@@ -125,12 +125,11 @@ func _pick_character() -> void:
 func _load_dossier(who: String) -> void:
 	# html/prison/<who>.html, stripped to amber text; <b> heads stay bright
 	dossier_lines.clear()
+	# data/html is transcoded to UTF-8 at extraction (tools/iw2/html_text.py)
 	var path: String = main._base().path_join("data/html/prison/%s.html" % who)
 	if not FileAccess.file_exists(path):
 		return
-	# the game's html is Latin-1; get_as_text() assumes UTF-8 and spews
-	# "Unicode parsing error: ... not a correct continuation byte"
-	var raw := FileAccess.get_file_as_bytes(path).get_string_from_ascii()
+	var raw := FileAccess.get_file_as_string(path)
 	var body := raw.get_slice("<BODY>", 1) if "<BODY>" in raw else raw
 	body = body.replace("\r\n", "\n").replace("<p>", "\n\n").replace("<P>", "\n\n")
 	body = body.replace("<br>", "\n").replace("<BR>", "\n")

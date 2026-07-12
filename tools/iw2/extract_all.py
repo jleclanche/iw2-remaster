@@ -23,6 +23,9 @@ textures.main()
 print("=== fonts ===")
 from . import fonts
 fonts.main()
+print("=== html (screen UI text, Latin-1 -> UTF-8) ===")
+from . import html_text
+html_text.main()
 print("=== mission packages ===")
 from . import campaign, pkg
 pkg.main()

@@ -53,43 +53,16 @@ func _ready() -> void:
 func _load_wav(rel: String) -> AudioStreamWAV:
 	if rel in sfx_cache:
 		return sfx_cache[rel]
+	# WAVs are normalized at extraction (tools/iw2/audio.py strips the
+	# smpl/LIST chunks Godot's parser trips on)
 	var path := base_path.path_join(rel)
 	var stream: AudioStreamWAV = null
 	if FileAccess.file_exists(path):
-		stream = AudioStreamWAV.load_from_buffer(_clean_wav(
-			FileAccess.get_file_as_bytes(path)))
+		stream = AudioStreamWAV.load_from_file(path)
 	else:
 		push_warning("missing sfx " + rel)
 	sfx_cache[rel] = stream
 	return stream
-
-static func _clean_wav(bytes: PackedByteArray) -> PackedByteArray:
-	# the game's WAVs carry trailing smpl/LIST chunks that Godot's parser
-	# over-reads ("Reading less data than requested") — rebuild a minimal
-	# fmt+data file; loop points are set in code, not from smpl
-	if bytes.size() < 12:
-		return bytes
-	var fmt := PackedByteArray()
-	var data := PackedByteArray()
-	var pos := 12
-	while pos + 8 <= bytes.size():
-		var tag := bytes.slice(pos, pos + 4).get_string_from_ascii()
-		var declared := mini(bytes.decode_u32(pos + 4), bytes.size() - pos - 8)
-		if tag == "fmt ":
-			fmt = bytes.slice(pos, pos + 8 + declared)
-		elif tag == "data":
-			data = bytes.slice(pos, pos + 8 + declared)
-		pos += 8 + declared + (declared & 1)
-	if fmt.is_empty() or data.is_empty():
-		return bytes
-	var out := PackedByteArray()
-	out.append_array("RIFF".to_ascii_buffer())
-	out.resize(8)
-	out.encode_u32(4, 4 + fmt.size() + data.size())
-	out.append_array("WAVE".to_ascii_buffer())
-	out.append_array(fmt)
-	out.append_array(data)
-	return out
 
 func play(rel: String, volume_db := 0.0) -> void:
 	var stream := _load_wav(rel)

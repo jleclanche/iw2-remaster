@@ -140,7 +140,12 @@ Dialogue/objective text keys (`a<act>_m<mm>_dialogue_<speaker>_<slug>`)
 map 1:1 to `streams/audio/speech/<key>.wav`.
 
 ## Audio & video
-- Resource `audio/**/*.wav`: PCM, load directly.
+Policy: anything that isn't UTF-8/clean for the engine is normalized AT
+EXTRACTION, not patched at runtime — WAVs are rebuilt as minimal
+fmt+data RIFF (`audio.py`; the originals' trailing smpl/LIST chunks
+trip Godot's parser), and the `html/` screen-UI tree is transcoded
+Latin-1 → UTF-8 (`html_text.py`).
+- Resource `audio/**/*.wav`: PCM, load directly (post-normalization).
 - `streams/audio/speech/*.wav`: **compressed** WAV (not PCM) —
   transcoded with **[existing tooling]** ffmpeg to OGG.
 - `streams/audio/music|ambient/*.mp3`: play directly (moods `a1_ambient`,
