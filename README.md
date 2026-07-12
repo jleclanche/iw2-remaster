@@ -48,12 +48,19 @@ $env:IW2_GAME_DIR = "C:\...\Independence War 2"   # if not the GOG default
 - Prior art: IronDuke's Unity remake attempt (2016, stalled) —
   [forum thread](https://www.i-war2.com/forum/general-i-war-talk/3233-ironduke-s-i-war2-remake-i-war3).
 
-## Roadmap
+## Status
 
-1. ✅ Extraction toolchain (ships, stations, subsims, star maps, textures)
-2. Models: LWO → glTF pipeline (Blender headless import or python lwo parser)
-3. POG script recovery (SDK sources + ZeroPipeline disassembly) for
-   mechanics: traffic, docking, factions, mission generator
-4. Engine prototype: 6-DOF Newtonian flight with original INI tuning values,
-   one system (Hoffer's Wake), LDS travel, docking
-5. Full Badlands/Gagarin cluster import
+1. ✅ Extraction toolchain (`python -m tools.iw2.extract_all`): ships,
+   stations, subsims, star maps, textures, **PSO meshes → glTF** (format
+   reverse-engineered here, 890/890), LWS scenes, avatar assembly (212
+   setups with LODs, hardpoints, nested scenes)
+2. ✅ **Engine: Godot 4** (agent-drivable text formats, MIT license,
+   Forward+). Prototype in `game/`: assisted-Newtonian flight with original
+   INI constants (validated), streaming 64-bit world, full Hoffer's Wake
+   navigable, **LDS travel with real drive constants + LDSI dropout**,
+   targeting HUD. Run: `godot --path game`; automated flight test:
+   `godot --path game -- --demo`
+3. Next: docking, weapons (PBC + projectile templates), station type
+   mapping (map type_hash → station sim), remaining systems, POG-derived
+   AI/traffic/factions (see docs/mechanics.md), capsule-drive jumps between
+   systems, DELT/FRAM animation decode, .giz collision hulls

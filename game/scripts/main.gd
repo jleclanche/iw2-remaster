@@ -36,6 +36,7 @@ var demo := false
 var demo_t := 0.0
 var demo_phase := 0
 
+var weapons: PbcWeapons
 var px := 0.0
 var py := 0.0
 var pz := 0.0
@@ -137,6 +138,9 @@ func _spawn_player() -> void:
 			break
 	ship.add_child(_load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf"))
 	add_child(ship)
+	weapons = PbcWeapons.new()
+	weapons.ship = ship
+	add_child(weapons)
 	cam = Camera3D.new()
 	cam.far = 6.0e5
 	cam.fov = 70
@@ -243,6 +247,9 @@ func _player_control(delta: float) -> void:
 	ship.input_rotate.z = Input.get_axis("roll_right", "roll_left")
 	ship.input_rotate.x = move_toward(ship.input_rotate.x, 0.0, delta * 1.5)
 	ship.input_rotate.y = move_toward(ship.input_rotate.y, 0.0, delta * 1.5)
+	if (Input.is_key_pressed(KEY_SPACE)
+			or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) and lds_state == 0:
+		weapons.fire()
 
 func _lds_process(delta: float) -> void:
 	if lds_state == 1:
@@ -269,6 +276,7 @@ func _fold_motion() -> void:
 	pz += p.z
 	ship.global_position = Vector3.ZERO
 	cam.global_position -= p
+	weapons.shift_world(p)
 
 func _stream_objects() -> void:
 	for o in objects:
@@ -361,10 +369,12 @@ func _demo_control(delta: float) -> void:
 				demo_t = 0.0
 		3:
 			ship.throttle = 0.3
+			_face_target()
+			weapons.fire()
 			if demo_t > 2.0:
 				var img := get_viewport().get_texture().get_image()
 				img.save_png(_base().path_join("data/screenshots/lds_demo.png"))
-				print("DEMO: screenshot saved")
+				print("DEMO: screenshot saved, bolts=", weapons.bolts.size())
 				get_tree().quit()
 	if int(demo_t) != int(demo_t - delta):
 		print("t=%.0f phase=%d spd=%s/s tgt=%s" % [demo_t, demo_phase,
