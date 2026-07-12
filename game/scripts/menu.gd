@@ -75,12 +75,37 @@ func _ready() -> void:
 	rim.light_energy = 0.5
 	rim.light_color = Color(0.9, 0.75, 0.5)
 	bust_view.add_child(rim)
-	var cursor: String = main._base().path_join(
-		"data/textures/images/cursors/pre_alpha_cursor.png")
-	if FileAccess.file_exists(cursor):
-		var img := Image.load_from_file(cursor)
-		if img != null:
-			Input.set_custom_mouse_cursor(ImageTexture.create_from_image(img))
+	_setup_cursor()
+
+func _setup_cursor() -> void:
+	# the original's cursor: the arrow tinted HUD-amber over a glossy glow
+	# shadow (images/gui/cursor_glow); the raw PNG is white on black, so
+	# derive alpha from luminance like the engine did
+	var base: String = main._base()
+	var cur := Image.load_from_file(base.path_join(
+		"data/textures/images/cursors/pre_alpha_cursor.png"))
+	if cur == null:
+		return
+	var glow := Image.load_from_file(base.path_join(
+		"data/textures/images/gui/cursor_glow.png"))
+	var w := cur.get_width()
+	var h := cur.get_height()
+	var canvas := Image.create(w + 6, h + 6, false, Image.FORMAT_RGBA8)
+	if glow != null:
+		glow.resize(w + 6, h + 6)
+		for y in canvas.get_height():
+			for x in canvas.get_width():
+				var g := glow.get_pixel(x, y)
+				var ga := maxf(g.r, maxf(g.g, g.b))
+				canvas.set_pixel(x, y, Color(0.35, 0.22, 0.0, ga * 0.85))
+	for y in h:
+		for x in w:
+			var p := cur.get_pixel(x, y)
+			var lum := maxf(p.r, maxf(p.g, p.b))
+			if lum > 0.05:
+				var c := Color(1.0, 0.78, 0.1) * lum
+				canvas.set_pixel(x, y, Color(c.r, c.g, c.b, 1.0))
+	Input.set_custom_mouse_cursor(ImageTexture.create_from_image(canvas))
 
 func _pick_character() -> void:
 	var pick: Array = CHARACTERS[randi() % CHARACTERS.size()]
@@ -137,6 +162,17 @@ func _load_dossier(who: String) -> void:
 		if cur != "":
 			dossier_lines.append({"text": cur, "bold": bold})
 
+func _unhandled_input(event: InputEvent) -> void:
+	# the menu owns its input: it must keep working while the tree is paused
+	if main.movie != null or main.demo:
+		return
+	if visible:
+		handle(event)
+		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and not event.echo \
+			and event.physical_keycode == KEY_ESCAPE:
+		open()  # Escape = PDA / pause
+
 func open() -> void:
 	visible = true
 	mode = "main"
@@ -144,11 +180,23 @@ func open() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	bust_view.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_pick_character()
+	if launched:
+		# pause the simulation like the original; UI/audio stay live
+		# (the CanvasLayer and AudioManager are PROCESS_MODE_ALWAYS)
+		get_tree().paused = true
+		for p in [main.audio.engine_player, main.audio.thruster_player,
+				main.audio.lds_player]:
+			p.stream_paused = true
 
 func close() -> void:
 	visible = false
 	bust_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	get_tree().paused = false
+	for p in [main.audio.engine_player, main.audio.thruster_player,
+			main.audio.lds_player]:
+		p.stream_paused = false
+	main.fire_lock = 0.3  # the confirming click must not fire the PBC
 
 func _items() -> Array:
 	# [label, enabled]; labels are the original pda_* strings

@@ -78,7 +78,13 @@ func _remove_waypoints() -> void:
 			if main.objects[i]["node"] != null:
 				main.objects[i]["node"].queue_free()
 			if main.target_idx == i:
+				# target gone: drop it and release any autopilot chasing it,
+				# else the AP keeps flying at a stale (re-indexed) object
 				main.target_idx = -1
+				if main.ap_mode != 0:
+					main._set_autopilot(0)
+			elif main.target_idx > i:
+				main.target_idx -= 1  # keep the same object targeted
 			main.objects.remove_at(i)
 
 func _has_wait(s: Dictionary) -> bool:

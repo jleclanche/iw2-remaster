@@ -29,10 +29,11 @@ const LDS_COL := Color(0.4, 1.0, 0.75, 0.95)
 
 var FONT_SIZE := 13
 var _font: Font       # Handel Gothic 8pt â€” panel text, like the original
-var _font_num: Font   # OCR-B 10pt â€” reticle numerics
+var _font_num: Font   # OCR-B 8pt â€” reticle numerics
 var _font_big: Font   # Handel Gothic 12pt â€” warnings
 var num_size := 14
 var big_size := 17
+var target_view: TargetView  # live EO-feed render of the target
 
 static func load_game_font(base: String, fnt: String) -> Font:
 	var path := base.path_join("data/fonts").path_join(fnt)
@@ -55,6 +56,9 @@ func _ready() -> void:
 		num_size = (_font_num as FontFile).fixed_size
 	if _font_big is FontFile and (_font_big as FontFile).fixed_size > 0:
 		big_size = (_font_big as FontFile).fixed_size
+	target_view = TargetView.new()
+	target_view.main = main
+	add_child(target_view)
 
 func _screen() -> Vector2:
 	return get_viewport_rect().size
@@ -83,8 +87,12 @@ func _draw() -> void:
 		_draw_reticle(c)
 		_draw_target_marks()
 	if main.comms != null and main.comms.speaking():
+		target_view.enabled = false
+		main.comms.portrait.visible = true  # channel stays open between lines
 		_draw_comm_panel()
 	else:
+		if main.comms != null:
+			main.comms.portrait.visible = false
 		_draw_mfd()
 	_draw_weapon_panel()
 	_draw_system_status()
@@ -115,10 +123,7 @@ func _draw_subtitles() -> void:
 	# in-flight dialogue subtitles at the top of the HUD (manual, comms):
 	# pale yellow with a dark drop, like the original
 	if main.comms == null or str(main.comms.subtitle) == "":
-		if main.comms != null:
-			main.comms.portrait.visible = false
 		return
-	main.comms.portrait.visible = true
 	var s := _screen()
 	var who := str(main.comms.speaker).capitalize()
 	var text: String = "%s: %s" % [who, main.comms.subtitle]
@@ -132,7 +137,7 @@ func _draw_subtitles() -> void:
 			lines.append(w)
 		else:
 			lines[-1] = trial
-	var y := 46.0
+	var y := 64.0  # below the system-status lights
 	for ln in lines:
 		var w2 := _font.get_string_size(ln, HORIZONTAL_ALIGNMENT_LEFT, -1,
 				FONT_SIZE + 1).x
@@ -395,6 +400,7 @@ func _draw_mfd() -> void:
 		ttype = str(t["category"]).to_upper()
 		col = GREEN if t["category"] == "lpoint" else YELLOW
 	else:
+		target_view.enabled = false
 		draw_string(_font, pos + Vector2(10, 40), "NO TARGET",
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, GREEN_DIM)
 		return
@@ -404,22 +410,27 @@ func _draw_mfd() -> void:
 			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, GREEN_DIM)
 	if hull_frac >= 0.0:
 		_bar(pos + Vector2(8, 54), 130, hull_frac, col, 13)
-	# EO feed: rotating wireframe
-	var center := pos + Vector2(size.x / 2.0, 104)
-	var t := Time.get_ticks_msec() / 1000.0
-	var basis := Basis(Vector3.UP, t * 0.6) * Basis(Vector3.RIGHT, 0.35)
-	var ext := Vector3(34, 12, 44)
-	if main.target_ai == null:
-		ext = Vector3(30, 26, 30)
-	var corners: Array = []
-	for sx in [-1, 1]:
-		for sy in [-1, 1]:
-			for sz in [-1, 1]:
-				var p3: Vector3 = basis * Vector3(sx * ext.x, sy * ext.y, sz * ext.z)
-				corners.append(center + Vector2(p3.x, -p3.y * 0.8 + p3.z * 0.25))
-	for e in [[0, 1], [0, 2], [1, 3], [2, 3], [4, 5], [4, 6], [5, 7], [6, 7],
-			[0, 4], [1, 5], [2, 6], [3, 7]]:
-		draw_line(corners[e[0]], corners[e[1]], col * Color(1, 1, 1, 0.7), 1.0, true)
+	# EO feed: live render of the actual target model
+	var has_model := target_view.show_avatar(main.target_avatar())
+	target_view.enabled = has_model
+	if has_model:
+		draw_texture_rect(target_view.get_texture(),
+				Rect2(pos + Vector2(10, 52), Vector2(200, 92)), false)
+	else:
+		# waypoints and modelless contacts keep the wireframe diamond
+		var center := pos + Vector2(size.x / 2.0, 104)
+		var t := Time.get_ticks_msec() / 1000.0
+		var basis := Basis(Vector3.UP, t * 0.6) * Basis(Vector3.RIGHT, 0.35)
+		var ext := Vector3(30, 26, 30)
+		var corners: Array = []
+		for sx in [-1, 1]:
+			for sy in [-1, 1]:
+				for sz in [-1, 1]:
+					var p3: Vector3 = basis * Vector3(sx * ext.x, sy * ext.y, sz * ext.z)
+					corners.append(center + Vector2(p3.x, -p3.y * 0.8 + p3.z * 0.25))
+		for e in [[0, 1], [0, 2], [1, 3], [2, 3], [4, 5], [4, 6], [5, 7], [6, 7],
+				[0, 4], [1, 5], [2, 6], [3, 7]]:
+			draw_line(corners[e[0]], corners[e[1]], col * Color(1, 1, 1, 0.7), 1.0, true)
 	draw_string(_font, pos + Vector2(size.x - 60, size.y - 6), "EO FEED",
 			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 3, GREEN_DIM)
 
