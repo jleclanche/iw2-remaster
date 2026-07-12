@@ -15,7 +15,17 @@ var ship: ShipFlight  # player, for fire()
 var main: Node3D
 var cooldown := 0.0
 var bolts: Array = []  # {node, vel, life, shooter}
+var muzzle_nodes: Array = []  # weapon-mount nulls found on the avatar
 var _mesh: BoxMesh
+
+func set_muzzles(model: Node3D) -> void:
+	# fire from the avatar's actual weapon nulls (pbc mounts) when present
+	muzzle_nodes.clear()
+	for n in model.find_children("*", "Node3D", true, false):
+		var nm := str(n.name).to_lower()
+		if "pbc" in nm and "bolt" not in nm and not (n is MeshInstance3D):
+			muzzle_nodes.append(n)
+	muzzle_nodes = muzzle_nodes.slice(0, 2)
 
 func _ready() -> void:
 	_mesh = BoxMesh.new()
@@ -32,9 +42,15 @@ func fire() -> void:
 	if cooldown > 0.0:
 		return
 	cooldown = REFIRE
-	for m in MUZZLES:
-		_spawn_at(ship, ship.global_transform * m,
-				-ship.global_transform.basis.z, ship.velocity)
+	if not muzzle_nodes.is_empty():
+		for n in muzzle_nodes:
+			if is_instance_valid(n):
+				_spawn_at(ship, (n as Node3D).global_position,
+						-ship.global_transform.basis.z, ship.velocity)
+	else:
+		for m in MUZZLES:
+			_spawn_at(ship, ship.global_transform * m,
+					-ship.global_transform.basis.z, ship.velocity)
 	if main:
 		main.audio.play("audio/sfx/light_pbc.wav", -8.0)
 

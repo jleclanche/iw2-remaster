@@ -124,10 +124,74 @@ func _ready() -> void:
 	hud.add_child(comms.portrait)
 	add_child(cl)
 
+func _fit_player(ini_path: String, avatar: String) -> void:
+	# swap the player's hull: the campaign opens in the bare command
+	# section; the tug comes later at Lucrecia's Base
+	if ship_model != null:
+		ship_model.queue_free()
+	if ship.fx != null:
+		ship.fx.queue_free()
+		ship.fx = null
+	ship_model = _load_gltf(avatar)
+	ship.add_child(ship_model)
+	ShipEffects.attach(ship, ship_model)
+	var stats: Array = _load_json("data/json/ships.json")
+	for rec in stats:
+		if rec.get("path", "") == ini_path:
+			ship_stats = rec["properties"]
+			ship.load_stats(ship_stats)
+			hull_max = float(ship_stats.get("hit_points", 500))
+			hull = hull_max
+	weapons.set_muzzles(ship_model)
+	_apply_view()
+
 func start_campaign() -> void:
 	start_in_system(START_SYSTEM)
+	_fit_player("sims/ships/player/command_section.ini",
+		"data/avatars/avatars/command_section/setup.gltf")
+	_setup_act0_scene()
 	_play_movie("intro", func() -> void:
 		mission.start(Mission.act0_m10()))
+
+func _setup_act0_scene() -> void:
+	# the original tutorial opens adrift in the Junkyard debris field:
+	# scattered rocks, the Abandoned Hulk ahead, working tugs all around
+	for o in objects:
+		if str(o["name"]) == "Junkyard":
+			px = o["x"] + 2500.0
+			py = o["y"]
+			pz = o["z"] + 3500.0
+	objects.append({"name": "Abandoned Hulk", "category": "station",
+		"x": px + 800.0, "y": py + 150.0, "z": pz - 4000.0, "radius": 120.0,
+		"avatar": "avatars/old_destroyer/setup_turretless.gltf",
+		"jumps": [], "colors": [], "node": null, "prop_collide": true})
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1701
+	for i in 14:
+		var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.4, 0.4),
+			rng.randf_range(-1, 1)).normalized()
+		var d := rng.randf_range(1200.0, 9000.0)
+		objects.append({"name": "rock%d" % i, "category": "prop",
+			"x": px + dir.x * d, "y": py + dir.y * d, "z": pz + dir.z * d,
+			"radius": rng.randf_range(35.0, 140.0),
+			"avatar": "avatars/asteroids/setup%d.gltf" % (i % 5 + 1),
+			"jumps": [], "colors": [], "node": null, "prop_collide": true})
+	for cfg in [["Scopo", 3500.0], ["Brick", 9000.0], ["De - Ex", 12000.0],
+			["Swyddfa'r Post", 15000.0]]:
+		var ai := AiShip.new()
+		ai.main = self
+		ai.name = str(cfg[0])
+		ai.setup({"hit_points": 600, "speed": [80, 80, 200],
+			"acceleration": [30, 30, 50], "yaw_rate": 18, "pitch_rate": 18,
+			"roll_rate": 18})
+		var mdl := _load_gltf("data/avatars/avatars/utilityvessel/setup.gltf")
+		if mdl != null:
+			ai.add_child(mdl)
+			ShipEffects.attach(ai, mdl)
+		ai.position = Vector3(cfg[1], 200 + cfg[1] * 0.02, -cfg[1] * 0.6)
+		ai.waypoints = [Vector3(cfg[1], 0, -3000), Vector3(-2000, 400, -cfg[1])]
+		add_child(ai)
+		ai_ships.append(ai)
 
 func _play_movie(stem: String, then: Callable) -> void:
 	var path := _base().path_join("data/movies/%s.ogv" % stem)
@@ -969,10 +1033,39 @@ func _physics_process(delta: float) -> void:
 		ship.input_rotate = Vector3.ZERO
 	_fold_motion()
 	_stream_objects()
+	_collisions()
 	_update_grid()
 	_chase_camera(delta)
 	if sky_anchor != null:
 		sky_anchor.global_position = cam.global_position
+
+func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
+		what: String) -> void:
+	var d := ship.global_position - center
+	var dist := d.length()
+	if dist >= radius or dist < 0.1:
+		return
+	var n := d / dist
+	var rel: float = (ship.velocity - vel).dot(n)
+	if rel < 0.0:
+		ship.velocity -= n * rel * 1.6  # bounce off
+		var dmg := clampf(-rel * 0.4, 4.0, 250.0)
+		hull -= dmg
+		audio.play("audio/sfx/collision.wav", -3.0)
+		audio.play("audio/sfx/ship_clatter.wav", -8.0)
+		hud.warn("COLLISION — %s  HULL %d%%" % [what.to_upper(),
+			int(100.0 * hull / hull_max)])
+	ship.global_position = center + n * radius
+
+func _collisions() -> void:
+	if docked_at != "" or jump_state >= 2:
+		return
+	for a in ai_ships:
+		_collide_sphere(a.global_position, 95.0, a.velocity, str(a.name))
+	for o in objects:
+		if o.get("prop_collide", false) and o["node"] != null:
+			_collide_sphere(Vector3(o["x"] - px, o["y"] - py, o["z"] - pz),
+				o["radius"] + 45.0, Vector3.ZERO, str(o["name"]))
 	var demand: float = absf(ship.set_speed - ship.forward_speed()) \
 		/ maxf(ship.max_speed.z, 1.0) + absf(ship.input_thrust.z)
 	audio.set_engine_level(demand + ship.set_speed / ship.max_speed.z * 0.1)
@@ -1183,6 +1276,10 @@ func _lds_process(delta: float) -> void:
 		audio.lds_player.stop()
 		audio.play("audio/sfx/lds_rampdown.wav", -4.0)
 		ship.velocity = ship.velocity.normalized() * ship.max_speed.z
+		# auto-deceleration (original option, default on): the flight
+		# computer zeroes the throttle wheel on LDS dropout so the ship
+		# brakes to a stop instead of barreling on at drive speed
+		ship.set_speed = 0.0
 
 func _fold_motion() -> void:
 	var p := ship.global_position
@@ -1217,7 +1314,7 @@ func _stream_objects() -> void:
 				var draw_r := minf(r * k, IMPOSTOR_DIST * 0.4)
 				o["node"].position = Vector3(dx, dy, dz) * k
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
-			"station":
+			"station", "prop":
 				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
 					var model := _load_gltf("data/avatars/" + o["avatar"])
 					if model == null:
