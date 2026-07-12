@@ -23,6 +23,10 @@ textures.main()
 print("=== fonts ===")
 from . import fonts
 fonts.main()
+print("=== mission packages ===")
+from . import campaign, pkg
+pkg.main()
+campaign.main()
 print("=== meshes ===")
 export_gltf.main()
 print("=== avatars ===")
