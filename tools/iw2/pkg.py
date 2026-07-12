@@ -97,4 +97,6 @@ def main(out_dir: str = "data/json/packages") -> None:
 
 
 if __name__ == "__main__":
+    if any(a.startswith("-") for a in sys.argv[1:]):
+        sys.exit(__doc__)  # "--help" must not become an output directory
     main(*sys.argv[1:])

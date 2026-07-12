@@ -109,6 +109,25 @@ Emit as BMFont (`base = line_height − descent`); GOG's `ocrb_8pt.frf`
 actually references the Andale Mono atlas. Note: font `.frf` ≠ `.ffe`
 (joystick force-feedback effects, no gameplay content).
 
+## POG VM bytecode (`pogdis.py`)
+The CODE chunk (u32be size prefix, then bytecode) is a stack-machine
+program: opcode byte + **little-endian** operands. The opcode table was
+recovered by compiling the POG SDK's sample sources — which include
+three original campaign missions — with the SDK's own `pc.exe -ma`
+(assembler listings with byte offsets) and aligning listing offsets
+against the compiled CODE bytes; `python -m tools.iw2.pogdis --selftest`
+re-validates the round trip (16k instructions, exact match). Compiler
+runs from `build/pogc` (needs the game's `flux.dll` beside it).
+Highlights: `0x0F/0x10/0x11` Goto/GoFalse/GoTrue (absolute u32 target),
+`0x14/0x15` CallLocal/Call and `0x17/0x18` StartLocal/Start (13 bytes;
+imported targets resolved via FIMP call-site offsets, local targets
+carry the callee entry offset), `0x0C/0x0D` Load/Store (local slot),
+`0x0E` Reserve, `0x3E` LoadString (STAB index), `0x3B/0x3C`
+MarkObject/DeleteMarkedObjects (temp handle scopes), `0x45` DebugSkip.
+Full table in `tools/iw2/pogdis.py`. `--all` emits readable listings
+for every retail package (`data/pogdis/*.pogasm`) — exact mission
+logic: spawn positions, waypoints, conditions, timings.
+
 ## POG script packages `.pkg` (`pkg.py`, `campaign.py`)
 IFF `FORM PKG `: `PKHD` name; `ITAB` import count; per import package a
 `PIMP` (name + count) followed by its `FIMP`s — imported function name,
