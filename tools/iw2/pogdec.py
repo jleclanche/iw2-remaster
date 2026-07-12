@@ -156,6 +156,13 @@ class While(Stmt):
         self.cond, self.body = cond, body
 
 
+class DoWhile(Stmt):
+    """`do { body } while (cond)` -- a loop whose test is the back edge itself."""
+
+    def __init__(self, cond, body):
+        self.cond, self.body = cond, body
+
+
 class Every(Stmt):
     """`EndTimeslice; TimedJump` -- run the body at most every N seconds."""
 
@@ -224,14 +231,28 @@ class Decompiler:
         self.at = {off: i for i, (off, _, _) in enumerate(self.instrs)}
         self.end = (self.instrs[-1][0] + 1) if self.instrs else 0
         self.labels: set[int] = set()
-        # A loop is a backward jump. Its target is the header; the *last* such
-        # jump is the latch, which fixes the loop's extent. (POG's compiler emits
-        # reducible code, so this is exact rather than a heuristic.)
-        self.loops: dict[int, int] = {}
+        self.func_hi = self.end
+        self._tail_stack: list[Expr] = []
+        # A loop is a backward jump: its target is the header, and the last such
+        # jump is the latch. But the latch does NOT bound the loop -- a nested
+        # loop's own back edge can sit *after* the outer loop's, so the outer
+        # body runs on past its latch. Extend each loop to cover any loop that
+        # begins inside it, or the outer one is never recognised at all.
+        self.latch: dict[int, int] = {}
         for off, mn, args in self.instrs:
             if mn in _JUMPS and args[0] <= off:
                 h = args[0]
-                self.loops[h] = max(self.loops.get(h, 0), off)
+                self.latch[h] = max(self.latch.get(h, 0), off)
+        self.loops: dict[int, int] = dict(self.latch)   # header -> last address
+        changed = True
+        while changed:
+            changed = False
+            for h, end in list(self.loops.items()):
+                for h2, end2 in self.loops.items():
+                    if h < h2 <= end and end2 > end:
+                        self.loops[h] = end2
+                        end = end2
+                        changed = True
 
     # -- helpers
 
@@ -276,6 +297,7 @@ class Decompiler:
         out = []
         for k, e in enumerate(ordered):
             stop = ordered[k + 1] if k + 1 < len(ordered) else self.end
+            self.func_hi = stop
             f = Func(entries[e], e, argc.get(e, 0))
             f.body = self._block(e, stop)
             out.append(f)
@@ -284,9 +306,14 @@ class Decompiler:
     # -- structuring
 
     def _block(self, lo: int, hi: int, ctx: tuple | None = None) -> list[Stmt]:
-        """Structure [lo, hi). ctx = (break_to, continue_to) of the open loop."""
+        """Structure [lo, hi). ctx = (break_to, header, latch) of the open loop.
+
+        Leaves whatever expression the region ended mid-evaluation in
+        `_tail_stack`: a do-while's condition is exactly that.
+        """
         out: list[Stmt] = []
         stack: list[Expr] = []
+        self._tail_stack = stack
         addr = lo
         while addr < hi:
             i = self.at[addr]
@@ -294,9 +321,8 @@ class Decompiler:
 
             # --- a loop starts here (something jumps back to this address)
             if addr in self.loops and self.loops[addr] < hi:
-                latch = self.loops[addr]
-                exit_at = self._next_addr(latch)
-                out.append(self._loop(addr, latch, exit_at))
+                exit_at = self._next_addr(self.loops[addr])
+                out.append(self._loop(addr, self.latch[addr], exit_at))
                 addr = exit_at
                 continue
 
@@ -319,19 +345,24 @@ class Decompiler:
                 body_lo = self._next_addr(addr)
 
                 jump = self._jump_stmt(tgt, ctx)
-                if jump is not None and not isinstance(jump, Goto):
-                    out.append(If(cond, [jump], []))   # break / continue
+                if isinstance(jump, Goto):
+                    epi = self._epilogue(tgt)
+                    if epi is not None:
+                        jump = epi
+                if not isinstance(jump, Goto):
+                    out.append(If(cond, [jump], []))   # break / continue / return
                     addr = body_lo
                     continue
 
-                if addr < tgt <= hi:
+                if addr < tgt <= hi and not self._splits_loop(body_lo, tgt):
                     # if / if-else: an else exists when the then-part ends with
                     # a forward Goto over it.
                     els_end = None
                     b = self._last_before(tgt)
                     if b is not None and b >= body_lo:
                         t2 = self._target(b)
-                        if t2 is not None and tgt < t2 <= hi:
+                        if (t2 is not None and tgt < t2 <= hi
+                                and not self._splits_loop(tgt, t2)):
                             els_end = t2
                     if els_end is not None:
                         out.append(If(cond,
@@ -350,36 +381,109 @@ class Decompiler:
 
             if mn == "Goto":
                 tgt = args[0]
+
+                # A pre-tested loop: the compiler jumps forward to the test,
+                # which sits at the bottom and jumps back over the body.
+                #     Goto COND ; H: <body> ; COND: <cond> ; GoTrue H
+                nxt = self._next_addr(addr)
+                if nxt in self.loops:
+                    h, latch = nxt, self.loops[nxt]
+                    if h < tgt <= latch and latch < hi:
+                        out.append(self._pretested(h, tgt, latch))
+                        addr = self._next_addr(latch)
+                        continue
+
                 if tgt == hi:
-                    return out          # the jump that converges on this region's
-                                        # end: structure already expresses it
+                    self._tail_stack = stack
+                    return out          # converges on this region's end: the
+                                        # structure already expresses it
+
+                if tgt >= self.func_hi:
+                    out.append(Ret(None))   # jump to the tail: a bare return
+                    self._tail_stack = stack
+                    return out
                 jump = self._jump_stmt(tgt, ctx)
-                if jump is not None:
-                    out.append(jump)
-                    if isinstance(jump, Goto):
-                        self.labels.add(tgt)
+                if isinstance(jump, Goto):
+                    epi = self._epilogue(tgt)
+                    if epi is not None:
+                        out.append(epi)
+                        self._tail_stack = stack
+                        return out
+                    self.labels.add(tgt)
+                out.append(jump)
                 if tgt >= hi:
+                    self._tail_stack = stack
                     return out
                 addr = self._next_addr(addr)
                 continue
 
             addr = self._step(i, stack, out)
+        self._tail_stack = stack
         return out
 
+    def _epilogue(self, tgt: int) -> Stmt | None:
+        """If everything from `tgt` to the end of the function is just the
+        shared exit -- scope cleanup and a Return -- then a jump to it is a
+        plain `return`, not a goto. Most remaining jumps are exactly this."""
+        allowed = {"DeleteMarkedObjects", "MarkObject", "Pop", "LoadZero",
+                   "LoadOne", "Load"}
+        stack: list[Expr] = []
+        addr = tgt
+        while addr < self.func_hi:
+            i = self.at.get(addr)
+            if i is None:
+                return None
+            _, mn, args = self.instrs[i]
+            if mn == "Halt":
+                return Halt()
+            if mn == "Return":
+                return Ret(stack[-1] if stack else None)
+            if mn not in allowed:
+                return None
+            if mn == "LoadZero":
+                stack.append(Const(0))
+            elif mn == "LoadOne":
+                stack.append(Const(1))
+            elif mn == "Load":
+                stack.append(Var(args[0]))
+            elif mn == "Pop" and stack:
+                stack.pop()
+            addr = self._next_addr(addr)
+        return None
+
+    def _splits_loop(self, lo: int, hi: int) -> bool:
+        """Would a region ending at `hi` cut a loop that starts inside it?
+
+        If so the branch is not an if-join at all, and treating it as one hides
+        the loop from the structurer -- which is what left thousands of gotos.
+        """
+        for h, latch in self.loops.items():
+            if lo <= h < hi <= latch:
+                return True
+        return False
+
     def _jump_stmt(self, tgt: int, ctx) -> Stmt | None:
-        """A jump out of the current loop is a break; back to its head, continue."""
+        """Out of the current loop is a break; to its head or its latch (the
+        back edge at the bottom) is a continue."""
         if ctx is not None:
-            brk, cont = ctx
+            brk, head, latch = ctx
             if tgt == brk:
                 return Break()
-            if tgt == cont:
+            if tgt == head or tgt == latch:
                 return Continue()
         return Goto(tgt)
 
     def _loop(self, header: int, latch: int, exit_at: int) -> Stmt:
-        ctx = (exit_at, header)
+        ctx = (exit_at, header, latch)
         i = self.at[header]
         _, mn, _ = self.instrs[i]
+        _, latch_mn, _ = self.instrs[self.at[latch]]
+
+        # The loop runs past its own back edge because a nested loop ends later.
+        # Its shape is then just "loop forever, leaving via break": the back
+        # edges inside become continues.
+        if self._next_addr(latch) != exit_at:
+            return While(Const(1), self._block(header, exit_at, ctx))
 
         # `every N seconds`: yield each frame, and skip the body until N has
         # elapsed. TimedJump's target is the bottom of the loop, not its exit.
@@ -395,8 +499,17 @@ class Decompiler:
                     tail = self._block(skip, latch, ctx)
                     return Every(secs, body + tail)
 
+        # `do { } while (cond)`: the back edge is itself the test, so the
+        # condition is whatever the body leaves on the stack at the latch.
+        if latch_mn in ("GoTrue", "GoFalse"):
+            body = self._block(header, latch, ctx)
+            cond = self._tail_stack[-1] if self._tail_stack else Const(1)
+            if latch_mn == "GoFalse":
+                cond = Un("!", cond)
+            return DoWhile(cond, body)
+
         # `while (cond)`: the header evaluates a condition that jumps to the
-        # loop's exit. If the condition region also has side effects, we cannot
+        # loop's exit. If the condition region also has side effects we cannot
         # hoist it, so emit while(true) with an explicit break.
         cond, pre, body_lo = self._loop_cond(header, latch, exit_at)
         if cond is not None and not pre:
@@ -405,6 +518,34 @@ class Decompiler:
             body = pre + [If(Un("!", cond), [Break()], [])]
             return While(Const(1), body + self._block(body_lo, latch, ctx))
         return While(Const(1), self._block(header, latch, ctx))
+
+    def _pretested(self, header: int, cond_at: int, latch: int) -> Stmt:
+        """`while (cond) { body }`, emitted by the compiler as a jump to the
+        bottom test. Body is [header, cond_at); the test is [cond_at, latch]."""
+        exit_at = self._next_addr(latch)
+        ctx = (exit_at, header, latch)
+        body = self._block(header, cond_at, ctx)
+        stmts, stack = self._eval(cond_at, latch)
+        cond = stack[-1] if stack else Const(1)
+        if self.instrs[self.at[latch]][1] == "GoFalse":
+            cond = Un("!", cond)
+        if not stmts:
+            return While(cond, body)
+        # The test has side effects, so it cannot be hoisted into the header.
+        return While(Const(1),
+                     body + stmts + [If(Un("!", cond), [Break()], [])])
+
+    def _eval(self, lo: int, hi: int):
+        """Straight-line symbolic execution of [lo, hi): (statements, stack)."""
+        stack: list[Expr] = []
+        stmts: list[Stmt] = []
+        addr = lo
+        while addr < hi:
+            i = self.at[addr]
+            if self.instrs[i][1] in _JUMPS:
+                break
+            addr = self._step(i, stack, stmts)
+        return stmts, stack
 
     def _loop_cond(self, header: int, latch: int, exit_at: int):
         """The header's exit test, if it has one: (cond, stmts_before, body_lo)."""
@@ -548,6 +689,9 @@ class PogBackend:
         if isinstance(s, While):
             return ["%swhile (%s) {" % (i, s.cond)] \
                 + self.body(s.body, d + 1) + [i + "}"]
+        if isinstance(s, DoWhile):
+            return [i + "do {"] + self.body(s.body, d + 1) \
+                + ["%s} while (%s);" % (i, s.cond)]
         if isinstance(s, If):
             out = ["%sif (%s) {" % (i, s.cond)] + self.body(s.then, d + 1)
             if s.els:
@@ -599,6 +743,11 @@ class GdBackend:
                 + ["%sawait _wait(%g)" % (_ind(d + 1), s.secs)]
         if isinstance(s, While):
             return ["%swhile %s:" % (i, _gx(s.cond))] + self.body(s.body, d + 1)
+        if isinstance(s, DoWhile):
+            # GDScript has no do/while; the body must run once before the test.
+            return ["%swhile true:" % i] + self.body(s.body, d + 1) \
+                + ["%sif not (%s):" % (_ind(d + 1), _gx(s.cond)),
+                   "%sbreak" % _ind(d + 2)]
         if isinstance(s, If):
             out = ["%sif %s:" % (i, _gx(s.cond))] + self.body(s.then, d + 1)
             if s.els:
