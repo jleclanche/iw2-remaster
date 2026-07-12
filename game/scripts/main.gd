@@ -208,10 +208,10 @@ func _setup_act0_scene() -> void:
 	for o in objects:
 		match str(o["name"]):
 			"Hoffer's Gap":
-				# spawn 3 km out with the Gap dead ahead, like the original
+				# spawn 8 km out with the Gap dead ahead, like the original
 				px = o["x"]
 				py = o["y"]
-				pz = o["z"] + 3000.0
+				pz = o["z"] + 8000.0
 				o["prop_collide"] = true
 			"Hoffer's Gap Entertainment Complex", \
 			"Hoffer's Gap Independent Trading Post":
@@ -353,8 +353,12 @@ func _setup_sky(stem: String) -> void:
 					var neb := _load_gltf("data/gltf/models/%s.gltf" % mstem)
 					if neb != null:
 						_make_additive(neb)
-						neb.scale = Vector3.ONE * 150.0
 						sky_anchor.add_child(neb)
+						# push the camera-anchored dome out near the far
+						# plane so nearby geometry occludes it — at small
+						# scales the additive backdrop painted OVER stations
+						var r := _model_bounds_radius(neb)
+						neb.scale = Vector3.ONE * (4.8e5 / maxf(r, 1.0))
 				elif cls == "icStarfieldAvatar" and sky_mat != null:
 					var tint := _parse_tuple(str(n.get("tint", "")), Vector3.ONE)
 					sky_mat.set_shader_parameter("star_tint", tint)
@@ -1131,9 +1135,8 @@ func damage_player(dmg: float, why: String) -> void:
 		ship.velocity = Vector3.ZERO
 		ship.set_speed = 0.0
 
-func _model_radius(model: Node3D, fallback: float) -> float:
-	# bounding-sphere radius of the streamed avatar, for collision — the
-	# map/record radii are zone numbers, not hull sizes
+func _model_bounds_radius(model: Node3D) -> float:
+	# bounding-sphere radius of an instanced model (must be in the tree)
 	var merged := AABB()
 	var first := true
 	for mi in model.find_children("*", "MeshInstance3D", true, false):
@@ -1143,12 +1146,18 @@ func _model_radius(model: Node3D, fallback: float) -> float:
 		var tb := xf * bb
 		merged = tb if first else merged.merge(tb)
 		first = false
-	if first:
+	return 0.0 if first else merged.size.length() * 0.5
+
+func _model_radius(model: Node3D, fallback: float) -> float:
+	# collision sphere for a streamed avatar — the map/record radii are
+	# zone numbers, not hull sizes
+	var r := _model_bounds_radius(model)
+	if r <= 0.0:
 		return fallback
 	# spheres are crude: cap so docking approaches (and the F6 autopilot's
 	# 600 m arrival) still get inside; big-station avatars also carry
 	# far-flung light nulls that would blow the AABB up to km scale
-	return clampf(merged.size.length() * 0.33, minf(fallback, 400.0) * 0.5, 450.0)
+	return clampf(r * 0.66, minf(fallback, 400.0) * 0.5, 450.0)
 
 func _collisions() -> void:
 	if docked_at != "" or jump_state >= 2:
