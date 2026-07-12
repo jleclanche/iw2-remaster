@@ -126,10 +126,13 @@ map 1:1 to `streams/audio/speech/<key>.wav`.
   transcoded with **[existing tooling]** ffmpeg to OGG.
 - `streams/audio/music|ambient/*.mp3`: play directly (moods `a1_ambient`,
   `a1_action`, ...).
-- `movies/*.bik`: Bink — **[existing tooling]** ffmpeg decodes; encode
-  Theora with forced `yuv420p` + even dimensions or Godot shows grey
-  macroblocks. Character biks (az/jaffs/lori/ocal/ycal/smith) are the
-  MFD comm-portrait loops.
+- `movies/*.bik`: Bink — **[existing tooling]** ffmpeg decodes.
+  **ffmpeg 8.1.x's libtheora encoder emits corrupt bitstreams**
+  (`error in unpack_block_qpis` from ffmpeg's own decoder; macroblock
+  garbage in Godot) — encode with ffmpeg 7.1.1, forced `yuv420p` +
+  even dimensions, and verify with `ffmpeg -v error -i out.ogv -f
+  null -`. Character biks (az/jaffs/lori/ocal/ycal/smith) are the MFD
+  comm-portrait loops.
 
 ## Textures FTC/FTU — [existing tooling]
 Decoded with Jerome's own FTEX plugin for Pillow (`textures.py` wraps

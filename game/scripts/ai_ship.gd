@@ -6,6 +6,8 @@ extends ShipFlight
 
 var behavior := "patrol"
 var display_name := ""  # node names mangle punctuation; HUD uses this
+var faction := "INDPT"  # text/faction_names.csv abbreviations
+var ctype := "TRANS"    # text/hud.csv hud_type_* abbreviations
 var hull := 1000.0
 var hull_max := 1000.0
 var main: Node3D

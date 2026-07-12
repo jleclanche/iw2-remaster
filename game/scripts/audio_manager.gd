@@ -56,11 +56,29 @@ func _load_wav(rel: String) -> AudioStreamWAV:
 	var path := base_path.path_join(rel)
 	var stream: AudioStreamWAV = null
 	if FileAccess.file_exists(path):
-		stream = AudioStreamWAV.load_from_file(path)
+		stream = AudioStreamWAV.load_from_buffer(_fix_riff(
+			FileAccess.get_file_as_bytes(path)))
 	else:
 		push_warning("missing sfx " + rel)
 	sfx_cache[rel] = stream
 	return stream
+
+static func _fix_riff(bytes: PackedByteArray) -> PackedByteArray:
+	# some of the game's WAVs declare RIFF/data chunk sizes past EOF, which
+	# makes Godot's parser warn "Reading less data than requested" — clamp
+	# every declared size to the bytes actually present
+	if bytes.size() < 12:
+		return bytes
+	bytes.encode_u32(4, bytes.size() - 8)
+	var pos := 12
+	while pos + 8 <= bytes.size():
+		var declared := bytes.decode_u32(pos + 4)
+		var avail := bytes.size() - pos - 8
+		if declared > avail:
+			bytes.encode_u32(pos + 4, avail)
+			declared = avail
+		pos += 8 + declared + (declared & 1)
+	return bytes
 
 func play(rel: String, volume_db := 0.0) -> void:
 	var stream := _load_wav(rel)

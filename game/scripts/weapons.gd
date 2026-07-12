@@ -8,22 +8,24 @@ extends Node3D
 const BOLT_SPEED := 6000.0
 const BOLT_LIFE := 1.6
 const BOLT_LENGTH := 90.0
-const REFIRE := 0.3
 const MUZZLES := [Vector3(0, 17.5, -8), Vector3(0, -6, -30)]
 
 var ship: ShipFlight  # player, for fire()
 var main: Node3D
+var refire := 0.3     # per-weapon (light PBC: 0.8 s, subsims INI)
 var cooldown := 0.0
 var bolts: Array = []  # {node, vel, life, shooter}
 var muzzle_nodes: Array = []  # weapon-mount nulls found on the avatar
+var muzzle_fallback: Array = MUZZLES  # per-hull mounts (setup-scene nulls)
 var _mesh: BoxMesh
 
 func set_muzzles(model: Node3D) -> void:
-	# fire from the avatar's actual weapon nulls (pbc mounts) when present
+	# fire from the avatar's actual weapon nulls (pbc mounts / hardpoints)
 	muzzle_nodes.clear()
 	for n in model.find_children("*", "Node3D", true, false):
 		var nm := str(n.name).to_lower()
-		if "pbc" in nm and "bolt" not in nm and not (n is MeshInstance3D):
+		if ("pbc" in nm or "hardpoint" in nm) and "bolt" not in nm \
+				and not (n is MeshInstance3D):
 			muzzle_nodes.append(n)
 	muzzle_nodes = muzzle_nodes.slice(0, 2)
 
@@ -41,14 +43,14 @@ func _ready() -> void:
 func fire() -> void:
 	if cooldown > 0.0:
 		return
-	cooldown = REFIRE
+	cooldown = refire
 	if not muzzle_nodes.is_empty():
 		for n in muzzle_nodes:
 			if is_instance_valid(n):
 				_spawn_at(ship, (n as Node3D).global_position,
 						-ship.global_transform.basis.z, ship.velocity)
 	else:
-		for m in MUZZLES:
+		for m in muzzle_fallback:
 			_spawn_at(ship, ship.global_transform * m,
 					-ship.global_transform.basis.z, ship.velocity)
 	if main:

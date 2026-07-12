@@ -47,7 +47,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var base: String = main._base()
 	_font = load_game_font(base, "handelgothic bt_8pt.fnt")
-	_font_num = load_game_font(base, "ocrb_10pt.fnt")
+	_font_num = load_game_font(base, "ocrb_8pt.fnt")  # tight reticle numerics
 	_font_big = load_game_font(base, "handelgothic bt_12pt.fnt")
 	if _font is FontFile and (_font as FontFile).fixed_size > 0:
 		FONT_SIZE = (_font as FontFile).fixed_size
@@ -82,7 +82,10 @@ func _draw() -> void:
 	if not based:
 		_draw_reticle(c)
 		_draw_target_marks()
-	_draw_mfd()
+	if main.comms != null and main.comms.speaking():
+		_draw_comm_panel()
+	else:
+		_draw_mfd()
 	_draw_weapon_panel()
 	_draw_system_status()
 	_draw_orb()
@@ -93,15 +96,31 @@ func _draw() -> void:
 	_draw_subtitles()
 	_draw_objectives()
 
+const SUBTITLE_COL := Color(1.0, 0.93, 0.55, 1.0)  # pale yellow, original
+
+func _draw_comm_panel() -> void:
+	# comm portrait replaces the targeting MFD while a channel is open:
+	# "COMM CHANNEL OPEN" header, portrait feed, speaker caption (manual)
+	var pos := Vector2(16, 16)
+	var size := Vector2(240, 210)
+	_panel(pos, size, "COMM CHANNEL OPEN")
+	main.comms.portrait.position = pos + Vector2(18, 24)
+	var who := str(main.comms.speaker).to_upper()
+	draw_string(_font, pos + Vector2(8, size.y - 8), who,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, GREEN)
+	draw_string(_font_num, pos + Vector2(8 + 70, size.y - 8), "E0",
+			HORIZONTAL_ALIGNMENT_LEFT, -1, num_size - 2, GREEN_DIM)
+
 func _draw_subtitles() -> void:
-	# in-flight dialogue subtitles at the top of the HUD (manual, comms)
+	# in-flight dialogue subtitles at the top of the HUD (manual, comms):
+	# pale yellow with a dark drop, like the original
 	if main.comms == null or str(main.comms.subtitle) == "":
 		if main.comms != null:
 			main.comms.portrait.visible = false
 		return
 	main.comms.portrait.visible = true
 	var s := _screen()
-	var who := str(main.comms.speaker).to_upper()
+	var who := str(main.comms.speaker).capitalize()
 	var text: String = "%s: %s" % [who, main.comms.subtitle]
 	var max_w := s.x * 0.62
 	var words := text.split(" ")
@@ -113,15 +132,16 @@ func _draw_subtitles() -> void:
 			lines.append(w)
 		else:
 			lines[-1] = trial
-	var y := 58.0
+	var y := 46.0
 	for ln in lines:
 		var w2 := _font.get_string_size(ln, HORIZONTAL_ALIGNMENT_LEFT, -1,
 				FONT_SIZE + 1).x
-		draw_rect(Rect2(s.x / 2.0 - w2 / 2.0 - 6, y - FONT_SIZE - 2,
-				w2 + 12, FONT_SIZE + 8), Color(0, 0.05, 0, 0.55))
-		draw_string(_font, Vector2(s.x / 2.0 - w2 / 2.0, y), ln,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, GREEN)
-		y += FONT_SIZE + 8
+		var at := Vector2(s.x / 2.0 - w2 / 2.0, y)
+		draw_string(_font, at + Vector2(1, 1), ln,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, Color(0, 0, 0, 0.8))
+		draw_string(_font, at, ln,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, SUBTITLE_COL)
+		y += FONT_SIZE + 7
 
 func _draw_objectives() -> void:
 	if main.mission == null or main.mission.objectives.is_empty():
@@ -140,13 +160,29 @@ func _draw_objectives() -> void:
 
 # --- shared chrome ----------------------------------------------------------
 
+func _fmt_tight(d: float) -> String:
+	# the original's compact ranges: "4000m", "7071m", "18.7k", "2.1Mm"
+	if d < 1e4:
+		return "%dm" % int(d)
+	if d < 1e6:
+		return "%.1fk" % (d / 1e3)
+	if d < 1e9:
+		return "%.1fMm" % (d / 1e6)
+	return "%.2fAU" % (d / 1.496e11)
+
 func _panel(pos: Vector2, size: Vector2, title: String) -> void:
+	# glossy chrome: dark glass body with a subtle top sheen, bright header
+	draw_rect(Rect2(pos + Vector2(0, 16), size - Vector2(0, 16)),
+			Color(0.0, 0.05, 0.0, 0.62))
+	draw_rect(Rect2(pos + Vector2(1, 17), Vector2(size.x - 2, 10)),
+			Color(0.5, 1.0, 0.6, 0.05))
 	draw_rect(Rect2(pos, Vector2(size.x, 16)), GREEN_PANEL)
+	draw_rect(Rect2(pos, Vector2(size.x, 5)), Color(0.7, 1.0, 0.75, 0.25))
 	draw_string(_font, pos + Vector2(5, 12), title,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, Color(0, 0, 0, 0.9))
-	draw_rect(Rect2(pos + Vector2(0, 16), size - Vector2(0, 16)),
-			Color(0.0, 0.08, 0.0, 0.45))
 	draw_rect(Rect2(pos, size), GREEN_DIM, false, 1.0)
+	draw_rect(Rect2(pos - Vector2(1, 1), size + Vector2(2, 2)),
+			Color(GREEN.r, GREEN.g, GREEN.b, 0.12), false, 1.0)
 
 func _bar(pos: Vector2, width: float, frac: float, col: Color,
 		segments := 16) -> void:
@@ -185,33 +221,40 @@ func _draw_reticle(c: Vector2) -> void:
 	var hull_col := GREEN if frac > 0.66 else (YELLOW if frac > 0.33 else RED)
 	draw_arc(c, 64.0, TAU * 0.02, TAU * 0.02 + TAU * 0.21 * frac, 24,
 			hull_col, 2.5, true)
-	# own speed, left: actual on top, set speed beneath
+	# own speed, left of the reticle, tight like the original ("+000m/s")
 	var vel: float = main.ship.forward_speed()
-	var vel_text: String = ("%s/s" % main._fmt_dist(vel)) if in_lds \
-		else "%+.0f m/s" % vel
-	draw_string(_font_num, c + Vector2(-166, -2), vel_text,
+	var vel_text: String = ("%s/s" % _fmt_tight(absf(vel))) if in_lds \
+		else "%s%03dm/s" % ["-" if vel < 0 else "+", absi(int(absf(vel)))]
+	var vw := _font_num.get_string_size(vel_text, HORIZONTAL_ALIGNMENT_LEFT,
+			-1, num_size).x
+	draw_string(_font_num, c + Vector2(-84 - vw, 2), vel_text,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, num_size, ring)
-	_tri(c + Vector2(-70, -6), 0.0, ring, 5.0)
-	draw_string(_font_num, c + Vector2(-166, 14), "set %.0f" % main.ship.set_speed,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, num_size - 2,
-			Color(ring.r, ring.g, ring.b, 0.55))
-	# target data, right: hull / range / closing speed (name is in the MFD)
+	_tri(c + Vector2(-72, -2), 0.0, ring, 5.0)
+	if main.ship.set_speed > 0.5:
+		var st := "set %d" % int(main.ship.set_speed)
+		var sw2 := _font_num.get_string_size(st, HORIZONTAL_ALIGNMENT_LEFT,
+				-1, num_size).x
+		draw_string(_font_num, c + Vector2(-84 - sw2, 16), st,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, num_size,
+				Color(ring.r, ring.g, ring.b, 0.55))
+	# target data, right: hull above range, tight ("100" / "4.0km")
 	var tdist: float = main._target_distance()
 	if tdist < INF:
 		var col := _target_color()
-		_tri(c + Vector2(70, -6), PI, col, 5.0)
+		_tri(c + Vector2(72, -2), PI, col, 5.0)
 		var tvel := Vector3.ZERO
 		if main.target_ai != null and is_instance_valid(main.target_ai):
 			tvel = main.target_ai.velocity
-			draw_string(_font, c + Vector2(80, -18), "%d" %
+			draw_string(_font_num, c + Vector2(84, -12), "%d" %
 				int(100.0 * main.target_ai.hull / main.target_ai.hull_max),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, col)
+				HORIZONTAL_ALIGNMENT_LEFT, -1, num_size, col)
 		var closing: float = (main.ship.velocity - tvel).dot(
 			main._target_pos().normalized())
-		draw_string(_font_num, c + Vector2(80, -2), main._fmt_dist(tdist),
+		draw_string(_font_num, c + Vector2(84, 2), _fmt_tight(tdist),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, num_size, col)
-		draw_string(_font_num, c + Vector2(80, 14), "%+.0f m/s" % closing,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, num_size - 2, col)
+		draw_string(_font_num, c + Vector2(84, 16), "%+dm/s" % int(closing),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, num_size,
+				Color(col.r, col.g, col.b, 0.7))
 		_reticle_turn_arrow(c)
 	# velocity vector marker
 	var v: Vector3 = main.ship.velocity
@@ -381,18 +424,31 @@ func _draw_mfd() -> void:
 			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 3, GREEN_DIM)
 
 func _draw_weapon_panel() -> void:
-	var pos := Vector2(16, 176)
-	_panel(pos, Vector2(220, 62), "L-PBC / R-PBC")
+	var comm_open: bool = main.comms != null and main.comms.speaking()
+	var pos := Vector2(16, 242 if comm_open else 176)
+	var dual: bool = "/" in str(main.weapon_name)
+	_panel(pos, Vector2(220, 62 if dual else 48), str(main.weapon_name))
 	var charge: float = 1.0
 	if main.weapons != null:
-		charge = 1.0 - main.weapons.cooldown / main.weapons.REFIRE
-	for i in 2:
-		var y := 28.0 + i * 16.0
-		draw_string(_font, pos + Vector2(8, y + 8), "L" if i == 0 else "R",
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, GREEN)
-		_bar(pos + Vector2(24, y), 150, charge, GREEN, 12)
-		draw_string(_font, pos + Vector2(182, y + 8), "%d%%" % int(charge * 100),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, GREEN)
+		charge = 1.0 - main.weapons.cooldown / main.weapons.refire
+	# lightning glyph, like the original's weapon-charge icon
+	var lp := pos + Vector2(14, 34)
+	draw_colored_polygon(PackedVector2Array([
+		lp + Vector2(3, -8), lp + Vector2(-4, 1), lp + Vector2(-1, 1),
+		lp + Vector2(-3, 8), lp + Vector2(4, -1), lp + Vector2(1, -1)]),
+		YELLOW)
+	if dual:
+		for i in 2:
+			var y := 26.0 + i * 16.0
+			draw_string(_font, pos + Vector2(26, y + 8), "L" if i == 0 else "R",
+					HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, GREEN)
+			_bar(pos + Vector2(42, y), 132, charge, GREEN, 12)
+			draw_string(_font, pos + Vector2(182, y + 8), "%d%%" % int(charge * 100),
+					HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, GREEN)
+	else:
+		_bar(pos + Vector2(28, 28), 130, charge, GREEN, 14)
+		draw_string(_font, pos + Vector2(166, 36), "%d%%" % int(charge * 100),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, GREEN)
 
 # --- system status lights (top-center) --------------------------------------
 
@@ -490,27 +546,37 @@ func _ellipse(c: Vector2, radii: Vector2, col: Color) -> void:
 # --- contact list (lower-right) ---------------------------------------------
 
 func _draw_contact_list() -> void:
+	# original columns: FACTION TYPE RANGE NAME, names cut with ">"
+	# ("INDPT UTIL 4000m SCOPO", "UTIL 7071m ABANDONED HU>")
 	var s := _screen()
 	var rows: Array = main.contact_list()
-	var h := 22.0 + rows.size() * 17.0
-	var pos := Vector2(s.x - 396, s.y - h - 16)
-	_panel(pos, Vector2(380, h), "CONTACT REGISTRY")
-	var y := pos.y + 30
+	var h := 24.0 + rows.size() * 16.0
+	var pos := Vector2(s.x - 336, s.y - h - 16)
+	draw_rect(Rect2(pos, Vector2(320, h)), Color(0.0, 0.05, 0.0, 0.55))
+	draw_rect(Rect2(pos, Vector2(320, h)),
+			Color(GREEN.r, GREEN.g, GREEN.b, 0.25), false, 1.0)
+	var y := pos.y + 16
 	for entry in rows:
 		var col := _contact_color(entry["hostile"], str(entry.get("category", "")))
 		if entry["targeted"]:
-			draw_rect(Rect2(pos.x + 2, y - 12, 376, 16),
-					Color(col.r, col.g, col.b, 0.18))
-		draw_string(_font, Vector2(pos.x + 6, y), str(entry.get("faction", "")),
+			draw_rect(Rect2(pos.x + 1, y - 11, 318, 15),
+					Color(col.r, col.g, col.b, 0.20))
+			draw_rect(Rect2(pos.x + 1, y - 11, 3, 15), col)
+		var range_txt := _fmt_tight(float(entry["dist"]))
+		var rw := _font.get_string_size(range_txt, HORIZONTAL_ALIGNMENT_LEFT,
+				-1, FONT_SIZE - 1).x
+		var nm := str(entry["name"]).to_upper()
+		if nm.length() > 13:
+			nm = nm.left(12) + ">"
+		draw_string(_font, Vector2(pos.x + 8, y), str(entry.get("faction", "")),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, col)
-		draw_string(_font, Vector2(pos.x + 56, y), str(entry.get("type", "")),
+		draw_string(_font, Vector2(pos.x + 62, y), str(entry.get("type", "")),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, col)
-		draw_string(_font, Vector2(pos.x + 108, y),
-				main._fmt_dist(entry["dist"]),
+		draw_string(_font, Vector2(pos.x + 168 - rw, y), range_txt,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, col)
-		draw_string(_font, Vector2(pos.x + 176, y), str(entry["name"]).left(24),
+		draw_string(_font, Vector2(pos.x + 178, y), nm,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, col)
-		y += 17.0
+		y += 16.0
 
 # --- messages ----------------------------------------------------------------
 

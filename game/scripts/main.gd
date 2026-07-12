@@ -76,6 +76,7 @@ var hull := 1000.0
 var hull_max := 1000.0
 var docked_at := ""
 var ship_stats: Dictionary = {}
+var weapon_name := "L-PBC / R-PBC"  # HUD weapon-panel title
 
 var clock_start := 0  # ms tick when we last left port (the HUD clock)
 var base_root: Node3D  # hangar interior while docked at a base
@@ -143,27 +144,60 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 			hull_max = float(ship_stats.get("hit_points", 500))
 			hull = hull_max
 	weapons.set_muzzles(ship_model)
+	if "comsec" in ini_path:
+		# single light PBC on the nose hardpoint (comsec.ini + comsec.lws:
+		# nose_hardpoint at LW (1.625,-1.5,10.625); light_pbc.ini refire 0.8)
+		weapons.refire = 0.8
+		weapons.muzzle_fallback = [Vector3(1.625, -1.5, -14.0)]
+		weapon_name = "LIGHT PBC"
+	else:
+		weapons.refire = 0.3
+		weapons.muzzle_fallback = PbcWeapons.MUZZLES
+		weapon_name = "L-PBC / R-PBC"
 	_apply_view()
 
 func start_campaign() -> void:
 	start_in_system(START_SYSTEM)
-	_fit_player("sims/ships/player/command_section.ini",
+	_fit_player("sims/ships/player/comsec.ini",
 		"data/avatars/avatars/command_section/setup.gltf")
 	_setup_act0_scene()
 	_play_movie("intro", func() -> void:
 		mission.start(Mission.act0_m10()))
 
+func _spawn_npc(dname: String, fac: String, typ: String, avatar: String,
+		pos: Vector3, wps: Array) -> AiShip:
+	var ai := AiShip.new()
+	ai.main = self
+	ai.display_name = dname
+	ai.faction = fac
+	ai.ctype = typ
+	ai.setup({"hit_points": 600, "speed": [80, 80, 200],
+		"acceleration": [30, 30, 50], "yaw_rate": 18, "pitch_rate": 18,
+		"roll_rate": 18})
+	var mdl := _load_gltf(avatar)
+	if mdl != null:
+		ai.add_child(mdl)
+		ShipEffects.attach(ai, mdl)
+	ai.position = pos
+	for w in wps:
+		ai.waypoints.append(w)
+	add_child(ai)
+	ai_ships.append(ai)
+	return ai
+
 func _setup_act0_scene() -> void:
-	# the original tutorial opens adrift in the Junkyard debris field:
-	# scattered rocks, the Abandoned Hulk ahead, working tugs all around
+	# the original tutorial opens adrift in the Junkyard debris field: the
+	# Abandoned Hulk wreck dead ahead, working tugs all around, the utility
+	# vessel Scopo nearby (targeted), the government transport Marengo far out
 	for o in objects:
 		if str(o["name"]) == "Junkyard":
 			px = o["x"] + 2500.0
 			py = o["y"]
 			pz = o["z"] + 3500.0
 	objects.append({"name": "Abandoned Hulk", "category": "station",
-		"x": px + 800.0, "y": py + 150.0, "z": pz - 4000.0, "radius": 120.0,
+		"x": px, "y": py + 80.0, "z": pz - 7000.0, "radius": 350.0,
 		"avatar": "avatars/old_destroyer/setup_turretless.gltf",
+		"faction": "", "type": "UTIL",
 		"jumps": [], "colors": [], "node": null, "prop_collide": true})
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1701
@@ -176,22 +210,24 @@ func _setup_act0_scene() -> void:
 			"radius": rng.randf_range(35.0, 140.0),
 			"avatar": "avatars/asteroids/setup%d.gltf" % (i % 5 + 1),
 			"jumps": [], "colors": [], "node": null, "prop_collide": true})
-	for cfg in [["Scopo", 3500.0], ["Brick", 9000.0], ["De - Ex", 12000.0],
+	var scopo := _spawn_npc("Scopo", "INDPT", "UTIL",
+		"data/avatars/avatars/utilityvessel/setup.gltf",
+		Vector3(-600, 100, -3950),
+		[Vector3(-600, 100, -3950), Vector3(2000, 300, -8000)])
+	_spawn_npc("Marengo", "GOVMT", "TRANS",
+		"data/avatars/avatars/freighter/setup.gltf",
+		Vector3(9000, 1500, -16400),
+		[Vector3(9000, 1500, -16400), Vector3(-14000, 800, -9000)])
+	for cfg in [["Brick", 9000.0], ["De - Ex", 12000.0],
 			["Swyddfa'r Post", 15000.0]]:
-		var ai := AiShip.new()
-		ai.main = self
-		ai.display_name = str(cfg[0])
-		ai.setup({"hit_points": 600, "speed": [80, 80, 200],
-			"acceleration": [30, 30, 50], "yaw_rate": 18, "pitch_rate": 18,
-			"roll_rate": 18})
-		var mdl := _load_gltf("data/avatars/avatars/utilityvessel/setup.gltf")
-		if mdl != null:
-			ai.add_child(mdl)
-			ShipEffects.attach(ai, mdl)
-		ai.position = Vector3(cfg[1], 200 + cfg[1] * 0.02, -cfg[1] * 0.6)
-		ai.waypoints = [Vector3(cfg[1], 0, -3000), Vector3(-2000, 400, -cfg[1])]
-		add_child(ai)
-		ai_ships.append(ai)
+		var d2: float = cfg[1]
+		_spawn_npc(str(cfg[0]), "INDPT", "TUG",
+			"data/avatars/avatars/utilityvessel/setup.gltf",
+			Vector3(d2, 200 + d2 * 0.02, -d2 * 0.6),
+			[Vector3(d2, 0, -3000), Vector3(-2000, 400, -d2)])
+	# the tutorial opens with the nearby tug already on target
+	target_ai = scopo
+	target_idx = -1
 
 func _play_movie(stem: String, then: Callable) -> void:
 	var path := _base().path_join("data/movies/%s.ogv" % stem)
@@ -567,9 +603,23 @@ func _spawn_player() -> void:
 	cam.fov = 70
 	add_child(cam)
 	cam.make_current()
-	# the original's cockpit frame, removable like the old UI option (V key)
+	# the original's cockpit frame, removable like the old UI option (V key).
+	# avatars/cockpit/setup.lws places cockpit4 at LW (0,-0.8225,1.8823)
+	# relative to the eye; its plastics are dark and glossy, not diffuse
 	cockpit = _load_gltf("data/avatars/avatars/cockpit/setup.gltf")
 	if cockpit != null:
+		cockpit.position = Vector3(0, -0.5, -1.55)
+		cockpit.scale = Vector3.ONE * 1.75  # eye inside the frame, like F1
+		for mi in cockpit.find_children("*", "MeshInstance3D", true, false):
+			var m := mi as MeshInstance3D
+			for i in m.mesh.get_surface_count():
+				var mat := m.mesh.surface_get_material(i)
+				if mat is StandardMaterial3D:
+					var sm: StandardMaterial3D = mat
+					sm.albedo_color = Color(0.72, 0.72, 0.74)
+					sm.metallic = 0.35
+					sm.roughness = 0.5
+					sm.metallic_specular = 0.6
 		cam.add_child(cockpit)
 	_apply_view()
 
@@ -654,8 +704,7 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null) -> void:
 		return
 	var ai := target as AiShip
 	if ai != null and ai.damage(PBC_DAMAGE):
-		_flash(ai.global_position, 40.0)
-		audio.play("audio/sfx/large_explosion_1.wav", -2.0)
+		ExplosionFx.boom(self, ai.global_position, 70.0)
 		hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
 		ai_ships.erase(ai)
 		if target_ai == ai:
@@ -692,11 +741,15 @@ func _flash(pos: Vector3, size: float) -> void:
 	tw.tween_callback(node.queue_free)
 
 func _station_faction(sname: String) -> String:
-	for f in ["MAAS", "NOMEX", "Police", "Government", "Marauder", "Navy",
-			"Military", "Trimann", "Lomax", "Helios", "Laplace"]:
-		if f.to_lower() in sname.to_lower():
-			return f.left(5).to_upper()
-	return "INDIE"
+	# text/faction_names.csv abbreviations
+	const FACS := {"maas": "MAAS", "nomex": "SOLAN", "police": "LAW",
+		"government": "GOVMT", "marauder": "XXXXX", "navy": "NAVY",
+		"military": "NAVY", "trimann": "TRIMN", "lomax": "LXENG",
+		"helios": "HELIO", "laplace": "NSO-L", "junker": "JUNKS"}
+	for f in FACS:
+		if f in sname.to_lower():
+			return FACS[f]
+	return "INDPT"
 
 func contact_list() -> Array:
 	# original columns: faction / type / range / name (manual, HUD section)
@@ -713,16 +766,17 @@ func contact_list() -> Array:
 		if show:
 			list.append({"name": o["name"], "dist": d, "hostile": false,
 					"targeted": i == target_idx, "category": o["category"],
-					"faction": "NAV" if o["category"] == "lpoint"
-						else _station_faction(str(o["name"])),
-					"type": "L-PNT" if o["category"] == "lpoint" else "STATN"})
+					"faction": str(o.get("faction", "NAV" if o["category"] == "lpoint"
+						else _station_faction(str(o["name"])))),
+					"type": str(o.get("type", "LAGPT" if o["category"] == "lpoint"
+						else "STATN"))})
 	for a in ai_ships:
 		var hostile: bool = a.behavior == "attack"
 		list.append({"name": (a.display_name if a.display_name != "" else str(a.name)), "dist": a.global_position.length(),
 				"hostile": hostile, "targeted": a == target_ai,
 				"category": "traffic",
-				"faction": "MARA" if hostile else "INDIE",
-				"type": "FIGHT" if hostile else "TRANS"})
+				"faction": "OUTLW" if hostile else a.faction,
+				"type": "FIGHT" if hostile else a.ctype})
 	list.sort_custom(func(x, y): return x["dist"] < y["dist"])
 	return list.slice(0, 12)
 
@@ -1015,7 +1069,7 @@ func _physics_process(delta: float) -> void:
 		_demo_control(delta)
 		if mechcheck and ap_mode > 0 and docked_at == "":
 			_autopilot_process(delta)
-	elif docked_at == "" and not menu.visible:
+	elif docked_at == "" and not menu.visible and movie == null:
 		_player_control(delta)
 		if ap_mode > 0:
 			_autopilot_process(delta)
@@ -1057,15 +1111,37 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 			int(100.0 * hull / hull_max)])
 	ship.global_position = center + n * radius
 
+func _model_radius(model: Node3D, fallback: float) -> float:
+	# bounding-sphere radius of the streamed avatar, for collision — the
+	# map/record radii are zone numbers, not hull sizes
+	var merged := AABB()
+	var first := true
+	for mi in model.find_children("*", "MeshInstance3D", true, false):
+		var bb: AABB = (mi as MeshInstance3D).get_aabb()
+		var xf: Transform3D = (mi as Node3D).global_transform
+		xf = model.global_transform.affine_inverse() * xf
+		var tb := xf * bb
+		merged = tb if first else merged.merge(tb)
+		first = false
+	if first:
+		return fallback
+	# spheres are crude: cap so docking approaches (and the F6 autopilot's
+	# 600 m arrival) still get inside; big-station avatars also carry
+	# far-flung light nulls that would blow the AABB up to km scale
+	return clampf(merged.size.length() * 0.33, minf(fallback, 400.0) * 0.5, 450.0)
+
 func _collisions() -> void:
 	if docked_at != "" or jump_state >= 2:
 		return
 	for a in ai_ships:
 		_collide_sphere(a.global_position, 95.0, a.velocity, str(a.display_name))
 	for o in objects:
-		if o.get("prop_collide", false) and o["node"] != null:
+		if o["node"] == null:
+			continue
+		if o["category"] == "station" or o.get("prop_collide", false):
 			_collide_sphere(Vector3(o["x"] - px, o["y"] - py, o["z"] - pz),
-				o["radius"] + 45.0, Vector3.ZERO, str(o["name"]))
+				float(o.get("coll_r", o["radius"] + 45.0)), Vector3.ZERO,
+				str(o["name"]))
 	var demand: float = absf(ship.set_speed - ship.forward_speed()) \
 		/ maxf(ship.max_speed.z, 1.0) + absf(ship.input_thrust.z)
 	audio.set_engine_level(demand + ship.set_speed / ship.max_speed.z * 0.1)
@@ -1321,6 +1397,7 @@ func _stream_objects() -> void:
 						continue
 					o["node"] = model
 					add_child(model)
+					o["coll_r"] = _model_radius(model, float(o["radius"]))
 				elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
 					o["node"].queue_free()
 					o["node"] = null
@@ -1514,7 +1591,10 @@ func _uicheck_control(_delta: float) -> void:
 	# screenshot the menu, then the cockpit HUD with a target
 	match demo_phase:
 		0:
-			if demo_t > 1.5:
+			if demo_t > 0.5 and not menu.visible:
+				menu.launched = false
+				menu.open()
+			if demo_t > 2.5:
 				var img := get_viewport().get_texture().get_image()
 				img.save_png(_base().path_join("data/screenshots/ui_menu.png"))
 				menu.launched = true
