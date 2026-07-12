@@ -45,6 +45,8 @@ OPS: dict[int, tuple[str, str]] = {
     0x06: ("LoadImmediate8I", "b"),
     0x07: ("LoadImmediate16I", "h"),
     0x08: ("LoadImmediate32I", "i"),
+    0x09: ("LoadImmediate8U", "B"),
+    0x0A: ("LoadImmediate16U", "H"),
     0x0B: ("LoadImmediate32U", "f"),
     0x0C: ("Load", "u"),
     0x0D: ("Store", "u"),
@@ -52,11 +54,14 @@ OPS: dict[int, tuple[str, str]] = {
     0x0F: ("Goto", "t"),
     0x10: ("GoFalse", "t"),
     0x11: ("GoTrue", "t"),
+    0x12: ("Halt", ""),
     0x13: ("Return", ""),
     0x14: ("CallLocal", "C"),
     0x15: ("Call", "C"),
-    0x17: ("StartLocal", "C"),
+    0x16: ("CallNative", "C"),    # loader rewrites Call -> this when the
+    0x17: ("StartLocal", "C"),    # import resolves to a native package
     0x18: ("Start", "C"),
+    0x19: ("StartNative", "C"),
     0x1A: ("AddI", ""),
     0x1B: ("SubtractI", ""),
     0x1C: ("MultiplyI", ""),
@@ -81,6 +86,10 @@ OPS: dict[int, tuple[str, str]] = {
     0x30: ("LogicalAnd", ""),
     0x31: ("LogicalOr", ""),
     0x32: ("LogicalNot", ""),
+    0x33: ("BitAnd", ""),
+    0x34: ("BitOr", ""),
+    0x35: ("BitXor", ""),
+    0x36: ("BitNot", ""),
     0x37: ("IntToFloat", ""),
     0x38: ("FloatToInt", ""),
     0x39: ("ToBool", ""),
@@ -93,13 +102,13 @@ OPS: dict[int, tuple[str, str]] = {
     0x40: ("CloneObject", ""),
     0x41: ("EndTimeslice", ""),
     0x42: ("TimedJump", "C"),
-    0x43: ("Debug43", ""),
-    0x44: ("Debug44", ""),
+    0x43: ("BeginAtomic", ""),    # suspends the interpreter's 64-instruction
+    0x44: ("EndAtomic", ""),      # preemption check while nonzero
     0x45: ("DebugSkip", "t"),
 }
 
-_SIZE = {"": 0, "b": 1, "B": 1, "h": 2, "i": 4, "f": 4, "u": 4, "t": 4,
-         "C": 12}
+_SIZE = {"": 0, "b": 1, "B": 1, "h": 2, "H": 2, "i": 4, "f": 4, "u": 4,
+         "t": 4, "C": 12}
 
 
 def _nulstr(body: bytes, pos: int = 0) -> tuple[str, int]:
@@ -155,6 +164,8 @@ def decode(code: bytes) -> list[tuple[int, str, list]]:
             args = [code[p]]
         elif fmt == "h":
             args = [struct.unpack_from("<h", code, p)[0]]
+        elif fmt == "H":
+            args = [struct.unpack_from("<H", code, p)[0]]
         elif fmt == "i":
             args = [struct.unpack_from("<i", code, p)[0]]
         elif fmt == "f":
@@ -200,7 +211,10 @@ def disassemble(pkg: dict) -> str:
             target = funcs.get(args[1], "local_%d" % args[1])
             txt = f"{mn} {target} argc={args[2]}"
         elif mn == "TimedJump":
-            txt = f"TimedJump {args[0]} {args[1]} {args[2]}"
+            # "run the body at most every N seconds": if now - local[slot]
+            # <= interval, skip to target; else stamp local[slot] and fall in.
+            secs = struct.unpack("<f", struct.pack("<I", args[2]))[0]
+            txt = f"TimedJump L{args[0]} slot={args[1]} every={secs:g}s"
         elif mn == "LoadString":
             idx = args[0]
             s = pkg["strings"][idx] if idx < len(pkg["strings"]) else "?"
@@ -227,7 +241,7 @@ _MOG_PAIRS = [
 ]
 
 _ALIAS = {"CallLocal": "Call", "StartLocal": "Start",
-          "Debug43": "<unnamed>", "Debug44": "<unnamed>",
+          "BeginAtomic": "<unnamed>", "EndAtomic": "<unnamed>",
           "DebugSkip": "<unnamed>"}
 
 
