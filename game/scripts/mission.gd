@@ -11,6 +11,8 @@ var steps: Array = []
 var idx := -1
 var objectives: Dictionary = {}  # id -> {text, done}
 var active := false
+var prompt := ""       # ihud.SetPrompt: bottom-of-HUD lesson prompt
+var prompt_keys := ""  # the key-combination hint next to it
 var _wp_counter := 0
 
 func start(script: Array) -> void:
@@ -44,6 +46,16 @@ func _advance() -> void:
 		_make_waypoint(s)
 	if s.has("music"):
 		main.audio.music(str(s["music"]))
+	if s.has("prompt"):
+		# ihud.SetPrompt(text, key_hints); "" clears
+		prompt = str(main.comms.strings.get(s["prompt"], s["prompt"]))
+		prompt_keys = str(s.get("keys", ""))
+	if s.has("target"):
+		# aim the player's target at a named object (dock lessons etc.)
+		for i in main.objects.size():
+			if str(main.objects[i]["name"]) == str(s["target"]):
+				main.target_idx = i
+				main.target_ai = null
 	# steps without a wait condition chain immediately
 	if not _has_wait(s):
 		_advance()
@@ -68,9 +80,25 @@ func _make_waypoint(s: Dictionary) -> void:
 		"radius": 0.0, "avatar": "", "jumps": [], "colors": [], "node": null,
 		"waypoint": true}
 	main.objects.append(rec)
-	# auto-target it so the HUD guides the player
-	main.target_idx = main.objects.size() - 1
-	main.target_ai = null
+	if s.get("auto_target", true):
+		# auto-target it so the HUD guides the player
+		main.target_idx = main.objects.size() - 1
+		main.target_ai = null
+	# decoy blips for the contact-list lesson (bytecode: 5 waypoints
+	# named a0_m10_name_other, 4-5 km from the player)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 42
+	for i in int(s.get("blips", 0)):
+		var dir2 := Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.5, 0.5),
+			rng.randf_range(-1, 1)).normalized()
+		var dd := rng.randf_range(4000.0, 5000.0)
+		main.objects.append({"name": str(main.comms.strings.get(
+				"a0_m10_name_other", "Marker")) + " %d" % (i + 1),
+			"category": "lpoint",
+			"x": main.px + dir2.x * dd, "y": main.py + dir2.y * dd,
+			"z": main.pz + dir2.z * dd,
+			"radius": 0.0, "avatar": "", "jumps": [], "colors": [],
+			"node": null, "waypoint": true})
 
 func _remove_waypoints() -> void:
 	for i in range(main.objects.size() - 1, -1, -1):
@@ -89,7 +117,7 @@ func _remove_waypoints() -> void:
 
 func _has_wait(s: Dictionary) -> bool:
 	for k in ["until_comms", "until_near", "until_ap", "until_docked",
-			"until_undocked", "wait"]:
+			"until_undocked", "until_target", "wait"]:
 		if s.has(k):
 			return true
 	return false
@@ -113,9 +141,15 @@ func _physics_process(delta: float) -> void:
 		done = str(s["until_docked"]).to_lower() in main.docked_at.to_lower()
 	elif s.has("until_undocked"):
 		done = main.docked_at == ""
+	elif s.has("until_target"):
+		# lesson: player must select the named contact themselves
+		done = main.target_idx >= 0 and \
+			str(main.objects[main.target_idx]["name"]) == str(s["until_target"])
 	if done:
 		if s.get("clear_wp", false):
 			_remove_waypoints()
+		prompt = ""
+		prompt_keys = ""
 		_advance()
 
 func _wp_pos() -> Vector3:
@@ -126,37 +160,67 @@ func _wp_pos() -> Vector3:
 	return Vector3(INF, INF, INF)
 
 
-# --- Act 0 Mission 10: Clay's tutorial run to Lucrecia's Base --------------
+# --- Act 0 Mission 10: Clay's tutorial run to Lucrecia's Base ---------------
+# Authored from the disassembled iact0mission10 bytecode
+# (data/pogdis/iact0mission10.pogasm): waypoint-select lesson with decoy
+# blips and ihud.SetPrompt key hints, formate -> approach -> disengage
+# autopilot lessons, dock/undock at the Abandoned Hulk, starmap leg to
+# Griffon, the Effrit, then the marked chain to Lucrecia's Base.
 
 static func act0_m10() -> Array:
-	var wp := func(offset: Vector3, near: float) -> Dictionary:
-		return {"waypoint": offset, "until_near": near, "clear_wp": true}
 	return [
 		{"music": "ambient"},
 		{"say": "a0_m10_dialogue_clay_i_know", "until_comms": true},
 		{"say": "a0_m10_dialogue_clay_before_we", "until_comms": true},
-		# contact list lesson: fly to Clay's waypoint
-		{"say": "a0_m10_dialogue_clay_contact_list"},
-		# bytecode: iutilities.CreateWaypointNear(player, random(4000, 5000))
-		{"obj_add": "a0_m10_objectives_approach_clay", "id": "wp1"},
-		wp.call(Vector3(2800, 600, -3500), 800.0),
+		# contact-list lesson: Clay drops a waypoint among decoy blips and
+		# the player must select it themselves (bytecode: CurrentTarget)
+		{"say": "a0_m10_dialogue_clay_contact_list", "until_comms": true},
+		{"waypoint": Vector3(2800, 600, -3500), "wp_name": "Clay's Waypoint",
+			"auto_target": false, "blips": 5},
+		{"say": "a0_m10_dialogue_clay_now_select",
+			"prompt": "a0_m10_prompt_select_waypoint", "keys": ", / .",
+			"until_target": "Clay's Waypoint"},
+		{"obj_add": "a0_m10_objectives_approach_clay", "id": "wp1",
+			"prompt": "a0_m10_prompt_fly_towards", "until_near": 800.0,
+			"clear_wp": true},
 		{"obj_done": "wp1", "say": "a0_m10_dialogue_clay_good",
+			"until_comms": true},
+		{"say": "a0_m10_dialogue_clay_the_first", "until_comms": true},
+		{"say": "a0_m10_dialogue_clay_that_leads", "until_comms": true},
+		# formate autopilot lesson (F7) — bytecode order: formate first
+		{"say": "a0_m10_dialogue_clay_instructions_formate"},
+		{"obj_add": "a0_m10_objectives_formate_lesson", "id": "ap2",
+			"prompt": "a0_m10_prompt_activate_formate", "keys": "F7",
+			"target": "Abandoned Hulk", "until_ap": 2},
+		{"obj_done": "ap2", "say": "a0_m10_dialogue_clay_formate_engage",
 			"until_comms": true},
 		# approach autopilot lesson (F6)
 		{"say": "a0_m10_dialogue_clay_instructions_approach"},
 		{"obj_add": "a0_m10_objectives_approach_lesson", "id": "ap1",
+			"prompt": "a0_m10_prompt_activate_approach", "keys": "F6",
 			"until_ap": 1},
 		{"obj_done": "ap1", "say": "a0_m10_dialogue_clay_approach_engage",
 			"until_comms": true},
-		# formate autopilot lesson (F7)
-		{"say": "a0_m10_dialogue_clay_instructions_formate"},
-		{"obj_add": "a0_m10_objectives_formate_lesson", "id": "ap2",
-			"until_ap": 2},
-		{"obj_done": "ap2", "say": "a0_m10_dialogue_clay_formate_engage",
+		# disengage (F5)
+		{"say": "a0_m10_dialogue_clay_disengage"},
+		{"obj_add": "a0_m10_objective_disengage", "id": "ap0",
+			"prompt": "a0_m10_prompt_disengage", "keys": "F5", "until_ap": 0},
+		{"obj_done": "ap0"},
+		# dock/undock lesson at the Abandoned Hulk (F8 / U)
+		{"obj_add": "a0_m10_objectives_dock_to", "id": "dock",
+			"prompt": "a0_m10_prompt_use_dock", "keys": "F8",
+			"target": "Abandoned Hulk", "until_docked": "abandoned"},
+		{"obj_done": "dock", "say": "a0_m10_dialogue_clay_undock",
 			"until_comms": true},
-		# fly to Griffon (LDS travel)
+		{"obj_add": "a0_m10_objectives_undock", "id": "undock",
+			"prompt": "a0_m10_prompt_use_undock", "keys": "U",
+			"until_undocked": true},
+		{"obj_done": "undock"},
+		# starmap lesson (screen not built yet: dialogue + straight to leg)
+		{"say": "a0_m10_dialogue_clay_starmap", "until_comms": true},
 		{"say": "a0_m10_dialogue_clay_this_is", "until_comms": true},
-		{"obj_add": "a0_m10_objectives_fly_to", "id": "griffon"},
+		{"obj_add": "a0_m10_objectives_fly_to", "id": "griffon",
+			"prompt": "a0_m10_prompt_use_approach", "keys": "F6"},
 		{"waypoint": "Griffon", "offset": Vector3(0, 0, 8.0e6),
 			"wp_name": "Griffon Approach", "until_near": 2.0e6,
 			"clear_wp": true},
@@ -164,13 +228,15 @@ static func act0_m10() -> Array:
 			"until_comms": true},
 		# on to the Effrit
 		{"say": "a0_m10_dialogue_clay_ok_this_is", "until_comms": true},
-		{"obj_add": "a0_m10_objectives_fly_to_effrit", "id": "effrit"},
+		{"obj_add": "a0_m10_objectives_fly_to_effrit", "id": "effrit",
+			"prompt": "a0_m10_prompt_fly_to_effrit", "keys": "F6"},
 		{"waypoint": "The Effrit", "wp_name": "The Effrit",
 			"until_near": 3.0e5, "clear_wp": true},
 		{"obj_done": "effrit", "say": "a0_m10_dialogue_clay_were_here",
 			"until_comms": true},
 		# waypoint chain through the Effrit to Lucrecia's Base
-		{"obj_add": "a0_m10_objectives_approach_lucrecias", "id": "base"},
+		{"obj_add": "a0_m10_objectives_follow_waypoints", "id": "base",
+			"prompt": "a0_m10_prompt_follow_waypoints"},
 		{"say": "a0_m10_dialogue_clay_im_bringing"},
 		{"waypoint": "Lucrecia's Base", "offset": Vector3(5.0e4, 6000, 4.0e4),
 			"wp_name": "Marked Asteroid 1", "until_near": 4000.0, "clear_wp": true},
@@ -183,6 +249,7 @@ static func act0_m10() -> Array:
 		{"say": "a0_m10_dialogue_clay_there_it", "until_comms": true},
 		{"until_docked": "lucrecia"},
 		{"obj_done": "base"},
+		# the HUD tour, docked at Lucrecia's
 		{"say": "a0_m10_dialogue_clay_first_hud", "until_comms": true},
 		{"say": "a0_m10_dialogue_clay_top_right", "until_comms": true},
 		{"say": "a0_m10_dialogue_clay_bottom_right", "until_comms": true},

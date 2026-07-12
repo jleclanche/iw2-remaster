@@ -109,6 +109,7 @@ func _draw() -> void:
 	_draw_console()
 	_draw_warnings(c)
 	_draw_subtitles()
+	_draw_prompt(c)
 	_draw_objectives()
 
 const SUBTITLE_COL := Color(1.0, 0.93, 0.55, 1.0)  # pale yellow, original
@@ -154,6 +155,21 @@ func _draw_subtitles() -> void:
 		draw_string(_font, at, ln,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, SUBTITLE_COL)
 		y += FONT_SIZE + 7
+
+func _draw_prompt(c: Vector2) -> void:
+	# the original's lesson prompt (ihud.SetPrompt): instruction + key hint
+	if main.mission == null or str(main.mission.prompt) == "":
+		return
+	var text: String = "+ " + str(main.mission.prompt)
+	if str(main.mission.prompt_keys) != "":
+		text += "  [ %s ]" % main.mission.prompt_keys
+	var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			FONT_SIZE).x
+	var at := Vector2(c.x - w / 2.0, c.y + 148)
+	draw_string(_font, at + Vector2(1, 1), text,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, Color(0, 0, 0, 0.8))
+	draw_string(_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE,
+			GREEN)
 
 func _draw_objectives() -> void:
 	if main.mission == null or main.mission.objectives.is_empty():

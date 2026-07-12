@@ -50,6 +50,12 @@ func _campcheck(_delta: float) -> void:
 			if m.movie != null and demo_t > 5.0:
 				_shot("movie_frame")
 				m.movie.finished.emit()
+			# pass the contact-list lesson: select Clay's Waypoint
+			for i in m.objects.size():
+				if str(m.objects[i]["name"]) == "Clay's Waypoint" \
+						and m.target_idx != i:
+					m.target_idx = i
+					m.target_ai = null
 			if m.mission.objectives.has("wp1"):
 				if not m._headless():
 					_shot("campaign_spawn")
