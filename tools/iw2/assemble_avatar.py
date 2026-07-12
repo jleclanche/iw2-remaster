@@ -82,6 +82,11 @@ class Assembler:
             mesh = None
             if n["kind"] == "object":
                 pso_path = f"{scene_dir}/{n['pso_stem']}.pso"
+                if not self.fs.exists(pso_path):
+                    # some scenes reference psos living in another avatar dir
+                    hits = self.fs.list("avatars/", f"/{n['pso_stem']}.pso")
+                    if hits:
+                        pso_path = hits[0]
                 if self.fs.exists(pso_path):
                     pso = parse_pso(self.fs.read_bytes(pso_path))
                     mesh = self.b.mesh_from_pso(
