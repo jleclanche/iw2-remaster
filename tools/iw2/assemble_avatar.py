@@ -109,6 +109,8 @@ class Assembler:
                 self.b.node(f"{name}_pivot", nid, mesh,
                             [-pivot[0], -pivot[1], -pivot[2]])
             gltf_ids[n["index"]] = nid
+            if n.get("keys"):
+                self.b.add_animation_channels(nid, n["keys"])
 
             if n["kind"] == "scene":
                 ref = f"{scene_dir}/{n.get('name','')}.lws"

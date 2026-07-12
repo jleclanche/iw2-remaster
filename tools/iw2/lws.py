@@ -66,12 +66,21 @@ def parse_lws(text: str) -> list[dict]:
         elif ln.startswith("ObjectMotion") and cur is not None:
             nchan = int(lines[i + 1].strip())
             nkeys = int(lines[i + 2].strip())
-            vals = [float(v) for v in lines[i + 3].split()]
-            if len(vals) >= 9:
-                cur["pos"] = vals[0:3]
-                cur["hpb"] = vals[3:6]
-                cur["scale"] = vals[6:9]
+            keys = []
+            for k in range(nkeys):
+                vals = [float(v) for v in lines[i + 3 + 2 * k].split()]
+                meta = [float(v) for v in lines[i + 4 + 2 * k].split()]
+                if len(vals) >= 9:
+                    keys.append({"frame": meta[0] if meta else 0.0,
+                                 "pos": vals[0:3], "hpb": vals[3:6],
+                                 "scale": vals[6:9]})
+            if keys:
+                cur["pos"] = keys[0]["pos"]
+                cur["hpb"] = keys[0]["hpb"]
+                cur["scale"] = keys[0]["scale"]
             cur["animated"] = nkeys > 1
+            if nkeys > 1:
+                cur["keys"] = keys
             i += 2 + 2 * nkeys  # skip keyframe pairs
         elif ln.startswith("ParentObject") and cur is not None:
             cur["parent"] = int(ln.split()[1])

@@ -155,6 +155,55 @@ class GltfBuilder:
             self.doc["nodes"][parent].setdefault("children", []).append(idx)
         return idx
 
+    @staticmethod
+    def _subdivide_keys(keys: list[dict]) -> list[dict]:
+        """Insert intermediate keys where rotation steps exceed 90 degrees.
+
+        LWS spinners are authored as euler sweeps (0 -> 360 -> ...); naive
+        per-key quaternion conversion + LERP collapses or reverses them.
+        """
+        out = [keys[0]]
+        for a, b in zip(keys, keys[1:]):
+            max_step = max(abs(b["hpb"][i] - a["hpb"][i]) for i in range(3))
+            n = max(1, int(max_step // 90) + (1 if max_step % 90 else 0))
+            for j in range(1, n + 1):
+                t = j / n
+                out.append({
+                    "frame": a["frame"] + (b["frame"] - a["frame"]) * t,
+                    "pos": [a["pos"][i] + (b["pos"][i] - a["pos"][i]) * t for i in range(3)],
+                    "hpb": [a["hpb"][i] + (b["hpb"][i] - a["hpb"][i]) * t for i in range(3)],
+                    "scale": [a["scale"][i] + (b["scale"][i] - a["scale"][i]) * t
+                              for i in range(3)],
+                })
+        return out
+
+    def add_animation_channels(self, node_idx: int, keys: list[dict],
+                               fps: float = 25.0) -> None:
+        """Add translation/rotation/scale channels for LWS keyframes."""
+        keys = self._subdivide_keys(keys)
+        if "animations" not in self.doc:
+            self.doc["animations"] = [{"name": "default", "channels": [], "samplers": []}]
+        anim = self.doc["animations"][0]
+        times = [k["frame"] / fps for k in keys]
+        t_view = self._view(struct.pack(f"<{len(times)}f", *times), 34962)
+        t_acc = self._accessor(t_view, 5126, len(times), "SCALAR",
+                               [min(times)], [max(times)])
+        outputs = {
+            "translation": [v for k in keys for v in
+                            (k["pos"][0], k["pos"][1], -k["pos"][2])],
+            "rotation": [v for k in keys for v in hpb_to_quat(*k["hpb"])],
+            "scale": [v for k in keys for v in k["scale"]],
+        }
+        types = {"translation": ("VEC3", 3), "rotation": ("VEC4", 4), "scale": ("VEC3", 3)}
+        for path, flat in outputs.items():
+            type_, _ = types[path]
+            view = self._view(struct.pack(f"<{len(flat)}f", *flat), 34962)
+            acc = self._accessor(view, 5126, len(keys), type_)
+            anim["samplers"].append({"input": t_acc, "interpolation": "LINEAR",
+                                     "output": acc})
+            anim["channels"].append({"sampler": len(anim["samplers"]) - 1,
+                                     "target": {"node": node_idx, "path": path}})
+
     def save(self, out_gltf: Path) -> None:
         out_gltf.parent.mkdir(parents=True, exist_ok=True)
         if not self.doc["images"]:
