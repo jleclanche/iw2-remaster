@@ -1,12 +1,14 @@
 extends Node3D
-# Hoffer's Wake, playable: flight, LDS, targeting, weapons, damage, AI
-# traffic + hostiles, docking, dynamic music, original SFX, animated
-# stations. See docs/mechanics.md for the IW2 semantics being recreated.
+# The Badlands, playable: flight, LDS, capsule jumps between all systems,
+# targeting, weapons, damage, AI traffic + hostiles, docking, dynamic music,
+# original SFX, animated stations, planets/stars rendered as impostors.
+# See docs/mechanics.md for the IW2 semantics being recreated.
 
-const DATA_SYSTEM := "data/json/systems/hoffers_wake.json"
+const START_SYSTEM := "hoffers_wake"
 const START_NAME := "Alexander L-Point"
 const STREAM_IN := 4.0e5
 const STREAM_OUT := 5.0e5
+const IMPOSTOR_DIST := 2.5e5  # bodies/stars drawn at capped range, scaled down
 const LDSI_RADIUS := 2.5e4
 
 const LDS_MAX := 3.0e10
@@ -15,20 +17,25 @@ const LDS_SPOOL := 3.0
 const LDS_BASE := 2000.0
 
 const DOCK_RANGE := 4000.0
+const JUMP_RANGE := 3.0e4  # must be this close to an L-point to capsule jump
 const PBC_DAMAGE := 160.0  # sims/weapons/pbc_bolt.ini
 const SHIP_HIT_RADIUS := 60.0
 
-const STATION_AVATARS := [
-	"avatars/haven_station/setup.gltf",
-	"avatars/policestation/setup.gltf",
-	"avatars/lor_platform/setup.gltf",
+const PLANET_TEXTURES := [
+	"landwater1", "landwater2", "landwater4", "gas1", "gas2", "gas3", "gas4",
+	"stripes1", "stripes2", "stripes3", "stripes4", "stripes5", "stripes6",
 ]
 
 var ship: ShipFlight
+var ship_model: Node3D
+var cockpit: Node3D
 var cam: Camera3D
 var hud: Hud
+var menu: Menu
 var weapons: PbcWeapons
 var audio: AudioManager
+var sun: DirectionalLight3D
+var view_mode := 0  # 0 cockpit, 1 internal no frame, 2 external chase
 var demo := false
 var demo_t := 0.0
 var demo_phase := 0
@@ -36,6 +43,8 @@ var demo_phase := 0
 var px := 0.0
 var py := 0.0
 var pz := 0.0
+var system_stem := ""
+var system_name := ""
 var objects: Array = []
 var ai_ships: Array = []
 var target_idx := -1
@@ -43,32 +52,62 @@ var target_ai: AiShip = null
 var lds_state := 0
 var lds_timer := 0.0
 var lds_speed := 0.0
+var jump_state := 0  # 0 idle, 1 spool, 2 accel run, 3 capsule space
+var jump_timer := 0.0
+var jump_dest := ""
+var jump_sel := 0
+var jump_fade: ColorRect
 var hull := 1000.0
 var hull_max := 1000.0
 var docked_at := ""
 var ship_stats: Dictionary = {}
 
 var motioncheck := false
+var jumpcheck := false
+var uicheck := false
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
 	motioncheck = "--motioncheck" in OS.get_cmdline_user_args()
-	if motioncheck:
+	jumpcheck = "--jumpcheck" in OS.get_cmdline_user_args()
+	uicheck = "--uicheck" in OS.get_cmdline_user_args()
+	if motioncheck or jumpcheck or uicheck:
 		demo = true
 	audio = AudioManager.new()
 	add_child(audio)
 	_build_environment()
-	_load_system()
 	_spawn_player()
-	_spawn_traffic()
+	_load_system(START_SYSTEM, START_NAME)
 	hud = Hud.new()
 	hud.main = self
 	var cl := CanvasLayer.new()
 	cl.add_child(hud)
+	jump_fade = ColorRect.new()
+	jump_fade.color = Color(1, 1, 1, 0)
+	jump_fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	jump_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cl.add_child(jump_fade)
+	menu = Menu.new()
+	menu.main = self
+	cl.add_child(menu)
 	add_child(cl)
 	audio.music("ambient")
-	if not demo:
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if uicheck:
+		menu.open()
+	elif demo:
+		menu.visible = false
+		menu.launched = true
+		view_mode = 2
+		_apply_view()
+	else:
+		menu.open()
+
+func start_in_system(stem: String) -> void:
+	lds_state = 0
+	jump_state = 0
+	_load_system(stem, START_NAME if stem == START_SYSTEM else "")
+	ship.velocity = Vector3.ZERO
+	ship.throttle = 0.0
 
 func _base() -> String:
 	return ProjectSettings.globalize_path("res://").path_join("..")
@@ -91,7 +130,7 @@ func _load_gltf(rel: String) -> Node3D:
 	return node
 
 func _build_environment() -> void:
-	var sun := DirectionalLight3D.new()
+	sun = DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-20, 60, 0)
 	sun.light_energy = 1.4
 	add_child(sun)
@@ -128,24 +167,119 @@ void sky() {
 	m.shader = sh
 	return m
 
-func _load_system() -> void:
-	var sys: Dictionary = _load_json(DATA_SYSTEM)
-	var i := 0
+# --- system loading -------------------------------------------------------
+
+func _clear_system() -> void:
+	for o in objects:
+		if o["node"] != null:
+			o["node"].queue_free()
+	objects.clear()
+	for a in ai_ships:
+		a.queue_free()
+	ai_ships.clear()
+	if weapons != null:
+		weapons.clear()
+	target_idx = -1
+	target_ai = null
+	docked_at = ""
+
+func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
+	_clear_system()
+	system_stem = stem
+	var sys: Dictionary = _load_json("data/json/systems/%s.json" % stem)
+	system_name = str(sys["objects"][0]["name"])
+	var entry := {}
 	for o in sys["objects"]:
-		if o["index"] <= 1:
+		var cat := str(o.get("category", "body"))
+		if cat == "system":
 			continue
 		var rec := {
-			"name": str(o["name"]), "kind": int(o["kind"]),
+			"name": str(o["name"]), "category": cat,
 			"x": float(o["pos"][0]), "y": float(o["pos"][1]),
 			"z": -float(o["pos"][2]),
-			"node": null, "avatar": STATION_AVATARS[i % STATION_AVATARS.size()],
+			"radius": float(o.get("radius", 0.0)),
+			"avatar": str(o.get("avatar", "")),
+			"jumps": o.get("jumps_to_stems", []),
+			"colors": o.get("colors", []),
+			"node": null,
 		}
 		objects.append(rec)
-		i += 1
-		if rec["name"] == START_NAME:
-			px = rec["x"] + 2500.0
-			py = rec["y"] + 300.0
-			pz = rec["z"] + 3000.0
+		if cat == "body" or cat == "star":
+			_spawn_impostor(rec)
+		if entry_name != "" and rec["name"] == entry_name:
+			entry = rec
+	if entry.is_empty():
+		# arrive at the L-point that links back to where we came from,
+		# else at the system's first L-point
+		for o in objects:
+			if o["category"] != "lpoint":
+				continue
+			if entry.is_empty() or from_stem in o["jumps"]:
+				entry = o
+			if from_stem != "" and from_stem in o["jumps"]:
+				break
+	if entry.is_empty() and not objects.is_empty():
+		entry = objects[0]
+	px = entry["x"] + 2500.0
+	py = entry["y"] + 300.0
+	pz = entry["z"] + 3000.0
+	jump_sel = 0
+	_spawn_traffic()
+	print("SYSTEM: ", system_name, " (", objects.size(), " objects)")
+
+func _planet_material(rec: Dictionary) -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	if rec["category"] == "star":
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_color = Color(1.0, 0.95, 0.8)
+		mat.emission_enabled = true
+		mat.emission = Color(1.0, 0.9, 0.7)
+		mat.emission_energy_multiplier = 8.0
+		return mat
+	var pick: String = PLANET_TEXTURES[abs(str(rec["name"]).hash()) % PLANET_TEXTURES.size()]
+	var path := _base().path_join("data/textures/images/planets/%s.png" % pick)
+	if FileAccess.file_exists(path):
+		var img := Image.load_from_file(path)
+		if img != null:
+			mat.albedo_texture = ImageTexture.create_from_image(img)
+	# tint the luminance texture with the body's map palette
+	var colors: Array = rec.get("colors", [])
+	if not colors.is_empty():
+		var c: Array = colors[0]
+		mat.albedo_color = Color(
+			clampf(c[0] / 255.0 * 1.5, 0.0, 1.0),
+			clampf(c[1] / 255.0 * 1.5, 0.0, 1.0),
+			clampf(c[2] / 255.0 * 1.5, 0.0, 1.0))
+	mat.roughness = 0.9
+	return mat
+
+func _spawn_impostor(rec: Dictionary) -> void:
+	var mesh := SphereMesh.new()
+	mesh.radius = 1.0
+	mesh.height = 2.0
+	mesh.radial_segments = 48
+	mesh.rings = 24
+	mesh.material = _planet_material(rec)
+	var node := MeshInstance3D.new()
+	node.mesh = mesh
+	add_child(node)
+	rec["node"] = node
+
+func _spawn_beacon(rec: Dictionary) -> Node3D:
+	var mesh := SphereMesh.new()
+	mesh.radius = 30.0
+	mesh.height = 60.0
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = Color(0.5, 0.9, 1.0)
+	mat.emission_enabled = true
+	mat.emission = Color(0.4, 0.8, 1.0)
+	mat.emission_energy_multiplier = 3.0
+	mesh.material = mat
+	var node := MeshInstance3D.new()
+	node.mesh = mesh
+	add_child(node)
+	return node
 
 func _spawn_player() -> void:
 	ship = ShipFlight.new()
@@ -158,7 +292,8 @@ func _spawn_player() -> void:
 			hull_max = float(ship_stats.get("hit_points", 1000))
 			hull = hull_max
 			break
-	ship.add_child(_load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf"))
+	ship_model = _load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf")
+	ship.add_child(ship_model)
 	add_child(ship)
 	weapons = PbcWeapons.new()
 	weapons.ship = ship
@@ -169,11 +304,29 @@ func _spawn_player() -> void:
 	cam.fov = 70
 	add_child(cam)
 	cam.make_current()
+	# the original's cockpit frame, removable like the old UI option (V key)
+	cockpit = _load_gltf("data/avatars/avatars/cockpit/setup.gltf")
+	if cockpit != null:
+		cam.add_child(cockpit)
+	_apply_view()
+
+func _apply_view() -> void:
+	if cockpit != null:
+		cockpit.visible = view_mode == 0
+	if ship_model != null:
+		ship_model.visible = view_mode == 2
+
+func _cycle_view() -> void:
+	view_mode = (view_mode + 1) % 3
+	audio.play("audio/gui/camera_change.wav", -10.0)
+	_apply_view()
 
 func _spawn_traffic() -> void:
 	# a couple of utility ships patrolling the start cluster
 	var local: Array = []
 	for o in objects:
+		if o["category"] != "station":
+			continue
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
 		if d.length() < 1.0e5:
 			local.append(d)
@@ -273,7 +426,13 @@ func contact_list() -> Array:
 	for i in objects.size():
 		var o: Dictionary = objects[i]
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
-		if d < 5.0e5 and o["kind"] == 1:
+		var show := false
+		match o["category"]:
+			"station":
+				show = d < 5.0e5
+			"lpoint":
+				show = d < 1.0e7
+		if show:
 			list.append({"name": o["name"], "dist": d, "hostile": false,
 					"targeted": i == target_idx})
 	for a in ai_ships:
@@ -283,6 +442,9 @@ func contact_list() -> Array:
 	return list.slice(0, 12)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if menu != null and menu.visible:
+		menu.handle(event)
+		return
 	if event is InputEventMouseMotion and not demo and docked_at == "":
 		ship.input_rotate.y = clampf(ship.input_rotate.y - event.relative.x * 0.003, -1, 1)
 		ship.input_rotate.x = clampf(ship.input_rotate.x - event.relative.y * 0.003, -1, 1)
@@ -296,11 +458,17 @@ func _unhandled_input(event: InputEvent) -> void:
 				_try_dock()
 			KEY_U:
 				_undock()
+			KEY_J:
+				_try_jump()
+			KEY_K:
+				_cycle_route()
+			KEY_V:
+				_cycle_view()
 			KEY_H:
 				spawn_hostile(ship.global_position +
 					-ship.global_transform.basis.z * 3000.0 + Vector3(400, 200, 0))
-	if event.is_action_pressed("ui_cancel"):
-		get_tree().quit()
+	if event.is_action_pressed("ui_cancel") and not demo:
+		menu.open()
 
 func _cycle_target() -> void:
 	audio.play("audio/hud/target_changed.wav", -10.0)
@@ -313,6 +481,8 @@ func _cycle_target() -> void:
 			return
 		target_ai = null
 	target_idx = (target_idx + 1) % objects.size()
+	if objects[target_idx]["category"] == "star":
+		target_idx = (target_idx + 1) % objects.size()
 	if target_idx == 0 and not ai_ships.is_empty():
 		target_ai = ai_ships[0]
 		target_idx = -1
@@ -329,29 +499,45 @@ func _target_distance() -> float:
 	var p := _target_pos()
 	return INF if p == Vector3.INF else p.length()
 
-func _nearest_object() -> Dictionary:
+func _nearest(category: String, range_limit := INF) -> Dictionary:
 	var best := {}
 	var bestd := INF
 	for o in objects:
+		if o["category"] != category:
+			continue
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
-		if d < bestd and o["kind"] == 1:
+		if d < bestd and d < range_limit:
 			bestd = d
 			best = o
 	best["dist"] = bestd
 	return best
 
-func _nearest_distance() -> float:
-	return _nearest_object().get("dist", INF)
+func _lds_clearance() -> float:
+	# distance to the nearest LDS-inhibition boundary (stations 25 km,
+	# bodies scale with their radius — masses inhibit LDS, iRegion.CreateLDSI)
+	var clear := INF
+	for o in objects:
+		var inhibit := 0.0
+		match o["category"]:
+			"station":
+				inhibit = LDSI_RADIUS
+			"body":
+				inhibit = maxf(LDSI_RADIUS, o["radius"] * 1.5)
+			_:
+				continue
+		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
+		clear = minf(clear, d - inhibit)
+	return clear
 
 func _toggle_lds() -> void:
-	if docked_at != "":
+	if docked_at != "" or jump_state != 0:
 		return
 	if lds_state != 0:
 		lds_state = 0
 		audio.play("audio/sfx/lds_rampdown.wav", -4.0)
 		audio.lds_player.stop()
 		ship.velocity = -ship.global_transform.basis.z * ship.max_speed.z
-	elif _nearest_distance() > LDSI_RADIUS * 0.5:
+	elif _lds_clearance() > 0.0:
 		lds_state = 1
 		lds_timer = 0.0
 		lds_speed = LDS_BASE
@@ -361,7 +547,7 @@ func _toggle_lds() -> void:
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 
 func _try_dock() -> void:
-	var near := _nearest_object()
+	var near := _nearest("station")
 	if near.get("dist", INF) > DOCK_RANGE:
 		hud.warn("NO DOCKPORT IN RANGE")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
@@ -379,13 +565,90 @@ func _undock() -> void:
 	audio.play("audio/sfx/base_doors_sound.wav", -6.0)
 	ship.velocity = -ship.global_transform.basis.z * 50.0
 
+# --- capsule jump ----------------------------------------------------------
+
+func _jump_lpoint() -> Dictionary:
+	var lp := _nearest("lpoint", JUMP_RANGE)
+	return {} if lp.get("dist", INF) == INF else lp
+
+func routes_text() -> String:
+	var lp := _jump_lpoint()
+	if lp.is_empty():
+		return ""
+	var jumps: Array = lp["jumps"]
+	if jumps.is_empty():
+		return "L-POINT: NO CHARTED ROUTES"
+	var parts: PackedStringArray = []
+	for i in jumps.size():
+		var stem: String = jumps[i]
+		parts.append(("[%s]" if i == jump_sel % jumps.size() else "%s")
+			% stem.replace("_", " ").to_upper())
+	return "CAPSULE ROUTES: " + "  ".join(parts) + "  (J jump, K cycle)"
+
+func _cycle_route() -> void:
+	var lp := _jump_lpoint()
+	if lp.is_empty() or lp["jumps"].is_empty():
+		return
+	jump_sel = (jump_sel + 1) % lp["jumps"].size()
+	audio.play("audio/hud/target_changed.wav", -10.0)
+
+func _try_jump() -> void:
+	if docked_at != "" or jump_state != 0 or lds_state != 0:
+		return
+	var lp := _jump_lpoint()
+	if lp.is_empty():
+		hud.warn("NO L-POINT IN RANGE")
+		audio.play("audio/hud/invalid_input.wav", -8.0)
+		return
+	var jumps: Array = lp["jumps"]
+	if jumps.is_empty():
+		hud.warn("NO CHARTED CAPSULE ROUTES")
+		audio.play("audio/hud/invalid_input.wav", -8.0)
+		return
+	jump_dest = jumps[jump_sel % jumps.size()]
+	jump_state = 1
+	jump_timer = 0.0
+	hud.warn("CAPSULE DRIVE CHARGING", 3.0)
+	audio.play("audio/sfx/capsule_jump.wav", -4.0)
+
+func _jump_process(delta: float) -> void:
+	jump_timer += delta
+	match jump_state:
+		1:  # spool
+			if jump_timer >= 3.0:
+				jump_state = 2
+				jump_timer = 0.0
+				hud.warn("ACCELERATION RUN", 2.0)
+		2:  # acceleration run — iAI.IsCapsuleJumpAccelerating
+			ship.velocity += -ship.global_transform.basis.z * 2500.0 * delta
+			jump_fade.color.a = clampf(jump_timer / 3.0 - 0.6, 0.0, 1.0) * 2.5
+			if jump_timer >= 3.0:
+				jump_state = 3
+				jump_timer = 0.0
+				jump_fade.color.a = 1.0
+				audio.play_loop(audio.lds_player,
+					"audio/sfx/inside_capsule_space.wav", -6.0)
+		3:  # capsule space, then exit at destination
+			jump_fade.color.a = clampf(2.0 - jump_timer, 0.0, 1.0)
+			if jump_timer >= 2.0:
+				var from := system_stem
+				audio.lds_player.stop()
+				_load_system(jump_dest, "", from)
+				ship.velocity = -ship.global_transform.basis.z * 1000.0
+				jump_state = 0
+				jump_fade.color.a = 0.0
+				audio.play("audio/sfx/lds_rampdown.wav", -4.0)
+				hud.warn("ARRIVED: %s" % system_name.to_upper(), 4.0)
+
 func _physics_process(delta: float) -> void:
 	if demo:
 		_demo_control(delta)
-	elif docked_at == "":
+	elif docked_at == "" and not menu.visible:
 		_player_control(delta)
 	if lds_state > 0:
 		_lds_process(delta)
+	if jump_state > 0:
+		_jump_process(delta)
 	if docked_at != "":
 		ship.velocity = Vector3.ZERO
 		ship.throttle = 0.0
@@ -423,13 +686,13 @@ func _lds_process(delta: float) -> void:
 			audio.play_loop(audio.lds_player, "audio/sfx/lds_cruise.wav", -10.0)
 		return
 	lds_speed = minf(lds_speed * pow(LDS_RAMP, delta), LDS_MAX)
-	var near := _nearest_distance()
+	var clear := _lds_clearance()
 	var tdist := _target_distance()
-	if (tdist < lds_speed * 1.5 and tdist < INF) or near < LDSI_RADIUS:
+	if (tdist < lds_speed * 1.5 and tdist < INF) or clear < 0.0:
 		lds_speed = maxf(tdist * 1.5, LDS_BASE)
 	lds_speed = minf(lds_speed, LDS_MAX)
 	ship.velocity = -ship.global_transform.basis.z * lds_speed
-	if near < LDSI_RADIUS or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
+	if clear < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
 		lds_state = 0
 		audio.lds_player.stop()
 		audio.play("audio/sfx/lds_rampdown.wav", -4.0)
@@ -452,22 +715,50 @@ func _stream_objects() -> void:
 		var dy: float = o["y"] - py
 		var dz: float = o["z"] - pz
 		var d2 := dx * dx + dy * dy + dz * dz
-		if o["node"] == null and d2 < STREAM_IN * STREAM_IN and o["kind"] == 1:
-			var model := _load_gltf("data/avatars/" + o["avatar"])
-			if model == null:
-				continue
-			o["node"] = model
-			add_child(model)
-		elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
-			o["node"].queue_free()
-			o["node"] = null
-		if o["node"] != null:
-			o["node"].position = Vector3(dx, dy, dz)
+		match o["category"]:
+			"body", "star":
+				# always visible: drawn at capped distance, scaled to keep
+				# the correct angular size (the camera far plane is 600 km)
+				var dist := sqrt(maxf(d2, 1.0))
+				var r: float = clampf(o["radius"], 2.0e4, 1.0e9)
+				if o["category"] == "star":
+					r = maxf(r, 7.0e8)
+					sun.look_at_from_position(Vector3.ZERO,
+						Vector3(-dx, -dy, -dz).normalized())
+				var k := minf(IMPOSTOR_DIST / dist, 1.0)
+				# never fill the screen: cap apparent radius vs draw distance
+				var draw_r := minf(r * k, IMPOSTOR_DIST * 0.4)
+				o["node"].position = Vector3(dx, dy, dz) * k
+				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
+			"station":
+				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
+					var model := _load_gltf("data/avatars/" + o["avatar"])
+					if model == null:
+						continue
+					o["node"] = model
+					add_child(model)
+				elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
+					o["node"].queue_free()
+					o["node"] = null
+				if o["node"] != null:
+					o["node"].position = Vector3(dx, dy, dz)
+			"lpoint":
+				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
+					o["node"] = _spawn_beacon(o)
+				elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
+					o["node"].queue_free()
+					o["node"] = null
+				if o["node"] != null:
+					o["node"].position = Vector3(dx, dy, dz)
 
 func _chase_camera(delta: float) -> void:
 	var target := ship.global_transform
+	if view_mode < 2:
+		# internal: rigid at the pilot's eye point
+		cam.global_transform = target.translated_local(Vector3(0, 5.0, -14.0))
+		return
 	var want := target.translated_local(Vector3(0, 32, 130))
-	if lds_state == 2:
+	if lds_state == 2 or jump_state >= 2:
 		cam.global_transform = want.looking_at(
 			target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
 	else:
@@ -490,6 +781,12 @@ var _mc_shot := 0
 
 func _demo_control(delta: float) -> void:
 	demo_t += delta
+	if uicheck:
+		_uicheck_control(delta)
+		return
+	if jumpcheck:
+		_jumpcheck_control(delta)
+		return
 	if motioncheck:
 		# hold position facing the start station; burst-capture frames
 		ship.throttle = 0.0
@@ -514,12 +811,14 @@ func _demo_control(delta: float) -> void:
 	match demo_phase:
 		0:
 			ship.throttle = 1.0
-			if _nearest_distance() > LDSI_RADIUS * 1.1:
+			if _lds_clearance() > LDSI_RADIUS * 0.1:
 				var bestd := INF
 				for i in objects.size():
 					var o: Dictionary = objects[i]
+					if o["category"] != "station":
+						continue
 					var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
-					if o["kind"] == 1 and d > 0.5 * 1.496e11 and d < bestd:
+					if d > 0.5 * 1.496e11 and d < bestd:
 						bestd = d
 						target_idx = i
 				print("DEMO: destination ", objects[target_idx]["name"])
@@ -563,6 +862,67 @@ func _demo_control(delta: float) -> void:
 				var dir := _target_pos().normalized()
 				if (-ship.global_transform.basis.z).angle_to(dir) < 0.08:
 					weapons.fire()
+
+func _uicheck_control(_delta: float) -> void:
+	# screenshot the menu, then the cockpit HUD with a target
+	match demo_phase:
+		0:
+			if demo_t > 1.5:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png(_base().path_join("data/screenshots/ui_menu.png"))
+				menu.launched = true
+				menu.close()
+				view_mode = 0
+				_apply_view()
+				var hostile := spawn_hostile(Vector3(1200, 150, -2200))
+				target_ai = hostile
+				demo_phase = 1
+				demo_t = 0.0
+		1:
+			_face_target()
+			if demo_t > 2.5:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png(_base().path_join("data/screenshots/ui_cockpit.png"))
+				view_mode = 2
+				_apply_view()
+				demo_phase = 2
+				demo_t = 0.0
+		2:
+			_face_target()
+			if demo_t > 1.0:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png(_base().path_join("data/screenshots/ui_chase.png"))
+				print("UICHECK done")
+				get_tree().quit()
+
+func _jumpcheck_control(_delta: float) -> void:
+	# validate a capsule jump: start at Alexander L-Point -> route to Coyote
+	match demo_phase:
+		0:
+			if demo_t > 1.0:
+				print("JUMPCHECK: from ", system_stem, ", routes: ", routes_text())
+				_try_jump()
+				if jump_state == 0:
+					print("JUMPCHECK: FAILED to initiate")
+					get_tree().quit(1)
+				demo_phase = 1
+		1:
+			if jump_state == 0:
+				print("JUMPCHECK: now in ", system_stem, " (", system_name, ")")
+				demo_phase = 2
+				demo_t = 0.0
+		2:
+			if demo_t > 1.5:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png(_base().path_join("data/screenshots/jump_arrival.png"))
+				var ok := system_stem != START_SYSTEM
+				print("JUMPCHECK: ", "PASS" if ok else "FAIL",
+					" — arrived in ", system_name,
+					", contacts=", contact_list().size())
+				get_tree().quit(0 if ok else 1)
+	if demo_t > 60.0:
+		print("JUMPCHECK: TIMEOUT in state ", jump_state)
+		get_tree().quit(1)
 
 func _face_target() -> void:
 	# demo autopilot: steer via the flight model, like a real pilot would

@@ -11,7 +11,11 @@ Format (reverse-engineered, packed; record count is BIG-endian, fields little):
         +291  12 bytes, zeros in all observed records
         +303  u32     parent record index (orbital/grouping hierarchy)
         +307  u8[4]   unknown (faction/flags?)
-        +311  u32     type hash (matches avatar/class of the object)
+        +311  f32     body radius in meters (self for planets/stars; for
+                      satellites, the radius of the body they orbit — used
+                      by the map screen to place icons outside the disc).
+                      Kept hex-encoded as "type_hash" for compatibility;
+                      classify_map.py decodes it into a "radius" field.
         +315  u8[4]   unknown
         +319  f32[9]  three RGB colors, 0-255 (map display)
         +355  u32     unknown (0x000000FF observed)

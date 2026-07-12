@@ -75,7 +75,12 @@ Every game data format is now decoded and extracted:
 
 - INI sims/subsims/weapons; localized strings — `data/json/`
 - `.map` systems **including the capsule-jump table** (per-L-point
-  destination lists; validated across all 16 systems) — `data/json/systems/`
+  destination lists; validated across all 16 systems) — `data/json/systems/`.
+  The u32 at record offset +311 (previously logged as a "type hash") is a
+  float32: the body radius in meters. Records carry no model reference —
+  the original spawns station sims from POG scripts — so
+  `tools/iw2/classify_map.py` classifies records (star/body/lpoint/station)
+  by name keywords + hierarchy and assigns modular-station avatars.
 - FTC/FTU textures — `data/textures/`
 - PSO/PSO2 meshes incl. `DELT` morph deltas (character facial animation,
   paired with the text `MORPHGIZMO` `.giz` weight tracks); `FRAM` weight

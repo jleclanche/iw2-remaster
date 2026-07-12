@@ -3,13 +3,15 @@
 Usage:  python -m tools.iw2.extract_all
 """
 
-from . import (assemble_avatar, audio, export_gltf, extract_sims, lwo, lws,
-               map_decoder, textures)
+from . import (assemble_avatar, audio, classify_map, export_gltf,
+               extract_sims, lwo, lws, map_decoder, textures)
 
 print("=== sims ===")
 extract_sims.main()
 print("=== star maps ===")
 map_decoder.main()
+print("=== map classification ===")
+classify_map.main()
 print("=== collision hulls / lwo ===")
 lwo.main()
 print("=== audio ===")

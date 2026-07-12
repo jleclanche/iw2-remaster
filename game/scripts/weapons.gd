@@ -87,6 +87,13 @@ func _segment_sphere(a: Vector3, b: Vector3, c: Vector3, r: float) -> bool:
 	var t := clampf((c - a).dot(ab) / maxf(ab.length_squared(), 1e-6), 0.0, 1.0)
 	return (a + ab * t).distance_squared_to(c) < r * r
 
+func clear() -> void:
+	for bolt in bolts:
+		var node: MeshInstance3D = bolt["node"]
+		if is_instance_valid(node):
+			node.queue_free()
+	bolts.clear()
+
 func shift_world(offset: Vector3) -> void:
 	for bolt in bolts:
 		var node: MeshInstance3D = bolt["node"]

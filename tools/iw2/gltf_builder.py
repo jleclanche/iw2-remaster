@@ -144,7 +144,9 @@ class GltfBuilder:
         if hpb is not None and any(hpb):
             n["rotation"] = hpb_to_quat(*hpb)
         if scale is not None and scale != [1.0, 1.0, 1.0]:
-            n["scale"] = list(scale)
+            # LW hides objects by zero scale; a degenerate basis breaks
+            # Godot's quaternion math, so clamp to invisibly small instead
+            n["scale"] = [s if abs(s) > 1e-4 else 1e-4 for s in scale]
         if extras:
             n["extras"] = extras
         self.doc["nodes"].append(n)
@@ -192,7 +194,8 @@ class GltfBuilder:
             "translation": [v for k in keys for v in
                             (k["pos"][0], k["pos"][1], -k["pos"][2])],
             "rotation": [v for k in keys for v in hpb_to_quat(*k["hpb"])],
-            "scale": [v for k in keys for v in k["scale"]],
+            "scale": [v if abs(v) > 1e-4 else 1e-4
+                      for k in keys for v in k["scale"]],
         }
         types = {"translation": ("VEC3", 3), "rotation": ("VEC4", 4), "scale": ("VEC3", 3)}
         for path, flat in outputs.items():

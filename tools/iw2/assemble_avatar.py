@@ -7,7 +7,7 @@ preserves nulls (hardpoints, effects anchors) as empty nodes with extras.
 
 Usage:
   python -m tools.iw2.assemble_avatar avatars/tug_hull/setup_prefitted [out.gltf]
-  python -m tools.iw2.assemble_avatar --all        # every avatars/*/setup*.lws
+  python -m tools.iw2.assemble_avatar --all        # every avatars/**/*.lws
 """
 
 from __future__ import annotations
@@ -132,8 +132,6 @@ def main() -> None:
     if args and args[0] == "--all":
         count = 0
         for scene in fs.list("avatars/", ".lws"):
-            if "/setup" not in scene:
-                continue
             out = Path("data/avatars") / Path(scene).with_suffix(".gltf")
             try:
                 missing = assemble(fs, scene, out)
