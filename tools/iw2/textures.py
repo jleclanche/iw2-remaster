@@ -22,7 +22,10 @@ def main(out_dir: str = "data/textures") -> None:
     out = Path(out_dir)
     ok = 0
     failed: list[tuple[str, str]] = []
-    paths = fs.list("", ".ftc") + fs.list("", ".ftu")
+    ftu = fs.list("", ".ftu")
+    have_ftu = {p[:-4] for p in ftu}
+    # many textures ship in both formats; prefer lossless .ftu over DXT .ftc
+    paths = ftu + [p for p in fs.list("", ".ftc") if p[:-4] not in have_ftu]
     for path in paths:
         try:
             img = Image.open(io.BytesIO(fs.read_bytes(path)))
