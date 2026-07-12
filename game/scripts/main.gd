@@ -55,6 +55,7 @@ var zoomed := false
 var free_toggle := false
 var ap_mode := 0  # 0 off, 1 approach, 2 formate, 3 dock, 4 match velocity
 var last_aggressor: AiShip = null
+var kill_count := 0  # hostiles destroyed (missions watch this)
 var demo := false
 var checks: CheckRunner
 
@@ -181,7 +182,7 @@ func start_campaign() -> void:
 	_setup_act0_scene()
 	# iact0mission10 bytecode: igame.PlayMovie("/movies/prelude")
 	_play_movie("prelude", func() -> void:
-		mission.start(Mission.act0_m10()))
+		mission.start(Mission.act0()))
 
 func _spawn_npc(dname: String, fac: String, typ: String, avatar: String,
 		pos: Vector3, wps: Array) -> AiShip:
@@ -759,6 +760,7 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null) -> void:
 	var ai := target as AiShip
 	if ai != null and ai.damage(PBC_DAMAGE):
 		ExplosionFx.boom(self, ai.global_position, 70.0)
+		kill_count += 1
 		hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
 		ai_ships.erase(ai)
 		if target_ai == ai:
@@ -846,6 +848,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and not demo and docked_at == "":
 		ship.input_rotate.y = clampf(ship.input_rotate.y - event.relative.x * 0.003, -1, 1)
 		ship.input_rotate.x = clampf(ship.input_rotate.x - event.relative.y * 0.003, -1, 1)
+	# conversation choices: number keys answer comms questions
+	if comms != null and comms.choosing() and event is InputEventKey \
+			and event.pressed and not event.echo \
+			and event.physical_keycode >= KEY_1 \
+			and event.physical_keycode <= KEY_9:
+		comms.choose(event.physical_keycode - KEY_1)
+		return
 	# original IW2 bindings (configs/default.ini + keyboard_only.ini)
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:

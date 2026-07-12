@@ -136,17 +136,54 @@ func _build_head_view() -> void:
 			head_view.add_child(mi)
 			beam_mats.append(mat)
 
-func say_key(key: String) -> void:
-	# "a1_m01_dialogue_smith_calm_down" -> speaker smith, text from strings
+func say_key(key: String, who := "") -> void:
+	# "a1_m01_dialogue_smith_calm_down" -> speaker smith, text from strings;
+	# `who` overrides for multi-word speakers (young_cal, wolfgang...)
 	var text := str(strings.get(key, ""))
 	if text.is_empty():
 		return
-	var parts := key.split("_")
-	var who := parts[3] if parts.size() > 3 and parts[2] == "dialogue" else "?"
+	if who == "":
+		var parts := key.split("_")
+		who = parts[3] if parts.size() > 3 and parts[2] == "dialogue" else "?"
+		# multi-word speakers in key form
+		for s in ["young_cal", "old_cal", "mercenary_leader"]:
+			if ("dialogue_" + s + "_") in key:
+				who = s
 	queue.append({"key": key, "speaker": who, "text": text})
 
+# --- conversation choices (iconversation.AddResponse / Ask) -----------------
+
+var ask_options: Array = []   # {text, reply_key, response_key}
+var ask_speaker := ""
+var ask_question := ""
+
+func ask(question_key: String, q_speaker: String, options: Array) -> void:
+	# options: [[text_key, player_reply_key, npc_response_key-or-""], ...]
+	say_key(question_key, q_speaker)
+	ask_speaker = q_speaker
+	ask_question = question_key
+	for o in options:
+		ask_options.append({
+			"text": str(strings.get(o[0], o[0])),
+			"reply": str(o[1]),
+			"response": str(o[2]) if o.size() > 2 else ""})
+
+func choosing() -> bool:
+	return not ask_options.is_empty() and current.is_empty() and queue.is_empty()
+
+func choose(i: int) -> void:
+	if i < 0 or i >= ask_options.size():
+		return
+	var opt: Dictionary = ask_options[i]
+	ask_options.clear()
+	main.audio.play("audio/gui/confirm.wav", -8.0)
+	say_key(opt["reply"], "young_cal")
+	if opt["response"] != "":
+		say_key(opt["response"], ask_speaker)
+
 func speaking() -> bool:
-	return not current.is_empty() or not queue.is_empty()
+	return not current.is_empty() or not queue.is_empty() \
+		or not ask_options.is_empty()
 
 func _start(entry: Dictionary) -> void:
 	current = entry
@@ -235,6 +272,8 @@ func _physics_process(delta: float) -> void:
 	if current.is_empty():
 		if not queue.is_empty():
 			_start(queue.pop_front())
+		elif fast and not ask_options.is_empty():
+			choose(0)  # checks auto-answer conversations
 		return
 	if voice.playing:
 		return

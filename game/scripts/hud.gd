@@ -110,6 +110,7 @@ func _draw() -> void:
 	_draw_warnings(c)
 	_draw_subtitles()
 	_draw_prompt(c)
+	_draw_choices(c)
 	_draw_objectives()
 
 const SUBTITLE_COL := Color(1.0, 0.93, 0.55, 1.0)  # pale yellow, original
@@ -155,6 +156,22 @@ func _draw_subtitles() -> void:
 		draw_string(_font, at, ln,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, SUBTITLE_COL)
 		y += FONT_SIZE + 7
+
+func _draw_choices(c: Vector2) -> void:
+	# comms response menu (iconversation.Ask): numbered options
+	if main.comms == null or not main.comms.choosing():
+		return
+	var opts: Array = main.comms.ask_options
+	var y := c.y + 180.0
+	draw_string(_font, Vector2(c.x - 200, y - 18), "RESPOND:",
+			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, GREEN_DIM)
+	for i in opts.size():
+		var text := "%d. %s" % [i + 1, str(opts[i]["text"])]
+		draw_string(_font, Vector2(c.x - 199, y + 1), text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, Color(0, 0, 0, 0.8))
+		draw_string(_font, Vector2(c.x - 200, y), text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, YELLOW)
+		y += 17.0
 
 func _draw_prompt(c: Vector2) -> void:
 	# the original's lesson prompt (ihud.SetPrompt): instruction + key hint
