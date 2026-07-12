@@ -686,9 +686,19 @@ func _g_autosaved(_t, _a: Array) -> Variant:
 
 var _saved := false
 
+# The scripts set 0, 1 or 2, and branch on GameType() being truthy at all --
+# istartsystem.FinalSetup skips the whole single-player path when it is 0. So 0
+# means "no game running"; 1 is the campaign we start in.
+var game_type := 1
+
 # @native igame.GameType
 func _g_game_type(_t, _a: Array) -> Variant:
-	return 0            # 0 = the single-player campaign
+	return game_type
+
+# @native igame.SetGameType
+func _g_set_game_type(_t, a: Array) -> Variant:
+	game_type = int(a[0]) if a.size() > 0 else 1
+	return 0
 
 # @stub igame.CreateFog
 # @stub igame.DestroyFog
@@ -898,7 +908,8 @@ const _BINDINGS := {
 	"igame.realtime": "_g_time",
 	"igame.nextact": "_g_next_act", "igame.enableblackout": "_g_blackout",
 	"igame.createfog": "_g_noop", "igame.destroyfog": "_g_noop",
-	"igame.gametype": "_g_game_type", "igame.setgametype": "_g_noop",
+	"igame.gametype": "_g_game_type",
+	"igame.setgametype": "_g_set_game_type",
 	"igame.startnewgame": "_g_noop", "igame.sessionname": "_g_noop",
 	"igame.setsessionname": "_g_noop", "igame.gotearnedmovie": "_g_noop",
 	"igame.gotplaydisk": "_g_noop", "igame.moveplayerbase": "_g_noop",

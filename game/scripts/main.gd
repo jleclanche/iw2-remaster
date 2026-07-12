@@ -169,7 +169,8 @@ func _pog_boot_next() -> void:
 	if pog_boot.is_empty():
 		return
 	var stage: String = pog_boot.pop_front()
-	pog_boot_task = pog.start("istartsystem", stage)
+	var parts := stage.split(".", true, 1)
+	pog_boot_task = pog.start(parts[0], parts[1])
 
 func _pog_boot_process() -> void:
 	if pog_boot.is_empty() and pog_boot_task == null:
@@ -264,8 +265,12 @@ func start_campaign() -> void:
 		# what the missions assume already exists (the ship-name INI handle, the
 		# mission tracker, the mission generator), then the session/space/system
 		# stages bring the player into the world and start the act.
-		pog_boot = ["StartupNewGame", "StartupSession", "StartupSpace",
-			"StartupSystem", "FinalSetup"]
+		# istartsystem's stages, then iprelude: nothing in the bytecode starts
+		# the prologue, because the engine did it from C++, so we do. iprelude
+		# plays the opening cinematic and then calls iact0mission10.Main itself.
+		pog_boot = ["istartsystem.StartupNewGame", "istartsystem.StartupSession",
+			"istartsystem.StartupSpace", "istartsystem.StartupSystem",
+			"istartsystem.FinalSetup", "iprelude.Main"]
 		_pog_boot_next()
 		return
 	# iact0mission10 bytecode: igame.PlayMovie("/movies/prelude")
@@ -388,12 +393,28 @@ func _load_json(rel: String) -> Variant:
 	var f := FileAccess.open(_base().path_join(rel), FileAccess.READ)
 	return null if f == null else JSON.parse_string(f.get_as_text())
 
+# Parsed glTF scenes, kept as prototypes and duplicated per instance. The POG
+# scripts build things like the Junkyard debris field out of hundreds of sims
+# that share two or three models, and re-parsing the file for each one stalls
+# the boot for minutes.
+var _gltf_cache: Dictionary = {}
+
 func _load_gltf(rel: String) -> Node3D:
+	if _gltf_cache.has(rel):
+		var proto: Node3D = _gltf_cache[rel]
+		if proto == null:
+			return null
+		return _instance_gltf(proto.duplicate())
 	var doc := GLTFDocument.new()
 	var state := GLTFState.new()
 	if doc.append_from_file(_base().path_join(rel), state) != OK:
+		_gltf_cache[rel] = null
 		return null
 	var node := doc.generate_scene(state)
+	_gltf_cache[rel] = node
+	return _instance_gltf(node.duplicate())
+
+func _instance_gltf(node: Node3D) -> Node3D:
 	for ap in node.find_children("*", "AnimationPlayer", true, false):
 		var player := ap as AnimationPlayer
 		for anim_name in player.get_animation_list():
