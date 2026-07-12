@@ -124,7 +124,7 @@ func _make_waypoint(s: Dictionary) -> void:
 			"x": main.px + dir2.x * dd, "y": main.py + dir2.y * dd,
 			"z": main.pz + dir2.z * dd,
 			"radius": 0.0, "avatar": "", "jumps": [], "colors": [],
-			"node": null, "waypoint": true})
+			"node": null, "waypoint": true, "blip": true})
 
 func _remove_waypoints() -> void:
 	for i in range(main.objects.size() - 1, -1, -1):
@@ -181,8 +181,10 @@ func _physics_process(delta: float) -> void:
 		_advance()
 
 func _wp_pos() -> Vector3:
+	# the mission waypoint proper — decoy blips don't count
 	for i in range(main.objects.size() - 1, -1, -1):
-		if main.objects[i].get("waypoint", false):
+		if main.objects[i].get("waypoint", false) \
+				and not main.objects[i].get("blip", false):
 			var o: Dictionary = main.objects[i]
 			return Vector3(o["x"], o["y"], o["z"])
 	return Vector3(INF, INF, INF)

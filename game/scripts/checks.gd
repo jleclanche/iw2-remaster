@@ -60,7 +60,7 @@ func _campcheck(_delta: float) -> void:
 				if not m._headless():
 					_shot("campaign_spawn")
 				for o in m.objects:
-					if o.get("waypoint", false):
+					if o.get("waypoint", false) and not o.get("blip", false):
 						m.px = o["x"]
 						m.py = o["y"]
 						m.pz = o["z"]

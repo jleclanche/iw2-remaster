@@ -265,19 +265,26 @@ func _draw_reticle(c: Vector2) -> void:
 	# charge pips over it (images/hud/sprites.png glyph)
 	if main.lds_state == 0 and main.jump_state == 0 \
 			and main._lds_clearance() < 0.0 and main.docked_at == "":
+		# the original's inhibit roundel: glowing green disc with the "!"
+		# knocked out dark, charge pips arcing over the top
 		var ip := c + Vector2(-46, -96)
-		draw_circle(ip, 15.0, Color(0, 0.10, 0, 0.85))
-		draw_arc(ip, 15.0, 0, TAU, 32, GREEN, 2.0, true)
+		var g := Color(0.45, 1.0, 0.35)
+		draw_circle(ip, 19.0, Color(g.r, g.g, g.b, 0.10))
+		draw_circle(ip, 16.0, Color(g.r, g.g, g.b, 0.22))
+		draw_circle(ip, 13.0, Color(g.r, g.g, g.b, 0.85))
+		draw_arc(ip, 14.5, 0, TAU, 40, Color(g.r, g.g, g.b, 0.9), 1.6, true)
 		if _sprites != null:
-			draw_texture_rect_region(_sprites, Rect2(ip - Vector2(11, 11),
-					Vector2(22, 22)), SPR_BANG, GREEN)
+			draw_texture_rect_region(_sprites, Rect2(ip - Vector2(9, 9),
+					Vector2(18, 18)), SPR_BANG, Color(0.0, 0.14, 0.02, 0.95))
 		else:
 			draw_string(_font_big, ip + Vector2(-3, 6), "!",
-					HORIZONTAL_ALIGNMENT_LEFT, -1, big_size, GREEN)
+					HORIZONTAL_ALIGNMENT_LEFT, -1, big_size,
+					Color(0.0, 0.14, 0.02))
 		for i in 5:
 			var a := PI + PI * (i + 0.5) / 5.0
-			draw_circle(ip + Vector2(cos(a), sin(a)) * 21.0, 1.8,
-					Color(GREEN.r, GREEN.g, GREEN.b, 0.9))
+			var pp := ip + Vector2(cos(a), sin(a)) * 24.0
+			draw_circle(pp, 3.0, Color(g.r, g.g, g.b, 0.25))
+			draw_circle(pp, 1.7, Color(g.r, g.g, g.b, 0.95))
 	# own hull: arc at the lower right of the reticle, green -> yellow -> red
 	var frac: float = clampf(main.hull / main.hull_max, 0.0, 1.0)
 	var hull_col := GREEN if frac > 0.66 else (YELLOW if frac > 0.33 else RED)

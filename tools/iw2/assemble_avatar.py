@@ -80,6 +80,7 @@ class Assembler:
                 n = nodes[p - 1]
 
         gltf_ids: dict[int, int] = {}
+        forward_parents: list[tuple[int, int]] = []
         for n in nodes:
             if n["index"] in lod_groups and n["index"] != best:
                 continue
@@ -87,6 +88,10 @@ class Assembler:
                 continue
             p = n.get("parent")
             gparent = gltf_ids.get(p, parent) if p else parent
+            if p and p not in gltf_ids:
+                # ParentObject may FORWARD-reference an object defined later
+                # in the scene (Hoffer's Gap gantries) — fix up in pass two
+                forward_parents.append((n["index"], p))
             name = n.get("name") or n.get("lwo", n["kind"])
             mesh = None
             if n["kind"] == "object":
@@ -133,11 +138,27 @@ class Assembler:
             gltf_ids[n["index"]] = nid
             if n.get("keys") and n["kind"] != "anim":
                 self.b.add_animation_channels(nid, n["keys"])
-
             if n["kind"] == "scene":
                 ref = f"{scene_dir}/{n.get('name','')}.lws"
                 if self.fs.exists(ref):
                     self.add_scene(ref, nid)
+        # pass two: resolve forward ParentObject references
+        for idx, p in forward_parents:
+            if idx in gltf_ids and p in gltf_ids:
+                self._reparent(gltf_ids[idx], gltf_ids[p])
+
+    def _reparent(self, nid: int, new_parent: int) -> None:
+        doc = self.b.doc
+        roots = doc["scenes"][0]["nodes"]
+        if nid in roots:
+            roots.remove(nid)
+        else:
+            for m in doc["nodes"]:
+                ch = m.get("children")
+                if ch and nid in ch:
+                    ch.remove(nid)
+                    break
+        doc["nodes"][new_parent].setdefault("children", []).append(nid)
 
 
 def assemble(fs: ResourceFS, scene: str, out_path: Path,

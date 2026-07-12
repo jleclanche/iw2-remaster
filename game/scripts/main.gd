@@ -626,16 +626,21 @@ func _spawn_impostor(rec: Dictionary) -> void:
 	rec["node"] = node
 
 func _spawn_beacon(rec: Dictionary) -> Node3D:
-	var mesh := SphereMesh.new()
-	mesh.radius = 30.0
-	mesh.height = 60.0
+	# waypoints/L-points render as the original's green wireframe cube
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = Color(0.5, 0.9, 1.0)
-	mat.emission_enabled = true
-	mat.emission = Color(0.4, 0.8, 1.0)
-	mat.emission_energy_multiplier = 3.0
-	mesh.material = mat
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.albedo_color = Color(0.35, 1.0, 0.45, 0.9)
+	var mesh := ImmediateMesh.new()
+	mesh.surface_begin(Mesh.PRIMITIVE_LINES, mat)
+	var s := 26.0
+	for e in [[0, 1], [1, 3], [3, 2], [2, 0], [4, 5], [5, 7], [7, 6],
+			[6, 4], [0, 4], [1, 5], [2, 6], [3, 7]]:
+		for vi in e:
+			mesh.surface_add_vertex(Vector3(
+				s if vi & 1 else -s, s if vi & 2 else -s, s if vi & 4 else -s))
+	mesh.surface_end()
 	var node := MeshInstance3D.new()
 	node.mesh = mesh
 	add_child(node)
