@@ -200,30 +200,29 @@ func _spawn_npc(dname: String, fac: String, typ: String, avatar: String,
 	return ai
 
 func _setup_act0_scene() -> void:
-	# the original tutorial opens adrift in the Junkyard debris field: the
-	# Abandoned Hulk wreck dead ahead, working tugs all around, the utility
-	# vessel Scopo nearby (targeted), the government transport Marengo far out
+	# extracted from the iprelude + iact0mission10 bytecode:
+	# iutilities.CreatePlayer(comsec_prefitted, "Hoffer's Gap") — the player
+	# wakes up AT Hoffer's Gap (the scrapyard rocks, avatars/hoffersgap);
+	# the "Abandoned Hulk" is the base reactor station sim placed at
+	# player + (3000, 4000, 5000) = 7071 m; junker traffic works the field
 	for o in objects:
-		if str(o["name"]) == "Junkyard":
-			px = o["x"] + 2500.0
-			py = o["y"]
-			pz = o["z"] + 3500.0
+		match str(o["name"]):
+			"Hoffer's Gap":
+				# spawn 3 km out with the Gap dead ahead, like the original
+				px = o["x"]
+				py = o["y"]
+				pz = o["z"] + 3000.0
+				o["prop_collide"] = true
+			"Hoffer's Gap Entertainment Complex", \
+			"Hoffer's Gap Independent Trading Post":
+				# dockable sub-locations of the same physical structure —
+				# don't render more copies of the rocks
+				o["avatar"] = ""
 	objects.append({"name": "Abandoned Hulk", "category": "station",
-		"x": px, "y": py + 80.0, "z": pz - 7000.0, "radius": 350.0,
-		"avatar": "avatars/old_destroyer/setup_turretless.gltf",
+		"x": px + 3000.0, "y": py + 4000.0, "z": pz - 5000.0, "radius": 120.0,
+		"avatar": "avatars/reactor/setup.gltf",
 		"faction": "", "type": "UTIL",
 		"jumps": [], "colors": [], "node": null, "prop_collide": true})
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 1701
-	for i in 14:
-		var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.4, 0.4),
-			rng.randf_range(-1, 1)).normalized()
-		var d := rng.randf_range(1200.0, 9000.0)
-		objects.append({"name": "rock%d" % i, "category": "prop",
-			"x": px + dir.x * d, "y": py + dir.y * d, "z": pz + dir.z * d,
-			"radius": rng.randf_range(35.0, 140.0),
-			"avatar": "avatars/asteroids/setup%d.gltf" % (i % 5 + 1),
-			"jumps": [], "colors": [], "node": null, "prop_collide": true})
 	var scopo := _spawn_npc("Scopo", "INDPT", "UTIL",
 		"data/avatars/avatars/utilityvessel/setup.gltf",
 		Vector3(-600, 100, -3950),
@@ -273,8 +272,10 @@ func _end_movie(then: Callable) -> void:
 		menu.launched = true
 		cam_mode = 1
 		_apply_view()
+	elif menu.launched:
+		menu.close()  # straight into flight after a campaign cinematic
 	else:
-		menu.open()
+		menu.open()   # MOVIES replay returns to the front end
 
 func start_in_system(stem: String) -> void:
 	lds_state = 0
@@ -621,9 +622,9 @@ func _spawn_player() -> void:
 	# the original's cockpit frame, removable like the old UI option (V key),
 	# exactly as authored: avatars/cockpit/setup.lws puts cockpit4 at
 	# LW (0,-0.8225,1.8823) relative to the pilot's eye
+	# (the authored LW offset is already baked into the assembled gltf)
 	cockpit = _load_gltf("data/avatars/avatars/cockpit/setup.gltf")
 	if cockpit != null:
-		cockpit.position = Vector3(0, -0.8225, -1.8823)
 		cam.add_child(cockpit)
 	_apply_view()
 
@@ -704,12 +705,7 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null) -> void:
 	if target == ship:
 		if shooter is AiShip:
 			last_aggressor = shooter
-		hull -= PBC_DAMAGE
-		hud.warn("HULL HIT  %d%%" % int(100.0 * hull / hull_max))
-		if hull <= 0.0:
-			hud.warn("SHIP DESTROYED â€” resetting", 5.0)
-			hull = hull_max
-			ship.velocity = Vector3.ZERO
+		damage_player(PBC_DAMAGE, "HULL HIT")
 		return
 	var ai := target as AiShip
 	if ai != null and ai.damage(PBC_DAMAGE):
@@ -1119,13 +1115,21 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 	var rel: float = (ship.velocity - vel).dot(n)
 	if rel < 0.0:
 		ship.velocity -= n * rel * 1.6  # bounce off
-		var dmg := clampf(-rel * 0.4, 4.0, 250.0)
-		hull -= dmg
+		damage_player(clampf(-rel * 0.4, 4.0, 250.0),
+			"COLLISION - " + what.to_upper())
 		audio.play("audio/sfx/collision.wav", -3.0)
 		audio.play("audio/sfx/ship_clatter.wav", -8.0)
-		hud.warn("COLLISION â€” %s  HULL %d%%" % [what.to_upper(),
-			int(100.0 * hull / hull_max)])
 	ship.global_position = center + n * radius
+
+func damage_player(dmg: float, why: String) -> void:
+	hull = maxf(hull - dmg, 0.0)
+	hud.warn("%s  HULL %d%%" % [why, int(100.0 * hull / hull_max)])
+	if hull <= 0.0:
+		ExplosionFx.boom(self, ship.global_position, 60.0)
+		hud.warn("SHIP DESTROYED - resetting", 5.0)
+		hull = hull_max
+		ship.velocity = Vector3.ZERO
+		ship.set_speed = 0.0
 
 func _model_radius(model: Node3D, fallback: float) -> float:
 	# bounding-sphere radius of the streamed avatar, for collision — the
@@ -1324,9 +1328,17 @@ func _autopilot_process(delta: float) -> void:
 		return
 	var dist := p.length()
 	_face_target()
+	# like the original: approach/dock autopilots engage LDS for long
+	# transits once the nose is on target (LDS cruise already brakes and
+	# drops out near the destination)
+	if ap_mode in [1, 3] and lds_state == 0 and jump_state == 0 \
+			and dist > 8.0e4 and _lds_clearance() > 1000.0 \
+			and (-ship.global_transform.basis.z).angle_to(p.normalized()) < 0.05:
+		_toggle_lds()
 	match ap_mode:
 		1:  # approach: decelerate to arrive 500 m out
-			ship.set_speed = clampf(dist / 8.0, 0.0, ship.max_speed.z)
+			if lds_state == 0:
+				ship.set_speed = clampf(dist / 8.0, 0.0, ship.max_speed.z)
 			if dist < 600.0:
 				ship.set_speed = 0.0
 				_set_autopilot(0)
@@ -1338,7 +1350,8 @@ func _autopilot_process(delta: float) -> void:
 			var hold := clampf((dist - 300.0) * 0.5, 0.0, ship.max_speed.z)
 			ship.set_speed = clampf(tvel.length() + hold, 0.0, ship.max_speed.z)
 		3:  # dock: approach then hard-dock
-			ship.set_speed = clampf(dist / 6.0, 0.0, ship.max_speed.z)
+			if lds_state == 0:
+				ship.set_speed = clampf(dist / 6.0, 0.0, ship.max_speed.z)
 			if dist < DOCK_RANGE * 0.8:
 				_set_autopilot(0)
 				_try_dock()

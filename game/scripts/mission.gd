@@ -137,8 +137,9 @@ static func act0_m10() -> Array:
 		{"say": "a0_m10_dialogue_clay_before_we", "until_comms": true},
 		# contact list lesson: fly to Clay's waypoint
 		{"say": "a0_m10_dialogue_clay_contact_list"},
+		# bytecode: iutilities.CreateWaypointNear(player, random(4000, 5000))
 		{"obj_add": "a0_m10_objectives_approach_clay", "id": "wp1"},
-		wp.call(Vector3(4000, 400, -6000), 800.0),
+		wp.call(Vector3(2800, 600, -3500), 800.0),
 		{"obj_done": "wp1", "say": "a0_m10_dialogue_clay_good",
 			"until_comms": true},
 		# approach autopilot lesson (F6)
