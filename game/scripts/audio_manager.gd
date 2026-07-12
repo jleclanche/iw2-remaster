@@ -9,12 +9,14 @@ const GAME_DIR := "C:/Program Files (x86)/GOG Galaxy/Games/Independence War 2"
 var sfx_cache: Dictionary = {}
 var players: Array[AudioStreamPlayer] = []
 var engine_player: AudioStreamPlayer
+var thruster_player: AudioStreamPlayer
 var lds_player: AudioStreamPlayer
 var music_a: AudioStreamPlayer
 var music_b: AudioStreamPlayer
 var music_current: AudioStreamPlayer
 var current_mood := ""
 var base_path := ""
+var _engine_hot := false
 
 func _ready() -> void:
 	base_path = ProjectSettings.globalize_path("res://").path_join("../data/audio")
@@ -22,9 +24,23 @@ func _ready() -> void:
 		var p := AudioStreamPlayer.new()
 		add_child(p)
 		players.append(p)
+	# the tug's actual drive: main burn loop plus spool-up/down transients
 	engine_player = AudioStreamPlayer.new()
 	engine_player.volume_db = -80.0
 	add_child(engine_player)
+	var eng := _load_wav("audio/sfx/tug_main_burn_loop.wav")
+	if eng:
+		eng.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		engine_player.stream = eng
+		engine_player.play()
+	thruster_player = AudioStreamPlayer.new()
+	thruster_player.volume_db = -80.0
+	add_child(thruster_player)
+	var thr := _load_wav("audio/sfx/maneuvering_thruster.wav")
+	if thr:
+		thr.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		thruster_player.stream = thr
+		thruster_player.play()
 	lds_player = AudioStreamPlayer.new()
 	add_child(lds_player)
 	music_a = AudioStreamPlayer.new()
@@ -33,12 +49,6 @@ func _ready() -> void:
 	add_child(music_a)
 	add_child(music_b)
 	music_current = music_a
-	var eng := _load_wav("audio/sfx/engine_startup.wav")
-	if eng:
-		eng.loop_mode = AudioStreamWAV.LOOP_FORWARD
-		eng.loop_end = eng.data.size() / 2  # 16-bit mono frames; refined per file
-		engine_player.stream = eng
-		engine_player.play()
 
 func _load_wav(rel: String) -> AudioStreamWAV:
 	if rel in sfx_cache:
@@ -73,8 +83,18 @@ func play_loop(player: AudioStreamPlayer, rel: String, volume_db := 0.0) -> void
 	player.play()
 
 func set_engine_level(level: float) -> void:
-	# level 0..1 -> volume; silent when coasting (space is quiet, IW2 wasn't)
+	# level 0..1 -> volume; near-silent when coasting. Spool transients fire
+	# when the main drive lights up or dies down, like the original tug.
+	var hot := level > 0.12
+	if hot and not _engine_hot:
+		play("audio/sfx/tug_main_burn_spoolup.wav", -12.0)
+	elif not hot and _engine_hot:
+		play("audio/sfx/tug_main_burn_spooldown.wav", -14.0)
+	_engine_hot = hot
 	engine_player.volume_db = linear_to_db(clampf(level, 0.0, 1.0) * 0.5 + 0.001)
+
+func set_thruster_level(level: float) -> void:
+	thruster_player.volume_db = linear_to_db(clampf(level, 0.0, 1.0) * 0.4 + 0.001)
 
 func music(mood: String) -> void:
 	if mood == current_mood:

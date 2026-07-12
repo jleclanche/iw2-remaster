@@ -73,7 +73,7 @@ func _physics_process(delta: float) -> void:
 				var hit := _segment_sphere(from, node.global_position,
 						t.global_position, 60.0)
 				if hit:
-					main.on_bolt_hit(t, t.global_position)
+					main.on_bolt_hit(t, t.global_position, bolt["shooter"])
 					dead = true
 					break
 		if dead:

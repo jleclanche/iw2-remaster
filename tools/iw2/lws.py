@@ -26,7 +26,7 @@ from pathlib import Path
 
 from .resources import ResourceFS
 
-_ATTR_RE = re.compile(r'(\w+)=("[^"]*"|\S+)')
+_ATTR_RE = re.compile(r'(\w+)=("[^"]*"|\([^)]*\)|\S+)')
 
 
 def _parse_tag(name: str) -> tuple[str, dict]:

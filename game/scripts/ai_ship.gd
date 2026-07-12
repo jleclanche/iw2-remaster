@@ -1,4 +1,4 @@
-class_name AiShip
+﻿class_name AiShip
 extends ShipFlight
 # AI pilot on top of the same flight model the player uses.
 # Behaviors: "patrol" (cruise between waypoints), "attack" (pursue the
@@ -45,13 +45,13 @@ func _steer_toward(point: Vector3, _delta: float) -> float:
 
 func _patrol(delta: float) -> void:
 	if waypoints.is_empty():
-		throttle = 0.0
+		set_speed = 0.0
 		return
 	var target := waypoints[wp]
 	if global_position.distance_to(target) < 800.0:
 		wp = (wp + 1) % waypoints.size()
 	_steer_toward(target, delta)
-	throttle = 0.5
+	set_speed = max_speed.z * 0.5
 
 func _attack(delta: float) -> void:
 	if main == null or main.ship == null:
@@ -62,7 +62,7 @@ func _attack(delta: float) -> void:
 	var tof := dist / bolt_speed
 	var aim: Vector3 = player.global_position + (player.velocity - velocity) * tof
 	var angle := _steer_toward(aim, delta)
-	throttle = 1.0 if dist > 1200.0 else 0.35
+	set_speed = max_speed.z if dist > 1200.0 else max_speed.z * 0.35
 	if dist < weapon_range and angle < 0.06 and fire_cooldown <= 0.0:
 		fire_cooldown = 0.5
 		main.spawn_bolt(self, -global_transform.basis.z)

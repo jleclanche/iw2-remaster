@@ -24,14 +24,23 @@ var main: Node3D
 var mode := "main"  # main | systems
 var sel := 0
 var launched := false
-var _font: Font
-var _item_rects: Array = []
+var _font: Font        # Handel Gothic 12pt — the original GUI face
+var _font_title: Font  # Square721 BdEx 19pt — the original title face
+var title_size := 27
+var item_size := 17
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = false
-	_font = ThemeDB.fallback_font
+	_font = Hud.load_game_font(main._base(), "handelgothic bt_12pt.fnt")
+	_font_title = Hud.load_game_font(main._base(), "square721 bdex bt_19pt.fnt")
+	if _font is FontFile and (_font as FontFile).fixed_size > 0:
+		item_size = (_font as FontFile).fixed_size
+	if _font_title is FontFile and (_font_title as FontFile).fixed_size > 0:
+		title_size = (_font_title as FontFile).fixed_size
+
+var _item_rects: Array = []
 
 func open() -> void:
 	visible = true
@@ -124,12 +133,13 @@ func _draw() -> void:
 	# title block
 	var title := "INDEPENDENCE WAR 2"
 	var sub := "EDGE OF CHAOS — REMASTER PROTOTYPE"
-	var tw := _font.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER, -1, 42).x
-	draw_string(_font, Vector2(cx - tw / 2.0, s.y * 0.2), title,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 42, AMBER_GLOW)
-	var sw := _font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 16).x
+	var tw := _font_title.get_string_size(title, HORIZONTAL_ALIGNMENT_CENTER,
+			-1, title_size * 2).x
+	draw_string(_font_title, Vector2(cx - tw / 2.0, s.y * 0.2), title,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, title_size * 2, AMBER_GLOW)
+	var sw := _font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, item_size).x
 	draw_string(_font, Vector2(cx - sw / 2.0, s.y * 0.2 + 26), sub,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 16, AMBER_DIM)
+			HORIZONTAL_ALIGNMENT_LEFT, -1, item_size, AMBER_DIM)
 	draw_line(Vector2(cx - tw / 2.0 - 30, s.y * 0.2 + 40),
 			Vector2(cx + tw / 2.0 + 30, s.y * 0.2 + 40), AMBER_DIM, 1.5, true)
 	# panel header
@@ -141,7 +151,7 @@ func _draw() -> void:
 	var items := _items()
 	var y := s.y * 0.34 + 30
 	var line_h := 30.0 if items.size() < 10 else 24.0
-	var fs := 20 if items.size() < 10 else 16
+	var fs := item_size if items.size() < 10 else item_size - 3
 	for i in items.size():
 		var col := AMBER_GLOW if i == sel else AMBER
 		var x := cx - 160

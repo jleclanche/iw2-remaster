@@ -15,10 +15,19 @@ from __future__ import annotations
 import sys
 from pathlib import Path, PurePosixPath
 
-from .gltf_builder import GltfBuilder
+from .gltf_builder import GltfBuilder, hpb_to_quat
 from .lws import parse_lws
 from .pso import parse_pso
 from .resources import ResourceFS
+
+
+def _pose(key: dict) -> dict:
+    """LWS key -> glTF-space pose for engine-side channel interpolation."""
+    return {
+        "pos": [key["pos"][0], key["pos"][1], -key["pos"][2]],
+        "quat": hpb_to_quat(*key["hpb"]),
+        "scale": [s if abs(s) > 1e-4 else 1e-4 for s in key["scale"]],
+    }
 
 
 class Assembler:
@@ -94,7 +103,19 @@ class Assembler:
                         lambda s: self.texture_uri(scene_dir, s.texture))
                 else:
                     self.missing_psos.append(pso_path)
-            extras = {"iw2_kind": n["kind"]} if n["kind"] not in ("object", "null") else None
+            extras = None
+            if n["kind"] not in ("object", "null"):
+                extras = {"iw2_kind": n["kind"]}
+                for attr in ("channel", "class", "template", "tint", "splay",
+                             "name"):
+                    if attr in n:
+                        extras["iw2_" + attr] = n[attr]
+                # <anim channel=X> nulls are POSE INTERPOLATORS driven by a
+                # named ship-state channel (0..1), not time animations: export
+                # both end poses for the engine's channel rig
+                if n["kind"] == "anim" and n.get("keys"):
+                    extras["iw2_pose0"] = _pose(n["keys"][0])
+                    extras["iw2_pose1"] = _pose(n["keys"][-1])
             # detail_switch transforms are authoring-time offsets (LOD variants
             # laid out side by side); the engine treats them as identity
             if n["kind"] == "detail_switch":
@@ -109,7 +130,7 @@ class Assembler:
                 self.b.node(f"{name}_pivot", nid, mesh,
                             [-pivot[0], -pivot[1], -pivot[2]])
             gltf_ids[n["index"]] = nid
-            if n.get("keys"):
+            if n.get("keys") and n["kind"] != "anim":
                 self.b.add_animation_channels(nid, n["keys"])
 
             if n["kind"] == "scene":

@@ -21,8 +21,12 @@ var angular_speed_boost := 1.4               # free-flight rotation bonus
 # --- state ---
 var velocity := Vector3.ZERO                 # world m/s
 var angular_velocity := Vector3.ZERO         # local rad/s (pitch, yaw, roll)
-var throttle := 0.0                          # 0..1 of forward max speed
+var set_speed := 0.0                         # m/s "throttle wheel" setting;
+                                             # the flight computer flies the
+                                             # ship at this speed along the nose
 var assist := true
+var drive_override := false                  # LDS/capsule drive owns velocity:
+                                             # skip assist trim and speed caps
 
 # --- per-frame inputs, set by the pilot controller ---
 var input_rotate := Vector3.ZERO             # desired pitch/yaw/roll -1..1
@@ -61,26 +65,36 @@ func _integrate_rotation(delta: float) -> void:
 	rotate_object_local(Vector3.BACK, angular_velocity.z * delta)
 
 func _integrate_translation(delta: float) -> void:
+	# IW2 semantics: thrusters (W/S/A/D) always push directly, Newtonian.
+	# With assist on, the flight computer trims axes that have no active
+	# thruster input toward the set-speed vector (set_speed along the nose,
+	# zero laterally); assist never fights a held thruster.
+	if drive_override:
+		global_position += velocity * delta
+		return
 	var b := global_transform.basis
+	var v_local := velocity * b  # world->local
+	if absf(input_thrust.x) > 0.05:
+		v_local.x += input_thrust.x * max_accel.x * delta
+	elif assist:
+		v_local.x = move_toward(v_local.x, 0.0, max_accel.x * delta)
+	if absf(input_thrust.y) > 0.05:
+		v_local.y += input_thrust.y * max_accel.y * delta
+	elif assist:
+		v_local.y = move_toward(v_local.y, 0.0, max_accel.y * delta)
+	if absf(input_thrust.z) > 0.05:
+		v_local.z += -input_thrust.z * max_accel.z * delta
+	elif assist:
+		v_local.z = move_toward(v_local.z, -set_speed, max_accel.z * delta)
 	if assist:
-		# target velocity in local frame: throttle drives -Z (forward),
-		# thrust inputs drive lateral/vertical
-		var target_local := Vector3(
-			input_thrust.x * max_speed.x,
-			input_thrust.y * max_speed.y,
-			-(throttle * max_speed.z) + input_thrust.z * max_speed.z * 0.25)
-		var v_local := velocity * b  # world->local
-		v_local.x = move_toward(v_local.x, target_local.x, max_accel.x * delta)
-		v_local.y = move_toward(v_local.y, target_local.y, max_accel.y * delta)
-		v_local.z = move_toward(v_local.z, target_local.z, max_accel.z * delta)
-		velocity = b * v_local
-	else:
-		var accel_local := Vector3(
-			input_thrust.x * max_accel.x,
-			input_thrust.y * max_accel.y,
-			-input_thrust.z * max_accel.z)
-		velocity += (b * accel_local) * delta
+		v_local.x = clampf(v_local.x, -max_speed.x, max_speed.x)
+		v_local.y = clampf(v_local.y, -max_speed.y, max_speed.y)
+		v_local.z = clampf(v_local.z, -max_speed.z, max_speed.z)
+	velocity = b * v_local
 	global_position += velocity * delta
+
+func thrusting() -> bool:
+	return input_thrust.length() > 0.05
 
 func speed() -> float:
 	return velocity.length()

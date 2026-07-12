@@ -148,8 +148,28 @@ def classify_system(sys_: dict) -> None:
     base = objects[0]["name"].removesuffix(" System") if objects else ""
     linked = {l["record"]: l["destinations"] for l in sys_["links"]}
 
+    positions = [o["pos"] for o in objects]
+
+    def nearest_other(idx: int) -> float:
+        best = float("inf")
+        px, py, pz = positions[idx]
+        for j, (x, y, z) in enumerate(positions):
+            if j == idx:
+                continue
+            d = ((x - px) ** 2 + (y - py) ** 2 + (z - pz) ** 2) ** 0.5
+            if 1.0 < d < best:
+                best = d
+        return best
+
     for o in objects:
         o["radius"] = struct.unpack(">f", bytes.fromhex(o["type_hash"]))[0]
+        # the +311 float is a map ZONE radius; for big bodies and cluster
+        # rocks it vastly exceeds the plausible physical size. Cap the render
+        # radius by the distance to the nearest other record so planets never
+        # swallow their own stations/L-points.
+        o["visual_radius"] = max(2.0e4, min(o["radius"],
+                                            0.5 * nearest_other(o["index"]),
+                                            8.0e7))
         name = o["name"]
         low = name.lower()
         avatar = None

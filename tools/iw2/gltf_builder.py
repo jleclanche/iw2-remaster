@@ -179,9 +179,30 @@ class GltfBuilder:
                 })
         return out
 
+    @staticmethod
+    def _is_cyclic(keys: list[dict]) -> bool:
+        """True when the track loops cleanly: last key == first key (position,
+        scale, and rotation modulo full turns). Non-cyclic tracks are one-shot
+        articulation poses (docking clamps, tug legs) that must NOT be looped —
+        looping them plays the move then teleports back every cycle."""
+        a, b = keys[0], keys[-1]
+        if any(abs(a["pos"][i] - b["pos"][i]) > 1e-4 for i in range(3)):
+            return False
+        if any(abs(a["scale"][i] - b["scale"][i]) > 1e-4 for i in range(3)):
+            return False
+        return all(abs(a["hpb"][i] - b["hpb"][i]) % 360.0 < 1e-3
+                   or 360.0 - abs(a["hpb"][i] - b["hpb"][i]) % 360.0 < 1e-3
+                   for i in range(3))
+
     def add_animation_channels(self, node_idx: int, keys: list[dict],
                                fps: float = 25.0) -> None:
-        """Add translation/rotation/scale channels for LWS keyframes."""
+        """Add translation/rotation/scale channels for LWS keyframes.
+
+        Only cyclic tracks are exported (the engine autoplays animations on
+        loop); one-shot pose tracks stay at their rest transform.
+        """
+        if len(keys) < 2 or not self._is_cyclic(keys):
+            return
         keys = self._subdivide_keys(keys)
         if "animations" not in self.doc:
             self.doc["animations"] = [{"name": "default", "channels": [], "samplers": []}]

@@ -35,7 +35,15 @@ var menu: Menu
 var weapons: PbcWeapons
 var audio: AudioManager
 var sun: DirectionalLight3D
-var view_mode := 0  # 0 cockpit, 1 internal no frame, 2 external chase
+var grid: MultiMeshInstance3D
+var grid_mat: StandardMaterial3D
+var cam_mode := 0  # F1 internal, F2 tactical/chase, F3 external, F4 drop
+var cockpit_frame := true  # the original's removable cockpit dressing
+var drop_cam_pos := Vector3.ZERO
+var zoomed := false
+var free_toggle := false
+var ap_mode := 0  # 0 off, 1 approach, 2 formate, 3 dock, 4 match velocity
+var last_aggressor: AiShip = null
 var demo := false
 var demo_t := 0.0
 var demo_phase := 0
@@ -62,16 +70,20 @@ var hull_max := 1000.0
 var docked_at := ""
 var ship_stats: Dictionary = {}
 
+var clock_start := 0  # ms tick when we last left port (the HUD clock)
+
 var motioncheck := false
 var jumpcheck := false
 var uicheck := false
+var mechcheck := false
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
 	motioncheck = "--motioncheck" in OS.get_cmdline_user_args()
 	jumpcheck = "--jumpcheck" in OS.get_cmdline_user_args()
 	uicheck = "--uicheck" in OS.get_cmdline_user_args()
-	if motioncheck or jumpcheck or uicheck:
+	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
+	if motioncheck or jumpcheck or uicheck or mechcheck:
 		demo = true
 	audio = AudioManager.new()
 	add_child(audio)
@@ -97,7 +109,7 @@ func _ready() -> void:
 	elif demo:
 		menu.visible = false
 		menu.launched = true
-		view_mode = 2
+		cam_mode = 1
 		_apply_view()
 	else:
 		menu.open()
@@ -107,7 +119,9 @@ func start_in_system(stem: String) -> void:
 	jump_state = 0
 	_load_system(stem, START_NAME if stem == START_SYSTEM else "")
 	ship.velocity = Vector3.ZERO
-	ship.throttle = 0.0
+	ship.set_speed = 0.0
+	ap_mode = 0
+	clock_start = Time.get_ticks_msec()
 
 func _base() -> String:
 	return ProjectSettings.globalize_path("res://").path_join("..")
@@ -146,6 +160,53 @@ func _build_environment() -> void:
 	e.glow_enabled = true
 	env.environment = e
 	add_child(env)
+	_build_grid()
+
+func _build_grid() -> void:
+	# the original's motion grid: translucent crosses fixed in space, orange
+	# in conventional flight, green in LDS. The lattice moves rigidly modulo
+	# its spacing so it never runs out.
+	var mesh := ArrayMesh.new()
+	var verts := PackedVector3Array()
+	var arm := 0.04
+	for axis in [Vector3.RIGHT, Vector3.UP, Vector3.BACK]:
+		verts.append(-axis * arm)
+		verts.append(axis * arm)
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
+	grid_mat = StandardMaterial3D.new()
+	grid_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	grid_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	grid_mat.albedo_color = Color(1.0, 0.55, 0.15, 0.30)
+	mesh.surface_set_material(0, grid_mat)
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = mesh
+	var n := 7  # 7^3 lattice, +-3 cells
+	mm.instance_count = n * n * n
+	var i := 0
+	for x in n:
+		for y in n:
+			for z in n:
+				mm.set_instance_transform(i, Transform3D(Basis.IDENTITY,
+					Vector3(x - 3, y - 3, z - 3)))
+				i += 1
+	grid = MultiMeshInstance3D.new()
+	grid.multimesh = mm
+	add_child(grid)
+
+func _update_grid() -> void:
+	var spd := ship.velocity.length()
+	# spacing grows with speed so crossing rate stays readable (LDS!)
+	var s := clampf(spd * 0.7, 500.0, 1.0e10)
+	grid.scale = Vector3.ONE * s
+	grid.position = -Vector3(fposmod(px, s), fposmod(py, s), fposmod(pz, s))
+	var want := Color(0.3, 1.0, 0.4, 0.35) if lds_state == 2 \
+		else Color(1.0, 0.55, 0.15, 0.30)
+	grid_mat.albedo_color = grid_mat.albedo_color.lerp(want, 0.1)
+	grid.visible = docked_at == ""
 
 func _starfield_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
@@ -197,7 +258,7 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 			"name": str(o["name"]), "category": cat,
 			"x": float(o["pos"][0]), "y": float(o["pos"][1]),
 			"z": -float(o["pos"][2]),
-			"radius": float(o.get("radius", 0.0)),
+			"radius": float(o.get("visual_radius", o.get("radius", 0.0))),
 			"avatar": str(o.get("avatar", "")),
 			"jumps": o.get("jumps_to_stems", []),
 			"colors": o.get("colors", []),
@@ -294,6 +355,7 @@ func _spawn_player() -> void:
 			break
 	ship_model = _load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf")
 	ship.add_child(ship_model)
+	ShipEffects.attach(ship, ship_model)
 	add_child(ship)
 	weapons = PbcWeapons.new()
 	weapons.ship = ship
@@ -312,12 +374,14 @@ func _spawn_player() -> void:
 
 func _apply_view() -> void:
 	if cockpit != null:
-		cockpit.visible = view_mode == 0
+		cockpit.visible = cam_mode == 0 and cockpit_frame
 	if ship_model != null:
-		ship_model.visible = view_mode == 2
+		ship_model.visible = cam_mode != 0
 
-func _cycle_view() -> void:
-	view_mode = (view_mode + 1) % 3
+func _set_camera(mode: int) -> void:
+	cam_mode = mode
+	if mode == 3:
+		drop_cam_pos = cam.global_position
 	audio.play("audio/gui/camera_change.wav", -10.0)
 	_apply_view()
 
@@ -339,7 +403,9 @@ func _spawn_traffic() -> void:
 		ai.setup({"hit_points": 800, "speed": [100, 100, 300],
 				"acceleration": [40, 40, 60], "yaw_rate": 20, "pitch_rate": 20,
 				"roll_rate": 20})
-		ai.add_child(_load_gltf("data/avatars/avatars/freighter/setup.gltf"))
+		var fmodel := _load_gltf("data/avatars/avatars/freighter/setup.gltf")
+		ai.add_child(fmodel)
+		ShipEffects.attach(ai, fmodel)
 		ai.position = Vector3(local[0]) + Vector3(1500 + i * 900, i * 400, -2000)
 		for w in local:
 			ai.waypoints.append(Vector3(w))
@@ -359,6 +425,7 @@ func spawn_hostile(at: Vector3) -> AiShip:
 	if model == null:
 		model = _load_gltf("data/avatars/avatars/gangstership/setup.gltf")
 	ai.add_child(model)
+	ShipEffects.attach(ai, model)
 	ai.position = at
 	add_child(ai)
 	ai_ships.append(ai)
@@ -371,10 +438,12 @@ func spawn_bolt(shooter: Node3D, dir: Vector3) -> void:
 	weapons.spawn(shooter, dir)
 	audio.play("audio/sfx/light_pbc.wav", -8.0)
 
-func on_bolt_hit(target: Node3D, pos: Vector3) -> void:
+func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null) -> void:
 	audio.play("audio/sfx/impact.wav", -6.0)
 	_flash(pos, 8.0)
 	if target == ship:
+		if shooter is AiShip:
+			last_aggressor = shooter
 		hull -= PBC_DAMAGE
 		hud.warn("HULL HIT  %d%%" % int(100.0 * hull / hull_max))
 		if hull <= 0.0:
@@ -421,7 +490,15 @@ func _flash(pos: Vector3, size: float) -> void:
 	tw.parallel().tween_property(mat, "albedo_color:a", 0.0, 0.5)
 	tw.tween_callback(node.queue_free)
 
+func _station_faction(sname: String) -> String:
+	for f in ["MAAS", "NOMEX", "Police", "Government", "Marauder", "Navy",
+			"Military", "Trimann", "Lomax", "Helios", "Laplace"]:
+		if f.to_lower() in sname.to_lower():
+			return f.left(5).to_upper()
+	return "INDIE"
+
 func contact_list() -> Array:
+	# original columns: faction / type / range / name (manual, HUD section)
 	var list: Array = []
 	for i in objects.size():
 		var o: Dictionary = objects[i]
@@ -434,10 +511,17 @@ func contact_list() -> Array:
 				show = d < 1.0e7
 		if show:
 			list.append({"name": o["name"], "dist": d, "hostile": false,
-					"targeted": i == target_idx})
+					"targeted": i == target_idx, "category": o["category"],
+					"faction": "NAV" if o["category"] == "lpoint"
+						else _station_faction(str(o["name"])),
+					"type": "L-PNT" if o["category"] == "lpoint" else "STATN"})
 	for a in ai_ships:
+		var hostile: bool = a.behavior == "attack"
 		list.append({"name": a.name, "dist": a.global_position.length(),
-				"hostile": a.behavior == "attack", "targeted": a == target_ai})
+				"hostile": hostile, "targeted": a == target_ai,
+				"category": "traffic",
+				"faction": "MARA" if hostile else "INDIE",
+				"type": "FIGHT" if hostile else "TRANS"})
 	list.sort_custom(func(x, y): return x["dist"] < y["dist"])
 	return list.slice(0, 12)
 
@@ -445,47 +529,77 @@ func _unhandled_input(event: InputEvent) -> void:
 	if menu != null and menu.visible:
 		menu.handle(event)
 		return
+	# mouse steers as the joystick yoke (the original's primary control)
 	if event is InputEventMouseMotion and not demo and docked_at == "":
 		ship.input_rotate.y = clampf(ship.input_rotate.y - event.relative.x * 0.003, -1, 1)
 		ship.input_rotate.x = clampf(ship.input_rotate.x - event.relative.y * 0.003, -1, 1)
+	# original IW2 bindings (configs/default.ini + keyboard_only.ini)
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
-			KEY_T:
-				_cycle_target()
-			KEY_L:
+			KEY_N:  # icPlayerPilot.FreeToggle
+				free_toggle = not free_toggle
+				audio.play("audio/gui/mechanical_confirm.wav", -10.0)
+				hud.log_msg("FLIGHT ASSIST %s" % ("OFF" if free_toggle else "ON"))
+			KEY_L:  # ToggleLDS
 				_toggle_lds()
-			KEY_D:
-				_try_dock()
-			KEY_U:
+			KEY_U:  # Undock
 				_undock()
-			KEY_J:
+			KEY_Z:  # ToggleZoom
+				zoomed = not zoomed
+				cam.fov = 30 if zoomed else 70
+			KEY_COMMA:  # CycleContactUp
+				_cycle_contact(-1)
+			KEY_PERIOD:  # CycleContactDown
+				_cycle_contact(1)
+			KEY_HOME:
+				_target_contact_index(0)
+			KEY_END:
+				_target_contact_index(9999)
+			KEY_R:  # TargetNearestEnemy
+				_target_nearest_enemy()
+			KEY_T:  # TargetNearestShipToDirection
+				_target_nearest_to_direction()
+			KEY_E:  # CycleEnemy
+				_cycle_enemy()
+			KEY_Q:  # TargetLastAggressor
+				if last_aggressor != null and is_instance_valid(last_aggressor):
+					target_ai = last_aggressor
+					target_idx = -1
+					audio.play("audio/hud/target_changed.wav", -10.0)
+			KEY_F5:  # AutopilotOff
+				_set_autopilot(0)
+			KEY_F6:  # AutopilotApproach
+				_set_autopilot(1)
+			KEY_F7:  # AutopilotFormate
+				_set_autopilot(2)
+			KEY_F8:  # AutopilotDock
+				_set_autopilot(3)
+			KEY_F9:  # AutopilotMatchVelocity
+				_set_autopilot(4)
+			KEY_F1:  # InternalCamera
+				_set_camera(0)
+			KEY_F2:  # TacticalCamera
+				_set_camera(1)
+			KEY_F3:  # ExternalCamera
+				_set_camera(2)
+			KEY_F4:  # DropCamera
+				_set_camera(3)
+			KEY_F12:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png(_base().path_join("data/screenshots/screenshot_%d.png"
+					% (Time.get_ticks_msec() / 1000)))
+			KEY_V:  # cockpit dressing on/off (original GUI option)
+				cockpit_frame = not cockpit_frame
+				_apply_view()
+			KEY_J:  # capsule jump at an L-point (remaster binding)
 				_try_jump()
 			KEY_K:
 				_cycle_route()
-			KEY_V:
-				_cycle_view()
-			KEY_H:
+			KEY_H:  # dev: spawn hostile
 				spawn_hostile(ship.global_position +
 					-ship.global_transform.basis.z * 3000.0 + Vector3(400, 200, 0))
 	if event.is_action_pressed("ui_cancel") and not demo:
-		menu.open()
-
-func _cycle_target() -> void:
-	audio.play("audio/hud/target_changed.wav", -10.0)
-	# cycle: AI ships first (nearest), then map objects
-	if not ai_ships.is_empty():
-		var idx := ai_ships.find(target_ai)
-		if idx < ai_ships.size() - 1:
-			target_ai = ai_ships[idx + 1]
-			target_idx = -1
-			return
-		target_ai = null
-	target_idx = (target_idx + 1) % objects.size()
-	if objects[target_idx]["category"] == "star":
-		target_idx = (target_idx + 1) % objects.size()
-	if target_idx == 0 and not ai_ships.is_empty():
-		target_ai = ai_ships[0]
-		target_idx = -1
+		menu.open()  # Escape = PDA
 
 func _target_pos() -> Vector3:
 	if target_ai != null and is_instance_valid(target_ai):
@@ -522,7 +636,9 @@ func _lds_clearance() -> float:
 			"station":
 				inhibit = LDSI_RADIUS
 			"body":
-				inhibit = maxf(LDSI_RADIUS, o["radius"] * 1.5)
+				# drop out just above the rendered surface — LDSI proper is
+				# station/script territory in IW2, not blanket planet zones
+				inhibit = maxf(LDSI_RADIUS, o["radius"] * 1.2)
 			_:
 				continue
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
@@ -554,16 +670,19 @@ func _try_dock() -> void:
 		return
 	docked_at = near["name"]
 	ship.velocity = Vector3.ZERO
-	ship.throttle = 0.0
+	ship.set_speed = 0.0
 	audio.play("audio/sfx/dock.wav", -4.0)
 	audio.music("ambient")
+	hud.log_msg("DOCKED: %s" % str(near["name"]).to_upper())
 
 func _undock() -> void:
 	if docked_at == "":
 		return
 	docked_at = ""
-	audio.play("audio/sfx/base_doors_sound.wav", -6.0)
+	audio.play("audio/sfx/undock.wav", -4.0)
 	ship.velocity = -ship.global_transform.basis.z * 50.0
+	clock_start = Time.get_ticks_msec()
+	hud.log_msg("UNDOCKED")
 
 # --- capsule jump ----------------------------------------------------------
 
@@ -643,40 +762,216 @@ func _jump_process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if demo:
 		_demo_control(delta)
+		if mechcheck and ap_mode > 0 and docked_at == "":
+			_autopilot_process(delta)
 	elif docked_at == "" and not menu.visible:
 		_player_control(delta)
+		if ap_mode > 0:
+			_autopilot_process(delta)
 	if lds_state > 0:
 		_lds_process(delta)
 	if jump_state > 0:
 		_jump_process(delta)
+	# LDS cruise / capsule runs own the velocity vector: the flight
+	# computer's per-axis speed caps must not clip them back to drive speeds
+	ship.drive_override = lds_state == 2 or jump_state >= 2
 	if docked_at != "":
 		ship.velocity = Vector3.ZERO
-		ship.throttle = 0.0
+		ship.set_speed = 0.0
 	_fold_motion()
 	_stream_objects()
+	_update_grid()
 	_chase_camera(delta)
-	var demand: float = (ship.throttle * ship.max_speed.z -
-		ship.forward_speed()) / maxf(ship.max_speed.z, 1.0)
-	audio.set_engine_level(absf(demand) + ship.input_thrust.length() * 0.3
-		+ ship.throttle * 0.15)
+	var demand: float = absf(ship.set_speed - ship.forward_speed()) \
+		/ maxf(ship.max_speed.z, 1.0) + absf(ship.input_thrust.z)
+	audio.set_engine_level(demand + ship.set_speed / ship.max_speed.z * 0.1)
+	audio.set_thruster_level(Vector2(ship.input_thrust.x, ship.input_thrust.y).length()
+		+ ship.input_rotate.length() * 0.5)
+
+func _key(code: int) -> float:
+	return 1.0 if Input.is_physical_key_pressed(code) else 0.0
 
 func _player_control(delta: float) -> void:
-	ship.throttle = clampf(ship.throttle
-		+ (0.4 if Input.is_action_pressed("throttle_up") else 0.0) * delta
-		- (0.4 if Input.is_action_pressed("throttle_down") else 0.0) * delta, 0.0, 1.0)
-	if Input.is_action_just_pressed("throttle_zero"):
-		ship.throttle = 0.0
-	if Input.is_action_just_pressed("toggle_assist"):
-		ship.assist = not ship.assist
-		audio.play("audio/gui/mechanical_confirm.wav", -10.0)
-	ship.input_thrust.x = Input.get_axis("thrust_left", "thrust_right")
-	ship.input_thrust.y = Input.get_axis("thrust_down", "thrust_up")
-	ship.input_rotate.z = Input.get_axis("roll_right", "roll_left")
-	ship.input_rotate.x = move_toward(ship.input_rotate.x, 0.0, delta * 1.5)
-	ship.input_rotate.y = move_toward(ship.input_rotate.y, 0.0, delta * 1.5)
+	# throttle wheel: = / - adjust the set speed (icPlayerPilot.ThrottleDelta)
+	var dv := ship.max_speed.z * delta / 1.2
+	ship.set_speed = clampf(ship.set_speed
+		+ (_key(KEY_EQUAL) + _key(KEY_KP_ADD)) * dv
+		- (_key(KEY_MINUS) + _key(KEY_KP_SUBTRACT)) * dv,
+		0.0, ship.max_speed.z)
+	if ap_mode == 0:
+		# thrusters: W/S fore-aft, A/D lateral (LateralZ / LateralX)
+		ship.input_thrust.z = _key(KEY_W) - _key(KEY_S)
+		ship.input_thrust.x = _key(KEY_D) - _key(KEY_A)
+		ship.input_thrust.y = 0.0
+		# steering: numpad per keyboard_only.ini, on top of the mouse yoke
+		var yaw := _key(KEY_KP_4) - _key(KEY_KP_6)
+		var pitch := _key(KEY_KP_8) - _key(KEY_KP_2)
+		var roll := _key(KEY_KP_1) - _key(KEY_KP_3)
+		if absf(yaw) > 0.0:
+			ship.input_rotate.y = yaw
+		if absf(pitch) > 0.0:
+			ship.input_rotate.x = pitch
+		ship.input_rotate.z = roll
+		ship.input_rotate.x = move_toward(ship.input_rotate.x, 0.0, delta * 1.5)
+		ship.input_rotate.y = move_toward(ship.input_rotate.y, 0.0, delta * 1.5)
+	# free flight: N toggles, LeftCtrl / NumPad5 holds (FreeToggle/FreeHold)
+	ship.assist = not (free_toggle or Input.is_physical_key_pressed(KEY_CTRL)
+		or Input.is_physical_key_pressed(KEY_KP_5))
 	if (Input.is_key_pressed(KEY_SPACE)
 			or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) and lds_state == 0:
 		weapons.fire()
+
+# --- targeting (original contact-list semantics) ----------------------------
+
+func _contacts_full() -> Array:
+	var list: Array = []
+	for i in objects.size():
+		var o: Dictionary = objects[i]
+		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
+		var show := false
+		match o["category"]:
+			"station":
+				show = d < 5.0e5
+			"lpoint":
+				show = d < 1.0e7
+		if show:
+			list.append({"kind": "obj", "idx": i, "dist": d})
+	for a in ai_ships:
+		list.append({"kind": "ai", "ai": a, "dist": a.global_position.length()})
+	list.sort_custom(func(x, y): return x["dist"] < y["dist"])
+	return list
+
+func _current_contact_pos(list: Array) -> int:
+	for i in list.size():
+		var e: Dictionary = list[i]
+		if e["kind"] == "ai" and e["ai"] == target_ai and target_ai != null:
+			return i
+		if e["kind"] == "obj" and e["idx"] == target_idx and target_idx >= 0:
+			return i
+	return -1
+
+func _set_contact(e: Dictionary) -> void:
+	if e["kind"] == "ai":
+		target_ai = e["ai"]
+		target_idx = -1
+	else:
+		target_idx = e["idx"]
+		target_ai = null
+	audio.play("audio/hud/target_changed.wav", -10.0)
+
+func _cycle_contact(dir: int) -> void:
+	var list := _contacts_full()
+	if list.is_empty():
+		return
+	var pos := _current_contact_pos(list)
+	_set_contact(list[clampi(pos + dir, 0, list.size() - 1)]
+		if pos >= 0 else list[0])
+
+func _target_contact_index(i: int) -> void:
+	var list := _contacts_full()
+	if list.is_empty():
+		return
+	_set_contact(list[clampi(i, 0, list.size() - 1)])
+
+func _target_nearest_enemy() -> void:
+	var best: AiShip = null
+	var bestd := INF
+	for a in ai_ships:
+		if a.behavior == "attack" and a.global_position.length() < bestd:
+			bestd = a.global_position.length()
+			best = a
+	if best != null:
+		target_ai = best
+		target_idx = -1
+		audio.play("audio/hud/target_changed.wav", -10.0)
+	else:
+		audio.play("audio/hud/invalid_input.wav", -10.0)
+
+func _cycle_enemy() -> void:
+	var enemies: Array = []
+	for a in ai_ships:
+		if a.behavior == "attack":
+			enemies.append(a)
+	if enemies.is_empty():
+		audio.play("audio/hud/invalid_input.wav", -10.0)
+		return
+	var idx := enemies.find(target_ai)
+	target_ai = enemies[(idx + 1) % enemies.size()]
+	target_idx = -1
+	audio.play("audio/hud/target_changed.wav", -10.0)
+
+func _target_nearest_to_direction() -> void:
+	var fwd := -ship.global_transform.basis.z
+	var best := {}
+	var besta := 0.6  # ~35 degree cone
+	for e in _contacts_full():
+		var p: Vector3
+		if e["kind"] == "ai":
+			p = e["ai"].global_position
+		else:
+			var o: Dictionary = objects[e["idx"]]
+			p = Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
+		var a := fwd.angle_to(p.normalized())
+		if a < besta:
+			besta = a
+			best = e
+	if not best.is_empty():
+		_set_contact(best)
+	else:
+		audio.play("audio/hud/invalid_input.wav", -10.0)
+
+# --- autopilots (F5-F9, iAI order packages) ---------------------------------
+
+func _set_autopilot(mode: int) -> void:
+	if mode != 0 and _target_pos() == Vector3.INF and mode != 3:
+		hud.warn("AUTOPILOT: NO TARGET")
+		audio.play("audio/hud/invalid_input.wav", -8.0)
+		return
+	ap_mode = mode
+	audio.play("audio/gui/confirm.wav", -10.0)
+	var names := ["OFF", "APPROACH", "FORMATE", "DOCK", "MATCH VELOCITY"]
+	hud.log_msg("AUTOPILOT: %s" % names[mode])
+
+func _autopilot_process(delta: float) -> void:
+	var p := _target_pos()
+	if ap_mode == 3 and p == Vector3.INF:
+		var near := _nearest("station")
+		if near.get("dist", INF) < INF:
+			for i in objects.size():
+				if objects[i] == near:
+					target_idx = i
+					target_ai = null
+			p = _target_pos()
+	if p == Vector3.INF:
+		ap_mode = 0
+		return
+	var dist := p.length()
+	_face_target()
+	match ap_mode:
+		1:  # approach: decelerate to arrive 500 m out
+			ship.set_speed = clampf(dist / 8.0, 0.0, ship.max_speed.z)
+			if dist < 600.0:
+				ship.set_speed = 0.0
+				_set_autopilot(0)
+				hud.log_msg("APPROACH COMPLETE")
+		2:  # formate: hold 300 m abreast
+			var tvel := Vector3.ZERO
+			if target_ai != null and is_instance_valid(target_ai):
+				tvel = target_ai.velocity
+			var hold := clampf((dist - 300.0) * 0.5, 0.0, ship.max_speed.z)
+			ship.set_speed = clampf(tvel.length() + hold, 0.0, ship.max_speed.z)
+		3:  # dock: approach then hard-dock
+			ship.set_speed = clampf(dist / 6.0, 0.0, ship.max_speed.z)
+			if dist < DOCK_RANGE * 0.8:
+				_set_autopilot(0)
+				_try_dock()
+		4:  # match velocity
+			var tv := Vector3.ZERO
+			if target_ai != null and is_instance_valid(target_ai):
+				tv = target_ai.velocity
+			ship.set_speed = clampf(tv.length(), 0.0, ship.max_speed.z)
+			if tv.length() < 1.0:
+				ship.set_speed = 0.0
 
 func _lds_process(delta: float) -> void:
 	if lds_state == 1:
@@ -705,6 +1000,7 @@ func _fold_motion() -> void:
 	pz += p.z
 	ship.global_position = Vector3.ZERO
 	cam.global_position -= p
+	drop_cam_pos -= p
 	weapons.shift_world(p)
 	for a in ai_ships:
 		a.global_position -= p
@@ -753,19 +1049,27 @@ func _stream_objects() -> void:
 
 func _chase_camera(delta: float) -> void:
 	var target := ship.global_transform
-	if view_mode < 2:
-		# internal: rigid at the pilot's eye point
-		cam.global_transform = target.translated_local(Vector3(0, 5.0, -14.0))
-		return
-	var want := target.translated_local(Vector3(0, 32, 130))
-	if lds_state == 2 or jump_state >= 2:
-		cam.global_transform = want.looking_at(
-			target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
-	else:
-		cam.global_transform = cam.global_transform.interpolate_with(
-			want, 1.0 - exp(-8.0 * delta))
-		cam.global_transform = cam.global_transform.looking_at(
-			target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
+	match cam_mode:
+		0:  # internal (F1): rigid at the pilot's eye point
+			cam.global_transform = target.translated_local(Vector3(0, 5.0, -14.0))
+		1:  # tactical chase (F2)
+			var want := target.translated_local(Vector3(0, 32, 130))
+			if lds_state == 2 or jump_state >= 2:
+				cam.global_transform = want.looking_at(
+					target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
+			else:
+				cam.global_transform = cam.global_transform.interpolate_with(
+					want, 1.0 - exp(-8.0 * delta))
+				cam.global_transform = cam.global_transform.looking_at(
+					target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
+		2:  # external (F3): slow orbit around the ship
+			var a := Time.get_ticks_msec() / 1000.0 * 0.15
+			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 180.0
+			cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+				target.origin, Vector3.UP)
+		3:  # drop camera (F4): fixed in space, tracking the ship
+			cam.global_transform = Transform3D(Basis.IDENTITY,
+				drop_cam_pos).looking_at(target.origin, Vector3.UP)
 
 func _fmt_dist(d: float) -> String:
 	if d < 1e4:
@@ -787,9 +1091,12 @@ func _demo_control(delta: float) -> void:
 	if jumpcheck:
 		_jumpcheck_control(delta)
 		return
+	if mechcheck:
+		_mechcheck_control(delta)
+		return
 	if motioncheck:
 		# hold position facing the start station; burst-capture frames
-		ship.throttle = 0.0
+		ship.set_speed = 0.0
 		ship.velocity = Vector3.ZERO
 		if target_idx < 0:
 			for i in objects.size():
@@ -810,7 +1117,7 @@ func _demo_control(delta: float) -> void:
 		return
 	match demo_phase:
 		0:
-			ship.throttle = 1.0
+			ship.set_speed = ship.max_speed.z
 			if _lds_clearance() > LDSI_RADIUS * 0.1:
 				var bestd := INF
 				for i in objects.size():
@@ -828,26 +1135,32 @@ func _demo_control(delta: float) -> void:
 			var dir := _target_pos().normalized()
 			if (-ship.global_transform.basis.z).angle_to(dir) < 0.05:
 				_toggle_lds()
+				_mech_v0 = Vector3(px, py, pz)
 				demo_phase = 2
 		2:
 			_face_target()
-			if lds_state == 0:
-				print("DEMO: arrived, dist=", _fmt_dist(_target_distance()))
+			if lds_state == 0 and _target_distance() > 1.0e6 \
+					and _lds_clearance() > 0.0 and demo_t < 400.0:
+				_toggle_lds()  # LDSI dropout en route: re-engage, like a pilot
+			if lds_state == 0 and _target_distance() <= 1.0e6:
+				print("DEMO: arrived, remaining=", _fmt_dist(_target_distance()),
+					" traveled=", _fmt_dist((Vector3(px, py, pz) - _mech_v0).length()))
 				var hostile := spawn_hostile(Vector3(2500, 300, -1500))
 				target_ai = hostile
 				target_idx = -1
 				demo_phase = 3
 				demo_t = 0.0
 		3:
-			ship.throttle = 0.4
+			ship.set_speed = ship.max_speed.z * 0.4
 			_face_target()
 			if target_ai != null and is_instance_valid(target_ai):
 				var dir := _target_pos().normalized()
 				if (-ship.global_transform.basis.z).angle_to(dir) < 0.08:
 					weapons.fire()
 			if demo_t > 6.0 or target_ai == null:
-				var img := get_viewport().get_texture().get_image()
-				img.save_png(_base().path_join("data/screenshots/combat_demo.png"))
+				if not _headless():
+					var img := get_viewport().get_texture().get_image()
+					img.save_png(_base().path_join("data/screenshots/combat_demo.png"))
 				print("DEMO: combat shot saved; player hull=", hull,
 					" hostiles=", _hostiles_alive(), " contacts=", contact_list().size())
 				demo_phase = 4
@@ -872,7 +1185,7 @@ func _uicheck_control(_delta: float) -> void:
 				img.save_png(_base().path_join("data/screenshots/ui_menu.png"))
 				menu.launched = true
 				menu.close()
-				view_mode = 0
+				cam_mode = 0
 				_apply_view()
 				var hostile := spawn_hostile(Vector3(1200, 150, -2200))
 				target_ai = hostile
@@ -883,17 +1196,150 @@ func _uicheck_control(_delta: float) -> void:
 			if demo_t > 2.5:
 				var img := get_viewport().get_texture().get_image()
 				img.save_png(_base().path_join("data/screenshots/ui_cockpit.png"))
-				view_mode = 2
+				cam_mode = 1
 				_apply_view()
 				demo_phase = 2
 				demo_t = 0.0
 		2:
-			_face_target()
-			if demo_t > 1.0:
+			ship.set_speed = ship.max_speed.z
+			ship.input_thrust.z = 1.0
+			if demo_t > 3.0:
 				var img := get_viewport().get_texture().get_image()
 				img.save_png(_base().path_join("data/screenshots/ui_chase.png"))
 				print("UICHECK done")
 				get_tree().quit()
+
+var _mech_fail := 0
+var _mech_t0 := 0.0
+var _mech_v0 := Vector3.ZERO
+var _mech_p0 := 0.0
+var _mech_home := Vector3.ZERO
+
+func _mech(check: String, ok: bool, detail: String) -> void:
+	if not ok:
+		_mech_fail += 1
+	print("MECHCHECK %s: %s (%s)" % ["PASS" if ok else "FAIL", check, detail])
+
+func _mech_next() -> void:
+	demo_phase += 1
+	demo_t = 0.0
+
+func _mechcheck_control(_delta: float) -> void:
+	match demo_phase:
+		0:  # move 1 Gm off-plane, clear of all masses, then full throttle
+			_mech_home = Vector3(px, py, pz)
+			py += 1.0e9
+			target_idx = -1
+			target_ai = null
+			ship.set_speed = ship.max_speed.z
+			_mech_t0 = demo_t
+			_mech_next()
+		1:  # tug reaches 850 m/s in 850/150 = 5.67 s (INI constants)
+			if ship.forward_speed() >= ship.max_speed.z - 10.0:
+				var t := demo_t
+				_mech("accel-to-850", t > 4.5 and t < 7.5, "%.2f s" % t)
+				ship.set_speed = 0.0
+				_mech_next()
+			elif demo_t > 15.0:
+				_mech("accel-to-850", false, "timeout, v=%.0f" % ship.forward_speed())
+				_mech_next()
+		2:  # flight computer brakes back to zero
+			if ship.velocity.length() < 5.0:
+				_mech("brake-to-zero", true, "%.2f s" % demo_t)
+				ship.input_thrust.x = 1.0
+				_mech_next()
+			elif demo_t > 15.0:
+				_mech("brake-to-zero", false, "v=%.0f" % ship.velocity.length())
+				_mech_next()
+		3:  # lateral thruster pushes sideways
+			if demo_t > 2.0:
+				var lat := absf((ship.velocity * ship.global_transform.basis).x)
+				_mech("lateral-thrust", lat > 30.0, "%.0f m/s" % lat)
+				ship.input_thrust.x = 0.0
+				_mech_next()
+		4:  # assist trims lateral drift back out
+			if demo_t > 4.0:
+				var lat := absf((ship.velocity * ship.global_transform.basis).x)
+				_mech("assist-trim", lat < 5.0, "%.1f m/s" % lat)
+				ship.assist = false
+				ship.input_thrust.z = 1.0
+				_mech_next()
+		5:  # free flight: thrust then coast, velocity must persist
+			if demo_t > 1.5:
+				ship.input_thrust.z = 0.0
+				_mech_v0 = ship.velocity
+				_mech_next()
+		6:
+			if demo_t > 3.0:
+				var dv := (ship.velocity - _mech_v0).length()
+				_mech("free-flight-drift", dv < 1.0 and _mech_v0.length() > 50.0,
+					"v=%.0f dv=%.2f" % [_mech_v0.length(), dv])
+				ship.assist = true
+				_mech_next()
+		7:  # LDS: must exceed drive speeds by orders of magnitude
+			if ship.velocity.length() < 5.0:
+				_mech_v0 = Vector3(px, py, pz)
+				_mech_p0 = py
+				_toggle_lds()
+				_mech("lds-engage", lds_state == 1, "state=%d" % lds_state)
+				_mech_next()
+			elif demo_t > 15.0:
+				_mech("lds-engage", false, "never stopped")
+				_mech_next()
+		8:
+			if demo_t > 15.0:
+				var spd := ship.velocity.length()
+				var traveled := (Vector3(px, py, pz) - _mech_v0).length()
+				_mech("lds-speed", lds_state == 2 and spd > 1.0e6,
+					"v=" + _fmt_dist(spd) + "/s")
+				_mech("lds-travel", traveled > 1.0e8, _fmt_dist(traveled))
+				_toggle_lds()
+				_mech_next()
+		9:  # LDS drop: back to conventional speeds under assist
+			if demo_t > 3.0:
+				var spd := ship.velocity.length()
+				_mech("lds-disengage", lds_state == 0 and spd <= ship.max_speed.z * 1.2,
+					"v=%.0f" % spd)
+				# return to the start cluster for autopilot + dock tests
+				px = _mech_home.x
+				py = _mech_home.y
+				pz = _mech_home.z
+				ship.velocity = Vector3.ZERO
+				var near := _nearest("station")
+				for i in objects.size():
+					if objects[i]["name"] == near.get("name", ""):
+						target_idx = i
+						target_ai = null
+				_set_autopilot(1)
+				_mech_next()
+		10:  # autopilot approach: arrive and stop
+			if ap_mode == 0 and demo_t > 1.0:
+				var d := _target_distance()
+				_mech("ap-approach", d < 1000.0, "dist=%.0f m after %.0f s" % [d, demo_t])
+				_set_autopilot(3)
+				_mech_next()
+			elif demo_t > 200.0:
+				_mech("ap-approach", false, "timeout dist=%s" % _fmt_dist(_target_distance()))
+				_set_autopilot(3)
+				_mech_next()
+		11:  # autopilot dock
+			if docked_at != "":
+				_mech("ap-dock", true, docked_at)
+				_undock()
+				_mech_next()
+			elif demo_t > 90.0:
+				_mech("ap-dock", false, "timeout")
+				_mech_next()
+		12:
+			print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
+				else "%d FAILURES" % _mech_fail))
+			get_tree().quit(0 if _mech_fail == 0 else 1)
+	if demo_t > 300.0:
+		print("MECHCHECK: phase %d timeout" % demo_phase)
+		get_tree().quit(1)
+
+func _headless() -> bool:
+	return DisplayServer.get_name() == "headless"
 
 func _jumpcheck_control(_delta: float) -> void:
 	# validate a capsule jump: start at Alexander L-Point -> route to Coyote
@@ -913,8 +1359,9 @@ func _jumpcheck_control(_delta: float) -> void:
 				demo_t = 0.0
 		2:
 			if demo_t > 1.5:
-				var img := get_viewport().get_texture().get_image()
-				img.save_png(_base().path_join("data/screenshots/jump_arrival.png"))
+				if not _headless():
+					var img := get_viewport().get_texture().get_image()
+					img.save_png(_base().path_join("data/screenshots/jump_arrival.png"))
 				var ok := system_stem != START_SYSTEM
 				print("JUMPCHECK: ", "PASS" if ok else "FAIL",
 					" — arrived in ", system_name,
