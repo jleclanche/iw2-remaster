@@ -69,11 +69,27 @@ packages (`iFormation.h`, `iEscort.h`, `iFight.h`, `iFlee.h`),
 - Trading/cargo: `iTrade.h`, `iCargo.h`, `CargoTypes.h`; stations are
   `iStation.h` + `iHabitat.h`.
 
-## Still to extract/decode
+## Extraction status: complete
 
-- `.giz` collision hulls (IFF FORM; low priority — engine can generate
-  convex hulls from render meshes initially)
-- PSO `DELT`/`FRAM` chunks (mesh animation: turrets, docking arms)
-- `.map` link-table remainder (see map_decoder.py docstring)
+Every game data format is now decoded and extracted:
+
+- INI sims/subsims/weapons; localized strings — `data/json/`
+- `.map` systems **including the capsule-jump table** (per-L-point
+  destination lists; validated across all 16 systems) — `data/json/systems/`
+- FTC/FTU textures — `data/textures/`
+- PSO/PSO2 meshes incl. `DELT` morph deltas (character facial animation,
+  paired with the text `MORPHGIZMO` `.giz` weight tracks); `FRAM` weight
+  tracks preserved raw — `data/gltf/`, `data/avatars/`
+- LWS scenes incl. full keyframe animation — `data/json/scenes/`
+- LWOB collision hulls (149) — `data/json/collisionhulls/`
+- Audio WAVs — `data/audio/`; music/ambience MP3s play directly from
+  `streams/audio/`
+- HTML encyclopedia + `.avi` movies are already standard formats in place
+- `.ffe`/`.frf` force-feedback effect files: joystick hardware effects,
+  intentionally not converted (no gameplay content)
+
+## Still to reimplement (engine side)
+
+- FRAM weight-track playback for character morphs (base interiors)
 - Original mission `.pkg` logic via ZeroPipeline's disassembly (story
   campaign — deprioritized per project goals)

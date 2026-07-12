@@ -16,7 +16,13 @@ IFF-style container, reverse-engineered:
     VERT: n_verts * f32le[3 pos + 3 normal + 2*n_uv uv]   (little-endian!)
     INDX: 2-byte prefix (meaning unknown; NOT a reliable count), then
           (size-2)/6 triangles as 3 u16le indices each
-    DELT / FRAM: deltas/animation, not yet decoded (preserved as raw)
+    DELT: vertex-morph delta block for the preceding surface:
+          u32be a (start/flags?), u32be b (group?), then N * f32le[3] deltas
+          (N = (size-8)/12). Used for character facial animation (Az, Jafs
+          etc.) driven by MORPHGIZMO .giz group/weight tracks.
+    FRAM: u32be frame_count, u32be group_count, then per group: u32be id,
+          NUL-str name, weight track (f32 data). Partially decoded; raw
+          bytes preserved.
 
 Mixed endianness: IFF headers/metadata big-endian, vertex/index payload
 little-endian (DirectX-ready buffers).
@@ -49,6 +55,8 @@ class Pso:
     textures: list[str]
     surfaces: list[Surface]
     has_animation: bool = False
+    morphs: list = None  # per surface-group DELT blocks
+    fram_raw: bytes = b""
 
 
 def _zstr(b: bytes, off: int) -> tuple[str, int]:
@@ -128,6 +136,16 @@ def parse_pso(data: bytes) -> Pso:
             pending.indices = list(struct.unpack_from(f"<{ntri * 3}H", body, 2))
             pso.surfaces.append(pending)
             pending = None
-        elif tag in (b"DELT", b"FRAM"):
+        elif tag == b"DELT":
             pso.has_animation = True
+            a, b_ = struct.unpack_from(">2I", body, 0)
+            n = (size - 8) // 12
+            deltas = struct.unpack_from(f"<{n * 3}f", body, 8)
+            if pso.morphs is None:
+                pso.morphs = []
+            pso.morphs.append({"surface": len(pso.surfaces) - 1, "a": a,
+                               "b": b_, "deltas": deltas})
+        elif tag == b"FRAM":
+            pso.has_animation = True
+            pso.fram_raw = bytes(body)
     return pso

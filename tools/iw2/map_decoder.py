@@ -16,11 +16,12 @@ Format (reverse-engineered, packed; record count is BIG-endian, fields little):
         +319  f32[9]  three RGB colors, 0-255 (map display)
         +355  u32     unknown (0x000000FF observed)
         +359  u8      object kind (1=body/station, 5=system root, ...)
-    tail: link table (inter-system jump/gate wiring), variable length:
-        u16 zero, u32 a?, u32 b?, u32 n_links
-        n_links * { u16 ref (record index | 0x8000), u16 unk, u8 len,
-                    char[len] target (";"-terminated system name, or " "/"0"
-                    placeholders for intra-system links), u32 zero }
+    tail: capsule-jump table — which Lagrange-point records jump where:
+        u16 zero, u32le 17, u32le 17, u32le n_entries, then n_entries of
+        { u32le ref (record index | 0x8000), u8 len,
+          char[len] destinations (NUL-incl ";"-separated system names;
+          " " = no outbound jumps, "0" = placeholder) }
+        separated by 3 zero bytes (no separator after the last).
 
     Some maps (microsystem.map) are IFF ``FORM`` files instead — skipped.
 
@@ -74,11 +75,12 @@ def decode_links(tail: bytes) -> list[dict]:
     for _ in range(n):
         if off + 5 > len(tail):
             break
-        ref, unk = struct.unpack_from("<2H", tail, off)
+        (ref,) = struct.unpack_from("<I", tail, off)
         length = tail[off + 4]
-        target = tail[off + 5: off + 5 + length].split(b"\x00")[0].decode("latin-1").rstrip(";")
-        off += 5 + length + 4  # u32 zero separator after each entry
-        links.append({"record": ref & 0x7FFF, "unk": unk, "target": target})
+        raw = tail[off + 5: off + 5 + length].split(b"\x00")[0].decode("latin-1")
+        off += 5 + length + 3  # 3 zero bytes between entries
+        dests = [d for d in raw.split(";") if d.strip() and d.strip() != "0"]
+        links.append({"record": ref & 0x7FFF, "destinations": dests})
     return links
 
 
@@ -112,7 +114,7 @@ def main(out_dir: str = "data/json/systems") -> None:
         index[stem] = {
             "source": path,
             "objects": len(system["objects"]),
-            "links": [l["target"] for l in system["links"] if l["target"].strip()],
+            "links": [d for l in system["links"] for d in l["destinations"]],
         }
         print(f"{stem}: {len(system['objects'])} objects, {len(system['links'])} links")
     (out / "_index.json").write_text(json.dumps(index, indent=1), encoding="utf-8")
