@@ -61,6 +61,50 @@ right next to the code that consumes them.
    approximate it: 25 km stations, body radius × 1.2).
 4. **Subsim damage**: how hit points, armour and power/heat interact.
 
+## Findings so far
+
+**The binaries kept their C++ symbols.** Ghidra recovers full mangled
+names — class, method, parameter types (`?BreakShipOutOfLDS@icLDSDrive@@AAEXXZ`).
+This is enormously better than a stripped binary: the classes named in
+`flux.ini` map straight to code.
+
+Totals: `iwar2.dll` 5,355 functions, `flux.dll` 5,606, `gui.dll` 150,
+`EdgeOfChaos.exe` 656 (a thin launcher — the game lives in the DLLs).
+
+### LDS dropout (`icLDSDrive::BreakShipOutOfLDS`)
+On dropout the engine **zeroes angular velocity** and sets linear
+velocity to **facing × 1000 m/s flat** — not the drive's max speed
+(which is what we assumed). It then cues the director (event 0xe).
+
+### LDS inhibition is REGION-based, not radius-derived
+`iiThrusterSim` keeps an **inhibition counter** at `+0x251`
+(`EnterLDSInhibitRegion` increments, `Leave` decrements; `IsLDSInhibited`
+is just `counter != 0`). Regions are explicit `icLDSIRegion` objects
+constructed from a **centre (double vector) + radius (float)** — created
+by geography and by scripts (`iRegion.CreateLDSI` in POG). So our
+"compute an inhibition radius from the body radius" model is wrong in
+kind; inhibition zones are authored objects.
+
+`icPlayerPilot` caches the region the player is inside at `+0xb8` —
+which is exactly what the HUD needs to draw the boundary/pip state.
+
+### LDS obstacle avoidance (`icAITarget::CheckLDSAvoidance`)
+Avoidance radius for a body =
+`(icPlanet::HeatDistanceAsRadiusMultiplier() + 1.1) × FiSim::Radius()`.
+
+### The HUD element classes (all in `iwar2.dll`)
+`icHUDBrackets`, `icHUDClock`, `icHUDContactList`, `icHUDContrails`,
+`icHUDDebug`, `icHUDEditBoxElement`, `icHUDEngineering`,
+`icHUDLagrangeIcon`, `icHUDLog`, `icHUDMenuReticle`, `icHUDMessage`,
+`icHUDObjectives`, `icHUDOrbRadar`, `icHUDReferenceGrid`,
+`icHUDReticle`, `icHUDScore`, `icHUDShields`, `icHUDShipStatus`,
+`icHUDStarmap`, `icHUDTargetMFD`, `icHUDWaypointIcon`, `icHUDWeapons`.
+
+That list is itself a spec: it names every element the original HUD had
+(note `icHUDContrails` — the velocity trails; `icHUDReferenceGrid` — the
+motion grid; `icHUDShields`, `icHUDEngineering`, `icHUDStarmap` — screens
+we have not built yet).
+
 ## Method note
 
 Optimized 2001-era C++ decompiles to dense pointer arithmetic; do not

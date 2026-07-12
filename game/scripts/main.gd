@@ -15,6 +15,7 @@ const LDS_MAX := 3.0e10
 const LDS_RAMP := 5.0
 const LDS_SPOOL := 3.0
 const LDS_BASE := 2000.0
+const LDS_DROPOUT_SPEED := 1000.0  # icLDSDrive::BreakShipOutOfLDS (decompiled)
 
 const FOV_INTERNAL := 63.0  # flux.ini icInternalCamera field_of_view 1.1 rad
 const FOV_EXTERNAL := 68.75  # flux.ini cameras field_of_view 1.2 rad
@@ -1021,10 +1022,7 @@ func _toggle_lds() -> void:
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
 	if lds_state != 0:
-		lds_state = 0
-		audio.play("audio/sfx/lds_rampdown.wav", -4.0)
-		audio.lds_player.stop()
-		ship.velocity = -ship.global_transform.basis.z * ship.max_speed.z
+		_drop_out_of_lds()
 	elif _lds_clearance() > 0.0:
 		lds_state = 1
 		lds_timer = 0.0
@@ -1506,14 +1504,20 @@ func _lds_process(delta: float) -> void:
 	lds_speed = minf(lds_speed, LDS_MAX)
 	ship.velocity = -ship.global_transform.basis.z * lds_speed
 	if clear < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
-		lds_state = 0
-		audio.lds_player.stop()
-		audio.play("audio/sfx/lds_rampdown.wav", -4.0)
-		ship.velocity = ship.velocity.normalized() * ship.max_speed.z
-		# auto-deceleration (original option, default on): the flight
-		# computer zeroes the throttle wheel on LDS dropout so the ship
-		# brakes to a stop instead of barreling on at drive speed
-		ship.set_speed = 0.0
+		_drop_out_of_lds()
+
+func _drop_out_of_lds() -> void:
+	# icLDSDrive::BreakShipOutOfLDS (decompiled): zero the angular
+	# velocity and set linear velocity to facing x 1000 m/s flat
+	lds_state = 0
+	audio.lds_player.stop()
+	audio.play("audio/sfx/lds_rampdown.wav", -4.0)
+	ship.velocity = -ship.global_transform.basis.z * LDS_DROPOUT_SPEED
+	ship.angular_velocity = Vector3.ZERO
+	ship.input_rotate = Vector3.ZERO
+	# auto-deceleration (original option, default on): the flight computer
+	# zeroes the throttle wheel so the ship brakes instead of barreling on
+	ship.set_speed = 0.0
 
 func _fold_motion() -> void:
 	var p := ship.global_position
