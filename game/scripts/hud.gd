@@ -78,8 +78,10 @@ func _draw() -> void:
 	if main.menu != null and main.menu.visible and not main.menu.launched:
 		return
 	var c := _screen() / 2.0
-	_draw_reticle(c)
-	_draw_target_marks()
+	var based: bool = main.get("base_root") != null
+	if not based:
+		_draw_reticle(c)
+		_draw_target_marks()
 	_draw_mfd()
 	_draw_weapon_panel()
 	_draw_system_status()

@@ -75,6 +75,8 @@ var docked_at := ""
 var ship_stats: Dictionary = {}
 
 var clock_start := 0  # ms tick when we last left port (the HUD clock)
+var base_root: Node3D  # hangar interior while docked at a base
+const BASE_BAY := Vector3(0, -110, -527)  # tug parking bay (glTF coords)
 
 var motioncheck := false
 var jumpcheck := false
@@ -768,11 +770,56 @@ func _try_dock() -> void:
 	audio.play("audio/sfx/dock.wav", -4.0)
 	audio.music("ambient")
 	hud.log_msg("DOCKED: %s" % str(near["name"]).to_upper())
+	if "base" in docked_at.to_lower():
+		_enter_base()
+
+func _enter_base() -> void:
+	# the original's drydock hangar interior (avatars/base), placed so the
+	# tug parking bay wraps around the docked ship; channel switches pick
+	# the normal light bank and the tug bay dressing
+	if base_root != null:
+		return
+	base_root = _load_gltf("data/avatars/avatars/base/setup.gltf")
+	if base_root == null:
+		return
+	add_child(base_root)
+	base_root.position = -BASE_BAY
+	var lights := 0
+	for n in base_root.find_children("*", "Node3D", true, false):
+		if not n.has_meta("extras"):
+			continue
+		var ex: Dictionary = n.get_meta("extras")
+		match str(ex.get("iw2_kind", "")):
+			"switch":
+				n.visible = str(ex.get("iw2_channel", "")) in [
+					"baselights_normal", "tug"]
+			"light":
+				if lights >= 48 or not (n as Node3D).is_visible_in_tree():
+					continue
+				var col := Color(1, 1, 1)
+				if ex.has("iw2_color"):
+					var c: Array = ex["iw2_color"]
+					col = Color(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0)
+				var l := OmniLight3D.new()
+				l.light_color = col
+				l.light_energy = 1.1
+				l.omni_range = 170.0
+				n.add_child(l)
+				lights += 1
+	if ship_model != null:
+		ship_model.visible = true
+
+func _leave_base() -> void:
+	if base_root != null:
+		base_root.queue_free()
+		base_root = null
+	_apply_view()
 
 func _undock() -> void:
 	if docked_at == "":
 		return
 	docked_at = ""
+	_leave_base()
 	audio.play("audio/sfx/undock.wav", -4.0)
 	ship.velocity = -ship.global_transform.basis.z * 50.0
 	clock_start = Time.get_ticks_msec()
@@ -872,6 +919,8 @@ func _physics_process(delta: float) -> void:
 	if docked_at != "":
 		ship.velocity = Vector3.ZERO
 		ship.set_speed = 0.0
+		ship.input_thrust = Vector3.ZERO
+		ship.input_rotate = Vector3.ZERO
 	_fold_motion()
 	_stream_objects()
 	_update_grid()
@@ -1145,6 +1194,14 @@ func _stream_objects() -> void:
 
 func _chase_camera(delta: float) -> void:
 	var target := ship.global_transform
+	if base_root != null:
+		# in the hangar: gantry viewpoint with a gentle sway
+		var a := Time.get_ticks_msec() / 1000.0 * 0.11
+		var pos := target.origin + Vector3(-150.0 + sin(a) * 35.0, 70.0,
+			-180.0 + cos(a * 0.7) * 25.0)
+		cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+			target.origin + Vector3(0, 0, 0), Vector3.UP)
+		return
 	match cam_mode:
 		0:  # internal (F1): rigid at the pilot's eye point
 			cam.global_transform = target.translated_local(Vector3(0, 5.0, -14.0))
@@ -1302,7 +1359,35 @@ func _uicheck_control(_delta: float) -> void:
 			if demo_t > 3.0:
 				var img := get_viewport().get_texture().get_image()
 				img.save_png(_base().path_join("data/screenshots/ui_chase.png"))
-				print("UICHECK done")
+				# teleport to Lucrecia's Base and dock for the interior shot
+				ship.input_thrust.z = 0.0
+				ship.set_speed = 0.0
+				ship.velocity = Vector3.ZERO
+				for a in ai_ships:
+					a.queue_free()
+				ai_ships.clear()
+				target_ai = null
+				for o in objects:
+					if str(o["name"]) == "Lucrecia's Base":
+						px = o["x"] + 2000.0
+						py = o["y"]
+						pz = o["z"]
+				_try_dock()
+				demo_phase = 3
+				demo_t = 0.0
+		3:
+			var bays := [Vector3(0, -110, -527), Vector3(-60, -160, -527),
+				Vector3(0, -160, -700)]
+			if demo_t > 1.5 and _mc_shot < 3:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png(_base().path_join(
+					"data/screenshots/ui_base_%d.png" % _mc_shot))
+				_mc_shot += 1
+				if _mc_shot < 3:
+					base_root.position = -(bays[_mc_shot] as Vector3)
+				demo_t = 1.0
+			elif _mc_shot >= 3:
+				print("UICHECK done, docked=", docked_at)
 				get_tree().quit()
 
 var _mech_fail := 0

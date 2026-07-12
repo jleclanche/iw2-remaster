@@ -107,7 +107,8 @@ class Assembler:
             if n["kind"] not in ("object", "null"):
                 extras = {"iw2_kind": n["kind"]}
                 for attr in ("channel", "class", "template", "tint", "splay",
-                             "name"):
+                             "name", "color", "intensity", "light_type",
+                             "lens_flare"):
                     if attr in n:
                         extras["iw2_" + attr] = n[attr]
                 # <anim channel=X> nulls are POSE INTERPOLATORS driven by a
