@@ -5,3 +5,4 @@ game/.godot/
 # Extracted/converted game assets are copyrighted (Particle Systems/Atari).
 # They are generated locally from the user's own GOG install and never committed.
 data/
+build/
