@@ -43,6 +43,8 @@ func spawn(shooter: Node3D, dir: Vector3) -> void:
 	_spawn_at(shooter, shooter.global_position + dir * 40.0, dir, vel)
 
 func _spawn_at(shooter: Node3D, pos: Vector3, dir: Vector3, base_vel: Vector3) -> void:
+	if shooter is ShipFlight and (shooter as ShipFlight).fx != null:
+		(shooter as ShipFlight).fx.fire_pulse = 1.0
 	var node := MeshInstance3D.new()
 	node.mesh = _mesh
 	get_parent().add_child(node)

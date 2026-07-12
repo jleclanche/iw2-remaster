@@ -50,26 +50,52 @@ def parse_lws(text: str) -> list[dict]:
     lines = [ln.rstrip() for ln in text.splitlines()]
     nodes: list[dict] = []
     cur: dict | None = None
+    obj_i = 0  # ParentObject refers to object load order; lights don't count
     i = 0
     while i < len(lines):
         ln = lines[i].strip()
         if ln.startswith("LoadObject"):
             path = ln[len("LoadObject"):].strip()
             stem = path.replace("\\", "/").rsplit("/", 1)[-1]
-            cur = {"index": len(nodes) + 1, "kind": "object",
+            obj_i += 1
+            cur = {"index": obj_i, "kind": "object",
                    "lwo": path, "pso_stem": re.sub(r"\.lwo$", "", stem, flags=re.I).lower()}
             nodes.append(cur)
         elif ln.startswith("AddNullObject"):
             kind, attrs = _parse_tag(ln[len("AddNullObject"):].strip())
-            cur = {"index": len(nodes) + 1, "kind": kind, **attrs}
+            obj_i += 1
+            cur = {"index": obj_i, "kind": kind, **attrs}
             nodes.append(cur)
-        elif ln.startswith("ObjectMotion") and cur is not None:
+        elif ln.startswith("AddLight"):
+            cur = {"index": None, "kind": "light"}
+            nodes.append(cur)
+        elif ln.startswith("LightName") and cur is not None:
+            cur["name"] = ln[len("LightName"):].strip()
+        elif ln.startswith("LightColor") and cur is not None:
+            try:
+                cur["color"] = [int(v) for v in ln.split()[1:4]]
+            except ValueError:
+                pass
+        elif ln.startswith("LgtIntensity") and cur is not None:
+            try:
+                cur["intensity"] = float(ln.split()[1])
+            except ValueError:
+                pass  # "(envelope)" — animated intensity, ignore
+        elif ln.startswith("LightType") and cur is not None:
+            cur["light_type"] = int(ln.split()[1])
+        elif ln.startswith("LensFlare") and cur is not None:
+            cur["lens_flare"] = True
+        elif (ln.startswith("ObjectMotion") or ln.startswith("LightMotion")) \
+                and cur is not None:
             nchan = int(lines[i + 1].strip())
             nkeys = int(lines[i + 2].strip())
             keys = []
             for k in range(nkeys):
-                vals = [float(v) for v in lines[i + 3 + 2 * k].split()]
-                meta = [float(v) for v in lines[i + 4 + 2 * k].split()]
+                try:
+                    vals = [float(v) for v in lines[i + 3 + 2 * k].split()]
+                    meta = [float(v) for v in lines[i + 4 + 2 * k].split()]
+                except (ValueError, IndexError):
+                    break  # "(envelope)" channels etc. — keep what we have
                 if len(vals) >= 9:
                     keys.append({"frame": meta[0] if meta else 0.0,
                                  "pos": vals[0:3], "hpb": vals[3:6],

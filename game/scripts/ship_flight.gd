@@ -27,6 +27,7 @@ var set_speed := 0.0                         # m/s "throttle wheel" setting;
 var assist := true
 var drive_override := false                  # LDS/capsule drive owns velocity:
                                              # skip assist trim and speed caps
+var fx: Node = null                          # ShipEffects channel rig
 
 # --- per-frame inputs, set by the pilot controller ---
 var input_rotate := Vector3.ZERO             # desired pitch/yaw/roll -1..1

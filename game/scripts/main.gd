@@ -35,8 +35,12 @@ var menu: Menu
 var weapons: PbcWeapons
 var audio: AudioManager
 var sun: DirectionalLight3D
-var grid: MultiMeshInstance3D
+var grid: MeshInstance3D
+var grid_mesh: ImmediateMesh
 var grid_mat: StandardMaterial3D
+var sky_anchor: Node3D
+var sky_mat: ShaderMaterial
+var env_ref: Environment
 var cam_mode := 0  # F1 internal, F2 tactical/chase, F3 external, F4 drop
 var cockpit_frame := true  # the original's removable cockpit dressing
 var drop_cam_pos := Vector3.ZERO
@@ -159,73 +163,158 @@ func _build_environment() -> void:
 	e.ambient_light_energy = 0.7
 	e.glow_enabled = true
 	env.environment = e
+	env_ref = e
 	add_child(env)
 	_build_grid()
 
+func _setup_sky(stem: String) -> void:
+	# per-system sky from the original geog/*.lws: nebula backdrop model,
+	# starfield tint/density, star + fill light colors, neighbor-star flares
+	if sky_anchor != null:
+		sky_anchor.queue_free()
+	sky_anchor = Node3D.new()
+	add_child(sky_anchor)
+	var geo: Variant = null
+	for cluster in ["badlands", "gagarin", "multiplayer"]:
+		geo = _load_json("data/json/scenes/geog/%s/%s.json" % [cluster, stem])
+		if geo != null:
+			break
+	if geo == null:
+		return
+	var sys_parent := Vector3.ZERO
+	for n in geo["nodes"]:
+		if str(n.get("name", "")) == "SystemParent" and n.has("pos"):
+			sys_parent = Vector3(n["pos"][0], n["pos"][1], n["pos"][2])
+	for n in geo["nodes"]:
+		match str(n.get("kind", "")):
+			"node":
+				var cls := str(n.get("class", ""))
+				if cls == "icNebulaAvatar":
+					var mstem := str(n.get("url", "")).split("|")[-1].to_lower()
+					var neb := _load_gltf("data/gltf/models/%s.gltf" % mstem)
+					if neb != null:
+						_make_additive(neb)
+						neb.scale = Vector3.ONE * 150.0
+						sky_anchor.add_child(neb)
+				elif cls == "icStarfieldAvatar" and sky_mat != null:
+					var tint := _parse_tuple(str(n.get("tint", "")), Vector3.ONE)
+					sky_mat.set_shader_parameter("star_tint", tint)
+					sky_mat.set_shader_parameter("density",
+						clampf(float(n.get("bright_star_count", 2000)) / 2000.0,
+							0.3, 3.0))
+			"light":
+				var col := Color.WHITE
+				if n.has("color"):
+					col = Color(n["color"][0] / 255.0, n["color"][1] / 255.0,
+						n["color"][2] / 255.0)
+				match str(n.get("name", "")):
+					"<star>":
+						sun.light_color = col
+						sun.light_energy = float(n.get("intensity", 1.0)) * 0.9
+					"<fill>":
+						env_ref.ambient_light_color = col * 0.35
+					_:
+						if int(n.get("light_type", 0)) == 1 \
+								and n.get("lens_flare", false) and n.has("pos"):
+							# LW bank-180 SystemParent: (x,y) -> (-x,-y)
+							var p := Vector3(-n["pos"][0], -n["pos"][1],
+								n["pos"][2]) + sys_parent
+							if p.length() > 100.0:
+								_add_sky_flare(p, col)
+
+func _parse_tuple(t: String, fallback: Vector3) -> Vector3:
+	var parts := t.trim_prefix("(").trim_suffix(")").split(",")
+	if parts.size() >= 3:
+		return Vector3(float(parts[0]), float(parts[1]), float(parts[2]))
+	return fallback
+
+func _add_sky_flare(dir_lw: Vector3, col: Color) -> void:
+	var dir := Vector3(dir_lw.x, dir_lw.y, -dir_lw.z).normalized()
+	var mesh := SphereMesh.new()
+	mesh.radius = 1600.0
+	mesh.height = 3200.0
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = col
+	mat.emission_enabled = true
+	mat.emission = col
+	mat.emission_energy_multiplier = 3.0
+	mesh.material = mat
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.position = dir * 4.5e5
+	sky_anchor.add_child(mi)
+
+func _make_additive(node: Node3D) -> void:
+	for mi in node.find_children("*", "MeshInstance3D", true, false):
+		var m: MeshInstance3D = mi
+		for i in m.get_surface_override_material_count():
+			var mat := m.mesh.surface_get_material(i)
+			if mat is StandardMaterial3D:
+				var sm: StandardMaterial3D = mat.duplicate()
+				sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				sm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+				sm.cull_mode = BaseMaterial3D.CULL_DISABLED
+				m.set_surface_override_material(i, sm)
+
 func _build_grid() -> void:
-	# the original's motion grid: translucent crosses fixed in space, orange
-	# in conventional flight, green in LDS. The lattice moves rigidly modulo
-	# its spacing so it never runs out.
-	var mesh := ArrayMesh.new()
-	var verts := PackedVector3Array()
-	var arm := 0.04
-	for axis in [Vector3.RIGHT, Vector3.UP, Vector3.BACK]:
-		verts.append(-axis * arm)
-		verts.append(axis * arm)
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = verts
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
+	# the original's motion grid: translucent LINES anchored in space whose
+	# length shows your speed (manual: "how fast you are travelling,
+	# represented by the length of the lines"). Orange normally, green in LDS.
 	grid_mat = StandardMaterial3D.new()
 	grid_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	grid_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	grid_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	grid_mat.albedo_color = Color(1.0, 0.55, 0.15, 0.30)
-	mesh.surface_set_material(0, grid_mat)
-	var mm := MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = mesh
-	var n := 7  # 7^3 lattice, +-3 cells
-	mm.instance_count = n * n * n
-	var i := 0
-	for x in n:
-		for y in n:
-			for z in n:
-				mm.set_instance_transform(i, Transform3D(Basis.IDENTITY,
-					Vector3(x - 3, y - 3, z - 3)))
-				i += 1
-	grid = MultiMeshInstance3D.new()
-	grid.multimesh = mm
+	grid_mesh = ImmediateMesh.new()
+	grid = MeshInstance3D.new()
+	grid.mesh = grid_mesh
 	add_child(grid)
 
 func _update_grid() -> void:
+	grid_mesh.clear_surfaces()
 	var spd := ship.velocity.length()
-	# spacing grows with speed so crossing rate stays readable (LDS!)
+	if docked_at != "" or spd < 3.0:
+		return
+	# lattice spacing grows with speed so passing rate stays readable (LDS)
 	var s := clampf(spd * 0.7, 500.0, 1.0e10)
-	grid.scale = Vector3.ONE * s
-	grid.position = -Vector3(fposmod(px, s), fposmod(py, s), fposmod(pz, s))
+	var dirv := ship.velocity / spd
+	var trail := clampf(spd * 0.1, 25.0, s * 0.45)
+	var off := Vector3(fposmod(px, s), fposmod(py, s), fposmod(pz, s))
+	grid_mesh.surface_begin(Mesh.PRIMITIVE_LINES, grid_mat)
+	for x in range(-3, 4):
+		for y in range(-3, 4):
+			for z in range(-3, 4):
+				var p := Vector3(x, y, z) * s - off
+				grid_mesh.surface_add_vertex(p)
+				grid_mesh.surface_add_vertex(p - dirv * trail)
+	grid_mesh.surface_end()
 	var want := Color(0.3, 1.0, 0.4, 0.35) if lds_state == 2 \
 		else Color(1.0, 0.55, 0.15, 0.30)
 	grid_mat.albedo_color = grid_mat.albedo_color.lerp(want, 0.1)
-	grid.visible = docked_at == ""
 
 func _starfield_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	var sh := Shader.new()
 	sh.code = """
 shader_type sky;
+uniform vec3 star_tint = vec3(0.9, 0.93, 1.0);
+uniform float density = 1.0;
 float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
 void sky() {
 	vec3 d = EYEDIR;
 	vec3 cell = floor(d * 220.0);
 	float h = hash(cell);
-	float star = step(0.997, h);
+	float star = step(1.0 - 0.003 * density, h);
 	vec3 center = (cell + 0.5) / 220.0;
 	float falloff = smoothstep(0.0035, 0.0005, distance(normalize(center), d));
 	float tw = 0.6 + 0.4 * hash(cell + 1.0);
-	COLOR = vec3(0.004, 0.005, 0.01) + star * falloff * tw * vec3(0.9, 0.93, 1.0);
+	COLOR = vec3(0.004, 0.005, 0.01) + star * falloff * tw * star_tint;
 }
 """
 	m.shader = sh
+	sky_mat = m
 	return m
 
 # --- system loading -------------------------------------------------------
@@ -285,6 +374,7 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 	py = entry["y"] + 300.0
 	pz = entry["z"] + 3000.0
 	jump_sel = 0
+	_setup_sky(stem)
 	_spawn_traffic()
 	print("SYSTEM: ", system_name, " (", objects.size(), " objects)")
 
@@ -355,6 +445,10 @@ func _spawn_player() -> void:
 			break
 	ship_model = _load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf")
 	ship.add_child(ship_model)
+	# the tug's RCS jets live on its command section
+	var cs := _load_gltf("data/avatars/avatars/command_section/setup.gltf")
+	if cs != null:
+		ShipEffects.graft_jets(ship_model, cs)
 	ShipEffects.attach(ship, ship_model)
 	add_child(ship)
 	weapons = PbcWeapons.new()
@@ -782,6 +876,8 @@ func _physics_process(delta: float) -> void:
 	_stream_objects()
 	_update_grid()
 	_chase_camera(delta)
+	if sky_anchor != null:
+		sky_anchor.global_position = cam.global_position
 	var demand: float = absf(ship.set_speed - ship.forward_speed()) \
 		/ maxf(ship.max_speed.z, 1.0) + absf(ship.input_thrust.z)
 	audio.set_engine_level(demand + ship.set_speed / ship.max_speed.z * 0.1)
