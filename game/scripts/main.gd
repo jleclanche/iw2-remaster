@@ -83,6 +83,7 @@ var ship_stats: Dictionary = {}
 var weapon_name := "L-PBC / R-PBC"  # HUD weapon-panel title
 var eye := Vector3(-1.19, -13.85, -40.05)  # pilot eye: tug.lws crew null
 var fire_lock := 0.0  # brief inhibit after menus/movies eat a click
+var disrupt_time := 0.0  # LDSi weapon hit: drive locked out (iship.Disrupt)
 
 var clock_start := 0  # ms tick when we last left port (the HUD clock)
 var base_root: Node3D  # hangar interior while docked at a base
@@ -989,8 +990,35 @@ func _lds_clearance() -> float:
 	var b := _nearest_inhibitor()
 	return INF if b.is_empty() else float(b["clear"])
 
+func inhibit_charge() -> float:
+	# 1 deep inside an inhibition zone, discharging to 0 at its boundary
+	# (the HUD roundel's pip ring). LDSi weapon hits pin it at full.
+	if disrupt_time > 0.0:
+		return 1.0
+	var b := _nearest_inhibitor()
+	if b.is_empty():
+		return 0.0
+	var clear: float = b["clear"]
+	if clear >= 0.0:
+		return 0.0
+	return clampf(-clear / maxf(float(b["r"]), 1.0), 0.0, 1.0)
+
+func disrupt(seconds: float) -> void:
+	# iship.DisruptLDSDrive: an LDSi hit locks the drive out for a while
+	disrupt_time = maxf(disrupt_time, seconds)
+	if lds_state != 0:
+		lds_state = 0
+		audio.lds_player.stop()
+		audio.play("audio/sfx/lds_rampdown.wav", -4.0)
+	audio.play("audio/sfx/ldsi_engage.wav", -4.0)
+	hud.warn("LDS DRIVE DISRUPTED", 3.0)
+
 func _toggle_lds() -> void:
 	if docked_at != "" or jump_state != 0:
+		return
+	if disrupt_time > 0.0:
+		hud.warn("LDS DRIVE DISRUPTED")
+		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
 	if lds_state != 0:
 		lds_state = 0
@@ -1150,6 +1178,7 @@ func _jump_process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	fire_lock = maxf(0.0, fire_lock - delta)
+	disrupt_time = maxf(0.0, disrupt_time - delta)
 	if demo:
 		checks.step(delta)
 	elif docked_at == "" and not menu.visible and movie == null:

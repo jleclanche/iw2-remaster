@@ -65,6 +65,14 @@ func _ready() -> void:
 	if FileAccess.file_exists(sprites_path):
 		var img := Image.load_from_file(sprites_path)
 		if img != null:
+			# the atlas is white glyphs on black; convert to an alpha mask
+			# so tinting a glyph doesn't paint its black cell background
+			img.convert(Image.FORMAT_RGBA8)
+			for y in img.get_height():
+				for x in img.get_width():
+					var p := img.get_pixel(x, y)
+					var l := maxf(p.r, maxf(p.g, p.b))
+					img.set_pixel(x, y, Color(1, 1, 1, l))
 			_sprites = ImageTexture.create_from_image(img)
 
 func _screen() -> Vector2:
@@ -263,28 +271,10 @@ func _draw_reticle(c: Vector2) -> void:
 	draw_line(c + Vector2(0, -5), c + Vector2(0, 5), ring, 1.0, true)
 	# LDS inhibition: the original's "!" roundel above the reticle, with
 	# charge pips over it (images/hud/sprites.png glyph)
-	if main.lds_state == 0 and main.jump_state == 0 \
-			and main._lds_clearance() < 0.0 and main.docked_at == "":
-		# the original's inhibit roundel: glowing green disc with the "!"
-		# knocked out dark, charge pips arcing over the top
-		var ip := c + Vector2(-46, -96)
-		var g := Color(0.45, 1.0, 0.35)
-		draw_circle(ip, 19.0, Color(g.r, g.g, g.b, 0.10))
-		draw_circle(ip, 16.0, Color(g.r, g.g, g.b, 0.22))
-		draw_circle(ip, 13.0, Color(g.r, g.g, g.b, 0.85))
-		draw_arc(ip, 14.5, 0, TAU, 40, Color(g.r, g.g, g.b, 0.9), 1.6, true)
-		if _sprites != null:
-			draw_texture_rect_region(_sprites, Rect2(ip - Vector2(9, 9),
-					Vector2(18, 18)), SPR_BANG, Color(0.0, 0.14, 0.02, 0.95))
-		else:
-			draw_string(_font_big, ip + Vector2(-3, 6), "!",
-					HORIZONTAL_ALIGNMENT_LEFT, -1, big_size,
-					Color(0.0, 0.14, 0.02))
-		for i in 5:
-			var a := PI + PI * (i + 0.5) / 5.0
-			var pp := ip + Vector2(cos(a), sin(a)) * 24.0
-			draw_circle(pp, 3.0, Color(g.r, g.g, g.b, 0.25))
-			draw_circle(pp, 1.7, Color(g.r, g.g, g.b, 0.95))
+	var inhibited: bool = main.lds_state == 0 and main.jump_state == 0 \
+		and main._lds_clearance() < 0.0 and main.docked_at == ""
+	if inhibited or main.disrupt_time > 0.0:
+		_draw_inhibit_roundel(c + Vector2(-46, -96), main.inhibit_charge())
 	# own hull: arc at the lower right of the reticle, green -> yellow -> red
 	var frac: float = clampf(main.hull / main.hull_max, 0.0, 1.0)
 	var hull_col := GREEN if frac > 0.66 else (YELLOW if frac > 0.33 else RED)
@@ -336,6 +326,30 @@ func _draw_reticle(c: Vector2) -> void:
 			draw_line(p + Vector2(-12, 0), p + Vector2(-6, 0), ring, 1.4)
 			draw_line(p + Vector2(6, 0), p + Vector2(12, 0), ring, 1.4)
 	_draw_status_icons(c)
+
+func _draw_inhibit_roundel(ip: Vector2, charge: float) -> void:
+	# LDS inhibition (and LDSi missile hits): the "!" roundel. The pip ring
+	# encircles it and DISCHARGES as you approach the edge of the field —
+	# `charge` is 1 deep inside the zone, 0 at its boundary.
+	var g := Color(0.45, 1.0, 0.35)
+	draw_circle(ip, 17.0, Color(g.r, g.g, g.b, 0.12))
+	draw_circle(ip, 13.0, Color(g.r, g.g, g.b, 0.85))
+	draw_arc(ip, 14.0, 0, TAU, 40, Color(g.r, g.g, g.b, 0.95), 1.6, true)
+	if _sprites != null:
+		draw_texture_rect_region(_sprites, Rect2(ip - Vector2(9, 9),
+				Vector2(18, 18)), SPR_BANG, Color(0.0, 0.13, 0.02, 0.95))
+	else:
+		draw_string(_font_big, ip + Vector2(-3, 6), "!",
+				HORIZONTAL_ALIGNMENT_LEFT, -1, big_size, Color(0.0, 0.13, 0.02))
+	var pips := 16
+	var lit := int(round(clampf(charge, 0.0, 1.0) * pips))
+	for i in pips:
+		var a := -PI / 2.0 + TAU * i / float(pips)
+		var pp := ip + Vector2(cos(a), sin(a)) * 17.5
+		if i < lit:
+			draw_circle(pp, 1.5, Color(g.r, g.g, g.b, 0.95))
+		else:
+			draw_circle(pp, 1.2, Color(g.r, g.g, g.b, 0.22))
 
 func _reticle_turn_arrow(c: Vector2) -> void:
 	# when the target is outside the reticle, an arrow inside the ring shows

@@ -6,3 +6,4 @@ game/.godot/
 # They are generated locally from the user's own GOG install and never committed.
 data/
 build/
+data/decomp/
