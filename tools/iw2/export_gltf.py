@@ -83,7 +83,16 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
             image_ids[key] = len(textures_json) - 1
         return image_ids[key]
 
-    for s in mesh.surfaces:
+    # DELT facial morphs: key by (surface index a, morph number b); each
+    # delta stream interleaves per-vertex (position delta, normal delta)
+    morphs_by_surface: dict[int, list] = {}
+    for d in (mesh.morphs or []):
+        morphs_by_surface.setdefault(d["a"], []).append(d)
+    for lst in morphs_by_surface.values():
+        lst.sort(key=lambda d: d["b"])
+    n_targets = max((len(v) for v in morphs_by_surface.values()), default=0)
+
+    for file_idx, s in enumerate(mesh.surfaces):
         nv = len(s.positions) // 3
         if nv == 0 or not s.indices:
             continue
@@ -133,14 +142,47 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
             if png is not None:
                 mat["emissiveTexture"] = {"index": image_ids[png.as_posix()], "texCoord": 0}
         materials.append(mat)
-        primitives.append({"attributes": attrs, "indices": ia, "material": len(materials) - 1})
+        prim = {"attributes": attrs, "indices": ia, "material": len(materials) - 1}
+        if n_targets:
+            # every primitive must carry the same target count (glTF spec);
+            # surfaces without their own DELTs get zero deltas
+            targets = []
+            surf_morphs = morphs_by_surface.get(file_idx, [])
+            for t in range(n_targets):
+                if t < len(surf_morphs) and len(surf_morphs[t]["deltas"]) == nv * 6:
+                    vals = surf_morphs[t]["deltas"]
+                    dpos, dnrm = [], []
+                    for vi in range(nv):
+                        vp = vals[vi * 6:vi * 6 + 3]
+                        vn = vals[vi * 6 + 3:vi * 6 + 6]
+                        dpos += [vp[0], vp[1], -vp[2]]
+                        dnrm += [vn[0], vn[1], -vn[2]]
+                else:
+                    dpos = [0.0] * (nv * 3)
+                    dnrm = [0.0] * (nv * 3)
+                tv = add_view(struct.pack(f"<{len(dpos)}f", *dpos), 34962)
+                txs, tys, tzs = dpos[0::3], dpos[1::3], dpos[2::3]
+                ta = add_accessor(tv, 5126, nv, "VEC3",
+                                  [min(txs), min(tys), min(tzs)],
+                                  [max(txs), max(tys), max(tzs)])
+                nvv = add_view(struct.pack(f"<{len(dnrm)}f", *dnrm), 34962)
+                targets.append({"POSITION": ta,
+                                "NORMAL": add_accessor(nvv, 5126, nv, "VEC3")})
+            prim["targets"] = targets
+        primitives.append(prim)
+
+    mesh_json: dict = {"primitives": primitives}
+    if n_targets:
+        mesh_json["weights"] = [0.0] * n_targets
+        mesh_json["extras"] = {
+            "targetNames": ["morph_%d" % (i + 1) for i in range(n_targets)]}
 
     gltf = {
         "asset": {"version": "2.0", "generator": "iw2-remaster pso exporter"},
         "scene": 0,
         "scenes": [{"nodes": [0]}],
         "nodes": [{"mesh": 0, "name": out_gltf.stem}],
-        "meshes": [{"primitives": primitives}],
+        "meshes": [mesh_json],
         "materials": materials,
         "accessors": accessors,
         "bufferViews": buffer_views,

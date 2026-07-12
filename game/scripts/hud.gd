@@ -34,6 +34,8 @@ var _font_big: Font   # Handel Gothic 12pt â€” warnings
 var num_size := 14
 var big_size := 17
 var target_view: TargetView  # live EO-feed render of the target
+var _sprites: Texture2D      # images/hud/sprites.png, 8x8 grid of 32px icons
+const SPR_BANG := Rect2(128, 96, 32, 32)  # the "!" warning glyph
 
 static func load_game_font(base: String, fnt: String) -> Font:
 	var path := base.path_join("data/fonts").path_join(fnt)
@@ -59,6 +61,11 @@ func _ready() -> void:
 	target_view = TargetView.new()
 	target_view.main = main
 	add_child(target_view)
+	var sprites_path := base.path_join("data/textures/images/hud/sprites.png")
+	if FileAccess.file_exists(sprites_path):
+		var img := Image.load_from_file(sprites_path)
+		if img != null:
+			_sprites = ImageTexture.create_from_image(img)
 
 func _screen() -> Vector2:
 	return get_viewport_rect().size
@@ -221,6 +228,23 @@ func _draw_reticle(c: Vector2) -> void:
 		draw_line(c + dir * inner, c + dir * 56.0, ring, 1.2, true)
 	draw_line(c + Vector2(-5, 0), c + Vector2(5, 0), ring, 1.0, true)
 	draw_line(c + Vector2(0, -5), c + Vector2(0, 5), ring, 1.0, true)
+	# LDS inhibition: the original's "!" roundel above the reticle, with
+	# charge pips over it (images/hud/sprites.png glyph)
+	if main.lds_state == 0 and main.jump_state == 0 \
+			and main._lds_clearance() < 0.0 and main.docked_at == "":
+		var ip := c + Vector2(-46, -96)
+		draw_circle(ip, 15.0, Color(0, 0.10, 0, 0.85))
+		draw_arc(ip, 15.0, 0, TAU, 32, GREEN, 2.0, true)
+		if _sprites != null:
+			draw_texture_rect_region(_sprites, Rect2(ip - Vector2(11, 11),
+					Vector2(22, 22)), SPR_BANG, GREEN)
+		else:
+			draw_string(_font_big, ip + Vector2(-3, 6), "!",
+					HORIZONTAL_ALIGNMENT_LEFT, -1, big_size, GREEN)
+		for i in 5:
+			var a := PI + PI * (i + 0.5) / 5.0
+			draw_circle(ip + Vector2(cos(a), sin(a)) * 21.0, 1.8,
+					Color(GREEN.r, GREEN.g, GREEN.b, 0.9))
 	# own hull: arc at the lower right of the reticle, green -> yellow -> red
 	var frac: float = clampf(main.hull / main.hull_max, 0.0, 1.0)
 	var hull_col := GREEN if frac > 0.66 else (YELLOW if frac > 0.33 else RED)
@@ -310,8 +334,6 @@ func _draw_status_icons(c: Vector2) -> void:
 	match main.lds_state:
 		1: icons.append(["LDS RAMP", LDS_COL])
 		2: icons.append(["LDS", LDS_COL])
-	if main.lds_state == 0 and main.jump_state == 0 and main._lds_clearance() < 0.0:
-		icons.append(["INHIBITED", YELLOW])
 	match main.jump_state:
 		1: icons.append(["CAPSULE CHG", ORANGE])
 		2: icons.append(["ACCEL RUN", ORANGE])
@@ -513,12 +535,22 @@ func _draw_orb() -> void:
 	var size := Vector2(140, 158)
 	var contacts := _orb_contacts()
 	_panel(pos, size, "%d CONTACTS" % contacts.size())
+	# graph-paper backdrop, like the original's ORB panel
+	for gx in range(int(pos.x) + 8, int(pos.x + size.x) - 4, 12):
+		draw_line(Vector2(gx, pos.y + 20), Vector2(gx, pos.y + size.y - 4),
+				Color(GREEN.r, GREEN.g, GREEN.b, 0.07), 1.0)
+	for gy in range(int(pos.y) + 24, int(pos.y + size.y) - 4, 12):
+		draw_line(Vector2(pos.x + 4, gy), Vector2(pos.x + size.x - 4, gy),
+				Color(GREEN.r, GREEN.g, GREEN.b, 0.07), 1.0)
 	var c := pos + Vector2(size.x / 2.0, 92)
 	var r := 40.0
-	# wireframe sphere: equator + two meridians as ellipses
-	draw_arc(c, r, 0, TAU, 40, GREEN_DIM, 1.0, true)
-	_ellipse(c, Vector2(r, r * 0.35), GREEN_DIM * Color(1, 1, 1, 0.7))
-	_ellipse(c, Vector2(r * 0.35, r), GREEN_DIM * Color(1, 1, 1, 0.7))
+	# wireframe sphere: bright ring + equator/meridian, and the axis pole
+	var ring := Color(0.55, 0.85, 0.3, 0.9)
+	draw_arc(c, r, 0, TAU, 48, ring, 1.6, true)
+	_ellipse(c, Vector2(r, r * 0.35), Color(ring.r, ring.g, ring.b, 0.55))
+	_ellipse(c, Vector2(r * 0.35, r), Color(ring.r, ring.g, ring.b, 0.30))
+	draw_line(c + Vector2(0, -r - 8), c + Vector2(0, r + 8),
+			Color(1.0, 0.75, 0.15, 0.85), 2.0, true)
 	var inv: Transform3D = main.ship.global_transform.affine_inverse()
 	var blink := int(Time.get_ticks_msec() / 250.0) % 2 == 0
 	for entry in contacts:
@@ -530,16 +562,19 @@ func _draw_orb() -> void:
 		var nd := local / d
 		# project the sphere point (x right, y up-ish with z depth squash)
 		var sp := c + Vector2(nd.x, -nd.y * 0.6 - nd.z * 0.55) * r
-		# stalk: inward when closer than 1 km, outward when farther
+		# thick stalk (flux.ini icHUDOrbRadar use_thick_stalks): inward
+		# when closer than 1 km, outward when farther
 		var stalk := clampf(log(d / 1000.0) / log(10.0) * 0.35, -0.8, 0.9)
 		var dir := (sp - c).normalized() if (sp - c).length() > 0.5 else Vector2.RIGHT
 		var tip := sp + dir * stalk * 14.0
 		var col: Color = entry[1]
-		draw_line(sp, tip, col * Color(1, 1, 1, 0.6), 1.0, true)
+		draw_line(sp, tip, col * Color(1, 1, 1, 0.75), 2.4, true)
+		# blob contact: soft halo under a bright core, like the reference
+		draw_circle(tip, 4.5, Color(col.r, col.g, col.b, 0.30))
 		if entry[2] and blink:
-			draw_circle(tip, 3.5, Color(1, 1, 1, 0.9))
+			draw_circle(tip, 3.2, Color(1, 1, 1, 0.95))
 		else:
-			draw_circle(tip, 2.2, col)
+			draw_circle(tip, 2.6, col)
 	# clock: time since leaving port (orange, like the original)
 	var ms: int = Time.get_ticks_msec() - main.clock_start
 	draw_string(_font_num, pos + Vector2(size.x - 128, size.y + 16),

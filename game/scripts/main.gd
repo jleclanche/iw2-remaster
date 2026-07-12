@@ -43,6 +43,8 @@ var sun: DirectionalLight3D
 var grid: MeshInstance3D
 var grid_mesh: ImmediateMesh
 var grid_mat: StandardMaterial3D
+var ldsi_mesh: ImmediateMesh
+var ldsi_mat: StandardMaterial3D
 var sky_anchor: Node3D
 var sky_mat: ShaderMaterial
 var env_ref: Environment
@@ -134,6 +136,10 @@ func _ready() -> void:
 	cl.process_mode = Node.PROCESS_MODE_ALWAYS
 	audio.process_mode = Node.PROCESS_MODE_ALWAYS  # GUI sounds while paused
 	add_child(cl)
+
+func _exit_tree() -> void:
+	ExplosionFx.release_cache()
+	Input.set_custom_mouse_cursor(null)
 
 func _fit_player(ini_path: String, avatar: String) -> void:
 	# swap the player's hull: the campaign opens in the bare command
@@ -434,6 +440,45 @@ func _build_grid() -> void:
 	grid = MeshInstance3D.new()
 	grid.mesh = grid_mesh
 	add_child(grid)
+	# LDSI boundary fence: vertical pillars marking the inhibition limit
+	ldsi_mat = StandardMaterial3D.new()
+	ldsi_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ldsi_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ldsi_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	ldsi_mat.vertex_color_use_as_albedo = true
+	ldsi_mesh = ImmediateMesh.new()
+	var lm := MeshInstance3D.new()
+	lm.mesh = ldsi_mesh
+	add_child(lm)
+
+func _update_ldsi_fence() -> void:
+	# the original visualized the LDS-inhibition boundary near the player:
+	# a curtain of vertical green pillars at the zone's edge
+	ldsi_mesh.clear_surfaces()
+	if docked_at != "" or jump_state != 0:
+		return
+	var b := _nearest_inhibitor()
+	if b.is_empty() or absf(float(b["clear"])) > 2.0e4:
+		return
+	var center: Vector3 = b["center"]
+	var r: float = b["r"]
+	var flat := Vector3(-center.x, 0, -center.z)  # ship dir in zone plane
+	if flat.length() < 1.0:
+		flat = Vector3.FORWARD
+	var base_a := atan2(flat.z, flat.x)
+	ldsi_mesh.surface_begin(Mesh.PRIMITIVE_LINES, ldsi_mat)
+	for i in range(-14, 15):
+		var a := base_a + i * (2400.0 / r)  # ~2.4 km pillar spacing
+		var p := center + Vector3(cos(a), 0, sin(a)) * r
+		var dist := p.length()
+		var alpha := clampf(1.0 - dist / 3.0e4, 0.0, 0.6)
+		if alpha <= 0.01:
+			continue
+		ldsi_mesh.surface_set_color(Color(0.3, 1.0, 0.45, alpha))
+		ldsi_mesh.surface_add_vertex(p + Vector3(0, -900, 0))
+		ldsi_mesh.surface_set_color(Color(0.3, 1.0, 0.45, alpha * 0.15))
+		ldsi_mesh.surface_add_vertex(p + Vector3(0, 900, 0))
+	ldsi_mesh.surface_end()
 
 func _update_grid() -> void:
 	grid_mesh.clear_surfaces()
@@ -903,24 +948,32 @@ func _nearest(category: String, range_limit := INF) -> Dictionary:
 	best["dist"] = bestd
 	return best
 
-func _lds_clearance() -> float:
-	# distance to the nearest LDS-inhibition boundary (stations 25 km,
-	# bodies scale with their radius â€” masses inhibit LDS, iRegion.CreateLDSI)
-	var clear := INF
+func _nearest_inhibitor() -> Dictionary:
+	# nearest LDS-inhibition source (stations 25 km, bodies scale with
+	# their radius — masses inhibit LDS, iRegion.CreateLDSI)
+	var best := {}
+	var bestc := INF
 	for o in objects:
 		var inhibit := 0.0
 		match o["category"]:
 			"station":
 				inhibit = LDSI_RADIUS
 			"body":
-				# drop out just above the rendered surface â€” LDSI proper is
+				# drop out just above the rendered surface — LDSI proper is
 				# station/script territory in IW2, not blanket planet zones
 				inhibit = maxf(LDSI_RADIUS, o["radius"] * 1.2)
 			_:
 				continue
-		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
-		clear = minf(clear, d - inhibit)
-	return clear
+		var cen := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
+		var cl := cen.length() - inhibit
+		if cl < bestc:
+			bestc = cl
+			best = {"center": cen, "r": inhibit, "clear": cl}
+	return best
+
+func _lds_clearance() -> float:
+	var b := _nearest_inhibitor()
+	return INF if b.is_empty() else float(b["clear"])
 
 func _toggle_lds() -> void:
 	if docked_at != "" or jump_state != 0:
@@ -1105,6 +1158,7 @@ func _physics_process(delta: float) -> void:
 	_stream_objects()
 	_collisions()
 	_update_grid()
+	_update_ldsi_fence()
 	_chase_camera(delta)
 	if sky_anchor != null:
 		sky_anchor.global_position = cam.global_position
@@ -1148,6 +1202,22 @@ func _model_bounds_radius(model: Node3D) -> float:
 		first = false
 	return 0.0 if first else merged.size.length() * 0.5
 
+func _model_coll_spheres(model: Node3D) -> Array:
+	# one collision sphere per major mesh chunk (model-local), so sprawling
+	# structures like Hoffer's Gap are solid where their geometry actually
+	# is — a single capped sphere either blocked docking or did nothing
+	var spheres: Array = []
+	var inv := model.global_transform.affine_inverse()
+	for mi in model.find_children("*", "MeshInstance3D", true, false):
+		var bb: AABB = (mi as MeshInstance3D).get_aabb()
+		var tb := (inv * (mi as Node3D).global_transform) * bb
+		var r := tb.size.length() * 0.4
+		if r < 25.0:
+			continue  # greebles/lights don't need physics
+		spheres.append({"c": tb.get_center(), "r": minf(r, 1500.0)})
+	spheres.sort_custom(func(a, b): return a["r"] > b["r"])
+	return spheres.slice(0, 24)
+
 func _model_radius(model: Node3D, fallback: float) -> float:
 	# collision sphere for a streamed avatar — the map/record radii are
 	# zone numbers, not hull sizes
@@ -1168,9 +1238,15 @@ func _collisions() -> void:
 		if o["node"] == null:
 			continue
 		if o["category"] == "station" or o.get("prop_collide", false):
-			_collide_sphere(Vector3(o["x"] - px, o["y"] - py, o["z"] - pz),
-				float(o.get("coll_r", o["radius"] + 45.0)), Vector3.ZERO,
-				str(o["name"]))
+			var base := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
+			var spheres: Array = o.get("coll_spheres", [])
+			if spheres.is_empty():
+				_collide_sphere(base, o["radius"] + 45.0, Vector3.ZERO,
+					str(o["name"]))
+			else:
+				for s in spheres:
+					_collide_sphere(base + (s["c"] as Vector3),
+						float(s["r"]) + 25.0, Vector3.ZERO, str(o["name"]))
 	var demand: float = absf(ship.set_speed - ship.forward_speed()) \
 		/ maxf(ship.max_speed.z, 1.0) + absf(ship.input_thrust.z)
 	audio.set_engine_level(demand + ship.set_speed / ship.max_speed.z * 0.1)
@@ -1436,7 +1512,7 @@ func _stream_objects() -> void:
 						continue
 					o["node"] = model
 					add_child(model)
-					o["coll_r"] = _model_radius(model, float(o["radius"]))
+					o["coll_spheres"] = _model_coll_spheres(model)
 				elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
 					o["node"].queue_free()
 					o["node"] = null

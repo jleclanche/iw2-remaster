@@ -73,6 +73,15 @@ func _fit(node: Node3D) -> void:
 	node.scale = Vector3.ONE / r
 	node.position = -(merged.get_center()) / r
 
+func _exit_tree() -> void:
+	# cached models not currently parented would leak at exit (Nodes are
+	# not refcounted)
+	for rel in _cache:
+		var n: Node3D = _cache[rel]
+		if n != null and n != _model and not n.is_inside_tree():
+			n.free()
+	_cache.clear()
+
 func _process(delta: float) -> void:
 	var active := _model != null and enabled
 	render_target_update_mode = SubViewport.UPDATE_ALWAYS if active \

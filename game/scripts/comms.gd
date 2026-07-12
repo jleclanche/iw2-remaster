@@ -40,10 +40,23 @@ var strings: Dictionary = {}
 var fast := false  # checks: skip VO playback, minimal gaps
 var _gap := 0.0
 var _head_t := 0.0
+var _head_mesh: MeshInstance3D          # blend-shaped face (DELT morphs)
+var _spectrum: AudioEffectSpectrumAnalyzerInstance
+var _mouth := 0.0
 
 func _ready() -> void:
+	# voice goes through its own bus with a spectrum analyzer so the 3D
+	# head can flap its mouth to the VO amplitude (the original's
+	# primitive lip sync over the DELT face morphs)
+	var bus := AudioServer.bus_count
+	AudioServer.add_bus(bus)
+	AudioServer.set_bus_name(bus, "Voice")
+	AudioServer.set_bus_send(bus, "Master")
+	AudioServer.add_bus_effect(bus, AudioEffectSpectrumAnalyzer.new(), 0)
+	_spectrum = AudioServer.get_bus_effect_instance(bus, 0)
 	voice = AudioStreamPlayer.new()
 	voice.volume_db = -2.0
+	voice.bus = "Voice"
 	add_child(voice)
 	portrait = Control.new()
 	portrait.visible = false
@@ -97,6 +110,10 @@ func _build_head_view() -> void:
 		head_node.position = Vector3(0.01, 0, 0.037)
 		head_node.scale = Vector3.ONE * 1.686
 		head_view.add_child(head_node)
+		for mi in head_node.find_children("*", "MeshInstance3D", true, false):
+			if (mi as MeshInstance3D).get_blend_shape_count() > 0:
+				_head_mesh = mi
+				break
 	var beam_path: String = main._base().path_join(
 		"data/textures/images/sfx/clay_back.png")
 	if FileAccess.file_exists(beam_path):
@@ -164,6 +181,24 @@ func _start(entry: Dictionary) -> void:
 	else:
 		video.visible = false
 
+func _lip_sync(delta: float) -> void:
+	# primitive lip sync, like the original: voice energy opens the mouth
+	# (blend shapes exported from the PSO DELT face morphs)
+	if _head_mesh == null:
+		return
+	var want := 0.0
+	if voice.playing and _spectrum != null:
+		var mag := _spectrum.get_magnitude_for_frequency_range(180.0, 3500.0)
+		want = clampf(mag.length() * 22.0, 0.0, 1.0)
+	_mouth += (want - _mouth) * minf(delta / 0.045, 1.0)
+	var n := _head_mesh.get_blend_shape_count()
+	if n > 0:
+		_head_mesh.set_blend_shape_value(0, _mouth)
+	if n > 1:
+		# flicker a secondary viseme at speech peaks so it reads as talking
+		_head_mesh.set_blend_shape_value(1,
+			maxf(_mouth - 0.55, 0.0) * (0.5 + 0.5 * sin(_head_t * 23.0)))
+
 func _clay_pose(t: float) -> void:
 	# evaluate the original 10 s head-motion loop (30 fps, 300 frames)
 	var frame := fposmod(t * 30.0, 300.0)
@@ -192,6 +227,7 @@ func _physics_process(delta: float) -> void:
 	if live and head_node != null:
 		_head_t += delta
 		_clay_pose(_head_t)
+		_lip_sync(delta)
 		for i in beam_mats.size():
 			var m: StandardMaterial3D = beam_mats[i]
 			m.uv1_offset.x = fposmod(m.uv1_offset.x

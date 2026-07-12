@@ -37,6 +37,13 @@ static func _ensure_frames(base: String) -> void:
 	_spark_tex = _load_tex(base, "spark.png")
 	_shock_tex = _load_tex(base, "shockwave.png")
 
+static func release_cache() -> void:
+	# static texture refs outlive the renderer and spam RID leaks at exit;
+	# main releases them on shutdown
+	_frames.clear()
+	_spark_tex = null
+	_shock_tex = null
+
 static func boom(main: Node3D, pos: Vector3, size: float) -> void:
 	_ensure_frames(main._base())
 	var fx: ExplosionFx = ExplosionFx.new()
