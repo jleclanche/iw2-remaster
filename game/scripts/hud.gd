@@ -341,7 +341,7 @@ func _draw_mfd() -> void:
 	var col := YELLOW
 	var hull_frac := -1.0
 	if main.target_ai != null and is_instance_valid(main.target_ai):
-		tname = str(main.target_ai.name)
+		tname = str(main.target_ai.display_name)
 		var host: bool = main.target_ai.behavior == "attack"
 		ttype = "HOSTILE VESSEL" if host else "TRANSPORT VESSEL"
 		col = RED if host else BLUE

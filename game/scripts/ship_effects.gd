@@ -49,10 +49,16 @@ static func graft_jets(target_model: Node3D, donor: Node3D) -> void:
 				jets.append(n)
 	for n in jets:
 		var t: Transform3D = n.transform
+		_clear_owner(n)
 		n.get_parent().remove_child(n)
 		anchor.add_child(n)
 		n.transform = t
 	donor.queue_free()
+
+static func _clear_owner(n: Node) -> void:
+	n.owner = null
+	for c in n.get_children():
+		_clear_owner(c)
 
 func _extras(n: Node) -> Dictionary:
 	return n.get_meta("extras") if n.has_meta("extras") else {}

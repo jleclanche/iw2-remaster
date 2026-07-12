@@ -1,4 +1,4 @@
-extends Node3D
+﻿extends Node3D
 # The Badlands, playable: flight, LDS, capsule jumps between all systems,
 # targeting, weapons, damage, AI traffic + hostiles, docking, dynamic music,
 # original SFX, animated stations, planets/stars rendered as impostors.
@@ -180,7 +180,7 @@ func _setup_act0_scene() -> void:
 			["Swyddfa'r Post", 15000.0]]:
 		var ai := AiShip.new()
 		ai.main = self
-		ai.name = str(cfg[0])
+		ai.display_name = str(cfg[0])
 		ai.setup({"hit_points": 600, "speed": [80, 80, 200],
 			"acceleration": [30, 30, 50], "yaw_rate": 18, "pitch_rate": 18,
 			"roll_rate": 18})
@@ -600,7 +600,7 @@ func _spawn_traffic() -> void:
 	for i in 2:
 		var ai := AiShip.new()
 		ai.main = self
-		ai.name = "Freighter %d" % (i + 1)
+		ai.display_name = "Freighter %d" % (i + 1)
 		ai.setup({"hit_points": 800, "speed": [100, 100, 300],
 				"acceleration": [40, 40, 60], "yaw_rate": 20, "pitch_rate": 20,
 				"roll_rate": 20})
@@ -617,7 +617,7 @@ func _spawn_traffic() -> void:
 func spawn_hostile(at: Vector3) -> AiShip:
 	var ai := AiShip.new()
 	ai.main = self
-	ai.name = "Marauder Cutter"
+	ai.display_name = "Marauder Cutter"
 	ai.setup({"hit_points": 600, "speed": [150, 150, 600],
 			"acceleration": [80, 80, 120], "yaw_rate": 45, "pitch_rate": 45,
 			"roll_rate": 45})
@@ -648,7 +648,7 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null) -> void:
 		hull -= PBC_DAMAGE
 		hud.warn("HULL HIT  %d%%" % int(100.0 * hull / hull_max))
 		if hull <= 0.0:
-			hud.warn("SHIP DESTROYED — resetting", 5.0)
+			hud.warn("SHIP DESTROYED â€” resetting", 5.0)
 			hull = hull_max
 			ship.velocity = Vector3.ZERO
 		return
@@ -656,7 +656,7 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null) -> void:
 	if ai != null and ai.damage(PBC_DAMAGE):
 		_flash(ai.global_position, 40.0)
 		audio.play("audio/sfx/large_explosion_1.wav", -2.0)
-		hud.warn("%s DESTROYED" % str(ai.name).to_upper())
+		hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
 		ai_ships.erase(ai)
 		if target_ai == ai:
 			target_ai = null
@@ -718,7 +718,7 @@ func contact_list() -> Array:
 					"type": "L-PNT" if o["category"] == "lpoint" else "STATN"})
 	for a in ai_ships:
 		var hostile: bool = a.behavior == "attack"
-		list.append({"name": a.name, "dist": a.global_position.length(),
+		list.append({"name": (a.display_name if a.display_name != "" else str(a.name)), "dist": a.global_position.length(),
 				"hostile": hostile, "targeted": a == target_ai,
 				"category": "traffic",
 				"faction": "MARA" if hostile else "INDIE",
@@ -834,7 +834,7 @@ func _nearest(category: String, range_limit := INF) -> Dictionary:
 
 func _lds_clearance() -> float:
 	# distance to the nearest LDS-inhibition boundary (stations 25 km,
-	# bodies scale with their radius — masses inhibit LDS, iRegion.CreateLDSI)
+	# bodies scale with their radius â€” masses inhibit LDS, iRegion.CreateLDSI)
 	var clear := INF
 	for o in objects:
 		var inhibit := 0.0
@@ -842,7 +842,7 @@ func _lds_clearance() -> float:
 			"station":
 				inhibit = LDSI_RADIUS
 			"body":
-				# drop out just above the rendered surface — LDSI proper is
+				# drop out just above the rendered surface â€” LDSI proper is
 				# station/script territory in IW2, not blanket planet zones
 				inhibit = maxf(LDSI_RADIUS, o["radius"] * 1.2)
 			_:
@@ -989,7 +989,7 @@ func _jump_process(delta: float) -> void:
 				jump_state = 2
 				jump_timer = 0.0
 				hud.warn("ACCELERATION RUN", 2.0)
-		2:  # acceleration run — iAI.IsCapsuleJumpAccelerating
+		2:  # acceleration run â€” iAI.IsCapsuleJumpAccelerating
 			ship.velocity += -ship.global_transform.basis.z * 2500.0 * delta
 			jump_fade.color.a = clampf(jump_timer / 3.0 - 0.6, 0.0, 1.0) * 2.5
 			if jump_timer >= 3.0:
@@ -1053,7 +1053,7 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 		hull -= dmg
 		audio.play("audio/sfx/collision.wav", -3.0)
 		audio.play("audio/sfx/ship_clatter.wav", -8.0)
-		hud.warn("COLLISION — %s  HULL %d%%" % [what.to_upper(),
+		hud.warn("COLLISION â€” %s  HULL %d%%" % [what.to_upper(),
 			int(100.0 * hull / hull_max)])
 	ship.global_position = center + n * radius
 
@@ -1061,7 +1061,7 @@ func _collisions() -> void:
 	if docked_at != "" or jump_state >= 2:
 		return
 	for a in ai_ships:
-		_collide_sphere(a.global_position, 95.0, a.velocity, str(a.name))
+		_collide_sphere(a.global_position, 95.0, a.velocity, str(a.display_name))
 	for o in objects:
 		if o.get("prop_collide", false) and o["node"] != null:
 			_collide_sphere(Vector3(o["x"] - px, o["y"] - py, o["z"] - pz),
@@ -1391,7 +1391,14 @@ func _campcheck_control(_delta: float) -> void:
 					mission.steps.size())
 				demo_phase = 1
 		1:
+			if movie != null and demo_t > 5.0:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png(_base().path_join("data/screenshots/movie_frame.png"))
+				movie.finished.emit()
 			if mission.objectives.has("wp1"):
+				if not _headless():
+					var img2 := get_viewport().get_texture().get_image()
+					img2.save_png(_base().path_join("data/screenshots/campaign_spawn.png"))
 				for o in objects:
 					if o.get("waypoint", false):
 						px = o["x"]
@@ -1400,7 +1407,7 @@ func _campcheck_control(_delta: float) -> void:
 				demo_phase = 2
 		2:
 			if mission.objectives.get("wp1", {}).get("done", false):
-				print("CAMPCHECK: PASS — waypoint objective completed, ",
+				print("CAMPCHECK: PASS â€” waypoint objective completed, ",
 					"dialogue queued=", comms.queue.size())
 				get_tree().quit(0)
 	if demo_t > 90.0:
@@ -1720,7 +1727,7 @@ func _jumpcheck_control(_delta: float) -> void:
 					img.save_png(_base().path_join("data/screenshots/jump_arrival.png"))
 				var ok := system_stem != START_SYSTEM
 				print("JUMPCHECK: ", "PASS" if ok else "FAIL",
-					" — arrived in ", system_name,
+					" â€” arrived in ", system_name,
 					", contacts=", contact_list().size())
 				get_tree().quit(0 if ok else 1)
 	if demo_t > 60.0:

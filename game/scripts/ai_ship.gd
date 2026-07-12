@@ -5,6 +5,7 @@ extends ShipFlight
 # player, fire PBCs in range/arc). Stats and hull from the extracted INIs.
 
 var behavior := "patrol"
+var display_name := ""  # node names mangle punctuation; HUD uses this
 var hull := 1000.0
 var hull_max := 1000.0
 var main: Node3D
