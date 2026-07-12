@@ -340,7 +340,9 @@ func _load_csv(path: String) -> void:
 		return
 	while not f.eof_reached():
 		var row := f.get_csv_line()
-		if row.size() > 0 and not row[0].is_empty():
+		# The tables are commented with a leading ';' -- skip those, and the
+		# blank separator rows between sections.
+		if row.size() > 0 and not row[0].is_empty() and not row[0].begins_with(";"):
 			text_tables[row[0]] = Array(row).slice(1)
 	f.close()
 
@@ -431,30 +433,71 @@ func _str_format(_t, a: Array) -> Variant:
 	return s
 
 
-# ---------------------------------------------------------------- list / set
-# @native list.Create
-func _list_create(_t, _a: Array) -> Variant:
-	return []
+# ---------------------------------------------------------------- list
+# POG's list is a deque: AddTail/AddHead, Head/Tail, RemoveHead. A POG list is
+# a plain GDScript Array here; the sorts take a *property name* and order by the
+# object.* property bag, which is why they live in this file.
 
-# @native list.Add
+# @native list.AddTail
 # @native list.Append
-func _list_add(_t, a: Array) -> Variant:
+func _list_add_tail(_t, a: Array) -> Variant:
 	var l = a[0]
 	if l is Array:
 		l.append(a[1])
 	return 0
 
-# @native list.Count
+# @native list.AddHead
+func _list_add_head(_t, a: Array) -> Variant:
+	var l = a[0]
+	if l is Array:
+		l.push_front(a[1])
+	return 0
+
+# @native list.ItemCount
 func _list_count(_t, a: Array) -> Variant:
 	var l = a[0]
 	return l.size() if l is Array else 0
 
-# @native list.Nth
+# @native list.IsEmpty
+func _list_is_empty(_t, a: Array) -> Variant:
+	var l = a[0]
+	return 1 if (not (l is Array) or (l as Array).is_empty()) else 0
+
+# @native list.GetNth
 func _list_nth(_t, a: Array) -> Variant:
 	var l = a[0]
 	var i := int(a[1])
 	if l is Array and i >= 0 and i < l.size():
 		return l[i]
+	return null
+
+# @native list.SetNth
+func _list_set_nth(_t, a: Array) -> Variant:
+	var l = a[0]
+	var i := int(a[1])
+	if l is Array and i >= 0 and i < l.size():
+		l[i] = a[2]
+	return 0
+
+# @native list.Head
+func _list_head(_t, a: Array) -> Variant:
+	var l = a[0]
+	if l is Array and not (l as Array).is_empty():
+		return l[0]
+	return null
+
+# @native list.Tail
+func _list_tail(_t, a: Array) -> Variant:
+	var l = a[0]
+	if l is Array and not (l as Array).is_empty():
+		return l[-1]
+	return null
+
+# @native list.RemoveHead
+func _list_remove_head(_t, a: Array) -> Variant:
+	var l = a[0]
+	if l is Array and not (l as Array).is_empty():
+		return (l as Array).pop_front()
 	return null
 
 # @native list.Remove
@@ -472,12 +515,20 @@ func _list_remove_nth(_t, a: Array) -> Variant:
 		l.remove_at(i)
 	return 0
 
-# @native list.Clear
-# @native list.Empty
+# @native list.RemoveAll
 func _list_clear(_t, a: Array) -> Variant:
 	var l = a[0]
 	if l is Array:
 		l.clear()
+	return 0
+
+# @native list.RemoveMembers
+func _list_remove_members(_t, a: Array) -> Variant:
+	var l = a[0]
+	var other = a[1]
+	if l is Array and other is Array:
+		for v in other:
+			l.erase(v)
 	return 0
 
 # @native list.Contains
@@ -485,10 +536,23 @@ func _list_contains(_t, a: Array) -> Variant:
 	var l = a[0]
 	return 1 if (l is Array and l.has(a[1])) else 0
 
-# @native set.Create
-func _set_create(_t, _a: Array) -> Variant:
-	return []
+# @native list.SortByIntProperty
+# @native list.SortByFloatProperty
+# @native list.SortByStringProperty
+func _list_sort_by(_t, a: Array) -> Variant:
+	var l = a[0]
+	if not (l is Array):
+		return 0
+	var key := _s(a[1])
+	var bags := props
+	(l as Array).sort_custom(func(x, y) -> bool:
+		var bx = bags.get(_key(x), {}).get(key, 0)
+		var by = bags.get(_key(y), {}).get(key, 0)
+		return bx < by)
+	return 0
 
+
+# ---------------------------------------------------------------- set
 # @native set.Add
 func _set_add(_t, a: Array) -> Variant:
 	var s = a[0]
@@ -496,14 +560,18 @@ func _set_add(_t, a: Array) -> Variant:
 		s.append(a[1])
 	return 0
 
-# @native set.Count
+# @native set.ItemCount
 func _set_count(_t, a: Array) -> Variant:
 	var s = a[0]
 	return s.size() if s is Array else 0
 
-# @native set.Nth
-func _set_nth(_t, a: Array) -> Variant:
-	return _list_nth(_t, a)
+# @native set.IsEmpty
+func _set_is_empty(_t, a: Array) -> Variant:
+	return _list_is_empty(_t, a)
+
+# @native set.FirstElement
+func _set_first(_t, a: Array) -> Variant:
+	return _list_head(_t, a)
 
 # @native set.Remove
 func _set_remove(_t, a: Array) -> Variant:
@@ -513,9 +581,78 @@ func _set_remove(_t, a: Array) -> Variant:
 func _set_contains(_t, a: Array) -> Variant:
 	return _list_contains(_t, a)
 
-# @native set.Clear
-func _set_clear(_t, a: Array) -> Variant:
-	return _list_clear(_t, a)
+# @native set.FromList
+func _set_from_list(_t, a: Array) -> Variant:
+	var out: Array = []
+	if a[0] is Array:
+		for v in a[0]:
+			if not out.has(v):
+				out.append(v)
+	return out
+
+# @native set.Union
+func _set_union(_t, a: Array) -> Variant:
+	var out: Array = (a[0] as Array).duplicate() if a[0] is Array else []
+	if a[1] is Array:
+		for v in a[1]:
+			if not out.has(v):
+				out.append(v)
+	return out
+
+# @native set.Difference
+func _set_difference(_t, a: Array) -> Variant:
+	var out: Array = (a[0] as Array).duplicate() if a[0] is Array else []
+	if a[1] is Array:
+		for v in a[1]:
+			out.erase(v)
+	return out
+
+# @native list.FromSet
+func _list_from_set(_t, a: Array) -> Variant:
+	return (a[0] as Array).duplicate() if a[0] is Array else []
+
+
+# ---------------------------------------------------------------- vectors
+# POG has no vector type: a "vector property" is three floats behind one name,
+# which is how the scripts stash positions on an object.
+
+# @native object.SetVectorProperty
+func _obj_set_vector(_t, a: Array) -> Variant:
+	var bag := _bag(a[0])
+	var key := _s(a[1])
+	bag[key + ".x"] = float(a[2]) if a.size() > 2 else 0.0
+	bag[key + ".y"] = float(a[3]) if a.size() > 3 else 0.0
+	bag[key + ".z"] = float(a[4]) if a.size() > 4 else 0.0
+	return 0
+
+# @native object.VectorPropertyX
+func _obj_vector_x(_t, a: Array) -> Variant:
+	return _bag(a[0]).get(_s(a[1]) + ".x", 0.0)
+
+# @native object.VectorPropertyY
+func _obj_vector_y(_t, a: Array) -> Variant:
+	return _bag(a[0]).get(_s(a[1]) + ".y", 0.0)
+
+# @native object.VectorPropertyZ
+func _obj_vector_z(_t, a: Array) -> Variant:
+	return _bag(a[0]).get(_s(a[1]) + ".z", 0.0)
+
+# @native object.IDModulus
+func _obj_id_modulus(_t, a: Array) -> Variant:
+	# A cheap stable hash of an object's identity: the scripts use it to spread
+	# work across frames and to pick a variant per object without a RNG.
+	var n := int(a[1]) if a.size() > 1 else 1
+	if n == 0:
+		return 0
+	var k: Variant = _key(a[0])
+	return absi(int(k) if k is int else hash(k)) % n
+
+# @native task.Call
+func _task_call(t, a: Array) -> Variant:
+	# Call(task): run a task to completion synchronously. Nothing in the retail
+	# campaign relies on the blocking part (one call site), so we let it run on
+	# its own and hand back the handle.
+	return a[0] if a.size() > 0 else t
 
 
 const _BINDINGS := {
@@ -581,14 +718,30 @@ const _BINDINGS := {
 	"string.trimleft": "_str_trim_left", "string.trimright": "_str_trim_right",
 	"string.formatstrstr": "_str_format",
 
-	"list.create": "_list_create", "list.add": "_list_add",
-	"list.append": "_list_add", "list.count": "_list_count",
-	"list.nth": "_list_nth", "list.remove": "_list_remove",
-	"list.removenth": "_list_remove_nth", "list.clear": "_list_clear",
-	"list.empty": "_list_clear", "list.contains": "_list_contains",
+	"list.addtail": "_list_add_tail", "list.append": "_list_add_tail",
+	"list.addhead": "_list_add_head", "list.itemcount": "_list_count",
+	"list.isempty": "_list_is_empty", "list.getnth": "_list_nth",
+	"list.setnth": "_list_set_nth", "list.head": "_list_head",
+	"list.tail": "_list_tail", "list.removehead": "_list_remove_head",
+	"list.remove": "_list_remove", "list.removenth": "_list_remove_nth",
+	"list.removeall": "_list_clear",
+	"list.removemembers": "_list_remove_members",
+	"list.contains": "_list_contains",
+	"list.sortbyintproperty": "_list_sort_by",
+	"list.sortbyfloatproperty": "_list_sort_by",
+	"list.sortbystringproperty": "_list_sort_by",
 
-	"set.create": "_set_create", "set.add": "_set_add",
-	"set.count": "_set_count", "set.nth": "_set_nth",
+	"list.fromset": "_list_from_set",
+	"object.setvectorproperty": "_obj_set_vector",
+	"object.vectorpropertyx": "_obj_vector_x",
+	"object.vectorpropertyy": "_obj_vector_y",
+	"object.vectorpropertyz": "_obj_vector_z",
+	"object.idmodulus": "_obj_id_modulus",
+	"task.call": "_task_call",
+
+	"set.add": "_set_add", "set.itemcount": "_set_count",
+	"set.isempty": "_set_is_empty", "set.firstelement": "_set_first",
 	"set.remove": "_set_remove", "set.contains": "_set_contains",
-	"set.clear": "_set_clear",
+	"set.fromlist": "_set_from_list", "set.union": "_set_union",
+	"set.difference": "_set_difference",
 }

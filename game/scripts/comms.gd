@@ -156,6 +156,9 @@ func say_key(key: String, who := "") -> void:
 var ask_options: Array = []   # {text, reply_key, response_key}
 var ask_speaker := ""
 var ask_question := ""
+# Index of the last option the player picked. The POG scripts branch on it:
+# icomms.Response() maps it back to the code the script attached to that option.
+var chosen := -1
 
 func ask(question_key: String, q_speaker: String, options: Array) -> void:
 	# options: [[text_key, player_reply_key, npc_response_key-or-""], ...]
@@ -175,6 +178,7 @@ func choose(i: int) -> void:
 	if i < 0 or i >= ask_options.size():
 		return
 	var opt: Dictionary = ask_options[i]
+	chosen = i
 	ask_options.clear()
 	main.audio.play("audio/gui/confirm.wav", -8.0)
 	say_key(opt["reply"], "young_cal")

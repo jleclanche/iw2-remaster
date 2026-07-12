@@ -60,6 +60,22 @@ var kill_count := 0  # hostiles destroyed (missions watch this)
 var demo := false
 var checks: CheckRunner
 
+# The POG virtual machine and its native packages. With --pog the campaign is
+# driven by the original mission bytecode instead of the hand-authored steps in
+# mission.gd; without it, mission.gd still runs, so both paths stay testable.
+var pog: PogVM
+var pog_std: PogStd
+var pog_facs: PogFactions
+var pog_world: PogWorld
+var pog_api: PogGameApi
+var pog_econ: PogEconomy
+var pog_ents: PogEntities
+var pog_ui: PogUi
+var pog_misc: PogMisc
+var pog_boot: Array = []
+var pog_boot_task: PogVM.PogTask = null
+var use_pog := false
+
 var px := 0.0
 var py := 0.0
 var pz := 0.0
@@ -103,6 +119,7 @@ func _ready() -> void:
 	uicheck = "--uicheck" in OS.get_cmdline_user_args()
 	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
 	campcheck = "--campcheck" in OS.get_cmdline_user_args()
+	use_pog = "--pog" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck:
 		demo = true
 	if demo:
@@ -117,6 +134,7 @@ func _ready() -> void:
 	mission = Mission.new()
 	mission.main = self
 	add_child(mission)
+	_build_pog()
 	_build_environment()
 	_spawn_player()
 	_load_system(START_SYSTEM, START_NAME)
@@ -139,6 +157,63 @@ func _ready() -> void:
 	cl.process_mode = Node.PROCESS_MODE_ALWAYS
 	audio.process_mode = Node.PROCESS_MODE_ALWAYS  # GUI sounds while paused
 	add_child(cl)
+	if use_pog and "--pogplay" in OS.get_cmdline_user_args():
+		# Straight into the campaign, no front end: the bytecode drives it.
+		menu.visible = false
+		start_campaign()
+
+## Walk istartsystem's boot stages, each one starting only after the previous
+## has run to completion. The engine drove these from C++; we drive them from
+## here, which keeps the ordering the scripts were written against.
+func _pog_boot_next() -> void:
+	if pog_boot.is_empty():
+		return
+	var stage: String = pog_boot.pop_front()
+	pog_boot_task = pog.start("istartsystem", stage)
+
+func _pog_boot_process() -> void:
+	if pog_boot.is_empty() and pog_boot_task == null:
+		return
+	if pog_boot_task != null and not pog_boot_task.halted:
+		return
+	pog_boot_task = null
+	if not pog_boot.is_empty():
+		_pog_boot_next()
+
+func _build_pog() -> void:
+	# The POG virtual machine, running the game's original mission bytecode.
+	# The natives are the only part we supply; everything above them -- the
+	# missions themselves, the conversations, the AI orders -- is the original
+	# compiled code out of resource.zip. See game/scripts/pog/vm.gd.
+	# --pogtrace echoes the missions' own debug.Print* lines: the original
+	# scripts narrate themselves, which is the fastest way to see what a
+	# mission thinks it is doing.
+	PogVM.trace_debug = "--pogtrace" in OS.get_cmdline_user_args()
+	pog = PogVM.new()
+	add_child(pog)
+	pog_std = PogStd.new()
+	pog_std.register(pog)
+	pog_facs = PogFactions.new()
+	pog_facs.register(pog)
+	pog_world = PogWorld.new()
+	pog_world.factions = pog_facs
+	pog_world.register(pog)
+	pog_world.bind_game(self)
+	pog_api = PogGameApi.new()
+	pog_api.register(pog, pog_world)
+	pog_api.bind_game(self)
+	pog_econ = PogEconomy.new()
+	pog_econ.register(pog, pog_world)
+	pog_econ.bind_game(self)
+	pog_ents = PogEntities.new()
+	pog_ents.register(pog, pog_world)
+	pog_ents.bind_game(self)
+	pog_ui = PogUi.new()
+	pog_ui.register(pog, pog_world)
+	pog_ui.bind_game(self)
+	pog_misc = PogMisc.new()
+	pog_misc.register(pog, pog_world)
+	pog_misc.bind_game(self)
 
 func _exit_tree() -> void:
 	ExplosionFx.release_cache()
@@ -182,6 +257,17 @@ func start_campaign() -> void:
 	_fit_player("sims/ships/player/comsec.ini",
 		"data/avatars/avatars/command_section/setup.gltf")
 	_setup_act0_scene()
+	if use_pog:
+		# Hand the campaign to the original bytecode, through the game's own
+		# boot sequence rather than jumping straight into a mission.
+		# istartsystem is the engine's bootstrap package: StartupNewGame sets up
+		# what the missions assume already exists (the ship-name INI handle, the
+		# mission tracker, the mission generator), then the session/space/system
+		# stages bring the player into the world and start the act.
+		pog_boot = ["StartupNewGame", "StartupSession", "StartupSpace",
+			"StartupSystem", "FinalSetup"]
+		_pog_boot_next()
+		return
 	# iact0mission10 bytecode: igame.PlayMovie("/movies/prelude")
 	_play_movie("prelude", func() -> void:
 		mission.start(Mission.act0()))
@@ -819,6 +905,10 @@ func contact_list() -> Array:
 	var list: Array = []
 	for i in objects.size():
 		var o: Dictionary = objects[i]
+		# isim.SetSensorVisibility(sim, false): the scripts hide a sim from
+		# sensors to stage an ambush, so it must not reach the contact list.
+		if o.get("sensor_hidden", false):
+			continue
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
 		var show := false
 		match o["category"]:
@@ -1177,6 +1267,9 @@ func _jump_process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	fire_lock = maxf(0.0, fire_lock - delta)
 	disrupt_time = maxf(0.0, disrupt_time - delta)
+	if use_pog:
+		_pog_boot_process()
+		pog_api.director_process(delta)   # cutscene camera, while one is staged
 	if demo:
 		checks.step(delta)
 	elif docked_at == "" and not menu.visible and movie == null:
@@ -1334,6 +1427,10 @@ func _contacts_full() -> Array:
 	var list: Array = []
 	for i in objects.size():
 		var o: Dictionary = objects[i]
+		# isim.SetSensorVisibility(sim, false): the scripts hide a sim from
+		# sensors to stage an ambush, so it must not reach the contact list.
+		if o.get("sensor_hidden", false):
+			continue
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
 		var show := false
 		match o["category"]:
@@ -1554,6 +1651,10 @@ func _stream_objects() -> void:
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
 			"station", "prop":
 				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
+					# POG can create a sim that carries no avatar (a pure logic
+					# marker); there is nothing to stream in for those.
+					if str(o.get("avatar", "")).is_empty():
+						continue
 					var model := _load_gltf("data/avatars/" + o["avatar"])
 					if model == null:
 						continue

@@ -428,10 +428,10 @@ func _execute(t: PogTask, deadline: int) -> void:
 				s[-1] = -s[-1]
 			OP_EQUAL:
 				var b: Variant = s.pop_back()
-				s[-1] = 1 if s[-1] == b else 0
+				s[-1] = 1 if _vals_equal(s[-1], b) else 0
 			OP_NOT_EQUAL:
 				var b: Variant = s.pop_back()
-				s[-1] = 1 if s[-1] != b else 0
+				s[-1] = 0 if _vals_equal(s[-1], b) else 1
 			OP_GREATER_I, OP_GREATER_F:
 				var b: Variant = s.pop_back()
 				s[-1] = 1 if s[-1] > b else 0
@@ -483,7 +483,7 @@ func _execute(t: PogTask, deadline: int) -> void:
 				s.push_back(t.pkg.strings[idx] if idx < t.pkg.strings.size() else "")
 			OP_EQUAL_OBJECTS:
 				var b: Variant = s.pop_back()
-				s[-1] = 1 if s[-1] == b else 0
+				s[-1] = 1 if _vals_equal(s[-1], b) else 0
 			OP_CLONE_OBJECT:
 				var v: Variant = s[-1]
 				s[-1] = v.duplicate() if v is Array or v is Dictionary else v
@@ -507,7 +507,14 @@ func _execute(t: PogTask, deadline: int) -> void:
 				if t.atomic > 0:
 					t.atomic -= 1
 			OP_DEBUG_SKIP:
-				t.pc = code.decode_u32(t.pc)   # developer mode off: skip `debug`
+				# The compiler wraps every `debug` statement in a skip that the
+				# engine takes unless FcDeveloperMode is on. trace_debug IS our
+				# developer mode: with it off, the missions' own narration is
+				# jumped over and never costs anything.
+				var after := code.decode_u32(t.pc)
+				t.pc += 4
+				if not trace_debug:
+					t.pc = after
 			_:
 				push_error("POG: unknown opcode 0x%02X in %s at %d"
 						% [op, t.pkg.name, t.pc - 1])
@@ -547,6 +554,22 @@ func _call_native(t: PogTask, link: Dictionary, argc: int) -> void:
 	var fn: Callable = link["native"]
 	var rv: Variant = fn.call(t, args)
 	t.stack.push_back(0 if rv == null else rv)
+
+
+## POG compares raw 32-bit words, so a script may legally test an object or
+## string handle against 0 to ask "is it null?". GDScript will not compare a
+## String to an int at all, so mixed-type equality means "is this handle null",
+## and a live handle never is.
+static func _vals_equal(a: Variant, b: Variant) -> bool:
+	if a == null or b == null:
+		return not _truthy(a) and not _truthy(b)
+	var an := a is int or a is float
+	var bn := b is int or b is float
+	if an != bn:
+		# handle vs number: only equal if the number is 0 and the handle is null,
+		# and we already know neither is null.
+		return false
+	return a == b
 
 
 ## POG has no bool type: 0 is false, everything else true. An object handle is

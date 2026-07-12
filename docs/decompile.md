@@ -105,6 +105,31 @@ That list is itself a spec: it names every element the original HUD had
 motion grid; `icHUDShields`, `icHUDEngineering`, `icHUDStarmap` — screens
 we have not built yet).
 
+### The POG interpreter (`FcScriptTask::Execute`)
+
+The single most valuable function in either binary: it is the VM the whole
+game's content logic runs on, and reading it let us build `game/scripts/pog/`
+(see `docs/pog.md`). Three things it settled that guesswork had wrong:
+
+- **`0x16`/`0x19` are `CallNative`/`StartNative`.** The compiler emits `Call`
+  (0x15) for *every* import with operands `0 0 argc`; the loader patches the
+  operands from the FIMP call-site tables and rewrites the opcode when the
+  import resolves to a DLL package. That is why shipped bytecode only ever
+  contains 0x15/0x18.
+- **`TimedJump` is a rate limiter, not a sleep.** `if now - local[slot] <=
+  interval: goto target; else: local[slot] = now`. So `EndTimeslice;
+  TimedJump L,slot,1.0` is POG's "poll this every second while yielding every
+  frame".
+- **A suspended task stops at the next *instruction*, not the next yield.**
+  The interpreter re-tests runnability after every opcode. Without that,
+  `iconversation`'s `while (!done) task.Sleep(Current(), 0.5)` -- which never
+  yields explicitly -- spins forever.
+
+`0x33`-`0x36` are the bitwise ops, and `0x43`/`0x44` are atomic-region
+begin/end (they suspend the 64-instruction preemption check), not debug
+markers. `0x45` (`DebugSkip`) is how `debug` statements cost nothing in
+release: the engine takes the jump unless `FcDeveloperMode` is on.
+
 ## Method note
 
 Optimized 2001-era C++ decompiles to dense pointer arithmetic; do not

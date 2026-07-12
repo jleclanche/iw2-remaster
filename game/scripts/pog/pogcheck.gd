@@ -15,7 +15,13 @@ const DEFAULT_SECS := 30.0
 
 var vm: PogVM
 var std: PogStd
+var facs: PogFactions
 var world: PogWorld
+var api: PogGameApi
+var econ: PogEconomy
+var ents: PogEntities
+var ui: PogUi
+var misc: PogMisc
 var elapsed := 0.0
 var limit := DEFAULT_SECS
 var steps := 0
@@ -34,8 +40,21 @@ func _initialize() -> void:
 
 	std = PogStd.new()
 	std.register(vm)
+	facs = PogFactions.new()
+	facs.register(vm)
 	world = PogWorld.new()
+	world.factions = facs
 	world.register(vm)
+	api = PogGameApi.new()
+	api.register(vm, world)
+	econ = PogEconomy.new()
+	econ.register(vm, world)
+	ents = PogEntities.new()
+	ents.register(vm, world)
+	ui = PogUi.new()
+	ui.register(vm, world)
+	misc = PogMisc.new()
+	misc.register(vm, world)
 
 	var p := vm.load_package(pkg_name)
 	if p == null:

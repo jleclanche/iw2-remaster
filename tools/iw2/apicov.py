@@ -31,13 +31,21 @@ POGDIS = ROOT / "data" / "pogdis"
 NATIVES = ROOT / "game" / "scripts" / "pog" / "natives"
 
 CALL = re.compile(r"^\s*\d+\s+(?:Call|StartLocal|Start|CallLocal)\s+([a-z_0-9]+)\.(\w+)\s+argc=(\d+)")
-# `# @native iship.IsInLDS` markers in the GDScript native modules
+# Markers in the GDScript native modules.
+#   @native -- really implemented: it does the thing.
+#   @stub   -- bound so the bytecode runs, but inert (or out of scope, like
+#              multiplayer). Counted separately: a stub is not a port, and a
+#              coverage number that conflates the two is lying to us.
 MARKER = re.compile(r"#\s*@native\s+([a-z_0-9]+)\.(\w+)")
+STUB = re.compile(r"#\s*@stub\s+([a-z_0-9]+)\.(\w+)")
 
 
 def script_packages() -> set[str]:
     """Packages whose bytecode we have -- the VM runs these, no port needed."""
     return {f.stem.lower() for f in POGDIS.glob("*.pogasm")}
+
+
+ARGCS: dict[tuple[str, str], set[int]] = collections.defaultdict(set)
 
 
 def census() -> tuple[dict[tuple[str, str], int], dict[tuple[str, str], set[str]]]:
@@ -51,17 +59,23 @@ def census() -> tuple[dict[tuple[str, str], int], dict[tuple[str, str], set[str]
                 key = (m.group(1), m.group(2))
                 counts[key] += 1
                 callers[key].add(f.stem)
+                ARGCS[key].add(int(m.group(3)))
     return counts, callers
 
 
-def implemented() -> set[tuple[str, str]]:
-    out: set[tuple[str, str]] = set()
+def implemented() -> tuple[set[tuple[str, str]], set[tuple[str, str]]]:
+    """(really implemented, stubbed)."""
+    real: set[tuple[str, str]] = set()
+    stub: set[tuple[str, str]] = set()
     if not NATIVES.is_dir():
-        return out
+        return real, stub
     for f in NATIVES.glob("*.gd"):
-        for m in MARKER.finditer(f.read_text(encoding="utf-8", errors="replace")):
-            out.add((m.group(1), m.group(2)))
-    return out
+        text = f.read_text(encoding="utf-8", errors="replace")
+        for m in MARKER.finditer(text):
+            real.add((m.group(1), m.group(2)))
+        for m in STUB.finditer(text):
+            stub.add((m.group(1), m.group(2)))
+    return real, stub - real
 
 
 def main() -> None:
@@ -83,7 +97,8 @@ def main() -> None:
     if args.pkg:
         counts = {k: v for k, v in counts.items() if k[0] == args.pkg}
 
-    done = implemented() if (args.coverage or args.todo or args.list is not None) else set()
+    done, stubbed = implemented()
+    bound = done | stubbed
 
     by_pkg: dict[str, list[tuple[str, int]]] = collections.defaultdict(list)
     for (pkg, fn), n in counts.items():
@@ -96,15 +111,23 @@ def main() -> None:
             print("%s  (%d functions, %d calls)"
                   % (pkg, len(fns), sum(n for _, n in fns)))
             for fn, n in fns:
-                mark = " " if (pkg, fn) in done else "*"
-                print("   %s %-34s %5d" % (mark, fn, n))
+                mark = " "
+                if (pkg, fn) in done:
+                    mark = "+"
+                elif (pkg, fn) in stubbed:
+                    mark = "~"
+                else:
+                    mark = "*"
+                argc = ",".join(str(x) for x in sorted(ARGCS[(pkg, fn)]))
+                print("   %s %-34s %5d   argc=%s" % (mark, fn, n, argc))
             print()
+        print("  + implemented   ~ stubbed   * not bound")
         return
 
     if args.todo:
-        todo = [(k, v) for k, v in counts.items() if k not in done]
+        todo = [(k, v) for k, v in counts.items() if k not in bound]
         todo.sort(key=lambda kv: -kv[1])
-        print("# unimplemented natives, most-called first")
+        print("# unbound natives, most-called first")
         for (pkg, fn), n in todo:
             print("%5d  %s.%s   (%d packages)" % (n, pkg, fn, len(callers[(pkg, fn)])))
         return
@@ -120,7 +143,7 @@ def main() -> None:
 
     hdr = "%-16s %6s %8s" % ("package", "funcs", "calls")
     if args.coverage:
-        hdr += "  %8s %s" % ("done", "coverage")
+        hdr += "  %5s %5s  %s" % ("impl", "stub", "calls covered")
     print(hdr)
     print("-" * (len(hdr) + 4))
 
@@ -130,16 +153,22 @@ def main() -> None:
         line = "%-16s %6d %8d" % (pkg, len(fns), calls)
         if args.coverage:
             d = sum(1 for fn, _ in fns if (pkg, fn) in done)
+            s = sum(1 for fn, _ in fns if (pkg, fn) in stubbed)
             dc = sum(n for fn, n in fns if (pkg, fn) in done)
-            line += "  %8d %6.0f%%" % (d, 100.0 * dc / calls if calls else 0)
+            line += "  %5d %5d  %11.0f%%" % (
+                d, s, 100.0 * dc / calls if calls else 0)
         print(line)
 
     if args.coverage:
         dc = sum(n for k, n in counts.items() if k in done)
         df = sum(1 for k in counts if k in done)
-        print("\nTOTAL  %d/%d functions (%.0f%%),  %d/%d call sites (%.0f%%)"
+        sf = sum(1 for k in counts if k in stubbed)
+        print("\nIMPLEMENTED  %d/%d functions (%.0f%%),  %d/%d call sites (%.0f%%)"
               % (df, total_fns, 100.0 * df / total_fns,
                  dc, total_calls, 100.0 * dc / total_calls))
+        print("STUBBED      %d functions (bound so the bytecode runs, but inert)"
+              % sf)
+        print("UNBOUND      %d functions" % (total_fns - df - sf))
 
 
 if __name__ == "__main__":
