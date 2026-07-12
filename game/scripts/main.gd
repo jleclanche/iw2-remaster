@@ -29,6 +29,9 @@ const PLANET_TEXTURES := [
 var ship: ShipFlight
 var ship_model: Node3D
 var cockpit: Node3D
+var comms: Comms
+var mission: Mission
+var movie: VideoStreamPlayer
 var cam: Camera3D
 var hud: Hud
 var menu: Menu
@@ -82,6 +85,7 @@ var motioncheck := false
 var jumpcheck := false
 var uicheck := false
 var mechcheck := false
+var campcheck := false
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
@@ -89,10 +93,17 @@ func _ready() -> void:
 	jumpcheck = "--jumpcheck" in OS.get_cmdline_user_args()
 	uicheck = "--uicheck" in OS.get_cmdline_user_args()
 	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
-	if motioncheck or jumpcheck or uicheck or mechcheck:
+	campcheck = "--campcheck" in OS.get_cmdline_user_args()
+	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck:
 		demo = true
 	audio = AudioManager.new()
 	add_child(audio)
+	comms = Comms.new()
+	comms.main = self
+	add_child(comms)
+	mission = Mission.new()
+	mission.main = self
+	add_child(mission)
 	_build_environment()
 	_spawn_player()
 	_load_system(START_SYSTEM, START_NAME)
@@ -108,7 +119,37 @@ func _ready() -> void:
 	menu = Menu.new()
 	menu.main = self
 	cl.add_child(menu)
+	# MFD comm-portrait video sits inside the HUD's targeting panel
+	comms.portrait.position = Vector2(18, 52)
+	hud.add_child(comms.portrait)
 	add_child(cl)
+
+func start_campaign() -> void:
+	start_in_system(START_SYSTEM)
+	_play_movie("intro", func() -> void:
+		mission.start(Mission.act0_m10()))
+
+func _play_movie(stem: String, then: Callable) -> void:
+	var path := _base().path_join("data/movies/%s.ogv" % stem)
+	if not FileAccess.file_exists(path) or _headless():
+		then.call()
+		return
+	movie = VideoStreamPlayer.new()
+	var vs := VideoStreamTheora.new()
+	vs.file = path
+	movie.stream = vs
+	movie.expand = true
+	movie.set_anchors_preset(Control.PRESET_FULL_RECT)
+	movie.finished.connect(func() -> void: _end_movie(then))
+	hud.get_parent().add_child(movie)
+	movie.play()
+	set_meta("movie_then", then)
+
+func _end_movie(then: Callable) -> void:
+	if movie != null:
+		movie.queue_free()
+		movie = null
+	then.call()
 	audio.music("ambient")
 	if uicheck:
 		menu.open()
@@ -622,6 +663,11 @@ func contact_list() -> Array:
 	return list.slice(0, 12)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if movie != null:  # Game.MovieSkip: Space / Escape / Return
+		if event is InputEventKey and event.pressed and event.physical_keycode \
+				in [KEY_SPACE, KEY_ESCAPE, KEY_ENTER]:
+			movie.finished.emit()
+		return
 	if menu != null and menu.visible:
 		menu.handle(event)
 		return
@@ -1236,8 +1282,39 @@ func _fmt_dist(d: float) -> String:
 # --- scripted demo: LDS across the system, then a combat encounter ---
 var _mc_shot := 0
 
+func _campcheck_control(_delta: float) -> void:
+	# smoke-test the campaign: mission starts, dialogue flows, waypoint
+	# objective spawns and completes when reached
+	match demo_phase:
+		0:
+			if demo_t > 1.0:
+				comms.fast = true
+				start_campaign()
+				print("CAMPCHECK: mission started, steps=",
+					mission.steps.size())
+				demo_phase = 1
+		1:
+			if mission.objectives.has("wp1"):
+				for o in objects:
+					if o.get("waypoint", false):
+						px = o["x"]
+						py = o["y"]
+						pz = o["z"]
+				demo_phase = 2
+		2:
+			if mission.objectives.get("wp1", {}).get("done", false):
+				print("CAMPCHECK: PASS — waypoint objective completed, ",
+					"dialogue queued=", comms.queue.size())
+				get_tree().quit(0)
+	if demo_t > 90.0:
+		print("CAMPCHECK: TIMEOUT phase ", demo_phase, " idx=", mission.idx)
+		get_tree().quit(1)
+
 func _demo_control(delta: float) -> void:
 	demo_t += delta
+	if campcheck:
+		_campcheck_control(delta)
+		return
 	if uicheck:
 		_uicheck_control(delta)
 		return
@@ -1342,6 +1419,7 @@ func _uicheck_control(_delta: float) -> void:
 				_apply_view()
 				var hostile := spawn_hostile(Vector3(1200, 150, -2200))
 				target_ai = hostile
+				comms.say_key("a0_m10_dialogue_clay_i_know")
 				demo_phase = 1
 				demo_t = 0.0
 		1:

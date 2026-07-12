@@ -61,7 +61,8 @@ func _items() -> Array:
 		return out
 	if launched:
 		return ["RESUME FLIGHT", "SELECT SYSTEM", "QUIT TO DESKTOP"]
-	return ["LAUNCH — COMMISSION TUG", "SELECT SYSTEM", "QUIT TO DESKTOP"]
+	return ["NEW CAMPAIGN", "FREE FLIGHT — COMMISSION TUG", "SELECT SYSTEM",
+		"QUIT TO DESKTOP"]
 
 func _activate() -> void:
 	var items := _items()
@@ -76,17 +77,33 @@ func _activate() -> void:
 		launched = true
 		close()
 		return
+	if launched:
+		match sel:
+			0:
+				main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
+				close()
+			1:
+				main.audio.play("audio/gui/expand.wav", -8.0)
+				mode = "systems"
+				sel = 0
+			2:
+				get_tree().quit()
+		return
 	match sel:
-		0:
-			main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
-			if not launched:
-				launched = true
+		0:  # NEW CAMPAIGN
+			main.audio.play("audio/gui/confirm.wav", -6.0)
+			launched = true
 			close()
-		1:
+			main.start_campaign()
+		1:  # free flight
+			main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
+			launched = true
+			close()
+		2:
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "systems"
 			sel = 0
-		2:
+		3:
 			get_tree().quit()
 
 func handle(event: InputEvent) -> void:

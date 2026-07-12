@@ -90,6 +90,53 @@ func _draw() -> void:
 	_draw_log(c)
 	_draw_console()
 	_draw_warnings(c)
+	_draw_subtitles()
+	_draw_objectives()
+
+func _draw_subtitles() -> void:
+	# in-flight dialogue subtitles at the top of the HUD (manual, comms)
+	if main.comms == null or str(main.comms.subtitle) == "":
+		if main.comms != null:
+			main.comms.portrait.visible = false
+		return
+	main.comms.portrait.visible = true
+	var s := _screen()
+	var who := str(main.comms.speaker).to_upper()
+	var text: String = "%s: %s" % [who, main.comms.subtitle]
+	var max_w := s.x * 0.62
+	var words := text.split(" ")
+	var lines: Array = [""]
+	for w in words:
+		var trial: String = (lines[-1] + " " + w).strip_edges()
+		if _font.get_string_size(trial, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				FONT_SIZE + 1).x > max_w:
+			lines.append(w)
+		else:
+			lines[-1] = trial
+	var y := 58.0
+	for ln in lines:
+		var w2 := _font.get_string_size(ln, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				FONT_SIZE + 1).x
+		draw_rect(Rect2(s.x / 2.0 - w2 / 2.0 - 6, y - FONT_SIZE - 2,
+				w2 + 12, FONT_SIZE + 8), Color(0, 0.05, 0, 0.55))
+		draw_string(_font, Vector2(s.x / 2.0 - w2 / 2.0, y), ln,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, GREEN)
+		y += FONT_SIZE + 8
+
+func _draw_objectives() -> void:
+	if main.mission == null or main.mission.objectives.is_empty():
+		return
+	var x := 20.0
+	var y := _screen().y - 150.0
+	draw_string(_font, Vector2(x, y), "OBJECTIVES",
+			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, GREEN_DIM)
+	for id in main.mission.objectives:
+		var o: Dictionary = main.mission.objectives[id]
+		if o["done"]:
+			continue
+		y += 17
+		draw_string(_font, Vector2(x, y), "- " + str(o["text"]).left(52),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, YELLOW)
 
 # --- shared chrome ----------------------------------------------------------
 
