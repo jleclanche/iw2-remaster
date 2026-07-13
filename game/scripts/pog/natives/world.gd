@@ -112,12 +112,24 @@ func player_pos() -> Vector3:
 	return Vector3(game.px, game.py, game.pz)
 
 
+## Moving the player moves the *origin*, because AI ships are positioned relative
+## to it. Shift them back by the same delta or they are dragged along, and a
+## script that teleports the player next to something it just spawned will find
+## the thing has politely moved out of the way -- which is what left the launch
+## cutscene waiting forever for the player to close on a launch tube that kept
+## running away from them.
 func set_player_pos(p: Vector3) -> void:
 	if game == null:
+		return
+	var delta := p - player_pos()
+	if delta == Vector3.ZERO:
 		return
 	game.px = p.x
 	game.py = p.y
 	game.pz = p.z
+	for ai in game.ai_ships:
+		if is_instance_valid(ai):
+			ai.position -= delta
 
 
 func _load_ship_db() -> void:
