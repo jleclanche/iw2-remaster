@@ -610,7 +610,12 @@ func _target_color() -> Color:
 # pilot's mode 0 lights none, mode 1 lights slot 1, mode 2 lights slot 0, and so
 # on. Our `ap_mode` (0 off, 1 approach, 2 formate, 3 dock, 4 match) has the same
 # arity and the same "0 = off" convention, so it drives them.
-const AP_ICON := [-1, 1, 0, 3, 2]   # DAT_1011e04c
+const AP_ICON := [-1, 1, 0, 3, 2]   # DAT_1011e04c, indexed by the ENGINE's enum
+# The engine's autopilot enum is 0 Off, 1 Formate, 2 Approach, 3 Dock, 4 Match.
+# Ours is 0 Off, 1 Approach, 2 Formate, ... -- approach and formate are swapped.
+# AP_ICON is the engine's table, so it has to be indexed by the engine's value,
+# or an approach lights the formate icon.
+const AP_MODE_TO_ENGINE := [0, 2, 1, 3, 4]
 const GAUGE_HOLD := 2.0             # DAT_1011e03c: a gauge lingers 2 s after it
                                     # stops changing
 var _gauge_last := [-1.0, -1.0, -1.0]
@@ -618,7 +623,7 @@ var _gauge_hold := [0.0, 0.0, 0.0]
 
 func _draw_status_icons(c: Vector2) -> void:
 	# --- slots 0-3: autopilot mode, r = 150, one at most ---------------------
-	var lit: int = AP_ICON[clampi(main.ap_mode, 0, 4)]
+	var lit: int = AP_ICON[AP_MODE_TO_ENGINE[clampi(main.ap_mode, 0, 4)]]
 	if lit >= 0:
 		_icon(c + _icon_pos(-22.5 - 11.25 * lit, ICON_R_MODE), 0x15 + lit,
 				ICON_ROUNDEL | ICON_SWEEP | ICON_RING, AMBER)

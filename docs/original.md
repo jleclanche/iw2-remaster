@@ -310,6 +310,53 @@ with `v0` the player's ship and `v8` the thing being approached.
 
 ---
 
+## 4b. The controls -- the game ships its own keymap
+
+Full write-up in **`controls.md`**. The keymap was an open question in this
+document and should not have been: the install carries **both** binding sets,
+complete, in `configs/default.ini` (joystick, "recommended") and
+`configs/keyboard_only.ini` (no joystick). Every `input.KeyCombinations(...)`
+prompt in the scripts can now be filled in.
+
+The three things that make IW2 feel like IW2, all confirmed against
+`icPlayerPilot::HandleLinearMessage` (`iwar2 @ 0x100ae2b0`) and
+`icPlayerPilot::RegisterInputs` (`0x100aea00`):
+
+- **You steer on the numpad and strafe on WASD.** `LateralX` is A/D, `LateralZ`
+  is W/S -- *thrusters*, not the stick. Yaw is NumPad4/6, pitch NumPad2/8, roll
+  NumPad1/3. `LateralY` (vertical strafe) has **no keyboard binding at all** in
+  either shipped config; it is joystick-only.
+- **`RollYawToggleHold` swaps yaw and roll.** Hold it (joystick button 2) and the
+  X axis rolls instead of yawing. `flux.ini [icPlayerPilot] toggle_roll_yaw = 0`
+  makes it a hold rather than a permanent swap. The yoke slots are identified
+  from `icAITarget::AngularVelocityToEuler` (`0x1005df5c`), which is
+  `icEuler(w.y, w.x, -w.z)` -- so **`icEuler` is (yaw, pitch, roll)**.
+- **The throttle is a fraction of top speed, rate-limited to +-1/3 per second**
+  (the float at `0x10119454`): a full sweep takes three seconds. The zoom factor
+  (`max_zoom_factor = 10`, `zoom_time = 0.5`) **divides yaw and pitch but not
+  roll**, which is what makes a zoomed shot aimable.
+
+### F1 is the "turn the cockpit off" key
+
+`icDirector`'s constructor (`0x100d5e20`) builds five camera **groups**, and
+`icDirector::OnMessage` (`0x100d6920`) cycles them: a camera key pressed from
+*outside* its group jumps to the group's first camera; pressed from *inside*, it
+steps to the next one, wrapping.
+
+```
+F1  cam_internal_cockpit -> cam_internal_no_cockpit -> cam_arcade
+F2  cam_tactical -> cam_inverse_tactical
+F3  cam_external -> cam_target_external
+F4  cam_drop
+```
+
+So the removable cockpit dressing was never a separate option -- it is the second
+press of F1. (`cam_internal_no_hud` exists, at index 3 of the `eCamera` name table
+at `0x101621e0`, but sits only in the developers' `DevCycleAllCameras` group,
+which ships bound to nothing.)
+
+---
+
 ## 5. Ships and sims
 
 **Ships are spawned by INI path**, not by a model name:
@@ -1269,6 +1316,9 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 | Bodies and stars are drawn as impostors: pulled in to 250 km and scaled down by the same factor, so the *angular* size is right, with the apparent radius capped at `0.4 x` the draw distance | Drew them at their true distance and size | Floating origin + a 600 km far plane. The cap only bites when a body would subtend more than ~44 degrees, which happens because a few authored star radii are enormous (see `geography.md`). |
 | The base screens run the original POG builders, but are drawn in the remaster's own amber-on-black (`base_screens.gd`) | A skinned widget toolkit: `igui.CreateFancyButton` splices a 38-argument nine-patch atlas onto every control | The content and the control flow are the original's -- the rows, their order, and the POG function behind every one of them. Only the skin is ours, and the front end already is (`menu.gd`). |
 | `natives/std.gd::_create` knowingly reads `global.Create*`'s persistence flag as its value | -- | It is a bug, and it is left in **on purpose**: it cancels a second bug in the ported comparison operators, and fixing either alone stops the campaign starting. See **8b**. |
+| An approach **arrives** at the marker sphere: complete when `distance <= marker + max(min(marker*0.05, 0.5), 20)` | **Settles** on it: complete when `\|distance - marker\| < min(marker*0.05, 0.5)` | The break-off distance itself is exact (section 4a). Only the tolerance differs: the engine has a position controller that holds station to half a metre, ours flies a waypoint list and cannot. The floor is the engine's own `m_waypoint_approach_distance` (20 m), not a number we picked. |
+| A station's `FiSim::Radius` is its avatar's bounding sphere, stamped when it streams in | The same -- the engine sizes every sim from its avatar | Not a divergence in kind, but worth stating: the station's *map record* carries no radius (its `+0x138` belongs to the parent body, see `geography.md`), so it has to come from the model, and **the approach marker depends on it**. Before this, every station reported radius 0 and the marker collapsed to the 20 m waypoint distance. |
+| The mouse is a yoke: X yaws, Y pitches, the right button is `RollYawToggleHold`, and the zoom factor divides it | Bound **no** mouse axis to the pilot; flight is joystick or numpad, and the mouse drives the director's camera | A 2001 game could assume a joystick. The mouse carries the real yoke's two behaviours, so it is the same control on a different device. See `controls.md`. |
 
 ---
 
@@ -1292,11 +1342,21 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
   **0x1D** (a capsule with left/right arrows). What that struct is was not
   resolved, so **neither sprite is drawn** -- only the 0x1B "a system is down"
   case is.
-- **`icPlayerPilot+0x308`.** It indexes `DAT_1011e04c = [-1, 1, 0, 3, 2]` to pick
-  one of the four mode icons, and gates the 0x1C/0x1D branch when it is 0. Our
-  `ap_mode` (0 off, 1 approach, 2 formate, 3 dock, 4 match) has the same arity
-  and the same "0 = off" convention, so it drives them -- **but that the field
-  *is* the autopilot mode is an inference, not a reading.**
+- ~~**`icPlayerPilot+0x308`.**~~ **RESOLVED, and it needs a fix.** `+0x308` *is*
+  the autopilot mode, by direct reading: `icPlayerPilot::SetAutopilot`
+  (`0x100af930`) ends `*(eAutopilot *)(this + 0x308) = param_1`, `Autopilot()`
+  (`0x10005370`) returns it and `AutopilotEngaged()` (`0x10005360`) is
+  `+0x308 != 0`. No inference left.
+
+  **But the enum is not ours.** The engine's is **0 Off, 1 Formate, 2 Approach,
+  3 Dock, 4 MatchVelocity** (6 = RemotePilot); `main.gd`'s `ap_mode` is 0 off,
+  **1 approach, 2 formate**, 3 dock, 4 match -- 1 and 2 are swapped. So
+  `hud.gd`'s `AP_ICON = DAT_1011e04c = [-1, 1, 0, 3, 2]`, which is indexed by the
+  *engine's* mode, currently lights the **formate** icon for an approach and vice
+  versa. Either remap on read (`AP_ICON[[0,2,1,3,4][ap_mode]]`) or renumber
+  `ap_mode` to the engine's enum -- but `hud.gd:917` also *writes* `ap_mode` from
+  the HUD menu, so both ends have to move together. Left for the HUD owner;
+  `main.gd` keeps its own numbering so nothing changes under `hud.gd`'s feet.
 - **The incoming-missile icon (0x4E) has no source in our sim.** Nothing ever
   locks a missile on the player, so slot 10 never lights. The engine's rule is
   known (`pilot+0x6c` set; one pip per missile from `pilot+0xa8`).
@@ -1339,16 +1399,38 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
   either: `body_type` (`+0x134`) holds only 2/3/4/6, `planet_type` (`+0x13C`) only
   1/2. `icPlanet::Type` is a bare field read, so the binary does not say where the
   loader filled it from. 6 call sites; left stubbed.
+- **What the contact list's membership rule actually is.** `icPlayerContactList`
+  (`0x100aabe0`) is recovered as far as *sorting* (`CompareByRange`, `0x100ac190`)
+  and the `iiSim::VisibleToSensor` (`0x100013b0`) gate, but the **range** at which
+  a sim enters the list is not: `Add` (`0x100ac1c0`) carries no distance test, so
+  the cutoff is upstream in the sensor sweep (`Update`, `0x100aad20`) and we did
+  not follow it. Our list keeps its own ranges (stations 500 km, L-points
+  10 000 km, ships unlimited) and they are **ours, not the game's**.
+- **`icAIServices::InnerMarkerRadius`'s category `0x1f` branch.** A target whose
+  `sim+0x194` is `0x1f` gets a marker of **0**. The category enum is the same one
+  `icBullet` uses to pick `asteroid_impact` (`0xb` / `0xe`), and it is still not
+  named -- so which sims those are is known by number, not by kind.
+- **`icAIDockAgent`.** The dock autopilot is *not* the approach autopilot with a
+  smaller radius: `EngageAutopilotDock` (`0x100afe80`) builds a `cData` with a
+  target sim and **no radius at all**, and `icAIDockAgent` (`0x10050aa0`) flies it
+  to a docking port. We did not read the agent, so our dock keeps its 4 km
+  `DOCK_RANGE` hard-dock. The break-off is right; the approach path is not read.
 - **The HUD menu tree.** `ihud.CurrentMenuNode` returns a *node name*
   ("hud_menu_eng", "hud_menu_wep", "hud_menu_nav" ...) and `SetMenuNodeEnabled`
   (70 call sites) locks the player out of a system until it has been taught. That
   is `icHUDMenuReticle` from `flux.ini [icHUD]`, and we never built it, so the
   whole of `iact0generaltraining`'s menu tour has nothing to walk. The node names
   are in the scripts; the tree's shape is not.
-- **The original keymap.** `input.KeyCombinations("icPlayerPilot.CycleContactUp")`
-  renders the bound key into a prompt ("press %s to..."). The action names are in
-  the scripts, but the engine-side action -> key table is not recovered, so the
-  prompts come out without the key name.
+- **The sense of the yoke axes.** The *bindings* are recovered (see below and
+  `controls.md`), and `icPlayerPilot::HandleLinearMessage` (`0x100ae2b0`) says
+  which yoke slot each axis drives. What is **not** read out of the binary is the
+  sign convention: whether `+Pitch` is nose-up or nose-down at the point the yoke
+  reaches `iiThrusterSim`. We take it as **nose-down**, on the chain
+  `[icPlayerPilot.Pitch] Joystick1, JoyYAxis, inverse` -> an inverted DirectInput
+  Y is positive when the stick is pushed forward -> forward stick is nose-down;
+  `keyboard_only.ini` then binds NumPad8 to the same positive half. Every step is
+  sourced, but the last one is an inference from convention, not a read
+  instruction. Yaw and roll are self-consistent either way and were already right.
 - **The C++ base screens.** `icSPComputerTradingScreen`, `icSPAddCargoScreen` and
   `icSPComputerPuzzleScreen` have no POG builder -- they were laid out in C++, and
   their window trees are in `iwar2.dll` rather than in any script. Trading itself

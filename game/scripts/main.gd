@@ -1846,12 +1846,9 @@ func _player_control(delta: float) -> void:
 	# icPlayerPilot::Simulate ramps the zoom at max_zoom_factor / zoom_time
 	zoom_factor = move_toward(zoom_factor, ZOOM_MAX if zoomed else 1.0,
 		ZOOM_MAX / ZOOM_TIME * delta)
-	if not docked_at.is_empty():
-		cam.fov = FOV_INTERNAL
-	else:
-		var base_fov: float = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 \
-			else FOV_EXTERNAL
-		cam.fov = base_fov / zoom_factor
+	var base_fov: float = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 \
+		else FOV_EXTERNAL
+	cam.fov = base_fov / zoom_factor
 	if ap_mode == 0:
 		# THRUSTERS, not steering. LateralX = D / A, LateralZ = W / S. LateralY
 		# has no keyboard binding in either shipped config -- it is joystick-only
