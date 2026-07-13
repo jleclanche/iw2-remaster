@@ -150,8 +150,14 @@ func _c_end(_t, _a: Array) -> Variant:
 # ---------------------------------------------------------------- iai
 # The scripts never fly a ship directly; they hand it an order and wait.
 
+## Orders only mean something for an AI-piloted ship. The scripts hand orders to
+## the player's hull too (the launch cutscene purges the player's orders before
+## it flies them out), and ShipFlight has no AI fields at all -- so an order for
+## anything that is not an AiShip is simply not an order.
 func _order_for(s) -> PogOrder:
 	if s == null or s.node == null or not is_instance_valid(s.node):
+		return null
+	if not (s.node is AiShip):
 		return null
 	var key: int = s.node.get_instance_id()
 	if not orders.has(key):
@@ -228,6 +234,8 @@ func _ai_purge(_t, a: Array) -> Variant:
 	var s = world._as_sim(a[0])
 	if s == null or s.node == null or not is_instance_valid(s.node):
 		return 0
+	if not (s.node is AiShip):
+		return 0            # the player's hull has no orders to purge
 	orders.erase(s.node.get_instance_id())
 	s.node.behavior = "patrol"
 	return 0
@@ -343,6 +351,8 @@ class PogDolly extends RefCounted:
 
 # @native idirector.Begin
 func _d_begin(_t, _a: Array) -> Variant:
+	if PogRuntime.TRACE:
+		print("[pog] idirector.Begin")
 	director_busy = true
 	focus = null
 	focus2 = null
@@ -353,6 +363,8 @@ func _d_begin(_t, _a: Array) -> Variant:
 
 # @native idirector.End
 func _d_end(_t, _a: Array) -> Variant:
+	if PogRuntime.TRACE:
+		print("[pog] idirector.End")
 	director_busy = false
 	fade = 0.0
 	fade_rate = 0.0
@@ -585,11 +597,18 @@ func _g_time(_t, _a: Array) -> Variant:
 
 # @native igame.EnableBlackout
 func _g_blackout(_t, a: Array) -> Variant:
-	# Used to hide the world while the director re-stages a scene.
+	# Used to hide the world while the director re-stages a scene. It is the
+	# scripts' job to turn it back off, and if they do not the player is left
+	# staring at a black screen -- so say so when tracing.
+	blackout = PogVM._truthy(a[0])
+	if PogRuntime.TRACE:
+		print("[pog] igame.EnableBlackout(%s)" % ("1" if blackout else "0"))
 	if game == null or game.jump_fade == null:
 		return 0
-	game.jump_fade.color = Color(0, 0, 0, 1.0 if PogVM._truthy(a[0]) else 0.0)
+	game.jump_fade.color = Color(0, 0, 0, 1.0 if blackout else 0.0)
 	return 0
+
+var blackout := false
 
 # @native igame.NextAct
 func _g_next_act(_t, a: Array) -> Variant:
@@ -686,10 +705,12 @@ func _g_autosaved(_t, _a: Array) -> Variant:
 
 var _saved := false
 
-# The scripts set 0, 1 or 2, and branch on GameType() being truthy at all --
-# istartsystem.FinalSetup skips the whole single-player path when it is 0. So 0
-# means "no game running"; 1 is the campaign we start in.
-var game_type := 1
+# 0 IS the single-player campaign: istartsystem.FinalSetup gates its whole
+# single-player path on `if (0 == igame.GameType())`, and StartupSpace blacks the
+# screen out for anything that is not 2 or 3 (the multiplayer types). Getting
+# this wrong skips the code that turns the blackout back off, and the player
+# stares at a black screen with a perfectly healthy game running behind it.
+var game_type := 0
 
 # @native igame.GameType
 func _g_game_type(_t, _a: Array) -> Variant:

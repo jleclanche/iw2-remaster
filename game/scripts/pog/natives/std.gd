@@ -168,9 +168,13 @@ func _task_resume(_t, a: Array) -> Variant:
 	return 0
 
 # @native task.SuspendAll
-func _task_suspend_all(_t, _a: Array) -> Variant:
-	for t in vm.tasks:
-		t.wake_at = INF
+func _task_suspend_all(t, _a: Array) -> Variant:
+	# Everything *else*. istartsystem.FinalSetup calls this immediately before
+	# spawning the launch cutscene, so suspending the caller as well deadlocks
+	# the boot -- which is exactly what it did.
+	for other in vm.tasks:
+		if other != t:
+			other.wake_at = INF
 	return 0
 
 # @native task.ResumeAll

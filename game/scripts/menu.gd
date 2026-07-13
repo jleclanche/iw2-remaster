@@ -166,6 +166,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	# the menu owns its input: it must keep working while the tree is paused
 	if main.movie != null or main.demo:
 		return
+	# ...except during a cutscene, where Escape means "skip", not "pause". The
+	# menu sits deeper in the tree than main, so without this it would swallow
+	# the key before main ever saw it.
+	if not visible and main.in_cutscene():
+		return
 	if visible:
 		handle(event)
 		get_viewport().set_input_as_handled()
@@ -277,13 +282,14 @@ func handle(event: InputEvent) -> void:
 			KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
 				_activate()
 			KEY_ESCAPE:
+				# Escape backs out of a screen. It never quits the game: that
+				# is what the QUIT item is for, and losing a campaign to a
+				# stray keypress is not a feature.
 				if mode == "systems":
 					mode = "main"
 					sel = 0
 				elif launched:
 					close()
-				else:
-					get_tree().quit()
 	if event is InputEventMouseMotion:
 		for i in _item_rects.size():
 			if _item_rects[i].has_point(event.position) and sel != i:

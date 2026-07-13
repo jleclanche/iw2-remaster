@@ -188,6 +188,21 @@ func _pog_boot_process() -> void:
 	if not pog_boot.is_empty():
 		_pog_boot_next()
 
+## Is an in-engine cutscene staged right now? idirector.Begin()/End() bracket
+## one, and the launch sequence at the start of the campaign is one.
+func in_cutscene() -> bool:
+	if use_port and pog_rt != null and pog_rt.gameapi != null:
+		return pog_rt.gameapi.director_busy
+	if use_pog and pog_api != null:
+		return pog_api.director_busy
+	return false
+
+## Ask the running cutscene to abort, the way the scripts themselves do.
+func skip_cutscene() -> void:
+	var std: PogStd = pog_rt.std if use_port else pog_std
+	if std != null:
+		std.globals["g_cutscene_skip"] = 1
+
 ## The campaign, running as ported GDScript. Same sequence the engine drove:
 ## istartsystem brings the world up, then iprelude opens Act 0. These are
 ## coroutines now, so the ordering is just `await`.
@@ -247,6 +262,12 @@ func _build_pog() -> void:
 func _exit_tree() -> void:
 	ExplosionFx.release_cache()
 	Input.set_custom_mouse_cursor(null)
+	# The glTF prototypes are parsed scenes we keep to duplicate from; they are
+	# deliberately not in the tree, so nothing else will ever free them.
+	for proto in _gltf_cache.values():
+		if proto != null and is_instance_valid(proto):
+			proto.free()
+	_gltf_cache.clear()
 
 func _fit_player(ini_path: String, avatar: String) -> void:
 	# swap the player's hull: the campaign opens in the bare command
@@ -282,6 +303,11 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 	_apply_view()
 
 func start_campaign() -> void:
+	# The pause menu needs to know a game is running, or Escape has nothing to
+	# return to. --pogplay boots straight past the front end, so set it here
+	# rather than in the menu item that usually would.
+	if menu != null:
+		menu.launched = true
 	start_in_system(START_SYSTEM)
 	_fit_player("sims/ships/player/comsec.ini",
 		"data/avatars/avatars/command_section/setup.gltf")
@@ -990,6 +1016,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event is InputEventKey and event.pressed and event.physical_keycode \
 				in [KEY_SPACE, KEY_ESCAPE, KEY_ENTER]:
 			movie.finished.emit()
+		return
+	# An in-engine cutscene is running: Escape skips it, it does not pause.
+	# The scripts have their own abort for this -- icutsceneutilities.HandleAbort
+	# polls the g_cutscene_skip flag and halts the cutscene task -- so setting it
+	# is a real skip rather than us tearing the scene down behind their back.
+	if event is InputEventKey and event.pressed and not event.echo \
+			and event.physical_keycode == KEY_ESCAPE and in_cutscene():
+		skip_cutscene()
+		get_viewport().set_input_as_handled()
 		return
 	if menu != null and menu.visible:
 		return  # the menu handles its own input (it runs while paused)
