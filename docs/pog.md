@@ -148,3 +148,61 @@ python -m tools.iw2.apicov --coverage   # native API coverage
 every line of dialogue comes from, and `inifile.*` is how the scripts read ship
 and weapon definitions. Both are Latin-1 in the original and are converted to
 UTF-8 at extraction, never at runtime.
+
+## Mission checkpoints: what iscore.SetRestartPoint actually is
+
+Every campaign act calls `iscore.SetRestartPoint()` at mission start and
+`iscore.GotoRestartPoint()` on a mission restart (8 packages, argc=0 at every
+call site). The natural guess -- an engine snapshot of the mission -- is wrong,
+and the binaries say so:
+
+* The POG package lives in its own wrapper DLL, `iscore.dll`. Its
+  `RegisterNative("SetRestartPoint", ...)` / `("GotoRestartPoint", ...)` calls
+  are at `iscore.dll @ 0x100018e0 / 0x10001940`, and the handlers
+  (`@ 0x10001900 / 0x10001960`) are five instructions each: if
+  `icScoreTable::m_p_instance` is non-null, push the player ship's object id
+  (`icPlayerPilot::m_p_instance` -> `+0x14` (ship) -> `+0x4` (id)) and call the
+  matching icScoreTable method. Nothing else.
+* `icScoreTable` (`iwar2.dll`) keeps three per-sim-id hash maps of `cStats`
+  (0x80-byte score records: per-type kill tallies, kill points, pod piracy
+  count/value): **Aggregate** at `+0x34`, **Current** at `+0x44`, **Restart**
+  at `+0x54`.
+  * `SetRestartPoint(id)` (`iwar2.dll @ 0x100a0ab0`):
+    `Restart[id] := Current[id]` (find-or-create, whole cStats copy).
+  * `GotoRestartPoint(id)` (`iwar2.dll @ 0x100a0d80`):
+    `Current[id] := Restart[id]`.
+  * `Credit` (`@ 0x100a1380` kills, `@ 0x100a1620` piracy) writes **only**
+    Current; `FlushScore` (`@ 0x100a07b0`, called from `icClient::DestroyWorld`
+    `@ 0x100b3620` when the world is torn down with the player alive) folds
+    Current into Aggregate and zeroes Current *and* Restart; if the player died,
+    DestroyWorld instead just zeroes Current. `Total` (the statistics screen)
+    reads Current + Aggregate.
+
+So the pair is a **scoreboard checkpoint**: restarting a mission discards the
+kills and piracy credited since the checkpoint, because the player is about to
+earn them again. The *positional* half of a checkpoint was never native at all
+-- the mission scripts store a `restart_waypoint` handle and a
+`current_mission_state` on the player ship right before calling
+SetRestartPoint, `ideathscript.PlayerDeathScript` reads them back on death, and
+the restart screen respawns the ship at the waypoint
+(`ideathscript.RestorePlayerShip`). All of that is POG and already ported in
+`gen/ideathscript.gd` / `gen/ipdagui.gd`.
+
+The port (`natives/misc.gd`) keeps one pair of counters where the original had
+Current + Aggregate, so SetRestartPoint snapshots the counters and
+GotoRestartPoint restores them. Between a Set and a Goto the Aggregate part
+cannot change (Credit only writes Current), so the observable behaviour is
+identical for every shipped script. The one divergence -- a Goto with no prior
+Set in the same world would zero the whole total instead of just the mission's
+share -- is unreachable: all 8 packages Set from their mission-start handler
+before any Goto. `--campcheck` asserts the roll-back end to end.
+
+UNKNOWN (not needed for the natives, left unrecovered): the exact meaning of
+the cStats dwords at `+0x54..+0x74` (ResetStats zeroes them; neither Credit
+overload writes them). Recovered fields: per-type kill tallies at `+0x00..+0x48`
+(dword index `iiSim::eType - 0xc`, types 0xc..0x1e), kill points `+0x4c`, kill
+count `+0x50` (Credit `@ 0x100a1380`), pod piracy count `+0x78` and value
+`+0x7c` (Credit `@ 0x100a1620`). Also left alone: `ResolveID`'s wingmen path
+(`iwar2.dll @ 0x100a1c60`: sims in the player's `wingmen_group` resolve to
+score id 0), which never triggers for these natives because the wrapper always
+passes the player ship's own id.

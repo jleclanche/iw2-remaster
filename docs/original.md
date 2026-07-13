@@ -165,6 +165,29 @@ That is what stops the mission's opening movie from racing the cutscene.
 to 1 halts the cutscene task and calls `idirector.End()`. Escape should set that
 flag, not tear the scene down behind the scripts' back.
 
+### Mission checkpoints are a scoreboard, not a save
+
+`iscore.SetRestartPoint` never snapshotted world state. `iscore` is a wrapper
+DLL (`bin/release/iscore.dll`, package `iScore`, 12 natives); its
+SetRestartPoint/GotoRestartPoint handlers (`@ 0x10001900 / 0x10001960`) take no
+POG arguments and forward the player ship's object id to `icScoreTable`
+(`iwar2.dll`, singleton), which keeps three per-sim-id cStats maps: Aggregate
+`+0x34`, Current `+0x44`, Restart `+0x54`. `SetRestartPoint @ 0x100a0ab0` is
+`Restart[id] := Current[id]`; `GotoRestartPoint @ 0x100a0d80` is the reverse;
+kill/piracy `Credit` (`0x100a1380` / `0x100a1620`) writes Current only;
+`FlushScore @ 0x100a07b0` (from `icClient::DestroyWorld @ 0x100b3620`, player
+alive) folds Current into Aggregate and zeroes Current and Restart -- a dead
+player's Current is simply discarded.
+
+The *positional* half of a checkpoint is pure POG and rides the ordinary
+mission machinery: packages store `restart_waypoint` +
+`current_mission_state` handle properties on the player ship before calling
+`SetRestartPoint()`; on death `iDeathScript.PlayerDeathScript` publishes
+`restart_screen_*` globals and overlays `icRestartScreen` (registered
+`@ 0x10022170`), and the mission resumes from its own stored state. Kills are
+credited only while logging is enabled (`icScoreTable+0x30`), and
+PlayerDeathScript brackets death with `DisableLogging`/`EnableLogging`.
+
 ---
 
 ## 4. Flight, LDS, and regions

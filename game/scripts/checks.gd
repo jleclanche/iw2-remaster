@@ -135,12 +135,31 @@ func _campcheck(_delta: float) -> void:
 				demo_phase = 2
 		2:
 			if m.mission.objectives.get("wp1", {}).get("done", false):
+				var ck := _checkpoint_check()
 				print("CAMPCHECK: PASS — waypoint objective completed, ",
 					"dialogue queued=", m.comms.queue.size())
-				get_tree().quit(0)
+				get_tree().quit(0 if ck else 1)
 	if demo_t > 90.0:
 		print("CAMPCHECK: TIMEOUT phase ", demo_phase, " idx=", m.mission.idx)
 		get_tree().quit(1)
+
+# Mission checkpoints roll the scoreboard back (iwar2.dll @ 0x100a0ab0
+# SetRestartPoint: snapshot; @ 0x100a0d80 GotoRestartPoint: restore -- see
+# natives/misc.gd). Drive the natives exactly as the mission scripts do
+# (argc=0, through the runtime dispatch) and assert the roll-back.
+func _checkpoint_check() -> bool:
+	var sc: PogMisc = m.pog_rt.misc
+	var k0: int = sc.kill_score
+	var p0: int = sc.piracy_score
+	m.pog_rt.native("iscore.setrestartpoint", [])
+	sc.kill_score += 250     # kills earned after the checkpoint...
+	sc.piracy_score += 40    # ...are discarded by the restart
+	m.pog_rt.native("iscore.gotorestartpoint", [])
+	var ok: bool = sc.kill_score == k0 and sc.piracy_score == p0
+	print("CAMPCHECK checkpoint: ", "PASS" if ok else "FAIL",
+		" — score rolled back to %d kill / %d piracy" %
+		[sc.kill_score, sc.piracy_score])
+	return ok
 
 # --- UI screenshots -----------------------------------------------------------
 

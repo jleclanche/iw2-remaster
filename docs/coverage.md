@@ -1,9 +1,10 @@
-# Coverage audit: the 186 API stubs and the element inventory
+# Coverage audit: the 184 API stubs and the element inventory
 
-Audited 2026-07-13 (task #44). Raw data is regenerable, not prose:
+Audited 2026-07-13 (task #44); iscore checkpoints implemented (task #47).
+Raw data is regenerable, not prose:
 
     python -m tools.iw2.apicov --stubs        # every stub, per package, by call count
-    python -m tools.iw2.apicov --coverage     # 643/829 implemented, 186 stubbed
+    python -m tools.iw2.apicov --coverage     # 645/829 implemented, 184 stubbed
     python -m tools.iw2.featurecov            # 384 registered classes, per binary
     python -m tools.iw2.featurecov --todo     # the GENUINE single-player gaps only
 
@@ -25,11 +26,12 @@ is a deliberate approximation rather than a missing feature.
 | presentation, deliberately not reproduced (gui skin, sim culling/channels) | 17 | 700 | accurate, two reasons stale (below) |
 | pragmatic approximations (ihabitat.Population, ibody.Type, iai.*, iship cosmetic) | 9 | 14 | accurate |
 | engine-internal (ioptions device rows, igame disc checks) | 4 | 7 | accurate |
-| **GENUINE GAP, SP-visible** | **24** | **175** | the work queue below |
+| **GENUINE GAP, SP-visible** | **22** | **159** | the work queue below |
 | dead marker (`iship.IsAIDisabled`, zero call sites) | 1 | 0 | flag: remove or explain |
 
-(186 markers total; `iship.IsAIDisabled` has no call site in any .pogasm --
-`apicov --stubs` prints it as a DEAD MARKER.)
+(184 markers total; `iship.IsAIDisabled` has no call site in any .pogasm --
+`apicov --stubs` prints it as a DEAD MARKER. The iscore checkpoint pair,
+formerly the top SP gap at 16 call sites, is implemented -- see below.)
 
 ## Per-package tables
 
@@ -109,14 +111,21 @@ the lobby, GotEarnedMovie/GotPlayDisk have no disc to check. All accurate.
 | CreateTurretFighters | 1 | turret gap |
 | IsAIDisabled | 0 | **DEAD MARKER**: no call site in any .pogasm. Remove the marker or note why it is bound |
 
-### iscore -- 2 stubs, 16 calls -- GENUINE GAP (SP)
+### iscore -- 0 stubs -- IMPLEMENTED (task #47)
 
-SetRestartPoint / GotoRestartPoint (8 calls each, 8 packages -- every act).
-The marker reason is honest ("we have no save/restore of world state to hang
-that on") but the classification should be loud: **these are mission
-checkpoints**. Dying mid-mission in the original rolls back to the restart
-point; here the scripts' checkpoint calls do nothing. The most consequential
-single stub pair for the SP experience.
+SetRestartPoint / GotoRestartPoint (8 calls each, 8 packages -- every act)
+are no longer stubs. The old marker reason ("we have no save/restore of
+world state to hang that on") turned out to be a false premise: the natives
+never snapshotted world state. Recovered from the binaries: the iscore.dll
+handlers (@ 0x10001900 / 0x10001960) call icScoreTable::SetRestartPoint /
+GotoRestartPoint (iwar2.dll @ 0x100a0ab0 / 0x100a0d80) with the player
+ship's id, which copy the per-sim score stats (cStats) between the Current
+table (+0x44) and the Restart table (+0x54) -- a *scoreboard* checkpoint.
+The positional half of a mission checkpoint was always pure POG
+(`restart_waypoint` / `current_mission_state` ship properties +
+ideathscript.PlayerDeathScript + the restart screen) and is already ported.
+Full write-up in docs/pog.md; verified by the `--campcheck` checkpoint
+assertion in checks.gd.
 
 ### input -- 1 stub, 12 calls -- GENUINE GAP (SP, cosmetic-but-annoying)
 
@@ -165,8 +174,8 @@ IsCapsuleJumpAccelerating: our AI ships have no jump spool-up phase.
 
 ## Stubs that matter for single player, ranked
 
-1. **iscore.SetRestartPoint / GotoRestartPoint** -- mission checkpoints do
-   nothing; every act calls them.
+1. ~~**iscore.SetRestartPoint / GotoRestartPoint**~~ -- IMPLEMENTED
+   (task #47): the checkpoint scoreboard roll-back, see the iscore section.
 2. **isim.AlienInfection\*** (4 stubs) -- act 3 infection visual *and* its
    damage-over-time.
 3. **iship turret-targeting trio + ihabitat.SetArmed trio +

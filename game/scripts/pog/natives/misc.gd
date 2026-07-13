@@ -30,6 +30,8 @@ var ratings: Array = []                ## [{score, key}], sorted high to low
 var kill_score := 0
 var piracy_score := 0
 var logging := true
+var restart_kill_score := 0            ## the checkpoint snapshot (SetRestartPoint)
+var restart_piracy_score := 0
 
 ## imod: the mods found by ScanDirectory, in scan order.
 var mods: Array[PogMod] = []
@@ -271,11 +273,44 @@ func add_kill(sim_type: String) -> void:
 	if logging:
 		kill_score += int(kill_values.get(sim_type, 0))
 
-# A restart point is a checkpoint: the engine snapshotted the mission and could
-# roll back to it. We have no save/restore of world state to hang that on.
-# @stub iscore.SetRestartPoint
-# @stub iscore.GotoRestartPoint
-func _score_noop(_t, _a: Array) -> Variant:
+# The "restart point" is NOT a world snapshot. Both natives take no arguments
+# (every call site is `Call iscore.SetRestartPoint argc=0`) and the handlers in
+# iscore.dll (@ 0x10001900 / 0x10001960, registered @ 0x100018e0 / 0x10001940)
+# do exactly one thing: call icScoreTable::SetRestartPoint / GotoRestartPoint
+# with the player ship's object id (icPlayerPilot::m_p_instance +0x14 -> +4).
+# icScoreTable (iwar2.dll) keeps three per-sim-id cStats hash maps: Aggregate
+# (+0x34, whole game), Current (+0x44, this mission) and Restart (+0x54):
+#   SetRestartPoint  (iwar2.dll @ 0x100a0ab0): Restart[id] := Current[id]
+#   GotoRestartPoint (iwar2.dll @ 0x100a0d80): Current[id] := Restart[id]
+# So the checkpoint rolls the *scoreboard* back: the mission scripts set the
+# restart point right after storing "restart_waypoint"/"current_mission_state"
+# on the player ship, and on a restart they discard the kills/piracy earned
+# since the checkpoint (the player is about to re-earn them). The positional
+# half of the checkpoint is pure POG (ideathscript.PlayerDeathScript reads
+# those properties; the restart screen respawns there) and is already ported.
+#
+# Our model keeps one pair of counters where the original had Current +
+# Aggregate. That is observably identical here: Credit (iwar2.dll @ 0x100a1380
+# / 0x100a1620) only ever writes Current, and FlushScore (@ 0x100a07b0, called
+# from icClient::DestroyWorld @ 0x100b3620) folds Current into Aggregate only
+# at world teardown -- so between a Set and a Goto the Aggregate part cannot
+# move, and restoring the combined counters restores exactly what the original
+# restores. (Divergence only if a script called Goto without ever calling Set
+# in the same world -- the original would zero just the mission's stats, we
+# would zero the total. No shipped script does: all 8 campaign packages call
+# SetRestartPoint from their mission-start handler.)
+
+# @native iscore.SetRestartPoint
+func _set_restart_point(_t, _a: Array) -> Variant:
+	# No logging-enabled check: the original snapshots unconditionally.
+	restart_kill_score = kill_score
+	restart_piracy_score = piracy_score
+	return 0
+
+# @native iscore.GotoRestartPoint
+func _goto_restart_point(_t, _a: Array) -> Variant:
+	kill_score = restart_kill_score
+	piracy_score = restart_piracy_score
 	return 0
 
 
@@ -514,8 +549,8 @@ const _BINDINGS := {
 	"iscore.enablelogging": "_enable_logging",
 	"iscore.disablelogging": "_disable_logging",
 	"iscore.htmlisedstats": "_htmlised_stats",
-	"iscore.setrestartpoint": "_score_noop",
-	"iscore.gotorestartpoint": "_score_noop",
+	"iscore.setrestartpoint": "_set_restart_point",
+	"iscore.gotorestartpoint": "_goto_restart_point",
 
 	"imod.scandirectory": "_mod_scan", "imod.count": "_mod_count",
 	"imod.name": "_mod_name", "imod.displayname": "_mod_display_name",
