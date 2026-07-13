@@ -22,25 +22,36 @@ big-endian IFF metadata with little-endian payloads constantly.
 carries gameplay constants (per-axis `speed`/`acceleration`, rates).
 
 ## `.map` star systems (`map_decoder.py`, `classify_map.py`)
-Header: **u32 big-endian** record count at offset 0, then 1 byte.
-Records are 360 bytes:
+Read straight out of `icSolarSystem::Load` (`iwar2.dll @ 0x1004bb60`) --
+full write-up and per-kind field meanings in **`docs/geography.md`**.
+Header: **u32 big-endian** record count at offset 0, and **nothing else**
+(the byte at 4 is record 0's `kind`, which is 0 -- it is not a version
+byte). Records are `sizeof(sEntity)` = 360 bytes, from offset 4:
 | off | type | meaning |
 |-----|------|---------|
-| 0   | NUL-str | name (rest of 263-byte region is dirty buffer garbage) |
-| 263 | 3×f64le | position, meters, system-centric |
-| 287 | f32le | scale (usually 1.0) |
-| 303 | u32le | parent record index (orbital hierarchy) |
-| 311 | f32le | **map ZONE radius** — not a body size and not a type id; Alexander is 88 Mm, cluster rocks 6,000 Mm. Cap by nearest-neighbor distance for rendering; do not use for LDSI |
-| 319 | 9×f32le | three RGB map colors 0-255 (tint planet impostors with color[0]) |
-| 359 | u8 | kind (5=system root; otherwise unreliable — classify by name keywords + hierarchy) |
+| 0x000 | u8 | **kind**: 0 body, 1 station, 2 L-point, 4 belt, 5 sun, 6 gunstar (inert -- never added to the world), 7 nebula |
+| 0x001 | NUL-str | name (rest of the 263-byte region is dirty buffer garbage) |
+| 0x108 | 3xf64le | position, meters, system-centric |
+| 0x120 | 4xf32le | **orientation quaternion, stored (w, x, y, z)** -- identity on everything except L-points, which carry a real yaw (the jump axis is local +Z) |
+| 0x130 | u16le | parent record index (orbital hierarchy) |
+| 0x134 | u32le | kind-dependent: body -> `IeBodyType`; sun -> `icSun::eClass`; station -> `station_creation.ini [Stations] Scene[n]` index; belt -> f32 belt radius |
+| 0x138 | f32le | **body radius, meters** (`FiSim::SetRadius`) -- bodies and suns only |
+| 0x13c | u8 | body: 1 = rocky, 2 = gassy |
+| 0x13d, 0x13e | u8 | body: surface texture indices into `planets.ini` |
+| 0x140 | 9xf32le | three RGB colors 0-255 -> `SurfaceTint(0/1)` (/255) |
+| 0x164 | i8 | body: cloud texture index, **-1 = no atmosphere** |
+| 0x165 | u8 | body: ring count |
 
-Tail = **capsule-jump table**: u16 zero, u32le 17, u32le 17, u32le n,
-then n × { u32le record|0x8000, u8 len, `;`-separated destination system
-names } with **3 zero bytes** between entries. Destination names use
-underscores and may need `System Centre` suffix stripping to match map
-stems. Records carry no model reference — the original spawns station
-sims from POG scripts; we classify by descriptive names.
-`microsystem.map` is an IFF FORM, not this format.
+**Fields a kind does not write are left over from the previous record**
+(one shared write buffer), so a station's 0x138 is its parent body's
+radius. Only read a field for the kind that owns it.
+
+Tail = **capsule-jump table**: u8 pad, u16 zero, u32le 17, u32le 17,
+u32le n, then n x { u32le record|0x8000, u8 len, `;`-separated
+destination system names } with **3 zero bytes** between entries.
+Destination names use underscores and may need `System Centre` suffix
+stripping to match map stems. `microsystem.map` is an IFF FORM, not this
+format.
 
 ## PSO / PSO2 meshes (`pso.py`, `export_gltf.py`)
 IFF `FORM PSO ` / `PSO2`. Metadata big-endian, vertex/index payload

@@ -48,8 +48,14 @@ static func _s(v: Variant) -> String:
 # A name -> value store. Every typed accessor lands in the same dictionary:
 # POG is statically typed at compile time, so the Int/Bool/Float/String/Handle
 # split is a compile-time distinction the runtime does not need to re-check.
-# Create* takes (name, value, flag); the third argument is the save-game
-# persistence flag, which matters only when we write saves.
+# Create* takes (name, flag, value) -- every one of them is argc=3, and the
+# *middle* argument is the save-game persistence scope, not the value:
+#   global.CreateInt("GUI_inversebutton_height", 14, 16)   ... and igui then uses
+#   global.Int("GUI_inversebutton_height") as a button height, so 16 is the value
+#   global.CreateBool("Hangar_Flashing", 2, 1)             ... 2 is not a bool
+# Reading the flag as the value made every global in the game hold a 1, 2 or 14:
+# harmless for the bools by luck, fatal for the handles, whose Cast then failed
+# and whose screens silently did nothing.
 
 # @native global.CreateBool
 # @native global.CreateInt
@@ -61,7 +67,7 @@ static func _s(v: Variant) -> String:
 func _create(_t, a: Array) -> Variant:
 	var name := _s(a[0])
 	if not globals.has(name):
-		globals[name] = a[1] if a.size() > 1 else 0
+		globals[name] = a[2] if a.size() > 2 else 0
 	return 0
 
 # @native global.Bool

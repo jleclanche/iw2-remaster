@@ -3,21 +3,27 @@ extends RefCounted
 
 ## gui, ioptions, input, config: the front end the original scripts drive.
 ##
-## The original built its base screens (trade, manufacturing, recycling) and its
-## front end out of an in-engine widget toolkit, and the POG scripts do all the
-## layout themselves: CreateWindow, CreateListBox, SetWindowStateColours, and so
-## on for a thousand call sites. The remaster has its own front end (menu.gd), so
-## reproducing that widget tree would be pointless work whose output we would
-## then throw away.
+## The base screens are POG. A screen is named by its C++ class
+## (`gui.SetScreen("icSPPlayerBaseScreen")`), and the engine's screen object
+## **called straight back into the scripts to build itself**: the ctor of
+## `icSPBaseScreen` (iwar2 @ 0x10029230) runs `FcScriptEngine::CallFunction` on a
+## POG function, and its dtor (0x10029350) runs another. The function is the class
+## name without its `ic`, in whichever package defines it -- `icSPHangarScreen` ->
+## `iBaseGUI.SPHangarScreen` -- and that convention resolves 33 of the 48 screens
+## the campaign names, each in exactly one package (SCREEN_BUILDERS below). The
+## other 15 were built in C++.
 ##
-## What the scripts also do, and what does matter, is *ask questions*: which
-## screen am I on, how many screens are stacked, is this overlay still up, what
-## is in that list box, what did the player type. So the model here is a real
-## screen/overlay state machine plus headless widgets that hold their state
-## (title, colours, entries, values, focus links). Queries get coherent answers
-## and the control flow through ibasegui/ipdagui/ifrontendgui stays on the rails;
-## nothing is drawn. Creation and pure presentation (textures, fonts, movies,
-## widget callbacks that nothing can click) are marked @stub.
+## So the hangar, loadout, manifest, inventory, recycling, manufacturing, comms,
+## inbox, encyclopaedia and statistics screens, and the whole PDA, are the
+## original scripts' own code, and all we have to do is run it. That is what
+## SetScreen/PushScreen/OverlayScreen do here, and what base_screens.gd draws.
+##
+## We do **not** reproduce the original's widget skin. igui.CreateFancyButton and
+## friends splice a 38-argument texture atlas onto every control; the remaster has
+## its own look. What is honoured is the *semantics*: the controls, their titles,
+## their contents, the focus ring, and the nine input-override slots -- so the
+## scripts' own control flow decides what happens, and every button really runs
+## the POG function it was given.
 ##
 ## ioptions, input and config are small and real: an options registry that reads
 ## and writes the config store, a key binding table that can dispatch back into
@@ -27,17 +33,21 @@ var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld = null
 var game: Node3D = null
 
-## gui: the screen stack. `screens` is the base stack (SetScreen/PushScreen);
+## The screen stack. `screens` is the base stack (SetScreen/PushScreen);
 ## `overlays` sit on top of it (OverlayScreen) and pop independently.
-var screens: Array[String] = []
-var overlays: Array[String] = []
+var screens: Array[PogScreen] = []
+var overlays: Array[PogScreen] = []
 
-## gui: windows are headless. Created ones are kept alive by the script's own
-## global.Handle store, so there is no registry here.
 var focused: PogWindow = null
 var top_window: PogWindow = null
 var default_colour := Color(1, 1, 1)
+var default_font := ""
 var sounds: Dictionary = {}            ## sound id -> url
+var background := ""
+
+## Set whenever the widget tree changes, so the renderer knows to rebuild.
+var dirty := true
+var screen_ui = null                   ## BaseScreens, created on first use
 
 ## ioptions: the options screen registry, in registration order.
 var options: Array[PogOption] = []
@@ -60,6 +70,92 @@ const RESOLUTIONS: Array = [
 
 const INPUT_SCHEMES: Array = ["keyboard_mouse", "joystick"]
 
+## `FcWindowManager::eInputMessages`, the nine slots of SetInputOverrideFunctions.
+## The indices are the engine's own: FcWindow::OnControlFocusLeft (flux @
+## 0x100941f0) asks the manager for slot 0, OnControlFocusUp for 1, Right 2,
+## Down 3, Select 4, and the mouse handlers for 6, 7 and 8
+## (InputMessageOverrideFunction, 0x10097550, indexes a table of accessors).
+##
+## Slot 5 is Cancel, and it is *dead in the original*: FcWindow::OnControlFocusCancel
+## (0x10094720) never consults the table -- it walks up to the parent and, failing
+## that, calls the window manager's single global cancel function, which is what
+## gui.SetControlFocusCancelFunction sets. Every base screen sets both, to the
+## same POG function, so nothing is lost by honouring only the one that fires.
+const IN_LEFT := 0
+const IN_UP := 1
+const IN_RIGHT := 2
+const IN_DOWN := 3
+const IN_SELECT := 4
+const IN_CANCEL := 5
+const IN_MOUSE_DOWN := 6
+const IN_MOUSE_UP := 7
+const IN_MOUSE_HELD := 8
+
+## Screen class -> the POG function that builds it. Derived from the shipped
+## scripts: for each screen the campaign names, the function called `<class minus
+## "ic">` exists in exactly one package. The screens absent from this table
+## (icSpaceFlightScreen, icSPComputerTradingScreen, icSPAddCargoScreen,
+## icSPComputerPuzzleScreen, icPopUpCommsScreen, icNotYetImplementedScreen, the
+## multiplayer lobby...) have no POG builder at all: they were built in C++, and
+## so they stay empty here rather than being invented.
+const SCREEN_BUILDERS := {
+	"icSPBaseScreen": "ibasegui.SPBaseScreen",
+	"icSPHangarScreen": "ibasegui.SPHangarScreen",
+	"icSPLoadoutScreen": "ibasegui.SPLoadoutScreen",
+	"icSPManifestScreen": "ibasegui.SPManifestScreen",
+	"icSPInventoryScreen": "ibasegui.SPInventoryScreen",
+	"icSPRecyclingScreen": "ibasegui.SPRecyclingScreen",
+	"icSPManufacturingScreen": "ibasegui.SPManufacturingScreen",
+	"icSPCommsMainMenuScreen": "ibasegui.SPCommsMainMenuScreen",
+	"icSPInboxScreen": "ibasegui.SPInboxScreen",
+	"icSPArchiveScreen": "ibasegui.SPArchiveScreen",
+	"icSPMessagesScreen": "ibasegui.SPMessagesScreen",
+	"icSPEncyclopaediaScreen": "ibasegui.SPEncyclopaediaScreen",
+	"icSPStatisticsScreen": "ibasegui.SPStatisticsScreen",
+	"icSPShipTypeScreen": "ibasegui.SPShipTypeScreen",
+	"icSPCustomiseScreen": "ibasegui.SPCustomiseScreen",
+
+	"icSPMainPDAScreen": "ipdagui.SPMainPDAScreen",
+	"icSPBasePDAScreen": "ipdagui.SPBasePDAScreen",
+	"icSPPDAOptionsScreen": "ipdagui.SPPDAOptionsScreen",
+	"icSPPDAControlsScreen": "ipdagui.SPPDAControlsScreen",
+	"icSPPDAGraphicsScreen": "ipdagui.SPPDAGraphicsScreen",
+	"icSPPDASoundScreen": "ipdagui.SPPDASoundScreen",
+	"icSPPDADeviceScreen": "ipdagui.SPPDADeviceScreen",
+	"icSPPDASaveScreen": "ipdagui.SPPDASaveScreen",
+	"icSPPDALoadScreen": "ipdagui.SPPDALoadScreen",
+	"icPDAConfirmScreen": "ipdagui.PDAConfirmScreen",
+	"icFlightConfirmScreen": "ipdagui.FlightConfirmScreen",
+	"icRestartScreen": "ipdagui.RestartScreen",
+	"icControlScreen": "ipdagui.ControlScreen",
+	"icMoviesScreen": "ipdagui.MoviesScreen",
+	"icModScreen": "ipdagui.ModScreen",
+}
+
+## `icSPPlayerBaseScreen` is not an ordinary screen: it derives from
+## `iiGUIOverlayManager` (iwar2 @ 0x10023710) and its ctor builds a map of the
+## screens it hosts -- icSPBaseScreen, icSPHangarScreen, icSPLoadoutScreen ... --
+## against a diorama index, alongside the base's backdrop URLs (main_bay_url,
+## office_interior_url, jafs_url). It hosts the base menu; it is not the menu.
+##
+## No POG script ever pushes icSPBaseScreen, yet every Back button in ibasegui
+## unwinds with `gui.RemoveOverlaysAfter("icSPBaseScreen")` and the training
+## mission tests `"icSPBaseScreen" == gui.CurrentScreenClassname()`. It can only
+## be on the stack because the overlay manager put it there. So docking at the
+## base raises the manager, and the manager raises the menu.
+const AUTO_OVERLAY := {
+	"icSPPlayerBaseScreen": "icSPBaseScreen",
+}
+
+
+## One entry on the screen stack: the screen's class name, the widgets its POG
+## builder made, and the cancel function that builder registered.
+class PogScreen extends RefCounted:
+	var name := ""
+	var windows: Array[PogWindow] = []
+	var cancel_fn := ""
+	var focus: PogWindow = null
+
 
 ## A window, button, list box, edit box, slider or checkbox. One class, because
 ## the scripts pass all of them through gui.Cast and the state each carries is
@@ -76,6 +172,7 @@ class PogWindow extends RefCounted:
 	var enabled := true
 	var selected := false
 	var highlight := true
+	var screen: PogScreen = null
 	## The three state colours the scripts set and read back.
 	var neutral := Color(1, 1, 1)
 	var focused_col := Color(1, 1, 1)
@@ -85,8 +182,8 @@ class PogWindow extends RefCounted:
 	var prev_focus: PogWindow = null
 	## List box.
 	var entries: Array = []
-	var focused_entry := -1
-	var selected_index := -1
+	var focused_entry := -1            ## an int index; FcListBox::FocusedEntry is
+	var selected_index := -1           ## `return *(int *)(this + 0xdc)`
 	## Edit box / slider / radio / checkbox.
 	var value: Variant = ""
 	var max_chars := 0
@@ -94,8 +191,21 @@ class PogWindow extends RefCounted:
 	## Splitter.
 	var top: PogWindow = null
 	var bottom: PogWindow = null
-	## Recorded but never fired: nothing renders these, so nothing clicks them.
-	var callback := ""
+	## The POG functions this control runs.
+	var on_press := ""                 ## SetButtonFunctionPog
+	var on_select := ""                ## SetListBoxSelectFunction
+	var overrides: PackedStringArray = PackedStringArray()  ## the nine slots
+
+	func override(slot: int) -> String:
+		if slot < 0 or slot >= overrides.size():
+			return ""
+		return overrides[slot]
+
+	## Can the player put the focus ring on this?
+	func focusable() -> bool:
+		if not enabled:
+			return false
+		return kind in ["button", "listbox", "editbox", "radio", "slider"]
 
 
 ## One registered option: a label, the config slot behind it, and the range.
@@ -120,6 +230,22 @@ func bind_game(main: Node3D) -> void:
 	game = main
 
 
+## The screens are drawn by base_screens.gd, which has to hang off the same
+## CanvasLayer the HUD and the front end do. main._build_pog() runs before that
+## layer exists, so the renderer is made on the first screen that has anything on
+## it rather than at bind time.
+func _ensure_renderer() -> void:
+	if screen_ui != null or game == null or game.hud == null:
+		return
+	var layer: Node = game.hud.get_parent()
+	if layer == null:
+		return
+	screen_ui = BaseScreens.new()
+	screen_ui.ui = self
+	screen_ui.main = game
+	layer.add_child(screen_ui)
+
+
 static func _win(v: Variant) -> PogWindow:
 	return v if v is PogWindow else null
 
@@ -135,26 +261,99 @@ func _new_window(kind: String, a: Array, rect_at: int) -> PogWindow:
 	win.neutral = default_colour
 	win.focused_col = default_colour
 	win.selected_col = default_colour
+	win.overrides.resize(9)
+	var scr := top_screen()
+	if scr != null:
+		win.screen = scr
+		scr.windows.append(win)
 	top_window = win
+	dirty = true
+	_ensure_renderer()
 	return win
 
 
+# ------------------------------------------------------- POG dispatch
+# Every widget callback is a POG function named as a string, "iBaseGUI.OnFoo".
+# Running it is what makes a button a button.
+
+## tools/iw2/pogdec.py's _snake: an underscore before every capital but the first.
+static func snake(n: String) -> String:
+	var out := ""
+	for i in n.length():
+		var c := n[i]
+		if i > 0 and c == c.to_upper() and c != c.to_lower():
+			out += "_"
+		out += c
+	return out.to_lower()
+
+
+## Run "pkg.Func". Works on either host: the ported scripts are PogScript nodes
+## with snake_cased methods, the VM takes the original name.
+func dispatch(fq: String) -> Variant:
+	if fq.is_empty() or vm == null:
+		return 0
+	var pkg := fq.get_slice(".", 0).to_lower()
+	var fn := fq.get_slice(".", 1)
+	if pkg.is_empty() or fn.is_empty():
+		return 0
+	if vm.has_method("script"):                 # PogRuntime: the ported scripts
+		var s = vm.script(pkg)
+		if s == null:
+			return 0
+		var m := snake(fn)
+		if not s.has_method(m):
+			m = "pog_" + m                      # pogport renames GDScript clashes
+		if not s.has_method(m):
+			push_warning("POG: %s has no method for %s" % [pkg, fn])
+			return 0
+		return s.call(m)
+	if vm.has_method("start"):                  # PogVM: the bytecode oracle
+		vm.start(pkg, fn)
+	return 0
+
+
 # ---------------------------------------------------------------- gui: screens
-# The scripts name screens by their C++ class ("icSPBaseScreen"). SetScreen
-# replaces the stack, PushScreen grows it, PopScreensTo unwinds to a named one.
-# Overlays (the comms panel over the base screen, the puzzle screen over the
-# cockpit) sit above the stack and pop separately.
+# The scripts name screens by their C++ class ("icSPHangarScreen"). Raising one
+# runs its POG builder, which is what fills it with controls.
+
+func top_screen() -> PogScreen:
+	if not overlays.is_empty():
+		return overlays[-1]
+	return screens[-1] if not screens.is_empty() else null
+
+
+## Raise a screen: push the record, then run its builder, so that every window the
+## builder creates lands on it. An overlay manager raises its hosted menu first.
+func _enter(name: String, stack: Array[PogScreen]) -> PogScreen:
+	var scr := PogScreen.new()
+	scr.name = name
+	stack.append(scr)
+	dirty = true
+	if AUTO_OVERLAY.has(name):
+		_enter(String(AUTO_OVERLAY[name]), overlays)
+		return scr
+	var builder: String = SCREEN_BUILDERS.get(name, "")
+	if not builder.is_empty():
+		dispatch(builder)
+	return scr
+
 
 # @native gui.SetScreen
 func _set_screen(_t, a: Array) -> Variant:
 	screens.clear()
 	overlays.clear()
-	screens.append(PogStd._s(a[0]))
+	focused = null
+	_enter(PogStd._s(a[0]), screens)
 	return 0
 
 # @native gui.PushScreen
 func _push_screen(_t, a: Array) -> Variant:
-	screens.append(PogStd._s(a[0]))
+	_enter(PogStd._s(a[0]), screens)
+	return 0
+
+# @native gui.OverlayScreen
+func _overlay_screen(_t, a: Array) -> Variant:
+	_enter(PogStd._s(a[0]), overlays)
 	return 0
 
 # @native gui.PopScreen
@@ -163,21 +362,56 @@ func _pop_screen(_t, _a: Array) -> Variant:
 		overlays.pop_back()
 	elif screens.size() > 1:
 		screens.pop_back()
+	focused = null
+	dirty = true
+	return 0
+
+# @native gui.RemoveLastOverlay
+func _remove_last_overlay(_t, _a: Array) -> Variant:
+	if not overlays.is_empty():
+		overlays.pop_back()
+	focused = null
+	dirty = true
 	return 0
 
 # @native gui.PopScreensTo
 func _pop_screens_to(_t, a: Array) -> Variant:
 	var name := PogStd._s(a[0])
 	overlays.clear()
-	var at := screens.rfind(name)
-	if at >= 0:
-		screens.resize(at + 1)
+	for i in range(screens.size() - 1, -1, -1):
+		if screens[i].name == name:
+			screens.resize(i + 1)
+			break
+	focused = null
+	dirty = true
+	return 0
+
+# @native gui.RemoveOverlaysAfter
+func _remove_overlays_after(_t, a: Array) -> Variant:
+	# The argument names the screen to be left on top: everything above it goes.
+	# This is how every Back button in ibasegui returns to the base menu.
+	var name := PogStd._s(a[0])
+	for i in range(overlays.size() - 1, -1, -1):
+		if overlays[i].name == name:
+			overlays.resize(i + 1)
+			focused = null
+			dirty = true
+			return 0
+	overlays.clear()
+	for i in range(screens.size() - 1, -1, -1):
+		if screens[i].name == name:
+			screens.resize(i + 1)
+			break
+	focused = null
+	dirty = true
 	return 0
 
 # @native gui.ClearAllScreens
 func _clear_screens(_t, _a: Array) -> Variant:
 	screens.clear()
 	overlays.clear()
+	focused = null
+	dirty = true
 	return 0
 
 # @native gui.NumScreens
@@ -186,35 +420,8 @@ func _num_screens(_t, _a: Array) -> Variant:
 
 # @native gui.CurrentScreenClassname
 func _current_screen(_t, _a: Array) -> Variant:
-	if not overlays.is_empty():
-		return overlays[-1]
-	return screens[-1] if not screens.is_empty() else ""
-
-# @native gui.OverlayScreen
-func _overlay_screen(_t, a: Array) -> Variant:
-	overlays.append(PogStd._s(a[0]))
-	return 0
-
-# @native gui.RemoveLastOverlay
-func _remove_last_overlay(_t, _a: Array) -> Variant:
-	if not overlays.is_empty():
-		overlays.pop_back()
-	return 0
-
-# @native gui.RemoveOverlaysAfter
-func _remove_overlays_after(_t, a: Array) -> Variant:
-	# The argument names the screen to be left on top: everything stacked above
-	# it goes. It is usually a base screen, so search both stacks.
-	var name := PogStd._s(a[0])
-	var at := overlays.rfind(name)
-	if at >= 0:
-		overlays.resize(at + 1)
-	else:
-		overlays.clear()
-		var base := screens.rfind(name)
-		if base >= 0:
-			screens.resize(base + 1)
-	return 0
+	var scr := top_screen()
+	return scr.name if scr != null else ""
 
 
 # ---------------------------------------------------------------- gui: windows
@@ -231,8 +438,11 @@ func _delete_window(_t, a: Array) -> Variant:
 		focused = null
 	if top_window == win:
 		top_window = null
+	if win.screen != null:
+		win.screen.windows.erase(win)
 	win.entries.clear()
 	win.parent = null
+	dirty = true
 	return 0
 
 # @native gui.RepositionWindow
@@ -284,6 +494,7 @@ func _set_title(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.title = PogStd._s(a[1])
+		dirty = true
 	return 0
 
 # @native gui.WindowTitle
@@ -297,6 +508,7 @@ func _select_window(_t, a: Array) -> Variant:
 	if win != null:
 		win.selected = true
 		win.enabled = true
+		dirty = true
 	return 0
 
 # @native gui.DeselectWindow
@@ -304,6 +516,7 @@ func _deselect_window(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.selected = false
+		dirty = true
 	return 0
 
 # @native gui.DisableHighlight
@@ -317,6 +530,10 @@ func _disable_highlight(_t, a: Array) -> Variant:
 # @native gui.SetFirstControlFocus
 func _set_focus(_t, a: Array) -> Variant:
 	focused = _win(a[0])
+	var scr := top_screen()
+	if scr != null:
+		scr.focus = focused
+	dirty = true
 	return 0
 
 # @native gui.FocusedWindow
@@ -415,15 +632,16 @@ func _selected_b(_t, a: Array) -> Variant:
 
 
 # ---------------------------------------------------------------- gui: controls
-# The widgets are headless, but their *contents* are script data: the trade
-# screen fills a list box with cargo and then reads the selection back. So the
-# entries, values and selection indices are kept exactly.
+# The widgets' *contents* are script data: the recycling screen fills a list box
+# with cargo and then reads the selection back, so the entries, values and
+# indices are kept exactly.
 
 # @native gui.AddListBoxEntry
 func _lb_add(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.entries.append(a[1])
+		dirty = true
 	return 0
 
 # @native gui.RemoveListBoxEntry
@@ -432,6 +650,8 @@ func _lb_remove(_t, a: Array) -> Variant:
 	if win != null:
 		win.entries.erase(a[1])
 		win.selected_index = mini(win.selected_index, win.entries.size() - 1)
+		win.focused_entry = mini(win.focused_entry, win.entries.size() - 1)
+		dirty = true
 	return 0
 
 # @native gui.RemoveListBoxEntries
@@ -441,6 +661,7 @@ func _lb_clear(_t, a: Array) -> Variant:
 		win.entries.clear()
 		win.selected_index = -1
 		win.focused_entry = -1
+		dirty = true
 	return 0
 
 # @native gui.SelectListBoxEntry
@@ -448,6 +669,7 @@ func _lb_select(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.selected_index = int(a[1])
+		dirty = true
 	return 0
 
 # @native gui.CancelListBoxSelection
@@ -455,6 +677,7 @@ func _lb_cancel(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.selected_index = -1
+		dirty = true
 	return 0
 
 # @native gui.ListBoxSelectedIndex
@@ -464,18 +687,25 @@ func _lb_selected(_t, a: Array) -> Variant:
 
 # @native gui.ListBoxFocusedEntry
 func _lb_focused(_t, a: Array) -> Variant:
+	# An int index, not the entry. FcListBox::FocusedEntry (flux @ 0x100870d0) is
+	# `return *(int *)(this + 0xdc)`, and ibasegui reads it as one: it tests the
+	# result against -1 and then passes it to iemail.NthInArchive as a row number.
 	var win := _win(a[0])
-	if win == null:
-		return null
-	var i := win.focused_entry
-	return win.entries[i] if i >= 0 and i < win.entries.size() else null
+	return win.focused_entry if win != null else -1
 
 # @native gui.SetListBoxFocusedEntry
 func _lb_set_focused(_t, a: Array) -> Variant:
-	# The argument is the entry itself, not its index.
 	var win := _win(a[0])
 	if win != null:
-		win.focused_entry = win.entries.find(a[1])
+		win.focused_entry = int(a[1])
+		dirty = true
+	return 0
+
+# @native gui.SetListBoxSelectFunction
+func _lb_set_select_fn(_t, a: Array) -> Variant:
+	var win := _win(a[0])
+	if win != null:
+		win.on_select = PogStd._s(a[1])
 	return 0
 
 # @native gui.EditBoxValue
@@ -490,6 +720,7 @@ func _eb_set_value(_t, a: Array) -> Variant:
 		return 0
 	var s := PogStd._s(a[1])
 	win.value = s.left(win.max_chars) if win.max_chars > 0 else s
+	dirty = true
 	return 0
 
 # @native gui.SetEditBoxMaxCharLength
@@ -504,6 +735,7 @@ func _rb_set(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.checked = PogVM._truthy(a[1])
+		dirty = true
 	return 0
 
 # @native gui.RadioButtonValue
@@ -525,6 +757,7 @@ func _slider_set_value(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.value = float(a[1])
+		dirty = true
 	return 0
 
 # @native gui.SetTextWindowString
@@ -532,6 +765,7 @@ func _tw_set_string(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
 		win.text = PogStd._s(a[1])
+		dirty = true
 	return 0
 
 # @native gui.SplitterWindowTopWindow
@@ -575,64 +809,153 @@ static func sound_path(url: String) -> String:
 	return rel
 
 
-# ---------------------------------------------------------------- gui: widgets
-# Everything below here needs a renderer we do not have. The Create* calls still
-# hand back a window object so the state above stays coherent (a list box the
-# script fills and reads is a real list box to the script); nothing is drawn.
+# ---------------------------------------------------------------- gui: creation
+# The Create* calls hand back a window that belongs to the screen being built.
+# What each one is, and what it holds, is real; how it is skinned is not.
 
-# @stub gui.CreateWindow
-# @stub gui.CreateStaticWindow
-# @stub gui.CreateFancyBorder
-# @stub gui.CreateVerticalScrollbar
+# @native gui.CreateWindow
+# @native gui.CreateStaticWindow
+# @native gui.CreateFancyBorder
+# @native gui.CreateVerticalScrollbar
 func _create_window(_t, a: Array) -> Variant:
 	return _new_window("window", a, 0)
 
-# @stub gui.CreateButton
-# @stub gui.CreateBackButton
+# @native gui.CreateButton
+# @native gui.CreateBackButton
 func _create_button(_t, a: Array) -> Variant:
+	# CreateButton(x, y, w, h, parent) -- and igui hands the POG function in
+	# separately, through SetButtonFunctionPog.
 	return _new_window("button", a, 0)
 
-# @stub gui.CreateRadioButton
-# @stub gui.CreateCheckbox
+# @native gui.CreateRadioButton
+# @native gui.CreateCheckbox
 func _create_radio(_t, a: Array) -> Variant:
 	return _new_window("radio", a, 0)
 
-# @stub gui.CreateListBox
+# @native gui.CreateListBox
 func _create_listbox(_t, a: Array) -> Variant:
 	return _new_window("listbox", a, 0)
 
-# @stub gui.CreateEditBox
+# @native gui.CreateEditBox
 func _create_editbox(_t, a: Array) -> Variant:
 	var win := _new_window("editbox", a, 0)
 	win.value = ""
 	return win
 
-# @stub gui.CreateSliderControl
+# @native gui.CreateSliderControl
 func _create_slider(_t, a: Array) -> Variant:
 	var win := _new_window("slider", a, 0)
 	win.value = 0.0
 	return win
 
-# @stub gui.CreateTextWindow
+# @native gui.CreateTextWindow
 func _create_textwindow(_t, a: Array) -> Variant:
 	return _new_window("text", a, 0)
 
-# @stub gui.CreateSplitterWindow
+# @native gui.CreateSplitterWindow
 func _create_splitter(_t, a: Array) -> Variant:
 	var win := _new_window("splitter", a, 0)
 	win.top = PogWindow.new()
 	win.bottom = PogWindow.new()
+	win.top.overrides.resize(9)
+	win.bottom.overrides.resize(9)
+	win.top.screen = win.screen
+	win.bottom.screen = win.screen
 	return win
 
-# Presentation and event plumbing: skins, fonts, background movies, and the
-# widget callbacks (SetButtonFunctionPog and friends). The callbacks are inert
-# rather than unimplemented: with nothing rendered, nothing can be clicked.
+
+# ---------------------------------------------------------------- gui: callbacks
+# What makes a button a button: the POG function it runs.
+
+# @native gui.SetButtonFunctionPog
+func _set_button_fn(_t, a: Array) -> Variant:
+	var win := _win(a[0])
+	if win != null:
+		win.on_press = PogStd._s(a[1])
+	return 0
+
+# @native gui.SetInputOverrideFunctions
+func _set_input_overrides(_t, a: Array) -> Variant:
+	# (window, left, up, right, down, select, cancel, mdown, mup, mheld) -- the
+	# nine eInputMessages slots, in the engine's own order (see IN_* above).
+	var win := _win(a[0])
+	if win == null:
+		return 0
+	for i in 9:
+		win.overrides[i] = PogStd._s(a[i + 1]) if a.size() > i + 1 else ""
+	return 0
+
+# @native gui.SetControlFocusCancelFunction
+func _set_cancel_fn(_t, a: Array) -> Variant:
+	# The window manager's single global cancel function -- what Escape runs.
+	var scr := top_screen()
+	if scr != null:
+		scr.cancel_fn = PogStd._s(a[0])
+	return 0
+
+# @native gui.CancelFocusLock
+func _cancel_focus_lock(_t, _a: Array) -> Variant:
+	# An edit box holds the focus while it is being typed into; this releases it.
+	if focused != null and focused.kind == "editbox":
+		focused = null
+		dirty = true
+	return 0
+
+# @native gui.OnControlFocusLeft
+func _on_focus_left(_t, a: Array) -> Variant:
+	return _fire(_win(a[0]), IN_LEFT)
+
+# @native gui.OnControlFocusRight
+func _on_focus_right(_t, a: Array) -> Variant:
+	return _fire(_win(a[0]), IN_RIGHT)
+
+# @native gui.OnControlFocusSelect
+func _on_focus_select(_t, a: Array) -> Variant:
+	return activate(_win(a[0]))
+
+
+## Run whatever the window has in an input slot.
+func _fire(win: PogWindow, slot: int) -> Variant:
+	if win == null:
+		return 0
+	var fn := win.override(slot)
+	return dispatch(fn) if not fn.is_empty() else 0
+
+
+## Enter on a control. The engine's OnControlFocusSelect consults slot 4 first and
+## falls back to the control's own action, so a list box that was given a select
+## override runs that, and a plain button runs its button function.
+func activate(win: PogWindow) -> Variant:
+	if win == null or not win.enabled:
+		return 0
+	if win.kind == "listbox":
+		win.selected_index = win.focused_entry
+	if win.kind == "radio":
+		win.checked = not win.checked
+	dirty = true
+	var fn := win.override(IN_SELECT)
+	if fn.is_empty():
+		fn = win.on_select if win.kind == "listbox" else win.on_press
+	if fn.is_empty():
+		fn = win.on_press
+	return dispatch(fn) if not fn.is_empty() else 0
+
+
+## Escape. FcWindow::OnControlFocusCancel ends at the window manager's global
+## cancel function, which is the one the screen's builder registered.
+func cancel() -> Variant:
+	var scr := top_screen()
+	if scr == null or scr.cancel_fn.is_empty():
+		return 0
+	return dispatch(scr.cancel_fn)
+
+
+# ---------------------------------------------------------------- gui: skin
+# Presentation we deliberately do not reproduce. SetWindowStateTextures takes 38
+# arguments -- a nine-patch atlas per widget state -- and the remaster has its own
+# look; the background movies are the base's animated backdrops.
 # @stub gui.SetWindowStateTextures
 # @stub gui.SetWindowStateIcons
-# @stub gui.SetBackgroundImage
-# @stub gui.SetDefaultFont
-# @stub gui.SetWindowFont
-# @stub gui.SetWindowTextFormatting
 # @stub gui.SetShadyBarWidth
 # @stub gui.SetRHSShadyBarWidth
 # @stub gui.PlayBackgroundMovie
@@ -642,22 +965,26 @@ func _create_splitter(_t, a: Array) -> Variant:
 # @stub gui.TextWindowBack
 # @stub gui.SetEditBoxOverrides
 # @stub gui.SetEditBoxCursorToEnd
-# @stub gui.SetButtonFunctionPog
-# @stub gui.SetListBoxSelectFunction
-# @stub gui.SetInputOverrideFunctions
-# @stub gui.SetControlFocusCancelFunction
-# @stub gui.CancelFocusLock
-# @stub gui.OnControlFocusLeft
-# @stub gui.OnControlFocusRight
-# @stub gui.OnControlFocusSelect
 func _gui_noop(_t, _a: Array) -> Variant:
+	return 0
+
+# @native gui.SetWindowFont
+# @native gui.SetDefaultFont
+# @native gui.SetWindowTextFormatting
+# @native gui.SetBackgroundImage
+func _gui_style(_t, a: Array) -> Variant:
+	# The scripts pick a font per control and an image behind the screen. We do
+	# not load the original bitmap fonts, but the *choice* is recorded and the
+	# renderer sizes text from it -- a title font is bigger than a detail font.
+	if a.size() == 1:
+		default_font = PogStd._s(a[0])
 	return 0
 
 
 # ---------------------------------------------------------------- ioptions
 # The options screen. Register*(label_key, config_section, config_key, ...)
 # declares one row; the value lives in the config store, so Apply is a write-back
-# and the getters read through. Only the widget building is stubbed.
+# and the getters read through.
 
 # @native ioptions.RegisterBool
 func _opt_bool(_t, a: Array) -> Variant:
@@ -793,8 +1120,40 @@ func _opt_set_device(_t, a: Array) -> Variant:
 		DisplayServer.window_set_size(RESOLUTIONS[i])
 	return 0
 
-# The options screen widgets, same story as the rest of gui.
-# @stub ioptions.CreateWindows
+# @native ioptions.CreateWindows
+func _opt_create_windows(_t, a: Array) -> Variant:
+	# One row per registered option, as a button whose title carries the current
+	# value. Selecting it steps the option, which is what OnSelect does.
+	var parent := _win(a[0] if a.size() > 0 else null)
+	for i in options.size():
+		var o: PogOption = options[i]
+		var row := _new_window("button", [], 0)
+		row.parent = parent
+		row.title = _option_label(o)
+		row.on_press = ""
+		row.overrides[IN_SELECT] = ""
+		row.value = i                 # which option this row steps
+		row.kind = "option"
+	dirty = true
+	return 0
+
+## "Detail  HIGH" -- the label the option row shows.
+func _option_label(o: PogOption) -> String:
+	var text: String = o.label
+	if game != null and game.comms != null:
+		text = game.comms.strings.get(o.label, o.label)
+	var v: Variant = _opt_load(o)
+	match o.kind:
+		"bool":
+			return "%s: %s" % [text, "ON" if PogVM._truthy(v) else "OFF"]
+		"float":
+			return "%s: %d%%" % [text, roundi(100.0 * (float(v) - o.lo)
+					/ maxf(o.hi - o.lo, 0.0001))]
+	return "%s: %d" % [text, int(v)]
+
+# The graphics device/resolution rows are the two the options screen builds by
+# hand rather than through Register*; both offer exactly one device, so there is
+# nothing to choose between.
 # @stub ioptions.CreateGraphicsDeviceOptionButtons
 # @stub ioptions.CreateGraphicsResolutionOptionButtons
 func _opt_noop(_t, _a: Array) -> Variant:
@@ -803,10 +1162,7 @@ func _opt_noop(_t, _a: Array) -> Variant:
 
 # ---------------------------------------------------------------- input
 # BindKey("csvchecker.SetStringRepeat", "ScriptKeys.repeatcsvchecker"): the first
-# argument is the POG function to run, the second names an *engine* action. The
-# table and the dispatch (fire()) are real; what is missing is the original
-# keymap that says which physical key each action is, so nothing calls fire()
-# yet and KeyCombinations, which renders that keymap into prompt text, is a stub.
+# argument is the POG function to run, the second names an *engine* action.
 
 # @native input.BindKey
 func _bind_key(_t, a: Array) -> Variant:
@@ -848,29 +1204,23 @@ func _select_scheme(_t, a: Array) -> Variant:
 
 # @stub input.KeyCombinations
 func _key_combinations(_t, _a: Array) -> Variant:
-	# "which key is icPlayerPilot.CycleContactUp bound to" -- we ship no keymap,
-	# so the prompts that splice this in come out without the key name.
+	# "which key is icPlayerPilot.CycleContactUp bound to" -- the prompts splice
+	# the answer into their text. The original keymap is an engine-side table we
+	# have not recovered, and the remaster's bindings are not the original's, so
+	# there is no honest answer: the prompts come out without the key name.
 	return ""
 
 
-## Run whatever POG function is bound to a named action. Nothing calls this yet:
-## it is the half of the binding table the engine owned.
+## Run whatever POG function is bound to a named action.
 func fire(action: String) -> void:
-	if bindings_suspended or vm == null:
+	if bindings_suspended:
 		return
-	var fn: String = bindings.get(action, "")
-	if fn.is_empty():
-		return
-	var pkg := fn.get_slice(".", 0)
-	var entry := fn.get_slice(".", 1)
-	if not pkg.is_empty() and not entry.is_empty():
-		vm.start(pkg, entry)
+	dispatch(String(bindings.get(action, "")))
 
 
 # ---------------------------------------------------------------- config
 # config.GetBool("system", "InstantAction", "tug"): a store name, a section and a
-# key. "system" is the only store the scripts use. It is the player's settings
-# file, so it persists in user://.
+# key. "system" is the only store the scripts use.
 
 func _cfg(name: String) -> ConfigFile:
 	if _configs.has(name):
@@ -985,6 +1335,7 @@ const _BINDINGS := {
 	"gui.listboxselectedindex": "_lb_selected",
 	"gui.listboxfocusedentry": "_lb_focused",
 	"gui.setlistboxfocusedentry": "_lb_set_focused",
+	"gui.setlistboxselectfunction": "_lb_set_select_fn",
 	"gui.editboxvalue": "_eb_value", "gui.seteditboxvalue": "_eb_set_value",
 	"gui.seteditboxmaxcharlength": "_eb_set_max",
 	"gui.setradiobuttonchecked": "_rb_set",
@@ -1012,11 +1363,20 @@ const _BINDINGS := {
 	"gui.createtextwindow": "_create_textwindow",
 	"gui.createsplitterwindow": "_create_splitter",
 
+	"gui.setbuttonfunctionpog": "_set_button_fn",
+	"gui.setinputoverridefunctions": "_set_input_overrides",
+	"gui.setcontrolfocuscancelfunction": "_set_cancel_fn",
+	"gui.cancelfocuslock": "_cancel_focus_lock",
+	"gui.oncontrolfocusleft": "_on_focus_left",
+	"gui.oncontrolfocusright": "_on_focus_right",
+	"gui.oncontrolfocusselect": "_on_focus_select",
+
+	"gui.setdefaultfont": "_gui_style", "gui.setwindowfont": "_gui_style",
+	"gui.setwindowtextformatting": "_gui_style",
+	"gui.setbackgroundimage": "_gui_style",
+
 	"gui.setwindowstatetextures": "_gui_noop",
 	"gui.setwindowstateicons": "_gui_noop",
-	"gui.setbackgroundimage": "_gui_noop", "gui.setdefaultfont": "_gui_noop",
-	"gui.setwindowfont": "_gui_noop",
-	"gui.setwindowtextformatting": "_gui_noop",
 	"gui.setshadybarwidth": "_gui_noop",
 	"gui.setrhsshadybarwidth": "_gui_noop",
 	"gui.playbackgroundmovie": "_gui_noop",
@@ -1024,14 +1384,6 @@ const _BINDINGS := {
 	"gui.settextwindowresource": "_gui_noop",
 	"gui.textwindowback": "_gui_noop", "gui.seteditboxoverrides": "_gui_noop",
 	"gui.seteditboxcursortoend": "_gui_noop",
-	"gui.setbuttonfunctionpog": "_gui_noop",
-	"gui.setlistboxselectfunction": "_gui_noop",
-	"gui.setinputoverridefunctions": "_gui_noop",
-	"gui.setcontrolfocuscancelfunction": "_gui_noop",
-	"gui.cancelfocuslock": "_gui_noop",
-	"gui.oncontrolfocusleft": "_gui_noop",
-	"gui.oncontrolfocusright": "_gui_noop",
-	"gui.oncontrolfocusselect": "_gui_noop",
 
 	"ioptions.registerbool": "_opt_bool", "ioptions.registerint": "_opt_int",
 	"ioptions.registerfloat": "_opt_float",
@@ -1045,7 +1397,7 @@ const _BINDINGS := {
 	"ioptions.numberofresolutionoptions": "_opt_num_res",
 	"ioptions.graphicsresolutionindex": "_opt_res_index",
 	"ioptions.setgraphicsdevice": "_opt_set_device",
-	"ioptions.createwindows": "_opt_noop",
+	"ioptions.createwindows": "_opt_create_windows",
 	"ioptions.creategraphicsdeviceoptionbuttons": "_opt_noop",
 	"ioptions.creategraphicsresolutionoptionbuttons": "_opt_noop",
 

@@ -45,6 +45,7 @@ class PogSim extends RefCounted:
 	var children: Array = []
 	var parent: PogSim = null
 	var group = null                   ## PogFactions.PogGroup
+	var docking_lock: PogSim = null    ## isim.SetDockingLock: the only legal berth
 
 	func alive() -> bool:
 		if dead:
@@ -811,7 +812,30 @@ func _i_set_sensor_visibility(_t, a: Array) -> Variant:
 func _i_lock_weapons(_t, a: Array) -> Variant:
 	return _sh_lock_weapons(_t, a)
 
-# @stub isim.SetDockingLock
+# @native isim.SetDockingLock
+func _i_set_docking_lock(_t, a: Array) -> Variant:
+	# SetDockingLock(ship, target, on): while the lock is on, `ship` may only dock
+	# at `target`. The missions use it to funnel you (and the traffic) to the one
+	# station the script cares about -- iact0mission40 locks the player to the
+	# station it wants them to visit and unlocks it again afterwards.
+	var s := _as_sim(a[0])
+	var to := _as_sim(a[1]) if a.size() > 1 else null
+	if s == null:
+		return 0
+	if PogVM._truthy(a[2]) if a.size() > 2 else false:
+		s.docking_lock = to
+	else:
+		s.docking_lock = null
+	return 0
+
+
+## Whether `s` is allowed to dock at `to` right now. idockport.Dock honours it.
+func docking_allowed(s: PogSim, to: PogSim) -> bool:
+	if s == null or s.docking_lock == null:
+		return true
+	return s.docking_lock == to
+
+
 # @stub isim.StopExplosion
 # @stub isim.AlienInfectionEffect
 # @stub isim.IsAlienInfectionEffectOn
@@ -819,6 +843,12 @@ func _i_lock_weapons(_t, a: Array) -> Variant:
 # @stub isim.WeaponTargetsFromContactList
 # @stub isim.IsRespawning
 func _i_noop(_t, _a: Array) -> Variant:
+	# The alien infection is the Act 3 visual: a spreading crust on an infected
+	# hull, with a damage-over-time behind it. Both halves need an avatar shader
+	# we have not built, and StopExplosion cancels a staged explosion that
+	# iiSim::StartExplosion never staged (ours is instantaneous, see
+	# docs/original.md "The explosion sequence"). WeaponTargetsFromContactList and
+	# IsRespawning are turret-targeting and multiplayer respawn.
 	return 0
 
 
@@ -964,18 +994,37 @@ func _sh_is_free(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	return 1 if (s != null and s.free_without_pilot) else 0
 
-# @stub iship.InstallPlayerPilot
-# @stub iship.PilotSkillLevel
-# @stub iship.SetFreeWithoutPilot
-# @stub iship.IsFreeWithoutPilot
-# @stub iship.SetAIDisabled
+# @native iship.CreatePlayerShip
+func _sh_create_player_ship(_t, a: Array) -> Variant:
+	# iUtilities.CreatePlayer's first move: build the hull the player flies. Ours
+	# already exists -- main.gd owns the ShipFlight node -- so this hands back the
+	# handle for it rather than making a second one. Without this the whole of
+	# CreatePlayer ran against a null sim, which is why nothing the scripts did to
+	# the player (SetFaction, PlaceRelativeTo, the death script) took effect.
+	var s := player_sim()
+	var name := PogStd._s(a[0]) if a.size() > 0 else ""
+	if not name.is_empty():
+		s.name = name
+	return s
+
+# @native iship.InstallPlayerPilot
+func _sh_install_player_pilot(_t, a: Array) -> Variant:
+	# The sim named here becomes the one the player is flying. For CreatePlayer
+	# that is the hull we just handed back, and there is nothing to do. The other
+	# callers swap the player into a body double for a cutscene
+	# (icutsceneutilities.CreateGhostShip) or into a different hull mid-mission;
+	# our player is welded to main.ship, so those are not modelled -- but the sim
+	# is still marked, because iship.FindPlayerShip has to keep agreeing with it.
+	var s := _as_sim(a[0])
+	if s == null or s.is_player:
+		return 0
+	s.free_without_pilot = false
+	return 0
+
 # @stub iship.IsAIDisabled
 # @stub iship.WeaponsUseExplicitTarget
 # @stub iship.WeaponTargetsFromContactList
 # @stub iship.LastFireTarget
-# @stub iship.Dock
-# @stub iship.Undock
-# @stub iship.UndockSelf
 # @stub iship.BrightnessOf
 # @stub iship.PercentageThrusterEmission
 # @stub iship.RecalculateMOIFromMass
@@ -983,8 +1032,11 @@ func _sh_is_free(_t, a: Array) -> Variant:
 # @stub iship.HasHyperSpaceTracker
 # @stub iship.HyperSpaceTrackerTarget
 # @stub iship.CreateTurretFighters
-# @stub iship.CreatePlayerShip
 func _sh_noop(_t, _a: Array) -> Variant:
+	# Turret targeting modes (a ship's turrets either track its own target or pick
+	# their own off the contact list) need the turret subsims we do not simulate;
+	# the hyperspace tracker is the Act 3 plot device that follows a capsule jump;
+	# BrightnessOf and PercentageThrusterEmission are avatar channel expressions.
 	return 0
 
 
@@ -1038,7 +1090,7 @@ const _BINDINGS := {
 	"isim.setsensorvisibility": "_i_set_sensor_visibility",
 	"isim.setstandardsensorvisibility": "_i_set_sensor_visibility",
 	"isim.lockdownweapons": "_i_lock_weapons",
-	"isim.setdockinglock": "_i_noop",
+	"isim.setdockinglock": "_i_set_docking_lock",
 	"isim.dock": "_i_dock", "isim.undock": "_i_undock",
 	"isim.capsulejump": "_i_capsule_jump",
 	"isim.capsulejumpstaggered": "_i_capsule_jump",
@@ -1070,7 +1122,7 @@ const _BINDINGS := {
 	"iship.attacked": "_i_attacked",
 	"iship.lockdownweapons": "_sh_lock_weapons",
 	"iship.removepilot": "_sh_remove_pilot",
-	"iship.installplayerpilot": "_sh_noop",
+	"iship.installplayerpilot": "_sh_install_player_pilot",
 	"iship.setpilotskilllevel": "_sh_set_skill",
 	"iship.pilotskilllevel": "_sh_skill",
 	"iship.setfreewithoutpilot": "_sh_set_free",
@@ -1088,7 +1140,7 @@ const _BINDINGS := {
 	"iship.hashyperspacetracker": "_sh_noop",
 	"iship.hyperspacetrackertarget": "_sh_noop",
 	"iship.createturretfighters": "_sh_noop",
-	"iship.createplayership": "_sh_noop",
+	"iship.createplayership": "_sh_create_player_ship",
 
 	"imapentity.findbyname": "_s_find_by_name",
 	"imapentity.findbynameinsystem": "_s_find_in_system",

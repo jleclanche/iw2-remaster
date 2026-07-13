@@ -23,10 +23,18 @@ const DOCK_RANGE := 4000.0
 const JUMP_RANGE := 3.0e4  # must be this close to an L-point to capsule jump
 const SHIP_HIT_RADIUS := 60.0
 
-const PLANET_TEXTURES := [
-	"landwater1", "landwater2", "landwater4", "gas1", "gas2", "gas3", "gas4",
-	"stripes1", "stripes2", "stripes3", "stripes4", "stripes5", "stripes6",
-]
+# planets.ini [Planets]: the renderer's own config, read by icPlanetProperties
+const ATMOSPHERE_HEIGHT := 1.1  # atmosphere_height
+# icPlanetAvatar (0x100cdc50) sizes each of a gas giant's rings with
+# FcRandom::Float(1.75, 2.44) x the body radius (2.44 = _DAT_1011d07c)
+const RING_MIN := 1.75
+const RING_MAX := 2.44
+const MAX_RINGS := 8  # max_rings
+# PLACEHOLDER: icPlanetAvatar's draw is not disassembled, so a ring's WIDTH is
+# not recovered. We give each band an even share of the 1.75..2.44 span so that
+# a full set of 8 tiles it. The radii and the count are from the data; this is
+# not.
+const RING_WIDTH := (RING_MAX - RING_MIN) / MAX_RINGS
 
 var ship: ShipFlight
 var ship_model: Node3D
@@ -135,6 +143,7 @@ var jumpcheck := false
 var uicheck := false
 var mechcheck := false
 var campcheck := false
+var geogcheck := false
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
@@ -143,9 +152,10 @@ func _ready() -> void:
 	uicheck = "--uicheck" in OS.get_cmdline_user_args()
 	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
 	campcheck = "--campcheck" in OS.get_cmdline_user_args()
+	geogcheck = "--geogcheck" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
-	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck:
+	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()
@@ -768,14 +778,26 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 			"name": str(o["name"]), "category": cat,
 			"x": float(o["pos"][0]), "y": float(o["pos"][1]),
 			"z": -float(o["pos"][2]),
-			"radius": float(o.get("visual_radius", o.get("radius", 0.0))),
+			# the f32 at record +0x138, i.e. what the engine hands to
+			# FiSim::SetRadius. Not a map zone, not clamped.
+			"radius": float(o.get("radius", 0.0)),
+			"orientation": o.get("orientation", [1.0, 0.0, 0.0, 0.0]),
 			"avatar": str(o.get("avatar", "")),
 			"jumps": o.get("jumps_to_stems", []),
 			"colors": o.get("colors", []),
+			"renders": bool(o.get("renders", false)),
+			"surface_class": str(o.get("surface_class", "")),
+			"surface_textures": o.get("surface_textures", []),
+			"atmosphere_texture": str(o.get("atmosphere_texture", "")),
+			"ring_count": int(o.get("ring_count", 0)),
+			"sun_texture": str(o.get("sun_texture", "")),
+			"sun_colours": o.get("sun_colours", []),
 			"node": null,
 		}
 		objects.append(rec)
-		if cat == "body" or cat == "star":
+		# icPlanet::CreateAvatar only builds an avatar for 1 < IeBodyType < 5,
+		# so most map bodies (and the system centre) are invisible markers.
+		if rec["renders"] and (cat == "body" or cat == "star"):
 			_spawn_impostor(rec)
 		if entry_name != "" and rec["name"] == entry_name:
 			entry = rec
@@ -799,43 +821,126 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 	_spawn_traffic()
 	print("SYSTEM: ", system_name, " (", objects.size(), " objects)")
 
-func _planet_material(rec: Dictionary) -> StandardMaterial3D:
-	var mat := StandardMaterial3D.new()
-	if rec["category"] == "star":
-		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		mat.albedo_color = Color(1.0, 0.95, 0.8)
-		mat.emission_enabled = true
-		mat.emission = Color(1.0, 0.9, 0.7)
-		mat.emission_energy_multiplier = 8.0
-		return mat
-	var pick: String = PLANET_TEXTURES[abs(str(rec["name"]).hash()) % PLANET_TEXTURES.size()]
-	var path := _base().path_join("data/textures/images/planets/%s.png" % pick)
-	if FileAccess.file_exists(path):
-		var img := Image.load_from_file(path)
-		if img != null:
-			mat.albedo_texture = ImageTexture.create_from_image(img)
-	# tint the luminance texture with the body's map palette
+func _planet_texture(stem: String) -> ImageTexture:
+	if stem.is_empty():
+		return null
+	var path := _base().path_join("data/textures/images/planets/%s.png" % stem)
+	if not FileAccess.file_exists(path):
+		return null
+	var img := Image.load_from_file(path)
+	if img == null:
+		return null
+	return ImageTexture.create_from_image(img)
+
+func _surface_tint(rec: Dictionary, layer: int) -> Color:
+	# icPlanet::SurfaceTint(n) = the record's colour n, scaled by 1/255
+	# (icPlanet::ReadColour, _DAT_1011b068 = 0.00392157)
 	var colors: Array = rec.get("colors", [])
-	if not colors.is_empty():
-		var c: Array = colors[0]
-		mat.albedo_color = Color(
-			clampf(c[0] / 255.0 * 1.5, 0.0, 1.0),
-			clampf(c[1] / 255.0 * 1.5, 0.0, 1.0),
-			clampf(c[2] / 255.0 * 1.5, 0.0, 1.0))
+	if layer >= colors.size():
+		return Color.WHITE
+	var c: Array = colors[layer]
+	return Color(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0)
+
+func _planet_material(rec: Dictionary) -> StandardMaterial3D:
+	# icPlanetAvatar's shader (FUN_100cdc50 @ 0x100cdc50): layer 0 is
+	# SurfaceType(0) out of planets.ini's rocky_ or gassy_planet_textures,
+	# tinted by SurfaceTint(0).
+	var mat := StandardMaterial3D.new()
+	var textures: Array = rec.get("surface_textures", [])
+	if not textures.is_empty():
+		mat.albedo_texture = _planet_texture(str(textures[0]))
+	mat.albedo_color = _surface_tint(rec, 0)
 	mat.roughness = 0.9
 	return mat
 
+func _atmosphere_material(rec: Dictionary) -> StandardMaterial3D:
+	# the cloud layer: atmosphere_planet_textures[record +0x164], tinted with a
+	# random blend of the two surface tints pulled toward white
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = _planet_texture(str(rec["atmosphere_texture"]))
+	var tint := _surface_tint(rec, 0).lerp(_surface_tint(rec, 1), 0.5) \
+		.lerp(Color.WHITE, 0.6)
+	mat.albedo_color = Color(tint.r, tint.g, tint.b, 0.55)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.roughness = 1.0
+	return mat
+
 func _spawn_impostor(rec: Dictionary) -> void:
+	if rec["category"] == "star":
+		var star := StarFx.new()
+		star.setup(rec, _base())
+		add_child(star)
+		rec["node"] = star
+		return
+	var node := Node3D.new()
 	var mesh := SphereMesh.new()
 	mesh.radius = 1.0
 	mesh.height = 2.0
 	mesh.radial_segments = 48
 	mesh.rings = 24
 	mesh.material = _planet_material(rec)
-	var node := MeshInstance3D.new()
-	node.mesh = mesh
+	var body := MeshInstance3D.new()
+	body.mesh = mesh
+	node.add_child(body)
+	if not str(rec["atmosphere_texture"]).is_empty():
+		var shell := SphereMesh.new()
+		shell.radius = ATMOSPHERE_HEIGHT
+		shell.height = ATMOSPHERE_HEIGHT * 2.0
+		shell.radial_segments = 48
+		shell.rings = 24
+		shell.material = _atmosphere_material(rec)
+		var atmo := MeshInstance3D.new()
+		atmo.mesh = shell
+		node.add_child(atmo)
+	for i in int(rec["ring_count"]):
+		node.add_child(_spawn_ring(rec, i))
 	add_child(node)
 	rec["node"] = node
+
+func _spawn_ring(rec: Dictionary, i: int) -> MeshInstance3D:
+	# icPlanetAvatar (0x100cdc50) seeds an FcRandom from the body radius and,
+	# for each of NumberOfRings(), draws a ring at FcRandom::Float(1.75, 2.44)
+	# x the body radius, coloured by taking SurfaceTint(0)'s hue and scaling
+	# its value by FcRandom::Float(0.2, 0.8). The width is NOT recovered.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(str(rec["name"]) + str(i))
+	var r := rng.randf_range(RING_MIN, RING_MAX)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = _planet_texture("ring")
+	var hsv := _surface_tint(rec, 0)
+	mat.albedo_color = Color.from_hsv(hsv.h, hsv.s, rng.randf_range(0.2, 0.8), 0.7)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var node := MeshInstance3D.new()
+	node.mesh = _annulus_mesh(r - RING_WIDTH, r)
+	node.mesh.surface_set_material(0, mat)
+	return node
+
+func _annulus_mesh(inner: float, outer: float) -> ArrayMesh:
+	# a flat band in the body's equatorial plane
+	const SEGMENTS := 96
+	var verts := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	for s in SEGMENTS:
+		var a0 := TAU * s / SEGMENTS
+		var a1 := TAU * (s + 1) / SEGMENTS
+		var i0 := Vector3(cos(a0) * inner, 0.0, sin(a0) * inner)
+		var o0 := Vector3(cos(a0) * outer, 0.0, sin(a0) * outer)
+		var i1 := Vector3(cos(a1) * inner, 0.0, sin(a1) * inner)
+		var o1 := Vector3(cos(a1) * outer, 0.0, sin(a1) * outer)
+		var u0 := float(s) / SEGMENTS
+		var u1 := float(s + 1) / SEGMENTS
+		verts.append_array([i0, o0, o1, i0, o1, i1])
+		uvs.append_array([Vector2(u0, 0), Vector2(u0, 1), Vector2(u1, 1),
+			Vector2(u0, 0), Vector2(u1, 1), Vector2(u1, 0)])
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = verts
+	arr[Mesh.ARRAY_TEX_UV] = uvs
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	return mesh
 
 func _spawn_beacon(rec: Dictionary) -> Node3D:
 	# icHUDLagrangeIcon: the blue/red wireframe double funnel (docs/hud.md)
@@ -844,17 +949,25 @@ func _spawn_beacon(rec: Dictionary) -> Node3D:
 	return node
 
 func _lpoint_axis(rec: Dictionary) -> Vector3:
-	# PLACEHOLDER. The funnel is drawn in the L-point sim's own frame with the
-	# jump axis on local +Z, but our extracted system JSON carries no
-	# orientation for lpoint records, so the true axis is not available. The
-	# star -> L-point line is a stand-in and is NOT from the binary.
-	var here := Vector3(rec["x"], rec["y"], rec["z"])
-	for o in objects:
-		if o["category"] == "star":
-			var axis := here - Vector3(o["x"], o["y"], o["z"])
-			if axis.length_squared() > 1.0:
-				return axis.normalized()
-	return Vector3.BACK
+	# The funnel is drawn in the L-point sim's frame with the jump axis on
+	# local +Z (icLagrangePointWaypoint::TryToJump @ 0x1006ad40 refuses a jump
+	# unless the ship's offset has local z < 0). That frame is the record's own
+	# orientation quaternion at +0x120, which icSolarSystem::Load hands to
+	# FiSim::SetOrientation; every L-point carries a real yaw there.
+	return _record_basis(rec) * Vector3.FORWARD
+
+func _record_basis(rec: Dictionary) -> Basis:
+	# The map is left-handed (+Z forward) and we mirror Z into Godot's frame,
+	# so a rotation R becomes M R M with M = diag(1,1,-1): for a quaternion
+	# stored (w, x, y, z) that is (w, -x, -y, z). Game +Z is Godot -Z, so the
+	# record's local +Z axis is the basis applied to Vector3.FORWARD.
+	var q: Array = rec.get("orientation", [])
+	if q.size() != 4:
+		return Basis.IDENTITY
+	var quat := Quaternion(-float(q[1]), -float(q[2]), float(q[3]), float(q[0]))
+	if not quat.is_normalized():
+		return Basis.IDENTITY
+	return Basis(quat)
 
 func _spawn_player() -> void:
 	ship = ShipFlight.new()
@@ -1895,12 +2008,15 @@ func _stream_objects() -> void:
 		var d2 := dx * dx + dy * dy + dz * dz
 		match o["category"]:
 			"body", "star":
+				if o["node"] == null:
+					continue
 				# always visible: drawn at capped distance, scaled to keep
 				# the correct angular size (the camera far plane is 600 km)
 				var dist := sqrt(maxf(d2, 1.0))
-				var r: float = clampf(o["radius"], 2.0e4, 1.0e9)
+				# the record's own FiSim radius. No floor, no clamp: the map
+				# says what size the body is.
+				var r: float = o["radius"]
 				if o["category"] == "star":
-					r = maxf(r, 7.0e8)
 					sun.look_at_from_position(Vector3.ZERO,
 						Vector3(-dx, -dy, -dz).normalized())
 				var k := minf(IMPOSTOR_DIST / dist, 1.0)

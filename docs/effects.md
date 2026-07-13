@@ -9,7 +9,7 @@ channel expression language).
 
 ---
 
-## 1. There are two layers, and we only had one of them
+## 1. There are two layers, and both are now extracted
 
 `data/ini/sfx/<name>/` holds **particle systems** -- twelve of them, each a
 `node.ini` + `emitter.ini` + `dynamics.ini` + `draw.ini`. That is the layer we
@@ -19,55 +19,99 @@ anywhere in the INI tree (`fields/asteroid.ini` -> `kibble`,
 `fields/debris.ini` -> `cornflake_field`).
 
 The layer above it is **`sfx/*.lws`**, twenty-three LightWave scenes in
-`resource.zip` that our extraction drops on the floor. *Those* are the effects
-the game fires. A scene is a bag of null objects, each tagged with a `<node>`
-directive, and it composes particle systems, a sprite flipbook, a sound and a
-light into one effect.
+`resource.zip`. *Those* are the effects the game fires. A scene is a bag of null
+objects, each tagged with a `<node>` directive, and it composes particle
+systems, a sprite flipbook, a sound, a special avatar and a light into one
+effect. **`tools/iw2/sfx.py` now extracts all 23 into
+`data/json/sfx_effects.json`**, which is what `ExplosionFx` plays; nothing about
+an individual effect is written in GDScript any more.
 
 The engine reaches them through **`icVisualEffects`** (`iwar2.dll`; the class
-name and its string table are at `0x10162078` / `0x10161f14`). The table is
-twelve URL *prefixes*:
+name and its prefix table are at `0x10162078` / `0x10161f14`). The table is
+twelve URL *prefixes*, and the index is the effect's identity everywhere in the
+engine:
 
 ```
-lws:/sfx/explosion_           lws:/sfx/reactor_explosion_
-lws:/sfx/small_explosion_     lws:/sfx/antimatter_explosion_
-lws:/sfx/hull_impact_         lws:/sfx/alien_explosion_
-lws:/sfx/asteroid_impact_     lws:/sfx/ldsi_explosion_
-lws:/sfx/beam_impact_         lws:/sfx/collision_
-lws:/sfx/lda_impact_
-lws:/sfx/plasma_fire_
+0 lws:/sfx/explosion_        4 lws:/sfx/beam_impact_    8 lws:/sfx/antimatter_explosion_
+1 lws:/sfx/small_explosion_  5 lws:/sfx/lda_impact_     9 lws:/sfx/alien_explosion_
+2 lws:/sfx/hull_impact_      6 lws:/sfx/plasma_fire_   10 lws:/sfx/ldsi_explosion_
+3 lws:/sfx/asteroid_impact_  7 lws:/sfx/reactor_explosion_  11 lws:/sfx/collision_
 ```
 
-and two format strings, `"%slow"` and `"%shigh_%d"` (`0x101620a0`,
-`0x101620a8`), so the effect resolves to `lws:/sfx/hull_impact_low` or
-`lws:/sfx/explosion_high_2` depending on the detail setting (also at that
-address: the keys `low_detail` and `cull_detail`). `explosion` and
-`small_explosion` are the only ones with three `high_` variants; the game picks
-one at random.
+The constructor (`0x100d3050`) preloads, per effect, `high_0..2` (stopping at
+the first that fails to load) and `low`, into twelve 20-byte slots of
+`{count, high[3], low}` -- exactly the `operator_new(0x104)` it allocates.
 
 **A weapon does not name its effects.** `pbc_bolt.ini` has no effect key at
-all. The effect is chosen by the engine from the *kind* of event -- bolt hits
-hull, bolt hits asteroid, beam hits, ship dies -- which is why grepping the INI
-tree for the link finds nothing.
+all. The effect is chosen by the engine from the *kind* of event, which is why
+grepping the INI tree for the link finds nothing.
+
+### `low` vs `high_%d` is a distance LOD, not a quality setting
+
+This was the open question. `0x100d33e0`, called from the play function
+`0x100d3210`:
+
+```
+apparent = size * SIZE_WEIGHT[effect] / distance_to_camera
+apparent < cull_detail * gfx  ->  nothing is drawn
+apparent < low_detail  * gfx  ->  the `_low` scene; if the effect ships none,
+                                  nothing is drawn
+otherwise                     ->  a uniformly RANDOM high_%d
+                                  (rand() % (2*count) >> 1)
+```
+
+`SIZE_WEIGHT` is a `float[12]` at `0x1011d254` = `20, 20, 15, 15, 15, 35, 20,
+30, 30, 30, 30, 30`. `cull_detail` (0.005) and `low_detail` (0.04) are
+`icVisualEffects`' two registered properties, defaults at `0x10161f0c` /
+`0x10161f10`; `gfx` is a graphics-engine detail scalar (`+0x108`).
+
+So `high_%d` is **not** a size tier: `explosion_high_0/1/2` differ *only* in
+flipbook and sound, and the choice is a coin toss. And a hull impact
+(`size = 1`, weight 15) drops to its `_low` scene -- a bare light, no sparks --
+past `15/0.04` = **375 m**. That is original behaviour, not a bug.
+
+The play function also sets the effect node's scale to `size` on all three axes,
+positions it from a local offset in the firing sim's basis, and attaches it to
+that sim.
 
 ### What each scene contains
 
-Read out of `resource.zip:sfx/*.lws`.
+Read out of `resource.zip:sfx/*.lws` (and now out of `sfx_effects.json`). Light
+colours are `r,g,b` 0-255; envelope keys are `(frame, intensity)` at the scene's
+own fps.
 
 | effect | flipbook | particle systems | sound | light |
 |---|---|---|---|---|
-| `explosion_high_0..2` | `deba`, 50 frames, scale 5 | `cornflakes`, `spark_shower` | `large_explosion_1` | 255,165,25 range 50 |
-| `explosion_low` | `deba`, 50 frames | -- | `large_explosion_1` | same |
-| `small_explosion_high_0..2` | `fzgb`, 40 frames, scale 5 | `cornflakes`, `spark_shower` | `small_explosion_1` | same |
-| `hull_impact_high_0` | -- | `pbc_spark` | `impact` | 255,165,25 range 60 |
-| `beam_impact_high_0` | -- | `pbc_spark` | `impact` | same |
-| `asteroid_impact_high_0` | -- | `pbc_spark`, `asteroid_impact` | -- | same |
-| `lda_impact_high_0` | `icLDAAvatar` | -- | `shield_hit` | 177,89,255 range 400 |
+| `explosion_high_0` | `deba`, 50 fr, scale 5 | `cornflakes`, `spark_shower` | `large_explosion_1` | 255,165,25 r50, 60 fps, 0/3/18/60 = 0/1/0.3/0 |
+| `explosion_high_1` | **`fzgb`, 40 fr** | `cornflakes`, `spark_shower` | `large_explosion_2` | same |
+| `explosion_high_2` | `deba`, 50 fr | `cornflakes`, `spark_shower` | `large_explosion_3` | same |
+| `explosion_low` | `deba`, 50 fr | -- | `large_explosion_1` | same, constant 1.0 |
+| `small_explosion_high_0/1` | `fzgb`, 40 fr | `cornflakes`, `spark_shower` | `small_explosion_1`/`_2` | as `explosion` |
+| `small_explosion_high_2` | **`deba`, 50 fr** | `cornflakes`, `spark_shower` | `small_explosion_3` | same |
+| `small_explosion_low` | `deba`, 50 fr | -- | `small_explosion_1` | same, constant |
+| `hull_impact_high_0` | -- | `pbc_spark` | `impact` | 255,165,25 r60, 30 fps, 0/2/15 = 0/1/0 |
+| `hull_impact_low` | -- | -- | -- | 255,165,25 **r400**, constant 1.0 |
+| `beam_impact_high_0` | -- | `pbc_spark` | `impact` | 255,165,25 r60, **constant 1.0** |
+| `asteroid_impact_high_0` | -- | `pbc_spark`, `asteroid_impact` | -- | 255,165,25 r60, 0/2/15 |
+| `lda_impact_high_0` | `icLDAAvatar` | -- | `shield_hit` | 177,89,255 r400, 0/15/30 = 0/**1.5**/0 |
+| `lda_impact_low` | -- | -- | -- | same light, no avatar |
+| `plasma_fire_high_0` | -- | `plasma` (scale 0.1, on an animated `scaler`), `hull_impact` (scale 5) | `critical_hit` | three: 255,180,40 r500 flare; 255,67,4 r50 **12-key flicker to frame 150**; 255,150,30 r500 flare |
+| `plasma_fire_low` | -- | -- | `critical_hit` | 255,180,40 r500 |
 | `collision_high_0` | -- | -- | `collision` | -- |
-| `reactor_explosion_high_0` | `icShockwaveAvatar tint=(1.0,0.6,0.1) lifetime=2` | -- | -- | 255,255,255 |
-| `antimatter_explosion_high_0` | `icShockwaveAvatar` | -- | -- | -- |
-| `alien_explosion_high_0` | `icShockwaveAvatar tint=(1.0,0.15,0.1) lifetime=6` | -- | `alien_death` | 191,218,44 range 3000 |
-| `ldsi_explosion_high_0` | `icShockwaveAvatar tint=(0.4,1.0,0.2) lifetime=3` | -- | -- | 113,210,66 range 4000 |
+| `reactor_explosion_high_0` | `icShockwaveAvatar tint=(1.0,0.6,0.1) lifetime=2` | -- | -- | 255,255,255, **LightType 0, no range** |
+| `antimatter_explosion_high_0` | `icShockwaveAvatar tint=(0.1,0.2,1.0) lifetime=3` **+ 8 `icBeamAvatar` (`SearchBeam`) spikes** | -- | `antimatter_explosion` -> `large_explosion_3.wav` | 255,255,255 **r75000**, 0/5/45/90 = 0/**5**/1/0 |
+| `alien_explosion_high_0` | `icShockwaveAvatar tint=(1.0,0.15,0.1) lifetime=6` | -- | `alien_death` | 191,218,44 r3000, 0/3/9/18/60 = 0/1/0.5/0.25/0 |
+| `ldsi_explosion_high_0` | `icShockwaveAvatar tint=(0.4,1.0,0.2) lifetime=3` | -- | -- | 113,210,66 r4000, 5 keys |
+
+Two things the previous hand-transcription got wrong, and which the extractor
+now gets right: **the flipbook is per variant** (`explosion_high_1` is `fzgb`,
+not `deba`) and **the sound is bound to the variant**, not picked at random from
+a list -- `high_0/1/2` carry `large_explosion_1/2/3` respectively. Randomising
+the sound independently of the flipbook was our invention.
+
+The sound node is an indirection, not an alias: `audio/sfx/antimatter_explosion`
+is an `FcSoundNode` INI whose `url` is `sound:/audio/sfx/**large_explosion_3**`.
+The extractor resolves it, and carries `volume` and `min_range` across.
 
 The directives:
 
@@ -80,9 +124,57 @@ The directives:
 
 (`||` is `:/` and `|` is `/`; `formats.md` already had this.) The light is a
 plain LightWave `AddLight` with an `LgtIntensity (envelope)` and `LensFlare 1`.
-`explosion_high_0`: 60 fps, keys at frames 0/3/18/60 = intensities 0/1/0.3/0
--- a 50 ms flash decaying over a second. `hull_impact_high_0`: 30 fps, keys at
-0/2/15 = 0/1/0 -- a half-second flash.
+Nulls with plain names (`scaler`, `beam_scaler_thick`, `FatBeamsH`) are
+animation/parenting helpers: `plasma_fire`'s `plasma` system hangs off a
+`scaler` whose scale runs 0 -> 0.8 -> 1.3 -> 0.9 -> 0 over **600 frames (20 s)**,
+which is the hull fire burning down.
+
+### Which effect fires for which event
+
+Recovered from the call sites of the play function `0x100d3210`. **The
+decompiled `iwar2.dll.c` shows only four of the seven** -- Ghidra dropped three
+-- so they were found by scanning `.text` for `E8` calls to `0x100d3210`. Do
+not trust the `.c` for a call-site census.
+
+| effect | fired by | condition |
+|---|---|---|
+| `explosion` / `small_explosion` | `icExplosion` | its radius >= / < **150 m** (`0x1011a81c`) |
+| `hull_impact` | `icBullet` | default |
+| `asteroid_impact` | `icBullet` | target category (`sim+0x194`) `0xb`/`0xe` and a name test on `sim+0x184` passes |
+| `beam_impact` | `icBeam` | on hit |
+| `lda_impact` | LDA ship-system (`0x10036210`) | shot crossing the LDA shield **ellipsoid** (axes `ship+0x208/0x20c/0x210`); drawn at the ray/ellipsoid intersection, only if the ship mounts an LDA |
+| `plasma_fire` | `icShip::ApplyWeaponDamage` | probabilistic: `p = (1 - armour/max_armour) * damage_fraction` -- the burning hull, sound `critical_hit` |
+| `reactor_explosion` | `icShockwave` | no type flag (default) |
+| `antimatter_explosion` | `icShockwave` | `antimatter=1` (`+0x1e8`) |
+| `alien_explosion` | `icShockwave` | `alien=1` (`+0x1ea`) |
+| `ldsi_explosion` | `icShockwave` | `ldsi=1` (`+0x1e9`) |
+| `collision` | `iiSim::ProcessContact` | two sims touching |
+
+The four `icShockwave` flags are confirmed independently by the data:
+`sims/explosions/*.ini` are all `name=icShockwave` and carry exactly
+`antimatter=1`, `alien=1`, `ldsi=1`, or nothing (`reactor_explosion.ini`,
+`harmless_shockwave_explosion.ini`).
+
+### A ship death is four explosions and a shockwave
+
+`iiSim::DoFinalExplosion` (`0x1007c990`), for a sim of radius `R`:
+
+```
+4 x icExplosion:  radius = R * lerp(0.3, 0.6, rand)     0x1011c034 / 0x101192c4
+                  position = centre + UnitVector() * R * 0.4       0x10117558
+                  velocity = the dying sim's velocity
+1 x sim ini:/sims/explosions/reactor_explosion  (an icShockwave), unless the
+                  sim sets no_shockwave=1  (+0x19f; only the power-ups do)
+                  final_radius = R * 4.0                          0x101190b4
+                  scale *= clamp(R / 200, 0.25, 4.0)   mean_radius_of_reactor_
+                                       explosion_sim = 200, defaults.ini:446
+```
+
+Each puff then picks its *own* effect against the 150 m rule. A fighter has
+`R` ~ 60-70 m, so its puffs are 20-40 m and every one of them is a
+**`small_explosion`**; you need `R` > ~250 m before a puff can reach 150 m and
+become the big `explosion`. **That is why `small_explosion` exists**, and it
+answers the old open question. `ExplosionFx.boom()` now reproduces this exactly.
 
 ### The muzzle flash and the bolt
 

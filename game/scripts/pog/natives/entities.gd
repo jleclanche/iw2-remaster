@@ -421,10 +421,13 @@ func _dp_dock(_t, a: Array) -> Variant:
 	var pb = _resolve_port(a[1] if a.size() > 1 else null)
 	if pa == null or pb == null or pa == pb:
 		return 0
-	pa.docked = pb
-	pb.docked = pa
 	var sa = pa.owner
 	var sb = pb.owner
+	# isim.SetDockingLock: a locked ship has exactly one berth it may take.
+	if not world.docking_allowed(sa, sb) or not world.docking_allowed(sb, sa):
+		return 0
+	pa.docked = pb
+	pb.docked = pa
 	if sa == null or sb == null:
 		return 0
 	# The mobile half moves onto the static one; a station never moves.
@@ -677,24 +680,66 @@ func _hab_cast_int(_t, a: Array) -> Variant:
 	# already the enum value.
 	return int(a[0])
 
-# @stub ihabitat.Type
-# @stub ihabitat.FilterOnType
-# @stub ihabitat.FilterOnAllegiance
-func _hab_type_filter(_t, a: Array) -> Variant:
-	# IeHabitatType (police 68/69, naval 72, ...) and the allegiance enum are
-	# engine-internal integers. Neither survives in any data we extracted, and
-	# nothing in the geography records which kind of station a station is, so
-	# there is nothing honest to compare against. Filters pass the set through
-	# rather than returning the empty set, which would deadlock every script
-	# that waits on the result; Type reports "unknown".
-	var v = a[0] if a.size() > 0 else null
-	if v is Array:
-		return (v as Array).duplicate()
-	return 0
+## IeHabitatType is authored per station instance, in the system map record: it
+## is the byte at record offset +308, which our extractor keeps as the second
+## byte of `unknown1` (tools/iw2/map_decoder.py reads unknown1 = buf[307:311]).
+##
+## How we know, without the enum ever being named in the binary:
+##   - every station whose avatar is `policestation` has the byte 68 or 69, and
+##     ifight.pog:111 builds its "police" set as exactly
+##     FilterOnType(68) UNION FilterOnType(69);
+##   - 54 is every `securitystation`, 55 the fortresses, and ifight.pog:187
+##     unions 72,73,70,71,79,82,85,54,55,78 for its "military" set -- which is
+##     precisely the naval/defence/security band;
+##   - reading the names back confirms it: 70 "Defense Station", 71 "Defence
+##     Dock", 73 "Naval Training Base", 79 "Naval Defences", 122 "Orbital
+##     Transfer Station".
+## icStation::HabitatType (iwar2 @ 0x1004ada0) is a bare field read, so there is
+## no logic to recover beyond the value itself.
+func _habitat_type(s) -> int:
+	var g := _geog_of(s)
+	if g.is_empty():
+		return 0
+	var u := String(g.get("unknown1", ""))
+	if u.length() != 8:
+		return 0
+	return u.substr(2, 2).hex_to_int()
+
+# @native ihabitat.Type
+func _hab_type(_t, a: Array) -> Variant:
+	return _habitat_type(_sim(a[0]))
+
+# @native ihabitat.FilterOnType
+func _hab_filter_type(_t, a: Array) -> Variant:
+	var want := int(a[1]) if a.size() > 1 else 0
+	var out: Array = []
+	for h in (a[0] if a[0] is Array else []):
+		var s = _sim(h)
+		if s != null and _habitat_type(s) == want:
+			out.append(s)
+	return out
+
+# @native ihabitat.FilterOnAllegiance
+func _hab_filter_allegiance(_t, a: Array) -> Variant:
+	# The allegiance is the station's faction, which _hab_allegiance already
+	# resolves; the argument is the faction to keep.
+	var want = a[1] if a.size() > 1 else null
+	var name: String = want.name if want is PogFactions.PogFaction \
+			else PogStd._s(want)
+	var out: Array = []
+	for h in (a[0] if a[0] is Array else []):
+		var s = _sim(h)
+		if s == null:
+			continue
+		var f = _hab_allegiance(_t, [s])
+		if f is PogFactions.PogFaction and f.name == name:
+			out.append(s)
+	return out
 
 # @stub ihabitat.Population
 func _hab_population(_t, a: Array) -> Variant:
-	# No census data survives in the extract. A nominal figure keeps the traffic
+	# No census data survives in the extract -- the map record carries the type
+	# but no headcount, and no INI has one. A nominal figure keeps the traffic
 	# generators' "is anybody home" gates behaving.
 	return 5000 if _is_habitat(_sim(a[0])) else 0
 
@@ -828,9 +873,13 @@ func _b_habitats_around(_t, a: Array) -> Variant:
 # @stub ibody.Type
 # @stub ibody.FilterOnType
 func _b_type_filter(_t, a: Array) -> Variant:
-	# IeBodyType, same story as IeHabitatType: the scripts compare against raw
-	# enum integers (5 and 7 are the asteroid-ish ones) and nothing we extracted
-	# tells a moon from an asteroid. Pass the set through; report "unknown".
+	# NOT the same story as IeHabitatType. The habitat type turned out to be the
+	# map record's +308 byte, but the body records' +308 spreads over 89 distinct
+	# values in [0,239] -- far too wide for the small enum the scripts compare
+	# against (iscriptedorders.pog:517 tests `5 != ibody.Type(v1)` and unions 5
+	# and 7). icPlanet::Type is a bare field read, so the binary gives no clue
+	# where the loader read it from either. Which field carries it is an open
+	# question; pass the set through, report "unknown".
 	var v = a[0] if a.size() > 0 else null
 	if v is Array:
 		return (v as Array).duplicate()
@@ -866,9 +915,9 @@ const _BINDINGS := {
 	"ihabitat.hasspewerslotfree": "_hab_spewer_free",
 	"ihabitat.spew": "_hab_spew",
 	"ihabitat.castinttohabitattype": "_hab_cast_int",
-	"ihabitat.type": "_hab_type_filter",
-	"ihabitat.filterontype": "_hab_type_filter",
-	"ihabitat.filteronallegiance": "_hab_type_filter",
+	"ihabitat.type": "_hab_type",
+	"ihabitat.filterontype": "_hab_filter_type",
+	"ihabitat.filteronallegiance": "_hab_filter_allegiance",
 	"ihabitat.population": "_hab_population",
 	"ihabitat.setarmed": "_hab_noop",
 	"ihabitat.setarmedwithtarget": "_hab_noop",

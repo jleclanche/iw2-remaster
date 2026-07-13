@@ -28,12 +28,80 @@ func step(delta: float) -> void:
 			m._autopilot_process(delta)
 	elif m.motioncheck:
 		_motioncheck(delta)
+	elif m.geogcheck:
+		_geogcheck(delta)
 	else:
 		_demo(delta)
 
 func _shot(name: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(m._base().path_join("data/screenshots/%s.png" % name))
+
+# --- geography: are the bodies the right size, and do they look right? -------
+
+var _geog_shot := 0
+
+func _geog_look_at(rec: Dictionary, dist_in_radii: float) -> void:
+	# park the ship `dist_in_radii` body-radii out and point it at the body
+	var r: float = maxf(float(rec["radius"]), 1.0e3)
+	var d := r * dist_in_radii
+	m.px = float(rec["x"]) + d * 0.6
+	m.py = float(rec["y"]) + d * 0.25
+	m.pz = float(rec["z"]) + d * 0.75
+	m.ship.global_position = Vector3.ZERO
+	m.ship.velocity = Vector3.ZERO
+	var to := Vector3(float(rec["x"]) - m.px, float(rec["y"]) - m.py,
+		float(rec["z"]) - m.pz).normalized()
+	m.ship.global_transform = Transform3D(Basis.IDENTITY, Vector3.ZERO) \
+		.looking_at(to * 1000.0, Vector3.UP)
+	m.cam_mode = 0
+	m._apply_view()
+	m._stream_objects()
+
+func _geogcheck(_delta: float) -> void:
+	if demo_phase == 0:
+		if demo_t < 1.0:
+			return
+		m.menu.visible = false
+		m.hud.visible = false
+		for o in m.objects:
+			if o["category"] == "star" or (o["category"] == "body"
+					and o["renders"]):
+				var what: String = str(o["sun_texture"]) \
+					if o["category"] == "star" \
+					else "%s %s rings=%d atm=%s" % [o["surface_class"],
+						o["surface_textures"], o["ring_count"],
+						o["atmosphere_texture"]]
+				print("GEOG: ", str(o["name"]).rpad(30), " r=",
+					"%.0f" % float(o["radius"]), " m  ", what)
+		demo_phase = 1
+		demo_t = 0.0
+		return
+	var wanted := []
+	for o in m.objects:
+		if o["category"] == "star":
+			wanted.append(o)
+	for o in m.objects:
+		if o["category"] == "body" and o["renders"] and o["ring_count"] > 0:
+			wanted.append(o)
+			break
+	for o in m.objects:
+		if o["category"] == "body" and o["renders"] \
+				and not str(o["atmosphere_texture"]).is_empty():
+			wanted.append(o)
+			break
+	if _geog_shot >= wanted.size():
+		print("GEOGCHECK done")
+		m.get_tree().quit()
+		return
+	var rec: Dictionary = wanted[_geog_shot]
+	if demo_t < 0.4:
+		_geog_look_at(rec, 6.0)
+		return
+	_shot("geog_%d_%s" % [_geog_shot, str(rec["name"]).to_snake_case()])
+	print("GEOGCHECK shot: ", rec["name"])
+	_geog_shot += 1
+	demo_t = 0.0
 
 # --- campaign smoke test ----------------------------------------------------
 

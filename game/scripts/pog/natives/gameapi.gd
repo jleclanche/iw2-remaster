@@ -282,10 +282,42 @@ func _ai_clear_autopilot(_t, _a: Array) -> Variant:
 		game.ap_mode = 0
 	return 0
 
-# @stub iai.InnerMarkerRadius
-# @stub iai.ForceLPRoute
+# @native iai.InnerMarkerRadius
+func _ai_inner_marker(_t, a: Array) -> Variant:
+	# icAIServices::InnerMarkerRadius (iwar2 @ 0x100560d0). The approach marker
+	# a ship must reach before it is "at" something. For an ordinary sim the
+	# whole function is `target->radius * 0.9` (the 0.9 is the float at
+	# 0x1011951c); the planet/sun branch scales by the heat multiplier instead
+	# and is not read -- see docs/original.md.
+	#
+	# POG's argument order is (target, ship): iact0mission10.pog:117 passes the
+	# object being approached first and the player's ship second, and it is the
+	# object's size the marker is derived from.
+	var target = world._as_sim(a[0])
+	return target.radius() * 0.9 if target != null else 0.0
+
+# @native iai.ForceLPRoute
+func _ai_force_lp_route(_t, a: Array) -> Variant:
+	# ForceLPRoute(ship, from_lpoint, to_lpoint): pin the route an AI ship takes
+	# out of the system, rather than letting it pick. The ship flies to the
+	# entry L-point and leaves; that is what the missions use it to stage.
+	var s = world._as_sim(a[0])
+	var from = world._as_sim(a[1]) if a.size() > 1 else null
+	var o := _order_for(s)
+	if o == null or from == null:
+		return 0
+	o.kind = "approach"
+	o.target = from
+	o.complete = false
+	s.node.waypoints = [from.abs_pos() - world.player_pos()]
+	s.node.wp = 0
+	s.node.behavior = "patrol"
+	return 0
+
 # @stub iai.IsCapsuleJumpAccelerating
 func _ai_noop(_t, _a: Array) -> Variant:
+	# The spin-up before an AI ship's capsule jump: our AI ships leave the system
+	# by simply being destroyed, so there is no acceleration phase to be in.
 	return 0
 
 
@@ -479,8 +511,19 @@ func _d_obituary(_t, a: Array) -> Variant:
 func _d_is_obituary(_t, _a: Array) -> Variant:
 	return 1 if (director_busy and focus != null and not focus.alive()) else 0
 
-# @stub idirector.UseSimOrientation
-func _d_noop(_t, _a: Array) -> Variant:
+# @native idirector.UseSimOrientation
+func _d_use_sim_orientation(_t, a: Array) -> Variant:
+	# UseSimOrientation(dolly, sim): shoot along the sim's own facing rather than
+	# looking back at the subject. It is the same shot DollyLookForward composes,
+	# so it sets the same two fields.
+	var d = a[0]
+	if d is PogDolly:
+		var s = world._as_sim(a[1]) if a.size() > 1 else null
+		if s != null:
+			d.attached = s
+		dolly = d
+		use_dolly = true
+		dolly_look_forward = true
 	return 0
 
 
@@ -566,12 +609,36 @@ func _h_set_target(_t, a: Array) -> Variant:
 		game.target_idx = -1
 	return 0
 
+## ihud's menu tree: the icHUDMenuReticle from `flux.ini [icHUD]`, whose nodes the
+## scripts address by name ("hud_menu_eng", "hud_menu_wep", "hud_menu_nav" ...).
+## The general-training mission drives the player round it node by node, polling
+## CurrentMenuNode and gating progress on where they are. We have no such menu --
+## hud.gd never built one -- so the enable table is kept (it is real state, and
+## SetMenuNodeEnabled is what locks the player out of a system before it is
+## taught) but nothing consumes it and there is no current node to report.
+var menu_nodes: Dictionary = {}      ## node name -> enabled
+var menu_locked := false
+
 # @stub ihud.SetMenuNodeEnabled
+func _h_set_menu_node(_t, a: Array) -> Variant:
+	menu_nodes[PogStd._s(a[0])] = PogVM._truthy(a[1]) if a.size() > 1 else true
+	return 0
+
 # @stub ihud.CurrentMenuNode
-# @stub ihud.FlashElement
+func _h_current_menu_node(_t, _a: Array) -> Variant:
+	# A node name, not a number: the scripts compare it against string literals.
+	return ""
+
 # @stub ihud.LockMenu
+func _h_lock_menu(_t, a: Array) -> Variant:
+	menu_locked = PogVM._truthy(a[0]) if a.size() > 0 else false
+	return 0
+
+# @stub ihud.FlashElement
 # @stub ihud.ShowScore
 func _h_noop(_t, _a: Array) -> Variant:
+	# FlashElement highlights one HUD panel to draw the eye to it during the
+	# tutorial; ShowScore raises the score readout. Neither element takes a cue.
 	return 0
 
 
@@ -721,28 +788,52 @@ func _g_set_game_type(_t, a: Array) -> Variant:
 	game_type = int(a[0]) if a.size() > 0 else 1
 	return 0
 
+## "map:/geog/badlands/hoffers_wake" -> "hoffers_wake", the stem main.gd loads.
+static func map_stem(url: String) -> String:
+	return url.trim_prefix("map:").trim_suffix("/").get_file().to_lower()
+
+# @native igame.StartNewGame
+func _g_start_new_game(_t, a: Array) -> Variant:
+	# StartNewGame("map:/geog/badlands/hoffers_wake", "iInstantAction"): load a
+	# system and hand control to a mission package's Main. It is how the front end
+	# begins a game, and how Instant Action drops you straight into one.
+	if game == null or vm == null:
+		return 0
+	var stem := map_stem(PogStd._s(a[0]))
+	var pkg := PogStd._s(a[1]) if a.size() > 1 else ""
+	if not stem.is_empty():
+		game.start_in_system(stem)
+	if not pkg.is_empty() and vm.has_method("script"):
+		var s = vm.script(pkg.to_lower())
+		if s != null and s.has_method("main"):
+			s.call("main")
+	return 0
+
+## Which system the player's base is in. istartsystem.MovePlayerBase relocates it
+## between acts (Gagarin/Formhault in Act 3), and the base screens dock you at it.
+var player_base_system := ""
+
+# @native igame.MovePlayerBase
+func _g_move_player_base(_t, a: Array) -> Variant:
+	player_base_system = map_stem(PogStd._s(a[0]))
+	return 0
+
+# Multiplayer-only, and multiplayer is out of scope: CreateFog/DestroyFog are
+# called from ibombtag, icapturetheflag and ideathmatch and from nowhere else,
+# and the CD-key / session / network calls belong to the lobby.
 # @stub igame.CreateFog
 # @stub igame.DestroyFog
-# @stub igame.GameType
-# @stub igame.SetGameType
-# @stub igame.StartNewGame
 # @stub igame.SessionName
 # @stub igame.SetSessionName
-# @stub igame.GotEarnedMovie
-# @stub igame.GotPlayDisk
-# @stub igame.MovePlayerBase
-# @stub igame.SaveGame
-# @stub igame.SaveAutosave
-# @stub igame.AutosaveSaved
-# @stub igame.LoadGame
-# @stub igame.NumberOfSavedGameSlots
-# @stub igame.NameOfSaveInSlot
 # @stub igame.IsMultiplayerOnly
 # @stub igame.CDKey
 # @stub igame.SetCDKey
 # @stub igame.ServerAddress
 # @stub igame.JoinNetworkGame
 # @stub igame.JoinNetworkGameFromLobby
+# The disc checks: there is no disc, and nothing is locked behind one.
+# @stub igame.GotEarnedMovie
+# @stub igame.GotPlayDisk
 func _g_noop(_t, _a: Array) -> Variant:
 	return 0
 
@@ -858,8 +949,17 @@ func _n_num_float(_t, a: Array) -> Variant:
 func _n_num_exists(_t, a: Array) -> Variant:
 	return 1 if _numbered(a) != null else 0
 
-# @stub inifile.Destroy
-func _n_noop(_t, _a: Array) -> Variant:
+# @native inifile.Destroy
+func _n_destroy(_t, a: Array) -> Variant:
+	# The scripts open an INI, read a handful of keys and close it again. Dropping
+	# the cache entry is the whole of it: the next Create re-reads the file, which
+	# is what the original did too.
+	var ini = a[0] if a.size() > 0 else null
+	if ini is PogIni:
+		for k in _inis.keys():
+			if _inis[k] == ini:
+				_inis.erase(k)
+				break
 	return 0
 
 
@@ -894,7 +994,8 @@ const _BINDINGS := {
 	"iai.currentordername": "_ai_order_type",
 	"iai.currentordertarget": "_ai_order_target",
 	"iai.clearautopilot": "_ai_clear_autopilot",
-	"iai.innermarkerradius": "_ai_noop", "iai.forcelproute": "_ai_noop",
+	"iai.innermarkerradius": "_ai_inner_marker",
+	"iai.forcelproute": "_ai_force_lp_route",
 	"iai.iscapsulejumpaccelerating": "_ai_noop",
 
 	"iobjectives.add": "_o_add", "iobjectives.setstate": "_o_set_state",
@@ -913,14 +1014,15 @@ const _BINDINGS := {
 	"idirector.attachdollytosim": "_d_attach_dolly",
 	"idirector.dollylookforward": "_d_dolly_look_forward",
 	"idirector.usedollyorientation": "_d_use_dolly_orientation",
-	"idirector.usesimorientation": "_d_noop",
+	"idirector.usesimorientation": "_d_use_sim_orientation",
 	"idirector.isobituaryview": "_d_is_obituary",
 	"idirector.obituary": "_d_obituary",
 
 	"ihud.setprompt": "_h_set_prompt", "ihud.print": "_h_print",
 	"ihud.playaudiocue": "_h_audio_cue", "ihud.settarget": "_h_set_target",
-	"ihud.setmenunodeenabled": "_h_noop", "ihud.currentmenunode": "_h_noop",
-	"ihud.flashelement": "_h_noop", "ihud.lockmenu": "_h_noop",
+	"ihud.setmenunodeenabled": "_h_set_menu_node",
+	"ihud.currentmenunode": "_h_current_menu_node",
+	"ihud.flashelement": "_h_noop", "ihud.lockmenu": "_h_lock_menu",
 	"ihud.showscore": "_h_noop",
 
 	"igame.playmovie": "_g_play_movie",
@@ -931,9 +1033,11 @@ const _BINDINGS := {
 	"igame.createfog": "_g_noop", "igame.destroyfog": "_g_noop",
 	"igame.gametype": "_g_game_type",
 	"igame.setgametype": "_g_set_game_type",
-	"igame.startnewgame": "_g_noop", "igame.sessionname": "_g_noop",
+	"igame.startnewgame": "_g_start_new_game",
+	"igame.sessionname": "_g_noop",
 	"igame.setsessionname": "_g_noop", "igame.gotearnedmovie": "_g_noop",
-	"igame.gotplaydisk": "_g_noop", "igame.moveplayerbase": "_g_noop",
+	"igame.gotplaydisk": "_g_noop",
+	"igame.moveplayerbase": "_g_move_player_base",
 	"igame.savegame": "_g_save", "igame.saveautosave": "_g_save",
 	"igame.autosavesaved": "_g_autosaved", "igame.loadgame": "_g_load",
 	"igame.numberofsavedgameslots": "_g_slots",
@@ -945,7 +1049,7 @@ const _BINDINGS := {
 
 	"inifile.create": "_n_create", "inifile.string": "_n_string",
 	"inifile.int": "_n_int", "inifile.float": "_n_float",
-	"inifile.cast": "_n_cast", "inifile.destroy": "_n_noop",
+	"inifile.cast": "_n_cast", "inifile.destroy": "_n_destroy",
 	"inifile.numberedstring": "_n_num_string",
 	"inifile.numberedint": "_n_num_int",
 	"inifile.numberedfloat": "_n_num_float",

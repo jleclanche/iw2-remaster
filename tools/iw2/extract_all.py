@@ -4,7 +4,7 @@ Usage:  python -m tools.iw2.extract_all
 """
 
 from . import (assemble_avatar, audio, classify_map, export_gltf,
-               extract_sims, lwo, lws, map_decoder, textures)
+               extract_sims, lwo, lws, map_decoder, sfx, textures)
 
 print("=== sims ===")
 extract_sims.main()
@@ -18,6 +18,8 @@ print("=== audio ===")
 audio.main()
 print("=== scenes ===")
 lws.main()
+print("=== composite effects (sfx/*.lws) ===")
+sfx.main()
 print("=== textures ===")
 textures.main()
 print("=== fonts ===")

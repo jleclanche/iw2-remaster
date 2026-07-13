@@ -46,6 +46,60 @@ def _parse_tag(name: str) -> tuple[str, dict]:
     return kind, attrs
 
 
+def _parse_envelope(lines: list[str], i: int) -> tuple[list[list[float]], int]:
+    """Read an LWS '(envelope)' block. Returns ([[frame, value], ...], lines_consumed).
+
+    The block is::
+
+        LgtIntensity (envelope)
+          1              <- channel count
+          4              <- key count
+          0              <- key value
+          0 0 0 0 0      <- frame, then spline params
+          1
+          3 0 0 0 0
+
+    i.e. keys are *value first, frame second*, the reverse of ObjectMotion.
+    """
+    try:
+        nkeys = int(lines[i + 2].strip())
+    except (ValueError, IndexError):
+        return [], 0
+    keys: list[list[float]] = []
+    for k in range(nkeys):
+        try:
+            value = float(lines[i + 3 + 2 * k].strip())
+            frame = float(lines[i + 4 + 2 * k].split()[0])
+        except (ValueError, IndexError):
+            break
+        keys.append([frame, value])
+    return keys, 2 + 2 * len(keys)
+
+
+def parse_scene(text: str) -> dict:
+    """Full scene: timing metadata plus the node list."""
+    scene: dict = {"fps": 30.0, "first_frame": 1, "last_frame": 60}
+    for ln in text.splitlines():
+        s = ln.strip()
+        if s.startswith("FramesPerSecond"):
+            try:
+                scene["fps"] = float(s.split()[1])
+            except (ValueError, IndexError):
+                pass
+        elif s.startswith("FirstFrame"):
+            try:
+                scene["first_frame"] = int(s.split()[1])
+            except (ValueError, IndexError):
+                pass
+        elif s.startswith("LastFrame"):
+            try:
+                scene["last_frame"] = int(s.split()[1])
+            except (ValueError, IndexError):
+                pass
+    scene["nodes"] = parse_lws(text)
+    return scene
+
+
 def parse_lws(text: str) -> list[dict]:
     lines = [ln.rstrip() for ln in text.splitlines()]
     nodes: list[dict] = []
@@ -77,10 +131,23 @@ def parse_lws(text: str) -> list[dict]:
             except ValueError:
                 pass
         elif ln.startswith("LgtIntensity") and cur is not None:
+            arg = ln[len("LgtIntensity"):].strip()
+            if arg.startswith("("):
+                # animated intensity: keys are (frame, value) in scene frames
+                keys, used = _parse_envelope(lines, i)
+                if keys:
+                    cur["intensity_envelope"] = keys
+                i += used
+            else:
+                try:
+                    cur["intensity"] = float(arg)
+                except ValueError:
+                    pass
+        elif ln.startswith("LightRange") and cur is not None:
             try:
-                cur["intensity"] = float(ln.split()[1])
-            except ValueError:
-                pass  # "(envelope)" — animated intensity, ignore
+                cur["range"] = float(ln.split()[1])
+            except (ValueError, IndexError):
+                pass
         elif ln.startswith("LightType") and cur is not None:
             cur["light_type"] = int(ln.split()[1])
         elif ln.startswith("LensFlare") and cur is not None:
@@ -122,13 +189,13 @@ def main(out_dir: str = "data/json/scenes") -> None:
     ok, failed = 0, []
     for path in fs.list("", ".lws"):
         try:
-            nodes = parse_lws(fs.read_text(path))
+            scene = parse_scene(fs.read_text(path))
         except Exception as exc:
             failed.append((path, str(exc)))
             continue
         dest = out / Path(path).with_suffix(".json")
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(json.dumps({"source": path, "nodes": nodes}, indent=1),
+        dest.write_text(json.dumps({"source": path, **scene}, indent=1),
                         encoding="utf-8")
         ok += 1
     print(f"parsed {ok} scenes, {len(failed)} failed")

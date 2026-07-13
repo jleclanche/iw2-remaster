@@ -19,7 +19,8 @@ re-deriving them.
   divergences**, with the reason.
 
 Companion docs: `pog.md` (how we run/port the scripts), `decompile.md` (how to
-get at the binaries), `formats.md` (the file formats).
+get at the binaries), `formats.md` (the file formats), `geography.md` (the solar
+systems: bodies, stars, stations, L-points).
 
 ---
 
@@ -312,36 +313,89 @@ that matrix. A `behaviour == "attack"` string is not a substitute.
 
 ## 7. Rendering
 
-### Stars are NOT flat-shaded spheres
-Assets (all present, and we already extract them):
+### The geography: every render property of a body is in its `.map` record
 
-| asset | what it is |
-|---|---|
-| `images/planets/sun_yellow.ftc`, `sun_red.ftc`, `sun_blue.ftc` | the star's **surface** texture: a tiling plasma |
-| `images/planets/sun_halo.ftc` | one **quadrant** of a spiky corona, white on black -- mirrored 4x and drawn additively |
-| `images/sfx/sun.ftc`, `images/sfx/lens_flares.ftc` | sun sprite and lens flares |
+Full write-up, with the disassembly, in **`geography.md`**. The short version --
+all of it out of `icSolarSystem::Load` (`iwar2.dll @ 0x1004bb60`), which reads
+the file as `count * sizeof(sEntity)` with `sizeof(sEntity) == 0x168` (360) and
+switches on each record's **first byte**:
 
-A star is a textured, emissive body plus an additive corona -- not a coloured
-sphere.
+**The header has no version byte.** The byte we were skipping at offset 4 is
+record 0's `kind`, and it is 0 (the system centre is a body). Every field in our
+old decoder was therefore **one byte off**, which is why the "kind" it read was
+the *next* record's kind and why L-points appeared to have no orientation.
 
-### Planets: `data/ini/planets.ini` is the renderer's config
+**The body radius is the f32 at `+0x138`** -- `FiSim::SetRadius(*(float *)(entity
++ 0x138))` in both `icPlanet::Load` (`0x10067eb0`) and `ParseSunInfo`
+(`0x1004e5a0`). It is a physical radius in meters; there is no map-zone field and
+no derivation. Median body 5.6e6 m, gas giants 3.2e7-2.6e8 m, stars 2e7-1.75e11 m.
+(Yes, 1.75e11: `Hoffer's Wake Alpha` is authored as a 251-solar-radius red
+hypergiant, and the engine takes it at face value -- it builds an
+`FcSphereCollider` of exactly that radius.) We had been reading the right float
+all along and then **clamping it to an arbitrary `8e7`**; the clamp was the bug.
 
-```
-planet_models[]            = avatars/planets/Planet_LOD2 / LOD1 / LOD0
-detail_switch[]            = 0.03, 0.2, 0.9          (LOD thresholds)
-rocky_planet_textures[]    = Terrain1..4, LandWater1/2/4, Cracks
-gassy_planet_textures[]    = Stripes1..6, gas1..4
-atmosphere_planet_textures[] = clouds1..4  (+ matching *_bump)
-atmosphere_height          = 1.1
-atmosphere_threshold       = 0.1     ; below this pressure, no atmosphere
-max_rings                  = 8
-rings_prob                 = 1.0
-colours[]                  = ...     ; "Colours for when colours can't be worked out"
-```
+**A record's fields are only valid for the kinds that write them.** The writer
+reused one 360-byte buffer, so a station's `+0x138` is its parent body's radius.
+That garbage is what made stations look planet-sized.
 
-Note the comment on `colours[]`: it is the **fallback** table, used when the real
-colour cannot be derived. Anything reading it as *the* planet colour is using the
-game's last resort as its first.
+**Only `1 < IeBodyType < 5` is drawn** (`icPlanet::CreateAvatar`, `0x10067fe0`).
+Type 4 is the ringed gas giant, and it is the only type that gets rings.
+
+### Stars: class -> texture, class -> colour
+
+`icSun::eClass` is the byte at record `+0x134` (0..15 in the shipped maps).
+
+- **Texture** (`icSunAvatar` ctor, `0x100d2910`): `class < 3` -> `sun_blue`,
+  `class < 7` -> `sun_yellow`, else -> `sun_red`. Default class is 6.
+- **Colour** (`icSun::PickColour`, `0x1006ac70`): `icSun::m_colours` is **16
+  pairs**; the star LERPs its class's pair with `rand()`. Blue-white -> white ->
+  yellow -> orange -> red. The table is written by a runtime static-init
+  (`FUN_10069f70`) so it is zeros in the file; the values are in `geography.md`.
+- The avatar is scaled to `FiSim::Radius()` with a bounding radius of
+  **radius x 1.4** (`_DAT_1011a440`) -- the extra 40% is the corona, which is what
+  `sun_halo` (one quadrant, mirrored 4x, additive) is for.
+- `icSun::CreateAvatar` (`0x1006a960`) also attaches **two `FcLensFlareNode`s**,
+  both coloured by `PickColour`; the second's variant is 3 for class <= 2 and 1
+  otherwise. `UpdateAvatar` pushes the first flare toward the camera each frame.
+
+### Planets: `planets.ini` is the config, and the record is the content
+
+`icPlanetAvatar`'s shader setup (`FUN_100cdc50 @ 0x100cdc50`) reads the record,
+not the planet's name and not a hash:
+
+| record | field | drives |
+|---|---|---|
+| `+0x13c` | `icPlanet::eType` | 1 = **rocky**, 2 = **gassy** (486 / 122 across the game) |
+| `+0x13d`, `+0x13e` | `SurfaceType(0/1)` | index into `planets.ini` `rocky_`/`gassy_planet_textures[]` |
+| `+0x140` | colours 0-255 | `SurfaceTint(0/1)` = colour / 255 (`_DAT_1011b068`) |
+| `+0x164` | i8 | atmosphere texture index; **-1 = none** (339 have none, 269 have clouds1..4) |
+| `+0x165` | u8 | ring count (0, or 4..8) |
+
+A cloud layer and a second surface layer are **mutually exclusive**. Rings are
+`FcRandom::Float(1.75, 2.44) x radius`, from an `FcRandom` seeded with the body's
+radius, coloured by `SurfaceTint(0)`'s hue at value `FcRandom::Float(0.2, 0.8)`.
+
+**`planets.ini`'s `colours[]` really is the last resort its comment says it is:
+nothing in the render path reads it.** We were using it first.
+
+### Stations: the model is in the record too
+
+`ParseLocationInfo` (`0x1004e0a0`) reads `entity[0x134]` as a **scene index** and
+`icStation::Scene(n)` (`0x100698c0`) looks it up in **`station_creation.ini`
+`[Stations] Scene[n]`** -- 37 entries, each an `ini:/sims/stations/*` whose
+`[Avatar]` names the LWS scene. All 756 station records resolve. `+0x136` is the
+station's **faction allegiance** (`icFactions::FindFactionByAllegiance`).
+
+This retires the name-keyword table we had been using to pick station avatars.
+
+### L-points: the orientation is in the record
+
+Every L-point carries a **unit quaternion at `+0x120`, stored (w, x, y, z)**,
+which `icSolarSystem::Load` hands to `FiSim::SetOrientation`. All 76 are a pure
+yaw. That is the frame `icLagrangePointWaypoint::TryToJump` (`0x1006ad40`) tests
+`local z < 0` in, so it is the funnel's frame and its local +Z is the jump axis.
+Into Godot (we mirror Z): the quaternion becomes `(w, -x, -y, z)` and the axis is
+`basis * Vector3.FORWARD`.
 
 ### The HUD element list (authoritative, in draw order)
 `flux.ini [icHUD]`:
@@ -480,7 +534,7 @@ text-line Y and the contact-list block width cannot be read out; the sprite tabl
 mapping a glyph to each status-icon slot is built at runtime (the slots and radii
 are real, the icons are not); the reticle ring's tick pattern is a texture.
 
-### Effects are a two-layer system, and we only had the bottom layer
+### Effects are a two-layer system, and both layers are now extracted
 (Full write-up in `effects.md`.)
 
 `data/ini/sfx/<name>/` -- twelve particle systems, each `node.ini` +
@@ -488,15 +542,63 @@ are real, the icons are not); the reticle ring's tick pattern is a texture.
 references any of them, which is why the link looked missing: **a weapon does
 not name its effects.**
 
-The layer above is **`sfx/*.lws`** -- 23 LightWave scenes in `resource.zip`
-that our extractor drops. Each composes particle systems, a sprite flipbook, a
-sound and a light into one effect. `icVisualEffects` (`iwar2.dll`, string table
-`0x10161f14`) holds twelve URL *prefixes* (`lws:/sfx/explosion_`,
-`lws:/sfx/hull_impact_`, ...) and builds the URL with `"%slow"` or
-`"%shigh_%d"` (`0x101620a0`). So the engine picks the effect from the *kind of
-event*, and a ship death is `lws:/sfx/explosion_high_{0,1,2}` = the `deba`
-50-frame fireball + the `cornflakes` and `spark_shower` particle systems + a
-`large_explosion` WAV + an orange flash.
+The layer above is **`sfx/*.lws`** -- 23 LightWave scenes in `resource.zip`,
+now extracted to `data/json/sfx_effects.json` (`tools/iw2/sfx.py`). Each
+composes particle systems, a sprite flipbook, a sound and a light into one
+effect. `icVisualEffects` (`iwar2.dll`, prefix table `0x10161f14`) holds twelve
+URL *prefixes* and builds the URL with `"%slow"` or `"%shigh_%d"`
+(`0x101620a0`). So the engine picks the effect from the *kind of event*.
+
+**`low` vs `high_%d` is a distance LOD, not a quality setting.**
+`icVisualEffects` (`0x100d33e0`, called from the play function `0x100d3210`)
+computes `apparent = size * size_weight[effect] / distance_to_camera`, with the
+weights in a `float[12]` at `0x1011d254`, and then:
+
+    apparent < cull_detail (0.005)  ->  nothing is drawn
+    apparent < low_detail  (0.04)   ->  the `_low` scene, and if the effect
+                                        ships none, nothing is drawn
+    otherwise                       ->  a uniformly RANDOM `high_%d`
+
+(`cull_detail`/`low_detail` are its two registered properties, defaults at
+`0x10161f0c`/`0x10161f10`.) Only `explosion` and `small_explosion` ship three
+`high_` variants, and they differ *only* in flipbook + sound -- which is what
+makes "pick one at random" legible. Five of the twelve ship no `_low` scene at
+all, so they simply vanish past that distance.
+
+**Which effect fires for which event** -- recovered from the seven call sites of
+`0x100d3210`. Note the decompiled `iwar2.dll.c` only shows four of them: Ghidra
+dropped three, and they were found by scanning `.text` for `E8` calls to the
+target. Do not trust the `.c` for call-site census work.
+
+| effect | fired by | condition |
+|---|---|---|
+| `explosion` | `icExplosion` | its radius >= **150 m** (`0x1011a81c`) |
+| `small_explosion` | `icExplosion` | its radius < 150 m |
+| `hull_impact` | `icBullet` | default |
+| `asteroid_impact` | `icBullet` | target category (`sim+0x194`) is `0xb`/`0xe` *and* a name test on `sim+0x184` passes |
+| `beam_impact` | `icBeam` | on hit |
+| `lda_impact` | the LDA ship-system (`0x10036210`) | a shot crossing the ship's LDA shield **ellipsoid**; only if the ship mounts an LDA. It is drawn at the ray/ellipsoid intersection, not at the hull |
+| `plasma_fire` | `icShip::ApplyWeaponDamage` | probabilistic: `p = (1 - armour/max_armour) * damage_fraction`. The burning-hull effect; sound is `critical_hit` |
+| `reactor_explosion` | `icShockwave` | no type flag (the default) |
+| `antimatter_explosion` | `icShockwave` | `antimatter=1` (`+0x1e8`) |
+| `alien_explosion` | `icShockwave` | `alien=1` (`+0x1ea`) |
+| `ldsi_explosion` | `icShockwave` | `ldsi=1` (`+0x1e9`) |
+| `collision` | `iiSim::ProcessContact` | two sims touching |
+
+The four `icShockwave` flags are confirmed independently by the data:
+`sims/explosions/*.ini` are all `name=icShockwave` and carry exactly
+`antimatter=1`, `alien=1`, `ldsi=1`, or nothing (`reactor_explosion.ini`).
+
+**A ship death is not one explosion.** `iiSim::DoFinalExplosion`
+(`0x1007c990`) spawns **four** `icExplosion` puffs, each of radius
+`R * lerp(0.3, 0.6, rand)` (`0x1011c034`/`0x101192c4`) and offset by a random
+unit vector * `R * 0.4` (`0x10117558`), plus one `reactor_explosion` shockwave
+sim (`final_radius = R*4`, scale `clamp(R/200, 0.25, 4)`; `mean_radius_of_
+reactor_explosion_sim = 200` in `defaults.ini:446`) unless the sim sets
+`no_shockwave=1` (only the power-ups do). Each puff then picks its own effect
+against the 150 m rule -- so a fighter (`R` ~ 60-70 m, puffs of 20-40 m) shows
+**`small_explosion`, never `explosion`**. You need `R` > ~250 m for the big one.
+That is the answer to "when is `small_explosion` used instead of `explosion`".
 
 Three facts that guessing had wrong:
 
@@ -566,6 +668,7 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 | Multiplayer (`imultiplay`, 118 natives) not ported | -- | Single-player remaster. |
 | The player flies `tug_prefitted.ini`'s subsim list | `tug.ini`'s empty mountpoints, filled by the fitting screen | Same hull (1000 hp / 65 armour) and the avatar we already render. The fitting screen is not ported, and empty mountpoints have `hit_points=0`, so they cannot be damaged -- a tug fitted from `tug.ini` would have no shields and no subsystem damage at all. |
 | Every impact lands exactly `N` subsim criticals | The same, via an RNG gate that re-rolls until they all land | The `critical_chance_scale` roll in `icShip::ApplyWeaponDamage` does not consume a loop iteration when it fails, so it is a no-op that only costs spins. We do the N hits directly. |
+| Bodies and stars are drawn as impostors: pulled in to 250 km and scaled down by the same factor, so the *angular* size is right, with the apparent radius capped at `0.4 x` the draw distance | Drew them at their true distance and size | Floating origin + a 600 km far plane. The cap only bites when a body would subtend more than ~44 degrees, which happens because a few authored star radii are enormous (see `geography.md`). |
 
 ---
 
@@ -575,20 +678,24 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
 
 - **`IeSimType`**: only `T_CommandSection = 131072` is confirmed. The rest of the
   bit flags are unknown; our table has placeholders and says so.
-- **Body radii.** The map record's `+311` float is a *map zone* radius, not a
-  physical size -- for `Hoffer's Wake Alpha` it comes out as 1.75e11 m (1.17 AU),
-  which is an orbital distance. Our extractor clamps it to an arbitrary `8e7`.
-  The real body radius must be somewhere else in the geography; we have not found
-  it. Until we do, every planet and star is the wrong size.
-- **Which sun texture a given star uses** (`sun_yellow` / `sun_red` /
-  `sun_blue`), and where the star's colour/class comes from.
-- **The L-point's orientation.** We now know the funnel is drawn in the L-point
-  sim's frame and that its local +Z is the jump axis (`TryToJump`) -- but nothing
-  in the HUD code *sets* that basis; it comes from the solar-system loader, and
-  our extracted `data/json/systems/*.json` carries **no orientation at all** for
-  `lpoint` records. `main.gd::_lpoint_axis` therefore uses an explicit,
-  clearly-marked placeholder. The orientation has to be re-extracted from the
-  system files.
+- **`IeBodyType`.** The values are known by behaviour (0 = system centre, 4 = the
+  ringed gas giant, 2/3 = the drawn bodies, 1 and 6 exist and are *not* drawn but
+  do count as LDS obstacles) but the enum's actual names are not recovered.
+- **The sun / planet avatar draw code.** Ghidra leaves `icSunAvatar`'s draw
+  (`0x100d2b30`, `0x100d2b80`) and `icPlanetAvatar`'s (`0x100ccbb0`, `0x100ccc60`,
+  `0x100ccc80`) undisassembled, same as the Lagrange icon. So the corona's exact
+  geometry and blend, a planet ring's **width**, and the atmosphere shell's blend
+  are unread. We have the textures, the colours, the ring radii, the 1.4x sun
+  bound and `atmosphere_height = 1.1`; the ring width in `main.gd` is a marked
+  placeholder.
+- **Station record bytes `+0x135` and `+0x137`.** `icStation::Load` reads both
+  (`+0x135` -> `icStation+0x1e0`, values 0..122; `+0x137` -> `+0x1e5`, quantised
+  3/5/10/15/.../250). Neither is identified. The faction byte `+0x136` and the
+  scene byte `+0x134` are.
+- **The L-point's `+0x134` link word.** `icSolarSystem::Load` stores it at
+  `icLagrangePointWaypoint+0x20c` and `icCluster::ConnectLagrangePoints`
+  (`0x10044e50`) consumes it. We take the jump destinations from the file's tail
+  table instead, so we never decoded what it indexes.
 - **The status-icon glyphs.** The reticle's icon *slots and radii* are recovered,
   but the sprite table that maps a glyph to each slot is built at runtime, so
   which icon sits in which slot is unknown. Ours currently use text labels.
@@ -604,29 +711,46 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
   `0x100ad000` from the contact list), gated by `field_coverage` and
   `field_hold_time`. Only half read; we implement the hood test and skip it, so
   our LDAs deflect slightly more than the original's.
-- **The explosion sequence.** `iiSim::StartExplosion` (`0x1007c950`) is a two-line
-  timer set; `DoFinalExplosion` (`0x1007c990`, 718 bytes) is what actually
-  spawns the thing, and it is not read.
 - **The `eBlend` enum.** Particles use `1`, the HUD and sprites use `2` and `3`.
   We are confident `1` is additive (see `effects.md`), but the enum is only
   *applied* in `dx7graph.dll`, which is not decompiled, so the mapping to actual
   blend factors -- and the meaning of `0` and `3` -- is unread.
-- **The shockwave avatars.** `icShockwaveAvatar`, `icLDAAvatar`, `icBeamAvatar`
-  and `icMovieAvatar` are named in the `sfx/*.lws` scenes with their textures
-  and their `tint`/`lifetime` parameters, but we have neither their meshes nor
-  their draw code. Every antimatter, reactor, alien and LDSI explosion is
-  shockwave-driven and we do not play them.
+- **The shockwave avatars' geometry.** `icShockwaveAvatar`, `icLDAAvatar`,
+  `icBeamAvatar` and `icMovieAvatar` are named in the `sfx/*.lws` scenes with
+  their `tint`/`lifetime`, and we now also know `icShockwaveAvatar` hardcodes
+  the texture **`texture:/images/sfx/shockwave`** and picks a **random unit
+  vector** in its constructor (`0x100cfa50`) -- so it has an orientation axis.
+  But its *draw* code is exactly where Ghidra gives up: the class's display
+  virtuals are vtable `0x1011d140` slots 14/16 (`0x100cfc90`, `0x100cfcb0`) and
+  the decompiler bails with "could not recover jumptable", so the actual
+  primitive (ring? sphere? camera-facing quad?) is unread, and the primitives
+  themselves live in the undecompiled `dx7graph.dll`. We therefore play the
+  antimatter / reactor / alien / LDSI explosions' **light and sound only** and
+  draw no shockwave. Guessing a mesh here would be inventing art.
+- **`antimatter_explosion` has a beam rig we do not draw.** Its scene has eight
+  `icBeamAvatar` nodes (`texture=SearchBeam`) parented through `FatBeamsH` /
+  `SkinnyBeamsP` / `beam_scaler_*` nulls -- the radiating spikes. Extracted into
+  the JSON (with parenting resolved), but unplayed for the same reason.
+- **Does an effect's light range scale with the effect's size?** The engine sets
+  the effect scene-node's scale to `size` on all three axes (`0x100d3210`), and
+  the LightWave light hangs inside that scene, so we scale `LightRange` by
+  `size`. Whether the original's D3D light actually inherits the node scale is
+  unverified (it is applied in `dx7graph.dll`).
+- **The `asteroid_impact` name test.** `icBullet` selects it when the target's
+  category (`sim+0x194`) is `0xb` or `0xe` **and** an `FcString::Find`-style
+  import (`0x10116a0c`) on the target's string field (`sim+0x184`) against a
+  runtime-initialised global (`0x10166318`) returns >= 0. The category enum and
+  the global's string value are both set at runtime, so "which sims count as
+  rock" is known by shape but not by name.
 - **`icCornflakeDraw`'s flake size** and blend mode. The class has *no*
   properties (it hardcodes `images/sfx/cornflakes` + `cornflake_masks`, a 4x4
   atlas) and we did not find the constant that sizes a flake; ours is a marked
   placeholder.
-- **Which effect fires for which event.** We have the twelve `icVisualEffects`
-  names and matched the obvious ones, but the call sites in `icBullet` /
-  `icShockwave` / the ship-death path are not traced, so what triggers
-  `small_explosion` rather than `explosion`, or `plasma_fire` at all, is unknown.
-- **`sfx/*.lws` are not extracted.** The composite recipes are transcribed into
-  `explosion_fx.gd` rather than loaded from `data/`. The extractor should pick
-  them up.
+- **`icMovieAvatar`'s playback rate and quad size.** The `explosion` scene is 60
+  frames at 60 fps but the `deba` flipbook has 50 frames; nothing says whether
+  the movie plays at the scene rate, is stretched over the scene, or has its
+  own. Its quad's size in metres per unit of scene scale is likewise unread.
+  `ExplosionFx.MOVIE_FPS` (25) and `MOVIE_QUAD` (0.52) are marked placeholders.
 - **`eDamageSource`** beyond `0` (weapon), `1` (shield-bypassing weapon) and `3`
   (heat). There is a log-event table at `DAT_1011bf14` indexed by it.
 - **Flag `0x100`** on a subsim (`iiShipSystem+0x68`) means "destroy me when my
