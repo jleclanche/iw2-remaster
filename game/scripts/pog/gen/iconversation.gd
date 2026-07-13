@@ -52,7 +52,7 @@ func ask(v0, v1, v2) -> Variant:
 			break
 	v3 = icomms.response()
 	icomms.clear_responses()
-	return
+	return v3
 	return 0
 
 func one_liner(v0, v1, v2) -> Variant:

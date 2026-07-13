@@ -148,11 +148,21 @@ func server_on_user_message() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	while v0 == 15:
+	if v0 == 15:
 		v4 = iship.cast(v1)
 		iship.undock_self(v4)
 		imultiplay.server_send_user_message(15, v4, 0, "")
-		break
+		return 0
+	if v0 == 16:
+		imultiplay.send_scores(v1)
+		return 0
+	if v0 == 99:
+		await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
+		return 0
+	if v0 == 204:
+		isim.dock(isim.cast(v1), isim.cast(v2))
+		imultiplay.server_send_user_message(204, v1, v2, v3)
+		return 0
 	return 0
 	return 0
 
@@ -225,7 +235,7 @@ func server_player_enter() -> Variant:
 	imultiplay.server_broadcast_message(v0, "mp_frag_player_spawned", 2)
 	imultiplay.set_ship_limits(iship.cast(v0))
 	imultiplay.link_ship_weapons(iship.cast(v0))
-	if 0 > imultiplay.a_i_bots_count() and imultiplay.use_a_i_bots() and v5:
+	if not (0 > imultiplay.a_i_bots_count() and imultiplay.use_a_i_bots() and v5):
 		return 0
 	v3 = group.cast(global.handle("g_bots_handle"))
 	v4 = isim.cast(group.nth_sim(v3, 0))
@@ -359,7 +369,7 @@ func server_main() -> Variant:
 	return 0
 
 func client_scores() -> Variant:
-	if not (_pog_eq("icMultiplayScreenInGame", gui.current_screen_classname())):
+	if _pog_eq("icMultiplayScreenInGame", gui.current_screen_classname()):
 		return 0
 	gui.pop_screens_to("icSpaceFlightScreen")
 	gui.overlay_screen("icPDAOverlayManager")
@@ -397,7 +407,7 @@ func local_4689(v0, v1, v2) -> Variant:
 	while true:
 		await _pog_wait(2)
 		v3 = sim.cast(iship.find_player_ship())
-		if not _pog_is_null(v3):
+		if _pog_is_null(v3):
 			continue
 		if v1 > sim.distance_between(v0, v3):
 			if not (v4):
@@ -406,9 +416,9 @@ func local_4689(v0, v1, v2) -> Variant:
 				ihud.play_audio_cue(4)
 				imultiplay.client_say(v3, "mp_frag_player_falling")
 			ihud.pog_print("mp_frag_player_falling")
-		if v1 <= sim.distance_between(v0, v3):
+		if v1 > sim.distance_between(v0, v3):
 			continue
-		if v4:
+		if not (v4):
 			continue
 		v4 = 0
 		igame.destroy_fog(0.009999999776482582)
@@ -581,7 +591,7 @@ func client_default_taunt4() -> Variant:
 	return 0
 
 func local_7356(v0, v1) -> Variant:
-	if not _pog_is_null(v0):
+	if _pog_is_null(v0):
 		return
 	await iconversation.begin()
 	await iconversation.say(v0, "", "mp_frag_player_stuffed_you")
@@ -637,12 +647,57 @@ func client_on_user_message() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	while v0 == 15:
-		if not _pog_eq(iship.find_player_ship(), v4):
+	var _pc: int = 7834
+	while true:
+		if _pc == 7834:
+			_pc = 7981
+			continue
+		elif _pc == 7844:
+			if not _pog_eq(iship.find_player_ship(), v4):
+				_pc = 7868
+				continue
+			else:
+				_pc = 7911
+				continue
+		elif _pc == 7868:
 			v4 = iship.cast(v1)
 			iship.undock_self(v4)
-		break
-	return 0
+			_pc = 7911
+			continue
+		elif _pc == 7911:
+			_pc = 8010
+			continue
+		elif _pc == 7916:
+			isim.dock(isim.cast(v1), isim.cast(v2))
+			_pc = 8010
+			continue
+		elif _pc == 7971:
+			_pc = 8010
+			continue
+		elif _pc == 7976:
+			_pc = 8010
+			continue
+		elif _pc == 7981:
+			if v0 != 15:
+				_pc = 7995
+				continue
+			else:
+				_pc = 7844
+				continue
+		elif _pc == 7995:
+			if not _pog_is_null(204):
+				_pc = 8005
+				continue
+			else:
+				_pc = 7916
+				continue
+		elif _pc == 8005:
+			_pc = 7971
+			continue
+		elif _pc == 8010:
+			return 0
+		else:
+			return 0
 	return 0
 
 func client_exit() -> Variant:

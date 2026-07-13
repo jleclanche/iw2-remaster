@@ -71,12 +71,10 @@ func _link() -> void:
 	text = api.text
 
 func local_0() -> Variant:
-	push_error("PORT: unstructured jump to L11")
 	return _pog_clone("Corporates On The Run")
 	return 0
 
 func local_14() -> Variant:
-	push_error("PORT: unstructured jump to L25")
 	return _pog_clone("g_act3_corporates_on_run_complete")
 	return 0
 
@@ -142,7 +140,7 @@ func local_447() -> Variant:
 func local_789(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19) -> Variant:
 	while true:
 		await _pog_wait(0.4)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		sim.destroy(v2)
 		sim.destroy(v3)
@@ -235,70 +233,774 @@ func mission_handler() -> Variant:
 	var v38: Variant = 0
 	var v39: Variant = 0
 	var v40: Variant = 0
-	v0 = self
-	v1 = state.find(v0)
-	v3 = 0
-	v4 = iship.find_player_ship()
-	v9 = group.create()
-	v17 = group.create()
-	v18 = group.create()
-	v20 = imapentity.find_by_name_in_system("Najran MAAS Security Station", "map:/geog/badlands/kompira")
-	v22 = imapentity.find_by_name_in_system("Baal L-Point", "map:/geog/badlands/kompira")
-	v25 = 20000.0
-	v26 = global.pog_float("g_player_sensor_range")
-	v27 = v26
-	v28 = 50000.0 + v26
-	v29 = 2000000.0
-	v30 = 3000000.0
-	v31 = 0.0
-	v32 = 2000000.0
-	v33 = 0.0
-	v34 = 50000.0
-	v35 = 15.0
-	v36 = 0
-	v37 = 0
-	await local_9709()
-	await local_14075()
-	if not (v1):
-		v1 = state.create(v0, 0)
-	await local_45(v1)
-	v40 = _pog_spawn(local_789.bind(self, v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
-	_pog_detach(v40)
-	await irangecheck.add_traffic_exception(imapentity.cast(v20))
-	object.add_int_property(v20, "reactive_exception", 1)
+	var _pc: int = 1692
 	while true:
-		while _pog_is_null(state.progress(v1)):
-			if PogRuntime.TRACE:
-				debug.print_string("Act 3 Mission 01 Phase 1 - Mission Start - Started\n")
+		if _pc == 1692:
+			v0 = self
+			v1 = state.find(v0)
+			v3 = 0
+			v4 = iship.find_player_ship()
+			v9 = group.create()
+			v17 = group.create()
+			v18 = group.create()
+			v20 = imapentity.find_by_name_in_system("Najran MAAS Security Station", "map:/geog/badlands/kompira")
+			v22 = imapentity.find_by_name_in_system("Baal L-Point", "map:/geog/badlands/kompira")
+			v25 = 20000.0
+			v26 = global.pog_float("g_player_sensor_range")
+			v27 = v26
+			v28 = 50000.0 + v26
+			v29 = 2000000.0
+			v30 = 3000000.0
+			v31 = 0.0
+			v32 = 2000000.0
+			v33 = 0.0
+			v34 = 50000.0
+			v35 = 15.0
+			v36 = 0
+			v37 = 0
+			await local_9709()
+			await local_14075()
+			if not (v1):
+				_pc = 2080
+				continue
+			else:
+				_pc = 2110
+				continue
+		elif _pc == 2080:
+			v1 = state.create(v0, 0)
+			_pc = 2110
+			continue
+		elif _pc == 2110:
+			await local_45(v1)
+			v40 = _pog_spawn(local_789.bind(self, v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
+			_pog_detach(v40)
+			await irangecheck.add_traffic_exception(imapentity.cast(v20))
+			object.add_int_property(v20, "reactive_exception", 1)
+			_pc = 2328
+			continue
+		elif _pc == 2328:
+			_pc = 8725
+			continue
+		elif _pc == 2333:
+			_pc = 2359
+			continue
+		elif _pc == 2338:
+			debug.print_string("Act 3 Mission 01 Phase 1 - Mission Start - Started\n")
+			_pc = 2359
+			continue
+		elif _pc == 2359:
 			v2 = iemail.find("html:/text/act_3/act3_mission01_email")
 			if not (v2):
-				iemail.send_email("a3_m01_email_sender", "a3_m01_email_subject", "html:/text/act_3/act3_mission01_email", 1)
-			if not (iemail.read(v2)):
-				return
+				_pc = 2396
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("Act 3 Mission 01 Phase 1 - Mission Start - Email read - waiting for player to reach initial meeting point\n")
+				_pc = 2430
+				continue
+		elif _pc == 2396:
+			iemail.send_email("a3_m01_email_sender", "a3_m01_email_subject", "html:/text/act_3/act3_mission01_email", 1)
+			_pc = 2430
+			continue
+		elif _pc == 2430:
+			if not (iemail.read(v2)):
+				_pc = 2454
+				continue
+			else:
+				_pc = 2464
+				continue
+		elif _pc == 2454:
+			_pc = 8865
+			continue
+		elif _pc == 2459:
+			_pc = 2490
+			continue
+		elif _pc == 2464:
+			_pc = 2490
+			continue
+		elif _pc == 2469:
+			debug.print_string("Act 3 Mission 01 Phase 1 - Mission Start - Email read - waiting for player to reach initial meeting point\n")
+			_pc = 2490
+			continue
+		elif _pc == 2490:
 			iobjectives.add("a3_m01_objectives_redezvous")
-			while true:
-				if not (v23):
-					v23 = await local_10731(v22, v32)
-					if PogRuntime.TRACE:
-						debug.print_string("Act 2 Mission 05 Phase 1 - Mission Start - Started - waypoint created\n")
-				while await abb_common.watch_sims_movement(v4, v23, v28, v31, 272, 1.0) == 16:
-					break
-				break
-				if not (1):
-					break
-			if PogRuntime.TRACE:
-				debug.print_string("Act 2 Mission 23 Phase 1 - Mission Start - Complete\n")
+			_pc = 2511
+			continue
+		elif _pc == 2511:
+			if not (v23):
+				_pc = 2522
+				continue
+			else:
+				_pc = 2577
+				continue
+		elif _pc == 2522:
+			v23 = await local_10731(v22, v32)
+			_pc = 2577
+			continue
+		elif _pc == 2556:
+			debug.print_string("Act 2 Mission 05 Phase 1 - Mission Start - Started - waypoint created\n")
+			_pc = 2577
+			continue
+		elif _pc == 2577:
+			_pc = 2597
+			continue
+		elif _pc == 2582:
+			_pc = 2657
+			continue
+		elif _pc == 2587:
+			_pc = 2511
+			continue
+		elif _pc == 2592:
+			_pc = 2657
+			continue
+		elif _pc == 2597:
+			if await abb_common.watch_sims_movement(v4, v23, v28, v31, 272, 1.0) != 16:
+				_pc = 2647
+				continue
+			else:
+				_pc = 2582
+				continue
+		elif _pc == 2647:
+			if not _pog_is_null(256):
+				_pc = 2657
+				continue
+			else:
+				_pc = 2587
+				continue
+		elif _pc == 2657:
+			_pc = 2668
+			continue
+		elif _pc == 2662:
+			if not (1):
+				_pc = 2668
+				continue
+			else:
+				_pc = 2511
+				continue
+		elif _pc == 2668:
+			_pc = 2694
+			continue
+		elif _pc == 2673:
+			debug.print_string("Act 2 Mission 23 Phase 1 - Mission Start - Complete\n")
+			_pc = 2694
+			continue
+		elif _pc == 2694:
 			state.set_progress(v1, 1)
-			break
-		if not (not (v3)):
-			break
-	global.set_bool(await local_14(), 1)
-	await iutilities.remove_mission_restart()
-	state.destroy(v0)
-	return
+			_pc = 8786
+			continue
+		elif _pc == 2719:
+			_pc = 2745
+			continue
+		elif _pc == 2724:
+			debug.print_string("Act 3 Mission 01 Phase 2 - Meeting - Started\n")
+			_pc = 2745
+			continue
+		elif _pc == 2745:
+			await local_45(v1)
+			v5 = await local_10923()
+			sim.set_cullable(v5, 0)
+			v12 = await local_11121(3)
+			await abb_common.set_cullable_group(v12, 0)
+			v13 = group.create()
+			v14 = await local_11370(5)
+			group.add_group(v13, v14)
+			v15 = await local_11370(8)
+			group.add_group(v13, v15)
+			await abb_common.set_cullable_group(v13, 0)
+			sim.place_relative_to(v5, v23, 0.0, -900.0, 0.0)
+			await iescort.in_formation_claw(v12, v5, 1, 0.0, 0.0, 0.0, 5.0, 250.0, 1)
+			sim.place_relative_to(group.leader(v14), v23, 0.0, 1600.0, 0.0)
+			sim.place_relative_to(group.leader(v15), v23, 400.0, 1600.0, 400.0)
+			await iformation.goose(v14, 250.0, 1)
+			await iformation.goose(v15, 250.0, 1)
+			await istation.add_reactive_exception(ihabitat.cast(v20))
+			iobjectives.set_state("a3_m01_objectives_redezvous", 1)
+			await iconversation.begin()
+			await iconversation.say(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_intro_1")
+			await iconversation.say(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_intro_2")
+			await iconversation.say(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_intro_3")
+			await iconversation.say(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_intro_4")
+			await iconversation.say(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_intro_5")
+			await iconversation.say(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_intro_6")
+			await iconversation.end()
+			if not (v21):
+				_pc = 3490
+				continue
+			else:
+				_pc = 3545
+				continue
+		elif _pc == 3490:
+			v21 = await local_10827(v20, v33)
+			_pc = 3545
+			continue
+		elif _pc == 3524:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Meeting - corporate base waypoint created\n")
+			_pc = 3545
+			continue
+		elif _pc == 3545:
+			_pog_halt(v40)
+			v40 = _pog_spawn(local_789.bind(self, v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
+			_pog_detach(v40)
+			iobjectives.add("a3_m01_objectives_security")
+			await iformation.goose(v14, 150.0, 0)
+			await iformation.goose(v15, 150.0, 0)
+			await _pog_wait(2.0)
+			iai.give_approach_order(group.leader(v14), v21)
+			iai.give_approach_order(group.leader(v15), v21)
+			await abb_common.watch_sims_movement(v4, v20, v28, v31, 16, 0.5)
+			state.set_progress(v1, 2)
+			_pc = 8786
+			continue
+		elif _pc == 3940:
+			await local_45(v1)
+			_pc = 3985
+			continue
+		elif _pc == 3964:
+			debug.print_string("Act 3 Mission 01 Phase 3 - Assault - Started\n")
+			_pc = 3985
+			continue
+		elif _pc == 3985:
+			iregion.create_traffic_control(v20, v34, 20000.0)
+			isim.set_indestructable(v20, 0)
+			object.set_float_property(v20, "hit_points", 50000.0)
+			v7 = await local_13374(v20, 4, 7000.0)
+			await abb_common.set_cullable_group(v7, 0)
+			v8 = await local_12029(4)
+			await abb_common.set_cullable_group(v8, 0)
+			_pog_halt(v40)
+			v40 = _pog_spawn(local_789.bind(self, v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
+			_pog_detach(v40)
+			await abb_common.materialise_group_near(v8, v20, 10000.0)
+			iai.give_approach_order_advanced(group.leader(v15), v21, 25000.0, 2000.0, 1)
+			v10 = await local_13008(3)
+			await abb_common.set_cullable_group(v10, 0)
+			await abb_common.materialise_group_near(v10, v20, 2000.0)
+			iai.give_dock_order(v20, group.leader(v10))
+			await icutsceneutilities.setup_directed_death(v20, v20, "a3_m01_name_corporate_base_traffic_control", "a3_m01_dialogue_Security_Base_Corporate_base_destroyed", "a3_m01_text_cutscene_caption_base_destroyed", 1)
+			_pc = 4544
+			continue
+		elif _pc == 4544:
+			await _pog_wait(0.5)
+			if 30000.0 <= sim.distance_between(v4, v20):
+				_pc = 4610
+				continue
+			else:
+				_pc = 4544
+				continue
+		elif _pc == 4610:
+			await icutsceneutilities.handle_abort(_pog_spawn(local_10036.bind(v20, group.leader(v7))))
+			iai.give_approach_order(v5, v21)
+			await iconversation.one_liner(group.leader(group.nth_group(v13, 0)), "a3_m01_name_Raiding_Party_members", "a3_m01_dialogue_Raiding_Party_Members_war_cry")
+			iai.give_flee_order(v10, v4)
+			iai.give_attack_order(v15, v8)
+			v38 = _pog_spawn(iscriptedorders.follow_route.bind(iship.cast(group.leader(v14)), v7, 0.800000011920929, 1.0, 0, 1, 0))
+			iai.give_generic_attack_order(v7)
+			iai.give_generic_attack_order(v8)
+			_pc = 4897
+			continue
+		elif _pc == 4897:
+			await _pog_wait(0.5)
+			if 10000.0 < sim.distance_between(v5, v20):
+				_pc = 4963
+				continue
+			else:
+				_pc = 4897
+				continue
+		elif _pc == 4963:
+			await iconversation.one_liner(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_approaching_dock")
+			iai.give_dock_order(v5, v20)
+			_pc = 5024
+			continue
+		elif _pc == 5024:
+			await _pog_frame()
+			if _pog_every(5025, 1.0):
+				_pc = 5038
+				continue
+			else:
+				_pc = 5071
+				continue
+		elif _pc == 5038:
+			if isim.is_docked_to(v20, v5):
+				_pc = 5066
+				continue
+			else:
+				_pc = 5071
+				continue
+		elif _pc == 5066:
+			_pc = 5076
+			continue
+		elif _pc == 5071:
+			_pc = 5024
+			continue
+		elif _pc == 5076:
+			iobjectives.set_state("a3_m01_objectives_security", 1)
+			await iconversation.one_liner(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_docked")
+			iai.purge_orders(v7)
+			await local_1463(v7, 1)
+			await _pog_wait(4.0)
+			await abb_common.set_faction_group(v7, ifaction.find("Independent"))
+			await abb_common.remove_pilot_group(v7)
+			state.set_progress(v1, 3)
+			_pc = 8786
+			continue
+		elif _pc == 5278:
+			_pc = 5304
+			continue
+		elif _pc == 5283:
+			debug.print_string("Act 3 Mission 01 Phase 4 - Defend - Started\n")
+			_pc = 5304
+			continue
+		elif _pc == 5304:
+			_pc = 5330
+			continue
+		elif _pc == 5309:
+			debug.print_string("Act 3 Mission 01 Phase 4 - base captured, gunstars disabled\n")
+			_pc = 5330
+			continue
+		elif _pc == 5330:
+			isim.set_mission_critical(v5, 0)
+			object.set_string_property(v5, "death_script", "")
+			_pog_halt(v38)
+			iai.give_generic_attack_order(v14)
+			iai.give_generic_attack_order(v15)
+			await icutsceneutilities.setup_directed_death(v20, v20, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_cutscene_base_destroyed", "a3_m01_text_cutscene_caption_base_destroyed", 1)
+			v16 = v7
+			isim.set_faction(v20, ifaction.find("League"))
+			_pc = 5665
+			continue
+		elif _pc == 5538:
+			debug.print_string("Act 3 Mission 1 Phase 4: ")
+			debug.print_int(group.sim_count(v17))
+			debug.print_string(" league gunstars left, and ")
+			debug.print_int(group.sim_count(v16))
+			debug.print_string(" neutral gunstars left\n")
+			_pc = 5665
+			continue
+		elif _pc == 5665:
+			v7 = 0
+			await iconversation.one_liner(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_conquered_base")
+			iobjectives.add("a3_m01_objectives_cover")
+			v39 = _pog_spawn(local_8867.bind(v4, v28, v9, 6, v18, 6))
+			await _pog_wait(4.0)
+			iship.undock(v5, v20)
+			await iconversation.one_liner(0, "name_clay", "a3_m01_dialogue_clay_advise_guard_gunstars")
+			_pc = 5844
+			continue
+		elif _pc == 5844:
+			if 0 > group.sim_count(v16):
+				_pc = 5869
+				continue
+			else:
+				_pc = 6432
+				continue
+		elif _pc == 5869:
+			v6 = iship.cast(group.leader(v16))
+			iai.give_dock_order(v5, v6)
+			_pc = 5935
+			continue
+		elif _pc == 5935:
+			await _pog_frame()
+			if _pog_every(5936, 2.0):
+				_pc = 5949
+				continue
+			else:
+				_pc = 6416
+				continue
+		elif _pc == 5949:
+			if not (iship.cast(v5)):
+				_pc = 5973
+				continue
+			else:
+				_pc = 5978
+				continue
+		elif _pc == 5973:
+			_pc = 6421
+			continue
+		elif _pc == 5978:
+			if iship.cast(v6):
+				_pc = 6001
+				continue
+			else:
+				_pc = 6411
+				continue
+		elif _pc == 6001:
+			if isim.is_docked_to(v6, v5):
+				_pc = 6029
+				continue
+			else:
+				_pc = 6406
+				continue
+		elif _pc == 6029:
+			isim.set_indestructable(v6, 1)
+			await _pog_wait(v35)
+			v36 = 1 + v36
+			isim.set_faction(v6, ifaction.find("League"))
+			group.add_sim(v17, v6)
+			iship.undock(v5, v6)
+			isim.set_indestructable(v6, 0)
+			if 0 > group.sim_count(v16):
+				_pc = 6218
+				continue
+			else:
+				_pc = 6401
+				continue
+		elif _pc == 6218:
+			_pc = 6339
+			continue
+		elif _pc == 6223:
+			await iconversation.one_liner(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_1st_gunstar_reprogrammed")
+			_pc = 6370
+			continue
+		elif _pc == 6260:
+			await iconversation.one_liner(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_2nd_gunstar_reprogrammed")
+			_pc = 6370
+			continue
+		elif _pc == 6297:
+			await iconversation.one_liner(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_3rd_gunstar_reprogrammed")
+			_pc = 6370
+			continue
+		elif _pc == 6334:
+			_pc = 6370
+			continue
+		elif _pc == 6339:
+			if v36 != 1:
+				_pc = 6352
+				continue
+			else:
+				_pc = 6223
+				continue
+		elif _pc == 6352:
+			if not _pog_is_null(2):
+				_pc = 6361
+				continue
+			else:
+				_pc = 6260
+				continue
+		elif _pc == 6361:
+			if not _pog_is_null(3):
+				_pc = 6370
+				continue
+			else:
+				_pc = 6297
+				continue
+		elif _pc == 6370:
+			_pc = 6396
+			continue
+		elif _pc == 6375:
+			debug.print_string("Act 3 Mission 01 Phase 4 - one (more) gunstar subverted\n")
+			_pc = 6396
+			continue
+		elif _pc == 6396:
+			_pc = 5844
+			continue
+		elif _pc == 6401:
+			_pc = 6421
+			continue
+		elif _pc == 6406:
+			_pc = 6416
+			continue
+		elif _pc == 6411:
+			_pc = 5844
+			continue
+		elif _pc == 6416:
+			_pc = 5935
+			continue
+		elif _pc == 6421:
+			_pc = 6432
+			continue
+		elif _pc == 6427:
+			_pc = 5844
+			continue
+		elif _pc == 6432:
+			if 0 > group.sim_count(v16) and not (iship.cast(v5)):
+				_pc = 6477
+				continue
+			else:
+				_pc = 7024
+				continue
+		elif _pc == 6477:
+			await iconversation.begin()
+			await iconversation.say(0, "name_smith", "a3_m01_dialogue_smith_you_finish_the_gunstars_1")
+			await iconversation.say(0, "name_smith", "a3_m01_dialogue_smith_you_finish_the_gunstars_2")
+			await iconversation.end()
+			iobjectives.set_state("a3_m01_objectives_cover", 2)
+			iobjectives.add("a3_m01_objectives_smith")
+			_pc = 6605
+			continue
+		elif _pc == 6605:
+			if 0 > group.sim_count(v16):
+				_pc = 6630
+				continue
+			else:
+				_pc = 7024
+				continue
+		elif _pc == 6630:
+			_pc = 6635
+			continue
+		elif _pc == 6635:
+			await _pog_frame()
+			if _pog_every(6636, 2.0):
+				_pc = 6649
+				continue
+			else:
+				_pc = 6986
+				continue
+		elif _pc == 6649:
+			if not (group.sim_count(v16)):
+				_pc = 6673
+				continue
+			else:
+				_pc = 6678
+				continue
+		elif _pc == 6673:
+			_pc = 6991
+			continue
+		elif _pc == 6678:
+			if _pog_eq(v16, sim.group(sim.parent(v4))):
+				_pc = 6720
+				continue
+			else:
+				_pc = 6986
+				continue
+		elif _pc == 6720:
+			v6 = iship.cast(sim.parent(v4))
+			isim.set_indestructable(v6, 1)
+			await _pog_wait(v35)
+			v36 = 1 + v36
+			isim.set_faction(v6, ifaction.find("League"))
+			group.add_sim(v17, v6)
+			isim.set_indestructable(v6, 0)
+			if 0 > group.sim_count(v16):
+				_pc = 6922
+				continue
+			else:
+				_pc = 6981
+				continue
+		elif _pc == 6922:
+			await iconversation.one_liner(0, "name_smith", "a3_m01_dialogue_smith_gunstar_online_next")
+			_pc = 6976
+			continue
+		elif _pc == 6955:
+			debug.print_string("Act 3 Mission 01 Phase 4 - one (more) gunstar subverted\n")
+			_pc = 6976
+			continue
+		elif _pc == 6976:
+			_pc = 6605
+			continue
+		elif _pc == 6981:
+			_pc = 6991
+			continue
+		elif _pc == 6986:
+			_pc = 6635
+			continue
+		elif _pc == 6991:
+			iobjectives.set_state("a3_m01_objectives_smith", 1)
+			_pc = 7024
+			continue
+		elif _pc == 7019:
+			_pc = 6605
+			continue
+		elif _pc == 7024:
+			_pc = 7050
+			continue
+		elif _pc == 7029:
+			debug.print_string("Act 3 Mission 01 Phase 4 - all gunstars subverted\n")
+			_pc = 7050
+			continue
+		elif _pc == 7050:
+			iobjectives.set_state("a3_m01_objectives_cover", 1)
+			iai.give_dock_order(v5, v20)
+			iai.give_generic_attack_order(v12)
+			state.set_progress(v1, 4)
+			_pc = 8786
+			continue
+		elif _pc == 7141:
+			_pc = 7167
+			continue
+		elif _pc == 7146:
+			debug.print_string("Act 3 Mission 01 Phase 5 - Survive - Started\n")
+			_pc = 7167
+			continue
+		elif _pc == 7167:
+			await abb_common.set_pilot_no_scripts_group(v17, 2000.0, 2000.0, -50.0)
+			await icutsceneutilities.setup_directed_death(v20, v20, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_cutscene_base_destroyed", "a3_m01_text_cutscene_caption_base_destroyed", 1)
+			if iship.cast(v5):
+				_pc = 7268
+				continue
+			else:
+				_pc = 7305
+				continue
+		elif _pc == 7268:
+			await iconversation.one_liner(v5, "a3_m01_name_marine_leader", "a3_m01_dialogue_marine_leader_last_gunstar_reprogrammed")
+			_pc = 7333
+			continue
+		elif _pc == 7305:
+			await iconversation.one_liner(0, "name_smith", "a3_m01_dialogue_smith_gunstar_last_gunstar_reprogrammed")
+			_pc = 7333
+			continue
+		elif _pc == 7333:
+			_pc = 7465
+			continue
+		elif _pc == 7338:
+			debug.print_string("Act 3 Mission 1 Phase 5: ")
+			debug.print_int(group.sim_count(v17))
+			debug.print_string(" league gunstars left, and ")
+			debug.print_int(group.sim_count(v16))
+			debug.print_string(" neutral gunstars left\n")
+			_pc = 7465
+			continue
+		elif _pc == 7465:
+			if 1 > group.sim_count(v17):
+				_pc = 7490
+				continue
+			else:
+				_pc = 7721
+				continue
+		elif _pc == 7490:
+			await iconversation.one_liner(0, "name_smith", "a3_m01_dialogue_smith_corporate_runaway")
+			await abb_common.set_cullable_group(v8, 1)
+			await abb_common.set_cullable_group(v9, 1)
+			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(await local_13918(v8, group.sim_count(v8) * 0.75), _pog_clone("Random"))))
+			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(await local_13918(v9, group.sim_count(v9) * 0.75), _pog_clone("Random"))))
+			_pc = 7947
+			continue
+		elif _pc == 7721:
+			await iconversation.one_liner(0, "name_clay", "a3_m01_dialogue_clay_not_enough_gunstars")
+			await abb_common.set_cullable_group(v8, 1)
+			await abb_common.set_cullable_group(v9, 1)
+			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(await local_13918(v8, group.sim_count(v8) * 0.25), _pog_clone("Random"))))
+			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(await local_13918(v9, group.sim_count(v9) * 0.25), _pog_clone("Random"))))
+			_pc = 7947
+			continue
+		elif _pc == 7947:
+			await local_1463(v7, 0)
+			isim.weapon_targets_from_contact_list(v20)
+			iobjectives.add("a3_m01_objectives_defend")
+			iai.give_attack_order(v8, v20)
+			iai.give_attack_order(v8, v9)
+			iai.give_attack_order(v9, v20)
+			await _pog_wait(2.0)
+			await iconversation.one_liner(0, "name_smith", "a3_m01_dialogue_smith_corporate_suicide_attack")
+			_pc = 8131
+			continue
+		elif _pc == 8131:
+			await _pog_wait(1.0)
+			if not (not _pog_is_null(p_set.item_count(isim.player_hostiles_in_radius(250000.0, 536838144))) and 0 > group.sim_count(v9)):
+				_pc = 8229
+				continue
+			else:
+				_pc = 8131
+				continue
+		elif _pc == 8229:
+			await iconversation.one_liner(v20, "a3_m01_name_league_base_traffic_control", "a3_m01_dialogue_Security_Base_League_Bye_Bye")
+			await iconversation.one_liner(v20, "a3_m01_name_league_base_traffic_control", "a3_m01_dialogue_Security_Base_League_Refuel")
+			iobjectives.set_state("a3_m01_objectives_defend", 1)
+			v19 = await local_12695()
+			sim.place_near(group.leader(v19), v20, v28)
+			await iformation.goose(v19, 450.0, 1)
+			iai.give_approach_order_advanced(v19, v20, 10000.0, 2000.0, 1)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_10506.bind(v20, v19)))
+			_pc = 8478
+			continue
+		elif _pc == 8478:
+			await _pog_frame()
+			if _pog_every(8479, 2.0):
+				_pc = 8492
+				continue
+			else:
+				_pc = 8676
+				continue
+		elif _pc == 8492:
+			if isim.is_docked_to(v20, v4):
+				_pc = 8520
+				continue
+			else:
+				_pc = 8637
+				continue
+		elif _pc == 8520:
+			await iconversation.one_liner(0, "name_smith", "a3_m01_dialogue_smith_started_refuelling")
+			iloadout.rearm_from_third_party(v4, 1.0)
+			await _pog_wait(5.0)
+			await iconversation.one_liner(0, "name_smith", "a3_m01_dialogue_smith_done_refuelling")
+			_pc = 8681
+			continue
+		elif _pc == 8637:
+			if v30 > sim.distance_between(v20, v4):
+				_pc = 8671
+				continue
+			else:
+				_pc = 8676
+				continue
+		elif _pc == 8671:
+			_pc = 8681
+			continue
+		elif _pc == 8676:
+			_pc = 8478
+			continue
+		elif _pc == 8681:
+			v3 = 1
+			_pc = 8715
+			continue
+		elif _pc == 8694:
+			debug.print_string("Act 2 Mission 23 Phase 5 - Defend - Complete\n")
+			_pc = 8715
+			continue
+		elif _pc == 8715:
+			_pc = 8786
+			continue
+		elif _pc == 8720:
+			_pc = 8786
+			continue
+		elif _pc == 8725:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 8751
+				continue
+			else:
+				_pc = 2333
+				continue
+		elif _pc == 8751:
+			if not _pog_is_null(1):
+				_pc = 8759
+				continue
+			else:
+				_pc = 2719
+				continue
+		elif _pc == 8759:
+			if not _pog_is_null(2):
+				_pc = 8768
+				continue
+			else:
+				_pc = 3940
+				continue
+		elif _pc == 8768:
+			if not _pog_is_null(3):
+				_pc = 8777
+				continue
+			else:
+				_pc = 5278
+				continue
+		elif _pc == 8777:
+			if not _pog_is_null(4):
+				_pc = 8786
+				continue
+			else:
+				_pc = 7141
+				continue
+		elif _pc == 8786:
+			if v3:
+				_pc = 8797
+				continue
+			else:
+				_pc = 2328
+				continue
+		elif _pc == 8797:
+			global.set_bool(await local_14(), 1)
+			await iutilities.remove_mission_restart()
+			state.destroy(v0)
+			_pc = 8865
+			continue
+		elif _pc == 8865:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8867(v0, v1, v2, v3, v4, v5) -> Variant:
@@ -420,14 +1122,14 @@ func local_10731(v0, v1) -> Variant:
 	var v2: Variant = 0
 	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
 	await iutilities.make_waypoint_visible(v2, 1, "a3_m01_waypoint_initial_meeting")
-	return
+	return v2
 	return 0
 
 func local_10827(v0, v1) -> Variant:
 	var v2: Variant = 0
 	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
 	await iutilities.make_waypoint_visible(v2, 1, "a3_m01_waypoint_security_base_approach")
-	return
+	return v2
 	return 0
 
 func local_10923() -> Variant:
@@ -438,7 +1140,7 @@ func local_10923() -> Variant:
 	object.set_bool_property(v0, "ignore_speed_limit", 1)
 	isim.set_mission_critical(v0, 1)
 	await icutsceneutilities.setup_directed_death(v0, v0, "", "", "", 1)
-	return
+	return v0
 	return 0
 
 func local_11121(v0) -> Variant:
@@ -454,24 +1156,105 @@ func local_11121(v0) -> Variant:
 		v2 = 1 + v2
 	await abb_common.set_pilot_no_scripts_group(v1, 2000.0, 2000.0, -50.0)
 	await abb_common.set_faction_group(v1, ifaction.find("League"))
-	return
+	return v1
 	return 0
 
 func local_11370(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = group.create()
-	v2 = 0
-	while v0 < v2:
-		while math.random_int(1, 5) == 1:
+	var _pc: int = 11370
+	while true:
+		if _pc == 11370:
+			v1 = group.create()
+			v2 = 0
+			_pc = 11401
+			continue
+		elif _pc == 11401:
+			if v0 < v2:
+				_pc = 11417
+				continue
+			else:
+				_pc = 11821
+				continue
+		elif _pc == 11417:
+			_pc = 11719
+			continue
+		elif _pc == 11422:
 			v3 = iship.create("ini:/sims/ships/independent/armoured_tug", await ishipcreation.ship_name("League", -1))
-			break
-		group.add_sim(v1, v3)
-		v2 = 1 + v2
-	await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
-	await abb_common.set_faction_group(v1, ifaction.find("League"))
-	return
+			_pc = 11779
+			continue
+		elif _pc == 11475:
+			v3 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
+			_pc = 11779
+			continue
+		elif _pc == 11528:
+			v3 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("League", -1))
+			_pc = 11779
+			continue
+		elif _pc == 11581:
+			v3 = iship.create("ini:/sims/ships/independent/puffin_armed", await ishipcreation.ship_name("League", -1))
+			_pc = 11779
+			continue
+		elif _pc == 11634:
+			v3 = iship.create("ini:/sims/ships/navy/heavy_corvette_mk2", await ishipcreation.ship_name("League", -1))
+			_pc = 11779
+			continue
+		elif _pc == 11687:
+			object.set_bool_property(v3, "ignore_speed_limit", 1)
+			_pc = 11779
+			continue
+		elif _pc == 11719:
+			if math.random_int(1, 5) != 1:
+				_pc = 11743
+				continue
+			else:
+				_pc = 11422
+				continue
+		elif _pc == 11743:
+			if not _pog_is_null(2):
+				_pc = 11752
+				continue
+			else:
+				_pc = 11475
+				continue
+		elif _pc == 11752:
+			if not _pog_is_null(3):
+				_pc = 11761
+				continue
+			else:
+				_pc = 11528
+				continue
+		elif _pc == 11761:
+			if not _pog_is_null(4):
+				_pc = 11770
+				continue
+			else:
+				_pc = 11581
+				continue
+		elif _pc == 11770:
+			if not _pog_is_null(5):
+				_pc = 11779
+				continue
+			else:
+				_pc = 11634
+				continue
+		elif _pc == 11779:
+			group.add_sim(v1, v3)
+			v2 = 1 + v2
+			_pc = 11401
+			continue
+		elif _pc == 11821:
+			await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
+			await abb_common.set_faction_group(v1, ifaction.find("League"))
+			_pc = 11904
+			continue
+		elif _pc == 11904:
+			return
+		elif _pc == 12027:
+			return
+		else:
+			return 0
 	return 0
 
 func local_12029(v0) -> Variant:
@@ -486,7 +1269,7 @@ func local_12029(v0) -> Variant:
 		v2 = 1 + v2
 	await abb_common.set_pilot_no_scripts_group(v1, 2000.0, 2000.0, -50.0)
 	await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
-	return
+	return v1
 	return 0
 
 func local_12251(v0) -> Variant:
@@ -501,7 +1284,7 @@ func local_12251(v0) -> Variant:
 		v2 = 1 + v2
 	await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
 	await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
-	return
+	return v1
 	return 0
 
 func local_12473(v0) -> Variant:
@@ -516,7 +1299,7 @@ func local_12473(v0) -> Variant:
 		v2 = 1 + v2
 	await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
 	await abb_common.set_faction_group(v1, ifaction.find("Oman"))
-	return
+	return v1
 	return 0
 
 func local_12695() -> Variant:
@@ -536,25 +1319,68 @@ func local_12695() -> Variant:
 		v2 = 1 + v2
 	await abb_common.set_pilot_no_scripts_group(v0, 2000.0, 2000.0, -50.0)
 	await abb_common.set_faction_group(v0, ifaction.find("League"))
-	return
+	return v0
 	return 0
 
 func local_13008(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = group.create()
-	v2 = 0
-	while v0 < v2:
-		while math.random_int(1, 2) == 1:
+	var _pc: int = 13008
+	while true:
+		if _pc == 13008:
+			v1 = group.create()
+			v2 = 0
+			_pc = 13039
+			continue
+		elif _pc == 13039:
+			if v0 < v2:
+				_pc = 13055
+				continue
+			else:
+				_pc = 13289
+				continue
+		elif _pc == 13055:
+			_pc = 13187
+			continue
+		elif _pc == 13060:
 			v3 = iship.create("ini:/sims/ships/utility/truck_greyhound", await ishipcreation.ship_name("General", -1))
-			break
-		object.set_bool_property(v3, "ignore_speed_limit", 1)
-		group.add_sim(v1, v3)
-		v2 = 1 + v2
-	await abb_common.set_pilot_no_scripts_group(v1, 0.30000001192092896, 1.0, 0.5)
-	await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
-	return
+			_pc = 13220
+			continue
+		elif _pc == 13113:
+			v3 = iship.create("ini:/sims/ships/utility/freighter", await ishipcreation.ship_name("General", -1))
+			await ishipcreation.create_supply_cargo(v3, -2)
+			_pc = 13220
+			continue
+		elif _pc == 13187:
+			if math.random_int(1, 2) != 1:
+				_pc = 13211
+				continue
+			else:
+				_pc = 13060
+				continue
+		elif _pc == 13211:
+			if not _pog_is_null(2):
+				_pc = 13220
+				continue
+			else:
+				_pc = 13113
+				continue
+		elif _pc == 13220:
+			object.set_bool_property(v3, "ignore_speed_limit", 1)
+			group.add_sim(v1, v3)
+			v2 = 1 + v2
+			_pc = 13039
+			continue
+		elif _pc == 13289:
+			await abb_common.set_pilot_no_scripts_group(v1, 0.30000001192092896, 1.0, 0.5)
+			await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
+			_pc = 13372
+			continue
+		elif _pc == 13372:
+			return
+		else:
+			return 0
 	return 0
 
 func local_13374(v0, v1, v2) -> Variant:
@@ -582,7 +1408,7 @@ func local_13374(v0, v1, v2) -> Variant:
 		iship.set_pilot_skill_level(v5, 0.4000000059604645)
 		isim.set_faction(v5, v3)
 		v6 = 1 + v6
-	return
+	return v4
 	return 0
 
 func local_13918(v0, v1) -> Variant:
@@ -595,7 +1421,7 @@ func local_13918(v0, v1) -> Variant:
 		group.remove_nth_sim(v0, 0)
 		group.add_sim(v2, v3)
 		v1 = -1 + v1
-	return
+	return v2
 	return 0
 
 func local_14075() -> Variant:

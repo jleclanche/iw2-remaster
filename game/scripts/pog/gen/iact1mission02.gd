@@ -111,7 +111,7 @@ func local_386() -> Variant:
 func local_530() -> Variant:
 	var v0: Variant = 0
 	v0 = await ishipcreation.get_traffic(7, 9, 3)
-	return
+	return v0
 	return 0
 
 func local_572(v0) -> Variant:
@@ -123,9 +123,9 @@ func local_572(v0) -> Variant:
 		v2 = sim.cast(p_set.first_element(v1))
 		if object.property_exists(v2, "cargo") and not (object.property_exists(v2, "checked")):
 			object.add_bool_property(v2, "checked", 1)
-			return
+			return v2
 		p_set.remove(v1, v2)
-	return
+	return 0
 	return 0
 
 func local_812(v0, v1, v2) -> Variant:
@@ -139,96 +139,436 @@ func local_812(v0, v1, v2) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v3 = 0
-	v6 = null
-	v9 = iship.cast(group.leader(v1))
-	v11 = ifaction.find("Player")
-	v12 = ifaction.find("Stepson")
-	v10 = iship.find_player_ship()
-	while _pog_is_null(state.progress(v2)):
-		if _pog_is_null(v3) and sim.cast(v9):
-			if _pog_is_null(state.progress(v2)) and 6000.0 <= sim.distance_between(v0, v10):
-				v3 = 1
-				await iconversation.begin()
-				await iconversation.add_response("a1_m02_text_player_c1_option_1_yes", "a1_m02_dialogue_player_c1_option_1_yes")
-				await iconversation.add_response("a1_m02_text_player_c1_option_2_no", "a1_m02_dialogue_player_c1_option_2_no")
-				v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_c1_come_to_join")
-				while v4 == 1:
-					await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_excellant_we_want")
-					await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_maas_courier")
-					await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_well_armed")
-					await iconversation.end()
-					state.set_progress(v2, 2)
-					iobjectives.set_state("a1_m02_objective_visit", 1)
-					iobjectives.add("a1_m02_objective_steal")
-					object.add_bool_property(v9, "still_here", 1)
-					v3 = 0
-					break
-		await _pog_wait(1.0)
+	var _pc: int = 812
 	while true:
-		await _pog_wait(2)
-		v10 = iship.find_player_ship()
-		if _pog_is_null(object.property_exists(v9, "still_here")) and _pog_is_null(v3) and sim.cast(v9):
+		if _pc == 812:
+			v3 = 0
+			v6 = null
+			v9 = iship.cast(group.leader(v1))
+			v11 = ifaction.find("Player")
+			v12 = ifaction.find("Stepson")
+			v10 = iship.find_player_ship()
+			_pc = 942
+			continue
+		elif _pc == 942:
+			if _pog_is_null(state.progress(v2)):
+				_pc = 967
+				continue
+			else:
+				_pc = 1944
+				continue
+		elif _pc == 967:
+			if _pog_is_null(v3) and sim.cast(v9):
+				_pc = 999
+				continue
+			else:
+				_pc = 1907
+				continue
+		elif _pc == 999:
+			if _pog_is_null(state.progress(v2)) and 6000.0 <= sim.distance_between(v0, v10):
+				_pc = 1054
+				continue
+			else:
+				_pc = 1907
+				continue
+		elif _pc == 1054:
+			v3 = 1
+			await iconversation.begin()
+			await iconversation.add_response("a1_m02_text_player_c1_option_1_yes", "a1_m02_dialogue_player_c1_option_1_yes")
+			await iconversation.add_response("a1_m02_text_player_c1_option_2_no", "a1_m02_dialogue_player_c1_option_2_no")
+			v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_c1_come_to_join")
+			_pc = 1876
+			continue
+		elif _pc == 1171:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_excellant_we_want")
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_maas_courier")
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_well_armed")
+			await iconversation.end()
+			state.set_progress(v2, 2)
+			iobjectives.set_state("a1_m02_objective_visit", 1)
+			iobjectives.add("a1_m02_objective_steal")
+			object.add_bool_property(v9, "still_here", 1)
+			v3 = 0
+			_pc = 1907
+			continue
+		elif _pc == 1384:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_reponse_2_bye")
+			await iconversation.end()
+			state.set_progress(v2, 1)
+			await _pog_wait(10.0)
+			v3 = 0
+			_pc = 1907
+			continue
+		elif _pc == 1494:
+			await iconversation.add_response("a1_m02_text_player_c1_option_1_sorry", "a1_m02_dialogue_player_c1_option_1_sorry")
+			await iconversation.add_response("a1_m02_text_player_c1_option_2_die", "a1_m02_dialogue_player_c1_option_2_die")
+			v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_response_3_crush_you")
+			_pc = 1849
+			continue
+		elif _pc == 1590:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_let_off")
+			await iconversation.end()
+			state.set_progress(v2, 1)
+			await _pog_wait(30.0)
+			v3 = 0
+			_pc = 1871
+			continue
+		elif _pc == 1700:
+			v5 = 0
+			_pc = 1707
+			continue
+		elif _pc == 1707:
+			if 3 < v5:
+				_pc = 1720
+				continue
+			else:
+				_pc = 1793
+				continue
+		elif _pc == 1720:
+			iai.give_attack_order(iship.cast(group.nth_sim(v1, v5)), v10)
+			v5 = 1 + v5
+			_pc = 1707
+			continue
+		elif _pc == 1793:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_2_have_at_you")
+			await iconversation.end()
+			_pc = 1871
+			continue
+		elif _pc == 1844:
+			_pc = 1871
+			continue
+		elif _pc == 1849:
+			if v4 != 1:
+				_pc = 1862
+				continue
+			else:
+				_pc = 1590
+				continue
+		elif _pc == 1862:
+			if not _pog_is_null(2):
+				_pc = 1871
+				continue
+			else:
+				_pc = 1700
+				continue
+		elif _pc == 1871:
+			_pc = 1907
+			continue
+		elif _pc == 1876:
+			if v4 != 1:
+				_pc = 1889
+				continue
+			else:
+				_pc = 1171
+				continue
+		elif _pc == 1889:
+			if not _pog_is_null(2):
+				_pc = 1898
+				continue
+			else:
+				_pc = 1384
+				continue
+		elif _pc == 1898:
+			if not _pog_is_null(3):
+				_pc = 1907
+				continue
+			else:
+				_pc = 1494
+				continue
+		elif _pc == 1907:
+			await _pog_wait(1.0)
+			_pc = 942
+			continue
+		elif _pc == 1944:
+			_pc = 1949
+			continue
+		elif _pc == 1949:
+			await _pog_frame()
+			if _pog_every(1950, 2.0):
+				_pc = 1963
+				continue
+			else:
+				_pc = 3188
+				continue
+		elif _pc == 1963:
+			v10 = iship.find_player_ship()
+			if _pog_is_null(object.property_exists(v9, "still_here")) and _pog_is_null(v3) and sim.cast(v9):
+				_pc = 2042
+				continue
+			else:
+				_pc = 3188
+				continue
+		elif _pc == 2042:
 			if 1 == state.progress(v2) or 2 == state.progress(v2) and 6000.0 <= sim.distance_between(v10, v9):
-				v3 = 1
-				await iconversation.begin()
-				if 2 == state.progress(v2):
-					await iconversation.add_response("a1_m02_text_player_c2_thread_1_option_1_forgot", "a1_m02_dialogue_player_c2_thread_1_option_1_forgot")
-				if 1 == state.progress(v2):
-					await iconversation.add_response("a1_m02_text_player_c2_thread_2_option_1_changed_mind", "a1_m02_dialogue_player_c2_thread_2_option_1_changed_mind")
-				await iconversation.add_response("a1_m02_text_player_c2_option_2_passing_through", "a1_m02_dialogue_player_c2_option_2_passing_through")
-				await iconversation.add_response("a1_m02_text_player_c2_option_3_kill_you", "a1_m02_dialogue_player_c2_option_3_kill_you")
-				v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_c2_your_back")
-				while v4 == 1:
-					if 2 == state.progress(v2):
-						await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c2_thread_1_response_1_want_you")
-						await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_maas_courier")
-						await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_well_armed")
-						await iconversation.end()
-					if 1 == state.progress(v2):
-						await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c2_thread_2_response_1_do_something")
-						await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_maas_courier")
-						await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_well_armed")
-						await iconversation.end()
-						state.set_progress(v2, 2)
-					await _pog_wait(30.0)
-					v3 = 0
-					break
-		if _pog_is_null(v3) and sim.cast(v9):
+				_pc = 2119
+				continue
+			else:
+				_pc = 3188
+				continue
+		elif _pc == 2119:
+			v3 = 1
+			await iconversation.begin()
+			if 2 == state.progress(v2):
+				_pc = 2166
+				continue
+			else:
+				_pc = 2193
+				continue
+		elif _pc == 2166:
+			await iconversation.add_response("a1_m02_text_player_c2_thread_1_option_1_forgot", "a1_m02_dialogue_player_c2_thread_1_option_1_forgot")
+			_pc = 2193
 			continue
-		if 5 == state.progress(v2) and 6000.0 <= sim.distance_between(v10, v9):
+		elif _pc == 2193:
+			if 1 == state.progress(v2):
+				_pc = 2218
+				continue
+			else:
+				_pc = 2245
+				continue
+		elif _pc == 2218:
+			await iconversation.add_response("a1_m02_text_player_c2_thread_2_option_1_changed_mind", "a1_m02_dialogue_player_c2_thread_2_option_1_changed_mind")
+			_pc = 2245
 			continue
-		v8 = await local_572(v10)
-		if not _pog_is_null(v8):
+		elif _pc == 2245:
+			await iconversation.add_response("a1_m02_text_player_c2_option_2_passing_through", "a1_m02_dialogue_player_c2_option_2_passing_through")
+			await iconversation.add_response("a1_m02_text_player_c2_option_3_kill_you", "a1_m02_dialogue_player_c2_option_3_kill_you")
+			v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_c2_your_back")
+			_pc = 3157
 			continue
-		if object.property_exists(v8, "Manifest"):
+		elif _pc == 2341:
+			if 2 == state.progress(v2):
+				_pc = 2367
+				continue
+			else:
+				_pc = 2477
+				continue
+		elif _pc == 2367:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c2_thread_1_response_1_want_you")
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_maas_courier")
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_well_armed")
+			await iconversation.end()
+			_pc = 2477
 			continue
-		v3 = 1
-		await iconversation.begin()
-		await iconversation.add_response("a1_m02_text_player_c3_option_1_yes", "a1_m02_dialogue_player_c3_option_1_yes")
-		await iconversation.add_response("a1_m02_text_player_c3_option_2_no", "a1_m02_dialogue_player_c3_option_2_no")
-		v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_c3_done_it")
-		while v4 == 1:
+		elif _pc == 2477:
+			if 1 == state.progress(v2):
+				_pc = 2502
+				continue
+			else:
+				_pc = 2633
+				continue
+		elif _pc == 2502:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c2_thread_2_response_1_do_something")
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_maas_courier")
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_well_armed")
+			await iconversation.end()
+			state.set_progress(v2, 2)
+			_pc = 2633
+			continue
+		elif _pc == 2633:
+			await _pog_wait(30.0)
+			v3 = 0
+			_pc = 3188
+			continue
+		elif _pc == 2677:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c2_response_2_dont_miss")
+			await iconversation.end()
+			await _pog_wait(30.0)
+			v3 = 0
+			_pc = 3188
+			continue
+		elif _pc == 2767:
+			await iconversation.end()
+			await iconversation.begin()
+			await iconversation.add_response("a1_m02_text_player_c1_option_1_sorry", "a1_m02_dialogue_player_c1_option_1_sorry")
+			await iconversation.add_response("a1_m02_text_player_c1_option_2_die", "a1_m02_dialogue_player_c1_option_2_die")
+			v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_c1_response_3_crush_you")
+			_pc = 3125
+			continue
+		elif _pc == 2891:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_1_let_off")
+			await iconversation.end()
+			await _pog_wait(30.0)
+			v3 = 0
+			_pc = 3147
+			continue
+		elif _pc == 2981:
+			v5 = 0
+			_pc = 2988
+			continue
+		elif _pc == 2988:
+			if 3 < v5:
+				_pc = 3001
+				continue
+			else:
+				_pc = 3074
+				continue
+		elif _pc == 3001:
+			iai.give_attack_order(iship.cast(group.nth_sim(v1, v5)), v10)
+			v5 = 1 + v5
+			_pc = 2988
+			continue
+		elif _pc == 3074:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c1_response_2_have_at_you")
+			await iconversation.end()
+			_pc = 3147
+			continue
+		elif _pc == 3125:
+			if v4 != 1:
+				_pc = 3138
+				continue
+			else:
+				_pc = 2891
+				continue
+		elif _pc == 3138:
+			if not _pog_is_null(2):
+				_pc = 3147
+				continue
+			else:
+				_pc = 2981
+				continue
+		elif _pc == 3147:
+			_pc = 3188
+			continue
+		elif _pc == 3152:
+			_pc = 3188
+			continue
+		elif _pc == 3157:
+			if v4 != 1:
+				_pc = 3170
+				continue
+			else:
+				_pc = 2341
+				continue
+		elif _pc == 3170:
+			if not _pog_is_null(2):
+				_pc = 3179
+				continue
+			else:
+				_pc = 2677
+				continue
+		elif _pc == 3179:
+			if not _pog_is_null(3):
+				_pc = 3188
+				continue
+			else:
+				_pc = 2767
+				continue
+		elif _pc == 3188:
+			if _pog_every(3188, 2.0):
+				_pc = 3201
+				continue
+			else:
+				_pc = 4065
+				continue
+		elif _pc == 3201:
+			if _pog_is_null(v3) and sim.cast(v9):
+				_pc = 3233
+				continue
+			else:
+				_pc = 4065
+				continue
+		elif _pc == 3233:
+			if 5 == state.progress(v2) and 6000.0 <= sim.distance_between(v10, v9):
+				_pc = 3289
+				continue
+			else:
+				_pc = 4065
+				continue
+		elif _pc == 3289:
+			v8 = await local_572(v10)
+			if not _pog_is_null(v8):
+				_pc = 3326
+				continue
+			else:
+				_pc = 4065
+				continue
+		elif _pc == 3326:
+			if object.property_exists(v8, "Manifest"):
+				_pc = 3356
+				continue
+			else:
+				_pc = 4065
+				continue
+		elif _pc == 3356:
+			v3 = 1
+			await iconversation.begin()
+			await iconversation.add_response("a1_m02_text_player_c3_option_1_yes", "a1_m02_dialogue_player_c3_option_1_yes")
+			await iconversation.add_response("a1_m02_text_player_c3_option_2_no", "a1_m02_dialogue_player_c3_option_2_no")
+			v4 = await iconversation.ask(v9, "", "a1_m02_dialogue_stepson_c3_done_it")
+			_pc = 4043
+			continue
+		elif _pc == 3473:
 			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c3_response_1_well_done")
 			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c3_response_1_drop_off")
 			await iconversation.end()
-			while true:
-				await _pog_wait(1.0)
-				if not (isim.is_docked_to(isim.cast(v8), v10)):
-					break
+			_pc = 3551
+			continue
+		elif _pc == 3551:
+			await _pog_wait(1.0)
+			if not (isim.is_docked_to(isim.cast(v8), v10)):
+				_pc = 3624
+				continue
+			else:
+				_pc = 3551
+				continue
+		elif _pc == 3624:
 			v6 = idockport.dockports_of_type(isim.cast(v8), 0, 4)
-			while not (p_set.is_empty(v6)):
-				v7 = idockport.cast(p_set.first_element(v6))
-				idockport.disable(v7)
-				p_set.remove(v6, v7)
+			_pc = 3667
+			continue
+		elif _pc == 3667:
+			if not (p_set.is_empty(v6)):
+				_pc = 3691
+				continue
+			else:
+				_pc = 3776
+				continue
+		elif _pc == 3691:
+			v7 = idockport.cast(p_set.first_element(v6))
+			idockport.disable(v7)
+			p_set.remove(v6, v7)
+			_pc = 3667
+			continue
+		elif _pc == 3776:
 			await iconversation.one_liner(v9, "", "a1_m02_dialogue_stepson_c3_response_1_thanks")
 			iobjectives.set_state("a1_m02_objective_deliver", 1)
 			ifaction.set_feeling(v11, v12, 4.0)
 			ifaction.set_feeling(v12, v11, 4.0)
 			v3 = 0
 			state.set_progress(v2, 6)
-			break
-	return
+			_pc = 4065
+			continue
+		elif _pc == 3922:
+			await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c3_response_2_damn_you")
+			await iconversation.end()
+			object.remove_property(v8, "checked")
+			await _pog_wait(30.0)
+			v3 = 0
+			_pc = 4065
+			continue
+		elif _pc == 4038:
+			_pc = 4065
+			continue
+		elif _pc == 4043:
+			if v4 != 1:
+				_pc = 4056
+				continue
+			else:
+				_pc = 3473
+				continue
+		elif _pc == 4056:
+			if not _pog_is_null(2):
+				_pc = 4065
+				continue
+			else:
+				_pc = 3922
+				continue
+		elif _pc == 4065:
+			_pc = 1949
+			continue
+		elif _pc == 4070:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4081(v0, v1) -> Variant:
@@ -250,7 +590,7 @@ func local_4081(v0, v1) -> Variant:
 			await iformation.goose(v4, 70.0, 1)
 			_pog_spawn(local_812.bind(v0, v4, v1))
 		else:
-			if 1 == v2 and 150000.0 > sim.distance_between(v5, v0):
+			if not (1 == v2 and 150000.0 > sim.distance_between(v5, v0)):
 				continue
 			v2 = 0
 			group.destroy(v4, 1)
@@ -308,7 +648,7 @@ func local_4435() -> Variant:
 	subsim.destroy(sim.find_subsim_by_name(v0, "system_countermeasures"))
 	group.add_group(v2, v3)
 	global.create_handle("g_maas_vessels", 2, v2)
-	return
+	return v2
 	return 0
 
 func local_5653(v0, v1) -> Variant:
@@ -383,7 +723,7 @@ func local_5653(v0, v1) -> Variant:
 			if 9000.0 < sim.distance_between(v8, v7) and not (v4) and v2:
 				v4 = 1
 				await iconversation.one_liner(v8, "", "a1_m02_dialogue_maas_unidentified_order")
-			if _pog_eq(v7, iship.cast(isim.last_attacker(v8))) and not (v3) and v2:
+			if not (_pog_eq(v7, iship.cast(isim.last_attacker(v8))) and not (v3) and v2):
 				continue
 			iai.give_attack_order(v6, v7)
 	return
@@ -437,7 +777,7 @@ func local_7317(v0, v1) -> Variant:
 			sim.place_relative_to(v8, v7, 700.0, 700.0, 700.0)
 			await iformation.goose(v5, 60.0, 1)
 		else:
-			if not (v3) and 12000.0 < sim.distance_between(v7, v6) and v2:
+			if not (not (v3) and 12000.0 < sim.distance_between(v7, v6) and v2):
 				continue
 			v3 = 1
 			await iconversation.one_liner(v7, "", "a1_m02_dialogue_maas_you_again")
@@ -509,7 +849,7 @@ func mission_handler() -> Variant:
 		if not (v1) and 4 == state.progress(v9):
 			v1 = 1
 			v8 = _pog_spawn(local_7317.bind(v5, v9))
-		if 100 == state.progress(v9) or 6 == state.progress(v9):
+		if not (100 == state.progress(v9) or 6 == state.progress(v9)):
 			continue
 		if 6 == state.progress(v9):
 			global.set_bool("g_act1_stepson_member", 1)

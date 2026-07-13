@@ -161,7 +161,7 @@ func local_1335(v0) -> Variant:
 		iship.install_a_i_pilot(iship.cast(v1), 0.4000000059604645, 2.0, 0.800000011920929, "", "", "", "iWingmen.TFighterWarn")
 		iship.set_free_without_pilot(iship.cast(v1), 0)
 		object.set_string_property(v1, "death_script", "iWingmen.TFighterDeathScript")
-	if object.property_exists(v0, "name_az"):
+	if not (object.property_exists(v0, "name_az")):
 		return 0
 	v1 = sim.cast(object.handle_property(v0, "name_az"))
 	await local_1242(v1)
@@ -270,7 +270,7 @@ func player_death_script(v0) -> Variant:
 	v5 = 0
 	v9 = null
 	v10 = null
-	if _pog_is_null(object.property_exists(v0, "player_dying")):
+	if not _pog_is_null(object.property_exists(v0, "player_dying")):
 		return
 	input.suspend_bindings()
 	iscore.disable_logging()

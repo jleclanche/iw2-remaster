@@ -91,7 +91,6 @@ func clean_inactive_map_entities() -> Variant:
 		debug.print_string("Number of cleaned habitats = ")
 		debug.print_string(string.from_int(p_set.item_count(v0)))
 		debug.print_string("\n")
-	push_error("PORT: unstructured jump to L596")
 	return _pog_clone(v0)
 	return 0
 
@@ -133,31 +132,1442 @@ func filter_on_friendly_sims() -> Variant:
 		if 0.10000000149011612 >= ifaction.feeling(isim.faction(isim.cast(v1)), isim.faction(isim.cast(list.get_nth(v5, v2)))):
 			list.add_tail(v4, list.get_nth(v5, v2))
 		v2 = 1 + v2
-	push_error("PORT: unstructured jump to L1237")
 	return _pog_clone(p_set.from_list(v4))
 	return 0
 
 func from_location_enum(v0) -> Variant:
-	while _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 1254
+	while true:
+		if _pc == 1254:
+			_pc = 2599
+			continue
+		elif _pc == 1259:
+			_pc = 1285
+			continue
+		elif _pc == 1264:
 			debug.error("LocationEnum: Warning - location passed has an invalid usage type!")
-		push_error("PORT: unstructured jump to L3680")
-	push_error("PORT: unstructured jump to L3680")
-	return _pog_clone("old mcdonald had a farm on on that farm there was a mary and mary had a little lamb until the british govenment burned it to death cos the guys down the road had foot and mouth and now mary just keeps turnips and mcdonald has sold the ancestral land to cover his debts.")
+			_pc = 1285
+			continue
+		elif _pc == 1285:
+			_pc = 3680
+			continue
+		elif _pc == 1296:
+			_pc = 3680
+			continue
+		elif _pc == 1307:
+			_pc = 3680
+			continue
+		elif _pc == 1318:
+			_pc = 3680
+			continue
+		elif _pc == 1329:
+			_pc = 3680
+			continue
+		elif _pc == 1340:
+			_pc = 3680
+			continue
+		elif _pc == 1351:
+			_pc = 3680
+			continue
+		elif _pc == 1362:
+			_pc = 3680
+			continue
+		elif _pc == 1373:
+			_pc = 3680
+			continue
+		elif _pc == 1384:
+			_pc = 3680
+			continue
+		elif _pc == 1395:
+			_pc = 3680
+			continue
+		elif _pc == 1406:
+			_pc = 3680
+			continue
+		elif _pc == 1417:
+			_pc = 3680
+			continue
+		elif _pc == 1428:
+			_pc = 3680
+			continue
+		elif _pc == 1439:
+			_pc = 3680
+			continue
+		elif _pc == 1450:
+			_pc = 3680
+			continue
+		elif _pc == 1461:
+			_pc = 3680
+			continue
+		elif _pc == 1472:
+			_pc = 3680
+			continue
+		elif _pc == 1483:
+			_pc = 3680
+			continue
+		elif _pc == 1494:
+			_pc = 3680
+			continue
+		elif _pc == 1505:
+			_pc = 3680
+			continue
+		elif _pc == 1516:
+			_pc = 3680
+			continue
+		elif _pc == 1527:
+			_pc = 3680
+			continue
+		elif _pc == 1538:
+			_pc = 3680
+			continue
+		elif _pc == 1549:
+			_pc = 3680
+			continue
+		elif _pc == 1560:
+			_pc = 3680
+			continue
+		elif _pc == 1571:
+			_pc = 3680
+			continue
+		elif _pc == 1582:
+			_pc = 3680
+			continue
+		elif _pc == 1593:
+			_pc = 3680
+			continue
+		elif _pc == 1604:
+			_pc = 3680
+			continue
+		elif _pc == 1615:
+			_pc = 3680
+			continue
+		elif _pc == 1626:
+			_pc = 3680
+			continue
+		elif _pc == 1637:
+			_pc = 3680
+			continue
+		elif _pc == 1648:
+			_pc = 3680
+			continue
+		elif _pc == 1659:
+			_pc = 3680
+			continue
+		elif _pc == 1670:
+			_pc = 3680
+			continue
+		elif _pc == 1681:
+			_pc = 3680
+			continue
+		elif _pc == 1692:
+			_pc = 3680
+			continue
+		elif _pc == 1703:
+			_pc = 3680
+			continue
+		elif _pc == 1714:
+			_pc = 3680
+			continue
+		elif _pc == 1725:
+			_pc = 3680
+			continue
+		elif _pc == 1736:
+			_pc = 3680
+			continue
+		elif _pc == 1747:
+			_pc = 3680
+			continue
+		elif _pc == 1758:
+			_pc = 3680
+			continue
+		elif _pc == 1769:
+			_pc = 3680
+			continue
+		elif _pc == 1780:
+			_pc = 3680
+			continue
+		elif _pc == 1791:
+			_pc = 3680
+			continue
+		elif _pc == 1802:
+			_pc = 3680
+			continue
+		elif _pc == 1813:
+			_pc = 3680
+			continue
+		elif _pc == 1824:
+			_pc = 3680
+			continue
+		elif _pc == 1835:
+			_pc = 3680
+			continue
+		elif _pc == 1846:
+			_pc = 3680
+			continue
+		elif _pc == 1857:
+			_pc = 3680
+			continue
+		elif _pc == 1868:
+			_pc = 3680
+			continue
+		elif _pc == 1879:
+			_pc = 3680
+			continue
+		elif _pc == 1890:
+			_pc = 3680
+			continue
+		elif _pc == 1901:
+			_pc = 3680
+			continue
+		elif _pc == 1912:
+			_pc = 3680
+			continue
+		elif _pc == 1923:
+			_pc = 3680
+			continue
+		elif _pc == 1934:
+			_pc = 3680
+			continue
+		elif _pc == 1945:
+			_pc = 3680
+			continue
+		elif _pc == 1956:
+			_pc = 3680
+			continue
+		elif _pc == 1967:
+			_pc = 3680
+			continue
+		elif _pc == 1978:
+			_pc = 3680
+			continue
+		elif _pc == 1989:
+			_pc = 3680
+			continue
+		elif _pc == 2000:
+			_pc = 3680
+			continue
+		elif _pc == 2011:
+			_pc = 3680
+			continue
+		elif _pc == 2022:
+			_pc = 3680
+			continue
+		elif _pc == 2033:
+			_pc = 3680
+			continue
+		elif _pc == 2044:
+			_pc = 3680
+			continue
+		elif _pc == 2055:
+			_pc = 3680
+			continue
+		elif _pc == 2066:
+			_pc = 3680
+			continue
+		elif _pc == 2077:
+			_pc = 3680
+			continue
+		elif _pc == 2088:
+			_pc = 3680
+			continue
+		elif _pc == 2099:
+			_pc = 3680
+			continue
+		elif _pc == 2110:
+			_pc = 3680
+			continue
+		elif _pc == 2121:
+			_pc = 3680
+			continue
+		elif _pc == 2132:
+			_pc = 3680
+			continue
+		elif _pc == 2143:
+			_pc = 3680
+			continue
+		elif _pc == 2154:
+			_pc = 3680
+			continue
+		elif _pc == 2165:
+			_pc = 3680
+			continue
+		elif _pc == 2176:
+			_pc = 3680
+			continue
+		elif _pc == 2187:
+			_pc = 3680
+			continue
+		elif _pc == 2198:
+			_pc = 3680
+			continue
+		elif _pc == 2209:
+			_pc = 3680
+			continue
+		elif _pc == 2220:
+			_pc = 3680
+			continue
+		elif _pc == 2231:
+			_pc = 3680
+			continue
+		elif _pc == 2242:
+			_pc = 3680
+			continue
+		elif _pc == 2253:
+			_pc = 3680
+			continue
+		elif _pc == 2264:
+			_pc = 3680
+			continue
+		elif _pc == 2275:
+			_pc = 3680
+			continue
+		elif _pc == 2286:
+			_pc = 3680
+			continue
+		elif _pc == 2297:
+			_pc = 3680
+			continue
+		elif _pc == 2308:
+			_pc = 3680
+			continue
+		elif _pc == 2319:
+			_pc = 3680
+			continue
+		elif _pc == 2330:
+			_pc = 3680
+			continue
+		elif _pc == 2341:
+			_pc = 3680
+			continue
+		elif _pc == 2352:
+			_pc = 3680
+			continue
+		elif _pc == 2363:
+			_pc = 3680
+			continue
+		elif _pc == 2374:
+			_pc = 3680
+			continue
+		elif _pc == 2385:
+			_pc = 3680
+			continue
+		elif _pc == 2396:
+			_pc = 3680
+			continue
+		elif _pc == 2407:
+			_pc = 3680
+			continue
+		elif _pc == 2418:
+			_pc = 3680
+			continue
+		elif _pc == 2429:
+			_pc = 3680
+			continue
+		elif _pc == 2440:
+			_pc = 3680
+			continue
+		elif _pc == 2451:
+			_pc = 3680
+			continue
+		elif _pc == 2462:
+			_pc = 3680
+			continue
+		elif _pc == 2473:
+			_pc = 3680
+			continue
+		elif _pc == 2484:
+			_pc = 3680
+			continue
+		elif _pc == 2495:
+			_pc = 3680
+			continue
+		elif _pc == 2506:
+			_pc = 3680
+			continue
+		elif _pc == 2517:
+			_pc = 3680
+			continue
+		elif _pc == 2528:
+			_pc = 3680
+			continue
+		elif _pc == 2539:
+			_pc = 3680
+			continue
+		elif _pc == 2550:
+			_pc = 3680
+			continue
+		elif _pc == 2561:
+			_pc = 3680
+			continue
+		elif _pc == 2572:
+			_pc = 3680
+			continue
+		elif _pc == 2583:
+			_pc = 3680
+			continue
+		elif _pc == 2594:
+			_pc = 3669
+			continue
+		elif _pc == 2599:
+			if not _pog_is_null(v0):
+				_pc = 2612
+				continue
+			else:
+				_pc = 1259
+				continue
+		elif _pc == 2612:
+			if not _pog_is_null(1):
+				_pc = 2620
+				continue
+			else:
+				_pc = 1296
+				continue
+		elif _pc == 2620:
+			if not _pog_is_null(2):
+				_pc = 2629
+				continue
+			else:
+				_pc = 1307
+				continue
+		elif _pc == 2629:
+			if not _pog_is_null(3):
+				_pc = 2638
+				continue
+			else:
+				_pc = 1318
+				continue
+		elif _pc == 2638:
+			if not _pog_is_null(4):
+				_pc = 2647
+				continue
+			else:
+				_pc = 1329
+				continue
+		elif _pc == 2647:
+			if not _pog_is_null(5):
+				_pc = 2656
+				continue
+			else:
+				_pc = 1340
+				continue
+		elif _pc == 2656:
+			if not _pog_is_null(6):
+				_pc = 2665
+				continue
+			else:
+				_pc = 1351
+				continue
+		elif _pc == 2665:
+			if not _pog_is_null(7):
+				_pc = 2674
+				continue
+			else:
+				_pc = 1362
+				continue
+		elif _pc == 2674:
+			if not _pog_is_null(8):
+				_pc = 2683
+				continue
+			else:
+				_pc = 1373
+				continue
+		elif _pc == 2683:
+			if not _pog_is_null(9):
+				_pc = 2692
+				continue
+			else:
+				_pc = 1384
+				continue
+		elif _pc == 2692:
+			if not _pog_is_null(10):
+				_pc = 2701
+				continue
+			else:
+				_pc = 1395
+				continue
+		elif _pc == 2701:
+			if not _pog_is_null(53):
+				_pc = 2710
+				continue
+			else:
+				_pc = 1406
+				continue
+		elif _pc == 2710:
+			if not _pog_is_null(11):
+				_pc = 2719
+				continue
+			else:
+				_pc = 1417
+				continue
+		elif _pc == 2719:
+			if not _pog_is_null(12):
+				_pc = 2728
+				continue
+			else:
+				_pc = 1428
+				continue
+		elif _pc == 2728:
+			if not _pog_is_null(13):
+				_pc = 2737
+				continue
+			else:
+				_pc = 1439
+				continue
+		elif _pc == 2737:
+			if not _pog_is_null(14):
+				_pc = 2746
+				continue
+			else:
+				_pc = 1450
+				continue
+		elif _pc == 2746:
+			if not _pog_is_null(15):
+				_pc = 2755
+				continue
+			else:
+				_pc = 1461
+				continue
+		elif _pc == 2755:
+			if not _pog_is_null(16):
+				_pc = 2764
+				continue
+			else:
+				_pc = 1472
+				continue
+		elif _pc == 2764:
+			if not _pog_is_null(17):
+				_pc = 2773
+				continue
+			else:
+				_pc = 1483
+				continue
+		elif _pc == 2773:
+			if not _pog_is_null(18):
+				_pc = 2782
+				continue
+			else:
+				_pc = 1494
+				continue
+		elif _pc == 2782:
+			if not _pog_is_null(19):
+				_pc = 2791
+				continue
+			else:
+				_pc = 1505
+				continue
+		elif _pc == 2791:
+			if not _pog_is_null(20):
+				_pc = 2800
+				continue
+			else:
+				_pc = 1516
+				continue
+		elif _pc == 2800:
+			if not _pog_is_null(22):
+				_pc = 2809
+				continue
+			else:
+				_pc = 1527
+				continue
+		elif _pc == 2809:
+			if not _pog_is_null(23):
+				_pc = 2818
+				continue
+			else:
+				_pc = 1538
+				continue
+		elif _pc == 2818:
+			if not _pog_is_null(24):
+				_pc = 2827
+				continue
+			else:
+				_pc = 1549
+				continue
+		elif _pc == 2827:
+			if not _pog_is_null(25):
+				_pc = 2836
+				continue
+			else:
+				_pc = 1560
+				continue
+		elif _pc == 2836:
+			if not _pog_is_null(26):
+				_pc = 2845
+				continue
+			else:
+				_pc = 1571
+				continue
+		elif _pc == 2845:
+			if not _pog_is_null(27):
+				_pc = 2854
+				continue
+			else:
+				_pc = 1582
+				continue
+		elif _pc == 2854:
+			if not _pog_is_null(28):
+				_pc = 2863
+				continue
+			else:
+				_pc = 1593
+				continue
+		elif _pc == 2863:
+			if not _pog_is_null(29):
+				_pc = 2872
+				continue
+			else:
+				_pc = 1604
+				continue
+		elif _pc == 2872:
+			if not _pog_is_null(30):
+				_pc = 2881
+				continue
+			else:
+				_pc = 1615
+				continue
+		elif _pc == 2881:
+			if not _pog_is_null(31):
+				_pc = 2890
+				continue
+			else:
+				_pc = 1626
+				continue
+		elif _pc == 2890:
+			if not _pog_is_null(32):
+				_pc = 2899
+				continue
+			else:
+				_pc = 1637
+				continue
+		elif _pc == 2899:
+			if not _pog_is_null(33):
+				_pc = 2908
+				continue
+			else:
+				_pc = 1648
+				continue
+		elif _pc == 2908:
+			if not _pog_is_null(39):
+				_pc = 2917
+				continue
+			else:
+				_pc = 1659
+				continue
+		elif _pc == 2917:
+			if not _pog_is_null(40):
+				_pc = 2926
+				continue
+			else:
+				_pc = 1670
+				continue
+		elif _pc == 2926:
+			if not _pog_is_null(42):
+				_pc = 2935
+				continue
+			else:
+				_pc = 1681
+				continue
+		elif _pc == 2935:
+			if not _pog_is_null(43):
+				_pc = 2944
+				continue
+			else:
+				_pc = 1692
+				continue
+		elif _pc == 2944:
+			if not _pog_is_null(96):
+				_pc = 2953
+				continue
+			else:
+				_pc = 1703
+				continue
+		elif _pc == 2953:
+			if not _pog_is_null(110):
+				_pc = 2962
+				continue
+			else:
+				_pc = 1714
+				continue
+		elif _pc == 2962:
+			if not _pog_is_null(34):
+				_pc = 2971
+				continue
+			else:
+				_pc = 1725
+				continue
+		elif _pc == 2971:
+			if not _pog_is_null(81):
+				_pc = 2980
+				continue
+			else:
+				_pc = 1736
+				continue
+		elif _pc == 2980:
+			if not _pog_is_null(80):
+				_pc = 2989
+				continue
+			else:
+				_pc = 1747
+				continue
+		elif _pc == 2989:
+			if not _pog_is_null(44):
+				_pc = 2998
+				continue
+			else:
+				_pc = 1758
+				continue
+		elif _pc == 2998:
+			if not _pog_is_null(45):
+				_pc = 3007
+				continue
+			else:
+				_pc = 1769
+				continue
+		elif _pc == 3007:
+			if not _pog_is_null(92):
+				_pc = 3016
+				continue
+			else:
+				_pc = 1780
+				continue
+		elif _pc == 3016:
+			if not _pog_is_null(93):
+				_pc = 3025
+				continue
+			else:
+				_pc = 1791
+				continue
+		elif _pc == 3025:
+			if not _pog_is_null(94):
+				_pc = 3034
+				continue
+			else:
+				_pc = 1802
+				continue
+		elif _pc == 3034:
+			if not _pog_is_null(95):
+				_pc = 3043
+				continue
+			else:
+				_pc = 1813
+				continue
+		elif _pc == 3043:
+			if not _pog_is_null(87):
+				_pc = 3052
+				continue
+			else:
+				_pc = 1824
+				continue
+		elif _pc == 3052:
+			if not _pog_is_null(47):
+				_pc = 3061
+				continue
+			else:
+				_pc = 1835
+				continue
+		elif _pc == 3061:
+			if not _pog_is_null(122):
+				_pc = 3070
+				continue
+			else:
+				_pc = 1846
+				continue
+		elif _pc == 3070:
+			if not _pog_is_null(121):
+				_pc = 3079
+				continue
+			else:
+				_pc = 1857
+				continue
+		elif _pc == 3079:
+			if not _pog_is_null(49):
+				_pc = 3088
+				continue
+			else:
+				_pc = 1868
+				continue
+		elif _pc == 3088:
+			if not _pog_is_null(50):
+				_pc = 3097
+				continue
+			else:
+				_pc = 1879
+				continue
+		elif _pc == 3097:
+			if not _pog_is_null(52):
+				_pc = 3106
+				continue
+			else:
+				_pc = 1890
+				continue
+		elif _pc == 3106:
+			if not _pog_is_null(66):
+				_pc = 3115
+				continue
+			else:
+				_pc = 1901
+				continue
+		elif _pc == 3115:
+			if not _pog_is_null(105):
+				_pc = 3124
+				continue
+			else:
+				_pc = 1912
+				continue
+		elif _pc == 3124:
+			if not _pog_is_null(106):
+				_pc = 3133
+				continue
+			else:
+				_pc = 1923
+				continue
+		elif _pc == 3133:
+			if not _pog_is_null(51):
+				_pc = 3142
+				continue
+			else:
+				_pc = 1934
+				continue
+		elif _pc == 3142:
+			if not _pog_is_null(41):
+				_pc = 3151
+				continue
+			else:
+				_pc = 1945
+				continue
+		elif _pc == 3151:
+			if not _pog_is_null(99):
+				_pc = 3160
+				continue
+			else:
+				_pc = 1956
+				continue
+		elif _pc == 3160:
+			if not _pog_is_null(100):
+				_pc = 3169
+				continue
+			else:
+				_pc = 1967
+				continue
+		elif _pc == 3169:
+			if not _pog_is_null(61):
+				_pc = 3178
+				continue
+			else:
+				_pc = 1978
+				continue
+		elif _pc == 3178:
+			if not _pog_is_null(63):
+				_pc = 3187
+				continue
+			else:
+				_pc = 1989
+				continue
+		elif _pc == 3187:
+			if not _pog_is_null(72):
+				_pc = 3196
+				continue
+			else:
+				_pc = 2000
+				continue
+		elif _pc == 3196:
+			if not _pog_is_null(73):
+				_pc = 3205
+				continue
+			else:
+				_pc = 2011
+				continue
+		elif _pc == 3205:
+			if not _pog_is_null(70):
+				_pc = 3214
+				continue
+			else:
+				_pc = 2022
+				continue
+		elif _pc == 3214:
+			if not _pog_is_null(71):
+				_pc = 3223
+				continue
+			else:
+				_pc = 2033
+				continue
+		elif _pc == 3223:
+			if not _pog_is_null(82):
+				_pc = 3232
+				continue
+			else:
+				_pc = 2044
+				continue
+		elif _pc == 3232:
+			if not _pog_is_null(85):
+				_pc = 3241
+				continue
+			else:
+				_pc = 2055
+				continue
+		elif _pc == 3241:
+			if not _pog_is_null(54):
+				_pc = 3250
+				continue
+			else:
+				_pc = 2066
+				continue
+		elif _pc == 3250:
+			if not _pog_is_null(55):
+				_pc = 3259
+				continue
+			else:
+				_pc = 2077
+				continue
+		elif _pc == 3259:
+			if not _pog_is_null(68):
+				_pc = 3268
+				continue
+			else:
+				_pc = 2088
+				continue
+		elif _pc == 3268:
+			if not _pog_is_null(69):
+				_pc = 3277
+				continue
+			else:
+				_pc = 2099
+				continue
+		elif _pc == 3277:
+			if not _pog_is_null(56):
+				_pc = 3286
+				continue
+			else:
+				_pc = 2110
+				continue
+		elif _pc == 3286:
+			if not _pog_is_null(57):
+				_pc = 3295
+				continue
+			else:
+				_pc = 2121
+				continue
+		elif _pc == 3295:
+			if not _pog_is_null(58):
+				_pc = 3304
+				continue
+			else:
+				_pc = 2132
+				continue
+		elif _pc == 3304:
+			if not _pog_is_null(84):
+				_pc = 3313
+				continue
+			else:
+				_pc = 2143
+				continue
+		elif _pc == 3313:
+			if not _pog_is_null(76):
+				_pc = 3322
+				continue
+			else:
+				_pc = 2154
+				continue
+		elif _pc == 3322:
+			if not _pog_is_null(64):
+				_pc = 3331
+				continue
+			else:
+				_pc = 2165
+				continue
+		elif _pc == 3331:
+			if not _pog_is_null(37):
+				_pc = 3340
+				continue
+			else:
+				_pc = 2176
+				continue
+		elif _pc == 3340:
+			if not _pog_is_null(86):
+				_pc = 3349
+				continue
+			else:
+				_pc = 2187
+				continue
+		elif _pc == 3349:
+			if not _pog_is_null(74):
+				_pc = 3358
+				continue
+			else:
+				_pc = 2198
+				continue
+		elif _pc == 3358:
+			if not _pog_is_null(75):
+				_pc = 3367
+				continue
+			else:
+				_pc = 2209
+				continue
+		elif _pc == 3367:
+			if not _pog_is_null(36):
+				_pc = 3376
+				continue
+			else:
+				_pc = 2220
+				continue
+		elif _pc == 3376:
+			if not _pog_is_null(78):
+				_pc = 3385
+				continue
+			else:
+				_pc = 2231
+				continue
+		elif _pc == 3385:
+			if not _pog_is_null(88):
+				_pc = 3394
+				continue
+			else:
+				_pc = 2242
+				continue
+		elif _pc == 3394:
+			if not _pog_is_null(89):
+				_pc = 3403
+				continue
+			else:
+				_pc = 2253
+				continue
+		elif _pc == 3403:
+			if not _pog_is_null(90):
+				_pc = 3412
+				continue
+			else:
+				_pc = 2264
+				continue
+		elif _pc == 3412:
+			if not _pog_is_null(91):
+				_pc = 3421
+				continue
+			else:
+				_pc = 2275
+				continue
+		elif _pc == 3421:
+			if not _pog_is_null(98):
+				_pc = 3430
+				continue
+			else:
+				_pc = 2286
+				continue
+		elif _pc == 3430:
+			if not _pog_is_null(97):
+				_pc = 3439
+				continue
+			else:
+				_pc = 2297
+				continue
+		elif _pc == 3439:
+			if not _pog_is_null(108):
+				_pc = 3448
+				continue
+			else:
+				_pc = 2308
+				continue
+		elif _pc == 3448:
+			if not _pog_is_null(48):
+				_pc = 3457
+				continue
+			else:
+				_pc = 2319
+				continue
+		elif _pc == 3457:
+			if not _pog_is_null(112):
+				_pc = 3466
+				continue
+			else:
+				_pc = 2330
+				continue
+		elif _pc == 3466:
+			if not _pog_is_null(107):
+				_pc = 3475
+				continue
+			else:
+				_pc = 2341
+				continue
+		elif _pc == 3475:
+			if not _pog_is_null(67):
+				_pc = 3484
+				continue
+			else:
+				_pc = 2352
+				continue
+		elif _pc == 3484:
+			if not _pog_is_null(59):
+				_pc = 3493
+				continue
+			else:
+				_pc = 2363
+				continue
+		elif _pc == 3493:
+			if not _pog_is_null(46):
+				_pc = 3502
+				continue
+			else:
+				_pc = 2374
+				continue
+		elif _pc == 3502:
+			if not _pog_is_null(114):
+				_pc = 3511
+				continue
+			else:
+				_pc = 2385
+				continue
+		elif _pc == 3511:
+			if not _pog_is_null(109):
+				_pc = 3520
+				continue
+			else:
+				_pc = 2396
+				continue
+		elif _pc == 3520:
+			if not _pog_is_null(62):
+				_pc = 3529
+				continue
+			else:
+				_pc = 2407
+				continue
+		elif _pc == 3529:
+			if not _pog_is_null(38):
+				_pc = 3538
+				continue
+			else:
+				_pc = 2418
+				continue
+		elif _pc == 3538:
+			if not _pog_is_null(21):
+				_pc = 3547
+				continue
+			else:
+				_pc = 2429
+				continue
+		elif _pc == 3547:
+			if not _pog_is_null(65):
+				_pc = 3556
+				continue
+			else:
+				_pc = 2440
+				continue
+		elif _pc == 3556:
+			if not _pog_is_null(35):
+				_pc = 3565
+				continue
+			else:
+				_pc = 2451
+				continue
+		elif _pc == 3565:
+			if not _pog_is_null(60):
+				_pc = 3574
+				continue
+			else:
+				_pc = 2462
+				continue
+		elif _pc == 3574:
+			if not _pog_is_null(101):
+				_pc = 3583
+				continue
+			else:
+				_pc = 2473
+				continue
+		elif _pc == 3583:
+			if not _pog_is_null(102):
+				_pc = 3592
+				continue
+			else:
+				_pc = 2484
+				continue
+		elif _pc == 3592:
+			if not _pog_is_null(103):
+				_pc = 3601
+				continue
+			else:
+				_pc = 2495
+				continue
+		elif _pc == 3601:
+			if not _pog_is_null(104):
+				_pc = 3610
+				continue
+			else:
+				_pc = 2506
+				continue
+		elif _pc == 3610:
+			if not _pog_is_null(111):
+				_pc = 3619
+				continue
+			else:
+				_pc = 2517
+				continue
+		elif _pc == 3619:
+			if not _pog_is_null(113):
+				_pc = 3628
+				continue
+			else:
+				_pc = 2528
+				continue
+		elif _pc == 3628:
+			if not _pog_is_null(115):
+				_pc = 3637
+				continue
+			else:
+				_pc = 2539
+				continue
+		elif _pc == 3637:
+			if not _pog_is_null(118):
+				_pc = 3646
+				continue
+			else:
+				_pc = 2550
+				continue
+		elif _pc == 3646:
+			if not _pog_is_null(119):
+				_pc = 3655
+				continue
+			else:
+				_pc = 2561
+				continue
+		elif _pc == 3655:
+			if not _pog_is_null(120):
+				_pc = 3664
+				continue
+			else:
+				_pc = 2572
+				continue
+		elif _pc == 3664:
+			_pc = 2583
+			continue
+		elif _pc == 3669:
+			_pc = 3680
+			continue
+		elif _pc == 3680:
+			return
+		else:
+			return 0
 	return 0
 
 func from_allegiance_enum(v0) -> Variant:
-	while _pog_is_null(v0):
-		push_error("PORT: unstructured jump to L4803")
-	push_error("PORT: unstructured jump to L4803")
-	return _pog_clone("there was an old woman who swallowed a horse")
+	if _pog_is_null(v0):
+		return _pog_clone("Neutral")
+	if v0 == 1:
+		return _pog_clone("Independent")
+	if v0 == 2:
+		return _pog_clone("Exile")
+	if v0 == 3:
+		return _pog_clone("Military")
+	if v0 == 4:
+		return _pog_clone("Underworld")
+	if v0 == 5:
+		return _pog_clone("Government")
+	if v0 == 6:
+		return _pog_clone("Transient")
+	if v0 == 7:
+		return _pog_clone("Society")
+	if v0 == 8:
+		return _pog_clone("Invalid")
+	if v0 == 9:
+		return _pog_clone("Stepson")
+	if v0 == 10:
+		return _pog_clone("Kong")
+	if v0 == 11:
+		return _pog_clone("MAAS Corporation")
+	if v0 == 12:
+		return _pog_clone("Carva Cartel")
+	if v0 == 13:
+		return _pog_clone("Junkers")
+	if v0 == 14:
+		return _pog_clone("Police")
+	if v0 == 15:
+		return _pog_clone("NOMEX Corporation")
+	if v0 == 16:
+		return _pog_clone("NSO Laplace")
+	if v0 == 17:
+		return _pog_clone("Marauders")
+	if v0 == 18:
+		return _pog_clone("Angels")
+	if v0 == 19:
+		return _pog_clone("The Oman")
+	if v0 == 20:
+		return _pog_clone("M.C.A.")
+	if v0 == 21:
+		return _pog_clone("Player")
+	if v0 == 22:
+		return _pog_clone("League")
+	if v0 == 23:
+		return _pog_clone("Trimann Shipping")
+	if v0 == 24:
+		return _pog_clone("Rhondus Gas Mining")
+	if v0 == 25:
+		return _pog_clone("Ashanti Investment")
+	if v0 == 26:
+		return _pog_clone("Crosspoint Minerals")
+	if v0 == 27:
+		return _pog_clone("Helios Mining")
+	if v0 == 28:
+		return _pog_clone("Jardin Terraforming")
+	if v0 == 29:
+		return _pog_clone("Chon Bodifule")
+	if v0 == 30:
+		return _pog_clone("Orion Products")
+	if v0 == 31:
+		return _pog_clone("Von Shelling Industries")
+	if v0 == 32:
+		return _pog_clone("Megalith Corporation")
+	if v0 == 33:
+		return _pog_clone("Hibatsh PMC")
+	if v0 == 34:
+		return _pog_clone("Dester Corporation")
+	if v0 == 35:
+		return _pog_clone("Whind Weapons Systems")
+	if v0 == 36:
+		return _pog_clone("Advanced Security Corporation")
+	if v0 == 37:
+		return _pog_clone("Network 54")
+	if v0 == 38:
+		return _pog_clone("Infonet")
+	if v0 == 39:
+		return _pog_clone("Stellar Net")
+	if v0 == 40:
+		return _pog_clone("Wordsworth Technology")
+	if v0 == 41:
+		return _pog_clone("Netcom SA")
+	if v0 == 42:
+		return _pog_clone("Coventry Engineering Research")
+	if v0 == 43:
+		return _pog_clone("NINEX Wetware")
+	if v0 == 44:
+		return _pog_clone("Universal Consumer Products")
+	if v0 == 45:
+		return _pog_clone("High Life Products")
+	if v0 == 46:
+		return _pog_clone("Low Orbit Recovery")
+	if v0 == 47:
+		return _pog_clone("KIMO Shipping")
+	if v0 == 48:
+		return _pog_clone("Datagon Technologies")
+	if v0 == 49:
+		return _pog_clone("Micoria Communications")
+	if v0 == 50:
+		return _pog_clone("LOMAX Engines")
+	if v0 == 51:
+		return _pog_clone("LOMAX Technologies")
+	if v0 == 52:
+		return _pog_clone("Numiko Products")
+	if v0 == 54:
+		return _pog_clone("Aliens")
+	return _pog_clone("none")
 	return 0
 
 func from_allegiance_enum_no_space(v0) -> Variant:
-	while _pog_is_null(v0):
-		push_error("PORT: unstructured jump to L5926")
-	push_error("PORT: unstructured jump to L5926")
-	return _pog_clone("dummy string la la la")
+	if _pog_is_null(v0):
+		return _pog_clone("Neutral")
+	if v0 == 1:
+		return _pog_clone("Independent")
+	if v0 == 2:
+		return _pog_clone("Exile")
+	if v0 == 3:
+		return _pog_clone("Military")
+	if v0 == 4:
+		return _pog_clone("Underworld")
+	if v0 == 5:
+		return _pog_clone("Government")
+	if v0 == 6:
+		return _pog_clone("Transient")
+	if v0 == 7:
+		return _pog_clone("Society")
+	if v0 == 8:
+		return _pog_clone("Invalid")
+	if v0 == 9:
+		return _pog_clone("Stepson")
+	if v0 == 10:
+		return _pog_clone("Kong")
+	if v0 == 11:
+		return _pog_clone("MaasCorporation")
+	if v0 == 12:
+		return _pog_clone("CarvaCartel")
+	if v0 == 13:
+		return _pog_clone("Junkers")
+	if v0 == 14:
+		return _pog_clone("Police")
+	if v0 == 15:
+		return _pog_clone("NomexCorporation")
+	if v0 == 16:
+		return _pog_clone("NsoLaplace")
+	if v0 == 17:
+		return _pog_clone("Marauders")
+	if v0 == 18:
+		return _pog_clone("Angels")
+	if v0 == 19:
+		return _pog_clone("TheOman")
+	if v0 == 20:
+		return _pog_clone("Mca")
+	if v0 == 21:
+		return _pog_clone("Player")
+	if v0 == 22:
+		return _pog_clone("League")
+	if v0 == 23:
+		return _pog_clone("TrimannShipping")
+	if v0 == 24:
+		return _pog_clone("RhondusGasMining")
+	if v0 == 25:
+		return _pog_clone("AshantiInvestment")
+	if v0 == 26:
+		return _pog_clone("CrosspointMinerals")
+	if v0 == 27:
+		return _pog_clone("HeliosMining")
+	if v0 == 28:
+		return _pog_clone("JardinTerraforming")
+	if v0 == 29:
+		return _pog_clone("ChonBodifule")
+	if v0 == 30:
+		return _pog_clone("OrionProducts")
+	if v0 == 31:
+		return _pog_clone("VonShellingIndustries")
+	if v0 == 32:
+		return _pog_clone("MegalithCorporation")
+	if v0 == 33:
+		return _pog_clone("HibatshPmc")
+	if v0 == 34:
+		return _pog_clone("DesterCorporation")
+	if v0 == 35:
+		return _pog_clone("WhindWeaponsSystems")
+	if v0 == 36:
+		return _pog_clone("AdvancedSecurityCorporation")
+	if v0 == 37:
+		return _pog_clone("Network54")
+	if v0 == 38:
+		return _pog_clone("Infonet")
+	if v0 == 39:
+		return _pog_clone("StellarNet")
+	if v0 == 40:
+		return _pog_clone("WordsworthTechnology")
+	if v0 == 41:
+		return _pog_clone("NetcomSa")
+	if v0 == 42:
+		return _pog_clone("CoventryEngineeringResearch")
+	if v0 == 43:
+		return _pog_clone("NinexWetware")
+	if v0 == 44:
+		return _pog_clone("UniversalConsumerProducts")
+	if v0 == 45:
+		return _pog_clone("HighLifeProducts")
+	if v0 == 46:
+		return _pog_clone("LowOrbitRecovery")
+	if v0 == 47:
+		return _pog_clone("KimoShipping")
+	if v0 == 48:
+		return _pog_clone("DatagonTechnologies")
+	if v0 == 49:
+		return _pog_clone("MicoriaCommunications")
+	if v0 == 50:
+		return _pog_clone("LomaxEngines")
+	if v0 == 51:
+		return _pog_clone("LomaxTechnologies")
+	if v0 == 52:
+		return _pog_clone("NumikoProducts")
+	if v0 == 54:
+		return _pog_clone("Aliens")
+	return _pog_clone("none")
 	return 0
 
 func find_number_of_i_n_i_entries(v0, v1, v2) -> Variant:
@@ -171,7 +1581,7 @@ func find_number_of_i_n_i_entries(v0, v1, v2) -> Variant:
 			v4 = 1 + v4
 		if not (1 == v3):
 			break
-	return
+	return v4
 	return 0
 
 func get_cargo_name_from_i_n_i(v0) -> Variant:
@@ -187,7 +1597,6 @@ func get_cargo_name_from_i_n_i(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.error(string.join("iShipCreation.GetCargoName: ERROR: Unable to retrieve name from ini file: ", v0))
 	inifile.destroy(v1)
-	push_error("PORT: unstructured jump to L6268")
 	return _pog_clone(v2)
 	return 0
 
@@ -199,7 +1608,7 @@ func pick_random_location_of_type() -> Variant:
 	v1 = list.from_set(imapentity.system_habitats())
 	v2 = 0
 	while list.item_count(v1) < v2:
-		if not (_pog_eq(v0, await from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2)))))):
+		if not _pog_eq(v0, await from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2))))):
 			list.remove_nth(v1, v2)
 			if not _pog_is_null(list.item_count(v1)):
 				v2 = -1 + v2
@@ -208,7 +1617,6 @@ func pick_random_location_of_type() -> Variant:
 					debug.error(string.join("iMissionGenerator.PickLocation: Unable to find location of specified type: ", v0))
 				break
 		v2 = 1 + v2
-	push_error("PORT: unstructured jump to L6641")
 	return _pog_clone(imapentity.pog_name(imapentity.cast(ihabitat.random(p_set.from_list(v1)))))
 	return 0
 
@@ -224,7 +1632,7 @@ func get_zone_of_control() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string(string.join("iUtilities.GetZoneOfControl: Assigning made up zone of influence for this lagrainge point, which is set to - ", string.from_float(v1)))
 			debug.print_string("\n")
-	return
+	return v1
 	return 0
 
 func get_largest_ship_radius(v0) -> Variant:
@@ -243,7 +1651,7 @@ func get_largest_ship_radius(v0) -> Variant:
 		if v3 > v4:
 			v3 = v4
 		v1 = 1 + v1
-	return
+	return v3
 	return 0
 
 func player_in_range(v0) -> Variant:
@@ -258,9 +1666,9 @@ func player_in_range(v0) -> Variant:
 	else:
 		v2 = 2000.0
 		if v2 + v1 <= sim.distance_between(v0, v3):
-			return
+			return 1
 		else:
-			return
+			return 0
 	return
 	return 0
 
@@ -315,7 +1723,7 @@ func create_waypoint_relative_to(v0, v1, v2, v3) -> Variant:
 	v4 = sim.create("ini:/sims/nav/waypoint", "default")
 	sim.set_cullable(v4, 0)
 	sim.place_relative_to(v4, v0, v1, v2, v3)
-	return
+	return v4
 	return 0
 
 func create_waypoint_between(v0, v1, v2) -> Variant:
@@ -323,7 +1731,7 @@ func create_waypoint_between(v0, v1, v2) -> Variant:
 	v3 = sim.create("ini:/sims/nav/waypoint", "default")
 	sim.set_cullable(v3, 0)
 	sim.place_between(v3, v0, v1, v2)
-	return
+	return v3
 	return 0
 
 func create_waypoint_relative_to_player(v0, v1, v2) -> Variant:
@@ -333,7 +1741,7 @@ func create_waypoint_relative_to_player(v0, v1, v2) -> Variant:
 	v3 = sim.create("ini:/sims/nav/waypoint", "default")
 	sim.set_cullable(v3, 0)
 	sim.place_relative_to(v3, v4, v0, v1, v2)
-	return
+	return v3
 	return 0
 
 func create_waypoint_at(v0) -> Variant:
@@ -341,7 +1749,7 @@ func create_waypoint_at(v0) -> Variant:
 	v1 = sim.create("ini:/sims/nav/waypoint", "default")
 	sim.set_cullable(v1, 0)
 	sim.place_at(v1, v0)
-	return
+	return v1
 	return 0
 
 func create_waypoint_near(v0, v1) -> Variant:
@@ -349,7 +1757,7 @@ func create_waypoint_near(v0, v1) -> Variant:
 	v2 = sim.create("ini:/sims/nav/waypoint", "default")
 	sim.set_cullable(v2, 0)
 	sim.place_near(v2, v0, v1)
-	return
+	return v2
 	return 0
 
 func make_waypoint_visible(v0, v1, v2) -> Variant:
@@ -370,7 +1778,7 @@ func return_hull_structure(v0) -> Variant:
 			debug.error("iUtilities.ReturnHullStructure: Invalid ship passed to check hull structure of!")
 	v1 = object.float_property(v0, "max_hit_points")
 	v2 = object.float_property(v0, "hit_points")
-	return
+	return v1 / v2
 	return 0
 
 func rename_sim(v0, v1) -> Variant:
@@ -411,7 +1819,6 @@ func get_surface_locations_from_orbital() -> Variant:
 		debug.print_string(" surface locations around parent location ")
 		debug.print_string(imapentity.pog_name(v1))
 		debug.print_string("\n")
-	push_error("PORT: unstructured jump to L9175")
 	return _pog_clone(v3)
 	return 0
 
@@ -452,7 +1859,7 @@ func local_9508() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iUtilities.pog: waiting to set skipping lock.\n")
 			await _pog_wait(2.0)
-			if not (1 == global.pog_bool("g_skip_locked")):
+			if 1 == global.pog_bool("g_skip_locked"):
 				continue
 			if _pog_is_null(global.pog_bool("g_skip_locked")):
 				global.set_bool("g_skip_locked", 1)
@@ -497,14 +1904,14 @@ func skip_act(v0, v1) -> Variant:
 			if 1 == global.pog_bool("g_skip_to_specific"):
 				if v1 > global.pog_int("g_skip_to_act"):
 					await local_9845()
-					return
+					return 1
 				else:
 					await local_9845()
-					return
+					return 0
 	await local_9845()
 	if PogRuntime.TRACE:
 		debug.print_string("iUtilities.SkipAct: not skipping act because skipper disabled.\n")
-	return
+	return 0
 	return 0
 
 func skip_mission(v0) -> Variant:
@@ -551,7 +1958,7 @@ func skip_mission(v0) -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iUtilities.SkipMission: no option to skip mission, bundling on.\n")
 			await local_9845()
-	return
+	return v1
 	return 0
 
 func g_m_delayed_disabler() -> Variant:
@@ -575,31 +1982,62 @@ func g_m_delayed_disabler() -> Variant:
 func super_skip() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	await local_9508()
-	if PogRuntime.TRACE:
-		text.add("csv:/text/utils")
-		await iconversation.begin()
-		await iconversation.add_response("no ta.", "no ta.")
-		await iconversation.add_response("yes please.", "yes please.")
-		v0 = await iconversation.ask(0, "utils_particle_employee", "utils_want_to_super_skip")
-		if 1 == v0:
+	var _pc: int = 11358
+	while true:
+		if _pc == 11358:
+			await local_9508()
+			_pc = 16832
+			continue
+		elif _pc == 11382:
+			text.add("csv:/text/utils")
+			await iconversation.begin()
+			await iconversation.add_response("no ta.", "no ta.")
+			await iconversation.add_response("yes please.", "yes please.")
+			v0 = await iconversation.ask(0, "utils_particle_employee", "utils_want_to_super_skip")
+			if 1 == v0:
+				_pc = 11516
+				continue
+			else:
+				_pc = 11671
+				continue
+		elif _pc == 11516:
 			await iconversation.end()
 			global.set_bool("g_skip_ok", 0)
 			await local_9845()
-			if PogRuntime.TRACE:
-				debug.print_string("iUtilties.SuperSkip: super skip has been declined.\n")
+			_pc = 11592
+			continue
+		elif _pc == 11571:
+			debug.print_string("iUtilties.SuperSkip: super skip has been declined.\n")
+			_pc = 11592
+			continue
+		elif _pc == 11592:
 			if 1 == global.pog_bool("g_skip_ok"):
-				debug.print_string("SuperSkip: g_skip_ok is true! \n")
+				_pc = 11619
+				continue
 			else:
-				debug.print_string("SuperSkip: g_skip_ok is false! \n")
-			return 0
-		await iconversation.say(0, "utils_particle_employee", "utils_super_welcome")
-		await iconversation.add_response("act zero", "act zero please")
-		await iconversation.add_response("act one", "act one please")
-		await iconversation.add_response("act two", "act two please")
-		await iconversation.add_response("act three", "act three please")
-		v0 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_act")
-		while v0 == 1:
+				_pc = 11645
+				continue
+		elif _pc == 11619:
+			debug.print_string("SuperSkip: g_skip_ok is true! \n")
+			_pc = 11666
+			continue
+		elif _pc == 11645:
+			debug.print_string("SuperSkip: g_skip_ok is false! \n")
+			_pc = 11666
+			continue
+		elif _pc == 11666:
+			_pc = 16846
+			continue
+		elif _pc == 11671:
+			await iconversation.say(0, "utils_particle_employee", "utils_super_welcome")
+			await iconversation.add_response("act zero", "act zero please")
+			await iconversation.add_response("act one", "act one please")
+			await iconversation.add_response("act two", "act two please")
+			await iconversation.add_response("act three", "act three please")
+			v0 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_act")
+			_pc = 16713
+			continue
+		elif _pc == 11845:
 			await iconversation.add_response("Home Sweet Home", "Home sweet home")
 			await iconversation.add_response("Proving Grounds", "proving grounds")
 			await iconversation.add_response("Errand Boy", "Errand Boy")
@@ -607,18 +2045,658 @@ func super_skip() -> Variant:
 			await iconversation.add_response("Hoffers Wake Tour?", "Hoffers Wake Tour?")
 			await iconversation.add_response("Nemesis", "Nemesis")
 			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
-			while v1 == 1:
-				global.set_int("g_skip_to_act", 0)
-				global.set_int("g_skip_to_mission_number", 10)
-				global.set_string("g_skip_to_mission", "Home Sweet Home?")
-				break
-			break
-		global.set_bool("g_skip_to_specific", 1)
-		global.set_bool("g_skip_missions_is_ok", 1)
-		await iconversation.end()
-		text.remove("csv:/text/utils")
-	await local_9845()
-	return 0
+			_pc = 12512
+			continue
+		elif _pc == 12045:
+			global.set_int("g_skip_to_act", 0)
+			global.set_int("g_skip_to_mission_number", 10)
+			global.set_string("g_skip_to_mission", "Home Sweet Home?")
+			_pc = 12570
+			continue
+		elif _pc == 12122:
+			global.set_int("g_skip_to_act", 0)
+			global.set_int("g_skip_to_mission_number", 20)
+			global.set_string("g_skip_to_mission", "Proving Grounds?")
+			_pc = 12570
+			continue
+		elif _pc == 12199:
+			global.set_int("g_skip_to_act", 0)
+			global.set_int("g_skip_to_mission_number", 40)
+			global.set_string("g_skip_to_mission", "Errand Boy?")
+			_pc = 12570
+			continue
+		elif _pc == 12276:
+			global.set_int("g_skip_to_act", 0)
+			global.set_int("g_skip_to_mission_number", 50)
+			global.set_string("g_skip_to_mission", "Steal reactor?")
+			_pc = 12570
+			continue
+		elif _pc == 12353:
+			global.set_int("g_skip_to_act", 0)
+			global.set_int("g_skip_to_mission_number", 55)
+			global.set_string("g_skip_to_mission", "Hoffers Wake Tour?")
+			_pc = 12570
+			continue
+		elif _pc == 12430:
+			global.set_int("g_skip_to_act", 0)
+			global.set_int("g_skip_to_mission_number", 60)
+			global.set_string("g_skip_to_mission", "Nemesis?")
+			_pc = 12570
+			continue
+		elif _pc == 12507:
+			_pc = 12570
+			continue
+		elif _pc == 12512:
+			if v1 != 1:
+				_pc = 12525
+				continue
+			else:
+				_pc = 12045
+				continue
+		elif _pc == 12525:
+			if not _pog_is_null(2):
+				_pc = 12534
+				continue
+			else:
+				_pc = 12122
+				continue
+		elif _pc == 12534:
+			if not _pog_is_null(3):
+				_pc = 12543
+				continue
+			else:
+				_pc = 12199
+				continue
+		elif _pc == 12543:
+			if not _pog_is_null(4):
+				_pc = 12552
+				continue
+			else:
+				_pc = 12276
+				continue
+		elif _pc == 12552:
+			if not _pog_is_null(5):
+				_pc = 12561
+				continue
+			else:
+				_pc = 12353
+				continue
+		elif _pc == 12561:
+			if not _pog_is_null(6):
+				_pc = 12570
+				continue
+			else:
+				_pc = 12430
+				continue
+		elif _pc == 12570:
+			_pc = 16753
+			continue
+		elif _pc == 12575:
+			await iconversation.add_response("The great escape", "the great escape")
+			await iconversation.add_response("stepson initiation", "stepson initiation")
+			await iconversation.add_response("steal turret fighters", "steal turret fighters")
+			await iconversation.add_response("marauder cache", "marauder cache")
+			await iconversation.add_response("Joint forces", "Joint Forces??")
+			await iconversation.add_response("gunstar sweep", "gunstar sweep")
+			await iconversation.add_response("battle of hoffers wake", "battle of hoffers wake")
+			await iconversation.add_response("league initiation", "league initiation")
+			await iconversation.add_response("LOR platform", "LOR platform")
+			await iconversation.add_response("treasure hunt", "treasure hunt")
+			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
+			_pc = 13657
+			continue
+		elif _pc == 12883:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 1)
+			global.set_string("g_skip_to_mission", "The Great Escape?")
+			_pc = 13751
+			continue
+		elif _pc == 12959:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 2)
+			global.set_string("g_skip_to_mission", "Stepson Initiation?")
+			_pc = 13751
+			continue
+		elif _pc == 13036:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 4)
+			global.set_string("g_skip_to_mission", "Steal the Turret Fighters?")
+			_pc = 13751
+			continue
+		elif _pc == 13113:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 5)
+			global.set_string("g_skip_to_mission", "Marauder Cache?")
+			_pc = 13751
+			continue
+		elif _pc == 13190:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 3)
+			global.set_string("g_skip_to_mission", "Joint Forces??")
+			_pc = 13751
+			continue
+		elif _pc == 13267:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 6)
+			global.set_string("g_skip_to_mission", "Gunstar Supermarket Sweep ?")
+			_pc = 13751
+			continue
+		elif _pc == 13344:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 7)
+			global.set_string("g_skip_to_mission", "Battle Of Hoffers Gap?")
+			_pc = 13751
+			continue
+		elif _pc == 13421:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 8)
+			global.set_string("g_skip_to_mission", "League Initiation?")
+			_pc = 13751
+			continue
+		elif _pc == 13498:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 9)
+			global.set_string("g_skip_to_mission", "LOR Platform??")
+			_pc = 13751
+			continue
+		elif _pc == 13575:
+			global.set_int("g_skip_to_act", 1)
+			global.set_int("g_skip_to_mission_number", 10)
+			global.set_string("g_skip_to_mission", "Treasure Hunt?")
+			_pc = 13751
+			continue
+		elif _pc == 13652:
+			_pc = 13751
+			continue
+		elif _pc == 13657:
+			if v1 != 1:
+				_pc = 13670
+				continue
+			else:
+				_pc = 12883
+				continue
+		elif _pc == 13670:
+			if not _pog_is_null(2):
+				_pc = 13679
+				continue
+			else:
+				_pc = 12959
+				continue
+		elif _pc == 13679:
+			if not _pog_is_null(3):
+				_pc = 13688
+				continue
+			else:
+				_pc = 13036
+				continue
+		elif _pc == 13688:
+			if not _pog_is_null(4):
+				_pc = 13697
+				continue
+			else:
+				_pc = 13113
+				continue
+		elif _pc == 13697:
+			if not _pog_is_null(5):
+				_pc = 13706
+				continue
+			else:
+				_pc = 13190
+				continue
+		elif _pc == 13706:
+			if not _pog_is_null(6):
+				_pc = 13715
+				continue
+			else:
+				_pc = 13267
+				continue
+		elif _pc == 13715:
+			if not _pog_is_null(7):
+				_pc = 13724
+				continue
+			else:
+				_pc = 13344
+				continue
+		elif _pc == 13724:
+			if not _pog_is_null(8):
+				_pc = 13733
+				continue
+			else:
+				_pc = 13421
+				continue
+		elif _pc == 13733:
+			if not _pog_is_null(9):
+				_pc = 13742
+				continue
+			else:
+				_pc = 13498
+				continue
+		elif _pc == 13742:
+			if not _pog_is_null(10):
+				_pc = 13751
+				continue
+			else:
+				_pc = 13575
+				continue
+		elif _pc == 13751:
+			_pc = 16753
+			continue
+		elif _pc == 13756:
+			await iconversation.add_response("Picking up the pieces", "Picking up the pieces")
+			await iconversation.add_response("Oman Initiation", "Oman Initiation??")
+			await iconversation.add_response("Trouble at Ranch", "Trouble at the Ranch?")
+			await iconversation.add_response("High Noon", "High Noon")
+			await iconversation.add_response("Blockade Runner", "Blockade Runner")
+			await iconversation.add_response("Corporate Holdings", "Corporate Holdings")
+			await iconversation.add_response("Marauder Base", "Marauder Base")
+			await iconversation.add_response("Grassy Knoll", "Grassy Knoll")
+			await iconversation.add_response("Unification", "Unfication")
+			await iconversation.add_response("Kong Fracture", "Kong Fracture")
+			await iconversation.add_response("Momma Wolf", "Momma Wolf?")
+			await iconversation.add_response("Wolfs Lair", "Wolf's Lair??")
+			await iconversation.add_response("Marauder War", "Marauder War?")
+			await iconversation.add_response("Ambassador Encounter", "Ambassador Encounter")
+			await iconversation.add_response("Battle of Mwari", "Battle of Mwari")
+			await iconversation.add_response("Hide n Seek", "Hide n Seek")
+			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
+			_pc = 15478
+			continue
+		elif _pc == 14226:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 1)
+			global.set_string("g_skip_to_mission", "Picking up the pieces??")
+			_pc = 15626
+			continue
+		elif _pc == 14303:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 2)
+			global.set_string("g_skip_to_mission", "Oman Initiation??")
+			_pc = 15626
+			continue
+		elif _pc == 14381:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 3)
+			global.set_string("g_skip_to_mission", "Trouble at the Ranch??")
+			_pc = 15626
+			continue
+		elif _pc == 14459:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 4)
+			global.set_string("g_skip_to_mission", "High Noon??")
+			_pc = 15626
+			continue
+		elif _pc == 14537:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 5)
+			global.set_string("g_skip_to_mission", "Blockade Runner")
+			_pc = 15626
+			continue
+		elif _pc == 14615:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 8)
+			global.set_string("g_skip_to_mission", "Corporate Holdings??")
+			_pc = 15626
+			continue
+		elif _pc == 14693:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 9)
+			global.set_string("g_skip_to_mission", "Marauder Base?")
+			_pc = 15626
+			continue
+		elif _pc == 14771:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 10)
+			global.set_string("g_skip_to_mission", " Grassy Knoll??")
+			_pc = 15626
+			continue
+		elif _pc == 14849:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 11)
+			global.set_string("g_skip_to_mission", "Unification??")
+			_pc = 15626
+			continue
+		elif _pc == 14927:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 13)
+			global.set_string("g_skip_to_mission", "Kong Fracture?")
+			_pc = 15626
+			continue
+		elif _pc == 15005:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 18)
+			global.set_string("g_skip_to_mission", "Momma Wolf?")
+			_pc = 15626
+			continue
+		elif _pc == 15083:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 22)
+			global.set_string("g_skip_to_mission", "Wolf's Lair??")
+			_pc = 15626
+			continue
+		elif _pc == 15161:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 25)
+			global.set_string("g_skip_to_mission", "Marauder War?")
+			_pc = 15626
+			continue
+		elif _pc == 15239:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 7)
+			global.set_string("g_skip_to_mission", "Ambassador Encounter??")
+			_pc = 15626
+			continue
+		elif _pc == 15317:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 27)
+			global.set_string("g_skip_to_mission", "Battle of Mwari")
+			_pc = 15626
+			continue
+		elif _pc == 15395:
+			global.set_int("g_skip_to_act", 2)
+			global.set_int("g_skip_to_mission_number", 28)
+			global.set_string("g_skip_to_mission", "Hide and Seek?")
+			_pc = 15626
+			continue
+		elif _pc == 15473:
+			_pc = 15626
+			continue
+		elif _pc == 15478:
+			if v1 != 1:
+				_pc = 15491
+				continue
+			else:
+				_pc = 14226
+				continue
+		elif _pc == 15491:
+			if not _pog_is_null(2):
+				_pc = 15500
+				continue
+			else:
+				_pc = 14303
+				continue
+		elif _pc == 15500:
+			if not _pog_is_null(3):
+				_pc = 15509
+				continue
+			else:
+				_pc = 14381
+				continue
+		elif _pc == 15509:
+			if not _pog_is_null(4):
+				_pc = 15518
+				continue
+			else:
+				_pc = 14459
+				continue
+		elif _pc == 15518:
+			if not _pog_is_null(5):
+				_pc = 15527
+				continue
+			else:
+				_pc = 14537
+				continue
+		elif _pc == 15527:
+			if not _pog_is_null(6):
+				_pc = 15536
+				continue
+			else:
+				_pc = 14615
+				continue
+		elif _pc == 15536:
+			if not _pog_is_null(7):
+				_pc = 15545
+				continue
+			else:
+				_pc = 14693
+				continue
+		elif _pc == 15545:
+			if not _pog_is_null(8):
+				_pc = 15554
+				continue
+			else:
+				_pc = 14771
+				continue
+		elif _pc == 15554:
+			if not _pog_is_null(9):
+				_pc = 15563
+				continue
+			else:
+				_pc = 14849
+				continue
+		elif _pc == 15563:
+			if not _pog_is_null(10):
+				_pc = 15572
+				continue
+			else:
+				_pc = 14927
+				continue
+		elif _pc == 15572:
+			if not _pog_is_null(11):
+				_pc = 15581
+				continue
+			else:
+				_pc = 15005
+				continue
+		elif _pc == 15581:
+			if not _pog_is_null(12):
+				_pc = 15590
+				continue
+			else:
+				_pc = 15083
+				continue
+		elif _pc == 15590:
+			if not _pog_is_null(13):
+				_pc = 15599
+				continue
+			else:
+				_pc = 15161
+				continue
+		elif _pc == 15599:
+			if not _pog_is_null(14):
+				_pc = 15608
+				continue
+			else:
+				_pc = 15239
+				continue
+		elif _pc == 15608:
+			if not _pog_is_null(15):
+				_pc = 15617
+				continue
+			else:
+				_pc = 15317
+				continue
+		elif _pc == 15617:
+			if not _pog_is_null(16):
+				_pc = 15626
+				continue
+			else:
+				_pc = 15395
+				continue
+		elif _pc == 15626:
+			_pc = 16753
+			continue
+		elif _pc == 15631:
+			await iconversation.add_response("Corporates on the run", "Corporates on the run")
+			await iconversation.add_response("Clash of the titans", "Clash of the titans")
+			await iconversation.add_response("Scavenger", "Scavenger?")
+			await iconversation.add_response("Capture the Accelerator", "Capture the Accelerator")
+			await iconversation.add_response("Deep Cover", "Deep Cover??")
+			await iconversation.add_response("Smokescreen", "Smokescreen??")
+			await iconversation.add_response("Hoffers Resuce", " ( Hoffers Rescue )")
+			await iconversation.add_response("Antimatter Cordon", " ( Antimatter Codron )")
+			await iconversation.add_response("The End", "The Finale??")
+			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
+			_pc = 16618
+			continue
+		elif _pc == 15912:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 1)
+			global.set_string("g_skip_to_mission", "Corporates On The Run")
+			_pc = 16703
+			continue
+		elif _pc == 15989:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 2)
+			global.set_string("g_skip_to_mission", " ( Clash of the titans )")
+			_pc = 16703
+			continue
+		elif _pc == 16067:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 3)
+			global.set_string("g_skip_to_mission", "Scavenger?")
+			_pc = 16703
+			continue
+		elif _pc == 16145:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 4)
+			global.set_string("g_skip_to_mission", "Capture the Jump Accelerator?")
+			_pc = 16703
+			continue
+		elif _pc == 16223:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 5)
+			global.set_string("g_skip_to_mission", "Deep Cover??")
+			_pc = 16703
+			continue
+		elif _pc == 16301:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 6)
+			global.set_string("g_skip_to_mission", "Smokescreen??")
+			_pc = 16703
+			continue
+		elif _pc == 16379:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 8)
+			global.set_string("g_skip_to_mission", " ( Hoffers Rescue )")
+			_pc = 16703
+			continue
+		elif _pc == 16457:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 9)
+			global.set_string("g_skip_to_mission", " ( Antimatter Cordon )")
+			_pc = 16703
+			continue
+		elif _pc == 16535:
+			global.set_int("g_skip_to_act", 3)
+			global.set_int("g_skip_to_mission_number", 10)
+			global.set_string("g_skip_to_mission", "The Finale??")
+			_pc = 16703
+			continue
+		elif _pc == 16613:
+			_pc = 16703
+			continue
+		elif _pc == 16618:
+			if v1 != 1:
+				_pc = 16631
+				continue
+			else:
+				_pc = 15912
+				continue
+		elif _pc == 16631:
+			if not _pog_is_null(2):
+				_pc = 16640
+				continue
+			else:
+				_pc = 15989
+				continue
+		elif _pc == 16640:
+			if not _pog_is_null(3):
+				_pc = 16649
+				continue
+			else:
+				_pc = 16067
+				continue
+		elif _pc == 16649:
+			if not _pog_is_null(4):
+				_pc = 16658
+				continue
+			else:
+				_pc = 16145
+				continue
+		elif _pc == 16658:
+			if not _pog_is_null(5):
+				_pc = 16667
+				continue
+			else:
+				_pc = 16223
+				continue
+		elif _pc == 16667:
+			if not _pog_is_null(6):
+				_pc = 16676
+				continue
+			else:
+				_pc = 16301
+				continue
+		elif _pc == 16676:
+			if not _pog_is_null(7):
+				_pc = 16685
+				continue
+			else:
+				_pc = 16379
+				continue
+		elif _pc == 16685:
+			if not _pog_is_null(8):
+				_pc = 16694
+				continue
+			else:
+				_pc = 16457
+				continue
+		elif _pc == 16694:
+			if not _pog_is_null(9):
+				_pc = 16703
+				continue
+			else:
+				_pc = 16535
+				continue
+		elif _pc == 16703:
+			_pc = 16753
+			continue
+		elif _pc == 16708:
+			_pc = 16753
+			continue
+		elif _pc == 16713:
+			if v0 != 1:
+				_pc = 16726
+				continue
+			else:
+				_pc = 11845
+				continue
+		elif _pc == 16726:
+			if not _pog_is_null(2):
+				_pc = 16735
+				continue
+			else:
+				_pc = 12575
+				continue
+		elif _pc == 16735:
+			if not _pog_is_null(3):
+				_pc = 16744
+				continue
+			else:
+				_pc = 13756
+				continue
+		elif _pc == 16744:
+			if not _pog_is_null(4):
+				_pc = 16753
+				continue
+			else:
+				_pc = 15631
+				continue
+		elif _pc == 16753:
+			global.set_bool("g_skip_to_specific", 1)
+			global.set_bool("g_skip_missions_is_ok", 1)
+			await iconversation.end()
+			text.remove("csv:/text/utils")
+			_pc = 16832
+			continue
+		elif _pc == 16832:
+			await local_9845()
+			_pc = 16846
+			continue
+		elif _pc == 16846:
+			return 0
+		else:
+			return 0
 	return 0
 
 func task_skip_mission() -> Variant:
@@ -653,8 +2731,8 @@ func wait_on_skip_mission() -> Variant:
 	while _pog_is_running(v0):
 		await _pog_wait(1.0)
 	if global.exists(v1):
-		if 1 == global.pog_bool(v1):
-			push_error("PORT: unstructured jump to L17351")
+		if 1 != global.pog_bool(v1):
+			return 0
 	return
 	return 0
 
@@ -810,7 +2888,7 @@ func local_17833() -> Variant:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v17)
-	if 17 == v0:
+	if 17 != v0:
 		return
 	await iconversation.say(0, "Particle Employee", "As you wish")
 	await iconversation.end()
@@ -865,7 +2943,7 @@ func capsule_jump_player(v0) -> Variant:
 	isim.capsule_jump(isim.cast(v1), v0)
 	while true:
 		await _pog_wait(0.5)
-		if not (not (_pog_eq(v2, isim.active_world()))):
+		if not (not _pog_eq(v2, isim.active_world())):
 			break
 	return 0
 	v3 = global.pog_float("g_player_sensor_range")
@@ -1023,7 +3101,6 @@ func list_from_compound_group(v0) -> Variant:
 	while v5 < v6:
 		list.append(v1, await list_from_compound_group(group.nth_group(v0, v6)))
 		v6 = 1 + v6
-	push_error("PORT: unstructured jump to L23353")
 	return _pog_clone(v1)
 	return 0
 
@@ -1041,14 +3118,14 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 		while v5 < v7:
 			v4 = isim.cast(group.nth_sim(v1, v7))
 			if v2 < sim.distance_between(v0, v4):
-				return
+				return v4
 			v7 = 1 + v7
 		if 0 > v6 and v3:
 			v7 = 0
 			while v6 < v7:
 				v4 = await near_to_group(v0, group.nth_group(v1, v7), v2, v3)
 				if not _pog_is_null(v4):
-					return
+					return v4
 				v7 = 1 + v7
 	return
 	return 0
@@ -1067,14 +3144,14 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 		while v5 < v7:
 			v4 = isim.cast(group.nth_sim(v1, v7))
 			if v2 > sim.distance_between(v0, v4):
-				return
+				return v4
 			v7 = 1 + v7
 		if 0 > v6 and v3:
 			v7 = 0
 			while v6 < v7:
 				v4 = await far_from_group(v0, group.nth_group(v1, v7), v2, v3)
 				if not _pog_is_null(v4):
-					return
+					return v4
 				v7 = 1 + v7
 	return
 	return 0
@@ -1084,7 +3161,7 @@ func create_waypoint_between_exact(v0, v1, v2) -> Variant:
 	v3 = sim.create("ini:/sims/nav/waypoint", "default")
 	sim.set_cullable(v3, 0)
 	await sim_place_between_exact(v3, v0, v1, v2)
-	return
+	return v3
 	return 0
 
 func create_player(v0, v1) -> Variant:
@@ -1103,7 +3180,7 @@ func create_player(v0, v1) -> Variant:
 	iship.install_player_pilot(v2)
 	isim.set_faction(v2, ifaction.find("Player"))
 	object.set_string_property(v2, "death_script", "iDeathScript.PlayerDeathScript")
-	if not _pog_is_null(v1):
+	if _pog_is_null(v1):
 		return 0
 	if _pog_eq(imapentity.find_by_name("Hoffer's Gap"), v1):
 		sim.place_relative_to(v2, v1, 7000.0, 10000.0, -19000.0)
@@ -1120,11 +3197,11 @@ func start_in_gagarin_cluster() -> Variant:
 	return 0
 
 func local_24642(v0) -> Variant:
-	return
+	return 60 / v0
 	return 0
 
 func local_24657(v0, v1) -> Variant:
-	return
+	return v0 * 60 - v1
 	return 0
 
 func convert_seconds_to_time(v0) -> Variant:
@@ -1139,7 +3216,6 @@ func convert_seconds_to_time(v0) -> Variant:
 		v3 = string.join(v3, string.join("0", string.from_int(v2)))
 	else:
 		v3 = string.join(v3, string.from_int(v2))
-	push_error("PORT: unstructured jump to L24931")
 	return _pog_clone(v3)
 	return 0
 
@@ -1182,26 +3258,27 @@ func group_set_faction(v0, v1) -> Variant:
 
 func local_25418(v0) -> Variant:
 	if 0.5 < v0:
-		return
+		return v0 * v0 * 2.0
 	else:
-		return
-	return
+		return v0 - 1.0 * v0 - 1.0 * 2.0 - 1.0
+	return 1.0
 	return 0
 
 func local_25513(v0, v1, v2) -> Variant:
-	return
+	return v2 - 1.0 * v1 + v2 * v0
 	return 0
 
 func random_centre_weighted(v0, v1) -> Variant:
 	var v2: Variant = 0
 	v2 = math.random(0.0, 1.0)
-	return
+	return await local_25513(v0, v1, await local_25418(v2))
 	return 0
 
 func send_story_element(v0, v1, v2) -> Variant:
 	if 1 == global.pog_bool("g_skip_to_specific") and global.exists("g_skip_to_specific"):
-		if not _pog_eq(global.pog_int("g_skip_to_act"), v1) or not _pog_eq(global.pog_int("g_skip_to_mission_number"), v2):
-			push_error("PORT: unstructured jump to L25762")
+		if not (not _pog_eq(global.pog_int("g_skip_to_act"), v1) or not _pog_eq(global.pog_int("g_skip_to_mission_number"), v2)):
+			global.set_int(v0, 1)
+			return 1
 		global.set_int(v0, 2)
 	else:
 		global.set_int(v0, 1)
@@ -1215,64 +3292,313 @@ func critical_ship_monitor() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = math.random_int(0, 3)
-	v4 = math.random_int(0, 3)
-	v5 = 0
-	if 0.0 < v1:
-		pass
-	if _pog_is_null(v0) or isim.is_dying(v0) or sim.is_dead(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 25790
+	while true:
+		if _pc == 25790:
+			v3 = math.random_int(0, 3)
+			v4 = math.random_int(0, 3)
+			v5 = 0
+			if 0.0 < v1:
+				_pc = 25862
+				continue
+			else:
+				_pc = 25874
+				continue
+		elif _pc == 25862:
+			_pc = 25874
+			continue
+		elif _pc == 25874:
+			if _pog_is_null(v0) or isim.is_dying(v0) or sim.is_dead(v0):
+				_pc = 25925
+				continue
+			else:
+				_pc = 26027
+				continue
+		elif _pc == 25925:
+			_pc = 25951
+			continue
+		elif _pc == 25930:
 			debug.print_string("iUtilities.CriticalShipMonitor: ")
-		if PogRuntime.TRACE:
+			_pc = 25951
+			continue
+		elif _pc == 25951:
+			_pc = 25996
+			continue
+		elif _pc == 25956:
 			debug.print_string(object.string_property(v0, "name"))
-		if PogRuntime.TRACE:
+			_pc = 25996
+			continue
+		elif _pc == 25996:
+			_pc = 26022
+			continue
+		elif _pc == 26001:
 			debug.print_string(" is invalid. Not monitoring\n")
-	else:
-		if not (isim.is_mission_critical(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iUtilities.CriticalShipMonitor: ")
-			if PogRuntime.TRACE:
-				debug.print_string(object.string_property(v0, "name"))
-			if PogRuntime.TRACE:
-				debug.print_string(" is not a critical ship. Not monitoring\n")
+			_pc = 26022
+			continue
+		elif _pc == 26022:
+			_pc = 27013
+			continue
+		elif _pc == 26027:
+			if not (isim.is_mission_critical(v0)):
+				_pc = 26051
+				continue
+			else:
+				_pc = 26153
+				continue
+		elif _pc == 26051:
+			_pc = 26077
+			continue
+		elif _pc == 26056:
+			debug.print_string("iUtilities.CriticalShipMonitor: ")
+			_pc = 26077
+			continue
+		elif _pc == 26077:
+			_pc = 26122
+			continue
+		elif _pc == 26082:
+			debug.print_string(object.string_property(v0, "name"))
+			_pc = 26122
+			continue
+		elif _pc == 26122:
+			_pc = 26148
+			continue
+		elif _pc == 26127:
+			debug.print_string(" is not a critical ship. Not monitoring\n")
+			_pc = 26148
+			continue
+		elif _pc == 26148:
+			_pc = 27013
+			continue
+		elif _pc == 26153:
+			_pc = 26179
+			continue
+		elif _pc == 26158:
+			debug.print_string("iUtilities.CriticalShipMonitor: Monitoring critical ship - ")
+			_pc = 26179
+			continue
+		elif _pc == 26179:
+			_pc = 26224
+			continue
+		elif _pc == 26184:
+			debug.print_string(object.string_property(v0, "name"))
+			_pc = 26224
+			continue
+		elif _pc == 26224:
+			_pc = 26250
+			continue
+		elif _pc == 26229:
+			debug.print_string("\n")
+			_pc = 26250
+			continue
+		elif _pc == 26250:
+			_pc = 26255
+			continue
+		elif _pc == 26255:
+			await _pog_frame()
+			if _pog_every(26256, 1.0):
+				_pc = 26269
+				continue
+			else:
+				_pc = 27007
+				continue
+		elif _pc == 26269:
+			if isim.is_dying(v0) or sim.is_dead(v0):
+				_pc = 26311
+				continue
+			else:
+				_pc = 26316
+				continue
+		elif _pc == 26311:
+			_pc = 27013
+			continue
+		elif _pc == 26316:
+			if not (isim.is_mission_critical(v0)):
+				_pc = 26340
+				continue
+			else:
+				_pc = 26437
+				continue
+		elif _pc == 26340:
+			_pc = 26366
+			continue
+		elif _pc == 26345:
+			debug.print_string("iUtilities.CriticalShipMonitor: ")
+			_pc = 26366
+			continue
+		elif _pc == 26366:
+			_pc = 26411
+			continue
+		elif _pc == 26371:
+			debug.print_string(object.string_property(v0, "name"))
+			_pc = 26411
+			continue
+		elif _pc == 26411:
+			_pc = 26437
+			continue
+		elif _pc == 26416:
+			debug.print_string(" is no longer a critical ship. Monitoring terminated\n")
+			_pc = 26437
+			continue
+		elif _pc == 26437:
+			if iship.attacked(v0):
+				_pc = 26460
+				continue
+			else:
+				_pc = 27007
+				continue
+		elif _pc == 26460:
+			if not (icomms.is_busy()):
+				_pc = 26479
+				continue
+			else:
+				_pc = 27007
+				continue
+		elif _pc == 26479:
+			if _pog_eq(v2, iship.last_attacker(v0)):
+				_pc = 26510
+				continue
+			else:
+				_pc = 26761
+				continue
+		elif _pc == 26510:
+			v3 = 1 + v3
+			if 3 > v3:
+				_pc = 26536
+				continue
+			else:
+				_pc = 26543
+				continue
+		elif _pc == 26536:
+			v3 = 0
+			_pc = 26543
+			continue
+		elif _pc == 26543:
+			_pc = 26685
+			continue
+		elif _pc == 26548:
+			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_1")
+			_pc = 26724
+			continue
+		elif _pc == 26581:
+			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_2")
+			_pc = 26724
+			continue
+		elif _pc == 26614:
+			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_3")
+			_pc = 26724
+			continue
+		elif _pc == 26647:
+			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_4")
+			_pc = 26724
+			continue
+		elif _pc == 26680:
+			_pc = 26724
+			continue
+		elif _pc == 26685:
+			if not _pog_is_null(v3):
+				_pc = 26698
+				continue
+			else:
+				_pc = 26548
+				continue
+		elif _pc == 26698:
+			if not _pog_is_null(1):
+				_pc = 26706
+				continue
+			else:
+				_pc = 26581
+				continue
+		elif _pc == 26706:
+			if not _pog_is_null(2):
+				_pc = 26715
+				continue
+			else:
+				_pc = 26614
+				continue
+		elif _pc == 26715:
+			if not _pog_is_null(3):
+				_pc = 26724
+				continue
+			else:
+				_pc = 26647
+				continue
+		elif _pc == 26724:
+			await _pog_wait(v1)
+			_pc = 27007
+			continue
+		elif _pc == 26761:
+			v4 = 1 + v4
+			if 3 > v4:
+				_pc = 26787
+				continue
+			else:
+				_pc = 26794
+				continue
+		elif _pc == 26787:
+			v4 = 0
+			_pc = 26794
+			continue
+		elif _pc == 26794:
+			_pc = 26968
+			continue
+		elif _pc == 26799:
+			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_1")
+			_pc = 27007
+			continue
+		elif _pc == 26832:
+			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_2")
+			_pc = 27007
+			continue
+		elif _pc == 26865:
+			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_3")
+			_pc = 27007
+			continue
+		elif _pc == 26898:
+			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_4")
+			_pc = 27007
+			continue
+		elif _pc == 26931:
+			await _pog_wait(v1)
+			_pc = 27007
+			continue
+		elif _pc == 26968:
+			if not _pog_is_null(v4):
+				_pc = 26981
+				continue
+			else:
+				_pc = 26799
+				continue
+		elif _pc == 26981:
+			if not _pog_is_null(1):
+				_pc = 26989
+				continue
+			else:
+				_pc = 26832
+				continue
+		elif _pc == 26989:
+			if not _pog_is_null(2):
+				_pc = 26998
+				continue
+			else:
+				_pc = 26865
+				continue
+		elif _pc == 26998:
+			if not _pog_is_null(3):
+				_pc = 27007
+				continue
+			else:
+				_pc = 26898
+				continue
+		elif _pc == 27007:
+			_pc = 26255
+			continue
+		elif _pc == 27012:
+			_pc = 27013
+			continue
+		elif _pc == 27013:
+			return
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iUtilities.CriticalShipMonitor: Monitoring critical ship - ")
-			if PogRuntime.TRACE:
-				debug.print_string(object.string_property(v0, "name"))
-			if PogRuntime.TRACE:
-				debug.print_string("\n")
-			while true:
-				await _pog_wait(1)
-				if isim.is_dying(v0) or sim.is_dead(v0):
-					return
-				if not (isim.is_mission_critical(v0)):
-					if PogRuntime.TRACE:
-						debug.print_string("iUtilities.CriticalShipMonitor: ")
-					if PogRuntime.TRACE:
-						debug.print_string(object.string_property(v0, "name"))
-					if PogRuntime.TRACE:
-						debug.print_string(" is no longer a critical ship. Monitoring terminated\n")
-				if iship.attacked(v0):
-					continue
-				if not (icomms.is_busy()):
-					continue
-				if _pog_eq(v2, iship.last_attacker(v0)):
-					v3 = 1 + v3
-					if 3 > v3:
-						v3 = 0
-					while _pog_is_null(v3):
-						icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_1")
-						break
-					await _pog_wait(v1)
-				else:
-					v4 = 1 + v4
-					if 3 > v4:
-						v4 = 0
-					while _pog_is_null(v4):
-						icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_1")
-						break
-	return
+			return 0
 	return 0
 
 func remove_mission_restart() -> Variant:

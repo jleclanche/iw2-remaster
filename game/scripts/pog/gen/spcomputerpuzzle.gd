@@ -373,9 +373,134 @@ func on_back() -> Variant:
 	return 0
 
 func local_6091(v0) -> Variant:
-	while _pog_is_null(v0):
-		push_error("PORT: unstructured jump to L8355")
-	push_error("PORT: unstructured jump to L8355")
+	if _pog_is_null(v0):
+		return _pog_clone(text.field("Griffon", 0))
+	if v0 == 1:
+		return _pog_clone(text.field("Samarakand", 0))
+	if v0 == 2:
+		return _pog_clone(text.field("Greydog City", 0))
+	if v0 == 3:
+		return _pog_clone(text.field("Petra", 0))
+	if v0 == 4:
+		return _pog_clone(text.field("Timbuktu", 0))
+	if v0 == 5:
+		return _pog_clone(text.field("Shangri-La", 0))
+	if v0 == 6:
+		return _pog_clone(text.field("The Effrit", 0))
+	if v0 == 7:
+		return _pog_clone(text.field("Touchdown", 0))
+	if v0 == 8:
+		return _pog_clone(text.field("Greenback", 0))
+	if v0 == 9:
+		return _pog_clone(text.field("Hope", 0))
+	if v0 == 10:
+		return _pog_clone(text.field("Twinkle", 0))
+	if v0 == 11:
+		return _pog_clone(text.field("Pit", 0))
+	if v0 == 12:
+		return _pog_clone(text.field("Zira", 0))
+	if v0 == 13:
+		return _pog_clone(text.field("Henge", 0))
+	if v0 == 14:
+		return _pog_clone(text.field("Blackfoot", 0))
+	if v0 == 15:
+		return _pog_clone(text.field("Skavey", 0))
+	if v0 == 16:
+		return _pog_clone(text.field("Tunnel", 0))
+	if v0 == 17:
+		return _pog_clone(text.field("Galan", 0))
+	if v0 == 18:
+		return _pog_clone(text.field("Freetown", 0))
+	if v0 == 19:
+		return _pog_clone(text.field("Patchwork", 0))
+	if v0 == 20:
+		return _pog_clone(text.field("Kirk", 0))
+	if v0 == 21:
+		return _pog_clone(text.field("Blight", 0))
+	if v0 == 22:
+		return _pog_clone(text.field("Gabriel", 0))
+	if v0 == 23:
+		return _pog_clone(text.field("Topov", 0))
+	if v0 == 24:
+		return _pog_clone(text.field("Andre", 0))
+	if v0 == 25:
+		return _pog_clone(text.field("Eustace", 0))
+	if v0 == 26:
+		return _pog_clone(text.field("Grimwald", 0))
+	if v0 == 27:
+		return _pog_clone(text.field("Camel Back", 0))
+	if v0 == 28:
+		return _pog_clone(text.field("Cavanerri", 0))
+	if v0 == 29:
+		return _pog_clone(text.field("Malvem", 0))
+	if v0 == 30:
+		return _pog_clone(text.field("Tremour", 0))
+	if v0 == 31:
+		return _pog_clone(text.field("Gavin's Rock", 0))
+	if v0 == 32:
+		return _pog_clone(text.field("Le Verrier", 0))
+	if v0 == 33:
+		return _pog_clone(text.field("Ariane", 0))
+	if v0 == 34:
+		return _pog_clone(text.field("Enclave", 0))
+	if v0 == 35:
+		return _pog_clone(text.field("Zion", 0))
+	if v0 == 36:
+		return _pog_clone(text.field("Scallywag", 0))
+	if v0 == 37:
+		return _pog_clone(text.field("Rebecca", 0))
+	if v0 == 38:
+		return _pog_clone(text.field("Buddokan", 0))
+	if v0 == 39:
+		return _pog_clone(text.field("Moonmist", 0))
+	if v0 == 40:
+		return _pog_clone(text.field("Covenant", 0))
+	if v0 == 41:
+		return _pog_clone(text.field("Stanu", 0))
+	if v0 == 42:
+		return _pog_clone(text.field("Aldo", 0))
+	if v0 == 43:
+		return _pog_clone(text.field("Stockade", 0))
+	if v0 == 44:
+		return _pog_clone(text.field("Ursus", 0))
+	if v0 == 45:
+		return _pog_clone(text.field("Milo", 0))
+	if v0 == 46:
+		return _pog_clone(text.field("Torridan", 0))
+	if v0 == 47:
+		return _pog_clone(text.field("Faraday", 0))
+	if v0 == 48:
+		return _pog_clone(text.field("Gretchin", 0))
+	if v0 == 49:
+		return _pog_clone(text.field("Pebble", 0))
+	if v0 == 50:
+		return _pog_clone(text.field("Les Campanas", 0))
+	if v0 == 51:
+		return _pog_clone(text.field("Alexander", 0))
+	if v0 == 52:
+		return _pog_clone(text.field("Cleitus", 0))
+	if v0 == 53:
+		return _pog_clone(text.field("Darius", 0))
+	if v0 == 54:
+		return _pog_clone(text.field("Bessus", 0))
+	if v0 == 55:
+		return _pog_clone(text.field("Memnon", 0))
+	if v0 == 56:
+		return _pog_clone(text.field("Blackeye", 0))
+	if v0 == 57:
+		return _pog_clone(text.field("Danzig", 0))
+	if v0 == 58:
+		return _pog_clone(text.field("Krakow", 0))
+	if v0 == 59:
+		return _pog_clone(text.field("Hoffer's Wake Beta", 0))
+	if v0 == 60:
+		return _pog_clone(text.field("Corinthia", 0))
+	if v0 == 61:
+		return _pog_clone(text.field("YellowRock", 0))
+	if v0 == 62:
+		return _pog_clone(text.field("Gimble", 0))
+	if v0 == 63:
+		return _pog_clone(text.field("Hoffer's Heel", 0))
 	return _pog_clone("dummy")
 	return 0
 
@@ -455,7 +580,7 @@ func local_8358() -> Variant:
 
 func calculate() -> Variant:
 	var v0: Variant = 0
-	if not (global.exists("g_calculate_task")):
+	if global.exists("g_calculate_task"):
 		return 0
 	v0 = _pog_spawn(local_8358.bind())
 	_pog_detach(v0)

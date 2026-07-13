@@ -31,7 +31,7 @@ func local_0(v0) -> Variant:
 	return 0
 
 func cleanup_game_globals() -> Variant:
-	if global.exists("g_current_act"):
+	if not (global.exists("g_current_act")):
 		return 0
 	await local_0("Act1")
 	global.destroy("g_current_act")

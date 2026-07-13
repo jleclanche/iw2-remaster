@@ -23,7 +23,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	return
+	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
 func warn_vessel() -> Variant:
@@ -43,7 +43,7 @@ func warn_vessel() -> Variant:
 	v3 = inifile.pog_int(v4, "stock_warn", "num_entries", 1)
 	v2 = math.random_int(1, v3)
 	v6 = iship.find_player_ship()
-	if 50000.0 < sim.distance_between(v6, v0) and _pog_eq(v6, v1):
+	if not (50000.0 < sim.distance_between(v6, v0) and _pog_eq(v6, v1)):
 		return
 	icomms.shout(v0, "", string.join(string.join("stock_warn_", string.from_int(v2)), v5))
 	return

@@ -19,8 +19,8 @@ func _link() -> void:
 func local_0() -> Variant:
 	if PogRuntime.TRACE:
 		if global.exists("g_debug_all_generated_missions_ok"):
-			return
-	return
+			return 1
+	return global.pog_bool("g_accept_generated_mission")
 	return 0
 
 func local_62() -> Variant:
@@ -30,14 +30,30 @@ func local_62() -> Variant:
 
 func instantiate_mission(v0) -> Variant:
 	var v1: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("Attempting to instantiate GM Mission ")
-		debug.print_int(v0)
-		debug.print_string(" \n")
-	global.create_bool("g_accept_generated_mission", 2, 1)
-	while v0 == 2:
-		await imissiongenerator.test_piracy_rating(50.0)
-		if await local_0():
+	var _pc: int = 107
+	while true:
+		if _pc == 107:
+			_pc = 180
+			continue
+		elif _pc == 117:
+			debug.print_string("Attempting to instantiate GM Mission ")
+			debug.print_int(v0)
+			debug.print_string(" \n")
+			_pc = 180
+			continue
+		elif _pc == 180:
+			global.create_bool("g_accept_generated_mission", 2, 1)
+			_pc = 23844
+			continue
+		elif _pc == 209:
+			await imissiongenerator.test_piracy_rating(50.0)
+			if await local_0():
+				_pc = 246
+				continue
+			else:
+				_pc = 871
+				continue
+		elif _pc == 246:
 			v1 = await imissiongenerator.new_mission("01_NeedOre")
 			await imissiongenerator.objective_stub(v1, "a4_m01")
 			await imissiongenerator.cargo_to_get(v1, 403, 4)
@@ -58,11 +74,1805 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.10000000149011612)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(2)
+			_pc = 24169
+			continue
+		elif _pc == 871:
+			if not (await local_0()):
+				_pc = 890
+				continue
+			else:
+				_pc = 896
+				continue
+		elif _pc == 890:
+			_pc = 24169
+			continue
+		elif _pc == 896:
+			_pc = 24163
+			continue
+		elif _pc == 901:
+			await imissiongenerator.test_piracy_rating(100.0)
+			if await local_0():
+				_pc = 938
+				continue
+			else:
+				_pc = 1465
+				continue
+		elif _pc == 938:
+			v1 = await imissiongenerator.new_mission("Counterfeit Goods")
+			await imissiongenerator.objective_stub(v1, "a4_m02")
+			await imissiongenerator.cargo_to_get(v1, 152, 1)
+			await imissiongenerator.cargo_reward(v1, 253, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Underworld", "Thug", "generated_missions_02_name_ship_01", "generated_missions_02_name_ship_02", "GenericScum", "Underworld")
+			await imissiongenerator.patron_location(v1, 112, "map:/geog/badlands/hoffers_wake", "Hoffer's Heel Ship Park")
+			await imissiongenerator.owner_details(v1, 0, "Thug", "generated_missions_02_name_ship_03", "generated_missions_02_name_ship_04", "GangsterAggressive", "Underworld")
+			await imissiongenerator.owner_location(v1, 63, "map:/geog/badlands/hoffers_wake", "Buddokan")
+			await imissiongenerator.owner_escort_details(v1, 6, "Thug", "generated_missions_02_name_ship_06 ", "GangsterAggressive", 2)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_02_CounterfeitGoods_01", "generated_missions_02_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_02_dialogue_dave_schwa_saved_my_neck_01", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Underworld"), 0.15000000596046448)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(4)
+			_pc = 24169
+			continue
+		elif _pc == 1465:
+			if not (await local_0()):
+				_pc = 1484
+				continue
+			else:
+				_pc = 1490
+				continue
+		elif _pc == 1484:
+			_pc = 24169
+			continue
+		elif _pc == 1490:
+			_pc = 24163
+			continue
+		elif _pc == 1495:
+			await imissiongenerator.test_piracy_rating(80.0)
+			await imissiongenerator.test_faction_rating("Stepson", 0.5)
+			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
+			if await local_0():
+				_pc = 1580
+				continue
+			else:
+				_pc = 2273
+				continue
+		elif _pc == 1580:
+			v1 = await imissiongenerator.new_mission("The Gardener")
+			await imissiongenerator.objective_stub(v1, "a4_m03")
+			await imissiongenerator.cargo_to_get(v1, 7, 1)
+			await imissiongenerator.cargo_reward(v1, 16, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 4)
+			await imissiongenerator.patron_details(v1, "Freight", "Light", "generated_missions_03_name_ship_01", "generated_missions_03_name_ship_02", "Generic", "Stepson")
+			await imissiongenerator.patron_location(v1, 48, "map:/geog/badlands/hoffers_wake", "Greenback Agri-Orbital 2")
+			await imissiongenerator.patron_escort_details(v1, "Security", "Light", "generated_missions_03_name_ship_03", "GenericAggressive", 1)
+			await imissiongenerator.owner_details(v1, 0, "heavy", "generated_missions_03_name_ship_04", "generated_missions_03_name_ship_05", "TradeCoward", "Independent")
+			await imissiongenerator.owner_escort_details(v1, 7, "Light", "generated_missions_06_name_ship_06", "PoliceHeroic", 1)
+			await imissiongenerator.owner_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Hoffer's Gap Entertainment Complex")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_03_Gardener_01", "generated_missions_03_email_sender_01", 4)
+			await imissiongenerator.set_repeat_msg(v1, "generated_missions_03_dialogue_gardener_thats_ideal_01", "", 5)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_03_dialogue_gardener_thanks_02", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_gardener_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.10000000149011612)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(3)
+			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			_pc = 24169
+			continue
+		elif _pc == 2273:
+			if not (await local_0()):
+				_pc = 2292
+				continue
+			else:
+				_pc = 2298
+				continue
+		elif _pc == 2292:
+			_pc = 24169
+			continue
+		elif _pc == 2298:
+			_pc = 24163
+			continue
+		elif _pc == 2303:
+			await local_62()
+			_pc = 24169
+			continue
+		elif _pc == 2323:
+			await imissiongenerator.test_piracy_rating(1000.0)
+			await imissiongenerator.test_faction_rating("Oman", 0.5)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 2408
+				continue
+			else:
+				_pc = 2997
+				continue
+		elif _pc == 2408:
+			v1 = await imissiongenerator.new_mission("Exotic Metals ")
+			await imissiongenerator.objective_stub(v1, "a4_m04")
+			await imissiongenerator.cargo_to_get(v1, 443, 2)
+			await imissiongenerator.cargo_reward(v1, 532, 2)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Heavy", "generated_missions_04_name_ship_01", "generated_missions_04_name_ship_02", "GenericUnderworld", "The Oman")
+			await imissiongenerator.patron_location(v1, 15, "map:/geog/badlands/kompira", "The Oman Processing Plant")
+			await imissiongenerator.owner_details(v1, 0, "heavy", "generated_missions_04_name_ship_03", "generated_missions_04_name_ship_04", "GenericFreight", "NOMEXCorporation")
+			await imissiongenerator.owner_location(v1, 17, "map:/geog/badlands/kompira", "Dagon NOMEX Exotic Metals Processing Plant")
+			await imissiongenerator.owner_escort_details(v1, 6, "heavy", "generated_missions_04_name_ship_05", "GenericAggressive", 1)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_04_OmanExoticMetals_01", "generated_missions_04_dialogue_Oman_having_trouble_01", 4)
+			await imissiongenerator.set_briefing(v1, "generated_missions_04_dialogue_Oman_having_trouble_01", "", 5)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_04_OmanExoticMetals_02", "generated_missions_04_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_OmanExoticMetals_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.30000001192092896)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(15)
+			_pc = 24169
+			continue
+		elif _pc == 2997:
+			if not (await local_0()):
+				_pc = 3016
+				continue
+			else:
+				_pc = 3022
+				continue
+		elif _pc == 3016:
+			_pc = 24169
+			continue
+		elif _pc == 3022:
+			_pc = 24163
+			continue
+		elif _pc == 3027:
+			await imissiongenerator.test_piracy_rating(2000.0)
+			await imissiongenerator.test_faction_rating("Oman", 0.75)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 3112
+				continue
+			else:
+				_pc = 3713
+				continue
+		elif _pc == 3112:
+			v1 = await imissiongenerator.new_mission("Oman_PowerPlant")
+			await imissiongenerator.objective_stub(v1, "a4_m05")
+			await imissiongenerator.cargo_to_get(v1, 345, 1)
+			await imissiongenerator.cargo_to_get(v1, 346, 1)
+			await imissiongenerator.cargo_reward(v1, 384, 1)
+			await imissiongenerator.cargo_reward(v1, 462, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_05_name_ship_01", "generated_missions_05_name_ship_02", "PoliceHeroic", "The Oman")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/kompira", "Jahim Exile Hermitage")
+			await imissiongenerator.owner_details(v1, 2, "heavy", "generated_missions_05_name_ship_03", "generated_missions_05_name_ship_04", "TradeCoward", "MAAS Corporation")
+			await imissiongenerator.owner_escort_details(v1, 5, "Light", "generated_missions_06_name_ship_06", "PoliceHeroic", 2)
+			await imissiongenerator.owner_location(v1, 2, "map:/geog/badlands/santa_romera", "Hope Independent Fusionable Gases Mine")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_05_OmanPowerPlant_01", "generated_missions_05_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_05_dialogue_oman_reactor_parts_01", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_OmanPowerPlant_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(16)
+			_pc = 24169
+			continue
+		elif _pc == 3713:
+			if not (await local_0()):
+				_pc = 3732
+				continue
+			else:
+				_pc = 3738
+				continue
+		elif _pc == 3732:
+			_pc = 24169
+			continue
+		elif _pc == 3738:
+			_pc = 24163
+			continue
+		elif _pc == 3743:
+			await imissiongenerator.test_piracy_rating(1200.0)
+			await imissiongenerator.test_faction_rating("Stepson", 0.5)
+			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
+			if await local_0():
+				_pc = 3828
+				continue
+			else:
+				_pc = 4596
+				continue
+		elif _pc == 3828:
+			v1 = await imissiongenerator.new_mission("Acid Burn")
+			await imissiongenerator.objective_stub(v1, "a4_m06")
+			await imissiongenerator.cargo_to_get(v1, 76, 1)
+			await imissiongenerator.cargo_reward(v1, 439, 2)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Light", "generated_missions_06_name_ship_01", "generated_missions_06_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 51, "map:/geog/badlands/hoffers_wake", "Freelancers co-op aid centre")
+			await imissiongenerator.patron_escort_details(v1, "Freight", "Light", "gm_06_shipname03", "Generic", 1)
+			await imissiongenerator.owner_details(v1, 14, "Medium", "generated_missions_06_name_ship_03", "generated_missions_06_name_ship_04", "TradeCoward", "Police")
+			await imissiongenerator.owner_location(v1, 2, "map:/geog/badlands/hoffers_wake", "Weimar")
+			await imissiongenerator.owner_escort_details(v1, 6, "Light", "generated_missions_06_name_ship_06", "PoliceHeroic", 3)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_06_AcidBurn_01", "generated_missions_06_email_subject_01", 4)
+			await imissiongenerator.set_prompt(v1, "html:/html/email/generatedmissions/GM_06_AcidBurn_02", "generated_missions_06_email_subject_02", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_06_dialogue_catherine_stepson_saved_lives_01", "generated_missions_06_email_subject_03", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_AcidBurn", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.3499999940395355)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Independent"), 0.10000000149011612)
+			await imissiongenerator.success_bool(v1, "gl_ThePayoff_available", 1)
+			await imissiongenerator.success_add_mission(v1, 14)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(13)
+			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			_pc = 24169
+			continue
+		elif _pc == 4596:
+			if not (await local_0()):
+				_pc = 4615
+				continue
+			else:
+				_pc = 4621
+				continue
+		elif _pc == 4615:
+			_pc = 24169
+			continue
+		elif _pc == 4621:
+			_pc = 24163
+			continue
+		elif _pc == 4626:
+			await imissiongenerator.test_global_bool("gl_ThePayoff_available", 1)
+			if await local_0():
+				_pc = 4666
+				continue
+			else:
+				_pc = 5333
+				continue
+		elif _pc == 4666:
+			v1 = await imissiongenerator.new_mission("The Payoff")
+			await imissiongenerator.objective_stub(v1, "a4_m07")
+			await imissiongenerator.cargo_to_get(v1, 333, 1)
+			await imissiongenerator.cargo_reward(v1, 507, 2)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Light", "generated_missions_07_name_ship_01", "generated_missions_07_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Greenback Agri-Orbital 3")
+			await imissiongenerator.owner_details(v1, 0, "heavy", "generated_missions_07_name_ship_03", "generated_missions_07_name_ship_04", "TradeCoward", "Independent")
+			await imissiongenerator.owner_location(v1, 21, "map:/geog/badlands/hoffers_wake", "Hoffer's Heel Ship Park")
+			await imissiongenerator.owner_escort_details(v1, 5, "Light", "generated_missions_07_name_ship_05", "PoliceHeroic", 3)
+			await imissiongenerator.owner_set_escort_faction(v1, "Police")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_07_ThePayOff_01", "generated_missions_07_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_07_dialogue_catherine_stepson_small_fortune_01", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_payoff_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Police"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(14)
+			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			_pc = 24169
+			continue
+		elif _pc == 5333:
+			if not (await local_0()):
+				_pc = 5352
+				continue
+			else:
+				_pc = 5358
+				continue
+		elif _pc == 5352:
+			_pc = 24169
+			continue
+		elif _pc == 5358:
+			_pc = 24163
+			continue
+		elif _pc == 5363:
+			await imissiongenerator.test_piracy_rating(500.0)
+			if await local_0():
+				_pc = 5400
+				continue
+			else:
+				_pc = 5910
+				continue
+		elif _pc == 5400:
+			v1 = await imissiongenerator.new_mission("Simple Piracy")
+			await imissiongenerator.objective_stub(v1, "a4_m08")
+			await imissiongenerator.cargo_to_get(v1, 457, 6)
+			await imissiongenerator.cargo_reward(v1, 488, 6)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.owner_details(v1, 1, "Heavy", "generated_missions_08_name_ship_01", "generated_missions_08_name_ship_02", "TradeCoward", "MAAS Corporation")
+			await imissiongenerator.owner_escort_details(v1, 7, "Light", "generated_missions_06_name_ship_06", "GenericAggressive", 3)
+			await imissiongenerator.owner_location(v1, 15, "map:/geog/badlands/hoffers_wake", "Cleitus Common Metals Processing Plant")
+			await imissiongenerator.patron_name(v1, "generated_missions_08_email_sender_01")
+			await imissiongenerator.set_briefing(v1, "generated_missions_08_dialogue_jafs_fuel_pellets_01", "", 1)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_08_dialogue_jafs_loaded_up_02", "generated_missions_30_email_subject_02", 1)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_SimplePiracy_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MAAS Corporation"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(10)
+			_pc = 24169
+			continue
+		elif _pc == 5910:
+			if not (await local_0()):
+				_pc = 5929
+				continue
+			else:
+				_pc = 5935
+				continue
+		elif _pc == 5929:
+			_pc = 24169
+			continue
+		elif _pc == 5935:
+			_pc = 24163
+			continue
+		elif _pc == 5940:
+			await imissiongenerator.test_piracy_rating(1500.0)
+			await imissiongenerator.test_faction_rating("Stepson", 0.800000011920929)
+			if await local_0():
+				_pc = 6003
+				continue
+			else:
+				_pc = 6683
+				continue
+		elif _pc == 6003:
+			v1 = await imissiongenerator.new_mission("Prison data")
+			await imissiongenerator.objective_stub(v1, "a4_m09")
+			await imissiongenerator.cargo_to_get(v1, 161, 1)
+			await imissiongenerator.cargo_reward(v1, 471, 3)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_09_name_ship_01", "generated_missions_09_name_ship_02", "GenericUnderworld", "Underworld")
+			await imissiongenerator.patron_location(v1, 105, "map:/geog/badlands/hoffers_wake", "Spring Heeled Jack's")
+			await imissiongenerator.patron_escort_details(v1, "Security", "Heavy", "generated_missions_09_name_ship_03", "MilitaryAggessive", 4)
+			await imissiongenerator.owner_details(v1, 7, "Courier", "generated_missions_09_name_ship_04", "generated_missions_09_name_ship_05", "CourierSecure", "Police")
+			await imissiongenerator.owner_location(v1, 122, "map:/geog/badlands/hoffers_wake", "Darius Orbital Transfer Station")
+			await imissiongenerator.owner_escort_details(v1, 6, "heavy", "generated_missions_09_name_ship_06", "PoliceHeroic", 2)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_09_PrisonData_01", "generated_missions_09_email_subject_03", 4)
+			await imissiongenerator.set_prompt(v1, "html:/html/email/generatedmissions/GM_09_PrisonData_02", "generated_missions_09_email_subject_03", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_09_PrisonData_03", "generated_missions_09_email_subject_03", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_prisondata_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Underworld"), 0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Police"), -0.20000000298023224)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(25)
+			_pc = 24169
+			continue
+		elif _pc == 6683:
+			if not (await local_0()):
+				_pc = 6702
+				continue
+			else:
+				_pc = 6708
+				continue
+		elif _pc == 6702:
+			_pc = 24169
+			continue
+		elif _pc == 6708:
+			_pc = 24163
+			continue
+		elif _pc == 6713:
+			await imissiongenerator.test_piracy_rating(300.0)
+			if await local_0():
+				_pc = 6750
+				continue
+			else:
+				_pc = 7338
+				continue
+		elif _pc == 6750:
+			v1 = await imissiongenerator.new_mission("Rare Animal Chef")
+			await imissiongenerator.objective_stub(v1, "a4_m10")
+			await imissiongenerator.cargo_to_get_category(v1, 35, 1)
+			await imissiongenerator.cargo_reward(v1, 134, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Freight", "Medium", "generated_missions_10_name_ship_01", "generated_missions_10_name_ship_02", "TradeCoward", "CarvaCartel")
+			await imissiongenerator.patron_location(v1, 36, "map:/geog/badlands/hoffers_wake", "Charlesworth Freight Service Depot")
+			await imissiongenerator.owner_details(v1, 2, "Medium", "generated_missions_10_name_ship_03", "generated_missions_10_name_ship_04", "TradeCoward", "Kong")
+			await imissiongenerator.owner_escort_details(v1, 5, "Light", "generated_missions_06_name_ship_06", "PoliceHeroic", 2)
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/hoffers_wake", "Buddokan")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_10_RareAnimalChef_01", "generated_missions_10_email_subject_01", 4)
+			await imissiongenerator.set_prompt(v1, "html:/html/email/generatedmissions/GM_10_RareAnimalChef_02", "generated_missions_10_email_subject_02", 5)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_10_dialogue_Maitre_De_thanks_for_the_animals_01", "generated_missions_10_email_subject_03", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_RareAnimalChef", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("CarvaCartel"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(7)
+			_pc = 24169
+			continue
+		elif _pc == 7338:
+			if not (await local_0()):
+				_pc = 7357
+				continue
+			else:
+				_pc = 7363
+				continue
+		elif _pc == 7357:
+			_pc = 24169
+			continue
+		elif _pc == 7363:
+			_pc = 24163
+			continue
+		elif _pc == 7368:
+			await imissiongenerator.test_piracy_rating(300.0)
+			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
+			if await local_0():
+				_pc = 7427
+				continue
+			else:
+				_pc = 8160
+				continue
+		elif _pc == 7427:
+			v1 = await imissiongenerator.new_mission("Fistful of Nanites")
+			await imissiongenerator.objective_stub(v1, "a4_m11")
+			await imissiongenerator.cargo_to_get(v1, 266, 3)
+			await imissiongenerator.cargo_to_get(v1, 252, 1)
+			await imissiongenerator.cargo_to_get(v1, 253, 2)
+			await imissiongenerator.cargo_reward(v1, 488, 1)
+			await imissiongenerator.cargo_reward(v1, 488, 1)
+			await imissiongenerator.cargo_reward(v1, 488, 1)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Freight", "Heavy", "generated_missions_11_name_ship_01", "generated_missions_11_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Greenback Agri-Orbital 3")
+			await imissiongenerator.owner_details(v1, 0, "Medium", "generated_missions_11_name_ship_03", "generated_missions_11_name_ship_04", "TradeCoward", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 21, "map:/geog/badlands/hoffers_wake", "Bessus Orbital Transfer Station")
+			await imissiongenerator.owner_escort_details(v1, 5, "Light", "generated_missions_11_name_ship_05", "PoliceHeroic", 2)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_11_FistfulOfNanites_02", "generated_missions_11_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_11_FistfulOfNanites_03", "gm_10_subject03", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_fistfulofnanites_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Maas"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(1)
+			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			_pc = 24169
+			continue
+		elif _pc == 8160:
+			if not (await local_0()):
+				_pc = 8179
+				continue
+			else:
+				_pc = 8185
+				continue
+		elif _pc == 8179:
+			_pc = 24169
+			continue
+		elif _pc == 8185:
+			_pc = 24163
+			continue
+		elif _pc == 8190:
+			await local_62()
+			_pc = 24169
+			continue
+		elif _pc == 8210:
+			await imissiongenerator.test_piracy_rating(450.0)
+			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
+			if await local_0():
+				_pc = 8269
+				continue
+			else:
+				_pc = 8965
+				continue
+		elif _pc == 8269:
+			v1 = await imissiongenerator.new_mission("Library Fine")
+			await imissiongenerator.objective_stub(v1, "a4_m12")
+			await imissiongenerator.cargo_to_get(v1, 146, 1)
+			await imissiongenerator.cargo_reward(v1, 345, 2)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Light", "generated_missions_12_name_ship_02", "generated_missions_12_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Greenback Agri-Orbital 3")
+			await imissiongenerator.owner_details(v1, 2, "Medium", "generated_missions_12_name_ship_03", "generated_missions_12_name_ship_04", "TradeGeneric", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 122, "map:/geog/badlands/hoffers_wake", "Yellowrock Orbital Transfer Station")
+			await imissiongenerator.owner_escort_details(v1, 6, "Light", "Maas Security Escort", "PoliceHeroic", 3)
+			iemail.send_email("generated_missions_12_name_ship_02", "generated_missions_12_email_subject_01", "html:/html/email/generatedmissions/GM_12_LibraryFine_01", 0)
+			await imissiongenerator.set_briefing(v1, "generated_missions_12_dialogue_Gabriella_stepson_steal_books_01", "generated_missions_12_dialogue_Gabriella_stepson_steal_books_01", 5)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_12_dialogue_Gabriella_stepson_nice_books_02", "generated_missions_12_dialogue_Gabriella_stepson_nice_books_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_libraryfine_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.30000001192092896)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Maas"), -0.30000001192092896)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(9)
+			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			_pc = 24169
+			continue
+		elif _pc == 8965:
+			if not (await local_0()):
+				_pc = 8984
+				continue
+			else:
+				_pc = 8990
+				continue
+		elif _pc == 8984:
+			_pc = 24169
+			continue
+		elif _pc == 8990:
+			_pc = 24163
+			continue
+		elif _pc == 8995:
+			await local_62()
+			_pc = 24169
+			continue
+		elif _pc == 9015:
+			await imissiongenerator.test_piracy_rating(250.0)
+			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
+			if await local_0():
+				_pc = 9074
+				continue
+			else:
+				_pc = 9581
+				continue
+		elif _pc == 9074:
+			v1 = await imissiongenerator.new_mission("Medical Supplies")
+			await imissiongenerator.objective_stub(v1, "a4_m13")
+			await imissiongenerator.cargo_to_get_category(v1, 325, 1)
+			await imissiongenerator.cargo_reward(v1, 558, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 4)
+			await imissiongenerator.patron_details(v1, "Freight", "Heavy", "generated_missions_13_name_ship_01", "generated_missions_13_name_ship_02", "GenericUnderworld", "League")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Yellowrock Orbital Transfer Station")
+			await imissiongenerator.owner_details(v1, 7, "Medium", "generated_missions_13_name_ship_03", "generated_missions_13_name_ship_04", "TradeCoward", "Independent")
+			await imissiongenerator.owner_location(v1, 51, "map:/geog/badlands/hoffers_wake", "Charitable Sisters of Pity Hospital")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_13_MedicalSupplies_01", "generated_missions_13_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_13_dialogue_dr_jones_saved_lives_01", "", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("League"), 1.0)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(6)
+			_pc = 24169
+			continue
+		elif _pc == 9581:
+			if not (await local_0()):
+				_pc = 9600
+				continue
+			else:
+				_pc = 9606
+				continue
+		elif _pc == 9600:
+			_pc = 24169
+			continue
+		elif _pc == 9606:
+			_pc = 24163
+			continue
+		elif _pc == 9611:
+			await imissiongenerator.test_piracy_rating(100.0)
+			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
+			if await local_0():
+				_pc = 9670
+				continue
+			else:
+				_pc = 10313
+				continue
+		elif _pc == 9670:
+			v1 = await imissiongenerator.new_mission("Gun robber")
+			await imissiongenerator.objective_stub(v1, "a4_m14")
+			await imissiongenerator.cargo_to_get_category(v1, 58, 1)
+			await imissiongenerator.cargo_reward(v1, 406, 2)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 6)
+			await imissiongenerator.patron_details(v1, "Mining", "Heavy", "generated_missions_14_name_ship_01", "generated_missions_14_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Greenback Agri-Orbital 1")
+			await imissiongenerator.owner_details(v1, 1, "Medium", "generated_missions_14_name_ship_03", "generated_missions_14_name_ship_04", "TradeCoward", "Navy")
+			await imissiongenerator.owner_location(v1, 70, "map:/geog/badlands/hoffers_wake", "Gabriel Defense Station")
+			await imissiongenerator.owner_escort_details(v1, 7, "Heavy", "Escort", "MilitaryAggessive", 3)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_14_Gunrobber_01", "generated_missions_14_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_14_Gunrobber_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_gunrobber_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Navy"), -0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Government"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(5)
+			_pc = 24169
+			continue
+		elif _pc == 10313:
+			if not (await local_0()):
+				_pc = 10332
+				continue
+			else:
+				_pc = 10338
+				continue
+		elif _pc == 10332:
+			_pc = 24169
+			continue
+		elif _pc == 10338:
+			_pc = 24163
+			continue
+		elif _pc == 10343:
+			await imissiongenerator.test_piracy_rating(800.0)
+			if await local_0():
+				_pc = 10380
+				continue
+			else:
+				_pc = 10830
+				continue
+		elif _pc == 10380:
+			v1 = await imissiongenerator.new_mission("The Survey")
+			await imissiongenerator.objective_stub(v1, "a4_m15")
+			await imissiongenerator.cargo_to_get(v1, 156, 1)
+			await imissiongenerator.cargo_reward(v1, 349, 3)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.owner_details(v1, 6, "Medium", "generated_missions_15_name_ship_01", "generated_missions_15_name_ship_02", "CourierSecure", "DatagonTechnologies ")
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/hoffers_wake", "Deep Sytems Research Facility")
+			await imissiongenerator.patron_name(v1, "generated_missions_15_email_sender_01")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_15_TheSurvey_01", "generated_missions_15_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_15_TheSurvey_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_survey_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Datagontechnologies"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(26)
+			_pc = 24169
+			continue
+		elif _pc == 10830:
+			if not (await local_0()):
+				_pc = 10849
+				continue
+			else:
+				_pc = 10855
+				continue
+		elif _pc == 10849:
+			_pc = 24169
+			continue
+		elif _pc == 10855:
+			_pc = 24163
+			continue
+		elif _pc == 10860:
+			await local_62()
+			_pc = 24169
+			continue
+		elif _pc == 10880:
+			await imissiongenerator.test_piracy_rating(400.0)
+			if await local_0():
+				_pc = 10917
+				continue
+			else:
+				_pc = 11431
+				continue
+		elif _pc == 10917:
+			v1 = await imissiongenerator.new_mission("The Freak")
+			await imissiongenerator.objective_stub(v1, "a4_m16")
+			await imissiongenerator.cargo_to_get_category(v1, 2, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 3, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 4, 1)
+			await imissiongenerator.cargo_reward(v1, 488, 1)
+			await imissiongenerator.cargo_reward(v1, 488, 1)
+			await imissiongenerator.cargo_reward(v1, 488, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 5)
+			await imissiongenerator.patron_details(v1, "Mining", "Light", "generated_missions_16_name_ship_01", "generated_missions_16_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Rosie's Piggery")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_16_TheFreak_01", "generated_missions_16_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_16_TheFreak_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_the_freak_mission", 1)
+			await imissiongenerator.success_add_mission(v1, 29)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(8)
+			_pc = 24169
+			continue
+		elif _pc == 11431:
+			if not (await local_0()):
+				_pc = 11450
+				continue
+			else:
+				_pc = 11456
+				continue
+		elif _pc == 11450:
+			_pc = 24169
+			continue
+		elif _pc == 11456:
+			_pc = 24163
+			continue
+		elif _pc == 11461:
+			await imissiongenerator.test_piracy_rating(600.0)
+			if await local_0():
+				_pc = 11498
+				continue
+			else:
+				_pc = 12074
+				continue
+		elif _pc == 11498:
+			v1 = await imissiongenerator.new_mission("Geriatric Cyborgs")
+			await imissiongenerator.objective_stub(v1, "a4_m17")
+			await imissiongenerator.cargo_to_get_category(v1, 8, 4)
+			await imissiongenerator.cargo_reward(v1, 291, 3)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Freight", "Light", "generated_missions_17_name_ship_01", "generated_missions_17_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Charlesworth Freight Service Depot")
+			await imissiongenerator.owner_details(v1, 10, "Medium", "generated_missions_17_name_ship_03", "generated_missions_17_name_ship_04", "CourierSecure", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/hoffers_wake", "MAAS Systems Security Station")
+			await imissiongenerator.owner_escort_details(v1, 5, "Light", "generated_missions_17_name_ship_05", "GenericAggressive", 3)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_17_GeriatricCyborgs_01", "generated_missions_17_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_17_dialogue_clive_wire_such_a_nice_boy_01", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_Geriatric_Cyborgs_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MaasCorporation"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(29)
+			_pc = 24169
+			continue
+		elif _pc == 12074:
+			if not (await local_0()):
+				_pc = 12093
+				continue
+			else:
+				_pc = 12099
+				continue
+		elif _pc == 12093:
+			_pc = 24169
+			continue
+		elif _pc == 12099:
+			_pc = 24163
+			continue
+		elif _pc == 12104:
+			await imissiongenerator.test_piracy_rating(500.0)
+			if await local_0():
+				_pc = 12141
+				continue
+			else:
+				_pc = 12720
+				continue
+		elif _pc == 12141:
+			v1 = await imissiongenerator.new_mission("GoldMiners")
+			await imissiongenerator.objective_stub(v1, "a4_m18")
+			await imissiongenerator.cargo_to_get_category(v1, 17, 1)
+			await imissiongenerator.cargo_reward(v1, 430, 2)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Light", "generated_missions_18_name_ship_01", "generated_missions_18_name_ship_02", "GenericUnderworld", "Independent")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Crosspoint Minerals Processing Plant")
+			await imissiongenerator.patron_escort_details(v1, "Mining", "Light", "generated_missions_18_name_ship_03", "Generic", 2)
+			await imissiongenerator.owner_details(v1, 16, "Medium", "generated_missions_18_name_ship_04", "generated_missions_18_name_ship_05", "CourierSecure", "Independent")
+			await imissiongenerator.owner_location(v1, 6, "map:/geog/badlands/hoffers_wake", "Ursus")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_18_GoldMiners_01", "generated_missions_18_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_18_GoldMiners_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_gold_miners_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MaasCorporation"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(12)
+			_pc = 24169
+			continue
+		elif _pc == 12720:
+			if not (await local_0()):
+				_pc = 12739
+				continue
+			else:
+				_pc = 12745
+				continue
+		elif _pc == 12739:
+			_pc = 24169
+			continue
+		elif _pc == 12745:
+			_pc = 24163
+			continue
+		elif _pc == 12750:
+			await imissiongenerator.test_global_bool("gl_Big_Jacks_Jewels_available", 1)
+			if await local_0():
+				_pc = 12790
+				continue
+			else:
+				_pc = 13374
+				continue
+		elif _pc == 12790:
+			v1 = await imissiongenerator.new_mission("Big Jacks Jewels")
+			await imissiongenerator.objective_stub(v1, "a4_m19")
+			await imissiongenerator.cargo_to_get(v1, 469, 1)
+			await imissiongenerator.cargo_to_get(v1, 469, 1)
+			await imissiongenerator.cargo_to_get(v1, 469, 1)
+			await imissiongenerator.cargo_reward(v1, 127, 1)
+			await imissiongenerator.cargo_reward(v1, 126, 1)
+			await imissiongenerator.cargo_reward(v1, 131, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.owner_details(v1, 16, "Medium", "generated_missions_19_name_ship_01", "generated_missions_19_name_ship_02", "GenericUnderworld", "Independent")
+			await imissiongenerator.owner_location(v1, 6, "map:/geog/badlands/hoffers_wake", "Ursus")
+			await imissiongenerator.patron_name(v1, "generated_missions_19_email_sender_01")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_19_Big_Jacks_Jewels_01", "generated_missions_19_email_subject_02", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_19_Big_Jacks_Jewels_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_big_jacks_jewels_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Independant"), -0.20000000298023224)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Underworld"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(24)
+			_pc = 24169
+			continue
+		elif _pc == 13374:
+			if not (await local_0()):
+				_pc = 13393
+				continue
+			else:
+				_pc = 13399
+				continue
+		elif _pc == 13393:
+			_pc = 24169
+			continue
+		elif _pc == 13399:
+			_pc = 24163
+			continue
+		elif _pc == 13404:
+			await imissiongenerator.test_piracy_rating(800.0)
+			if await local_0():
+				_pc = 13441
+				continue
+			else:
+				_pc = 14019
+				continue
+		elif _pc == 13441:
+			v1 = await imissiongenerator.new_mission("Station Parts")
+			await imissiongenerator.objective_stub(v1, "a4_m20")
+			await imissiongenerator.cargo_to_get(v1, 377, 1)
+			await imissiongenerator.cargo_reward(v1, 446, 3)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Heavy", "generated_missions_20_name_ship_01", "generated_missions_20_name_ship_02", "GenericFreight", "League")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Hoffer's Gap Independent Trading Post")
+			await imissiongenerator.owner_details(v1, 2, "Medium", "generated_missions_20_name_ship_03", "generated_missions_20_name_ship_04", "GenericFreight", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/hoffers_wake", "MAAS Orbital Processing Plant")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_20_StationParts_01", "generated_missions_20_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_20_dialogue_foreman_thanks_cal_01", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_stationparts_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MAASCorporation"), -0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("League"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(11)
+			_pc = 24169
+			continue
+		elif _pc == 14019:
+			if not (await local_0()):
+				_pc = 14038
+				continue
+			else:
+				_pc = 14044
+				continue
+		elif _pc == 14038:
+			_pc = 24169
+			continue
+		elif _pc == 14044:
+			_pc = 24163
+			continue
+		elif _pc == 14049:
+			await imissiongenerator.test_piracy_rating(1800.0)
+			if await local_0():
+				_pc = 14086
+				continue
+			else:
+				_pc = 14838
+				continue
+		elif _pc == 14086:
+			v1 = await imissiongenerator.new_mission("Crooked Cops")
+			await imissiongenerator.objective_stub(v1, "a4_m21")
+			await imissiongenerator.cargo_to_get_category(v1, 59, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 58, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 27, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 27, 1)
+			await imissiongenerator.cargo_reward(v1, 544, 1)
+			await imissiongenerator.cargo_reward(v1, 546, 1)
+			await imissiongenerator.cargo_reward(v1, 553, 1)
+			await imissiongenerator.cargo_reward(v1, 468, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_21_name_ship_01", "generated_missions_21_name_ship_02", "GenericUnderworld", "Stepson")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/hoffers_wake", "Greenback Agri-Orbital 3")
+			await imissiongenerator.owner_details(v1, 2, "Medium", "generated_missions_21_name_ship_03", "generated_missions_21_name_ship_04", "GenericSupply", "Police")
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/hoffers_wake", "Buddokan")
+			await imissiongenerator.owner_escort_details(v1, 0, "Light", "generated_missions_21_name_ship_05", "PoliceHeroic", 2)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_21_CrookedCops_01", "generated_missions_21_email_subject_02", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_21_CrookedCops_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_crooked_cops_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Police"), -0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(27)
+			_pc = 24169
+			continue
+		elif _pc == 14838:
+			if not (await local_0()):
+				_pc = 14857
+				continue
+			else:
+				_pc = 14863
+				continue
+		elif _pc == 14857:
+			_pc = 24169
+			continue
+		elif _pc == 14863:
+			_pc = 24163
+			continue
+		elif _pc == 14868:
+			await imissiongenerator.test_piracy_rating(800.0)
+			if await local_0():
+				_pc = 14905
+				continue
+			else:
+				_pc = 15534
+				continue
+		elif _pc == 14905:
+			v1 = await imissiongenerator.new_mission("Marauders dealing")
+			await imissiongenerator.objective_stub(v1, "a4_m22")
+			await imissiongenerator.cargo_to_get_category(v1, 39, 2)
+			await imissiongenerator.cargo_to_get_category(v1, 30, 2)
+			await imissiongenerator.cargo_to_get_category(v1, 5, 2)
+			await imissiongenerator.cargo_reward(v1, 465, 1)
+			await imissiongenerator.cargo_reward(v1, 481, 1)
+			await imissiongenerator.cargo_reward(v1, 519, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.owner_details(v1, 3, "Heavy", "generated_missions_22_name_ship_01", "generated_missions_22_name_ship_02", "GenericTrade", "Marauders")
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/hoffers_wake", "Spring Heeled Jack's")
+			await imissiongenerator.owner_escort_details(v1, 7, "Gangster", "generated_missions_22_name_ship_03", "generated_missions_22_name_ship_04", 3)
+			await imissiongenerator.owner_set_escort_faction(v1, "Underworld")
+			await imissiongenerator.patron_name(v1, "generated_missions_22_email_sender_01")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_22_MaraudersDealing_01", "generated_missions_22_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_22_MaraudersDealing_02", "generated_missions_22_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_survey_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Marauder"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(28)
+			_pc = 24169
+			continue
+		elif _pc == 15534:
+			if not (await local_0()):
+				_pc = 15553
+				continue
+			else:
+				_pc = 15559
+				continue
+		elif _pc == 15553:
+			_pc = 24169
+			continue
+		elif _pc == 15559:
+			_pc = 24163
+			continue
+		elif _pc == 15564:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 15623
+				continue
+			else:
+				_pc = 16092
+				continue
+		elif _pc == 15623:
+			v1 = await imissiongenerator.new_mission("Oman Raider")
+			await imissiongenerator.objective_stub(v1, "a4_m23")
+			await imissiongenerator.cargo_to_get(v1, 579, 6)
+			await imissiongenerator.cargo_reward(v1, 64, 6)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.owner_details(v1, 1, "Heavy", "generated_missions_23_name_ship_01", "generated_missions_23_name_ship_02", "GenericSupply", "Independent")
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/eureka", "Belial Energy Cells Manufacturing")
+			await imissiongenerator.patron_name(v1, "generated_missions_23_email_sender_01")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_23_OmanRaider_01", "generated_missions_23_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_23_OmanRaider_02", "generated_missions_23_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omanraider_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(17)
+			_pc = 24169
+			continue
+		elif _pc == 16092:
+			if not (await local_0()):
+				_pc = 16111
+				continue
+			else:
+				_pc = 16117
+				continue
+		elif _pc == 16111:
+			_pc = 24169
+			continue
+		elif _pc == 16117:
+			_pc = 24163
+			continue
+		elif _pc == 16122:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 16181
+				continue
+			else:
+				_pc = 16758
+				continue
+		elif _pc == 16181:
+			v1 = await imissiongenerator.new_mission("Oman Payback")
+			await imissiongenerator.objective_stub(v1, "a4_m24")
+			await imissiongenerator.cargo_to_get(v1, 347, 1)
+			await imissiongenerator.cargo_reward(v1, 64, 6)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Light", "generated_missions_24_name_ship_01", "generated_missions_24_name_ship_02", "GenericUnderworld", "The Oman")
+			await imissiongenerator.patron_location(v1, 67, "map:/geog/badlands/kompira", "Baal Oman Outpost")
+			await imissiongenerator.owner_details(v1, 7, "heavy", "generated_missions_24_name_ship_03", "generated_missions_24_name_ship_04", "GenericMilitary", "NOMEXCorporation")
+			await imissiongenerator.owner_location(v1, 40, "map:/geog/badlands/kompira", "Hutamah NOMEX Regional HQ")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_24_OmanPayback_01", "generated_missions_24_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_24_dialogue_wafeeq_paid_back_01", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omanpayback_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("NOMEXCorporation"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(18)
+			_pc = 24169
+			continue
+		elif _pc == 16758:
+			if not (await local_0()):
+				_pc = 16777
+				continue
+			else:
+				_pc = 16783
+				continue
+		elif _pc == 16777:
+			_pc = 24169
+			continue
+		elif _pc == 16783:
+			_pc = 24163
+			continue
+		elif _pc == 16788:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 16847
+				continue
+			else:
+				_pc = 17425
+				continue
+		elif _pc == 16847:
+			v1 = await imissiongenerator.new_mission("Oman Disease")
+			await imissiongenerator.objective_stub(v1, "a4_m25")
+			await imissiongenerator.cargo_to_get(v1, 332, 1)
+			await imissiongenerator.cargo_reward(v1, 518, 4)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Mining", "Light", "generated_missions_25_name_ship_01", "generated_missions_25_name_ship_02", "GenericUnderworld", "The Oman")
+			await imissiongenerator.patron_location(v1, 111, "map:/geog/badlands/kompira", "Baal Oman Outpost")
+			await imissiongenerator.owner_details(v1, 7, "heavy", "generated_missions_25_name_ship_03", "generated_missions_25_name_ship_04", "GenericMilitary", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 62, "map:/geog/badlands/santa_romera", "Liberty MAAS Docking Station")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_25_OmanDisease_01", "generated_missions_25_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "GM_25_OmanDisease_01_marid", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omandisease_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MAASCorporation"), -0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(19)
+			_pc = 24169
+			continue
+		elif _pc == 17425:
+			if not (await local_0()):
+				_pc = 17444
+				continue
+			else:
+				_pc = 17450
+				continue
+		elif _pc == 17444:
+			_pc = 24169
+			continue
+		elif _pc == 17450:
+			_pc = 24163
+			continue
+		elif _pc == 17455:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 17514
+				continue
+			else:
+				_pc = 17983
+				continue
+		elif _pc == 17514:
+			v1 = await imissiongenerator.new_mission("Oman Weapon Parts")
+			await imissiongenerator.objective_stub(v1, "a4_m26")
+			await imissiongenerator.cargo_to_get_category(v1, 57, 1)
+			await imissiongenerator.cargo_reward(v1, 519, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 5)
+			await imissiongenerator.owner_details(v1, 3, "heavy", "generated_missions_26_name_ship_01", "generated_missions_26_name_ship_02", "GenericSupply", "The Oman")
+			await imissiongenerator.owner_location(v1, 67, "map:/geog/badlands/kompira", "Dagon NOMEX Exotic Metals Processing Plant")
+			await imissiongenerator.patron_name(v1, "generated_missions_26_email_sender_01")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_26_OmanWeaponParts_01", "generated_missions_26_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_26_OmanWeaponParts_02", "generated_missions_26_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omanweaponparts_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(20)
+			_pc = 24169
+			continue
+		elif _pc == 17983:
+			if not (await local_0()):
+				_pc = 18002
+				continue
+			else:
+				_pc = 18008
+				continue
+		elif _pc == 18002:
+			_pc = 24169
+			continue
+		elif _pc == 18008:
+			_pc = 24163
+			continue
+		elif _pc == 18013:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 18072
+				continue
+			else:
+				_pc = 18605
+				continue
+		elif _pc == 18072:
+			v1 = await imissiongenerator.new_mission("Oman Anti-Propaganda")
+			await imissiongenerator.objective_stub(v1, "a4_m27")
+			await imissiongenerator.cargo_to_get(v1, 206, 1)
+			await imissiongenerator.cargo_reward(v1, 540, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 4)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_27_name_ship_01", "generated_missions_27_name_ship_02", "GenericUnderworld", "The Oman")
+			await imissiongenerator.patron_location(v1, 111, "map:/geog/badlands/kompira", "Jizan Oman Outpost")
+			await imissiongenerator.owner_details(v1, 0, "Light", "generated_missions_27_name_ship_03", "generated_missions_27_name_ship_04", "GenericSupply", "Independent")
+			await imissiongenerator.owner_location(v1, 65, "map:/geog/badlands/kompira", "Saqar MAAS Docking Station")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_27_OmanAntiPropaganda_01", "generated_missions_27_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_27_OmanAntiPropaganda_02", "generated_missions_27_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omanantipropaganda_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(21)
+			_pc = 24169
+			continue
+		elif _pc == 18605:
+			if not (await local_0()):
+				_pc = 18624
+				continue
+			else:
+				_pc = 18630
+				continue
+		elif _pc == 18624:
+			_pc = 24169
+			continue
+		elif _pc == 18630:
+			_pc = 24163
+			continue
+		elif _pc == 18635:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_initiation_complete", 1)
+			if await local_0():
+				_pc = 18694
+				continue
+			else:
+				_pc = 19226
+				continue
+		elif _pc == 18694:
+			v1 = await imissiongenerator.new_mission("Oman malfunction")
+			await imissiongenerator.objective_stub(v1, "a4_m28")
+			await imissiongenerator.cargo_to_get_category(v1, 15, 1)
+			await imissiongenerator.cargo_reward(v1, 542, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.exclusive_trades(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 4)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_28_name_ship_01", "sn_oman_3", "GenericUnderworld", "The Oman")
+			await imissiongenerator.patron_location(v1, 111, "map:/geog/badlands/kompira", "Jizan Oman Outpost")
+			await imissiongenerator.owner_details(v1, 0, "Light", "sn_general_18", "sn_general_18", "GenericSupply", "Independent")
+			await imissiongenerator.owner_location(v1, 65, "map:/geog/badlands/kompira", "Saqar MAAS Docking Station")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_28_OmanMalfunction_01", "generated_missions_28_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_28_dialogue_speaker_rep_thats_ideal_01", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omanmalfunction_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(22)
+			_pc = 24169
+			continue
+		elif _pc == 19226:
+			if not (await local_0()):
+				_pc = 19245
+				continue
+			else:
+				_pc = 19251
+				continue
+		elif _pc == 19245:
+			_pc = 24169
+			continue
+		elif _pc == 19251:
+			_pc = 24163
+			continue
+		elif _pc == 19256:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_technology_complete", 1)
+			if await local_0():
+				_pc = 19315
+				continue
+			else:
+				_pc = 19893
+				continue
+		elif _pc == 19315:
+			v1 = await imissiongenerator.new_mission("Oman Technology")
+			await imissiongenerator.objective_stub(v1, "a4_m29")
+			await imissiongenerator.cargo_to_get_category(v1, 6, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 7, 1)
+			await imissiongenerator.cargo_reward(v1, 423, 1)
+			await imissiongenerator.cargo_reward(v1, 423, 2)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.exclusive_trades(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 2)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_29_name_ship_01", "generated_missions_29_name_ship_02", "GenericUnderworld", "The Oman")
+			await imissiongenerator.patron_location(v1, 74, "map:/geog/badlands/kompira", "Baal Oman Outpost")
+			await imissiongenerator.owner_details(v1, 1, "heavy", "sn_maas_35", "sn_maas_36", "GenericSupply", "Independent")
+			await imissiongenerator.owner_location(v1, 11, "map:/geog/badlands/kompira", "Sharqi MAAS Water Processing Plant")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_29_Omantechnology_01", "generated_missions_29_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "GM_29_OmanTechnology_01_humam", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omanmalfunction_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(23)
+			_pc = 24169
+			continue
+		elif _pc == 19893:
+			if not (await local_0()):
+				_pc = 19912
+				continue
+			else:
+				_pc = 19918
+				continue
+		elif _pc == 19912:
+			_pc = 24169
+			continue
+		elif _pc == 19918:
+			_pc = 24163
+			continue
+		elif _pc == 19923:
+			await imissiongenerator.test_piracy_rating(4800.0)
+			await imissiongenerator.test_global_bool("g_act2_oman_celebration_complete", 1)
+			if await local_0():
+				_pc = 19982
+				continue
+			else:
+				_pc = 20520
+				continue
+		elif _pc == 19982:
+			v1 = await imissiongenerator.new_mission("Oman Technology")
+			await imissiongenerator.objective_stub(v1, "a4_m30")
+			await imissiongenerator.cargo_to_get_category(v1, 26, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 39, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 40, 1)
+			await imissiongenerator.cargo_reward(v1, 443, 1)
+			await imissiongenerator.cargo_reward(v1, 442, 1)
+			await imissiongenerator.cargo_reward(v1, 444, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 5)
+			await imissiongenerator.owner_details(v1, 0, "Light", "generated_missions_30_name_ship_01", "generated_missions_30_name_ship_02", "GenericSupply", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 48, "map:/geog/badlands/kompira", "Al Wakrah Independent Leisure Station")
+			await imissiongenerator.patron_name(v1, "generated_missions_30_email_sender_01")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_30_OmanFeast_01", "generated_missions_30_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_30_OmanFeast_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_omanmalfunction_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(30)
+			_pc = 24169
+			continue
+		elif _pc == 20520:
+			if not (await local_0()):
+				_pc = 20539
+				continue
+			else:
+				_pc = 20545
+				continue
+		elif _pc == 20539:
+			_pc = 24169
+			continue
+		elif _pc == 20545:
+			_pc = 24163
+			continue
+		elif _pc == 20550:
+			await imissiongenerator.test_piracy_rating(14800.0)
+			await imissiongenerator.test_global_bool("g_act2_mca_introduced", 1)
+			if await local_0():
+				_pc = 20609
+				continue
+			else:
+				_pc = 21167
+				continue
+		elif _pc == 20609:
+			v1 = await imissiongenerator.new_mission("MCA Excavations")
+			await imissiongenerator.objective_stub(v1, "a4_m31")
+			await imissiongenerator.cargo_to_get_category(v1, 17, 1)
+			await imissiongenerator.cargo_reward(v1, 505, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.owner_details(v1, 2, "Light", "sn_maas_25", "sn_maas_26", "GenericSupply", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 54, "map:/geog/badlands/santa_romera", "Mercy NOMEX Fusionable Gases Mine")
+			await imissiongenerator.patron_details(v1, "ST_MiningHeavy", "Heavy", "sn_mca_67", "sn_mca_67", "GenericUnderworld", "M.C.A.")
+			await imissiongenerator.patron_location(v1, 104, "map:/geog/badlands/santa_romera", "The Ritz")
+			await imissiongenerator.patron_escort_details(v1, "ST_CombatHeavy", "Heavy", "sn_underworld", "GenericUnderworld", 2)
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_31_MCAexcavations_01", "generated_missions_31_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_30_email_subject_02", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_mcaexcavations_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(31)
+			_pc = 24169
+			continue
+		elif _pc == 21167:
+			if not (await local_0()):
+				_pc = 21186
+				continue
+			else:
+				_pc = 21192
+				continue
+		elif _pc == 21186:
+			_pc = 24169
+			continue
+		elif _pc == 21192:
+			_pc = 24163
+			continue
+		elif _pc == 21197:
+			await imissiongenerator.test_piracy_rating(14800.0)
+			await imissiongenerator.test_global_bool("g_act2_mca_introduced", 1)
+			if await local_0():
+				_pc = 21256
+				continue
+			else:
+				_pc = 21801
+				continue
+		elif _pc == 21256:
+			v1 = await imissiongenerator.new_mission("M.C.A. Terraforming")
+			await imissiongenerator.objective_stub(v1, "a4_m32")
+			await imissiongenerator.cargo_to_get_category(v1, 19, 1)
+			await imissiongenerator.cargo_reward(v1, 596, 1)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_32_name_ship_01", "generated_missions_32_name_ship_02", "GenericUnderworld", "M.C.A.")
+			await imissiongenerator.patron_location(v1, 104, "map:/geog/badlands/santa_romera", "The Ritz")
+			await imissiongenerator.owner_details(v1, 1, "Light", "generated_missions_32_name_ship_03", "generated_missions_32_name_ship_04", "GenericSupply", "Independent")
+			await imissiongenerator.owner_location(v1, 62, "map:/geog/badlands/santa_romera", "Liberty NOMEX Warehouse")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_32_MCATerraforming_01", "generated_missions_32_email_subject_01", 4)
+			await imissiongenerator.set_verification(v1, "generated_missions_32_MCATerraforming_01_jardan", "", 5)
+			await imissiongenerator.set_conclusion(v1, "generated_missions_32_dialogue_jardan_thats_enough_02", "generated_missions_30_email_subject_02", 5)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_MCAterraforming_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(32)
+			_pc = 24169
+			continue
+		elif _pc == 21801:
+			if not (await local_0()):
+				_pc = 21820
+				continue
+			else:
+				_pc = 21826
+				continue
+		elif _pc == 21820:
+			_pc = 24169
+			continue
+		elif _pc == 21826:
+			_pc = 24163
+			continue
+		elif _pc == 21831:
+			await imissiongenerator.test_piracy_rating(14800.0)
+			await imissiongenerator.test_global_bool("g_act2_mca_introduced", 1)
+			if await local_0():
+				_pc = 21890
+				continue
+			else:
+				_pc = 22539
+				continue
+		elif _pc == 21890:
+			v1 = await imissiongenerator.new_mission("MCA Plague")
+			await imissiongenerator.objective_stub(v1, "a4_m33")
+			await imissiongenerator.cargo_to_get_category(v1, 11, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 30, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 31, 1)
+			await imissiongenerator.cargo_to_get(v1, 332, 1)
+			await imissiongenerator.cargo_reward(v1, 442, 1)
+			await imissiongenerator.cargo_reward(v1, 597, 1)
+			await imissiongenerator.cargo_reward(v1, 558, 1)
+			await imissiongenerator.cargo_reward(v1, 558, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 2)
+			await imissiongenerator.owner_details(v1, 2, "Light", "sn_maas_20", "sn_maas_21", "GenericSupply", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 54, "map:/geog/badlands/santa_romera", "St George Naval Defence Station")
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "generated_missions_33_name_ship_01", "generated_missions_33_name_ship_02", "GenericUnderworld", "M.C.A.")
+			await imissiongenerator.patron_location(v1, 104, "map:/geog/badlands/santa_romera", "The Ritz")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_33_MCAPlague_01", "generated_missions_33_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_33_MCAPlague_02", "generated_missions_33_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_mcaplague_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(33)
+			_pc = 24169
+			continue
+		elif _pc == 22539:
+			if not (await local_0()):
+				_pc = 22558
+				continue
+			else:
+				_pc = 22564
+				continue
+		elif _pc == 22558:
+			_pc = 24169
+			continue
+		elif _pc == 22564:
+			_pc = 24163
+			continue
+		elif _pc == 22569:
+			await imissiongenerator.test_piracy_rating(14800.0)
+			await imissiongenerator.test_global_bool("g_act2_mca_introduced", 1)
+			if await local_0():
+				_pc = 22628
+				continue
+			else:
+				_pc = 23185
+				continue
+		elif _pc == 22628:
+			v1 = await imissiongenerator.new_mission("Oman Technology")
+			await imissiongenerator.objective_stub(v1, "a4_m34")
+			await imissiongenerator.cargo_to_get_category(v1, 55, 1)
+			await imissiongenerator.cargo_to_get_category(v1, 58, 1)
+			await imissiongenerator.cargo_reward(v1, 500, 1)
+			await imissiongenerator.cargo_reward(v1, 464, 1)
+			await imissiongenerator.personal_delivery(v1, 0)
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "sn_mca_59", "sn_mca_59", "GenericUnderworld", "M.C.A.")
+			await imissiongenerator.patron_location(v1, 104, "map:/geog/badlands/santa_romera", "The Ritz")
+			await imissiongenerator.owner_details(v1, 2, "Light", "sn_maas_31", "sn_maas_32", "GenericSupply", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 54, "map:/geog/badlands/santa_romera", "Grace MAAS Organics Processing Plant")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/gm_34_mcaarmy_01", "generated_missions_34_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/gm_34_mcaarmy_02", "generated_missions_34_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_mcaarmy_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(34)
+			_pc = 24169
+			continue
+		elif _pc == 23185:
+			if not (await local_0()):
+				_pc = 23204
+				continue
+			else:
+				_pc = 23210
+				continue
+		elif _pc == 23204:
+			_pc = 24169
+			continue
+		elif _pc == 23210:
+			_pc = 24163
+			continue
+		elif _pc == 23215:
+			await imissiongenerator.test_piracy_rating(14800.0)
+			await imissiongenerator.test_global_bool("gl_MCAsafetydrive_available", 1)
+			await imissiongenerator.test_global_bool("g_act2_mca_introduced", 1)
+			if await local_0():
+				_pc = 23296
+				continue
+			else:
+				_pc = 23809
+				continue
+		elif _pc == 23296:
+			v1 = await imissiongenerator.new_mission("MCA Safety drive")
+			await imissiongenerator.objective_stub(v1, "a4_m35")
+			await imissiongenerator.cargo_to_get_category(v1, 32, 1)
+			await imissiongenerator.cargo_reward(v1, 433, 2)
+			await imissiongenerator.personal_delivery(v1, 1)
+			await imissiongenerator.owner_details(v1, 2, "Light", "sn_maas_23", "sn_maas_24", "GenericSupply", "MAAS Corporation")
+			await imissiongenerator.owner_location(v1, 54, "map:/geog/badlands/santa_romera", "Grace MAAS Organics Processing Plant")
+			await imissiongenerator.number_of_repeats(v1, 1)
+			await imissiongenerator.patron_details(v1, "Security", "Heavy", "sn_mca_38", "sn_mca_38", "GenericUnderworld", "M.C.A.")
+			await imissiongenerator.patron_location(v1, 104, "map:/geog/badlands/santa_romera", "The Ritz")
+			await imissiongenerator.set_briefing(v1, "html:/html/email/generatedmissions/GM_35_MCAsafetyDrive_01", "generated_missions_35_email_subject_01", 4)
+			await imissiongenerator.set_conclusion(v1, "html:/html/email/generatedmissions/GM_35_MCAsafetyDrive_02", "generated_missions_30_email_subject_02", 4)
+			await imissiongenerator.fail_if_patron_dead(v1)
+			await imissiongenerator.fail_if_global_bool(v1, "gl_stop_mcasafetydrive_mission", 1)
+			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
+			await imissiongenerator.activate(v1)
+			await imissiongenerator.flush_g_ms(35)
+			_pc = 24169
+			continue
+		elif _pc == 23809:
+			if not (await local_0()):
+				_pc = 23828
+				continue
+			else:
+				_pc = 23834
+				continue
+		elif _pc == 23828:
+			_pc = 24169
+			continue
+		elif _pc == 23834:
+			_pc = 24163
+			continue
+		elif _pc == 23839:
+			_pc = 24163
+			continue
+		elif _pc == 23844:
+			if v0 != 2:
+				_pc = 23858
+				continue
+			else:
+				_pc = 209
+				continue
+		elif _pc == 23858:
+			if not _pog_is_null(4):
+				_pc = 23867
+				continue
+			else:
+				_pc = 901
+				continue
+		elif _pc == 23867:
+			if not _pog_is_null(3):
+				_pc = 23876
+				continue
+			else:
+				_pc = 1495
+				continue
+		elif _pc == 23876:
+			if not _pog_is_null(15):
+				_pc = 23885
+				continue
+			else:
+				_pc = 2303
+				continue
+		elif _pc == 23885:
+			if not _pog_is_null(16):
+				_pc = 23894
+				continue
+			else:
+				_pc = 3027
+				continue
+		elif _pc == 23894:
+			if not _pog_is_null(13):
+				_pc = 23903
+				continue
+			else:
+				_pc = 3743
+				continue
+		elif _pc == 23903:
+			if not _pog_is_null(14):
+				_pc = 23912
+				continue
+			else:
+				_pc = 4626
+				continue
+		elif _pc == 23912:
+			if not _pog_is_null(10):
+				_pc = 23921
+				continue
+			else:
+				_pc = 5363
+				continue
+		elif _pc == 23921:
+			if not _pog_is_null(25):
+				_pc = 23930
+				continue
+			else:
+				_pc = 5940
+				continue
+		elif _pc == 23930:
+			if not _pog_is_null(7):
+				_pc = 23939
+				continue
+			else:
+				_pc = 6713
+				continue
+		elif _pc == 23939:
+			if not _pog_is_null(1):
+				_pc = 23947
+				continue
+			else:
+				_pc = 7368
+				continue
+		elif _pc == 23947:
+			if not _pog_is_null(9):
+				_pc = 23956
+				continue
+			else:
+				_pc = 8190
+				continue
+		elif _pc == 23956:
+			if not _pog_is_null(6):
+				_pc = 23965
+				continue
+			else:
+				_pc = 8995
+				continue
+		elif _pc == 23965:
+			if not _pog_is_null(5):
+				_pc = 23974
+				continue
+			else:
+				_pc = 9611
+				continue
+		elif _pc == 23974:
+			if not _pog_is_null(26):
+				_pc = 23983
+				continue
+			else:
+				_pc = 10343
+				continue
+		elif _pc == 23983:
+			if not _pog_is_null(8):
+				_pc = 23992
+				continue
+			else:
+				_pc = 10860
+				continue
+		elif _pc == 23992:
+			if not _pog_is_null(29):
+				_pc = 24001
+				continue
+			else:
+				_pc = 11461
+				continue
+		elif _pc == 24001:
+			if not _pog_is_null(12):
+				_pc = 24010
+				continue
+			else:
+				_pc = 12104
+				continue
+		elif _pc == 24010:
+			if not _pog_is_null(24):
+				_pc = 24019
+				continue
+			else:
+				_pc = 12750
+				continue
+		elif _pc == 24019:
+			if not _pog_is_null(11):
+				_pc = 24028
+				continue
+			else:
+				_pc = 13404
+				continue
+		elif _pc == 24028:
+			if not _pog_is_null(27):
+				_pc = 24037
+				continue
+			else:
+				_pc = 14049
+				continue
+		elif _pc == 24037:
+			if not _pog_is_null(28):
+				_pc = 24046
+				continue
+			else:
+				_pc = 14868
+				continue
+		elif _pc == 24046:
+			if not _pog_is_null(17):
+				_pc = 24055
+				continue
+			else:
+				_pc = 15564
+				continue
+		elif _pc == 24055:
+			if not _pog_is_null(18):
+				_pc = 24064
+				continue
+			else:
+				_pc = 16122
+				continue
+		elif _pc == 24064:
+			if not _pog_is_null(19):
+				_pc = 24073
+				continue
+			else:
+				_pc = 16788
+				continue
+		elif _pc == 24073:
+			if not _pog_is_null(20):
+				_pc = 24082
+				continue
+			else:
+				_pc = 17455
+				continue
+		elif _pc == 24082:
+			if not _pog_is_null(21):
+				_pc = 24091
+				continue
+			else:
+				_pc = 18013
+				continue
+		elif _pc == 24091:
+			if not _pog_is_null(22):
+				_pc = 24100
+				continue
+			else:
+				_pc = 18635
+				continue
+		elif _pc == 24100:
+			if not _pog_is_null(23):
+				_pc = 24109
+				continue
+			else:
+				_pc = 19256
+				continue
+		elif _pc == 24109:
+			if not _pog_is_null(30):
+				_pc = 24118
+				continue
+			else:
+				_pc = 19923
+				continue
+		elif _pc == 24118:
+			if not _pog_is_null(31):
+				_pc = 24127
+				continue
+			else:
+				_pc = 20550
+				continue
+		elif _pc == 24127:
+			if not _pog_is_null(32):
+				_pc = 24136
+				continue
+			else:
+				_pc = 21197
+				continue
+		elif _pc == 24136:
+			if not _pog_is_null(33):
+				_pc = 24145
+				continue
+			else:
+				_pc = 21831
+				continue
+		elif _pc == 24145:
+			if not _pog_is_null(34):
+				_pc = 24154
+				continue
+			else:
+				_pc = 22569
+				continue
+		elif _pc == 24154:
+			if not _pog_is_null(35):
+				_pc = 24163
+				continue
+			else:
+				_pc = 23215
+				continue
+		elif _pc == 24163:
+			_pc = 24169
+			continue
+		elif _pc == 24169:
 			return
-		if not (await local_0()):
-			return
-		break
-	return
+		else:
+			return 0
 	return 0
 
 func local_24171() -> Variant:

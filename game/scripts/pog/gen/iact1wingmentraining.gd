@@ -153,7 +153,7 @@ func local_1094(v0) -> Variant:
 		v6 = 1 + v6
 	await local_145(v2, 0)
 	group.add_group(v1, v2)
-	return
+	return v1
 	return 0
 
 func local_1728(v0) -> Variant:
@@ -211,11 +211,11 @@ func local_2328(v0, v1) -> Variant:
 func local_2563(v0, v1) -> Variant:
 	if 2 == list.item_count(v0):
 		if isim.is_docked_to(isim.cast(list.get_nth(v0, 1)), v1) and isim.is_docked_to(isim.cast(list.get_nth(v0, 0)), v1):
-			return
+			return 1
 	else:
 		if isim.is_docked_to(isim.cast(list.get_nth(v0, 0)), v1):
-			return
-	return
+			return 1
+	return 0
 	return 0
 
 func local_2775(v0, v1, v2) -> Variant:
@@ -243,7 +243,7 @@ func local_2775(v0, v1, v2) -> Variant:
 			if 8 != state.progress(v2):
 				state.set_progress(v2, 2)
 			return 0
-		if await local_2563(v4, v3):
+		if not (await local_2563(v4, v3)):
 			continue
 		_pog_halt(v8)
 		_pog_halt(v9)
@@ -273,18 +273,87 @@ func local_2775(v0, v1, v2) -> Variant:
 func local_3705(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = group.nth_group(v0, 0)
-	await iconversation.begin()
-	await iconversation.add_response("a1_training_text_cal_about", "a1_training_dialogue_cal_about")
-	await iconversation.add_response("a1_training_text_cal_fastest", "a1_training_dialogue_cal_fastest")
-	await iconversation.add_response("a1_training_text_cal_start", "a1_training_dialogue_cal_start")
-	await iconversation.add_response("a1_training_text_cal_nothing", "a1_training_dialogue_cal_nothing")
-	v4 = await iconversation.ask(0, "name_clay", "a1_training_dialogue_clay_at_course")
-	while v4 == 1:
-		await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_about_tfighters")
-		break
-	await iconversation.end()
-	return
+	var _pc: int = 3705
+	while true:
+		if _pc == 3705:
+			v3 = group.nth_group(v0, 0)
+			await iconversation.begin()
+			await iconversation.add_response("a1_training_text_cal_about", "a1_training_dialogue_cal_about")
+			await iconversation.add_response("a1_training_text_cal_fastest", "a1_training_dialogue_cal_fastest")
+			await iconversation.add_response("a1_training_text_cal_start", "a1_training_dialogue_cal_start")
+			await iconversation.add_response("a1_training_text_cal_nothing", "a1_training_dialogue_cal_nothing")
+			v4 = await iconversation.ask(0, "name_clay", "a1_training_dialogue_clay_at_course")
+			_pc = 4297
+			continue
+		elif _pc == 3895:
+			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_about_tfighters")
+			_pc = 4333
+			continue
+		elif _pc == 3928:
+			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_the_fastest")
+			ihud.set_prompt(await iutilities.convert_seconds_to_time(object.int_property(v2, "best_time")), "")
+			_pc = 4333
+			continue
+		elif _pc == 4020:
+			if 3 != state.progress(v2):
+				_pc = 4046
+				continue
+			else:
+				_pc = 4222
+				continue
+		elif _pc == 4046:
+			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_ok")
+			state.set_progress(v2, 1)
+			await _pog_wait(2.0)
+			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_go")
+			await local_145(v3, 1)
+			await iconversation.end()
+			await local_2775(v0, v1, v2)
+			_pc = 4250
+			continue
+		elif _pc == 4222:
+			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_wait")
+			_pc = 4250
+			continue
+		elif _pc == 4250:
+			_pc = 4333
+			continue
+		elif _pc == 4255:
+			await _pog_wait(40.0)
+			_pc = 4333
+			continue
+		elif _pc == 4292:
+			_pc = 4333
+			continue
+		elif _pc == 4297:
+			if v4 != 1:
+				_pc = 4310
+				continue
+			else:
+				_pc = 3895
+				continue
+		elif _pc == 4310:
+			if not _pog_is_null(2):
+				_pc = 4319
+				continue
+			else:
+				_pc = 3928
+				continue
+		elif _pc == 4319:
+			if not _pog_is_null(3):
+				_pc = 4328
+				continue
+			else:
+				_pc = 4020
+				continue
+		elif _pc == 4328:
+			_pc = 4255
+			continue
+		elif _pc == 4333:
+			await iconversation.end()
+			return
+		else:
+			return 0
 	return 0
 
 func local_4349(v0, v1, v2) -> Variant:
@@ -298,7 +367,7 @@ func local_4349(v0, v1, v2) -> Variant:
 	v7 = 0
 	while true:
 		await _pog_wait(1)
-		if 1 != state.progress(v2) and 1 == (1 - _pog_is_running(v6)) and 800.0 <= sim.distance_between(v0, v3):
+		if not (1 != state.progress(v2) and 1 == (1 - _pog_is_running(v6)) and 800.0 <= sim.distance_between(v0, v3)):
 			continue
 		await local_17(v4, 1)
 		v6 = _pog_spawn(local_3705.bind(v1, v0, v2))
@@ -353,9 +422,9 @@ func main_task() -> Variant:
 					global.destroy("g_training_task_handle")
 					global.destroy("g_started_wingmen_training")
 					return
-				if 1 == (1 - _pog_is_running(v2)) and 700.0 <= sim.distance_between(v3, v4):
+				if not (1 == (1 - _pog_is_running(v2)) and 700.0 <= sim.distance_between(v3, v4)):
 					continue
-				if not _pog_is_null(await iwingmen.t_fighter_count()):
+				if _pog_is_null(await iwingmen.t_fighter_count()):
 					continue
 				v2 = _pog_spawn(local_4349.bind(v4, v1, v6))
 	return

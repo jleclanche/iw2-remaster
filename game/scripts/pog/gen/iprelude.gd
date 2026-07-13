@@ -114,7 +114,7 @@ func junkyard_handler() -> Variant:
 			sim.destroy(v4)
 			global.destroy("g_reactor_handle")
 			return
-		if _pog_eq("map:/geog/badlands/hoffers_wake", isim.active_world()):
+		if not _pog_eq("map:/geog/badlands/hoffers_wake", isim.active_world()):
 			continue
 		if not (v0) and await iutilities.player_in_range(v3):
 			v0 = 1
@@ -132,7 +132,7 @@ func junkyard_handler() -> Variant:
 				if not (global.exists("g_reactor_handle")):
 					global.destroy("g_reactor_handle")
 		else:
-			if _pog_is_null(sim.cast(v4)) or not (await iutilities.player_in_range(v3)) and v0:
+			if not (_pog_is_null(sim.cast(v4)) or not (await iutilities.player_in_range(v3)) and v0):
 				continue
 			v0 = 0
 			sim.destroy(v4)
@@ -197,156 +197,653 @@ func local_2112() -> Variant:
 func master_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
-	v1 = state.find(v0)
-	if not (v1):
-		v1 = state.create(v0, 0)
-	await iutilities.super_skip()
-	await ibasegui.set_triangulation_screen_enabled(0)
-	if await iutilities.skip_act("Act Zero: The Prelude", 0):
-		await iact0mission10.stub()
-		await iact0mission20.stub()
-		await iact0mission40.stub()
-		await iact0mission50.stub()
-		await iact0mission60.stub()
-		await iact0missiontour.stub()
-		if not (iinventory.got_command_section()):
+	var _pc: int = 2282
+	while true:
+		if _pc == 2282:
+			v0 = self
+			v1 = state.find(v0)
+			if not (v1):
+				_pc = 2341
+				continue
+			else:
+				_pc = 2366
+				continue
+		elif _pc == 2341:
+			v1 = state.create(v0, 0)
+			_pc = 2366
+			continue
+		elif _pc == 2366:
+			await iutilities.super_skip()
+			await ibasegui.set_triangulation_screen_enabled(0)
+			if await iutilities.skip_act("Act Zero: The Prelude", 0):
+				_pc = 2421
+				continue
+			else:
+				_pc = 2672
+				continue
+		elif _pc == 2421:
+			await iact0mission10.stub()
+			await iact0mission20.stub()
+			await iact0mission40.stub()
+			await iact0mission50.stub()
+			await iact0mission60.stub()
+			await iact0missiontour.stub()
+			if not (iinventory.got_command_section()):
+				_pc = 2524
+				continue
+			else:
+				_pc = 2538
+				continue
+		elif _pc == 2524:
 			iinventory.add_command_section()
-		global.create_bool("g_jafs_menu_option_enabled", 2, 1)
-		global.set_bool("g_base_lights_on", 1)
-		await local_471()
-		state.destroy(self)
-		await _pog_movie("/movies/midtro")
-		igame.next_act("iActOne")
-	else:
-		if _pog_is_null(global.pog_bool("g_act0_recovered_reactor")):
+			_pc = 2538
+			continue
+		elif _pc == 2538:
+			global.create_bool("g_jafs_menu_option_enabled", 2, 1)
+			global.set_bool("g_base_lights_on", 1)
+			await local_471()
+			state.destroy(self)
+			await _pog_movie("/movies/midtro")
+			igame.next_act("iActOne")
+			_pc = 4840
+			continue
+		elif _pc == 2672:
+			if _pog_is_null(global.pog_bool("g_act0_recovered_reactor")):
+				_pc = 2699
+				continue
+			else:
+				_pc = 2744
+				continue
+		elif _pc == 2699:
 			await ibasegui.set_trade_screen_enabled(0)
 			await ibasegui.set_recycling_screen_enabled(0)
 			await ibasegui.set_manufacturing_screen_enabled(0)
-		global.destroy("g_weapons_training_active")
-		if PogRuntime.TRACE:
+			_pc = 2744
+			continue
+		elif _pc == 2744:
+			global.destroy("g_weapons_training_active")
+			_pc = 2791
+			continue
+		elif _pc == 2770:
 			debug.print_string("iPrelude.MasterScript - Commencing Act 0 script.\n")
-		if 10 < object.int_property(global.handle("g_hud_handler"), "number_completed_hud_nodes") and not (object.property_exists(global.handle("g_hud_handler"), "number_completed_hud_nodes")) and 1 == global.exists("g_hud_handler"):
+			_pc = 2791
+			continue
+		elif _pc == 2791:
+			if 10 < object.int_property(global.handle("g_hud_handler"), "number_completed_hud_nodes") and not (object.property_exists(global.handle("g_hud_handler"), "number_completed_hud_nodes")) and 1 == global.exists("g_hud_handler"):
+				_pc = 2900
+				continue
+			else:
+				_pc = 2947
+				continue
+		elif _pc == 2900:
 			state.restore(state.cast(global.handle("g_hud_handler")))
-		_pog_detach(_pog_spawn(junkyard_handler.bind()))
-		while _pog_is_null(state.progress(v1)):
+			_pc = 2947
+			continue
+		elif _pc == 2947:
+			_pog_detach(_pog_spawn(junkyard_handler.bind()))
+			_pc = 4734
+			continue
+		elif _pc == 2979:
 			await iact0mission10.main()
 			state.set_progress(v1, 1)
-			while true:
-				await _pog_wait(1)
-				if 1 == global.pog_bool("g_act0_found_base"):
-					if PogRuntime.TRACE:
-						debug.print_string("iPrelude.MasterScript - player has found Lucrecia's Base.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iPrelude.MasterScript - Still waiting for player to find Lucrecia's base.\n")
+			_pc = 3013
+			continue
+		elif _pc == 3013:
+			_pc = 3018
+			continue
+		elif _pc == 3018:
+			await _pog_frame()
+			if _pog_every(3019, 1.0):
+				_pc = 3032
+				continue
+			else:
+				_pc = 3121
+				continue
+		elif _pc == 3032:
+			if 1 == global.pog_bool("g_act0_found_base"):
+				_pc = 3059
+				continue
+			else:
+				_pc = 3095
+				continue
+		elif _pc == 3059:
+			_pc = 3085
+			continue
+		elif _pc == 3064:
+			debug.print_string("iPrelude.MasterScript - player has found Lucrecia's Base.\n")
+			_pc = 3085
+			continue
+		elif _pc == 3085:
+			_pc = 3126
+			continue
+		elif _pc == 3090:
+			_pc = 3121
+			continue
+		elif _pc == 3095:
+			_pc = 3121
+			continue
+		elif _pc == 3100:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to find Lucrecia's base.\n")
+			_pc = 3121
+			continue
+		elif _pc == 3121:
+			_pc = 3018
+			continue
+		elif _pc == 3126:
 			await iutilities.send_story_element("g_story_0.20", 0, 0)
 			await iutilities.send_story_element("g_story_0.30", 0, 0)
 			state.set_progress(v1, 2)
+			_pc = 3194
+			continue
+		elif _pc == 3194:
 			if 1 != global.pog_bool("g_skip_to_specific"):
-				while true:
-					await _pog_wait(1)
-					if 1 == global.pog_bool("g_act0_started_proving_grounds"):
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - player has been given proving ground mission\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - Still waiting for player to be given proving grounds mission.\n")
+				_pc = 3221
+				continue
+			else:
+				_pc = 3335
+				continue
+		elif _pc == 3221:
+			_pc = 3226
+			continue
+		elif _pc == 3226:
+			await _pog_frame()
+			if _pog_every(3227, 1.0):
+				_pc = 3240
+				continue
+			else:
+				_pc = 3329
+				continue
+		elif _pc == 3240:
+			if 1 == global.pog_bool("g_act0_started_proving_grounds"):
+				_pc = 3267
+				continue
+			else:
+				_pc = 3303
+				continue
+		elif _pc == 3267:
+			_pc = 3293
+			continue
+		elif _pc == 3272:
+			debug.print_string("iPrelude.MasterScript - player has been given proving ground mission\n")
+			_pc = 3293
+			continue
+		elif _pc == 3293:
+			_pc = 3334
+			continue
+		elif _pc == 3298:
+			_pc = 3329
+			continue
+		elif _pc == 3303:
+			_pc = 3329
+			continue
+		elif _pc == 3308:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to be given proving grounds mission.\n")
+			_pc = 3329
+			continue
+		elif _pc == 3329:
+			_pc = 3226
+			continue
+		elif _pc == 3334:
+			_pc = 3335
+			continue
+		elif _pc == 3335:
 			await iact0mission20.main()
 			state.set_progress(v1, 3)
+			_pc = 3370
+			continue
+		elif _pc == 3370:
 			if 1 != global.pog_bool("g_skip_to_specific"):
-				while true:
-					await _pog_wait(2)
-					if 1 == global.pog_bool("g_act0_proving_grounds_complete"):
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - player has completed proving grounds mission.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - Still waiting for player to complete the proving grounds mission.\n")
+				_pc = 3397
+				continue
+			else:
+				_pc = 3511
+				continue
+		elif _pc == 3397:
+			_pc = 3402
+			continue
+		elif _pc == 3402:
+			await _pog_frame()
+			if _pog_every(3403, 2.0):
+				_pc = 3416
+				continue
+			else:
+				_pc = 3505
+				continue
+		elif _pc == 3416:
+			if 1 == global.pog_bool("g_act0_proving_grounds_complete"):
+				_pc = 3443
+				continue
+			else:
+				_pc = 3479
+				continue
+		elif _pc == 3443:
+			_pc = 3469
+			continue
+		elif _pc == 3448:
+			debug.print_string("iPrelude.MasterScript - player has completed proving grounds mission.\n")
+			_pc = 3469
+			continue
+		elif _pc == 3469:
+			_pc = 3510
+			continue
+		elif _pc == 3474:
+			_pc = 3505
+			continue
+		elif _pc == 3479:
+			_pc = 3505
+			continue
+		elif _pc == 3484:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to complete the proving grounds mission.\n")
+			_pc = 3505
+			continue
+		elif _pc == 3505:
+			_pc = 3402
+			continue
+		elif _pc == 3510:
+			_pc = 3511
+			continue
+		elif _pc == 3511:
 			await iutilities.send_story_element("g_story_0.40", 0, 0)
 			state.set_progress(v1, 4)
+			_pc = 3555
+			continue
+		elif _pc == 3555:
 			if 1 != global.pog_bool("g_skip_to_specific"):
-				while true:
-					await _pog_wait(2)
-					if 1 == global.pog_bool("g_act0_started_tour"):
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - player has been given tour mission\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - Still waiting for player to be given tour mission.\n")
+				_pc = 3582
+				continue
+			else:
+				_pc = 3696
+				continue
+		elif _pc == 3582:
+			_pc = 3587
+			continue
+		elif _pc == 3587:
+			await _pog_frame()
+			if _pog_every(3588, 2.0):
+				_pc = 3601
+				continue
+			else:
+				_pc = 3690
+				continue
+		elif _pc == 3601:
+			if 1 == global.pog_bool("g_act0_started_tour"):
+				_pc = 3628
+				continue
+			else:
+				_pc = 3664
+				continue
+		elif _pc == 3628:
+			_pc = 3654
+			continue
+		elif _pc == 3633:
+			debug.print_string("iPrelude.MasterScript - player has been given tour mission\n")
+			_pc = 3654
+			continue
+		elif _pc == 3654:
+			_pc = 3695
+			continue
+		elif _pc == 3659:
+			_pc = 3690
+			continue
+		elif _pc == 3664:
+			_pc = 3690
+			continue
+		elif _pc == 3669:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to be given tour mission.\n")
+			_pc = 3690
+			continue
+		elif _pc == 3690:
+			_pc = 3587
+			continue
+		elif _pc == 3695:
+			_pc = 3696
+			continue
+		elif _pc == 3696:
 			await iact0missiontour.main()
 			state.set_progress(v1, 5)
+			_pc = 3731
+			continue
+		elif _pc == 3731:
 			if 1 != global.pog_bool("g_skip_to_specific"):
-				while true:
-					await _pog_wait(2)
-					if 1 == global.pog_bool("g_act0_tour_complete"):
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - player has completed tour.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - Still waiting for player to complete Hoffers Wake Tour.\n")
+				_pc = 3758
+				continue
+			else:
+				_pc = 3872
+				continue
+		elif _pc == 3758:
+			_pc = 3763
+			continue
+		elif _pc == 3763:
+			await _pog_frame()
+			if _pog_every(3764, 2.0):
+				_pc = 3777
+				continue
+			else:
+				_pc = 3866
+				continue
+		elif _pc == 3777:
+			if 1 == global.pog_bool("g_act0_tour_complete"):
+				_pc = 3804
+				continue
+			else:
+				_pc = 3840
+				continue
+		elif _pc == 3804:
+			_pc = 3830
+			continue
+		elif _pc == 3809:
+			debug.print_string("iPrelude.MasterScript - player has completed tour.\n")
+			_pc = 3830
+			continue
+		elif _pc == 3830:
+			_pc = 3871
+			continue
+		elif _pc == 3835:
+			_pc = 3866
+			continue
+		elif _pc == 3840:
+			_pc = 3866
+			continue
+		elif _pc == 3845:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to complete Hoffers Wake Tour.\n")
+			_pc = 3866
+			continue
+		elif _pc == 3866:
+			_pc = 3763
+			continue
+		elif _pc == 3871:
+			_pc = 3872
+			continue
+		elif _pc == 3872:
 			await iconversation.say(0, "name_clay", "a0_m35_dialogue_clay_hm_i")
 			await iact0mission40.main()
 			state.set_progress(v1, 6)
+			_pc = 3935
+			continue
+		elif _pc == 3935:
 			if 1 != global.pog_bool("g_skip_to_specific"):
-				while true:
-					await _pog_wait(2)
-					if 1 == global.pog_bool("g_act0_errand_boy_complete"):
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - player has completed Errand Boy.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - Still waiting for player to complete Errand Boy.\n")
+				_pc = 3962
+				continue
+			else:
+				_pc = 4076
+				continue
+		elif _pc == 3962:
+			_pc = 3967
+			continue
+		elif _pc == 3967:
+			await _pog_frame()
+			if _pog_every(3968, 2.0):
+				_pc = 3981
+				continue
+			else:
+				_pc = 4070
+				continue
+		elif _pc == 3981:
+			if 1 == global.pog_bool("g_act0_errand_boy_complete"):
+				_pc = 4008
+				continue
+			else:
+				_pc = 4044
+				continue
+		elif _pc == 4008:
+			_pc = 4034
+			continue
+		elif _pc == 4013:
+			debug.print_string("iPrelude.MasterScript - player has completed Errand Boy.\n")
+			_pc = 4034
+			continue
+		elif _pc == 4034:
+			_pc = 4075
+			continue
+		elif _pc == 4039:
+			_pc = 4070
+			continue
+		elif _pc == 4044:
+			_pc = 4070
+			continue
+		elif _pc == 4049:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to complete Errand Boy.\n")
+			_pc = 4070
+			continue
+		elif _pc == 4070:
+			_pc = 3967
+			continue
+		elif _pc == 4075:
+			_pc = 4076
+			continue
+		elif _pc == 4076:
 			await _pog_wait(10.0)
 			await iconversation.one_liner(0, "name_clay", "a0_master_dialogue_clay_hey_maybe")
 			await iact0mission50.main()
 			state.set_progress(v1, 7)
-			while true:
-				await _pog_wait(2)
-				if 1 == global.pog_bool("g_act0_recovered_reactor"):
-					if PogRuntime.TRACE:
-						debug.print_string("iPrelude.MasterScript - player has recovered the base reactor.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iPrelude.MasterScript - Still waiting for player to recover base reactor.\n")
+			_pc = 4171
+			continue
+		elif _pc == 4171:
+			_pc = 4176
+			continue
+		elif _pc == 4176:
+			await _pog_frame()
+			if _pog_every(4177, 2.0):
+				_pc = 4190
+				continue
+			else:
+				_pc = 4279
+				continue
+		elif _pc == 4190:
+			if 1 == global.pog_bool("g_act0_recovered_reactor"):
+				_pc = 4217
+				continue
+			else:
+				_pc = 4253
+				continue
+		elif _pc == 4217:
+			_pc = 4243
+			continue
+		elif _pc == 4222:
+			debug.print_string("iPrelude.MasterScript - player has recovered the base reactor.\n")
+			_pc = 4243
+			continue
+		elif _pc == 4243:
+			_pc = 4284
+			continue
+		elif _pc == 4248:
+			_pc = 4279
+			continue
+		elif _pc == 4253:
+			_pc = 4279
+			continue
+		elif _pc == 4258:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to recover base reactor.\n")
+			_pc = 4279
+			continue
+		elif _pc == 4279:
+			_pc = 4176
+			continue
+		elif _pc == 4284:
 			global.set_int("g_act0_base_online", 1)
 			iinventory.remove_command_section()
 			state.set_progress(v1, 8)
+			_pc = 4342
+			continue
+		elif _pc == 4342:
 			if 1 != global.pog_bool("g_skip_to_specific"):
-				while true:
-					await _pog_wait(2)
-					if 1 == global.pog_bool("g_act0_online_base_complete"):
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - player has completed the online base tour.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.MasterScript - Still waiting for player to finish online base.\n")
+				_pc = 4369
+				continue
+			else:
+				_pc = 4483
+				continue
+		elif _pc == 4369:
+			_pc = 4374
+			continue
+		elif _pc == 4374:
+			await _pog_frame()
+			if _pog_every(4375, 2.0):
+				_pc = 4388
+				continue
+			else:
+				_pc = 4477
+				continue
+		elif _pc == 4388:
+			if 1 == global.pog_bool("g_act0_online_base_complete"):
+				_pc = 4415
+				continue
+			else:
+				_pc = 4451
+				continue
+		elif _pc == 4415:
+			_pc = 4441
+			continue
+		elif _pc == 4420:
+			debug.print_string("iPrelude.MasterScript - player has completed the online base tour.\n")
+			_pc = 4441
+			continue
+		elif _pc == 4441:
+			_pc = 4482
+			continue
+		elif _pc == 4446:
+			_pc = 4477
+			continue
+		elif _pc == 4451:
+			_pc = 4477
+			continue
+		elif _pc == 4456:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to finish online base.\n")
+			_pc = 4477
+			continue
+		elif _pc == 4477:
+			_pc = 4374
+			continue
+		elif _pc == 4482:
+			_pc = 4483
+			continue
+		elif _pc == 4483:
 			await iact0mission60.main()
 			state.set_progress(v1, 9)
-			while true:
-				await _pog_wait(2)
-				if 1 == global.pog_bool("g_act0_nemesis_complete"):
-					if PogRuntime.TRACE:
-						debug.print_string("iPrelude.MasterScript - player has completed Nemesis.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iPrelude.MasterScript - Still waiting for player to finish Nemesis.\n")
+			_pc = 4518
+			continue
+		elif _pc == 4518:
+			_pc = 4523
+			continue
+		elif _pc == 4523:
+			await _pog_frame()
+			if _pog_every(4524, 2.0):
+				_pc = 4537
+				continue
+			else:
+				_pc = 4626
+				continue
+		elif _pc == 4537:
+			if 1 == global.pog_bool("g_act0_nemesis_complete"):
+				_pc = 4564
+				continue
+			else:
+				_pc = 4600
+				continue
+		elif _pc == 4564:
+			_pc = 4590
+			continue
+		elif _pc == 4569:
+			debug.print_string("iPrelude.MasterScript - player has completed Nemesis.\n")
+			_pc = 4590
+			continue
+		elif _pc == 4590:
+			_pc = 4631
+			continue
+		elif _pc == 4595:
+			_pc = 4626
+			continue
+		elif _pc == 4600:
+			_pc = 4626
+			continue
+		elif _pc == 4605:
+			debug.print_string("iPrelude.MasterScript - Still waiting for player to finish Nemesis.\n")
+			_pc = 4626
+			continue
+		elif _pc == 4626:
+			_pc = 4523
+			continue
+		elif _pc == 4631:
 			await local_471()
 			iinventory.add_command_section()
 			state.destroy(self)
 			await _pog_movie("/movies/midtro")
 			igame.next_act("iActOne")
-			break
-	return
+			_pc = 4840
+			continue
+		elif _pc == 4734:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 4760
+				continue
+			else:
+				_pc = 2979
+				continue
+		elif _pc == 4760:
+			if not _pog_is_null(1):
+				_pc = 4768
+				continue
+			else:
+				_pc = 3013
+				continue
+		elif _pc == 4768:
+			if not _pog_is_null(2):
+				_pc = 4777
+				continue
+			else:
+				_pc = 3194
+				continue
+		elif _pc == 4777:
+			if not _pog_is_null(3):
+				_pc = 4786
+				continue
+			else:
+				_pc = 3370
+				continue
+		elif _pc == 4786:
+			if not _pog_is_null(4):
+				_pc = 4795
+				continue
+			else:
+				_pc = 3555
+				continue
+		elif _pc == 4795:
+			if not _pog_is_null(5):
+				_pc = 4804
+				continue
+			else:
+				_pc = 3731
+				continue
+		elif _pc == 4804:
+			if not _pog_is_null(6):
+				_pc = 4813
+				continue
+			else:
+				_pc = 3935
+				continue
+		elif _pc == 4813:
+			if not _pog_is_null(7):
+				_pc = 4822
+				continue
+			else:
+				_pc = 4171
+				continue
+		elif _pc == 4822:
+			if not _pog_is_null(8):
+				_pc = 4831
+				continue
+			else:
+				_pc = 4342
+				continue
+		elif _pc == 4831:
+			if not _pog_is_null(9):
+				_pc = 4840
+				continue
+			else:
+				_pc = 4518
+				continue
+		elif _pc == 4840:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4842() -> Variant:

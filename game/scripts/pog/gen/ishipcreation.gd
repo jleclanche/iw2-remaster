@@ -92,15 +92,35 @@ func ship_name(v0, v1) -> Variant:
 				debug.print_string("' using random\n")
 			v1 = math.random_int(0, v4)
 		v5 = string.join(inifile.string(v2, v0, "Prefix", "none"), string.from_int(v1))
-	push_error("PORT: unstructured jump to L907")
 	return _pog_clone(v5)
 	return 0
 
 func local_924(v0, v1, v2) -> Variant:
 	sim.set_collision(v1, 0)
-	while _pog_is_null(v2):
+	if _pog_is_null(v2):
 		sim.add_child_relative_to(v0, v1, -30.0, -30.0, 50.0)
-		break
+		return 0
+	if v2 == 1:
+		sim.add_child_relative_to(v0, v1, 30.0, 30.0, 50.0)
+		return 0
+	if v2 == 2:
+		sim.add_child_relative_to(v0, v1, -30.0, 30.0, 50.0)
+		return 0
+	if v2 == 3:
+		sim.add_child_relative_to(v0, v1, 30.0, -30.0, 50.0)
+		return 0
+	if v2 == 4:
+		sim.add_child_relative_to(v0, v1, -30.0, -30.0, 0.0)
+		return 0
+	if v2 == 5:
+		sim.add_child_relative_to(v0, v1, 30.0, 30.0, 0.0)
+		return 0
+	if v2 == 6:
+		sim.add_child_relative_to(v0, v1, -30.0, 30.0, 0.0)
+		return 0
+	if v2 == 7:
+		sim.add_child_relative_to(v0, v1, 30.0, -30.0, 0.0)
+		return 0
 	return 0
 	return 0
 
@@ -136,42 +156,12233 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = group.create()
-	v6 = null
-	object.set_int_property(v7, "number_small_pods", v1)
-	object.set_int_property(v7, "type_cargo", v2)
-	v8 = 0
-	while v1 < v8:
-		while _pog_is_null(math.random_int(0, 2)):
+	var _pc: int = 1726
+	while true:
+		if _pc == 1726:
+			v3 = group.create()
+			v6 = null
+			object.set_int_property(v7, "number_small_pods", v1)
+			object.set_int_property(v7, "type_cargo", v2)
+			v8 = 0
+			_pc = 1830
+			continue
+		elif _pc == 1830:
+			if v1 < v8:
+				_pc = 1846
+				continue
+			else:
+				_pc = 2793
+				continue
+		elif _pc == 1846:
+			_pc = 1910
+			continue
+		elif _pc == 1851:
 			v6 = "ini:/sims/ships/utility/cargo_pod"
-			break
-		v7 = iship.create(v6, "name_cargo_pod")
-		object.add_int_property(v7, "cargo_faction", 1)
-		while v2 == -2:
+			_pc = 1951
+			continue
+		elif _pc == 1869:
+			v6 = "ini:/sims/ships/utility/freightpod"
+			_pc = 1951
+			continue
+		elif _pc == 1887:
+			v6 = "ini:/sims/ships/utility/containerpod"
+			_pc = 1951
+			continue
+		elif _pc == 1905:
+			_pc = 1951
+			continue
+		elif _pc == 1910:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 1934
+				continue
+			else:
+				_pc = 1851
+				continue
+		elif _pc == 1934:
+			if not _pog_is_null(1):
+				_pc = 1942
+				continue
+			else:
+				_pc = 1869
+				continue
+		elif _pc == 1942:
+			if not _pog_is_null(2):
+				_pc = 1951
+				continue
+			else:
+				_pc = 1887
+				continue
+		elif _pc == 1951:
+			v7 = iship.create(v6, "name_cargo_pod")
+			object.add_int_property(v7, "cargo_faction", 1)
+			_pc = 2339
+			continue
+		elif _pc == 2014:
 			v5 = await icargoscript.military_supply_cargo_generator()
-			break
-		if 531 == v5 or 530 == v5 or 514 == v5 or 230 == v5 or 549 == v5 or 472 == v5 or 471 == v5 or 482 == v5:
+			_pc = 2384
+			continue
+		elif _pc == 2038:
+			v5 = await icargoscript.supply_cargo_generator()
+			_pc = 2384
+			continue
+		elif _pc == 2062:
+			_pc = 2168
+			continue
+		elif _pc == 2067:
+			v5 = await icargoscript.cheap_cargo_generator()
+			_pc = 2218
+			continue
+		elif _pc == 2091:
+			v5 = await icargoscript.medium_cargo_generator()
+			_pc = 2218
+			continue
+		elif _pc == 2115:
+			v5 = await icargoscript.high_cargo_generator()
+			_pc = 2218
+			continue
+		elif _pc == 2139:
+			v5 = await icargoscript.very_high_cargo_generator()
+			_pc = 2218
+			continue
+		elif _pc == 2163:
+			_pc = 2218
+			continue
+		elif _pc == 2168:
+			if not _pog_is_null(math.random_int(0, 3)):
+				_pc = 2192
+				continue
+			else:
+				_pc = 2067
+				continue
+		elif _pc == 2192:
+			if not _pog_is_null(1):
+				_pc = 2200
+				continue
+			else:
+				_pc = 2091
+				continue
+		elif _pc == 2200:
+			if not _pog_is_null(2):
+				_pc = 2209
+				continue
+			else:
+				_pc = 2115
+				continue
+		elif _pc == 2209:
+			if not _pog_is_null(3):
+				_pc = 2218
+				continue
+			else:
+				_pc = 2139
+				continue
+		elif _pc == 2218:
+			_pc = 2384
+			continue
+		elif _pc == 2223:
+			v4 = ihabitat.nearest(global.pog_set("g_filtered_system_habitats"), v0)
+			v5 = await icargoscript.find_cargo_for_location(ihabitat.type(v4))
+			_pc = 2384
+			continue
+		elif _pc == 2310:
+			v5 = await icargoscript.medium_cargo_generator()
+			_pc = 2384
+			continue
+		elif _pc == 2334:
+			_pc = 2384
+			continue
+		elif _pc == 2339:
+			if v2 != -2:
+				_pc = 2353
+				continue
+			else:
+				_pc = 2014
+				continue
+		elif _pc == 2353:
+			if not _pog_is_null(-1):
+				_pc = 2362
+				continue
+			else:
+				_pc = 2038
+				continue
+		elif _pc == 2362:
+			if not _pog_is_null(1):
+				_pc = 2370
+				continue
+			else:
+				_pc = 2062
+				continue
+		elif _pc == 2370:
+			if not _pog_is_null(2):
+				_pc = 2379
+				continue
+			else:
+				_pc = 2223
+				continue
+		elif _pc == 2379:
+			_pc = 2310
+			continue
+		elif _pc == 2384:
+			if 531 == v5 or 530 == v5 or 514 == v5 or 230 == v5 or 549 == v5 or 472 == v5 or 471 == v5 or 482 == v5:
+				_pc = 2468
+				continue
+			else:
+				_pc = 2500
+				continue
+		elif _pc == 2468:
 			object.set_string_property(v7, "death_script", "iDeathScript.Antimatter")
-		if _pog_is_null(v5):
-			while _pog_is_null(math.random_int(0, 3)):
-				v5 = await icargoscript.cheap_cargo_generator()
-				break
-		object.set_int_property(v7, "cargo", v5)
-		await iutilities.rename_sim(v7, icargo.pog_name(icargo.find(v5)))
-		group.add_sim(v3, v7)
-		v8 = 1 + v8
-	return
+			_pc = 2500
+			continue
+		elif _pc == 2500:
+			if _pog_is_null(v5):
+				_pc = 2512
+				continue
+			else:
+				_pc = 2668
+				continue
+		elif _pc == 2512:
+			_pc = 2618
+			continue
+		elif _pc == 2517:
+			v5 = await icargoscript.cheap_cargo_generator()
+			_pc = 2668
+			continue
+		elif _pc == 2541:
+			v5 = await icargoscript.medium_cargo_generator()
+			_pc = 2668
+			continue
+		elif _pc == 2565:
+			v5 = await icargoscript.high_cargo_generator()
+			_pc = 2668
+			continue
+		elif _pc == 2589:
+			v5 = await icargoscript.very_high_cargo_generator()
+			_pc = 2668
+			continue
+		elif _pc == 2613:
+			_pc = 2668
+			continue
+		elif _pc == 2618:
+			if not _pog_is_null(math.random_int(0, 3)):
+				_pc = 2642
+				continue
+			else:
+				_pc = 2517
+				continue
+		elif _pc == 2642:
+			if not _pog_is_null(1):
+				_pc = 2650
+				continue
+			else:
+				_pc = 2541
+				continue
+		elif _pc == 2650:
+			if not _pog_is_null(2):
+				_pc = 2659
+				continue
+			else:
+				_pc = 2565
+				continue
+		elif _pc == 2659:
+			if not _pog_is_null(3):
+				_pc = 2668
+				continue
+			else:
+				_pc = 2589
+				continue
+		elif _pc == 2668:
+			object.set_int_property(v7, "cargo", v5)
+			await iutilities.rename_sim(v7, icargo.pog_name(icargo.find(v5)))
+			group.add_sim(v3, v7)
+			v8 = 1 + v8
+			_pc = 1830
+			continue
+		elif _pc == 2793:
+			_pc = 2803
+			continue
+		elif _pc == 2803:
+			return
+		else:
+			return 0
 	return 0
 
 func get_ship(v0, v1) -> Variant:
-	while _pog_is_null(v1):
-		while _pog_is_null(v0):
-			push_error("PORT: unstructured jump to L21067")
-		break
-	if PogRuntime.TRACE:
-		debug.error("iShipCreation.GetShip: Generation failed")
-	push_error("PORT: unstructured jump to L21067")
-	return _pog_clone("")
+	var _pc: int = 2812
+	while true:
+		if _pc == 2812:
+			_pc = 20788
+			continue
+		elif _pc == 2817:
+			_pc = 2864
+			continue
+		elif _pc == 2822:
+			_pc = 21067
+			continue
+		elif _pc == 2833:
+			_pc = 2859
+			continue
+		elif _pc == 2838:
+			debug.error("GetShip: Illegal faction")
+			_pc = 2859
+			continue
+		elif _pc == 2859:
+			_pc = 3358
+			continue
+		elif _pc == 2864:
+			if not _pog_is_null(v0):
+				_pc = 2877
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2877:
+			if not _pog_is_null(1):
+				_pc = 2885
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2885:
+			if not _pog_is_null(2):
+				_pc = 2894
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2894:
+			if not _pog_is_null(3):
+				_pc = 2903
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2903:
+			if not _pog_is_null(4):
+				_pc = 2912
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2912:
+			if not _pog_is_null(5):
+				_pc = 2921
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2921:
+			if not _pog_is_null(6):
+				_pc = 2930
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2930:
+			if not _pog_is_null(7):
+				_pc = 2939
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2939:
+			if not _pog_is_null(8):
+				_pc = 2948
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2948:
+			if not _pog_is_null(9):
+				_pc = 2957
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2957:
+			if not _pog_is_null(10):
+				_pc = 2966
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2966:
+			if not _pog_is_null(11):
+				_pc = 2975
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2975:
+			if not _pog_is_null(12):
+				_pc = 2984
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2984:
+			if not _pog_is_null(13):
+				_pc = 2993
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 2993:
+			if not _pog_is_null(14):
+				_pc = 3002
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3002:
+			if not _pog_is_null(15):
+				_pc = 3011
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3011:
+			if not _pog_is_null(16):
+				_pc = 3020
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3020:
+			if not _pog_is_null(17):
+				_pc = 3029
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3029:
+			if not _pog_is_null(18):
+				_pc = 3038
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3038:
+			if not _pog_is_null(19):
+				_pc = 3047
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3047:
+			if not _pog_is_null(20):
+				_pc = 3056
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3056:
+			if not _pog_is_null(21):
+				_pc = 3065
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3065:
+			if not _pog_is_null(22):
+				_pc = 3074
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3074:
+			if not _pog_is_null(23):
+				_pc = 3083
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3083:
+			if not _pog_is_null(24):
+				_pc = 3092
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3092:
+			if not _pog_is_null(25):
+				_pc = 3101
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3101:
+			if not _pog_is_null(26):
+				_pc = 3110
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3110:
+			if not _pog_is_null(27):
+				_pc = 3119
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3119:
+			if not _pog_is_null(28):
+				_pc = 3128
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3128:
+			if not _pog_is_null(29):
+				_pc = 3137
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3137:
+			if not _pog_is_null(30):
+				_pc = 3146
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3146:
+			if not _pog_is_null(31):
+				_pc = 3155
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3155:
+			if not _pog_is_null(32):
+				_pc = 3164
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3164:
+			if not _pog_is_null(33):
+				_pc = 3173
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3173:
+			if not _pog_is_null(34):
+				_pc = 3182
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3182:
+			if not _pog_is_null(35):
+				_pc = 3191
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3191:
+			if not _pog_is_null(36):
+				_pc = 3200
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3200:
+			if not _pog_is_null(37):
+				_pc = 3209
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3209:
+			if not _pog_is_null(38):
+				_pc = 3218
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3218:
+			if not _pog_is_null(39):
+				_pc = 3227
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3227:
+			if not _pog_is_null(40):
+				_pc = 3236
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3236:
+			if not _pog_is_null(41):
+				_pc = 3245
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3245:
+			if not _pog_is_null(42):
+				_pc = 3254
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3254:
+			if not _pog_is_null(43):
+				_pc = 3263
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3263:
+			if not _pog_is_null(44):
+				_pc = 3272
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3272:
+			if not _pog_is_null(45):
+				_pc = 3281
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3281:
+			if not _pog_is_null(46):
+				_pc = 3290
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3290:
+			if not _pog_is_null(47):
+				_pc = 3299
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3299:
+			if not _pog_is_null(48):
+				_pc = 3308
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3308:
+			if not _pog_is_null(49):
+				_pc = 3317
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3317:
+			if not _pog_is_null(50):
+				_pc = 3326
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3326:
+			if not _pog_is_null(51):
+				_pc = 3335
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3335:
+			if not _pog_is_null(52):
+				_pc = 3344
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3344:
+			if not _pog_is_null(53):
+				_pc = 3353
+				continue
+			else:
+				_pc = 2822
+				continue
+		elif _pc == 3353:
+			_pc = 2833
+			continue
+		elif _pc == 3358:
+			_pc = 21030
+			continue
+		elif _pc == 3363:
+			_pc = 3515
+			continue
+		elif _pc == 3368:
+			_pc = 3437
+			continue
+		elif _pc == 3373:
+			_pc = 21067
+			continue
+		elif _pc == 3384:
+			_pc = 21067
+			continue
+		elif _pc == 3395:
+			_pc = 21067
+			continue
+		elif _pc == 3406:
+			_pc = 3432
+			continue
+		elif _pc == 3411:
+			debug.error("GetShip: Random number OOB")
+			_pc = 3432
+			continue
+		elif _pc == 3432:
+			_pc = 3484
+			continue
+		elif _pc == 3437:
+			if math.random_int(1, 3) != 1:
+				_pc = 3461
+				continue
+			else:
+				_pc = 3373
+				continue
+		elif _pc == 3461:
+			if not _pog_is_null(2):
+				_pc = 3470
+				continue
+			else:
+				_pc = 3384
+				continue
+		elif _pc == 3470:
+			if not _pog_is_null(3):
+				_pc = 3479
+				continue
+			else:
+				_pc = 3395
+				continue
+		elif _pc == 3479:
+			_pc = 3406
+			continue
+		elif _pc == 3484:
+			_pc = 3510
+			continue
+		elif _pc == 3489:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 3510
+			continue
+		elif _pc == 3510:
+			_pc = 4009
+			continue
+		elif _pc == 3515:
+			if not _pog_is_null(v0):
+				_pc = 3528
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3528:
+			if not _pog_is_null(1):
+				_pc = 3536
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3536:
+			if not _pog_is_null(2):
+				_pc = 3545
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3545:
+			if not _pog_is_null(3):
+				_pc = 3554
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3554:
+			if not _pog_is_null(4):
+				_pc = 3563
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3563:
+			if not _pog_is_null(5):
+				_pc = 3572
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3572:
+			if not _pog_is_null(6):
+				_pc = 3581
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3581:
+			if not _pog_is_null(7):
+				_pc = 3590
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3590:
+			if not _pog_is_null(8):
+				_pc = 3599
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3599:
+			if not _pog_is_null(9):
+				_pc = 3608
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3608:
+			if not _pog_is_null(10):
+				_pc = 3617
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3617:
+			if not _pog_is_null(11):
+				_pc = 3626
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3626:
+			if not _pog_is_null(12):
+				_pc = 3635
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3635:
+			if not _pog_is_null(13):
+				_pc = 3644
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3644:
+			if not _pog_is_null(14):
+				_pc = 3653
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3653:
+			if not _pog_is_null(15):
+				_pc = 3662
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3662:
+			if not _pog_is_null(16):
+				_pc = 3671
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3671:
+			if not _pog_is_null(17):
+				_pc = 3680
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3680:
+			if not _pog_is_null(18):
+				_pc = 3689
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3689:
+			if not _pog_is_null(19):
+				_pc = 3698
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3698:
+			if not _pog_is_null(20):
+				_pc = 3707
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3707:
+			if not _pog_is_null(21):
+				_pc = 3716
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3716:
+			if not _pog_is_null(22):
+				_pc = 3725
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3725:
+			if not _pog_is_null(23):
+				_pc = 3734
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3734:
+			if not _pog_is_null(24):
+				_pc = 3743
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3743:
+			if not _pog_is_null(25):
+				_pc = 3752
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3752:
+			if not _pog_is_null(26):
+				_pc = 3761
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3761:
+			if not _pog_is_null(27):
+				_pc = 3770
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3770:
+			if not _pog_is_null(28):
+				_pc = 3779
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3779:
+			if not _pog_is_null(29):
+				_pc = 3788
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3788:
+			if not _pog_is_null(30):
+				_pc = 3797
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3797:
+			if not _pog_is_null(31):
+				_pc = 3806
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3806:
+			if not _pog_is_null(32):
+				_pc = 3815
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3815:
+			if not _pog_is_null(33):
+				_pc = 3824
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3824:
+			if not _pog_is_null(34):
+				_pc = 3833
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3833:
+			if not _pog_is_null(35):
+				_pc = 3842
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3842:
+			if not _pog_is_null(36):
+				_pc = 3851
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3851:
+			if not _pog_is_null(37):
+				_pc = 3860
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3860:
+			if not _pog_is_null(38):
+				_pc = 3869
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3869:
+			if not _pog_is_null(39):
+				_pc = 3878
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3878:
+			if not _pog_is_null(40):
+				_pc = 3887
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3887:
+			if not _pog_is_null(41):
+				_pc = 3896
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3896:
+			if not _pog_is_null(42):
+				_pc = 3905
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3905:
+			if not _pog_is_null(43):
+				_pc = 3914
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3914:
+			if not _pog_is_null(44):
+				_pc = 3923
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3923:
+			if not _pog_is_null(45):
+				_pc = 3932
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3932:
+			if not _pog_is_null(46):
+				_pc = 3941
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3941:
+			if not _pog_is_null(47):
+				_pc = 3950
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3950:
+			if not _pog_is_null(48):
+				_pc = 3959
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3959:
+			if not _pog_is_null(49):
+				_pc = 3968
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3968:
+			if not _pog_is_null(50):
+				_pc = 3977
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3977:
+			if not _pog_is_null(51):
+				_pc = 3986
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3986:
+			if not _pog_is_null(52):
+				_pc = 3995
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 3995:
+			if not _pog_is_null(53):
+				_pc = 4004
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 4004:
+			_pc = 3484
+			continue
+		elif _pc == 4009:
+			_pc = 21030
+			continue
+		elif _pc == 4014:
+			_pc = 4166
+			continue
+		elif _pc == 4019:
+			_pc = 4088
+			continue
+		elif _pc == 4024:
+			_pc = 21067
+			continue
+		elif _pc == 4035:
+			_pc = 21067
+			continue
+		elif _pc == 4046:
+			_pc = 21067
+			continue
+		elif _pc == 4057:
+			_pc = 4083
+			continue
+		elif _pc == 4062:
+			debug.error("GetShip: Random number OOB")
+			_pc = 4083
+			continue
+		elif _pc == 4083:
+			_pc = 4135
+			continue
+		elif _pc == 4088:
+			if math.random_int(1, 3) != 1:
+				_pc = 4112
+				continue
+			else:
+				_pc = 4024
+				continue
+		elif _pc == 4112:
+			if not _pog_is_null(2):
+				_pc = 4121
+				continue
+			else:
+				_pc = 4035
+				continue
+		elif _pc == 4121:
+			if not _pog_is_null(3):
+				_pc = 4130
+				continue
+			else:
+				_pc = 4046
+				continue
+		elif _pc == 4130:
+			_pc = 4057
+			continue
+		elif _pc == 4135:
+			_pc = 4161
+			continue
+		elif _pc == 4140:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 4161
+			continue
+		elif _pc == 4161:
+			_pc = 4660
+			continue
+		elif _pc == 4166:
+			if not _pog_is_null(v0):
+				_pc = 4179
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4179:
+			if not _pog_is_null(1):
+				_pc = 4187
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4187:
+			if not _pog_is_null(2):
+				_pc = 4196
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4196:
+			if not _pog_is_null(3):
+				_pc = 4205
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4205:
+			if not _pog_is_null(4):
+				_pc = 4214
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4214:
+			if not _pog_is_null(5):
+				_pc = 4223
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4223:
+			if not _pog_is_null(6):
+				_pc = 4232
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4232:
+			if not _pog_is_null(7):
+				_pc = 4241
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4241:
+			if not _pog_is_null(8):
+				_pc = 4250
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4250:
+			if not _pog_is_null(9):
+				_pc = 4259
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4259:
+			if not _pog_is_null(10):
+				_pc = 4268
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4268:
+			if not _pog_is_null(11):
+				_pc = 4277
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4277:
+			if not _pog_is_null(12):
+				_pc = 4286
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4286:
+			if not _pog_is_null(13):
+				_pc = 4295
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4295:
+			if not _pog_is_null(14):
+				_pc = 4304
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4304:
+			if not _pog_is_null(15):
+				_pc = 4313
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4313:
+			if not _pog_is_null(16):
+				_pc = 4322
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4322:
+			if not _pog_is_null(17):
+				_pc = 4331
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4331:
+			if not _pog_is_null(18):
+				_pc = 4340
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4340:
+			if not _pog_is_null(19):
+				_pc = 4349
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4349:
+			if not _pog_is_null(20):
+				_pc = 4358
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4358:
+			if not _pog_is_null(21):
+				_pc = 4367
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4367:
+			if not _pog_is_null(22):
+				_pc = 4376
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4376:
+			if not _pog_is_null(23):
+				_pc = 4385
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4385:
+			if not _pog_is_null(24):
+				_pc = 4394
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4394:
+			if not _pog_is_null(25):
+				_pc = 4403
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4403:
+			if not _pog_is_null(26):
+				_pc = 4412
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4412:
+			if not _pog_is_null(27):
+				_pc = 4421
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4421:
+			if not _pog_is_null(28):
+				_pc = 4430
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4430:
+			if not _pog_is_null(29):
+				_pc = 4439
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4439:
+			if not _pog_is_null(30):
+				_pc = 4448
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4448:
+			if not _pog_is_null(31):
+				_pc = 4457
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4457:
+			if not _pog_is_null(32):
+				_pc = 4466
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4466:
+			if not _pog_is_null(33):
+				_pc = 4475
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4475:
+			if not _pog_is_null(34):
+				_pc = 4484
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4484:
+			if not _pog_is_null(35):
+				_pc = 4493
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4493:
+			if not _pog_is_null(36):
+				_pc = 4502
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4502:
+			if not _pog_is_null(37):
+				_pc = 4511
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4511:
+			if not _pog_is_null(38):
+				_pc = 4520
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4520:
+			if not _pog_is_null(39):
+				_pc = 4529
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4529:
+			if not _pog_is_null(40):
+				_pc = 4538
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4538:
+			if not _pog_is_null(41):
+				_pc = 4547
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4547:
+			if not _pog_is_null(42):
+				_pc = 4556
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4556:
+			if not _pog_is_null(43):
+				_pc = 4565
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4565:
+			if not _pog_is_null(44):
+				_pc = 4574
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4574:
+			if not _pog_is_null(45):
+				_pc = 4583
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4583:
+			if not _pog_is_null(46):
+				_pc = 4592
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4592:
+			if not _pog_is_null(47):
+				_pc = 4601
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4601:
+			if not _pog_is_null(48):
+				_pc = 4610
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4610:
+			if not _pog_is_null(49):
+				_pc = 4619
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4619:
+			if not _pog_is_null(50):
+				_pc = 4628
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4628:
+			if not _pog_is_null(51):
+				_pc = 4637
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4637:
+			if not _pog_is_null(52):
+				_pc = 4646
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4646:
+			if not _pog_is_null(53):
+				_pc = 4655
+				continue
+			else:
+				_pc = 4019
+				continue
+		elif _pc == 4655:
+			_pc = 4135
+			continue
+		elif _pc == 4660:
+			_pc = 21030
+			continue
+		elif _pc == 4665:
+			_pc = 4723
+			continue
+		elif _pc == 4670:
+			_pc = 21067
+			continue
+		elif _pc == 4681:
+			_pc = 21067
+			continue
+		elif _pc == 4692:
+			_pc = 4718
+			continue
+		elif _pc == 4697:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 4718
+			continue
+		elif _pc == 4718:
+			_pc = 5217
+			continue
+		elif _pc == 4723:
+			if not _pog_is_null(v0):
+				_pc = 4736
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4736:
+			if not _pog_is_null(1):
+				_pc = 4744
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4744:
+			if not _pog_is_null(2):
+				_pc = 4753
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4753:
+			if not _pog_is_null(4):
+				_pc = 4762
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4762:
+			if not _pog_is_null(6):
+				_pc = 4771
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4771:
+			if not _pog_is_null(7):
+				_pc = 4780
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4780:
+			if not _pog_is_null(8):
+				_pc = 4789
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4789:
+			if not _pog_is_null(9):
+				_pc = 4798
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4798:
+			if not _pog_is_null(10):
+				_pc = 4807
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4807:
+			if not _pog_is_null(12):
+				_pc = 4816
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4816:
+			if not _pog_is_null(13):
+				_pc = 4825
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4825:
+			if not _pog_is_null(14):
+				_pc = 4834
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4834:
+			if not _pog_is_null(16):
+				_pc = 4843
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4843:
+			if not _pog_is_null(17):
+				_pc = 4852
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4852:
+			if not _pog_is_null(18):
+				_pc = 4861
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4861:
+			if not _pog_is_null(19):
+				_pc = 4870
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4870:
+			if not _pog_is_null(20):
+				_pc = 4879
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4879:
+			if not _pog_is_null(21):
+				_pc = 4888
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4888:
+			if not _pog_is_null(22):
+				_pc = 4897
+				continue
+			else:
+				_pc = 4670
+				continue
+		elif _pc == 4897:
+			if not _pog_is_null(3):
+				_pc = 4906
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4906:
+			if not _pog_is_null(5):
+				_pc = 4915
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4915:
+			if not _pog_is_null(11):
+				_pc = 4924
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4924:
+			if not _pog_is_null(15):
+				_pc = 4933
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4933:
+			if not _pog_is_null(23):
+				_pc = 4942
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4942:
+			if not _pog_is_null(24):
+				_pc = 4951
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4951:
+			if not _pog_is_null(25):
+				_pc = 4960
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4960:
+			if not _pog_is_null(26):
+				_pc = 4969
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4969:
+			if not _pog_is_null(27):
+				_pc = 4978
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4978:
+			if not _pog_is_null(28):
+				_pc = 4987
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4987:
+			if not _pog_is_null(29):
+				_pc = 4996
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 4996:
+			if not _pog_is_null(30):
+				_pc = 5005
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5005:
+			if not _pog_is_null(31):
+				_pc = 5014
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5014:
+			if not _pog_is_null(32):
+				_pc = 5023
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5023:
+			if not _pog_is_null(33):
+				_pc = 5032
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5032:
+			if not _pog_is_null(34):
+				_pc = 5041
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5041:
+			if not _pog_is_null(35):
+				_pc = 5050
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5050:
+			if not _pog_is_null(36):
+				_pc = 5059
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5059:
+			if not _pog_is_null(37):
+				_pc = 5068
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5068:
+			if not _pog_is_null(38):
+				_pc = 5077
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5077:
+			if not _pog_is_null(39):
+				_pc = 5086
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5086:
+			if not _pog_is_null(40):
+				_pc = 5095
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5095:
+			if not _pog_is_null(41):
+				_pc = 5104
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5104:
+			if not _pog_is_null(42):
+				_pc = 5113
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5113:
+			if not _pog_is_null(43):
+				_pc = 5122
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5122:
+			if not _pog_is_null(44):
+				_pc = 5131
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5131:
+			if not _pog_is_null(45):
+				_pc = 5140
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5140:
+			if not _pog_is_null(46):
+				_pc = 5149
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5149:
+			if not _pog_is_null(47):
+				_pc = 5158
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5158:
+			if not _pog_is_null(48):
+				_pc = 5167
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5167:
+			if not _pog_is_null(49):
+				_pc = 5176
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5176:
+			if not _pog_is_null(50):
+				_pc = 5185
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5185:
+			if not _pog_is_null(51):
+				_pc = 5194
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5194:
+			if not _pog_is_null(52):
+				_pc = 5203
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5203:
+			if not _pog_is_null(53):
+				_pc = 5212
+				continue
+			else:
+				_pc = 4681
+				continue
+		elif _pc == 5212:
+			_pc = 4692
+			continue
+		elif _pc == 5217:
+			_pc = 21030
+			continue
+		elif _pc == 5222:
+			_pc = 5416
+			continue
+		elif _pc == 5227:
+			_pc = 5296
+			continue
+		elif _pc == 5232:
+			_pc = 21067
+			continue
+		elif _pc == 5243:
+			_pc = 21067
+			continue
+		elif _pc == 5254:
+			_pc = 21067
+			continue
+		elif _pc == 5265:
+			_pc = 5291
+			continue
+		elif _pc == 5270:
+			debug.error("GetShip: Random number OOB")
+			_pc = 5291
+			continue
+		elif _pc == 5291:
+			_pc = 5352
+			continue
+		elif _pc == 5296:
+			if math.random_int(1, 4) != 1:
+				_pc = 5320
+				continue
+			else:
+				_pc = 5232
+				continue
+		elif _pc == 5320:
+			if not _pog_is_null(2):
+				_pc = 5329
+				continue
+			else:
+				_pc = 5232
+				continue
+		elif _pc == 5329:
+			if not _pog_is_null(3):
+				_pc = 5338
+				continue
+			else:
+				_pc = 5243
+				continue
+		elif _pc == 5338:
+			if not _pog_is_null(4):
+				_pc = 5347
+				continue
+			else:
+				_pc = 5254
+				continue
+		elif _pc == 5347:
+			_pc = 5265
+			continue
+		elif _pc == 5352:
+			_pc = 21067
+			continue
+		elif _pc == 5363:
+			_pc = 21067
+			continue
+		elif _pc == 5374:
+			_pc = 21067
+			continue
+		elif _pc == 5385:
+			_pc = 5411
+			continue
+		elif _pc == 5390:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 5411
+			continue
+		elif _pc == 5411:
+			_pc = 5910
+			continue
+		elif _pc == 5416:
+			if v0 != 5:
+				_pc = 5430
+				continue
+			else:
+				_pc = 5227
+				continue
+		elif _pc == 5430:
+			if not _pog_is_null(3):
+				_pc = 5439
+				continue
+			else:
+				_pc = 5227
+				continue
+		elif _pc == 5439:
+			if not _pog_is_null(1):
+				_pc = 5447
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5447:
+			if not _pog_is_null(2):
+				_pc = 5456
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5456:
+			if not _pog_is_null(6):
+				_pc = 5465
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5465:
+			if not _pog_is_null(7):
+				_pc = 5474
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5474:
+			if not _pog_is_null(8):
+				_pc = 5483
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5483:
+			if not _pog_is_null(4):
+				_pc = 5492
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5492:
+			if not _pog_is_null(9):
+				_pc = 5501
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5501:
+			if not _pog_is_null(10):
+				_pc = 5510
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5510:
+			if not _pog_is_null(17):
+				_pc = 5519
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5519:
+			if not _pog_is_null(18):
+				_pc = 5528
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5528:
+			if not _pog_is_null(19):
+				_pc = 5537
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5537:
+			if not _pog_is_null(20):
+				_pc = 5546
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5546:
+			if not _pog_is_null(22):
+				_pc = 5555
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5555:
+			if not _pog_is_null(12):
+				_pc = 5564
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5564:
+			if not _pog_is_null(13):
+				_pc = 5573
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5573:
+			if not _pog_is_null(21):
+				_pc = 5582
+				continue
+			else:
+				_pc = 5352
+				continue
+		elif _pc == 5582:
+			if not _pog_is_null(14):
+				_pc = 5591
+				continue
+			else:
+				_pc = 5363
+				continue
+		elif _pc == 5591:
+			if not _pog_is_null(0):
+				_pc = 5599
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5599:
+			if not _pog_is_null(11):
+				_pc = 5608
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5608:
+			if not _pog_is_null(15):
+				_pc = 5617
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5617:
+			if not _pog_is_null(16):
+				_pc = 5626
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5626:
+			if not _pog_is_null(23):
+				_pc = 5635
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5635:
+			if not _pog_is_null(24):
+				_pc = 5644
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5644:
+			if not _pog_is_null(25):
+				_pc = 5653
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5653:
+			if not _pog_is_null(26):
+				_pc = 5662
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5662:
+			if not _pog_is_null(27):
+				_pc = 5671
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5671:
+			if not _pog_is_null(28):
+				_pc = 5680
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5680:
+			if not _pog_is_null(29):
+				_pc = 5689
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5689:
+			if not _pog_is_null(30):
+				_pc = 5698
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5698:
+			if not _pog_is_null(31):
+				_pc = 5707
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5707:
+			if not _pog_is_null(32):
+				_pc = 5716
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5716:
+			if not _pog_is_null(33):
+				_pc = 5725
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5725:
+			if not _pog_is_null(34):
+				_pc = 5734
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5734:
+			if not _pog_is_null(35):
+				_pc = 5743
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5743:
+			if not _pog_is_null(36):
+				_pc = 5752
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5752:
+			if not _pog_is_null(37):
+				_pc = 5761
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5761:
+			if not _pog_is_null(38):
+				_pc = 5770
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5770:
+			if not _pog_is_null(39):
+				_pc = 5779
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5779:
+			if not _pog_is_null(40):
+				_pc = 5788
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5788:
+			if not _pog_is_null(41):
+				_pc = 5797
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5797:
+			if not _pog_is_null(42):
+				_pc = 5806
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5806:
+			if not _pog_is_null(43):
+				_pc = 5815
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5815:
+			if not _pog_is_null(44):
+				_pc = 5824
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5824:
+			if not _pog_is_null(45):
+				_pc = 5833
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5833:
+			if not _pog_is_null(46):
+				_pc = 5842
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5842:
+			if not _pog_is_null(47):
+				_pc = 5851
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5851:
+			if not _pog_is_null(48):
+				_pc = 5860
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5860:
+			if not _pog_is_null(49):
+				_pc = 5869
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5869:
+			if not _pog_is_null(50):
+				_pc = 5878
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5878:
+			if not _pog_is_null(51):
+				_pc = 5887
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5887:
+			if not _pog_is_null(52):
+				_pc = 5896
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5896:
+			if not _pog_is_null(53):
+				_pc = 5905
+				continue
+			else:
+				_pc = 5374
+				continue
+		elif _pc == 5905:
+			_pc = 5385
+			continue
+		elif _pc == 5910:
+			_pc = 21030
+			continue
+		elif _pc == 5915:
+			_pc = 6192
+			continue
+		elif _pc == 5920:
+			_pc = 21067
+			continue
+		elif _pc == 5931:
+			_pc = 21067
+			continue
+		elif _pc == 5942:
+			_pc = 6000
+			continue
+		elif _pc == 5947:
+			_pc = 21067
+			continue
+		elif _pc == 5958:
+			_pc = 21067
+			continue
+		elif _pc == 5969:
+			_pc = 5995
+			continue
+		elif _pc == 5974:
+			debug.error("GetShip: Random number OOB")
+			_pc = 5995
+			continue
+		elif _pc == 5995:
+			_pc = 6056
+			continue
+		elif _pc == 6000:
+			if math.random_int(1, 4) != 1:
+				_pc = 6024
+				continue
+			else:
+				_pc = 5947
+				continue
+		elif _pc == 6024:
+			if not _pog_is_null(2):
+				_pc = 6033
+				continue
+			else:
+				_pc = 5947
+				continue
+		elif _pc == 6033:
+			if not _pog_is_null(3):
+				_pc = 6042
+				continue
+			else:
+				_pc = 5947
+				continue
+		elif _pc == 6042:
+			if not _pog_is_null(4):
+				_pc = 6051
+				continue
+			else:
+				_pc = 5958
+				continue
+		elif _pc == 6051:
+			_pc = 5969
+			continue
+		elif _pc == 6056:
+			_pc = 21067
+			continue
+		elif _pc == 6067:
+			_pc = 6125
+			continue
+		elif _pc == 6072:
+			_pc = 21067
+			continue
+		elif _pc == 6083:
+			_pc = 21067
+			continue
+		elif _pc == 6094:
+			_pc = 6120
+			continue
+		elif _pc == 6099:
+			debug.error("GetShip: Random number OOB")
+			_pc = 6120
+			continue
+		elif _pc == 6120:
+			_pc = 6161
+			continue
+		elif _pc == 6125:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 6148
+				continue
+			else:
+				_pc = 6072
+				continue
+		elif _pc == 6148:
+			if not _pog_is_null(1):
+				_pc = 6156
+				continue
+			else:
+				_pc = 6083
+				continue
+		elif _pc == 6156:
+			_pc = 6094
+			continue
+		elif _pc == 6161:
+			_pc = 6187
+			continue
+		elif _pc == 6166:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 6187
+			continue
+		elif _pc == 6187:
+			_pc = 6686
+			continue
+		elif _pc == 6192:
+			if v0 != 3:
+				_pc = 6206
+				continue
+			else:
+				_pc = 5920
+				continue
+		elif _pc == 6206:
+			if not _pog_is_null(5):
+				_pc = 6215
+				continue
+			else:
+				_pc = 5920
+				continue
+		elif _pc == 6215:
+			if not _pog_is_null(4):
+				_pc = 6224
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6224:
+			if not _pog_is_null(6):
+				_pc = 6233
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6233:
+			if not _pog_is_null(7):
+				_pc = 6242
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6242:
+			if not _pog_is_null(8):
+				_pc = 6251
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6251:
+			if not _pog_is_null(9):
+				_pc = 6260
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6260:
+			if not _pog_is_null(10):
+				_pc = 6269
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6269:
+			if not _pog_is_null(1):
+				_pc = 6277
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6277:
+			if not _pog_is_null(13):
+				_pc = 6286
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6286:
+			if not _pog_is_null(2):
+				_pc = 6295
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6295:
+			if not _pog_is_null(18):
+				_pc = 6304
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6304:
+			if not _pog_is_null(19):
+				_pc = 6313
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6313:
+			if not _pog_is_null(20):
+				_pc = 6322
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6322:
+			if not _pog_is_null(21):
+				_pc = 6331
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6331:
+			if not _pog_is_null(22):
+				_pc = 6340
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 6340:
+			if not _pog_is_null(14):
+				_pc = 6349
+				continue
+			else:
+				_pc = 5942
+				continue
+		elif _pc == 6349:
+			if not _pog_is_null(17):
+				_pc = 6358
+				continue
+			else:
+				_pc = 6056
+				continue
+		elif _pc == 6358:
+			if not _pog_is_null(0):
+				_pc = 6366
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6366:
+			if not _pog_is_null(11):
+				_pc = 6375
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6375:
+			if not _pog_is_null(12):
+				_pc = 6384
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6384:
+			if not _pog_is_null(15):
+				_pc = 6393
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6393:
+			if not _pog_is_null(16):
+				_pc = 6402
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6402:
+			if not _pog_is_null(23):
+				_pc = 6411
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6411:
+			if not _pog_is_null(24):
+				_pc = 6420
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6420:
+			if not _pog_is_null(25):
+				_pc = 6429
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6429:
+			if not _pog_is_null(26):
+				_pc = 6438
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6438:
+			if not _pog_is_null(27):
+				_pc = 6447
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6447:
+			if not _pog_is_null(28):
+				_pc = 6456
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6456:
+			if not _pog_is_null(29):
+				_pc = 6465
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6465:
+			if not _pog_is_null(30):
+				_pc = 6474
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6474:
+			if not _pog_is_null(31):
+				_pc = 6483
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6483:
+			if not _pog_is_null(32):
+				_pc = 6492
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6492:
+			if not _pog_is_null(33):
+				_pc = 6501
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6501:
+			if not _pog_is_null(34):
+				_pc = 6510
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6510:
+			if not _pog_is_null(35):
+				_pc = 6519
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6519:
+			if not _pog_is_null(36):
+				_pc = 6528
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6528:
+			if not _pog_is_null(37):
+				_pc = 6537
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6537:
+			if not _pog_is_null(38):
+				_pc = 6546
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6546:
+			if not _pog_is_null(39):
+				_pc = 6555
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6555:
+			if not _pog_is_null(40):
+				_pc = 6564
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6564:
+			if not _pog_is_null(41):
+				_pc = 6573
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6573:
+			if not _pog_is_null(42):
+				_pc = 6582
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6582:
+			if not _pog_is_null(43):
+				_pc = 6591
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6591:
+			if not _pog_is_null(44):
+				_pc = 6600
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6600:
+			if not _pog_is_null(45):
+				_pc = 6609
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6609:
+			if not _pog_is_null(46):
+				_pc = 6618
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6618:
+			if not _pog_is_null(47):
+				_pc = 6627
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6627:
+			if not _pog_is_null(48):
+				_pc = 6636
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6636:
+			if not _pog_is_null(49):
+				_pc = 6645
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6645:
+			if not _pog_is_null(50):
+				_pc = 6654
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6654:
+			if not _pog_is_null(51):
+				_pc = 6663
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6663:
+			if not _pog_is_null(52):
+				_pc = 6672
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6672:
+			if not _pog_is_null(53):
+				_pc = 6681
+				continue
+			else:
+				_pc = 6067
+				continue
+		elif _pc == 6681:
+			_pc = 6161
+			continue
+		elif _pc == 6686:
+			_pc = 21030
+			continue
+		elif _pc == 6691:
+			_pc = 6928
+			continue
+		elif _pc == 6696:
+			_pc = 6754
+			continue
+		elif _pc == 6701:
+			_pc = 21067
+			continue
+		elif _pc == 6712:
+			_pc = 21067
+			continue
+		elif _pc == 6723:
+			_pc = 6749
+			continue
+		elif _pc == 6728:
+			debug.error("GetShip: Random number OOB")
+			_pc = 6749
+			continue
+		elif _pc == 6749:
+			_pc = 6790
+			continue
+		elif _pc == 6754:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 6777
+				continue
+			else:
+				_pc = 6701
+				continue
+		elif _pc == 6777:
+			if not _pog_is_null(1):
+				_pc = 6785
+				continue
+			else:
+				_pc = 6712
+				continue
+		elif _pc == 6785:
+			_pc = 6723
+			continue
+		elif _pc == 6790:
+			_pc = 21067
+			continue
+		elif _pc == 6801:
+			_pc = 21067
+			continue
+		elif _pc == 6812:
+			_pc = 21067
+			continue
+		elif _pc == 6823:
+			_pc = 6855
+			continue
+		elif _pc == 6828:
+			_pc = 21067
+			continue
+		elif _pc == 6839:
+			_pc = 21067
+			continue
+		elif _pc == 6850:
+			_pc = 6886
+			continue
+		elif _pc == 6855:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 6878
+				continue
+			else:
+				_pc = 6828
+				continue
+		elif _pc == 6878:
+			if not _pog_is_null(1):
+				_pc = 6886
+				continue
+			else:
+				_pc = 6839
+				continue
+		elif _pc == 6886:
+			_pc = 21067
+			continue
+		elif _pc == 6897:
+			_pc = 6923
+			continue
+		elif _pc == 6902:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 6923
+			continue
+		elif _pc == 6923:
+			_pc = 7422
+			continue
+		elif _pc == 6928:
+			if v0 != 3:
+				_pc = 6942
+				continue
+			else:
+				_pc = 6696
+				continue
+		elif _pc == 6942:
+			if not _pog_is_null(5):
+				_pc = 6951
+				continue
+			else:
+				_pc = 6696
+				continue
+		elif _pc == 6951:
+			if not _pog_is_null(20):
+				_pc = 6960
+				continue
+			else:
+				_pc = 6696
+				continue
+		elif _pc == 6960:
+			if not _pog_is_null(1):
+				_pc = 6968
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 6968:
+			if not _pog_is_null(2):
+				_pc = 6977
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 6977:
+			if not _pog_is_null(4):
+				_pc = 6986
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 6986:
+			if not _pog_is_null(6):
+				_pc = 6995
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 6995:
+			if not _pog_is_null(7):
+				_pc = 7004
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7004:
+			if not _pog_is_null(8):
+				_pc = 7013
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7013:
+			if not _pog_is_null(9):
+				_pc = 7022
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7022:
+			if not _pog_is_null(10):
+				_pc = 7031
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7031:
+			if not _pog_is_null(12):
+				_pc = 7040
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7040:
+			if not _pog_is_null(13):
+				_pc = 7049
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7049:
+			if not _pog_is_null(18):
+				_pc = 7058
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7058:
+			if not _pog_is_null(19):
+				_pc = 7067
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7067:
+			if not _pog_is_null(21):
+				_pc = 7076
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7076:
+			if not _pog_is_null(22):
+				_pc = 7085
+				continue
+			else:
+				_pc = 6790
+				continue
+		elif _pc == 7085:
+			if not _pog_is_null(14):
+				_pc = 7094
+				continue
+			else:
+				_pc = 6801
+				continue
+		elif _pc == 7094:
+			if not _pog_is_null(17):
+				_pc = 7103
+				continue
+			else:
+				_pc = 6812
+				continue
+		elif _pc == 7103:
+			if not _pog_is_null(0):
+				_pc = 7111
+				continue
+			else:
+				_pc = 6823
+				continue
+		elif _pc == 7111:
+			if not _pog_is_null(11):
+				_pc = 7120
+				continue
+			else:
+				_pc = 6823
+				continue
+		elif _pc == 7120:
+			if not _pog_is_null(16):
+				_pc = 7129
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7129:
+			if not _pog_is_null(15):
+				_pc = 7138
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7138:
+			if not _pog_is_null(23):
+				_pc = 7147
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7147:
+			if not _pog_is_null(24):
+				_pc = 7156
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7156:
+			if not _pog_is_null(25):
+				_pc = 7165
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7165:
+			if not _pog_is_null(26):
+				_pc = 7174
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7174:
+			if not _pog_is_null(27):
+				_pc = 7183
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7183:
+			if not _pog_is_null(28):
+				_pc = 7192
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7192:
+			if not _pog_is_null(29):
+				_pc = 7201
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7201:
+			if not _pog_is_null(30):
+				_pc = 7210
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7210:
+			if not _pog_is_null(31):
+				_pc = 7219
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7219:
+			if not _pog_is_null(32):
+				_pc = 7228
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7228:
+			if not _pog_is_null(33):
+				_pc = 7237
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7237:
+			if not _pog_is_null(34):
+				_pc = 7246
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7246:
+			if not _pog_is_null(35):
+				_pc = 7255
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7255:
+			if not _pog_is_null(36):
+				_pc = 7264
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7264:
+			if not _pog_is_null(37):
+				_pc = 7273
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7273:
+			if not _pog_is_null(38):
+				_pc = 7282
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7282:
+			if not _pog_is_null(39):
+				_pc = 7291
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7291:
+			if not _pog_is_null(40):
+				_pc = 7300
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7300:
+			if not _pog_is_null(41):
+				_pc = 7309
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7309:
+			if not _pog_is_null(42):
+				_pc = 7318
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7318:
+			if not _pog_is_null(43):
+				_pc = 7327
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7327:
+			if not _pog_is_null(44):
+				_pc = 7336
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7336:
+			if not _pog_is_null(45):
+				_pc = 7345
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7345:
+			if not _pog_is_null(46):
+				_pc = 7354
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7354:
+			if not _pog_is_null(47):
+				_pc = 7363
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7363:
+			if not _pog_is_null(48):
+				_pc = 7372
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7372:
+			if not _pog_is_null(49):
+				_pc = 7381
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7381:
+			if not _pog_is_null(50):
+				_pc = 7390
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7390:
+			if not _pog_is_null(51):
+				_pc = 7399
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7399:
+			if not _pog_is_null(52):
+				_pc = 7408
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7408:
+			if not _pog_is_null(53):
+				_pc = 7417
+				continue
+			else:
+				_pc = 6886
+				continue
+		elif _pc == 7417:
+			_pc = 6897
+			continue
+		elif _pc == 7422:
+			_pc = 21030
+			continue
+		elif _pc == 7427:
+			_pc = 7694
+			continue
+		elif _pc == 7432:
+			_pc = 7501
+			continue
+		elif _pc == 7437:
+			_pc = 21067
+			continue
+		elif _pc == 7448:
+			_pc = 21067
+			continue
+		elif _pc == 7459:
+			_pc = 21067
+			continue
+		elif _pc == 7470:
+			_pc = 7496
+			continue
+		elif _pc == 7475:
+			debug.error("GetShip: Random number OOB")
+			_pc = 7496
+			continue
+		elif _pc == 7496:
+			_pc = 7547
+			continue
+		elif _pc == 7501:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 7525
+				continue
+			else:
+				_pc = 7437
+				continue
+		elif _pc == 7525:
+			if not _pog_is_null(1):
+				_pc = 7533
+				continue
+			else:
+				_pc = 7448
+				continue
+		elif _pc == 7533:
+			if not _pog_is_null(2):
+				_pc = 7542
+				continue
+			else:
+				_pc = 7459
+				continue
+		elif _pc == 7542:
+			_pc = 7470
+			continue
+		elif _pc == 7547:
+			_pc = 21067
+			continue
+		elif _pc == 7558:
+			_pc = 21067
+			continue
+		elif _pc == 7569:
+			_pc = 7627
+			continue
+		elif _pc == 7574:
+			_pc = 21067
+			continue
+		elif _pc == 7585:
+			_pc = 21067
+			continue
+		elif _pc == 7596:
+			_pc = 7622
+			continue
+		elif _pc == 7601:
+			debug.error("GetShip: Random number OOB")
+			_pc = 7622
+			continue
+		elif _pc == 7622:
+			_pc = 7663
+			continue
+		elif _pc == 7627:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 7650
+				continue
+			else:
+				_pc = 7574
+				continue
+		elif _pc == 7650:
+			if not _pog_is_null(1):
+				_pc = 7658
+				continue
+			else:
+				_pc = 7585
+				continue
+		elif _pc == 7658:
+			_pc = 7596
+			continue
+		elif _pc == 7663:
+			_pc = 7689
+			continue
+		elif _pc == 7668:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 7689
+			continue
+		elif _pc == 7689:
+			_pc = 8188
+			continue
+		elif _pc == 7694:
+			if v0 != 3:
+				_pc = 7708
+				continue
+			else:
+				_pc = 7432
+				continue
+		elif _pc == 7708:
+			if not _pog_is_null(5):
+				_pc = 7717
+				continue
+			else:
+				_pc = 7432
+				continue
+		elif _pc == 7717:
+			if not _pog_is_null(4):
+				_pc = 7726
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7726:
+			if not _pog_is_null(6):
+				_pc = 7735
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7735:
+			if not _pog_is_null(7):
+				_pc = 7744
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7744:
+			if not _pog_is_null(8):
+				_pc = 7753
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7753:
+			if not _pog_is_null(9):
+				_pc = 7762
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7762:
+			if not _pog_is_null(10):
+				_pc = 7771
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7771:
+			if not _pog_is_null(17):
+				_pc = 7780
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7780:
+			if not _pog_is_null(18):
+				_pc = 7789
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7789:
+			if not _pog_is_null(19):
+				_pc = 7798
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7798:
+			if not _pog_is_null(20):
+				_pc = 7807
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7807:
+			if not _pog_is_null(21):
+				_pc = 7816
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7816:
+			if not _pog_is_null(22):
+				_pc = 7825
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7825:
+			if not _pog_is_null(1):
+				_pc = 7833
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7833:
+			if not _pog_is_null(2):
+				_pc = 7842
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7842:
+			if not _pog_is_null(12):
+				_pc = 7851
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7851:
+			if not _pog_is_null(13):
+				_pc = 7860
+				continue
+			else:
+				_pc = 7547
+				continue
+		elif _pc == 7860:
+			if not _pog_is_null(14):
+				_pc = 7869
+				continue
+			else:
+				_pc = 7558
+				continue
+		elif _pc == 7869:
+			if not _pog_is_null(0):
+				_pc = 7877
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7877:
+			if not _pog_is_null(16):
+				_pc = 7886
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7886:
+			if not _pog_is_null(11):
+				_pc = 7895
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7895:
+			if not _pog_is_null(15):
+				_pc = 7904
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7904:
+			if not _pog_is_null(23):
+				_pc = 7913
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7913:
+			if not _pog_is_null(24):
+				_pc = 7922
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7922:
+			if not _pog_is_null(25):
+				_pc = 7931
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7931:
+			if not _pog_is_null(26):
+				_pc = 7940
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7940:
+			if not _pog_is_null(27):
+				_pc = 7949
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7949:
+			if not _pog_is_null(28):
+				_pc = 7958
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7958:
+			if not _pog_is_null(29):
+				_pc = 7967
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7967:
+			if not _pog_is_null(30):
+				_pc = 7976
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7976:
+			if not _pog_is_null(31):
+				_pc = 7985
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7985:
+			if not _pog_is_null(32):
+				_pc = 7994
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 7994:
+			if not _pog_is_null(33):
+				_pc = 8003
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8003:
+			if not _pog_is_null(34):
+				_pc = 8012
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8012:
+			if not _pog_is_null(35):
+				_pc = 8021
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8021:
+			if not _pog_is_null(36):
+				_pc = 8030
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8030:
+			if not _pog_is_null(37):
+				_pc = 8039
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8039:
+			if not _pog_is_null(38):
+				_pc = 8048
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8048:
+			if not _pog_is_null(39):
+				_pc = 8057
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8057:
+			if not _pog_is_null(40):
+				_pc = 8066
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8066:
+			if not _pog_is_null(41):
+				_pc = 8075
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8075:
+			if not _pog_is_null(42):
+				_pc = 8084
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8084:
+			if not _pog_is_null(43):
+				_pc = 8093
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8093:
+			if not _pog_is_null(44):
+				_pc = 8102
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8102:
+			if not _pog_is_null(45):
+				_pc = 8111
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8111:
+			if not _pog_is_null(46):
+				_pc = 8120
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8120:
+			if not _pog_is_null(47):
+				_pc = 8129
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8129:
+			if not _pog_is_null(48):
+				_pc = 8138
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8138:
+			if not _pog_is_null(49):
+				_pc = 8147
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8147:
+			if not _pog_is_null(50):
+				_pc = 8156
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8156:
+			if not _pog_is_null(51):
+				_pc = 8165
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8165:
+			if not _pog_is_null(52):
+				_pc = 8174
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8174:
+			if not _pog_is_null(53):
+				_pc = 8183
+				continue
+			else:
+				_pc = 7569
+				continue
+		elif _pc == 8183:
+			_pc = 7663
+			continue
+		elif _pc == 8188:
+			_pc = 21030
+			continue
+		elif _pc == 8193:
+			_pc = 8459
+			continue
+		elif _pc == 8198:
+			_pc = 8267
+			continue
+		elif _pc == 8203:
+			_pc = 21067
+			continue
+		elif _pc == 8214:
+			_pc = 21067
+			continue
+		elif _pc == 8225:
+			_pc = 21067
+			continue
+		elif _pc == 8236:
+			_pc = 8262
+			continue
+		elif _pc == 8241:
+			debug.error("GetShip: Random number OOB")
+			_pc = 8262
+			continue
+		elif _pc == 8262:
+			_pc = 8313
+			continue
+		elif _pc == 8267:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 8291
+				continue
+			else:
+				_pc = 8203
+				continue
+		elif _pc == 8291:
+			if not _pog_is_null(1):
+				_pc = 8299
+				continue
+			else:
+				_pc = 8214
+				continue
+		elif _pc == 8299:
+			if not _pog_is_null(2):
+				_pc = 8308
+				continue
+			else:
+				_pc = 8225
+				continue
+		elif _pc == 8308:
+			_pc = 8236
+			continue
+		elif _pc == 8313:
+			_pc = 8382
+			continue
+		elif _pc == 8318:
+			_pc = 21067
+			continue
+		elif _pc == 8329:
+			_pc = 21067
+			continue
+		elif _pc == 8340:
+			_pc = 21067
+			continue
+		elif _pc == 8351:
+			_pc = 8377
+			continue
+		elif _pc == 8356:
+			debug.error("GetShip: Random number OOB")
+			_pc = 8377
+			continue
+		elif _pc == 8377:
+			_pc = 8428
+			continue
+		elif _pc == 8382:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 8406
+				continue
+			else:
+				_pc = 8318
+				continue
+		elif _pc == 8406:
+			if not _pog_is_null(1):
+				_pc = 8414
+				continue
+			else:
+				_pc = 8329
+				continue
+		elif _pc == 8414:
+			if not _pog_is_null(2):
+				_pc = 8423
+				continue
+			else:
+				_pc = 8340
+				continue
+		elif _pc == 8423:
+			_pc = 8351
+			continue
+		elif _pc == 8428:
+			_pc = 8454
+			continue
+		elif _pc == 8433:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 8454
+			continue
+		elif _pc == 8454:
+			_pc = 8953
+			continue
+		elif _pc == 8459:
+			if not _pog_is_null(v0):
+				_pc = 8472
+				continue
+			else:
+				_pc = 8198
+				continue
+		elif _pc == 8472:
+			if not _pog_is_null(1):
+				_pc = 8480
+				continue
+			else:
+				_pc = 8198
+				continue
+		elif _pc == 8480:
+			if not _pog_is_null(5):
+				_pc = 8489
+				continue
+			else:
+				_pc = 8198
+				continue
+		elif _pc == 8489:
+			if not _pog_is_null(2):
+				_pc = 8498
+				continue
+			else:
+				_pc = 8198
+				continue
+		elif _pc == 8498:
+			if not _pog_is_null(3):
+				_pc = 8507
+				continue
+			else:
+				_pc = 8198
+				continue
+		elif _pc == 8507:
+			if not _pog_is_null(4):
+				_pc = 8516
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8516:
+			if not _pog_is_null(6):
+				_pc = 8525
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8525:
+			if not _pog_is_null(7):
+				_pc = 8534
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8534:
+			if not _pog_is_null(8):
+				_pc = 8543
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8543:
+			if not _pog_is_null(9):
+				_pc = 8552
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8552:
+			if not _pog_is_null(10):
+				_pc = 8561
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8561:
+			if not _pog_is_null(11):
+				_pc = 8570
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8570:
+			if not _pog_is_null(12):
+				_pc = 8579
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8579:
+			if not _pog_is_null(13):
+				_pc = 8588
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8588:
+			if not _pog_is_null(14):
+				_pc = 8597
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8597:
+			if not _pog_is_null(15):
+				_pc = 8606
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8606:
+			if not _pog_is_null(16):
+				_pc = 8615
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8615:
+			if not _pog_is_null(17):
+				_pc = 8624
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8624:
+			if not _pog_is_null(18):
+				_pc = 8633
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8633:
+			if not _pog_is_null(19):
+				_pc = 8642
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8642:
+			if not _pog_is_null(20):
+				_pc = 8651
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8651:
+			if not _pog_is_null(21):
+				_pc = 8660
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8660:
+			if not _pog_is_null(22):
+				_pc = 8669
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8669:
+			if not _pog_is_null(23):
+				_pc = 8678
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8678:
+			if not _pog_is_null(24):
+				_pc = 8687
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8687:
+			if not _pog_is_null(25):
+				_pc = 8696
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8696:
+			if not _pog_is_null(26):
+				_pc = 8705
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8705:
+			if not _pog_is_null(27):
+				_pc = 8714
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8714:
+			if not _pog_is_null(28):
+				_pc = 8723
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8723:
+			if not _pog_is_null(29):
+				_pc = 8732
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8732:
+			if not _pog_is_null(30):
+				_pc = 8741
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8741:
+			if not _pog_is_null(31):
+				_pc = 8750
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8750:
+			if not _pog_is_null(32):
+				_pc = 8759
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8759:
+			if not _pog_is_null(33):
+				_pc = 8768
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8768:
+			if not _pog_is_null(34):
+				_pc = 8777
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8777:
+			if not _pog_is_null(35):
+				_pc = 8786
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8786:
+			if not _pog_is_null(36):
+				_pc = 8795
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8795:
+			if not _pog_is_null(37):
+				_pc = 8804
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8804:
+			if not _pog_is_null(38):
+				_pc = 8813
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8813:
+			if not _pog_is_null(39):
+				_pc = 8822
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8822:
+			if not _pog_is_null(40):
+				_pc = 8831
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8831:
+			if not _pog_is_null(41):
+				_pc = 8840
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8840:
+			if not _pog_is_null(42):
+				_pc = 8849
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8849:
+			if not _pog_is_null(43):
+				_pc = 8858
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8858:
+			if not _pog_is_null(44):
+				_pc = 8867
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8867:
+			if not _pog_is_null(45):
+				_pc = 8876
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8876:
+			if not _pog_is_null(46):
+				_pc = 8885
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8885:
+			if not _pog_is_null(47):
+				_pc = 8894
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8894:
+			if not _pog_is_null(48):
+				_pc = 8903
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8903:
+			if not _pog_is_null(49):
+				_pc = 8912
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8912:
+			if not _pog_is_null(50):
+				_pc = 8921
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8921:
+			if not _pog_is_null(51):
+				_pc = 8930
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8930:
+			if not _pog_is_null(52):
+				_pc = 8939
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8939:
+			if not _pog_is_null(53):
+				_pc = 8948
+				continue
+			else:
+				_pc = 8313
+				continue
+		elif _pc == 8948:
+			_pc = 8428
+			continue
+		elif _pc == 8953:
+			_pc = 21030
+			continue
+		elif _pc == 8958:
+			_pc = 9516
+			continue
+		elif _pc == 8963:
+			_pc = 9032
+			continue
+		elif _pc == 8968:
+			_pc = 21067
+			continue
+		elif _pc == 8979:
+			_pc = 21067
+			continue
+		elif _pc == 8990:
+			_pc = 21067
+			continue
+		elif _pc == 9001:
+			_pc = 9027
+			continue
+		elif _pc == 9006:
+			debug.error("GetShip: Random number OOB")
+			_pc = 9027
+			continue
+		elif _pc == 9027:
+			_pc = 9079
+			continue
+		elif _pc == 9032:
+			if math.random_int(1, 3) != 1:
+				_pc = 9056
+				continue
+			else:
+				_pc = 8968
+				continue
+		elif _pc == 9056:
+			if not _pog_is_null(2):
+				_pc = 9065
+				continue
+			else:
+				_pc = 8979
+				continue
+		elif _pc == 9065:
+			if not _pog_is_null(3):
+				_pc = 9074
+				continue
+			else:
+				_pc = 8990
+				continue
+		elif _pc == 9074:
+			_pc = 9001
+			continue
+		elif _pc == 9079:
+			_pc = 9170
+			continue
+		elif _pc == 9084:
+			_pc = 21067
+			continue
+		elif _pc == 9095:
+			_pc = 21067
+			continue
+		elif _pc == 9106:
+			_pc = 21067
+			continue
+		elif _pc == 9117:
+			_pc = 21067
+			continue
+		elif _pc == 9128:
+			_pc = 21067
+			continue
+		elif _pc == 9139:
+			_pc = 9165
+			continue
+		elif _pc == 9144:
+			debug.error("GetShip: Random number OOB")
+			_pc = 9165
+			continue
+		elif _pc == 9165:
+			_pc = 9235
+			continue
+		elif _pc == 9170:
+			if math.random_int(1, 5) != 1:
+				_pc = 9194
+				continue
+			else:
+				_pc = 9084
+				continue
+		elif _pc == 9194:
+			if not _pog_is_null(2):
+				_pc = 9203
+				continue
+			else:
+				_pc = 9095
+				continue
+		elif _pc == 9203:
+			if not _pog_is_null(3):
+				_pc = 9212
+				continue
+			else:
+				_pc = 9106
+				continue
+		elif _pc == 9212:
+			if not _pog_is_null(4):
+				_pc = 9221
+				continue
+			else:
+				_pc = 9117
+				continue
+		elif _pc == 9221:
+			if not _pog_is_null(5):
+				_pc = 9230
+				continue
+			else:
+				_pc = 9128
+				continue
+		elif _pc == 9230:
+			_pc = 9139
+			continue
+		elif _pc == 9235:
+			_pc = 9304
+			continue
+		elif _pc == 9240:
+			_pc = 21067
+			continue
+		elif _pc == 9251:
+			_pc = 21067
+			continue
+		elif _pc == 9262:
+			_pc = 21067
+			continue
+		elif _pc == 9273:
+			_pc = 9299
+			continue
+		elif _pc == 9278:
+			debug.error("GetShip: Random number OOB")
+			_pc = 9299
+			continue
+		elif _pc == 9299:
+			_pc = 9351
+			continue
+		elif _pc == 9304:
+			if math.random_int(1, 3) != 1:
+				_pc = 9328
+				continue
+			else:
+				_pc = 9240
+				continue
+		elif _pc == 9328:
+			if not _pog_is_null(2):
+				_pc = 9337
+				continue
+			else:
+				_pc = 9251
+				continue
+		elif _pc == 9337:
+			if not _pog_is_null(3):
+				_pc = 9346
+				continue
+			else:
+				_pc = 9262
+				continue
+		elif _pc == 9346:
+			_pc = 9273
+			continue
+		elif _pc == 9351:
+			_pc = 21067
+			continue
+		elif _pc == 9362:
+			_pc = 9420
+			continue
+		elif _pc == 9367:
+			_pc = 21067
+			continue
+		elif _pc == 9378:
+			_pc = 21067
+			continue
+		elif _pc == 9389:
+			_pc = 9415
+			continue
+		elif _pc == 9394:
+			debug.error("GetShip: Random number OOB")
+			_pc = 9415
+			continue
+		elif _pc == 9415:
+			_pc = 9485
+			continue
+		elif _pc == 9420:
+			if math.random_int(1, 5) != 1:
+				_pc = 9444
+				continue
+			else:
+				_pc = 9367
+				continue
+		elif _pc == 9444:
+			if not _pog_is_null(2):
+				_pc = 9453
+				continue
+			else:
+				_pc = 9367
+				continue
+		elif _pc == 9453:
+			if not _pog_is_null(3):
+				_pc = 9462
+				continue
+			else:
+				_pc = 9367
+				continue
+		elif _pc == 9462:
+			if not _pog_is_null(4):
+				_pc = 9471
+				continue
+			else:
+				_pc = 9367
+				continue
+		elif _pc == 9471:
+			if not _pog_is_null(5):
+				_pc = 9480
+				continue
+			else:
+				_pc = 9378
+				continue
+		elif _pc == 9480:
+			_pc = 9389
+			continue
+		elif _pc == 9485:
+			_pc = 9511
+			continue
+		elif _pc == 9490:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 9511
+			continue
+		elif _pc == 9511:
+			_pc = 10010
+			continue
+		elif _pc == 9516:
+			if v0 != 1:
+				_pc = 9529
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9529:
+			if not _pog_is_null(2):
+				_pc = 9538
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9538:
+			if not _pog_is_null(4):
+				_pc = 9547
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9547:
+			if not _pog_is_null(6):
+				_pc = 9556
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9556:
+			if not _pog_is_null(7):
+				_pc = 9565
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9565:
+			if not _pog_is_null(8):
+				_pc = 9574
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9574:
+			if not _pog_is_null(9):
+				_pc = 9583
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9583:
+			if not _pog_is_null(10):
+				_pc = 9592
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9592:
+			if not _pog_is_null(11):
+				_pc = 9601
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9601:
+			if not _pog_is_null(12):
+				_pc = 9610
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9610:
+			if not _pog_is_null(13):
+				_pc = 9619
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9619:
+			if not _pog_is_null(18):
+				_pc = 9628
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9628:
+			if not _pog_is_null(19):
+				_pc = 9637
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9637:
+			if not _pog_is_null(20):
+				_pc = 9646
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9646:
+			if not _pog_is_null(21):
+				_pc = 9655
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9655:
+			if not _pog_is_null(22):
+				_pc = 9664
+				continue
+			else:
+				_pc = 8963
+				continue
+		elif _pc == 9664:
+			if not _pog_is_null(3):
+				_pc = 9673
+				continue
+			else:
+				_pc = 9079
+				continue
+		elif _pc == 9673:
+			if not _pog_is_null(5):
+				_pc = 9682
+				continue
+			else:
+				_pc = 9235
+				continue
+		elif _pc == 9682:
+			if not _pog_is_null(14):
+				_pc = 9691
+				continue
+			else:
+				_pc = 9235
+				continue
+		elif _pc == 9691:
+			if not _pog_is_null(17):
+				_pc = 9700
+				continue
+			else:
+				_pc = 9351
+				continue
+		elif _pc == 9700:
+			if not _pog_is_null(0):
+				_pc = 9708
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9708:
+			if not _pog_is_null(15):
+				_pc = 9717
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9717:
+			if not _pog_is_null(16):
+				_pc = 9726
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9726:
+			if not _pog_is_null(23):
+				_pc = 9735
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9735:
+			if not _pog_is_null(24):
+				_pc = 9744
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9744:
+			if not _pog_is_null(25):
+				_pc = 9753
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9753:
+			if not _pog_is_null(26):
+				_pc = 9762
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9762:
+			if not _pog_is_null(27):
+				_pc = 9771
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9771:
+			if not _pog_is_null(28):
+				_pc = 9780
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9780:
+			if not _pog_is_null(29):
+				_pc = 9789
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9789:
+			if not _pog_is_null(30):
+				_pc = 9798
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9798:
+			if not _pog_is_null(31):
+				_pc = 9807
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9807:
+			if not _pog_is_null(32):
+				_pc = 9816
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9816:
+			if not _pog_is_null(33):
+				_pc = 9825
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9825:
+			if not _pog_is_null(34):
+				_pc = 9834
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9834:
+			if not _pog_is_null(35):
+				_pc = 9843
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9843:
+			if not _pog_is_null(36):
+				_pc = 9852
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9852:
+			if not _pog_is_null(37):
+				_pc = 9861
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9861:
+			if not _pog_is_null(38):
+				_pc = 9870
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9870:
+			if not _pog_is_null(39):
+				_pc = 9879
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9879:
+			if not _pog_is_null(40):
+				_pc = 9888
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9888:
+			if not _pog_is_null(41):
+				_pc = 9897
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9897:
+			if not _pog_is_null(42):
+				_pc = 9906
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9906:
+			if not _pog_is_null(43):
+				_pc = 9915
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9915:
+			if not _pog_is_null(44):
+				_pc = 9924
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9924:
+			if not _pog_is_null(45):
+				_pc = 9933
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9933:
+			if not _pog_is_null(46):
+				_pc = 9942
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9942:
+			if not _pog_is_null(47):
+				_pc = 9951
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9951:
+			if not _pog_is_null(48):
+				_pc = 9960
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9960:
+			if not _pog_is_null(49):
+				_pc = 9969
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9969:
+			if not _pog_is_null(50):
+				_pc = 9978
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9978:
+			if not _pog_is_null(51):
+				_pc = 9987
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9987:
+			if not _pog_is_null(52):
+				_pc = 9996
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 9996:
+			if not _pog_is_null(53):
+				_pc = 10005
+				continue
+			else:
+				_pc = 9362
+				continue
+		elif _pc == 10005:
+			_pc = 9485
+			continue
+		elif _pc == 10010:
+			_pc = 21030
+			continue
+		elif _pc == 10015:
+			_pc = 10166
+			continue
+		elif _pc == 10020:
+			_pc = 10089
+			continue
+		elif _pc == 10025:
+			_pc = 21067
+			continue
+		elif _pc == 10036:
+			_pc = 21067
+			continue
+		elif _pc == 10047:
+			_pc = 21067
+			continue
+		elif _pc == 10058:
+			_pc = 10084
+			continue
+		elif _pc == 10063:
+			debug.error("GetShip: Random number OOB")
+			_pc = 10084
+			continue
+		elif _pc == 10084:
+			_pc = 10135
+			continue
+		elif _pc == 10089:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 10113
+				continue
+			else:
+				_pc = 10025
+				continue
+		elif _pc == 10113:
+			if not _pog_is_null(1):
+				_pc = 10121
+				continue
+			else:
+				_pc = 10036
+				continue
+		elif _pc == 10121:
+			if not _pog_is_null(2):
+				_pc = 10130
+				continue
+			else:
+				_pc = 10047
+				continue
+		elif _pc == 10130:
+			_pc = 10058
+			continue
+		elif _pc == 10135:
+			_pc = 10161
+			continue
+		elif _pc == 10140:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 10161
+			continue
+		elif _pc == 10161:
+			_pc = 10660
+			continue
+		elif _pc == 10166:
+			if not _pog_is_null(v0):
+				_pc = 10179
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10179:
+			if not _pog_is_null(1):
+				_pc = 10187
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10187:
+			if not _pog_is_null(2):
+				_pc = 10196
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10196:
+			if not _pog_is_null(3):
+				_pc = 10205
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10205:
+			if not _pog_is_null(4):
+				_pc = 10214
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10214:
+			if not _pog_is_null(5):
+				_pc = 10223
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10223:
+			if not _pog_is_null(6):
+				_pc = 10232
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10232:
+			if not _pog_is_null(7):
+				_pc = 10241
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10241:
+			if not _pog_is_null(8):
+				_pc = 10250
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10250:
+			if not _pog_is_null(9):
+				_pc = 10259
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10259:
+			if not _pog_is_null(10):
+				_pc = 10268
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10268:
+			if not _pog_is_null(11):
+				_pc = 10277
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10277:
+			if not _pog_is_null(12):
+				_pc = 10286
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10286:
+			if not _pog_is_null(13):
+				_pc = 10295
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10295:
+			if not _pog_is_null(14):
+				_pc = 10304
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10304:
+			if not _pog_is_null(15):
+				_pc = 10313
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10313:
+			if not _pog_is_null(16):
+				_pc = 10322
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10322:
+			if not _pog_is_null(17):
+				_pc = 10331
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10331:
+			if not _pog_is_null(18):
+				_pc = 10340
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10340:
+			if not _pog_is_null(19):
+				_pc = 10349
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10349:
+			if not _pog_is_null(20):
+				_pc = 10358
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10358:
+			if not _pog_is_null(21):
+				_pc = 10367
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10367:
+			if not _pog_is_null(22):
+				_pc = 10376
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10376:
+			if not _pog_is_null(23):
+				_pc = 10385
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10385:
+			if not _pog_is_null(24):
+				_pc = 10394
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10394:
+			if not _pog_is_null(25):
+				_pc = 10403
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10403:
+			if not _pog_is_null(26):
+				_pc = 10412
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10412:
+			if not _pog_is_null(27):
+				_pc = 10421
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10421:
+			if not _pog_is_null(28):
+				_pc = 10430
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10430:
+			if not _pog_is_null(29):
+				_pc = 10439
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10439:
+			if not _pog_is_null(30):
+				_pc = 10448
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10448:
+			if not _pog_is_null(31):
+				_pc = 10457
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10457:
+			if not _pog_is_null(32):
+				_pc = 10466
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10466:
+			if not _pog_is_null(33):
+				_pc = 10475
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10475:
+			if not _pog_is_null(34):
+				_pc = 10484
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10484:
+			if not _pog_is_null(35):
+				_pc = 10493
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10493:
+			if not _pog_is_null(36):
+				_pc = 10502
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10502:
+			if not _pog_is_null(37):
+				_pc = 10511
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10511:
+			if not _pog_is_null(38):
+				_pc = 10520
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10520:
+			if not _pog_is_null(39):
+				_pc = 10529
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10529:
+			if not _pog_is_null(40):
+				_pc = 10538
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10538:
+			if not _pog_is_null(41):
+				_pc = 10547
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10547:
+			if not _pog_is_null(42):
+				_pc = 10556
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10556:
+			if not _pog_is_null(43):
+				_pc = 10565
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10565:
+			if not _pog_is_null(44):
+				_pc = 10574
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10574:
+			if not _pog_is_null(45):
+				_pc = 10583
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10583:
+			if not _pog_is_null(46):
+				_pc = 10592
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10592:
+			if not _pog_is_null(47):
+				_pc = 10601
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10601:
+			if not _pog_is_null(48):
+				_pc = 10610
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10610:
+			if not _pog_is_null(49):
+				_pc = 10619
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10619:
+			if not _pog_is_null(50):
+				_pc = 10628
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10628:
+			if not _pog_is_null(51):
+				_pc = 10637
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10637:
+			if not _pog_is_null(52):
+				_pc = 10646
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10646:
+			if not _pog_is_null(53):
+				_pc = 10655
+				continue
+			else:
+				_pc = 10020
+				continue
+		elif _pc == 10655:
+			_pc = 10135
+			continue
+		elif _pc == 10660:
+			_pc = 21030
+			continue
+		elif _pc == 10665:
+			_pc = 10795
+			continue
+		elif _pc == 10670:
+			_pc = 10728
+			continue
+		elif _pc == 10675:
+			_pc = 21067
+			continue
+		elif _pc == 10686:
+			_pc = 21067
+			continue
+		elif _pc == 10697:
+			_pc = 10723
+			continue
+		elif _pc == 10702:
+			debug.error("GetShip: Random number OOB")
+			_pc = 10723
+			continue
+		elif _pc == 10723:
+			_pc = 10764
+			continue
+		elif _pc == 10728:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 10751
+				continue
+			else:
+				_pc = 10675
+				continue
+		elif _pc == 10751:
+			if not _pog_is_null(1):
+				_pc = 10759
+				continue
+			else:
+				_pc = 10686
+				continue
+		elif _pc == 10759:
+			_pc = 10697
+			continue
+		elif _pc == 10764:
+			_pc = 10790
+			continue
+		elif _pc == 10769:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 10790
+			continue
+		elif _pc == 10790:
+			_pc = 11289
+			continue
+		elif _pc == 10795:
+			if not _pog_is_null(v0):
+				_pc = 10808
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10808:
+			if not _pog_is_null(1):
+				_pc = 10816
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10816:
+			if not _pog_is_null(2):
+				_pc = 10825
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10825:
+			if not _pog_is_null(3):
+				_pc = 10834
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10834:
+			if not _pog_is_null(4):
+				_pc = 10843
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10843:
+			if not _pog_is_null(5):
+				_pc = 10852
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10852:
+			if not _pog_is_null(6):
+				_pc = 10861
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10861:
+			if not _pog_is_null(7):
+				_pc = 10870
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10870:
+			if not _pog_is_null(8):
+				_pc = 10879
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10879:
+			if not _pog_is_null(9):
+				_pc = 10888
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10888:
+			if not _pog_is_null(10):
+				_pc = 10897
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10897:
+			if not _pog_is_null(11):
+				_pc = 10906
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10906:
+			if not _pog_is_null(12):
+				_pc = 10915
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10915:
+			if not _pog_is_null(13):
+				_pc = 10924
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10924:
+			if not _pog_is_null(14):
+				_pc = 10933
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10933:
+			if not _pog_is_null(15):
+				_pc = 10942
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10942:
+			if not _pog_is_null(16):
+				_pc = 10951
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10951:
+			if not _pog_is_null(17):
+				_pc = 10960
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10960:
+			if not _pog_is_null(18):
+				_pc = 10969
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10969:
+			if not _pog_is_null(19):
+				_pc = 10978
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10978:
+			if not _pog_is_null(20):
+				_pc = 10987
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10987:
+			if not _pog_is_null(21):
+				_pc = 10996
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 10996:
+			if not _pog_is_null(22):
+				_pc = 11005
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11005:
+			if not _pog_is_null(23):
+				_pc = 11014
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11014:
+			if not _pog_is_null(24):
+				_pc = 11023
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11023:
+			if not _pog_is_null(25):
+				_pc = 11032
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11032:
+			if not _pog_is_null(26):
+				_pc = 11041
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11041:
+			if not _pog_is_null(27):
+				_pc = 11050
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11050:
+			if not _pog_is_null(28):
+				_pc = 11059
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11059:
+			if not _pog_is_null(29):
+				_pc = 11068
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11068:
+			if not _pog_is_null(30):
+				_pc = 11077
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11077:
+			if not _pog_is_null(31):
+				_pc = 11086
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11086:
+			if not _pog_is_null(32):
+				_pc = 11095
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11095:
+			if not _pog_is_null(33):
+				_pc = 11104
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11104:
+			if not _pog_is_null(34):
+				_pc = 11113
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11113:
+			if not _pog_is_null(35):
+				_pc = 11122
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11122:
+			if not _pog_is_null(36):
+				_pc = 11131
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11131:
+			if not _pog_is_null(37):
+				_pc = 11140
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11140:
+			if not _pog_is_null(38):
+				_pc = 11149
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11149:
+			if not _pog_is_null(39):
+				_pc = 11158
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11158:
+			if not _pog_is_null(40):
+				_pc = 11167
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11167:
+			if not _pog_is_null(41):
+				_pc = 11176
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11176:
+			if not _pog_is_null(42):
+				_pc = 11185
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11185:
+			if not _pog_is_null(43):
+				_pc = 11194
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11194:
+			if not _pog_is_null(44):
+				_pc = 11203
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11203:
+			if not _pog_is_null(45):
+				_pc = 11212
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11212:
+			if not _pog_is_null(46):
+				_pc = 11221
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11221:
+			if not _pog_is_null(47):
+				_pc = 11230
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11230:
+			if not _pog_is_null(48):
+				_pc = 11239
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11239:
+			if not _pog_is_null(49):
+				_pc = 11248
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11248:
+			if not _pog_is_null(50):
+				_pc = 11257
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11257:
+			if not _pog_is_null(51):
+				_pc = 11266
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11266:
+			if not _pog_is_null(52):
+				_pc = 11275
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11275:
+			if not _pog_is_null(53):
+				_pc = 11284
+				continue
+			else:
+				_pc = 10670
+				continue
+		elif _pc == 11284:
+			_pc = 10764
+			continue
+		elif _pc == 11289:
+			_pc = 21030
+			continue
+		elif _pc == 11294:
+			_pc = 11665
+			continue
+		elif _pc == 11299:
+			_pc = 11368
+			continue
+		elif _pc == 11304:
+			_pc = 21067
+			continue
+		elif _pc == 11315:
+			_pc = 21067
+			continue
+		elif _pc == 11326:
+			_pc = 21067
+			continue
+		elif _pc == 11337:
+			_pc = 11363
+			continue
+		elif _pc == 11342:
+			debug.error("GetShip: Random number OOB")
+			_pc = 11363
+			continue
+		elif _pc == 11363:
+			_pc = 11414
+			continue
+		elif _pc == 11368:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 11392
+				continue
+			else:
+				_pc = 11304
+				continue
+		elif _pc == 11392:
+			if not _pog_is_null(1):
+				_pc = 11400
+				continue
+			else:
+				_pc = 11315
+				continue
+		elif _pc == 11400:
+			if not _pog_is_null(2):
+				_pc = 11409
+				continue
+			else:
+				_pc = 11326
+				continue
+		elif _pc == 11409:
+			_pc = 11337
+			continue
+		elif _pc == 11414:
+			_pc = 11483
+			continue
+		elif _pc == 11419:
+			_pc = 21067
+			continue
+		elif _pc == 11430:
+			_pc = 21067
+			continue
+		elif _pc == 11441:
+			_pc = 21067
+			continue
+		elif _pc == 11452:
+			_pc = 11478
+			continue
+		elif _pc == 11457:
+			debug.error("GetShip: Random number OOB")
+			_pc = 11478
+			continue
+		elif _pc == 11478:
+			_pc = 11529
+			continue
+		elif _pc == 11483:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 11507
+				continue
+			else:
+				_pc = 11419
+				continue
+		elif _pc == 11507:
+			if not _pog_is_null(1):
+				_pc = 11515
+				continue
+			else:
+				_pc = 11430
+				continue
+		elif _pc == 11515:
+			if not _pog_is_null(2):
+				_pc = 11524
+				continue
+			else:
+				_pc = 11441
+				continue
+		elif _pc == 11524:
+			_pc = 11452
+			continue
+		elif _pc == 11529:
+			_pc = 21067
+			continue
+		elif _pc == 11540:
+			_pc = 11598
+			continue
+		elif _pc == 11545:
+			_pc = 21067
+			continue
+		elif _pc == 11556:
+			_pc = 21067
+			continue
+		elif _pc == 11567:
+			_pc = 11593
+			continue
+		elif _pc == 11572:
+			debug.error("GetShip: Random number OOB")
+			_pc = 11593
+			continue
+		elif _pc == 11593:
+			_pc = 11634
+			continue
+		elif _pc == 11598:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 11621
+				continue
+			else:
+				_pc = 11545
+				continue
+		elif _pc == 11621:
+			if not _pog_is_null(1):
+				_pc = 11629
+				continue
+			else:
+				_pc = 11556
+				continue
+		elif _pc == 11629:
+			_pc = 11567
+			continue
+		elif _pc == 11634:
+			_pc = 11660
+			continue
+		elif _pc == 11639:
+			debug.error("GetShip: Unhandled faction")
+			_pc = 11660
+			continue
+		elif _pc == 11660:
+			_pc = 12159
+			continue
+		elif _pc == 11665:
+			if v0 != 5:
+				_pc = 11679
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11679:
+			if not _pog_is_null(3):
+				_pc = 11688
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11688:
+			if not _pog_is_null(1):
+				_pc = 11696
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11696:
+			if not _pog_is_null(2):
+				_pc = 11705
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11705:
+			if not _pog_is_null(4):
+				_pc = 11714
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11714:
+			if not _pog_is_null(6):
+				_pc = 11723
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11723:
+			if not _pog_is_null(7):
+				_pc = 11732
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11732:
+			if not _pog_is_null(8):
+				_pc = 11741
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11741:
+			if not _pog_is_null(9):
+				_pc = 11750
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11750:
+			if not _pog_is_null(10):
+				_pc = 11759
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11759:
+			if not _pog_is_null(11):
+				_pc = 11768
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11768:
+			if not _pog_is_null(12):
+				_pc = 11777
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11777:
+			if not _pog_is_null(13):
+				_pc = 11786
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11786:
+			if not _pog_is_null(18):
+				_pc = 11795
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11795:
+			if not _pog_is_null(19):
+				_pc = 11804
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11804:
+			if not _pog_is_null(20):
+				_pc = 11813
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11813:
+			if not _pog_is_null(21):
+				_pc = 11822
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11822:
+			if not _pog_is_null(22):
+				_pc = 11831
+				continue
+			else:
+				_pc = 11299
+				continue
+		elif _pc == 11831:
+			if not _pog_is_null(14):
+				_pc = 11840
+				continue
+			else:
+				_pc = 11414
+				continue
+		elif _pc == 11840:
+			if not _pog_is_null(17):
+				_pc = 11849
+				continue
+			else:
+				_pc = 11529
+				continue
+		elif _pc == 11849:
+			if not _pog_is_null(15):
+				_pc = 11858
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11858:
+			if not _pog_is_null(16):
+				_pc = 11867
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11867:
+			if not _pog_is_null(0):
+				_pc = 11875
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11875:
+			if not _pog_is_null(23):
+				_pc = 11884
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11884:
+			if not _pog_is_null(24):
+				_pc = 11893
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11893:
+			if not _pog_is_null(25):
+				_pc = 11902
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11902:
+			if not _pog_is_null(26):
+				_pc = 11911
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11911:
+			if not _pog_is_null(27):
+				_pc = 11920
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11920:
+			if not _pog_is_null(28):
+				_pc = 11929
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11929:
+			if not _pog_is_null(29):
+				_pc = 11938
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11938:
+			if not _pog_is_null(30):
+				_pc = 11947
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11947:
+			if not _pog_is_null(31):
+				_pc = 11956
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11956:
+			if not _pog_is_null(32):
+				_pc = 11965
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11965:
+			if not _pog_is_null(33):
+				_pc = 11974
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11974:
+			if not _pog_is_null(34):
+				_pc = 11983
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11983:
+			if not _pog_is_null(35):
+				_pc = 11992
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 11992:
+			if not _pog_is_null(36):
+				_pc = 12001
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12001:
+			if not _pog_is_null(37):
+				_pc = 12010
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12010:
+			if not _pog_is_null(38):
+				_pc = 12019
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12019:
+			if not _pog_is_null(39):
+				_pc = 12028
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12028:
+			if not _pog_is_null(40):
+				_pc = 12037
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12037:
+			if not _pog_is_null(41):
+				_pc = 12046
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12046:
+			if not _pog_is_null(42):
+				_pc = 12055
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12055:
+			if not _pog_is_null(43):
+				_pc = 12064
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12064:
+			if not _pog_is_null(44):
+				_pc = 12073
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12073:
+			if not _pog_is_null(45):
+				_pc = 12082
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12082:
+			if not _pog_is_null(46):
+				_pc = 12091
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12091:
+			if not _pog_is_null(47):
+				_pc = 12100
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12100:
+			if not _pog_is_null(48):
+				_pc = 12109
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12109:
+			if not _pog_is_null(49):
+				_pc = 12118
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12118:
+			if not _pog_is_null(50):
+				_pc = 12127
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12127:
+			if not _pog_is_null(51):
+				_pc = 12136
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12136:
+			if not _pog_is_null(52):
+				_pc = 12145
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12145:
+			if not _pog_is_null(53):
+				_pc = 12154
+				continue
+			else:
+				_pc = 11540
+				continue
+		elif _pc == 12154:
+			_pc = 11634
+			continue
+		elif _pc == 12159:
+			_pc = 21030
+			continue
+		elif _pc == 12164:
+			_pc = 12410
+			continue
+		elif _pc == 12169:
+			_pc = 21067
+			continue
+		elif _pc == 12180:
+			_pc = 12238
+			continue
+		elif _pc == 12185:
+			_pc = 21067
+			continue
+		elif _pc == 12196:
+			_pc = 21067
+			continue
+		elif _pc == 12207:
+			_pc = 12233
+			continue
+		elif _pc == 12212:
+			debug.error("GetShip: Random number OOB")
+			_pc = 12233
+			continue
+		elif _pc == 12233:
+			_pc = 12274
+			continue
+		elif _pc == 12238:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 12261
+				continue
+			else:
+				_pc = 12185
+				continue
+		elif _pc == 12261:
+			if not _pog_is_null(1):
+				_pc = 12269
+				continue
+			else:
+				_pc = 12196
+				continue
+		elif _pc == 12269:
+			_pc = 12207
+			continue
+		elif _pc == 12274:
+			_pc = 21067
+			continue
+		elif _pc == 12285:
+			_pc = 12343
+			continue
+		elif _pc == 12290:
+			_pc = 21067
+			continue
+		elif _pc == 12301:
+			_pc = 21067
+			continue
+		elif _pc == 12312:
+			_pc = 12338
+			continue
+		elif _pc == 12317:
+			debug.error("GetShip: Random number OOB")
+			_pc = 12338
+			continue
+		elif _pc == 12338:
+			_pc = 12379
+			continue
+		elif _pc == 12343:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 12366
+				continue
+			else:
+				_pc = 12290
+				continue
+		elif _pc == 12366:
+			if not _pog_is_null(1):
+				_pc = 12374
+				continue
+			else:
+				_pc = 12301
+				continue
+		elif _pc == 12374:
+			_pc = 12312
+			continue
+		elif _pc == 12379:
+			_pc = 12405
+			continue
+		elif _pc == 12384:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 12405
+			continue
+		elif _pc == 12405:
+			_pc = 12904
+			continue
+		elif _pc == 12410:
+			if v0 != 1:
+				_pc = 12423
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12423:
+			if not _pog_is_null(2):
+				_pc = 12432
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12432:
+			if not _pog_is_null(4):
+				_pc = 12441
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12441:
+			if not _pog_is_null(6):
+				_pc = 12450
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12450:
+			if not _pog_is_null(7):
+				_pc = 12459
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12459:
+			if not _pog_is_null(8):
+				_pc = 12468
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12468:
+			if not _pog_is_null(9):
+				_pc = 12477
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12477:
+			if not _pog_is_null(10):
+				_pc = 12486
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12486:
+			if not _pog_is_null(11):
+				_pc = 12495
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12495:
+			if not _pog_is_null(12):
+				_pc = 12504
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12504:
+			if not _pog_is_null(13):
+				_pc = 12513
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12513:
+			if not _pog_is_null(18):
+				_pc = 12522
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12522:
+			if not _pog_is_null(19):
+				_pc = 12531
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12531:
+			if not _pog_is_null(20):
+				_pc = 12540
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12540:
+			if not _pog_is_null(21):
+				_pc = 12549
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12549:
+			if not _pog_is_null(22):
+				_pc = 12558
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12558:
+			if not _pog_is_null(3):
+				_pc = 12567
+				continue
+			else:
+				_pc = 12180
+				continue
+		elif _pc == 12567:
+			if not _pog_is_null(5):
+				_pc = 12576
+				continue
+			else:
+				_pc = 12180
+				continue
+		elif _pc == 12576:
+			if not _pog_is_null(14):
+				_pc = 12585
+				continue
+			else:
+				_pc = 12180
+				continue
+		elif _pc == 12585:
+			if not _pog_is_null(17):
+				_pc = 12594
+				continue
+			else:
+				_pc = 12274
+				continue
+		elif _pc == 12594:
+			if not _pog_is_null(0):
+				_pc = 12602
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12602:
+			if not _pog_is_null(15):
+				_pc = 12611
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12611:
+			if not _pog_is_null(16):
+				_pc = 12620
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12620:
+			if not _pog_is_null(23):
+				_pc = 12629
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12629:
+			if not _pog_is_null(24):
+				_pc = 12638
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12638:
+			if not _pog_is_null(25):
+				_pc = 12647
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12647:
+			if not _pog_is_null(26):
+				_pc = 12656
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12656:
+			if not _pog_is_null(27):
+				_pc = 12665
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12665:
+			if not _pog_is_null(28):
+				_pc = 12674
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12674:
+			if not _pog_is_null(29):
+				_pc = 12683
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12683:
+			if not _pog_is_null(30):
+				_pc = 12692
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12692:
+			if not _pog_is_null(31):
+				_pc = 12701
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12701:
+			if not _pog_is_null(32):
+				_pc = 12710
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12710:
+			if not _pog_is_null(33):
+				_pc = 12719
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12719:
+			if not _pog_is_null(34):
+				_pc = 12728
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12728:
+			if not _pog_is_null(35):
+				_pc = 12737
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12737:
+			if not _pog_is_null(36):
+				_pc = 12746
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12746:
+			if not _pog_is_null(37):
+				_pc = 12755
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12755:
+			if not _pog_is_null(38):
+				_pc = 12764
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12764:
+			if not _pog_is_null(39):
+				_pc = 12773
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12773:
+			if not _pog_is_null(40):
+				_pc = 12782
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12782:
+			if not _pog_is_null(41):
+				_pc = 12791
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12791:
+			if not _pog_is_null(42):
+				_pc = 12800
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12800:
+			if not _pog_is_null(43):
+				_pc = 12809
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12809:
+			if not _pog_is_null(44):
+				_pc = 12818
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12818:
+			if not _pog_is_null(45):
+				_pc = 12827
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12827:
+			if not _pog_is_null(46):
+				_pc = 12836
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12836:
+			if not _pog_is_null(47):
+				_pc = 12845
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12845:
+			if not _pog_is_null(48):
+				_pc = 12854
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12854:
+			if not _pog_is_null(49):
+				_pc = 12863
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12863:
+			if not _pog_is_null(50):
+				_pc = 12872
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12872:
+			if not _pog_is_null(51):
+				_pc = 12881
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12881:
+			if not _pog_is_null(52):
+				_pc = 12890
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12890:
+			if not _pog_is_null(53):
+				_pc = 12899
+				continue
+			else:
+				_pc = 12285
+				continue
+		elif _pc == 12899:
+			_pc = 12379
+			continue
+		elif _pc == 12904:
+			_pc = 21030
+			continue
+		elif _pc == 12909:
+			_pc = 13333
+			continue
+		elif _pc == 12914:
+			_pc = 12994
+			continue
+		elif _pc == 12919:
+			_pc = 21067
+			continue
+		elif _pc == 12930:
+			_pc = 21067
+			continue
+		elif _pc == 12941:
+			_pc = 21067
+			continue
+		elif _pc == 12952:
+			_pc = 21067
+			continue
+		elif _pc == 12963:
+			_pc = 12989
+			continue
+		elif _pc == 12968:
+			debug.error("GetShip: Random number OOB")
+			_pc = 12989
+			continue
+		elif _pc == 12989:
+			_pc = 13050
+			continue
+		elif _pc == 12994:
+			if math.random_int(1, 4) != 1:
+				_pc = 13018
+				continue
+			else:
+				_pc = 12919
+				continue
+		elif _pc == 13018:
+			if not _pog_is_null(2):
+				_pc = 13027
+				continue
+			else:
+				_pc = 12930
+				continue
+		elif _pc == 13027:
+			if not _pog_is_null(3):
+				_pc = 13036
+				continue
+			else:
+				_pc = 12941
+				continue
+		elif _pc == 13036:
+			if not _pog_is_null(4):
+				_pc = 13045
+				continue
+			else:
+				_pc = 12952
+				continue
+		elif _pc == 13045:
+			_pc = 12963
+			continue
+		elif _pc == 13050:
+			_pc = 13130
+			continue
+		elif _pc == 13055:
+			_pc = 21067
+			continue
+		elif _pc == 13066:
+			_pc = 21067
+			continue
+		elif _pc == 13077:
+			_pc = 21067
+			continue
+		elif _pc == 13088:
+			_pc = 21067
+			continue
+		elif _pc == 13099:
+			_pc = 13125
+			continue
+		elif _pc == 13104:
+			debug.error("GetShip: Random number OOB")
+			_pc = 13125
+			continue
+		elif _pc == 13125:
+			_pc = 13186
+			continue
+		elif _pc == 13130:
+			if math.random_int(1, 4) != 1:
+				_pc = 13154
+				continue
+			else:
+				_pc = 13055
+				continue
+		elif _pc == 13154:
+			if not _pog_is_null(2):
+				_pc = 13163
+				continue
+			else:
+				_pc = 13066
+				continue
+		elif _pc == 13163:
+			if not _pog_is_null(3):
+				_pc = 13172
+				continue
+			else:
+				_pc = 13077
+				continue
+		elif _pc == 13172:
+			if not _pog_is_null(4):
+				_pc = 13181
+				continue
+			else:
+				_pc = 13088
+				continue
+		elif _pc == 13181:
+			_pc = 13099
+			continue
+		elif _pc == 13186:
+			_pc = 13255
+			continue
+		elif _pc == 13191:
+			_pc = 21067
+			continue
+		elif _pc == 13202:
+			_pc = 21067
+			continue
+		elif _pc == 13213:
+			_pc = 21067
+			continue
+		elif _pc == 13224:
+			_pc = 13250
+			continue
+		elif _pc == 13229:
+			debug.error("GetShip: Random number OOB")
+			_pc = 13250
+			continue
+		elif _pc == 13250:
+			_pc = 13302
+			continue
+		elif _pc == 13255:
+			if math.random_int(1, 3) != 1:
+				_pc = 13279
+				continue
+			else:
+				_pc = 13191
+				continue
+		elif _pc == 13279:
+			if not _pog_is_null(2):
+				_pc = 13288
+				continue
+			else:
+				_pc = 13202
+				continue
+		elif _pc == 13288:
+			if not _pog_is_null(3):
+				_pc = 13297
+				continue
+			else:
+				_pc = 13213
+				continue
+		elif _pc == 13297:
+			_pc = 13224
+			continue
+		elif _pc == 13302:
+			_pc = 13328
+			continue
+		elif _pc == 13307:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 13328
+			continue
+		elif _pc == 13328:
+			_pc = 13827
+			continue
+		elif _pc == 13333:
+			if v0 != 3:
+				_pc = 13347
+				continue
+			else:
+				_pc = 12914
+				continue
+		elif _pc == 13347:
+			if not _pog_is_null(5):
+				_pc = 13356
+				continue
+			else:
+				_pc = 12914
+				continue
+		elif _pc == 13356:
+			if not _pog_is_null(14):
+				_pc = 13365
+				continue
+			else:
+				_pc = 12914
+				continue
+		elif _pc == 13365:
+			if not _pog_is_null(1):
+				_pc = 13373
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13373:
+			if not _pog_is_null(2):
+				_pc = 13382
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13382:
+			if not _pog_is_null(4):
+				_pc = 13391
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13391:
+			if not _pog_is_null(6):
+				_pc = 13400
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13400:
+			if not _pog_is_null(7):
+				_pc = 13409
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13409:
+			if not _pog_is_null(8):
+				_pc = 13418
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13418:
+			if not _pog_is_null(9):
+				_pc = 13427
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13427:
+			if not _pog_is_null(10):
+				_pc = 13436
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13436:
+			if not _pog_is_null(11):
+				_pc = 13445
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13445:
+			if not _pog_is_null(12):
+				_pc = 13454
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13454:
+			if not _pog_is_null(13):
+				_pc = 13463
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13463:
+			if not _pog_is_null(17):
+				_pc = 13472
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13472:
+			if not _pog_is_null(18):
+				_pc = 13481
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13481:
+			if not _pog_is_null(19):
+				_pc = 13490
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13490:
+			if not _pog_is_null(20):
+				_pc = 13499
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13499:
+			if not _pog_is_null(21):
+				_pc = 13508
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13508:
+			if not _pog_is_null(22):
+				_pc = 13517
+				continue
+			else:
+				_pc = 13050
+				continue
+		elif _pc == 13517:
+			if not _pog_is_null(0):
+				_pc = 13525
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13525:
+			if not _pog_is_null(15):
+				_pc = 13534
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13534:
+			if not _pog_is_null(16):
+				_pc = 13543
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13543:
+			if not _pog_is_null(23):
+				_pc = 13552
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13552:
+			if not _pog_is_null(24):
+				_pc = 13561
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13561:
+			if not _pog_is_null(25):
+				_pc = 13570
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13570:
+			if not _pog_is_null(26):
+				_pc = 13579
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13579:
+			if not _pog_is_null(27):
+				_pc = 13588
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13588:
+			if not _pog_is_null(28):
+				_pc = 13597
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13597:
+			if not _pog_is_null(29):
+				_pc = 13606
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13606:
+			if not _pog_is_null(30):
+				_pc = 13615
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13615:
+			if not _pog_is_null(31):
+				_pc = 13624
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13624:
+			if not _pog_is_null(32):
+				_pc = 13633
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13633:
+			if not _pog_is_null(33):
+				_pc = 13642
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13642:
+			if not _pog_is_null(34):
+				_pc = 13651
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13651:
+			if not _pog_is_null(35):
+				_pc = 13660
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13660:
+			if not _pog_is_null(36):
+				_pc = 13669
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13669:
+			if not _pog_is_null(37):
+				_pc = 13678
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13678:
+			if not _pog_is_null(38):
+				_pc = 13687
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13687:
+			if not _pog_is_null(39):
+				_pc = 13696
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13696:
+			if not _pog_is_null(40):
+				_pc = 13705
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13705:
+			if not _pog_is_null(41):
+				_pc = 13714
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13714:
+			if not _pog_is_null(42):
+				_pc = 13723
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13723:
+			if not _pog_is_null(43):
+				_pc = 13732
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13732:
+			if not _pog_is_null(44):
+				_pc = 13741
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13741:
+			if not _pog_is_null(45):
+				_pc = 13750
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13750:
+			if not _pog_is_null(46):
+				_pc = 13759
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13759:
+			if not _pog_is_null(47):
+				_pc = 13768
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13768:
+			if not _pog_is_null(48):
+				_pc = 13777
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13777:
+			if not _pog_is_null(49):
+				_pc = 13786
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13786:
+			if not _pog_is_null(50):
+				_pc = 13795
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13795:
+			if not _pog_is_null(51):
+				_pc = 13804
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13804:
+			if not _pog_is_null(52):
+				_pc = 13813
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13813:
+			if not _pog_is_null(53):
+				_pc = 13822
+				continue
+			else:
+				_pc = 13186
+				continue
+		elif _pc == 13822:
+			_pc = 13302
+			continue
+		elif _pc == 13827:
+			_pc = 21030
+			continue
+		elif _pc == 13832:
+			_pc = 13984
+			continue
+		elif _pc == 13837:
+			_pc = 13906
+			continue
+		elif _pc == 13842:
+			_pc = 21067
+			continue
+		elif _pc == 13853:
+			_pc = 21067
+			continue
+		elif _pc == 13864:
+			_pc = 21067
+			continue
+		elif _pc == 13875:
+			_pc = 13901
+			continue
+		elif _pc == 13880:
+			debug.error("GetShip: Random number OOB")
+			_pc = 13901
+			continue
+		elif _pc == 13901:
+			_pc = 13953
+			continue
+		elif _pc == 13906:
+			if math.random_int(1, 3) != 1:
+				_pc = 13930
+				continue
+			else:
+				_pc = 13842
+				continue
+		elif _pc == 13930:
+			if not _pog_is_null(2):
+				_pc = 13939
+				continue
+			else:
+				_pc = 13853
+				continue
+		elif _pc == 13939:
+			if not _pog_is_null(3):
+				_pc = 13948
+				continue
+			else:
+				_pc = 13864
+				continue
+		elif _pc == 13948:
+			_pc = 13875
+			continue
+		elif _pc == 13953:
+			_pc = 13979
+			continue
+		elif _pc == 13958:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 13979
+			continue
+		elif _pc == 13979:
+			_pc = 14478
+			continue
+		elif _pc == 13984:
+			if not _pog_is_null(v0):
+				_pc = 13997
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 13997:
+			if not _pog_is_null(1):
+				_pc = 14005
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14005:
+			if not _pog_is_null(2):
+				_pc = 14014
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14014:
+			if not _pog_is_null(3):
+				_pc = 14023
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14023:
+			if not _pog_is_null(4):
+				_pc = 14032
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14032:
+			if not _pog_is_null(5):
+				_pc = 14041
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14041:
+			if not _pog_is_null(6):
+				_pc = 14050
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14050:
+			if not _pog_is_null(7):
+				_pc = 14059
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14059:
+			if not _pog_is_null(8):
+				_pc = 14068
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14068:
+			if not _pog_is_null(9):
+				_pc = 14077
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14077:
+			if not _pog_is_null(10):
+				_pc = 14086
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14086:
+			if not _pog_is_null(11):
+				_pc = 14095
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14095:
+			if not _pog_is_null(12):
+				_pc = 14104
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14104:
+			if not _pog_is_null(13):
+				_pc = 14113
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14113:
+			if not _pog_is_null(14):
+				_pc = 14122
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14122:
+			if not _pog_is_null(15):
+				_pc = 14131
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14131:
+			if not _pog_is_null(16):
+				_pc = 14140
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14140:
+			if not _pog_is_null(17):
+				_pc = 14149
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14149:
+			if not _pog_is_null(18):
+				_pc = 14158
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14158:
+			if not _pog_is_null(19):
+				_pc = 14167
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14167:
+			if not _pog_is_null(20):
+				_pc = 14176
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14176:
+			if not _pog_is_null(21):
+				_pc = 14185
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14185:
+			if not _pog_is_null(22):
+				_pc = 14194
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14194:
+			if not _pog_is_null(23):
+				_pc = 14203
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14203:
+			if not _pog_is_null(24):
+				_pc = 14212
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14212:
+			if not _pog_is_null(25):
+				_pc = 14221
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14221:
+			if not _pog_is_null(26):
+				_pc = 14230
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14230:
+			if not _pog_is_null(27):
+				_pc = 14239
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14239:
+			if not _pog_is_null(28):
+				_pc = 14248
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14248:
+			if not _pog_is_null(29):
+				_pc = 14257
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14257:
+			if not _pog_is_null(30):
+				_pc = 14266
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14266:
+			if not _pog_is_null(31):
+				_pc = 14275
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14275:
+			if not _pog_is_null(32):
+				_pc = 14284
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14284:
+			if not _pog_is_null(33):
+				_pc = 14293
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14293:
+			if not _pog_is_null(34):
+				_pc = 14302
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14302:
+			if not _pog_is_null(35):
+				_pc = 14311
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14311:
+			if not _pog_is_null(36):
+				_pc = 14320
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14320:
+			if not _pog_is_null(37):
+				_pc = 14329
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14329:
+			if not _pog_is_null(38):
+				_pc = 14338
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14338:
+			if not _pog_is_null(39):
+				_pc = 14347
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14347:
+			if not _pog_is_null(40):
+				_pc = 14356
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14356:
+			if not _pog_is_null(41):
+				_pc = 14365
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14365:
+			if not _pog_is_null(42):
+				_pc = 14374
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14374:
+			if not _pog_is_null(43):
+				_pc = 14383
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14383:
+			if not _pog_is_null(44):
+				_pc = 14392
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14392:
+			if not _pog_is_null(45):
+				_pc = 14401
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14401:
+			if not _pog_is_null(46):
+				_pc = 14410
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14410:
+			if not _pog_is_null(47):
+				_pc = 14419
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14419:
+			if not _pog_is_null(48):
+				_pc = 14428
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14428:
+			if not _pog_is_null(49):
+				_pc = 14437
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14437:
+			if not _pog_is_null(50):
+				_pc = 14446
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14446:
+			if not _pog_is_null(51):
+				_pc = 14455
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14455:
+			if not _pog_is_null(52):
+				_pc = 14464
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14464:
+			if not _pog_is_null(53):
+				_pc = 14473
+				continue
+			else:
+				_pc = 13837
+				continue
+		elif _pc == 14473:
+			_pc = 13953
+			continue
+		elif _pc == 14478:
+			_pc = 21030
+			continue
+		elif _pc == 14483:
+			_pc = 14595
+			continue
+		elif _pc == 14488:
+			_pc = 14520
+			continue
+		elif _pc == 14493:
+			_pc = 21067
+			continue
+		elif _pc == 14504:
+			_pc = 21067
+			continue
+		elif _pc == 14515:
+			_pc = 14553
+			continue
+		elif _pc == 14520:
+			if math.random_int(1, 2) != 1:
+				_pc = 14544
+				continue
+			else:
+				_pc = 14493
+				continue
+		elif _pc == 14544:
+			if not _pog_is_null(2):
+				_pc = 14553
+				continue
+			else:
+				_pc = 14504
+				continue
+		elif _pc == 14553:
+			_pc = 21067
+			continue
+		elif _pc == 14564:
+			_pc = 14590
+			continue
+		elif _pc == 14569:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 14590
+			continue
+		elif _pc == 14590:
+			_pc = 15089
+			continue
+		elif _pc == 14595:
+			if v0 != 1:
+				_pc = 14608
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14608:
+			if not _pog_is_null(2):
+				_pc = 14617
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14617:
+			if not _pog_is_null(4):
+				_pc = 14626
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14626:
+			if not _pog_is_null(6):
+				_pc = 14635
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14635:
+			if not _pog_is_null(7):
+				_pc = 14644
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14644:
+			if not _pog_is_null(8):
+				_pc = 14653
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14653:
+			if not _pog_is_null(9):
+				_pc = 14662
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14662:
+			if not _pog_is_null(10):
+				_pc = 14671
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14671:
+			if not _pog_is_null(12):
+				_pc = 14680
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14680:
+			if not _pog_is_null(13):
+				_pc = 14689
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14689:
+			if not _pog_is_null(14):
+				_pc = 14698
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14698:
+			if not _pog_is_null(16):
+				_pc = 14707
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14707:
+			if not _pog_is_null(17):
+				_pc = 14716
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14716:
+			if not _pog_is_null(18):
+				_pc = 14725
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14725:
+			if not _pog_is_null(19):
+				_pc = 14734
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14734:
+			if not _pog_is_null(20):
+				_pc = 14743
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14743:
+			if not _pog_is_null(21):
+				_pc = 14752
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14752:
+			if not _pog_is_null(22):
+				_pc = 14761
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14761:
+			if not _pog_is_null(15):
+				_pc = 14770
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14770:
+			if not _pog_is_null(11):
+				_pc = 14779
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14779:
+			if not _pog_is_null(5):
+				_pc = 14788
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14788:
+			if not _pog_is_null(3):
+				_pc = 14797
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14797:
+			if not _pog_is_null(0):
+				_pc = 14805
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14805:
+			if not _pog_is_null(23):
+				_pc = 14814
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14814:
+			if not _pog_is_null(24):
+				_pc = 14823
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14823:
+			if not _pog_is_null(25):
+				_pc = 14832
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14832:
+			if not _pog_is_null(26):
+				_pc = 14841
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14841:
+			if not _pog_is_null(27):
+				_pc = 14850
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14850:
+			if not _pog_is_null(28):
+				_pc = 14859
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14859:
+			if not _pog_is_null(29):
+				_pc = 14868
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14868:
+			if not _pog_is_null(30):
+				_pc = 14877
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14877:
+			if not _pog_is_null(31):
+				_pc = 14886
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14886:
+			if not _pog_is_null(32):
+				_pc = 14895
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14895:
+			if not _pog_is_null(33):
+				_pc = 14904
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14904:
+			if not _pog_is_null(34):
+				_pc = 14913
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14913:
+			if not _pog_is_null(35):
+				_pc = 14922
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14922:
+			if not _pog_is_null(36):
+				_pc = 14931
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14931:
+			if not _pog_is_null(37):
+				_pc = 14940
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14940:
+			if not _pog_is_null(38):
+				_pc = 14949
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14949:
+			if not _pog_is_null(39):
+				_pc = 14958
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14958:
+			if not _pog_is_null(40):
+				_pc = 14967
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14967:
+			if not _pog_is_null(41):
+				_pc = 14976
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14976:
+			if not _pog_is_null(42):
+				_pc = 14985
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14985:
+			if not _pog_is_null(43):
+				_pc = 14994
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 14994:
+			if not _pog_is_null(44):
+				_pc = 15003
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15003:
+			if not _pog_is_null(45):
+				_pc = 15012
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15012:
+			if not _pog_is_null(46):
+				_pc = 15021
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15021:
+			if not _pog_is_null(47):
+				_pc = 15030
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15030:
+			if not _pog_is_null(48):
+				_pc = 15039
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15039:
+			if not _pog_is_null(49):
+				_pc = 15048
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15048:
+			if not _pog_is_null(50):
+				_pc = 15057
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15057:
+			if not _pog_is_null(51):
+				_pc = 15066
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15066:
+			if not _pog_is_null(52):
+				_pc = 15075
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15075:
+			if not _pog_is_null(53):
+				_pc = 15084
+				continue
+			else:
+				_pc = 14488
+				continue
+		elif _pc == 15084:
+			_pc = 14564
+			continue
+		elif _pc == 15089:
+			_pc = 21030
+			continue
+		elif _pc == 15094:
+			_pc = 15266
+			continue
+		elif _pc == 15099:
+			_pc = 15179
+			continue
+		elif _pc == 15104:
+			_pc = 21067
+			continue
+		elif _pc == 15115:
+			_pc = 21067
+			continue
+		elif _pc == 15126:
+			_pc = 21067
+			continue
+		elif _pc == 15137:
+			_pc = 21067
+			continue
+		elif _pc == 15148:
+			_pc = 15174
+			continue
+		elif _pc == 15153:
+			debug.error("GetShip: Random number OOB")
+			_pc = 15174
+			continue
+		elif _pc == 15174:
+			_pc = 15235
+			continue
+		elif _pc == 15179:
+			if math.random_int(1, 4) != 1:
+				_pc = 15203
+				continue
+			else:
+				_pc = 15104
+				continue
+		elif _pc == 15203:
+			if not _pog_is_null(2):
+				_pc = 15212
+				continue
+			else:
+				_pc = 15115
+				continue
+		elif _pc == 15212:
+			if not _pog_is_null(3):
+				_pc = 15221
+				continue
+			else:
+				_pc = 15126
+				continue
+		elif _pc == 15221:
+			if not _pog_is_null(4):
+				_pc = 15230
+				continue
+			else:
+				_pc = 15137
+				continue
+		elif _pc == 15230:
+			_pc = 15148
+			continue
+		elif _pc == 15235:
+			_pc = 15261
+			continue
+		elif _pc == 15240:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 15261
+			continue
+		elif _pc == 15261:
+			_pc = 15760
+			continue
+		elif _pc == 15266:
+			if not _pog_is_null(v0):
+				_pc = 15279
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15279:
+			if not _pog_is_null(1):
+				_pc = 15287
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15287:
+			if not _pog_is_null(2):
+				_pc = 15296
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15296:
+			if not _pog_is_null(3):
+				_pc = 15305
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15305:
+			if not _pog_is_null(4):
+				_pc = 15314
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15314:
+			if not _pog_is_null(5):
+				_pc = 15323
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15323:
+			if not _pog_is_null(6):
+				_pc = 15332
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15332:
+			if not _pog_is_null(7):
+				_pc = 15341
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15341:
+			if not _pog_is_null(8):
+				_pc = 15350
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15350:
+			if not _pog_is_null(9):
+				_pc = 15359
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15359:
+			if not _pog_is_null(10):
+				_pc = 15368
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15368:
+			if not _pog_is_null(11):
+				_pc = 15377
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15377:
+			if not _pog_is_null(12):
+				_pc = 15386
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15386:
+			if not _pog_is_null(13):
+				_pc = 15395
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15395:
+			if not _pog_is_null(14):
+				_pc = 15404
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15404:
+			if not _pog_is_null(15):
+				_pc = 15413
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15413:
+			if not _pog_is_null(16):
+				_pc = 15422
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15422:
+			if not _pog_is_null(17):
+				_pc = 15431
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15431:
+			if not _pog_is_null(18):
+				_pc = 15440
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15440:
+			if not _pog_is_null(19):
+				_pc = 15449
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15449:
+			if not _pog_is_null(20):
+				_pc = 15458
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15458:
+			if not _pog_is_null(21):
+				_pc = 15467
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15467:
+			if not _pog_is_null(22):
+				_pc = 15476
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15476:
+			if not _pog_is_null(23):
+				_pc = 15485
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15485:
+			if not _pog_is_null(24):
+				_pc = 15494
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15494:
+			if not _pog_is_null(25):
+				_pc = 15503
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15503:
+			if not _pog_is_null(26):
+				_pc = 15512
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15512:
+			if not _pog_is_null(27):
+				_pc = 15521
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15521:
+			if not _pog_is_null(28):
+				_pc = 15530
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15530:
+			if not _pog_is_null(29):
+				_pc = 15539
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15539:
+			if not _pog_is_null(30):
+				_pc = 15548
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15548:
+			if not _pog_is_null(31):
+				_pc = 15557
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15557:
+			if not _pog_is_null(32):
+				_pc = 15566
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15566:
+			if not _pog_is_null(33):
+				_pc = 15575
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15575:
+			if not _pog_is_null(34):
+				_pc = 15584
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15584:
+			if not _pog_is_null(35):
+				_pc = 15593
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15593:
+			if not _pog_is_null(36):
+				_pc = 15602
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15602:
+			if not _pog_is_null(37):
+				_pc = 15611
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15611:
+			if not _pog_is_null(38):
+				_pc = 15620
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15620:
+			if not _pog_is_null(39):
+				_pc = 15629
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15629:
+			if not _pog_is_null(40):
+				_pc = 15638
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15638:
+			if not _pog_is_null(41):
+				_pc = 15647
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15647:
+			if not _pog_is_null(42):
+				_pc = 15656
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15656:
+			if not _pog_is_null(43):
+				_pc = 15665
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15665:
+			if not _pog_is_null(44):
+				_pc = 15674
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15674:
+			if not _pog_is_null(45):
+				_pc = 15683
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15683:
+			if not _pog_is_null(46):
+				_pc = 15692
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15692:
+			if not _pog_is_null(47):
+				_pc = 15701
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15701:
+			if not _pog_is_null(48):
+				_pc = 15710
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15710:
+			if not _pog_is_null(49):
+				_pc = 15719
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15719:
+			if not _pog_is_null(50):
+				_pc = 15728
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15728:
+			if not _pog_is_null(51):
+				_pc = 15737
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15737:
+			if not _pog_is_null(52):
+				_pc = 15746
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15746:
+			if not _pog_is_null(53):
+				_pc = 15755
+				continue
+			else:
+				_pc = 15099
+				continue
+		elif _pc == 15755:
+			_pc = 15235
+			continue
+		elif _pc == 15760:
+			_pc = 21030
+			continue
+		elif _pc == 15765:
+			_pc = 15906
+			continue
+		elif _pc == 15770:
+			_pc = 15828
+			continue
+		elif _pc == 15775:
+			_pc = 21067
+			continue
+		elif _pc == 15786:
+			_pc = 21067
+			continue
+		elif _pc == 15797:
+			_pc = 15823
+			continue
+		elif _pc == 15802:
+			debug.error("GetShip: Random number OOB")
+			_pc = 15823
+			continue
+		elif _pc == 15823:
+			_pc = 15875
+			continue
+		elif _pc == 15828:
+			if math.random_int(1, 3) != 1:
+				_pc = 15852
+				continue
+			else:
+				_pc = 15775
+				continue
+		elif _pc == 15852:
+			if not _pog_is_null(2):
+				_pc = 15861
+				continue
+			else:
+				_pc = 15775
+				continue
+		elif _pc == 15861:
+			if not _pog_is_null(3):
+				_pc = 15870
+				continue
+			else:
+				_pc = 15786
+				continue
+		elif _pc == 15870:
+			_pc = 15797
+			continue
+		elif _pc == 15875:
+			_pc = 15901
+			continue
+		elif _pc == 15880:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 15901
+			continue
+		elif _pc == 15901:
+			_pc = 16400
+			continue
+		elif _pc == 15906:
+			if not _pog_is_null(v0):
+				_pc = 15919
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15919:
+			if not _pog_is_null(1):
+				_pc = 15927
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15927:
+			if not _pog_is_null(2):
+				_pc = 15936
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15936:
+			if not _pog_is_null(3):
+				_pc = 15945
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15945:
+			if not _pog_is_null(4):
+				_pc = 15954
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15954:
+			if not _pog_is_null(5):
+				_pc = 15963
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15963:
+			if not _pog_is_null(6):
+				_pc = 15972
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15972:
+			if not _pog_is_null(7):
+				_pc = 15981
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15981:
+			if not _pog_is_null(8):
+				_pc = 15990
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15990:
+			if not _pog_is_null(9):
+				_pc = 15999
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 15999:
+			if not _pog_is_null(10):
+				_pc = 16008
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16008:
+			if not _pog_is_null(11):
+				_pc = 16017
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16017:
+			if not _pog_is_null(12):
+				_pc = 16026
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16026:
+			if not _pog_is_null(13):
+				_pc = 16035
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16035:
+			if not _pog_is_null(14):
+				_pc = 16044
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16044:
+			if not _pog_is_null(15):
+				_pc = 16053
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16053:
+			if not _pog_is_null(16):
+				_pc = 16062
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16062:
+			if not _pog_is_null(17):
+				_pc = 16071
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16071:
+			if not _pog_is_null(18):
+				_pc = 16080
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16080:
+			if not _pog_is_null(19):
+				_pc = 16089
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16089:
+			if not _pog_is_null(20):
+				_pc = 16098
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16098:
+			if not _pog_is_null(21):
+				_pc = 16107
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16107:
+			if not _pog_is_null(22):
+				_pc = 16116
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16116:
+			if not _pog_is_null(23):
+				_pc = 16125
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16125:
+			if not _pog_is_null(24):
+				_pc = 16134
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16134:
+			if not _pog_is_null(25):
+				_pc = 16143
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16143:
+			if not _pog_is_null(26):
+				_pc = 16152
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16152:
+			if not _pog_is_null(27):
+				_pc = 16161
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16161:
+			if not _pog_is_null(28):
+				_pc = 16170
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16170:
+			if not _pog_is_null(29):
+				_pc = 16179
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16179:
+			if not _pog_is_null(30):
+				_pc = 16188
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16188:
+			if not _pog_is_null(31):
+				_pc = 16197
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16197:
+			if not _pog_is_null(32):
+				_pc = 16206
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16206:
+			if not _pog_is_null(33):
+				_pc = 16215
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16215:
+			if not _pog_is_null(34):
+				_pc = 16224
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16224:
+			if not _pog_is_null(35):
+				_pc = 16233
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16233:
+			if not _pog_is_null(36):
+				_pc = 16242
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16242:
+			if not _pog_is_null(37):
+				_pc = 16251
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16251:
+			if not _pog_is_null(38):
+				_pc = 16260
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16260:
+			if not _pog_is_null(39):
+				_pc = 16269
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16269:
+			if not _pog_is_null(40):
+				_pc = 16278
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16278:
+			if not _pog_is_null(41):
+				_pc = 16287
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16287:
+			if not _pog_is_null(42):
+				_pc = 16296
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16296:
+			if not _pog_is_null(43):
+				_pc = 16305
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16305:
+			if not _pog_is_null(44):
+				_pc = 16314
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16314:
+			if not _pog_is_null(45):
+				_pc = 16323
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16323:
+			if not _pog_is_null(46):
+				_pc = 16332
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16332:
+			if not _pog_is_null(47):
+				_pc = 16341
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16341:
+			if not _pog_is_null(48):
+				_pc = 16350
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16350:
+			if not _pog_is_null(49):
+				_pc = 16359
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16359:
+			if not _pog_is_null(50):
+				_pc = 16368
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16368:
+			if not _pog_is_null(51):
+				_pc = 16377
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16377:
+			if not _pog_is_null(52):
+				_pc = 16386
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16386:
+			if not _pog_is_null(53):
+				_pc = 16395
+				continue
+			else:
+				_pc = 15770
+				continue
+		elif _pc == 16395:
+			_pc = 15875
+			continue
+		elif _pc == 16400:
+			_pc = 21030
+			continue
+		elif _pc == 16405:
+			_pc = 16546
+			continue
+		elif _pc == 16410:
+			_pc = 16468
+			continue
+		elif _pc == 16415:
+			_pc = 21067
+			continue
+		elif _pc == 16426:
+			_pc = 21067
+			continue
+		elif _pc == 16437:
+			_pc = 16463
+			continue
+		elif _pc == 16442:
+			debug.error("GetShip: Random number OOB")
+			_pc = 16463
+			continue
+		elif _pc == 16463:
+			_pc = 16515
+			continue
+		elif _pc == 16468:
+			if math.random_int(1, 3) != 1:
+				_pc = 16492
+				continue
+			else:
+				_pc = 16415
+				continue
+		elif _pc == 16492:
+			if not _pog_is_null(2):
+				_pc = 16501
+				continue
+			else:
+				_pc = 16415
+				continue
+		elif _pc == 16501:
+			if not _pog_is_null(3):
+				_pc = 16510
+				continue
+			else:
+				_pc = 16426
+				continue
+		elif _pc == 16510:
+			_pc = 16437
+			continue
+		elif _pc == 16515:
+			_pc = 16541
+			continue
+		elif _pc == 16520:
+			debug.error("Unhandled allegiance")
+			_pc = 16541
+			continue
+		elif _pc == 16541:
+			_pc = 17040
+			continue
+		elif _pc == 16546:
+			if not _pog_is_null(v0):
+				_pc = 16559
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16559:
+			if not _pog_is_null(1):
+				_pc = 16567
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16567:
+			if not _pog_is_null(2):
+				_pc = 16576
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16576:
+			if not _pog_is_null(3):
+				_pc = 16585
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16585:
+			if not _pog_is_null(4):
+				_pc = 16594
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16594:
+			if not _pog_is_null(5):
+				_pc = 16603
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16603:
+			if not _pog_is_null(6):
+				_pc = 16612
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16612:
+			if not _pog_is_null(7):
+				_pc = 16621
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16621:
+			if not _pog_is_null(8):
+				_pc = 16630
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16630:
+			if not _pog_is_null(9):
+				_pc = 16639
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16639:
+			if not _pog_is_null(10):
+				_pc = 16648
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16648:
+			if not _pog_is_null(11):
+				_pc = 16657
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16657:
+			if not _pog_is_null(12):
+				_pc = 16666
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16666:
+			if not _pog_is_null(13):
+				_pc = 16675
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16675:
+			if not _pog_is_null(14):
+				_pc = 16684
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16684:
+			if not _pog_is_null(15):
+				_pc = 16693
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16693:
+			if not _pog_is_null(16):
+				_pc = 16702
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16702:
+			if not _pog_is_null(17):
+				_pc = 16711
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16711:
+			if not _pog_is_null(18):
+				_pc = 16720
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16720:
+			if not _pog_is_null(19):
+				_pc = 16729
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16729:
+			if not _pog_is_null(20):
+				_pc = 16738
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16738:
+			if not _pog_is_null(21):
+				_pc = 16747
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16747:
+			if not _pog_is_null(22):
+				_pc = 16756
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16756:
+			if not _pog_is_null(23):
+				_pc = 16765
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16765:
+			if not _pog_is_null(24):
+				_pc = 16774
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16774:
+			if not _pog_is_null(25):
+				_pc = 16783
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16783:
+			if not _pog_is_null(26):
+				_pc = 16792
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16792:
+			if not _pog_is_null(27):
+				_pc = 16801
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16801:
+			if not _pog_is_null(28):
+				_pc = 16810
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16810:
+			if not _pog_is_null(29):
+				_pc = 16819
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16819:
+			if not _pog_is_null(30):
+				_pc = 16828
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16828:
+			if not _pog_is_null(31):
+				_pc = 16837
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16837:
+			if not _pog_is_null(32):
+				_pc = 16846
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16846:
+			if not _pog_is_null(33):
+				_pc = 16855
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16855:
+			if not _pog_is_null(34):
+				_pc = 16864
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16864:
+			if not _pog_is_null(35):
+				_pc = 16873
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16873:
+			if not _pog_is_null(36):
+				_pc = 16882
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16882:
+			if not _pog_is_null(37):
+				_pc = 16891
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16891:
+			if not _pog_is_null(38):
+				_pc = 16900
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16900:
+			if not _pog_is_null(39):
+				_pc = 16909
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16909:
+			if not _pog_is_null(40):
+				_pc = 16918
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16918:
+			if not _pog_is_null(41):
+				_pc = 16927
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16927:
+			if not _pog_is_null(42):
+				_pc = 16936
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16936:
+			if not _pog_is_null(43):
+				_pc = 16945
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16945:
+			if not _pog_is_null(44):
+				_pc = 16954
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16954:
+			if not _pog_is_null(45):
+				_pc = 16963
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16963:
+			if not _pog_is_null(46):
+				_pc = 16972
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16972:
+			if not _pog_is_null(47):
+				_pc = 16981
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16981:
+			if not _pog_is_null(48):
+				_pc = 16990
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16990:
+			if not _pog_is_null(49):
+				_pc = 16999
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16999:
+			if not _pog_is_null(50):
+				_pc = 17008
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 17008:
+			if not _pog_is_null(51):
+				_pc = 17017
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 17017:
+			if not _pog_is_null(52):
+				_pc = 17026
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 17026:
+			if not _pog_is_null(53):
+				_pc = 17035
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 17035:
+			_pc = 16515
+			continue
+		elif _pc == 17040:
+			_pc = 21030
+			continue
+		elif _pc == 17045:
+			_pc = 17197
+			continue
+		elif _pc == 17050:
+			_pc = 17119
+			continue
+		elif _pc == 17055:
+			_pc = 21067
+			continue
+		elif _pc == 17066:
+			_pc = 21067
+			continue
+		elif _pc == 17077:
+			_pc = 21067
+			continue
+		elif _pc == 17088:
+			_pc = 17114
+			continue
+		elif _pc == 17093:
+			debug.error("GetShip: Random number OOB")
+			_pc = 17114
+			continue
+		elif _pc == 17114:
+			_pc = 17166
+			continue
+		elif _pc == 17119:
+			if math.random_int(1, 3) != 1:
+				_pc = 17143
+				continue
+			else:
+				_pc = 17055
+				continue
+		elif _pc == 17143:
+			if not _pog_is_null(2):
+				_pc = 17152
+				continue
+			else:
+				_pc = 17066
+				continue
+		elif _pc == 17152:
+			if not _pog_is_null(3):
+				_pc = 17161
+				continue
+			else:
+				_pc = 17077
+				continue
+		elif _pc == 17161:
+			_pc = 17088
+			continue
+		elif _pc == 17166:
+			_pc = 17192
+			continue
+		elif _pc == 17171:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 17192
+			continue
+		elif _pc == 17192:
+			_pc = 17691
+			continue
+		elif _pc == 17197:
+			if not _pog_is_null(v0):
+				_pc = 17210
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17210:
+			if not _pog_is_null(1):
+				_pc = 17218
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17218:
+			if not _pog_is_null(2):
+				_pc = 17227
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17227:
+			if not _pog_is_null(3):
+				_pc = 17236
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17236:
+			if not _pog_is_null(4):
+				_pc = 17245
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17245:
+			if not _pog_is_null(5):
+				_pc = 17254
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17254:
+			if not _pog_is_null(6):
+				_pc = 17263
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17263:
+			if not _pog_is_null(7):
+				_pc = 17272
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17272:
+			if not _pog_is_null(8):
+				_pc = 17281
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17281:
+			if not _pog_is_null(9):
+				_pc = 17290
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17290:
+			if not _pog_is_null(10):
+				_pc = 17299
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17299:
+			if not _pog_is_null(11):
+				_pc = 17308
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17308:
+			if not _pog_is_null(12):
+				_pc = 17317
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17317:
+			if not _pog_is_null(13):
+				_pc = 17326
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17326:
+			if not _pog_is_null(14):
+				_pc = 17335
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17335:
+			if not _pog_is_null(15):
+				_pc = 17344
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17344:
+			if not _pog_is_null(16):
+				_pc = 17353
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17353:
+			if not _pog_is_null(17):
+				_pc = 17362
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17362:
+			if not _pog_is_null(18):
+				_pc = 17371
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17371:
+			if not _pog_is_null(19):
+				_pc = 17380
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17380:
+			if not _pog_is_null(20):
+				_pc = 17389
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17389:
+			if not _pog_is_null(21):
+				_pc = 17398
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17398:
+			if not _pog_is_null(22):
+				_pc = 17407
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17407:
+			if not _pog_is_null(23):
+				_pc = 17416
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17416:
+			if not _pog_is_null(24):
+				_pc = 17425
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17425:
+			if not _pog_is_null(25):
+				_pc = 17434
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17434:
+			if not _pog_is_null(26):
+				_pc = 17443
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17443:
+			if not _pog_is_null(27):
+				_pc = 17452
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17452:
+			if not _pog_is_null(28):
+				_pc = 17461
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17461:
+			if not _pog_is_null(29):
+				_pc = 17470
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17470:
+			if not _pog_is_null(30):
+				_pc = 17479
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17479:
+			if not _pog_is_null(31):
+				_pc = 17488
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17488:
+			if not _pog_is_null(32):
+				_pc = 17497
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17497:
+			if not _pog_is_null(33):
+				_pc = 17506
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17506:
+			if not _pog_is_null(34):
+				_pc = 17515
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17515:
+			if not _pog_is_null(35):
+				_pc = 17524
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17524:
+			if not _pog_is_null(36):
+				_pc = 17533
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17533:
+			if not _pog_is_null(37):
+				_pc = 17542
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17542:
+			if not _pog_is_null(38):
+				_pc = 17551
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17551:
+			if not _pog_is_null(39):
+				_pc = 17560
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17560:
+			if not _pog_is_null(40):
+				_pc = 17569
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17569:
+			if not _pog_is_null(41):
+				_pc = 17578
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17578:
+			if not _pog_is_null(42):
+				_pc = 17587
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17587:
+			if not _pog_is_null(43):
+				_pc = 17596
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17596:
+			if not _pog_is_null(44):
+				_pc = 17605
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17605:
+			if not _pog_is_null(45):
+				_pc = 17614
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17614:
+			if not _pog_is_null(46):
+				_pc = 17623
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17623:
+			if not _pog_is_null(47):
+				_pc = 17632
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17632:
+			if not _pog_is_null(48):
+				_pc = 17641
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17641:
+			if not _pog_is_null(49):
+				_pc = 17650
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17650:
+			if not _pog_is_null(50):
+				_pc = 17659
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17659:
+			if not _pog_is_null(51):
+				_pc = 17668
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17668:
+			if not _pog_is_null(52):
+				_pc = 17677
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17677:
+			if not _pog_is_null(53):
+				_pc = 17686
+				continue
+			else:
+				_pc = 17050
+				continue
+		elif _pc == 17686:
+			_pc = 17166
+			continue
+		elif _pc == 17691:
+			_pc = 21030
+			continue
+		elif _pc == 17696:
+			_pc = 18280
+			continue
+		elif _pc == 17701:
+			_pc = 17825
+			continue
+		elif _pc == 17706:
+			_pc = 21067
+			continue
+		elif _pc == 17717:
+			_pc = 21067
+			continue
+		elif _pc == 17728:
+			_pc = 21067
+			continue
+		elif _pc == 17739:
+			_pc = 21067
+			continue
+		elif _pc == 17750:
+			_pc = 21067
+			continue
+		elif _pc == 17761:
+			_pc = 21067
+			continue
+		elif _pc == 17772:
+			_pc = 21067
+			continue
+		elif _pc == 17783:
+			_pc = 21067
+			continue
+		elif _pc == 17794:
+			_pc = 17820
+			continue
+		elif _pc == 17799:
+			debug.error("GetShip: Random number OOB")
+			_pc = 17820
+			continue
+		elif _pc == 17820:
+			_pc = 17917
+			continue
+		elif _pc == 17825:
+			if math.random_int(1, 8) != 1:
+				_pc = 17849
+				continue
+			else:
+				_pc = 17706
+				continue
+		elif _pc == 17849:
+			if not _pog_is_null(2):
+				_pc = 17858
+				continue
+			else:
+				_pc = 17717
+				continue
+		elif _pc == 17858:
+			if not _pog_is_null(3):
+				_pc = 17867
+				continue
+			else:
+				_pc = 17728
+				continue
+		elif _pc == 17867:
+			if not _pog_is_null(4):
+				_pc = 17876
+				continue
+			else:
+				_pc = 17739
+				continue
+		elif _pc == 17876:
+			if not _pog_is_null(5):
+				_pc = 17885
+				continue
+			else:
+				_pc = 17750
+				continue
+		elif _pc == 17885:
+			if not _pog_is_null(6):
+				_pc = 17894
+				continue
+			else:
+				_pc = 17761
+				continue
+		elif _pc == 17894:
+			if not _pog_is_null(7):
+				_pc = 17903
+				continue
+			else:
+				_pc = 17772
+				continue
+		elif _pc == 17903:
+			if not _pog_is_null(8):
+				_pc = 17912
+				continue
+			else:
+				_pc = 17783
+				continue
+		elif _pc == 17912:
+			_pc = 17794
+			continue
+		elif _pc == 17917:
+			_pc = 18019
+			continue
+		elif _pc == 17922:
+			_pc = 21067
+			continue
+		elif _pc == 17933:
+			_pc = 21067
+			continue
+		elif _pc == 17944:
+			_pc = 21067
+			continue
+		elif _pc == 17955:
+			_pc = 21067
+			continue
+		elif _pc == 17966:
+			_pc = 21067
+			continue
+		elif _pc == 17977:
+			_pc = 21067
+			continue
+		elif _pc == 17988:
+			_pc = 18014
+			continue
+		elif _pc == 17993:
+			debug.error("GetShip: Random number OOB")
+			_pc = 18014
+			continue
+		elif _pc == 18014:
+			_pc = 18102
+			continue
+		elif _pc == 18019:
+			if math.random_int(1, 7) != 1:
+				_pc = 18043
+				continue
+			else:
+				_pc = 17922
+				continue
+		elif _pc == 18043:
+			if not _pog_is_null(2):
+				_pc = 18052
+				continue
+			else:
+				_pc = 17933
+				continue
+		elif _pc == 18052:
+			if not _pog_is_null(3):
+				_pc = 18061
+				continue
+			else:
+				_pc = 17944
+				continue
+		elif _pc == 18061:
+			if not _pog_is_null(4):
+				_pc = 18070
+				continue
+			else:
+				_pc = 17955
+				continue
+		elif _pc == 18070:
+			if not _pog_is_null(5):
+				_pc = 18079
+				continue
+			else:
+				_pc = 17955
+				continue
+		elif _pc == 18079:
+			if not _pog_is_null(6):
+				_pc = 18088
+				continue
+			else:
+				_pc = 17966
+				continue
+		elif _pc == 18088:
+			if not _pog_is_null(7):
+				_pc = 18097
+				continue
+			else:
+				_pc = 17977
+				continue
+		elif _pc == 18097:
+			_pc = 17988
+			continue
+		elif _pc == 18102:
+			_pc = 21067
+			continue
+		elif _pc == 18113:
+			_pc = 18193
+			continue
+		elif _pc == 18118:
+			_pc = 21067
+			continue
+		elif _pc == 18129:
+			_pc = 21067
+			continue
+		elif _pc == 18140:
+			_pc = 21067
+			continue
+		elif _pc == 18151:
+			_pc = 21067
+			continue
+		elif _pc == 18162:
+			_pc = 18188
+			continue
+		elif _pc == 18167:
+			debug.error("GetShip: Random number OOB")
+			_pc = 18188
+			continue
+		elif _pc == 18188:
+			_pc = 18249
+			continue
+		elif _pc == 18193:
+			if math.random_int(1, 4) != 1:
+				_pc = 18217
+				continue
+			else:
+				_pc = 18118
+				continue
+		elif _pc == 18217:
+			if not _pog_is_null(2):
+				_pc = 18226
+				continue
+			else:
+				_pc = 18129
+				continue
+		elif _pc == 18226:
+			if not _pog_is_null(3):
+				_pc = 18235
+				continue
+			else:
+				_pc = 18140
+				continue
+		elif _pc == 18235:
+			if not _pog_is_null(4):
+				_pc = 18244
+				continue
+			else:
+				_pc = 18151
+				continue
+		elif _pc == 18244:
+			_pc = 18162
+			continue
+		elif _pc == 18249:
+			_pc = 18275
+			continue
+		elif _pc == 18254:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 18275
+			continue
+		elif _pc == 18275:
+			_pc = 18774
+			continue
+		elif _pc == 18280:
+			if v0 != 14:
+				_pc = 18294
+				continue
+			else:
+				_pc = 17701
+				continue
+		elif _pc == 18294:
+			if not _pog_is_null(5):
+				_pc = 18303
+				continue
+			else:
+				_pc = 17701
+				continue
+		elif _pc == 18303:
+			if not _pog_is_null(3):
+				_pc = 18312
+				continue
+			else:
+				_pc = 17701
+				continue
+		elif _pc == 18312:
+			if not _pog_is_null(1):
+				_pc = 18320
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18320:
+			if not _pog_is_null(2):
+				_pc = 18329
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18329:
+			if not _pog_is_null(4):
+				_pc = 18338
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18338:
+			if not _pog_is_null(6):
+				_pc = 18347
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18347:
+			if not _pog_is_null(7):
+				_pc = 18356
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18356:
+			if not _pog_is_null(8):
+				_pc = 18365
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18365:
+			if not _pog_is_null(9):
+				_pc = 18374
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18374:
+			if not _pog_is_null(10):
+				_pc = 18383
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18383:
+			if not _pog_is_null(12):
+				_pc = 18392
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18392:
+			if not _pog_is_null(13):
+				_pc = 18401
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18401:
+			if not _pog_is_null(18):
+				_pc = 18410
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18410:
+			if not _pog_is_null(19):
+				_pc = 18419
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18419:
+			if not _pog_is_null(20):
+				_pc = 18428
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18428:
+			if not _pog_is_null(21):
+				_pc = 18437
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18437:
+			if not _pog_is_null(22):
+				_pc = 18446
+				continue
+			else:
+				_pc = 17917
+				continue
+		elif _pc == 18446:
+			if not _pog_is_null(17):
+				_pc = 18455
+				continue
+			else:
+				_pc = 18102
+				continue
+		elif _pc == 18455:
+			if not _pog_is_null(0):
+				_pc = 18463
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18463:
+			if not _pog_is_null(16):
+				_pc = 18472
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18472:
+			if not _pog_is_null(15):
+				_pc = 18481
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18481:
+			if not _pog_is_null(11):
+				_pc = 18490
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18490:
+			if not _pog_is_null(23):
+				_pc = 18499
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18499:
+			if not _pog_is_null(24):
+				_pc = 18508
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18508:
+			if not _pog_is_null(25):
+				_pc = 18517
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18517:
+			if not _pog_is_null(26):
+				_pc = 18526
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18526:
+			if not _pog_is_null(27):
+				_pc = 18535
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18535:
+			if not _pog_is_null(28):
+				_pc = 18544
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18544:
+			if not _pog_is_null(29):
+				_pc = 18553
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18553:
+			if not _pog_is_null(30):
+				_pc = 18562
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18562:
+			if not _pog_is_null(31):
+				_pc = 18571
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18571:
+			if not _pog_is_null(32):
+				_pc = 18580
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18580:
+			if not _pog_is_null(33):
+				_pc = 18589
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18589:
+			if not _pog_is_null(34):
+				_pc = 18598
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18598:
+			if not _pog_is_null(35):
+				_pc = 18607
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18607:
+			if not _pog_is_null(36):
+				_pc = 18616
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18616:
+			if not _pog_is_null(37):
+				_pc = 18625
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18625:
+			if not _pog_is_null(38):
+				_pc = 18634
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18634:
+			if not _pog_is_null(39):
+				_pc = 18643
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18643:
+			if not _pog_is_null(40):
+				_pc = 18652
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18652:
+			if not _pog_is_null(41):
+				_pc = 18661
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18661:
+			if not _pog_is_null(42):
+				_pc = 18670
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18670:
+			if not _pog_is_null(43):
+				_pc = 18679
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18679:
+			if not _pog_is_null(44):
+				_pc = 18688
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18688:
+			if not _pog_is_null(45):
+				_pc = 18697
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18697:
+			if not _pog_is_null(46):
+				_pc = 18706
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18706:
+			if not _pog_is_null(47):
+				_pc = 18715
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18715:
+			if not _pog_is_null(48):
+				_pc = 18724
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18724:
+			if not _pog_is_null(49):
+				_pc = 18733
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18733:
+			if not _pog_is_null(50):
+				_pc = 18742
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18742:
+			if not _pog_is_null(51):
+				_pc = 18751
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18751:
+			if not _pog_is_null(52):
+				_pc = 18760
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18760:
+			if not _pog_is_null(53):
+				_pc = 18769
+				continue
+			else:
+				_pc = 18113
+				continue
+		elif _pc == 18769:
+			_pc = 18249
+			continue
+		elif _pc == 18774:
+			_pc = 21030
+			continue
+		elif _pc == 18779:
+			_pc = 18826
+			continue
+		elif _pc == 18784:
+			_pc = 21067
+			continue
+		elif _pc == 18795:
+			_pc = 18821
+			continue
+		elif _pc == 18800:
+			debug.error("GetShip: Unhandled allegiance")
+			_pc = 18821
+			continue
+		elif _pc == 18821:
+			_pc = 19320
+			continue
+		elif _pc == 18826:
+			if not _pog_is_null(v0):
+				_pc = 18839
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18839:
+			if not _pog_is_null(1):
+				_pc = 18847
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18847:
+			if not _pog_is_null(2):
+				_pc = 18856
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18856:
+			if not _pog_is_null(3):
+				_pc = 18865
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18865:
+			if not _pog_is_null(4):
+				_pc = 18874
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18874:
+			if not _pog_is_null(5):
+				_pc = 18883
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18883:
+			if not _pog_is_null(6):
+				_pc = 18892
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18892:
+			if not _pog_is_null(7):
+				_pc = 18901
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18901:
+			if not _pog_is_null(8):
+				_pc = 18910
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18910:
+			if not _pog_is_null(9):
+				_pc = 18919
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18919:
+			if not _pog_is_null(10):
+				_pc = 18928
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18928:
+			if not _pog_is_null(11):
+				_pc = 18937
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18937:
+			if not _pog_is_null(12):
+				_pc = 18946
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18946:
+			if not _pog_is_null(13):
+				_pc = 18955
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18955:
+			if not _pog_is_null(14):
+				_pc = 18964
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18964:
+			if not _pog_is_null(15):
+				_pc = 18973
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18973:
+			if not _pog_is_null(16):
+				_pc = 18982
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18982:
+			if not _pog_is_null(17):
+				_pc = 18991
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 18991:
+			if not _pog_is_null(18):
+				_pc = 19000
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19000:
+			if not _pog_is_null(19):
+				_pc = 19009
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19009:
+			if not _pog_is_null(20):
+				_pc = 19018
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19018:
+			if not _pog_is_null(21):
+				_pc = 19027
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19027:
+			if not _pog_is_null(22):
+				_pc = 19036
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19036:
+			if not _pog_is_null(23):
+				_pc = 19045
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19045:
+			if not _pog_is_null(24):
+				_pc = 19054
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19054:
+			if not _pog_is_null(25):
+				_pc = 19063
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19063:
+			if not _pog_is_null(26):
+				_pc = 19072
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19072:
+			if not _pog_is_null(27):
+				_pc = 19081
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19081:
+			if not _pog_is_null(28):
+				_pc = 19090
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19090:
+			if not _pog_is_null(29):
+				_pc = 19099
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19099:
+			if not _pog_is_null(30):
+				_pc = 19108
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19108:
+			if not _pog_is_null(31):
+				_pc = 19117
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19117:
+			if not _pog_is_null(32):
+				_pc = 19126
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19126:
+			if not _pog_is_null(33):
+				_pc = 19135
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19135:
+			if not _pog_is_null(34):
+				_pc = 19144
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19144:
+			if not _pog_is_null(35):
+				_pc = 19153
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19153:
+			if not _pog_is_null(36):
+				_pc = 19162
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19162:
+			if not _pog_is_null(37):
+				_pc = 19171
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19171:
+			if not _pog_is_null(38):
+				_pc = 19180
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19180:
+			if not _pog_is_null(39):
+				_pc = 19189
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19189:
+			if not _pog_is_null(40):
+				_pc = 19198
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19198:
+			if not _pog_is_null(41):
+				_pc = 19207
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19207:
+			if not _pog_is_null(42):
+				_pc = 19216
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19216:
+			if not _pog_is_null(43):
+				_pc = 19225
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19225:
+			if not _pog_is_null(44):
+				_pc = 19234
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19234:
+			if not _pog_is_null(45):
+				_pc = 19243
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19243:
+			if not _pog_is_null(46):
+				_pc = 19252
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19252:
+			if not _pog_is_null(47):
+				_pc = 19261
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19261:
+			if not _pog_is_null(48):
+				_pc = 19270
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19270:
+			if not _pog_is_null(49):
+				_pc = 19279
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19279:
+			if not _pog_is_null(50):
+				_pc = 19288
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19288:
+			if not _pog_is_null(51):
+				_pc = 19297
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19297:
+			if not _pog_is_null(52):
+				_pc = 19306
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19306:
+			if not _pog_is_null(53):
+				_pc = 19315
+				continue
+			else:
+				_pc = 18784
+				continue
+		elif _pc == 19315:
+			_pc = 18795
+			continue
+		elif _pc == 19320:
+			_pc = 21030
+			continue
+		elif _pc == 19325:
+			_pc = 19471
+			continue
+		elif _pc == 19330:
+			_pc = 21067
+			continue
+		elif _pc == 19341:
+			_pc = 21067
+			continue
+		elif _pc == 19352:
+			_pc = 21067
+			continue
+		elif _pc == 19363:
+			_pc = 21067
+			continue
+		elif _pc == 19374:
+			_pc = 21067
+			continue
+		elif _pc == 19385:
+			_pc = 21067
+			continue
+		elif _pc == 19396:
+			_pc = 21067
+			continue
+		elif _pc == 19407:
+			_pc = 21067
+			continue
+		elif _pc == 19418:
+			_pc = 21067
+			continue
+		elif _pc == 19429:
+			_pc = 21067
+			continue
+		elif _pc == 19440:
+			_pc = 19466
+			continue
+		elif _pc == 19445:
+			debug.error("GetShip: Random number OOB")
+			_pc = 19466
+			continue
+		elif _pc == 19466:
+			_pc = 19580
+			continue
+		elif _pc == 19471:
+			if not _pog_is_null(math.random_int(0, 9)):
+				_pc = 19495
+				continue
+			else:
+				_pc = 19330
+				continue
+		elif _pc == 19495:
+			if not _pog_is_null(1):
+				_pc = 19503
+				continue
+			else:
+				_pc = 19341
+				continue
+		elif _pc == 19503:
+			if not _pog_is_null(2):
+				_pc = 19512
+				continue
+			else:
+				_pc = 19352
+				continue
+		elif _pc == 19512:
+			if not _pog_is_null(3):
+				_pc = 19521
+				continue
+			else:
+				_pc = 19363
+				continue
+		elif _pc == 19521:
+			if not _pog_is_null(4):
+				_pc = 19530
+				continue
+			else:
+				_pc = 19374
+				continue
+		elif _pc == 19530:
+			if not _pog_is_null(5):
+				_pc = 19539
+				continue
+			else:
+				_pc = 19385
+				continue
+		elif _pc == 19539:
+			if not _pog_is_null(6):
+				_pc = 19548
+				continue
+			else:
+				_pc = 19396
+				continue
+		elif _pc == 19548:
+			if not _pog_is_null(7):
+				_pc = 19557
+				continue
+			else:
+				_pc = 19407
+				continue
+		elif _pc == 19557:
+			if not _pog_is_null(8):
+				_pc = 19566
+				continue
+			else:
+				_pc = 19418
+				continue
+		elif _pc == 19566:
+			if not _pog_is_null(9):
+				_pc = 19575
+				continue
+			else:
+				_pc = 19429
+				continue
+		elif _pc == 19575:
+			_pc = 19440
+			continue
+		elif _pc == 19580:
+			_pc = 21030
+			continue
+		elif _pc == 19585:
+			_pc = 19632
+			continue
+		elif _pc == 19590:
+			_pc = 21067
+			continue
+		elif _pc == 19601:
+			_pc = 19627
+			continue
+		elif _pc == 19606:
+			debug.error("GetShip: Unhandled faction")
+			_pc = 19627
+			continue
+		elif _pc == 19627:
+			_pc = 20126
+			continue
+		elif _pc == 19632:
+			if not _pog_is_null(v0):
+				_pc = 19645
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19645:
+			if not _pog_is_null(1):
+				_pc = 19653
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19653:
+			if not _pog_is_null(2):
+				_pc = 19662
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19662:
+			if not _pog_is_null(3):
+				_pc = 19671
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19671:
+			if not _pog_is_null(4):
+				_pc = 19680
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19680:
+			if not _pog_is_null(5):
+				_pc = 19689
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19689:
+			if not _pog_is_null(6):
+				_pc = 19698
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19698:
+			if not _pog_is_null(7):
+				_pc = 19707
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19707:
+			if not _pog_is_null(8):
+				_pc = 19716
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19716:
+			if not _pog_is_null(9):
+				_pc = 19725
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19725:
+			if not _pog_is_null(10):
+				_pc = 19734
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19734:
+			if not _pog_is_null(11):
+				_pc = 19743
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19743:
+			if not _pog_is_null(12):
+				_pc = 19752
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19752:
+			if not _pog_is_null(13):
+				_pc = 19761
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19761:
+			if not _pog_is_null(14):
+				_pc = 19770
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19770:
+			if not _pog_is_null(15):
+				_pc = 19779
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19779:
+			if not _pog_is_null(16):
+				_pc = 19788
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19788:
+			if not _pog_is_null(17):
+				_pc = 19797
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19797:
+			if not _pog_is_null(18):
+				_pc = 19806
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19806:
+			if not _pog_is_null(19):
+				_pc = 19815
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19815:
+			if not _pog_is_null(20):
+				_pc = 19824
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19824:
+			if not _pog_is_null(21):
+				_pc = 19833
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19833:
+			if not _pog_is_null(22):
+				_pc = 19842
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19842:
+			if not _pog_is_null(23):
+				_pc = 19851
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19851:
+			if not _pog_is_null(24):
+				_pc = 19860
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19860:
+			if not _pog_is_null(25):
+				_pc = 19869
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19869:
+			if not _pog_is_null(26):
+				_pc = 19878
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19878:
+			if not _pog_is_null(27):
+				_pc = 19887
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19887:
+			if not _pog_is_null(28):
+				_pc = 19896
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19896:
+			if not _pog_is_null(29):
+				_pc = 19905
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19905:
+			if not _pog_is_null(30):
+				_pc = 19914
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19914:
+			if not _pog_is_null(31):
+				_pc = 19923
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19923:
+			if not _pog_is_null(32):
+				_pc = 19932
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19932:
+			if not _pog_is_null(33):
+				_pc = 19941
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19941:
+			if not _pog_is_null(34):
+				_pc = 19950
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19950:
+			if not _pog_is_null(35):
+				_pc = 19959
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19959:
+			if not _pog_is_null(36):
+				_pc = 19968
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19968:
+			if not _pog_is_null(37):
+				_pc = 19977
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19977:
+			if not _pog_is_null(38):
+				_pc = 19986
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19986:
+			if not _pog_is_null(39):
+				_pc = 19995
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 19995:
+			if not _pog_is_null(40):
+				_pc = 20004
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20004:
+			if not _pog_is_null(41):
+				_pc = 20013
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20013:
+			if not _pog_is_null(42):
+				_pc = 20022
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20022:
+			if not _pog_is_null(43):
+				_pc = 20031
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20031:
+			if not _pog_is_null(44):
+				_pc = 20040
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20040:
+			if not _pog_is_null(45):
+				_pc = 20049
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20049:
+			if not _pog_is_null(46):
+				_pc = 20058
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20058:
+			if not _pog_is_null(47):
+				_pc = 20067
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20067:
+			if not _pog_is_null(48):
+				_pc = 20076
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20076:
+			if not _pog_is_null(49):
+				_pc = 20085
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20085:
+			if not _pog_is_null(50):
+				_pc = 20094
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20094:
+			if not _pog_is_null(51):
+				_pc = 20103
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20103:
+			if not _pog_is_null(52):
+				_pc = 20112
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20112:
+			if not _pog_is_null(53):
+				_pc = 20121
+				continue
+			else:
+				_pc = 19590
+				continue
+		elif _pc == 20121:
+			_pc = 19601
+			continue
+		elif _pc == 20126:
+			_pc = 20258
+			continue
+		elif _pc == 20131:
+			_pc = 20189
+			continue
+		elif _pc == 20136:
+			_pc = 21067
+			continue
+		elif _pc == 20147:
+			_pc = 21067
+			continue
+		elif _pc == 20158:
+			_pc = 20184
+			continue
+		elif _pc == 20163:
+			debug.error("GetShip: Random number OOB")
+			_pc = 20184
+			continue
+		elif _pc == 20184:
+			_pc = 20227
+			continue
+		elif _pc == 20189:
+			if math.random_int(1, 2) != 1:
+				_pc = 20213
+				continue
+			else:
+				_pc = 20136
+				continue
+		elif _pc == 20213:
+			if not _pog_is_null(2):
+				_pc = 20222
+				continue
+			else:
+				_pc = 20147
+				continue
+		elif _pc == 20222:
+			_pc = 20158
+			continue
+		elif _pc == 20227:
+			_pc = 20253
+			continue
+		elif _pc == 20232:
+			debug.error("GetShip: Illegal faction")
+			_pc = 20253
+			continue
+		elif _pc == 20253:
+			_pc = 20752
+			continue
+		elif _pc == 20258:
+			if not _pog_is_null(v0):
+				_pc = 20271
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20271:
+			if not _pog_is_null(1):
+				_pc = 20279
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20279:
+			if not _pog_is_null(2):
+				_pc = 20288
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20288:
+			if not _pog_is_null(3):
+				_pc = 20297
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20297:
+			if not _pog_is_null(4):
+				_pc = 20306
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20306:
+			if not _pog_is_null(5):
+				_pc = 20315
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20315:
+			if not _pog_is_null(6):
+				_pc = 20324
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20324:
+			if not _pog_is_null(7):
+				_pc = 20333
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20333:
+			if not _pog_is_null(8):
+				_pc = 20342
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20342:
+			if not _pog_is_null(9):
+				_pc = 20351
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20351:
+			if not _pog_is_null(10):
+				_pc = 20360
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20360:
+			if not _pog_is_null(11):
+				_pc = 20369
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20369:
+			if not _pog_is_null(12):
+				_pc = 20378
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20378:
+			if not _pog_is_null(13):
+				_pc = 20387
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20387:
+			if not _pog_is_null(14):
+				_pc = 20396
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20396:
+			if not _pog_is_null(15):
+				_pc = 20405
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20405:
+			if not _pog_is_null(16):
+				_pc = 20414
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20414:
+			if not _pog_is_null(17):
+				_pc = 20423
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20423:
+			if not _pog_is_null(18):
+				_pc = 20432
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20432:
+			if not _pog_is_null(19):
+				_pc = 20441
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20441:
+			if not _pog_is_null(20):
+				_pc = 20450
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20450:
+			if not _pog_is_null(21):
+				_pc = 20459
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20459:
+			if not _pog_is_null(22):
+				_pc = 20468
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20468:
+			if not _pog_is_null(23):
+				_pc = 20477
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20477:
+			if not _pog_is_null(24):
+				_pc = 20486
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20486:
+			if not _pog_is_null(25):
+				_pc = 20495
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20495:
+			if not _pog_is_null(26):
+				_pc = 20504
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20504:
+			if not _pog_is_null(27):
+				_pc = 20513
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20513:
+			if not _pog_is_null(28):
+				_pc = 20522
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20522:
+			if not _pog_is_null(29):
+				_pc = 20531
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20531:
+			if not _pog_is_null(30):
+				_pc = 20540
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20540:
+			if not _pog_is_null(31):
+				_pc = 20549
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20549:
+			if not _pog_is_null(32):
+				_pc = 20558
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20558:
+			if not _pog_is_null(33):
+				_pc = 20567
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20567:
+			if not _pog_is_null(34):
+				_pc = 20576
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20576:
+			if not _pog_is_null(35):
+				_pc = 20585
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20585:
+			if not _pog_is_null(36):
+				_pc = 20594
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20594:
+			if not _pog_is_null(37):
+				_pc = 20603
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20603:
+			if not _pog_is_null(38):
+				_pc = 20612
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20612:
+			if not _pog_is_null(39):
+				_pc = 20621
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20621:
+			if not _pog_is_null(40):
+				_pc = 20630
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20630:
+			if not _pog_is_null(41):
+				_pc = 20639
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20639:
+			if not _pog_is_null(42):
+				_pc = 20648
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20648:
+			if not _pog_is_null(43):
+				_pc = 20657
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20657:
+			if not _pog_is_null(44):
+				_pc = 20666
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20666:
+			if not _pog_is_null(45):
+				_pc = 20675
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20675:
+			if not _pog_is_null(46):
+				_pc = 20684
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20684:
+			if not _pog_is_null(47):
+				_pc = 20693
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20693:
+			if not _pog_is_null(48):
+				_pc = 20702
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20702:
+			if not _pog_is_null(49):
+				_pc = 20711
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20711:
+			if not _pog_is_null(50):
+				_pc = 20720
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20720:
+			if not _pog_is_null(51):
+				_pc = 20729
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20729:
+			if not _pog_is_null(52):
+				_pc = 20738
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20738:
+			if not _pog_is_null(53):
+				_pc = 20747
+				continue
+			else:
+				_pc = 20131
+				continue
+		elif _pc == 20747:
+			_pc = 20227
+			continue
+		elif _pc == 20752:
+			_pc = 21030
+			continue
+		elif _pc == 20757:
+			_pc = 20783
+			continue
+		elif _pc == 20762:
+			debug.error("GetShip: Unhandled ship type")
+			_pc = 20783
+			continue
+		elif _pc == 20783:
+			_pc = 21030
+			continue
+		elif _pc == 20788:
+			if not _pog_is_null(v1):
+				_pc = 20801
+				continue
+			else:
+				_pc = 2817
+				continue
+		elif _pc == 20801:
+			if not _pog_is_null(1):
+				_pc = 20809
+				continue
+			else:
+				_pc = 3363
+				continue
+		elif _pc == 20809:
+			if not _pog_is_null(2):
+				_pc = 20818
+				continue
+			else:
+				_pc = 4014
+				continue
+		elif _pc == 20818:
+			if not _pog_is_null(3):
+				_pc = 20827
+				continue
+			else:
+				_pc = 4665
+				continue
+		elif _pc == 20827:
+			if not _pog_is_null(4):
+				_pc = 20836
+				continue
+			else:
+				_pc = 5222
+				continue
+		elif _pc == 20836:
+			if not _pog_is_null(5):
+				_pc = 20845
+				continue
+			else:
+				_pc = 5915
+				continue
+		elif _pc == 20845:
+			if not _pog_is_null(6):
+				_pc = 20854
+				continue
+			else:
+				_pc = 6691
+				continue
+		elif _pc == 20854:
+			if not _pog_is_null(7):
+				_pc = 20863
+				continue
+			else:
+				_pc = 7427
+				continue
+		elif _pc == 20863:
+			if not _pog_is_null(8):
+				_pc = 20872
+				continue
+			else:
+				_pc = 8193
+				continue
+		elif _pc == 20872:
+			if not _pog_is_null(9):
+				_pc = 20881
+				continue
+			else:
+				_pc = 8958
+				continue
+		elif _pc == 20881:
+			if not _pog_is_null(10):
+				_pc = 20890
+				continue
+			else:
+				_pc = 10015
+				continue
+		elif _pc == 20890:
+			if not _pog_is_null(11):
+				_pc = 20899
+				continue
+			else:
+				_pc = 10665
+				continue
+		elif _pc == 20899:
+			if not _pog_is_null(12):
+				_pc = 20908
+				continue
+			else:
+				_pc = 11294
+				continue
+		elif _pc == 20908:
+			if not _pog_is_null(13):
+				_pc = 20917
+				continue
+			else:
+				_pc = 12164
+				continue
+		elif _pc == 20917:
+			if not _pog_is_null(14):
+				_pc = 20926
+				continue
+			else:
+				_pc = 12909
+				continue
+		elif _pc == 20926:
+			if not _pog_is_null(15):
+				_pc = 20935
+				continue
+			else:
+				_pc = 13832
+				continue
+		elif _pc == 20935:
+			if not _pog_is_null(16):
+				_pc = 20944
+				continue
+			else:
+				_pc = 14483
+				continue
+		elif _pc == 20944:
+			if not _pog_is_null(17):
+				_pc = 20953
+				continue
+			else:
+				_pc = 15094
+				continue
+		elif _pc == 20953:
+			if not _pog_is_null(18):
+				_pc = 20962
+				continue
+			else:
+				_pc = 15765
+				continue
+		elif _pc == 20962:
+			if not _pog_is_null(19):
+				_pc = 20971
+				continue
+			else:
+				_pc = 16405
+				continue
+		elif _pc == 20971:
+			if not _pog_is_null(20):
+				_pc = 20980
+				continue
+			else:
+				_pc = 17045
+				continue
+		elif _pc == 20980:
+			if not _pog_is_null(21):
+				_pc = 20989
+				continue
+			else:
+				_pc = 17696
+				continue
+		elif _pc == 20989:
+			if not _pog_is_null(22):
+				_pc = 20998
+				continue
+			else:
+				_pc = 18779
+				continue
+		elif _pc == 20998:
+			if not _pog_is_null(24):
+				_pc = 21007
+				continue
+			else:
+				_pc = 19325
+				continue
+		elif _pc == 21007:
+			if not _pog_is_null(23):
+				_pc = 21016
+				continue
+			else:
+				_pc = 19585
+				continue
+		elif _pc == 21016:
+			if not _pog_is_null(25):
+				_pc = 21025
+				continue
+			else:
+				_pc = 20126
+				continue
+		elif _pc == 21025:
+			_pc = 20757
+			continue
+		elif _pc == 21030:
+			_pc = 21056
+			continue
+		elif _pc == 21035:
+			debug.error("iShipCreation.GetShip: Generation failed")
+			_pc = 21056
+			continue
+		elif _pc == 21056:
+			_pc = 21067
+			continue
+		elif _pc == 21067:
+			return
+		else:
+			return 0
 	return 0
 
 func create_character_group(v0, v1, v2, v3, v4) -> Variant:
@@ -229,7 +12440,7 @@ func create_character_group(v0, v1, v2, v3, v4) -> Variant:
 		await ipilotsetup.string_description(v5, v1)
 		v11 = 1
 		v9 = 1 + v9
-	return
+	return v6
 	return 0
 
 func local_21809(v0, v1) -> Variant:
@@ -272,61 +12483,182 @@ func create_supply_cargo(v0, v1) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v5 = 0
-	v6 = 0
-	v8 = 1
-	v11 = null
-	v12 = null
-	v14 = null
-	v15 = null
-	v2 = object.add_int_property(v0, "cargo_origin", v1)
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 22244
+	while true:
+		if _pc == 22244:
+			v5 = 0
+			v6 = 0
+			v8 = 1
+			v11 = null
+			v12 = null
+			v14 = null
+			v15 = null
+			v2 = object.add_int_property(v0, "cargo_origin", v1)
+			if _pog_is_null(v2):
+				_pc = 22362
+				continue
+			else:
+				_pc = 22388
+				continue
+		elif _pc == 22362:
+			_pc = 22388
+			continue
+		elif _pc == 22367:
 			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-	if 1 == object.property_exists(v0, "mega_freighter"):
-		await local_21809(v0, v1)
-	else:
-		v7 = idockport.count(v0, 3, 1)
-		v9 = await iutilities.random_centre_weighted(1.0, v7)
-		if PogRuntime.TRACE:
+			_pc = 22388
+			continue
+		elif _pc == 22388:
+			if 1 == object.property_exists(v0, "mega_freighter"):
+				_pc = 22420
+				continue
+			else:
+				_pc = 22449
+				continue
+		elif _pc == 22420:
+			await local_21809(v0, v1)
+			_pc = 23496
+			continue
+		elif _pc == 22449:
+			v7 = idockport.count(v0, 3, 1)
+			v9 = await iutilities.random_centre_weighted(1.0, v7)
+			_pc = 22705
+			continue
+		elif _pc == 22512:
 			debug.print_string("iShipCreation: Filling vessel with supply cargo of (")
 			debug.print_string(string.from_int(v9))
 			debug.print_string(string.join("/", string.from_int(v7)))
 			debug.print_string(") pod(s) for vessel ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("\n")
-		v3 = 0
-		while v9 < v3:
-			while _pog_is_null(math.random_int(0, 2)):
-				v14 = "ini:/sims/ships/utility/cargo_pod"
-				break
+			_pc = 22705
+			continue
+		elif _pc == 22705:
+			v3 = 0
+			_pc = 22712
+			continue
+		elif _pc == 22712:
+			if v9 < v3:
+				_pc = 22728
+				continue
+			else:
+				_pc = 23496
+				continue
+		elif _pc == 22728:
+			_pc = 22792
+			continue
+		elif _pc == 22733:
+			v14 = "ini:/sims/ships/utility/cargo_pod"
+			_pc = 22833
+			continue
+		elif _pc == 22751:
+			v14 = "ini:/sims/ships/utility/freightpod"
+			_pc = 22833
+			continue
+		elif _pc == 22769:
+			v14 = "ini:/sims/ships/utility/containerpod"
+			_pc = 22833
+			continue
+		elif _pc == 22787:
+			_pc = 22833
+			continue
+		elif _pc == 22792:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 22816
+				continue
+			else:
+				_pc = 22733
+				continue
+		elif _pc == 22816:
+			if not _pog_is_null(1):
+				_pc = 22824
+				continue
+			else:
+				_pc = 22751
+				continue
+		elif _pc == 22824:
+			if not _pog_is_null(2):
+				_pc = 22833
+				continue
+			else:
+				_pc = 22769
+				continue
+		elif _pc == 22833:
 			v16 = iship.create(v14, "")
 			object.add_int_property(v16, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			if _pog_is_null(v16):
-				if PogRuntime.TRACE:
-					debug.print_string("iShipCreation.CreateSupplyCargo: Critical error: no cargo pod create with template ")
-					debug.print_string(v14)
+				_pc = 22934
+				continue
+			else:
+				_pc = 22981
+				continue
+		elif _pc == 22934:
+			_pc = 22981
+			continue
+		elif _pc == 22939:
+			debug.print_string("iShipCreation.CreateSupplyCargo: Critical error: no cargo pod create with template ")
+			debug.print_string(v14)
+			_pc = 22981
+			continue
+		elif _pc == 22981:
 			list.add_tail(v11, v16)
 			if -2 == v1:
-				v13 = await icargoscript.military_supply_cargo_generator()
+				_pc = 23018
+				continue
 			else:
-				if -1 == v1:
-					v13 = await icargoscript.supply_cargo_generator()
-				else:
-					v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
+				_pc = 23042
+				continue
+		elif _pc == 23018:
+			v13 = await icargoscript.military_supply_cargo_generator()
+			_pc = 23116
+			continue
+		elif _pc == 23042:
+			if -1 == v1:
+				_pc = 23055
+				continue
+			else:
+				_pc = 23079
+				continue
+		elif _pc == 23055:
+			v13 = await icargoscript.supply_cargo_generator()
+			_pc = 23116
+			continue
+		elif _pc == 23079:
+			v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
+			_pc = 23116
+			continue
+		elif _pc == 23116:
 			if 531 == v13 or 530 == v13 or 514 == v13 or 230 == v13 or 549 == v13 or 472 == v13 or 471 == v13 or 482 == v13:
-				object.set_string_property(v16, "death_script", "iDeathScript.Antimatter")
+				_pc = 23200
+				continue
+			else:
+				_pc = 23232
+				continue
+		elif _pc == 23200:
+			object.set_string_property(v16, "death_script", "iDeathScript.Antimatter")
+			_pc = 23232
+			continue
+		elif _pc == 23232:
 			object.set_int_property(v16, "cargo", v13)
 			v15 = icargo.pog_name(icargo.find(v13))
 			await iutilities.rename_sim(v16, v15)
 			iship.dock(v16, v0)
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation: Creating POD cargo : ")
-				debug.print_string(v15)
-				debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
-				debug.print_string("\n")
+			_pc = 23478
+			continue
+		elif _pc == 23355:
+			debug.print_string("iShipCreation: Creating POD cargo : ")
+			debug.print_string(v15)
+			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
+			debug.print_string("\n")
+			_pc = 23478
+			continue
+		elif _pc == 23478:
 			v3 = 1 + v3
-	return 0
+			_pc = 22712
+			continue
+		elif _pc == 23496:
+			return 0
+		else:
+			return 0
 	return 0
 
 func create_trade_cargo(v0, v1) -> Variant:
@@ -413,58 +12745,154 @@ func create_haulage_cargo(v0, v1) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v3 = null
-	v3 = await iutilities.from_location_enum(v1)
-	v7 = 0
-	v8 = 0
-	v10 = 1
-	v13 = null
-	v14 = null
-	v16 = null
-	v18 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iShipCreation: Creating Haulage cargo for location ")
-		debug.print_string(v3)
-		debug.print_string("\n")
-	if 1 == object.property_exists(v0, "mega_freighter"):
-		await local_21809(v0, 2)
-	else:
-		v9 = idockport.count(v0, 3, 1)
-		if PogRuntime.TRACE:
+	var _pc: int = 24532
+	while true:
+		if _pc == 24532:
+			v3 = null
+			v3 = await iutilities.from_location_enum(v1)
+			v7 = 0
+			v8 = 0
+			v10 = 1
+			v13 = null
+			v14 = null
+			v16 = null
+			v18 = null
+			_pc = 24707
+			continue
+		elif _pc == 24644:
+			debug.print_string("iShipCreation: Creating Haulage cargo for location ")
+			debug.print_string(v3)
+			debug.print_string("\n")
+			_pc = 24707
+			continue
+		elif _pc == 24707:
+			if 1 == object.property_exists(v0, "mega_freighter"):
+				_pc = 24739
+				continue
+			else:
+				_pc = 24765
+				continue
+		elif _pc == 24739:
+			await local_21809(v0, 2)
+			_pc = 25727
+			continue
+		elif _pc == 24765:
+			v9 = idockport.count(v0, 3, 1)
+			_pc = 24936
+			continue
+		elif _pc == 24797:
 			debug.print_string("iShipCreation: Vessel ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("has this many ports: ")
 			debug.print_string(string.from_int(v9))
 			debug.print_string("\n")
-		v11 = await iutilities.random_centre_weighted(1.0, v9)
-		v6 = v1
-		v2 = object.add_int_property(v0, "cargo_origin", v6)
-		if _pog_is_null(v2):
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-		object.set_int_property(v0, "cargo_origin", v6)
-		v5 = 0
-		while v11 < v5:
-			while _pog_is_null(math.random_int(0, 2)):
-				v16 = "ini:/sims/ships/utility/cargo_pod"
-				break
+			_pc = 24936
+			continue
+		elif _pc == 24936:
+			v11 = await iutilities.random_centre_weighted(1.0, v9)
+			v6 = v1
+			v2 = object.add_int_property(v0, "cargo_origin", v6)
+			if _pog_is_null(v2):
+				_pc = 25026
+				continue
+			else:
+				_pc = 25052
+				continue
+		elif _pc == 25026:
+			_pc = 25052
+			continue
+		elif _pc == 25031:
+			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
+			_pc = 25052
+			continue
+		elif _pc == 25052:
+			object.set_int_property(v0, "cargo_origin", v6)
+			v5 = 0
+			_pc = 25090
+			continue
+		elif _pc == 25090:
+			if v11 < v5:
+				_pc = 25106
+				continue
+			else:
+				_pc = 25727
+				continue
+		elif _pc == 25106:
+			_pc = 25170
+			continue
+		elif _pc == 25111:
+			v16 = "ini:/sims/ships/utility/cargo_pod"
+			_pc = 25211
+			continue
+		elif _pc == 25129:
+			v16 = "ini:/sims/ships/utility/freightpod"
+			_pc = 25211
+			continue
+		elif _pc == 25147:
+			v16 = "ini:/sims/ships/utility/containerpod"
+			_pc = 25211
+			continue
+		elif _pc == 25165:
+			_pc = 25211
+			continue
+		elif _pc == 25170:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 25194
+				continue
+			else:
+				_pc = 25111
+				continue
+		elif _pc == 25194:
+			if not _pog_is_null(1):
+				_pc = 25202
+				continue
+			else:
+				_pc = 25129
+				continue
+		elif _pc == 25202:
+			if not _pog_is_null(2):
+				_pc = 25211
+				continue
+			else:
+				_pc = 25147
+				continue
+		elif _pc == 25211:
 			v15 = iship.create(v16, "name_cargo_pod")
 			object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v13, v15)
 			v17 = await icargoscript.find_cargo_for_location(v1)
 			if 531 == v17 or 530 == v17 or 514 == v17 or 230 == v17 or 549 == v17 or 472 == v17 or 471 == v17 or 482 == v17:
-				object.set_string_property(v15, "death_script", "iDeathScript.Antimatter")
+				_pc = 25431
+				continue
+			else:
+				_pc = 25463
+				continue
+		elif _pc == 25431:
+			object.set_string_property(v15, "death_script", "iDeathScript.Antimatter")
+			_pc = 25463
+			continue
+		elif _pc == 25463:
 			object.set_int_property(v15, "cargo", v17)
 			v18 = icargo.pog_name(icargo.find(v17))
 			await iutilities.rename_sim(v15, v18)
 			iship.dock(v15, v0)
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation: Creating POD cargo : ")
-				debug.print_string(v18)
-				debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
-				debug.print_string("\n")
+			_pc = 25709
+			continue
+		elif _pc == 25586:
+			debug.print_string("iShipCreation: Creating POD cargo : ")
+			debug.print_string(v18)
+			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
+			debug.print_string("\n")
+			_pc = 25709
+			continue
+		elif _pc == 25709:
 			v5 = 1 + v5
-	return 0
+			_pc = 25090
+			continue
+		elif _pc == 25727:
+			return 0
+		else:
+			return 0
 	return 0
 
 func return_supply_cargo() -> Variant:
@@ -485,55 +12913,164 @@ func return_supply_cargo() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v5 = 0
-	v6 = 0
-	v8 = 1
-	v11 = null
-	v12 = null
-	v14 = null
-	v15 = null
-	v2 = object.add_int_property(v0, "cargo_origin", v1)
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
-			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-	if PogRuntime.TRACE:
-		debug.print_string("iShipCreation: Creating Supply cargo \n ")
-	v7 = idockport.count(v0, 3, 1)
-	if PogRuntime.TRACE:
-		debug.print_string("iShipCreation: Vessel ")
-		debug.print_string(object.string_property(v0, "name"))
-		debug.print_string("has this many ports: ")
-		debug.print_string(string.from_int(v7))
-		debug.print_string("\n")
-	v9 = await iutilities.random_centre_weighted(1.0, v7)
-	v3 = 0
-	while v9 < v3:
-		while _pog_is_null(math.random_int(0, 2)):
-			v14 = "ini:/sims/ships/utility/cargo_pod"
-			break
-		v16 = iship.create(v14, "name_cargo_pod")
-		object.add_int_property(v16, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
-		list.add_tail(v11, v16)
-		if -2 == v1:
-			v13 = await icargoscript.military_supply_cargo_generator()
-		else:
-			if -1 == v1:
-				v13 = await icargoscript.supply_cargo_generator()
+	var _pc: int = 25765
+	while true:
+		if _pc == 25765:
+			v5 = 0
+			v6 = 0
+			v8 = 1
+			v11 = null
+			v12 = null
+			v14 = null
+			v15 = null
+			v2 = object.add_int_property(v0, "cargo_origin", v1)
+			if _pog_is_null(v2):
+				_pc = 25883
+				continue
 			else:
-				v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
-		if 531 == v13 or 530 == v13 or 514 == v13 or 230 == v13 or 549 == v13 or 472 == v13 or 471 == v13 or 482 == v13:
+				_pc = 25909
+				continue
+		elif _pc == 25883:
+			_pc = 25909
+			continue
+		elif _pc == 25888:
+			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
+			_pc = 25909
+			continue
+		elif _pc == 25909:
+			_pc = 25937
+			continue
+		elif _pc == 25914:
+			debug.print_string("iShipCreation: Creating Supply cargo \n ")
+			_pc = 25937
+			continue
+		elif _pc == 25937:
+			v7 = idockport.count(v0, 3, 1)
+			_pc = 26108
+			continue
+		elif _pc == 25969:
+			debug.print_string("iShipCreation: Vessel ")
+			debug.print_string(object.string_property(v0, "name"))
+			debug.print_string("has this many ports: ")
+			debug.print_string(string.from_int(v7))
+			debug.print_string("\n")
+			_pc = 26108
+			continue
+		elif _pc == 26108:
+			v9 = await iutilities.random_centre_weighted(1.0, v7)
+			v3 = 0
+			_pc = 26146
+			continue
+		elif _pc == 26146:
+			if v9 < v3:
+				_pc = 26162
+				continue
+			else:
+				_pc = 26846
+				continue
+		elif _pc == 26162:
+			_pc = 26226
+			continue
+		elif _pc == 26167:
+			v14 = "ini:/sims/ships/utility/cargo_pod"
+			_pc = 26267
+			continue
+		elif _pc == 26185:
+			v14 = "ini:/sims/ships/utility/freightpod"
+			_pc = 26267
+			continue
+		elif _pc == 26203:
+			v14 = "ini:/sims/ships/utility/containerpod"
+			_pc = 26267
+			continue
+		elif _pc == 26221:
+			_pc = 26267
+			continue
+		elif _pc == 26226:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 26250
+				continue
+			else:
+				_pc = 26167
+				continue
+		elif _pc == 26250:
+			if not _pog_is_null(1):
+				_pc = 26258
+				continue
+			else:
+				_pc = 26185
+				continue
+		elif _pc == 26258:
+			if not _pog_is_null(2):
+				_pc = 26267
+				continue
+			else:
+				_pc = 26203
+				continue
+		elif _pc == 26267:
+			v16 = iship.create(v14, "name_cargo_pod")
+			object.add_int_property(v16, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
+			list.add_tail(v11, v16)
+			if -2 == v1:
+				_pc = 26392
+				continue
+			else:
+				_pc = 26416
+				continue
+		elif _pc == 26392:
+			v13 = await icargoscript.military_supply_cargo_generator()
+			_pc = 26490
+			continue
+		elif _pc == 26416:
+			if -1 == v1:
+				_pc = 26429
+				continue
+			else:
+				_pc = 26453
+				continue
+		elif _pc == 26429:
+			v13 = await icargoscript.supply_cargo_generator()
+			_pc = 26490
+			continue
+		elif _pc == 26453:
+			v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
+			_pc = 26490
+			continue
+		elif _pc == 26490:
+			if 531 == v13 or 530 == v13 or 514 == v13 or 230 == v13 or 549 == v13 or 472 == v13 or 471 == v13 or 482 == v13:
+				_pc = 26574
+				continue
+			else:
+				_pc = 26606
+				continue
+		elif _pc == 26574:
 			object.set_string_property(v16, "death_script", "iDeathScript.Antimatter")
-		object.set_int_property(v16, "cargo", v13)
-		v15 = icargo.pog_name(icargo.find(v13))
-		await iutilities.rename_sim(v16, v15)
-		if PogRuntime.TRACE:
+			_pc = 26606
+			continue
+		elif _pc == 26606:
+			object.set_int_property(v16, "cargo", v13)
+			v15 = icargo.pog_name(icargo.find(v13))
+			await iutilities.rename_sim(v16, v15)
+			_pc = 26828
+			continue
+		elif _pc == 26705:
 			debug.print_string("iShipCreation: Creating POD cargo : ")
 			debug.print_string(v15)
 			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
 			debug.print_string("\n")
-		v3 = 1 + v3
-	push_error("PORT: unstructured jump to L26856")
-	return _pog_clone(v11)
+			_pc = 26828
+			continue
+		elif _pc == 26828:
+			v3 = 1 + v3
+			_pc = 26146
+			continue
+		elif _pc == 26846:
+			_pc = 26856
+			continue
+		elif _pc == 26856:
+			return
+		else:
+			return 0
 	return 0
 
 func return_trade_cargo() -> Variant:
@@ -604,7 +13141,6 @@ func return_trade_cargo() -> Variant:
 			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
 			debug.print_string("\n")
 		v3 = 1 + v3
-	push_error("PORT: unstructured jump to L27992")
 	return _pog_clone(v11)
 	return 0
 
@@ -626,48 +13162,133 @@ func return_haulage_cargo(v0, v1) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v3 = null
-	v3 = await iutilities.from_location_enum(v1)
-	v7 = 0
-	v8 = 0
-	v10 = 1
-	v13 = null
-	v14 = null
-	v16 = null
-	v18 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iShipCreation: Creating Haulage cargo for location ")
-		debug.print_string(v3)
-		debug.print_string("\n")
-	v9 = idockport.count(v0, 3, 1)
-	v11 = await iutilities.random_centre_weighted(1.0, v9)
-	v6 = v1
-	v2 = object.add_int_property(v0, "cargo_origin", v6)
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 28016
+	while true:
+		if _pc == 28016:
+			v3 = null
+			v3 = await iutilities.from_location_enum(v1)
+			v7 = 0
+			v8 = 0
+			v10 = 1
+			v13 = null
+			v14 = null
+			v16 = null
+			v18 = null
+			_pc = 28191
+			continue
+		elif _pc == 28128:
+			debug.print_string("iShipCreation: Creating Haulage cargo for location ")
+			debug.print_string(v3)
+			debug.print_string("\n")
+			_pc = 28191
+			continue
+		elif _pc == 28191:
+			v9 = idockport.count(v0, 3, 1)
+			v11 = await iutilities.random_centre_weighted(1.0, v9)
+			v6 = v1
+			v2 = object.add_int_property(v0, "cargo_origin", v6)
+			if _pog_is_null(v2):
+				_pc = 28308
+				continue
+			else:
+				_pc = 28334
+				continue
+		elif _pc == 28308:
+			_pc = 28334
+			continue
+		elif _pc == 28313:
 			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-	v5 = 0
-	while v11 < v5:
-		while _pog_is_null(math.random_int(0, 2)):
+			_pc = 28334
+			continue
+		elif _pc == 28334:
+			v5 = 0
+			_pc = 28341
+			continue
+		elif _pc == 28341:
+			if v11 < v5:
+				_pc = 28357
+				continue
+			else:
+				_pc = 28954
+				continue
+		elif _pc == 28357:
+			_pc = 28421
+			continue
+		elif _pc == 28362:
 			v16 = "ini:/sims/ships/utility/cargo_pod"
-			break
-		v15 = iship.create(v16, "name_cargo_pod")
-		object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
-		list.add_tail(v13, v15)
-		v17 = await icargoscript.find_cargo_for_location(v1)
-		if 531 == v17 or 530 == v17 or 514 == v17 or 230 == v17 or 549 == v17 or 472 == v17 or 471 == v17 or 482 == v17:
+			_pc = 28462
+			continue
+		elif _pc == 28380:
+			v16 = "ini:/sims/ships/utility/freightpod"
+			_pc = 28462
+			continue
+		elif _pc == 28398:
+			v16 = "ini:/sims/ships/utility/containerpod"
+			_pc = 28462
+			continue
+		elif _pc == 28416:
+			_pc = 28462
+			continue
+		elif _pc == 28421:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 28445
+				continue
+			else:
+				_pc = 28362
+				continue
+		elif _pc == 28445:
+			if not _pog_is_null(1):
+				_pc = 28453
+				continue
+			else:
+				_pc = 28380
+				continue
+		elif _pc == 28453:
+			if not _pog_is_null(2):
+				_pc = 28462
+				continue
+			else:
+				_pc = 28398
+				continue
+		elif _pc == 28462:
+			v15 = iship.create(v16, "name_cargo_pod")
+			object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
+			list.add_tail(v13, v15)
+			v17 = await icargoscript.find_cargo_for_location(v1)
+			if 531 == v17 or 530 == v17 or 514 == v17 or 230 == v17 or 549 == v17 or 472 == v17 or 471 == v17 or 482 == v17:
+				_pc = 28682
+				continue
+			else:
+				_pc = 28714
+				continue
+		elif _pc == 28682:
 			object.set_string_property(v15, "death_script", "iDeathScript.Antimatter")
-		object.set_int_property(v15, "cargo", v17)
-		v18 = icargo.pog_name(icargo.find(v17))
-		await iutilities.rename_sim(v15, v18)
-		if PogRuntime.TRACE:
+			_pc = 28714
+			continue
+		elif _pc == 28714:
+			object.set_int_property(v15, "cargo", v17)
+			v18 = icargo.pog_name(icargo.find(v17))
+			await iutilities.rename_sim(v15, v18)
+			_pc = 28936
+			continue
+		elif _pc == 28813:
 			debug.print_string("iShipCreation: Creating POD cargo : ")
 			debug.print_string(v18)
 			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
 			debug.print_string("\n")
-		v5 = 1 + v5
-	push_error("PORT: unstructured jump to L28964")
-	return _pog_clone(v13)
+			_pc = 28936
+			continue
+		elif _pc == 28936:
+			v5 = 1 + v5
+			_pc = 28341
+			continue
+		elif _pc == 28954:
+			_pc = 28964
+			continue
+		elif _pc == 28964:
+			return
+		else:
+			return 0
 	return 0
 
 func get_traffic(v0, v1, v2) -> Variant:
@@ -719,7 +13340,7 @@ func get_traffic(v0, v1, v2) -> Variant:
 		else:
 			await ipilotsetup.generic(v3)
 		v7 = 1 + v7
-	return
+	return v4
 	return 0
 
 func put_ships_in_formation() -> Variant:
@@ -727,10 +13348,49 @@ func put_ships_in_formation() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	while _pog_is_null(v1):
+	if _pog_is_null(v1):
 		await iformation.wedge(v0, v2, v3)
-		return
-	return
+		return 1
+	if v1 == 2:
+		await iformation.line_abreast(v0, v2, v3)
+		return 1
+	if v1 == 3:
+		await iformation.line_ahead(v0, v2, v3)
+		return 1
+	if v1 == 4:
+		await iformation.parade(v0, v2, v3)
+		return 1
+	if v1 == 5:
+		await iformation.skirmish_line(v0, v2, v3)
+		return 1
+	if v1 == 6:
+		await iformation.v(v0, v2, v3)
+		return 1
+	if v1 == 7:
+		await iformation.cross(v0, v2, v3)
+		return 1
+	if v1 == 8:
+		await iformation.loose(v0, v2, v3)
+		return 1
+	if v1 == 9:
+		await iformation.impi(v0, v2, v3)
+		return 1
+	if v1 == 10:
+		await iformation.outrider(v0, v2, v3)
+		return 1
+	if v1 == 1:
+		await iformation.goose(v0, v2, v3)
+		return 1
+	if v1 == 11:
+		await iformation.line_astern(v0, v2, v3)
+		return 1
+	if v1 == 12:
+		await iformation.box(v0, v2, v3)
+		return 1
+	if v1 == 13:
+		await iformation.claw(v0, v2, v3)
+		return 1
+	return 0
 	return 0
 
 func create_character_ships(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) -> Variant:
@@ -746,7 +13406,7 @@ func create_character_ships(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) -> Variant:
 	if _pog_is_null(group.sim_count(v10)):
 		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation.CreateCharacterShips - ERROR, list of character ships is empty !\n")
-	return
+	return v10
 	return 0
 
 func create_cargo_pods(v0, v1) -> Variant:
@@ -760,6 +13420,6 @@ func create_cargo_pods(v0, v1) -> Variant:
 		object.set_int_property(v4, "cargo", v0)
 		group.add_sim(v3, v4)
 		v2 = 1 + v2
-	return
+	return v3
 	return 0
 

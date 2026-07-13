@@ -32,7 +32,7 @@ func local_0(v0) -> Variant:
 		if not (global.exists("g_player_ship_handle")):
 			return
 		else:
-			if 0.0 <= object.float_property(v0, "hit_points"):
+			if 0.0 > object.float_property(v0, "hit_points"):
 				continue
 			iship.remove_pilot(v0)
 			iship.install_player_pilot(v1)
@@ -97,7 +97,7 @@ func enable_remote_connection(v0, v1) -> Variant:
 				debug.print_string("iRemotePilot.EnableRemote: Setting remote_connection_avaialbe int\n")
 			object.set_int_property(v0, "remote_connection_available", 1)
 	else:
-		if object.property_exists(v0, "remote_connection_available"):
+		if not (object.property_exists(v0, "remote_connection_available")):
 			return 0
 		if PogRuntime.TRACE:
 			debug.print_string("iRemotePilot.EnableRemote: Removing remote_connection_avaialbe int\n")
@@ -113,12 +113,12 @@ func remote_active() -> Variant:
 
 func return_current_remote_vessel() -> Variant:
 	if global.exists("g_remote_vessel_handle"):
-		return
-	return
+		return iship.cast(global.handle("g_remote_vessel_handle"))
+	return 0
 	return 0
 
 func deactivate_connection() -> Variant:
-	if global.exists("g_player_ship_handle"):
+	if not (global.exists("g_player_ship_handle")):
 		return 0
 	iship.remove_pilot(iship.cast(global.handle("g_remote_vessel_handle")))
 	iship.install_player_pilot(iship.cast(global.handle("g_player_ship_handle")))

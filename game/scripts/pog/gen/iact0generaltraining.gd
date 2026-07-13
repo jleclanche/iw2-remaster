@@ -136,7 +136,7 @@ func base_exploration_handler() -> Variant:
 													await iconversation.begin()
 													await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_is_stats")
 													await iconversation.end()
-		if not (v4) and 1 == global.pog_bool("g_act0_lucrecias_mail_conversation") and _pog_eq("icSPBaseScreen", v0):
+		if not (not (v4) and 1 == global.pog_bool("g_act0_lucrecias_mail_conversation") and _pog_eq("icSPBaseScreen", v0)):
 			continue
 		v4 = 1
 		object.set_bool_property(v3, "said_phrase", 1)
@@ -186,7 +186,7 @@ func base_online_handler() -> Variant:
 					await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_here_is_the_manufacturing_console")
 					await iconversation.end()
 				else:
-					if _pog_is_null(object.property_exists(v4, "act0_done_trade")) and _pog_eq("icSPTradingScreen", v0):
+					if not (_pog_is_null(object.property_exists(v4, "act0_done_trade")) and _pog_eq("icSPTradingScreen", v0)):
 						continue
 					object.add_int_property(v4, "act0_done_trade", 1)
 					await iconversation.begin()
@@ -198,7 +198,7 @@ func base_online_handler() -> Variant:
 func local_3176(v0) -> Variant:
 	while true:
 		await _pog_wait(0.5)
-		if not (not (_pog_eq(v0, ihud.current_menu_node()))):
+		if not (not _pog_eq(v0, ihud.current_menu_node())):
 			break
 	return 0
 	return 0
@@ -229,7 +229,7 @@ func h_u_d_traininer() -> Variant:
 		await _pog_wait(1)
 		if PogRuntime.TRACE:
 			debug.print_string("iact0GeneralTraining: Still running the HUD traininer!\n")
-		if not (global.exists("g_training_disabled")):
+		if global.exists("g_training_disabled"):
 			continue
 		if 10 == object.int_property(v0, "number_completed_hud_nodes"):
 			state.destroy(self)
@@ -277,7 +277,7 @@ func h_u_d_traininer() -> Variant:
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_map")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_starmap")
-		if _pog_is_null(object.property_exists(v0, "done_auto")) and _pog_eq("hud_menu_autopilot", ihud.current_menu_node()):
+		if not (_pog_is_null(object.property_exists(v0, "done_auto")) and _pog_eq("hud_menu_autopilot", ihud.current_menu_node())):
 			continue
 		object.add_int_property(v0, "done_auto", 1)
 		object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))

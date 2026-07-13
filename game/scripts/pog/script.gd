@@ -155,6 +155,20 @@ func _pog_movie(stem: String) -> Variant:
 	return 0
 
 
+## `TimedJump`: not a sleep, a rate limiter. It lets a polling loop yield every
+## frame while the body it guards runs at most once every `secs`. Keyed by the
+## instruction it came from, which is unique per site.
+var _every: Dictionary = {}
+
+func _pog_every(site: int, secs: float) -> bool:
+	var now := Time.get_ticks_msec() / 1000.0
+	var last: float = _every.get(site, -INF)
+	if now - last <= secs:
+		return false
+	_every[site] = now
+	return true
+
+
 ## `CloneObject`: POG's containers are values, and Godot's are too.
 func _pog_clone(v: Variant) -> Variant:
 	if v is Array or v is Dictionary:

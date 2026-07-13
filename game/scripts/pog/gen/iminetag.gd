@@ -168,12 +168,151 @@ func server_on_user_message() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	while v0 == 15:
-		v4 = iship.cast(v1)
-		iship.undock_self(v4)
-		imultiplay.server_send_user_message(15, v4, 0, "")
-		break
-	return 0
+	var _pc: int = 1200
+	while true:
+		if _pc == 1200:
+			_pc = 1887
+			continue
+		elif _pc == 1210:
+			v4 = iship.cast(v1)
+			iship.undock_self(v4)
+			imultiplay.server_send_user_message(15, v4, 0, "")
+			_pc = 1963
+			continue
+		elif _pc == 1287:
+			imultiplay.send_scores(v1)
+			_pc = 1963
+			continue
+		elif _pc == 1311:
+			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
+			_pc = 1963
+			continue
+		elif _pc == 1371:
+			v2 = sim.find_by_name(v3)
+			if not (object.property_exists(v2, "mp_tagged_by")):
+				_pc = 1426
+				continue
+			else:
+				_pc = 1520
+				continue
+		elif _pc == 1426:
+			await local_273(iship.cast(v1))
+			imultiplay.server_send_user_message(41, v1, v2, v3)
+			object.add_handle_property(v2, "mp_tagged_by", v1)
+			_pc = 1520
+			continue
+		elif _pc == 1520:
+			_pc = 1963
+			continue
+		elif _pc == 1525:
+			if not (object.property_exists(v2, "mp_remote_linked")):
+				_pc = 1556
+				continue
+			else:
+				_pc = 1621
+				continue
+		elif _pc == 1556:
+			object.add_handle_property(v2, "mp_remote_linked", v1)
+			imultiplay.server_send_user_message(202, v1, v2, "")
+			_pc = 1621
+			continue
+		elif _pc == 1621:
+			_pc = 1963
+			continue
+		elif _pc == 1626:
+			if object.property_exists(v2, "mp_remote_linked"):
+				_pc = 1656
+				continue
+			else:
+				_pc = 1748
+				continue
+		elif _pc == 1656:
+			object.remove_property(v2, "mp_remote_linked")
+			imultiplay.sever_remote_link_to(iship.cast(v2))
+			imultiplay.server_send_user_message(203, v1, v2, "")
+			_pc = 1748
+			continue
+		elif _pc == 1748:
+			_pc = 1963
+			continue
+		elif _pc == 1753:
+			if _pog_is_null(v2):
+				_pc = 1766
+				continue
+			else:
+				_pc = 1790
+				continue
+		elif _pc == 1766:
+			v2 = sim.find_by_name(v3)
+			_pc = 1790
+			continue
+		elif _pc == 1790:
+			isim.dock(isim.cast(v1), isim.cast(v2))
+			imultiplay.server_send_user_message(204, v1, v2, v3)
+			_pc = 1963
+			continue
+		elif _pc == 1877:
+			_pc = 1963
+			continue
+		elif _pc == 1882:
+			_pc = 1963
+			continue
+		elif _pc == 1887:
+			if v0 != 15:
+				_pc = 1901
+				continue
+			else:
+				_pc = 1210
+				continue
+		elif _pc == 1901:
+			if not _pog_is_null(16):
+				_pc = 1910
+				continue
+			else:
+				_pc = 1287
+				continue
+		elif _pc == 1910:
+			if not _pog_is_null(99):
+				_pc = 1919
+				continue
+			else:
+				_pc = 1311
+				continue
+		elif _pc == 1919:
+			if not _pog_is_null(40):
+				_pc = 1928
+				continue
+			else:
+				_pc = 1371
+				continue
+		elif _pc == 1928:
+			if not _pog_is_null(202):
+				_pc = 1938
+				continue
+			else:
+				_pc = 1525
+				continue
+		elif _pc == 1938:
+			if not _pog_is_null(203):
+				_pc = 1948
+				continue
+			else:
+				_pc = 1626
+				continue
+		elif _pc == 1948:
+			if not _pog_is_null(204):
+				_pc = 1958
+				continue
+			else:
+				_pc = 1753
+				continue
+		elif _pc == 1958:
+			_pc = 1877
+			continue
+		elif _pc == 1963:
+			return 0
+		else:
+			return 0
 	return 0
 
 func server_player_leave() -> Variant:
@@ -436,7 +575,7 @@ func server_main() -> Variant:
 	return 0
 
 func client_scores() -> Variant:
-	if not (_pog_eq("icMultiplayScreenInGame", gui.current_screen_classname())):
+	if _pog_eq("icMultiplayScreenInGame", gui.current_screen_classname()):
 		return 0
 	gui.pop_screens_to("icSpaceFlightScreen")
 	gui.overlay_screen("icPDAOverlayManager")
@@ -465,7 +604,7 @@ func local_6583(v0, v1, v2, v3, v4, v5) -> Variant:
 	v6 = await igui.create_and_initialise_static_window(v0, 0, v1, v2, v3, v4, v5)
 	gui.set_window_text_formatting(v6, 0, 0)
 	gui.set_window_state_colours(v6, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_listbox_focused_red"), global.pog_float("GUI_listbox_focused_green"), global.pog_float("GUI_listbox_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
-	return
+	return v6
 	return 0
 
 func local_6862() -> Variant:
@@ -567,7 +706,7 @@ func local_6862() -> Variant:
 	await igui.create_window_list_in_splitter(v36, v21, v33, 70, text.field("mp_game_frags", 0))
 	v33 = v34 + 10 + v31 + v33
 	await igui.create_window_list_in_splitter(v36, v22, v33, 70, text.field("mp_game_died", 0))
-	if imultiplay.is_game_ended():
+	if not (imultiplay.is_game_ended()):
 		return 0
 	gui.set_control_focus_cancel_function("iMineTag.ScoreScreenBackButton")
 	return 0
@@ -603,7 +742,7 @@ func local_8485(v0, v1, v2) -> Variant:
 	while true:
 		await _pog_wait(2)
 		v3 = sim.cast(iship.find_player_ship())
-		if not _pog_is_null(v3):
+		if _pog_is_null(v3):
 			continue
 		if v1 > sim.distance_between(v0, v3):
 			if not (v4):
@@ -612,9 +751,9 @@ func local_8485(v0, v1, v2) -> Variant:
 				ihud.play_audio_cue(4)
 				imultiplay.client_say(v3, "mp_frag_player_falling")
 			ihud.pog_print("mp_frag_player_falling")
-		if v1 <= sim.distance_between(v0, v3):
+		if v1 > sim.distance_between(v0, v3):
 			continue
-		if v4:
+		if not (v4):
 			continue
 		v4 = 0
 		igame.destroy_fog(0.009999999776482582)
@@ -787,7 +926,7 @@ func client_default_taunt4() -> Variant:
 	return 0
 
 func local_11152(v0, v1) -> Variant:
-	if not _pog_is_null(v0):
+	if _pog_is_null(v0):
 		return
 	await iconversation.begin()
 	await iconversation.say(v0, "", "mp_frag_player_stuffed_you")
@@ -865,14 +1004,236 @@ func client_on_user_message() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = iship.cast(v1)
-	v5 = iship.find_player_ship()
-	while v0 == 15:
-		v4 = iship.cast(v1)
-		if not _pog_eq(iship.find_player_ship(), v4):
+	var _pc: int = 11822
+	while true:
+		if _pc == 11822:
+			v4 = iship.cast(v1)
+			v5 = iship.find_player_ship()
+			_pc = 13283
+			continue
+		elif _pc == 11875:
+			v4 = iship.cast(v1)
+			if not _pog_eq(iship.find_player_ship(), v4):
+				_pc = 11923
+				continue
+			else:
+				_pc = 11942
+				continue
+		elif _pc == 11923:
 			iship.undock_self(v4)
-		break
-	return 0
+			_pc = 11942
+			continue
+		elif _pc == 11942:
+			_pc = 13386
+			continue
+		elif _pc == 11947:
+			v2 = sim.find_by_name(v3)
+			if _pog_eq(iship.find_player_ship(), v4):
+				_pc = 11995
+				continue
+			else:
+				_pc = 12130
+				continue
+		elif _pc == 11995:
+			isim.set_faction(isim.cast(v2), ifaction.find("Player"))
+			sim.avatar_set_channel(v2, "alpha", 1.0)
+			sim.avatar_set_channel(v2, "beta", 0.0)
+			gui.play_sound(2)
+			_pc = 12244
+			continue
+		elif _pc == 12130:
+			isim.set_faction(isim.cast(v2), ifaction.find("AntiPlayer"))
+			sim.avatar_set_channel(v2, "alpha", 0.0)
+			sim.avatar_set_channel(v2, "beta", 1.0)
+			_pc = 12244
+			continue
+		elif _pc == 12244:
+			object.add_bool_property(v2, "mp_is_tagged", 1)
+			_pc = 13386
+			continue
+		elif _pc == 12276:
+			v2 = sim.find_by_name(v3)
+			object.remove_property(v2, "mp_is_tagged")
+			isim.set_faction(isim.cast(v2), ifaction.find("NINEX Wetware"))
+			sim.avatar_set_channel(v2, "alpha", 0.0)
+			sim.avatar_set_channel(v2, "beta", 0.0)
+			_pc = 13386
+			continue
+		elif _pc == 12445:
+			if _pog_eq(iship.find_player_ship(), v4):
+				_pc = 12469
+				continue
+			else:
+				_pc = 12634
+				continue
+		elif _pc == 12469:
+			v2 = sim.find_by_name(v3)
+			isim.set_faction(isim.cast(v2), ifaction.find("Player"))
+			object.add_bool_property(v2, "mp_is_tagged", 1)
+			sim.avatar_set_channel(v2, "alpha", 1.0)
+			sim.avatar_set_channel(v2, "beta", 0.0)
+			_pc = 12634
+			continue
+		elif _pc == 12634:
+			_pc = 13386
+			continue
+		elif _pc == 12639:
+			if _pog_eq(iship.find_player_ship(), v4):
+				_pc = 12663
+				continue
+			else:
+				_pc = 12828
+				continue
+		elif _pc == 12663:
+			v2 = sim.find_by_name(v3)
+			isim.set_faction(isim.cast(v2), ifaction.find("AntiPlayer"))
+			object.add_bool_property(v2, "mp_is_tagged", 1)
+			sim.avatar_add_channel(v2, "alpha", 0.0)
+			sim.avatar_add_channel(v2, "beta", 1.0)
+			_pc = 12828
+			continue
+		elif _pc == 12828:
+			_pc = 13386
+			continue
+		elif _pc == 12833:
+			if _pog_eq(iship.find_player_ship(), v4):
+				_pc = 12857
+				continue
+			else:
+				_pc = 13021
+				continue
+		elif _pc == 12857:
+			v2 = sim.find_by_name(v3)
+			isim.set_faction(isim.cast(v2), ifaction.find("NINEX Wetware"))
+			object.remove_property(v2, "mp_is_tagged")
+			sim.avatar_add_channel(v2, "alpha", 0.0)
+			sim.avatar_add_channel(v2, "beta", 0.0)
+			_pc = 13021
+			continue
+		elif _pc == 13021:
+			_pc = 13386
+			continue
+		elif _pc == 13026:
+			await iremotepilot.enable_remote_connection(iship.cast(v1), 0)
+			_pc = 13386
+			continue
+		elif _pc == 13064:
+			if _pog_eq(iship.cast(v1), v5):
+				_pc = 13093
+				continue
+			else:
+				_pc = 13136
+				continue
+		elif _pc == 13093:
+			v4 = iship.cast(v2)
+			imultiplay.remote_link_to(v4)
+			_pc = 13136
+			continue
+		elif _pc == 13136:
+			_pc = 13386
+			continue
+		elif _pc == 13141:
+			if not _pog_eq(iship.cast(v1), v5):
+				_pc = 13170
+				continue
+			else:
+				_pc = 13213
+				continue
+		elif _pc == 13170:
+			v4 = iship.cast(v2)
+			imultiplay.sever_remote_link_to(v4)
+			_pc = 13213
+			continue
+		elif _pc == 13213:
+			_pc = 13386
+			continue
+		elif _pc == 13218:
+			isim.dock(isim.cast(v1), isim.cast(v2))
+			_pc = 13386
+			continue
+		elif _pc == 13273:
+			_pc = 13386
+			continue
+		elif _pc == 13278:
+			_pc = 13386
+			continue
+		elif _pc == 13283:
+			if v0 != 15:
+				_pc = 13297
+				continue
+			else:
+				_pc = 11875
+				continue
+		elif _pc == 13297:
+			if not _pog_is_null(41):
+				_pc = 13306
+				continue
+			else:
+				_pc = 11947
+				continue
+		elif _pc == 13306:
+			if not _pog_is_null(42):
+				_pc = 13315
+				continue
+			else:
+				_pc = 12276
+				continue
+		elif _pc == 13315:
+			if not _pog_is_null(45):
+				_pc = 13324
+				continue
+			else:
+				_pc = 12445
+				continue
+		elif _pc == 13324:
+			if not _pog_is_null(46):
+				_pc = 13333
+				continue
+			else:
+				_pc = 12639
+				continue
+		elif _pc == 13333:
+			if not _pog_is_null(47):
+				_pc = 13342
+				continue
+			else:
+				_pc = 12833
+				continue
+		elif _pc == 13342:
+			if not _pog_is_null(48):
+				_pc = 13351
+				continue
+			else:
+				_pc = 13026
+				continue
+		elif _pc == 13351:
+			if not _pog_is_null(202):
+				_pc = 13361
+				continue
+			else:
+				_pc = 13064
+				continue
+		elif _pc == 13361:
+			if not _pog_is_null(203):
+				_pc = 13371
+				continue
+			else:
+				_pc = 13141
+				continue
+		elif _pc == 13371:
+			if not _pog_is_null(204):
+				_pc = 13381
+				continue
+			else:
+				_pc = 13218
+				continue
+		elif _pc == 13381:
+			_pc = 13273
+			continue
+		elif _pc == 13386:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_13389(v0, v1, v2) -> Variant:

@@ -65,119 +65,353 @@ func main_task() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v0 = self
-	v2 = state.find(v0)
-	v5 = 0
-	v6 = iship.find_player_ship()
-	if not (global.exists("g_piracy_mission_one_ship_flag")):
-		global.create_bool("g_piracy_mission_one_ship_flag", 2, 0)
-		global.create_bool("g_ship_threat", 2, 0)
-	global.create_handle("g_maas_ship", 2, 0)
-	global.create_handle("g_maas_ship", 2, 0)
-	if PogRuntime.TRACE:
-		debug.print_string("iActOne.PiracySpecialMissionOne - starting first piracy special mission. \n")
-	if not (v2):
-		v2 = state.create(v0, 0)
-	iobjectives.remove("a1_m00_objective_checkout")
-	sim.destroy(sim.cast(global.handle("g_mission_waypoint")))
-	global.destroy("g_mission_waypoint")
-	while _pog_is_null(state.progress(v2)):
-		if PogRuntime.TRACE:
+	var _pc: int = 17
+	while true:
+		if _pc == 17:
+			v0 = self
+			v2 = state.find(v0)
+			v5 = 0
+			v6 = iship.find_player_ship()
+			if not (global.exists("g_piracy_mission_one_ship_flag")):
+				_pc = 117
+				continue
+			else:
+				_pc = 165
+				continue
+		elif _pc == 117:
+			global.create_bool("g_piracy_mission_one_ship_flag", 2, 0)
+			global.create_bool("g_ship_threat", 2, 0)
+			_pc = 165
+			continue
+		elif _pc == 165:
+			global.create_handle("g_maas_ship", 2, 0)
+			global.create_handle("g_maas_ship", 2, 0)
+			_pc = 239
+			continue
+		elif _pc == 218:
+			debug.print_string("iActOne.PiracySpecialMissionOne - starting first piracy special mission. \n")
+			_pc = 239
+			continue
+		elif _pc == 239:
+			if not (v2):
+				_pc = 250
+				continue
+			else:
+				_pc = 275
+				continue
+		elif _pc == 250:
+			v2 = state.create(v0, 0)
+			_pc = 275
+			continue
+		elif _pc == 275:
+			iobjectives.remove("a1_m00_objective_checkout")
+			sim.destroy(sim.cast(global.handle("g_mission_waypoint")))
+			global.destroy("g_mission_waypoint")
+			_pc = 2348
+			continue
+		elif _pc == 369:
+			_pc = 395
+			continue
+		elif _pc == 374:
 			debug.print_string("iActOne.PiracySpecialMissionOne - starting intro loop\n")
-		while not (v5):
+			_pc = 395
+			continue
+		elif _pc == 395:
+			if not (v5):
+				_pc = 406
+				continue
+			else:
+				_pc = 663
+				continue
+		elif _pc == 406:
 			if 300000.0 < sim.distance_between(imapentity.find_by_name("Lucrecia's Base"), v6):
-				await iconversation.begin()
-				await iconversation.say(0, "name_smith", "a1_master_dialogue_picked_up_distress_1")
-				await iconversation.say(0, "name_jafs", "a1_master_dialogue_jafs_signal_coment_1")
-				await iconversation.end()
-				iemail.send_email("a1_sender_the_stepsons", "a1_subject_greetings", "html:/text/act_1/act1_stepson_mail_1", 0)
-				iobjectives.add("a1_m00_objective_checkout")
-				state.set_progress(v2, 1)
-				v5 = 1
+				_pc = 455
+				continue
 			else:
-				await _pog_wait(2.0)
-		v5 = 0
-		v3 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_waypoint_name_distress"))
-		global.create_handle("g_mission_waypoint", 2, v3)
-		v4 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
-		if PogRuntime.TRACE:
+				_pc = 626
+				continue
+		elif _pc == 455:
+			await iconversation.begin()
+			await iconversation.say(0, "name_smith", "a1_master_dialogue_picked_up_distress_1")
+			await iconversation.say(0, "name_jafs", "a1_master_dialogue_jafs_signal_coment_1")
+			await iconversation.end()
+			iemail.send_email("a1_sender_the_stepsons", "a1_subject_greetings", "html:/text/act_1/act1_stepson_mail_1", 0)
+			iobjectives.add("a1_m00_objective_checkout")
+			state.set_progress(v2, 1)
+			v5 = 1
+			_pc = 658
+			continue
+		elif _pc == 626:
+			await _pog_wait(2.0)
+			_pc = 658
+			continue
+		elif _pc == 658:
+			_pc = 395
+			continue
+		elif _pc == 663:
+			v5 = 0
+			v3 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_waypoint_name_distress"))
+			global.create_handle("g_mission_waypoint", 2, v3)
+			v4 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
+			_pc = 801
+			continue
+		elif _pc == 780:
 			debug.print_string("iActOne.PiracySpecialMission: ERROR: unable to find player base!!\n")
-		sim.set_cullable(v3, 0)
-		sim.place_relative_to(v3, v4, 1500000.0, 0.0, 0.0)
-		isim.set_sensor_visibility(isim.cast(v3), 1)
-		v1 = _pog_spawn(piracy_mission_one_ship_generator.bind(v3))
-		_pog_detach(v1)
-		_pog_detach(_pog_spawn(piracy_mission_one_shut_down_monitor.bind(v0, v1)))
-		if PogRuntime.TRACE:
+			_pc = 801
+			continue
+		elif _pc == 801:
+			sim.set_cullable(v3, 0)
+			sim.place_relative_to(v3, v4, 1500000.0, 0.0, 0.0)
+			isim.set_sensor_visibility(isim.cast(v3), 1)
+			v1 = _pog_spawn(piracy_mission_one_ship_generator.bind(v3))
+			_pog_detach(v1)
+			_pog_detach(_pog_spawn(piracy_mission_one_shut_down_monitor.bind(v0, v1)))
+			_pc = 999
+			continue
+		elif _pc == 978:
 			debug.print_string("iActOne.PiracySpecialMissionOne - Starting first wait loop...\n")
-		while not (v5):
+			_pc = 999
+			continue
+		elif _pc == 999:
+			if not (v5):
+				_pc = 1010
+				continue
+			else:
+				_pc = 1211
+				continue
+		elif _pc == 1010:
 			if not (global.pog_bool("g_piracy_mission_one_ship_flag")):
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.PiracySpecialMissionOne - wait loop is waiting for target ship to awake. Sleeping for a bit \n")
-				await _pog_wait(2.0)
+				_pc = 1036
+				continue
 			else:
-				v8 = iship.cast(global.handle("g_maas_ship"))
-				if _pog_is_null(v8):
-					if PogRuntime.TRACE:
-						debug.error("iActOne.PiracySpecialMissionOne - Cannot find ship Spirit of Capitalism\n")
-				iobjectives.set_state("a1_m00_objective_checkout", 1)
-				v5 = 1
-		state.set_progress(v2, 2)
-		if PogRuntime.TRACE:
+				_pc = 1099
+				continue
+		elif _pc == 1036:
+			_pc = 1062
+			continue
+		elif _pc == 1041:
+			debug.print_string("iActOne.PiracySpecialMissionOne - wait loop is waiting for target ship to awake. Sleeping for a bit \n")
+			_pc = 1062
+			continue
+		elif _pc == 1062:
+			await _pog_wait(2.0)
+			_pc = 1206
+			continue
+		elif _pc == 1099:
+			v8 = iship.cast(global.handle("g_maas_ship"))
+			if _pog_is_null(v8):
+				_pc = 1151
+				continue
+			else:
+				_pc = 1177
+				continue
+		elif _pc == 1151:
+			_pc = 1177
+			continue
+		elif _pc == 1156:
+			debug.error("iActOne.PiracySpecialMissionOne - Cannot find ship Spirit of Capitalism\n")
+			_pc = 1177
+			continue
+		elif _pc == 1177:
+			iobjectives.set_state("a1_m00_objective_checkout", 1)
+			v5 = 1
+			_pc = 1206
+			continue
+		elif _pc == 1206:
+			_pc = 999
+			continue
+		elif _pc == 1211:
+			state.set_progress(v2, 2)
+			_pc = 1232
+			continue
+		elif _pc == 1232:
+			_pc = 1258
+			continue
+		elif _pc == 1237:
 			debug.print_string("iActOneOne.PiracySpecialMissionOne - starting close loop\n")
-		v5 = 0
-		while not (v5):
-			if _pog_is_null(sim.cast(global.handle("g_maas_ship"))):
-				state.set_progress(v2, 3)
-			if 9000.0 < sim.distance_between(sim.cast(global.handle("g_maas_ship")), v6):
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.PracySpecialMissionOne - spirit of capitalism is talking to the player\n")
-				await iconversation.begin()
-				await iconversation.add_response("a1_master_player_option_1", "a1_master_player_option_1")
-				await iconversation.add_response("a1_master_player_option_2", "a1_master_player_option_2")
-				await iconversation.add_response("a1_master_player_option_3", "a1_master_player_option_3")
-				await iconversation.add_response("a1_master_player_option_4", "a1_master_player_option_4")
-				v7 = await iconversation.ask(v8, "a1_master_spirit_of_capitalism", "a1_master_dialogue_victim_threat_1")
-				if 1 == v7:
-					await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_1")
-					await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
-					await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
-					await iconversation.end()
-					global.set_bool("g_ship_threat", 1)
-					v5 = 1
-				else:
-					if 2 == v7:
-						await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_3")
-						await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
-						await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
-						await iconversation.end()
-						v5 = 1
-					else:
-						if 3 == v7:
-							await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_4")
-							await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
-							await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
-							await iconversation.end()
-							v5 = 1
-						else:
-							if 4 == v7:
-								await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_5")
-								await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
-								await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
-								await iconversation.end()
-								v5 = 1
+			_pc = 1258
+			continue
+		elif _pc == 1258:
+			v5 = 0
+			_pc = 1265
+			continue
+		elif _pc == 1265:
+			if not (v5):
+				_pc = 1276
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.PiracySpecialMissionOne - waiting for player to get close to targer ship so we can chat, sleeping\n")
-				await _pog_wait(2.0)
-		state.set_progress(v2, 3)
-		if PogRuntime.TRACE:
+				_pc = 2193
+				continue
+		elif _pc == 1276:
+			if _pog_is_null(sim.cast(global.handle("g_maas_ship"))):
+				_pc = 1317
+				continue
+			else:
+				_pc = 1338
+				continue
+		elif _pc == 1317:
+			state.set_progress(v2, 3)
+			_pc = 1338
+			continue
+		elif _pc == 1338:
+			if 9000.0 < sim.distance_between(sim.cast(global.handle("g_maas_ship")), v6):
+				_pc = 1400
+				continue
+			else:
+				_pc = 2130
+				continue
+		elif _pc == 1400:
+			_pc = 1426
+			continue
+		elif _pc == 1405:
+			debug.print_string("iActOne.PracySpecialMissionOne - spirit of capitalism is talking to the player\n")
+			_pc = 1426
+			continue
+		elif _pc == 1426:
+			await iconversation.begin()
+			await iconversation.add_response("a1_master_player_option_1", "a1_master_player_option_1")
+			await iconversation.add_response("a1_master_player_option_2", "a1_master_player_option_2")
+			await iconversation.add_response("a1_master_player_option_3", "a1_master_player_option_3")
+			await iconversation.add_response("a1_master_player_option_4", "a1_master_player_option_4")
+			v7 = await iconversation.ask(v8, "a1_master_spirit_of_capitalism", "a1_master_dialogue_victim_threat_1")
+			if 1 == v7:
+				_pc = 1597
+				continue
+			else:
+				_pc = 1737
+				continue
+		elif _pc == 1597:
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_1")
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
+			await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
+			await iconversation.end()
+			global.set_bool("g_ship_threat", 1)
+			v5 = 1
+			_pc = 2125
+			continue
+		elif _pc == 1737:
+			if 2 == v7:
+				_pc = 1750
+				continue
+			else:
+				_pc = 1868
+				continue
+		elif _pc == 1750:
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_3")
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
+			await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
+			await iconversation.end()
+			v5 = 1
+			_pc = 2125
+			continue
+		elif _pc == 1868:
+			if 3 == v7:
+				_pc = 1881
+				continue
+			else:
+				_pc = 1999
+				continue
+		elif _pc == 1881:
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_4")
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
+			await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
+			await iconversation.end()
+			v5 = 1
+			_pc = 2125
+			continue
+		elif _pc == 1999:
+			if 4 == v7:
+				_pc = 2012
+				continue
+			else:
+				_pc = 2125
+				continue
+		elif _pc == 2012:
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_5")
+			await iconversation.say(v8, "a1_master_spirit_of_capitalism", "a1_victim_comment_2")
+			await iconversation.say(0, "name_clay", "a1_master_clay_hes_bluffing")
+			await iconversation.end()
+			v5 = 1
+			_pc = 2125
+			continue
+		elif _pc == 2125:
+			_pc = 2188
+			continue
+		elif _pc == 2130:
+			_pc = 2156
+			continue
+		elif _pc == 2135:
+			debug.print_string("iActOne.PiracySpecialMissionOne - waiting for player to get close to targer ship so we can chat, sleeping\n")
+			_pc = 2156
+			continue
+		elif _pc == 2156:
+			await _pog_wait(2.0)
+			_pc = 2188
+			continue
+		elif _pc == 2188:
+			_pc = 1265
+			continue
+		elif _pc == 2193:
+			state.set_progress(v2, 3)
+			_pc = 2214
+			continue
+		elif _pc == 2214:
+			_pc = 2240
+			continue
+		elif _pc == 2219:
 			debug.print_string("iActOne.PiracySpecialMissionOne - finished what i need to do here\n")
-		while 100000.0 < sim.distance_between(v3, v6):
+			_pc = 2240
+			continue
+		elif _pc == 2240:
+			if 100000.0 < sim.distance_between(v3, v6):
+				_pc = 2274
+				continue
+			else:
+				_pc = 2311
+				continue
+		elif _pc == 2274:
 			await _pog_wait(1.0)
-		state.destroy(self)
-		break
-	return
+			_pc = 2240
+			continue
+		elif _pc == 2311:
+			state.destroy(self)
+			_pc = 2400
+			continue
+		elif _pc == 2343:
+			_pc = 2400
+			continue
+		elif _pc == 2348:
+			if not _pog_is_null(state.progress(v2)):
+				_pc = 2374
+				continue
+			else:
+				_pc = 369
+				continue
+		elif _pc == 2374:
+			if not _pog_is_null(1):
+				_pc = 2382
+				continue
+			else:
+				_pc = 663
+				continue
+		elif _pc == 2382:
+			if not _pog_is_null(2):
+				_pc = 2391
+				continue
+			else:
+				_pc = 1232
+				continue
+		elif _pc == 2391:
+			if not _pog_is_null(3):
+				_pc = 2400
+				continue
+			else:
+				_pc = 2214
+				continue
+		elif _pc == 2400:
+			return
+		else:
+			return 0
 	return 0
 
 func local_2402() -> Variant:
@@ -186,15 +420,15 @@ func local_2402() -> Variant:
 	v0 = imapentity.find_by_name("Lucrecia's Base")
 	v1 = iship.cast(sim.find_by_name("name_jafs"))
 	if await ijafsscript.jafs_active():
-		if not _pog_is_null(iship.cast(v1)):
-			push_error("PORT: unstructured jump to L2585")
-		if 3 == iai.current_order_type(v1) and _pog_eq(isim.cast(v0), iai.current_order_target(v1)):
-			push_error("PORT: unstructured jump to L2585")
+		if _pog_is_null(iship.cast(v1)):
+			return 0
+		if not (3 == iai.current_order_type(v1) and _pog_eq(isim.cast(v0), iai.current_order_target(v1))):
+			return 0
 	return
 	return 0
 
 func local_2593(v0) -> Variant:
-	if not (icomms.is_in_conversation()):
+	if icomms.is_in_conversation():
 		return 0
 	icomms.shout(0, "name_clay", v0)
 	return 0
@@ -213,74 +447,285 @@ func cargo_hint_handler(v0) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v1 = 0
-	v2 = 0
-	v3 = 0
-	v5 = iship.find_player_ship()
-	v6 = null
-	v10 = 0
-	v11 = 0
-	if PogRuntime.TRACE:
-		debug.print_string("iAct1PiracySpecial.cargo_hint_handler: Starting hint handler\n")
-	v8 = await iutilities.create_waypoint_at(v5)
-	await _pog_wait(5.0)
-	await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_well_done")
+	var _pc: int = 2642
 	while true:
-		await _pog_wait(1)
-		if 100000.0 < sim.distance_between(v5, v8):
+		if _pc == 2642:
+			v1 = 0
+			v2 = 0
+			v3 = 0
+			v5 = iship.find_player_ship()
+			v6 = null
+			v10 = 0
+			v11 = 0
+			_pc = 2738
+			continue
+		elif _pc == 2717:
+			debug.print_string("iAct1PiracySpecial.cargo_hint_handler: Starting hint handler\n")
+			_pc = 2738
+			continue
+		elif _pc == 2738:
+			v8 = await iutilities.create_waypoint_at(v5)
+			await _pog_wait(5.0)
+			await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_well_done")
+			_pc = 2827
+			continue
+		elif _pc == 2827:
+			await _pog_frame()
+			if _pog_every(2828, 1.0):
+				_pc = 2841
+				continue
+			else:
+				_pc = 4135
+				continue
+		elif _pc == 2841:
+			if 100000.0 < sim.distance_between(v5, v8):
+				_pc = 2875
+				continue
+			else:
+				_pc = 3092
+				continue
+		elif _pc == 2875:
 			v6 = isim.sims_in_radius(isim.cast(v8), 30000.0, 2048)
 			if not (v2) and _pog_is_null(p_set.item_count(v6)) or await local_2402():
-				v2 = 1
-				await _pog_wait(6.0)
-				await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_end_speech")
-				await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_end_speech2")
-				sim.destroy(v8)
-				return
-		else:
+				_pc = 2968
+				continue
+			else:
+				_pc = 3087
+				continue
+		elif _pc == 2968:
+			v2 = 1
+			await _pog_wait(6.0)
+			await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_end_speech")
+			await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_end_speech2")
+			sim.destroy(v8)
+			_pc = 4141
+			continue
+		elif _pc == 3087:
+			_pc = 3213
+			continue
+		elif _pc == 3092:
 			v6 = isim.sims_in_radius(isim.cast(v8), 30000.0, 2048)
 			if not (v1) and not (v3) and not _pog_is_null(p_set.item_count(v6)):
-				v3 = 1
-				await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_go_back")
-		v4 = await ijafsscript.get_tag_group()
-		v11 = group.sim_count(v4)
-		if v10 > v11:
+				_pc = 3178
+				continue
+			else:
+				_pc = 3213
+				continue
+		elif _pc == 3178:
+			v3 = 1
+			await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_go_back")
+			_pc = 3213
+			continue
+		elif _pc == 3213:
+			v4 = await ijafsscript.get_tag_group()
+			v11 = group.sim_count(v4)
+			if v10 > v11:
+				_pc = 3272
+				continue
+			else:
+				_pc = 3283
+				continue
+		elif _pc == 3272:
 			v10 = v11
-		if not (v1):
+			_pc = 3283
+			continue
+		elif _pc == 3283:
+			if not (v1):
+				_pc = 3294
+				continue
+			else:
+				_pc = 3969
+				continue
+		elif _pc == 3294:
 			v9 = 1 + v9
 			if not (v1) and 80 > v9:
-				v9 = 0
-				await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_get_a_move_on")
-			v12 = 0
-			while v11 < v12:
-				v7 = group.nth_sim(v4, v12)
-				if _pog_is_null(object.property_exists(v7, "commented")):
-					object.add_int_property(v7, "commented", 1)
-					v9 = 0
-					if 6 >= icargo.value(icargo.find(object.int_property(v7, "cargo"))):
-						await local_2593("a1_master_dialogue_clay_good_comment_1")
-					else:
-						if 2 >= icargo.value(icargo.find(object.int_property(v7, "cargo"))):
-							while _pog_is_null(math.random_int(0, 2)):
-								await local_2593("a1_master_dialogue_clay_medium_comment_1")
-								break
-						else:
-							if 2 < icargo.value(icargo.find(object.int_property(v7, "cargo"))):
-								while _pog_is_null(math.random_int(0, 2)):
-									await local_2593("a1_master_dialogue_clay_bad_comment_1")
-									break
-				v12 = 1 + v12
-		else:
-			if not (await ijafsscript.jafs_active()) and 6 >= v10:
-				v9 = 1 + v9
-				if 50 > v9:
-					v9 = 0
-					await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_call_jafs_long")
-		if not (v1) and not (await ijafsscript.jafs_active()) and 6 >= v10:
+				_pc = 3327
+				continue
+			else:
+				_pc = 3362
+				continue
+		elif _pc == 3327:
+			v9 = 0
+			await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_get_a_move_on")
+			_pc = 3362
 			continue
-		v9 = 0
-		v1 = 1
-		await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_call_jafs")
-	return
+		elif _pc == 3362:
+			v12 = 0
+			_pc = 3369
+			continue
+		elif _pc == 3369:
+			if v11 < v12:
+				_pc = 3385
+				continue
+			else:
+				_pc = 3964
+				continue
+		elif _pc == 3385:
+			v7 = group.nth_sim(v4, v12)
+			if _pog_is_null(object.property_exists(v7, "commented")):
+				_pc = 3446
+				continue
+			else:
+				_pc = 3946
+				continue
+		elif _pc == 3446:
+			object.add_int_property(v7, "commented", 1)
+			v9 = 0
+			if 6 >= icargo.value(icargo.find(object.int_property(v7, "cargo"))):
+				_pc = 3539
+				continue
+			else:
+				_pc = 3565
+				continue
+		elif _pc == 3539:
+			await local_2593("a1_master_dialogue_clay_good_comment_1")
+			_pc = 3946
+			continue
+		elif _pc == 3565:
+			if 2 >= icargo.value(icargo.find(object.int_property(v7, "cargo"))):
+				_pc = 3624
+				continue
+			else:
+				_pc = 3758
+				continue
+		elif _pc == 3624:
+			_pc = 3712
+			continue
+		elif _pc == 3629:
+			await local_2593("a1_master_dialogue_clay_medium_comment_1")
+			_pc = 3753
+			continue
+		elif _pc == 3655:
+			await local_2593("a1_master_dialogue_clay_medium_comment_2")
+			_pc = 3753
+			continue
+		elif _pc == 3681:
+			await local_2593("a1_master_dialogue_clay_medium_comment_3")
+			_pc = 3753
+			continue
+		elif _pc == 3707:
+			_pc = 3753
+			continue
+		elif _pc == 3712:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 3736
+				continue
+			else:
+				_pc = 3629
+				continue
+		elif _pc == 3736:
+			if not _pog_is_null(1):
+				_pc = 3744
+				continue
+			else:
+				_pc = 3655
+				continue
+		elif _pc == 3744:
+			if not _pog_is_null(2):
+				_pc = 3753
+				continue
+			else:
+				_pc = 3681
+				continue
+		elif _pc == 3753:
+			_pc = 3946
+			continue
+		elif _pc == 3758:
+			if 2 < icargo.value(icargo.find(object.int_property(v7, "cargo"))):
+				_pc = 3817
+				continue
+			else:
+				_pc = 3946
+				continue
+		elif _pc == 3817:
+			_pc = 3905
+			continue
+		elif _pc == 3822:
+			await local_2593("a1_master_dialogue_clay_bad_comment_1")
+			_pc = 3946
+			continue
+		elif _pc == 3848:
+			await local_2593("a1_master_dialogue_clay_bad_comment_2")
+			_pc = 3946
+			continue
+		elif _pc == 3874:
+			await local_2593("a1_master_dialogue_clay_bad_comment_3")
+			_pc = 3946
+			continue
+		elif _pc == 3900:
+			_pc = 3946
+			continue
+		elif _pc == 3905:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 3929
+				continue
+			else:
+				_pc = 3822
+				continue
+		elif _pc == 3929:
+			if not _pog_is_null(1):
+				_pc = 3937
+				continue
+			else:
+				_pc = 3848
+				continue
+		elif _pc == 3937:
+			if not _pog_is_null(2):
+				_pc = 3946
+				continue
+			else:
+				_pc = 3874
+				continue
+		elif _pc == 3946:
+			v12 = 1 + v12
+			_pc = 3369
+			continue
+		elif _pc == 3964:
+			_pc = 4058
+			continue
+		elif _pc == 3969:
+			if not (await ijafsscript.jafs_active()) and 6 >= v10:
+				_pc = 3997
+				continue
+			else:
+				_pc = 4058
+				continue
+		elif _pc == 3997:
+			v9 = 1 + v9
+			if 50 > v9:
+				_pc = 4023
+				continue
+			else:
+				_pc = 4058
+				continue
+		elif _pc == 4023:
+			v9 = 0
+			await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_call_jafs_long")
+			_pc = 4058
+			continue
+		elif _pc == 4058:
+			if not (v1) and not (await ijafsscript.jafs_active()) and 6 >= v10:
+				_pc = 4093
+				continue
+			else:
+				_pc = 4135
+				continue
+		elif _pc == 4093:
+			v9 = 0
+			v1 = 1
+			await iconversation.one_liner(0, "name_clay", "a1_master_dialogue_clay_call_jafs")
+			_pc = 4135
+			continue
+		elif _pc == 4135:
+			_pc = 2827
+			continue
+		elif _pc == 4140:
+			_pc = 4141
+			continue
+		elif _pc == 4141:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4157(v0) -> Variant:
@@ -299,82 +744,247 @@ func hitpointmonitortask(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = null
-	v2 = object.float_property(v0, "hit_points")
-	v4 = 0
-	v5 = 0
-	v6 = null
-	v6 = string.join("iActOne.hitpointmonitor - ships hitpoints are - ", string.from_float(v2))
-	if PogRuntime.TRACE:
-		debug.print_string("iAct1PiracySpecial.hitpointmonitor\n")
-	if PogRuntime.TRACE:
-		debug.print_string(string.join(v6, "\n"))
+	var _pc: int = 4283
 	while true:
-		await _pog_wait(1)
-		if 1 == global.pog_bool("g_piracy_mission_one_ship_flag") and _pog_is_null(sim.cast(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1PiracySpecial: Ship has been destroyed. Starting hint task\n")
+		if _pc == 4283:
+			v1 = null
+			v2 = object.float_property(v0, "hit_points")
+			v4 = 0
+			v5 = 0
+			v6 = null
+			v6 = string.join("iActOne.hitpointmonitor - ships hitpoints are - ", string.from_float(v2))
+			_pc = 4426
+			continue
+		elif _pc == 4405:
+			debug.print_string("iAct1PiracySpecial.hitpointmonitor\n")
+			_pc = 4426
+			continue
+		elif _pc == 4426:
+			_pc = 4471
+			continue
+		elif _pc == 4431:
+			debug.print_string(string.join(v6, "\n"))
+			_pc = 4471
+			continue
+		elif _pc == 4471:
+			_pc = 4476
+			continue
+		elif _pc == 4476:
+			await _pog_frame()
+			if _pog_every(4477, 1.0):
+				_pc = 4490
+				continue
+			else:
+				_pc = 6030
+				continue
+		elif _pc == 4490:
+			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag") and _pog_is_null(sim.cast(v0)):
+				_pc = 4539
+				continue
+			else:
+				_pc = 4615
+				continue
+		elif _pc == 4539:
+			_pc = 4565
+			continue
+		elif _pc == 4544:
+			debug.print_string("iAct1PiracySpecial: Ship has been destroyed. Starting hint task\n")
+			_pc = 4565
+			continue
+		elif _pc == 4565:
 			v4 = 1
 			_pog_detach(_pog_spawn(cargo_hint_handler.bind(_pog_clone(v1))))
+			_pc = 6036
+			continue
+		elif _pc == 4610:
+			_pc = 6030
+			continue
+		elif _pc == 4615:
+			if v2 < 150.0 + object.float_property(v0, "hit_points"):
+				_pc = 4657
+				continue
+			else:
+				_pc = 6030
+				continue
+		elif _pc == 4657:
+			if 1 == v4:
+				_pc = 4669
+				continue
+			else:
+				_pc = 5041
+				continue
+		elif _pc == 4669:
+			_pc = 5006
+			continue
+		elif _pc == 4674:
+			await iconversation.begin()
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_1")
+			await iconversation.end()
+			v2 = object.float_property(v0, "hit_points")
+			v5 = 1 + v5
+			_pc = 5036
+			continue
+		elif _pc == 4783:
+			await iconversation.begin()
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
+			await iconversation.end()
+			v2 = object.float_property(v0, "hit_points")
+			v5 = 1 + v5
+			_pc = 5036
+			continue
+		elif _pc == 4892:
+			await iconversation.begin()
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_3")
+			await iconversation.end()
+			v2 = object.float_property(v0, "hit_points")
+			v5 = 1 + v5
+			_pc = 5036
+			continue
+		elif _pc == 5001:
+			_pc = 5036
+			continue
+		elif _pc == 5006:
+			if not _pog_is_null(v5):
+				_pc = 5019
+				continue
+			else:
+				_pc = 4674
+				continue
+		elif _pc == 5019:
+			if not _pog_is_null(1):
+				_pc = 5027
+				continue
+			else:
+				_pc = 4783
+				continue
+		elif _pc == 5027:
+			if not _pog_is_null(3):
+				_pc = 5036
+				continue
+			else:
+				_pc = 4892
+				continue
+		elif _pc == 5036:
+			_pc = 6030
+			continue
+		elif _pc == 5041:
+			if 1 == global.pog_bool("g_ship_threat"):
+				_pc = 5068
+				continue
+			else:
+				_pc = 5321
+				continue
+		elif _pc == 5068:
+			await iconversation.begin()
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
+			await iconversation.end()
+			v1 = list.from_set(sim.children(v0))
+			await local_4157(v0)
+			v2 = object.float_property(v0, "hit_points")
+			v4 = 1
+			_pc = 5251
+			continue
+		elif _pc == 5230:
+			debug.print_string("iAct1PiracySpecial: Ship has been threatened. Starting hint task\n")
+			_pc = 5251
+			continue
+		elif _pc == 5251:
+			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
+				_pc = 5278
+				continue
+			else:
+				_pc = 5311
+				continue
+		elif _pc == 5278:
+			_pog_detach(_pog_spawn(cargo_hint_handler.bind(_pog_clone(v1))))
+			_pc = 5311
+			continue
+		elif _pc == 5311:
+			_pc = 6036
+			continue
+		elif _pc == 5316:
+			_pc = 6030
+			continue
+		elif _pc == 5321:
+			await iconversation.begin()
+			await iconversation.add_response("a1_master_player_option_5", "a1_master_player_option_5")
+			await iconversation.add_response("a1_master_player_option_6", "a1_master_player_option_6")
+			await iconversation.add_response("a1_master_player_option_7", "a1_master_player_option_7")
+			v3 = await iconversation.ask(v0, "a1_master_spirit_of_capitalism", "a1_master_dialogue_victim_question_2")
+			if 1 == v3:
+				_pc = 5465
+				continue
+			else:
+				_pc = 5673
+				continue
+		elif _pc == 5465:
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
+			await iconversation.end()
+			v1 = list.from_set(sim.children(v0))
+			await local_4157(v0)
+			v2 = object.float_property(v0, "hit_points")
+			v4 = 1
+			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
+				_pc = 5635
+				continue
+			else:
+				_pc = 5668
+				continue
+		elif _pc == 5635:
+			_pog_detach(_pog_spawn(cargo_hint_handler.bind(_pog_clone(v1))))
+			_pc = 5668
+			continue
+		elif _pc == 5668:
+			_pc = 6036
+			continue
+		elif _pc == 5673:
+			if 2 == v3:
+				_pc = 5686
+				continue
+			else:
+				_pc = 5931
+				continue
+		elif _pc == 5686:
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_4")
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
+			await iconversation.end()
+			v1 = list.from_set(sim.children(v0))
+			await local_4157(v0)
+			v2 = object.float_property(v0, "hit_points")
+			v4 = 1
+			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
+				_pc = 5888
+				continue
+			else:
+				_pc = 5921
+				continue
+		elif _pc == 5888:
+			_pog_detach(_pog_spawn(cargo_hint_handler.bind(_pog_clone(v1))))
+			_pc = 5921
+			continue
+		elif _pc == 5921:
+			_pc = 6036
+			continue
+		elif _pc == 5926:
+			_pc = 6030
+			continue
+		elif _pc == 5931:
+			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_5")
+			await iconversation.end()
+			global.set_bool("g_ship_threat", 1)
+			v2 = object.float_property(v0, "hit_points")
+			_pc = 6030
+			continue
+		elif _pc == 6030:
+			_pc = 4476
+			continue
+		elif _pc == 6035:
+			_pc = 6036
+			continue
+		elif _pc == 6036:
 			return
 		else:
-			if v2 < 150.0 + object.float_property(v0, "hit_points"):
-				continue
-			if 1 == v4:
-				while _pog_is_null(v5):
-					await iconversation.begin()
-					await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_1")
-					await iconversation.end()
-					v2 = object.float_property(v0, "hit_points")
-					v5 = 1 + v5
-					break
-			else:
-				if 1 == global.pog_bool("g_ship_threat"):
-					await iconversation.begin()
-					await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
-					await iconversation.end()
-					v1 = list.from_set(sim.children(v0))
-					await local_4157(v0)
-					v2 = object.float_property(v0, "hit_points")
-					v4 = 1
-					if PogRuntime.TRACE:
-						debug.print_string("iAct1PiracySpecial: Ship has been threatened. Starting hint task\n")
-					if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
-						_pog_detach(_pog_spawn(cargo_hint_handler.bind(_pog_clone(v1))))
-					return
-				else:
-					await iconversation.begin()
-					await iconversation.add_response("a1_master_player_option_5", "a1_master_player_option_5")
-					await iconversation.add_response("a1_master_player_option_6", "a1_master_player_option_6")
-					await iconversation.add_response("a1_master_player_option_7", "a1_master_player_option_7")
-					v3 = await iconversation.ask(v0, "a1_master_spirit_of_capitalism", "a1_master_dialogue_victim_question_2")
-					if 1 == v3:
-						await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
-						await iconversation.end()
-						v1 = list.from_set(sim.children(v0))
-						await local_4157(v0)
-						v2 = object.float_property(v0, "hit_points")
-						v4 = 1
-						if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
-							_pog_detach(_pog_spawn(cargo_hint_handler.bind(_pog_clone(v1))))
-						return
-					if 2 == v3:
-						await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_4")
-						await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
-						await iconversation.end()
-						v1 = list.from_set(sim.children(v0))
-						await local_4157(v0)
-						v2 = object.float_property(v0, "hit_points")
-						v4 = 1
-						if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
-							_pog_detach(_pog_spawn(cargo_hint_handler.bind(_pog_clone(v1))))
-						return
-					else:
-						await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_5")
-						await iconversation.end()
-						global.set_bool("g_ship_threat", 1)
-						v2 = object.float_property(v0, "hit_points")
-	return
+			return 0
 	return 0
 
 func local_6052(v0) -> Variant:
@@ -385,22 +995,177 @@ func local_6052(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v4 = 9
-	v6 = null
-	v2 = 0
-	while v4 < v2:
-		while _pog_is_null(math.random_int(0, 2)):
+	var _pc: int = 6052
+	while true:
+		if _pc == 6052:
+			v4 = 9
+			v6 = null
+			v2 = 0
+			_pc = 6083
+			continue
+		elif _pc == 6083:
+			if v4 < v2:
+				_pc = 6099
+				continue
+			else:
+				_pc = 6765
+				continue
+		elif _pc == 6099:
+			_pc = 6163
+			continue
+		elif _pc == 6104:
 			v6 = "ini:/sims/ships/utility/cargo_pod"
-			break
-		v7 = iship.create(v6, "name_cargo_pod")
-		sim.set_cullable(v7, 0)
-		while _pog_is_null(v2):
+			_pc = 6204
+			continue
+		elif _pc == 6122:
+			v6 = "ini:/sims/ships/utility/freightpod"
+			_pc = 6204
+			continue
+		elif _pc == 6140:
+			v6 = "ini:/sims/ships/utility/containerpod"
+			_pc = 6204
+			continue
+		elif _pc == 6158:
+			_pc = 6204
+			continue
+		elif _pc == 6163:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 6187
+				continue
+			else:
+				_pc = 6104
+				continue
+		elif _pc == 6187:
+			if not _pog_is_null(1):
+				_pc = 6195
+				continue
+			else:
+				_pc = 6122
+				continue
+		elif _pc == 6195:
+			if not _pog_is_null(2):
+				_pc = 6204
+				continue
+			else:
+				_pc = 6140
+				continue
+		elif _pc == 6204:
+			v7 = iship.create(v6, "name_cargo_pod")
+			sim.set_cullable(v7, 0)
+			_pc = 6568
+			continue
+		elif _pc == 6260:
 			object.set_int_property(v7, "cargo", 110)
-			break
-		await iutilities.rename_sim(v7, icargo.pog_name(icargo.find(object.int_property(v7, "cargo"))))
-		isim.dock(v7, v0)
-		v2 = 1 + v2
-	return 0
+			_pc = 6652
+			continue
+		elif _pc == 6293:
+			object.set_int_property(v7, "cargo", 365)
+			_pc = 6652
+			continue
+		elif _pc == 6327:
+			object.set_int_property(v7, "cargo", 441)
+			_pc = 6652
+			continue
+		elif _pc == 6361:
+			object.set_int_property(v7, "cargo", 280)
+			_pc = 6652
+			continue
+		elif _pc == 6395:
+			object.set_int_property(v7, "cargo", 114)
+			_pc = 6652
+			continue
+		elif _pc == 6428:
+			object.set_int_property(v7, "cargo", 482)
+			_pc = 6652
+			continue
+		elif _pc == 6462:
+			object.set_int_property(v7, "cargo", 345)
+			_pc = 6652
+			continue
+		elif _pc == 6496:
+			object.set_int_property(v7, "cargo", 26)
+			_pc = 6652
+			continue
+		elif _pc == 6529:
+			object.set_int_property(v7, "cargo", 136)
+			_pc = 6652
+			continue
+		elif _pc == 6563:
+			_pc = 6652
+			continue
+		elif _pc == 6568:
+			if not _pog_is_null(v2):
+				_pc = 6581
+				continue
+			else:
+				_pc = 6260
+				continue
+		elif _pc == 6581:
+			if not _pog_is_null(1):
+				_pc = 6589
+				continue
+			else:
+				_pc = 6293
+				continue
+		elif _pc == 6589:
+			if not _pog_is_null(2):
+				_pc = 6598
+				continue
+			else:
+				_pc = 6327
+				continue
+		elif _pc == 6598:
+			if not _pog_is_null(3):
+				_pc = 6607
+				continue
+			else:
+				_pc = 6361
+				continue
+		elif _pc == 6607:
+			if not _pog_is_null(4):
+				_pc = 6616
+				continue
+			else:
+				_pc = 6395
+				continue
+		elif _pc == 6616:
+			if not _pog_is_null(5):
+				_pc = 6625
+				continue
+			else:
+				_pc = 6428
+				continue
+		elif _pc == 6625:
+			if not _pog_is_null(6):
+				_pc = 6634
+				continue
+			else:
+				_pc = 6462
+				continue
+		elif _pc == 6634:
+			if not _pog_is_null(7):
+				_pc = 6643
+				continue
+			else:
+				_pc = 6496
+				continue
+		elif _pc == 6643:
+			if not _pog_is_null(8):
+				_pc = 6652
+				continue
+			else:
+				_pc = 6529
+				continue
+		elif _pc == 6652:
+			await iutilities.rename_sim(v7, icargo.pog_name(icargo.find(object.int_property(v7, "cargo"))))
+			isim.dock(v7, v0)
+			v2 = 1 + v2
+			_pc = 6083
+			continue
+		elif _pc == 6765:
+			return 0
+		else:
+			return 0
 	return 0
 
 func piracy_mission_one_ship_generator(v0) -> Variant:

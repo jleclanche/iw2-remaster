@@ -19,7 +19,7 @@ func _link() -> void:
 	iutilities = rt.script("iutilities")
 
 func main_task() -> Variant:
-	if _pog_is_null(global.exists("ran_empty")):
+	if not _pog_is_null(global.exists("ran_empty")):
 		return
 	if PogRuntime.TRACE:
 		debug.print_string("empty.MainTask: creating a ship for the player.\n")

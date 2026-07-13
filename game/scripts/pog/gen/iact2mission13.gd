@@ -126,7 +126,7 @@ func local_334() -> Variant:
 func local_483(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		await iwingmen.purge()
 		isim.set_faction(iship.find_player_ship(), ifaction.find("Player"))
@@ -197,36 +197,74 @@ func mission_handler() -> Variant:
 	var v38: Variant = 0
 	var v39: Variant = 0
 	var v40: Variant = 0
-	v1 = state.find(self)
-	v2 = imapentity.find_by_name_in_system("Hoffers Port Orbital", "map:/geog/badlands/hoffers_wake")
-	v3 = imapentity.find_by_name_in_system("Alexander L-Point", "map:/geog/badlands/hoffers_wake")
-	v4 = imapentity.find_by_name_in_system("Hoffers Wake Police Headquarters", "map:/geog/badlands/hoffers_wake")
-	v5 = imapentity.find_by_name_in_system("Freetown Ship Park", "map:/geog/badlands/hoffers_wake")
-	v6 = imapentity.find_by_name_in_system("Touchdown L-Point", "map:/geog/badlands/hoffers_wake")
-	v7 = imapentity.find_by_name_in_system("Alexander Sentry Station", "map:/geog/badlands/hoffers_wake")
-	v8 = imapentity.find_by_name_in_system("Courier Transmission Station", "map:/geog/badlands/hoffers_wake")
-	v10 = ifaction.find("Government")
-	v11 = ifaction.find("Kong")
-	v12 = group.create()
-	v13 = group.create()
-	v14 = group.create()
-	v20 = iship.find_player_ship()
-	v35 = 0
-	v36 = 0
-	v37 = 0
-	v38 = 1
-	if not (v1):
-		v1 = state.create(self, 0)
-	v0 = iemail.find("html:/text/act_2/act2_mission13_email")
-	if not (v0):
-		iemail.send_email("a2_m13_email_sender", "a2_m13_email_subject", "html:/text/act_2/act2_mission13_email", 1)
-		if PogRuntime.TRACE:
+	var _pc: int = 1045
+	while true:
+		if _pc == 1045:
+			v1 = state.find(self)
+			v2 = imapentity.find_by_name_in_system("Hoffers Port Orbital", "map:/geog/badlands/hoffers_wake")
+			v3 = imapentity.find_by_name_in_system("Alexander L-Point", "map:/geog/badlands/hoffers_wake")
+			v4 = imapentity.find_by_name_in_system("Hoffers Wake Police Headquarters", "map:/geog/badlands/hoffers_wake")
+			v5 = imapentity.find_by_name_in_system("Freetown Ship Park", "map:/geog/badlands/hoffers_wake")
+			v6 = imapentity.find_by_name_in_system("Touchdown L-Point", "map:/geog/badlands/hoffers_wake")
+			v7 = imapentity.find_by_name_in_system("Alexander Sentry Station", "map:/geog/badlands/hoffers_wake")
+			v8 = imapentity.find_by_name_in_system("Courier Transmission Station", "map:/geog/badlands/hoffers_wake")
+			v10 = ifaction.find("Government")
+			v11 = ifaction.find("Kong")
+			v12 = group.create()
+			v13 = group.create()
+			v14 = group.create()
+			v20 = iship.find_player_ship()
+			v35 = 0
+			v36 = 0
+			v37 = 0
+			v38 = 1
+			if not (v1):
+				_pc = 1465
+				continue
+			else:
+				_pc = 1498
+				continue
+		elif _pc == 1465:
+			v1 = state.create(self, 0)
+			_pc = 1498
+			continue
+		elif _pc == 1498:
+			v0 = iemail.find("html:/text/act_2/act2_mission13_email")
+			if not (v0):
+				_pc = 1535
+				continue
+			else:
+				_pc = 1600
+				continue
+		elif _pc == 1535:
+			iemail.send_email("a2_m13_email_sender", "a2_m13_email_subject", "html:/text/act_2/act2_mission13_email", 1)
+			_pc = 1595
+			continue
+		elif _pc == 1574:
 			debug.print_string("iAct2_Mission13.MissionHandler: Email Sent - EXITING\n")
-	else:
-		if not (iemail.read(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission13.MissionHandler: Email not read yet - EXITING\n")
-		else:
+			_pc = 1595
+			continue
+		elif _pc == 1595:
+			_pc = 13985
+			continue
+		elif _pc == 1600:
+			if not (iemail.read(v0)):
+				_pc = 1624
+				continue
+			else:
+				_pc = 1655
+				continue
+		elif _pc == 1624:
+			_pc = 1650
+			continue
+		elif _pc == 1629:
+			debug.print_string("iAct2_Mission13.MissionHandler: Email not read yet - EXITING\n")
+			_pc = 1650
+			continue
+		elif _pc == 1650:
+			_pc = 13985
+			continue
+		elif _pc == 1655:
 			v15 = await iwingmen.group()
 			text.add("csv:/text/act_2/act2_mission13")
 			text.add("csv:/text/act_2/act2_mission15")
@@ -240,22 +278,64 @@ func mission_handler() -> Variant:
 			await irangecheck.add_traffic_exceptions_in_area(imapentity.cast(v7), 10000000.0)
 			await irangecheck.add_traffic_exceptions_in_area(imapentity.cast(v8), 10000000.0)
 			await irangecheck.add_traffic_exceptions_in_area(imapentity.cast(v5), 10000000.0)
-			if PogRuntime.TRACE:
-				if _pog_is_null(v2):
-					debug.error("iAct2_Mission13: Unable to find port orbital")
-					return
-				if _pog_is_null(v3):
-					debug.error("iAct2_Mission13: Unable to find Alexander L-Point")
-					return
-				if _pog_is_null(v4):
-					debug.error("iAct2_Mission13: Unable to find police hq")
-					return
-				if _pog_is_null(v5):
-					debug.error("iAct2_Mission13: Unable to find freetown")
-					return
-				if _pog_is_null(v6):
-					debug.error("iAct2_Mission13: Unable to find touchdown l-point")
-					return
+			_pc = 2280
+			continue
+		elif _pc == 2085:
+			if _pog_is_null(v2):
+				_pc = 2098
+				continue
+			else:
+				_pc = 2124
+				continue
+		elif _pc == 2098:
+			debug.error("iAct2_Mission13: Unable to find port orbital")
+			_pc = 13985
+			continue
+		elif _pc == 2124:
+			if _pog_is_null(v3):
+				_pc = 2137
+				continue
+			else:
+				_pc = 2163
+				continue
+		elif _pc == 2137:
+			debug.error("iAct2_Mission13: Unable to find Alexander L-Point")
+			_pc = 13985
+			continue
+		elif _pc == 2163:
+			if _pog_is_null(v4):
+				_pc = 2176
+				continue
+			else:
+				_pc = 2202
+				continue
+		elif _pc == 2176:
+			debug.error("iAct2_Mission13: Unable to find police hq")
+			_pc = 13985
+			continue
+		elif _pc == 2202:
+			if _pog_is_null(v5):
+				_pc = 2215
+				continue
+			else:
+				_pc = 2241
+				continue
+		elif _pc == 2215:
+			debug.error("iAct2_Mission13: Unable to find freetown")
+			_pc = 13985
+			continue
+		elif _pc == 2241:
+			if _pog_is_null(v6):
+				_pc = 2254
+				continue
+			else:
+				_pc = 2280
+				continue
+		elif _pc == 2254:
+			debug.error("iAct2_Mission13: Unable to find touchdown l-point")
+			_pc = 13985
+			continue
+		elif _pc == 2280:
 			v21 = iship.create("ini:/sims/ships/independent/cutter", "a2_m13_shipname_kong_leader")
 			sim.set_cullable(v21, 0)
 			isim.set_faction(v21, v11)
@@ -295,22 +375,854 @@ func mission_handler() -> Variant:
 			group.add_sim(v12, v24)
 			iship.set_free_without_pilot(v24, 1)
 			await local_77(v1)
-			while _pog_is_null(state.progress(v1)):
-				state.set_progress(v1, 1)
-				break
+			_pc = 3248
+			continue
+		elif _pc == 3218:
+			state.set_progress(v1, 1)
+			_pc = 3274
+			continue
+		elif _pc == 3243:
+			_pc = 3274
+			continue
+		elif _pc == 3248:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 3274
+				continue
+			else:
+				_pc = 3218
+				continue
+		elif _pc == 3274:
 			v40 = _pog_spawn(local_483.bind(self, v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
 			_pog_detach(v40)
-			while true:
-				await _pog_wait(1)
-				if v35:
-					v29 = 5 + v29
-				while _pog_is_null(state.progress(v1)):
-					await local_77(v1)
-					if PogRuntime.TRACE:
-						debug.error("iAct2_Mission13: Reached main scheduler in MS_Start state!")
-					state.set_progress(v1, 1)
-					break
-	return
+			_pc = 3384
+			continue
+		elif _pc == 3384:
+			await _pog_frame()
+			if _pog_every(3385, 1.0):
+				_pc = 3398
+				continue
+			else:
+				_pc = 13979
+				continue
+		elif _pc == 3398:
+			if v35:
+				_pc = 3408
+				continue
+			else:
+				_pc = 3422
+				continue
+		elif _pc == 3408:
+			v29 = 5 + v29
+			_pc = 3422
+			continue
+		elif _pc == 3422:
+			_pc = 13846
+			continue
+		elif _pc == 3427:
+			await local_77(v1)
+			_pc = 3472
+			continue
+		elif _pc == 3451:
+			debug.error("iAct2_Mission13: Reached main scheduler in MS_Start state!")
+			_pc = 3472
+			continue
+		elif _pc == 3472:
+			state.set_progress(v1, 1)
+			_pc = 13979
+			continue
+		elif _pc == 3497:
+			await local_77(v1)
+			iobjectives.add("a2_m13_objectives_travel")
+			isim.set_sensor_visibility(isim.cast(v2), 1)
+			if await iutilities.player_in_range(v2):
+				_pc = 3593
+				continue
+			else:
+				_pc = 4106
+				continue
+		elif _pc == 3593:
+			v17 = await local_13987(v2)
+			v19 = iship.create("ini:/sims/ships/cops/interceptor_mk2", "a2_m13_shipname_special_investigator")
+			object.add_handle_property(v1, "hewitt_handle", v19)
+			sim.set_cullable(v19, 0)
+			isim.set_mission_critical(v19, 1)
+			object.set_string_property(v19, "death_script", "iDeathScript.CriticalShipDeath")
+			isim.set_faction(v19, ifaction.find("Player"))
+			await ipilotsetup.generic_coward(v19)
+			sim.place_near(v19, v2, 3000.0)
+			_pog_halt(v40)
+			v40 = _pog_spawn(local_483.bind(self, v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
+			_pog_detach(v40)
+			await iconversation.begin()
+			await iconversation.say(v2, "a2_m13_character_blake", "a2_m13_dialogue_blake_glad_you_are_here")
+			await iconversation.end()
+			iobjectives.set_state("a2_m13_objectives_travel", 1)
+			iobjectives.add("a2_m13_objective_dock_to_base")
+			state.set_progress(v1, 2)
+			await local_77(v1)
+			_pc = 4106
+			continue
+		elif _pc == 4106:
+			_pc = 13979
+			continue
+		elif _pc == 4111:
+			if isim.is_docked_to_structure(v20, isim.cast(v2)):
+				_pc = 4152
+				continue
+			else:
+				_pc = 5302
+				continue
+		elif _pc == 4152:
+			isim.set_docking_lock(v20, isim.cast(v2), 1)
+			iobjectives.set_state("a2_m13_objective_dock_to_base", 1)
+			v27 = sim.find_subsim_by_name(v20, "Cargo_DisruptorMissile")
+			if _pog_is_null(v27):
+				_pc = 4256
+				continue
+			else:
+				_pc = 4502
+				continue
+		elif _pc == 4256:
+			global.create_bool("g_added_disruptor", 1, 1)
+			v27 = subsim.create("ini:/subsims/systems/player/custom_a2m13_disruptor_missile_launcher")
+			gui.play_sound(5)
+			if not (sim.add_subsim(v20, v27)):
+				_pc = 4350
+				continue
+			else:
+				_pc = 4376
+				continue
+		elif _pc == 4350:
+			_pc = 4376
+			continue
+		elif _pc == 4355:
+			debug.error("Unable to add launcher subsim to player ship!")
+			_pc = 4376
+			continue
+		elif _pc == 4376:
+			if 2097152 == isim.type(v20):
+				_pc = 4405
+				continue
+			else:
+				_pc = 4439
+				continue
+		elif _pc == 4405:
+			subsim.place(v27, 2.5999999046325684, -14.600000381469727, 13.0)
+			_pc = 4439
+			continue
+		elif _pc == 4439:
+			if 4194304 == isim.type(v20):
+				_pc = 4468
+				continue
+			else:
+				_pc = 4502
+				continue
+		elif _pc == 4468:
+			subsim.place(v27, 11.0, 5.5, 6.5)
+			_pc = 4502
+			continue
+		elif _pc == 4502:
+			object.set_int_property(v27, "max_ammo", 6)
+			object.set_int_property(v27, "ammo", 6)
+			_pog_halt(v40)
+			v40 = _pog_spawn(local_483.bind(self, v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
+			_pog_detach(v40)
+			await iconversation.begin()
+			await iconversation.say(v2, "a2_m13_character_blake", "a2_m13_dialogue_blake_special_officer_james_hewitt_earl")
+			await iconversation.say(v19, "", "a2_m13_dialogue_james_greetings")
+			await iconversation.say(0, "name_cal", "a2_m13_dialogue_cal_er_yeah")
+			await iconversation.say(0, "name_smith", "a2_m13_dialogue_smith_no_time_to_faf")
+			await iconversation.say(v19, "", "a2_m13_dialogue_james_head_for_alexander")
+			await iconversation.say(0, "name_clay", "a2_m13_dialogue_clay_hey_youve_never_been_esteemed_before")
+			await iconversation.say(0, "name_cal", "a2_m13_dialogue_cal_or_a_gentleman")
+			await iconversation.say(0, "name_smith", "a2_m13_dialogue_smith_shut_it")
+			await iconversation.end()
+			iobjectives.add("a2_m13_objectives_head")
+			isim.set_docking_lock(v20, isim.cast(v2), 0)
+			_pc = 5005
+			continue
+		elif _pc == 5005:
+			await _pog_wait(1.0)
+			if not (isim.is_docked_to_structure(v20, isim.cast(v2))):
+				_pc = 5078
+				continue
+			else:
+				_pc = 5005
+				continue
+		elif _pc == 5078:
+			await _pog_wait(2.0)
+			await ibacktobase.inhibit()
+			state.set_progress(v1, 3)
+			await local_77(v1)
+			v29 = 0
+			v35 = 1
+			iai.give_formate_order(v19, v20, 300.0, 0.0, 0.0)
+			await local_14643(v17)
+			isim.set_standard_sensor_visibility(isim.cast(v2), 1)
+			isim.set_sensor_visibility(isim.cast(v3), 1)
+			_pc = 5302
+			continue
+		elif _pc == 5302:
+			_pc = 13979
+			continue
+		elif _pc == 5307:
+			await _pog_wait(2.0)
+			if 600 >= v29:
+				_pc = 5353
+				continue
+			else:
+				_pc = 6568
+				continue
+		elif _pc == 5353:
+			v29 = 0
+			state.set_progress(v1, 4)
+			await local_77(v1)
+			isim.set_standard_sensor_visibility(isim.cast(v3), 1)
+			if not (await iutilities.player_in_range(v3)):
+				_pc = 5457
+				continue
+			else:
+				_pc = 5571
+				continue
+		elif _pc == 5457:
+			iobjectives.set_state("a2_m13_objectives_head", 2)
+			await iconversation.begin()
+			await iconversation.say(v19, "", "a2_m13_dialogue_james_what_are_you_doing")
+			await iconversation.end()
+			state.set_progress(v1, 10)
+			_pc = 13979
+			continue
+		elif _pc == 5566:
+			_pc = 6568
+			continue
+		elif _pc == 5571:
+			iobjectives.set_state("a2_m13_objectives_head", 1)
+			iobjectives.add("a2_m13_objectives_stop")
+			await imusic.pause()
+			await imusic.play("sound:/audio/music/a2_action", 1, 0)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_23434.bind(v20, v19, v22, v12, isim.cast(v3))))
+			await imusic.pog_resume()
+			sim.place_relative_to(v22, v3, 0.0, 0.0, 10000.0)
+			sim.copy_orientation(v22, v3)
+			iship.set_free_without_pilot(v22, 0)
+			isim.set_mission_critical(v22, 1)
+			sim.place_relative_to(group.leader(v12), v22, 0.0, 0.0, -1000.0)
+			sim.point_at(group.leader(v12), v22)
+			v30 = group.sim_count(v12)
+			_pc = 5947
+			continue
+		elif _pc == 5947:
+			if 0 >= v30:
+				_pc = 5959
+				continue
+			else:
+				_pc = 6143
+				continue
+		elif _pc == 5959:
+			iship.set_free_without_pilot(iship.cast(group.nth_sim(v12, v30)), 0)
+			isim.set_mission_critical(iship.cast(group.nth_sim(v12, v30)), 1)
+			object.set_string_property(iship.cast(group.nth_sim(v12, v30)), "death_script", "iDeathScript.CriticalShipDeath")
+			v30 = -1 + v30
+			_pc = 5947
+			continue
+		elif _pc == 6143:
+			iai.give_formate_order(v21, v22, 0.0, 0.0, -1000.0)
+			await iformation.claw(v12, 0.0, 1)
+			sim.place_relative_to(v20, v22, 5000.0, 200.0, -2000.0)
+			sim.point_at(v20, v22)
+			await iescort.goose(await iwingmen.group(), 0.0, 5000.0, 1)
+			await iutilities.group_set_local_velocity(await iwingmen.group(), 0.0, 0.0, 0.0, 0, 1)
+			sim.place_relative_to(v19, v20, 1000.0, 500.0, 500.0)
+			sim.point_at(v19, v22)
+			sim.set_velocity(v19, 0.0, 0.0, 0.0)
+			sim.set_velocity_local_to_sim(v22, 0.0, 0.0, 500.0)
+			await iutilities.group_set_local_velocity(v12, 0.0, 0.0, 500.0, 0, 1)
+			iship.disrupt_l_d_s_drive(v22, 120.0)
+			iai.give_approach_order(v22, v4)
+			_pc = 6568
+			continue
+		elif _pc == 6568:
+			if 10000.0 < sim.distance_between(v20, v3):
+				_pc = 6602
+				continue
+			else:
+				_pc = 6616
+				continue
+		elif _pc == 6602:
+			v29 = 40 + v29
+			_pc = 6616
+			continue
+		elif _pc == 6616:
+			_pc = 13979
+			continue
+		elif _pc == 6621:
+			v36 = 0
+			v30 = 0
+			_pc = 6635
+			continue
+		elif _pc == 6635:
+			if group.sim_count(v12) < v30:
+				_pc = 6664
+				continue
+			else:
+				_pc = 6743
+				continue
+		elif _pc == 6664:
+			if iship.is_disrupted(iship.cast(group.nth_sim(v12, v30))):
+				_pc = 6718
+				continue
+			else:
+				_pc = 6725
+				continue
+		elif _pc == 6718:
+			v36 = 1
+			_pc = 6725
+			continue
+		elif _pc == 6725:
+			v30 = 1 + v30
+			_pc = 6635
+			continue
+		elif _pc == 6743:
+			if v36 or iship.is_disrupted(v22):
+				_pc = 6772
+				continue
+			else:
+				_pc = 6800
+				continue
+		elif _pc == 6772:
+			v35 = 0
+			state.set_progress(v1, 5)
+			_pc = 6800
+			continue
+		elif _pc == 6800:
+			if 0 > group.sim_count(v12):
+				_pc = 6825
+				continue
+			else:
+				_pc = 6964
+				continue
+		elif _pc == 6825:
+			if 6 == iai.current_order_type(iship.cast(group.leader(v12))) and 100000.0 <= sim.distance_between(group.leader(v12), v4):
+				_pc = 6920
+				continue
+			else:
+				_pc = 6964
+				continue
+		elif _pc == 6920:
+			iai.give_approach_order(v12, v5)
+			await local_22891(v12, 1)
+			_pc = 6964
+			continue
+		elif _pc == 6964:
+			if 10000000.0 > sim.distance_between(v20, v22) or 100000.0 < sim.distance_between(v22, v4):
+				_pc = 7028
+				continue
+			else:
+				_pc = 7072
+				continue
+		elif _pc == 7028:
+			iobjectives.set_state("a2_m13_objectives_stop", 2)
+			state.set_progress(v1, 10)
+			_pc = 7072
+			continue
+		elif _pc == 7072:
+			_pc = 13979
+			continue
+		elif _pc == 7077:
+			await local_77(v1)
+			iobjectives.set_state("a2_m13_objectives_stop", 1)
+			idirector.begin()
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			await imusic.pause()
+			await imusic.play("sound:/audio/music/a2_ambient", 1, 1)
+			iai.purge_orders(v12)
+			iai.purge_orders(v22)
+			iai.purge_orders(v15)
+			v30 = 1
+			_pc = 7268
+			continue
+		elif _pc == 7268:
+			if group.sim_count(v15) < v30:
+				_pc = 7297
+				continue
+			else:
+				_pc = 7365
+				continue
+		elif _pc == 7297:
+			iship.lock_down_weapons(iship.cast(group.nth_sim(v15, v30)))
+			v30 = 1 + v30
+			_pc = 7268
+			continue
+		elif _pc == 7365:
+			iai.clear_autopilot()
+			sim.set_velocity(v22, 0.0, 0.0, 0.0)
+			await iutilities.group_set_local_velocity(v12, 0.0, 0.0, 0.0, 1, 1)
+			await iutilities.group_set_local_velocity(await iwingmen.group(), 0.0, 0.0, 0.0, 1, 1)
+			sim.place_relative_to(v22, group.leader(v12), 200.0, 400.0, -500.0)
+			iai.give_escort_order(v21, v22, 0.0, 100.0, 0.0, 5000.0)
+			await iformation.claw(v12, 0.0, 1)
+			iai.purge_orders(v12)
+			iship.disrupt_l_d_s_drive(v22, 1.0)
+			sim.place_relative_to(v20, v22, 1000.0, -200.0, 100.0)
+			sim.point_at(v20, v22)
+			await iformation.goose(v15, 0.0, 1)
+			iai.purge_orders(v15)
+			sim.place_relative_to(v19, v20, 500.0, 200.0, 100.0)
+			sim.point_at(v19, v22)
+			idirector.set_camera(21)
+			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+			await _pog_wait(1.0)
+			await local_15992(v1)
+			idirector.end()
+			await imusic.pog_resume()
+			await imusic.set_mood(3)
+			_pc = 13979
+			continue
+		elif _pc == 7978:
+			await local_77(v1)
+			idirector.begin()
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			iai.purge_orders(v12)
+			iai.purge_orders(v22)
+			iai.purge_orders(await iwingmen.group())
+			iai.clear_autopilot()
+			sim.set_velocity(v22, 0.0, 0.0, 0.0)
+			await iutilities.group_set_local_velocity(v12, 0.0, 0.0, 0.0, 1, 1)
+			await iutilities.group_set_local_velocity(await iwingmen.group(), 0.0, 0.0, 0.0, 1, 1)
+			sim.place_relative_to(v22, group.leader(v12), 200.0, 400.0, -500.0)
+			iai.give_escort_order(v21, v22, 0.0, 100.0, 0.0, 5000.0)
+			await iformation.claw(v12, 0.0, 1)
+			iai.purge_orders(v12)
+			iship.disrupt_l_d_s_drive(v22, 1.0)
+			sim.place_relative_to(v20, v22, 1000.0, -200.0, 100.0)
+			sim.point_at(v20, v22)
+			await iformation.goose(await iwingmen.group(), 0.0, 1)
+			iai.purge_orders(await iwingmen.group())
+			sim.place_relative_to(v19, v20, 500.0, 200.0, 100.0)
+			sim.point_at(v19, v22)
+			v9 = await iutilities.create_waypoint_relative_to(v5, 20000.0, 0.0, 0.0)
+			v16 = await local_15321(v9)
+			v23 = iship.cast(group.leader(v16))
+			v28 = iregion.create_l_d_s_i(v9, 200000.0)
+			v30 = 0
+			_pc = 8725
+			continue
+		elif _pc == 8725:
+			if group.sim_count(v12) < v30:
+				_pc = 8754
+				continue
+			else:
+				_pc = 8866
+				continue
+		elif _pc == 8754:
+			v24 = iship.cast(group.nth_sim(v12, v30))
+			isim.set_mission_critical(v24, 0)
+			object.set_string_property(v24, "death_script", "")
+			v30 = 1 + v30
+			_pc = 8725
+			continue
+		elif _pc == 8866:
+			await local_23112(v12)
+			isim.set_mission_critical(v22, 0)
+			sim.set_cullable(v22, 0)
+			object.set_string_property(v22, "death_script", "")
+			isim.set_indestructable(v21, 1)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_24441.bind(v20, v22, v19, v21, v26, v25, v23, isim.cast(v5), v13, v12, v14, isim.cast(v3))))
+			igame.enable_blackout(1)
+			group.destroy(v13, 1)
+			group.destroy(v14, 1)
+			iai.purge_orders(v12)
+			iai.purge_orders(v22)
+			iai.purge_orders(await iwingmen.group())
+			iai.clear_autopilot()
+			sim.set_velocity(v22, 0.0, 0.0, 0.0)
+			sim.set_velocity(v19, 0.0, 0.0, 0.0)
+			await iutilities.group_set_local_velocity(v12, 0.0, 0.0, 0.0, 1, 1)
+			await iutilities.group_set_local_velocity(await iwingmen.group(), 0.0, 0.0, 0.0, 1, 1)
+			await iutilities.sim_place_between_exact(v22, v5, v22, 20000.0)
+			sim.point_at(v22, v5)
+			sim.place_relative_to(group.leader(v12), v22, 200.0, 400.0, -500.0)
+			iai.give_escort_order(v21, v22, 0.0, 100.0, 0.0, 5000.0)
+			await iformation.claw(v12, 0.0, 1)
+			iai.purge_orders(v12)
+			sim.place_relative_to(v20, v22, 1000.0, -500.0, 100.0)
+			sim.copy_orientation(v20, v22)
+			await iformation.goose(await iwingmen.group(), 0.0, 1)
+			iai.purge_orders(await iwingmen.group())
+			sim.place_relative_to(v19, v20, 500.0, 200.0, 100.0)
+			sim.copy_orientation(v19, v20)
+			await iutilities.group_set_local_velocity(v12, 0.0, 0.0, 500.0, 1, 1)
+			await local_23219(v12, 0)
+			await iutilities.group_set_local_velocity(await iwingmen.group(), 0.0, 0.0, 500.0, 1, 1)
+			await local_23219(await iwingmen.group(), 0)
+			sim.set_velocity_local_to_sim(v19, 0.0, 0.0, 500.0)
+			iship.set_free_without_pilot(v19, 0)
+			sim.set_velocity_local_to_sim(v22, 0.0, 0.0, 500.0)
+			iship.set_free_without_pilot(v22, 0)
+			iai.give_attack_order(v13, v14)
+			iai.give_flee_order(v22, isim.cast(v5))
+			sim.set_cullable(v22, 1)
+			v13 = group.create()
+			v14 = group.create()
+			await _pog_wait(0.20000000298023224)
+			await local_14862(v5, v13, v14)
+			await _pog_wait(1.0)
+			igame.enable_blackout(0)
+			iai.give_attack_order(v12, v23)
+			await local_22995(v13, ifaction.find("Marauders"))
+			iai.give_generic_attack_order(v14)
+			iai.give_generic_attack_order(v13)
+			v32 = 500
+			v33 = 500
+			v34 = 500
+			v30 = 0
+			_pc = 10357
+			continue
+		elif _pc == 10357:
+			if group.sim_count(v13) < v30:
+				_pc = 10386
+				continue
+			else:
+				_pc = 10527
+				continue
+		elif _pc == 10386:
+			iai.give_escort_order(iship.cast(group.nth_sim(v13, v30)), v16, v32, v33, v34, 10000.0)
+			v32 = 500 + v32
+			v33 = 500 + v33
+			v34 = 500 + v34
+			v30 = 1 + v30
+			_pc = 10357
+			continue
+		elif _pc == 10527:
+			state.set_progress(v1, 7)
+			await local_77(v1)
+			iobjectives.add("a2_m13_objectives_eliminate")
+			_pc = 13979
+			continue
+		elif _pc == 10593:
+			if 100000.0 > sim.distance_between(v20, v5):
+				_pc = 10627
+				continue
+			else:
+				_pc = 10749
+				continue
+		elif _pc == 10627:
+			iship.disrupt_l_d_s_drive(v20, 100.0)
+			sim.set_velocity(v20, 0.0, 0.0, 0.0)
+			object.add_string_property(v5, "death_script", "iDeathScript.CriticalShipDeath")
+			isim.kill(isim.cast(v5))
+			_pc = 10749
+			continue
+		elif _pc == 10749:
+			if _pog_is_null(v37) and 0.25 < await iutilities.return_hull_structure(v23):
+				_pc = 10786
+				continue
+			else:
+				_pc = 12067
+				continue
+		elif _pc == 10786:
+			v37 = 1
+			await ipilotsetup.marauder(v23)
+			iai.give_flee_order(v23, isim.cast(v5))
+			_pc = 10875
+			continue
+		elif _pc == 10854:
+			debug.error("iAct2_Mission13: Akela running")
+			_pc = 10875
+			continue
+		elif _pc == 10875:
+			iregion.destroy(v28)
+			idirector.begin()
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			group.add_sim(v13, v23)
+			group.promote_sim(v13, 1 - group.sim_count(v13))
+			sim.point_away(v23, v5)
+			iai.purge_orders(v13)
+			await iformation.random_rectangle(v13, 0.0, 1)
+			sim.place_near(v20, v23, 100000.0)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_28111.bind(v23, v13, isim.cast(v5), v21)))
+			group.destroy(v16, 1)
+			group.destroy(v13, 1)
+			sim.place_near(v20, v5, 10000.0)
+			sim.point_at(v20, v5)
+			await iformation.goose(v15, 0.0, 1)
+			iai.purge_orders(v15)
+			isim.set_indestructable(v21, 0)
+			object.set_string_property(v21, "death_script", "iDeathScript.CriticalShipDeath")
+			sim.place_near(group.leader(v12), v20, 2000.0)
+			sim.point_at(group.leader(v12), v20)
+			await iformation.random_rectangle(v12, 0.0, 1)
+			iai.purge_orders(v12)
+			sim.place_near(v19, v20, 2000.0)
+			iobjectives.set_state("a2_m13_objectives_eliminate", 1)
+			await iconversation.begin()
+			await iconversation.say(v21, "a2_m13_character_jet", "a2_m13_dialogue_jet_thank_you")
+			await iconversation.say(0, "name_cal", "a2_m13_dialogue_cal_it_was_nothing")
+			await iconversation.say(v21, "a2_m13_character_jet", "a2_m13_dialogue_jet_i_owe_you")
+			iai.give_approach_order(v12, v5)
+			await local_22891(v12, 1)
+			await iconversation.say(v19, "a2_m13_character_james", "a2_m13_dialogue_james_my_thanks_also")
+			await iconversation.say(v19, "a2_m13_character_james", "a2_m13_dialogue_james_im_leaving_now")
+			sim.set_cullable(v19, 1)
+			iai.give_approach_order(v19, v4)
+			if 0 > await iwingmen.count():
+				_pc = 11807
+				continue
+			else:
+				_pc = 11861
+				continue
+		elif _pc == 11807:
+			await iconversation.say(list.head(await iwingmen.true_wingman_list()), "", "a2_m13_dialogue_wingman_heading_home")
+			_pc = 11861
+			continue
+		elif _pc == 11861:
+			v18 = await iwingmen.purge_to_group()
+			if 0 > group.sim_count(v18):
+				_pc = 11905
+				continue
+			else:
+				_pc = 11992
+				continue
+		elif _pc == 11905:
+			if 1 > group.sim_count(v18):
+				_pc = 11930
+				continue
+			else:
+				_pc = 11955
+				continue
+		elif _pc == 11930:
+			await iformation.goose(v18, 0.0, 0)
+			_pc = 11955
+			continue
+		elif _pc == 11955:
+			iai.give_approach_order(group.leader(v18), v2)
+			_pc = 11992
+			continue
+		elif _pc == 11992:
+			await local_22891(v18, 1)
+			await local_22891(v14, 1)
+			await iconversation.end()
+			state.set_progress(v1, 12)
+			_pc = 12067
+			continue
+		elif _pc == 12067:
+			_pc = 13979
+			continue
+		elif _pc == 12072:
+			await local_77(v1)
+			v30 = group.sim_count(v12)
+			_pc = 12115
+			continue
+		elif _pc == 12115:
+			if 0 >= v30:
+				_pc = 12127
+				continue
+			else:
+				_pc = 12260
+				continue
+		elif _pc == 12127:
+			isim.set_mission_critical(iship.cast(group.nth_sim(v12, v30)), 0)
+			object.set_string_property(iship.cast(group.nth_sim(v12, v30)), "death_script", "")
+			v30 = -1 + v30
+			_pc = 12115
+			continue
+		elif _pc == 12260:
+			isim.set_mission_critical(v22, 0)
+			iai.give_attack_order(v12, v15)
+			sim.set_cullable(v22, 1)
+			iai.give_approach_order(v22, v5)
+			isim.set_mission_critical(v22, 0)
+			isim.set_faction(v19, v10)
+			iai.give_approach_order(v19, v4)
+			state.set_progress(v1, 9)
+			await local_77(v1)
+			_pc = 13979
+			continue
+		elif _pc == 12461:
+			await _pog_wait(5.0)
+			state.set_progress(v1, 11)
+			_pc = 13979
+			continue
+		elif _pc == 12519:
+			igame.enable_blackout(1)
+			iai.clear_autopilot()
+			iship.disrupt_l_d_s_drive(v20, 100.0)
+			sim.place_near(v20, v4, 100000.0)
+			sim.set_velocity(v20, 0.0, 0.0, 0.0)
+			iai.purge_orders(v22)
+			iship.disrupt_l_d_s_drive(v20, 1.0)
+			sim.set_velocity(v22, 0.0, 0.0, 0.0)
+			sim.set_angular_velocity_euler(v22, 0.0, 0.0, 0.0)
+			group.destroy(v12, 1)
+			v17 = await iwingmen.purge_to_group()
+			group.destroy(v17, 1)
+			sim.destroy(v19)
+			await iutilities.sim_place_between_exact(v22, v4, v3, 5000.0)
+			sim.point_at(v22, v4)
+			object.set_string_property(v22, "death_script", "")
+			await icutsceneutilities.handle_abort(_pog_spawn(local_28471.bind(v4, v22)))
+			sim.set_velocity_local_to_sim(v20, 0.0, 0.0, 500.0)
+			igame.enable_blackout(0)
+			_pc = 13002
+			continue
+		elif _pc == 13002:
+			v18 = await iwingmen.purge_to_group()
+			if 0 > group.sim_count(v18):
+				_pc = 13046
+				continue
+			else:
+				_pc = 13133
+				continue
+		elif _pc == 13046:
+			if 1 > group.sim_count(v18):
+				_pc = 13071
+				continue
+			else:
+				_pc = 13096
+				continue
+		elif _pc == 13071:
+			await iformation.goose(v18, 0.0, 0)
+			_pc = 13096
+			continue
+		elif _pc == 13096:
+			iai.give_approach_order(group.leader(v18), v2)
+			_pc = 13133
+			continue
+		elif _pc == 13133:
+			await local_22891(v18, 1)
+			await local_22891(v13, 1)
+			await local_22891(v12, 1)
+			await local_22891(v16, 1)
+			state.destroy(self)
+			await imissiontracker.remove_mission(self)
+			await iutilities.remove_mission_restart()
+			object.add_bool_property(v20, "destroy_sim", 0)
+			object.add_string_property(v20, "death_caption", "caption_failed_generic")
+			_pog_detach(_pog_spawn(ideathscript.player_death_script.bind(v20)))
+			_pc = 13985
+			continue
+		elif _pc == 13377:
+			await ibacktobase.allow()
+			await istation.enable_reactive_in_area(ihabitat.cast(v7), 10000000.0)
+			await istation.enable_reactive_in_area(ihabitat.cast(v2), 10000000.0)
+			await istation.enable_reactive_in_area(ihabitat.cast(v8), 10000000.0)
+			await istation.enable_reactive_in_area(ihabitat.cast(v5), 10000000.0)
+			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v2), 10000000.0)
+			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v3), 10000000.0)
+			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v7), 1000000.0)
+			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v8), 1000000.0)
+			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v5), 10000000.0)
+			state.destroy(self)
+			global.set_bool("g_act2_kong_fracture_complete", 1)
+			global.set_bool("g_act2_kong_fracture_success", 1)
+			await imissiontracker.remove_mission(self)
+			await iutilities.remove_mission_restart()
+			_pc = 13985
+			continue
+		elif _pc == 13841:
+			_pc = 13979
+			continue
+		elif _pc == 13846:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 13872
+				continue
+			else:
+				_pc = 3427
+				continue
+		elif _pc == 13872:
+			if not _pog_is_null(1):
+				_pc = 13880
+				continue
+			else:
+				_pc = 3497
+				continue
+		elif _pc == 13880:
+			if not _pog_is_null(2):
+				_pc = 13889
+				continue
+			else:
+				_pc = 4111
+				continue
+		elif _pc == 13889:
+			if not _pog_is_null(3):
+				_pc = 13898
+				continue
+			else:
+				_pc = 5307
+				continue
+		elif _pc == 13898:
+			if not _pog_is_null(4):
+				_pc = 13907
+				continue
+			else:
+				_pc = 6621
+				continue
+		elif _pc == 13907:
+			if not _pog_is_null(5):
+				_pc = 13916
+				continue
+			else:
+				_pc = 7077
+				continue
+		elif _pc == 13916:
+			if not _pog_is_null(6):
+				_pc = 13925
+				continue
+			else:
+				_pc = 7978
+				continue
+		elif _pc == 13925:
+			if not _pog_is_null(7):
+				_pc = 13934
+				continue
+			else:
+				_pc = 10593
+				continue
+		elif _pc == 13934:
+			if not _pog_is_null(8):
+				_pc = 13943
+				continue
+			else:
+				_pc = 12072
+				continue
+		elif _pc == 13943:
+			if not _pog_is_null(9):
+				_pc = 13952
+				continue
+			else:
+				_pc = 12461
+				continue
+		elif _pc == 13952:
+			if not _pog_is_null(10):
+				_pc = 13961
+				continue
+			else:
+				_pc = 12519
+				continue
+		elif _pc == 13961:
+			if not _pog_is_null(11):
+				_pc = 13970
+				continue
+			else:
+				_pc = 13002
+				continue
+		elif _pc == 13970:
+			if not _pog_is_null(12):
+				_pc = 13979
+				continue
+			else:
+				_pc = 13377
+				continue
+		elif _pc == 13979:
+			_pc = 3384
+			continue
+		elif _pc == 13984:
+			_pc = 13985
+			continue
+		elif _pc == 13985:
+			return
+		else:
+			return 0
 	return 0
 
 func local_13987(v0) -> Variant:
@@ -341,7 +1253,7 @@ func local_13987(v0) -> Variant:
 	await ipilotsetup.generic_cargo_pod(v1)
 	group.add_sim(v2, v1)
 	await iformation.line_abreast(v2, 50.0, 1)
-	return
+	return v2
 	return 0
 
 func local_14643(v0) -> Variant:
@@ -440,7 +1352,7 @@ func local_15321(v0) -> Variant:
 	await iutilities.group_set_cullable(v2, 0)
 	await iutilities.group_set_faction(v2, ifaction.find("Marauders"))
 	sim.place_at(v7, v0)
-	return
+	return v2
 	return 0
 
 func local_15992(v0) -> Variant:
@@ -449,27 +1361,77 @@ func local_15992(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = iship.find_player_ship()
-	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-	idirector.set_focus(v3)
-	idirector.set_secondary_focus(v2)
-	await iconversation.begin()
-	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1", "a2_m13_dialogue_diplomacy_cal_a1")
-	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2", "a2_m13_dialogue_diplomacy_cal_a2")
-	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3", "a2_m13_dialogue_diplomacy_cal_a3")
-	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_jet_ok_we_will_talk")
-	while v1 == 1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1")
-		await local_16734(v0)
-		break
-	await iconversation.end()
-	idirector.end()
-	await icutsceneutilities.disable_player_autopilot()
-	return 0
+	var _pc: int = 15992
+	while true:
+		if _pc == 15992:
+			v2 = iship.find_player_ship()
+			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.begin()
+			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1", "a2_m13_dialogue_diplomacy_cal_a1")
+			await iconversation.add_response("a2_m13_text_diplomacy_cal_a2", "a2_m13_dialogue_diplomacy_cal_a2")
+			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3", "a2_m13_dialogue_diplomacy_cal_a3")
+			v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_jet_ok_we_will_talk")
+			_pc = 16658
+			continue
+		elif _pc == 16317:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1")
+			await local_16734(v0)
+			_pc = 16689
+			continue
+		elif _pc == 16407:
+			await local_17599(v0)
+			_pc = 16689
+			continue
+		elif _pc == 16431:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3")
+			idirector.set_focus(v2)
+			idirector.set_secondary_focus(v3)
+			await iconversation.say(0, "name_cal", "a2_m13_dialogue_diplomacy_cal_2_a3")
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a3")
+			await local_18105(v0)
+			_pc = 16689
+			continue
+		elif _pc == 16653:
+			_pc = 16689
+			continue
+		elif _pc == 16658:
+			if v1 != 1:
+				_pc = 16671
+				continue
+			else:
+				_pc = 16317
+				continue
+		elif _pc == 16671:
+			if not _pog_is_null(2):
+				_pc = 16680
+				continue
+			else:
+				_pc = 16407
+				continue
+		elif _pc == 16680:
+			if not _pog_is_null(3):
+				_pc = 16689
+				continue
+			else:
+				_pc = 16431
+				continue
+		elif _pc == 16689:
+			await iconversation.end()
+			idirector.end()
+			await icutsceneutilities.disable_player_autopilot()
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_16734(v0) -> Variant:
@@ -490,12 +1452,33 @@ func local_16734(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b2", "a2_m13_dialogue_diplomacy_cal_a1_b2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b3", "a2_m13_dialogue_diplomacy_cal_a1_b3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1")
-	while v1 == 1:
+	if v1 == 1:
 		idirector.set_focus(v3)
 		idirector.set_secondary_focus(v2)
 		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1")
 		await local_18859(v0)
-		break
+		return 0
+	if v1 == 2:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b2")
+		state.set_progress(v0, 8)
+		return 0
+	if v1 == 3:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b3")
+		idirector.set_focus(v6)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b3")
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b3")
+		state.set_progress(v0, 8)
+		return 0
 	return 0
 	return 0
 
@@ -544,7 +1527,7 @@ func local_18105(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2", "a2_m13_dialogue_diplomacy_cal_a3_b2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b3", "a2_m13_dialogue_diplomacy_cal_a3_b3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3")
-	while v1 == 1:
+	if v1 == 1:
 		idirector.set_focus(v5)
 		idirector.set_secondary_focus(v2)
 		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b1")
@@ -555,7 +1538,19 @@ func local_18105(v0) -> Variant:
 		idirector.set_secondary_focus(v5)
 		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b1")
 		await local_21569(v0)
-		break
+		return 0
+	if v1 == 2:
+		await local_22133(v0)
+		return 0
+	if v1 == 3:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
+		state.set_progress(v0, 6)
+		return 0
 	return 0
 	return 0
 
@@ -575,7 +1570,7 @@ func local_18859(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1")
-	while v1 == 1:
+	if v1 == 1:
 		idirector.set_focus(v3)
 		idirector.set_secondary_focus(v2)
 		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c1")
@@ -586,7 +1581,31 @@ func local_18859(v0) -> Variant:
 		idirector.set_secondary_focus(v5)
 		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
 		await local_20702(v0)
-		break
+		return 0
+	if v1 == 2:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c2")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v4)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_2_a1_b1_c2")
+		await local_20702(v0)
+		return 0
+	if v1 == 3:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v3)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3")
+		await local_19875(v0)
+		return 0
 	return 0
 	return 0
 
@@ -608,10 +1627,31 @@ func local_19875(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1_c3")
-	while v1 == 1:
+	if v1 == 1:
 		await iconversation.say(0, "name_cal", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d1")
 		state.set_progress(v0, 8)
-		break
+		return 0
+	if v1 == 2:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3_d2")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v3)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c3_d2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
+		await local_20702(v0)
+		return 0
+	if v1 == 3:
+		idirector.set_focus(v6)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b1_c3_d3")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3_d3")
+		state.set_progress(v0, 8)
+		return 0
 	return 0
 	return 0
 
@@ -633,7 +1673,7 @@ func local_20702(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c2", "a2_m13_dialogue_diplomacy_cal_a2_b1_c2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c3", "a2_m13_dialogue_diplomacy_cal_a2_b1_c3")
 	v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a2_b1")
-	while v1 == 1:
+	if v1 == 1:
 		idirector.set_focus(v5)
 		idirector.set_secondary_focus(v6)
 		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c1")
@@ -644,7 +1684,22 @@ func local_20702(v0) -> Variant:
 		idirector.set_secondary_focus(v5)
 		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c1")
 		state.set_progress(v0, 8)
-		break
+		return 0
+	if v1 == 2:
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c2")
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v4)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a2_b1_c2")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c2")
+		state.set_progress(v0, 6)
+		return 0
+	if v1 == 3:
+		state.set_progress(v0, 8)
+		return 0
 	return 0
 	return 0
 
@@ -663,7 +1718,7 @@ func local_21569(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c1", "a2_m13_dialogue_diplomacy_cal_a3_b1_c1")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c2", "a2_m13_dialogue_diplomacy_cal_a3_b1_c2")
 	v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a3_b1")
-	while v1 == 1:
+	if v1 == 1:
 		idirector.set_focus(v3)
 		idirector.set_secondary_focus(v2)
 		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
@@ -671,7 +1726,13 @@ func local_21569(v0) -> Variant:
 		idirector.set_secondary_focus(v2)
 		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
 		state.set_progress(v0, 6)
-		break
+		return 0
+	if v1 == 2:
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1_c2")
+		state.set_progress(v0, 8)
+		return 0
 	return 0
 	return 0
 
@@ -691,7 +1752,7 @@ func local_22133(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c2", "a2_m13_dialogue_diplomacy_cal_a3_b2_c2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c3", "a2_m13_dialogue_diplomacy_cal_a3_b2_c3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2")
-	while v1 == 1:
+	if v1 == 1:
 		idirector.set_focus(v3)
 		idirector.set_secondary_focus(v2)
 		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c1")
@@ -702,7 +1763,19 @@ func local_22133(v0) -> Variant:
 		idirector.set_secondary_focus(v2)
 		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a3_b2_c1")
 		state.set_progress(v0, 6)
-		break
+		return 0
+	if v1 == 2:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c2")
+		state.set_progress(v0, 8)
+		return 0
+	if v1 == 3:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c3")
+		state.set_progress(v0, 8)
+		return 0
 	return 0
 	return 0
 

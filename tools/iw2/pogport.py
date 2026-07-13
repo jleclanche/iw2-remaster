@@ -39,9 +39,10 @@ import collections
 import re
 from pathlib import Path
 
-from .pogdec import (Break, Call, Const, Continue, Debug, Decompiler, DoWhile,
-                     Every, Expr, Func, Goto, Halt, If, Null, Ret, Str, Un,
-                     Var, While, Assign, Bin, Do, Yield, argc_census, _snake)
+from .pogdec import (Break, Call, Const, Continue, Debug, Decompiler, Dispatch,
+                     DoWhile, Every, Expr, Func, Goto, Halt, If, Null, PcSet,
+                     Ret, Str, Un, Var, While, Assign, Bin, Do, Yield,
+                     argc_census, _snake)
 from .pogdis import parse_pkg
 from .resources import ResourceFS
 
@@ -200,6 +201,9 @@ class Port:
         target = e.target
         args = [self.x(a) for a in e.args]
 
+        if target.startswith("_pog_"):      # a PogScript helper, not a coroutine
+            return "%s(%s)" % (target, ", ".join(args))
+
         if "." in target:
             pkg, fn = target.split(".", 1)
             pkg = pkg.lower()
@@ -278,6 +282,23 @@ class Port:
             return [i + "break"]
         if isinstance(s, Continue):
             return [i + "continue"]
+        if isinstance(s, PcSet):
+            return ["%s_pc = %d" % (i, s.target), "%scontinue" % i]
+        if isinstance(s, Dispatch):
+            # Irreducible control flow, rebuilt as its basic blocks under an
+            # explicit pc. Not pretty, but exact -- and it runs.
+            self.unstructured += 1
+            out = ["%svar _pc: int = %d" % (i, s.entry),
+                   "%swhile true:" % i]
+            first = True
+            for addr, stmts in s.blocks:
+                kw = "if" if first else "elif"
+                first = False
+                out.append("%s%s _pc == %d:" % (_ind(d + 1), kw, addr))
+                out += self.body(stmts, d + 2)
+            out.append("%selse:" % _ind(d + 1))
+            out.append("%sreturn 0" % _ind(d + 2))
+            return out
         if isinstance(s, Goto):
             self.unstructured += 1
             return ["%spush_error(\"PORT: unstructured jump to L%d\")"
@@ -347,6 +368,9 @@ def _locals_used(f: Func) -> int:
                 walk(s.body)
             elif isinstance(s, (Every, Debug)):
                 walk(s.body)
+            elif isinstance(s, Dispatch):
+                for _addr, body in s.blocks:
+                    walk(body)
 
     walk(f.body)
     return hi[0]
@@ -424,9 +448,10 @@ def main() -> None:
             broken.append((stem, nfuncs, bad))
 
     print("ported %d packages, %d functions -> %s" % (pkgs, total, GEN))
-    print("  %d/%d functions ported cleanly (%.1f%%)"
+    print("  %d/%d as structured code (%.1f%%)"
           % (clean, total, 100.0 * clean / total))
-    print("  %d functions still contain an unstructured jump" % (total - clean))
+    print("  %d as a basic-block dispatch (irreducible, but exact)"
+          % (total - clean))
     if args.report:
         for stem, n, bad in sorted(broken, key=lambda x: -x[2]):
             print("    %-28s %d/%d" % (stem, bad, n))

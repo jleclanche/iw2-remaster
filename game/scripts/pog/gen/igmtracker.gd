@@ -130,7 +130,7 @@ func g_m_tracker() -> Variant:
 			else:
 				v3 = -1
 		await _pog_wait(5.0)
-		if not (-1 == v3):
+		if -1 == v3:
 			continue
 		v8 = await igmtemplates.instantiate_mission(v3)
 		if v8:
@@ -247,7 +247,7 @@ func cheat_trigger_mission(v0) -> Variant:
 		v1 = 0
 	global.create_bool("g_debug_all_generated_missions_ok", 2, 1)
 	await igmtemplates.instantiate_mission(v0)
-	if _pog_is_null(v1):
+	if not _pog_is_null(v1):
 		return 0
 	global.set_bool("g_debug_all_generated_missions_ok", 0)
 	return 0

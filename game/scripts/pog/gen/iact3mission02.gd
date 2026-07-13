@@ -125,7 +125,7 @@ func local_455() -> Variant:
 	isim.set_faction(v1, v2)
 	await ipilotsetup.generic(v1)
 	group.add_sim(v0, v1)
-	return
+	return v0
 	return 0
 
 func local_786(v0, v1, v2) -> Variant:
@@ -205,7 +205,7 @@ func local_1327(v0, v1, v2, v3, v4) -> Variant:
 			iobjectives.add("a3_m02_objectives_dock")
 			sim.destroy(v3)
 			return
-		if not (await iutilities.player_in_range(v3)):
+		if await iutilities.player_in_range(v3):
 			continue
 		sim.destroy(v3)
 		return
@@ -239,7 +239,7 @@ func local_2132(v0) -> Variant:
 	group.add_group(v1, v2)
 	if PogRuntime.TRACE:
 		debug.print_string("M3.2 Clash of the Titans: Created Patrol 2 \n")
-	return
+	return v1
 	return 0
 
 func local_2686(v0, v1) -> Variant:
@@ -272,7 +272,7 @@ func local_2686(v0, v1) -> Variant:
 	v2 = isim.cast(iship.find_player_ship())
 	while true:
 		await _pog_wait(1)
-		if 180000.0 < sim.distance_between(v2, v0):
+		if 180000.0 >= sim.distance_between(v2, v0):
 			continue
 		if not (v13):
 			v13 = 1
@@ -318,7 +318,7 @@ func local_2686(v0, v1) -> Variant:
 					isim.kill(isim.cast(v6))
 					state.set_progress(v1, 2)
 					iobjectives.add("a3_m02_objectives_dock")
-		if _pog_is_null(v12) and 3 < state.progress(v1) and isim.is_docked_to_structure(v2, v3):
+		if not (_pog_is_null(v12) and 3 < state.progress(v1) and isim.is_docked_to_structure(v2, v3)):
 			continue
 		iobjectives.set_state("a3_m02_objectives_dock", 1)
 		v12 = 1
@@ -388,7 +388,7 @@ func local_4657() -> Variant:
 	await ipilotsetup.generic_cargo_pod(v1)
 	isim.set_faction(v1, v2)
 	group.add_sim(v0, v1)
-	return
+	return v0
 	return 0
 
 func local_5897() -> Variant:
@@ -426,7 +426,7 @@ func local_5897() -> Variant:
 			v6 = 1 + v6
 		group.add_group(v0, v1)
 		v7 = 1 + v7
-	return
+	return v0
 	return 0
 
 func local_6510(v0, v1) -> Variant:
@@ -483,7 +483,7 @@ func local_7044(v0, v1, v2) -> Variant:
 		if not (v4) and v3 and 90000.0 < sim.distance_between(v1, v6):
 			v4 = 1
 			await iconversation.one_liner(0, "name_clay", "a3_m02_dialogue_clay_what_the")
-		if v4 and v3 and 90000.0 < sim.distance_between(v1, v0):
+		if not (v4 and v3 and 90000.0 < sim.distance_between(v1, v0)):
 			continue
 	return
 	return 0
@@ -491,7 +491,7 @@ func local_7044(v0, v1, v2) -> Variant:
 func local_7400(v0, v1, v2, v3) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 4 == state.progress(v3) and 25000.0 < sim.distance_between(v1, v0):
+		if not (4 == state.progress(v3) and 25000.0 < sim.distance_between(v1, v0)):
 			continue
 		iobjectives.set_state("a3_m02_objectives_return", 1)
 		state.set_progress(v3, 6)
@@ -559,14 +559,14 @@ func mission_handler() -> Variant:
 	if _pog_is_null(v7):
 		if PogRuntime.TRACE:
 			debug.error("iAct3:Unable to find player base")
-	if not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
+	if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
 		await iconversation.one_liner(0, "", "Testing mission in isolation............")
 		global.set_string("g_player_base_system", "map:/geog/badlands/santa_romera")
 		v7 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")
 		isim.capsule_jump(v4, isim.cast(v7))
 		while true:
 			await _pog_wait(1.0)
-			if not (not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world()))):
+			if not (not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
 				break
 		await _pog_wait(4.0)
 	await ibacktobase.inhibit()
@@ -595,7 +595,7 @@ func mission_handler() -> Variant:
 			v3 = 1
 			await icutsceneutilities.handle_abort(_pog_spawn(local_12031.bind()))
 			_pog_spawn(local_10216.bind(v6, v10))
-		if 100 == state.progress(v10) or 7 == state.progress(v10):
+		if not (100 == state.progress(v10) or 7 == state.progress(v10)):
 			continue
 		if 7 == state.progress(v10):
 			global.set_bool("g_act3_clash_of_titans_complete", 1)
@@ -644,7 +644,7 @@ func local_9581() -> Variant:
 			v4 = 1 + v4
 		group.add_group(v0, v1)
 		v5 = 1 + v5
-	return
+	return v0
 	return 0
 
 func local_10041(v0, v1, v2) -> Variant:
@@ -711,9 +711,9 @@ func local_10216(v0, v1) -> Variant:
 			await iescort.goose(v3, 40.0, 10000.0, 0)
 			await _pog_wait(7.0)
 			_pog_spawn(iscriptedorders.lagrange_handler.bind(v3, _pog_clone("Random")))
-		if v14:
+		if not (v14):
 			continue
-		if not (sim.is_alive(v12)):
+		if sim.is_alive(v12):
 			continue
 		iobjectives.set_state("a3_m02_objectives_protect_hoffer", 1)
 		iai.give_flee_order(v4, v11)
@@ -742,7 +742,7 @@ func local_11540() -> Variant:
 	v1 = iship.create("ini:/sims/ships/utility/puffin", await ishipcreation.ship_name("League", -1))
 	await ipilotsetup.generic_military(v1)
 	group.add_sim(v0, v1)
-	return
+	return v0
 	return 0
 
 func local_12031() -> Variant:
@@ -1097,7 +1097,7 @@ func local_19559(v0) -> Variant:
 				debug.print_handle(v9)
 				debug.print_string(")")
 				debug.print_string(" for its order status\n")
-			if 300.0 <= sim.distance_between(v9, group.nth_sim(v4, v1)):
+			if 300.0 > sim.distance_between(v9, group.nth_sim(v4, v1)):
 				continue
 			if 8 < v1:
 				v1 = 1 + v1

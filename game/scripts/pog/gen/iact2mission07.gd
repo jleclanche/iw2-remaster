@@ -116,7 +116,7 @@ func local_407() -> Variant:
 	group.add_sim(v0, v1)
 	if PogRuntime.TRACE:
 		debug.print_string("Mission 2-07: created freelancer posse\n")
-	return
+	return v0
 	return 0
 
 func local_716(v0, v1) -> Variant:
@@ -128,57 +128,191 @@ func local_716(v0, v1) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v2 = 0
-	v5 = null
-	v6 = iship.cast(group.leader(v0))
-	v8 = ifaction.find("Player")
-	v9 = ifaction.find("Independent")
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: started freelancer dialogue monitor\n")
+	var _pc: int = 716
 	while true:
-		await _pog_wait(5)
-		if PogRuntime.TRACE:
+		if _pc == 716:
+			v2 = 0
+			v5 = null
+			v6 = iship.cast(group.leader(v0))
+			v8 = ifaction.find("Player")
+			v9 = ifaction.find("Independent")
+			_pc = 853
+			continue
+		elif _pc == 832:
+			debug.print_string("Mission 2-07: started freelancer dialogue monitor\n")
+			_pc = 853
+			continue
+		elif _pc == 853:
+			_pc = 858
+			continue
+		elif _pc == 858:
+			await _pog_frame()
+			if _pog_every(859, 5.0):
+				_pc = 872
+				continue
+			else:
+				_pc = 1564
+				continue
+		elif _pc == 872:
+			_pc = 898
+			continue
+		elif _pc == 877:
 			debug.print_string("Mission 2-07: Still in freelance dialogue monitor\n")
-		v7 = iship.find_player_ship()
-		if _pog_is_null(v2) and sim.cast(v6):
+			_pc = 898
 			continue
-		if 700.0 <= sim.distance_between(v7, v6):
+		elif _pc == 898:
+			v7 = iship.find_player_ship()
+			if _pog_is_null(v2) and sim.cast(v6):
+				_pc = 949
+				continue
+			else:
+				_pc = 1564
+				continue
+		elif _pc == 949:
+			if 700.0 <= sim.distance_between(v7, v6):
+				_pc = 983
+				continue
+			else:
+				_pc = 1564
+				continue
+		elif _pc == 983:
+			if 1 == state.progress(v1) or _pog_is_null(state.progress(v1)):
+				_pc = 1029
+				continue
+			else:
+				_pc = 1564
+				continue
+		elif _pc == 1029:
+			_pc = 1055
 			continue
-		if 1 == state.progress(v1) or _pog_is_null(state.progress(v1)):
-			continue
-		if PogRuntime.TRACE:
+		elif _pc == 1034:
 			debug.print_string("Mission 2-07: Starting freelancer dialogue session\n")
-		v2 = 1
-		await iconversation.begin()
-		await iconversation.add_response("a2_m07_text_player_c1_option_1_yes", "a2_m07_dialogue_player_c1_option_1_yes")
-		if _pog_is_null(state.progress(v1)):
+			_pc = 1055
+			continue
+		elif _pc == 1055:
+			v2 = 1
+			await iconversation.begin()
+			await iconversation.add_response("a2_m07_text_player_c1_option_1_yes", "a2_m07_dialogue_player_c1_option_1_yes")
+			if _pog_is_null(state.progress(v1)):
+				_pc = 1128
+				continue
+			else:
+				_pc = 1160
+				continue
+		elif _pc == 1128:
 			await iconversation.add_response("a2_m07_text_player_c1_option_2_no", "a2_m07_dialogue_player_c1_option_2_no")
-		else:
+			_pc = 1187
+			continue
+		elif _pc == 1160:
 			await iconversation.add_response("a2_m07_text_player_c1_option_2_just_looking", "a2_m07_dialogue_player_c1_option_2_just_looking")
-		if _pog_is_null(state.progress(v1)):
+			_pc = 1187
+			continue
+		elif _pc == 1187:
+			if _pog_is_null(state.progress(v1)):
+				_pc = 1212
+				continue
+			else:
+				_pc = 1254
+				continue
+		elif _pc == 1212:
 			v3 = await iconversation.ask(v6, "Tadsar", "a2_m07_dialogue_freelancers_c1_your_new_in_the_area")
-		else:
+			_pc = 1291
+			continue
+		elif _pc == 1254:
 			v3 = await iconversation.ask(v6, "Tadsar", "a2_m07_dialogue_freelancers_c1_back_again")
-		while v3 == 1:
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: Player took freelancer option one - no\n")
+			_pc = 1291
+			continue
+		elif _pc == 1291:
+			_pc = 1542
+			continue
+		elif _pc == 1296:
+			_pc = 1322
+			continue
+		elif _pc == 1301:
+			debug.print_string("Mission 2-07: Player took freelancer option one - no\n")
+			_pc = 1322
+			continue
+		elif _pc == 1322:
 			await iconversation.say(v6, "Tadsar", "a2_m07_dialogue_freelancers_c1_response_1_youll_probably")
 			await iconversation.end()
 			state.set_progress(v1, 2)
 			v2 = 0
+			_pc = 1596
+			continue
+		elif _pc == 1401:
+			_pc = 1427
+			continue
+		elif _pc == 1406:
+			debug.print_string("Mission 2-07: Player took freelancer option two - just looking\n")
+			_pc = 1427
+			continue
+		elif _pc == 1427:
+			await iconversation.say(v6, "Tadsar", "a2_m07_dialogue_freelancers_c1_response_2_fine")
+			await iconversation.end()
+			state.set_progress(v1, 1)
+			v2 = 0
+			await _pog_wait(10.0)
+			_pc = 1564
+			continue
+		elif _pc == 1537:
+			_pc = 1564
+			continue
+		elif _pc == 1542:
+			if v3 != 1:
+				_pc = 1555
+				continue
+			else:
+				_pc = 1296
+				continue
+		elif _pc == 1555:
+			if not _pog_is_null(2):
+				_pc = 1564
+				continue
+			else:
+				_pc = 1401
+				continue
+		elif _pc == 1564:
+			_pc = 858
+			continue
+		elif _pc == 1569:
+			_pc = 1596
+			continue
+		elif _pc == 1575:
+			debug.print_string("Mission 2-07: end of freelancer dialogue monitor\n")
+			_pc = 1596
+			continue
+		elif _pc == 1596:
 			return
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: end of freelancer dialogue monitor\n")
-	return
-	v2 = 0
-	v5 = iship.find_player_ship()
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Started actual freelance handler\n")
-	while true:
-		await _pog_wait(5)
-		if PogRuntime.TRACE:
+		elif _pc == 1641:
+			debug.print_string("Mission 2-07: Started actual freelance handler\n")
+			_pc = 1662
+			continue
+		elif _pc == 1662:
+			_pc = 1667
+			continue
+		elif _pc == 1667:
+			await _pog_frame()
+			if _pog_every(1668, 5.0):
+				_pc = 1681
+				continue
+			else:
+				_pc = 2005
+				continue
+		elif _pc == 1681:
+			_pc = 1707
+			continue
+		elif _pc == 1686:
 			debug.print_string("Mission 2-07: Freelance handler cycle.\n")
-		if _pog_is_null(v2) and await iutilities.player_in_range(v0):
+			_pc = 1707
+			continue
+		elif _pc == 1707:
+			if _pog_is_null(v2) and await iutilities.player_in_range(v0):
+				_pc = 1738
+				continue
+			else:
+				_pc = 1920
+				continue
+		elif _pc == 1738:
 			v2 = 1
 			v4 = await local_407()
 			v6 = iship.cast(group.leader(v4))
@@ -186,16 +320,38 @@ func local_716(v0, v1) -> Variant:
 			sim.point_at(v6, v5)
 			await iformation.line_abreast(v4, 70.0, 1)
 			_pog_spawn(local_716.bind(v4, v1))
-		else:
+			_pc = 2005
+			continue
+		elif _pc == 1920:
 			if 1 == v2 and not (await iutilities.player_in_range(v0)):
+				_pc = 1952
 				continue
+			else:
+				_pc = 2005
+				continue
+		elif _pc == 1952:
 			v2 = 0
 			group.destroy(v4, 1)
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: Nuking freelancers - no one wants them anymore\n")
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Ending freelancer hander\n")
-	return
+			_pc = 2005
+			continue
+		elif _pc == 1984:
+			debug.print_string("Mission 2-07: Nuking freelancers - no one wants them anymore\n")
+			_pc = 2005
+			continue
+		elif _pc == 2005:
+			_pc = 1667
+			continue
+		elif _pc == 2010:
+			_pc = 2037
+			continue
+		elif _pc == 2016:
+			debug.print_string("Mission 2-07: Ending freelancer hander\n")
+			_pc = 2037
+			continue
+		elif _pc == 2037:
+			return
+		else:
+			return 0
 	return 0
 
 func local_2039() -> Variant:
@@ -221,7 +377,7 @@ func local_2039() -> Variant:
 	group.add_sim(v0, v1)
 	if PogRuntime.TRACE:
 		debug.print_string("Mission 2-07: Done made marauder vessels, y'all.\n")
-	return
+	return v0
 	return 0
 
 func local_2479(v0, v1, v2) -> Variant:
@@ -252,7 +408,7 @@ func local_2479(v0, v1, v2) -> Variant:
 			debug.print_string("\n")
 		if 100 == state.progress(v2):
 			return
-		if 100 != state.progress(v2) and _pog_is_null(group.sim_count(v0)):
+		if not (100 != state.progress(v2) and _pog_is_null(group.sim_count(v0))):
 			continue
 		if 0 > await iwingmen.count():
 			v3 = iship.cast(list.get_nth(v7, 0))
@@ -288,7 +444,7 @@ func local_3426(v0, v1, v2) -> Variant:
 		await _pog_wait(5)
 		if PogRuntime.TRACE:
 			debug.print_string("Mission 2-07: Maruader handler schedule runs\n")
-		if not (v4) and 3000.0 > sim.distance_between(v0, v1):
+		if not (not (v4) and 3000.0 > sim.distance_between(v0, v1)):
 			continue
 		v4 = 1
 		v3 = await local_2039()
@@ -318,7 +474,7 @@ func local_3667() -> Variant:
 	group.add_sim(v0, v1)
 	if PogRuntime.TRACE:
 		debug.print_string("Mission 2-07: W'hoo! made the ambasador!\n")
-	return
+	return v0
 	return 0
 
 func local_4012(v0, v1, v2) -> Variant:
@@ -332,52 +488,152 @@ func local_4012(v0, v1, v2) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v3 = 0
-	v6 = null
-	v8 = iship.cast(group.leader(v0))
-	v9 = iship.cast(group.nth_sim(v0, 1))
-	v11 = ifaction.find("Player")
-	v12 = ifaction.find("M.C.A.")
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Starting ambasador dialogue monitor\n")
+	var _pc: int = 4012
 	while true:
-		await _pog_wait(5)
-		if PogRuntime.TRACE:
-			debug.print_string("Mission 2-07: Running ambasador dialogue monitor\n")
-		v10 = iship.find_player_ship()
-		if _pog_is_null(v3) and not _pog_is_null(sim.cast(v8)):
+		if _pc == 4012:
+			v3 = 0
+			v6 = null
+			v8 = iship.cast(group.leader(v0))
+			v9 = iship.cast(group.nth_sim(v0, 1))
+			v11 = ifaction.find("Player")
+			v12 = ifaction.find("M.C.A.")
+			_pc = 4187
 			continue
-		if 3 == state.progress(v2) or 2 == state.progress(v2) and 700.0 <= sim.distance_between(v10, v8):
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: Starting conversation with ambasador.\n")
+		elif _pc == 4166:
+			debug.print_string("Mission 2-07: Starting ambasador dialogue monitor\n")
+			_pc = 4187
+			continue
+		elif _pc == 4187:
+			_pc = 4192
+			continue
+		elif _pc == 4192:
+			await _pog_frame()
+			if _pog_every(4193, 5.0):
+				_pc = 4206
+				continue
+			else:
+				_pc = 5390
+				continue
+		elif _pc == 4206:
+			_pc = 4232
+			continue
+		elif _pc == 4211:
+			debug.print_string("Mission 2-07: Running ambasador dialogue monitor\n")
+			_pc = 4232
+			continue
+		elif _pc == 4232:
+			v10 = iship.find_player_ship()
+			if _pog_is_null(v3) and not _pog_is_null(sim.cast(v8)):
+				_pc = 4285
+				continue
+			else:
+				_pc = 5390
+				continue
+		elif _pc == 4285:
+			if 3 == state.progress(v2) or 2 == state.progress(v2) and 700.0 <= sim.distance_between(v10, v8):
+				_pc = 4363
+				continue
+			else:
+				_pc = 4990
+				continue
+		elif _pc == 4363:
+			_pc = 4389
+			continue
+		elif _pc == 4368:
+			debug.print_string("Mission 2-07: Starting conversation with ambasador.\n")
+			_pc = 4389
+			continue
+		elif _pc == 4389:
 			v3 = 1
 			await iconversation.begin()
 			await iconversation.add_response("a2_m07_text_player_c2_option_1_cal_help", "a2_m07_dialogue_player_c2_option_1_cal_help")
 			await iconversation.add_response("a2_m07_text_player_c2_option_2_just_passing_through", "a2_m07_dialogue_player_c2_option_2_just_passing_through")
 			if 2 == state.progress(v2):
-				v4 = await iconversation.ask(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_who_are_you")
-			else:
-				v4 = await iconversation.ask(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_ah_your_back")
-			while v4 == 1:
-				if PogRuntime.TRACE:
-					debug.print_string("Mission 2-07: Player issued ambassador with response one\n")
-				await iconversation.say(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_response_1_ah_a_common")
-				await iconversation.say(0, "name_cal", "a2_m07_dialogue_player_c2_response_1_we_can_help")
-				await iconversation.say(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_response_1_hm_that_might")
-				await iconversation.end()
-				iobjectives.set_state("a2_m07_objectives_redezvous", 1)
-				iobjectives.add("a2_m07_objectives_lure")
-				iai.give_formate_order(v8, v10, 40.0, 0.0, 0.0)
-				state.set_progress(v2, 4)
-				v3 = 0
-				await ibacktobase.inhibit()
-				await _pog_wait(10.0)
-				break
-		else:
-			if 8000.0 > sim.distance_between(v8, v1) and 4 == state.progress(v2):
+				_pc = 4490
 				continue
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: Ambasador following player initiates conversation\n")
+			else:
+				_pc = 4532
+				continue
+		elif _pc == 4490:
+			v4 = await iconversation.ask(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_who_are_you")
+			_pc = 4569
+			continue
+		elif _pc == 4532:
+			v4 = await iconversation.ask(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_ah_your_back")
+			_pc = 4569
+			continue
+		elif _pc == 4569:
+			_pc = 4963
+			continue
+		elif _pc == 4574:
+			_pc = 4600
+			continue
+		elif _pc == 4579:
+			debug.print_string("Mission 2-07: Player issued ambassador with response one\n")
+			_pc = 4600
+			continue
+		elif _pc == 4600:
+			await iconversation.say(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_response_1_ah_a_common")
+			await iconversation.say(0, "name_cal", "a2_m07_dialogue_player_c2_response_1_we_can_help")
+			await iconversation.say(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_response_1_hm_that_might")
+			await iconversation.end()
+			iobjectives.set_state("a2_m07_objectives_redezvous", 1)
+			iobjectives.add("a2_m07_objectives_lure")
+			iai.give_formate_order(v8, v10, 40.0, 0.0, 0.0)
+			state.set_progress(v2, 4)
+			v3 = 0
+			await ibacktobase.inhibit()
+			await _pog_wait(10.0)
+			_pc = 4985
+			continue
+		elif _pc == 4867:
+			_pc = 4893
+			continue
+		elif _pc == 4872:
+			debug.print_string("Mission 2-07: Player issued ambassador with response two\n")
+			_pc = 4893
+			continue
+		elif _pc == 4893:
+			await iconversation.one_liner(v8, "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_c2_response_2_hm_ok_then")
+			state.set_progress(v2, 3)
+			v3 = 0
+			_pc = 4985
+			continue
+		elif _pc == 4958:
+			_pc = 4985
+			continue
+		elif _pc == 4963:
+			if v4 != 1:
+				_pc = 4976
+				continue
+			else:
+				_pc = 4574
+				continue
+		elif _pc == 4976:
+			if not _pog_is_null(2):
+				_pc = 4985
+				continue
+			else:
+				_pc = 4867
+				continue
+		elif _pc == 4985:
+			_pc = 5390
+			continue
+		elif _pc == 4990:
+			if 8000.0 > sim.distance_between(v8, v1) and 4 == state.progress(v2):
+				_pc = 5046
+				continue
+			else:
+				_pc = 5390
+				continue
+		elif _pc == 5046:
+			_pc = 5072
+			continue
+		elif _pc == 5051:
+			debug.print_string("Mission 2-07: Ambasador following player initiates conversation\n")
+			_pc = 5072
+			continue
+		elif _pc == 5072:
 			v3 = 1
 			iai.purge_orders(v8)
 			await iconversation.one_liner(sim.cast(v8), "a2_m07_name_ambassador", "a2_m07_dialogue_ambassador_ok_this_should_do")
@@ -389,9 +645,22 @@ func local_4012(v0, v1, v2) -> Variant:
 			state.set_progress(v2, 5)
 			v7 = await iutilities.create_waypoint_near(v10, 0.0)
 			_pog_detach(_pog_spawn(local_3426.bind(v10, v7, v2)))
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Ending ambasador dialogue handler\n")
-	return
+			_pc = 5390
+			continue
+		elif _pc == 5390:
+			_pc = 4192
+			continue
+		elif _pc == 5395:
+			_pc = 5422
+			continue
+		elif _pc == 5401:
+			debug.print_string("Mission 2-07: Ending ambasador dialogue handler\n")
+			_pc = 5422
+			continue
+		elif _pc == 5422:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5431(v0) -> Variant:
@@ -413,7 +682,7 @@ func local_5431(v0) -> Variant:
 		await _pog_wait(5)
 		if PogRuntime.TRACE:
 			debug.print_string("Mission 2-07: Ambasador handler shedule is running\n")
-		if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+		if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
 			continue
 		if _pog_is_null(v1) and await iutilities.player_in_range(v6):
 			await local_55(v0)
@@ -427,11 +696,11 @@ func local_5431(v0) -> Variant:
 				state.set_progress(v0, 3)
 			_pog_spawn(local_4012.bind(v3, v6, v0))
 		else:
-			if 1 == v1 and not (await iutilities.player_in_range(v6)):
+			if not (1 == v1 and not (await iutilities.player_in_range(v6))):
 				continue
 			if PogRuntime.TRACE:
 				debug.print_string("Mission 2-07: Player in range of activation point\n")
-			if not (await iutilities.player_in_range_of_group(v3)):
+			if await iutilities.player_in_range_of_group(v3):
 				continue
 			v1 = 0
 			group.destroy(v3, 1)
@@ -474,7 +743,7 @@ func mission_handler() -> Variant:
 		await _pog_wait(3)
 		if PogRuntime.TRACE:
 			debug.print_string("Mission 2-07: mission handler schedule running\n")
-		if 100 == state.progress(v4) or 6 == state.progress(v4):
+		if not (100 == state.progress(v4) or 6 == state.progress(v4)):
 			continue
 		if 6 == state.progress(v4):
 			global.set_bool("g_act2_ambassador_rescued", 1)

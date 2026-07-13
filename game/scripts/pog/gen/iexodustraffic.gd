@@ -53,7 +53,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	return
+	return imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")
 	return 0
 
 func exodus_traffic_generator() -> Variant:
@@ -90,158 +90,556 @@ func exodus_traffic_generator() -> Variant:
 	var v30: Variant = 0
 	var v31: Variant = 0
 	var v32: Variant = 0
-	v0 = global.pog_float("g_player_sensor_range")
-	v1 = iship.find_player_ship()
-	v5 = null
-	v16 = null
-	v20 = imapentity.find_by_name_in_system("Formhault System Administration Centre", "map:/geog/gagarin/formhault")
-	v21 = await local_0()
-	v22 = null
-	v23 = null
-	v24 = 0
-	v25 = null
-	v29 = 25
-	v30 = 999
-	v31 = 5000
-	v32 = 10000
-	if PogRuntime.TRACE:
-		debug.print_string("iActThree.Event3_30_SurvivorsRetreat : starting\n")
-	v19 = state.find(self)
-	if _pog_is_null(v19):
-		v19 = state.create(self, 0)
-	if not (global.exists("g_total_refugees_running")):
-		global.create_int("g_total_refugees_running", 2, 0)
-	if not (global.exists("g_refugees_waiting_at_fomalhaut")):
-		global.create_int("g_refugees_waiting_at_fomalhaut", 2, 0)
-	if global.exists("g_alien_spread_radius"):
-		v2 = global.pog_int("g_alien_spread_radius")
-	else:
-		v2 = 0
-		global.create_int("g_alien_spread_radius", 2, v2)
-	while v2 == 3:
-		await disable_all_traffic_in_system("map:/geog/gagarin/batatas")
-		await disable_all_traffic_in_system("map:/geog/gagarin/owens_star")
-		await disable_all_traffic_in_system("map:/geog/gagarin/formhault")
-		await disable_all_traffic_in_system("map:/geog/gagarin/ishime")
-		await disable_all_traffic_in_system("map:/geog/gagarin/drake")
-		await disable_all_traffic_in_system("map:/geog/gagarin/osprey")
-		await disable_all_traffic_in_system("map:/geog/gagarin/new_bavaria")
-		break
+	var _pc: int = 32
 	while true:
-		await _pog_wait(1)
-		if 2 != global.pog_int("g_story_3.145"):
+		if _pc == 32:
+			v0 = global.pog_float("g_player_sensor_range")
+			v1 = iship.find_player_ship()
+			v5 = null
+			v16 = null
+			v20 = imapentity.find_by_name_in_system("Formhault System Administration Centre", "map:/geog/gagarin/formhault")
+			v21 = await local_0()
+			v22 = null
+			v23 = null
+			v24 = 0
+			v25 = null
+			v29 = 25
+			v30 = 999
+			v31 = 5000
+			v32 = 10000
+			_pc = 255
+			continue
+		elif _pc == 234:
+			debug.print_string("iActThree.Event3_30_SurvivorsRetreat : starting\n")
+			_pc = 255
+			continue
+		elif _pc == 255:
+			v19 = state.find(self)
+			if _pog_is_null(v19):
+				_pc = 300
+				continue
+			else:
+				_pc = 333
+				continue
+		elif _pc == 300:
+			v19 = state.create(self, 0)
+			_pc = 333
+			continue
+		elif _pc == 333:
+			if not (global.exists("g_total_refugees_running")):
+				_pc = 359
+				continue
+			else:
+				_pc = 383
+				continue
+		elif _pc == 359:
+			global.create_int("g_total_refugees_running", 2, 0)
+			_pc = 383
+			continue
+		elif _pc == 383:
+			if not (global.exists("g_refugees_waiting_at_fomalhaut")):
+				_pc = 409
+				continue
+			else:
+				_pc = 433
+				continue
+		elif _pc == 409:
+			global.create_int("g_refugees_waiting_at_fomalhaut", 2, 0)
+			_pc = 433
+			continue
+		elif _pc == 433:
+			if global.exists("g_alien_spread_radius"):
+				_pc = 458
+				continue
+			else:
+				_pc = 489
+				continue
+		elif _pc == 458:
+			v2 = global.pog_int("g_alien_spread_radius")
+			_pc = 524
+			continue
+		elif _pc == 489:
+			v2 = 0
+			global.create_int("g_alien_spread_radius", 2, v2)
+			_pc = 524
+			continue
+		elif _pc == 524:
+			_pc = 686
+			continue
+		elif _pc == 529:
+			await disable_all_traffic_in_system("map:/geog/gagarin/batatas")
+			_pc = 550
+			continue
+		elif _pc == 550:
+			await disable_all_traffic_in_system("map:/geog/gagarin/owens_star")
+			await disable_all_traffic_in_system("map:/geog/gagarin/formhault")
+			await disable_all_traffic_in_system("map:/geog/gagarin/ishime")
+			_pc = 613
+			continue
+		elif _pc == 613:
+			await disable_all_traffic_in_system("map:/geog/gagarin/drake")
+			await disable_all_traffic_in_system("map:/geog/gagarin/osprey")
+			_pc = 655
+			continue
+		elif _pc == 655:
+			await disable_all_traffic_in_system("map:/geog/gagarin/new_bavaria")
+			_pc = 725
+			continue
+		elif _pc == 681:
+			_pc = 725
+			continue
+		elif _pc == 686:
+			if v2 != 3:
+				_pc = 700
+				continue
+			else:
+				_pc = 529
+				continue
+		elif _pc == 700:
+			if not _pog_is_null(2):
+				_pc = 709
+				continue
+			else:
+				_pc = 550
+				continue
+		elif _pc == 709:
+			if not _pog_is_null(1):
+				_pc = 717
+				continue
+			else:
+				_pc = 613
+				continue
+		elif _pc == 717:
+			if not _pog_is_null(0):
+				_pc = 725
+				continue
+			else:
+				_pc = 655
+				continue
+		elif _pc == 725:
+			_pc = 730
+			continue
+		elif _pc == 730:
+			await _pog_frame()
+			if _pog_every(731, 1.0):
+				_pc = 744
+				continue
+			else:
+				_pc = 2732
+				continue
+		elif _pc == 744:
+			if 2 != global.pog_int("g_story_3.145"):
+				_pc = 772
+				continue
+			else:
+				_pc = 820
+				continue
+		elif _pc == 772:
 			if v24:
-				group.destroy(group.from_set(v22), 1)
-			return
-		if not (_pog_eq(v25, isim.active_world())):
+				_pc = 782
+				continue
+			else:
+				_pc = 815
+				continue
+		elif _pc == 782:
+			group.destroy(group.from_set(v22), 1)
+			_pc = 815
+			continue
+		elif _pc == 815:
+			_pc = 2884
+			continue
+		elif _pc == 820:
+			if not _pog_eq(v25, isim.active_world()):
+				_pc = 847
+				continue
+			else:
+				_pc = 973
+				continue
+		elif _pc == 847:
 			v25 = isim.active_world()
 			if _pog_is_null(v24) and _pog_eq("map:/geog/gagarin/formhault", v25):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct3.Event3_30: Creating Magic Cube framework in fomalhaut.\n")
-				v22 = await create_magic_cube_relative_to(v20, 0.0, 0.0, 1650000.0)
-				v24 = 1
-		else:
+				_pc = 894
+				continue
+			else:
+				_pc = 968
+				continue
+		elif _pc == 894:
+			_pc = 920
+			continue
+		elif _pc == 899:
+			debug.print_string("iAct3.Event3_30: Creating Magic Cube framework in fomalhaut.\n")
+			_pc = 920
+			continue
+		elif _pc == 920:
+			v22 = await create_magic_cube_relative_to(v20, 0.0, 0.0, 1650000.0)
+			v24 = 1
+			_pc = 968
+			continue
+		elif _pc == 968:
+			_pc = 1051
+			continue
+		elif _pc == 973:
 			if 0 > group.sim_count(v26):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct3.Event3_30: removing refugee fleet refugees.\n")
-				group.destroy(v26, 1)
-				v28 = 0
-		v5 = list.from_set(isim.non_planetary_in_radius(v1, 2.0 * v0))
-		v3 = await local_8094(isim.active_world())
-		if 1500000000.0 < sim.distance_between(v1, v20) and -1 == v3:
+				_pc = 998
+				continue
+			else:
+				_pc = 1051
+				continue
+		elif _pc == 998:
+			_pc = 1024
+			continue
+		elif _pc == 1003:
+			debug.print_string("iAct3.Event3_30: removing refugee fleet refugees.\n")
+			_pc = 1024
+			continue
+		elif _pc == 1024:
+			group.destroy(v26, 1)
+			v28 = 0
+			_pc = 1051
+			continue
+		elif _pc == 1051:
+			v5 = list.from_set(isim.non_planetary_in_radius(v1, 2.0 * v0))
+			v3 = await local_8094(isim.active_world())
+			if 1500000000.0 < sim.distance_between(v1, v20) and -1 == v3:
+				_pc = 1179
+				continue
+			else:
+				_pc = 1531
+				continue
+		elif _pc == 1179:
 			if 350000.0 > sim.distance_between(v1, v28):
-				if PogRuntime.TRACE:
-					debug.print_string("iActThree.Event3_30_SurvivorsRetreat : removing out of range refugee fleet\n")
-				group.destroy(v26, 1)
-				v28 = 0
+				_pc = 1213
+				continue
+			else:
+				_pc = 1266
+				continue
+		elif _pc == 1213:
+			_pc = 1239
+			continue
+		elif _pc == 1218:
+			debug.print_string("iActThree.Event3_30_SurvivorsRetreat : removing out of range refugee fleet\n")
+			_pc = 1239
+			continue
+		elif _pc == 1239:
+			group.destroy(v26, 1)
+			v28 = 0
+			_pc = 1266
+			continue
+		elif _pc == 1266:
 			v23 = isim.sims_in_radius_from_set(v22, v1, 300000.0, 8)
 			if 0 > p_set.item_count(v23):
-				if PogRuntime.TRACE:
-					pass
-				if 1 > p_set.item_count(v23):
-					if PogRuntime.TRACE:
-						debug.print_string("iAct3.Event3_30: More than one cube point in range - this should never happen!\n")
-				v27 = sim.cast(p_set.first_element(v23))
-				if not _pog_eq(v28, v27):
-					v28 = v27
-					if global.pog_int("g_refugees_waiting_at_fomalhaut") < object.int_property(v28, "point_number"):
-						await create_fomalhaut_refugees(v28)
-		else:
-			if 1 + v2 <= v3:
-				v6 = list.item_count(v5)
-				v4 = 0
-				while v6 < v4:
-					v7 = list.get_nth(v5, v4)
-					v8 = ihabitat.cast(v7)
-					if not _pog_is_null(v8):
-						v10 = ihabitat.population(v8)
-						if 999 < v10:
-							if 0 < v10:
-								v10 = 0
-							v14 = 333
-							v12 = v14 / v10 + 1
-							v11 = 999
-						else:
-							if 5000 < v10:
-								v14 = 6 / v30 - v31
-								v12 = v14 / 999 - v10 + 3
-								v11 = 5000
-							else:
-								if 10000 > v10:
-									v10 = 10000
-								v14 = 5 / v31 - v32
-								v12 = v14 / 5000 - v10 + 8
-								v11 = 10000
-						if v2 > v3:
-							v12 = 4 / v12
-						v18 = imapentity.radius_of_influence(v8)
-						v13 = p_set.item_count(isim.sims_in_radius(v8, v18, 536838144)) - v12
-						if v29 > global.pog_int("g_total_refugees_running") + v13:
-							v13 = global.pog_int("g_total_refugees_running") - v29
-						if 0 > v13:
-							if PogRuntime.TRACE:
-								debug.print_string("iAct3.Event3_30: Creating ")
-							if PogRuntime.TRACE:
-								debug.print_string(string.from_int(v13))
-							if PogRuntime.TRACE:
-								debug.print_string(string.join(" from ", string.from_int(v12)))
-							if PogRuntime.TRACE:
-								debug.print_string(" at ")
-							if PogRuntime.TRACE:
-								debug.print_handle(v8)
-							if PogRuntime.TRACE:
-								debug.print_string("\n")
-							while true:
-								v13 = await local_4713(v8, await local_23575(v8), v11) - v13
-								if not (0 > v13):
-									break
-						else:
-							if PogRuntime.TRACE:
-								debug.print_string("iAct3.Event3_30: No free slots after capping at ")
-							if PogRuntime.TRACE:
-								debug.print_handle(v8)
-							if PogRuntime.TRACE:
-								debug.print_string(" - sleeping.\n")
-					else:
-						v9 = ilagrangepoint.cast(v7)
-						if _pog_is_null(v9):
-							if PogRuntime.TRACE:
-								debug.error("iAct3.Event3_30: located non-planetary is neither a habitat nor an l-point.")
-						else:
-							await local_22728(v9, v2, 1, v29)
-							v16 = list.from_set(await local_22555(v9))
-							v15 = 0
-							while list.item_count(v16) < v15:
-								v17 = ilagrangepoint.cast(list.get_nth(v16, v15))
-								await local_22728(v17, v2, 0, v29)
-								v15 = 1 + v15
-					v4 = 1 + v4
-		if 125 < global.pog_int("g_refugees_waiting_at_fomalhaut") and global.pog_bool("g_evacuate_through_accelerator"):
+				_pc = 1329
+				continue
+			else:
+				_pc = 1526
+				continue
+		elif _pc == 1329:
+			_pc = 1342
 			continue
-		global.set_int("g_refugees_waiting_at_fomalhaut", math.random_int(3, 7) + global.pog_int("g_refugees_waiting_at_fomalhaut"))
-	if PogRuntime.TRACE:
-		debug.print_string("iActThree.Event3_30_SurvivorsRetreat : ending\n")
-	return
+		elif _pc == 1334:
+			_pc = 1342
+			continue
+		elif _pc == 1342:
+			if 1 > p_set.item_count(v23):
+				_pc = 1367
+				continue
+			else:
+				_pc = 1393
+				continue
+		elif _pc == 1367:
+			_pc = 1393
+			continue
+		elif _pc == 1372:
+			debug.print_string("iAct3.Event3_30: More than one cube point in range - this should never happen!\n")
+			_pc = 1393
+			continue
+		elif _pc == 1393:
+			v27 = sim.cast(p_set.first_element(v23))
+			if not _pog_eq(v28, v27):
+				_pc = 1446
+				continue
+			else:
+				_pc = 1526
+				continue
+		elif _pc == 1446:
+			v28 = v27
+			if global.pog_int("g_refugees_waiting_at_fomalhaut") < object.int_property(v28, "point_number"):
+				_pc = 1507
+				continue
+			else:
+				_pc = 1526
+				continue
+		elif _pc == 1507:
+			await create_fomalhaut_refugees(v28)
+			_pc = 1526
+			continue
+		elif _pc == 1526:
+			_pc = 2732
+			continue
+		elif _pc == 1531:
+			if 1 + v2 <= v3:
+				_pc = 1549
+				continue
+			else:
+				_pc = 2732
+				continue
+		elif _pc == 1549:
+			v6 = list.item_count(v5)
+			v4 = 0
+			_pc = 1580
+			continue
+		elif _pc == 1580:
+			if v6 < v4:
+				_pc = 1596
+				continue
+			else:
+				_pc = 2732
+				continue
+		elif _pc == 1596:
+			v7 = list.get_nth(v5, v4)
+			v8 = ihabitat.cast(v7)
+			if not _pog_is_null(v8):
+				_pc = 1662
+				continue
+			else:
+				_pc = 2450
+				continue
+		elif _pc == 1662:
+			v10 = ihabitat.population(v8)
+			if 999 < v10:
+				_pc = 1700
+				continue
+			else:
+				_pc = 1761
+				continue
+		elif _pc == 1700:
+			if 0 < v10:
+				_pc = 1712
+				continue
+			else:
+				_pc = 1719
+				continue
+		elif _pc == 1712:
+			v10 = 0
+			_pc = 1719
+			continue
+		elif _pc == 1719:
+			v14 = 333
+			v12 = v14 / v10 + 1
+			v11 = 999
+			_pc = 1909
+			continue
+		elif _pc == 1761:
+			if 5000 < v10:
+				_pc = 1775
+				continue
+			else:
+				_pc = 1833
+				continue
+		elif _pc == 1775:
+			v14 = 6 / v30 - v31
+			v12 = v14 / 999 - v10 + 3
+			v11 = 5000
+			_pc = 1909
+			continue
+		elif _pc == 1833:
+			if 10000 > v10:
+				_pc = 1847
+				continue
+			else:
+				_pc = 1856
+				continue
+		elif _pc == 1847:
+			v10 = 10000
+			_pc = 1856
+			continue
+		elif _pc == 1856:
+			v14 = 5 / v31 - v32
+			v12 = v14 / 5000 - v10 + 8
+			v11 = 10000
+			_pc = 1909
+			continue
+		elif _pc == 1909:
+			if v2 > v3:
+				_pc = 1925
+				continue
+			else:
+				_pc = 1939
+				continue
+		elif _pc == 1925:
+			v12 = 4 / v12
+			_pc = 1939
+			continue
+		elif _pc == 1939:
+			v18 = imapentity.radius_of_influence(v8)
+			v13 = p_set.item_count(isim.sims_in_radius(v8, v18, 536838144)) - v12
+			if v29 > global.pog_int("g_total_refugees_running") + v13:
+				_pc = 2055
+				continue
+			else:
+				_pc = 2087
+				continue
+		elif _pc == 2055:
+			v13 = global.pog_int("g_total_refugees_running") - v29
+			_pc = 2087
+			continue
+		elif _pc == 2087:
+			if 0 > v13:
+				_pc = 2099
+				continue
+			else:
+				_pc = 2369
+				continue
+		elif _pc == 2099:
+			_pc = 2125
+			continue
+		elif _pc == 2104:
+			debug.print_string("iAct3.Event3_30: Creating ")
+			_pc = 2125
+			continue
+		elif _pc == 2125:
+			_pc = 2164
+			continue
+		elif _pc == 2130:
+			debug.print_string(string.from_int(v13))
+			_pc = 2164
+			continue
+		elif _pc == 2164:
+			_pc = 2223
+			continue
+		elif _pc == 2169:
+			debug.print_string(string.join(" from ", string.from_int(v12)))
+			_pc = 2223
+			continue
+		elif _pc == 2223:
+			_pc = 2249
+			continue
+		elif _pc == 2228:
+			debug.print_string(" at ")
+			_pc = 2249
+			continue
+		elif _pc == 2249:
+			_pc = 2273
+			continue
+		elif _pc == 2254:
+			debug.print_handle(v8)
+			_pc = 2273
+			continue
+		elif _pc == 2273:
+			_pc = 2299
+			continue
+		elif _pc == 2278:
+			debug.print_string("\n")
+			_pc = 2299
+			continue
+		elif _pc == 2299:
+			v13 = await local_4713(v8, await local_23575(v8), v11) - v13
+			if 0 <= v13:
+				_pc = 2364
+				continue
+			else:
+				_pc = 2299
+				continue
+		elif _pc == 2364:
+			_pc = 2445
+			continue
+		elif _pc == 2369:
+			_pc = 2395
+			continue
+		elif _pc == 2374:
+			debug.print_string("iAct3.Event3_30: No free slots after capping at ")
+			_pc = 2395
+			continue
+		elif _pc == 2395:
+			_pc = 2419
+			continue
+		elif _pc == 2400:
+			debug.print_handle(v8)
+			_pc = 2419
+			continue
+		elif _pc == 2419:
+			_pc = 2445
+			continue
+		elif _pc == 2424:
+			debug.print_string(" - sleeping.\n")
+			_pc = 2445
+			continue
+		elif _pc == 2445:
+			_pc = 2714
+			continue
+		elif _pc == 2450:
+			v9 = ilagrangepoint.cast(v7)
+			if _pog_is_null(v9):
+				_pc = 2487
+				continue
+			else:
+				_pc = 2518
+				continue
+		elif _pc == 2487:
+			_pc = 2513
+			continue
+		elif _pc == 2492:
+			debug.error("iAct3.Event3_30: located non-planetary is neither a habitat nor an l-point.")
+			_pc = 2513
+			continue
+		elif _pc == 2513:
+			_pc = 2714
+			continue
+		elif _pc == 2518:
+			await local_22728(v9, v2, 1, v29)
+			v16 = list.from_set(await local_22555(v9))
+			v15 = 0
+			_pc = 2595
+			continue
+		elif _pc == 2595:
+			if list.item_count(v16) < v15:
+				_pc = 2624
+				continue
+			else:
+				_pc = 2714
+				continue
+		elif _pc == 2624:
+			v17 = ilagrangepoint.cast(list.get_nth(v16, v15))
+			await local_22728(v17, v2, 0, v29)
+			v15 = 1 + v15
+			_pc = 2595
+			continue
+		elif _pc == 2714:
+			v4 = 1 + v4
+			_pc = 1580
+			continue
+		elif _pc == 2732:
+			if _pog_every(2732, 20.0):
+				_pc = 2745
+				continue
+			else:
+				_pc = 2851
+				continue
+		elif _pc == 2745:
+			if 125 < global.pog_int("g_refugees_waiting_at_fomalhaut") and global.pog_bool("g_evacuate_through_accelerator"):
+				_pc = 2793
+				continue
+			else:
+				_pc = 2851
+				continue
+		elif _pc == 2793:
+			global.set_int("g_refugees_waiting_at_fomalhaut", math.random_int(3, 7) + global.pog_int("g_refugees_waiting_at_fomalhaut"))
+			_pc = 2851
+			continue
+		elif _pc == 2851:
+			_pc = 730
+			continue
+		elif _pc == 2856:
+			_pc = 2884
+			continue
+		elif _pc == 2863:
+			debug.print_string("iActThree.Event3_30_SurvivorsRetreat : ending\n")
+			_pc = 2884
+			continue
+		elif _pc == 2884:
+			return
+		else:
+			return 0
 	return 0
 
 func create_fomalhaut_refugees(v0) -> Variant:
@@ -259,34 +657,131 @@ func create_fomalhaut_refugees(v0) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	v1 = group.create()
-	v5 = null
-	v6 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iExodustraffic.CreateFomalhautRegugees: kludge creating only one allegiance - should be ALL - non relevant (see code)\n")
-	v5 = p_set.from_list(ifaction.all())
-	p_set.remove(v5, ifaction.find("Marauders"))
-	p_set.remove(v5, ifaction.find("Police"))
-	p_set.remove(v5, ifaction.find("Military"))
-	p_set.remove(v5, ifaction.find("Player"))
-	p_set.remove(v5, ifaction.find("MAAS Corporation"))
-	p_set.remove(v5, ifaction.find("The Third Way"))
-	p_set.remove(v5, ifaction.find("Aliens"))
-	v6 = list.from_set(v5)
-	v9 = math.random_int(9, 20)
-	v8 = 0
-	while v9 < v8:
-		v7 = ifaction.cast(list.get_nth(v6, math.random_int(0, 1 - list.item_count(v6))))
-		while math.random_int(1, 7) == 1:
+	var _pc: int = 2921
+	while true:
+		if _pc == 2921:
+			v1 = group.create()
+			v5 = null
+			v6 = null
+			_pc = 2993
+			continue
+		elif _pc == 2972:
+			debug.print_string("iExodustraffic.CreateFomalhautRegugees: kludge creating only one allegiance - should be ALL - non relevant (see code)\n")
+			_pc = 2993
+			continue
+		elif _pc == 2993:
+			v5 = p_set.from_list(ifaction.all())
+			p_set.remove(v5, ifaction.find("Marauders"))
+			p_set.remove(v5, ifaction.find("Police"))
+			p_set.remove(v5, ifaction.find("Military"))
+			p_set.remove(v5, ifaction.find("Player"))
+			p_set.remove(v5, ifaction.find("MAAS Corporation"))
+			p_set.remove(v5, ifaction.find("The Third Way"))
+			p_set.remove(v5, ifaction.find("Aliens"))
+			v6 = list.from_set(v5)
+			v9 = math.random_int(9, 20)
+			v8 = 0
+			_pc = 3357
+			continue
+		elif _pc == 3357:
+			if v9 < v8:
+				_pc = 3373
+				continue
+			else:
+				_pc = 3774
+				continue
+		elif _pc == 3373:
+			v7 = ifaction.cast(list.get_nth(v6, math.random_int(0, 1 - list.item_count(v6))))
+			_pc = 3519
+			continue
+		elif _pc == 3449:
 			v14 = 6
-			break
-		v2 = iship.create(await ishipcreation.get_ship(ifaction.allegiance(v7), v14), await ishipcreation.ship_name(ifaction.pog_name(v7), -1))
-		isim.set_faction(v2, v7)
-		await ipilotsetup.generic_coward(v2)
-		group.add_sim(v1, v2)
-		v8 = 1 + v8
-	await iutilities.group_set_cullable(v1, 0)
-	return
+			_pc = 3597
+			continue
+		elif _pc == 3462:
+			v14 = 4
+			_pc = 3597
+			continue
+		elif _pc == 3475:
+			v14 = 12
+			_pc = 3597
+			continue
+		elif _pc == 3488:
+			v14 = 13
+			_pc = 3597
+			continue
+		elif _pc == 3501:
+			v14 = 21
+			_pc = 3597
+			continue
+		elif _pc == 3514:
+			_pc = 3597
+			continue
+		elif _pc == 3519:
+			if math.random_int(1, 7) != 1:
+				_pc = 3543
+				continue
+			else:
+				_pc = 3449
+				continue
+		elif _pc == 3543:
+			if not _pog_is_null(2):
+				_pc = 3552
+				continue
+			else:
+				_pc = 3462
+				continue
+		elif _pc == 3552:
+			if not _pog_is_null(3):
+				_pc = 3561
+				continue
+			else:
+				_pc = 3475
+				continue
+		elif _pc == 3561:
+			if not _pog_is_null(4):
+				_pc = 3570
+				continue
+			else:
+				_pc = 3475
+				continue
+		elif _pc == 3570:
+			if not _pog_is_null(5):
+				_pc = 3579
+				continue
+			else:
+				_pc = 3488
+				continue
+		elif _pc == 3579:
+			if not _pog_is_null(6):
+				_pc = 3588
+				continue
+			else:
+				_pc = 3501
+				continue
+		elif _pc == 3588:
+			if not _pog_is_null(7):
+				_pc = 3597
+				continue
+			else:
+				_pc = 3501
+				continue
+		elif _pc == 3597:
+			v2 = iship.create(await ishipcreation.get_ship(ifaction.allegiance(v7), v14), await ishipcreation.ship_name(ifaction.pog_name(v7), -1))
+			isim.set_faction(v2, v7)
+			await ipilotsetup.generic_coward(v2)
+			group.add_sim(v1, v2)
+			v8 = 1 + v8
+			_pc = 3357
+			continue
+		elif _pc == 3774:
+			await iutilities.group_set_cullable(v1, 0)
+			_pc = 3804
+			continue
+		elif _pc == 3804:
+			return
+		else:
+			return 0
 	return 0
 
 func disable_all_traffic_in_system(v0) -> Variant:
@@ -354,7 +849,6 @@ func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
 		v9 = v10 + v9
 		v11 = 1 + v11
 	sim.destroy(v5)
-	push_error("PORT: unstructured jump to L4703")
 	return _pog_clone(v4)
 	return 0
 
@@ -369,47 +863,706 @@ func local_4713(v0, v1, v2) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v4 = await local_8094(isim.world_name(v0))
-	v9 = ifaction.find("Underworld")
-	v10 = ifaction.find("Police")
-	if -100 == v4:
-		if PogRuntime.TRACE:
+	var v13: Variant = 0
+	var _pc: int = 4713
+	while true:
+		if _pc == 4713:
+			v4 = await local_8094(isim.world_name(v0))
+			v9 = ifaction.find("Underworld")
+			v10 = ifaction.find("Police")
+			if -100 == v4:
+				_pc = 4820
+				continue
+			else:
+				_pc = 4854
+				continue
+		elif _pc == 4820:
+			_pc = 4846
+			continue
+		elif _pc == 4825:
 			debug.error("iAct3.create_retreat_at_location: Called outside Gagarin cluster")
-	else:
-		v12 = _pog_eq(isim.world_name(v0), isim.active_world())
-		if ihabitat.cast(v0):
+			_pc = 4846
+			continue
+		elif _pc == 4846:
+			_pc = 8092
+			continue
+		elif _pc == 4854:
+			v12 = _pog_eq(isim.world_name(v0), isim.active_world())
+			if ihabitat.cast(v0):
+				_pc = 4918
+				continue
+			else:
+				_pc = 4994
+				continue
+		elif _pc == 4918:
 			v11 = ihabitat.allegiance(ihabitat.cast(v0))
 			v8 = ifaction.find(await iutilities.from_allegiance_enum(v11))
-		while _pog_is_null(v1):
+			_pc = 4994
+			continue
+		elif _pc == 4994:
+			_pc = 8002
+			continue
+		elif _pc == 4999:
 			if 999 == v2:
-				v3 = math.random_int(1, 2)
+				_pc = 5013
+				continue
 			else:
-				if 5000 == v2:
-					v3 = math.random_int(1, 3)
-				else:
-					v3 = math.random_int(2, 4)
+				_pc = 5040
+				continue
+		elif _pc == 5013:
+			v3 = math.random_int(1, 2)
+			_pc = 5104
+			continue
+		elif _pc == 5040:
+			if 5000 == v2:
+				_pc = 5054
+				continue
+			else:
+				_pc = 5081
+				continue
+		elif _pc == 5054:
+			v3 = math.random_int(1, 3)
+			_pc = 5104
+			continue
+		elif _pc == 5081:
+			v3 = math.random_int(2, 4)
+			_pc = 5104
+			continue
+		elif _pc == 5104:
 			v5 = await ishipcreation.create_character_group(9, "GenericAggressive", v3, v8, "Random")
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				await local_8691(group.leader(v5), v0)
+				_pc = 5178
+				continue
 			else:
-				sim.place_at(group.leader(v5), 0)
+				_pc = 5220
+				continue
+		elif _pc == 5178:
+			await local_8691(group.leader(v5), v0)
+			_pc = 5253
+			continue
+		elif _pc == 5220:
+			sim.place_at(group.leader(v5), 0)
+			_pc = 5253
+			continue
+		elif _pc == 5253:
 			await iformation.goose(v5, 100.0, 1)
 			if not (v12):
-				await local_8506(v5, v0)
+				_pc = 5289
+				continue
+			else:
+				_pc = 5313
+				continue
+		elif _pc == 5289:
+			await local_8506(v5, v0)
+			_pc = 5313
+			continue
+		elif _pc == 5313:
 			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
-			break
-	return
+			_pc = 8082
+			continue
+		elif _pc == 5355:
+			if 999 == v2:
+				_pc = 5369
+				continue
+			else:
+				_pc = 5381
+				continue
+		elif _pc == 5369:
+			v3 = 1
+			_pc = 5403
+			continue
+		elif _pc == 5381:
+			v3 = math.random_int(1, 3)
+			_pc = 5403
+			continue
+		elif _pc == 5403:
+			v5 = group.create()
+			v13 = 0
+			_pc = 5429
+			continue
+		elif _pc == 5429:
+			if v3 < v13:
+				_pc = 5445
+				continue
+			else:
+				_pc = 5831
+				continue
+		elif _pc == 5445:
+			_pc = 5566
+			continue
+		elif _pc == 5450:
+			v7 = 6
+			_pc = 5667
+			continue
+		elif _pc == 5463:
+			v7 = 0
+			_pc = 5667
+			continue
+		elif _pc == 5475:
+			v7 = 4
+			_pc = 5667
+			continue
+		elif _pc == 5488:
+			v7 = 12
+			_pc = 5667
+			continue
+		elif _pc == 5501:
+			v7 = 13
+			_pc = 5667
+			continue
+		elif _pc == 5514:
+			v7 = 21
+			_pc = 5667
+			continue
+		elif _pc == 5527:
+			_pc = 5553
+			continue
+		elif _pc == 5532:
+			debug.error("iAct.create_retreat: POG's random number generator is faulty!\n")
+			_pc = 5553
+			continue
+		elif _pc == 5553:
+			v7 = 12
+			_pc = 5667
+			continue
+		elif _pc == 5566:
+			if math.random_int(1, 9) != 1:
+				_pc = 5590
+				continue
+			else:
+				_pc = 5450
+				continue
+		elif _pc == 5590:
+			if not _pog_is_null(2):
+				_pc = 5599
+				continue
+			else:
+				_pc = 5463
+				continue
+		elif _pc == 5599:
+			if not _pog_is_null(3):
+				_pc = 5608
+				continue
+			else:
+				_pc = 5463
+				continue
+		elif _pc == 5608:
+			if not _pog_is_null(4):
+				_pc = 5617
+				continue
+			else:
+				_pc = 5475
+				continue
+		elif _pc == 5617:
+			if not _pog_is_null(5):
+				_pc = 5626
+				continue
+			else:
+				_pc = 5488
+				continue
+		elif _pc == 5626:
+			if not _pog_is_null(6):
+				_pc = 5635
+				continue
+			else:
+				_pc = 5488
+				continue
+		elif _pc == 5635:
+			if not _pog_is_null(7):
+				_pc = 5644
+				continue
+			else:
+				_pc = 5501
+				continue
+		elif _pc == 5644:
+			if not _pog_is_null(8):
+				_pc = 5653
+				continue
+			else:
+				_pc = 5514
+				continue
+		elif _pc == 5653:
+			if not _pog_is_null(9):
+				_pc = 5662
+				continue
+			else:
+				_pc = 5514
+				continue
+		elif _pc == 5662:
+			_pc = 5527
+			continue
+		elif _pc == 5667:
+			v6 = iship.create(await ishipcreation.get_ship(v11, v7), await ishipcreation.ship_name(await iutilities.from_allegiance_enum(v11), -1))
+			await ipilotsetup.generic_coward(v6)
+			isim.set_faction(v6, v8)
+			group.add_sim(v5, v6)
+			v13 = 1 + v13
+			_pc = 5429
+			continue
+		elif _pc == 5831:
+			await iutilities.group_set_cullable(v5, 0)
+			if v12:
+				_pc = 5861
+				continue
+			else:
+				_pc = 5903
+				continue
+		elif _pc == 5861:
+			await local_8691(group.leader(v5), v0)
+			_pc = 5936
+			continue
+		elif _pc == 5903:
+			sim.place_at(group.leader(v5), 0)
+			_pc = 5936
+			continue
+		elif _pc == 5936:
+			await iformation.random_sphere(v5, 1000.0, 1)
+			if not (v12):
+				_pc = 5972
+				continue
+			else:
+				_pc = 5996
+				continue
+		elif _pc == 5972:
+			await local_8506(v5, v0)
+			_pc = 5996
+			continue
+		elif _pc == 5996:
+			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
+			_pc = 8082
+			continue
+		elif _pc == 6038:
+			if 999 == v2:
+				_pc = 6052
+				continue
+			else:
+				_pc = 6079
+				continue
+		elif _pc == 6052:
+			v3 = math.random_int(1, 2)
+			_pc = 6101
+			continue
+		elif _pc == 6079:
+			v3 = math.random_int(1, 3)
+			_pc = 6101
+			continue
+		elif _pc == 6101:
+			v5 = await ishipcreation.create_character_group(17, "Generic", v3, v8, "Random")
+			await iutilities.group_set_cullable(v5, 0)
+			if v12:
+				_pc = 6175
+				continue
+			else:
+				_pc = 6217
+				continue
+		elif _pc == 6175:
+			await local_8691(group.leader(v5), v0)
+			_pc = 6250
+			continue
+		elif _pc == 6217:
+			sim.place_at(group.leader(v5), 0)
+			_pc = 6250
+			continue
+		elif _pc == 6250:
+			await iformation.goose(v5, 120.0, 1)
+			if not (v12):
+				_pc = 6286
+				continue
+			else:
+				_pc = 6310
+				continue
+		elif _pc == 6286:
+			await local_8506(v5, v0)
+			_pc = 6310
+			continue
+		elif _pc == 6310:
+			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
+			_pc = 8082
+			continue
+		elif _pc == 6352:
+			v3 = math.random_int(1, 2) + math.random_int(1, 2)
+			v5 = await ishipcreation.create_character_group(9, "Generic", v3, v9, "Random")
+			await iutilities.group_set_cullable(v5, 0)
+			if v12:
+				_pc = 6465
+				continue
+			else:
+				_pc = 6507
+				continue
+		elif _pc == 6465:
+			await local_8691(group.leader(v5), v0)
+			_pc = 6540
+			continue
+		elif _pc == 6507:
+			sim.place_at(group.leader(v5), 0)
+			_pc = 6540
+			continue
+		elif _pc == 6540:
+			await iformation.line_abreast(v5, 100.0, 1)
+			if not (v12):
+				_pc = 6576
+				continue
+			else:
+				_pc = 6600
+				continue
+		elif _pc == 6576:
+			await local_8506(v5, v0)
+			_pc = 6600
+			continue
+		elif _pc == 6600:
+			_pog_detach(_pog_spawn(pillager_retreat_orders.bind(v5, v0)))
+			_pc = 8082
+			continue
+		elif _pc == 6642:
+			v3 = math.random_int(2, 4)
+			v5 = await ishipcreation.create_character_group(9, "Generic", v3, v10, "Random")
+			await iutilities.group_set_cullable(v5, 0)
+			if v12:
+				_pc = 6739
+				continue
+			else:
+				_pc = 6781
+				continue
+		elif _pc == 6739:
+			await local_8691(group.leader(v5), v0)
+			_pc = 6814
+			continue
+		elif _pc == 6781:
+			sim.place_at(group.leader(v5), 0)
+			_pc = 6814
+			continue
+		elif _pc == 6814:
+			await iformation.goose(v5, 150.0, 1)
+			if not (v12):
+				_pc = 6850
+				continue
+			else:
+				_pc = 6874
+				continue
+		elif _pc == 6850:
+			await local_8506(v5, v0)
+			_pc = 6874
+			continue
+		elif _pc == 6874:
+			_pog_detach(_pog_spawn(police_retreat_orders.bind(v5, v0)))
+			_pc = 8082
+			continue
+		elif _pc == 6916:
+			if 999 == v2:
+				_pc = 6930
+				continue
+			else:
+				_pc = 6942
+				continue
+		elif _pc == 6930:
+			v3 = 1
+			_pc = 6964
+			continue
+		elif _pc == 6942:
+			v3 = math.random_int(1, 2)
+			_pc = 6964
+			continue
+		elif _pc == 6964:
+			v5 = await ishipcreation.create_character_group(20, "GenericSupply", v3, v8, "Random")
+			await iutilities.group_set_cullable(v5, 0)
+			if v12:
+				_pc = 7038
+				continue
+			else:
+				_pc = 7080
+				continue
+		elif _pc == 7038:
+			await local_8691(group.leader(v5), v0)
+			_pc = 7113
+			continue
+		elif _pc == 7080:
+			sim.place_at(group.leader(v5), 0)
+			_pc = 7113
+			continue
+		elif _pc == 7113:
+			await iformation.random_sphere(v5, 1000.0, 1)
+			if not (v12):
+				_pc = 7149
+				continue
+			else:
+				_pc = 7173
+				continue
+		elif _pc == 7149:
+			await local_8506(v5, v0)
+			_pc = 7173
+			continue
+		elif _pc == 7173:
+			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
+			_pc = 8082
+			continue
+		elif _pc == 7215:
+			if 999 == v2:
+				_pc = 7229
+				continue
+			else:
+				_pc = 7241
+				continue
+		elif _pc == 7229:
+			v3 = 1
+			_pc = 7305
+			continue
+		elif _pc == 7241:
+			if 5000 == v2:
+				_pc = 7255
+				continue
+			else:
+				_pc = 7282
+				continue
+		elif _pc == 7255:
+			v3 = math.random_int(1, 2)
+			_pc = 7305
+			continue
+		elif _pc == 7282:
+			v3 = math.random_int(2, 4)
+			_pc = 7305
+			continue
+		elif _pc == 7305:
+			v5 = await ishipcreation.create_character_group(2, "GenericTrade", v3, v8, "Random")
+			await iutilities.group_set_cullable(v5, 0)
+			if v12:
+				_pc = 7379
+				continue
+			else:
+				_pc = 7421
+				continue
+		elif _pc == 7379:
+			await local_8691(group.leader(v5), v0)
+			_pc = 7454
+			continue
+		elif _pc == 7421:
+			sim.place_at(group.leader(v5), 0)
+			_pc = 7454
+			continue
+		elif _pc == 7454:
+			await iformation.random_sphere(v5, 1750.0, 1)
+			if not (v12):
+				_pc = 7490
+				continue
+			else:
+				_pc = 7514
+				continue
+		elif _pc == 7490:
+			await local_8506(v5, v0)
+			_pc = 7514
+			continue
+		elif _pc == 7514:
+			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
+			_pc = 8082
+			continue
+		elif _pc == 7556:
+			if not (v12):
+				_pc = 7567
+				continue
+			else:
+				_pc = 7573
+				continue
+		elif _pc == 7567:
+			_pc = 8092
+			continue
+		elif _pc == 7573:
+			_pc = 7694
+			continue
+		elif _pc == 7578:
+			v7 = 6
+			_pc = 7795
+			continue
+		elif _pc == 7591:
+			v7 = 0
+			_pc = 7795
+			continue
+		elif _pc == 7603:
+			v7 = 4
+			_pc = 7795
+			continue
+		elif _pc == 7616:
+			v7 = 12
+			_pc = 7795
+			continue
+		elif _pc == 7629:
+			v7 = 13
+			_pc = 7795
+			continue
+		elif _pc == 7642:
+			v7 = 21
+			_pc = 7795
+			continue
+		elif _pc == 7655:
+			_pc = 7681
+			continue
+		elif _pc == 7660:
+			debug.error("iAct.create_retreat: POG's random number generator is faulty!\n")
+			_pc = 7681
+			continue
+		elif _pc == 7681:
+			v7 = 12
+			_pc = 7795
+			continue
+		elif _pc == 7694:
+			if math.random_int(1, 9) != 1:
+				_pc = 7718
+				continue
+			else:
+				_pc = 7578
+				continue
+		elif _pc == 7718:
+			if not _pog_is_null(2):
+				_pc = 7727
+				continue
+			else:
+				_pc = 7591
+				continue
+		elif _pc == 7727:
+			if not _pog_is_null(3):
+				_pc = 7736
+				continue
+			else:
+				_pc = 7591
+				continue
+		elif _pc == 7736:
+			if not _pog_is_null(4):
+				_pc = 7745
+				continue
+			else:
+				_pc = 7603
+				continue
+		elif _pc == 7745:
+			if not _pog_is_null(5):
+				_pc = 7754
+				continue
+			else:
+				_pc = 7616
+				continue
+		elif _pc == 7754:
+			if not _pog_is_null(6):
+				_pc = 7763
+				continue
+			else:
+				_pc = 7616
+				continue
+		elif _pc == 7763:
+			if not _pog_is_null(7):
+				_pc = 7772
+				continue
+			else:
+				_pc = 7629
+				continue
+		elif _pc == 7772:
+			if not _pog_is_null(8):
+				_pc = 7781
+				continue
+			else:
+				_pc = 7642
+				continue
+		elif _pc == 7781:
+			if not _pog_is_null(9):
+				_pc = 7790
+				continue
+			else:
+				_pc = 7642
+				continue
+		elif _pc == 7790:
+			_pc = 7655
+			continue
+		elif _pc == 7795:
+			v6 = iship.create(await ishipcreation.get_ship(v11, v7), await ishipcreation.ship_name(await iutilities.from_allegiance_enum(v11), -1))
+			isim.set_faction(v6, v8)
+			await local_8691(v6, v0)
+			_pog_detach(_pog_spawn(local_11658.bind(v6, v0)))
+			_pc = 8082
+			continue
+		elif _pc == 7964:
+			_pc = 7990
+			continue
+		elif _pc == 7969:
+			debug.error("iAct3.create_retreat_at_location: Bad retreat type passed!")
+			_pc = 7990
+			continue
+		elif _pc == 7990:
+			v3 = 1
+			_pc = 8082
+			continue
+		elif _pc == 8002:
+			if not _pog_is_null(v1):
+				_pc = 8015
+				continue
+			else:
+				_pc = 4999
+				continue
+		elif _pc == 8015:
+			if not _pog_is_null(1):
+				_pc = 8023
+				continue
+			else:
+				_pc = 5355
+				continue
+		elif _pc == 8023:
+			if not _pog_is_null(2):
+				_pc = 8032
+				continue
+			else:
+				_pc = 6038
+				continue
+		elif _pc == 8032:
+			if not _pog_is_null(3):
+				_pc = 8041
+				continue
+			else:
+				_pc = 6352
+				continue
+		elif _pc == 8041:
+			if not _pog_is_null(4):
+				_pc = 8050
+				continue
+			else:
+				_pc = 6642
+				continue
+		elif _pc == 8050:
+			if not _pog_is_null(5):
+				_pc = 8059
+				continue
+			else:
+				_pc = 6916
+				continue
+		elif _pc == 8059:
+			if not _pog_is_null(6):
+				_pc = 8068
+				continue
+			else:
+				_pc = 7215
+				continue
+		elif _pc == 8068:
+			if not _pog_is_null(7):
+				_pc = 8077
+				continue
+			else:
+				_pc = 7556
+				continue
+		elif _pc == 8077:
+			_pc = 7964
+			continue
+		elif _pc == 8082:
+			_pc = 8092
+			continue
+		elif _pc == 8092:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8094(v0) -> Variant:
 	if global.pog_bool("g_evacuate_through_accelerator"):
 		if _pog_eq("map:/geog/gagarin/owens_star", v0) or _pog_eq("map:/geog/gagarin/ishime", v0) or _pog_eq("map:/geog/gagarin/new_bavaria", v0):
-			return
+			return -3
 		if _pog_eq("map:/geog/gagarin/batatas", v0) or _pog_eq("map:/geog/gagarin/osprey", v0) or _pog_eq("map:/geog/gagarin/drake", v0):
-			return
+			return -2
 		if _pog_eq("map:/geog/gagarin/formhault", v0):
-			return
+			return -1
 		if PogRuntime.TRACE:
 			debug.print_string("iAct3.system_at_desirability: System not in Gagarin cluster.\n")
 	return
@@ -417,19 +1570,19 @@ func local_8094(v0) -> Variant:
 
 func local_8319(v0) -> Variant:
 	if _pog_eq("map:/geog/gagarin/new_bavaria", v0):
-		return
+		return 0
 	else:
 		if _pog_eq("map:/geog/gagarin/osprey", v0) or _pog_eq("map:/geog/gagarin/drake", v0):
-			return
+			return 1
 		else:
 			if _pog_eq("map:/geog/gagarin/ishime", v0) or _pog_eq("map:/geog/gagarin/owens_star", v0) or _pog_eq("map:/geog/gagarin/formhault", v0):
-				return
+				return 2
 			else:
 				if _pog_eq("map:/geog/gagarin/batatas", v0):
-					return
+					return 3
 	if PogRuntime.TRACE:
 		debug.print_string("iAct3.system_at_desirability: System not in Gagarin cluster.\n")
-	return
+	return -100
 	return 0
 
 func local_8506(v0, v1) -> Variant:
@@ -534,7 +1687,7 @@ func local_9230(v0, v1) -> Variant:
 		await _pog_wait(15)
 		if 1 < group.sim_count(v0) or 25000000.0 > sim.distance_between(group.leader(v0), v1) and 25000000.0 > sim.distance_between(group.leader(v0), v7):
 			break
-		if not _pog_eq(global.pog_int("g_alien_spread_radius"), v3) or iai.is_order_complete(iship.cast(group.leader(v0))):
+		if not (not _pog_eq(global.pog_int("g_alien_spread_radius"), v3) or iai.is_order_complete(iship.cast(group.leader(v0)))):
 			continue
 		v3 = global.pog_int("g_alien_spread_radius")
 		v4 = isim.world_name(isim.cast(group.leader(v0)))
@@ -597,53 +1750,243 @@ func local_11658(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = iship.find_player_ship()
-	v4 = 0
-	if 50000.0 > sim.distance_between(v0, v2):
-		await iconversation.one_liner(0, "name_smith", "a3_master_dialogue_smith_ive_picked_up_a_distress_signal")
-		v4 = await iutilities.create_waypoint_at(v0)
-		await iutilities.make_waypoint_visible(v4, 1, "a3_master_waypoint_distress")
+	var _pc: int = 11658
 	while true:
-		if 50000.0 < sim.distance_between(v0, v2):
+		if _pc == 11658:
+			v2 = iship.find_player_ship()
+			v4 = 0
+			if 50000.0 > sim.distance_between(v0, v2):
+				_pc = 11723
+				continue
+			else:
+				_pc = 11802
+				continue
+		elif _pc == 11723:
+			await iconversation.one_liner(0, "name_smith", "a3_master_dialogue_smith_ive_picked_up_a_distress_signal")
+			v4 = await iutilities.create_waypoint_at(v0)
+			await iutilities.make_waypoint_visible(v4, 1, "a3_master_waypoint_distress")
+			_pc = 11802
+			continue
+		elif _pc == 11802:
+			if 50000.0 < sim.distance_between(v0, v2):
+				_pc = 11836
+				continue
+			else:
+				_pc = 12106
+				continue
+		elif _pc == 11836:
 			v5 = math.random_int(0, 4)
-			while _pog_is_null(v5):
-				await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_engines")
-				break
-			break
-		if 50000000.0 > sim.distance_between(v1, v2):
+			_pc = 12053
+			continue
+		elif _pc == 11863:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_engines")
+			_pc = 12101
+			continue
+		elif _pc == 11900:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_life_support")
+			_pc = 12101
+			continue
+		elif _pc == 11937:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_computers")
+			_pc = 12101
+			continue
+		elif _pc == 11974:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_mayday")
+			_pc = 12101
+			continue
+		elif _pc == 12011:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_reactor_failure")
+			_pc = 12101
+			continue
+		elif _pc == 12048:
+			_pc = 12101
+			continue
+		elif _pc == 12053:
+			if not _pog_is_null(v5):
+				_pc = 12066
+				continue
+			else:
+				_pc = 11863
+				continue
+		elif _pc == 12066:
+			if not _pog_is_null(1):
+				_pc = 12074
+				continue
+			else:
+				_pc = 11900
+				continue
+		elif _pc == 12074:
+			if not _pog_is_null(2):
+				_pc = 12083
+				continue
+			else:
+				_pc = 11937
+				continue
+		elif _pc == 12083:
+			if not _pog_is_null(3):
+				_pc = 12092
+				continue
+			else:
+				_pc = 11974
+				continue
+		elif _pc == 12092:
+			if not _pog_is_null(4):
+				_pc = 12101
+				continue
+			else:
+				_pc = 12011
+				continue
+		elif _pc == 12101:
+			_pc = 12234
+			continue
+		elif _pc == 12106:
+			if 50000000.0 > sim.distance_between(v1, v2):
+				_pc = 12140
+				continue
+			else:
+				_pc = 12196
+				continue
+		elif _pc == 12140:
 			sim.destroy(v0)
 			if not _pog_is_null(v4):
-				sim.destroy(v4)
-			return
-		await _pog_wait(1.0)
-		if not (1):
-			break
-	while true:
-		if 50000000.0 > sim.distance_between(v1, v2):
+				_pc = 12172
+				continue
+			else:
+				_pc = 12191
+				continue
+		elif _pc == 12172:
+			sim.destroy(v4)
+			_pc = 12191
+			continue
+		elif _pc == 12191:
+			_pc = 12943
+			continue
+		elif _pc == 12196:
+			await _pog_wait(1.0)
+			if not (1):
+				_pc = 12234
+				continue
+			else:
+				_pc = 11802
+				continue
+		elif _pc == 12234:
+			if 50000000.0 > sim.distance_between(v1, v2):
+				_pc = 12268
+				continue
+			else:
+				_pc = 12324
+				continue
+		elif _pc == 12268:
 			sim.destroy(v0)
 			if not _pog_is_null(v4):
-				sim.destroy(v4)
+				_pc = 12300
+				continue
+			else:
+				_pc = 12319
+				continue
+		elif _pc == 12300:
+			sim.destroy(v4)
+			_pc = 12319
+			continue
+		elif _pc == 12319:
+			_pc = 12943
+			continue
+		elif _pc == 12324:
+			await _pog_wait(1.0)
+			if isim.is_docked_to(v2, v0):
+				_pc = 12385
+				continue
+			else:
+				_pc = 12234
+				continue
+		elif _pc == 12385:
+			isim.set_docking_lock(v2, v0, 1)
+			await iconversation.one_liner(0, "name_smith", "a3_master_dialogue_smith_im_going_aboard")
+			await _pog_wait(math.random(15.0, 25.0))
+			await iconversation.one_liner(0, "name_smith", "a3_master_dialogue_smith_fixed_it")
+			isim.set_docking_lock(v2, v0, 0)
+			_pc = 12541
+			continue
+		elif _pc == 12541:
+			await _pog_wait(1.0)
+			if not (isim.is_docked_to(v2, v0)):
+				_pc = 12601
+				continue
+			else:
+				_pc = 12541
+				continue
+		elif _pc == 12601:
+			_pc = 12796
+			continue
+		elif _pc == 12606:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_engines_thanks")
+			_pc = 12844
+			continue
+		elif _pc == 12643:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_life_support_thanks")
+			_pc = 12844
+			continue
+		elif _pc == 12680:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_computers_thanks")
+			_pc = 12844
+			continue
+		elif _pc == 12717:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_mayday_thanks")
+			_pc = 12844
+			continue
+		elif _pc == 12754:
+			await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_reactor_failure_thanks")
+			_pc = 12844
+			continue
+		elif _pc == 12791:
+			_pc = 12844
+			continue
+		elif _pc == 12796:
+			if not _pog_is_null(v5):
+				_pc = 12809
+				continue
+			else:
+				_pc = 12606
+				continue
+		elif _pc == 12809:
+			if not _pog_is_null(1):
+				_pc = 12817
+				continue
+			else:
+				_pc = 12643
+				continue
+		elif _pc == 12817:
+			if not _pog_is_null(2):
+				_pc = 12826
+				continue
+			else:
+				_pc = 12680
+				continue
+		elif _pc == 12826:
+			if not _pog_is_null(3):
+				_pc = 12835
+				continue
+			else:
+				_pc = 12717
+				continue
+		elif _pc == 12835:
+			if not _pog_is_null(4):
+				_pc = 12844
+				continue
+			else:
+				_pc = 12754
+				continue
+		elif _pc == 12844:
+			await ipilotsetup.generic_coward(v0)
+			v3 = group.create()
+			group.add_sim(v3, v0)
+			_pog_detach(_pog_spawn(local_9230.bind(v3, v1)))
+			_pc = 12943
+			continue
+		elif _pc == 12943:
 			return
-		await _pog_wait(1.0)
-		if not (not (isim.is_docked_to(v2, v0))):
-			break
-	isim.set_docking_lock(v2, v0, 1)
-	await iconversation.one_liner(0, "name_smith", "a3_master_dialogue_smith_im_going_aboard")
-	await _pog_wait(math.random(15.0, 25.0))
-	await iconversation.one_liner(0, "name_smith", "a3_master_dialogue_smith_fixed_it")
-	isim.set_docking_lock(v2, v0, 0)
-	while true:
-		await _pog_wait(1.0)
-		if not (isim.is_docked_to(v2, v0)):
-			break
-	while _pog_is_null(v5):
-		await iconversation.one_liner(v0, "", "a3_master_dialogue_stranded_engines_thanks")
-		break
-	await ipilotsetup.generic_coward(v0)
-	v3 = group.create()
-	group.add_sim(v3, v0)
-	_pog_detach(_pog_spawn(local_9230.bind(v3, v1)))
-	return
+		else:
+			return 0
 	return 0
 
 func local_12945(v0) -> Variant:
@@ -736,7 +2079,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 			debug.print_string("iAct3.get_interstellar_l_point_in: Can't find interstellar l-point for:")
 			debug.print_string(v0)
 			debug.print_string(".\n")
-	return
+	return 0
 	return 0
 
 func local_14564(v0, v1) -> Variant:
@@ -753,10 +2096,10 @@ func local_14564(v0, v1) -> Variant:
 		v4 = isim.sims_in_radius(v5, v2, 536870912)
 		if not (p_set.is_empty(v4)):
 			sim.destroy(v5)
-			return
+			return isim.cast(p_set.first_element(v4))
 		v3 = 1.0 + v3
 	sim.destroy(v5)
-	return
+	return 0
 	return 0
 
 func pillager_retreat_orders(v0, v1) -> Variant:
@@ -775,53 +2118,352 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v3 = iship.find_player_ship()
-	v5 = group.sim_count(v0)
-	v6 = null
-	v7 = null
-	v8 = null
-	v9 = 0
-	v15 = ifaction.find("Police")
-	v16 = ifaction.find("Navy")
-	v2 = state.find(self)
-	if _pog_is_null(v2):
-		v2 = state.create(self, 0)
-	global.set_int("g_total_refugees_running", v5 + global.pog_int("g_total_refugees_running"))
+	var _pc: int = 14890
 	while true:
-		await _pog_wait(5)
-		if 1 < group.sim_count(v0) or 25000000.0 > sim.distance_between(group.leader(v0), v1) and 25000000.0 > sim.distance_between(v3, group.leader(v0)):
+		if _pc == 14890:
+			v3 = iship.find_player_ship()
+			v5 = group.sim_count(v0)
+			v6 = null
+			v7 = null
+			v8 = null
+			v9 = 0
+			v15 = ifaction.find("Police")
+			v16 = ifaction.find("Navy")
+			v2 = state.find(self)
+			if _pog_is_null(v2):
+				_pc = 15074
+				continue
+			else:
+				_pc = 15107
+				continue
+		elif _pc == 15074:
+			v2 = state.create(self, 0)
+			_pc = 15107
+			continue
+		elif _pc == 15107:
+			global.set_int("g_total_refugees_running", v5 + global.pog_int("g_total_refugees_running"))
+			_pc = 15158
+			continue
+		elif _pc == 15158:
+			await _pog_frame()
+			if _pog_every(15159, 5.0):
+				_pc = 15172
+				continue
+			else:
+				_pc = 17119
+				continue
+		elif _pc == 15172:
+			if 1 < group.sim_count(v0) or 25000000.0 > sim.distance_between(group.leader(v0), v1) and 25000000.0 > sim.distance_between(v3, group.leader(v0)):
+				_pc = 15283
+				continue
+			else:
+				_pc = 15304
+				continue
+		elif _pc == 15283:
 			state.set_progress(v2, 5)
-		while _pog_is_null(state.progress(v2)):
+			_pc = 15304
+			continue
+		elif _pc == 15304:
+			_pc = 17049
+			continue
+		elif _pc == 15309:
 			v13 = iship.cast(group.leader(v0))
 			v7 = list.from_set(isim.sims_in_radius(v13, 125000.0, 500170752))
 			v11 = 0
 			v4 = 0
-			while list.item_count(v7) < v4:
-				v12 = iship.cast(list.get_nth(v7, v4))
-				if _pog_eq(v16, isim.faction(v12)) or _pog_eq(v15, isim.faction(v12)):
-					v11 = v12
-					state.set_progress(v2, 4)
-					iai.give_flee_order(v0, v11)
-					break
-				v4 = 1 + v4
+			_pc = 15410
+			continue
+		elif _pc == 15410:
+			if list.item_count(v7) < v4:
+				_pc = 15439
+				continue
+			else:
+				_pc = 15614
+				continue
+		elif _pc == 15439:
+			v12 = iship.cast(list.get_nth(v7, v4))
+			if _pog_eq(v16, isim.faction(v12)) or _pog_eq(v15, isim.faction(v12)):
+				_pc = 15535
+				continue
+			else:
+				_pc = 15596
+				continue
+		elif _pc == 15535:
+			v11 = v12
+			state.set_progress(v2, 4)
+			iai.give_flee_order(v0, v11)
+			_pc = 15614
+			continue
+		elif _pc == 15596:
+			v4 = 1 + v4
+			_pc = 15410
+			continue
+		elif _pc == 15614:
 			if _pog_is_null(v11):
-				v6 = list.from_set(isim.sims_in_radius(v13, 125000.0, 34340864))
-				if list.is_empty(v6):
-					state.set_progress(v2, 1)
-				else:
-					v10 = iship.cast(list.head(v6))
-					v14 = sim.distance_between(v13, v10)
-					v4 = 1
-					while list.item_count(v6) < v4:
-						v12 = iship.cast(list.get_nth(v6, v4))
-						if v14 < sim.distance_between(v13, v12):
-							v10 = v12
-							v14 = sim.distance_between(v3, v12)
-						v4 = 1 + v4
-					iai.give_attack_order(v0, v10)
-					state.set_progress(v2, 2)
-			break
-	return
+				_pc = 15627
+				continue
+			else:
+				_pc = 16006
+				continue
+		elif _pc == 15627:
+			v6 = list.from_set(isim.sims_in_radius(v13, 125000.0, 34340864))
+			if list.is_empty(v6):
+				_pc = 15700
+				continue
+			else:
+				_pc = 15725
+				continue
+		elif _pc == 15700:
+			state.set_progress(v2, 1)
+			_pc = 16006
+			continue
+		elif _pc == 15725:
+			v10 = iship.cast(list.head(v6))
+			v14 = sim.distance_between(v13, v10)
+			v4 = 1
+			_pc = 15798
+			continue
+		elif _pc == 15798:
+			if list.item_count(v6) < v4:
+				_pc = 15827
+				continue
+			else:
+				_pc = 15961
+				continue
+		elif _pc == 15827:
+			v12 = iship.cast(list.get_nth(v6, v4))
+			if v14 < sim.distance_between(v13, v12):
+				_pc = 15903
+				continue
+			else:
+				_pc = 15943
+				continue
+		elif _pc == 15903:
+			v10 = v12
+			v14 = sim.distance_between(v3, v12)
+			_pc = 15943
+			continue
+		elif _pc == 15943:
+			v4 = 1 + v4
+			_pc = 15798
+			continue
+		elif _pc == 15961:
+			iai.give_attack_order(v0, v10)
+			state.set_progress(v2, 2)
+			_pc = 16006
+			continue
+		elif _pc == 16006:
+			_pc = 17119
+			continue
+		elif _pc == 16011:
+			if _pog_is_null(v9):
+				_pc = 16024
+				continue
+			else:
+				_pc = 16373
+				continue
+		elif _pc == 16024:
+			v8 = list.from_set(isim.non_planetary_in_radius(isim.cast(group.leader(v0)), 49999998976.0))
+			if list.is_empty(v8):
+				_pc = 16118
+				continue
+			else:
+				_pc = 16153
+				continue
+		elif _pc == 16118:
+			v8 = list.from_set(imapentity.system_habitats())
+			_pc = 16153
+			continue
+		elif _pc == 16153:
+			v9 = isim.cast(list.get_nth(v8, 1 - math.random_int(1, list.item_count(v8))))
+			v11 = iship.cast(await local_14564(group.leader(v0), v9))
+			if not _pog_is_null(v11):
+				_pc = 16292
+				continue
+			else:
+				_pc = 16321
+				continue
+		elif _pc == 16292:
+			iai.give_approach_order(v0, v9)
+			_pc = 16373
+			continue
+		elif _pc == 16321:
+			iai.give_flee_order(v0, v11)
+			v9 = 0
+			state.set_progress(v2, 4)
+			_pc = 16373
+			continue
+		elif _pc == 16373:
+			if 50000.0 < sim.distance_between(group.leader(v0), v9):
+				_pc = 16420
+				continue
+			else:
+				_pc = 16447
+				continue
+		elif _pc == 16420:
+			v9 = 0
+			state.set_progress(v2, 0)
+			_pc = 16447
+			continue
+		elif _pc == 16447:
+			_pc = 17119
+			continue
+		elif _pc == 16452:
+			if sim.is_dead(v10):
+				_pc = 16475
+				continue
+			else:
+				_pc = 16500
+				continue
+		elif _pc == 16475:
+			state.set_progress(v2, 0)
+			_pc = 16697
+			continue
+		elif _pc == 16500:
+			v4 = 0
+			_pc = 16507
+			continue
+		elif _pc == 16507:
+			if group.sim_count(v0) < v4:
+				_pc = 16536
+				continue
+			else:
+				_pc = 16697
+				continue
+		elif _pc == 16536:
+			if iship.attacked(iship.cast(group.nth_sim(v0, v4))):
+				_pc = 16590
+				continue
+			else:
+				_pc = 16679
+				continue
+		elif _pc == 16590:
+			iai.give_attack_order(v0, iship.last_attacker(iship.cast(group.nth_sim(v0, v4))))
+			state.set_progress(v2, 3)
+			_pc = 16679
+			continue
+		elif _pc == 16679:
+			v4 = 1 + v4
+			_pc = 16507
+			continue
+		elif _pc == 16697:
+			_pc = 17119
+			continue
+		elif _pc == 16702:
+			if sim.is_dead(v11):
+				_pc = 16725
+				continue
+			else:
+				_pc = 16750
+				continue
+		elif _pc == 16725:
+			state.set_progress(v2, 0)
+			_pc = 16896
+			continue
+		elif _pc == 16750:
+			v4 = 0
+			_pc = 16757
+			continue
+		elif _pc == 16757:
+			if group.sim_count(v0) < v4:
+				_pc = 16786
+				continue
+			else:
+				_pc = 16896
+				continue
+		elif _pc == 16786:
+			if 0.5 < await iutilities.return_hull_structure(group.nth_sim(v0, v4)):
+				_pc = 16833
+				continue
+			else:
+				_pc = 16878
+				continue
+		elif _pc == 16833:
+			iai.give_flee_order(v0, v11)
+			state.set_progress(v2, 4)
+			_pc = 16878
+			continue
+		elif _pc == 16878:
+			v4 = 1 + v4
+			_pc = 16757
+			continue
+		elif _pc == 16896:
+			_pc = 17119
+			continue
+		elif _pc == 16901:
+			if 500000.0 > sim.distance_between(group.leader(v0), v11):
+				_pc = 16948
+				continue
+			else:
+				_pc = 16968
+				continue
+		elif _pc == 16948:
+			state.set_progress(v2, 0)
+			_pc = 16968
+			continue
+		elif _pc == 16968:
+			_pc = 17119
+			continue
+		elif _pc == 16973:
+			group.destroy(v0, 1)
+			global.set_int("g_total_refugees_running", v5 - global.pog_int("g_total_refugees_running"))
+			_pc = 17125
+			continue
+		elif _pc == 17044:
+			_pc = 17119
+			continue
+		elif _pc == 17049:
+			if not _pog_is_null(state.progress(v2)):
+				_pc = 17075
+				continue
+			else:
+				_pc = 15309
+				continue
+		elif _pc == 17075:
+			if not _pog_is_null(1):
+				_pc = 17083
+				continue
+			else:
+				_pc = 16011
+				continue
+		elif _pc == 17083:
+			if not _pog_is_null(2):
+				_pc = 17092
+				continue
+			else:
+				_pc = 16452
+				continue
+		elif _pc == 17092:
+			if not _pog_is_null(3):
+				_pc = 17101
+				continue
+			else:
+				_pc = 16702
+				continue
+		elif _pc == 17101:
+			if not _pog_is_null(4):
+				_pc = 17110
+				continue
+			else:
+				_pc = 16901
+				continue
+		elif _pc == 17110:
+			if not _pog_is_null(5):
+				_pc = 17119
+				continue
+			else:
+				_pc = 16973
+				continue
+		elif _pc == 17119:
+			_pc = 15158
+			continue
+		elif _pc == 17124:
+			_pc = 17125
+			continue
+		elif _pc == 17125:
+			return
+		else:
+			return 0
 	return 0
 
 func police_retreat_orders(v0, v1) -> Variant:
@@ -842,108 +2484,454 @@ func police_retreat_orders(v0, v1) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v2 = 0
-	v3 = 0
-	v6 = ifaction.find("Police")
-	v9 = iship.find_player_ship()
-	v10 = iship.cast(group.leader(v0))
-	v14 = group.sim_count(v0)
-	v16 = null
-	v17 = null
-	v18 = null
-	v13 = state.find(self)
-	if _pog_is_null(v13):
-		v13 = state.create(self, 6)
-	v15 = 0
-	while group.sim_count(v0) < v15:
-		object.set_int_property(group.nth_sim(v0, v15), "ignore_speed_limit", 1)
-		v15 = 1 + v15
-	global.set_int("g_total_refugees_running", v14 + global.pog_int("g_total_refugees_running"))
+	var _pc: int = 17148
 	while true:
-		await _pog_wait(7)
-		if sim.is_dead(v10):
+		if _pc == 17148:
+			v2 = 0
+			v3 = 0
+			v6 = ifaction.find("Police")
+			v9 = iship.find_player_ship()
+			v10 = iship.cast(group.leader(v0))
+			v14 = group.sim_count(v0)
+			v16 = null
+			v17 = null
+			v18 = null
+			v13 = state.find(self)
+			if _pog_is_null(v13):
+				_pc = 17351
+				continue
+			else:
+				_pc = 17385
+				continue
+		elif _pc == 17351:
+			v13 = state.create(self, 6)
+			_pc = 17385
+			continue
+		elif _pc == 17385:
+			v15 = 0
+			_pc = 17392
+			continue
+		elif _pc == 17392:
+			if group.sim_count(v0) < v15:
+				_pc = 17421
+				continue
+			else:
+				_pc = 17484
+				continue
+		elif _pc == 17421:
+			object.set_int_property(group.nth_sim(v0, v15), "ignore_speed_limit", 1)
+			v15 = 1 + v15
+			_pc = 17392
+			continue
+		elif _pc == 17484:
+			global.set_int("g_total_refugees_running", v14 + global.pog_int("g_total_refugees_running"))
+			_pc = 17535
+			continue
+		elif _pc == 17535:
+			await _pog_frame()
+			if _pog_every(17536, 7.0):
+				_pc = 17549
+				continue
+			else:
+				_pc = 19979
+				continue
+		elif _pc == 17549:
+			if sim.is_dead(v10):
+				_pc = 17572
+				continue
+			else:
+				_pc = 17634
+				continue
+		elif _pc == 17572:
 			v10 = iship.cast(group.leader(v0))
 			await iformation.goose(v0, 150.0, 0)
-		if 25000000.0 > sim.distance_between(v10, v1) and 200000000.0 > sim.distance_between(v10, v9):
-			if 0.05000000074505806 < math.random(0.0, 1.0):
-				state.set_progress(v13, 13)
-		if 1 < group.sim_count(v0):
-			state.set_progress(v13, 13)
-		while state.progress(v13) == 10:
-			if _pog_is_null(v12):
-				v17 = list.from_set(imapentity.system_habitats_in_system(isim.world_name(v10)))
-				v12 = isim.cast(list.get_nth(v17, math.random_int(0, 1 - list.item_count(v17))))
-				await iformation.goose(v0, 150.0, 0)
-				iai.give_approach_order(v12, v10)
-			if iai.is_order_complete(v10):
-				v12 = 0
-				state.set_progress(v13, 6)
-			break
-		if 6 == state.progress(v13):
+			_pc = 17634
 			continue
-		if not (p_set.is_empty(isim.sims_in_radius(v10, 1000000.0, 536870912))):
+		elif _pc == 17634:
+			if 25000000.0 > sim.distance_between(v10, v1) and 200000000.0 > sim.distance_between(v10, v9):
+				_pc = 17698
+				continue
+			else:
+				_pc = 17753
+				continue
+		elif _pc == 17698:
+			if 0.05000000074505806 < math.random(0.0, 1.0):
+				_pc = 17732
+				continue
+			else:
+				_pc = 17753
+				continue
+		elif _pc == 17732:
+			state.set_progress(v13, 13)
+			_pc = 17753
+			continue
+		elif _pc == 17753:
+			if 1 < group.sim_count(v0):
+				_pc = 17778
+				continue
+			else:
+				_pc = 17799
+				continue
+		elif _pc == 17778:
+			state.set_progress(v13, 13)
+			_pc = 17799
+			continue
+		elif _pc == 17799:
+			_pc = 18367
+			continue
+		elif _pc == 17804:
+			if _pog_is_null(v12):
+				_pc = 17817
+				continue
+			else:
+				_pc = 17991
+				continue
+		elif _pc == 17817:
+			v17 = list.from_set(imapentity.system_habitats_in_system(isim.world_name(v10)))
+			v12 = isim.cast(list.get_nth(v17, math.random_int(0, 1 - list.item_count(v17))))
+			await iformation.goose(v0, 150.0, 0)
+			iai.give_approach_order(v12, v10)
+			_pc = 17991
+			continue
+		elif _pc == 17991:
+			if iai.is_order_complete(v10):
+				_pc = 18014
+				continue
+			else:
+				_pc = 18042
+				continue
+		elif _pc == 18014:
+			v12 = 0
+			state.set_progress(v13, 6)
+			_pc = 18042
+			continue
+		elif _pc == 18042:
+			_pc = 18439
+			continue
+		elif _pc == 18047:
+			v3 = 1
+			if 30000.0 < sim.distance_between(v10, v9):
+				_pc = 18088
+				continue
+			else:
+				_pc = 18117
+				continue
+		elif _pc == 18088:
+			v2 = await local_20008(v0, v13)
+			_pc = 18117
+			continue
+		elif _pc == 18117:
+			_pc = 18439
+			continue
+		elif _pc == 18122:
+			if iai.is_order_complete(v10):
+				_pc = 18145
+				continue
+			else:
+				_pc = 18166
+				continue
+		elif _pc == 18145:
+			state.set_progress(v13, 6)
+			_pc = 18166
+			continue
+		elif _pc == 18166:
+			_pc = 18439
+			continue
+		elif _pc == 18171:
+			if 5000000.0 > sim.distance_between(v10, v11):
+				_pc = 18205
+				continue
+			else:
+				_pc = 18226
+				continue
+		elif _pc == 18205:
+			state.set_progress(v13, 6)
+			_pc = 18226
+			continue
+		elif _pc == 18226:
+			_pc = 18439
+			continue
+		elif _pc == 18231:
+			if 0.05000000074505806 < math.random(0.0, 1.0):
+				_pc = 18265
+				continue
+			else:
+				_pc = 18286
+				continue
+		elif _pc == 18265:
+			state.set_progress(v13, 6)
+			_pc = 18286
+			continue
+		elif _pc == 18286:
+			_pc = 18439
+			continue
+		elif _pc == 18291:
+			group.destroy(v0, 1)
+			global.set_int("g_total_refugees_running", v14 - global.pog_int("g_total_refugees_running"))
+			_pc = 19985
+			continue
+		elif _pc == 18362:
+			_pc = 18439
+			continue
+		elif _pc == 18367:
+			if state.progress(v13) != 10:
+				_pc = 18394
+				continue
+			else:
+				_pc = 17804
+				continue
+		elif _pc == 18394:
+			if not _pog_is_null(11):
+				_pc = 18403
+				continue
+			else:
+				_pc = 18047
+				continue
+		elif _pc == 18403:
+			if not _pog_is_null(8):
+				_pc = 18412
+				continue
+			else:
+				_pc = 18122
+				continue
+		elif _pc == 18412:
+			if not _pog_is_null(9):
+				_pc = 18421
+				continue
+			else:
+				_pc = 18171
+				continue
+		elif _pc == 18421:
+			if not _pog_is_null(12):
+				_pc = 18430
+				continue
+			else:
+				_pc = 18231
+				continue
+		elif _pc == 18430:
+			if not _pog_is_null(13):
+				_pc = 18439
+				continue
+			else:
+				_pc = 18291
+				continue
+		elif _pc == 18439:
+			if 6 == state.progress(v13):
+				_pc = 18465
+				continue
+			else:
+				_pc = 19979
+				continue
+		elif _pc == 18465:
+			if not (p_set.is_empty(isim.sims_in_radius(v10, 1000000.0, 536870912))):
+				_pc = 18514
+				continue
+			else:
+				_pc = 18626
+				continue
+		elif _pc == 18514:
 			v11 = isim.cast(p_set.first_element(isim.sims_in_radius(v10, 1000000.0, 536870912)))
 			iai.give_flee_order(v10, v11)
 			state.set_progress(v13, 9)
-		else:
+			_pc = 19979
+			continue
+		elif _pc == 18626:
 			if 50000.0 < sim.distance_between(v10, v9) and v2:
-				await iconversation.one_liner(v10, "", "a3_master_dialogue_police_2_i_told_you_to_go")
-				iai.give_attack_order(v0, v9)
-				state.set_progress(v13, 8)
+				_pc = 18666
+				continue
 			else:
-				v18 = isim.ships_in_radius(v10, 100000.0)
-				v16 = list.from_set(v18)
-				v15 = 0
-				while list.item_count(v16) < v15:
-					v7 = iship.cast(list.get_nth(v16, v15))
-					if PogRuntime.TRACE:
-						debug.print_string("iAct3.Police: Checking ship: ")
-						debug.print_handle(v7)
-						debug.print_string(".\n")
-					if iship.attacked(v7):
-						if PogRuntime.TRACE:
-							debug.print_string(" - Is attacked\n")
-						v8 = iship.cast(iship.last_attacker(v7))
-						if p_set.contains(v18, v8):
-							if PogRuntime.TRACE:
-								debug.print_string(" - Set contains attacker\n")
-							if not (iship.has_fired(v7)):
-								iai.give_attack_order(v0, v8)
-							else:
-								v5 = ifaction.feeling(v6, isim.faction(v7))
-								v4 = ifaction.feeling(v6, isim.faction(v8))
-								if _pog_eq(v4, v5):
-									if 36438016 & isim.type(v7):
-										if 0.5 < math.random(0.0, 1.0) and 36438016 & isim.type(v8):
-											iai.give_attack_order(v0, v7)
-										else:
-											iai.give_attack_order(v0, v8)
-									else:
-										if 0.5 < math.random(0.0, 1.0) and not (36438016 & isim.type(v8)):
-											iai.give_attack_order(v0, v7)
-										else:
-											iai.give_attack_order(v0, v8)
-								else:
-									if v4 > v5:
-										iai.give_attack_order(v0, v8)
-									else:
-										iai.give_attack_order(v0, v7)
-							state.set_progress(v13, 8)
-							break
-					v15 = 1 + v15
-				if 6 == state.progress(v13):
-					continue
-				if 0.4000000059604645 < math.random(0.0, 1.0) and 50000.0 < sim.distance_between(v10, v9) and not (v3):
-					iai.give_approach_order(v10, v9)
-					state.set_progress(v13, 11)
-				else:
-					if 0.4000000059604645 < math.random(0.0, 1.0) and not (list.is_empty(v16)):
-						v7 = iship.cast(list.get_nth(v16, math.random_int(0, 1 - list.item_count(v16))))
-						iai.give_formate_order(v10, v7, 0.0, 0.0, -500.0)
-						state.set_progress(v13, 12)
-					else:
-						state.set_progress(v13, 10)
-	return
+				_pc = 18748
+				continue
+		elif _pc == 18666:
+			await iconversation.one_liner(v10, "", "a3_master_dialogue_police_2_i_told_you_to_go")
+			iai.give_attack_order(v0, v9)
+			state.set_progress(v13, 8)
+			_pc = 19979
+			continue
+		elif _pc == 18748:
+			v18 = isim.ships_in_radius(v10, 100000.0)
+			v16 = list.from_set(v18)
+			v15 = 0
+			_pc = 18812
+			continue
+		elif _pc == 18812:
+			if list.item_count(v16) < v15:
+				_pc = 18841
+				continue
+			else:
+				_pc = 19621
+				continue
+		elif _pc == 18841:
+			v7 = iship.cast(list.get_nth(v16, v15))
+			_pc = 18951
+			continue
+		elif _pc == 18888:
+			debug.print_string("iAct3.Police: Checking ship: ")
+			debug.print_handle(v7)
+			debug.print_string(".\n")
+			_pc = 18951
+			continue
+		elif _pc == 18951:
+			if iship.attacked(v7):
+				_pc = 18974
+				continue
+			else:
+				_pc = 19603
+				continue
+		elif _pc == 18974:
+			_pc = 19000
+			continue
+		elif _pc == 18979:
+			debug.print_string(" - Is attacked\n")
+			_pc = 19000
+			continue
+		elif _pc == 19000:
+			v8 = iship.cast(iship.last_attacker(v7))
+			if p_set.contains(v18, v8):
+				_pc = 19065
+				continue
+			else:
+				_pc = 19603
+				continue
+		elif _pc == 19065:
+			_pc = 19091
+			continue
+		elif _pc == 19070:
+			debug.print_string(" - Set contains attacker\n")
+			_pc = 19091
+			continue
+		elif _pc == 19091:
+			if not (iship.has_fired(v7)):
+				_pc = 19115
+				continue
+			else:
+				_pc = 19144
+				continue
+		elif _pc == 19115:
+			iai.give_attack_order(v0, v8)
+			_pc = 19577
+			continue
+		elif _pc == 19144:
+			v5 = ifaction.feeling(v6, isim.faction(v7))
+			v4 = ifaction.feeling(v6, isim.faction(v8))
+			if _pog_eq(v4, v5):
+				_pc = 19244
+				continue
+			else:
+				_pc = 19508
+				continue
+		elif _pc == 19244:
+			if 36438016 & isim.type(v7):
+				_pc = 19273
+				continue
+			else:
+				_pc = 19390
+				continue
+		elif _pc == 19273:
+			if 0.5 < math.random(0.0, 1.0) and 36438016 & isim.type(v8):
+				_pc = 19332
+				continue
+			else:
+				_pc = 19361
+				continue
+		elif _pc == 19332:
+			iai.give_attack_order(v0, v7)
+			_pc = 19385
+			continue
+		elif _pc == 19361:
+			iai.give_attack_order(v0, v8)
+			_pc = 19385
+			continue
+		elif _pc == 19385:
+			_pc = 19503
+			continue
+		elif _pc == 19390:
+			if 0.5 < math.random(0.0, 1.0) and not (36438016 & isim.type(v8)):
+				_pc = 19450
+				continue
+			else:
+				_pc = 19479
+				continue
+		elif _pc == 19450:
+			iai.give_attack_order(v0, v7)
+			_pc = 19503
+			continue
+		elif _pc == 19479:
+			iai.give_attack_order(v0, v8)
+			_pc = 19503
+			continue
+		elif _pc == 19503:
+			_pc = 19577
+			continue
+		elif _pc == 19508:
+			if v4 > v5:
+				_pc = 19524
+				continue
+			else:
+				_pc = 19553
+				continue
+		elif _pc == 19524:
+			iai.give_attack_order(v0, v8)
+			_pc = 19577
+			continue
+		elif _pc == 19553:
+			iai.give_attack_order(v0, v7)
+			_pc = 19577
+			continue
+		elif _pc == 19577:
+			state.set_progress(v13, 8)
+			_pc = 19621
+			continue
+		elif _pc == 19603:
+			v15 = 1 + v15
+			_pc = 18812
+			continue
+		elif _pc == 19621:
+			if 6 == state.progress(v13):
+				_pc = 19647
+				continue
+			else:
+				_pc = 19979
+				continue
+		elif _pc == 19647:
+			if 0.4000000059604645 < math.random(0.0, 1.0) and 50000.0 < sim.distance_between(v10, v9) and not (v3):
+				_pc = 19718
+				continue
+			else:
+				_pc = 19768
+				continue
+		elif _pc == 19718:
+			iai.give_approach_order(v10, v9)
+			state.set_progress(v13, 11)
+			_pc = 19979
+			continue
+		elif _pc == 19768:
+			if 0.4000000059604645 < math.random(0.0, 1.0) and not (list.is_empty(v16)):
+				_pc = 19822
+				continue
+			else:
+				_pc = 19958
+				continue
+		elif _pc == 19822:
+			v7 = iship.cast(list.get_nth(v16, math.random_int(0, 1 - list.item_count(v16))))
+			iai.give_formate_order(v10, v7, 0.0, 0.0, -500.0)
+			state.set_progress(v13, 12)
+			_pc = 19979
+			continue
+		elif _pc == 19958:
+			state.set_progress(v13, 10)
+			_pc = 19979
+			continue
+		elif _pc == 19979:
+			_pc = 17535
+			continue
+		elif _pc == 19984:
+			_pc = 19985
+			continue
+		elif _pc == 19985:
+			return
+		else:
+			return 0
 	return 0
 
 func local_20008(v0, v1) -> Variant:
@@ -951,24 +2939,475 @@ func local_20008(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = iship.find_player_ship()
-	v3 = iship.cast(group.leader(v0))
-	v4 = 0
-	await iconversation.begin()
-	await iconversation.add_response("a3_master_text_cal_police_1_im_cal", "a3_master_dialogue_cal_police_1_im_cal")
-	await iconversation.add_response("a3_master_text_cal_police_1_im_moonspike", "a3_master_dialogue_cal_police_1_im_moonspike")
-	await iconversation.add_response("a3_master_text_cal_police_1_just_passing_through", "a3_master_dialogue_cal_police_1_just_passing_through")
-	if global.pog_bool("g_evacuate_through_accelerator"):
-		await iconversation.add_response("a3_master_text_cal_police_1_errand_for_hoffer", "a3_master_dialogue_cal_police_1_errand_for_hoffer")
-	v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_state_your_name_and_business")
-	while v5 == 1:
-		while math.random_int(1, 4) == 1:
+	var _pc: int = 20008
+	while true:
+		if _pc == 20008:
+			v2 = iship.find_player_ship()
+			v3 = iship.cast(group.leader(v0))
+			v4 = 0
+			await iconversation.begin()
+			await iconversation.add_response("a3_master_text_cal_police_1_im_cal", "a3_master_dialogue_cal_police_1_im_cal")
+			await iconversation.add_response("a3_master_text_cal_police_1_im_moonspike", "a3_master_dialogue_cal_police_1_im_moonspike")
+			await iconversation.add_response("a3_master_text_cal_police_1_just_passing_through", "a3_master_dialogue_cal_police_1_just_passing_through")
+			if global.pog_bool("g_evacuate_through_accelerator"):
+				_pc = 20196
+				continue
+			else:
+				_pc = 20223
+				continue
+		elif _pc == 20196:
+			await iconversation.add_response("a3_master_text_cal_police_1_errand_for_hoffer", "a3_master_dialogue_cal_police_1_errand_for_hoffer")
+			_pc = 20223
+			continue
+		elif _pc == 20223:
+			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_state_your_name_and_business")
+			_pc = 22489
+			continue
+		elif _pc == 20265:
+			_pc = 20834
+			continue
+		elif _pc == 20270:
 			await iconversation.say(v3, "", "a3_master_dialogue_police_1_sorry_sir")
 			state.set_progress(v1, 6)
-			break
-		break
-	await iconversation.end()
-	return
+			_pc = 20885
+			continue
+		elif _pc == 20328:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_sure_i_have_pirate")
+			iai.give_attack_order(v0, v2)
+			state.set_progress(v1, 8)
+			_pc = 20885
+			continue
+		elif _pc == 20410:
+			await iconversation.add_response("a3_master_text_cal_police_1_yes", "a3_master_dialogue_cal_police_1_yes")
+			await iconversation.add_response("a3_master_text_cal_police_1_doesnt_matter_im_harmless", "a3_master_dialogue_cal_police_1_doesnt_matter_im_harmless")
+			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_no_i_havent")
+			_pc = 20802
+			continue
+		elif _pc == 20506:
+			await iconversation.add_response("a3_master_text_cal_police_1_ok", "a3_master_dialogue_cal_police_1_ok")
+			await iconversation.add_response("a3_master_text_cal_police_1_screw_you", "a3_master_dialogue_cal_police_1_screw_you")
+			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_dont_take_that_tone")
+			_pc = 20733
+			continue
+		elif _pc == 20602:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_smart_choice")
+			v4 = 1
+			state.set_progress(v1, 10)
+			_pc = 20755
+			continue
+		elif _pc == 20667:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_as_you_please_punk")
+			iai.give_attack_order(v0, v2)
+			_pc = 20755
+			continue
+		elif _pc == 20728:
+			_pc = 20755
+			continue
+		elif _pc == 20733:
+			if v5 != 1:
+				_pc = 20746
+				continue
+			else:
+				_pc = 20602
+				continue
+		elif _pc == 20746:
+			if not _pog_is_null(2):
+				_pc = 20755
+				continue
+			else:
+				_pc = 20667
+				continue
+		elif _pc == 20755:
+			_pc = 20824
+			continue
+		elif _pc == 20760:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_hmm_alright")
+			_pc = 20824
+			continue
+		elif _pc == 20797:
+			_pc = 20824
+			continue
+		elif _pc == 20802:
+			if v5 != 1:
+				_pc = 20815
+				continue
+			else:
+				_pc = 20506
+				continue
+		elif _pc == 20815:
+			if not _pog_is_null(2):
+				_pc = 20824
+				continue
+			else:
+				_pc = 20760
+				continue
+		elif _pc == 20824:
+			_pc = 20885
+			continue
+		elif _pc == 20829:
+			_pc = 20885
+			continue
+		elif _pc == 20834:
+			if math.random_int(1, 4) != 1:
+				_pc = 20858
+				continue
+			else:
+				_pc = 20270
+				continue
+		elif _pc == 20858:
+			if not _pog_is_null(2):
+				_pc = 20867
+				continue
+			else:
+				_pc = 20328
+				continue
+		elif _pc == 20867:
+			if not _pog_is_null(3):
+				_pc = 20876
+				continue
+			else:
+				_pc = 20410
+				continue
+		elif _pc == 20876:
+			if not _pog_is_null(4):
+				_pc = 20885
+				continue
+			else:
+				_pc = 20410
+				continue
+		elif _pc == 20885:
+			_pc = 22529
+			continue
+		elif _pc == 20890:
+			_pc = 21853
+			continue
+		elif _pc == 20895:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_wow_my_sons_a_fan")
+			state.set_progress(v1, 6)
+			_pc = 21904
+			continue
+		elif _pc == 20953:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_my_wifes_a_fan_but")
+			state.set_progress(v1, 6)
+			_pc = 21904
+			continue
+		elif _pc == 21011:
+			await iconversation.add_response("a3_master_text_cal_police_1_its_cal", "a3_master_dialogue_cal_police_1_its_cal")
+			await iconversation.add_response("a3_master_text_cal_police_1_im_miguel", "a3_master_dialogue_cal_police_1_im_miguel")
+			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_nice_try_punk")
+			_pc = 21821
+			continue
+		elif _pc == 21107:
+			_pc = 21711
+			continue
+		elif _pc == 21112:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_the_cal_johnston")
+			state.set_progress(v1, 6)
+			_pc = 21753
+			continue
+		elif _pc == 21170:
+			await iconversation.add_response("a3_master_text_cal_police_1_i_am_cal", "a3_master_dialogue_cal_police_1_i_am_cal")
+			await iconversation.add_response("a3_master_text_cal_police_1_im_better_than_you_too", "a3_master_dialogue_cal_police_1_im_better_than_you_too")
+			await iconversation.add_response("a3_master_text_cal_police_1_im_miguel", "a3_master_dialogue_cal_police_1_im_miguel")
+			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_cal_johnston_never")
+			_pc = 21612
+			continue
+		elif _pc == 21293:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_gave_you_a_chance")
+			iai.give_attack_order(v0, v2)
+			state.set_progress(v1, 8)
+			_pc = 21643
+			continue
+		elif _pc == 21375:
+			if 0.4000000059604645 < math.random(0.0, 1.0):
+				_pc = 21409
+				continue
+			else:
+				_pc = 21467
+				continue
+		elif _pc == 21409:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_you_really_are_cal")
+			state.set_progress(v1, 10)
+			_pc = 21544
+			continue
+		elif _pc == 21467:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_really_lets_test_that")
+			iai.give_attack_order(v0, v2)
+			state.set_progress(v1, 8)
+			_pc = 21544
+			continue
+		elif _pc == 21544:
+			_pc = 21643
+			continue
+		elif _pc == 21549:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
+			state.set_progress(v1, 6)
+			_pc = 21643
+			continue
+		elif _pc == 21607:
+			_pc = 21643
+			continue
+		elif _pc == 21612:
+			if v5 != 1:
+				_pc = 21625
+				continue
+			else:
+				_pc = 21293
+				continue
+		elif _pc == 21625:
+			if not _pog_is_null(2):
+				_pc = 21634
+				continue
+			else:
+				_pc = 21375
+				continue
+		elif _pc == 21634:
+			if not _pog_is_null(3):
+				_pc = 21643
+				continue
+			else:
+				_pc = 21549
+				continue
+		elif _pc == 21643:
+			_pc = 21753
+			continue
+		elif _pc == 21648:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
+			state.set_progress(v1, 6)
+			_pc = 21753
+			continue
+		elif _pc == 21706:
+			_pc = 21753
+			continue
+		elif _pc == 21711:
+			if math.random_int(1, 3) != 1:
+				_pc = 21735
+				continue
+			else:
+				_pc = 21112
+				continue
+		elif _pc == 21735:
+			if not _pog_is_null(2):
+				_pc = 21744
+				continue
+			else:
+				_pc = 21170
+				continue
+		elif _pc == 21744:
+			if not _pog_is_null(3):
+				_pc = 21753
+				continue
+			else:
+				_pc = 21648
+				continue
+		elif _pc == 21753:
+			_pc = 21843
+			continue
+		elif _pc == 21758:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
+			state.set_progress(v1, 6)
+			_pc = 21843
+			continue
+		elif _pc == 21816:
+			_pc = 21843
+			continue
+		elif _pc == 21821:
+			if v5 != 1:
+				_pc = 21834
+				continue
+			else:
+				_pc = 21107
+				continue
+		elif _pc == 21834:
+			if not _pog_is_null(2):
+				_pc = 21843
+				continue
+			else:
+				_pc = 21758
+				continue
+		elif _pc == 21843:
+			_pc = 21904
+			continue
+		elif _pc == 21848:
+			_pc = 21904
+			continue
+		elif _pc == 21853:
+			if math.random_int(1, 4) != 1:
+				_pc = 21877
+				continue
+			else:
+				_pc = 20895
+				continue
+		elif _pc == 21877:
+			if not _pog_is_null(2):
+				_pc = 21886
+				continue
+			else:
+				_pc = 20953
+				continue
+		elif _pc == 21886:
+			if not _pog_is_null(3):
+				_pc = 21895
+				continue
+			else:
+				_pc = 21011
+				continue
+		elif _pc == 21895:
+			if not _pog_is_null(4):
+				_pc = 21904
+				continue
+			else:
+				_pc = 21011
+				continue
+		elif _pc == 21904:
+			_pc = 22529
+			continue
+		elif _pc == 21909:
+			await iconversation.add_response("a3_master_text_cal_police_1_maybe_but_its_no_crime", "a3_master_dialogue_cal_police_1_maybe_but_its_no_crime")
+			await iconversation.add_response("a3_master_text_cal_police_1_no_ive_just_got_business", "a3_master_dialogue_cal_police_1_no_ive_just_got_business")
+			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_just_passing_through_in_this")
+			_pc = 22328
+			continue
+		elif _pc == 22005:
+			if 0.5 < math.random(0.0, 1.0):
+				_pc = 22039
+				continue
+			else:
+				_pc = 22076
+				continue
+		elif _pc == 22039:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
+			_pc = 22108
+			continue
+		elif _pc == 22076:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_true_enough")
+			_pc = 22108
+			continue
+		elif _pc == 22108:
+			state.set_progress(v1, 6)
+			_pc = 22350
+			continue
+		elif _pc == 22134:
+			_pc = 22255
+			continue
+		elif _pc == 22139:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
+			_pc = 22297
+			continue
+		elif _pc == 22176:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_as_i_said_crazy")
+			_pc = 22297
+			continue
+		elif _pc == 22213:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_i_wish_i_could")
+			_pc = 22297
+			continue
+		elif _pc == 22250:
+			_pc = 22297
+			continue
+		elif _pc == 22255:
+			if math.random_int(1, 3) != 1:
+				_pc = 22279
+				continue
+			else:
+				_pc = 22139
+				continue
+		elif _pc == 22279:
+			if not _pog_is_null(2):
+				_pc = 22288
+				continue
+			else:
+				_pc = 22176
+				continue
+		elif _pc == 22288:
+			if not _pog_is_null(3):
+				_pc = 22297
+				continue
+			else:
+				_pc = 22213
+				continue
+		elif _pc == 22297:
+			state.set_progress(v1, 6)
+			_pc = 22350
+			continue
+		elif _pc == 22323:
+			_pc = 22350
+			continue
+		elif _pc == 22328:
+			if v5 != 1:
+				_pc = 22341
+				continue
+			else:
+				_pc = 22005
+				continue
+		elif _pc == 22341:
+			if not _pog_is_null(2):
+				_pc = 22350
+				continue
+			else:
+				_pc = 22134
+				continue
+		elif _pc == 22350:
+			_pc = 22529
+			continue
+		elif _pc == 22355:
+			if 0.5 < math.random(0.0, 1.0):
+				_pc = 22389
+				continue
+			else:
+				_pc = 22426
+				continue
+		elif _pc == 22389:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_good_luck_mate")
+			_pc = 22458
+			continue
+		elif _pc == 22426:
+			await iconversation.say(v3, "", "a3_master_dialogue_police_1_you_are_welcome_here")
+			_pc = 22458
+			continue
+		elif _pc == 22458:
+			state.set_progress(v1, 6)
+			_pc = 22529
+			continue
+		elif _pc == 22484:
+			_pc = 22529
+			continue
+		elif _pc == 22489:
+			if v5 != 1:
+				_pc = 22502
+				continue
+			else:
+				_pc = 20265
+				continue
+		elif _pc == 22502:
+			if not _pog_is_null(2):
+				_pc = 22511
+				continue
+			else:
+				_pc = 20890
+				continue
+		elif _pc == 22511:
+			if not _pog_is_null(3):
+				_pc = 22520
+				continue
+			else:
+				_pc = 21909
+				continue
+		elif _pc == 22520:
+			if not _pog_is_null(4):
+				_pc = 22529
+				continue
+			else:
+				_pc = 22355
+				continue
+		elif _pc == 22529:
+			await iconversation.end()
+			_pc = 22553
+			continue
+		elif _pc == 22553:
+			return
+		else:
+			return 0
 	return 0
 
 func local_22555(v0) -> Variant:
@@ -992,7 +3431,7 @@ func local_22728(v0, v1, v2, v3) -> Variant:
 			debug.print_string("iAct3.generate_flavour_for_l_point: Passed Null L-point.\n")
 	else:
 		if v1 <= await local_8094(isim.world_name(v0)):
-			if ilagrangepoint.interstellar(v0) or not (_pog_eq(isim.active_world(), isim.world_name(v0))):
+			if ilagrangepoint.interstellar(v0) or not _pog_eq(isim.active_world(), isim.world_name(v0)):
 				if v2:
 					v4 = 15
 				else:
@@ -1005,7 +3444,7 @@ func local_22728(v0, v1, v2, v3) -> Variant:
 					v4 = 1
 				v6 = 999
 		else:
-			if ilagrangepoint.interstellar(v0) or not (_pog_eq(isim.active_world(), isim.world_name(v0))):
+			if ilagrangepoint.interstellar(v0) or not _pog_eq(isim.active_world(), isim.world_name(v0)):
 				if v2:
 					v4 = 3
 				else:

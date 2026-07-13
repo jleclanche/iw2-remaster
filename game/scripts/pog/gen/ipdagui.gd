@@ -63,49 +63,97 @@ func s_p_main_p_d_a_screen() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v10 = null
-	v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
-	text.add("csv:/text/gui")
-	text.add("csv:/text/gui_addendum")
-	text.add("csv:/text/gui_addendum_2")
-	text.add("csv:/text/gui_addendum_3")
-	text.add("csv:/text/gui_addendum_4")
-	text.add("csv:/text/gui_addendum_5")
-	text.add("csv:/text/objectives")
-	await igui.set_g_u_i_globals()
-	gui.register_sound("sound:/audio/gui/minor", 1)
-	gui.register_sound("sound:/audio/gui/confirm", 2)
-	gui.register_sound("sound:/audio/gui/error", 3)
-	gui.register_sound("sound:/audio/gui/loadout", 4)
-	gui.register_sound("sound:/audio/gui/mechanical_confirm", 5)
-	gui.register_sound("sound:/audio/gui/add_program", 6)
-	gui.register_sound("sound:/audio/gui/remove_program", 7)
-	gui.register_sound("sound:/audio/gui/add_upgrade", 8)
-	gui.register_sound("sound:/audio/gui/remove_upgrade", 9)
-	gui.set_default_font(global.string("GUI_title_font"))
-	if imultiplay.network_is_lobby_session() or not (_pog_eq("", igame.session_name())):
-		if 1 < imultiplay.client_rejected_count():
-			push_error("PORT: unstructured jump to L525")
-		await s_p_main_p_d_a_screen__on_multiplayer()
-	else:
-		if v11 and not (igame.is_multiplayer_only()):
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			v10 = null
+			v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
+			text.add("csv:/text/gui")
+			text.add("csv:/text/gui_addendum")
+			text.add("csv:/text/gui_addendum_2")
+			text.add("csv:/text/gui_addendum_3")
+			text.add("csv:/text/gui_addendum_4")
+			text.add("csv:/text/gui_addendum_5")
+			text.add("csv:/text/objectives")
+			await igui.set_g_u_i_globals()
+			gui.register_sound("sound:/audio/gui/minor", 1)
+			gui.register_sound("sound:/audio/gui/confirm", 2)
+			gui.register_sound("sound:/audio/gui/error", 3)
+			gui.register_sound("sound:/audio/gui/loadout", 4)
+			gui.register_sound("sound:/audio/gui/mechanical_confirm", 5)
+			gui.register_sound("sound:/audio/gui/add_program", 6)
+			gui.register_sound("sound:/audio/gui/remove_program", 7)
+			gui.register_sound("sound:/audio/gui/add_upgrade", 8)
+			gui.register_sound("sound:/audio/gui/remove_upgrade", 9)
+			gui.set_default_font(global.string("GUI_title_font"))
+			if imultiplay.network_is_lobby_session() or not _pog_eq("", igame.session_name()):
+				_pc = 486
+				continue
+			else:
+				_pc = 525
+				continue
+		elif _pc == 486:
+			if 1 < imultiplay.client_rejected_count():
+				_pc = 506
+				continue
+			else:
+				_pc = 525
+				continue
+		elif _pc == 506:
+			await s_p_main_p_d_a_screen__on_multiplayer()
+			_pc = 1182
+			continue
+		elif _pc == 525:
+			if v11 and not (igame.is_multiplayer_only()):
+				_pc = 550
+				continue
+			else:
+				_pc = 758
+				continue
+		elif _pc == 550:
 			v0 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnStart", text.field("pda_start_new_game", 0), v10)
 			v1 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnLoad", text.field("pda_load_game", 0), v10)
 			v2 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnInstant", text.field("pda_instant_action", 0), v10)
 			v3 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMod", text.field("pda_extras", 0), v10)
-		v4 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMultiplayer", text.field("pda_multiplayer", 0), v10)
-		v5 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnOptions", text.field("pda_options", 0), v10)
-		if v11:
+			_pc = 758
+			continue
+		elif _pc == 758:
+			v4 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMultiplayer", text.field("pda_multiplayer", 0), v10)
+			v5 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnOptions", text.field("pda_options", 0), v10)
+			if v11:
+				_pc = 872
+				continue
+			else:
+				_pc = 924
+				continue
+		elif _pc == 872:
 			v6 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMovies", text.field("movie_movies", 0), v10)
-		v7 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnCredits", text.field("pda_credits", 0), v10)
-		v8 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnQuit", text.field("pda_quit_button", 0), v10)
-		v9 = await igui.create_menu(v10)
-		gui.set_first_control_focus(gui.cast(list.head(v10)))
-		await igui.set_cyclic_control_focus_path(v10)
-		if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/badlands")):
+			_pc = 924
+			continue
+		elif _pc == 924:
+			v7 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnCredits", text.field("pda_credits", 0), v10)
+			v8 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnQuit", text.field("pda_quit_button", 0), v10)
+			v9 = await igui.create_menu(v10)
+			gui.set_first_control_focus(gui.cast(list.head(v10)))
+			await igui.set_cyclic_control_focus_path(v10)
+			if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/badlands")):
+				_pc = 1144
+				continue
+			else:
+				_pc = 1168
+				continue
+		elif _pc == 1144:
 			stream.play(0, "sound:/audio/music/badlands", 1, 1)
-		await local_23590()
-	return 0
+			_pc = 1168
+			continue
+		elif _pc == 1168:
+			await local_23590()
+			_pc = 1182
+			continue
+		elif _pc == 1182:
+			return 0
+		else:
+			return 0
 	return 0
 
 func s_p_main_p_d_a_screen__on_start() -> Variant:
@@ -220,7 +268,7 @@ func s_p_demo_main_screen() -> Variant:
 	v5 = await igui.create_menu(v6)
 	gui.set_first_control_focus(v0)
 	await igui.set_cyclic_control_focus_path(v6)
-	if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/badlands")):
+	if not _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/badlands")):
 		return 0
 	stream.play(0, "sound:/audio/music/badlands", 0, 1)
 	return 0
@@ -342,10 +390,25 @@ func flight_confirm_screen() -> Variant:
 	return 0
 
 func flight_confirm_screen__on_o_k() -> Variant:
-	while _pog_is_null(igame.game_type()):
+	if _pog_is_null(igame.game_type()):
 		gui.pop_screens_to("icSPMasterScreen")
 		gui.pop_screen()
-		break
+		return 0
+	if igame.game_type() == 1:
+		gui.pop_screens_to("icSPMasterScreen")
+		gui.pop_screen()
+		return 0
+	if igame.game_type() == 2:
+		gui.pop_screens_to("icSPMasterScreen")
+		gui.pop_screen()
+		return 0
+	if igame.game_type() == 3:
+		imultiplay.client_set_requested_to_cycle(0)
+		gui.pop_screen()
+		gui.pop_screen()
+		gui.push_screen("icPDAOverlayManager")
+		gui.overlay_screen("icNetworkScreen")
+		return 0
 	return 0
 	return 0
 
@@ -573,7 +636,7 @@ func local_8548(v0, v1) -> Variant:
 	v4 = 0
 	while v3 < v4:
 		v2 = igame.name_of_save_in_slot(v4)
-		if not (_pog_eq("", v2)):
+		if not _pog_eq("", v2):
 			await local_7319(v2, v0, v1)
 		else:
 			await local_7319(text.field("savegame_empty", 0), v0, v1)
@@ -687,7 +750,7 @@ func local_11058(v0, v1) -> Variant:
 	v3 = 0
 	while v2 < v3:
 		v4 = igame.name_of_save_in_slot(v3)
-		if not (_pog_eq("", v4)):
+		if not _pog_eq("", v4):
 			await local_8759("iPDAGUI.SPPDALoadScreen_OnLoad", v4, v0, v1)
 		v3 = 1 + v3
 	return 0
@@ -1154,7 +1217,7 @@ func s_p_p_d_a_device_screen__on_apply() -> Variant:
 	v1 = await local_20333()
 	v2 = ioptions.graphics_resolution_index(v0)
 	v3 = await local_20538()
-	if not _pog_eq(v3, v2) or not _pog_eq(v1, v0):
+	if not (not _pog_eq(v3, v2) or not _pog_eq(v1, v0)):
 		return 0
 	ioptions.set_graphics_device(v1, v3)
 	await s_p_p_d_a_device_screen__on_back_button()
@@ -1250,7 +1313,7 @@ func local_20333() -> Variant:
 			v2 = v0
 			break
 		v0 = 1 + v0
-	return
+	return v2
 	return 0
 
 func local_20538() -> Variant:
@@ -1269,10 +1332,10 @@ func local_20538() -> Variant:
 				debug.print_int(v0)
 			if PogRuntime.TRACE:
 				debug.print_string("\n")
-			return
+			return v0
 		list.remove_head(v2)
 		v0 = 1 + v0
-	return
+	return -1
 	return 0
 
 func movies_screen() -> Variant:
@@ -1520,7 +1583,7 @@ func local_23590() -> Variant:
 func local_24153(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = null
-	if not (_pog_eq(v0, global.string("g_pda_current_mod"))):
+	if _pog_eq(v0, global.string("g_pda_current_mod")):
 		return 0
 	global.set_string("g_pda_current_mod", v0)
 	v1 = string.join("html:/mods/", string.join(string.join(v0, "/"), v0))
@@ -1539,7 +1602,7 @@ func local_24335(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	v9 = gui.splitter_window_top_window(v8)
 	v10 = await igui.create_and_initialise_static_window(0, 0, gui.window_canvas_width(v9), gui.window_canvas_height(v9), v9, v7, text.field(v6, 0))
 	gui.set_window_text_formatting(v10, 0, 9)
-	return
+	return v8
 	return 0
 
 func local_24581(v0, v1) -> Variant:
@@ -1549,7 +1612,7 @@ func local_24581(v0, v1) -> Variant:
 	v2 = global.pog_int("GUI_inversebutton_height")
 	v3 = 3
 	v4 = gui.splitter_window_bottom_window(v0)
-	return
+	return gui.window_canvas_height(v4) > v3 + v2 * v1
 	return 0
 
 func local_24687(v0, v1, v2) -> Variant:
@@ -1567,7 +1630,7 @@ func local_24687(v0, v1, v2) -> Variant:
 	v6 = gui.create_list_box(0, 0, v3, gui.window_canvas_height(v5), v5, 1, v2)
 	if v7:
 		gui.create_vertical_scrollbar(v4 - gui.window_canvas_width(v5), 0, v4, gui.window_canvas_height(v5), v5, v6, global.pog_float("GUI_scrollbar_buttonratio"), "")
-	return
+	return v6
 	return 0
 
 func local_25001() -> Variant:
@@ -1852,7 +1915,7 @@ func local_29812(v0, v1, v2, v3) -> Variant:
 	gui.set_window_state_textures(v5, global.string("GUI_texture_request"), global.pog_int("GUI_fancybutton_neutral_left_left"), global.pog_int("GUI_fancybutton_neutral_left_top"), global.pog_int("GUI_fancybutton_neutral_left_right"), global.pog_int("GUI_fancybutton_neutral_left_bottom"), global.pog_int("GUI_fancybutton_neutral_body_left"), global.pog_int("GUI_fancybutton_neutral_body_top"), global.pog_int("GUI_fancybutton_neutral_body_right"), global.pog_int("GUI_fancybutton_neutral_body_bottom"), global.pog_int("GUI_fancybutton_neutral_right_left"), global.pog_int("GUI_fancybutton_neutral_right_top"), global.pog_int("GUI_fancybutton_neutral_right_right"), global.pog_int("GUI_fancybutton_neutral_right_bottom"), global.pog_int("GUI_fancybutton_focused_left_left"), global.pog_int("GUI_fancybutton_focused_left_top"), global.pog_int("GUI_fancybutton_focused_left_right"), global.pog_int("GUI_fancybutton_focused_left_bottom"), global.pog_int("GUI_fancybutton_focused_body_left"), global.pog_int("GUI_fancybutton_focused_body_top"), global.pog_int("GUI_fancybutton_focused_body_right"), global.pog_int("GUI_fancybutton_focused_body_bottom"), global.pog_int("GUI_fancybutton_focused_right_left"), global.pog_int("GUI_fancybutton_focused_right_top"), global.pog_int("GUI_fancybutton_focused_right_right"), global.pog_int("GUI_fancybutton_focused_right_bottom"), global.pog_int("GUI_fancybutton_selected_left_left"), global.pog_int("GUI_fancybutton_selected_left_top"), global.pog_int("GUI_fancybutton_selected_left_right"), global.pog_int("GUI_fancybutton_selected_left_bottom"), global.pog_int("GUI_fancybutton_selected_body_left"), global.pog_int("GUI_fancybutton_selected_body_top"), global.pog_int("GUI_fancybutton_selected_body_right"), global.pog_int("GUI_fancybutton_selected_body_bottom"), global.pog_int("GUI_fancybutton_selected_right_left"), global.pog_int("GUI_fancybutton_selected_right_top"), global.pog_int("GUI_fancybutton_selected_right_right"), global.pog_int("GUI_fancybutton_selected_right_bottom"))
 	gui.set_window_title(v5, v2)
 	gui.set_button_function_pog(v5, v3)
-	return
+	return v5
 	return 0
 
 func restart_screen() -> Variant:

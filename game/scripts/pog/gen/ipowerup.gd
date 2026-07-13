@@ -83,7 +83,7 @@ func give_all_cargo() -> Variant:
 			debug.print_string("iPowerUp.GiveAllShips: Destroying Ship powerup global.\n")
 		global.destroy("g_powerup_ships")
 	else:
-		if global.exists("g_powerup_cargo"):
+		if not (global.exists("g_powerup_cargo")):
 			return 0
 		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllShips: Destroying Cargo powerup global.\n")

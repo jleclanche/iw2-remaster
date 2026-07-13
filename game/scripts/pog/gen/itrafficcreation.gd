@@ -50,13 +50,36 @@ func disable_traffic_report() -> Variant:
 	return 0
 
 func local_27(v0) -> Variant:
-	if global.exists("gl_traffic_creation_no_report"):
-		if 1 == global.pog_bool("gl_traffic_creation_no_report"):
-			push_error("PORT: unstructured jump to L84")
-	else:
-		if PogRuntime.TRACE:
+	var _pc: int = 27
+	while true:
+		if _pc == 27:
+			if global.exists("gl_traffic_creation_no_report"):
+				_pc = 52
+				continue
+			else:
+				_pc = 84
+				continue
+		elif _pc == 52:
+			if 1 == global.pog_bool("gl_traffic_creation_no_report"):
+				_pc = 79
+				continue
+			else:
+				_pc = 84
+				continue
+		elif _pc == 79:
+			_pc = 108
+			continue
+		elif _pc == 84:
+			_pc = 108
+			continue
+		elif _pc == 89:
 			debug.print_string(v0)
-	return 0
+			_pc = 108
+			continue
+		elif _pc == 108:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_111(v0) -> Variant:
@@ -92,24 +115,35 @@ func local_111(v0) -> Variant:
 	var v30: Variant = 0
 	var v31: Variant = 0
 	var v32: Variant = 0
-	v1 = ihabitat.cast(v0)
-	v2 = ilagrangepoint.cast(v0)
-	v19 = 1.0
-	v20 = 1.0
-	v21 = 1.0
-	v22 = 0.800000011920929
-	v23 = 0.699999988079071
-	v24 = 0.6000000238418579
-	v25 = 0.5
-	v26 = 0.4000000059604645
-	v27 = 0.30000001192092896
-	v28 = 0.5
-	v29 = 0.20000000298023224
-	v30 = 0.30000001192092896
-	v31 = 0.30000001192092896
-	v32 = 0.10000000149011612
-	if not _pog_is_null(v1):
-		while _pog_is_null(ihabitat.type(v1)):
+	var _pc: int = 111
+	while true:
+		if _pc == 111:
+			v1 = ihabitat.cast(v0)
+			v2 = ilagrangepoint.cast(v0)
+			v19 = 1.0
+			v20 = 1.0
+			v21 = 1.0
+			v22 = 0.800000011920929
+			v23 = 0.699999988079071
+			v24 = 0.6000000238418579
+			v25 = 0.5
+			v26 = 0.4000000059604645
+			v27 = 0.30000001192092896
+			v28 = 0.5
+			v29 = 0.20000000298023224
+			v30 = 0.30000001192092896
+			v31 = 0.30000001192092896
+			v32 = 0.10000000149011612
+			if not _pog_is_null(v1):
+				_pc = 331
+				continue
+			else:
+				_pc = 7981
+				continue
+		elif _pc == 331:
+			_pc = 6871
+			continue
+		elif _pc == 336:
 			v3 = 0.0
 			v4 = 0.0
 			v5 = 0.0
@@ -124,9 +158,1550 @@ func local_111(v0) -> Variant:
 			v14 = 0.0
 			v15 = 0.0
 			v16 = 0.0
-			break
-	else:
-		if ilagrangepoint.interstellar(v2):
+			_pc = 7976
+			continue
+		elif _pc == 495:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.0
+			v6 = 0.0
+			v7 = 0.0
+			v8 = 0.0
+			v9 = 0.0
+			v10 = 0.0
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.0
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 654:
+			v3 = 0.0
+			v4 = 0.8999999761581421
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.6000000238418579
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 813:
+			v3 = 0.0
+			v4 = 0.8999999761581421
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.8999999761581421
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 972:
+			v3 = 0.8999999761581421
+			v3 = 0.8999999761581421
+			v4 = 0.8999999761581421
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.6000000238418579
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 1142:
+			v3 = 0.8999999761581421
+			v4 = 0.8999999761581421
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.8999999761581421
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 1301:
+			v3 = 0.8999999761581421
+			v4 = 0.5
+			v5 = 0.20000000298023224
+			v6 = 0.699999988079071
+			v7 = 0.6000000238418579
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 1460:
+			v3 = 0.10000000149011612
+			v4 = 0.10000000149011612
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.4000000059604645
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.10000000149011612
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 1619:
+			v3 = 0.30000001192092896
+			v4 = 0.30000001192092896
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.8999999761581421
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.10000000149011612
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 1778:
+			v3 = 0.5
+			v4 = 0.10000000149011612
+			v5 = 0.5
+			v6 = 0.20000000298023224
+			v7 = 0.4000000059604645
+			v8 = 0.4000000059604645
+			v9 = 0.4000000059604645
+			v10 = 0.20000000298023224
+			v11 = 0.5
+			v12 = 0.10000000149011612
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.20000000298023224
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 1937:
+			v3 = 0.10000000149011612
+			v4 = 0.0
+			v5 = 0.5
+			v6 = 0.4000000059604645
+			v7 = 0.699999988079071
+			v8 = 0.30000001192092896
+			v9 = 0.800000011920929
+			v10 = 0.0
+			v11 = 0.30000001192092896
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.4000000059604645
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 2096:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.30000001192092896
+			v6 = 0.10000000149011612
+			v7 = 0.30000001192092896
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.20000000298023224
+			v14 = 0.8999999761581421
+			v15 = 0.0
+			v16 = 0.10000000149011612
+			_pc = 7976
+			continue
+		elif _pc == 2255:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.0
+			v8 = 0.30000001192092896
+			v9 = 0.10000000149011612
+			v10 = 0.699999988079071
+			v11 = 0.10000000149011612
+			v12 = 0.0
+			v13 = 0.20000000298023224
+			v14 = 0.699999988079071
+			v15 = 0.30000001192092896
+			v16 = 0.4000000059604645
+			_pc = 7976
+			continue
+		elif _pc == 2414:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.30000001192092896
+			v6 = 0.6000000238418579
+			v7 = 0.6000000238418579
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.5
+			v11 = 0.10000000149011612
+			v12 = 0.0
+			v13 = 0.20000000298023224
+			v14 = 0.8999999761581421
+			v15 = 0.30000001192092896
+			v16 = 0.30000001192092896
+			_pc = 7976
+			continue
+		elif _pc == 2573:
+			v3 = 0.0
+			v4 = 0.10000000149011612
+			v5 = 0.5
+			v6 = 0.0
+			v7 = 0.4000000059604645
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.10000000149011612
+			v11 = 0.20000000298023224
+			v12 = 0.0
+			v13 = 0.20000000298023224
+			v14 = 0.5
+			v15 = 0.0
+			v16 = 0.10000000149011612
+			_pc = 7976
+			continue
+		elif _pc == 2732:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.4000000059604645
+			v6 = 0.8999999761581421
+			v7 = 0.20000000298023224
+			v8 = 0.20000000298023224
+			v9 = 0.20000000298023224
+			v10 = 0.30000001192092896
+			v11 = 0.30000001192092896
+			v12 = 0.0
+			v13 = 0.4000000059604645
+			v14 = 0.699999988079071
+			v15 = 0.10000000149011612
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 2891:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.4000000059604645
+			v6 = 0.800000011920929
+			v7 = 0.0
+			v8 = 0.30000001192092896
+			v9 = 0.0
+			v10 = 0.6000000238418579
+			v11 = 0.10000000149011612
+			v12 = 0.0
+			v13 = 0.30000001192092896
+			v14 = 0.4000000059604645
+			v15 = 0.20000000298023224
+			v16 = 0.4000000059604645
+			_pc = 7976
+			continue
+		elif _pc == 3050:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.0
+			v7 = 0.5
+			v8 = 0.30000001192092896
+			v9 = 0.30000001192092896
+			v10 = 0.0
+			v11 = 0.10000000149011612
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.30000001192092896
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 3209:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.30000001192092896
+			v6 = 0.0
+			v7 = 0.8999999761581421
+			v8 = 0.30000001192092896
+			v9 = 0.30000001192092896
+			v10 = 0.0
+			v11 = 0.20000000298023224
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.20000000298023224
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 3368:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.30000001192092896
+			v6 = 0.0
+			v7 = 0.800000011920929
+			v8 = 0.30000001192092896
+			v9 = 0.800000011920929
+			v10 = 0.0
+			v11 = 0.20000000298023224
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.20000000298023224
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 3527:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.800000011920929
+			v6 = 0.0
+			v7 = 0.8999999761581421
+			v8 = 0.30000001192092896
+			v9 = 0.800000011920929
+			v10 = 0.0
+			v11 = 0.4000000059604645
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.0
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 3686:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.800000011920929
+			v6 = 0.0
+			v7 = 0.6000000238418579
+			v8 = 0.30000001192092896
+			v9 = 0.699999988079071
+			v10 = 0.0
+			v11 = 0.4000000059604645
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.0
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 3845:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.800000011920929
+			v6 = 0.20000000298023224
+			v7 = 0.699999988079071
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.699999988079071
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.10000000149011612
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 4004:
+			v3 = 0.6000000238418579
+			v4 = 0.5
+			v5 = 0.4000000059604645
+			v6 = 0.20000000298023224
+			v7 = 0.699999988079071
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.699999988079071
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.10000000149011612
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 4163:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.4000000059604645
+			v6 = 0.20000000298023224
+			v7 = 0.699999988079071
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.699999988079071
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.10000000149011612
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 4322:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.6000000238418579
+			v8 = 0.30000001192092896
+			v9 = 0.5
+			v10 = 0.10000000149011612
+			v11 = 0.20000000298023224
+			v12 = 0.0
+			v13 = 0.10000000149011612
+			v14 = 0.5
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 4481:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.30000001192092896
+			v6 = 0.0
+			v7 = 0.699999988079071
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.10000000149011612
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.0
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 4640:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.0
+			v7 = 0.20000000298023224
+			v8 = 0.0
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.4000000059604645
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.0
+			v15 = 0.0
+			v16 = 0.10000000149011612
+			_pc = 7976
+			continue
+		elif _pc == 4799:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.10000000149011612
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.5
+			v14 = 0.800000011920929
+			v15 = 0.0
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 4958:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.10000000149011612
+			v8 = 0.30000001192092896
+			v9 = 0.10000000149011612
+			v10 = 0.20000000298023224
+			v11 = 0.0
+			v12 = 0.30000001192092896
+			v13 = 0.20000000298023224
+			v14 = 0.800000011920929
+			v15 = 0.10000000149011612
+			v16 = 0.30000001192092896
+			_pc = 7976
+			continue
+		elif _pc == 5117:
+			v3 = 0.8999999761581421
+			v4 = 0.8999999761581421
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.699999988079071
+			v8 = 0.20000000298023224
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.0
+			v14 = 0.10000000149011612
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 5276:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.5
+			v6 = 0.0
+			v7 = 0.800000011920929
+			v8 = 0.30000001192092896
+			v9 = 0.0
+			v10 = 0.0
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.20000000298023224
+			v15 = 0.0
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 5435:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.0
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.10000000149011612
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.30000001192092896
+			v14 = 0.800000011920929
+			v15 = 0.0
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 5594:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.30000001192092896
+			v6 = 0.10000000149011612
+			v7 = 0.699999988079071
+			v8 = 0.30000001192092896
+			v9 = 0.20000000298023224
+			v10 = 0.0
+			v11 = 0.5
+			v12 = 0.0
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 5753:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.4000000059604645
+			v6 = 0.0
+			v7 = 0.0
+			v8 = 0.30000001192092896
+			v9 = 0.0
+			v10 = 0.20000000298023224
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.5
+			v14 = 0.20000000298023224
+			v15 = 0.5
+			v16 = 0.6000000238418579
+			_pc = 7976
+			continue
+		elif _pc == 5912:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.30000001192092896
+			v6 = 0.0
+			v7 = 0.5
+			v8 = 0.30000001192092896
+			v9 = 0.0
+			v10 = 0.699999988079071
+			v11 = 0.10000000149011612
+			v12 = 0.0
+			v13 = 0.20000000298023224
+			v14 = 0.10000000149011612
+			v15 = 0.6000000238418579
+			v16 = 0.4000000059604645
+			_pc = 7976
+			continue
+		elif _pc == 6071:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.699999988079071
+			v7 = 0.6000000238418579
+			v8 = 0.30000001192092896
+			v9 = 0.0
+			v10 = 0.5
+			v11 = 0.0
+			v12 = 0.30000001192092896
+			v13 = 0.20000000298023224
+			v14 = 0.4000000059604645
+			v15 = 0.0
+			v16 = 0.10000000149011612
+			_pc = 7976
+			continue
+		elif _pc == 6230:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.0
+			v6 = 0.0
+			v7 = 0.0
+			v8 = 0.0
+			v9 = 0.0
+			v10 = 0.0
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.0
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 6389:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.20000000298023224
+			v6 = 0.20000000298023224
+			v7 = 0.6000000238418579
+			v8 = 0.0
+			v9 = 0.20000000298023224
+			v10 = 0.20000000298023224
+			v11 = 0.20000000298023224
+			v12 = 0.0
+			v13 = 0.20000000298023224
+			v14 = 0.20000000298023224
+			v15 = 0.0
+			v16 = 0.0
+			_pc = 7976
+			continue
+		elif _pc == 6548:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.6000000238418579
+			v6 = 0.699999988079071
+			v7 = 0.20000000298023224
+			v8 = 0.20000000298023224
+			v9 = 0.10000000149011612
+			v10 = 0.30000001192092896
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.20000000298023224
+			v14 = 0.8999999761581421
+			v15 = 0.10000000149011612
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 6707:
+			v3 = 0.0
+			v4 = 0.0
+			v5 = 0.6000000238418579
+			v6 = 0.699999988079071
+			v7 = 0.20000000298023224
+			v8 = 0.20000000298023224
+			v9 = 0.10000000149011612
+			v10 = 0.30000001192092896
+			v11 = 0.20000000298023224
+			v12 = 0.8999999761581421
+			v13 = 0.20000000298023224
+			v14 = 0.8999999761581421
+			v15 = 0.10000000149011612
+			v16 = 0.20000000298023224
+			_pc = 7976
+			continue
+		elif _pc == 6866:
+			_pc = 7976
+			continue
+		elif _pc == 6871:
+			if not _pog_is_null(ihabitat.type(v1)):
+				_pc = 6897
+				continue
+			else:
+				_pc = 336
+				continue
+		elif _pc == 6897:
+			if not _pog_is_null(1):
+				_pc = 6905
+				continue
+			else:
+				_pc = 495
+				continue
+		elif _pc == 6905:
+			if not _pog_is_null(2):
+				_pc = 6914
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6914:
+			if not _pog_is_null(3):
+				_pc = 6923
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6923:
+			if not _pog_is_null(4):
+				_pc = 6932
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6932:
+			if not _pog_is_null(5):
+				_pc = 6941
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6941:
+			if not _pog_is_null(6):
+				_pc = 6950
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6950:
+			if not _pog_is_null(7):
+				_pc = 6959
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6959:
+			if not _pog_is_null(8):
+				_pc = 6968
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6968:
+			if not _pog_is_null(9):
+				_pc = 6977
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6977:
+			if not _pog_is_null(10):
+				_pc = 6986
+				continue
+			else:
+				_pc = 654
+				continue
+		elif _pc == 6986:
+			if not _pog_is_null(53):
+				_pc = 6995
+				continue
+			else:
+				_pc = 813
+				continue
+		elif _pc == 6995:
+			if not _pog_is_null(11):
+				_pc = 7004
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7004:
+			if not _pog_is_null(12):
+				_pc = 7013
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7013:
+			if not _pog_is_null(13):
+				_pc = 7022
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7022:
+			if not _pog_is_null(14):
+				_pc = 7031
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7031:
+			if not _pog_is_null(15):
+				_pc = 7040
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7040:
+			if not _pog_is_null(16):
+				_pc = 7049
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7049:
+			if not _pog_is_null(17):
+				_pc = 7058
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7058:
+			if not _pog_is_null(18):
+				_pc = 7067
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7067:
+			if not _pog_is_null(19):
+				_pc = 7076
+				continue
+			else:
+				_pc = 972
+				continue
+		elif _pc == 7076:
+			if not _pog_is_null(20):
+				_pc = 7085
+				continue
+			else:
+				_pc = 1142
+				continue
+		elif _pc == 7085:
+			if not _pog_is_null(22):
+				_pc = 7094
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7094:
+			if not _pog_is_null(23):
+				_pc = 7103
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7103:
+			if not _pog_is_null(24):
+				_pc = 7112
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7112:
+			if not _pog_is_null(25):
+				_pc = 7121
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7121:
+			if not _pog_is_null(26):
+				_pc = 7130
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7130:
+			if not _pog_is_null(27):
+				_pc = 7139
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7139:
+			if not _pog_is_null(28):
+				_pc = 7148
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7148:
+			if not _pog_is_null(29):
+				_pc = 7157
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7157:
+			if not _pog_is_null(30):
+				_pc = 7166
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7166:
+			if not _pog_is_null(31):
+				_pc = 7175
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7175:
+			if not _pog_is_null(32):
+				_pc = 7184
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7184:
+			if not _pog_is_null(33):
+				_pc = 7193
+				continue
+			else:
+				_pc = 1301
+				continue
+		elif _pc == 7193:
+			if not _pog_is_null(39):
+				_pc = 7202
+				continue
+			else:
+				_pc = 1460
+				continue
+		elif _pc == 7202:
+			if not _pog_is_null(40):
+				_pc = 7211
+				continue
+			else:
+				_pc = 1460
+				continue
+		elif _pc == 7211:
+			if not _pog_is_null(96):
+				_pc = 7220
+				continue
+			else:
+				_pc = 1460
+				continue
+		elif _pc == 7220:
+			if not _pog_is_null(110):
+				_pc = 7229
+				continue
+			else:
+				_pc = 1460
+				continue
+		elif _pc == 7229:
+			if not _pog_is_null(42):
+				_pc = 7238
+				continue
+			else:
+				_pc = 1619
+				continue
+		elif _pc == 7238:
+			if not _pog_is_null(43):
+				_pc = 7247
+				continue
+			else:
+				_pc = 1619
+				continue
+		elif _pc == 7247:
+			if not _pog_is_null(80):
+				_pc = 7256
+				continue
+			else:
+				_pc = 1619
+				continue
+		elif _pc == 7256:
+			if not _pog_is_null(81):
+				_pc = 7265
+				continue
+			else:
+				_pc = 1619
+				continue
+		elif _pc == 7265:
+			if not _pog_is_null(34):
+				_pc = 7274
+				continue
+			else:
+				_pc = 1778
+				continue
+		elif _pc == 7274:
+			if not _pog_is_null(35):
+				_pc = 7283
+				continue
+			else:
+				_pc = 1778
+				continue
+		elif _pc == 7283:
+			if not _pog_is_null(44):
+				_pc = 7292
+				continue
+			else:
+				_pc = 1937
+				continue
+		elif _pc == 7292:
+			if not _pog_is_null(45):
+				_pc = 7301
+				continue
+			else:
+				_pc = 1937
+				continue
+		elif _pc == 7301:
+			if not _pog_is_null(47):
+				_pc = 7310
+				continue
+			else:
+				_pc = 1937
+				continue
+		elif _pc == 7310:
+			if not _pog_is_null(92):
+				_pc = 7319
+				continue
+			else:
+				_pc = 1937
+				continue
+		elif _pc == 7319:
+			if not _pog_is_null(93):
+				_pc = 7328
+				continue
+			else:
+				_pc = 1937
+				continue
+		elif _pc == 7328:
+			if not _pog_is_null(94):
+				_pc = 7337
+				continue
+			else:
+				_pc = 1937
+				continue
+		elif _pc == 7337:
+			if not _pog_is_null(95):
+				_pc = 7346
+				continue
+			else:
+				_pc = 1937
+				continue
+		elif _pc == 7346:
+			if not _pog_is_null(49):
+				_pc = 7355
+				continue
+			else:
+				_pc = 2096
+				continue
+		elif _pc == 7355:
+			if not _pog_is_null(50):
+				_pc = 7364
+				continue
+			else:
+				_pc = 2096
+				continue
+		elif _pc == 7364:
+			if not _pog_is_null(66):
+				_pc = 7373
+				continue
+			else:
+				_pc = 2096
+				continue
+		elif _pc == 7373:
+			if not _pog_is_null(52):
+				_pc = 7382
+				continue
+			else:
+				_pc = 2096
+				continue
+		elif _pc == 7382:
+			if not _pog_is_null(105):
+				_pc = 7391
+				continue
+			else:
+				_pc = 2255
+				continue
+		elif _pc == 7391:
+			if not _pog_is_null(106):
+				_pc = 7400
+				continue
+			else:
+				_pc = 2414
+				continue
+		elif _pc == 7400:
+			if not _pog_is_null(41):
+				_pc = 7409
+				continue
+			else:
+				_pc = 2573
+				continue
+		elif _pc == 7409:
+			if not _pog_is_null(51):
+				_pc = 7418
+				continue
+			else:
+				_pc = 2573
+				continue
+		elif _pc == 7418:
+			if not _pog_is_null(99):
+				_pc = 7427
+				continue
+			else:
+				_pc = 2573
+				continue
+		elif _pc == 7427:
+			if not _pog_is_null(100):
+				_pc = 7436
+				continue
+			else:
+				_pc = 2573
+				continue
+		elif _pc == 7436:
+			if not _pog_is_null(61):
+				_pc = 7445
+				continue
+			else:
+				_pc = 2732
+				continue
+		elif _pc == 7445:
+			if not _pog_is_null(63):
+				_pc = 7454
+				continue
+			else:
+				_pc = 2891
+				continue
+		elif _pc == 7454:
+			if not _pog_is_null(72):
+				_pc = 7463
+				continue
+			else:
+				_pc = 3050
+				continue
+		elif _pc == 7463:
+			if not _pog_is_null(73):
+				_pc = 7472
+				continue
+			else:
+				_pc = 3050
+				continue
+		elif _pc == 7472:
+			if not _pog_is_null(54):
+				_pc = 7481
+				continue
+			else:
+				_pc = 3209
+				continue
+		elif _pc == 7481:
+			if not _pog_is_null(55):
+				_pc = 7490
+				continue
+			else:
+				_pc = 3209
+				continue
+		elif _pc == 7490:
+			if not _pog_is_null(70):
+				_pc = 7499
+				continue
+			else:
+				_pc = 3209
+				continue
+		elif _pc == 7499:
+			if not _pog_is_null(71):
+				_pc = 7508
+				continue
+			else:
+				_pc = 3209
+				continue
+		elif _pc == 7508:
+			if not _pog_is_null(82):
+				_pc = 7517
+				continue
+			else:
+				_pc = 3209
+				continue
+		elif _pc == 7517:
+			if not _pog_is_null(85):
+				_pc = 7526
+				continue
+			else:
+				_pc = 3209
+				continue
+		elif _pc == 7526:
+			if not _pog_is_null(68):
+				_pc = 7535
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 7535:
+			if not _pog_is_null(69):
+				_pc = 7544
+				continue
+			else:
+				_pc = 3368
+				continue
+		elif _pc == 7544:
+			if not _pog_is_null(56):
+				_pc = 7553
+				continue
+			else:
+				_pc = 3527
+				continue
+		elif _pc == 7553:
+			if not _pog_is_null(58):
+				_pc = 7562
+				continue
+			else:
+				_pc = 3527
+				continue
+		elif _pc == 7562:
+			if not _pog_is_null(57):
+				_pc = 7571
+				continue
+			else:
+				_pc = 3686
+				continue
+		elif _pc == 7571:
+			if not _pog_is_null(84):
+				_pc = 7580
+				continue
+			else:
+				_pc = 3845
+				continue
+		elif _pc == 7580:
+			if not _pog_is_null(21):
+				_pc = 7589
+				continue
+			else:
+				_pc = 4004
+				continue
+		elif _pc == 7589:
+			if not _pog_is_null(37):
+				_pc = 7598
+				continue
+			else:
+				_pc = 4163
+				continue
+		elif _pc == 7598:
+			if not _pog_is_null(64):
+				_pc = 7607
+				continue
+			else:
+				_pc = 4163
+				continue
+		elif _pc == 7607:
+			if not _pog_is_null(76):
+				_pc = 7616
+				continue
+			else:
+				_pc = 4163
+				continue
+		elif _pc == 7616:
+			if not _pog_is_null(86):
+				_pc = 7625
+				continue
+			else:
+				_pc = 4322
+				continue
+		elif _pc == 7625:
+			if not _pog_is_null(74):
+				_pc = 7634
+				continue
+			else:
+				_pc = 4322
+				continue
+		elif _pc == 7634:
+			if not _pog_is_null(75):
+				_pc = 7643
+				continue
+			else:
+				_pc = 4322
+				continue
+		elif _pc == 7643:
+			if not _pog_is_null(36):
+				_pc = 7652
+				continue
+			else:
+				_pc = 4322
+				continue
+		elif _pc == 7652:
+			if not _pog_is_null(60):
+				_pc = 7661
+				continue
+			else:
+				_pc = 4481
+				continue
+		elif _pc == 7661:
+			if not _pog_is_null(78):
+				_pc = 7670
+				continue
+			else:
+				_pc = 4481
+				continue
+		elif _pc == 7670:
+			if not _pog_is_null(87):
+				_pc = 7679
+				continue
+			else:
+				_pc = 4640
+				continue
+		elif _pc == 7679:
+			if not _pog_is_null(88):
+				_pc = 7688
+				continue
+			else:
+				_pc = 4640
+				continue
+		elif _pc == 7688:
+			if not _pog_is_null(89):
+				_pc = 7697
+				continue
+			else:
+				_pc = 4640
+				continue
+		elif _pc == 7697:
+			if not _pog_is_null(90):
+				_pc = 7706
+				continue
+			else:
+				_pc = 4640
+				continue
+		elif _pc == 7706:
+			if not _pog_is_null(91):
+				_pc = 7715
+				continue
+			else:
+				_pc = 4640
+				continue
+		elif _pc == 7715:
+			if not _pog_is_null(97):
+				_pc = 7724
+				continue
+			else:
+				_pc = 4799
+				continue
+		elif _pc == 7724:
+			if not _pog_is_null(98):
+				_pc = 7733
+				continue
+			else:
+				_pc = 4799
+				continue
+		elif _pc == 7733:
+			if not _pog_is_null(108):
+				_pc = 7742
+				continue
+			else:
+				_pc = 4799
+				continue
+		elif _pc == 7742:
+			if not _pog_is_null(48):
+				_pc = 7751
+				continue
+			else:
+				_pc = 4799
+				continue
+		elif _pc == 7751:
+			if not _pog_is_null(46):
+				_pc = 7760
+				continue
+			else:
+				_pc = 4958
+				continue
+		elif _pc == 7760:
+			if not _pog_is_null(59):
+				_pc = 7769
+				continue
+			else:
+				_pc = 4958
+				continue
+		elif _pc == 7769:
+			if not _pog_is_null(67):
+				_pc = 7778
+				continue
+			else:
+				_pc = 4958
+				continue
+		elif _pc == 7778:
+			if not _pog_is_null(107):
+				_pc = 7787
+				continue
+			else:
+				_pc = 4958
+				continue
+		elif _pc == 7787:
+			if not _pog_is_null(112):
+				_pc = 7796
+				continue
+			else:
+				_pc = 4958
+				continue
+		elif _pc == 7796:
+			if not _pog_is_null(114):
+				_pc = 7805
+				continue
+			else:
+				_pc = 4958
+				continue
+		elif _pc == 7805:
+			if not _pog_is_null(38):
+				_pc = 7814
+				continue
+			else:
+				_pc = 5117
+				continue
+		elif _pc == 7814:
+			if not _pog_is_null(62):
+				_pc = 7823
+				continue
+			else:
+				_pc = 5276
+				continue
+		elif _pc == 7823:
+			if not _pog_is_null(109):
+				_pc = 7832
+				continue
+			else:
+				_pc = 5435
+				continue
+		elif _pc == 7832:
+			if not _pog_is_null(65):
+				_pc = 7841
+				continue
+			else:
+				_pc = 5594
+				continue
+		elif _pc == 7841:
+			if not _pog_is_null(101):
+				_pc = 7850
+				continue
+			else:
+				_pc = 5753
+				continue
+		elif _pc == 7850:
+			if not _pog_is_null(102):
+				_pc = 7859
+				continue
+			else:
+				_pc = 5753
+				continue
+		elif _pc == 7859:
+			if not _pog_is_null(103):
+				_pc = 7868
+				continue
+			else:
+				_pc = 5753
+				continue
+		elif _pc == 7868:
+			if not _pog_is_null(111):
+				_pc = 7877
+				continue
+			else:
+				_pc = 5753
+				continue
+		elif _pc == 7877:
+			if not _pog_is_null(104):
+				_pc = 7886
+				continue
+			else:
+				_pc = 5912
+				continue
+		elif _pc == 7886:
+			if not _pog_is_null(113):
+				_pc = 7895
+				continue
+			else:
+				_pc = 6071
+				continue
+		elif _pc == 7895:
+			if not _pog_is_null(79):
+				_pc = 7904
+				continue
+			else:
+				_pc = 6230
+				continue
+		elif _pc == 7904:
+			if not _pog_is_null(115):
+				_pc = 7913
+				continue
+			else:
+				_pc = 6230
+				continue
+		elif _pc == 7913:
+			if not _pog_is_null(116):
+				_pc = 7922
+				continue
+			else:
+				_pc = 6230
+				continue
+		elif _pc == 7922:
+			if not _pog_is_null(117):
+				_pc = 7931
+				continue
+			else:
+				_pc = 6230
+				continue
+		elif _pc == 7931:
+			if not _pog_is_null(118):
+				_pc = 7940
+				continue
+			else:
+				_pc = 6389
+				continue
+		elif _pc == 7940:
+			if not _pog_is_null(119):
+				_pc = 7949
+				continue
+			else:
+				_pc = 6548
+				continue
+		elif _pc == 7949:
+			if not _pog_is_null(120):
+				_pc = 7958
+				continue
+			else:
+				_pc = 6548
+				continue
+		elif _pc == 7958:
+			if not _pog_is_null(121):
+				_pc = 7967
+				continue
+			else:
+				_pc = 6707
+				continue
+		elif _pc == 7967:
+			if not _pog_is_null(122):
+				_pc = 7976
+				continue
+			else:
+				_pc = 6707
+				continue
+		elif _pc == 7976:
+			_pc = 8317
+			continue
+		elif _pc == 7981:
+			if ilagrangepoint.interstellar(v2):
+				_pc = 8004
+				continue
+			else:
+				_pc = 8163
+				continue
+		elif _pc == 8004:
 			v3 = 0.699999988079071
 			v4 = 0.699999988079071
 			v5 = 0.5
@@ -141,7 +1716,9 @@ func local_111(v0) -> Variant:
 			v14 = 0.20000000298023224
 			v15 = 0.20000000298023224
 			v16 = 0.20000000298023224
-		else:
+			_pc = 8317
+			continue
+		elif _pc == 8163:
 			v3 = 0.699999988079071
 			v4 = 0.699999988079071
 			v5 = 0.5
@@ -156,156 +1733,644 @@ func local_111(v0) -> Variant:
 			v14 = 0.20000000298023224
 			v15 = 0.10000000149011612
 			v16 = 0.10000000149011612
-	v3 = v19 * v3
-	v4 = v4 * v4
-	v5 = v21 * v5
-	v6 = v22 * v6
-	v7 = v23 * v7
-	v8 = v24 * v8
-	v9 = v25 * v9
-	v10 = v26 * v10
-	v11 = v27 * v11
-	v12 = v28 * v12
-	v13 = v29 * v13
-	v14 = v30 * v14
-	v15 = v31 * v15
-	v16 = v32 * v16
-	v17 = v16 + v15 + v14 + v13 + v12 + v11 + v10 + v9 + v8 + v7 + v6 + v5 + v4 + v3
-	if _pog_is_null(v17):
-		if PogRuntime.TRACE:
+			_pc = 8317
+			continue
+		elif _pc == 8317:
+			v3 = v19 * v3
+			v4 = v4 * v4
+			v5 = v21 * v5
+			v6 = v22 * v6
+			v7 = v23 * v7
+			v8 = v24 * v8
+			v9 = v25 * v9
+			v10 = v26 * v10
+			v11 = v27 * v11
+			v12 = v28 * v12
+			v13 = v29 * v13
+			v14 = v30 * v14
+			v15 = v31 * v15
+			v16 = v32 * v16
+			v17 = v16 + v15 + v14 + v13 + v12 + v11 + v10 + v9 + v8 + v7 + v6 + v5 + v4 + v3
+			if _pog_is_null(v17):
+				_pc = 8660
+				continue
+			else:
+				_pc = 8692
+				continue
+		elif _pc == 8660:
+			_pc = 8686
+			continue
+		elif _pc == 8665:
 			await local_27("iT%rafficCreation.FindScenario : location has no weightings, returning no Scenario\n")
-	else:
-		v18 = math.random(0.0, v17)
-		if v3 <= v18:
-			if PogRuntime.TRACE:
-				await local_27("iTrafficCreation.FindScenario : Returning a HaulageIn Scenario for ")
-				await local_27(imapentity.pog_name(v0))
-				await local_27(" \n")
-		else:
+			_pc = 8686
+			continue
+		elif _pc == 8686:
+			_pc = 10474
+			continue
+		elif _pc == 8692:
+			v18 = math.random(0.0, v17)
+			if v3 <= v18:
+				_pc = 8737
+				continue
+			else:
+				_pc = 8826
+				continue
+		elif _pc == 8737:
+			_pc = 8820
+			continue
+		elif _pc == 8742:
+			await local_27("iTrafficCreation.FindScenario : Returning a HaulageIn Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 8820
+			continue
+		elif _pc == 8820:
+			_pc = 10474
+			continue
+		elif _pc == 8826:
 			v18 = v3 - v18
 			if v4 <= v18:
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.FindScenario : Returning a HaulageOut Scenario for ")
-					await local_27(imapentity.pog_name(v0))
-					await local_27(" \n")
+				_pc = 8859
+				continue
 			else:
-				v18 = v4 - v18
-				if v5 <= v18:
-					if PogRuntime.TRACE:
-						await local_27("iTrafficCreation.FindScenario : Returning a Supply Scenario for ")
-						await local_27(imapentity.pog_name(v0))
-						await local_27(" \n")
-				else:
-					v18 = v5 - v18
-					if v6 <= v18:
-						if PogRuntime.TRACE:
-							await local_27("iTrafficCreation.FindScenario : Returning a Trade Scenario for ")
-							await local_27(imapentity.pog_name(v0))
-							await local_27(" \n")
-					else:
-						v18 = v6 - v18
-						if v7 <= v18:
-							if PogRuntime.TRACE:
-								await local_27("iTrafficCreation.FindScenario : Returning a Security Scenario for ")
-								await local_27(imapentity.pog_name(v0))
-								await local_27(" \n")
-						else:
-							v18 = v7 - v18
-							if v8 <= v18:
-								if PogRuntime.TRACE:
-									await local_27("iTrafficCreation.FindScenario : Returning a Tanker Scenario for ")
-									await local_27(imapentity.pog_name(v0))
-									await local_27(" \n")
-							else:
-								v18 = v8 - v18
-								if v9 <= v18:
-									if PogRuntime.TRACE:
-										await local_27("iTrafficCreation.FindScenario : Returning a Official Scenario for ")
-										await local_27(imapentity.pog_name(v0))
-										await local_27(" \n")
-								else:
-									v18 = v9 - v18
-									if v10 <= v18:
-										if PogRuntime.TRACE:
-											await local_27("iTrafficCreation.FindScenario : Returning an Underworld Scenario for ")
-											await local_27(imapentity.pog_name(v0))
-											await local_27(" \n")
-									else:
-										v18 = v10 - v18
-										if v11 <= v18:
-											if PogRuntime.TRACE:
-												await local_27("iTrafficCreation.FindScenario : Returning a Maintenance Scenario for ")
-												await local_27(imapentity.pog_name(v0))
-												await local_27(" \n")
-										else:
-											v18 = v11 - v18
-											if v12 <= v18:
-												if PogRuntime.TRACE:
-													await local_27("iTrafficCreation.FindScenario : Returning a Mining Scenario for ")
-													await local_27(imapentity.pog_name(v0))
-													await local_27(" \n")
-											else:
-												v18 = v12 - v18
-												if v13 <= v18:
-													if PogRuntime.TRACE:
-														await local_27("iTrafficCreation.FindScenario : Returning an Oddball Scenario for ")
-														await local_27(imapentity.pog_name(v0))
-														await local_27(" \n")
-												else:
-													v18 = v13 - v18
-													if v14 <= v18:
-														if PogRuntime.TRACE:
-															await local_27("iTrafficCreation.FindScenario : Returning a Civilian Scenario for ")
-															await local_27(imapentity.pog_name(v0))
-															await local_27(" \n")
-													else:
-														v18 = v14 - v18
-														if v15 <= v18:
-															if PogRuntime.TRACE:
-																await local_27("iTrafficCreation.FindScenario : Returning a Hostile Scenario for ")
-																await local_27(imapentity.pog_name(v0))
-																await local_27(" \n")
-														else:
-															v18 = v15 - v18
-															if v16 <= v18:
-																if PogRuntime.TRACE:
-																	await local_27("iTrafficCreation.FindScenario : Returning a Scum Scenario for ")
-																	await local_27(imapentity.pog_name(v0))
-																	await local_27(" \n")
-															else:
-																v18 = v16 - v18
-																if PogRuntime.TRACE:
-																	await local_27("iTrafficCreation.FinScenario : Oops, unable to find scenario, returning blank scenario\n")
-	return
+				_pc = 8949
+				continue
+		elif _pc == 8859:
+			_pc = 8942
+			continue
+		elif _pc == 8864:
+			await local_27("iTrafficCreation.FindScenario : Returning a HaulageOut Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 8942
+			continue
+		elif _pc == 8942:
+			_pc = 10474
+			continue
+		elif _pc == 8949:
+			v18 = v4 - v18
+			if v5 <= v18:
+				_pc = 8982
+				continue
+			else:
+				_pc = 9072
+				continue
+		elif _pc == 8982:
+			_pc = 9065
+			continue
+		elif _pc == 8987:
+			await local_27("iTrafficCreation.FindScenario : Returning a Supply Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9065
+			continue
+		elif _pc == 9065:
+			_pc = 10474
+			continue
+		elif _pc == 9072:
+			v18 = v5 - v18
+			if v6 <= v18:
+				_pc = 9105
+				continue
+			else:
+				_pc = 9195
+				continue
+		elif _pc == 9105:
+			_pc = 9188
+			continue
+		elif _pc == 9110:
+			await local_27("iTrafficCreation.FindScenario : Returning a Trade Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9188
+			continue
+		elif _pc == 9188:
+			_pc = 10474
+			continue
+		elif _pc == 9195:
+			v18 = v6 - v18
+			if v7 <= v18:
+				_pc = 9228
+				continue
+			else:
+				_pc = 9318
+				continue
+		elif _pc == 9228:
+			_pc = 9311
+			continue
+		elif _pc == 9233:
+			await local_27("iTrafficCreation.FindScenario : Returning a Security Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9311
+			continue
+		elif _pc == 9311:
+			_pc = 10474
+			continue
+		elif _pc == 9318:
+			v18 = v7 - v18
+			if v8 <= v18:
+				_pc = 9351
+				continue
+			else:
+				_pc = 9441
+				continue
+		elif _pc == 9351:
+			_pc = 9434
+			continue
+		elif _pc == 9356:
+			await local_27("iTrafficCreation.FindScenario : Returning a Tanker Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9434
+			continue
+		elif _pc == 9434:
+			_pc = 10474
+			continue
+		elif _pc == 9441:
+			v18 = v8 - v18
+			if v9 <= v18:
+				_pc = 9474
+				continue
+			else:
+				_pc = 9564
+				continue
+		elif _pc == 9474:
+			_pc = 9557
+			continue
+		elif _pc == 9479:
+			await local_27("iTrafficCreation.FindScenario : Returning a Official Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9557
+			continue
+		elif _pc == 9557:
+			_pc = 10474
+			continue
+		elif _pc == 9564:
+			v18 = v9 - v18
+			if v10 <= v18:
+				_pc = 9597
+				continue
+			else:
+				_pc = 9687
+				continue
+		elif _pc == 9597:
+			_pc = 9680
+			continue
+		elif _pc == 9602:
+			await local_27("iTrafficCreation.FindScenario : Returning an Underworld Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9680
+			continue
+		elif _pc == 9680:
+			_pc = 10474
+			continue
+		elif _pc == 9687:
+			v18 = v10 - v18
+			if v11 <= v18:
+				_pc = 9720
+				continue
+			else:
+				_pc = 9810
+				continue
+		elif _pc == 9720:
+			_pc = 9803
+			continue
+		elif _pc == 9725:
+			await local_27("iTrafficCreation.FindScenario : Returning a Maintenance Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9803
+			continue
+		elif _pc == 9803:
+			_pc = 10474
+			continue
+		elif _pc == 9810:
+			v18 = v11 - v18
+			if v12 <= v18:
+				_pc = 9843
+				continue
+			else:
+				_pc = 9933
+				continue
+		elif _pc == 9843:
+			_pc = 9926
+			continue
+		elif _pc == 9848:
+			await local_27("iTrafficCreation.FindScenario : Returning a Mining Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 9926
+			continue
+		elif _pc == 9926:
+			_pc = 10474
+			continue
+		elif _pc == 9933:
+			v18 = v12 - v18
+			if v13 <= v18:
+				_pc = 9966
+				continue
+			else:
+				_pc = 10056
+				continue
+		elif _pc == 9966:
+			_pc = 10049
+			continue
+		elif _pc == 9971:
+			await local_27("iTrafficCreation.FindScenario : Returning an Oddball Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 10049
+			continue
+		elif _pc == 10049:
+			_pc = 10474
+			continue
+		elif _pc == 10056:
+			v18 = v13 - v18
+			if v14 <= v18:
+				_pc = 10089
+				continue
+			else:
+				_pc = 10179
+				continue
+		elif _pc == 10089:
+			_pc = 10172
+			continue
+		elif _pc == 10094:
+			await local_27("iTrafficCreation.FindScenario : Returning a Civilian Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 10172
+			continue
+		elif _pc == 10172:
+			_pc = 10474
+			continue
+		elif _pc == 10179:
+			v18 = v14 - v18
+			if v15 <= v18:
+				_pc = 10212
+				continue
+			else:
+				_pc = 10302
+				continue
+		elif _pc == 10212:
+			_pc = 10295
+			continue
+		elif _pc == 10217:
+			await local_27("iTrafficCreation.FindScenario : Returning a Hostile Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 10295
+			continue
+		elif _pc == 10295:
+			_pc = 10474
+			continue
+		elif _pc == 10302:
+			v18 = v15 - v18
+			if v16 <= v18:
+				_pc = 10335
+				continue
+			else:
+				_pc = 10425
+				continue
+		elif _pc == 10335:
+			_pc = 10418
+			continue
+		elif _pc == 10340:
+			await local_27("iTrafficCreation.FindScenario : Returning a Scum Scenario for ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27(" \n")
+			_pc = 10418
+			continue
+		elif _pc == 10418:
+			_pc = 10474
+			continue
+		elif _pc == 10425:
+			v18 = v16 - v18
+			_pc = 10468
+			continue
+		elif _pc == 10447:
+			await local_27("iTrafficCreation.FinScenario : Oops, unable to find scenario, returning blank scenario\n")
+			_pc = 10468
+			continue
+		elif _pc == 10468:
+			_pc = 10474
+			continue
+		elif _pc == 10474:
+			return
+		else:
+			return 0
 	return 0
 
 func local_10476(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = ihabitat.cast(v0)
-	v2 = ihabitat.type(v3)
-	if PogRuntime.TRACE:
-		await local_27("iTrafficCreation.Generate_some_traffic : monitor noted traffic missing.... Generating Scenario \n")
-	v1 = await local_111(v0)
-	if PogRuntime.TRACE:
-		debug.print_string("iTrafficCreation - location ")
-		debug.print_string(imapentity.pog_name(v0))
-		debug.print_string(" - type ")
-		debug.print_int(v2)
-		debug.print_string(" - scenario ")
-		debug.print_int(v1)
-		debug.print_string(" \n")
-	while _pog_is_null(v1):
-		if PogRuntime.TRACE:
+	var _pc: int = 10476
+	while true:
+		if _pc == 10476:
+			v3 = ihabitat.cast(v0)
+			v2 = ihabitat.type(v3)
+			_pc = 10555
+			continue
+		elif _pc == 10534:
+			await local_27("iTrafficCreation.Generate_some_traffic : monitor noted traffic missing.... Generating Scenario \n")
+			_pc = 10555
+			continue
+		elif _pc == 10555:
+			v1 = await local_111(v0)
+			_pc = 10742
+			continue
+		elif _pc == 10584:
+			debug.print_string("iTrafficCreation - location ")
+			debug.print_string(imapentity.pog_name(v0))
+			debug.print_string(" - type ")
+			debug.print_int(v2)
+			debug.print_string(" - scenario ")
+			debug.print_int(v1)
+			debug.print_string(" \n")
+			_pc = 10742
+			continue
+		elif _pc == 10742:
+			_pc = 11535
+			continue
+		elif _pc == 10747:
+			_pc = 10830
+			continue
+		elif _pc == 10752:
 			await local_27("iTrafficCreation.Generate_some_traffic : NO SCENARIO RETURNED FOR ")
 			await local_27(imapentity.pog_name(v0))
 			await local_27("\n")
-		if PogRuntime.TRACE:
+			_pc = 10830
+			continue
+		elif _pc == 10830:
+			_pc = 10856
+			continue
+		elif _pc == 10835:
 			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageIn Scenario.\n")
-		await itrafficscenario.haulage_in(v0)
-		break
-	return 0
+			_pc = 10856
+			continue
+		elif _pc == 10856:
+			await itrafficscenario.haulage_in(v0)
+			_pc = 11673
+			continue
+		elif _pc == 10880:
+			_pc = 10906
+			continue
+		elif _pc == 10885:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageOut Scenario\n")
+			_pc = 10906
+			continue
+		elif _pc == 10906:
+			await itrafficscenario.haulage_out(v0)
+			_pc = 11673
+			continue
+		elif _pc == 10930:
+			_pc = 10956
+			continue
+		elif _pc == 10935:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Supply Scenario\n")
+			_pc = 10956
+			continue
+		elif _pc == 10956:
+			await itrafficscenario.supply(v0)
+			_pc = 11673
+			continue
+		elif _pc == 10980:
+			_pc = 11006
+			continue
+		elif _pc == 10985:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Trade Scenario \n")
+			_pc = 11006
+			continue
+		elif _pc == 11006:
+			await itrafficscenario.trade(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11030:
+			_pc = 11056
+			continue
+		elif _pc == 11035:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Security Scenario\n")
+			_pc = 11056
+			continue
+		elif _pc == 11056:
+			await itrafficscenario.security(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11080:
+			_pc = 11106
+			continue
+		elif _pc == 11085:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Tanker Scenario\n")
+			_pc = 11106
+			continue
+		elif _pc == 11106:
+			await itrafficscenario.tanker(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11130:
+			_pc = 11156
+			continue
+		elif _pc == 11135:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Official scenario\n")
+			_pc = 11156
+			continue
+		elif _pc == 11156:
+			await itrafficscenario.official(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11180:
+			_pc = 11206
+			continue
+		elif _pc == 11185:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Underworld Scenario\n")
+			_pc = 11206
+			continue
+		elif _pc == 11206:
+			await itrafficscenario.underworld(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11230:
+			_pc = 11256
+			continue
+		elif _pc == 11235:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Maintenance Scenario\n")
+			_pc = 11256
+			continue
+		elif _pc == 11256:
+			await itrafficscenario.maintenance(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11280:
+			_pc = 11306
+			continue
+		elif _pc == 11285:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Mining sceanareo\n")
+			_pc = 11306
+			continue
+		elif _pc == 11306:
+			await itrafficscenario.mining(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11330:
+			_pc = 11356
+			continue
+		elif _pc == 11335:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Oddball Scenario\n")
+			_pc = 11356
+			continue
+		elif _pc == 11356:
+			await itrafficscenario.oddball(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11380:
+			_pc = 11406
+			continue
+		elif _pc == 11385:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Civilian scenario\n")
+			_pc = 11406
+			continue
+		elif _pc == 11406:
+			await itrafficscenario.civilian(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11430:
+			_pc = 11456
+			continue
+		elif _pc == 11435:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Hostile Scenario\n")
+			_pc = 11456
+			continue
+		elif _pc == 11456:
+			await itrafficscenario.hostile(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11480:
+			_pc = 11506
+			continue
+		elif _pc == 11485:
+			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Scum Scenario\n")
+			_pc = 11506
+			continue
+		elif _pc == 11506:
+			await itrafficscenario.scum(v0)
+			_pc = 11673
+			continue
+		elif _pc == 11530:
+			_pc = 11673
+			continue
+		elif _pc == 11535:
+			if not _pog_is_null(v1):
+				_pc = 11548
+				continue
+			else:
+				_pc = 10747
+				continue
+		elif _pc == 11548:
+			if not _pog_is_null(1):
+				_pc = 11556
+				continue
+			else:
+				_pc = 10830
+				continue
+		elif _pc == 11556:
+			if not _pog_is_null(2):
+				_pc = 11565
+				continue
+			else:
+				_pc = 10880
+				continue
+		elif _pc == 11565:
+			if not _pog_is_null(3):
+				_pc = 11574
+				continue
+			else:
+				_pc = 10930
+				continue
+		elif _pc == 11574:
+			if not _pog_is_null(4):
+				_pc = 11583
+				continue
+			else:
+				_pc = 10980
+				continue
+		elif _pc == 11583:
+			if not _pog_is_null(5):
+				_pc = 11592
+				continue
+			else:
+				_pc = 11030
+				continue
+		elif _pc == 11592:
+			if not _pog_is_null(6):
+				_pc = 11601
+				continue
+			else:
+				_pc = 11080
+				continue
+		elif _pc == 11601:
+			if not _pog_is_null(7):
+				_pc = 11610
+				continue
+			else:
+				_pc = 11130
+				continue
+		elif _pc == 11610:
+			if not _pog_is_null(8):
+				_pc = 11619
+				continue
+			else:
+				_pc = 11180
+				continue
+		elif _pc == 11619:
+			if not _pog_is_null(9):
+				_pc = 11628
+				continue
+			else:
+				_pc = 11230
+				continue
+		elif _pc == 11628:
+			if not _pog_is_null(10):
+				_pc = 11637
+				continue
+			else:
+				_pc = 11280
+				continue
+		elif _pc == 11637:
+			if not _pog_is_null(11):
+				_pc = 11646
+				continue
+			else:
+				_pc = 11330
+				continue
+		elif _pc == 11646:
+			if not _pog_is_null(12):
+				_pc = 11655
+				continue
+			else:
+				_pc = 11380
+				continue
+		elif _pc == 11655:
+			if not _pog_is_null(13):
+				_pc = 11664
+				continue
+			else:
+				_pc = 11430
+				continue
+		elif _pc == 11664:
+			if not _pog_is_null(14):
+				_pc = 11673
+				continue
+			else:
+				_pc = 11480
+				continue
+		elif _pc == 11673:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_11676(v0) -> Variant:
@@ -408,7 +2473,7 @@ func start(v0) -> Variant:
 	else:
 		v9 = 1
 	await local_11676(v0)
-	return
+	return v9
 	return 0
 
 func terminate() -> Variant:
@@ -433,7 +2498,7 @@ func terminate() -> Variant:
 		v1 = 1 + v1
 	if PogRuntime.TRACE:
 		await local_27("iTrafficCreation: Terminated location task successfully!\n")
-	return
+	return 1
 	return 0
 
 func monitor_traffic() -> Variant:
@@ -541,7 +2606,7 @@ func custom_go_to_lagrange_point() -> Variant:
 			object.add_handle_property(v8, "behaviour_script_handle", v9)
 			if not (not _pog_is_null(group.sim_count(v6))):
 				break
-	return
+	return v6
 	return 0
 
 func custom_local_security_patrol(v0, v1, v2, v3, v4) -> Variant:
@@ -576,7 +2641,7 @@ func custom_local_security_patrol(v0, v1, v2, v3, v4) -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_freelance_mine() -> Variant:
@@ -614,7 +2679,7 @@ func custom_freelance_mine() -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_official_visit() -> Variant:
@@ -652,7 +2717,7 @@ func custom_official_visit() -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_piracy() -> Variant:
@@ -690,7 +2755,7 @@ func custom_piracy() -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_cabbie() -> Variant:
@@ -728,7 +2793,7 @@ func custom_cabbie() -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_speed_trap() -> Variant:
@@ -766,7 +2831,7 @@ func custom_speed_trap() -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_flitter(v0, v1, v2, v3, v4) -> Variant:
@@ -799,7 +2864,7 @@ func custom_flitter(v0, v1, v2, v3, v4) -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_police_raid() -> Variant:
@@ -837,7 +2902,7 @@ func custom_police_raid() -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 
 func custom_maneuvre() -> Variant:
@@ -875,6 +2940,6 @@ func custom_maneuvre() -> Variant:
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
 			if not (not _pog_is_null(group.sim_count(v5))):
 				break
-	return
+	return v5
 	return 0
 

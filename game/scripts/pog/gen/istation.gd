@@ -96,22 +96,56 @@ func enable_reactive_in_area(v0, v1) -> Variant:
 	return 0
 
 func local_498(v0, v1, v2) -> Variant:
-	if global.exists("gl_station_reaction_no_report"):
-		if 1 == global.pog_bool("gl_station_reaction_no_report"):
-			push_error("PORT: unstructured jump to L555")
-	else:
-		if PogRuntime.TRACE:
-			if _pog_is_null(v1):
-				debug.print_string("iStation : ")
+	var _pc: int = 498
+	while true:
+		if _pc == 498:
+			if global.exists("gl_station_reaction_no_report"):
+				_pc = 523
+				continue
 			else:
-				debug.print_string("iStation(")
-				debug.print_handle(v1)
-				debug.print_string("::")
-				debug.print_handle(v2)
-				debug.print_string(") : ")
+				_pc = 555
+				continue
+		elif _pc == 523:
+			if 1 == global.pog_bool("gl_station_reaction_no_report"):
+				_pc = 550
+				continue
+			else:
+				_pc = 555
+				continue
+		elif _pc == 550:
+			_pc = 742
+			continue
+		elif _pc == 555:
+			_pc = 742
+			continue
+		elif _pc == 560:
+			if _pog_is_null(v1):
+				_pc = 574
+				continue
+			else:
+				_pc = 600
+				continue
+		elif _pc == 574:
+			debug.print_string("iStation : ")
+			_pc = 701
+			continue
+		elif _pc == 600:
+			debug.print_string("iStation(")
+			debug.print_handle(v1)
+			debug.print_string("::")
+			debug.print_handle(v2)
+			debug.print_string(") : ")
+			_pc = 701
+			continue
+		elif _pc == 701:
 			debug.print_string(v0)
 			debug.print_string("\n")
-	return 0
+			_pc = 742
+			continue
+		elif _pc == 742:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_745(v0) -> Variant:
@@ -121,7 +155,7 @@ func local_745(v0) -> Variant:
 	return 0
 
 func local_798() -> Variant:
-	return
+	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
 func local_837(v0, v1) -> Variant:
@@ -129,91 +163,466 @@ func local_837(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = null
-	if 53 == ihabitat.allegiance(v0):
-		pass
-	else:
-		if _pog_is_null(v0):
-			pass
-		else:
+	var _pc: int = 837
+	while true:
+		if _pc == 837:
+			v2 = null
+			if 53 == ihabitat.allegiance(v0):
+				_pc = 879
+				continue
+			else:
+				_pc = 884
+				continue
+		elif _pc == 879:
+			_pc = 1343
+			continue
+		elif _pc == 884:
+			if _pog_is_null(v0):
+				_pc = 897
+				continue
+			else:
+				_pc = 902
+				continue
+		elif _pc == 897:
+			_pc = 1343
+			continue
+		elif _pc == 902:
 			v3 = await local_798()
 			if _pog_is_null(v3):
-				pass
+				_pc = 934
+				continue
 			else:
-				v2 = await local_1353(v1)
-				if await local_745(v0):
-					while v1 == 6:
-						v2 = "attack_guarded_cops_"
-						break
-				v2 = string.join("stock_station_", v2)
-				v4 = inifile.pog_int(v3, v2, "num_entries", 1)
-				v5 = math.random_int(1, v4)
-				v2 = string.join(v2, string.from_int(v5))
-				if 7 > object.i_d_modulus(v0, 13):
-					v2 = string.join(v2, "_male")
-				else:
-					v2 = string.join(v2, "_female")
-				if not (icomms.is_busy()):
-					return 0
-				icomms.shout(v0, "", v2)
-	return 0
+				_pc = 939
+				continue
+		elif _pc == 934:
+			_pc = 1343
+			continue
+		elif _pc == 939:
+			v2 = await local_1353(v1)
+			if await local_745(v0):
+				_pc = 988
+				continue
+			else:
+				_pc = 1057
+				continue
+		elif _pc == 988:
+			_pc = 1034
+			continue
+		elif _pc == 993:
+			v2 = "attack_guarded_cops_"
+			_pc = 1057
+			continue
+		elif _pc == 1011:
+			v2 = "warning_gentle_cops_"
+			_pc = 1057
+			continue
+		elif _pc == 1029:
+			_pc = 1057
+			continue
+		elif _pc == 1034:
+			if v1 != 6:
+				_pc = 1048
+				continue
+			else:
+				_pc = 993
+				continue
+		elif _pc == 1048:
+			if not _pog_is_null(3):
+				_pc = 1057
+				continue
+			else:
+				_pc = 1011
+				continue
+		elif _pc == 1057:
+			v2 = string.join("stock_station_", v2)
+			v4 = inifile.pog_int(v3, v2, "num_entries", 1)
+			v5 = math.random_int(1, v4)
+			v2 = string.join(v2, string.from_int(v5))
+			if 7 > object.i_d_modulus(v0, 13):
+				_pc = 1224
+				continue
+			else:
+				_pc = 1261
+				continue
+		elif _pc == 1224:
+			v2 = string.join(v2, "_male")
+			_pc = 1293
+			continue
+		elif _pc == 1261:
+			v2 = string.join(v2, "_female")
+			_pc = 1293
+			continue
+		elif _pc == 1293:
+			if not (icomms.is_busy()):
+				_pc = 1312
+				continue
+			else:
+				_pc = 1343
+				continue
+		elif _pc == 1312:
+			icomms.shout(v0, "", v2)
+			_pc = 1343
+			continue
+		elif _pc == 1343:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_1353(v0) -> Variant:
-	while _pog_is_null(v0):
-		push_error("PORT: unstructured jump to L1624")
-	push_error("PORT: unstructured jump to L1624")
-	return _pog_clone("dummy string")
+	var _pc: int = 1353
+	while true:
+		if _pc == 1353:
+			_pc = 1533
+			continue
+		elif _pc == 1358:
+			_pc = 1624
+			continue
+		elif _pc == 1369:
+			_pc = 1613
+			continue
+		elif _pc == 1374:
+			_pc = 1624
+			continue
+		elif _pc == 1385:
+			_pc = 1613
+			continue
+		elif _pc == 1390:
+			_pc = 1624
+			continue
+		elif _pc == 1401:
+			_pc = 1613
+			continue
+		elif _pc == 1406:
+			_pc = 1624
+			continue
+		elif _pc == 1417:
+			_pc = 1613
+			continue
+		elif _pc == 1422:
+			_pc = 1624
+			continue
+		elif _pc == 1433:
+			_pc = 1613
+			continue
+		elif _pc == 1438:
+			_pc = 1624
+			continue
+		elif _pc == 1449:
+			_pc = 1613
+			continue
+		elif _pc == 1454:
+			_pc = 1624
+			continue
+		elif _pc == 1465:
+			_pc = 1613
+			continue
+		elif _pc == 1470:
+			_pc = 1624
+			continue
+		elif _pc == 1481:
+			_pc = 1613
+			continue
+		elif _pc == 1486:
+			_pc = 1512
+			continue
+		elif _pc == 1491:
+			debug.error("iStation.warning_name : Bad station reaction. !!!SHOULDNT HAPPEN")
+			_pc = 1512
+			continue
+		elif _pc == 1512:
+			_pc = 1624
+			continue
+		elif _pc == 1523:
+			_pc = 1613
+			continue
+		elif _pc == 1528:
+			_pc = 1613
+			continue
+		elif _pc == 1533:
+			if not _pog_is_null(v0):
+				_pc = 1546
+				continue
+			else:
+				_pc = 1358
+				continue
+		elif _pc == 1546:
+			if not _pog_is_null(1):
+				_pc = 1554
+				continue
+			else:
+				_pc = 1374
+				continue
+		elif _pc == 1554:
+			if not _pog_is_null(2):
+				_pc = 1563
+				continue
+			else:
+				_pc = 1390
+				continue
+		elif _pc == 1563:
+			if not _pog_is_null(3):
+				_pc = 1572
+				continue
+			else:
+				_pc = 1406
+				continue
+		elif _pc == 1572:
+			if not _pog_is_null(4):
+				_pc = 1581
+				continue
+			else:
+				_pc = 1422
+				continue
+		elif _pc == 1581:
+			if not _pog_is_null(5):
+				_pc = 1590
+				continue
+			else:
+				_pc = 1438
+				continue
+		elif _pc == 1590:
+			if not _pog_is_null(6):
+				_pc = 1599
+				continue
+			else:
+				_pc = 1454
+				continue
+		elif _pc == 1599:
+			if not _pog_is_null(7):
+				_pc = 1608
+				continue
+			else:
+				_pc = 1470
+				continue
+		elif _pc == 1608:
+			_pc = 1486
+			continue
+		elif _pc == 1613:
+			_pc = 1624
+			continue
+		elif _pc == 1624:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1627(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
-	if not (object.property_exists(v1, "enemy_list")):
-		object.add_list_property(v1, "enemy_list", v4)
-		object.add_float_property(v0, "warned_time", igame.game_time())
-		if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
-			if 1000.0 < v2:
-				await local_837(v1, 3)
+	var v6: Variant = 0
+	var _pc: int = 1627
+	while true:
+		if _pc == 1627:
+			v4 = null
+			if not (object.property_exists(v1, "enemy_list")):
+				_pc = 1674
+				continue
 			else:
-				await local_837(v1, 5)
-		if 1000.0 < v2:
-			object.add_int_property(v0, "warned_level", 1)
-		else:
-			object.add_int_property(v0, "warned_level", 2)
-	else:
-		v4 = object.list_property(v1, "enemy_list")
-		if not (object.property_exists(v0, "warned_level")):
-			if 1000.0 < v2:
-				object.add_int_property(v0, "warned_level", 1)
-			else:
-				object.add_int_property(v0, "warned_level", 2)
+				_pc = 1932
+				continue
+		elif _pc == 1674:
+			object.add_list_property(v1, "enemy_list", v4)
 			object.add_float_property(v0, "warned_time", igame.game_time())
-		else:
+			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+				_pc = 1788
+				continue
+			else:
+				_pc = 1851
+				continue
+		elif _pc == 1788:
+			if 1000.0 < v2:
+				_pc = 1804
+				continue
+			else:
+				_pc = 1830
+				continue
+		elif _pc == 1804:
+			await local_837(v1, 3)
+			_pc = 1851
+			continue
+		elif _pc == 1830:
+			await local_837(v1, 5)
+			_pc = 1851
+			continue
+		elif _pc == 1851:
+			if 1000.0 < v2:
+				_pc = 1867
+				continue
+			else:
+				_pc = 1899
+				continue
+		elif _pc == 1867:
+			object.add_int_property(v0, "warned_level", 1)
+			_pc = 1927
+			continue
+		elif _pc == 1899:
+			object.add_int_property(v0, "warned_level", 2)
+			_pc = 1927
+			continue
+		elif _pc == 1927:
+			_pc = 2966
+			continue
+		elif _pc == 1932:
+			v4 = object.list_property(v1, "enemy_list")
+			if not (object.property_exists(v0, "warned_level")):
+				_pc = 1995
+				continue
+			else:
+				_pc = 2115
+				continue
+		elif _pc == 1995:
+			if 1000.0 < v2:
+				_pc = 2011
+				continue
+			else:
+				_pc = 2043
+				continue
+		elif _pc == 2011:
+			object.add_int_property(v0, "warned_level", 1)
+			_pc = 2071
+			continue
+		elif _pc == 2043:
+			object.add_int_property(v0, "warned_level", 2)
+			_pc = 2071
+			continue
+		elif _pc == 2071:
+			object.add_float_property(v0, "warned_time", igame.game_time())
+			_pc = 2966
+			continue
+		elif _pc == 2115:
 			v5 = object.int_property(v0, "warned_level")
 			v3 = object.float_property(v0, "warned_time") - igame.game_time()
-			while v5 == 1:
-				if 10.0 <= v3:
-					if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
-						await local_837(v1, 5)
-					object.set_int_property(v0, "warned_level", 2)
-					object.set_float_property(v0, "warned_time", igame.game_time())
-				else:
-					await local_498("add_station_enemy: This vessel was warned a while ago - sticking with gentle warn...", v1, v0)
-					if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
-						if 1000.0 < v2:
-							await local_837(v1, 3)
-						else:
-							await local_837(v1, 5)
-					if 1000.0 < v2:
-						object.set_int_property(v0, "warned_level", 1)
-					else:
-						object.set_int_property(v0, "warned_level", 2)
-					object.set_float_property(v0, "warned_time", igame.game_time())
-				break
-	return 0
+			_pc = 2939
+			continue
+		elif _pc == 2196:
+			if 10.0 <= v3:
+				_pc = 2212
+				continue
+			else:
+				_pc = 2349
+				continue
+		elif _pc == 2212:
+			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+				_pc = 2256
+				continue
+			else:
+				_pc = 2277
+				continue
+		elif _pc == 2256:
+			await local_837(v1, 5)
+			_pc = 2277
+			continue
+		elif _pc == 2277:
+			object.set_int_property(v0, "warned_level", 2)
+			object.set_float_property(v0, "warned_time", igame.game_time())
+			_pc = 2602
+			continue
+		elif _pc == 2349:
+			await local_498("add_station_enemy: This vessel was warned a while ago - sticking with gentle warn...", v1, v0)
+			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+				_pc = 2424
+				continue
+			else:
+				_pc = 2487
+				continue
+		elif _pc == 2424:
+			if 1000.0 < v2:
+				_pc = 2440
+				continue
+			else:
+				_pc = 2466
+				continue
+		elif _pc == 2440:
+			await local_837(v1, 3)
+			_pc = 2487
+			continue
+		elif _pc == 2466:
+			await local_837(v1, 5)
+			_pc = 2487
+			continue
+		elif _pc == 2487:
+			if 1000.0 < v2:
+				_pc = 2503
+				continue
+			else:
+				_pc = 2535
+				continue
+		elif _pc == 2503:
+			object.set_int_property(v0, "warned_level", 1)
+			_pc = 2563
+			continue
+		elif _pc == 2535:
+			object.set_int_property(v0, "warned_level", 2)
+			_pc = 2563
+			continue
+		elif _pc == 2563:
+			object.set_float_property(v0, "warned_time", igame.game_time())
+			_pc = 2602
+			continue
+		elif _pc == 2602:
+			_pc = 2966
+			continue
+		elif _pc == 2607:
+			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+				_pc = 2651
+				continue
+			else:
+				_pc = 2672
+				continue
+		elif _pc == 2651:
+			await local_837(v1, 6)
+			_pc = 2672
+			continue
+		elif _pc == 2672:
+			list.add_tail(v4, v0)
+			object.set_list_property(v1, "enemy_list", v4)
+			object.set_int_property(v0, "warned_level", 3)
+			object.set_float_property(v0, "warned_time", igame.game_time())
+			if not (object.property_exists(v1, "station_protection_handler")):
+				_pc = 2825
+				continue
+			else:
+				_pc = 2893
+				continue
+		elif _pc == 2825:
+			v6 = _pog_spawn(local_6298.bind(v1))
+			_pog_detach(v6)
+			object.add_handle_property(v1, "station_protection_handler", v6)
+			_pc = 2893
+			continue
+		elif _pc == 2893:
+			_pc = 2966
+			continue
+		elif _pc == 2898:
+			await local_498("add_station_enemy: This ship is already in the bad books....", v1, v0)
+			_pc = 2966
+			continue
+		elif _pc == 2934:
+			_pc = 2966
+			continue
+		elif _pc == 2939:
+			if v5 != 1:
+				_pc = 2952
+				continue
+			else:
+				_pc = 2196
+				continue
+		elif _pc == 2952:
+			if not _pog_is_null(2):
+				_pc = 2961
+				continue
+			else:
+				_pc = 2607
+				continue
+		elif _pc == 2961:
+			_pc = 2898
+			continue
+		elif _pc == 2966:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_2976(v0, v1) -> Variant:
@@ -240,39 +649,160 @@ func local_3185(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v4 = ifaction.allegiance(isim.faction(v0))
-	if 6 == v4 or 2 == v4 or 1 == v4:
-		v4 = 14
-	while _pog_is_null(v3):
-		v5 = await ishipcreation.get_traffic(9, v4, v2)
-		break
-	sim.place_near(group.leader(v5), v1, 100000.0)
-	await iformation.goose(v5, 100.0, 1)
-	v6 = 0
-	while v2 < v6:
-		object.set_bool_property(group.nth_sim(v5, v6), "ignore_speed_limit", 1)
-		object.add_handle_property(group.nth_sim(v5, v6), "traffic_handler_task", 0)
-		sim.set_cullable(group.nth_sim(v5, v6), 1)
-		v6 = 1 + v6
-	return
+	var _pc: int = 3185
+	while true:
+		if _pc == 3185:
+			v4 = ifaction.allegiance(isim.faction(v0))
+			if 6 == v4 or 2 == v4 or 1 == v4:
+				_pc = 3257
+				continue
+			else:
+				_pc = 3265
+				continue
+		elif _pc == 3257:
+			v4 = 14
+			_pc = 3265
+			continue
+		elif _pc == 3265:
+			_pc = 3383
+			continue
+		elif _pc == 3270:
+			v5 = await ishipcreation.get_traffic(9, v4, v2)
+			_pc = 3413
+			continue
+		elif _pc == 3306:
+			v5 = await ishipcreation.get_traffic(7, v4, v2)
+			_pc = 3413
+			continue
+		elif _pc == 3342:
+			v5 = await ishipcreation.get_traffic(8, v4, v2)
+			_pc = 3413
+			continue
+		elif _pc == 3378:
+			_pc = 3413
+			continue
+		elif _pc == 3383:
+			if not _pog_is_null(v3):
+				_pc = 3396
+				continue
+			else:
+				_pc = 3270
+				continue
+		elif _pc == 3396:
+			if not _pog_is_null(1):
+				_pc = 3404
+				continue
+			else:
+				_pc = 3306
+				continue
+		elif _pc == 3404:
+			if not _pog_is_null(2):
+				_pc = 3413
+				continue
+			else:
+				_pc = 3342
+				continue
+		elif _pc == 3413:
+			sim.place_near(group.leader(v5), v1, 100000.0)
+			await iformation.goose(v5, 100.0, 1)
+			v6 = 0
+			_pc = 3487
+			continue
+		elif _pc == 3487:
+			if v2 < v6:
+				_pc = 3503
+				continue
+			else:
+				_pc = 3649
+				continue
+		elif _pc == 3503:
+			object.set_bool_property(group.nth_sim(v5, v6), "ignore_speed_limit", 1)
+			object.add_handle_property(group.nth_sim(v5, v6), "traffic_handler_task", 0)
+			sim.set_cullable(group.nth_sim(v5, v6), 1)
+			v6 = 1 + v6
+			_pc = 3487
+			continue
+		elif _pc == 3649:
+			_pc = 3659
+			continue
+		elif _pc == 3659:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3661(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v4 = ifaction.allegiance(isim.faction(v0))
-	while _pog_is_null(v3):
-		v5 = await ishipcreation.get_traffic(9, v4, v2)
-		break
-	await iescort.in_formation_goose(v5, v1, 0, 0.0, 300.0, 0.0, 70.0, 9000.0, 1)
-	v6 = 0
-	while v2 < v6:
-		object.set_bool_property(group.nth_sim(v5, v6), "ignore_speed_limit", 1)
-		object.add_handle_property(group.nth_sim(v5, v6), "traffic_handler_task", 0)
-		sim.set_cullable(group.nth_sim(v5, v6), 1)
-		v6 = 1 + v6
-	return
+	var _pc: int = 3661
+	while true:
+		if _pc == 3661:
+			v4 = ifaction.allegiance(isim.faction(v0))
+			_pc = 3821
+			continue
+		elif _pc == 3708:
+			v5 = await ishipcreation.get_traffic(9, v4, v2)
+			_pc = 3851
+			continue
+		elif _pc == 3744:
+			v5 = await ishipcreation.get_traffic(7, v4, v2)
+			_pc = 3851
+			continue
+		elif _pc == 3780:
+			v5 = await ishipcreation.get_traffic(8, v4, v2)
+			_pc = 3851
+			continue
+		elif _pc == 3816:
+			_pc = 3851
+			continue
+		elif _pc == 3821:
+			if not _pog_is_null(v3):
+				_pc = 3834
+				continue
+			else:
+				_pc = 3708
+				continue
+		elif _pc == 3834:
+			if not _pog_is_null(1):
+				_pc = 3842
+				continue
+			else:
+				_pc = 3744
+				continue
+		elif _pc == 3842:
+			if not _pog_is_null(2):
+				_pc = 3851
+				continue
+			else:
+				_pc = 3780
+				continue
+		elif _pc == 3851:
+			await iescort.in_formation_goose(v5, v1, 0, 0.0, 300.0, 0.0, 70.0, 9000.0, 1)
+			v6 = 0
+			_pc = 3909
+			continue
+		elif _pc == 3909:
+			if v2 < v6:
+				_pc = 3925
+				continue
+			else:
+				_pc = 4071
+				continue
+		elif _pc == 3925:
+			object.set_bool_property(group.nth_sim(v5, v6), "ignore_speed_limit", 1)
+			object.add_handle_property(group.nth_sim(v5, v6), "traffic_handler_task", 0)
+			sim.set_cullable(group.nth_sim(v5, v6), 1)
+			v6 = 1 + v6
+			_pc = 3909
+			continue
+		elif _pc == 4071:
+			_pc = 4081
+			continue
+		elif _pc == 4081:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4083(v0, v1, v2) -> Variant:
@@ -313,7 +843,7 @@ func local_4083(v0, v1, v2) -> Variant:
 			v3 = 1
 			await iescort.in_formation_claw(v4, v0, 0, 0.0, 0.0, 0.0, 40.0, 10000.0, 0)
 		else:
-			if not _pog_is_null(list.item_count(v1)):
+			if _pog_is_null(list.item_count(v1)):
 				continue
 			if v3:
 				v3 = 0
@@ -338,7 +868,7 @@ func local_4083(v0, v1, v2) -> Variant:
 					v7 = isim.cast(list.get_nth(v1, v8))
 					iai.give_attack_order(v4, v7)
 					v8 = 1 + v8
-			if _pog_is_null(group.total_sim_count(v4)):
+			if not _pog_is_null(group.total_sim_count(v4)):
 				continue
 			v4 = await local_3185(v0, v5, 1, 2)
 			iai.give_attack_order(v4, v7)
@@ -369,7 +899,6 @@ func local_5500(v0) -> Variant:
 		if not (object.property_exists(v7, "traffic_handler_task")) or not _pog_eq(v5, v3) and not _pog_eq(v4, v3) and not _pog_eq(isim.faction(v7), v3):
 			list.remove_nth(v2, v9)
 		v9 = -1 + v9
-	push_error("PORT: unstructured jump to L5926")
 	return _pog_clone(v2)
 	return 0
 
@@ -388,7 +917,7 @@ func local_5936(v0, v1) -> Variant:
 		await _pog_wait(1)
 		if _pog_is_null(iship.cast(v0)):
 			return
-		if _pog_is_null(iship.cast(v1)):
+		if not _pog_is_null(iship.cast(v1)):
 			continue
 		_pog_resume(v2)
 		if not _pog_is_null(v3):
@@ -443,7 +972,7 @@ func local_6298(v0) -> Variant:
 					_pog_detach(_pog_spawn(local_5936.bind(v5, iship.cast(list.get_nth(v2, math.random_int(0, 1 - v9))))))
 				v11 = 1 + v11
 		v1 = global.list("g_active_location_list")
-		if not (list.contains(v1, v0)):
+		if list.contains(v1, v0):
 			continue
 		if PogRuntime.TRACE:
 			debug.print_string("iStation.station_protection_handler: Station: ")
@@ -478,10 +1007,10 @@ func check_station_reaction() -> Variant:
 		await _pog_wait(2)
 		await local_498("Checking active location list.\n", 0, 0)
 		v7 = iship.find_player_ship()
-		if 1 == global.exists("g_active_location_list"):
+		if 1 != global.exists("g_active_location_list"):
 			continue
 		v0 = global.list("g_active_location_list")
-		if _pog_is_null(list.is_empty(v0)):
+		if not _pog_is_null(list.is_empty(v0)):
 			continue
 		v10 = list.item_count(v0)
 		await local_498(string.join(string.join("Found ", string.from_int(v10)), " stations to check reactions for.\n"), 0, 0)

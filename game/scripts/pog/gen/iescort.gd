@@ -864,7 +864,7 @@ func lock_groups_in_formation(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 		v10 = group.leader(group.cast(v1))
 	else:
 		v10 = sim.cast(v1)
-	if not _pog_is_null(v10):
+	if _pog_is_null(v10):
 		return 0
 	if v6:
 		sim.place_relative_to(v10, v9, v2, v3, v4)

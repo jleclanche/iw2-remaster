@@ -55,7 +55,6 @@ func local_0() -> Variant:
 	while v1 < v2:
 		iship.set_a_i_disabled(iship.cast(list.get_nth(v0, v2)), 1)
 		v2 = 1 + v2
-	push_error("PORT: unstructured jump to L187")
 	return _pog_clone(v0)
 	return 0
 
@@ -156,7 +155,7 @@ func create_ghost_ship() -> Variant:
 	isim.set_indestructable(v0, 1)
 	isim.set_sensor_visibility(v0, 0)
 	await ipilotsetup.generic_cargo_pod(v0)
-	return
+	return v0
 	return 0
 
 func enable_player_autopilot() -> Variant:
@@ -185,7 +184,7 @@ func enable_player_autopilot() -> Variant:
 		await ipilotsetup.generic_cargo_pod(v1)
 		if not (0):
 			break
-	return
+	return v1
 	return 0
 
 func disable_player_autopilot() -> Variant:
@@ -295,15 +294,29 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v9 = 1.0 - v5 / v3 - v4
-	v15 = await get_kill_group()
-	v16 = group.create()
-	v6 = 0
-	while v5 < v6:
-		v8 = v9 * v6 + v3
-		v10 = math.pog_cos(v8) * v2
-		v11 = math.pog_sin(v8) * v2
-		if PogRuntime.TRACE:
+	var _pc: int = 3468
+	while true:
+		if _pc == 3468:
+			v9 = 1.0 - v5 / v3 - v4
+			v15 = await get_kill_group()
+			v16 = group.create()
+			v6 = 0
+			_pc = 3548
+			continue
+		elif _pc == 3548:
+			if v5 < v6:
+				_pc = 3564
+				continue
+			else:
+				_pc = 4095
+				continue
+		elif _pc == 3564:
+			v8 = v9 * v6 + v3
+			v10 = math.pog_cos(v8) * v2
+			v11 = math.pog_sin(v8) * v2
+			_pc = 3847
+			continue
+		elif _pc == 3653:
 			debug.print_string("Creating waypoint at radius ")
 			debug.print_float(v2)
 			debug.print_string(" Meters, with cos ")
@@ -313,16 +326,67 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 			debug.print_string(" , ")
 			debug.print_float(v11)
 			debug.print_string(")\n")
-		while _pog_is_null(v1):
+			_pc = 3847
+			continue
+		elif _pc == 3847:
+			_pc = 3971
+			continue
+		elif _pc == 3852:
 			v12 = 0.0
 			v13 = v10
 			v14 = v11
-			break
-		v7 = isim.cast(await iutilities.create_waypoint_relative_to(v0, v12, v13, v14))
-		group.add_sim(v16, v7)
-		v6 = 1 + v6
-	group.add_group(v15, v16)
-	return
+			_pc = 4001
+			continue
+		elif _pc == 3890:
+			v12 = v11
+			v13 = 0.0
+			v14 = v10
+			_pc = 4001
+			continue
+		elif _pc == 3928:
+			v12 = v10
+			v13 = v11
+			v14 = 0.0
+			_pc = 4001
+			continue
+		elif _pc == 3966:
+			_pc = 4001
+			continue
+		elif _pc == 3971:
+			if not _pog_is_null(v1):
+				_pc = 3984
+				continue
+			else:
+				_pc = 3852
+				continue
+		elif _pc == 3984:
+			if not _pog_is_null(1):
+				_pc = 3992
+				continue
+			else:
+				_pc = 3890
+				continue
+		elif _pc == 3992:
+			if not _pog_is_null(2):
+				_pc = 4001
+				continue
+			else:
+				_pc = 3928
+				continue
+		elif _pc == 4001:
+			v7 = isim.cast(await iutilities.create_waypoint_relative_to(v0, v12, v13, v14))
+			group.add_sim(v16, v7)
+			v6 = 1 + v6
+			_pc = 3548
+			continue
+		elif _pc == 4095:
+			group.add_group(v15, v16)
+			_pc = 4129
+			continue
+		elif _pc == 4129:
+			return
+		else:
+			return 0
 	return 0
 
 func get_kill_group() -> Variant:
@@ -331,7 +395,7 @@ func get_kill_group() -> Variant:
 	if not (v0):
 		v0 = group.create()
 		global.set_handle("g_cutscene_kill_group", v0)
-	return
+	return v0
 	return 0
 
 func watch(v0, v1) -> Variant:
@@ -360,7 +424,7 @@ func buzz_camera(v0, v1, v2, v3) -> Variant:
 	sim.place_at(v4, v0)
 	idirector.set_focus(v4)
 	idirector.set_dolly_camera(v5)
-	return
+	return v5
 	return 0
 
 func orbit_sim() -> Variant:
@@ -426,7 +490,7 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 			await setup_directed_death(group.nth_group(v6, v9), v1, v2, v3, v4, v5)
 			v9 = 1 + v9
 	else:
-		if v7:
+		if not (v7):
 			return 0
 		object.add_handle_property(v7, "Cutscene_DirectedDeath_Speaker", v1)
 		object.add_string_property(v7, "Cutscene_DirectedDeath_Speaker_Name", v2)
@@ -457,7 +521,7 @@ func setup_directed_group_death() -> Variant:
 			await setup_directed_death(group.nth_sim(v6, v8), v1, v2, v3, v4, v5)
 			v8 = 1 + v8
 		return 0
-	if v7:
+	if not (v7):
 		return 0
 	object.set_string_property(v7, "death_script", "iCutsceneUtilities.DirectedGroupDeath")
 	return 0
@@ -510,7 +574,7 @@ func local_6581(v0, v1) -> Variant:
 		v6 = v0
 	await handle_abort(_pog_spawn(local_6290.bind(v0, v6, _pog_clone(v7), _pog_clone(v8), _pog_clone(v9))))
 	await _pog_wait(5.0)
-	if _pog_is_null(object.property_exists(iship.find_player_ship(), "player_dying")) and v5:
+	if not (_pog_is_null(object.property_exists(iship.find_player_ship(), "player_dying")) and v5):
 		return 0
 	object.add_bool_property(iship.find_player_ship(), "destroy_sim", 0)
 	object.add_string_property(iship.find_player_ship(), "death_caption", "caption_failed_generic")
@@ -531,7 +595,6 @@ func directed_group_death() -> Variant:
 	return 0
 
 func get_station_modules(v0) -> Variant:
-	push_error("PORT: unstructured jump to L7358")
 	return _pog_clone(isim.sims_in_radius(isim.cast(v0), 1.5 * object.float_property(v0, "radius"), 8192))
 	return 0
 
@@ -549,7 +612,6 @@ func get_things_called(v0, v1) -> Variant:
 		p_set.remove(v3, v2)
 		if not (not (p_set.is_empty(v3))):
 			break
-	push_error("PORT: unstructured jump to L7568")
 	return _pog_clone(v4)
 	return 0
 
@@ -558,18 +620,124 @@ func find_station_module() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
-	v2 = await get_station_modules(v0)
-	v3 = null
-	while _pog_is_null(v1):
-		p_set.union(v3, await get_things_called(v2, "Comms"))
-		break
-	if p_set.is_empty(v3):
-		if PogRuntime.TRACE:
+	var _pc: int = 7585
+	while true:
+		if _pc == 7585:
+			v2 = null
+			v2 = await get_station_modules(v0)
+			v3 = null
+			_pc = 8043
+			continue
+		elif _pc == 7643:
+			p_set.union(v3, await get_things_called(v2, "Comms"))
+			_pc = 8109
+			continue
+		elif _pc == 7693:
+			p_set.union(v3, await get_things_called(v2, "Large Engineering Module"))
+			p_set.union(v3, await get_things_called(v2, "Small Engineering Module"))
+			_pc = 8109
+			continue
+		elif _pc == 7788:
+			p_set.union(v3, await get_things_called(v2, "Docking Arm"))
+			_pc = 8109
+			continue
+		elif _pc == 7838:
+			p_set.union(v3, await get_things_called(v2, "Pod Spewer"))
+			_pc = 8109
+			continue
+		elif _pc == 7888:
+			p_set.union(v3, await get_things_called(v2, "Large Habitat"))
+			_pc = 8109
+			continue
+		elif _pc == 7938:
+			p_set.union(v3, await get_things_called(v2, "Police Interceptor"))
+			_pc = 8109
+			continue
+		elif _pc == 7988:
+			p_set.union(v3, await get_things_called(v2, "Processing Plant"))
+			_pc = 8109
+			continue
+		elif _pc == 8038:
+			_pc = 8109
+			continue
+		elif _pc == 8043:
+			if not _pog_is_null(v1):
+				_pc = 8056
+				continue
+			else:
+				_pc = 7643
+				continue
+		elif _pc == 8056:
+			if not _pog_is_null(1):
+				_pc = 8064
+				continue
+			else:
+				_pc = 7693
+				continue
+		elif _pc == 8064:
+			if not _pog_is_null(2):
+				_pc = 8073
+				continue
+			else:
+				_pc = 7788
+				continue
+		elif _pc == 8073:
+			if not _pog_is_null(3):
+				_pc = 8082
+				continue
+			else:
+				_pc = 7838
+				continue
+		elif _pc == 8082:
+			if not _pog_is_null(4):
+				_pc = 8091
+				continue
+			else:
+				_pc = 7888
+				continue
+		elif _pc == 8091:
+			if not _pog_is_null(5):
+				_pc = 8100
+				continue
+			else:
+				_pc = 7938
+				continue
+		elif _pc == 8100:
+			if not _pog_is_null(6):
+				_pc = 8109
+				continue
+			else:
+				_pc = 7988
+				continue
+		elif _pc == 8109:
+			if p_set.is_empty(v3):
+				_pc = 8132
+				continue
+			else:
+				_pc = 8169
+				continue
+		elif _pc == 8132:
+			_pc = 8158
+			continue
+		elif _pc == 8137:
 			debug.print_string("iUtilities.FindStationModule failed to find a module of the requested type.  this may be due to (a) localisation or (b) a change to the way stations are constructed!\n")
-		return
-	else:
-		return
-	return
+			_pc = 8158
+			continue
+		elif _pc == 8158:
+			_pc = 8211
+			continue
+		elif _pc == 8164:
+			_pc = 8205
+			continue
+		elif _pc == 8169:
+			_pc = 8211
+			continue
+		elif _pc == 8205:
+			_pc = 8211
+			continue
+		elif _pc == 8211:
+			return
+		else:
+			return 0
 	return 0
 

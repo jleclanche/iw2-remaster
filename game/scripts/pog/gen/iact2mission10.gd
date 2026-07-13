@@ -125,31 +125,68 @@ func local_608(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v3 = 0
-	v6 = iship.cast(list.get_nth(v0, 0))
-	v7 = iship.cast(list.get_nth(v0, 1))
-	v9 = ifaction.find("Player")
-	v10 = ifaction.find("League")
-	if PogRuntime.TRACE:
-		debug.print_string("Act2 Mission 10 - meeting_dialogue_monitor going\n")
-	isim.set_faction(v6, v10)
-	v8 = iship.find_player_ship()
+	var _pc: int = 608
 	while true:
-		await _pog_wait(5)
-		if not _pog_is_null(state.progress(v1)):
-			break
-		if _pog_is_null(v3) and sim.is_alive(v6):
+		if _pc == 608:
+			v3 = 0
+			v6 = iship.cast(list.get_nth(v0, 0))
+			v7 = iship.cast(list.get_nth(v0, 1))
+			v9 = ifaction.find("Player")
+			v10 = ifaction.find("League")
+			_pc = 773
 			continue
-		if 2500.0 <= sim.distance_between(v8, v6):
+		elif _pc == 752:
+			debug.print_string("Act2 Mission 10 - meeting_dialogue_monitor going\n")
+			_pc = 773
 			continue
-		iobjectives.set_state("a2_m10_objectives_redezvous", 1)
-		v3 = 1
-		await iconversation.begin()
-		await iconversation.add_response("a2_m10_text_player_c1_option_1_yes", "a2_m10_dialogue_player_c1_option_1_yes")
-		await iconversation.add_response("a2_m10_text_player_c1_option_2_no", "a2_m10_dialogue_player_c1_option_2_no")
-		v4 = await iconversation.ask(v6, "", "a2_m10_dialogue_thirdman_c1_will_you_do_it")
-		await iconversation.end()
-		while v4 == 1:
+		elif _pc == 773:
+			isim.set_faction(v6, v10)
+			v8 = iship.find_player_ship()
+			_pc = 821
+			continue
+		elif _pc == 821:
+			await _pog_frame()
+			if _pog_every(822, 5.0):
+				_pc = 835
+				continue
+			else:
+				_pc = 1657
+				continue
+		elif _pc == 835:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 860
+				continue
+			else:
+				_pc = 865
+				continue
+		elif _pc == 860:
+			_pc = 1662
+			continue
+		elif _pc == 865:
+			if _pog_is_null(v3) and sim.is_alive(v6):
+				_pc = 896
+				continue
+			else:
+				_pc = 1657
+				continue
+		elif _pc == 896:
+			if 2500.0 <= sim.distance_between(v8, v6):
+				_pc = 930
+				continue
+			else:
+				_pc = 1657
+				continue
+		elif _pc == 930:
+			iobjectives.set_state("a2_m10_objectives_redezvous", 1)
+			v3 = 1
+			await iconversation.begin()
+			await iconversation.add_response("a2_m10_text_player_c1_option_1_yes", "a2_m10_dialogue_player_c1_option_1_yes")
+			await iconversation.add_response("a2_m10_text_player_c1_option_2_no", "a2_m10_dialogue_player_c1_option_2_no")
+			v4 = await iconversation.ask(v6, "", "a2_m10_dialogue_thirdman_c1_will_you_do_it")
+			await iconversation.end()
+			_pc = 1635
+			continue
+		elif _pc == 1083:
 			await iconversation.begin()
 			await iconversation.say(v6, "", "a2_m10_dialogue_thirdman_c1_response_1_good")
 			await iconversation.say(v6, "", "a2_m10_dialogue_thirdman_c1_response_1_beacon")
@@ -167,9 +204,39 @@ func local_608(v0, v1, v2) -> Variant:
 			await iconversation.one_liner(0, "name_clay", "a2_m10_dialogue_clay_fit_the_weapon")
 			iobjectives.add("a2_m10_objectives_equip")
 			v3 = 0
-			break
-	sim.destroy(v2)
-	return
+			_pc = 1657
+			continue
+		elif _pc == 1507:
+			await iconversation.one_liner(v6, "", "a2_m10_dialogue_thirdman_c1_response_2_keep_quiet")
+			iai.give_flee_order(v6, v8)
+			sim.set_cullable(v6, 1)
+			sim.set_cullable(v7, 1)
+			state.set_progress(v1, 1)
+			v3 = 0
+			_pc = 1657
+			continue
+		elif _pc == 1635:
+			if v4 != 1:
+				_pc = 1648
+				continue
+			else:
+				_pc = 1083
+				continue
+		elif _pc == 1648:
+			if not _pog_is_null(2):
+				_pc = 1657
+				continue
+			else:
+				_pc = 1507
+				continue
+		elif _pc == 1657:
+			_pc = 821
+			continue
+		elif _pc == 1662:
+			sim.destroy(v2)
+			return
+		else:
+			return 0
 	return 0
 
 func local_1691(v0) -> Variant:
@@ -186,7 +253,7 @@ func local_1691(v0) -> Variant:
 		debug.print_string("Act2 Mission 10 - Setting up security waypoint\n")
 	while true:
 		await _pog_wait(1)
-		if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+		if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
 			continue
 		if _pog_is_null(v3):
 			v4 = await iutilities.create_waypoint_relative_to(v5, 0.0, 0.0, 0.0)
@@ -204,9 +271,9 @@ func local_1691(v0) -> Variant:
 				debug.print_string("Act 2 Mission 10 - security waypoint set up\n")
 			v3 = 1
 		else:
-			if 250000.0 <= sim.distance_between(v1, v4):
+			if 250000.0 > sim.distance_between(v1, v4):
 				continue
-			if _pog_is_null(v2):
+			if not _pog_is_null(v2):
 				continue
 			iregion.create_l_d_s_i(v4, 25000.0)
 			_pog_spawn(local_4386.bind(await local_3374(v5), v0, v5))
@@ -245,9 +312,9 @@ func local_2464(v0) -> Variant:
 	while true:
 		await _pog_wait(5)
 		v4 = iship.find_player_ship()
-		if 300000.0 <= sim.distance_between(v4, v1):
+		if 300000.0 > sim.distance_between(v4, v1):
 			continue
-		if _pog_is_null(v3):
+		if not _pog_is_null(v3):
 			continue
 		_pog_spawn(local_608.bind(_pog_clone(await local_2999(v1)), v0, v1))
 		v3 = 1
@@ -274,7 +341,6 @@ func local_2999(v0) -> Variant:
 	list.add_tail(v1, v3)
 	object.set_int_property(v3, "cargo", 566)
 	iship.dock(v3, v2)
-	push_error("PORT: unstructured jump to L3364")
 	return _pog_clone(v1)
 	return 0
 
@@ -316,7 +382,7 @@ func local_3374(v0) -> Variant:
 	global.create_handle("g_security_force", 1, v1)
 	if PogRuntime.TRACE:
 		debug.print_string("security forces set up")
-	return
+	return v1
 	return 0
 
 func local_4309(v0) -> Variant:
@@ -347,14 +413,14 @@ func local_4386(v0, v1, v2) -> Variant:
 		debug.print_string("security monitor started")
 	while true:
 		await _pog_wait(1)
-		if _pog_is_null(v5) and sim.cast(v3):
+		if not (_pog_is_null(v5) and sim.cast(v3)):
 			continue
-		if 300000.0 <= sim.distance_between(v4, v3):
+		if 300000.0 > sim.distance_between(v4, v3):
 			continue
 		if _pog_is_null(v9):
 			await iconversation.one_liner(0, "a2_m10_clay", "a2_m10_dialogue_clay_careful_of_the_zone")
 			v9 = 1
-		if 25000.0 <= sim.distance_between(v4, v3):
+		if 25000.0 > sim.distance_between(v4, v3):
 			continue
 		if not (p_set.is_empty(isim.sims_in_radius_of_faction(isim.cast(v3), 5000.0, ifaction.find("Player")))) or not _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())) or iship.has_fired(v4) or 5000.0 < sim.distance_between(v4, v3):
 			if PogRuntime.TRACE:
@@ -444,9 +510,9 @@ func local_5440(v0, v1) -> Variant:
 		debug.print_string("ammo pod made")
 	while true:
 		await _pog_wait(2)
-		if _pog_is_null(v8):
+		if not _pog_is_null(v8):
 			continue
-		if isim.is_docked_to(isim.cast(v9), isim.cast(v6)):
+		if not (isim.is_docked_to(isim.cast(v9), isim.cast(v6))):
 			continue
 		isim.set_docking_lock(isim.cast(v9), isim.cast(v6), 1)
 		iobjectives.set_state("a2_m10_objectives_ammo", 1)
@@ -483,9 +549,9 @@ func local_6941(v0, v1, v2) -> Variant:
 	object.set_float_property(v3, "hit_points", 10.0)
 	while true:
 		await _pog_wait(2)
-		if _pog_is_null(v4):
+		if not _pog_is_null(v4):
 			continue
-		if _pog_is_null(sim.cast(v3)):
+		if not _pog_is_null(sim.cast(v3)):
 			continue
 		if PogRuntime.TRACE:
 			debug.print_string("you got him!")
@@ -519,7 +585,7 @@ func local_7449(v0) -> Variant:
 	while true:
 		await _pog_wait(5)
 		v3 = iship.find_player_ship()
-		if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+		if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
 			continue
 		if _pog_is_null(v4):
 			if PogRuntime.TRACE:
@@ -528,9 +594,9 @@ func local_7449(v0) -> Variant:
 			v1 = await iutilities.create_waypoint_relative_to(v4, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
 			object.set_string_property(v1, "name", "a2_m10_meeting_place")
 			isim.set_sensor_visibility(isim.cast(v1), 1)
-		if 300000.0 <= sim.distance_between(v3, v1):
+		if 300000.0 > sim.distance_between(v3, v1):
 			continue
-		if _pog_is_null(v2):
+		if not _pog_is_null(v2):
 			continue
 		await ibacktobase.allow()
 		await local_7984(v1, v0)
@@ -669,9 +735,9 @@ func local_9901() -> Variant:
 	while true:
 		await _pog_wait(1)
 		v3 = iship.find_player_ship()
-		if 300000.0 <= sim.distance_between(v3, v0):
+		if 300000.0 > sim.distance_between(v3, v0):
 			continue
-		if _pog_is_null(iship.cast(v4)) or _pog_is_null(v2):
+		if not (_pog_is_null(iship.cast(v4)) or _pog_is_null(v2)):
 			continue
 		v4 = iship.create("ini:/sims/ships/utility/temp_cargopod", "Cargo_LongRangeCannon")
 		object.set_int_property(v4, "cargo", 566)
@@ -688,64 +754,262 @@ func mission_handler() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = iship.find_player_ship()
-	v1 = state.find(self)
-	if _pog_is_null(v1) and _pog_is_null(global.exists("g_grassy_knoll_going")):
-		global.create_bool("g_grassy_knoll_going", 1, 1)
-		v1 = state.create(self, 0)
-		await local_12117(v1)
-	else:
-		if _pog_is_null(v1):
-			return
-	await local_222(v1)
-	await imissiontracker.add_mission(self, 2, 10)
-	text.add("csv:/text/act_2/act2_mission10")
-	text.add("csv:/text/act_2/act2_mission10_addendum")
-	v2 = iemail.find("html:/text/act_2/act2_mission10_email")
-	if not (v2):
-		iemail.send_email("a2_m10_email_sender", "a2_m10_email_subject", "html:/text/act_2/act2_mission10_email", 1)
-		await imissiontracker.remove_mission(self)
-		if PogRuntime.TRACE:
-			debug.print_string("Act 2 Mission 10 - Email sent\n")
-		return
-	else:
-		if not (iemail.read(v2)):
-			await imissiontracker.remove_mission(self)
-			if PogRuntime.TRACE:
-				debug.print_string("Act 2 Mission 10 - Go read your email")
-			return
-	while _pog_is_null(state.progress(v1)):
-		if PogRuntime.TRACE:
-			debug.print_string("Act2 Mission 10: Progress == MS_Start\n")
-		iobjectives.add("a2_m10_objectives_redezvous")
-		await local_2464(v1)
-		break
+	var _pc: int = 10546
 	while true:
-		await _pog_wait(1)
-		if 100 == state.progress(v1) or 6 == state.progress(v1):
+		if _pc == 10546:
+			v0 = iship.find_player_ship()
+			v1 = state.find(self)
+			if _pog_is_null(v1) and _pog_is_null(global.exists("g_grassy_knoll_going")):
+				_pc = 10638
+				continue
+			else:
+				_pc = 10718
+				continue
+		elif _pc == 10638:
+			global.create_bool("g_grassy_knoll_going", 1, 1)
+			v1 = state.create(self, 0)
+			await local_12117(v1)
+			_pc = 10736
 			continue
-		break
-	if 6 == state.progress(v1):
-		global.set_bool("g_act2_grassy_knoll_complete", 1)
-	else:
-		global.set_bool("g_skip_locked", 0)
-		_pog_detach(_pog_spawn(local_479.bind()))
-		await local_371()
-	global.destroy("g_standin_window")
-	global.destroy("g_security_force")
-	global.destroy("g_ammo_pod")
-	global.destroy("g_standin_window")
-	global.destroy("g_larry")
-	global.destroy("g_curly")
-	global.destroy("g_moe")
-	global.destroy("g_grassy_knoll_going")
-	await iutilities.remove_mission_restart()
-	state.destroy(self)
-	await imissiontracker.remove_mission(self)
-	itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 572, 1, 20, 1, 0))
-	itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 572, 1, 6, 1, 0))
-	itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 566, 1, 11, 4, 2))
-	return
+		elif _pc == 10718:
+			if _pog_is_null(v1):
+				_pc = 10731
+				continue
+			else:
+				_pc = 10736
+				continue
+		elif _pc == 10731:
+			_pc = 12115
+			continue
+		elif _pc == 10736:
+			await local_222(v1)
+			await imissiontracker.add_mission(self, 2, 10)
+			text.add("csv:/text/act_2/act2_mission10")
+			text.add("csv:/text/act_2/act2_mission10_addendum")
+			v2 = iemail.find("html:/text/act_2/act2_mission10_email")
+			if not (v2):
+				_pc = 10865
+				continue
+			else:
+				_pc = 10962
+				continue
+		elif _pc == 10865:
+			iemail.send_email("a2_m10_email_sender", "a2_m10_email_subject", "html:/text/act_2/act2_mission10_email", 1)
+			await imissiontracker.remove_mission(self)
+			_pc = 10952
+			continue
+		elif _pc == 10931:
+			debug.print_string("Act 2 Mission 10 - Email sent\n")
+			_pc = 10952
+			continue
+		elif _pc == 10952:
+			_pc = 12115
+			continue
+		elif _pc == 10957:
+			_pc = 11044
+			continue
+		elif _pc == 10962:
+			if not (iemail.read(v2)):
+				_pc = 10986
+				continue
+			else:
+				_pc = 11044
+				continue
+		elif _pc == 10986:
+			await imissiontracker.remove_mission(self)
+			_pc = 11039
+			continue
+		elif _pc == 11018:
+			debug.print_string("Act 2 Mission 10 - Go read your email")
+			_pc = 11039
+			continue
+		elif _pc == 11039:
+			_pc = 12115
+			continue
+		elif _pc == 11044:
+			_pc = 11441
+			continue
+		elif _pc == 11049:
+			_pc = 11075
+			continue
+		elif _pc == 11054:
+			debug.print_string("Act2 Mission 10: Progress == MS_Start\n")
+			_pc = 11075
+			continue
+		elif _pc == 11075:
+			iobjectives.add("a2_m10_objectives_redezvous")
+			await local_2464(v1)
+			_pc = 11511
+			continue
+		elif _pc == 11120:
+			_pc = 11146
+			continue
+		elif _pc == 11125:
+			debug.print_string("Act2 Mission 10: Progress == MS_NotAccepted\n")
+			_pc = 11146
+			continue
+		elif _pc == 11146:
+			state.set_progress(v1, 6)
+			_pc = 11511
+			continue
+		elif _pc == 11172:
+			_pc = 11198
+			continue
+		elif _pc == 11177:
+			debug.print_string("Act2 Mission 10: Progress == MS_Accepted\n")
+			_pc = 11198
+			continue
+		elif _pc == 11198:
+			if not _pog_is_null(sim.find_subsim_by_name(v0, "Cargo_LongRangeCannon")) or not _pog_is_null(iinventory.number_of_cargo_type(566)):
+				_pc = 11250
+				continue
+			else:
+				_pc = 11383
+				continue
+		elif _pc == 11250:
+			if _pog_is_null(sim.find_subsim_by_name(v0, "Cargo_LongRangeCannon")):
+				_pc = 11283
+				continue
+			else:
+				_pc = 11316
+				continue
+		elif _pc == 11283:
+			await iconversation.one_liner(0, "a2_m10_clay", "a2_m10_dialogue_clay_need_the_sniper")
+			_pc = 11378
+			continue
+		elif _pc == 11316:
+			iobjectives.set_state("a2_m10_objectives_equip", 1)
+			iobjectives.add("a2_m10_objectives_ammo")
+			await local_1691(v1)
+			_pc = 11378
+			continue
+		elif _pc == 11378:
+			_pc = 11397
+			continue
+		elif _pc == 11383:
+			await local_9901()
+			_pc = 11397
+			continue
+		elif _pc == 11397:
+			_pc = 11511
+			continue
+		elif _pc == 11402:
+			_pog_spawn(local_7449.bind(v1))
+			_pc = 11511
+			continue
+		elif _pc == 11426:
+			_pc = 11511
+			continue
+		elif _pc == 11431:
+			_pc = 11511
+			continue
+		elif _pc == 11436:
+			_pc = 11511
+			continue
+		elif _pc == 11441:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 11467
+				continue
+			else:
+				_pc = 11049
+				continue
+		elif _pc == 11467:
+			if not _pog_is_null(1):
+				_pc = 11475
+				continue
+			else:
+				_pc = 11120
+				continue
+		elif _pc == 11475:
+			if not _pog_is_null(2):
+				_pc = 11484
+				continue
+			else:
+				_pc = 11172
+				continue
+		elif _pc == 11484:
+			if not _pog_is_null(4):
+				_pc = 11493
+				continue
+			else:
+				_pc = 11402
+				continue
+		elif _pc == 11493:
+			if not _pog_is_null(5):
+				_pc = 11502
+				continue
+			else:
+				_pc = 11426
+				continue
+		elif _pc == 11502:
+			if not _pog_is_null(6):
+				_pc = 11511
+				continue
+			else:
+				_pc = 11431
+				continue
+		elif _pc == 11511:
+			_pc = 11516
+			continue
+		elif _pc == 11516:
+			await _pog_frame()
+			if _pog_every(11517, 1.0):
+				_pc = 11530
+				continue
+			else:
+				_pc = 11583
+				continue
+		elif _pc == 11530:
+			if 100 == state.progress(v1) or 6 == state.progress(v1):
+				_pc = 11578
+				continue
+			else:
+				_pc = 11583
+				continue
+		elif _pc == 11578:
+			_pc = 11588
+			continue
+		elif _pc == 11583:
+			_pc = 11516
+			continue
+		elif _pc == 11588:
+			if 6 == state.progress(v1):
+				_pc = 11615
+				continue
+			else:
+				_pc = 11642
+				continue
+		elif _pc == 11615:
+			global.set_bool("g_act2_grassy_knoll_complete", 1)
+			_pc = 11707
+			continue
+		elif _pc == 11642:
+			global.set_bool("g_skip_locked", 0)
+			_pog_detach(_pog_spawn(local_479.bind()))
+			await local_371()
+			_pc = 11707
+			continue
+		elif _pc == 11707:
+			global.destroy("g_standin_window")
+			global.destroy("g_security_force")
+			global.destroy("g_ammo_pod")
+			global.destroy("g_standin_window")
+			global.destroy("g_larry")
+			global.destroy("g_curly")
+			global.destroy("g_moe")
+			global.destroy("g_grassy_knoll_going")
+			await iutilities.remove_mission_restart()
+			state.destroy(self)
+			await imissiontracker.remove_mission(self)
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 572, 1, 20, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 572, 1, 6, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 566, 1, 11, 4, 2))
+			_pc = 12115
+			continue
+		elif _pc == 12115:
+			return
+		else:
+			return 0
 	return 0
 
 func local_12117(v0) -> Variant:

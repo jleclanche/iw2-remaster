@@ -828,7 +828,7 @@ func lock_groups_in_formation(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v8: Variant = 0
 	v7 = group.leader(v0)
 	v8 = group.leader(v1)
-	if not _pog_is_null(v8):
+	if _pog_is_null(v8):
 		return 0
 	if v5:
 		sim.place_relative_to(v8, v7, v2, v3, v4)

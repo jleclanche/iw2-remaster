@@ -81,12 +81,10 @@ func _link() -> void:
 	text = api.text
 
 func local_0() -> Variant:
-	push_error("PORT: unstructured jump to L11")
 	return _pog_clone("Blockade Runner")
 	return 0
 
 func local_14() -> Variant:
-	push_error("PORT: unstructured jump to L25")
 	return _pog_clone("g_act2_completed_blockade_run")
 	return 0
 
@@ -143,7 +141,7 @@ func local_575() -> Variant:
 func local_657(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		await iwingmen.purge()
 		isim.set_standard_sensor_visibility(isim.find_by_name_in_system("St George's L-Point", "map:/geog/badlands/santa_romera"), 1)
@@ -252,128 +250,1429 @@ func mission_handler() -> Variant:
 	var v47: Variant = 0
 	var v48: Variant = 0
 	var v49: Variant = 0
-	v0 = self
-	v3 = state.find(v0)
-	v4 = iship.find_player_ship()
-	v8 = group.create()
-	v11 = group.create()
-	v13 = isim.find_by_name_in_system("St George's L-Point", "map:/geog/badlands/santa_romera")
-	v15 = isim.find_by_name_in_system("Toad Skin L-Point", "map:/geog/badlands/mwari")
-	v17 = isim.find_by_name_in_system("Longshot MCA Defence HQ", "map:/geog/badlands/mwari")
-	v31 = global.pog_float("g_player_sensor_range")
-	v32 = v31
-	v33 = 50000.0 + v31
-	v34 = 10000.0
-	v35 = 1500000.0
-	v36 = 2000000.0
-	v37 = 0.8999999761581421 * v36
-	v38 = 3000000.0
-	v39 = 0.0
-	v40 = 3000000.0
-	v41 = 15000.0
-	v44 = 0
-	v45 = 0
-	v46 = 0
-	v47 = 1
-	v48 = 0
-	v49 = 0
-	if _pog_is_null(global.exists("g_blockade_runner_going")):
-		global.create_bool("g_blockade_runner_going", 1, 1)
-		if _pog_is_null(v3):
+	var v50: Variant = 0
+	var _pc: int = 1659
+	while true:
+		if _pc == 1659:
+			v0 = self
+			v3 = state.find(v0)
+			v4 = iship.find_player_ship()
+			v8 = group.create()
+			v11 = group.create()
+			v13 = isim.find_by_name_in_system("St George's L-Point", "map:/geog/badlands/santa_romera")
+			v15 = isim.find_by_name_in_system("Toad Skin L-Point", "map:/geog/badlands/mwari")
+			v17 = isim.find_by_name_in_system("Longshot MCA Defence HQ", "map:/geog/badlands/mwari")
+			v31 = global.pog_float("g_player_sensor_range")
+			v32 = v31
+			v33 = 50000.0 + v31
+			v34 = 10000.0
+			v35 = 1500000.0
+			v36 = 2000000.0
+			v37 = 0.8999999761581421 * v36
+			v38 = 3000000.0
+			v39 = 0.0
+			v40 = 3000000.0
+			v41 = 15000.0
+			v44 = 0
+			v45 = 0
+			v46 = 0
+			v47 = 1
+			v48 = 0
+			v49 = 0
+			if _pog_is_null(global.exists("g_blockade_runner_going")):
+				_pc = 2075
+				continue
+			else:
+				_pc = 2171
+				continue
+		elif _pc == 2075:
+			global.create_bool("g_blockade_runner_going", 1, 1)
+			if _pog_is_null(v3):
+				_pc = 2111
+				continue
+			else:
+				_pc = 2144
+				continue
+		elif _pc == 2111:
 			v3 = state.create(self, 0)
-		object.add_bool_property(v3, "true_task", 1)
-	if _pog_is_null(object.property_exists(v3, "true_task")) and global.exists("g_blockade_runner_going"):
-		state.destroy(self)
-	else:
-		if global.exists("g_act2_completed_blockade_run"):
+			_pc = 2144
+			continue
+		elif _pc == 2144:
+			object.add_bool_property(v3, "true_task", 1)
+			_pc = 2171
+			continue
+		elif _pc == 2171:
+			if _pog_is_null(object.property_exists(v3, "true_task")) and global.exists("g_blockade_runner_going"):
+				_pc = 2223
+				continue
+			else:
+				_pc = 2256
+				continue
+		elif _pc == 2223:
+			state.destroy(self)
+			_pc = 12819
+			continue
+		elif _pc == 2256:
+			if global.exists("g_act2_completed_blockade_run"):
+				_pc = 2282
+				continue
+			else:
+				_pc = 2403
+				continue
+		elif _pc == 2282:
 			if 1 == global.pog_bool("g_act2_completed_blockade_run"):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2Mission05.MissionHandler: Naughty mission is trying to start again. Destroying its state and quitting. \n")
-				state.destroy(self)
-				return
+				_pc = 2309
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2Mission05.MissionHandler: Mission hasn't been completed yet, so it's ok to start it. \n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission05.MissionHandler: Mission completion global doesn't exist. Assuming mission being tested in isolation. \n")
-		await imissiontracker.add_mission(self, 2, 5)
-		if PogRuntime.TRACE:
+				_pc = 2372
+				continue
+		elif _pc == 2309:
+			_pc = 2335
+			continue
+		elif _pc == 2314:
+			debug.print_string("iAct2Mission05.MissionHandler: Naughty mission is trying to start again. Destroying its state and quitting. \n")
+			_pc = 2335
+			continue
+		elif _pc == 2335:
+			state.destroy(self)
+			_pc = 12819
+			continue
+		elif _pc == 2367:
+			_pc = 2398
+			continue
+		elif _pc == 2372:
+			_pc = 2398
+			continue
+		elif _pc == 2377:
+			debug.print_string("iAct2Mission05.MissionHandler: Mission hasn't been completed yet, so it's ok to start it. \n")
+			_pc = 2398
+			continue
+		elif _pc == 2398:
+			_pc = 2429
+			continue
+		elif _pc == 2403:
+			_pc = 2429
+			continue
+		elif _pc == 2408:
+			debug.print_string("iAct2Mission05.MissionHandler: Mission completion global doesn't exist. Assuming mission being tested in isolation. \n")
+			_pc = 2429
+			continue
+		elif _pc == 2429:
+			await imissiontracker.add_mission(self, 2, 5)
+			_pc = 2486
+			continue
+		elif _pc == 2465:
 			debug.print_string("iAct2Mission05.MissionHandler: Looking for Email \n")
-		v22 = iemail.find("html:/text/act_2/act2_mission05_email")
-		if not (v22):
-			iemail.send_email("a2_m05_email_sender", "a2_m05_email_subject", "html:/text/act_2/act2_mission05_email", 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission05.MissionHandler: Email Sent - EXITING\n")
-		else:
-			if not (iemail.read(v22)):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2Mission05.MissionHandler: Email not read yet - EXITING\n")
+			_pc = 2486
+			continue
+		elif _pc == 2486:
+			v22 = iemail.find("html:/text/act_2/act2_mission05_email")
+			if not (v22):
+				_pc = 2523
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2Mission05. Email read - starting mission \n")
-				global.create_bool("g_blockade_runner_running", 1, 1)
-				await local_12821()
-				await local_15968("Number_Of_Freighters", 3)
-				await local_15968("Number_Of_Escorts", 3)
-				await local_15968("Number_Of_Mercenaries", 3)
-				await local_18685()
-				await igangsterincidentgen.set_active(0)
-				while _pog_is_null(state.progress(v3)):
-					break
-				await local_339(v3)
-				v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
-				_pog_detach(v1)
-				while true:
-					if v5:
-						await local_16402("Number_Of_Freighters", 3)
-					if v6:
-						await local_16402("Number_Of_Escorts", 3)
-					if v7:
-						await local_15968("Number_Of_Mercenaries", 3)
-					while _pog_is_null(state.progress(v3)):
-						if PogRuntime.TRACE:
-							debug.print_string("Act 2 Mission 05 Phase 1 - Mission Start - Started\n")
-						while true:
-							if not (v14):
-								await _pog_wait(3.0)
-								v14 = await local_18353(v13, v35)
-								await iconversation.one_liner(0, "name_smith", "a2_m05_dialogue_smith_initial_meeting_waypoint_created")
-								iobjectives.add("a2_m05_objectives_redezvous")
-								if PogRuntime.TRACE:
-									debug.print_string("Act 2 Mission 05 Phase 1 - Mission Start - Started - waypoint created\n")
-							while await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0) == 16:
-								break
-							break
-							if not (1):
-								break
-						state.set_progress(v3, 1)
-						break
-					if not (not (v44)):
-						break
-				await local_16287(v5, v4)
-				await local_16287(v6, v4)
-				await local_16287(v7, v4)
-				await local_16287(v9, v4)
-				await local_16287(v8, v4)
-				await local_16287(v10, v4)
-				await local_16287(v11, v4)
-				sim.destroy(v14)
-				sim.destroy(v16)
-				sim.destroy(v18)
-				sim.destroy(v19)
-				sim.destroy(v20)
-				await igangsterincidentgen.set_active(1)
-				await ibacktobase.allow()
-				while v44 == 5:
-					break
-				state.destroy(self)
-				global.destroy("g_blockade_runner_running")
-				global.set_bool(await local_14(), 1)
-				await iutilities.remove_mission_restart()
-				if PogRuntime.TRACE:
-					debug.print_string("Act 2 Mission 05 Finished\n")
-	return
+				_pc = 2588
+				continue
+		elif _pc == 2523:
+			iemail.send_email("a2_m05_email_sender", "a2_m05_email_subject", "html:/text/act_2/act2_mission05_email", 1)
+			_pc = 2583
+			continue
+		elif _pc == 2562:
+			debug.print_string("iAct2Mission05.MissionHandler: Email Sent - EXITING\n")
+			_pc = 2583
+			continue
+		elif _pc == 2583:
+			_pc = 12819
+			continue
+		elif _pc == 2588:
+			if not (iemail.read(v22)):
+				_pc = 2612
+				continue
+			else:
+				_pc = 2643
+				continue
+		elif _pc == 2612:
+			_pc = 2638
+			continue
+		elif _pc == 2617:
+			debug.print_string("iAct2Mission05.MissionHandler: Email not read yet - EXITING\n")
+			_pc = 2638
+			continue
+		elif _pc == 2638:
+			_pc = 12819
+			continue
+		elif _pc == 2643:
+			_pc = 2669
+			continue
+		elif _pc == 2648:
+			debug.print_string("iAct2Mission05. Email read - starting mission \n")
+			_pc = 2669
+			continue
+		elif _pc == 2669:
+			global.create_bool("g_blockade_runner_running", 1, 1)
+			await local_12821()
+			await local_15968("Number_Of_Freighters", 3)
+			await local_15968("Number_Of_Escorts", 3)
+			await local_15968("Number_Of_Mercenaries", 3)
+			await local_18685()
+			await igangsterincidentgen.set_active(0)
+			_pc = 4074
+			continue
+		elif _pc == 2809:
+			_pc = 4135
+			continue
+		elif _pc == 2814:
+			v14 = await local_18353(v13, v35)
+			v45 = 1
+			await iconversation.one_liner(0, "name_smith", "a2_m05_dialogue_smith_initial_meeting_waypoint_created")
+			iobjectives.add("a2_m05_objectives_redezvous")
+			_pc = 4135
+			continue
+		elif _pc == 2904:
+			v5 = await local_16978(0, await local_16713("Number_Of_Freighters"))
+			await abb_common.set_cullable_group(v5, 0)
+			v6 = await local_16978(1, await local_16713("Number_Of_Escorts"))
+			await abb_common.set_cullable_group(v6, 0)
+			v7 = await local_16978(2, await local_16713("Number_Of_Mercenaries"))
+			await abb_common.set_cullable_group(v7, 0)
+			_pc = 3206
+			continue
+		elif _pc == 3090:
+			if object.property_exists(v3, "phase_menu"):
+				_pc = 3120
+				continue
+			else:
+				_pc = 3206
+				continue
+		elif _pc == 3120:
+			isim.capsule_jump(v4, v15)
+			debug.print_string("Act 2 Mission 05 Phase 3 - Entering phase directly.  Warping player to Mwari toadskin l-point\n")
+			await abb_common.watch_sims_movement(v4, v15, v31, v39, 16, 1.0)
+			_pc = 3206
+			continue
+		elif _pc == 3206:
+			_pc = 4135
+			continue
+		elif _pc == 3211:
+			v5 = await local_16978(0, await local_16713("Number_Of_Freighters"))
+			await abb_common.set_cullable_group(v5, 0)
+			v6 = await local_16978(1, await local_16713("Number_Of_Escorts"))
+			await abb_common.set_cullable_group(v6, 0)
+			v7 = await local_16978(2, await local_16713("Number_Of_Mercenaries"))
+			await abb_common.set_cullable_group(v7, 0)
+			_pc = 3513
+			continue
+		elif _pc == 3397:
+			if object.property_exists(v3, "phase_menu"):
+				_pc = 3427
+				continue
+			else:
+				_pc = 3513
+				continue
+		elif _pc == 3427:
+			isim.capsule_jump(v4, v15)
+			debug.print_string("Act 2 Mission 05 Phase 4 - Entering phase directly.  Warping player near to Mwari toadskin l-point\n")
+			await abb_common.watch_sims_movement(v4, v15, v31, v39, 16, 1.0)
+			_pc = 3513
+			continue
+		elif _pc == 3513:
+			await abb_common.materialise_group_near(v5, v4, 1000.0)
+			await abb_common.materialise_group_near(v6, v4, 2000.0)
+			await abb_common.materialise_group_near(v7, v4, 2000.0)
+			_pc = 4135
+			continue
+		elif _pc == 3605:
+			v5 = await local_16978(0, await local_16713("Number_Of_Freighters"))
+			await abb_common.set_cullable_group(v5, 0)
+			v6 = await local_16978(1, await local_16713("Number_Of_Escorts"))
+			await abb_common.set_cullable_group(v6, 0)
+			v7 = await local_16978(2, await local_16713("Number_Of_Mercenaries"))
+			await abb_common.set_cullable_group(v7, 0)
+			_pc = 3977
+			continue
+		elif _pc == 3791:
+			if object.property_exists(v3, "phase_menu"):
+				_pc = 3821
+				continue
+			else:
+				_pc = 3977
+				continue
+		elif _pc == 3821:
+			isim.capsule_jump(v4, v15)
+			debug.print_string("Act 2 Mission 05 Phase 5 - Entering phase directly.  Warping player to MCA Base\n")
+			await abb_common.watch_sims_movement(v4, v15, v31, v39, 16, 1.0)
+			sim.place_near(v4, v17, 1000.0)
+			await abb_common.watch_sims_movement(v4, v17, v31, v39, 16, 1.0)
+			_pc = 3977
+			continue
+		elif _pc == 3977:
+			await abb_common.materialise_group_near(v5, v4, 1000.0)
+			await abb_common.materialise_group_near(v6, v4, 2000.0)
+			await abb_common.materialise_group_near(v7, v4, 2000.0)
+			_pc = 4135
+			continue
+		elif _pc == 4069:
+			_pc = 4135
+			continue
+		elif _pc == 4074:
+			if not _pog_is_null(state.progress(v3)):
+				_pc = 4100
+				continue
+			else:
+				_pc = 2809
+				continue
+		elif _pc == 4100:
+			if not _pog_is_null(1):
+				_pc = 4108
+				continue
+			else:
+				_pc = 2814
+				continue
+		elif _pc == 4108:
+			if not _pog_is_null(2):
+				_pc = 4117
+				continue
+			else:
+				_pc = 2904
+				continue
+		elif _pc == 4117:
+			if not _pog_is_null(3):
+				_pc = 4126
+				continue
+			else:
+				_pc = 3211
+				continue
+		elif _pc == 4126:
+			if not _pog_is_null(4):
+				_pc = 4135
+				continue
+			else:
+				_pc = 3605
+				continue
+		elif _pc == 4135:
+			await local_339(v3)
+			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			_pog_detach(v1)
+			_pc = 4264
+			continue
+		elif _pc == 4264:
+			if v5:
+				_pc = 4274
+				continue
+			else:
+				_pc = 4297
+				continue
+		elif _pc == 4274:
+			await local_16402("Number_Of_Freighters", 3)
+			_pc = 4297
+			continue
+		elif _pc == 4297:
+			if v6:
+				_pc = 4307
+				continue
+			else:
+				_pc = 4330
+				continue
+		elif _pc == 4307:
+			await local_16402("Number_Of_Escorts", 3)
+			_pc = 4330
+			continue
+		elif _pc == 4330:
+			if v7:
+				_pc = 4340
+				continue
+			else:
+				_pc = 4363
+				continue
+		elif _pc == 4340:
+			await local_15968("Number_Of_Mercenaries", 3)
+			_pc = 4363
+			continue
+		elif _pc == 4363:
+			_pc = 12254
+			continue
+		elif _pc == 4368:
+			_pc = 4394
+			continue
+		elif _pc == 4373:
+			debug.print_string("Act 2 Mission 05 Phase 1 - Mission Start - Started\n")
+			_pc = 4394
+			continue
+		elif _pc == 4394:
+			if not (v14):
+				_pc = 4405
+				continue
+			else:
+				_pc = 4541
+				continue
+		elif _pc == 4405:
+			await _pog_wait(3.0)
+			v14 = await local_18353(v13, v35)
+			await iconversation.one_liner(0, "name_smith", "a2_m05_dialogue_smith_initial_meeting_waypoint_created")
+			iobjectives.add("a2_m05_objectives_redezvous")
+			_pc = 4541
+			continue
+		elif _pc == 4520:
+			debug.print_string("Act 2 Mission 05 Phase 1 - Mission Start - Started - waypoint created\n")
+			_pc = 4541
+			continue
+		elif _pc == 4541:
+			_pc = 4561
+			continue
+		elif _pc == 4546:
+			_pc = 4621
+			continue
+		elif _pc == 4551:
+			_pc = 4394
+			continue
+		elif _pc == 4556:
+			_pc = 4621
+			continue
+		elif _pc == 4561:
+			if await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0) != 16:
+				_pc = 4611
+				continue
+			else:
+				_pc = 4546
+				continue
+		elif _pc == 4611:
+			if not _pog_is_null(256):
+				_pc = 4621
+				continue
+			else:
+				_pc = 4551
+				continue
+		elif _pc == 4621:
+			_pc = 4632
+			continue
+		elif _pc == 4626:
+			if not (1):
+				_pc = 4632
+				continue
+			else:
+				_pc = 4394
+				continue
+		elif _pc == 4632:
+			state.set_progress(v3, 1)
+			_pc = 12315
+			continue
+		elif _pc == 4657:
+			_pc = 4683
+			continue
+		elif _pc == 4662:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Started\n")
+			_pc = 4683
+			continue
+		elif _pc == 4683:
+			await local_339(v3)
+			v5 = await local_16978(0, await local_16713("Number_Of_Freighters"))
+			await abb_common.set_cullable_group(v5, 0)
+			await abb_common.materialise_group_near(v5, v14, 500.0)
+			v6 = await local_16978(1, await local_16713("Number_Of_Escorts"))
+			await abb_common.set_cullable_group(v6, 0)
+			await abb_common.materialise_group_near(v6, v14, 500.0)
+			v7 = await local_16978(2, await local_16713("Number_Of_Mercenaries"))
+			await abb_common.set_cullable_group(v7, 0)
+			await abb_common.materialise_group_near(v7, v14, 1500.0)
+			_pog_halt(v1)
+			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			_pog_detach(v1)
+			_pc = 5225
+			continue
+		elif _pc == 5104:
+			_pc = 5285
+			continue
+		elif _pc == 5109:
+			group.destroy(v5, 1)
+			group.destroy(v6, 1)
+			group.destroy(v7, 1)
+			state.set_progress(v3, 0)
+			_pc = 5215
+			continue
+		elif _pc == 5194:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Aborted, return to Phase 1\n")
+			_pc = 5215
+			continue
+		elif _pc == 5215:
+			_pc = 4264
+			continue
+		elif _pc == 5220:
+			_pc = 5285
+			continue
+		elif _pc == 5225:
+			if await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0) != 16:
+				_pc = 5275
+				continue
+			else:
+				_pc = 5104
+				continue
+		elif _pc == 5275:
+			if not _pog_is_null(128):
+				_pc = 5285
+				continue
+			else:
+				_pc = 5109
+				continue
+		elif _pc == 5285:
+			iobjectives.set_state("a2_m05_objectives_redezvous", 1)
+			await ibacktobase.inhibit()
+			await iconversation.begin()
+			await iconversation.say(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_welcome")
+			await iconversation.say(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_initial_brief_1")
+			await iconversation.say(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_initial_brief_2")
+			await iconversation.say(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_initial_brief_3")
+			await iconversation.say(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_initial_brief_4")
+			await iconversation.say(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_initial_brief_5")
+			await iconversation.end()
+			iobjectives.add("a2_m05_objectives_jump")
+			isim.set_sensor_visibility(isim.cast(v15), 1)
+			await irangecheck.add_out_of_system_traffic_exception(imapentity.cast(v15))
+			await irangecheck.add_traffic_exception(imapentity.cast(v13))
+			_pc = 5817
+			continue
+		elif _pc == 5742:
+			await iformation.v(v7, 50.0, 0)
+			await iconversation.one_liner(group.leader(v7), "", "a2_m05_dialogue_mercenary_leader_we_will_follow_you_st_george")
+			_pc = 5866
+			continue
+		elif _pc == 5817:
+			if await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0) != 32:
+				_pc = 5866
+				continue
+			else:
+				_pc = 5742
+				continue
+		elif _pc == 5866:
+			_pc = 6425
+			continue
+		elif _pc == 5871:
+			_pc = 5897
+			continue
+		elif _pc == 5876:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Abort Warning!\n")
+			_pc = 5897
+			continue
+		elif _pc == 5897:
+			await iconversation.one_liner(group.leader(v7), "", "a2_m05_dialogue_mercenary_leader_dont_wander_off")
+			_pc = 6094
+			continue
+		elif _pc == 5947:
+			_pc = 5973
+			continue
+		elif _pc == 5952:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Abort Warning cancelled\n")
+			_pc = 5973
+			continue
+		elif _pc == 5973:
+			_pc = 5866
+			continue
+		elif _pc == 5978:
+			await iconversation.one_liner(group.leader(v7), "", "a2_m05_dialogue_mercenary_leader_were_not_following")
+			await iconversation.one_liner(0, "name_clay", "a2_m05_dialogue_clay_you_blew_that_mission_1")
+			v44 = 1
+			_pc = 6084
+			continue
+		elif _pc == 6063:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Aborting\n")
+			_pc = 6084
+			continue
+		elif _pc == 6084:
+			_pc = 6154
+			continue
+		elif _pc == 6089:
+			_pc = 6154
+			continue
+		elif _pc == 6094:
+			if await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0) != 16:
+				_pc = 6144
+				continue
+			else:
+				_pc = 5947
+				continue
+		elif _pc == 6144:
+			if not _pog_is_null(128):
+				_pc = 6154
+				continue
+			else:
+				_pc = 5978
+				continue
+		elif _pc == 6154:
+			_pc = 6495
+			continue
+		elif _pc == 6159:
+			v44 = 2
+			_pc = 6193
+			continue
+		elif _pc == 6172:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Aborting\n")
+			_pc = 6193
+			continue
+		elif _pc == 6193:
+			_pc = 6495
+			continue
+		elif _pc == 6198:
+			await _pog_wait(0.10000000149011612)
+			if not (isim.is_capsule_jumping(v4)):
+				_pc = 6253
+				continue
+			else:
+				_pc = 6198
+				continue
+		elif _pc == 6253:
+			if _pog_eq("map:/geog/badlands/mwari", isim.world_name(v4)):
+				_pc = 6285
+				continue
+			else:
+				_pc = 6290
+				continue
+		elif _pc == 6285:
+			_pc = 6415
+			continue
+		elif _pc == 6290:
+			v44 = 3
+			_pc = 6324
+			continue
+		elif _pc == 6303:
+			debug.print_string("Act 2 Mission 05 Phase 2 - player jumped to ")
+			_pc = 6324
+			continue
+		elif _pc == 6324:
+			_pc = 6363
+			continue
+		elif _pc == 6329:
+			debug.print_string(isim.world_name(v4))
+			_pc = 6363
+			continue
+		elif _pc == 6363:
+			_pc = 6389
+			continue
+		elif _pc == 6368:
+			debug.print_string("instead of Mwari. ")
+			_pc = 6389
+			continue
+		elif _pc == 6389:
+			_pc = 6415
+			continue
+		elif _pc == 6394:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Aborted, move to Finished phase\n")
+			_pc = 6415
+			continue
+		elif _pc == 6415:
+			_pc = 6495
+			continue
+		elif _pc == 6420:
+			_pc = 6495
+			continue
+		elif _pc == 6425:
+			if await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0) != 32:
+				_pc = 6475
+				continue
+			else:
+				_pc = 5871
+				continue
+		elif _pc == 6475:
+			if not _pog_is_null(128):
+				_pc = 6485
+				continue
+			else:
+				_pc = 6159
+				continue
+		elif _pc == 6485:
+			if not _pog_is_null(256):
+				_pc = 6495
+				continue
+			else:
+				_pc = 6198
+				continue
+		elif _pc == 6495:
+			_pc = 6506
+			continue
+		elif _pc == 6500:
+			if not (1):
+				_pc = 6506
+				continue
+			else:
+				_pc = 5866
+				continue
+		elif _pc == 6506:
+			if v44:
+				_pc = 6516
+				continue
+			else:
+				_pc = 6521
+				continue
+		elif _pc == 6516:
+			_pc = 12315
+			continue
+		elif _pc == 6521:
+			iobjectives.set_state("a2_m05_objectives_jump", 1)
+			iai.purge_orders(group.leader(v7))
+			state.set_progress(v3, 2)
+			_pc = 6623
+			continue
+		elif _pc == 6602:
+			debug.print_string("Act 2 Mission 05 Phase 2 - Initial Meeting Point - Complete, moving to Clear Bockade phase\n")
+			_pc = 6623
+			continue
+		elif _pc == 6623:
+			_pc = 12315
+			continue
+		elif _pc == 6629:
+			_pc = 6655
+			continue
+		elif _pc == 6634:
+			debug.print_string("Act 2 Mission 05 Phase 3 - Clear Blockade - Started\n")
+			_pc = 6655
+			continue
+		elif _pc == 6655:
+			iobjectives.add("a2_m05_objectives_eliminate")
+			isim.set_standard_sensor_visibility(isim.cast(v15), 1)
+			v16 = isim.cast(await iutilities.create_waypoint_relative_to(v15, 0.0, 0.0, v41))
+			v10 = await local_17092(20, v15)
+			_pog_spawn(local_19143.bind(v10, 5.0))
+			v9 = await local_16978(3, 2)
+			await abb_common.materialise_group_near(v9, isim.cast(group.leader(v10)), 2000.0)
+			iai.give_generic_attack_order(v9)
+			v50 = iregion.create_l_d_s_i(v15, 25000.0)
+			_pog_spawn(local_1375.bind(v15, v7, v9, 5.0))
+			_pog_halt(v1)
+			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			_pog_detach(v1)
+			await local_339(v3)
+			isim.set_sensor_visibility(v14, 0)
+			await iescort.in_formation_impi(v6, v5, 0, 0.0, 100.0, 0.0, 50.0, 500.0, 0)
+			await iformation.goose(v5, 40.0, 0)
+			_pog_spawn(local_1599.bind(v15, v5, v6, 120.0))
+			_pc = 7251
+			continue
+		elif _pc == 7251:
+			await _pog_wait(1.0)
+			if not _pog_eq("map:/geog/badlands/mwari", isim.active_world()) or 300000.0 > sim.distance_between(v4, v15):
+				_pc = 7341
+				continue
+			else:
+				_pc = 7546
+				continue
+		elif _pc == 7341:
+			await _pog_wait(1.0)
+			if not _pog_eq("Loading", isim.active_world()):
+				_pc = 7400
+				continue
+			else:
+				_pc = 7341
+				continue
+		elif _pc == 7400:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_aargh_we_have_all_died_1")
+			group.destroy(v5, 1)
+			await iconversation.one_liner(0, "name_clay", "a2_m05_dialogue_clay_freighters_all_dead_1")
+			v44 = 4
+			_pc = 7527
+			continue
+		elif _pc == 7506:
+			debug.print_string("Act 2 Mission 05 Phase 3 - Clear Blockade - You ran away - the freighters are all dead!, Aborting\n")
+			_pc = 7527
+			continue
+		elif _pc == 7527:
+			await local_1257()
+			_pc = 12819
+			continue
+		elif _pc == 7546:
+			if _pog_eq("map:/geog/badlands/mwari", isim.world_name(isim.cast(group.leader(v5)))):
+				_pc = 7605
+				continue
+			else:
+				_pc = 7251
+				continue
+		elif _pc == 7605:
+			v28 = 0
+			_pc = 7612
+			continue
+		elif _pc == 7612:
+			if group.sim_count(v5) < v28:
+				_pc = 7641
+				continue
+			else:
+				_pc = 7761
+				continue
+		elif _pc == 7641:
+			isim.set_sensor_visibility(isim.cast(group.nth_sim(v5, v28)), 1)
+			isim.set_mission_critical(isim.cast(group.nth_sim(v5, v28)), 1)
+			v28 = 1 + v28
+			_pc = 7612
+			continue
+		elif _pc == 7761:
+			iai.give_approach_order(group.leader(v5), v16)
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_arrived_in_mwari_1")
+			await abb_common.empty_group(v11)
+			group.add_group(v11, v5)
+			group.add_group(v11, v9)
+			_pog_halt(v1)
+			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			_pog_detach(v1)
+			_pc = 8039
+			continue
+		elif _pc == 8039:
+			if not _pog_eq("map:/geog/badlands/mwari", isim.active_world()) or 300000.0 > sim.distance_between(v4, v15):
+				_pc = 8097
+				continue
+			else:
+				_pc = 8288
+				continue
+		elif _pc == 8097:
+			await _pog_wait(1.0)
+			if not _pog_eq("Loading", isim.active_world()):
+				_pc = 8156
+				continue
+			else:
+				_pc = 8097
+				continue
+		elif _pc == 8156:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_aargh_we_have_all_died_1")
+			group.destroy(v5, 1)
+			await iconversation.one_liner(0, "name_clay", "a2_m05_dialogue_clay_freighters_all_dead_1")
+			v44 = 4
+			_pc = 8283
+			continue
+		elif _pc == 8262:
+			debug.print_string("Act 2 Mission 05 Phase 3 - Clear Blockade - You ran away - the freighters are all dead!, Aborting\n")
+			_pc = 8283
+			continue
+		elif _pc == 8283:
+			_pc = 8404
+			continue
+		elif _pc == 8288:
+			if _pog_is_null(group.sim_count(v9)):
+				_pc = 8313
+				continue
+			else:
+				_pc = 8366
+				continue
+		elif _pc == 8313:
+			iobjectives.set_state("a2_m05_objectives_eliminate", 1)
+			_pc = 8361
+			continue
+		elif _pc == 8340:
+			debug.print_string("Act 2 Mission 05 Phase 3 - Clear Blockade - Marauders all dead!, this combat wave is over\n")
+			_pc = 8361
+			continue
+		elif _pc == 8361:
+			_pc = 8404
+			continue
+		elif _pc == 8366:
+			await _pog_wait(1.0)
+			if not (1):
+				_pc = 8404
+				continue
+			else:
+				_pc = 8039
+				continue
+		elif _pc == 8404:
+			if v44:
+				_pc = 8414
+				continue
+			else:
+				_pc = 8419
+				continue
+		elif _pc == 8414:
+			_pc = 12315
+			continue
+		elif _pc == 8419:
+			state.set_progress(v3, 3)
+			_pc = 8466
+			continue
+		elif _pc == 8445:
+			debug.print_string("Act 2 Mission 05 Phase 3 - Clear Blockade - Complete, noving to Escort Freighters phase\n")
+			_pc = 8466
+			continue
+		elif _pc == 8466:
+			_pc = 12315
+			continue
+		elif _pc == 8471:
+			_pc = 8497
+			continue
+		elif _pc == 8476:
+			debug.print_string("Act 2 Mission 05 Phase 4 - Escort Freighters - Started\n")
+			_pc = 8497
+			continue
+		elif _pc == 8497:
+			v18 = await local_18449(v17, 1000.0)
+			v45 = 1
+			await irangecheck.add_traffic_exception(imapentity.cast(v17))
+			_pog_halt(v1)
+			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			_pog_detach(v1)
+			await local_339(v3)
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_escort_brief")
+			iobjectives.add("a2_m05_objectives_escort")
+			v25 = 2
+			v28 = group.sim_count(v5)
+			await iescort.goose(await iwingmen.group(), 0.0, 5000.0, 0)
+			_pc = 8849
+			continue
+		elif _pc == 8849:
+			_pc = 8854
+			continue
+		elif _pc == 8854:
+			await _pog_frame()
+			if _pog_every(8855, 1.0):
+				_pc = 8868
+				continue
+			else:
+				_pc = 9213
+				continue
+		elif _pc == 8868:
+			if _pog_eq(v5, sim.group(iai.current_order_target(v4))) and 2 == iai.current_order_type(v4):
+				_pc = 8932
+				continue
+			else:
+				_pc = 8937
+				continue
+		elif _pc == 8932:
+			_pc = 9276
+			continue
+		elif _pc == 8937:
+			if not _pog_eq("map:/geog/badlands/mwari", isim.active_world()) or 1000000.0 > sim.distance_between(v4, group.leader(v5)):
+				_pc = 9008
+				continue
+			else:
+				_pc = 9213
+				continue
+		elif _pc == 9008:
+			await _pog_wait(1.0)
+			if not _pog_eq("Loading", isim.active_world()):
+				_pc = 9067
+				continue
+			else:
+				_pc = 9008
+				continue
+		elif _pc == 9067:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_aargh_we_have_all_died_2")
+			group.destroy(v5, 1)
+			await iconversation.one_liner(0, "name_clay", "a2_m05_dialogue_clay_all_freighters_dead_3")
+			v44 = 4
+			_pc = 9194
+			continue
+		elif _pc == 9173:
+			debug.print_string("Act 2 Mission 05 Phase 4 - Freighter Escort - You ran away - the freighters are all dead!, Aborting\n")
+			_pc = 9194
+			continue
+		elif _pc == 9194:
+			await local_1257()
+			_pc = 12819
+			continue
+		elif _pc == 9213:
+			if _pog_every(9213, 20.0):
+				_pc = 9226
+				continue
+			else:
+				_pc = 9271
+				continue
+		elif _pc == 9226:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_escort_reminder")
+			_pc = 9271
+			continue
+		elif _pc == 9271:
+			_pc = 8854
+			continue
+		elif _pc == 9276:
+			iai.give_approach_order(group.leader(v5), v18)
+			v42 = sim.distance_between(isim.cast(group.leader(v5)), v18)
+			v43 = math.random(v42, 1.0 + v25 / v25 * v42)
+			if 3.0 * v32 < v43:
+				_pc = 9441
+				continue
+			else:
+				_pc = 9446
+				continue
+		elif _pc == 9441:
+			_pc = 10909
+			continue
+		elif _pc == 9446:
+			_pc = 10809
+			continue
+		elif _pc == 9451:
+			_pc = 9517
+			continue
+		elif _pc == 9456:
+			debug.print_string("Act 2 Mission 05 Phase 4 - Freighter Escort - combat wave ")
+			debug.print_int(v25)
+			debug.print_string("(numbered downwards) starting\n")
+			_pc = 9517
+			continue
+		elif _pc == 9517:
+			v9 = await local_16978(3, 2)
+			v24 = sim.create("ini:/sims/weapons/ldsi_missile", "")
+			sim.place_at(v24, group.leader(v5))
+			isim.kill(isim.cast(v24))
+			iship.disrupt_l_d_s_drive(v4, 120.0)
+			await abb_common.disrupt_l_d_s_group(v5, 120.0)
+			await abb_common.disrupt_l_d_s_group(v6, 120.0)
+			await abb_common.materialise_group_near(v9, isim.cast(group.leader(v5)), 60000.0)
+			await abb_common.materialise_group_near(v5, isim.cast(group.leader(v5)), 1000.0)
+			await abb_common.materialise_group_near(v6, isim.cast(group.leader(v5)), 2000.0)
+			await abb_common.materialise_group_near(v7, isim.cast(group.leader(v5)), 2000.0)
+			sim.place_near(v4, isim.cast(group.leader(v5)), 4000.0)
+			iai.give_attack_order(v9, v5)
+			iai.remove_order(group.leader(v5))
+			_pc = 10206
+			continue
+		elif _pc == 10051:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_were_under_attack_from_marauders_A")
+			_pc = 10248
+			continue
+		elif _pc == 10101:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_were_under_attack_from_marauders_B")
+			_pc = 10248
+			continue
+		elif _pc == 10151:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_were_under_attack_from_marauders_C")
+			_pc = 10248
+			continue
+		elif _pc == 10201:
+			_pc = 10248
+			continue
+		elif _pc == 10206:
+			if math.random_int(1, 3) != 1:
+				_pc = 10230
+				continue
+			else:
+				_pc = 10051
+				continue
+		elif _pc == 10230:
+			if not _pog_is_null(2):
+				_pc = 10239
+				continue
+			else:
+				_pc = 10101
+				continue
+		elif _pc == 10239:
+			if not _pog_is_null(3):
+				_pc = 10248
+				continue
+			else:
+				_pc = 10151
+				continue
+		elif _pc == 10248:
+			v20 = v19
+			await abb_common.empty_group(v11)
+			group.add_group(v11, v5)
+			group.add_group(v11, v9)
+			_pc = 10326
+			continue
+		elif _pc == 10326:
+			if 1000000.0 > sim.distance_between(v4, group.leader(v5)):
+				_pc = 10373
+				continue
+			else:
+				_pc = 10505
+				continue
+		elif _pc == 10373:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_aargh_we_have_all_died_2")
+			group.destroy(v5, 1)
+			await iconversation.one_liner(0, "name_clay", "a2_m05_dialogue_clay_all_freighters_dead_3")
+			v44 = 4
+			_pc = 10500
+			continue
+		elif _pc == 10479:
+			debug.print_string("Act 2 Mission 05 Phase 4 - Freighter Escort - You ran away - the freighters are all dead!, Aborting\n")
+			_pc = 10500
+			continue
+		elif _pc == 10500:
+			_pc = 10742
+			continue
+		elif _pc == 10505:
+			if _pog_is_null(group.sim_count(v9)):
+				_pc = 10530
+				continue
+			else:
+				_pc = 10704
+				continue
+		elif _pc == 10530:
+			_pc = 10556
+			continue
+		elif _pc == 10535:
+			debug.print_string("Act 2 Mission 05 Phase 4 - Freighter Escort - Marauders all dead!, this combat wave is over\n")
+			_pc = 10556
+			continue
+		elif _pc == 10556:
+			_pc = 10666
+			continue
+		elif _pc == 10561:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_all_marauders_dead_A")
+			_pc = 10699
+			continue
+		elif _pc == 10611:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_all_marauders_dead_B")
+			_pc = 10699
+			continue
+		elif _pc == 10661:
+			_pc = 10699
+			continue
+		elif _pc == 10666:
+			if math.random_int(1, 2) != 1:
+				_pc = 10690
+				continue
+			else:
+				_pc = 10561
+				continue
+		elif _pc == 10690:
+			if not _pog_is_null(2):
+				_pc = 10699
+				continue
+			else:
+				_pc = 10611
+				continue
+		elif _pc == 10699:
+			_pc = 10742
+			continue
+		elif _pc == 10704:
+			await _pog_wait(1.0)
+			if not (1):
+				_pc = 10742
+				continue
+			else:
+				_pc = 10326
+				continue
+		elif _pc == 10742:
+			if v44:
+				_pc = 10752
+				continue
+			else:
+				_pc = 10780
+				continue
+		elif _pc == 10752:
+			iobjectives.set_state("a2_m05_objectives_escort", 2)
+			_pc = 10892
+			continue
+		elif _pc == 10780:
+			v25 = -1 + v25
+			_pc = 8849
+			continue
+		elif _pc == 10799:
+			_pc = 8849
+			continue
+		elif _pc == 10804:
+			_pc = 10892
+			continue
+		elif _pc == 10809:
+			if await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0) != 16:
+				_pc = 10884
+				continue
+			else:
+				_pc = 9451
+				continue
+		elif _pc == 10884:
+			if not _pog_is_null(0):
+				_pc = 10892
+				continue
+			else:
+				_pc = 10799
+				continue
+		elif _pc == 10892:
+			_pc = 10909
+			continue
+		elif _pc == 10897:
+			if 0 <= v25:
+				_pc = 10909
+				continue
+			else:
+				_pc = 8849
+				continue
+		elif _pc == 10909:
+			if v44:
+				_pc = 10919
+				continue
+			else:
+				_pc = 10947
+				continue
+		elif _pc == 10919:
+			iobjectives.set_state("a2_m05_objectives_escort", 2)
+			_pc = 12315
+			continue
+		elif _pc == 10947:
+			_pc = 11024
+			continue
+		elif _pc == 10952:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_base_in_sight")
+			iobjectives.set_state("a2_m05_objectives_escort", 1)
+			_pc = 11099
+			continue
+		elif _pc == 11024:
+			if await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0) != 16:
+				_pc = 11099
+				continue
+			else:
+				_pc = 10952
+				continue
+		elif _pc == 11099:
+			_pc = 11125
+			continue
+		elif _pc == 11104:
+			debug.print_string("Act 2 Mission 05 Phase 4 - Escort Freighters - Complete, noving to Choose Reward phase\n")
+			_pc = 11125
+			continue
+		elif _pc == 11125:
+			state.set_progress(v3, 4)
+			iregion.destroy(v50)
+			_pc = 12315
+			continue
+		elif _pc == 11170:
+			_pc = 11196
+			continue
+		elif _pc == 11175:
+			debug.print_string("Act 2 Mission 05 Phase 5 - Choose Reward - Started\n")
+			_pc = 11196
+			continue
+		elif _pc == 11196:
+			v28 = 0
+			_pc = 11203
+			continue
+		elif _pc == 11203:
+			if group.sim_count(v5) < v28:
+				_pc = 11232
+				continue
+			else:
+				_pc = 11301
+				continue
+		elif _pc == 11232:
+			isim.set_standard_sensor_visibility(isim.cast(group.nth_sim(v5, v28)), 1)
+			v28 = 1 + v28
+			_pc = 11203
+			continue
+		elif _pc == 11301:
+			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_ready_to_dock")
+			await iconversation.one_liner(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_pleased_to_see_you_dock_now")
+			iai.purge_orders(v5)
+			v7 = await iwingmen.purge_to_group()
+			if 0 > group.sim_count(v7):
+				_pc = 11441
+				continue
+			else:
+				_pc = 11562
+				continue
+		elif _pc == 11441:
+			await iconversation.one_liner(group.leader(v7), "", "a2_m05_dialogue_mercenary_leader_bye")
+			iai.purge_orders(group.leader(v7))
+			iai.give_flee_order(v7, v4)
+			await iutilities.group_set_cullable(v7, 1)
+			_pc = 11562
+			continue
+		elif _pc == 11562:
+			iai.purge_orders(group.leader(v6))
+			_pc = 11761
+			continue
+		elif _pc == 11599:
+			await iconversation.one_liner(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_poor_job")
+			v29 = 4
+			v30 = 0
+			_pc = 11801
+			continue
+		elif _pc == 11651:
+			await iconversation.one_liner(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_medium_job")
+			v29 = 2
+			v30 = 2
+			_pc = 11801
+			continue
+		elif _pc == 11704:
+			await iconversation.one_liner(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_good_job")
+			v29 = 0
+			v30 = 4
+			_pc = 11801
+			continue
+		elif _pc == 11756:
+			_pc = 11801
+			continue
+		elif _pc == 11761:
+			if group.sim_count(v5) != 1:
+				_pc = 11787
+				continue
+			else:
+				_pc = 11599
+				continue
+		elif _pc == 11787:
+			if not _pog_is_null(2):
+				_pc = 11796
+				continue
+			else:
+				_pc = 11651
+				continue
+		elif _pc == 11796:
+			_pc = 11704
+			continue
+		elif _pc == 11801:
+			iobjectives.add("a2_m05_objective_dock_to_base")
+			_pc = 11827
+			continue
+		elif _pc == 11827:
+			await _pog_frame()
+			if _pog_every(11828, 1.0):
+				_pc = 11841
+				continue
+			else:
+				_pc = 11874
+				continue
+		elif _pc == 11841:
+			if isim.is_docked_to(v17, v4):
+				_pc = 11869
+				continue
+			else:
+				_pc = 11874
+				continue
+		elif _pc == 11869:
+			_pc = 11924
+			continue
+		elif _pc == 11874:
+			if _pog_every(11874, 120.0):
+				_pc = 11887
+				continue
+			else:
+				_pc = 11919
+				continue
+		elif _pc == 11887:
+			await iconversation.one_liner(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_dock_and_rearm_and_talk_about_reward")
+			_pc = 11919
+			continue
+		elif _pc == 11919:
+			_pc = 11827
+			continue
+		elif _pc == 11924:
+			iobjectives.set_state("a2_m05_objective_dock_to_base", 1)
+			iloadout.rearm_from_third_party(v4, 1.0)
+			await iconversation.begin()
+			await iconversation.say(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_really_impressed")
+			await iconversation.say(0, "name_cal", "a2_m05_dialogue_cal_yeah_alright")
+			await iconversation.say(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_give_new_ship")
+			await iconversation.say(0, "name_smith", "a2_m05_dialogue_smith_ive_heard_of_them")
+			await iconversation.say(0, "name_cal", "a2_m05_dialogue_cal_overwhelmed")
+			await iconversation.say(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_not_being_straight")
+			await iconversation.say(0, "name_cal", "a2_m05_dialogue_cal_thanks")
+			await iconversation.say(0, "name_clay", "a2_m05_dialogue_clay_not_bad")
+			await iconversation.end()
+			v44 = 5
+			_pc = 12315
+			continue
+		elif _pc == 12249:
+			_pc = 12315
+			continue
+		elif _pc == 12254:
+			if not _pog_is_null(state.progress(v3)):
+				_pc = 12280
+				continue
+			else:
+				_pc = 4368
+				continue
+		elif _pc == 12280:
+			if not _pog_is_null(1):
+				_pc = 12288
+				continue
+			else:
+				_pc = 4657
+				continue
+		elif _pc == 12288:
+			if not _pog_is_null(2):
+				_pc = 12297
+				continue
+			else:
+				_pc = 6629
+				continue
+		elif _pc == 12297:
+			if not _pog_is_null(3):
+				_pc = 12306
+				continue
+			else:
+				_pc = 8471
+				continue
+		elif _pc == 12306:
+			if not _pog_is_null(4):
+				_pc = 12315
+				continue
+			else:
+				_pc = 11170
+				continue
+		elif _pc == 12315:
+			if v44:
+				_pc = 12326
+				continue
+			else:
+				_pc = 4264
+				continue
+		elif _pc == 12326:
+			await local_16287(v5, v4)
+			await local_16287(v6, v4)
+			await local_16287(v7, v4)
+			await local_16287(v9, v4)
+			await local_16287(v8, v4)
+			await local_16287(v10, v4)
+			await local_16287(v11, v4)
+			sim.destroy(v14)
+			sim.destroy(v16)
+			sim.destroy(v18)
+			sim.destroy(v19)
+			sim.destroy(v20)
+			await igangsterincidentgen.set_active(1)
+			await ibacktobase.allow()
+			_pc = 12652
+			continue
+		elif _pc == 12623:
+			_pc = 12701
+			continue
+		elif _pc == 12628:
+			await local_1257()
+			_pc = 12819
+			continue
+		elif _pc == 12647:
+			_pc = 12701
+			continue
+		elif _pc == 12652:
+			if v44 != 5:
+				_pc = 12666
+				continue
+			else:
+				_pc = 12623
+				continue
+		elif _pc == 12666:
+			if not _pog_is_null(4):
+				_pc = 12675
+				continue
+			else:
+				_pc = 12628
+				continue
+		elif _pc == 12675:
+			if not _pog_is_null(1):
+				_pc = 12683
+				continue
+			else:
+				_pc = 12628
+				continue
+		elif _pc == 12683:
+			if not _pog_is_null(2):
+				_pc = 12692
+				continue
+			else:
+				_pc = 12628
+				continue
+		elif _pc == 12692:
+			if not _pog_is_null(3):
+				_pc = 12701
+				continue
+			else:
+				_pc = 12628
+				continue
+		elif _pc == 12701:
+			state.destroy(self)
+			global.destroy("g_blockade_runner_running")
+			global.set_bool(await local_14(), 1)
+			await iutilities.remove_mission_restart()
+			_pc = 12819
+			continue
+		elif _pc == 12798:
+			debug.print_string("Act 2 Mission 05 Finished\n")
+			_pc = 12819
+			continue
+		elif _pc == 12819:
+			return
+		else:
+			return 0
 	return 0
 
 func local_12821() -> Variant:
@@ -527,7 +1826,7 @@ func local_15968(v0, v1) -> Variant:
 	return 0
 
 func local_16287(v0, v1) -> Variant:
-	if v0:
+	if not (v0):
 		return 0
 	iai.purge_orders(v0)
 	iai.give_flee_order(v0, v1)
@@ -564,20 +1863,20 @@ func local_16713(v0) -> Variant:
 	v1 = state.find(self)
 	if v1:
 		if object.property_exists(v1, v0):
-			return
+			return object.int_property(v1, v0)
 		else:
 			if PogRuntime.TRACE:
 				debug.print_string("Error: attempted to load unknown integer ")
 				debug.print_string(v0)
 				debug.print_string(" from state.  Using 0\n")
-				return
+				return 0
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("Error: attempted to load integer ")
 			debug.print_string(v0)
 			debug.print_string(" from state when no state exists.  Using 0\n")
-			return
-	return
+			return 0
+	return 0
 	return 0
 
 func local_16978(v0, v1) -> Variant:
@@ -588,7 +1887,7 @@ func local_16978(v0, v1) -> Variant:
 	while v1 < v3:
 		group.add_sim(v2, await local_17527(v0))
 		v3 = 1 + v3
-	return
+	return v2
 	return 0
 
 func local_17092(v0, v1) -> Variant:
@@ -604,7 +1903,7 @@ func local_17092(v0, v1) -> Variant:
 	sim.place_relative_to(v3, v1, 0.0, 0.0, 1000.0)
 	await iformation.random_sphere(v2, 1500.0, 1)
 	await iformation.jiggle(v2, 0.0, 180.0)
-	return
+	return v2
 	return 0
 
 func local_17318() -> Variant:
@@ -615,13 +1914,75 @@ func local_17318() -> Variant:
 	object.add_float_property(v0, "explosive_radius", 400.0)
 	object.set_bool_property(v0, "ignore_speed_limit", 1)
 	isim.set_faction(v0, ifaction.find("Marauders"))
-	return
+	return v0
 	return 0
 
 func local_17527(v0) -> Variant:
-	while _pog_is_null(v0):
-		return
-	return
+	var _pc: int = 17527
+	while true:
+		if _pc == 17527:
+			_pc = 17635
+			continue
+		elif _pc == 17532:
+			_pc = 17685
+			continue
+		elif _pc == 17550:
+			_pc = 17685
+			continue
+		elif _pc == 17568:
+			_pc = 17685
+			continue
+		elif _pc == 17586:
+			_pc = 17685
+			continue
+		elif _pc == 17604:
+			_pc = 17630
+			continue
+		elif _pc == 17609:
+			debug.print_string("Attempt to create a ship of unknown actor type\n")
+			_pc = 17630
+			continue
+		elif _pc == 17630:
+			_pc = 17679
+			continue
+		elif _pc == 17635:
+			if not _pog_is_null(v0):
+				_pc = 17648
+				continue
+			else:
+				_pc = 17532
+				continue
+		elif _pc == 17648:
+			if not _pog_is_null(1):
+				_pc = 17656
+				continue
+			else:
+				_pc = 17550
+				continue
+		elif _pc == 17656:
+			if not _pog_is_null(2):
+				_pc = 17665
+				continue
+			else:
+				_pc = 17568
+				continue
+		elif _pc == 17665:
+			if not _pog_is_null(3):
+				_pc = 17674
+				continue
+			else:
+				_pc = 17586
+				continue
+		elif _pc == 17674:
+			_pc = 17604
+			continue
+		elif _pc == 17679:
+			_pc = 17685
+			continue
+		elif _pc == 17685:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17687() -> Variant:
@@ -636,7 +1997,7 @@ func local_17687() -> Variant:
 	isim.set_mission_critical(v0, 1)
 	v1 = sim.find_subsim_by_name(v0, "system_autorepair")
 	object.set_float_property(v1, "autorepair_rate", 10.0)
-	return
+	return v0
 	return 0
 
 func local_17984() -> Variant:
@@ -644,7 +2005,7 @@ func local_17984() -> Variant:
 	v0 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("Mca", -1))
 	await ipilotsetup.generic_cargo_pod(v0)
 	isim.set_faction(v0, ifaction.find("M.C.A."))
-	return
+	return v0
 	return 0
 
 func local_18107() -> Variant:
@@ -652,7 +2013,7 @@ func local_18107() -> Variant:
 	v0 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("General", -1))
 	await ipilotsetup.generic_cargo_pod(v0)
 	isim.set_faction(v0, ifaction.find("Independent"))
-	return
+	return v0
 	return 0
 
 func local_18230() -> Variant:
@@ -660,21 +2021,21 @@ func local_18230() -> Variant:
 	v0 = iship.create("ini:/sims/ships/marauder/marauder_cutter_hard", await ishipcreation.ship_name("Marauders", -1))
 	await ipilotsetup.generic_cargo_pod(v0)
 	isim.set_faction(v0, ifaction.find("Marauders"))
-	return
+	return v0
 	return 0
 
 func local_18353(v0, v1) -> Variant:
 	var v2: Variant = 0
 	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
 	await iutilities.make_waypoint_visible(v2, 1, "a2_m05_waypoint_initial_meeting")
-	return
+	return v2
 	return 0
 
 func local_18449(v0, v1) -> Variant:
 	var v2: Variant = 0
 	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
 	await iutilities.make_waypoint_visible(v2, 1, "a2_m05_mca_base")
-	return
+	return v2
 	return 0
 
 func local_18685() -> Variant:

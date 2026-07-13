@@ -37,7 +37,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	return
+	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
 func surrender() -> Variant:
@@ -104,7 +104,7 @@ func surrender() -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string("iSelfPreservation.surrender: arrived at police station.......... killing\n")
 				break
-			if not (await iutilities.player_in_range(sim.cast(v0))):
+			if await iutilities.player_in_range(sim.cast(v0)):
 				continue
 			break
 	return

@@ -105,37 +105,93 @@ func local_407(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = group.create()
-	v2 = group.create()
-	v3 = ifaction.find("M.C.A.")
-	v5 = 3
-	group.add_group(v1, group.cast(global.handle("g_hoffers_vessels")))
-	v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
-	isim.set_faction(v4, v3)
-	sim.set_cullable(v4, 0)
-	iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-	group.add_sim(v2, v4)
-	v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
-	isim.set_faction(v4, v3)
-	sim.set_cullable(v4, 0)
-	iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-	group.add_sim(v2, v4)
-	group.add_group(v1, v2)
-	v2 = group.create()
-	v6 = 0
-	while v5 < v6:
-		while _pog_is_null(math.random_int(0, 2)):
+	var _pc: int = 407
+	while true:
+		if _pc == 407:
+			v1 = group.create()
+			v2 = group.create()
+			v3 = ifaction.find("M.C.A.")
+			v5 = 3
+			group.add_group(v1, group.cast(global.handle("g_hoffers_vessels")))
+			v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
+			isim.set_faction(v4, v3)
+			sim.set_cullable(v4, 0)
+			iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v4)
+			v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
+			isim.set_faction(v4, v3)
+			sim.set_cullable(v4, 0)
+			iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v4)
+			group.add_group(v1, v2)
+			v2 = group.create()
+			v6 = 0
+			_pc = 936
+			continue
+		elif _pc == 936:
+			if v5 < v6:
+				_pc = 952
+				continue
+			else:
+				_pc = 1307
+				continue
+		elif _pc == 952:
+			_pc = 1121
+			continue
+		elif _pc == 957:
 			v4 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("Mca", -1))
-			break
-		isim.set_faction(v4, v3)
-		sim.set_cullable(v4, 0)
-		iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-		group.add_sim(v2, v4)
-		v6 = 1 + v6
-	group.add_group(v1, v2)
-	await iescort.in_formation_goose(group.nth_group(v1, 1), group.leader(group.nth_group(v1, 0)), 0, 0.0, 200.0, -80.0, 200.0, 2000.0, 1)
-	await iescort.in_formation_goose(group.nth_group(v1, 2), group.leader(group.nth_group(v1, 0)), 0, 0.0, 500.0, -300.0, 200.0, 2000.0, 1)
-	return
+			_pc = 1162
+			continue
+		elif _pc == 1010:
+			v4 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("Mca", -1))
+			_pc = 1162
+			continue
+		elif _pc == 1063:
+			v4 = iship.create("ini:/sims/ships/independent/cutter_mercenary", await ishipcreation.ship_name("Mca", -1))
+			_pc = 1162
+			continue
+		elif _pc == 1116:
+			_pc = 1162
+			continue
+		elif _pc == 1121:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 1145
+				continue
+			else:
+				_pc = 957
+				continue
+		elif _pc == 1145:
+			if not _pog_is_null(1):
+				_pc = 1153
+				continue
+			else:
+				_pc = 1010
+				continue
+		elif _pc == 1153:
+			if not _pog_is_null(2):
+				_pc = 1162
+				continue
+			else:
+				_pc = 1063
+				continue
+		elif _pc == 1162:
+			isim.set_faction(v4, v3)
+			sim.set_cullable(v4, 0)
+			iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v4)
+			v6 = 1 + v6
+			_pc = 936
+			continue
+		elif _pc == 1307:
+			group.add_group(v1, v2)
+			await iescort.in_formation_goose(group.nth_group(v1, 1), group.leader(group.nth_group(v1, 0)), 0, 0.0, 200.0, -80.0, 200.0, 2000.0, 1)
+			await iescort.in_formation_goose(group.nth_group(v1, 2), group.leader(group.nth_group(v1, 0)), 0, 0.0, 500.0, -300.0, 200.0, 2000.0, 1)
+			_pc = 1526
+			continue
+		elif _pc == 1526:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1528(v0, v1) -> Variant:
@@ -208,7 +264,7 @@ func local_2473(v0, v1, v2) -> Variant:
 	v7 = imapentity.find_by_name_in_system("Haitsuchi L-Point", "map:/geog/gagarin/ishime")
 	while true:
 		await _pog_wait(1)
-		if not (v3) and 800.0 < sim.distance_between(v1, v4):
+		if not (not (v3) and 800.0 < sim.distance_between(v1, v4)):
 			continue
 		v3 = 1
 		await iconversation.one_liner(v4, "name_hoffer", "a3_m06_dialogue_hoffer_good_to")
@@ -249,60 +305,211 @@ func local_3427(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v1 = group.create()
-	v2 = group.create()
-	v3 = ifaction.find("MAAS Corporation")
-	v4 = ifaction.find("Ashanti Investment")
-	v5 = ifaction.find("Von Schelling Industries")
-	v6 = ifaction.find("Advanced Security Corp")
-	v8 = 8
-	v10 = 0
-	ifaction.set_feeling(v3, v4, -1.0)
-	ifaction.set_feeling(v3, v5, -1.0)
-	ifaction.set_feeling(v3, v6, -1.0)
-	ifaction.set_feeling(v4, v3, -1.0)
-	ifaction.set_feeling(v5, v3, -1.0)
-	ifaction.set_feeling(v6, v3, -1.0)
-	v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("MaasCorporation", -1))
-	isim.set_faction(v7, v3)
-	iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-	group.add_sim(v2, v7)
-	v9 = 0
-	while v8 < v9:
-		while _pog_is_null(math.random_int(0, 2)):
-			v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("MaasCorporation", -1))
-			break
-		isim.set_faction(v7, v3)
-		iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-		group.add_sim(v2, v7)
-		v9 = 1 + v9
-	group.add_group(v1, v2)
-	v2 = group.create()
-	v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
-	isim.set_faction(v7, v5)
-	iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-	group.add_sim(v2, v7)
-	v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
-	isim.set_faction(v7, v5)
-	iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-	group.add_sim(v2, v7)
-	v9 = 0
-	while v8 < v9:
-		while _pog_is_null(math.random_int(0, 2)):
-			v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("General", -1))
-			break
-		while _pog_is_null(v10):
-			isim.set_faction(v7, v4)
-			break
-		iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-		group.add_sim(v2, v7)
-		if 2 < v10:
-			v10 = 1 + v10
-		else:
+	var _pc: int = 3427
+	while true:
+		if _pc == 3427:
+			v1 = group.create()
+			v2 = group.create()
+			v3 = ifaction.find("MAAS Corporation")
+			v4 = ifaction.find("Ashanti Investment")
+			v5 = ifaction.find("Von Schelling Industries")
+			v6 = ifaction.find("Advanced Security Corp")
+			v8 = 8
 			v10 = 0
-		v9 = 1 + v9
-	group.add_group(v1, v2)
-	return
+			ifaction.set_feeling(v3, v4, -1.0)
+			ifaction.set_feeling(v3, v5, -1.0)
+			ifaction.set_feeling(v3, v6, -1.0)
+			ifaction.set_feeling(v4, v3, -1.0)
+			ifaction.set_feeling(v5, v3, -1.0)
+			ifaction.set_feeling(v6, v3, -1.0)
+			v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("MaasCorporation", -1))
+			isim.set_faction(v7, v3)
+			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v7)
+			v9 = 0
+			_pc = 3922
+			continue
+		elif _pc == 3922:
+			if v8 < v9:
+				_pc = 3938
+				continue
+			else:
+				_pc = 4273
+				continue
+		elif _pc == 3938:
+			_pc = 4107
+			continue
+		elif _pc == 3943:
+			v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("MaasCorporation", -1))
+			_pc = 4148
+			continue
+		elif _pc == 3996:
+			v7 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
+			_pc = 4148
+			continue
+		elif _pc == 4049:
+			v7 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("MaasCorporation", -1))
+			_pc = 4148
+			continue
+		elif _pc == 4102:
+			_pc = 4148
+			continue
+		elif _pc == 4107:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 4131
+				continue
+			else:
+				_pc = 3943
+				continue
+		elif _pc == 4131:
+			if not _pog_is_null(1):
+				_pc = 4139
+				continue
+			else:
+				_pc = 3996
+				continue
+		elif _pc == 4139:
+			if not _pog_is_null(2):
+				_pc = 4148
+				continue
+			else:
+				_pc = 4049
+				continue
+		elif _pc == 4148:
+			isim.set_faction(v7, v3)
+			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v7)
+			v9 = 1 + v9
+			_pc = 3922
+			continue
+		elif _pc == 4273:
+			group.add_group(v1, v2)
+			v2 = group.create()
+			v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v7, v5)
+			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v7)
+			v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v7, v5)
+			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v7)
+			v9 = 0
+			_pc = 4633
+			continue
+		elif _pc == 4633:
+			if v8 < v9:
+				_pc = 4649
+				continue
+			else:
+				_pc = 5125
+				continue
+		elif _pc == 4649:
+			_pc = 4818
+			continue
+		elif _pc == 4654:
+			v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("General", -1))
+			_pc = 4859
+			continue
+		elif _pc == 4707:
+			v7 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("General", -1))
+			_pc = 4859
+			continue
+		elif _pc == 4760:
+			v7 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("General", -1))
+			_pc = 4859
+			continue
+		elif _pc == 4813:
+			_pc = 4859
+			continue
+		elif _pc == 4818:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 4842
+				continue
+			else:
+				_pc = 4654
+				continue
+		elif _pc == 4842:
+			if not _pog_is_null(1):
+				_pc = 4850
+				continue
+			else:
+				_pc = 4707
+				continue
+		elif _pc == 4850:
+			if not _pog_is_null(2):
+				_pc = 4859
+				continue
+			else:
+				_pc = 4760
+				continue
+		elif _pc == 4859:
+			_pc = 4956
+			continue
+		elif _pc == 4864:
+			isim.set_faction(v7, v4)
+			_pc = 4986
+			continue
+		elif _pc == 4893:
+			isim.set_faction(v7, v5)
+			_pc = 4986
+			continue
+		elif _pc == 4922:
+			isim.set_faction(v7, v6)
+			_pc = 4986
+			continue
+		elif _pc == 4951:
+			_pc = 4986
+			continue
+		elif _pc == 4956:
+			if not _pog_is_null(v10):
+				_pc = 4969
+				continue
+			else:
+				_pc = 4864
+				continue
+		elif _pc == 4969:
+			if not _pog_is_null(1):
+				_pc = 4977
+				continue
+			else:
+				_pc = 4893
+				continue
+		elif _pc == 4977:
+			if not _pog_is_null(2):
+				_pc = 4986
+				continue
+			else:
+				_pc = 4922
+				continue
+		elif _pc == 4986:
+			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+			group.add_sim(v2, v7)
+			if 2 < v10:
+				_pc = 5082
+				continue
+			else:
+				_pc = 5100
+				continue
+		elif _pc == 5082:
+			v10 = 1 + v10
+			_pc = 5107
+			continue
+		elif _pc == 5100:
+			v10 = 0
+			_pc = 5107
+			continue
+		elif _pc == 5107:
+			v9 = 1 + v9
+			_pc = 4633
+			continue
+		elif _pc == 5125:
+			group.add_group(v1, v2)
+			_pc = 5159
+			continue
+		elif _pc == 5159:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5161(v0, v1) -> Variant:
@@ -349,7 +556,7 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 			await local_1738(v1, v0, 0)
 			global.create_bool("g_hoffer_disabled", 2, 1)
 		else:
-			if v7 and not (_pog_eq("map:/geog/gagarin/ishime", isim.active_world())):
+			if v7 and not _pog_eq("map:/geog/gagarin/ishime", isim.active_world()):
 				v7 = 0
 				v9 = ilagrangepoint.nearest(imapentity.system_lagrange_points(), v0)
 				await _pog_wait(5.0)
@@ -375,9 +582,9 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 			iobjectives.set_state("a3_m06_objectives_fly_to", 1)
 			await iconversation.one_liner(0, "name_smith", "a3_m06_dialogue_smith_cal")
 			iobjectives.add("a3_m06_objectives_destroy")
-		if v4:
+		if not (v4):
 			continue
-		if not (v5) and _pog_is_null(group.total_sim_count(group.nth_group(v8, 1))):
+		if not (not (v5) and _pog_is_null(group.total_sim_count(group.nth_group(v8, 1)))):
 			continue
 		await iconversation.one_liner(0, "name_smith", "a3_m06_dialogue_smith_wooa")
 		iobjectives.set_state("a3_m06_objectives_destroy", 1)
@@ -439,9 +646,9 @@ func local_7746(v0, v1, v2) -> Variant:
 			v3 = 1
 			sim.place_near(v4, v1, 100.0)
 			await iconversation.one_liner(0, "name_smith", "a3_m06_dialogue_smith_it")
-		if v3:
+		if not (v3):
 			continue
-		if 2000.0 < sim.distance_between(v0, v4):
+		if 2000.0 >= sim.distance_between(v0, v4):
 			continue
 		iobjectives.set_state("a3_m06_objectives_return", 1)
 		await iconversation.one_liner(0, "name_cal", "a3_m06_dialogue_cal_what")
@@ -462,7 +669,7 @@ func local_8168(v0, v1, v2) -> Variant:
 	if v2:
 		v6 = 1
 	v3 = group.sim_count(v0)
-	if not _pog_is_null(v3):
+	if _pog_is_null(v3):
 		return 0
 	v4 = 0
 	while v3 < v4:
@@ -505,7 +712,7 @@ func local_8374(v0, v1, v2, v3, v4, v5) -> Variant:
 	sim.place_near(v0, v3, 300000.0)
 	while true:
 		await _pog_wait(0.10000000149011612)
-		if not (not (_pog_eq("map:/geog/gagarin/ishime", isim.active_world()))):
+		if not (not _pog_eq("map:/geog/gagarin/ishime", isim.active_world())):
 			break
 	sim.point_at(v0, v3)
 	sim.place_relative_to(v6, v0, -200.0, 50.0, 1000.0)
@@ -557,12 +764,12 @@ func mission_handler() -> Variant:
 	else:
 		if not (iemail.read(v7)):
 			return
-	if not (_pog_eq("map:/geog/gagarin/formhault", isim.active_world())):
+	if not _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
 		await iconversation.one_liner(0, "", "Testing mission in isolation...........")
 		isim.capsule_jump(v2, isim.cast(v4))
 		while true:
 			await _pog_wait(1.0)
-			if not (not (_pog_eq("map:/geog/gagarin/formhault", isim.active_world()))):
+			if not (not _pog_eq("map:/geog/gagarin/formhault", isim.active_world())):
 				break
 		await _pog_wait(5.0)
 	await ibacktobase.inhibit()
@@ -578,7 +785,7 @@ func mission_handler() -> Variant:
 		if not (v1) and 2 == state.progress(v6):
 			v1 = 1
 			_pog_spawn(local_7746.bind(v2, v4, v6))
-		if 100 == state.progress(v6) or 8 == state.progress(v6):
+		if not (100 == state.progress(v6) or 8 == state.progress(v6)):
 			continue
 		if 8 == state.progress(v6):
 			global.set_bool("g_act3_smokescreen_mission_complete", 1)

@@ -113,13 +113,49 @@ func local_310() -> Variant:
 
 func local_454(v0) -> Variant:
 	var v1: Variant = 0
-	while _pog_is_null(math.random_int(0, 1)):
-		v1 = iship.create("ini:/sims/ships/independent/tug_armed_weak", await ishipcreation.ship_name("General", -1))
-		isim.set_faction(v1, v0)
-		await ipilotsetup.generic_aggressive(v1)
-		iship.set_pilot_skill_level(v1, 0.30000001192092896)
-		break
-	return
+	var _pc: int = 454
+	while true:
+		if _pc == 454:
+			_pc = 709
+			continue
+		elif _pc == 464:
+			v1 = iship.create("ini:/sims/ships/independent/tug_armed_weak", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v1, v0)
+			await ipilotsetup.generic_aggressive(v1)
+			iship.set_pilot_skill_level(v1, 0.30000001192092896)
+			_pc = 740
+			continue
+		elif _pc == 584:
+			v1 = iship.create("ini:/sims/ships/independent/puffin_armed", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v1, v0)
+			await ipilotsetup.generic_aggressive(v1)
+			iship.set_pilot_skill_level(v1, 0.30000001192092896)
+			_pc = 740
+			continue
+		elif _pc == 704:
+			_pc = 740
+			continue
+		elif _pc == 709:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 732
+				continue
+			else:
+				_pc = 464
+				continue
+		elif _pc == 732:
+			if not _pog_is_null(1):
+				_pc = 740
+				continue
+			else:
+				_pc = 584
+				continue
+		elif _pc == 740:
+			_pc = 750
+			continue
+		elif _pc == 750:
+			return
+		else:
+			return 0
 	return 0
 
 func local_752(v0, v1) -> Variant:
@@ -149,7 +185,7 @@ func local_752(v0, v1) -> Variant:
 		object.add_handle_property(group.leader(v3), "g_task_handle", v6)
 		group.add_group(v2, v3)
 		v8 = 1 + v8
-	return
+	return v2
 	return 0
 
 func local_1217(v0) -> Variant:
@@ -204,7 +240,7 @@ func local_1436(v0) -> Variant:
 	v3 = await iutilities.create_waypoint_relative_to(v0, 0.0, -8000.0, -8000.0)
 	group.add_sim(v2, v3)
 	group.add_group(v1, v2)
-	return
+	return v1
 	return 0
 
 func local_2357(v0, v1, v2) -> Variant:
@@ -236,7 +272,7 @@ func local_2357(v0, v1, v2) -> Variant:
 	v11 = await local_752(v1, v12)
 	while true:
 		await _pog_wait(2)
-		if 20000.0 < sim.distance_between(v0, v1):
+		if 20000.0 >= sim.distance_between(v0, v1):
 			continue
 		if 1 != state.progress(v2):
 			await iconversation.one_liner(0, "name_clay", "a0_m50_dialogue_clay_yep_thisll")
@@ -276,7 +312,7 @@ func local_2357(v0, v1, v2) -> Variant:
 				v14 = v15
 			v19 = 1 + v19
 		v7 = iship.brightness_of(v0, v14, 8000.0, 0)
-		if not (v3) and v4 or 0.1899999976158142 > v7:
+		if not (not (v3) and v4 or 0.1899999976158142 > v7):
 			continue
 		if v4:
 			v18 = 1 + v18
@@ -302,7 +338,7 @@ func local_2357(v0, v1, v2) -> Variant:
 	await iconversation.one_liner(0, "name_clay", "a0_m50_dialogue_clay_run_for")
 	while true:
 		await _pog_wait(1)
-		if v13 <= sim.distance_between(v0, v10):
+		if v13 > sim.distance_between(v0, v10):
 			continue
 		iobjectives.set_state("a0_m50_objectives_return", 1)
 		iai.purge_orders(v11)
@@ -348,7 +384,7 @@ func mission_handler() -> Variant:
 			if 2 != state.progress(v3) and not (await iutilities.player_in_range(v1)) and v0:
 				_pog_halt(v5)
 				v0 = 0
-		if 8 == state.progress(v3):
+		if 8 != state.progress(v3):
 			continue
 		if 100 != state.progress(v3):
 			global.set_bool("g_act0_recovered_reactor", 1)

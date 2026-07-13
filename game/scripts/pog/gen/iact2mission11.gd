@@ -109,7 +109,7 @@ func local_275() -> Variant:
 func local_424(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		await iwingmen.purge()
 		state.destroy(v0)
@@ -186,212 +186,557 @@ func mission_handler() -> Variant:
 	var v42: Variant = 0
 	var v43: Variant = 0
 	var v44: Variant = 0
-	v0 = state.find(self)
-	v2 = ifaction.find("Player")
-	v3 = ifaction.find("Police")
-	v4 = ifaction.find("Carva Cartal")
-	v5 = ifaction.find("Stepson")
-	v6 = ifaction.find("League")
-	v7 = ifaction.find("Junkers")
-	v8 = ifaction.find("Government")
-	v9 = ifaction.find("Marauders")
-	v10 = group.create()
-	v23 = iship.find_player_ship()
-	v27 = imapentity.find_by_name_in_system("Greenback", "map:/geog/badlands/hoffers_wake")
-	v28 = imapentity.find_by_name_in_system("Touchdown L-point", "map:/geog/badlands/hoffers_wake")
-	v31 = imapentity.find_by_name_in_system("Blackeye L-point", "map:/geog/badlands/hoffers_wake")
-	v33 = imapentity.find_by_name_in_system("Dog 1 Orbital", "map:/geog/badlands/hoffers_wake")
-	v39 = 0
-	v40 = 0
-	v41 = 0
-	v42 = 0
-	v43 = 0
-	v44 = self
-	v0 = state.find(v44)
-	if not (v0):
-		v0 = state.create(v44, 0)
-	text.add("csv:/text/act_2/act2_mission11")
-	text.add("csv:/text/act_2/act2_mission24")
-	text.add("csv:/text/act_3/act3_mission09")
-	await imissiontracker.add_mission(self, 2, 11)
-	v1 = iemail.find("html:/text/act_2/act2_mission11_email")
-	if not (v1):
-		iemail.send_email("a2_m11_email_sender", "a2_m11_email_subject", "html:/text/act_2/act2_mission11_email", 1)
-		return
-	else:
-		if not (iemail.read(v1)):
-			return
-	iobjectives.add("a2_m11_objectives_redezvous")
-	await local_60(v0)
-	ifaction.set_feeling(v2, v5, 4.0)
-	ifaction.set_feeling(v2, v6, 4.0)
-	ifaction.set_feeling(v5, v2, 4.0)
-	ifaction.set_feeling(v6, v2, 4.0)
-	v29 = await iutilities.create_waypoint_relative_to(v27, 0.0, 1000000.0, 0.0)
-	await iutilities.make_waypoint_visible(v29, 1, "a2_m11_allied_waypoint")
-	v13 = await local_13728("ini:/sims/ships/independent/tug_armed", "Stepson", v5, 2, 2)
-	await local_12765(v13, 0)
-	v21 = iship.cast(group.leader(v13))
-	group.add_group(v10, v13)
-	sim.place_relative_to(v21, v29, -50.0, 100.0, -1000.0)
-	await iformation.goose(v13, 400.0, 1)
-	v22 = iship.cast(group.leader(v13))
-	object.set_string_property(v22, "name", "a2_m11_email_sender")
-	isim.set_indestructable(v22, 1)
-	v11 = await local_13728("ini:/sims/ships/independent/cutter_mercenary", "Stepson", v5, 5, 4)
-	await local_12765(v11, 0)
-	await iformation.lock_groups_in_formation(v13, v11, 0.0, 50.0, 0.0, 1)
-	await iformation.line_abreast(v11, 140.0, 1)
-	v12 = await local_13728("ini:/sims/ships/navy/heavy_corvette_mk1", "General", v6, 20, 3)
-	await local_12765(v12, 0)
-	group.add_group(v10, v12)
-	await iformation.lock_groups_in_formation(v13, v12, 100.0, 1000.0, -250.0, 1)
-	await iformation.line_abreast(v12, 200.0, 1)
-	v12 = await local_13728("ini:/sims/ships/navy/fighter_mk2", "General", v6, 30, 6)
-	await local_12765(v12, 0)
-	group.add_group(v10, v12)
-	await iformation.lock_groups_in_formation(v13, v12, 100.0, 900.0, -400.0, 1)
-	await iformation.goose(v12, 40.0, 1)
-	v12 = await local_13728("ini:/sims/ships/corporate/interceptor", "General", v6, 40, 2)
-	await local_12765(v12, 0)
-	group.add_group(v10, v12)
-	await iformation.lock_groups_in_formation(v13, v12, 100.0, 700.0, -100.0, 1)
-	await iformation.goose(v12, 100.0, 1)
-	v12 = await local_13728("ini:/sims/ships/navy/advanced_patcom_mk2", "General", v6, 50, 2)
-	await local_12765(v12, 0)
-	group.add_group(v10, v12)
-	await iformation.lock_groups_in_formation(v13, v12, -200.0, 500.0, -50.0, 1)
-	await iformation.goose(v12, 100.0, 1)
-	group.flatten(v10)
-	v26 = iship.cast(group.leader(await local_13728("ini:/sims/ships/navy/old_destroyer", "General", v6, 1, 1)))
-	isim.set_indestructable(v26, 1)
-	group.add_sim(v10, v26)
-	group.promote_sim(v10, 1 - group.sim_count(v10))
-	await iutilities.group_set_cullable(v10, 0)
-	sim.place_relative_to(v26, v22, 1000.0, 1000.0, 1000.0)
-	sim.copy_orientation(v26, v22)
-	v19 = group.create()
-	v16 = group.create()
-	if _pog_is_null(v33):
-		if PogRuntime.TRACE:
-			debug.error("iAct2_Mission11: Unable to locate Dog 1 Orbital")
-	if _pog_is_null(v31):
-		if PogRuntime.TRACE:
-			debug.error("iAct2_Mission11: Unable to locate Blackeye L-point")
-	v32 = ilagrangepoint.nearest(imapentity.system_lagrange_points(), v29)
-	v34 = await iutilities.create_waypoint_relative_to(v32, 0.0, 0.0, -5000.0)
-	v35 = await iutilities.create_waypoint_relative_to(v31, 0.0, 0.0, 5000.0)
-	if _pog_is_null(v32):
-		if PogRuntime.TRACE:
-			debug.error("iAct2_Mission11: Unable to find nearest l-point")
-	_pog_detach(_pog_spawn(local_424.bind(self, v0, v10, v11, v12, v13, v14, v15, v16, v17, v20, v21, v24, v25, v29, v30, v34, v35)))
-	while _pog_is_null(state.progress(v0)):
-		_pog_spawn(local_6222.bind(v0, v29, v11, v22))
-		break
+	var _pc: int = 991
 	while true:
-		await _pog_wait(0.5)
-		if not (v42) and 1 == state.progress(v0):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission11: Order to approach other side given.")
+		if _pc == 991:
+			v0 = state.find(self)
+			v2 = ifaction.find("Player")
+			v3 = ifaction.find("Police")
+			v4 = ifaction.find("Carva Cartal")
+			v5 = ifaction.find("Stepson")
+			v6 = ifaction.find("League")
+			v7 = ifaction.find("Junkers")
+			v8 = ifaction.find("Government")
+			v9 = ifaction.find("Marauders")
+			v10 = group.create()
+			v23 = iship.find_player_ship()
+			v27 = imapentity.find_by_name_in_system("Greenback", "map:/geog/badlands/hoffers_wake")
+			v28 = imapentity.find_by_name_in_system("Touchdown L-point", "map:/geog/badlands/hoffers_wake")
+			v31 = imapentity.find_by_name_in_system("Blackeye L-point", "map:/geog/badlands/hoffers_wake")
+			v33 = imapentity.find_by_name_in_system("Dog 1 Orbital", "map:/geog/badlands/hoffers_wake")
+			v39 = 0
+			v40 = 0
+			v41 = 0
+			v42 = 0
+			v43 = 0
+			v44 = self
+			v0 = state.find(v44)
+			if not (v0):
+				_pc = 1480
+				continue
+			else:
+				_pc = 1505
+				continue
+		elif _pc == 1480:
+			v0 = state.create(v44, 0)
+			_pc = 1505
+			continue
+		elif _pc == 1505:
+			text.add("csv:/text/act_2/act2_mission11")
+			text.add("csv:/text/act_2/act2_mission24")
+			text.add("csv:/text/act_3/act3_mission09")
+			await imissiontracker.add_mission(self, 2, 11)
+			v1 = iemail.find("html:/text/act_2/act2_mission11_email")
+			if not (v1):
+				_pc = 1636
+				continue
+			else:
+				_pc = 1680
+				continue
+		elif _pc == 1636:
+			iemail.send_email("a2_m11_email_sender", "a2_m11_email_subject", "html:/text/act_2/act2_mission11_email", 1)
+			_pc = 5578
+			continue
+		elif _pc == 1675:
+			_pc = 1709
+			continue
+		elif _pc == 1680:
+			if not (iemail.read(v1)):
+				_pc = 1704
+				continue
+			else:
+				_pc = 1709
+				continue
+		elif _pc == 1704:
+			_pc = 5578
+			continue
+		elif _pc == 1709:
+			iobjectives.add("a2_m11_objectives_redezvous")
+			await local_60(v0)
+			ifaction.set_feeling(v2, v5, 4.0)
+			ifaction.set_feeling(v2, v6, 4.0)
+			ifaction.set_feeling(v5, v2, 4.0)
+			ifaction.set_feeling(v6, v2, 4.0)
+			v29 = await iutilities.create_waypoint_relative_to(v27, 0.0, 1000000.0, 0.0)
+			await iutilities.make_waypoint_visible(v29, 1, "a2_m11_allied_waypoint")
+			v13 = await local_13728("ini:/sims/ships/independent/tug_armed", "Stepson", v5, 2, 2)
+			await local_12765(v13, 0)
+			v21 = iship.cast(group.leader(v13))
+			group.add_group(v10, v13)
+			sim.place_relative_to(v21, v29, -50.0, 100.0, -1000.0)
+			await iformation.goose(v13, 400.0, 1)
+			v22 = iship.cast(group.leader(v13))
+			object.set_string_property(v22, "name", "a2_m11_email_sender")
+			isim.set_indestructable(v22, 1)
+			v11 = await local_13728("ini:/sims/ships/independent/cutter_mercenary", "Stepson", v5, 5, 4)
+			await local_12765(v11, 0)
+			await iformation.lock_groups_in_formation(v13, v11, 0.0, 50.0, 0.0, 1)
+			await iformation.line_abreast(v11, 140.0, 1)
+			v12 = await local_13728("ini:/sims/ships/navy/heavy_corvette_mk1", "General", v6, 20, 3)
+			await local_12765(v12, 0)
+			group.add_group(v10, v12)
+			await iformation.lock_groups_in_formation(v13, v12, 100.0, 1000.0, -250.0, 1)
+			await iformation.line_abreast(v12, 200.0, 1)
+			v12 = await local_13728("ini:/sims/ships/navy/fighter_mk2", "General", v6, 30, 6)
+			await local_12765(v12, 0)
+			group.add_group(v10, v12)
+			await iformation.lock_groups_in_formation(v13, v12, 100.0, 900.0, -400.0, 1)
+			await iformation.goose(v12, 40.0, 1)
+			v12 = await local_13728("ini:/sims/ships/corporate/interceptor", "General", v6, 40, 2)
+			await local_12765(v12, 0)
+			group.add_group(v10, v12)
+			await iformation.lock_groups_in_formation(v13, v12, 100.0, 700.0, -100.0, 1)
+			await iformation.goose(v12, 100.0, 1)
+			v12 = await local_13728("ini:/sims/ships/navy/advanced_patcom_mk2", "General", v6, 50, 2)
+			await local_12765(v12, 0)
+			group.add_group(v10, v12)
+			await iformation.lock_groups_in_formation(v13, v12, -200.0, 500.0, -50.0, 1)
+			await iformation.goose(v12, 100.0, 1)
+			group.flatten(v10)
+			v26 = iship.cast(group.leader(await local_13728("ini:/sims/ships/navy/old_destroyer", "General", v6, 1, 1)))
+			isim.set_indestructable(v26, 1)
+			group.add_sim(v10, v26)
+			group.promote_sim(v10, 1 - group.sim_count(v10))
+			await iutilities.group_set_cullable(v10, 0)
+			sim.place_relative_to(v26, v22, 1000.0, 1000.0, 1000.0)
+			sim.copy_orientation(v26, v22)
+			v19 = group.create()
+			v16 = group.create()
+			if _pog_is_null(v33):
+				_pc = 3233
+				continue
+			else:
+				_pc = 3259
+				continue
+		elif _pc == 3233:
+			_pc = 3259
+			continue
+		elif _pc == 3238:
+			debug.error("iAct2_Mission11: Unable to locate Dog 1 Orbital")
+			_pc = 3259
+			continue
+		elif _pc == 3259:
+			if _pog_is_null(v31):
+				_pc = 3272
+				continue
+			else:
+				_pc = 3298
+				continue
+		elif _pc == 3272:
+			_pc = 3298
+			continue
+		elif _pc == 3277:
+			debug.error("iAct2_Mission11: Unable to locate Blackeye L-point")
+			_pc = 3298
+			continue
+		elif _pc == 3298:
+			v32 = ilagrangepoint.nearest(imapentity.system_lagrange_points(), v29)
+			v34 = await iutilities.create_waypoint_relative_to(v32, 0.0, 0.0, -5000.0)
+			v35 = await iutilities.create_waypoint_relative_to(v31, 0.0, 0.0, 5000.0)
+			if _pog_is_null(v32):
+				_pc = 3428
+				continue
+			else:
+				_pc = 3454
+				continue
+		elif _pc == 3428:
+			_pc = 3454
+			continue
+		elif _pc == 3433:
+			debug.error("iAct2_Mission11: Unable to find nearest l-point")
+			_pc = 3454
+			continue
+		elif _pc == 3454:
+			_pog_detach(_pog_spawn(local_424.bind(self, v0, v10, v11, v12, v13, v14, v15, v16, v17, v20, v21, v24, v25, v29, v30, v34, v35)))
+			_pc = 3907
+			continue
+		elif _pc == 3584:
+			_pog_spawn(local_6222.bind(v0, v29, v11, v22))
+			_pc = 3977
+			continue
+		elif _pc == 3623:
+			await iwingmen.from_group(v11, 1)
+			await iwingmen.defend_player()
+			_pc = 3977
+			continue
+		elif _pc == 3662:
+			state.set_progress(v0, 1)
+			_pc = 3708
+			continue
+		elif _pc == 3687:
+			debug.print_string("iAct2Mission11 - State set to MS_ThroughPoint\n")
+			_pc = 3708
+			continue
+		elif _pc == 3708:
+			await iwingmen.from_group(v11, 1)
+			await iwingmen.defend_player()
+			_pc = 3977
+			continue
+		elif _pc == 3747:
+			await local_12621(v10, v33, 5000.0)
+			_pc = 3802
+			continue
+		elif _pc == 3781:
+			debug.print_string("iAct2Mission11 - State set to MS_FleetSent\n")
+			_pc = 3802
+			continue
+		elif _pc == 3802:
+			state.set_progress(v0, 3)
+			group.destroy(v15, 1)
+			group.destroy(v14, 1)
+			await iwingmen.from_group(v11, 1)
+			await iwingmen.defend_player()
+			_pc = 3977
+			continue
+		elif _pc == 3902:
+			_pc = 3977
+			continue
+		elif _pc == 3907:
+			if not _pog_is_null(state.progress(v0)):
+				_pc = 3933
+				continue
+			else:
+				_pc = 3584
+				continue
+		elif _pc == 3933:
+			if not _pog_is_null(1):
+				_pc = 3941
+				continue
+			else:
+				_pc = 3623
+				continue
+		elif _pc == 3941:
+			if not _pog_is_null(2):
+				_pc = 3950
+				continue
+			else:
+				_pc = 3662
+				continue
+		elif _pc == 3950:
+			if not _pog_is_null(3):
+				_pc = 3959
+				continue
+			else:
+				_pc = 3662
+				continue
+		elif _pc == 3959:
+			if not _pog_is_null(4):
+				_pc = 3968
+				continue
+			else:
+				_pc = 3747
+				continue
+		elif _pc == 3968:
+			if not _pog_is_null(5):
+				_pc = 3977
+				continue
+			else:
+				_pc = 3747
+				continue
+		elif _pc == 3977:
+			_pc = 3982
+			continue
+		elif _pc == 3982:
+			await _pog_frame()
+			if _pog_every(3983, 0.5):
+				_pc = 3996
+				continue
+			else:
+				_pc = 5572
+				continue
+		elif _pc == 3996:
+			if not (v42) and 1 == state.progress(v0):
+				_pc = 4028
+				continue
+			else:
+				_pc = 4137
+				continue
+		elif _pc == 4028:
+			_pc = 4054
+			continue
+		elif _pc == 4033:
+			debug.print_string("iAct2_Mission11: Order to approach other side given.")
+			_pc = 4054
+			continue
+		elif _pc == 4054:
 			isim.set_standard_sensor_visibility(isim.cast(v31), 1)
 			v42 = 1
 			_pog_spawn(local_6980.bind(v0, v19))
 			sim.destroy(v29)
-		if not (await iutilities.player_in_range(v31)) and 10 < state.progress(v0) and 1 >= state.progress(v0):
+			_pc = 4137
+			continue
+		elif _pc == 4137:
+			if not (await iutilities.player_in_range(v31)) and 10 < state.progress(v0) and 1 >= state.progress(v0):
+				_pc = 4204
+				continue
+			else:
+				_pc = 4359
+				continue
+		elif _pc == 4204:
 			await iconversation.one_liner(v22, "a2_m11_email_sender", "a2_m11_dialogue_carla_where_are_you_going")
 			object.add_bool_property(v23, "destroy_sim", 0)
 			object.add_string_property(v23, "death_caption", "caption_failed_generic")
 			_pog_detach(_pog_spawn(ideathscript.player_death_script.bind(v23)))
 			state.destroy(self)
-			return
-		if 2 == state.progress(v0):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission11 - State set to MS_FleetSent\n")
+			_pc = 5578
+			continue
+		elif _pc == 4359:
+			if 2 == state.progress(v0):
+				_pc = 4385
+				continue
+			else:
+				_pc = 4585
+				continue
+		elif _pc == 4385:
+			_pc = 4411
+			continue
+		elif _pc == 4390:
+			debug.print_string("iAct2Mission11 - State set to MS_FleetSent\n")
+			_pc = 4411
+			continue
+		elif _pc == 4411:
 			state.set_progress(v0, 3)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission11: Order given to come through l-point")
+			_pc = 4458
+			continue
+		elif _pc == 4437:
+			debug.print_string("iAct2_Mission11: Order given to come through l-point")
+			_pc = 4458
+			continue
+		elif _pc == 4458:
 			await iconversation.one_liner(0, "name_smith", "a2_m24_dialogue_smith_the_jump_point_sensor_is_ramping_up")
 			iai.purge_orders(v10)
 			iai.give_generic_attack_order(v10)
 			await iutilities.capsule_jump_group(v10, isim.cast(v31), 3.0)
 			iai.give_generic_attack_order(v10)
-		if _pog_is_null(v40) and 3 == state.progress(v0):
-			if _pog_is_null(group.total_sim_count(v19)):
-				await _pog_wait(2.0)
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2_Mission11: Fleet handler started")
-				v40 = 1
-				_pog_spawn(local_9501.bind(v0, v23, v10, v19, v26, v22, isim.cast(v33), isim.cast(v31)))
-		if 4 == state.progress(v0):
-			_pog_spawn(local_11181.bind(v31, v19))
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission11 - State set to MS_Reinforced\n")
-			state.set_progress(v0, 5)
-		if 5 == state.progress(v0):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission11: Checking to see if we've started the surprise\n")
-			if not (v41):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2_Mission11: Checking to see if no marauders remain\n")
-				await iutilities.group_set_cullable(v19, 1)
-				if _pog_is_null(group.total_sim_count(v19)):
-					await _pog_wait(3.0)
-					if PogRuntime.TRACE:
-						debug.print_string("iAct2_Mission11: Calling the surprise.\n")
-					_pog_spawn(local_11400.bind(v0))
-					v41 = 1
-		if 10 == state.progress(v0):
+			_pc = 4585
 			continue
-		state.destroy(self)
-		global.set_bool("g_act2_unification_complete", 1)
-		await local_12765(v10, 1)
-		await iconversation.begin()
-		await iconversation.say(v22, "", "a2_m11_dialogue_carla_finale_to_all")
-		await iconversation.say(v22, "", "a2_m11_dialogue_carla_finale_to_cal")
-		await iconversation.end()
-		v18 = await iwingmen.purge_to_group()
-		await iutilities.group_set_cullable(v18, 1)
-		iai.give_flee_order(v18, v23)
-		await iutilities.group_set_cullable(v10, 1)
-		iai.give_flee_order(v10, v23)
-		await imissiontracker.remove_mission(self)
-		await iutilities.remove_mission_restart()
-		isim.set_standard_sensor_visibility(isim.cast(v31), 1)
-		await irangecheck.remove_traffic_exception(imapentity.cast(v31))
-		await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v28), 10000000.0)
-		if PogRuntime.TRACE:
+		elif _pc == 4585:
+			if _pog_is_null(v40) and 3 == state.progress(v0):
+				_pc = 4619
+				continue
+			else:
+				_pc = 4789
+				continue
+		elif _pc == 4619:
+			if _pog_is_null(group.total_sim_count(v19)):
+				_pc = 4644
+				continue
+			else:
+				_pc = 4789
+				continue
+		elif _pc == 4644:
+			await _pog_wait(2.0)
+			_pc = 4702
+			continue
+		elif _pc == 4681:
+			debug.print_string("iAct2_Mission11: Fleet handler started")
+			_pc = 4702
+			continue
+		elif _pc == 4702:
+			v40 = 1
+			_pog_spawn(local_9501.bind(v0, v23, v10, v19, v26, v22, isim.cast(v33), isim.cast(v31)))
+			_pc = 4789
+			continue
+		elif _pc == 4789:
+			if 4 == state.progress(v0):
+				_pc = 4815
+				continue
+			else:
+				_pc = 4886
+				continue
+		elif _pc == 4815:
+			_pog_spawn(local_11181.bind(v31, v19))
+			_pc = 4865
+			continue
+		elif _pc == 4844:
+			debug.print_string("iAct2Mission11 - State set to MS_Reinforced\n")
+			_pc = 4865
+			continue
+		elif _pc == 4865:
+			state.set_progress(v0, 5)
+			_pc = 4886
+			continue
+		elif _pc == 4886:
+			if 5 == state.progress(v0):
+				_pc = 4912
+				continue
+			else:
+				_pc = 5104
+				continue
+		elif _pc == 4912:
+			_pc = 4938
+			continue
+		elif _pc == 4917:
+			debug.print_string("iAct2_Mission11: Checking to see if we've started the surprise\n")
+			_pc = 4938
+			continue
+		elif _pc == 4938:
+			if not (v41):
+				_pc = 4949
+				continue
+			else:
+				_pc = 5104
+				continue
+		elif _pc == 4949:
+			_pc = 4975
+			continue
+		elif _pc == 4954:
+			debug.print_string("iAct2_Mission11: Checking to see if no marauders remain\n")
+			_pc = 4975
+			continue
+		elif _pc == 4975:
+			await iutilities.group_set_cullable(v19, 1)
+			if _pog_is_null(group.total_sim_count(v19)):
+				_pc = 5020
+				continue
+			else:
+				_pc = 5104
+				continue
+		elif _pc == 5020:
+			await _pog_wait(3.0)
+			_pc = 5078
+			continue
+		elif _pc == 5057:
+			debug.print_string("iAct2_Mission11: Calling the surprise.\n")
+			_pc = 5078
+			continue
+		elif _pc == 5078:
+			_pog_spawn(local_11400.bind(v0))
+			v41 = 1
+			_pc = 5104
+			continue
+		elif _pc == 5104:
+			if 10 == state.progress(v0):
+				_pc = 5130
+				continue
+			else:
+				_pc = 5572
+				continue
+		elif _pc == 5130:
+			state.destroy(self)
+			global.set_bool("g_act2_unification_complete", 1)
+			await local_12765(v10, 1)
+			await iconversation.begin()
+			await iconversation.say(v22, "", "a2_m11_dialogue_carla_finale_to_all")
+			await iconversation.say(v22, "", "a2_m11_dialogue_carla_finale_to_cal")
+			await iconversation.end()
+			v18 = await iwingmen.purge_to_group()
+			await iutilities.group_set_cullable(v18, 1)
+			iai.give_flee_order(v18, v23)
+			await iutilities.group_set_cullable(v10, 1)
+			iai.give_flee_order(v10, v23)
+			await imissiontracker.remove_mission(self)
+			await iutilities.remove_mission_restart()
+			isim.set_standard_sensor_visibility(isim.cast(v31), 1)
+			await irangecheck.remove_traffic_exception(imapentity.cast(v31))
+			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v28), 10000000.0)
+			_pc = 5567
+			continue
+		elif _pc == 5546:
 			debug.print_string("iAct2_Mission11: Mission completed.\n")
-		return
-	return
+			_pc = 5567
+			continue
+		elif _pc == 5567:
+			_pc = 5578
+			continue
+		elif _pc == 5572:
+			_pc = 3982
+			continue
+		elif _pc == 5577:
+			_pc = 5578
+			continue
+		elif _pc == 5578:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5580(v0, v1) -> Variant:
 	var v2: Variant = 0
-	idirector.begin()
-	await icutsceneutilities.enable_player_autopilot()
-	idirector.set_focus(v1)
-	idirector.set_secondary_focus(v0)
-	idirector.set_camera(15)
-	await iconversation.begin()
-	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_1")
-	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_2")
-	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_3")
-	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_4")
-	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_5")
+	var _pc: int = 5580
 	while true:
-		await iconversation.add_response("a2_m11_text_briefing_question_1", "a2_m11_dialogue_cal_briefing_question_1")
-		await iconversation.add_response("a2_m11_text_briefing_question_2", "a2_m11_dialogue_cal_briefing_question_2")
-		await iconversation.add_response("a2_m11_text_briefing_question_3", "a2_m11_dialogue_cal_briefing_question_3")
-		await iconversation.add_response("a2_m11_text_briefing_question_4", "a2_m11_dialogue_cal_briefing_question_4")
-		v2 = await iconversation.ask(0, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_6")
-		while v2 == 1:
+		if _pc == 5580:
+			idirector.begin()
+			await icutsceneutilities.enable_player_autopilot()
+			idirector.set_focus(v1)
+			idirector.set_secondary_focus(v0)
+			idirector.set_camera(15)
+			await iconversation.begin()
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_1")
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_2")
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_3")
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_4")
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_5")
+			_pc = 5841
+			continue
+		elif _pc == 5841:
+			await iconversation.add_response("a2_m11_text_briefing_question_1", "a2_m11_dialogue_cal_briefing_question_1")
+			await iconversation.add_response("a2_m11_text_briefing_question_2", "a2_m11_dialogue_cal_briefing_question_2")
+			await iconversation.add_response("a2_m11_text_briefing_question_3", "a2_m11_dialogue_cal_briefing_question_3")
+			await iconversation.add_response("a2_m11_text_briefing_question_4", "a2_m11_dialogue_cal_briefing_question_4")
+			v2 = await iconversation.ask(0, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_6")
+			_pc = 6140
+			continue
+		elif _pc == 5987:
 			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_1")
-			break
-		if not (1 != v2):
-			break
-	await iconversation.end()
-	idirector.end()
-	return
+			_pc = 6180
+			continue
+		elif _pc == 6024:
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_2")
+			_pc = 6180
+			continue
+		elif _pc == 6061:
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_3")
+			_pc = 6180
+			continue
+		elif _pc == 6098:
+			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_4")
+			_pc = 6180
+			continue
+		elif _pc == 6135:
+			_pc = 6180
+			continue
+		elif _pc == 6140:
+			if v2 != 1:
+				_pc = 6153
+				continue
+			else:
+				_pc = 5987
+				continue
+		elif _pc == 6153:
+			if not _pog_is_null(2):
+				_pc = 6162
+				continue
+			else:
+				_pc = 6024
+				continue
+		elif _pc == 6162:
+			if not _pog_is_null(3):
+				_pc = 6171
+				continue
+			else:
+				_pc = 6061
+				continue
+		elif _pc == 6171:
+			if not _pog_is_null(4):
+				_pc = 6180
+				continue
+			else:
+				_pc = 6098
+				continue
+		elif _pc == 6180:
+			if 1 == v2:
+				_pc = 6192
+				continue
+			else:
+				_pc = 5841
+				continue
+		elif _pc == 6192:
+			await iconversation.end()
+			idirector.end()
+			return
+		else:
+			return 0
 	return 0
 
 func local_6222(v0, v1, v2, v3) -> Variant:
@@ -429,7 +774,7 @@ func local_6222(v0, v1, v2, v3) -> Variant:
 			await irangecheck.add_traffic_exception(imapentity.cast(v8))
 			await irangecheck.add_out_of_system_traffic_exception(imapentity.cast(v8))
 			await irangecheck.add_traffic_exceptions_in_area(imapentity.find_by_name_in_system("Touchdown L-point", "map:/geog/badlands/hoffers_wake"), 10000000.0)
-		if v5 and await iutilities.player_in_range(v8):
+		if not (v5 and await iutilities.player_in_range(v8)):
 			continue
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission11 - State set to MS_ThroughPoint\n")
@@ -575,7 +920,7 @@ func local_6980(v0, v1) -> Variant:
 			v13 = iship.cast(group.leader(v18))
 			iai.give_generic_attack_order(v13)
 			v24 = 1
-		if 2 >= state.progress(v0) and v25 and _pog_is_null(group.sim_count(v18)):
+		if not (2 >= state.progress(v0) and v25 and _pog_is_null(group.sim_count(v18))):
 			continue
 		return
 	return
@@ -726,7 +1071,7 @@ func local_11400(v0) -> Variant:
 	iai.give_generic_attack_order(v5)
 	while true:
 		await _pog_wait(1)
-		if _pog_is_null(group.total_sim_count(v5)):
+		if not _pog_is_null(group.total_sim_count(v5)):
 			continue
 		iobjectives.set_state("a2_m11_objectives_cover", 1)
 		if PogRuntime.TRACE:
@@ -744,7 +1089,7 @@ func local_12346(v0) -> Variant:
 		group.remove_nth_sim(v0, v1)
 	else:
 		v2 = 0
-	return
+	return v2
 	return 0
 
 func local_12621(v0, v1, v2) -> Variant:
@@ -783,7 +1128,7 @@ func local_12880(v0, v1) -> Variant:
 		sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
 		sim.set_cullable(v3, 0)
 		v4 = 1 + v4
-	return
+	return v2
 	return 0
 
 func local_13502(v0, v1) -> Variant:
@@ -799,7 +1144,7 @@ func local_13502(v0, v1) -> Variant:
 		group.add_sim(v2, v3)
 		sim.set_cullable(v3, 0)
 		v4 = 1 + v4
-	return
+	return v2
 	return 0
 
 func local_13728(v0, v1, v2, v3, v4) -> Variant:
@@ -815,7 +1160,7 @@ func local_13728(v0, v1, v2, v3, v4) -> Variant:
 		group.add_sim(v5, v6)
 		sim.set_cullable(v6, 0)
 		v7 = 1 + v7
-	return
+	return v5
 	return 0
 
 func local_13947(v0, v1, v2) -> Variant:

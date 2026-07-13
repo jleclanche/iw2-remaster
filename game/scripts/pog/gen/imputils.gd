@@ -51,7 +51,7 @@ func _link() -> void:
 	text = api.text
 
 func local_0(v0, v1) -> Variant:
-	if not _pog_is_null(v0):
+	if _pog_is_null(v0):
 		return
 	await iconversation.begin()
 	await iconversation.say(v0, "", v1)
@@ -129,7 +129,7 @@ func create_asteroids() -> Variant:
 		imultiplay.set_transmit_flag(v2, 1)
 		v5 = 1 + v5
 	sim.destroy(v3)
-	return
+	return v1
 	return 0
 
 func create_graveyard() -> Variant:
@@ -212,7 +212,7 @@ func weapon_ammo_power_up(v0, v1) -> Variant:
 	v2 = iship.find_player_ship()
 	v4 = null
 	imultiplay.add_powerup_weapon(iship.cast(v1), isim.cast(v0))
-	if _pog_eq(v2, v1) and imultiplay.is_client():
+	if not (_pog_eq(v2, v1) and imultiplay.is_client()):
 		return 0
 	v3 = _pog_spawn(local_0.bind(v2, _pog_clone("mp_frag_ammo_power_up")))
 	_pog_detach(v3)
@@ -229,7 +229,7 @@ func speed_power_up(v0, v1) -> Variant:
 	v3 = null
 	v4 = iship.find_player_ship()
 	imultiplay.change_max_speed(iship.cast(v1), v2)
-	if _pog_eq(v4, v1) and imultiplay.is_client():
+	if not (_pog_eq(v4, v1) and imultiplay.is_client()):
 		return 0
 	v3 = "mp_speed_message_up"
 	v3 = string.join(v3, " ")
@@ -249,7 +249,7 @@ func speed_power_down(v0, v1) -> Variant:
 	v3 = null
 	v4 = iship.find_player_ship()
 	imultiplay.change_max_speed(iship.cast(v1), v2)
-	if _pog_eq(v4, v1) and imultiplay.is_client():
+	if not (_pog_eq(v4, v1) and imultiplay.is_client()):
 		return 0
 	v3 = "mp_speed_message_down"
 	v3 = string.join(v3, " ")
@@ -268,7 +268,7 @@ func health_power_up(v0, v1) -> Variant:
 	v3 = null
 	v4 = iship.find_player_ship()
 	imultiplay.add_health(iship.cast(v1), v2)
-	if _pog_eq(v4, v1) and imultiplay.is_client():
+	if not (_pog_eq(v4, v1) and imultiplay.is_client()):
 		return 0
 	if 0.30000001192092896 == v2:
 		v3 = "mp_health_message_30"
@@ -284,23 +284,170 @@ func health_power_up(v0, v1) -> Variant:
 func local_4680(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
-	while 1:
-		v2 = isim.sims_in_radius(v0, 10.0, 1073741824)
-		if p_set.is_empty(v2):
+	var _pc: int = 4680
+	while true:
+		if _pc == 4680:
+			v2 = null
+			_pc = 4696
 			continue
-		while math.random_int(1, 10) == 1:
+		elif _pc == 4696:
+			if 1:
+				_pc = 4702
+				continue
+			else:
+				_pc = 5628
+				continue
+		elif _pc == 4702:
+			v2 = isim.sims_in_radius(v0, 10.0, 1073741824)
+			if p_set.is_empty(v2):
+				_pc = 4761
+				continue
+			else:
+				_pc = 5623
+				continue
+		elif _pc == 4761:
+			_pc = 5272
+			continue
+		elif _pc == 4767:
 			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_proximity_minelayer", ""))
-			break
-		if not _pog_is_null(v1):
+			_pc = 5377
+			continue
+		elif _pc == 4817:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_seeker_minelayer", ""))
+			_pc = 5377
+			continue
+		elif _pc == 4867:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_neutron", ""))
+			_pc = 5377
+			continue
+		elif _pc == 4917:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_assault_cannon", ""))
+			_pc = 5377
+			continue
+		elif _pc == 4967:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_sniper", ""))
+			_pc = 5377
+			continue
+		elif _pc == 5017:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_mining_laser", ""))
+			_pc = 5377
+			continue
+		elif _pc == 5067:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_deadshot_missile", ""))
+			_pc = 5377
+			continue
+		elif _pc == 5117:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_antimatter_beam", ""))
+			_pc = 5377
+			continue
+		elif _pc == 5167:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/health_60pc", ""))
+			_pc = 5377
+			continue
+		elif _pc == 5217:
+			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_hammer_rocket", ""))
+			_pc = 5377
+			continue
+		elif _pc == 5267:
+			_pc = 5377
+			continue
+		elif _pc == 5272:
+			if math.random_int(1, 10) != 1:
+				_pc = 5296
+				continue
+			else:
+				_pc = 4767
+				continue
+		elif _pc == 5296:
+			if not _pog_is_null(2):
+				_pc = 5305
+				continue
+			else:
+				_pc = 4817
+				continue
+		elif _pc == 5305:
+			if not _pog_is_null(3):
+				_pc = 5314
+				continue
+			else:
+				_pc = 4867
+				continue
+		elif _pc == 5314:
+			if not _pog_is_null(4):
+				_pc = 5323
+				continue
+			else:
+				_pc = 4917
+				continue
+		elif _pc == 5323:
+			if not _pog_is_null(5):
+				_pc = 5332
+				continue
+			else:
+				_pc = 4967
+				continue
+		elif _pc == 5332:
+			if not _pog_is_null(6):
+				_pc = 5341
+				continue
+			else:
+				_pc = 5017
+				continue
+		elif _pc == 5341:
+			if not _pog_is_null(7):
+				_pc = 5350
+				continue
+			else:
+				_pc = 5067
+				continue
+		elif _pc == 5350:
+			if not _pog_is_null(8):
+				_pc = 5359
+				continue
+			else:
+				_pc = 5117
+				continue
+		elif _pc == 5359:
+			if not _pog_is_null(9):
+				_pc = 5368
+				continue
+			else:
+				_pc = 5167
+				continue
+		elif _pc == 5368:
+			if not _pog_is_null(10):
+				_pc = 5377
+				continue
+			else:
+				_pc = 5217
+				continue
+		elif _pc == 5377:
+			if not _pog_is_null(v1):
+				_pc = 5390
+				continue
+			else:
+				_pc = 5572
+				continue
+		elif _pc == 5390:
 			isim.set_faction(v1, ifaction.find("PowerUp"))
 			sim.copy_orientation(v1, v0)
 			sim.place_at(v1, v0)
 			imultiplay.set_transmit_flag(v1, 1)
 			isim.set_mission_critical(v1, 1)
 			object.set_float_property(v1, "life_time", math.random(1.0, 20.0) + 100.0)
-		await _pog_wait(math.random(20.0, 40.0))
-	return
+			_pc = 5572
+			continue
+		elif _pc == 5572:
+			await _pog_wait(math.random(20.0, 40.0))
+			_pc = 5623
+			continue
+		elif _pc == 5623:
+			_pc = 4696
+			continue
+		elif _pc == 5628:
+			return
+		else:
+			return 0
 	return 0
 
 func weapon_power_up_generator_task(v0) -> Variant:
@@ -331,7 +478,7 @@ func spawn_killed_player_power_ups(v0) -> Variant:
 	var v5: Variant = 0
 	v1 = iship.cast(v0)
 	v3 = null
-	if not _pog_is_null(v1):
+	if _pog_is_null(v1):
 		return 0
 	v3 = imultiplay.remove_powerup_weapons(v1, 1)
 	if not (list.is_empty(v3)):
@@ -362,7 +509,7 @@ func client_send_debug_info() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	v0 = null
-	if global.exists("mp_utils_last_taunt"):
+	if not (global.exists("mp_utils_last_taunt")):
 		return 0
 	v1 = iship.current_target(iship.find_player_ship())
 	v0 = global.string("mp_utils_last_taunt")
@@ -499,7 +646,7 @@ func server_do_debug(v0, v1, v2) -> Variant:
 																			v5 = isim.cast(sim.find_by_name("Megapod"))
 																			imultiplay.server_send_user_message(66, v5, 0, "door")
 																		else:
-																			if _pog_eq("close", v2):
+																			if not _pog_eq("close", v2):
 																				return 0
 																			v5 = isim.cast(sim.find_by_name("Megapod"))
 																			imultiplay.server_send_user_message(67, v5, 0, "door")
@@ -528,7 +675,7 @@ func find_system_centre() -> Variant:
 	v3 = await iutilities.create_waypoint_relative_to(v1, 0.0, 0.0, 3.0 * v2)
 	imultiplay.set_transmit_flag(v3, 0)
 	imultiplay.set_update_flag(v3, 0)
-	return
+	return v3
 	return 0
 
 func spawn_player(v0, v1) -> Variant:
@@ -664,7 +811,7 @@ func check_time_limit() -> Variant:
 	while true:
 		await _pog_wait(1)
 		v2 = list.item_count(imultiplay.server_player_list())
-		if 0 > v2:
+		if 0 <= v2:
 			continue
 		if _pog_is_null(v3):
 			v3 = 0.0010000000474974513 * igame.system_time()
@@ -677,7 +824,7 @@ func check_time_limit() -> Variant:
 			v1 = 1
 			imultiplay.server_broadcast_message(0, "mp_time_limit_one_minute", 3)
 			imultiplay.server_broadcast_message(0, "sound:/audio/speech/mp_time_limit_one_minute", 4)
-		if imultiplay.time_limit() + v3 > 0.0010000000474974513 * igame.system_time():
+		if imultiplay.time_limit() + v3 <= 0.0010000000474974513 * igame.system_time():
 			continue
 		imultiplay.end_game()
 		break

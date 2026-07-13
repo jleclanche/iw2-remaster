@@ -126,7 +126,7 @@ func local_326() -> Variant:
 	v12 = ifaction.find("Marauders")
 	while true:
 		await _pog_wait(1)
-		if 1 == global.pog_bool("g_act2_got_hyperspace_tracker"):
+		if 1 != global.pog_bool("g_act2_got_hyperspace_tracker"):
 			continue
 		v9 = imapentity.system_lagrange_points()
 		v11 = iship.current_target(v0)
@@ -143,10 +143,10 @@ func local_326() -> Variant:
 					if v4:
 						v4 = 0
 					v7 = ilagrangepoint.nearest(v9, v10)
-		if v4:
+		if not (v4):
 			continue
 		v8 = ilagrangepoint.nearest(v9, v10)
-		if not _pog_eq(v8, v7):
+		if _pog_eq(v8, v7):
 			continue
 		v6 = imapentity.pog_name(v8)
 		if _pog_eq(v1, sim.cast(v8)):
@@ -165,14 +165,14 @@ func local_1212(v0, v1, v2) -> Variant:
 	v3 = iship.find_player_ship()
 	while true:
 		await _pog_wait(1)
-		if iship.has_hyper_space_tracker(v3):
+		if not (iship.has_hyper_space_tracker(v3)):
 			continue
 		if _pog_eq(isim.cast(v0), iship.hyper_space_tracker_target()):
 			if 8 != state.progress(v2):
 				state.set_progress(v2, 1)
 			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost"), 1)
 			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost")), 1)
-		if _pog_eq(isim.cast(v1), iship.hyper_space_tracker_target()):
+		if not _pog_eq(isim.cast(v1), iship.hyper_space_tracker_target()):
 			continue
 		if 8 != state.progress(v2):
 			state.set_progress(v2, 6)
@@ -197,26 +197,93 @@ func local_1834(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = await iutilities.create_waypoint_relative_to(v0, 4000.0, 4000.0, 8000.0)
-	v2 = group.create()
-	v4 = 25
-	await iutilities.make_waypoint_visible(v1, 1, "a2_m20_name_waypoint_junk")
-	group.add_sim(v2, v1)
-	v5 = 0
-	while v4 < v5:
-		while _pog_is_null(math.random_int(0, 3)):
+	var _pc: int = 1834
+	while true:
+		if _pc == 1834:
+			v1 = await iutilities.create_waypoint_relative_to(v0, 4000.0, 4000.0, 8000.0)
+			v2 = group.create()
+			v4 = 25
+			await iutilities.make_waypoint_visible(v1, 1, "a2_m20_name_waypoint_junk")
+			group.add_sim(v2, v1)
+			v5 = 0
+			_pc = 1963
+			continue
+		elif _pc == 1963:
+			if v4 < v5:
+				_pc = 1979
+				continue
+			else:
+				_pc = 2417
+				continue
+		elif _pc == 1979:
+			_pc = 2137
+			continue
+		elif _pc == 1984:
 			v3 = sim.create("ini:/sims/inert/debris1", "TRH")
-			break
-		isim.set_sensor_visibility(isim.cast(v3), 0)
-		sim.place_near(v3, v1, math.random(100.0, 1000.0))
-		sim.set_orientation_euler(v3, math.random(1.0, 359.0), math.random(1.0, 359.0), math.random(1.0, 359.0))
-		sim.set_cullable(v3, 0)
-		group.add_sim(v2, v3)
-		v5 = 1 + v5
-	v3 = iship.create("ini:/sims/ships/utility/puffin", "a2_m22_name_star")
-	sim.place_near(v3, v1, 100.0)
-	group.add_sim(v2, v3)
-	return
+			_pc = 2187
+			continue
+		elif _pc == 2021:
+			v3 = sim.create("ini:/sims/inert/debris2", "TRH")
+			_pc = 2187
+			continue
+		elif _pc == 2058:
+			v3 = sim.create("ini:/sims/inert/debris3", "TRH")
+			_pc = 2187
+			continue
+		elif _pc == 2095:
+			v3 = sim.create("ini:/sims/inert/debris4", "TRH")
+			_pc = 2187
+			continue
+		elif _pc == 2132:
+			_pc = 2187
+			continue
+		elif _pc == 2137:
+			if not _pog_is_null(math.random_int(0, 3)):
+				_pc = 2161
+				continue
+			else:
+				_pc = 1984
+				continue
+		elif _pc == 2161:
+			if not _pog_is_null(1):
+				_pc = 2169
+				continue
+			else:
+				_pc = 2021
+				continue
+		elif _pc == 2169:
+			if not _pog_is_null(2):
+				_pc = 2178
+				continue
+			else:
+				_pc = 2058
+				continue
+		elif _pc == 2178:
+			if not _pog_is_null(3):
+				_pc = 2187
+				continue
+			else:
+				_pc = 2095
+				continue
+		elif _pc == 2187:
+			isim.set_sensor_visibility(isim.cast(v3), 0)
+			sim.place_near(v3, v1, math.random(100.0, 1000.0))
+			sim.set_orientation_euler(v3, math.random(1.0, 359.0), math.random(1.0, 359.0), math.random(1.0, 359.0))
+			sim.set_cullable(v3, 0)
+			group.add_sim(v2, v3)
+			v5 = 1 + v5
+			_pc = 1963
+			continue
+		elif _pc == 2417:
+			v3 = iship.create("ini:/sims/ships/utility/puffin", "a2_m22_name_star")
+			sim.place_near(v3, v1, 100.0)
+			group.add_sim(v2, v3)
+			_pc = 2512
+			continue
+		elif _pc == 2512:
+			return
+		else:
+			return 0
 	return 0
 
 func local_2514() -> Variant:
@@ -245,13 +312,13 @@ func local_2514() -> Variant:
 	sim.set_cullable(v2, 0)
 	await ipilotsetup.generic_cargo_pod(v2)
 	group.add_sim(v0, v2)
-	return
+	return v0
 	return 0
 
 func local_3116(v0, v1, v2) -> Variant:
 	while true:
 		await _pog_wait(5)
-		if 200.0 < sim.distance_between(v0, v2) or iai.is_order_complete(v0):
+		if not (200.0 < sim.distance_between(v0, v2) or iai.is_order_complete(v0)):
 			continue
 		iship.disrupt_l_d_s_drive(v0, 30.0)
 		iai.give_approach_order(v0, v1)
@@ -264,23 +331,78 @@ func local_3249(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = await iutilities.create_waypoint_relative_to(v0, 0.0, 0.0, 8000.0)
-	v5 = ifaction.find("Marauders")
-	while _pog_is_null(math.random_int(0, 2)):
-		v3 = iship.create("ini:/sims/ships/utility/temp_freighter", await ishipcreation.ship_name("General", -1))
-		break
-	await ipilotsetup.generic_freight(v3)
-	isim.set_faction(v3, v5)
-	isim.capsule_jump(v3, isim.cast(v0))
-	await ishipcreation.create_supply_cargo(v3, -2)
-	v2 = sim.find_subsim_by_name(v3, "Cargo_CapsuleDrive")
-	if PogRuntime.TRACE:
-		if _pog_is_null(v2):
+	var _pc: int = 3249
+	while true:
+		if _pc == 3249:
+			v4 = await iutilities.create_waypoint_relative_to(v0, 0.0, 0.0, 8000.0)
+			v5 = ifaction.find("Marauders")
+			_pc = 3488
+			continue
+		elif _pc == 3324:
+			v3 = iship.create("ini:/sims/ships/utility/temp_freighter", await ishipcreation.ship_name("General", -1))
+			_pc = 3529
+			continue
+		elif _pc == 3377:
+			v3 = iship.create("ini:/sims/ships/utility/freighter", await ishipcreation.ship_name("General", -1))
+			_pc = 3529
+			continue
+		elif _pc == 3430:
+			v3 = iship.create("ini:/sims/ships/utility/containercarrier", await ishipcreation.ship_name("General", -1))
+			_pc = 3529
+			continue
+		elif _pc == 3483:
+			_pc = 3529
+			continue
+		elif _pc == 3488:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 3512
+				continue
+			else:
+				_pc = 3324
+				continue
+		elif _pc == 3512:
+			if not _pog_is_null(1):
+				_pc = 3520
+				continue
+			else:
+				_pc = 3377
+				continue
+		elif _pc == 3520:
+			if not _pog_is_null(2):
+				_pc = 3529
+				continue
+			else:
+				_pc = 3430
+				continue
+		elif _pc == 3529:
+			await ipilotsetup.generic_freight(v3)
+			isim.set_faction(v3, v5)
+			isim.capsule_jump(v3, isim.cast(v0))
+			await ishipcreation.create_supply_cargo(v3, -2)
+			v2 = sim.find_subsim_by_name(v3, "Cargo_CapsuleDrive")
+			_pc = 3700
+			continue
+		elif _pc == 3666:
+			if _pog_is_null(v2):
+				_pc = 3679
+				continue
+			else:
+				_pc = 3700
+				continue
+		elif _pc == 3679:
 			debug.error("Unable to find capsule drive on vessels!")
-	subsim.destroy(v2)
-	iai.give_approach_order(v3, v4)
-	_pog_detach(_pog_spawn(local_3116.bind(v3, v1, v4)))
-	return
+			_pc = 3700
+			continue
+		elif _pc == 3700:
+			subsim.destroy(v2)
+			iai.give_approach_order(v3, v4)
+			_pog_detach(_pog_spawn(local_3116.bind(v3, v1, v4)))
+			_pc = 3795
+			continue
+		elif _pc == 3795:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3797(v0, v1) -> Variant:
@@ -299,10 +421,10 @@ func local_3797(v0, v1) -> Variant:
 		while v3 < v6:
 			v2 = iship.cast(group.nth_sim(group.nth_group(v0, v7), v6))
 			if v5 < sim.distance_between(v1, v2):
-				return
+				return 1
 			v6 = 1 + v6
 		v7 = 1 + v7
-	return
+	return 0
 	return 0
 
 func local_4069(v0, v1, v2, v3, v4) -> Variant:
@@ -374,13 +496,13 @@ func local_4069(v0, v1, v2, v3, v4) -> Variant:
 					v19 = 0
 					v15 = await local_3249(v1, v3)
 					v7 = 1
-		if 6 == state.progress(v4):
+		if 6 != state.progress(v4):
 			continue
 		iai.give_generic_attack_order(v18)
 		break
 	while true:
 		await _pog_wait(2)
-		if not (isim.is_capsule_jumping(v0)) and not (_pog_eq("map:/geog/badlands/firefrost", isim.active_world())) or not _pog_eq(v2, ilagrangepoint.nearest(v13, v0)) and not _pog_eq(v1, ilagrangepoint.nearest(v13, v0)):
+		if not (not (isim.is_capsule_jumping(v0)) and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world()) or not _pog_eq(v2, ilagrangepoint.nearest(v13, v0)) and not _pog_eq(v1, ilagrangepoint.nearest(v13, v0))):
 			continue
 		await iconversation.one_liner(0, "name_clay", "a2_m22_dialogue_clay_were_clear")
 		iobjectives.set_state("a2_m22_objectives_escape", 1)
@@ -409,7 +531,7 @@ func local_5648(v0) -> Variant:
 		v3 = 1 + v3
 	sim.place_at(group.leader(v1), v0)
 	await iformation.line_astern(v1, 50.0, 1)
-	return
+	return v1
 	return 0
 
 func local_5926(v0) -> Variant:
@@ -439,7 +561,7 @@ func local_5926(v0) -> Variant:
 		_pog_detach(_pog_spawn(local_9572.bind(v2, v0)))
 		group.add_group(v1, v2)
 		v6 = 1 + v6
-	return
+	return v1
 	return 0
 
 func local_6357(v0, v1, v2, v3) -> Variant:
@@ -447,32 +569,113 @@ func local_6357(v0, v1, v2, v3) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v5 = ifaction.find("Marauders")
-	v6 = imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante")
-	v7 = 0
-	while _pog_is_null(math.random_int(0, 2)):
-		v4 = iship.create("ini:/sims/ships/utility/temp_freighter", await ishipcreation.ship_name("General", -1))
-		break
-	isim.set_faction(v4, v5)
-	await ipilotsetup.generic_freight(v4)
-	sim.place_near(v4, v0, 5000.0 - global.pog_float("g_player_sensor_range"))
-	await ishipcreation.create_supply_cargo(v4, -2)
-	iai.give_formate_order(v4, v1, 0.0, 1000.0, 0.0)
+	var _pc: int = 6357
 	while true:
-		await _pog_wait(2)
-		if not (v7) and 5 < state.progress(v3) and 20000.0 < sim.distance_between(v4, v0):
+		if _pc == 6357:
+			v5 = ifaction.find("Marauders")
+			v6 = imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante")
+			v7 = 0
+			_pc = 6595
+			continue
+		elif _pc == 6431:
+			v4 = iship.create("ini:/sims/ships/utility/temp_freighter", await ishipcreation.ship_name("General", -1))
+			_pc = 6636
+			continue
+		elif _pc == 6484:
+			v4 = iship.create("ini:/sims/ships/utility/freighter", await ishipcreation.ship_name("General", -1))
+			_pc = 6636
+			continue
+		elif _pc == 6537:
+			v4 = iship.create("ini:/sims/ships/utility/containercarrier", await ishipcreation.ship_name("General", -1))
+			_pc = 6636
+			continue
+		elif _pc == 6590:
+			_pc = 6636
+			continue
+		elif _pc == 6595:
+			if not _pog_is_null(math.random_int(0, 2)):
+				_pc = 6619
+				continue
+			else:
+				_pc = 6431
+				continue
+		elif _pc == 6619:
+			if not _pog_is_null(1):
+				_pc = 6627
+				continue
+			else:
+				_pc = 6484
+				continue
+		elif _pc == 6627:
+			if not _pog_is_null(2):
+				_pc = 6636
+				continue
+			else:
+				_pc = 6537
+				continue
+		elif _pc == 6636:
+			isim.set_faction(v4, v5)
+			await ipilotsetup.generic_freight(v4)
+			sim.place_near(v4, v0, 5000.0 - global.pog_float("g_player_sensor_range"))
+			await ishipcreation.create_supply_cargo(v4, -2)
+			iai.give_formate_order(v4, v1, 0.0, 1000.0, 0.0)
+			_pc = 6794
+			continue
+		elif _pc == 6794:
+			await _pog_frame()
+			if _pog_every(6795, 2.0):
+				_pc = 6808
+				continue
+			else:
+				_pc = 7133
+				continue
+		elif _pc == 6808:
+			if not (v7) and 5 < state.progress(v3) and 20000.0 < sim.distance_between(v4, v0):
+				_pc = 6871
+				continue
+			else:
+				_pc = 6996
+				continue
+		elif _pc == 6871:
 			v7 = 1
 			if 8 != state.progress(v3):
-				state.set_progress(v3, 5)
+				_pc = 6904
+				continue
+			else:
+				_pc = 6925
+				continue
+		elif _pc == 6904:
+			state.set_progress(v3, 5)
+			_pc = 6925
+			continue
+		elif _pc == 6925:
 			await iconversation.one_liner(0, "name_clay", "a2_m22_dialogue_clay_i_wonder")
 			iobjectives.set_state("a2_m22_objectives_scout", 1)
 			iobjectives.add("a2_m22_objectives_freighters")
-		if 1000.0 < sim.distance_between(v4, v1) or iai.is_order_complete(v4):
+			_pc = 6996
 			continue
-		iai.give_approach_order(v4, v6)
-		iai.force_l_p_route(v4, ilagrangepoint.cast(v2), ilagrangepoint.cast(v6))
-		return
-	return
+		elif _pc == 6996:
+			if 1000.0 < sim.distance_between(v4, v1) or iai.is_order_complete(v4):
+				_pc = 7049
+				continue
+			else:
+				_pc = 7133
+				continue
+		elif _pc == 7049:
+			iai.give_approach_order(v4, v6)
+			iai.force_l_p_route(v4, ilagrangepoint.cast(v2), ilagrangepoint.cast(v6))
+			_pc = 7139
+			continue
+		elif _pc == 7133:
+			_pc = 6794
+			continue
+		elif _pc == 7138:
+			_pc = 7139
+			continue
+		elif _pc == 7139:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7141(v0, v1, v2, v3) -> Variant:
@@ -516,7 +719,7 @@ func local_7141(v0, v1, v2, v3) -> Variant:
 			iobjectives.add("a2_m22_objectives_scout")
 		if v5:
 			pass
-		if 6 == state.progress(v3):
+		if 6 != state.progress(v3):
 			continue
 		await iconversation.one_liner(0, "name_smith", "a2_m22_dialogue_smith_theyre_taking")
 		imapentity.set_map_visibility(imapentity.cast(v1), 1)
@@ -544,7 +747,7 @@ func local_8009(v0, v1, v2) -> Variant:
 			await istation.add_reactive_exception(ihabitat.cast(v0))
 			await istation.add_reactive_exception(ihabitat.cast(v2))
 		else:
-			if v3 and not (_pog_eq("map:/geog/badlands/firefrost", isim.active_world())):
+			if not (v3 and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world())):
 				continue
 			v3 = 0
 	return
@@ -590,7 +793,7 @@ func mission_handler() -> Variant:
 			isim.set_sensor_visibility(isim.cast(v4), 1)
 			while true:
 				await _pog_wait(1.0)
-				if not (not (_pog_eq("map:/geog/badlands/firefrost", isim.active_world()))):
+				if not (not _pog_eq("map:/geog/badlands/firefrost", isim.active_world())):
 					break
 			await _pog_wait(1.0)
 			v2 = iship.find_player_ship()
@@ -600,7 +803,7 @@ func mission_handler() -> Variant:
 			v1 = 1
 			_pog_spawn(local_4069.bind(v2, v4, v3, v5, v7))
 			_pog_spawn(local_7141.bind(v2, v3, v5, v7))
-		if 100 == state.progress(v7) or 8 == state.progress(v7):
+		if not (100 == state.progress(v7) or 8 == state.progress(v7)):
 			continue
 		if 8 == state.progress(v7):
 			global.set_bool("g_act2_wolfs_lair_complete", 1)
@@ -672,7 +875,7 @@ func local_9572(v0, v1) -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iScriptedOrders.Localpatrol: player out of range......\n")
 			break
-		if 300.0 <= sim.distance_between(v10, group.nth_sim(v5, v2)):
+		if 300.0 > sim.distance_between(v10, group.nth_sim(v5, v2)):
 			continue
 		if 8 < v2:
 			v2 = 1 + v2

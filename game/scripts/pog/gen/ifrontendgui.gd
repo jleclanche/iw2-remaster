@@ -31,7 +31,7 @@ func main_menu_screen() -> Variant:
 	return 0
 
 func wrong_disk_screen__on_retry() -> Variant:
-	if igame.got_play_disk("movies/intro.bik"):
+	if not (igame.got_play_disk("movies/intro.bik")):
 		return 0
 	global.create_bool("WrongDiskScreen_GotDisk", 2, 1)
 	global.create_bool("WrongDiskScreen_LocalisedTextEnabled", 14, 1)
@@ -99,7 +99,7 @@ func local_1016() -> Variant:
 	while true:
 		await _pog_wait(1)
 		await wrong_disk_screen__on_retry()
-		if global.exists("WrongDiskScreen_GotDisk"):
+		if not (global.exists("WrongDiskScreen_GotDisk")):
 			continue
 		return
 	return
@@ -138,7 +138,7 @@ func local_1624() -> Variant:
 	v2 = config.count_number("system", "icGame", "movies")
 	gui.pop_screen()
 	gui.overlay_screen("icSPMainPDAScreen")
-	if not (_pog_eq("", igame.session_name())) or imultiplay.network_is_lobby_session():
+	if not _pog_eq("", igame.session_name()) or imultiplay.network_is_lobby_session():
 		pass
 	else:
 		v1 = 1 - v2

@@ -104,7 +104,7 @@ func main() -> Variant:
 	return 0
 
 func stub() -> Variant:
-	if global.exists("g_act2_dante_system_scouted"):
+	if not (global.exists("g_act2_dante_system_scouted")):
 		return 0
 	global.set_bool("g_act2_dante_system_scouted", 1)
 	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"), 1)
@@ -153,7 +153,7 @@ func local_767() -> Variant:
 func local_896(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		sim.destroy(v2)
 		sim.destroy(v3)
@@ -273,13 +273,13 @@ func mission_handler() -> Variant:
 					debug.print_string("iAct2Mission24. Player not in command section - EXITING.\n")
 			else:
 				if PogRuntime.TRACE:
-					if not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
+					if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
 						if PogRuntime.TRACE:
 							debug.print_string("iAct2Mission24. Player not near player base in Santa Romera, so jumping the ship there.\n")
 						sim.place_near(v0, v1, 10000.0)
 						while true:
 							await _pog_wait(0.10000000149011612)
-							if not (not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world()))):
+							if not (not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
 								break
 				await ijafsscript.disable_jafs()
 				iobjectives.add("a2_m24_objectives_enter_dante_system")
@@ -299,11 +299,11 @@ func mission_handler() -> Variant:
 					await imusic.play("sound:/audio/music/a4_ambient", 1, 1)
 				sim.set_collision(v0, 1)
 				iship.set_free_without_pilot(v0, 0)
-				if not (_pog_eq("map:/geog/badlands/dante", isim.active_world())):
+				if not _pog_eq("map:/geog/badlands/dante", isim.active_world()):
 					sim.place_relative_to(v0, v3, 1000.0, 1000.0, 1000.0)
 					while true:
 						await _pog_wait(0.10000000149011612)
-						if not (not (_pog_eq("map:/geog/badlands/dante", isim.active_world()))):
+						if not (not _pog_eq("map:/geog/badlands/dante", isim.active_world())):
 							break
 				await irangecheck.add_traffic_exception(imapentity.find_by_name("Faust-Alpha L-Point"))
 				await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Central HQ"))
@@ -382,7 +382,7 @@ func mission_handler() -> Variant:
 						if 1 == await local_22529(v22, "visited_shipyard") and 1 == await local_22529(v22, "visited_cargo") and 1 == await local_22529(v22, "visited_hq"):
 							await local_22216(v22, "visited_all_bases", 1)
 							iobjectives.set_state("a2_m24_objectives_locate_marauder_bases", 1)
-					if 1 == await local_22529(v22, "sent_signal"):
+					if 1 != await local_22529(v22, "sent_signal"):
 						continue
 					break
 				iobjectives.set_state("a2_m24_objectives_transmit_ftl_signal", 1)
@@ -427,7 +427,7 @@ func local_6393(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 		debug.print_string("iAct2Mission24.monitor_player: STARTED\n")
 	while true:
 		await _pog_wait(1)
-		if 100 == state.progress(v6) or not (sim.parent(v0)):
+		if not (100 == state.progress(v6) or not (sim.parent(v0))):
 			continue
 		break
 	iship.has_fired(v0)
@@ -452,11 +452,11 @@ func local_6393(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			else:
 				ihud.set_prompt("", "")
 		v8 = isim.ships_in_radius(v0, v1)
-		if 10.0 > sim.speed(v0):
+		if 10.0 <= sim.speed(v0):
 			continue
-		if 100 == state.progress(v6) or not (p_set.is_empty(v8)):
+		if not (100 == state.progress(v6) or not (p_set.is_empty(v8))):
 			continue
-		if 100 == state.progress(v6) or not (p_set.is_empty(await local_7811(v8, v7))):
+		if not (100 == state.progress(v6) or not (p_set.is_empty(await local_7811(v8, v7)))):
 			continue
 		_pog_halt(v2)
 		_pog_halt(v3)
@@ -485,7 +485,7 @@ func local_7373(v0) -> Variant:
 	icomms.abort(0)
 	await iconversation.one_liner(0, "name_cal", "a2_m24_dialogue_cal_damn_theyve_detected_us")
 	await _pog_wait(10.0)
-	if sim.is_alive(v0):
+	if not (sim.is_alive(v0)):
 		return 0
 	object.add_bool_property(v0, "destroy_sim", 0)
 	_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_generic"))))
@@ -506,7 +506,6 @@ func local_7811(v0, v1) -> Variant:
 		if _pog_eq(v1, isim.faction(v4)):
 			p_set.add(v3, v4)
 		v5 = 1 + v5
-	push_error("PORT: unstructured jump to L8023")
 	return _pog_clone(v3)
 	return 0
 
@@ -531,7 +530,7 @@ func local_8040(v0, v1, v2) -> Variant:
 	while 100 != state.progress(v1) and 1:
 		while true:
 			await _pog_wait(1)
-			if 100 == state.progress(v1) or 300000.0 < sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 300000.0 < sim.distance_between(v3, v0)):
 				continue
 			break
 		if PogRuntime.TRACE:
@@ -599,7 +598,7 @@ func local_8040(v0, v1, v2) -> Variant:
 						await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_dock_it")
 						await iconversation.end()
 						isim.set_docking_lock(v4, v5, 0)
-			if 100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0)):
 				continue
 			if PogRuntime.TRACE:
 				debug.print_string("iAct2Mission24.monitor_hq: Player left Marauder HQ area, destroying custom scenery.\n")
@@ -629,7 +628,7 @@ func local_10136(v0, v1, v2) -> Variant:
 	while 100 != state.progress(v1) and 1:
 		while true:
 			await _pog_wait(1)
-			if 100 == state.progress(v1) or 300000.0 < sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 300000.0 < sim.distance_between(v3, v0)):
 				continue
 			break
 		if PogRuntime.TRACE:
@@ -685,7 +684,7 @@ func local_10136(v0, v1, v2) -> Variant:
 							await iconversation.end()
 							iobjectives.set_state("a2_m24_objectives_locate_and_retrieve_field_generator", 1)
 							isim.set_docking_lock(v3, v4, 0)
-			if 100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0)):
 				continue
 			if PogRuntime.TRACE:
 				debug.print_string("iAct2Mission24.monitor_cargo: Player left Marauder  area, destroying custom scenery.\n")
@@ -718,7 +717,7 @@ func local_11896(v0, v1, v2) -> Variant:
 	while 100 != state.progress(v1) and 1:
 		while true:
 			await _pog_wait(1)
-			if 100 == state.progress(v1) or 300000.0 < sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 300000.0 < sim.distance_between(v3, v0)):
 				continue
 			break
 		if PogRuntime.TRACE:
@@ -796,7 +795,7 @@ func local_11896(v0, v1, v2) -> Variant:
 									await iremotepilot.enable_remote_connection(v4, 1)
 									await _pog_wait(1.0)
 								v13 = 1 + v13
-			if 100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0)):
 				continue
 			if PogRuntime.TRACE:
 				debug.print_string("iAct2Mission24.monitor_cargo: Player left Marauder  area, destroying custom scenery.\n")
@@ -814,7 +813,7 @@ func local_14220(v0, v1, v2) -> Variant:
 	while 100 != state.progress(v1) and 1:
 		while true:
 			await _pog_wait(1)
-			if 100 == state.progress(v1) or 100000000.0 < sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 100000000.0 < sim.distance_between(v3, v0)):
 				continue
 			break
 		while true:
@@ -844,7 +843,7 @@ func local_14220(v0, v1, v2) -> Variant:
 				iobjectives.set_state("a2_m24_objectives_scout_for_lpoint_near_faust", 1)
 				await iconversation.end()
 				_pog_spawn(local_37318.bind(v1, v2))
-			if 5000.0 < sim.distance_between(v3, v0):
+			if 5000.0 >= sim.distance_between(v3, v0):
 				continue
 			if _pog_is_null(await local_22529(v1, "got_antenna")) and 1 == await local_22529(v1, "got_power_booster") and _pog_is_null(await local_22529(v1, "given_lpoint_antenna_clue")):
 				await local_22216(v1, "given_lpoint_antenna_clue", 1)
@@ -876,7 +875,7 @@ func local_14220(v0, v1, v2) -> Variant:
 							debug.print_string("iAct2Mission24.monitor_cargo: Player successfully sent FTL signal. EXITING.\n")
 						await local_22216(v1, "sent_signal", 1)
 						return
-			if 100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0):
+			if not (100 == state.progress(v1) or 300000.0 > sim.distance_between(v3, v0)):
 				continue
 			if PogRuntime.TRACE:
 				debug.print_string("iAct2Mission24.monitor_cargo: Player left L-Point Area.\n")
@@ -925,7 +924,7 @@ func local_16080() -> Variant:
 	group.add_sim(v0, v3)
 	v5 = subsim.create("ini:/subsims/dockports/universal_port")
 	sim.add_subsim(v3, v5)
-	return
+	return v0
 	return 0
 
 func local_16834(v0, v1, v2) -> Variant:
@@ -943,7 +942,7 @@ func local_16834(v0, v1, v2) -> Variant:
 		isim.set_faction(v4, v5)
 		sim.place_near(v4, v0, v2)
 		v6 = 1 + v6
-	return
+	return v3
 	return 0
 
 func local_17138(v0, v1, v2, v3, v4, v5) -> Variant:
@@ -952,7 +951,7 @@ func local_17138(v0, v1, v2, v3, v4, v5) -> Variant:
 	sim.place_relative_to(group.leader(v6), v0, v2, v3, v4)
 	await iformation.box(v6, 100.0, 1)
 	await iformation.jiggle(v6, 50.0, 90.0)
-	return
+	return v6
 	return 0
 
 func local_17290(v0, v1, v2) -> Variant:
@@ -971,7 +970,7 @@ func local_17290(v0, v1, v2) -> Variant:
 		sim.place_near(v4, v0, 1000.0)
 		_pog_spawn(iscriptedorders.loiter_near_sim.bind(v4, v0))
 		v5 = 1 + v5
-	return
+	return v3
 	return 0
 
 func local_17563(v0, v1, v2) -> Variant:
@@ -993,7 +992,7 @@ func local_17563(v0, v1, v2) -> Variant:
 		v5 = 1 + v5
 	await iformation.goose(v3, 0.0, 1)
 	_pog_spawn(iscriptedorders.local_patrol.bind(v3))
-	return
+	return v3
 	return 0
 
 func local_17863(v0, v1, v2) -> Variant:
@@ -1017,7 +1016,7 @@ func local_17863(v0, v1, v2) -> Variant:
 		v5 = 1 + v5
 	await iformation.goose(v3, 0.0, 1)
 	_pog_spawn(iscriptedorders.local_patrol.bind(v3))
-	return
+	return v3
 	return 0
 
 func local_18181(v0) -> Variant:
@@ -1040,7 +1039,7 @@ func local_18181(v0) -> Variant:
 	group.add_group(v1, await local_17290(v3, 5, "a2_m24_ship_flitter_cruiser"))
 	iship.disrupt(v4, 9999999.0, 0)
 	iship.disrupt(v5, 9999999.0, 0)
-	return
+	return v1
 	return 0
 
 func local_18583(v0, v1, v2, v3, v4, v5) -> Variant:
@@ -1063,7 +1062,7 @@ func local_18583(v0, v1, v2, v3, v4, v5) -> Variant:
 		sim.place_near(v7, v0, 1000.0)
 		v8 = 1 + v8
 	_pog_spawn(local_19367.bind(v6, v0, v1, v4, v5))
-	return
+	return v6
 	return 0
 
 func local_18896(v0, v1, v2, v3) -> Variant:
@@ -1094,7 +1093,7 @@ func local_18896(v0, v1, v2, v3) -> Variant:
 		v6 = 1 + v6
 	await iformation.line_abreast(v4, 20.0, 1)
 	await iformation.jiggle(v4, 5.0, 5.0)
-	return
+	return v4
 	return 0
 
 func local_19367(v0, v1, v2, v3, v4) -> Variant:
@@ -1104,7 +1103,7 @@ func local_19367(v0, v1, v2, v3, v4) -> Variant:
 			await _pog_wait(10)
 			if 100 == state.progress(v4) or _pog_is_null(group.sim_count(v0)):
 				return
-			if 100 == state.progress(v4) or iai.is_order_complete(v0):
+			if not (100 == state.progress(v4) or iai.is_order_complete(v0)):
 				continue
 			break
 		await _pog_wait(v3)
@@ -1113,7 +1112,7 @@ func local_19367(v0, v1, v2, v3, v4) -> Variant:
 			await _pog_wait(10)
 			if 100 == state.progress(v4) or _pog_is_null(group.sim_count(v0)):
 				return
-			if 100 == state.progress(v4) or iai.is_order_complete(v0):
+			if not (100 == state.progress(v4) or iai.is_order_complete(v0)):
 				continue
 			break
 		await _pog_wait(20.0 + v3)
@@ -1248,7 +1247,7 @@ func local_22216(v0, v1, v2) -> Variant:
 	return 0
 
 func local_22529(v0, v1) -> Variant:
-	return
+	return object.bool_property(v0, v1)
 	return 0
 
 func local_22559(v0, v1) -> Variant:
@@ -1256,7 +1255,6 @@ func local_22559(v0, v1) -> Variant:
 	if 24 > v1:
 		v2 = 24 / v1
 		v1 = 24 * v2 - v1
-	push_error("PORT: unstructured jump to L22674")
 	return _pog_clone(string.join(v0, string.join("+ +ship_no_", string.from_int(v1))))
 	return 0
 
@@ -1499,7 +1497,7 @@ func local_22677(v0, v1, v2, v3) -> Variant:
 	sim.place_relative_to(v0, v3, 30000.0, 30000.0, 30000.0)
 	while true:
 		await _pog_wait(0.10000000149011612)
-		if not (not (_pog_eq("map:/geog/badlands/dante", isim.active_world()))):
+		if not (not _pog_eq("map:/geog/badlands/dante", isim.active_world())):
 			break
 	sim.place_relative_to(v11, v3, 0.0, 200.0, 2000.0)
 	sim.place_relative_to(v12, v3, 1000.0, -200.0, 4000.0)
@@ -1737,7 +1735,7 @@ func local_30197(v0, v1, v2) -> Variant:
 	sim.place_relative_to(v0, v2, 100000.0, 100000.0, 100000.0)
 	while true:
 		await _pog_wait(0.10000000149011612)
-		if not (not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world()))):
+		if not (not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
 			break
 	sim.place_relative_to(v3, v2, 5000.0, 5000.0, 10000.0)
 	sim.point_at(v3, v2)
@@ -1931,116 +1929,364 @@ func local_37318(v0, v1) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	v2 = iship.find_player_ship()
-	v3 = group.create()
-	v4 = 0
-	v6 = isim.cast(imapentity.find_by_name_in_system("Cicero", "map:/geog/badlands/dante"))
-	v7 = isim.cast(imapentity.find_by_name_in_system("Ortega", "map:/geog/badlands/dante"))
-	v8 = isim.cast(imapentity.find_by_name_in_system("Ortega Lambda", "map:/geog/badlands/dante"))
-	v9 = isim.cast(imapentity.find_by_name_in_system("Valia", "map:/geog/badlands/dante"))
-	v10 = isim.cast(imapentity.find_by_name_in_system("Valia Epsilon", "map:/geog/badlands/dante"))
-	v11 = isim.cast(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"))
-	v12 = isim.cast(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"))
-	v13 = isim.cast(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"))
-	group.add_group(v1, v3)
-	if PogRuntime.TRACE:
-		if not (v7):
+	var _pc: int = 37318
+	while true:
+		if _pc == 37318:
+			v2 = iship.find_player_ship()
+			v3 = group.create()
+			v4 = 0
+			v6 = isim.cast(imapentity.find_by_name_in_system("Cicero", "map:/geog/badlands/dante"))
+			v7 = isim.cast(imapentity.find_by_name_in_system("Ortega", "map:/geog/badlands/dante"))
+			v8 = isim.cast(imapentity.find_by_name_in_system("Ortega Lambda", "map:/geog/badlands/dante"))
+			v9 = isim.cast(imapentity.find_by_name_in_system("Valia", "map:/geog/badlands/dante"))
+			v10 = isim.cast(imapentity.find_by_name_in_system("Valia Epsilon", "map:/geog/badlands/dante"))
+			v11 = isim.cast(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"))
+			v12 = isim.cast(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"))
+			v13 = isim.cast(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"))
+			group.add_group(v1, v3)
+			_pc = 38009
+			continue
+		elif _pc == 37750:
+			if not (v7):
+				_pc = 37761
+				continue
+			else:
+				_pc = 37787
+				continue
+		elif _pc == 37761:
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find ortega - EXITING\n")
-			return
-		if not (v8):
+			_pc = 39687
+			continue
+		elif _pc == 37787:
+			if not (v8):
+				_pc = 37798
+				continue
+			else:
+				_pc = 37824
+				continue
+		elif _pc == 37798:
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find Ortega Lambda - EXITING\n")
-			return
-		if not (v9):
+			_pc = 39687
+			continue
+		elif _pc == 37824:
+			if not (v9):
+				_pc = 37835
+				continue
+			else:
+				_pc = 37861
+				continue
+		elif _pc == 37835:
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find Valia - EXITING\n")
-			return
-		if not (v10):
+			_pc = 39687
+			continue
+		elif _pc == 37861:
+			if not (v10):
+				_pc = 37872
+				continue
+			else:
+				_pc = 37898
+				continue
+		elif _pc == 37872:
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find Valia Epsilon - EXITING\n")
-			return
-		if not (v11):
+			_pc = 39687
+			continue
+		elif _pc == 37898:
+			if not (v11):
+				_pc = 37909
+				continue
+			else:
+				_pc = 37935
+				continue
+		elif _pc == 37909:
 			debug.print_string("iAct2Mission24.monitor_relays: Can't find Marauder HQ - EXITING\n")
-			return
-		if not (v12):
+			_pc = 39687
+			continue
+		elif _pc == 37935:
+			if not (v12):
+				_pc = 37946
+				continue
+			else:
+				_pc = 37972
+				continue
+		elif _pc == 37946:
 			debug.print_string("iAct2Mission24.monitor_relays: Marauder Shipyard is invalid - EXITING\n")
-			return
-		if not (v13):
+			_pc = 39687
+			continue
+		elif _pc == 37972:
+			if not (v13):
+				_pc = 37983
+				continue
+			else:
+				_pc = 38009
+				continue
+		elif _pc == 37983:
 			debug.print_string("iAct2Mission24.monitor_relays: Marauder Cargo yard is invalid- EXITING\n")
-			return
-	if 1 == await local_22529(v0, "visited_all_bases"):
-		if PogRuntime.TRACE:
+			_pc = 39687
+			continue
+		elif _pc == 38009:
+			if 1 == await local_22529(v0, "visited_all_bases"):
+				_pc = 38041
+				continue
+			else:
+				_pc = 38072
+				continue
+		elif _pc == 38041:
+			_pc = 38067
+			continue
+		elif _pc == 38046:
 			debug.print_string("iAct2Mission24.monitor_relays: All bases have been found. No need to create relays. Exiting.\n")
-	else:
-		if _pog_is_null(await local_22529(v0, "visited_hq")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder hq.\n")
+			_pc = 38067
+			continue
+		elif _pc == 38067:
+			_pc = 39687
+			continue
+		elif _pc == 38072:
+			if _pog_is_null(await local_22529(v0, "visited_hq")):
+				_pc = 38104
+				continue
+			else:
+				_pc = 38237
+				continue
+		elif _pc == 38104:
+			_pc = 38130
+			continue
+		elif _pc == 38109:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder hq.\n")
+			_pc = 38130
+			continue
+		elif _pc == 38130:
 			v5 = isim.cast(await iutilities.create_waypoint_at(v11))
 			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "visited_cargo")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder cargo yard.\n")
+			_pc = 38237
+			continue
+		elif _pc == 38237:
+			if _pog_is_null(await local_22529(v0, "visited_cargo")):
+				_pc = 38269
+				continue
+			else:
+				_pc = 38402
+				continue
+		elif _pc == 38269:
+			_pc = 38295
+			continue
+		elif _pc == 38274:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder cargo yard.\n")
+			_pc = 38295
+			continue
+		elif _pc == 38295:
 			v5 = isim.cast(await iutilities.create_waypoint_at(v13))
 			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "visited_shipyard")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder shipyard.\n")
+			_pc = 38402
+			continue
+		elif _pc == 38402:
+			if _pog_is_null(await local_22529(v0, "visited_shipyard")):
+				_pc = 38434
+				continue
+			else:
+				_pc = 38567
+				continue
+		elif _pc == 38434:
+			_pc = 38460
+			continue
+		elif _pc == 38439:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder shipyard.\n")
+			_pc = 38460
+			continue
+		elif _pc == 38460:
 			v5 = isim.cast(await iutilities.create_waypoint_at(v12))
 			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "found_relay_1")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 1.\n")
+			_pc = 38567
+			continue
+		elif _pc == 38567:
+			if _pog_is_null(await local_22529(v0, "found_relay_1")):
+				_pc = 38599
+				continue
+			else:
+				_pc = 38775
+				continue
+		elif _pc == 38599:
+			_pc = 38625
+			continue
+		elif _pc == 38604:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 1.\n")
+			_pc = 38625
+			continue
+		elif _pc == 38625:
 			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
 			object.add_bool_property(v5, "relay", 1)
 			sim.place_between(v5, v6, v7, 0.009999999776482582)
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "found_relay_2")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 2.\n")
+			_pc = 38775
+			continue
+		elif _pc == 38775:
+			if _pog_is_null(await local_22529(v0, "found_relay_2")):
+				_pc = 38807
+				continue
+			else:
+				_pc = 38983
+				continue
+		elif _pc == 38807:
+			_pc = 38833
+			continue
+		elif _pc == 38812:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 2.\n")
+			_pc = 38833
+			continue
+		elif _pc == 38833:
 			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
 			object.add_bool_property(v5, "relay", 1)
 			sim.place_between(v5, v8, v7, 0.009999999776482582)
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-		if _pog_is_null(object.bool_property(v0, "found_relay_3")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 3.\n")
+			_pc = 38983
+			continue
+		elif _pc == 38983:
+			if _pog_is_null(object.bool_property(v0, "found_relay_3")):
+				_pc = 39015
+				continue
+			else:
+				_pc = 39191
+				continue
+		elif _pc == 39015:
+			_pc = 39041
+			continue
+		elif _pc == 39020:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 3.\n")
+			_pc = 39041
+			continue
+		elif _pc == 39041:
 			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
 			object.add_bool_property(v5, "relay", 1)
 			sim.place_between(v5, v10, v9, 0.009999999776482582)
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-		while true:
-			while true:
-				await _pog_wait(1)
-				if 1 == await local_22529(v0, "visited_all_bases"):
-					if PogRuntime.TRACE:
-						debug.print_string("iAct2Mission24.monitor_relays: All bases found. Destroying remaining relay waypoints and quitting.\n")
-					group.destroy(v3, 1)
-					return
-				v5 = await iutilities.near_to_group(v2, v3, 80000.0, 0)
-				if not _pog_is_null(v5):
-					continue
-				break
+			_pc = 39191
+			continue
+		elif _pc == 39191:
+			_pc = 39196
+			continue
+		elif _pc == 39196:
+			await _pog_frame()
+			if _pog_every(39197, 1.0):
+				_pc = 39210
+				continue
+			else:
+				_pc = 39346
+				continue
+		elif _pc == 39210:
+			if 1 == await local_22529(v0, "visited_all_bases"):
+				_pc = 39242
+				continue
+			else:
+				_pc = 39293
+				continue
+		elif _pc == 39242:
+			_pc = 39268
+			continue
+		elif _pc == 39247:
+			debug.print_string("iAct2Mission24.monitor_relays: All bases found. Destroying remaining relay waypoints and quitting.\n")
+			_pc = 39268
+			continue
+		elif _pc == 39268:
+			group.destroy(v3, 1)
+			_pc = 39687
+			continue
+		elif _pc == 39293:
+			v5 = await iutilities.near_to_group(v2, v3, 80000.0, 0)
+			if not _pog_is_null(v5):
+				_pc = 39341
+				continue
+			else:
+				_pc = 39346
+				continue
+		elif _pc == 39341:
+			_pc = 39351
+			continue
+		elif _pc == 39346:
+			_pc = 39196
+			continue
+		elif _pc == 39351:
 			group.remove_sim(v3, v5)
 			if object.property_exists(v5, "relay"):
-				v4 = 1 + v4
-				while v4 == 1:
-					await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_one")
-					break
-				sim.destroy(v5)
+				_pc = 39406
+				continue
 			else:
-				group.remove_sim(v3, v5)
-				isim.set_sensor_visibility(v5, 0)
-			if not (0 > group.sim_count(v3)):
-				break
-		if PogRuntime.TRACE:
+				_pc = 39592
+				continue
+		elif _pc == 39406:
+			v4 = 1 + v4
+			_pc = 39537
+			continue
+		elif _pc == 39424:
+			await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_one")
+			_pc = 39568
+			continue
+		elif _pc == 39460:
+			await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_two")
+			_pc = 39568
+			continue
+		elif _pc == 39496:
+			await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_three")
+			_pc = 39568
+			continue
+		elif _pc == 39532:
+			_pc = 39568
+			continue
+		elif _pc == 39537:
+			if v4 != 1:
+				_pc = 39550
+				continue
+			else:
+				_pc = 39424
+				continue
+		elif _pc == 39550:
+			if not _pog_is_null(2):
+				_pc = 39559
+				continue
+			else:
+				_pc = 39460
+				continue
+		elif _pc == 39559:
+			if not _pog_is_null(3):
+				_pc = 39568
+				continue
+			else:
+				_pc = 39496
+				continue
+		elif _pc == 39568:
+			sim.destroy(v5)
+			_pc = 39636
+			continue
+		elif _pc == 39592:
+			group.remove_sim(v3, v5)
+			isim.set_sensor_visibility(v5, 0)
+			_pc = 39636
+			continue
+		elif _pc == 39636:
+			if 0 <= group.sim_count(v3):
+				_pc = 39661
+				continue
+			else:
+				_pc = 39191
+				continue
+		elif _pc == 39661:
+			_pc = 39687
+			continue
+		elif _pc == 39666:
 			debug.print_string("iAct2Mission24.monitor_relays: All relay waypoints found. Quitting.\n")
-	return
+			_pc = 39687
+			continue
+		elif _pc == 39687:
+			return
+		else:
+			return 0
 	return 0
 
 func local_39689(v0, v1, v2) -> Variant:

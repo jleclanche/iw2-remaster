@@ -110,7 +110,7 @@ func local_342() -> Variant:
 func local_486(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		await iwingmen.purge()
 		isim.set_faction(iship.find_player_ship(), ifaction.find("Player"))
@@ -181,7 +181,7 @@ func local_1010(v0, v1, v2, v3, v4, v5) -> Variant:
 					v7 = group.nth_sim(v3, v12)
 					iai.give_escort_order(v7, v6, math.random(100.0, 7000.0), math.random(100.0, 7000.0), math.random(100.0, 7000.0), 12000.0)
 					v12 = 1 + v12
-		if 6 == state.progress(v5):
+		if 6 != state.progress(v5):
 			continue
 		sim.destroy(v6)
 		return
@@ -223,9 +223,9 @@ func local_2300(v0, v1) -> Variant:
 		await _pog_wait(1)
 		if 6 >= state.progress(v1):
 			return
-		if 6 < state.progress(v1) and 2 >= state.progress(v1):
+		if not (6 < state.progress(v1) and 2 >= state.progress(v1)):
 			continue
-		if not (_pog_eq("map:/geog/badlands/firefrost", isim.active_world())):
+		if _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
 			continue
 		while true:
 			await _pog_wait(1.0)
@@ -262,102 +262,592 @@ func mission_handler() -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	v0 = state.find(self)
-	v1 = imapentity.find_by_name_in_system("Fort Brooklyn", "map:/geog/badlands/firefrost")
-	v2 = imapentity.find_by_name_in_system("Sunflower L-Point", "map:/geog/badlands/firefrost")
-	v9 = iship.find_player_ship()
-	v18 = ifaction.find("Police")
-	v19 = ifaction.find("Player")
-	v21 = 0
-	v23 = 0
-	if _pog_is_null(v0):
-		v0 = state.create(self, 0)
-	await local_55(v0)
-	if _pog_is_null(v1):
-		if PogRuntime.TRACE:
-			debug.print_string("act2_mission04: Can't find Fort Brooklyn")
-	await imissiontracker.add_mission(self, 2, 4)
-	text.add("csv:/text/act_2/act2_mission04")
-	await iwingmen.initialise()
-	v3 = await iutilities.create_waypoint_relative_to(v1, 2.0 * object.float_property(v1, "radius"), 0.0, 0.0)
-	v7 = imapentity.find_by_name_in_system("Al Fujayrah", "map:/geog/badlands/firefrost")
-	v4 = await iutilities.create_waypoint_relative_to(v7, 2.0 * object.float_property(v7, "radius"), 0.0, 0.0)
-	v7 = imapentity.find_by_name_in_system("Almost", "map:/geog/badlands/firefrost")
-	v5 = await iutilities.create_waypoint_relative_to(v7, 0.0, 2.0 * object.float_property(v7, "radius"), 0.0)
-	v7 = imapentity.find_by_name_in_system("Ad Dawhah", "map:/geog/badlands/firefrost")
-	v6 = await iutilities.create_waypoint_relative_to(v7, 0.0, 0.0, 2.0 * object.float_property(v7, "radius"))
-	await iutilities.make_waypoint_visible(v3, 1, "a2_m04_waypoint_meeting")
-	v10 = await ishipcreation.create_character_group(7, "GenericAggressive", 5, v18, "Random")
-	await local_9066(v10, "smith_")
-	await local_8845(v10, 0)
-	v7 = group.leader(v10)
-	sim.place_relative_to(v7, v3, 0.0, 0.0, 5000.0)
-	sim.point_at(v7, v3)
-	await iformation.goose(v10, 200.0, 1)
-	isim.set_indestructable(isim.cast(group.leader(v10)), 1)
-	isim.set_indestructable(isim.cast(v7), 1)
-	v11 = await ishipcreation.create_character_group(9, "GenericAggressive", 4, v18, "Random")
-	await local_9066(v11, "westley_")
-	await local_8845(v11, 0)
-	v7 = group.leader(v11)
-	sim.place_relative_to(v7, v3, -1250.0, 500.0, 5000.0)
-	sim.point_at(v7, v3)
-	await iformation.line_abreast(v11, 200.0, 1)
-	await iformation.jiggle(v11, 20.0, 5.0)
-	v12 = await ishipcreation.create_character_group(9, "GenericAggressive", 5, v18, "Random")
-	await local_9066(v12, "harbuck_")
-	await local_8845(v12, 0)
-	v7 = group.leader(v12)
-	sim.place_relative_to(v7, v3, 1250.0, -500.0, 5000.0)
-	sim.point_at(v7, v3)
-	await iformation.goose(v12, 200.0, 1)
-	await iformation.jiggle(v12, 20.0, 5.0)
-	while _pog_is_null(math.random_int(0, 3)):
-		v13 = await local_9254(v4)
-		v16 = await local_9732(v4)
-		v17 = await local_9437(v4)
-		v8 = v4
-		break
-	_pog_detach(_pog_spawn(local_486.bind(self, v0, v3, v4, v5, v6, v7, v10, v11, v12, v13, v14, v15, v16, v17)))
-	_pog_spawn(local_1010.bind(v13, v10, v12, v11, v16, v0))
-	_pog_spawn(local_2300.bind(iship.cast(group.leader(v10)), v0))
-	await ibacktobase.inhibit()
+	var _pc: int = 2582
 	while true:
-		await _pog_wait(3)
-		v23 = 5 + v23
-		while _pog_is_null(state.progress(v0)):
+		if _pc == 2582:
+			v0 = state.find(self)
+			v1 = imapentity.find_by_name_in_system("Fort Brooklyn", "map:/geog/badlands/firefrost")
+			v2 = imapentity.find_by_name_in_system("Sunflower L-Point", "map:/geog/badlands/firefrost")
+			v9 = iship.find_player_ship()
+			v18 = ifaction.find("Police")
+			v19 = ifaction.find("Player")
+			v21 = 0
+			v23 = 0
+			if _pog_is_null(v0):
+				_pc = 2778
+				continue
+			else:
+				_pc = 2811
+				continue
+		elif _pc == 2778:
+			v0 = state.create(self, 0)
+			_pc = 2811
+			continue
+		elif _pc == 2811:
+			await local_55(v0)
+			if _pog_is_null(v1):
+				_pc = 2843
+				continue
+			else:
+				_pc = 2869
+				continue
+		elif _pc == 2843:
+			_pc = 2869
+			continue
+		elif _pc == 2848:
+			debug.print_string("act2_mission04: Can't find Fort Brooklyn")
+			_pc = 2869
+			continue
+		elif _pc == 2869:
+			await imissiontracker.add_mission(self, 2, 4)
+			text.add("csv:/text/act_2/act2_mission04")
+			await iwingmen.initialise()
+			v3 = await iutilities.create_waypoint_relative_to(v1, 2.0 * object.float_property(v1, "radius"), 0.0, 0.0)
+			v7 = imapentity.find_by_name_in_system("Al Fujayrah", "map:/geog/badlands/firefrost")
+			v4 = await iutilities.create_waypoint_relative_to(v7, 2.0 * object.float_property(v7, "radius"), 0.0, 0.0)
+			v7 = imapentity.find_by_name_in_system("Almost", "map:/geog/badlands/firefrost")
+			v5 = await iutilities.create_waypoint_relative_to(v7, 0.0, 2.0 * object.float_property(v7, "radius"), 0.0)
+			v7 = imapentity.find_by_name_in_system("Ad Dawhah", "map:/geog/badlands/firefrost")
+			v6 = await iutilities.create_waypoint_relative_to(v7, 0.0, 0.0, 2.0 * object.float_property(v7, "radius"))
+			await iutilities.make_waypoint_visible(v3, 1, "a2_m04_waypoint_meeting")
+			v10 = await ishipcreation.create_character_group(7, "GenericAggressive", 5, v18, "Random")
+			await local_9066(v10, "smith_")
+			await local_8845(v10, 0)
+			v7 = group.leader(v10)
+			sim.place_relative_to(v7, v3, 0.0, 0.0, 5000.0)
+			sim.point_at(v7, v3)
+			await iformation.goose(v10, 200.0, 1)
+			isim.set_indestructable(isim.cast(group.leader(v10)), 1)
+			isim.set_indestructable(isim.cast(v7), 1)
+			v11 = await ishipcreation.create_character_group(9, "GenericAggressive", 4, v18, "Random")
+			await local_9066(v11, "westley_")
+			await local_8845(v11, 0)
+			v7 = group.leader(v11)
+			sim.place_relative_to(v7, v3, -1250.0, 500.0, 5000.0)
+			sim.point_at(v7, v3)
+			await iformation.line_abreast(v11, 200.0, 1)
+			await iformation.jiggle(v11, 20.0, 5.0)
+			v12 = await ishipcreation.create_character_group(9, "GenericAggressive", 5, v18, "Random")
+			await local_9066(v12, "harbuck_")
+			await local_8845(v12, 0)
+			v7 = group.leader(v12)
+			sim.place_relative_to(v7, v3, 1250.0, -500.0, 5000.0)
+			sim.point_at(v7, v3)
+			await iformation.goose(v12, 200.0, 1)
+			await iformation.jiggle(v12, 20.0, 5.0)
+			_pc = 4326
+			continue
+		elif _pc == 4057:
+			v13 = await local_9254(v4)
+			v16 = await local_9732(v4)
+			v17 = await local_9437(v4)
+			v8 = v4
+			_pc = 4376
+			continue
+		elif _pc == 4145:
+			v13 = await local_9254(v5)
+			v16 = await local_9732(v5)
+			v17 = await local_9437(v5)
+			v8 = v5
+			_pc = 4376
+			continue
+		elif _pc == 4233:
+			v13 = await local_9254(v6)
+			v16 = await local_9732(v6)
+			v17 = await local_9437(v6)
+			v8 = v6
+			_pc = 4376
+			continue
+		elif _pc == 4321:
+			_pc = 4376
+			continue
+		elif _pc == 4326:
+			if not _pog_is_null(math.random_int(0, 3)):
+				_pc = 4350
+				continue
+			else:
+				_pc = 4057
+				continue
+		elif _pc == 4350:
+			if not _pog_is_null(1):
+				_pc = 4358
+				continue
+			else:
+				_pc = 4145
+				continue
+		elif _pc == 4358:
+			if not _pog_is_null(2):
+				_pc = 4367
+				continue
+			else:
+				_pc = 4145
+				continue
+		elif _pc == 4367:
+			if not _pog_is_null(3):
+				_pc = 4376
+				continue
+			else:
+				_pc = 4233
+				continue
+		elif _pc == 4376:
+			_pog_detach(_pog_spawn(local_486.bind(self, v0, v3, v4, v5, v6, v7, v10, v11, v12, v13, v14, v15, v16, v17)))
+			_pog_spawn(local_1010.bind(v13, v10, v12, v11, v16, v0))
+			_pog_spawn(local_2300.bind(iship.cast(group.leader(v10)), v0))
+			await ibacktobase.inhibit()
+			_pc = 4599
+			continue
+		elif _pc == 4599:
+			await _pog_frame()
+			if _pog_every(4600, 3.0):
+				_pc = 4613
+				continue
+			else:
+				_pc = 8837
+				continue
+		elif _pc == 4613:
+			v23 = 5 + v23
+			_pc = 8749
+			continue
+		elif _pc == 4632:
 			iobjectives.add("a2_m04_objectives_redezvous")
 			if 15000.0 < sim.distance_between(v9, v3):
-				iobjectives.set_state("a2_m04_objectives_redezvous", 1)
-				await iconversation.begin()
-				await iconversation.add_response("a2_m04_text_cal_no_way", "a2_m04_dialogue_cal_no_way")
-				await iconversation.add_response("a2_m04_text_cal_no_problem", "a2_m04_dialogue_cal_no_problem")
-				v22 = await iconversation.ask(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_good_to_see_you_here")
-				if 1 == v22:
-					v20 = 0
-					await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_only_cos_we_need_you")
-					await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_the_plan_is")
-					await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_cal_youll_be_leading")
-					iobjectives.add("a2_m04_objectives_lead")
-					await iwingmen.from_group(v11, 1)
-					await iwingmen.defend_player()
-				else:
-					v20 = 1
-					await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_good_on_you_son")
-					await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_the_plan_is")
-					await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_cal_youll_be_wing")
-					await iconversation.say(group.leader(v11), "", "a2_m04_dialogue_randell_greeting")
-					iobjectives.add("a2_m04_objectives_wing")
-				await iconversation.end()
-				await iutilities.make_waypoint_visible(v4, 1, "a2_m04_waypoint_smith")
-				await iutilities.make_waypoint_visible(v5, 1, "a2_m04_waypoint_westley")
-				await iutilities.make_waypoint_visible(v6, 1, "a2_m04_waypoint_harbuck")
-				isim.set_faction(v9, v18)
-				state.set_progress(v0, 1)
-				v23 = 0
-				await imusic.set_mood(3)
-			break
-	return
+				_pc = 4687
+				continue
+			else:
+				_pc = 5292
+				continue
+		elif _pc == 4687:
+			iobjectives.set_state("a2_m04_objectives_redezvous", 1)
+			await iconversation.begin()
+			await iconversation.add_response("a2_m04_text_cal_no_way", "a2_m04_dialogue_cal_no_way")
+			await iconversation.add_response("a2_m04_text_cal_no_problem", "a2_m04_dialogue_cal_no_problem")
+			v22 = await iconversation.ask(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_good_to_see_you_here")
+			if 1 == v22:
+				_pc = 4822
+				continue
+			else:
+				_pc = 4973
+				continue
+		elif _pc == 4822:
+			v20 = 0
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_only_cos_we_need_you")
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_the_plan_is")
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_cal_youll_be_leading")
+			iobjectives.add("a2_m04_objectives_lead")
+			await iwingmen.from_group(v11, 1)
+			await iwingmen.defend_player()
+			_pc = 5130
+			continue
+		elif _pc == 4973:
+			v20 = 1
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_good_on_you_son")
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_the_plan_is")
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_cal_youll_be_wing")
+			await iconversation.say(group.leader(v11), "", "a2_m04_dialogue_randell_greeting")
+			iobjectives.add("a2_m04_objectives_wing")
+			_pc = 5130
+			continue
+		elif _pc == 5130:
+			await iconversation.end()
+			await iutilities.make_waypoint_visible(v4, 1, "a2_m04_waypoint_smith")
+			await iutilities.make_waypoint_visible(v5, 1, "a2_m04_waypoint_westley")
+			await iutilities.make_waypoint_visible(v6, 1, "a2_m04_waypoint_harbuck")
+			isim.set_faction(v9, v18)
+			state.set_progress(v0, 1)
+			v23 = 0
+			await imusic.set_mood(3)
+			_pc = 5292
+			continue
+		elif _pc == 5292:
+			_pc = 8837
+			continue
+		elif _pc == 5297:
+			if 10 == v23:
+				_pc = 5310
+				continue
+			else:
+				_pc = 5360
+				continue
+		elif _pc == 5310:
+			iai.give_approach_order(iship.cast(group.leader(v10)), v4)
+			_pc = 5360
+			continue
+		elif _pc == 5360:
+			if 20 == v23:
+				_pc = 5373
+				continue
+			else:
+				_pc = 5423
+				continue
+		elif _pc == 5373:
+			iai.give_approach_order(iship.cast(group.leader(v12)), v6)
+			_pc = 5423
+			continue
+		elif _pc == 5423:
+			if 30 == v23:
+				_pc = 5436
+				continue
+			else:
+				_pc = 5517
+				continue
+		elif _pc == 5436:
+			if v20:
+				_pc = 5446
+				continue
+			else:
+				_pc = 5496
+				continue
+		elif _pc == 5446:
+			iai.give_approach_order(iship.cast(group.leader(v11)), v5)
+			_pc = 5496
+			continue
+		elif _pc == 5496:
+			state.set_progress(v0, 2)
+			_pc = 5517
+			continue
+		elif _pc == 5517:
+			_pc = 8837
+			continue
+		elif _pc == 5522:
+			if _pog_is_null(v20):
+				_pc = 5534
+				continue
+			else:
+				_pc = 5909
+				continue
+		elif _pc == 5534:
+			if 30000.0 < sim.distance_between(v9, group.leader(v13)):
+				_pc = 5581
+				continue
+			else:
+				_pc = 5909
+				continue
+		elif _pc == 5581:
+			v21 = 1
+			await iconversation.begin()
+			await iconversation.say(0, "name_cal", "a2_m04_dialogue_cal_there_they_are")
+			await iconversation.end()
+			iobjectives.set_state("a2_m04_objectives_lead", 1)
+			iobjectives.add("a2_m04_objectives_destroy")
+			sim.place_near(group.leader(v10), v9, 25000.0)
+			await iformation.goose(v10, 40.0, 1)
+			sim.place_near(group.leader(v12), v9, 25000.0)
+			await iformation.goose(v12, 40.0, 1)
+			iai.give_attack_order(v10, v13)
+			iai.give_attack_order(v12, v13)
+			state.set_progress(v0, 3)
+			iai.give_generic_attack_order(v13)
+			_pc = 5909
+			continue
+		elif _pc == 5909:
+			if v20:
+				_pc = 5919
+				continue
+			else:
+				_pc = 6400
+				continue
+		elif _pc == 5919:
+			if not (v21) and 30000.0 < sim.distance_between(group.leader(v11), group.leader(v13)):
+				_pc = 5986
+				continue
+			else:
+				_pc = 6400
+				continue
+		elif _pc == 5986:
+			v21 = 1
+			await iconversation.begin()
+			await iconversation.say(group.leader(v11), "", "a2_m04_dialogue_randell_there_they_are")
+			await iconversation.say(group.leader(v11), "", "a2_m04_dialogue_randell_be_careful_boys")
+			await iconversation.end()
+			iobjectives.set_state("a2_m04_objectives_wing", 1)
+			iobjectives.add("a2_m04_objectives_destroy")
+			sim.place_near(group.leader(v10), v9, 25000.0)
+			await iformation.goose(v10, 40.0, 1)
+			sim.place_near(group.leader(v12), v9, 25000.0)
+			await iformation.goose(v12, 40.0, 1)
+			iai.give_attack_order(v10, v13)
+			iai.give_attack_order(v12, v13)
+			iai.give_attack_order(v11, v13)
+			state.set_progress(v0, 3)
+			iai.give_generic_attack_order(v13)
+			_pc = 6400
+			continue
+		elif _pc == 6400:
+			if not (v21) and 30000.0 < sim.distance_between(group.leader(v10), group.leader(v13)):
+				_pc = 6467
+				continue
+			else:
+				_pc = 6864
+				continue
+		elif _pc == 6467:
+			v21 = 1
+			await iconversation.begin()
+			await iconversation.say(group.leader(v10), "", "a2_m04_dialogue_sheriff_there_they_are")
+			iai.give_attack_order(v10, v13)
+			sim.place_near(group.leader(v12), group.leader(v10), 15000.0)
+			await iformation.goose(v12, 40.0, 1)
+			iai.give_attack_order(v12, v13)
+			if v20:
+				_pc = 6671
+				continue
+			else:
+				_pc = 6767
+				continue
+		elif _pc == 6671:
+			iai.give_attack_order(v11, v13)
+			await iconversation.say(group.leader(v11), "", "a2_m04_dialogue_randell_you_heard_the_man")
+			iobjectives.set_state("a2_m04_objectives_wing", 1)
+			_pc = 6789
+			continue
+		elif _pc == 6767:
+			iobjectives.set_state("a2_m04_objectives_lead", 1)
+			_pc = 6789
+			continue
+		elif _pc == 6789:
+			await iconversation.end()
+			iobjectives.add("a2_m04_objectives_destroy")
+			state.set_progress(v0, 3)
+			iai.give_generic_attack_order(v13)
+			_pc = 6864
+			continue
+		elif _pc == 6864:
+			if not (v21) and 30000.0 < sim.distance_between(group.leader(v12), group.leader(v13)):
+				_pc = 6931
+				continue
+			else:
+				_pc = 7328
+				continue
+		elif _pc == 6931:
+			v21 = 1
+			await iconversation.begin()
+			await iconversation.say(group.leader(v12), "", "a2_m04_dialogue_garett_there_they_are")
+			sim.place_near(group.leader(v10), group.leader(v12), 15000.0)
+			await iformation.goose(v10, 40.0, 1)
+			iai.give_attack_order(v10, v13)
+			iai.give_attack_order(v12, v13)
+			if v20:
+				_pc = 7135
+				continue
+			else:
+				_pc = 7231
+				continue
+		elif _pc == 7135:
+			iai.give_attack_order(v11, v13)
+			await iconversation.say(group.leader(v11), "", "a2_m04_dialogue_randell_you_heard_the_man")
+			iobjectives.set_state("a2_m04_objectives_wing", 1)
+			_pc = 7253
+			continue
+		elif _pc == 7231:
+			iobjectives.set_state("a2_m04_objectives_lead", 1)
+			_pc = 7253
+			continue
+		elif _pc == 7253:
+			await iconversation.end()
+			iobjectives.add("a2_m04_objectives_destroy")
+			state.set_progress(v0, 3)
+			iai.give_generic_attack_order(v13)
+			_pc = 7328
+			continue
+		elif _pc == 7328:
+			_pc = 8837
+			continue
+		elif _pc == 7333:
+			if 5 <= group.sim_count(v13):
+				_pc = 7359
+				continue
+			else:
+				_pc = 7544
+				continue
+		elif _pc == 7359:
+			v14 = await ishipcreation.create_character_group(6, "GenericAgressive", 5, ifaction.find("Marauders"), "Random")
+			sim.place_near(group.leader(v14), v9, 250000.0)
+			await iescort.goose(v14, 100.0, 8000.0, 1)
+			iai.give_approach_order(group.leader(v14), v9)
+			state.set_progress(v0, 4)
+			_pc = 7544
+			continue
+		elif _pc == 7544:
+			_pc = 8837
+			continue
+		elif _pc == 7549:
+			if _pog_is_null(group.sim_count(v14)) or 15000.0 < sim.distance_between(group.leader(v14), v9):
+				_pc = 7617
+				continue
+			else:
+				_pc = 7700
+				continue
+		elif _pc == 7617:
+			iai.give_generic_attack_order(v14)
+			group.add_group(v13, v14)
+			group.flatten(v13)
+			state.set_progress(v0, 5)
+			_pc = 7700
+			continue
+		elif _pc == 7700:
+			_pc = 8837
+			continue
+		elif _pc == 7705:
+			_pc = 7888
+			continue
+		elif _pc == 7710:
+			debug.print_string(string.join("iAct2Mission04.WaitingFroBarBackup: There are this many ships left: ", string.from_int(group.total_sim_count(v13))))
+			debug.print_string("\n")
+			debug.print_string(string.join("iAct2Mission04.WaitingFroBarBackup: There are this many groups left: ", string.from_int(group.group_count(v13))))
+			debug.print_string("\n")
+			_pc = 7888
+			continue
+		elif _pc == 7888:
+			if 1 < group.sim_count(v13):
+				_pc = 7913
+				continue
+			else:
+				_pc = 8303
+				continue
+		elif _pc == 7913:
+			iobjectives.set_state("a2_m04_objectives_destroy", 1)
+			if v20:
+				_pc = 7945
+				continue
+			else:
+				_pc = 7961
+				continue
+		elif _pc == 7945:
+			v15 = v11
+			_pc = 7980
+			continue
+		elif _pc == 7961:
+			v15 = await iwingmen.purge_to_group()
+			_pc = 7980
+			continue
+		elif _pc == 7980:
+			if 125000.0 > sim.distance_between(v9, v8):
+				_pc = 8014
+				continue
+			else:
+				_pc = 8107
+				continue
+		elif _pc == 8014:
+			group.add_group(v15, v10)
+			group.add_group(v15, v12)
+			group.flatten(v15)
+			state.set_progress(v0, 7)
+			_pc = 8303
+			continue
+		elif _pc == 8107:
+			group.add_group(v15, v10)
+			group.add_group(v15, v12)
+			group.flatten(v15)
+			v23 = 0
+			await iconversation.begin()
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_we_did_it")
+			await iconversation.end()
+			iai.purge_orders(v15)
+			await local_2096(v15, v16)
+			state.set_progress(v0, 6)
+			_pc = 8303
+			continue
+		elif _pc == 8303:
+			_pc = 8837
+			continue
+		elif _pc == 8308:
+			if 60 >= v23:
+				_pc = 8321
+				continue
+			else:
+				_pc = 8422
+				continue
+		elif _pc == 8321:
+			await iconversation.begin()
+			await iconversation.say(0, "a2_m04_character_sheriff", "a2_m04_dialogue_sheriff_here_you_go")
+			await iconversation.end()
+			isim.set_faction(v9, v19)
+			state.set_progress(v0, 7)
+			_pc = 8422
+			continue
+		elif _pc == 8422:
+			_pc = 8837
+			continue
+		elif _pc == 8427:
+			await local_8845(v15, 1)
+			await local_8845(v16, 1)
+			await ibacktobase.allow()
+			await imissiontracker.remove_mission(self)
+			state.destroy(self)
+			await iutilities.remove_mission_restart()
+			global.set_bool("g_act2_firefrost_high_noon_complete", 1)
+			_pog_detach(_pog_spawn(local_1936.bind(v15)))
+			sim.destroy(sim.find_by_name("a2_m04_waypoint_meeting"))
+			sim.destroy(sim.find_by_name("a2_m04_waypoint_smith"))
+			sim.destroy(sim.find_by_name("a2_m04_waypoint_westley"))
+			sim.destroy(sim.find_by_name("a2_m04_waypoint_harbuck"))
+			_pc = 8837
+			continue
+		elif _pc == 8744:
+			_pc = 8837
+			continue
+		elif _pc == 8749:
+			if not _pog_is_null(state.progress(v0)):
+				_pc = 8775
+				continue
+			else:
+				_pc = 4632
+				continue
+		elif _pc == 8775:
+			if not _pog_is_null(1):
+				_pc = 8783
+				continue
+			else:
+				_pc = 5297
+				continue
+		elif _pc == 8783:
+			if not _pog_is_null(2):
+				_pc = 8792
+				continue
+			else:
+				_pc = 5522
+				continue
+		elif _pc == 8792:
+			if not _pog_is_null(3):
+				_pc = 8801
+				continue
+			else:
+				_pc = 7333
+				continue
+		elif _pc == 8801:
+			if not _pog_is_null(4):
+				_pc = 8810
+				continue
+			else:
+				_pc = 7549
+				continue
+		elif _pc == 8810:
+			if not _pog_is_null(5):
+				_pc = 8819
+				continue
+			else:
+				_pc = 7705
+				continue
+		elif _pc == 8819:
+			if not _pog_is_null(6):
+				_pc = 8828
+				continue
+			else:
+				_pc = 8308
+				continue
+		elif _pc == 8828:
+			if not _pog_is_null(7):
+				_pc = 8837
+				continue
+			else:
+				_pc = 8427
+				continue
+		elif _pc == 8837:
+			_pc = 4599
+			continue
+		elif _pc == 8842:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8845(v0, v1) -> Variant:
@@ -393,7 +883,7 @@ func local_9254(v0) -> Variant:
 	sim.place_at(group.leader(v1), v0)
 	await iformation.skirmish_line(v1, 100.0, 1)
 	await iformation.jiggle(v1, 0.0, 180.0)
-	return
+	return v1
 	return 0
 
 func local_9437(v0) -> Variant:
@@ -409,7 +899,7 @@ func local_9437(v0) -> Variant:
 	sim.place_near(group.leader(v1), v0, 500.0)
 	await iformation.random_sphere(v1, 3500.0, 1)
 	await iformation.jiggle(v1, 0.0, 180.0)
-	return
+	return v1
 	return 0
 
 func local_9732(v0) -> Variant:
@@ -444,6 +934,6 @@ func local_9732(v0) -> Variant:
 	await iformation.random_sphere(v1, 3500.0, 1)
 	await iformation.jiggle(v1, 0.0, 180.0)
 	iregion.create_l_d_s_i(v0, 20000.0)
-	return
+	return v1
 	return 0
 

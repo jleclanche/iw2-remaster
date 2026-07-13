@@ -49,11 +49,11 @@ func local_0(v0, v1, v2) -> Variant:
 	v4 = 0
 	while true:
 		v3 = inifile.numbered_string(v0, v1, v2, v4, "moo")
-		if not (_pog_eq("moo", v3)):
+		if not _pog_eq("moo", v3):
 			v4 = 1 + v4
-		if not (not (_pog_eq("moo", v3))):
+		if not (not _pog_eq("moo", v3)):
 			break
-	return
+	return v4
 	return 0
 
 func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
@@ -98,7 +98,7 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 			object.add_bool_property(v7, "is_bot", 1)
 			object.add_int_property(v7, "frag_count", 0)
 			object.add_int_property(v7, "bot_deaths", 0)
-			return
+			return v7
 		else:
 			v13 = 0
 			while v1 < v13:
@@ -130,7 +130,7 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 					v11 = 0
 				v13 = 1 + v13
 			inifile.destroy(v8)
-			return
+			return v6
 	return
 	return 0
 
@@ -182,7 +182,6 @@ func local_2018(v0, v1) -> Variant:
 			p_set.remove(v0, v3)
 		if not (not (p_set.is_empty(v0))):
 			break
-	push_error("PORT: unstructured jump to L2293")
 	return _pog_clone(v4)
 	return 0
 
@@ -205,7 +204,6 @@ func local_2303(v0, v1) -> Variant:
 				list.set_nth(v2, v6, v3)
 			v6 = -1 + v6
 		v5 = 1 + v5
-	push_error("PORT: unstructured jump to L2695")
 	return _pog_clone(v2)
 	return 0
 
@@ -227,7 +225,7 @@ func local_2705(v0) -> Variant:
 					v3 = 2
 	else:
 		v3 = 1
-	return
+	return iship.cast(list.get_nth(v1, math.random_int(1, v3) - v2))
 	return 0
 
 func local_3030(v0, v1, v2) -> Variant:
@@ -258,7 +256,7 @@ func local_3030(v0, v1, v2) -> Variant:
 			v5 = 0
 			if PogRuntime.TRACE:
 				debug.print_string("discarding likely target - only just respawned\n")
-	return
+	return v5
 	return 0
 
 func local_3530(v0, v1, v2) -> Variant:
@@ -271,7 +269,7 @@ func local_3530(v0, v1, v2) -> Variant:
 	v3 = list.from_set(isim.sims_in_radius(isim.cast(v0), v1, 1073741824))
 	v5 = list.item_count(v3)
 	if _pog_is_null(v5):
-		return
+		return 0
 	else:
 		v7 = 0
 		while v5 < v7:
@@ -281,10 +279,10 @@ func local_3530(v0, v1, v2) -> Variant:
 			else:
 				v6 = 5
 			if _pog_is_null(math.random_int(0, v6)):
-				return
+				return v4
 			v7 = 1 + v7
-		return
-	return
+		return 0
+	return 0
 	return 0
 
 func local_3851(v0) -> Variant:
@@ -331,7 +329,7 @@ func local_3851(v0) -> Variant:
 			if not _pog_is_null(sim.cast(v6)):
 				v1 = 1
 				iai.give_approach_order_advanced(v0, v6, 0.0, 0.0, 0)
-		if sim.is_dead(v0):
+		if not (sim.is_dead(v0)):
 			continue
 		return
 	return
@@ -403,7 +401,7 @@ func local_4772(v0) -> Variant:
 			if not (v1) and not _pog_is_null(sim.cast(v10)):
 				v1 = 1
 				iai.give_approach_order_advanced(v0, v10, 0.0, 0.0, 0)
-		if sim.is_dead(v0):
+		if not (sim.is_dead(v0)):
 			continue
 		return
 	return
@@ -424,11 +422,11 @@ func local_6162(v0, v1, v2) -> Variant:
 	while true:
 		v5 = iship.cast(list.get_nth(v4, v7))
 		if not (object.property_exists(v5, "poo")):
-			return
+			return v5
 		v7 = 1 + v7
 		if not (v6 < v7):
 			break
-	return
+	return 0
 	return 0
 
 func local_6446(v0) -> Variant:
@@ -496,7 +494,7 @@ func local_6446(v0) -> Variant:
 			if not (v3) and not _pog_is_null(sim.cast(v6)):
 				v3 = 1
 				iai.give_approach_order_advanced(v0, v6, 0.0, 0.0, 0)
-		if sim.is_dead(v0):
+		if not (sim.is_dead(v0)):
 			continue
 		return
 	return

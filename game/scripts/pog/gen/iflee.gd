@@ -41,7 +41,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	return
+	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
 func gangster_run_for_help() -> Variant:
@@ -108,7 +108,7 @@ func gangster_run_for_help() -> Variant:
 				debug.print_string("iFlee.GangsterCallForHelp: Starting Wait for arrival loop\n")
 			while true:
 				await _pog_wait(30)
-				if iai.is_order_complete(v10):
+				if not (iai.is_order_complete(v10)):
 					continue
 				break
 			if PogRuntime.TRACE:
@@ -195,7 +195,7 @@ func civilian_run_for_help() -> Variant:
 				debug.print_string("iFlee.CivilianCallForHelp: Starting Wait for arrival loop\n")
 			while true:
 				await _pog_wait(30)
-				if iai.is_order_complete(v14):
+				if not (iai.is_order_complete(v14)):
 					continue
 				break
 			iai.remove_order(v14)
@@ -204,7 +204,7 @@ func civilian_run_for_help() -> Variant:
 			iai.give_approach_order(v14, v11)
 			while true:
 				await _pog_wait(30)
-				if iai.is_order_complete(v14):
+				if not (iai.is_order_complete(v14)):
 					continue
 				break
 			if PogRuntime.TRACE:

@@ -109,7 +109,7 @@ func local_298() -> Variant:
 func local_427(v0, v1, v2, v3, v4, v5) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		sim.destroy(v2)
 		sim.destroy(v3)
@@ -186,7 +186,7 @@ func mission_handler() -> Variant:
 				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to get near outpost\n")
 			while true:
 				await _pog_wait(10)
-				if 500000.0 < sim.distance_between(v0, v3):
+				if 500000.0 >= sim.distance_between(v0, v3):
 					continue
 				break
 			v5 = await local_3996(v2, 5000.0)
@@ -194,7 +194,7 @@ func mission_handler() -> Variant:
 				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to get nearer outpost\n")
 			while true:
 				await _pog_wait(1)
-				if 40000.0 < sim.distance_between(v0, v3):
+				if 40000.0 >= sim.distance_between(v0, v3):
 					continue
 				break
 			await imusic.set_suite(0)
@@ -206,7 +206,7 @@ func mission_handler() -> Variant:
 				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to dock to outpost\n")
 			while true:
 				await _pog_wait(1)
-				if isim.is_docked_to_structure(v0, v2):
+				if not (isim.is_docked_to_structure(v0, v2)):
 					continue
 				break
 			iobjectives.set_state("a1_m06_objective_dock_to_base", 1)
@@ -245,7 +245,7 @@ func mission_handler() -> Variant:
 				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to capture all the gunstars.\n")
 			while true:
 				await _pog_wait(1)
-				if 6 == group.sim_count(v4):
+				if 6 != group.sim_count(v4):
 					continue
 				break
 			group.add_group(v4, v5)
@@ -355,7 +355,7 @@ func local_3996(v0, v1) -> Variant:
 	await ipilotsetup.generic_cargo_pod(v8)
 	sim.place_relative_to(v8, v0, 0.0, 0.0, -(v1))
 	sim.set_orientation_euler(v8, 0.0, -90.0, 0.0)
-	return
+	return v2
 	return 0
 
 func local_5293(v0, v1, v2, v3) -> Variant:
@@ -435,9 +435,21 @@ func local_5736(v0, v1, v2, v3, v4, v5) -> Variant:
 	return 0
 
 func local_6541(v0) -> Variant:
-	while v0 == 1:
+	if v0 == 1:
 		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_one")
-		break
+		return 0
+	if v0 == 2:
+		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_two")
+		return 0
+	if v0 == 3:
+		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_half_done")
+		return 0
+	if v0 == 4:
+		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_two_more")
+		return 0
+	if v0 == 5:
+		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_one_to_go")
+		return 0
 	return 0
 	return 0
 
@@ -448,7 +460,7 @@ func local_6768(v0, v1) -> Variant:
 	v4 = 10 / object.int_property(v0, "hit_points")
 	while true:
 		await _pog_wait(1)
-		if 15000.0 > sim.distance_between(v0, v1):
+		if 15000.0 <= sim.distance_between(v0, v1):
 			continue
 		icomms.shout(0, "name_clay", "a1_m06_dialogue_clay_minefield")
 		v3 = 0

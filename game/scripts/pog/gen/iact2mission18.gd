@@ -128,7 +128,7 @@ func local_458() -> Variant:
 func local_587(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		await iwingmen.purge()
 		isim.set_faction(iship.find_player_ship(), ifaction.find("Player"))
@@ -285,7 +285,7 @@ func mission_handler() -> Variant:
 				debug.print_string("iAct2Mission18.MissionHandler: Waiting for player to enter the hoffer's wake system.\n")
 			while true:
 				await _pog_wait(1.0)
-				if not (not (_pog_eq("map:/geog/badlands/hoffers_wake", isim.active_world()))):
+				if not (not _pog_eq("map:/geog/badlands/hoffers_wake", isim.active_world())):
 					break
 			await istation.add_reactive_exception(ihabitat.cast(v2))
 			await irangecheck.add_traffic_exception(imapentity.cast(v2))
@@ -293,7 +293,7 @@ func mission_handler() -> Variant:
 				debug.print_string("iAct2Mission18.MissionHandler: Waiting for player to enter range of rendezvous waypoint.\n")
 			while true:
 				await _pog_wait(1)
-				if 300000.0 < sim.distance_between(v0, v1):
+				if 300000.0 >= sim.distance_between(v0, v1):
 					continue
 				break
 			if PogRuntime.TRACE:
@@ -347,7 +347,7 @@ func mission_handler() -> Variant:
 				debug.print_string("Act2Mission18.MissionHandler: Waiting for player to approach rendezvous waypoint.\n")
 			while true:
 				await _pog_wait(1)
-				if 15000.0 < sim.distance_between(v0, v1):
+				if 15000.0 >= sim.distance_between(v0, v1):
 					continue
 				break
 			iobjectives.set_state("a2_m18_objectives_fly_to_rendezvous", 1)
@@ -364,11 +364,11 @@ func mission_handler() -> Variant:
 			await local_138(v48)
 			while true:
 				await _pog_wait(1)
-				if _pog_eq(v14, iship.current_target(v0)) or _pog_eq(v13, iship.current_target(v0)):
+				if not (_pog_eq(v14, iship.current_target(v0)) or _pog_eq(v13, iship.current_target(v0))):
 					continue
 				if PogRuntime.TRACE:
 					debug.print_string("iAct2_Mission18.MissionHandler: Player has an order.\n")
-				if 2 == iai.current_order_type(v0):
+				if 2 != iai.current_order_type(v0):
 					continue
 				break
 			if PogRuntime.TRACE:
@@ -391,7 +391,7 @@ func mission_handler() -> Variant:
 					_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_generic"))))
 					await local_15269(v7)
 					return
-				if 30000.0 < sim.distance_between(v14, v4) and 30000.0 < sim.distance_between(v13, v4):
+				if not (30000.0 < sim.distance_between(v14, v4) and 30000.0 < sim.distance_between(v13, v4)):
 					continue
 				break
 			await local_138(v48)
@@ -476,9 +476,9 @@ func mission_handler() -> Variant:
 						if sim.is_alive(v14) or sim.is_alive(v13):
 							await iconversation.one_liner(0, "name_clay", "a2_m18_dialogue_clay_weve_lost_a_freighter")
 							v38 = 1
-				if 1 == v38:
+				if 1 != v38:
 					continue
-				if sim.is_dead(v14) and sim.is_dead(v13):
+				if not (sim.is_dead(v14) and sim.is_dead(v13)):
 					continue
 				iobjectives.set_state("a2_m18_objectives_protect_freighters", 2)
 				await iconversation.one_liner(0, "name_clay", "a2_m18_dialogue_clay_dammit_there_goes_the_other_one")
@@ -622,7 +622,7 @@ func mission_handler() -> Variant:
 					object.add_bool_property(v0, "destroy_sim", 0)
 					_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_generic"))))
 					return
-				if isim.is_dying(v27):
+				if not (isim.is_dying(v27)):
 					continue
 				break
 			iai.give_flee_order(v21, v0)
@@ -722,7 +722,7 @@ func local_11759(v0) -> Variant:
 	iship.disrupt(v11, 9999999.0, 0)
 	iship.disrupt(v12, 9999999.0, 0)
 	iship.disrupt(v13, 9999999.0, 0)
-	return
+	return v2
 	return 0
 
 func local_13151(v0, v1, v2) -> Variant:
@@ -747,7 +747,7 @@ func local_13151(v0, v1, v2) -> Variant:
 		await iutilities.rename_sim(v5, "a2_m18_ship_escort_3")
 		await iutilities.rename_sim(v6, "a2_m18_ship_escort_4")
 	await iutilities.group_set_faction(v3, ifaction.find("League"))
-	return
+	return v3
 	return 0
 
 func local_13632(v0) -> Variant:
@@ -767,7 +767,7 @@ func local_13632(v0) -> Variant:
 		await iremotepilot.enable_remote_connection(v2, 0)
 		iship.dock(v2, v0)
 		v5 = 1 + v5
-	return
+	return v1
 	return 0
 
 func local_13893(v0, v1, v2) -> Variant:
@@ -785,33 +785,151 @@ func local_13893(v0, v1, v2) -> Variant:
 		isim.set_faction(v5, v4)
 		sim.place_near(v5, v0, v2)
 		v6 = 1 + v6
-	return
+	return v3
 	return 0
 
 func local_14140(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = 0
+	var _pc: int = 14140
 	while true:
-		await _pog_wait(1)
-		if sim.is_dead(v0):
-			return
-		if iship.attacked(v0):
+		if _pc == 14140:
+			v4 = 0
+			_pc = 14157
 			continue
-		v3 = math.random_int(0, 2)
-		if _pog_eq(v2, iship.last_attacker(v0)):
-			while _pog_is_null(v3):
-				icomms.shout(v0, "", "a2_m18_dialogue_freighter_what_the_hell_do_you_think_youre_doing")
-				break
-		else:
+		elif _pc == 14157:
+			await _pog_frame()
+			if _pog_every(14158, 1.0):
+				_pc = 14171
+				continue
+			else:
+				_pc = 14619
+				continue
+		elif _pc == 14171:
+			if sim.is_dead(v0):
+				_pc = 14194
+				continue
+			else:
+				_pc = 14199
+				continue
+		elif _pc == 14194:
+			_pc = 14625
+			continue
+		elif _pc == 14199:
+			if iship.attacked(v0):
+				_pc = 14222
+				continue
+			else:
+				_pc = 14619
+				continue
+		elif _pc == 14222:
+			v3 = math.random_int(0, 2)
+			if _pog_eq(v2, iship.last_attacker(v0)):
+				_pc = 14275
+				continue
+			else:
+				_pc = 14431
+				continue
+		elif _pc == 14275:
+			_pc = 14396
+			continue
+		elif _pc == 14280:
+			icomms.shout(v0, "", "a2_m18_dialogue_freighter_what_the_hell_do_you_think_youre_doing")
+			_pc = 14426
+			continue
+		elif _pc == 14317:
+			icomms.shout(v0, "", "a2_m18_dialogue_freighter_are_you_crazy_cease_fire")
+			_pc = 14426
+			continue
+		elif _pc == 14354:
+			icomms.shout(v0, "", "a2_m18_dialogue_freighter_dont_shoot_us_you_idiot")
+			_pc = 14426
+			continue
+		elif _pc == 14391:
+			_pc = 14426
+			continue
+		elif _pc == 14396:
+			if not _pog_is_null(v3):
+				_pc = 14409
+				continue
+			else:
+				_pc = 14280
+				continue
+		elif _pc == 14409:
+			if not _pog_is_null(1):
+				_pc = 14417
+				continue
+			else:
+				_pc = 14317
+				continue
+		elif _pc == 14417:
+			if not _pog_is_null(2):
+				_pc = 14426
+				continue
+			else:
+				_pc = 14354
+				continue
+		elif _pc == 14426:
+			_pc = 14619
+			continue
+		elif _pc == 14431:
 			v4 = 1 + v4
 			if _pog_eq(v1, v4):
+				_pc = 14460
 				continue
-			while _pog_is_null(v3):
-				icomms.shout(v0, "", "a2_m18_dialogue_freighter_help_were_under_attack")
-				break
-	return
+			else:
+				_pc = 14619
+				continue
+		elif _pc == 14460:
+			_pc = 14589
+			continue
+		elif _pc == 14473:
+			icomms.shout(v0, "", "a2_m18_dialogue_freighter_help_were_under_attack")
+			_pc = 14619
+			continue
+		elif _pc == 14510:
+			icomms.shout(v0, "", "a2_m18_dialogue_freighter_were_being_fired_upon")
+			_pc = 14619
+			continue
+		elif _pc == 14547:
+			icomms.shout(v0, "", "a2_m18_dialogue_freighter_enemy_ships_are_attacking")
+			_pc = 14619
+			continue
+		elif _pc == 14584:
+			_pc = 14619
+			continue
+		elif _pc == 14589:
+			if not _pog_is_null(v3):
+				_pc = 14602
+				continue
+			else:
+				_pc = 14473
+				continue
+		elif _pc == 14602:
+			if not _pog_is_null(1):
+				_pc = 14610
+				continue
+			else:
+				_pc = 14510
+				continue
+		elif _pc == 14610:
+			if not _pog_is_null(2):
+				_pc = 14619
+				continue
+			else:
+				_pc = 14547
+				continue
+		elif _pc == 14619:
+			_pc = 14157
+			continue
+		elif _pc == 14624:
+			_pc = 14625
+			continue
+		elif _pc == 14625:
+			return
+		else:
+			return 0
 	return 0
 
 func local_14627(v0, v1, v2, v3, v4) -> Variant:

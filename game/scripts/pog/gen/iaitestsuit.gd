@@ -236,7 +236,7 @@ func local_3584(v0, v1, v2) -> Variant:
 		group.add_sim(v3, v4)
 		sim.set_cullable(v4, 0)
 		v7 = 1 + v7
-	return
+	return v3
 	return 0
 
 func local_3961(v0, v1) -> Variant:
@@ -267,17 +267,36 @@ func local_4249() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = inifile.create("ini:/iAITestShips")
-	v4 = 2000.0
-	v5 = 3000.0
+	var _pc: int = 4249
 	while true:
-		await _pog_wait(0.5)
-		if not _pog_is_null(global.pog_int("g_setup_state")):
+		if _pc == 4249:
+			v1 = inifile.create("ini:/iAITestShips")
+			v4 = 2000.0
+			v5 = 3000.0
+			_pc = 4307
 			continue
-		v0 = iship.find_player_ship()
-		await local_3083(v2)
-		await local_3083(v3)
-		while global.pog_int("g_setup_state") == 1:
+		elif _pc == 4307:
+			await _pog_frame()
+			if _pog_every(4308, 0.5):
+				_pc = 4321
+				continue
+			else:
+				_pc = 5566
+				continue
+		elif _pc == 4321:
+			if not _pog_is_null(global.pog_int("g_setup_state")):
+				_pc = 4347
+				continue
+			else:
+				_pc = 5566
+				continue
+		elif _pc == 4347:
+			v0 = iship.find_player_ship()
+			await local_3083(v2)
+			await local_3083(v3)
+			_pc = 5498
+			continue
+		elif _pc == 4410:
 			v2 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 0, "none"), "Bert")
 			sim.set_cullable(sim.cast(v2), 0)
 			v3 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 1, "none"), "Wilf")
@@ -290,9 +309,70 @@ func local_4249() -> Variant:
 			await local_3374(v3)
 			await local_3182(v2, v0, -(v4), 0.0, v5)
 			await local_3182(v3, v0, v4, 0.0, v5)
-			break
-		global.set_int("g_setup_state", 0)
-	return
+			_pc = 5543
+			continue
+		elif _pc == 4818:
+			v2 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 0, "none"), "Bert")
+			sim.set_cullable(sim.cast(v2), 0)
+			v3 = await local_3584(v1, global.pog_int("g_amt_grp_1"), "Group 1 ")
+			global.set_handle("g_object1_handle", v2)
+			global.set_handle("g_object2_handle", v3)
+			await local_3961(v2, 1)
+			await local_3961(v3, 0)
+			await local_3374(v2)
+			await local_3374(v3)
+			await local_3182(v2, v0, -(v4), 0.0, v5)
+			await local_3182(v3, v0, v4, 0.0, v5)
+			_pc = 5543
+			continue
+		elif _pc == 5179:
+			v2 = await local_3584(v1, global.pog_int("g_amt_grp_1"), "Group 1 ")
+			v3 = await local_3584(v1, global.pog_int("g_amt_grp_2"), "Group 2 ")
+			global.set_handle("g_object1_handle", v2)
+			global.set_handle("g_object2_handle", v3)
+			await local_3961(v2, 1)
+			await local_3961(v3, 0)
+			await local_3374(v2)
+			await local_3374(v3)
+			await local_3182(v2, v0, -(v4), 0.0, v5)
+			await local_3182(v3, v0, v4, 0.0, v5)
+			_pc = 5543
+			continue
+		elif _pc == 5493:
+			_pc = 5543
+			continue
+		elif _pc == 5498:
+			if global.pog_int("g_setup_state") != 1:
+				_pc = 5525
+				continue
+			else:
+				_pc = 4410
+				continue
+		elif _pc == 5525:
+			if not _pog_is_null(2):
+				_pc = 5534
+				continue
+			else:
+				_pc = 4818
+				continue
+		elif _pc == 5534:
+			if not _pog_is_null(3):
+				_pc = 5543
+				continue
+			else:
+				_pc = 5179
+				continue
+		elif _pc == 5543:
+			global.set_int("g_setup_state", 0)
+			_pc = 5566
+			continue
+		elif _pc == 5566:
+			_pc = 4307
+			continue
+		elif _pc == 5571:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5574(v0, v1) -> Variant:
@@ -313,17 +393,64 @@ func local_5574(v0, v1) -> Variant:
 
 func local_5749() -> Variant:
 	var v0: Variant = 0
-	await iconversation.begin()
-	await iconversation.add_response("Ship v Ship", "")
-	await iconversation.add_response("Ship v Group", "")
-	await iconversation.add_response("Group v Group", "")
-	await iconversation.add_response("Exit Menu", "")
-	v0 = await iconversation.ask(0, "Martyn", "Select Ship Setup:")
-	while v0 == 1:
-		global.set_int("g_setup_state", 1)
-		break
-	await iconversation.end()
-	return
+	var _pc: int = 5749
+	while true:
+		if _pc == 5749:
+			await iconversation.begin()
+			await iconversation.add_response("Ship v Ship", "")
+			await iconversation.add_response("Ship v Group", "")
+			await iconversation.add_response("Group v Group", "")
+			await iconversation.add_response("Exit Menu", "")
+			v0 = await iconversation.ask(0, "Martyn", "Select Ship Setup:")
+			_pc = 6007
+			continue
+		elif _pc == 5914:
+			global.set_int("g_setup_state", 1)
+			_pc = 6043
+			continue
+		elif _pc == 5941:
+			global.set_int("g_setup_state", 2)
+			_pc = 6043
+			continue
+		elif _pc == 5969:
+			global.set_int("g_setup_state", 3)
+			_pc = 6043
+			continue
+		elif _pc == 5997:
+			_pc = 6043
+			continue
+		elif _pc == 6002:
+			_pc = 6043
+			continue
+		elif _pc == 6007:
+			if v0 != 1:
+				_pc = 6020
+				continue
+			else:
+				_pc = 5914
+				continue
+		elif _pc == 6020:
+			if not _pog_is_null(2):
+				_pc = 6029
+				continue
+			else:
+				_pc = 5941
+				continue
+		elif _pc == 6029:
+			if not _pog_is_null(3):
+				_pc = 6038
+				continue
+			else:
+				_pc = 5969
+				continue
+		elif _pc == 6038:
+			_pc = 5997
+			continue
+		elif _pc == 6043:
+			await iconversation.end()
+			return
+		else:
+			return 0
 	return 0
 
 func call_setup_menu() -> Variant:
@@ -338,9 +465,11 @@ func local_6076() -> Variant:
 	await iconversation.add_response("Object 2", "")
 	v0 = await iconversation.ask(0, "Martyn", "Select Object to Manipulate:")
 	await iconversation.end()
-	while v0 == 1:
-		return
-	return
+	if v0 == 1:
+		return global.handle("g_object1_handle")
+	if v0 == 2:
+		return global.handle("g_object2_handle")
+	return 0
 	return 0
 
 func local_6286() -> Variant:
@@ -352,55 +481,950 @@ func local_6286() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v2 = null
-	v6 = global.handle("g_object1_handle")
-	v7 = global.handle("g_object2_handle")
-	v5 = await local_6076()
-	await iconversation.begin()
-	await iconversation.add_response("Approach", "")
-	await iconversation.add_response("Formate", "")
-	await iconversation.add_response("Dock", "")
-	await iconversation.add_response("Attack", "")
-	await iconversation.add_response("Generic Attack", "")
-	await iconversation.add_response("Set Moving Local", "")
-	await iconversation.add_response("Set Moving LDS", "")
-	await iconversation.add_response("Leader/Ship Approach My Target", "")
-	await iconversation.add_response("Leader/Ship Capsule Jump", "")
-	await iconversation.add_response("Group Capsule Jump", "")
-	await iconversation.add_response("Check if Order Complete", "")
-	await iconversation.add_response("Remove Current Order", "")
-	await iconversation.add_response("Purge Orders", "")
-	await iconversation.add_response("Check Ship Order", "")
-	await iconversation.add_response("Check Ship Order Target", "")
-	await iconversation.add_response("Make Player Hostile", "")
-	await iconversation.add_response("Make Player Friendly", "")
-	await iconversation.add_response("Randomise number of Ships in Groups", "")
-	await iconversation.add_response("Set Ship/Group Cullable", "")
-	await iconversation.add_response("Set Ship/Group Non-Cullable", "")
-	await iconversation.add_response("Set Ship/Group Indestructable", "")
-	await iconversation.add_response("Set Ship/Group Non-Indestructable", "")
-	await iconversation.add_response("Force Dock", "")
-	await iconversation.add_response("Point At My Target", "")
-	await iconversation.add_response("Change Faction Feelings", "")
-	await iconversation.add_response("Escort", "")
-	await iconversation.add_response("Spew", "")
-	await iconversation.add_response("Dock To My Target", "")
-	await iconversation.add_response("Spin Current Target", "")
-	await iconversation.add_response("Last Attacker Of Current Target", "")
-	await iconversation.add_response("Show Score", "")
-	await iconversation.add_response("Set Ranks", "")
-	await iconversation.add_response("Flee", "")
-	await iconversation.add_response("Exit Menu", "")
-	v0 = await iconversation.ask(0, "Martyn", "Select Order:")
-	await iconversation.end()
-	while v0 == 1:
-		if _pog_eq(v6, v5):
+	var v8: Variant = 0
+	var _pc: int = 6286
+	while true:
+		if _pc == 6286:
+			v2 = null
+			v6 = global.handle("g_object1_handle")
+			v7 = global.handle("g_object2_handle")
+			v5 = await local_6076()
+			await iconversation.begin()
+			await iconversation.add_response("Approach", "")
+			await iconversation.add_response("Formate", "")
+			await iconversation.add_response("Dock", "")
+			await iconversation.add_response("Attack", "")
+			await iconversation.add_response("Generic Attack", "")
+			await iconversation.add_response("Set Moving Local", "")
+			await iconversation.add_response("Set Moving LDS", "")
+			await iconversation.add_response("Leader/Ship Approach My Target", "")
+			await iconversation.add_response("Leader/Ship Capsule Jump", "")
+			await iconversation.add_response("Group Capsule Jump", "")
+			await iconversation.add_response("Check if Order Complete", "")
+			await iconversation.add_response("Remove Current Order", "")
+			await iconversation.add_response("Purge Orders", "")
+			await iconversation.add_response("Check Ship Order", "")
+			await iconversation.add_response("Check Ship Order Target", "")
+			await iconversation.add_response("Make Player Hostile", "")
+			await iconversation.add_response("Make Player Friendly", "")
+			await iconversation.add_response("Randomise number of Ships in Groups", "")
+			await iconversation.add_response("Set Ship/Group Cullable", "")
+			await iconversation.add_response("Set Ship/Group Non-Cullable", "")
+			await iconversation.add_response("Set Ship/Group Indestructable", "")
+			await iconversation.add_response("Set Ship/Group Non-Indestructable", "")
+			await iconversation.add_response("Force Dock", "")
+			await iconversation.add_response("Point At My Target", "")
+			await iconversation.add_response("Change Faction Feelings", "")
+			await iconversation.add_response("Escort", "")
+			await iconversation.add_response("Spew", "")
+			await iconversation.add_response("Dock To My Target", "")
+			await iconversation.add_response("Spin Current Target", "")
+			await iconversation.add_response("Last Attacker Of Current Target", "")
+			await iconversation.add_response("Show Score", "")
+			await iconversation.add_response("Set Ranks", "")
+			await iconversation.add_response("Flee", "")
+			await iconversation.add_response("Exit Menu", "")
+			v0 = await iconversation.ask(0, "Martyn", "Select Order:")
+			await iconversation.end()
+			_pc = 12319
+			continue
+		elif _pc == 7356:
+			if _pog_eq(v6, v5):
+				_pc = 7372
+				continue
+			else:
+				_pc = 7401
+				continue
+		elif _pc == 7372:
 			iai.give_approach_order(v5, v7)
-		else:
+			_pc = 7425
+			continue
+		elif _pc == 7401:
 			iai.give_approach_order(v5, v6)
-		break
-	await iconversation.end()
-	return
+			_pc = 7425
+			continue
+		elif _pc == 7425:
+			_pc = 12625
+			continue
+		elif _pc == 7430:
+			if _pog_eq(v6, v5):
+				_pc = 7446
+				continue
+			else:
+				_pc = 7490
+				continue
+		elif _pc == 7446:
+			iai.give_formate_order(v5, v7, 80.0, 0.0, 0.0)
+			_pc = 7529
+			continue
+		elif _pc == 7490:
+			iai.give_formate_order(v5, v6, 80.0, 0.0, 0.0)
+			_pc = 7529
+			continue
+		elif _pc == 7529:
+			_pc = 12625
+			continue
+		elif _pc == 7534:
+			if _pog_eq(v6, v5):
+				_pc = 7550
+				continue
+			else:
+				_pc = 7579
+				continue
+		elif _pc == 7550:
+			iai.give_dock_order(v5, v7)
+			_pc = 7603
+			continue
+		elif _pc == 7579:
+			iai.give_dock_order(v5, v6)
+			_pc = 7603
+			continue
+		elif _pc == 7603:
+			_pc = 12625
+			continue
+		elif _pc == 7608:
+			if _pog_eq(v6, v5):
+				_pc = 7624
+				continue
+			else:
+				_pc = 7653
+				continue
+		elif _pc == 7624:
+			iai.give_attack_order(v5, v7)
+			_pc = 7677
+			continue
+		elif _pc == 7653:
+			iai.give_attack_order(v5, v6)
+			_pc = 7677
+			continue
+		elif _pc == 7677:
+			_pc = 12625
+			continue
+		elif _pc == 7682:
+			iai.give_generic_attack_order(v5)
+			_pc = 12625
+			continue
+		elif _pc == 7706:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 7732
+				continue
+			else:
+				_pc = 7802
+				continue
+		elif _pc == 7732:
+			iai.give_approach_order(v5, await iutilities.create_waypoint_relative_to(sim.cast(v5), 0.0, 0.0, 24000.0))
+			_pc = 7906
+			continue
+		elif _pc == 7802:
+			iai.give_approach_order(group.leader(group.cast(v5)), await iutilities.create_waypoint_relative_to(group.leader(group.cast(v5)), 0.0, 0.0, 24000.0))
+			_pc = 7906
+			continue
+		elif _pc == 7906:
+			_pc = 12625
+			continue
+		elif _pc == 7911:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 7937
+				continue
+			else:
+				_pc = 8007
+				continue
+		elif _pc == 7937:
+			iai.give_approach_order(v5, await iutilities.create_waypoint_relative_to(sim.cast(v5), 0.0, 0.0, 10000000.0))
+			_pc = 8111
+			continue
+		elif _pc == 8007:
+			iai.give_approach_order(group.leader(group.cast(v5)), await iutilities.create_waypoint_relative_to(group.leader(group.cast(v5)), 0.0, 0.0, 10000000.0))
+			_pc = 8111
+			continue
+		elif _pc == 8111:
+			_pc = 12625
+			continue
+		elif _pc == 8116:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 8142
+				continue
+			else:
+				_pc = 8192
+				continue
+		elif _pc == 8142:
+			iai.give_approach_order(v5, iship.current_target(iship.find_player_ship()))
+			_pc = 8263
+			continue
+		elif _pc == 8192:
+			iai.give_approach_order(group.leader(group.cast(v5)), iship.current_target(iship.find_player_ship()))
+			_pc = 8263
+			continue
+		elif _pc == 8263:
+			_pc = 12625
+			continue
+		elif _pc == 8268:
+			v2 = imapentity.system_lagrange_points()
+			v3 = ilagrangepoint.nearest(v2, iship.find_player_ship())
+			v4 = sim.cast(p_set.first_element(v2))
+			_pc = 8363
+			continue
+		elif _pc == 8363:
+			if _pog_eq(v4, v3):
+				_pc = 8379
+				continue
+			else:
+				_pc = 8445
+				continue
+		elif _pc == 8379:
+			p_set.remove(v2, v4)
+			v4 = sim.cast(p_set.first_element(v2))
+			_pc = 8363
+			continue
+		elif _pc == 8445:
+			if not _pog_is_null(group.cast(v5)):
+				_pc = 8471
+				continue
+			else:
+				_pc = 8623
+				continue
+		elif _pc == 8471:
+			await iconversation.one_liner(group.leader(group.cast(v5)), "", string.join("Jumping to ", object.string_property(v4, "name")))
+			iai.give_approach_order(group.leader(group.cast(v5)), v4)
+			_pc = 8731
+			continue
+		elif _pc == 8623:
+			await iconversation.one_liner(iship.cast(v5), "", string.join("Jumping to ", object.string_property(v4, "name")))
+			iai.give_approach_order(v5, v4)
+			_pc = 8731
+			continue
+		elif _pc == 8731:
+			_pc = 12625
+			continue
+		elif _pc == 8736:
+			v2 = imapentity.system_lagrange_points()
+			v3 = ilagrangepoint.nearest(v2, iship.find_player_ship())
+			v4 = sim.cast(p_set.first_element(v2))
+			_pc = 8831
+			continue
+		elif _pc == 8831:
+			if _pog_eq(v4, v3):
+				_pc = 8847
+				continue
+			else:
+				_pc = 8913
+				continue
+		elif _pc == 8847:
+			p_set.remove(v2, v4)
+			v4 = sim.cast(p_set.first_element(v2))
+			_pc = 8831
+			continue
+		elif _pc == 8913:
+			await iconversation.one_liner(v5, "", string.join("Jumping to ", object.string_property(v4, "name")))
+			if _pog_is_null(group.cast(v5)):
+				_pc = 9010
+				continue
+			else:
+				_pc = 9036
+				continue
+		elif _pc == 9010:
+			debug.error("Brett.... This ain't a group you muppet!!")
+			_pc = 9060
+			continue
+		elif _pc == 9036:
+			iai.give_approach_order(v5, v4)
+			_pc = 9060
+			continue
+		elif _pc == 9060:
+			_pc = 12625
+			continue
+		elif _pc == 9065:
+			if 1 == iai.is_order_complete(v5):
+				_pc = 9090
+				continue
+			else:
+				_pc = 9115
+				continue
+		elif _pc == 9090:
+			debug.error("Order is complete")
+			_pc = 9135
+			continue
+		elif _pc == 9115:
+			debug.error("Order is not complete")
+			_pc = 9135
+			continue
+		elif _pc == 9135:
+			_pc = 12625
+			continue
+		elif _pc == 9141:
+			iai.remove_order(v5)
+			_pc = 12625
+			continue
+		elif _pc == 9165:
+			iai.purge_orders(v5)
+			_pc = 12625
+			continue
+		elif _pc == 9189:
+			if group.cast(v5):
+				_pc = 9212
+				continue
+			else:
+				_pc = 9237
+				continue
+		elif _pc == 9212:
+			debug.error("Brett, this is a group you muppet")
+			_pc = 9445
+			continue
+		elif _pc == 9237:
+			if iai.has_order(iship.cast(v5)):
+				_pc = 9273
+				continue
+			else:
+				_pc = 9424
+				continue
+		elif _pc == 9273:
+			debug.error(string.join(string.join(string.join("The current order is ", iai.current_order_name(iship.cast(v5))), " "), string.from_int(iai.current_order_type(iship.cast(v5)))))
+			_pc = 9445
+			continue
+		elif _pc == 9424:
+			debug.error("Ship has no order!")
+			_pc = 9445
+			continue
+		elif _pc == 9445:
+			_pc = 12625
+			continue
+		elif _pc == 9450:
+			if group.cast(v5):
+				_pc = 9473
+				continue
+			else:
+				_pc = 9498
+				continue
+		elif _pc == 9473:
+			debug.error("Brett, this is a group you muppet")
+			_pc = 9629
+			continue
+		elif _pc == 9498:
+			if not _pog_is_null(iai.current_order_target(iship.cast(v5))):
+				_pc = 9537
+				continue
+			else:
+				_pc = 9608
+				continue
+		elif _pc == 9537:
+			debug.error(object.string_property(iai.current_order_target(iship.cast(v5)), "name"))
+			_pc = 9629
+			continue
+		elif _pc == 9608:
+			debug.error("Ship has no order target!")
+			_pc = 9629
+			continue
+		elif _pc == 9629:
+			_pc = 12625
+			continue
+		elif _pc == 9634:
+			if _pog_eq(v6, v5):
+				_pc = 9650
+				continue
+			else:
+				_pc = 9671
+				continue
+		elif _pc == 9650:
+			await local_5574(1, 1)
+			_pc = 9687
+			continue
+		elif _pc == 9671:
+			await local_5574(0, 1)
+			_pc = 9687
+			continue
+		elif _pc == 9687:
+			_pc = 12625
+			continue
+		elif _pc == 9692:
+			if _pog_eq(v6, v5):
+				_pc = 9708
+				continue
+			else:
+				_pc = 9729
+				continue
+		elif _pc == 9708:
+			await local_5574(1, 0)
+			_pc = 9745
+			continue
+		elif _pc == 9729:
+			await local_5574(0, 0)
+			_pc = 9745
+			continue
+		elif _pc == 9745:
+			_pc = 12625
+			continue
+		elif _pc == 9750:
+			global.set_int("g_amt_grp_1", math.random_int(2, 10))
+			global.set_int("g_amt_grp_2", math.random_int(2, 10))
+			_pc = 12625
+			continue
+		elif _pc == 9831:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 9857
+				continue
+			else:
+				_pc = 9895
+				continue
+		elif _pc == 9857:
+			sim.set_cullable(sim.cast(v5), 1)
+			_pc = 10013
+			continue
+		elif _pc == 9895:
+			v1 = 0
+			_pc = 9902
+			continue
+		elif _pc == 9902:
+			if group.sim_count(group.cast(v5)) < v1:
+				_pc = 9944
+				continue
+			else:
+				_pc = 10013
+				continue
+		elif _pc == 9944:
+			sim.set_cullable(group.nth_sim(group.cast(v5), v1), 1)
+			v1 = 1 + v1
+			_pc = 9902
+			continue
+		elif _pc == 10013:
+			_pc = 12625
+			continue
+		elif _pc == 10018:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 10044
+				continue
+			else:
+				_pc = 10082
+				continue
+		elif _pc == 10044:
+			sim.set_cullable(sim.cast(v5), 0)
+			_pc = 10200
+			continue
+		elif _pc == 10082:
+			v1 = 0
+			_pc = 10089
+			continue
+		elif _pc == 10089:
+			if group.sim_count(group.cast(v5)) < v1:
+				_pc = 10131
+				continue
+			else:
+				_pc = 10200
+				continue
+		elif _pc == 10131:
+			sim.set_cullable(group.nth_sim(group.cast(v5), v1), 0)
+			v1 = 1 + v1
+			_pc = 10089
+			continue
+		elif _pc == 10200:
+			_pc = 12625
+			continue
+		elif _pc == 10205:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 10231
+				continue
+			else:
+				_pc = 10269
+				continue
+		elif _pc == 10231:
+			isim.set_indestructable(isim.cast(v5), 1)
+			_pc = 10400
+			continue
+		elif _pc == 10269:
+			v1 = 0
+			_pc = 10276
+			continue
+		elif _pc == 10276:
+			if group.sim_count(group.cast(v5)) < v1:
+				_pc = 10318
+				continue
+			else:
+				_pc = 10400
+				continue
+		elif _pc == 10318:
+			isim.set_indestructable(isim.cast(group.nth_sim(group.cast(v5), v1)), 1)
+			v1 = 1 + v1
+			_pc = 10276
+			continue
+		elif _pc == 10400:
+			_pc = 12625
+			continue
+		elif _pc == 10405:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 10431
+				continue
+			else:
+				_pc = 10469
+				continue
+		elif _pc == 10431:
+			isim.set_indestructable(isim.cast(v5), 0)
+			_pc = 10600
+			continue
+		elif _pc == 10469:
+			v1 = 0
+			_pc = 10476
+			continue
+		elif _pc == 10476:
+			if group.sim_count(group.cast(v5)) < v1:
+				_pc = 10518
+				continue
+			else:
+				_pc = 10600
+				continue
+		elif _pc == 10518:
+			isim.set_indestructable(isim.cast(group.nth_sim(group.cast(v5), v1)), 0)
+			v1 = 1 + v1
+			_pc = 10476
+			continue
+		elif _pc == 10600:
+			_pc = 12625
+			continue
+		elif _pc == 10605:
+			if _pog_is_null(sim.cast(v7)) or _pog_is_null(sim.cast(v6)):
+				_pc = 10653
+				continue
+			else:
+				_pc = 10679
+				continue
+		elif _pc == 10653:
+			debug.error("Cannot work with groups")
+			_pc = 10800
+			continue
+		elif _pc == 10679:
+			if _pog_eq(v6, v5):
+				_pc = 10695
+				continue
+			else:
+				_pc = 10750
+				continue
+		elif _pc == 10695:
+			iship.dock(iship.cast(v6), isim.cast(v7))
+			_pc = 10800
+			continue
+		elif _pc == 10750:
+			iship.dock(iship.cast(v7), isim.cast(v6))
+			_pc = 10800
+			continue
+		elif _pc == 10800:
+			_pc = 12625
+			continue
+		elif _pc == 10805:
+			if _pog_is_null(sim.cast(v5)):
+				_pc = 10831
+				continue
+			else:
+				_pc = 10857
+				continue
+		elif _pc == 10831:
+			debug.error("Cannot work with groups")
+			_pc = 10915
+			continue
+		elif _pc == 10857:
+			sim.point_at(sim.cast(v5), iship.current_target(iship.find_player_ship()))
+			_pc = 10915
+			continue
+		elif _pc == 10915:
+			_pc = 12625
+			continue
+		elif _pc == 10920:
+			if global.pog_bool("g_faction_hatred"):
+				_pc = 10944
+				continue
+			else:
+				_pc = 10992
+				continue
+		elif _pc == 10944:
+			global.set_bool("g_faction_hatred", 0)
+			debug.error("Player no longer hated by obj1 or obj2.")
+			_pc = 11035
+			continue
+		elif _pc == 10992:
+			global.set_bool("g_faction_hatred", 1)
+			debug.error("Player now hated by obj1 and obj2.")
+			_pc = 11035
+			continue
+		elif _pc == 11035:
+			await local_2648()
+			_pc = 12625
+			continue
+		elif _pc == 11054:
+			if _pog_eq(v6, v5):
+				_pc = 11070
+				continue
+			else:
+				_pc = 11119
+				continue
+		elif _pc == 11070:
+			iai.give_escort_order(v5, v7, 80.0, 0.0, 0.0, 5000.0)
+			_pc = 11163
+			continue
+		elif _pc == 11119:
+			iai.give_escort_order(v5, v6, 80.0, 0.0, 0.0, 5000.0)
+			_pc = 11163
+			continue
+		elif _pc == 11163:
+			_pc = 12625
+			continue
+		elif _pc == 11168:
+			v8 = ihabitat.cast(iship.current_target(iship.find_player_ship()))
+			if _pog_is_null(v8):
+				_pc = 11226
+				continue
+			else:
+				_pc = 11252
+				continue
+		elif _pc == 11226:
+			debug.error("Only works with stations.")
+			_pc = 11340
+			continue
+		elif _pc == 11252:
+			if ihabitat.spew(v8, isim.cast(v5)):
+				_pc = 11293
+				continue
+			else:
+				_pc = 11319
+				continue
+		elif _pc == 11293:
+			debug.error("TRUE")
+			_pc = 11340
+			continue
+		elif _pc == 11319:
+			debug.error("FALSE")
+			_pc = 11340
+			continue
+		elif _pc == 11340:
+			if _pog_is_null(group.cast(v5)):
+				_pc = 11366
+				continue
+			else:
+				_pc = 11416
+				continue
+		elif _pc == 11366:
+			iai.give_dock_order(v5, iship.current_target(iship.find_player_ship()))
+			_pc = 11487
+			continue
+		elif _pc == 11416:
+			iai.give_dock_order(group.leader(group.cast(v5)), iship.current_target(iship.find_player_ship()))
+			_pc = 11487
+			continue
+		elif _pc == 11487:
+			_pc = 12625
+			continue
+		elif _pc == 11492:
+			iship.set_free_without_pilot(iship.cast(iship.current_target(iship.find_player_ship())), 1)
+			sim.set_angular_velocity_euler(sim.cast(iship.current_target(iship.find_player_ship())), 5.0, 5.0, 60.0)
+			_pc = 12625
+			continue
+		elif _pc == 11619:
+			debug.print_string("Last attacker was: ")
+			debug.print_handle(isim.last_attacker(isim.cast(iship.current_target(iship.find_player_ship()))))
+			debug.print_string(".  Attacked = ")
+			debug.print_int(isim.attacked(isim.cast(iship.current_target(iship.find_player_ship()))))
+			debug.print_string("\n")
+			_pc = 12625
+			continue
+		elif _pc == 11819:
+			iscore.set_kill_value("T_Interceptor", 100)
+			iscore.set_kill_value("T_Cruiser", 1000)
+			iscore.add_piracy(149, 5)
+			ihud.show_score()
+			_pc = 12625
+			continue
+		elif _pc == 11904:
+			iscore.add_skill_rating(1600, "statistics_kill_rating_level_5")
+			iscore.add_skill_rating(800, "statistics_kill_rating_level_4")
+			iscore.add_skill_rating(400, "statistics_kill_rating_level_3")
+			iscore.add_skill_rating(200, "statistics_kill_rating_level_2")
+			iscore.add_skill_rating(0, "statistics_kill_rating_level_1")
+			_pc = 12625
+			continue
+		elif _pc == 12027:
+			if _pog_eq(v6, v5):
+				_pc = 12043
+				continue
+			else:
+				_pc = 12176
+				continue
+		elif _pc == 12043:
+			if group.cast(v7):
+				_pc = 12066
+				continue
+			else:
+				_pc = 12134
+				continue
+		elif _pc == 12066:
+			iai.give_flee_order(v6, isim.cast(group.leader(group.cast(v7))))
+			_pc = 12171
+			continue
+		elif _pc == 12134:
+			iai.give_flee_order(v6, isim.cast(v7))
+			_pc = 12171
+			continue
+		elif _pc == 12171:
+			_pc = 12304
+			continue
+		elif _pc == 12176:
+			if group.cast(v6):
+				_pc = 12199
+				continue
+			else:
+				_pc = 12267
+				continue
+		elif _pc == 12199:
+			iai.give_flee_order(v7, isim.cast(group.leader(group.cast(v6))))
+			_pc = 12304
+			continue
+		elif _pc == 12267:
+			iai.give_flee_order(v7, isim.cast(v6))
+			_pc = 12304
+			continue
+		elif _pc == 12304:
+			_pc = 12625
+			continue
+		elif _pc == 12309:
+			_pc = 12625
+			continue
+		elif _pc == 12314:
+			_pc = 12625
+			continue
+		elif _pc == 12319:
+			if v0 != 1:
+				_pc = 12332
+				continue
+			else:
+				_pc = 7356
+				continue
+		elif _pc == 12332:
+			if not _pog_is_null(2):
+				_pc = 12341
+				continue
+			else:
+				_pc = 7430
+				continue
+		elif _pc == 12341:
+			if not _pog_is_null(3):
+				_pc = 12350
+				continue
+			else:
+				_pc = 7534
+				continue
+		elif _pc == 12350:
+			if not _pog_is_null(4):
+				_pc = 12359
+				continue
+			else:
+				_pc = 7608
+				continue
+		elif _pc == 12359:
+			if not _pog_is_null(5):
+				_pc = 12368
+				continue
+			else:
+				_pc = 7682
+				continue
+		elif _pc == 12368:
+			if not _pog_is_null(6):
+				_pc = 12377
+				continue
+			else:
+				_pc = 7706
+				continue
+		elif _pc == 12377:
+			if not _pog_is_null(7):
+				_pc = 12386
+				continue
+			else:
+				_pc = 7911
+				continue
+		elif _pc == 12386:
+			if not _pog_is_null(8):
+				_pc = 12395
+				continue
+			else:
+				_pc = 8116
+				continue
+		elif _pc == 12395:
+			if not _pog_is_null(9):
+				_pc = 12404
+				continue
+			else:
+				_pc = 8268
+				continue
+		elif _pc == 12404:
+			if not _pog_is_null(10):
+				_pc = 12413
+				continue
+			else:
+				_pc = 8736
+				continue
+		elif _pc == 12413:
+			if not _pog_is_null(11):
+				_pc = 12422
+				continue
+			else:
+				_pc = 9065
+				continue
+		elif _pc == 12422:
+			if not _pog_is_null(12):
+				_pc = 12431
+				continue
+			else:
+				_pc = 9141
+				continue
+		elif _pc == 12431:
+			if not _pog_is_null(13):
+				_pc = 12440
+				continue
+			else:
+				_pc = 9165
+				continue
+		elif _pc == 12440:
+			if not _pog_is_null(14):
+				_pc = 12449
+				continue
+			else:
+				_pc = 9189
+				continue
+		elif _pc == 12449:
+			if not _pog_is_null(15):
+				_pc = 12458
+				continue
+			else:
+				_pc = 9450
+				continue
+		elif _pc == 12458:
+			if not _pog_is_null(16):
+				_pc = 12467
+				continue
+			else:
+				_pc = 9634
+				continue
+		elif _pc == 12467:
+			if not _pog_is_null(17):
+				_pc = 12476
+				continue
+			else:
+				_pc = 9692
+				continue
+		elif _pc == 12476:
+			if not _pog_is_null(18):
+				_pc = 12485
+				continue
+			else:
+				_pc = 9750
+				continue
+		elif _pc == 12485:
+			if not _pog_is_null(19):
+				_pc = 12494
+				continue
+			else:
+				_pc = 9831
+				continue
+		elif _pc == 12494:
+			if not _pog_is_null(20):
+				_pc = 12503
+				continue
+			else:
+				_pc = 10018
+				continue
+		elif _pc == 12503:
+			if not _pog_is_null(21):
+				_pc = 12512
+				continue
+			else:
+				_pc = 10205
+				continue
+		elif _pc == 12512:
+			if not _pog_is_null(22):
+				_pc = 12521
+				continue
+			else:
+				_pc = 10405
+				continue
+		elif _pc == 12521:
+			if not _pog_is_null(23):
+				_pc = 12530
+				continue
+			else:
+				_pc = 10605
+				continue
+		elif _pc == 12530:
+			if not _pog_is_null(24):
+				_pc = 12539
+				continue
+			else:
+				_pc = 10805
+				continue
+		elif _pc == 12539:
+			if not _pog_is_null(25):
+				_pc = 12548
+				continue
+			else:
+				_pc = 10920
+				continue
+		elif _pc == 12548:
+			if not _pog_is_null(26):
+				_pc = 12557
+				continue
+			else:
+				_pc = 11054
+				continue
+		elif _pc == 12557:
+			if not _pog_is_null(27):
+				_pc = 12566
+				continue
+			else:
+				_pc = 11168
+				continue
+		elif _pc == 12566:
+			if not _pog_is_null(28):
+				_pc = 12575
+				continue
+			else:
+				_pc = 11340
+				continue
+		elif _pc == 12575:
+			if not _pog_is_null(29):
+				_pc = 12584
+				continue
+			else:
+				_pc = 11492
+				continue
+		elif _pc == 12584:
+			if not _pog_is_null(30):
+				_pc = 12593
+				continue
+			else:
+				_pc = 11619
+				continue
+		elif _pc == 12593:
+			if not _pog_is_null(31):
+				_pc = 12602
+				continue
+			else:
+				_pc = 11819
+				continue
+		elif _pc == 12602:
+			if not _pog_is_null(32):
+				_pc = 12611
+				continue
+			else:
+				_pc = 11904
+				continue
+		elif _pc == 12611:
+			if not _pog_is_null(33):
+				_pc = 12620
+				continue
+			else:
+				_pc = 12027
+				continue
+		elif _pc == 12620:
+			_pc = 12309
+			continue
+		elif _pc == 12625:
+			await iconversation.end()
+			return
+		else:
+			return 0
 	return 0
 
 func call_order_menu() -> Variant:

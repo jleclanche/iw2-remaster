@@ -159,7 +159,14 @@ func attach_way_point_to_group_leader(v0, v1) -> Variant:
 	return 0
 
 func watch_sims_and_group_combat() -> Variant:
-	return
+	var v0: Variant = 0
+	var v1: Variant = 0
+	var v2: Variant = 0
+	var v3: Variant = 0
+	var v4: Variant = 0
+	var v5: Variant = 0
+	var v6: Variant = 0
+	return await watch_group_combat_task(v0, v1, v2, v3, v4, 0, v5, v6)
 	return 0
 
 func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
@@ -176,17 +183,50 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 	var v18: Variant = 0
 	var v19: Variant = 0
 	var v20: Variant = 0
-	v8 = await local_6108(4, group.group_count(v2))
-	v18 = 1
-	if PogRuntime.TRACE:
-		if _pog_is_null(group.group_count(v2)):
+	var _pc: int = 1957
+	while true:
+		if _pc == 1957:
+			v8 = await local_6108(4, group.group_count(v2))
+			v18 = 1
+			_pc = 2059
+			continue
+		elif _pc == 2013:
+			if _pog_is_null(group.group_count(v2)):
+				_pc = 2038
+				continue
+			else:
+				_pc = 2059
+				continue
+		elif _pc == 2038:
 			debug.print_string("ABB_Common.WatchSimsAndGroupCombat ERROR! combat group contains no subgroups\n")
-	if 2048 & v6:
-		v9 = 3
-	else:
-		v9 = 0
-	if PogRuntime.TRACE:
-		if not (1024 & v6):
+			_pc = 2059
+			continue
+		elif _pc == 2059:
+			if 2048 & v6:
+				_pc = 2073
+				continue
+			else:
+				_pc = 2086
+				continue
+		elif _pc == 2073:
+			v9 = 3
+			_pc = 2093
+			continue
+		elif _pc == 2086:
+			v9 = 0
+			_pc = 2093
+			continue
+		elif _pc == 2093:
+			_pc = 2664
+			continue
+		elif _pc == 2098:
+			if not (1024 & v6):
+				_pc = 2113
+				continue
+			else:
+				_pc = 2664
+				continue
+		elif _pc == 2113:
 			debug.print_string("watching sim '")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("' relative to sim '")
@@ -195,124 +235,611 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			debug.print_int(v8)
 			debug.print_string(" additional groups, with options: ")
 			if 256 & v6:
-				debug.print_string("LSYS ")
+				_pc = 2310
+				continue
+			else:
+				_pc = 2331
+				continue
+		elif _pc == 2310:
+			debug.print_string("LSYS ")
+			_pc = 2331
+			continue
+		elif _pc == 2331:
 			if 512 & v6:
-				debug.print_string("ESYS ")
+				_pc = 2345
+				continue
+			else:
+				_pc = 2366
+				continue
+		elif _pc == 2345:
+			debug.print_string("ESYS ")
+			_pc = 2366
+			continue
+		elif _pc == 2366:
 			if 16 & v6:
-				debug.print_string("ECLO ")
+				_pc = 2379
+				continue
+			else:
+				_pc = 2400
+				continue
+		elif _pc == 2379:
+			debug.print_string("ECLO ")
+			_pc = 2400
+			continue
+		elif _pc == 2400:
 			if 64 & v6:
-				debug.print_string("ELON ")
+				_pc = 2413
+				continue
+			else:
+				_pc = 2434
+				continue
+		elif _pc == 2413:
+			debug.print_string("ELON ")
+			_pc = 2434
+			continue
+		elif _pc == 2434:
 			if 32 & v6:
-				debug.print_string("LCLO ")
+				_pc = 2447
+				continue
+			else:
+				_pc = 2468
+				continue
+		elif _pc == 2447:
+			debug.print_string("LCLO ")
+			_pc = 2468
+			continue
+		elif _pc == 2468:
 			if 128 & v6:
-				debug.print_string("LLON ")
+				_pc = 2482
+				continue
+			else:
+				_pc = 2503
+				continue
+		elif _pc == 2482:
+			debug.print_string("LLON ")
+			_pc = 2503
+			continue
+		elif _pc == 2503:
 			if 4096 & v6:
-				debug.print_string("SGDE ")
+				_pc = 2517
+				continue
+			else:
+				_pc = 2538
+				continue
+		elif _pc == 2517:
+			debug.print_string("SGDE ")
+			_pc = 2538
+			continue
+		elif _pc == 2538:
 			if 8192 & v6:
-				debug.print_string("SGSD ")
+				_pc = 2552
+				continue
+			else:
+				_pc = 2573
+				continue
+		elif _pc == 2552:
+			debug.print_string("SGSD ")
+			_pc = 2573
+			continue
+		elif _pc == 2573:
 			if 16384 & v6:
-				debug.print_string("SGA-LCLO ")
+				_pc = 2587
+				continue
+			else:
+				_pc = 2608
+				continue
+		elif _pc == 2587:
+			debug.print_string("SGA-LCLO ")
+			_pc = 2608
+			continue
+		elif _pc == 2608:
 			if 1024 & v6:
-				debug.print_string("Don't Wait ")
+				_pc = 2622
+				continue
+			else:
+				_pc = 2643
+				continue
+		elif _pc == 2622:
+			debug.print_string("Don't Wait ")
+			_pc = 2643
+			continue
+		elif _pc == 2643:
 			debug.print_string("\n")
-	while v8 == 4:
-		v10 = group.nth_group(v2, 4 - v8)
-		v14 = await recursive_sim_count(v10)
-		v11 = group.nth_group(v2, 3 - v8)
-		v15 = await recursive_sim_count(v11)
-		v12 = group.nth_group(v2, 2 - v8)
-		v16 = await recursive_sim_count(v12)
-		v13 = group.nth_group(v2, 1 - v8)
-		v17 = await recursive_sim_count(v13)
-		break
-	while true:
-		if 12288 & v6:
-			while v8 == 4:
-				v19 = await recursive_sim_count(v10)
-				if _pog_is_null(v19) and 4096 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-					return
-				if not _pog_eq(v19, v14) and 8192 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-					return
-				v19 = await recursive_sim_count(v11)
-				if _pog_is_null(v19) and 4096 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-					return
-				if not _pog_eq(v19, v15) and 8192 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-					return
-				v19 = await recursive_sim_count(v12)
-				if _pog_is_null(v19) and 4096 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-					return
-				if not _pog_eq(v19, v16) and 8192 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-					return
-				v19 = await recursive_sim_count(v13)
-				if _pog_is_null(v19) and 4096 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-					return
-				if not _pog_eq(v19, v17) and 8192 & v6:
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-					return
-				break
-		if 16384 & v6:
-			while v8 == 4:
-				if not (await iutilities.near_to_group(v1, v10, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-					return
-				if not (await iutilities.near_to_group(v1, v11, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-					return
-				if not (await iutilities.near_to_group(v1, v12, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-					return
-				if not (await iutilities.near_to_group(v1, v13, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-					return
-				break
-		if 32768 & v6:
-			while v8 == 4:
-				if not (await iutilities.far_from_group(v1, v10, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-					return
-				if not (await iutilities.far_from_group(v1, v11, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-					return
-				if not (await iutilities.far_from_group(v1, v12, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-					return
-				if not (await iutilities.far_from_group(v1, v13, v3, 1)):
-					if PogRuntime.TRACE:
-						debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-					return
-				break
-		if 65536 & v6:
+			_pc = 2664
+			continue
+		elif _pc == 2664:
+			_pc = 2897
+			continue
+		elif _pc == 2669:
+			v10 = group.nth_group(v2, 4 - v8)
+			v14 = await recursive_sim_count(v10)
+			_pc = 2725
+			continue
+		elif _pc == 2725:
+			v11 = group.nth_group(v2, 3 - v8)
+			v15 = await recursive_sim_count(v11)
+			_pc = 2781
+			continue
+		elif _pc == 2781:
+			v12 = group.nth_group(v2, 2 - v8)
+			v16 = await recursive_sim_count(v12)
+			_pc = 2837
+			continue
+		elif _pc == 2837:
+			v13 = group.nth_group(v2, 1 - v8)
+			v17 = await recursive_sim_count(v13)
+			_pc = 2937
+			continue
+		elif _pc == 2897:
+			if v8 != 4:
+				_pc = 2911
+				continue
+			else:
+				_pc = 2669
+				continue
+		elif _pc == 2911:
+			if not _pog_is_null(3):
+				_pc = 2920
+				continue
+			else:
+				_pc = 2725
+				continue
+		elif _pc == 2920:
+			if not _pog_is_null(2):
+				_pc = 2929
+				continue
+			else:
+				_pc = 2781
+				continue
+		elif _pc == 2929:
+			if not _pog_is_null(1):
+				_pc = 2937
+				continue
+			else:
+				_pc = 2837
+				continue
+		elif _pc == 2937:
+			if 12288 & v6:
+				_pc = 2951
+				continue
+			else:
+				_pc = 3679
+				continue
+		elif _pc == 2951:
+			_pc = 3639
+			continue
+		elif _pc == 2956:
+			v19 = await recursive_sim_count(v10)
+			if _pog_is_null(v19) and 4096 & v6:
+				_pc = 3002
+				continue
+			else:
+				_pc = 3051
+				continue
+		elif _pc == 3002:
+			_pc = 3028
+			continue
+		elif _pc == 3007:
+			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+			_pc = 3028
+			continue
+		elif _pc == 3028:
+			_pc = 4661
+			continue
+		elif _pc == 3051:
+			if not _pog_eq(v19, v14) and 8192 & v6:
+				_pc = 3077
+				continue
+			else:
+				_pc = 3126
+				continue
+		elif _pc == 3077:
+			_pc = 3103
+			continue
+		elif _pc == 3082:
+			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+			_pc = 3103
+			continue
+		elif _pc == 3103:
+			_pc = 4661
+			continue
+		elif _pc == 3126:
+			v19 = await recursive_sim_count(v11)
+			if _pog_is_null(v19) and 4096 & v6:
+				_pc = 3172
+				continue
+			else:
+				_pc = 3221
+				continue
+		elif _pc == 3172:
+			_pc = 3198
+			continue
+		elif _pc == 3177:
+			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+			_pc = 3198
+			continue
+		elif _pc == 3198:
+			_pc = 4661
+			continue
+		elif _pc == 3221:
+			if not _pog_eq(v19, v15) and 8192 & v6:
+				_pc = 3247
+				continue
+			else:
+				_pc = 3296
+				continue
+		elif _pc == 3247:
+			_pc = 3273
+			continue
+		elif _pc == 3252:
+			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+			_pc = 3273
+			continue
+		elif _pc == 3273:
+			_pc = 4661
+			continue
+		elif _pc == 3296:
+			v19 = await recursive_sim_count(v12)
+			if _pog_is_null(v19) and 4096 & v6:
+				_pc = 3342
+				continue
+			else:
+				_pc = 3391
+				continue
+		elif _pc == 3342:
+			_pc = 3368
+			continue
+		elif _pc == 3347:
+			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+			_pc = 3368
+			continue
+		elif _pc == 3368:
+			_pc = 4661
+			continue
+		elif _pc == 3391:
+			if not _pog_eq(v19, v16) and 8192 & v6:
+				_pc = 3417
+				continue
+			else:
+				_pc = 3466
+				continue
+		elif _pc == 3417:
+			_pc = 3443
+			continue
+		elif _pc == 3422:
+			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+			_pc = 3443
+			continue
+		elif _pc == 3443:
+			_pc = 4661
+			continue
+		elif _pc == 3466:
+			v19 = await recursive_sim_count(v13)
+			if _pog_is_null(v19) and 4096 & v6:
+				_pc = 3512
+				continue
+			else:
+				_pc = 3560
+				continue
+		elif _pc == 3512:
+			_pc = 3538
+			continue
+		elif _pc == 3517:
+			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+			_pc = 3538
+			continue
+		elif _pc == 3538:
+			_pc = 4661
+			continue
+		elif _pc == 3560:
+			if not _pog_eq(v19, v17) and 8192 & v6:
+				_pc = 3586
+				continue
+			else:
+				_pc = 3634
+				continue
+		elif _pc == 3586:
+			_pc = 3612
+			continue
+		elif _pc == 3591:
+			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+			_pc = 3612
+			continue
+		elif _pc == 3612:
+			_pc = 4661
+			continue
+		elif _pc == 3634:
+			_pc = 3679
+			continue
+		elif _pc == 3639:
+			if v8 != 4:
+				_pc = 3653
+				continue
+			else:
+				_pc = 2956
+				continue
+		elif _pc == 3653:
+			if not _pog_is_null(3):
+				_pc = 3662
+				continue
+			else:
+				_pc = 3126
+				continue
+		elif _pc == 3662:
+			if not _pog_is_null(2):
+				_pc = 3671
+				continue
+			else:
+				_pc = 3296
+				continue
+		elif _pc == 3671:
+			if not _pog_is_null(1):
+				_pc = 3679
+				continue
+			else:
+				_pc = 3466
+				continue
+		elif _pc == 3679:
+			if 16384 & v6:
+				_pc = 3693
+				continue
+			else:
+				_pc = 4078
+				continue
+		elif _pc == 3693:
+			_pc = 4038
+			continue
+		elif _pc == 3698:
+			if not (await iutilities.near_to_group(v1, v10, v3, 1)):
+				_pc = 3733
+				continue
+			else:
+				_pc = 3782
+				continue
+		elif _pc == 3733:
+			_pc = 3759
+			continue
+		elif _pc == 3738:
+			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+			_pc = 3759
+			continue
+		elif _pc == 3759:
+			_pc = 4661
+			continue
+		elif _pc == 3782:
+			if not (await iutilities.near_to_group(v1, v11, v3, 1)):
+				_pc = 3817
+				continue
+			else:
+				_pc = 3866
+				continue
+		elif _pc == 3817:
+			_pc = 3843
+			continue
+		elif _pc == 3822:
+			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+			_pc = 3843
+			continue
+		elif _pc == 3843:
+			_pc = 4661
+			continue
+		elif _pc == 3866:
+			if not (await iutilities.near_to_group(v1, v12, v3, 1)):
+				_pc = 3901
+				continue
+			else:
+				_pc = 3950
+				continue
+		elif _pc == 3901:
+			_pc = 3927
+			continue
+		elif _pc == 3906:
+			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+			_pc = 3927
+			continue
+		elif _pc == 3927:
+			_pc = 4661
+			continue
+		elif _pc == 3950:
+			if not (await iutilities.near_to_group(v1, v13, v3, 1)):
+				_pc = 3985
+				continue
+			else:
+				_pc = 4033
+				continue
+		elif _pc == 3985:
+			_pc = 4011
+			continue
+		elif _pc == 3990:
+			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+			_pc = 4011
+			continue
+		elif _pc == 4011:
+			_pc = 4661
+			continue
+		elif _pc == 4033:
+			_pc = 4078
+			continue
+		elif _pc == 4038:
+			if v8 != 4:
+				_pc = 4052
+				continue
+			else:
+				_pc = 3698
+				continue
+		elif _pc == 4052:
+			if not _pog_is_null(3):
+				_pc = 4061
+				continue
+			else:
+				_pc = 3782
+				continue
+		elif _pc == 4061:
+			if not _pog_is_null(2):
+				_pc = 4070
+				continue
+			else:
+				_pc = 3866
+				continue
+		elif _pc == 4070:
+			if not _pog_is_null(1):
+				_pc = 4078
+				continue
+			else:
+				_pc = 3950
+				continue
+		elif _pc == 4078:
+			if 32768 & v6:
+				_pc = 4094
+				continue
+			else:
+				_pc = 4487
+				continue
+		elif _pc == 4094:
+			_pc = 4447
+			continue
+		elif _pc == 4099:
+			if not (await iutilities.far_from_group(v1, v10, v3, 1)):
+				_pc = 4134
+				continue
+			else:
+				_pc = 4185
+				continue
+		elif _pc == 4134:
+			_pc = 4160
+			continue
+		elif _pc == 4139:
+			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+			_pc = 4160
+			continue
+		elif _pc == 4160:
+			_pc = 4661
+			continue
+		elif _pc == 4185:
+			if not (await iutilities.far_from_group(v1, v11, v3, 1)):
+				_pc = 4220
+				continue
+			else:
+				_pc = 4271
+				continue
+		elif _pc == 4220:
+			_pc = 4246
+			continue
+		elif _pc == 4225:
+			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+			_pc = 4246
+			continue
+		elif _pc == 4246:
+			_pc = 4661
+			continue
+		elif _pc == 4271:
+			if not (await iutilities.far_from_group(v1, v12, v3, 1)):
+				_pc = 4306
+				continue
+			else:
+				_pc = 4357
+				continue
+		elif _pc == 4306:
+			_pc = 4332
+			continue
+		elif _pc == 4311:
+			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+			_pc = 4332
+			continue
+		elif _pc == 4332:
+			_pc = 4661
+			continue
+		elif _pc == 4357:
+			if not (await iutilities.far_from_group(v1, v13, v3, 1)):
+				_pc = 4392
+				continue
+			else:
+				_pc = 4442
+				continue
+		elif _pc == 4392:
+			_pc = 4418
+			continue
+		elif _pc == 4397:
+			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+			_pc = 4418
+			continue
+		elif _pc == 4418:
+			_pc = 4661
+			continue
+		elif _pc == 4442:
+			_pc = 4487
+			continue
+		elif _pc == 4447:
+			if v8 != 4:
+				_pc = 4461
+				continue
+			else:
+				_pc = 4099
+				continue
+		elif _pc == 4461:
+			if not _pog_is_null(3):
+				_pc = 4470
+				continue
+			else:
+				_pc = 4185
+				continue
+		elif _pc == 4470:
+			if not _pog_is_null(2):
+				_pc = 4479
+				continue
+			else:
+				_pc = 4271
+				continue
+		elif _pc == 4479:
+			if not _pog_is_null(1):
+				_pc = 4487
+				continue
+			else:
+				_pc = 4357
+				continue
+		elif _pc == 4487:
+			if 65536 & v6:
+				_pc = 4503
+				continue
+			else:
+				_pc = 4536
+				continue
+		elif _pc == 4503:
 			if (1 - _pog_is_running(v5)):
-				return
-		v20 = await watch_sims_movement(v0, v1, v3, v4, 1024 | v6, 0.0)
-		if 1024 != v20:
+				_pc = 4526
+				continue
+			else:
+				_pc = 4536
+				continue
+		elif _pc == 4526:
+			_pc = 4661
+			continue
+		elif _pc == 4536:
+			v20 = await watch_sims_movement(v0, v1, v3, v4, 1024 | v6, 0.0)
+			if 1024 != v20:
+				_pc = 4603
+				continue
+			else:
+				_pc = 4613
+				continue
+		elif _pc == 4603:
+			_pc = 4661
+			continue
+		elif _pc == 4613:
+			await _pog_wait(v7)
+			if not (1):
+				_pc = 4651
+				continue
+			else:
+				_pc = 2937
+				continue
+		elif _pc == 4651:
+			_pc = 4661
+			continue
+		elif _pc == 4661:
 			return
-		await _pog_wait(v7)
-		if not (1):
-			break
-	return
+		else:
+			return 0
 	return 0
 
 func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
@@ -347,7 +874,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 		if not (isim.cast(v1)) or not (isim.cast(v0)):
 			if PogRuntime.TRACE:
 				debug.print_string("Watch result : WS_Destroyed\n")
-			return
+			return 0
 		if 768 & v4:
 			v7 = isim.world_name(v0)
 			v8 = isim.world_name(v1)
@@ -355,46 +882,46 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 				await _pog_wait(1.0)
 				continue
 			if 256 & v4:
-				if not (_pog_eq(v8, v7)):
+				if not _pog_eq(v8, v7):
 					if PogRuntime.TRACE:
 						debug.print_string("Watch result : WS_Leave_Same_System\n")
-					return
+					return 256
 			if 512 & v4:
 				if _pog_eq(v8, v7):
 					if PogRuntime.TRACE:
 						debug.print_string("Watch result : WS_Enter_Same_System\n")
-					return
+					return 512
 		if 176 & v4:
 			v6 = sim.distance_between(v0, v1)
 		if 16 & v4:
 			if v2 < v6:
 				if PogRuntime.TRACE:
 					debug.print_string("Watch result : WS_Enter_Close_Range\n")
-				return
+				return 16
 		if 64 & v4:
 			if v3 < v6:
 				if PogRuntime.TRACE:
 					debug.print_string("Watch result : WS_Enter_Long_Range\n")
-				return
+				return 64
 		if 128 & v4:
 			if v3 > v6:
 				if PogRuntime.TRACE:
 					debug.print_string("Watch result : WS_Leave_Long_Range\n")
-				return
+				return 128
 		if 32 & v4:
 			if v2 > v6:
 				if PogRuntime.TRACE:
 					debug.print_string("Watch result : WS_Leave_Close_Range\n")
-				return
+				return 32
 		if 1024 & v4:
 			if PogRuntime.TRACE:
 				if not (1024 & v4):
 					debug.print_string("Watch result : WS_Nothing\n")
-			return
+			return 1024
 		await _pog_wait(v5)
 		if not (1):
 			break
-	return
+	return 1024
 	return 0
 
 func recursive_sim_count(v0) -> Variant:
@@ -410,7 +937,7 @@ func recursive_sim_count(v0) -> Variant:
 	while v2 < v1:
 		v3 = await recursive_sim_count(group.nth_group(v0, v1)) + v3
 		v1 = 1 + v1
-	return
+	return v3
 	return 0
 
 func local_6108(v0, v1) -> Variant:

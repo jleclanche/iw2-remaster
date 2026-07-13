@@ -130,7 +130,7 @@ func local_498() -> Variant:
 func local_642(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16) -> Variant:
 	while true:
 		await _pog_wait(0.1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		global.create_bool("g_a2_m1_restart", 2, 1)
 		sim.destroy(v2)
@@ -213,52 +213,83 @@ func mission_handler() -> Variant:
 	var v50: Variant = 0
 	var v51: Variant = 0
 	var v52: Variant = 0
-	v1 = iship.find_player_ship()
-	v7 = imapentity.find_by_name("Haven Station")
-	v8 = imapentity.find_by_name("Haven Station Construction Yard")
-	v9 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
-	v11 = imapentity.find_by_name("Corinthia L-Point")
-	v13 = imapentity.find_by_name("Touchdown L-Point")
-	v14 = ifaction.find("League")
-	v15 = ifaction.find("Player")
-	v16 = ifaction.find("Stepson")
-	v17 = ifaction.find("Independent")
-	v21 = group.create()
-	v22 = group.create()
-	v29 = null
-	v35 = 0
-	v36 = 500.0
-	v37 = 500.0
-	v38 = -250.0
-	v39 = 0
-	v40 = null
-	v41 = 1
-	v42 = 0
-	v43 = 1
-	v44 = 0
-	v45 = 1
-	v46 = 1
-	v47 = 0
-	v0 = state.find(self)
-	if _pog_is_null(v0):
-		v0 = state.create(self, 0)
-	await local_254(v0)
-	await imissiontracker.add_mission(self, 2, 1)
-	await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Haven Station", "map:/geog/badlands/hoffers_wake"))
-	await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Haven Station Construction Yard", "map:/geog/badlands/hoffers_wake"))
-	object.add_int_property(v7, "reactive_exception", 1)
-	v10 = isim.cast(await iutilities.create_waypoint_at(v7))
-	if PogRuntime.TRACE:
-		pass
-	text.add("csv:/text/act_2/act2_mission01")
-	text.add("csv:/text/act_2/act2_mission01_addendum")
-	text.add("csv:/text/act_2/act2_mission01_addendum_2")
-	text.add("csv:/text/act_2/act2_mission05")
-	text.add("csv:/text/act_2/act2_mission25")
-	if _pog_is_null(state.progress(v0)):
-		if not (global.exists("g_a2_m1_restart")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission01: Playing cut-scene\n")
+	var v53: Variant = 0
+	var _pc: int = 1163
+	while true:
+		if _pc == 1163:
+			v1 = iship.find_player_ship()
+			v7 = imapentity.find_by_name("Haven Station")
+			v8 = imapentity.find_by_name("Haven Station Construction Yard")
+			v9 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
+			v11 = imapentity.find_by_name("Corinthia L-Point")
+			v13 = imapentity.find_by_name("Touchdown L-Point")
+			v14 = ifaction.find("League")
+			v15 = ifaction.find("Player")
+			v16 = ifaction.find("Stepson")
+			v17 = ifaction.find("Independent")
+			v21 = group.create()
+			v22 = group.create()
+			v29 = null
+			v35 = 0
+			v36 = 500.0
+			v37 = 500.0
+			v38 = -250.0
+			v39 = 0
+			v40 = null
+			v41 = 1
+			v42 = 0
+			v43 = 1
+			v44 = 0
+			v45 = 1
+			v46 = 1
+			v47 = 0
+			v0 = state.find(self)
+			if _pog_is_null(v0):
+				_pc = 1620
+				continue
+			else:
+				_pc = 1653
+				continue
+		elif _pc == 1620:
+			v0 = state.create(self, 0)
+			_pc = 1653
+			continue
+		elif _pc == 1653:
+			await local_254(v0)
+			await imissiontracker.add_mission(self, 2, 1)
+			await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Haven Station", "map:/geog/badlands/hoffers_wake"))
+			await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Haven Station Construction Yard", "map:/geog/badlands/hoffers_wake"))
+			object.add_int_property(v7, "reactive_exception", 1)
+			v10 = isim.cast(await iutilities.create_waypoint_at(v7))
+			_pc = 1851
+			continue
+		elif _pc == 1851:
+			text.add("csv:/text/act_2/act2_mission01")
+			text.add("csv:/text/act_2/act2_mission01_addendum")
+			text.add("csv:/text/act_2/act2_mission01_addendum_2")
+			text.add("csv:/text/act_2/act2_mission05")
+			text.add("csv:/text/act_2/act2_mission25")
+			if _pog_is_null(state.progress(v0)):
+				_pc = 1981
+				continue
+			else:
+				_pc = 2207
+				continue
+		elif _pc == 1981:
+			if not (global.exists("g_a2_m1_restart")):
+				_pc = 2007
+				continue
+			else:
+				_pc = 2181
+				continue
+		elif _pc == 2007:
+			_pc = 2033
+			continue
+		elif _pc == 2012:
+			debug.print_string("iAct2_Mission01: Playing cut-scene\n")
+			_pc = 2033
+			continue
+		elif _pc == 2033:
 			await imusic.pause()
 			await icutsceneutilities.handle_abort(_pog_spawn(local_15034.bind()))
 			igame.enable_blackout(1)
@@ -267,71 +298,218 @@ func mission_handler() -> Variant:
 			await imusic.pog_resume()
 			sim.destroy(v7)
 			iship.set_free_without_pilot(v1, 0)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission01: Mission has been restarted. Not playing cut-scene.\n")
-	igame.enable_blackout(1)
-	v18 = await local_10183(v10)
-	v19 = await local_10639(v10)
-	v20 = await local_11138(v10)
-	await local_13611(v18, v17)
-	await local_13611(v19, v17)
-	await local_13611(v20, v17)
-	v28 = sim.create("ini:/sims/regions/debris", "")
-	sim.place_at(v28, v10)
-	sim.place_relative_to(v1, v10, 0.0, 300.0, 10000.0)
-	sim.set_velocity(v1, 0.0, 0.0, 0.0)
-	sim.point_at(v1, v10)
-	ifaction.set_feeling(v14, v15, 4.0)
-	ifaction.set_feeling(v16, v15, 4.0)
-	ifaction.set_feeling(v15, v14, 4.0)
-	ifaction.set_feeling(v15, v16, 4.0)
-	v2 = iship.create("ini:/sims/ships/utility/lor_platform_capsule", "a2_m01_name_ship_lor_platform")
-	sim.set_cullable(v2, 0)
-	object.add_bool_property(v2, "no_shockwave", 1)
-	sim.place_near(v2, v10, 1500.0)
-	isim.set_faction(v2, v14)
-	isim.set_mission_critical(v2, 1)
-	object.set_string_property(v2, "death_script", "iDeathScript.CriticalShipDeath")
-	isim.set_sensor_visibility(v2, 1)
-	v24 = await local_13190(v2)
-	v23 = await ishipcreation.create_character_group(9, "Marauder", 6, v14, "Random")
-	await iutilities.group_set_cullable(v23, 0)
-	await local_13611(v23, v14)
-	v34 = 0
-	while group.sim_count(v23) < v34:
-		isim.set_sensor_visibility(isim.cast(group.nth_sim(v23, v34)), 0)
-		isim.dock(isim.cast(group.nth_sim(v23, v34)), v2)
-		v34 = 1 + v34
-	await ibacktobase.inhibit()
-	await _pog_wait(0.5)
-	igame.enable_blackout(0)
-	v33 = 4
-	v52 = _pog_spawn(local_642.bind(self, v0, v2, v3, v4, v5, v6, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27))
-	_pog_detach(v52)
-	while true:
-		await _pog_wait(20)
-		if 0 > state.progress(v0) and v33 < group.sim_count(v22) + group.sim_count(v21):
-			while _pog_is_null(state.progress(v0)):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2_Mission01: Marauders generated around haven station.\n")
-				await local_11794(v22, group.sim_count(v22) - group.sim_count(v21) - v33, v10)
-				break
-		if 1 == math.random_int(1, 8) and 0 > group.sim_count(v19):
+			_pc = 2207
+			continue
+		elif _pc == 2181:
+			_pc = 2207
+			continue
+		elif _pc == 2186:
+			debug.print_string("iAct2_Mission01: Mission has been restarted. Not playing cut-scene.\n")
+			_pc = 2207
+			continue
+		elif _pc == 2207:
+			igame.enable_blackout(1)
+			v18 = await local_10183(v10)
+			v19 = await local_10639(v10)
+			v20 = await local_11138(v10)
+			await local_13611(v18, v17)
+			await local_13611(v19, v17)
+			await local_13611(v20, v17)
+			v28 = sim.create("ini:/sims/regions/debris", "")
+			sim.place_at(v28, v10)
+			sim.place_relative_to(v1, v10, 0.0, 300.0, 10000.0)
+			sim.set_velocity(v1, 0.0, 0.0, 0.0)
+			sim.point_at(v1, v10)
+			ifaction.set_feeling(v14, v15, 4.0)
+			ifaction.set_feeling(v16, v15, 4.0)
+			ifaction.set_feeling(v15, v14, 4.0)
+			ifaction.set_feeling(v15, v16, 4.0)
+			v2 = iship.create("ini:/sims/ships/utility/lor_platform_capsule", "a2_m01_name_ship_lor_platform")
+			sim.set_cullable(v2, 0)
+			object.add_bool_property(v2, "no_shockwave", 1)
+			sim.place_near(v2, v10, 1500.0)
+			isim.set_faction(v2, v14)
+			isim.set_mission_critical(v2, 1)
+			object.set_string_property(v2, "death_script", "iDeathScript.CriticalShipDeath")
+			isim.set_sensor_visibility(v2, 1)
+			v24 = await local_13190(v2)
+			v23 = await ishipcreation.create_character_group(9, "Marauder", 6, v14, "Random")
+			await iutilities.group_set_cullable(v23, 0)
+			await local_13611(v23, v14)
+			v34 = 0
+			_pc = 2956
+			continue
+		elif _pc == 2956:
+			if group.sim_count(v23) < v34:
+				_pc = 2985
+				continue
+			else:
+				_pc = 3109
+				continue
+		elif _pc == 2985:
+			isim.set_sensor_visibility(isim.cast(group.nth_sim(v23, v34)), 0)
+			isim.dock(isim.cast(group.nth_sim(v23, v34)), v2)
+			v34 = 1 + v34
+			_pc = 2956
+			continue
+		elif _pc == 3109:
+			await ibacktobase.inhibit()
+			await _pog_wait(0.5)
+			igame.enable_blackout(0)
+			v33 = 4
+			v52 = _pog_spawn(local_642.bind(self, v0, v2, v3, v4, v5, v6, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27))
+			_pog_detach(v52)
+			_pc = 3309
+			continue
+		elif _pc == 3309:
+			await _pog_frame()
+			if _pog_every(3310, 20.0):
+				_pc = 3323
+				continue
+			else:
+				_pc = 3757
+				continue
+		elif _pc == 3323:
+			if 0 > state.progress(v0) and v33 < group.sim_count(v22) + group.sim_count(v21):
+				_pc = 3392
+				continue
+			else:
+				_pc = 3757
+				continue
+		elif _pc == 3392:
+			_pc = 3696
+			continue
+		elif _pc == 3397:
+			_pc = 3423
+			continue
+		elif _pc == 3402:
+			debug.print_string("iAct2_Mission01: Marauders generated around haven station.\n")
+			_pc = 3423
+			continue
+		elif _pc == 3423:
+			await local_11794(v22, group.sim_count(v22) - group.sim_count(v21) - v33, v10)
+			_pc = 3757
+			continue
+		elif _pc == 3495:
+			_pc = 3521
+			continue
+		elif _pc == 3500:
+			debug.print_string("iAct2_Mission01: Marauders generated around the platform.\n")
+			_pc = 3521
+			continue
+		elif _pc == 3521:
+			await local_11794(v22, group.sim_count(v22) - group.sim_count(v21) - v33, v2)
+			_pc = 3757
+			continue
+		elif _pc == 3593:
+			_pc = 3619
+			continue
+		elif _pc == 3598:
+			debug.print_string("iAct2_Mission01: Marauders generated around the lpoint.\n")
+			_pc = 3619
+			continue
+		elif _pc == 3619:
+			await local_11794(v22, group.sim_count(v22) - group.sim_count(v21) - v33, v11)
+			_pc = 3757
+			continue
+		elif _pc == 3691:
+			_pc = 3757
+			continue
+		elif _pc == 3696:
+			if not _pog_is_null(state.progress(v0)):
+				_pc = 3722
+				continue
+			else:
+				_pc = 3397
+				continue
+		elif _pc == 3722:
+			if not _pog_is_null(1):
+				_pc = 3730
+				continue
+			else:
+				_pc = 3397
+				continue
+		elif _pc == 3730:
+			if not _pog_is_null(2):
+				_pc = 3739
+				continue
+			else:
+				_pc = 3397
+				continue
+		elif _pc == 3739:
+			if not _pog_is_null(3):
+				_pc = 3748
+				continue
+			else:
+				_pc = 3495
+				continue
+		elif _pc == 3748:
+			if not _pog_is_null(4):
+				_pc = 3757
+				continue
+			else:
+				_pc = 3593
+				continue
+		elif _pc == 3757:
+			if _pog_every(3757, 1.0):
+				_pc = 3770
+				continue
+			else:
+				_pc = 9416
+				continue
+		elif _pc == 3770:
+			if 1 == math.random_int(1, 8) and 0 > group.sim_count(v19):
+				_pc = 3814
+				continue
+			else:
+				_pc = 3859
+				continue
+		elif _pc == 3814:
 			isim.kill(isim.cast(group.leader(v19)))
-		if not (sim.is_hidden(v1)) and 4 < state.progress(v0) and 300000.0 > sim.distance_between(v1, v10):
+			_pc = 3859
+			continue
+		elif _pc == 3859:
+			if not (sim.is_hidden(v1)) and 4 < state.progress(v0) and 300000.0 > sim.distance_between(v1, v10):
+				_pc = 3935
+				continue
+			else:
+				_pc = 3966
+				continue
+		elif _pc == 3935:
 			isim.kill(v2)
 			v47 = 1
-			break
-		while _pog_is_null(state.progress(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission1: MS_Start\n")
+			_pc = 9421
+			continue
+		elif _pc == 3966:
+			_pc = 9334
+			continue
+		elif _pc == 3971:
+			_pc = 3997
+			continue
+		elif _pc == 3976:
+			debug.print_string("iAct2_Mission1: MS_Start\n")
+			_pc = 3997
+			continue
+		elif _pc == 3997:
 			v31 = 0
 			if isim.is_dying(v2) or sim.is_dead(v2):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2_Mission01: Mission failed - LOR Platform destroyed\n")
-				v47 = 1
-				break
+				_pc = 4046
+				continue
+			else:
+				_pc = 4084
+				continue
+		elif _pc == 4046:
+			_pc = 4072
+			continue
+		elif _pc == 4051:
+			debug.print_string("iAct2_Mission01: Mission failed - LOR Platform destroyed\n")
+			_pc = 4072
+			continue
+		elif _pc == 4072:
+			v47 = 1
+			_pc = 9395
+			continue
+		elif _pc == 4084:
 			await _pog_wait(1.0)
 			await iconversation.begin()
 			await iconversation.say(0, "name_cal", "a2_m25_dialogue_cal_were_here_to_help")
@@ -342,45 +520,783 @@ func mission_handler() -> Variant:
 			v32 = 0
 			v41 = 0
 			state.set_progress(v0, 1)
-			break
-		if v47 or v39:
+			_pc = 9395
 			continue
-		break
-	await irangecheck.remove_traffic_exception(imapentity.cast(v11))
-	await irangecheck.remove_traffic_exception(imapentity.cast(v13))
-	v23 = await iwingmen.purge_to_group()
-	if v47:
-		iobjectives.set_state("a2_m01_objectives_cover", 2)
-	else:
-		iobjectives.set_state("a2_m01_objectives_cover", 1)
-		if PogRuntime.TRACE:
+		elif _pc == 4292:
+			if isim.is_dying(v2) or sim.is_dead(v2):
+				_pc = 4334
+				continue
+			else:
+				_pc = 4372
+				continue
+		elif _pc == 4334:
+			_pc = 4360
+			continue
+		elif _pc == 4339:
+			debug.print_string("iAct2_Mission01: Mission failed - LOR Platform destroyed\n")
+			_pc = 4360
+			continue
+		elif _pc == 4360:
+			v47 = 1
+			_pc = 9395
+			continue
+		elif _pc == 4372:
+			_pc = 4398
+			continue
+		elif _pc == 4377:
+			debug.print_string("iAct2_Mission1:MS_ProtectThePlatform\n")
+			_pc = 4398
+			continue
+		elif _pc == 4398:
+			v31 = 5 + v31
+			if sim.is_alive(v2) and 1 == math.random_int(0, 4) and 30 >= v31:
+				_pc = 4463
+				continue
+			else:
+				_pc = 4871
+				continue
+		elif _pc == 4463:
+			v4 = iship.cast(group.leader(v23))
+			group.remove_sim(v23, v4)
+			group.add_sim(v24, v4)
+			isim.undock(v4, v2)
+			isim.set_sensor_visibility(v4, 1)
+			await iwingmen.add_wingman(v4)
+			iai.give_escort_order(v4, v2, v36, v37, v38, 10000.0)
+			v36 = -(v36)
+			if 0.0 > v36:
+				_pc = 4683
+				continue
+			else:
+				_pc = 4700
+				continue
+		elif _pc == 4683:
+			v38 = 200.0 + v38
+			_pc = 4700
+			continue
+		elif _pc == 4700:
+			v32 = 1 + v32
+			if 6 > v32:
+				_pc = 4726
+				continue
+			else:
+				_pc = 4733
+				continue
+		elif _pc == 4726:
+			v32 = 1
+			_pc = 4733
+			continue
+		elif _pc == 4733:
+			await iconversation.one_liner(v2, "a2_m01_name_ship_lor_platform", string.join("a2_m01_dialogue_lor_ship_", string.from_int(v32)))
+			if _pog_is_null(group.sim_count(v23)):
+				_pc = 4823
+				continue
+			else:
+				_pc = 4871
+				continue
+		elif _pc == 4823:
+			iobjectives.set_state("a2_m01_objectives_protect", 1)
+			state.set_progress(v0, 2)
+			_pc = 9395
+			continue
+		elif _pc == 4871:
+			v34 = 0
+			_pc = 4878
+			continue
+		elif _pc == 4878:
+			if group.sim_count(v22) < v34:
+				_pc = 4907
+				continue
+			else:
+				_pc = 5073
+				continue
+		elif _pc == 4907:
+			v4 = iship.cast(group.nth_sim(v22, v34))
+			if 30000.0 < sim.distance_between(v4, v10):
+				_pc = 4983
+				continue
+			else:
+				_pc = 5055
+				continue
+		elif _pc == 4983:
+			group.remove_sim(v22, v4)
+			iai.give_attack_order(v4, v2)
+			group.add_sim(v21, v4)
+			_pc = 5055
+			continue
+		elif _pc == 5055:
+			v34 = 1 + v34
+			_pc = 4878
+			continue
+		elif _pc == 5073:
+			_pc = 9395
+			continue
+		elif _pc == 5078:
+			_pc = 5104
+			continue
+		elif _pc == 5083:
+			debug.print_string("iAct2_Mission1: MS_CoveringFire\n")
+			_pc = 5104
+			continue
+		elif _pc == 5104:
+			if v43:
+				_pc = 5114
+				continue
+			else:
+				_pc = 5750
+				continue
+		elif _pc == 5114:
+			v43 = 0
+			v12 = isim.cast(sim.create("ini:/sims/nav/waypoint", "temp_waypoint"))
+			await iutilities.sim_place_between_exact(v12, v10, v11, 40000.0)
+			v25 = await local_12700(v12, v18, v2, 2)
+			v50 = iship.cast(group.leader(v25))
+			v51 = iship.cast(group.nth_sim(v25, 1))
+			_pog_halt(v52)
+			v52 = _pog_spawn(local_642.bind(self, v0, v2, v3, v4, v5, v6, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27))
+			_pog_detach(v52)
+			object.add_handle_property(v50, "other_ship", v51)
+			object.add_handle_property(v50, "other_ship", v51)
+			sim.destroy(v12)
+			iai.give_generic_attack_order(v21)
+			await iconversation.begin()
+			await iconversation.say(iship.cast(group.leader(v25)), "", "a2_m01_dialogue_rescue_were_here")
+			await iconversation.say(0, "name_cal", "a2_m01_dialogue_cal_dont_worry")
+			await iconversation.say(0, "name_clay", "a2_m01_dialogue_clay_whats_this_we")
+			await iconversation.say(v2, "", "a2_m01_dialogue_lor_form_up_survivors")
+			await iconversation.end()
+			iobjectives.add("a2_m01_objectives_support")
+			_pc = 5750
+			continue
+		elif _pc == 5750:
+			if isim.is_dying(v2) or sim.is_dead(v2):
+				_pc = 5792
+				continue
+			else:
+				_pc = 5858
+				continue
+		elif _pc == 5792:
+			_pc = 5818
+			continue
+		elif _pc == 5797:
+			debug.print_string("iAct2_Mission01: Mission failed - LOR platform destroyed\n")
+			_pc = 5818
+			continue
+		elif _pc == 5818:
+			await iconversation.one_liner(0, "name_clay", "a2_m01_dialogue_clay_you_idiot")
+			v47 = 1
+			_pc = 9395
+			continue
+		elif _pc == 5858:
+			if _pog_is_null(group.sim_count(v25)):
+				_pc = 5883
+				continue
+			else:
+				_pc = 5949
+				continue
+		elif _pc == 5883:
+			_pc = 5909
+			continue
+		elif _pc == 5888:
+			debug.print_string("iAct2_Mission01: Mission failed - Rescue ships destroyed\n")
+			_pc = 5909
+			continue
+		elif _pc == 5909:
+			await iconversation.one_liner(0, "name_clay", "a2_m01_dialogue_clay_you_fool")
+			v47 = 1
+			_pc = 9395
+			continue
+		elif _pc == 5949:
+			if _pog_is_null(group.sim_count(v18)):
+				_pc = 5974
+				continue
+			else:
+				_pc = 6361
+				continue
+		elif _pc == 5974:
+			v44 = 0
+			v34 = 0
+			_pc = 5988
+			continue
+		elif _pc == 5988:
+			if group.sim_count(v25) < v34:
+				_pc = 6017
+				continue
+			else:
+				_pc = 6114
+				continue
+		elif _pc == 6017:
+			v4 = iship.cast(group.nth_sim(v25, v34))
+			if object.property_exists(v4, "survivors"):
+				_pc = 6089
+				continue
+			else:
+				_pc = 6096
+				continue
+		elif _pc == 6089:
+			v44 = 1
+			_pc = 6096
+			continue
+		elif _pc == 6096:
+			v34 = 1 + v34
+			_pc = 5988
+			continue
+		elif _pc == 6114:
+			if _pog_is_null(v44):
+				_pc = 6126
+				continue
+			else:
+				_pc = 6197
+				continue
+		elif _pc == 6126:
+			_pc = 6152
+			continue
+		elif _pc == 6131:
+			debug.print_string("iAct2_Mission01: Mission failed - Survivors not rescued\n")
+			_pc = 6152
+			continue
+		elif _pc == 6152:
+			await iconversation.one_liner(0, "name_clay", "a2_m01_dialogue_clay_you_simpleton")
+			v47 = 1
+			_pc = 9395
+			continue
+		elif _pc == 6192:
+			_pc = 6361
+			continue
+		elif _pc == 6197:
+			_pc = 6223
+			continue
+		elif _pc == 6202:
+			debug.print_string("iAct2_Mission01: Survivors rescued. Triggering next section\n")
+			_pc = 6223
+			continue
+		elif _pc == 6223:
+			iai.give_approach_order(v25, v2)
+			state.set_progress(v0, 3)
+			await iconversation.one_liner(group.leader(v25), "", "a2_m01_dialogue_rescue_all_survivors_rescued")
+			iobjectives.set_state("a2_m01_objectives_support", 1)
+			iobjectives.add("a2_m01_objectives_escort")
+			_pc = 9395
+			continue
+		elif _pc == 6361:
+			v34 = 0
+			_pc = 6368
+			continue
+		elif _pc == 6368:
+			if group.sim_count(v22) < v34:
+				_pc = 6397
+				continue
+			else:
+				_pc = 6577
+				continue
+		elif _pc == 6397:
+			v4 = iship.cast(group.nth_sim(v22, v34))
+			if iship.attacked(v4) or 20000.0 < sim.distance_between(v4, v10):
+				_pc = 6492
+				continue
+			else:
+				_pc = 6559
+				continue
+		elif _pc == 6492:
+			group.remove_sim(v22, v4)
+			iai.give_generic_attack_order(v4)
+			group.add_sim(v21, v4)
+			_pc = 6559
+			continue
+		elif _pc == 6559:
+			v34 = 1 + v34
+			_pc = 6368
+			continue
+		elif _pc == 6577:
+			_pc = 9395
+			continue
+		elif _pc == 6582:
+			_pc = 6608
+			continue
+		elif _pc == 6587:
+			debug.print_string("iAct2_Mission1: MS_EscortDuty\n")
+			_pc = 6608
+			continue
+		elif _pc == 6608:
+			if v45:
+				_pc = 6618
+				continue
+			else:
+				_pc = 6721
+				continue
+		elif _pc == 6618:
+			await iconversation.one_liner(v2, "", "a2_m01_dialogue_lor_form_up")
+			v45 = 0
+			await irangecheck.add_traffic_exception(imapentity.cast(v11))
+			await irangecheck.add_traffic_exception(imapentity.cast(v13))
+			_pc = 6721
+			continue
+		elif _pc == 6721:
+			if 5000.0 < sim.distance_between(v1, v2):
+				_pc = 6755
+				continue
+			else:
+				_pc = 7101
+				continue
+		elif _pc == 6755:
+			if _pog_eq(v2, iai.current_order_target(v1)) and 2 == iai.current_order_type(v1):
+				_pc = 6808
+				continue
+			else:
+				_pc = 7101
+				continue
+		elif _pc == 6808:
+			await iconversation.one_liner(v2, "", "a2_m01_dialogue_lor_lets_go")
+			group.promote_sim(v25, 1 - group.sim_count(v25))
+			await ipilotsetup.generic_cargo_pod(v2)
+			await iformation.line_astern(v25, 0.0, 0)
+			iai.give_formate_order(group.leader(v25), v2, 0.0, 1000.0, 1000.0)
+			await iescort.in_formation_claw(v24, v25, 0, 0.0, 100.0, 0.0, 150.0, 15000.0, 0)
+			iai.give_approach_order_advanced(v2, v11, 8000.0, 10000.0, 1)
+			state.set_progress(v0, 4)
+			v33 = 0
+			v53 = 0
+			_pc = 9395
+			continue
+		elif _pc == 7101:
+			v34 = 0
+			_pc = 7108
+			continue
+		elif _pc == 7108:
+			if group.sim_count(v22) < v34:
+				_pc = 7137
+				continue
+			else:
+				_pc = 7436
+				continue
+		elif _pc == 7137:
+			v4 = iship.cast(group.nth_sim(v22, v34))
+			group.remove_sim(v22, v4)
+			if 1 == math.random_int(0, 1):
+				_pc = 7225
+				continue
+			else:
+				_pc = 7254
+				continue
+		elif _pc == 7225:
+			iai.give_attack_order(v4, v25)
+			_pc = 7346
+			continue
+		elif _pc == 7254:
+			if _pog_is_null(math.random_int(0, group.sim_count(v24))):
+				_pc = 7293
+				continue
+			else:
+				_pc = 7322
+				continue
+		elif _pc == 7293:
+			iai.give_attack_order(v4, v1)
+			_pc = 7346
+			continue
+		elif _pc == 7322:
+			iai.give_attack_order(v4, v24)
+			_pc = 7346
+			continue
+		elif _pc == 7346:
+			if not (iai.has_order(v4)):
+				_pc = 7370
+				continue
+			else:
+				_pc = 7394
+				continue
+		elif _pc == 7370:
+			iai.give_attack_order(v4, v2)
+			_pc = 7394
+			continue
+		elif _pc == 7394:
+			group.add_sim(v21, v4)
+			v34 = 1 + v34
+			_pc = 7108
+			continue
+		elif _pc == 7436:
+			_pc = 9395
+			continue
+		elif _pc == 7441:
+			_pc = 7467
+			continue
+		elif _pc == 7446:
+			debug.print_string("iAct2_Mission1: MS_LaGrangePoint\n")
+			_pc = 7467
+			continue
+		elif _pc == 7467:
+			if _pog_is_null(group.sim_count(v25)):
+				_pc = 7492
+				continue
+			else:
+				_pc = 7558
+				continue
+		elif _pc == 7492:
+			_pc = 7518
+			continue
+		elif _pc == 7497:
+			debug.print_string("iAct2_Mission01: Mission failed - Survivors not rescued\n")
+			_pc = 7518
+			continue
+		elif _pc == 7518:
+			await iconversation.one_liner(0, "name_clay", "a2_m01_dialogue_clay_you_simpleton")
+			v47 = 1
+			_pc = 9395
+			continue
+		elif _pc == 7558:
+			if 30000.0 >= sim.distance_between(v1, v11) and 20000.0 < sim.distance_between(group.leader(v25), v11) and 20000.0 < sim.distance_between(v2, v11):
+				_pc = 7665
+				continue
+			else:
+				_pc = 7766
+				continue
+		elif _pc == 7665:
+			v53 = 1 + v53
+			if 100000000.0 < sim.distance_between(v1, v9) or 120 > v53:
+				_pc = 7721
+				continue
+			else:
+				_pc = 7766
+				continue
+		elif _pc == 7721:
+			_pc = 7747
+			continue
+		elif _pc == 7726:
+			debug.print_string("iAct2_Mission01: Mission failed - Player ran away\n")
+			_pc = 7747
+			continue
+		elif _pc == 7747:
+			isim.kill(v2)
+			_pc = 7766
+			continue
+		elif _pc == 7766:
+			if 1 == v46 and 30000.0 < sim.distance_between(v1, v11) and 20000.0 < sim.distance_between(group.leader(v25), v11) and 20000.0 < sim.distance_between(v2, v11):
+				_pc = 7881
+				continue
+			else:
+				_pc = 8595
+				continue
+		elif _pc == 7881:
+			iobjectives.set_state("a2_m01_objectives_escort", 1)
+			await iconversation.one_liner(group.leader(v25), "", "a2_m01_dialogue_rescue_we_are_jumping")
+			iobjectives.add("a2_m01_objectives_cover")
+			v46 = 0
+			isim.set_standard_sensor_visibility(v2, 1)
+			v12 = isim.cast(await iutilities.create_waypoint_relative_to(v13, 10000.0, 1000.0, 15000.0))
+			iai.purge_orders(v2)
+			iai.give_approach_order(v2, v12)
+			iai.force_l_p_route(v2, ilagrangepoint.cast(v11), ilagrangepoint.cast(v13))
+			if sim.is_alive(v50):
+				_pc = 8169
+				continue
+			else:
+				_pc = 8267
+				continue
+		elif _pc == 8169:
+			iai.purge_orders(v50)
+			iai.give_approach_order(v50, v12)
+			iai.force_l_p_route(v50, ilagrangepoint.cast(v11), ilagrangepoint.cast(v13))
+			_pc = 8267
+			continue
+		elif _pc == 8267:
+			if sim.is_alive(v51):
+				_pc = 8290
+				continue
+			else:
+				_pc = 8388
+				continue
+		elif _pc == 8290:
+			iai.purge_orders(v51)
+			iai.give_approach_order(v51, v12)
+			iai.force_l_p_route(v51, ilagrangepoint.cast(v11), ilagrangepoint.cast(v13))
+			_pc = 8388
+			continue
+		elif _pc == 8388:
+			v34 = 0
+			_pc = 8395
+			continue
+		elif _pc == 8395:
+			if group.sim_count(v24) < v34:
+				_pc = 8424
+				continue
+			else:
+				_pc = 8582
+				continue
+		elif _pc == 8424:
+			v4 = iship.cast(group.nth_sim(v24, v34))
+			iai.purge_orders(v4)
+			iai.give_approach_order(v4, v12)
+			iai.force_l_p_route(v4, ilagrangepoint.cast(v11), ilagrangepoint.cast(v13))
+			v34 = 1 + v34
+			_pc = 8395
+			continue
+		elif _pc == 8582:
+			v33 = 2
+			_pc = 8728
+			continue
+		elif _pc == 8595:
+			v4 = iship.cast(group.leader(v25))
+			if _pog_is_null(v46) and not (iai.has_order(v4)):
+				_pc = 8664
+				continue
+			else:
+				_pc = 8728
+				continue
+		elif _pc == 8664:
+			iai.give_formate_order(v4, v2, 0.0, 1000.0, 0.0)
+			await iformation.line_astern(v25, 0.0, 0)
+			_pc = 8728
+			continue
+		elif _pc == 8728:
+			if _pog_is_null(v46):
+				_pc = 8740
+				continue
+			else:
+				_pc = 8994
+				continue
+		elif _pc == 8740:
+			v39 = 1
+			if sim.is_alive(v50):
+				_pc = 8770
+				continue
+			else:
+				_pc = 8837
+				continue
+		elif _pc == 8770:
+			if 100000.0 > sim.distance_between(v50, v13):
+				_pc = 8804
+				continue
+			else:
+				_pc = 8837
+				continue
+		elif _pc == 8804:
+			_pc = 8830
+			continue
+		elif _pc == 8809:
+			debug.print_string("Rescue 1 Not Jumped\n")
+			_pc = 8830
+			continue
+		elif _pc == 8830:
+			v39 = 0
+			_pc = 8837
+			continue
+		elif _pc == 8837:
+			if sim.is_alive(v51):
+				_pc = 8860
+				continue
+			else:
+				_pc = 8927
+				continue
+		elif _pc == 8860:
+			if 100000.0 > sim.distance_between(v51, v13):
+				_pc = 8894
+				continue
+			else:
+				_pc = 8927
+				continue
+		elif _pc == 8894:
+			_pc = 8920
+			continue
+		elif _pc == 8899:
+			debug.print_string("Rescue 2 Not Jumped\n")
+			_pc = 8920
+			continue
+		elif _pc == 8920:
+			v39 = 0
+			_pc = 8927
+			continue
+		elif _pc == 8927:
+			if 100000.0 > sim.distance_between(v2, v13):
+				_pc = 8961
+				continue
+			else:
+				_pc = 8994
+				continue
+		elif _pc == 8961:
+			_pc = 8987
+			continue
+		elif _pc == 8966:
+			debug.print_string("LOR Not Jumped\n")
+			_pc = 8987
+			continue
+		elif _pc == 8987:
+			v39 = 0
+			_pc = 8994
+			continue
+		elif _pc == 8994:
+			v34 = 0
+			_pc = 9001
+			continue
+		elif _pc == 9001:
+			if group.sim_count(v22) < v34:
+				_pc = 9030
+				continue
+			else:
+				_pc = 9329
+				continue
+		elif _pc == 9030:
+			v4 = iship.cast(group.nth_sim(v22, v34))
+			group.remove_sim(v22, v4)
+			if 1 == math.random_int(0, 1):
+				_pc = 9118
+				continue
+			else:
+				_pc = 9147
+				continue
+		elif _pc == 9118:
+			iai.give_attack_order(v4, v25)
+			_pc = 9239
+			continue
+		elif _pc == 9147:
+			if _pog_is_null(math.random_int(0, group.sim_count(v24))):
+				_pc = 9186
+				continue
+			else:
+				_pc = 9215
+				continue
+		elif _pc == 9186:
+			iai.give_attack_order(v4, v1)
+			_pc = 9239
+			continue
+		elif _pc == 9215:
+			iai.give_attack_order(v4, v24)
+			_pc = 9239
+			continue
+		elif _pc == 9239:
+			if not (iai.has_order(v4)):
+				_pc = 9263
+				continue
+			else:
+				_pc = 9287
+				continue
+		elif _pc == 9263:
+			iai.give_attack_order(v4, v2)
+			_pc = 9287
+			continue
+		elif _pc == 9287:
+			group.add_sim(v21, v4)
+			v34 = 1 + v34
+			_pc = 9001
+			continue
+		elif _pc == 9329:
+			_pc = 9395
+			continue
+		elif _pc == 9334:
+			if not _pog_is_null(state.progress(v0)):
+				_pc = 9360
+				continue
+			else:
+				_pc = 3971
+				continue
+		elif _pc == 9360:
+			if not _pog_is_null(1):
+				_pc = 9368
+				continue
+			else:
+				_pc = 4292
+				continue
+		elif _pc == 9368:
+			if not _pog_is_null(2):
+				_pc = 9377
+				continue
+			else:
+				_pc = 5078
+				continue
+		elif _pc == 9377:
+			if not _pog_is_null(3):
+				_pc = 9386
+				continue
+			else:
+				_pc = 6582
+				continue
+		elif _pc == 9386:
+			if not _pog_is_null(4):
+				_pc = 9395
+				continue
+			else:
+				_pc = 7441
+				continue
+		elif _pc == 9395:
+			if v47 or v39:
+				_pc = 9411
+				continue
+			else:
+				_pc = 9416
+				continue
+		elif _pc == 9411:
+			_pc = 9421
+			continue
+		elif _pc == 9416:
+			_pc = 3309
+			continue
+		elif _pc == 9421:
+			await irangecheck.remove_traffic_exception(imapentity.cast(v11))
+			await irangecheck.remove_traffic_exception(imapentity.cast(v13))
+			v23 = await iwingmen.purge_to_group()
+			if v47:
+				_pc = 9516
+				continue
+			else:
+				_pc = 9544
+				continue
+		elif _pc == 9516:
+			iobjectives.set_state("a2_m01_objectives_cover", 2)
+			_pc = 9982
+			continue
+		elif _pc == 9544:
+			iobjectives.set_state("a2_m01_objectives_cover", 1)
+			_pc = 9592
+			continue
+		elif _pc == 9571:
 			debug.print_string("iAct2_Mission1: MS_Finished\n")
-		if global.exists("g_act2_survivors_rescued"):
+			_pc = 9592
+			continue
+		elif _pc == 9592:
+			if global.exists("g_act2_survivors_rescued"):
+				_pc = 9617
+				continue
+			else:
+				_pc = 9639
+				continue
+		elif _pc == 9617:
 			global.set_bool("g_act2_survivors_rescued", 1)
-		await iconversation.one_liner(group.leader(v25), "", "a2_m01_dialogue_rescue_all_ships_rescued")
-		await iutilities.group_set_cullable(v25, 1)
-		await iutilities.group_set_cullable(v24, 1)
-		await iutilities.group_set_cullable(v21, 1)
-		await iutilities.group_set_cullable(v23, 1)
-		await iutilities.group_set_cullable(v20, 1)
-		iai.give_flee_order(v25, v12)
-		iai.give_flee_order(v24, v12)
-		iai.give_flee_order(v21, v12)
-		iai.give_flee_order(v23, v1)
-		sim.set_cullable(v2, 1)
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
-		await iutilities.remove_mission_restart()
-		await ibacktobase.allow()
-	return
-	v1 = null
-	v1 = isim.ships_in_radius(isim.cast(v0), 2000.0)
-	v2 = group.from_set(v1)
-	v3 = 0
-	while group.sim_count(v2) < v3:
-		sim.destroy(group.nth_sim(v2, v3))
-		v3 = 1 + v3
-	return 0
+			_pc = 9639
+			continue
+		elif _pc == 9639:
+			await iconversation.one_liner(group.leader(v25), "", "a2_m01_dialogue_rescue_all_ships_rescued")
+			await iutilities.group_set_cullable(v25, 1)
+			await iutilities.group_set_cullable(v24, 1)
+			await iutilities.group_set_cullable(v21, 1)
+			await iutilities.group_set_cullable(v23, 1)
+			await iutilities.group_set_cullable(v20, 1)
+			iai.give_flee_order(v25, v12)
+			iai.give_flee_order(v24, v12)
+			iai.give_flee_order(v21, v12)
+			iai.give_flee_order(v23, v1)
+			sim.set_cullable(v2, 1)
+			state.destroy(self)
+			await imissiontracker.remove_mission(self)
+			await iutilities.remove_mission_restart()
+			await ibacktobase.allow()
+			_pc = 9982
+			continue
+		elif _pc == 9982:
+			return
+		elif _pc == 10089:
+			if group.sim_count(v2) < v3:
+				_pc = 10118
+				continue
+			else:
+				_pc = 10173
+				continue
+		elif _pc == 10118:
+			sim.destroy(group.nth_sim(v2, v3))
+			v3 = 1 + v3
+			_pc = 10089
+			continue
+		elif _pc == 10173:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_10183(v0) -> Variant:
@@ -400,7 +1316,7 @@ func local_10183(v0) -> Variant:
 		group.add_sim(v2, v3)
 		v1 = 1 + v1
 	group.add_group(v2, group.create())
-	return
+	return v2
 	return 0
 
 func local_10639(v0) -> Variant:
@@ -420,7 +1336,7 @@ func local_10639(v0) -> Variant:
 		sim.set_angular_velocity_euler(v3, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
 		group.add_sim(v2, v3)
 		v1 = 1 + v1
-	return
+	return v2
 	return 0
 
 func local_11138(v0) -> Variant:
@@ -447,7 +1363,7 @@ func local_11138(v0) -> Variant:
 		sim.set_velocity(v3, v4, v5, v6)
 		group.add_sim(v2, v3)
 		v1 = 1 + v1
-	return
+	return v2
 	return 0
 
 func local_11794(v0, v1, v2) -> Variant:
@@ -456,35 +1372,166 @@ func local_11794(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v7 = ifaction.find("Marauders")
-	if PogRuntime.TRACE:
-		if global.exists("g_a2_m01_no_enemies"):
+	var _pc: int = 11794
+	while true:
+		if _pc == 11794:
+			v7 = ifaction.find("Marauders")
+			_pc = 11881
+			continue
+		elif _pc == 11830:
+			if global.exists("g_a2_m01_no_enemies"):
+				_pc = 11855
+				continue
+			else:
+				_pc = 11881
+				continue
+		elif _pc == 11855:
 			debug.print_string("iAct2_Mission01 - WARNING: Marauders disabled - no marauders created.\n")
-			return 0
-	if 0 > v1:
-		v3 = math.random_int(1, v1)
-	else:
-		v3 = -(v1)
-	v6 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
-	object.add_bool_property(v6, "no_shockwave", 1)
-	await ipilotsetup.marauder(v6)
-	isim.set_faction(v6, v7)
-	sim.place_near(v6, v2, 40000.0)
-	iai.give_approach_order(v6, v2)
-	group.add_sim(v0, v6)
-	v4 = 1
-	while v3 < v4:
-		while _pog_is_null(math.random_int(0, 9)):
+			_pc = 12697
+			continue
+		elif _pc == 11881:
+			if 0 > v1:
+				_pc = 11893
+				continue
+			else:
+				_pc = 11923
+				continue
+		elif _pc == 11893:
+			v3 = math.random_int(1, v1)
+			_pc = 11935
+			continue
+		elif _pc == 11923:
+			v3 = -(v1)
+			_pc = 11935
+			continue
+		elif _pc == 11935:
+			v6 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
+			object.add_bool_property(v6, "no_shockwave", 1)
+			await ipilotsetup.marauder(v6)
+			isim.set_faction(v6, v7)
+			sim.place_near(v6, v2, 40000.0)
+			iai.give_approach_order(v6, v2)
+			group.add_sim(v0, v6)
+			v4 = 1
+			_pc = 12137
+			continue
+		elif _pc == 12137:
+			if v3 < v4:
+				_pc = 12153
+				continue
+			else:
+				_pc = 12697
+				continue
+		elif _pc == 12153:
+			_pc = 12428
+			continue
+		elif _pc == 12158:
 			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
-			break
-		object.add_bool_property(v5, "no_shockwave", 1)
-		await ipilotsetup.marauder(v5)
-		isim.set_faction(v5, v7)
-		sim.place_near(v5, v6, 1000.0)
-		iai.give_approach_order(v5, v2)
-		group.add_sim(v0, v5)
-		v4 = 1 + v4
-	return 0
+			_pc = 12532
+			continue
+		elif _pc == 12211:
+			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
+			_pc = 12532
+			continue
+		elif _pc == 12264:
+			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
+			_pc = 12532
+			continue
+		elif _pc == 12317:
+			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
+			_pc = 12532
+			continue
+		elif _pc == 12370:
+			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
+			_pc = 12532
+			continue
+		elif _pc == 12423:
+			_pc = 12532
+			continue
+		elif _pc == 12428:
+			if not _pog_is_null(math.random_int(0, 9)):
+				_pc = 12452
+				continue
+			else:
+				_pc = 12158
+				continue
+		elif _pc == 12452:
+			if not _pog_is_null(1):
+				_pc = 12460
+				continue
+			else:
+				_pc = 12158
+				continue
+		elif _pc == 12460:
+			if not _pog_is_null(2):
+				_pc = 12469
+				continue
+			else:
+				_pc = 12211
+				continue
+		elif _pc == 12469:
+			if not _pog_is_null(3):
+				_pc = 12478
+				continue
+			else:
+				_pc = 12211
+				continue
+		elif _pc == 12478:
+			if not _pog_is_null(4):
+				_pc = 12487
+				continue
+			else:
+				_pc = 12264
+				continue
+		elif _pc == 12487:
+			if not _pog_is_null(5):
+				_pc = 12496
+				continue
+			else:
+				_pc = 12264
+				continue
+		elif _pc == 12496:
+			if not _pog_is_null(6):
+				_pc = 12505
+				continue
+			else:
+				_pc = 12264
+				continue
+		elif _pc == 12505:
+			if not _pog_is_null(7):
+				_pc = 12514
+				continue
+			else:
+				_pc = 12317
+				continue
+		elif _pc == 12514:
+			if not _pog_is_null(8):
+				_pc = 12523
+				continue
+			else:
+				_pc = 12317
+				continue
+		elif _pc == 12523:
+			if not _pog_is_null(9):
+				_pc = 12532
+				continue
+			else:
+				_pc = 12370
+				continue
+		elif _pc == 12532:
+			object.add_bool_property(v5, "no_shockwave", 1)
+			await ipilotsetup.marauder(v5)
+			isim.set_faction(v5, v7)
+			sim.place_near(v5, v6, 1000.0)
+			iai.give_approach_order(v5, v2)
+			group.add_sim(v0, v5)
+			v4 = 1 + v4
+			_pc = 12137
+			continue
+		elif _pc == 12697:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_12700(v0, v1, v2, v3) -> Variant:
@@ -513,7 +1560,7 @@ func local_12700(v0, v1, v2, v3) -> Variant:
 		_pog_spawn(local_13800.bind(v5, v2, v1))
 		v4 = 1 + v4
 	await ideathscript.setup_critical_group_death(v8, 0)
-	return
+	return v8
 	return 0
 
 func local_13190(v0) -> Variant:
@@ -540,7 +1587,7 @@ func local_13190(v0) -> Variant:
 		iai.give_escort_order(v4, v0, v6, -500.0, 0.0, 30000.0)
 		v6 = 4000.0 + v6
 		v5 = 1 + v5
-	return
+	return v3
 	return 0
 
 func local_13611(v0, v1) -> Variant:
@@ -576,7 +1623,7 @@ func local_13800(v0, v1, v2) -> Variant:
 		await _pog_wait(1)
 		if sim.is_dead(v0):
 			return
-		if isim.is_docked(v0):
+		if not (isim.is_docked(v0)):
 			continue
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2_Mission01 - Survivor task. Ship: ")

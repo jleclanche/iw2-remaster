@@ -133,7 +133,7 @@ func local_476(v0) -> Variant:
 		v2 = 1 + v2
 	sim.place_relative_to(group.leader(v4), v0, 0.0, 6000.0, 6000.0)
 	await iformation.box(v4, 60.0, 1)
-	return
+	return v4
 	return 0
 
 func local_1140(v0) -> Variant:
@@ -147,7 +147,7 @@ func local_1140(v0) -> Variant:
 	sim.place_relative_to(v3, v0, -3000.0, 0.0, -2000.0)
 	await ipilotsetup.generic_cargo_pod(v3)
 	group.add_sim(v1, v3)
-	return
+	return v1
 	return 0
 
 func local_1340(v0, v1) -> Variant:
@@ -193,7 +193,7 @@ func local_1714(v0) -> Variant:
 		v5 = 1 + v5
 	sim.place_near(group.leader(v1), v0, 1000.0)
 	await iformation.cross(v1, 40.0, 1)
-	return
+	return v1
 	return 0
 
 func local_2007(v0, v1) -> Variant:
@@ -301,18 +301,63 @@ func local_3806(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = group.create()
-	v2 = ifaction.find("Stepson")
-	v4 = 0
-	while v0 < v4:
-		while _pog_is_null(1):
+	var _pc: int = 3806
+	while true:
+		if _pc == 3806:
+			v1 = group.create()
+			v2 = ifaction.find("Stepson")
+			v4 = 0
+			_pc = 3863
+			continue
+		elif _pc == 3863:
+			if v0 < v4:
+				_pc = 3879
+				continue
+			else:
+				_pc = 4097
+				continue
+		elif _pc == 3879:
+			_pc = 3995
+			continue
+		elif _pc == 3884:
 			v3 = iship.create("ini:/sims/ships/navy/old_corvette", await ishipcreation.ship_name("Stepson", -1))
-			break
-		isim.set_faction(v3, v2)
-		await ipilotsetup.generic_military(v3)
-		group.add_sim(v1, v3)
-		v4 = 1 + v4
-	return
+			_pc = 4012
+			continue
+		elif _pc == 3937:
+			v3 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("Stepson", -1))
+			_pc = 4012
+			continue
+		elif _pc == 3990:
+			_pc = 4012
+			continue
+		elif _pc == 3995:
+			if not _pog_is_null(1):
+				_pc = 4004
+				continue
+			else:
+				_pc = 3884
+				continue
+		elif _pc == 4004:
+			if not _pog_is_null(1):
+				_pc = 4012
+				continue
+			else:
+				_pc = 3937
+				continue
+		elif _pc == 4012:
+			isim.set_faction(v3, v2)
+			await ipilotsetup.generic_military(v3)
+			group.add_sim(v1, v3)
+			v4 = 1 + v4
+			_pc = 3863
+			continue
+		elif _pc == 4097:
+			_pc = 4107
+			continue
+		elif _pc == 4107:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4109() -> Variant:
@@ -329,7 +374,7 @@ func local_4109() -> Variant:
 	isim.set_faction(v2, v1)
 	await ipilotsetup.generic_military(v2)
 	group.add_sim(v0, v2)
-	return
+	return v0
 	return 0
 
 func local_4401(v0, v1, v2) -> Variant:
@@ -342,59 +387,144 @@ func local_4401(v0, v1, v2) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v3 = 0
-	v6 = null
-	v7 = iship.cast(group.leader(v0))
-	v9 = group.cast(global.handle("g_player_group"))
-	v10 = ifaction.find("Player")
-	v11 = ifaction.find("Stepson")
+	var _pc: int = 4401
 	while true:
-		await _pog_wait(5)
-		v8 = iship.find_player_ship()
-		if _pog_is_null(v3) and not _pog_is_null(iship.cast(v7)):
+		if _pc == 4401:
+			v3 = 0
+			v6 = null
+			v7 = iship.cast(group.leader(v0))
+			v9 = group.cast(global.handle("g_player_group"))
+			v10 = ifaction.find("Player")
+			v11 = ifaction.find("Stepson")
+			_pc = 4555
 			continue
-		if 1 == state.progress(v2) or _pog_is_null(state.progress(v2)) and 7000.0 <= sim.distance_between(v8, v7):
+		elif _pc == 4555:
+			await _pog_frame()
+			if _pog_every(4556, 5.0):
+				_pc = 4569
+				continue
+			else:
+				_pc = 5727
+				continue
+		elif _pc == 4569:
+			v8 = iship.find_player_ship()
+			if _pog_is_null(v3) and not _pog_is_null(iship.cast(v7)):
+				_pc = 4622
+				continue
+			else:
+				_pc = 5727
+				continue
+		elif _pc == 4622:
+			if 1 == state.progress(v2) or _pog_is_null(state.progress(v2)) and 7000.0 <= sim.distance_between(v8, v7):
+				_pc = 4698
+				continue
+			else:
+				_pc = 5320
+				continue
+		elif _pc == 4698:
 			v3 = 1
 			await iconversation.begin()
 			await iconversation.add_response("a1_m03_text_player_c1_option_1_yes", "a1_m03_dialogue_player_c1_option_1_yes")
 			await iconversation.add_response("a1_m03_text_player_c1_option_2_no", "a1_m03_dialogue_player_c1_option_2_no")
 			if 1 == state.progress(v2):
-				v4 = await iconversation.ask(v7, "", "a1_m03_dialogue_stepson_c1_youre_back")
+				_pc = 4798
+				continue
 			else:
-				v4 = await iconversation.ask(v7, "", "a1_m03_dialogue_stepson_c1_cal_youve_arrived")
-			while v4 == 1:
-				await iconversation.say(v7, "", "a1_m03_dialogue_stepson_c1_response_1_ok_were_sending")
-				await iconversation.end()
-				state.set_progress(v2, 2)
-				iobjectives.add("a1_m03_objectives_destroy")
-				v8 = iship.find_player_ship()
-				await iformation.goose(v9, 50.0, 0)
-				await iutilities.group_set_cullable(v9, 0)
-				await iwingmen.from_group(v9, 0)
-				await iwingmen.defend_player()
-				await iutilities.make_waypoint_visible(v1, 1, "a1_m03_name_base_loc")
-				object.add_int_property(v2, "number_of_wingmen", group.sim_count(v9))
-				await _pog_wait(40.0)
-				v3 = 0
-				break
-		if 6 == state.progress(v2) and 700.0 <= sim.distance_between(v8, v7):
+				_pc = 4840
+				continue
+		elif _pc == 4798:
+			v4 = await iconversation.ask(v7, "", "a1_m03_dialogue_stepson_c1_youre_back")
+			_pc = 4877
 			continue
-		await iconversation.one_liner(v7, "", "a1_m03_dialogue_stepsons_youve_returned")
-		while true:
+		elif _pc == 4840:
+			v4 = await iconversation.ask(v7, "", "a1_m03_dialogue_stepson_c1_cal_youve_arrived")
+			_pc = 4877
+			continue
+		elif _pc == 4877:
+			_pc = 5298
+			continue
+		elif _pc == 4882:
+			await iconversation.say(v7, "", "a1_m03_dialogue_stepson_c1_response_1_ok_were_sending")
+			await iconversation.end()
+			state.set_progress(v2, 2)
+			iobjectives.add("a1_m03_objectives_destroy")
+			v8 = iship.find_player_ship()
+			await iformation.goose(v9, 50.0, 0)
+			await iutilities.group_set_cullable(v9, 0)
+			await iwingmen.from_group(v9, 0)
+			await iwingmen.defend_player()
+			await iutilities.make_waypoint_visible(v1, 1, "a1_m03_name_base_loc")
+			object.add_int_property(v2, "number_of_wingmen", group.sim_count(v9))
+			await _pog_wait(40.0)
+			v3 = 0
+			_pc = 5320
+			continue
+		elif _pc == 5183:
+			await iconversation.say(v7, "", "a1_m03_dialogue_stepson_c1_response_2_wait")
+			await iconversation.end()
+			state.set_progress(v2, 1)
+			await _pog_wait(20.0)
+			v3 = 0
+			_pc = 5320
+			continue
+		elif _pc == 5293:
+			_pc = 5320
+			continue
+		elif _pc == 5298:
+			if v4 != 1:
+				_pc = 5311
+				continue
+			else:
+				_pc = 4882
+				continue
+		elif _pc == 5311:
+			if not _pog_is_null(2):
+				_pc = 5320
+				continue
+			else:
+				_pc = 5183
+				continue
+		elif _pc == 5320:
+			if 6 == state.progress(v2) and 700.0 <= sim.distance_between(v8, v7):
+				_pc = 5376
+				continue
+			else:
+				_pc = 5727
+				continue
+		elif _pc == 5376:
+			await iconversation.one_liner(v7, "", "a1_m03_dialogue_stepsons_youve_returned")
+			_pc = 5408
+			continue
+		elif _pc == 5408:
 			await _pog_wait(3.0)
-			if not (not (isim.is_docked_to(isim.cast(v8), isim.cast(v7)))):
-				break
-		iinventory.add(560, 1)
-		iinventory.add(561, 2)
-		await iconversation.one_liner(v7, "", "a1_m03_dialogue_wingmen_there_you_go")
-		await iconversation.one_liner(0, "name_cal", "a1_m03_dialogue_guess_we_can")
-		sim.set_cullable(group.leader(v0), 1)
-		sim.set_cullable(group.nth_sim(v0, 1), 1)
-		group.destroy(v0, 0)
-		iobjectives.set_state("a1_m03_objectives_return", 1)
-		state.set_progress(v2, 7)
-		return
-	return
+			if isim.is_docked_to(isim.cast(v8), isim.cast(v7)):
+				_pc = 5495
+				continue
+			else:
+				_pc = 5408
+				continue
+		elif _pc == 5495:
+			iinventory.add(560, 1)
+			iinventory.add(561, 2)
+			await iconversation.one_liner(v7, "", "a1_m03_dialogue_wingmen_there_you_go")
+			await iconversation.one_liner(0, "name_cal", "a1_m03_dialogue_guess_we_can")
+			sim.set_cullable(group.leader(v0), 1)
+			sim.set_cullable(group.nth_sim(v0, 1), 1)
+			group.destroy(v0, 0)
+			iobjectives.set_state("a1_m03_objectives_return", 1)
+			state.set_progress(v2, 7)
+			_pc = 5733
+			continue
+		elif _pc == 5727:
+			_pc = 4555
+			continue
+		elif _pc == 5732:
+			_pc = 5733
+			continue
+		elif _pc == 5733:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5742(v0, v1, v2) -> Variant:
@@ -421,13 +551,13 @@ func local_5742(v0, v1, v2) -> Variant:
 				iobjectives.set_state("a1_m03_objectives_rendezvous", 1)
 			v4 = _pog_spawn(local_4401.bind(v5, v1, v2))
 		else:
-			if v3 and not (await iutilities.player_in_range(v0)):
+			if not (v3 and not (await iutilities.player_in_range(v0))):
 				continue
 			v3 = 0
 			group.destroy(v5, 1)
 			if _pog_is_null(state.progress(v2)):
 				group.destroy(v6, 1)
-			if not ((1 - _pog_is_running(v4))):
+			if (1 - _pog_is_running(v4)):
 				continue
 			_pog_halt(v4)
 	return
@@ -486,7 +616,7 @@ func mission_handler() -> Variant:
 			_pog_spawn(local_2081.bind(v2, v5, v6))
 		if v0 and 3 == state.progress(v6):
 			v0 = 0
-		if 100 == state.progress(v6) or 7 == state.progress(v6):
+		if not (100 == state.progress(v6) or 7 == state.progress(v6)):
 			continue
 		if 7 == state.progress(v6):
 			global.set_bool("g_act1_joint_forces_complete", 1)

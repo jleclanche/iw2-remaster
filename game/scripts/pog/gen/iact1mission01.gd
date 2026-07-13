@@ -159,7 +159,7 @@ func local_604(v0, v1, v2, v3) -> Variant:
 	iai.give_attack_order(v5, v0)
 	while true:
 		await _pog_wait(5)
-		if _pog_is_null(group.sim_count(v5)):
+		if not _pog_is_null(group.sim_count(v5)):
 			continue
 		await imusic.set_mood(3)
 		await iconversation.begin()
@@ -201,7 +201,7 @@ func local_1735(v0) -> Variant:
 		sim.set_cullable(v3, 0)
 		v4 = 1 + v4
 	global.create_handle("g_police_vessels", 2, v1)
-	return
+	return v1
 	return 0
 
 func local_2032(v0, v1) -> Variant:
@@ -230,7 +230,7 @@ func local_2032(v0, v1) -> Variant:
 			iai.give_attack_order(v3, v0)
 			return
 		else:
-			if 2 == state.progress(v1):
+			if 2 != state.progress(v1):
 				continue
 			return
 	return
@@ -271,7 +271,7 @@ func local_2575() -> Variant:
 	sim.set_cullable(v3, 0)
 	group.add_group(v0, v1)
 	global.create_handle("g_pirate_vessels", 2, v0)
-	return
+	return v0
 	return 0
 
 func local_3383(v0, v1) -> Variant:
@@ -297,7 +297,7 @@ func local_3383(v0, v1) -> Variant:
 	sim.place_near(group.leader(v5), v7, 200.0)
 	await iformation.box(v5, 250.0, 1)
 	await iformation.jiggle(v5, 70.0, 359.0)
-	return
+	return v4
 	return 0
 
 func local_6028(v0, v1, v2) -> Variant:
@@ -305,57 +305,154 @@ func local_6028(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v3 = 0
-	v5 = 0
-	v6 = iship.cast(group.leader(v1))
-	await iconversation.begin()
-	await iconversation.add_response("a1_m01_option_player_c2_option_1_special_tour", "a1_m01_dialogue_player_c2_option_1_special_tour")
-	await iconversation.add_response("a1_m01_text_player_c2_option_2_er_yeah", "a1_m01_dialogue_player_c2_option_2_er_yeah")
-	await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
-	v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c2_hm_vessel_mona_lisa")
-	while v4 == 1:
-		v3 = 1 + v3
-		await iconversation.add_response("a1_m01_text_player_c3_option_1_after_my_ex_girlfried", "a1_m01_dialogue_player_c3_option_1_my_ex_girlfriend")
-		await iconversation.add_response("a1_m01_text_player_c3_option_2_its_my_favourite", "a1_m01_dialogue_player_c3_option_2_its_my_favourite")
-		await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
-		v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c3_i_see")
-		if 3 == v4:
-			break
-		if 2 == v4:
+	var _pc: int = 6028
+	while true:
+		if _pc == 6028:
+			v3 = 0
+			v5 = 0
+			v6 = iship.cast(group.leader(v1))
+			await iconversation.begin()
+			await iconversation.add_response("a1_m01_option_player_c2_option_1_special_tour", "a1_m01_dialogue_player_c2_option_1_special_tour")
+			await iconversation.add_response("a1_m01_text_player_c2_option_2_er_yeah", "a1_m01_dialogue_player_c2_option_2_er_yeah")
+			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
+			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c2_hm_vessel_mona_lisa")
+			_pc = 6594
+			continue
+		elif _pc == 6221:
 			v3 = 1 + v3
-		await iconversation.add_response("a1_m01_text_player_c4_option_1_my_last_one", "a1_m01_dialogue_player_c4_option_1_my_last_one")
-		await iconversation.add_response("a1_m01_text_player_c4_option_2_this_is_a_tug", "a1_m01_dialogue_player_c4_option_2_this_is_a_tug")
-		await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
-		v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c4_right_so_why")
-		if 3 == v4:
+			_pc = 6234
+			continue
+		elif _pc == 6234:
+			await iconversation.add_response("a1_m01_text_player_c3_option_1_after_my_ex_girlfried", "a1_m01_dialogue_player_c3_option_1_my_ex_girlfriend")
+			await iconversation.add_response("a1_m01_text_player_c3_option_2_its_my_favourite", "a1_m01_dialogue_player_c3_option_2_its_my_favourite")
+			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
+			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c3_i_see")
+			if 3 == v4:
+				_pc = 6365
+				continue
+			else:
+				_pc = 6378
+				continue
+		elif _pc == 6365:
+			_pc = 6625
+			continue
+		elif _pc == 6378:
+			if 2 == v4:
+				_pc = 6391
+				continue
+			else:
+				_pc = 6404
+				continue
+		elif _pc == 6391:
+			v3 = 1 + v3
+			_pc = 6404
+			continue
+		elif _pc == 6404:
+			await iconversation.add_response("a1_m01_text_player_c4_option_1_my_last_one", "a1_m01_dialogue_player_c4_option_1_my_last_one")
+			await iconversation.add_response("a1_m01_text_player_c4_option_2_this_is_a_tug", "a1_m01_dialogue_player_c4_option_2_this_is_a_tug")
+			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
+			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c4_right_so_why")
+			if 3 == v4:
+				_pc = 6535
+				continue
+			else:
+				_pc = 6547
+				continue
+		elif _pc == 6535:
 			v5 = 1
-			break
-		if 1 == v4:
+			_pc = 6625
+			continue
+		elif _pc == 6547:
+			if 1 == v4:
+				_pc = 6559
+				continue
+			else:
+				_pc = 6572
+				continue
+		elif _pc == 6559:
 			v3 = 1 + v3
-		break
-	if v5:
-		sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
-		await iconversation.say(v6, "", "a1_m01_dialogue_police_c2_response_3_where")
-		await iconversation.say(0, "name_jafs", "a1_m01_dialogue_jafs_lets_move")
-		await _pog_wait(3.0)
-		sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
-		await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
-		await iconversation.end()
-		iai.give_attack_order(v1, v0)
-		return
-	else:
-		if 2 >= v3:
+			_pc = 6572
+			continue
+		elif _pc == 6572:
+			_pc = 6625
+			continue
+		elif _pc == 6577:
+			v5 = 1
+			_pc = 6625
+			continue
+		elif _pc == 6589:
+			_pc = 6625
+			continue
+		elif _pc == 6594:
+			if v4 != 1:
+				_pc = 6607
+				continue
+			else:
+				_pc = 6221
+				continue
+		elif _pc == 6607:
+			if not _pog_is_null(2):
+				_pc = 6616
+				continue
+			else:
+				_pc = 6234
+				continue
+		elif _pc == 6616:
+			if not _pog_is_null(3):
+				_pc = 6625
+				continue
+			else:
+				_pc = 6577
+				continue
+		elif _pc == 6625:
+			if v5:
+				_pc = 6635
+				continue
+			else:
+				_pc = 6875
+				continue
+		elif _pc == 6635:
+			sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
+			await iconversation.say(v6, "", "a1_m01_dialogue_police_c2_response_3_where")
+			await iconversation.say(0, "name_jafs", "a1_m01_dialogue_jafs_lets_move")
+			await _pog_wait(3.0)
+			sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
+			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
+			await iconversation.end()
+			iai.give_attack_order(v1, v0)
+			_pc = 7112
+			continue
+		elif _pc == 6870:
+			_pc = 7112
+			continue
+		elif _pc == 6875:
+			if 2 >= v3:
+				_pc = 6888
+				continue
+			else:
+				_pc = 7005
+				continue
+		elif _pc == 6888:
 			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_right")
 			await iconversation.end()
 			state.set_progress(v2, 6)
 			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v1, _pog_clone("Random"))))
-			return
-		else:
+			_pc = 7112
+			continue
+		elif _pc == 7000:
+			_pc = 7112
+			continue
+		elif _pc == 7005:
 			await iconversation.say(v6, "", "a1_m01_dialogue_police_not_convinced")
 			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
 			await iconversation.end()
 			iai.give_attack_order(v1, v0)
-	return
+			_pc = 7112
+			continue
+		elif _pc == 7112:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7114(v0, v1, v2, v3) -> Variant:
@@ -413,7 +510,7 @@ func local_7459(v0, v1, v2) -> Variant:
 			await iconversation.end()
 			v5 = await iutilities.create_waypoint_at(v1)
 			iai.give_approach_order(v4, v1)
-		if v8:
+		if not (v8):
 			continue
 		v6 = 5 + v6
 		if not (v12) and 5 != state.progress(v2) and 10 > v6 or iai.is_order_complete(v4):
@@ -436,7 +533,7 @@ func local_7459(v0, v1, v2) -> Variant:
 				v11 = 1
 				iai.purge_orders(v3)
 				_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v3, _pog_clone("Random"))))
-		if not (v9) and 20000.0 < sim.distance_between(v1, v0):
+		if not (not (v9) and 20000.0 < sim.distance_between(v1, v0)):
 			continue
 		v9 = 1
 		iobjectives.set_state("a1_m01_objective_find_base", 1)
@@ -459,7 +556,7 @@ func local_8531(v0, v1, v2, v3) -> Variant:
 			await iconversation.begin()
 			await iconversation.say(0, "name_smith", "a1_m01_dialogue_smith_ah_there_it_is")
 			await iconversation.end()
-		if 450.0 < sim.distance_between(v1, v0) and isim.is_docked(isim.cast(v1)):
+		if not (450.0 < sim.distance_between(v1, v0) and isim.is_docked(isim.cast(v1))):
 			continue
 		v5 = 1
 		await iconversation.begin()
@@ -647,7 +744,7 @@ func mission_handler() -> Variant:
 		if not (v0) and 3 == state.progress(v8):
 			v0 = 1
 			_pog_spawn(local_8531.bind(v6, v2, v8, v5))
-		if 100 == state.progress(v8) or 10 == state.progress(v8):
+		if not (100 == state.progress(v8) or 10 == state.progress(v8)):
 			continue
 		if 100 != state.progress(v8):
 			global.set_bool("g_act1_found_base", 1)

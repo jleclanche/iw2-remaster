@@ -195,7 +195,40 @@ class Debug(Stmt):
         self.body = body
 
 
+class PcSet(Stmt):
+    """Inside a Dispatch: go to a block."""
+
+    def __init__(self, target):
+        self.target = target
+
+
+class Dispatch(Stmt):
+    """A function whose control flow does not reduce to structured code.
+
+    Rather than emit a goto we cannot honour, the function is rebuilt as its
+    basic blocks under an explicit program counter. It is not pretty, but it is
+    exactly the original, and it runs. About 8% of the game needs it.
+    """
+
+    def __init__(self, entry, blocks):
+        self.entry = entry
+        self.blocks = blocks      # [(addr, [Stmt])], each ending in PcSet/Ret
+
+
 # --- decompiler ------------------------------------------------------------
+
+_INVERSE = {"==": "!=", "!=": "==", "<": ">=", ">=": "<",
+            ">": "<=", "<=": ">"}
+
+
+def _not(e: Expr) -> Expr:
+    """Logical negation, folded: `!!x` is x, and `!(a == b)` is `a != b`."""
+    if isinstance(e, Un) and e.op == "!":
+        return e.a
+    if isinstance(e, Bin) and e.op in _INVERSE:
+        return Bin(_INVERSE[e.op], e.a, e.b, e.prec)
+    return Un("!", e)
+
 
 _BIN = {
     "AddI": ("+", 6), "SubtractI": ("-", 6), "MultiplyI": ("*", 7),
@@ -221,6 +254,18 @@ class Func:
         self.argc = argc
         self.body: list[Stmt] = []
         self.nlocals = 0
+        self.unstructured = False   # rebuilt as a block dispatch
+
+
+def _has_goto(stmts) -> bool:
+    for s in stmts:
+        if isinstance(s, Goto):
+            return True
+        if isinstance(s, If) and (_has_goto(s.then) or _has_goto(s.els)):
+            return True
+        if isinstance(s, (While, DoWhile, Every, Debug)) and _has_goto(s.body):
+            return True
+    return False
 
 
 class Decompiler:
@@ -233,26 +278,9 @@ class Decompiler:
         self.labels: set[int] = set()
         self.func_hi = self.end
         self._tail_stack: list[Expr] = []
-        # A loop is a backward jump: its target is the header, and the last such
-        # jump is the latch. But the latch does NOT bound the loop -- a nested
-        # loop's own back edge can sit *after* the outer loop's, so the outer
-        # body runs on past its latch. Extend each loop to cover any loop that
-        # begins inside it, or the outer one is never recognised at all.
+        self._inlining: set[int] = set()
         self.latch: dict[int, int] = {}
-        for off, mn, args in self.instrs:
-            if mn in _JUMPS and args[0] <= off:
-                h = args[0]
-                self.latch[h] = max(self.latch.get(h, 0), off)
-        self.loops: dict[int, int] = dict(self.latch)   # header -> last address
-        changed = True
-        while changed:
-            changed = False
-            for h, end in list(self.loops.items()):
-                for h2, end2 in self.loops.items():
-                    if h < h2 <= end and end2 > end:
-                        self.loops[h] = end2
-                        end = end2
-                        changed = True
+        self.loops: dict[int, int] = {}
 
     # -- helpers
 
@@ -298,8 +326,14 @@ class Decompiler:
         for k, e in enumerate(ordered):
             stop = ordered[k + 1] if k + 1 < len(ordered) else self.end
             self.func_hi = stop
+            self._find_loops(e, stop)
             f = Func(entries[e], e, argc.get(e, 0))
             f.body = self._block(e, stop)
+            # A goto we could not shape means the structured form would be a
+            # lie. Fall back to the block dispatch, which is exact.
+            if _has_goto(f.body):
+                f.body = [self._linear(e, stop)]
+                f.unstructured = True
             out.append(f)
         return out
 
@@ -340,17 +374,20 @@ class Decompiler:
             if mn in ("GoFalse", "GoTrue"):
                 cond = stack.pop() if stack else Const(0)
                 if mn == "GoTrue":
-                    cond = Un("!", cond)
+                    cond = _not(cond)
                 tgt = args[0]
                 body_lo = self._next_addr(addr)
 
                 jump = self._jump_stmt(tgt, ctx)
                 if isinstance(jump, Goto):
-                    epi = self._epilogue(tgt)
+                    epi = self._epilogue(tgt, stack)
                     if epi is not None:
                         jump = epi
                 if not isinstance(jump, Goto):
-                    out.append(If(cond, [jump], []))   # break / continue / return
+                    # `cond` is the condition to FALL THROUGH (GoFalse jumps when
+                    # it is false; GoTrue was negated above), so the jump is
+                    # taken on its negation.
+                    out.append(If(_not(cond), [jump], []))
                     addr = body_lo
                     continue
 
@@ -374,8 +411,17 @@ class Decompiler:
                         addr = tgt
                     continue
 
+                # Last resort before a goto: a switch arm, or an early exit into
+                # shared cleanup -- straight-line code that ends by returning,
+                # so it can simply be pasted in where it is branched to.
+                inlined = self._inline(tgt, stack)
+                if inlined is not None:
+                    out.append(If(_not(cond), inlined, []))
+                    addr = body_lo
+                    continue
+
                 self.labels.add(tgt)
-                out.append(If(cond, [Goto(tgt)], []))
+                out.append(If(_not(cond), [Goto(tgt)], []))
                 addr = body_lo
                 continue
 
@@ -404,9 +450,22 @@ class Decompiler:
                     return out
                 jump = self._jump_stmt(tgt, ctx)
                 if isinstance(jump, Goto):
-                    epi = self._epilogue(tgt)
+                    epi = self._epilogue(tgt, stack)
                     if epi is not None:
                         out.append(epi)
+                        self._tail_stack = stack
+                        return out
+                    if tgt > addr:
+                        # An unconditional forward jump inside the region simply
+                        # moves the cursor: whatever it skipped is reachable only
+                        # through other jumps (this is how a switch skips over
+                        # its case bodies to reach the dispatch), and those get
+                        # inlined at their jump sites.
+                        addr = tgt
+                        continue
+                    inlined = self._inline(tgt, stack)
+                    if inlined is not None:
+                        out += inlined
                         self._tail_stack = stack
                         return out
                     self.labels.add(tgt)
@@ -421,13 +480,19 @@ class Decompiler:
         self._tail_stack = stack
         return out
 
-    def _epilogue(self, tgt: int) -> Stmt | None:
+    def _epilogue(self, tgt: int, stack: list[Expr] | None = None) -> Stmt | None:
         """If everything from `tgt` to the end of the function is just the
         shared exit -- scope cleanup and a Return -- then a jump to it is a
-        plain `return`, not a goto. Most remaining jumps are exactly this."""
+        plain `return`, not a goto. Most jumps in the game are exactly this.
+
+        The exit runs on whatever the jumping code left on the stack (a switch
+        arm loads its result and jumps straight to `CloneObject; Return`), so it
+        is simulated from the caller's stack rather than an empty one.
+        """
         allowed = {"DeleteMarkedObjects", "MarkObject", "Pop", "LoadZero",
-                   "LoadOne", "Load"}
-        stack: list[Expr] = []
+                   "LoadOne", "Load", "LoadString", "CloneObject", "NewObject",
+                   "Copy"}
+        sim: list[Expr] = list(stack) if stack else []
         addr = tgt
         while addr < self.func_hi:
             i = self.at.get(addr)
@@ -437,19 +502,190 @@ class Decompiler:
             if mn == "Halt":
                 return Halt()
             if mn == "Return":
-                return Ret(stack[-1] if stack else None)
+                return Ret(sim[-1] if sim else None)
             if mn not in allowed:
                 return None
-            if mn == "LoadZero":
-                stack.append(Const(0))
-            elif mn == "LoadOne":
-                stack.append(Const(1))
-            elif mn == "Load":
-                stack.append(Var(args[0]))
-            elif mn == "Pop" and stack:
-                stack.pop()
+            self._step(i, sim, [])      # side-effect free by construction
             addr = self._next_addr(addr)
         return None
+
+    # -- loops, properly
+
+    def _succs(self, off: int, lo: int, hi: int) -> list[int]:
+        _, mn, args = self.instrs[self.at[off]]
+        nxt = self._next_addr(off)
+        if mn == "Goto":
+            s = [args[0]]
+        elif mn in ("GoFalse", "GoTrue", "DebugSkip", "TimedJump"):
+            s = [args[0], nxt]
+        elif mn in ("Return", "Halt"):
+            s = []
+        else:
+            s = [nxt]
+        return [t for t in s if lo <= t < hi]
+
+    def _find_loops(self, lo: int, hi: int) -> None:
+        """Loops for one function.
+
+        A backward jump is NOT enough to make a loop: the compiler emits a
+        switch as `goto dispatch; <cases>; dispatch: compare-and-jump back into
+        a case`, so those back edges jump into code that never encloses them.
+        A back edge n -> h is a loop only if h *dominates* n -- if every path
+        from the entry to n runs through h. Anything else is a jump table.
+        """
+        nodes = [off for off, _, _ in self.instrs if lo <= off < hi]
+        succ = {n: self._succs(n, lo, hi) for n in nodes}
+
+        def dominates(h: int, n: int) -> bool:
+            """Does every path from the entry to `n` pass through `h`?
+            Equivalently: with `h` removed, is `n` still reachable?"""
+            if h == n:
+                return True
+            seen = {h}
+            stack = [lo]
+            if lo == h:
+                return True
+            while stack:
+                x = stack.pop()
+                if x == n:
+                    return False
+                if x in seen:
+                    continue
+                seen.add(x)
+                stack.extend(succ.get(x, ()))
+            return True
+
+        self.latch = {}
+        for n in nodes:
+            _, mn, args = self.instrs[self.at[n]]
+            if mn in _JUMPS and lo <= args[0] <= n:
+                h = args[0]
+                if dominates(h, n):              # a real loop, not a jump table
+                    self.latch[h] = max(self.latch.get(h, 0), n)
+
+        # A loop's extent is not its latch: a nested loop's own back edge can
+        # sit after the outer loop's, so the outer body runs on past it.
+        self.loops = dict(self.latch)
+        changed = True
+        while changed:
+            changed = False
+            for h, end in list(self.loops.items()):
+                for h2, end2 in self.loops.items():
+                    if h < h2 <= end and end2 > end:
+                        self.loops[h] = end2
+                        end = end2
+                        changed = True
+
+    def _linear(self, lo: int, hi: int) -> Dispatch:
+        """Rebuild a function as basic blocks under an explicit pc.
+
+        The fallback for the ~8% of functions whose control flow is genuinely
+        irreducible (multi-level exits out of nested loops, mostly). Every jump
+        becomes an assignment to the pc, so nothing is approximated: the result
+        is the original program, just spelled as a state machine.
+        """
+        leaders = {lo}
+        for off, mn, args in self.instrs:
+            if not (lo <= off < hi):
+                continue
+            if mn in _JUMPS or mn in ("DebugSkip", "TimedJump"):
+                if lo <= args[0] < hi:
+                    leaders.add(args[0])
+                nxt = self._next_addr(off)
+                if lo <= nxt < hi:
+                    leaders.add(nxt)
+        order = sorted(leaders)
+
+        blocks: list[tuple[int, list[Stmt]]] = []
+        for k, start in enumerate(order):
+            stop = order[k + 1] if k + 1 < len(order) else hi
+            stmts: list[Stmt] = []
+            stack: list[Expr] = []
+            addr = start
+            done = False
+            while addr < stop:
+                i = self.at[addr]
+                _, mn, args = self.instrs[i]
+                nxt = self._next_addr(addr)
+                if mn == "Goto":
+                    stmts.append(PcSet(args[0]))
+                    done = True
+                    break
+                if mn in ("GoFalse", "GoTrue"):
+                    cond = stack.pop() if stack else Const(0)
+                    if mn == "GoTrue":
+                        cond = _not(cond)
+                    # cond is the fall-through condition.
+                    stmts.append(If(cond, [PcSet(nxt)], [PcSet(args[0])]))
+                    done = True
+                    break
+                if mn == "DebugSkip":
+                    stmts.append(PcSet(args[0]))   # developer mode off
+                    done = True
+                    break
+                if mn == "EndTimeslice":
+                    stmts.append(Yield())
+                    addr = nxt
+                    continue
+                if mn == "TimedJump":
+                    secs = struct.unpack("<f", struct.pack("<I", args[2]))[0]
+                    stmts.append(If(Call("_pog_every", [Const(addr),
+                                                        Const(secs)]),
+                                    [PcSet(nxt)], [PcSet(args[0])]))
+                    done = True
+                    break
+                if mn in ("Return", "Halt"):
+                    stmts.append(Ret(stack[-1] if stack else None)
+                                 if mn == "Return" else Halt())
+                    done = True
+                    break
+                addr = self._step(i, stack, stmts)
+            if not done:
+                stmts.append(PcSet(stop) if stop < hi else Ret(None))
+            blocks.append((start, stmts))
+        return Dispatch(lo, blocks)
+
+    def _inline(self, tgt: int, stack: list[Expr]) -> list[Stmt] | None:
+        """A switch arm, inlined at its jump site.
+
+        The compiler lays a switch out as `goto dispatch; <cases>; dispatch:
+        compare-and-jump into a case`, so the case bodies sit *before* the code
+        that selects them and can only be reached by jumping backwards. Each arm
+        is straight-line and ends by jumping to the function's shared exit, so it
+        can simply be pasted in where it is selected -- no label, no goto.
+
+        Returns None if the target is not that shape, in which case the caller
+        keeps its honest goto.
+        """
+        if tgt in self._inlining:
+            return None                  # not straight-line after all
+        sim: list[Expr] = list(stack)
+        stmts: list[Stmt] = []
+        addr = tgt
+        self._inlining.add(tgt)
+        try:
+            while addr < self.func_hi:
+                i = self.at.get(addr)
+                if i is None:
+                    return None
+                _, mn, args = self.instrs[i]
+                if mn in ("Return", "Halt"):
+                    stmts.append(Ret(sim[-1] if sim else None)
+                                 if mn == "Return" else Halt())
+                    return stmts
+                if mn == "Goto":
+                    epi = self._epilogue(args[0], sim)
+                    if epi is None:
+                        return None
+                    stmts.append(epi)
+                    return stmts
+                if mn in _JUMPS or mn in ("EndTimeslice", "TimedJump",
+                                          "DebugSkip"):
+                    return None          # not straight-line
+                addr = self._step(i, sim, stmts)
+            return None
+        finally:
+            self._inlining.discard(tgt)
 
     def _splits_loop(self, lo: int, hi: int) -> bool:
         """Would a region ending at `hi` cut a loop that starts inside it?
@@ -505,7 +741,7 @@ class Decompiler:
             body = self._block(header, latch, ctx)
             cond = self._tail_stack[-1] if self._tail_stack else Const(1)
             if latch_mn == "GoFalse":
-                cond = Un("!", cond)
+                cond = _not(cond)
             return DoWhile(cond, body)
 
         # `while (cond)`: the header evaluates a condition that jumps to the
@@ -515,7 +751,7 @@ class Decompiler:
         if cond is not None and not pre:
             return While(cond, self._block(body_lo, latch, ctx))
         if cond is not None:
-            body = pre + [If(Un("!", cond), [Break()], [])]
+            body = pre + [If(_not(cond), [Break()], [])]
             return While(Const(1), body + self._block(body_lo, latch, ctx))
         return While(Const(1), self._block(header, latch, ctx))
 
@@ -528,12 +764,12 @@ class Decompiler:
         stmts, stack = self._eval(cond_at, latch)
         cond = stack[-1] if stack else Const(1)
         if self.instrs[self.at[latch]][1] == "GoFalse":
-            cond = Un("!", cond)
+            cond = _not(cond)
         if not stmts:
             return While(cond, body)
         # The test has side effects, so it cannot be hoisted into the header.
         return While(Const(1),
-                     body + stmts + [If(Un("!", cond), [Break()], [])])
+                     body + stmts + [If(_not(cond), [Break()], [])])
 
     def _eval(self, lo: int, hi: int):
         """Straight-line symbolic execution of [lo, hi): (statements, stack)."""
@@ -560,7 +796,7 @@ class Decompiler:
                     return None, [], header
                 cond = stack.pop() if stack else Const(0)
                 if mn == "GoTrue":
-                    cond = Un("!", cond)
+                    cond = _not(cond)
                 return cond, stmts, self._next_addr(addr)
             if mn in _JUMPS or mn in ("EndTimeslice", "TimedJump", "DebugSkip"):
                 return None, [], header
@@ -616,7 +852,7 @@ class Decompiler:
             stack.append(Bin(op, a, b, prec))
         elif mn in _UN:
             a = stack.pop() if stack else Const(0)
-            stack.append(Un(_UN[mn], a))
+            stack.append(_not(a) if mn == "LogicalNot" else Un(_UN[mn], a))
         elif mn in ("IntToFloat", "FloatToInt", "ToBool"):
             pass                       # coercions the types already imply
         elif mn in ("Call", "Start", "CallLocal", "StartLocal"):
@@ -677,6 +913,16 @@ class PogBackend:
             return [i + "break;"]
         if isinstance(s, Continue):
             return [i + "continue;"]
+        if isinstance(s, PcSet):
+            return ["%spc = %d;" % (i, s.target)]
+        if isinstance(s, Dispatch):
+            out = ["%s// irreducible: rebuilt as its basic blocks" % i,
+                   "%sint pc = %d;" % (i, s.entry),
+                   "%swhile (1) switch (pc) {" % i]
+            for addr, stmts in s.blocks:
+                out.append("%scase %d:" % (_ind(d + 1), addr))
+                out += self.body(stmts, d + 2)
+            return out + [i + "}"]
         if isinstance(s, Goto):
             return ["%sgoto L%d;" % (i, s.target)]
         if isinstance(s, Label):

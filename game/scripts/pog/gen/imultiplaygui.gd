@@ -27,7 +27,7 @@ func _link() -> void:
 	text = api.text
 
 func valid_ship_count() -> Variant:
-	return
+	return imultiplay.get_server_ship_list()
 	return 0
 
 func valid_ship_display_name(v0) -> Variant:
@@ -37,20 +37,11 @@ func valid_ship_display_name(v0) -> Variant:
 	v1 = inifile.create(imultiplay.server_ship_list_item(v0))
 	v2 = string.upper_case(inifile.string(v1, "Properties", "name", ""))
 	inifile.destroy(v1)
-	push_error("PORT: unstructured jump to L177")
 	return _pog_clone(text.field(v2, 0))
 	return 0
 
 func valid_ship_i_n_i(v0) -> Variant:
-	var v1: Variant = 0
-	push_error("PORT: unstructured jump to L211")
 	return _pog_clone(imultiplay.server_ship_list_item(v0))
-	v1 = 0
-	while await valid_ship_count() < v1:
-		if _pog_eq(v0, await valid_ship_i_n_i(v1)):
-			return
-		v1 = 1 + v1
-	return
 	return 0
 
 func local_313(v0, v1, v2, v3, v4, v5) -> Variant:
@@ -58,7 +49,7 @@ func local_313(v0, v1, v2, v3, v4, v5) -> Variant:
 	v6 = await igui.create_and_initialise_static_window(v0, 0, v1, v2, v3, v4, v5)
 	gui.set_window_text_formatting(v6, 0, 0)
 	gui.set_window_state_colours(v6, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
-	return
+	return v6
 	return 0
 
 func local_592(v0, v1, v2, v3) -> Variant:
@@ -106,7 +97,7 @@ func local_592(v0, v1, v2, v3) -> Variant:
 	v7 = await local_313(v18, v17, v21, v4, v24, string.from_int(v1))
 	v8 = await local_313(v20, v19, v21, v4, v24, string.from_int(v2))
 	gui.add_list_box_entry(v3, v4)
-	return
+	return v4
 	return 0
 
 func multiplay_score_screen() -> Variant:
@@ -174,7 +165,7 @@ func multiplay_score_screen() -> Variant:
 	if not (list.is_empty(v2)):
 		gui.set_first_control_focus(gui.cast(list.head(v2)))
 	await igui.set_cyclic_control_focus_path(v2)
-	if imultiplay.is_game_ended():
+	if not (imultiplay.is_game_ended()):
 		return 0
 	gui.set_control_focus_cancel_function("iMultiplayGUI.OnMultiplayScoreScreenQuitButton")
 	return 0

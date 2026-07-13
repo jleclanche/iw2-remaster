@@ -155,7 +155,7 @@ func local_548() -> Variant:
 	v1 = group.cast(global.handle("g_cleanup_stuff"))
 	group.add_group(v1, v0)
 	global.set_handle("g_cleanup_stuff", v1)
-	return
+	return v0
 	return 0
 
 func local_1705(v0) -> Variant:
@@ -200,7 +200,7 @@ func local_1705(v0) -> Variant:
 	global.set_handle("g_cleanup_stuff", v6)
 	while true:
 		await _pog_wait(2)
-		if 400000.0 <= sim.distance_between(v9, v7):
+		if 400000.0 > sim.distance_between(v9, v7):
 			continue
 		if _pog_is_null(v2):
 			await local_30(v0)
@@ -215,7 +215,7 @@ func local_1705(v0) -> Variant:
 			global.create_handle("g_mca_force", 1, v5)
 			v11 = iship.cast(group.leader(v5))
 		else:
-			if 10000.0 <= sim.distance_between(v9, v11):
+			if 10000.0 > sim.distance_between(v9, v11):
 				continue
 			if _pog_is_null(v4):
 				await local_30(v0)
@@ -272,7 +272,7 @@ func local_1705(v0) -> Variant:
 					await iwingmen.defend_player()
 					iobjectives.add("a2_m09_objecitves_patrol")
 				else:
-					if _pog_is_null(v20):
+					if not _pog_is_null(v20):
 						continue
 					await local_30(v0)
 					_pog_spawn(local_4436.bind(v0, iship.cast(group.nth_sim(v5, 5)), v5, v21))
@@ -307,7 +307,7 @@ func local_4436(v0, v1, v2, v3) -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string("completed point three\n")
 				v7 = 1
-		if _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_2") and 1 == object.int_property(v0, "g_a2_m09_signal_3") or _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_3") and 1 == object.int_property(v0, "g_a2_m09_signal_1") or _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_2") and 1 == object.int_property(v0, "g_a2_m09_signal_1"):
+		if not (_pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_2") and 1 == object.int_property(v0, "g_a2_m09_signal_3") or _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_3") and 1 == object.int_property(v0, "g_a2_m09_signal_1") or _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_2") and 1 == object.int_property(v0, "g_a2_m09_signal_1")):
 			continue
 		iobjectives.set_state("a2_m09_objecitves_patrol", 1)
 		await iconversation.one_liner(v1, "", "a2_m09_dialogue_sensorship_triangulating")
@@ -343,7 +343,7 @@ func local_5149(v0, v1, v2) -> Variant:
 			if 5 == v5:
 				_pog_spawn(local_17019.bind(v1, v0, v2))
 		else:
-			if 50000.0 <= sim.distance_between(v3, v0):
+			if 50000.0 > sim.distance_between(v3, v0):
 				continue
 			v4 = 1
 	return
@@ -368,9 +368,9 @@ func local_5418(v0, v1, v2) -> Variant:
 		debug.print_string("Waypoint Two\n")
 	while true:
 		await _pog_wait(3)
-		if 50000.0 <= sim.distance_between(v3, v0):
+		if 50000.0 > sim.distance_between(v3, v0):
 			continue
-		if _pog_is_null(v4):
+		if not _pog_is_null(v4):
 			continue
 		v4 = 1
 		object.set_int_property(v1, "g_a2_m09_signal_2", 1)
@@ -423,7 +423,7 @@ func local_6258(v0, v1, v2) -> Variant:
 		debug.print_string("Waypoint Three\n")
 	while true:
 		await _pog_wait(5)
-		if 10000.0 <= sim.distance_between(v3, v0):
+		if 10000.0 > sim.distance_between(v3, v0):
 			continue
 		if _pog_is_null(v4):
 			v4 = 1
@@ -438,7 +438,7 @@ func local_6258(v0, v1, v2) -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("arrived at Encounter  Three\n")
 		else:
-			if _pog_is_null(v13):
+			if not _pog_is_null(v13):
 				continue
 			v13 = 1
 			v8 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a2_m09_Fatal")
@@ -645,7 +645,7 @@ func local_11103(v0, v1, v2) -> Variant:
 			debug.print_string("can't find the base location waypoint \n")
 	while true:
 		await _pog_wait(1)
-		if 300000.0 <= sim.distance_between(v6, v5):
+		if 300000.0 > sim.distance_between(v6, v5):
 			continue
 		if _pog_is_null(v4):
 			v4 = 1
@@ -795,7 +795,7 @@ func local_11103(v0, v1, v2) -> Variant:
 				else:
 					if _pog_is_null(v36):
 						v35 = 1 + v35
-				if 10000.0 <= sim.distance_between(v23, v3):
+				if 10000.0 > sim.distance_between(v23, v3):
 					continue
 				if await icutsceneutilities.handle_abort(_pog_spawn(local_7969.bind(v23, v3, v30, v6, v7, v8))):
 					sim.destroy(sim.cast(group.nth_sim(v30, 0)))
@@ -823,20 +823,68 @@ func local_11103(v0, v1, v2) -> Variant:
 
 func local_16668(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("MCA conversation\n")
-	await iconversation.begin()
-	await iconversation.add_response("a2_m09_text_player_c1_option_1_yes", "a2_m09_dialogue_player_c1_option_1_yes")
-	await iconversation.add_response("a2_m09_text_player_c1_option_2_no", "a2_m09_dialogue_player_c1_option_2_no")
-	v3 = await iconversation.ask(v0, "", "a2_m09_dialogue_mca_leader_c1_are_you_ready")
-	while v3 == 1:
-		if PogRuntime.TRACE:
+	var _pc: int = 16668
+	while true:
+		if _pc == 16668:
+			_pc = 16699
+			continue
+		elif _pc == 16678:
+			debug.print_string("MCA conversation\n")
+			_pc = 16699
+			continue
+		elif _pc == 16699:
+			await iconversation.begin()
+			await iconversation.add_response("a2_m09_text_player_c1_option_1_yes", "a2_m09_dialogue_player_c1_option_1_yes")
+			await iconversation.add_response("a2_m09_text_player_c1_option_2_no", "a2_m09_dialogue_player_c1_option_2_no")
+			v3 = await iconversation.ask(v0, "", "a2_m09_dialogue_mca_leader_c1_are_you_ready")
+			_pc = 16981
+			continue
+		elif _pc == 16809:
+			_pc = 16835
+			continue
+		elif _pc == 16814:
 			debug.print_string("MCA conversation accepted\n")
-		await iconversation.say(v0, "", "a2_m09_dialogue_mca_leader_c1_response_then_lets_go")
-		state.set_progress(v1, 2)
-		break
-	await iconversation.end()
-	return
+			_pc = 16835
+			continue
+		elif _pc == 16835:
+			await iconversation.say(v0, "", "a2_m09_dialogue_mca_leader_c1_response_then_lets_go")
+			state.set_progress(v1, 2)
+			_pc = 17003
+			continue
+		elif _pc == 16893:
+			await iconversation.say(v0, "", "a2_m09_dialogue_mca_leader_c1_response_then_get_ready")
+			_pc = 16951
+			continue
+		elif _pc == 16930:
+			debug.print_string("MCA conversation declined\n")
+			_pc = 16951
+			continue
+		elif _pc == 16951:
+			state.set_progress(v1, 1)
+			_pc = 17003
+			continue
+		elif _pc == 16976:
+			_pc = 17003
+			continue
+		elif _pc == 16981:
+			if v3 != 1:
+				_pc = 16994
+				continue
+			else:
+				_pc = 16809
+				continue
+		elif _pc == 16994:
+			if not _pog_is_null(2):
+				_pc = 17003
+				continue
+			else:
+				_pc = 16893
+				continue
+		elif _pc == 17003:
+			await iconversation.end()
+			return
+		else:
+			return 0
 	return 0
 
 func local_17019(v0, v1, v2) -> Variant:
@@ -878,7 +926,7 @@ func local_17019(v0, v1, v2) -> Variant:
 	await iconversation.one_liner(0, "a2_m09_Distress_Signal", "a2_m09_dialogue_freighter_mayday")
 	while true:
 		await _pog_wait(5)
-		if 40000.0 <= sim.distance_between(v4, v3):
+		if 40000.0 > sim.distance_between(v4, v3):
 			continue
 		if _pog_is_null(v5):
 			v5 = 1
@@ -949,7 +997,7 @@ func local_18932(v0) -> Variant:
 	v1 = iship.find_player_ship()
 	while true:
 		await _pog_wait(5)
-		if 10000.0 <= sim.distance_between(v1, v0):
+		if 10000.0 > sim.distance_between(v1, v0):
 			continue
 		sim.destroy(v0)
 		break
@@ -965,7 +1013,7 @@ func local_19041(v0) -> Variant:
 	v1 = iship.find_player_ship()
 	while true:
 		await _pog_wait(5)
-		if 10000.0 <= sim.distance_between(v1, v0):
+		if 10000.0 > sim.distance_between(v1, v0):
 			continue
 		sim.destroy(v0)
 		break
@@ -1026,7 +1074,7 @@ func mission_handler() -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string("hello again, you're in Mwari\n")
 				v0 = 1
-		if 100 == state.progress(v2) or 6 == state.progress(v2):
+		if not (100 == state.progress(v2) or 6 == state.progress(v2)):
 			continue
 		if 100 == state.progress(v2):
 			group.destroy(group.cast(global.handle("g_cleanup_stuff")), 1)

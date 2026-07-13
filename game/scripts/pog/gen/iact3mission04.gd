@@ -117,7 +117,7 @@ func local_325() -> Variant:
 	if not (await iutilities.skip_mission("Capture the Jump Accelerator?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
 	else:
-		if global.exists("g_act3_capture_accelerator_complete"):
+		if not (global.exists("g_act3_capture_accelerator_complete")):
 			return
 		global.set_bool("g_act3_capture_accelerator_complete", 1)
 	return
@@ -126,7 +126,7 @@ func local_325() -> Variant:
 func local_487(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> Variant:
 	while true:
 		await _pog_wait(1)
-		if 100 == state.progress(v1):
+		if 100 != state.progress(v1):
 			continue
 		sim.destroy(v2)
 		sim.destroy(v3)
@@ -276,13 +276,13 @@ func mission_handler() -> Variant:
 				if _pog_is_null(v6):
 					debug.print_string("iAct3Mission04.mission_handler: Cannot find Santa Romera Jump Accelerator - EXITING\n")
 					return
-				if not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
+				if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
 					v1 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")
 					await iconversation.one_liner(0, "DEBUG:", "Act 3 Mission 4 Mission being tested in isolation. Placing you in the correct starting location.")
 					sim.place_relative_to(v0, v1, 1000.0, 1000.0, 1000.0)
 					while true:
 						await _pog_wait(0.10000000149011612)
-						if not (not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world()))):
+						if not (not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
 							break
 			await irangecheck.add_traffic_exceptions_in_area(imapentity.cast(v6), 1000000.0)
 			await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))
@@ -339,7 +339,7 @@ func mission_handler() -> Variant:
 			await iconversation.one_liner(v11, "", "a3_m04_dialogue_ship_megafreighter_were_ready_to_go")
 			while true:
 				await _pog_wait(0.5)
-				if 4000.0 < sim.distance_between(v0, v11):
+				if 4000.0 >= sim.distance_between(v0, v11):
 					continue
 				break
 			iai.clear_autopilot()
@@ -357,7 +357,7 @@ func mission_handler() -> Variant:
 			sim.place_relative_to(v11, v5, 0.0, 0.0, 10000.0)
 			while true:
 				await _pog_wait(0.10000000149011612)
-				if not (not (_pog_eq("map:/geog/gagarin/formhault", isim.active_world()))):
+				if not (not _pog_eq("map:/geog/gagarin/formhault", isim.active_world())):
 					break
 			await istation.disable_reactive_in_area(v5, 100000.0)
 			sim.copy_orientation(v11, v5)
@@ -451,7 +451,7 @@ func mission_handler() -> Variant:
 							await _pog_wait(2.0)
 							sim.set_collision(v16, 1)
 				else:
-					if isim.is_docked_to_structure(v16, v5):
+					if not (isim.is_docked_to_structure(v16, v5)):
 						continue
 					_pog_halt(v28)
 					isim.set_sensor_visibility(v16, 0)
@@ -488,7 +488,7 @@ func mission_handler() -> Variant:
 				ihud.set_prompt(string.join("a3_m04_caption_fleet_arrives+ +", string.from_int(v30)), "")
 				if 1 < v30:
 					break
-				if _pog_is_null(group.sim_count(v19)):
+				if not _pog_is_null(group.sim_count(v19)):
 					continue
 				sim.destroy(v25)
 				v35 = 0
@@ -550,11 +550,11 @@ func mission_handler() -> Variant:
 				isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Super Freighter Service Depot", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
 				isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
 				await icutsceneutilities.handle_abort(_pog_spawn(local_15369.bind(v5, v6, v0)))
-				if not (isim.is_capsule_jumping(v0)) and not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
+				if not (isim.is_capsule_jumping(v0)) and not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
 					sim.place_relative_to(v0, v6, 0.0, 0.0, 6000.0)
 					while true:
 						await _pog_wait(0.10000000149011612)
-						if not (not (_pog_eq("map:/geog/badlands/santa_romera", isim.active_world()))):
+						if not (not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world())):
 							break
 					iship.set_free_without_pilot(v0, 0)
 					sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
@@ -591,7 +591,7 @@ func local_10251(v0, v1, v2, v3) -> Variant:
 		await ipilotsetup.military_aggressive(v6)
 		isim.set_faction(v6, v5)
 		v7 = 1 + v7
-	return
+	return v4
 	return 0
 
 func local_10479(v0, v1, v2, v3, v4, v5, v6) -> Variant:
@@ -700,7 +700,7 @@ func local_10479(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	sim.place_near(v1, v5, 200000.0)
 	while true:
 		await _pog_wait(0.10000000149011612)
-		if not (not (_pog_eq("map:/geog/gagarin/formhault", isim.world_name(v0))) and not (_pog_eq("map:/geog/gagarin/formhault", isim.active_world()))):
+		if not (not _pog_eq("map:/geog/gagarin/formhault", isim.world_name(v0)) and not _pog_eq("map:/geog/gagarin/formhault", isim.active_world())):
 			break
 	await imusic.play("sound:/audio/music/a4_tension", 1, 1)
 	await istation.disable_reactive_in_area(v5, 50000.0)
@@ -894,7 +894,7 @@ func local_16657(v0) -> Variant:
 		isim.set_indestructable(v1, 1)
 		isim.set_sensor_visibility(v1, 0)
 		v3 = 1 + v3
-	return
+	return v2
 	return 0
 
 func local_16871(v0, v1, v2, v3, v4) -> Variant:
@@ -1101,7 +1101,6 @@ func local_17823(v0) -> Variant:
 	subsim.place(v2, 51.96149826049805, -30.0, -1124.0)
 	subsim.orientate_euler(v2, 90.0, 30.0, -90.0)
 	list.add_tail(v1, v2)
-	push_error("PORT: unstructured jump to L22269")
 	return _pog_clone(v1)
 	return 0
 

@@ -252,7 +252,7 @@ func local_2274() -> Variant:
 					await iconversation.end()
 					global.set_string("g_player_ship_name", "a1_ship_name_4")
 				else:
-					if 5 == v0:
+					if 5 != v0:
 						return
 					await iconversation.say(0, "name_smith", "a1_master_black_pig_well_its_you_who_will_flying_it")
 					await iconversation.end()
@@ -446,26 +446,211 @@ func local_6631() -> Variant:
 	return 0
 
 func local_6855(v0) -> Variant:
-	while v0 == 1:
-		if PogRuntime.TRACE:
+	var _pc: int = 6855
+	while true:
+		if _pc == 6855:
+			_pc = 7101
+			continue
+		elif _pc == 6860:
+			_pc = 6886
+			continue
+		elif _pc == 6865:
 			debug.print_string("iActOneStart.StepsonComms - Jaffs complains about few trades on offer. Add trades....\n")
-		global.set_int("g_story_1.35", 1)
-		break
-	return 0
+			_pc = 6886
+			continue
+		elif _pc == 6886:
+			global.set_int("g_story_1.35", 1)
+			_pc = 7141
+			continue
+		elif _pc == 6913:
+			_pc = 6939
+			continue
+		elif _pc == 6918:
+			debug.print_string("iActOneStart.StepsonComms - Jaffs makes some more complaints about trades on offer. Adding more trades.\n")
+			_pc = 6939
+			continue
+		elif _pc == 6939:
+			global.set_int("g_story_1.36", 1)
+			_pc = 7141
+			continue
+		elif _pc == 6966:
+			_pc = 6992
+			continue
+		elif _pc == 6971:
+			debug.print_string("iActOneStart.StepsonComms - Sending fourth Stepsons teaser to e-mail.\n")
+			_pc = 6992
+			continue
+		elif _pc == 6992:
+			iemail.send_email("a1_sender_the_stepsons", "a1_subject_doing_well", "html:/text/act_1/act1_stepson_mail_2", 0)
+			_pc = 7141
+			continue
+		elif _pc == 7031:
+			_pc = 7057
+			continue
+		elif _pc == 7036:
+			debug.print_string("iActOneStart.StepsonComms - Sending fifth Stepsons teaser to e-mail.\n")
+			_pc = 7057
+			continue
+		elif _pc == 7057:
+			iemail.send_email("a1_sender_the_stepsons", "a1_subject_we_are_impressed", "html:/text/act_1/act1_stepson_mail_3", 0)
+			_pc = 7141
+			continue
+		elif _pc == 7096:
+			_pc = 7141
+			continue
+		elif _pc == 7101:
+			if v0 != 1:
+				_pc = 7114
+				continue
+			else:
+				_pc = 6860
+				continue
+		elif _pc == 7114:
+			if not _pog_is_null(2):
+				_pc = 7123
+				continue
+			else:
+				_pc = 6913
+				continue
+		elif _pc == 7123:
+			if not _pog_is_null(3):
+				_pc = 7132
+				continue
+			else:
+				_pc = 6966
+				continue
+		elif _pc == 7132:
+			if not _pog_is_null(4):
+				_pc = 7141
+				continue
+			else:
+				_pc = 7031
+				continue
+		elif _pc == 7141:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_7144(v0) -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iActOne.PiracyGeneratedMission : Adding new generated issions to the list....\n")
-	while v0 == 1:
-		if _pog_is_null(global.exists("g_added_gm_batch_1")):
+	var _pc: int = 7144
+	while true:
+		if _pc == 7144:
+			_pc = 7170
+			continue
+		elif _pc == 7149:
+			debug.print_string("iActOne.PiracyGeneratedMission : Adding new generated issions to the list....\n")
+			_pc = 7170
+			continue
+		elif _pc == 7170:
+			_pc = 7647
+			continue
+		elif _pc == 7175:
+			if _pog_is_null(global.exists("g_added_gm_batch_1")):
+				_pc = 7202
+				continue
+			else:
+				_pc = 7290
+				continue
+		elif _pc == 7202:
 			await igmtracker.add_g_m_enum(1)
 			await igmtracker.add_g_m_enum(2)
 			await igmtracker.add_g_m_enum(3)
 			await igmtracker.set_g_m_range(2, 3)
 			global.create_bool("g_added_gm_batch_1", 1, 1)
-		break
-	return 0
+			_pc = 7290
+			continue
+		elif _pc == 7290:
+			_pc = 7687
+			continue
+		elif _pc == 7295:
+			if _pog_is_null(global.exists("g_added_gm_batch_2")):
+				_pc = 7322
+				continue
+			else:
+				_pc = 7411
+				continue
+		elif _pc == 7322:
+			await igmtracker.add_g_m_enum(4)
+			await igmtracker.add_g_m_enum(5)
+			await igmtracker.add_g_m_enum(6)
+			await igmtracker.set_g_m_range(4, 6)
+			global.create_bool("g_added_gm_batch_2", 1, 1)
+			_pc = 7411
+			continue
+		elif _pc == 7411:
+			_pc = 7687
+			continue
+		elif _pc == 7416:
+			if _pog_is_null(global.exists("g_added_gm_batch_3")):
+				_pc = 7443
+				continue
+			else:
+				_pc = 7548
+				continue
+		elif _pc == 7443:
+			await igmtracker.add_g_m_enum(7)
+			await igmtracker.add_g_m_enum(8)
+			await igmtracker.add_g_m_enum(9)
+			await igmtracker.add_g_m_enum(10)
+			await igmtracker.set_g_m_range(7, 10)
+			global.create_bool("g_added_gm_batch_3", 1, 1)
+			_pc = 7548
+			continue
+		elif _pc == 7548:
+			_pc = 7687
+			continue
+		elif _pc == 7553:
+			if _pog_is_null(global.exists("g_added_gm_batch_4")):
+				_pc = 7580
+				continue
+			else:
+				_pc = 7637
+				continue
+		elif _pc == 7580:
+			await igmtracker.add_g_m_enum(11)
+			await igmtracker.set_g_m_range(11, 11)
+			global.create_bool("g_added_gm_batch_4", 1, 1)
+			_pc = 7637
+			continue
+		elif _pc == 7637:
+			_pc = 7687
+			continue
+		elif _pc == 7642:
+			_pc = 7687
+			continue
+		elif _pc == 7647:
+			if v0 != 1:
+				_pc = 7660
+				continue
+			else:
+				_pc = 7175
+				continue
+		elif _pc == 7660:
+			if not _pog_is_null(2):
+				_pc = 7669
+				continue
+			else:
+				_pc = 7295
+				continue
+		elif _pc == 7669:
+			if not _pog_is_null(3):
+				_pc = 7678
+				continue
+			else:
+				_pc = 7416
+				continue
+		elif _pc == 7678:
+			if not _pog_is_null(4):
+				_pc = 7687
+				continue
+			else:
+				_pc = 7553
+				continue
+		elif _pc == 7687:
+			return 0
+		else:
+			return 0
 	return 0
 
 func stepson_member() -> Variant:
@@ -479,7 +664,7 @@ func stepson_member() -> Variant:
 		v2 = state.create(v1, 0)
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.StepsonMember : Starting to monitoring the players career with the Stepsons.\n")
-	while _pog_is_null(state.progress(v2)):
+	if _pog_is_null(state.progress(v2)):
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 484, 1, 344, 1, 0))
 		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 483, 1, 7, 3, 2))
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 377, 1, 0))
@@ -536,8 +721,12 @@ func stepson_member() -> Variant:
 		state.set_progress(v2, 1)
 		global.set_bool("g_act1_stepsons_pleased", 1)
 		state.destroy(self)
-		break
-	return
+		return state.progress(v2)
+	if state.progress(v2) == 1:
+		global.set_bool("g_act1_stepsons_pleased", 1)
+		state.destroy(self)
+		return state.progress(v2)
+	return state.progress(v2)
 	return 0
 
 func piracy_rating_handler() -> Variant:
@@ -555,266 +744,902 @@ func piracy_rating_handler() -> Variant:
 func piracy_rating_tracker() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
-	v1 = state.find(v0)
-	await local_7144(1)
-	if not (v1):
-		v1 = state.create(v0, 0)
-	if PogRuntime.TRACE:
-		debug.print_string("iActOne.PiracyRatingTracker - Commencing Piracy Rating Tracker script.\n")
-	while _pog_is_null(state.progress(v1)):
-		if _pog_is_null(object.property_exists(v1, "done_special")):
+	var _pc: int = 11405
+	while true:
+		if _pc == 11405:
+			v0 = self
+			v1 = state.find(v0)
+			await local_7144(1)
+			if not (v1):
+				_pc = 11479
+				continue
+			else:
+				_pc = 11504
+				continue
+		elif _pc == 11479:
+			v1 = state.create(v0, 0)
+			_pc = 11504
+			continue
+		elif _pc == 11504:
+			_pc = 11530
+			continue
+		elif _pc == 11509:
+			debug.print_string("iActOne.PiracyRatingTracker - Commencing Piracy Rating Tracker script.\n")
+			_pc = 11530
+			continue
+		elif _pc == 11530:
+			_pc = 15190
+			continue
+		elif _pc == 11535:
+			if _pog_is_null(object.property_exists(v1, "done_special")):
+				_pc = 11567
+				continue
+			else:
+				_pc = 11961
+				continue
+		elif _pc == 11567:
 			object.add_int_property(v1, "done_special", 1)
 			if await iutilities.skip_mission("Piracy Special Mission?"):
-				object.add_int_property(v1, "next_piracy_level", 100)
-				await local_6855(4)
-				global.set_bool("g_act1_stepsons_intro", 1)
-				if _pog_is_null(global.exists("g_added_gm_batch_5")):
-					await igmtracker.add_g_m_enum(1)
-					await igmtracker.add_g_m_enum(2)
-					await igmtracker.add_g_m_enum(3)
-					await igmtracker.add_g_m_enum(4)
-					await igmtracker.add_g_m_enum(5)
-					await igmtracker.add_g_m_enum(6)
-					await igmtracker.add_g_m_enum(7)
-					await igmtracker.add_g_m_enum(8)
-					await igmtracker.add_g_m_enum(9)
-					await igmtracker.add_g_m_enum(10)
-					await igmtracker.add_g_m_enum(11)
-					global.create_bool("g_added_gm_batch_5", 1, 1)
-				state.destroy(self)
-				break
+				_pc = 11619
+				continue
 			else:
-				await iact1piracyspecial.main()
-		object.add_int_property(v1, "next_piracy_level", 1)
-		while true:
-			await _pog_wait(5)
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 11947
 				continue
-			break
-		if PogRuntime.TRACE:
+		elif _pc == 11619:
+			object.add_int_property(v1, "next_piracy_level", 100)
+			await local_6855(4)
+			global.set_bool("g_act1_stepsons_intro", 1)
+			if _pog_is_null(global.exists("g_added_gm_batch_5")):
+				_pc = 11712
+				continue
+			else:
+				_pc = 11910
+				continue
+		elif _pc == 11712:
+			await igmtracker.add_g_m_enum(1)
+			await igmtracker.add_g_m_enum(2)
+			await igmtracker.add_g_m_enum(3)
+			await igmtracker.add_g_m_enum(4)
+			await igmtracker.add_g_m_enum(5)
+			await igmtracker.add_g_m_enum(6)
+			await igmtracker.add_g_m_enum(7)
+			await igmtracker.add_g_m_enum(8)
+			await igmtracker.add_g_m_enum(9)
+			await igmtracker.add_g_m_enum(10)
+			await igmtracker.add_g_m_enum(11)
+			global.create_bool("g_added_gm_batch_5", 1, 1)
+			_pc = 11910
+			continue
+		elif _pc == 11910:
+			state.destroy(self)
+			_pc = 15296
+			continue
+		elif _pc == 11942:
+			_pc = 11961
+			continue
+		elif _pc == 11947:
+			await iact1piracyspecial.main()
+			_pc = 11961
+			continue
+		elif _pc == 11961:
+			object.add_int_property(v1, "next_piracy_level", 1)
+			_pc = 11993
+			continue
+		elif _pc == 11993:
+			await _pog_frame()
+			if _pog_every(11994, 5.0):
+				_pc = 12007
+				continue
+			else:
+				_pc = 12056
+				continue
+		elif _pc == 12007:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 12051
+				continue
+			else:
+				_pc = 12056
+				continue
+		elif _pc == 12051:
+			_pc = 12061
+			continue
+		elif _pc == 12056:
+			_pc = 11993
+			continue
+		elif _pc == 12061:
+			_pc = 12088
+			continue
+		elif _pc == 12067:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 1\n")
-		object.set_int_property(v1, "next_piracy_level", 17 + object.int_property(v1, "next_piracy_level"))
-		state.set_progress(v1, 1)
-		while true:
-			await _pog_wait(5)
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 12088
+			continue
+		elif _pc == 12088:
+			object.set_int_property(v1, "next_piracy_level", 17 + object.int_property(v1, "next_piracy_level"))
+			state.set_progress(v1, 1)
+			_pc = 12161
+			continue
+		elif _pc == 12161:
+			_pc = 12166
+			continue
+		elif _pc == 12166:
+			await _pog_frame()
+			if _pog_every(12167, 5.0):
+				_pc = 12180
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 12229
+				continue
+		elif _pc == 12180:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 12224
+				continue
+			else:
+				_pc = 12229
+				continue
+		elif _pc == 12224:
+			_pc = 12234
+			continue
+		elif _pc == 12229:
+			_pc = 12166
+			continue
+		elif _pc == 12234:
+			_pc = 12261
+			continue
+		elif _pc == 12240:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 2\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_6855(1)
-		state.set_progress(v1, 2)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 12261
+			continue
+		elif _pc == 12261:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_6855(1)
+			state.set_progress(v1, 2)
+			_pc = 12350
+			continue
+		elif _pc == 12350:
+			_pc = 12355
+			continue
+		elif _pc == 12355:
+			await _pog_frame()
+			if _pog_every(12356, 5.0):
+				_pc = 12369
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 12581
+				continue
+		elif _pc == 12369:
+			_pc = 12532
+			continue
+		elif _pc == 12374:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 12532
+			continue
+		elif _pc == 12532:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 12576
+				continue
+			else:
+				_pc = 12581
+				continue
+		elif _pc == 12576:
+			_pc = 12586
+			continue
+		elif _pc == 12581:
+			_pc = 12355
+			continue
+		elif _pc == 12586:
+			_pc = 12613
+			continue
+		elif _pc == 12592:
 			debug.print_string("ActOne.PiracyRatingTracker - Player has achieved piracy level 3\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_7144(1)
-		state.set_progress(v1, 3)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 12613
+			continue
+		elif _pc == 12613:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_7144(1)
+			state.set_progress(v1, 3)
+			_pc = 12702
+			continue
+		elif _pc == 12702:
+			_pc = 12707
+			continue
+		elif _pc == 12707:
+			await _pog_frame()
+			if _pog_every(12708, 5.0):
+				_pc = 12721
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 12933
+				continue
+		elif _pc == 12721:
+			_pc = 12884
+			continue
+		elif _pc == 12726:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 12884
+			continue
+		elif _pc == 12884:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 12928
+				continue
+			else:
+				_pc = 12933
+				continue
+		elif _pc == 12928:
+			_pc = 12938
+			continue
+		elif _pc == 12933:
+			_pc = 12707
+			continue
+		elif _pc == 12938:
+			_pc = 12965
+			continue
+		elif _pc == 12944:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 4\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_6855(2)
-		state.set_progress(v1, 4)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 12965
+			continue
+		elif _pc == 12965:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_6855(2)
+			state.set_progress(v1, 4)
+			_pc = 13055
+			continue
+		elif _pc == 13055:
+			_pc = 13060
+			continue
+		elif _pc == 13060:
+			await _pog_frame()
+			if _pog_every(13061, 5.0):
+				_pc = 13074
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 13286
+				continue
+		elif _pc == 13074:
+			_pc = 13237
+			continue
+		elif _pc == 13079:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 13237
+			continue
+		elif _pc == 13237:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 13281
+				continue
+			else:
+				_pc = 13286
+				continue
+		elif _pc == 13281:
+			_pc = 13291
+			continue
+		elif _pc == 13286:
+			_pc = 13060
+			continue
+		elif _pc == 13291:
+			_pc = 13318
+			continue
+		elif _pc == 13297:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 5\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_7144(2)
-		state.set_progress(v1, 5)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 13318
+			continue
+		elif _pc == 13318:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_7144(2)
+			state.set_progress(v1, 5)
+			_pc = 13408
+			continue
+		elif _pc == 13408:
+			_pc = 13413
+			continue
+		elif _pc == 13413:
+			await _pog_frame()
+			if _pog_every(13414, 5.0):
+				_pc = 13427
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 13639
+				continue
+		elif _pc == 13427:
+			_pc = 13590
+			continue
+		elif _pc == 13432:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 13590
+			continue
+		elif _pc == 13590:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 13634
+				continue
+			else:
+				_pc = 13639
+				continue
+		elif _pc == 13634:
+			_pc = 13644
+			continue
+		elif _pc == 13639:
+			_pc = 13413
+			continue
+		elif _pc == 13644:
+			_pc = 13671
+			continue
+		elif _pc == 13650:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 6\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_6855(3)
-		state.set_progress(v1, 6)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 13671
+			continue
+		elif _pc == 13671:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_6855(3)
+			state.set_progress(v1, 6)
+			_pc = 13761
+			continue
+		elif _pc == 13761:
+			_pc = 13766
+			continue
+		elif _pc == 13766:
+			await _pog_frame()
+			if _pog_every(13767, 5.0):
+				_pc = 13780
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 13992
+				continue
+		elif _pc == 13780:
+			_pc = 13943
+			continue
+		elif _pc == 13785:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 13943
+			continue
+		elif _pc == 13943:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 13987
+				continue
+			else:
+				_pc = 13992
+				continue
+		elif _pc == 13987:
+			_pc = 13997
+			continue
+		elif _pc == 13992:
+			_pc = 13766
+			continue
+		elif _pc == 13997:
+			_pc = 14024
+			continue
+		elif _pc == 14003:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 7\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_7144(3)
-		state.set_progress(v1, 7)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 14024
+			continue
+		elif _pc == 14024:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_7144(3)
+			state.set_progress(v1, 7)
+			_pc = 14114
+			continue
+		elif _pc == 14114:
+			_pc = 14119
+			continue
+		elif _pc == 14119:
+			await _pog_frame()
+			if _pog_every(14120, 5.0):
+				_pc = 14133
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 14345
+				continue
+		elif _pc == 14133:
+			_pc = 14296
+			continue
+		elif _pc == 14138:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 14296
+			continue
+		elif _pc == 14296:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 14340
+				continue
+			else:
+				_pc = 14345
+				continue
+		elif _pc == 14340:
+			_pc = 14350
+			continue
+		elif _pc == 14345:
+			_pc = 14119
+			continue
+		elif _pc == 14350:
+			_pc = 14377
+			continue
+		elif _pc == 14356:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 8\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_6855(4)
-		state.set_progress(v1, 8)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 14377
+			continue
+		elif _pc == 14377:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_6855(4)
+			state.set_progress(v1, 8)
+			_pc = 14467
+			continue
+		elif _pc == 14467:
+			_pc = 14472
+			continue
+		elif _pc == 14472:
+			await _pog_frame()
+			if _pog_every(14473, 5.0):
+				_pc = 14486
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 14698
+				continue
+		elif _pc == 14486:
+			_pc = 14649
+			continue
+		elif _pc == 14491:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 14649
+			continue
+		elif _pc == 14649:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 14693
+				continue
+			else:
+				_pc = 14698
+				continue
+		elif _pc == 14693:
+			_pc = 14703
+			continue
+		elif _pc == 14698:
+			_pc = 14472
+			continue
+		elif _pc == 14703:
+			_pc = 14730
+			continue
+		elif _pc == 14709:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 11\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		await local_7144(4)
-		state.set_progress(v1, 9)
-		while true:
-			await _pog_wait(5)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.PiracyRatingTracker: Current score ")
-				debug.print_string(string.from_int(iscore.pod_piracy_value()))
-				debug.print_string(" of ")
-				debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
-				debug.print_string("\n")
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			_pc = 14730
+			continue
+		elif _pc == 14730:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			await local_7144(4)
+			state.set_progress(v1, 9)
+			_pc = 14820
+			continue
+		elif _pc == 14820:
+			_pc = 14825
+			continue
+		elif _pc == 14825:
+			await _pog_frame()
+			if _pog_every(14826, 5.0):
+				_pc = 14839
 				continue
-			break
-		if PogRuntime.TRACE:
+			else:
+				_pc = 15051
+				continue
+		elif _pc == 14839:
+			_pc = 15002
+			continue
+		elif _pc == 14844:
+			debug.print_string("iActOne.PiracyRatingTracker: Current score ")
+			debug.print_string(string.from_int(iscore.pod_piracy_value()))
+			debug.print_string(" of ")
+			debug.print_string(string.from_int(object.int_property(v1, "next_piracy_level")))
+			debug.print_string("\n")
+			_pc = 15002
+			continue
+		elif _pc == 15002:
+			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+				_pc = 15046
+				continue
+			else:
+				_pc = 15051
+				continue
+		elif _pc == 15046:
+			_pc = 15056
+			continue
+		elif _pc == 15051:
+			_pc = 14825
+			continue
+		elif _pc == 15056:
+			_pc = 15083
+			continue
+		elif _pc == 15062:
 			debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 12\n")
-		object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
-		global.set_bool("g_act1_stepsons_intro", 1)
-		state.destroy(self)
-		break
-	return
+			_pc = 15083
+			continue
+		elif _pc == 15083:
+			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			global.set_bool("g_act1_stepsons_intro", 1)
+			state.destroy(self)
+			_pc = 15296
+			continue
+		elif _pc == 15190:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 15216
+				continue
+			else:
+				_pc = 11535
+				continue
+		elif _pc == 15216:
+			if not _pog_is_null(1):
+				_pc = 15224
+				continue
+			else:
+				_pc = 12161
+				continue
+		elif _pc == 15224:
+			if not _pog_is_null(2):
+				_pc = 15233
+				continue
+			else:
+				_pc = 12350
+				continue
+		elif _pc == 15233:
+			if not _pog_is_null(3):
+				_pc = 15242
+				continue
+			else:
+				_pc = 12702
+				continue
+		elif _pc == 15242:
+			if not _pog_is_null(4):
+				_pc = 15251
+				continue
+			else:
+				_pc = 13055
+				continue
+		elif _pc == 15251:
+			if not _pog_is_null(5):
+				_pc = 15260
+				continue
+			else:
+				_pc = 13408
+				continue
+		elif _pc == 15260:
+			if not _pog_is_null(6):
+				_pc = 15269
+				continue
+			else:
+				_pc = 13761
+				continue
+		elif _pc == 15269:
+			if not _pog_is_null(7):
+				_pc = 15278
+				continue
+			else:
+				_pc = 14114
+				continue
+		elif _pc == 15278:
+			if not _pog_is_null(8):
+				_pc = 15287
+				continue
+			else:
+				_pc = 14467
+				continue
+		elif _pc == 15287:
+			if not _pog_is_null(9):
+				_pc = 15296
+				continue
+			else:
+				_pc = 14820
+				continue
+		elif _pc == 15296:
+			return
+		else:
+			return 0
 	return 0
 
 func marauder_encounters() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
-	v1 = state.find(v0)
-	if not (v1):
-		v1 = state.create(v0, 0)
-	if await iutilities.skip_mission("Marauder generated missions?"):
-		global.set_bool("g_act_1_marauders_encountered", 1)
-		global.set_int("g_story_1.90", 1)
-		state.set_progress(v1, 4)
-	if PogRuntime.TRACE:
-		debug.print_string("iActOne.MarauderEncounters : Starting Marauder Encounters Task\n")
-	while _pog_is_null(state.progress(v1)):
-		if PogRuntime.TRACE:
+	var _pc: int = 15298
+	while true:
+		if _pc == 15298:
+			v0 = self
+			v1 = state.find(v0)
+			if not (v1):
+				_pc = 15357
+				continue
+			else:
+				_pc = 15382
+				continue
+		elif _pc == 15357:
+			v1 = state.create(v0, 0)
+			_pc = 15382
+			continue
+		elif _pc == 15382:
+			if await iutilities.skip_mission("Marauder generated missions?"):
+				_pc = 15407
+				continue
+			else:
+				_pc = 15472
+				continue
+		elif _pc == 15407:
+			global.set_bool("g_act_1_marauders_encountered", 1)
+			global.set_int("g_story_1.90", 1)
+			state.set_progress(v1, 4)
+			_pc = 15472
+			continue
+		elif _pc == 15472:
+			_pc = 15498
+			continue
+		elif _pc == 15477:
+			debug.print_string("iActOne.MarauderEncounters : Starting Marauder Encounters Task\n")
+			_pc = 15498
+			continue
+		elif _pc == 15498:
+			_pc = 16579
+			continue
+		elif _pc == 15503:
+			_pc = 15529
+			continue
+		elif _pc == 15508:
 			debug.print_string("iActOne.MarauderEncounters : Setting up marauder encounter counter global\n")
-		global.create_int("g_marauder_encounter_count", 2, 0)
-		state.set_progress(v1, 1)
-		await igangsterincidentgen.set_active(1)
-		await igangsterincidentgen.set_faction(17)
-		await igangsterincidentgen.set_number_of_vessel_attackers_var(2)
-		await igangsterincidentgen.set_number_of_station_attackers_var(3)
-		await igangsterincidentgen.set_delay_check(40.0)
-		_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
-		while _pog_is_null(global.pog_bool("g_act1_marauders_encountered")):
-			while true:
-				await _pog_wait(10)
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.MarauderEncounters : Checking for a new marauder encounter....")
-				global.set_int("g_marauder_encounter_count", 1 + global.pog_int("g_marauder_encounter_count"))
-				if 24 == global.pog_int("g_marauder_encounter_count"):
-					continue
-				global.set_bool("g_act1_marauders_encountered", 1)
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.MarauderEncounter : player has had enough marauder encounters - progress to marauder cache\n")
-				break
-		global.set_bool("g_act1_marauders_encountered", 1)
-		state.set_progress(v1, 2)
-		await igangsterincidentgen.set_active(0)
-		if PogRuntime.TRACE:
+			_pc = 15529
+			continue
+		elif _pc == 15529:
+			global.create_int("g_marauder_encounter_count", 2, 0)
+			state.set_progress(v1, 1)
+			_pc = 15573
+			continue
+		elif _pc == 15573:
+			await igangsterincidentgen.set_active(1)
+			await igangsterincidentgen.set_faction(17)
+			await igangsterincidentgen.set_number_of_vessel_attackers_var(2)
+			await igangsterincidentgen.set_number_of_station_attackers_var(3)
+			await igangsterincidentgen.set_delay_check(40.0)
+			_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
+			_pc = 15682
+			continue
+		elif _pc == 15682:
+			if _pog_is_null(global.pog_bool("g_act1_marauders_encountered")):
+				_pc = 15709
+				continue
+			else:
+				_pc = 15888
+				continue
+		elif _pc == 15709:
+			_pc = 15714
+			continue
+		elif _pc == 15714:
+			await _pog_frame()
+			if _pog_every(15715, 10.0):
+				_pc = 15728
+				continue
+			else:
+				_pc = 15877
+				continue
+		elif _pc == 15728:
+			_pc = 15754
+			continue
+		elif _pc == 15733:
+			debug.print_string("iActOne.MarauderEncounters : Checking for a new marauder encounter....")
+			_pc = 15754
+			continue
+		elif _pc == 15754:
+			global.set_int("g_marauder_encounter_count", 1 + global.pog_int("g_marauder_encounter_count"))
+			if 24 == global.pog_int("g_marauder_encounter_count"):
+				_pc = 15824
+				continue
+			else:
+				_pc = 15877
+				continue
+		elif _pc == 15824:
+			global.set_bool("g_act1_marauders_encountered", 1)
+			_pc = 15872
+			continue
+		elif _pc == 15851:
+			debug.print_string("iActOne.MarauderEncounter : player has had enough marauder encounters - progress to marauder cache\n")
+			_pc = 15872
+			continue
+		elif _pc == 15872:
+			_pc = 15882
+			continue
+		elif _pc == 15877:
+			_pc = 15714
+			continue
+		elif _pc == 15882:
+			_pc = 15682
+			continue
+		elif _pc == 15888:
+			global.set_bool("g_act1_marauders_encountered", 1)
+			state.set_progress(v1, 2)
+			_pc = 15931
+			continue
+		elif _pc == 15931:
+			await igangsterincidentgen.set_active(0)
+			_pc = 15972
+			continue
+		elif _pc == 15951:
 			debug.print_string("iActOne.MarauderEncounter : Pausing the baddie generator while act 01 mission 05 executes....\n")
-		while _pog_is_null(global.pog_bool("g_act1_destroyed_marauder_cache")):
+			_pc = 15972
+			continue
+		elif _pc == 15972:
+			if _pog_is_null(global.pog_bool("g_act1_destroyed_marauder_cache")):
+				_pc = 15999
+				continue
+			else:
+				_pc = 16062
+				continue
+		elif _pc == 15999:
 			await _pog_wait(60.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.MarauderEncounter : Waiting for the Marauder Cach mission to be completed.....\n")
-		if PogRuntime.TRACE:
+			_pc = 16057
+			continue
+		elif _pc == 16036:
+			debug.print_string("iActOne.MarauderEncounter : Waiting for the Marauder Cach mission to be completed.....\n")
+			_pc = 16057
+			continue
+		elif _pc == 16057:
+			_pc = 15972
+			continue
+		elif _pc == 16062:
+			_pc = 16088
+			continue
+		elif _pc == 16067:
 			debug.print_string("iActOne.MarauderEncounter : player has completed Marauder Cache mission, resuming marauder encounters\n")
-		global.set_int("g_marauder_encounter_count", 0)
-		state.set_progress(v1, 3)
-		await igangsterincidentgen.set_active(1)
-		await igangsterincidentgen.set_faction(17)
-		await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
-		await igangsterincidentgen.set_number_of_station_attackers_var(7)
-		await igangsterincidentgen.set_delay_check(35.0)
-		while _pog_is_null(global.pog_bool("g_act1_hoffers_wake_warning")):
-			while true:
-				await _pog_wait(60)
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.MarauderEncounters : Checking for a post cache marauder encounter")
-				global.set_int("g_marauder_encounter_count", 1 + global.pog_int("g_marauder_encounter_count"))
-				if 3 == global.pog_int("g_marauder_encounter_count"):
-					global.set_int("g_story_1.90", 1)
-					global.set_bool("g_act1_hoffers_wake_warning", 1)
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MarauderEncounter : player has had enough marauder encounters - progress to marauder cache\n")
-					break
-				else:
-					if 5 > global.pog_int("g_marauder_encounter_count"):
-						continue
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MarauderEncounter : playr has exceeded marauder encounter to get story 1.80, but has not returned to base yet.....\n")
-		if PogRuntime.TRACE:
+			_pc = 16088
+			continue
+		elif _pc == 16088:
+			global.set_int("g_marauder_encounter_count", 0)
+			state.set_progress(v1, 3)
+			_pc = 16131
+			continue
+		elif _pc == 16131:
+			await igangsterincidentgen.set_active(1)
+			await igangsterincidentgen.set_faction(17)
+			await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
+			await igangsterincidentgen.set_number_of_station_attackers_var(7)
+			await igangsterincidentgen.set_delay_check(35.0)
+			_pc = 16213
+			continue
+		elif _pc == 16213:
+			if _pog_is_null(global.pog_bool("g_act1_hoffers_wake_warning")):
+				_pc = 16240
+				continue
+			else:
+				_pc = 16500
+				continue
+		elif _pc == 16240:
+			_pc = 16245
+			continue
+		elif _pc == 16245:
+			await _pog_frame()
+			if _pog_every(16246, 60.0):
+				_pc = 16259
+				continue
+			else:
+				_pc = 16489
+				continue
+		elif _pc == 16259:
+			_pc = 16285
+			continue
+		elif _pc == 16264:
+			debug.print_string("iActOne.MarauderEncounters : Checking for a post cache marauder encounter")
+			_pc = 16285
+			continue
+		elif _pc == 16285:
+			global.set_int("g_marauder_encounter_count", 1 + global.pog_int("g_marauder_encounter_count"))
+			if 3 == global.pog_int("g_marauder_encounter_count"):
+				_pc = 16355
+				continue
+			else:
+				_pc = 16435
+				continue
+		elif _pc == 16355:
+			global.set_int("g_story_1.90", 1)
+			global.set_bool("g_act1_hoffers_wake_warning", 1)
+			_pc = 16425
+			continue
+		elif _pc == 16404:
+			debug.print_string("iActOne.MarauderEncounter : player has had enough marauder encounters - progress to marauder cache\n")
+			_pc = 16425
+			continue
+		elif _pc == 16425:
+			_pc = 16494
+			continue
+		elif _pc == 16430:
+			_pc = 16489
+			continue
+		elif _pc == 16435:
+			if 5 > global.pog_int("g_marauder_encounter_count"):
+				_pc = 16463
+				continue
+			else:
+				_pc = 16489
+				continue
+		elif _pc == 16463:
+			_pc = 16489
+			continue
+		elif _pc == 16468:
+			debug.print_string("iActOne.MarauderEncounter : playr has exceeded marauder encounter to get story 1.80, but has not returned to base yet.....\n")
+			_pc = 16489
+			continue
+		elif _pc == 16489:
+			_pc = 16245
+			continue
+		elif _pc == 16494:
+			_pc = 16213
+			continue
+		elif _pc == 16500:
+			_pc = 16526
+			continue
+		elif _pc == 16505:
 			debug.print_string("iActOne.MarauderEncounter : Stopping marauder encounters while the player performs act 01 mission 06 - gunstar supermarket sweep...\n")
-		state.set_progress(v1, 4)
-		state.destroy(self)
-		break
-	return
+			_pc = 16526
+			continue
+		elif _pc == 16526:
+			state.set_progress(v1, 4)
+			_pc = 16547
+			continue
+		elif _pc == 16547:
+			state.destroy(self)
+			_pc = 16640
+			continue
+		elif _pc == 16579:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 16605
+				continue
+			else:
+				_pc = 15503
+				continue
+		elif _pc == 16605:
+			if not _pog_is_null(1):
+				_pc = 16613
+				continue
+			else:
+				_pc = 15573
+				continue
+		elif _pc == 16613:
+			if not _pog_is_null(2):
+				_pc = 16622
+				continue
+			else:
+				_pc = 15931
+				continue
+		elif _pc == 16622:
+			if not _pog_is_null(3):
+				_pc = 16631
+				continue
+			else:
+				_pc = 16131
+				continue
+		elif _pc == 16631:
+			if not _pog_is_null(4):
+				_pc = 16640
+				continue
+			else:
+				_pc = 16547
+				continue
+		elif _pc == 16640:
+			return
+		else:
+			return 0
 	return 0
 
 func local_16642(v0, v1, v2) -> Variant:
@@ -858,165 +1683,466 @@ func haven_station_introduction() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v0 = self
-	v1 = state.find(v0)
-	v2 = iship.find_player_ship()
-	v4 = 0
-	v5 = 0
-	v6 = null
-	v10 = 1
-	v11 = await icutsceneutilities.get_kill_group()
-	global.create_bool("g_act1_haven_station_visited", 2, 0)
-	if not (v1):
-		v1 = state.create(v0, 0)
-	if 1 != global.pog_int("g_current_act"):
-		if PogRuntime.TRACE:
+	var _pc: int = 17284
+	while true:
+		if _pc == 17284:
+			v0 = self
+			v1 = state.find(v0)
+			v2 = iship.find_player_ship()
+			v4 = 0
+			v5 = 0
+			v6 = null
+			v10 = 1
+			v11 = await icutsceneutilities.get_kill_group()
+			global.create_bool("g_act1_haven_station_visited", 2, 0)
+			if not (v1):
+				_pc = 17437
+				continue
+			else:
+				_pc = 17462
+				continue
+		elif _pc == 17437:
+			v1 = state.create(v0, 0)
+			_pc = 17462
+			continue
+		elif _pc == 17462:
+			if 1 != global.pog_int("g_current_act"):
+				_pc = 17489
+				continue
+			else:
+				_pc = 17547
+				continue
+		elif _pc == 17489:
+			_pc = 17515
+			continue
+		elif _pc == 17494:
 			debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
-		state.destroy(self)
-	else:
-		if PogRuntime.TRACE:
+			_pc = 17515
+			continue
+		elif _pc == 17515:
+			state.destroy(self)
+			_pc = 20452
+			continue
+		elif _pc == 17547:
+			_pc = 17573
+			continue
+		elif _pc == 17552:
 			debug.print_string("iActOne.HavenStationIntroduction : Starting haven station introduction task\n")
-		while _pog_is_null(state.progress(v1)):
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.HavenStationVisitor : Sending player invitation to the league\n")
+			_pc = 17573
+			continue
+		elif _pc == 17573:
+			_pc = 20418
+			continue
+		elif _pc == 17578:
+			_pc = 17604
+			continue
+		elif _pc == 17583:
+			debug.print_string("iActOne.HavenStationVisitor : Sending player invitation to the league\n")
+			_pc = 17604
+			continue
+		elif _pc == 17604:
 			iemail.send_email("a1_m08_email_sender", "a1_master_subject_haven", "html:/text/act_1/act1_master_leaguemail_2", 1)
 			state.set_progress(v1, 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.HavenStationVisitor : setting up the tiger lilly - the league aligned piggy back ship\n")
+			_pc = 17658
+			continue
+		elif _pc == 17658:
+			_pc = 17684
+			continue
+		elif _pc == 17663:
+			debug.print_string("iActOne.HavenStationVisitor : setting up the tiger lilly - the league aligned piggy back ship\n")
+			_pc = 17684
+			continue
+		elif _pc == 17684:
 			v3 = iship.create("ini:/sims/ships/utility/snrv_recovery", "Tiger Lilly")
 			isim.set_faction(v3, ifaction.find("League"))
 			await ipilotsetup.generic(v3)
 			sim.set_cullable(v3, 0)
 			isim.set_indestructable(v3, 1)
 			object.set_float_property(v3, "docking_priority", 200.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.HavenStationVisitor - Placing the Tiger littly near Jebiadiah's Foundary...\n")
+			_pc = 17871
+			continue
+		elif _pc == 17850:
+			debug.print_string("iActOne.HavenStationVisitor - Placing the Tiger littly near Jebiadiah's Foundary...\n")
+			_pc = 17871
+			continue
+		elif _pc == 17871:
 			v7 = imapentity.find_by_name("Jebiadiah's Foundary")
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					debug.error("iActOne.HavenStationIntroduction : cannot find Jebadiah's foundary in current system\n")
+				_pc = 17910
+				continue
+			else:
+				_pc = 17936
+				continue
+		elif _pc == 17910:
+			_pc = 17936
+			continue
+		elif _pc == 17915:
+			debug.error("iActOne.HavenStationIntroduction : cannot find Jebadiah's foundary in current system\n")
+			_pc = 17936
+			continue
+		elif _pc == 17936:
 			sim.place_relative_to(v3, imapentity.waypoint_for_entity(v7), 500.0, 500.0, 500.0)
-			while 1 == global.pog_int("g_current_act") and v10:
-				while not (v4):
-					if 1 != global.pog_int("g_current_act"):
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
-						sim.destroy(v3)
-						state.destroy(self)
-						return
-					if 20000.0 > sim.distance_between(v2, v3):
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
-						v5 = 0
-						await _pog_wait(10.0)
-					else:
-						if 8000.0 > sim.distance_between(v2, v3):
-							if PogRuntime.TRACE:
-								debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
-							await _pog_wait(1.0)
-						else:
-							if not (v5):
-								v5 = 1
-								await iconversation.begin()
-								await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
-								await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_player_tl_player_negative")
-								v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_haven_station")
-								if 1 == v9:
-									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
-									await iconversation.end()
-								else:
-									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
-									await iconversation.end()
-							else:
-								if isim.is_docked_to(v2, v3):
-									if PogRuntime.TRACE:
-										debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to haven station...\n")
-									v4 = 1
-								else:
-									if PogRuntime.TRACE:
-										debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
-									await _pog_wait(5.0)
-				v8 = imapentity.find_by_name_in_system("Haven Station", "map:/geog/badlands/hoffers_wake")
-				if _pog_is_null(v7):
-					if PogRuntime.TRACE:
-						debug.error("iActOne.HavenStationIntroduction : cannot find Haven Station in current system\n")
-				await irangecheck.add_traffic_exception(v8)
-				await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v7, v8)))
-				sim.place_relative_to(v3, v8, 500.0, 500.0, 2000.0)
-				sim.set_velocity(v3, 0.0, 0.0, 0.0)
-				sim.point_at(v3, v8)
-				iship.set_free_without_pilot(v3, 0)
-				await _pog_wait(1.0)
-				await iconversation.begin()
-				await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_haven_station")
-				await iconversation.end()
-				while isim.is_docked_to(v2, v3):
-					await _pog_wait(1.0)
-				v4 = 0
-				if not (global.pog_bool("g_act1_haven_station_visited")):
-					text.add("csv:/text/act_2/act2_mission25_addendum2")
-					await _pog_wait(4.0)
-					await imusic.pause()
-					await imusic.play("sound:/audio/music/a4_theme", 0, 0)
-					await icutsceneutilities.handle_abort(_pog_spawn(local_34470.bind(v8)))
-					sim.place_relative_to(v2, v8, 1000.0, 500.0, 1000.0)
-					sim.set_velocity(v2, 0.0, 0.0, 0.0)
-					sim.set_angular_velocity_euler(v2, 0.0, 0.0, 0.0)
-					sim.point_at(v2, v8)
-					stream.stop(0, 0)
-					stream.stop(1, 0)
-					await imusic.pog_resume()
-					await imusic.set_suite(0)
-					await imusic.set_mood(0)
-					text.remove("csv:/text/act_2/act2_mission25_addendum2")
-					global.set_bool("g_act1_haven_station_visited", 1)
-				await irangecheck.remove_traffic_exception(v8)
-				while not (v4):
-					if 10000.0 > sim.distance_between(v2, v3):
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
-						v5 = 0
-						await _pog_wait(10.0)
-					else:
-						if 1000.0 > sim.distance_between(v2, v3):
-							if PogRuntime.TRACE:
-								debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
-							await _pog_wait(1.0)
-						else:
-							if not (v5):
-								v5 = 1
-								await iconversation.begin()
-								await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
-								await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_tl_player_affirmative")
-								v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_hoffers_wake_alpha")
-								if 1 == v9:
-									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
-									await iconversation.end()
-								else:
-									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
-									await iconversation.end()
-							else:
-								if isim.is_docked_to(v2, v3):
-									if PogRuntime.TRACE:
-										debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to Jeffersons Foundary...\n")
-									v4 = 1
-								else:
-									if PogRuntime.TRACE:
-										debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
-									await _pog_wait(5.0)
-				await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v8, v7)))
-				sim.place_relative_to(v3, v7, 500.0, 200.0, 1000.0)
-				sim.set_velocity(v3, 0.0, 0.0, 0.0)
-				sim.point_at(v3, v7)
-				iship.set_free_without_pilot(v3, 0)
-				await iconversation.begin()
-				await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_hoffers_alpha")
-				await iconversation.end()
-				while isim.is_docked_to(v2, v3):
-					await _pog_wait(1.0)
-				v4 = 0
-			break
-	return
+			_pc = 17988
+			continue
+		elif _pc == 17988:
+			if 1 == global.pog_int("g_current_act") and v10:
+				_pc = 18021
+				continue
+			else:
+				_pc = 20413
+				continue
+		elif _pc == 18021:
+			if not (v4):
+				_pc = 18032
+				continue
+			else:
+				_pc = 18703
+				continue
+		elif _pc == 18032:
+			if 1 != global.pog_int("g_current_act"):
+				_pc = 18059
+				continue
+			else:
+				_pc = 18136
+				continue
+		elif _pc == 18059:
+			_pc = 18085
+			continue
+		elif _pc == 18064:
+			debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
+			_pc = 18085
+			continue
+		elif _pc == 18085:
+			sim.destroy(v3)
+			state.destroy(self)
+			_pc = 20452
+			continue
+		elif _pc == 18136:
+			if 20000.0 > sim.distance_between(v2, v3):
+				_pc = 18170
+				continue
+			else:
+				_pc = 18240
+				continue
+		elif _pc == 18170:
+			_pc = 18196
+			continue
+		elif _pc == 18175:
+			debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
+			_pc = 18196
+			continue
+		elif _pc == 18196:
+			v5 = 0
+			await _pog_wait(10.0)
+			_pc = 18698
+			continue
+		elif _pc == 18240:
+			if 8000.0 > sim.distance_between(v2, v3):
+				_pc = 18274
+				continue
+			else:
+				_pc = 18337
+				continue
+		elif _pc == 18274:
+			_pc = 18300
+			continue
+		elif _pc == 18279:
+			debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
+			_pc = 18300
+			continue
+		elif _pc == 18300:
+			await _pog_wait(1.0)
+			_pc = 18698
+			continue
+		elif _pc == 18337:
+			if not (v5):
+				_pc = 18348
+				continue
+			else:
+				_pc = 18574
+				continue
+		elif _pc == 18348:
+			v5 = 1
+			await iconversation.begin()
+			await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
+			await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_player_tl_player_negative")
+			v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_haven_station")
+			if 1 == v9:
+				_pc = 18472
+				continue
+			else:
+				_pc = 18523
+				continue
+		elif _pc == 18472:
+			await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
+			await iconversation.end()
+			_pc = 18569
+			continue
+		elif _pc == 18523:
+			await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
+			await iconversation.end()
+			_pc = 18569
+			continue
+		elif _pc == 18569:
+			_pc = 18698
+			continue
+		elif _pc == 18574:
+			if isim.is_docked_to(v2, v3):
+				_pc = 18602
+				continue
+			else:
+				_pc = 18640
+				continue
+		elif _pc == 18602:
+			_pc = 18628
+			continue
+		elif _pc == 18607:
+			debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to haven station...\n")
+			_pc = 18628
+			continue
+		elif _pc == 18628:
+			v4 = 1
+			_pc = 18698
+			continue
+		elif _pc == 18640:
+			_pc = 18666
+			continue
+		elif _pc == 18645:
+			debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
+			_pc = 18666
+			continue
+		elif _pc == 18666:
+			await _pog_wait(5.0)
+			_pc = 18698
+			continue
+		elif _pc == 18698:
+			_pc = 18021
+			continue
+		elif _pc == 18703:
+			v8 = imapentity.find_by_name_in_system("Haven Station", "map:/geog/badlands/hoffers_wake")
+			if _pog_is_null(v7):
+				_pc = 18748
+				continue
+			else:
+				_pc = 18774
+				continue
+		elif _pc == 18748:
+			_pc = 18774
+			continue
+		elif _pc == 18753:
+			debug.error("iActOne.HavenStationIntroduction : cannot find Haven Station in current system\n")
+			_pc = 18774
+			continue
+		elif _pc == 18774:
+			await irangecheck.add_traffic_exception(v8)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v7, v8)))
+			sim.place_relative_to(v3, v8, 500.0, 500.0, 2000.0)
+			sim.set_velocity(v3, 0.0, 0.0, 0.0)
+			sim.point_at(v3, v8)
+			iship.set_free_without_pilot(v3, 0)
+			await _pog_wait(1.0)
+			await iconversation.begin()
+			await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_haven_station")
+			await iconversation.end()
+			_pc = 19046
+			continue
+		elif _pc == 19046:
+			if isim.is_docked_to(v2, v3):
+				_pc = 19074
+				continue
+			else:
+				_pc = 19111
+				continue
+		elif _pc == 19074:
+			await _pog_wait(1.0)
+			_pc = 19046
+			continue
+		elif _pc == 19111:
+			v4 = 0
+			if not (global.pog_bool("g_act1_haven_station_visited")):
+				_pc = 19144
+				continue
+			else:
+				_pc = 19518
+				continue
+		elif _pc == 19144:
+			text.add("csv:/text/act_2/act2_mission25_addendum2")
+			await _pog_wait(4.0)
+			await imusic.pause()
+			await imusic.play("sound:/audio/music/a4_theme", 0, 0)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_34470.bind(v8)))
+			sim.place_relative_to(v2, v8, 1000.0, 500.0, 1000.0)
+			sim.set_velocity(v2, 0.0, 0.0, 0.0)
+			sim.set_angular_velocity_euler(v2, 0.0, 0.0, 0.0)
+			sim.point_at(v2, v8)
+			stream.stop(0, 0)
+			stream.stop(1, 0)
+			await imusic.pog_resume()
+			await imusic.set_suite(0)
+			await imusic.set_mood(0)
+			text.remove("csv:/text/act_2/act2_mission25_addendum2")
+			global.set_bool("g_act1_haven_station_visited", 1)
+			_pc = 19518
+			continue
+		elif _pc == 19518:
+			await irangecheck.remove_traffic_exception(v8)
+			_pc = 19537
+			continue
+		elif _pc == 19537:
+			if not (v4):
+				_pc = 19548
+				continue
+			else:
+				_pc = 20115
+				continue
+		elif _pc == 19548:
+			if 10000.0 > sim.distance_between(v2, v3):
+				_pc = 19582
+				continue
+			else:
+				_pc = 19652
+				continue
+		elif _pc == 19582:
+			_pc = 19608
+			continue
+		elif _pc == 19587:
+			debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
+			_pc = 19608
+			continue
+		elif _pc == 19608:
+			v5 = 0
+			await _pog_wait(10.0)
+			_pc = 20110
+			continue
+		elif _pc == 19652:
+			if 1000.0 > sim.distance_between(v2, v3):
+				_pc = 19686
+				continue
+			else:
+				_pc = 19749
+				continue
+		elif _pc == 19686:
+			_pc = 19712
+			continue
+		elif _pc == 19691:
+			debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
+			_pc = 19712
+			continue
+		elif _pc == 19712:
+			await _pog_wait(1.0)
+			_pc = 20110
+			continue
+		elif _pc == 19749:
+			if not (v5):
+				_pc = 19760
+				continue
+			else:
+				_pc = 19986
+				continue
+		elif _pc == 19760:
+			v5 = 1
+			await iconversation.begin()
+			await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
+			await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_tl_player_affirmative")
+			v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_hoffers_wake_alpha")
+			if 1 == v9:
+				_pc = 19884
+				continue
+			else:
+				_pc = 19935
+				continue
+		elif _pc == 19884:
+			await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
+			await iconversation.end()
+			_pc = 19981
+			continue
+		elif _pc == 19935:
+			await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
+			await iconversation.end()
+			_pc = 19981
+			continue
+		elif _pc == 19981:
+			_pc = 20110
+			continue
+		elif _pc == 19986:
+			if isim.is_docked_to(v2, v3):
+				_pc = 20014
+				continue
+			else:
+				_pc = 20052
+				continue
+		elif _pc == 20014:
+			_pc = 20040
+			continue
+		elif _pc == 20019:
+			debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to Jeffersons Foundary...\n")
+			_pc = 20040
+			continue
+		elif _pc == 20040:
+			v4 = 1
+			_pc = 20110
+			continue
+		elif _pc == 20052:
+			_pc = 20078
+			continue
+		elif _pc == 20057:
+			debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
+			_pc = 20078
+			continue
+		elif _pc == 20078:
+			await _pog_wait(5.0)
+			_pc = 20110
+			continue
+		elif _pc == 20110:
+			_pc = 19537
+			continue
+		elif _pc == 20115:
+			await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v8, v7)))
+			sim.place_relative_to(v3, v7, 500.0, 200.0, 1000.0)
+			sim.set_velocity(v3, 0.0, 0.0, 0.0)
+			sim.point_at(v3, v7)
+			iship.set_free_without_pilot(v3, 0)
+			await iconversation.begin()
+			await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_hoffers_alpha")
+			await iconversation.end()
+			_pc = 20336
+			continue
+		elif _pc == 20336:
+			if isim.is_docked_to(v2, v3):
+				_pc = 20364
+				continue
+			else:
+				_pc = 20401
+				continue
+		elif _pc == 20364:
+			await _pog_wait(1.0)
+			_pc = 20336
+			continue
+		elif _pc == 20401:
+			v4 = 0
+			_pc = 17988
+			continue
+		elif _pc == 20413:
+			_pc = 20452
+			continue
+		elif _pc == 20418:
+			if not _pog_is_null(state.progress(v1)):
+				_pc = 20444
+				continue
+			else:
+				_pc = 17578
+				continue
+		elif _pc == 20444:
+			if not _pog_is_null(1):
+				_pc = 20452
+				continue
+			else:
+				_pc = 17658
+				continue
+		elif _pc == 20452:
+			return
+		else:
+			return 0
 	return 0
 
 func local_20461() -> Variant:
@@ -1049,311 +2175,869 @@ func master_script() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = self
-	v2 = state.find(v0)
-	v4 = iship.find_player_ship()
-	if not (v2):
-		v2 = state.create(v0, 0)
-		await istartsystem.set_player_base_movies_visible(1)
-	if 2 == global.pog_int("g_story_1.50"):
-		if _pog_is_null(global.exists("g_training_task_handle")):
+	var _pc: int = 21014
+	while true:
+		if _pc == 21014:
+			v0 = self
+			v2 = state.find(v0)
+			v4 = iship.find_player_ship()
+			if not (v2):
+				_pc = 21092
+				continue
+			else:
+				_pc = 21132
+				continue
+		elif _pc == 21092:
+			v2 = state.create(v0, 0)
+			await istartsystem.set_player_base_movies_visible(1)
+			_pc = 21132
+			continue
+		elif _pc == 21132:
+			if 2 == global.pog_int("g_story_1.50"):
+				_pc = 21160
+				continue
+			else:
+				_pc = 21228
+				continue
+		elif _pc == 21160:
+			if _pog_is_null(global.exists("g_training_task_handle")):
+				_pc = 21187
+				continue
+			else:
+				_pc = 21228
+				continue
+		elif _pc == 21187:
 			global.create_handle("g_training_task_handle", 2, _pog_spawn(iact1wingmentraining.main_task.bind()))
-	if await iutilities.skip_act("Act One: Hoffer's Wake", 1):
-		await local_20461()
-		if PogRuntime.TRACE:
+			_pc = 21228
+			continue
+		elif _pc == 21228:
+			if await iutilities.skip_act("Act One: Hoffer's Wake", 1):
+				_pc = 21254
+				continue
+			else:
+				_pc = 27346
+				continue
+		elif _pc == 21254:
+			await local_20461()
+			_pc = 21294
+			continue
+		elif _pc == 21273:
 			debug.print_string("iActOne.MasterScript: Skipping act, calling mission stubs.\n")
-		await iact1mission01.stub()
-		iinventory.add_tug()
-		iloadout.set_ship(1)
-		await iact1mission02.stub()
-		await iact1mission03.stub()
-		await iact1mission04.stub()
-		await iact1mission05.stub()
-		await iact1mission06.stub()
-		await iact1mission07.stub()
-		await iact1mission08.stub()
-		await iact1mission09.stub()
-		await iact1mission10.stub()
-		imapentity.set_hidden(imapentity.find_by_name("Haven Station"), 1)
-		await local_1081()
-		state.destroy(self)
-		igame.next_act("iActTwo")
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 484, 1, 90, 3, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 483, 1, 39, 10, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 490, 1, 26, 10, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 498, 1, 258, 5, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 488, 1, 268, 5, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 492, 1, 293, 5, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 563, 1, 313, 5, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 10, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 20, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 40, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 10, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 560, 1, 377, 2, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 561, 1, 49, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 561, 1, 52, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 565, 1, 466, 2, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 565, 1, 45, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 565, 1, 102, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 565, 1, 43, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 501, 1, 121, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 501, 1, 38, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 564, 1, 201, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 564, 1, 35, 2, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 588, 1, 377, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 588, 1, 45, 4, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 588, 1, 40, 4, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 308, 1, 92, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 308, 1, 39, 5, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 308, 1, 153, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 569, 1, 24, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 484, 1, 344, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 483, 1, 7, 3, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 377, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 498, 1, 90, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 488, 1, 313, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 317, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 563, 1, 330, 1, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 24, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 53, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 52, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 45, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 165, 1, 29, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 40, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 50, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 494, 1, 83, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 494, 1, 45, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 167, 1, 347, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 496, 1, 363, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 299, 1, 358, 1, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 301, 1, 344, 1, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 590, 1, 377, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 371, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 591, 1, 381, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 592, 1, 390, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 167, 1, 47, 5, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 496, 1, 38, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 40, 4, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 45, 4, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 24, 2, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 47, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 591, 1, 58, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 592, 1, 28, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 35, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 32, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 31, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 35, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 4, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 35, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 596, 1, 466, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 596, 1, 31, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 503, 1, 258, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 503, 1, 52, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 214, 1, 390, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 214, 1, 49, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 218, 1, 462, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 218, 1, 50, 4, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 500, 1, 268, 1, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 500, 1, 14, 2, 3))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 193, 1, 479, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 193, 1, 58, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 168, 1, 540, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 168, 1, 7, 5, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 216, 1, 29, 5, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 579, 1, 30, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 7, 3, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 521, 1, 83, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 521, 1, 52, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 528, 1, 377, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 528, 1, 52, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 453, 5, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 230, 1, 50, 8, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 13, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 595, 1, 404, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 595, 1, 31, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 409, 1, 5))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 570, 1, 39, 3, 3))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 229, 1, 427, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 229, 1, 52, 2, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 169, 1, 440, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 169, 1, 52, 6, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 37, 1, 1))
-	else:
-		if PogRuntime.TRACE:
+			_pc = 21294
+			continue
+		elif _pc == 21294:
+			await iact1mission01.stub()
+			iinventory.add_tug()
+			iloadout.set_ship(1)
+			await iact1mission02.stub()
+			await iact1mission03.stub()
+			await iact1mission04.stub()
+			await iact1mission05.stub()
+			await iact1mission06.stub()
+			await iact1mission07.stub()
+			await iact1mission08.stub()
+			await iact1mission09.stub()
+			await iact1mission10.stub()
+			imapentity.set_hidden(imapentity.find_by_name("Haven Station"), 1)
+			await local_1081()
+			state.destroy(self)
+			igame.next_act("iActTwo")
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 484, 1, 90, 3, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 483, 1, 39, 10, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 490, 1, 26, 10, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 498, 1, 258, 5, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 488, 1, 268, 5, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 492, 1, 293, 5, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 563, 1, 313, 5, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 10, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 20, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 40, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 10, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 560, 1, 377, 2, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 561, 1, 49, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 561, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 565, 1, 466, 2, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 565, 1, 45, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 565, 1, 102, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 565, 1, 43, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 501, 1, 121, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 501, 1, 38, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 564, 1, 201, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 564, 1, 35, 2, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 588, 1, 377, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 588, 1, 45, 4, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 588, 1, 40, 4, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 308, 1, 92, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 308, 1, 39, 5, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 308, 1, 153, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 569, 1, 24, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 484, 1, 344, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 483, 1, 7, 3, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 377, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 498, 1, 90, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 488, 1, 313, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 317, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 563, 1, 330, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 24, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 53, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 45, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 165, 1, 29, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 40, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 50, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 494, 1, 83, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 494, 1, 45, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 167, 1, 347, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 496, 1, 363, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 299, 1, 358, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 301, 1, 344, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 590, 1, 377, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 371, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 591, 1, 381, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 592, 1, 390, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 167, 1, 47, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 496, 1, 38, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 40, 4, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 45, 4, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 24, 2, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 47, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 591, 1, 58, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 592, 1, 28, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 35, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 32, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 31, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 35, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 4, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 35, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 596, 1, 466, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 596, 1, 31, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 503, 1, 258, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 503, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 214, 1, 390, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 214, 1, 49, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 218, 1, 462, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 218, 1, 50, 4, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 500, 1, 268, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 500, 1, 14, 2, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 193, 1, 479, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 193, 1, 58, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 168, 1, 540, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 168, 1, 7, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 216, 1, 29, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 579, 1, 30, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 7, 3, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 521, 1, 83, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 521, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 528, 1, 377, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 528, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 453, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 230, 1, 50, 8, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 13, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 595, 1, 404, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 595, 1, 31, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 409, 1, 5))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 570, 1, 39, 3, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 229, 1, 427, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 229, 1, 52, 2, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 169, 1, 440, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 169, 1, 52, 6, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 37, 1, 1))
+			_pc = 32295
+			continue
+		elif _pc == 27346:
+			_pc = 27372
+			continue
+		elif _pc == 27351:
 			debug.print_string("iActOne.MasterScript: Commencing Act One Chapter Script.\n")
-		if 1 == global.pog_bool("g_act1_character_intro") and _pog_is_null(global.exists("g_finished_email_hinter")):
+			_pc = 27372
+			continue
+		elif _pc == 27372:
+			if 1 == global.pog_bool("g_act1_character_intro") and _pog_is_null(global.exists("g_finished_email_hinter")):
+				_pc = 27421
+				continue
+			else:
+				_pc = 27435
+				continue
+		elif _pc == 27421:
 			_pog_spawn(piracy_email_hinter.bind())
-		while _pog_is_null(state.progress(v2)):
+			_pc = 27435
+			continue
+		elif _pc == 27435:
+			_pc = 32126
+			continue
+		elif _pc == 27440:
 			await ijafsscript.disable_jafs()
 			await iact1mission01.main()
 			state.set_progress(v2, 1)
-			while true:
-				await _pog_wait(1)
-				if 1 == global.pog_bool("g_act1_found_base"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has found Lucrecia's Base.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Still waiting for player to find Lucrecia's base.\n")
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.MasterScript -initilising story elements S1.10 & S1.30 in player base.\n")
+			_pc = 27488
+			continue
+		elif _pc == 27488:
+			_pc = 27493
+			continue
+		elif _pc == 27493:
+			await _pog_frame()
+			if _pog_every(27494, 1.0):
+				_pc = 27507
+				continue
+			else:
+				_pc = 27596
+				continue
+		elif _pc == 27507:
+			if 1 == global.pog_bool("g_act1_found_base"):
+				_pc = 27534
+				continue
+			else:
+				_pc = 27570
+				continue
+		elif _pc == 27534:
+			_pc = 27560
+			continue
+		elif _pc == 27539:
+			debug.print_string("iActOne.MasterScript - player has found Lucrecia's Base.\n")
+			_pc = 27560
+			continue
+		elif _pc == 27560:
+			_pc = 27601
+			continue
+		elif _pc == 27565:
+			_pc = 27596
+			continue
+		elif _pc == 27570:
+			_pc = 27596
+			continue
+		elif _pc == 27575:
+			debug.print_string("iActOne.MasterScript - Still waiting for player to find Lucrecia's base.\n")
+			_pc = 27596
+			continue
+		elif _pc == 27596:
+			_pc = 27493
+			continue
+		elif _pc == 27601:
+			_pc = 27628
+			continue
+		elif _pc == 27607:
+			debug.print_string("iActOne.MasterScript -initilising story elements S1.10 & S1.30 in player base.\n")
+			_pc = 27628
+			continue
+		elif _pc == 27628:
 			state.set_progress(v2, 2)
-			while true:
-				await _pog_wait(1)
-				if 1 == global.pog_bool("g_act1_character_intro"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has received character intro's\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Still waiting for player receive character intro's\n")
+			_pc = 27649
+			continue
+		elif _pc == 27649:
+			_pc = 27654
+			continue
+		elif _pc == 27654:
+			await _pog_frame()
+			if _pog_every(27655, 1.0):
+				_pc = 27668
+				continue
+			else:
+				_pc = 27757
+				continue
+		elif _pc == 27668:
+			if 1 == global.pog_bool("g_act1_character_intro"):
+				_pc = 27695
+				continue
+			else:
+				_pc = 27731
+				continue
+		elif _pc == 27695:
+			_pc = 27721
+			continue
+		elif _pc == 27700:
+			debug.print_string("iActOne.MasterScript - player has received character intro's\n")
+			_pc = 27721
+			continue
+		elif _pc == 27721:
+			_pc = 27762
+			continue
+		elif _pc == 27726:
+			_pc = 27757
+			continue
+		elif _pc == 27731:
+			_pc = 27757
+			continue
+		elif _pc == 27736:
+			debug.print_string("iActOne.MasterScript - Still waiting for player receive character intro's\n")
+			_pc = 27757
+			continue
+		elif _pc == 27757:
+			_pc = 27654
+			continue
+		elif _pc == 27762:
 			await ijafsscript.enable_jafs()
 			_pog_spawn(piracy_rating_tracker.bind())
 			state.set_progress(v2, 3)
+			_pc = 27812
+			continue
+		elif _pc == 27812:
 			await iutilities.skip_wait_for_bool("utils_bool_g_act1_stepsons_intro", "g_act1_stepsons_intro", 1)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_stepsons_intro"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has received and itroduction to work for the Stepsons\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Still waiting for player to attract the Stepsons job offer.\n")
+			_pc = 27845
+			continue
+		elif _pc == 27845:
+			await _pog_frame()
+			if _pog_every(27846, 5.0):
+				_pc = 27859
+				continue
+			else:
+				_pc = 27948
+				continue
+		elif _pc == 27859:
+			if 1 == global.pog_bool("g_act1_stepsons_intro"):
+				_pc = 27886
+				continue
+			else:
+				_pc = 27922
+				continue
+		elif _pc == 27886:
+			_pc = 27912
+			continue
+		elif _pc == 27891:
+			debug.print_string("iActOne.MasterScript - player has received and itroduction to work for the Stepsons\n")
+			_pc = 27912
+			continue
+		elif _pc == 27912:
+			_pc = 27953
+			continue
+		elif _pc == 27917:
+			_pc = 27948
+			continue
+		elif _pc == 27922:
+			_pc = 27948
+			continue
+		elif _pc == 27927:
+			debug.print_string("iActOne.MasterScript - Still waiting for player to attract the Stepsons job offer.\n")
+			_pc = 27948
+			continue
+		elif _pc == 27948:
+			_pc = 27845
+			continue
+		elif _pc == 27953:
 			await iact1mission02.main()
 			state.set_progress(v2, 4)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_stepson_member"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has completed act 01 Mission 02 - \n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Still waiting for player to acomplete act 01 Mission 02.\n")
+			_pc = 27989
+			continue
+		elif _pc == 27989:
+			_pc = 27994
+			continue
+		elif _pc == 27994:
+			await _pog_frame()
+			if _pog_every(27995, 5.0):
+				_pc = 28008
+				continue
+			else:
+				_pc = 28097
+				continue
+		elif _pc == 28008:
+			if 1 == global.pog_bool("g_act1_stepson_member"):
+				_pc = 28035
+				continue
+			else:
+				_pc = 28071
+				continue
+		elif _pc == 28035:
+			_pc = 28061
+			continue
+		elif _pc == 28040:
+			debug.print_string("iActOne.MasterScript - player has completed act 01 Mission 02 - \n")
+			_pc = 28061
+			continue
+		elif _pc == 28061:
+			_pc = 28102
+			continue
+		elif _pc == 28066:
+			_pc = 28097
+			continue
+		elif _pc == 28071:
+			_pc = 28097
+			continue
+		elif _pc == 28076:
+			debug.print_string("iActOne.MasterScript - Still waiting for player to acomplete act 01 Mission 02.\n")
+			_pc = 28097
+			continue
+		elif _pc == 28097:
+			_pc = 27994
+			continue
+		elif _pc == 28102:
 			_pog_detach(_pog_spawn(stepson_member.bind()))
 			state.set_progress(v2, 6)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_stepsons_pleased"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has pleased the Stepsons enough to be given an important mission. Arselicker.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Still waiting for player to work his way up through Stespon Heirachy.\n")
+			_pc = 28151
+			continue
+		elif _pc == 28151:
+			_pc = 28156
+			continue
+		elif _pc == 28156:
+			await _pog_frame()
+			if _pog_every(28157, 5.0):
+				_pc = 28170
+				continue
+			else:
+				_pc = 28259
+				continue
+		elif _pc == 28170:
+			if 1 == global.pog_bool("g_act1_stepsons_pleased"):
+				_pc = 28197
+				continue
+			else:
+				_pc = 28233
+				continue
+		elif _pc == 28197:
+			_pc = 28223
+			continue
+		elif _pc == 28202:
+			debug.print_string("iActOne.MasterScript - Player has pleased the Stepsons enough to be given an important mission. Arselicker.\n")
+			_pc = 28223
+			continue
+		elif _pc == 28223:
+			_pc = 28264
+			continue
+		elif _pc == 28228:
+			_pc = 28259
+			continue
+		elif _pc == 28233:
+			_pc = 28259
+			continue
+		elif _pc == 28238:
+			debug.print_string("iActOne.MasterScript - Still waiting for player to work his way up through Stespon Heirachy.\n")
+			_pc = 28259
+			continue
+		elif _pc == 28259:
+			_pc = 28156
+			continue
+		elif _pc == 28264:
 			state.set_progress(v2, 6)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_stepsons_pleased"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has pleased stepsons.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Still waiting for player to please stepsons\n")
+			_pc = 28286
+			continue
+		elif _pc == 28286:
+			_pc = 28291
+			continue
+		elif _pc == 28291:
+			await _pog_frame()
+			if _pog_every(28292, 5.0):
+				_pc = 28305
+				continue
+			else:
+				_pc = 28394
+				continue
+		elif _pc == 28305:
+			if 1 == global.pog_bool("g_act1_stepsons_pleased"):
+				_pc = 28332
+				continue
+			else:
+				_pc = 28368
+				continue
+		elif _pc == 28332:
+			_pc = 28358
+			continue
+		elif _pc == 28337:
+			debug.print_string("iActOne.MasterScript - Player has pleased stepsons.\n")
+			_pc = 28358
+			continue
+		elif _pc == 28358:
+			_pc = 28399
+			continue
+		elif _pc == 28363:
+			_pc = 28394
+			continue
+		elif _pc == 28368:
+			_pc = 28394
+			continue
+		elif _pc == 28373:
+			debug.print_string("iActOne.MasterScript - Still waiting for player to please stepsons\n")
+			_pc = 28394
+			continue
+		elif _pc == 28394:
+			_pc = 28291
+			continue
+		elif _pc == 28399:
 			global.set_int("g_story_1.40", 1)
 			await iact1mission04.main()
 			state.set_progress(v2, 7)
-			while true:
-				await _pog_wait(1)
-				if 1 == global.pog_bool("g_act1_got_turret_fighters"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 04.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 04.\n")
+			_pc = 28457
+			continue
+		elif _pc == 28457:
+			_pc = 28462
+			continue
+		elif _pc == 28462:
+			await _pog_frame()
+			if _pog_every(28463, 1.0):
+				_pc = 28476
+				continue
+			else:
+				_pc = 28565
+				continue
+		elif _pc == 28476:
+			if 1 == global.pog_bool("g_act1_got_turret_fighters"):
+				_pc = 28503
+				continue
+			else:
+				_pc = 28539
+				continue
+		elif _pc == 28503:
+			_pc = 28529
+			continue
+		elif _pc == 28508:
+			debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 04.\n")
+			_pc = 28529
+			continue
+		elif _pc == 28529:
+			_pc = 28570
+			continue
+		elif _pc == 28534:
+			_pc = 28565
+			continue
+		elif _pc == 28539:
+			_pc = 28565
+			continue
+		elif _pc == 28544:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 04.\n")
+			_pc = 28565
+			continue
+		elif _pc == 28565:
+			_pc = 28462
+			continue
+		elif _pc == 28570:
 			global.set_int("g_story_1.50", 1)
 			global.set_int("g_story_1.70", 1)
 			global.set_int("g_story_1.60", 1)
 			_pog_detach(_pog_spawn(marauder_encounters.bind()))
 			state.set_progress(v2, 9)
+			_pc = 28685
+			continue
+		elif _pc == 28685:
 			await iutilities.skip_wait_for_bool("utils_g_act1_marauders_encountered", "g_act1_marauders_encountered", 1)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_marauders_encountered"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has encountered the marauders - he's ready for the first marauder mission.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player encounter enough marauders to trigger Act 01 Mission 05.\n")
+			_pc = 28718
+			continue
+		elif _pc == 28718:
+			await _pog_frame()
+			if _pog_every(28719, 5.0):
+				_pc = 28732
+				continue
+			else:
+				_pc = 28821
+				continue
+		elif _pc == 28732:
+			if 1 == global.pog_bool("g_act1_marauders_encountered"):
+				_pc = 28759
+				continue
+			else:
+				_pc = 28795
+				continue
+		elif _pc == 28759:
+			_pc = 28785
+			continue
+		elif _pc == 28764:
+			debug.print_string("iActOne.MasterScript - Player has encountered the marauders - he's ready for the first marauder mission.\n")
+			_pc = 28785
+			continue
+		elif _pc == 28785:
+			_pc = 28826
+			continue
+		elif _pc == 28790:
+			_pc = 28821
+			continue
+		elif _pc == 28795:
+			_pc = 28821
+			continue
+		elif _pc == 28800:
+			debug.print_string("iActOne.MasterScript - Waiting for the player encounter enough marauders to trigger Act 01 Mission 05.\n")
+			_pc = 28821
+			continue
+		elif _pc == 28821:
+			_pc = 28718
+			continue
+		elif _pc == 28826:
 			await iact1mission05.main()
 			state.set_progress(v2, 10)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_destroyed_marauder_cache"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has finished Act1 Mission 05, Bravo.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 05.\n")
+			_pc = 28862
+			continue
+		elif _pc == 28862:
+			_pc = 28867
+			continue
+		elif _pc == 28867:
+			await _pog_frame()
+			if _pog_every(28868, 5.0):
+				_pc = 28881
+				continue
+			else:
+				_pc = 28970
+				continue
+		elif _pc == 28881:
+			if 1 == global.pog_bool("g_act1_destroyed_marauder_cache"):
+				_pc = 28908
+				continue
+			else:
+				_pc = 28944
+				continue
+		elif _pc == 28908:
+			_pc = 28934
+			continue
+		elif _pc == 28913:
+			debug.print_string("iActOne.MasterScript - Player has finished Act1 Mission 05, Bravo.\n")
+			_pc = 28934
+			continue
+		elif _pc == 28934:
+			_pc = 28975
+			continue
+		elif _pc == 28939:
+			_pc = 28970
+			continue
+		elif _pc == 28944:
+			_pc = 28970
+			continue
+		elif _pc == 28949:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 05.\n")
+			_pc = 28970
+			continue
+		elif _pc == 28970:
+			_pc = 28867
+			continue
+		elif _pc == 28975:
 			global.set_int("g_story_1.80", 1)
 			state.set_progress(v2, 11)
 			await iact1mission03.main()
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_hoffers_wake_warning"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has been warned about the marauder threat to Hoffers Wake \n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to be warned about the threat to Hoffers Wake.\n")
-			while true:
-				await _pog_wait(5.0)
-				if not (_pog_is_null(global.pog_bool("g_act1_joint_forces_complete"))):
-					break
+			_pc = 29033
+			continue
+		elif _pc == 29033:
+			_pc = 29038
+			continue
+		elif _pc == 29038:
+			await _pog_frame()
+			if _pog_every(29039, 5.0):
+				_pc = 29052
+				continue
+			else:
+				_pc = 29141
+				continue
+		elif _pc == 29052:
+			if 1 == global.pog_bool("g_act1_hoffers_wake_warning"):
+				_pc = 29079
+				continue
+			else:
+				_pc = 29115
+				continue
+		elif _pc == 29079:
+			_pc = 29105
+			continue
+		elif _pc == 29084:
+			debug.print_string("iActOne.MasterScript - Player has been warned about the marauder threat to Hoffers Wake \n")
+			_pc = 29105
+			continue
+		elif _pc == 29105:
+			_pc = 29146
+			continue
+		elif _pc == 29110:
+			_pc = 29141
+			continue
+		elif _pc == 29115:
+			_pc = 29141
+			continue
+		elif _pc == 29120:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to be warned about the threat to Hoffers Wake.\n")
+			_pc = 29141
+			continue
+		elif _pc == 29141:
+			_pc = 29038
+			continue
+		elif _pc == 29146:
+			_pc = 29147
+			continue
+		elif _pc == 29147:
+			await _pog_wait(5.0)
+			if not _pog_is_null(global.pog_bool("g_act1_joint_forces_complete")):
+				_pc = 29206
+				continue
+			else:
+				_pc = 29147
+				continue
+		elif _pc == 29206:
 			await iact1mission06.main()
 			state.set_progress(v2, 12)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_retreived_gunstars"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 06 - preparing to launch battle of Hoffers Wake \n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 06.\n")
+			_pc = 29241
+			continue
+		elif _pc == 29241:
+			_pc = 29246
+			continue
+		elif _pc == 29246:
+			await _pog_frame()
+			if _pog_every(29247, 5.0):
+				_pc = 29260
+				continue
+			else:
+				_pc = 29349
+				continue
+		elif _pc == 29260:
+			if 1 == global.pog_bool("g_act1_retreived_gunstars"):
+				_pc = 29287
+				continue
+			else:
+				_pc = 29323
+				continue
+		elif _pc == 29287:
+			_pc = 29313
+			continue
+		elif _pc == 29292:
+			debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 06 - preparing to launch battle of Hoffers Wake \n")
+			_pc = 29313
+			continue
+		elif _pc == 29313:
+			_pc = 29354
+			continue
+		elif _pc == 29318:
+			_pc = 29349
+			continue
+		elif _pc == 29323:
+			_pc = 29349
+			continue
+		elif _pc == 29328:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 06.\n")
+			_pc = 29349
+			continue
+		elif _pc == 29349:
+			_pc = 29246
+			continue
+		elif _pc == 29354:
 			await iact1mission07.main()
 			state.set_progress(v2, 13)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_saved_hoffers_wake"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 07. \n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 07.\n")
+			_pc = 29390
+			continue
+		elif _pc == 29390:
+			_pc = 29395
+			continue
+		elif _pc == 29395:
+			await _pog_frame()
+			if _pog_every(29396, 5.0):
+				_pc = 29409
+				continue
+			else:
+				_pc = 29498
+				continue
+		elif _pc == 29409:
+			if 1 == global.pog_bool("g_act1_saved_hoffers_wake"):
+				_pc = 29436
+				continue
+			else:
+				_pc = 29472
+				continue
+		elif _pc == 29436:
+			_pc = 29462
+			continue
+		elif _pc == 29441:
+			debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 07. \n")
+			_pc = 29462
+			continue
+		elif _pc == 29462:
+			_pc = 29503
+			continue
+		elif _pc == 29467:
+			_pc = 29498
+			continue
+		elif _pc == 29472:
+			_pc = 29498
+			continue
+		elif _pc == 29477:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 07.\n")
+			_pc = 29498
+			continue
+		elif _pc == 29498:
+			_pc = 29395
+			continue
+		elif _pc == 29503:
 			global.set_int("g_story_1.100", 1)
 			state.set_progress(v2, 14)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_league_introduction"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has been introduced to the league.\n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to read the league introduction.\n")
+			_pc = 29547
+			continue
+		elif _pc == 29547:
+			_pc = 29552
+			continue
+		elif _pc == 29552:
+			await _pog_frame()
+			if _pog_every(29553, 5.0):
+				_pc = 29566
+				continue
+			else:
+				_pc = 29655
+				continue
+		elif _pc == 29566:
+			if 1 == global.pog_bool("g_act1_league_introduction"):
+				_pc = 29593
+				continue
+			else:
+				_pc = 29629
+				continue
+		elif _pc == 29593:
+			_pc = 29619
+			continue
+		elif _pc == 29598:
+			debug.print_string("iActOne.MasterScript - player has been introduced to the league.\n")
+			_pc = 29619
+			continue
+		elif _pc == 29619:
+			_pc = 29660
+			continue
+		elif _pc == 29624:
+			_pc = 29655
+			continue
+		elif _pc == 29629:
+			_pc = 29655
+			continue
+		elif _pc == 29634:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to read the league introduction.\n")
+			_pc = 29655
+			continue
+		elif _pc == 29655:
+			_pc = 29552
+			continue
+		elif _pc == 29660:
 			await iact1mission08.main()
 			state.set_progress(v2, 15)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_league_initiation"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has completed league initiation test ( act 1 Mission 08 ). \n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to complete league intiation test ( act 1 Mission 08 ) .\n")
+			_pc = 29696
+			continue
+		elif _pc == 29696:
+			_pc = 29701
+			continue
+		elif _pc == 29701:
+			await _pog_frame()
+			if _pog_every(29702, 5.0):
+				_pc = 29715
+				continue
+			else:
+				_pc = 29804
+				continue
+		elif _pc == 29715:
+			if 1 == global.pog_bool("g_act1_league_initiation"):
+				_pc = 29742
+				continue
+			else:
+				_pc = 29778
+				continue
+		elif _pc == 29742:
+			_pc = 29768
+			continue
+		elif _pc == 29747:
+			debug.print_string("iActOne.MasterScript - player has completed league initiation test ( act 1 Mission 08 ). \n")
+			_pc = 29768
+			continue
+		elif _pc == 29768:
+			_pc = 29809
+			continue
+		elif _pc == 29773:
+			_pc = 29804
+			continue
+		elif _pc == 29778:
+			_pc = 29804
+			continue
+		elif _pc == 29783:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to complete league intiation test ( act 1 Mission 08 ) .\n")
+			_pc = 29804
+			continue
+		elif _pc == 29804:
+			_pc = 29701
+			continue
+		elif _pc == 29809:
 			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 35, 2, 1))
 			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 596, 1, 466, 1, 1))
 			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 596, 1, 31, 2, 1))
@@ -1391,132 +3075,550 @@ func master_script() -> Variant:
 			_pog_spawn(haven_station_introduction.bind())
 			await iact1mission09.main()
 			state.set_progress(v2, 16)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_lor_stolen"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has compelted act1 misson 09. \n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission09.\n")
+			_pc = 31770
+			continue
+		elif _pc == 31770:
+			_pc = 31775
+			continue
+		elif _pc == 31775:
+			await _pog_frame()
+			if _pog_every(31776, 5.0):
+				_pc = 31789
+				continue
+			else:
+				_pc = 31878
+				continue
+		elif _pc == 31789:
+			if 1 == global.pog_bool("g_act1_lor_stolen"):
+				_pc = 31816
+				continue
+			else:
+				_pc = 31852
+				continue
+		elif _pc == 31816:
+			_pc = 31842
+			continue
+		elif _pc == 31821:
+			debug.print_string("iActOne.MasterScript - player has compelted act1 misson 09. \n")
+			_pc = 31842
+			continue
+		elif _pc == 31842:
+			_pc = 31883
+			continue
+		elif _pc == 31847:
+			_pc = 31878
+			continue
+		elif _pc == 31852:
+			_pc = 31878
+			continue
+		elif _pc == 31857:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission09.\n")
+			_pc = 31878
+			continue
+		elif _pc == 31878:
+			_pc = 31775
+			continue
+		elif _pc == 31883:
 			await iact1mission10.main()
 			state.set_progress(v2, 17)
-			while true:
-				await _pog_wait(5)
-				if 1 == global.pog_bool("g_act1_retrieved_artefact"):
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - player has compelted act1 misson 10 and has retreived the alien artefact. \n")
-					break
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission 10.\n")
-			if PogRuntime.TRACE:
-				debug.print_string(" iActOone.MasterScript - Finished Act One\n")
+			_pc = 31919
+			continue
+		elif _pc == 31919:
+			_pc = 31924
+			continue
+		elif _pc == 31924:
+			await _pog_frame()
+			if _pog_every(31925, 5.0):
+				_pc = 31938
+				continue
+			else:
+				_pc = 32027
+				continue
+		elif _pc == 31938:
+			if 1 == global.pog_bool("g_act1_retrieved_artefact"):
+				_pc = 31965
+				continue
+			else:
+				_pc = 32001
+				continue
+		elif _pc == 31965:
+			_pc = 31991
+			continue
+		elif _pc == 31970:
+			debug.print_string("iActOne.MasterScript - player has compelted act1 misson 10 and has retreived the alien artefact. \n")
+			_pc = 31991
+			continue
+		elif _pc == 31991:
+			_pc = 32032
+			continue
+		elif _pc == 31996:
+			_pc = 32027
+			continue
+		elif _pc == 32001:
+			_pc = 32027
+			continue
+		elif _pc == 32006:
+			debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission 10.\n")
+			_pc = 32027
+			continue
+		elif _pc == 32027:
+			_pc = 31924
+			continue
+		elif _pc == 32032:
+			_pc = 32059
+			continue
+		elif _pc == 32038:
+			debug.print_string(" iActOone.MasterScript - Finished Act One\n")
+			_pc = 32059
+			continue
+		elif _pc == 32059:
 			await local_1081()
 			state.destroy(self)
 			igame.next_act("iActTwo")
-			break
-	return
+			_pc = 32295
+			continue
+		elif _pc == 32126:
+			if not _pog_is_null(state.progress(v2)):
+				_pc = 32152
+				continue
+			else:
+				_pc = 27440
+				continue
+		elif _pc == 32152:
+			if not _pog_is_null(1):
+				_pc = 32160
+				continue
+			else:
+				_pc = 27488
+				continue
+		elif _pc == 32160:
+			if not _pog_is_null(2):
+				_pc = 32169
+				continue
+			else:
+				_pc = 27649
+				continue
+		elif _pc == 32169:
+			if not _pog_is_null(3):
+				_pc = 32178
+				continue
+			else:
+				_pc = 27812
+				continue
+		elif _pc == 32178:
+			if not _pog_is_null(4):
+				_pc = 32187
+				continue
+			else:
+				_pc = 27989
+				continue
+		elif _pc == 32187:
+			if not _pog_is_null(5):
+				_pc = 32196
+				continue
+			else:
+				_pc = 28151
+				continue
+		elif _pc == 32196:
+			if not _pog_is_null(6):
+				_pc = 32205
+				continue
+			else:
+				_pc = 28286
+				continue
+		elif _pc == 32205:
+			if not _pog_is_null(7):
+				_pc = 32214
+				continue
+			else:
+				_pc = 28457
+				continue
+		elif _pc == 32214:
+			if not _pog_is_null(9):
+				_pc = 32223
+				continue
+			else:
+				_pc = 28685
+				continue
+		elif _pc == 32223:
+			if not _pog_is_null(10):
+				_pc = 32232
+				continue
+			else:
+				_pc = 28862
+				continue
+		elif _pc == 32232:
+			if not _pog_is_null(11):
+				_pc = 32241
+				continue
+			else:
+				_pc = 29033
+				continue
+		elif _pc == 32241:
+			if not _pog_is_null(12):
+				_pc = 32250
+				continue
+			else:
+				_pc = 29241
+				continue
+		elif _pc == 32250:
+			if not _pog_is_null(13):
+				_pc = 32259
+				continue
+			else:
+				_pc = 29390
+				continue
+		elif _pc == 32259:
+			if not _pog_is_null(14):
+				_pc = 32268
+				continue
+			else:
+				_pc = 29547
+				continue
+		elif _pc == 32268:
+			if not _pog_is_null(15):
+				_pc = 32277
+				continue
+			else:
+				_pc = 29696
+				continue
+		elif _pc == 32277:
+			if not _pog_is_null(16):
+				_pc = 32286
+				continue
+			else:
+				_pc = 31770
+				continue
+		elif _pc == 32286:
+			if not _pog_is_null(17):
+				_pc = 32295
+				continue
+			else:
+				_pc = 31919
+				continue
+		elif _pc == 32295:
+			return
+		else:
+			return 0
 	return 0
 
 func local_32297() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = iemail.find("html:/text/act_1/act1_mission10_email")
-	if 1 == global.pog_bool("g_act1_puzzle_active"):
-		await iconversation.begin()
-		await iconversation.add_response("a1_master_player_yes", "a1_master_player_yes")
-		await iconversation.add_response("a1_master_player_no", "a1_master_player_no")
-		v1 = await iconversation.ask(0, "name_smith", "a1_master_smith_want_to_use")
-		while v1 == 1:
+	var _pc: int = 32297
+	while true:
+		if _pc == 32297:
+			v2 = iemail.find("html:/text/act_1/act1_mission10_email")
+			if 1 == global.pog_bool("g_act1_puzzle_active"):
+				_pc = 32355
+				continue
+			else:
+				_pc = 32533
+				continue
+		elif _pc == 32355:
+			await iconversation.begin()
+			await iconversation.add_response("a1_master_player_yes", "a1_master_player_yes")
+			await iconversation.add_response("a1_master_player_no", "a1_master_player_no")
+			v1 = await iconversation.ask(0, "name_smith", "a1_master_smith_want_to_use")
+			_pc = 32506
+			continue
+		elif _pc == 32461:
 			await iconversation.end()
 			gui.overlay_screen("icSPComputerPuzzleScreen")
-			break
-		await iconversation.end()
-	if 1 != global.pog_bool("g_act1_lor_stolen") and 2 > iemail.unread():
-		if 1 == math.random_int(1, 2):
-			await iconversation.one_liner(0, "name_smith", "a1_master_smith_email")
-	if 1 == global.pog_bool("g_act1_character_intro") and _pog_is_null(global.exists("g_finished_email_hinter")):
-		_pog_spawn(piracy_email_hinter.bind())
-	while true:
-		await _pog_wait(0.5)
-		if PogRuntime.TRACE:
-			debug.print_string(" iActOne.BaseMessageChecker - Checking to see if any new story sequences are needed....\n")
-		if not ((1 - _pog_is_running(v0))):
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.BaseMessageChecker - A story sequence is currently running.\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iActOne.BaseMessageChecker - No story sequences are currnetly runing, checking to see if any are waiting to run\n")
-			if 1 == global.pog_int("g_story_1.05"):
-				global.set_int("g_story_1.05", 2)
-				v0 = _pog_spawn(local_2048.bind())
+			_pc = 32519
+			continue
+		elif _pc == 32501:
+			_pc = 32519
+			continue
+		elif _pc == 32506:
+			if v1 != 1:
+				_pc = 32519
+				continue
 			else:
-				if 1 == global.pog_int("g_story_1.10"):
-					global.set_int("g_story_1.10", 2)
-					v0 = _pog_spawn(local_2274.bind())
-				else:
-					if 1 == global.pog_int("g_story_1.30"):
-						global.set_int("g_story_1.30", 2)
-						v0 = _pog_spawn(local_3106.bind())
-					else:
-						if 1 == global.pog_int("g_story_1.20"):
-							global.set_int("g_story_1.20", 2)
-							v0 = _pog_spawn(local_3386.bind())
-						else:
-							if 1 == global.pog_int("g_story_1.25"):
-								global.set_int("g_story_1.25", 2)
-								v0 = _pog_spawn(local_4360.bind())
-							else:
-								if 1 == global.pog_int("g_story_1.35"):
-									global.set_int("g_story_1.35", 2)
-									v0 = _pog_spawn(local_3600.bind())
-								else:
-									if 1 == global.pog_int("g_story_1.36"):
-										global.set_int("g_story_1.36", 2)
-										v0 = _pog_spawn(local_4444.bind())
-									else:
-										if 1 == global.pog_int("g_story_1.40"):
-											global.set_int("g_story_1.40", 2)
-											v0 = _pog_spawn(local_4528.bind())
-										else:
-											if 1 == global.pog_int("g_story_1.50"):
-												global.set_int("g_story_1.50", 2)
-												v0 = _pog_spawn(local_4708.bind())
-											else:
-												if 1 == global.pog_int("g_story_1.70"):
-													global.set_int("g_story_1.70", 2)
-													v0 = _pog_spawn(local_5008.bind())
-												else:
-													if 1 == global.pog_int("g_story_1.60"):
-														global.set_int("g_story_1.60", 2)
-														v0 = _pog_spawn(local_4646.bind())
-													else:
-														if 1 == global.pog_int("g_story_1.80"):
-															global.set_int("g_story_1.80", 2)
-															v0 = _pog_spawn(local_6081.bind())
-														else:
-															if 1 == global.pog_int("g_story_1.90"):
-																global.set_int("g_story_1.90", 2)
-																v0 = _pog_spawn(local_6199.bind())
-															else:
-																if 1 == global.pog_int("g_story_1.100"):
-																	global.set_int("g_story_1.100", 2)
-																	v0 = _pog_spawn(local_6485.bind())
-																else:
-																	if 1 == global.pog_int("g_story_1.110"):
-																		global.set_int("g_story_1.110", 2)
-																		v0 = _pog_spawn(local_6569.bind())
-																	else:
-																		if iemail.read(v2) and _pog_is_null(global.pog_bool("g_act1_treasure_hunt_conversation")):
-																			global.set_bool("g_act1_treasure_hunt_conversation", 1)
-																			v0 = _pog_spawn(local_6631.bind())
-																		else:
-																			if PogRuntime.TRACE:
-																				debug.print_string(" iActOne.MasterBaseScript - No story sequences are wating to be executed, sleeping for a bit...\n")
-	return
+				_pc = 32461
+				continue
+		elif _pc == 32519:
+			await iconversation.end()
+			_pc = 32533
+			continue
+		elif _pc == 32533:
+			if 1 != global.pog_bool("g_act1_lor_stolen") and 2 > iemail.unread():
+				_pc = 32577
+				continue
+			else:
+				_pc = 32628
+				continue
+		elif _pc == 32577:
+			if 1 == math.random_int(1, 2):
+				_pc = 32600
+				continue
+			else:
+				_pc = 32628
+				continue
+		elif _pc == 32600:
+			await iconversation.one_liner(0, "name_smith", "a1_master_smith_email")
+			_pc = 32628
+			continue
+		elif _pc == 32628:
+			if 1 == global.pog_bool("g_act1_character_intro") and _pog_is_null(global.exists("g_finished_email_hinter")):
+				_pc = 32677
+				continue
+			else:
+				_pc = 32691
+				continue
+		elif _pc == 32677:
+			_pog_spawn(piracy_email_hinter.bind())
+			_pc = 32691
+			continue
+		elif _pc == 32691:
+			_pc = 32696
+			continue
+		elif _pc == 32696:
+			await _pog_frame()
+			if _pog_every(32697, 0.5):
+				_pc = 32710
+				continue
+			else:
+				_pc = 34045
+				continue
+		elif _pc == 32710:
+			_pc = 32736
+			continue
+		elif _pc == 32715:
+			debug.print_string(" iActOne.BaseMessageChecker - Checking to see if any new story sequences are needed....\n")
+			_pc = 32736
+			continue
+		elif _pc == 32736:
+			if not ((1 - _pog_is_running(v0))):
+				_pc = 32760
+				continue
+			else:
+				_pc = 32791
+				continue
+		elif _pc == 32760:
+			_pc = 32786
+			continue
+		elif _pc == 32765:
+			debug.print_string("iActOne.BaseMessageChecker - A story sequence is currently running.\n")
+			_pc = 32786
+			continue
+		elif _pc == 32786:
+			_pc = 34045
+			continue
+		elif _pc == 32791:
+			_pc = 32817
+			continue
+		elif _pc == 32796:
+			debug.print_string("iActOne.BaseMessageChecker - No story sequences are currnetly runing, checking to see if any are waiting to run\n")
+			_pc = 32817
+			continue
+		elif _pc == 32817:
+			if 1 == global.pog_int("g_story_1.05"):
+				_pc = 32844
+				continue
+			else:
+				_pc = 32891
+				continue
+		elif _pc == 32844:
+			global.set_int("g_story_1.05", 2)
+			v0 = _pog_spawn(local_2048.bind())
+			_pc = 34045
+			continue
+		elif _pc == 32891:
+			if 1 == global.pog_int("g_story_1.10"):
+				_pc = 32918
+				continue
+			else:
+				_pc = 32965
+				continue
+		elif _pc == 32918:
+			global.set_int("g_story_1.10", 2)
+			v0 = _pog_spawn(local_2274.bind())
+			_pc = 34045
+			continue
+		elif _pc == 32965:
+			if 1 == global.pog_int("g_story_1.30"):
+				_pc = 32992
+				continue
+			else:
+				_pc = 33039
+				continue
+		elif _pc == 32992:
+			global.set_int("g_story_1.30", 2)
+			v0 = _pog_spawn(local_3106.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33039:
+			if 1 == global.pog_int("g_story_1.20"):
+				_pc = 33066
+				continue
+			else:
+				_pc = 33113
+				continue
+		elif _pc == 33066:
+			global.set_int("g_story_1.20", 2)
+			v0 = _pog_spawn(local_3386.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33113:
+			if 1 == global.pog_int("g_story_1.25"):
+				_pc = 33140
+				continue
+			else:
+				_pc = 33187
+				continue
+		elif _pc == 33140:
+			global.set_int("g_story_1.25", 2)
+			v0 = _pog_spawn(local_4360.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33187:
+			if 1 == global.pog_int("g_story_1.35"):
+				_pc = 33214
+				continue
+			else:
+				_pc = 33261
+				continue
+		elif _pc == 33214:
+			global.set_int("g_story_1.35", 2)
+			v0 = _pog_spawn(local_3600.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33261:
+			if 1 == global.pog_int("g_story_1.36"):
+				_pc = 33288
+				continue
+			else:
+				_pc = 33335
+				continue
+		elif _pc == 33288:
+			global.set_int("g_story_1.36", 2)
+			v0 = _pog_spawn(local_4444.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33335:
+			if 1 == global.pog_int("g_story_1.40"):
+				_pc = 33362
+				continue
+			else:
+				_pc = 33409
+				continue
+		elif _pc == 33362:
+			global.set_int("g_story_1.40", 2)
+			v0 = _pog_spawn(local_4528.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33409:
+			if 1 == global.pog_int("g_story_1.50"):
+				_pc = 33436
+				continue
+			else:
+				_pc = 33483
+				continue
+		elif _pc == 33436:
+			global.set_int("g_story_1.50", 2)
+			v0 = _pog_spawn(local_4708.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33483:
+			if 1 == global.pog_int("g_story_1.70"):
+				_pc = 33510
+				continue
+			else:
+				_pc = 33557
+				continue
+		elif _pc == 33510:
+			global.set_int("g_story_1.70", 2)
+			v0 = _pog_spawn(local_5008.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33557:
+			if 1 == global.pog_int("g_story_1.60"):
+				_pc = 33584
+				continue
+			else:
+				_pc = 33631
+				continue
+		elif _pc == 33584:
+			global.set_int("g_story_1.60", 2)
+			v0 = _pog_spawn(local_4646.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33631:
+			if 1 == global.pog_int("g_story_1.80"):
+				_pc = 33658
+				continue
+			else:
+				_pc = 33705
+				continue
+		elif _pc == 33658:
+			global.set_int("g_story_1.80", 2)
+			v0 = _pog_spawn(local_6081.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33705:
+			if 1 == global.pog_int("g_story_1.90"):
+				_pc = 33732
+				continue
+			else:
+				_pc = 33779
+				continue
+		elif _pc == 33732:
+			global.set_int("g_story_1.90", 2)
+			v0 = _pog_spawn(local_6199.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33779:
+			if 1 == global.pog_int("g_story_1.100"):
+				_pc = 33806
+				continue
+			else:
+				_pc = 33853
+				continue
+		elif _pc == 33806:
+			global.set_int("g_story_1.100", 2)
+			v0 = _pog_spawn(local_6485.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33853:
+			if 1 == global.pog_int("g_story_1.110"):
+				_pc = 33880
+				continue
+			else:
+				_pc = 33927
+				continue
+		elif _pc == 33880:
+			global.set_int("g_story_1.110", 2)
+			v0 = _pog_spawn(local_6569.bind())
+			_pc = 34045
+			continue
+		elif _pc == 33927:
+			if iemail.read(v2) and _pog_is_null(global.pog_bool("g_act1_treasure_hunt_conversation")):
+				_pc = 33973
+				continue
+			else:
+				_pc = 34019
+				continue
+		elif _pc == 33973:
+			global.set_bool("g_act1_treasure_hunt_conversation", 1)
+			v0 = _pog_spawn(local_6631.bind())
+			_pc = 34045
+			continue
+		elif _pc == 34019:
+			_pc = 34045
+			continue
+		elif _pc == 34024:
+			debug.print_string(" iActOne.MasterBaseScript - No story sequences are wating to be executed, sleeping for a bit...\n")
+			_pc = 34045
+			continue
+		elif _pc == 34045:
+			_pc = 32696
+			continue
+		elif _pc == 34050:
+			return
+		else:
+			return 0
 	return 0
 
 func main() -> Variant:
@@ -1593,22 +3695,130 @@ func local_34470(v0) -> Variant:
 
 func local_35213(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
-	while v0 == 1:
-		v1 = "html:/text/act_1/piracy_hint_1"
-		break
-	push_error("PORT: unstructured jump to L35361")
-	return _pog_clone(v1)
+	var _pc: int = 35213
+	while true:
+		if _pc == 35213:
+			v1 = null
+			_pc = 35311
+			continue
+		elif _pc == 35234:
+			v1 = "html:/text/act_1/piracy_hint_1"
+			_pc = 35351
+			continue
+		elif _pc == 35252:
+			v1 = "html:/text/act_1/piracy_hint_2"
+			_pc = 35351
+			continue
+		elif _pc == 35270:
+			v1 = "html:/text/act_1/piracy_hint_3"
+			_pc = 35351
+			continue
+		elif _pc == 35288:
+			v1 = "html:/text/act_1/piracy_hint_4"
+			_pc = 35351
+			continue
+		elif _pc == 35306:
+			_pc = 35351
+			continue
+		elif _pc == 35311:
+			if v0 != 1:
+				_pc = 35324
+				continue
+			else:
+				_pc = 35234
+				continue
+		elif _pc == 35324:
+			if not _pog_is_null(2):
+				_pc = 35333
+				continue
+			else:
+				_pc = 35252
+				continue
+		elif _pc == 35333:
+			if not _pog_is_null(3):
+				_pc = 35342
+				continue
+			else:
+				_pc = 35270
+				continue
+		elif _pc == 35342:
+			if not _pog_is_null(4):
+				_pc = 35351
+				continue
+			else:
+				_pc = 35288
+				continue
+		elif _pc == 35351:
+			_pc = 35361
+			continue
+		elif _pc == 35361:
+			return
+		else:
+			return 0
 	return 0
 
 func local_35371(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
-	while v0 == 1:
-		v1 = "a2_master_story2.140b_mail_subject"
-		break
-	push_error("PORT: unstructured jump to L35519")
-	return _pog_clone(v1)
+	var _pc: int = 35371
+	while true:
+		if _pc == 35371:
+			v1 = null
+			_pc = 35469
+			continue
+		elif _pc == 35392:
+			v1 = "a2_master_story2.140b_mail_subject"
+			_pc = 35509
+			continue
+		elif _pc == 35410:
+			v1 = "a2_master_story2.180_mail_subject"
+			_pc = 35509
+			continue
+		elif _pc == 35428:
+			v1 = "a2_master_story2.260_mail_subject"
+			_pc = 35509
+			continue
+		elif _pc == 35446:
+			v1 = "a2_master_story2.140b_mail_subject"
+			_pc = 35509
+			continue
+		elif _pc == 35464:
+			_pc = 35509
+			continue
+		elif _pc == 35469:
+			if v0 != 1:
+				_pc = 35482
+				continue
+			else:
+				_pc = 35392
+				continue
+		elif _pc == 35482:
+			if not _pog_is_null(2):
+				_pc = 35491
+				continue
+			else:
+				_pc = 35410
+				continue
+		elif _pc == 35491:
+			if not _pog_is_null(3):
+				_pc = 35500
+				continue
+			else:
+				_pc = 35428
+				continue
+		elif _pc == 35500:
+			if not _pog_is_null(4):
+				_pc = 35509
+				continue
+			else:
+				_pc = 35446
+				continue
+		elif _pc == 35509:
+			_pc = 35519
+			continue
+		elif _pc == 35519:
+			return
+		else:
+			return 0
 	return 0
 
 func piracy_email_hinter() -> Variant:
@@ -1635,7 +3845,7 @@ func piracy_email_hinter() -> Variant:
 				global.destroy("g_current_waiter")
 				global.create_bool("g_finished_email_hinter", 2, 1)
 				return
-		if iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail")))):
+		if not (iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail"))))):
 			continue
 		global.set_bool("g_read_current_mail", 1)
 	return

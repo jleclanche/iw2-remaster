@@ -36,7 +36,6 @@ func get_author(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = null
 	v1 = inifile.string(v0, "Info", "author", "None")
-	push_error("PORT: unstructured jump to L70")
 	return _pog_clone(v1)
 	return 0
 
@@ -44,7 +43,6 @@ func get_description(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = null
 	v1 = inifile.string(v0, "Info", "description", "None")
-	push_error("PORT: unstructured jump to L150")
 	return _pog_clone(v1)
 	return 0
 
@@ -52,7 +50,6 @@ func get_date(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = null
 	v1 = inifile.string(v0, "Info", "date", "None")
-	push_error("PORT: unstructured jump to L230")
 	return _pog_clone(v1)
 	return 0
 
@@ -60,7 +57,6 @@ func pog_get_name(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = null
 	v1 = inifile.string(v0, "Info", "mapname", "None")
-	push_error("PORT: unstructured jump to L310")
 	return _pog_clone(v1)
 	return 0
 
@@ -68,14 +64,13 @@ func get_map(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = null
 	v1 = inifile.string(v0, "General", "map", "None")
-	push_error("PORT: unstructured jump to L390")
 	return _pog_clone(v1)
 	return 0
 
 func get_map_size(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = inifile.pog_float(v0, "General", "radius", 0.0)
-	return
+	return v1
 	return 0
 
 func local_459(v0, v1, v2, v3) -> Variant:
@@ -115,7 +110,7 @@ func local_459(v0, v1, v2, v3) -> Variant:
 	else:
 		if _pog_eq("Beta", string.left(object.string_property(v6, "name"), 4)):
 			isim.set_faction(isim.cast(v6), ifaction.find(text.field("mp_flag_team_b", 0)))
-	return
+	return v6
 	return 0
 
 func get_geography(v0, v1) -> Variant:
@@ -149,7 +144,7 @@ func get_geography(v0, v1) -> Variant:
 	group.add_group(v2, v3)
 	group.add_group(v2, v4)
 	group.add_group(v2, v5)
-	return
+	return v2
 	return 0
 
 func get_spawn_points(v0, v1) -> Variant:
@@ -196,7 +191,7 @@ func get_spawn_points(v0, v1) -> Variant:
 	group.add_group(v2, v3)
 	group.add_group(v2, v4)
 	group.add_group(v2, v5)
-	return
+	return v2
 	return 0
 
 func pog_load(v0, v1) -> Variant:

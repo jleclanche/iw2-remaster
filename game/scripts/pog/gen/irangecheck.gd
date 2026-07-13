@@ -37,27 +37,62 @@ func local_27(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	if global.exists("gl_Range_creation_no_report"):
-		if 1 == global.pog_bool("gl_Range_creation_no_report"):
-			push_error("PORT: unstructured jump to L84")
-	else:
-		if PogRuntime.TRACE:
+	var _pc: int = 27
+	while true:
+		if _pc == 27:
+			if global.exists("gl_Range_creation_no_report"):
+				_pc = 52
+				continue
+			else:
+				_pc = 84
+				continue
+		elif _pc == 52:
+			if 1 == global.pog_bool("gl_Range_creation_no_report"):
+				_pc = 79
+				continue
+			else:
+				_pc = 84
+				continue
+		elif _pc == 79:
+			_pc = 108
+			continue
+		elif _pc == 84:
+			_pc = 108
+			continue
+		elif _pc == 89:
 			debug.print_string(v0)
-	return 0
-	v1 = null
-	v1 = list.from_set(v0)
-	v2 = list.item_count(v1)
-	if PogRuntime.TRACE:
-		debug.print_string("SET DUMP:\n")
-		v3 = 0
-		while v2 < v3:
+			_pc = 108
+			continue
+		elif _pc == 108:
+			return 0
+		elif _pc == 182:
+			debug.print_string("SET DUMP:\n")
+			v3 = 0
+			_pc = 211
+			continue
+		elif _pc == 211:
+			if v2 < v3:
+				_pc = 227
+				continue
+			else:
+				_pc = 379
+				continue
+		elif _pc == 227:
 			debug.print_string("Set Item ")
 			debug.print_string(string.from_int(v3))
 			debug.print_string(" ")
 			debug.print_handle(list.get_nth(v1, v3))
 			debug.print_string("\n")
 			v3 = 1 + v3
-	return 0
+			_pc = 211
+			continue
+		elif _pc == 379:
+			_pc = 380
+			continue
+		elif _pc == 380:
+			return 0
+		else:
+			return 0
 	return 0
 
 func add_traffic_exception(v0) -> Variant:
@@ -143,7 +178,7 @@ func remove_out_of_system_traffic_exception() -> Variant:
 	var v2: Variant = 0
 	v1 = null
 	v2 = null
-	if 1 == global.exists("g_out_of_system_exceptions"):
+	if 1 != global.exists("g_out_of_system_exceptions"):
 		return 0
 	v1 = global.pog_set("g_out_of_system_exceptions")
 	p_set.add(v2, v0)
@@ -212,7 +247,7 @@ func monitor_range() -> Variant:
 	global.set_list("g_active_location_list", v10)
 	while true:
 		await _pog_wait(1)
-		if _pog_is_null(global.exists("g_disable_traffic_monitor")) and v0:
+		if not (_pog_is_null(global.exists("g_disable_traffic_monitor")) and v0):
 			continue
 		v12 = global.pog_set("g_filtered_system_habitats")
 		v7 = iship.find_player_ship()

@@ -104,7 +104,7 @@ func local_635(v0, v1) -> Variant:
 	v2 = await igui.create_inverse_radio_button(0, 0, 0)
 	gui.set_window_title(v2, v0)
 	list.add_tail(v1, v2)
-	return
+	return v2
 	return 0
 
 func on_session_refresh() -> Variant:
@@ -114,7 +114,7 @@ func on_session_refresh() -> Variant:
 	v2 = null
 	v0 = gui.cast(global.handle("mp_network_session_list_box"))
 	v1 = gui.cast(global.handle("mp_network_refresh_button"))
-	if imultiplay.server_browser_update_complete():
+	if not (imultiplay.server_browser_update_complete()):
 		return 0
 	gui.remove_list_box_entries(v0)
 	if 1 == global.pog_bool("Network_Internet_connect"):
@@ -320,7 +320,6 @@ func local_2660(v0) -> Variant:
 	v5 = await igui.create_and_initialise_text_window(v18, 0, v18 + v13 * 2 - v16, v17, v6, "")
 	list.add_tail(v3, v5)
 	global.create_handle("mp_network_text_box", 2, v5)
-	push_error("PORT: unstructured jump to L4034")
 	return _pog_clone(v3)
 	return 0
 
@@ -386,10 +385,10 @@ func show_ship(v0) -> Variant:
 	v2 = null
 	v3 = null
 	v4 = null
-	if not (_pog_eq("", v0)):
+	if _pog_eq("", v0):
 		return 0
 	v4 = global.string("MoviePlaying")
-	if not (_pog_eq(v4, v0)):
+	if _pog_eq(v4, v0):
 		return 0
 	global.set_string("MoviePlaying", v0)
 	v1 = inifile.create(v0)
@@ -706,7 +705,6 @@ func local_8762() -> Variant:
 		v16 = string.join(v16, string.from_float(imultiplay.client_options_server_a_i_bots_skill()))
 		v16 = string.join(v16, " -aic ")
 		v16 = string.join(v16, string.from_int(imultiplay.client_options_server_a_i_bots_count()))
-	push_error("PORT: unstructured jump to L10367")
 	return _pog_clone(v16)
 	return 0
 
@@ -895,7 +893,7 @@ func local_14325(v0, v1) -> Variant:
 	v5 = await igui.create_and_initialise_static_window(0, 0, v3 - v7, v2, v4, global.string("GUI_title_font"), text.field(v0, 0))
 	gui.set_window_state_colours(v5, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
 	gui.set_window_text_formatting(v5, 0, v3)
-	return
+	return v4
 	return 0
 
 func network_server_screen_advanced() -> Variant:
@@ -969,7 +967,7 @@ func local_16187() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	v1 = gui.cast(global.handle("NetworkServerAdvancedListBox"))
-	return
+	return gui.list_box_focused_entry(v1)
 	return 0
 
 func local_16256(v0) -> Variant:
@@ -989,19 +987,71 @@ func on_advanced_left() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
-	v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
-	v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
-	v3 = await local_16187()
-	while _pog_is_null(v3):
-		v5 = string.to_int(gui.edit_box_value(v0))
-		if 0 > v5:
+	var _pc: int = 16343
+	while true:
+		if _pc == 16343:
+			v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
+			v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
+			v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
+			v3 = await local_16187()
+			_pc = 16671
+			continue
+		elif _pc == 16487:
+			v5 = string.to_int(gui.edit_box_value(v0))
+			if 0 > v5:
+				_pc = 16538
+				continue
+			else:
+				_pc = 16597
+				continue
+		elif _pc == 16538:
 			v5 = -1 + v5
 			gui.set_edit_box_value(v0, string.from_int(v5))
-		else:
+			_pc = 16613
+			continue
+		elif _pc == 16597:
 			gui.play_sound(3)
-		break
-	return 0
+			_pc = 16613
+			continue
+		elif _pc == 16613:
+			_pc = 16701
+			continue
+		elif _pc == 16618:
+			gui.on_control_focus_left(v1)
+			_pc = 16701
+			continue
+		elif _pc == 16642:
+			await local_16256(v2)
+			_pc = 16701
+			continue
+		elif _pc == 16666:
+			_pc = 16701
+			continue
+		elif _pc == 16671:
+			if not _pog_is_null(v3):
+				_pc = 16684
+				continue
+			else:
+				_pc = 16487
+				continue
+		elif _pc == 16684:
+			if not _pog_is_null(1):
+				_pc = 16692
+				continue
+			else:
+				_pc = 16618
+				continue
+		elif _pc == 16692:
+			if not _pog_is_null(2):
+				_pc = 16701
+				continue
+			else:
+				_pc = 16642
+				continue
+		elif _pc == 16701:
+			return 0
+		else:
+			return 0
 	return 0
 
 func on_advanced_right() -> Variant:
@@ -1010,19 +1060,71 @@ func on_advanced_right() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
-	v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
-	v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
-	v3 = await local_16187()
-	while _pog_is_null(v3):
-		v4 = string.to_int(gui.edit_box_value(v0))
-		if 9 < v4:
+	var _pc: int = 16704
+	while true:
+		if _pc == 16704:
+			v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
+			v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
+			v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
+			v3 = await local_16187()
+			_pc = 17032
+			continue
+		elif _pc == 16848:
+			v4 = string.to_int(gui.edit_box_value(v0))
+			if 9 < v4:
+				_pc = 16900
+				continue
+			else:
+				_pc = 16958
+				continue
+		elif _pc == 16900:
 			v4 = 1 + v4
 			gui.set_edit_box_value(v0, string.from_int(v4))
-		else:
+			_pc = 16974
+			continue
+		elif _pc == 16958:
 			gui.play_sound(3)
-		break
-	return 0
+			_pc = 16974
+			continue
+		elif _pc == 16974:
+			_pc = 17062
+			continue
+		elif _pc == 16979:
+			gui.on_control_focus_right(v1)
+			_pc = 17062
+			continue
+		elif _pc == 17003:
+			await local_16256(v2)
+			_pc = 17062
+			continue
+		elif _pc == 17027:
+			_pc = 17062
+			continue
+		elif _pc == 17032:
+			if not _pog_is_null(v3):
+				_pc = 17045
+				continue
+			else:
+				_pc = 16848
+				continue
+		elif _pc == 17045:
+			if not _pog_is_null(1):
+				_pc = 17053
+				continue
+			else:
+				_pc = 16979
+				continue
+		elif _pc == 17053:
+			if not _pog_is_null(2):
+				_pc = 17062
+				continue
+			else:
+				_pc = 17003
+				continue
+		elif _pc == 17062:
+			return 0
+		else:
+			return 0
 	return 0
 
 func on_advanced_select() -> Variant:
@@ -1034,9 +1136,15 @@ func on_advanced_select() -> Variant:
 	v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
 	v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
 	v3 = await local_16187()
-	while _pog_is_null(v3):
+	if _pog_is_null(v3):
 		gui.on_control_focus_select(v0)
-		break
+		return 0
+	if v3 == 1:
+		gui.play_sound(3)
+		return 0
+	if v3 == 2:
+		await local_16256(v2)
+		return 0
 	return 0
 	return 0
 
@@ -1046,14 +1154,14 @@ func on_advanced_mouse_down() -> Variant:
 	return 0
 
 func on_advanced_mouse_up() -> Variant:
-	if _pog_eq(global.pog_int("NetworkServerAdvancedFocusedEntry"), await local_16187()):
+	if not _pog_eq(global.pog_int("NetworkServerAdvancedFocusedEntry"), await local_16187()):
 		return 0
 	await on_advanced_select()
 	return 0
 	return 0
 
 func on_host_session() -> Variant:
-	if not (imultiplay.is_server_app_spawned()):
+	if imultiplay.is_server_app_spawned():
 		return 0
 	gui.overlay_screen("icMultiplayServerScreen")
 	return 0
@@ -1275,37 +1383,89 @@ func network_screen() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v6 = null
-	v9 = null
-	v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
-	await igui.set_g_u_i_globals()
-	gui.set_default_font(global.string("GUI_title_font"))
-	if not (global.exists("Network_Internet_connect")):
-		global.create_bool("Network_Internet_connect", 2, 0)
-	if 1 < imultiplay.client_rejected_count() and imultiplay.network_is_lobby_session():
-		igame.join_network_game_from_lobby()
-		await local_583()
-	else:
-		if 1 < imultiplay.client_rejected_count() and not (_pog_eq("", igame.session_name())):
+	var _pc: int = 20634
+	while true:
+		if _pc == 20634:
+			v6 = null
+			v9 = null
+			v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
+			await igui.set_g_u_i_globals()
+			gui.set_default_font(global.string("GUI_title_font"))
+			if not (global.exists("Network_Internet_connect")):
+				_pc = 20762
+				continue
+			else:
+				_pc = 20786
+				continue
+		elif _pc == 20762:
+			global.create_bool("Network_Internet_connect", 2, 0)
+			_pc = 20786
+			continue
+		elif _pc == 20786:
+			if 1 < imultiplay.client_rejected_count() and imultiplay.network_is_lobby_session():
+				_pc = 20820
+				continue
+			else:
+				_pc = 20853
+				continue
+		elif _pc == 20820:
+			igame.join_network_game_from_lobby()
+			await local_583()
+			_pc = 21946
+			continue
+		elif _pc == 20853:
+			if 1 < imultiplay.client_rejected_count() and not _pog_eq("", igame.session_name()):
+				_pc = 20897
+				continue
+			else:
+				_pc = 21094
+				continue
+		elif _pc == 20897:
 			imultiplay.client_set_last_address(igame.server_address())
 			imultiplay.client_set_last_session(igame.session_name())
 			await local_0()
 			v10 = imultiplay.server_session_index_from_name(igame.server_address(), igame.session_name())
 			if -1 != v10:
-				igame.join_network_game(v10)
-				await local_583()
-				return 0
+				_pc = 21030
+				continue
 			else:
-				igame.set_session_name("")
-		if imultiplay.client_requested_to_cycle():
+				_pc = 21073
+				continue
+		elif _pc == 21030:
+			igame.join_network_game(v10)
+			await local_583()
+			_pc = 21946
+			continue
+		elif _pc == 21068:
+			_pc = 21094
+			continue
+		elif _pc == 21073:
+			igame.set_session_name("")
+			_pc = 21094
+			continue
+		elif _pc == 21094:
+			if imultiplay.client_requested_to_cycle():
+				_pc = 21112
+				continue
+			else:
+				_pc = 21239
+				continue
+		elif _pc == 21112:
 			imultiplay.network_reset()
 			await local_0()
 			v10 = imultiplay.server_session_index_from_name(imultiplay.client_last_address(), imultiplay.client_last_session())
 			if -1 != v10:
-				push_error("PORT: unstructured jump to L21239")
+				_pc = 21201
+				continue
+			else:
+				_pc = 21239
+				continue
+		elif _pc == 21201:
 			igame.join_network_game(v10)
 			await local_583()
-		else:
+			_pc = 21946
+			continue
+		elif _pc == 21239:
 			v0 = await igui.create_shady_bar()
 			await igui.add_back_buttons(v0, "iNetworkGUI.MainOnBackButton", "iNetworkGUI.MainOnBackToMainMenuButton")
 			await igui.add_title(v0, text.field("pda_multiplayer", 0))
@@ -1313,16 +1473,36 @@ func network_screen() -> Variant:
 			v9 = string.upper_case(v9)
 			v1 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGUI.OnNetworkLANScreen", v9, v6)
 			if v11:
-				v9 = text.field("mp_internet_game", 0)
-				v9 = string.upper_case(v9)
-				v2 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGUI.OnNetworkInternetScreen", v9, v6)
+				_pc = 21432
+				continue
+			else:
+				_pc = 21522
+				continue
+		elif _pc == 21432:
+			v9 = text.field("mp_internet_game", 0)
+			v9 = string.upper_case(v9)
+			v2 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGUI.OnNetworkInternetScreen", v9, v6)
+			_pc = 21522
+			continue
+		elif _pc == 21522:
 			v9 = text.field("mp_options_title", 0)
 			v9 = string.upper_case(v9)
 			v3 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGui.OnPlayerOptions", v9, v6)
 			if imultiplay.is_server_app_spawned():
-				v9 = text.field("mp_options_hosting_session", 0)
+				_pc = 21630
+				continue
 			else:
-				v9 = text.field("mp_options_host_session", 0)
+				_pc = 21663
+				continue
+		elif _pc == 21630:
+			v9 = text.field("mp_options_hosting_session", 0)
+			_pc = 21691
+			continue
+		elif _pc == 21663:
+			v9 = text.field("mp_options_host_session", 0)
+			_pc = 21691
+			continue
+		elif _pc == 21691:
 			v9 = string.upper_case(v9)
 			v4 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGui.OnHostSession", v9, v6)
 			v7 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
@@ -1331,7 +1511,12 @@ func network_screen() -> Variant:
 			gui.set_first_control_focus(v1)
 			await igui.set_cyclic_control_focus_path(v6)
 			gui.set_control_focus_cancel_function("iNetworkGUI.MainOnBackButton")
-	return 0
+			_pc = 21946
+			continue
+		elif _pc == 21946:
+			return 0
+		else:
+			return 0
 	return 0
 
 func on_c_d_key() -> Variant:

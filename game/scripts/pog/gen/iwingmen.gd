@@ -110,7 +110,7 @@ func count() -> Variant:
 		debug.print_int(v1)
 	if PogRuntime.TRACE:
 		debug.print_string(" \n")
-	return
+	return v1
 	return 0
 
 func add_wingman(v0) -> Variant:
@@ -140,7 +140,7 @@ func add_wingman(v0) -> Variant:
 					debug.print_string(" added. Total wingmen = ")
 					debug.print_string(string.from_int(1 - p_group.sim_count(v1)))
 					debug.print_string("\n")
-				if not (object.property_exists(v0, "tfighter")):
+				if object.property_exists(v0, "tfighter"):
 					return 0
 				ihud.pog_print(string.join("wingmen_new_wingman", string.join("+ - +", object.string_property(v0, "name"))))
 	return 0
@@ -212,7 +212,7 @@ func local_1777(v0) -> Variant:
 					debug.print_string(" removed. Total wingmen = ")
 					debug.print_string(string.from_int(1 - p_group.sim_count(v1)))
 					debug.print_string("\n")
-				if not (object.property_exists(v0, "tfighter")):
+				if object.property_exists(v0, "tfighter"):
 					return 0
 				ihud.pog_print(string.join("wingmen_wingman_removed", string.join("+ - +", object.string_property(v0, "name"))))
 	return 0
@@ -246,7 +246,7 @@ func from_group(v0, v1) -> Variant:
 						v3 = iship.cast(p_group.leader(v0))
 						await add_wingman(v3)
 						v4 = 1 + v4
-					if 1 == v1:
+					if 1 != v1:
 						return 0
 					p_group.destroy(v0, 1)
 	return 0
@@ -351,9 +351,27 @@ func report_status() -> Variant:
 					else:
 						v6 = 0
 					await local_22684()
-					while _pog_is_null(v6):
+					if _pog_is_null(v6):
 						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_awaiting_orders")
-						break
+						return 0
+					if v6 == 1:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_attacking+ - +", v5))
+						return 0
+					if v6 == 2:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
+						return 0
+					if v6 == 6:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
+						return 0
+					if v6 == 3:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_approaching+ - +", v5))
+						return 0
+					if v6 == 4:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_docking_to+ - +", v5))
+						return 0
+					if v6 == 5:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_retreating")
+						return 0
 	return 0
 	return 0
 
@@ -694,7 +712,7 @@ func add_t_fighters(v0, v1) -> Variant:
 				pass
 			else:
 				v2 = iship.cast(list.get_nth(v1, 1))
-				if not (await local_14617(v2, v0)):
+				if await local_14617(v2, v0):
 					return 0
 				if PogRuntime.TRACE:
 					debug.print_string("iWingmen.AddTfighters: Can't mount first turret fighter. EXITING.\n")
@@ -737,7 +755,6 @@ func get_attached_t_fighters() -> Variant:
 	if object.property_exists(v3, "attached") and isim.is_docked_to(v3, v0) and sim.is_alive(v3):
 		if not (sim.is_hidden(v3)):
 			list.add_tail(v1, v3)
-	push_error("PORT: unstructured jump to L10843")
 	return _pog_clone(v1)
 	return 0
 
@@ -764,7 +781,6 @@ func get_detached_t_fighters() -> Variant:
 	if _pog_eq(v2, sim.group(v4)) and sim.is_alive(v4):
 		if not (sim.is_hidden(v4)):
 			list.add_tail(v1, v4)
-	push_error("PORT: unstructured jump to L11261")
 	return _pog_clone(v1)
 	return 0
 
@@ -791,7 +807,6 @@ func get_all_t_fighters() -> Variant:
 			list.add_tail(v1, v4)
 	if PogRuntime.TRACE:
 		debug.print_string("iWingmen.GetAllTfighters: Returning list.\n")
-	push_error("PORT: unstructured jump to L11593")
 	return _pog_clone(v1)
 	return 0
 
@@ -842,11 +857,11 @@ func t_fighter_attack_target() -> Variant:
 											iship.lock_down_weapons(v4)
 											iship.weapons_use_explicit_target(v4, v1)
 								v3 = await get_lori()
-								if sim.is_alive(v3):
+								if not (sim.is_alive(v3)):
 									return 0
-								if not (sim.is_hidden(v3)):
+								if sim.is_hidden(v3):
 									return 0
-								if object.property_exists(v3, "attached"):
+								if not (object.property_exists(v3, "attached")):
 									return 0
 								iai.purge_orders(v3)
 								iship.lock_down_weapons(v3)
@@ -885,11 +900,11 @@ func t_fighter_fire_at_will() -> Variant:
 							iship.lock_down_weapons(v4)
 							iship.weapon_targets_from_contact_list(v4)
 				v5 = await get_lori()
-				if sim.is_alive(v5):
+				if not (sim.is_alive(v5)):
 					return 0
-				if not (sim.is_hidden(v5)):
+				if sim.is_hidden(v5):
 					return 0
-				if object.property_exists(v5, "attached"):
+				if not (object.property_exists(v5, "attached")):
 					return 0
 				iai.purge_orders(v5)
 				iship.lock_down_weapons(v5)
@@ -925,11 +940,11 @@ func t_fighter_cease_fire() -> Variant:
 							iai.purge_orders(v4)
 							iship.lock_down_weapons(v4)
 				v3 = await get_lori()
-				if sim.is_alive(v3):
+				if not (sim.is_alive(v3)):
 					return 0
-				if not (sim.is_hidden(v3)):
+				if sim.is_hidden(v3):
 					return 0
-				if object.property_exists(v3, "attached"):
+				if not (object.property_exists(v3, "attached")):
 					return 0
 				iai.purge_orders(v3)
 				iship.lock_down_weapons(v3)
@@ -965,7 +980,7 @@ func local_13741(v0, v1) -> Variant:
 				debug.print_string(v2)
 				debug.print_string(" has successfully attached.\n")
 			return
-		if not _pog_eq(v1, iai.current_order_target(v0)) or 4 != iai.current_order_type(v0):
+		if not (not _pog_eq(v1, iai.current_order_target(v0)) or 4 != iai.current_order_type(v0)):
 			continue
 		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.remove_tfighter - TFighter ")
@@ -1045,7 +1060,7 @@ func local_14617(v0, v1) -> Variant:
 	return 0
 
 func t_fighter_count() -> Variant:
-	return
+	return list.item_count(await get_all_t_fighters())
 	return 0
 
 func get_live_t_fighter() -> Variant:
@@ -1075,13 +1090,66 @@ func get_live_t_fighter() -> Variant:
 func create_test_t_fighters() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v1 = null
-	while _pog_is_null(v0):
-		break
-	if not (global.exists("g_tfighters_menu_option_enabled")):
-		global.create_bool("g_tfighters_menu_option_enabled", 2, 1)
-	push_error("PORT: unstructured jump to L16210")
-	return _pog_clone(v1)
+	var _pc: int = 15962
+	while true:
+		if _pc == 15962:
+			v1 = null
+			_pc = 16120
+			continue
+		elif _pc == 15983:
+			_pc = 16150
+			continue
+		elif _pc == 15988:
+			list.add_tail(v1, await local_16220("name_az"))
+			_pc = 16150
+			continue
+		elif _pc == 16032:
+			list.add_tail(v1, await local_16220("name_az"))
+			list.add_tail(v1, await local_16220("name_lori"))
+			_pc = 16150
+			continue
+		elif _pc == 16115:
+			_pc = 16150
+			continue
+		elif _pc == 16120:
+			if not _pog_is_null(v0):
+				_pc = 16133
+				continue
+			else:
+				_pc = 15983
+				continue
+		elif _pc == 16133:
+			if not _pog_is_null(1):
+				_pc = 16141
+				continue
+			else:
+				_pc = 15988
+				continue
+		elif _pc == 16141:
+			if not _pog_is_null(2):
+				_pc = 16150
+				continue
+			else:
+				_pc = 16032
+				continue
+		elif _pc == 16150:
+			if not (global.exists("g_tfighters_menu_option_enabled")):
+				_pc = 16176
+				continue
+			else:
+				_pc = 16200
+				continue
+		elif _pc == 16176:
+			global.create_bool("g_tfighters_menu_option_enabled", 2, 1)
+			_pc = 16200
+			continue
+		elif _pc == 16200:
+			_pc = 16210
+			continue
+		elif _pc == 16210:
+			return
+		else:
+			return 0
 	return 0
 
 func local_16220(v0) -> Variant:
@@ -1095,7 +1163,7 @@ func local_16220(v0) -> Variant:
 			debug.print_string(v0)
 		if PogRuntime.TRACE:
 			debug.print_string("\n")
-	return
+	return v1
 	return 0
 
 func t_fighters_attach() -> Variant:
@@ -1239,11 +1307,11 @@ func get_az() -> Variant:
 			debug.print_string("iWingmen.GetAz: ERROR: Player ship is invalid. EXITING.\n")
 	else:
 		if object.property_exists(v0, "name_az"):
-			return
+			return iship.cast(object.handle_property(v0, "name_az"))
 		else:
 			if PogRuntime.TRACE:
 				debug.print_string("iWingmen.GetAz: ERROR: name_az handle property does not exist on the player ship.\n")
-			return
+			return 0
 	return
 	return 0
 
@@ -1255,11 +1323,11 @@ func get_lori() -> Variant:
 			debug.print_string("iWingmen.GetLori: ERROR: Player ship is invalid. EXITING.\n")
 	else:
 		if object.property_exists(v0, "name_lori"):
-			return
+			return iship.cast(object.handle_property(v0, "name_lori"))
 		else:
 			if PogRuntime.TRACE:
 				debug.print_string("iWingmen.GetLori: ERROR: name_lori handle property does not exist on the player ship.\n")
-			return
+			return 0
 	return
 	return 0
 
@@ -1340,46 +1408,114 @@ func attack_death_script() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = iship.find_player_ship()
-	v2 = await get_az()
-	v3 = await get_lori()
-	v5 = await group()
-	v6 = iship.last_attacker(v0)
-	v7 = null
-	isim.kill(v0)
-	await _pog_wait(0.10000000149011612)
-	if not _pog_is_null(v6):
-		if sim.is_dead(v6):
-			push_error("PORT: unstructured jump to L20247")
-		if PogRuntime.TRACE:
+	var _pc: int = 20013
+	while true:
+		if _pc == 20013:
+			v1 = iship.find_player_ship()
+			v2 = await get_az()
+			v3 = await get_lori()
+			v5 = await group()
+			v6 = iship.last_attacker(v0)
+			v7 = null
+			isim.kill(v0)
+			await _pog_wait(0.10000000149011612)
+			if not _pog_is_null(v6):
+				_pc = 20193
+				continue
+			else:
+				_pc = 20247
+				continue
+		elif _pc == 20193:
+			if sim.is_dead(v6):
+				_pc = 20216
+				continue
+			else:
+				_pc = 20247
+				continue
+		elif _pc == 20216:
+			_pc = 20242
+			continue
+		elif _pc == 20221:
 			debug.print_string("iWingmen.AttackDeathScript - Attacker is dead. No comment necessary.")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 20242
+			continue
+		elif _pc == 20242:
+			_pc = 20819
+			continue
+		elif _pc == 20247:
+			_pc = 20273
+			continue
+		elif _pc == 20252:
 			debug.print_string("iWingmen.AttackDeathScript: Last attacker == ")
-		if PogRuntime.TRACE:
+			_pc = 20273
+			continue
+		elif _pc == 20273:
+			_pc = 20318
+			continue
+		elif _pc == 20278:
 			debug.print_string(object.string_property(v6, "name"))
-		if PogRuntime.TRACE:
+			_pc = 20318
+			continue
+		elif _pc == 20318:
+			_pc = 20344
+			continue
+		elif _pc == 20323:
 			debug.print_string("\n")
-		v7 = object.string_property(v0, "name")
-		if object.property_exists(v6, "tfighter"):
+			_pc = 20344
+			continue
+		elif _pc == 20344:
+			v7 = object.string_property(v0, "name")
+			if object.property_exists(v6, "tfighter"):
+				_pc = 20406
+				continue
+			else:
+				_pc = 20664
+				continue
+		elif _pc == 20406:
 			v4 = await get_live_t_fighter()
 			if not _pog_is_null(v4):
-				push_error("PORT: unstructured jump to L20664")
+				_pc = 20438
+				continue
+			else:
+				_pc = 20664
+				continue
+		elif _pc == 20438:
 			await local_19618(0, "_makeskill_", 3)
 			ihud.pog_print(string.join("wingmen_tfighters+: +", string.join("wingmen_target_destroyed+ - +", v7)))
 			if _pog_is_null(iai.current_order_type(v4)) and not _pog_is_null(list.item_count(await get_detached_t_fighters())):
-				iai.purge_orders(v5)
-				await escort_ship(v5, v1)
-				iship.lock_down_weapons(v2)
-				iship.lock_down_weapons(v3)
-		else:
+				_pc = 20578
+				continue
+			else:
+				_pc = 20659
+				continue
+		elif _pc == 20578:
+			iai.purge_orders(v5)
+			await escort_ship(v5, v1)
+			iship.lock_down_weapons(v2)
+			iship.lock_down_weapons(v3)
+			_pc = 20659
+			continue
+		elif _pc == 20659:
+			_pc = 20819
+			continue
+		elif _pc == 20664:
 			v4 = iship.cast(p_group.nth_sim(v5, 1))
 			if sim.is_alive(v4):
-				return
+				_pc = 20725
+				continue
+			else:
+				_pc = 20819
+				continue
+		elif _pc == 20725:
 			await local_14393(v4, "wingmen_id", string.join("wingmen_target_destroyed+ - +", v7))
 			iai.purge_orders(v5)
 			await escort_ship(v5, v1)
-	return
+			_pc = 20819
+			continue
+		elif _pc == 20819:
+			return
+		else:
+			return 0
 	return 0
 
 func escort_death_script() -> Variant:
@@ -1472,9 +1608,9 @@ func local_22081() -> Variant:
 		pass
 	else:
 		v1 = isim.cast(object.handle_property(v0, "wingmen_target_handle"))
-		if sim.is_alive(v1):
+		if not (sim.is_alive(v1)):
 			return 0
-		if _pog_eq("iWingmen.AttackDeathScript", object.string_property(v1, "death_script")):
+		if not _pog_eq("iWingmen.AttackDeathScript", object.string_property(v1, "death_script")):
 			return 0
 		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.remove_target_deathscript: Cleared target deathscript from old target called ")
@@ -1503,15 +1639,48 @@ func t_fighter_warn() -> Variant:
 	return 0
 
 func t_fighters_enabled() -> Variant:
-	if global.exists("g_current_act"):
-		if -1 == global.pog_int("g_current_act"):
-			push_error("PORT: unstructured jump to L22634")
-	else:
-		if global.exists("g_tfighters_menu_option_enabled"):
+	var _pc: int = 22575
+	while true:
+		if _pc == 22575:
+			if global.exists("g_current_act"):
+				_pc = 22600
+				continue
+			else:
+				_pc = 22634
+				continue
+		elif _pc == 22600:
+			if -1 == global.pog_int("g_current_act"):
+				_pc = 22628
+				continue
+			else:
+				_pc = 22634
+				continue
+		elif _pc == 22628:
+			_pc = 22682
+			continue
+		elif _pc == 22634:
+			if global.exists("g_tfighters_menu_option_enabled"):
+				_pc = 22659
+				continue
+			else:
+				_pc = 22670
+				continue
+		elif _pc == 22659:
+			_pc = 22682
+			continue
+		elif _pc == 22665:
+			_pc = 22676
+			continue
+		elif _pc == 22670:
+			_pc = 22682
+			continue
+		elif _pc == 22676:
+			_pc = 22682
+			continue
+		elif _pc == 22682:
 			return
 		else:
-			return
-	return
+			return 0
 	return 0
 
 func local_22684() -> Variant:

@@ -83,9 +83,16 @@ func set_active(v0) -> Variant:
 	return 0
 
 func set_faction(v0) -> Variant:
-	while v0 == 17:
+	if v0 == 17:
 		global.set_int("g_gangster_faction", 1)
-		break
+		return 0
+	if _pog_is_null(v0):
+		global.set_int("g_gangster_faction", 2)
+		return 0
+	if v0 == 5:
+		global.set_int("g_gangster_faction", 3)
+		return 0
+	global.set_int("g_gangster_faction", 4)
 	return 0
 	return 0
 
@@ -120,7 +127,6 @@ func local_624(v0) -> Variant:
 		if 1 == ihabitat.type(v2):
 			list.remove(v1, v2)
 		v4 = 1 + v4
-	push_error("PORT: unstructured jump to L893")
 	return _pog_clone(v1)
 	return 0
 
@@ -136,65 +142,258 @@ func gangster_war_generator() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = null
-	v5 = global.pog_float("g_player_sensor_range")
-	v9 = self
-	await _pog_wait(math.random(0.10000000149011612, 0.8999999761581421))
-	v10 = state.find(v9)
-	if _pog_is_null(v10):
-		if 1 == global.pog_bool("g_gangster_locking_global"):
-			return
-		global.set_bool("g_gangster_locking_global", 1)
-		v10 = state.create(v9, 0)
-	global.set_bool("g_gangster_incident_running", 0)
+	var _pc: int = 903
 	while true:
-		await _pog_wait(1)
-		if 1 == global.pog_bool("g_gangster_incident_generator_active"):
-			while true:
-				v2 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
-				v0 = iship.find_player_ship()
-				v4 = await local_624(v0)
-				if list.contains(v4, v2):
-					list.remove(v4, v2)
-				v6 = list.item_count(v4)
-				if not (isim.is_capsule_jumping(isim.cast(v0))) and not (idirector.is_busy()):
-					if 0 > v6:
-						if _pog_is_null(global.pog_bool("g_gangster_incident_running")) and 3 == math.random_int(0, 4):
-							v3 = imapentity.cast(list.get_nth(v4, math.random_int(0, 1 - v6)))
-							if 5000.0 < imapentity.entity_to_sim_distance(v3, v0):
-								v8 = math.random_int(1, 3)
-							else:
-								v8 = math.random_int(1, 2)
-							while v8 == 1:
-								global.set_bool("g_gangster_incident_running", 1)
-								v1 = await iutilities.create_waypoint_relative_to_player(math.random(10000.0 - v5, v5), math.random(10000.0 - v5, v5), math.random(10000.0 - v5, v5))
-								object.set_string_property(v1, "name", "a2_master_name_distress")
-								isim.set_sensor_visibility(isim.cast(v1), 1)
-								sim.set_cullable(v1, 0)
-								if PogRuntime.TRACE:
-									debug.print_string("iGangsterIncidentGen.GangsterWarGen: Picked Distress handler.......\n")
-								_pog_detach(_pog_spawn(local_5708.bind(v1)))
-								break
-					else:
-						if 3500000.0 > sim.distance_between(v0, v2):
-							v7 = math.random_int(0, 4)
-							if _pog_is_null(global.pog_bool("g_gangster_incident_running")) and 4 == v7:
-								global.set_bool("g_gangster_incident_running", 1)
-								v1 = await iutilities.create_waypoint_relative_to_player(math.random(50000.0 - v5, 100000.0 + v5), math.random(50000.0 - v5, 100000.0 + v5), math.random(50000.0 - v5, 100000.0 + v5))
-								object.set_string_property(v1, "name", "a2_master_name_distress")
-								isim.set_sensor_visibility(isim.cast(v1), 1)
-								sim.set_cullable(v1, 0)
-								if PogRuntime.TRACE:
-									debug.print_string("iGangsterIncidentGen.GangsterWarGen: Picked Distress handler.......\n")
-								_pog_detach(_pog_spawn(local_5708.bind(v1)))
-				await _pog_wait(global.pog_float("g_gangster_delay_check"))
-				if not (1 == global.pog_bool("g_gangster_incident_generator_active")):
-					break
+		if _pc == 903:
+			v4 = null
+			v5 = global.pog_float("g_player_sensor_range")
+			v9 = self
+			await _pog_wait(math.random(0.10000000149011612, 0.8999999761581421))
+			v10 = state.find(v9)
+			if _pog_is_null(v10):
+				_pc = 1052
+				continue
+			else:
+				_pc = 1132
+				continue
+		elif _pc == 1052:
+			if 1 == global.pog_bool("g_gangster_locking_global"):
+				_pc = 1079
+				continue
+			else:
+				_pc = 1085
+				continue
+		elif _pc == 1079:
+			_pc = 2774
+			continue
+		elif _pc == 1085:
+			global.set_bool("g_gangster_locking_global", 1)
+			v10 = state.create(v9, 0)
+			_pc = 1132
+			continue
+		elif _pc == 1132:
+			global.set_bool("g_gangster_incident_running", 0)
+			_pc = 1160
+			continue
+		elif _pc == 1160:
+			await _pog_frame()
+			if _pog_every(1161, 1.0):
+				_pc = 1174
+				continue
+			else:
+				_pc = 2746
+				continue
+		elif _pc == 1174:
+			if 1 == global.pog_bool("g_gangster_incident_generator_active"):
+				_pc = 1201
+				continue
+			else:
+				_pc = 2720
+				continue
+		elif _pc == 1201:
+			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
+			v0 = iship.find_player_ship()
+			v4 = await local_624(v0)
+			if list.contains(v4, v2):
+				_pc = 1320
+				continue
+			else:
+				_pc = 1344
+				continue
+		elif _pc == 1320:
+			list.remove(v4, v2)
+			_pc = 1344
+			continue
+		elif _pc == 1344:
+			v6 = list.item_count(v4)
+			if not (isim.is_capsule_jumping(isim.cast(v0))) and not (idirector.is_busy()):
+				_pc = 1420
+				continue
+			else:
+				_pc = 2649
+				continue
+		elif _pc == 1420:
+			if 0 > v6:
+				_pc = 1432
+				continue
+			else:
+				_pc = 2266
+				continue
+		elif _pc == 1432:
+			if _pog_is_null(global.pog_bool("g_gangster_incident_running")) and 3 == math.random_int(0, 4):
+				_pc = 1479
+				continue
+			else:
+				_pc = 2261
+				continue
+		elif _pc == 1479:
+			v3 = imapentity.cast(list.get_nth(v4, math.random_int(0, 1 - v6)))
+			if 5000.0 < imapentity.entity_to_sim_distance(v3, v0):
+				_pc = 1571
+				continue
+			else:
+				_pc = 1598
+				continue
+		elif _pc == 1571:
+			v8 = math.random_int(1, 3)
+			_pc = 1620
+			continue
+		elif _pc == 1598:
+			v8 = math.random_int(1, 2)
+			_pc = 1620
+			continue
+		elif _pc == 1620:
+			_pc = 2230
+			continue
+		elif _pc == 1625:
+			global.set_bool("g_gangster_incident_running", 1)
+			v1 = await iutilities.create_waypoint_relative_to_player(math.random(10000.0 - v5, v5), math.random(10000.0 - v5, v5), math.random(10000.0 - v5, v5))
+			object.set_string_property(v1, "name", "a2_master_name_distress")
+			isim.set_sensor_visibility(isim.cast(v1), 1)
+			sim.set_cullable(v1, 0)
+			_pc = 1865
+			continue
+		elif _pc == 1844:
+			debug.print_string("iGangsterIncidentGen.GangsterWarGen: Picked Distress handler.......\n")
+			_pc = 1865
+			continue
+		elif _pc == 1865:
+			_pog_detach(_pog_spawn(local_5708.bind(v1)))
+			_pc = 2261
+			continue
+		elif _pc == 1903:
+			if not (object.property_exists(v3, "reactive_exception")):
+				_pc = 1934
+				continue
+			else:
+				_pc = 2059
+				continue
+		elif _pc == 1934:
+			_pc = 2016
+			continue
+		elif _pc == 1939:
+			debug.print_string(string.join("iGangsterIncidentGen.GangsterWarGen: Picked base attack handler with...", imapentity.pog_name(v3)))
+			debug.print_string("\n")
+			_pc = 2016
+			continue
+		elif _pc == 2016:
+			global.set_bool("g_gangster_incident_running", 1)
+			await local_7460(v3)
+			_pc = 2059
+			continue
+		elif _pc == 2059:
+			_pc = 2261
+			continue
+		elif _pc == 2064:
+			if not (object.property_exists(v3, "reactive_exception")):
+				_pc = 2095
+				continue
+			else:
+				_pc = 2220
+				continue
+		elif _pc == 2095:
+			_pc = 2177
+			continue
+		elif _pc == 2100:
+			debug.print_string(string.join("iGangsterIncidentGen.GangsterWarGen: Picked player local base attack handler with...", imapentity.pog_name(v3)))
+			debug.print_string("\n")
+			_pc = 2177
+			continue
+		elif _pc == 2177:
+			global.set_bool("g_gangster_incident_running", 1)
+			await local_8291(v3)
+			_pc = 2220
+			continue
+		elif _pc == 2220:
+			_pc = 2261
+			continue
+		elif _pc == 2225:
+			_pc = 2261
+			continue
+		elif _pc == 2230:
+			if v8 != 1:
+				_pc = 2243
+				continue
+			else:
+				_pc = 1625
+				continue
+		elif _pc == 2243:
+			if not _pog_is_null(2):
+				_pc = 2252
+				continue
+			else:
+				_pc = 1903
+				continue
+		elif _pc == 2252:
+			if not _pog_is_null(3):
+				_pc = 2261
+				continue
+			else:
+				_pc = 2064
+				continue
+		elif _pc == 2261:
+			_pc = 2649
+			continue
+		elif _pc == 2266:
+			if 3500000.0 > sim.distance_between(v0, v2):
+				_pc = 2300
+				continue
+			else:
+				_pc = 2649
+				continue
+		elif _pc == 2300:
+			v7 = math.random_int(0, 4)
+			if _pog_is_null(global.pog_bool("g_gangster_incident_running")) and 4 == v7:
+				_pc = 2358
+				continue
+			else:
+				_pc = 2649
+				continue
+		elif _pc == 2358:
+			global.set_bool("g_gangster_incident_running", 1)
+			v1 = await iutilities.create_waypoint_relative_to_player(math.random(50000.0 - v5, 100000.0 + v5), math.random(50000.0 - v5, 100000.0 + v5), math.random(50000.0 - v5, 100000.0 + v5))
+			object.set_string_property(v1, "name", "a2_master_name_distress")
+			isim.set_sensor_visibility(isim.cast(v1), 1)
+			sim.set_cullable(v1, 0)
+			_pc = 2616
+			continue
+		elif _pc == 2595:
+			debug.print_string("iGangsterIncidentGen.GangsterWarGen: Picked Distress handler.......\n")
+			_pc = 2616
+			continue
+		elif _pc == 2616:
+			_pog_detach(_pog_spawn(local_5708.bind(v1)))
+			_pc = 2649
+			continue
+		elif _pc == 2649:
+			await _pog_wait(global.pog_float("g_gangster_delay_check"))
+			if 1 != global.pog_bool("g_gangster_incident_generator_active"):
+				_pc = 2715
+				continue
+			else:
+				_pc = 1201
+				continue
+		elif _pc == 2715:
+			_pc = 2746
+			continue
+		elif _pc == 2720:
+			_pc = 2746
+			continue
+		elif _pc == 2725:
+			debug.print_string("iGangsterIncidentGen.GangsterWarGen: The Gangster Generator is disabled!!!\n")
+			_pc = 2746
+			continue
+		elif _pc == 2746:
+			_pc = 1160
+			continue
+		elif _pc == 2751:
+			global.set_bool("g_gangster_incident_running", 0)
+			_pc = 2774
+			continue
+		elif _pc == 2774:
+			return
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iGangsterIncidentGen.GangsterWarGen: The Gangster Generator is disabled!!!\n")
-	global.set_bool("g_gangster_incident_running", 0)
-	return
+			return 0
 	return 0
 
 func local_2783(v0) -> Variant:
@@ -214,7 +413,7 @@ func local_2783(v0) -> Variant:
 		v3 = await ishipcreation.get_traffic(14, 1, math.random_int(1, 4))
 		sim.place_relative_to(group.nth_sim(v3, 0), v0, 0.0, 0.0, 0.0)
 		await iformation.random_rectangle(v3, 50.0, 1)
-	return
+	return v3
 	return 0
 
 func local_3175() -> Variant:
@@ -229,9 +428,9 @@ func local_3175() -> Variant:
 	v3 = 0
 	while v2 < v3:
 		if 0.0 < ifaction.feeling(ifaction.cast(list.get_nth(v0, v3)), v1):
-			return
+			return ifaction.cast(list.get_nth(v0, v3))
 		v3 = 1 + v3
-	return
+	return 0
 	return 0
 
 func leg_it() -> Variant:
@@ -262,18 +461,281 @@ func local_3706(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = global.pog_int("g_gangster_vessel_attack_variation")
-	if v0:
-		while global.pog_int("g_gangster_faction") == 1:
+	var _pc: int = 3706
+	while true:
+		if _pc == 3706:
+			v3 = global.pog_int("g_gangster_vessel_attack_variation")
+			if v0:
+				_pc = 3747
+				continue
+			else:
+				_pc = 4367
+				continue
+		elif _pc == 3747:
+			_pc = 4307
+			continue
+		elif _pc == 3752:
 			v2 = await ishipcreation.get_traffic(6, 17, math.random_int(2, v3))
-			break
-	else:
-		while global.pog_int("g_gangster_faction") == 1:
+			_pc = 4362
+			continue
+		elif _pc == 3800:
+			_pc = 4098
+			continue
+		elif _pc == 3805:
+			v2 = await ishipcreation.get_traffic(5, 11, math.random_int(2, v3))
+			_pc = 4166
+			continue
+		elif _pc == 3853:
+			v2 = await ishipcreation.get_traffic(5, 15, math.random_int(2, v3))
+			_pc = 4166
+			continue
+		elif _pc == 3901:
+			v2 = await ishipcreation.get_traffic(5, 16, math.random_int(2, v3))
+			_pc = 4166
+			continue
+		elif _pc == 3949:
+			v2 = await ishipcreation.get_traffic(5, 23, math.random_int(2, v3))
+			_pc = 4166
+			continue
+		elif _pc == 3997:
+			v2 = await ishipcreation.get_traffic(5, 31, math.random_int(2, v3))
+			_pc = 4166
+			continue
+		elif _pc == 4045:
+			v2 = await ishipcreation.get_traffic(5, 36, math.random_int(2, v3))
+			_pc = 4166
+			continue
+		elif _pc == 4093:
+			_pc = 4166
+			continue
+		elif _pc == 4098:
+			if not _pog_is_null(math.random_int(0, 5)):
+				_pc = 4122
+				continue
+			else:
+				_pc = 3805
+				continue
+		elif _pc == 4122:
+			if not _pog_is_null(1):
+				_pc = 4130
+				continue
+			else:
+				_pc = 3853
+				continue
+		elif _pc == 4130:
+			if not _pog_is_null(2):
+				_pc = 4139
+				continue
+			else:
+				_pc = 3901
+				continue
+		elif _pc == 4139:
+			if not _pog_is_null(3):
+				_pc = 4148
+				continue
+			else:
+				_pc = 3949
+				continue
+		elif _pc == 4148:
+			if not _pog_is_null(4):
+				_pc = 4157
+				continue
+			else:
+				_pc = 3997
+				continue
+		elif _pc == 4157:
+			if not _pog_is_null(5):
+				_pc = 4166
+				continue
+			else:
+				_pc = 4045
+				continue
+		elif _pc == 4166:
+			_pc = 4362
+			continue
+		elif _pc == 4171:
+			v2 = await ishipcreation.get_traffic(5, 5, math.random_int(2, v3))
+			_pc = 4362
+			continue
+		elif _pc == 4219:
+			v1 = await local_3175()
+			v2 = await ishipcreation.get_traffic(5, ifaction.allegiance(v1), math.random_int(2, v3))
+			_pc = 4362
+			continue
+		elif _pc == 4302:
+			_pc = 4362
+			continue
+		elif _pc == 4307:
+			if global.pog_int("g_gangster_faction") != 1:
+				_pc = 4335
+				continue
+			else:
+				_pc = 3752
+				continue
+		elif _pc == 4335:
+			if not _pog_is_null(2):
+				_pc = 4344
+				continue
+			else:
+				_pc = 3800
+				continue
+		elif _pc == 4344:
+			if not _pog_is_null(3):
+				_pc = 4353
+				continue
+			else:
+				_pc = 4171
+				continue
+		elif _pc == 4353:
+			if not _pog_is_null(4):
+				_pc = 4362
+				continue
+			else:
+				_pc = 4219
+				continue
+		elif _pc == 4362:
+			_pc = 4982
+			continue
+		elif _pc == 4367:
+			_pc = 4927
+			continue
+		elif _pc == 4372:
 			v2 = await ishipcreation.get_traffic(6, 17, math.random_int(3, v3))
-			break
-	if 1 == global.pog_int("g_gangster_faction"):
-		await local_3513(v2)
-	return
+			_pc = 4982
+			continue
+		elif _pc == 4420:
+			_pc = 4718
+			continue
+		elif _pc == 4425:
+			v2 = await ishipcreation.get_traffic(5, 11, math.random_int(3, v3))
+			_pc = 4786
+			continue
+		elif _pc == 4473:
+			v2 = await ishipcreation.get_traffic(5, 15, math.random_int(3, v3))
+			_pc = 4786
+			continue
+		elif _pc == 4521:
+			v2 = await ishipcreation.get_traffic(5, 16, math.random_int(3, v3))
+			_pc = 4786
+			continue
+		elif _pc == 4569:
+			v2 = await ishipcreation.get_traffic(5, 23, math.random_int(3, v3))
+			_pc = 4786
+			continue
+		elif _pc == 4617:
+			v2 = await ishipcreation.get_traffic(5, 31, math.random_int(3, v3))
+			_pc = 4786
+			continue
+		elif _pc == 4665:
+			v2 = await ishipcreation.get_traffic(5, 36, math.random_int(3, v3))
+			_pc = 4786
+			continue
+		elif _pc == 4713:
+			_pc = 4786
+			continue
+		elif _pc == 4718:
+			if not _pog_is_null(math.random_int(0, 5)):
+				_pc = 4742
+				continue
+			else:
+				_pc = 4425
+				continue
+		elif _pc == 4742:
+			if not _pog_is_null(1):
+				_pc = 4750
+				continue
+			else:
+				_pc = 4473
+				continue
+		elif _pc == 4750:
+			if not _pog_is_null(2):
+				_pc = 4759
+				continue
+			else:
+				_pc = 4521
+				continue
+		elif _pc == 4759:
+			if not _pog_is_null(3):
+				_pc = 4768
+				continue
+			else:
+				_pc = 4569
+				continue
+		elif _pc == 4768:
+			if not _pog_is_null(4):
+				_pc = 4777
+				continue
+			else:
+				_pc = 4617
+				continue
+		elif _pc == 4777:
+			if not _pog_is_null(5):
+				_pc = 4786
+				continue
+			else:
+				_pc = 4665
+				continue
+		elif _pc == 4786:
+			_pc = 4982
+			continue
+		elif _pc == 4791:
+			v2 = await ishipcreation.get_traffic(5, 5, math.random_int(3, v3))
+			_pc = 4982
+			continue
+		elif _pc == 4839:
+			v1 = await local_3175()
+			v2 = await ishipcreation.get_traffic(5, ifaction.allegiance(v1), math.random_int(3, v3))
+			_pc = 4982
+			continue
+		elif _pc == 4922:
+			_pc = 4982
+			continue
+		elif _pc == 4927:
+			if global.pog_int("g_gangster_faction") != 1:
+				_pc = 4955
+				continue
+			else:
+				_pc = 4372
+				continue
+		elif _pc == 4955:
+			if not _pog_is_null(2):
+				_pc = 4964
+				continue
+			else:
+				_pc = 4420
+				continue
+		elif _pc == 4964:
+			if not _pog_is_null(3):
+				_pc = 4973
+				continue
+			else:
+				_pc = 4791
+				continue
+		elif _pc == 4973:
+			if not _pog_is_null(4):
+				_pc = 4982
+				continue
+			else:
+				_pc = 4839
+				continue
+		elif _pc == 4982:
+			if 1 == global.pog_int("g_gangster_faction"):
+				_pc = 5009
+				continue
+			else:
+				_pc = 5028
+				continue
+		elif _pc == 5009:
+			await local_3513(v2)
+			_pc = 5028
+			continue
+		elif _pc == 5028:
+			_pc = 5038
+			continue
+		elif _pc == 5038:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5040(v0) -> Variant:
@@ -282,13 +744,14 @@ func local_5040(v0) -> Variant:
 	v2 = await local_3706(1)
 	sim.place_relative_to(group.leader(v2), v0, math.random(2000.0, 3000.0), math.random(2000.0, 3000.0), math.random(2000.0, 3000.0))
 	await iformation.claw(v2, 40.0, 1)
-	return
+	return v2
 	return 0
 
 func local_5391() -> Variant:
-	while _pog_is_null(math.random_int(0, 1)):
-		push_error("PORT: unstructured jump to L5465")
-	push_error("PORT: unstructured jump to L5465")
+	if _pog_is_null(math.random_int(0, 1)):
+		return _pog_clone("male")
+	if math.random_int(0, 1) == 1:
+		return _pog_clone("female")
 	return _pog_clone("gooba")
 	return 0
 
@@ -301,7 +764,6 @@ func local_5468(v0, v1, v2) -> Variant:
 	v3 = string.join(v3, "_")
 	v3 = string.join(v3, v1)
 	v3 = string.join(v3, "_1")
-	push_error("PORT: unstructured jump to L5698")
 	return _pog_clone(v3)
 	return 0
 
@@ -337,7 +799,7 @@ func local_5708(v0) -> Variant:
 		await _pog_wait(1)
 		v3 = iship.find_player_ship()
 		v14 = 30.0 + v14
-		if not (_pog_eq(isim.world_name(isim.cast(v0)), isim.active_world())) or global.pog_float("g_player_sensor_range") > sim.distance_between(v3, v0) and 900.0 > v14:
+		if not _pog_eq(isim.world_name(isim.cast(v0)), isim.active_world()) or global.pog_float("g_player_sensor_range") > sim.distance_between(v3, v0) and 900.0 > v14:
 			v1 = 0
 			if v2:
 				group.destroy(v6, 1)
@@ -368,7 +830,7 @@ func local_5708(v0) -> Variant:
 					iship.undock(iship.cast(p_set.first_element(sim.children(group.leader(v5)))), group.leader(v5))
 				v1 = 0
 				_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v5, _pog_clone("Random"))))
-		if not (v1):
+		if v1:
 			continue
 		break
 	sim.destroy(v0)

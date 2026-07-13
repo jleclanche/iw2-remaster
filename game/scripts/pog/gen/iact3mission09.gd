@@ -137,7 +137,7 @@ func local_413() -> Variant:
 	isim.set_faction(v1, v2)
 	await ipilotsetup.generic(v1)
 	group.add_sim(v0, v1)
-	return
+	return v0
 	return 0
 
 func local_1089(v0, v1) -> Variant:
@@ -232,7 +232,7 @@ func local_1503(v0, v1) -> Variant:
 	v3 = 0
 	while v4 < v3:
 		v3 = 1 + v3
-	return
+	return v1
 	return 0
 
 func local_2571(v0, v1, v2) -> Variant:
@@ -283,7 +283,7 @@ func local_3185(v0, v1, v2) -> Variant:
 	iobjectives.add("a3_m09_objectives_jump")
 	while true:
 		await _pog_wait(5)
-		if not (_pog_eq("map:/geog/gagarin/batatas", isim.active_world())):
+		if _pog_eq("map:/geog/gagarin/batatas", isim.active_world()):
 			continue
 		iobjectives.set_state("a3_m09_objectives_jump", 1)
 		state.set_progress(v2, 10)
@@ -300,57 +300,160 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v4 = await iwingmen.group()
-	v6 = iship.cast(group.leader(v4))
-	v7 = 0
-	v8 = 0
-	v9 = 1
-	v11 = 2.0 / v1
+	var _pc: int = 3628
 	while true:
-		await _pog_wait(0.5)
-		if not (v7) and v11 <= sim.distance_between(v2, v0):
-			if _pog_is_null(v8):
-				v8 = 1
-				iai.purge_orders(v2)
-				iship.disrupt_l_d_s_drive(v2, 40.0)
-				iship.disrupt(v2, 4000000.0, 1)
-				iship.disrupt_l_d_s_drive(v6, 40.0)
-				_pog_spawn(local_1503.bind(v2, v3))
-				await _pog_wait(30.0)
-				state.set_progress(v3, 2)
-			else:
-				if 2 == state.progress(v3):
-					v7 = 1
-					v10 = 1 + v10
-					if v9:
-						v9 = 0
-						await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
-					else:
-						while _pog_is_null(math.random_int(0, 1)):
-							await iconversation.begin()
-							await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
-							await iconversation.end()
-							break
-					v5 = await local_413()
-					await local_1089(v4, 30)
-					sim.place_near(group.leader(v5), v6, 30000.0)
-					await iformation.cross(v5, 100.0, 1)
-					iai.give_attack_order(v5, v4)
-		if 500000.0 > sim.distance_between(v6, v2):
-			isim.kill(v2)
-		if _pog_is_null(group.sim_count(v5)) and v7:
+		if _pc == 3628:
+			v4 = await iwingmen.group()
+			v6 = iship.cast(group.leader(v4))
+			v7 = 0
+			v8 = 0
+			v9 = 1
+			v11 = 2.0 / v1
+			_pc = 3732
 			continue
-		if 4 >= v10:
+		elif _pc == 3732:
+			await _pog_frame()
+			if _pog_every(3733, 0.5):
+				_pc = 3746
+				continue
+			else:
+				_pc = 4657
+				continue
+		elif _pc == 3746:
+			if not (v7) and v11 <= sim.distance_between(v2, v0):
+				_pc = 3787
+				continue
+			else:
+				_pc = 4374
+				continue
+		elif _pc == 3787:
+			if _pog_is_null(v8):
+				_pc = 3799
+				continue
+			else:
+				_pc = 3982
+				continue
+		elif _pc == 3799:
+			v8 = 1
+			iai.purge_orders(v2)
+			iship.disrupt_l_d_s_drive(v2, 40.0)
+			iship.disrupt(v2, 4000000.0, 1)
+			iship.disrupt_l_d_s_drive(v6, 40.0)
+			_pog_spawn(local_1503.bind(v2, v3))
+			await _pog_wait(30.0)
+			state.set_progress(v3, 2)
+			_pc = 4374
+			continue
+		elif _pc == 3982:
+			if 2 == state.progress(v3):
+				_pc = 4008
+				continue
+			else:
+				_pc = 4374
+				continue
+		elif _pc == 4008:
+			v7 = 1
+			v10 = 1 + v10
+			if v9:
+				_pc = 4038
+				continue
+			else:
+				_pc = 4078
+				continue
+		elif _pc == 4038:
+			v9 = 0
+			await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
+			_pc = 4241
+			continue
+		elif _pc == 4078:
+			_pc = 4210
+			continue
+		elif _pc == 4083:
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
+			await iconversation.end()
+			_pc = 4241
+			continue
+		elif _pc == 4144:
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_another_wave")
+			await iconversation.end()
+			_pc = 4241
+			continue
+		elif _pc == 4205:
+			_pc = 4241
+			continue
+		elif _pc == 4210:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 4233
+				continue
+			else:
+				_pc = 4083
+				continue
+		elif _pc == 4233:
+			if not _pog_is_null(1):
+				_pc = 4241
+				continue
+			else:
+				_pc = 4144
+				continue
+		elif _pc == 4241:
+			v5 = await local_413()
+			await local_1089(v4, 30)
+			sim.place_near(group.leader(v5), v6, 30000.0)
+			await iformation.cross(v5, 100.0, 1)
+			iai.give_attack_order(v5, v4)
+			_pc = 4374
+			continue
+		elif _pc == 4374:
+			if 500000.0 > sim.distance_between(v6, v2):
+				_pc = 4408
+				continue
+			else:
+				_pc = 4427
+				continue
+		elif _pc == 4408:
+			isim.kill(v2)
+			_pc = 4427
+			continue
+		elif _pc == 4427:
+			if _pog_is_null(group.sim_count(v5)) and v7:
+				_pc = 4458
+				continue
+			else:
+				_pc = 4657
+				continue
+		elif _pc == 4458:
+			if 4 >= v10:
+				_pc = 4471
+				continue
+			else:
+				_pc = 4618
+				continue
+		elif _pc == 4471:
 			state.set_progress(v3, 3)
 			await iconversation.begin()
 			await iconversation.say(v2, "", "a3_m09_dialogue_antimatter_were_back_online")
 			await iconversation.end()
 			iship.cancel_disrupt(v2)
 			_pog_detach(_pog_spawn(local_3185.bind(v0, v2, v3)))
+			_pc = 4663
+			continue
+		elif _pc == 4618:
+			v7 = 0
+			await _pog_wait(8.0)
+			_pc = 4657
+			continue
+		elif _pc == 4657:
+			_pc = 3732
+			continue
+		elif _pc == 4662:
+			_pc = 4663
+			continue
+		elif _pc == 4663:
 			return
-		v7 = 0
-		await _pog_wait(8.0)
-	return
+		else:
+			return 0
 	return 0
 
 func local_4665(v0) -> Variant:
@@ -371,7 +474,7 @@ func local_4665(v0) -> Variant:
 		v4 = 1 + v4
 	sim.place_relative_to(group.leader(v1), v0, 0.0, 500.0, -4000.0)
 	await iformation.box(v1, 60.0, 1)
-	return
+	return v1
 	return 0
 
 func local_4983(v0) -> Variant:
@@ -410,7 +513,7 @@ func local_5106(v0, v1, v2, v3) -> Variant:
 			iai.give_dock_order(v4, v0)
 			await _pog_wait(3.0)
 			v7 = 0
-		if not (v7) and v6 and iai.is_order_complete(v4):
+		if not (not (v7) and v6 and iai.is_order_complete(v4)):
 			continue
 		v7 = 1
 		await local_4983(v4)
@@ -433,7 +536,7 @@ func local_5622() -> Variant:
 	sim.set_cullable(v0, 0)
 	isim.set_mission_critical(v0, 1)
 	object.set_string_property(v0, "death_script", "iAct3Mission09.fail_handler")
-	return
+	return v0
 	return 0
 
 func local_5828() -> Variant:
@@ -504,7 +607,7 @@ func local_6860(v0) -> Variant:
 	v4 = 1
 	while v3 < v4:
 		v2 = isim.cast(group.nth_sim(v1, v4))
-		if not (_pog_eq("map:/geog/gagarin/batatas", isim.world_name(v2))) and not (isim.is_docked(v2)):
+		if not _pog_eq("map:/geog/gagarin/batatas", isim.world_name(v2)) and not (isim.is_docked(v2)):
 			isim.capsule_jump_staggered(v2, isim.cast(v0))
 		v4 = 1 + v4
 	return 0
@@ -555,12 +658,12 @@ func mission_handler() -> Variant:
 	if _pog_is_null(v8):
 		if PogRuntime.TRACE:
 			debug.error("iAct3:Unable to find player l-point")
-	if not (_pog_eq("map:/geog/gagarin/formhault", isim.active_world())):
+	if not _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
 		await iconversation.one_liner(0, "", "Testing mission in isolation..........")
 		isim.capsule_jump(iship.find_player_ship(), imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault"))
 		while true:
 			await _pog_wait(1.0)
-			if not (not (_pog_eq("map:/geog/gagarin/formhault", isim.active_world()))):
+			if not (not _pog_eq("map:/geog/gagarin/formhault", isim.active_world())):
 				break
 		await _pog_wait(7.0)
 	v6 = await iutilities.create_waypoint_relative_to(v10, 0.0, 0.0, 0.0)
@@ -587,7 +690,7 @@ func mission_handler() -> Variant:
 			isim.capsule_jump_staggered(v5, isim.cast(v9))
 			while true:
 				await _pog_wait(1.0)
-				if not (not (_pog_eq("map:/geog/gagarin/batatas", isim.world_name(v5)))):
+				if not (not _pog_eq("map:/geog/gagarin/batatas", isim.world_name(v5))):
 					break
 			await _pog_wait(4.0)
 			iai.give_formate_order(v5, v4, 0.0, 600.0, 0.0)
@@ -601,7 +704,7 @@ func mission_handler() -> Variant:
 		if not (v0) and 1 >= state.progress(v11):
 			v0 = 1
 			_pog_spawn(local_3628.bind(v8, sim.distance_between(v4, v8), v5, v11))
-		if 100 == state.progress(v11) or 10 == state.progress(v11):
+		if not (100 == state.progress(v11) or 10 == state.progress(v11)):
 			continue
 		if 10 == state.progress(v11):
 			global.set_bool("g_act3_antimatter_cordon_complete", 1)

@@ -41,7 +41,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	return
+	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
 func gangster_call_for_backup() -> Variant:
@@ -105,14 +105,14 @@ func gangster_call_for_backup() -> Variant:
 				iai.give_attack_order(v0, v1)
 			while true:
 				await _pog_wait(30)
-				if iai.is_order_complete(v10):
+				if not (iai.is_order_complete(v10)):
 					continue
 				break
 			if PogRuntime.TRACE:
 				debug.print_string("iFight.GangsterCallForBackup: Arrived at destination, staying alive while player is here\n")
 			while true:
 				await _pog_wait(50)
-				if await iutilities.player_in_range(group.leader(v9)):
+				if not (await iutilities.player_in_range(group.leader(v9))):
 					continue
 				break
 			if PogRuntime.TRACE:
@@ -185,14 +185,14 @@ func police_call_for_backup() -> Variant:
 				iai.give_attack_order(v0, v1)
 			while true:
 				await _pog_wait(30)
-				if iai.is_order_complete(v11):
+				if not (iai.is_order_complete(v11)):
 					continue
 				break
 			if PogRuntime.TRACE:
 				debug.print_string("iFight.PoliceCallForBackup: Arrived at destination, staying alive while player is here\n")
 			while true:
 				await _pog_wait(50)
-				if await iutilities.player_in_range(group.leader(v10)):
+				if not (await iutilities.player_in_range(group.leader(v10))):
 					continue
 				break
 			if PogRuntime.TRACE:
@@ -273,14 +273,14 @@ func military_call_for_backup() -> Variant:
 				iai.give_attack_order(v0, v1)
 			while true:
 				await _pog_wait(30)
-				if iai.is_order_complete(v11):
+				if not (iai.is_order_complete(v11)):
 					continue
 				break
 			if PogRuntime.TRACE:
 				debug.print_string("iFight.MilitaryCallForBackup: Arrived at destination, staying alive while player is here\n")
 			while true:
 				await _pog_wait(50)
-				if await iutilities.player_in_range(group.leader(v10)):
+				if not (await iutilities.player_in_range(group.leader(v10))):
 					continue
 				break
 			if PogRuntime.TRACE:

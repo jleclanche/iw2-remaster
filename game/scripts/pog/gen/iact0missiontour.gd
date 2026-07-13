@@ -119,7 +119,7 @@ func local_353() -> Variant:
 	await ipilotsetup.generic_cargo_pod(v1)
 	group.add_sim(v0, v1)
 	object.set_bool_property(v1, "ignore_speed_limit", 1)
-	return
+	return v0
 	return 0
 
 func local_861(v0, v1) -> Variant:
@@ -158,7 +158,7 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 			if not (await iutilities.player_in_range(v0)) and v4:
 				v4 = 0
 				group.destroy(v6, 1)
-		if v4 and 10000.0 < sim.distance_between(v0, v2):
+		if not (v4 and 10000.0 < sim.distance_between(v0, v2)):
 			continue
 		idirector.begin()
 		sim.place_at(v2, v0)
@@ -171,7 +171,7 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 	iobjectives.set_state("a0_m35_objectives_fly_to", 1)
 	while true:
 		await _pog_wait(1)
-		if not (v5) and 800.0 < sim.distance_between(v7, v2) or iai.is_order_complete(v7):
+		if not (not (v5) and 800.0 < sim.distance_between(v7, v2) or iai.is_order_complete(v7)):
 			continue
 		v5 = 1
 		await iconversation.begin()
@@ -193,30 +193,118 @@ func local_1897(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = group.create()
-	v4 = ifaction.find("Independent")
-	v5 = 0
-	while v0 < v5:
-		if v1:
-			while _pog_is_null(math.random_int(0, 1)):
-				v3 = iship.create("ini:/sims/ships/independent/cutter_mercenary", await ishipcreation.ship_name("General", -1))
-				isim.set_faction(v3, v4)
-				await ipilotsetup.generic_cargo_pod(v3)
-				iship.set_pilot_skill_level(v3, 0.5)
-				group.add_sim(v2, v3)
-				object.set_bool_property(v3, "ignore_speed_limit", 1)
-				break
+	var _pc: int = 1897
+	while true:
+		if _pc == 1897:
+			v2 = group.create()
+			v4 = ifaction.find("Independent")
+			v5 = 0
+			_pc = 1954
+			continue
+		elif _pc == 1954:
+			if v0 < v5:
+				_pc = 1970
+				continue
+			else:
+				_pc = 2769
+				continue
+		elif _pc == 1970:
+			if v1:
+				_pc = 1980
+				continue
+			else:
+				_pc = 2368
+				continue
+		elif _pc == 1980:
+			_pc = 2332
+			continue
+		elif _pc == 1985:
+			v3 = iship.create("ini:/sims/ships/independent/cutter_mercenary", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v3, v4)
+			await ipilotsetup.generic_cargo_pod(v3)
+			iship.set_pilot_skill_level(v3, 0.5)
+			group.add_sim(v2, v3)
+			object.set_bool_property(v3, "ignore_speed_limit", 1)
+			_pc = 2363
+			continue
+		elif _pc == 2156:
+			v3 = iship.create("ini:/sims/ships/navy/old_corvette", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v3, v4)
+			await ipilotsetup.generic_cargo_pod(v3)
+			iship.set_pilot_skill_level(v3, 0.5)
+			group.add_sim(v2, v3)
+			object.set_bool_property(v3, "ignore_speed_limit", 1)
+			_pc = 2363
+			continue
+		elif _pc == 2327:
+			_pc = 2363
+			continue
+		elif _pc == 2332:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 2355
+				continue
+			else:
+				_pc = 1985
+				continue
+		elif _pc == 2355:
+			if not _pog_is_null(1):
+				_pc = 2363
+				continue
+			else:
+				_pc = 2156
+				continue
+		elif _pc == 2363:
+			_pc = 2751
+			continue
+		elif _pc == 2368:
+			_pc = 2720
+			continue
+		elif _pc == 2373:
+			v3 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v3, v4)
+			await ipilotsetup.generic_cargo_pod(v3)
+			iship.set_pilot_skill_level(v3, 0.5)
+			group.add_sim(v2, v3)
+			object.set_bool_property(v3, "ignore_speed_limit", 1)
+			_pc = 2751
+			continue
+		elif _pc == 2544:
+			v3 = iship.create("ini:/sims/ships/independent/puffin_armed", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v3, v4)
+			await ipilotsetup.generic_cargo_pod(v3)
+			iship.set_pilot_skill_level(v3, 0.5)
+			group.add_sim(v2, v3)
+			object.set_bool_property(v3, "ignore_speed_limit", 1)
+			_pc = 2751
+			continue
+		elif _pc == 2715:
+			_pc = 2751
+			continue
+		elif _pc == 2720:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 2743
+				continue
+			else:
+				_pc = 2373
+				continue
+		elif _pc == 2743:
+			if not _pog_is_null(1):
+				_pc = 2751
+				continue
+			else:
+				_pc = 2544
+				continue
+		elif _pc == 2751:
+			v5 = 1 + v5
+			_pc = 1954
+			continue
+		elif _pc == 2769:
+			_pc = 2779
+			continue
+		elif _pc == 2779:
+			return
 		else:
-			while _pog_is_null(math.random_int(0, 1)):
-				v3 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("General", -1))
-				isim.set_faction(v3, v4)
-				await ipilotsetup.generic_cargo_pod(v3)
-				iship.set_pilot_skill_level(v3, 0.5)
-				group.add_sim(v2, v3)
-				object.set_bool_property(v3, "ignore_speed_limit", 1)
-				break
-		v5 = 1 + v5
-	return
+			return 0
 	return 0
 
 func local_2781() -> Variant:
@@ -224,25 +312,74 @@ func local_2781() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = group.create()
-	v2 = ifaction.find("Independent")
-	v1 = iship.create("ini:/sims/ships/independent/cutter_mercenary", "a0_m35_name_wolf")
-	isim.set_faction(v1, v2)
-	isim.set_indestructable(v1, 1)
-	await ipilotsetup.generic_cargo_pod(v1)
-	object.set_int_property(v1, "ignore_speed_limit", 1)
-	group.add_sim(v0, v1)
-	v3 = 0
-	while 4 < v3:
-		while _pog_is_null(math.random_int(0, 1)):
+	var _pc: int = 2781
+	while true:
+		if _pc == 2781:
+			v0 = group.create()
+			v2 = ifaction.find("Independent")
+			v1 = iship.create("ini:/sims/ships/independent/cutter_mercenary", "a0_m35_name_wolf")
+			isim.set_faction(v1, v2)
+			isim.set_indestructable(v1, 1)
+			await ipilotsetup.generic_cargo_pod(v1)
+			object.set_int_property(v1, "ignore_speed_limit", 1)
+			group.add_sim(v0, v1)
+			v3 = 0
+			_pc = 2984
+			continue
+		elif _pc == 2984:
+			if 4 < v3:
+				_pc = 2997
+				continue
+			else:
+				_pc = 3350
+				continue
+		elif _pc == 2997:
+			_pc = 3301
+			continue
+		elif _pc == 3002:
 			v1 = iship.create("ini:/sims/ships/independent/cutter_mercenary", await ishipcreation.ship_name("General", -1))
 			isim.set_faction(v1, v2)
 			await ipilotsetup.generic_cargo_pod(v1)
 			group.add_sim(v0, v1)
 			object.set_bool_property(v1, "ignore_speed_limit", 1)
-			break
-		v3 = 1 + v3
-	return
+			_pc = 3332
+			continue
+		elif _pc == 3149:
+			v1 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic_cargo_pod(v1)
+			group.add_sim(v0, v1)
+			object.set_bool_property(v1, "ignore_speed_limit", 1)
+			_pc = 3332
+			continue
+		elif _pc == 3296:
+			_pc = 3332
+			continue
+		elif _pc == 3301:
+			if not _pog_is_null(math.random_int(0, 1)):
+				_pc = 3324
+				continue
+			else:
+				_pc = 3002
+				continue
+		elif _pc == 3324:
+			if not _pog_is_null(1):
+				_pc = 3332
+				continue
+			else:
+				_pc = 3149
+				continue
+		elif _pc == 3332:
+			v3 = 1 + v3
+			_pc = 2984
+			continue
+		elif _pc == 3350:
+			_pc = 3360
+			continue
+		elif _pc == 3360:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3362(v0, v1, v2) -> Variant:
@@ -361,7 +498,7 @@ func local_4235(v0, v1) -> Variant:
 				if 1 == v13:
 					await iconversation.one_liner(v16, "", "a0_m35_dialogue_baddies_you_just")
 		else:
-			if 100 != state.progress(v1) and 0 <= v14:
+			if not (100 != state.progress(v1) and 0 <= v14):
 				continue
 			v14 = math.random_int(9, 17)
 			if not (v2):
@@ -380,7 +517,7 @@ func local_4235(v0, v1) -> Variant:
 							v5 = 1
 							await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_4")
 						else:
-							if not (v6):
+							if v6:
 								continue
 							v6 = 1
 							await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_5")
@@ -406,7 +543,7 @@ func local_4235(v0, v1) -> Variant:
 		if not (v9) and iship.attacked(iship.cast(group.leader(v10))):
 			v9 = 1
 			iai.give_attack_order(v10, v11)
-		if 100 != state.progress(v1) and not (v8) and _pog_is_null(group.sim_count(v10)):
+		if not (100 != state.progress(v1) and not (v8) and _pog_is_null(group.sim_count(v10))):
 			continue
 		v8 = 1
 		iai.give_approach_order(v18, v0)
@@ -460,7 +597,7 @@ func mission_handler() -> Variant:
 		if not (v0) and 2 == state.progress(v4):
 			v0 = 1
 			_pog_spawn(local_4235.bind(v1, v4))
-		if 100 == state.progress(v4) or 8 == state.progress(v4):
+		if not (100 == state.progress(v4) or 8 == state.progress(v4)):
 			continue
 		if 100 != state.progress(v4):
 			global.set_bool("g_act0_tour_complete", 1)

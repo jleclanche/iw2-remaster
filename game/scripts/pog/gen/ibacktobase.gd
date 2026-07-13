@@ -79,7 +79,7 @@ func detector() -> Variant:
 					if PogRuntime.TRACE:
 						debug.print_string("iBackToBase.Detector: Destroying bodge dockport\n")
 					subsim.destroy(v9)
-				if _pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 200000.0 > sim.distance_between(v0, v1):
+				if not (_pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 200000.0 > sim.distance_between(v0, v1)):
 					continue
 				if not (iship.is_l_d_s_inhibited(v0)):
 					if not (idirector.is_busy()):
@@ -145,7 +145,7 @@ func detector() -> Variant:
 			await icutsceneutilities.handle_abort(_pog_spawn(local_3520.bind(v0, v1)))
 		else:
 			await icutsceneutilities.handle_abort(_pog_spawn(local_6393.bind(v0, v1)))
-		if not (object.property_exists(v0, "player_dying")):
+		if object.property_exists(v0, "player_dying"):
 			return
 		igame.enable_blackout(1)
 		sim.set_collision(v0, 0)
@@ -169,50 +169,201 @@ func detector() -> Variant:
 
 func initialise() -> Variant:
 	var v0: Variant = 0
-	if _pog_is_null(igame.game_type()):
-		if PogRuntime.TRACE:
+	var _pc: int = 1980
+	while true:
+		if _pc == 1980:
+			if _pog_is_null(igame.game_type()):
+				_pc = 2005
+				continue
+			else:
+				_pc = 2253
+				continue
+		elif _pc == 2005:
+			_pc = 2031
+			continue
+		elif _pc == 2010:
 			debug.print_string("iBackToBase.Initialise: Game is in Single player mode. Checking act and mission status.\n")
-		while _pog_is_null(global.pog_int("g_current_act")):
+			_pc = 2031
+			continue
+		elif _pc == 2031:
+			_pc = 2212
+			continue
+		elif _pc == 2036:
 			if global.exists("g_act0_found_base"):
-				if _pog_is_null(global.pog_bool("g_act0_found_base")):
-					if PogRuntime.TRACE:
-						debug.print_string("iBackToBase.Initialise: Act-1 - Player base not yet found. BackToBase disabled.\n")
-					return 0
-			break
-	else:
-		if PogRuntime.TRACE:
+				_pc = 2061
+				continue
+			else:
+				_pc = 2119
+				continue
+		elif _pc == 2061:
+			if _pog_is_null(global.pog_bool("g_act0_found_base")):
+				_pc = 2088
+				continue
+			else:
+				_pc = 2119
+				continue
+		elif _pc == 2088:
+			_pc = 2114
+			continue
+		elif _pc == 2093:
+			debug.print_string("iBackToBase.Initialise: Act-1 - Player base not yet found. BackToBase disabled.\n")
+			_pc = 2114
+			continue
+		elif _pc == 2114:
+			_pc = 2901
+			continue
+		elif _pc == 2119:
+			_pc = 2248
+			continue
+		elif _pc == 2124:
+			if global.exists("g_act1_found_base"):
+				_pc = 2149
+				continue
+			else:
+				_pc = 2207
+				continue
+		elif _pc == 2149:
+			if _pog_is_null(global.pog_bool("g_act1_found_base")):
+				_pc = 2176
+				continue
+			else:
+				_pc = 2207
+				continue
+		elif _pc == 2176:
+			_pc = 2202
+			continue
+		elif _pc == 2181:
+			debug.print_string("iBackToBase.Initialise: Act-2 - Player base not yet found. BackToBase disabled.\n")
+			_pc = 2202
+			continue
+		elif _pc == 2202:
+			_pc = 2901
+			continue
+		elif _pc == 2207:
+			_pc = 2248
+			continue
+		elif _pc == 2212:
+			if not _pog_is_null(global.pog_int("g_current_act")):
+				_pc = 2240
+				continue
+			else:
+				_pc = 2036
+				continue
+		elif _pc == 2240:
+			if not _pog_is_null(1):
+				_pc = 2248
+				continue
+			else:
+				_pc = 2124
+				continue
+		elif _pc == 2248:
+			_pc = 2284
+			continue
+		elif _pc == 2253:
+			_pc = 2279
+			continue
+		elif _pc == 2258:
 			debug.print_string("iBackToBase.Initialise: Game is not in Single Player, iBackToBase disabled.\n")
-		return 0
-	if PogRuntime.TRACE:
-		debug.print_string("iBackToBase.Initialise: Making player base visible.\n")
-	isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")), 0)
-	isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")), 0)
-	isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault")), 0)
-	isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))), 1)
-	if global.exists("g_have_started_ibacktobase_detector"):
-		if _pog_is_null(global.handle("g_have_started_ibacktobase_detector")):
-			if PogRuntime.TRACE:
-				debug.print_string("iBackToBase.Initialise: g_have_started_ibacktobase_detector exists, but handle is null. Will re-initialise.\n")
+			_pc = 2279
+			continue
+		elif _pc == 2279:
+			_pc = 2901
+			continue
+		elif _pc == 2284:
+			_pc = 2310
+			continue
+		elif _pc == 2289:
+			debug.print_string("iBackToBase.Initialise: Making player base visible.\n")
+			_pc = 2310
+			continue
+		elif _pc == 2310:
+			isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")), 0)
+			isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")), 0)
+			isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault")), 0)
+			isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))), 1)
+			if global.exists("g_have_started_ibacktobase_detector"):
+				_pc = 2565
+				continue
+			else:
+				_pc = 2675
+				continue
+		elif _pc == 2565:
+			if _pog_is_null(global.handle("g_have_started_ibacktobase_detector")):
+				_pc = 2592
+				continue
+			else:
+				_pc = 2644
+				continue
+		elif _pc == 2592:
+			_pc = 2618
+			continue
+		elif _pc == 2597:
+			debug.print_string("iBackToBase.Initialise: g_have_started_ibacktobase_detector exists, but handle is null. Will re-initialise.\n")
+			_pc = 2618
+			continue
+		elif _pc == 2618:
 			global.destroy("g_have_started_ibacktobase_detector")
-			push_error("PORT: unstructured jump to L2675")
-		if PogRuntime.TRACE:
+			_pc = 2675
+			continue
+		elif _pc == 2644:
+			_pc = 2670
+			continue
+		elif _pc == 2649:
 			debug.print_string("iBackToBase.Initialise: iBackToBase is already initialised.\n")
-	else:
-		v0 = _pog_spawn(detector.bind())
-		_pog_detach(v0)
-		if PogRuntime.TRACE:
+			_pc = 2670
+			continue
+		elif _pc == 2670:
+			_pc = 2901
+			continue
+		elif _pc == 2675:
+			v0 = _pog_spawn(detector.bind())
+			_pog_detach(v0)
+			_pc = 2740
+			continue
+		elif _pc == 2719:
 			debug.print_string("iBackToBase.Initialise: Initialising global handle g_have_started_ibacktobase_detector for detector task.\n")
-		global.create_handle("g_have_started_ibacktobase_detector", 10, v0)
-		if global.exists("g_ibacktobase_level"):
-			if PogRuntime.TRACE:
-				debug.print_string("iBackToBase.Initialise: Global g_ibacktobase_level already exists.\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iBackToBase.Initialise: Initialising Global g_ibacktobase_level.\n")
+			_pc = 2740
+			continue
+		elif _pc == 2740:
+			global.create_handle("g_have_started_ibacktobase_detector", 10, v0)
+			if global.exists("g_ibacktobase_level"):
+				_pc = 2793
+				continue
+			else:
+				_pc = 2824
+				continue
+		elif _pc == 2793:
+			_pc = 2819
+			continue
+		elif _pc == 2798:
+			debug.print_string("iBackToBase.Initialise: Global g_ibacktobase_level already exists.\n")
+			_pc = 2819
+			continue
+		elif _pc == 2819:
+			_pc = 2874
+			continue
+		elif _pc == 2824:
+			_pc = 2850
+			continue
+		elif _pc == 2829:
+			debug.print_string("iBackToBase.Initialise: Initialising Global g_ibacktobase_level.\n")
+			_pc = 2850
+			continue
+		elif _pc == 2850:
 			global.create_int("g_ibacktobase_level", 10, 0)
-		if PogRuntime.TRACE:
+			_pc = 2874
+			continue
+		elif _pc == 2874:
+			_pc = 2901
+			continue
+		elif _pc == 2880:
 			debug.print_string("iBackToBase.Initialise completed\n")
-	return 0
+			_pc = 2901
+			continue
+		elif _pc == 2901:
+			return 0
+		else:
+			return 0
 	return 0
 
 func inhibit() -> Variant:
@@ -272,7 +423,7 @@ func local_3520(v0, v1) -> Variant:
 	sim.place_near(v0, v1, 10000.0)
 	while true:
 		await _pog_wait(0.10000000149011612)
-		if not (not (_pog_eq(global.string("g_player_base_system"), isim.active_world()))):
+		if not (not _pog_eq(global.string("g_player_base_system"), isim.active_world())):
 			break
 	await _pog_wait(1.0)
 	iship.set_free_without_pilot(v0, 1)
@@ -307,69 +458,151 @@ func docking_cutscene(v0, v1) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-	sim.set_velocity(v0, 0.0, 0.0, 0.0)
-	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-	iship.disrupt_l_d_s_drive(v0, 1.0)
-	iai.clear_autopilot()
-	await iwingmen.purge()
-	await iwingmen.add_t_fighters(v0, await iwingmen.get_detached_t_fighters())
-	iship.lock_down_weapons(await iwingmen.get_az())
-	iship.lock_down_weapons(await iwingmen.get_lori())
-	await icutsceneutilities.enable_player_autopilot()
-	v8 = object.float_property(v0, "radius")
-	while isim.type(v0) == 131072:
-		v9 = -1.100000023841858
-		v10 = 0.0
-		v11 = 14.0
-		v12 = 8.0 + v10
-		break
-	v3 = idirector.create_dolly()
-	sim.set_collision(v3, 0)
-	v4 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
-	v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
-	v7 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
-	v6 = await icutsceneutilities.get_kill_group()
-	group.add_sim(v6, v3)
-	group.add_sim(v6, v4)
-	group.add_sim(v6, v5)
-	sim.place_relative_to_inside(v4, v1, 0.0, 0.0, 1800.0)
-	sim.place_relative_to(v0, v1, 0.0, 0.0, 2900.0)
-	sim.point_at(v0, v1)
-	sim.set_collision(v0, 0)
-	sim.place_relative_to_inside(v3, v0, v8, -(2.0 / v8), -(2.5 * v8))
-	object.set_vector_property(v0, "speed", 0.0, 0.0, 300.0)
-	object.set_vector_property(v0, "acceleration", 0.0, 0.0, 50.0)
-	idirector.set_dolly_camera(v3)
-	idirector.set_focus(v0)
-	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-	sim.avatar_add_channel(v1, "door", 0.0)
-	sim.avatar_set_channel(v1, "door", 1.0)
-	sim.avatar_add_channel(v1, "base_doors_sound", 1.0)
-	await _pog_wait(2.0)
-	iai.give_approach_order_advanced(v0, v4, 10.0, 10.0, 0)
+	var _pc: int = 4371
 	while true:
-		await _pog_wait(0.10000000149011612)
-		if not (50.0 > sim.distance_between(v0, v4)):
-			break
-	sim.avatar_set_channel(v1, "base_doors_sound", 0.0)
-	await _pog_wait(1.0)
-	iai.purge_orders(v0)
-	sim.set_velocity(v0, 0.0, 0.0, 0.0)
-	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-	sim.place_relative_to_inside(v0, v4, 0.0, 0.0, 0.0)
-	sim.point_at(v0, v1)
-	sim.place_relative_to_inside(v4, v0, 0.0, v12, 2.0 * v8)
-	sim.place_relative_to_inside(v5, v0, v9, v10, v11)
-	sim.place_relative_to_inside(v7, v0, v9, v10, 20.0 - v11)
-	idirector.set_focus(v7)
-	idirector.set_direction(v3, v4, v5, 10.0, 2.0)
-	sim.avatar_set_channel(v1, "door", 0.0)
-	await _pog_wait(1.0)
-	sim.avatar_set_channel(v1, "base_doors_sound", 1.0)
-	await _pog_wait(11.0)
-	await icutsceneutilities.disable_player_autopilot()
-	return 0
+		if _pc == 4371:
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			sim.set_velocity(v0, 0.0, 0.0, 0.0)
+			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+			iship.disrupt_l_d_s_drive(v0, 1.0)
+			iai.clear_autopilot()
+			await iwingmen.purge()
+			await iwingmen.add_t_fighters(v0, await iwingmen.get_detached_t_fighters())
+			iship.lock_down_weapons(await iwingmen.get_az())
+			iship.lock_down_weapons(await iwingmen.get_lori())
+			await icutsceneutilities.enable_player_autopilot()
+			v8 = object.float_property(v0, "radius")
+			_pc = 4949
+			continue
+		elif _pc == 4669:
+			v9 = -1.100000023841858
+			v10 = 0.0
+			v11 = 14.0
+			v12 = 8.0 + v10
+			_pc = 5027
+			continue
+		elif _pc == 4724:
+			v9 = 0.0
+			v10 = 0.0
+			v11 = 8.0
+			v12 = 7.0 + v10
+			_pc = 5027
+			continue
+		elif _pc == 4779:
+			v9 = -1.100000023841858
+			v10 = -14.0
+			v11 = 35.0
+			v12 = 8.0 + v10
+			_pc = 5027
+			continue
+		elif _pc == 4834:
+			v9 = -1.100000023841858
+			v10 = 0.0
+			v11 = 44.0
+			v12 = 15.0 + v10
+			_pc = 5027
+			continue
+		elif _pc == 4889:
+			v9 = -1.100000023841858
+			v10 = 0.0
+			v11 = 60.0
+			v12 = 15.0 + v10
+			_pc = 5027
+			continue
+		elif _pc == 4944:
+			_pc = 5027
+			continue
+		elif _pc == 4949:
+			if isim.type(v0) != 131072:
+				_pc = 4979
+				continue
+			else:
+				_pc = 4669
+				continue
+		elif _pc == 4979:
+			if not _pog_is_null(8388608):
+				_pc = 4991
+				continue
+			else:
+				_pc = 4724
+				continue
+		elif _pc == 4991:
+			if not _pog_is_null(2097152):
+				_pc = 5003
+				continue
+			else:
+				_pc = 4779
+				continue
+		elif _pc == 5003:
+			if not _pog_is_null(4194304):
+				_pc = 5015
+				continue
+			else:
+				_pc = 4834
+				continue
+		elif _pc == 5015:
+			if not _pog_is_null(16777216):
+				_pc = 5027
+				continue
+			else:
+				_pc = 4889
+				continue
+		elif _pc == 5027:
+			v3 = idirector.create_dolly()
+			sim.set_collision(v3, 0)
+			v4 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
+			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
+			v7 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
+			v6 = await icutsceneutilities.get_kill_group()
+			group.add_sim(v6, v3)
+			group.add_sim(v6, v4)
+			group.add_sim(v6, v5)
+			sim.place_relative_to_inside(v4, v1, 0.0, 0.0, 1800.0)
+			sim.place_relative_to(v0, v1, 0.0, 0.0, 2900.0)
+			sim.point_at(v0, v1)
+			sim.set_collision(v0, 0)
+			sim.place_relative_to_inside(v3, v0, v8, -(2.0 / v8), -(2.5 * v8))
+			object.set_vector_property(v0, "speed", 0.0, 0.0, 300.0)
+			object.set_vector_property(v0, "acceleration", 0.0, 0.0, 50.0)
+			idirector.set_dolly_camera(v3)
+			idirector.set_focus(v0)
+			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+			sim.avatar_add_channel(v1, "door", 0.0)
+			sim.avatar_set_channel(v1, "door", 1.0)
+			sim.avatar_add_channel(v1, "base_doors_sound", 1.0)
+			await _pog_wait(2.0)
+			iai.give_approach_order_advanced(v0, v4, 10.0, 10.0, 0)
+			_pc = 5782
+			continue
+		elif _pc == 5782:
+			await _pog_wait(0.10000000149011612)
+			if 50.0 <= sim.distance_between(v0, v4):
+				_pc = 5848
+				continue
+			else:
+				_pc = 5782
+				continue
+		elif _pc == 5848:
+			sim.avatar_set_channel(v1, "base_doors_sound", 0.0)
+			await _pog_wait(1.0)
+			iai.purge_orders(v0)
+			sim.set_velocity(v0, 0.0, 0.0, 0.0)
+			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+			sim.place_relative_to_inside(v0, v4, 0.0, 0.0, 0.0)
+			sim.point_at(v0, v1)
+			sim.place_relative_to_inside(v4, v0, 0.0, v12, 2.0 * v8)
+			sim.place_relative_to_inside(v5, v0, v9, v10, v11)
+			sim.place_relative_to_inside(v7, v0, v9, v10, 20.0 - v11)
+			idirector.set_focus(v7)
+			idirector.set_direction(v3, v4, v5, 10.0, 2.0)
+			sim.avatar_set_channel(v1, "door", 0.0)
+			await _pog_wait(1.0)
+			sim.avatar_set_channel(v1, "base_doors_sound", 1.0)
+			await _pog_wait(11.0)
+			await icutsceneutilities.disable_player_autopilot()
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_6393(v0, v1) -> Variant:

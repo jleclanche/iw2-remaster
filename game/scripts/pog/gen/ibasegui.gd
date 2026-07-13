@@ -66,7 +66,7 @@ func local_249() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_362() -> Variant:
@@ -79,7 +79,7 @@ func local_362() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_475() -> Variant:
@@ -92,7 +92,7 @@ func local_475() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_588() -> Variant:
@@ -105,7 +105,7 @@ func local_588() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_701() -> Variant:
@@ -118,7 +118,7 @@ func local_701() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_814() -> Variant:
@@ -131,7 +131,7 @@ func local_814() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_927() -> Variant:
@@ -144,7 +144,7 @@ func local_927() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_1040() -> Variant:
@@ -157,7 +157,7 @@ func local_1040() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_1153() -> Variant:
@@ -170,7 +170,7 @@ func local_1153() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func local_1266() -> Variant:
@@ -183,7 +183,7 @@ func local_1266() -> Variant:
 	v1 = global.exists(v0)
 	if v1:
 		v2 = global.pog_bool(v0)
-	return
+	return v2
 	return 0
 
 func set_hangar_screen_enabled() -> Variant:
@@ -451,7 +451,7 @@ func s_p_base_screen() -> Variant:
 	gui.set_first_control_focus(v0)
 	await igui.set_cyclic_control_focus_path(v11)
 	gui.set_control_focus_cancel_function("iBaseGUI.SPBaseScreen_OnCancelButton")
-	if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_2")) and _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_1")):
+	if not (_pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_2")) and _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_1"))):
 		return 0
 	if 0.5 > math.random(0.0, 1.0):
 		stream.play(0, "sound:/audio/music/base_ambient_1", 1, 1)
@@ -462,29 +462,186 @@ func s_p_base_screen() -> Variant:
 
 func local_5932() -> Variant:
 	var v0: Variant = 0
-	v0 = 0
-	while _pog_is_null(iloadout.ship()):
-		if not (iinventory.got_command_section()):
-			v0 = 1
-		break
-	if v0:
-		return 0
-	if iinventory.got_heavy_corvette():
-		iloadout.set_ship(3)
-	else:
-		if iinventory.got_fast_attack_ship():
-			iloadout.set_ship(2)
-		else:
-			if iinventory.got_tug():
-				iloadout.set_ship(1)
+	var _pc: int = 5932
+	while true:
+		if _pc == 5932:
+			v0 = 0
+			_pc = 6109
+			continue
+		elif _pc == 5949:
+			if not (iinventory.got_command_section()):
+				_pc = 5968
+				continue
 			else:
-				if iinventory.got_storm_petrel():
-					iloadout.set_ship(4)
-				else:
-					if iinventory.got_command_section():
-						return 0
-					iloadout.set_ship(0)
-	return 0
+				_pc = 5975
+				continue
+		elif _pc == 5968:
+			v0 = 1
+			_pc = 5975
+			continue
+		elif _pc == 5975:
+			_pc = 6165
+			continue
+		elif _pc == 5980:
+			if not (iinventory.got_storm_petrel()):
+				_pc = 5999
+				continue
+			else:
+				_pc = 6006
+				continue
+		elif _pc == 5999:
+			v0 = 1
+			_pc = 6006
+			continue
+		elif _pc == 6006:
+			_pc = 6165
+			continue
+		elif _pc == 6011:
+			if not (iinventory.got_tug()):
+				_pc = 6030
+				continue
+			else:
+				_pc = 6037
+				continue
+		elif _pc == 6030:
+			v0 = 1
+			_pc = 6037
+			continue
+		elif _pc == 6037:
+			_pc = 6165
+			continue
+		elif _pc == 6042:
+			if not (iinventory.got_fast_attack_ship()):
+				_pc = 6061
+				continue
+			else:
+				_pc = 6068
+				continue
+		elif _pc == 6061:
+			v0 = 1
+			_pc = 6068
+			continue
+		elif _pc == 6068:
+			_pc = 6165
+			continue
+		elif _pc == 6073:
+			if not (iinventory.got_heavy_corvette()):
+				_pc = 6092
+				continue
+			else:
+				_pc = 6099
+				continue
+		elif _pc == 6092:
+			v0 = 1
+			_pc = 6099
+			continue
+		elif _pc == 6099:
+			_pc = 6165
+			continue
+		elif _pc == 6104:
+			_pc = 6165
+			continue
+		elif _pc == 6109:
+			if not _pog_is_null(iloadout.ship()):
+				_pc = 6130
+				continue
+			else:
+				_pc = 5949
+				continue
+		elif _pc == 6130:
+			if not _pog_is_null(4):
+				_pc = 6139
+				continue
+			else:
+				_pc = 5980
+				continue
+		elif _pc == 6139:
+			if not _pog_is_null(1):
+				_pc = 6147
+				continue
+			else:
+				_pc = 6011
+				continue
+		elif _pc == 6147:
+			if not _pog_is_null(2):
+				_pc = 6156
+				continue
+			else:
+				_pc = 6042
+				continue
+		elif _pc == 6156:
+			if not _pog_is_null(3):
+				_pc = 6165
+				continue
+			else:
+				_pc = 6073
+				continue
+		elif _pc == 6165:
+			if v0:
+				_pc = 6175
+				continue
+			else:
+				_pc = 6363
+				continue
+		elif _pc == 6175:
+			if iinventory.got_heavy_corvette():
+				_pc = 6193
+				continue
+			else:
+				_pc = 6214
+				continue
+		elif _pc == 6193:
+			iloadout.set_ship(3)
+			_pc = 6363
+			continue
+		elif _pc == 6214:
+			if iinventory.got_fast_attack_ship():
+				_pc = 6232
+				continue
+			else:
+				_pc = 6253
+				continue
+		elif _pc == 6232:
+			iloadout.set_ship(2)
+			_pc = 6363
+			continue
+		elif _pc == 6253:
+			if iinventory.got_tug():
+				_pc = 6271
+				continue
+			else:
+				_pc = 6291
+				continue
+		elif _pc == 6271:
+			iloadout.set_ship(1)
+			_pc = 6363
+			continue
+		elif _pc == 6291:
+			if iinventory.got_storm_petrel():
+				_pc = 6309
+				continue
+			else:
+				_pc = 6330
+				continue
+		elif _pc == 6309:
+			iloadout.set_ship(4)
+			_pc = 6363
+			continue
+		elif _pc == 6330:
+			if iinventory.got_command_section():
+				_pc = 6348
+				continue
+			else:
+				_pc = 6363
+				continue
+		elif _pc == 6348:
+			iloadout.set_ship(0)
+			_pc = 6363
+			continue
+		elif _pc == 6363:
+			return 0
+		else:
+			return 0
 	return 0
 
 func s_p_base_screen__on_hangar_button() -> Variant:
@@ -492,7 +649,7 @@ func s_p_base_screen__on_hangar_button() -> Variant:
 	await local_6873()
 	gui.overlay_screen("icSPHangarScreen")
 	v0 = iloadout.current_loadout()
-	if 4 == v0 or 3 == v0 or 2 == v0 or 1 == v0:
+	if not (4 == v0 or 3 == v0 or 2 == v0 or 1 == v0):
 		return 0
 	iloadout.calculate_loadout(v0)
 	return 0
@@ -561,7 +718,7 @@ func s_p_base_screen__on_cancel_button() -> Variant:
 func local_6873() -> Variant:
 	var v0: Variant = 0
 	v0 = gui.cast(global.handle("SPBaseScreen_CommsButton"))
-	if not _pog_is_null(v0):
+	if _pog_is_null(v0):
 		return 0
 	await stop_new_mail_notification(v0)
 	global.destroy("SPBaseScreen_CommsButton")
@@ -619,7 +776,7 @@ func local_6973() -> Variant:
 	global.create_handle("HangarManifestWindow", 2, v12)
 	gui.create_vertical_scrollbar(v4 - gui.window_canvas_width(v13), 0, v4, gui.window_canvas_height(v13), v13, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
 	iloadout.set_manifest_window(v12)
-	return
+	return v12
 	return 0
 
 func local_8118() -> Variant:
@@ -752,7 +909,7 @@ func s_p_hangar_screen__on_back_to_main_menu_button() -> Variant:
 func local_10275() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	if global.exists("Hangar_Flashing"):
+	if not (global.exists("Hangar_Flashing")):
 		return 0
 	v0 = gui.cast(global.handle("Hangar_SpaceworthyWindow"))
 	v1 = gui.cast(global.handle("Hangar_ManifestWindow"))
@@ -865,7 +1022,7 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 				v2 = v1
 				break
 		v1 = 1 + v1
-	if -1 != v2:
+	if -1 == v2:
 		return 0
 	if _pog_is_null(v2):
 		v3 = 1
@@ -916,7 +1073,7 @@ func s_p_loadout_screen__on_fighter() -> Variant:
 			break
 		v1 = 1 + v1
 	iloadout.set_desired_number_of_turret_fighters(v2)
-	if not _pog_eq(v4, v2):
+	if _pog_eq(v4, v2):
 		return 0
 	gui.play_sound(4)
 	v3 = iloadout.current_loadout()
@@ -964,7 +1121,7 @@ func local_12830(v0, v1, v2, v3) -> Variant:
 					if 3 == v6:
 						await local_14751(v2, v3)
 	v4 = await igui.create_window_list_in_splitter(v0, v2, v5, v1, text.field(iloadout.ship_name(v6), 0))
-	return
+	return v4
 	return 0
 
 func local_13189(v0, v1) -> Variant:
@@ -1067,26 +1224,91 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v6 = iinventory.number_of_cargo_type(474)
-	v7 = iloadout.turret_fighters_in_loadout()
-	v9 = null
-	v10 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v6 = v7 + v6
-	if 2 > v6:
-		v6 = 2
-	list.remove_all(v3)
-	v8 = 0
-	while v6 <= v8:
-		while _pog_is_null(v8):
+	var _pc: int = 15522
+	while true:
+		if _pc == 15522:
+			v6 = iinventory.number_of_cargo_type(474)
+			v7 = iloadout.turret_fighters_in_loadout()
+			v9 = null
+			v10 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v6 = v7 + v6
+			if 2 > v6:
+				_pc = 15655
+				continue
+			else:
+				_pc = 15663
+				continue
+		elif _pc == 15655:
+			v6 = 2
+			_pc = 15663
+			continue
+		elif _pc == 15663:
+			list.remove_all(v3)
+			v8 = 0
+			_pc = 15689
+			continue
+		elif _pc == 15689:
+			if v6 <= v8:
+				_pc = 15705
+				continue
+			else:
+				_pc = 16008
+				continue
+		elif _pc == 15705:
+			_pc = 15814
+			continue
+		elif _pc == 15710:
 			v9 = text.field("turret_fighters_zero", 0)
-			break
-		v5 = await local_46444(v9, v2)
-		await igui.make_inverse_button_iconic(v5)
-		gui.set_input_override_functions(v5, "", "", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "")
-		list.add_tail(v3, v5)
-		v8 = 1 + v8
-	v4 = await igui.create_window_list_in_splitter(v0, v3, v10, v1, text.field("manifest_ship_tfighters", 0))
-	return
+			_pc = 15844
+			continue
+		elif _pc == 15743:
+			v9 = text.field("turret_fighters_one", 0)
+			_pc = 15844
+			continue
+		elif _pc == 15776:
+			v9 = text.field("turret_fighters_two", 0)
+			_pc = 15844
+			continue
+		elif _pc == 15809:
+			_pc = 15844
+			continue
+		elif _pc == 15814:
+			if not _pog_is_null(v8):
+				_pc = 15827
+				continue
+			else:
+				_pc = 15710
+				continue
+		elif _pc == 15827:
+			if not _pog_is_null(1):
+				_pc = 15835
+				continue
+			else:
+				_pc = 15743
+				continue
+		elif _pc == 15835:
+			if not _pog_is_null(2):
+				_pc = 15844
+				continue
+			else:
+				_pc = 15776
+				continue
+		elif _pc == 15844:
+			v5 = await local_46444(v9, v2)
+			await igui.make_inverse_button_iconic(v5)
+			gui.set_input_override_functions(v5, "", "", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "")
+			list.add_tail(v3, v5)
+			v8 = 1 + v8
+			_pc = 15689
+			continue
+		elif _pc == 16008:
+			v4 = await igui.create_window_list_in_splitter(v0, v3, v10, v1, text.field("manifest_ship_tfighters", 0))
+			_pc = 16079
+			continue
+		elif _pc == 16079:
+			return
+		else:
+			return 0
 	return 0
 
 func local_16088(v0, v1, v2, v3) -> Variant:
@@ -1128,7 +1350,7 @@ func local_16088(v0, v1, v2, v3) -> Variant:
 	await igui.create_window_list_in_splitter(v0, v14, v5, v6, v3)
 	gui.set_window_font(v13, global.string("GUI_detail_font"))
 	gui.set_text_window_string(v13, iloadout.loadout_description())
-	return
+	return v13
 	return 0
 
 func s_p_manifest_screen() -> Variant:
@@ -1242,7 +1464,6 @@ func local_17725(v0, v1) -> Variant:
 		v5 = "commsmenu_new_messages"
 	v8 = await igui.create_and_initialise_static_window(v12 + v11 + v10, v1, v13, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field(v5, 0))
 	list.add_tail(v9, v8)
-	push_error("PORT: unstructured jump to L18360")
 	return _pog_clone(v9)
 	return 0
 
@@ -1285,7 +1506,7 @@ func local_18391(v0, v1) -> Variant:
 	v4 = await igui.create_and_initialise_list_box_entry_component_window(v12, v11, v15, v2, v17, iemail.sender(v0))
 	v5 = await igui.create_and_initialise_list_box_entry_component_window(v14, v13, v15, v2, v18, iemail.subject(v0))
 	gui.add_list_box_entry(v1, v2)
-	return
+	return v2
 	return 0
 
 func s_p_inbox_screen() -> Variant:
@@ -1462,7 +1683,7 @@ func force_email_read(v0) -> Variant:
 			if PogRuntime.TRACE:
 				debug.error("iBaseGUI.ForceEmailRead : Email has already been read.")
 		else:
-			if not (_pog_eq("icSPBaseScreen", gui.current_screen_classname())):
+			if not _pog_eq("icSPBaseScreen", gui.current_screen_classname()):
 				if PogRuntime.TRACE:
 					debug.error("iBaseGUI.ForceEmailRead : Player is not at root player base screen.")
 			else:
@@ -1507,7 +1728,7 @@ func s_p_encyclopaedia_screen__on_back_button() -> Variant:
 	var v1: Variant = 0
 	v1 = gui.cast(global.handle("encyclopaedia_text_window"))
 	v0 = gui.text_window_back(v1)
-	if not (v0):
+	if v0:
 		return 0
 	global.destroy("encyclopaedia_text_window")
 	gui.remove_last_overlay()
@@ -1686,7 +1907,6 @@ func local_23974() -> Variant:
 	v5 = await igui.create_and_initialise_text_window(v18, 0, v18 + v13 * 2 - v16, v17, v6, "")
 	gui.create_vertical_scrollbar(v13 - v16, 0, v13, v17, v6, v5, global.pog_float("GUI_scrollbar_buttonratio"), "")
 	list.add_tail(v2, v5)
-	push_error("PORT: unstructured jump to L25266")
 	return _pog_clone(v2)
 	return 0
 
@@ -1762,7 +1982,7 @@ func local_25428(v0, v1) -> Variant:
 	await igui.create_and_initialise_list_box_entry_component_window(v12, v13, v5, v2, v19, itrade.offered(v1))
 	await igui.create_and_initialise_list_box_entry_component_window(v14, v15, v5, v2, v19, itrade.wanted(v1))
 	gui.add_list_box_entry(v0, v2)
-	return
+	return v2
 	return 0
 
 func s_p_trading_screen__on_trades_list_box_select() -> Variant:
@@ -1848,7 +2068,7 @@ func local_26725(v0, v1) -> Variant:
 	return 0
 
 func s_p_inventory_screen__on_equipment() -> Variant:
-	if global.pog_bool("SPInventoryScreen_CargoOnly"):
+	if not (global.pog_bool("SPInventoryScreen_CargoOnly")):
 		return 0
 	global.set_bool("SPInventoryScreen_CargoOnly", 0)
 	await local_29193(0)
@@ -1856,7 +2076,7 @@ func s_p_inventory_screen__on_equipment() -> Variant:
 	return 0
 
 func s_p_inventory_screen__on_cargo() -> Variant:
-	if not (global.pog_bool("SPInventoryScreen_CargoOnly")):
+	if global.pog_bool("SPInventoryScreen_CargoOnly"):
 		return 0
 	global.set_bool("SPInventoryScreen_CargoOnly", 1)
 	await local_29193(1)
@@ -2686,12 +2906,12 @@ func s_p_ship_type_screen() -> Variant:
 
 func local_41431(v0) -> Variant:
 	gui.cancel_focus_lock()
-	if not _pog_eq(v0, iloadout.ship()):
+	if _pog_eq(v0, iloadout.ship()):
 		return 0
 	gui.play_sound(4)
 	iloadout.set_ship(v0)
 	await local_8118()
-	if -1 != iloadout.cargo() and _pog_is_null(iloadout.ship()):
+	if not (-1 != iloadout.cargo() and _pog_is_null(iloadout.ship())):
 		return 0
 	iinventory.add_without_marking_new(iloadout.cargo(), 1)
 	iloadout.set_cargo(-1)
@@ -2817,7 +3037,7 @@ func local_42175() -> Variant:
 	v13 = v4
 	await local_44051(v21, v13)
 	iloadout.set_manifest_window(v17)
-	return
+	return v17
 	return 0
 
 func s_p_customise_screen() -> Variant:
@@ -2855,7 +3075,7 @@ func local_43763() -> Variant:
 	return 0
 
 func s_p_customise_screen__on_back_button() -> Variant:
-	if not (iloadout.on_customise_screen_back()):
+	if iloadout.on_customise_screen_back():
 		return 0
 	await local_43763()
 	gui.remove_last_overlay()
@@ -2998,7 +3218,7 @@ func s_p_customise_screen__on_select() -> Variant:
 	return 0
 
 func s_p_customise_screen__create_options_list_box() -> Variant:
-	return
+	return 0
 	return 0
 
 func s_p_statistics_screen() -> Variant:
@@ -3038,6 +3258,6 @@ func local_46444(v0, v1) -> Variant:
 	v2 = await igui.create_inverse_radio_button(0, 0, 0)
 	gui.set_window_title(v2, v0)
 	list.add_tail(v1, v2)
-	return
+	return v2
 	return 0
 
