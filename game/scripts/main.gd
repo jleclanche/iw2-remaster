@@ -1093,10 +1093,12 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
 		if shooter is AiShip:
 			last_aggressor = shooter
 		var hit := hit_player(spec, age, pos)
-		# a deflected bolt never reaches the hull: it flares on the LDA field
-		ExplosionFx.play(self, "hull_impact",
-				Transform3D(Basis.looking_at(-out), pos),
-				0.6 if hit["deflected"] else 1.0)
+		# A deflected bolt never reaches the hull -- it flares on the LDA field,
+		# and the engine has a separate effect for exactly that. Playing a
+		# scaled-down hull impact was our invention.
+		ExplosionFx.play(self,
+				"lda_impact" if hit["deflected"] else "hull_impact",
+				Transform3D(Basis.looking_at(-out), pos), 1.0)
 		return
 	ExplosionFx.play(self, "hull_impact",
 			Transform3D(Basis.looking_at(-out), pos), 1.0)

@@ -409,13 +409,32 @@ The ramp is an emitted intensity, not a tint.
   picks the atlas cell out of the combined colour+mask sheet; alpha-blended,
   since a cutout mask is meaningless for additive art), `FcParticleDrawModel`
   (instances the extracted kibble glTF).
-- **`game/scripts/explosion_fx.gd`** (`ExplosionFx`) -- rewritten from a
-  hand-rolled billboard animation into the **composite** player: `RECIPES` is
-  the `sfx/*.lws` table above, and `ExplosionFx.play(main, key, xform, size)`
-  instantiates the particle systems, the flipbook, the light (driven by the
-  scene's real LightWave intensity envelope) and the sound. `boom()` still
-  exists and now resolves to the `explosion` recipe, so `main.gd` did not have
-  to change for ship deaths.
+- **`tools/iw2/sfx.py`** -- extracts the 23 `sfx/*.lws` scenes into
+  **`data/json/sfx_effects.json`**: per effect, its engine index, its
+  `size_weight`, the event that fires it, and its `low` / `high[]` variants,
+  each with fps, last frame, flipbook, particle systems (with parenting
+  resolved and any animated scaler's keys), sounds (resolved through the
+  `FcSoundNode` INI to the actual wave, with volume and min range), lights
+  (colour, range, and the real intensity envelope) and the special avatars with
+  their tint/lifetime. Plus the engine block: `cull_detail`, `low_detail`, the
+  150 m threshold and the `DoFinalExplosion` constants. Runs in `extract_all`.
+- **`tools/iw2/lws.py`** -- the scene parser was silently dropping exactly what
+  this needed. It now keeps `FramesPerSecond` / `FirstFrame` / `LastFrame`,
+  `LightRange`, and `LgtIntensity (envelope)` -- whose key blocks are
+  *value-first, frame-second*, the reverse of `ObjectMotion`. (It previously hit
+  `float("(envelope)")`, swallowed the `ValueError` and moved on, so every
+  animated light in the game read as intensity 0.)
+- **`game/scripts/explosion_fx.gd`** (`ExplosionFx`) -- now **fully
+  data-driven**: the hand-transcribed `RECIPES` table is gone, and
+  `ExplosionFx.play(main, key, xform, size)` reads `sfx_effects.json`, picks the
+  variant with the engine's own apparent-size LOD rule (including "draw nothing"
+  when the effect has no `_low` scene and is too small), and instantiates the
+  particle systems, the flipbook, the lights (driven by the scene's real
+  envelope, at the scene's own fps) and the sound. It drives an animated
+  emitter scaler per frame, so `plasma_fire`'s 20-second hull fire works.
+  `boom()` keeps its signature but now implements `DoFinalExplosion`: four
+  scattered puffs, each choosing `explosion`/`small_explosion` by its own
+  radius, plus the reactor shockwave.
 - **Muzzle flash**: `ExplosionFx.muzzle_flash()`, the `fire?o(5.0)` lens-flare
   light, fired from `weapons.gd::_spawn_at`.
 - **Bolt**: `ExplosionFx.bolt_mesh()`, the 4 x 800 m `icBeamAvatar` streak
@@ -437,24 +456,40 @@ The ramp is an emitted intensity, not a tint.
 - **`icCornflakeDraw`'s blend mode and atlas-cell choice.** We infer
   alpha-blended from the existence of the mask sheet, and pick a cell at
   random. Neither is read from the binary.
-- **`icMovieAvatar`'s playback rate.** The scenes are 60 frames long at 60 fps
-  (`explosion`) or 30 fps (`hull_impact`), but the flipbooks have 50 and 40
-  frames. Nothing says whether the movie plays at the scene rate, is stretched
-  over the scene, or has its own. Ours runs at 25 fps, inherited from the old
-  code.
-- **`icShockwaveAvatar`, `icLDAAvatar`, `icBeamAvatar`, `icMovieAvatar`
-  geometry.** We have their names, textures and tint/lifetime parameters from
-  the LWS scenes, but not their meshes or draw code. The antimatter, reactor,
-  alien and LDSI explosions are all shockwave-driven and we do not play them.
+- **`icMovieAvatar`'s playback rate and quad size.** The scenes are 60 frames
+  long at 60 fps (`explosion`) or 30 fps (`hull_impact`), but the flipbooks have
+  50 and 40 frames. Nothing says whether the movie plays at the scene rate, is
+  stretched over the scene, or has its own. Nor do we know how many metres the
+  quad spans per unit of scene scale. `MOVIE_FPS` (25) and `MOVIE_QUAD` (0.52)
+  in `explosion_fx.gd` are marked placeholders, inherited from the old code.
+- **`icShockwaveAvatar` / `icLDAAvatar` / `icBeamAvatar` geometry.** We now know
+  `icShockwaveAvatar` hardcodes `texture:/images/sfx/shockwave` (the file is in
+  `data/textures/images/sfx/shockwave.png`) and picks a **random unit vector**
+  in its constructor (`0x100cfa50`), so the primitive has an orientation axis;
+  and we have every scene's `tint` and `lifetime`. But the draw code is where
+  Ghidra gives up: the display virtuals are vtable `0x1011d140` slots 14 and 16
+  (`0x100cfc90`, `0x100cfcb0`), and the decompiler bails there with "could not
+  recover jumptable", with the actual primitives living in the undecompiled
+  `dx7graph.dll`. So we do **not** draw a shockwave: the antimatter / reactor /
+  alien / LDSI explosions play their light and sound only. Inventing a ring or a
+  sphere here would be inventing art, not recovering it.
+- **`antimatter_explosion`'s beam rig.** Eight `icBeamAvatar` nodes
+  (`texture=SearchBeam`) parented through `FatBeamsH`/`SkinnyBeamsP`/
+  `beam_scaler_*` nulls -- the radiating spikes. Extracted into the JSON with
+  parenting resolved, but unplayed, for the same reason as the shockwave.
+- **Does the light range scale with the effect's size?** The engine sets the
+  effect node's scale to `size` (`0x100d3210`) and the light hangs inside that
+  node, so we multiply `LightRange` by `size`. Whether the original's D3D light
+  really inherits the node scale is applied in `dx7graph.dll` and unverified.
+  Likewise `LIGHT_ENERGY` (8.0) is a renderer fit, not game data: LightWave
+  intensities are 0..1.5 (5.0 for antimatter) and mean nothing to Godot.
 - **`icDisruptorDynamics` and `icTeleportDynamics`.** The property maps are
   recovered; the behaviour behind `follow_edge` (crawl over the target's
   geometry) and `prob_jump` is not, so `disruptor`, `ldsi`, `infection`,
   `kibble` and `cornflake_field` have no player.
-- **The `sfx/*.lws` files are not in `data/`.** `tools/` should extract them so
-  `ExplosionFx.RECIPES` can be data-driven instead of transcribed. Until then
-  the table in the script is the only copy.
-- **Which effect the engine fires for which event.** We know the twelve names
-  and matched the obvious ones (bolt-on-hull -> `hull_impact`, ship death ->
-  `explosion`), but the call sites in `icBullet` / `icShockwave` / the ship
-  death code are not traced, so e.g. when `small_explosion` is used instead of
-  `explosion`, or what fires `plasma_fire`, is unknown.
+- **The `asteroid_impact` name test.** `icBullet` picks it when the target's
+  category (`sim+0x194`) is `0xb` or `0xe` **and** an `FcString::Find`-shaped
+  import (`0x10116a0c`) on the target's string field (`sim+0x184`), against a
+  runtime-initialised global (`0x10166318`), returns >= 0. Both the category
+  enum and the global's value are set at runtime, so "what counts as rock" is
+  known by shape but not by name -- we do not fire `asteroid_impact` yet.

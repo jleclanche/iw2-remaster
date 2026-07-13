@@ -169,12 +169,42 @@ func _email_received(_t, a: Array) -> Variant:
 	var m = a[0] if a.size() > 0 else null
 	return m.received if m is PogEmail else 0.0
 
-# The mail reader's widgets belong to the original base screen, which we do not
-# rebuild; the inbox itself is above and is real.
-# @stub iemail.ResetWindows
-# @stub iemail.FillArchivedEmailListBox
-func _email_noop(_t, _a: Array) -> Variant:
+# The archive list box on the comms screen. igui.CreateTitledListBox gives it two
+# columns, "commsmenu_sender" and "commsmenu_subject", and ibasegui reads the row
+# number straight back out to pick the mail:
+#   v0 = gui.ListBoxFocusedEntry(v2); v1 = iemail.NthInArchive(v0);
+# so the rows must be in archive order, which they are.
+
+# @native iemail.FillArchivedEmailListBox
+func _email_fill_archive(_t, a: Array) -> Variant:
+	var lb = a[0] if a.size() > 0 else null
+	if not (lb is PogUi.PogWindow):
+		return 0
+	lb.entries.clear()
+	lb.selected_index = -1
+	lb.focused_entry = 0 if not archive.is_empty() else -1
+	for m in archive:
+		lb.entries.append("%-22s %s" % [_text(m.sender), _text(m.subject)])
+	_ui_dirty()
 	return 0
+
+# @native iemail.ResetWindows
+func _email_reset_windows(_t, _a: Array) -> Variant:
+	_ui_dirty()
+	return 0
+
+
+## The sender and subject are localisation keys, like every other line of text.
+func _text(key: String) -> String:
+	if game != null and game.comms != null:
+		return String(game.comms.strings.get(key, key))
+	return key
+
+
+func _ui_dirty() -> void:
+	var ui = vm.ui if (vm != null and "ui" in vm) else null
+	if ui is PogUi:
+		ui.dirty = true
 
 
 # ---------------------------------------------------------------- iscore
@@ -473,8 +503,8 @@ const _BINDINGS := {
 	"iemail.shuntreademailtoarchive": "_email_shunt",
 	"iemail.sender": "_email_sender", "iemail.subject": "_email_subject",
 	"iemail.body": "_email_body", "iemail.received": "_email_received",
-	"iemail.resetwindows": "_email_noop",
-	"iemail.fillarchivedemaillistbox": "_email_noop",
+	"iemail.resetwindows": "_email_reset_windows",
+	"iemail.fillarchivedemaillistbox": "_email_fill_archive",
 
 	"iscore.setkillvalue": "_set_kill_value",
 	"iscore.addskillrating": "_add_skill_rating",

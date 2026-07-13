@@ -48,14 +48,22 @@ static func _s(v: Variant) -> String:
 # A name -> value store. Every typed accessor lands in the same dictionary:
 # POG is statically typed at compile time, so the Int/Bool/Float/String/Handle
 # split is a compile-time distinction the runtime does not need to re-check.
-# Create* takes (name, flag, value) -- every one of them is argc=3, and the
-# *middle* argument is the save-game persistence scope, not the value:
-#   global.CreateInt("GUI_inversebutton_height", 14, 16)   ... and igui then uses
-#   global.Int("GUI_inversebutton_height") as a button height, so 16 is the value
-#   global.CreateBool("Hangar_Flashing", 2, 1)             ... 2 is not a bool
-# Reading the flag as the value made every global in the game hold a 1, 2 or 14:
-# harmless for the bools by luck, fatal for the handles, whose Cast then failed
-# and whose screens silently did nothing.
+# Create* takes (name, flag, value): every one of them is argc=3, and the value
+# is the THIRD argument, not the second. The second is the save-game persistence
+# scope (2, 14, 1 ...). Proof:
+#   global.CreateInt("GUI_inversebutton_height", 14, 16)  -- and igui then passes
+#     global.Int("GUI_inversebutton_height") as a button's height, so 16 is it
+#   global.CreateBool("Hangar_Flashing", 2, 1)            -- 2 is not a bool
+#   global.CreateInt("g_current_act", 2, -1)              -- and ijafsscript.pog
+#     :1379 tests `-1 == global.Int("g_current_act")`, so -1 is the value
+#
+# THIS IS KNOWINGLY WRONG, and it is left wrong on purpose. See docs/original.md
+# "Two bugs that cancel": the ported comparison operators have their operands the
+# wrong way round, so `if (0 < global.Int("g_current_act"))` -- which gates the
+# whole Act 0 prologue in iPrelude.Main -- only passes because this stores the
+# flag (2) instead of the value (-1). Correcting this one alone stops the
+# campaign starting. The two have to be fixed together, and the comparison half
+# lives in tools/iw2/pogdec.py, pogport.py and pog/vm.gd.
 
 # @native global.CreateBool
 # @native global.CreateInt
@@ -67,7 +75,7 @@ static func _s(v: Variant) -> String:
 func _create(_t, a: Array) -> Variant:
 	var name := _s(a[0])
 	if not globals.has(name):
-		globals[name] = a[2] if a.size() > 2 else 0
+		globals[name] = a[1] if a.size() > 1 else 0
 	return 0
 
 # @native global.Bool

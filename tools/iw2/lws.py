@@ -162,7 +162,7 @@ def parse_lws(text: str) -> list[dict]:
                     vals = [float(v) for v in lines[i + 3 + 2 * k].split()]
                     meta = [float(v) for v in lines[i + 4 + 2 * k].split()]
                 except (ValueError, IndexError):
-                    break  # "(envelope)" channels etc. — keep what we have
+                    break  # "(envelope)" channels etc. -- keep what we have
                 if len(vals) >= 9:
                     keys.append({"frame": meta[0] if meta else 0.0,
                                  "pos": vals[0:3], "hpb": vals[3:6],

@@ -87,7 +87,25 @@ refers to that order (lights don't count). Null names carry semantics:
   LightWave's "hidden" idiom (clamp, don't drop); `(envelope)` may
   replace values — skip those keys. Lights: `AddLight`/`LightName`/
   `LightColor`/`LgtIntensity` (may be `(envelope)`)/`LightType`/
-  `LensFlare`.
+  `LightRange`/`LensFlare`.
+- **`(envelope)` key blocks are value-first, frame-second** -- the reverse
+  of a motion block, where the values come first and the *meta* row leads
+  with the frame. An animated light intensity is:
+
+      LgtIntensity (envelope)
+        1              <- channel count
+        4              <- key count
+        0              <- key 0 VALUE
+        0 0 0 0 0      <- key 0 FRAME, then spline params
+        1              <- key 1 value
+        3 0 0 0 0      <- key 1 frame
+
+  Reading it like a motion block yields intensity 0 everywhere. Frames are
+  in the scene's own `FramesPerSecond`, so keep that too -- it differs per
+  scene (the `sfx` explosions are 60 fps, the impacts 30).
+- Parenting needs **two passes**: `ParentObject n` may FORWARD-reference an
+  object defined later in the file. `sfx/antimatter_explosion_high_0.lws`
+  does exactly this (its beams parent to scaler nulls declared below them).
 - Time animations must only loop when cyclic (first==last pose, HPB
   modulo 360°); rotation keys must be subdivided to ≤90° steps before
   quaternion conversion or spinners collapse.

@@ -532,13 +532,99 @@ func _drop_ship(which: int) -> Variant:
 		loadout.ship = SHIP_COMMAND_SECTION
 	return 0
 
-# @stub iinventory.FillInventoryListBox
-# @stub iinventory.FillAddCargoListBox
-# @stub iinventory.FillRecyclingListBox
-# @stub iinventory.ResetWindows
-func _i_noop(_t, _a: Array) -> Variant:
-	# The hangar screens these fill (FcListBox handles, in and out) are the one
-	# part of the economy that is pure UI; there is no window to put rows in yet.
+# --- the hangar list boxes.
+#
+# These are natives rather than script code because they fill *two* things at
+# once: the list box the player sees, and a plain POG list of the icCargo handles
+# behind it, which the script keeps in a global and indexes with the row number
+# the list box hands back:
+#
+#   global.CreateList("InventoryScreen_CargoList", 2, v1);
+#   iinventory.FillInventoryListBox(v4, !v0, v1);       <- the same v1
+#   ...
+#   v0 = gui.ListBoxFocusedEntry(v1);                    <- a row number
+#   v8 = icargo.Cast(list.GetNth(v7, v0));               <- back to the cargo
+#
+# So the row order and the list order have to agree, and the native is what makes
+# them agree. The columns come from the titles igui.CreateTitledListBox was given:
+# item / quantity for the inventory, item / quantity / recycling value for the
+# recycling and add-cargo screens.
+
+## The rows of one hangar list, as (cargo, quantity) in declaration order --
+## which is the order the original listed things in.
+func _held(filter: Callable) -> Array:
+	var inv := player_inv()
+	var out: Array = []
+	for type in type_order:
+		var qty := inv.quantity(int(type))
+		if qty <= 0:
+			continue
+		var c := _cargo(int(type))
+		if c == null or not c.significant or not filter.call(c):
+			continue
+		out.append([c, qty])
+	return out
+
+
+## Add the rows to the list box and the handles to the script's parallel list.
+func _fill(a: Array, list_at: int, rows: Array, with_value: bool) -> void:
+	var lb = a[0] if a.size() > 0 else null
+	var parallel = a[list_at] if a.size() > list_at else null
+	if lb is PogUi.PogWindow:
+		lb.entries.clear()
+		lb.focused_entry = -1
+		lb.selected_index = -1
+	if parallel is Array:
+		(parallel as Array).clear()
+	for r in rows:
+		var c: PogCargo = r[0]
+		var qty: int = r[1]
+		if lb is PogUi.PogWindow:
+			var row := "%-28s %4d" % [_text(c.name), qty]
+			if with_value:
+				row += "  %6d" % (c.recycle_value * qty)
+			lb.entries.append(row)
+		if parallel is Array:
+			(parallel as Array).append(c)
+	if lb is PogUi.PogWindow and not rows.is_empty():
+		lb.focused_entry = 0
+	_ui_dirty()
+
+
+func _ui_dirty() -> void:
+	var ui = vm.ui if (vm != null and "ui" in vm) else null
+	if ui is PogUi:
+		ui.dirty = true
+
+# @native iinventory.FillInventoryListBox
+func _i_fill_inventory(_t, a: Array) -> Variant:
+	# (listbox, equipment, cargo_list). The screen has two tabs -- Equipment and
+	# Cargo -- and the flag picks which. A cargo is "equipment" when it carries a
+	# ship-system template, which is exactly what makes it fittable.
+	var equipment := PogVM._truthy(a[1]) if a.size() > 1 else false
+	var rows := _held(func(c: PogCargo) -> bool:
+		return (not c.ship_system.is_empty()) == equipment)
+	_fill(a, 2, rows, false)
+	return 0
+
+# @native iinventory.FillAddCargoListBox
+func _i_fill_add_cargo(_t, a: Array) -> Variant:
+	# The loadout screen's "add cargo" list: everything in the hold that is not
+	# already fitted, so the player can put it in the pods.
+	_fill(a, 1, _held(func(c: PogCargo) -> bool: return true), true)
+	return 0
+
+# @native iinventory.FillRecyclingListBox
+func _i_fill_recycling(_t, a: Array) -> Variant:
+	# Only what can actually be broken down, priced at what it would pay.
+	_fill(a, 1, _held(func(c: PogCargo) -> bool: return c.can_recycle), true)
+	return 0
+
+# @native iinventory.ResetWindows
+func _i_reset_windows(_t, _a: Array) -> Variant:
+	# Called on the way out of every hangar screen and before every re-fill: it
+	# drops the cached window handles so the next screen builds fresh ones.
+	_ui_dirty()
 	return 0
 
 
@@ -863,10 +949,10 @@ const _BINDINGS := {
 	"iinventory.gotstormpetrel": "_i_got_petrel",
 	"iinventory.removecommandsection": "_i_remove_command",
 	"iinventory.removestormpetrel": "_i_remove_petrel",
-	"iinventory.fillinventorylistbox": "_i_noop",
-	"iinventory.filladdcargolistbox": "_i_noop",
-	"iinventory.fillrecyclinglistbox": "_i_noop",
-	"iinventory.resetwindows": "_i_noop",
+	"iinventory.fillinventorylistbox": "_i_fill_inventory",
+	"iinventory.filladdcargolistbox": "_i_fill_add_cargo",
+	"iinventory.fillrecyclinglistbox": "_i_fill_recycling",
+	"iinventory.resetwindows": "_i_reset_windows",
 
 	"itrade.createtradeforcargotype": "_t_create_for_type",
 	"itrade.createtradeforcargocategory": "_t_create_for_category",
