@@ -60,7 +60,6 @@ $env:IW2_GAME_DIR = "C:\...\Independence War 2"   # if not the GOG default
    navigable, **LDS travel with real drive constants + LDSI dropout**,
    targeting HUD. Run: `godot --path game`; automated flight test:
    `godot --path game -- --demo`
-3. Next: docking, weapons (PBC + projectile templates), station type
-   mapping (map type_hash → station sim), remaining systems, POG-derived
+3. Next: docking, weapons (PBC + projectile templates), remaining systems, POG-derived
    AI/traffic/factions (see docs/mechanics.md), capsule-drive jumps between
    systems, DELT/FRAM animation decode, .giz collision hulls
