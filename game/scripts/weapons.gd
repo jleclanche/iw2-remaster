@@ -48,6 +48,11 @@ func _bolt_mesh() -> Mesh:
 func fire() -> void:
 	if cooldown > 0.0:
 		return
+	# iiWeapon::Simulate 0x1003cc00 sets flag 0x200 and refuses to fire while
+	# the ship's TotalHeat is at or past heat_damage_threshold
+	if main and main.sys != null and main.sys.heat + main.sys.heat_external \
+			>= ShipSystems.HEAT_DAMAGE_THRESHOLD:
+		return
 	cooldown = refire
 	if not muzzle_nodes.is_empty():
 		for n in muzzle_nodes:

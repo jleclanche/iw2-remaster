@@ -24,6 +24,8 @@ const HEAT_GAIN_FACTOR := 1.0
 const HEAT_LOSS_FACTOR := 0.5
 const HEAT_DAMAGE_THRESHOLD := 500.0
 const HEAT_DAMAGE_RATE := 0.08
+# (the PE defaults the runtime flux.ini overrides: gain 1.0 @ 0x1015d5b4,
+#  loss 1.0 @ 0x1015d5b8, threshold 500 @ 0x1015d5bc, rate 0.1 @ 0x1015d5c0)
 
 # iwar2.dll immediates
 const SPLASH_SCALE := 0.4         # 0x3ecccccd at 0x1007427b
@@ -37,6 +39,15 @@ const LDA_MAX_CHANCE := 0.98      # 0x1011c664
 const INVULN_HULL_FLOOR := 0.2    # 0x101184ac, iiSim::ApplyDamage
 const HEATSINK_MIN_RAMP := 0.2    # 0x101184ac again, icHeatSink::Simulate
 const NO_POWERPLANT_POOL := 100000.0  # 0x47c35000, icShip 0x10075f80
+const HEAT_DAMAGE_EXTERNAL_MIN := 0.5 # 0x10117738, icShip::SimulateSystems 0x10075f60
+const HUD_HEAT_GAUGE_SCALE := 0.8 # 0x10163efc, HUD player feed 0x10108890
+
+# icPlanet exported constants (not INI-tunable in the shipped build) and the
+# icSun immediate: proximity heating of the player's ship, icPlanet::Think
+# 0x10068380 / icSun::Think 0x1006ab90.
+const HEAT_RADIUS_MULTIPLIER := 0.5    # icPlanet::m_heat_radius_multiplier 0x1011af58
+const PLANET_HEAT_MULTIPLIER := 10000.0 # icPlanet::m_heat_multiplier 0x1011af54
+const SUN_HEAT_FACTOR := 10.0          # 0x101190c0, the sun's extra term
 
 # eDamageSource, from icBullet::OnCollision (setne on bypass_shields) and
 # icShip::SimulateSystems (heat passes 3)
@@ -141,6 +152,14 @@ static func ship_record(ini_path: String) -> Dictionary:
 static func for_ship(ini_path: String) -> ShipSystems:
 	var s := ShipSystems.new()
 	s.rng.randomize()
+	# sims/ships/player/comsec.ini mounts empty *sockets* (subsims/mountpoints/*)
+	# that the original's fitting screen fills from the player's inventory. Fit
+	# from the game's own already-fitted record instead -- same hull (350 hp / 50
+	# armour) -- exactly as main.gd does for tug.ini -> tug_prefitted.ini. An
+	# unfitted comsec has no heatsink, only the powerplant's heat_rate=100, so its
+	# heat would just integrate up to the clamp at heat_damage_threshold.
+	if ini_path == "sims/ships/player/comsec.ini":
+		ini_path = "sims/ships/player/comsec_prefitted.ini"
 	var rec := ship_record(ini_path)
 	var props: Dictionary = rec.get("properties", {})
 	s.hull_max = float(props.get("hit_points", 1000))
@@ -366,22 +385,38 @@ func simulate(dt: float) -> void:
 		heat_rate += _simulate_system(sys, dt, overheated)
 	for lda in ldas:
 		_simulate_lda(lda, dt)
-	# icShip 0x10076060: a positive net rate heats, a negative one cools, and
-	# both stores are clamped to the damage threshold.
+	# icShip::SimulateSystems 0x10075f60 (integration at 0x10076060): a positive
+	# net rate heats the internal store; a negative one cools the EXTERNAL store
+	# first (at heat_loss_factor) and only what the external store cannot absorb
+	# spills over into the internal store. Both stores are floored at zero and
+	# clamped to the damage threshold.
 	if heat_rate <= 0.0:
-		heat += HEAT_LOSS_FACTOR * dt * heat_rate
+		var cool := HEAT_LOSS_FACTOR * dt * heat_rate  # <= 0
+		if heat_external >= -cool:
+			heat_external += cool
+		else:
+			heat += cool + heat_external
+			heat_external = 0.0
 	else:
 		heat += HEAT_GAIN_FACTOR * dt * heat_rate
 	heat = clampf(heat, 0.0, HEAT_DAMAGE_THRESHOLD)
 	heat_external = clampf(heat_external, 0.0, HEAT_DAMAGE_THRESHOLD)
 	var total := heat + heat_external
-	if total > HEAT_DAMAGE_THRESHOLD and heat_external >= total * 0.5:
-		apply_damage((total - HEAT_DAMAGE_THRESHOLD) * HEAT_DAMAGE_RATE * dt, SRC_HEAT)
+	if total > HEAT_DAMAGE_THRESHOLD and heat_external >= total * HEAT_DAMAGE_EXTERNAL_MIN:
+		# The original hands (total - threshold) * heat_damage_rate straight to
+		# ApplyDamage with NO dt term -- once per frame, frame-rate dependent.
+		# We keep the per-call form it actually has.
+		apply_damage((total - HEAT_DAMAGE_THRESHOLD) * HEAT_DAMAGE_RATE, SRC_HEAT)
 
 func _simulate_system(sys: Dictionary, dt: float, overheated: bool) -> float:
 	if bool(sys["destroyed"]):
 		sys["efficiency"] = 0.0
 		sys["usage"] = 0.0
+		# icHeatSink::Simulate 0x1002ee90 has no destroyed/off gate: the base
+		# Simulate bails out, the AddHeatRate(-loss * ramp) that follows it does
+		# not. A shot-out heatsink keeps radiating.
+		if sys["class"] == "icHeatSink":
+			return -_heatsink_rate(float(sys["heat_loss_rate"]))
 		return 0.0
 	var hp_max := float(sys["hp_max"])
 	var health := 1.0
@@ -422,7 +457,7 @@ func _simulate_system(sys: Dictionary, dt: float, overheated: bool) -> float:
 	var rate := 0.0
 	if float(sys["heat_rate"]) > 0.0:
 		rate = float(sys["heat_rate"]) * ratio
-	if sys["class"] == "icHeatSink" and not bool(sys["destroyed"]):
+	if sys["class"] == "icHeatSink":
 		rate -= _heatsink_rate(float(sys["heat_loss_rate"]))
 	return rate
 
@@ -435,6 +470,29 @@ func _heatsink_rate(loss: float) -> float:
 		return loss
 	var d := total - knee
 	return loss * maxf(1.0 - (d * d) / (knee * knee), HEATSINK_MIN_RAMP)
+
+func add_body_heat(dist_to_surface: float, body_radius: float, is_sun: bool,
+		dt: float) -> void:
+	# icPlanet::Think 0x10068380 / icSun::Think 0x1006ab90: each frame every
+	# planet/sun in the active system heats the PLAYER ship's external store
+	# (only the player -- both Thinks go through icPlayerPilot::m_p_instance):
+	#
+	#   d = max(distance_to_centre - radius, 0)
+	#   if d < radius * heat_radius_multiplier:                    ; 0.5
+	#       t = 1 - d / (radius * heat_radius_multiplier)
+	#       external += t^2 * heat_multiplier * dt                 ; planet, 10000
+	#       external += t^2 * heat_multiplier * 10 * dt            ; sun
+	#
+	# The store is clamped to heat_damage_threshold by the next simulate(), and
+	# heat damage only ever fires while external >= half the total -- so this is
+	# what makes sun-diving lethal.
+	var reach := body_radius * HEAT_RADIUS_MULTIPLIER
+	var d := maxf(dist_to_surface, 0.0)
+	if reach <= 0.0 or d >= reach:
+		return
+	var t := 1.0 - d / reach
+	var mult := PLANET_HEAT_MULTIPLIER * (SUN_HEAT_FACTOR if is_sun else 1.0)
+	heat_external += t * t * mult * dt
 
 func _simulate_lda(lda: Dictionary, dt: float) -> void:
 	if bool(lda["destroyed"]):
@@ -457,6 +515,16 @@ func _simulate_lda(lda: Dictionary, dt: float) -> void:
 		lda["usage"] = 1.0
 
 # --- read-only views for the HUD -------------------------------------------
+
+func heat_fraction() -> float:
+	# The HUD's player feed (0x10108890) computes the thermometer as
+	#   TotalHeat / heat_damage_threshold * 0.8   (0.8 lives at 0x10163efc)
+	# clamped to 1. So an internal-only overheat pegs the needle at 0.8; only
+	# external (sun/planet) heat pushes it into the top fifth, and the needle
+	# hits 1.0 at total = 625. (The base-screen status panels use 0.75 instead,
+	# 0x100e07f0, warning at frac >= 0.75, i.e. exactly at the threshold.)
+	var total := heat + heat_external
+	return clampf(total / HEAT_DAMAGE_THRESHOLD * HUD_HEAT_GAUGE_SCALE, 0.0, 1.0)
 
 func group_health(group: String) -> float:
 	# -1: nothing of that kind is fitted. Otherwise the worst efficiency of the

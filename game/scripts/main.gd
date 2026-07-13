@@ -1642,6 +1642,16 @@ func _physics_process(delta: float) -> void:
 		ship.input_thrust = Vector3.ZERO
 		ship.input_rotate = Vector3.ZERO
 	if sys != null:
+		# icSun::Think 0x1006ab90 / icPlanet::Think 0x10068380: every body in
+		# the active system radiates onto the PLAYER's external heat store
+		for o in objects:
+			var cat: String = o["category"]
+			if cat == "star" or cat == "body":
+				var r: float = o["radius"]
+				if r > 0.0:
+					var d := Vector3(px - o["x"], py - o["y"],
+							pz - o["z"]).length() - r
+					sys.add_body_heat(d, r, cat == "star", delta)
 		sys.simulate(delta)
 	_fold_motion()
 	_stream_objects()
@@ -1671,11 +1681,11 @@ func armour_rating() -> float:
 	return 0.0 if sys == null else sys.armour
 
 func ship_heat() -> float:
-	# 0..1 of flux.ini [icShip] heat_damage_threshold
+	# the HUD player feed (0x10108890): TotalHeat / threshold * 0.8, clamped.
+	# Internal-only overheat pegs at 0.8; only sun/planet heat reaches the top.
 	if sys == null:
 		return 0.0
-	return clampf((sys.heat + sys.heat_external)
-			/ ShipSystems.HEAT_DAMAGE_THRESHOLD, 0.0, 1.0)
+	return sys.heat_fraction()
 
 func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 		what: String) -> void:

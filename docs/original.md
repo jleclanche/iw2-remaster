@@ -458,6 +458,29 @@ credit, killed flag, **the ship's death script** (a POG task name at `+0x1c4`),
 `critical_damage_scale=0.2`, `criticals_per_impact=0.2`, `heat_gain_factor=1`,
 `heat_loss_factor=0.5`, `heat_damage_threshold=500`, `heat_damage_rate=0.08`.
 
+## 5b. Heat is a raw two-store accumulator, not a temperature
+
+Two stores on `icShip`: internal (`+0x288`, fed by every live subsim's
+`heat_rate * power_ratio` and by beam fire at `sqrt(damage_rate) * heat_scale`
+per second) and external (`+0x28c`, fed only by sun/planet proximity, and only
+on the player's ship: `t = 1 - d/(0.5 * radius)` inside half a radius of the
+surface, `t^2 * 10000` per second for planets, ten times that for suns).
+Heatsinks cool at `heat_loss_rate` ramped from 20% on a cold ship to 100% at
+nine-tenths of the `heat_damage_threshold` (500, flux.ini) -- so a ship's
+resting heat is the equilibrium between its fitted subsims and its heatsink,
+about 96 for the prefitted comsec and 128 for the prefitted tug, not zero and
+not the threshold. Net cooling drains the external store before the internal
+one, at half rate (`heat_loss_factor=0.5`). Both stores clamp at the
+threshold. Over the threshold every non-heatsink subsim is capped at 0.75
+efficiency and weapons refuse to fire; hull damage `(total - 500) * 0.08` (per
+frame, no dt term in the original) only applies while the *external* store is
+at least half the total -- a ship can never burn itself, only a sun or planet
+can kill it. The HUD thermometer is `total / 500 * 0.8` clamped to 1, so
+internal-only overheat pegs at 0.8 and the top fifth of the gauge is sun
+territory. Sources: `0x1003bbd0`, `0x100300c0`, `0x10068380`, `0x1006ab90`,
+`0x1002ee90`, `0x10075f60`, `0x1003cc00`, `0x10108890`; constants in
+`docs/combat.md` section 8.
+
 ---
 
 ## 6. Factions

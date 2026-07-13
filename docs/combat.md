@@ -316,32 +316,112 @@ is set, `hull += rate * dt` clamped to max.
 ### Heat
 
 `flux.ini [icShip]`: `heat_gain_factor=1`, `heat_loss_factor=0.5`,
-`heat_damage_threshold=500`, `heat_damage_rate=0.08`.
+`heat_damage_threshold=500`, `heat_damage_rate=0.08` (the PE's compiled-in
+defaults, overridden by that INI, are gain 1.0 `0x1015d5b4`, loss 1.0
+`0x1015d5b8`, threshold 500 `0x1015d5bc`, rate 0.1 `0x1015d5c0`).
 
-Two heat stores (`+0x288`, `+0x28c`), both clamped to the threshold. The net
-`heat_rate` the subsims accumulated is applied each frame (gain factor if
-positive, loss factor if negative), and
+Heat is **not** a normalized temperature: it is a raw accumulator in the same
+units as the subsims' `heat_rate` (points per second), living in two stores on
+`icShip` -- **internal** `+0x288` (`InternalHeat`, fed by the ship's own
+subsims and beam fire) and **external** `+0x28c` (`ExternalHeat`, fed only by
+sun/planet proximity). `TotalHeat` (`0x10002b30`) is their sum. There is no
+authored "rest value": the rest value is the *equilibrium* where the
+heatsink's ramped cooling matches the fitted subsims' output (below).
+
+**Sources.** Each frame `iiShipSystem::Simulate` (`0x1003bbd0`, the block at
+`0x1003bda6`) makes every live subsim with `heat_rate > 0` call
+`icShip::AddHeatRate(HeatRate() * power_ratio)` -- the same 0..1 power ratio
+that scales its efficiency, so a browned-out device also runs cooler. On top
+of that a firing beam projector adds internal heat directly:
+`icBeamProjector`'s fire path (`0x100300c0`, the beam-drain block) does
+`ship.internal += sqrt(beam.damage_rate) * heat_scale * dt` while the beam is
+on (`heat_scale=5`, `flux.ini [icBeamProjector]`; the static's compiled-in
+default is 1.0 at `0x1015b2c4`; `damage_rate` is the `icBeam` field at
+`+0x1e0`, property map at `0x10064f20`). `icCannon` registers the same
+`heat_scale` property (static at `0x1015b09c`, `flux.ini [icCannon]` sets 5)
+but **no code reads it** -- PBC fire adds no heat beyond the mount's own
+`heat_rate`.
+
+**Sun and planet proximity** feed the *external* store, and only for the
+player's ship -- both Thinks go through `icPlayerPilot::m_p_instance`:
 
 ```
-total = heat + heat_external
-if (total > 500 && heat_external >= total * 0.5)
-    ApplyDamage((total - 500) * 0.08, src=3)
+icPlanet::Think 0x10068380 / icSun::Think 0x1006ab90, every frame:
+d = max(distance_to_centre - radius, 0)
+if (d < radius * heat_radius_multiplier)                ; 0.5, 0x1011af58
+    t = 1 - d / (radius * heat_radius_multiplier)
+    external += t^2 * heat_multiplier * dt              ; planet: 10000, 0x1011af54
+    external += t^2 * heat_multiplier * 10 * dt         ; sun: the same * 10, 0x101190c0
 ```
 
-`icHeatSink::Simulate` (`0x1002ee90`) is what cools: it calls
+`m_heat_radius_multiplier` / `m_heat_multiplier` are **exported const floats**
+(`?m_heat_radius_multiplier@icPlanet@@1MB`), not INI-tunable in the shipped
+build.
+
+**Dissipation.** `icHeatSink::Simulate` (`0x1002ee90`) is what cools: it calls
 `AddHeatRate(-heat_loss_rate * ramp)`, where the ramp is
 
 ```
-knee = heat_damage_threshold * 0.9              ; 450
-ramp = 1 - (total - knee)^2 / knee^2   , total < knee, floored at 0.2
+knee = heat_damage_threshold * 0.9              ; 450, 0x1011951c
+ramp = 1 - (total - knee)^2 / knee^2   , total < knee, floored at 0.2 (0x101184ac)
 ramp = 1                               , total >= knee
 ```
 
 so a heatsink loafs at 20% of its rated `heat_loss_rate` on a cold ship and only
-works flat out as the ship approaches its damage threshold.
+works flat out as the ship approaches its damage threshold. Note `0x1002ee90`
+has **no destroyed/off gate** -- the base `Simulate` bails out for a dead
+subsim, but the cooling call after it still runs, so a shot-out heatsink keeps
+radiating.
 
-Once the ship is over the threshold, **every** non-heatsink subsim is capped at
-0.75 efficiency.
+**Integration** (`icShip::SimulateSystems 0x10075f60`, the tail at
+`0x10076060`): the per-frame net `heat_rate` accumulator (`+0x284`, reset to 0
+at the top of every frame) is applied as
+
+```
+if (rate <= 0)                             ; cooling
+    d = heat_loss_factor * dt * rate       ; <= 0
+    if (external >= -d)  external += d     ; external drains FIRST
+    else { internal += d + external; external = 0 }   ; spillover
+else                                       ; heating
+    internal += heat_gain_factor * dt * rate
+internal = clamp(internal, 0, threshold)
+external = clamp(external, 0, threshold)   ; so total caps at 1000
+```
+
+**Damage** (same tail): with `total = internal + external`,
+
+```
+if (total > 500 && external >= total * 0.5)         ; 0.5 at 0x10117738
+    if (LastAggressor() == 0) SetLastAggressor(self)
+    ApplyDamage((total - 500) * 0.08, src=3)        ; NO dt term
+```
+
+The damage call has **no dt factor** -- it is applied once per frame, so heat
+damage in the original engine is frame-rate dependent. Because the condition
+needs `external >= total/2`, a ship can never burn itself: internal-only heat
+pegs at the threshold and merely degrades it (below). Only sun/planet heat
+kills, which is what makes sun-diving lethal.
+
+**Overheat.** Once `total >= threshold`, every non-heatsink subsim is capped at
+0.75 efficiency (`0x10117d8c`), and `iiWeapon::Simulate` (`0x1003cc00`) sets
+flag `0x200` on every weapon, which blocks fire.
+
+**HUD normalization.** The HUD's player feed (`0x10108890`) computes the
+thermometer as `TotalHeat / heat_damage_threshold * 0.8` clamped to 1 -- the
+0.8 lives at `0x10163efc`. Internal-only overheat therefore pegs the needle at
+0.8; it hits 1.0 at `total = 625`, which requires external heat. The
+base-screen status panels (`0x100e07f0`) use `* 0.75` instead and flag
+"overheat" at `frac >= 0.75`, i.e. exactly at the threshold. Total heat also
+leaks into the ship's sensor brightness: `icShip::Brightness` (`0x10075420`)
+adds `total * 0.4 / threshold` (`0x10117558`).
+
+**Rest value.** With the above, a fitted ship idles where
+`sum(heat_rate) = heat_loss_rate * ramp(total)`. The prefitted comsec
+(`comsec_prefitted.ini`: 100 powerplant + 250 thrusters + 10 sensors + 30
+autorepair + 300 LDS + 60 PBC + 10 CPU = 760/s against `heatsink1`'s 2000)
+settles at `total = 450 * (1 - sqrt(1 - 760/2000)) = 95.7`, i.e. 0.153 on the
+HUD gauge; the prefitted tug (2190/s against `heatsink5`'s 4500) at
+`total = 127.6`, gauge 0.204.
 
 ---
 
@@ -446,9 +526,17 @@ Immediates read out of the PE with `tools/ghidra/readconst.py`:
 | `0x1011c664` | 0.98 | LDA deflect chance cap |
 | `0x101184ac` | 0.2 | invulnerable hull floor; also the heatsink ramp floor |
 | `0x1011951c` | 0.9 | heatsink knee, as a fraction of the heat threshold |
-| `0x10117d8c` | 0.75 | overheat efficiency cap; power drain usage term |
+| `0x10117d8c` | 0.75 | overheat efficiency cap; power drain usage term; the base-screens' heat panel scale |
 | `0x101191ec` | 0.25 | power drain base term; underpower threshold |
 | `0x10118494` | 3.0518e-05 | 1/32767, the `rand()` normaliser |
+| `0x10117738` | 0.5 | external share of total heat needed before heat damage |
+| `0x10163efc` | 0.8 | HUD thermometer scale on `total/threshold` (`0x10108890`) |
+| `0x10117558` | 0.4 | heat's contribution to sensor brightness (`0x10075420`) |
+| `0x101190c0` | 10.0 | the sun's extra factor on planet proximity heat |
+| `0x1011af54` | 10000.0 | `icPlanet::m_heat_multiplier` (exported const) |
+| `0x1011af58` | 0.5 | `icPlanet::m_heat_radius_multiplier` (exported const) |
+| `0x1015b09c` | 1.0 | `icCannon::m_heat_scale` default (flux.ini sets 5; **unused by any code**) |
+| `0x1015b2c4` | 1.0 | `icBeamProjector::m_heat_scale` default (flux.ini sets 5) |
 
 ### `iiShipSystem` layout
 
@@ -509,3 +597,5 @@ Not recovered. **Do not fill these in with plausible values.**
   which ones are permanently removed rather than merely knocked to 0 hp.
 - **The reactor's spin-up factor** (`icReactor+0x9c`) and its boost mode
   (`+0x84`/`+0x88`), which scale `output_power`.
+
+---
