@@ -206,9 +206,9 @@ extends RefCounted
 # @element-stub icCargoPod -- covered-elsewhere: spawned as ordinary sims from their INI (natives/world.gd sim.Create; ipilotsetup.generic_cargo_pod)
 # @element-stub icBeamProjector -- GENUINE GAP: beam weapons (antimatter beam, mining laser, comms laser -- data/ini/subsims/systems)
 # @element-stub icBeam -- GENUINE GAP: the beam sim a projector fires
-# @element-stub icSlugThrower -- GENUINE GAP: slug-thrower guns (assault/fortress cannon INIs)
-# @element-stub icTurret -- GENUINE GAP: turret guns -- station and gunstar defence (nps_turret_*.ini); also behind the ihabitat.SetArmed stubs
-# @element-stub icTurretShip -- GENUINE GAP: turret-ship (gunstar) hulls
+# (icSlugThrower stays a stub: its @element-stub marker is in turrets.gd)
+# (icTurret is really built: its @element marker is in turrets.gd, with iiGun/icBeamProjector/icBeam)
+# (icTurretShip stays a stub: its @element-stub marker is in turrets.gd)
 # @element-stub icAggressorShield -- GENUINE GAP: the player's aggressor-shield device
 # (icMagazine is really built: its @element marker is in missiles.gd)
 # (icMissileMagazine is really built: its @element marker is in missiles.gd)

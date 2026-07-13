@@ -164,6 +164,15 @@ var cms: Array = []       # live icCounterMeasure records
 var _trail_mats: Dictionary = {}
 var _ai_mags: Dictionary = {}  # AiShip instance id -> Array of magazine dicts
 
+func _ready() -> void:
+	# The turret/beam manager (turrets.gd) rides along with the missile
+	# system: main.gd builds weapons + missiles, and the turret battery layer
+	# arrived later, so it bootstraps itself here rather than editing main.
+	if main != null and Turrets.instance == null:
+		var t := Turrets.new()
+		t.main = main
+		add_sibling.call_deferred(t)
+
 # =============================================================================
 # magazines -- the fire cycle (iiWeapon::Simulate 0x1003cc00 ->
 # AttemptToActivateWeapon 0x1003ccb0 -> IsReadyToFire -> Fire)

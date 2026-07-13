@@ -739,11 +739,54 @@ func _hab_population(_t, a: Array) -> Variant:
 	# generators' "is anybody home" gates behaving.
 	return 5000 if _is_habitat(_sim(a[0])) else 0
 
-# @stub ihabitat.SetArmed
-# @stub ihabitat.SetArmedWithTarget
+# @native ihabitat.SetArmed
+func _hab_set_armed(_t, a: Array) -> Variant:
+	# ihabitat.dll @ 0x10002840: armed -> iiSim::ConfigureWeapons(1, 0, 0)
+	# (every turret to AUTO in its authored mode), disarmed ->
+	# ConfigureWeapons(0, 0, 1) = iiSim::LockDownWeapons (fire mode 0, the
+	# turrets slew back to stow). turrets.gd carries the recovered handler
+	# (iwar2.dll @ 0x1007b8a0).
+	var s = _sim(a[0])
+	if s == null or Turrets.instance == null:
+		return 0
+	var armed: bool = a.size() > 1 and PogVM._truthy(a[1])
+	if s.node is AiShip:
+		if armed:
+			Turrets.instance.arm_ship(s.node, null)
+		else:
+			for b in Turrets.instance.batteries:
+				if b["owner"] == s.node:
+					b["armed"] = false
+					b["locked"] = null
+	elif not s.rec.is_empty():
+		if armed:
+			Turrets.instance.arm_station(s.rec, null)
+		else:
+			Turrets.instance.disarm_station(s.rec)
+	return 0
+
+# @native ihabitat.SetArmedWithTarget
+func _hab_set_armed_with_target(_t, a: Array) -> Variant:
+	# ihabitat.dll @ 0x10002910: iiSim::ConfigureWeapons(1, target, 0) --
+	# every turret goes to SetMode(1) (0x10033800) with the target id in its
+	# fire-request slot (+0x84).
+	var s = _sim(a[0])
+	var t = _sim(a[1]) if a.size() > 1 else null
+	if s == null or Turrets.instance == null:
+		return 0
+	var target: Node3D = null
+	if t != null and t.node is Node3D and is_instance_valid(t.node):
+		target = t.node
+	if s.node is AiShip:
+		Turrets.instance.arm_ship(s.node, target)
+	elif not s.rec.is_empty():
+		Turrets.instance.arm_station(s.rec, target)
+	return 0
+
 # @stub ihabitat.SetReactiveFunction
 func _hab_noop(_t, _a: Array) -> Variant:
-	# Station turrets: stations have no weapons in the remaster yet.
+	# SetReactiveFunction registers a POG callback the engine runs when the
+	# habitat is attacked; the reactive-callback plumbing is not built.
 	return 0
 
 
@@ -916,8 +959,8 @@ const _BINDINGS := {
 	"ihabitat.filterontype": "_hab_filter_type",
 	"ihabitat.filteronallegiance": "_hab_filter_allegiance",
 	"ihabitat.population": "_hab_population",
-	"ihabitat.setarmed": "_hab_noop",
-	"ihabitat.setarmedwithtarget": "_hab_noop",
+	"ihabitat.setarmed": "_hab_set_armed",
+	"ihabitat.setarmedwithtarget": "_hab_set_armed_with_target",
 	"ihabitat.setreactivefunction": "_hab_noop",
 
 	"ilagrangepoint.cast": "_lp_cast",

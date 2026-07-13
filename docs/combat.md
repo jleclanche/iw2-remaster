@@ -887,3 +887,355 @@ Not recovered. **Do not fill these in with plausible values.**
   it (`icBullet` does); rockets get velocity from `launch_speed` + thrust.
 
 ---
+
+## 11. Turrets and guns
+
+Class map (registrations in `iwar2.dll`):
+
+```
+iiWeapon                 (property map 0x1003c6d0: fire_position_translation
+  |                       +0x88, fire_position_rotation +0x94; ctor 0x1003c860:
+  |                       fire MODE +0x7c default 1 = player trigger)
+  iiGun         reg 0x10034ba0, ctor 0x10034ea0, 0xd0 bytes  the ballistic gun
+    icCannon    the fixed cannon (weapons.gd's PBC; +0xd0 capacity/+0xd4 cost)
+    icSlugThrower  ctor 0x10032660: iiGun + max_ammo_count +0xd0 / ammo_count
+                +0xd4 (ints); Fire 0x100327f0 decrements, IsReadyToFire
+                0x10032750 returns 8 on empty. Simulate 0x10032730 pins usage 1.
+    icTurret    reg 0x10032c50, ctor 0x10032d80, 0x114 bytes  the slewing gun
+icShip
+  icTurretShip  reg 0x10033ea0, ctor 0x10034080, 0x330 bytes  a HULL that yaws
+                itself at its target (the player turret fighter)
+```
+
+### 11.1 iiGun -- the shared fire solution
+
+Property map (`0x10034c20`): `horizontal_fire_arc +0xac`,
+`vertical_fire_arc +0xb0` (degrees, full angle), `projectile_template +0xb4`,
+`refire_delay +0xb8`, `no_jitter +0xc4`, `sniper_zoom +0xc5`; statics
+`m_min_travel_time`, `m_min_speed_fraction`, `m_max_jitter_angle`,
+`m_max_jitter_radius` (`flux.ini [iiGun]`: 0.4 / 0.75 / 0.75 / 1.5).
+
+- **Load** (`0x10035060`): resolves the projectile prototype (must derive from
+  `icBullet`, class ptr `0x1016631c`); muzzle speed `+0xbc` = the bullet INI's
+  `speed` (`proto+0x1f4`), range `+0xc0` = `speed * lifetime` (`proto+0x1f0`).
+- **Simulate** (`0x10035030`): the refire clock `+0xc8` accumulates
+  `efficiency * dt` -- a damaged gun cycles slower.
+- **IsReadyToFire** (`0x10035120`): ready when
+  `TRIWeight * clock >= refire_delay` (0xd "recharging" otherwise; the ship
+  overheat check at vtable `+0x5c` returns 9 first).
+- **FindAimPoint** (`0x10035170`, static): `travel = dist / muzzle_speed`
+  floored at `m_min_travel_time` (0.4 s); the SOLVED speed `dist / travel` is
+  floored at `0.75 * muzzle_speed` (`0x10117d8c` -- the compiled-in value; the
+  registered `m_min_speed_fraction` static carries the same 0.75 from
+  flux.ini). `aim = target_pos + target_vel * travel`. The bolt then launches
+  at the solved speed, and `Fire` (`0x100357e0`, the tail at `0x10035ad0`)
+  scales its `lifetime` and `half_time` by `muzzle_speed / solved` (times
+  TRIWeight on lifetime and damage) -- range in metres is preserved; a
+  close-in shot flies a slower, longer-lived bolt.
+- **IsInFireArc** (`0x10035270`): the solution direction (muzzle-local) must
+  satisfy `atan(|x|/z) <= horizontal_fire_arc/2` and `atan(|y|/z) <=
+  vertical_fire_arc/2` (degrees x 57.2958 `0x10119924`; a negative atan gets
+  +pi `0x10119464`, so a target behind always fails).
+- **ComputeFiringSolution** (`0x10035310`): player guns with auto-aim off
+  (`pilot+0x9c == 0`) fire straight ahead, always true. Otherwise:
+  `FindLocalTarget` (`0x1003d7d0`) -> range gate (`+0xc0`) -> **the AI miss
+  model**: unless `no_jitter`, for a target of radius >= 40 m (`0x1011849c`),
+  roll `FcRandom::Int(0, 4 - pilot_skill)`; on > 0 push the aim point
+  `sin(rand(0..1)^2 * m_max_jitter_angle * 2deg)` (`2deg = 0.0349066 @
+  0x10119adc`) times the octagonal-norm ship-to-target distance
+  (`0x101191f0/0x101191ec`), capped at `target_radius * m_max_jitter_radius`,
+  in a random unit direction. A pilotless gun (station, gunstar) rolls 0..4:
+  **80% of its shots are jittered**. Then FindAimPoint + IsInFireArc.
+- **Fire** (`0x100357e0`): clock = 0; clone the bullet prototype, owner
+  `+0x1dc` = strong-root id, position = world muzzle + solution direction x
+  `bullet_length * +0x20c`, velocity = ship velocity + solution x solved
+  speed, orientation = the solution direction.
+
+### 11.2 icTurret -- the slewing mount
+
+Property map (`0x10032960`, parent `iiGun`): `capacity +0xd0`,
+`shot_energy_cost +0xd4`, `reacquire_time +0xd8` (ctor default FLT_MAX),
+`turret_mode +0xdc` (int, default 0), `min_heading +0xe0` (-45),
+`max_heading +0xe4` (45), `min_elevation +0xe8` (0), `max_elevation +0xec`
+(45), `stow_heading +0xf0`, `stow_elevation +0xf4`,
+`max_heading_velocity +0xf8`, `max_elevation_velocity +0xfc` (deg/s, ctor 0).
+Runtime: reacquire clock `+0x100`, elevation `+0x104`, heading `+0x108`,
+locked target `+0x10c`, energy `+0x110` (ctor 0).
+
+The ctor (`0x10032d80`) sets subsim flags `|0x20` (switchable), `&~2` (on) and
+**`|0x100` (destroy-on-death)** -- a turret shot below 0 hp is removed from
+the ship outright (this resolves part of the section-6 "flag 0x100" unknown).
+
+`turret_mode` (the INI comments in `nps_turret_*.ini` match the code):
+`0` full control (self-targeting), `1` designated target, `2` point defence.
+`SetMode` (`0x10033800`) always forces fire mode `+0x7c = 2` (AUTO); mode 1
+parks the fire request in `+0x10c`; modes 0/2 set the reacquire clock to
+`reacquire_time + 1` so the next Simulate retargets immediately.
+
+**Simulate** (`0x10033570`, recovered by raw disassembly -- Ghidra dropped it):
+
+```
+iiGun::Simulate(dt)                          ; refire clock
+if (!IsWorking() or ship overheat) -> skip aiming
+mode 0/2:  reacq += dt; if reacq > reacquire_time { FindNewTarget; reacq = 0 }
+mode 1:    if fire request != locked target: reacq += dt;
+           if reacq > reacquire_time { fire request = locked; reacq = 0 }
+target = FindInstance(fire request +0x84)
+if target:
+    ComputeAnglesToTarget (0x10033180: FindLocalTarget -> iiGun::FindAimPoint
+        lead -> heading/elevation degrees, 0x10033000)
+    if within min/max heading+elevation (0x10033420): Slew(h, el, dt)
+    else if (mode 1 && locked): FindNewTarget       ; designated out of reach
+    else: slew to stow
+else: slew to stow (0x10033470: step by max_*_velocity * dt, no shortest-path)
+energy: if energy < capacity { energy += TRIWeight * efficiency * power * dt,
+        clamp; SetUsage(1) } else SetUsage(0)
+```
+
+**The shot energy bank only exists on powered turrets**: `IsReadyToFire`
+(`0x10033790`) returns 4 ("no energy") only when `power > 0` and
+`energy < shot_energy_cost`; every `nps_turret_*.ini` has no `power` key, so
+NPC turrets never gate on energy (the player point-defence/dock-on turrets,
+`power=50`, do). `Fire` (`0x100337d0`) is `energy -= shot_energy_cost` then
+`iiGun::Fire`. GetHUDInfo (`0x10033db0`) reports `energy/capacity * 100`.
+
+**FindNewTarget** (`0x10033890`): scans every world sim within **25 km**
+(6.25e8 m^2), skipping `icGeography`. Mode 2 takes only missiles (sim type
+`+0x194 == 8`) whose **aggressor** is hostile; other modes take ships (type >
+10). Hostile = faction FeelingType 0, OR anything on the player's contact
+list when the turret is on the player's own ship (`0x10033de0`). It prefers
+the nearest candidate inside the slew limits (`0x10033270` -> `0x10033420`)
+and falls back to the last hostile seen even out of arc.
+
+**The muzzle follows the slew**: `InternalOrientation` (`0x10033af0`) builds
+the quaternion from `heading * 0.0174533` (`0x10119930`) and `-elevation`
+(`0x10119934`); SetAngles (`0x10033bd0`) drives the avatar's `heading`
+channel (`h / 360`, `0x1011993c`) and `elevation` channel (`0.5 - el / 180`,
+`0x10119938`) -- that is what visibly turns the turret model.
+
+**Fire cycle summary**: `iiWeapon::Simulate` (`0x1003cc00`) calls
+`AttemptToActivateWeapon` (`0x1003ccb0`) every frame; in AUTO mode the target
+comes from the fire request `+0x84` (or the ship's contact-list target, only
+if hostile when the ship has no AI pilot); mode 0 returns 0xc; an LDS-engaged
+ship returns 0xb; CFS failure in AUTO is silent (9). So a turret fires the
+moment its slewed muzzle brings the (possibly jittered) lead point inside its
+1-degree fire arc, at most once per `refire_delay`.
+
+### 11.3 What mounts turrets
+
+- **Gunstars** are ordinary `icShip`s (`sims/ships/navy/gunstar*.ini`,
+  6000 hp / armour 90) with 4 icTurrets on `hardpoint_gun_1..4` nulls
+  authored in `sims/ships/common_setups/gunstar.lws` -- the nulls sit on the
+  hull faces with their +Y outward, so each turret covers one hemisphere
+  face and the four together cover the sphere. The map's "gunstar" habitat
+  category (kind 6) is such a ship parked as a station.
+- **Stations** (`sims/stations/*.ini`) mount `nps_pseudo_turret.ini` -- an
+  **icCannon** with 90-degree fire arcs, i.e. a fixed gun pretending
+  (the custom gunstar station, `sims/stations/custom/gunstar.ini`, uses 4).
+- Warships: `heavy_destroyer_turret.ini`, `old_destroyer_turreted.ini`,
+  `corp_cruiser_turrets.ini` mount `nps_turret_cannon_*` icTurrets.
+
+### 11.4 ihabitat.SetArmed -- iiSim::ConfigureWeapons
+
+The POG natives live in their own wrapper DLL. `ihabitat.dll @ 0x10002840`
+(SetArmed) / `@ 0x10002910` (SetArmedWithTarget) resolve the habitat (must be
+`icStation`-derived) and call virtual `+0xfc`:
+
+```
+SetArmed(hab, true)          ConfigureWeapons(1, 0, 0)
+SetArmed(hab, false)         ConfigureWeapons(0, 0, 1)   = LockDownWeapons
+SetArmedWithTarget(hab, t)   ConfigureWeapons(1, t, 0)
+```
+
+`iiSim::ConfigureWeapons(bool armed, iiSim* target, bool lockdown)`
+(`0x1007b8a0`), for every `iiWeapon` subsim:
+
+- lockdown -> fire mode 0 (off; turrets slew to stow);
+- on the player's true ship, magazines and slug throwers stay manual (mode 0
+  here means "the pilot's trigger");
+- otherwise AUTO (mode 2) if the weapon's muzzle points backwards (muzzle
+  forward . ship forward <= 0), or it is an `icCounterMeasureMagazine`, or an
+  `icTurret`; anything else gets `armed + 1`;
+- with a target: fire request `+0x84` = target id, icTurrets `SetMode(1)`;
+  without: `+0x84 = 0`, icTurrets keep their authored mode (2 stays point
+  defence, else 0). `ConfigureWeaponsForAI` (`0x10001590`) is the same call
+  with the AI pilot's victim -- an engaging AI warship arms its turrets this
+  way.
+
+The shipped scripts (`istation.pog`) arm stations exclusively through
+`SetArmedWithTarget` when a hostile closes within **15 000 m** (the
+station-protection handler) and disarm with `SetArmed(x, 0)` when the player
+leaves the area.
+
+### 11.5 icTurretShip (the turret fighter) -- NOT BUILT
+
+`0x330`-byte icShip subclass; props `max_heading_velocity +0x300` and static
+`sensor_update_time` (`flux.ini [icTurretShip]` = 1). `Think` (`0x10034700`,
+raw-disassembled): when enabled (`+0x318`), mode 2 tracks the contact-list
+target (refreshed every `sensor_update_time`), mode 3 a designated id
+(`+0x324`); `FUN_10034200` lead-solves at a **hardcoded 6000 m/s** and
+`FUN_10034190` yaws the whole hull at `max_heading_velocity`. Only
+`sims/ships/player/turret_fighter*.ini` use it; the loadout system that
+launches turret fighters is not built (see the icMissileMagazine unknown in
+10.10), so the remaster stubs the class.
+
+---
+
+## 12. Beam weapons
+
+```
+iiWeapon
+  icBeamProjector  reg 0x1002f980, ctor 0x1002fc50, 0xd4 bytes   the mount
+iiSim
+  icBeam           reg near 0x10064f20 (map), ctor 0x100650a0, 0x228 bytes
+                   the BEAM ITSELF IS A SIM riding the muzzle
+```
+
+### 12.1 icBeamProjector
+
+Property map (`0x1002fa20`): `beam_template +0xac`, `capacity +0xb0`,
+`beam_power_drain +0xb4`, `min_fire_energy +0xb8`, `ai_charge_per_second
++0xbc`, static `heat_scale` (`flux.ini [icBeamProjector]` = 5; compiled
+default 1.0 `0x1015b2c4`). Runtime: range `+0xc0`, energy `+0xc4`, live beam
+sim id `+0xc8`, firing flag `+0xcc`, live-last-frame flag `+0xcd`, scripted
+fire timer `+0xd0`.
+
+- **Load** (`0x10030370`, raw-disassembled): creates the icBeam from
+  `beam_template`, keeps its id at `+0xc8`, and range `+0xc0` = the beam's
+  `length` (`beam+0x1d8`). `Range` (`0x100302b0`) returns the live beam's
+  length, or **1500** (`0x1011961c`) with none.
+- **Simulate** (`0x1002fee0`, raw-disassembled): the scripted-fire timer
+  `+0xd0` counts down, holding the trigger (`+0xa8`) while it runs. Then
+  `prev = firing(+0xcc); firing = 0; live(+0xcd) = prev`. **While not live**:
+  recharge `energy += TRIWeight * efficiency * power * dt` up to capacity
+  (usage 1 while charging, else 0); in AUTO mode additionally the free NPC
+  charge `energy += ai_charge_per_second * dt` -- and **only at FULL capacity
+  with a fire-request target does an AUTO beam light up** (`+0xcc = 1`).
+  Then `iiWeapon::Simulate`, the avatar's fire channel, force feedback.
+- **IsReadyToFire** (`0x10030480`): with `power > 0`, needs
+  `energy > min_fire_energy` to start; **once live it fires down to zero**
+  (`+0xcd` switches the test). A drawless NPC projector (power=0) skips the
+  gate entirely.
+- **The fire path** (`0x100300c0`, the vtable `+0x54` trigger): on activation,
+  if the beam is not yet live: `energy <= min_fire_energy` -> stop (result
+  4), else start the beam -- owner `beam+0x1ec` = strong-root id, target
+  `beam+0x1f0` = fire request, ramp reset (`0x10065830`: `+0x224 = 0.01`),
+  add the beam sim to the world. Every firing frame: pin the beam to the
+  world muzzle (position + orientation); **if `|ai_charge_per_second| <
+  1e-6`** (`0x101178fc`) add ship internal heat
+  `sqrt(beam.damage_rate) * heat_scale * dt` (so the self-charging NPC beams
+  run cold, the player's don't -- section 6); drain
+  `energy -= beam_power_drain * dt`, at <= 0 clamp to 0 and stop.
+- **CFS** (`0x100304e0`): the target must sit in the muzzle **cylinder**:
+  ahead (`z > 0` in muzzle frame), `dist^2 <= range^2`, and `|x|` and `|y|`
+  each within the target's radius. `SetFireRequest` (`0x100305e0`) also
+  scales the live beam's damage rate by TRIWeight (`beam+0x1e0 =
+  TRIWeight * beam+0x1e4`).
+
+### 12.2 icBeam -- the damage
+
+Property map (`0x10064f20`): `length +0x1d8`, `penetration +0x1dc`,
+`damage_rate +0x1e0`, `antimatter_based +0x1e8`. Runtime: INI damage rate
+copy `+0x1e4`, owner `+0x1ec`, target `+0x1f0`, nearest-hit distance
+`+0x1f8` (reset to FLT_MAX every frame), hit sim `+0x1f4`, hit position
+`+0x200`, hit normal `+0x218`, ramp `+0x224` (ctor 0.01). The ctor also sets
+`SetRadius(length)` -- the whole beam is one sim for the collision system.
+
+- **OnCollision** (`0x10065840`): records the CLOSEST contact along the beam
+  axis (`dot(forward, contact - muzzle)`), its position and normal.
+- **Think** (`0x100652c0`, raw-disassembled): the ramp grows `+= dt / 0.75`
+  (`0x1011ab30`) to 1 -- the beam VISUAL extends to full length over 0.75 s
+  (`avatar z-scale = length * ramp * 0.5`, also `Integrate 0x100656f0`). If a
+  contact was recorded: the visual shortens to the hit
+  (`ramp = hit_dist / length`), an impact effect spawns at the hit point
+  (effect type 4 through the manager at `0x10173908`), and
+
+  ```
+  victim->ApplyWeaponDamage(damage_rate * dt,          ; CONTINUOUS
+                            penetration * 7.5,         ; 0x1011ac34
+                            hit_pos, hit_dir, this, owner, src=1)
+  ```
+
+  **eDamageSource 1 skips the LDA loop** (`icShip::ApplyWeaponDamage
+  0x10073e2e` only scans LDAs for source 0): a beam cannot be
+  shield-deflected. Armour still divides it -- but at `penetration * 7.5`
+  (antimatter beam: 70 -> 525 effective) **no shipped hull's armour reduces a
+  beam**. Subsim criticals apply every frame, which is why beams shred
+  subsystems. There is no ramp gate on the damage: the sweep hits at full
+  authored length from the first frame.
+
+### 12.3 The authored beams
+
+| beam INI (`sims/weapons/`) | length | pen | damage_rate | projector (`subsims/systems/`) | capacity | drain | min_fire | ai_charge | power |
+|---|---|---|---|---|---|---|---|---|---|
+| `antimatter_beam` | 3000 | 70 | 4000 | `player/antimatter_beam` | 1800 | 300 | 300 | -- | 250 |
+| `capital_ship_beam` | 10000 | 70 | 6000 | `nonplayer/nps_capital_beam_weapon` | 100 | 0 | 1 | 100 | 0 |
+| `cutting_beam` | 2500 | 60 | 1500 | `player/cutting_beam` | 1500 | 250 | 250 | -- | 150 |
+| `nps_cutting_beam` | 2500 | 60 | 1000 | `nonplayer/nps_beam_weapon` | 1800 | 500 | 10 | 300 | 0 |
+| `mining_beam` | 1500 | 55 | 1000 | `player/mining_laser` (also `nonplayer/nps_mining_laser`) | 1200 | 200/300 | 100/200 | -- | 100/0 |
+| `comms_laser_beam` | 2500 | 20 | 300 | `player/comms_laser` | 900 | 150 | 100 | -- | 75 |
+
+So the NPC cutting beam burns `capacity/drain = 3.6 s` for 3600 total damage,
+then recharges 6 s; the capital beam (drain 0) simply never stops while it
+has a solution. `antimatter_based` marks the beam for the antimatter-immunity
+checks (`IsAntimatterBasedWeapon`, vtable `+0xdc` reads `+0x1e8`).
+
+The visual is an `icBeamAvatar` axial billboard (docs/effects.md): half-width
+= the avatar's authored x-scale (`beam_antimatter` 1.8 m, `beam_capital`
+10 m), length driven by the engine, u scrolling along the beam; glow colours
+from the avatar lights (antimatter/capital purple 149,1,211; mining/comms
+cyan 62,220,255; cutting orange 253,165,0). The exact LWS texture bindings
+did not survive the avatar extract; the remaster matches by name
+(`am_beam`, `beam_blue`, `cutting_beam` under `images/sfx`).
+
+### 12.4 Turret and beam constants
+
+| address | value | what |
+|---|---|---|
+| `0x10033890` (imm) | 6.25e8 | FindNewTarget scan range^2 (25 km) |
+| `0x1011849c` | 40.0 | min target radius for the jitter roll |
+| `0x10119adc` | 0.0349066 | 2 deg in rad, the jitter angle unit |
+| `0x10117d8c` | 0.75 | solved-speed floor fraction (= flux.ini min_speed_fraction) |
+| `0x10119924` | 57.2958 | rad->deg in every angle path |
+| `0x10119930` | 0.0174533 | heading deg->rad (InternalOrientation) |
+| `0x10119934` | -0.0174533 | elevation deg->rad (negated) |
+| `0x1011993c` | 0.00277778 | 1/360, avatar heading channel |
+| `0x10119938` | 0.00555556 | 1/180, avatar elevation channel |
+| `0x1011ab30` | 0.75 | beam ramp time (s to full length) |
+| `0x1011ac34` | 7.5 | beam penetration multiplier |
+| `0x1011961c` | 1500.0 | icBeamProjector::Range fallback |
+| `0x1011a70c` | 0.01 | beam avatar z-scale factor (x0.5) |
+| `0x1015b2c4` | 1.0 | icBeamProjector::m_heat_scale default (flux.ini 5) |
+| `0x101178fc` | 1e-06 | the epsilon on the ai_charge heat gate |
+| `flux.ini [iiGun]` | 0.4 / 0.75 / 0.75 / 1.5 | min_travel_time / min_speed_fraction / max_jitter_angle / max_jitter_radius |
+| `flux.ini [icTurretShip]` | 1.0 | sensor_update_time |
+
+### 12.5 Turret/beam unknowns
+
+Not recovered. **Do not fill these in with plausible values.**
+
+- **The heading fold.** `0x10033000` folds heading into [0, 360) and mirrors
+  elevation past +/-90, yet the authored limits are signed
+  (`min_heading = -160`). How the limit test (`0x10033420`, a plain
+  `min <= x <= max`) meets the folded angle was not reconciled; the remaster
+  keeps heading signed in (-180, 180], which makes the authored limits test
+  directly and matches the arcs the INIs describe.
+- **The mount null convention.** The engine composes the muzzle from the
+  setup-scene null's orientation x the turret's slew quaternion. Our LWS
+  hpb -> basis conversion (`ExplosionFx._hpb_basis`, the repo's established
+  reading of the same scene data) puts the gunstar turret's azimuth axis on
+  the null's +Y (outward), which is geometrically coherent, but the axis
+  convention was not verified against the renderer.
+- **`FUN_1002f900`** (`0x1002f900`): an AI utility on the beam projector
+  returning `TRIWeight * (x/min_fire)^2 * ai_charge` clamped to 0.25..5
+  (`0x1015b214/0x1015b210`) times the ship's max hull -- a target-priority
+  weight, caller not traced.
+- **The icBeamAvatar textures and scroll speed** for the weapon beams (the
+  `speed` property of each beam avatar's LWS node): the setup.gltf extract
+  keeps class + lights + scale but not the texture/speed bindings.
+- **`icTurretShip` beyond Think** (`0x100348d0` Simulate, the `+0x2b0`
+  contact refresh via `0x1003ab00`): partially read, class stubbed.
+- **The impact-effect table** behind `0x100d3210` (beam sparks, effect
+  type 4).
+
+---

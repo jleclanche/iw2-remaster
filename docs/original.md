@@ -536,6 +536,40 @@ The original player controls: Space fires the selected weapon, Backspace
 cycles secondaries, I quick-fires the LDSI magazine. Full write-up with the
 per-class property maps: `docs/combat.md` section 10.
 
+## 5d. Turrets and beams
+
+Turrets: a turret is a gun on a slewing mount. Every gun solves the same
+fire solution: lead the target by `dist/speed` (min 0.4 s, bolt speed floored
+at 75%, with lifetime/half_time rescaled so range is preserved), jitter the
+aim point by pilot skill (a pilotless station gun jitters 80% of its shots,
+up to 1.5 x target radius -- that is why stations miss fighters), and fire
+only when the muzzle points within the authored fire arc (1 degree for real
+turrets, 90 for the stations' fixed pseudo-turrets). The turret itself
+re-targets the nearest hostile inside 25 km every `reacquire_time`, slews at
+`max_heading/elevation_velocity` inside authored heading/elevation limits,
+recharges `capacity` from ship power only when the INI gives it a `power`
+draw, and pays `shot_energy_cost` per shot. Point-defence mode (turret_mode
+2) targets hostile missiles instead of ships. Stations and gunstars are
+armed by the mission scripts through `ihabitat.SetArmed[WithTarget]` =
+`iiSim::ConfigureWeapons`: every turret goes to auto-fire with the given
+target designated; disarming stows them. An engaging AI warship arms its own
+turrets the same way. Turrets are destroy-on-death subsims: shot out is gone.
+
+Beams: a beam weapon is a projector subsim plus a beam SIM parked on its
+muzzle. The projector holds an energy bank (`capacity`); starting the beam
+needs `min_fire_energy`, holding it costs `beam_power_drain` per second and
+the beam stays on until the bank hits zero or the target leaves the muzzle
+cylinder (ahead, within `length`, inside the target's radius laterally). NPC
+beams self-charge (`ai_charge_per_second`) and only light up at FULL charge
+-- the burst/recharge rhythm you see fighting a beam destroyer is
+`capacity/drain` seconds on, `capacity/ai_charge` off. Damage is continuous:
+`damage_rate * dt` against the nearest hull on the ray, at `penetration x
+7.5` (nothing shipped resists it), source 1 -- shields never deflect a beam,
+and subsim criticals land every frame. Player-style beams (no ai_charge) heat
+the firing ship by `sqrt(damage_rate) * 5` per second. The beam visual grows
+to full length in 0.75 s and shortens to the hit point. Addresses and the
+constants table: `docs/combat.md` sections 11-12.
+
 ---
 
 ## 6. Factions

@@ -13,6 +13,9 @@ var _mech_fail := 0
 var _mech_t0 := 0.0
 var _mech_v0 := Vector3.ZERO
 var _mech_home := Vector3.ZERO
+var _mech_gs: AiShip = null      # turret platform (gunstar.ini)
+var _mech_drone: AiShip = null   # turret / beam target
+var _mech_beam: Dictionary = {}  # the beam mount under test
 
 func step(delta: float) -> void:
 	demo_t += delta
@@ -412,13 +415,127 @@ func _mechcheck(_delta: float) -> void:
 						_mech("missile-damage", false, "step=%.1f" % drop)
 					_mech_v0.x = m.target_ai.hull
 				m._fire_secondary()
-		14:
+		14:  # icTurret: a gunstar's nps_turret_pbc fires pbc_bolt on the
+			# recovered fire cycle (refire_delay 0.6 through clock += eff*dt,
+			# iiGun::Simulate 0x10035030 / IsReadyToFire 0x10035120)
+			_mech_gs = _mech_spawn("Gunstar", 6000.0,
+					m.ship.global_position - m.ship.global_transform.basis.z * 6000.0)
+			_mech_gs.setup_ini("sims/ships/navy/gunstar.ini", null)
+			# a small drone: radius < 40 m skips the iiGun jitter roll
+			# (0x1011849c), so every solution passes the 1-degree fire arc
+			# and the cadence is the bare refire clock. Offset off the mount
+			# plane: the gunstar's turret nulls put min_elevation=0 exactly
+			# on the equator, so a coplanar target sits on the limit.
+			_mech_drone = _mech_spawn("Drone", 100000.0, _mech_gs.global_position
+					+ Vector3(-600.0, 0.0, -2000.0))
+			_mech_drone.radius = 20.0
+			Turrets.instance.arm_ship(_mech_gs, _mech_drone)
+			_mech_next()
+		15:
+			var shots := _mech_turret_shots()
+			if shots.size() >= 4:
+				var battery: Dictionary = _mech_battery(_mech_gs)
+				var gun: Dictionary = battery["guns"][0]
+				var bolt: Dictionary = gun["bolt"]
+				_mech("turret-bolt", absf(float(bolt["damage"]) - 160.0) < 0.01
+					and absf(float(bolt["penetration"]) - 50.0) < 0.01
+					and absf(float(bolt["speed"]) - 6000.0) < 0.01,
+					"pbc_bolt %d/%d @ %d m/s" % [int(bolt["damage"]),
+						int(bolt["penetration"]), int(bolt["speed"])])
+				var lo := 1.0e9
+				var hi := 0.0
+				for i in range(1, shots.size()):
+					var dt_i := float(shots[i]) - float(shots[i - 1])
+					lo = minf(lo, dt_i)
+					hi = maxf(hi, dt_i)
+				# refire_delay 0.6 (nps_turret_pbc.ini), quantised to the
+				# physics tick
+				_mech("turret-refire", lo > 0.55 and hi < 0.75,
+					"interval %.3f..%.3f s" % [lo, hi])
+				m.kill_ai(_mech_gs)
+				_mech_next()
+			elif demo_t > 30.0:
+				_mech("turret-refire", false, "%d shots in %.0f s"
+					% [_mech_turret_shots().size(), demo_t])
+				m.kill_ai(_mech_gs)
+				_mech_next()
+		16:  # icBeamProjector/icBeam: nps_beam_weapon charges to capacity
+			# (1800 at ai_charge_per_second 300), then burns at
+			# beam_power_drain 500/s while applying damage_rate 1000/s --
+			# the burst is exactly capacity/drain * damage_rate = 3600
+			m.weapons.clear()  # no stale turret bolts against the drone
+			var ship := _mech_spawn("Beamship", 5000.0,
+					m.ship.global_position + m.ship.global_transform.basis.x * 6000.0)
+			_mech_drone.global_position = ship.global_position \
+					- ship.global_transform.basis.z * 1500.0
+			_mech_drone.velocity = Vector3.ZERO
+			_mech_drone.radius = 20.0
+			_mech_beam = Turrets._make_beam(
+					"ini:/subsims/systems/nonplayer/nps_beam_weapon", {},
+					Vector3.ZERO, Basis.IDENTITY)
+			Turrets.instance.batteries.append({"owner": ship, "rec": {},
+				"guns": [], "beams": [_mech_beam], "armed": true,
+				"locked": _mech_drone})
+			_mech_v0 = Vector3(_mech_drone.hull, 0.0, 0.0)
+			_mech_next()
+		17:
+			var burst := float(_mech_beam["burst_damage"])
+			if burst > 0.0 and not bool(_mech_beam["firing"]):
+				_mech("beam-burst", absf(burst - 3600.0) < 50.0,
+					"%.0f damage (capacity 1800 / drain 500 * rate 1000)" % burst)
+				var took := float(_mech_v0.x) - _mech_drone.hull
+				_mech("beam-damage", absf(took - burst) < 1.0,
+					"hull -%.0f (src=1: no LDA, bare hull here)" % took)
+				m.kill_ai(_mech_drone)
+				_mech_next()
+			elif demo_t > 30.0:
+				_mech("beam-burst", false, "energy=%.0f firing=%s after %.0f s"
+					% [float(_mech_beam["energy"]),
+						str(_mech_beam["firing"]), demo_t])
+				_mech_next()
+		18:
 			print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
 				else "%d FAILURES" % _mech_fail))
 			get_tree().quit(0 if _mech_fail == 0 else 1)
 	if demo_t > 300.0:
 		print("MECHCHECK: phase %d timeout" % demo_phase)
 		get_tree().quit(1)
+
+# a bare AiShip for the turret/beam phases: no INI (sys == null), so damage
+# lands on the raw hull pool and the numbers stay exact
+func _mech_spawn(dname: String, hp: float, at: Vector3) -> AiShip:
+	var ai := AiShip.new()
+	ai.main = m
+	ai.display_name = dname
+	ai.behavior = "idle"
+	ai.setup({"hit_points": hp, "speed": [1, 1, 1],
+		"acceleration": [1, 1, 1], "yaw_rate": 0.001, "pitch_rate": 0.001,
+		"roll_rate": 0.001})
+	m.add_child(ai)
+	ai.global_position = at
+	m.ai_ships.append(ai)
+	return ai
+
+func _mech_battery(ai: AiShip) -> Dictionary:
+	if Turrets.instance == null:
+		return {}
+	for b in Turrets.instance.batteries:
+		if b["owner"] == ai:
+			return b
+	return {}
+
+func _mech_turret_shots() -> Array:
+	var b := _mech_battery(_mech_gs)
+	if b.is_empty():
+		return []
+	# the drone is in some mounts' blind zone (elevation limits); read the
+	# busiest gun's timestamps
+	var best: Array = []
+	for g in b["guns"]:
+		var f: Array = g["fired"]
+		if f.size() > best.size():
+			best = f
+	return best
 
 # --- motion grid burst capture --------------------------------------------------
 

@@ -44,6 +44,8 @@ var radius := 60.0    # iiSim radius (+0x1c), the ship INI's radius= key
 var disrupt_time := 0.0       # icShip::Disrupt via icMissile::CheckForDisruption
 var disrupt_full := false     # full_disruption: everything, else shields only
 var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
+var ini_path := ""    # the authored ship INI (turrets.gd reads the record's
+					  # setup scene for the turret mount nulls)
 
 func setup(props: Dictionary) -> void:
 	load_stats(props)
@@ -51,17 +53,21 @@ func setup(props: Dictionary) -> void:
 	hull = hull_max
 	radius = float(props.get("radius", 60.0))
 
-func setup_ini(ini_path: String, model: Node3D = null) -> void:
+func setup_ini(path: String, model: Node3D = null) -> void:
 	# the authored hull: hit_points, armour and the full subsim list
-	var rec := ShipSystems.ship_record(ini_path)
+	ini_path = path
+	var rec := ShipSystems.ship_record(path)
 	if not rec.is_empty():
 		radius = float((rec.get("properties", {}) as Dictionary)
 				.get("radius", radius))
-	var fitted := ShipSystems.for_ship(ini_path)
+	var fitted := ShipSystems.for_ship(path)
 	if fitted.hull_max <= 0.0:
 		return
 	fitted.bind_model(model)
 	sys = fitted
+	# any fitted icTurret / icBeamProjector fires through the turret manager
+	# (turrets.gd scans main.ai_ships and arms them with the ship: an AI ship
+	# engaging arms its weapons, iiSim::ConfigureWeaponsForAI 0x10001590)
 
 func armour() -> float:
 	return sys.armour if sys != null else 0.0
