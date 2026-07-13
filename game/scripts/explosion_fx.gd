@@ -3,8 +3,7 @@ extends Node3D
 # Player for the original's composite effects, driven entirely by
 # data/json/sfx_effects.json (tools/iw2/sfx.py -> the 23 sfx/*.lws scenes plus
 # the icVisualEffects constants out of iwar2.dll). Nothing about an individual
-# effect is hardcoded here any more except the antimatter beam rig (see
-# AM_BEAM_RIG below); see docs/effects.md.
+# effect is hardcoded here any more; see docs/effects.md.
 #
 # A scene is a bag of nulls tagged <node template=ini||sfx|x|node> (a ParticleFx
 # system), <node class=icMovieAvatar url=... frame_count=N> (a flipbook),
@@ -53,24 +52,15 @@ const LDA_APEX := 4.0
 const LDA_RIM := 30.0
 const LDA_SEGS := 16
 
-# The antimatter beam rig, read from resource.zip:sfx/antimatter_explosion_
-# high_0.lws (sfx_effects.json only carries the beams' directions -- the
-# extractor drops their per-axis scale and the scaler/spinner parent chain;
-# see docs/effects.md "Open questions"). Two groups of four icBeamAvatars in a
-# tetrahedral fan (pitch -90, plus three at pitch 30 spaced 120 deg):
-#   fat:    widths 0.3/0.2/0.3/0.2, spinning +360 deg/2 s in heading AND
-#           pitch, scale envelope (0,0) (8,4) (35,3) (53,0) @ 30 fps
-#   skinny: width 0.05, heading offset 180, spinning -360 deg/2 s both axes,
-#           scale envelope (0,0) (10,4) (40,3) (60,0)
-# All beams are length 2 before scaling.
-const AM_BEAM_RIG := {
-	"fat": {"widths": [0.3, 0.2, 0.3, 0.2], "heading0": 0.0, "spin": TAU / 2.0,
-			"env": [[0.0, 0.0], [8.0, 4.0], [35.0, 3.0], [53.0, 0.0]]},
-	"skinny": {"widths": [0.05, 0.05, 0.05, 0.05], "heading0": PI, "spin": -TAU / 2.0,
-			"env": [[0.0, 0.0], [10.0, 4.0], [40.0, 3.0], [60.0, 0.0]]},
-}
-const AM_BEAM_LENGTH := 2.0
-const BEAM_TEXTURE := "images/sfx/searchbeam"
+# icBeamAvatar rigs (the antimatter spikes) are now fully data-driven:
+# sfx_effects.json carries each beam's per-axis LWS scale (`scale_xyz`,
+# x = half-width, z = length), its scaler envelope (`scale_keys`, from the
+# beam_scaler_thick/_thin nulls) and its spinner parent chain (`parents`:
+# FatBeamsH/FatBeamsP spin +360 deg/2 s in heading and pitch; SkinnyBeamsH
+# starts pitched 180 (unwinding to 0) while spinning -360 deg/2 s in heading,
+# SkinnyBeamsP -360 deg/2 s in pitch). The beam texture name is the node's
+# `texture` attribute under images/sfx/.
+const BEAM_TEXTURE := "searchbeam"  # fallback when a node carries no texture
 
 # The muzzle flash is not a particle system: avatars/standard_pbc/
 # setup_effects.lws is a lens-flare light parented to an
@@ -108,7 +98,7 @@ var _lights: Array = []      # [{node, envelope, intensity}]
 var _systems: Array = []     # [{fx, scale, keys}] -- animated emitter scalers
 var _shockwaves: Array = []  # [{a, b, tint, lifetime, keys, axis}]
 var _ldas: Array = []        # [{node, mat}]
-var _beams: Array = []       # [{node, dir_local, width, group}]
+var _beams: Array = []       # [{node, dir, width, length, keys, spinners}]
 
 static func table(base: String) -> Dictionary:
 	if not _table.is_empty():
@@ -257,7 +247,6 @@ func _build(main: Node3D, xform: Transform3D) -> void:
 		if not _frames.is_empty():
 			_build_movie(float((movie as Dictionary).get("scale", 1.0)))
 
-	var am_beam := 0
 	for a in _variant.get("avatars", []):
 		var av: Dictionary = a
 		match str(av.get("class", "")):
@@ -268,10 +257,11 @@ func _build(main: Node3D, xform: Transform3D) -> void:
 				_add_lda(base, av)
 				last_frame = maxf(last_frame, LDA_LIFETIME * _fps)
 			"icBeamAvatar":
-				# the antimatter spikes: the first four LWS beams are the fat
-				# group, the next four the skinny group (AM_BEAM_RIG)
-				_add_beam(base, av, "fat" if am_beam < 4 else "skinny", am_beam % 4)
-				am_beam += 1
+				_add_beam(base, av)
+				var bkeys: Array = av.get("scale_keys", [])
+				if not bkeys.is_empty():
+					last_frame = maxf(last_frame,
+							float((bkeys[bkeys.size() - 1] as Array)[0]))
 
 	for l in _variant.get("lights", []):
 		var light: Dictionary = l
@@ -480,21 +470,50 @@ func _update_ldas() -> void:
 
 # --- icBeamAvatar (the antimatter spikes) ------------------------------------
 
+# LightWave HPB (degrees) -> basis: heading about Y, pitch about X, bank
+# about the +Z-forward axis, heading outermost (LW's H*P*B order, mapped the
+# same way the beam directions always were).  All authored sfx banks are 0.
+static func _hpb_basis(h: float, p: float, b: float) -> Basis:
+	var out := Basis(Vector3.UP, deg_to_rad(h)) * Basis(Vector3.RIGHT, deg_to_rad(p))
+	if b != 0.0:
+		out = out * Basis(Vector3.FORWARD, deg_to_rad(b))
+	return out
+
 # @element icBeamAvatar
-func _add_beam(base: String, av: Dictionary, group: String, idx: int) -> void:
-	var rig: Dictionary = AM_BEAM_RIG[group]
+func _add_beam(base: String, av: Dictionary) -> void:
+	var sxyz: Array = av.get("scale_xyz", [1.0, 1.0, 1.0])
 	var hpb: Array = av.get("hpb", [0.0, 0.0, 0.0])
-	# LightWave heading/pitch: local +Z turned by pitch about X then heading
-	# about Y (the -90 pitch beam points straight up)
-	var dir := Basis(Vector3.RIGHT, deg_to_rad(float(hpb[1]))) * Vector3.FORWARD
-	dir = Basis(Vector3.UP, deg_to_rad(float(hpb[0]))) * dir
+	# the spinner nulls up the parent chain, innermost first: per parent,
+	# three [frame, degrees] envelopes (h, p, b). A static parent becomes a
+	# one-key envelope. The parents' animated SCALE is not read here -- it is
+	# already this node's scale_keys (sfx.py resolve()); using both would
+	# apply the envelope twice.
+	var spinners: Array = []
+	for p in av.get("parents", []):
+		var par: Dictionary = p
+		var hpb0: Array = par.get("hpb", [0.0, 0.0, 0.0])
+		var chans: Array = [[], [], []]
+		for k in par.get("keys", []):
+			var key: Dictionary = k
+			var khpb: Array = key.get("hpb", hpb0)
+			for c in 3:
+				(chans[c] as Array).append(
+						[float(key.get("frame", 0.0)), float(khpb[c])])
+		for c in 3:
+			if (chans[c] as Array).is_empty():
+				chans[c] = [[0.0, float(hpb0[c])]]
+		spinners.append(chans)
+	var tex := str(av.get("texture", BEAM_TEXTURE)).to_lower()
 	var mi := MeshInstance3D.new()
 	mi.mesh = _beam_quad_mesh()
 	mi.mesh.surface_set_material(0, ParticleFx.additive_material(
-			ParticleFx.texture(base, BEAM_TEXTURE)))
+			ParticleFx.texture(base, "images/sfx/" + tex)))
 	add_child(mi)
-	_beams.append({"node": mi, "dir": dir,
-			"width": float((rig["widths"] as Array)[idx]), "group": group})
+	_beams.append({"node": mi,
+			"dir": ExplosionFx._hpb_basis(float(hpb[0]), float(hpb[1]),
+					float(hpb[2])) * Vector3.FORWARD,
+			"width": float(sxyz[0]), "length": float(sxyz[2]),
+			"keys": av.get("scale_keys", []), "spinners": spinners})
 
 # unit beam quad: z 0..1 along the beam, x -1..1 across; u runs along the
 # length and v across the width (0x100bbc6c..0x100bbd7e)
@@ -526,19 +545,22 @@ func _update_beams(cam: Camera3D) -> void:
 	for b in _beams:
 		var beam: Dictionary = b
 		var mi: MeshInstance3D = beam["node"]
-		var rig: Dictionary = AM_BEAM_RIG[beam["group"]]
-		var scaler := _envelope(rig["env"], frame)
+		var keys: Array = beam["keys"]
+		var scaler: float = _envelope(keys, frame) if not keys.is_empty() else 1.0
 		if scaler <= 0.0:
 			mi.visible = false
 			continue
 		mi.visible = true
-		# the group nulls spin the whole fan: beam -> *BeamsH (heading) ->
-		# *BeamsP (pitch) -> beam_scaler, so pitch wraps heading; the skinny
-		# group starts 180 deg round and spins the other way
-		var rate: float = float(rig["spin"])
-		var heading: float = float(rig["heading0"]) + rate * _t
-		var group_basis := Basis(Vector3.RIGHT, rate * _t) * Basis(Vector3.UP, heading)
-		var dir: Vector3 = (global_transform.basis * (group_basis * beam["dir"])).normalized()
+		# the parent nulls spin the whole fan: beam -> *BeamsH -> *BeamsP ->
+		# beam_scaler_*; each parent wraps the accumulated child rotation, so
+		# compose innermost-first
+		var group := Basis.IDENTITY
+		for sp in beam["spinners"]:
+			var chans: Array = sp
+			group = ExplosionFx._hpb_basis(
+					_envelope(chans[0], frame), _envelope(chans[1], frame),
+					_envelope(chans[2], frame)) * group
+		var dir: Vector3 = (global_transform.basis * (group * beam["dir"])).normalized()
 		# axial billboard (0x100bba92..0x100bbb38): the quad turns about its
 		# own axis to face the camera
 		var to_cam := (cam.global_position - global_position).normalized()
@@ -547,7 +569,7 @@ func _update_beams(cam: Camera3D) -> void:
 			continue
 		side = side.normalized()
 		var w: float = float(beam["width"]) * scaler * _size
-		var length: float = AM_BEAM_LENGTH * scaler * _size
+		var length: float = float(beam["length"]) * scaler * _size
 		mi.global_transform = Transform3D(
 				Basis(side * w, side.cross(dir), dir * length), global_position)
 

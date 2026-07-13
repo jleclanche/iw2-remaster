@@ -428,8 +428,18 @@ below, and pins the other three values.
   resolved and any animated scaler's keys), sounds (resolved through the
   `FcSoundNode` INI to the actual wave, with volume and min range), lights
   (colour, range, and the real intensity envelope) and the special avatars with
-  their tint/lifetime. Plus the engine block: `cull_detail`, `low_detail`, the
-  150 m threshold and the `DoFinalExplosion` constants. Runs in `extract_all`.
+  their tint/lifetime. Avatars additionally carry their per-axis static chain
+  scale (`scale_xyz`; for an `icBeamAvatar` x = half-width, z = length), the
+  chain's scale envelope (`scale_keys`, `[frame, value]` -- from the link
+  whose scale actually *animates*, e.g. `beam_scaler_thick/_thin`, so a
+  scaler keyed 0 at frame 0 doesn't zero the static product) and, when
+  parented, `parents`: the parent nulls innermost-first, each with its
+  frame-0 `hpb`/`scale` and -- if keyframed -- `keys` as
+  `[{frame, hpb, scale}]` (scene frames, degrees). That is the whole
+  antimatter beam rig: the `FatBeamsH/P` / `SkinnyBeamsH/P` spinners and the
+  `beam_scaler_*` envelopes, verbatim from the LWS. Plus the engine block:
+  `cull_detail`, `low_detail`, the 150 m threshold and the `DoFinalExplosion`
+  constants. Runs in `extract_all`.
 - **`tools/iw2/lws.py`** -- the scene parser was silently dropping exactly what
   this needed. It now keeps `FramesPerSecond` / `FirstFrame` / `LastFrame`,
   `LightRange`, and `LgtIntensity (envelope)` -- whose key blocks are
@@ -444,6 +454,9 @@ below, and pins the other three values.
   particle systems, the flipbook, the lights (driven by the scene's real
   envelope, at the scene's own fps) and the sound. It drives an animated
   emitter scaler per frame, so `plasma_fire`'s 20-second hull fire works.
+  `icBeamAvatar` nodes (the antimatter spikes) come entirely from the JSON
+  too: width/length from `scale_xyz`, the `beam_scaler_*` envelope from
+  `scale_keys`, and the spinner nulls from `parents`.
   `boom()` keeps its signature but now implements `DoFinalExplosion`: four
   scattered puffs, each choosing `explosion`/`small_explosion` by its own
   radius, plus the reactor shockwave.
@@ -466,18 +479,22 @@ playback rate and quad size~~, ~~`icShockwaveAvatar` / `icLDAAvatar` /
 decompiling `dx7graph.dll` and raw-disassembling the draw methods Ghidra
 drops from `iwar2.dll.c` (`tools/ghidra/disasm.py`).
 
-Still open:
+~~**The extractor drops the beam rig.**~~ Resolved: `tools/iw2/sfx.py` now
+exports every avatar's per-axis chain scale (`scale_xyz`), takes the chain's
+scale envelope from the link whose scale actually animates (so the rotation-
+only `FatBeamsH`-style spinners no longer shadow the `beam_scaler_*`
+envelopes, and their static scale is no longer dropped -- the old collapse
+that wrote `"scale": 0.0` for every beam), and exports the parent-null chain
+(`parents`) with its authored rotation/scale keys. `explosion_fx.gd` plays
+the rig from the JSON; the hand-transcribed `AM_BEAM_RIG` stopgap is retired.
+One deliberate change against the stopgap: the LWS authors the skinny fan's
+180 in `SkinnyBeamsH`'s *pitch* channel at frame 0 (unwinding to 0 by frame
+60), which `AM_BEAM_RIG` had approximated as a static *heading* offset; the
+runtime now plays the authored channels, so the skinny fan's mid-flight
+orientation differs from the stopgap (widths, lengths, envelopes and spin
+rates are bit-identical).
 
-- **The extractor drops the beam rig.** `sfx_effects.json` carries the eight
-  `antimatter_explosion` `icBeamAvatar` nodes with their directions (`hpb`)
-  but writes `"scale": 0.0` for all of them: `tools/iw2/sfx.py` collapses the
-  per-axis LWS scale (`0.3/0.2/0.05 x ... x 2`) to one scalar and drops the
-  `FatBeamsH/P` / `SkinnyBeamsH/P` spinner nulls and the `beam_scaler_thick`
-  / `_thin` envelopes entirely. `explosion_fx.gd` carries the rig as a
-  hand-transcribed constant (`AM_BEAM_RIG`, cited to
-  `resource.zip:sfx/antimatter_explosion_high_0.lws`) until sfx.py exports
-  per-axis scale and parent animation for avatar nodes. (sfx.py is owned by
-  another task; see the report.)
+Still open:
 - **`m_game_time` units.** The shockwave spin is
   `frac(FnTimeWin32::m_game_time * 1e-5) * 2pi`; `m_game_time` is a uint we
   believe is milliseconds (giving 3.6 deg/s), but we have not read the
@@ -688,7 +705,9 @@ Structurally recovered, not fully decoded:
   LDSI explosions now draw), `icMovieAvatar` (real quad size, framerate-locked
   crossfade -- `MOVIE_QUAD`/`MOVIE_FPS` placeholders retired),
   `icLDAAvatar` (the shield-hit cone), and the antimatter 8-beam rig
-  (`icBeamAvatar` axial billboards under `AM_BEAM_RIG`).
+  (`icBeamAvatar` axial billboards, driven by the `scale_xyz` / `scale_keys` /
+  `parents` fields in `sfx_effects.json`; the interim `AM_BEAM_RIG` constant
+  is retired).
 - `particle_fx.gd`: `icCornflakeDraw` -- real size (0.075), 2:1 plate, 3D
   tumble, sequential atlas cell, sun-lit grey.
 - `tools/ghidra/disasm.py`: the raw-disassembly tool.

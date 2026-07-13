@@ -153,23 +153,61 @@ def _content(fs: ResourceFS, nodes: list[dict]) -> dict:
             n = p
         return out
 
-    def resolve(n: dict) -> tuple[float, list]:
-        """Static scale up the parent chain, plus the animating node's keys.
+    def scale_animates(link: dict) -> bool:
+        """A link's SCALE animates (not merely: it has keys). The antimatter
+        spinner nulls (``FatBeamsH`` etc.) are keyed for rotation only and must
+        keep their static scale in the chain product."""
+        keys = link.get("keys")
+        if not keys:
+            return False
+        first = keys[0].get("scale")
+        return any(k.get("scale") != first for k in keys)
 
-        Effective scale at frame f is ``scale * key(f)``, so the animated link
-        contributes its keys and *not* its frame-0 scale -- otherwise a scaler
-        that starts at 0 (``plasma_fire``) would zero the whole chain.
+    def resolve(n: dict) -> tuple[list[float], list]:
+        """Static per-axis scale up the parent chain, plus the scale envelope.
+
+        Effective scale at frame f is ``scale * key(f)``, so a link whose
+        scale animates contributes its keys and *not* its frame-0 scale --
+        otherwise a scaler that starts at 0 (``plasma_fire``'s ``scaler``, the
+        antimatter ``beam_scaler_*``) would zero the whole chain.
         """
-        animated = next((l for l in chain(n) if l.get("keys")), None)
-        scale = 1.0
+        animated = None
+        scale = [1.0, 1.0, 1.0]
         for link in chain(n):
-            if link is animated:
+            if scale_animates(link):
+                if animated is None:
+                    animated = link
                 continue
             s = link.get("scale") or [1.0, 1.0, 1.0]
-            scale *= float(s[0])
+            for i in range(3):
+                scale[i] *= float(s[i])
         keys = ([[k["frame"], k["scale"][0]] for k in animated["keys"]]
                 if animated else [])
         return scale, keys
+
+    def parent_anim(n: dict) -> list[dict]:
+        """The parent nulls, innermost first, with their authored motion.
+
+        Rotation and scale channels only -- no sfx null animates position.
+        A parent carries ``keys`` ([{frame, hpb, scale}], scene frames,
+        degrees) only when it is actually keyframed; a static parent is just
+        its frame-0 pose. NOTE a scale-animating parent's envelope is the
+        node's ``scale_keys`` (see ``resolve``); consumers that use
+        ``scale_keys`` must read only rotation out of ``parents`` or they
+        would apply the envelope twice.
+        """
+        out = []
+        for link in chain(n)[1:]:
+            entry = {
+                "name": str(link.get("name", "")),
+                "hpb": link.get("hpb", [0.0, 0.0, 0.0]),
+                "scale": link.get("scale") or [1.0, 1.0, 1.0],
+            }
+            if link.get("keys"):
+                entry["keys"] = [{"frame": k["frame"], "hpb": k["hpb"],
+                                  "scale": k["scale"]} for k in link["keys"]]
+            out.append(entry)
+        return out
 
     out: dict = {"systems": [], "sounds": [], "lights": [], "avatars": [],
                  "movie": None}
@@ -198,8 +236,10 @@ def _content(fs: ResourceFS, nodes: list[dict]) -> dict:
                 out["sounds"].append(_sound(fs, url))
             elif url.startswith("ini:/sfx/"):
                 # ini:/sfx/<name>/node -> the particle system <name>
+                # (every authored system/movie scale is uniform, so the
+                # scalar is lossless here; avatars get the full vector)
                 out["systems"].append({
-                    "name": url.split("/")[2], "scale": scale,
+                    "name": url.split("/")[2], "scale": scale[0],
                     "scale_keys": keys,
                 })
             continue
@@ -208,14 +248,17 @@ def _content(fs: ResourceFS, nodes: list[dict]) -> dict:
             out["movie"] = {
                 "texture": _url(n.get("url", "")).replace("texture:/", ""),
                 "frames": int(n.get("frame_count", 0)),
-                "scale": scale,
+                "scale": scale[0],
             }
         elif cls:
-            av = {"class": cls, "scale": scale, "scale_keys": keys,
-                  "hpb": n.get("hpb", [0.0, 0.0, 0.0])}
+            av = {"class": cls, "scale": scale[0], "scale_xyz": scale,
+                  "scale_keys": keys, "hpb": n.get("hpb", [0.0, 0.0, 0.0])}
             for k in ("tint", "lifetime", "texture"):
                 if k in n:
                     av[k] = n[k]
+            parents = parent_anim(n)
+            if parents:
+                av["parents"] = parents
             out["avatars"].append(av)
     return out
 
