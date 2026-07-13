@@ -46,6 +46,7 @@ var cam: Camera3D
 var hud: Hud
 var menu: Menu
 var weapons: PbcWeapons
+var missiles: Missiles
 var audio: AudioManager
 var sun: DirectionalLight3D
 var space_fx: SpaceFx
@@ -158,6 +159,18 @@ var weapon_name := "L-PBC / R-PBC"  # HUD weapon-panel title
 var eye := Vector3(-1.19, -13.85, -40.05)  # pilot eye: tug.lws crew null
 var fire_lock := 0.0  # brief inhibit after menus/movies eat a click
 var disrupt_time := 0.0  # LDSi weapon hit: drive locked out (iship.Disrupt)
+# --- the missile system's player-side state (missiles.gd) -------------------
+var player_mags: Array = []      # the fitted icMissileMagazine/icCM magazines
+var secondary_idx := -1          # NextSecondaryWeapon ring; -1 = primary
+var secondary_name := "NONE"     # HUD weapon-panel line (hud.gd owner wires it)
+# icPlayerPilot's incoming-missile feed (OnIncomingMissile 0x100b0fc0): the
+# HUD draws one pip per entry of the +0xa8 id list and reads the octagonal-
+# norm nearest range at +0xb4. hud.gd owns the drawing; these mirror the two.
+var incoming_missiles: Array = []
+var nearest_missile_range := -1.0
+# icShip::Disrupt on the player (disruptor/achillies warheads): weapons out
+var weapon_disrupt_time := 0.0
+var weapon_disrupt_full := false
 
 var clock_start := 0  # ms tick when we last left port (the HUD clock)
 var base_root: Node3D  # hangar interior while docked at a base
@@ -379,9 +392,15 @@ func _fit_systems(ini_path: String) -> void:
 		sys = null
 		hull_max = float(ship_stats.get("hit_points", 500))
 		hull = hull_max
+		player_mags = []
+		_select_secondary(-1)
 		return
 	fitted.bind_model(ship_model)
 	sys = fitted
+	# the fitted missile/countermeasure magazines (tug_prefitted.ini: seeker
+	# x5, LDSi x4, decoy x8)
+	player_mags = Missiles.mags_for(sys)
+	_select_secondary(-1)
 
 func start_campaign() -> void:
 	# The pause menu needs to know a game is running, or Escape has nothing to
@@ -786,6 +805,8 @@ func _clear_system() -> void:
 	ai_ships.clear()
 	if weapons != null:
 		weapons.clear()
+	if missiles != null:
+		missiles.clear()
 	target_idx = -1
 	target_ai = null
 	docked_at = ""
@@ -1018,6 +1039,9 @@ func _spawn_player() -> void:
 	weapons.main = self
 	weapons.refire = 0.7  # subsims/systems/player/pbc.ini refire_delay
 	add_child(weapons)
+	missiles = Missiles.new()
+	missiles.main = self
+	add_child(missiles)
 	cam = Camera3D.new()
 	cam.far = 6.0e5
 	cam.fov = FOV_INTERNAL  # starts in the F1 internal view
@@ -1143,15 +1167,22 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
 			Transform3D(Basis.looking_at(-out), pos), 1.0)
 	var ai := target as AiShip
 	if ai != null and ai.hit_by_bolt(spec, age, pos)["killed"]:
-		ExplosionFx.boom(self, ai.global_position, 70.0)
-		kill_count += 1
-		hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
-		ai_ships.erase(ai)
-		if target_ai == ai:
-			target_ai = null
-		ai.queue_free()
-		if not _hostiles_alive():
-			audio.music("ambient")
+		kill_ai(ai)
+
+func kill_ai(ai: AiShip) -> void:
+	# iiSim::OnKilled 0x10079b80 -> the death explosion + score/removal;
+	# shared by bolt hits (on_bolt_hit) and warheads (missiles.gd)
+	if ai == null or not is_instance_valid(ai):
+		return
+	ExplosionFx.boom(self, ai.global_position, 70.0)
+	kill_count += 1
+	hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
+	ai_ships.erase(ai)
+	if target_ai == ai:
+		target_ai = null
+	ai.queue_free()
+	if not _hostiles_alive():
+		audio.music("ambient")
 
 func _hostiles_alive() -> bool:
 	for a in ai_ships:
@@ -1329,6 +1360,16 @@ func _unhandled_input(event: InputEvent) -> void:
 					target_ai = last_aggressor
 					target_idx = -1
 					audio.play("audio/hud/target_changed.wav", -10.0)
+			KEY_BACKSPACE:  # icPlayerPilot.NextSecondaryWeapon
+				_cycle_secondary()
+			KEY_ENTER:  # icPlayerPilot.NextPrimaryWeapon (back to the PBCs)
+				_select_secondary(-1)
+				audio.play("audio/gui/mechanical_confirm.wav", -10.0)
+			KEY_I:  # icPlayerPilot.LDSIQuickFire: the LDSi magazine fires on
+				# its own trigger, bypassing weapon selection (the dedicated
+				# LDSI path in AttemptToActivateWeapon 0x1003ccb0 via
+				# pilot+0x82)
+				fire_ldsi()
 			KEY_F5:  # AutopilotOff
 				_set_autopilot(0)
 			KEY_F6:  # AutopilotApproach
@@ -1611,6 +1652,12 @@ func _jump_process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	fire_lock = maxf(0.0, fire_lock - delta)
 	disrupt_time = maxf(0.0, disrupt_time - delta)
+	weapon_disrupt_time = maxf(0.0, weapon_disrupt_time - delta)
+	if weapon_disrupt_time <= 0.0:
+		weapon_disrupt_full = false
+	# icMagazine::Simulate 0x10038210: the refire clock is efficiency * dt
+	if missiles != null:
+		missiles._tick_mags(player_mags, delta)
 	if use_pog:
 		_pog_boot_process()
 		pog_api.director_process(delta)   # cutscene camera, while one is staged
@@ -1740,6 +1787,89 @@ func hit_player(spec: Dictionary, age: float, at: Vector3) -> Dictionary:
 	if out["killed"]:
 		_kill_player()
 	return out
+
+# --- the missile system: player-side plumbing (missiles.gd) -----------------
+
+func _select_secondary(idx: int) -> void:
+	secondary_idx = idx if idx >= 0 and idx < player_mags.size() else -1
+	if secondary_idx < 0:
+		secondary_name = "NONE"
+		return
+	var mag: Dictionary = player_mags[secondary_idx]
+	secondary_name = "%s %d/%d" % [str(mag["projectile"]).replace("_", " ")
+			.to_upper(), int(mag["ammo"]), int(mag["max_ammo"])]
+
+func _cycle_secondary() -> void:
+	# icPlayerPilot.NextSecondaryWeapon steps the ring of fitted magazines
+	if player_mags.is_empty():
+		hud.warn("NO SECONDARY WEAPONS")
+		audio.play("audio/hud/invalid_input.wav", -8.0)
+		return
+	_select_secondary((secondary_idx + 1) % player_mags.size())
+	audio.play("audio/gui/mechanical_confirm.wav", -10.0)
+	hud.log_msg("WEAPON: %s" % secondary_name)
+
+func _fire_secondary() -> void:
+	if secondary_idx < 0 or secondary_idx >= player_mags.size():
+		return
+	# iiWeapon::IsReadyToFire 0x1003cb80: the disrupted flag blocks fire.
+	# Shields-only disruption (full_disruption=0, e.g. achillies) only takes
+	# the LDA subsims, not the weapons.
+	if weapon_disrupt_time > 0.0 and weapon_disrupt_full:
+		return
+	var mag: Dictionary = player_mags[secondary_idx]
+	# the ship-wide overheat flag 0x200 (iiWeapon::Simulate 0x1003cc00)
+	if sys != null and sys.heat + sys.heat_external \
+			>= ShipSystems.HEAT_DAMAGE_THRESHOLD:
+		return
+	if missiles.fire_magazine(ship, mag, target_ai):
+		_select_secondary(secondary_idx)  # refresh the ammo readout
+
+func fire_ldsi() -> void:
+	# LDSIQuickFire: the first LDSi magazine with ammo fires at the target,
+	# regardless of the current weapon selection
+	if weapon_disrupt_time > 0.0 and weapon_disrupt_full:
+		return
+	if fire_lock > 0.0:
+		# iship.LockDownWeapons locks the quick-fire too, not just the trigger
+		return
+	for mag in player_mags:
+		if bool(mag["ldsi"]):
+			if missiles.fire_magazine(ship, mag, target_ai):
+				hud.log_msg("LDSI MISSILE AWAY")
+			else:
+				audio.play("audio/hud/invalid_input.wav", -8.0)
+			return
+	hud.warn("NO LDSI MISSILES")
+	audio.play("audio/hud/invalid_input.wav", -8.0)
+
+func hit_player_warhead(dmg: float, pen: float, at: Vector3) -> Dictionary:
+	# the contact-warhead path (icRocket::OnCollision 0x1006ff50):
+	# ApplyWeaponDamage with source 2 -- armour and criticals, but the LDA
+	# scan only runs for source 0 (icShip::ApplyWeaponDamage 0x10073e2e),
+	# so no deflection
+	var out := {"applied": dmg, "deflected": false, "hit": "", "killed": false}
+	if sys == null:
+		damage_player(dmg, "MISSILE HIT")
+		return out
+	var inv := ship.global_transform.affine_inverse()
+	var dir := (inv.basis * (at - ship.global_position)).normalized()
+	out = sys.apply_weapon_damage(dmg, pen, inv * at, dir, 2)
+	hud.warn("MISSILE HIT  HULL %d%%" % int(100.0 * hull / hull_max))
+	if out["killed"]:
+		_kill_player()
+	return out
+
+func disrupt_player_systems(seconds: float, full: bool) -> void:
+	# icShip::Disrupt via icMissile::CheckForDisruption 0x1006d0b0: the
+	# weapons lock out here, and ship_systems raises the subsim disrupted
+	# flag (efficiency reads zero, the LDA stops deflecting and recharging).
+	weapon_disrupt_time = maxf(weapon_disrupt_time, seconds)
+	weapon_disrupt_full = weapon_disrupt_full or full
+	if sys != null:
+		sys.disrupt(seconds, full)
+	hud.warn("SYSTEMS DISRUPTED" if full else "SHIELDS DISRUPTED", 3.0)
+	audio.play("audio/sfx/disruptor_startup.wav", -6.0)
 
 func _system_label(name: String) -> String:
 	# subsim names are localisation keys ("Cargo_ShipsDrive", "system_lda_shield")
@@ -1892,7 +2022,15 @@ func _player_control(delta: float) -> void:
 	if (Input.is_key_pressed(KEY_SPACE)
 			or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) \
 			and lds_state == 0 and fire_lock <= 0.0:
-		weapons.fire()
+		# CurrentWeaponFire fires the SELECTED weapon (iiWeapon::
+		# AttemptToActivateWeapon 0x1003ccb0 only lets the magazine whose id
+		# matches the pilot's current selection through). Holding the trigger
+		# keeps firing each refire_delay: icMagazine ctor 0x10037fe0 defaults
+		# salvo_fire (+0xbc) on.
+		if secondary_idx >= 0:
+			_fire_secondary()
+		else:
+			weapons.fire()
 
 # --- targeting (original contact-list semantics) ----------------------------
 
@@ -2166,6 +2304,7 @@ func _fold_motion() -> void:
 	cam.global_position -= p
 	drop_cam_pos -= p
 	weapons.shift_world(p)
+	missiles.shift_world(p)
 	for fx in get_tree().get_nodes_in_group("worldfx"):
 		fx.shift_world(p)
 	for a in ai_ships:

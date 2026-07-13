@@ -92,6 +92,8 @@ var heat := 0.0               # icShip +0x288
 var heat_external := 0.0      # icShip +0x28c
 var invulnerable := false
 var killed := false
+var disrupt_time := 0.0       # icShip::Disrupt -- subsim disrupted flag 0x10,
+var disrupt_full := false     # shields-only (LDA) vs full_disruption warheads
 var rng := RandomNumberGenerator.new()
 var _repair_pool := 0.0
 var _power_pool := 0.0
@@ -269,7 +271,9 @@ func apply_weapon_damage(damage: float, penetration: float, hit_local: Vector3,
 	var out := {"applied": 0.0, "deflected": false, "hit": "", "killed": false}
 	if killed:
 		return out
-	if source == SRC_WEAPON:
+	if source == SRC_WEAPON and disrupt_time <= 0.0:
+		# a disrupted LDA does not deflect (icShip::Disrupt raises the subsim
+		# disrupted flag 0x10; shields-only disruption exists to strip the LDA)
 		for lda in ldas:
 			if _lda_deflect(lda, dir_local):
 				out["deflected"] = true
@@ -370,6 +374,9 @@ func simulate(dt: float) -> void:
 	# icShip 0x10075f80 (the subsim tick) + iiShipSystem::Simulate 0x1003bbd0.
 	if killed or dt <= 0.0:
 		return
+	disrupt_time = maxf(0.0, disrupt_time - dt)
+	if disrupt_time <= 0.0:
+		disrupt_full = false
 	_power_pool = 0.0
 	_repair_pool = 0.0
 	var heat_rate := 0.0
@@ -383,8 +390,10 @@ func simulate(dt: float) -> void:
 	var overheated := (heat + heat_external) >= HEAT_DAMAGE_THRESHOLD
 	for sys in systems:
 		heat_rate += _simulate_system(sys, dt, overheated)
-	for lda in ldas:
-		_simulate_lda(lda, dt)
+	if disrupt_time <= 0.0:
+		# a disrupted LDA neither recharges nor deflects while the timer runs
+		for lda in ldas:
+			_simulate_lda(lda, dt)
 	# icShip::SimulateSystems 0x10075f60 (integration at 0x10076060): a positive
 	# net rate heats the internal store; a negative one cools the EXTERNAL store
 	# first (at heat_loss_factor) and only what the external store cannot absorb
@@ -409,6 +418,13 @@ func simulate(dt: float) -> void:
 		apply_damage((total - HEAT_DAMAGE_THRESHOLD) * HEAT_DAMAGE_RATE, SRC_HEAT)
 
 func _simulate_system(sys: Dictionary, dt: float, overheated: bool) -> float:
+	# a full-disruption warhead (icShip::Disrupt) raises the disrupted flag
+	# 0x10 on every subsim: efficiency reads zero until the timer expires.
+	# Heatsinks keep radiating -- their AddHeatRate has no gate (see below).
+	if disrupt_full and disrupt_time > 0.0 and sys["class"] != "icHeatSink":
+		sys["efficiency"] = 0.0
+		sys["usage"] = 0.0
+		return 0.0
 	if bool(sys["destroyed"]):
 		sys["efficiency"] = 0.0
 		sys["usage"] = 0.0
@@ -515,6 +531,13 @@ func _simulate_lda(lda: Dictionary, dt: float) -> void:
 		lda["usage"] = 1.0
 
 # --- read-only views for the HUD -------------------------------------------
+
+func disrupt(seconds: float, full: bool) -> void:
+	# icShip::Disrupt via icMissile::CheckForDisruption 0x1006d0b0: raise the
+	# disrupted flag for `seconds`. Shields-only (full_disruption=0) takes the
+	# LDAs; full disruption takes every subsim but the heatsinks.
+	disrupt_time = maxf(disrupt_time, seconds)
+	disrupt_full = disrupt_full or full
 
 func heat_fraction() -> float:
 	# The HUD's player feed (0x10108890) computes the thermometer as

@@ -599,3 +599,291 @@ Not recovered. **Do not fill these in with plausible values.**
   (`+0x84`/`+0x88`), which scale `output_power`.
 
 ---
+
+## 10. Missiles
+
+The whole secondary-weapon system. Class map (registrations in `iwar2.dll`):
+
+```
+iiWeapon
+  icMissileLauncher   0x10031450   an INERT rack: magazines slave to it
+  icMagazine          0x10037fe0   the weapon that actually fires
+    icMissileMagazine          0x1000ff80   fires icMissile subclasses
+    icCounterMeasureMagazine   FUN_1002d470 (vtable 0x10119320)
+iiThrusterSim
+  icMissile           0x1006c020   powered, guided, 0x488 bytes
+    icSimTrackingMissile  ctor FUN_1007d140, vtable 0x1011c038
+    icLDSIMissile         ctor FUN_1006b740, vtable 0x1011b3b0
+    icMine                ctor FUN_1006baf0, vtable 0x1011b4e0
+iiProjectile (0x1006ee70)   unpowered, 0x1dc owner / 0x1e4 age / 0x1f0 lifetime
+  icRocket            ctor FUN_1006fc90, vtable 0x1011bb98
+  icCounterMeasure    ctor FUN_10064050, vtable 0x1011a714
+icShip
+  icRemoteMissile     0x1006f330   a player-flyable drone SHIP
+```
+
+`icSimTrackingMissile`, `icLDSIMissile`, `icMine`, `icRocket` and
+`icCounterMeasure` are not DLL-exported; their bodies were recovered by
+dumping the vtables from the PE and raw-disassembling the slots
+(`tools/ghidra/disasm.py`).
+
+### 10.1 The launcher is not the weapon
+
+`icMissileLauncher::Fire` (`0x1004ad80`) is an **empty function** (COMDAT-
+folded with a dozen other no-ops), its `ComputeFiringSolution` (`0x100310c0`)
+returns false, its `IsReadyToFire` (`0x100bc470`) returns 0xd ("recharging")
+unconditionally, and its `Range` is 0. It exists to hold `missile_capacity`
+magazines (`AddMagazine 0x10030ee0`) and to donate its fire position:
+`icMagazine::SetLauncher` (`0x100387e0`) copies the launcher's mount position,
+orientation and muzzle offset (`+0x88..+0xa0`) onto the magazine. Everything
+else -- readiness, solution, firing -- is the magazine.
+
+### 10.2 The magazine fire cycle
+
+`icMagazine` INI keys (property map at `0x10037db0`): `max_ammo_count` `+0xac`,
+`ammo_count` `+0xb0`, `refire_delay` `+0xb4`, `launch_speed` `+0xb8`,
+`salvo_fire` `+0xbc` (ctor default ON), `projectile_template` `+0xc4`.
+
+- **Reload clock**: `icMagazine::Simulate` (`0x10038210`) accumulates
+  `clock += efficiency * dt` -- a damaged or under-powered magazine reloads
+  slower.
+- **Ready** (`IsReadyToFire 0x10038350`): `efficiency * clock > refire_delay`,
+  `ammo > 0`, plus the ship-wide overheat flag 0x200 from `iiWeapon::Simulate`
+  (`0x1003cc00`). In AUTO mode (`+0x7c == 2`) a non-countermeasure magazine
+  additionally rolls `rand() <= ammo_fraction *
+  rocket_launch_likelihood_per_ammo_fraction` (flux.ini `[icMagazine]`: 0.1)
+  every ready check -- the AI's rocket rate limiter.
+- **Trigger** (`iiWeapon::AttemptToActivateWeapon 0x1003ccb0`): in player mode
+  (`+0x7c == 1`) only the magazine matching the pilot's current weapon
+  selection fires -- with one exception: an LDSI magazine (flagged at `+0x6c`,
+  set in `Load 0x10038240` when the projectile template is an `icLDSIMissile`)
+  fires on the dedicated LDSI trigger (`icPlayerPilot+0x82`,
+  `LDSIQuickFire` = `I` in `configs/default.ini`), bypassing selection.
+  In AUTO mode the target comes from the fire-request slot `+0x84` or the
+  ship's contact-list target.
+- **Fire** (`icMissileMagazine::Fire 0x100399c0` / `icMagazine::Fire
+  0x10038440`): `clock = 0`, `ammo -= 1`, create the projectile template,
+  set aggressor = `StrongRoot(ship).id` and `SetTarget(current target)`,
+  velocity = ship velocity + muzzle forward x `launch_speed`, orientation =
+  muzzle quat -- unless the muzzle is within `cos > 0.95` (`0x10119c3c`) of
+  the ship's facing, in which case the SHIP's orientation is used (angled
+  tubes straighten out). CM/rocket fire also calls the projectile's OnLaunch
+  slot (+0x100): a CM starts its engage timer there (`0x10064130`).
+- The AI ballistic solution for rockets (`icMagazine::ComputeFiringSolution`
+  `0x10038660`): an unguided round at `launch_speed` must pass within
+  `target_radius + 15` m (`squared_radius_firing_tolerance`, used linearly),
+  lead time 0..30 s (`0x10119c18`).
+- AI missile launches (`icMissileMagazine::ComputeFiringSolution 0x10039d50`):
+  each ready frame rolls `rand() <= ammo_fraction *
+  missile_launch_likelihood_per_ammo_fraction` (flux.ini: 0.005; 0.01 under a
+  missile-boat order, goal id 4 at `pilot+0xa4`). **An LDSI magazine only
+  auto-fires at a target whose LDS drive is currently engaged**
+  (`target+0x25c` drive state `+0x84 == 2`).
+
+### 10.3 icMissile -- the state machine
+
+Property map (`FUN_1006bcf0`): `arm_time +0x260`, `lifetime +0x264`,
+`penetration +0x268`, `damage +0x26c`, `explode_radius +0x270`,
+`blast_radius +0x274`, `disable_attenuation +0x278`, `sensor_radius +0x27c`,
+`disruptor_time +0x280`, `full_disruption +0x284`, `antimatter_radius +0x288`,
+`ldsi +0x28c`, `field_radius +0x290`, `field_life_time +0x294`. Runtime:
+`eMissileType +0x298` (ctor default 2; `icMine` sets 0), `eState +0x29c`,
+embedded `icAITarget` brain at `+0x2a0`, aggressor `+0x458`, target `+0x45c`,
+age `+0x460`, seek timer `+0x47c`.
+
+States (`Simulate 0x1006c550` / `Think 0x1006c350`):
+
+1. **EJECT** -- coast until `age > arm_time`, then: type 0/1 -> SEEK,
+   type 2 (everything a magazine fires) -> TRACK + `OnTracking()`. A type-2
+   with no lock is a dud: `Think` finds no target instance and sets state 6.
+2. **SEEK** -- every `m_active_seek_update_time` (1.0 s, `0x1011b60c`)
+   `FindTarget` (`0x1006c3f0`) scans every ship-type sim within
+   `sensor_radius` and takes the nearest -- hostile-faction only
+   (`FeelingType < 2`), except a player-launched missile may take anything on
+   the player's contact list. Only **type 0** (mines) thrusts in this state.
+3. **TRACK** -- the embedded `icAITarget` brain flies the missile through
+   `iiThrusterSim::ComputeForceAndTorque`: the missile IS a ship, flying the
+   INI `speed`/`acceleration`/`yaw_rate` flight model. Each frame
+   `TargetInRange` (`0x1006c980`: brain range < `explode_radius` +
+   target radius) triggers `OnExplodeRadiusEntry` + `OnExplode` + destroy.
+4. **HOLD** -- `icMine` with `proximity=1` (`icMine::Simulate 0x1006bc20`):
+   brake to zero and wait for `TargetInRange`.
+5. **EXPLODED**, 6. **DEAD** -- state 6 coasts inert, engine flame still on
+   (the `lz` avatar channel is `state >= 2`), until lifetime.
+
+Lifetime expiry **explodes** a missile (`OnExplode` then destroy); an
+`iiProjectile` (rocket, CM) just vanishes (`0x1006ef90`).
+`CanCollideWith` (`0x1006cf90`): never another missile, and never the
+launcher (or its subsims / docked parent) during the first **4 s**
+(`0x101190b4`). `OnTracking` (`0x1000f8c0`) -> `icShip::OnIncomingMissile`
+(`0x10074f20`): the player pilot gets the HUD warning
+(`icPlayerPilot::OnIncomingMissile 0x100b0fc0` appends the missile id to the
+pilot's `+0xa8` list -- one HUD pip per entry -- and folds the range into
+`+0xb4` with the octagonal norm `max + 0.34375*mid + 0.25*min`,
+`0x101191f0`/`0x101191ec`; log event 0x30), and any ship scans its subsims
+for a ready `icCounterMeasureMagazine` and drops the missile id in its
+fire-request slot `+0x84` -- **NPCs auto-launch countermeasures**.
+
+### 10.4 Warheads
+
+`icMissile::OnCollision` (`0x1006cc30`): only a warhead with
+`|explode_radius| < 1e-6` applies contact damage --
+`ApplyWeaponDamage(damage, penetration, ..., src=2)` on the struck sim.
+**eDamageSource 2 skips the LDA loop** (`icShip::ApplyWeaponDamage 0x10073e2e`
+only scans LDAs for source 0): missiles and rockets cannot be
+shield-deflected. Armour and subsim criticals still apply on this path.
+Then director cue 9, `CheckForDisruption`, `OnExplode`, score, destroy.
+
+`icMissile::OnExplode` (`0x1006d1a0`), in priority order:
+
+- **LDSI** (`+0x28c`): spawn `ini:/sims/explosions/ldsi_missile_explosion`
+  (an `icShockwave`) with radius = `field_radius`. The teeth are in
+  `OnExplodeRadiusEntry` (`0x1006c9e0`): snap the missile to the target's
+  position, **zero the target's velocity** (yanks it out of LDS), then
+  `ScrambleLDSDrives(field_radius, field_life_time)` (`0x1006d7c0`): every
+  thruster sim in the field with an ENGAGED LDS drive is stopped dead
+  (the player also gets `Reset` + autopilot removed) and its drive
+  `icLDSDrive::Scramble`d for `field_life_time`. It also plants an
+  `icTimedWaypoint` (localised `ldsi_waypoint_name`) visible only to the
+  aggressor's side.
+- **Antimatter** (`antimatter_radius != 0`): spawn
+  `ini:/sims/explosions/missile_antimatter_explosion` (`icShockwave`) with
+  that radius; the shockwave sim does the damage (not recovered here).
+- **Blast** (`explode_radius != 0`): every sim within
+  `blast_radius + sim_radius` takes `(1 - dist/reach) * damage` -- or flat
+  `damage` with `disable_attenuation` (all shipped seekers set it) --
+  through **`iiSim::ApplyDamage` (vtable +0xd0): raw hull, no armour, no
+  LDA, no subsim criticals**; plus `CheckForDisruption` each.
+- Visuals: a `harmless_shockwave` when `max(blast, explode, radius) > 100`
+  (`0x101192c0`, capped at 3000 `0x1011a194`) and an `icExplosion` fireball
+  of `min(that, 100)`.
+
+`CheckForDisruption` (`0x1006d0b0`): if `disruptor_time > 0` and the victim
+is a ship, `icShip::Disrupt(clamp(150 / victim_radius * disruptor_time,
+2, 30), shields_only = !full_disruption)` -- 150 = `m_destroyer_radius`
+(300, `0x1011b618`) x 0.5. Disruption raises subsim flag 0x10 (efficiency 0;
+`iiWeapon::IsReadyToFire 0x1003cb80` returns "locked out").
+
+### 10.5 icSimTrackingMissile -- level and decoys
+
+Its `Think`/`Simulate` are **pure thunks** to `icMissile` (`0x1007d3d0` /
+`0x1007d3e0`). All it adds is `level` (`+0x484`, ctor default 1.0) and the
+decoy dance, called from `icCounterMeasure::Simulate` (`0x10064140`):
+
+- The CM coasts ballistically (`Integrate 0x100642d0`). The frame its engage
+  timer expires (`engage_time`, INI, started at launch), every tracking
+  missile whose target is the CM's OWNER runs **`Decoy`** (`FUN_1007d240`):
+  seduced iff the CM is within `(1 - level) * 500` m **of the victim**
+  (`max_range_for_decoying_level_zero_missile`, flux.ini). The original
+  target id is parked in `+0x480`. One chance, no rand. A `level=1`
+  missile can never be seduced; a Deadshot (0.9) needs the flare within 50 m.
+- When the CM dies, **`OnDecoyExpired`** (`FUN_1007d2d0`): a missile further
+  than `level * 5000` m from the dead CM
+  (`min_range_for_stopping_level_one_missile_reacquisition`) loses lock for
+  good (`SetTarget(0)` -> state 6); otherwise it reacquires the parked
+  target and re-warns it (`OnIncomingMissile` again).
+- `icCounterMeasure::OnCollision` (`0x10064340`): a projectile-type sim
+  (`+0x190 == 1`, i.e. a missile) that flies into the CM is destroyed with it.
+
+### 10.6 icMine, icRocket, icRemoteMissile
+
+**icMine** -- `eMissileType 0`, `proximity` at `+0x480` (default true).
+`Think` (`0x1006bbb0`): while tracking, the lock is dropped past
+`sensor_radius * 5` (`0x1011b4dc`), back to SEEK. `Simulate` (`0x1006bc20`):
+a proximity mine that starts tracking goes to HOLD (brake to zero) instead of
+chasing; a seeker mine (`proximity=0`) chases. `lifetime=-1` = forever.
+
+**icRocket** -- an `iiProjectile` with one key, `acceleration` (`+0x200`).
+`Simulate` (`0x1006fde0`): the motor lights at a fixed **0.6 s**
+(`0x1011bb94`), switching the `lz` channel on; `Integrate` (`0x1006fe30`):
+`velocity += facing * acceleration * dt`, no speed cap, no guidance.
+`OnCollision` (`0x1006ff50`): contact `ApplyWeaponDamage(damage, penetration,
+..., src=2)` (armour applies, LDA does not), director cue 8, `OnExplode`.
+The iiProjectile keys (`FUN_1006ecc0`): `damage +0x1e8`, `penetration +0x1ec`,
+`lifetime +0x1f0`, `speed +0x1f4`, `antimatter_based +0x1f8`. `arm_time` in
+the rocket/CM INIs matches no key in either map -- dead data.
+
+**icRemoteMissile** -- an `icShip` subclass (hull, subsims, sensors), keys
+`penetration +0x300 / damage +0x304 / blast_radius +0x308 /
+antimatter_radius +0x30c / lifetime +0x310`. `Think` (`0x1006f490`): after
+`m_arm_time` (1.5 s, `0x1011ba60`) it hands itself to
+`icPlayerPilot::RemoteLink` -- the player flies it. It self-destructs
+(ApplyDamage(2 x max hull, src=5)) on any collision (`0x1006f610`), at
+`arm_time + lifetime` (`0x1006f530`), or when the pilot aborts. `OnExplode`
+(`0x1006f630`) is the icMissile blast with linear attenuation over the
+octagonal-norm distance, aggressor = owner (`+0x314`).
+
+### 10.7 Trail avatars
+
+`icMissileTrailAvatar` / `icRocketTrailAvatar` (registrations `0x100c7...`;
+property map `FUN_100c7980`: `texture +0xbc`, `lifetime +0xc0`,
+`min_radius +0xc4`, `max_radius +0xc8`, `tint +0xcc`, `channel +0xd8`,
+`stay_on +0xdc`). The authored data (`data/ini/avatars/*/trail.ini`):
+`redtrail` (seeker/harrower/deadshot 5 s), `bluetrail` (pulsar/disruptor 5 s),
+`greentrail` (LDSI 2 s), `orangetrail` (rockets 2-3 s, hammer 3 s),
+`min_radius 1.5 / max_radius 10`, keyed to the `lz` engine channel.
+The ribbon draw itself was NOT disassembled; the remaster spawns its
+additive-billboard machinery with exactly these parameters.
+
+### 10.8 Player controls (configs/default.ini)
+
+`CurrentWeaponFire` Space/Joy1 fires the SELECTED weapon;
+`NextPrimaryWeapon` Return, `NextSecondaryWeapon` Backspace cycle the
+selection rings; `LDSIQuickFire` I fires the LDSI magazine directly;
+`RemotePilot` Shift+R. The prefitted tug carries `seeker_missile_magazine`
+(5), `ldsi_missile_magazine` (4) and `decoy_magazine` (8).
+
+### 10.9 Missile constants
+
+| address | value | what |
+|---|---|---|
+| `0x1011b60c` | 1.0 | `m_active_seek_update_time` (FindTarget cadence) |
+| `0x1011b610` | 2.0 | `m_min_disruptor_time` |
+| `0x1011b614` | 30.0 | `m_max_disruptor_time` |
+| `0x1011b618` | 300.0 | `m_destroyer_radius` (x0.5 in the disrupt scale) |
+| `0x101190b4` | 4.0 | launch grace: no self-collision for 4 s |
+| `0x1011b4dc` | 5.0 | mine lock-drop hysteresis on sensor_radius |
+| `0x10119fcc` | 500.0 | LDSI proximity fuse range |
+| `0x1011bb94` | 0.6 | rocket motor ignition delay |
+| `0x101192c0` | 100.0 | explosion visual floor / fireball cap |
+| `0x1011a194` | 3000.0 | missile harmless-shockwave radius cap |
+| `0x1011bb90` | 2000.0 | remote-missile shockwave radius cap |
+| `0x10119c3c` | 0.95 | muzzle-vs-ship facing dot for launch orientation |
+| `0x10119c18` | 30.0 | max ballistic lead time (rocket solution) |
+| `0x1015dd5c` | 500.0 | decoy range, level 0 (flux.ini same) |
+| `0x1015dd60` | 5000.0 | reacquisition stop range, level 1 (flux.ini same) |
+| `0x1015ba80` | 0.02 | missile launch likelihood default (flux.ini 0.005) |
+| `0x1015ba7c` | 0.08 | missile-boat likelihood default (flux.ini 0.01) |
+| `0x1015ba00` | 0.1 | rocket launch likelihood (flux.ini same) |
+| `0x1015b9fc` | 15.0 | firing tolerance (metres, despite the name) |
+| `0x1011ba60` | 1.5 | `icRemoteMissile::m_arm_time` |
+| `0x10119b9c` | 0.1 | `icMagazine::m_background_power_usage` |
+| `0x101191f0` | 0.34375 | octagonal-norm mid coefficient |
+| `0x101191ec` | 0.25 | octagonal-norm min coefficient |
+
+### 10.10 Missile unknowns
+
+Not recovered. **Do not fill these in with plausible values.**
+
+- **The `icAITarget::Think` intercept law.** The missile flies the same AI
+  brain NPC ships use; its exact steering (lead law, roll policy) was not
+  extracted. The remaster flies turn-rate-limited lead pursuit at full
+  thrust through the same INI limits -- the flight-model shape is right, the
+  steering law is an approximation.
+- **`icShockwave`** -- the antimatter and LDSI explosion carrier. Radius and
+  the INI it is built from are recovered; its damage application is not.
+- **The LDSI missile's in-LDS fuse.** `icLDSIMissile::Think` (`0x1006b830`)
+  has a second detonation branch used while the missile's OWN LDS drive
+  (subsim `nps_lds_missile`) is engaged, testing two brain fields
+  (`+0x34c >= 0 && +0x36c > 0.4`) whose meaning was not pinned down. The
+  500 m proximity branch is recovered and implemented; LDS-chase is not
+  built (the remaster's missiles do not fly LDS).
+- **`eMissileType 1`.** Constructed nowhere in the shipped code paths we
+  read; behaves like type 0 in `Think`, thrust-less in SEEK.
+- **The turret-fighter path** (`icMissileMagazine::Fire` with an `icShip`
+  template: attach `icAIPilot`, sim flag 0x40000, `GiveEscortOrder`
+  `0x10039840` = DefaultFormate on the launcher).
+- **`speed=` in rocket INIs** (`iiProjectile+0x1f4`): no rocket code reads
+  it (`icBullet` does); rockets get velocity from `launch_speed` + thrust.
+
+---

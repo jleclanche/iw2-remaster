@@ -160,8 +160,8 @@ extends RefCounted
 # @element-stub icElectricEffectAvatar -- GENUINE GAP: electric-arc emitter (disruptor / damage arcing)
 # @element-stub icGasBallAvatar -- GENUINE GAP: gas-ball avatar (cosmetic; exact use not yet traced in the campaign)
 # (icLDAAvatar is really built: its @element marker is in explosion_fx.gd)
-# @element-stub icMissileTrailAvatar -- GENUINE GAP: missile exhaust trail (part of the missile system gap)
-# @element-stub icRocketTrailAvatar -- GENUINE GAP: rocket exhaust trail (part of the missile system gap)
+# (icMissileTrailAvatar is really built: its @element marker is in missiles.gd)
+# (icRocketTrailAvatar is really built: its @element marker is in missiles.gd)
 # @element-stub icSignAvatar -- GENUINE GAP: station signage boards (cosmetic)
 
 # ---------------------------------------------------------------------------
@@ -210,17 +210,17 @@ extends RefCounted
 # @element-stub icTurret -- GENUINE GAP: turret guns -- station and gunstar defence (nps_turret_*.ini); also behind the ihabitat.SetArmed stubs
 # @element-stub icTurretShip -- GENUINE GAP: turret-ship (gunstar) hulls
 # @element-stub icAggressorShield -- GENUINE GAP: the player's aggressor-shield device
-# @element-stub icMagazine -- GENUINE GAP: ammunition magazines (missile system)
-# @element-stub icMissileMagazine -- GENUINE GAP: missile magazine (missile system)
-# @element-stub icCounterMeasureMagazine -- GENUINE GAP: countermeasure magazine (missile system)
-# @element-stub icMissileLauncher -- GENUINE GAP: missile launcher weapon (missile system)
-# @element-stub icMissile -- GENUINE GAP: powered missile sim (missile system)
-# @element-stub icSimTrackingMissile -- GENUINE GAP: seeker missile (missile system)
-# @element-stub icRemoteMissile -- GENUINE GAP: player-flyable remote missile (missile system)
-# @element-stub icLDSIMissile -- GENUINE GAP: LDS-inhibitor missile (missile system)
-# @element-stub icMine -- GENUINE GAP: mines (missile system)
-# @element-stub icCounterMeasure -- GENUINE GAP: countermeasure decoy projectile (missile system)
-# @element-stub icRocket -- GENUINE GAP: unguided rockets (missile system)
+# (icMagazine is really built: its @element marker is in missiles.gd)
+# (icMissileMagazine is really built: its @element marker is in missiles.gd)
+# (icCounterMeasureMagazine is really built: its @element marker is in missiles.gd)
+# (icMissileLauncher is really built: its @element marker is in missiles.gd)
+# (icMissile is really built: its @element marker is in missiles.gd)
+# (icSimTrackingMissile is really built: its @element marker is in missiles.gd)
+# (icRemoteMissile stays a stub: its @element-stub marker is in missiles.gd)
+# (icLDSIMissile is really built: its @element marker is in missiles.gd)
+# (icMine is really built: its @element marker is in missiles.gd)
+# (icCounterMeasure is really built: its @element marker is in missiles.gd)
+# (icRocket is really built: its @element marker is in missiles.gd)
 # @element-stub icPowerUp -- mp-only: deathmatch pickup (imultiplay.AddPowerupWeapon and friends)
 # @element-stub icPowerUpBomb -- mp-only: deathmatch bomb pickup
 # @element-stub icAlienSwarm -- GENUINE GAP: the act 3 alien swarm ship

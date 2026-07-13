@@ -383,7 +383,36 @@ func _mechcheck(_delta: float) -> void:
 			elif demo_t > 90.0:
 				_mech("ap-dock", false, "timeout")
 				_mech_next()
-		12:
+		12:  # a seeker missile tracks and kills: 500 hp / 280 flat blast = 2 hits
+			var ai: AiShip = m.spawn_hostile(m.ship.global_position
+					- m.ship.global_transform.basis.z * 3000.0)
+			ai.hull = 500.0
+			ai.behavior = "idle"
+			m.target_ai = ai
+			m._cycle_secondary()
+			_mech_v0 = Vector3(ai.hull, 0.0, 0.0)
+			_mech_next()
+		13:
+			if m.target_ai == null or not is_instance_valid(m.target_ai):
+				_mech("missile-kill", true, "%.0f s" % demo_t)
+				_mech_next()
+			elif demo_t > 60.0:
+				_mech("missile-kill", false, "hull=%.0f after %.0f s"
+					% [m.target_ai.hull, demo_t])
+				m.kill_ai(m.target_ai)
+				_mech_next()
+			else:
+				# the recovered blast is flat 280 (seeker, disable_attenuation):
+				# hull must step by exact multiples of it
+				if is_instance_valid(m.target_ai) \
+						and m.target_ai.hull < float(_mech_v0.x):
+					var drop: float = float(_mech_v0.x) - m.target_ai.hull
+					if absf(fmod(drop, 280.0)) > 0.5 \
+							and absf(fmod(drop, 280.0) - 280.0) > 0.5:
+						_mech("missile-damage", false, "step=%.1f" % drop)
+					_mech_v0.x = m.target_ai.hull
+				m._fire_secondary()
+		14:
 			print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
 				else "%d FAILURES" % _mech_fail))
 			get_tree().quit(0 if _mech_fail == 0 else 1)

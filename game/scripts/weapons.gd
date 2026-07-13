@@ -53,6 +53,10 @@ func fire() -> void:
 	if main and main.sys != null and main.sys.heat + main.sys.heat_external \
 			>= ShipSystems.HEAT_DAMAGE_THRESHOLD:
 		return
+	# iiWeapon::IsReadyToFire 0x1003cb80: the disrupted flag (0x10, set by a
+	# full-disruption warhead through icShip::Disrupt) blocks fire
+	if main and main.weapon_disrupt_time > 0.0 and main.weapon_disrupt_full:
+		return
 	cooldown = refire
 	if not muzzle_nodes.is_empty():
 		for n in muzzle_nodes:

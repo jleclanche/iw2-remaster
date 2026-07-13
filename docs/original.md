@@ -504,6 +504,38 @@ territory. Sources: `0x1003bbd0`, `0x100300c0`, `0x10068380`, `0x1006ab90`,
 `0x1002ee90`, `0x10075f60`, `0x1003cc00`, `0x10108890`; constants in
 `docs/combat.md` section 8.
 
+## 5c. Missiles: the launcher is an inert rack -- the magazine is the weapon
+
+`icMissileLauncher::Fire` (`0x1004ad80`) is an empty COMDAT-folded stub; the
+launcher only donates a fire position. A magazine reloads at
+`efficiency x dt` against `refire_delay`, and fires the projectile template
+with the ship's velocity plus `launch_speed` on the muzzle axis
+(`icMissileMagazine::Fire 0x100399c0`). A missile is a ship: an
+`iiThrusterSim` flown by the same `icAITarget` brain the AI pilots use, with
+the INI speed/acceleration/turn-rate limits, through the state machine
+eject -> arm -> track (`icMissile::Simulate 0x1006c550`); losing its target
+makes it an inert dud, and lifetime expiry detonates it. Warheads never
+touch the LDA (damage source 2 skips the shield scan, `0x10073e2e`):
+contact rockets go through armour via `ApplyWeaponDamage`, radius missiles
+apply raw hull damage to everything within `blast_radius + sim_radius`
+(flat, since every shipped seeker sets `disable_attenuation`), and
+disruptor warheads call `icShip::Disrupt` for `clamp(150/radius x
+disruptor_time, 2, 30)` seconds. Tracking warns the victim
+(`OnIncomingMissile 0x10074f20`): the player gets the HUD pips (one per
+missile) and NPCs auto-launch countermeasures. A flare seduces a tracking
+missile only in the single frame its `engage_time` expires, only if it sits
+within `(1-level) x 500` m of the victim; when the flare dies the missile
+reacquires unless it chased the decoy further than `level x 5000` m
+(`FUN_1007d240`/`FUN_1007d2d0`). Mines are missiles of seeker type 0
+(proximity mines hold station, seeker mines chase, lock drops at 5x
+sensor_radius); rockets are dumbfire `iiProjectile`s whose motor lights at
+0.6 s and accelerates along the nose forever; LDSI missiles fuse at 500 m,
+stop every LDS runner within `field_radius` dead and scramble their drives
+for `field_life_time`; the remote missile is a player-flyable drone icShip.
+The original player controls: Space fires the selected weapon, Backspace
+cycles secondaries, I quick-fires the LDSI magazine. Full write-up with the
+per-class property maps: `docs/combat.md` section 10.
+
 ---
 
 ## 6. Factions

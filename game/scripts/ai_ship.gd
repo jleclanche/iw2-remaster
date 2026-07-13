@@ -40,15 +40,23 @@ var wp := 0
 var fire_cooldown := 0.0
 var bolt_speed := 6000.0
 var weapon_range := 2500.0
+var radius := 60.0    # iiSim radius (+0x1c), the ship INI's radius= key
+var disrupt_time := 0.0       # icShip::Disrupt via icMissile::CheckForDisruption
+var disrupt_full := false     # full_disruption: everything, else shields only
 var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
 
 func setup(props: Dictionary) -> void:
 	load_stats(props)
 	hull_max = float(props.get("hit_points", 1000))
 	hull = hull_max
+	radius = float(props.get("radius", 60.0))
 
 func setup_ini(ini_path: String, model: Node3D = null) -> void:
 	# the authored hull: hit_points, armour and the full subsim list
+	var rec := ShipSystems.ship_record(ini_path)
+	if not rec.is_empty():
+		radius = float((rec.get("properties", {}) as Dictionary)
+				.get("radius", radius))
 	var fitted := ShipSystems.for_ship(ini_path)
 	if fitted.hull_max <= 0.0:
 		return
@@ -64,6 +72,29 @@ func damage(amount: float) -> bool:
 		return sys.apply_damage(amount)
 	hull -= amount
 	return hull <= 0.0
+
+func hit_by_warhead(dmg: float, pen: float, at: Vector3) -> Dictionary:
+	# icRocket::OnCollision 0x1006ff50 / icMissile::OnCollision 0x1006cc30
+	# contact path: ApplyWeaponDamage with eDamageSource=2. A nonzero source
+	# skips the LDA scan (icShip::ApplyWeaponDamage 0x10073e2e), so warheads
+	# are never shield-deflected; armour and subsim criticals still apply.
+	if sys == null:
+		hull -= dmg
+		return {"applied": dmg, "deflected": false, "hit": "",
+			"killed": hull <= 0.0}
+	var inv := global_transform.affine_inverse()
+	var dir := (inv.basis * (at - global_position)).normalized()
+	return sys.apply_weapon_damage(dmg, pen, inv * at, dir, 2)
+
+func disrupt(seconds: float, full: bool) -> void:
+	# icShip::Disrupt (via icMissile::CheckForDisruption 0x1006d0b0): the
+	# original sets the disrupted flag (0x10) on the subsims, which zeroes
+	# their efficiency. ship_systems.gd is owned elsewhere; here the timer
+	# gates everything this ship does with its weapons (fire below, missile
+	# magazines in missiles.gd). The LDA-efficiency wiring is reported to the
+	# ship_systems owner.
+	disrupt_time = maxf(disrupt_time, seconds)
+	disrupt_full = disrupt_full or full
 
 func hit_by_bolt(spec: Dictionary, age: float, at: Vector3) -> Dictionary:
 	# icBullet::OnCollision -> icShip::ApplyWeaponDamage
@@ -84,6 +115,9 @@ func hit_by_bolt(spec: Dictionary, age: float, at: Vector3) -> Dictionary:
 
 func _physics_process(delta: float) -> void:
 	fire_cooldown = maxf(0.0, fire_cooldown - delta)
+	disrupt_time = maxf(0.0, disrupt_time - delta)
+	if disrupt_time <= 0.0:
+		disrupt_full = false
 	if sys != null:
 		sys.simulate(delta)
 	match behavior:
@@ -124,6 +158,10 @@ func _attack(delta: float) -> void:
 	var aim: Vector3 = player.global_position + (player.velocity - velocity) * tof
 	var angle := _steer_toward(aim, delta)
 	set_speed = max_speed.z if dist > 1200.0 else max_speed.z * 0.35
+	# a fully disrupted ship cannot fire (iiWeapon::IsReadyToFire 0x1003cb80:
+	# the disrupted flag 0x10 returns eFireResult 6)
+	if disrupt_time > 0.0 and disrupt_full:
+		return
 	if dist < weapon_range and angle < 0.06 and fire_cooldown <= 0.0:
 		fire_cooldown = 0.5
 		main.spawn_bolt(self, -global_transform.basis.z)

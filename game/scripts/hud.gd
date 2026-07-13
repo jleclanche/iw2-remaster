@@ -923,9 +923,17 @@ func _draw_status_icons(c: Vector2) -> void:
 	# ship_heat() * (0.75/0.8) and the flag trips at ship_heat() >= 0.8.
 	_gauge(c, 0, 0x3E, 180.0, main.ship_heat() * 0.9375, main.ship_heat() >= 0.8)
 
-	# Slot 10 (incoming missile, sprite 0x4E) has no source in our sim -- no
-	# missile ever locks the player -- so it never lights. Slots 11-14 are the
-	# multiplayer team / flag / bomb markers and are dead in the campaign.
+	# --- slot 10: incoming missile, r = 110, +67.5 ----------------------------
+	# The pilot's incoming feed (0x100b0fc0): pilot+0x6c is the alarm flag,
+	# pilot+0xa8 the id list -- ONE PIP PER MISSILE on the charge ring. Fed by
+	# missiles.gd through main.incoming_missiles.
+	var incoming: int = main.incoming_missiles.size()
+	if incoming > 0:
+		_icon(c + _icon_pos(67.5, ICON_R), 0x4E, ICON_ROUNDEL | ICON_RING, RED,
+				float(incoming) / float(ICON_PIPS))
+
+	# Slots 11-14 are the multiplayer team / flag / bomb markers and are dead
+	# in the campaign.
 
 func _gauge(c: Vector2, idx: int, sprite: int, deg: float, value: float,
 		flagged: bool) -> void:
@@ -1532,9 +1540,14 @@ func _draw_weapon_panel() -> void:
 	# (length 74), and a "%d%%" readout. Header is the weapon's own name.
 	_ea = _flash_a("icHUDWeapons")
 	var rows: int = 2 if "/" in str(main.weapon_name) else 1
+	# One extra row for the selected secondary (missile magazine). The engine's
+	# element shows the SELECTED GROUP's weapons one per row; the ammo-count
+	# readout text is ours (the magazine row's exact layout was not recovered).
+	var sec := str(main.secondary_name)
+	var sec_row: int = 1 if sec != "NONE" else 0
 	# the MFD above may be in a short mode; the stack advance uses its height
 	var pos := Vector2(_left_x(), _advance(MARGIN, _mfd_rect().size.y))
-	var size := Vector2(PANEL_W, ROW_PITCH * rows + HDR_H)
+	var size := Vector2(PANEL_W, ROW_PITCH * (rows + sec_row) + HDR_H)
 	_panel(pos, size, str(main.weapon_name).to_upper())
 	var charge: float = 1.0
 	if main.weapons != null:
@@ -1548,6 +1561,10 @@ func _draw_weapon_panel() -> void:
 			_dim(AMBER))
 		_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
 		draw_string(_font, Vector2(pos.x + 36, ry + 28), "%d%%" % int(charge * 100),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+	if sec_row > 0:
+		var ry := pos.y + HDR_H + rows * ROW_PITCH
+		draw_string(_font, Vector2(pos.x + 16, ry + 20), sec,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 	_ea = 1.0
 
