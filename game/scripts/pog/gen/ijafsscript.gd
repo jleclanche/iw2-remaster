@@ -76,51 +76,147 @@ func local_176(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = iship.find_player_ship()
-	v2 = await get_tag_group()
-	v3 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
-	if PogRuntime.TRACE:
-		debug.print_string("iJafsScript.jafs_goes_home: Jafs ordered to return to player base\n")
-	if sim.is_dead(v0):
-		await flag_jafs_inactive()
-		if PogRuntime.TRACE:
-			debug.print_string("iJafsScript.jafs_goes_home: TERMINATED - Jafs is NULL, possibly destroyed\n")
-	else:
-		iai.purge_orders(v0)
-		iai.give_approach_order(v0, v3)
-		while true:
-			await _pog_wait(5)
+	var _pc: int = 176
+	while true:
+		if _pc == 176:
+			v1 = iship.find_player_ship()
+			v2 = await get_tag_group()
+			v3 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
+			_pc = 291
+			continue
+		elif _pc == 270:
+			debug.print_string("iJafsScript.jafs_goes_home: Jafs ordered to return to player base\n")
+			_pc = 291
+			continue
+		elif _pc == 291:
 			if sim.is_dead(v0):
-				await flag_jafs_inactive()
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.jafs_goes_home: TERMINATED - Jafs is NULL, possibly destroyed\n")
-				return
-			if 10000.0 < sim.distance_between(v0, v3):
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.jafs_goes_home: Jafs arrived at player base \n")
-				break
-			if 300000.0 <= sim.distance_between(v0, v1):
+				_pc = 314
 				continue
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.jafs_goes_home: Player out of range. \n")
-			break
-		if not (idirector.is_busy()) and 20000.0 < sim.distance_between(v0, v1):
+			else:
+				_pc = 359
+				continue
+		elif _pc == 314:
+			await flag_jafs_inactive()
+			_pc = 354
+			continue
+		elif _pc == 333:
+			debug.print_string("iJafsScript.jafs_goes_home: TERMINATED - Jafs is NULL, possibly destroyed\n")
+			_pc = 354
+			continue
+		elif _pc == 354:
+			_pc = 1090
+			continue
+		elif _pc == 359:
+			iai.purge_orders(v0)
+			iai.give_approach_order(v0, v3)
+			_pc = 407
+			continue
+		elif _pc == 407:
+			await _pog_frame()
+			if _pog_every(408, 5.0):
+				_pc = 421
+				continue
+			else:
+				_pc = 619
+				continue
+		elif _pc == 421:
+			if sim.is_dead(v0):
+				_pc = 444
+				continue
+			else:
+				_pc = 489
+				continue
+		elif _pc == 444:
+			await flag_jafs_inactive()
+			_pc = 484
+			continue
+		elif _pc == 463:
+			debug.print_string("iJafsScript.jafs_goes_home: TERMINATED - Jafs is NULL, possibly destroyed\n")
+			_pc = 484
+			continue
+		elif _pc == 484:
+			_pc = 1090
+			continue
+		elif _pc == 489:
+			if 10000.0 < sim.distance_between(v0, v3):
+				_pc = 523
+				continue
+			else:
+				_pc = 554
+				continue
+		elif _pc == 523:
+			_pc = 549
+			continue
+		elif _pc == 528:
+			debug.print_string("iJafsScript.jafs_goes_home: Jafs arrived at player base \n")
+			_pc = 549
+			continue
+		elif _pc == 549:
+			_pc = 624
+			continue
+		elif _pc == 554:
+			if 300000.0 > sim.distance_between(v0, v1):
+				_pc = 588
+				continue
+			else:
+				_pc = 619
+				continue
+		elif _pc == 588:
+			_pc = 614
+			continue
+		elif _pc == 593:
+			debug.print_string("iJafsScript.jafs_goes_home: Player out of range. \n")
+			_pc = 614
+			continue
+		elif _pc == 614:
+			_pc = 624
+			continue
+		elif _pc == 619:
+			_pc = 407
+			continue
+		elif _pc == 624:
+			if not (idirector.is_busy()) and 20000.0 < sim.distance_between(v0, v1):
+				_pc = 674
+				continue
+			else:
+				_pc = 1014
+				continue
+		elif _pc == 674:
 			idirector.begin()
 			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
 			v4 = isim.cast(await iutilities.create_waypoint_relative_to(v3, 0.0, 0.0, 2000.0))
 			iai.clear_autopilot()
 			await iutilities.group_set_local_velocity(await iwingmen.group(), 0.0, 0.0, 0.0, 0, 0)
 			if await iutilities.near_to_group(v4, await iwingmen.group(), 1000.0, 0):
-				sim.place_relative_to(v1, v3, 1000.0, 500.0, 2000.0)
-				sim.point_at(v1, v3)
-				await iescort.goose(await iwingmen.group(), 0.0, 1.0, 1)
+				_pc = 875
+				continue
+			else:
+				_pc = 976
+				continue
+		elif _pc == 875:
+			sim.place_relative_to(v1, v3, 1000.0, 500.0, 2000.0)
+			sim.point_at(v1, v3)
+			await iescort.goose(await iwingmen.group(), 0.0, 1.0, 1)
+			_pc = 976
+			continue
+		elif _pc == 976:
 			await icutsceneutilities.handle_abort(_pog_spawn(local_19159.bind(v0, v3)))
-		await collect_pods(0)
-		sim.destroy(v0)
-		await flag_jafs_inactive()
-		if PogRuntime.TRACE:
+			_pc = 1014
+			continue
+		elif _pc == 1014:
+			await collect_pods(0)
+			sim.destroy(v0)
+			await flag_jafs_inactive()
+			_pc = 1090
+			continue
+		elif _pc == 1069:
 			debug.print_string("iJafsScript.jafs_goes_home: COMPLETED\n")
-	return
+			_pc = 1090
+			continue
+		elif _pc == 1090:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1092(v0, v1, v2) -> Variant:
@@ -622,6 +718,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 4399
 			continue
 		elif _pc == 4167:
+			object.int_property(v3, "cargo")
 			if object.int_property(v3, "cargo") != 27:
 				_pc = 4201
 				continue
@@ -1017,144 +1114,243 @@ func collect_pods(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v1 = await get_tag_group()
-	v8 = group.create()
-	if PogRuntime.TRACE:
-		debug.print_string("iJafsScript.CollectPods: STARTED\n")
-	v2 = group.nth_group(v1, 0)
-	if 1 == v0:
-		if PogRuntime.TRACE:
+	var _pc: int = 5418
+	while true:
+		if _pc == 5418:
+			v1 = await get_tag_group()
+			v8 = group.create()
+			_pc = 5487
+			continue
+		elif _pc == 5466:
+			debug.print_string("iJafsScript.CollectPods: STARTED\n")
+			_pc = 5487
+			continue
+		elif _pc == 5487:
+			v2 = group.nth_group(v1, 0)
+			if 1 == v0:
+				_pc = 5524
+				continue
+			else:
+				_pc = 5725
+				continue
+		elif _pc == 5524:
+			_pc = 5605
+			continue
+		elif _pc == 5529:
 			debug.print_string("iJafsScript.CollectPods: Transferring ")
 			debug.print_int(group.sim_count(v1))
 			debug.print_string(" pods to the collect pods group.\n")
-		while true:
+			_pc = 5605
+			continue
+		elif _pc == 5605:
+			_pc = 5606
+			continue
+		elif _pc == 5606:
 			v5 = iship.cast(group.leader(v1))
 			group.add_sim(v2, v5)
 			await _pog_wait(0.009999999776482582)
-			if not (0 > group.sim_count(v1)):
-				break
-	if _pog_is_null(group.sim_count(v2)):
-		if PogRuntime.TRACE:
+			if 0 <= group.sim_count(v1):
+				_pc = 5724
+				continue
+			else:
+				_pc = 5606
+				continue
+		elif _pc == 5724:
+			_pc = 5725
+			continue
+		elif _pc == 5725:
+			if _pog_is_null(group.sim_count(v2)):
+				_pc = 5750
+				continue
+			else:
+				_pc = 5786
+				continue
+		elif _pc == 5750:
+			_pc = 5776
+			continue
+		elif _pc == 5755:
 			debug.print_string("iJafsScript.CollectPods: No pods in collected pods group. Exiting.\n")
-		return 0
-	else:
-		if PogRuntime.TRACE:
+			_pc = 5776
+			continue
+		elif _pc == 5776:
+			_pc = 6541
+			continue
+		elif _pc == 5781:
+			_pc = 5867
+			continue
+		elif _pc == 5786:
+			_pc = 5867
+			continue
+		elif _pc == 5791:
 			debug.print_string("iJafsScript.CollectPods: ")
 			debug.print_int(group.sim_count(v2))
 			debug.print_string(" pods to collect.\n")
-	v3 = 0
-	while true:
-		if PogRuntime.TRACE:
+			_pc = 5867
+			continue
+		elif _pc == 5867:
+			v3 = 0
+			_pc = 5874
+			continue
+		elif _pc == 5874:
+			_pc = 5942
+			continue
+		elif _pc == 5879:
 			debug.print_string("iJafsScript.CollectPods: Checking pod ")
 			debug.print_int(v3)
 			debug.print_string("\n")
-		v5 = iship.cast(group.leader(v2))
-		if not _pog_is_null(object.int_property(v5, "cargo")) and object.property_exists(v5, "cargo"):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.CollectPods: Adding ")
-				debug.print_string(icargo.pog_name(icargo.find(object.int_property(v5, "cargo"))))
-				debug.print_string(" to inventory.\n")
+			_pc = 5942
+			continue
+		elif _pc == 5942:
+			v5 = iship.cast(group.leader(v2))
+			if not _pog_is_null(object.int_property(v5, "cargo")) and object.property_exists(v5, "cargo"):
+				_pc = 6036
+				continue
+			else:
+				_pc = 6407
+				continue
+		elif _pc == 6036:
+			_pc = 6151
+			continue
+		elif _pc == 6041:
+			debug.print_string("iJafsScript.CollectPods: Adding ")
+			debug.print_string(icargo.pog_name(icargo.find(object.int_property(v5, "cargo"))))
+			debug.print_string(" to inventory.\n")
+			_pc = 6151
+			continue
+		elif _pc == 6151:
 			iinventory.add(object.int_property(v5, "cargo"), 1)
 			iscore.add_piracy(object.int_property(v5, "cargo"), 1)
 			v7 = icargo.value(icargo.find(object.int_property(v5, "cargo")))
 			global.set_int("g_piracy_rating", v7 + global.pog_int("g_piracy_rating"))
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.CollectPods: Pod of value ")
-				debug.print_int(v7)
-				debug.print_string(" collected.\n")
+			_pc = 6402
+			continue
+		elif _pc == 6339:
+			debug.print_string("iJafsScript.CollectPods: Pod of value ")
+			debug.print_int(v7)
+			debug.print_string(" collected.\n")
+			_pc = 6402
+			continue
+		elif _pc == 6402:
+			_pc = 6433
+			continue
+		elif _pc == 6407:
+			_pc = 6433
+			continue
+		elif _pc == 6412:
+			debug.print_string("iJafsScript.CollectPods: Object property 'cargo' not found. Assuming empty pod. Skipping.")
+			_pc = 6433
+			continue
+		elif _pc == 6433:
+			group.add_sim(v8, v5)
+			v3 = 1 + v3
+			if 0 <= group.sim_count(v2):
+				_pc = 6495
+				continue
+			else:
+				_pc = 5874
+				continue
+		elif _pc == 6495:
+			group.destroy(v8, 1)
+			_pc = 6541
+			continue
+		elif _pc == 6520:
+			debug.print_string("iJafsScript.CollectPods: COMPLETED\n")
+			_pc = 6541
+			continue
+		elif _pc == 6541:
+			return 0
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.CollectPods: Object property 'cargo' not found. Assuming empty pod. Skipping.")
-		group.add_sim(v8, v5)
-		v3 = 1 + v3
-		if not (0 > group.sim_count(v2)):
-			break
-	group.destroy(v8, 1)
-	if PogRuntime.TRACE:
-		debug.print_string("iJafsScript.CollectPods: COMPLETED\n")
-	return 0
+			return 0
 	return 0
 
 func local_6544(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v3 = 13.100000381469727
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, -27.0, v3, 41.0)
-	subsim.orientate_euler(v2, 90.0, -90.0, 0.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, 27.0, v3, 41.0)
-	subsim.orientate_euler(v2, -90.0, -90.0, -90.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, -27.0, v3, -13.0)
-	subsim.orientate_euler(v2, 90.0, -90.0, 90.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, 27.0, v3, -13.0)
-	subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, -27.0, v3, -67.0)
-	subsim.orientate_euler(v2, 90.0, -90.0, 180.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, 27.0, v3, -67.0)
-	subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v3 = 63.19999694824219
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, -27.0, v3, 41.0)
-	subsim.orientate_euler(v2, 90.0, -90.0, 0.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, 27.0, v3, 41.0)
-	subsim.orientate_euler(v2, -90.0, -90.0, -90.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, -27.0, v3, -13.0)
-	subsim.orientate_euler(v2, 90.0, -90.0, 90.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, 27.0, v3, -13.0)
-	subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, -27.0, v3, -67.0)
-	subsim.orientate_euler(v2, 90.0, -90.0, 180.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-	sim.add_subsim(v0, v2)
-	subsim.place(v2, 27.0, v3, -67.0)
-	subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
-	idockport.disable(idockport.cast(v2))
-	list.add_tail(v1, v2)
-	return _pog_clone(v1)
+	var _pc: int = 6544
+	while true:
+		if _pc == 6544:
+			v1 = null
+			v3 = 13.100000381469727
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, -27.0, v3, 41.0)
+			subsim.orientate_euler(v2, 90.0, -90.0, 0.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, 27.0, v3, 41.0)
+			subsim.orientate_euler(v2, -90.0, -90.0, -90.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, -27.0, v3, -13.0)
+			subsim.orientate_euler(v2, 90.0, -90.0, 90.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, 27.0, v3, -13.0)
+			subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, -27.0, v3, -67.0)
+			subsim.orientate_euler(v2, 90.0, -90.0, 180.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, 27.0, v3, -67.0)
+			subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v3 = 63.19999694824219
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, -27.0, v3, 41.0)
+			subsim.orientate_euler(v2, 90.0, -90.0, 0.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, 27.0, v3, 41.0)
+			subsim.orientate_euler(v2, -90.0, -90.0, -90.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, -27.0, v3, -13.0)
+			subsim.orientate_euler(v2, 90.0, -90.0, 90.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, 27.0, v3, -13.0)
+			subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, -27.0, v3, -67.0)
+			subsim.orientate_euler(v2, 90.0, -90.0, 180.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+			sim.add_subsim(v0, v2)
+			subsim.place(v2, 27.0, v3, -67.0)
+			subsim.orientate_euler(v2, -90.0, -90.0, 0.0)
+			idockport.disable(idockport.cast(v2))
+			list.add_tail(v1, v2)
+			_pc = 8680
+			continue
+		elif _pc == 8680:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8690() -> Variant:
@@ -1168,265 +1364,796 @@ func local_8690() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = iship.find_player_ship()
-	v3 = await get_tag_group()
-	v4 = ifaction.find("Player")
-	v7 = null
-	v8 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iJafsScript.SummonJafs: STARTED\n")
-	await flag_jafs_active()
-	if not (p_set.is_empty(isim.player_hostiles_in_radius(100000.0, 1073713152))):
-		await local_18284(0, "Jafs_bottles_out_", 3, 0, 0)
-		ihud.pog_print("hud_cant_summon_jafs_enemies_near")
-		if PogRuntime.TRACE:
+	var _pc: int = 8690
+	while true:
+		if _pc == 8690:
+			v1 = iship.find_player_ship()
+			v3 = await get_tag_group()
+			v4 = ifaction.find("Player")
+			v7 = null
+			v8 = null
+			_pc = 8807
+			continue
+		elif _pc == 8786:
+			debug.print_string("iJafsScript.SummonJafs: STARTED\n")
+			_pc = 8807
+			continue
+		elif _pc == 8807:
+			await flag_jafs_active()
+			if not (p_set.is_empty(isim.player_hostiles_in_radius(100000.0, 1073713152))):
+				_pc = 8865
+				continue
+			else:
+				_pc = 8957
+				continue
+		elif _pc == 8865:
+			await local_18284(0, "Jafs_bottles_out_", 3, 0, 0)
+			ihud.pog_print("hud_cant_summon_jafs_enemies_near")
+			_pc = 8938
+			continue
+		elif _pc == 8917:
 			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Enemy ships in range.\n")
-		await flag_jafs_inactive()
-	else:
-		if _pog_is_null(group.sim_count(v3)):
+			_pc = 8938
+			continue
+		elif _pc == 8938:
+			await flag_jafs_inactive()
+			_pc = 10630
+			continue
+		elif _pc == 8957:
+			if _pog_is_null(group.sim_count(v3)):
+				_pc = 8982
+				continue
+			else:
+				_pc = 8996
+				continue
+		elif _pc == 8982:
 			await auto_tag_valuable_pods()
-		await local_21770()
-		if _pog_is_null(group.sim_count(v3)):
+			_pc = 8996
+			continue
+		elif _pc == 8996:
+			await local_21770()
+			if _pog_is_null(group.sim_count(v3)):
+				_pc = 9037
+				continue
+			else:
+				_pc = 9127
+				continue
+		elif _pc == 9037:
 			await local_18414(0, "jafs_nothing_for_me_to_pickup", 0, 0)
 			ihud.pog_print("hud_tag_error_no_pods_in_fov")
 			await flag_jafs_inactive()
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.SummonJafs: TERMINATED - No tagged Pods available.\n")
-		else:
+			_pc = 9122
+			continue
+		elif _pc == 9101:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - No tagged Pods available.\n")
+			_pc = 9122
+			continue
+		elif _pc == 9122:
+			_pc = 10630
+			continue
+		elif _pc == 9127:
 			v6 = isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
 			if await local_19034(v6, v3, 30000.0) and 30000.0 < sim.distance_between(v6, v1):
-				await local_18284(0, "jafs_dialogue_after_you_", 4, 0, 0)
-				await flag_jafs_inactive()
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.SummonJafs: TERMINATED - Player too close to player base \n")
+				_pc = 9249
+				continue
 			else:
-				ihud.pog_print("hud_jafs_summoned")
-				await flag_jafs_active()
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.SummonJafs: Flagged Jafs as ACTIVE.\n")
-				await local_18414(v0, "jafs_on_my_way", 1, 0)
-				v7 = "ini:/sims/ships/player/snrv_jafs_capsule_nodockports"
-				if global.exists("g_current_act"):
-					if 1 == global.pog_int("g_current_act"):
-						v7 = "ini:/sims/ships/player/snrv_jafs_nodockports"
-				v0 = iship.create(v7, "name_jafs")
-				v8 = await local_6544(v0)
-				iship.install_a_i_pilot(v0, 30.0, 30.0, 0.10000000149011612, "iJafsScript.JafsScared", "", "", "")
-				isim.set_faction(v0, v4)
-				object.set_int_property(v0, "ignore_speed_limit", 1)
-				object.add_int_property(v0, "attacked_count", 0)
-				isim.set_indestructable(v0, 1)
-				sim.set_cullable(v0, 0)
-				sim.place_near(v0, v1, 300000.0)
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.SummonJafs: Jafs Created\n")
-				v2 = sim.create("ini:/sims/nav/waypoint", "Jafs Pod Waypoint")
-				v9 = iship.cast(await local_16262(v0, v3))
-				if PogRuntime.TRACE:
-					if _pog_is_null(v9):
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.SummonJafs: Warning - Nearest pod is null! \n")
-				await iutilities.sim_place_between_exact(v2, v9, v0, 1000.0)
-				sim.point_at(v0, v2)
-				sim.set_velocity(v0, 0.0, 0.0, 1000.0)
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.SummonJafs: Waypoint Set for Jafs\n")
-				iai.give_approach_order_advanced(v0, v2, 500.0, 200.0, 1)
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.SummonJafs: Jafs ordered to approach pod waypoint\n")
-				while true:
-					await _pog_wait(5)
-					if sim.is_dead(v0):
-						sim.destroy(v2)
-						await flag_jafs_inactive()
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
-						return
-					if await local_17890(v0, v1, 5):
-						sim.destroy(v2)
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs has been attacked.")
-						return
-					if iai.is_order_complete(v0):
-						break
-					if sim.is_dead(v0):
-						await flag_jafs_inactive()
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
-						return
-					if await local_17028(v1, v0, v3, 300000.0):
-						continue
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.SummonJafs: TERMINATED - Player out of range.\n")
-					await collect_pods(1)
-					sim.destroy(v0)
-					await flag_jafs_inactive()
-					return
-				if sim.is_dead(v0):
-					await flag_jafs_inactive()
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
-				else:
-					_pog_detach(_pog_spawn(local_1092.bind(v0, v3, _pog_clone(v8))))
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.SummonJafs: COMPLETED \n")
-	return
+				_pc = 9320
+				continue
+		elif _pc == 9249:
+			await local_18284(0, "jafs_dialogue_after_you_", 4, 0, 0)
+			await flag_jafs_inactive()
+			_pc = 9315
+			continue
+		elif _pc == 9294:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Player too close to player base \n")
+			_pc = 9315
+			continue
+		elif _pc == 9315:
+			_pc = 10630
+			continue
+		elif _pc == 9320:
+			ihud.pog_print("hud_jafs_summoned")
+			await flag_jafs_active()
+			_pc = 9381
+			continue
+		elif _pc == 9360:
+			debug.print_string("iJafsScript.SummonJafs: Flagged Jafs as ACTIVE.\n")
+			_pc = 9381
+			continue
+		elif _pc == 9381:
+			await local_18414(v0, "jafs_on_my_way", 1, 0)
+			v7 = "ini:/sims/ships/player/snrv_jafs_capsule_nodockports"
+			if global.exists("g_current_act"):
+				_pc = 9447
+				continue
+			else:
+				_pc = 9487
+				continue
+		elif _pc == 9447:
+			if 1 == global.pog_int("g_current_act"):
+				_pc = 9474
+				continue
+			else:
+				_pc = 9487
+				continue
+		elif _pc == 9474:
+			v7 = "ini:/sims/ships/player/snrv_jafs_nodockports"
+			_pc = 9487
+			continue
+		elif _pc == 9487:
+			v0 = iship.create(v7, "name_jafs")
+			v8 = await local_6544(v0)
+			iship.install_a_i_pilot(v0, 30.0, 30.0, 0.10000000149011612, "iJafsScript.JafsScared", "", "", "")
+			isim.set_faction(v0, v4)
+			object.set_int_property(v0, "ignore_speed_limit", 1)
+			object.add_int_property(v0, "attacked_count", 0)
+			isim.set_indestructable(v0, 1)
+			sim.set_cullable(v0, 0)
+			sim.place_near(v0, v1, 300000.0)
+			_pc = 9776
+			continue
+		elif _pc == 9755:
+			debug.print_string("iJafsScript.SummonJafs: Jafs Created\n")
+			_pc = 9776
+			continue
+		elif _pc == 9776:
+			v2 = sim.create("ini:/sims/nav/waypoint", "Jafs Pod Waypoint")
+			v9 = iship.cast(await local_16262(v0, v3))
+			_pc = 9894
+			continue
+		elif _pc == 9855:
+			if _pog_is_null(v9):
+				_pc = 9868
+				continue
+			else:
+				_pc = 9894
+				continue
+		elif _pc == 9868:
+			_pc = 9894
+			continue
+		elif _pc == 9873:
+			debug.print_string("iJafsScript.SummonJafs: Warning - Nearest pod is null! \n")
+			_pc = 9894
+			continue
+		elif _pc == 9894:
+			await iutilities.sim_place_between_exact(v2, v9, v0, 1000.0)
+			sim.point_at(v0, v2)
+			sim.set_velocity(v0, 0.0, 0.0, 1000.0)
+			_pc = 10012
+			continue
+		elif _pc == 9991:
+			debug.print_string("iJafsScript.SummonJafs: Waypoint Set for Jafs\n")
+			_pc = 10012
+			continue
+		elif _pc == 10012:
+			iai.give_approach_order_advanced(v0, v2, 500.0, 200.0, 1)
+			_pc = 10073
+			continue
+		elif _pc == 10052:
+			debug.print_string("iJafsScript.SummonJafs: Jafs ordered to approach pod waypoint\n")
+			_pc = 10073
+			continue
+		elif _pc == 10073:
+			_pc = 10078
+			continue
+		elif _pc == 10078:
+			await _pog_frame()
+			if _pog_every(10079, 5.0):
+				_pc = 10092
+				continue
+			else:
+				_pc = 10287
+				continue
+		elif _pc == 10092:
+			if sim.is_dead(v0):
+				_pc = 10115
+				continue
+			else:
+				_pc = 10179
+				continue
+		elif _pc == 10115:
+			sim.destroy(v2)
+			await flag_jafs_inactive()
+			_pc = 10174
+			continue
+		elif _pc == 10153:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
+			_pc = 10174
+			continue
+		elif _pc == 10174:
+			_pc = 10630
+			continue
+		elif _pc == 10179:
+			if await local_17890(v0, v1, 5):
+				_pc = 10209
+				continue
+			else:
+				_pc = 10259
+				continue
+		elif _pc == 10209:
+			sim.destroy(v2)
+			_pc = 10254
+			continue
+		elif _pc == 10233:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs has been attacked.")
+			_pc = 10254
+			continue
+		elif _pc == 10254:
+			_pc = 10630
+			continue
+		elif _pc == 10259:
+			if iai.is_order_complete(v0):
+				_pc = 10282
+				continue
+			else:
+				_pc = 10287
+				continue
+		elif _pc == 10282:
+			_pc = 10491
+			continue
+		elif _pc == 10287:
+			if _pog_every(10287, 10.0):
+				_pc = 10300
+				continue
+			else:
+				_pc = 10486
+				continue
+		elif _pc == 10300:
+			if sim.is_dead(v0):
+				_pc = 10323
+				continue
+			else:
+				_pc = 10368
+				continue
+		elif _pc == 10323:
+			await flag_jafs_inactive()
+			_pc = 10363
+			continue
+		elif _pc == 10342:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
+			_pc = 10363
+			continue
+		elif _pc == 10363:
+			_pc = 10630
+			continue
+		elif _pc == 10368:
+			if not (await local_17028(v1, v0, v3, 300000.0)):
+				_pc = 10407
+				continue
+			else:
+				_pc = 10486
+				continue
+		elif _pc == 10407:
+			_pc = 10433
+			continue
+		elif _pc == 10412:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Player out of range.\n")
+			_pc = 10433
+			continue
+		elif _pc == 10433:
+			await collect_pods(1)
+			sim.destroy(v0)
+			await flag_jafs_inactive()
+			_pc = 10630
+			continue
+		elif _pc == 10486:
+			_pc = 10078
+			continue
+		elif _pc == 10491:
+			if sim.is_dead(v0):
+				_pc = 10516
+				continue
+			else:
+				_pc = 10561
+				continue
+		elif _pc == 10516:
+			await flag_jafs_inactive()
+			_pc = 10556
+			continue
+		elif _pc == 10535:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
+			_pc = 10556
+			continue
+		elif _pc == 10556:
+			_pc = 10630
+			continue
+		elif _pc == 10561:
+			_pog_detach(_pog_spawn(local_1092.bind(v0, v3, _pog_clone(v8))))
+			_pc = 10630
+			continue
+		elif _pc == 10609:
+			debug.print_string("iJafsScript.SummonJafs: COMPLETED \n")
+			_pc = 10630
+			continue
+		elif _pc == 10630:
+			return
+		else:
+			return 0
 	return 0
 
 func call_jafs() -> Variant:
-	if not (await jafs_functionality_available()):
-		if PogRuntime.TRACE:
+	var _pc: int = 10646
+	while true:
+		if _pc == 10646:
+			if not (await jafs_functionality_available()):
+				_pc = 10666
+				continue
+			else:
+				_pc = 10698
+				continue
+		elif _pc == 10666:
+			_pc = 10692
+			continue
+		elif _pc == 10671:
 			debug.print_string("iJafsScript.CallJafs: Jafs functionality disabled. Can't summon Jafs\n")
-	else:
-		if not (await jafs_enabled()):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.CallJafs: Jafs has been disabled by a script. Can't summon Jafs.\n")
+			_pc = 10692
+			continue
+		elif _pc == 10692:
+			_pc = 10915
+			continue
+		elif _pc == 10698:
+			if not (await jafs_enabled()):
+				_pc = 10717
+				continue
+			else:
+				_pc = 10785
+				continue
+		elif _pc == 10717:
+			_pc = 10743
+			continue
+		elif _pc == 10722:
+			debug.print_string("iJafsScript.CallJafs: Jafs has been disabled by a script. Can't summon Jafs.\n")
+			_pc = 10743
+			continue
+		elif _pc == 10743:
 			ihud.pog_print("hud_jafs_unavailable")
 			ihud.play_audio_cue(1)
-		else:
+			_pc = 10915
+			continue
+		elif _pc == 10785:
 			if await jafs_active():
-				await local_18284(0, "jafs_dialogue_im_busy_", 4, 0, 0)
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs already active.\n")
+				_pc = 10803
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.CallJafs: Jafs is available. Attempting to summon Jafs\n")
-				_pog_detach(_pog_spawn(local_8690.bind()))
-	return 0
+				_pc = 10861
+				continue
+		elif _pc == 10803:
+			await local_18284(0, "jafs_dialogue_im_busy_", 4, 0, 0)
+			_pc = 10855
+			continue
+		elif _pc == 10834:
+			debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs already active.\n")
+			_pc = 10855
+			continue
+		elif _pc == 10855:
+			_pc = 10915
+			continue
+		elif _pc == 10861:
+			_pc = 10888
+			continue
+		elif _pc == 10867:
+			debug.print_string("iJafsScript.CallJafs: Jafs is available. Attempting to summon Jafs\n")
+			_pc = 10888
+			continue
+		elif _pc == 10888:
+			_pog_detach(_pog_spawn(local_8690.bind()))
+			_pc = 10915
+			continue
+		elif _pc == 10915:
+			return 0
+		else:
+			return 0
 	return 0
 
 func jafs_enabled() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.find_player_ship()
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 10918
+	while true:
+		if _pc == 10918:
+			v0 = iship.find_player_ship()
+			if _pog_is_null(v0):
+				_pc = 10955
+				continue
+			else:
+				_pc = 10987
+				continue
+		elif _pc == 10955:
+			_pc = 10981
+			continue
+		elif _pc == 10960:
 			debug.print_string("iJafsScript.JafsEnabled: Can't find player ship.\n")
-	else:
-		if object.property_exists(v0, "jafs_disabled"):
-			pass
-	return
+			_pc = 10981
+			continue
+		elif _pc == 10981:
+			_pc = 11029
+			continue
+		elif _pc == 10987:
+			if object.property_exists(v0, "jafs_disabled"):
+				_pc = 11017
+				continue
+			else:
+				_pc = 11023
+				continue
+		elif _pc == 11017:
+			_pc = 11029
+			continue
+		elif _pc == 11023:
+			_pc = 11029
+			continue
+		elif _pc == 11029:
+			return
+		else:
+			return 0
 	return 0
 
 func enable_jafs() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.find_player_ship()
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 11031
+	while true:
+		if _pc == 11031:
+			v0 = iship.find_player_ship()
+			if _pog_is_null(v0):
+				_pc = 11068
+				continue
+			else:
+				_pc = 11099
+				continue
+		elif _pc == 11068:
+			_pc = 11094
+			continue
+		elif _pc == 11073:
 			debug.print_string("iJafsScript.EnableJafs: Can't find player ship. Can't try to enable Jafs.\n")
-	else:
-		if object.property_exists(v0, "jafs_disabled"):
+			_pc = 11094
+			continue
+		elif _pc == 11094:
+			_pc = 11212
+			continue
+		elif _pc == 11099:
+			if object.property_exists(v0, "jafs_disabled"):
+				_pc = 11129
+				continue
+			else:
+				_pc = 11186
+				continue
+		elif _pc == 11129:
 			object.remove_property(v0, "jafs_disabled")
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.EnableJafs: Jafs enabled.\n")
+			_pc = 11181
+			continue
+		elif _pc == 11160:
+			debug.print_string("iJafsScript.EnableJafs: Jafs enabled.\n")
+			_pc = 11181
+			continue
+		elif _pc == 11181:
+			_pc = 11212
+			continue
+		elif _pc == 11186:
+			_pc = 11212
+			continue
+		elif _pc == 11191:
+			debug.print_string("iJafsScript.EnableJafs: Jafs already enabled.\n")
+			_pc = 11212
+			continue
+		elif _pc == 11212:
+			return 0
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.EnableJafs: Jafs already enabled.\n")
-	return 0
+			return 0
 	return 0
 
 func disable_jafs() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.find_player_ship()
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 11215
+	while true:
+		if _pc == 11215:
+			v0 = iship.find_player_ship()
+			if _pog_is_null(v0):
+				_pc = 11252
+				continue
+			else:
+				_pc = 11283
+				continue
+		elif _pc == 11252:
+			_pc = 11278
+			continue
+		elif _pc == 11257:
 			debug.print_string("iJafsScript.DisableJafs: Can't disable Jafs - Player ship not found.\n")
-	else:
-		if not (object.property_exists(v0, "jafs_disabled")):
+			_pc = 11278
+			continue
+		elif _pc == 11278:
+			_pc = 11398
+			continue
+		elif _pc == 11283:
+			if not (object.property_exists(v0, "jafs_disabled")):
+				_pc = 11314
+				continue
+			else:
+				_pc = 11372
+				continue
+		elif _pc == 11314:
 			object.add_int_property(v0, "jafs_disabled", 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.EnableJafs: Jafs disabled.\n")
+			_pc = 11367
+			continue
+		elif _pc == 11346:
+			debug.print_string("iJafsScript.EnableJafs: Jafs disabled.\n")
+			_pc = 11367
+			continue
+		elif _pc == 11367:
+			_pc = 11398
+			continue
+		elif _pc == 11372:
+			_pc = 11398
+			continue
+		elif _pc == 11377:
+			debug.print_string("iJafsScript.EnableJafs: Jafs already disabled.\n")
+			_pc = 11398
+			continue
+		elif _pc == 11398:
+			return 0
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.EnableJafs: Jafs already disabled.\n")
-	return 0
+			return 0
 	return 0
 
 func pod_tag_toggle() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = await get_tag_group()
-	v1 = iship.find_player_ship()
-	if not (await jafs_functionality_available()):
-		if PogRuntime.TRACE:
+	var _pc: int = 11401
+	while true:
+		if _pc == 11401:
+			v0 = await get_tag_group()
+			v1 = iship.find_player_ship()
+			if not (await jafs_functionality_available()):
+				_pc = 11463
+				continue
+			else:
+				_pc = 11494
+				continue
+		elif _pc == 11463:
+			_pc = 11489
+			continue
+		elif _pc == 11468:
 			debug.print_string("iJafsScript.PodTagToggle: Jafs functionality disabled. Pod Tagging not available.\n")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 11489
+			continue
+		elif _pc == 11489:
+			_pc = 12165
+			continue
+		elif _pc == 11494:
+			_pc = 11520
+			continue
+		elif _pc == 11499:
 			debug.print_string("iJafsScript.PodTagToggle: Attempting to tag / untag pod.")
-		if _pog_is_null(v1):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Can't find player ship. \n")
-		else:
+			_pc = 11520
+			continue
+		elif _pc == 11520:
+			if _pog_is_null(v1):
+				_pc = 11533
+				continue
+			else:
+				_pc = 11564
+				continue
+		elif _pc == 11533:
+			_pc = 11559
+			continue
+		elif _pc == 11538:
+			debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Can't find player ship. \n")
+			_pc = 11559
+			continue
+		elif _pc == 11559:
+			_pc = 12165
+			continue
+		elif _pc == 11564:
 			v2 = iship.cast(iship.current_target(v1))
 			if not (v2):
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Target is null.\n")
+				_pc = 11612
+				continue
 			else:
-				if 2048 != isim.type(v2):
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Not a cargo pod.\n")
-				else:
-					if not (object.property_exists(v2, "cargo")):
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Cargo property doesn't exits.\n")
-						ihud.pog_print("hud_tag_error_no_cargo_in_pod")
-						ihud.play_audio_cue(1)
-						return 0
-					else:
-						if _pog_is_null(object.int_property(v2, "cargo")):
-							if PogRuntime.TRACE:
-								debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - No cargo in pod.\n")
-							ihud.pog_print("hud_tag_error_no_cargo_in_pod")
-							ihud.play_audio_cue(1)
-							return 0
-					if iai.has_order(v2):
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Pod is loading.\n")
-						ihud.pog_print("hud_tag_error_pod_is_loading")
-						ihud.play_audio_cue(1)
-					else:
-						if isim.is_docked(v2):
-							if PogRuntime.TRACE:
-								debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Pod is docked.\n")
-							ihud.pog_print("hud_tag_error_pod_is_docked")
-							ihud.play_audio_cue(1)
-						else:
-							if not _pog_eq(v0, sim.group(v2)):
-								await tag_pod(v0, v2)
-							else:
-								await untag_pod(v0, v2)
-	return 0
+				_pc = 11643
+				continue
+		elif _pc == 11612:
+			_pc = 11638
+			continue
+		elif _pc == 11617:
+			debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Target is null.\n")
+			_pc = 11638
+			continue
+		elif _pc == 11638:
+			_pc = 12165
+			continue
+		elif _pc == 11643:
+			if 2048 != isim.type(v2):
+				_pc = 11670
+				continue
+			else:
+				_pc = 11701
+				continue
+		elif _pc == 11670:
+			_pc = 11696
+			continue
+		elif _pc == 11675:
+			debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Not a cargo pod.\n")
+			_pc = 11696
+			continue
+		elif _pc == 11696:
+			_pc = 12165
+			continue
+		elif _pc == 11701:
+			if not (object.property_exists(v2, "cargo")):
+				_pc = 11732
+				continue
+			else:
+				_pc = 11804
+				continue
+		elif _pc == 11732:
+			_pc = 11758
+			continue
+		elif _pc == 11737:
+			debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Cargo property doesn't exits.\n")
+			_pc = 11758
+			continue
+		elif _pc == 11758:
+			ihud.pog_print("hud_tag_error_no_cargo_in_pod")
+			ihud.play_audio_cue(1)
+			_pc = 12165
+			continue
+		elif _pc == 11799:
+			_pc = 11903
+			continue
+		elif _pc == 11804:
+			if _pog_is_null(object.int_property(v2, "cargo")):
+				_pc = 11836
+				continue
+			else:
+				_pc = 11903
+				continue
+		elif _pc == 11836:
+			_pc = 11862
+			continue
+		elif _pc == 11841:
+			debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - No cargo in pod.\n")
+			_pc = 11862
+			continue
+		elif _pc == 11862:
+			ihud.pog_print("hud_tag_error_no_cargo_in_pod")
+			ihud.play_audio_cue(1)
+			_pc = 12165
+			continue
+		elif _pc == 11903:
+			if iai.has_order(v2):
+				_pc = 11926
+				continue
+			else:
+				_pc = 11993
+				continue
+		elif _pc == 11926:
+			_pc = 11952
+			continue
+		elif _pc == 11931:
+			debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Pod is loading.\n")
+			_pc = 11952
+			continue
+		elif _pc == 11952:
+			ihud.pog_print("hud_tag_error_pod_is_loading")
+			ihud.play_audio_cue(1)
+			_pc = 12165
+			continue
+		elif _pc == 11993:
+			if isim.is_docked(v2):
+				_pc = 12016
+				continue
+			else:
+				_pc = 12083
+				continue
+		elif _pc == 12016:
+			_pc = 12042
+			continue
+		elif _pc == 12021:
+			debug.print_string("iJafsScript.PodTagToggle: Can't tag / untag - Pod is docked.\n")
+			_pc = 12042
+			continue
+		elif _pc == 12042:
+			ihud.pog_print("hud_tag_error_pod_is_docked")
+			ihud.play_audio_cue(1)
+			_pc = 12165
+			continue
+		elif _pc == 12083:
+			if not _pog_eq(v0, sim.group(v2)):
+				_pc = 12112
+				continue
+			else:
+				_pc = 12141
+				continue
+		elif _pc == 12112:
+			await tag_pod(v0, v2)
+			_pc = 12165
+			continue
+		elif _pc == 12141:
+			await untag_pod(v0, v2)
+			_pc = 12165
+			continue
+		elif _pc == 12165:
+			return 0
+		else:
+			return 0
 	return 0
 
 func tag_pod(v0, v1) -> Variant:
 	var v2: Variant = 0
-	if 11 > group.sim_count(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 12168
+	while true:
+		if _pc == 12168:
+			if 11 > group.sim_count(v0):
+				_pc = 12199
+				continue
+			else:
+				_pc = 12266
+				continue
+		elif _pc == 12199:
+			_pc = 12225
+			continue
+		elif _pc == 12204:
 			debug.print_string("iJafsScript.TagPod: Can't tag - no free tags. \n")
-		ihud.pog_print("hud_tag_error_no_free_tags")
-		ihud.play_audio_cue(1)
-	else:
-		v2 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v1, 2, 1)))
-		if idockport.is_disabled(v2):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.TagPod: Can't tag - Dockport disabled. \n")
+			_pc = 12225
+			continue
+		elif _pc == 12225:
+			ihud.pog_print("hud_tag_error_no_free_tags")
+			ihud.play_audio_cue(1)
+			_pc = 12628
+			continue
+		elif _pc == 12266:
+			v2 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v1, 2, 1)))
+			if idockport.is_disabled(v2):
+				_pc = 12344
+				continue
+			else:
+				_pc = 12411
+				continue
+		elif _pc == 12344:
+			_pc = 12370
+			continue
+		elif _pc == 12349:
+			debug.print_string("iJafsScript.TagPod: Can't tag - Dockport disabled. \n")
+			_pc = 12370
+			continue
+		elif _pc == 12370:
 			ihud.pog_print("E_NoDockportAvailable")
 			ihud.play_audio_cue(1)
-		else:
+			_pc = 12628
+			continue
+		elif _pc == 12411:
 			if not (await disable_pod_dockport(v1)):
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.TagPod: Can't tag - No dockport. \n")
-				ihud.pog_print("E_NoDockportAvailable")
-				ihud.play_audio_cue(1)
+				_pc = 12435
+				continue
 			else:
-				group.add_sim(v0, v1)
-				isim.set_mission_critical(v1, 1)
-				sim.set_cullable(v1, 0)
-				ihud.pog_print("hud_pod_tagged")
-				ihud.play_audio_cue(0)
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.TagPod: Pod Successfully Tagged. \n")
-	return 0
+				_pc = 12502
+				continue
+		elif _pc == 12435:
+			_pc = 12461
+			continue
+		elif _pc == 12440:
+			debug.print_string("iJafsScript.TagPod: Can't tag - No dockport. \n")
+			_pc = 12461
+			continue
+		elif _pc == 12461:
+			ihud.pog_print("E_NoDockportAvailable")
+			ihud.play_audio_cue(1)
+			_pc = 12628
+			continue
+		elif _pc == 12502:
+			group.add_sim(v0, v1)
+			isim.set_mission_critical(v1, 1)
+			sim.set_cullable(v1, 0)
+			ihud.pog_print("hud_pod_tagged")
+			ihud.play_audio_cue(0)
+			_pc = 12628
+			continue
+		elif _pc == 12607:
+			debug.print_string("iJafsScript.TagPod: Pod Successfully Tagged. \n")
+			_pc = 12628
+			continue
+		elif _pc == 12628:
+			return 0
+		else:
+			return 0
 	return 0
 
 func untag_pod(v0, v1) -> Variant:
@@ -1450,34 +2177,98 @@ func get_tag_group() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = iship.find_player_ship()
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 12871
+	while true:
+		if _pc == 12871:
+			v2 = iship.find_player_ship()
+			if _pog_is_null(v2):
+				_pc = 12908
+				continue
+			else:
+				_pc = 12940
+				continue
+		elif _pc == 12908:
+			_pc = 12934
+			continue
+		elif _pc == 12913:
 			debug.print_string("iJafsScript.GetTagGroup: Can't find player ship. Can't get tagged pods group. \n")
-	else:
-		if not (object.property_exists(v2, "tagged_pods_group")):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.GetTagGroup: Initialising group of tagged pods and subgroup of loaded pods. \n")
+			_pc = 12934
+			continue
+		elif _pc == 12934:
+			_pc = 13352
+			continue
+		elif _pc == 12940:
+			if not (object.property_exists(v2, "tagged_pods_group")):
+				_pc = 12971
+				continue
+			else:
+				_pc = 13095
+				continue
+		elif _pc == 12971:
+			_pc = 12997
+			continue
+		elif _pc == 12976:
+			debug.print_string("iJafsScript.GetTagGroup: Initialising group of tagged pods and subgroup of loaded pods. \n")
+			_pc = 12997
+			continue
+		elif _pc == 12997:
 			v0 = group.create()
 			v1 = group.create()
 			group.add_group(v0, v1)
 			object.add_handle_property(v2, "tagged_pods_group", v0)
-		else:
+			_pc = 13342
+			continue
+		elif _pc == 13095:
 			v0 = group.cast(object.handle_property(v2, "tagged_pods_group"))
 			v1 = group.nth_group(v0, 0)
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.GetTagGroup: Returning group of tagged pods containing ")
-			if PogRuntime.TRACE:
-				debug.print_int(group.sim_count(v0))
-			if PogRuntime.TRACE:
-				debug.print_string(" pods. \n")
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.GetTagGroup: Returning subgroup of loaded pods containing ")
-			if PogRuntime.TRACE:
-				debug.print_int(group.sim_count(v1))
-			if PogRuntime.TRACE:
-				debug.print_string(" pods. \n")
-	return
+			_pc = 13190
+			continue
+		elif _pc == 13169:
+			debug.print_string("iJafsScript.GetTagGroup: Returning group of tagged pods containing ")
+			_pc = 13190
+			continue
+		elif _pc == 13190:
+			_pc = 13227
+			continue
+		elif _pc == 13195:
+			debug.print_int(group.sim_count(v0))
+			_pc = 13227
+			continue
+		elif _pc == 13227:
+			_pc = 13253
+			continue
+		elif _pc == 13232:
+			debug.print_string(" pods. \n")
+			_pc = 13253
+			continue
+		elif _pc == 13253:
+			_pc = 13279
+			continue
+		elif _pc == 13258:
+			debug.print_string("iJafsScript.GetTagGroup: Returning subgroup of loaded pods containing ")
+			_pc = 13279
+			continue
+		elif _pc == 13279:
+			_pc = 13316
+			continue
+		elif _pc == 13284:
+			debug.print_int(group.sim_count(v1))
+			_pc = 13316
+			continue
+		elif _pc == 13316:
+			_pc = 13342
+			continue
+		elif _pc == 13321:
+			debug.print_string(" pods. \n")
+			_pc = 13342
+			continue
+		elif _pc == 13342:
+			_pc = 13352
+			continue
+		elif _pc == 13352:
+			return
+		else:
+			return 0
 	return 0
 
 func tag_pods_in_f_o_v() -> Variant:
@@ -1493,172 +2284,582 @@ func tag_pods_in_f_o_v() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v0 = iship.find_player_ship()
-	v1 = await get_tag_group()
-	v4 = 45.0
-	v5 = 10000.0
-	v8 = null
-	v9 = null
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 13354
+	while true:
+		if _pc == 13354:
+			v0 = iship.find_player_ship()
+			v1 = await get_tag_group()
+			v4 = 45.0
+			v5 = 10000.0
+			v8 = null
+			v9 = null
+			if _pog_is_null(v0):
+				_pc = 13454
+				continue
+			else:
+				_pc = 13485
+				continue
+		elif _pc == 13454:
+			_pc = 13480
+			continue
+		elif _pc == 13459:
 			debug.print_string("iJafsScript.TagPodsInFOV(): Can't find player ship - EXITING.\n")
-	else:
-		if _pog_is_null(v1):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.TagPodsInFOV(): Can't get tagged pods group - EXITING.\n")
-		else:
+			_pc = 13480
+			continue
+		elif _pc == 13480:
+			_pc = 15132
+			continue
+		elif _pc == 13485:
+			if _pog_is_null(v1):
+				_pc = 13498
+				continue
+			else:
+				_pc = 13529
+				continue
+		elif _pc == 13498:
+			_pc = 13524
+			continue
+		elif _pc == 13503:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Can't get tagged pods group - EXITING.\n")
+			_pc = 13524
+			continue
+		elif _pc == 13524:
+			_pc = 15132
+			continue
+		elif _pc == 13529:
 			v8 = list.from_set(isim.sims_in_radius(v0, 10000.0, 2048))
 			if _pog_is_null(list.item_count(v8)):
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.TagPodsInFOV(): No pods in range. EXITING.\n")
+				_pc = 13602
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.TagPodsInFOV(): Pods in range == ")
-				if PogRuntime.TRACE:
-					debug.print_int(list.item_count(v8))
-				if PogRuntime.TRACE:
-					debug.print_string(". Filtering...\n")
-				v10 = 0
-				while list.item_count(v8) < v10:
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.TagPodsInFOV(): Checking pod no.")
-					if PogRuntime.TRACE:
-						debug.print_int(v10)
-					if PogRuntime.TRACE:
-						debug.print_string("\n")
-					v2 = iship.cast(list.get_nth(v8, v10))
-					if _pog_is_null(v2) or sim.is_dead(v2):
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring dead / null pod.\n")
-					else:
-						if not (sim.is_in_f_o_v(v0, v2, v4)):
-							if PogRuntime.TRACE:
-								debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring pod outside FOV.\n")
-						else:
-							if not (object.property_exists(v2, "cargo")):
-								if PogRuntime.TRACE:
-									debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring pod without cargo property.\n")
-							else:
-								if _pog_is_null(object.int_property(v2, "cargo")):
-									if PogRuntime.TRACE:
-										debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring pod with no cargo.\n")
-								else:
-									if iai.has_order(v2):
-										if PogRuntime.TRACE:
-											debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring loading pod.\n")
-									else:
-										if isim.is_docked(v2):
-											if PogRuntime.TRACE:
-												debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring docked Pod.\n")
-										else:
-											if PogRuntime.TRACE:
-												debug.print_string("iJafsScript.TagPodsInFOV(): Found Valid Pod\n")
-											list.add_tail(v9, v2)
-					v10 = 1 + v10
-				v10 = list.item_count(v9)
-				if _pog_is_null(v10):
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.TagPodsInFOV(): No pods to tag. EXITING.\n")
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.TagPodsInFOV: Valid pods found = ")
-					if PogRuntime.TRACE:
-						debug.print_int(v10)
-					if PogRuntime.TRACE:
-						debug.print_string("\n")
-					if 1 == v10:
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.TagPodsInFOV: Tagging single pod.\n")
-						await tag_pod(v1, iship.cast(list.get_nth(v9, 0)))
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.TagPodsInFOV: Finished tagging pods.\n")
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.TagPodsInFOV: Tagging closest valid pods..\n")
-						while true:
-							v3 = iship.cast(list.head(v9))
-							v10 = 0
-							while list.item_count(v9) < v10:
-								if PogRuntime.TRACE:
-									debug.print_string("iJafsScript.get_closest_pod: Checking Pod ")
-								if PogRuntime.TRACE:
-									debug.print_int(v10)
-								if PogRuntime.TRACE:
-									debug.print_string("\n")
-								v2 = iship.cast(list.get_nth(v9, v10))
-								if sim.is_alive(v2):
-									v7 = sim.distance_between(v0, v2)
-									if v6 < v7:
-										v3 = v2
-										v6 = v7
-										v11 = v10
-								else:
-									if PogRuntime.TRACE:
-										debug.print_string("iJafsScript.get_closest_pod: WARNING - sim is dead!")
-								v10 = 1 + v10
-							if PogRuntime.TRACE:
-								debug.print_string("iJafsScript.get_closest_pod: Closest pod is No.")
-							if PogRuntime.TRACE:
-								debug.print_int(v11)
-							if PogRuntime.TRACE:
-								debug.print_string("\n")
-							list.remove(v9, v3)
-							await tag_pod(v1, v3)
-							if not (not _pog_is_null(list.item_count(v9)) and 12 < group.sim_count(v1)):
-								break
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.TagPodsInFOV: Finished tagging pods.\n")
-	return 0
+				_pc = 13633
+				continue
+		elif _pc == 13602:
+			_pc = 13628
+			continue
+		elif _pc == 13607:
+			debug.print_string("iJafsScript.TagPodsInFOV(): No pods in range. EXITING.\n")
+			_pc = 13628
+			continue
+		elif _pc == 13628:
+			_pc = 15132
+			continue
+		elif _pc == 13633:
+			_pc = 13659
+			continue
+		elif _pc == 13638:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Pods in range == ")
+			_pc = 13659
+			continue
+		elif _pc == 13659:
+			_pc = 13696
+			continue
+		elif _pc == 13664:
+			debug.print_int(list.item_count(v8))
+			_pc = 13696
+			continue
+		elif _pc == 13696:
+			_pc = 13722
+			continue
+		elif _pc == 13701:
+			debug.print_string(". Filtering...\n")
+			_pc = 13722
+			continue
+		elif _pc == 13722:
+			v10 = 0
+			_pc = 13729
+			continue
+		elif _pc == 13729:
+			if list.item_count(v8) < v10:
+				_pc = 13758
+				continue
+			else:
+				_pc = 14305
+				continue
+		elif _pc == 13758:
+			_pc = 13784
+			continue
+		elif _pc == 13763:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Checking pod no.")
+			_pc = 13784
+			continue
+		elif _pc == 13784:
+			_pc = 13808
+			continue
+		elif _pc == 13789:
+			debug.print_int(v10)
+			_pc = 13808
+			continue
+		elif _pc == 13808:
+			_pc = 13834
+			continue
+		elif _pc == 13813:
+			debug.print_string("\n")
+			_pc = 13834
+			continue
+		elif _pc == 13834:
+			v2 = iship.cast(list.get_nth(v8, v10))
+			if _pog_is_null(v2) or sim.is_dead(v2):
+				_pc = 13908
+				continue
+			else:
+				_pc = 13939
+				continue
+		elif _pc == 13908:
+			_pc = 13934
+			continue
+		elif _pc == 13913:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring dead / null pod.\n")
+			_pc = 13934
+			continue
+		elif _pc == 13934:
+			_pc = 14287
+			continue
+		elif _pc == 13939:
+			if not (sim.is_in_f_o_v(v0, v2, v4)):
+				_pc = 13973
+				continue
+			else:
+				_pc = 14004
+				continue
+		elif _pc == 13973:
+			_pc = 13999
+			continue
+		elif _pc == 13978:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring pod outside FOV.\n")
+			_pc = 13999
+			continue
+		elif _pc == 13999:
+			_pc = 14287
+			continue
+		elif _pc == 14004:
+			if not (object.property_exists(v2, "cargo")):
+				_pc = 14035
+				continue
+			else:
+				_pc = 14066
+				continue
+		elif _pc == 14035:
+			_pc = 14061
+			continue
+		elif _pc == 14040:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring pod without cargo property.\n")
+			_pc = 14061
+			continue
+		elif _pc == 14061:
+			_pc = 14287
+			continue
+		elif _pc == 14066:
+			if _pog_is_null(object.int_property(v2, "cargo")):
+				_pc = 14098
+				continue
+			else:
+				_pc = 14129
+				continue
+		elif _pc == 14098:
+			_pc = 14124
+			continue
+		elif _pc == 14103:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring pod with no cargo.\n")
+			_pc = 14124
+			continue
+		elif _pc == 14124:
+			_pc = 14287
+			continue
+		elif _pc == 14129:
+			if iai.has_order(v2):
+				_pc = 14152
+				continue
+			else:
+				_pc = 14183
+				continue
+		elif _pc == 14152:
+			_pc = 14178
+			continue
+		elif _pc == 14157:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring loading pod.\n")
+			_pc = 14178
+			continue
+		elif _pc == 14178:
+			_pc = 14287
+			continue
+		elif _pc == 14183:
+			if isim.is_docked(v2):
+				_pc = 14206
+				continue
+			else:
+				_pc = 14237
+				continue
+		elif _pc == 14206:
+			_pc = 14232
+			continue
+		elif _pc == 14211:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Ignoring docked Pod.\n")
+			_pc = 14232
+			continue
+		elif _pc == 14232:
+			_pc = 14287
+			continue
+		elif _pc == 14237:
+			_pc = 14263
+			continue
+		elif _pc == 14242:
+			debug.print_string("iJafsScript.TagPodsInFOV(): Found Valid Pod\n")
+			_pc = 14263
+			continue
+		elif _pc == 14263:
+			list.add_tail(v9, v2)
+			_pc = 14287
+			continue
+		elif _pc == 14287:
+			v10 = 1 + v10
+			_pc = 13729
+			continue
+		elif _pc == 14305:
+			v10 = list.item_count(v9)
+			if _pog_is_null(v10):
+				_pc = 14341
+				continue
+			else:
+				_pc = 14372
+				continue
+		elif _pc == 14341:
+			_pc = 14367
+			continue
+		elif _pc == 14346:
+			debug.print_string("iJafsScript.TagPodsInFOV(): No pods to tag. EXITING.\n")
+			_pc = 14367
+			continue
+		elif _pc == 14367:
+			_pc = 15132
+			continue
+		elif _pc == 14372:
+			_pc = 14398
+			continue
+		elif _pc == 14377:
+			debug.print_string("iJafsScript.TagPodsInFOV: Valid pods found = ")
+			_pc = 14398
+			continue
+		elif _pc == 14398:
+			_pc = 14422
+			continue
+		elif _pc == 14403:
+			debug.print_int(v10)
+			_pc = 14422
+			continue
+		elif _pc == 14422:
+			_pc = 14448
+			continue
+		elif _pc == 14427:
+			debug.print_string("\n")
+			_pc = 14448
+			continue
+		elif _pc == 14448:
+			if 1 == v10:
+				_pc = 14460
+				continue
+			else:
+				_pc = 14568
+				continue
+		elif _pc == 14460:
+			_pc = 14486
+			continue
+		elif _pc == 14465:
+			debug.print_string("iJafsScript.TagPodsInFOV: Tagging single pod.\n")
+			_pc = 14486
+			continue
+		elif _pc == 14486:
+			await tag_pod(v1, iship.cast(list.get_nth(v9, 0)))
+			_pc = 14563
+			continue
+		elif _pc == 14542:
+			debug.print_string("iJafsScript.TagPodsInFOV: Finished tagging pods.\n")
+			_pc = 14563
+			continue
+		elif _pc == 14563:
+			_pc = 15132
+			continue
+		elif _pc == 14568:
+			_pc = 14594
+			continue
+		elif _pc == 14573:
+			debug.print_string("iJafsScript.TagPodsInFOV: Tagging closest valid pods..\n")
+			_pc = 14594
+			continue
+		elif _pc == 14594:
+			v3 = iship.cast(list.head(v9))
+			v10 = 0
+			_pc = 14638
+			continue
+		elif _pc == 14638:
+			if list.item_count(v9) < v10:
+				_pc = 14667
+				continue
+			else:
+				_pc = 14935
+				continue
+		elif _pc == 14667:
+			_pc = 14693
+			continue
+		elif _pc == 14672:
+			debug.print_string("iJafsScript.get_closest_pod: Checking Pod ")
+			_pc = 14693
+			continue
+		elif _pc == 14693:
+			_pc = 14717
+			continue
+		elif _pc == 14698:
+			debug.print_int(v10)
+			_pc = 14717
+			continue
+		elif _pc == 14717:
+			_pc = 14743
+			continue
+		elif _pc == 14722:
+			debug.print_string("\n")
+			_pc = 14743
+			continue
+		elif _pc == 14743:
+			v2 = iship.cast(list.get_nth(v9, v10))
+			if sim.is_alive(v2):
+				_pc = 14808
+				continue
+			else:
+				_pc = 14891
+				continue
+		elif _pc == 14808:
+			v7 = sim.distance_between(v0, v2)
+			if v6 < v7:
+				_pc = 14853
+				continue
+			else:
+				_pc = 14886
+				continue
+		elif _pc == 14853:
+			v3 = v2
+			v6 = v7
+			v11 = v10
+			_pc = 14886
+			continue
+		elif _pc == 14886:
+			_pc = 14917
+			continue
+		elif _pc == 14891:
+			_pc = 14917
+			continue
+		elif _pc == 14896:
+			debug.print_string("iJafsScript.get_closest_pod: WARNING - sim is dead!")
+			_pc = 14917
+			continue
+		elif _pc == 14917:
+			v10 = 1 + v10
+			_pc = 14638
+			continue
+		elif _pc == 14935:
+			_pc = 14961
+			continue
+		elif _pc == 14940:
+			debug.print_string("iJafsScript.get_closest_pod: Closest pod is No.")
+			_pc = 14961
+			continue
+		elif _pc == 14961:
+			_pc = 14985
+			continue
+		elif _pc == 14966:
+			debug.print_int(v11)
+			_pc = 14985
+			continue
+		elif _pc == 14985:
+			_pc = 15011
+			continue
+		elif _pc == 14990:
+			debug.print_string("\n")
+			_pc = 15011
+			continue
+		elif _pc == 15011:
+			list.remove(v9, v3)
+			await tag_pod(v1, v3)
+			if not (not _pog_is_null(list.item_count(v9)) and 12 < group.sim_count(v1)):
+				_pc = 15106
+				continue
+			else:
+				_pc = 14594
+				continue
+		elif _pc == 15106:
+			_pc = 15132
+			continue
+		elif _pc == 15111:
+			debug.print_string("iJafsScript.TagPodsInFOV: Finished tagging pods.\n")
+			_pc = 15132
+			continue
+		elif _pc == 15132:
+			return 0
+		else:
+			return 0
 	return 0
 
 func jafs_active() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.find_player_ship()
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 15149
+	while true:
+		if _pc == 15149:
+			v0 = iship.find_player_ship()
+			if _pog_is_null(v0):
+				_pc = 15186
+				continue
+			else:
+				_pc = 15218
+				continue
+		elif _pc == 15186:
+			_pc = 15212
+			continue
+		elif _pc == 15191:
 			debug.print_string("iJafsScript.JafsActive: Can't find player ship - EXITING.\n")
-	else:
-		if object.property_exists(v0, "jafs_active"):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.JafsActive: Jafs is active.\n")
+			_pc = 15212
+			continue
+		elif _pc == 15212:
+			_pc = 15312
+			continue
+		elif _pc == 15218:
+			if object.property_exists(v0, "jafs_active"):
+				_pc = 15248
+				continue
+			else:
+				_pc = 15280
+				continue
+		elif _pc == 15248:
+			_pc = 15274
+			continue
+		elif _pc == 15253:
+			debug.print_string("iJafsScript.JafsActive: Jafs is active.\n")
+			_pc = 15274
+			continue
+		elif _pc == 15274:
+			_pc = 15312
+			continue
+		elif _pc == 15280:
+			_pc = 15306
+			continue
+		elif _pc == 15285:
+			debug.print_string("iJafsScript.JafsActive: Jafs not active.\n")
+			_pc = 15306
+			continue
+		elif _pc == 15306:
+			_pc = 15312
+			continue
+		elif _pc == 15312:
+			return
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.JafsActive: Jafs not active.\n")
-	return
+			return 0
 	return 0
 
 func flag_jafs_active() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.find_player_ship()
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 15314
+	while true:
+		if _pc == 15314:
+			v0 = iship.find_player_ship()
+			if _pog_is_null(v0):
+				_pc = 15351
+				continue
+			else:
+				_pc = 15382
+				continue
+		elif _pc == 15351:
+			_pc = 15377
+			continue
+		elif _pc == 15356:
 			debug.print_string("iJafsScript.FlagJafsActive: Can't find player ship - EXITING.\n")
-	else:
-		if object.property_exists(v0, "jafs_active"):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.FlagJafsActive: WARNING - Jafs is already active.\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.FlagJafsActive: Flagging Jafs as active.\n")
+			_pc = 15377
+			continue
+		elif _pc == 15377:
+			_pc = 15496
+			continue
+		elif _pc == 15382:
+			if object.property_exists(v0, "jafs_active"):
+				_pc = 15412
+				continue
+			else:
+				_pc = 15443
+				continue
+		elif _pc == 15412:
+			_pc = 15438
+			continue
+		elif _pc == 15417:
+			debug.print_string("iJafsScript.FlagJafsActive: WARNING - Jafs is already active.\n")
+			_pc = 15438
+			continue
+		elif _pc == 15438:
+			_pc = 15496
+			continue
+		elif _pc == 15443:
+			_pc = 15469
+			continue
+		elif _pc == 15448:
+			debug.print_string("iJafsScript.FlagJafsActive: Flagging Jafs as active.\n")
+			_pc = 15469
+			continue
+		elif _pc == 15469:
 			object.add_int_property(v0, "jafs_active", 0)
-	return 0
+			_pc = 15496
+			continue
+		elif _pc == 15496:
+			return 0
+		else:
+			return 0
 	return 0
 
 func flag_jafs_inactive() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.find_player_ship()
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 15499
+	while true:
+		if _pc == 15499:
+			v0 = iship.find_player_ship()
+			if _pog_is_null(v0):
+				_pc = 15536
+				continue
+			else:
+				_pc = 15567
+				continue
+		elif _pc == 15536:
+			_pc = 15562
+			continue
+		elif _pc == 15541:
 			debug.print_string("iJafsScript.FlagJafsInactive: Can't find player ship - EXITING.\n")
-	else:
-		if object.property_exists(v0, "jafs_active"):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.FlagJafsInactive: Flagging Jafs as inactive.\n")
+			_pc = 15562
+			continue
+		elif _pc == 15562:
+			_pc = 15680
+			continue
+		elif _pc == 15567:
+			if object.property_exists(v0, "jafs_active"):
+				_pc = 15597
+				continue
+			else:
+				_pc = 15654
+				continue
+		elif _pc == 15597:
+			_pc = 15623
+			continue
+		elif _pc == 15602:
+			debug.print_string("iJafsScript.FlagJafsInactive: Flagging Jafs as inactive.\n")
+			_pc = 15623
+			continue
+		elif _pc == 15623:
 			object.remove_property(v0, "jafs_active")
+			_pc = 15680
+			continue
+		elif _pc == 15654:
+			_pc = 15680
+			continue
+		elif _pc == 15659:
+			debug.print_string("iJafsScript.FlagJafsInactive: WARNING - Jafs is already inactive.\n")
+			_pc = 15680
+			continue
+		elif _pc == 15680:
+			return 0
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.FlagJafsInactive: WARNING - Jafs is already inactive.\n")
-	return 0
+			return 0
 	return 0
 
 func local_15683(v0, v1) -> Variant:
@@ -1667,37 +2868,89 @@ func local_15683(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = iship.find_player_ship()
-	v3 = await get_tag_group()
-	v4 = group.nth_group(v3, 0)
-	v5 = null
-	if sim.is_dead(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 15683
+	while true:
+		if _pc == 15683:
+			v2 = iship.find_player_ship()
+			v3 = await get_tag_group()
+			v4 = group.nth_group(v3, 0)
+			v5 = null
+			if sim.is_dead(v0):
+				_pc = 15785
+				continue
+			else:
+				_pc = 15830
+				continue
+		elif _pc == 15785:
+			_pc = 15811
+			continue
+		elif _pc == 15790:
 			debug.print_string("iJafsScript.jafs_runs_away: Jafs is dead - EXITING")
-		await flag_jafs_inactive()
-	else:
-		if _pog_eq(isim.cast(v2), v1):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.jafs_runs_away: Jafs is running away because the player attacked him.")
+			_pc = 15811
+			continue
+		elif _pc == 15811:
+			await flag_jafs_inactive()
+			_pc = 16253
+			continue
+		elif _pc == 15830:
+			if _pog_eq(isim.cast(v2), v1):
+				_pc = 15859
+				continue
+			else:
+				_pc = 15920
+				continue
+		elif _pc == 15859:
+			_pc = 15885
+			continue
+		elif _pc == 15864:
+			debug.print_string("iJafsScript.jafs_runs_away: Jafs is running away because the player attacked him.")
+			_pc = 15885
+			continue
+		elif _pc == 15885:
 			await local_18284(v0, "jafs_runs_from_cal_", 3, 1, 0)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.jafs_runs_away: Jafs is running away due to enemy ships.")
+			_pc = 15976
+			continue
+		elif _pc == 15920:
+			_pc = 15946
+			continue
+		elif _pc == 15925:
+			debug.print_string("iJafsScript.jafs_runs_away: Jafs is running away due to enemy ships.")
+			_pc = 15946
+			continue
+		elif _pc == 15946:
 			await local_18284(v0, "jafs_runs_from_them_", 3, 1, 0)
-		iai.purge_orders(v0)
-		iai.purge_orders(v3)
-		iai.purge_orders(v4)
-		if 0 > group.sim_count(v4):
-			while true:
-				v6 = iship.cast(group.leader(v4))
-				group.remove_sim(v4, v6)
-				object.remove_property(v6, "loading")
-				iship.undock_self(v6)
-				await _pog_wait(0.5)
-				if not (0 > group.sim_count(v4)):
-					break
-		_pog_detach(_pog_spawn(local_176.bind(v0)))
-	return
+			_pc = 15976
+			continue
+		elif _pc == 15976:
+			iai.purge_orders(v0)
+			iai.purge_orders(v3)
+			iai.purge_orders(v4)
+			if 0 > group.sim_count(v4):
+				_pc = 16058
+				continue
+			else:
+				_pc = 16221
+				continue
+		elif _pc == 16058:
+			v6 = iship.cast(group.leader(v4))
+			group.remove_sim(v4, v6)
+			object.remove_property(v6, "loading")
+			iship.undock_self(v6)
+			await _pog_wait(0.5)
+			if 0 <= group.sim_count(v4):
+				_pc = 16221
+				continue
+			else:
+				_pc = 16058
+				continue
+		elif _pc == 16221:
+			_pog_detach(_pog_spawn(local_176.bind(v0)))
+			_pc = 16253
+			continue
+		elif _pc == 16253:
+			return
+		else:
+			return 0
 	return 0
 
 func local_16262(v0, v1) -> Variant:
@@ -1707,82 +2960,285 @@ func local_16262(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	if _pog_is_null(group.sim_count(v1)):
-		if PogRuntime.TRACE:
+	var _pc: int = 16262
+	while true:
+		if _pc == 16262:
+			if _pog_is_null(group.sim_count(v1)):
+				_pc = 16293
+				continue
+			else:
+				_pc = 16326
+				continue
+		elif _pc == 16293:
+			_pc = 16319
+			continue
+		elif _pc == 16298:
 			debug.print_string("iJafsScript.get_closest_pod: ERROR! No sims in group! \n")
-	else:
-		if 1 == group.sim_count(v1):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.get_closest_pod: Only one sim in group. Returning leader \n")
-		else:
+			_pc = 16319
+			continue
+		elif _pc == 16319:
+			_pc = 17026
+			continue
+		elif _pc == 16326:
+			if 1 == group.sim_count(v1):
+				_pc = 16351
+				continue
+			else:
+				_pc = 16414
+				continue
+		elif _pc == 16351:
+			_pc = 16377
+			continue
+		elif _pc == 16356:
+			debug.print_string("iJafsScript.get_closest_pod: Only one sim in group. Returning leader \n")
+			_pc = 16377
+			continue
+		elif _pc == 16377:
+			isim.cast(group.leader(v1))
+			_pc = 17026
+			continue
+		elif _pc == 16414:
 			v3 = isim.cast(group.leader(v1))
 			v4 = sim.distance_between(v0, v3)
 			v6 = 1 - group.sim_count(v1)
-			while 0 >= v6:
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.get_closest_pod: Checking Pod ")
-				if PogRuntime.TRACE:
-					debug.print_int(v6)
-				if PogRuntime.TRACE:
-					debug.print_string(".  ")
-				v2 = isim.cast(group.nth_sim(v1, v6))
-				if sim.is_alive(v2):
-					v5 = sim.distance_between(v0, v2)
-					if PogRuntime.TRACE:
-						debug.print_string("Distance =  ")
-					if PogRuntime.TRACE:
-						debug.print_float(v5)
-					if PogRuntime.TRACE:
-						debug.print_string(" \n")
-					if v4 < v5:
-						v3 = v2
-						v4 = v5
-						v7 = v6
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.get_closest_pod: WARNING - sim is dead!")
-				v6 = -1 + v6
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.get_closest_pod: Closest pod is No.")
-			if PogRuntime.TRACE:
-				debug.print_int(v7)
-			if PogRuntime.TRACE:
-				debug.print_string(".  ")
-			if PogRuntime.TRACE:
-				debug.print_string("Distance =  ")
-			if PogRuntime.TRACE:
-				debug.print_float(v4)
-			if PogRuntime.TRACE:
-				debug.print_string(" \n")
-	return
+			_pc = 16506
+			continue
+		elif _pc == 16506:
+			if 0 >= v6:
+				_pc = 16518
+				continue
+			else:
+				_pc = 16863
+				continue
+		elif _pc == 16518:
+			_pc = 16544
+			continue
+		elif _pc == 16523:
+			debug.print_string("iJafsScript.get_closest_pod: Checking Pod ")
+			_pc = 16544
+			continue
+		elif _pc == 16544:
+			_pc = 16568
+			continue
+		elif _pc == 16549:
+			debug.print_int(v6)
+			_pc = 16568
+			continue
+		elif _pc == 16568:
+			_pc = 16594
+			continue
+		elif _pc == 16573:
+			debug.print_string(".  ")
+			_pc = 16594
+			continue
+		elif _pc == 16594:
+			v2 = isim.cast(group.nth_sim(v1, v6))
+			if sim.is_alive(v2):
+				_pc = 16659
+				continue
+			else:
+				_pc = 16818
+				continue
+		elif _pc == 16659:
+			v5 = sim.distance_between(v0, v2)
+			_pc = 16714
+			continue
+		elif _pc == 16693:
+			debug.print_string("Distance =  ")
+			_pc = 16714
+			continue
+		elif _pc == 16714:
+			_pc = 16738
+			continue
+		elif _pc == 16719:
+			debug.print_float(v5)
+			_pc = 16738
+			continue
+		elif _pc == 16738:
+			_pc = 16764
+			continue
+		elif _pc == 16743:
+			debug.print_string(" \n")
+			_pc = 16764
+			continue
+		elif _pc == 16764:
+			if v4 < v5:
+				_pc = 16780
+				continue
+			else:
+				_pc = 16813
+				continue
+		elif _pc == 16780:
+			v3 = v2
+			v4 = v5
+			v7 = v6
+			_pc = 16813
+			continue
+		elif _pc == 16813:
+			_pc = 16844
+			continue
+		elif _pc == 16818:
+			_pc = 16844
+			continue
+		elif _pc == 16823:
+			debug.print_string("iJafsScript.get_closest_pod: WARNING - sim is dead!")
+			_pc = 16844
+			continue
+		elif _pc == 16844:
+			v6 = -1 + v6
+			_pc = 16506
+			continue
+		elif _pc == 16863:
+			_pc = 16889
+			continue
+		elif _pc == 16868:
+			debug.print_string("iJafsScript.get_closest_pod: Closest pod is No.")
+			_pc = 16889
+			continue
+		elif _pc == 16889:
+			_pc = 16913
+			continue
+		elif _pc == 16894:
+			debug.print_int(v7)
+			_pc = 16913
+			continue
+		elif _pc == 16913:
+			_pc = 16939
+			continue
+		elif _pc == 16918:
+			debug.print_string(".  ")
+			_pc = 16939
+			continue
+		elif _pc == 16939:
+			_pc = 16965
+			continue
+		elif _pc == 16944:
+			debug.print_string("Distance =  ")
+			_pc = 16965
+			continue
+		elif _pc == 16965:
+			_pc = 16989
+			continue
+		elif _pc == 16970:
+			debug.print_float(v4)
+			_pc = 16989
+			continue
+		elif _pc == 16989:
+			_pc = 17015
+			continue
+		elif _pc == 16994:
+			debug.print_string(" \n")
+			_pc = 17015
+			continue
+		elif _pc == 17015:
+			_pc = 17026
+			continue
+		elif _pc == 17026:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17028(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
-	if v3 < sim.distance_between(v0, v1):
-		if PogRuntime.TRACE:
+	var _pc: int = 17028
+	while true:
+		if _pc == 17028:
+			if v3 < sim.distance_between(v0, v1):
+				_pc = 17067
+				continue
+			else:
+				_pc = 17099
+				continue
+		elif _pc == 17067:
+			_pc = 17093
+			continue
+		elif _pc == 17072:
 			debug.print_string("iJafsScript.jafs_in_range: Jafs is in range.\n")
-	else:
-		if 0 > group.sim_count(v2):
+			_pc = 17093
+			continue
+		elif _pc == 17093:
+			_pc = 17341
+			continue
+		elif _pc == 17099:
+			if 0 > group.sim_count(v2):
+				_pc = 17124
+				continue
+			else:
+				_pc = 17309
+				continue
+		elif _pc == 17124:
 			v5 = 0
-			while group.sim_count(v2) < v5:
-				v4 = isim.cast(group.nth_sim(v2, v5))
-				if sim.is_alive(v4):
-					if v3 < sim.distance_between(v0, v4):
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.jafs_in_range: A pod is in range.\n")
-						return 1
-				v5 = 1 + v5
-		if PogRuntime.TRACE:
+			_pc = 17131
+			continue
+		elif _pc == 17131:
+			if group.sim_count(v2) < v5:
+				_pc = 17160
+				continue
+			else:
+				_pc = 17309
+				continue
+		elif _pc == 17160:
+			v4 = isim.cast(group.nth_sim(v2, v5))
+			if sim.is_alive(v4):
+				_pc = 17225
+				continue
+			else:
+				_pc = 17291
+				continue
+		elif _pc == 17225:
+			if v3 < sim.distance_between(v0, v4):
+				_pc = 17259
+				continue
+			else:
+				_pc = 17291
+				continue
+		elif _pc == 17259:
+			_pc = 17285
+			continue
+		elif _pc == 17264:
+			debug.print_string("iJafsScript.jafs_in_range: A pod is in range.\n")
+			_pc = 17285
+			continue
+		elif _pc == 17285:
+			_pc = 17341
+			continue
+		elif _pc == 17291:
+			v5 = 1 + v5
+			_pc = 17131
+			continue
+		elif _pc == 17309:
+			_pc = 17335
+			continue
+		elif _pc == 17314:
 			debug.print_string("iJafsScript.jafs_in_range: Jafs and pods out of range.\n")
-	return
-	v2 = null
-	v1 = group.sim_count(v0)
-	while 0 > v1:
-		list.add_tail(v2, group.nth_sim(v0, 1 - v1))
-		v1 = -1 + v1
-	return _pog_clone(v2)
+			_pc = 17335
+			continue
+		elif _pc == 17335:
+			_pc = 17341
+			continue
+		elif _pc == 17341:
+			return
+		elif _pc == 17383:
+			if 0 > v1:
+				_pc = 17395
+				continue
+			else:
+				_pc = 17458
+				continue
+		elif _pc == 17395:
+			list.add_tail(v2, group.nth_sim(v0, 1 - v1))
+			v1 = -1 + v1
+			_pc = 17383
+			continue
+		elif _pc == 17458:
+			_pc = 17468
+			continue
+		elif _pc == 17468:
+			return
+		else:
+			return 0
 	return 0
 
 func cheat_jafs() -> Variant:
@@ -1792,61 +3248,191 @@ func cheat_jafs() -> Variant:
 
 func local_17495() -> Variant:
 	var v0: Variant = 0
-	v0 = await get_tag_group()
-	if not (debug.developer_mode()):
-		if PogRuntime.TRACE:
+	var _pc: int = 17495
+	while true:
+		if _pc == 17495:
+			v0 = await get_tag_group()
+			if not (debug.developer_mode()):
+				_pc = 17538
+				continue
+			else:
+				_pc = 17569
+				continue
+		elif _pc == 17538:
+			_pc = 17564
+			continue
+		elif _pc == 17543:
 			debug.print_string("iJafsScript.CheatJafs: Not in developer mode. Disabled.\n")
-	else:
-		if await jafs_active():
+			_pc = 17564
+			continue
+		elif _pc == 17564:
+			_pc = 17771
+			continue
+		elif _pc == 17569:
+			if await jafs_active():
+				_pc = 17587
+				continue
+			else:
+				_pc = 17639
+				continue
+		elif _pc == 17587:
 			await local_18284(0, "jafs_dialogue_im_busy_", 4, 0, 0)
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.CheatJafs: Unable to Cheat. Jafs is already active.\n")
-		if PogRuntime.TRACE:
+			_pc = 17639
+			continue
+		elif _pc == 17618:
+			debug.print_string("iJafsScript.CheatJafs: Unable to Cheat. Jafs is already active.\n")
+			_pc = 17639
+			continue
+		elif _pc == 17639:
+			_pc = 17665
+			continue
+		elif _pc == 17644:
 			debug.print_string("iJafsScript.CheatJafs: You cheat!\n")
-		if _pog_is_null(group.sim_count(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.CheatJafs: Tagging nearest pods in FOV.\n")
+			_pc = 17665
+			continue
+		elif _pc == 17665:
+			if _pog_is_null(group.sim_count(v0)):
+				_pc = 17690
+				continue
+			else:
+				_pc = 17730
+				continue
+		elif _pc == 17690:
+			_pc = 17716
+			continue
+		elif _pc == 17695:
+			debug.print_string("iJafsScript.CheatJafs: Tagging nearest pods in FOV.\n")
+			_pc = 17716
+			continue
+		elif _pc == 17716:
 			await auto_tag_valuable_pods()
-		if PogRuntime.TRACE:
+			_pc = 17730
+			continue
+		elif _pc == 17730:
+			_pc = 17756
+			continue
+		elif _pc == 17735:
 			debug.print_string("iJafsScript.CheatJafs: Collecting Tagged Pods.\n")
-		await collect_pods(1)
-	return
+			_pc = 17756
+			continue
+		elif _pc == 17756:
+			await collect_pods(1)
+			_pc = 17771
+			continue
+		elif _pc == 17771:
+			return
+		else:
+			return 0
 	return 0
 
 func jafs_functionality_available() -> Variant:
-	if -1 == global.pog_int("g_current_act"):
-		global.create_bool("g_jafs_menu_option_enabled", 2, 1)
-		if PogRuntime.TRACE:
+	var _pc: int = 17773
+	while true:
+		if _pc == 17773:
+			if -1 == global.pog_int("g_current_act"):
+				_pc = 17801
+				continue
+			else:
+				_pc = 17851
+				continue
+		elif _pc == 17801:
+			global.create_bool("g_jafs_menu_option_enabled", 2, 1)
+			_pc = 17851
+			continue
+		elif _pc == 17830:
 			debug.print_string("iJafsScript.JafsFunctionalityAvailable: No act running. Assuming Jafs functionality enabled.\n")
-	if global.exists("g_jafs_menu_option_enabled"):
-		pass
-	return
+			_pc = 17851
+			continue
+		elif _pc == 17851:
+			if global.exists("g_jafs_menu_option_enabled"):
+				_pc = 17876
+				continue
+			else:
+				_pc = 17882
+				continue
+		elif _pc == 17876:
+			_pc = 17888
+			continue
+		elif _pc == 17882:
+			_pc = 17888
+			continue
+		elif _pc == 17888:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17890(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
-	if not (isim.attacked(v0)):
-		pass
-	else:
-		v3 = object.int_property(v0, "attacked_count")
-		v3 = 1 + v3
-		object.set_int_property(v0, "attacked_count", v3)
-		if PogRuntime.TRACE:
+	var _pc: int = 17890
+	while true:
+		if _pc == 17890:
+			v4 = null
+			if not (isim.attacked(v0)):
+				_pc = 17930
+				continue
+			else:
+				_pc = 17936
+				continue
+		elif _pc == 17930:
+			_pc = 18275
+			continue
+		elif _pc == 17936:
+			v3 = object.int_property(v0, "attacked_count")
+			v3 = 1 + v3
+			object.set_int_property(v0, "attacked_count", v3)
+			_pc = 18037
+			continue
+		elif _pc == 18016:
 			debug.print_string("iJafsScript.jafs_attacked: Jafs has been attacked. Attack count is now ")
-		if PogRuntime.TRACE:
+			_pc = 18037
+			continue
+		elif _pc == 18037:
+			_pc = 18061
+			continue
+		elif _pc == 18042:
 			debug.print_int(v3)
-		if PogRuntime.TRACE:
+			_pc = 18061
+			continue
+		elif _pc == 18061:
+			_pc = 18087
+			continue
+		elif _pc == 18066:
 			debug.print_string("\n")
-		if v2 >= v3:
+			_pc = 18087
+			continue
+		elif _pc == 18087:
+			if v2 >= v3:
+				_pc = 18103
+				continue
+			else:
+				_pc = 18146
+				continue
+		elif _pc == 18103:
 			_pog_detach(_pog_spawn(local_15683.bind(v0, v5)))
-		else:
+			_pc = 18275
+			continue
+		elif _pc == 18146:
 			v5 = isim.last_attacker(v0)
 			if _pog_eq(ifaction.find("player"), isim.faction(v5)) or _pog_eq(isim.cast(v1), v5):
-				await local_18284(v0, "jafs_gerroff_", 3, 1, 0)
-	return
+				_pc = 18239
+				continue
+			else:
+				_pc = 18269
+				continue
+		elif _pc == 18239:
+			await local_18284(v0, "jafs_gerroff_", 3, 1, 0)
+			_pc = 18269
+			continue
+		elif _pc == 18269:
+			_pc = 18275
+			continue
+		elif _pc == 18275:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18284(v0, v1, v2, v3, v4) -> Variant:
@@ -1860,65 +3446,197 @@ func local_18284(v0, v1, v2, v3, v4) -> Variant:
 	return 0
 
 func local_18414(v0, v1, v2, v3) -> Variant:
-	if v3:
-		if 11000.0 <= sim.distance_between(v0, iship.find_player_ship()):
+	var _pc: int = 18414
+	while true:
+		if _pc == 18414:
+			if v3:
+				_pc = 18424
+				continue
+			else:
+				_pc = 18471
+				continue
+		elif _pc == 18424:
+			if 11000.0 > sim.distance_between(v0, iship.find_player_ship()):
+				_pc = 18466
+				continue
+			else:
+				_pc = 18471
+				continue
+		elif _pc == 18466:
+			_pc = 18514
+			continue
+		elif _pc == 18471:
 			_pog_detach(_pog_spawn(local_18517.bind(v0, _pog_clone(v1), v2)))
+			_pc = 18514
+			continue
+		elif _pc == 18514:
 			return 0
-	else:
-		_pog_detach(_pog_spawn(local_18517.bind(v0, _pog_clone(v1), v2)))
-	return 0
+		else:
+			return 0
 	return 0
 
 func local_18517(v0, v1, v2) -> Variant:
-	if _pog_is_null(v2) and icomms.is_busy():
-		pass
-	else:
-		icomms.shout(v0, "name_jafs", v1)
-		while true:
+	var _pc: int = 18517
+	while true:
+		if _pc == 18517:
+			if _pog_is_null(v2) and icomms.is_busy():
+				_pc = 18543
+				continue
+			else:
+				_pc = 18548
+				continue
+		elif _pc == 18543:
+			_pc = 18646
+			continue
+		elif _pc == 18548:
+			icomms.shout(v0, "name_jafs", v1)
+			_pc = 18579
+			continue
+		elif _pc == 18579:
 			await _pog_wait(0.10000000149011612)
 			if not (icomms.is_saying(v0, "name_jafs", v1)):
-				break
-	return
+				_pc = 18646
+				continue
+			else:
+				_pc = 18579
+				continue
+		elif _pc == 18646:
+			return
+		else:
+			return 0
 	return 0
 
 func disable_pod_dockport(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v0, 2, 1)))
-	if not (v1):
-		if PogRuntime.TRACE:
+	var _pc: int = 18655
+	while true:
+		if _pc == 18655:
+			v1 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v0, 2, 1)))
+			if not (v1):
+				_pc = 18726
+				continue
+			else:
+				_pc = 18758
+				continue
+		elif _pc == 18726:
+			_pc = 18752
+			continue
+		elif _pc == 18731:
 			debug.print_string("iJafsScript.disable_pod_port: Can't find dockport to lock off.\n")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 18752
+			continue
+		elif _pc == 18752:
+			_pc = 18809
+			continue
+		elif _pc == 18758:
+			_pc = 18784
+			continue
+		elif _pc == 18763:
 			debug.print_string("iJafsScript.disable_pod_port: Dockport disabled.\n")
-		idockport.disable(v1)
-	return
+			_pc = 18784
+			continue
+		elif _pc == 18784:
+			idockport.disable(v1)
+			_pc = 18809
+			continue
+		elif _pc == 18809:
+			return
+		else:
+			return 0
 	return 0
 
 func enable_pod_dockport(v0) -> Variant:
 	var v1: Variant = 0
-	if isim.is_docked(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 18811
+	while true:
+		if _pc == 18811:
+			if isim.is_docked(v0):
+				_pc = 18839
+				continue
+			else:
+				_pc = 18875
+				continue
+		elif _pc == 18839:
+			_pc = 18865
+			continue
+		elif _pc == 18844:
 			debug.print_string("iJafsScript.EnablePodDockport: Can't enable dockport - pod is docked. \n")
-	else:
-		v1 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v0, 0, 4)))
-		if not (v1):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.EnablePodDockport: Can't find dockport to enable. \n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.EnablePodDockport: Enabled pod dockport. \n")
+			_pc = 18865
+			continue
+		elif _pc == 18865:
+			_pc = 19032
+			continue
+		elif _pc == 18875:
+			v1 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v0, 0, 4)))
+			if not (v1):
+				_pc = 18941
+				continue
+			else:
+				_pc = 18977
+				continue
+		elif _pc == 18941:
+			_pc = 18967
+			continue
+		elif _pc == 18946:
+			debug.print_string("iJafsScript.EnablePodDockport: Can't find dockport to enable. \n")
+			_pc = 18967
+			continue
+		elif _pc == 18967:
+			_pc = 19032
+			continue
+		elif _pc == 18977:
+			_pc = 19003
+			continue
+		elif _pc == 18982:
+			debug.print_string("iJafsScript.EnablePodDockport: Enabled pod dockport. \n")
+			_pc = 19003
+			continue
+		elif _pc == 19003:
 			idockport.enable(v1)
-	return
+			_pc = 19032
+			continue
+		elif _pc == 19032:
+			return
+		else:
+			return 0
 	return 0
 
 func local_19034(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = 0
-	while group.sim_count(v1) < v3:
-		if v2 > sim.distance_between(v0, group.nth_sim(v1, v3)):
+	var _pc: int = 19034
+	while true:
+		if _pc == 19034:
+			v3 = 0
+			_pc = 19046
+			continue
+		elif _pc == 19046:
+			if group.sim_count(v1) < v3:
+				_pc = 19075
+				continue
+			else:
+				_pc = 19151
+				continue
+		elif _pc == 19075:
+			if v2 > sim.distance_between(v0, group.nth_sim(v1, v3)):
+				_pc = 19127
+				continue
+			else:
+				_pc = 19133
+				continue
+		elif _pc == 19127:
+			_pc = 19157
+			continue
+		elif _pc == 19133:
+			v3 = 1 + v3
+			_pc = 19046
+			continue
+		elif _pc == 19151:
+			_pc = 19157
+			continue
+		elif _pc == 19157:
+			return
+		else:
 			return 0
-		v3 = 1 + v3
-	return 1
 	return 0
 
 func local_19159(v0, v1) -> Variant:
@@ -1928,38 +3646,50 @@ func local_19159(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	sim.set_velocity(v0, 0.0, 0.0, 0.0)
-	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-	iship.disrupt_l_d_s_drive(v0, 1.0)
-	iai.purge_orders(v0)
-	v2 = idirector.create_dolly()
-	sim.set_collision(v2, 0)
-	v5 = isim.cast(await iutilities.create_waypoint_at(v1))
-	sim.place_relative_to_inside(v5, v1, 0.0, 0.0, 1700.0)
-	sim.place_relative_to(v0, v1, 0.0, 0.0, 2900.0)
-	sim.point_at(v0, v1)
-	v7 = object.float_property(v0, "radius")
-	sim.set_collision(v0, 0)
-	sim.place_relative_to_inside(v2, v0, v7, 2.0 / v7, -(2.5 * v7))
-	object.set_vector_property(v0, "speed", 0.0, 0.0, 300.0)
-	object.set_vector_property(v0, "acceleration", 0.0, 0.0, 50.0)
-	idirector.set_dolly_camera(v2)
-	idirector.set_focus(v0)
-	idirector.fade_in(0.0, 0.0, 0.0, 0.0)
-	await _pog_wait(1.0)
-	sim.avatar_add_channel(v1, "door", 0.0)
-	sim.avatar_set_channel(v1, "door", 1.0)
-	await _pog_wait(1.0)
-	iai.give_approach_order_advanced(v0, v5, 10.0, 10.0, 0)
+	var _pc: int = 19159
 	while true:
-		await _pog_wait(0.10000000149011612)
-		if not (50.0 > sim.distance_between(v0, v5)):
-			break
-	iai.purge_orders(v0)
-	sim.avatar_set_channel(v1, "door", 0.0)
-	await _pog_wait(4.0)
-	idirector.end()
-	return
+		if _pc == 19159:
+			sim.set_velocity(v0, 0.0, 0.0, 0.0)
+			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+			iship.disrupt_l_d_s_drive(v0, 1.0)
+			iai.purge_orders(v0)
+			v2 = idirector.create_dolly()
+			sim.set_collision(v2, 0)
+			v5 = isim.cast(await iutilities.create_waypoint_at(v1))
+			sim.place_relative_to_inside(v5, v1, 0.0, 0.0, 1700.0)
+			sim.place_relative_to(v0, v1, 0.0, 0.0, 2900.0)
+			sim.point_at(v0, v1)
+			v7 = object.float_property(v0, "radius")
+			sim.set_collision(v0, 0)
+			sim.place_relative_to_inside(v2, v0, v7, 2.0 / v7, -(2.5 * v7))
+			object.set_vector_property(v0, "speed", 0.0, 0.0, 300.0)
+			object.set_vector_property(v0, "acceleration", 0.0, 0.0, 50.0)
+			idirector.set_dolly_camera(v2)
+			idirector.set_focus(v0)
+			idirector.fade_in(0.0, 0.0, 0.0, 0.0)
+			await _pog_wait(1.0)
+			sim.avatar_add_channel(v1, "door", 0.0)
+			sim.avatar_set_channel(v1, "door", 1.0)
+			await _pog_wait(1.0)
+			iai.give_approach_order_advanced(v0, v5, 10.0, 10.0, 0)
+			_pc = 19873
+			continue
+		elif _pc == 19873:
+			await _pog_wait(0.10000000149011612)
+			if 50.0 <= sim.distance_between(v0, v5):
+				_pc = 19939
+				continue
+			else:
+				_pc = 19873
+				continue
+		elif _pc == 19939:
+			iai.purge_orders(v0)
+			sim.avatar_set_channel(v1, "door", 0.0)
+			await _pog_wait(4.0)
+			idirector.end()
+			return
+		else:
+			return 0
 	return 0
 
 func auto_tag_valuable_pods() -> Variant:
@@ -1977,105 +3707,331 @@ func auto_tag_valuable_pods() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	v0 = iship.find_player_ship()
-	v1 = await get_tag_group()
-	v4 = 45.0
-	v5 = 20000.0
-	v8 = null
-	v9 = null
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 20037
+	while true:
+		if _pc == 20037:
+			v0 = iship.find_player_ship()
+			v1 = await get_tag_group()
+			v4 = 45.0
+			v5 = 20000.0
+			v8 = null
+			v9 = null
+			if _pog_is_null(v0):
+				_pc = 20137
+				continue
+			else:
+				_pc = 20168
+				continue
+		elif _pc == 20137:
+			_pc = 20163
+			continue
+		elif _pc == 20142:
 			debug.print_string("iJafsScript.AutoTagValuablePods(): Can't find player ship - EXITING.\n")
-	else:
-		if _pog_is_null(v1):
-			if PogRuntime.TRACE:
-				debug.print_string("iJafsScript.AutoTagValuablePods(): Can't get tagged pods group - EXITING.\n")
-		else:
+			_pc = 20163
+			continue
+		elif _pc == 20163:
+			_pc = 21753
+			continue
+		elif _pc == 20168:
+			if _pog_is_null(v1):
+				_pc = 20181
+				continue
+			else:
+				_pc = 20212
+				continue
+		elif _pc == 20181:
+			_pc = 20207
+			continue
+		elif _pc == 20186:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Can't get tagged pods group - EXITING.\n")
+			_pc = 20207
+			continue
+		elif _pc == 20207:
+			_pc = 21753
+			continue
+		elif _pc == 20212:
 			v8 = list.from_set(isim.sims_in_radius(v0, v5, 2048))
 			if _pog_is_null(list.item_count(v8)):
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.AutoTagValuablePods(): No pods in range. EXITING.\n")
+				_pc = 20285
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iJafsScript.AutoTagValuablePods(): Pods in range == ")
-					debug.print_int(list.item_count(v8))
-					debug.print_string(". Filtering...\n")
-				v10 = 0
-				while list.item_count(v8) < v10:
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.AutoTagValuablePods(): Checking pod No.")
-					if PogRuntime.TRACE:
-						debug.print_int(v10)
-					if PogRuntime.TRACE:
-						debug.print_string(" \n")
-					v2 = iship.cast(list.get_nth(v8, v10))
-					if _pog_is_null(v2) or sim.is_dead(v2):
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring dead / null pod. \n")
-					else:
-						if not (object.property_exists(v2, "cargo")):
-							if PogRuntime.TRACE:
-								debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring pod without cargo property. \n")
-						else:
-							if _pog_is_null(object.int_property(v2, "cargo")):
-								if PogRuntime.TRACE:
-									debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring pod with no cargo. \n")
-							else:
-								if iai.has_order(v2):
-									if PogRuntime.TRACE:
-										debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring loading pod. \n")
-								else:
-									if isim.is_docked(v2):
-										if PogRuntime.TRACE:
-											debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring docked Pod. \n")
-									else:
-										if PogRuntime.TRACE:
-											debug.print_string("iJafsScript.AutoTagValuablePods(): Found Valid Pod. \n")
-										object.add_int_property(v2, "value", icargo.value(icargo.find(object.int_property(v2, "cargo"))) - 9)
-										list.add_tail(v9, v2)
-					v10 = 1 + v10
-				v10 = list.item_count(v9)
-				if _pog_is_null(v10):
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.AutoTagValuablePods(): No pods to tag. EXITING.\n")
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iJafsScript.AutoTagValuablePods: Valid pods found = ")
-						debug.print_int(v10)
-						debug.print_string(" \n")
-					if 1 == v10:
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.AutoTagValuablePods: Tagging single pod. \n")
-						await tag_pod(v1, iship.cast(list.get_nth(v9, 0)))
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.AutoTagValuablePods: Finished tagging pods. \n")
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.AutoTagValuablePods: Tagging most valuable valid pods..\n")
-						v8 = list.sort_by_int_property(v9, "value")
-						v13 = list.item_count(v8)
-						if 12 > v13:
-							v13 = 12
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.AutoTagValuablePods: Collecting ")
-							debug.print_int(v12 - v13)
-							debug.print_string(" pods. \n")
-						v10 = 0
-						while v13 < v10:
-							v2 = iship.cast(list.get_nth(v8, v10))
-							if PogRuntime.TRACE:
-								debug.print_string("iJafsScript.AutoTagValuablePods: Tagging Pod No. ")
-								debug.print_int(v10)
-								debug.print_string(" (")
-								debug.print_string(object.string_property(v2, "name"))
-								debug.print_string(") of value  ")
-								debug.print_int(object.int_property(v2, "value") - 9)
-								debug.print_string(" \n")
-							await tag_pod(v1, v2)
-							v10 = 1 + v10
-						if PogRuntime.TRACE:
-							debug.print_string("iJafsScript.TagPodsInFOV: Finished tagging pods.\n")
-	return 0
+				_pc = 20316
+				continue
+		elif _pc == 20285:
+			_pc = 20311
+			continue
+		elif _pc == 20290:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): No pods in range. EXITING.\n")
+			_pc = 20311
+			continue
+		elif _pc == 20311:
+			_pc = 21753
+			continue
+		elif _pc == 20316:
+			_pc = 20397
+			continue
+		elif _pc == 20321:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Pods in range == ")
+			debug.print_int(list.item_count(v8))
+			debug.print_string(". Filtering...\n")
+			_pc = 20397
+			continue
+		elif _pc == 20397:
+			v10 = 0
+			_pc = 20405
+			continue
+		elif _pc == 20405:
+			if list.item_count(v8) < v10:
+				_pc = 20434
+				continue
+			else:
+				_pc = 20995
+				continue
+		elif _pc == 20434:
+			_pc = 20460
+			continue
+		elif _pc == 20439:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Checking pod No.")
+			_pc = 20460
+			continue
+		elif _pc == 20460:
+			_pc = 20484
+			continue
+		elif _pc == 20465:
+			debug.print_int(v10)
+			_pc = 20484
+			continue
+		elif _pc == 20484:
+			_pc = 20510
+			continue
+		elif _pc == 20489:
+			debug.print_string(" \n")
+			_pc = 20510
+			continue
+		elif _pc == 20510:
+			v2 = iship.cast(list.get_nth(v8, v10))
+			if _pog_is_null(v2) or sim.is_dead(v2):
+				_pc = 20584
+				continue
+			else:
+				_pc = 20615
+				continue
+		elif _pc == 20584:
+			_pc = 20610
+			continue
+		elif _pc == 20589:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring dead / null pod. \n")
+			_pc = 20610
+			continue
+		elif _pc == 20610:
+			_pc = 20977
+			continue
+		elif _pc == 20615:
+			if not (object.property_exists(v2, "cargo")):
+				_pc = 20646
+				continue
+			else:
+				_pc = 20677
+				continue
+		elif _pc == 20646:
+			_pc = 20672
+			continue
+		elif _pc == 20651:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring pod without cargo property. \n")
+			_pc = 20672
+			continue
+		elif _pc == 20672:
+			_pc = 20977
+			continue
+		elif _pc == 20677:
+			if _pog_is_null(object.int_property(v2, "cargo")):
+				_pc = 20709
+				continue
+			else:
+				_pc = 20740
+				continue
+		elif _pc == 20709:
+			_pc = 20735
+			continue
+		elif _pc == 20714:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring pod with no cargo. \n")
+			_pc = 20735
+			continue
+		elif _pc == 20735:
+			_pc = 20977
+			continue
+		elif _pc == 20740:
+			if iai.has_order(v2):
+				_pc = 20763
+				continue
+			else:
+				_pc = 20794
+				continue
+		elif _pc == 20763:
+			_pc = 20789
+			continue
+		elif _pc == 20768:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring loading pod. \n")
+			_pc = 20789
+			continue
+		elif _pc == 20789:
+			_pc = 20977
+			continue
+		elif _pc == 20794:
+			if isim.is_docked(v2):
+				_pc = 20817
+				continue
+			else:
+				_pc = 20848
+				continue
+		elif _pc == 20817:
+			_pc = 20843
+			continue
+		elif _pc == 20822:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Ignoring docked Pod. \n")
+			_pc = 20843
+			continue
+		elif _pc == 20843:
+			_pc = 20977
+			continue
+		elif _pc == 20848:
+			_pc = 20874
+			continue
+		elif _pc == 20853:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): Found Valid Pod. \n")
+			_pc = 20874
+			continue
+		elif _pc == 20874:
+			object.add_int_property(v2, "value", icargo.value(icargo.find(object.int_property(v2, "cargo"))) - 9)
+			list.add_tail(v9, v2)
+			_pc = 20977
+			continue
+		elif _pc == 20977:
+			v10 = 1 + v10
+			_pc = 20405
+			continue
+		elif _pc == 20995:
+			v10 = list.item_count(v9)
+			if _pog_is_null(v10):
+				_pc = 21032
+				continue
+			else:
+				_pc = 21063
+				continue
+		elif _pc == 21032:
+			_pc = 21058
+			continue
+		elif _pc == 21037:
+			debug.print_string("iJafsScript.AutoTagValuablePods(): No pods to tag. EXITING.\n")
+			_pc = 21058
+			continue
+		elif _pc == 21058:
+			_pc = 21753
+			continue
+		elif _pc == 21063:
+			_pc = 21131
+			continue
+		elif _pc == 21068:
+			debug.print_string("iJafsScript.AutoTagValuablePods: Valid pods found = ")
+			debug.print_int(v10)
+			debug.print_string(" \n")
+			_pc = 21131
+			continue
+		elif _pc == 21131:
+			if 1 == v10:
+				_pc = 21143
+				continue
+			else:
+				_pc = 21251
+				continue
+		elif _pc == 21143:
+			_pc = 21169
+			continue
+		elif _pc == 21148:
+			debug.print_string("iJafsScript.AutoTagValuablePods: Tagging single pod. \n")
+			_pc = 21169
+			continue
+		elif _pc == 21169:
+			await tag_pod(v1, iship.cast(list.get_nth(v9, 0)))
+			_pc = 21246
+			continue
+		elif _pc == 21225:
+			debug.print_string("iJafsScript.AutoTagValuablePods: Finished tagging pods. \n")
+			_pc = 21246
+			continue
+		elif _pc == 21246:
+			_pc = 21753
+			continue
+		elif _pc == 21251:
+			_pc = 21277
+			continue
+		elif _pc == 21256:
+			debug.print_string("iJafsScript.AutoTagValuablePods: Tagging most valuable valid pods..\n")
+			_pc = 21277
+			continue
+		elif _pc == 21277:
+			v8 = list.sort_by_int_property(v9, "value")
+			v13 = list.item_count(v8)
+			if 12 > v13:
+				_pc = 21346
+				continue
+			else:
+				_pc = 21354
+				continue
+		elif _pc == 21346:
+			v13 = 12
+			_pc = 21354
+			continue
+		elif _pc == 21354:
+			_pc = 21428
+			continue
+		elif _pc == 21359:
+			debug.print_string("iJafsScript.AutoTagValuablePods: Collecting ")
+			debug.print_int(v12 - v13)
+			debug.print_string(" pods. \n")
+			_pc = 21428
+			continue
+		elif _pc == 21428:
+			v10 = 0
+			_pc = 21435
+			continue
+		elif _pc == 21435:
+			if v13 < v10:
+				_pc = 21451
+				continue
+			else:
+				_pc = 21727
+				continue
+		elif _pc == 21451:
+			v2 = iship.cast(list.get_nth(v8, v10))
+			_pc = 21685
+			continue
+		elif _pc == 21498:
+			debug.print_string("iJafsScript.AutoTagValuablePods: Tagging Pod No. ")
+			debug.print_int(v10)
+			debug.print_string(" (")
+			debug.print_string(object.string_property(v2, "name"))
+			debug.print_string(") of value  ")
+			debug.print_int(object.int_property(v2, "value") - 9)
+			debug.print_string(" \n")
+			_pc = 21685
+			continue
+		elif _pc == 21685:
+			await tag_pod(v1, v2)
+			v10 = 1 + v10
+			_pc = 21435
+			continue
+		elif _pc == 21727:
+			_pc = 21753
+			continue
+		elif _pc == 21732:
+			debug.print_string("iJafsScript.TagPodsInFOV: Finished tagging pods.\n")
+			_pc = 21753
+			continue
+		elif _pc == 21753:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_21770() -> Variant:
@@ -2083,20 +4039,51 @@ func local_21770() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = await get_tag_group()
-	v0 = 1 - group.sim_count(v2)
-	while 0 >= v0:
-		v3 = isim.cast(group.nth_sim(v2, v0))
-		if not _pog_eq(isim.active_world(), isim.world_name(v3)):
+	var _pc: int = 21770
+	while true:
+		if _pc == 21770:
+			v2 = await get_tag_group()
+			v0 = 1 - group.sim_count(v2)
+			_pc = 21820
+			continue
+		elif _pc == 21820:
+			if 0 >= v0:
+				_pc = 21832
+				continue
+			else:
+				_pc = 22010
+				continue
+		elif _pc == 21832:
+			v3 = isim.cast(group.nth_sim(v2, v0))
+			if not _pog_eq(isim.active_world(), isim.world_name(v3)):
+				_pc = 21915
+				continue
+			else:
+				_pc = 21991
+				continue
+		elif _pc == 21915:
 			group.remove_sim(v2, v3)
 			sim.set_cullable(v3, 1)
 			sim.destroy(v3)
 			v1 = 1 + v1
-		v0 = -1 + v0
-	if PogRuntime.TRACE:
-		debug.print_string("iJafsScript.filter_out_of_system_pods: Removed ")
-		debug.print_int(v1)
-		debug.print_string(" out of system pods..\n")
-	return 0
+			_pc = 21991
+			continue
+		elif _pc == 21991:
+			v0 = -1 + v0
+			_pc = 21820
+			continue
+		elif _pc == 22010:
+			_pc = 22076
+			continue
+		elif _pc == 22015:
+			debug.print_string("iJafsScript.filter_out_of_system_pods: Removed ")
+			debug.print_int(v1)
+			debug.print_string(" out of system pods..\n")
+			_pc = 22076
+			continue
+		elif _pc == 22076:
+			return 0
+		else:
+			return 0
 	return 0
 

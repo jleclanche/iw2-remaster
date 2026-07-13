@@ -109,86 +109,267 @@ func local_326() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var v12: Variant = 0
-	while icomms.is_in_conversation():
-		await _pog_wait(0.5)
-	if not (await iutilities.skip_mission("Wolf's Lair??")):
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
-		await imissiontracker.add_mission(v0, 2, 22)
-	else:
-		await stub()
-	return
-	v4 = 0
-	v5 = null
-	v6 = null
-	v9 = null
-	v12 = ifaction.find("Marauders")
+	var _pc: int = 326
 	while true:
-		await _pog_wait(1)
-		if 1 != global.pog_bool("g_act2_got_hyperspace_tracker"):
+		if _pc == 326:
+			_pc = 331
 			continue
-		v9 = imapentity.system_lagrange_points()
-		v11 = iship.current_target(v0)
-		if not _pog_is_null(v11):
-			if not _pog_eq(v10, v11):
-				sim.set_cullable(v10, 1)
-				sim.set_cullable(v11, 0)
-				v10 = v11
-				v7 = ilagrangepoint.nearest(v9, v10)
-			if not (v4) and 2000.0 < sim.distance_between(v10, v7):
-				v4 = 1
+		elif _pc == 331:
+			if icomms.is_in_conversation():
+				_pc = 349
+				continue
 			else:
-				if 2000.0 > sim.distance_between(v10, v7):
-					if v4:
-						v4 = 0
-					v7 = ilagrangepoint.nearest(v9, v10)
-		if not (v4):
+				_pc = 386
+				continue
+		elif _pc == 349:
+			await _pog_wait(0.5)
+			_pc = 331
 			continue
-		v8 = ilagrangepoint.nearest(v9, v10)
-		if _pog_eq(v8, v7):
+		elif _pc == 386:
+			if not (await iutilities.skip_mission("Wolf's Lair??")):
+				_pc = 412
+				continue
+			else:
+				_pc = 472
+				continue
+		elif _pc == 412:
+			v0 = _pog_spawn(mission_handler.bind())
+			_pog_detach(v0)
+			await imissiontracker.add_mission(v0, 2, 22)
+			_pc = 491
 			continue
-		v6 = imapentity.pog_name(v8)
-		if _pog_eq(v1, sim.cast(v8)):
+		elif _pc == 472:
+			await stub()
+			_pc = 491
+			continue
+		elif _pc == 491:
+			return
+		elif _pc == 569:
+			await _pog_frame()
+			if _pog_every(570, 1.0):
+				_pc = 583
+				continue
+			else:
+				_pc = 1183
+				continue
+		elif _pc == 583:
+			if 1 == global.pog_bool("g_act2_got_hyperspace_tracker"):
+				_pc = 610
+				continue
+			else:
+				_pc = 1183
+				continue
+		elif _pc == 610:
+			v9 = imapentity.system_lagrange_points()
+			v11 = iship.current_target(v0)
+			if not _pog_is_null(v11):
+				_pc = 668
+				continue
+			else:
+				_pc = 897
+				continue
+		elif _pc == 668:
+			if not _pog_eq(v10, v11):
+				_pc = 684
+				continue
+			else:
+				_pc = 764
+				continue
+		elif _pc == 684:
+			sim.set_cullable(v10, 1)
+			sim.set_cullable(v11, 0)
+			v10 = v11
+			v7 = ilagrangepoint.nearest(v9, v10)
+			_pc = 764
+			continue
+		elif _pc == 764:
+			if not (v4) and 2000.0 < sim.distance_between(v10, v7):
+				_pc = 805
+				continue
+			else:
+				_pc = 817
+				continue
+		elif _pc == 805:
+			v4 = 1
+			_pc = 897
+			continue
+		elif _pc == 817:
+			if 2000.0 > sim.distance_between(v10, v7):
+				_pc = 851
+				continue
+			else:
+				_pc = 897
+				continue
+		elif _pc == 851:
+			if v4:
+				_pc = 861
+				continue
+			else:
+				_pc = 868
+				continue
+		elif _pc == 861:
+			v4 = 0
+			_pc = 868
+			continue
+		elif _pc == 868:
+			v7 = ilagrangepoint.nearest(v9, v10)
+			_pc = 897
+			continue
+		elif _pc == 897:
+			if v4:
+				_pc = 907
+				continue
+			else:
+				_pc = 1183
+				continue
+		elif _pc == 907:
+			v8 = ilagrangepoint.nearest(v9, v10)
+			if not _pog_eq(v8, v7):
+				_pc = 952
+				continue
+			else:
+				_pc = 1183
+				continue
+		elif _pc == 952:
+			v6 = imapentity.pog_name(v8)
+			if _pog_eq(v1, sim.cast(v8)):
+				_pc = 1007
+				continue
+			else:
+				_pc = 1053
+				continue
+		elif _pc == 1007:
 			if 8 != state.progress(v3):
-				state.set_progress(v3, 1)
-		if _pog_eq(v2, sim.cast(v8)):
+				_pc = 1033
+				continue
+			else:
+				_pc = 1053
+				continue
+		elif _pc == 1033:
+			state.set_progress(v3, 1)
+			_pc = 1053
+			continue
+		elif _pc == 1053:
+			if _pog_eq(v2, sim.cast(v8)):
+				_pc = 1082
+				continue
+			else:
+				_pc = 1129
+				continue
+		elif _pc == 1082:
 			if 8 != state.progress(v3):
-				state.set_progress(v3, 6)
-		await iconversation.one_liner(0, "Tracker", string.join("Target has jumped to: ", v6))
-		v4 = 0
-	return
+				_pc = 1108
+				continue
+			else:
+				_pc = 1129
+				continue
+		elif _pc == 1108:
+			state.set_progress(v3, 6)
+			_pc = 1129
+			continue
+		elif _pc == 1129:
+			await iconversation.one_liner(0, "Tracker", string.join("Target has jumped to: ", v6))
+			v4 = 0
+			_pc = 1183
+			continue
+		elif _pc == 1183:
+			_pc = 569
+			continue
+		elif _pc == 1188:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1212(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = iship.find_player_ship()
+	var _pc: int = 1212
 	while true:
-		await _pog_wait(1)
-		if not (iship.has_hyper_space_tracker(v3)):
+		if _pc == 1212:
+			v3 = iship.find_player_ship()
+			_pc = 1241
 			continue
-		if _pog_eq(isim.cast(v0), iship.hyper_space_tracker_target()):
+		elif _pc == 1241:
+			await _pog_frame()
+			if _pog_every(1242, 1.0):
+				_pc = 1255
+				continue
+			else:
+				_pc = 1635
+				continue
+		elif _pc == 1255:
+			if iship.has_hyper_space_tracker(v3):
+				_pc = 1278
+				continue
+			else:
+				_pc = 1635
+				continue
+		elif _pc == 1278:
+			if _pog_eq(isim.cast(v0), iship.hyper_space_tracker_target()):
+				_pc = 1315
+				continue
+			else:
+				_pc = 1456
+				continue
+		elif _pc == 1315:
 			if 8 != state.progress(v2):
-				state.set_progress(v2, 1)
+				_pc = 1341
+				continue
+			else:
+				_pc = 1361
+				continue
+		elif _pc == 1341:
+			state.set_progress(v2, 1)
+			_pc = 1361
+			continue
+		elif _pc == 1361:
 			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost"), 1)
 			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost")), 1)
-		if not _pog_eq(isim.cast(v1), iship.hyper_space_tracker_target()):
+			_pc = 1456
 			continue
-		if 8 != state.progress(v2):
+		elif _pc == 1456:
+			if _pog_eq(isim.cast(v1), iship.hyper_space_tracker_target()):
+				_pc = 1493
+				continue
+			else:
+				_pc = 1635
+				continue
+		elif _pc == 1493:
+			if 8 != state.progress(v2):
+				_pc = 1519
+				continue
+			else:
+				_pc = 1540
+				continue
+		elif _pc == 1519:
 			state.set_progress(v2, 6)
-		imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost"), 1)
-		ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")), 1)
-	return
-	v1 = iship.create("ini:/sims/ships/corporate/interceptor", "Watch My Ass")
-	sim.set_cullable(v1, 0)
-	isim.set_indestructable(v1, 1)
-	await ipilotsetup.generic(v1)
-	sim.place_near(v1, v0, 500.0)
-	iai.give_approach_order(v1, imapentity.find_by_name("Dainn II L-Point"))
-	while true:
-		await _pog_wait(5)
-		pass
-	return
+			_pc = 1540
+			continue
+		elif _pc == 1540:
+			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost"), 1)
+			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")), 1)
+			_pc = 1635
+			continue
+		elif _pc == 1635:
+			_pc = 1241
+			continue
+		elif _pc == 1640:
+			return
+		elif _pc == 1812:
+			await _pog_frame()
+			if _pog_every(1813, 5.0):
+				_pc = 1826
+				continue
+			else:
+				_pc = 1826
+				continue
+		elif _pc == 1826:
+			_pc = 1812
+			continue
+		elif _pc == 1831:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1834(v0) -> Variant:
@@ -238,6 +419,7 @@ func local_1834(v0) -> Variant:
 			_pc = 2187
 			continue
 		elif _pc == 2137:
+			math.random_int(0, 3)
 			if not _pog_is_null(math.random_int(0, 3)):
 				_pc = 2161
 				continue
@@ -290,40 +472,75 @@ func local_2514() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = group.create()
-	v1 = ifaction.find("Marauders")
-	v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
-	isim.set_faction(v2, v1)
-	sim.set_cullable(v2, 0)
-	await ipilotsetup.generic_cargo_pod(v2)
-	group.add_sim(v0, v2)
-	v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
-	isim.set_faction(v2, v1)
-	sim.set_cullable(v2, 0)
-	await ipilotsetup.generic_cargo_pod(v2)
-	group.add_sim(v0, v2)
-	v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
-	isim.set_faction(v2, v1)
-	sim.set_cullable(v2, 0)
-	await ipilotsetup.generic_cargo_pod(v2)
-	group.add_sim(v0, v2)
-	v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
-	isim.set_faction(v2, v1)
-	sim.set_cullable(v2, 0)
-	await ipilotsetup.generic_cargo_pod(v2)
-	group.add_sim(v0, v2)
-	return v0
+	var _pc: int = 2514
+	while true:
+		if _pc == 2514:
+			v0 = group.create()
+			v1 = ifaction.find("Marauders")
+			v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
+			isim.set_faction(v2, v1)
+			sim.set_cullable(v2, 0)
+			await ipilotsetup.generic_cargo_pod(v2)
+			group.add_sim(v0, v2)
+			v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
+			isim.set_faction(v2, v1)
+			sim.set_cullable(v2, 0)
+			await ipilotsetup.generic_cargo_pod(v2)
+			group.add_sim(v0, v2)
+			v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
+			isim.set_faction(v2, v1)
+			sim.set_cullable(v2, 0)
+			await ipilotsetup.generic_cargo_pod(v2)
+			group.add_sim(v0, v2)
+			v2 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
+			isim.set_faction(v2, v1)
+			sim.set_cullable(v2, 0)
+			await ipilotsetup.generic_cargo_pod(v2)
+			group.add_sim(v0, v2)
+			_pc = 3114
+			continue
+		elif _pc == 3114:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3116(v0, v1, v2) -> Variant:
+	var _pc: int = 3116
 	while true:
-		await _pog_wait(5)
-		if not (200.0 < sim.distance_between(v0, v2) or iai.is_order_complete(v0)):
+		if _pc == 3116:
+			_pc = 3121
 			continue
-		iship.disrupt_l_d_s_drive(v0, 30.0)
-		iai.give_approach_order(v0, v1)
-		return
-	return
+		elif _pc == 3121:
+			await _pog_frame()
+			if _pog_every(3122, 5.0):
+				_pc = 3135
+				continue
+			else:
+				_pc = 3241
+				continue
+		elif _pc == 3135:
+			if 200.0 < sim.distance_between(v0, v2) or iai.is_order_complete(v0):
+				_pc = 3188
+				continue
+			else:
+				_pc = 3241
+				continue
+		elif _pc == 3188:
+			iship.disrupt_l_d_s_drive(v0, 30.0)
+			iai.give_approach_order(v0, v1)
+			_pc = 3247
+			continue
+		elif _pc == 3241:
+			_pc = 3121
+			continue
+		elif _pc == 3246:
+			_pc = 3247
+			continue
+		elif _pc == 3247:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3249(v0, v1) -> Variant:
@@ -354,6 +571,7 @@ func local_3249(v0, v1) -> Variant:
 			_pc = 3529
 			continue
 		elif _pc == 3488:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 3512
 				continue
@@ -412,19 +630,59 @@ func local_3797(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v4 = group.group_count(v0)
-	v5 = 3000.0
-	v7 = 0
-	while v4 < v7:
-		v3 = group.sim_count(group.nth_group(v0, v7))
-		v6 = 0
-		while v3 < v6:
+	var _pc: int = 3797
+	while true:
+		if _pc == 3797:
+			v4 = group.group_count(v0)
+			v5 = 3000.0
+			v7 = 0
+			_pc = 3844
+			continue
+		elif _pc == 3844:
+			if v4 < v7:
+				_pc = 3860
+				continue
+			else:
+				_pc = 4061
+				continue
+		elif _pc == 3860:
+			v3 = group.sim_count(group.nth_group(v0, v7))
+			v6 = 0
+			_pc = 3909
+			continue
+		elif _pc == 3909:
+			if v3 < v6:
+				_pc = 3925
+				continue
+			else:
+				_pc = 4043
+				continue
+		elif _pc == 3925:
 			v2 = iship.cast(group.nth_sim(group.nth_group(v0, v7), v6))
 			if v5 < sim.distance_between(v1, v2):
-				return 1
+				_pc = 4019
+				continue
+			else:
+				_pc = 4025
+				continue
+		elif _pc == 4019:
+			_pc = 4067
+			continue
+		elif _pc == 4025:
 			v6 = 1 + v6
-		v7 = 1 + v7
-	return 0
+			_pc = 3909
+			continue
+		elif _pc == 4043:
+			v7 = 1 + v7
+			_pc = 3844
+			continue
+		elif _pc == 4061:
+			_pc = 4067
+			continue
+		elif _pc == 4067:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4069(v0, v1, v2, v3, v4) -> Variant:
@@ -443,24 +701,51 @@ func local_4069(v0, v1, v2, v3, v4) -> Variant:
 	var v17: Variant = 0
 	var v18: Variant = 0
 	var v19: Variant = 0
-	v5 = 0
-	v6 = 0
-	v7 = 0
-	v8 = 0
-	v9 = 0
-	v10 = 0
-	v11 = 0
-	v12 = 0
-	v13 = null
-	v13 = imapentity.system_lagrange_points()
-	v14 = await iutilities.create_waypoint_relative_to(v1, 1000.0, 500.0, 500.0)
+	var _pc: int = 4069
 	while true:
-		await _pog_wait(1)
-		if not (v5) and await iutilities.player_in_range(v1):
+		if _pc == 4069:
+			v5 = 0
+			v6 = 0
+			v7 = 0
+			v8 = 0
+			v9 = 0
+			v10 = 0
+			v11 = 0
+			v12 = 0
+			v13 = null
+			v13 = imapentity.system_lagrange_points()
+			v14 = await iutilities.create_waypoint_relative_to(v1, 1000.0, 500.0, 500.0)
+			_pc = 4206
+			continue
+		elif _pc == 4206:
+			await _pog_frame()
+			if _pog_every(4207, 1.0):
+				_pc = 4220
+				continue
+			else:
+				_pc = 5334
+				continue
+		elif _pc == 4220:
+			if not (v5) and await iutilities.player_in_range(v1):
+				_pc = 4250
+				continue
+			else:
+				_pc = 4617
+				continue
+		elif _pc == 4250:
 			v5 = 1
 			v17 = await local_1834(v1)
 			if 8 != state.progress(v4):
-				state.set_progress(v4, 2)
+				_pc = 4307
+				continue
+			else:
+				_pc = 4328
+				continue
+		elif _pc == 4307:
+			state.set_progress(v4, 2)
+			_pc = 4328
+			continue
+		elif _pc == 4328:
 			await iconversation.one_liner(0, "name_clay", "a2_m22_dialogue_clay_this_place")
 			await iconversation.one_liner(0, "name_smith", "a2_m22_dialogue_smith_dont_look")
 			await iconversation.one_liner(0, "name_cal", "a2_m22_dialogue_cal_there_must")
@@ -471,48 +756,164 @@ func local_4069(v0, v1, v2, v3, v4) -> Variant:
 			sim.place_near(group.leader(v18), v1, 60000.0)
 			await iformation.cross(v18, 40.0, 1)
 			iai.give_approach_order(group.leader(v18), v14)
-		if await iutilities.player_in_range(v1) and v5:
+			_pc = 4617
+			continue
+		elif _pc == 4617:
+			if await iutilities.player_in_range(v1) and v5:
+				_pc = 4646
+				continue
+			else:
+				_pc = 5284
+				continue
+		elif _pc == 4646:
 			if not (v6) and 800.0 < sim.distance_between(group.leader(v18), v14) or iai.is_order_complete(group.leader(v18)):
-				v6 = 1
-				v15 = await local_3249(v1, v3)
-				v7 = 1
-				await iconversation.one_liner(0, "name_clay", "a2_m22_dialogue_clay_hey_that")
+				_pc = 4732
+				continue
+			else:
+				_pc = 4803
+				continue
+		elif _pc == 4732:
+			v6 = 1
+			v15 = await local_3249(v1, v3)
+			v7 = 1
+			await iconversation.one_liner(0, "name_clay", "a2_m22_dialogue_clay_hey_that")
+			_pc = 4803
+			continue
+		elif _pc == 4803:
 			if 2000.0 > sim.distance_between(v0, group.leader(v17)) and await iutilities.player_in_range(v1):
-				await _pog_wait(9.0)
-				if 3000.0 < sim.distance_between(v15, v0) and 1 == v7:
-					pass
-				else:
-					if 2000.0 > sim.distance_between(v0, group.leader(v17)) and 3000.0 > sim.distance_between(v15, v0):
-						if not (v12):
-							v12 = 1
-							await iconversation.one_liner(group.leader(v18), "", "a2_m22_dialogue_marauders_intruder")
-						iai.give_attack_order(v18, v0)
+				_pc = 4869
+				continue
+			else:
+				_pc = 5112
+				continue
+		elif _pc == 4869:
+			await _pog_wait(9.0)
+			if 3000.0 < sim.distance_between(v15, v0) and 1 == v7:
+				_pc = 4943
+				continue
+			else:
+				_pc = 4948
+				continue
+		elif _pc == 4943:
+			_pc = 5112
+			continue
+		elif _pc == 4948:
+			if 2000.0 > sim.distance_between(v0, group.leader(v17)) and 3000.0 > sim.distance_between(v15, v0):
+				_pc = 5025
+				continue
+			else:
+				_pc = 5112
+				continue
+		elif _pc == 5025:
+			if not (v12):
+				_pc = 5036
+				continue
+			else:
+				_pc = 5088
+				continue
+		elif _pc == 5036:
+			v12 = 1
+			await iconversation.one_liner(group.leader(v18), "", "a2_m22_dialogue_marauders_intruder")
+			_pc = 5088
+			continue
+		elif _pc == 5088:
+			iai.give_attack_order(v18, v0)
+			_pc = 5112
+			continue
+		elif _pc == 5112:
 			if 3 < state.progress(v4) and await iutilities.player_in_range(v1):
-				if v5 and not (v7):
-					v19 = 1 + v19
-				if 1 == v7 and _pog_is_null(iship.cast(v15)):
-					v7 = 0
-				if 50 > v19:
-					v19 = 0
-					v15 = await local_3249(v1, v3)
-					v7 = 1
-		if 6 != state.progress(v4):
+				_pc = 5157
+				continue
+			else:
+				_pc = 5284
+				continue
+		elif _pc == 5157:
+			if v5 and not (v7):
+				_pc = 5174
+				continue
+			else:
+				_pc = 5187
+				continue
+		elif _pc == 5174:
+			v19 = 1 + v19
+			_pc = 5187
 			continue
-		iai.give_generic_attack_order(v18)
-		break
-	while true:
-		await _pog_wait(2)
-		if not (not (isim.is_capsule_jumping(v0)) and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world()) or not _pog_eq(v2, ilagrangepoint.nearest(v13, v0)) and not _pog_eq(v1, ilagrangepoint.nearest(v13, v0))):
+		elif _pc == 5187:
+			if 1 == v7 and _pog_is_null(iship.cast(v15)):
+				_pc = 5221
+				continue
+			else:
+				_pc = 5228
+				continue
+		elif _pc == 5221:
+			v7 = 0
+			_pc = 5228
 			continue
-		await iconversation.one_liner(0, "name_clay", "a2_m22_dialogue_clay_were_clear")
-		iobjectives.set_state("a2_m22_objectives_escape", 1)
-		state.set_progress(v4, 8)
-		await _pog_wait(3.0)
-		group.destroy(v17, 1)
-		group.destroy(v18, 1)
-		await ibacktobase.allow()
-		return
-	return
+		elif _pc == 5228:
+			if 50 > v19:
+				_pc = 5241
+				continue
+			else:
+				_pc = 5284
+				continue
+		elif _pc == 5241:
+			v19 = 0
+			v15 = await local_3249(v1, v3)
+			v7 = 1
+			_pc = 5284
+			continue
+		elif _pc == 5284:
+			if 6 == state.progress(v4):
+				_pc = 5310
+				continue
+			else:
+				_pc = 5334
+				continue
+		elif _pc == 5310:
+			iai.give_generic_attack_order(v18)
+			_pc = 5339
+			continue
+		elif _pc == 5334:
+			_pc = 4206
+			continue
+		elif _pc == 5339:
+			_pc = 5345
+			continue
+		elif _pc == 5345:
+			await _pog_frame()
+			if _pog_every(5346, 2.0):
+				_pc = 5359
+				continue
+			else:
+				_pc = 5633
+				continue
+		elif _pc == 5359:
+			if not (isim.is_capsule_jumping(v0)) and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world()) or not _pog_eq(v2, ilagrangepoint.nearest(v13, v0)) and not _pog_eq(v1, ilagrangepoint.nearest(v13, v0)):
+				_pc = 5471
+				continue
+			else:
+				_pc = 5633
+				continue
+		elif _pc == 5471:
+			await iconversation.one_liner(0, "name_clay", "a2_m22_dialogue_clay_were_clear")
+			iobjectives.set_state("a2_m22_objectives_escape", 1)
+			state.set_progress(v4, 8)
+			await _pog_wait(3.0)
+			group.destroy(v17, 1)
+			group.destroy(v18, 1)
+			await ibacktobase.allow()
+			_pc = 5639
+			continue
+		elif _pc == 5633:
+			_pc = 5345
+			continue
+		elif _pc == 5638:
+			_pc = 5639
+			continue
+		elif _pc == 5639:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5648(v0) -> Variant:
@@ -520,18 +921,38 @@ func local_5648(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = group.create()
-	v4 = ifaction.find("Independent")
-	v3 = 0
-	while 2 < v3:
-		v2 = iship.create("ini:/sims/ships/utility/temp_freighter", await ishipcreation.ship_name("General", -1))
-		group.add_sim(v1, v2)
-		isim.set_faction(v2, v4)
-		sim.set_cullable(v2, 0)
-		v3 = 1 + v3
-	sim.place_at(group.leader(v1), v0)
-	await iformation.line_astern(v1, 50.0, 1)
-	return v1
+	var _pc: int = 5648
+	while true:
+		if _pc == 5648:
+			v1 = group.create()
+			v4 = ifaction.find("Independent")
+			v3 = 0
+			_pc = 5705
+			continue
+		elif _pc == 5705:
+			if 2 < v3:
+				_pc = 5718
+				continue
+			else:
+				_pc = 5852
+				continue
+		elif _pc == 5718:
+			v2 = iship.create("ini:/sims/ships/utility/temp_freighter", await ishipcreation.ship_name("General", -1))
+			group.add_sim(v1, v2)
+			isim.set_faction(v2, v4)
+			sim.set_cullable(v2, 0)
+			v3 = 1 + v3
+			_pc = 5705
+			continue
+		elif _pc == 5852:
+			sim.place_at(group.leader(v1), v0)
+			await iformation.line_astern(v1, 50.0, 1)
+			_pc = 5924
+			continue
+		elif _pc == 5924:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5926(v0) -> Variant:
@@ -542,26 +963,58 @@ func local_5926(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = group.create()
-	v3 = ifaction.find("Marauders")
-	v5 = 3
-	v6 = 0
-	while v5 < v6:
-		v2 = group.create()
-		v7 = 0
-		while 5 < v7:
+	var _pc: int = 5926
+	while true:
+		if _pc == 5926:
+			v1 = group.create()
+			v3 = ifaction.find("Marauders")
+			v5 = 3
+			v6 = 0
+			_pc = 5991
+			continue
+		elif _pc == 5991:
+			if v5 < v6:
+				_pc = 6007
+				continue
+			else:
+				_pc = 6345
+				continue
+		elif _pc == 6007:
+			v2 = group.create()
+			v7 = 0
+			_pc = 6033
+			continue
+		elif _pc == 6033:
+			if 5 < v7:
+				_pc = 6046
+				continue
+			else:
+				_pc = 6199
+				continue
+		elif _pc == 6046:
 			v4 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("Marauder", -1))
 			isim.set_faction(v4, v3)
 			await ipilotsetup.military_aggressive(v4)
 			group.add_sim(v2, v4)
 			sim.set_cullable(v4, 0)
 			v7 = 1 + v7
-		sim.place_near(group.leader(v2), v0, 3000.0)
-		await iformation.goose(v2, 80.0, 1)
-		_pog_detach(_pog_spawn(local_9572.bind(v2, v0)))
-		group.add_group(v1, v2)
-		v6 = 1 + v6
-	return v1
+			_pc = 6033
+			continue
+		elif _pc == 6199:
+			sim.place_near(group.leader(v2), v0, 3000.0)
+			await iformation.goose(v2, 80.0, 1)
+			_pog_detach(_pog_spawn(local_9572.bind(v2, v0)))
+			group.add_group(v1, v2)
+			v6 = 1 + v6
+			_pc = 5991
+			continue
+		elif _pc == 6345:
+			_pc = 6355
+			continue
+		elif _pc == 6355:
+			return
+		else:
+			return 0
 	return 0
 
 func local_6357(v0, v1, v2, v3) -> Variant:
@@ -593,6 +1046,7 @@ func local_6357(v0, v1, v2, v3) -> Variant:
 			_pc = 6636
 			continue
 		elif _pc == 6595:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 6619
 				continue
@@ -686,30 +1140,92 @@ func local_7141(v0, v1, v2, v3) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = 0
-	v5 = 0
-	v6 = 0
+	var _pc: int = 7141
 	while true:
-		await _pog_wait(2)
-		if not (v4) and await iutilities.player_in_range(v2):
+		if _pc == 7141:
+			v4 = 0
+			v5 = 0
+			v6 = 0
+			_pc = 7172
+			continue
+		elif _pc == 7172:
+			await _pog_frame()
+			if _pog_every(7173, 2.0):
+				_pc = 7186
+				continue
+			else:
+				_pc = 8001
+				continue
+		elif _pc == 7186:
+			if not (v4) and await iutilities.player_in_range(v2):
+				_pc = 7216
+				continue
+			else:
+				_pc = 7376
+				continue
+		elif _pc == 7216:
 			v4 = 1
 			if 8 != state.progress(v3):
-				state.set_progress(v3, 3)
+				_pc = 7249
+				continue
+			else:
+				_pc = 7270
+				continue
+		elif _pc == 7249:
+			state.set_progress(v3, 3)
+			_pc = 7270
+			continue
+		elif _pc == 7270:
 			v7 = await iutilities.create_waypoint_relative_to(v2, 6000.0, 0.0, -5000.0)
 			v9 = await local_5648(v7)
 			v10 = await local_5926(v2)
 			iship.has_fired(v0)
-		if v4:
+			_pc = 7376
+			continue
+		elif _pc == 7376:
+			if v4:
+				_pc = 7386
+				continue
+			else:
+				_pc = 7530
+				continue
+		elif _pc == 7386:
 			if not (v6) and iship.has_fired(v0) or await local_3797(v10, v0):
-				v6 = 1
-				await iconversation.one_liner(group.leader(group.nth_group(v10, 0)), "", "a2_m22_dialogue_marauders_intruder")
-				iai.give_attack_order(v10, v0)
-		if 30 >= v8 and v4:
+				_pc = 7440
+				continue
+			else:
+				_pc = 7530
+				continue
+		elif _pc == 7440:
+			v6 = 1
+			await iconversation.one_liner(group.leader(group.nth_group(v10, 0)), "", "a2_m22_dialogue_marauders_intruder")
+			iai.give_attack_order(v10, v0)
+			_pc = 7530
+			continue
+		elif _pc == 7530:
+			if 30 >= v8 and v4:
+				_pc = 7549
+				continue
+			else:
+				_pc = 7595
+				continue
+		elif _pc == 7549:
 			v8 = 0
 			_pog_spawn(local_6357.bind(v0, v7, v1, v3))
-		else:
+			_pc = 7608
+			continue
+		elif _pc == 7595:
 			v8 = 1 + v8
-		if not (v5) and v4:
+			_pc = 7608
+			continue
+		elif _pc == 7608:
+			if not (v5) and v4:
+				_pc = 7625
+				continue
+			else:
+				_pc = 7797
+				continue
+		elif _pc == 7625:
 			v5 = 1
 			isim.set_sensor_visibility(isim.cast(v2), 1)
 			await iconversation.one_liner(0, "name_smith", "a2_m22_dialogue_smith_wooa_this")
@@ -717,27 +1233,68 @@ func local_7141(v0, v1, v2, v3) -> Variant:
 			imapentity.set_map_visibility(imapentity.cast(v2), 1)
 			iobjectives.set_state("a2_m22_objectives_track", 1)
 			iobjectives.add("a2_m22_objectives_scout")
-		if v5:
-			pass
-		if 6 != state.progress(v3):
+			_pc = 7797
 			continue
-		await iconversation.one_liner(0, "name_smith", "a2_m22_dialogue_smith_theyre_taking")
-		imapentity.set_map_visibility(imapentity.cast(v1), 1)
-		iobjectives.set_state("a2_m22_objectives_freighters", 1)
-		iobjectives.add("a2_m22_objectives_escape")
-		group.destroy(v9, 0)
-		group.destroy(v10, 0)
-		sim.destroy(v7)
-		return
-	return
+		elif _pc == 7797:
+			if v5:
+				_pc = 7807
+				continue
+			else:
+				_pc = 7807
+				continue
+		elif _pc == 7807:
+			if 6 == state.progress(v3):
+				_pc = 7833
+				continue
+			else:
+				_pc = 8001
+				continue
+		elif _pc == 7833:
+			await iconversation.one_liner(0, "name_smith", "a2_m22_dialogue_smith_theyre_taking")
+			imapentity.set_map_visibility(imapentity.cast(v1), 1)
+			iobjectives.set_state("a2_m22_objectives_freighters", 1)
+			iobjectives.add("a2_m22_objectives_escape")
+			group.destroy(v9, 0)
+			group.destroy(v10, 0)
+			sim.destroy(v7)
+			_pc = 8007
+			continue
+		elif _pc == 8001:
+			_pc = 7172
+			continue
+		elif _pc == 8006:
+			_pc = 8007
+			continue
+		elif _pc == 8007:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8009(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = 0
+	var _pc: int = 8009
 	while true:
-		await _pog_wait(1)
-		if not (v3) and _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
+		if _pc == 8009:
+			v3 = 0
+			_pc = 8026
+			continue
+		elif _pc == 8026:
+			await _pog_frame()
+			if _pog_every(8027, 1.0):
+				_pc = 8040
+				continue
+			else:
+				_pc = 8351
+				continue
+		elif _pc == 8040:
+			if not (v3) and _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
+				_pc = 8074
+				continue
+			else:
+				_pc = 8310
+				continue
+		elif _pc == 8074:
 			v3 = 1
 			await _pog_wait(2.0)
 			await irangecheck.add_traffic_exception(imapentity.cast(v1))
@@ -746,11 +1303,26 @@ func local_8009(v0, v1, v2) -> Variant:
 			await istation.add_reactive_exception(ihabitat.cast(v1))
 			await istation.add_reactive_exception(ihabitat.cast(v0))
 			await istation.add_reactive_exception(ihabitat.cast(v2))
-		else:
-			if not (v3 and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world())):
+			_pc = 8351
+			continue
+		elif _pc == 8310:
+			if v3 and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
+				_pc = 8344
 				continue
+			else:
+				_pc = 8351
+				continue
+		elif _pc == 8344:
 			v3 = 0
-	return
+			_pc = 8351
+			continue
+		elif _pc == 8351:
+			_pc = 8026
+			continue
+		elif _pc == 8356:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -764,37 +1336,89 @@ func mission_handler() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v0 = 0
-	v1 = 0
-	v3 = imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")
-	v4 = imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost")
-	v5 = imapentity.find_by_name_in_system("Quail", "map:/geog/badlands/firefrost")
-	v6 = imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante")
-	v7 = state.find(self)
-	v9 = self
-	text.add("csv:/text/act_2/act2_mission22")
-	if not (v7):
-		v7 = state.create(v9, 0)
-	isim.set_indestructable(isim.cast(v3), 1)
-	isim.set_indestructable(isim.cast(v4), 1)
-	isim.set_indestructable(isim.cast(v5), 1)
-	isim.set_indestructable(isim.cast(v6), 1)
-	if _pog_is_null(state.progress(v7)):
-		iobjectives.add("a2_m22_objectives_track")
-	_pog_spawn(local_1212.bind(v4, v6, v7))
-	_pog_spawn(local_8009.bind(v3, v4, v5))
+	var _pc: int = 8359
 	while true:
-		await _pog_wait(1)
-		if not (v1) and 2 == state.progress(v7) or 1 == state.progress(v7):
+		if _pc == 8359:
+			v0 = 0
+			v1 = 0
+			v3 = imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")
+			v4 = imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost")
+			v5 = imapentity.find_by_name_in_system("Quail", "map:/geog/badlands/firefrost")
+			v6 = imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante")
+			v7 = state.find(self)
+			v9 = self
+			text.add("csv:/text/act_2/act2_mission22")
+			if not (v7):
+				_pc = 8586
+				continue
+			else:
+				_pc = 8611
+				continue
+		elif _pc == 8586:
+			v7 = state.create(v9, 0)
+			_pc = 8611
+			continue
+		elif _pc == 8611:
+			isim.set_indestructable(isim.cast(v3), 1)
+			isim.set_indestructable(isim.cast(v4), 1)
+			isim.set_indestructable(isim.cast(v5), 1)
+			isim.set_indestructable(isim.cast(v6), 1)
+			if _pog_is_null(state.progress(v7)):
+				_pc = 8768
+				continue
+			else:
+				_pc = 8789
+				continue
+		elif _pc == 8768:
+			iobjectives.add("a2_m22_objectives_track")
+			_pc = 8789
+			continue
+		elif _pc == 8789:
+			_pog_spawn(local_1212.bind(v4, v6, v7))
+			_pog_spawn(local_8009.bind(v3, v4, v5))
+			_pc = 8852
+			continue
+		elif _pc == 8852:
+			await _pog_frame()
+			if _pog_every(8853, 1.0):
+				_pc = 8866
+				continue
+			else:
+				_pc = 9564
+				continue
+		elif _pc == 8866:
+			if not (v1) and 2 == state.progress(v7) or 1 == state.progress(v7):
+				_pc = 8920
+				continue
+			else:
+				_pc = 9304
+				continue
+		elif _pc == 8920:
 			await local_55(v7)
 			if _pog_is_null(object.property_exists(v7, "done_hinter")):
-				object.add_bool_property(v7, "done_hinter", 1)
-				await iconversation.one_liner(0, "name_smith", "a2_m22_dialogue_smith_hm_dont")
+				_pc = 8971
+				continue
+			else:
+				_pc = 9026
+				continue
+		elif _pc == 8971:
+			object.add_bool_property(v7, "done_hinter", 1)
+			await iconversation.one_liner(0, "name_smith", "a2_m22_dialogue_smith_hm_dont")
+			_pc = 9026
+			continue
+		elif _pc == 9026:
 			isim.set_sensor_visibility(isim.cast(v4), 1)
-			while true:
-				await _pog_wait(1.0)
-				if not (not _pog_eq("map:/geog/badlands/firefrost", isim.active_world())):
-					break
+			_pc = 9059
+			continue
+		elif _pc == 9059:
+			await _pog_wait(1.0)
+			if _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
+				_pc = 9119
+				continue
+			else:
+				_pc = 9059
+				continue
+		elif _pc == 9119:
 			await _pog_wait(1.0)
 			v2 = iship.find_player_ship()
 			await ibacktobase.inhibit()
@@ -803,20 +1427,49 @@ func mission_handler() -> Variant:
 			v1 = 1
 			_pog_spawn(local_4069.bind(v2, v4, v3, v5, v7))
 			_pog_spawn(local_7141.bind(v2, v3, v5, v7))
-		if not (100 == state.progress(v7) or 8 == state.progress(v7)):
+			_pc = 9304
 			continue
-		if 8 == state.progress(v7):
+		elif _pc == 9304:
+			if 100 == state.progress(v7) or 8 == state.progress(v7):
+				_pc = 9352
+				continue
+			else:
+				_pc = 9564
+				continue
+		elif _pc == 9352:
+			if 8 == state.progress(v7):
+				_pc = 9378
+				continue
+			else:
+				_pc = 9405
+				continue
+		elif _pc == 9378:
 			global.set_bool("g_act2_wolfs_lair_complete", 1)
-		else:
+			_pc = 9484
+			continue
+		elif _pc == 9405:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_326.bind()))
 			await local_218()
 			iscore.goto_restart_point()
-		state.destroy(self)
-		text.remove("csv:/text/act_2/act2_mission22")
-		await imissiontracker.remove_mission(self)
-		return
-	return
+			_pc = 9484
+			continue
+		elif _pc == 9484:
+			state.destroy(self)
+			text.remove("csv:/text/act_2/act2_mission22")
+			await imissiontracker.remove_mission(self)
+			_pc = 9570
+			continue
+		elif _pc == 9564:
+			_pc = 8852
+			continue
+		elif _pc == 9569:
+			_pc = 9570
+			continue
+		elif _pc == 9570:
+			return
+		else:
+			return 0
 	return 0
 
 func local_9572(v0, v1) -> Variant:
@@ -832,54 +1485,113 @@ func local_9572(v0, v1) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	v3 = 8
-	v4 = group.sim_count(v0)
-	v5 = group.create()
-	v8 = ihabitat.cast(v1)
-	v10 = iship.cast(group.leader(v0))
-	v11 = iai.inner_marker_radius(v8, isim.cast(group.leader(v0)))
-	v12 = math.random(200.0 + v11, 800.0 + v11)
-	v13 = 0.0
-	if PogRuntime.TRACE:
-		debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
-	object.add_handle_property(v10, "traffic_handler_task", self)
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
-	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 0)), v8, v12, 0.0, v13)
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 1)), v8, v12, 100.0 - v12, v13)
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 2)), v8, 0.0, v12, v13)
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 3)), v8, -(v12), 100.0 - v12, v13)
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 4)), v8, -(v12), 0.0, v13)
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 5)), v8, -(v12), 100.0 + -(v12), v13)
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 6)), v8, 0.0, -(v12), v13)
-	sim.place_relative_to(sim.cast(group.nth_sim(v5, 7)), v8, v12, 100.0 + -(v12), v13)
-	v2 = 0
-	iai.give_approach_order(v10, group.nth_sim(v5, v2))
+	var _pc: int = 9572
 	while true:
-		await _pog_wait(5)
-		if not _pog_eq(v4, group.sim_count(v0)):
+		if _pc == 9572:
+			v3 = 8
+			v4 = group.sim_count(v0)
+			v5 = group.create()
+			v8 = ihabitat.cast(v1)
+			v10 = iship.cast(group.leader(v0))
+			v11 = iai.inner_marker_radius(v8, isim.cast(group.leader(v0)))
+			v12 = math.random(200.0 + v11, 800.0 + v11)
+			v13 = 0.0
+			_pc = 9822
+			continue
+		elif _pc == 9801:
+			debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
+			_pc = 9822
+			continue
+		elif _pc == 9822:
+			object.add_handle_property(v10, "traffic_handler_task", self)
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
+			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 0)), v8, v12, 0.0, v13)
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 1)), v8, v12, 100.0 - v12, v13)
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 2)), v8, 0.0, v12, v13)
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 3)), v8, -(v12), 100.0 - v12, v13)
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 4)), v8, -(v12), 0.0, v13)
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 5)), v8, -(v12), 100.0 + -(v12), v13)
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 6)), v8, 0.0, -(v12), v13)
+			sim.place_relative_to(sim.cast(group.nth_sim(v5, 7)), v8, v12, 100.0 + -(v12), v13)
+			v2 = 0
+			iai.give_approach_order(v10, group.nth_sim(v5, v2))
+			_pc = 10839
+			continue
+		elif _pc == 10839:
+			await _pog_frame()
+			if _pog_every(10840, 5.0):
+				_pc = 10853
+				continue
+			else:
+				_pc = 12181
+				continue
+		elif _pc == 10853:
+			if not _pog_eq(v4, group.sim_count(v0)):
+				_pc = 10882
+				continue
+			else:
+				_pc = 11032
+				continue
+		elif _pc == 10882:
 			v4 = group.sim_count(v0)
 			if not _pog_is_null(v4):
-				v10 = iship.cast(group.leader(v0))
-				await iformation.goose(v0, 40.0, 0)
-				iai.give_approach_order(v10, group.nth_sim(v5, v2))
+				_pc = 10918
+				continue
 			else:
-				break
-		if not (await iutilities.player_in_range_of_group(v0)) or not _pog_eq(v0, sim.group(v10)):
-			if PogRuntime.TRACE:
-				debug.print_string("iScriptedOrders.Localpatrol: player out of range......\n")
-			break
-		if 300.0 > sim.distance_between(v10, group.nth_sim(v5, v2)):
+				_pc = 11027
+				continue
+		elif _pc == 10918:
+			v10 = iship.cast(group.leader(v0))
+			await iformation.goose(v0, 40.0, 0)
+			iai.give_approach_order(v10, group.nth_sim(v5, v2))
+			_pc = 11032
 			continue
-		if 8 < v2:
+		elif _pc == 11027:
+			_pc = 12186
+			continue
+		elif _pc == 11032:
+			if not (await iutilities.player_in_range_of_group(v0)) or not _pog_eq(v0, sim.group(v10)):
+				_pc = 11081
+				continue
+			else:
+				_pc = 11112
+				continue
+		elif _pc == 11081:
+			_pc = 11107
+			continue
+		elif _pc == 11086:
+			debug.print_string("iScriptedOrders.Localpatrol: player out of range......\n")
+			_pc = 11107
+			continue
+		elif _pc == 11107:
+			_pc = 12186
+			continue
+		elif _pc == 11112:
+			if 300.0 <= sim.distance_between(v10, group.nth_sim(v5, v2)):
+				_pc = 11164
+				continue
+			else:
+				_pc = 12181
+				continue
+		elif _pc == 11164:
+			if 8 < v2:
+				_pc = 11177
+				continue
+			else:
+				_pc = 11195
+				continue
+		elif _pc == 11177:
 			v2 = 1 + v2
-		else:
+			_pc = 12113
+			continue
+		elif _pc == 11195:
 			group.destroy(v5, 1)
 			v13 = math.random(100.0, 300.0)
 			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
@@ -900,11 +1612,27 @@ func local_9572(v0, v1) -> Variant:
 			sim.place_relative_to(group.nth_sim(v5, 7), v8, v12, 100.0 + -(v12), v13)
 			v2 = 0
 			iai.give_approach_order(v10, group.nth_sim(v5, v2))
-		if PogRuntime.TRACE:
+			_pc = 12113
+			continue
+		elif _pc == 12113:
+			_pc = 12139
+			continue
+		elif _pc == 12118:
 			debug.print_string("iScriptedOrders: Waypoint Reached\n")
-		iai.give_approach_order(v10, group.nth_sim(v5, v2))
-	group.destroy(v0, 1)
-	group.destroy(v5, 1)
-	return
+			_pc = 12139
+			continue
+		elif _pc == 12139:
+			iai.give_approach_order(v10, group.nth_sim(v5, v2))
+			_pc = 12181
+			continue
+		elif _pc == 12181:
+			_pc = 10839
+			continue
+		elif _pc == 12186:
+			group.destroy(v0, 1)
+			group.destroy(v5, 1)
+			return
+		else:
+			return 0
 	return 0
 

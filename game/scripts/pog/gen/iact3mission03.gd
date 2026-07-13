@@ -110,42 +110,85 @@ func local_242() -> Variant:
 	return 0
 
 func main_task() -> Variant:
-	if not (await iutilities.skip_mission("Scavenger?")):
-		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
-	return
+	var _pc: int = 350
+	while true:
+		if _pc == 350:
+			if not (await iutilities.skip_mission("Scavenger?")):
+				_pc = 376
+				continue
+			else:
+				_pc = 408
+				continue
+		elif _pc == 376:
+			_pog_detach(_pog_spawn(mission_handler.bind()))
+			_pc = 422
+			continue
+		elif _pc == 408:
+			await stub()
+			_pc = 422
+			continue
+		elif _pc == 422:
+			return
+		else:
+			return 0
 	return 0
 
 func local_424(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16) -> Variant:
+	var _pc: int = 424
 	while true:
-		await _pog_wait(1)
-		if 100 != state.progress(v1):
+		if _pc == 424:
+			_pc = 429
 			continue
-		sim.destroy(v2)
-		sim.destroy(v3)
-		sim.destroy(v4)
-		sim.destroy(v5)
-		sim.destroy(v6)
-		sim.destroy(v7)
-		sim.destroy(v14)
-		sim.destroy(v15)
-		sim.destroy(v16)
-		group.destroy(v8, 1)
-		group.destroy(v9, 1)
-		group.destroy(v10, 1)
-		group.destroy(v11, 1)
-		group.destroy(v12, 1)
-		group.destroy(v13, 1)
-		global.set_bool("g_skip_locked", 0)
-		_pog_detach(_pog_spawn(main_task.bind()))
-		await local_242()
-		state.destroy(v0)
-		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
-		_pog_halt(v0)
-		return
-	return
+		elif _pc == 429:
+			await _pog_frame()
+			if _pog_every(430, 1.0):
+				_pc = 443
+				continue
+			else:
+				_pc = 909
+				continue
+		elif _pc == 443:
+			if 100 == state.progress(v1):
+				_pc = 469
+				continue
+			else:
+				_pc = 909
+				continue
+		elif _pc == 469:
+			sim.destroy(v2)
+			sim.destroy(v3)
+			sim.destroy(v4)
+			sim.destroy(v5)
+			sim.destroy(v6)
+			sim.destroy(v7)
+			sim.destroy(v14)
+			sim.destroy(v15)
+			sim.destroy(v16)
+			group.destroy(v8, 1)
+			group.destroy(v9, 1)
+			group.destroy(v10, 1)
+			group.destroy(v11, 1)
+			group.destroy(v12, 1)
+			group.destroy(v13, 1)
+			global.set_bool("g_skip_locked", 0)
+			_pog_detach(_pog_spawn(main_task.bind()))
+			await local_242()
+			state.destroy(v0)
+			await iutilities.remove_mission_restart()
+			await imissiontracker.remove_mission(self)
+			_pog_halt(v0)
+			_pc = 915
+			continue
+		elif _pc == 909:
+			_pc = 429
+			continue
+		elif _pc == 914:
+			_pc = 915
+			continue
+		elif _pc == 915:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -913,6 +956,7 @@ func mission_handler() -> Variant:
 			_pc = 6606
 			continue
 		elif _pc == 6563:
+			state.progress(v34)
 			if not _pog_is_null(state.progress(v34)):
 				_pc = 6589
 				continue
@@ -944,24 +988,60 @@ func local_6608(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v3 = group.create()
-	v5 = 0
-	while v1 < v5:
-		v6 = 1.0 * v1 / 360.0 * 1.0 * v5
-		if _pog_is_null(v5):
+	var _pc: int = 6608
+	while true:
+		if _pc == 6608:
+			v3 = group.create()
+			v5 = 0
+			_pc = 6639
+			continue
+		elif _pc == 6639:
+			if v1 < v5:
+				_pc = 6655
+				continue
+			else:
+				_pc = 7036
+				continue
+		elif _pc == 6655:
+			v6 = 1.0 * v1 / 360.0 * 1.0 * v5
+			if _pog_is_null(v5):
+				_pc = 6704
+				continue
+			else:
+				_pc = 6741
+				continue
+		elif _pc == 6704:
 			v4 = iship.create("ini:/sims/custom/act2_mission24/antenna", "a3_m03_commsat")
-		else:
+			_pc = 6773
+			continue
+		elif _pc == 6741:
 			v4 = iship.create("ini:/sims/custom/act3_mission03/dead_commsat", "a3_m03_commsat")
-		group.add_sim(v3, v4)
-		if PogRuntime.TRACE:
+			_pc = 6773
+			continue
+		elif _pc == 6773:
+			group.add_sim(v3, v4)
+			_pc = 6941
+			continue
+		elif _pc == 6802:
 			debug.print_string("Creating commsat relative to location: ( ")
 			debug.print_float(math.pog_cos(v6) * v2)
 			debug.print_string(", ")
 			debug.print_float(math.pog_sin(v6) * v2)
 			debug.print_string(")\n")
-		sim.place_relative_to(v4, v0, math.pog_cos(v6) * v2, math.pog_sin(v6) * v2, 0.0)
-		v5 = 1 + v5
-	return v3
+			_pc = 6941
+			continue
+		elif _pc == 6941:
+			sim.place_relative_to(v4, v0, math.pog_cos(v6) * v2, math.pog_sin(v6) * v2, 0.0)
+			v5 = 1 + v5
+			_pc = 6639
+			continue
+		elif _pc == 7036:
+			_pc = 7046
+			continue
+		elif _pc == 7046:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7048(v0, v1, v2, v3) -> Variant:
@@ -969,47 +1049,144 @@ func local_7048(v0, v1, v2, v3) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v5 = group.sim_count(v1)
-	v6 = group.group_count(v1)
-	if _pog_is_null(v6) and _pog_is_null(v5):
-		pass
-	else:
-		v7 = 0
-		while v5 < v7:
+	var _pc: int = 7048
+	while true:
+		if _pc == 7048:
+			v5 = group.sim_count(v1)
+			v6 = group.group_count(v1)
+			if _pog_is_null(v6) and _pog_is_null(v5):
+				_pc = 7121
+				continue
+			else:
+				_pc = 7127
+				continue
+		elif _pc == 7121:
+			_pc = 7402
+			continue
+		elif _pc == 7127:
+			v7 = 0
+			_pc = 7135
+			continue
+		elif _pc == 7135:
+			if v5 < v7:
+				_pc = 7151
+				continue
+			else:
+				_pc = 7256
+				continue
+		elif _pc == 7151:
 			v4 = isim.cast(group.nth_sim(v1, v7))
 			if v2 < sim.distance_between(v0, v4):
-				return v4
+				_pc = 7227
+				continue
+			else:
+				_pc = 7238
+				continue
+		elif _pc == 7227:
+			_pc = 7402
+			continue
+		elif _pc == 7238:
 			v7 = 1 + v7
-		if 0 > v6 and v3:
+			_pc = 7135
+			continue
+		elif _pc == 7256:
+			if 0 > v6 and v3:
+				_pc = 7275
+				continue
+			else:
+				_pc = 7396
+				continue
+		elif _pc == 7275:
 			v7 = 0
-			while v6 < v7:
-				v4 = await local_7048(v0, group.nth_group(v1, v6), v2, v3)
-				if not _pog_is_null(v4):
-					return v4
-				v7 = 1 + v7
-	return
+			_pc = 7282
+			continue
+		elif _pc == 7282:
+			if v6 < v7:
+				_pc = 7298
+				continue
+			else:
+				_pc = 7396
+				continue
+		elif _pc == 7298:
+			v4 = await local_7048(v0, group.nth_group(v1, v6), v2, v3)
+			if not _pog_is_null(v4):
+				_pc = 7368
+				continue
+			else:
+				_pc = 7378
+				continue
+		elif _pc == 7368:
+			_pc = 7402
+			continue
+		elif _pc == 7378:
+			v7 = 1 + v7
+			_pc = 7282
+			continue
+		elif _pc == 7396:
+			_pc = 7402
+			continue
+		elif _pc == 7402:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7404(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = group.create()
-	v4 = isim.faction(v0)
+	var _pc: int = 7404
 	while true:
-		await _pog_wait(5)
-		if sim.is_dead(v0) or sim.is_dead(v1):
-			group.destroy(v2, 0)
-			return
-		if 4 >= group.sim_count(v2):
+		if _pc == 7404:
+			v2 = group.create()
+			v4 = isim.faction(v0)
+			_pc = 7457
 			continue
-		v3 = iship.create("ini:/sims/ships/navy/fighter", "a3_m03_ship_corp_escort")
-		sim.place_near(v3, v0, 100.0)
-		await ipilotsetup.generic_military(v3)
-		isim.set_faction(v3, v4)
-		group.add_sim(v2, v3)
-		iai.give_attack_order(v3, v1)
-	return
+		elif _pc == 7457:
+			await _pog_frame()
+			if _pog_every(7458, 5.0):
+				_pc = 7471
+				continue
+			else:
+				_pc = 7716
+				continue
+		elif _pc == 7471:
+			if sim.is_dead(v0) or sim.is_dead(v1):
+				_pc = 7513
+				continue
+			else:
+				_pc = 7538
+				continue
+		elif _pc == 7513:
+			group.destroy(v2, 0)
+			_pc = 7722
+			continue
+		elif _pc == 7538:
+			if 4 < group.sim_count(v2):
+				_pc = 7564
+				continue
+			else:
+				_pc = 7716
+				continue
+		elif _pc == 7564:
+			v3 = iship.create("ini:/sims/ships/navy/fighter", "a3_m03_ship_corp_escort")
+			sim.place_near(v3, v0, 100.0)
+			await ipilotsetup.generic_military(v3)
+			isim.set_faction(v3, v4)
+			group.add_sim(v2, v3)
+			iai.give_attack_order(v3, v1)
+			_pc = 7716
+			continue
+		elif _pc == 7716:
+			_pc = 7457
+			continue
+		elif _pc == 7721:
+			_pc = 7722
+			continue
+		elif _pc == 7722:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7724(v0, v1, v2) -> Variant:
@@ -1018,38 +1195,80 @@ func local_7724(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v3 = group.create()
-	v5 = iship.create("ini:/sims/ships/utility/megapod", "")
-	v6 = 0
-	while v1 < v6:
-		v7 = 1.0 * v1 / 360.0 * 1.0 * v6
-		v4 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
-		isim.set_sensor_visibility(v4, 0)
-		group.add_sim(v3, v4)
-		if PogRuntime.TRACE:
+	var _pc: int = 7724
+	while true:
+		if _pc == 7724:
+			v3 = group.create()
+			v5 = iship.create("ini:/sims/ships/utility/megapod", "")
+			v6 = 0
+			_pc = 7787
+			continue
+		elif _pc == 7787:
+			if v1 < v6:
+				_pc = 7803
+				continue
+			else:
+				_pc = 8228
+				continue
+		elif _pc == 7803:
+			v7 = 1.0 * v1 / 360.0 * 1.0 * v6
+			v4 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
+			isim.set_sensor_visibility(v4, 0)
+			group.add_sim(v3, v4)
+			_pc = 8075
+			continue
+		elif _pc == 7934:
 			debug.print_string("Creating waypoint relative to location: ( ")
 			debug.print_float(math.pog_cos(v7) * v2)
 			debug.print_string(", ")
 			debug.print_float(math.pog_sin(v7) * v2)
 			debug.print_string(")\n")
-		sim.place_relative_to(v5, v0, math.pog_cos(v7) * v2, math.pog_sin(v7) * v2, 0.0)
-		await _pog_wait(0.10000000149011612)
-		sim.place_at(v4, v5)
-		v6 = 1 + v6
-	sim.destroy(v5)
-	return v3
+			_pc = 8075
+			continue
+		elif _pc == 8075:
+			sim.place_relative_to(v5, v0, math.pog_cos(v7) * v2, math.pog_sin(v7) * v2, 0.0)
+			await _pog_wait(0.10000000149011612)
+			sim.place_at(v4, v5)
+			v6 = 1 + v6
+			_pc = 7787
+			continue
+		elif _pc == 8228:
+			sim.destroy(v5)
+			_pc = 8257
+			continue
+		elif _pc == 8257:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8259(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = 0
-	while v1 < v3:
-		v4 = iship.create("ini:/sims/custom/act3_mission03/demolition_mine", "hud_long_type_mine")
-		await ipilotsetup.marauder(v4)
-		group.add_sim(v0, v4)
-		v3 = 1 + v3
-	return 0
+	var _pc: int = 8259
+	while true:
+		if _pc == 8259:
+			v3 = 0
+			_pc = 8271
+			continue
+		elif _pc == 8271:
+			if v1 < v3:
+				_pc = 8287
+				continue
+			else:
+				_pc = 8380
+				continue
+		elif _pc == 8287:
+			v4 = iship.create("ini:/sims/custom/act3_mission03/demolition_mine", "hud_long_type_mine")
+			await ipilotsetup.marauder(v4)
+			group.add_sim(v0, v4)
+			v3 = 1 + v3
+			_pc = 8271
+			continue
+		elif _pc == 8380:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_8383(v0, v1, v2) -> Variant:
@@ -1057,42 +1276,108 @@ func local_8383(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v5 = group.sim_count(v1)
-	v6 = 0
-	while group.sim_count(v2) < v6:
-		if sim.is_dead(v0):
-			break
-		v3 = iship.cast(group.nth_sim(v2, v6))
-		v4 = isim.cast(group.nth_sim(v1, v6))
-		isim.set_indestructable(v3, 1)
-		sim.place_relative_to(v3, v0, 0.0, 0.0, 50.0)
-		sim.point_at(v3, v4)
-		sim.set_velocity_local_to_sim(v3, 0.0, 0.0, 200.0)
-		iai.give_approach_order_advanced(v3, v4, 500.0, 200.0, 1)
-		await _pog_wait(1.0)
-		_pog_detach(_pog_spawn(local_8796.bind(v3)))
-		v6 = 1 + v6
-	return
+	var _pc: int = 8383
+	while true:
+		if _pc == 8383:
+			v5 = group.sim_count(v1)
+			v6 = 0
+			_pc = 8419
+			continue
+		elif _pc == 8419:
+			if group.sim_count(v2) < v6:
+				_pc = 8448
+				continue
+			else:
+				_pc = 8794
+				continue
+		elif _pc == 8448:
+			if sim.is_dead(v0):
+				_pc = 8471
+				continue
+			else:
+				_pc = 8476
+				continue
+		elif _pc == 8471:
+			_pc = 8794
+			continue
+		elif _pc == 8476:
+			v3 = iship.cast(group.nth_sim(v2, v6))
+			v4 = isim.cast(group.nth_sim(v1, v6))
+			isim.set_indestructable(v3, 1)
+			sim.place_relative_to(v3, v0, 0.0, 0.0, 50.0)
+			sim.point_at(v3, v4)
+			sim.set_velocity_local_to_sim(v3, 0.0, 0.0, 200.0)
+			iai.give_approach_order_advanced(v3, v4, 500.0, 200.0, 1)
+			await _pog_wait(1.0)
+			_pog_detach(_pog_spawn(local_8796.bind(v3)))
+			v6 = 1 + v6
+			_pc = 8419
+			continue
+		elif _pc == 8794:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8796(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = object.float_property(v0, "max_hit_points")
-	await _pog_wait(5.0)
-	object.set_string_property(v0, "death_script", "iAct3Mission03.MineDeathScript")
-	isim.set_indestructable(v0, 0)
-	await iremotepilot.enable_remote_connection(v0, 1)
+	var _pc: int = 8796
 	while true:
-		await _pog_wait(0.1)
-		if sim.is_dead(v0):
+		if _pc == 8796:
+			v2 = object.float_property(v0, "max_hit_points")
+			await _pog_wait(5.0)
+			object.set_string_property(v0, "death_script", "iAct3Mission03.MineDeathScript")
+			isim.set_indestructable(v0, 0)
+			await iremotepilot.enable_remote_connection(v0, 1)
+			_pc = 8941
+			continue
+		elif _pc == 8941:
+			await _pog_frame()
+			if _pog_every(8942, 0.10000000149011612):
+				_pc = 8955
+				continue
+			else:
+				_pc = 9062
+				continue
+		elif _pc == 8955:
+			if sim.is_dead(v0):
+				_pc = 8978
+				continue
+			else:
+				_pc = 8983
+				continue
+		elif _pc == 8978:
+			_pc = 9068
+			continue
+		elif _pc == 8983:
+			if _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
+				_pc = 9007
+				continue
+			else:
+				_pc = 9062
+				continue
+		elif _pc == 9007:
+			if not _pog_eq(v2, object.float_property(v0, "hit_points")):
+				_pc = 9043
+				continue
+			else:
+				_pc = 9062
+				continue
+		elif _pc == 9043:
+			isim.kill(v0)
+			_pc = 9062
+			continue
+		elif _pc == 9062:
+			_pc = 8941
+			continue
+		elif _pc == 9067:
+			_pc = 9068
+			continue
+		elif _pc == 9068:
 			return
-		if not _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
-			continue
-		if _pog_eq(v2, object.float_property(v0, "hit_points")):
-			continue
-		isim.kill(v0)
-	return
+		else:
+			return 0
 	return 0
 
 func local_9070(v0, v1) -> Variant:
@@ -1115,87 +1400,191 @@ func local_9283(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = isim.cast(iship.create("ini:/sims/custom/haven_station/HavenStationDebris1", "Station Shell"))
-	group.add_sim(v1, v3)
-	sim.set_cullable(v3, 0)
-	sim.place_at(v3, v0)
-	isim.set_sensor_visibility(isim.cast(v3), 0)
-	sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-	sim.set_angular_velocity_euler(v3, 5.0, -5.0, 5.0)
-	v4 = 0
-	while 3 < v4:
-		v2 = sim.create("ini:/sims/inert/asteroid1", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 500.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
-		v4 = 1 + v4
-	v4 = 0
-	while 3 < v4:
-		v2 = sim.create("ini:/sims/inert/debris1", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 500.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
-		v4 = 1 + v4
-	v4 = 0
-	while 5 < v4:
-		v2 = sim.create("ini:/sims/inert/asteroid2", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 600.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-10.0, 10.0), math.random(-10.0, 10.0), math.random(-10.0, 10.0))
-		v4 = 1 + v4
-	v4 = 0
-	while 4 < v4:
-		v2 = sim.create("ini:/sims/inert/debris2", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 600.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-10.0, 10.0), math.random(-10.0, 10.0), math.random(-10.0, 10.0))
-		v4 = 1 + v4
-	v4 = 0
-	while 6 < v4:
-		v2 = sim.create("ini:/sims/inert/asteroid3", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 700.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-15.0, 15.0), math.random(-15.0, 15.0), math.random(-15.0, 15.0))
-		v4 = 1 + v4
-	v4 = 0
-	while 6 < v4:
-		v2 = sim.create("ini:/sims/inert/debris3", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 700.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-15.0, 15.0), math.random(-15.0, 15.0), math.random(-15.0, 15.0))
-		v4 = 1 + v4
-	v4 = 0
-	while 6 < v4:
-		v2 = sim.create("ini:/sims/inert/asteroid4", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 800.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
-		v4 = 1 + v4
-	v4 = 0
-	while 6 < v4:
-		v2 = sim.create("ini:/sims/inert/debris4", "")
-		isim.set_sensor_visibility(isim.cast(v2), 0)
-		group.add_sim(v1, v2)
-		sim.place_near(v2, v3, 800.0)
-		sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v2, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
-		isim.set_indestructable(isim.cast(v2), 0)
-		v4 = 1 + v4
-	return v1
+	var _pc: int = 9283
+	while true:
+		if _pc == 9283:
+			v3 = isim.cast(iship.create("ini:/sims/custom/haven_station/HavenStationDebris1", "Station Shell"))
+			group.add_sim(v1, v3)
+			sim.set_cullable(v3, 0)
+			sim.place_at(v3, v0)
+			isim.set_sensor_visibility(isim.cast(v3), 0)
+			sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v3, 5.0, -5.0, 5.0)
+			v4 = 0
+			_pc = 9563
+			continue
+		elif _pc == 9563:
+			if 3 < v4:
+				_pc = 9576
+				continue
+			else:
+				_pc = 9888
+				continue
+		elif _pc == 9576:
+			v2 = sim.create("ini:/sims/inert/asteroid1", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 500.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
+			v4 = 1 + v4
+			_pc = 9563
+			continue
+		elif _pc == 9888:
+			v4 = 0
+			_pc = 9895
+			continue
+		elif _pc == 9895:
+			if 3 < v4:
+				_pc = 9908
+				continue
+			else:
+				_pc = 10220
+				continue
+		elif _pc == 9908:
+			v2 = sim.create("ini:/sims/inert/debris1", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 500.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
+			v4 = 1 + v4
+			_pc = 9895
+			continue
+		elif _pc == 10220:
+			v4 = 0
+			_pc = 10227
+			continue
+		elif _pc == 10227:
+			if 5 < v4:
+				_pc = 10240
+				continue
+			else:
+				_pc = 10552
+				continue
+		elif _pc == 10240:
+			v2 = sim.create("ini:/sims/inert/asteroid2", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 600.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-10.0, 10.0), math.random(-10.0, 10.0), math.random(-10.0, 10.0))
+			v4 = 1 + v4
+			_pc = 10227
+			continue
+		elif _pc == 10552:
+			v4 = 0
+			_pc = 10559
+			continue
+		elif _pc == 10559:
+			if 4 < v4:
+				_pc = 10572
+				continue
+			else:
+				_pc = 10884
+				continue
+		elif _pc == 10572:
+			v2 = sim.create("ini:/sims/inert/debris2", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 600.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-10.0, 10.0), math.random(-10.0, 10.0), math.random(-10.0, 10.0))
+			v4 = 1 + v4
+			_pc = 10559
+			continue
+		elif _pc == 10884:
+			v4 = 0
+			_pc = 10891
+			continue
+		elif _pc == 10891:
+			if 6 < v4:
+				_pc = 10904
+				continue
+			else:
+				_pc = 11216
+				continue
+		elif _pc == 10904:
+			v2 = sim.create("ini:/sims/inert/asteroid3", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 700.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-15.0, 15.0), math.random(-15.0, 15.0), math.random(-15.0, 15.0))
+			v4 = 1 + v4
+			_pc = 10891
+			continue
+		elif _pc == 11216:
+			v4 = 0
+			_pc = 11223
+			continue
+		elif _pc == 11223:
+			if 6 < v4:
+				_pc = 11236
+				continue
+			else:
+				_pc = 11548
+				continue
+		elif _pc == 11236:
+			v2 = sim.create("ini:/sims/inert/debris3", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 700.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-15.0, 15.0), math.random(-15.0, 15.0), math.random(-15.0, 15.0))
+			v4 = 1 + v4
+			_pc = 11223
+			continue
+		elif _pc == 11548:
+			v4 = 0
+			_pc = 11555
+			continue
+		elif _pc == 11555:
+			if 6 < v4:
+				_pc = 11568
+				continue
+			else:
+				_pc = 11880
+				continue
+		elif _pc == 11568:
+			v2 = sim.create("ini:/sims/inert/asteroid4", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 800.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
+			v4 = 1 + v4
+			_pc = 11555
+			continue
+		elif _pc == 11880:
+			v4 = 0
+			_pc = 11887
+			continue
+		elif _pc == 11887:
+			if 6 < v4:
+				_pc = 11900
+				continue
+			else:
+				_pc = 12245
+				continue
+		elif _pc == 11900:
+			v2 = sim.create("ini:/sims/inert/debris4", "")
+			isim.set_sensor_visibility(isim.cast(v2), 0)
+			group.add_sim(v1, v2)
+			sim.place_near(v2, v3, 800.0)
+			sim.set_orientation_euler(v2, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v2, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
+			isim.set_indestructable(isim.cast(v2), 0)
+			v4 = 1 + v4
+			_pc = 11887
+			continue
+		elif _pc == 12245:
+			_pc = 12255
+			continue
+		elif _pc == 12255:
+			return
+		else:
+			return 0
 	return 0
 
 func mine_death_script() -> Variant:
@@ -1318,11 +1707,28 @@ func local_14021(v0, v1, v2, v3) -> Variant:
 func local_14378(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = 0
-	while group.sim_count(v0) < v2:
-		v3 = isim.cast(group.nth_sim(v0, v2))
-		isim.set_indestructable(v3, v1)
-		v2 = 1 + v2
-	return 0
+	var _pc: int = 14378
+	while true:
+		if _pc == 14378:
+			v2 = 0
+			_pc = 14390
+			continue
+		elif _pc == 14390:
+			if group.sim_count(v0) < v2:
+				_pc = 14419
+				continue
+			else:
+				_pc = 14503
+				continue
+		elif _pc == 14419:
+			v3 = isim.cast(group.nth_sim(v0, v2))
+			isim.set_indestructable(v3, v1)
+			v2 = 1 + v2
+			_pc = 14390
+			continue
+		elif _pc == 14503:
+			return 0
+		else:
+			return 0
 	return 0
 

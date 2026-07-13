@@ -87,14 +87,42 @@ func local_218() -> Variant:
 
 func local_263() -> Variant:
 	var v0: Variant = 0
-	while icomms.is_in_conversation():
-		await _pog_wait(0.5)
-	if not (await iutilities.skip_mission("Ambassador Encounter??")):
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
-	else:
-		await stub()
-	return
+	var _pc: int = 263
+	while true:
+		if _pc == 263:
+			_pc = 268
+			continue
+		elif _pc == 268:
+			if icomms.is_in_conversation():
+				_pc = 286
+				continue
+			else:
+				_pc = 323
+				continue
+		elif _pc == 286:
+			await _pog_wait(0.5)
+			_pc = 268
+			continue
+		elif _pc == 323:
+			if not (await iutilities.skip_mission("Ambassador Encounter??")):
+				_pc = 349
+				continue
+			else:
+				_pc = 386
+				continue
+		elif _pc == 349:
+			v0 = _pog_spawn(mission_handler.bind())
+			_pog_detach(v0)
+			_pc = 405
+			continue
+		elif _pc == 386:
+			await stub()
+			_pc = 405
+			continue
+		elif _pc == 405:
+			return
+		else:
+			return 0
 	return 0
 
 func local_407() -> Variant:
@@ -102,21 +130,45 @@ func local_407() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = group.create()
-	v2 = ifaction.find("Independent")
-	v3 = ifaction.find("Player")
-	ifaction.set_feeling(v2, v3, 1.0)
-	ifaction.set_feeling(v3, v2, 1.0)
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 407
+	while true:
+		if _pc == 407:
+			v0 = group.create()
+			v2 = ifaction.find("Independent")
+			v3 = ifaction.find("Player")
+			ifaction.set_feeling(v2, v3, 1.0)
+			ifaction.set_feeling(v3, v2, 1.0)
+			if _pog_is_null(v2):
+				_pc = 553
+				continue
+			else:
+				_pc = 579
+				continue
+		elif _pc == 553:
+			_pc = 579
+			continue
+		elif _pc == 558:
 			debug.error("iAct2Mission07: Unable to find Freelancer faction\n")
-	v1 = iship.create("ini:/sims/ships/utility/lightminer", "a2_m07_name_muppet")
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic(v1)
-	group.add_sim(v0, v1)
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: created freelancer posse\n")
-	return v0
+			_pc = 579
+			continue
+		elif _pc == 579:
+			v1 = iship.create("ini:/sims/ships/utility/lightminer", "a2_m07_name_muppet")
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic(v1)
+			group.add_sim(v0, v1)
+			_pc = 704
+			continue
+		elif _pc == 683:
+			debug.print_string("Mission 2-07: created freelancer posse\n")
+			_pc = 704
+			continue
+		elif _pc == 704:
+			_pc = 714
+			continue
+		elif _pc == 714:
+			return
+		else:
+			return 0
 	return 0
 
 func local_716(v0, v1) -> Variant:
@@ -358,26 +410,50 @@ func local_2039() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = group.create()
-	v2 = ifaction.find("Marauders")
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 2039
+	while true:
+		if _pc == 2039:
+			v0 = group.create()
+			v2 = ifaction.find("Marauders")
+			if _pog_is_null(v2):
+				_pc = 2102
+				continue
+			else:
+				_pc = 2128
+				continue
+		elif _pc == 2102:
+			_pc = 2128
+			continue
+		elif _pc == 2107:
 			debug.error("iAct2Mission07: Unable to find marauder faction\n")
-	v1 = iship.create("ini:/sims/ships/marauder/marauder_cutter_hard", "a2_m07_name_deaths")
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic(v1)
-	group.add_sim(v0, v1)
-	v1 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a2_m07_name_flaming")
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic(v1)
-	group.add_sim(v0, v1)
-	v1 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic(v1)
-	group.add_sim(v0, v1)
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Done made marauder vessels, y'all.\n")
-	return v0
+			_pc = 2128
+			continue
+		elif _pc == 2128:
+			v1 = iship.create("ini:/sims/ships/marauder/marauder_cutter_hard", "a2_m07_name_deaths")
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic(v1)
+			group.add_sim(v0, v1)
+			v1 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a2_m07_name_flaming")
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic(v1)
+			group.add_sim(v0, v1)
+			v1 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic(v1)
+			group.add_sim(v0, v1)
+			_pc = 2467
+			continue
+		elif _pc == 2446:
+			debug.print_string("Mission 2-07: Done made marauder vessels, y'all.\n")
+			_pc = 2467
+			continue
+		elif _pc == 2467:
+			_pc = 2477
+			continue
+		elif _pc == 2477:
+			return
+		else:
+			return 0
 	return 0
 
 func local_2479(v0, v1, v2) -> Variant:
@@ -386,31 +462,77 @@ func local_2479(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v5 = group.create()
-	v6 = await iwingmen.group()
-	v7 = null
-	v7 = await iwingmen.true_wingman_list()
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Attack handler started\n")
-	iship.disrupt_l_d_s_drive(v1, 30.0)
-	await _pog_wait(1.0)
-	sim.place_near(group.leader(v0), v1, 2.0 / global.pog_float("g_player_sensor_range"))
-	await iescort.goose(v0, 50.0, 8000.0, 1)
-	iai.give_attack_order(v0, v6)
-	await iconversation.one_liner(0, "name_clay", "a2_m07_dialogue_clay_heads_up_kid")
+	var _pc: int = 2479
 	while true:
-		await _pog_wait(4)
-		if PogRuntime.TRACE:
+		if _pc == 2479:
+			v5 = group.create()
+			v6 = await iwingmen.group()
+			v7 = null
+			v7 = await iwingmen.true_wingman_list()
+			_pc = 2580
+			continue
+		elif _pc == 2559:
+			debug.print_string("Mission 2-07: Attack handler started\n")
+			_pc = 2580
+			continue
+		elif _pc == 2580:
+			iship.disrupt_l_d_s_drive(v1, 30.0)
+			await _pog_wait(1.0)
+			sim.place_near(group.leader(v0), v1, 2.0 / global.pog_float("g_player_sensor_range"))
+			await iescort.goose(v0, 50.0, 8000.0, 1)
+			iai.give_attack_order(v0, v6)
+			await iconversation.one_liner(0, "name_clay", "a2_m07_dialogue_clay_heads_up_kid")
+			_pc = 2786
+			continue
+		elif _pc == 2786:
+			await _pog_frame()
+			if _pog_every(2787, 4.0):
+				_pc = 2800
+				continue
+			else:
+				_pc = 3411
+				continue
+		elif _pc == 2800:
+			_pc = 2826
+			continue
+		elif _pc == 2805:
 			debug.print_string("Mission 2-07: Attack handler schedule running\n")
-		if PogRuntime.TRACE:
+			_pc = 2826
+			continue
+		elif _pc == 2826:
+			_pc = 2907
+			continue
+		elif _pc == 2831:
 			debug.print_string("marauder count ")
 			debug.print_int(group.sim_count(v0))
 			debug.print_string("\n")
-		if 100 == state.progress(v2):
-			return
-		if not (100 != state.progress(v2) and _pog_is_null(group.sim_count(v0))):
+			_pc = 2907
 			continue
-		if 0 > await iwingmen.count():
+		elif _pc == 2907:
+			if 100 == state.progress(v2):
+				_pc = 2933
+				continue
+			else:
+				_pc = 2938
+				continue
+		elif _pc == 2933:
+			_pc = 3417
+			continue
+		elif _pc == 2938:
+			if 100 != state.progress(v2) and _pog_is_null(group.sim_count(v0)):
+				_pc = 2985
+				continue
+			else:
+				_pc = 3411
+				continue
+		elif _pc == 2985:
+			if 0 > await iwingmen.count():
+				_pc = 3005
+				continue
+			else:
+				_pc = 3283
+				continue
+		elif _pc == 3005:
 			v3 = iship.cast(list.get_nth(v7, 0))
 			await iconversation.one_liner(0, "name_clay", "a2_m07_dialogue_clay_nice_one")
 			await iconversation.one_liner(v3, "", "a2_m07_dialogue_wingman_thanks_for_the_help")
@@ -419,62 +541,153 @@ func local_2479(v0, v1, v2) -> Variant:
 			object.set_int_property(v4, "cargo", 195)
 			v5 = await iwingmen.purge_to_group()
 			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v5, _pog_clone("Random"))))
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: maraudas dead we done good\n")
-		else:
+			_pc = 3278
+			continue
+		elif _pc == 3257:
+			debug.print_string("Mission 2-07: maraudas dead we done good\n")
+			_pc = 3278
+			continue
+		elif _pc == 3278:
+			_pc = 3337
+			continue
+		elif _pc == 3283:
 			await iconversation.one_liner(0, "name_clay", "a2_m07_dialogue_clay_nice_one_shame")
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: maraudas dead but our mates snuffed it.\n")
-		iobjectives.set_state("a2_m07_objectives_lure", 1)
-		state.set_progress(v2, 6)
-		if PogRuntime.TRACE:
+			_pc = 3337
+			continue
+		elif _pc == 3316:
+			debug.print_string("Mission 2-07: maraudas dead but our mates snuffed it.\n")
+			_pc = 3337
+			continue
+		elif _pc == 3337:
+			iobjectives.set_state("a2_m07_objectives_lure", 1)
+			state.set_progress(v2, 6)
+			_pc = 3406
+			continue
+		elif _pc == 3385:
 			debug.print_string("Mission 2-07: Attack handler ends\n")
-		return
-	return
+			_pc = 3406
+			continue
+		elif _pc == 3406:
+			_pc = 3417
+			continue
+		elif _pc == 3411:
+			_pc = 2786
+			continue
+		elif _pc == 3416:
+			_pc = 3417
+			continue
+		elif _pc == 3417:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3426(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = 0
-	icomms.shout(0, "name_clay", "a2_m07_dialogue_clay_lets_move_kid")
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Marauda handler starts\n")
+	var _pc: int = 3426
 	while true:
-		await _pog_wait(5)
-		if PogRuntime.TRACE:
-			debug.print_string("Mission 2-07: Maruader handler schedule runs\n")
-		if not (not (v4) and 3000.0 > sim.distance_between(v0, v1)):
+		if _pc == 3426:
+			v4 = 0
+			icomms.shout(0, "name_clay", "a2_m07_dialogue_clay_lets_move_kid")
+			_pc = 3492
 			continue
-		v4 = 1
-		v3 = await local_2039()
-		_pog_spawn(local_2479.bind(v3, v0, v2))
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Marauda handler ends\n")
-	return
+		elif _pc == 3471:
+			debug.print_string("Mission 2-07: Marauda handler starts\n")
+			_pc = 3492
+			continue
+		elif _pc == 3492:
+			_pc = 3497
+			continue
+		elif _pc == 3497:
+			await _pog_frame()
+			if _pog_every(3498, 5.0):
+				_pc = 3511
+				continue
+			else:
+				_pc = 3633
+				continue
+		elif _pc == 3511:
+			_pc = 3537
+			continue
+		elif _pc == 3516:
+			debug.print_string("Mission 2-07: Maruader handler schedule runs\n")
+			_pc = 3537
+			continue
+		elif _pc == 3537:
+			if not (v4) and 3000.0 > sim.distance_between(v0, v1):
+				_pc = 3578
+				continue
+			else:
+				_pc = 3633
+				continue
+		elif _pc == 3578:
+			v4 = 1
+			v3 = await local_2039()
+			_pog_spawn(local_2479.bind(v3, v0, v2))
+			_pc = 3633
+			continue
+		elif _pc == 3633:
+			_pc = 3497
+			continue
+		elif _pc == 3638:
+			_pc = 3665
+			continue
+		elif _pc == 3644:
+			debug.print_string("Mission 2-07: Marauda handler ends\n")
+			_pc = 3665
+			continue
+		elif _pc == 3665:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3667() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = group.create()
-	v2 = ifaction.find("M.C.A.")
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 3667
+	while true:
+		if _pc == 3667:
+			v0 = group.create()
+			v2 = ifaction.find("M.C.A.")
+			if _pog_is_null(v2):
+				_pc = 3730
+				continue
+			else:
+				_pc = 3756
+				continue
+		elif _pc == 3730:
+			_pc = 3756
+			continue
+		elif _pc == 3735:
 			debug.error("iAct2Mission07: Unable to find MCA faction\n")
-	v1 = iship.create("ini:/sims/ships/corporate/yacht", "a2_m07_name_ambassador")
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic_cargo_pod(v1)
-	isim.set_indestructable(v1, 1)
-	group.add_sim(v0, v1)
-	v1 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m07_name_jester")
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic(v1)
-	group.add_sim(v0, v1)
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: W'hoo! made the ambasador!\n")
-	return v0
+			_pc = 3756
+			continue
+		elif _pc == 3756:
+			v1 = iship.create("ini:/sims/ships/corporate/yacht", "a2_m07_name_ambassador")
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic_cargo_pod(v1)
+			isim.set_indestructable(v1, 1)
+			group.add_sim(v0, v1)
+			v1 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m07_name_jester")
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic(v1)
+			group.add_sim(v0, v1)
+			_pc = 4000
+			continue
+		elif _pc == 3979:
+			debug.print_string("Mission 2-07: W'hoo! made the ambasador!\n")
+			_pc = 4000
+			continue
+		elif _pc == 4000:
+			_pc = 4010
+			continue
+		elif _pc == 4010:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4012(v0, v1, v2) -> Variant:
@@ -670,43 +883,131 @@ func local_5431(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = 0
-	v4 = iship.find_player_ship()
-	v6 = isim.find_by_name_in_system("Brotherhood Exile Ark", "map:/geog/badlands/santa_romera")
-	if not (v6):
-		if PogRuntime.TRACE:
-			debug.error("blimey guv - 2-07 can't find the brotherhood exile ark!")
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Ambassador handler has been started.\n")
+	var _pc: int = 5431
 	while true:
-		await _pog_wait(5)
-		if PogRuntime.TRACE:
-			debug.print_string("Mission 2-07: Ambasador handler shedule is running\n")
-		if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+		if _pc == 5431:
+			v1 = 0
+			v4 = iship.find_player_ship()
+			v6 = isim.find_by_name_in_system("Brotherhood Exile Ark", "map:/geog/badlands/santa_romera")
+			if not (v6):
+				_pc = 5505
+				continue
+			else:
+				_pc = 5531
+				continue
+		elif _pc == 5505:
+			_pc = 5531
 			continue
-		if _pog_is_null(v1) and await iutilities.player_in_range(v6):
+		elif _pc == 5510:
+			debug.error("blimey guv - 2-07 can't find the brotherhood exile ark!")
+			_pc = 5531
+			continue
+		elif _pc == 5531:
+			_pc = 5557
+			continue
+		elif _pc == 5536:
+			debug.print_string("Mission 2-07: Ambassador handler has been started.\n")
+			_pc = 5557
+			continue
+		elif _pc == 5557:
+			_pc = 5562
+			continue
+		elif _pc == 5562:
+			await _pog_frame()
+			if _pog_every(5563, 5.0):
+				_pc = 5576
+				continue
+			else:
+				_pc = 5998
+				continue
+		elif _pc == 5576:
+			_pc = 5602
+			continue
+		elif _pc == 5581:
+			debug.print_string("Mission 2-07: Ambasador handler shedule is running\n")
+			_pc = 5602
+			continue
+		elif _pc == 5602:
+			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+				_pc = 5629
+				continue
+			else:
+				_pc = 5998
+				continue
+		elif _pc == 5629:
+			if _pog_is_null(v1) and await iutilities.player_in_range(v6):
+				_pc = 5660
+				continue
+			else:
+				_pc = 5889
+				continue
+		elif _pc == 5660:
 			await local_55(v0)
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: Player in range of activation point\n")
+			_pc = 5705
+			continue
+		elif _pc == 5684:
+			debug.print_string("Mission 2-07: Player in range of activation point\n")
+			_pc = 5705
+			continue
+		elif _pc == 5705:
 			v1 = 1
 			v3 = await local_3667()
 			sim.place_relative_to(group.leader(v3), v6, 1000.0, 1000.0, 1000.0)
 			await iformation.line_abreast(v3, 50.0, 1)
 			if 4 == state.progress(v0):
-				state.set_progress(v0, 3)
+				_pc = 5834
+				continue
+			else:
+				_pc = 5855
+				continue
+		elif _pc == 5834:
+			state.set_progress(v0, 3)
+			_pc = 5855
+			continue
+		elif _pc == 5855:
 			_pog_spawn(local_4012.bind(v3, v6, v0))
-		else:
-			if not (1 == v1 and not (await iutilities.player_in_range(v6))):
+			_pc = 5998
+			continue
+		elif _pc == 5889:
+			if 1 == v1 and not (await iutilities.player_in_range(v6)):
+				_pc = 5921
 				continue
-			if PogRuntime.TRACE:
-				debug.print_string("Mission 2-07: Player in range of activation point\n")
-			if await iutilities.player_in_range_of_group(v3):
+			else:
+				_pc = 5998
 				continue
+		elif _pc == 5921:
+			_pc = 5947
+			continue
+		elif _pc == 5926:
+			debug.print_string("Mission 2-07: Player in range of activation point\n")
+			_pc = 5947
+			continue
+		elif _pc == 5947:
+			if not (await iutilities.player_in_range_of_group(v3)):
+				_pc = 5971
+				continue
+			else:
+				_pc = 5998
+				continue
+		elif _pc == 5971:
 			v1 = 0
 			group.destroy(v3, 1)
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Ambassador handler starts\n")
-	return
+			_pc = 5998
+			continue
+		elif _pc == 5998:
+			_pc = 5562
+			continue
+		elif _pc == 6003:
+			_pc = 6030
+			continue
+		elif _pc == 6009:
+			debug.print_string("Mission 2-07: Ambassador handler starts\n")
+			_pc = 6030
+			continue
+		elif _pc == 6030:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -716,51 +1017,151 @@ func mission_handler() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = isim.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera")
-	v2 = iship.find_player_ship()
-	v3 = 0
-	v4 = state.find(self)
-	v5 = self
-	if PogRuntime.TRACE:
-		debug.print_string("Mission 2-07: Mission Handler started\n")
-	await imissiontracker.add_mission(self, 2, 7)
-	text.add("csv:/text/act_2/act2_mission07")
-	text.add("csv:/text/act_2/act2_mission07_addendum")
-	v4 = state.find(v5)
-	if not (v4):
-		v4 = state.create(v5, 2)
-	await local_55(v4)
-	if PogRuntime.TRACE:
-		if _pog_is_null(v1):
-			debug.error("Unable to find L-point!")
-	if 3 == state.progress(v4) or 2 == state.progress(v4):
-		iobjectives.add("a2_m07_objectives_redezvous")
-	if 5 == state.progress(v4) or 4 == state.progress(v4):
-		state.set_progress(v4, 3)
-	if 3 == state.progress(v4) or 2 == state.progress(v4):
-		_pog_spawn(local_5431.bind(v4))
+	var _pc: int = 6032
 	while true:
-		await _pog_wait(3)
-		if PogRuntime.TRACE:
-			debug.print_string("Mission 2-07: mission handler schedule running\n")
-		if not (100 == state.progress(v4) or 6 == state.progress(v4)):
+		if _pc == 6032:
+			v1 = isim.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera")
+			v2 = iship.find_player_ship()
+			v3 = 0
+			v4 = state.find(self)
+			v5 = self
+			_pc = 6172
 			continue
-		if 6 == state.progress(v4):
+		elif _pc == 6151:
+			debug.print_string("Mission 2-07: Mission Handler started\n")
+			_pc = 6172
+			continue
+		elif _pc == 6172:
+			await imissiontracker.add_mission(self, 2, 7)
+			text.add("csv:/text/act_2/act2_mission07")
+			text.add("csv:/text/act_2/act2_mission07_addendum")
+			v4 = state.find(v5)
+			if not (v4):
+				_pc = 6280
+				continue
+			else:
+				_pc = 6306
+				continue
+		elif _pc == 6280:
+			v4 = state.create(v5, 2)
+			_pc = 6306
+			continue
+		elif _pc == 6306:
+			await local_55(v4)
+			_pc = 6364
+			continue
+		elif _pc == 6330:
+			if _pog_is_null(v1):
+				_pc = 6343
+				continue
+			else:
+				_pc = 6364
+				continue
+		elif _pc == 6343:
+			debug.error("Unable to find L-point!")
+			_pc = 6364
+			continue
+		elif _pc == 6364:
+			if 3 == state.progress(v4) or 2 == state.progress(v4):
+				_pc = 6412
+				continue
+			else:
+				_pc = 6433
+				continue
+		elif _pc == 6412:
+			iobjectives.add("a2_m07_objectives_redezvous")
+			_pc = 6433
+			continue
+		elif _pc == 6433:
+			if 5 == state.progress(v4) or 4 == state.progress(v4):
+				_pc = 6481
+				continue
+			else:
+				_pc = 6502
+				continue
+		elif _pc == 6481:
+			state.set_progress(v4, 3)
+			_pc = 6502
+			continue
+		elif _pc == 6502:
+			if 3 == state.progress(v4) or 2 == state.progress(v4):
+				_pc = 6550
+				continue
+			else:
+				_pc = 6569
+				continue
+		elif _pc == 6550:
+			_pog_spawn(local_5431.bind(v4))
+			_pc = 6569
+			continue
+		elif _pc == 6569:
+			_pc = 6574
+			continue
+		elif _pc == 6574:
+			await _pog_frame()
+			if _pog_every(6575, 3.0):
+				_pc = 6588
+				continue
+			else:
+				_pc = 6960
+				continue
+		elif _pc == 6588:
+			_pc = 6614
+			continue
+		elif _pc == 6593:
+			debug.print_string("Mission 2-07: mission handler schedule running\n")
+			_pc = 6614
+			continue
+		elif _pc == 6614:
+			if 100 == state.progress(v4) or 6 == state.progress(v4):
+				_pc = 6662
+				continue
+			else:
+				_pc = 6960
+				continue
+		elif _pc == 6662:
+			if 6 == state.progress(v4):
+				_pc = 6688
+				continue
+			else:
+				_pc = 6715
+				continue
+		elif _pc == 6688:
 			global.set_bool("g_act2_ambassador_rescued", 1)
-		else:
+			_pc = 6794
+			continue
+		elif _pc == 6715:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_263.bind()))
 			await local_218()
 			iscore.goto_restart_point()
-		isim.set_faction(v2, ifaction.find("Player"))
-		await ibacktobase.allow()
-		await iwingmen.purge()
-		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		if PogRuntime.TRACE:
+			_pc = 6794
+			continue
+		elif _pc == 6794:
+			isim.set_faction(v2, ifaction.find("Player"))
+			await ibacktobase.allow()
+			await iwingmen.purge()
+			await iutilities.remove_mission_restart()
+			state.destroy(self)
+			_pc = 6928
+			continue
+		elif _pc == 6907:
 			debug.print_string("Mission 2-07: ending mission handler. Mission concluded\n")
-		await imissiontracker.remove_mission(self)
-		return
-	return
+			_pc = 6928
+			continue
+		elif _pc == 6928:
+			await imissiontracker.remove_mission(self)
+			_pc = 6966
+			continue
+		elif _pc == 6960:
+			_pc = 6574
+			continue
+		elif _pc == 6965:
+			_pc = 6966
+			continue
+		elif _pc == 6966:
+			return
+		else:
+			return 0
 	return 0
 

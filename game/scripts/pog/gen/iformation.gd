@@ -31,40 +31,116 @@ func local_0(v0, v1, v2, v3) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	v6 = 1
-	v9 = 0.0
-	v10 = 0.0
-	v4 = group.sim_count(v0)
-	v7 = await iutilities.get_largest_ship_radius(v0)
-	v7 = v1 + 2.0 * v7
-	v5 = 0
-	while v4 < v5:
-		if _pog_is_null(v5):
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			v6 = 1
+			v9 = 0.0
+			v10 = 0.0
+			v4 = group.sim_count(v0)
+			v7 = await iutilities.get_largest_ship_radius(v0)
+			v7 = v1 + 2.0 * v7
+			v5 = 0
+			_pc = 112
+			continue
+		elif _pc == 112:
+			if v4 < v5:
+				_pc = 128
+				continue
+			else:
+				_pc = 602
+				continue
+		elif _pc == 128:
+			if _pog_is_null(v5):
+				_pc = 140
+				continue
+			else:
+				_pc = 174
+				continue
+		elif _pc == 140:
 			v12 = group.nth_sim(v0, v5)
-		else:
+			_pc = 584
+			continue
+		elif _pc == 174:
 			v11 = group.nth_sim(v0, v5)
 			if 1 == v6:
-				if 0.0 < v9:
-					v9 = -(v9)
-				v9 = v7 + v9
-				v6 = 0
-				if v3:
-					v10 = v7 - v10
-				else:
-					v10 = v7 + v10
+				_pc = 215
+				continue
 			else:
-				v9 = -(v9)
-				v6 = 1
+				_pc = 321
+				continue
+		elif _pc == 215:
+			if 0.0 < v9:
+				_pc = 231
+				continue
+			else:
+				_pc = 243
+				continue
+		elif _pc == 231:
+			v9 = -(v9)
+			_pc = 243
+			continue
+		elif _pc == 243:
+			v9 = v7 + v9
+			v6 = 0
+			if v3:
+				_pc = 277
+				continue
+			else:
+				_pc = 299
+				continue
+		elif _pc == 277:
+			v10 = v7 - v10
+			_pc = 316
+			continue
+		elif _pc == 299:
+			v10 = v7 + v10
+			_pc = 316
+			continue
+		elif _pc == 316:
+			_pc = 340
+			continue
+		elif _pc == 321:
+			v9 = -(v9)
+			v6 = 1
+			_pc = 340
+			continue
+		elif _pc == 340:
 			if v2:
-				sim.place_relative_to(v11, v12, v9, 0.0, v10)
-				if group.nth_sim(v0, v5):
-					v13 = iship.cast(group.nth_sim(v0, v5))
-					iai.give_formate_order(v13, v12, v9, 0.0, v10)
+				_pc = 350
+				continue
 			else:
-				v13 = iship.cast(group.nth_sim(v0, v5))
-				iai.give_formate_order(v13, v12, v9, 0.0, v10)
-		v5 = 1 + v5
-	return 0
+				_pc = 503
+				continue
+		elif _pc == 350:
+			sim.place_relative_to(v11, v12, v9, 0.0, v10)
+			if group.nth_sim(v0, v5):
+				_pc = 417
+				continue
+			else:
+				_pc = 498
+				continue
+		elif _pc == 417:
+			v13 = iship.cast(group.nth_sim(v0, v5))
+			iai.give_formate_order(v13, v12, v9, 0.0, v10)
+			_pc = 498
+			continue
+		elif _pc == 498:
+			_pc = 584
+			continue
+		elif _pc == 503:
+			v13 = iship.cast(group.nth_sim(v0, v5))
+			iai.give_formate_order(v13, v12, v9, 0.0, v10)
+			_pc = 584
+			continue
+		elif _pc == 584:
+			v5 = 1 + v5
+			_pc = 112
+			continue
+		elif _pc == 602:
+			return 0
+		else:
+			return 0
 	return 0
 
 func v(v0, v1, v2) -> Variant:
@@ -93,49 +169,131 @@ func wedge(v0, v1, v2) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	v4 = 0
-	v5 = 0
-	v6 = 1
-	v7 = 3
-	v8 = 0.0
-	v10 = 0.0
-	v3 = group.sim_count(v0)
-	v8 = await iutilities.get_largest_ship_radius(v0)
-	v8 = v1 + 2.0 * v8
-	v4 = 0
-	while v3 < v4:
-		if _pog_is_null(v4):
+	var _pc: int = 703
+	while true:
+		if _pc == 703:
+			v4 = 0
+			v5 = 0
+			v6 = 1
+			v7 = 3
+			v8 = 0.0
+			v10 = 0.0
+			v3 = group.sim_count(v0)
+			v8 = await iutilities.get_largest_ship_radius(v0)
+			v8 = v1 + 2.0 * v8
+			v4 = 0
+			_pc = 837
+			continue
+		elif _pc == 837:
+			if v3 < v4:
+				_pc = 853
+				continue
+			else:
+				_pc = 1376
+				continue
+		elif _pc == 853:
+			if _pog_is_null(v4):
+				_pc = 865
+				continue
+			else:
+				_pc = 899
+				continue
+		elif _pc == 865:
 			v12 = group.nth_sim(v0, v4)
-		else:
+			_pc = 1358
+			continue
+		elif _pc == 899:
 			v11 = group.nth_sim(v0, v4)
 			if _pog_is_null(v5):
-				v10 = v8 - v10
-				v9 = 0.0
-				v5 = 1 + v5
+				_pc = 940
+				continue
 			else:
-				if 1 == v6:
-					if 0.0 < v9:
-						v9 = -(v9)
-					v9 = v8 + v9
-					v6 = 0
-					v5 = 1 + v5
-				else:
-					v9 = -(v9)
-					v6 = 1
-					v5 = 1 + v5
+				_pc = 986
+				continue
+		elif _pc == 940:
+			v10 = v8 - v10
+			v9 = 0.0
+			v5 = 1 + v5
+			_pc = 1100
+			continue
+		elif _pc == 986:
+			if 1 == v6:
+				_pc = 998
+				continue
+			else:
+				_pc = 1068
+				continue
+		elif _pc == 998:
+			if 0.0 < v9:
+				_pc = 1014
+				continue
+			else:
+				_pc = 1026
+				continue
+		elif _pc == 1014:
+			v9 = -(v9)
+			_pc = 1026
+			continue
+		elif _pc == 1026:
+			v9 = v8 + v9
+			v6 = 0
+			v5 = 1 + v5
+			_pc = 1100
+			continue
+		elif _pc == 1068:
+			v9 = -(v9)
+			v6 = 1
+			v5 = 1 + v5
+			_pc = 1100
+			continue
+		elif _pc == 1100:
 			if v2:
-				sim.place_relative_to(v11, v12, v9, 0.0, v10)
-				if iship.cast(v11):
-					v13 = iship.cast(v11)
-					iai.give_formate_order(v13, v12, v9, 0.0, v10)
+				_pc = 1110
+				continue
 			else:
-				v13 = iship.cast(group.nth_sim(v0, v4))
-				iai.give_formate_order(v13, v12, v9, 0.0, v10)
+				_pc = 1240
+				continue
+		elif _pc == 1110:
+			sim.place_relative_to(v11, v12, v9, 0.0, v10)
+			if iship.cast(v11):
+				_pc = 1172
+				continue
+			else:
+				_pc = 1235
+				continue
+		elif _pc == 1172:
+			v13 = iship.cast(v11)
+			iai.give_formate_order(v13, v12, v9, 0.0, v10)
+			_pc = 1235
+			continue
+		elif _pc == 1235:
+			_pc = 1321
+			continue
+		elif _pc == 1240:
+			v13 = iship.cast(group.nth_sim(v0, v4))
+			iai.give_formate_order(v13, v12, v9, 0.0, v10)
+			_pc = 1321
+			continue
+		elif _pc == 1321:
 			if _pog_eq(v7, v5):
-				v7 = 2 + v7
-				v5 = 0
-		v4 = 1 + v4
-	return 0
+				_pc = 1337
+				continue
+			else:
+				_pc = 1358
+				continue
+		elif _pc == 1337:
+			v7 = 2 + v7
+			v5 = 0
+			_pc = 1358
+			continue
+		elif _pc == 1358:
+			v4 = 1 + v4
+			_pc = 837
+			continue
+		elif _pc == 1376:
+			return 0
+		else:
+			return 0
 	return 0
 
 func line_abreast(v0, v1, v2) -> Variant:
@@ -148,35 +306,100 @@ func line_abreast(v0, v1, v2) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v5 = 1
-	v8 = 0.0
-	v3 = group.sim_count(v0)
-	v6 = await iutilities.get_largest_ship_radius(v0)
-	v6 = v1 + 2.0 * v6
-	v4 = 0
-	while v3 < v4:
-		if _pog_is_null(v4):
+	var _pc: int = 1379
+	while true:
+		if _pc == 1379:
+			v5 = 1
+			v8 = 0.0
+			v3 = group.sim_count(v0)
+			v6 = await iutilities.get_largest_ship_radius(v0)
+			v6 = v1 + 2.0 * v6
+			v4 = 0
+			_pc = 1480
+			continue
+		elif _pc == 1480:
+			if v3 < v4:
+				_pc = 1496
+				continue
+			else:
+				_pc = 1911
+				continue
+		elif _pc == 1496:
+			if _pog_is_null(v4):
+				_pc = 1508
+				continue
+			else:
+				_pc = 1555
+				continue
+		elif _pc == 1508:
 			v10 = sim.cast(group.nth_sim(v0, v4))
-		else:
+			_pc = 1893
+			continue
+		elif _pc == 1555:
 			v9 = group.nth_sim(v0, v4)
 			if 1 == v5:
-				if 0.0 < v8:
-					v8 = -(v8)
-				v8 = v6 + v8
-				v5 = 0
+				_pc = 1596
+				continue
 			else:
-				v8 = -(v8)
-				v5 = 1
+				_pc = 1653
+				continue
+		elif _pc == 1596:
+			if 0.0 < v8:
+				_pc = 1612
+				continue
+			else:
+				_pc = 1624
+				continue
+		elif _pc == 1612:
+			v8 = -(v8)
+			_pc = 1624
+			continue
+		elif _pc == 1624:
+			v8 = v6 + v8
+			v5 = 0
+			_pc = 1672
+			continue
+		elif _pc == 1653:
+			v8 = -(v8)
+			v5 = 1
+			_pc = 1672
+			continue
+		elif _pc == 1672:
 			if v2:
-				sim.place_relative_to(v9, v10, v8, 0.0, 0.0)
-				if iship.cast(v9):
-					v11 = iship.cast(v9)
-					iai.give_formate_order(v11, v10, v8, 0.0, 0.0)
+				_pc = 1682
+				continue
 			else:
-				v11 = iship.cast(group.nth_sim(v0, v4))
-				iai.give_formate_order(v11, v10, v8, 0.0, 0.0)
-		v4 = 1 + v4
-	return 0
+				_pc = 1812
+				continue
+		elif _pc == 1682:
+			sim.place_relative_to(v9, v10, v8, 0.0, 0.0)
+			if iship.cast(v9):
+				_pc = 1744
+				continue
+			else:
+				_pc = 1807
+				continue
+		elif _pc == 1744:
+			v11 = iship.cast(v9)
+			iai.give_formate_order(v11, v10, v8, 0.0, 0.0)
+			_pc = 1807
+			continue
+		elif _pc == 1807:
+			_pc = 1893
+			continue
+		elif _pc == 1812:
+			v11 = iship.cast(group.nth_sim(v0, v4))
+			iai.give_formate_order(v11, v10, v8, 0.0, 0.0)
+			_pc = 1893
+			continue
+		elif _pc == 1893:
+			v4 = 1 + v4
+			_pc = 1480
+			continue
+		elif _pc == 1911:
+			return 0
+		else:
+			return 0
 	return 0
 
 func line_ahead(v0, v1, v2) -> Variant:
@@ -188,27 +411,72 @@ func line_ahead(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v7 = 0.0
-	v3 = group.sim_count(v0)
-	v5 = await iutilities.get_largest_ship_radius(v0)
-	v5 = v1 + 2.0 * v5
-	v4 = 0
-	while v3 < v4:
-		if _pog_is_null(v4):
+	var _pc: int = 1914
+	while true:
+		if _pc == 1914:
+			v7 = 0.0
+			v3 = group.sim_count(v0)
+			v5 = await iutilities.get_largest_ship_radius(v0)
+			v5 = v1 + 2.0 * v5
+			v4 = 0
+			_pc = 2008
+			continue
+		elif _pc == 2008:
+			if v3 < v4:
+				_pc = 2024
+				continue
+			else:
+				_pc = 2355
+				continue
+		elif _pc == 2024:
+			if _pog_is_null(v4):
+				_pc = 2036
+				continue
+			else:
+				_pc = 2070
+				continue
+		elif _pc == 2036:
 			v9 = group.nth_sim(v0, v4)
-		else:
+			_pc = 2337
+			continue
+		elif _pc == 2070:
 			v8 = group.nth_sim(v0, v4)
 			v7 = v5 - v7
 			if v2:
-				sim.place_relative_to(v8, v9, 0.0, 0.0, v7)
-				if iship.cast(v8):
-					v10 = iship.cast(v8)
-					iai.give_formate_order(v10, v9, 0.0, 0.0, v7)
+				_pc = 2126
+				continue
 			else:
-				v10 = iship.cast(group.nth_sim(v0, v4))
-				iai.give_formate_order(v10, v9, 0.0, 0.0, v7)
-		v4 = 1 + v4
-	return 0
+				_pc = 2256
+				continue
+		elif _pc == 2126:
+			sim.place_relative_to(v8, v9, 0.0, 0.0, v7)
+			if iship.cast(v8):
+				_pc = 2188
+				continue
+			else:
+				_pc = 2251
+				continue
+		elif _pc == 2188:
+			v10 = iship.cast(v8)
+			iai.give_formate_order(v10, v9, 0.0, 0.0, v7)
+			_pc = 2251
+			continue
+		elif _pc == 2251:
+			_pc = 2337
+			continue
+		elif _pc == 2256:
+			v10 = iship.cast(group.nth_sim(v0, v4))
+			iai.give_formate_order(v10, v9, 0.0, 0.0, v7)
+			_pc = 2337
+			continue
+		elif _pc == 2337:
+			v4 = 1 + v4
+			_pc = 2008
+			continue
+		elif _pc == 2355:
+			return 0
+		else:
+			return 0
 	return 0
 
 func parade(v0, v1, v2) -> Variant:
@@ -226,40 +494,96 @@ func parade(v0, v1, v2) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v8 = 0
-	v11 = 0.0
-	v12 = 0.0
-	v13 = 0.0
-	v3 = group.sim_count(v0)
-	v13 = await iutilities.get_largest_ship_radius(v0)
-	v13 = v1 + 2.0 * v13
-	v9 = v3
-	v10 = math.pog_sqrt(v9)
-	v4 = v10
-	v6 = 0
-	while v3 < v6:
-		if _pog_is_null(v6):
+	var _pc: int = 2358
+	while true:
+		if _pc == 2358:
+			v8 = 0
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.0
+			v3 = group.sim_count(v0)
+			v13 = await iutilities.get_largest_ship_radius(v0)
+			v13 = v1 + 2.0 * v13
+			v9 = v3
+			v10 = math.pog_sqrt(v9)
+			v4 = v10
+			v6 = 0
+			_pc = 2529
+			continue
+		elif _pc == 2529:
+			if v3 < v6:
+				_pc = 2545
+				continue
+			else:
+				_pc = 2958
+				continue
+		elif _pc == 2545:
+			if _pog_is_null(v6):
+				_pc = 2557
+				continue
+			else:
+				_pc = 2604
+				continue
+		elif _pc == 2557:
 			v15 = group.nth_sim(v0, v6)
 			v8 = 1 + v8
-		else:
+			_pc = 2940
+			continue
+		elif _pc == 2604:
 			v14 = group.nth_sim(v0, v6)
 			if _pog_eq(v4, v8):
-				v11 = 0.0
-				v12 = v13 - v12
-				v8 = 1
+				_pc = 2649
+				continue
 			else:
-				v11 = v13 + v11
-				v8 = 1 + v8
+				_pc = 2689
+				continue
+		elif _pc == 2649:
+			v11 = 0.0
+			v12 = v13 - v12
+			v8 = 1
+			_pc = 2719
+			continue
+		elif _pc == 2689:
+			v11 = v13 + v11
+			v8 = 1 + v8
+			_pc = 2719
+			continue
+		elif _pc == 2719:
 			if v2:
-				sim.place_relative_to(v14, v15, v11, 0.0, v12)
-				if iship.cast(v14):
-					v16 = iship.cast(v14)
-					iai.give_formate_order(v16, v15, v11, 0.0, v12)
+				_pc = 2729
+				continue
 			else:
-				v16 = iship.cast(group.nth_sim(v0, v6))
-				iai.give_formate_order(v16, v15, v11, 0.0, v12)
-		v6 = 1 + v6
-	return 0
+				_pc = 2859
+				continue
+		elif _pc == 2729:
+			sim.place_relative_to(v14, v15, v11, 0.0, v12)
+			if iship.cast(v14):
+				_pc = 2791
+				continue
+			else:
+				_pc = 2854
+				continue
+		elif _pc == 2791:
+			v16 = iship.cast(v14)
+			iai.give_formate_order(v16, v15, v11, 0.0, v12)
+			_pc = 2854
+			continue
+		elif _pc == 2854:
+			_pc = 2940
+			continue
+		elif _pc == 2859:
+			v16 = iship.cast(group.nth_sim(v0, v6))
+			iai.give_formate_order(v16, v15, v11, 0.0, v12)
+			_pc = 2940
+			continue
+		elif _pc == 2940:
+			v6 = 1 + v6
+			_pc = 2529
+			continue
+		elif _pc == 2958:
+			return 0
+		else:
+			return 0
 	return 0
 
 func skirmish_line(v0, v1, v2) -> Variant:
@@ -276,49 +600,131 @@ func skirmish_line(v0, v1, v2) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	v5 = 1
-	v6 = 0
-	v8 = 0.0
-	v10 = 0.0
-	v11 = 0.0
-	v12 = 0.0
-	v3 = group.sim_count(v0)
-	v7 = await iutilities.get_largest_ship_radius(v0)
-	v7 = v1 + 2.0 * v7
-	v12 = -(v7)
-	v11 = v12
-	v4 = 0
-	while v3 < v4:
-		if _pog_is_null(v4):
+	var _pc: int = 2961
+	while true:
+		if _pc == 2961:
+			v5 = 1
+			v6 = 0
+			v8 = 0.0
+			v10 = 0.0
+			v11 = 0.0
+			v12 = 0.0
+			v3 = group.sim_count(v0)
+			v7 = await iutilities.get_largest_ship_radius(v0)
+			v7 = v1 + 2.0 * v7
+			v12 = -(v7)
+			v11 = v12
+			v4 = 0
+			_pc = 3125
+			continue
+		elif _pc == 3125:
+			if v3 < v4:
+				_pc = 3141
+				continue
+			else:
+				_pc = 3632
+				continue
+		elif _pc == 3141:
+			if _pog_is_null(v4):
+				_pc = 3153
+				continue
+			else:
+				_pc = 3187
+				continue
+		elif _pc == 3153:
 			v14 = group.nth_sim(v0, v4)
-		else:
+			_pc = 3614
+			continue
+		elif _pc == 3187:
 			v13 = group.nth_sim(v0, v4)
 			if 1 == v5:
-				if 0.0 < v10:
-					v10 = -(v10)
-				v10 = v7 + v10
-				v5 = 0
-				v6 = 1 + v6
+				_pc = 3228
+				continue
 			else:
-				v10 = -(v10)
-				v5 = 1
-				v6 = 1 + v6
+				_pc = 3298
+				continue
+		elif _pc == 3228:
+			if 0.0 < v10:
+				_pc = 3244
+				continue
+			else:
+				_pc = 3256
+				continue
+		elif _pc == 3244:
+			v10 = -(v10)
+			_pc = 3256
+			continue
+		elif _pc == 3256:
+			v10 = v7 + v10
+			v5 = 0
+			v6 = 1 + v6
+			_pc = 3330
+			continue
+		elif _pc == 3298:
+			v10 = -(v10)
+			v5 = 1
+			v6 = 1 + v6
+			_pc = 3330
+			continue
+		elif _pc == 3330:
 			if v2:
-				sim.place_relative_to(v13, v14, v10, 0.0, v11)
-				if iship.cast(v13):
-					v15 = iship.cast(v13)
-					iai.give_formate_order(v15, v14, v10, 0.0, v11)
+				_pc = 3340
+				continue
 			else:
-				v15 = iship.cast(group.nth_sim(v0, v4))
-				iai.give_formate_order(v15, v14, v10, 0.0, v11)
+				_pc = 3470
+				continue
+		elif _pc == 3340:
+			sim.place_relative_to(v13, v14, v10, 0.0, v11)
+			if iship.cast(v13):
+				_pc = 3402
+				continue
+			else:
+				_pc = 3465
+				continue
+		elif _pc == 3402:
+			v15 = iship.cast(v13)
+			iai.give_formate_order(v15, v14, v10, 0.0, v11)
+			_pc = 3465
+			continue
+		elif _pc == 3465:
+			_pc = 3551
+			continue
+		elif _pc == 3470:
+			v15 = iship.cast(group.nth_sim(v0, v4))
+			iai.give_formate_order(v15, v14, v10, 0.0, v11)
+			_pc = 3551
+			continue
+		elif _pc == 3551:
 			if 2 == v6:
-				v6 = 0
-				if _pog_is_null(v11):
-					v11 = v12
-				else:
-					v11 = 0.0
-		v4 = 1 + v4
-	return 0
+				_pc = 3564
+				continue
+			else:
+				_pc = 3614
+				continue
+		elif _pc == 3564:
+			v6 = 0
+			if _pog_is_null(v11):
+				_pc = 3587
+				continue
+			else:
+				_pc = 3603
+				continue
+		elif _pc == 3587:
+			v11 = v12
+			_pc = 3614
+			continue
+		elif _pc == 3603:
+			v11 = 0.0
+			_pc = 3614
+			continue
+		elif _pc == 3614:
+			v4 = 1 + v4
+			_pc = 3125
+			continue
+		elif _pc == 3632:
+			return 0
+		else:
+			return 0
 	return 0
 
 func cross(v0, v1, v2) -> Variant:
@@ -330,61 +736,181 @@ func cross(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v3 = group.sim_count(v0)
-	v4 = 1
-	if 1 == v3:
-		pass
-	else:
-		v10 = group.nth_sim(v0, 0)
-		v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
-		while true:
+	var _pc: int = 3635
+	while true:
+		if _pc == 3635:
+			v3 = group.sim_count(v0)
+			v4 = 1
+			if 1 == v3:
+				_pc = 3683
+				continue
+			else:
+				_pc = 3688
+				continue
+		elif _pc == 3683:
+			_pc = 4914
+			continue
+		elif _pc == 3688:
+			v10 = group.nth_sim(v0, 0)
+			v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			_pc = 3749
+			continue
+		elif _pc == 3749:
 			v5 = 1.0 + v5
 			v9 = group.nth_sim(v0, v4)
 			v6 = v8 * v5
 			v7 = v8 * v5
 			if v2:
-				sim.place_relative_to(v9, v10, v6, v7, 0.0)
-				if iship.cast(v9):
-					iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
+				_pc = 3839
+				continue
 			else:
-				iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
+				_pc = 3958
+				continue
+		elif _pc == 3839:
+			sim.place_relative_to(v9, v10, v6, v7, 0.0)
+			if iship.cast(v9):
+				_pc = 3901
+				continue
+			else:
+				_pc = 3953
+				continue
+		elif _pc == 3901:
+			iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
+			_pc = 3953
+			continue
+		elif _pc == 3953:
+			_pc = 4023
+			continue
+		elif _pc == 3958:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
+			_pc = 4023
+			continue
+		elif _pc == 4023:
 			v4 = 1 + v4
 			if v3 < v4:
-				v9 = group.nth_sim(v0, v4)
-				v6 = v8 * v5
-				v7 = -(v8 * v5)
-				if v2:
-					sim.place_relative_to(v9, v10, v6, v7, 0.0)
-					if iship.cast(v9):
-						iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
-				else:
-					iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
-				v4 = 1 + v4
-				if v3 < v4:
-					v9 = group.nth_sim(v0, v4)
-					v6 = -(v8 * v5)
-					v7 = v8 * v5
-					if v2:
-						sim.place_relative_to(v9, v10, v6, v7, 0.0)
-						if iship.cast(v9):
-							iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
-					else:
-						iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
-					v4 = 1 + v4
-					if v3 < v4:
-						v9 = group.nth_sim(v0, v4)
-						v6 = -(v8 * v5)
-						v7 = -(v8 * v5)
-						if v2:
-							sim.place_relative_to(v9, v10, v6, v7, 0.0)
-							if iship.cast(v9):
-								iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
-						else:
-							iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
-						v4 = 1 + v4
-			if not (v3 < v4):
-				break
-	return 0
+				_pc = 4052
+				continue
+			else:
+				_pc = 4898
+				continue
+		elif _pc == 4052:
+			v9 = group.nth_sim(v0, v4)
+			v6 = v8 * v5
+			v7 = -(v8 * v5)
+			if v2:
+				_pc = 4126
+				continue
+			else:
+				_pc = 4245
+				continue
+		elif _pc == 4126:
+			sim.place_relative_to(v9, v10, v6, v7, 0.0)
+			if iship.cast(v9):
+				_pc = 4188
+				continue
+			else:
+				_pc = 4240
+				continue
+		elif _pc == 4188:
+			iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
+			_pc = 4240
+			continue
+		elif _pc == 4240:
+			_pc = 4310
+			continue
+		elif _pc == 4245:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
+			_pc = 4310
+			continue
+		elif _pc == 4310:
+			v4 = 1 + v4
+			if v3 < v4:
+				_pc = 4339
+				continue
+			else:
+				_pc = 4898
+				continue
+		elif _pc == 4339:
+			v9 = group.nth_sim(v0, v4)
+			v6 = -(v8 * v5)
+			v7 = v8 * v5
+			if v2:
+				_pc = 4413
+				continue
+			else:
+				_pc = 4532
+				continue
+		elif _pc == 4413:
+			sim.place_relative_to(v9, v10, v6, v7, 0.0)
+			if iship.cast(v9):
+				_pc = 4475
+				continue
+			else:
+				_pc = 4527
+				continue
+		elif _pc == 4475:
+			iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
+			_pc = 4527
+			continue
+		elif _pc == 4527:
+			_pc = 4597
+			continue
+		elif _pc == 4532:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
+			_pc = 4597
+			continue
+		elif _pc == 4597:
+			v4 = 1 + v4
+			if v3 < v4:
+				_pc = 4626
+				continue
+			else:
+				_pc = 4898
+				continue
+		elif _pc == 4626:
+			v9 = group.nth_sim(v0, v4)
+			v6 = -(v8 * v5)
+			v7 = -(v8 * v5)
+			if v2:
+				_pc = 4701
+				continue
+			else:
+				_pc = 4820
+				continue
+		elif _pc == 4701:
+			sim.place_relative_to(v9, v10, v6, v7, 0.0)
+			if iship.cast(v9):
+				_pc = 4763
+				continue
+			else:
+				_pc = 4815
+				continue
+		elif _pc == 4763:
+			iai.give_formate_order(iship.cast(v9), v10, v6, v7, 0.0)
+			_pc = 4815
+			continue
+		elif _pc == 4815:
+			_pc = 4885
+			continue
+		elif _pc == 4820:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, v7, 0.0)
+			_pc = 4885
+			continue
+		elif _pc == 4885:
+			v4 = 1 + v4
+			_pc = 4898
+			continue
+		elif _pc == 4898:
+			if v3 >= v4:
+				_pc = 4914
+				continue
+			else:
+				_pc = 3749
+				continue
+		elif _pc == 4914:
+			return 0
+		else:
+			return 0
 	return 0
 
 func loose(v0, v1, v2) -> Variant:
@@ -400,42 +926,121 @@ func impi(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v3 = group.sim_count(v0)
-	v4 = 1
-	v7 = 10.0
-	if 1 == v3:
-		pass
-	else:
-		v10 = group.nth_sim(v0, 0)
-		v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
-		while true:
+	var _pc: int = 4920
+	while true:
+		if _pc == 4920:
+			v3 = group.sim_count(v0)
+			v4 = 1
+			v7 = 10.0
+			if 1 == v3:
+				_pc = 4979
+				continue
+			else:
+				_pc = 4984
+				continue
+		elif _pc == 4979:
+			_pc = 5662
+			continue
+		elif _pc == 4984:
+			v10 = group.nth_sim(v0, 0)
+			v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			_pc = 5045
+			continue
+		elif _pc == 5045:
 			v5 = 1.0 + v5
 			if 4.0 < v5:
-				v7 = v5 * v7
+				_pc = 5078
+				continue
 			else:
-				v7 = v7 + v7
+				_pc = 5100
+				continue
+		elif _pc == 5078:
+			v7 = v5 * v7
+			_pc = 5117
+			continue
+		elif _pc == 5100:
+			v7 = v7 + v7
+			_pc = 5117
+			continue
+		elif _pc == 5117:
 			v9 = group.nth_sim(v0, v4)
 			v6 = v1 + v8 * v5
 			if v2:
-				sim.place_relative_to(v9, v10, v6, 0.0, v7)
-				if iship.cast(v9):
-					iai.give_formate_order(iship.cast(v9), v10, v6, 0.0, v7)
+				_pc = 5179
+				continue
 			else:
-				iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, 0.0, v7)
+				_pc = 5298
+				continue
+		elif _pc == 5179:
+			sim.place_relative_to(v9, v10, v6, 0.0, v7)
+			if iship.cast(v9):
+				_pc = 5241
+				continue
+			else:
+				_pc = 5293
+				continue
+		elif _pc == 5241:
+			iai.give_formate_order(iship.cast(v9), v10, v6, 0.0, v7)
+			_pc = 5293
+			continue
+		elif _pc == 5293:
+			_pc = 5363
+			continue
+		elif _pc == 5298:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, 0.0, v7)
+			_pc = 5363
+			continue
+		elif _pc == 5363:
 			v4 = 1 + v4
 			if v3 < v4:
-				v9 = group.nth_sim(v0, v4)
-				v6 = -(v8 * v5)
-				if v2:
-					sim.place_relative_to(v9, v10, v6, 0.0, v7)
-					if iship.cast(v9):
-						iai.give_formate_order(iship.cast(v9), v10, v6, 0.0, v7)
-				else:
-					iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, 0.0, v7)
-				v4 = 1 + v4
-			if not (v3 < v4):
-				break
-	return 0
+				_pc = 5392
+				continue
+			else:
+				_pc = 5646
+				continue
+		elif _pc == 5392:
+			v9 = group.nth_sim(v0, v4)
+			v6 = -(v8 * v5)
+			if v2:
+				_pc = 5449
+				continue
+			else:
+				_pc = 5568
+				continue
+		elif _pc == 5449:
+			sim.place_relative_to(v9, v10, v6, 0.0, v7)
+			if iship.cast(v9):
+				_pc = 5511
+				continue
+			else:
+				_pc = 5563
+				continue
+		elif _pc == 5511:
+			iai.give_formate_order(iship.cast(v9), v10, v6, 0.0, v7)
+			_pc = 5563
+			continue
+		elif _pc == 5563:
+			_pc = 5633
+			continue
+		elif _pc == 5568:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v6, 0.0, v7)
+			_pc = 5633
+			continue
+		elif _pc == 5633:
+			v4 = 1 + v4
+			_pc = 5646
+			continue
+		elif _pc == 5646:
+			if v3 >= v4:
+				_pc = 5662
+				continue
+			else:
+				_pc = 5045
+				continue
+		elif _pc == 5662:
+			return 0
+		else:
+			return 0
 	return 0
 
 func outrider(v0, v1, v2) -> Variant:
@@ -447,57 +1052,175 @@ func outrider(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v3 = group.sim_count(v0)
-	if 1 == v3:
-		pass
-	else:
-		v10 = group.nth_sim(v0, 0)
-		v4 = 2 / 1 - v3
-		v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
-		while true:
+	var _pc: int = 5665
+	while true:
+		if _pc == 5665:
+			v3 = group.sim_count(v0)
+			if 1 == v3:
+				_pc = 5706
+				continue
+			else:
+				_pc = 5711
+				continue
+		elif _pc == 5706:
+			_pc = 6933
+			continue
+		elif _pc == 5711:
+			v10 = group.nth_sim(v0, 0)
+			v4 = 2 / 1 - v3
+			v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			_pc = 5788
+			continue
+		elif _pc == 5788:
 			v5 = 1 + v5
 			v9 = group.nth_sim(v0, v5)
 			if v2:
-				sim.place_relative_to(v9, v10, v7, 0.0, 10.0 + v8)
-				if iship.cast(v9):
-					iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, 10.0 + v8)
+				_pc = 5840
+				continue
 			else:
-				iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, 10.0 + v8)
+				_pc = 5971
+				continue
+		elif _pc == 5840:
+			sim.place_relative_to(v9, v10, v7, 0.0, 10.0 + v8)
+			if iship.cast(v9):
+				_pc = 5908
+				continue
+			else:
+				_pc = 5966
+				continue
+		elif _pc == 5908:
+			iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, 10.0 + v8)
+			_pc = 5966
+			continue
+		elif _pc == 5966:
+			_pc = 6042
+			continue
+		elif _pc == 5971:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, 10.0 + v8)
+			_pc = 6042
+			continue
+		elif _pc == 6042:
 			v7 = v8 + v7
 			if v4 <= 1 + v5:
-				v5 = 1 + v5
-				v9 = group.nth_sim(v0, v5)
-				if v2:
-					sim.place_relative_to(v9, v10, -(v7), 0.0, 10.0 + v8)
-					if iship.cast(v9):
-						iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, 10.0 + v8)
-				else:
-					iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, 10.0 + v8)
-			if not (v4 < v5):
-				break
-		v7 = 0.0
-		while true:
+				_pc = 6077
+				continue
+			else:
+				_pc = 6334
+				continue
+		elif _pc == 6077:
 			v5 = 1 + v5
 			v9 = group.nth_sim(v0, v5)
 			if v2:
-				sim.place_relative_to(v9, v10, v7, 0.0, -(10.0 + v8))
-				if iship.cast(v9):
-					iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, -(10.0 + v8))
+				_pc = 6129
+				continue
 			else:
-				iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, -(10.0 + v8))
+				_pc = 6262
+				continue
+		elif _pc == 6129:
+			sim.place_relative_to(v9, v10, -(v7), 0.0, 10.0 + v8)
+			if iship.cast(v9):
+				_pc = 6198
+				continue
+			else:
+				_pc = 6257
+				continue
+		elif _pc == 6198:
+			iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, 10.0 + v8)
+			_pc = 6257
+			continue
+		elif _pc == 6257:
+			_pc = 6334
+			continue
+		elif _pc == 6262:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, 10.0 + v8)
+			_pc = 6334
+			continue
+		elif _pc == 6334:
+			if v4 >= v5:
+				_pc = 6350
+				continue
+			else:
+				_pc = 5788
+				continue
+		elif _pc == 6350:
+			v7 = 0.0
+			_pc = 6361
+			continue
+		elif _pc == 6361:
+			v5 = 1 + v5
+			v9 = group.nth_sim(v0, v5)
+			if v2:
+				_pc = 6413
+				continue
+			else:
+				_pc = 6546
+				continue
+		elif _pc == 6413:
+			sim.place_relative_to(v9, v10, v7, 0.0, -(10.0 + v8))
+			if iship.cast(v9):
+				_pc = 6482
+				continue
+			else:
+				_pc = 6541
+				continue
+		elif _pc == 6482:
+			iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, -(10.0 + v8))
+			_pc = 6541
+			continue
+		elif _pc == 6541:
+			_pc = 6618
+			continue
+		elif _pc == 6546:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, -(10.0 + v8))
+			_pc = 6618
+			continue
+		elif _pc == 6618:
 			v7 = v8 + v7
 			if 1 - v3 <= 1 + v5:
-				v5 = 1 + v5
-				v9 = group.nth_sim(v0, v5)
-				if v2:
-					sim.place_relative_to(v9, v10, -(v7), 0.0, -(10.0 + v8))
-					if iship.cast(v9):
-						iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, -(10.0 + v8))
-				else:
-					iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, -(10.0 + v8))
-			if not (1 - v3 < v5):
-				break
-	return 0
+				_pc = 6655
+				continue
+			else:
+				_pc = 6915
+				continue
+		elif _pc == 6655:
+			v5 = 1 + v5
+			v9 = group.nth_sim(v0, v5)
+			if v2:
+				_pc = 6707
+				continue
+			else:
+				_pc = 6842
+				continue
+		elif _pc == 6707:
+			sim.place_relative_to(v9, v10, -(v7), 0.0, -(10.0 + v8))
+			if iship.cast(v9):
+				_pc = 6777
+				continue
+			else:
+				_pc = 6837
+				continue
+		elif _pc == 6777:
+			iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, -(10.0 + v8))
+			_pc = 6837
+			continue
+		elif _pc == 6837:
+			_pc = 6915
+			continue
+		elif _pc == 6842:
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, -(10.0 + v8))
+			_pc = 6915
+			continue
+		elif _pc == 6915:
+			if 1 - v3 >= v5:
+				_pc = 6933
+				continue
+			else:
+				_pc = 6361
+				continue
+		elif _pc == 6933:
+			return 0
+		else:
+			return 0
 	return 0
 
 func line_astern(v0, v1, v2) -> Variant:
@@ -509,26 +1232,71 @@ func line_astern(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v7 = 0.0
-	v3 = group.sim_count(v0)
-	v5 = await iutilities.get_largest_ship_radius(v0)
-	v5 = v1 + 2.0 * v5
-	v4 = 0
-	while v3 < v4:
-		if _pog_is_null(v4):
+	var _pc: int = 6936
+	while true:
+		if _pc == 6936:
+			v7 = 0.0
+			v3 = group.sim_count(v0)
+			v5 = await iutilities.get_largest_ship_radius(v0)
+			v5 = v1 + 2.0 * v5
+			v4 = 0
+			_pc = 7030
+			continue
+		elif _pc == 7030:
+			if v3 < v4:
+				_pc = 7046
+				continue
+			else:
+				_pc = 7366
+				continue
+		elif _pc == 7046:
+			if _pog_is_null(v4):
+				_pc = 7058
+				continue
+			else:
+				_pc = 7092
+				continue
+		elif _pc == 7058:
 			v9 = group.nth_sim(v0, v4)
-		else:
+			_pc = 7348
+			continue
+		elif _pc == 7092:
 			v8 = group.nth_sim(v0, v4)
 			v7 = v5 + v7
 			if v2:
-				sim.place_relative_to(v8, v9, 0.0, 0.0, v7)
-				if iship.cast(v8):
-					iai.give_formate_order(iship.cast(v8), v9, 0.0, 0.0, v7)
+				_pc = 7148
+				continue
 			else:
-				v10 = iship.cast(group.nth_sim(v0, v4))
-				iai.give_formate_order(v10, v9, 0.0, 0.0, v7)
-		v4 = 1 + v4
-	return 0
+				_pc = 7267
+				continue
+		elif _pc == 7148:
+			sim.place_relative_to(v8, v9, 0.0, 0.0, v7)
+			if iship.cast(v8):
+				_pc = 7210
+				continue
+			else:
+				_pc = 7262
+				continue
+		elif _pc == 7210:
+			iai.give_formate_order(iship.cast(v8), v9, 0.0, 0.0, v7)
+			_pc = 7262
+			continue
+		elif _pc == 7262:
+			_pc = 7348
+			continue
+		elif _pc == 7267:
+			v10 = iship.cast(group.nth_sim(v0, v4))
+			iai.give_formate_order(v10, v9, 0.0, 0.0, v7)
+			_pc = 7348
+			continue
+		elif _pc == 7348:
+			v4 = 1 + v4
+			_pc = 7030
+			continue
+		elif _pc == 7366:
+			return 0
+		else:
+			return 0
 	return 0
 
 func box(v0, v1, v2) -> Variant:
@@ -548,46 +1316,111 @@ func box(v0, v1, v2) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v8 = 0
-	v9 = 0
-	v12 = 0.0
-	v13 = 0.0
-	v14 = 0.0
-	v15 = 0.0
-	v3 = group.sim_count(v0)
-	v15 = await iutilities.get_largest_ship_radius(v0)
-	v15 = v1 + 2.0 * v15
-	v10 = v3
-	v11 = math.cube_root(v10)
-	v4 = v11
-	v6 = 0
-	while v3 < v6:
-		if _pog_is_null(v6):
+	var _pc: int = 7369
+	while true:
+		if _pc == 7369:
+			v8 = 0
+			v9 = 0
+			v12 = 0.0
+			v13 = 0.0
+			v14 = 0.0
+			v15 = 0.0
+			v3 = group.sim_count(v0)
+			v15 = await iutilities.get_largest_ship_radius(v0)
+			v15 = v1 + 2.0 * v15
+			v10 = v3
+			v11 = math.cube_root(v10)
+			v4 = v11
+			v6 = 0
+			_pc = 7558
+			continue
+		elif _pc == 7558:
+			if v3 < v6:
+				_pc = 7574
+				continue
+			else:
+				_pc = 8040
+				continue
+		elif _pc == 7574:
+			if _pog_is_null(v6):
+				_pc = 7586
+				continue
+			else:
+				_pc = 7633
+				continue
+		elif _pc == 7586:
 			v17 = group.nth_sim(v0, v6)
 			v8 = 1 + v8
-		else:
+			_pc = 8022
+			continue
+		elif _pc == 7633:
 			v16 = group.nth_sim(v0, v6)
 			if _pog_eq(v4, v8):
-				v12 = 0.0
-				v13 = v15 - v13
-				v8 = 1
-				v9 = 1 + v9
+				_pc = 7678
+				continue
 			else:
-				v12 = v15 + v12
-				v8 = 1 + v8
+				_pc = 7731
+				continue
+		elif _pc == 7678:
+			v12 = 0.0
+			v13 = v15 - v13
+			v8 = 1
+			v9 = 1 + v9
+			_pc = 7761
+			continue
+		elif _pc == 7731:
+			v12 = v15 + v12
+			v8 = 1 + v8
+			_pc = 7761
+			continue
+		elif _pc == 7761:
 			if _pog_eq(v4, v9):
-				v9 = 0
-				v13 = 0.0
-				v14 = v15 - v14
-			if v2:
-				sim.place_relative_to(v16, v17, v12, v13, v14)
-				if iship.cast(v16):
-					iai.give_formate_order(iship.cast(v16), v17, v12, v13, v14)
+				_pc = 7777
+				continue
 			else:
-				v18 = iship.cast(group.nth_sim(v0, v6))
-				iai.give_formate_order(v18, v17, v12, v13, v14)
-		v6 = 1 + v6
-	return 0
+				_pc = 7812
+				continue
+		elif _pc == 7777:
+			v9 = 0
+			v13 = 0.0
+			v14 = v15 - v14
+			_pc = 7812
+			continue
+		elif _pc == 7812:
+			if v2:
+				_pc = 7822
+				continue
+			else:
+				_pc = 7941
+				continue
+		elif _pc == 7822:
+			sim.place_relative_to(v16, v17, v12, v13, v14)
+			if iship.cast(v16):
+				_pc = 7884
+				continue
+			else:
+				_pc = 7936
+				continue
+		elif _pc == 7884:
+			iai.give_formate_order(iship.cast(v16), v17, v12, v13, v14)
+			_pc = 7936
+			continue
+		elif _pc == 7936:
+			_pc = 8022
+			continue
+		elif _pc == 7941:
+			v18 = iship.cast(group.nth_sim(v0, v6))
+			iai.give_formate_order(v18, v17, v12, v13, v14)
+			_pc = 8022
+			continue
+		elif _pc == 8022:
+			v6 = 1 + v6
+			_pc = 7558
+			continue
+		elif _pc == 8040:
+			return 0
+		else:
+			return 0
 	return 0
 
 func claw(v0, v1, v2) -> Variant:
@@ -600,66 +1433,197 @@ func claw(v0, v1, v2) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v3 = group.sim_count(v0)
-	v4 = 1
-	v8 = 10.0
-	if 1 == v3:
-		pass
-	else:
-		v11 = group.nth_sim(v0, 0)
-		v9 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
-		while true:
+	var _pc: int = 8043
+	while true:
+		if _pc == 8043:
+			v3 = group.sim_count(v0)
+			v4 = 1
+			v8 = 10.0
+			if 1 == v3:
+				_pc = 8102
+				continue
+			else:
+				_pc = 8107
+				continue
+		elif _pc == 8102:
+			_pc = 9400
+			continue
+		elif _pc == 8107:
+			v11 = group.nth_sim(v0, 0)
+			v9 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			_pc = 8168
+			continue
+		elif _pc == 8168:
 			v5 = 1.0 + v5
 			if 4.0 < v5:
-				v8 = v5 * v8
+				_pc = 8201
+				continue
 			else:
-				v8 = v8 + v8
+				_pc = 8223
+				continue
+		elif _pc == 8201:
+			v8 = v5 * v8
+			_pc = 8240
+			continue
+		elif _pc == 8223:
+			v8 = v8 + v8
+			_pc = 8240
+			continue
+		elif _pc == 8240:
 			v10 = group.nth_sim(v0, v4)
 			v6 = v1 + v9 * v5
 			v7 = v1 + v9 * v5
 			if v2:
-				sim.place_relative_to(v10, v11, v6, v7, v8)
-				if iship.cast(v10):
-					iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
+				_pc = 8325
+				continue
 			else:
-				iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
+				_pc = 8444
+				continue
+		elif _pc == 8325:
+			sim.place_relative_to(v10, v11, v6, v7, v8)
+			if iship.cast(v10):
+				_pc = 8387
+				continue
+			else:
+				_pc = 8439
+				continue
+		elif _pc == 8387:
+			iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
+			_pc = 8439
+			continue
+		elif _pc == 8439:
+			_pc = 8509
+			continue
+		elif _pc == 8444:
+			iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
+			_pc = 8509
+			continue
+		elif _pc == 8509:
 			v4 = 1 + v4
 			if v3 < v4:
-				v10 = group.nth_sim(v0, v4)
-				v6 = v9 * v5
-				v7 = -(v9 * v5)
-				if v2:
-					sim.place_relative_to(v10, v11, v6, v7, v8)
-					if iship.cast(v10):
-						iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
-				else:
-					iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
-				v4 = 1 + v4
-				if v3 < v4:
-					v10 = group.nth_sim(v0, v4)
-					v6 = -(v9 * v5)
-					v7 = v9 * v5
-					if v2:
-						sim.place_relative_to(v10, v11, v6, v7, v8)
-						if iship.cast(v10):
-							iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
-					else:
-						iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
-					v4 = 1 + v4
-					if v3 < v4:
-						v10 = group.nth_sim(v0, v4)
-						v6 = -(v9 * v5)
-						v7 = -(v9 * v5)
-						if v2:
-							sim.place_relative_to(v10, v11, v6, v7, v8)
-							if iship.cast(v10):
-								iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
-						else:
-							iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
-						v4 = 1 + v4
-			if not (v3 < v4):
-				break
-	return 0
+				_pc = 8538
+				continue
+			else:
+				_pc = 9384
+				continue
+		elif _pc == 8538:
+			v10 = group.nth_sim(v0, v4)
+			v6 = v9 * v5
+			v7 = -(v9 * v5)
+			if v2:
+				_pc = 8612
+				continue
+			else:
+				_pc = 8731
+				continue
+		elif _pc == 8612:
+			sim.place_relative_to(v10, v11, v6, v7, v8)
+			if iship.cast(v10):
+				_pc = 8674
+				continue
+			else:
+				_pc = 8726
+				continue
+		elif _pc == 8674:
+			iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
+			_pc = 8726
+			continue
+		elif _pc == 8726:
+			_pc = 8796
+			continue
+		elif _pc == 8731:
+			iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
+			_pc = 8796
+			continue
+		elif _pc == 8796:
+			v4 = 1 + v4
+			if v3 < v4:
+				_pc = 8825
+				continue
+			else:
+				_pc = 9384
+				continue
+		elif _pc == 8825:
+			v10 = group.nth_sim(v0, v4)
+			v6 = -(v9 * v5)
+			v7 = v9 * v5
+			if v2:
+				_pc = 8899
+				continue
+			else:
+				_pc = 9018
+				continue
+		elif _pc == 8899:
+			sim.place_relative_to(v10, v11, v6, v7, v8)
+			if iship.cast(v10):
+				_pc = 8961
+				continue
+			else:
+				_pc = 9013
+				continue
+		elif _pc == 8961:
+			iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
+			_pc = 9013
+			continue
+		elif _pc == 9013:
+			_pc = 9083
+			continue
+		elif _pc == 9018:
+			iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
+			_pc = 9083
+			continue
+		elif _pc == 9083:
+			v4 = 1 + v4
+			if v3 < v4:
+				_pc = 9112
+				continue
+			else:
+				_pc = 9384
+				continue
+		elif _pc == 9112:
+			v10 = group.nth_sim(v0, v4)
+			v6 = -(v9 * v5)
+			v7 = -(v9 * v5)
+			if v2:
+				_pc = 9187
+				continue
+			else:
+				_pc = 9306
+				continue
+		elif _pc == 9187:
+			sim.place_relative_to(v10, v11, v6, v7, v8)
+			if iship.cast(v10):
+				_pc = 9249
+				continue
+			else:
+				_pc = 9301
+				continue
+		elif _pc == 9249:
+			iai.give_formate_order(iship.cast(v10), v11, v6, v7, v8)
+			_pc = 9301
+			continue
+		elif _pc == 9301:
+			_pc = 9371
+			continue
+		elif _pc == 9306:
+			iai.give_formate_order(iship.cast(v10), iship.cast(v11), v6, v7, v8)
+			_pc = 9371
+			continue
+		elif _pc == 9371:
+			v4 = 1 + v4
+			_pc = 9384
+			continue
+		elif _pc == 9384:
+			if v3 >= v4:
+				_pc = 9400
+				continue
+			else:
+				_pc = 8168
+				continue
+		elif _pc == 9400:
+			return 0
+		else:
+			return 0
 	return 0
 
 func wall(v0, v1, v2) -> Variant:
@@ -677,39 +1641,95 @@ func wall(v0, v1, v2) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v8 = 0
-	v11 = 0.0
-	v12 = 0.0
-	v13 = 0.0
-	v3 = group.sim_count(v0)
-	v13 = await iutilities.get_largest_ship_radius(v0)
-	v13 = v1 + 2.0 * v13
-	v9 = v3
-	v10 = math.pog_sqrt(v9)
-	v4 = v10
-	v6 = 0
-	while v3 < v6:
-		if _pog_is_null(v6):
+	var _pc: int = 9403
+	while true:
+		if _pc == 9403:
+			v8 = 0
+			v11 = 0.0
+			v12 = 0.0
+			v13 = 0.0
+			v3 = group.sim_count(v0)
+			v13 = await iutilities.get_largest_ship_radius(v0)
+			v13 = v1 + 2.0 * v13
+			v9 = v3
+			v10 = math.pog_sqrt(v9)
+			v4 = v10
+			v6 = 0
+			_pc = 9574
+			continue
+		elif _pc == 9574:
+			if v3 < v6:
+				_pc = 9590
+				continue
+			else:
+				_pc = 9992
+				continue
+		elif _pc == 9590:
+			if _pog_is_null(v6):
+				_pc = 9602
+				continue
+			else:
+				_pc = 9649
+				continue
+		elif _pc == 9602:
 			v15 = group.nth_sim(v0, v6)
 			v8 = 1 + v8
-		else:
+			_pc = 9974
+			continue
+		elif _pc == 9649:
 			v14 = group.nth_sim(v0, v6)
 			if _pog_eq(v4, v8):
-				v11 = 0.0
-				v12 = v13 - v12
-				v8 = 1
+				_pc = 9694
+				continue
 			else:
-				v11 = v13 + v11
-				v8 = 1 + v8
+				_pc = 9734
+				continue
+		elif _pc == 9694:
+			v11 = 0.0
+			v12 = v13 - v12
+			v8 = 1
+			_pc = 9764
+			continue
+		elif _pc == 9734:
+			v11 = v13 + v11
+			v8 = 1 + v8
+			_pc = 9764
+			continue
+		elif _pc == 9764:
 			if v2:
-				sim.place_relative_to(v14, v15, v11, v12, 0.0)
-				if iship.cast(v14):
-					iai.give_formate_order(iship.cast(v14), v15, v11, v12, 0.0)
+				_pc = 9774
+				continue
 			else:
-				v16 = iship.cast(group.nth_sim(v0, v6))
-				iai.give_formate_order(v16, v15, v11, v12, 0.0)
-		v6 = 1 + v6
-	return 0
+				_pc = 9893
+				continue
+		elif _pc == 9774:
+			sim.place_relative_to(v14, v15, v11, v12, 0.0)
+			if iship.cast(v14):
+				_pc = 9836
+				continue
+			else:
+				_pc = 9888
+				continue
+		elif _pc == 9836:
+			iai.give_formate_order(iship.cast(v14), v15, v11, v12, 0.0)
+			_pc = 9888
+			continue
+		elif _pc == 9888:
+			_pc = 9974
+			continue
+		elif _pc == 9893:
+			v16 = iship.cast(group.nth_sim(v0, v6))
+			iai.give_formate_order(v16, v15, v11, v12, 0.0)
+			_pc = 9974
+			continue
+		elif _pc == 9974:
+			v6 = 1 + v6
+			_pc = 9574
+			continue
+		elif _pc == 9992:
+			return 0
+		else:
+			return 0
 	return 0
 
 func random_rectangle(v0, v1, v2) -> Variant:
@@ -723,37 +1743,102 @@ func random_rectangle(v0, v1, v2) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v3 = 0
-	v11 = group.nth_sim(v0, 0)
-	v4 = group.sim_count(v0)
-	v6 = object.float_property(v11, "radius")
+	var _pc: int = 9995
 	while true:
-		v3 = 1 + v3
-		v5 = math.random(1.0, 3.0)
-		if 1 == v5:
+		if _pc == 9995:
+			v3 = 0
+			v11 = group.nth_sim(v0, 0)
+			v4 = group.sim_count(v0)
+			v6 = object.float_property(v11, "radius")
+			_pc = 10087
+			continue
+		elif _pc == 10087:
+			v3 = 1 + v3
+			v5 = math.random(1.0, 3.0)
+			if 1 == v5:
+				_pc = 10142
+				continue
+			else:
+				_pc = 10182
+				continue
+		elif _pc == 10142:
 			v7 = math.random(v6, v1 + v6)
-		else:
+			_pc = 10218
+			continue
+		elif _pc == 10182:
 			v7 = -(math.random(v6, v1 + v6))
-		v5 = math.random(1.0, 3.0)
-		if 1 == v5:
+			_pc = 10218
+			continue
+		elif _pc == 10218:
+			v5 = math.random(1.0, 3.0)
+			if 1 == v5:
+				_pc = 10260
+				continue
+			else:
+				_pc = 10300
+				continue
+		elif _pc == 10260:
 			v8 = math.random(v6, v1 + v6)
-		else:
+			_pc = 10336
+			continue
+		elif _pc == 10300:
 			v8 = -(math.random(v6, v1 + v6))
-		v5 = math.random(1.0, 3.0)
-		if 1 == v5:
+			_pc = 10336
+			continue
+		elif _pc == 10336:
+			v5 = math.random(1.0, 3.0)
+			if 1 == v5:
+				_pc = 10378
+				continue
+			else:
+				_pc = 10418
+				continue
+		elif _pc == 10378:
 			v9 = math.random(v6, v1 + v6)
-		else:
+			_pc = 10454
+			continue
+		elif _pc == 10418:
 			v9 = -(math.random(v6, v1 + v6))
-		v12 = group.nth_sim(v0, v3)
-		if v2:
+			_pc = 10454
+			continue
+		elif _pc == 10454:
+			v12 = group.nth_sim(v0, v3)
+			if v2:
+				_pc = 10493
+				continue
+			else:
+				_pc = 10612
+				continue
+		elif _pc == 10493:
 			sim.place_relative_to(v12, v11, v7, v8, v9)
 			if iship.cast(v12):
-				iai.give_formate_order(iship.cast(v12), v11, v7, v8, v9)
-		else:
+				_pc = 10555
+				continue
+			else:
+				_pc = 10607
+				continue
+		elif _pc == 10555:
+			iai.give_formate_order(iship.cast(v12), v11, v7, v8, v9)
+			_pc = 10607
+			continue
+		elif _pc == 10607:
+			_pc = 10677
+			continue
+		elif _pc == 10612:
 			iai.give_formate_order(iship.cast(v12), iship.cast(v11), v7, v8, v9)
-		if not (1 - v4 < v3):
-			break
-	return 0
+			_pc = 10677
+			continue
+		elif _pc == 10677:
+			if 1 - v4 >= v3:
+				_pc = 10695
+				continue
+			else:
+				_pc = 10087
+				continue
+		elif _pc == 10695:
+			return 0
+		else:
+			return 0
 	return 0
 
 func random_sphere(v0, v1, v2) -> Variant:
@@ -767,24 +1852,56 @@ func random_sphere(v0, v1, v2) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v3 = 0
-	v11 = group.nth_sim(v0, 0)
-	v4 = group.sim_count(v0)
-	v6 = object.float_property(v11, "radius")
+	var _pc: int = 10698
 	while true:
-		v3 = 1 + v3
-		v10 = math.random(0.0, 1.0)
-		v10 = v1 * v10 * v10 - 1.0
-		v12 = group.nth_sim(v0, v3)
-		if v2:
+		if _pc == 10698:
+			v3 = 0
+			v11 = group.nth_sim(v0, 0)
+			v4 = group.sim_count(v0)
+			v6 = object.float_property(v11, "radius")
+			_pc = 10790
+			continue
+		elif _pc == 10790:
+			v3 = 1 + v3
+			v10 = math.random(0.0, 1.0)
+			v10 = v1 * v10 * v10 - 1.0
+			v12 = group.nth_sim(v0, v3)
+			if v2:
+				_pc = 10900
+				continue
+			else:
+				_pc = 11009
+				continue
+		elif _pc == 10900:
 			sim.place_near(v12, v11, v10)
 			if iship.cast(v12):
-				iai.give_formate_order(iship.cast(v12), v11, v7, v8, v9)
-		else:
+				_pc = 10952
+				continue
+			else:
+				_pc = 11004
+				continue
+		elif _pc == 10952:
+			iai.give_formate_order(iship.cast(v12), v11, v7, v8, v9)
+			_pc = 11004
+			continue
+		elif _pc == 11004:
+			_pc = 11074
+			continue
+		elif _pc == 11009:
 			iai.give_formate_order(iship.cast(v12), iship.cast(v11), v7, v8, v9)
-		if not (1 - v4 < v3):
-			break
-	return 0
+			_pc = 11074
+			continue
+		elif _pc == 11074:
+			if 1 - v4 >= v3:
+				_pc = 11092
+				continue
+			else:
+				_pc = 10790
+				continue
+		elif _pc == 11092:
+			return 0
+		else:
+			return 0
 	return 0
 
 func stack() -> Variant:
@@ -799,44 +1916,119 @@ func stack() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v7 = 0.0
-	v3 = group.sim_count(v0)
-	v5 = await iutilities.get_largest_ship_radius(v0)
-	v5 = v1 + 2.0 * v5
-	v4 = 0
-	while v3 < v4:
-		if _pog_is_null(v4):
+	var _pc: int = 11095
+	while true:
+		if _pc == 11095:
+			v7 = 0.0
+			v3 = group.sim_count(v0)
+			v5 = await iutilities.get_largest_ship_radius(v0)
+			v5 = v1 + 2.0 * v5
+			v4 = 0
+			_pc = 11189
+			continue
+		elif _pc == 11189:
+			if v3 < v4:
+				_pc = 11205
+				continue
+			else:
+				_pc = 11536
+				continue
+		elif _pc == 11205:
+			if _pog_is_null(v4):
+				_pc = 11217
+				continue
+			else:
+				_pc = 11251
+				continue
+		elif _pc == 11217:
 			v9 = group.nth_sim(v0, v4)
-		else:
+			_pc = 11518
+			continue
+		elif _pc == 11251:
 			v8 = group.nth_sim(v0, v4)
 			v7 = v5 - v7
 			if v2:
-				sim.place_relative_to(v8, v9, 0.0, v7, 0.0)
-				if iship.cast(v8):
-					v10 = iship.cast(v8)
-					iai.give_formate_order(v10, v9, 0.0, v7, 0.0)
+				_pc = 11307
+				continue
 			else:
-				v10 = iship.cast(group.nth_sim(v0, v4))
-				iai.give_formate_order(v10, v9, 0.0, v7, 0.0)
-		v4 = 1 + v4
-	return 0
+				_pc = 11437
+				continue
+		elif _pc == 11307:
+			sim.place_relative_to(v8, v9, 0.0, v7, 0.0)
+			if iship.cast(v8):
+				_pc = 11369
+				continue
+			else:
+				_pc = 11432
+				continue
+		elif _pc == 11369:
+			v10 = iship.cast(v8)
+			iai.give_formate_order(v10, v9, 0.0, v7, 0.0)
+			_pc = 11432
+			continue
+		elif _pc == 11432:
+			_pc = 11518
+			continue
+		elif _pc == 11437:
+			v10 = iship.cast(group.nth_sim(v0, v4))
+			iai.give_formate_order(v10, v9, 0.0, v7, 0.0)
+			_pc = 11518
+			continue
+		elif _pc == 11518:
+			v4 = 1 + v4
+			_pc = 11189
+			continue
+		elif _pc == 11536:
+			return 0
+		else:
+			return 0
 	return 0
 
 func lock_groups_in_formation(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v7 = group.leader(v0)
-	v8 = group.leader(v1)
-	if _pog_is_null(v8):
-		return 0
-	if v5:
-		sim.place_relative_to(v8, v7, v2, v3, v4)
-		if iship.cast(v8):
+	var _pc: int = 11539
+	while true:
+		if _pc == 11539:
+			v7 = group.leader(v0)
+			v8 = group.leader(v1)
+			if not _pog_is_null(v8):
+				_pc = 11605
+				continue
+			else:
+				_pc = 11786
+				continue
+		elif _pc == 11605:
+			if v5:
+				_pc = 11615
+				continue
+			else:
+				_pc = 11734
+				continue
+		elif _pc == 11615:
+			sim.place_relative_to(v8, v7, v2, v3, v4)
+			if iship.cast(v8):
+				_pc = 11677
+				continue
+			else:
+				_pc = 11729
+				continue
+		elif _pc == 11677:
 			iai.give_formate_order(iship.cast(v8), v7, v2, v3, v4)
-	else:
-		iai.give_formate_order(iship.cast(v8), v7, v2, v3, v4)
-	return 0
+			_pc = 11729
+			continue
+		elif _pc == 11729:
+			_pc = 11786
+			continue
+		elif _pc == 11734:
+			iai.give_formate_order(iship.cast(v8), v7, v2, v3, v4)
+			_pc = 11786
+			continue
+		elif _pc == 11786:
+			return 0
+		else:
+			return 0
 	return 0
 
 func apply_random_rotation(v0) -> Variant:
@@ -845,15 +2037,32 @@ func apply_random_rotation(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = group.sim_count(v0)
-	v2 = 0
-	while v1 < v2:
-		v3 = math.random(0.0, 360.0)
-		v4 = math.random(0.0, 360.0)
-		v5 = math.random(0.0, 360.0)
-		sim.set_angular_velocity_euler(group.nth_sim(v0, v2), v3, v4, v5)
-		v2 = 1 + v2
-	return 0
+	var _pc: int = 11789
+	while true:
+		if _pc == 11789:
+			v1 = group.sim_count(v0)
+			v2 = 0
+			_pc = 11825
+			continue
+		elif _pc == 11825:
+			if v1 < v2:
+				_pc = 11841
+				continue
+			else:
+				_pc = 11998
+				continue
+		elif _pc == 11841:
+			v3 = math.random(0.0, 360.0)
+			v4 = math.random(0.0, 360.0)
+			v5 = math.random(0.0, 360.0)
+			sim.set_angular_velocity_euler(group.nth_sim(v0, v2), v3, v4, v5)
+			v2 = 1 + v2
+			_pc = 11825
+			continue
+		elif _pc == 11998:
+			return 0
+		else:
+			return 0
 	return 0
 
 func jiggle(v0, v1, v2) -> Variant:
@@ -863,24 +2072,73 @@ func jiggle(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = group.sim_count(v0)
-	if 1 < v3:
-		pass
-	else:
-		if 1.0 < v2 and 1.0 < v1:
-			pass
-		else:
+	var _pc: int = 12001
+	while true:
+		if _pc == 12001:
+			v3 = group.sim_count(v0)
+			if 1 < v3:
+				_pc = 12042
+				continue
+			else:
+				_pc = 12047
+				continue
+		elif _pc == 12042:
+			_pc = 12354
+			continue
+		elif _pc == 12047:
+			if 1.0 < v2 and 1.0 < v1:
+				_pc = 12075
+				continue
+			else:
+				_pc = 12080
+				continue
+		elif _pc == 12075:
+			_pc = 12354
+			continue
+		elif _pc == 12080:
 			v4 = 0
-			while v3 < v4:
-				v8 = group.nth_sim(v0, v4)
-				if 0.0 > v1:
-					sim.place_near(v8, v8, math.random(-(v1), v1))
-				if 0.0 > v2:
-					v5 = math.random(-(v2), v2)
-					v6 = math.random(-(v2), v2)
-					v7 = math.random(-(v2), v2)
-					sim.set_angular_velocity_euler(v8, v5, v6, v7)
-				v4 = 1 + v4
-	return 0
+			_pc = 12087
+			continue
+		elif _pc == 12087:
+			if v3 < v4:
+				_pc = 12103
+				continue
+			else:
+				_pc = 12354
+				continue
+		elif _pc == 12103:
+			v8 = group.nth_sim(v0, v4)
+			if 0.0 > v1:
+				_pc = 12148
+				continue
+			else:
+				_pc = 12196
+				continue
+		elif _pc == 12148:
+			sim.place_near(v8, v8, math.random(-(v1), v1))
+			_pc = 12196
+			continue
+		elif _pc == 12196:
+			if 0.0 > v2:
+				_pc = 12212
+				continue
+			else:
+				_pc = 12336
+				continue
+		elif _pc == 12212:
+			v5 = math.random(-(v2), v2)
+			v6 = math.random(-(v2), v2)
+			v7 = math.random(-(v2), v2)
+			sim.set_angular_velocity_euler(v8, v5, v6, v7)
+			_pc = 12336
+			continue
+		elif _pc == 12336:
+			v4 = 1 + v4
+			_pc = 12087
+			continue
+		elif _pc == 12354:
+			return 0
+		else:
+			return 0
 	return 0
 

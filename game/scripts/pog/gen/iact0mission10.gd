@@ -95,13 +95,29 @@ func local_335() -> Variant:
 
 func local_548() -> Variant:
 	var v0: Variant = 0
-	if not (await iutilities.skip_mission("Home Sweet Home?")):
-		await _pog_movie("/movies/prelude")
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
-	else:
-		await stub()
-	return
+	var _pc: int = 548
+	while true:
+		if _pc == 548:
+			if not (await iutilities.skip_mission("Home Sweet Home?")):
+				_pc = 579
+				continue
+			else:
+				_pc = 637
+				continue
+		elif _pc == 579:
+			await _pog_movie("/movies/prelude")
+			v0 = _pog_spawn(mission_handler.bind())
+			_pog_detach(v0)
+			_pc = 656
+			continue
+		elif _pc == 637:
+			await stub()
+			_pc = 656
+			continue
+		elif _pc == 656:
+			return
+		else:
+			return 0
 	return 0
 
 func local_658() -> Variant:
@@ -144,178 +160,415 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v4 = 0
-	v5 = 0
-	isim.set_indestructable(isim.cast(v2), 1)
-	sim.set_cullable(v2, 0)
-	sim.place_relative_to(v2, v0, 3000.0, 4000.0, 5000.0)
-	isim.set_standard_sensor_visibility(isim.cast(v2), 1)
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_i_know")
-	await local_658()
-	ihud.set_prompt("", "")
-	await _pog_wait(1.0)
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_contact_list_more")
-	v8 = await iutilities.create_waypoint_near(v1, 4500.0 + object.float_property(v1, "radius"))
-	await iutilities.make_waypoint_visible(v8, 1, "a0_m10_name_waypoint")
-	ihud.set_prompt("", "")
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_now_select")
-	ihud.set_prompt("a0_m10_prompt_select_waypoint", string.join(string.join(input.key_combinations("icPlayerPilot.CycleContactUp"), "+, +"), input.key_combinations("icPlayerPilot.CycleContactDown")))
+	var _pc: int = 1276
 	while true:
-		await _pog_wait(0.5)
-		if 100 == state.progress(v3):
-			sim.destroy(v8)
-			group.destroy(v7, 1)
-			return
-		if not _pog_eq(isim.cast(v8), iship.current_target(v0)):
+		if _pc == 1276:
+			v4 = 0
+			v5 = 0
+			isim.set_indestructable(isim.cast(v2), 1)
+			sim.set_cullable(v2, 0)
+			sim.place_relative_to(v2, v0, 3000.0, 4000.0, 5000.0)
+			isim.set_standard_sensor_visibility(isim.cast(v2), 1)
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_i_know")
+			await local_658()
+			ihud.set_prompt("", "")
+			await _pog_wait(1.0)
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_contact_list_more")
+			v8 = await iutilities.create_waypoint_near(v1, 4500.0 + object.float_property(v1, "radius"))
+			await iutilities.make_waypoint_visible(v8, 1, "a0_m10_name_waypoint")
+			ihud.set_prompt("", "")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_now_select")
+			ihud.set_prompt("a0_m10_prompt_select_waypoint", string.join(string.join(input.key_combinations("icPlayerPilot.CycleContactUp"), "+, +"), input.key_combinations("icPlayerPilot.CycleContactDown")))
+			_pc = 1786
 			continue
-		break
-	ihud.set_prompt("a0_m10_prompt_fly_towards", "")
-	iobjectives.add("a0_m10_objectives_approach_clay")
-	while true:
-		await _pog_wait(0.5)
-		if 100 == state.progress(v3):
-			sim.destroy(v8)
-			group.destroy(v7, 1)
-			return
-		if 500.0 + iai.inner_marker_radius(isim.cast(v8), v0) >= sim.distance_between(v0, v8):
-			continue
-		ihud.set_prompt("", "")
-		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_good")
-		sim.destroy(v8)
-		group.destroy(v7, 1)
-		break
-	iobjectives.set_state("a0_m10_objectives_approach_clay", 1)
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_the_first")
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_that_leads")
-	while true:
-		await _pog_wait(2)
-		if v4:
-			if v5:
-				break
+		elif _pc == 1786:
+			await _pog_frame()
+			if _pog_every(1787, 0.5):
+				_pc = 1800
+				continue
 			else:
-				if not (v6):
-					v6 = 1
-					await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_instructions_formate")
-					iobjectives.add("a0_m10_objectives_formate_lesson")
-					ihud.set_prompt("a0_m10_prompt_activate_formate", input.key_combinations("icPlayerPilot.AutopilotFormate"))
-				while true:
-					await _pog_wait(1.0)
-					if not (2 != iai.current_order_type(v0)):
-						break
-				ihud.set_prompt("", "")
-				v9 = iai.current_order_target(v0)
-				await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_formate_engage")
-				while true:
-					await _pog_wait(1.0)
-					if not (not (iai.is_order_complete(v0))):
-						break
-				v5 = 1
-				v6 = 0
-				iobjectives.set_state("a0_m10_objectives_formate_lesson", 1)
-		else:
+				_pc = 1917
+				continue
+		elif _pc == 1800:
+			if 100 == state.progress(v3):
+				_pc = 1826
+				continue
+			else:
+				_pc = 1870
+				continue
+		elif _pc == 1826:
+			sim.destroy(v8)
+			group.destroy(v7, 1)
+			_pc = 3662
+			continue
+		elif _pc == 1870:
+			if _pog_eq(isim.cast(v8), iship.current_target(v0)):
+				_pc = 1912
+				continue
+			else:
+				_pc = 1917
+				continue
+		elif _pc == 1912:
+			_pc = 1922
+			continue
+		elif _pc == 1917:
+			_pc = 1786
+			continue
+		elif _pc == 1922:
+			ihud.set_prompt("a0_m10_prompt_fly_towards", "")
+			iobjectives.add("a0_m10_objectives_approach_clay")
+			_pc = 1976
+			continue
+		elif _pc == 1976:
+			await _pog_frame()
+			if _pog_every(1977, 0.5):
+				_pc = 1990
+				continue
+			else:
+				_pc = 2230
+				continue
+		elif _pc == 1990:
+			if 100 == state.progress(v3):
+				_pc = 2016
+				continue
+			else:
+				_pc = 2060
+				continue
+		elif _pc == 2016:
+			sim.destroy(v8)
+			group.destroy(v7, 1)
+			_pc = 3662
+			continue
+		elif _pc == 2060:
+			if 500.0 + iai.inner_marker_radius(isim.cast(v8), v0) < sim.distance_between(v0, v8):
+				_pc = 2131
+				continue
+			else:
+				_pc = 2230
+				continue
+		elif _pc == 2131:
+			ihud.set_prompt("", "")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_good")
+			sim.destroy(v8)
+			group.destroy(v7, 1)
+			_pc = 2235
+			continue
+		elif _pc == 2230:
+			_pc = 1976
+			continue
+		elif _pc == 2235:
+			iobjectives.set_state("a0_m10_objectives_approach_clay", 1)
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_the_first")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_that_leads")
+			_pc = 2319
+			continue
+		elif _pc == 2319:
+			await _pog_frame()
+			if _pog_every(2320, 2.0):
+				_pc = 2333
+				continue
+			else:
+				_pc = 3069
+				continue
+		elif _pc == 2333:
+			if v4:
+				_pc = 2343
+				continue
+			else:
+				_pc = 2705
+				continue
+		elif _pc == 2343:
+			if v5:
+				_pc = 2353
+				continue
+			else:
+				_pc = 2363
+				continue
+		elif _pc == 2353:
+			_pc = 3074
+			continue
+		elif _pc == 2358:
+			_pc = 2700
+			continue
+		elif _pc == 2363:
 			if not (v6):
-				v6 = 1
-				await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_instructions_approach")
-				iobjectives.add("a0_m10_objectives_approach_lesson")
-				ihud.set_prompt("a0_m10_prompt_activate_approach", input.key_combinations("icPlayerPilot.AutopilotApproach"))
-			while true:
-				await _pog_wait(1.0)
-				if not (3 != iai.current_order_type(v0)):
-					break
+				_pc = 2374
+				continue
+			else:
+				_pc = 2471
+				continue
+		elif _pc == 2374:
+			v6 = 1
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_instructions_formate")
+			iobjectives.add("a0_m10_objectives_formate_lesson")
+			ihud.set_prompt("a0_m10_prompt_activate_formate", input.key_combinations("icPlayerPilot.AutopilotFormate"))
+			_pc = 2471
+			continue
+		elif _pc == 2471:
+			await _pog_wait(1.0)
+			if 2 == iai.current_order_type(v0):
+				_pc = 2529
+				continue
+			else:
+				_pc = 2471
+				continue
+		elif _pc == 2529:
+			ihud.set_prompt("", "")
+			v9 = iai.current_order_target(v0)
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_formate_engage")
+			_pc = 2608
+			continue
+		elif _pc == 2608:
+			await _pog_wait(1.0)
+			if iai.is_order_complete(v0):
+				_pc = 2664
+				continue
+			else:
+				_pc = 2608
+				continue
+		elif _pc == 2664:
+			v5 = 1
+			v6 = 0
+			iobjectives.set_state("a0_m10_objectives_formate_lesson", 1)
+			_pc = 2700
+			continue
+		elif _pc == 2700:
+			_pc = 3069
+			continue
+		elif _pc == 2705:
+			if not (v6):
+				_pc = 2716
+				continue
+			else:
+				_pc = 2813
+				continue
+		elif _pc == 2716:
+			v6 = 1
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_instructions_approach")
+			iobjectives.add("a0_m10_objectives_approach_lesson")
+			ihud.set_prompt("a0_m10_prompt_activate_approach", input.key_combinations("icPlayerPilot.AutopilotApproach"))
+			_pc = 2813
+			continue
+		elif _pc == 2813:
+			await _pog_wait(1.0)
+			if 3 == iai.current_order_type(v0):
+				_pc = 2871
+				continue
+			else:
+				_pc = 2813
+				continue
+		elif _pc == 2871:
 			ihud.set_prompt("", "")
 			v9 = iai.current_order_target(v0)
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_approach_engage")
-			while true:
-				await _pog_wait(1.0)
-				if not (not (iai.is_order_complete(v0))):
-					break
+			_pc = 2950
+			continue
+		elif _pc == 2950:
+			await _pog_wait(1.0)
+			if iai.is_order_complete(v0):
+				_pc = 3006
+				continue
+			else:
+				_pc = 2950
+				continue
+		elif _pc == 3006:
 			v4 = 1
 			v6 = 0
 			iobjectives.set_state("a0_m10_objectives_approach_lesson", 1)
 			ihud.set_prompt("", "")
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_disengage")
-	iobjectives.add("a0_m10_objective_disengage")
-	ihud.set_prompt("a0_m10_prompt_disengage", input.key_combinations("icPlayerPilot.AutopilotOff"))
-	while true:
-		await _pog_wait(0.5)
-		if not (not _pog_is_null(iai.current_order_type(v0))):
-			break
-	iobjectives.set_state("a0_m10_objective_disengage", 1)
-	ihud.set_prompt("", "")
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_the_final")
-	iobjectives.add("a0_m10_objectives_dock_to")
-	ihud.set_prompt("a0_m10_prompt_use_dock", input.key_combinations("icPlayerPilot.AutopilotDock"))
-	while true:
-		await _pog_wait(1.0)
-		if not (not (isim.is_docked_to(v0, isim.cast(v2)))):
-			break
-	iobjectives.set_state("a0_m10_objectives_dock_to", 1)
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_undock")
-	iobjectives.add("a0_m10_objectives_undock")
-	ihud.set_prompt("a0_m10_prompt_use_undock", input.key_combinations("icPlayerPilot.Undock"))
-	while true:
-		await _pog_wait(1.0)
-		if not (isim.is_docked_to(v0, isim.cast(v2))):
-			break
-	iobjectives.set_state("a0_m10_objectives_undock", 1)
-	state.set_progress(v3, 1)
-	return
+			_pc = 3069
+			continue
+		elif _pc == 3069:
+			_pc = 2319
+			continue
+		elif _pc == 3074:
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_disengage")
+			iobjectives.add("a0_m10_objective_disengage")
+			ihud.set_prompt("a0_m10_prompt_disengage", input.key_combinations("icPlayerPilot.AutopilotOff"))
+			_pc = 3165
+			continue
+		elif _pc == 3165:
+			await _pog_wait(0.5)
+			if _pog_is_null(iai.current_order_type(v0)):
+				_pc = 3222
+				continue
+			else:
+				_pc = 3165
+				continue
+		elif _pc == 3222:
+			iobjectives.set_state("a0_m10_objective_disengage", 1)
+			ihud.set_prompt("", "")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_the_final")
+			iobjectives.add("a0_m10_objectives_dock_to")
+			ihud.set_prompt("a0_m10_prompt_use_dock", input.key_combinations("icPlayerPilot.AutopilotDock"))
+			_pc = 3361
+			continue
+		elif _pc == 3361:
+			await _pog_wait(1.0)
+			if isim.is_docked_to(v0, isim.cast(v2)):
+				_pc = 3435
+				continue
+			else:
+				_pc = 3361
+				continue
+		elif _pc == 3435:
+			iobjectives.set_state("a0_m10_objectives_dock_to", 1)
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_undock")
+			iobjectives.add("a0_m10_objectives_undock")
+			ihud.set_prompt("a0_m10_prompt_use_undock", input.key_combinations("icPlayerPilot.Undock"))
+			_pc = 3547
+			continue
+		elif _pc == 3547:
+			await _pog_wait(1.0)
+			if not (isim.is_docked_to(v0, isim.cast(v2))):
+				_pc = 3620
+				continue
+			else:
+				_pc = 3547
+				continue
+		elif _pc == 3620:
+			iobjectives.set_state("a0_m10_objectives_undock", 1)
+			state.set_progress(v3, 1)
+			_pc = 3662
+			continue
+		elif _pc == 3662:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3664(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = 0
-	v4 = imapentity.find_by_name("Hoffer's Gap")
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_i_think")
-	iobjectives.add("a0_m10_objectives_starmap_lesson")
-	ihud.set_prompt("a0_m10_prompt_activate_starmap", input.key_combinations("HUD.Starmap"))
+	var _pc: int = 3664
 	while true:
-		await _pog_wait(0.5)
-		if not (not _pog_eq("hud_menu_map", ihud.current_menu_node())):
-			break
-	ihud.set_prompt("", "")
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_this_is")
-	iobjectives.set_state("a0_m10_objectives_starmap_lesson", 1)
-	iobjectives.add("a0_m10_objectives_select_griffon")
-	ihud.set_prompt("a0_m10_prompt_select_griffon", "")
-	while true:
-		await _pog_wait(0.5)
-		if not (not _pog_eq(object.string_property(v1, "name"), object.string_property(iship.current_target(v0), "name"))):
-			break
-	ihud.set_prompt("", "")
-	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_thats_the")
-	iobjectives.set_state("a0_m10_objectives_select_griffon", 1)
-	iobjectives.add("a0_m10_objectives_fly_to")
-	ihud.set_prompt("a0_m10_prompt_use_approach", input.key_combinations("icPlayerPilot.AutopilotApproach"))
-	while true:
-		await _pog_wait(1)
-		if not (v3) and iship.is_in_l_d_s(v0) and 2 == iai.current_order_type(v0) or 3 == iai.current_order_type(v0):
+		if _pc == 3664:
+			v3 = 0
+			v4 = imapentity.find_by_name("Hoffer's Gap")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_i_think")
+			iobjectives.add("a0_m10_objectives_starmap_lesson")
+			ihud.set_prompt("a0_m10_prompt_activate_starmap", input.key_combinations("HUD.Starmap"))
+			_pc = 3792
+			continue
+		elif _pc == 3792:
+			await _pog_wait(0.5)
+			if _pog_eq("hud_menu_map", ihud.current_menu_node()):
+				_pc = 3852
+				continue
+			else:
+				_pc = 3792
+				continue
+		elif _pc == 3852:
+			ihud.set_prompt("", "")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_this_is")
+			iobjectives.set_state("a0_m10_objectives_starmap_lesson", 1)
+			iobjectives.add("a0_m10_objectives_select_griffon")
+			ihud.set_prompt("a0_m10_prompt_select_griffon", "")
+			_pc = 3977
+			continue
+		elif _pc == 3977:
+			await _pog_wait(0.5)
+			if _pog_eq(object.string_property(v1, "name"), object.string_property(iship.current_target(v0), "name")):
+				_pc = 4080
+				continue
+			else:
+				_pc = 3977
+				continue
+		elif _pc == 4080:
+			ihud.set_prompt("", "")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_thats_the")
+			iobjectives.set_state("a0_m10_objectives_select_griffon", 1)
+			iobjectives.add("a0_m10_objectives_fly_to")
+			ihud.set_prompt("a0_m10_prompt_use_approach", input.key_combinations("icPlayerPilot.AutopilotApproach"))
+			_pc = 4224
+			continue
+		elif _pc == 4224:
+			await _pog_frame()
+			if _pog_every(4225, 1.0):
+				_pc = 4238
+				continue
+			else:
+				_pc = 4600
+				continue
+		elif _pc == 4238:
+			if not (v3) and iship.is_in_l_d_s(v0) and 2 == iai.current_order_type(v0) or 3 == iai.current_order_type(v0):
+				_pc = 4312
+				continue
+			else:
+				_pc = 4347
+				continue
+		elif _pc == 4312:
 			v3 = 1
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_there_weve")
-		if not (global.exists("g_training_disabled")) and 25000.0 > sim.distance_between(v0, v4):
-			global.create_bool("g_training_disabled", 1, 1)
-		if 50.0 + iai.inner_marker_radius(isim.cast(v1), v0) >= sim.distance_between(v0, v1):
+			_pc = 4347
 			continue
-		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_ok_this_is")
-		state.set_progress(v2, 2)
-		iobjectives.set_state("a0_m10_objectives_fly_to", 1)
-		ihud.set_prompt("", "")
-		return
-	return
+		elif _pc == 4347:
+			if not (global.exists("g_training_disabled")) and 25000.0 > sim.distance_between(v0, v4):
+				_pc = 4403
+				continue
+			else:
+				_pc = 4426
+				continue
+		elif _pc == 4403:
+			global.create_bool("g_training_disabled", 1, 1)
+			_pc = 4426
+			continue
+		elif _pc == 4426:
+			if 50.0 + iai.inner_marker_radius(isim.cast(v1), v0) < sim.distance_between(v0, v1):
+				_pc = 4497
+				continue
+			else:
+				_pc = 4600
+				continue
+		elif _pc == 4497:
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_ok_this_is")
+			state.set_progress(v2, 2)
+			iobjectives.set_state("a0_m10_objectives_fly_to", 1)
+			ihud.set_prompt("", "")
+			_pc = 4606
+			continue
+		elif _pc == 4600:
+			_pc = 4224
+			continue
+		elif _pc == 4605:
+			_pc = 4606
+			continue
+		elif _pc == 4606:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4608(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = await iutilities.create_waypoint_between(v0, v1, v2)
-	v4 = await iutilities.create_waypoint_relative_to(v3, math.random(-8000.0, 8000.0), math.random(-8000.0, 8000.0), 0.0)
-	if _pog_is_null(global.exists("g_next_waypoint")):
-		global.create_handle("g_next_waypoint", 2, v4)
-	else:
-		global.set_handle("g_next_waypoint", v4)
-	sim.destroy(v3)
-	return v4
+	var _pc: int = 4608
+	while true:
+		if _pc == 4608:
+			v3 = await iutilities.create_waypoint_between(v0, v1, v2)
+			v4 = await iutilities.create_waypoint_relative_to(v3, math.random(-8000.0, 8000.0), math.random(-8000.0, 8000.0), 0.0)
+			if _pog_is_null(global.exists("g_next_waypoint")):
+				_pc = 4749
+				continue
+			else:
+				_pc = 4782
+				continue
+		elif _pc == 4749:
+			global.create_handle("g_next_waypoint", 2, v4)
+			_pc = 4808
+			continue
+		elif _pc == 4782:
+			global.set_handle("g_next_waypoint", v4)
+			_pc = 4808
+			continue
+		elif _pc == 4808:
+			sim.destroy(v3)
+			_pc = 4837
+			continue
+		elif _pc == 4837:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4839(v0, v1) -> Variant:
@@ -340,6 +593,7 @@ func local_4839(v0, v1) -> Variant:
 			_pc = 4978
 			continue
 		elif _pc == 4947:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 4970
 				continue
@@ -383,6 +637,7 @@ func local_4839(v0, v1) -> Variant:
 			_pc = 5285
 			continue
 		elif _pc == 5254:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 5277
 				continue
@@ -550,6 +805,7 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 			_pc = 6967
 			continue
 		elif _pc == 6917:
+			math.random_int(0, 3)
 			if not _pog_is_null(math.random_int(0, 3)):
 				_pc = 6941
 				continue
@@ -610,44 +866,101 @@ func mission_handler() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v0 = 0
-	v1 = 0
-	v2 = iship.find_player_ship()
-	v4 = imapentity.find_by_name("Hoffer's Gap")
-	v5 = imapentity.find_by_name("Griffon")
-	v6 = imapentity.find_by_name("The Effrit")
-	v7 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
-	v8 = sim.create("ini:/sims/stations/reactor", "a0_m10_name_abandoned")
-	v11 = self
-	text.add("csv:/text/act_0/act0_mission10")
-	text.add("csv:/text/act_0/act0_mission10_addendum")
-	text.add("csv:/text/act_0/act0_mission10_addendum2")
-	text.add("csv:/text/act_0/act0_mission10_addendum3")
-	text.add("csv:/text/act_0/act0_mission10_addendum4")
-	v9 = state.find(v11)
-	if not (v9):
-		v9 = state.create(v11, 0)
-	await local_192(v9)
-	await istation.add_reactive_exception(ihabitat.cast(v4))
-	await imissiontracker.add_mission(self, 0, 10)
-	isim.set_sensor_visibility(isim.cast(v4), 1)
-	v3 = iship.create("ini:/sims/ships/utility/flitter", await ishipcreation.ship_name("General", -1))
-	isim.set_faction(v3, ifaction.find("Independent"))
-	sim.place_near(v3, v2, 4000.0)
-	await _pog_wait(5.0)
-	_pog_spawn(local_1276.bind(v2, v4, v8, v9))
+	var _pc: int = 7004
 	while true:
-		await _pog_wait(2)
-		if not (v1) and 2 == state.progress(v9):
+		if _pc == 7004:
+			v0 = 0
+			v1 = 0
+			v2 = iship.find_player_ship()
+			v4 = imapentity.find_by_name("Hoffer's Gap")
+			v5 = imapentity.find_by_name("Griffon")
+			v6 = imapentity.find_by_name("The Effrit")
+			v7 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
+			v8 = sim.create("ini:/sims/stations/reactor", "a0_m10_name_abandoned")
+			v11 = self
+			text.add("csv:/text/act_0/act0_mission10")
+			text.add("csv:/text/act_0/act0_mission10_addendum")
+			text.add("csv:/text/act_0/act0_mission10_addendum2")
+			text.add("csv:/text/act_0/act0_mission10_addendum3")
+			text.add("csv:/text/act_0/act0_mission10_addendum4")
+			v9 = state.find(v11)
+			if not (v9):
+				_pc = 7339
+				continue
+			else:
+				_pc = 7364
+				continue
+		elif _pc == 7339:
+			v9 = state.create(v11, 0)
+			_pc = 7364
+			continue
+		elif _pc == 7364:
+			await local_192(v9)
+			await istation.add_reactive_exception(ihabitat.cast(v4))
+			await imissiontracker.add_mission(self, 0, 10)
+			isim.set_sensor_visibility(isim.cast(v4), 1)
+			v3 = iship.create("ini:/sims/ships/utility/flitter", await ishipcreation.ship_name("General", -1))
+			isim.set_faction(v3, ifaction.find("Independent"))
+			sim.place_near(v3, v2, 4000.0)
+			await _pog_wait(5.0)
+			_pog_spawn(local_1276.bind(v2, v4, v8, v9))
+			_pc = 7665
+			continue
+		elif _pc == 7665:
+			await _pog_frame()
+			if _pog_every(7666, 2.0):
+				_pc = 7679
+				continue
+			else:
+				_pc = 7854
+				continue
+		elif _pc == 7679:
+			if not (v1) and 2 == state.progress(v9):
+				_pc = 7712
+				continue
+			else:
+				_pc = 7753
+				continue
+		elif _pc == 7712:
 			v1 = 1
 			_pog_spawn(local_5618.bind(v2, v6, v7, v9))
-		if not (v0) and 1 == state.progress(v9):
+			_pc = 7753
+			continue
+		elif _pc == 7753:
+			if not (v0) and 1 == state.progress(v9):
+				_pc = 7785
+				continue
+			else:
+				_pc = 7854
+				continue
+		elif _pc == 7785:
 			v0 = 1
 			isim.set_standard_sensor_visibility(isim.cast(v4), 1)
 			_pog_spawn(local_3664.bind(v2, v5, v9))
-		if not (100 == state.progress(v9) or 8 == state.progress(v9)):
+			_pc = 7854
 			continue
-		if 100 != state.progress(v9):
+		elif _pc == 7854:
+			if _pog_every(7854, 1.0):
+				_pc = 7867
+				continue
+			else:
+				_pc = 8522
+				continue
+		elif _pc == 7867:
+			if 100 == state.progress(v9) or 8 == state.progress(v9):
+				_pc = 7915
+				continue
+			else:
+				_pc = 8522
+				continue
+		elif _pc == 7915:
+			if 100 != state.progress(v9):
+				_pc = 7941
+				continue
+			else:
+				_pc = 8178
+				continue
+		elif _pc == 7941:
 			global.set_bool("g_act0_found_base", 1)
 			state.destroy(self)
 			imapentity.set_map_visibility(imapentity.cast(v7), 1)
@@ -657,20 +970,39 @@ func mission_handler() -> Variant:
 			gui.set_screen("icSPPlayerBaseScreen")
 			await _pog_movie("/movies/PBDiscovery")
 			igame.enable_blackout(1)
-		else:
+			_pc = 8522
+			continue
+		elif _pc == 8178:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_548.bind()))
 			sim.destroy(v8)
 			sim.destroy(sim.find_by_name("a0_m10_name_waypoint"))
 			if global.exists("g_next_waypoint"):
-				sim.destroy(sim.cast(global.handle("g_next_waypoint")))
-				global.destroy("g_next_waypoint")
+				_pc = 8307
+				continue
+			else:
+				_pc = 8375
+				continue
+		elif _pc == 8307:
+			sim.destroy(sim.cast(global.handle("g_next_waypoint")))
+			global.destroy("g_next_waypoint")
+			_pc = 8375
+			continue
+		elif _pc == 8375:
 			await iutilities.remove_mission_restart()
 			await local_335()
 			state.destroy(self)
 			imapentity.set_map_visibility(imapentity.cast(v7), 1)
 			await imissiontracker.remove_mission(self)
 			await istation.remove_reactive_exception(ihabitat.cast(v4))
-	return
+			_pc = 8522
+			continue
+		elif _pc == 8522:
+			_pc = 7665
+			continue
+		elif _pc == 8527:
+			return
+		else:
+			return 0
 	return 0
 

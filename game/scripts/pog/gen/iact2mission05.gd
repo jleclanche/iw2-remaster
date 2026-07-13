@@ -81,11 +81,27 @@ func _link() -> void:
 	text = api.text
 
 func local_0() -> Variant:
-	return _pog_clone("Blockade Runner")
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			_pc = 11
+			continue
+		elif _pc == 11:
+			return
+		else:
+			return 0
 	return 0
 
 func local_14() -> Variant:
-	return _pog_clone("g_act2_completed_blockade_run")
+	var _pc: int = 14
+	while true:
+		if _pc == 14:
+			_pc = 25
+			continue
+		elif _pc == 25:
+			return
+		else:
+			return 0
 	return 0
 
 func main() -> Variant:
@@ -131,44 +147,87 @@ func local_488() -> Variant:
 	return 0
 
 func local_575() -> Variant:
-	if not (await iutilities.skip_mission(await local_0())):
-		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
-	return
+	var _pc: int = 575
+	while true:
+		if _pc == 575:
+			if not (await iutilities.skip_mission(await local_0())):
+				_pc = 609
+				continue
+			else:
+				_pc = 641
+				continue
+		elif _pc == 609:
+			_pog_detach(_pog_spawn(mission_handler.bind()))
+			_pc = 655
+			continue
+		elif _pc == 641:
+			await stub()
+			_pc = 655
+			continue
+		elif _pc == 655:
+			return
+		else:
+			return 0
 	return 0
 
 func local_657(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13) -> Variant:
+	var _pc: int = 657
 	while true:
-		await _pog_wait(0.1)
-		if 100 != state.progress(v1):
+		if _pc == 657:
+			_pc = 662
 			continue
-		await iwingmen.purge()
-		isim.set_standard_sensor_visibility(isim.find_by_name_in_system("St George's L-Point", "map:/geog/badlands/santa_romera"), 1)
-		isim.set_standard_sensor_visibility(isim.find_by_name_in_system("Toad Skin L-Point", "map:/geog/badlands/mwari"), 1)
-		isim.set_standard_sensor_visibility(isim.find_by_name_in_system("Longshot MCA Defence HQ", "map:/geog/badlands/mwari"), 1)
-		sim.destroy(v9)
-		sim.destroy(sim.find_by_name("a2_m05_waypoint_initial_meeting"))
-		sim.destroy(v10)
-		sim.destroy(v11)
-		sim.destroy(v12)
-		sim.destroy(v13)
-		group.destroy(v2, 1)
-		group.destroy(v3, 1)
-		group.destroy(v4, 1)
-		group.destroy(v5, 1)
-		group.destroy(v6, 1)
-		group.destroy(v7, 1)
-		group.destroy(v8, 1)
-		global.set_bool("g_skip_locked", 0)
-		await local_488()
-		state.destroy(v0)
-		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(v0)
-		_pog_halt(v0)
-		_pog_detach(_pog_spawn(mission_handler.bind()))
-		return
-	return
+		elif _pc == 662:
+			await _pog_frame()
+			if _pog_every(663, 0.10000000149011612):
+				_pc = 676
+				continue
+			else:
+				_pc = 1249
+				continue
+		elif _pc == 676:
+			if 100 == state.progress(v1):
+				_pc = 702
+				continue
+			else:
+				_pc = 1249
+				continue
+		elif _pc == 702:
+			await iwingmen.purge()
+			isim.set_standard_sensor_visibility(isim.find_by_name_in_system("St George's L-Point", "map:/geog/badlands/santa_romera"), 1)
+			isim.set_standard_sensor_visibility(isim.find_by_name_in_system("Toad Skin L-Point", "map:/geog/badlands/mwari"), 1)
+			isim.set_standard_sensor_visibility(isim.find_by_name_in_system("Longshot MCA Defence HQ", "map:/geog/badlands/mwari"), 1)
+			sim.destroy(v9)
+			sim.destroy(sim.find_by_name("a2_m05_waypoint_initial_meeting"))
+			sim.destroy(v10)
+			sim.destroy(v11)
+			sim.destroy(v12)
+			sim.destroy(v13)
+			group.destroy(v2, 1)
+			group.destroy(v3, 1)
+			group.destroy(v4, 1)
+			group.destroy(v5, 1)
+			group.destroy(v6, 1)
+			group.destroy(v7, 1)
+			group.destroy(v8, 1)
+			global.set_bool("g_skip_locked", 0)
+			await local_488()
+			state.destroy(v0)
+			await iutilities.remove_mission_restart()
+			await imissiontracker.remove_mission(v0)
+			_pog_halt(v0)
+			_pog_detach(_pog_spawn(mission_handler.bind()))
+			_pc = 1255
+			continue
+		elif _pc == 1249:
+			_pc = 662
+			continue
+		elif _pc == 1254:
+			_pc = 1255
+			continue
+		elif _pc == 1255:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1257() -> Variant:
@@ -515,6 +574,7 @@ func mission_handler() -> Variant:
 			_pc = 4135
 			continue
 		elif _pc == 4074:
+			state.progress(v3)
 			if not _pog_is_null(state.progress(v3)):
 				_pc = 4100
 				continue
@@ -629,6 +689,7 @@ func mission_handler() -> Variant:
 			_pc = 4621
 			continue
 		elif _pc == 4561:
+			await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0)
 			if await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0) != 16:
 				_pc = 4611
 				continue
@@ -700,6 +761,7 @@ func mission_handler() -> Variant:
 			_pc = 5285
 			continue
 		elif _pc == 5225:
+			await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0)
 			if await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0) != 16:
 				_pc = 5275
 				continue
@@ -736,6 +798,7 @@ func mission_handler() -> Variant:
 			_pc = 5866
 			continue
 		elif _pc == 5817:
+			await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0)
 			if await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0) != 32:
 				_pc = 5866
 				continue
@@ -783,6 +846,7 @@ func mission_handler() -> Variant:
 			_pc = 6154
 			continue
 		elif _pc == 6094:
+			await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0)
 			if await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0) != 16:
 				_pc = 6144
 				continue
@@ -864,6 +928,7 @@ func mission_handler() -> Variant:
 			_pc = 6495
 			continue
 		elif _pc == 6425:
+			await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0)
 			if await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0) != 32:
 				_pc = 6475
 				continue
@@ -1232,6 +1297,7 @@ func mission_handler() -> Variant:
 			_pc = 10248
 			continue
 		elif _pc == 10206:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 10230
 				continue
@@ -1309,6 +1375,7 @@ func mission_handler() -> Variant:
 			_pc = 10699
 			continue
 		elif _pc == 10666:
+			math.random_int(1, 2)
 			if math.random_int(1, 2) != 1:
 				_pc = 10690
 				continue
@@ -1355,6 +1422,7 @@ func mission_handler() -> Variant:
 			_pc = 10892
 			continue
 		elif _pc == 10809:
+			await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0)
 			if await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0) != 16:
 				_pc = 10884
 				continue
@@ -1398,6 +1466,7 @@ func mission_handler() -> Variant:
 			_pc = 11099
 			continue
 		elif _pc == 11024:
+			await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0)
 			if await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0) != 16:
 				_pc = 11099
 				continue
@@ -1483,6 +1552,7 @@ func mission_handler() -> Variant:
 			_pc = 11801
 			continue
 		elif _pc == 11761:
+			group.sim_count(v5)
 			if group.sim_count(v5) != 1:
 				_pc = 11787
 				continue
@@ -1555,6 +1625,7 @@ func mission_handler() -> Variant:
 			_pc = 12315
 			continue
 		elif _pc == 12254:
+			state.progress(v3)
 			if not _pog_is_null(state.progress(v3)):
 				_pc = 12280
 				continue
@@ -1805,24 +1876,58 @@ func local_12821() -> Variant:
 
 func local_15968(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = state.find(self)
-	if v2:
-		if not (object.property_exists(v2, v0)):
+	var _pc: int = 15968
+	while true:
+		if _pc == 15968:
+			v2 = state.find(self)
+			if v2:
+				_pc = 16015
+				continue
+			else:
+				_pc = 16218
+				continue
+		elif _pc == 16015:
+			if not (object.property_exists(v2, v0)):
+				_pc = 16044
+				continue
+			else:
+				_pc = 16078
+				continue
+		elif _pc == 16044:
 			object.add_int_property(v2, v0, v1)
-		else:
+			_pc = 16107
+			continue
+		elif _pc == 16078:
 			object.set_int_property(v2, v0, v1)
-		if PogRuntime.TRACE:
+			_pc = 16107
+			continue
+		elif _pc == 16107:
+			_pc = 16213
+			continue
+		elif _pc == 16112:
 			debug.print_string("Integer Property ")
 			debug.print_string(v0)
 			debug.print_string(" created in state, with new value ")
 			debug.print_int(v1)
 			debug.print_string(" \n")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 16213
+			continue
+		elif _pc == 16213:
+			_pc = 16284
+			continue
+		elif _pc == 16218:
+			_pc = 16284
+			continue
+		elif _pc == 16223:
 			debug.print_string("Error: attempted to save integer ")
 			debug.print_string(v0)
 			debug.print_string(" to state when no state exists\n")
-	return 0
+			_pc = 16284
+			continue
+		elif _pc == 16284:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_16287(v0, v1) -> Variant:
@@ -1838,83 +1943,200 @@ func local_16287(v0, v1) -> Variant:
 
 func local_16402(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = state.find(self)
-	if v2:
-		if not (object.property_exists(v2, v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("Warning: update_int used before save_int.  Expect bad behaviour.")
-		object.set_int_property(v2, v0, v1)
-		if PogRuntime.TRACE:
+	var _pc: int = 16402
+	while true:
+		if _pc == 16402:
+			v2 = state.find(self)
+			if v2:
+				_pc = 16449
+				continue
+			else:
+				_pc = 16644
+				continue
+		elif _pc == 16449:
+			if not (object.property_exists(v2, v0)):
+				_pc = 16478
+				continue
+			else:
+				_pc = 16504
+				continue
+		elif _pc == 16478:
+			_pc = 16504
+			continue
+		elif _pc == 16483:
+			debug.print_string("Warning: update_int used before save_int.  Expect bad behaviour.")
+			_pc = 16504
+			continue
+		elif _pc == 16504:
+			object.set_int_property(v2, v0, v1)
+			_pc = 16639
+			continue
+		elif _pc == 16538:
 			debug.print_string("Integer Property ")
 			debug.print_string(v0)
 			debug.print_string(" in state updated new value ")
 			debug.print_int(v1)
 			debug.print_string(" \n")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 16639
+			continue
+		elif _pc == 16639:
+			_pc = 16710
+			continue
+		elif _pc == 16644:
+			_pc = 16710
+			continue
+		elif _pc == 16649:
 			debug.print_string("Error: attempted to save integer ")
 			debug.print_string(v0)
 			debug.print_string(" to state when no state exists\n")
-	return 0
+			_pc = 16710
+			continue
+		elif _pc == 16710:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_16713(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = state.find(self)
-	if v1:
-		if object.property_exists(v1, v0):
-			return object.int_property(v1, v0)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("Error: attempted to load unknown integer ")
-				debug.print_string(v0)
-				debug.print_string(" from state.  Using 0\n")
-				return 0
-	else:
-		if PogRuntime.TRACE:
+	var _pc: int = 16713
+	while true:
+		if _pc == 16713:
+			v1 = state.find(self)
+			if v1:
+				_pc = 16760
+				continue
+			else:
+				_pc = 16898
+				continue
+		elif _pc == 16760:
+			if object.property_exists(v1, v0):
+				_pc = 16788
+				continue
+			else:
+				_pc = 16821
+				continue
+		elif _pc == 16788:
+			object.int_property(v1, v0)
+			_pc = 16976
+			continue
+		elif _pc == 16816:
+			_pc = 16893
+			continue
+		elif _pc == 16821:
+			_pc = 16893
+			continue
+		elif _pc == 16826:
+			debug.print_string("Error: attempted to load unknown integer ")
+			debug.print_string(v0)
+			debug.print_string(" from state.  Using 0\n")
+			_pc = 16976
+			continue
+		elif _pc == 16893:
+			_pc = 16970
+			continue
+		elif _pc == 16898:
+			_pc = 16970
+			continue
+		elif _pc == 16903:
 			debug.print_string("Error: attempted to load integer ")
 			debug.print_string(v0)
 			debug.print_string(" from state when no state exists.  Using 0\n")
+			_pc = 16976
+			continue
+		elif _pc == 16970:
+			_pc = 16976
+			continue
+		elif _pc == 16976:
+			return
+		else:
 			return 0
-	return 0
 	return 0
 
 func local_16978(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = group.create()
-	v3 = 0
-	while v1 < v3:
-		group.add_sim(v2, await local_17527(v0))
-		v3 = 1 + v3
-	return v2
+	var _pc: int = 16978
+	while true:
+		if _pc == 16978:
+			v2 = group.create()
+			v3 = 0
+			_pc = 17009
+			continue
+		elif _pc == 17009:
+			if v1 < v3:
+				_pc = 17025
+				continue
+			else:
+				_pc = 17080
+				continue
+		elif _pc == 17025:
+			group.add_sim(v2, await local_17527(v0))
+			v3 = 1 + v3
+			_pc = 17009
+			continue
+		elif _pc == 17080:
+			_pc = 17090
+			continue
+		elif _pc == 17090:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17092(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = group.create()
-	v4 = 0
-	while v0 < v4:
-		group.add_sim(v2, await local_17318())
-		v4 = 1 + v4
-	v3 = group.leader(v2)
-	sim.place_relative_to(v3, v1, 0.0, 0.0, 1000.0)
-	await iformation.random_sphere(v2, 1500.0, 1)
-	await iformation.jiggle(v2, 0.0, 180.0)
-	return v2
+	var _pc: int = 17092
+	while true:
+		if _pc == 17092:
+			v2 = group.create()
+			v4 = 0
+			_pc = 17123
+			continue
+		elif _pc == 17123:
+			if v0 < v4:
+				_pc = 17139
+				continue
+			else:
+				_pc = 17189
+				continue
+		elif _pc == 17139:
+			group.add_sim(v2, await local_17318())
+			v4 = 1 + v4
+			_pc = 17123
+			continue
+		elif _pc == 17189:
+			v3 = group.leader(v2)
+			sim.place_relative_to(v3, v1, 0.0, 0.0, 1000.0)
+			await iformation.random_sphere(v2, 1500.0, 1)
+			await iformation.jiggle(v2, 0.0, 180.0)
+			_pc = 17316
+			continue
+		elif _pc == 17316:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17318() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.create("ini:/sims/custom/act2_mission03/fudge_mine", "a2_m05_ship_Mine")
-	object.set_string_property(v0, "death_script", "iDeathScript.Explosives")
-	object.add_float_property(v0, "explosive_damage", 300.0)
-	object.add_float_property(v0, "explosive_radius", 400.0)
-	object.set_bool_property(v0, "ignore_speed_limit", 1)
-	isim.set_faction(v0, ifaction.find("Marauders"))
-	return v0
+	var _pc: int = 17318
+	while true:
+		if _pc == 17318:
+			v0 = iship.create("ini:/sims/custom/act2_mission03/fudge_mine", "a2_m05_ship_Mine")
+			object.set_string_property(v0, "death_script", "iDeathScript.Explosives")
+			object.add_float_property(v0, "explosive_damage", 300.0)
+			object.add_float_property(v0, "explosive_radius", 400.0)
+			object.set_bool_property(v0, "ignore_speed_limit", 1)
+			isim.set_faction(v0, ifaction.find("Marauders"))
+			_pc = 17525
+			continue
+		elif _pc == 17525:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17527(v0) -> Variant:
@@ -1924,15 +2146,19 @@ func local_17527(v0) -> Variant:
 			_pc = 17635
 			continue
 		elif _pc == 17532:
+			await local_17687()
 			_pc = 17685
 			continue
 		elif _pc == 17550:
+			await local_17984()
 			_pc = 17685
 			continue
 		elif _pc == 17568:
+			await local_18107()
 			_pc = 17685
 			continue
 		elif _pc == 17586:
+			await local_18230()
 			_pc = 17685
 			continue
 		elif _pc == 17604:
@@ -1988,54 +2214,104 @@ func local_17527(v0) -> Variant:
 func local_17687() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = iship.create("ini:/sims/ships/utility/freighter", await ishipcreation.ship_name("Mca", -1))
-	await ipilotsetup.generic_cargo_pod(v0)
-	isim.set_faction(v0, ifaction.find("M.C.A."))
-	await ishipcreation.create_supply_cargo(v0, -1)
-	subsim.destroy(sim.find_subsim_by_name(v0, "Cargo_CapsuleDrive"))
-	object.set_string_property(v0, "death_script", "iDeathScript.CriticalShipDeath")
-	isim.set_mission_critical(v0, 1)
-	v1 = sim.find_subsim_by_name(v0, "system_autorepair")
-	object.set_float_property(v1, "autorepair_rate", 10.0)
-	return v0
+	var _pc: int = 17687
+	while true:
+		if _pc == 17687:
+			v0 = iship.create("ini:/sims/ships/utility/freighter", await ishipcreation.ship_name("Mca", -1))
+			await ipilotsetup.generic_cargo_pod(v0)
+			isim.set_faction(v0, ifaction.find("M.C.A."))
+			await ishipcreation.create_supply_cargo(v0, -1)
+			subsim.destroy(sim.find_subsim_by_name(v0, "Cargo_CapsuleDrive"))
+			object.set_string_property(v0, "death_script", "iDeathScript.CriticalShipDeath")
+			isim.set_mission_critical(v0, 1)
+			v1 = sim.find_subsim_by_name(v0, "system_autorepair")
+			object.set_float_property(v1, "autorepair_rate", 10.0)
+			_pc = 17982
+			continue
+		elif _pc == 17982:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17984() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("Mca", -1))
-	await ipilotsetup.generic_cargo_pod(v0)
-	isim.set_faction(v0, ifaction.find("M.C.A."))
-	return v0
+	var _pc: int = 17984
+	while true:
+		if _pc == 17984:
+			v0 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("Mca", -1))
+			await ipilotsetup.generic_cargo_pod(v0)
+			isim.set_faction(v0, ifaction.find("M.C.A."))
+			_pc = 18105
+			continue
+		elif _pc == 18105:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18107() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("General", -1))
-	await ipilotsetup.generic_cargo_pod(v0)
-	isim.set_faction(v0, ifaction.find("Independent"))
-	return v0
+	var _pc: int = 18107
+	while true:
+		if _pc == 18107:
+			v0 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("General", -1))
+			await ipilotsetup.generic_cargo_pod(v0)
+			isim.set_faction(v0, ifaction.find("Independent"))
+			_pc = 18228
+			continue
+		elif _pc == 18228:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18230() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.create("ini:/sims/ships/marauder/marauder_cutter_hard", await ishipcreation.ship_name("Marauders", -1))
-	await ipilotsetup.generic_cargo_pod(v0)
-	isim.set_faction(v0, ifaction.find("Marauders"))
-	return v0
+	var _pc: int = 18230
+	while true:
+		if _pc == 18230:
+			v0 = iship.create("ini:/sims/ships/marauder/marauder_cutter_hard", await ishipcreation.ship_name("Marauders", -1))
+			await ipilotsetup.generic_cargo_pod(v0)
+			isim.set_faction(v0, ifaction.find("Marauders"))
+			_pc = 18351
+			continue
+		elif _pc == 18351:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18353(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
-	await iutilities.make_waypoint_visible(v2, 1, "a2_m05_waypoint_initial_meeting")
-	return v2
+	var _pc: int = 18353
+	while true:
+		if _pc == 18353:
+			v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
+			await iutilities.make_waypoint_visible(v2, 1, "a2_m05_waypoint_initial_meeting")
+			_pc = 18447
+			continue
+		elif _pc == 18447:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18449(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
-	await iutilities.make_waypoint_visible(v2, 1, "a2_m05_mca_base")
-	return v2
+	var _pc: int = 18449
+	while true:
+		if _pc == 18449:
+			v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
+			await iutilities.make_waypoint_visible(v2, 1, "a2_m05_mca_base")
+			_pc = 18543
+			continue
+		elif _pc == 18543:
+			return
+		elif _pc == 18666:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18685() -> Variant:
@@ -2067,35 +2343,113 @@ func local_19143(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v4 = ifaction.find("Marauders")
-	v5 = null
-	v7 = group.sim_count(v0)
+	var _pc: int = 19143
 	while true:
-		await _pog_wait(v1)
-		if _pog_is_null(group.sim_count(v0)):
-			break
-		v6 = 0
-		while v7 < v6:
+		if _pc == 19143:
+			v4 = ifaction.find("Marauders")
+			v5 = null
+			v7 = group.sim_count(v0)
+			_pc = 19209
+			continue
+		elif _pc == 19209:
+			await _pog_wait(v1)
+			if _pog_is_null(group.sim_count(v0)):
+				_pc = 19266
+				continue
+			else:
+				_pc = 19271
+				continue
+		elif _pc == 19266:
+			_pc = 19797
+			continue
+		elif _pc == 19271:
+			v6 = 0
+			_pc = 19278
+			continue
+		elif _pc == 19278:
+			if v7 < v6:
+				_pc = 19294
+				continue
+			else:
+				_pc = 19791
+				continue
+		elif _pc == 19294:
 			v3 = iship.cast(group.nth_sim(v0, v6))
 			v5 = isim.ships_in_radius(v3, 1000.0)
 			if not (p_set.is_empty(v5)):
-				v2 = iship.cast(p_set.first_element(v5))
-				if not _pog_eq(v4, isim.faction(v2)):
-					if iai.is_order_complete(v3) or 1000.0 < sim.distance_between(v2, v3):
-						if 150.0 < sim.distance_between(v2, v3):
-							isim.kill(isim.cast(v3))
-						else:
-							if not (object.property_exists(v3, "triggered")):
-								object.add_int_property(v3, "triggered", 1)
-								await ipilotsetup.generic_cargo_pod(v3)
-								iai.give_approach_order_advanced(v3, v2, 0.0, 0.0, 0)
-					else:
-						if object.property_exists(v3, "triggered"):
-							object.remove_property(v3, "triggered")
-							iship.remove_pilot(v3)
+				_pc = 19391
+				continue
+			else:
+				_pc = 19773
+				continue
+		elif _pc == 19391:
+			v2 = iship.cast(p_set.first_element(v5))
+			if not _pog_eq(v4, isim.faction(v2)):
+				_pc = 19457
+				continue
+			else:
+				_pc = 19773
+				continue
+		elif _pc == 19457:
+			if iai.is_order_complete(v3) or 1000.0 < sim.distance_between(v2, v3):
+				_pc = 19510
+				continue
+			else:
+				_pc = 19698
+				continue
+		elif _pc == 19510:
+			if 150.0 < sim.distance_between(v2, v3):
+				_pc = 19544
+				continue
+			else:
+				_pc = 19581
+				continue
+		elif _pc == 19544:
+			isim.kill(isim.cast(v3))
+			_pc = 19693
+			continue
+		elif _pc == 19581:
+			if not (object.property_exists(v3, "triggered")):
+				_pc = 19612
+				continue
+			else:
+				_pc = 19693
+				continue
+		elif _pc == 19612:
+			object.add_int_property(v3, "triggered", 1)
+			await ipilotsetup.generic_cargo_pod(v3)
+			iai.give_approach_order_advanced(v3, v2, 0.0, 0.0, 0)
+			_pc = 19693
+			continue
+		elif _pc == 19693:
+			_pc = 19773
+			continue
+		elif _pc == 19698:
+			if object.property_exists(v3, "triggered"):
+				_pc = 19728
+				continue
+			else:
+				_pc = 19773
+				continue
+		elif _pc == 19728:
+			object.remove_property(v3, "triggered")
+			iship.remove_pilot(v3)
+			_pc = 19773
+			continue
+		elif _pc == 19773:
 			v6 = 1 + v6
-		if not (1):
-			break
-	return
+			_pc = 19278
+			continue
+		elif _pc == 19791:
+			if not (1):
+				_pc = 19797
+				continue
+			else:
+				_pc = 19209
+				continue
+		elif _pc == 19797:
+			return
+		else:
+			return 0
 	return 0
 

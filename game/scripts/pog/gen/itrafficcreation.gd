@@ -845,6 +845,7 @@ func local_111(v0) -> Variant:
 			_pc = 7976
 			continue
 		elif _pc == 6871:
+			ihabitat.type(v1)
 			if not _pog_is_null(ihabitat.type(v1)):
 				_pc = 6897
 				continue
@@ -2384,44 +2385,103 @@ func local_11676(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v1 = ihabitat.cast(v0)
-	v2 = ilagrangepoint.cast(v0)
-	v8 = 0
-	v9 = 4
-	if not _pog_is_null(v1):
-		v9 = 1000 / ihabitat.population(v1) + v9
-	if 8 > v9:
-		v9 = 8
-	object.set_int_property(v0, "active_slots", v9)
-	if 1 > v9:
-		v10 = 2
-	else:
-		v10 = 1
-	if PogRuntime.TRACE:
-		await local_27("iTrafficCreation: Initializing traffic for ")
-		if ihabitat.cast(v1):
-			await local_27(await iutilities.from_location_enum(ihabitat.type(v1)))
-		else:
-			await local_27("Lagrange Point ( non-habitat )")
-		await local_27("\n")
-		await local_27("iTrafficCreation: location name is ")
-		await local_27(imapentity.pog_name(v0))
-		await local_27("\n")
-		await local_27("iTrafficCreation: The number of slots created is ")
-		await local_27(string.from_int(v9))
-		await local_27("\n")
+	var _pc: int = 11676
 	while true:
-		if PogRuntime.TRACE:
+		if _pc == 11676:
+			v1 = ihabitat.cast(v0)
+			v2 = ilagrangepoint.cast(v0)
+			v8 = 0
+			v9 = 4
+			if not _pog_is_null(v1):
+				_pc = 11757
+				continue
+			else:
+				_pc = 11791
+				continue
+		elif _pc == 11757:
+			v9 = 1000 / ihabitat.population(v1) + v9
+			_pc = 11791
+			continue
+		elif _pc == 11791:
+			if 8 > v9:
+				_pc = 11804
+				continue
+			else:
+				_pc = 11812
+				continue
+		elif _pc == 11804:
+			v9 = 8
+			_pc = 11812
+			continue
+		elif _pc == 11812:
+			object.set_int_property(v0, "active_slots", v9)
+			if 1 > v9:
+				_pc = 11855
+				continue
+			else:
+				_pc = 11868
+				continue
+		elif _pc == 11855:
+			v10 = 2
+			_pc = 11875
+			continue
+		elif _pc == 11868:
+			v10 = 1
+			_pc = 11875
+			continue
+		elif _pc == 11875:
+			_pc = 12172
+			continue
+		elif _pc == 11880:
+			await local_27("iTrafficCreation: Initializing traffic for ")
+			if ihabitat.cast(v1):
+				_pc = 11925
+				continue
+			else:
+				_pc = 11977
+				continue
+		elif _pc == 11925:
+			await local_27(await iutilities.from_location_enum(ihabitat.type(v1)))
+			_pc = 11998
+			continue
+		elif _pc == 11977:
+			await local_27("Lagrange Point ( non-habitat )")
+			_pc = 11998
+			continue
+		elif _pc == 11998:
+			await local_27("\n")
+			await local_27("iTrafficCreation: location name is ")
+			await local_27(imapentity.pog_name(v0))
+			await local_27("\n")
+			await local_27("iTrafficCreation: The number of slots created is ")
+			await local_27(string.from_int(v9))
+			await local_27("\n")
+			_pc = 12172
+			continue
+		elif _pc == 12172:
+			_pc = 12312
+			continue
+		elif _pc == 12177:
 			await local_27("iTrafficCreation: Generating a traffic scenario for slot ")
 			await local_27(string.from_int(1 + v8))
 			await local_27(" of ")
 			await local_27(string.from_int(v10))
 			await local_27(" \n")
-		await local_10476(v0)
-		v8 = 1 + v8
-		if not (v10 < v8):
-			break
-	return 0
+			_pc = 12312
+			continue
+		elif _pc == 12312:
+			await local_10476(v0)
+			v8 = 1 + v8
+			if v10 >= v8:
+				_pc = 12360
+				continue
+			else:
+				_pc = 12172
+				continue
+		elif _pc == 12360:
+			return 0
+		else:
+			return 0
 	return 0
 
 func start(v0) -> Variant:
@@ -2434,71 +2494,189 @@ func start(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = ihabitat.cast(v0)
-	v2 = ilagrangepoint.cast(v0)
-	v3 = group.create()
-	v4 = group.create()
-	v9 = 0
-	global.create_int("g_parking_slots", 1, 9)
-	v6 = global.pog_int("g_parking_slots")
-	if _pog_is_null(v2):
-		global.destroy("g_spewer_in_use")
-		v7 = 0
-		while v6 < v7:
+	var _pc: int = 12363
+	while true:
+		if _pc == 12363:
+			v1 = ihabitat.cast(v0)
+			v2 = ilagrangepoint.cast(v0)
+			v3 = group.create()
+			v4 = group.create()
+			v9 = 0
+			global.create_int("g_parking_slots", 1, 9)
+			v6 = global.pog_int("g_parking_slots")
+			if _pog_is_null(v2):
+				_pc = 12524
+				continue
+			else:
+				_pc = 13400
+				continue
+		elif _pc == 12524:
+			global.destroy("g_spewer_in_use")
+			v7 = 0
+			_pc = 12552
+			continue
+		elif _pc == 12552:
+			if v6 < v7:
+				_pc = 12568
+				continue
+			else:
+				_pc = 12742
+				continue
+		elif _pc == 12568:
 			group.add_sim(v3, sim.create("ini:/sims/nav/waypoint", string.join(imapentity.pog_name(v0), string.join(" Unload Slot ", string.from_int(v7)))))
 			object.add_int_property(group.nth_sim(v3, v7), "occupied", 0)
 			v7 = 1 + v7
-		v5 = group.nth_sim(v3, 0)
-		sim.place_relative_to(v5, v0, 0.0, -1000.0, 2.5 * object.float_property(v0, "radius"))
-		sim.point_at(v5, v0)
-		v7 = 1
-		while v6 < v7:
+			_pc = 12552
+			continue
+		elif _pc == 12742:
+			v5 = group.nth_sim(v3, 0)
+			sim.place_relative_to(v5, v0, 0.0, -1000.0, 2.5 * object.float_property(v0, "radius"))
+			sim.point_at(v5, v0)
+			v7 = 1
+			_pc = 12863
+			continue
+		elif _pc == 12863:
+			if v6 < v7:
+				_pc = 12879
+				continue
+			else:
+				_pc = 12939
+				continue
+		elif _pc == 12879:
 			sim.copy_orientation(group.nth_sim(v3, v7), v5)
 			v7 = 1 + v7
-		await iformation.wall(v3, 2000.0, 1)
-		v3 = v4
-		v7 = 0
-		while v6 < v7:
+			_pc = 12863
+			continue
+		elif _pc == 12939:
+			await iformation.wall(v3, 2000.0, 1)
+			v3 = v4
+			v7 = 0
+			_pc = 12982
+			continue
+		elif _pc == 12982:
+			if v6 < v7:
+				_pc = 12998
+				continue
+			else:
+				_pc = 13172
+				continue
+		elif _pc == 12998:
 			group.add_sim(v3, sim.create("ini:/sims/nav/waypoint", string.join(imapentity.pog_name(v0), string.join(" Load Slot ", string.from_int(v7)))))
 			object.add_int_property(group.nth_sim(v3, v7), "occupied", 0)
 			v7 = 1 + v7
-		v5 = group.nth_sim(v3, 0)
-		sim.place_relative_to(v5, v0, 0.0, -1000.0, -(2.5 * object.float_property(v0, "radius")))
-		sim.point_at(v5, v0)
-		v7 = 1
-		while v6 < v7:
+			_pc = 12982
+			continue
+		elif _pc == 13172:
+			v5 = group.nth_sim(v3, 0)
+			sim.place_relative_to(v5, v0, 0.0, -1000.0, -(2.5 * object.float_property(v0, "radius")))
+			sim.point_at(v5, v0)
+			v7 = 1
+			_pc = 13294
+			continue
+		elif _pc == 13294:
+			if v6 < v7:
+				_pc = 13310
+				continue
+			else:
+				_pc = 13370
+				continue
+		elif _pc == 13310:
 			sim.copy_orientation(group.nth_sim(v3, v7), v5)
 			v7 = 1 + v7
-		await iformation.wall(v3, 2000.0, 1)
-	else:
-		v9 = 1
-	await local_11676(v0)
-	return v9
+			_pc = 13294
+			continue
+		elif _pc == 13370:
+			await iformation.wall(v3, 2000.0, 1)
+			_pc = 13407
+			continue
+		elif _pc == 13400:
+			v9 = 1
+			_pc = 13407
+			continue
+		elif _pc == 13407:
+			await local_11676(v0)
+			_pc = 13436
+			continue
+		elif _pc == 13436:
+			return
+		else:
+			return 0
 	return 0
 
 func terminate() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
-	v1 = 0
-	while global.pog_int("g_parking_slots") < v1:
-		v2 = string.join(imapentity.pog_name(v0), string.join(" Unload Slot ", string.from_int(v1)))
-		if not _pog_is_null(sim.find_by_name(v2)):
+	var _pc: int = 13438
+	while true:
+		if _pc == 13438:
+			v2 = null
+			v1 = 0
+			_pc = 13461
+			continue
+		elif _pc == 13461:
+			if global.pog_int("g_parking_slots") < v1:
+				_pc = 13492
+				continue
+			else:
+				_pc = 13846
+				continue
+		elif _pc == 13492:
+			v2 = string.join(imapentity.pog_name(v0), string.join(" Unload Slot ", string.from_int(v1)))
+			if not _pog_is_null(sim.find_by_name(v2)):
+				_pc = 13597
+				continue
+			else:
+				_pc = 13634
+				continue
+		elif _pc == 13597:
 			sim.destroy(sim.find_by_name(v2))
-		else:
-			if PogRuntime.TRACE:
-				await local_27("iTrafficCreation.Terminate - Unable to find unload waypoint to destroy\n")
-		v2 = string.join(imapentity.pog_name(v0), string.join(" Load Slot ", string.from_int(v1)))
-		if not _pog_is_null(sim.find_by_name(v2)):
+			_pc = 13660
+			continue
+		elif _pc == 13634:
+			_pc = 13660
+			continue
+		elif _pc == 13639:
+			await local_27("iTrafficCreation.Terminate - Unable to find unload waypoint to destroy\n")
+			_pc = 13660
+			continue
+		elif _pc == 13660:
+			v2 = string.join(imapentity.pog_name(v0), string.join(" Load Slot ", string.from_int(v1)))
+			if not _pog_is_null(sim.find_by_name(v2)):
+				_pc = 13765
+				continue
+			else:
+				_pc = 13802
+				continue
+		elif _pc == 13765:
 			sim.destroy(sim.find_by_name(v2))
+			_pc = 13828
+			continue
+		elif _pc == 13802:
+			_pc = 13828
+			continue
+		elif _pc == 13807:
+			await local_27("iTrafficCreation.Terminate - Unable to find load waypoint to destroy\n")
+			_pc = 13828
+			continue
+		elif _pc == 13828:
+			v1 = 1 + v1
+			_pc = 13461
+			continue
+		elif _pc == 13846:
+			_pc = 13872
+			continue
+		elif _pc == 13851:
+			await local_27("iTrafficCreation: Terminated location task successfully!\n")
+			_pc = 13872
+			continue
+		elif _pc == 13872:
+			_pc = 13878
+			continue
+		elif _pc == 13878:
+			return
 		else:
-			if PogRuntime.TRACE:
-				await local_27("iTrafficCreation.Terminate - Unable to find load waypoint to destroy\n")
-		v1 = 1 + v1
-	if PogRuntime.TRACE:
-		await local_27("iTrafficCreation: Terminated location task successfully!\n")
-	return 1
+			return 0
 	return 0
 
 func monitor_traffic() -> Variant:
@@ -2515,59 +2693,154 @@ func monitor_traffic() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v0 = 1
-	v1 = null
-	v9 = null
-	v10 = null
-	v11 = null
-	v12 = iship.find_player_ship()
-	global.set_list("g_active_location_list", v11)
+	var _pc: int = 13887
 	while true:
-		v1 = global.list("g_active_location_list")
-		if not (list.is_empty(v1)):
+		if _pc == 13887:
+			v0 = 1
+			v1 = null
+			v9 = null
+			v10 = null
+			v11 = null
+			v12 = iship.find_player_ship()
+			global.set_list("g_active_location_list", v11)
+			_pc = 13988
+			continue
+		elif _pc == 13988:
+			v1 = global.list("g_active_location_list")
+			if not (list.is_empty(v1)):
+				_pc = 14039
+				continue
+			else:
+				_pc = 14955
+				continue
+		elif _pc == 14039:
 			v5 = list.item_count(v1)
 			v3 = 0
-			while v5 < v3:
-				v2 = imapentity.cast(list.get_nth(v1, v3))
-				v7 = ilagrangepoint.cast(v2)
-				if await iutilities.player_in_range(v2):
-					if not (object.property_exists(v2, "active_slots")):
-						if PogRuntime.TRACE:
-							await local_27(" task iTrafficCreation.Monitortraffic - initialising traffic for - ")
-							await local_27(imapentity.pog_name(v2))
-							await local_27(" \n")
-						object.add_int_property(v2, "active_slots", 0)
-						await start(v2)
-					if _pog_is_null(v7):
-						v8 = global.pog_float("g_player_sensor_range") + 100000.0
-					else:
-						v8 = global.pog_float("g_player_sensor_range") + 100000.0
-					v9 = isim.sims_in_radius(v2, v8, 536838144)
-					v6 = p_set.item_count(v9)
-					if v8 < sim.distance_between(v2, v12):
-						v6 = 1 - v6
-					v4 = 2 * object.int_property(v2, "active_slots")
-					if PogRuntime.TRACE:
-						await local_27("iTrafficCreation.MonitorTraffic: Ping! Habitat Type: ")
-						if ihabitat.cast(v2):
-							await local_27(await iutilities.from_location_enum(ihabitat.type(ihabitat.cast(v2))))
-						else:
-							await local_27("<Unknown>")
-						await local_27(" Found ")
-						await local_27(string.from_int(v6))
-						await local_27(" active ships for ")
-						await local_27(string.from_int(v4))
-						await local_27(" adjusted slots; traffic if ships < slots. ")
-						await local_27("Radius: ")
-						await local_27(string.from_float(v8))
-						await local_27("\n")
-					if v4 < v6:
-						await local_10476(v2)
-				v3 = 1 + v3
-		await _pog_wait(0.5)
-		if not (v0):
-			break
-	return
+			_pc = 14070
+			continue
+		elif _pc == 14070:
+			if v5 < v3:
+				_pc = 14086
+				continue
+			else:
+				_pc = 14955
+				continue
+		elif _pc == 14086:
+			v2 = imapentity.cast(list.get_nth(v1, v3))
+			v7 = ilagrangepoint.cast(v2)
+			if await iutilities.player_in_range(v2):
+				_pc = 14175
+				continue
+			else:
+				_pc = 14937
+				continue
+		elif _pc == 14175:
+			if not (object.property_exists(v2, "active_slots")):
+				_pc = 14206
+				continue
+			else:
+				_pc = 14335
+				continue
+		elif _pc == 14206:
+			_pc = 14289
+			continue
+		elif _pc == 14211:
+			await local_27(" task iTrafficCreation.Monitortraffic - initialising traffic for - ")
+			await local_27(imapentity.pog_name(v2))
+			await local_27(" \n")
+			_pc = 14289
+			continue
+		elif _pc == 14289:
+			object.add_int_property(v2, "active_slots", 0)
+			await start(v2)
+			_pc = 14335
+			continue
+		elif _pc == 14335:
+			if _pog_is_null(v7):
+				_pc = 14348
+				continue
+			else:
+				_pc = 14385
+				continue
+		elif _pc == 14348:
+			v8 = global.pog_float("g_player_sensor_range") + 100000.0
+			_pc = 14417
+			continue
+		elif _pc == 14385:
+			v8 = global.pog_float("g_player_sensor_range") + 100000.0
+			_pc = 14417
+			continue
+		elif _pc == 14417:
+			v9 = isim.sims_in_radius(v2, v8, 536838144)
+			v6 = p_set.item_count(v9)
+			if v8 < sim.distance_between(v2, v12):
+				_pc = 14511
+				continue
+			else:
+				_pc = 14524
+				continue
+		elif _pc == 14511:
+			v6 = 1 - v6
+			_pc = 14524
+			continue
+		elif _pc == 14524:
+			v4 = 2 * object.int_property(v2, "active_slots")
+			_pc = 14902
+			continue
+		elif _pc == 14563:
+			await local_27("iTrafficCreation.MonitorTraffic: Ping! Habitat Type: ")
+			if ihabitat.cast(v2):
+				_pc = 14608
+				continue
+			else:
+				_pc = 14673
+				continue
+		elif _pc == 14608:
+			await local_27(await iutilities.from_location_enum(ihabitat.type(ihabitat.cast(v2))))
+			_pc = 14694
+			continue
+		elif _pc == 14673:
+			await local_27("<Unknown>")
+			_pc = 14694
+			continue
+		elif _pc == 14694:
+			await local_27(" Found ")
+			await local_27(string.from_int(v6))
+			await local_27(" active ships for ")
+			await local_27(string.from_int(v4))
+			await local_27(" adjusted slots; traffic if ships < slots. ")
+			await local_27("Radius: ")
+			await local_27(string.from_float(v8))
+			await local_27("\n")
+			_pc = 14902
+			continue
+		elif _pc == 14902:
+			if v4 < v6:
+				_pc = 14918
+				continue
+			else:
+				_pc = 14937
+				continue
+		elif _pc == 14918:
+			await local_10476(v2)
+			_pc = 14937
+			continue
+		elif _pc == 14937:
+			v3 = 1 + v3
+			_pc = 14070
+			continue
+		elif _pc == 14955:
+			await _pog_wait(0.5)
+			if not (v0):
+				_pc = 14997
+				continue
+			else:
+				_pc = 13988
+				continue
+		elif _pc == 14997:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_go_to_lagrange_point() -> Variant:
@@ -2582,31 +2855,62 @@ func custom_go_to_lagrange_point() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v6 = group.create()
-	v6 = await ishipcreation.get_traffic(v2, v4, v3)
-	if v5:
-		v8 = group.leader(v6)
-		sim.place_near(v8, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v6, 40.0, 1)
-		v9 = _pog_spawn(iscriptedorders.lagrange_handler.bind(v6, _pog_clone(v1)))
-		_pog_detach(v9)
-		object.add_handle_property(v8, "behaviour_script_handle", v9)
-	else:
-		while true:
+	var _pc: int = 15027
+	while true:
+		if _pc == 15027:
+			v6 = group.create()
+			v6 = await ishipcreation.get_traffic(v2, v4, v3)
+			if v5:
+				_pc = 15095
+				continue
+			else:
+				_pc = 15270
+				continue
+		elif _pc == 15095:
+			v8 = group.leader(v6)
+			sim.place_near(v8, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v6, 40.0, 1)
+			v9 = _pog_spawn(iscriptedorders.lagrange_handler.bind(v6, _pog_clone(v1)))
+			_pog_detach(v9)
+			object.add_handle_property(v8, "behaviour_script_handle", v9)
+			_pc = 15551
+			continue
+		elif _pc == 15270:
 			v7 = group.create()
 			v8 = group.nth_sim(v6, v10)
 			if _pog_is_null(v8):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomGoToLagrangePoint: Invalid Sim passed for orders")
+				_pc = 15331
+				continue
+			else:
+				_pc = 15357
+				continue
+		elif _pc == 15331:
+			_pc = 15357
+			continue
+		elif _pc == 15336:
+			await local_27("iTrafficCreation.CustomGoToLagrangePoint: Invalid Sim passed for orders")
+			_pc = 15357
+			continue
+		elif _pc == 15357:
 			group.add_sim(v7, v8)
 			group.add_group(v6, v7)
 			sim.place_near(v8, v0, math.random(500.0, 3000.0))
 			v9 = _pog_spawn(iscriptedorders.lagrange_handler.bind(v7, _pog_clone(v1)))
 			_pog_detach(v9)
 			object.add_handle_property(v8, "behaviour_script_handle", v9)
-			if not (not _pog_is_null(group.sim_count(v6))):
-				break
-	return v6
+			if _pog_is_null(group.sim_count(v6)):
+				_pc = 15551
+				continue
+			else:
+				_pc = 15270
+				continue
+		elif _pc == 15551:
+			_pc = 15561
+			continue
+		elif _pc == 15561:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_local_security_patrol(v0, v1, v2, v3, v4) -> Variant:
@@ -2615,23 +2919,44 @@ func custom_local_security_patrol(v0, v1, v2, v3, v4) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		object.add_bool_property(group.leader(v5), "no_run_off", 1)
-		v8 = _pog_spawn(iscriptedorders.local_patrol.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 15563
+	while true:
+		if _pc == 15563:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 15631
+				continue
+			else:
+				_pc = 15840
+				continue
+		elif _pc == 15631:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			object.add_bool_property(group.leader(v5), "no_run_off", 1)
+			v8 = _pog_spawn(iscriptedorders.local_patrol.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 16155
+			continue
+		elif _pc == 15840:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomLocalPatrol: Invalid Sim passed for orders")
+				_pc = 15901
+				continue
+			else:
+				_pc = 15927
+				continue
+		elif _pc == 15901:
+			_pc = 15927
+			continue
+		elif _pc == 15906:
+			await local_27("iTrafficCreation.CustomLocalPatrol: Invalid Sim passed for orders")
+			_pc = 15927
+			continue
+		elif _pc == 15927:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
@@ -2639,9 +2964,19 @@ func custom_local_security_patrol(v0, v1, v2, v3, v4) -> Variant:
 			v8 = _pog_spawn(iscriptedorders.local_patrol.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 16155
+				continue
+			else:
+				_pc = 15840
+				continue
+		elif _pc == 16155:
+			_pc = 16165
+			continue
+		elif _pc == 16165:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_freelance_mine() -> Variant:
@@ -2655,31 +2990,62 @@ func custom_freelance_mine() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.freelance_mine.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 16167
+	while true:
+		if _pc == 16167:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 16235
+				continue
+			else:
+				_pc = 16404
+				continue
+		elif _pc == 16235:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.freelance_mine.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 16679
+			continue
+		elif _pc == 16404:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomFreelanceMine: Invalid Sim passed for orders")
+				_pc = 16465
+				continue
+			else:
+				_pc = 16491
+				continue
+		elif _pc == 16465:
+			_pc = 16491
+			continue
+		elif _pc == 16470:
+			await local_27("iTrafficCreation.CustomFreelanceMine: Invalid Sim passed for orders")
+			_pc = 16491
+			continue
+		elif _pc == 16491:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.freelance_mine.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 16679
+				continue
+			else:
+				_pc = 16404
+				continue
+		elif _pc == 16679:
+			_pc = 16689
+			continue
+		elif _pc == 16689:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_official_visit() -> Variant:
@@ -2693,31 +3059,62 @@ func custom_official_visit() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.official_visitor.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 16691
+	while true:
+		if _pc == 16691:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 16759
+				continue
+			else:
+				_pc = 16928
+				continue
+		elif _pc == 16759:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.official_visitor.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 17203
+			continue
+		elif _pc == 16928:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomOfficialVisitor: Invalid Sim passed for orders")
+				_pc = 16989
+				continue
+			else:
+				_pc = 17015
+				continue
+		elif _pc == 16989:
+			_pc = 17015
+			continue
+		elif _pc == 16994:
+			await local_27("iTrafficCreation.CustomOfficialVisitor: Invalid Sim passed for orders")
+			_pc = 17015
+			continue
+		elif _pc == 17015:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.official_visitor.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 17203
+				continue
+			else:
+				_pc = 16928
+				continue
+		elif _pc == 17203:
+			_pc = 17213
+			continue
+		elif _pc == 17213:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_piracy() -> Variant:
@@ -2731,31 +3128,62 @@ func custom_piracy() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.piracy.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 17215
+	while true:
+		if _pc == 17215:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 17283
+				continue
+			else:
+				_pc = 17452
+				continue
+		elif _pc == 17283:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.piracy.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 17727
+			continue
+		elif _pc == 17452:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomPiracy: Invalid Sim passed for orders")
+				_pc = 17513
+				continue
+			else:
+				_pc = 17539
+				continue
+		elif _pc == 17513:
+			_pc = 17539
+			continue
+		elif _pc == 17518:
+			await local_27("iTrafficCreation.CustomPiracy: Invalid Sim passed for orders")
+			_pc = 17539
+			continue
+		elif _pc == 17539:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.piracy.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 17727
+				continue
+			else:
+				_pc = 17452
+				continue
+		elif _pc == 17727:
+			_pc = 17737
+			continue
+		elif _pc == 17737:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_cabbie() -> Variant:
@@ -2769,31 +3197,62 @@ func custom_cabbie() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.cabbie.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 17739
+	while true:
+		if _pc == 17739:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 17807
+				continue
+			else:
+				_pc = 17976
+				continue
+		elif _pc == 17807:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.cabbie.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 18251
+			continue
+		elif _pc == 17976:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomCabbie: Invalid Sim passed for orders")
+				_pc = 18037
+				continue
+			else:
+				_pc = 18063
+				continue
+		elif _pc == 18037:
+			_pc = 18063
+			continue
+		elif _pc == 18042:
+			await local_27("iTrafficCreation.CustomCabbie: Invalid Sim passed for orders")
+			_pc = 18063
+			continue
+		elif _pc == 18063:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.cabbie.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 18251
+				continue
+			else:
+				_pc = 17976
+				continue
+		elif _pc == 18251:
+			_pc = 18261
+			continue
+		elif _pc == 18261:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_speed_trap() -> Variant:
@@ -2807,31 +3266,62 @@ func custom_speed_trap() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.speed_trap.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 18263
+	while true:
+		if _pc == 18263:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 18331
+				continue
+			else:
+				_pc = 18500
+				continue
+		elif _pc == 18331:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.speed_trap.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 18775
+			continue
+		elif _pc == 18500:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomSpeedTrap: Invalid Sim passed for orders")
+				_pc = 18561
+				continue
+			else:
+				_pc = 18587
+				continue
+		elif _pc == 18561:
+			_pc = 18587
+			continue
+		elif _pc == 18566:
+			await local_27("iTrafficCreation.CustomSpeedTrap: Invalid Sim passed for orders")
+			_pc = 18587
+			continue
+		elif _pc == 18587:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.speed_trap.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 18775
+				continue
+			else:
+				_pc = 18500
+				continue
+		elif _pc == 18775:
+			_pc = 18785
+			continue
+		elif _pc == 18785:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_flitter(v0, v1, v2, v3, v4) -> Variant:
@@ -2840,31 +3330,62 @@ func custom_flitter(v0, v1, v2, v3, v4) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.flitter.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 18787
+	while true:
+		if _pc == 18787:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 18855
+				continue
+			else:
+				_pc = 19024
+				continue
+		elif _pc == 18855:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.flitter.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 19299
+			continue
+		elif _pc == 19024:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomFlitter: Invalid Sim passed for orders")
+				_pc = 19085
+				continue
+			else:
+				_pc = 19111
+				continue
+		elif _pc == 19085:
+			_pc = 19111
+			continue
+		elif _pc == 19090:
+			await local_27("iTrafficCreation.CustomFlitter: Invalid Sim passed for orders")
+			_pc = 19111
+			continue
+		elif _pc == 19111:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.flitter.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 19299
+				continue
+			else:
+				_pc = 19024
+				continue
+		elif _pc == 19299:
+			_pc = 19309
+			continue
+		elif _pc == 19309:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_police_raid() -> Variant:
@@ -2878,31 +3399,62 @@ func custom_police_raid() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.police_raid.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 19311
+	while true:
+		if _pc == 19311:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 19379
+				continue
+			else:
+				_pc = 19548
+				continue
+		elif _pc == 19379:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.police_raid.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 19823
+			continue
+		elif _pc == 19548:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomPoliceRaid: Invalid Sim passed for orders")
+				_pc = 19609
+				continue
+			else:
+				_pc = 19635
+				continue
+		elif _pc == 19609:
+			_pc = 19635
+			continue
+		elif _pc == 19614:
+			await local_27("iTrafficCreation.CustomPoliceRaid: Invalid Sim passed for orders")
+			_pc = 19635
+			continue
+		elif _pc == 19635:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.police_raid.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 19823
+				continue
+			else:
+				_pc = 19548
+				continue
+		elif _pc == 19823:
+			_pc = 19833
+			continue
+		elif _pc == 19833:
+			return
+		else:
+			return 0
 	return 0
 
 func custom_maneuvre() -> Variant:
@@ -2916,30 +3468,61 @@ func custom_maneuvre() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = group.create()
-	v5 = await ishipcreation.get_traffic(v1, v3, v2)
-	if v4:
-		v7 = group.leader(v5)
-		sim.place_near(v7, v0, math.random(500.0, 3000.0))
-		await iformation.goose(v5, 40.0, 1)
-		v8 = _pog_spawn(iscriptedorders.maneuvre.bind(v5))
-		_pog_detach(v8)
-		object.add_handle_property(v7, "behaviour_script_handle", v8)
-	else:
-		while true:
+	var _pc: int = 19835
+	while true:
+		if _pc == 19835:
+			v5 = group.create()
+			v5 = await ishipcreation.get_traffic(v1, v3, v2)
+			if v4:
+				_pc = 19903
+				continue
+			else:
+				_pc = 20072
+				continue
+		elif _pc == 19903:
+			v7 = group.leader(v5)
+			sim.place_near(v7, v0, math.random(500.0, 3000.0))
+			await iformation.goose(v5, 40.0, 1)
+			v8 = _pog_spawn(iscriptedorders.maneuvre.bind(v5))
+			_pog_detach(v8)
+			object.add_handle_property(v7, "behaviour_script_handle", v8)
+			_pc = 20347
+			continue
+		elif _pc == 20072:
 			v6 = group.create()
 			v7 = group.nth_sim(v5, v9)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					await local_27("iTrafficCreation.CustomManeuvre: Invalid Sim passed for orders")
+				_pc = 20133
+				continue
+			else:
+				_pc = 20159
+				continue
+		elif _pc == 20133:
+			_pc = 20159
+			continue
+		elif _pc == 20138:
+			await local_27("iTrafficCreation.CustomManeuvre: Invalid Sim passed for orders")
+			_pc = 20159
+			continue
+		elif _pc == 20159:
 			group.add_sim(v6, v7)
 			group.add_group(v5, v6)
 			sim.place_near(v7, v0, math.random(500.0, 3000.0))
 			v8 = _pog_spawn(iscriptedorders.maneuvre.bind(v6))
 			_pog_detach(v8)
 			object.add_handle_property(v7, "behaviour_script_handle", v8)
-			if not (not _pog_is_null(group.sim_count(v5))):
-				break
-	return v5
+			if _pog_is_null(group.sim_count(v5)):
+				_pc = 20347
+				continue
+			else:
+				_pc = 20072
+				continue
+		elif _pc == 20347:
+			_pc = 20357
+			continue
+		elif _pc == 20357:
+			return
+		else:
+			return 0
 	return 0
 

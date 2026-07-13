@@ -50,78 +50,244 @@ func ship_name(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = inifile.cast(global.handle("g_ship_names_ini"))
-	v4 = inifile.pog_int(v2, v0, "NumberOfEntries", -1)
-	v5 = null
-	v6 = null
-	if -1 == v4:
-		if PogRuntime.TRACE:
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			v2 = inifile.cast(global.handle("g_ship_names_ini"))
+			v4 = inifile.pog_int(v2, v0, "NumberOfEntries", -1)
+			v5 = null
+			v6 = null
+			if -1 == v4:
+				_pc = 116
+				continue
+			else:
+				_pc = 238
+				continue
+		elif _pc == 116:
+			_pc = 182
+			continue
+		elif _pc == 121:
 			debug.print_string("iShipCreation.ShipName: ERROR! Unable to read the number of entries of category '")
 			debug.print_string(v0)
 			debug.print_string("' from ini file.  Using general category\n")
-		v0 = "General"
-		v4 = inifile.pog_int(v2, v0, "NumberOfEntries", -1)
-	else:
-		if _pog_is_null(v4):
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation.ShipName: No names in valid category '")
-				debug.print_string(v0)
-				debug.print_string("'.  Using general category instead\n")
+			_pc = 182
+			continue
+		elif _pc == 182:
 			v0 = "General"
 			v4 = inifile.pog_int(v2, v0, "NumberOfEntries", -1)
-	if -1 == v1:
-		v6 = string.join("index_", v0)
-		if _pog_is_null(global.exists(v6)):
+			_pc = 367
+			continue
+		elif _pc == 238:
+			if _pog_is_null(v4):
+				_pc = 250
+				continue
+			else:
+				_pc = 367
+				continue
+		elif _pc == 250:
+			_pc = 316
+			continue
+		elif _pc == 255:
+			debug.print_string("iShipCreation.ShipName: No names in valid category '")
+			debug.print_string(v0)
+			debug.print_string("'.  Using general category instead\n")
+			_pc = 316
+			continue
+		elif _pc == 316:
+			v0 = "General"
+			v4 = inifile.pog_int(v2, v0, "NumberOfEntries", -1)
+			_pc = 367
+			continue
+		elif _pc == 367:
+			if -1 == v1:
+				_pc = 380
+				continue
+			else:
+				_pc = 714
+				continue
+		elif _pc == 380:
+			v6 = string.join("index_", v0)
+			if _pog_is_null(global.exists(v6)):
+				_pc = 437
+				continue
+			else:
+				_pc = 493
+				continue
+		elif _pc == 437:
 			v1 = math.random_int(0, v4)
 			global.create_int(v6, 2, v1)
-		else:
+			_pc = 517
+			continue
+		elif _pc == 493:
 			v1 = global.pog_int(v6)
-		v5 = string.join(inifile.string(v2, v0, "Prefix", "none"), string.from_int(v1))
-		if 15 > v4:
+			_pc = 517
+			continue
+		elif _pc == 517:
+			v5 = string.join(inifile.string(v2, v0, "Prefix", "none"), string.from_int(v1))
+			if 15 > v4:
+				_pc = 606
+				continue
+			else:
+				_pc = 639
+				continue
+		elif _pc == 606:
 			v1 = math.random_int(1, 3) + v1
-		else:
+			_pc = 652
+			continue
+		elif _pc == 639:
 			v1 = 1 + v1
-		if v4 >= v1:
+			_pc = 652
+			continue
+		elif _pc == 652:
+			if v4 >= v1:
+				_pc = 668
+				continue
+			else:
+				_pc = 685
+				continue
+		elif _pc == 668:
 			v1 = v4 - v1
-		global.set_int(v6, v1)
-	else:
-		if v4 > v1:
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation.ShipName: The name number given does not exist in category '")
-				debug.print_string(v0)
-				debug.print_string("' using random\n")
+			_pc = 685
+			continue
+		elif _pc == 685:
+			global.set_int(v6, v1)
+			_pc = 897
+			continue
+		elif _pc == 714:
+			if v4 > v1:
+				_pc = 730
+				continue
+			else:
+				_pc = 821
+				continue
+		elif _pc == 730:
+			_pc = 796
+			continue
+		elif _pc == 735:
+			debug.print_string("iShipCreation.ShipName: The name number given does not exist in category '")
+			debug.print_string(v0)
+			debug.print_string("' using random\n")
+			_pc = 796
+			continue
+		elif _pc == 796:
 			v1 = math.random_int(0, v4)
-		v5 = string.join(inifile.string(v2, v0, "Prefix", "none"), string.from_int(v1))
-	return _pog_clone(v5)
+			_pc = 821
+			continue
+		elif _pc == 821:
+			v5 = string.join(inifile.string(v2, v0, "Prefix", "none"), string.from_int(v1))
+			_pc = 897
+			continue
+		elif _pc == 897:
+			_pc = 907
+			continue
+		elif _pc == 907:
+			return
+		else:
+			return 0
 	return 0
 
 func local_924(v0, v1, v2) -> Variant:
-	sim.set_collision(v1, 0)
-	if _pog_is_null(v2):
-		sim.add_child_relative_to(v0, v1, -30.0, -30.0, 50.0)
-		return 0
-	if v2 == 1:
-		sim.add_child_relative_to(v0, v1, 30.0, 30.0, 50.0)
-		return 0
-	if v2 == 2:
-		sim.add_child_relative_to(v0, v1, -30.0, 30.0, 50.0)
-		return 0
-	if v2 == 3:
-		sim.add_child_relative_to(v0, v1, 30.0, -30.0, 50.0)
-		return 0
-	if v2 == 4:
-		sim.add_child_relative_to(v0, v1, -30.0, -30.0, 0.0)
-		return 0
-	if v2 == 5:
-		sim.add_child_relative_to(v0, v1, 30.0, 30.0, 0.0)
-		return 0
-	if v2 == 6:
-		sim.add_child_relative_to(v0, v1, -30.0, 30.0, 0.0)
-		return 0
-	if v2 == 7:
-		sim.add_child_relative_to(v0, v1, 30.0, -30.0, 0.0)
-		return 0
-	return 0
+	var _pc: int = 924
+	while true:
+		if _pc == 924:
+			sim.set_collision(v1, 0)
+			_pc = 1306
+			continue
+		elif _pc == 949:
+			sim.add_child_relative_to(v0, v1, -30.0, -30.0, 50.0)
+			_pc = 1381
+			continue
+		elif _pc == 993:
+			sim.add_child_relative_to(v0, v1, 30.0, 30.0, 50.0)
+			_pc = 1381
+			continue
+		elif _pc == 1037:
+			sim.add_child_relative_to(v0, v1, -30.0, 30.0, 50.0)
+			_pc = 1381
+			continue
+		elif _pc == 1081:
+			sim.add_child_relative_to(v0, v1, 30.0, -30.0, 50.0)
+			_pc = 1381
+			continue
+		elif _pc == 1125:
+			sim.add_child_relative_to(v0, v1, -30.0, -30.0, 0.0)
+			_pc = 1381
+			continue
+		elif _pc == 1169:
+			sim.add_child_relative_to(v0, v1, 30.0, 30.0, 0.0)
+			_pc = 1381
+			continue
+		elif _pc == 1213:
+			sim.add_child_relative_to(v0, v1, -30.0, 30.0, 0.0)
+			_pc = 1381
+			continue
+		elif _pc == 1257:
+			sim.add_child_relative_to(v0, v1, 30.0, -30.0, 0.0)
+			_pc = 1381
+			continue
+		elif _pc == 1301:
+			_pc = 1381
+			continue
+		elif _pc == 1306:
+			if not _pog_is_null(v2):
+				_pc = 1319
+				continue
+			else:
+				_pc = 949
+				continue
+		elif _pc == 1319:
+			if not _pog_is_null(1):
+				_pc = 1327
+				continue
+			else:
+				_pc = 993
+				continue
+		elif _pc == 1327:
+			if not _pog_is_null(2):
+				_pc = 1336
+				continue
+			else:
+				_pc = 1037
+				continue
+		elif _pc == 1336:
+			if not _pog_is_null(3):
+				_pc = 1345
+				continue
+			else:
+				_pc = 1081
+				continue
+		elif _pc == 1345:
+			if not _pog_is_null(4):
+				_pc = 1354
+				continue
+			else:
+				_pc = 1125
+				continue
+		elif _pc == 1354:
+			if not _pog_is_null(5):
+				_pc = 1363
+				continue
+			else:
+				_pc = 1169
+				continue
+		elif _pc == 1363:
+			if not _pog_is_null(6):
+				_pc = 1372
+				continue
+			else:
+				_pc = 1213
+				continue
+		elif _pc == 1372:
+			if not _pog_is_null(7):
+				_pc = 1381
+				continue
+			else:
+				_pc = 1257
+				continue
+		elif _pc == 1381:
+			return 0
+		else:
+			return 0
 	return 0
 
 func stack_cargo(v0, v1) -> Variant:
@@ -130,23 +296,59 @@ func stack_cargo(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = group.cast(v1)
-	v3 = iship.cast(v1)
-	if not (object.property_exists(v0, "stacking_slot")):
-		object.add_int_property(v0, "stacking_slot", 0)
-		v4 = 0
-	else:
-		v4 = object.int_property(v0, "stacking_slot")
-	if not _pog_is_null(v3):
-		await local_924(v0, v3, v4)
-	else:
-		v5 = group.sim_count(v2)
-		v6 = 0
-		while v5 < v6:
+	var _pc: int = 1384
+	while true:
+		if _pc == 1384:
+			v2 = group.cast(v1)
+			v3 = iship.cast(v1)
+			if not (object.property_exists(v0, "stacking_slot")):
+				_pc = 1468
+				continue
+			else:
+				_pc = 1507
+				continue
+		elif _pc == 1468:
+			object.add_int_property(v0, "stacking_slot", 0)
+			v4 = 0
+			_pc = 1538
+			continue
+		elif _pc == 1507:
+			v4 = object.int_property(v0, "stacking_slot")
+			_pc = 1538
+			continue
+		elif _pc == 1538:
+			if not _pog_is_null(v3):
+				_pc = 1551
+				continue
+			else:
+				_pc = 1585
+				continue
+		elif _pc == 1551:
+			await local_924(v0, v3, v4)
+			_pc = 1723
+			continue
+		elif _pc == 1585:
+			v5 = group.sim_count(v2)
+			v6 = 0
+			_pc = 1616
+			continue
+		elif _pc == 1616:
+			if v5 < v6:
+				_pc = 1632
+				continue
+			else:
+				_pc = 1723
+				continue
+		elif _pc == 1632:
 			v4 = 1 + v4
 			await local_924(v0, iship.cast(group.nth_sim(v2, v6)), v4)
 			v6 = 1 + v6
-	return 0
+			_pc = 1616
+			continue
+		elif _pc == 1723:
+			return 0
+		else:
+			return 0
 	return 0
 
 func create_megapod_cargo(v0, v1, v2) -> Variant:
@@ -192,6 +394,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 			_pc = 1951
 			continue
 		elif _pc == 1910:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 1934
 				continue
@@ -248,6 +451,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 			_pc = 2218
 			continue
 		elif _pc == 2168:
+			math.random_int(0, 3)
 			if not _pog_is_null(math.random_int(0, 3)):
 				_pc = 2192
 				continue
@@ -362,6 +566,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 			_pc = 2668
 			continue
 		elif _pc == 2618:
+			math.random_int(0, 3)
 			if not _pog_is_null(math.random_int(0, 3)):
 				_pc = 2642
 				continue
@@ -837,6 +1042,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 3484
 			continue
 		elif _pc == 3437:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 3461
 				continue
@@ -1280,6 +1486,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 4135
 			continue
 		elif _pc == 4088:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 4112
 				continue
@@ -2126,6 +2333,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 5352
 			continue
 		elif _pc == 5296:
+			math.random_int(1, 4)
 			if math.random_int(1, 4) != 1:
 				_pc = 5320
 				continue
@@ -2588,6 +2796,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 6056
 			continue
 		elif _pc == 6000:
+			math.random_int(1, 4)
 			if math.random_int(1, 4) != 1:
 				_pc = 6024
 				continue
@@ -2641,6 +2850,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 6161
 			continue
 		elif _pc == 6125:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 6148
 				continue
@@ -3074,6 +3284,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 6790
 			continue
 		elif _pc == 6754:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 6777
 				continue
@@ -3112,6 +3323,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 6886
 			continue
 		elif _pc == 6855:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 6878
 				continue
@@ -3548,6 +3760,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 7547
 			continue
 		elif _pc == 7501:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 7525
 				continue
@@ -3597,6 +3810,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 7663
 			continue
 		elif _pc == 7627:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 7650
 				continue
@@ -4033,6 +4247,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 8313
 			continue
 		elif _pc == 8267:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 8291
 				continue
@@ -4079,6 +4294,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 8428
 			continue
 		elif _pc == 8382:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 8406
 				continue
@@ -4522,6 +4738,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 9079
 			continue
 		elif _pc == 9032:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 9056
 				continue
@@ -4574,6 +4791,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 9235
 			continue
 		elif _pc == 9170:
+			math.random_int(1, 5)
 			if math.random_int(1, 5) != 1:
 				_pc = 9194
 				continue
@@ -4634,6 +4852,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 9351
 			continue
 		elif _pc == 9304:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 9328
 				continue
@@ -4680,6 +4899,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 9485
 			continue
 		elif _pc == 9420:
+			math.random_int(1, 5)
 			if math.random_int(1, 5) != 1:
 				_pc = 9444
 				continue
@@ -5137,6 +5357,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 10135
 			continue
 		elif _pc == 10089:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 10113
 				continue
@@ -5577,6 +5798,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 10764
 			continue
 		elif _pc == 10728:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 10751
 				continue
@@ -6013,6 +6235,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 11414
 			continue
 		elif _pc == 11368:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 11392
 				continue
@@ -6059,6 +6282,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 11529
 			continue
 		elif _pc == 11483:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 11507
 				continue
@@ -6105,6 +6329,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 11634
 			continue
 		elif _pc == 11598:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 11621
 				continue
@@ -6541,6 +6766,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 12274
 			continue
 		elif _pc == 12238:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 12261
 				continue
@@ -6580,6 +6806,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 12379
 			continue
 		elif _pc == 12343:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 12366
 				continue
@@ -7019,6 +7246,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 13050
 			continue
 		elif _pc == 12994:
+			math.random_int(1, 4)
 			if math.random_int(1, 4) != 1:
 				_pc = 13018
 				continue
@@ -7075,6 +7303,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 13186
 			continue
 		elif _pc == 13130:
+			math.random_int(1, 4)
 			if math.random_int(1, 4) != 1:
 				_pc = 13154
 				continue
@@ -7128,6 +7357,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 13302
 			continue
 		elif _pc == 13255:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 13279
 				continue
@@ -7571,6 +7801,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 13953
 			continue
 		elif _pc == 13906:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 13930
 				continue
@@ -8004,6 +8235,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 14553
 			continue
 		elif _pc == 14520:
+			math.random_int(1, 2)
 			if math.random_int(1, 2) != 1:
 				_pc = 14544
 				continue
@@ -8443,6 +8675,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 15235
 			continue
 		elif _pc == 15179:
+			math.random_int(1, 4)
 			if math.random_int(1, 4) != 1:
 				_pc = 15203
 				continue
@@ -8890,6 +9123,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 15875
 			continue
 		elif _pc == 15828:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 15852
 				continue
@@ -9330,6 +9564,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 16515
 			continue
 		elif _pc == 16468:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 16492
 				continue
@@ -9773,6 +10008,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 17166
 			continue
 		elif _pc == 17119:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 17143
 				continue
@@ -10231,6 +10467,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 17917
 			continue
 		elif _pc == 17825:
+			math.random_int(1, 8)
 			if math.random_int(1, 8) != 1:
 				_pc = 17849
 				continue
@@ -10321,6 +10558,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 18102
 			continue
 		elif _pc == 18019:
+			math.random_int(1, 7)
 			if math.random_int(1, 7) != 1:
 				_pc = 18043
 				continue
@@ -10401,6 +10639,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 18249
 			continue
 		elif _pc == 18193:
+			math.random_int(1, 4)
 			if math.random_int(1, 4) != 1:
 				_pc = 18217
 				continue
@@ -11269,6 +11508,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 19580
 			continue
 		elif _pc == 19471:
+			math.random_int(0, 9)
 			if not _pog_is_null(math.random_int(0, 9)):
 				_pc = 19495
 				continue
@@ -11764,6 +12004,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 20227
 			continue
 		elif _pc == 20189:
+			math.random_int(1, 2)
 			if math.random_int(1, 2) != 1:
 				_pc = 20213
 				continue
@@ -12397,50 +12638,111 @@ func create_character_group(v0, v1, v2, v3, v4) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	v6 = group.create()
-	v7 = null
-	v8 = null
-	v10 = 1
-	v11 = 0
-	v12 = 0
-	v13 = 0
-	v15 = 0
-	v14 = ifaction.allegiance(v3)
-	v9 = 0
-	while v2 < v9:
-		v5 = iship.create(await get_ship(v14, v0), "name")
-		if _pog_is_null(v5):
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation.CreateCharacterGroup: Could not create '")
-				debug.print_string(v4)
-				debug.print_string(" ship of type ")
-				debug.print_int(v0)
-				debug.print_string("\n")
+	var _pc: int = 21070
+	while true:
+		if _pc == 21070:
+			v6 = group.create()
+			v7 = null
+			v8 = null
+			v10 = 1
+			v11 = 0
+			v12 = 0
+			v13 = 0
+			v15 = 0
+			v14 = ifaction.allegiance(v3)
+			v9 = 0
+			_pc = 21182
 			continue
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation.CreateCharacterGroup: '")
-				debug.print_string(v4)
-				debug.print_string(" ship of type ")
-				debug.print_int(v0)
-				debug.print_string(" created sucessfully : ")
-		isim.set_faction(v5, v3)
-		if _pog_eq("Random", v4):
-			if PogRuntime.TRACE:
-				debug.print_string(" picking random name\n")
+		elif _pc == 21182:
+			if v2 < v9:
+				_pc = 21198
+				continue
+			else:
+				_pc = 21783
+				continue
+		elif _pc == 21198:
+			v5 = iship.create(await get_ship(v14, v0), "name")
+			if _pog_is_null(v5):
+				_pc = 21261
+				continue
+			else:
+				_pc = 21377
+				continue
+		elif _pc == 21261:
+			_pc = 21367
+			continue
+		elif _pc == 21266:
+			debug.print_string("iShipCreation.CreateCharacterGroup: Could not create '")
+			debug.print_string(v4)
+			debug.print_string(" ship of type ")
+			debug.print_int(v0)
+			debug.print_string("\n")
+			_pc = 21367
+			continue
+		elif _pc == 21367:
+			_pc = 21182
+			continue
+		elif _pc == 21372:
+			_pc = 21483
+			continue
+		elif _pc == 21377:
+			_pc = 21483
+			continue
+		elif _pc == 21382:
+			debug.print_string("iShipCreation.CreateCharacterGroup: '")
+			debug.print_string(v4)
+			debug.print_string(" ship of type ")
+			debug.print_int(v0)
+			debug.print_string(" created sucessfully : ")
+			_pc = 21483
+			continue
+		elif _pc == 21483:
+			isim.set_faction(v5, v3)
+			if _pog_eq("Random", v4):
+				_pc = 21525
+				continue
+			else:
+				_pc = 21609
+				continue
+		elif _pc == 21525:
+			_pc = 21551
+			continue
+		elif _pc == 21530:
+			debug.print_string(" picking random name\n")
+			_pc = 21551
+			continue
+		elif _pc == 21551:
 			v15 = -1
 			v7 = await ship_name(await iutilities.from_allegiance_enum_no_space(v14), v15)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string(" picking iterated name\n")
+			_pc = 21679
+			continue
+		elif _pc == 21609:
+			_pc = 21635
+			continue
+		elif _pc == 21614:
+			debug.print_string(" picking iterated name\n")
+			_pc = 21635
+			continue
+		elif _pc == 21635:
 			v7 = await ship_name(v4, v15)
 			v15 = 1 + v15
-		object.set_string_property(v5, "name", v7)
-		group.add_sim(v6, v5)
-		await ipilotsetup.string_description(v5, v1)
-		v11 = 1
-		v9 = 1 + v9
-	return v6
+			_pc = 21679
+			continue
+		elif _pc == 21679:
+			object.set_string_property(v5, "name", v7)
+			group.add_sim(v6, v5)
+			await ipilotsetup.string_description(v5, v1)
+			v11 = 1
+			v9 = 1 + v9
+			_pc = 21182
+			continue
+		elif _pc == 21783:
+			_pc = 21793
+			continue
+		elif _pc == 21793:
+			return
+		else:
+			return 0
 	return 0
 
 func local_21809(v0, v1) -> Variant:
@@ -12448,23 +12750,48 @@ func local_21809(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = null
-	v2 = "ini:/sims/ships/utility/megapod_open_rotated"
-	v4 = math.random_int(4, 8)
-	v5 = 0
-	while v4 < v5:
-		v3 = iship.create(v2, "name_cargo_pod")
-		object.add_int_property(v3, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
-		object.add_int_property(v3, "type_cargo", v1)
-		object.add_int_property(v3, "number_small_pods", math.random_int(2, 8))
-		object.set_string_property(v3, "death_script", "iDeathScript.MegaPodDeath")
-		iship.dock(v3, v0)
-		if PogRuntime.TRACE:
+	var _pc: int = 21809
+	while true:
+		if _pc == 21809:
+			v2 = null
+			v2 = "ini:/sims/ships/utility/megapod_open_rotated"
+			v4 = math.random_int(4, 8)
+			v5 = 0
+			_pc = 21868
+			continue
+		elif _pc == 21868:
+			if v4 < v5:
+				_pc = 21884
+				continue
+			else:
+				_pc = 22229
+				continue
+		elif _pc == 21884:
+			v3 = iship.create(v2, "name_cargo_pod")
+			object.add_int_property(v3, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
+			object.add_int_property(v3, "type_cargo", v1)
+			object.add_int_property(v3, "number_small_pods", math.random_int(2, 8))
+			object.set_string_property(v3, "death_script", "iDeathScript.MegaPodDeath")
+			iship.dock(v3, v0)
+			_pc = 22211
+			continue
+		elif _pc == 22107:
 			debug.print_string("iShipCreation: Creating Mega POD cargo")
 			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
 			debug.print_string("\n")
-		v5 = 1 + v5
-	return 0
+			_pc = 22211
+			continue
+		elif _pc == 22211:
+			v5 = 1 + v5
+			_pc = 21868
+			continue
+		elif _pc == 22229:
+			_pc = 22234
+			continue
+		elif _pc == 22234:
+			return 0
+		else:
+			return 0
 	return 0
 
 func create_supply_cargo(v0, v1) -> Variant:
@@ -12562,6 +12889,7 @@ func create_supply_cargo(v0, v1) -> Variant:
 			_pc = 22833
 			continue
 		elif _pc == 22792:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 22816
 				continue
@@ -12676,55 +13004,136 @@ func create_trade_cargo(v0, v1) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	v5 = 0
-	v6 = 0
-	v7 = 5
-	v8 = 1
-	v11 = null
-	v12 = null
-	v15 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iShipCreation: Creating Trade cargo of type ")
-		debug.print_string(v1)
-		debug.print_string("\n")
-	if 1 == object.property_exists(v0, "mega_freighter"):
-		await local_21809(v0, 1)
-	else:
-		v7 = idockport.count(v0, 3, 1)
-		v9 = await iutilities.random_centre_weighted(1.0, v7)
-		v3 = 0
-		while v9 < v3:
+	var _pc: int = 23527
+	while true:
+		if _pc == 23527:
+			v5 = 0
+			v6 = 0
+			v7 = 5
+			v8 = 1
+			v11 = null
+			v12 = null
+			v15 = null
+			_pc = 23662
+			continue
+		elif _pc == 23599:
+			debug.print_string("iShipCreation: Creating Trade cargo of type ")
+			debug.print_string(v1)
+			debug.print_string("\n")
+			_pc = 23662
+			continue
+		elif _pc == 23662:
+			if 1 == object.property_exists(v0, "mega_freighter"):
+				_pc = 23694
+				continue
+			else:
+				_pc = 23719
+				continue
+		elif _pc == 23694:
+			await local_21809(v0, 1)
+			_pc = 24508
+			continue
+		elif _pc == 23719:
+			v7 = idockport.count(v0, 3, 1)
+			v9 = await iutilities.random_centre_weighted(1.0, v7)
+			v3 = 0
+			_pc = 23784
+			continue
+		elif _pc == 23784:
+			if v9 < v3:
+				_pc = 23800
+				continue
+			else:
+				_pc = 24508
+				continue
+		elif _pc == 23800:
 			v13 = iship.create("ini:/sims/ships/utility/freightpod", "")
 			object.add_int_property(v13, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v11, v13)
 			if _pog_eq("Cheap", v1):
-				v14 = await icargoscript.cheap_cargo_generator()
+				_pc = 23931
+				continue
 			else:
-				if _pog_eq("Medium", v1):
-					v14 = await icargoscript.medium_cargo_generator()
-				else:
-					if _pog_eq("High", v1):
-						v14 = await icargoscript.high_cargo_generator()
-					else:
-						if _pog_eq("Expensive", v1):
-							v14 = await icargoscript.very_high_cargo_generator()
-						else:
-							v14 = await icargoscript.cheap_cargo_generator()
-							if PogRuntime.TRACE:
-								debug.print_string("iShipCreation.CreateTradeCargo - Invalid trade type passed ! \n")
+				_pc = 23955
+				continue
+		elif _pc == 23931:
+			v14 = await icargoscript.cheap_cargo_generator()
+			_pc = 24128
+			continue
+		elif _pc == 23955:
+			if _pog_eq("Medium", v1):
+				_pc = 23973
+				continue
+			else:
+				_pc = 23997
+				continue
+		elif _pc == 23973:
+			v14 = await icargoscript.medium_cargo_generator()
+			_pc = 24128
+			continue
+		elif _pc == 23997:
+			if _pog_eq("High", v1):
+				_pc = 24015
+				continue
+			else:
+				_pc = 24039
+				continue
+		elif _pc == 24015:
+			v14 = await icargoscript.high_cargo_generator()
+			_pc = 24128
+			continue
+		elif _pc == 24039:
+			if _pog_eq("Expensive", v1):
+				_pc = 24057
+				continue
+			else:
+				_pc = 24081
+				continue
+		elif _pc == 24057:
+			v14 = await icargoscript.very_high_cargo_generator()
+			_pc = 24128
+			continue
+		elif _pc == 24081:
+			v14 = await icargoscript.cheap_cargo_generator()
+			_pc = 24128
+			continue
+		elif _pc == 24105:
+			debug.print_string("iShipCreation.CreateTradeCargo - Invalid trade type passed ! \n")
+			_pc = 24128
+			continue
+		elif _pc == 24128:
 			if 531 == v14 or 530 == v14 or 514 == v14 or 230 == v14 or 549 == v14 or 472 == v14 or 471 == v14 or 482 == v14:
-				object.set_string_property(v13, "death_script", "iDeathScript.Antimatter")
+				_pc = 24212
+				continue
+			else:
+				_pc = 24244
+				continue
+		elif _pc == 24212:
+			object.set_string_property(v13, "death_script", "iDeathScript.Antimatter")
+			_pc = 24244
+			continue
+		elif _pc == 24244:
 			object.set_int_property(v13, "cargo", v14)
 			v15 = icargo.pog_name(icargo.find(v14))
 			await iutilities.rename_sim(v13, v15)
 			iship.dock(v13, v0)
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation: Creating POD cargo : ")
-				debug.print_string(v15)
-				debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
-				debug.print_string("\n")
+			_pc = 24490
+			continue
+		elif _pc == 24367:
+			debug.print_string("iShipCreation: Creating POD cargo : ")
+			debug.print_string(v15)
+			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
+			debug.print_string("\n")
+			_pc = 24490
+			continue
+		elif _pc == 24490:
 			v3 = 1 + v3
-	return 0
+			_pc = 23784
+			continue
+		elif _pc == 24508:
+			return 0
+		else:
+			return 0
 	return 0
 
 func create_haulage_cargo(v0, v1) -> Variant:
@@ -12836,6 +13245,7 @@ func create_haulage_cargo(v0, v1) -> Variant:
 			_pc = 25211
 			continue
 		elif _pc == 25170:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 25194
 				continue
@@ -12987,6 +13397,7 @@ func return_supply_cargo() -> Variant:
 			_pc = 26267
 			continue
 		elif _pc == 26226:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 26250
 				continue
@@ -13090,58 +13501,139 @@ func return_trade_cargo() -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	v5 = 0
-	v6 = 0
-	v7 = 5
-	v8 = 1
-	v11 = null
-	v12 = null
-	v15 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iShipCreation: Creating Trade cargo of type ")
-		debug.print_string(v1)
-		debug.print_string("\n")
-	v7 = idockport.count(v0, 3, 1)
-	if PogRuntime.TRACE:
-		debug.print_string("iShipCreation: Vessel ")
-		debug.print_string(object.string_property(v0, "name"))
-		debug.print_string("has this many ports: ")
-		debug.print_string(string.from_int(v7))
-		debug.print_string("\n")
-	v9 = await iutilities.random_centre_weighted(1.0, v7)
-	v3 = 0
-	while v9 < v3:
-		v13 = iship.create("ini:/sims/ships/utility/freightpod", "name_cargo_pod")
-		object.add_int_property(v13, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
-		list.add_tail(v11, v13)
-		if _pog_eq("Cheap", v1):
-			v14 = await icargoscript.cheap_cargo_generator()
-		else:
-			if _pog_eq("Medium", v1):
-				v14 = await icargoscript.medium_cargo_generator()
+	var _pc: int = 26887
+	while true:
+		if _pc == 26887:
+			v5 = 0
+			v6 = 0
+			v7 = 5
+			v8 = 1
+			v11 = null
+			v12 = null
+			v15 = null
+			_pc = 27022
+			continue
+		elif _pc == 26959:
+			debug.print_string("iShipCreation: Creating Trade cargo of type ")
+			debug.print_string(v1)
+			debug.print_string("\n")
+			_pc = 27022
+			continue
+		elif _pc == 27022:
+			v7 = idockport.count(v0, 3, 1)
+			_pc = 27193
+			continue
+		elif _pc == 27054:
+			debug.print_string("iShipCreation: Vessel ")
+			debug.print_string(object.string_property(v0, "name"))
+			debug.print_string("has this many ports: ")
+			debug.print_string(string.from_int(v7))
+			debug.print_string("\n")
+			_pc = 27193
+			continue
+		elif _pc == 27193:
+			v9 = await iutilities.random_centre_weighted(1.0, v7)
+			v3 = 0
+			_pc = 27231
+			continue
+		elif _pc == 27231:
+			if v9 < v3:
+				_pc = 27247
+				continue
 			else:
-				if _pog_eq("High", v1):
-					v14 = await icargoscript.high_cargo_generator()
-				else:
-					if _pog_eq("Expensive", v1):
-						v14 = await icargoscript.very_high_cargo_generator()
-					else:
-						v14 = await icargoscript.cheap_cargo_generator()
-						if PogRuntime.TRACE:
-							debug.print_string("iShipCreation.CreateTradeCargo - Invalid trade type passed ! \n")
-		if 531 == v14 or 530 == v14 or 514 == v14 or 230 == v14 or 549 == v14 or 472 == v14 or 471 == v14 or 482 == v14:
+				_pc = 27982
+				continue
+		elif _pc == 27247:
+			v13 = iship.create("ini:/sims/ships/utility/freightpod", "name_cargo_pod")
+			object.add_int_property(v13, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
+			list.add_tail(v11, v13)
+			if _pog_eq("Cheap", v1):
+				_pc = 27378
+				continue
+			else:
+				_pc = 27402
+				continue
+		elif _pc == 27378:
+			v14 = await icargoscript.cheap_cargo_generator()
+			_pc = 27575
+			continue
+		elif _pc == 27402:
+			if _pog_eq("Medium", v1):
+				_pc = 27420
+				continue
+			else:
+				_pc = 27444
+				continue
+		elif _pc == 27420:
+			v14 = await icargoscript.medium_cargo_generator()
+			_pc = 27575
+			continue
+		elif _pc == 27444:
+			if _pog_eq("High", v1):
+				_pc = 27462
+				continue
+			else:
+				_pc = 27486
+				continue
+		elif _pc == 27462:
+			v14 = await icargoscript.high_cargo_generator()
+			_pc = 27575
+			continue
+		elif _pc == 27486:
+			if _pog_eq("Expensive", v1):
+				_pc = 27504
+				continue
+			else:
+				_pc = 27528
+				continue
+		elif _pc == 27504:
+			v14 = await icargoscript.very_high_cargo_generator()
+			_pc = 27575
+			continue
+		elif _pc == 27528:
+			v14 = await icargoscript.cheap_cargo_generator()
+			_pc = 27575
+			continue
+		elif _pc == 27552:
+			debug.print_string("iShipCreation.CreateTradeCargo - Invalid trade type passed ! \n")
+			_pc = 27575
+			continue
+		elif _pc == 27575:
+			if 531 == v14 or 530 == v14 or 514 == v14 or 230 == v14 or 549 == v14 or 472 == v14 or 471 == v14 or 482 == v14:
+				_pc = 27659
+				continue
+			else:
+				_pc = 27691
+				continue
+		elif _pc == 27659:
 			object.set_string_property(v13, "death_script", "iDeathScript.Antimatter")
-		object.set_int_property(v13, "cargo", v14)
-		v15 = icargo.pog_name(icargo.find(v14))
-		await iutilities.rename_sim(v13, v15)
-		object.set_string_property(v13, "name", string.join("Pod of ", v15))
-		if PogRuntime.TRACE:
+			_pc = 27691
+			continue
+		elif _pc == 27691:
+			object.set_int_property(v13, "cargo", v14)
+			v15 = icargo.pog_name(icargo.find(v14))
+			await iutilities.rename_sim(v13, v15)
+			object.set_string_property(v13, "name", string.join("Pod of ", v15))
+			_pc = 27964
+			continue
+		elif _pc == 27841:
 			debug.print_string("iShipCreation: Creating POD cargo : ")
 			debug.print_string(v15)
 			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
 			debug.print_string("\n")
-		v3 = 1 + v3
-	return _pog_clone(v11)
+			_pc = 27964
+			continue
+		elif _pc == 27964:
+			v3 = 1 + v3
+			_pc = 27231
+			continue
+		elif _pc == 27982:
+			_pc = 27992
+			continue
+		elif _pc == 27992:
+			return
+		else:
+			return 0
 	return 0
 
 func return_haulage_cargo(v0, v1) -> Variant:
@@ -13230,6 +13722,7 @@ func return_haulage_cargo(v0, v1) -> Variant:
 			_pc = 28462
 			continue
 		elif _pc == 28421:
+			math.random_int(0, 2)
 			if not _pog_is_null(math.random_int(0, 2)):
 				_pc = 28445
 				continue
@@ -13302,45 +13795,133 @@ func get_traffic(v0, v1, v2) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v4 = group.create()
-	v5 = null
-	v6 = null
-	v8 = 1
-	v9 = 0
-	v10 = 0
-	v11 = 0
-	v12 = ifaction.find(await iutilities.from_allegiance_enum(v1))
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 29002
+	while true:
+		if _pc == 29002:
+			v4 = group.create()
+			v5 = null
+			v6 = null
+			v8 = 1
+			v9 = 0
+			v10 = 0
+			v11 = 0
+			v12 = ifaction.find(await iutilities.from_allegiance_enum(v1))
+			if _pog_is_null(v2):
+				_pc = 29127
+				continue
+			else:
+				_pc = 29160
+				continue
+		elif _pc == 29127:
+			_pc = 29153
+			continue
+		elif _pc == 29132:
 			debug.print_string("iShipCreation: Error detected in number of vessels req, creating 1\n")
-		v2 = 1
-	v7 = 0
-	while v2 < v7:
-		v3 = iship.create(await get_ship(v1, v0), "name")
-		sim.set_cullable(v3, 0)
-		if _pog_is_null(v3):
-			if PogRuntime.TRACE:
-				debug.error("iShipCreation: ARRRGGGhhhh this ship was not created!!!")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation.GetTraffic : ship succesfully created\n")
-		object.set_string_property(v3, "name", await ship_name(await iutilities.from_allegiance_enum_no_space(v1), -1))
-		v12 = ifaction.find(await iutilities.from_allegiance_enum(v1))
-		if not _pog_is_null(v12):
+			_pc = 29153
+			continue
+		elif _pc == 29153:
+			v2 = 1
+			_pc = 29160
+			continue
+		elif _pc == 29160:
+			v7 = 0
+			_pc = 29167
+			continue
+		elif _pc == 29167:
+			if v2 < v7:
+				_pc = 29183
+				continue
+			else:
+				_pc = 29719
+				continue
+		elif _pc == 29183:
+			v3 = iship.create(await get_ship(v1, v0), "name")
+			sim.set_cullable(v3, 0)
+			if _pog_is_null(v3):
+				_pc = 29266
+				continue
+			else:
+				_pc = 29297
+				continue
+		elif _pc == 29266:
+			_pc = 29292
+			continue
+		elif _pc == 29271:
+			debug.error("iShipCreation: ARRRGGGhhhh this ship was not created!!!")
+			_pc = 29292
+			continue
+		elif _pc == 29292:
+			_pc = 29323
+			continue
+		elif _pc == 29297:
+			_pc = 29323
+			continue
+		elif _pc == 29302:
+			debug.print_string("iShipCreation.GetTraffic : ship succesfully created\n")
+			_pc = 29323
+			continue
+		elif _pc == 29323:
+			object.set_string_property(v3, "name", await ship_name(await iutilities.from_allegiance_enum_no_space(v1), -1))
+			v12 = ifaction.find(await iutilities.from_allegiance_enum(v1))
+			if not _pog_is_null(v12):
+				_pc = 29436
+				continue
+			else:
+				_pc = 29465
+				continue
+		elif _pc == 29436:
 			isim.set_faction(v3, v12)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iShipCreation.Gettraffic: Unable to assign correct allegiance to ship\n")
+			_pc = 29539
+			continue
+		elif _pc == 29465:
+			_pc = 29491
+			continue
+		elif _pc == 29470:
+			debug.print_string("iShipCreation.Gettraffic: Unable to assign correct allegiance to ship\n")
+			_pc = 29491
+			continue
+		elif _pc == 29491:
 			isim.set_faction(v3, ifaction.find(await iutilities.from_allegiance_enum(1)))
-		group.add_sim(v4, v3)
-		if 20 > idockport.count(v3, 3, 4):
+			_pc = 29539
+			continue
+		elif _pc == 29539:
+			group.add_sim(v4, v3)
+			if 20 > idockport.count(v3, 3, 4):
+				_pc = 29593
+				continue
+			else:
+				_pc = 29620
+				continue
+		elif _pc == 29593:
 			object.add_bool_property(v3, "mega_freighter", 1)
-		if 3 == v0 or 2 == v0 or 1 == v0 or _pog_is_null(v0):
+			_pc = 29620
+			continue
+		elif _pc == 29620:
+			if 3 == v0 or 2 == v0 or 1 == v0 or _pog_is_null(v0):
+				_pc = 29658
+				continue
+			else:
+				_pc = 29682
+				continue
+		elif _pc == 29658:
 			await ipilotsetup.generic_freight(v3)
-		else:
+			_pc = 29701
+			continue
+		elif _pc == 29682:
 			await ipilotsetup.generic(v3)
-		v7 = 1 + v7
-	return v4
+			_pc = 29701
+			continue
+		elif _pc == 29701:
+			v7 = 1 + v7
+			_pc = 29167
+			continue
+		elif _pc == 29719:
+			_pc = 29729
+			continue
+		elif _pc == 29729:
+			return
+		else:
+			return 0
 	return 0
 
 func put_ships_in_formation() -> Variant:
@@ -13348,78 +13929,267 @@ func put_ships_in_formation() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	if _pog_is_null(v1):
-		await iformation.wedge(v0, v2, v3)
-		return 1
-	if v1 == 2:
-		await iformation.line_abreast(v0, v2, v3)
-		return 1
-	if v1 == 3:
-		await iformation.line_ahead(v0, v2, v3)
-		return 1
-	if v1 == 4:
-		await iformation.parade(v0, v2, v3)
-		return 1
-	if v1 == 5:
-		await iformation.skirmish_line(v0, v2, v3)
-		return 1
-	if v1 == 6:
-		await iformation.v(v0, v2, v3)
-		return 1
-	if v1 == 7:
-		await iformation.cross(v0, v2, v3)
-		return 1
-	if v1 == 8:
-		await iformation.loose(v0, v2, v3)
-		return 1
-	if v1 == 9:
-		await iformation.impi(v0, v2, v3)
-		return 1
-	if v1 == 10:
-		await iformation.outrider(v0, v2, v3)
-		return 1
-	if v1 == 1:
-		await iformation.goose(v0, v2, v3)
-		return 1
-	if v1 == 11:
-		await iformation.line_astern(v0, v2, v3)
-		return 1
-	if v1 == 12:
-		await iformation.box(v0, v2, v3)
-		return 1
-	if v1 == 13:
-		await iformation.claw(v0, v2, v3)
-		return 1
-	return 0
+	var _pc: int = 29745
+	while true:
+		if _pc == 29745:
+			_pc = 30251
+			continue
+		elif _pc == 29750:
+			await iformation.wedge(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 29785:
+			await iformation.line_abreast(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 29820:
+			await iformation.line_ahead(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 29855:
+			await iformation.parade(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 29890:
+			await iformation.skirmish_line(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 29925:
+			await iformation.v(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 29960:
+			await iformation.cross(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 29995:
+			await iformation.loose(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 30030:
+			await iformation.impi(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 30065:
+			await iformation.outrider(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 30100:
+			await iformation.goose(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 30135:
+			await iformation.line_astern(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 30170:
+			await iformation.box(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 30205:
+			await iformation.claw(v0, v2, v3)
+			_pc = 30391
+			continue
+		elif _pc == 30240:
+			_pc = 30391
+			continue
+		elif _pc == 30246:
+			_pc = 30385
+			continue
+		elif _pc == 30251:
+			if not _pog_is_null(v1):
+				_pc = 30264
+				continue
+			else:
+				_pc = 29750
+				continue
+		elif _pc == 30264:
+			if not _pog_is_null(2):
+				_pc = 30273
+				continue
+			else:
+				_pc = 29785
+				continue
+		elif _pc == 30273:
+			if not _pog_is_null(3):
+				_pc = 30282
+				continue
+			else:
+				_pc = 29820
+				continue
+		elif _pc == 30282:
+			if not _pog_is_null(4):
+				_pc = 30291
+				continue
+			else:
+				_pc = 29855
+				continue
+		elif _pc == 30291:
+			if not _pog_is_null(5):
+				_pc = 30300
+				continue
+			else:
+				_pc = 29890
+				continue
+		elif _pc == 30300:
+			if not _pog_is_null(6):
+				_pc = 30309
+				continue
+			else:
+				_pc = 29925
+				continue
+		elif _pc == 30309:
+			if not _pog_is_null(7):
+				_pc = 30318
+				continue
+			else:
+				_pc = 29960
+				continue
+		elif _pc == 30318:
+			if not _pog_is_null(8):
+				_pc = 30327
+				continue
+			else:
+				_pc = 29995
+				continue
+		elif _pc == 30327:
+			if not _pog_is_null(9):
+				_pc = 30336
+				continue
+			else:
+				_pc = 30030
+				continue
+		elif _pc == 30336:
+			if not _pog_is_null(10):
+				_pc = 30345
+				continue
+			else:
+				_pc = 30065
+				continue
+		elif _pc == 30345:
+			if not _pog_is_null(1):
+				_pc = 30353
+				continue
+			else:
+				_pc = 30100
+				continue
+		elif _pc == 30353:
+			if not _pog_is_null(11):
+				_pc = 30362
+				continue
+			else:
+				_pc = 30135
+				continue
+		elif _pc == 30362:
+			if not _pog_is_null(12):
+				_pc = 30371
+				continue
+			else:
+				_pc = 30170
+				continue
+		elif _pc == 30371:
+			if not _pog_is_null(13):
+				_pc = 30380
+				continue
+			else:
+				_pc = 30205
+				continue
+		elif _pc == 30380:
+			_pc = 30240
+			continue
+		elif _pc == 30385:
+			_pc = 30391
+			continue
+		elif _pc == 30391:
+			return
+		else:
+			return 0
 	return 0
 
 func create_character_ships(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v10 = group.create()
-	v11 = group.create()
-	if 0 > v4:
-		v10 = await create_character_group(v0, v3, v4, v9, v1)
-	if 0 > v8:
-		v11 = await create_character_group(v5, v7, v8, v9, v6)
-		group.add_group(v10, v11)
-	if _pog_is_null(group.sim_count(v10)):
-		if PogRuntime.TRACE:
+	var _pc: int = 30393
+	while true:
+		if _pc == 30393:
+			v10 = group.create()
+			v11 = group.create()
+			if 0 > v4:
+				_pc = 30448
+				continue
+			else:
+				_pc = 30492
+				continue
+		elif _pc == 30448:
+			v10 = await create_character_group(v0, v3, v4, v9, v1)
+			_pc = 30492
+			continue
+		elif _pc == 30492:
+			if 0 > v8:
+				_pc = 30504
+				continue
+			else:
+				_pc = 30572
+				continue
+		elif _pc == 30504:
+			v11 = await create_character_group(v5, v7, v8, v9, v6)
+			group.add_group(v10, v11)
+			_pc = 30572
+			continue
+		elif _pc == 30572:
+			if _pog_is_null(group.sim_count(v10)):
+				_pc = 30597
+				continue
+			else:
+				_pc = 30623
+				continue
+		elif _pc == 30597:
+			_pc = 30623
+			continue
+		elif _pc == 30602:
 			debug.print_string("iShipCreation.CreateCharacterShips - ERROR, list of character ships is empty !\n")
-	return v10
+			_pc = 30623
+			continue
+		elif _pc == 30623:
+			_pc = 30633
+			continue
+		elif _pc == 30633:
+			return
+		else:
+			return 0
 	return 0
 
 func create_cargo_pods(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = group.create()
-	v2 = 0
-	while v1 < v2:
-		v4 = iship.create("ini:/sims/ships/utility/freightpod", icargo.pog_name(icargo.find(v0)))
-		object.set_int_property(v4, "cargo", v0)
-		group.add_sim(v3, v4)
-		v2 = 1 + v2
-	return v3
+	var _pc: int = 30635
+	while true:
+		if _pc == 30635:
+			v3 = group.create()
+			v2 = 0
+			_pc = 30666
+			continue
+		elif _pc == 30666:
+			if v1 < v2:
+				_pc = 30682
+				continue
+			else:
+				_pc = 30813
+				continue
+		elif _pc == 30682:
+			v4 = iship.create("ini:/sims/ships/utility/freightpod", icargo.pog_name(icargo.find(v0)))
+			object.set_int_property(v4, "cargo", v0)
+			group.add_sim(v3, v4)
+			v2 = 1 + v2
+			_pc = 30666
+			continue
+		elif _pc == 30813:
+			_pc = 30823
+			continue
+		elif _pc == 30823:
+			return
+		else:
+			return 0
 	return 0
 

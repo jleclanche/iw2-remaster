@@ -62,58 +62,153 @@ func clean_inactive_map_entities() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v0 = null
-	v1 = null
-	v1 = global.pog_set("g_filtered_system_habitats")
-	v8 = p_set.item_count(v1)
+	var _pc: int = 0
 	while true:
-		v2 = imapentity.cast(p_set.first_element(v1))
-		v4 = ihabitat.cast(v2)
-		if not _pog_is_null(v4):
-			if 1 == ihabitat.type(v4):
-				if PogRuntime.TRACE:
-					debug.print_string("iUtilities.CleanInactiveHabitats: Removing disused location: ")
-					debug.print_string(imapentity.pog_name(v2))
-					debug.print_string("\n")
-				p_set.remove(v1, v2)
+		if _pc == 0:
+			v0 = null
+			v1 = null
+			v1 = global.pog_set("g_filtered_system_habitats")
+			v8 = p_set.item_count(v1)
+			_pc = 78
+			continue
+		elif _pc == 78:
+			v2 = imapentity.cast(p_set.first_element(v1))
+			v4 = ihabitat.cast(v2)
+			if not _pog_is_null(v4):
+				_pc = 152
+				continue
 			else:
-				p_set.add(v0, v2)
-				p_set.remove(v1, v2)
-		else:
+				_pc = 342
+				continue
+		elif _pc == 152:
+			if 1 == ihabitat.type(v4):
+				_pc = 177
+				continue
+			else:
+				_pc = 289
+				continue
+		elif _pc == 177:
+			_pc = 260
+			continue
+		elif _pc == 182:
+			debug.print_string("iUtilities.CleanInactiveHabitats: Removing disused location: ")
+			debug.print_string(imapentity.pog_name(v2))
+			debug.print_string("\n")
+			_pc = 260
+			continue
+		elif _pc == 260:
+			p_set.remove(v1, v2)
+			_pc = 337
+			continue
+		elif _pc == 289:
 			p_set.add(v0, v2)
 			p_set.remove(v1, v2)
-		if not (not (p_set.is_empty(v1))):
-			break
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.CleanInactiveHabitats: Number of original habitats = ")
-		debug.print_string(string.from_int(v8))
-		debug.print_string("\n")
-		debug.print_string("Number of cleaned habitats = ")
-		debug.print_string(string.from_int(p_set.item_count(v0)))
-		debug.print_string("\n")
-	return _pog_clone(v0)
+			_pc = 337
+			continue
+		elif _pc == 337:
+			_pc = 390
+			continue
+		elif _pc == 342:
+			p_set.add(v0, v2)
+			p_set.remove(v1, v2)
+			_pc = 390
+			continue
+		elif _pc == 390:
+			if p_set.is_empty(v1):
+				_pc = 414
+				continue
+			else:
+				_pc = 78
+				continue
+		elif _pc == 414:
+			_pc = 586
+			continue
+		elif _pc == 419:
+			debug.print_string("iUtilities.CleanInactiveHabitats: Number of original habitats = ")
+			debug.print_string(string.from_int(v8))
+			debug.print_string("\n")
+			debug.print_string("Number of cleaned habitats = ")
+			debug.print_string(string.from_int(p_set.item_count(v0)))
+			debug.print_string("\n")
+			_pc = 586
+			continue
+		elif _pc == 586:
+			_pc = 596
+			continue
+		elif _pc == 596:
+			return
+		else:
+			return 0
 	return 0
 
 func filter_on_friendly_habitats(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
-	v3 = list.from_set(v0)
-	if p_set.is_empty(v0):
-		if PogRuntime.TRACE:
-			debug.print_string("iUtilities.FilterOnFriendlyHabitats : I've been passesd an empty set of habitats !\n")
-	else:
-		while true:
-			if _pog_is_null(ihabitat.cast(list.get_nth(v3, v2))):
-				if PogRuntime.TRACE:
-					debug.error("iUtilities.FilterOnfreindlyHabitats : An entry in the passed set is not a habitat !")
-			if not _pog_eq(v1, ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v2)))):
-				list.remove_nth(v3, v2)
+	var _pc: int = 613
+	while true:
+		if _pc == 613:
+			v3 = null
+			v3 = list.from_set(v0)
+			if p_set.is_empty(v0):
+				_pc = 678
+				continue
 			else:
-				v2 = 1 + v2
-			if not (list.item_count(v3) < v2):
-				break
-	return
+				_pc = 714
+				continue
+		elif _pc == 678:
+			_pc = 704
+			continue
+		elif _pc == 683:
+			debug.print_string("iUtilities.FilterOnFriendlyHabitats : I've been passesd an empty set of habitats !\n")
+			_pc = 704
+			continue
+		elif _pc == 704:
+			_pc = 939
+			continue
+		elif _pc == 714:
+			if _pog_is_null(ihabitat.cast(list.get_nth(v3, v2))):
+				_pc = 758
+				continue
+			else:
+				_pc = 784
+				continue
+		elif _pc == 758:
+			_pc = 784
+			continue
+		elif _pc == 763:
+			debug.error("iUtilities.FilterOnfreindlyHabitats : An entry in the passed set is not a habitat !")
+			_pc = 784
+			continue
+		elif _pc == 784:
+			if not _pog_eq(v1, ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v2)))):
+				_pc = 844
+				continue
+			else:
+				_pc = 873
+				continue
+		elif _pc == 844:
+			list.remove_nth(v3, v2)
+			_pc = 886
+			continue
+		elif _pc == 873:
+			v2 = 1 + v2
+			_pc = 886
+			continue
+		elif _pc == 886:
+			if list.item_count(v3) >= v2:
+				_pc = 915
+				continue
+			else:
+				_pc = 714
+				continue
+		elif _pc == 915:
+			p_set.from_list(v3)
+			_pc = 939
+			continue
+		elif _pc == 939:
+			return
+		else:
+			return 0
 	return 0
 
 func filter_on_friendly_sims() -> Variant:
@@ -123,16 +218,46 @@ func filter_on_friendly_sims() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
-	v5 = null
-	v5 = list.from_set(v0)
-	v3 = list.item_count(v5)
-	v2 = 0
-	while v3 < v2:
-		if 0.10000000149011612 >= ifaction.feeling(isim.faction(isim.cast(v1)), isim.faction(isim.cast(list.get_nth(v5, v2)))):
+	var _pc: int = 949
+	while true:
+		if _pc == 949:
+			v4 = null
+			v5 = null
+			v5 = list.from_set(v0)
+			v3 = list.item_count(v5)
+			v2 = 0
+			_pc = 1033
+			continue
+		elif _pc == 1033:
+			if v3 < v2:
+				_pc = 1049
+				continue
+			else:
+				_pc = 1213
+				continue
+		elif _pc == 1049:
+			if 0.10000000149011612 >= ifaction.feeling(isim.faction(isim.cast(v1)), isim.faction(isim.cast(list.get_nth(v5, v2)))):
+				_pc = 1153
+				continue
+			else:
+				_pc = 1195
+				continue
+		elif _pc == 1153:
 			list.add_tail(v4, list.get_nth(v5, v2))
-		v2 = 1 + v2
-	return _pog_clone(p_set.from_list(v4))
+			_pc = 1195
+			continue
+		elif _pc == 1195:
+			v2 = 1 + v2
+			_pc = 1033
+			continue
+		elif _pc == 1213:
+			p_set.from_list(v4)
+			_pc = 1237
+			continue
+		elif _pc == 1237:
+			return
+		else:
+			return 0
 	return 0
 
 func from_location_enum(v0) -> Variant:
@@ -1347,292 +1472,1318 @@ func from_location_enum(v0) -> Variant:
 	return 0
 
 func from_allegiance_enum(v0) -> Variant:
-	if _pog_is_null(v0):
-		return _pog_clone("Neutral")
-	if v0 == 1:
-		return _pog_clone("Independent")
-	if v0 == 2:
-		return _pog_clone("Exile")
-	if v0 == 3:
-		return _pog_clone("Military")
-	if v0 == 4:
-		return _pog_clone("Underworld")
-	if v0 == 5:
-		return _pog_clone("Government")
-	if v0 == 6:
-		return _pog_clone("Transient")
-	if v0 == 7:
-		return _pog_clone("Society")
-	if v0 == 8:
-		return _pog_clone("Invalid")
-	if v0 == 9:
-		return _pog_clone("Stepson")
-	if v0 == 10:
-		return _pog_clone("Kong")
-	if v0 == 11:
-		return _pog_clone("MAAS Corporation")
-	if v0 == 12:
-		return _pog_clone("Carva Cartel")
-	if v0 == 13:
-		return _pog_clone("Junkers")
-	if v0 == 14:
-		return _pog_clone("Police")
-	if v0 == 15:
-		return _pog_clone("NOMEX Corporation")
-	if v0 == 16:
-		return _pog_clone("NSO Laplace")
-	if v0 == 17:
-		return _pog_clone("Marauders")
-	if v0 == 18:
-		return _pog_clone("Angels")
-	if v0 == 19:
-		return _pog_clone("The Oman")
-	if v0 == 20:
-		return _pog_clone("M.C.A.")
-	if v0 == 21:
-		return _pog_clone("Player")
-	if v0 == 22:
-		return _pog_clone("League")
-	if v0 == 23:
-		return _pog_clone("Trimann Shipping")
-	if v0 == 24:
-		return _pog_clone("Rhondus Gas Mining")
-	if v0 == 25:
-		return _pog_clone("Ashanti Investment")
-	if v0 == 26:
-		return _pog_clone("Crosspoint Minerals")
-	if v0 == 27:
-		return _pog_clone("Helios Mining")
-	if v0 == 28:
-		return _pog_clone("Jardin Terraforming")
-	if v0 == 29:
-		return _pog_clone("Chon Bodifule")
-	if v0 == 30:
-		return _pog_clone("Orion Products")
-	if v0 == 31:
-		return _pog_clone("Von Shelling Industries")
-	if v0 == 32:
-		return _pog_clone("Megalith Corporation")
-	if v0 == 33:
-		return _pog_clone("Hibatsh PMC")
-	if v0 == 34:
-		return _pog_clone("Dester Corporation")
-	if v0 == 35:
-		return _pog_clone("Whind Weapons Systems")
-	if v0 == 36:
-		return _pog_clone("Advanced Security Corporation")
-	if v0 == 37:
-		return _pog_clone("Network 54")
-	if v0 == 38:
-		return _pog_clone("Infonet")
-	if v0 == 39:
-		return _pog_clone("Stellar Net")
-	if v0 == 40:
-		return _pog_clone("Wordsworth Technology")
-	if v0 == 41:
-		return _pog_clone("Netcom SA")
-	if v0 == 42:
-		return _pog_clone("Coventry Engineering Research")
-	if v0 == 43:
-		return _pog_clone("NINEX Wetware")
-	if v0 == 44:
-		return _pog_clone("Universal Consumer Products")
-	if v0 == 45:
-		return _pog_clone("High Life Products")
-	if v0 == 46:
-		return _pog_clone("Low Orbit Recovery")
-	if v0 == 47:
-		return _pog_clone("KIMO Shipping")
-	if v0 == 48:
-		return _pog_clone("Datagon Technologies")
-	if v0 == 49:
-		return _pog_clone("Micoria Communications")
-	if v0 == 50:
-		return _pog_clone("LOMAX Engines")
-	if v0 == 51:
-		return _pog_clone("LOMAX Technologies")
-	if v0 == 52:
-		return _pog_clone("Numiko Products")
-	if v0 == 54:
-		return _pog_clone("Aliens")
-	return _pog_clone("none")
+	var _pc: int = 3683
+	while true:
+		if _pc == 3683:
+			_pc = 4298
+			continue
+		elif _pc == 3688:
+			_pc = 4803
+			continue
+		elif _pc == 3699:
+			_pc = 4803
+			continue
+		elif _pc == 3710:
+			_pc = 4803
+			continue
+		elif _pc == 3721:
+			_pc = 4803
+			continue
+		elif _pc == 3732:
+			_pc = 4803
+			continue
+		elif _pc == 3743:
+			_pc = 4803
+			continue
+		elif _pc == 3754:
+			_pc = 4803
+			continue
+		elif _pc == 3765:
+			_pc = 4803
+			continue
+		elif _pc == 3776:
+			_pc = 4803
+			continue
+		elif _pc == 3787:
+			_pc = 4803
+			continue
+		elif _pc == 3798:
+			_pc = 4803
+			continue
+		elif _pc == 3809:
+			_pc = 4803
+			continue
+		elif _pc == 3820:
+			_pc = 4803
+			continue
+		elif _pc == 3831:
+			_pc = 4803
+			continue
+		elif _pc == 3842:
+			_pc = 4803
+			continue
+		elif _pc == 3853:
+			_pc = 4803
+			continue
+		elif _pc == 3864:
+			_pc = 4803
+			continue
+		elif _pc == 3875:
+			_pc = 4803
+			continue
+		elif _pc == 3886:
+			_pc = 4803
+			continue
+		elif _pc == 3897:
+			_pc = 4803
+			continue
+		elif _pc == 3908:
+			_pc = 4803
+			continue
+		elif _pc == 3919:
+			_pc = 4803
+			continue
+		elif _pc == 3930:
+			_pc = 4803
+			continue
+		elif _pc == 3941:
+			_pc = 4803
+			continue
+		elif _pc == 3952:
+			_pc = 4803
+			continue
+		elif _pc == 3963:
+			_pc = 4803
+			continue
+		elif _pc == 3974:
+			_pc = 4803
+			continue
+		elif _pc == 3985:
+			_pc = 4803
+			continue
+		elif _pc == 3996:
+			_pc = 4803
+			continue
+		elif _pc == 4007:
+			_pc = 4803
+			continue
+		elif _pc == 4018:
+			_pc = 4803
+			continue
+		elif _pc == 4029:
+			_pc = 4803
+			continue
+		elif _pc == 4040:
+			_pc = 4803
+			continue
+		elif _pc == 4051:
+			_pc = 4803
+			continue
+		elif _pc == 4062:
+			_pc = 4803
+			continue
+		elif _pc == 4073:
+			_pc = 4803
+			continue
+		elif _pc == 4084:
+			_pc = 4803
+			continue
+		elif _pc == 4095:
+			_pc = 4803
+			continue
+		elif _pc == 4106:
+			_pc = 4803
+			continue
+		elif _pc == 4117:
+			_pc = 4803
+			continue
+		elif _pc == 4128:
+			_pc = 4803
+			continue
+		elif _pc == 4139:
+			_pc = 4803
+			continue
+		elif _pc == 4150:
+			_pc = 4803
+			continue
+		elif _pc == 4161:
+			_pc = 4803
+			continue
+		elif _pc == 4172:
+			_pc = 4803
+			continue
+		elif _pc == 4183:
+			_pc = 4803
+			continue
+		elif _pc == 4194:
+			_pc = 4803
+			continue
+		elif _pc == 4205:
+			_pc = 4803
+			continue
+		elif _pc == 4216:
+			_pc = 4803
+			continue
+		elif _pc == 4227:
+			_pc = 4803
+			continue
+		elif _pc == 4238:
+			_pc = 4803
+			continue
+		elif _pc == 4249:
+			_pc = 4803
+			continue
+		elif _pc == 4260:
+			_pc = 4803
+			continue
+		elif _pc == 4271:
+			_pc = 4803
+			continue
+		elif _pc == 4282:
+			_pc = 4803
+			continue
+		elif _pc == 4293:
+			_pc = 4792
+			continue
+		elif _pc == 4298:
+			if not _pog_is_null(v0):
+				_pc = 4311
+				continue
+			else:
+				_pc = 3688
+				continue
+		elif _pc == 4311:
+			if not _pog_is_null(1):
+				_pc = 4319
+				continue
+			else:
+				_pc = 3699
+				continue
+		elif _pc == 4319:
+			if not _pog_is_null(2):
+				_pc = 4328
+				continue
+			else:
+				_pc = 3710
+				continue
+		elif _pc == 4328:
+			if not _pog_is_null(3):
+				_pc = 4337
+				continue
+			else:
+				_pc = 3721
+				continue
+		elif _pc == 4337:
+			if not _pog_is_null(4):
+				_pc = 4346
+				continue
+			else:
+				_pc = 3732
+				continue
+		elif _pc == 4346:
+			if not _pog_is_null(5):
+				_pc = 4355
+				continue
+			else:
+				_pc = 3743
+				continue
+		elif _pc == 4355:
+			if not _pog_is_null(6):
+				_pc = 4364
+				continue
+			else:
+				_pc = 3754
+				continue
+		elif _pc == 4364:
+			if not _pog_is_null(7):
+				_pc = 4373
+				continue
+			else:
+				_pc = 3765
+				continue
+		elif _pc == 4373:
+			if not _pog_is_null(8):
+				_pc = 4382
+				continue
+			else:
+				_pc = 3776
+				continue
+		elif _pc == 4382:
+			if not _pog_is_null(9):
+				_pc = 4391
+				continue
+			else:
+				_pc = 3787
+				continue
+		elif _pc == 4391:
+			if not _pog_is_null(10):
+				_pc = 4400
+				continue
+			else:
+				_pc = 3798
+				continue
+		elif _pc == 4400:
+			if not _pog_is_null(11):
+				_pc = 4409
+				continue
+			else:
+				_pc = 3809
+				continue
+		elif _pc == 4409:
+			if not _pog_is_null(12):
+				_pc = 4418
+				continue
+			else:
+				_pc = 3820
+				continue
+		elif _pc == 4418:
+			if not _pog_is_null(13):
+				_pc = 4427
+				continue
+			else:
+				_pc = 3831
+				continue
+		elif _pc == 4427:
+			if not _pog_is_null(14):
+				_pc = 4436
+				continue
+			else:
+				_pc = 3842
+				continue
+		elif _pc == 4436:
+			if not _pog_is_null(15):
+				_pc = 4445
+				continue
+			else:
+				_pc = 3853
+				continue
+		elif _pc == 4445:
+			if not _pog_is_null(16):
+				_pc = 4454
+				continue
+			else:
+				_pc = 3864
+				continue
+		elif _pc == 4454:
+			if not _pog_is_null(17):
+				_pc = 4463
+				continue
+			else:
+				_pc = 3875
+				continue
+		elif _pc == 4463:
+			if not _pog_is_null(18):
+				_pc = 4472
+				continue
+			else:
+				_pc = 3886
+				continue
+		elif _pc == 4472:
+			if not _pog_is_null(19):
+				_pc = 4481
+				continue
+			else:
+				_pc = 3897
+				continue
+		elif _pc == 4481:
+			if not _pog_is_null(20):
+				_pc = 4490
+				continue
+			else:
+				_pc = 3908
+				continue
+		elif _pc == 4490:
+			if not _pog_is_null(21):
+				_pc = 4499
+				continue
+			else:
+				_pc = 3919
+				continue
+		elif _pc == 4499:
+			if not _pog_is_null(22):
+				_pc = 4508
+				continue
+			else:
+				_pc = 3930
+				continue
+		elif _pc == 4508:
+			if not _pog_is_null(23):
+				_pc = 4517
+				continue
+			else:
+				_pc = 3941
+				continue
+		elif _pc == 4517:
+			if not _pog_is_null(24):
+				_pc = 4526
+				continue
+			else:
+				_pc = 3952
+				continue
+		elif _pc == 4526:
+			if not _pog_is_null(25):
+				_pc = 4535
+				continue
+			else:
+				_pc = 3963
+				continue
+		elif _pc == 4535:
+			if not _pog_is_null(26):
+				_pc = 4544
+				continue
+			else:
+				_pc = 3974
+				continue
+		elif _pc == 4544:
+			if not _pog_is_null(27):
+				_pc = 4553
+				continue
+			else:
+				_pc = 3985
+				continue
+		elif _pc == 4553:
+			if not _pog_is_null(28):
+				_pc = 4562
+				continue
+			else:
+				_pc = 3996
+				continue
+		elif _pc == 4562:
+			if not _pog_is_null(29):
+				_pc = 4571
+				continue
+			else:
+				_pc = 4007
+				continue
+		elif _pc == 4571:
+			if not _pog_is_null(30):
+				_pc = 4580
+				continue
+			else:
+				_pc = 4018
+				continue
+		elif _pc == 4580:
+			if not _pog_is_null(31):
+				_pc = 4589
+				continue
+			else:
+				_pc = 4029
+				continue
+		elif _pc == 4589:
+			if not _pog_is_null(32):
+				_pc = 4598
+				continue
+			else:
+				_pc = 4040
+				continue
+		elif _pc == 4598:
+			if not _pog_is_null(33):
+				_pc = 4607
+				continue
+			else:
+				_pc = 4051
+				continue
+		elif _pc == 4607:
+			if not _pog_is_null(34):
+				_pc = 4616
+				continue
+			else:
+				_pc = 4062
+				continue
+		elif _pc == 4616:
+			if not _pog_is_null(35):
+				_pc = 4625
+				continue
+			else:
+				_pc = 4073
+				continue
+		elif _pc == 4625:
+			if not _pog_is_null(36):
+				_pc = 4634
+				continue
+			else:
+				_pc = 4084
+				continue
+		elif _pc == 4634:
+			if not _pog_is_null(37):
+				_pc = 4643
+				continue
+			else:
+				_pc = 4095
+				continue
+		elif _pc == 4643:
+			if not _pog_is_null(38):
+				_pc = 4652
+				continue
+			else:
+				_pc = 4106
+				continue
+		elif _pc == 4652:
+			if not _pog_is_null(39):
+				_pc = 4661
+				continue
+			else:
+				_pc = 4117
+				continue
+		elif _pc == 4661:
+			if not _pog_is_null(40):
+				_pc = 4670
+				continue
+			else:
+				_pc = 4128
+				continue
+		elif _pc == 4670:
+			if not _pog_is_null(41):
+				_pc = 4679
+				continue
+			else:
+				_pc = 4139
+				continue
+		elif _pc == 4679:
+			if not _pog_is_null(42):
+				_pc = 4688
+				continue
+			else:
+				_pc = 4150
+				continue
+		elif _pc == 4688:
+			if not _pog_is_null(43):
+				_pc = 4697
+				continue
+			else:
+				_pc = 4161
+				continue
+		elif _pc == 4697:
+			if not _pog_is_null(44):
+				_pc = 4706
+				continue
+			else:
+				_pc = 4172
+				continue
+		elif _pc == 4706:
+			if not _pog_is_null(45):
+				_pc = 4715
+				continue
+			else:
+				_pc = 4183
+				continue
+		elif _pc == 4715:
+			if not _pog_is_null(46):
+				_pc = 4724
+				continue
+			else:
+				_pc = 4194
+				continue
+		elif _pc == 4724:
+			if not _pog_is_null(47):
+				_pc = 4733
+				continue
+			else:
+				_pc = 4205
+				continue
+		elif _pc == 4733:
+			if not _pog_is_null(48):
+				_pc = 4742
+				continue
+			else:
+				_pc = 4216
+				continue
+		elif _pc == 4742:
+			if not _pog_is_null(49):
+				_pc = 4751
+				continue
+			else:
+				_pc = 4227
+				continue
+		elif _pc == 4751:
+			if not _pog_is_null(50):
+				_pc = 4760
+				continue
+			else:
+				_pc = 4238
+				continue
+		elif _pc == 4760:
+			if not _pog_is_null(51):
+				_pc = 4769
+				continue
+			else:
+				_pc = 4249
+				continue
+		elif _pc == 4769:
+			if not _pog_is_null(52):
+				_pc = 4778
+				continue
+			else:
+				_pc = 4260
+				continue
+		elif _pc == 4778:
+			if not _pog_is_null(54):
+				_pc = 4787
+				continue
+			else:
+				_pc = 4271
+				continue
+		elif _pc == 4787:
+			_pc = 4282
+			continue
+		elif _pc == 4792:
+			_pc = 4803
+			continue
+		elif _pc == 4803:
+			return
+		else:
+			return 0
 	return 0
 
 func from_allegiance_enum_no_space(v0) -> Variant:
-	if _pog_is_null(v0):
-		return _pog_clone("Neutral")
-	if v0 == 1:
-		return _pog_clone("Independent")
-	if v0 == 2:
-		return _pog_clone("Exile")
-	if v0 == 3:
-		return _pog_clone("Military")
-	if v0 == 4:
-		return _pog_clone("Underworld")
-	if v0 == 5:
-		return _pog_clone("Government")
-	if v0 == 6:
-		return _pog_clone("Transient")
-	if v0 == 7:
-		return _pog_clone("Society")
-	if v0 == 8:
-		return _pog_clone("Invalid")
-	if v0 == 9:
-		return _pog_clone("Stepson")
-	if v0 == 10:
-		return _pog_clone("Kong")
-	if v0 == 11:
-		return _pog_clone("MaasCorporation")
-	if v0 == 12:
-		return _pog_clone("CarvaCartel")
-	if v0 == 13:
-		return _pog_clone("Junkers")
-	if v0 == 14:
-		return _pog_clone("Police")
-	if v0 == 15:
-		return _pog_clone("NomexCorporation")
-	if v0 == 16:
-		return _pog_clone("NsoLaplace")
-	if v0 == 17:
-		return _pog_clone("Marauders")
-	if v0 == 18:
-		return _pog_clone("Angels")
-	if v0 == 19:
-		return _pog_clone("TheOman")
-	if v0 == 20:
-		return _pog_clone("Mca")
-	if v0 == 21:
-		return _pog_clone("Player")
-	if v0 == 22:
-		return _pog_clone("League")
-	if v0 == 23:
-		return _pog_clone("TrimannShipping")
-	if v0 == 24:
-		return _pog_clone("RhondusGasMining")
-	if v0 == 25:
-		return _pog_clone("AshantiInvestment")
-	if v0 == 26:
-		return _pog_clone("CrosspointMinerals")
-	if v0 == 27:
-		return _pog_clone("HeliosMining")
-	if v0 == 28:
-		return _pog_clone("JardinTerraforming")
-	if v0 == 29:
-		return _pog_clone("ChonBodifule")
-	if v0 == 30:
-		return _pog_clone("OrionProducts")
-	if v0 == 31:
-		return _pog_clone("VonShellingIndustries")
-	if v0 == 32:
-		return _pog_clone("MegalithCorporation")
-	if v0 == 33:
-		return _pog_clone("HibatshPmc")
-	if v0 == 34:
-		return _pog_clone("DesterCorporation")
-	if v0 == 35:
-		return _pog_clone("WhindWeaponsSystems")
-	if v0 == 36:
-		return _pog_clone("AdvancedSecurityCorporation")
-	if v0 == 37:
-		return _pog_clone("Network54")
-	if v0 == 38:
-		return _pog_clone("Infonet")
-	if v0 == 39:
-		return _pog_clone("StellarNet")
-	if v0 == 40:
-		return _pog_clone("WordsworthTechnology")
-	if v0 == 41:
-		return _pog_clone("NetcomSa")
-	if v0 == 42:
-		return _pog_clone("CoventryEngineeringResearch")
-	if v0 == 43:
-		return _pog_clone("NinexWetware")
-	if v0 == 44:
-		return _pog_clone("UniversalConsumerProducts")
-	if v0 == 45:
-		return _pog_clone("HighLifeProducts")
-	if v0 == 46:
-		return _pog_clone("LowOrbitRecovery")
-	if v0 == 47:
-		return _pog_clone("KimoShipping")
-	if v0 == 48:
-		return _pog_clone("DatagonTechnologies")
-	if v0 == 49:
-		return _pog_clone("MicoriaCommunications")
-	if v0 == 50:
-		return _pog_clone("LomaxEngines")
-	if v0 == 51:
-		return _pog_clone("LomaxTechnologies")
-	if v0 == 52:
-		return _pog_clone("NumikoProducts")
-	if v0 == 54:
-		return _pog_clone("Aliens")
-	return _pog_clone("none")
+	var _pc: int = 4806
+	while true:
+		if _pc == 4806:
+			_pc = 5421
+			continue
+		elif _pc == 4811:
+			_pc = 5926
+			continue
+		elif _pc == 4822:
+			_pc = 5926
+			continue
+		elif _pc == 4833:
+			_pc = 5926
+			continue
+		elif _pc == 4844:
+			_pc = 5926
+			continue
+		elif _pc == 4855:
+			_pc = 5926
+			continue
+		elif _pc == 4866:
+			_pc = 5926
+			continue
+		elif _pc == 4877:
+			_pc = 5926
+			continue
+		elif _pc == 4888:
+			_pc = 5926
+			continue
+		elif _pc == 4899:
+			_pc = 5926
+			continue
+		elif _pc == 4910:
+			_pc = 5926
+			continue
+		elif _pc == 4921:
+			_pc = 5926
+			continue
+		elif _pc == 4932:
+			_pc = 5926
+			continue
+		elif _pc == 4943:
+			_pc = 5926
+			continue
+		elif _pc == 4954:
+			_pc = 5926
+			continue
+		elif _pc == 4965:
+			_pc = 5926
+			continue
+		elif _pc == 4976:
+			_pc = 5926
+			continue
+		elif _pc == 4987:
+			_pc = 5926
+			continue
+		elif _pc == 4998:
+			_pc = 5926
+			continue
+		elif _pc == 5009:
+			_pc = 5926
+			continue
+		elif _pc == 5020:
+			_pc = 5926
+			continue
+		elif _pc == 5031:
+			_pc = 5926
+			continue
+		elif _pc == 5042:
+			_pc = 5926
+			continue
+		elif _pc == 5053:
+			_pc = 5926
+			continue
+		elif _pc == 5064:
+			_pc = 5926
+			continue
+		elif _pc == 5075:
+			_pc = 5926
+			continue
+		elif _pc == 5086:
+			_pc = 5926
+			continue
+		elif _pc == 5097:
+			_pc = 5926
+			continue
+		elif _pc == 5108:
+			_pc = 5926
+			continue
+		elif _pc == 5119:
+			_pc = 5926
+			continue
+		elif _pc == 5130:
+			_pc = 5926
+			continue
+		elif _pc == 5141:
+			_pc = 5926
+			continue
+		elif _pc == 5152:
+			_pc = 5926
+			continue
+		elif _pc == 5163:
+			_pc = 5926
+			continue
+		elif _pc == 5174:
+			_pc = 5926
+			continue
+		elif _pc == 5185:
+			_pc = 5926
+			continue
+		elif _pc == 5196:
+			_pc = 5926
+			continue
+		elif _pc == 5207:
+			_pc = 5926
+			continue
+		elif _pc == 5218:
+			_pc = 5926
+			continue
+		elif _pc == 5229:
+			_pc = 5926
+			continue
+		elif _pc == 5240:
+			_pc = 5926
+			continue
+		elif _pc == 5251:
+			_pc = 5926
+			continue
+		elif _pc == 5262:
+			_pc = 5926
+			continue
+		elif _pc == 5273:
+			_pc = 5926
+			continue
+		elif _pc == 5284:
+			_pc = 5926
+			continue
+		elif _pc == 5295:
+			_pc = 5926
+			continue
+		elif _pc == 5306:
+			_pc = 5926
+			continue
+		elif _pc == 5317:
+			_pc = 5926
+			continue
+		elif _pc == 5328:
+			_pc = 5926
+			continue
+		elif _pc == 5339:
+			_pc = 5926
+			continue
+		elif _pc == 5350:
+			_pc = 5926
+			continue
+		elif _pc == 5361:
+			_pc = 5926
+			continue
+		elif _pc == 5372:
+			_pc = 5926
+			continue
+		elif _pc == 5383:
+			_pc = 5926
+			continue
+		elif _pc == 5394:
+			_pc = 5926
+			continue
+		elif _pc == 5405:
+			_pc = 5926
+			continue
+		elif _pc == 5416:
+			_pc = 5915
+			continue
+		elif _pc == 5421:
+			if not _pog_is_null(v0):
+				_pc = 5434
+				continue
+			else:
+				_pc = 4811
+				continue
+		elif _pc == 5434:
+			if not _pog_is_null(1):
+				_pc = 5442
+				continue
+			else:
+				_pc = 4822
+				continue
+		elif _pc == 5442:
+			if not _pog_is_null(2):
+				_pc = 5451
+				continue
+			else:
+				_pc = 4833
+				continue
+		elif _pc == 5451:
+			if not _pog_is_null(3):
+				_pc = 5460
+				continue
+			else:
+				_pc = 4844
+				continue
+		elif _pc == 5460:
+			if not _pog_is_null(4):
+				_pc = 5469
+				continue
+			else:
+				_pc = 4855
+				continue
+		elif _pc == 5469:
+			if not _pog_is_null(5):
+				_pc = 5478
+				continue
+			else:
+				_pc = 4866
+				continue
+		elif _pc == 5478:
+			if not _pog_is_null(6):
+				_pc = 5487
+				continue
+			else:
+				_pc = 4877
+				continue
+		elif _pc == 5487:
+			if not _pog_is_null(7):
+				_pc = 5496
+				continue
+			else:
+				_pc = 4888
+				continue
+		elif _pc == 5496:
+			if not _pog_is_null(8):
+				_pc = 5505
+				continue
+			else:
+				_pc = 4899
+				continue
+		elif _pc == 5505:
+			if not _pog_is_null(9):
+				_pc = 5514
+				continue
+			else:
+				_pc = 4910
+				continue
+		elif _pc == 5514:
+			if not _pog_is_null(10):
+				_pc = 5523
+				continue
+			else:
+				_pc = 4921
+				continue
+		elif _pc == 5523:
+			if not _pog_is_null(11):
+				_pc = 5532
+				continue
+			else:
+				_pc = 4932
+				continue
+		elif _pc == 5532:
+			if not _pog_is_null(12):
+				_pc = 5541
+				continue
+			else:
+				_pc = 4943
+				continue
+		elif _pc == 5541:
+			if not _pog_is_null(13):
+				_pc = 5550
+				continue
+			else:
+				_pc = 4954
+				continue
+		elif _pc == 5550:
+			if not _pog_is_null(14):
+				_pc = 5559
+				continue
+			else:
+				_pc = 4965
+				continue
+		elif _pc == 5559:
+			if not _pog_is_null(15):
+				_pc = 5568
+				continue
+			else:
+				_pc = 4976
+				continue
+		elif _pc == 5568:
+			if not _pog_is_null(16):
+				_pc = 5577
+				continue
+			else:
+				_pc = 4987
+				continue
+		elif _pc == 5577:
+			if not _pog_is_null(17):
+				_pc = 5586
+				continue
+			else:
+				_pc = 4998
+				continue
+		elif _pc == 5586:
+			if not _pog_is_null(18):
+				_pc = 5595
+				continue
+			else:
+				_pc = 5009
+				continue
+		elif _pc == 5595:
+			if not _pog_is_null(19):
+				_pc = 5604
+				continue
+			else:
+				_pc = 5020
+				continue
+		elif _pc == 5604:
+			if not _pog_is_null(20):
+				_pc = 5613
+				continue
+			else:
+				_pc = 5031
+				continue
+		elif _pc == 5613:
+			if not _pog_is_null(21):
+				_pc = 5622
+				continue
+			else:
+				_pc = 5042
+				continue
+		elif _pc == 5622:
+			if not _pog_is_null(22):
+				_pc = 5631
+				continue
+			else:
+				_pc = 5053
+				continue
+		elif _pc == 5631:
+			if not _pog_is_null(23):
+				_pc = 5640
+				continue
+			else:
+				_pc = 5064
+				continue
+		elif _pc == 5640:
+			if not _pog_is_null(24):
+				_pc = 5649
+				continue
+			else:
+				_pc = 5075
+				continue
+		elif _pc == 5649:
+			if not _pog_is_null(25):
+				_pc = 5658
+				continue
+			else:
+				_pc = 5086
+				continue
+		elif _pc == 5658:
+			if not _pog_is_null(26):
+				_pc = 5667
+				continue
+			else:
+				_pc = 5097
+				continue
+		elif _pc == 5667:
+			if not _pog_is_null(27):
+				_pc = 5676
+				continue
+			else:
+				_pc = 5108
+				continue
+		elif _pc == 5676:
+			if not _pog_is_null(28):
+				_pc = 5685
+				continue
+			else:
+				_pc = 5119
+				continue
+		elif _pc == 5685:
+			if not _pog_is_null(29):
+				_pc = 5694
+				continue
+			else:
+				_pc = 5130
+				continue
+		elif _pc == 5694:
+			if not _pog_is_null(30):
+				_pc = 5703
+				continue
+			else:
+				_pc = 5141
+				continue
+		elif _pc == 5703:
+			if not _pog_is_null(31):
+				_pc = 5712
+				continue
+			else:
+				_pc = 5152
+				continue
+		elif _pc == 5712:
+			if not _pog_is_null(32):
+				_pc = 5721
+				continue
+			else:
+				_pc = 5163
+				continue
+		elif _pc == 5721:
+			if not _pog_is_null(33):
+				_pc = 5730
+				continue
+			else:
+				_pc = 5174
+				continue
+		elif _pc == 5730:
+			if not _pog_is_null(34):
+				_pc = 5739
+				continue
+			else:
+				_pc = 5185
+				continue
+		elif _pc == 5739:
+			if not _pog_is_null(35):
+				_pc = 5748
+				continue
+			else:
+				_pc = 5196
+				continue
+		elif _pc == 5748:
+			if not _pog_is_null(36):
+				_pc = 5757
+				continue
+			else:
+				_pc = 5207
+				continue
+		elif _pc == 5757:
+			if not _pog_is_null(37):
+				_pc = 5766
+				continue
+			else:
+				_pc = 5218
+				continue
+		elif _pc == 5766:
+			if not _pog_is_null(38):
+				_pc = 5775
+				continue
+			else:
+				_pc = 5229
+				continue
+		elif _pc == 5775:
+			if not _pog_is_null(39):
+				_pc = 5784
+				continue
+			else:
+				_pc = 5240
+				continue
+		elif _pc == 5784:
+			if not _pog_is_null(40):
+				_pc = 5793
+				continue
+			else:
+				_pc = 5251
+				continue
+		elif _pc == 5793:
+			if not _pog_is_null(41):
+				_pc = 5802
+				continue
+			else:
+				_pc = 5262
+				continue
+		elif _pc == 5802:
+			if not _pog_is_null(42):
+				_pc = 5811
+				continue
+			else:
+				_pc = 5273
+				continue
+		elif _pc == 5811:
+			if not _pog_is_null(43):
+				_pc = 5820
+				continue
+			else:
+				_pc = 5284
+				continue
+		elif _pc == 5820:
+			if not _pog_is_null(44):
+				_pc = 5829
+				continue
+			else:
+				_pc = 5295
+				continue
+		elif _pc == 5829:
+			if not _pog_is_null(45):
+				_pc = 5838
+				continue
+			else:
+				_pc = 5306
+				continue
+		elif _pc == 5838:
+			if not _pog_is_null(46):
+				_pc = 5847
+				continue
+			else:
+				_pc = 5317
+				continue
+		elif _pc == 5847:
+			if not _pog_is_null(47):
+				_pc = 5856
+				continue
+			else:
+				_pc = 5328
+				continue
+		elif _pc == 5856:
+			if not _pog_is_null(48):
+				_pc = 5865
+				continue
+			else:
+				_pc = 5339
+				continue
+		elif _pc == 5865:
+			if not _pog_is_null(49):
+				_pc = 5874
+				continue
+			else:
+				_pc = 5350
+				continue
+		elif _pc == 5874:
+			if not _pog_is_null(50):
+				_pc = 5883
+				continue
+			else:
+				_pc = 5361
+				continue
+		elif _pc == 5883:
+			if not _pog_is_null(51):
+				_pc = 5892
+				continue
+			else:
+				_pc = 5372
+				continue
+		elif _pc == 5892:
+			if not _pog_is_null(52):
+				_pc = 5901
+				continue
+			else:
+				_pc = 5383
+				continue
+		elif _pc == 5901:
+			if not _pog_is_null(54):
+				_pc = 5910
+				continue
+			else:
+				_pc = 5394
+				continue
+		elif _pc == 5910:
+			_pc = 5405
+			continue
+		elif _pc == 5915:
+			_pc = 5926
+			continue
+		elif _pc == 5926:
+			return
+		else:
+			return 0
 	return 0
 
 func find_number_of_i_n_i_entries(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = 0
-	v4 = 0
+	var _pc: int = 5929
 	while true:
-		v3 = inifile.numbered_exists(v0, v1, v2, v4)
-		if v3:
+		if _pc == 5929:
+			v3 = 0
+			v4 = 0
+			_pc = 5948
+			continue
+		elif _pc == 5948:
+			v3 = inifile.numbered_exists(v0, v1, v2, v4)
+			if v3:
+				_pc = 5997
+				continue
+			else:
+				_pc = 6010
+				continue
+		elif _pc == 5997:
 			v4 = 1 + v4
-		if not (1 == v3):
-			break
-	return v4
+			_pc = 6010
+			continue
+		elif _pc == 6010:
+			if 1 != v3:
+				_pc = 6022
+				continue
+			else:
+				_pc = 5948
+				continue
+		elif _pc == 6022:
+			_pc = 6032
+			continue
+		elif _pc == 6032:
+			return
+		else:
+			return 0
 	return 0
 
 func get_cargo_name_from_i_n_i(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
-	v1 = inifile.create(v0)
-	if _pog_is_null(v1):
-		if PogRuntime.TRACE:
+	var _pc: int = 6034
+	while true:
+		if _pc == 6034:
+			v2 = null
+			v1 = inifile.create(v0)
+			if _pog_is_null(v1):
+				_pc = 6087
+				continue
+			else:
+				_pc = 6132
+				continue
+		elif _pc == 6087:
+			_pc = 6132
+			continue
+		elif _pc == 6092:
 			debug.error(string.join("iShipCreation.GetCargoName: ERROR: unable to open requested ini: ", v0))
-	v2 = inifile.string(v1, "General_info", "Name", "None")
-	if _pog_eq("None", v2):
-		if PogRuntime.TRACE:
+			_pc = 6132
+			continue
+		elif _pc == 6132:
+			v2 = inifile.string(v1, "General_info", "Name", "None")
+			if _pog_eq("None", v2):
+				_pc = 6194
+				continue
+			else:
+				_pc = 6239
+				continue
+		elif _pc == 6194:
+			_pc = 6239
+			continue
+		elif _pc == 6199:
 			debug.error(string.join("iShipCreation.GetCargoName: ERROR: Unable to retrieve name from ini file: ", v0))
-	inifile.destroy(v1)
-	return _pog_clone(v2)
+			_pc = 6239
+			continue
+		elif _pc == 6239:
+			inifile.destroy(v1)
+			_pc = 6268
+			continue
+		elif _pc == 6268:
+			return
+		else:
+			return 0
 	return 0
 
 func pick_random_location_of_type() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
-	v1 = list.from_set(imapentity.system_habitats())
-	v2 = 0
-	while list.item_count(v1) < v2:
-		if not _pog_eq(v0, await from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2))))):
+	var _pc: int = 6278
+	while true:
+		if _pc == 6278:
+			v1 = null
+			v1 = list.from_set(imapentity.system_habitats())
+			v2 = 0
+			_pc = 6336
+			continue
+		elif _pc == 6336:
+			if list.item_count(v1) < v2:
+				_pc = 6365
+				continue
+			else:
+				_pc = 6577
+				continue
+		elif _pc == 6365:
+			if not _pog_eq(v0, await from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2))))):
+				_pc = 6441
+				continue
+			else:
+				_pc = 6559
+				continue
+		elif _pc == 6441:
 			list.remove_nth(v1, v2)
 			if not _pog_is_null(list.item_count(v1)):
-				v2 = -1 + v2
+				_pc = 6490
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.error(string.join("iMissionGenerator.PickLocation: Unable to find location of specified type: ", v0))
-				break
-		v2 = 1 + v2
-	return _pog_clone(imapentity.pog_name(imapentity.cast(ihabitat.random(p_set.from_list(v1)))))
+				_pc = 6509
+				continue
+		elif _pc == 6490:
+			v2 = -1 + v2
+			_pc = 6559
+			continue
+		elif _pc == 6509:
+			_pc = 6554
+			continue
+		elif _pc == 6514:
+			debug.error(string.join("iMissionGenerator.PickLocation: Unable to find location of specified type: ", v0))
+			_pc = 6554
+			continue
+		elif _pc == 6554:
+			_pc = 6577
+			continue
+		elif _pc == 6559:
+			v2 = 1 + v2
+			_pc = 6336
+			continue
+		elif _pc == 6577:
+			imapentity.pog_name(imapentity.cast(ihabitat.random(p_set.from_list(v1))))
+			_pc = 6641
+			continue
+		elif _pc == 6641:
+			return
+		else:
+			return 0
 	return 0
 
 func get_zone_of_control() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	if _pog_is_null(ilagrangepoint.cast(v0)):
-		v1 = imapentity.radius_of_influence(v0)
-		if PogRuntime.TRACE:
+	var _pc: int = 6651
+	while true:
+		if _pc == 6651:
+			if _pog_is_null(ilagrangepoint.cast(v0)):
+				_pc = 6682
+				continue
+			else:
+				_pc = 6737
+				continue
+		elif _pc == 6682:
+			v1 = imapentity.radius_of_influence(v0)
+			_pc = 6732
+			continue
+		elif _pc == 6711:
 			debug.print_string("iUtilities.GetZoneOfControl: This object is a habitat, getting the zone of influence from database. \n ")
-	else:
-		v1 = 250.0
-		if PogRuntime.TRACE:
+			_pc = 6732
+			continue
+		elif _pc == 6732:
+			_pc = 6830
+			continue
+		elif _pc == 6737:
+			v1 = 250.0
+			_pc = 6830
+			continue
+		elif _pc == 6753:
 			debug.print_string(string.join("iUtilities.GetZoneOfControl: Assigning made up zone of influence for this lagrainge point, which is set to - ", string.from_float(v1)))
 			debug.print_string("\n")
-	return v1
+			_pc = 6830
+			continue
+		elif _pc == 6830:
+			_pc = 6840
+			continue
+		elif _pc == 6840:
+			return
+		else:
+			return 0
 	return 0
 
 func get_largest_ship_radius(v0) -> Variant:
@@ -1641,35 +2792,97 @@ func get_largest_ship_radius(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = 0.0
-	v4 = 0.0
-	v2 = group.sim_count(v0)
-	v1 = 0
-	while v2 < v1:
-		v5 = group.nth_sim(v0, v1)
-		v4 = object.float_property(v5, "radius")
-		if v3 > v4:
+	var _pc: int = 6842
+	while true:
+		if _pc == 6842:
+			v3 = 0.0
+			v4 = 0.0
+			v2 = group.sim_count(v0)
+			v1 = 0
+			_pc = 6900
+			continue
+		elif _pc == 6900:
+			if v2 < v1:
+				_pc = 6916
+				continue
+			else:
+				_pc = 7021
+				continue
+		elif _pc == 6916:
+			v5 = group.nth_sim(v0, v1)
+			v4 = object.float_property(v5, "radius")
+			if v3 > v4:
+				_pc = 6992
+				continue
+			else:
+				_pc = 7003
+				continue
+		elif _pc == 6992:
 			v3 = v4
-		v1 = 1 + v1
-	return v3
+			_pc = 7003
+			continue
+		elif _pc == 7003:
+			v1 = 1 + v1
+			_pc = 6900
+			continue
+		elif _pc == 7021:
+			_pc = 7031
+			continue
+		elif _pc == 7031:
+			return
+		else:
+			return 0
 	return 0
 
 func player_in_range(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = global.pog_float("g_player_sensor_range")
-	v3 = iship.find_player_ship()
-	if _pog_is_null(sim.cast(v0)):
-		if PogRuntime.TRACE:
+	var _pc: int = 7033
+	while true:
+		if _pc == 7033:
+			v1 = global.pog_float("g_player_sensor_range")
+			v3 = iship.find_player_ship()
+			if _pog_is_null(sim.cast(v0)):
+				_pc = 7109
+				continue
+			else:
+				_pc = 7141
+				continue
+		elif _pc == 7109:
+			_pc = 7135
+			continue
+		elif _pc == 7114:
 			debug.print_string("iUtilities.PlayerInRange: Invalid sim passed to check!\n")
-	else:
-		v2 = 2000.0
-		if v2 + v1 <= sim.distance_between(v0, v3):
-			return 1
+			_pc = 7135
+			continue
+		elif _pc == 7135:
+			_pc = 7215
+			continue
+		elif _pc == 7141:
+			v2 = 2000.0
+			if v2 + v1 <= sim.distance_between(v0, v3):
+				_pc = 7192
+				continue
+			else:
+				_pc = 7203
+				continue
+		elif _pc == 7192:
+			_pc = 7215
+			continue
+		elif _pc == 7198:
+			_pc = 7209
+			continue
+		elif _pc == 7203:
+			_pc = 7215
+			continue
+		elif _pc == 7209:
+			_pc = 7215
+			continue
+		elif _pc == 7215:
+			return
 		else:
 			return 0
-	return
 	return 0
 
 func player_in_range_of_group(v0) -> Variant:
@@ -1679,85 +2892,207 @@ func player_in_range_of_group(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = iship.find_player_ship()
-	v2 = global.pog_float("g_player_sensor_range")
-	v3 = 2000.0
-	v4 = group.sim_count(v0)
-	v6 = 0
-	while v4 < v6:
-		if v3 + v2 <= sim.distance_between(group.nth_sim(v0, v6), v1):
+	var _pc: int = 7217
+	while true:
+		if _pc == 7217:
+			v1 = iship.find_player_ship()
+			v2 = global.pog_float("g_player_sensor_range")
+			v3 = 2000.0
+			v4 = group.sim_count(v0)
+			v6 = 0
+			_pc = 7309
+			continue
+		elif _pc == 7309:
+			if v4 < v6:
+				_pc = 7325
+				continue
+			else:
+				_pc = 7414
+				continue
+		elif _pc == 7325:
+			if v3 + v2 <= sim.distance_between(group.nth_sim(v0, v6), v1):
+				_pc = 7383
+				continue
+			else:
+				_pc = 7396
+				continue
+		elif _pc == 7383:
 			v5 = 1 + v5
-		v6 = 1 + v6
-	if 0 > v5:
-		pass
-	return
+			_pc = 7396
+			continue
+		elif _pc == 7396:
+			v6 = 1 + v6
+			_pc = 7309
+			continue
+		elif _pc == 7414:
+			if 0 > v5:
+				_pc = 7426
+				continue
+			else:
+				_pc = 7432
+				continue
+		elif _pc == 7426:
+			_pc = 7438
+			continue
+		elif _pc == 7432:
+			_pc = 7438
+			continue
+		elif _pc == 7438:
+			return
+		else:
+			return 0
 	return 0
 
 func kill_list_of_sims(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = 0
-	while list.item_count(v0) < v1:
-		sim.destroy(sim.cast(list.get_nth(v0, v1)))
-		v1 = 1 + v1
-	return 0
+	var _pc: int = 7440
+	while true:
+		if _pc == 7440:
+			v1 = 0
+			_pc = 7452
+			continue
+		elif _pc == 7452:
+			if list.item_count(v0) < v1:
+				_pc = 7481
+				continue
+			else:
+				_pc = 7549
+				continue
+		elif _pc == 7481:
+			sim.destroy(sim.cast(list.get_nth(v0, v1)))
+			v1 = 1 + v1
+			_pc = 7452
+			continue
+		elif _pc == 7549:
+			return 0
+		else:
+			return 0
 	return 0
 
 func jettison_cargo(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = 9.0
-	if _pog_is_null(sim.cast(v1)):
-		if PogRuntime.TRACE:
+	var _pc: int = 7552
+	while true:
+		if _pc == 7552:
+			v3 = 9.0
+			if _pog_is_null(sim.cast(v1)):
+				_pc = 7594
+				continue
+			else:
+				_pc = 7620
+				continue
+		elif _pc == 7594:
+			_pc = 7620
+			continue
+		elif _pc == 7599:
 			debug.error("iUtilities.JettisonCargo: Invalid ship passed to jettison cargo from!")
-	v4 = 0
-	while list.item_count(v0) < v4:
-		v2 = iship.cast(list.get_nth(v0, v4))
-		iship.undock(v2, v1)
-		v4 = 1 + v4
-	return
+			_pc = 7620
+			continue
+		elif _pc == 7620:
+			v4 = 0
+			_pc = 7627
+			continue
+		elif _pc == 7627:
+			if list.item_count(v0) < v4:
+				_pc = 7656
+				continue
+			else:
+				_pc = 7740
+				continue
+		elif _pc == 7656:
+			v2 = iship.cast(list.get_nth(v0, v4))
+			iship.undock(v2, v1)
+			v4 = 1 + v4
+			_pc = 7627
+			continue
+		elif _pc == 7740:
+			return
+		else:
+			return 0
 	return 0
 
 func create_waypoint_relative_to(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
-	v4 = sim.create("ini:/sims/nav/waypoint", "default")
-	sim.set_cullable(v4, 0)
-	sim.place_relative_to(v4, v0, v1, v2, v3)
-	return v4
+	var _pc: int = 7749
+	while true:
+		if _pc == 7749:
+			v4 = sim.create("ini:/sims/nav/waypoint", "default")
+			sim.set_cullable(v4, 0)
+			sim.place_relative_to(v4, v0, v1, v2, v3)
+			_pc = 7855
+			continue
+		elif _pc == 7855:
+			return
+		else:
+			return 0
 	return 0
 
 func create_waypoint_between(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = sim.create("ini:/sims/nav/waypoint", "default")
-	sim.set_cullable(v3, 0)
-	sim.place_between(v3, v0, v1, v2)
-	return v3
+	var _pc: int = 7857
+	while true:
+		if _pc == 7857:
+			v3 = sim.create("ini:/sims/nav/waypoint", "default")
+			sim.set_cullable(v3, 0)
+			sim.place_between(v3, v0, v1, v2)
+			_pc = 7958
+			continue
+		elif _pc == 7958:
+			return
+		else:
+			return 0
 	return 0
 
 func create_waypoint_relative_to_player(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = iship.find_player_ship()
-	v3 = sim.create("ini:/sims/nav/waypoint", "default")
-	sim.set_cullable(v3, 0)
-	sim.place_relative_to(v3, v4, v0, v1, v2)
-	return v3
+	var _pc: int = 7960
+	while true:
+		if _pc == 7960:
+			v4 = iship.find_player_ship()
+			v3 = sim.create("ini:/sims/nav/waypoint", "default")
+			sim.set_cullable(v3, 0)
+			sim.place_relative_to(v3, v4, v0, v1, v2)
+			_pc = 8085
+			continue
+		elif _pc == 8085:
+			return
+		else:
+			return 0
 	return 0
 
 func create_waypoint_at(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = sim.create("ini:/sims/nav/waypoint", "default")
-	sim.set_cullable(v1, 0)
-	sim.place_at(v1, v0)
-	return v1
+	var _pc: int = 8087
+	while true:
+		if _pc == 8087:
+			v1 = sim.create("ini:/sims/nav/waypoint", "default")
+			sim.set_cullable(v1, 0)
+			sim.place_at(v1, v0)
+			_pc = 8178
+			continue
+		elif _pc == 8178:
+			return
+		else:
+			return 0
 	return 0
 
 func create_waypoint_near(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = sim.create("ini:/sims/nav/waypoint", "default")
-	sim.set_cullable(v2, 0)
-	sim.place_near(v2, v0, v1)
-	return v2
+	var _pc: int = 8180
+	while true:
+		if _pc == 8180:
+			v2 = sim.create("ini:/sims/nav/waypoint", "default")
+			sim.set_cullable(v2, 0)
+			sim.place_near(v2, v0, v1)
+			_pc = 8276
+			continue
+		elif _pc == 8276:
+			return
+		else:
+			return 0
 	return 0
 
 func make_waypoint_visible(v0, v1, v2) -> Variant:
@@ -1773,23 +3108,64 @@ func make_waypoint_visible(v0, v1, v2) -> Variant:
 func return_hull_structure(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	if _pog_is_null(sim.cast(v0)):
-		if PogRuntime.TRACE:
+	var _pc: int = 8400
+	while true:
+		if _pc == 8400:
+			if _pog_is_null(sim.cast(v0)):
+				_pc = 8431
+				continue
+			else:
+				_pc = 8457
+				continue
+		elif _pc == 8431:
+			_pc = 8457
+			continue
+		elif _pc == 8436:
 			debug.error("iUtilities.ReturnHullStructure: Invalid ship passed to check hull structure of!")
-	v1 = object.float_property(v0, "max_hit_points")
-	v2 = object.float_property(v0, "hit_points")
-	return v1 / v2
+			_pc = 8457
+			continue
+		elif _pc == 8457:
+			v1 = object.float_property(v0, "max_hit_points")
+			v2 = object.float_property(v0, "hit_points")
+			_pc = 8535
+			continue
+		elif _pc == 8535:
+			return
+		else:
+			return 0
 	return 0
 
 func rename_sim(v0, v1) -> Variant:
-	if sim.is_dead(v0):
-		pass
-	else:
-		if not (object.property_exists(v0, "name")):
-			pass
-		else:
+	var _pc: int = 8537
+	while true:
+		if _pc == 8537:
+			if sim.is_dead(v0):
+				_pc = 8560
+				continue
+			else:
+				_pc = 8566
+				continue
+		elif _pc == 8560:
+			_pc = 8640
+			continue
+		elif _pc == 8566:
+			if not (object.property_exists(v0, "name")):
+				_pc = 8597
+				continue
+			else:
+				_pc = 8603
+				continue
+		elif _pc == 8597:
+			_pc = 8640
+			continue
+		elif _pc == 8603:
 			object.set_string_property(v0, "name", v1)
-	return
+			_pc = 8640
+			continue
+		elif _pc == 8640:
+			return
+		else:
+			return 0
 	return 0
 
 func get_surface_locations_from_orbital() -> Variant:
@@ -1798,28 +3174,64 @@ func get_surface_locations_from_orbital() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
-	v3 = null
-	v4 = null
-	v2 = imapentity.system_habitats()
-	v1 = imapentity.parent(imapentity.cast(v0))
-	if PogRuntime.TRACE:
-		debug.print_string(" iUtilites.GetSurfaceLocationFromOrbital : Looking for all surface habitats on the location - ")
-		debug.print_string(imapentity.pog_name(v1))
-		debug.print_string(" \n")
-	while not (p_set.is_empty(v2)):
-		if _pog_eq(v1, imapentity.parent(imapentity.cast(p_set.first_element(v2)))):
+	var _pc: int = 8642
+	while true:
+		if _pc == 8642:
+			v2 = null
+			v3 = null
+			v4 = null
+			v2 = imapentity.system_habitats()
+			v1 = imapentity.parent(imapentity.cast(v0))
+			_pc = 8821
+			continue
+		elif _pc == 8743:
+			debug.print_string(" iUtilites.GetSurfaceLocationFromOrbital : Looking for all surface habitats on the location - ")
+			debug.print_string(imapentity.pog_name(v1))
+			debug.print_string(" \n")
+			_pc = 8821
+			continue
+		elif _pc == 8821:
+			if not (p_set.is_empty(v2)):
+				_pc = 8845
+				continue
+			else:
+				_pc = 8979
+				continue
+		elif _pc == 8845:
+			if _pog_eq(v1, imapentity.parent(imapentity.cast(p_set.first_element(v2)))):
+				_pc = 8900
+				continue
+			else:
+				_pc = 8937
+				continue
+		elif _pc == 8900:
 			p_set.add(v3, p_set.first_element(v2))
-		p_set.remove(v2, p_set.first_element(v2))
-	v4 = ihabitat.filter_orbiting(v3)
-	p_set.difference(v3, v4)
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.GetsurfacelocationsFromOrbital : Found ")
-		debug.print_int(p_set.item_count(v3))
-		debug.print_string(" surface locations around parent location ")
-		debug.print_string(imapentity.pog_name(v1))
-		debug.print_string("\n")
-	return _pog_clone(v3)
+			_pc = 8937
+			continue
+		elif _pc == 8937:
+			p_set.remove(v2, p_set.first_element(v2))
+			_pc = 8821
+			continue
+		elif _pc == 8979:
+			v4 = ihabitat.filter_orbiting(v3)
+			p_set.difference(v3, v4)
+			_pc = 9165
+			continue
+		elif _pc == 9034:
+			debug.print_string("iUtilities.GetsurfacelocationsFromOrbital : Found ")
+			debug.print_int(p_set.item_count(v3))
+			debug.print_string(" surface locations around parent location ")
+			debug.print_string(imapentity.pog_name(v1))
+			debug.print_string("\n")
+			_pc = 9165
+			continue
+		elif _pc == 9165:
+			_pc = 9175
+			continue
+		elif _pc == 9175:
+			return
+		else:
+			return 0
 	return 0
 
 func release_error(v0) -> Variant:
@@ -1827,52 +3239,138 @@ func release_error(v0) -> Variant:
 	return 0
 
 func allow_mission_skipping() -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilites.AllowMissionSkipping: called.\n")
-	if 1 == global.pog_bool("g_setup_skipper_already") and 1 == global.exists("g_setup_skipper_already"):
-		if PogRuntime.TRACE:
+	var _pc: int = 9202
+	while true:
+		if _pc == 9202:
+			_pc = 9228
+			continue
+		elif _pc == 9207:
+			debug.print_string("iUtilites.AllowMissionSkipping: called.\n")
+			_pc = 9228
+			continue
+		elif _pc == 9228:
+			if 1 == global.pog_bool("g_setup_skipper_already") and 1 == global.exists("g_setup_skipper_already"):
+				_pc = 9277
+				continue
+			else:
+				_pc = 9308
+				continue
+		elif _pc == 9277:
+			_pc = 9303
+			continue
+		elif _pc == 9282:
 			debug.print_string("iUtilities.AllowMissionSkipping ignored - it's been done once already.\n")
-	else:
-		global.create_bool("g_skip_ok", 2, 1)
-		global.create_bool("g_skip_to_specific", 2, 0)
-		global.create_string("g_skip_to_mission", 2, "none")
-		global.create_int("g_skip_to_mission_number", 2, 0)
-		global.create_int("g_skip_to_act", 2, 1)
-		global.create_bool("g_skip_locked", 2, 0)
-		global.create_bool("g_skip_missions_is_ok", 2, 0)
-		global.create_bool("g_setup_skipper_already", 2, 1)
-	return 0
+			_pc = 9303
+			continue
+		elif _pc == 9303:
+			_pc = 9505
+			continue
+		elif _pc == 9308:
+			global.create_bool("g_skip_ok", 2, 1)
+			global.create_bool("g_skip_to_specific", 2, 0)
+			global.create_string("g_skip_to_mission", 2, "none")
+			global.create_int("g_skip_to_mission_number", 2, 0)
+			global.create_int("g_skip_to_act", 2, 1)
+			global.create_bool("g_skip_locked", 2, 0)
+			global.create_bool("g_skip_missions_is_ok", 2, 0)
+			global.create_bool("g_setup_skipper_already", 2, 1)
+			_pc = 9505
+			continue
+		elif _pc == 9505:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_9508() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = 0
-	v1 = 0
-	if _pog_is_null(global.pog_bool("g_skip_locked")):
-		global.set_bool("g_skip_locked", 1)
-		if PogRuntime.TRACE:
-			debug.print_string("iUtilities.pog: locking the skipper.\n")
-		v1 = 1
-	if _pog_is_null(v1):
-		while true:
-			if PogRuntime.TRACE:
-				debug.print_string("iUtilities.pog: waiting to set skipping lock.\n")
-			await _pog_wait(2.0)
-			if 1 == global.pog_bool("g_skip_locked"):
-				continue
+	var _pc: int = 9508
+	while true:
+		if _pc == 9508:
+			v0 = 0
+			v1 = 0
 			if _pog_is_null(global.pog_bool("g_skip_locked")):
-				global.set_bool("g_skip_locked", 1)
-				if PogRuntime.TRACE:
-					debug.print_string("iUtilities.pog: locking the skipper.\n")
-				v0 = 0
+				_pc = 9555
+				continue
 			else:
-				v0 = 1
-			if not (1 == v0):
-				break
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.pog: skipper now locked.\n")
-	return 0
+				_pc = 9610
+				continue
+		elif _pc == 9555:
+			global.set_bool("g_skip_locked", 1)
+			_pc = 9603
+			continue
+		elif _pc == 9582:
+			debug.print_string("iUtilities.pog: locking the skipper.\n")
+			_pc = 9603
+			continue
+		elif _pc == 9603:
+			v1 = 1
+			_pc = 9610
+			continue
+		elif _pc == 9610:
+			if _pog_is_null(v1):
+				_pc = 9623
+				continue
+			else:
+				_pc = 9816
+				continue
+		elif _pc == 9623:
+			_pc = 9649
+			continue
+		elif _pc == 9628:
+			debug.print_string("iUtilities.pog: waiting to set skipping lock.\n")
+			_pc = 9649
+			continue
+		elif _pc == 9649:
+			await _pog_wait(2.0)
+			if 1 != global.pog_bool("g_skip_locked"):
+				_pc = 9708
+				continue
+			else:
+				_pc = 9623
+				continue
+		elif _pc == 9708:
+			if _pog_is_null(global.pog_bool("g_skip_locked")):
+				_pc = 9736
+				continue
+			else:
+				_pc = 9796
+				continue
+		elif _pc == 9736:
+			global.set_bool("g_skip_locked", 1)
+			_pc = 9784
+			continue
+		elif _pc == 9763:
+			debug.print_string("iUtilities.pog: locking the skipper.\n")
+			_pc = 9784
+			continue
+		elif _pc == 9784:
+			v0 = 0
+			_pc = 9803
+			continue
+		elif _pc == 9796:
+			v0 = 1
+			_pc = 9803
+			continue
+		elif _pc == 9803:
+			if 1 != v0:
+				_pc = 9816
+				continue
+			else:
+				_pc = 9623
+				continue
+		elif _pc == 9816:
+			_pc = 9842
+			continue
+		elif _pc == 9821:
+			debug.print_string("iUtilities.pog: skipper now locked.\n")
+			_pc = 9842
+			continue
+		elif _pc == 9842:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_9845() -> Variant:
@@ -1897,86 +3395,249 @@ func local_9845() -> Variant:
 	return 0
 
 func skip_act(v0, v1) -> Variant:
-	await local_9508()
-	if PogRuntime.TRACE:
-		if 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+	var _pc: int = 10137
+	while true:
+		if _pc == 10137:
+			await local_9508()
+			_pc = 10327
+			continue
+		elif _pc == 10156:
+			if 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+				_pc = 10203
+				continue
+			else:
+				_pc = 10327
+				continue
+		elif _pc == 10203:
 			text.add("csv:/text/utils")
 			if 1 == global.pog_bool("g_skip_to_specific"):
-				if v1 > global.pog_int("g_skip_to_act"):
-					await local_9845()
-					return 1
-				else:
-					await local_9845()
-					return 0
-	await local_9845()
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.SkipAct: not skipping act because skipper disabled.\n")
-	return 0
+				_pc = 10251
+				continue
+			else:
+				_pc = 10327
+				continue
+		elif _pc == 10251:
+			if v1 > global.pog_int("g_skip_to_act"):
+				_pc = 10282
+				continue
+			else:
+				_pc = 10307
+				continue
+		elif _pc == 10282:
+			await local_9845()
+			_pc = 10373
+			continue
+		elif _pc == 10302:
+			_pc = 10327
+			continue
+		elif _pc == 10307:
+			await local_9845()
+			_pc = 10373
+			continue
+		elif _pc == 10327:
+			await local_9845()
+			_pc = 10367
+			continue
+		elif _pc == 10346:
+			debug.print_string("iUtilities.SkipAct: not skipping act because skipper disabled.\n")
+			_pc = 10367
+			continue
+		elif _pc == 10367:
+			_pc = 10373
+			continue
+		elif _pc == 10373:
+			return
+		else:
+			return 0
 	return 0
 
 func skip_mission(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = 0
-	if PogRuntime.TRACE:
-		debug.print_string("lubdushumubdig!\n")
-	if PogRuntime.TRACE:
-		await local_9508()
-		if 1 == global.pog_bool("g_skip_missions_is_ok") and 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+	var _pc: int = 10375
+	while true:
+		if _pc == 10375:
+			v1 = 0
+			_pc = 10413
+			continue
+		elif _pc == 10392:
+			debug.print_string("lubdushumubdig!\n")
+			_pc = 10413
+			continue
+		elif _pc == 10413:
+			_pc = 11157
+			continue
+		elif _pc == 10418:
+			await local_9508()
+			if 1 == global.pog_bool("g_skip_missions_is_ok") and 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+				_pc = 10501
+				continue
+			else:
+				_pc = 11117
+				continue
+		elif _pc == 10501:
 			text.add("csv:/text/utils")
 			if 1 == global.pog_bool("g_skip_to_specific"):
-				if PogRuntime.TRACE:
-					debug.print_string("iUtilities.SkipMission: checking strings for match -")
-					debug.print_string(v0)
-					debug.print_string("&")
-					debug.print_string(global.string("g_skip_to_mission"))
-					debug.print_string("\n")
-				if _pog_eq(global.string("g_skip_to_mission"), v0):
-					global.set_bool("g_skip_to_specific", 0)
-					global.set_bool("g_skip_ok", 0)
-					await iconversation.one_liner(0, "utils_particle_employee", "utils_skipper_got_there")
-					v1 = 0
-					await local_27489()
-				else:
-					await iconversation.one_liner(0, "utils_particle_employee", string.join("utils_skipper_not_yet+ +", v0))
-					v1 = 1
+				_pc = 10549
+				continue
 			else:
-				if PogRuntime.TRACE:
-					if 1 == global.pog_bool("g_skip_ok"):
-						debug.print_string("g_skip_ok is true! \n")
-					else:
-						debug.print_string("g_skip_ok is false! \n")
-				global.set_bool("g_skip_ok", 0)
-				_pog_detach(_pog_spawn(g_m_delayed_disabler.bind()))
-				while 1:
-					await _pog_wait(0.10000000149011612)
+				_pc = 10862
+				continue
+		elif _pc == 10549:
+			_pc = 10673
+			continue
+		elif _pc == 10554:
+			debug.print_string("iUtilities.SkipMission: checking strings for match -")
+			debug.print_string(v0)
+			debug.print_string("&")
+			debug.print_string(global.string("g_skip_to_mission"))
+			debug.print_string("\n")
+			_pc = 10673
+			continue
+		elif _pc == 10673:
+			if _pog_eq(global.string("g_skip_to_mission"), v0):
+				_pc = 10705
+				continue
+			else:
+				_pc = 10803
+				continue
+		elif _pc == 10705:
+			global.set_bool("g_skip_to_specific", 0)
+			global.set_bool("g_skip_ok", 0)
+			await iconversation.one_liner(0, "utils_particle_employee", "utils_skipper_got_there")
+			v1 = 0
+			await local_27489()
+			_pc = 10857
+			continue
+		elif _pc == 10803:
+			await iconversation.one_liner(0, "utils_particle_employee", string.join("utils_skipper_not_yet+ +", v0))
+			v1 = 1
+			_pc = 10857
+			continue
+		elif _pc == 10857:
+			_pc = 11033
+			continue
+		elif _pc == 10862:
+			_pc = 10941
+			continue
+		elif _pc == 10867:
+			if 1 == global.pog_bool("g_skip_ok"):
+				_pc = 10894
+				continue
+			else:
+				_pc = 10920
+				continue
+		elif _pc == 10894:
+			debug.print_string("g_skip_ok is true! \n")
+			_pc = 10941
+			continue
+		elif _pc == 10920:
+			debug.print_string("g_skip_ok is false! \n")
+			_pc = 10941
+			continue
+		elif _pc == 10941:
+			global.set_bool("g_skip_ok", 0)
+			_pog_detach(_pog_spawn(g_m_delayed_disabler.bind()))
+			_pc = 10990
+			continue
+		elif _pc == 10990:
+			if 1:
+				_pc = 10996
+				continue
+			else:
+				_pc = 11033
+				continue
+		elif _pc == 10996:
+			await _pog_wait(0.10000000149011612)
+			_pc = 10990
+			continue
+		elif _pc == 11033:
 			text.remove("csv:/text/utils")
 			if _pog_is_null(v1):
-				_pog_detach(_pog_spawn(g_m_delayed_disabler.bind()))
+				_pc = 11066
+				continue
 			else:
-				await local_9845()
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iUtilities.SkipMission: no option to skip mission, bundling on.\n")
+				_pc = 11098
+				continue
+		elif _pc == 11066:
+			_pog_detach(_pog_spawn(g_m_delayed_disabler.bind()))
+			_pc = 11112
+			continue
+		elif _pc == 11098:
 			await local_9845()
-	return v1
+			_pc = 11112
+			continue
+		elif _pc == 11112:
+			_pc = 11157
+			continue
+		elif _pc == 11117:
+			_pc = 11143
+			continue
+		elif _pc == 11122:
+			debug.print_string("iUtilities.SkipMission: no option to skip mission, bundling on.\n")
+			_pc = 11143
+			continue
+		elif _pc == 11143:
+			await local_9845()
+			_pc = 11157
+			continue
+		elif _pc == 11157:
+			_pc = 11167
+			continue
+		elif _pc == 11167:
+			return
+		else:
+			return 0
 	return 0
 
 func g_m_delayed_disabler() -> Variant:
 	var v0: Variant = 0
-	v0 = state.find(self)
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 11169
+	while true:
+		if _pc == 11169:
+			v0 = state.find(self)
+			if _pog_is_null(v0):
+				_pc = 11219
+				continue
+			else:
+				_pc = 11316
+				continue
+		elif _pc == 11219:
+			_pc = 11245
+			continue
+		elif _pc == 11224:
 			debug.print_string("iUtilities.GMDelayedDisable: entered the delayed disabler.\n")
-		state.create(self, 1)
-		while true:
+			_pc = 11245
+			continue
+		elif _pc == 11245:
+			state.create(self, 1)
+			_pc = 11273
+			continue
+		elif _pc == 11273:
 			await _pog_wait(100.0)
 			if not (1):
-				break
-	else:
-		if PogRuntime.TRACE:
+				_pc = 11311
+				continue
+			else:
+				_pc = 11273
+				continue
+		elif _pc == 11311:
+			_pc = 11356
+			continue
+		elif _pc == 11316:
+			_pc = 11342
+			continue
+		elif _pc == 11321:
 			debug.print_string("iUtiltites.GMDelayedDisable: ditching mission skipper altogether.\n")
-		await local_9845()
-	return
+			_pc = 11342
+			continue
+		elif _pc == 11342:
+			await local_9845()
+			_pc = 11356
+			continue
+		elif _pc == 11356:
+			return
+		else:
+			return 0
 	return 0
 
 func super_skip() -> Variant:
@@ -2703,51 +4364,158 @@ func task_skip_mission() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	if PogRuntime.TRACE:
-		if global.exists("g_skip_ok"):
+	var _pc: int = 16849
+	while true:
+		if _pc == 16849:
+			_pc = 17201
+			continue
+		elif _pc == 16859:
+			if global.exists("g_skip_ok"):
+				_pc = 16884
+				continue
+			else:
+				_pc = 17201
+				continue
+		elif _pc == 16884:
 			if 1 == global.pog_bool("g_skip_ok"):
-				text.add("csv:/text/utils")
-				await iconversation.begin()
-				await iconversation.add_response("utils_text_no_ta", "utils_dial_no_ta")
-				await iconversation.add_response("utils_text_sure_thing", "utils_dial_sure_thing")
-				v2 = await iconversation.ask(0, "utils_particle_employee", string.join("utils_dial_wanna_skip+", v0))
-				await iconversation.end()
-				text.remove("csv:/text/utils")
-				if 2 == v2:
-					if PogRuntime.TRACE:
-						debug.print_string("skipping next mission!")
-					if not (global.exists(v1)):
-						global.create_bool(v1, 1, 1)
-					else:
-						global.set_bool(v1, 1)
-					return
-	global.set_bool(v1, 0)
-	return
+				_pc = 16911
+				continue
+			else:
+				_pc = 17201
+				continue
+		elif _pc == 16911:
+			text.add("csv:/text/utils")
+			await iconversation.begin()
+			await iconversation.add_response("utils_text_no_ta", "utils_dial_no_ta")
+			await iconversation.add_response("utils_text_sure_thing", "utils_dial_sure_thing")
+			v2 = await iconversation.ask(0, "utils_particle_employee", string.join("utils_dial_wanna_skip+", v0))
+			await iconversation.end()
+			text.remove("csv:/text/utils")
+			if 2 == v2:
+				_pc = 17100
+				continue
+			else:
+				_pc = 17201
+				continue
+		elif _pc == 17100:
+			_pc = 17126
+			continue
+		elif _pc == 17105:
+			debug.print_string("skipping next mission!")
+			_pc = 17126
+			continue
+		elif _pc == 17126:
+			if not (global.exists(v1)):
+				_pc = 17150
+				continue
+			else:
+				_pc = 17176
+				continue
+		elif _pc == 17150:
+			global.create_bool(v1, 1, 1)
+			_pc = 17196
+			continue
+		elif _pc == 17176:
+			global.set_bool(v1, 1)
+			_pc = 17196
+			continue
+		elif _pc == 17196:
+			_pc = 17221
+			continue
+		elif _pc == 17201:
+			global.set_bool(v1, 0)
+			_pc = 17221
+			continue
+		elif _pc == 17221:
+			return
+		else:
+			return 0
 	return 0
 
 func wait_on_skip_mission() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	while _pog_is_running(v0):
-		await _pog_wait(1.0)
-	if global.exists(v1):
-		if 1 != global.pog_bool(v1):
+	var _pc: int = 17237
+	while true:
+		if _pc == 17237:
+			if _pog_is_running(v0):
+				_pc = 17260
+				continue
+			else:
+				_pc = 17297
+				continue
+		elif _pc == 17260:
+			await _pog_wait(1.0)
+			_pc = 17237
+			continue
+		elif _pc == 17297:
+			if global.exists(v1):
+				_pc = 17320
+				continue
+			else:
+				_pc = 17351
+				continue
+		elif _pc == 17320:
+			if 1 == global.pog_bool(v1):
+				_pc = 17345
+				continue
+			else:
+				_pc = 17351
+				continue
+		elif _pc == 17345:
+			_pc = 17357
+			continue
+		elif _pc == 17351:
+			_pc = 17357
+			continue
+		elif _pc == 17357:
+			return
+		else:
 			return 0
-	return
 	return 0
 
 func skip_wait_for_bool(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	await local_9508()
-	if PogRuntime.TRACE:
-		if 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+	var _pc: int = 17359
+	while true:
+		if _pc == 17359:
+			await local_9508()
+			_pc = 17799
+			continue
+		elif _pc == 17383:
+			if 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+				_pc = 17430
+				continue
+			else:
+				_pc = 17799
+				continue
+		elif _pc == 17430:
 			if 1 == global.pog_bool("g_skip_to_specific"):
-				if global.exists(v1):
-					global.set_bool(v1, v2)
-				else:
-					global.create_bool(v1, 1, v2)
-				await local_9845()
-				return 0
+				_pc = 17457
+				continue
+			else:
+				_pc = 17553
+				continue
+		elif _pc == 17457:
+			if global.exists(v1):
+				_pc = 17480
+				continue
+			else:
+				_pc = 17509
+				continue
+		elif _pc == 17480:
+			global.set_bool(v1, v2)
+			_pc = 17534
+			continue
+		elif _pc == 17509:
+			global.create_bool(v1, 1, v2)
+			_pc = 17534
+			continue
+		elif _pc == 17534:
+			await local_9845()
+			_pc = 17813
+			continue
+		elif _pc == 17553:
 			text.add("csv:/text/utils")
 			await iconversation.begin()
 			await iconversation.add_response("utils_text_no_ta", "utils_dial_no_ta")
@@ -2756,12 +4524,34 @@ func skip_wait_for_bool(v0, v1, v2) -> Variant:
 			await iconversation.end()
 			text.remove("csv:/text/utils")
 			if 2 == v3:
-				if global.exists(v1):
-					global.set_bool(v1, v2)
-				else:
-					global.create_bool(v1, 1, v2)
-	await local_9845()
-	return 0
+				_pc = 17722
+				continue
+			else:
+				_pc = 17799
+				continue
+		elif _pc == 17722:
+			if global.exists(v1):
+				_pc = 17745
+				continue
+			else:
+				_pc = 17774
+				continue
+		elif _pc == 17745:
+			global.set_bool(v1, v2)
+			_pc = 17799
+			continue
+		elif _pc == 17774:
+			global.create_bool(v1, 1, v2)
+			_pc = 17799
+			continue
+		elif _pc == 17799:
+			await local_9845()
+			_pc = 17813
+			continue
+		elif _pc == 17813:
+			return 0
+		else:
+			return 0
 	return 0
 
 func skip_dialogue() -> Variant:
@@ -2902,32 +4692,90 @@ func jump_system() -> Variant:
 
 func sim_place_between_exact(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
-	v4 = sim.distance_between(v1, v2)
-	if _pog_is_null(v4):
-		sim.place_at(v0, v1)
-	else:
-		sim.place_between(v0, v1, v2, v4 / v3)
-	return 0
+	var _pc: int = 20197
+	while true:
+		if _pc == 20197:
+			v4 = sim.distance_between(v1, v2)
+			if _pog_is_null(v4):
+				_pc = 20247
+				continue
+			else:
+				_pc = 20276
+				continue
+		elif _pc == 20247:
+			sim.place_at(v0, v1)
+			_pc = 20316
+			continue
+		elif _pc == 20276:
+			sim.place_between(v0, v1, v2, v4 / v3)
+			_pc = 20316
+			continue
+		elif _pc == 20316:
+			return 0
+		else:
+			return 0
 	return 0
 
 func group_set_cullable(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = group.sim_count(v0)
-	if not _pog_is_null(v2):
-		v3 = 0
-		while v2 < v3:
+	var _pc: int = 20319
+	while true:
+		if _pc == 20319:
+			v2 = group.sim_count(v0)
+			if not _pog_is_null(v2):
+				_pc = 20360
+				continue
+			else:
+				_pc = 20443
+				continue
+		elif _pc == 20360:
+			v3 = 0
+			_pc = 20367
+			continue
+		elif _pc == 20367:
+			if v2 < v3:
+				_pc = 20383
+				continue
+			else:
+				_pc = 20443
+				continue
+		elif _pc == 20383:
 			sim.set_cullable(group.nth_sim(v0, v3), v1)
 			v3 = 1 + v3
-	v2 = group.group_count(v0)
-	if _pog_is_null(v2):
-		pass
-	else:
-		v3 = 0
-		while v2 < v3:
+			_pc = 20367
+			continue
+		elif _pc == 20443:
+			v2 = group.group_count(v0)
+			if _pog_is_null(v2):
+				_pc = 20479
+				continue
+			else:
+				_pc = 20484
+				continue
+		elif _pc == 20479:
+			_pc = 20567
+			continue
+		elif _pc == 20484:
+			v3 = 0
+			_pc = 20491
+			continue
+		elif _pc == 20491:
+			if v2 < v3:
+				_pc = 20507
+				continue
+			else:
+				_pc = 20567
+				continue
+		elif _pc == 20507:
 			await group_set_cullable(group.nth_group(v0, v3), v1)
 			v3 = 1 + v3
-	return 0
+			_pc = 20491
+			continue
+		elif _pc == 20567:
+			return 0
+		else:
+			return 0
 	return 0
 
 func capsule_jump_player(v0) -> Variant:
@@ -2937,74 +4785,185 @@ func capsule_jump_player(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = iship.find_player_ship()
-	v2 = null
-	v2 = isim.world_name(v0)
-	isim.capsule_jump(isim.cast(v1), v0)
+	var _pc: int = 20570
 	while true:
-		await _pog_wait(0.5)
-		if not (not _pog_eq(v2, isim.active_world())):
-			break
-	return 0
-	v3 = global.pog_float("g_player_sensor_range")
-	v5 = list.item_count(v0)
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.CapsuleJumpGroup Preparing to capsule jump ")
-		debug.print_int(v5)
-		debug.print_string(" Sims after a delay...\n")
-	await _pog_wait(v2)
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.CapsuleJumpGroup starting multiple capsule jumps\n")
-	v4 = 0
-	while v5 < v4:
-		v6 = isim.cast(list.get_nth(v0, v4))
-		if PogRuntime.TRACE:
+		if _pc == 20570:
+			v1 = iship.find_player_ship()
+			v2 = null
+			v2 = isim.world_name(v0)
+			isim.capsule_jump(isim.cast(v1), v0)
+			_pc = 20668
+			continue
+		elif _pc == 20668:
+			await _pog_wait(0.5)
+			if _pog_eq(v2, isim.active_world()):
+				_pc = 20727
+				continue
+			else:
+				_pc = 20668
+				continue
+		elif _pc == 20727:
+			return 0
+		elif _pc == 20797:
+			debug.print_string("iUtilities.CapsuleJumpGroup Preparing to capsule jump ")
+			debug.print_int(v5)
+			debug.print_string(" Sims after a delay...\n")
+			_pc = 20858
+			continue
+		elif _pc == 20858:
+			await _pog_wait(v2)
+			_pc = 20916
+			continue
+		elif _pc == 20895:
+			debug.print_string("iUtilities.CapsuleJumpGroup starting multiple capsule jumps\n")
+			_pc = 20916
+			continue
+		elif _pc == 20916:
+			v4 = 0
+			_pc = 20923
+			continue
+		elif _pc == 20923:
+			if v5 < v4:
+				_pc = 20939
+				continue
+			else:
+				_pc = 21242
+				continue
+		elif _pc == 20939:
+			v6 = isim.cast(list.get_nth(v0, v4))
+			_pc = 21124
+			continue
+		elif _pc == 20986:
 			debug.print_string("iUtilities:CapsuleJumpGroup Now capsule jumping delayed sim [")
 			if object.property_exists(v6, "name"):
-				debug.print_string(object.string_property(v6, "name"))
+				_pc = 21037
+				continue
 			else:
-				debug.print_string("no name")
+				_pc = 21082
+				continue
+		elif _pc == 21037:
+			debug.print_string(object.string_property(v6, "name"))
+			_pc = 21103
+			continue
+		elif _pc == 21082:
+			debug.print_string("no name")
+			_pc = 21103
+			continue
+		elif _pc == 21103:
 			debug.print_string("] ... ")
-		isim.capsule_jump_staggered(v6, v1)
-		if PogRuntime.TRACE:
+			_pc = 21124
+			continue
+		elif _pc == 21124:
+			isim.capsule_jump_staggered(v6, v1)
+			_pc = 21174
+			continue
+		elif _pc == 21153:
 			debug.print_string("done. \n")
-		await _pog_wait(math.random(1.5, 2.5))
-		v4 = 1 + v4
-	while true:
-		if sim.is_dead(v6):
-			break
-		await _pog_wait(0.10000000149011612)
-		if not (isim.is_capsule_jumping(v6)):
-			break
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.CapsuleJumpGroup completed multiple capsule jumps\n")
-	return
+			_pc = 21174
+			continue
+		elif _pc == 21174:
+			await _pog_wait(math.random(1.5, 2.5))
+			v4 = 1 + v4
+			_pc = 20923
+			continue
+		elif _pc == 21242:
+			if sim.is_dead(v6):
+				_pc = 21265
+				continue
+			else:
+				_pc = 21270
+				continue
+		elif _pc == 21265:
+			_pc = 21325
+			continue
+		elif _pc == 21270:
+			await _pog_wait(0.10000000149011612)
+			if not (isim.is_capsule_jumping(v6)):
+				_pc = 21325
+				continue
+			else:
+				_pc = 21242
+				continue
+		elif _pc == 21325:
+			_pc = 21351
+			continue
+		elif _pc == 21330:
+			debug.print_string("iUtilities.CapsuleJumpGroup completed multiple capsule jumps\n")
+			_pc = 21351
+			continue
+		elif _pc == 21351:
+			return
+		else:
+			return 0
 	return 0
 
 func local_21360(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = group.sim_count(v0)
-	v2 = 0
-	while v1 < v2:
-		iship.set_free_without_pilot(iship.cast(group.nth_sim(v0, v2)), 0)
-		v2 = 1 + v2
-	return 0
+	var _pc: int = 21360
+	while true:
+		if _pc == 21360:
+			v1 = group.sim_count(v0)
+			v2 = 0
+			_pc = 21396
+			continue
+		elif _pc == 21396:
+			if v1 < v2:
+				_pc = 21412
+				continue
+			else:
+				_pc = 21481
+				continue
+		elif _pc == 21412:
+			iship.set_free_without_pilot(iship.cast(group.nth_sim(v0, v2)), 0)
+			v2 = 1 + v2
+			_pc = 21396
+			continue
+		elif _pc == 21481:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_21484(v0) -> Variant:
+	var _pc: int = 21484
 	while true:
-		await _pog_wait(0.10000000149011612)
-		if not (iship.is_free_without_pilot(v0) and isim.is_capsule_jumping(v0)):
-			break
-	iship.set_free_without_pilot(v0, 1)
-	if 1 == object.property_exists(v0, "mega_freighter"):
-		await _pog_wait(math.random(1.0, 2.0))
-	else:
-		if 33554432 == isim.type(v0):
+		if _pc == 21484:
+			await _pog_wait(0.10000000149011612)
+			if not (iship.is_free_without_pilot(v0) and isim.is_capsule_jumping(v0)):
+				_pc = 21558
+				continue
+			else:
+				_pc = 21484
+				continue
+		elif _pc == 21558:
+			iship.set_free_without_pilot(v0, 1)
+			if 1 == object.property_exists(v0, "mega_freighter"):
+				_pc = 21610
+				continue
+			else:
+				_pc = 21665
+				continue
+		elif _pc == 21610:
+			await _pog_wait(math.random(1.0, 2.0))
+			_pc = 21744
+			continue
+		elif _pc == 21665:
+			if 33554432 == isim.type(v0):
+				_pc = 21694
+				continue
+			else:
+				_pc = 21744
+				continue
+		elif _pc == 21694:
 			await _pog_wait(math.random(0.699999988079071, 1.399999976158142))
-	await _pog_wait(math.random(0.30000001192092896, 0.699999988079071))
-	return 0
+			_pc = 21744
+			continue
+		elif _pc == 21744:
+			await _pog_wait(math.random(0.30000001192092896, 0.699999988079071))
+			return 0
+		else:
+			return 0
 	return 0
 
 func capsule_jump_group(v0, v1, v2) -> Variant:
@@ -3012,75 +4971,195 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v6 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iUtilities.CapsuleJumpGroup: Waiting ")
-		debug.print_float(v2)
-		debug.print_string(" seconds before jumping group.\n")
-		debug.print_string("iUtilities.CapsuleJumpGroup: Sims = ")
-		debug.print_int(group.total_sim_count(v0))
-		debug.print_string(" Destination = ")
-		debug.print_string(object.string_property(v1, "name"))
-		debug.print_string(" \n")
-	v3 = group.sim_count(v0)
-	if not _pog_is_null(v3):
-		v4 = 0
-		while v3 < v4:
+	var _pc: int = 21797
+	while true:
+		if _pc == 21797:
+			v6 = null
+			_pc = 22016
+			continue
+		elif _pc == 21818:
+			debug.print_string("iUtilities.CapsuleJumpGroup: Waiting ")
+			debug.print_float(v2)
+			debug.print_string(" seconds before jumping group.\n")
+			debug.print_string("iUtilities.CapsuleJumpGroup: Sims = ")
+			debug.print_int(group.total_sim_count(v0))
+			debug.print_string(" Destination = ")
+			debug.print_string(object.string_property(v1, "name"))
+			debug.print_string(" \n")
+			_pc = 22016
+			continue
+		elif _pc == 22016:
+			v3 = group.sim_count(v0)
+			if not _pog_is_null(v3):
+				_pc = 22052
+				continue
+			else:
+				_pc = 22870
+				continue
+		elif _pc == 22052:
+			v4 = 0
+			_pc = 22060
+			continue
+		elif _pc == 22060:
+			if v3 < v4:
+				_pc = 22076
+				continue
+			else:
+				_pc = 22393
+				continue
+		elif _pc == 22076:
 			v5 = iship.cast(group.nth_sim(v0, v4))
 			if sim.is_alive(v5):
-				if PogRuntime.TRACE:
-					debug.print_string("iUtilities.CapsuleJumpGroup: Adding sim no. ")
-					debug.print_int(1 + v4)
-					debug.print_string(" (")
-					debug.print_string(object.string_property(v5, "name"))
-					debug.print_string(") to the jump list. \n")
-				list.add_tail(v6, v5)
+				_pc = 22141
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iUtilities.CapsuleJumpGroup: ERROR: sim no. ")
-				if PogRuntime.TRACE:
-					debug.print_int(v4)
-				if PogRuntime.TRACE:
-					debug.print_string(" is dead / null. Not adding to list.\n")
+				_pc = 22299
+				continue
+		elif _pc == 22141:
+			_pc = 22270
+			continue
+		elif _pc == 22146:
+			debug.print_string("iUtilities.CapsuleJumpGroup: Adding sim no. ")
+			debug.print_int(1 + v4)
+			debug.print_string(" (")
+			debug.print_string(object.string_property(v5, "name"))
+			debug.print_string(") to the jump list. \n")
+			_pc = 22270
+			continue
+		elif _pc == 22270:
+			list.add_tail(v6, v5)
+			_pc = 22375
+			continue
+		elif _pc == 22299:
+			_pc = 22325
+			continue
+		elif _pc == 22304:
+			debug.print_string("iUtilities.CapsuleJumpGroup: ERROR: sim no. ")
+			_pc = 22325
+			continue
+		elif _pc == 22325:
+			_pc = 22349
+			continue
+		elif _pc == 22330:
+			debug.print_int(v4)
+			_pc = 22349
+			continue
+		elif _pc == 22349:
+			_pc = 22375
+			continue
+		elif _pc == 22354:
+			debug.print_string(" is dead / null. Not adding to list.\n")
+			_pc = 22375
+			continue
+		elif _pc == 22375:
 			v4 = 1 + v4
-		v3 = list.item_count(v6)
-		await _pog_wait(v2)
-		v4 = 0
-		while v3 < v4:
+			_pc = 22060
+			continue
+		elif _pc == 22393:
+			v3 = list.item_count(v6)
+			await _pog_wait(v2)
+			v4 = 0
+			_pc = 22457
+			continue
+		elif _pc == 22457:
+			if v3 < v4:
+				_pc = 22473
+				continue
+			else:
+				_pc = 22870
+				continue
+		elif _pc == 22473:
 			v5 = iship.cast(list.get_nth(v6, v4))
 			if sim.is_alive(v5):
-				if PogRuntime.TRACE:
-					debug.print_string("iUtilities.CapsuleJumpGroup: Jumping sim no. ")
-					debug.print_int(1 + v4)
-					debug.print_string(" name = ")
-					debug.print_string(object.string_property(v5, "name"))
-					debug.print_string(" to ")
-					debug.print_string(object.string_property(v1, "name"))
-					debug.print_string(" \n")
-				isim.capsule_jump_staggered(v5, v1)
-				await local_21484(v5)
+				_pc = 22538
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iUtilities.CapsuleJumpGroup: ERROR: sim no. ")
-				if PogRuntime.TRACE:
-					debug.print_int(v4)
-				if PogRuntime.TRACE:
-					debug.print_string(" is dead / null. Can't jump.\n")
+				_pc = 22776
+				continue
+		elif _pc == 22538:
+			_pc = 22728
+			continue
+		elif _pc == 22543:
+			debug.print_string("iUtilities.CapsuleJumpGroup: Jumping sim no. ")
+			debug.print_int(1 + v4)
+			debug.print_string(" name = ")
+			debug.print_string(object.string_property(v5, "name"))
+			debug.print_string(" to ")
+			debug.print_string(object.string_property(v1, "name"))
+			debug.print_string(" \n")
+			_pc = 22728
+			continue
+		elif _pc == 22728:
+			isim.capsule_jump_staggered(v5, v1)
+			await local_21484(v5)
+			_pc = 22852
+			continue
+		elif _pc == 22776:
+			_pc = 22802
+			continue
+		elif _pc == 22781:
+			debug.print_string("iUtilities.CapsuleJumpGroup: ERROR: sim no. ")
+			_pc = 22802
+			continue
+		elif _pc == 22802:
+			_pc = 22826
+			continue
+		elif _pc == 22807:
+			debug.print_int(v4)
+			_pc = 22826
+			continue
+		elif _pc == 22826:
+			_pc = 22852
+			continue
+		elif _pc == 22831:
+			debug.print_string(" is dead / null. Can't jump.\n")
+			_pc = 22852
+			continue
+		elif _pc == 22852:
 			v4 = 1 + v4
-	await local_21360(v0)
-	v3 = group.group_count(v0)
-	if _pog_is_null(v3):
-		pass
-	else:
-		if PogRuntime.TRACE:
+			_pc = 22457
+			continue
+		elif _pc == 22870:
+			await local_21360(v0)
+			v3 = group.group_count(v0)
+			if _pog_is_null(v3):
+				_pc = 22925
+				continue
+			else:
+				_pc = 22930
+				continue
+		elif _pc == 22925:
+			_pc = 23086
+			continue
+		elif _pc == 22930:
+			_pc = 22998
+			continue
+		elif _pc == 22935:
 			debug.print_string("iUtilities.CapsuleJumpGroup: Processing ")
 			debug.print_int(v3)
 			debug.print_string(" subgroup(s).\n")
-		v4 = 0
-		while v3 < v4:
+			_pc = 22998
+			continue
+		elif _pc == 22998:
+			v4 = 0
+			_pc = 23005
+			continue
+		elif _pc == 23005:
+			if v3 < v4:
+				_pc = 23021
+				continue
+			else:
+				_pc = 23086
+				continue
+		elif _pc == 23021:
 			await capsule_jump_group(group.nth_group(v0, v4), v1, v2)
 			v4 = 1 + v4
-	return 0
+			_pc = 23005
+			continue
+		elif _pc == 23086:
+			return 0
+		else:
+			return 0
 	return 0
 
 func list_from_compound_group(v0) -> Variant:
@@ -3090,18 +5169,50 @@ func list_from_compound_group(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = null
-	v5 = group.group_count(v0)
-	v3 = group.sim_count(v0)
-	v4 = 0
-	while v3 < v4:
-		list.add_head(v1, group.nth_sim(v0, v4))
-		v4 = 1 + v4
-	v6 = 0
-	while v5 < v6:
-		list.append(v1, await list_from_compound_group(group.nth_group(v0, v6)))
-		v6 = 1 + v6
-	return _pog_clone(v1)
+	var _pc: int = 23096
+	while true:
+		if _pc == 23096:
+			v1 = null
+			v5 = group.group_count(v0)
+			v3 = group.sim_count(v0)
+			v4 = 0
+			_pc = 23168
+			continue
+		elif _pc == 23168:
+			if v3 < v4:
+				_pc = 23184
+				continue
+			else:
+				_pc = 23244
+				continue
+		elif _pc == 23184:
+			list.add_head(v1, group.nth_sim(v0, v4))
+			v4 = 1 + v4
+			_pc = 23168
+			continue
+		elif _pc == 23244:
+			v6 = 0
+			_pc = 23251
+			continue
+		elif _pc == 23251:
+			if v5 < v6:
+				_pc = 23267
+				continue
+			else:
+				_pc = 23342
+				continue
+		elif _pc == 23267:
+			list.append(v1, await list_from_compound_group(group.nth_group(v0, v6)))
+			v6 = 1 + v6
+			_pc = 23251
+			continue
+		elif _pc == 23342:
+			_pc = 23353
+			continue
+		elif _pc == 23353:
+			return
+		else:
+			return 0
 	return 0
 
 func near_to_group(v0, v1, v2, v3) -> Variant:
@@ -3109,25 +5220,86 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v5 = group.sim_count(v1)
-	v6 = group.group_count(v1)
-	if _pog_is_null(v6) and _pog_is_null(v5):
-		pass
-	else:
-		v7 = 0
-		while v5 < v7:
+	var _pc: int = 23363
+	while true:
+		if _pc == 23363:
+			v5 = group.sim_count(v1)
+			v6 = group.group_count(v1)
+			if _pog_is_null(v6) and _pog_is_null(v5):
+				_pc = 23436
+				continue
+			else:
+				_pc = 23442
+				continue
+		elif _pc == 23436:
+			_pc = 23714
+			continue
+		elif _pc == 23442:
+			v7 = 0
+			_pc = 23449
+			continue
+		elif _pc == 23449:
+			if v5 < v7:
+				_pc = 23465
+				continue
+			else:
+				_pc = 23569
+				continue
+		elif _pc == 23465:
 			v4 = isim.cast(group.nth_sim(v1, v7))
 			if v2 < sim.distance_between(v0, v4):
-				return v4
+				_pc = 23541
+				continue
+			else:
+				_pc = 23551
+				continue
+		elif _pc == 23541:
+			_pc = 23714
+			continue
+		elif _pc == 23551:
 			v7 = 1 + v7
-		if 0 > v6 and v3:
+			_pc = 23449
+			continue
+		elif _pc == 23569:
+			if 0 > v6 and v3:
+				_pc = 23587
+				continue
+			else:
+				_pc = 23708
+				continue
+		elif _pc == 23587:
 			v7 = 0
-			while v6 < v7:
-				v4 = await near_to_group(v0, group.nth_group(v1, v7), v2, v3)
-				if not _pog_is_null(v4):
-					return v4
-				v7 = 1 + v7
-	return
+			_pc = 23594
+			continue
+		elif _pc == 23594:
+			if v6 < v7:
+				_pc = 23610
+				continue
+			else:
+				_pc = 23708
+				continue
+		elif _pc == 23610:
+			v4 = await near_to_group(v0, group.nth_group(v1, v7), v2, v3)
+			if not _pog_is_null(v4):
+				_pc = 23680
+				continue
+			else:
+				_pc = 23690
+				continue
+		elif _pc == 23680:
+			_pc = 23714
+			continue
+		elif _pc == 23690:
+			v7 = 1 + v7
+			_pc = 23594
+			continue
+		elif _pc == 23708:
+			_pc = 23714
+			continue
+		elif _pc == 23714:
+			return
+		else:
+			return 0
 	return 0
 
 func far_from_group(v0, v1, v2, v3) -> Variant:
@@ -3135,60 +5307,175 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v5 = group.sim_count(v1)
-	v6 = group.group_count(v1)
-	if _pog_is_null(v6) and _pog_is_null(v5):
-		pass
-	else:
-		v7 = 0
-		while v5 < v7:
+	var _pc: int = 23716
+	while true:
+		if _pc == 23716:
+			v5 = group.sim_count(v1)
+			v6 = group.group_count(v1)
+			if _pog_is_null(v6) and _pog_is_null(v5):
+				_pc = 23789
+				continue
+			else:
+				_pc = 23795
+				continue
+		elif _pc == 23789:
+			_pc = 24067
+			continue
+		elif _pc == 23795:
+			v7 = 0
+			_pc = 23802
+			continue
+		elif _pc == 23802:
+			if v5 < v7:
+				_pc = 23818
+				continue
+			else:
+				_pc = 23922
+				continue
+		elif _pc == 23818:
 			v4 = isim.cast(group.nth_sim(v1, v7))
 			if v2 > sim.distance_between(v0, v4):
-				return v4
+				_pc = 23894
+				continue
+			else:
+				_pc = 23904
+				continue
+		elif _pc == 23894:
+			_pc = 24067
+			continue
+		elif _pc == 23904:
 			v7 = 1 + v7
-		if 0 > v6 and v3:
+			_pc = 23802
+			continue
+		elif _pc == 23922:
+			if 0 > v6 and v3:
+				_pc = 23940
+				continue
+			else:
+				_pc = 24061
+				continue
+		elif _pc == 23940:
 			v7 = 0
-			while v6 < v7:
-				v4 = await far_from_group(v0, group.nth_group(v1, v7), v2, v3)
-				if not _pog_is_null(v4):
-					return v4
-				v7 = 1 + v7
-	return
+			_pc = 23947
+			continue
+		elif _pc == 23947:
+			if v6 < v7:
+				_pc = 23963
+				continue
+			else:
+				_pc = 24061
+				continue
+		elif _pc == 23963:
+			v4 = await far_from_group(v0, group.nth_group(v1, v7), v2, v3)
+			if not _pog_is_null(v4):
+				_pc = 24033
+				continue
+			else:
+				_pc = 24043
+				continue
+		elif _pc == 24033:
+			_pc = 24067
+			continue
+		elif _pc == 24043:
+			v7 = 1 + v7
+			_pc = 23947
+			continue
+		elif _pc == 24061:
+			_pc = 24067
+			continue
+		elif _pc == 24067:
+			return
+		else:
+			return 0
 	return 0
 
 func create_waypoint_between_exact(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = sim.create("ini:/sims/nav/waypoint", "default")
-	sim.set_cullable(v3, 0)
-	await sim_place_between_exact(v3, v0, v1, v2)
-	return v3
+	var _pc: int = 24069
+	while true:
+		if _pc == 24069:
+			v3 = sim.create("ini:/sims/nav/waypoint", "default")
+			sim.set_cullable(v3, 0)
+			await sim_place_between_exact(v3, v0, v1, v2)
+			_pc = 24170
+			continue
+		elif _pc == 24170:
+			return
+		else:
+			return 0
 	return 0
 
 func create_player(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = iship.find_player_ship()
-	v3 = null
-	v3 = global.string("g_player_ship_name")
-	if PogRuntime.TRACE:
-		if _pog_is_null(v1):
+	var _pc: int = 24172
+	while true:
+		if _pc == 24172:
+			v2 = iship.find_player_ship()
+			v3 = null
+			v3 = global.string("g_player_ship_name")
+			_pc = 24275
+			continue
+		elif _pc == 24239:
+			if _pog_is_null(v1):
+				_pc = 24253
+				continue
+			else:
+				_pc = 24274
+				continue
+		elif _pc == 24253:
 			debug.error("iUtilities.CreatePlayer: Bad start point")
-	if _pog_eq("", v0):
-		v2 = iship.create_player_ship(v3)
-	else:
-		v2 = iship.create(v0, v3)
-	iship.install_player_pilot(v2)
-	isim.set_faction(v2, ifaction.find("Player"))
-	object.set_string_property(v2, "death_script", "iDeathScript.PlayerDeathScript")
-	if _pog_is_null(v1):
-		return 0
-	if _pog_eq(imapentity.find_by_name("Hoffer's Gap"), v1):
-		sim.place_relative_to(v2, v1, 7000.0, 10000.0, -19000.0)
-		sim.copy_orientation(v2, v1)
-		sim.point_at(v2, v1)
-	else:
-		sim.place_near(v2, v1, 5000.0)
-	return 0
+			_pc = 24274
+			continue
+		elif _pc == 24274:
+			_pc = 24275
+			continue
+		elif _pc == 24275:
+			if _pog_eq("", v0):
+				_pc = 24293
+				continue
+			else:
+				_pc = 24322
+				continue
+		elif _pc == 24293:
+			v2 = iship.create_player_ship(v3)
+			_pc = 24351
+			continue
+		elif _pc == 24322:
+			v2 = iship.create(v0, v3)
+			_pc = 24351
+			continue
+		elif _pc == 24351:
+			iship.install_player_pilot(v2)
+			isim.set_faction(v2, ifaction.find("Player"))
+			object.set_string_property(v2, "death_script", "iDeathScript.PlayerDeathScript")
+			if not _pog_is_null(v1):
+				_pc = 24454
+				continue
+			else:
+				_pc = 24608
+				continue
+		elif _pc == 24454:
+			if _pog_eq(imapentity.find_by_name("Hoffer's Gap"), v1):
+				_pc = 24487
+				continue
+			else:
+				_pc = 24579
+				continue
+		elif _pc == 24487:
+			sim.place_relative_to(v2, v1, 7000.0, 10000.0, -19000.0)
+			sim.copy_orientation(v2, v1)
+			sim.point_at(v2, v1)
+			_pc = 24608
+			continue
+		elif _pc == 24579:
+			sim.place_near(v2, v1, 5000.0)
+			_pc = 24608
+			continue
+		elif _pc == 24608:
+			return 0
+		else:
+			return 0
 	return 0
 
 func start_in_gagarin_cluster() -> Variant:
@@ -3197,26 +5484,61 @@ func start_in_gagarin_cluster() -> Variant:
 	return 0
 
 func local_24642(v0) -> Variant:
-	return 60 / v0
+	var _pc: int = 24642
+	while true:
+		if _pc == 24642:
+			_pc = 24655
+			continue
+		elif _pc == 24655:
+			return
+		else:
+			return 0
 	return 0
 
 func local_24657(v0, v1) -> Variant:
-	return v0 * 60 - v1
+	var _pc: int = 24657
+	while true:
+		if _pc == 24657:
+			_pc = 24676
+			continue
+		elif _pc == 24676:
+			return
+		else:
+			return 0
 	return 0
 
 func convert_seconds_to_time(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
-	v1 = await local_24642(v0)
-	v3 = string.join(string.from_int(v1), ":")
-	v2 = await local_24657(v1, v0)
-	if 10 < v2:
-		v3 = string.join(v3, string.join("0", string.from_int(v2)))
-	else:
-		v3 = string.join(v3, string.from_int(v2))
-	return _pog_clone(v3)
+	var _pc: int = 24678
+	while true:
+		if _pc == 24678:
+			v3 = null
+			v1 = await local_24642(v0)
+			v3 = string.join(string.from_int(v1), ":")
+			v2 = await local_24657(v1, v0)
+			if 10 < v2:
+				_pc = 24806
+				continue
+			else:
+				_pc = 24876
+				continue
+		elif _pc == 24806:
+			v3 = string.join(v3, string.join("0", string.from_int(v2)))
+			_pc = 24921
+			continue
+		elif _pc == 24876:
+			v3 = string.join(v3, string.from_int(v2))
+			_pc = 24921
+			continue
+		elif _pc == 24921:
+			_pc = 24931
+			continue
+		elif _pc == 24931:
+			return
+		else:
+			return 0
 	return 0
 
 func timer() -> Variant:
@@ -3239,50 +5561,149 @@ func timer() -> Variant:
 func group_set_faction(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = group.sim_count(v0)
-	if not _pog_is_null(v2):
-		v3 = 0
-		while v2 < v3:
+	var _pc: int = 25154
+	while true:
+		if _pc == 25154:
+			v2 = group.sim_count(v0)
+			if not _pog_is_null(v2):
+				_pc = 25195
+				continue
+			else:
+				_pc = 25291
+				continue
+		elif _pc == 25195:
+			v3 = 0
+			_pc = 25202
+			continue
+		elif _pc == 25202:
+			if v2 < v3:
+				_pc = 25218
+				continue
+			else:
+				_pc = 25291
+				continue
+		elif _pc == 25218:
 			isim.set_faction(isim.cast(group.nth_sim(v0, v3)), v1)
 			v3 = 1 + v3
-	v2 = group.group_count(v0)
-	if _pog_is_null(v2):
-		pass
-	else:
-		v3 = 0
-		while v2 < v3:
+			_pc = 25202
+			continue
+		elif _pc == 25291:
+			v2 = group.group_count(v0)
+			if _pog_is_null(v2):
+				_pc = 25327
+				continue
+			else:
+				_pc = 25332
+				continue
+		elif _pc == 25327:
+			_pc = 25415
+			continue
+		elif _pc == 25332:
+			v3 = 0
+			_pc = 25339
+			continue
+		elif _pc == 25339:
+			if v2 < v3:
+				_pc = 25355
+				continue
+			else:
+				_pc = 25415
+				continue
+		elif _pc == 25355:
 			await group_set_faction(group.nth_group(v0, v3), v1)
 			v3 = 1 + v3
-	return 0
+			_pc = 25339
+			continue
+		elif _pc == 25415:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_25418(v0) -> Variant:
-	if 0.5 < v0:
-		return v0 * v0 * 2.0
-	else:
-		return v0 - 1.0 * v0 - 1.0 * 2.0 - 1.0
-	return 1.0
+	var _pc: int = 25418
+	while true:
+		if _pc == 25418:
+			if 0.5 < v0:
+				_pc = 25434
+				continue
+			else:
+				_pc = 25461
+				continue
+		elif _pc == 25434:
+			_pc = 25511
+			continue
+		elif _pc == 25456:
+			_pc = 25501
+			continue
+		elif _pc == 25461:
+			_pc = 25511
+			continue
+		elif _pc == 25501:
+			_pc = 25511
+			continue
+		elif _pc == 25511:
+			return
+		else:
+			return 0
 	return 0
 
 func local_25513(v0, v1, v2) -> Variant:
-	return v2 - 1.0 * v1 + v2 * v0
+	var _pc: int = 25513
+	while true:
+		if _pc == 25513:
+			_pc = 25547
+			continue
+		elif _pc == 25547:
+			return
+		else:
+			return 0
 	return 0
 
 func random_centre_weighted(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = math.random(0.0, 1.0)
-	return await local_25513(v0, v1, await local_25418(v2))
+	var _pc: int = 25549
+	while true:
+		if _pc == 25549:
+			v2 = math.random(0.0, 1.0)
+			await local_25513(v0, v1, await local_25418(v2))
+			_pc = 25629
+			continue
+		elif _pc == 25629:
+			return
+		else:
+			return 0
 	return 0
 
 func send_story_element(v0, v1, v2) -> Variant:
-	if 1 == global.pog_bool("g_skip_to_specific") and global.exists("g_skip_to_specific"):
-		if not (not _pog_eq(global.pog_int("g_skip_to_act"), v1) or not _pog_eq(global.pog_int("g_skip_to_mission_number"), v2)):
+	var _pc: int = 25631
+	while true:
+		if _pc == 25631:
+			if 1 == global.pog_bool("g_skip_to_specific") and global.exists("g_skip_to_specific"):
+				_pc = 25678
+				continue
+			else:
+				_pc = 25762
+				continue
+		elif _pc == 25678:
+			if not _pog_eq(global.pog_int("g_skip_to_act"), v1) or not _pog_eq(global.pog_int("g_skip_to_mission_number"), v2):
+				_pc = 25735
+				continue
+			else:
+				_pc = 25762
+				continue
+		elif _pc == 25735:
+			global.set_int(v0, 2)
+			_pc = 25788
+			continue
+		elif _pc == 25762:
 			global.set_int(v0, 1)
-			return 1
-		global.set_int(v0, 2)
-	else:
-		global.set_int(v0, 1)
-	return
+			_pc = 25788
+			continue
+		elif _pc == 25788:
+			return
+		else:
+			return 0
 	return 0
 
 func critical_ship_monitor() -> Variant:
@@ -3614,25 +6035,77 @@ func group_set_local_velocity(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v6 = 0
-	v6 = 0
-	while group.sim_count(v0) < v6:
-		sim.set_velocity_local_to_sim(group.nth_sim(v0, v6), v1, v2, v3)
-		if v4:
-			sim.set_angular_velocity_euler(group.nth_sim(v0, v6), 0.0, 0.0, 0.0)
-		v6 = 1 + v6
-	if not (v5):
-		pass
-	else:
-		v7 = group.group_count(v8)
-		if _pog_is_null(v7):
-			pass
-		else:
+	var _pc: int = 27146
+	while true:
+		if _pc == 27146:
 			v6 = 0
-			while v7 < v6:
-				await group_set_local_velocity(group.nth_group(v8, v6), v1, v2, v3, v4, v5)
-				v6 = 1 + v6
-	return 0
+			v6 = 0
+			_pc = 27165
+			continue
+		elif _pc == 27165:
+			if group.sim_count(v0) < v6:
+				_pc = 27194
+				continue
+			else:
+				_pc = 27326
+				continue
+		elif _pc == 27194:
+			sim.set_velocity_local_to_sim(group.nth_sim(v0, v6), v1, v2, v3)
+			if v4:
+				_pc = 27256
+				continue
+			else:
+				_pc = 27308
+				continue
+		elif _pc == 27256:
+			sim.set_angular_velocity_euler(group.nth_sim(v0, v6), 0.0, 0.0, 0.0)
+			_pc = 27308
+			continue
+		elif _pc == 27308:
+			v6 = 1 + v6
+			_pc = 27165
+			continue
+		elif _pc == 27326:
+			if not (v5):
+				_pc = 27337
+				continue
+			else:
+				_pc = 27342
+				continue
+		elif _pc == 27337:
+			_pc = 27486
+			continue
+		elif _pc == 27342:
+			v7 = group.group_count(v8)
+			if _pog_is_null(v7):
+				_pc = 27378
+				continue
+			else:
+				_pc = 27383
+				continue
+		elif _pc == 27378:
+			_pc = 27486
+			continue
+		elif _pc == 27383:
+			v6 = 0
+			_pc = 27390
+			continue
+		elif _pc == 27390:
+			if v7 < v6:
+				_pc = 27406
+				continue
+			else:
+				_pc = 27486
+				continue
+		elif _pc == 27406:
+			await group_set_local_velocity(group.nth_group(v8, v6), v1, v2, v3, v4, v5)
+			v6 = 1 + v6
+			_pc = 27390
+			continue
+		elif _pc == 27486:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_27489() -> Variant:
@@ -3640,18 +6113,52 @@ func local_27489() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = 1 - itrade.num_trades()
-	while 0 >= v0:
-		v1 = itrade.nth_trade(v0)
-		v2 = itrade.num_offers(v1)
-		v3 = iinventory.cargo_type_from_name(itrade.offered(v1))
-		if _pog_eq("", object.string_property(v1, "generated_mission")):
-			if 0 <= v2:
-				iinventory.add(v3, 5)
+	var _pc: int = 27489
+	while true:
+		if _pc == 27489:
+			v0 = 1 - itrade.num_trades()
+			_pc = 27515
+			continue
+		elif _pc == 27515:
+			if 0 >= v0:
+				_pc = 27527
+				continue
 			else:
-				iinventory.add(v3, v2)
-				itrade.remove_trade(v1)
-		v0 = -1 + v0
-	return 0
+				_pc = 27752
+				continue
+		elif _pc == 27527:
+			v1 = itrade.nth_trade(v0)
+			v2 = itrade.num_offers(v1)
+			v3 = iinventory.cargo_type_from_name(itrade.offered(v1))
+			if _pog_eq("", object.string_property(v1, "generated_mission")):
+				_pc = 27652
+				continue
+			else:
+				_pc = 27733
+				continue
+		elif _pc == 27652:
+			if 0 <= v2:
+				_pc = 27664
+				continue
+			else:
+				_pc = 27690
+				continue
+		elif _pc == 27664:
+			iinventory.add(v3, 5)
+			_pc = 27733
+			continue
+		elif _pc == 27690:
+			iinventory.add(v3, v2)
+			itrade.remove_trade(v1)
+			_pc = 27733
+			continue
+		elif _pc == 27733:
+			v0 = -1 + v0
+			_pc = 27515
+			continue
+		elif _pc == 27752:
+			return 0
+		else:
+			return 0
 	return 0
 

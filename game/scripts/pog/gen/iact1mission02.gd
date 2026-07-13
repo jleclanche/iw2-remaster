@@ -98,34 +98,98 @@ func local_299() -> Variant:
 
 func local_386() -> Variant:
 	var v0: Variant = 0
-	while icomms.is_in_conversation():
-		await _pog_wait(0.5)
-	if not (await iutilities.skip_mission("Stepson Initiation?")):
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
-	else:
-		await stub()
-	return
+	var _pc: int = 386
+	while true:
+		if _pc == 386:
+			_pc = 391
+			continue
+		elif _pc == 391:
+			if icomms.is_in_conversation():
+				_pc = 409
+				continue
+			else:
+				_pc = 446
+				continue
+		elif _pc == 409:
+			await _pog_wait(0.5)
+			_pc = 391
+			continue
+		elif _pc == 446:
+			if not (await iutilities.skip_mission("Stepson Initiation?")):
+				_pc = 472
+				continue
+			else:
+				_pc = 509
+				continue
+		elif _pc == 472:
+			v0 = _pog_spawn(mission_handler.bind())
+			_pog_detach(v0)
+			_pc = 528
+			continue
+		elif _pc == 509:
+			await stub()
+			_pc = 528
+			continue
+		elif _pc == 528:
+			return
+		else:
+			return 0
 	return 0
 
 func local_530() -> Variant:
 	var v0: Variant = 0
-	v0 = await ishipcreation.get_traffic(7, 9, 3)
-	return v0
+	var _pc: int = 530
+	while true:
+		if _pc == 530:
+			v0 = await ishipcreation.get_traffic(7, 9, 3)
+			_pc = 570
+			continue
+		elif _pc == 570:
+			return
+		else:
+			return 0
 	return 0
 
 func local_572(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
-	v1 = sim.children(v0)
-	while not (p_set.is_empty(v1)):
-		v2 = sim.cast(p_set.first_element(v1))
-		if object.property_exists(v2, "cargo") and not (object.property_exists(v2, "checked")):
+	var _pc: int = 572
+	while true:
+		if _pc == 572:
+			v1 = null
+			v1 = sim.children(v0)
+			_pc = 614
+			continue
+		elif _pc == 614:
+			if not (p_set.is_empty(v1)):
+				_pc = 638
+				continue
+			else:
+				_pc = 797
+				continue
+		elif _pc == 638:
+			v2 = sim.cast(p_set.first_element(v1))
+			if object.property_exists(v2, "cargo") and not (object.property_exists(v2, "checked")):
+				_pc = 731
+				continue
+			else:
+				_pc = 768
+				continue
+		elif _pc == 731:
 			object.add_bool_property(v2, "checked", 1)
-			return v2
-		p_set.remove(v1, v2)
-	return 0
+			_pc = 803
+			continue
+		elif _pc == 768:
+			p_set.remove(v1, v2)
+			_pc = 614
+			continue
+		elif _pc == 797:
+			_pc = 803
+			continue
+		elif _pc == 803:
+			return
+		else:
+			return 0
 	return 0
 
 func local_812(v0, v1, v2) -> Variant:
@@ -577,11 +641,29 @@ func local_4081(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = 0
-	v5 = iship.find_player_ship()
+	var _pc: int = 4081
 	while true:
-		await _pog_wait(1)
-		if _pog_is_null(v2) and 150000.0 < sim.distance_between(v5, v0):
+		if _pc == 4081:
+			v2 = 0
+			v5 = iship.find_player_ship()
+			_pc = 4117
+			continue
+		elif _pc == 4117:
+			await _pog_frame()
+			if _pog_every(4118, 1.0):
+				_pc = 4131
+				continue
+			else:
+				_pc = 4427
+				continue
+		elif _pc == 4131:
+			if _pog_is_null(v2) and 150000.0 < sim.distance_between(v5, v0):
+				_pc = 4173
+				continue
+			else:
+				_pc = 4358
+				continue
+		elif _pc == 4173:
 			v2 = 1
 			v4 = await local_530()
 			v6 = iship.cast(group.leader(v4))
@@ -589,12 +671,27 @@ func local_4081(v0, v1) -> Variant:
 			sim.point_at(v6, v5)
 			await iformation.goose(v4, 70.0, 1)
 			_pog_spawn(local_812.bind(v0, v4, v1))
-		else:
-			if not (1 == v2 and 150000.0 > sim.distance_between(v5, v0)):
+			_pc = 4427
+			continue
+		elif _pc == 4358:
+			if 1 == v2 and 150000.0 > sim.distance_between(v5, v0):
+				_pc = 4400
 				continue
+			else:
+				_pc = 4427
+				continue
+		elif _pc == 4400:
 			v2 = 0
 			group.destroy(v4, 1)
-	return
+			_pc = 4427
+			continue
+		elif _pc == 4427:
+			_pc = 4117
+			continue
+		elif _pc == 4432:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4435() -> Variant:
@@ -603,52 +700,71 @@ func local_4435() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = group.create()
-	v3 = group.create()
-	v4 = ifaction.find("MAAS Corporation")
-	if _pog_is_null(v4):
-		if PogRuntime.TRACE:
+	var _pc: int = 4435
+	while true:
+		if _pc == 4435:
+			v2 = group.create()
+			v3 = group.create()
+			v4 = ifaction.find("MAAS Corporation")
+			if _pog_is_null(v4):
+				_pc = 4517
+				continue
+			else:
+				_pc = 4543
+				continue
+		elif _pc == 4517:
+			_pc = 4543
+			continue
+		elif _pc == 4522:
 			debug.error("iAct1_Mission02: Unable to find Maas faction")
-	v0 = iship.create("ini:/sims/ships/utility/lst", "a1_m02_name_maas_courier")
-	object.set_vector_property(v0, "speed", 60.0, 60.0, 600.0)
-	isim.set_faction(v0, v4)
-	await ipilotsetup.generic_cargo_pod(v0)
-	group.add_sim(v2, v0)
-	sim.set_cullable(v0, 0)
-	subsim.destroy(sim.find_subsim_by_name(v0, "Cargo_CapsuleDrive"))
-	v1 = isim.cast(sim.create("ini:/sims/ships/utility/mail_pod", "a1_m02_name_shipping"))
-	isim.set_indestructable(isim.cast(v1), 1)
-	sim.set_cullable(v1, 1)
-	object.add_int_property(v1, "Manifest", 1)
-	isim.set_mission_critical(isim.cast(v1), 1)
-	isim.dock(v0, v1)
-	v0 = iship.create("ini:/sims/ships/corporate/interceptor", "a1_m02_name_black")
-	isim.set_faction(v0, v4)
-	await ipilotsetup.generic_cargo_pod(v0)
-	iship.set_pilot_skill_level(v0, 0.30000001192092896)
-	group.add_sim(v3, v0)
-	sim.set_cullable(v0, 0)
-	subsim.destroy(sim.find_subsim_by_name(v0, "system_missile_launcher"))
-	subsim.destroy(sim.find_subsim_by_name(v0, "system_countermeasures"))
-	v0 = iship.create("ini:/sims/ships/corporate/interceptor", "a1_m02_name_tyrant")
-	isim.set_faction(v0, v4)
-	await ipilotsetup.generic_cargo_pod(v0)
-	iship.set_pilot_skill_level(v0, 0.30000001192092896)
-	group.add_sim(v3, v0)
-	sim.set_cullable(v0, 0)
-	subsim.destroy(sim.find_subsim_by_name(v0, "system_missile_launcher"))
-	subsim.destroy(sim.find_subsim_by_name(v0, "system_countermeasures"))
-	v0 = iship.create("ini:/sims/ships/corporate/interceptor", "a1_m02_name_snapper")
-	isim.set_faction(v0, v4)
-	await ipilotsetup.generic_cargo_pod(v0)
-	iship.set_pilot_skill_level(v0, 0.30000001192092896)
-	group.add_sim(v3, v0)
-	sim.set_cullable(v0, 0)
-	subsim.destroy(sim.find_subsim_by_name(v0, "system_missile_launcher"))
-	subsim.destroy(sim.find_subsim_by_name(v0, "system_countermeasures"))
-	group.add_group(v2, v3)
-	global.create_handle("g_maas_vessels", 2, v2)
-	return v2
+			_pc = 4543
+			continue
+		elif _pc == 4543:
+			v0 = iship.create("ini:/sims/ships/utility/lst", "a1_m02_name_maas_courier")
+			object.set_vector_property(v0, "speed", 60.0, 60.0, 600.0)
+			isim.set_faction(v0, v4)
+			await ipilotsetup.generic_cargo_pod(v0)
+			group.add_sim(v2, v0)
+			sim.set_cullable(v0, 0)
+			subsim.destroy(sim.find_subsim_by_name(v0, "Cargo_CapsuleDrive"))
+			v1 = isim.cast(sim.create("ini:/sims/ships/utility/mail_pod", "a1_m02_name_shipping"))
+			isim.set_indestructable(isim.cast(v1), 1)
+			sim.set_cullable(v1, 1)
+			object.add_int_property(v1, "Manifest", 1)
+			isim.set_mission_critical(isim.cast(v1), 1)
+			isim.dock(v0, v1)
+			v0 = iship.create("ini:/sims/ships/corporate/interceptor", "a1_m02_name_black")
+			isim.set_faction(v0, v4)
+			await ipilotsetup.generic_cargo_pod(v0)
+			iship.set_pilot_skill_level(v0, 0.30000001192092896)
+			group.add_sim(v3, v0)
+			sim.set_cullable(v0, 0)
+			subsim.destroy(sim.find_subsim_by_name(v0, "system_missile_launcher"))
+			subsim.destroy(sim.find_subsim_by_name(v0, "system_countermeasures"))
+			v0 = iship.create("ini:/sims/ships/corporate/interceptor", "a1_m02_name_tyrant")
+			isim.set_faction(v0, v4)
+			await ipilotsetup.generic_cargo_pod(v0)
+			iship.set_pilot_skill_level(v0, 0.30000001192092896)
+			group.add_sim(v3, v0)
+			sim.set_cullable(v0, 0)
+			subsim.destroy(sim.find_subsim_by_name(v0, "system_missile_launcher"))
+			subsim.destroy(sim.find_subsim_by_name(v0, "system_countermeasures"))
+			v0 = iship.create("ini:/sims/ships/corporate/interceptor", "a1_m02_name_snapper")
+			isim.set_faction(v0, v4)
+			await ipilotsetup.generic_cargo_pod(v0)
+			iship.set_pilot_skill_level(v0, 0.30000001192092896)
+			group.add_sim(v3, v0)
+			sim.set_cullable(v0, 0)
+			subsim.destroy(sim.find_subsim_by_name(v0, "system_missile_launcher"))
+			subsim.destroy(sim.find_subsim_by_name(v0, "system_countermeasures"))
+			group.add_group(v2, v3)
+			global.create_handle("g_maas_vessels", 2, v2)
+			_pc = 5651
+			continue
+		elif _pc == 5651:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5653(v0, v1) -> Variant:
@@ -662,47 +778,120 @@ func local_5653(v0, v1) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v2 = 0
-	v3 = 0
-	v4 = 0
-	v7 = iship.find_player_ship()
-	v9 = imapentity.find_by_name("Grimwald Collection Station I")
-	if _pog_is_null(v9):
-		if PogRuntime.TRACE:
-			debug.error("iAct1_Mission02 Error: Unable to find courier destination!")
-	isim.set_sensor_visibility(isim.cast(v0), 1)
-	await irangecheck.add_traffic_exception(imapentity.cast(v0))
+	var _pc: int = 5653
 	while true:
-		await _pog_wait(1)
-		if v2:
-			if 5 < state.progress(v1) and _pog_eq(v5, sim.group(v8)):
-				if 3 >= state.progress(v1) and not (await iutilities.player_in_range(v8)):
-					v2 = 0
-					group.destroy(v5, 1)
-					await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_got_away")
-					iobjectives.set_state("a1_m02_objective_steal", 2)
-					iobjectives.add("a1_m02_objective_recover")
-					isim.set_sensor_visibility(isim.cast(v0), 0)
-					await irangecheck.remove_traffic_exception(imapentity.cast(v0))
-					state.set_progress(v1, 4)
-					return
-			if 4 != state.progress(v1) and 5 < state.progress(v1) and not _pog_eq(v5, sim.group(v8)):
-				iobjectives.set_state("a1_m02_objective_steal", 1)
-				await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
-				isim.set_sensor_visibility(isim.cast(v0), 0)
-				state.set_progress(v1, 5)
+		if _pc == 5653:
+			v2 = 0
+			v3 = 0
+			v4 = 0
+			v7 = iship.find_player_ship()
+			v9 = imapentity.find_by_name("Grimwald Collection Station I")
+			if _pog_is_null(v9):
+				_pc = 5737
+				continue
 			else:
-				if 4 != state.progress(v1) and 5 < state.progress(v1) and _pog_is_null(group.sim_count(v6)):
-					iship.disrupt_l_d_s_drive(v8, 30.0)
-					await iconversation.one_liner(v8, "", "a1_m02_dialogue_maas_take_anything")
-					iship.undock_self(v8)
-					await _pog_wait(5.0)
-					iobjectives.set_state("a1_m02_objective_steal", 1)
-					_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v5, _pog_clone("Random"))))
-					await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
-					state.set_progress(v1, 5)
-					isim.set_sensor_visibility(isim.cast(v0), 0)
-		if 3 < state.progress(v1) and not (v2) and await iutilities.player_in_range(v0):
+				_pc = 5763
+				continue
+		elif _pc == 5737:
+			_pc = 5763
+			continue
+		elif _pc == 5742:
+			debug.error("iAct1_Mission02 Error: Unable to find courier destination!")
+			_pc = 5763
+			continue
+		elif _pc == 5763:
+			isim.set_sensor_visibility(isim.cast(v0), 1)
+			await irangecheck.add_traffic_exception(imapentity.cast(v0))
+			_pc = 5833
+			continue
+		elif _pc == 5833:
+			await _pog_frame()
+			if _pog_every(5834, 1.0):
+				_pc = 5847
+				continue
+			else:
+				_pc = 6646
+				continue
+		elif _pc == 5847:
+			if v2:
+				_pc = 5857
+				continue
+			else:
+				_pc = 6646
+				continue
+		elif _pc == 5857:
+			if 5 < state.progress(v1) and _pog_eq(v5, sim.group(v8)):
+				_pc = 5908
+				continue
+			else:
+				_pc = 6144
+				continue
+		elif _pc == 5908:
+			if 3 >= state.progress(v1) and not (await iutilities.player_in_range(v8)):
+				_pc = 5954
+				continue
+			else:
+				_pc = 6144
+				continue
+		elif _pc == 5954:
+			v2 = 0
+			group.destroy(v5, 1)
+			await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_got_away")
+			iobjectives.set_state("a1_m02_objective_steal", 2)
+			iobjectives.add("a1_m02_objective_recover")
+			isim.set_sensor_visibility(isim.cast(v0), 0)
+			await irangecheck.remove_traffic_exception(imapentity.cast(v0))
+			state.set_progress(v1, 4)
+			_pc = 7315
+			continue
+		elif _pc == 6144:
+			if 4 != state.progress(v1) and 5 < state.progress(v1) and not _pog_eq(v5, sim.group(v8)):
+				_pc = 6217
+				continue
+			else:
+				_pc = 6326
+				continue
+		elif _pc == 6217:
+			iobjectives.set_state("a1_m02_objective_steal", 1)
+			await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
+			isim.set_sensor_visibility(isim.cast(v0), 0)
+			state.set_progress(v1, 5)
+			_pc = 6646
+			continue
+		elif _pc == 6326:
+			if 4 != state.progress(v1) and 5 < state.progress(v1) and _pog_is_null(group.sim_count(v6)):
+				_pc = 6395
+				continue
+			else:
+				_pc = 6646
+				continue
+		elif _pc == 6395:
+			iship.disrupt_l_d_s_drive(v8, 30.0)
+			await iconversation.one_liner(v8, "", "a1_m02_dialogue_maas_take_anything")
+			iship.undock_self(v8)
+			await _pog_wait(5.0)
+			iobjectives.set_state("a1_m02_objective_steal", 1)
+			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v5, _pog_clone("Random"))))
+			await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
+			state.set_progress(v1, 5)
+			isim.set_sensor_visibility(isim.cast(v0), 0)
+			_pc = 6646
+			continue
+		elif _pc == 6646:
+			if _pog_every(6646, 2.0):
+				_pc = 6659
+				continue
+			else:
+				_pc = 7308
+				continue
+		elif _pc == 6659:
+			if 3 < state.progress(v1) and not (v2) and await iutilities.player_in_range(v0):
+				_pc = 6711
+				continue
+			else:
+				_pc = 7003
+				continue
+		elif _pc == 6711:
 			v2 = 1
 			v5 = await local_4435()
 			v6 = group.nth_group(v5, 0)
@@ -714,19 +903,55 @@ func local_5653(v0, v1) -> Variant:
 			iai.give_approach_order(v8, v9)
 			iship.disrupt_l_d_s_drive(v8, 180.0)
 			state.set_progress(v1, 3)
-		else:
+			_pc = 7308
+			continue
+		elif _pc == 7003:
 			if 9000.0 < sim.distance_between(v8, v7) and not (v3) and v4 and v2:
-				await iconversation.one_liner(v8, "", "a1_m02_dialogue_maas_warned_you")
-				v3 = 1
-				v11 = group.sim_count(v6)
-				iai.give_attack_order(v6, v7)
-			if 9000.0 < sim.distance_between(v8, v7) and not (v4) and v2:
-				v4 = 1
-				await iconversation.one_liner(v8, "", "a1_m02_dialogue_maas_unidentified_order")
-			if not (_pog_eq(v7, iship.cast(isim.last_attacker(v8))) and not (v3) and v2):
+				_pc = 7056
 				continue
+			else:
+				_pc = 7143
+				continue
+		elif _pc == 7056:
+			await iconversation.one_liner(v8, "", "a1_m02_dialogue_maas_warned_you")
+			v3 = 1
+			v11 = group.sim_count(v6)
 			iai.give_attack_order(v6, v7)
-	return
+			_pc = 7143
+			continue
+		elif _pc == 7143:
+			if 9000.0 < sim.distance_between(v8, v7) and not (v4) and v2:
+				_pc = 7190
+				continue
+			else:
+				_pc = 7229
+				continue
+		elif _pc == 7190:
+			v4 = 1
+			await iconversation.one_liner(v8, "", "a1_m02_dialogue_maas_unidentified_order")
+			_pc = 7229
+			continue
+		elif _pc == 7229:
+			if _pog_eq(v7, iship.cast(isim.last_attacker(v8))) and not (v3) and v2:
+				_pc = 7284
+				continue
+			else:
+				_pc = 7308
+				continue
+		elif _pc == 7284:
+			iai.give_attack_order(v6, v7)
+			_pc = 7308
+			continue
+		elif _pc == 7308:
+			_pc = 5833
+			continue
+		elif _pc == 7313:
+			_pc = 7315
+			continue
+		elif _pc == 7315:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7317(v0, v1) -> Variant:
@@ -739,34 +964,97 @@ func local_7317(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v2 = 0
-	v3 = 0
-	v6 = iship.find_player_ship()
-	isim.set_sensor_visibility(isim.cast(v0), 1)
+	var _pc: int = 7317
 	while true:
-		await _pog_wait(1)
-		if v2:
-			if 5 < state.progress(v1) and _pog_eq(v4, sim.group(v7)) and v2:
-				if not (await iutilities.player_in_range(v7)):
-					v2 = 0
-					group.destroy(v4, 1)
-			if 5 < state.progress(v1) and not _pog_eq(v4, sim.group(v7)):
-				iobjectives.set_state("a1_m02_objective_recover", 1)
-				await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
-				isim.set_sensor_visibility(isim.cast(v0), 0)
-				state.set_progress(v1, 5)
+		if _pc == 7317:
+			v2 = 0
+			v3 = 0
+			v6 = iship.find_player_ship()
+			isim.set_sensor_visibility(isim.cast(v0), 1)
+			_pc = 7393
+			continue
+		elif _pc == 7393:
+			await _pog_frame()
+			if _pog_every(7394, 1.0):
+				_pc = 7407
+				continue
 			else:
-				if 5 < state.progress(v1) and _pog_is_null(group.sim_count(v5)):
-					iobjectives.set_state("a1_m02_objective_recover", 1)
-					_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v4, _pog_clone("Random"))))
-					iship.disrupt_l_d_s_drive(v7, 30.0)
-					await iconversation.one_liner(v7, "", "a1_m02_dialogue_maas_take_anything")
-					iship.undock_self(v7)
-					await _pog_wait(5.0)
-					await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
-					state.set_progress(v1, 5)
-					isim.set_sensor_visibility(isim.cast(v0), 0)
-		if await iutilities.player_in_range(v0) and not (v2):
+				_pc = 7983
+				continue
+		elif _pc == 7407:
+			if v2:
+				_pc = 7417
+				continue
+			else:
+				_pc = 7983
+				continue
+		elif _pc == 7417:
+			if 5 < state.progress(v1) and _pog_eq(v4, sim.group(v7)) and v2:
+				_pc = 7474
+				continue
+			else:
+				_pc = 7525
+				continue
+		elif _pc == 7474:
+			if not (await iutilities.player_in_range(v7)):
+				_pc = 7498
+				continue
+			else:
+				_pc = 7525
+				continue
+		elif _pc == 7498:
+			v2 = 0
+			group.destroy(v4, 1)
+			_pc = 7525
+			continue
+		elif _pc == 7525:
+			if 5 < state.progress(v1) and not _pog_eq(v4, sim.group(v7)):
+				_pc = 7576
+				continue
+			else:
+				_pc = 7685
+				continue
+		elif _pc == 7576:
+			iobjectives.set_state("a1_m02_objective_recover", 1)
+			await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
+			isim.set_sensor_visibility(isim.cast(v0), 0)
+			state.set_progress(v1, 5)
+			_pc = 7983
+			continue
+		elif _pc == 7685:
+			if 5 < state.progress(v1) and _pog_is_null(group.sim_count(v5)):
+				_pc = 7732
+				continue
+			else:
+				_pc = 7983
+				continue
+		elif _pc == 7732:
+			iobjectives.set_state("a1_m02_objective_recover", 1)
+			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v4, _pog_clone("Random"))))
+			iship.disrupt_l_d_s_drive(v7, 30.0)
+			await iconversation.one_liner(v7, "", "a1_m02_dialogue_maas_take_anything")
+			iship.undock_self(v7)
+			await _pog_wait(5.0)
+			await iconversation.one_liner(0, "name_clay", "a1_m02_dialogue_clay_nice_one")
+			state.set_progress(v1, 5)
+			isim.set_sensor_visibility(isim.cast(v0), 0)
+			_pc = 7983
+			continue
+		elif _pc == 7983:
+			if _pog_every(7983, 5.0):
+				_pc = 7996
+				continue
+			else:
+				_pc = 8409
+				continue
+		elif _pc == 7996:
+			if await iutilities.player_in_range(v0) and not (v2):
+				_pc = 8026
+				continue
+			else:
+				_pc = 8275
+				continue
+		elif _pc == 8026:
 			v2 = 1
 			v4 = await local_4435()
 			v5 = group.nth_group(v4, 0)
@@ -776,14 +1064,29 @@ func local_7317(v0, v1) -> Variant:
 			sim.point_at(v8, v6)
 			sim.place_relative_to(v8, v7, 700.0, 700.0, 700.0)
 			await iformation.goose(v5, 60.0, 1)
-		else:
-			if not (not (v3) and 12000.0 < sim.distance_between(v7, v6) and v2):
+			_pc = 8409
+			continue
+		elif _pc == 8275:
+			if not (v3) and 12000.0 < sim.distance_between(v7, v6) and v2:
+				_pc = 8322
 				continue
+			else:
+				_pc = 8409
+				continue
+		elif _pc == 8322:
 			v3 = 1
 			await iconversation.one_liner(v7, "", "a1_m02_dialogue_maas_you_again")
 			v10 = group.sim_count(v5)
 			iai.give_attack_order(v5, v6)
-	return
+			_pc = 8409
+			continue
+		elif _pc == 8409:
+			_pc = 7393
+			continue
+		elif _pc == 8414:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -802,75 +1105,205 @@ func mission_handler() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	v0 = 0
-	v1 = 0
-	v3 = imapentity.waypoint_for_entity(imapentity.find_by_name("Greenback Agri-Orbital 1"))
-	v4 = imapentity.waypoint_for_entity(ilagrangepoint.find_by_name("Touchdown L-Point"))
-	v5 = imapentity.waypoint_for_entity(imapentity.find_by_name("Grimwald Collection Station I"))
-	v11 = ifaction.find("Player")
-	v12 = ifaction.find("Stepsons")
-	v13 = self
-	await imissiontracker.add_mission(self, 1, 2)
-	text.add("csv:/text/act_1/act1_mission02")
-	text.add("csv:/text/act_1/act1_mission02_addendum")
-	v9 = state.find(v13)
-	if not (v9):
-		v9 = state.create(v13, 0)
-	await local_156(v9)
-	v10 = iemail.find("html:/text/act_1/act1_mission02_email")
-	if not (v10):
-		iemail.send_email("a1_m02_email_sender", "a1_m02_email_subject", "html:/text/act_1/act1_mission02_email", 1)
-		return
-	else:
-		if not (iemail.read(v10)):
-			return
-	await irangecheck.add_traffic_exception(imapentity.cast(v3))
-	v2 = await iutilities.create_waypoint_relative_to(v3, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
-	object.set_string_property(v2, "name", "a1_m02_name_stepson_waypoint")
-	isim.set_sensor_visibility(isim.cast(v2), 1)
-	if _pog_is_null(v4):
-		if PogRuntime.TRACE:
-			debug.error("Unable to find L-point!")
-	if _pog_is_null(v5):
-		if PogRuntime.TRACE:
-			debug.error("Unable to find Maas Station")
-	v6 = _pog_spawn(local_4081.bind(v2, v9))
-	if 5 == state.progress(v9):
-		v14 = sim.create("ini:/sims/ships/utility/mail_pod", "a1_m02_name_shipping")
-		isim.set_indestructable(isim.cast(v14), 1)
-		object.add_int_property(v14, "Manifest", 1)
-		isim.set_mission_critical(isim.cast(v14), 1)
-		isim.dock(iship.find_player_ship(), isim.cast(v14))
+	var _pc: int = 8418
 	while true:
-		await _pog_wait(2)
-		if not (v0) and 2 == state.progress(v9):
+		if _pc == 8418:
+			v0 = 0
+			v1 = 0
+			v3 = imapentity.waypoint_for_entity(imapentity.find_by_name("Greenback Agri-Orbital 1"))
+			v4 = imapentity.waypoint_for_entity(ilagrangepoint.find_by_name("Touchdown L-Point"))
+			v5 = imapentity.waypoint_for_entity(imapentity.find_by_name("Grimwald Collection Station I"))
+			v11 = ifaction.find("Player")
+			v12 = ifaction.find("Stepsons")
+			v13 = self
+			await imissiontracker.add_mission(self, 1, 2)
+			text.add("csv:/text/act_1/act1_mission02")
+			text.add("csv:/text/act_1/act1_mission02_addendum")
+			v9 = state.find(v13)
+			if not (v9):
+				_pc = 8728
+				continue
+			else:
+				_pc = 8753
+				continue
+		elif _pc == 8728:
+			v9 = state.create(v13, 0)
+			_pc = 8753
+			continue
+		elif _pc == 8753:
+			await local_156(v9)
+			v10 = iemail.find("html:/text/act_1/act1_mission02_email")
+			if not (v10):
+				_pc = 8809
+				continue
+			else:
+				_pc = 8853
+				continue
+		elif _pc == 8809:
+			iemail.send_email("a1_m02_email_sender", "a1_m02_email_subject", "html:/text/act_1/act1_mission02_email", 1)
+			_pc = 10089
+			continue
+		elif _pc == 8848:
+			_pc = 8882
+			continue
+		elif _pc == 8853:
+			if not (iemail.read(v10)):
+				_pc = 8877
+				continue
+			else:
+				_pc = 8882
+				continue
+		elif _pc == 8877:
+			_pc = 10089
+			continue
+		elif _pc == 8882:
+			await irangecheck.add_traffic_exception(imapentity.cast(v3))
+			v2 = await iutilities.create_waypoint_relative_to(v3, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
+			object.set_string_property(v2, "name", "a1_m02_name_stepson_waypoint")
+			isim.set_sensor_visibility(isim.cast(v2), 1)
+			if _pog_is_null(v4):
+				_pc = 9085
+				continue
+			else:
+				_pc = 9111
+				continue
+		elif _pc == 9085:
+			_pc = 9111
+			continue
+		elif _pc == 9090:
+			debug.error("Unable to find L-point!")
+			_pc = 9111
+			continue
+		elif _pc == 9111:
+			if _pog_is_null(v5):
+				_pc = 9124
+				continue
+			else:
+				_pc = 9150
+				continue
+		elif _pc == 9124:
+			_pc = 9150
+			continue
+		elif _pc == 9129:
+			debug.error("Unable to find Maas Station")
+			_pc = 9150
+			continue
+		elif _pc == 9150:
+			v6 = _pog_spawn(local_4081.bind(v2, v9))
+			if 5 == state.progress(v9):
+				_pc = 9205
+				continue
+			else:
+				_pc = 9377
+				continue
+		elif _pc == 9205:
+			v14 = sim.create("ini:/sims/ships/utility/mail_pod", "a1_m02_name_shipping")
+			isim.set_indestructable(isim.cast(v14), 1)
+			object.add_int_property(v14, "Manifest", 1)
+			isim.set_mission_critical(isim.cast(v14), 1)
+			isim.dock(iship.find_player_ship(), isim.cast(v14))
+			_pc = 9377
+			continue
+		elif _pc == 9377:
+			_pc = 9382
+			continue
+		elif _pc == 9382:
+			await _pog_frame()
+			if _pog_every(9383, 2.0):
+				_pc = 9396
+				continue
+			else:
+				_pc = 9534
+				continue
+		elif _pc == 9396:
+			if not (v0) and 2 == state.progress(v9):
+				_pc = 9429
+				continue
+			else:
+				_pc = 9465
+				continue
+		elif _pc == 9429:
 			v0 = 1
 			v7 = _pog_spawn(local_5653.bind(v4, v9))
-		if not (v1) and 4 == state.progress(v9):
+			_pc = 9465
+			continue
+		elif _pc == 9465:
+			if not (v1) and 4 == state.progress(v9):
+				_pc = 9498
+				continue
+			else:
+				_pc = 9534
+				continue
+		elif _pc == 9498:
 			v1 = 1
 			v8 = _pog_spawn(local_7317.bind(v5, v9))
-		if not (100 == state.progress(v9) or 6 == state.progress(v9)):
+			_pc = 9534
 			continue
-		if 6 == state.progress(v9):
+		elif _pc == 9534:
+			if _pog_every(9534, 3.0):
+				_pc = 9547
+				continue
+			else:
+				_pc = 10082
+				continue
+		elif _pc == 9547:
+			if 100 == state.progress(v9) or 6 == state.progress(v9):
+				_pc = 9595
+				continue
+			else:
+				_pc = 10082
+				continue
+		elif _pc == 9595:
+			if 6 == state.progress(v9):
+				_pc = 9621
+				continue
+			else:
+				_pc = 9648
+				continue
+		elif _pc == 9621:
 			global.set_bool("g_act1_stepson_member", 1)
-		else:
+			_pc = 9872
+			continue
+		elif _pc == 9648:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_386.bind()))
 			if 4.0 == ifaction.feeling(v11, v12):
-				ifaction.set_feeling(v11, v12, 2.0)
-				ifaction.set_feeling(v12, v11, 2.0)
+				_pc = 9733
+				continue
+			else:
+				_pc = 9791
+				continue
+		elif _pc == 9733:
+			ifaction.set_feeling(v11, v12, 2.0)
+			ifaction.set_feeling(v12, v11, 2.0)
+			_pc = 9791
+			continue
+		elif _pc == 9791:
 			await local_299()
 			group.destroy(group.cast(global.handle("g_maas_vessels")), 1)
 			sim.destroy(v2)
-		isim.set_standard_sensor_visibility(isim.cast(v4), 1)
-		await irangecheck.remove_traffic_exception(imapentity.cast(v4))
-		await irangecheck.remove_traffic_exception(imapentity.cast(v3))
-		global.destroy("g_maas_vessels")
-		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		sim.destroy(v2)
-		await imissiontracker.remove_mission(self)
-		return
-	return
+			_pc = 9872
+			continue
+		elif _pc == 9872:
+			isim.set_standard_sensor_visibility(isim.cast(v4), 1)
+			await irangecheck.remove_traffic_exception(imapentity.cast(v4))
+			await irangecheck.remove_traffic_exception(imapentity.cast(v3))
+			global.destroy("g_maas_vessels")
+			await iutilities.remove_mission_restart()
+			state.destroy(self)
+			sim.destroy(v2)
+			await imissiontracker.remove_mission(self)
+			_pc = 10089
+			continue
+		elif _pc == 10082:
+			_pc = 9382
+			continue
+		elif _pc == 10087:
+			_pc = 10089
+			continue
+		elif _pc == 10089:
+			return
+		else:
+			return 0
 	return 0
 

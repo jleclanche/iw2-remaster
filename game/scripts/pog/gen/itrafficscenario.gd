@@ -54,71 +54,233 @@ func local_0(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = global.pog_float("g_player_sensor_range")
-	v2 = iship.find_player_ship()
-	v3 = sim.distance_between(v2, v1)
-	if _pog_is_null(math.random_int(0, 1)) and ilagrangepoint.cast(v1):
-		pass
-	else:
-		if _pog_is_null(sim.find_subsim_by_name(v0, "system_lds")):
-			sim.place_near(v0, v2, 15000.0)
-		else:
-			if 200000.0 - v4 < v3:
-				if PogRuntime.TRACE:
-					debug.print_string(" iTrafficScenario.PlaceTraffic - Station is with players sensor range - placing traffic on edge of player range\n")
-				sim.place_near(v0, v2, 100000.0 - v4)
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			v4 = global.pog_float("g_player_sensor_range")
+			v2 = iship.find_player_ship()
+			v3 = sim.distance_between(v2, v1)
+			if _pog_is_null(math.random_int(0, 1)) and ilagrangepoint.cast(v1):
+				_pc = 121
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string(" iTrafficScenario.PlaceTraffic - Station is outside players sensor range - placing traffic between player & ship \n")
-				sim.place_near(v0, v1, math.random(1000.0, 5000.0))
-	return
+				_pc = 127
+				continue
+		elif _pc == 121:
+			_pc = 361
+			continue
+		elif _pc == 127:
+			if _pog_is_null(sim.find_subsim_by_name(v0, "system_lds")):
+				_pc = 160
+				continue
+			else:
+				_pc = 194
+				continue
+		elif _pc == 160:
+			sim.place_near(v0, v2, 15000.0)
+			_pc = 355
+			continue
+		elif _pc == 194:
+			if 200000.0 - v4 < v3:
+				_pc = 216
+				continue
+			else:
+				_pc = 282
+				continue
+		elif _pc == 216:
+			_pc = 242
+			continue
+		elif _pc == 221:
+			debug.print_string(" iTrafficScenario.PlaceTraffic - Station is with players sensor range - placing traffic on edge of player range\n")
+			_pc = 242
+			continue
+		elif _pc == 242:
+			sim.place_near(v0, v2, 100000.0 - v4)
+			_pc = 355
+			continue
+		elif _pc == 282:
+			_pc = 308
+			continue
+		elif _pc == 287:
+			debug.print_string(" iTrafficScenario.PlaceTraffic - Station is outside players sensor range - placing traffic between player & ship \n")
+			_pc = 308
+			continue
+		elif _pc == 308:
+			sim.place_near(v0, v1, math.random(1000.0, 5000.0))
+			_pc = 355
+			continue
+		elif _pc == 355:
+			_pc = 361
+			continue
+		elif _pc == 361:
+			return
+		else:
+			return 0
 	return 0
 
 func local_363(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 363
+	while true:
+		if _pc == 363:
+			if _pog_is_null(v0):
+				_pc = 381
+				continue
+			else:
+				_pc = 407
+				continue
+		elif _pc == 381:
+			_pc = 407
+			continue
+		elif _pc == 386:
 			debug.print_string(" iTrafficSceanrio.Calculate_maximum_ships - Passed a null location handle to me! \n ")
-	v2 = ihabitat.population(v0)
-	v1 = 1000 / v2
-	if 4 > v1:
-		v1 = 4
-	return v1
+			_pc = 407
+			continue
+		elif _pc == 407:
+			v2 = ihabitat.population(v0)
+			v1 = 1000 / v2
+			if 4 > v1:
+				_pc = 459
+				continue
+			else:
+				_pc = 467
+				continue
+		elif _pc == 459:
+			v1 = 4
+			_pc = 467
+			continue
+		elif _pc == 467:
+			_pc = 477
+			continue
+		elif _pc == 477:
+			return
+		else:
+			return 0
 	return 0
 
 func local_479(v0) -> Variant:
-	if object.property_exists(v0, "mega_freighter"):
-		pass
-	return
+	var _pc: int = 479
+	while true:
+		if _pc == 479:
+			if object.property_exists(v0, "mega_freighter"):
+				_pc = 509
+				continue
+			else:
+				_pc = 549
+				continue
+		elif _pc == 509:
+			8 * p_set.item_count(sim.children(v0))
+			_pc = 586
+			continue
+		elif _pc == 549:
+			p_set.item_count(sim.children(v0))
+			_pc = 586
+			continue
+		elif _pc == 586:
+			return
+		else:
+			return 0
 	return 0
 
 func local_588(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = group.sim_count(v0)
-	v3 = 0
-	while v2 < v3:
-		v1 = await local_479(group.nth_sim(v0, v3)) + v1
-		v3 = 1 + v3
-	if 1 == object.property_exists(group.leader(v0), "mega_freighter"):
-		return 6
-	else:
-		if 15 >= v1:
-			return 4
-		else:
-			if 10 >= v1:
-				return 3
+	var _pc: int = 588
+	while true:
+		if _pc == 588:
+			v2 = group.sim_count(v0)
+			v3 = 0
+			_pc = 624
+			continue
+		elif _pc == 624:
+			if v2 < v3:
+				_pc = 640
+				continue
 			else:
-				if 5 >= v1:
-					return 2
-				else:
-					if 3 >= v1:
-						return 1
-					else:
-						return 0
-	return 0
+				_pc = 706
+				continue
+		elif _pc == 640:
+			v1 = await local_479(group.nth_sim(v0, v3)) + v1
+			v3 = 1 + v3
+			_pc = 624
+			continue
+		elif _pc == 706:
+			if 1 == object.property_exists(group.leader(v0), "mega_freighter"):
+				_pc = 751
+				continue
+			else:
+				_pc = 763
+				continue
+		elif _pc == 751:
+			_pc = 874
+			continue
+		elif _pc == 758:
+			_pc = 868
+			continue
+		elif _pc == 763:
+			if 15 >= v1:
+				_pc = 776
+				continue
+			else:
+				_pc = 788
+				continue
+		elif _pc == 776:
+			_pc = 874
+			continue
+		elif _pc == 783:
+			_pc = 868
+			continue
+		elif _pc == 788:
+			if 10 >= v1:
+				_pc = 801
+				continue
+			else:
+				_pc = 813
+				continue
+		elif _pc == 801:
+			_pc = 874
+			continue
+		elif _pc == 808:
+			_pc = 868
+			continue
+		elif _pc == 813:
+			if 5 >= v1:
+				_pc = 826
+				continue
+			else:
+				_pc = 838
+				continue
+		elif _pc == 826:
+			_pc = 874
+			continue
+		elif _pc == 833:
+			_pc = 868
+			continue
+		elif _pc == 838:
+			if 3 >= v1:
+				_pc = 851
+				continue
+			else:
+				_pc = 862
+				continue
+		elif _pc == 851:
+			_pc = 874
+			continue
+		elif _pc == 857:
+			_pc = 868
+			continue
+		elif _pc == 862:
+			_pc = 874
+			continue
+		elif _pc == 868:
+			_pc = 874
+			continue
+		elif _pc == 874:
+			return
+		else:
+			return 0
 	return 0
 
 func local_876(v0) -> Variant:
@@ -131,52 +293,156 @@ func local_876(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v2 = null
-	v6 = group.sim_count(v0)
-	v8 = 0
-	while v6 < v8:
-		v1 = group.nth_sim(v0, v8)
-		v3 = await local_479(v1)
-		v2 = list.from_set(sim.children(v1))
-		v4 = v3 + v4
-		v9 = 0
-		while v3 < v9:
+	var _pc: int = 876
+	while true:
+		if _pc == 876:
+			v2 = null
+			v6 = group.sim_count(v0)
+			v8 = 0
+			_pc = 923
+			continue
+		elif _pc == 923:
+			if v6 < v8:
+				_pc = 939
+				continue
+			else:
+				_pc = 1169
+				continue
+		elif _pc == 939:
+			v1 = group.nth_sim(v0, v8)
+			v3 = await local_479(v1)
+			v2 = list.from_set(sim.children(v1))
+			v4 = v3 + v4
+			v9 = 0
+			_pc = 1056
+			continue
+		elif _pc == 1056:
+			if v3 < v9:
+				_pc = 1072
+				continue
+			else:
+				_pc = 1151
+				continue
+		elif _pc == 1072:
 			v5 = icargo.value(icargo.cast(list.get_nth(v2, v9))) + v5
 			v9 = 1 + v9
-		v8 = 1 + v8
-	v7 = v4 / v5
-	if 6 >= v7:
-		return 7
-	else:
-		if 3 >= v7:
-			return 9
+			_pc = 1056
+			continue
+		elif _pc == 1151:
+			v8 = 1 + v8
+			_pc = 923
+			continue
+		elif _pc == 1169:
+			v7 = v4 / v5
+			if 6 >= v7:
+				_pc = 1199
+				continue
+			else:
+				_pc = 1211
+				continue
+		elif _pc == 1199:
+			_pc = 1250
+			continue
+		elif _pc == 1206:
+			_pc = 1243
+			continue
+		elif _pc == 1211:
+			if 3 >= v7:
+				_pc = 1224
+				continue
+			else:
+				_pc = 1236
+				continue
+		elif _pc == 1224:
+			_pc = 1250
+			continue
+		elif _pc == 1231:
+			_pc = 1243
+			continue
+		elif _pc == 1236:
+			_pc = 1250
+			continue
+		elif _pc == 1243:
+			_pc = 1250
+			continue
+		elif _pc == 1250:
+			return
 		else:
-			return 6
-	return 9
+			return 0
 	return 0
 
 func local_1259(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
-	v3 = 0
-	while v1 < v3:
-		v2 = isim.sims_in_cone(isim.cast(v0), 375.0, 800.0, 2000.0, 536838144)
-		if p_set.is_empty(v2):
-			break
-		if PogRuntime.TRACE:
+	var _pc: int = 1259
+	while true:
+		if _pc == 1259:
+			v2 = null
+			v3 = 0
+			_pc = 1282
+			continue
+		elif _pc == 1282:
+			if v1 < v3:
+				_pc = 1298
+				continue
+			else:
+				_pc = 1580
+				continue
+		elif _pc == 1298:
+			v2 = isim.sims_in_cone(isim.cast(v0), 375.0, 800.0, 2000.0, 536838144)
+			if p_set.is_empty(v2):
+				_pc = 1380
+				continue
+			else:
+				_pc = 1385
+				continue
+		elif _pc == 1380:
+			_pc = 1580
+			continue
+		elif _pc == 1385:
+			_pc = 1411
+			continue
+		elif _pc == 1390:
 			debug.print_string("iTrafficScenario:Waiting for Lagrange Point to be clear - blocked by: ")
-		if PogRuntime.TRACE:
+			_pc = 1411
+			continue
+		elif _pc == 1411:
+			_pc = 1448
+			continue
+		elif _pc == 1416:
 			debug.print_int(p_set.item_count(v2))
-		if PogRuntime.TRACE:
+			_pc = 1448
+			continue
+		elif _pc == 1448:
+			_pc = 1474
+			continue
+		elif _pc == 1453:
 			debug.print_string(" ships. Time left: ")
-		if PogRuntime.TRACE:
+			_pc = 1474
+			continue
+		elif _pc == 1474:
+			_pc = 1504
+			continue
+		elif _pc == 1479:
 			debug.print_int(v3 - v1)
-		if PogRuntime.TRACE:
+			_pc = 1504
+			continue
+		elif _pc == 1504:
+			_pc = 1530
+			continue
+		elif _pc == 1509:
 			debug.print_string(" \n")
-		await _pog_wait(1.0)
-		v3 = 1 + v3
-	return 0
+			_pc = 1530
+			continue
+		elif _pc == 1530:
+			await _pog_wait(1.0)
+			v3 = 1 + v3
+			_pc = 1282
+			continue
+		elif _pc == 1580:
+			return 0
+		else:
+			return 0
 	return 0
 
 func haulage_in(v0) -> Variant:
@@ -1197,146 +1463,461 @@ func haulage_out(v0) -> Variant:
 	var v30: Variant = 0
 	var v31: Variant = 0
 	var v32: Variant = 0
-	v7 = null
-	v13 = 0
-	v21 = global.pog_float("g_player_sensor_range")
-	v25 = null
-	v26 = null
-	v28 = 0
-	v32 = 0
-	if 7 >= global.pog_int("g_total_haulage_running"):
-		if PogRuntime.TRACE:
+	var _pc: int = 5709
+	while true:
+		if _pc == 5709:
+			v7 = null
+			v13 = 0
+			v21 = global.pog_float("g_player_sensor_range")
+			v25 = null
+			v26 = null
+			v28 = 0
+			v32 = 0
+			if 7 >= global.pog_int("g_total_haulage_running"):
+				_pc = 5822
+				continue
+			else:
+				_pc = 5853
+				continue
+		elif _pc == 5822:
+			_pc = 5848
+			continue
+		elif _pc == 5827:
 			debug.print_string("iTrafficScenario.Haualge: Aborting haulage sceneario.... capped value reached\n")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 5848
+			continue
+		elif _pc == 5848:
+			_pc = 8736
+			continue
+		elif _pc == 5853:
+			_pc = 5941
+			continue
+		elif _pc == 5858:
 			debug.print_string(string.join(" iTrafficScenario.HaulageOut - Created HaulageOut Scenario for - ", object.string_property(v0, "name")))
 			debug.print_string(" \n")
-		v23 = ihabitat.cast(v0)
-		if _pog_is_null(v23):
+			_pc = 5941
+			continue
+		elif _pc == 5941:
+			v23 = ihabitat.cast(v0)
+			if _pog_is_null(v23):
+				_pc = 5978
+				continue
+			else:
+				_pc = 6437
+				continue
+		elif _pc == 5978:
 			v29 = ilagrangepoint.cast(v0)
-			if PogRuntime.TRACE:
-				debug.print_string("iTrafficScenario.HaulageOut  - location is an l-point, finding a location to generate ships \n")
+			_pc = 6028
+			continue
+		elif _pc == 6007:
+			debug.print_string("iTrafficScenario.HaulageOut  - location is an l-point, finding a location to generate ships \n")
+			_pc = 6028
+			continue
+		elif _pc == 6028:
 			v25 = global.pog_set("g_filtered_system_habitats")
-			while not (v28):
-				v23 = ihabitat.nearest(v25, v29)
-				if PogRuntime.TRACE:
-					debug.print_string("iTrafficScenario.HaulageOut - l point is local \n")
-				v8 = ihabitat.type(v23)
-				v27 = v8
-				if 34 <= v27 and 11 >= v27:
-					if PogRuntime.TRACE:
-						debug.print_string(string.join("iTrafficScenario.HaulagEOut - substitute location for interstellar L-point is - ", object.string_property(v23, "name")))
-						debug.print_string("\n")
-					v28 = 1
-				else:
-					if 1 == p_set.is_empty(v25):
-						if PogRuntime.TRACE:
-							debug.print_string(string.join("iTrafficScenario.HaulageOut - unable to find appropriate haualge out location for system, gonna have to take water to - ", object.string_property(v23, "name")))
-							debug.print_string("\n")
-						v28 = 1
-					else:
-						p_set.remove(v25, v23)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string(" ITrafficScenario.HaulageOut - location is a habitat.\n")
-		v8 = ihabitat.type(v23)
-		v9 = ihabitat.allegiance(v23)
-		if 121 == v8 or 122 == v8:
-			if PogRuntime.TRACE:
-				debug.print_string(" iTrafficScenario.HaulageOut - location is a beanstalk or transfer station - finding a surface location\n ")
-		v3 = await local_363(v23)
-		if 1 == v3:
+			_pc = 6055
+			continue
+		elif _pc == 6055:
+			if not (v28):
+				_pc = 6066
+				continue
+			else:
+				_pc = 6432
+				continue
+		elif _pc == 6066:
+			v23 = ihabitat.nearest(v25, v29)
+			_pc = 6121
+			continue
+		elif _pc == 6100:
+			debug.print_string("iTrafficScenario.HaulageOut - l point is local \n")
+			_pc = 6121
+			continue
+		elif _pc == 6121:
+			v8 = ihabitat.type(v23)
+			v27 = v8
+			if 34 <= v27 and 11 >= v27:
+				_pc = 6178
+				continue
+			else:
+				_pc = 6278
+				continue
+		elif _pc == 6178:
+			_pc = 6266
+			continue
+		elif _pc == 6183:
+			debug.print_string(string.join("iTrafficScenario.HaulagEOut - substitute location for interstellar L-point is - ", object.string_property(v23, "name")))
+			debug.print_string("\n")
+			_pc = 6266
+			continue
+		elif _pc == 6266:
+			v28 = 1
+			_pc = 6427
+			continue
+		elif _pc == 6278:
+			if 1 == p_set.is_empty(v25):
+				_pc = 6303
+				continue
+			else:
+				_pc = 6403
+				continue
+		elif _pc == 6303:
+			_pc = 6391
+			continue
+		elif _pc == 6308:
+			debug.print_string(string.join("iTrafficScenario.HaulageOut - unable to find appropriate haualge out location for system, gonna have to take water to - ", object.string_property(v23, "name")))
+			debug.print_string("\n")
+			_pc = 6391
+			continue
+		elif _pc == 6391:
+			v28 = 1
+			_pc = 6427
+			continue
+		elif _pc == 6403:
+			p_set.remove(v25, v23)
+			_pc = 6427
+			continue
+		elif _pc == 6427:
+			_pc = 6055
+			continue
+		elif _pc == 6432:
+			_pc = 6463
+			continue
+		elif _pc == 6437:
+			_pc = 6463
+			continue
+		elif _pc == 6442:
+			debug.print_string(" ITrafficScenario.HaulageOut - location is a habitat.\n")
+			_pc = 6463
+			continue
+		elif _pc == 6463:
+			v8 = ihabitat.type(v23)
+			v9 = ihabitat.allegiance(v23)
+			if 121 == v8 or 122 == v8:
+				_pc = 6533
+				continue
+			else:
+				_pc = 6559
+				continue
+		elif _pc == 6533:
+			_pc = 6559
+			continue
+		elif _pc == 6538:
+			debug.print_string(" iTrafficScenario.HaulageOut - location is a beanstalk or transfer station - finding a surface location\n ")
+			_pc = 6559
+			continue
+		elif _pc == 6559:
+			v3 = await local_363(v23)
+			if 1 == v3:
+				_pc = 6595
+				continue
+			else:
+				_pc = 6603
+				continue
+		elif _pc == 6595:
 			v3 = 2
-		v4 = math.random_int(1, v3)
-		if 7 > v4 + global.pog_int("g_total_haulage_running"):
+			_pc = 6603
+			continue
+		elif _pc == 6603:
+			v4 = math.random_int(1, v3)
+			if 7 > v4 + global.pog_int("g_total_haulage_running"):
+				_pc = 6662
+				continue
+			else:
+				_pc = 6691
+				continue
+		elif _pc == 6662:
 			v4 = global.pog_int("g_total_haulage_running") - 7
-		v9 = ihabitat.allegiance(v23)
-		if PogRuntime.TRACE:
+			_pc = 6691
+			continue
+		elif _pc == 6691:
+			v9 = ihabitat.allegiance(v23)
+			_pc = 6797
+			continue
+		elif _pc == 6720:
 			debug.print_string(string.join("iTrafficScenario.HaulageOut - total freighters to create =  ", string.from_int(v4)))
 			debug.print_string("\n")
-		v31 = math.random(10.0, 100.0)
-		if 32 == v8 or 22 == v8:
+			_pc = 6797
+			continue
+		elif _pc == 6797:
+			v31 = math.random(10.0, 100.0)
+			if 32 == v8 or 22 == v8:
+				_pc = 6848
+				continue
+			else:
+				_pc = 6865
+				continue
+		elif _pc == 6848:
 			v31 = 20.0 + v31
-		if 90.0 > v31:
+			_pc = 6865
+			continue
+		elif _pc == 6865:
+			if 90.0 > v31:
+				_pc = 6881
+				continue
+			else:
+				_pc = 6917
+				continue
+		elif _pc == 6881:
 			v11 = await ishipcreation.get_traffic(3, v9, v4)
-		else:
+			_pc = 6998
+			continue
+		elif _pc == 6917:
 			if 50.0 >= v31:
-				v11 = await ishipcreation.get_traffic(1, v9, v4)
+				_pc = 6933
+				continue
 			else:
-				v11 = await ishipcreation.get_traffic(0, v9, v4)
-		v6 = group.sim_count(v11)
-		v5 = math.random_int(0, 4)
-		if 1 == object.property_exists(group.leader(v11), "mega_freighter") or 3 <= v5:
+				_pc = 6968
+				continue
+		elif _pc == 6933:
+			v11 = await ishipcreation.get_traffic(1, v9, v4)
+			_pc = 6998
+			continue
+		elif _pc == 6968:
+			v11 = await ishipcreation.get_traffic(0, v9, v4)
+			_pc = 6998
+			continue
+		elif _pc == 6998:
+			v6 = group.sim_count(v11)
+			v5 = math.random_int(0, 4)
+			if 1 == object.property_exists(group.leader(v11), "mega_freighter") or 3 <= v5:
+				_pc = 7098
+				continue
+			else:
+				_pc = 7287
+				continue
+		elif _pc == 7098:
 			v2 = 0
-			while v6 < v2:
-				v14 = iship.cast(group.nth_sim(v11, v2))
-				if PogRuntime.TRACE:
-					debug.print_string(string.join(" ITrafficScenario.HaulOut - Installing Cargo for ship number  - ", string.from_int(v2)))
-					debug.print_string(" \n ")
-				await ishipcreation.create_haulage_cargo(v14, v8)
-				v2 = 1 + v2
-		v10 = await local_588(v11)
-		if 0 > v10:
-			if PogRuntime.TRACE:
-				debug.print_string(string.join("iTrafficScenario.HaulageOut - Number of escorts to create = ", string.from_int(v10)))
-				debug.print_string("\n")
+			_pc = 7105
+			continue
+		elif _pc == 7105:
+			if v6 < v2:
+				_pc = 7121
+				continue
+			else:
+				_pc = 7287
+				continue
+		elif _pc == 7121:
+			v14 = iship.cast(group.nth_sim(v11, v2))
+			_pc = 7245
+			continue
+		elif _pc == 7168:
+			debug.print_string(string.join(" ITrafficScenario.HaulOut - Installing Cargo for ship number  - ", string.from_int(v2)))
+			debug.print_string(" \n ")
+			_pc = 7245
+			continue
+		elif _pc == 7245:
+			await ishipcreation.create_haulage_cargo(v14, v8)
+			v2 = 1 + v2
+			_pc = 7105
+			continue
+		elif _pc == 7287:
+			v10 = await local_588(v11)
+			if 0 > v10:
+				_pc = 7323
+				continue
+			else:
+				_pc = 7457
+				continue
+		elif _pc == 7323:
+			_pc = 7405
+			continue
+		elif _pc == 7328:
+			debug.print_string(string.join("iTrafficScenario.HaulageOut - Number of escorts to create = ", string.from_int(v10)))
+			debug.print_string("\n")
+			_pc = 7405
+			continue
+		elif _pc == 7405:
 			v12 = await ishipcreation.get_traffic(await local_876(v11), v9, v10)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iTrafficScenario.HaulageOut -  No escorts generated \n")
-		if not _pog_is_null(v29):
+			_pc = 7483
+			continue
+		elif _pc == 7457:
+			_pc = 7483
+			continue
+		elif _pc == 7462:
+			debug.print_string("iTrafficScenario.HaulageOut -  No escorts generated \n")
+			_pc = 7483
+			continue
+		elif _pc == 7483:
+			if not _pog_is_null(v29):
+				_pc = 7496
+				continue
+			else:
+				_pc = 7544
+				continue
+		elif _pc == 7496:
 			v32 = await local_0(group.nth_sim(v11, 0), v29)
-		else:
+			_pc = 7587
+			continue
+		elif _pc == 7544:
 			v32 = await local_0(group.nth_sim(v11, 0), v0)
-		if 1 > v6:
-			if PogRuntime.TRACE:
-				debug.print_string(" iTrafficScenario.HaulOut - Placing  additional freighters in formation \n")
-			if v32:
-				await local_1259(v29, 30)
-				await iutilities.capsule_jump_group(v11, v29, math.random(1.0, 2.0))
-				await iformation.line_ahead(v11, math.random(1.0, 100.0), 0)
+			_pc = 7587
+			continue
+		elif _pc == 7587:
+			if 1 > v6:
+				_pc = 7599
+				continue
 			else:
-				await iformation.line_ahead(v11, math.random(1.0, 100.0), 1)
-		else:
+				_pc = 7799
+				continue
+		elif _pc == 7599:
+			_pc = 7625
+			continue
+		elif _pc == 7604:
+			debug.print_string(" iTrafficScenario.HaulOut - Placing  additional freighters in formation \n")
+			_pc = 7625
+			continue
+		elif _pc == 7625:
 			if v32:
-				await local_1259(v29, 30)
-				isim.capsule_jump_staggered(isim.cast(group.leader(v11)), v29)
-		if 0 > v10:
-			if PogRuntime.TRACE:
-				debug.print_string(" iTrafficScenario.HaulOut - Placing lead escort\n")
+				_pc = 7635
+				continue
+			else:
+				_pc = 7751
+				continue
+		elif _pc == 7635:
+			await local_1259(v29, 30)
+			await iutilities.capsule_jump_group(v11, v29, math.random(1.0, 2.0))
+			await iformation.line_ahead(v11, math.random(1.0, 100.0), 0)
+			_pc = 7794
+			continue
+		elif _pc == 7751:
+			await iformation.line_ahead(v11, math.random(1.0, 100.0), 1)
+			_pc = 7794
+			continue
+		elif _pc == 7794:
+			_pc = 7880
+			continue
+		elif _pc == 7799:
+			if v32:
+				_pc = 7809
+				continue
+			else:
+				_pc = 7880
+				continue
+		elif _pc == 7809:
+			await local_1259(v29, 30)
+			isim.capsule_jump_staggered(isim.cast(group.leader(v11)), v29)
+			_pc = 7880
+			continue
+		elif _pc == 7880:
+			if 0 > v10:
+				_pc = 7892
+				continue
+			else:
+				_pc = 8355
+				continue
+		elif _pc == 7892:
+			_pc = 7918
+			continue
+		elif _pc == 7897:
+			debug.print_string(" iTrafficScenario.HaulOut - Placing lead escort\n")
+			_pc = 7918
+			continue
+		elif _pc == 7918:
 			if 1 > v10:
-				if PogRuntime.TRACE:
-					debug.print_string(" iTrafficScenario.HaulIn  - placing additional escorts in formation \n ")
-				if v32:
-					await local_1259(v29, 3)
-					await iutilities.capsule_jump_group(v12, v29, math.random(1.0, 2.0))
-					await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 0)
-				else:
-					await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 1)
+				_pc = 7930
+				continue
 			else:
-				if v32:
-					await local_1259(v29, 3)
-					isim.capsule_jump_staggered(isim.cast(group.leader(v12)), v29)
-				else:
-					sim.place_relative_to(group.leader(v12), group.nth_sim(v11, 0), 0.0, 100.0, -100.0)
-				iai.give_escort_order(group.leader(v12), v11, 0.0, 100.0, -100.0, 8000.0)
-		if 0 > v10:
+				_pc = 8146
+				continue
+		elif _pc == 7930:
+			_pc = 7956
+			continue
+		elif _pc == 7935:
+			debug.print_string(" iTrafficScenario.HaulIn  - placing additional escorts in formation \n ")
+			_pc = 7956
+			continue
+		elif _pc == 7956:
+			if v32:
+				_pc = 7966
+				continue
+			else:
+				_pc = 8090
+				continue
+		elif _pc == 7966:
+			await local_1259(v29, 3)
+			await iutilities.capsule_jump_group(v12, v29, math.random(1.0, 2.0))
+			await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 0)
+			_pc = 8141
+			continue
+		elif _pc == 8090:
+			await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 1)
+			_pc = 8141
+			continue
+		elif _pc == 8141:
+			_pc = 8355
+			continue
+		elif _pc == 8146:
+			if v32:
+				_pc = 8156
+				continue
+			else:
+				_pc = 8232
+				continue
+		elif _pc == 8156:
+			await local_1259(v29, 3)
+			isim.capsule_jump_staggered(isim.cast(group.leader(v12)), v29)
+			_pc = 8298
+			continue
+		elif _pc == 8232:
+			sim.place_relative_to(group.leader(v12), group.nth_sim(v11, 0), 0.0, 100.0, -100.0)
+			_pc = 8298
+			continue
+		elif _pc == 8298:
+			iai.give_escort_order(group.leader(v12), v11, 0.0, 100.0, -100.0, 8000.0)
+			_pc = 8355
+			continue
+		elif _pc == 8355:
+			if 0 > v10:
+				_pc = 8367
+				continue
+			else:
+				_pc = 8391
+				continue
+		elif _pc == 8367:
 			group.add_group(v11, v12)
-		if PogRuntime.TRACE:
+			_pc = 8391
+			continue
+		elif _pc == 8391:
+			_pc = 8494
+			continue
+		elif _pc == 8396:
 			debug.print_string("iTrafficScenario.HaulOut - Assigning haualge orders to list, lead by ship called -  ")
 			debug.print_string(object.string_property(group.nth_sim(v11, 0), "name"))
 			debug.print_string("\n")
-		v30 = _pog_spawn(iscriptedorders.haulage.bind(v11, v0))
-		_pog_detach(v30)
-		if 3 <= v5:
-			if PogRuntime.TRACE:
-				debug.print_string(string.join("iTrafficScenario.HaulOut  - Hauled goods are being carried from  -  ", object.string_property(v0, "name")))
-				debug.print_string("\n")
+			_pc = 8494
+			continue
+		elif _pc == 8494:
+			v30 = _pog_spawn(iscriptedorders.haulage.bind(v11, v0))
+			_pog_detach(v30)
+			if 3 <= v5:
+				_pc = 8555
+				continue
+			else:
+				_pc = 8648
+				continue
+		elif _pc == 8555:
+			_pc = 8643
+			continue
+		elif _pc == 8560:
+			debug.print_string(string.join("iTrafficScenario.HaulOut  - Hauled goods are being carried from  -  ", object.string_property(v0, "name")))
+			debug.print_string("\n")
+			_pc = 8643
+			continue
+		elif _pc == 8643:
+			_pc = 8736
+			continue
+		elif _pc == 8648:
+			_pc = 8736
+			continue
+		elif _pc == 8653:
+			debug.print_string(string.join("iTrafficScenario.HaulOut - empty ships are approaching ", object.string_property(v0, "name")))
+			debug.print_string("\n")
+			_pc = 8736
+			continue
+		elif _pc == 8736:
+			return 0
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string(string.join("iTrafficScenario.HaulOut - empty ships are approaching ", object.string_property(v0, "name")))
-				debug.print_string("\n")
-	return 0
+			return 0
 	return 0
 
 func supply(v0) -> Variant:
@@ -2042,6 +2623,7 @@ func supply(v0) -> Variant:
 			_pc = 10621
 			continue
 		elif _pc == 10590:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 10613
 				continue
@@ -3449,6 +4031,7 @@ func tanker(v0) -> Variant:
 			_pc = 18975
 			continue
 		elif _pc == 18933:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 18957
 				continue
@@ -4154,6 +4737,7 @@ func official(v0) -> Variant:
 			_pc = 21721
 			continue
 		elif _pc == 21652:
+			math.random_int(1, 6)
 			if math.random_int(1, 6) != 1:
 				_pc = 21676
 				continue
@@ -4285,6 +4869,7 @@ func official(v0) -> Variant:
 			_pc = 22092
 			continue
 		elif _pc == 22050:
+			math.random_int(1, 3)
 			if math.random_int(1, 3) != 1:
 				_pc = 22074
 				continue
@@ -4404,6 +4989,7 @@ func official(v0) -> Variant:
 			_pc = 22479
 			continue
 		elif _pc == 22428:
+			math.random_int(1, 4)
 			if math.random_int(1, 4) != 1:
 				_pc = 22452
 				continue
@@ -4549,6 +5135,7 @@ func official(v0) -> Variant:
 			_pc = 22893
 			continue
 		elif _pc == 22860:
+			math.random_int(1, 2)
 			if math.random_int(1, 2) != 1:
 				_pc = 22884
 				continue
@@ -6773,15 +7360,44 @@ func local_37397(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v1 = ifaction.all()
-	v2 = list.item_count(v1)
-	v3 = 0
-	while v2 < v3:
-		if 0.0 < ifaction.feeling(ifaction.cast(list.get_nth(v1, v3)), v0):
-			return ifaction.cast(list.get_nth(v1, v3))
-		v3 = 1 + v3
-	return 0
+	var _pc: int = 37397
+	while true:
+		if _pc == 37397:
+			v1 = null
+			v1 = ifaction.all()
+			v2 = list.item_count(v1)
+			v3 = 0
+			_pc = 37465
+			continue
+		elif _pc == 37465:
+			if v2 < v3:
+				_pc = 37481
+				continue
+			else:
+				_pc = 37605
+				continue
+		elif _pc == 37481:
+			if 0.0 < ifaction.feeling(ifaction.cast(list.get_nth(v1, v3)), v0):
+				_pc = 37546
+				continue
+			else:
+				_pc = 37587
+				continue
+		elif _pc == 37546:
+			ifaction.cast(list.get_nth(v1, v3))
+			_pc = 37611
+			continue
+		elif _pc == 37587:
+			v3 = 1 + v3
+			_pc = 37465
+			continue
+		elif _pc == 37605:
+			_pc = 37611
+			continue
+		elif _pc == 37611:
+			return
+		else:
+			return 0
 	return 0
 
 func hostile(v0) -> Variant:
@@ -7036,6 +7652,7 @@ func hostile(v0) -> Variant:
 			_pc = 39527
 			continue
 		elif _pc == 39496:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 39519
 				continue

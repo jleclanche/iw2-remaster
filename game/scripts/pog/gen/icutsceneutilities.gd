@@ -48,25 +48,62 @@ func local_0() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
-	v0 = list.from_set(isim.player_hostiles_in_radius(300000.0, 536850432))
-	v1 = list.item_count(v0)
-	v2 = 0
-	while v1 < v2:
-		iship.set_a_i_disabled(iship.cast(list.get_nth(v0, v2)), 1)
-		v2 = 1 + v2
-	return _pog_clone(v0)
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			v0 = null
+			v0 = list.from_set(isim.player_hostiles_in_radius(300000.0, 536850432))
+			v1 = list.item_count(v0)
+			v2 = 0
+			_pc = 92
+			continue
+		elif _pc == 92:
+			if v1 < v2:
+				_pc = 108
+				continue
+			else:
+				_pc = 177
+				continue
+		elif _pc == 108:
+			iship.set_a_i_disabled(iship.cast(list.get_nth(v0, v2)), 1)
+			v2 = 1 + v2
+			_pc = 92
+			continue
+		elif _pc == 177:
+			_pc = 187
+			continue
+		elif _pc == 187:
+			return
+		else:
+			return 0
 	return 0
 
 func local_197(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = list.item_count(v0)
-	v2 = 0
-	while v1 < v2:
-		iship.set_a_i_disabled(iship.cast(list.get_nth(v0, v2)), 0)
-		v2 = 1 + v2
-	return 0
+	var _pc: int = 197
+	while true:
+		if _pc == 197:
+			v1 = list.item_count(v0)
+			v2 = 0
+			_pc = 233
+			continue
+		elif _pc == 233:
+			if v1 < v2:
+				_pc = 249
+				continue
+			else:
+				_pc = 318
+				continue
+		elif _pc == 249:
+			iship.set_a_i_disabled(iship.cast(list.get_nth(v0, v2)), 0)
+			v2 = 1 + v2
+			_pc = 233
+			continue
+		elif _pc == 318:
+			return 0
+		else:
+			return 0
 	return 0
 
 func handle_abort(v0) -> Variant:
@@ -81,110 +118,290 @@ func handle_abort(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v1 = self
-	v2 = 0
-	v3 = await get_kill_group()
-	v4 = null
-	v5 = null
-	v6 = iship.find_player_ship()
-	v8 = await iwingmen.group()
-	v9 = await iwingmen.get_lori()
-	v10 = await iwingmen.get_az()
-	v11 = null
-	if object.property_exists(iship.find_player_ship(), "player_dying"):
-		pass
-	else:
-		if not (global.exists("g_cutscene_skip")):
-			if PogRuntime.TRACE:
-				debug.print_string("Cutscene skipper does not exist\n")
-		global.set_bool("g_cutscene_skip", 0)
-		if await iremotepilot.remote_active():
-			if PogRuntime.TRACE:
-				debug.print_string("iCutsceneUtilities.HandleAbort: WARNING: Player was remote piloting. Deactivating connection.\n")
+	var _pc: int = 321
+	while true:
+		if _pc == 321:
+			v1 = self
+			v2 = 0
+			v3 = await get_kill_group()
+			v4 = null
+			v5 = null
+			v6 = iship.find_player_ship()
+			v8 = await iwingmen.group()
+			v9 = await iwingmen.get_lori()
+			v10 = await iwingmen.get_az()
+			v11 = null
+			if object.property_exists(iship.find_player_ship(), "player_dying"):
+				_pc = 518
+				continue
+			else:
+				_pc = 528
+				continue
+		elif _pc == 518:
+			_pc = 1499
+			continue
+		elif _pc == 528:
+			if not (global.exists("g_cutscene_skip")):
+				_pc = 555
+				continue
+			else:
+				_pc = 581
+				continue
+		elif _pc == 555:
+			_pc = 581
+			continue
+		elif _pc == 560:
+			debug.print_string("Cutscene skipper does not exist\n")
+			_pc = 581
+			continue
+		elif _pc == 581:
+			global.set_bool("g_cutscene_skip", 0)
+			if await iremotepilot.remote_active():
+				_pc = 621
+				continue
+			else:
+				_pc = 661
+				continue
+		elif _pc == 621:
+			_pc = 647
+			continue
+		elif _pc == 626:
+			debug.print_string("iCutsceneUtilities.HandleAbort: WARNING: Player was remote piloting. Deactivating connection.\n")
+			_pc = 647
+			continue
+		elif _pc == 647:
 			await iremotepilot.deactivate_connection()
-		v11 = await iwingmen.get_detached_t_fighters()
-		if 0 > list.item_count(v11):
-			if PogRuntime.TRACE:
-				debug.print_string("iCutsceneUtilities.HandleAbort: Turret fighters detached. Re-attaching for cut-scene\n")
+			_pc = 661
+			continue
+		elif _pc == 661:
+			v11 = await iwingmen.get_detached_t_fighters()
+			if 0 > list.item_count(v11):
+				_pc = 707
+				continue
+			else:
+				_pc = 1161
+				continue
+		elif _pc == 707:
+			_pc = 733
+			continue
+		elif _pc == 712:
+			debug.print_string("iCutsceneUtilities.HandleAbort: Turret fighters detached. Re-attaching for cut-scene\n")
+			_pc = 733
+			continue
+		elif _pc == 733:
 			if sim.is_alive(v9):
-				if PogRuntime.TRACE:
-					debug.print_string("iCutsceneUtilities.HandleAbort: Removing LORI as a wingman \n")
-				if _pog_eq(v8, sim.group(v9)):
-					await iwingmen.remove_wingman(v9)
-				if not (isim.is_docked_to(v9, v6)) and isim.is_docked(v9):
-					iship.undock_self(v9)
+				_pc = 756
+				continue
+			else:
+				_pc = 897
+				continue
+		elif _pc == 756:
+			_pc = 782
+			continue
+		elif _pc == 761:
+			debug.print_string("iCutsceneUtilities.HandleAbort: Removing LORI as a wingman \n")
+			_pc = 782
+			continue
+		elif _pc == 782:
+			if _pog_eq(v8, sim.group(v9)):
+				_pc = 811
+				continue
+			else:
+				_pc = 830
+				continue
+		elif _pc == 811:
+			await iwingmen.remove_wingman(v9)
+			_pc = 830
+			continue
+		elif _pc == 830:
+			if not (isim.is_docked_to(v9, v6)) and isim.is_docked(v9):
+				_pc = 878
+				continue
+			else:
+				_pc = 897
+				continue
+		elif _pc == 878:
+			iship.undock_self(v9)
+			_pc = 897
+			continue
+		elif _pc == 897:
 			if sim.is_alive(v10):
-				if PogRuntime.TRACE:
-					debug.print_string("iCutsceneUtilities.HandleAbort: Removing Az as a wingman \n")
-				if _pog_eq(v8, sim.group(v10)):
-					await iwingmen.remove_wingman(v10)
-				if not (isim.is_docked_to(v10, v6)) and isim.is_docked(v10):
-					iship.undock_self(v10)
+				_pc = 920
+				continue
+			else:
+				_pc = 1061
+				continue
+		elif _pc == 920:
+			_pc = 946
+			continue
+		elif _pc == 925:
+			debug.print_string("iCutsceneUtilities.HandleAbort: Removing Az as a wingman \n")
+			_pc = 946
+			continue
+		elif _pc == 946:
+			if _pog_eq(v8, sim.group(v10)):
+				_pc = 975
+				continue
+			else:
+				_pc = 994
+				continue
+		elif _pc == 975:
+			await iwingmen.remove_wingman(v10)
+			_pc = 994
+			continue
+		elif _pc == 994:
+			if not (isim.is_docked_to(v10, v6)) and isim.is_docked(v10):
+				_pc = 1042
+				continue
+			else:
+				_pc = 1061
+				continue
+		elif _pc == 1042:
+			iship.undock_self(v10)
+			_pc = 1061
+			continue
+		elif _pc == 1061:
 			await iwingmen.add_t_fighters(v6, v11)
 			iai.purge_orders(v10)
 			iai.purge_orders(v9)
 			iship.lock_down_weapons(v10)
 			iship.lock_down_weapons(v9)
-		v4 = await local_0()
-		iai.clear_autopilot()
-		sim.set_velocity(v6, 0.0, 0.0, 0.0)
-		while true:
+			_pc = 1161
+			continue
+		elif _pc == 1161:
+			v4 = await local_0()
+			iai.clear_autopilot()
+			sim.set_velocity(v6, 0.0, 0.0, 0.0)
+			_pc = 1231
+			continue
+		elif _pc == 1231:
 			if object.property_exists(iship.find_player_ship(), "player_dying"):
-				break
+				_pc = 1269
+				continue
+			else:
+				_pc = 1274
+				continue
+		elif _pc == 1269:
+			_pc = 1420
+			continue
+		elif _pc == 1274:
 			if 1 == global.pog_bool("g_cutscene_skip"):
-				if PogRuntime.TRACE:
-					debug.print_string("iDirectorUtilities.HandleAbort: cutscene aborted early\n")
-				_pog_halt(v0)
-				idirector.end()
-				v2 = 1
-				break
+				_pc = 1301
+				continue
+			else:
+				_pc = 1372
+				continue
+		elif _pc == 1301:
+			_pc = 1327
+			continue
+		elif _pc == 1306:
+			debug.print_string("iDirectorUtilities.HandleAbort: cutscene aborted early\n")
+			_pc = 1327
+			continue
+		elif _pc == 1327:
+			_pog_halt(v0)
+			idirector.end()
+			v2 = 1
+			_pc = 1420
+			continue
+		elif _pc == 1372:
 			await _pog_wait(0.10000000149011612)
-			if not (not ((1 - _pog_is_running(v0)))):
-				break
-		await local_2285(1)
-		await local_197(v4)
-		group.destroy(v3, 1)
-		icomms.abort(0)
-	return
+			if (1 - _pog_is_running(v0)):
+				_pc = 1420
+				continue
+			else:
+				_pc = 1231
+				continue
+		elif _pc == 1420:
+			await local_2285(1)
+			await local_197(v4)
+			group.destroy(v3, 1)
+			icomms.abort(0)
+			_pc = 1499
+			continue
+		elif _pc == 1499:
+			return
+		else:
+			return 0
 	return 0
 
 func create_ghost_ship() -> Variant:
 	var v0: Variant = 0
-	v0 = iship.create("ini:/sims/ships/player/ghost", "")
-	sim.set_cullable(v0, 0)
-	isim.set_indestructable(v0, 1)
-	isim.set_sensor_visibility(v0, 0)
-	await ipilotsetup.generic_cargo_pod(v0)
-	return v0
+	var _pc: int = 1522
+	while true:
+		if _pc == 1522:
+			v0 = iship.create("ini:/sims/ships/player/ghost", "")
+			sim.set_cullable(v0, 0)
+			isim.set_indestructable(v0, 1)
+			isim.set_sensor_visibility(v0, 0)
+			await ipilotsetup.generic_cargo_pod(v0)
+			_pc = 1648
+			continue
+		elif _pc == 1648:
+			return
+		else:
+			return 0
 	return 0
 
 func enable_player_autopilot() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = iship.find_player_ship()
-	v2 = await get_kill_group()
+	var _pc: int = 1650
 	while true:
-		if object.property_exists(v1, "cutscene_utilities_player_autopilot_enabled_count"):
+		if _pc == 1650:
+			v1 = iship.find_player_ship()
+			v2 = await get_kill_group()
+			_pc = 1694
+			continue
+		elif _pc == 1694:
+			if object.property_exists(v1, "cutscene_utilities_player_autopilot_enabled_count"):
+				_pc = 1724
+				continue
+			else:
+				_pc = 1818
+				continue
+		elif _pc == 1724:
 			object.set_int_property(v1, "cutscene_utilities_player_autopilot_enabled_count", 1 + object.int_property(v1, "cutscene_utilities_player_autopilot_enabled_count"))
 			v1 = iship.cast(sim.parent(v1))
-			break
-		v0 = await create_ghost_ship()
-		group.add_sim(v2, v0)
-		object.add_int_property(v0, "cutscene_utilities_player_autopilot_enabled_count", 1)
-		sim.place_at(v0, v1)
-		sim.attach_child(v1, v0)
-		sim.place_at(v0, v1)
-		sim.set_cullable(v1, 0)
-		iship.install_player_pilot(v0)
-		if object.property_exists(v1, "wingmen_group") or object.property_exists(v1, "name_lori") or object.property_exists(v1, "name_az"):
+			_pc = 2254
+			continue
+		elif _pc == 1818:
+			v0 = await create_ghost_ship()
+			group.add_sim(v2, v0)
+			object.add_int_property(v0, "cutscene_utilities_player_autopilot_enabled_count", 1)
+			sim.place_at(v0, v1)
+			sim.attach_child(v1, v0)
+			sim.place_at(v0, v1)
+			sim.set_cullable(v1, 0)
+			iship.install_player_pilot(v0)
+			if object.property_exists(v1, "wingmen_group") or object.property_exists(v1, "name_lori") or object.property_exists(v1, "name_az"):
+				_pc = 2079
+				continue
+			else:
+				_pc = 2229
+				continue
+		elif _pc == 2079:
 			object.add_handle_property(v0, "wingmen_group", object.handle_property(v1, "wingmen_group"))
 			object.add_handle_property(v0, "name_az", object.handle_property(v1, "name_az"))
 			object.add_handle_property(v0, "name_lori", object.handle_property(v1, "name_lori"))
-		await ipilotsetup.generic_cargo_pod(v1)
-		if not (0):
-			break
-	return v1
+			_pc = 2229
+			continue
+		elif _pc == 2229:
+			await ipilotsetup.generic_cargo_pod(v1)
+			if not (0):
+				_pc = 2254
+				continue
+			else:
+				_pc = 1694
+				continue
+		elif _pc == 2254:
+			_pc = 2265
+			continue
+		elif _pc == 2265:
+			return
+		else:
+			return 0
 	return 0
 
 func disable_player_autopilot() -> Variant:
@@ -196,79 +413,239 @@ func local_2285(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = iship.find_player_ship()
+	var _pc: int = 2285
 	while true:
-		if not (object.property_exists(v2, "cutscene_utilities_player_autopilot_enabled_count")):
-			if PogRuntime.TRACE:
-				debug.print_string("iCutSceneUtilities.DisablePlayerAutopilot: WARNING: attempt to disable player autopilot more times than it was enabled\n")
-			break
-		if not (v0):
+		if _pc == 2285:
+			v2 = iship.find_player_ship()
+			_pc = 2310
+			continue
+		elif _pc == 2310:
+			if not (object.property_exists(v2, "cutscene_utilities_player_autopilot_enabled_count")):
+				_pc = 2341
+				continue
+			else:
+				_pc = 2372
+				continue
+		elif _pc == 2341:
+			_pc = 2367
+			continue
+		elif _pc == 2346:
+			debug.print_string("iCutSceneUtilities.DisablePlayerAutopilot: WARNING: attempt to disable player autopilot more times than it was enabled\n")
+			_pc = 2367
+			continue
+		elif _pc == 2367:
+			_pc = 2571
+			continue
+		elif _pc == 2372:
+			if not (v0):
+				_pc = 2383
+				continue
+			else:
+				_pc = 2490
+				continue
+		elif _pc == 2383:
 			v3 = object.int_property(v2, "cutscene_utilities_player_autopilot_enabled_count")
 			if 1 > v3:
-				object.set_int_property(v2, "cutscene_utilities_player_autopilot_enabled_count", 1 - v3)
-				if PogRuntime.TRACE:
-					debug.print_string("iCutSceneUtilities.DisablePlayerAutopilot: NOTE: attempt to disable player autopilot delayed until a subsequent call\n")
-				break
-		v1 = iship.cast(sim.parent(v2))
-		iship.install_player_pilot(v1)
-		sim.destroy(v2)
-		if not (0):
-			break
-	return 0
+				_pc = 2426
+				continue
+			else:
+				_pc = 2490
+				continue
+		elif _pc == 2426:
+			object.set_int_property(v2, "cutscene_utilities_player_autopilot_enabled_count", 1 - v3)
+			_pc = 2485
+			continue
+		elif _pc == 2464:
+			debug.print_string("iCutSceneUtilities.DisablePlayerAutopilot: NOTE: attempt to disable player autopilot delayed until a subsequent call\n")
+			_pc = 2485
+			continue
+		elif _pc == 2485:
+			_pc = 2571
+			continue
+		elif _pc == 2490:
+			v1 = iship.cast(sim.parent(v2))
+			iship.install_player_pilot(v1)
+			sim.destroy(v2)
+			if not (0):
+				_pc = 2571
+				continue
+			else:
+				_pc = 2310
+				continue
+		elif _pc == 2571:
+			return 0
+		else:
+			return 0
 	return 0
 
 func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("FollowRoute: Ordering Sim: ")
-	if PogRuntime.TRACE:
-		debug.print_string(object.string_property(v0, "name"))
-	if PogRuntime.TRACE:
-		debug.print_string(" to follow route.\n")
-	if 1.0 > v2 or 0.0 <= v2:
-		v2 = 0.9900000095367432
-	if 0.0 <= v3:
-		v3 = 1.0
-	if group.sim_count(v1) > v5 or 0 < v5:
-		v5 = 0
-	if 2 < group.sim_count(v1):
-		if PogRuntime.TRACE:
+	var _pc: int = 2575
+	while true:
+		if _pc == 2575:
+			_pc = 2606
+			continue
+		elif _pc == 2585:
+			debug.print_string("FollowRoute: Ordering Sim: ")
+			_pc = 2606
+			continue
+		elif _pc == 2606:
+			_pc = 2651
+			continue
+		elif _pc == 2611:
+			debug.print_string(object.string_property(v0, "name"))
+			_pc = 2651
+			continue
+		elif _pc == 2651:
+			_pc = 2677
+			continue
+		elif _pc == 2656:
+			debug.print_string(" to follow route.\n")
+			_pc = 2677
+			continue
+		elif _pc == 2677:
+			if 1.0 > v2 or 0.0 <= v2:
+				_pc = 2705
+				continue
+			else:
+				_pc = 2716
+				continue
+		elif _pc == 2705:
+			v2 = 0.9900000095367432
+			_pc = 2716
+			continue
+		elif _pc == 2716:
+			if 0.0 <= v3:
+				_pc = 2732
+				continue
+			else:
+				_pc = 2743
+				continue
+		elif _pc == 2732:
+			v3 = 1.0
+			_pc = 2743
+			continue
+		elif _pc == 2743:
+			if group.sim_count(v1) > v5 or 0 < v5:
+				_pc = 2780
+				continue
+			else:
+				_pc = 2787
+				continue
+		elif _pc == 2780:
+			v5 = 0
+			_pc = 2787
+			continue
+		elif _pc == 2787:
+			if 2 < group.sim_count(v1):
+				_pc = 2813
+				continue
+			else:
+				_pc = 2844
+				continue
+		elif _pc == 2813:
+			_pc = 2839
+			continue
+		elif _pc == 2818:
 			debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
-	else:
-		while true:
+			_pc = 2839
+			continue
+		elif _pc == 2839:
+			_pc = 3419
+			continue
+		elif _pc == 2844:
 			v6 = isim.cast(group.nth_sim(v1, v5))
 			if not _pog_is_null(isim.cast(v6)):
-				v7 = v2 * sim.distance_between(v0, v6)
-				iai.give_approach_order_advanced(v0, v6, 0.0, 1.0, 0)
-				if PogRuntime.TRACE:
-					debug.print_string("FollowRoute: Ship ")
-					debug.print_string(object.string_property(v0, "name"))
-					debug.print_string(" approaching location ")
-					debug.print_int(v5)
-					debug.print_string(" radius ")
-					debug.print_float(v7)
-					debug.print_string("\n")
-				while true:
-					if 2 < group.sim_count(v1):
-						if PogRuntime.TRACE:
-							debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
-						return 0
-					await _pog_wait(v3)
-					if not (not (iai.is_order_complete(v0)) and v7 > sim.distance_between(v0, v6)):
-						break
-				v5 = 1 + v5
+				_pc = 2912
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("FollowWaypoints: Last route marker reached. Looping back to beginning\n")
-				v5 = 0
+				_pc = 3310
+				continue
+		elif _pc == 2912:
+			v7 = v2 * sim.distance_between(v0, v6)
+			iai.give_approach_order_advanced(v0, v6, 0.0, 1.0, 0)
+			_pc = 3149
+			continue
+		elif _pc == 2987:
+			debug.print_string("FollowRoute: Ship ")
+			debug.print_string(object.string_property(v0, "name"))
+			debug.print_string(" approaching location ")
+			debug.print_int(v5)
+			debug.print_string(" radius ")
+			debug.print_float(v7)
+			debug.print_string("\n")
+			_pc = 3149
+			continue
+		elif _pc == 3149:
+			if 2 < group.sim_count(v1):
+				_pc = 3175
+				continue
+			else:
+				_pc = 3206
+				continue
+		elif _pc == 3175:
+			_pc = 3201
+			continue
+		elif _pc == 3180:
+			debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
+			_pc = 3201
+			continue
+		elif _pc == 3201:
+			_pc = 3419
+			continue
+		elif _pc == 3206:
+			await _pog_wait(v3)
+			if not (not (iai.is_order_complete(v0)) and v7 > sim.distance_between(v0, v6)):
+				_pc = 3292
+				continue
+			else:
+				_pc = 3149
+				continue
+		elif _pc == 3292:
+			v5 = 1 + v5
+			_pc = 3343
+			continue
+		elif _pc == 3310:
+			_pc = 3336
+			continue
+		elif _pc == 3315:
+			debug.print_string("FollowWaypoints: Last route marker reached. Looping back to beginning\n")
+			_pc = 3336
+			continue
+		elif _pc == 3336:
+			v5 = 0
+			_pc = 3343
+			continue
+		elif _pc == 3343:
 			if not (isim.cast(v6)):
-				v4 = -1 + v4
-			if not (0 > v4):
-				break
-		if PogRuntime.TRACE:
+				_pc = 3367
+				continue
+			else:
+				_pc = 3381
+				continue
+		elif _pc == 3367:
+			v4 = -1 + v4
+			_pc = 3381
+			continue
+		elif _pc == 3381:
+			if 0 <= v4:
+				_pc = 3393
+				continue
+			else:
+				_pc = 2844
+				continue
+		elif _pc == 3393:
+			_pc = 3419
+			continue
+		elif _pc == 3398:
 			debug.print_string("FollowWaypoints: Completed. \n")
-	return 0
+			_pc = 3419
+			continue
+		elif _pc == 3419:
+			return 0
+		else:
+			return 0
 	return 0
 
 func follow_route_task() -> Variant:
@@ -391,11 +768,28 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 
 func get_kill_group() -> Variant:
 	var v0: Variant = 0
-	v0 = group.cast(global.handle("g_cutscene_kill_group"))
-	if not (v0):
-		v0 = group.create()
-		global.set_handle("g_cutscene_kill_group", v0)
-	return v0
+	var _pc: int = 4131
+	while true:
+		if _pc == 4131:
+			v0 = group.cast(global.handle("g_cutscene_kill_group"))
+			if not (v0):
+				_pc = 4187
+				continue
+			else:
+				_pc = 4232
+				continue
+		elif _pc == 4187:
+			v0 = group.create()
+			global.set_handle("g_cutscene_kill_group", v0)
+			_pc = 4232
+			continue
+		elif _pc == 4232:
+			_pc = 4243
+			continue
+		elif _pc == 4243:
+			return
+		else:
+			return 0
 	return 0
 
 func watch(v0, v1) -> Variant:
@@ -414,17 +808,25 @@ func buzz_camera(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v4 = sim.create("ini:/sims/nav/waypoint", "default")
-	v5 = idirector.create_dolly()
-	v6 = await get_kill_group()
-	group.add_sim(v6, v4)
-	group.add_sim(v6, v5)
-	sim.place_relative_to(v5, v0, v1, v2, v3)
-	sim.set_cullable(v4, 0)
-	sim.place_at(v4, v0)
-	idirector.set_focus(v4)
-	idirector.set_dolly_camera(v5)
-	return v5
+	var _pc: int = 4377
+	while true:
+		if _pc == 4377:
+			v4 = sim.create("ini:/sims/nav/waypoint", "default")
+			v5 = idirector.create_dolly()
+			v6 = await get_kill_group()
+			group.add_sim(v6, v4)
+			group.add_sim(v6, v5)
+			sim.place_relative_to(v5, v0, v1, v2, v3)
+			sim.set_cullable(v4, 0)
+			sim.place_at(v4, v0)
+			idirector.set_focus(v4)
+			idirector.set_dolly_camera(v5)
+			_pc = 4631
+			continue
+		elif _pc == 4631:
+			return
+		else:
+			return 0
 	return 0
 
 func orbit_sim() -> Variant:
@@ -476,29 +878,74 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v6 = group.cast(v0)
-	v7 = isim.cast(v0)
-	if v6:
-		v10 = group.sim_count(v6)
-		v11 = group.group_count(v6)
-		v8 = 0
-		while v10 < v8:
+	var _pc: int = 5373
+	while true:
+		if _pc == 5373:
+			v6 = group.cast(v0)
+			v7 = isim.cast(v0)
+			if v6:
+				_pc = 5436
+				continue
+			else:
+				_pc = 5695
+				continue
+		elif _pc == 5436:
+			v10 = group.sim_count(v6)
+			v11 = group.group_count(v6)
+			v8 = 0
+			_pc = 5491
+			continue
+		elif _pc == 5491:
+			if v10 < v8:
+				_pc = 5507
+				continue
+			else:
+				_pc = 5587
+				continue
+		elif _pc == 5507:
 			await setup_directed_death(group.nth_sim(v6, v8), v1, v2, v3, v4, v5)
 			v8 = 1 + v8
-		v9 = 0
-		while v11 < v9:
+			_pc = 5491
+			continue
+		elif _pc == 5587:
+			v9 = 0
+			_pc = 5594
+			continue
+		elif _pc == 5594:
+			if v11 < v9:
+				_pc = 5610
+				continue
+			else:
+				_pc = 5690
+				continue
+		elif _pc == 5610:
 			await setup_directed_death(group.nth_group(v6, v9), v1, v2, v3, v4, v5)
 			v9 = 1 + v9
-	else:
-		if not (v7):
+			_pc = 5594
+			continue
+		elif _pc == 5690:
+			_pc = 5892
+			continue
+		elif _pc == 5695:
+			if v7:
+				_pc = 5705
+				continue
+			else:
+				_pc = 5892
+				continue
+		elif _pc == 5705:
+			object.add_handle_property(v7, "Cutscene_DirectedDeath_Speaker", v1)
+			object.add_string_property(v7, "Cutscene_DirectedDeath_Speaker_Name", v2)
+			object.add_string_property(v7, "Cutscene_DirectedDeath_Obituary", v3)
+			object.add_string_property(v7, "Cutscene_DirectedDeath_Epitaph", v4)
+			object.add_int_property(v7, "Cutscene_DirectedDeath_EndGame", v5)
+			object.set_string_property(v7, "death_script", "iCutsceneUtilities.DirectedDeath")
+			_pc = 5892
+			continue
+		elif _pc == 5892:
 			return 0
-		object.add_handle_property(v7, "Cutscene_DirectedDeath_Speaker", v1)
-		object.add_string_property(v7, "Cutscene_DirectedDeath_Speaker_Name", v2)
-		object.add_string_property(v7, "Cutscene_DirectedDeath_Obituary", v3)
-		object.add_string_property(v7, "Cutscene_DirectedDeath_Epitaph", v4)
-		object.add_int_property(v7, "Cutscene_DirectedDeath_EndGame", v5)
-		object.set_string_property(v7, "death_script", "iCutsceneUtilities.DirectedDeath")
-	return 0
+		else:
+			return 0
 	return 0
 
 func setup_directed_group_death() -> Variant:
@@ -512,19 +959,60 @@ func setup_directed_group_death() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v6 = group.cast(v0)
-	v7 = isim.cast(v0)
-	if v6:
-		v9 = group.sim_count(v6)
-		v8 = 0
-		while v9 < v8:
+	var _pc: int = 5895
+	while true:
+		if _pc == 5895:
+			v6 = group.cast(v0)
+			v7 = isim.cast(v0)
+			if v6:
+				_pc = 5958
+				continue
+			else:
+				_pc = 6245
+				continue
+		elif _pc == 5958:
+			v9 = group.sim_count(v6)
+			v8 = 0
+			_pc = 5989
+			continue
+		elif _pc == 5989:
+			if v9 < v8:
+				_pc = 6005
+				continue
+			else:
+				_pc = 6085
+				continue
+		elif _pc == 6005:
 			await setup_directed_death(group.nth_sim(v6, v8), v1, v2, v3, v4, v5)
 			v8 = 1 + v8
-		return 0
-	if not (v7):
-		return 0
-	object.set_string_property(v7, "death_script", "iCutsceneUtilities.DirectedGroupDeath")
-	return 0
+			_pc = 5989
+			continue
+		elif _pc == 6085:
+			_pc = 6287
+			continue
+		elif _pc == 6090:
+			object.add_handle_property(v6, "Cutscene_DirectedDeath_Speaker", v1)
+			object.add_string_property(v6, "Cutscene_DirectedDeath_Speaker_Name", v2)
+			object.add_string_property(v6, "Cutscene_DirectedDeath_Obituary", v3)
+			object.add_string_property(v6, "Cutscene_DirectedDeath_Epitaph", v4)
+			object.add_int_property(v6, "Cutscene_DirectedDeath_EndGame", v5)
+			_pc = 6245
+			continue
+		elif _pc == 6245:
+			if v7:
+				_pc = 6255
+				continue
+			else:
+				_pc = 6287
+				continue
+		elif _pc == 6255:
+			object.set_string_property(v7, "death_script", "iCutsceneUtilities.DirectedGroupDeath")
+			_pc = 6287
+			continue
+		elif _pc == 6287:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_6290(v0, v1, v2, v3, v4) -> Variant:
@@ -553,33 +1041,79 @@ func local_6581(v0, v1) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v7 = null
-	v8 = null
-	v9 = null
-	if v1:
-		if 1 > group.sim_count(v3):
-			if PogRuntime.TRACE:
-				debug.print_string("iCutsceneUtilities.DirectedDeath: NOTE: death cutscene not appropriate yet - wait for (if) rest of group to die\n")
+	var _pc: int = 6581
+	while true:
+		if _pc == 6581:
+			v7 = null
+			v8 = null
+			v9 = null
+			if v1:
+				_pc = 6629
+				continue
+			else:
+				_pc = 6725
+				continue
+		elif _pc == 6629:
+			if 1 > group.sim_count(v3):
+				_pc = 6654
+				continue
+			else:
+				_pc = 6685
+				continue
+		elif _pc == 6654:
+			_pc = 6680
+			continue
+		elif _pc == 6659:
+			debug.print_string("iCutsceneUtilities.DirectedDeath: NOTE: death cutscene not appropriate yet - wait for (if) rest of group to die\n")
+			_pc = 6680
+			continue
+		elif _pc == 6680:
+			_pc = 7194
+			continue
+		elif _pc == 6685:
+			v3 = sim.group(v0)
+			v4 = v3
+			_pc = 6736
+			continue
+		elif _pc == 6725:
+			v4 = v0
+			_pc = 6736
+			continue
+		elif _pc == 6736:
+			v6 = sim.cast(object.handle_property(v4, "Cutscene_DirectedDeath_Speaker"))
+			v7 = object.string_property(v4, "Cutscene_DirectedDeath_Speaker_Name")
+			v8 = object.string_property(v4, "Cutscene_DirectedDeath_Obituary")
+			v9 = object.string_property(v4, "Cutscene_DirectedDeath_Epitaph")
+			v5 = object.int_property(v4, "Cutscene_DirectedDeath_EndGame")
+			if _pog_eq("", v7) and _pog_is_null(v6):
+				_pc = 6935
+				continue
+			else:
+				_pc = 6946
+				continue
+		elif _pc == 6935:
+			v6 = v0
+			_pc = 6946
+			continue
+		elif _pc == 6946:
+			await handle_abort(_pog_spawn(local_6290.bind(v0, v6, _pog_clone(v7), _pog_clone(v8), _pog_clone(v9))))
+			await _pog_wait(5.0)
+			if _pog_is_null(object.property_exists(iship.find_player_ship(), "player_dying")) and v5:
+				_pc = 7079
+				continue
+			else:
+				_pc = 7194
+				continue
+		elif _pc == 7079:
+			object.add_bool_property(iship.find_player_ship(), "destroy_sim", 0)
+			object.add_string_property(iship.find_player_ship(), "death_caption", "caption_failed_generic")
+			_pog_detach(_pog_spawn(ideathscript.player_death_script.bind(iship.find_player_ship())))
+			_pc = 7194
+			continue
+		elif _pc == 7194:
 			return 0
-		v3 = sim.group(v0)
-		v4 = v3
-	else:
-		v4 = v0
-	v6 = sim.cast(object.handle_property(v4, "Cutscene_DirectedDeath_Speaker"))
-	v7 = object.string_property(v4, "Cutscene_DirectedDeath_Speaker_Name")
-	v8 = object.string_property(v4, "Cutscene_DirectedDeath_Obituary")
-	v9 = object.string_property(v4, "Cutscene_DirectedDeath_Epitaph")
-	v5 = object.int_property(v4, "Cutscene_DirectedDeath_EndGame")
-	if _pog_eq("", v7) and _pog_is_null(v6):
-		v6 = v0
-	await handle_abort(_pog_spawn(local_6290.bind(v0, v6, _pog_clone(v7), _pog_clone(v8), _pog_clone(v9))))
-	await _pog_wait(5.0)
-	if not (_pog_is_null(object.property_exists(iship.find_player_ship(), "player_dying")) and v5):
-		return 0
-	object.add_bool_property(iship.find_player_ship(), "destroy_sim", 0)
-	object.add_string_property(iship.find_player_ship(), "death_caption", "caption_failed_generic")
-	_pog_detach(_pog_spawn(ideathscript.player_death_script.bind(iship.find_player_ship())))
-	return 0
+		else:
+			return 0
 	return 0
 
 func directed_death() -> Variant:
@@ -595,24 +1129,57 @@ func directed_group_death() -> Variant:
 	return 0
 
 func get_station_modules(v0) -> Variant:
-	return _pog_clone(isim.sims_in_radius(isim.cast(v0), 1.5 * object.float_property(v0, "radius"), 8192))
+	var _pc: int = 7288
+	while true:
+		if _pc == 7288:
+			isim.sims_in_radius(isim.cast(v0), 1.5 * object.float_property(v0, "radius"), 8192)
+			_pc = 7358
+			continue
+		elif _pc == 7358:
+			return
+		else:
+			return 0
 	return 0
 
 func get_things_called(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
-	v4 = null
-	p_set.union(v3, v0)
+	var _pc: int = 7361
 	while true:
-		v2 = isim.cast(p_set.first_element(v3))
-		if _pog_eq(v1, object.string_property(v2, "name")):
+		if _pc == 7361:
+			v3 = null
+			v4 = null
+			p_set.union(v3, v0)
+			_pc = 7412
+			continue
+		elif _pc == 7412:
+			v2 = isim.cast(p_set.first_element(v3))
+			if _pog_eq(v1, object.string_property(v2, "name")):
+				_pc = 7486
+				continue
+			else:
+				_pc = 7510
+				continue
+		elif _pc == 7486:
 			p_set.add(v4, v2)
-		p_set.remove(v3, v2)
-		if not (not (p_set.is_empty(v3))):
-			break
-	return _pog_clone(v4)
+			_pc = 7510
+			continue
+		elif _pc == 7510:
+			p_set.remove(v3, v2)
+			if p_set.is_empty(v3):
+				_pc = 7558
+				continue
+			else:
+				_pc = 7412
+				continue
+		elif _pc == 7558:
+			_pc = 7568
+			continue
+		elif _pc == 7568:
+			return
+		else:
+			return 0
 	return 0
 
 func find_station_module() -> Variant:
@@ -730,6 +1297,7 @@ func find_station_module() -> Variant:
 			_pc = 8205
 			continue
 		elif _pc == 8169:
+			isim.cast(p_set.first_element(v3))
 			_pc = 8211
 			continue
 		elif _pc == 8205:

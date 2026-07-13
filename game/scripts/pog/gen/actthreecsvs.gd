@@ -13,886 +13,2115 @@ func _link() -> void:
 	text = api.text
 
 func local_0() -> Variant:
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_wouldnt_you_beleive_it_unkle_hoffer_is_five_minutes_back_from_the_dead_:", "a3_master_dialogue_jafs_well_wouldnt_you_beleive_it_unkle_hoffer_is_five_minutes_back_from_the_dead")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_lori_here_we_go_again_Will_you_jusT_shut_up_jafs_:", "a3_master_dialogue_lori_here_we_go_again_Will_you_jusT_shut_up_jafs")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_thats_just_it_i_was_quite_happy_as_a_pirate_:", "a3_master_dialogue_jafs_well_thats_just_it_i_was_quite_happy_as_a_pirate")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_clay_now_just_you_watch_it_lard_boy_or_i_swear_to_god_:", "a3_master_dialogue_clay_now_just_you_watch_it_lard_boy_or_i_swear_to_god")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_top_pirates_:", "a3_master_dialogue_jafs_top_pirates")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_lori_had_everything_:", "a3_master_dialogue_lori_had_everything")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_poor_little_:", "a3_master_dialogue_jafs_poor_little")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_lori_join_the_queue_:", "a3_master_dialogue_lori_join_the_queue")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_calm_down_everyone_hes_just_doing_for_effect_:", "a3_master_dialogue_cal_calm_down_everyone_hes_just_doing_for_effect")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_right_cal_:", "a3_master_dialogue_jafs_right_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_but_it_kind_of_brings_up_a_point_ive_been_meaning_:", "a3_master_dialogue_cal_but_it_kind_of_brings_up_a_point_ive_been_meaning")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_ibuki_dont_worry_:", "a3_master_dialogue_ibuki_dont_worry")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_shes_right_i_dunno_aout_the_others_:", "a3_master_dialogue_smith_shes_right_i_dunno_aout_the_others")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_im_in_:", "a3_master_dialogue_jafs_im_in")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_sheesh_now_thats_sounds_like_a_one_way_ticket_:", "a3_master_dialogue_jafs_sheesh_now_thats_sounds_like_a_one_way_ticket")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_ibuki_for_once_i_have_to_agree_with_jafs_:", "a3_master_dialogue_ibuki_for_once_i_have_to_agree_with_jafs")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_relax_weve_got_a_job_to_do_and_there_is_no_se_bellyaching_about_it_:", "a3_master_dialogue_cal_relax_weve_got_a_job_to_do_and_there_is_no_se_bellyaching_about_it")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_im_sure_it_will_but_rather_you_than_me_:", "a3_master_dialogue_jafs_im_sure_it_will_but_rather_you_than_me")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_hang_on_a_second_i_just_need_to_get_this_right_:", "a3_master_dialogue_jafs_hang_on_a_second_i_just_need_to_get_this_right")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_thats_right_:", "a3_master_dialogue_cal_thats_right")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_thats_just_stupid_:", "a3_master_dialogue_jafs_well_thats_just_stupid")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_yeah_but_i_reackon_that_our_reaction_has_taken_them_by_suprise_:", "a3_master_dialogue_smith_yeah_but_i_reackon_that_our_reaction_has_taken_them_by_suprise")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_ok_ill_buy_that_but_why_the_hell_do_they_want_to_blow_up_the_navy_:", "a3_master_dialogue_jafs_ok_ill_buy_that_but_why_the_hell_do_they_want_to_blow_up_the_navy")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_dunno_but_im_sure_were_gonna_find_out_:", "a3_master_dialogue_cal_dunno_but_im_sure_were_gonna_find_out")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_lori_hadnt_we_better_get_on_and_try_and_find_hoffer_:", "a3_master_dialogue_lori_hadnt_we_better_get_on_and_try_and_find_hoffer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_if_this_maas_geezers_record_is_anything_to_go_by_i_suspect_:", "a3_master_dialogue_jafs_well_if_this_maas_geezers_record_is_anything_to_go_by_i_suspect")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_if_thats_the_case_then_theres_one_more_reason_to_find_maas_:", "a3_master_dialogue_cal_if_thats_the_case_then_theres_one_more_reason_to_find_maas")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_state_your_name_and_business_:", "a3_master_dialogue_police_1_state_your_name_and_business")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_cal_:", "a3_master_text_cal_police_1_im_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_cal_:", "a3_master_dialogue_cal_police_1_im_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_sorry_sir_:", "a3_master_dialogue_police_1_sorry_sir")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_sure_i_have_pirate_:", "a3_master_dialogue_police_1_sure_i_have_pirate")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_no_i_havent_:", "a3_master_dialogue_police_1_no_i_havent")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_yes_:", "a3_master_text_cal_police_1_yes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_yes_:", "a3_master_dialogue_cal_police_1_yes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_dont_take_that_tone_:", "a3_master_dialogue_police_1_dont_take_that_tone")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_ok_:", "a3_master_text_cal_police_1_ok")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_ok_:", "a3_master_dialogue_cal_police_1_ok")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_smart_choice_:", "a3_master_dialogue_police_1_smart_choice")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_screw_you_:", "a3_master_text_cal_police_1_screw_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_screw_you_:", "a3_master_dialogue_cal_police_1_screw_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_as_you_please_punk_:", "a3_master_dialogue_police_1_as_you_please_punk")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_doesnt_matter_im_harmless_:", "a3_master_text_cal_police_1_doesnt_matter_im_harmless")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_doesnt_matter_im_harmless_:", "a3_master_dialogue_cal_police_1_doesnt_matter_im_harmless")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_hmm_alright_:", "a3_master_dialogue_police_1_hmm_alright")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_moonspike_:", "a3_master_text_cal_police_1_im_moonspike")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_moonspike_:", "a3_master_dialogue_cal_police_1_im_moonspike")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_wow_my_sons_a_fan_:", "a3_master_dialogue_police_1_wow_my_sons_a_fan")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_my_wifes_a_fan_but_:", "a3_master_dialogue_police_1_my_wifes_a_fan_but")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_nice_try_punk_:", "a3_master_dialogue_police_1_nice_try_punk")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_its_cal_:", "a3_master_text_cal_police_1_its_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_its_cal_:", "a3_master_dialogue_cal_police_1_its_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_the_cal_johnston_:", "a3_master_dialogue_police_1_the_cal_johnston")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_cal_johnston_never_:", "a3_master_dialogue_police_1_cal_johnston_never")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_i_am_cal_:", "a3_master_text_cal_police_1_i_am_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_i_am_Cal_:", "a3_master_dialogue_cal_police_1_i_am_Cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_well_i_gave_you_a_chance_:", "a3_master_dialogue_police_1_well_i_gave_you_a_chance")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_better_than_you_too_:", "a3_master_text_cal_police_1_im_better_than_you_too")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_better_than_you_too_:", "a3_master_dialogue_cal_police_1_im_better_than_you_too")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_really_lets_test_that_:", "a3_master_dialogue_police_1_really_lets_test_that")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_you_really_are_cal_:", "a3_master_dialogue_police_1_you_really_are_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_miguel_:", "a3_master_text_cal_police_1_im_miguel")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_miguel_:", "a3_master_dialogue_cal_police_1_im_miguel")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_at_last_a_little_sense_:", "a3_master_dialogue_police_1_at_last_a_little_sense")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_just_passing_through_:", "a3_master_text_cal_police_1_just_passing_through")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_just_passing_through_:", "a3_master_dialogue_cal_police_1_just_passing_through")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_just_passing_through_in_this_:", "a3_master_dialogue_police_1_just_passing_through_in_this")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_maybe_but_its_no_crime_:", "a3_master_text_cal_police_1_maybe_but_its_no_crime")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_maybe_but_its_no_crime_:", "a3_master_dialogue_cal_police_1_maybe_but_its_no_crime")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_true_enough_:", "a3_master_dialogue_police_1_true_enough")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_no_ive_just_got_business_:", "a3_master_text_cal_police_1_no_ive_just_got_business")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_no_ive_just_got_business_:", "a3_master_dialogue_cal_police_1_no_ive_just_got_business")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble_:", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_as_i_said_crazy_:", "a3_master_dialogue_police_1_as_i_said_crazy")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_i_wish_i_could_:", "a3_master_dialogue_police_1_i_wish_i_could")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_police_1_errand_for_hoffer_:", "a3_master_text_cal_police_1_errand_for_hoffer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_errand_for_hoffer_:", "a3_master_dialogue_cal_police_1_errand_for_hoffer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_good_luck_mate_:", "a3_master_dialogue_police_1_good_luck_mate")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_1_you_are_welcome_here_:", "a3_master_dialogue_police_1_you_are_welcome_here")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_police_2_i_told_you_to_go_:", "a3_master_dialogue_police_2_i_told_you_to_go")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_wouldnt_you_beleive_it_unkle_hoffer_is_five_minutes_back_from_the_dead_:", "a3_master_dialogue_jafs_well_wouldnt_you_beleive_it_unkle_hoffer_is_five_minutes_back_from_the_dead")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 76
+				continue
+			else:
+				_pc = 0
+				continue
+		elif _pc == 76:
+			_pc = 77
+			continue
+		elif _pc == 77:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_lori_here_we_go_again_Will_you_jusT_shut_up_jafs_:", "a3_master_dialogue_lori_here_we_go_again_Will_you_jusT_shut_up_jafs")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 153
+				continue
+			else:
+				_pc = 77
+				continue
+		elif _pc == 153:
+			_pc = 154
+			continue
+		elif _pc == 154:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_thats_just_it_i_was_quite_happy_as_a_pirate_:", "a3_master_dialogue_jafs_well_thats_just_it_i_was_quite_happy_as_a_pirate")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 230
+				continue
+			else:
+				_pc = 154
+				continue
+		elif _pc == 230:
+			_pc = 231
+			continue
+		elif _pc == 231:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_clay_now_just_you_watch_it_lard_boy_or_i_swear_to_god_:", "a3_master_dialogue_clay_now_just_you_watch_it_lard_boy_or_i_swear_to_god")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 307
+				continue
+			else:
+				_pc = 231
+				continue
+		elif _pc == 307:
+			_pc = 308
+			continue
+		elif _pc == 308:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_top_pirates_:", "a3_master_dialogue_jafs_top_pirates")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 384
+				continue
+			else:
+				_pc = 308
+				continue
+		elif _pc == 384:
+			_pc = 385
+			continue
+		elif _pc == 385:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_lori_had_everything_:", "a3_master_dialogue_lori_had_everything")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 461
+				continue
+			else:
+				_pc = 385
+				continue
+		elif _pc == 461:
+			_pc = 462
+			continue
+		elif _pc == 462:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_poor_little_:", "a3_master_dialogue_jafs_poor_little")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 538
+				continue
+			else:
+				_pc = 462
+				continue
+		elif _pc == 538:
+			_pc = 539
+			continue
+		elif _pc == 539:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_lori_join_the_queue_:", "a3_master_dialogue_lori_join_the_queue")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 615
+				continue
+			else:
+				_pc = 539
+				continue
+		elif _pc == 615:
+			_pc = 616
+			continue
+		elif _pc == 616:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_calm_down_everyone_hes_just_doing_for_effect_:", "a3_master_dialogue_cal_calm_down_everyone_hes_just_doing_for_effect")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 692
+				continue
+			else:
+				_pc = 616
+				continue
+		elif _pc == 692:
+			_pc = 693
+			continue
+		elif _pc == 693:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_right_cal_:", "a3_master_dialogue_jafs_right_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 769
+				continue
+			else:
+				_pc = 693
+				continue
+		elif _pc == 769:
+			_pc = 770
+			continue
+		elif _pc == 770:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_but_it_kind_of_brings_up_a_point_ive_been_meaning_:", "a3_master_dialogue_cal_but_it_kind_of_brings_up_a_point_ive_been_meaning")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 846
+				continue
+			else:
+				_pc = 770
+				continue
+		elif _pc == 846:
+			_pc = 847
+			continue
+		elif _pc == 847:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_ibuki_dont_worry_:", "a3_master_dialogue_ibuki_dont_worry")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 923
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 923:
+			_pc = 924
+			continue
+		elif _pc == 924:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_shes_right_i_dunno_aout_the_others_:", "a3_master_dialogue_smith_shes_right_i_dunno_aout_the_others")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1000
+				continue
+			else:
+				_pc = 924
+				continue
+		elif _pc == 1000:
+			_pc = 1001
+			continue
+		elif _pc == 1001:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_im_in_:", "a3_master_dialogue_jafs_im_in")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1077
+				continue
+			else:
+				_pc = 1001
+				continue
+		elif _pc == 1077:
+			_pc = 1078
+			continue
+		elif _pc == 1078:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_sheesh_now_thats_sounds_like_a_one_way_ticket_:", "a3_master_dialogue_jafs_sheesh_now_thats_sounds_like_a_one_way_ticket")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1154
+				continue
+			else:
+				_pc = 1078
+				continue
+		elif _pc == 1154:
+			_pc = 1155
+			continue
+		elif _pc == 1155:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_ibuki_for_once_i_have_to_agree_with_jafs_:", "a3_master_dialogue_ibuki_for_once_i_have_to_agree_with_jafs")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1231
+				continue
+			else:
+				_pc = 1155
+				continue
+		elif _pc == 1231:
+			_pc = 1232
+			continue
+		elif _pc == 1232:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_relax_weve_got_a_job_to_do_and_there_is_no_se_bellyaching_about_it_:", "a3_master_dialogue_cal_relax_weve_got_a_job_to_do_and_there_is_no_se_bellyaching_about_it")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1308
+				continue
+			else:
+				_pc = 1232
+				continue
+		elif _pc == 1308:
+			_pc = 1309
+			continue
+		elif _pc == 1309:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_im_sure_it_will_but_rather_you_than_me_:", "a3_master_dialogue_jafs_im_sure_it_will_but_rather_you_than_me")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1385
+				continue
+			else:
+				_pc = 1309
+				continue
+		elif _pc == 1385:
+			_pc = 1386
+			continue
+		elif _pc == 1386:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_hang_on_a_second_i_just_need_to_get_this_right_:", "a3_master_dialogue_jafs_hang_on_a_second_i_just_need_to_get_this_right")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1462
+				continue
+			else:
+				_pc = 1386
+				continue
+		elif _pc == 1462:
+			_pc = 1463
+			continue
+		elif _pc == 1463:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_thats_right_:", "a3_master_dialogue_cal_thats_right")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1539
+				continue
+			else:
+				_pc = 1463
+				continue
+		elif _pc == 1539:
+			_pc = 1540
+			continue
+		elif _pc == 1540:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_thats_just_stupid_:", "a3_master_dialogue_jafs_well_thats_just_stupid")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1616
+				continue
+			else:
+				_pc = 1540
+				continue
+		elif _pc == 1616:
+			_pc = 1617
+			continue
+		elif _pc == 1617:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_yeah_but_i_reackon_that_our_reaction_has_taken_them_by_suprise_:", "a3_master_dialogue_smith_yeah_but_i_reackon_that_our_reaction_has_taken_them_by_suprise")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1693
+				continue
+			else:
+				_pc = 1617
+				continue
+		elif _pc == 1693:
+			_pc = 1694
+			continue
+		elif _pc == 1694:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_ok_ill_buy_that_but_why_the_hell_do_they_want_to_blow_up_the_navy_:", "a3_master_dialogue_jafs_ok_ill_buy_that_but_why_the_hell_do_they_want_to_blow_up_the_navy")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1770
+				continue
+			else:
+				_pc = 1694
+				continue
+		elif _pc == 1770:
+			_pc = 1771
+			continue
+		elif _pc == 1771:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_dunno_but_im_sure_were_gonna_find_out_:", "a3_master_dialogue_cal_dunno_but_im_sure_were_gonna_find_out")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1847
+				continue
+			else:
+				_pc = 1771
+				continue
+		elif _pc == 1847:
+			_pc = 1848
+			continue
+		elif _pc == 1848:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_lori_hadnt_we_better_get_on_and_try_and_find_hoffer_:", "a3_master_dialogue_lori_hadnt_we_better_get_on_and_try_and_find_hoffer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 1924
+				continue
+			else:
+				_pc = 1848
+				continue
+		elif _pc == 1924:
+			_pc = 1925
+			continue
+		elif _pc == 1925:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_jafs_well_if_this_maas_geezers_record_is_anything_to_go_by_i_suspect_:", "a3_master_dialogue_jafs_well_if_this_maas_geezers_record_is_anything_to_go_by_i_suspect")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2001
+				continue
+			else:
+				_pc = 1925
+				continue
+		elif _pc == 2001:
+			_pc = 2002
+			continue
+		elif _pc == 2002:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_if_thats_the_case_then_theres_one_more_reason_to_find_maas_:", "a3_master_dialogue_cal_if_thats_the_case_then_theres_one_more_reason_to_find_maas")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2078
+				continue
+			else:
+				_pc = 2002
+				continue
+		elif _pc == 2078:
+			_pc = 2079
+			continue
+		elif _pc == 2079:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_state_your_name_and_business_:", "a3_master_dialogue_police_1_state_your_name_and_business")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2155
+				continue
+			else:
+				_pc = 2079
+				continue
+		elif _pc == 2155:
+			_pc = 2156
+			continue
+		elif _pc == 2156:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_cal_:", "a3_master_text_cal_police_1_im_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2232
+				continue
+			else:
+				_pc = 2156
+				continue
+		elif _pc == 2232:
+			_pc = 2233
+			continue
+		elif _pc == 2233:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_cal_:", "a3_master_dialogue_cal_police_1_im_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2309
+				continue
+			else:
+				_pc = 2233
+				continue
+		elif _pc == 2309:
+			_pc = 2310
+			continue
+		elif _pc == 2310:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_sorry_sir_:", "a3_master_dialogue_police_1_sorry_sir")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2386
+				continue
+			else:
+				_pc = 2310
+				continue
+		elif _pc == 2386:
+			_pc = 2387
+			continue
+		elif _pc == 2387:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_sure_i_have_pirate_:", "a3_master_dialogue_police_1_sure_i_have_pirate")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2463
+				continue
+			else:
+				_pc = 2387
+				continue
+		elif _pc == 2463:
+			_pc = 2464
+			continue
+		elif _pc == 2464:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_no_i_havent_:", "a3_master_dialogue_police_1_no_i_havent")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2540
+				continue
+			else:
+				_pc = 2464
+				continue
+		elif _pc == 2540:
+			_pc = 2541
+			continue
+		elif _pc == 2541:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_yes_:", "a3_master_text_cal_police_1_yes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2617
+				continue
+			else:
+				_pc = 2541
+				continue
+		elif _pc == 2617:
+			_pc = 2618
+			continue
+		elif _pc == 2618:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_yes_:", "a3_master_dialogue_cal_police_1_yes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2694
+				continue
+			else:
+				_pc = 2618
+				continue
+		elif _pc == 2694:
+			_pc = 2695
+			continue
+		elif _pc == 2695:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_dont_take_that_tone_:", "a3_master_dialogue_police_1_dont_take_that_tone")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2771
+				continue
+			else:
+				_pc = 2695
+				continue
+		elif _pc == 2771:
+			_pc = 2772
+			continue
+		elif _pc == 2772:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_ok_:", "a3_master_text_cal_police_1_ok")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2848
+				continue
+			else:
+				_pc = 2772
+				continue
+		elif _pc == 2848:
+			_pc = 2849
+			continue
+		elif _pc == 2849:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_ok_:", "a3_master_dialogue_cal_police_1_ok")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 2925
+				continue
+			else:
+				_pc = 2849
+				continue
+		elif _pc == 2925:
+			_pc = 2926
+			continue
+		elif _pc == 2926:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_smart_choice_:", "a3_master_dialogue_police_1_smart_choice")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3002
+				continue
+			else:
+				_pc = 2926
+				continue
+		elif _pc == 3002:
+			_pc = 3003
+			continue
+		elif _pc == 3003:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_screw_you_:", "a3_master_text_cal_police_1_screw_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3079
+				continue
+			else:
+				_pc = 3003
+				continue
+		elif _pc == 3079:
+			_pc = 3080
+			continue
+		elif _pc == 3080:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_screw_you_:", "a3_master_dialogue_cal_police_1_screw_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3156
+				continue
+			else:
+				_pc = 3080
+				continue
+		elif _pc == 3156:
+			_pc = 3157
+			continue
+		elif _pc == 3157:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_as_you_please_punk_:", "a3_master_dialogue_police_1_as_you_please_punk")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3233
+				continue
+			else:
+				_pc = 3157
+				continue
+		elif _pc == 3233:
+			_pc = 3234
+			continue
+		elif _pc == 3234:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_doesnt_matter_im_harmless_:", "a3_master_text_cal_police_1_doesnt_matter_im_harmless")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3310
+				continue
+			else:
+				_pc = 3234
+				continue
+		elif _pc == 3310:
+			_pc = 3311
+			continue
+		elif _pc == 3311:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_doesnt_matter_im_harmless_:", "a3_master_dialogue_cal_police_1_doesnt_matter_im_harmless")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3387
+				continue
+			else:
+				_pc = 3311
+				continue
+		elif _pc == 3387:
+			_pc = 3388
+			continue
+		elif _pc == 3388:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_hmm_alright_:", "a3_master_dialogue_police_1_hmm_alright")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3464
+				continue
+			else:
+				_pc = 3388
+				continue
+		elif _pc == 3464:
+			_pc = 3465
+			continue
+		elif _pc == 3465:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_moonspike_:", "a3_master_text_cal_police_1_im_moonspike")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3541
+				continue
+			else:
+				_pc = 3465
+				continue
+		elif _pc == 3541:
+			_pc = 3542
+			continue
+		elif _pc == 3542:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_moonspike_:", "a3_master_dialogue_cal_police_1_im_moonspike")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3618
+				continue
+			else:
+				_pc = 3542
+				continue
+		elif _pc == 3618:
+			_pc = 3619
+			continue
+		elif _pc == 3619:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_wow_my_sons_a_fan_:", "a3_master_dialogue_police_1_wow_my_sons_a_fan")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3695
+				continue
+			else:
+				_pc = 3619
+				continue
+		elif _pc == 3695:
+			_pc = 3696
+			continue
+		elif _pc == 3696:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_my_wifes_a_fan_but_:", "a3_master_dialogue_police_1_my_wifes_a_fan_but")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3772
+				continue
+			else:
+				_pc = 3696
+				continue
+		elif _pc == 3772:
+			_pc = 3773
+			continue
+		elif _pc == 3773:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_nice_try_punk_:", "a3_master_dialogue_police_1_nice_try_punk")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3849
+				continue
+			else:
+				_pc = 3773
+				continue
+		elif _pc == 3849:
+			_pc = 3850
+			continue
+		elif _pc == 3850:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_its_cal_:", "a3_master_text_cal_police_1_its_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 3926
+				continue
+			else:
+				_pc = 3850
+				continue
+		elif _pc == 3926:
+			_pc = 3927
+			continue
+		elif _pc == 3927:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_its_cal_:", "a3_master_dialogue_cal_police_1_its_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4003
+				continue
+			else:
+				_pc = 3927
+				continue
+		elif _pc == 4003:
+			_pc = 4004
+			continue
+		elif _pc == 4004:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_the_cal_johnston_:", "a3_master_dialogue_police_1_the_cal_johnston")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4080
+				continue
+			else:
+				_pc = 4004
+				continue
+		elif _pc == 4080:
+			_pc = 4081
+			continue
+		elif _pc == 4081:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_cal_johnston_never_:", "a3_master_dialogue_police_1_cal_johnston_never")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4157
+				continue
+			else:
+				_pc = 4081
+				continue
+		elif _pc == 4157:
+			_pc = 4158
+			continue
+		elif _pc == 4158:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_i_am_cal_:", "a3_master_text_cal_police_1_i_am_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4234
+				continue
+			else:
+				_pc = 4158
+				continue
+		elif _pc == 4234:
+			_pc = 4235
+			continue
+		elif _pc == 4235:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_i_am_Cal_:", "a3_master_dialogue_cal_police_1_i_am_Cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4311
+				continue
+			else:
+				_pc = 4235
+				continue
+		elif _pc == 4311:
+			_pc = 4312
+			continue
+		elif _pc == 4312:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_well_i_gave_you_a_chance_:", "a3_master_dialogue_police_1_well_i_gave_you_a_chance")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4388
+				continue
+			else:
+				_pc = 4312
+				continue
+		elif _pc == 4388:
+			_pc = 4389
+			continue
+		elif _pc == 4389:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_better_than_you_too_:", "a3_master_text_cal_police_1_im_better_than_you_too")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4465
+				continue
+			else:
+				_pc = 4389
+				continue
+		elif _pc == 4465:
+			_pc = 4466
+			continue
+		elif _pc == 4466:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_better_than_you_too_:", "a3_master_dialogue_cal_police_1_im_better_than_you_too")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4542
+				continue
+			else:
+				_pc = 4466
+				continue
+		elif _pc == 4542:
+			_pc = 4543
+			continue
+		elif _pc == 4543:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_really_lets_test_that_:", "a3_master_dialogue_police_1_really_lets_test_that")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4619
+				continue
+			else:
+				_pc = 4543
+				continue
+		elif _pc == 4619:
+			_pc = 4620
+			continue
+		elif _pc == 4620:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_you_really_are_cal_:", "a3_master_dialogue_police_1_you_really_are_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4696
+				continue
+			else:
+				_pc = 4620
+				continue
+		elif _pc == 4696:
+			_pc = 4697
+			continue
+		elif _pc == 4697:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_im_miguel_:", "a3_master_text_cal_police_1_im_miguel")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4773
+				continue
+			else:
+				_pc = 4697
+				continue
+		elif _pc == 4773:
+			_pc = 4774
+			continue
+		elif _pc == 4774:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_im_miguel_:", "a3_master_dialogue_cal_police_1_im_miguel")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4850
+				continue
+			else:
+				_pc = 4774
+				continue
+		elif _pc == 4850:
+			_pc = 4851
+			continue
+		elif _pc == 4851:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_at_last_a_little_sense_:", "a3_master_dialogue_police_1_at_last_a_little_sense")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 4927
+				continue
+			else:
+				_pc = 4851
+				continue
+		elif _pc == 4927:
+			_pc = 4928
+			continue
+		elif _pc == 4928:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_just_passing_through_:", "a3_master_text_cal_police_1_just_passing_through")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5004
+				continue
+			else:
+				_pc = 4928
+				continue
+		elif _pc == 5004:
+			_pc = 5005
+			continue
+		elif _pc == 5005:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_just_passing_through_:", "a3_master_dialogue_cal_police_1_just_passing_through")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5081
+				continue
+			else:
+				_pc = 5005
+				continue
+		elif _pc == 5081:
+			_pc = 5082
+			continue
+		elif _pc == 5082:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_just_passing_through_in_this_:", "a3_master_dialogue_police_1_just_passing_through_in_this")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5158
+				continue
+			else:
+				_pc = 5082
+				continue
+		elif _pc == 5158:
+			_pc = 5159
+			continue
+		elif _pc == 5159:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_maybe_but_its_no_crime_:", "a3_master_text_cal_police_1_maybe_but_its_no_crime")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5235
+				continue
+			else:
+				_pc = 5159
+				continue
+		elif _pc == 5235:
+			_pc = 5236
+			continue
+		elif _pc == 5236:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_maybe_but_its_no_crime_:", "a3_master_dialogue_cal_police_1_maybe_but_its_no_crime")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5312
+				continue
+			else:
+				_pc = 5236
+				continue
+		elif _pc == 5312:
+			_pc = 5313
+			continue
+		elif _pc == 5313:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_true_enough_:", "a3_master_dialogue_police_1_true_enough")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5389
+				continue
+			else:
+				_pc = 5313
+				continue
+		elif _pc == 5389:
+			_pc = 5390
+			continue
+		elif _pc == 5390:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_no_ive_just_got_business_:", "a3_master_text_cal_police_1_no_ive_just_got_business")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5466
+				continue
+			else:
+				_pc = 5390
+				continue
+		elif _pc == 5466:
+			_pc = 5467
+			continue
+		elif _pc == 5467:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_no_ive_just_got_business_:", "a3_master_dialogue_cal_police_1_no_ive_just_got_business")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5543
+				continue
+			else:
+				_pc = 5467
+				continue
+		elif _pc == 5543:
+			_pc = 5544
+			continue
+		elif _pc == 5544:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble_:", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5620
+				continue
+			else:
+				_pc = 5544
+				continue
+		elif _pc == 5620:
+			_pc = 5621
+			continue
+		elif _pc == 5621:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_as_i_said_crazy_:", "a3_master_dialogue_police_1_as_i_said_crazy")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5697
+				continue
+			else:
+				_pc = 5621
+				continue
+		elif _pc == 5697:
+			_pc = 5698
+			continue
+		elif _pc == 5698:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_i_wish_i_could_:", "a3_master_dialogue_police_1_i_wish_i_could")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5774
+				continue
+			else:
+				_pc = 5698
+				continue
+		elif _pc == 5774:
+			_pc = 5775
+			continue
+		elif _pc == 5775:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_police_1_errand_for_hoffer_:", "a3_master_text_cal_police_1_errand_for_hoffer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5851
+				continue
+			else:
+				_pc = 5775
+				continue
+		elif _pc == 5851:
+			_pc = 5852
+			continue
+		elif _pc == 5852:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_police_1_errand_for_hoffer_:", "a3_master_dialogue_cal_police_1_errand_for_hoffer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 5928
+				continue
+			else:
+				_pc = 5852
+				continue
+		elif _pc == 5928:
+			_pc = 5929
+			continue
+		elif _pc == 5929:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_good_luck_mate_:", "a3_master_dialogue_police_1_good_luck_mate")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6005
+				continue
+			else:
+				_pc = 5929
+				continue
+		elif _pc == 6005:
+			_pc = 6006
+			continue
+		elif _pc == 6006:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_1_you_are_welcome_here_:", "a3_master_dialogue_police_1_you_are_welcome_here")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6082
+				continue
+			else:
+				_pc = 6006
+				continue
+		elif _pc == 6082:
+			_pc = 6083
+			continue
+		elif _pc == 6083:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_police_2_i_told_you_to_go_:", "a3_master_dialogue_police_2_i_told_you_to_go")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6159
+				continue
+			else:
+				_pc = 6083
+				continue
+		elif _pc == 6159:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_6163() -> Variant:
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_ive_picked_up_a_distress_signal_:", "a3_master_dialogue_smith_ive_picked_up_a_distress_signal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_waypoint_distress_:", "a3_master_waypoint_distress")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_engines_please_:", "a3_master_dialogue_stranded_engines_please")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_engines_thanks_:", "a3_master_dialogue_stranded_engines_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_life_support_:", "a3_master_dialogue_stranded_life_support")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_life_support_thanks_:", "a3_master_dialogue_stranded_life_support_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_computers_hello_:", "a3_master_dialogue_stranded_computers_hello")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_computers_thanks_:", "a3_master_dialogue_stranded_computers_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_mayday_mayday_:", "a3_master_dialogue_stranded_mayday_mayday")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_mayday_thanks_:", "a3_master_dialogue_stranded_mayday_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_reactor_failure_:", "a3_master_dialogue_stranded_reactor_failure")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_stranded_reactor_failure_thanks_:", "a3_master_dialogue_stranded_reactor_failure_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_im_going_aboard_:", "a3_master_dialogue_smith_im_going_aboard")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_fixed_it_:", "a3_master_dialogue_smith_fixed_it")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_name_franklyn_hoffer_:", "a3_master_name_franklyn_hoffer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_hoffer_hey_cal_someone_needs_to_look_after_these_refugees_:", "a3_master_dialogue_hoffer_hey_cal_someone_needs_to_look_after_these_refugees")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_ok_i_guess_i_could_:", "a3_master_text_cal_ok_i_guess_i_could")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_ok_i_guess_i_could_:", "a3_master_dialogue_cal_ok_i_guess_i_could")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_mrs_jones_thank_you_:", "a3_master_dialogue_mrs_jones_thank_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_not_a_problem_:", "a3_master_dialogue_cal_not_a_problem")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_thank_you_:", "a3_master_dialogue_mr_jones_thank_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_i_havent_got_time_:", "a3_master_text_cal_i_havent_got_time")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_i_havent_got_time_:", "a3_master_dialogue_cal_i_havent_got_time")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_shipname_mrs_jones_:", "a3_master_shipname_mrs_jones")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_shipname_mr_jones_:", "a3_master_shipname_mr_jones")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_shipname_paul_jones_:", "a3_master_shipname_paul_jones")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_shipname_chris_jones_:", "a3_master_shipname_chris_jones")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_shipname_catherine_jones_:", "a3_master_shipname_catherine_jones")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_mrs_jones_help_:", "a3_master_dialogue_mrs_jones_help")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_god_no_:", "a3_master_dialogue_mr_jones_god_no")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_paul_what_are_you_doing_:", "a3_master_dialogue_mr_jones_paul_what_are_you_doing")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_clay_we_cant_help_her_now_:", "a3_master_dialogue_clay_we_cant_help_her_now")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_catherine_jones_this_cant_be_happening_:", "a3_master_dialogue_catherine_jones_this_cant_be_happening")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_paul_jones_arrggghhhhhhhh_:", "a3_master_dialogue_paul_jones_arrggghhhhhhhh")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_no_more_:", "a3_master_dialogue_mr_jones_no_more")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_caption_meanwhile_near_the_stoymir_l_point_:", "a3_master_text_caption_meanwhile_near_the_stoymir_l_point")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_shipname_junked_:", "a3_master_shipname_junked")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_antimatter_mine_:", "a3_master_antimatter_mine")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_shipname_flagship_:", "a3_master_shipname_flagship")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_name_marcus_:", "a3_master_name_marcus")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_nice_defenses_start_:", "a3_master_dialogue_cal_nice_defenses_start")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_hello_:", "a3_master_dialogue_marcus_hello")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_hoffer_thanks_:", "a3_master_dialogue_marcus_hoffer_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_defenses_:", "a3_master_dialogue_marcus_defenses")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_defenses_test_:", "a3_master_dialogue_marcus_defenses_test")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_name_drone_:", "a3_master_name_drone")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_nice_defenses_end_:", "a3_master_dialogue_cal_nice_defenses_end")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_get_antimatter_PBC_:", "a3_master_dialogue_marcus_get_antimatter_PBC")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_you_gonna_like_this_:", "a3_master_dialogue_smith_you_gonna_like_this")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_cut_to_the_chase_:", "a3_master_dialogue_cal_cut_to_the_chase")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_well_yeah_:", "a3_master_dialogue_smith_well_yeah")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_you_have_to_be_kidding_:", "a3_master_dialogue_cal_you_have_to_be_kidding")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_nope_and_it_gets_better_too_:", "a3_master_dialogue_smith_nope_and_it_gets_better_too")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_i_could_kiss_you_:", "a3_master_dialogue_cal_i_could_kiss_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_dont_:", "a3_master_dialogue_smith_dont")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_smith_a_warning_:", "a3_master_dialogue_smith_a_warning")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_i_wont_:", "a3_master_dialogue_cal_i_wont")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_hoffer_ok_cal_we_are_ready_:", "a3_master_dialogue_hoffer_ok_cal_we_are_ready")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_caption_near_the_jump_accelerator_:", "a3_master_text_caption_near_the_jump_accelerator")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_caption_christmas_l_point_:", "a3_master_text_caption_christmas_l_point")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_caption_final_weapons_test_:", "a3_master_text_caption_final_weapons_test")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_hey_cal_could_you_go_help_out_at_christmas_:", "a3_master_dialogue_marcus_hey_cal_could_you_go_help_out_at_christmas")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_cal_why_are_you_still_here_:", "a3_master_dialogue_marcus_cal_why_are_you_still_here")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_goddamn_it_cal_if_your_not_helping_:", "a3_master_dialogue_marcus_goddamn_it_cal_if_your_not_helping")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_well_done_cal_we_have_lost_christmas_:", "a3_master_dialogue_marcus_well_done_cal_we_have_lost_christmas")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_where_were_you_:", "a3_master_dialogue_marcus_where_were_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_christmas_defender_time_to_fall_back_:", "a3_master_dialogue_christmas_defender_time_to_fall_back")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_second_that_order_:", "a3_master_dialogue_marcus_second_that_order")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_enough_reugees_through_:", "a3_master_dialogue_marcus_enough_reugees_through")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_wahoo_:", "a3_master_dialogue_defender_wahoo")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_take_that_:", "a3_master_dialogue_defender_take_that")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_another_one_bites_the_dust_:", "a3_master_dialogue_defender_another_one_bites_the_dust")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_infected_male_scream_:", "a3_master_dialogue_infected_male_scream")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_infected_female_scream_:", "a3_master_dialogue_infected_female_scream")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_infected_female_begging_:", "a3_master_dialogue_infected_female_begging")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_infected_male_no_you_bastards_:", "a3_master_dialogue_infected_male_no_you_bastards")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_1_hey_cal_:", "a3_master_dialogue_defender_1_hey_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_thanks_:", "a3_master_dialogue_cal_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_1_is_this_going_to_work_:", "a3_master_dialogue_defender_1_is_this_going_to_work")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_it_will_work_:", "a3_master_text_cal_it_will_work")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_it_will_work_:", "a3_master_dialogue_cal_it_will_work")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_1_yeah_youre_right_:", "a3_master_dialogue_defender_1_yeah_youre_right")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_no_but_we_can_save_:", "a3_master_text_cal_no_but_we_can_save")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_no_but_we_can_save_:", "a3_master_dialogue_cal_no_but_we_can_save")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_1_i_think_id_rather_live_:", "a3_master_dialogue_defender_1_i_think_id_rather_live")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_text_cal_we_are_fucked_:", "a3_master_text_cal_we_are_fucked")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_we_are_fucked_:", "a3_master_dialogue_cal_we_are_fucked")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_1_christ_cal_cheer_me_up_:", "a3_master_dialogue_defender_1_christ_cal_cheer_me_up")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_cal_no_choice_:", "a3_master_dialogue_cal_no_choice")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_defender_2_glad_youre_here_cal_:", "a3_master_dialogue_defender_2_glad_youre_here_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_here_they_come_:", "a3_master_dialogue_marcus_here_they_come")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_this_is_the_last_one_:", "a3_master_dialogue_marcus_this_is_the_last_one")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_marcus_bloody_hell_:", "a3_master_dialogue_marcus_bloody_hell")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_clay_you_cant_let_them_through_:", "a3_master_dialogue_clay_you_cant_let_them_through")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_master_dialogue_freighter_please_no_:", "a3_master_dialogue_freighter_please_no")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+	var _pc: int = 6163
+	while true:
+		if _pc == 6163:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_ive_picked_up_a_distress_signal_:", "a3_master_dialogue_smith_ive_picked_up_a_distress_signal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6239
+				continue
+			else:
+				_pc = 6163
+				continue
+		elif _pc == 6239:
+			_pc = 6240
+			continue
+		elif _pc == 6240:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_waypoint_distress_:", "a3_master_waypoint_distress")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6316
+				continue
+			else:
+				_pc = 6240
+				continue
+		elif _pc == 6316:
+			_pc = 6317
+			continue
+		elif _pc == 6317:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_engines_please_:", "a3_master_dialogue_stranded_engines_please")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6393
+				continue
+			else:
+				_pc = 6317
+				continue
+		elif _pc == 6393:
+			_pc = 6394
+			continue
+		elif _pc == 6394:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_engines_thanks_:", "a3_master_dialogue_stranded_engines_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6470
+				continue
+			else:
+				_pc = 6394
+				continue
+		elif _pc == 6470:
+			_pc = 6471
+			continue
+		elif _pc == 6471:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_life_support_:", "a3_master_dialogue_stranded_life_support")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6547
+				continue
+			else:
+				_pc = 6471
+				continue
+		elif _pc == 6547:
+			_pc = 6548
+			continue
+		elif _pc == 6548:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_life_support_thanks_:", "a3_master_dialogue_stranded_life_support_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6624
+				continue
+			else:
+				_pc = 6548
+				continue
+		elif _pc == 6624:
+			_pc = 6625
+			continue
+		elif _pc == 6625:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_computers_hello_:", "a3_master_dialogue_stranded_computers_hello")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6701
+				continue
+			else:
+				_pc = 6625
+				continue
+		elif _pc == 6701:
+			_pc = 6702
+			continue
+		elif _pc == 6702:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_computers_thanks_:", "a3_master_dialogue_stranded_computers_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6778
+				continue
+			else:
+				_pc = 6702
+				continue
+		elif _pc == 6778:
+			_pc = 6779
+			continue
+		elif _pc == 6779:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_mayday_mayday_:", "a3_master_dialogue_stranded_mayday_mayday")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6855
+				continue
+			else:
+				_pc = 6779
+				continue
+		elif _pc == 6855:
+			_pc = 6856
+			continue
+		elif _pc == 6856:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_mayday_thanks_:", "a3_master_dialogue_stranded_mayday_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 6932
+				continue
+			else:
+				_pc = 6856
+				continue
+		elif _pc == 6932:
+			_pc = 6933
+			continue
+		elif _pc == 6933:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_reactor_failure_:", "a3_master_dialogue_stranded_reactor_failure")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7009
+				continue
+			else:
+				_pc = 6933
+				continue
+		elif _pc == 7009:
+			_pc = 7010
+			continue
+		elif _pc == 7010:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_stranded_reactor_failure_thanks_:", "a3_master_dialogue_stranded_reactor_failure_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7086
+				continue
+			else:
+				_pc = 7010
+				continue
+		elif _pc == 7086:
+			_pc = 7087
+			continue
+		elif _pc == 7087:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_im_going_aboard_:", "a3_master_dialogue_smith_im_going_aboard")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7163
+				continue
+			else:
+				_pc = 7087
+				continue
+		elif _pc == 7163:
+			_pc = 7164
+			continue
+		elif _pc == 7164:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_fixed_it_:", "a3_master_dialogue_smith_fixed_it")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7240
+				continue
+			else:
+				_pc = 7164
+				continue
+		elif _pc == 7240:
+			_pc = 7241
+			continue
+		elif _pc == 7241:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_name_franklyn_hoffer_:", "a3_master_name_franklyn_hoffer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7317
+				continue
+			else:
+				_pc = 7241
+				continue
+		elif _pc == 7317:
+			_pc = 7318
+			continue
+		elif _pc == 7318:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_hoffer_hey_cal_someone_needs_to_look_after_these_refugees_:", "a3_master_dialogue_hoffer_hey_cal_someone_needs_to_look_after_these_refugees")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7394
+				continue
+			else:
+				_pc = 7318
+				continue
+		elif _pc == 7394:
+			_pc = 7395
+			continue
+		elif _pc == 7395:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_ok_i_guess_i_could_:", "a3_master_text_cal_ok_i_guess_i_could")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7471
+				continue
+			else:
+				_pc = 7395
+				continue
+		elif _pc == 7471:
+			_pc = 7472
+			continue
+		elif _pc == 7472:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_ok_i_guess_i_could_:", "a3_master_dialogue_cal_ok_i_guess_i_could")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7548
+				continue
+			else:
+				_pc = 7472
+				continue
+		elif _pc == 7548:
+			_pc = 7549
+			continue
+		elif _pc == 7549:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_mrs_jones_thank_you_:", "a3_master_dialogue_mrs_jones_thank_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7625
+				continue
+			else:
+				_pc = 7549
+				continue
+		elif _pc == 7625:
+			_pc = 7626
+			continue
+		elif _pc == 7626:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_not_a_problem_:", "a3_master_dialogue_cal_not_a_problem")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7702
+				continue
+			else:
+				_pc = 7626
+				continue
+		elif _pc == 7702:
+			_pc = 7703
+			continue
+		elif _pc == 7703:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_thank_you_:", "a3_master_dialogue_mr_jones_thank_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7779
+				continue
+			else:
+				_pc = 7703
+				continue
+		elif _pc == 7779:
+			_pc = 7780
+			continue
+		elif _pc == 7780:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_i_havent_got_time_:", "a3_master_text_cal_i_havent_got_time")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7856
+				continue
+			else:
+				_pc = 7780
+				continue
+		elif _pc == 7856:
+			_pc = 7857
+			continue
+		elif _pc == 7857:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_i_havent_got_time_:", "a3_master_dialogue_cal_i_havent_got_time")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 7933
+				continue
+			else:
+				_pc = 7857
+				continue
+		elif _pc == 7933:
+			_pc = 7934
+			continue
+		elif _pc == 7934:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_shipname_mrs_jones_:", "a3_master_shipname_mrs_jones")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8010
+				continue
+			else:
+				_pc = 7934
+				continue
+		elif _pc == 8010:
+			_pc = 8011
+			continue
+		elif _pc == 8011:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_shipname_mr_jones_:", "a3_master_shipname_mr_jones")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8087
+				continue
+			else:
+				_pc = 8011
+				continue
+		elif _pc == 8087:
+			_pc = 8088
+			continue
+		elif _pc == 8088:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_shipname_paul_jones_:", "a3_master_shipname_paul_jones")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8164
+				continue
+			else:
+				_pc = 8088
+				continue
+		elif _pc == 8164:
+			_pc = 8165
+			continue
+		elif _pc == 8165:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_shipname_chris_jones_:", "a3_master_shipname_chris_jones")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8241
+				continue
+			else:
+				_pc = 8165
+				continue
+		elif _pc == 8241:
+			_pc = 8242
+			continue
+		elif _pc == 8242:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_shipname_catherine_jones_:", "a3_master_shipname_catherine_jones")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8318
+				continue
+			else:
+				_pc = 8242
+				continue
+		elif _pc == 8318:
+			_pc = 8319
+			continue
+		elif _pc == 8319:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_mrs_jones_help_:", "a3_master_dialogue_mrs_jones_help")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8395
+				continue
+			else:
+				_pc = 8319
+				continue
+		elif _pc == 8395:
+			_pc = 8396
+			continue
+		elif _pc == 8396:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_god_no_:", "a3_master_dialogue_mr_jones_god_no")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8472
+				continue
+			else:
+				_pc = 8396
+				continue
+		elif _pc == 8472:
+			_pc = 8473
+			continue
+		elif _pc == 8473:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_paul_what_are_you_doing_:", "a3_master_dialogue_mr_jones_paul_what_are_you_doing")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8549
+				continue
+			else:
+				_pc = 8473
+				continue
+		elif _pc == 8549:
+			_pc = 8550
+			continue
+		elif _pc == 8550:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_clay_we_cant_help_her_now_:", "a3_master_dialogue_clay_we_cant_help_her_now")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8626
+				continue
+			else:
+				_pc = 8550
+				continue
+		elif _pc == 8626:
+			_pc = 8627
+			continue
+		elif _pc == 8627:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_catherine_jones_this_cant_be_happening_:", "a3_master_dialogue_catherine_jones_this_cant_be_happening")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8703
+				continue
+			else:
+				_pc = 8627
+				continue
+		elif _pc == 8703:
+			_pc = 8704
+			continue
+		elif _pc == 8704:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_paul_jones_arrggghhhhhhhh_:", "a3_master_dialogue_paul_jones_arrggghhhhhhhh")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8780
+				continue
+			else:
+				_pc = 8704
+				continue
+		elif _pc == 8780:
+			_pc = 8781
+			continue
+		elif _pc == 8781:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_mr_jones_no_more_:", "a3_master_dialogue_mr_jones_no_more")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8857
+				continue
+			else:
+				_pc = 8781
+				continue
+		elif _pc == 8857:
+			_pc = 8858
+			continue
+		elif _pc == 8858:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_caption_meanwhile_near_the_stoymir_l_point_:", "a3_master_text_caption_meanwhile_near_the_stoymir_l_point")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 8934
+				continue
+			else:
+				_pc = 8858
+				continue
+		elif _pc == 8934:
+			_pc = 8935
+			continue
+		elif _pc == 8935:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_shipname_junked_:", "a3_master_shipname_junked")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9011
+				continue
+			else:
+				_pc = 8935
+				continue
+		elif _pc == 9011:
+			_pc = 9012
+			continue
+		elif _pc == 9012:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_antimatter_mine_:", "a3_master_antimatter_mine")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9088
+				continue
+			else:
+				_pc = 9012
+				continue
+		elif _pc == 9088:
+			_pc = 9089
+			continue
+		elif _pc == 9089:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_shipname_flagship_:", "a3_master_shipname_flagship")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9165
+				continue
+			else:
+				_pc = 9089
+				continue
+		elif _pc == 9165:
+			_pc = 9166
+			continue
+		elif _pc == 9166:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_name_marcus_:", "a3_master_name_marcus")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9242
+				continue
+			else:
+				_pc = 9166
+				continue
+		elif _pc == 9242:
+			_pc = 9243
+			continue
+		elif _pc == 9243:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_nice_defenses_start_:", "a3_master_dialogue_cal_nice_defenses_start")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9319
+				continue
+			else:
+				_pc = 9243
+				continue
+		elif _pc == 9319:
+			_pc = 9320
+			continue
+		elif _pc == 9320:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_hello_:", "a3_master_dialogue_marcus_hello")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9396
+				continue
+			else:
+				_pc = 9320
+				continue
+		elif _pc == 9396:
+			_pc = 9397
+			continue
+		elif _pc == 9397:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_hoffer_thanks_:", "a3_master_dialogue_marcus_hoffer_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9473
+				continue
+			else:
+				_pc = 9397
+				continue
+		elif _pc == 9473:
+			_pc = 9474
+			continue
+		elif _pc == 9474:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_defenses_:", "a3_master_dialogue_marcus_defenses")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9550
+				continue
+			else:
+				_pc = 9474
+				continue
+		elif _pc == 9550:
+			_pc = 9551
+			continue
+		elif _pc == 9551:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_defenses_test_:", "a3_master_dialogue_marcus_defenses_test")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9627
+				continue
+			else:
+				_pc = 9551
+				continue
+		elif _pc == 9627:
+			_pc = 9628
+			continue
+		elif _pc == 9628:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_name_drone_:", "a3_master_name_drone")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9704
+				continue
+			else:
+				_pc = 9628
+				continue
+		elif _pc == 9704:
+			_pc = 9705
+			continue
+		elif _pc == 9705:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_nice_defenses_end_:", "a3_master_dialogue_cal_nice_defenses_end")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9781
+				continue
+			else:
+				_pc = 9705
+				continue
+		elif _pc == 9781:
+			_pc = 9782
+			continue
+		elif _pc == 9782:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_get_antimatter_PBC_:", "a3_master_dialogue_marcus_get_antimatter_PBC")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9858
+				continue
+			else:
+				_pc = 9782
+				continue
+		elif _pc == 9858:
+			_pc = 9859
+			continue
+		elif _pc == 9859:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_you_gonna_like_this_:", "a3_master_dialogue_smith_you_gonna_like_this")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 9935
+				continue
+			else:
+				_pc = 9859
+				continue
+		elif _pc == 9935:
+			_pc = 9936
+			continue
+		elif _pc == 9936:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_cut_to_the_chase_:", "a3_master_dialogue_cal_cut_to_the_chase")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10012
+				continue
+			else:
+				_pc = 9936
+				continue
+		elif _pc == 10012:
+			_pc = 10013
+			continue
+		elif _pc == 10013:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_well_yeah_:", "a3_master_dialogue_smith_well_yeah")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10089
+				continue
+			else:
+				_pc = 10013
+				continue
+		elif _pc == 10089:
+			_pc = 10090
+			continue
+		elif _pc == 10090:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_you_have_to_be_kidding_:", "a3_master_dialogue_cal_you_have_to_be_kidding")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10166
+				continue
+			else:
+				_pc = 10090
+				continue
+		elif _pc == 10166:
+			_pc = 10167
+			continue
+		elif _pc == 10167:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_nope_and_it_gets_better_too_:", "a3_master_dialogue_smith_nope_and_it_gets_better_too")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10243
+				continue
+			else:
+				_pc = 10167
+				continue
+		elif _pc == 10243:
+			_pc = 10244
+			continue
+		elif _pc == 10244:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_i_could_kiss_you_:", "a3_master_dialogue_cal_i_could_kiss_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10320
+				continue
+			else:
+				_pc = 10244
+				continue
+		elif _pc == 10320:
+			_pc = 10321
+			continue
+		elif _pc == 10321:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_dont_:", "a3_master_dialogue_smith_dont")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10397
+				continue
+			else:
+				_pc = 10321
+				continue
+		elif _pc == 10397:
+			_pc = 10398
+			continue
+		elif _pc == 10398:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_smith_a_warning_:", "a3_master_dialogue_smith_a_warning")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10474
+				continue
+			else:
+				_pc = 10398
+				continue
+		elif _pc == 10474:
+			_pc = 10475
+			continue
+		elif _pc == 10475:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_i_wont_:", "a3_master_dialogue_cal_i_wont")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10551
+				continue
+			else:
+				_pc = 10475
+				continue
+		elif _pc == 10551:
+			_pc = 10552
+			continue
+		elif _pc == 10552:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_hoffer_ok_cal_we_are_ready_:", "a3_master_dialogue_hoffer_ok_cal_we_are_ready")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10628
+				continue
+			else:
+				_pc = 10552
+				continue
+		elif _pc == 10628:
+			_pc = 10629
+			continue
+		elif _pc == 10629:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_caption_near_the_jump_accelerator_:", "a3_master_text_caption_near_the_jump_accelerator")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10705
+				continue
+			else:
+				_pc = 10629
+				continue
+		elif _pc == 10705:
+			_pc = 10706
+			continue
+		elif _pc == 10706:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_caption_christmas_l_point_:", "a3_master_text_caption_christmas_l_point")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10782
+				continue
+			else:
+				_pc = 10706
+				continue
+		elif _pc == 10782:
+			_pc = 10783
+			continue
+		elif _pc == 10783:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_caption_final_weapons_test_:", "a3_master_text_caption_final_weapons_test")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10859
+				continue
+			else:
+				_pc = 10783
+				continue
+		elif _pc == 10859:
+			_pc = 10860
+			continue
+		elif _pc == 10860:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_hey_cal_could_you_go_help_out_at_christmas_:", "a3_master_dialogue_marcus_hey_cal_could_you_go_help_out_at_christmas")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 10936
+				continue
+			else:
+				_pc = 10860
+				continue
+		elif _pc == 10936:
+			_pc = 10937
+			continue
+		elif _pc == 10937:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_cal_why_are_you_still_here_:", "a3_master_dialogue_marcus_cal_why_are_you_still_here")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11013
+				continue
+			else:
+				_pc = 10937
+				continue
+		elif _pc == 11013:
+			_pc = 11014
+			continue
+		elif _pc == 11014:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_goddamn_it_cal_if_your_not_helping_:", "a3_master_dialogue_marcus_goddamn_it_cal_if_your_not_helping")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11090
+				continue
+			else:
+				_pc = 11014
+				continue
+		elif _pc == 11090:
+			_pc = 11091
+			continue
+		elif _pc == 11091:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_well_done_cal_we_have_lost_christmas_:", "a3_master_dialogue_marcus_well_done_cal_we_have_lost_christmas")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11167
+				continue
+			else:
+				_pc = 11091
+				continue
+		elif _pc == 11167:
+			_pc = 11168
+			continue
+		elif _pc == 11168:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_where_were_you_:", "a3_master_dialogue_marcus_where_were_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11244
+				continue
+			else:
+				_pc = 11168
+				continue
+		elif _pc == 11244:
+			_pc = 11245
+			continue
+		elif _pc == 11245:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_christmas_defender_time_to_fall_back_:", "a3_master_dialogue_christmas_defender_time_to_fall_back")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11321
+				continue
+			else:
+				_pc = 11245
+				continue
+		elif _pc == 11321:
+			_pc = 11322
+			continue
+		elif _pc == 11322:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_second_that_order_:", "a3_master_dialogue_marcus_second_that_order")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11398
+				continue
+			else:
+				_pc = 11322
+				continue
+		elif _pc == 11398:
+			_pc = 11399
+			continue
+		elif _pc == 11399:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_enough_reugees_through_:", "a3_master_dialogue_marcus_enough_reugees_through")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11475
+				continue
+			else:
+				_pc = 11399
+				continue
+		elif _pc == 11475:
+			_pc = 11476
+			continue
+		elif _pc == 11476:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_wahoo_:", "a3_master_dialogue_defender_wahoo")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11552
+				continue
+			else:
+				_pc = 11476
+				continue
+		elif _pc == 11552:
+			_pc = 11553
+			continue
+		elif _pc == 11553:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_take_that_:", "a3_master_dialogue_defender_take_that")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11629
+				continue
+			else:
+				_pc = 11553
+				continue
+		elif _pc == 11629:
+			_pc = 11630
+			continue
+		elif _pc == 11630:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_another_one_bites_the_dust_:", "a3_master_dialogue_defender_another_one_bites_the_dust")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11706
+				continue
+			else:
+				_pc = 11630
+				continue
+		elif _pc == 11706:
+			_pc = 11707
+			continue
+		elif _pc == 11707:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_infected_male_scream_:", "a3_master_dialogue_infected_male_scream")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11783
+				continue
+			else:
+				_pc = 11707
+				continue
+		elif _pc == 11783:
+			_pc = 11784
+			continue
+		elif _pc == 11784:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_infected_female_scream_:", "a3_master_dialogue_infected_female_scream")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11860
+				continue
+			else:
+				_pc = 11784
+				continue
+		elif _pc == 11860:
+			_pc = 11861
+			continue
+		elif _pc == 11861:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_infected_female_begging_:", "a3_master_dialogue_infected_female_begging")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 11937
+				continue
+			else:
+				_pc = 11861
+				continue
+		elif _pc == 11937:
+			_pc = 11938
+			continue
+		elif _pc == 11938:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_infected_male_no_you_bastards_:", "a3_master_dialogue_infected_male_no_you_bastards")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12014
+				continue
+			else:
+				_pc = 11938
+				continue
+		elif _pc == 12014:
+			_pc = 12015
+			continue
+		elif _pc == 12015:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_1_hey_cal_:", "a3_master_dialogue_defender_1_hey_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12091
+				continue
+			else:
+				_pc = 12015
+				continue
+		elif _pc == 12091:
+			_pc = 12092
+			continue
+		elif _pc == 12092:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_thanks_:", "a3_master_dialogue_cal_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12168
+				continue
+			else:
+				_pc = 12092
+				continue
+		elif _pc == 12168:
+			_pc = 12169
+			continue
+		elif _pc == 12169:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_1_is_this_going_to_work_:", "a3_master_dialogue_defender_1_is_this_going_to_work")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12245
+				continue
+			else:
+				_pc = 12169
+				continue
+		elif _pc == 12245:
+			_pc = 12246
+			continue
+		elif _pc == 12246:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_it_will_work_:", "a3_master_text_cal_it_will_work")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12322
+				continue
+			else:
+				_pc = 12246
+				continue
+		elif _pc == 12322:
+			_pc = 12323
+			continue
+		elif _pc == 12323:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_it_will_work_:", "a3_master_dialogue_cal_it_will_work")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12399
+				continue
+			else:
+				_pc = 12323
+				continue
+		elif _pc == 12399:
+			_pc = 12400
+			continue
+		elif _pc == 12400:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_1_yeah_youre_right_:", "a3_master_dialogue_defender_1_yeah_youre_right")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12476
+				continue
+			else:
+				_pc = 12400
+				continue
+		elif _pc == 12476:
+			_pc = 12477
+			continue
+		elif _pc == 12477:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_no_but_we_can_save_:", "a3_master_text_cal_no_but_we_can_save")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12553
+				continue
+			else:
+				_pc = 12477
+				continue
+		elif _pc == 12553:
+			_pc = 12554
+			continue
+		elif _pc == 12554:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_no_but_we_can_save_:", "a3_master_dialogue_cal_no_but_we_can_save")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12630
+				continue
+			else:
+				_pc = 12554
+				continue
+		elif _pc == 12630:
+			_pc = 12631
+			continue
+		elif _pc == 12631:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_1_i_think_id_rather_live_:", "a3_master_dialogue_defender_1_i_think_id_rather_live")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12707
+				continue
+			else:
+				_pc = 12631
+				continue
+		elif _pc == 12707:
+			_pc = 12708
+			continue
+		elif _pc == 12708:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_text_cal_we_are_fucked_:", "a3_master_text_cal_we_are_fucked")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12784
+				continue
+			else:
+				_pc = 12708
+				continue
+		elif _pc == 12784:
+			_pc = 12785
+			continue
+		elif _pc == 12785:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_we_are_fucked_:", "a3_master_dialogue_cal_we_are_fucked")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12861
+				continue
+			else:
+				_pc = 12785
+				continue
+		elif _pc == 12861:
+			_pc = 12862
+			continue
+		elif _pc == 12862:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_1_christ_cal_cheer_me_up_:", "a3_master_dialogue_defender_1_christ_cal_cheer_me_up")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 12938
+				continue
+			else:
+				_pc = 12862
+				continue
+		elif _pc == 12938:
+			_pc = 12939
+			continue
+		elif _pc == 12939:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_cal_no_choice_:", "a3_master_dialogue_cal_no_choice")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13015
+				continue
+			else:
+				_pc = 12939
+				continue
+		elif _pc == 13015:
+			_pc = 13016
+			continue
+		elif _pc == 13016:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_defender_2_glad_youre_here_cal_:", "a3_master_dialogue_defender_2_glad_youre_here_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13092
+				continue
+			else:
+				_pc = 13016
+				continue
+		elif _pc == 13092:
+			_pc = 13093
+			continue
+		elif _pc == 13093:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_here_they_come_:", "a3_master_dialogue_marcus_here_they_come")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13169
+				continue
+			else:
+				_pc = 13093
+				continue
+		elif _pc == 13169:
+			_pc = 13170
+			continue
+		elif _pc == 13170:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_this_is_the_last_one_:", "a3_master_dialogue_marcus_this_is_the_last_one")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13246
+				continue
+			else:
+				_pc = 13170
+				continue
+		elif _pc == 13246:
+			_pc = 13247
+			continue
+		elif _pc == 13247:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_marcus_bloody_hell_:", "a3_master_dialogue_marcus_bloody_hell")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13323
+				continue
+			else:
+				_pc = 13247
+				continue
+		elif _pc == 13323:
+			_pc = 13324
+			continue
+		elif _pc == 13324:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_clay_you_cant_let_them_through_:", "a3_master_dialogue_clay_you_cant_let_them_through")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13400
+				continue
+			else:
+				_pc = 13324
+				continue
+		elif _pc == 13400:
+			_pc = 13401
+			continue
+		elif _pc == 13401:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_master_dialogue_freighter_please_no_:", "a3_master_dialogue_freighter_please_no")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13477
+				continue
+			else:
+				_pc = 13401
+				continue
+		elif _pc == 13477:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_13481() -> Variant:
@@ -900,1915 +2129,4527 @@ func local_13481() -> Variant:
 	return 0
 
 func local_13484() -> Variant:
+	var _pc: int = 13484
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_choose_phase_skip_mission_:", "a3_m01_debug_choose_phase_skip_mission")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_skip_mission_:", "a3_m01_debug_chosen_phase_skip_mission")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Start_:", "a3_m01_debug_choose_phase_MP_Start")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Start_:", "a3_m01_debug_chosen_phase_MP_Start")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Meeting_:", "a3_m01_debug_choose_phase_MP_Meeting")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Meeting_:", "a3_m01_debug_chosen_phase_MP_Meeting")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Assault_:", "a3_m01_debug_choose_phase_MP_Assault")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Assault_:", "a3_m01_debug_chosen_phase_MP_Assault")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Defend_:", "a3_m01_debug_choose_phase_MP_Defend")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Defend_:", "a3_m01_debug_chosen_phase_MP_Defend")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Survive_:", "a3_m01_debug_choose_phase_MP_Survive")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Survive_:", "a3_m01_debug_chosen_phase_MP_Survive")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_debug_choose_entry_phase_:", "a3_m01_debug_choose_entry_phase")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_email_sender_:", "a3_m01_email_sender")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_email_subject_:", "a3_m01_email_subject")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_name_marine_leader_:", "a3_m01_name_marine_leader")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_1_:", "a3_m01_dialogue_marine_leader_intro_1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_2_:", "a3_m01_dialogue_marine_leader_intro_2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_3_:", "a3_m01_dialogue_marine_leader_intro_3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_4_:", "a3_m01_dialogue_marine_leader_intro_4")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_5_:", "a3_m01_dialogue_marine_leader_intro_5")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_6_:", "a3_m01_dialogue_marine_leader_intro_6")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_base_intro_:", "a3_m01_dialogue_smith_base_intro")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_clay_base_intro_:", "a3_m01_dialogue_clay_base_intro")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_name_corporate_base_traffic_control_:", "a3_m01_name_corporate_base_traffic_control")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_Corporate_warning_:", "a3_m01_dialogue_Security_Base_Corporate_warning")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_Cal_lets_go_:", "a3_m01_dialogue_Cal_lets_go")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_name_Raiding_Party_members_:", "a3_m01_name_Raiding_Party_members")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_Raiding_Party_Members_war_cry_:", "a3_m01_dialogue_Raiding_Party_Members_war_cry")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_approaching_dock_:", "a3_m01_dialogue_marine_leader_approaching_dock")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_docked_:", "a3_m01_dialogue_marine_leader_docked")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_conquered_base_:", "a3_m01_dialogue_marine_leader_conquered_base")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_clay_advise_guard_gunstars_:", "a3_m01_dialogue_clay_advise_guard_gunstars")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_1st_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_1st_gunstar_reprogrammed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_2nd_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_2nd_gunstar_reprogrammed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_3rd_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_3rd_gunstar_reprogrammed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_you_finish_the_gunstars_1_:", "a3_m01_dialogue_smith_you_finish_the_gunstars_1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_you_finish_the_gunstars_2_:", "a3_m01_dialogue_smith_you_finish_the_gunstars_2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_gunstar_online_next_:", "a3_m01_dialogue_smith_gunstar_online_next")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_last_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_last_gunstar_reprogrammed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_gunstar_last_gunstar_reprogrammed_:", "a3_m01_dialogue_smith_gunstar_last_gunstar_reprogrammed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_corporate_runaway_:", "a3_m01_dialogue_smith_corporate_runaway")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_clay_not_enough_gunstars_:", "a3_m01_dialogue_clay_not_enough_gunstars")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_corporate_suicide_attack_:", "a3_m01_dialogue_smith_corporate_suicide_attack")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_name_league_base_traffic_control_:", "a3_m01_name_league_base_traffic_control")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_League_Bye_Bye_:", "a3_m01_dialogue_Security_Base_League_Bye_Bye")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_League_Refuel_:", "a3_m01_dialogue_Security_Base_League_Refuel")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_started_refuelling_:", "a3_m01_dialogue_smith_started_refuelling")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_smith_done_refuelling_:", "a3_m01_dialogue_smith_done_refuelling")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_waypoint_initial_meeting_:", "a3_m01_waypoint_initial_meeting")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_waypoint_security_base_approach_:", "a3_m01_waypoint_security_base_approach")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_marine_troop_carrier_:", "a3_m01_marine_troop_carrier")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_ship_name_resolute_:", "a3_m01_ship_name_resolute")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_Gunstar_:", "a3_m01_Gunstar")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 13484:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_choose_phase_skip_mission_:", "a3_m01_debug_choose_phase_skip_mission")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13560
+				continue
+			else:
+				_pc = 13484
+				continue
+		elif _pc == 13560:
+			_pc = 13561
+			continue
+		elif _pc == 13561:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_skip_mission_:", "a3_m01_debug_chosen_phase_skip_mission")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13637
+				continue
+			else:
+				_pc = 13561
+				continue
+		elif _pc == 13637:
+			_pc = 13638
+			continue
+		elif _pc == 13638:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Start_:", "a3_m01_debug_choose_phase_MP_Start")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13714
+				continue
+			else:
+				_pc = 13638
+				continue
+		elif _pc == 13714:
+			_pc = 13715
+			continue
+		elif _pc == 13715:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Start_:", "a3_m01_debug_chosen_phase_MP_Start")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13791
+				continue
+			else:
+				_pc = 13715
+				continue
+		elif _pc == 13791:
+			_pc = 13792
+			continue
+		elif _pc == 13792:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Meeting_:", "a3_m01_debug_choose_phase_MP_Meeting")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13868
+				continue
+			else:
+				_pc = 13792
+				continue
+		elif _pc == 13868:
+			_pc = 13869
+			continue
+		elif _pc == 13869:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Meeting_:", "a3_m01_debug_chosen_phase_MP_Meeting")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 13945
+				continue
+			else:
+				_pc = 13869
+				continue
+		elif _pc == 13945:
+			_pc = 13946
+			continue
+		elif _pc == 13946:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Assault_:", "a3_m01_debug_choose_phase_MP_Assault")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14022
+				continue
+			else:
+				_pc = 13946
+				continue
+		elif _pc == 14022:
+			_pc = 14023
+			continue
+		elif _pc == 14023:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Assault_:", "a3_m01_debug_chosen_phase_MP_Assault")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14099
+				continue
+			else:
+				_pc = 14023
+				continue
+		elif _pc == 14099:
+			_pc = 14100
+			continue
+		elif _pc == 14100:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Defend_:", "a3_m01_debug_choose_phase_MP_Defend")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14176
+				continue
+			else:
+				_pc = 14100
+				continue
+		elif _pc == 14176:
+			_pc = 14177
+			continue
+		elif _pc == 14177:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Defend_:", "a3_m01_debug_chosen_phase_MP_Defend")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14253
+				continue
+			else:
+				_pc = 14177
+				continue
+		elif _pc == 14253:
+			_pc = 14254
+			continue
+		elif _pc == 14254:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_choose_phase_MP_Survive_:", "a3_m01_debug_choose_phase_MP_Survive")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14330
+				continue
+			else:
+				_pc = 14254
+				continue
+		elif _pc == 14330:
+			_pc = 14331
+			continue
+		elif _pc == 14331:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_chosen_phase_MP_Survive_:", "a3_m01_debug_chosen_phase_MP_Survive")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14407
+				continue
+			else:
+				_pc = 14331
+				continue
+		elif _pc == 14407:
+			_pc = 14408
+			continue
+		elif _pc == 14408:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_debug_choose_entry_phase_:", "a3_m01_debug_choose_entry_phase")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14484
+				continue
+			else:
+				_pc = 14408
+				continue
+		elif _pc == 14484:
+			_pc = 14485
+			continue
+		elif _pc == 14485:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_email_sender_:", "a3_m01_email_sender")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14561
+				continue
+			else:
+				_pc = 14485
+				continue
+		elif _pc == 14561:
+			_pc = 14562
+			continue
+		elif _pc == 14562:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_email_subject_:", "a3_m01_email_subject")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14638
+				continue
+			else:
+				_pc = 14562
+				continue
+		elif _pc == 14638:
+			_pc = 14639
+			continue
+		elif _pc == 14639:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_name_marine_leader_:", "a3_m01_name_marine_leader")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14715
+				continue
+			else:
+				_pc = 14639
+				continue
+		elif _pc == 14715:
+			_pc = 14716
+			continue
+		elif _pc == 14716:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_1_:", "a3_m01_dialogue_marine_leader_intro_1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14792
+				continue
+			else:
+				_pc = 14716
+				continue
+		elif _pc == 14792:
+			_pc = 14793
+			continue
+		elif _pc == 14793:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_2_:", "a3_m01_dialogue_marine_leader_intro_2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14869
+				continue
+			else:
+				_pc = 14793
+				continue
+		elif _pc == 14869:
+			_pc = 14870
+			continue
+		elif _pc == 14870:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_3_:", "a3_m01_dialogue_marine_leader_intro_3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 14946
+				continue
+			else:
+				_pc = 14870
+				continue
+		elif _pc == 14946:
+			_pc = 14947
+			continue
+		elif _pc == 14947:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_4_:", "a3_m01_dialogue_marine_leader_intro_4")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15023
+				continue
+			else:
+				_pc = 14947
+				continue
+		elif _pc == 15023:
+			_pc = 15024
+			continue
+		elif _pc == 15024:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_5_:", "a3_m01_dialogue_marine_leader_intro_5")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15100
+				continue
+			else:
+				_pc = 15024
+				continue
+		elif _pc == 15100:
+			_pc = 15101
+			continue
+		elif _pc == 15101:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_intro_6_:", "a3_m01_dialogue_marine_leader_intro_6")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15177
+				continue
+			else:
+				_pc = 15101
+				continue
+		elif _pc == 15177:
+			_pc = 15178
+			continue
+		elif _pc == 15178:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_base_intro_:", "a3_m01_dialogue_smith_base_intro")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15254
+				continue
+			else:
+				_pc = 15178
+				continue
+		elif _pc == 15254:
+			_pc = 15255
+			continue
+		elif _pc == 15255:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_clay_base_intro_:", "a3_m01_dialogue_clay_base_intro")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15331
+				continue
+			else:
+				_pc = 15255
+				continue
+		elif _pc == 15331:
+			_pc = 15332
+			continue
+		elif _pc == 15332:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_name_corporate_base_traffic_control_:", "a3_m01_name_corporate_base_traffic_control")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15408
+				continue
+			else:
+				_pc = 15332
+				continue
+		elif _pc == 15408:
+			_pc = 15409
+			continue
+		elif _pc == 15409:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_Corporate_warning_:", "a3_m01_dialogue_Security_Base_Corporate_warning")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15485
+				continue
+			else:
+				_pc = 15409
+				continue
+		elif _pc == 15485:
+			_pc = 15486
+			continue
+		elif _pc == 15486:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_Cal_lets_go_:", "a3_m01_dialogue_Cal_lets_go")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15562
+				continue
+			else:
+				_pc = 15486
+				continue
+		elif _pc == 15562:
+			_pc = 15563
+			continue
+		elif _pc == 15563:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_name_Raiding_Party_members_:", "a3_m01_name_Raiding_Party_members")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15639
+				continue
+			else:
+				_pc = 15563
+				continue
+		elif _pc == 15639:
+			_pc = 15640
+			continue
+		elif _pc == 15640:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_Raiding_Party_Members_war_cry_:", "a3_m01_dialogue_Raiding_Party_Members_war_cry")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15716
+				continue
+			else:
+				_pc = 15640
+				continue
+		elif _pc == 15716:
+			_pc = 15717
+			continue
+		elif _pc == 15717:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_approaching_dock_:", "a3_m01_dialogue_marine_leader_approaching_dock")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15793
+				continue
+			else:
+				_pc = 15717
+				continue
+		elif _pc == 15793:
+			_pc = 15794
+			continue
+		elif _pc == 15794:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_docked_:", "a3_m01_dialogue_marine_leader_docked")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15870
+				continue
+			else:
+				_pc = 15794
+				continue
+		elif _pc == 15870:
+			_pc = 15871
+			continue
+		elif _pc == 15871:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_conquered_base_:", "a3_m01_dialogue_marine_leader_conquered_base")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 15947
+				continue
+			else:
+				_pc = 15871
+				continue
+		elif _pc == 15947:
+			_pc = 15948
+			continue
+		elif _pc == 15948:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_clay_advise_guard_gunstars_:", "a3_m01_dialogue_clay_advise_guard_gunstars")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16024
+				continue
+			else:
+				_pc = 15948
+				continue
+		elif _pc == 16024:
+			_pc = 16025
+			continue
+		elif _pc == 16025:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_1st_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_1st_gunstar_reprogrammed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16101
+				continue
+			else:
+				_pc = 16025
+				continue
+		elif _pc == 16101:
+			_pc = 16102
+			continue
+		elif _pc == 16102:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_2nd_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_2nd_gunstar_reprogrammed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16178
+				continue
+			else:
+				_pc = 16102
+				continue
+		elif _pc == 16178:
+			_pc = 16179
+			continue
+		elif _pc == 16179:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_3rd_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_3rd_gunstar_reprogrammed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16255
+				continue
+			else:
+				_pc = 16179
+				continue
+		elif _pc == 16255:
+			_pc = 16256
+			continue
+		elif _pc == 16256:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_you_finish_the_gunstars_1_:", "a3_m01_dialogue_smith_you_finish_the_gunstars_1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16332
+				continue
+			else:
+				_pc = 16256
+				continue
+		elif _pc == 16332:
+			_pc = 16333
+			continue
+		elif _pc == 16333:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_you_finish_the_gunstars_2_:", "a3_m01_dialogue_smith_you_finish_the_gunstars_2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16409
+				continue
+			else:
+				_pc = 16333
+				continue
+		elif _pc == 16409:
+			_pc = 16410
+			continue
+		elif _pc == 16410:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_gunstar_online_next_:", "a3_m01_dialogue_smith_gunstar_online_next")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16486
+				continue
+			else:
+				_pc = 16410
+				continue
+		elif _pc == 16486:
+			_pc = 16487
+			continue
+		elif _pc == 16487:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_last_gunstar_reprogrammed_:", "a3_m01_dialogue_marine_leader_last_gunstar_reprogrammed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16563
+				continue
+			else:
+				_pc = 16487
+				continue
+		elif _pc == 16563:
+			_pc = 16564
+			continue
+		elif _pc == 16564:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_gunstar_last_gunstar_reprogrammed_:", "a3_m01_dialogue_smith_gunstar_last_gunstar_reprogrammed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16640
+				continue
+			else:
+				_pc = 16564
+				continue
+		elif _pc == 16640:
+			_pc = 16641
+			continue
+		elif _pc == 16641:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_corporate_runaway_:", "a3_m01_dialogue_smith_corporate_runaway")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16717
+				continue
+			else:
+				_pc = 16641
+				continue
+		elif _pc == 16717:
+			_pc = 16718
+			continue
+		elif _pc == 16718:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_clay_not_enough_gunstars_:", "a3_m01_dialogue_clay_not_enough_gunstars")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16794
+				continue
+			else:
+				_pc = 16718
+				continue
+		elif _pc == 16794:
+			_pc = 16795
+			continue
+		elif _pc == 16795:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_corporate_suicide_attack_:", "a3_m01_dialogue_smith_corporate_suicide_attack")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16871
+				continue
+			else:
+				_pc = 16795
+				continue
+		elif _pc == 16871:
+			_pc = 16872
+			continue
+		elif _pc == 16872:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_name_league_base_traffic_control_:", "a3_m01_name_league_base_traffic_control")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 16948
+				continue
+			else:
+				_pc = 16872
+				continue
+		elif _pc == 16948:
+			_pc = 16949
+			continue
+		elif _pc == 16949:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_League_Bye_Bye_:", "a3_m01_dialogue_Security_Base_League_Bye_Bye")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17025
+				continue
+			else:
+				_pc = 16949
+				continue
+		elif _pc == 17025:
+			_pc = 17026
+			continue
+		elif _pc == 17026:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_League_Refuel_:", "a3_m01_dialogue_Security_Base_League_Refuel")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17102
+				continue
+			else:
+				_pc = 17026
+				continue
+		elif _pc == 17102:
+			_pc = 17103
+			continue
+		elif _pc == 17103:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_started_refuelling_:", "a3_m01_dialogue_smith_started_refuelling")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17179
+				continue
+			else:
+				_pc = 17103
+				continue
+		elif _pc == 17179:
+			_pc = 17180
+			continue
+		elif _pc == 17180:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_smith_done_refuelling_:", "a3_m01_dialogue_smith_done_refuelling")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17256
+				continue
+			else:
+				_pc = 17180
+				continue
+		elif _pc == 17256:
+			_pc = 17257
+			continue
+		elif _pc == 17257:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_waypoint_initial_meeting_:", "a3_m01_waypoint_initial_meeting")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17333
+				continue
+			else:
+				_pc = 17257
+				continue
+		elif _pc == 17333:
+			_pc = 17334
+			continue
+		elif _pc == 17334:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_waypoint_security_base_approach_:", "a3_m01_waypoint_security_base_approach")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17410
+				continue
+			else:
+				_pc = 17334
+				continue
+		elif _pc == 17410:
+			_pc = 17411
+			continue
+		elif _pc == 17411:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_marine_troop_carrier_:", "a3_m01_marine_troop_carrier")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17487
+				continue
+			else:
+				_pc = 17411
+				continue
+		elif _pc == 17487:
+			_pc = 17488
+			continue
+		elif _pc == 17488:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_ship_name_resolute_:", "a3_m01_ship_name_resolute")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17564
+				continue
+			else:
+				_pc = 17488
+				continue
+		elif _pc == 17564:
+			_pc = 17565
+			continue
+		elif _pc == 17565:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_Gunstar_:", "a3_m01_Gunstar")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17641
+				continue
+			else:
+				_pc = 17565
+				continue
+		elif _pc == 17641:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_17645() -> Variant:
+	var _pc: int = 17645
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_name_cutscene_najran_security_base_:", "a3_m01_name_cutscene_najran_security_base")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_Corporate_base_destroyed_:", "a3_m01_dialogue_Security_Base_Corporate_base_destroyed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_cutscene_base_destroyed_:", "a3_m01_dialogue_marine_leader_cutscene_base_destroyed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 17645:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_name_cutscene_najran_security_base_:", "a3_m01_name_cutscene_najran_security_base")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17721
+				continue
+			else:
+				_pc = 17645
+				continue
+		elif _pc == 17721:
+			_pc = 17722
+			continue
+		elif _pc == 17722:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_Security_Base_Corporate_base_destroyed_:", "a3_m01_dialogue_Security_Base_Corporate_base_destroyed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17798
+				continue
+			else:
+				_pc = 17722
+				continue
+		elif _pc == 17798:
+			_pc = 17799
+			continue
+		elif _pc == 17799:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m01_dialogue_marine_leader_cutscene_base_destroyed_:", "a3_m01_dialogue_marine_leader_cutscene_base_destroyed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17875
+				continue
+			else:
+				_pc = 17799
+				continue
+		elif _pc == 17875:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_17879() -> Variant:
+	var _pc: int = 17879
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_email_sender_:", "a3_m02_email_sender")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_email_subject_:", "a3_m02_email_subject")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_clay_wow_looks_like_:", "a3_m02_dialogue_clay_wow_looks_like")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_clay_i_think_were_:", "a3_m02_dialogue_clay_i_think_were")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_corporate_alert_intruder_:", "a3_m02_dialogue_corporate_alert_intruder")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_government_c1_made_it_through_:", "a3_m02_dialogue_government_c1_made_it_through")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_text_player_c1_option_1_need_codes_:", "a3_m02_text_player_c1_option_1_need_codes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_player_c1_option_1_need_codes_:", "a3_m02_dialogue_player_c1_option_1_need_codes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_government_c1_response_1_ok_heres_the_:", "a3_m02_dialogue_government_c1_response_1_ok_heres_the")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_smith_reactor_:", "a3_m02_dialogue_smith_reactor")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_clay_hey_that_looks_like_:", "a3_m02_dialogue_clay_hey_that_looks_like")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_clay_ok_im_setting_:", "a3_m02_dialogue_clay_ok_im_setting")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_clay_done_youve_got_:", "a3_m02_dialogue_clay_done_youve_got")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_clay_ok_kid_lets_:", "a3_m02_dialogue_clay_ok_kid_lets")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_good_to_see_:", "a3_m02_dialogue_hoffer_good_to_see")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_clay_what_the_:", "a3_m02_dialogue_clay_what_the")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_o_my_god_:", "a3_m02_dialogue_hoffer_o_my_god")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_hold_them_off_:", "a3_m02_dialogue_hoffer_hold_them_off")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_that_carrier_:", "a3_m02_dialogue_hoffer_that_carrier")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 17879:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_email_sender_:", "a3_m02_email_sender")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 17955
+				continue
+			else:
+				_pc = 17879
+				continue
+		elif _pc == 17955:
+			_pc = 17956
+			continue
+		elif _pc == 17956:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_email_subject_:", "a3_m02_email_subject")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18032
+				continue
+			else:
+				_pc = 17956
+				continue
+		elif _pc == 18032:
+			_pc = 18033
+			continue
+		elif _pc == 18033:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_clay_wow_looks_like_:", "a3_m02_dialogue_clay_wow_looks_like")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18109
+				continue
+			else:
+				_pc = 18033
+				continue
+		elif _pc == 18109:
+			_pc = 18110
+			continue
+		elif _pc == 18110:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_clay_i_think_were_:", "a3_m02_dialogue_clay_i_think_were")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18186
+				continue
+			else:
+				_pc = 18110
+				continue
+		elif _pc == 18186:
+			_pc = 18187
+			continue
+		elif _pc == 18187:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_corporate_alert_intruder_:", "a3_m02_dialogue_corporate_alert_intruder")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18263
+				continue
+			else:
+				_pc = 18187
+				continue
+		elif _pc == 18263:
+			_pc = 18264
+			continue
+		elif _pc == 18264:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_government_c1_made_it_through_:", "a3_m02_dialogue_government_c1_made_it_through")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18340
+				continue
+			else:
+				_pc = 18264
+				continue
+		elif _pc == 18340:
+			_pc = 18341
+			continue
+		elif _pc == 18341:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_text_player_c1_option_1_need_codes_:", "a3_m02_text_player_c1_option_1_need_codes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18417
+				continue
+			else:
+				_pc = 18341
+				continue
+		elif _pc == 18417:
+			_pc = 18418
+			continue
+		elif _pc == 18418:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_player_c1_option_1_need_codes_:", "a3_m02_dialogue_player_c1_option_1_need_codes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18494
+				continue
+			else:
+				_pc = 18418
+				continue
+		elif _pc == 18494:
+			_pc = 18495
+			continue
+		elif _pc == 18495:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_government_c1_response_1_ok_heres_the_:", "a3_m02_dialogue_government_c1_response_1_ok_heres_the")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18571
+				continue
+			else:
+				_pc = 18495
+				continue
+		elif _pc == 18571:
+			_pc = 18572
+			continue
+		elif _pc == 18572:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_smith_reactor_:", "a3_m02_dialogue_smith_reactor")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18648
+				continue
+			else:
+				_pc = 18572
+				continue
+		elif _pc == 18648:
+			_pc = 18649
+			continue
+		elif _pc == 18649:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_clay_hey_that_looks_like_:", "a3_m02_dialogue_clay_hey_that_looks_like")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18725
+				continue
+			else:
+				_pc = 18649
+				continue
+		elif _pc == 18725:
+			_pc = 18726
+			continue
+		elif _pc == 18726:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_clay_ok_im_setting_:", "a3_m02_dialogue_clay_ok_im_setting")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18802
+				continue
+			else:
+				_pc = 18726
+				continue
+		elif _pc == 18802:
+			_pc = 18803
+			continue
+		elif _pc == 18803:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_clay_done_youve_got_:", "a3_m02_dialogue_clay_done_youve_got")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18879
+				continue
+			else:
+				_pc = 18803
+				continue
+		elif _pc == 18879:
+			_pc = 18880
+			continue
+		elif _pc == 18880:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_clay_ok_kid_lets_:", "a3_m02_dialogue_clay_ok_kid_lets")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 18956
+				continue
+			else:
+				_pc = 18880
+				continue
+		elif _pc == 18956:
+			_pc = 18957
+			continue
+		elif _pc == 18957:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_good_to_see_:", "a3_m02_dialogue_hoffer_good_to_see")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19033
+				continue
+			else:
+				_pc = 18957
+				continue
+		elif _pc == 19033:
+			_pc = 19034
+			continue
+		elif _pc == 19034:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_clay_what_the_:", "a3_m02_dialogue_clay_what_the")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19110
+				continue
+			else:
+				_pc = 19034
+				continue
+		elif _pc == 19110:
+			_pc = 19111
+			continue
+		elif _pc == 19111:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_o_my_god_:", "a3_m02_dialogue_hoffer_o_my_god")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19187
+				continue
+			else:
+				_pc = 19111
+				continue
+		elif _pc == 19187:
+			_pc = 19188
+			continue
+		elif _pc == 19188:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_hold_them_off_:", "a3_m02_dialogue_hoffer_hold_them_off")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19264
+				continue
+			else:
+				_pc = 19188
+				continue
+		elif _pc == 19264:
+			_pc = 19265
+			continue
+		elif _pc == 19265:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_hoffer_that_carrier_:", "a3_m02_dialogue_hoffer_that_carrier")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19341
+				continue
+			else:
+				_pc = 19265
+				continue
+		elif _pc == 19341:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_19345() -> Variant:
+	var _pc: int = 19345
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_cal_i_got_through_:", "a3_m02_dialogue_cal_i_got_through")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_hoffa_lets_get_the_fleet_:", "a3_m02_dialogue_hoffa_lets_get_the_fleet")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_hoffa_there_they_are_:", "a3_m02_dialogue_hoffa_there_they_are")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_hoffa_go_get_them_:", "a3_m02_dialogue_hoffa_go_get_them")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m02_dialogue_cruiser_all_green_:", "a3_m02_dialogue_cruiser_all_green")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 19345:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_cal_i_got_through_:", "a3_m02_dialogue_cal_i_got_through")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19421
+				continue
+			else:
+				_pc = 19345
+				continue
+		elif _pc == 19421:
+			_pc = 19422
+			continue
+		elif _pc == 19422:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_hoffa_lets_get_the_fleet_:", "a3_m02_dialogue_hoffa_lets_get_the_fleet")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19498
+				continue
+			else:
+				_pc = 19422
+				continue
+		elif _pc == 19498:
+			_pc = 19499
+			continue
+		elif _pc == 19499:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_hoffa_there_they_are_:", "a3_m02_dialogue_hoffa_there_they_are")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19575
+				continue
+			else:
+				_pc = 19499
+				continue
+		elif _pc == 19575:
+			_pc = 19576
+			continue
+		elif _pc == 19576:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_hoffa_go_get_them_:", "a3_m02_dialogue_hoffa_go_get_them")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19652
+				continue
+			else:
+				_pc = 19576
+				continue
+		elif _pc == 19652:
+			_pc = 19653
+			continue
+		elif _pc == 19653:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m02_dialogue_cruiser_all_green_:", "a3_m02_dialogue_cruiser_all_green")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19729
+				continue
+			else:
+				_pc = 19653
+				continue
+		elif _pc == 19729:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_19733() -> Variant:
+	var _pc: int = 19733
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_ship_corp_cruiser_:", "a3_m03_ship_corp_cruiser")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_ship_corp_escort_:", "a3_m03_ship_corp_escort")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_commsat_:", "a3_m03_commsat")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_text_time_to_detonation_:", "a3_m03_text_time_to_detonation")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_thats_interesting_:", "a3_m03_dialogue_smith_thats_interesting")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_cal_lets_take_a_look_:", "a3_m03_dialogue_cal_lets_take_a_look")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_you_are_going_the_wrong_way_:", "a3_m03_dialogue_clay_you_are_going_the_wrong_way")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_look_at_that_:", "a3_m03_dialogue_smith_look_at_that")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_antimatter_explosion_:", "a3_m03_dialogue_clay_antimatter_explosion")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_cal_that_explains_the_radiation_:", "a3_m03_dialogue_cal_that_explains_the_radiation")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_lets_take_a_look_around_:", "a3_m03_dialogue_clay_lets_take_a_look_around")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_hey_that_ones_still_online_:", "a3_m03_dialogue_smith_hey_that_ones_still_online")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_cal_can_you_access_its_data_:", "a3_m03_dialogue_cal_can_you_access_its_data")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_hang_on_:", "a3_m03_dialogue_smith_hang_on")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_they_blew_up_their_own_station_:", "a3_m03_dialogue_clay_they_blew_up_their_own_station")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_cal_what_was_it_:", "a3_m03_dialogue_cal_what_was_it")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_have_but_it_was_a_long_time_ago_:", "a3_m03_dialogue_clay_i_have_but_it_was_a_long_time_ago")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_this_place_is_bad_:", "a3_m03_dialogue_smith_this_place_is_bad")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_that_ones_dead_:", "a3_m03_dialogue_smith_that_ones_dead")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_guess_we_will_never_find_out_:", "a3_m03_dialogue_clay_i_guess_we_will_never_find_out")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_theres_a_cruiser_approaching_:", "a3_m03_dialogue_smith_theres_a_cruiser_approaching")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_lets_hide_:", "a3_m03_dialogue_clay_lets_hide")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_ive_got_a_hiding_spot_marked_:", "a3_m03_dialogue_smith_ive_got_a_hiding_spot_marked")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_dont_call_that_hiding_:", "a3_m03_dialogue_clay_i_dont_call_that_hiding")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_i_think_they_are_on_to_us_:", "a3_m03_dialogue_smith_i_think_they_are_on_to_us")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_cal_no_kidding_:", "a3_m03_dialogue_cal_no_kidding")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_times_up_:", "a3_m03_dialogue_smith_times_up")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_think_we_did_pretty_well_:", "a3_m03_dialogue_clay_i_think_we_did_pretty_well")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_cal_what_are_they_doing_:", "a3_m03_dialogue_cal_what_are_they_doing")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_looks_like_demolition_charges_:", "a3_m03_dialogue_smith_looks_like_demolition_charges")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_clay_demolition_charges_and_a_base_:", "a3_m03_dialogue_clay_demolition_charges_and_a_base")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_cal_great_they_are_blowing_the_base_:", "a3_m03_dialogue_cal_great_they_are_blowing_the_base")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_smith_they_left_the_remote_link_active_:", "a3_m03_dialogue_smith_they_left_the_remote_link_active")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 19733:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_ship_corp_cruiser_:", "a3_m03_ship_corp_cruiser")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19809
+				continue
+			else:
+				_pc = 19733
+				continue
+		elif _pc == 19809:
+			_pc = 19810
+			continue
+		elif _pc == 19810:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_ship_corp_escort_:", "a3_m03_ship_corp_escort")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19886
+				continue
+			else:
+				_pc = 19810
+				continue
+		elif _pc == 19886:
+			_pc = 19887
+			continue
+		elif _pc == 19887:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_commsat_:", "a3_m03_commsat")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 19963
+				continue
+			else:
+				_pc = 19887
+				continue
+		elif _pc == 19963:
+			_pc = 19964
+			continue
+		elif _pc == 19964:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_text_time_to_detonation_:", "a3_m03_text_time_to_detonation")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20040
+				continue
+			else:
+				_pc = 19964
+				continue
+		elif _pc == 20040:
+			_pc = 20041
+			continue
+		elif _pc == 20041:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_thats_interesting_:", "a3_m03_dialogue_smith_thats_interesting")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20117
+				continue
+			else:
+				_pc = 20041
+				continue
+		elif _pc == 20117:
+			_pc = 20118
+			continue
+		elif _pc == 20118:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_cal_lets_take_a_look_:", "a3_m03_dialogue_cal_lets_take_a_look")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20194
+				continue
+			else:
+				_pc = 20118
+				continue
+		elif _pc == 20194:
+			_pc = 20195
+			continue
+		elif _pc == 20195:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_you_are_going_the_wrong_way_:", "a3_m03_dialogue_clay_you_are_going_the_wrong_way")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20271
+				continue
+			else:
+				_pc = 20195
+				continue
+		elif _pc == 20271:
+			_pc = 20272
+			continue
+		elif _pc == 20272:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_look_at_that_:", "a3_m03_dialogue_smith_look_at_that")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20348
+				continue
+			else:
+				_pc = 20272
+				continue
+		elif _pc == 20348:
+			_pc = 20349
+			continue
+		elif _pc == 20349:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_antimatter_explosion_:", "a3_m03_dialogue_clay_antimatter_explosion")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20425
+				continue
+			else:
+				_pc = 20349
+				continue
+		elif _pc == 20425:
+			_pc = 20426
+			continue
+		elif _pc == 20426:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_cal_that_explains_the_radiation_:", "a3_m03_dialogue_cal_that_explains_the_radiation")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20502
+				continue
+			else:
+				_pc = 20426
+				continue
+		elif _pc == 20502:
+			_pc = 20503
+			continue
+		elif _pc == 20503:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_lets_take_a_look_around_:", "a3_m03_dialogue_clay_lets_take_a_look_around")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20579
+				continue
+			else:
+				_pc = 20503
+				continue
+		elif _pc == 20579:
+			_pc = 20580
+			continue
+		elif _pc == 20580:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_hey_that_ones_still_online_:", "a3_m03_dialogue_smith_hey_that_ones_still_online")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20656
+				continue
+			else:
+				_pc = 20580
+				continue
+		elif _pc == 20656:
+			_pc = 20657
+			continue
+		elif _pc == 20657:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_cal_can_you_access_its_data_:", "a3_m03_dialogue_cal_can_you_access_its_data")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20733
+				continue
+			else:
+				_pc = 20657
+				continue
+		elif _pc == 20733:
+			_pc = 20734
+			continue
+		elif _pc == 20734:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_hang_on_:", "a3_m03_dialogue_smith_hang_on")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20810
+				continue
+			else:
+				_pc = 20734
+				continue
+		elif _pc == 20810:
+			_pc = 20811
+			continue
+		elif _pc == 20811:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_they_blew_up_their_own_station_:", "a3_m03_dialogue_clay_they_blew_up_their_own_station")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20887
+				continue
+			else:
+				_pc = 20811
+				continue
+		elif _pc == 20887:
+			_pc = 20888
+			continue
+		elif _pc == 20888:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_cal_what_was_it_:", "a3_m03_dialogue_cal_what_was_it")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 20964
+				continue
+			else:
+				_pc = 20888
+				continue
+		elif _pc == 20964:
+			_pc = 20965
+			continue
+		elif _pc == 20965:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_have_but_it_was_a_long_time_ago_:", "a3_m03_dialogue_clay_i_have_but_it_was_a_long_time_ago")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21041
+				continue
+			else:
+				_pc = 20965
+				continue
+		elif _pc == 21041:
+			_pc = 21042
+			continue
+		elif _pc == 21042:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_this_place_is_bad_:", "a3_m03_dialogue_smith_this_place_is_bad")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21118
+				continue
+			else:
+				_pc = 21042
+				continue
+		elif _pc == 21118:
+			_pc = 21119
+			continue
+		elif _pc == 21119:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_that_ones_dead_:", "a3_m03_dialogue_smith_that_ones_dead")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21195
+				continue
+			else:
+				_pc = 21119
+				continue
+		elif _pc == 21195:
+			_pc = 21196
+			continue
+		elif _pc == 21196:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_guess_we_will_never_find_out_:", "a3_m03_dialogue_clay_i_guess_we_will_never_find_out")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21272
+				continue
+			else:
+				_pc = 21196
+				continue
+		elif _pc == 21272:
+			_pc = 21273
+			continue
+		elif _pc == 21273:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_theres_a_cruiser_approaching_:", "a3_m03_dialogue_smith_theres_a_cruiser_approaching")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21349
+				continue
+			else:
+				_pc = 21273
+				continue
+		elif _pc == 21349:
+			_pc = 21350
+			continue
+		elif _pc == 21350:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_lets_hide_:", "a3_m03_dialogue_clay_lets_hide")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21426
+				continue
+			else:
+				_pc = 21350
+				continue
+		elif _pc == 21426:
+			_pc = 21427
+			continue
+		elif _pc == 21427:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_ive_got_a_hiding_spot_marked_:", "a3_m03_dialogue_smith_ive_got_a_hiding_spot_marked")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21503
+				continue
+			else:
+				_pc = 21427
+				continue
+		elif _pc == 21503:
+			_pc = 21504
+			continue
+		elif _pc == 21504:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_dont_call_that_hiding_:", "a3_m03_dialogue_clay_i_dont_call_that_hiding")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21580
+				continue
+			else:
+				_pc = 21504
+				continue
+		elif _pc == 21580:
+			_pc = 21581
+			continue
+		elif _pc == 21581:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_i_think_they_are_on_to_us_:", "a3_m03_dialogue_smith_i_think_they_are_on_to_us")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21657
+				continue
+			else:
+				_pc = 21581
+				continue
+		elif _pc == 21657:
+			_pc = 21658
+			continue
+		elif _pc == 21658:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_cal_no_kidding_:", "a3_m03_dialogue_cal_no_kidding")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21734
+				continue
+			else:
+				_pc = 21658
+				continue
+		elif _pc == 21734:
+			_pc = 21735
+			continue
+		elif _pc == 21735:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_times_up_:", "a3_m03_dialogue_smith_times_up")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21811
+				continue
+			else:
+				_pc = 21735
+				continue
+		elif _pc == 21811:
+			_pc = 21812
+			continue
+		elif _pc == 21812:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_i_think_we_did_pretty_well_:", "a3_m03_dialogue_clay_i_think_we_did_pretty_well")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21888
+				continue
+			else:
+				_pc = 21812
+				continue
+		elif _pc == 21888:
+			_pc = 21889
+			continue
+		elif _pc == 21889:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_cal_what_are_they_doing_:", "a3_m03_dialogue_cal_what_are_they_doing")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 21965
+				continue
+			else:
+				_pc = 21889
+				continue
+		elif _pc == 21965:
+			_pc = 21966
+			continue
+		elif _pc == 21966:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_looks_like_demolition_charges_:", "a3_m03_dialogue_smith_looks_like_demolition_charges")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22042
+				continue
+			else:
+				_pc = 21966
+				continue
+		elif _pc == 22042:
+			_pc = 22043
+			continue
+		elif _pc == 22043:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_clay_demolition_charges_and_a_base_:", "a3_m03_dialogue_clay_demolition_charges_and_a_base")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22119
+				continue
+			else:
+				_pc = 22043
+				continue
+		elif _pc == 22119:
+			_pc = 22120
+			continue
+		elif _pc == 22120:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_cal_great_they_are_blowing_the_base_:", "a3_m03_dialogue_cal_great_they_are_blowing_the_base")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22196
+				continue
+			else:
+				_pc = 22120
+				continue
+		elif _pc == 22196:
+			_pc = 22197
+			continue
+		elif _pc == 22197:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_smith_they_left_the_remote_link_active_:", "a3_m03_dialogue_smith_they_left_the_remote_link_active")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22273
+				continue
+			else:
+				_pc = 22197
+				continue
+		elif _pc == 22273:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_22277() -> Variant:
+	var _pc: int = 22277
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_name_scientist_1_:", "a3_m03_name_scientist_1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_name_scientist_2_:", "a3_m03_name_scientist_2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_name_scientist_3_:", "a3_m03_name_scientist_3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_name_base_computer_:", "a3_m03_name_base_computer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_never_seen_anything_like_:", "a3_m03_dialogue_scientist_1_never_seen_anything_like")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_2_three_nodes_:", "a3_m03_dialogue_scientist_2_three_nodes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_2_oh_my_god_:", "a3_m03_dialogue_scientist_2_oh_my_god")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_point_of_light_:", "a3_m03_dialogue_scientist_1_point_of_light")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_3_giving_off_power_:", "a3_m03_dialogue_scientist_3_giving_off_power")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_getting_brighter_:", "a3_m03_dialogue_scientist_1_getting_brighter")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_3_power_increase_:", "a3_m03_dialogue_scientist_3_power_increase")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_it_burns_:", "a3_m03_dialogue_scientist_1_it_burns")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_2_shut_it_down_:", "a3_m03_dialogue_scientist_2_shut_it_down")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_scientist_3_thats_impossible_:", "a3_m03_dialogue_scientist_3_thats_impossible")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_containment_breach_:", "a3_m03_dialogue_base_computer_containment_breach")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_4_:", "a3_m03_dialogue_base_computer_countdown_4")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_3_:", "a3_m03_dialogue_base_computer_countdown_3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_2_:", "a3_m03_dialogue_base_computer_countdown_2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_1_:", "a3_m03_dialogue_base_computer_countdown_1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 22277:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_name_scientist_1_:", "a3_m03_name_scientist_1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22353
+				continue
+			else:
+				_pc = 22277
+				continue
+		elif _pc == 22353:
+			_pc = 22354
+			continue
+		elif _pc == 22354:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_name_scientist_2_:", "a3_m03_name_scientist_2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22430
+				continue
+			else:
+				_pc = 22354
+				continue
+		elif _pc == 22430:
+			_pc = 22431
+			continue
+		elif _pc == 22431:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_name_scientist_3_:", "a3_m03_name_scientist_3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22507
+				continue
+			else:
+				_pc = 22431
+				continue
+		elif _pc == 22507:
+			_pc = 22508
+			continue
+		elif _pc == 22508:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_name_base_computer_:", "a3_m03_name_base_computer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22584
+				continue
+			else:
+				_pc = 22508
+				continue
+		elif _pc == 22584:
+			_pc = 22585
+			continue
+		elif _pc == 22585:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_never_seen_anything_like_:", "a3_m03_dialogue_scientist_1_never_seen_anything_like")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22661
+				continue
+			else:
+				_pc = 22585
+				continue
+		elif _pc == 22661:
+			_pc = 22662
+			continue
+		elif _pc == 22662:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_2_three_nodes_:", "a3_m03_dialogue_scientist_2_three_nodes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22738
+				continue
+			else:
+				_pc = 22662
+				continue
+		elif _pc == 22738:
+			_pc = 22739
+			continue
+		elif _pc == 22739:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_2_oh_my_god_:", "a3_m03_dialogue_scientist_2_oh_my_god")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22815
+				continue
+			else:
+				_pc = 22739
+				continue
+		elif _pc == 22815:
+			_pc = 22816
+			continue
+		elif _pc == 22816:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_point_of_light_:", "a3_m03_dialogue_scientist_1_point_of_light")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22892
+				continue
+			else:
+				_pc = 22816
+				continue
+		elif _pc == 22892:
+			_pc = 22893
+			continue
+		elif _pc == 22893:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_3_giving_off_power_:", "a3_m03_dialogue_scientist_3_giving_off_power")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 22969
+				continue
+			else:
+				_pc = 22893
+				continue
+		elif _pc == 22969:
+			_pc = 22970
+			continue
+		elif _pc == 22970:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_getting_brighter_:", "a3_m03_dialogue_scientist_1_getting_brighter")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23046
+				continue
+			else:
+				_pc = 22970
+				continue
+		elif _pc == 23046:
+			_pc = 23047
+			continue
+		elif _pc == 23047:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_3_power_increase_:", "a3_m03_dialogue_scientist_3_power_increase")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23123
+				continue
+			else:
+				_pc = 23047
+				continue
+		elif _pc == 23123:
+			_pc = 23124
+			continue
+		elif _pc == 23124:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_1_it_burns_:", "a3_m03_dialogue_scientist_1_it_burns")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23200
+				continue
+			else:
+				_pc = 23124
+				continue
+		elif _pc == 23200:
+			_pc = 23201
+			continue
+		elif _pc == 23201:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_2_shut_it_down_:", "a3_m03_dialogue_scientist_2_shut_it_down")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23277
+				continue
+			else:
+				_pc = 23201
+				continue
+		elif _pc == 23277:
+			_pc = 23278
+			continue
+		elif _pc == 23278:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_scientist_3_thats_impossible_:", "a3_m03_dialogue_scientist_3_thats_impossible")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23354
+				continue
+			else:
+				_pc = 23278
+				continue
+		elif _pc == 23354:
+			_pc = 23355
+			continue
+		elif _pc == 23355:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_containment_breach_:", "a3_m03_dialogue_base_computer_containment_breach")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23431
+				continue
+			else:
+				_pc = 23355
+				continue
+		elif _pc == 23431:
+			_pc = 23432
+			continue
+		elif _pc == 23432:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_4_:", "a3_m03_dialogue_base_computer_countdown_4")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23508
+				continue
+			else:
+				_pc = 23432
+				continue
+		elif _pc == 23508:
+			_pc = 23509
+			continue
+		elif _pc == 23509:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_3_:", "a3_m03_dialogue_base_computer_countdown_3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23585
+				continue
+			else:
+				_pc = 23509
+				continue
+		elif _pc == 23585:
+			_pc = 23586
+			continue
+		elif _pc == 23586:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_2_:", "a3_m03_dialogue_base_computer_countdown_2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23662
+				continue
+			else:
+				_pc = 23586
+				continue
+		elif _pc == 23662:
+			_pc = 23663
+			continue
+		elif _pc == 23663:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m03_dialogue_base_computer_countdown_1_:", "a3_m03_dialogue_base_computer_countdown_1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23739
+				continue
+			else:
+				_pc = 23663
+				continue
+		elif _pc == 23739:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_23743() -> Variant:
+	var _pc: int = 23743
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_name_league_:", "a3_m04_name_league")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_email_jumpgate_:", "a3_m04_email_jumpgate")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_wingman_1_:", "a3_m04_ship_wingman_1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_wingman_2_:", "a3_m04_ship_wingman_2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_wingman_3_:", "a3_m04_ship_wingman_3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_megafreighter_:", "a3_m04_ship_megafreighter")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_marines_:", "a3_m04_ship_marines")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_patrol_1_:", "a3_m04_ship_patrol_1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_patrol_2_:", "a3_m04_ship_patrol_2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_patrol_3_:", "a3_m04_ship_patrol_3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_cruiser_:", "a3_m04_ship_cruiser")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_interceptor1_:", "a3_m04_ship_interceptor1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_interceptor2_:", "a3_m04_ship_interceptor2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_interceptor3_:", "a3_m04_ship_interceptor3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_cutter1_:", "a3_m04_ship_cutter1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_cutter2_:", "a3_m04_ship_cutter2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_cutter3_:", "a3_m04_ship_cutter3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_megapod_:", "a3_m04_ship_megapod")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_marines_Pod_:", "a3_m04_ship_marines_Pod")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_wingman_1_Pod_:", "a3_m04_ship_wingman_1_Pod")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_wingman_2_Pod_:", "a3_m04_ship_wingman_2_Pod")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_wingman_3_Pod_:", "a3_m04_ship_wingman_3_Pod")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_megafreighter_were_ready_to_go_:", "a3_m04_dialogue_ship_megafreighter_were_ready_to_go")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_cal_were_in_wingmen_launch_when_i_undock_:", "a3_m04_dialogue_cal_were_in_wingmen_launch_when_i_undock")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_1a3_m04_ship_1_roger_that_:", "a3_m04_dialogue_ship_1a3_m04_ship_1_roger_that")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_cal_go_go_go_:", "a3_m04_dialogue_cal_go_go_go")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_1a3_m04_ship_1_breakin_out_:", "a3_m04_dialogue_ship_1a3_m04_ship_1_breakin_out")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_help_were_stuck_:", "a3_m04_dialogue_ship_marines_help_were_stuck")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_cal_hang_on_ill_break_you_out_:", "a3_m04_dialogue_cal_hang_on_ill_break_you_out")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_clay_better_make_it_quick_:", "a3_m04_dialogue_clay_better_make_it_quick")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_were_out_thanks_:", "a3_m04_dialogue_ship_marines_were_out_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_were_under_attack_:", "a3_m04_dialogue_ship_marines_were_under_attack")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_clay_you_messed_that_up_:", "a3_m04_dialogue_clay_you_messed_that_up")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_were_docked_boarding_now_:", "a3_m04_dialogue_ship_marines_were_docked_boarding_now")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_weve_got_control_:", "a3_m04_dialogue_ship_marines_weve_got_control")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_cal_sending_ftl_signal_:", "a3_m04_dialogue_cal_sending_ftl_signal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_stations_gone_into_lockdown_the_lda_field_is_on_:", "a3_m04_dialogue_ship_marines_stations_gone_into_lockdown_the_lda_field_is_on")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_smith_the_fleet_will_jump_in_soon_:", "a3_m04_dialogue_smith_the_fleet_will_jump_in_soon")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_cal_there_must_be_some_way_to_take_down_the_field_:", "a3_m04_dialogue_cal_there_must_be_some_way_to_take_down_the_field")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_clay_an_lda_field_needs_an_lda_field_generator_:", "a3_m04_dialogue_clay_an_lda_field_needs_an_lda_field_generator")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_clay_you_did_it_:", "a3_m04_dialogue_clay_you_did_it")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_smith_they_are_coming_through_:", "a3_m04_dialogue_smith_they_are_coming_through")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_clay_too_late_:", "a3_m04_dialogue_clay_too_late")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_ship_cruiser_well_done_:", "a3_m04_dialogue_ship_cruiser_well_done")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 23743:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_name_league_:", "a3_m04_name_league")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23819
+				continue
+			else:
+				_pc = 23743
+				continue
+		elif _pc == 23819:
+			_pc = 23820
+			continue
+		elif _pc == 23820:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_email_jumpgate_:", "a3_m04_email_jumpgate")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23896
+				continue
+			else:
+				_pc = 23820
+				continue
+		elif _pc == 23896:
+			_pc = 23897
+			continue
+		elif _pc == 23897:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_wingman_1_:", "a3_m04_ship_wingman_1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 23973
+				continue
+			else:
+				_pc = 23897
+				continue
+		elif _pc == 23973:
+			_pc = 23974
+			continue
+		elif _pc == 23974:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_wingman_2_:", "a3_m04_ship_wingman_2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24050
+				continue
+			else:
+				_pc = 23974
+				continue
+		elif _pc == 24050:
+			_pc = 24051
+			continue
+		elif _pc == 24051:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_wingman_3_:", "a3_m04_ship_wingman_3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24127
+				continue
+			else:
+				_pc = 24051
+				continue
+		elif _pc == 24127:
+			_pc = 24128
+			continue
+		elif _pc == 24128:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_megafreighter_:", "a3_m04_ship_megafreighter")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24204
+				continue
+			else:
+				_pc = 24128
+				continue
+		elif _pc == 24204:
+			_pc = 24205
+			continue
+		elif _pc == 24205:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_marines_:", "a3_m04_ship_marines")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24281
+				continue
+			else:
+				_pc = 24205
+				continue
+		elif _pc == 24281:
+			_pc = 24282
+			continue
+		elif _pc == 24282:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_patrol_1_:", "a3_m04_ship_patrol_1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24358
+				continue
+			else:
+				_pc = 24282
+				continue
+		elif _pc == 24358:
+			_pc = 24359
+			continue
+		elif _pc == 24359:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_patrol_2_:", "a3_m04_ship_patrol_2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24435
+				continue
+			else:
+				_pc = 24359
+				continue
+		elif _pc == 24435:
+			_pc = 24436
+			continue
+		elif _pc == 24436:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_patrol_3_:", "a3_m04_ship_patrol_3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24512
+				continue
+			else:
+				_pc = 24436
+				continue
+		elif _pc == 24512:
+			_pc = 24513
+			continue
+		elif _pc == 24513:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_cruiser_:", "a3_m04_ship_cruiser")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24589
+				continue
+			else:
+				_pc = 24513
+				continue
+		elif _pc == 24589:
+			_pc = 24590
+			continue
+		elif _pc == 24590:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_interceptor1_:", "a3_m04_ship_interceptor1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24666
+				continue
+			else:
+				_pc = 24590
+				continue
+		elif _pc == 24666:
+			_pc = 24667
+			continue
+		elif _pc == 24667:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_interceptor2_:", "a3_m04_ship_interceptor2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24743
+				continue
+			else:
+				_pc = 24667
+				continue
+		elif _pc == 24743:
+			_pc = 24744
+			continue
+		elif _pc == 24744:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_interceptor3_:", "a3_m04_ship_interceptor3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24820
+				continue
+			else:
+				_pc = 24744
+				continue
+		elif _pc == 24820:
+			_pc = 24821
+			continue
+		elif _pc == 24821:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_cutter1_:", "a3_m04_ship_cutter1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24897
+				continue
+			else:
+				_pc = 24821
+				continue
+		elif _pc == 24897:
+			_pc = 24898
+			continue
+		elif _pc == 24898:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_cutter2_:", "a3_m04_ship_cutter2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 24974
+				continue
+			else:
+				_pc = 24898
+				continue
+		elif _pc == 24974:
+			_pc = 24975
+			continue
+		elif _pc == 24975:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_cutter3_:", "a3_m04_ship_cutter3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25051
+				continue
+			else:
+				_pc = 24975
+				continue
+		elif _pc == 25051:
+			_pc = 25052
+			continue
+		elif _pc == 25052:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_megapod_:", "a3_m04_ship_megapod")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25128
+				continue
+			else:
+				_pc = 25052
+				continue
+		elif _pc == 25128:
+			_pc = 25129
+			continue
+		elif _pc == 25129:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_marines_Pod_:", "a3_m04_ship_marines_Pod")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25205
+				continue
+			else:
+				_pc = 25129
+				continue
+		elif _pc == 25205:
+			_pc = 25206
+			continue
+		elif _pc == 25206:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_wingman_1_Pod_:", "a3_m04_ship_wingman_1_Pod")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25282
+				continue
+			else:
+				_pc = 25206
+				continue
+		elif _pc == 25282:
+			_pc = 25283
+			continue
+		elif _pc == 25283:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_wingman_2_Pod_:", "a3_m04_ship_wingman_2_Pod")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25359
+				continue
+			else:
+				_pc = 25283
+				continue
+		elif _pc == 25359:
+			_pc = 25360
+			continue
+		elif _pc == 25360:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_wingman_3_Pod_:", "a3_m04_ship_wingman_3_Pod")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25436
+				continue
+			else:
+				_pc = 25360
+				continue
+		elif _pc == 25436:
+			_pc = 25437
+			continue
+		elif _pc == 25437:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_megafreighter_were_ready_to_go_:", "a3_m04_dialogue_ship_megafreighter_were_ready_to_go")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25513
+				continue
+			else:
+				_pc = 25437
+				continue
+		elif _pc == 25513:
+			_pc = 25514
+			continue
+		elif _pc == 25514:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_cal_were_in_wingmen_launch_when_i_undock_:", "a3_m04_dialogue_cal_were_in_wingmen_launch_when_i_undock")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25590
+				continue
+			else:
+				_pc = 25514
+				continue
+		elif _pc == 25590:
+			_pc = 25591
+			continue
+		elif _pc == 25591:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_1a3_m04_ship_1_roger_that_:", "a3_m04_dialogue_ship_1a3_m04_ship_1_roger_that")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25667
+				continue
+			else:
+				_pc = 25591
+				continue
+		elif _pc == 25667:
+			_pc = 25668
+			continue
+		elif _pc == 25668:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_cal_go_go_go_:", "a3_m04_dialogue_cal_go_go_go")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25744
+				continue
+			else:
+				_pc = 25668
+				continue
+		elif _pc == 25744:
+			_pc = 25745
+			continue
+		elif _pc == 25745:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_1a3_m04_ship_1_breakin_out_:", "a3_m04_dialogue_ship_1a3_m04_ship_1_breakin_out")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25821
+				continue
+			else:
+				_pc = 25745
+				continue
+		elif _pc == 25821:
+			_pc = 25822
+			continue
+		elif _pc == 25822:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_help_were_stuck_:", "a3_m04_dialogue_ship_marines_help_were_stuck")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25898
+				continue
+			else:
+				_pc = 25822
+				continue
+		elif _pc == 25898:
+			_pc = 25899
+			continue
+		elif _pc == 25899:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_cal_hang_on_ill_break_you_out_:", "a3_m04_dialogue_cal_hang_on_ill_break_you_out")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 25975
+				continue
+			else:
+				_pc = 25899
+				continue
+		elif _pc == 25975:
+			_pc = 25976
+			continue
+		elif _pc == 25976:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_clay_better_make_it_quick_:", "a3_m04_dialogue_clay_better_make_it_quick")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26052
+				continue
+			else:
+				_pc = 25976
+				continue
+		elif _pc == 26052:
+			_pc = 26053
+			continue
+		elif _pc == 26053:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_were_out_thanks_:", "a3_m04_dialogue_ship_marines_were_out_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26129
+				continue
+			else:
+				_pc = 26053
+				continue
+		elif _pc == 26129:
+			_pc = 26130
+			continue
+		elif _pc == 26130:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_were_under_attack_:", "a3_m04_dialogue_ship_marines_were_under_attack")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26206
+				continue
+			else:
+				_pc = 26130
+				continue
+		elif _pc == 26206:
+			_pc = 26207
+			continue
+		elif _pc == 26207:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_clay_you_messed_that_up_:", "a3_m04_dialogue_clay_you_messed_that_up")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26283
+				continue
+			else:
+				_pc = 26207
+				continue
+		elif _pc == 26283:
+			_pc = 26284
+			continue
+		elif _pc == 26284:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_were_docked_boarding_now_:", "a3_m04_dialogue_ship_marines_were_docked_boarding_now")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26360
+				continue
+			else:
+				_pc = 26284
+				continue
+		elif _pc == 26360:
+			_pc = 26361
+			continue
+		elif _pc == 26361:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_weve_got_control_:", "a3_m04_dialogue_ship_marines_weve_got_control")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26437
+				continue
+			else:
+				_pc = 26361
+				continue
+		elif _pc == 26437:
+			_pc = 26438
+			continue
+		elif _pc == 26438:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_cal_sending_ftl_signal_:", "a3_m04_dialogue_cal_sending_ftl_signal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26514
+				continue
+			else:
+				_pc = 26438
+				continue
+		elif _pc == 26514:
+			_pc = 26515
+			continue
+		elif _pc == 26515:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_marines_stations_gone_into_lockdown_the_lda_field_is_on_:", "a3_m04_dialogue_ship_marines_stations_gone_into_lockdown_the_lda_field_is_on")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26591
+				continue
+			else:
+				_pc = 26515
+				continue
+		elif _pc == 26591:
+			_pc = 26592
+			continue
+		elif _pc == 26592:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_smith_the_fleet_will_jump_in_soon_:", "a3_m04_dialogue_smith_the_fleet_will_jump_in_soon")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26668
+				continue
+			else:
+				_pc = 26592
+				continue
+		elif _pc == 26668:
+			_pc = 26669
+			continue
+		elif _pc == 26669:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_cal_there_must_be_some_way_to_take_down_the_field_:", "a3_m04_dialogue_cal_there_must_be_some_way_to_take_down_the_field")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26745
+				continue
+			else:
+				_pc = 26669
+				continue
+		elif _pc == 26745:
+			_pc = 26746
+			continue
+		elif _pc == 26746:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_clay_an_lda_field_needs_an_lda_field_generator_:", "a3_m04_dialogue_clay_an_lda_field_needs_an_lda_field_generator")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26822
+				continue
+			else:
+				_pc = 26746
+				continue
+		elif _pc == 26822:
+			_pc = 26823
+			continue
+		elif _pc == 26823:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_clay_you_did_it_:", "a3_m04_dialogue_clay_you_did_it")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26899
+				continue
+			else:
+				_pc = 26823
+				continue
+		elif _pc == 26899:
+			_pc = 26900
+			continue
+		elif _pc == 26900:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_smith_they_are_coming_through_:", "a3_m04_dialogue_smith_they_are_coming_through")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 26976
+				continue
+			else:
+				_pc = 26900
+				continue
+		elif _pc == 26976:
+			_pc = 26977
+			continue
+		elif _pc == 26977:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_clay_too_late_:", "a3_m04_dialogue_clay_too_late")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27053
+				continue
+			else:
+				_pc = 26977
+				continue
+		elif _pc == 27053:
+			_pc = 27054
+			continue
+		elif _pc == 27054:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_ship_cruiser_well_done_:", "a3_m04_dialogue_ship_cruiser_well_done")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27130
+				continue
+			else:
+				_pc = 27054
+				continue
+		elif _pc == 27130:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_27134() -> Variant:
+	var _pc: int = 27134
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_text_caption_santa_romera_:", "a3_m04_text_caption_santa_romera")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_text_caption_formalhaut_:", "a3_m04_text_caption_formalhaut")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_text_caption_mission_failed_fleet_destroyed_:", "a3_m04_text_caption_mission_failed_fleet_destroyed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_text_caption_mission_failed_marines_destroyed_:", "a3_m04_text_caption_mission_failed_marines_destroyed")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_ready_for_jump_:", "a3_m04_dialogue_megafreighter_ready_for_jump")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_stc_clear_to_jump_:", "a3_m04_dialogue_stc_clear_to_jump")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_you_need_a_bigger_ship_:", "a3_m04_dialogue_megafreighter_you_need_a_bigger_ship")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_thats_better_:", "a3_m04_dialogue_megafreighter_thats_better")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 27134:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_text_caption_santa_romera_:", "a3_m04_text_caption_santa_romera")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27210
+				continue
+			else:
+				_pc = 27134
+				continue
+		elif _pc == 27210:
+			_pc = 27211
+			continue
+		elif _pc == 27211:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_text_caption_formalhaut_:", "a3_m04_text_caption_formalhaut")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27287
+				continue
+			else:
+				_pc = 27211
+				continue
+		elif _pc == 27287:
+			_pc = 27288
+			continue
+		elif _pc == 27288:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_text_caption_mission_failed_fleet_destroyed_:", "a3_m04_text_caption_mission_failed_fleet_destroyed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27364
+				continue
+			else:
+				_pc = 27288
+				continue
+		elif _pc == 27364:
+			_pc = 27365
+			continue
+		elif _pc == 27365:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_text_caption_mission_failed_marines_destroyed_:", "a3_m04_text_caption_mission_failed_marines_destroyed")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27441
+				continue
+			else:
+				_pc = 27365
+				continue
+		elif _pc == 27441:
+			_pc = 27442
+			continue
+		elif _pc == 27442:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_ready_for_jump_:", "a3_m04_dialogue_megafreighter_ready_for_jump")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27518
+				continue
+			else:
+				_pc = 27442
+				continue
+		elif _pc == 27518:
+			_pc = 27519
+			continue
+		elif _pc == 27519:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_stc_clear_to_jump_:", "a3_m04_dialogue_stc_clear_to_jump")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27595
+				continue
+			else:
+				_pc = 27519
+				continue
+		elif _pc == 27595:
+			_pc = 27596
+			continue
+		elif _pc == 27596:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_you_need_a_bigger_ship_:", "a3_m04_dialogue_megafreighter_you_need_a_bigger_ship")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27672
+				continue
+			else:
+				_pc = 27596
+				continue
+		elif _pc == 27672:
+			_pc = 27673
+			continue
+		elif _pc == 27673:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_thats_better_:", "a3_m04_dialogue_megafreighter_thats_better")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27749
+				continue
+			else:
+				_pc = 27673
+				continue
+		elif _pc == 27749:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_27753() -> Variant:
+	var _pc: int = 27753
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_character_stc_:", "a3_m04_character_stc")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_ship_lda_node_:", "a3_m04_ship_lda_node")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_caption_fleet_arrives_:", "a3_m04_caption_fleet_arrives")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_were_leaving_good_luck_:", "a3_m04_dialogue_megafreighter_were_leaving_good_luck")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_cal_youre_welcome_:", "a3_m04_dialogue_cal_youre_welcome")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m04_dialogue_cruiser_ill_let_them_know_:", "a3_m04_dialogue_cruiser_ill_let_them_know")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 27753:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_character_stc_:", "a3_m04_character_stc")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27829
+				continue
+			else:
+				_pc = 27753
+				continue
+		elif _pc == 27829:
+			_pc = 27830
+			continue
+		elif _pc == 27830:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_ship_lda_node_:", "a3_m04_ship_lda_node")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27906
+				continue
+			else:
+				_pc = 27830
+				continue
+		elif _pc == 27906:
+			_pc = 27907
+			continue
+		elif _pc == 27907:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_caption_fleet_arrives_:", "a3_m04_caption_fleet_arrives")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 27983
+				continue
+			else:
+				_pc = 27907
+				continue
+		elif _pc == 27983:
+			_pc = 27984
+			continue
+		elif _pc == 27984:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_megafreighter_were_leaving_good_luck_:", "a3_m04_dialogue_megafreighter_were_leaving_good_luck")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28060
+				continue
+			else:
+				_pc = 27984
+				continue
+		elif _pc == 28060:
+			_pc = 28061
+			continue
+		elif _pc == 28061:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_cal_youre_welcome_:", "a3_m04_dialogue_cal_youre_welcome")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28137
+				continue
+			else:
+				_pc = 28061
+				continue
+		elif _pc == 28137:
+			_pc = 28138
+			continue
+		elif _pc == 28138:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m04_dialogue_cruiser_ill_let_them_know_:", "a3_m04_dialogue_cruiser_ill_let_them_know")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28214
+				continue
+			else:
+				_pc = 28138
+				continue
+		elif _pc == 28214:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_28218() -> Variant:
+	var _pc: int = 28218
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_name_scout_waypoint_:", "a3_m05_name_scout_waypoint")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_name_red_:", "a3_m05_name_red")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_name_fire_:", "a3_m05_name_fire")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_name_cyclone_:", "a3_m05_name_cyclone")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_name_stc_:", "a3_m05_name_stc")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_name_transmitter_:", "a3_m05_name_transmitter")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_league_cal_what_:", "a3_m05_dialogue_league_cal_what")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_ah_cal_:", "a3_m05_dialogue_league_c1_ah_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_your_back_:", "a3_m05_dialogue_league_c1_your_back")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c1_option_1_yes_:", "a3_m05_text_c1_option_1_yes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_player_c1_option_1_yes_:", "a3_m05_dialogue_player_c1_option_1_yes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c1_option_2_no_:", "a3_m05_text_c1_option_2_no")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_player_c1_option_2_no_:", "a3_m05_dialogue_player_c1_option_2_no")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_response_1_ok_:", "a3_m05_dialogue_league_c1_response_1_ok")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_response_1_ready_:", "a3_m05_dialogue_league_c1_response_1_ready")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_response_1_alright_well_:", "a3_m05_dialogue_league_c1_response_1_alright_well")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_station_repair_vessel_:", "a3_m05_dialogue_station_repair_vessel")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_cal_were_here_:", "a3_m05_dialogue_cal_were_here")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_station_dock_:", "a3_m05_dialogue_station_dock")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_station_iff_code_:", "a3_m05_dialogue_station_iff_code")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_hmm_:", "a3_m05_dialogue_smith_hmm")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_this_is_:", "a3_m05_dialogue_security_c1_this_is")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c1_option_1_35vb89_:", "a3_m05_text_c1_option_1_35vb89")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_c1_cal_option_1_35vb89_:", "a3_m05_dialogue_c1_cal_option_1_35vb89")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_response_1_very_well_:", "a3_m05_dialogue_security_c1_response_1_very_well")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c1_cal_option_2_clearence_:", "a3_m05_text_c1_cal_option_2_clearence")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_cal_c1_option_2_clearence_:", "a3_m05_dialogue_cal_c1_option_2_clearence")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_response_2_invalid_:", "a3_m05_dialogue_security_c1_response_2_invalid")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c1_option_3_oops_:", "a3_m05_text_c1_option_3_oops")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_cal_c1_option_3_oops_:", "a3_m05_dialogue_cal_c1_option_3_oops")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_response_3_leave_:", "a3_m05_dialogue_security_c1_response_3_leave")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_we_warned_:", "a3_m05_dialogue_security_we_warned")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_those_are_:", "a3_m05_dialogue_smith_those_are")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_ill_explain_:", "a3_m05_dialogue_smith_ill_explain")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_im_bringing_:", "a3_m05_dialogue_smith_im_bringing")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_im_brin_:", "a3_m05_dialogue_smith_im_brin")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_red_:", "a3_m05_text_red")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_green_:", "a3_m05_text_green")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_blue_:", "a3_m05_text_blue")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_yellow_:", "a3_m05_text_yellow")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_that_worked_:", "a3_m05_dialogue_smith_that_worked")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_damn_:", "a3_m05_dialogue_smith_damn")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_c2_whats_going_:", "a3_m05_dialogue_security_c2_whats_going")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c2_option_1_spanner_:", "a3_m05_text_c2_option_1_spanner")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_player_c2_option_1_spanner_:", "a3_m05_dialogue_player_c2_option_1_spanner")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c2_option_1_spanner_ag_:", "a3_m05_text_c2_option_1_spanner_ag")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_player_c2_option_1_spanner_ag_:", "a3_m05_dialogue_player_c2_option_1_spanner_ag")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_text_c2_option_2_rumbled_:", "a3_m05_text_c2_option_2_rumbled")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_player_c2_option_2_rumbled_:", "a3_m05_dialogue_player_c2_option_2_rumbled")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_c2_repsonse_2_ok_:", "a3_m05_dialogue_security_c2_repsonse_2_ok")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_you_wont_:", "a3_m05_dialogue_security_you_wont")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_security_right_:", "a3_m05_dialogue_security_right")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_smith_thats_all_:", "a3_m05_dialogue_smith_thats_all")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 28218:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_name_scout_waypoint_:", "a3_m05_name_scout_waypoint")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28294
+				continue
+			else:
+				_pc = 28218
+				continue
+		elif _pc == 28294:
+			_pc = 28295
+			continue
+		elif _pc == 28295:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_name_red_:", "a3_m05_name_red")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28371
+				continue
+			else:
+				_pc = 28295
+				continue
+		elif _pc == 28371:
+			_pc = 28372
+			continue
+		elif _pc == 28372:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_name_fire_:", "a3_m05_name_fire")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28448
+				continue
+			else:
+				_pc = 28372
+				continue
+		elif _pc == 28448:
+			_pc = 28449
+			continue
+		elif _pc == 28449:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_name_cyclone_:", "a3_m05_name_cyclone")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28525
+				continue
+			else:
+				_pc = 28449
+				continue
+		elif _pc == 28525:
+			_pc = 28526
+			continue
+		elif _pc == 28526:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_name_stc_:", "a3_m05_name_stc")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28602
+				continue
+			else:
+				_pc = 28526
+				continue
+		elif _pc == 28602:
+			_pc = 28603
+			continue
+		elif _pc == 28603:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_name_transmitter_:", "a3_m05_name_transmitter")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28679
+				continue
+			else:
+				_pc = 28603
+				continue
+		elif _pc == 28679:
+			_pc = 28680
+			continue
+		elif _pc == 28680:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_league_cal_what_:", "a3_m05_dialogue_league_cal_what")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28756
+				continue
+			else:
+				_pc = 28680
+				continue
+		elif _pc == 28756:
+			_pc = 28757
+			continue
+		elif _pc == 28757:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_ah_cal_:", "a3_m05_dialogue_league_c1_ah_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28833
+				continue
+			else:
+				_pc = 28757
+				continue
+		elif _pc == 28833:
+			_pc = 28834
+			continue
+		elif _pc == 28834:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_your_back_:", "a3_m05_dialogue_league_c1_your_back")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28910
+				continue
+			else:
+				_pc = 28834
+				continue
+		elif _pc == 28910:
+			_pc = 28911
+			continue
+		elif _pc == 28911:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c1_option_1_yes_:", "a3_m05_text_c1_option_1_yes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 28987
+				continue
+			else:
+				_pc = 28911
+				continue
+		elif _pc == 28987:
+			_pc = 28988
+			continue
+		elif _pc == 28988:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_player_c1_option_1_yes_:", "a3_m05_dialogue_player_c1_option_1_yes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29064
+				continue
+			else:
+				_pc = 28988
+				continue
+		elif _pc == 29064:
+			_pc = 29065
+			continue
+		elif _pc == 29065:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c1_option_2_no_:", "a3_m05_text_c1_option_2_no")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29141
+				continue
+			else:
+				_pc = 29065
+				continue
+		elif _pc == 29141:
+			_pc = 29142
+			continue
+		elif _pc == 29142:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_player_c1_option_2_no_:", "a3_m05_dialogue_player_c1_option_2_no")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29218
+				continue
+			else:
+				_pc = 29142
+				continue
+		elif _pc == 29218:
+			_pc = 29219
+			continue
+		elif _pc == 29219:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_response_1_ok_:", "a3_m05_dialogue_league_c1_response_1_ok")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29295
+				continue
+			else:
+				_pc = 29219
+				continue
+		elif _pc == 29295:
+			_pc = 29296
+			continue
+		elif _pc == 29296:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_response_1_ready_:", "a3_m05_dialogue_league_c1_response_1_ready")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29372
+				continue
+			else:
+				_pc = 29296
+				continue
+		elif _pc == 29372:
+			_pc = 29373
+			continue
+		elif _pc == 29373:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_league_c1_response_1_alright_well_:", "a3_m05_dialogue_league_c1_response_1_alright_well")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29449
+				continue
+			else:
+				_pc = 29373
+				continue
+		elif _pc == 29449:
+			_pc = 29450
+			continue
+		elif _pc == 29450:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_station_repair_vessel_:", "a3_m05_dialogue_station_repair_vessel")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29526
+				continue
+			else:
+				_pc = 29450
+				continue
+		elif _pc == 29526:
+			_pc = 29527
+			continue
+		elif _pc == 29527:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_cal_were_here_:", "a3_m05_dialogue_cal_were_here")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29603
+				continue
+			else:
+				_pc = 29527
+				continue
+		elif _pc == 29603:
+			_pc = 29604
+			continue
+		elif _pc == 29604:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_station_dock_:", "a3_m05_dialogue_station_dock")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29680
+				continue
+			else:
+				_pc = 29604
+				continue
+		elif _pc == 29680:
+			_pc = 29681
+			continue
+		elif _pc == 29681:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_station_iff_code_:", "a3_m05_dialogue_station_iff_code")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29757
+				continue
+			else:
+				_pc = 29681
+				continue
+		elif _pc == 29757:
+			_pc = 29758
+			continue
+		elif _pc == 29758:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_hmm_:", "a3_m05_dialogue_smith_hmm")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29834
+				continue
+			else:
+				_pc = 29758
+				continue
+		elif _pc == 29834:
+			_pc = 29835
+			continue
+		elif _pc == 29835:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_this_is_:", "a3_m05_dialogue_security_c1_this_is")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29911
+				continue
+			else:
+				_pc = 29835
+				continue
+		elif _pc == 29911:
+			_pc = 29912
+			continue
+		elif _pc == 29912:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c1_option_1_35vb89_:", "a3_m05_text_c1_option_1_35vb89")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 29988
+				continue
+			else:
+				_pc = 29912
+				continue
+		elif _pc == 29988:
+			_pc = 29989
+			continue
+		elif _pc == 29989:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_c1_cal_option_1_35vb89_:", "a3_m05_dialogue_c1_cal_option_1_35vb89")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30065
+				continue
+			else:
+				_pc = 29989
+				continue
+		elif _pc == 30065:
+			_pc = 30066
+			continue
+		elif _pc == 30066:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_response_1_very_well_:", "a3_m05_dialogue_security_c1_response_1_very_well")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30142
+				continue
+			else:
+				_pc = 30066
+				continue
+		elif _pc == 30142:
+			_pc = 30143
+			continue
+		elif _pc == 30143:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c1_cal_option_2_clearence_:", "a3_m05_text_c1_cal_option_2_clearence")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30219
+				continue
+			else:
+				_pc = 30143
+				continue
+		elif _pc == 30219:
+			_pc = 30220
+			continue
+		elif _pc == 30220:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_cal_c1_option_2_clearence_:", "a3_m05_dialogue_cal_c1_option_2_clearence")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30296
+				continue
+			else:
+				_pc = 30220
+				continue
+		elif _pc == 30296:
+			_pc = 30297
+			continue
+		elif _pc == 30297:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_response_2_invalid_:", "a3_m05_dialogue_security_c1_response_2_invalid")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30373
+				continue
+			else:
+				_pc = 30297
+				continue
+		elif _pc == 30373:
+			_pc = 30374
+			continue
+		elif _pc == 30374:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c1_option_3_oops_:", "a3_m05_text_c1_option_3_oops")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30450
+				continue
+			else:
+				_pc = 30374
+				continue
+		elif _pc == 30450:
+			_pc = 30451
+			continue
+		elif _pc == 30451:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_cal_c1_option_3_oops_:", "a3_m05_dialogue_cal_c1_option_3_oops")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30527
+				continue
+			else:
+				_pc = 30451
+				continue
+		elif _pc == 30527:
+			_pc = 30528
+			continue
+		elif _pc == 30528:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_c1_response_3_leave_:", "a3_m05_dialogue_security_c1_response_3_leave")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30604
+				continue
+			else:
+				_pc = 30528
+				continue
+		elif _pc == 30604:
+			_pc = 30605
+			continue
+		elif _pc == 30605:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_we_warned_:", "a3_m05_dialogue_security_we_warned")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30681
+				continue
+			else:
+				_pc = 30605
+				continue
+		elif _pc == 30681:
+			_pc = 30682
+			continue
+		elif _pc == 30682:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_those_are_:", "a3_m05_dialogue_smith_those_are")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30758
+				continue
+			else:
+				_pc = 30682
+				continue
+		elif _pc == 30758:
+			_pc = 30759
+			continue
+		elif _pc == 30759:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_ill_explain_:", "a3_m05_dialogue_smith_ill_explain")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30835
+				continue
+			else:
+				_pc = 30759
+				continue
+		elif _pc == 30835:
+			_pc = 30836
+			continue
+		elif _pc == 30836:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_im_bringing_:", "a3_m05_dialogue_smith_im_bringing")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30912
+				continue
+			else:
+				_pc = 30836
+				continue
+		elif _pc == 30912:
+			_pc = 30913
+			continue
+		elif _pc == 30913:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_im_brin_:", "a3_m05_dialogue_smith_im_brin")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 30989
+				continue
+			else:
+				_pc = 30913
+				continue
+		elif _pc == 30989:
+			_pc = 30990
+			continue
+		elif _pc == 30990:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_red_:", "a3_m05_text_red")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31066
+				continue
+			else:
+				_pc = 30990
+				continue
+		elif _pc == 31066:
+			_pc = 31067
+			continue
+		elif _pc == 31067:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_green_:", "a3_m05_text_green")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31143
+				continue
+			else:
+				_pc = 31067
+				continue
+		elif _pc == 31143:
+			_pc = 31144
+			continue
+		elif _pc == 31144:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_blue_:", "a3_m05_text_blue")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31220
+				continue
+			else:
+				_pc = 31144
+				continue
+		elif _pc == 31220:
+			_pc = 31221
+			continue
+		elif _pc == 31221:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_yellow_:", "a3_m05_text_yellow")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31297
+				continue
+			else:
+				_pc = 31221
+				continue
+		elif _pc == 31297:
+			_pc = 31298
+			continue
+		elif _pc == 31298:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_that_worked_:", "a3_m05_dialogue_smith_that_worked")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31374
+				continue
+			else:
+				_pc = 31298
+				continue
+		elif _pc == 31374:
+			_pc = 31375
+			continue
+		elif _pc == 31375:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_damn_:", "a3_m05_dialogue_smith_damn")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31451
+				continue
+			else:
+				_pc = 31375
+				continue
+		elif _pc == 31451:
+			_pc = 31452
+			continue
+		elif _pc == 31452:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_c2_whats_going_:", "a3_m05_dialogue_security_c2_whats_going")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31528
+				continue
+			else:
+				_pc = 31452
+				continue
+		elif _pc == 31528:
+			_pc = 31529
+			continue
+		elif _pc == 31529:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c2_option_1_spanner_:", "a3_m05_text_c2_option_1_spanner")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31605
+				continue
+			else:
+				_pc = 31529
+				continue
+		elif _pc == 31605:
+			_pc = 31606
+			continue
+		elif _pc == 31606:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_player_c2_option_1_spanner_:", "a3_m05_dialogue_player_c2_option_1_spanner")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31682
+				continue
+			else:
+				_pc = 31606
+				continue
+		elif _pc == 31682:
+			_pc = 31683
+			continue
+		elif _pc == 31683:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c2_option_1_spanner_ag_:", "a3_m05_text_c2_option_1_spanner_ag")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31759
+				continue
+			else:
+				_pc = 31683
+				continue
+		elif _pc == 31759:
+			_pc = 31760
+			continue
+		elif _pc == 31760:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_player_c2_option_1_spanner_ag_:", "a3_m05_dialogue_player_c2_option_1_spanner_ag")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31836
+				continue
+			else:
+				_pc = 31760
+				continue
+		elif _pc == 31836:
+			_pc = 31837
+			continue
+		elif _pc == 31837:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_text_c2_option_2_rumbled_:", "a3_m05_text_c2_option_2_rumbled")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31913
+				continue
+			else:
+				_pc = 31837
+				continue
+		elif _pc == 31913:
+			_pc = 31914
+			continue
+		elif _pc == 31914:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_player_c2_option_2_rumbled_:", "a3_m05_dialogue_player_c2_option_2_rumbled")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 31990
+				continue
+			else:
+				_pc = 31914
+				continue
+		elif _pc == 31990:
+			_pc = 31991
+			continue
+		elif _pc == 31991:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_c2_repsonse_2_ok_:", "a3_m05_dialogue_security_c2_repsonse_2_ok")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32067
+				continue
+			else:
+				_pc = 31991
+				continue
+		elif _pc == 32067:
+			_pc = 32068
+			continue
+		elif _pc == 32068:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_you_wont_:", "a3_m05_dialogue_security_you_wont")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32144
+				continue
+			else:
+				_pc = 32068
+				continue
+		elif _pc == 32144:
+			_pc = 32145
+			continue
+		elif _pc == 32145:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_security_right_:", "a3_m05_dialogue_security_right")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32221
+				continue
+			else:
+				_pc = 32145
+				continue
+		elif _pc == 32221:
+			_pc = 32222
+			continue
+		elif _pc == 32222:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_smith_thats_all_:", "a3_m05_dialogue_smith_thats_all")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32298
+				continue
+			else:
+				_pc = 32222
+				continue
+		elif _pc == 32298:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_32302() -> Variant:
+	var _pc: int = 32302
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_clay_that_antenna_:", "a3_m05_dialogue_clay_that_antenna")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m05_dialogue_clay_some_way_:", "a3_m05_dialogue_clay_some_way")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 32302:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_clay_that_antenna_:", "a3_m05_dialogue_clay_that_antenna")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32378
+				continue
+			else:
+				_pc = 32302
+				continue
+		elif _pc == 32378:
+			_pc = 32379
+			continue
+		elif _pc == 32379:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m05_dialogue_clay_some_way_:", "a3_m05_dialogue_clay_some_way")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32455
+				continue
+			else:
+				_pc = 32379
+				continue
+		elif _pc == 32455:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_32459() -> Variant:
+	var _pc: int = 32459
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_name_hoffer_:", "a3_m06_name_hoffer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_name_maashq_:", "a3_m06_name_maashq")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_name_escort_:", "a3_m06_name_escort")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_hoffer_good_to_:", "a3_m06_dialogue_hoffer_good_to")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_cal_all_ships_:", "a3_m06_dialogue_cal_all_ships")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_smith_uh_oh_:", "a3_m06_dialogue_smith_uh_oh")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_maashq_its_about_:", "a3_m06_dialogue_maashq_its_about")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_clay_hey_:", "a3_m06_dialogue_clay_hey")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_smith_cal_:", "a3_m06_dialogue_smith_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_smith_wooa_:", "a3_m06_dialogue_smith_wooa")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_clay_i_think_:", "a3_m06_dialogue_clay_i_think")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_maashq_thanks_:", "a3_m06_dialogue_maashq_thanks")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_player_what_was_:", "a3_m06_dialogue_player_what_was")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_cabal_:", "a3_m06_dialogue_maashq_c1_cabal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_text_c1_option_1_cabal_:", "a3_m06_text_c1_option_1_cabal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_player_c1_option_1_cabal_:", "a3_m06_dialogue_player_c1_option_1_cabal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_response_1_cabal_:", "a3_m06_dialogue_maashq_c1_response_1_cabal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_text_c1_option_2_split_:", "a3_m06_text_c1_option_2_split")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_player_c1_option_2_split_:", "a3_m06_dialogue_player_c1_option_2_split")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_response_2_split_:", "a3_m06_dialogue_maashq_c1_response_2_split")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_text_c1_option_3_remit_:", "a3_m06_text_c1_option_3_remit")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_player_c1_option_3_remit_:", "a3_m06_dialogue_player_c1_option_3_remit")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_response_3_remit_:", "a3_m06_dialogue_maashq_c1_response_3_remit")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_player_i_see_:", "a3_m06_dialogue_player_i_see")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_maashq_funny_:", "a3_m06_dialogue_maashq_funny")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_player_what_:", "a3_m06_dialogue_player_what")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_clay_that_dont_:", "a3_m06_dialogue_clay_that_dont")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_cal_lets_get_:", "a3_m06_dialogue_cal_lets_get")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_smith_it_:", "a3_m06_dialogue_smith_it")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_cal_what_:", "a3_m06_dialogue_cal_what")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_escort_im_all_:", "a3_m06_dialogue_escort_im_all")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_cal_you_did_:", "a3_m06_dialogue_cal_you_did")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m06_dialogue_smith_well_:", "a3_m06_dialogue_smith_well")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 32459:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_name_hoffer_:", "a3_m06_name_hoffer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32535
+				continue
+			else:
+				_pc = 32459
+				continue
+		elif _pc == 32535:
+			_pc = 32536
+			continue
+		elif _pc == 32536:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_name_maashq_:", "a3_m06_name_maashq")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32612
+				continue
+			else:
+				_pc = 32536
+				continue
+		elif _pc == 32612:
+			_pc = 32613
+			continue
+		elif _pc == 32613:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_name_escort_:", "a3_m06_name_escort")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32689
+				continue
+			else:
+				_pc = 32613
+				continue
+		elif _pc == 32689:
+			_pc = 32690
+			continue
+		elif _pc == 32690:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_hoffer_good_to_:", "a3_m06_dialogue_hoffer_good_to")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32766
+				continue
+			else:
+				_pc = 32690
+				continue
+		elif _pc == 32766:
+			_pc = 32767
+			continue
+		elif _pc == 32767:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_cal_all_ships_:", "a3_m06_dialogue_cal_all_ships")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32843
+				continue
+			else:
+				_pc = 32767
+				continue
+		elif _pc == 32843:
+			_pc = 32844
+			continue
+		elif _pc == 32844:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_smith_uh_oh_:", "a3_m06_dialogue_smith_uh_oh")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32920
+				continue
+			else:
+				_pc = 32844
+				continue
+		elif _pc == 32920:
+			_pc = 32921
+			continue
+		elif _pc == 32921:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_maashq_its_about_:", "a3_m06_dialogue_maashq_its_about")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 32997
+				continue
+			else:
+				_pc = 32921
+				continue
+		elif _pc == 32997:
+			_pc = 32998
+			continue
+		elif _pc == 32998:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_clay_hey_:", "a3_m06_dialogue_clay_hey")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33074
+				continue
+			else:
+				_pc = 32998
+				continue
+		elif _pc == 33074:
+			_pc = 33075
+			continue
+		elif _pc == 33075:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_smith_cal_:", "a3_m06_dialogue_smith_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33151
+				continue
+			else:
+				_pc = 33075
+				continue
+		elif _pc == 33151:
+			_pc = 33152
+			continue
+		elif _pc == 33152:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_smith_wooa_:", "a3_m06_dialogue_smith_wooa")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33228
+				continue
+			else:
+				_pc = 33152
+				continue
+		elif _pc == 33228:
+			_pc = 33229
+			continue
+		elif _pc == 33229:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_clay_i_think_:", "a3_m06_dialogue_clay_i_think")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33305
+				continue
+			else:
+				_pc = 33229
+				continue
+		elif _pc == 33305:
+			_pc = 33306
+			continue
+		elif _pc == 33306:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_maashq_thanks_:", "a3_m06_dialogue_maashq_thanks")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33382
+				continue
+			else:
+				_pc = 33306
+				continue
+		elif _pc == 33382:
+			_pc = 33383
+			continue
+		elif _pc == 33383:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_player_what_was_:", "a3_m06_dialogue_player_what_was")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33459
+				continue
+			else:
+				_pc = 33383
+				continue
+		elif _pc == 33459:
+			_pc = 33460
+			continue
+		elif _pc == 33460:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_cabal_:", "a3_m06_dialogue_maashq_c1_cabal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33536
+				continue
+			else:
+				_pc = 33460
+				continue
+		elif _pc == 33536:
+			_pc = 33537
+			continue
+		elif _pc == 33537:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_text_c1_option_1_cabal_:", "a3_m06_text_c1_option_1_cabal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33613
+				continue
+			else:
+				_pc = 33537
+				continue
+		elif _pc == 33613:
+			_pc = 33614
+			continue
+		elif _pc == 33614:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_player_c1_option_1_cabal_:", "a3_m06_dialogue_player_c1_option_1_cabal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33690
+				continue
+			else:
+				_pc = 33614
+				continue
+		elif _pc == 33690:
+			_pc = 33691
+			continue
+		elif _pc == 33691:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_response_1_cabal_:", "a3_m06_dialogue_maashq_c1_response_1_cabal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33767
+				continue
+			else:
+				_pc = 33691
+				continue
+		elif _pc == 33767:
+			_pc = 33768
+			continue
+		elif _pc == 33768:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_text_c1_option_2_split_:", "a3_m06_text_c1_option_2_split")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33844
+				continue
+			else:
+				_pc = 33768
+				continue
+		elif _pc == 33844:
+			_pc = 33845
+			continue
+		elif _pc == 33845:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_player_c1_option_2_split_:", "a3_m06_dialogue_player_c1_option_2_split")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33921
+				continue
+			else:
+				_pc = 33845
+				continue
+		elif _pc == 33921:
+			_pc = 33922
+			continue
+		elif _pc == 33922:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_response_2_split_:", "a3_m06_dialogue_maashq_c1_response_2_split")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 33998
+				continue
+			else:
+				_pc = 33922
+				continue
+		elif _pc == 33998:
+			_pc = 33999
+			continue
+		elif _pc == 33999:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_text_c1_option_3_remit_:", "a3_m06_text_c1_option_3_remit")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34075
+				continue
+			else:
+				_pc = 33999
+				continue
+		elif _pc == 34075:
+			_pc = 34076
+			continue
+		elif _pc == 34076:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_player_c1_option_3_remit_:", "a3_m06_dialogue_player_c1_option_3_remit")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34152
+				continue
+			else:
+				_pc = 34076
+				continue
+		elif _pc == 34152:
+			_pc = 34153
+			continue
+		elif _pc == 34153:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_maashq_c1_response_3_remit_:", "a3_m06_dialogue_maashq_c1_response_3_remit")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34229
+				continue
+			else:
+				_pc = 34153
+				continue
+		elif _pc == 34229:
+			_pc = 34230
+			continue
+		elif _pc == 34230:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_player_i_see_:", "a3_m06_dialogue_player_i_see")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34306
+				continue
+			else:
+				_pc = 34230
+				continue
+		elif _pc == 34306:
+			_pc = 34307
+			continue
+		elif _pc == 34307:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_maashq_funny_:", "a3_m06_dialogue_maashq_funny")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34383
+				continue
+			else:
+				_pc = 34307
+				continue
+		elif _pc == 34383:
+			_pc = 34384
+			continue
+		elif _pc == 34384:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_player_what_:", "a3_m06_dialogue_player_what")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34460
+				continue
+			else:
+				_pc = 34384
+				continue
+		elif _pc == 34460:
+			_pc = 34461
+			continue
+		elif _pc == 34461:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_clay_that_dont_:", "a3_m06_dialogue_clay_that_dont")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34537
+				continue
+			else:
+				_pc = 34461
+				continue
+		elif _pc == 34537:
+			_pc = 34538
+			continue
+		elif _pc == 34538:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_cal_lets_get_:", "a3_m06_dialogue_cal_lets_get")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34614
+				continue
+			else:
+				_pc = 34538
+				continue
+		elif _pc == 34614:
+			_pc = 34615
+			continue
+		elif _pc == 34615:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_smith_it_:", "a3_m06_dialogue_smith_it")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34691
+				continue
+			else:
+				_pc = 34615
+				continue
+		elif _pc == 34691:
+			_pc = 34692
+			continue
+		elif _pc == 34692:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_cal_what_:", "a3_m06_dialogue_cal_what")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34768
+				continue
+			else:
+				_pc = 34692
+				continue
+		elif _pc == 34768:
+			_pc = 34769
+			continue
+		elif _pc == 34769:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_escort_im_all_:", "a3_m06_dialogue_escort_im_all")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34845
+				continue
+			else:
+				_pc = 34769
+				continue
+		elif _pc == 34845:
+			_pc = 34846
+			continue
+		elif _pc == 34846:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_cal_you_did_:", "a3_m06_dialogue_cal_you_did")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34922
+				continue
+			else:
+				_pc = 34846
+				continue
+		elif _pc == 34922:
+			_pc = 34923
+			continue
+		elif _pc == 34923:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m06_dialogue_smith_well_:", "a3_m06_dialogue_smith_well")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 34999
+				continue
+			else:
+				_pc = 34923
+				continue
+		elif _pc == 34999:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_35003() -> Variant:
+	var _pc: int = 35003
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_debris_:", "a3_m08_name_debris")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_ambush_:", "a3_m08_name_ambush")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_hostage_:", "a3_m08_name_hostage")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_flambe_:", "a3_m08_name_flambe")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_trash_:", "a3_m08_name_trash")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_smith_hoffers_:", "a3_m08_dialogue_smith_hoffers")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_smith_im_:", "a3_m08_dialogue_smith_im")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_smith_doesnt_:", "a3_m08_dialogue_smith_doesnt")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_smith_wooa_:", "a3_m08_dialogue_smith_wooa")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_flambe_this_:", "a3_m08_dialogue_flambe_this")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_flambe_are_we_:", "a3_m08_dialogue_flambe_are_we")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_smith_hmm_lets_:", "a3_m08_dialogue_smith_hmm_lets")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_smith_hey_:", "a3_m08_dialogue_smith_hey")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_player_garbage_vessel_:", "a3_m08_dialogue_player_garbage_vessel")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_trash_dunno_:", "a3_m08_dialogue_trash_dunno")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_smith_inside_:", "a3_m08_dialogue_smith_inside")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_player_garbage_pick_up_:", "a3_m08_dialogue_player_garbage_pick_up")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_trash_dunno2_:", "a3_m08_dialogue_trash_dunno2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_clay_guess_:", "a3_m08_dialogue_clay_guess")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_that_was_close_:", "a3_m08_dialogue_hoffer_that_was_close")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_clay_i_reckon_weve_:", "a3_m08_dialogue_clay_i_reckon_weve")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_clay_looks_like_:", "a3_m08_dialogue_clay_looks_like")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_grand_duke_mayday_we_require_:", "a3_m08_dialogue_grand_duke_mayday_we_require")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_clay_theyre_spinning_:", "a3_m08_dialogue_clay_theyre_spinning")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_jafs_well_done_you_:", "a3_m08_dialogue_jafs_well_done_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_now_all_that_was_just_nearly_too_much_for_an_old_timer_like_me_:", "a3_m08_dialogue_hoffer_now_all_that_was_just_nearly_too_much_for_an_old_timer_like_me")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_cal_what_the_hells_going_on_here_frank_:", "a3_m08_dialogue_cal_what_the_hells_going_on_here_frank")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_a_bloody_mess_:", "a3_m08_dialogue_hoffer_a_bloody_mess")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_cal_yeah_kind_of_figured_that_one_:", "a3_m08_dialogue_cal_yeah_kind_of_figured_that_one")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_well_their_plan_was_to_stir_up_trouble_in_the_badlands_:", "a3_m08_dialogue_hoffer_well_their_plan_was_to_stir_up_trouble_in_the_badlands")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_trouble_is_they_didnt_count_on_us_kicking_:", "a3_m08_dialogue_hoffer_trouble_is_they_didnt_count_on_us_kicking")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_cal_and_where_do_those_ship_eating_things_come_into_it_:", "a3_m08_dialogue_cal_and_where_do_those_ship_eating_things_come_into_it")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_your_guess_is_as_good_as_mine_:", "a3_m08_dialogue_hoffer_your_guess_is_as_good_as_mine")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 35003:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_debris_:", "a3_m08_name_debris")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35079
+				continue
+			else:
+				_pc = 35003
+				continue
+		elif _pc == 35079:
+			_pc = 35080
+			continue
+		elif _pc == 35080:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_ambush_:", "a3_m08_name_ambush")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35156
+				continue
+			else:
+				_pc = 35080
+				continue
+		elif _pc == 35156:
+			_pc = 35157
+			continue
+		elif _pc == 35157:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_hostage_:", "a3_m08_name_hostage")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35233
+				continue
+			else:
+				_pc = 35157
+				continue
+		elif _pc == 35233:
+			_pc = 35234
+			continue
+		elif _pc == 35234:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_flambe_:", "a3_m08_name_flambe")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35310
+				continue
+			else:
+				_pc = 35234
+				continue
+		elif _pc == 35310:
+			_pc = 35311
+			continue
+		elif _pc == 35311:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_trash_:", "a3_m08_name_trash")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35387
+				continue
+			else:
+				_pc = 35311
+				continue
+		elif _pc == 35387:
+			_pc = 35388
+			continue
+		elif _pc == 35388:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_smith_hoffers_:", "a3_m08_dialogue_smith_hoffers")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35464
+				continue
+			else:
+				_pc = 35388
+				continue
+		elif _pc == 35464:
+			_pc = 35465
+			continue
+		elif _pc == 35465:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_smith_im_:", "a3_m08_dialogue_smith_im")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35541
+				continue
+			else:
+				_pc = 35465
+				continue
+		elif _pc == 35541:
+			_pc = 35542
+			continue
+		elif _pc == 35542:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_smith_doesnt_:", "a3_m08_dialogue_smith_doesnt")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35618
+				continue
+			else:
+				_pc = 35542
+				continue
+		elif _pc == 35618:
+			_pc = 35619
+			continue
+		elif _pc == 35619:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_smith_wooa_:", "a3_m08_dialogue_smith_wooa")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35695
+				continue
+			else:
+				_pc = 35619
+				continue
+		elif _pc == 35695:
+			_pc = 35696
+			continue
+		elif _pc == 35696:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_flambe_this_:", "a3_m08_dialogue_flambe_this")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35772
+				continue
+			else:
+				_pc = 35696
+				continue
+		elif _pc == 35772:
+			_pc = 35773
+			continue
+		elif _pc == 35773:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_flambe_are_we_:", "a3_m08_dialogue_flambe_are_we")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35849
+				continue
+			else:
+				_pc = 35773
+				continue
+		elif _pc == 35849:
+			_pc = 35850
+			continue
+		elif _pc == 35850:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_smith_hmm_lets_:", "a3_m08_dialogue_smith_hmm_lets")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 35926
+				continue
+			else:
+				_pc = 35850
+				continue
+		elif _pc == 35926:
+			_pc = 35927
+			continue
+		elif _pc == 35927:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_smith_hey_:", "a3_m08_dialogue_smith_hey")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36003
+				continue
+			else:
+				_pc = 35927
+				continue
+		elif _pc == 36003:
+			_pc = 36004
+			continue
+		elif _pc == 36004:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_player_garbage_vessel_:", "a3_m08_dialogue_player_garbage_vessel")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36080
+				continue
+			else:
+				_pc = 36004
+				continue
+		elif _pc == 36080:
+			_pc = 36081
+			continue
+		elif _pc == 36081:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_trash_dunno_:", "a3_m08_dialogue_trash_dunno")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36157
+				continue
+			else:
+				_pc = 36081
+				continue
+		elif _pc == 36157:
+			_pc = 36158
+			continue
+		elif _pc == 36158:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_smith_inside_:", "a3_m08_dialogue_smith_inside")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36234
+				continue
+			else:
+				_pc = 36158
+				continue
+		elif _pc == 36234:
+			_pc = 36235
+			continue
+		elif _pc == 36235:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_player_garbage_pick_up_:", "a3_m08_dialogue_player_garbage_pick_up")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36311
+				continue
+			else:
+				_pc = 36235
+				continue
+		elif _pc == 36311:
+			_pc = 36312
+			continue
+		elif _pc == 36312:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_trash_dunno2_:", "a3_m08_dialogue_trash_dunno2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36388
+				continue
+			else:
+				_pc = 36312
+				continue
+		elif _pc == 36388:
+			_pc = 36389
+			continue
+		elif _pc == 36389:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_clay_guess_:", "a3_m08_dialogue_clay_guess")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36465
+				continue
+			else:
+				_pc = 36389
+				continue
+		elif _pc == 36465:
+			_pc = 36466
+			continue
+		elif _pc == 36466:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_that_was_close_:", "a3_m08_dialogue_hoffer_that_was_close")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36542
+				continue
+			else:
+				_pc = 36466
+				continue
+		elif _pc == 36542:
+			_pc = 36543
+			continue
+		elif _pc == 36543:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_clay_i_reckon_weve_:", "a3_m08_dialogue_clay_i_reckon_weve")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36619
+				continue
+			else:
+				_pc = 36543
+				continue
+		elif _pc == 36619:
+			_pc = 36620
+			continue
+		elif _pc == 36620:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_clay_looks_like_:", "a3_m08_dialogue_clay_looks_like")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36696
+				continue
+			else:
+				_pc = 36620
+				continue
+		elif _pc == 36696:
+			_pc = 36697
+			continue
+		elif _pc == 36697:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_grand_duke_mayday_we_require_:", "a3_m08_dialogue_grand_duke_mayday_we_require")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36773
+				continue
+			else:
+				_pc = 36697
+				continue
+		elif _pc == 36773:
+			_pc = 36774
+			continue
+		elif _pc == 36774:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_clay_theyre_spinning_:", "a3_m08_dialogue_clay_theyre_spinning")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36850
+				continue
+			else:
+				_pc = 36774
+				continue
+		elif _pc == 36850:
+			_pc = 36851
+			continue
+		elif _pc == 36851:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_jafs_well_done_you_:", "a3_m08_dialogue_jafs_well_done_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 36927
+				continue
+			else:
+				_pc = 36851
+				continue
+		elif _pc == 36927:
+			_pc = 36928
+			continue
+		elif _pc == 36928:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_now_all_that_was_just_nearly_too_much_for_an_old_timer_like_me_:", "a3_m08_dialogue_hoffer_now_all_that_was_just_nearly_too_much_for_an_old_timer_like_me")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37004
+				continue
+			else:
+				_pc = 36928
+				continue
+		elif _pc == 37004:
+			_pc = 37005
+			continue
+		elif _pc == 37005:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_cal_what_the_hells_going_on_here_frank_:", "a3_m08_dialogue_cal_what_the_hells_going_on_here_frank")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37081
+				continue
+			else:
+				_pc = 37005
+				continue
+		elif _pc == 37081:
+			_pc = 37082
+			continue
+		elif _pc == 37082:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_a_bloody_mess_:", "a3_m08_dialogue_hoffer_a_bloody_mess")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37158
+				continue
+			else:
+				_pc = 37082
+				continue
+		elif _pc == 37158:
+			_pc = 37159
+			continue
+		elif _pc == 37159:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_cal_yeah_kind_of_figured_that_one_:", "a3_m08_dialogue_cal_yeah_kind_of_figured_that_one")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37235
+				continue
+			else:
+				_pc = 37159
+				continue
+		elif _pc == 37235:
+			_pc = 37236
+			continue
+		elif _pc == 37236:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_well_their_plan_was_to_stir_up_trouble_in_the_badlands_:", "a3_m08_dialogue_hoffer_well_their_plan_was_to_stir_up_trouble_in_the_badlands")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37312
+				continue
+			else:
+				_pc = 37236
+				continue
+		elif _pc == 37312:
+			_pc = 37313
+			continue
+		elif _pc == 37313:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_trouble_is_they_didnt_count_on_us_kicking_:", "a3_m08_dialogue_hoffer_trouble_is_they_didnt_count_on_us_kicking")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37389
+				continue
+			else:
+				_pc = 37313
+				continue
+		elif _pc == 37389:
+			_pc = 37390
+			continue
+		elif _pc == 37390:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_cal_and_where_do_those_ship_eating_things_come_into_it_:", "a3_m08_dialogue_cal_and_where_do_those_ship_eating_things_come_into_it")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37466
+				continue
+			else:
+				_pc = 37390
+				continue
+		elif _pc == 37466:
+			_pc = 37467
+			continue
+		elif _pc == 37467:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_hoffer_your_guess_is_as_good_as_mine_:", "a3_m08_dialogue_hoffer_your_guess_is_as_good_as_mine")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37543
+				continue
+			else:
+				_pc = 37467
+				continue
+		elif _pc == 37543:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_37547() -> Variant:
+	var _pc: int = 37547
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_hoffers_distress_:", "a3_m08_name_hoffers_distress")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_command_vessel_:", "a3_m08_name_command_vessel")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_hoffer_:", "a3_m08_name_hoffer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_grand_duke_:", "a3_m08_name_grand_duke")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_maas_:", "a3_m08_name_maas")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 37547:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_hoffers_distress_:", "a3_m08_name_hoffers_distress")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37623
+				continue
+			else:
+				_pc = 37547
+				continue
+		elif _pc == 37623:
+			_pc = 37624
+			continue
+		elif _pc == 37624:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_command_vessel_:", "a3_m08_name_command_vessel")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37700
+				continue
+			else:
+				_pc = 37624
+				continue
+		elif _pc == 37700:
+			_pc = 37701
+			continue
+		elif _pc == 37701:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_hoffer_:", "a3_m08_name_hoffer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37777
+				continue
+			else:
+				_pc = 37701
+				continue
+		elif _pc == 37777:
+			_pc = 37778
+			continue
+		elif _pc == 37778:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_grand_duke_:", "a3_m08_name_grand_duke")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37854
+				continue
+			else:
+				_pc = 37778
+				continue
+		elif _pc == 37854:
+			_pc = 37855
+			continue
+		elif _pc == 37855:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_maas_:", "a3_m08_name_maas")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 37931
+				continue
+			else:
+				_pc = 37855
+				continue
+		elif _pc == 37931:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_37935() -> Variant:
+	var _pc: int = 37935
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_cal_oh_god_:", "a3_m08_dialogue_cal_oh_god")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_cal_what_is_that_:", "a3_m08_dialogue_cal_what_is_that")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_clay_bad_news_:", "a3_m08_dialogue_clay_bad_news")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 37935:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_cal_oh_god_:", "a3_m08_dialogue_cal_oh_god")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38011
+				continue
+			else:
+				_pc = 37935
+				continue
+		elif _pc == 38011:
+			_pc = 38012
+			continue
+		elif _pc == 38012:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_cal_what_is_that_:", "a3_m08_dialogue_cal_what_is_that")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38088
+				continue
+			else:
+				_pc = 38012
+				continue
+		elif _pc == 38088:
+			_pc = 38089
+			continue
+		elif _pc == 38089:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_clay_bad_news_:", "a3_m08_dialogue_clay_bad_news")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38165
+				continue
+			else:
+				_pc = 38089
+				continue
+		elif _pc == 38165:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_38169() -> Variant:
+	var _pc: int = 38169
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_cal_big_loop_:", "a3_m08_dialogue_cal_big_loop")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_clay_but_bigger_:", "a3_m08_dialogue_clay_but_bigger")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_von_schelling_:", "a3_m08_name_von_schelling")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_von_schelling_intro_:", "a3_m08_dialogue_von_schelling_intro")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_von_schelling_start_:", "a3_m08_dialogue_von_schelling_start")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_caleb_dont_do_it_:", "a3_m08_dialogue_caleb_dont_do_it")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_name_engineer_:", "a3_m08_name_engineer")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_engineer_panic_:", "a3_m08_dialogue_engineer_panic")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_clay_yikes_:", "a3_m08_dialogue_clay_yikes")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m08_dialogue_cal_eating_the_hull_:", "a3_m08_dialogue_cal_eating_the_hull")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 38169:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_cal_big_loop_:", "a3_m08_dialogue_cal_big_loop")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38245
+				continue
+			else:
+				_pc = 38169
+				continue
+		elif _pc == 38245:
+			_pc = 38246
+			continue
+		elif _pc == 38246:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_clay_but_bigger_:", "a3_m08_dialogue_clay_but_bigger")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38322
+				continue
+			else:
+				_pc = 38246
+				continue
+		elif _pc == 38322:
+			_pc = 38323
+			continue
+		elif _pc == 38323:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_von_schelling_:", "a3_m08_name_von_schelling")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38399
+				continue
+			else:
+				_pc = 38323
+				continue
+		elif _pc == 38399:
+			_pc = 38400
+			continue
+		elif _pc == 38400:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_von_schelling_intro_:", "a3_m08_dialogue_von_schelling_intro")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38476
+				continue
+			else:
+				_pc = 38400
+				continue
+		elif _pc == 38476:
+			_pc = 38477
+			continue
+		elif _pc == 38477:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_von_schelling_start_:", "a3_m08_dialogue_von_schelling_start")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38553
+				continue
+			else:
+				_pc = 38477
+				continue
+		elif _pc == 38553:
+			_pc = 38554
+			continue
+		elif _pc == 38554:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_caleb_dont_do_it_:", "a3_m08_dialogue_caleb_dont_do_it")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38630
+				continue
+			else:
+				_pc = 38554
+				continue
+		elif _pc == 38630:
+			_pc = 38631
+			continue
+		elif _pc == 38631:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_name_engineer_:", "a3_m08_name_engineer")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38707
+				continue
+			else:
+				_pc = 38631
+				continue
+		elif _pc == 38707:
+			_pc = 38708
+			continue
+		elif _pc == 38708:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_engineer_panic_:", "a3_m08_dialogue_engineer_panic")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38784
+				continue
+			else:
+				_pc = 38708
+				continue
+		elif _pc == 38784:
+			_pc = 38785
+			continue
+		elif _pc == 38785:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_clay_yikes_:", "a3_m08_dialogue_clay_yikes")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38861
+				continue
+			else:
+				_pc = 38785
+				continue
+		elif _pc == 38861:
+			_pc = 38862
+			continue
+		elif _pc == 38862:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m08_dialogue_cal_eating_the_hull_:", "a3_m08_dialogue_cal_eating_the_hull")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 38938
+				continue
+			else:
+				_pc = 38862
+				continue
+		elif _pc == 38938:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_38942() -> Variant:
+	var _pc: int = 38942
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_email_sender_:", "a3_m09_email_sender")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_email_subject_:", "a3_m09_email_subject")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_carrier_ok_here_we_are_:", "a3_m09_dialogue_antimatter_carrier_ok_here_we_are")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_carrier_docking_now_:", "a3_m09_dialogue_antimatter_carrier_docking_now")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_loaded_lets_move_:", "a3_m09_dialogue_antimatter_loaded_lets_move")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_mayday_we_appear_:", "a3_m09_dialogue_antimatter_mayday_we_appear")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_o_my_god_:", "a3_m09_dialogue_antimatter_o_my_god")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_clay_looks_like_that_:", "a3_m09_dialogue_clay_looks_like_that")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_clay_incoming_:", "a3_m09_dialogue_clay_incoming")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_clay_another_wave_:", "a3_m09_dialogue_clay_another_wave")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_were_back_online_:", "a3_m09_dialogue_antimatter_were_back_online")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_were_heading_back_:", "a3_m09_dialogue_antimatter_were_heading_back")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_at_last_the_lpoint_:", "a3_m09_dialogue_antimatter_at_last_the_lpoint")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_what_the_:", "a3_m09_dialogue_antimatter_what_the")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 38942:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_email_sender_:", "a3_m09_email_sender")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39018
+				continue
+			else:
+				_pc = 38942
+				continue
+		elif _pc == 39018:
+			_pc = 39019
+			continue
+		elif _pc == 39019:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_email_subject_:", "a3_m09_email_subject")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39095
+				continue
+			else:
+				_pc = 39019
+				continue
+		elif _pc == 39095:
+			_pc = 39096
+			continue
+		elif _pc == 39096:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_carrier_ok_here_we_are_:", "a3_m09_dialogue_antimatter_carrier_ok_here_we_are")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39172
+				continue
+			else:
+				_pc = 39096
+				continue
+		elif _pc == 39172:
+			_pc = 39173
+			continue
+		elif _pc == 39173:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_carrier_docking_now_:", "a3_m09_dialogue_antimatter_carrier_docking_now")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39249
+				continue
+			else:
+				_pc = 39173
+				continue
+		elif _pc == 39249:
+			_pc = 39250
+			continue
+		elif _pc == 39250:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_loaded_lets_move_:", "a3_m09_dialogue_antimatter_loaded_lets_move")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39326
+				continue
+			else:
+				_pc = 39250
+				continue
+		elif _pc == 39326:
+			_pc = 39327
+			continue
+		elif _pc == 39327:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_mayday_we_appear_:", "a3_m09_dialogue_antimatter_mayday_we_appear")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39403
+				continue
+			else:
+				_pc = 39327
+				continue
+		elif _pc == 39403:
+			_pc = 39404
+			continue
+		elif _pc == 39404:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_o_my_god_:", "a3_m09_dialogue_antimatter_o_my_god")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39480
+				continue
+			else:
+				_pc = 39404
+				continue
+		elif _pc == 39480:
+			_pc = 39481
+			continue
+		elif _pc == 39481:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_clay_looks_like_that_:", "a3_m09_dialogue_clay_looks_like_that")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39557
+				continue
+			else:
+				_pc = 39481
+				continue
+		elif _pc == 39557:
+			_pc = 39558
+			continue
+		elif _pc == 39558:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_clay_incoming_:", "a3_m09_dialogue_clay_incoming")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39634
+				continue
+			else:
+				_pc = 39558
+				continue
+		elif _pc == 39634:
+			_pc = 39635
+			continue
+		elif _pc == 39635:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_clay_another_wave_:", "a3_m09_dialogue_clay_another_wave")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39711
+				continue
+			else:
+				_pc = 39635
+				continue
+		elif _pc == 39711:
+			_pc = 39712
+			continue
+		elif _pc == 39712:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_were_back_online_:", "a3_m09_dialogue_antimatter_were_back_online")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39788
+				continue
+			else:
+				_pc = 39712
+				continue
+		elif _pc == 39788:
+			_pc = 39789
+			continue
+		elif _pc == 39789:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_were_heading_back_:", "a3_m09_dialogue_antimatter_were_heading_back")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39865
+				continue
+			else:
+				_pc = 39789
+				continue
+		elif _pc == 39865:
+			_pc = 39866
+			continue
+		elif _pc == 39866:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_at_last_the_lpoint_:", "a3_m09_dialogue_antimatter_at_last_the_lpoint")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 39942
+				continue
+			else:
+				_pc = 39866
+				continue
+		elif _pc == 39942:
+			_pc = 39943
+			continue
+		elif _pc == 39943:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m09_dialogue_antimatter_what_the_:", "a3_m09_dialogue_antimatter_what_the")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40019
+				continue
+			else:
+				_pc = 39943
+				continue
+		elif _pc == 40019:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_40023() -> Variant:
+	var _pc: int = 40023
 	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_name_bomb_:", "a3_m10_name_bomb")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_name_zero_:", "a3_m10_name_zero")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_name_flag_ship_:", "a3_m10_name_flag_ship")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_name_escape_ship_:", "a3_m10_name_escape_ship")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_ok_cal_:", "a3_m10_dialogue_jafs_ok_cal")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_right_hold_:", "a3_m10_dialogue_jafs_right_hold")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_im_unloading_:", "a3_m10_dialogue_jafs_im_unloading")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning1_:", "a3_m10_dialogue_jafs_warning1")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning2_:", "a3_m10_dialogue_jafs_warning2")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning3_:", "a3_m10_dialogue_jafs_warning3")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning4_:", "a3_m10_dialogue_jafs_warning4")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_all_bombs_:", "a3_m10_dialogue_jafs_all_bombs")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_bombs_detonated_:", "a3_m10_dialogue_jafs_bombs_detonated")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_freighter_all_defense_:", "a3_m10_dialogue_freighter_all_defense")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_cal_what_the_:", "a3_m10_dialogue_cal_what_the")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_caleb_get_out_:", "a3_m10_dialogue_caleb_get_out")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_its_caleb_:", "a3_m10_dialogue_jafs_its_caleb")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_cal_we_cant_:", "a3_m10_dialogue_cal_we_cant")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_but_:", "a3_m10_dialogue_jafs_but")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_cal_go_:", "a3_m10_dialogue_cal_go")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_im_docked_:", "a3_m10_dialogue_jafs_im_docked")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_caleb_argh_you_:", "a3_m10_dialogue_caleb_argh_you")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_jafs_argh_:", "a3_m10_dialogue_jafs_argh")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	while true:
-		global.set_bool("g_repeat_last_string", 0)
-		await iconversation.one_liner(0, "a3_m10_dialogue_cal_no_:", "a3_m10_dialogue_cal_no")
-		if not (1 == global.pog_bool("g_repeat_last_string")):
-			break
-	return 0
+		if _pc == 40023:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_name_bomb_:", "a3_m10_name_bomb")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40099
+				continue
+			else:
+				_pc = 40023
+				continue
+		elif _pc == 40099:
+			_pc = 40100
+			continue
+		elif _pc == 40100:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_name_zero_:", "a3_m10_name_zero")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40176
+				continue
+			else:
+				_pc = 40100
+				continue
+		elif _pc == 40176:
+			_pc = 40177
+			continue
+		elif _pc == 40177:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_name_flag_ship_:", "a3_m10_name_flag_ship")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40253
+				continue
+			else:
+				_pc = 40177
+				continue
+		elif _pc == 40253:
+			_pc = 40254
+			continue
+		elif _pc == 40254:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_name_escape_ship_:", "a3_m10_name_escape_ship")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40330
+				continue
+			else:
+				_pc = 40254
+				continue
+		elif _pc == 40330:
+			_pc = 40331
+			continue
+		elif _pc == 40331:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_ok_cal_:", "a3_m10_dialogue_jafs_ok_cal")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40407
+				continue
+			else:
+				_pc = 40331
+				continue
+		elif _pc == 40407:
+			_pc = 40408
+			continue
+		elif _pc == 40408:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_right_hold_:", "a3_m10_dialogue_jafs_right_hold")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40484
+				continue
+			else:
+				_pc = 40408
+				continue
+		elif _pc == 40484:
+			_pc = 40485
+			continue
+		elif _pc == 40485:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_im_unloading_:", "a3_m10_dialogue_jafs_im_unloading")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40561
+				continue
+			else:
+				_pc = 40485
+				continue
+		elif _pc == 40561:
+			_pc = 40562
+			continue
+		elif _pc == 40562:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning1_:", "a3_m10_dialogue_jafs_warning1")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40638
+				continue
+			else:
+				_pc = 40562
+				continue
+		elif _pc == 40638:
+			_pc = 40639
+			continue
+		elif _pc == 40639:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning2_:", "a3_m10_dialogue_jafs_warning2")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40715
+				continue
+			else:
+				_pc = 40639
+				continue
+		elif _pc == 40715:
+			_pc = 40716
+			continue
+		elif _pc == 40716:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning3_:", "a3_m10_dialogue_jafs_warning3")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40792
+				continue
+			else:
+				_pc = 40716
+				continue
+		elif _pc == 40792:
+			_pc = 40793
+			continue
+		elif _pc == 40793:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_warning4_:", "a3_m10_dialogue_jafs_warning4")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40869
+				continue
+			else:
+				_pc = 40793
+				continue
+		elif _pc == 40869:
+			_pc = 40870
+			continue
+		elif _pc == 40870:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_all_bombs_:", "a3_m10_dialogue_jafs_all_bombs")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 40946
+				continue
+			else:
+				_pc = 40870
+				continue
+		elif _pc == 40946:
+			_pc = 40947
+			continue
+		elif _pc == 40947:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_bombs_detonated_:", "a3_m10_dialogue_jafs_bombs_detonated")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41023
+				continue
+			else:
+				_pc = 40947
+				continue
+		elif _pc == 41023:
+			_pc = 41024
+			continue
+		elif _pc == 41024:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_freighter_all_defense_:", "a3_m10_dialogue_freighter_all_defense")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41100
+				continue
+			else:
+				_pc = 41024
+				continue
+		elif _pc == 41100:
+			_pc = 41101
+			continue
+		elif _pc == 41101:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_cal_what_the_:", "a3_m10_dialogue_cal_what_the")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41177
+				continue
+			else:
+				_pc = 41101
+				continue
+		elif _pc == 41177:
+			_pc = 41178
+			continue
+		elif _pc == 41178:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_caleb_get_out_:", "a3_m10_dialogue_caleb_get_out")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41254
+				continue
+			else:
+				_pc = 41178
+				continue
+		elif _pc == 41254:
+			_pc = 41255
+			continue
+		elif _pc == 41255:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_its_caleb_:", "a3_m10_dialogue_jafs_its_caleb")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41331
+				continue
+			else:
+				_pc = 41255
+				continue
+		elif _pc == 41331:
+			_pc = 41332
+			continue
+		elif _pc == 41332:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_cal_we_cant_:", "a3_m10_dialogue_cal_we_cant")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41408
+				continue
+			else:
+				_pc = 41332
+				continue
+		elif _pc == 41408:
+			_pc = 41409
+			continue
+		elif _pc == 41409:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_but_:", "a3_m10_dialogue_jafs_but")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41485
+				continue
+			else:
+				_pc = 41409
+				continue
+		elif _pc == 41485:
+			_pc = 41486
+			continue
+		elif _pc == 41486:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_cal_go_:", "a3_m10_dialogue_cal_go")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41562
+				continue
+			else:
+				_pc = 41486
+				continue
+		elif _pc == 41562:
+			_pc = 41563
+			continue
+		elif _pc == 41563:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_im_docked_:", "a3_m10_dialogue_jafs_im_docked")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41639
+				continue
+			else:
+				_pc = 41563
+				continue
+		elif _pc == 41639:
+			_pc = 41640
+			continue
+		elif _pc == 41640:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_caleb_argh_you_:", "a3_m10_dialogue_caleb_argh_you")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41716
+				continue
+			else:
+				_pc = 41640
+				continue
+		elif _pc == 41716:
+			_pc = 41717
+			continue
+		elif _pc == 41717:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_jafs_argh_:", "a3_m10_dialogue_jafs_argh")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41793
+				continue
+			else:
+				_pc = 41717
+				continue
+		elif _pc == 41793:
+			_pc = 41794
+			continue
+		elif _pc == 41794:
+			global.set_bool("g_repeat_last_string", 0)
+			await iconversation.one_liner(0, "a3_m10_dialogue_cal_no_:", "a3_m10_dialogue_cal_no")
+			if 1 != global.pog_bool("g_repeat_last_string"):
+				_pc = 41870
+				continue
+			else:
+				_pc = 41794
+				continue
+		elif _pc == 41870:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_41874() -> Variant:

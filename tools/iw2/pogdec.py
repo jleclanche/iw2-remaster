@@ -257,6 +257,28 @@ class Func:
         self.unstructured = False   # rebuilt as a block dispatch
 
 
+def _has_call(e) -> bool:
+    """Does this expression do anything? Discarding a value is not the same as
+    not computing it: `f() == 2` popped is still a call to f."""
+    if isinstance(e, Call):
+        return True
+    if isinstance(e, Bin):
+        return _has_call(e.a) or _has_call(e.b)
+    if isinstance(e, Un):
+        return _has_call(e.a)
+    return False
+
+
+def _flush(stack, stmts) -> None:
+    """A block ends with values still on its stack. They belong to expressions
+    the compiler discarded, but discarding a value does not un-call the function
+    that produced it, so anything with a side effect still has to be emitted."""
+    for e in stack:
+        if _has_call(e):
+            stmts.append(Do(e))
+    stack.clear()
+
+
 def _has_goto(stmts) -> bool:
     for s in stmts:
         if isinstance(s, Goto):
@@ -279,6 +301,11 @@ class Decompiler:
         self.func_hi = self.end
         self._tail_stack: list[Expr] = []
         self._inlining: set[int] = set()
+        # Every instruction the structured form actually consumed. Skipping
+        # forward over a switch's case bodies is only sound if those bodies are
+        # inlined back in at the branches that select them; when inlining fails
+        # they would otherwise be dropped in silence. So we check.
+        self._covered: set[int] = set()
         self.latch: dict[int, int] = {}
         self.loops: dict[int, int] = {}
 
@@ -328,14 +355,36 @@ class Decompiler:
             self.func_hi = stop
             self._find_loops(e, stop)
             f = Func(entries[e], e, argc.get(e, 0))
+            self._covered = set()
             f.body = self._block(e, stop)
-            # A goto we could not shape means the structured form would be a
-            # lie. Fall back to the block dispatch, which is exact.
-            if _has_goto(f.body):
+            # Two ways the structured form can be a lie, and both fall back to
+            # the block dispatch, which is exact by construction:
+            #
+            #   a goto we could not shape -- it would not run; and
+            #
+            #   code we skipped and never put back. Jumping the cursor forward
+            #   over a switch's case bodies is only sound if those bodies are
+            #   inlined at the branches that select them. When inlining fails
+            #   the code is simply gone, and the output looks perfectly clean
+            #   while missing statements. So compare what we emitted against
+            #   what is reachable, and never ship the difference.
+            if _has_goto(f.body) or self._lost_code(e, stop):
                 f.body = [self._linear(e, stop)]
                 f.unstructured = True
             out.append(f)
         return out
+
+    def _lost_code(self, lo: int, hi: int) -> bool:
+        """Did the structured form drop any instruction that can actually run?"""
+        seen = {lo}
+        stack = [lo]
+        while stack:
+            n = stack.pop()
+            for t in self._succs(n, lo, hi):
+                if t not in seen:
+                    seen.add(t)
+                    stack.append(t)
+        return bool(seen - self._covered)
 
     # -- structuring
 
@@ -352,6 +401,7 @@ class Decompiler:
         while addr < hi:
             i = self.at[addr]
             _, mn, args = self.instrs[i]
+            self._covered.add(addr)
 
             # --- a loop starts here (something jumps back to this address)
             if addr in self.loops and self.loops[addr] < hi:
@@ -597,10 +647,17 @@ class Decompiler:
         order = sorted(leaders)
 
         blocks: list[tuple[int, list[Stmt]]] = []
+        # A block boundary can land in the middle of an expression -- a debug
+        # block's skip target does exactly that -- so a value computed in one
+        # block is consumed by a branch in the next. Giving each block a fresh
+        # stack drops that value, and the calls inside it vanish with it. The
+        # stack therefore carries across a fall-through edge, and only there.
+        carry: list[Expr] = []
         for k, start in enumerate(order):
             stop = order[k + 1] if k + 1 < len(order) else hi
             stmts: list[Stmt] = []
-            stack: list[Expr] = []
+            stack: list[Expr] = carry
+            carry = []
             addr = start
             done = False
             while addr < stop:
@@ -608,6 +665,7 @@ class Decompiler:
                 _, mn, args = self.instrs[i]
                 nxt = self._next_addr(addr)
                 if mn == "Goto":
+                    _flush(stack, stmts)
                     stmts.append(PcSet(args[0]))
                     done = True
                     break
@@ -615,11 +673,13 @@ class Decompiler:
                     cond = stack.pop() if stack else Const(0)
                     if mn == "GoTrue":
                         cond = _not(cond)
+                    _flush(stack, stmts)
                     # cond is the fall-through condition.
                     stmts.append(If(cond, [PcSet(nxt)], [PcSet(args[0])]))
                     done = True
                     break
                 if mn == "DebugSkip":
+                    _flush(stack, stmts)
                     stmts.append(PcSet(args[0]))   # developer mode off
                     done = True
                     break
@@ -635,12 +695,16 @@ class Decompiler:
                     done = True
                     break
                 if mn in ("Return", "Halt"):
-                    stmts.append(Ret(stack[-1] if stack else None)
-                                 if mn == "Return" else Halt())
+                    rv = stack.pop() if (mn == "Return" and stack) else None
+                    _flush(stack, stmts)
+                    stmts.append(Ret(rv) if mn == "Return" else Halt())
                     done = True
                     break
                 addr = self._step(i, stack, stmts)
             if not done:
+                # fell through to the next block: whatever is still on the stack
+                # belongs to an expression that continues there
+                carry = stack
                 stmts.append(PcSet(stop) if stop < hi else Ret(None))
             blocks.append((start, stmts))
         return Dispatch(lo, blocks)
@@ -805,6 +869,7 @@ class Decompiler:
 
     def _step(self, i: int, stack: list[Expr], out: list[Stmt]) -> int:
         off, mn, args = self.instrs[i]
+        self._covered.add(off)
         nxt = self._next_addr(off)
         p = self.pkg
 
@@ -828,12 +893,14 @@ class Decompiler:
         elif mn == "Pop":
             if stack:
                 e = stack.pop()
-                if isinstance(e, Call):
+                if _has_call(e):
                     out.append(Do(e))
         elif mn == "PopN":
             for _ in range(args[0]):
                 if stack:
-                    stack.pop()
+                    e = stack.pop()
+                    if _has_call(e):
+                        out.append(Do(e))
         elif mn == "Copy":
             if stack:
                 stack.append(stack[-1])

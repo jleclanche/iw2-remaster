@@ -215,49 +215,99 @@ func local_2048() -> Variant:
 
 func local_2274() -> Variant:
 	var v0: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("iActOne.StoryElement1.10 : Story element has begun.\n")
-	iinventory.add_tug()
-	iloadout.set_ship(1)
-	iinventory.add(484, 5)
-	await iconversation.begin()
-	await iconversation.say(0, "name_smith", "a1_master_sure_got_ourselves")
-	await iconversation.say(0, "name_smith", "a1_master_ive_already_has_a_play")
-	await iconversation.say(0, "name_smith", "a1_master_reackon_itll_fly_like_a_dream")
-	await iconversation.add_response("a1_master_lamb_chop", "a1_master_lamb_chop_how_about_that")
-	await iconversation.add_response("a1_master_southern_cross", "a1_master_the_southern_cross_thats_a_good_name")
-	await iconversation.add_response("a1_master_crazy_horse", "a1_master_how_about_crazy_horse")
-	await iconversation.add_response("a1_master_jolly_roger", "a1_master_what_about_jolly_roger")
-	await iconversation.add_response("a1_master_black_pig", "a1_master_mmmm_black_pig_is_a_good_name")
-	v0 = await iconversation.ask(0, "name_smith", "a1_master_only_thing_she_needs_now_is_a_name")
-	if 1 == v0:
-		await iconversation.say(0, "name_smith", "a1_master_lambchop_what_kind_of_stupid_name_is_that")
-		await iconversation.say(0, "name_cal", "a1_master_well_you_did_ask")
-		await iconversation.say(0, "name_smith", "a1_master_sigh_lambchop_it_is")
-		await iconversation.end()
-		global.set_string("g_player_ship_name", "a1_ship_name_1")
-	else:
-		if 2 == v0:
+	var _pc: int = 2274
+	while true:
+		if _pc == 2274:
+			_pc = 2305
+			continue
+		elif _pc == 2284:
+			debug.print_string("iActOne.StoryElement1.10 : Story element has begun.\n")
+			_pc = 2305
+			continue
+		elif _pc == 2305:
+			iinventory.add_tug()
+			iloadout.set_ship(1)
+			iinventory.add(484, 5)
+			await iconversation.begin()
+			await iconversation.say(0, "name_smith", "a1_master_sure_got_ourselves")
+			await iconversation.say(0, "name_smith", "a1_master_ive_already_has_a_play")
+			await iconversation.say(0, "name_smith", "a1_master_reackon_itll_fly_like_a_dream")
+			await iconversation.add_response("a1_master_lamb_chop", "a1_master_lamb_chop_how_about_that")
+			await iconversation.add_response("a1_master_southern_cross", "a1_master_the_southern_cross_thats_a_good_name")
+			await iconversation.add_response("a1_master_crazy_horse", "a1_master_how_about_crazy_horse")
+			await iconversation.add_response("a1_master_jolly_roger", "a1_master_what_about_jolly_roger")
+			await iconversation.add_response("a1_master_black_pig", "a1_master_mmmm_black_pig_is_a_good_name")
+			v0 = await iconversation.ask(0, "name_smith", "a1_master_only_thing_she_needs_now_is_a_name")
+			if 1 == v0:
+				_pc = 2631
+				continue
+			else:
+				_pc = 2761
+				continue
+		elif _pc == 2631:
+			await iconversation.say(0, "name_smith", "a1_master_lambchop_what_kind_of_stupid_name_is_that")
+			await iconversation.say(0, "name_cal", "a1_master_well_you_did_ask")
+			await iconversation.say(0, "name_smith", "a1_master_sigh_lambchop_it_is")
+			await iconversation.end()
+			global.set_string("g_player_ship_name", "a1_ship_name_1")
+			_pc = 3104
+			continue
+		elif _pc == 2761:
+			if 2 == v0:
+				_pc = 2774
+				continue
+			else:
+				_pc = 2848
+				continue
+		elif _pc == 2774:
 			await iconversation.say(0, "name_smith", "a1_master_good_name")
 			await iconversation.end()
 			global.set_string("g_player_ship_name", "a1_ship_name_2")
-		else:
+			_pc = 3104
+			continue
+		elif _pc == 2848:
 			if 3 == v0:
-				await iconversation.say(0, "name_smith", "a1_master_crazy_horse_good_has_a_fugative_edge")
-				await iconversation.end()
-				global.set_string("g_player_ship_name", "a1_ship_name_3")
+				_pc = 2861
+				continue
 			else:
-				if 4 == v0:
-					await iconversation.say(0, "name_smith", "a1_master_well_its_not_the_most_subtle")
-					await iconversation.end()
-					global.set_string("g_player_ship_name", "a1_ship_name_4")
-				else:
-					if 5 != v0:
-						return
-					await iconversation.say(0, "name_smith", "a1_master_black_pig_well_its_you_who_will_flying_it")
-					await iconversation.end()
-					global.set_string("g_player_ship_name", "a1_ship_name_5")
-	return
+				_pc = 2935
+				continue
+		elif _pc == 2861:
+			await iconversation.say(0, "name_smith", "a1_master_crazy_horse_good_has_a_fugative_edge")
+			await iconversation.end()
+			global.set_string("g_player_ship_name", "a1_ship_name_3")
+			_pc = 3104
+			continue
+		elif _pc == 2935:
+			if 4 == v0:
+				_pc = 2948
+				continue
+			else:
+				_pc = 3022
+				continue
+		elif _pc == 2948:
+			await iconversation.say(0, "name_smith", "a1_master_well_its_not_the_most_subtle")
+			await iconversation.end()
+			global.set_string("g_player_ship_name", "a1_ship_name_4")
+			_pc = 3104
+			continue
+		elif _pc == 3022:
+			if 5 == v0:
+				_pc = 3035
+				continue
+			else:
+				_pc = 3104
+				continue
+		elif _pc == 3035:
+			await iconversation.say(0, "name_smith", "a1_master_black_pig_well_its_you_who_will_flying_it")
+			await iconversation.end()
+			global.set_string("g_player_ship_name", "a1_ship_name_5")
+			_pc = 3104
+			continue
+		elif _pc == 3104:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3106() -> Variant:
@@ -657,88 +707,238 @@ func stepson_member() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = 0
-	v1 = self
-	v2 = state.find(v1)
-	if not (v2):
-		v2 = state.create(v1, 0)
-	if PogRuntime.TRACE:
-		debug.print_string("iActOne.StepsonMember : Starting to monitoring the players career with the Stepsons.\n")
-	if _pog_is_null(state.progress(v2)):
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 484, 1, 344, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 483, 1, 7, 3, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 377, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 559, 1, 336, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 498, 1, 90, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 488, 1, 313, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 317, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 563, 1, 330, 1, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 24, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 53, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 52, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 45, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 165, 1, 29, 3, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 40, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 50, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 494, 1, 83, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 494, 1, 45, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 167, 1, 347, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 213, 1, 351, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 496, 1, 363, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 299, 1, 358, 1, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 301, 1, 344, 1, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 590, 1, 377, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 371, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 591, 1, 381, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 592, 1, 390, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 167, 1, 47, 5, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 496, 1, 38, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 40, 4, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 45, 4, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 24, 2, 2))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 47, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 591, 1, 58, 1, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 592, 1, 28, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 35, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 32, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 31, 2, 1))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 35, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 1, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 2, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 4, 0))
-		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 1, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 484, 1, 90, 3, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 483, 1, 39, 10, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 490, 1, 26, 10, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 498, 1, 258, 5, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 488, 1, 268, 5, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 492, 1, 293, 5, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 563, 1, 313, 5, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 10, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 20, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 40, 0))
-		itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 10, 0))
-		state.set_progress(v2, 1)
-		global.set_bool("g_act1_stepsons_pleased", 1)
-		state.destroy(self)
-		return state.progress(v2)
-	if state.progress(v2) == 1:
-		global.set_bool("g_act1_stepsons_pleased", 1)
-		state.destroy(self)
-		return state.progress(v2)
-	return state.progress(v2)
+	var _pc: int = 7690
+	while true:
+		if _pc == 7690:
+			v0 = 0
+			v1 = self
+			v2 = state.find(v1)
+			if not (v2):
+				_pc = 7756
+				continue
+			else:
+				_pc = 7781
+				continue
+		elif _pc == 7756:
+			v2 = state.create(v1, 0)
+			_pc = 7781
+			continue
+		elif _pc == 7781:
+			_pc = 7807
+			continue
+		elif _pc == 7786:
+			debug.print_string("iActOne.StepsonMember : Starting to monitoring the players career with the Stepsons.\n")
+			_pc = 7807
+			continue
+		elif _pc == 7807:
+			_pc = 11172
+			continue
+		elif _pc == 7812:
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 484, 1, 344, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 483, 1, 7, 3, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 377, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 559, 1, 336, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 498, 1, 90, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 488, 1, 313, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 317, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 563, 1, 330, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 24, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 492, 1, 53, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 45, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 165, 1, 29, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 40, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 488, 1, 50, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 494, 1, 83, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 494, 1, 45, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 167, 1, 347, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 213, 1, 351, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 496, 1, 363, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 299, 1, 358, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 301, 1, 344, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 590, 1, 377, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 371, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 591, 1, 381, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 592, 1, 390, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 167, 1, 47, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 496, 1, 38, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 40, 4, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 45, 4, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 24, 2, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 47, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 591, 1, 58, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 592, 1, 28, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 299, 1, 35, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 301, 1, 32, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 590, 1, 31, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 490, 1, 35, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 4, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 1, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 484, 1, 90, 3, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 483, 1, 39, 10, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 490, 1, 26, 10, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 498, 1, 258, 5, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 488, 1, 268, 5, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 492, 1, 293, 5, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 563, 1, 313, 5, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 47, 10, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 488, 1, 45, 20, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 40, 0))
+			itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 10, 0))
+			state.set_progress(v2, 1)
+			_pc = 10804
+			continue
+		elif _pc == 10804:
+			global.set_bool("g_act1_stepsons_pleased", 1)
+			state.destroy(self)
+			_pc = 11206
+			continue
+		elif _pc == 10858:
+			if not (global.pog_bool("g_act1_stepsons_pleased")):
+				_pc = 10884
+				continue
+			else:
+				_pc = 11167
+				continue
+		elif _pc == 10884:
+			_pc = 10889
+			continue
+		elif _pc == 10889:
+			await _pog_frame()
+			if _pog_every(10890, 60.0):
+				_pc = 10903
+				continue
+			else:
+				_pc = 11124
+				continue
+		elif _pc == 10903:
+			_pc = 10929
+			continue
+		elif _pc == 10908:
+			debug.print_string("iActOne.StepsonMember - checking to see if player has completed enough generated missions to advance to next act stage\n")
+			_pc = 10929
+			continue
+		elif _pc == 10929:
+			v0 = 1 + v0
+			if 5 == v0:
+				_pc = 10955
+				continue
+			else:
+				_pc = 11013
+				continue
+		elif _pc == 10955:
+			_pc = 10981
+			continue
+		elif _pc == 10960:
+			debug.print_string("iActOne.StepsonMember - player has completed enought generated Stepson missions to advance to next state....\n")
+			_pc = 10981
+			continue
+		elif _pc == 10981:
+			global.set_bool("g_act1_stepsons_pleased", 1)
+			_pc = 11129
+			continue
+		elif _pc == 11008:
+			_pc = 11124
+			continue
+		elif _pc == 11013:
+			if 0 > v0:
+				_pc = 11025
+				continue
+			else:
+				_pc = 11098
+				continue
+		elif _pc == 11025:
+			_pc = 11093
+			continue
+		elif _pc == 11030:
+			debug.print_string("iActOne.StepsonMember - player has completed ")
+			debug.print_int(v0)
+			debug.print_string(" generated Stepson missions - five are needed to progress.....\n")
+			_pc = 11093
+			continue
+		elif _pc == 11093:
+			_pc = 11124
+			continue
+		elif _pc == 11098:
+			_pc = 11124
+			continue
+		elif _pc == 11103:
+			debug.print_string("iActOne.StepsonMember - not enough generated missions have been completed to advance to next stage \n")
+			_pc = 11124
+			continue
+		elif _pc == 11124:
+			_pc = 10889
+			continue
+		elif _pc == 11129:
+			state.destroy(self)
+			_pc = 11206
+			continue
+		elif _pc == 11162:
+			_pc = 10858
+			continue
+		elif _pc == 11167:
+			_pc = 11206
+			continue
+		elif _pc == 11172:
+			state.progress(v2)
+			if not _pog_is_null(state.progress(v2)):
+				_pc = 11198
+				continue
+			else:
+				_pc = 7812
+				continue
+		elif _pc == 11198:
+			if not _pog_is_null(1):
+				_pc = 11206
+				continue
+			else:
+				_pc = 10804
+				continue
+		elif _pc == 11206:
+			return
+		else:
+			return 0
 	return 0
 
 func piracy_rating_handler() -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iActOne.piracyRatingHandler - Starting temporary piracy rating incrementor\n")
+	var _pc: int = 11208
 	while true:
-		await _pog_wait(1)
-		global.set_int("g_piracy_rating", 100 + global.pog_int("g_piracy_rating"))
-		if PogRuntime.TRACE:
+		if _pc == 11208:
+			_pc = 11239
+			continue
+		elif _pc == 11218:
+			debug.print_string("iActOne.piracyRatingHandler - Starting temporary piracy rating incrementor\n")
+			_pc = 11239
+			continue
+		elif _pc == 11239:
+			_pc = 11244
+			continue
+		elif _pc == 11244:
+			await _pog_frame()
+			if _pog_every(11245, 1.0):
+				_pc = 11258
+				continue
+			else:
+				_pc = 11397
+				continue
+		elif _pc == 11258:
+			global.set_int("g_piracy_rating", 100 + global.pog_int("g_piracy_rating"))
+			_pc = 11397
+			continue
+		elif _pc == 11306:
 			debug.print_string(string.join("iActOne.PiracyRatingHandler - Piracy rating is now - ", string.from_int(global.pog_int("g_piracy_rating"))))
 			debug.print_string("\n")
-	return
+			_pc = 11397
+			continue
+		elif _pc == 11397:
+			_pc = 11244
+			continue
+		elif _pc == 11402:
+			return
+		else:
+			return 0
 	return 0
 
 func piracy_rating_tracker() -> Variant:
@@ -1280,6 +1480,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 15296
 			continue
 		elif _pc == 15190:
+			state.progress(v1)
 			if not _pog_is_null(state.progress(v1)):
 				_pc = 15216
 				continue
@@ -1602,6 +1803,7 @@ func marauder_encounters() -> Variant:
 			_pc = 16640
 			continue
 		elif _pc == 16579:
+			state.progress(v1)
 			if not _pog_is_null(state.progress(v1)):
 				_pc = 16605
 				continue
@@ -2126,6 +2328,7 @@ func haven_station_introduction() -> Variant:
 			_pc = 20452
 			continue
 		elif _pc == 20418:
+			state.progress(v1)
 			if not _pog_is_null(state.progress(v1)):
 				_pc = 20444
 				continue
@@ -2146,27 +2349,87 @@ func haven_station_introduction() -> Variant:
 	return 0
 
 func local_20461() -> Variant:
-	if config.exists("system", "icGUIMovie", "az"):
-		config.set_bool("system", "icGUIMovie", "az", 1)
-	else:
-		config.create_bool("system", "icGUIMovie", "az", 1)
-	if config.exists("system", "icGUIMovie", "ocal"):
-		config.set_bool("system", "icGUIMovie", "ocal", 1)
-	else:
-		config.create_bool("system", "icGUIMovie", "ocal", 1)
-	if config.exists("system", "icGUIMovie", "jaffs"):
-		config.set_bool("system", "icGUIMovie", "jaffs", 1)
-	else:
-		config.create_bool("system", "icGUIMovie", "jaffs", 1)
-	if config.exists("system", "icGUIMovie", "lori"):
-		config.set_bool("system", "icGUIMovie", "lori", 1)
-	else:
-		config.create_bool("system", "icGUIMovie", "lori", 1)
-	if config.exists("system", "icGUIMovie", "smith"):
-		config.set_bool("system", "icGUIMovie", "smith", 1)
-	else:
-		config.create_bool("system", "icGUIMovie", "smith", 1)
-	return 0
+	var _pc: int = 20461
+	while true:
+		if _pc == 20461:
+			if config.exists("system", "icGUIMovie", "az"):
+				_pc = 20498
+				continue
+			else:
+				_pc = 20537
+				continue
+		elif _pc == 20498:
+			config.set_bool("system", "icGUIMovie", "az", 1)
+			_pc = 20571
+			continue
+		elif _pc == 20537:
+			config.create_bool("system", "icGUIMovie", "az", 1)
+			_pc = 20571
+			continue
+		elif _pc == 20571:
+			if config.exists("system", "icGUIMovie", "ocal"):
+				_pc = 20608
+				continue
+			else:
+				_pc = 20647
+				continue
+		elif _pc == 20608:
+			config.set_bool("system", "icGUIMovie", "ocal", 1)
+			_pc = 20681
+			continue
+		elif _pc == 20647:
+			config.create_bool("system", "icGUIMovie", "ocal", 1)
+			_pc = 20681
+			continue
+		elif _pc == 20681:
+			if config.exists("system", "icGUIMovie", "jaffs"):
+				_pc = 20718
+				continue
+			else:
+				_pc = 20757
+				continue
+		elif _pc == 20718:
+			config.set_bool("system", "icGUIMovie", "jaffs", 1)
+			_pc = 20791
+			continue
+		elif _pc == 20757:
+			config.create_bool("system", "icGUIMovie", "jaffs", 1)
+			_pc = 20791
+			continue
+		elif _pc == 20791:
+			if config.exists("system", "icGUIMovie", "lori"):
+				_pc = 20828
+				continue
+			else:
+				_pc = 20867
+				continue
+		elif _pc == 20828:
+			config.set_bool("system", "icGUIMovie", "lori", 1)
+			_pc = 20901
+			continue
+		elif _pc == 20867:
+			config.create_bool("system", "icGUIMovie", "lori", 1)
+			_pc = 20901
+			continue
+		elif _pc == 20901:
+			if config.exists("system", "icGUIMovie", "smith"):
+				_pc = 20938
+				continue
+			else:
+				_pc = 20977
+				continue
+		elif _pc == 20938:
+			config.set_bool("system", "icGUIMovie", "smith", 1)
+			_pc = 21011
+			continue
+		elif _pc == 20977:
+			config.create_bool("system", "icGUIMovie", "smith", 1)
+			_pc = 21011
+			continue
+		elif _pc == 21011:
+			return 0
+		else:
+			return 0
 	return 0
 
 func master_script() -> Variant:
@@ -3178,6 +3441,7 @@ func master_script() -> Variant:
 			_pc = 32295
 			continue
 		elif _pc == 32126:
+			state.progress(v2)
 			if not _pog_is_null(state.progress(v2)):
 				_pc = 32152
 				continue
@@ -3626,26 +3890,65 @@ func main() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = 0
-	v3 = iship.find_player_ship()
-	await local_20461()
-	if 1 < global.pog_int("g_current_act"):
-		if PogRuntime.TRACE:
+	var _pc: int = 34053
+	while true:
+		if _pc == 34053:
+			v0 = 0
+			v3 = iship.find_player_ship()
+			await local_20461()
+			if 1 < global.pog_int("g_current_act"):
+				_pc = 34125
+				continue
+			else:
+				_pc = 34208
+				continue
+		elif _pc == 34125:
+			_pc = 34151
+			continue
+		elif _pc == 34130:
 			debug.print_string("iActOne.Main: Initialising act 1\n")
-		global.set_int("g_current_act", 1)
-		await local_0()
-		_pog_spawn(master_script.bind())
-		v0 = 1
-	if v0:
-		v1 = imapentity.waypoint_for_entity(imapentity.find_by_name("Maurice's Freighter Service Depot"))
-		v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, 9000000.0, 0.0)
-		await iutilities.create_player("ini:/sims/ships/player/escape_tug", v2)
-		if v3:
+			_pc = 34151
+			continue
+		elif _pc == 34151:
+			global.set_int("g_current_act", 1)
+			await local_0()
+			_pog_spawn(master_script.bind())
+			v0 = 1
+			_pc = 34208
+			continue
+		elif _pc == 34208:
+			if v0:
+				_pc = 34218
+				continue
+			else:
+				_pc = 34370
+				continue
+		elif _pc == 34218:
+			v1 = imapentity.waypoint_for_entity(imapentity.find_by_name("Maurice's Freighter Service Depot"))
+			v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, 9000000.0, 0.0)
+			await iutilities.create_player("ini:/sims/ships/player/escape_tug", v2)
+			if v3:
+				_pc = 34332
+				continue
+			else:
+				_pc = 34351
+				continue
+		elif _pc == 34332:
 			sim.destroy(v3)
-		idirector.end()
-	else:
-		await iutilities.create_player("", imapentity.find_by_name("Lucrecia's Base"))
-	return 0
+			_pc = 34351
+			continue
+		elif _pc == 34351:
+			idirector.end()
+			_pc = 34410
+			continue
+		elif _pc == 34370:
+			await iutilities.create_player("", imapentity.find_by_name("Lucrecia's Base"))
+			_pc = 34410
+			continue
+		elif _pc == 34410:
+			return 0
+		else:
+			return 0
 	return 0
 
 func base_main() -> Variant:
@@ -3822,32 +4125,108 @@ func local_35371(v0) -> Variant:
 	return 0
 
 func piracy_email_hinter() -> Variant:
-	if not (global.exists("g_hint_timer")):
-		global.create_int("g_hint_timer", 2, 0)
-		global.create_int("g_current_hint_mail", 2, 0)
-		global.create_bool("g_read_current_mail", 2, 0)
-		global.create_int("g_current_waiter", 2, math.random_int(60, 300))
-	if _pog_is_null(global.pog_int("g_current_hint_mail")) or iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail")))):
-		global.set_bool("g_read_current_mail", 1)
+	var _pc: int = 35529
 	while true:
-		await _pog_wait(1)
-		if 1 == global.pog_bool("g_read_current_mail"):
+		if _pc == 35529:
+			if not (global.exists("g_hint_timer")):
+				_pc = 35555
+				continue
+			else:
+				_pc = 35668
+				continue
+		elif _pc == 35555:
+			global.create_int("g_hint_timer", 2, 0)
+			global.create_int("g_current_hint_mail", 2, 0)
+			global.create_bool("g_read_current_mail", 2, 0)
+			global.create_int("g_current_waiter", 2, math.random_int(60, 300))
+			_pc = 35668
+			continue
+		elif _pc == 35668:
+			if _pog_is_null(global.pog_int("g_current_hint_mail")) or iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail")))):
+				_pc = 35755
+				continue
+			else:
+				_pc = 35777
+				continue
+		elif _pc == 35755:
+			global.set_bool("g_read_current_mail", 1)
+			_pc = 35777
+			continue
+		elif _pc == 35777:
+			_pc = 35782
+			continue
+		elif _pc == 35782:
+			await _pog_frame()
+			if _pog_every(35783, 1.0):
+				_pc = 35796
+				continue
+			else:
+				_pc = 36242
+				continue
+		elif _pc == 35796:
+			if 1 == global.pog_bool("g_read_current_mail"):
+				_pc = 35823
+				continue
+			else:
+				_pc = 35865
+				continue
+		elif _pc == 35823:
 			global.set_int("g_hint_timer", 1 + global.pog_int("g_hint_timer"))
-		if global.pog_int("g_current_waiter") > global.pog_int("g_hint_timer"):
+			_pc = 35865
+			continue
+		elif _pc == 35865:
+			if global.pog_int("g_current_waiter") > global.pog_int("g_hint_timer"):
+				_pc = 35910
+				continue
+			else:
+				_pc = 36242
+				continue
+		elif _pc == 35910:
 			global.set_int("g_hint_timer", 0)
 			global.set_int("g_current_waiter", math.random_int(60, 300))
 			global.set_int("g_current_hint_mail", 1 + global.pog_int("g_current_hint_mail"))
 			iemail.send_email("a1_master_stepsons_mail_sender", await local_35371(global.pog_int("g_current_hint_mail")), await local_35213(global.pog_int("g_current_hint_mail")), 1)
 			if 4 == global.pog_int("g_current_hint_mail"):
-				global.destroy("g_hint_timer")
-				global.destroy("g_current_hint_mail")
-				global.destroy("g_read_current_mail")
-				global.destroy("g_current_waiter")
-				global.create_bool("g_finished_email_hinter", 2, 1)
-				return
-		if not (iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail"))))):
+				_pc = 36129
+				continue
+			else:
+				_pc = 36242
+				continue
+		elif _pc == 36129:
+			global.destroy("g_hint_timer")
+			global.destroy("g_current_hint_mail")
+			global.destroy("g_read_current_mail")
+			global.destroy("g_current_waiter")
+			global.create_bool("g_finished_email_hinter", 2, 1)
+			_pc = 36349
 			continue
-		global.set_bool("g_read_current_mail", 1)
-	return
+		elif _pc == 36242:
+			if _pog_every(36242, 10.0):
+				_pc = 36255
+				continue
+			else:
+				_pc = 36342
+				continue
+		elif _pc == 36255:
+			if iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail")))):
+				_pc = 36320
+				continue
+			else:
+				_pc = 36342
+				continue
+		elif _pc == 36320:
+			global.set_bool("g_read_current_mail", 1)
+			_pc = 36342
+			continue
+		elif _pc == 36342:
+			_pc = 35782
+			continue
+		elif _pc == 36347:
+			_pc = 36349
+			continue
+		elif _pc == 36349:
+			return
+		else:
+			return 0
 	return 0
 

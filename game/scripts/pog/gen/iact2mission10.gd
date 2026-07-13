@@ -107,13 +107,38 @@ func local_371() -> Variant:
 	return 0
 
 func local_479() -> Variant:
-	while icomms.is_in_conversation():
-		await _pog_wait(0.5)
-	if not (await iutilities.skip_mission(" Grassy Knoll??")):
-		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
-	return
+	var _pc: int = 479
+	while true:
+		if _pc == 479:
+			if icomms.is_in_conversation():
+				_pc = 497
+				continue
+			else:
+				_pc = 534
+				continue
+		elif _pc == 497:
+			await _pog_wait(0.5)
+			_pc = 479
+			continue
+		elif _pc == 534:
+			if not (await iutilities.skip_mission(" Grassy Knoll??")):
+				_pc = 560
+				continue
+			else:
+				_pc = 592
+				continue
+		elif _pc == 560:
+			_pog_detach(_pog_spawn(mission_handler.bind()))
+			_pc = 606
+			continue
+		elif _pc == 592:
+			await stub()
+			_pc = 606
+			continue
+		elif _pc == 606:
+			return
+		else:
+			return 0
 	return 0
 
 func local_608(v0, v1, v2) -> Variant:
@@ -245,49 +270,128 @@ func local_1691(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = iship.find_player_ship()
-	v2 = 0
-	v3 = 0
-	v5 = imapentity.find_by_name_in_system("Nymas MAAS Security Station", "map:/geog/badlands/santa_romera")
-	if PogRuntime.TRACE:
-		debug.print_string("Act2 Mission 10 - Setting up security waypoint\n")
+	var _pc: int = 1691
 	while true:
-		await _pog_wait(1)
-		if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+		if _pc == 1691:
+			v1 = iship.find_player_ship()
+			v2 = 0
+			v3 = 0
+			v5 = imapentity.find_by_name_in_system("Nymas MAAS Security Station", "map:/geog/badlands/santa_romera")
+			_pc = 1787
 			continue
-		if _pog_is_null(v3):
+		elif _pc == 1766:
+			debug.print_string("Act2 Mission 10 - Setting up security waypoint\n")
+			_pc = 1787
+			continue
+		elif _pc == 1787:
+			_pc = 1792
+			continue
+		elif _pc == 1792:
+			await _pog_frame()
+			if _pog_every(1793, 1.0):
+				_pc = 1806
+				continue
+			else:
+				_pc = 2455
+				continue
+		elif _pc == 1806:
+			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+				_pc = 1833
+				continue
+			else:
+				_pc = 2455
+				continue
+		elif _pc == 1833:
+			if _pog_is_null(v3):
+				_pc = 1845
+				continue
+			else:
+				_pc = 2191
+				continue
+		elif _pc == 1845:
 			v4 = await iutilities.create_waypoint_relative_to(v5, 0.0, 0.0, 0.0)
 			await iutilities.sim_place_between_exact(v4, v5, isim.cast(v1), 30000.0)
 			object.add_int_property(v5, "reactive_exception", 1)
-			if PogRuntime.TRACE:
-				if _pog_is_null(v4):
-					debug.print_string("Act2 Mission 10 - O bobbins its not here\n")
+			_pc = 1997
+			continue
+		elif _pc == 1963:
+			if _pog_is_null(v4):
+				_pc = 1976
+				continue
+			else:
+				_pc = 1997
+				continue
+		elif _pc == 1976:
+			debug.print_string("Act2 Mission 10 - O bobbins its not here\n")
+			_pc = 1997
+			continue
+		elif _pc == 1997:
 			object.set_string_property(v4, "name", "a2_m10_target_waypoint")
 			isim.set_sensor_visibility(isim.cast(v4), 1)
 			await istation.add_reactive_exception(ihabitat.cast(v5))
 			await irangecheck.add_traffic_exception(imapentity.cast(v5))
 			object.add_int_property(v5, "reactive_exception", 1)
-			if PogRuntime.TRACE:
-				debug.print_string("Act 2 Mission 10 - security waypoint set up\n")
+			_pc = 2179
+			continue
+		elif _pc == 2158:
+			debug.print_string("Act 2 Mission 10 - security waypoint set up\n")
+			_pc = 2179
+			continue
+		elif _pc == 2179:
 			v3 = 1
-		else:
-			if 250000.0 > sim.distance_between(v1, v4):
+			_pc = 2455
+			continue
+		elif _pc == 2191:
+			if 250000.0 <= sim.distance_between(v1, v4):
+				_pc = 2225
 				continue
-			if not _pog_is_null(v2):
+			else:
+				_pc = 2455
 				continue
+		elif _pc == 2225:
+			if _pog_is_null(v2):
+				_pc = 2237
+				continue
+			else:
+				_pc = 2455
+				continue
+		elif _pc == 2237:
 			iregion.create_l_d_s_i(v4, 25000.0)
 			_pog_spawn(local_4386.bind(await local_3374(v5), v0, v5))
-			if PogRuntime.TRACE:
-				debug.print_string("security near-to schedule triggered")
+			_pc = 2329
+			continue
+		elif _pc == 2308:
+			debug.print_string("security near-to schedule triggered")
+			_pc = 2329
+			continue
+		elif _pc == 2329:
 			_pog_spawn(local_5440.bind(v4, v5))
-			if PogRuntime.TRACE:
-				debug.print_string("dump created")
+			_pc = 2379
+			continue
+		elif _pc == 2358:
+			debug.print_string("dump created")
+			_pc = 2379
+			continue
+		elif _pc == 2379:
 			_pog_spawn(local_6941.bind(v5, v4, v0))
-			if PogRuntime.TRACE:
-				debug.print_string("window made")
+			_pc = 2434
+			continue
+		elif _pc == 2413:
+			debug.print_string("window made")
+			_pc = 2434
+			continue
+		elif _pc == 2434:
 			v2 = 1
 			await ibacktobase.inhibit()
-	return 0
+			_pc = 2455
+			continue
+		elif _pc == 2455:
+			_pc = 1792
+			continue
+		elif _pc == 2460:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_2464(v0) -> Variant:
@@ -295,53 +399,117 @@ func local_2464(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = imapentity.find_by_name_in_system("Hot Rock Independent Waystation", "map:/geog/badlands/santa_romera")
-	v3 = 0
-	if PogRuntime.TRACE:
-		if _pog_is_null(v2):
-			debug.print_string("O bobbins its not here")
-	await istation.add_reactive_exception(ihabitat.cast(v2))
-	await irangecheck.add_traffic_exception(imapentity.cast(v2))
-	object.add_int_property(v2, "reactive_exception", 1)
-	v1 = await iutilities.create_waypoint_relative_to(v2, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
-	object.set_string_property(v1, "name", "a2_m10_meeting_place")
-	isim.set_sensor_visibility(isim.cast(v1), 1)
-	await istation.add_reactive_exception(ihabitat.cast(v2))
-	if PogRuntime.TRACE:
-		debug.print_string("Act2 Mission 10 - meeting waypoint setup")
+	var _pc: int = 2464
 	while true:
-		await _pog_wait(5)
-		v4 = iship.find_player_ship()
-		if 300000.0 > sim.distance_between(v4, v1):
+		if _pc == 2464:
+			v2 = imapentity.find_by_name_in_system("Hot Rock Independent Waystation", "map:/geog/badlands/santa_romera")
+			v3 = 0
+			_pc = 2547
 			continue
-		if not _pog_is_null(v3):
+		elif _pc == 2513:
+			if _pog_is_null(v2):
+				_pc = 2526
+				continue
+			else:
+				_pc = 2547
+				continue
+		elif _pc == 2526:
+			debug.print_string("O bobbins its not here")
+			_pc = 2547
 			continue
-		_pog_spawn(local_608.bind(_pog_clone(await local_2999(v1)), v0, v1))
-		v3 = 1
-	return 0
+		elif _pc == 2547:
+			await istation.add_reactive_exception(ihabitat.cast(v2))
+			await irangecheck.add_traffic_exception(imapentity.cast(v2))
+			object.add_int_property(v2, "reactive_exception", 1)
+			v1 = await iutilities.create_waypoint_relative_to(v2, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
+			object.set_string_property(v1, "name", "a2_m10_meeting_place")
+			isim.set_sensor_visibility(isim.cast(v1), 1)
+			await istation.add_reactive_exception(ihabitat.cast(v2))
+			_pc = 2854
+			continue
+		elif _pc == 2833:
+			debug.print_string("Act2 Mission 10 - meeting waypoint setup")
+			_pc = 2854
+			continue
+		elif _pc == 2854:
+			_pc = 2859
+			continue
+		elif _pc == 2859:
+			await _pog_frame()
+			if _pog_every(2860, 5.0):
+				_pc = 2873
+				continue
+			else:
+				_pc = 2990
+				continue
+		elif _pc == 2873:
+			v4 = iship.find_player_ship()
+			if 300000.0 <= sim.distance_between(v4, v1):
+				_pc = 2926
+				continue
+			else:
+				_pc = 2990
+				continue
+		elif _pc == 2926:
+			if _pog_is_null(v3):
+				_pc = 2938
+				continue
+			else:
+				_pc = 2990
+				continue
+		elif _pc == 2938:
+			_pog_spawn(local_608.bind(_pog_clone(await local_2999(v1)), v0, v1))
+			v3 = 1
+			_pc = 2990
+			continue
+		elif _pc == 2990:
+			_pc = 2859
+			continue
+		elif _pc == 2995:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_2999(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v2 = iship.create("ini:/sims/ships/independent/tug_armed", "a2_m10_third_man")
-	await ipilotsetup.generic_military(v2)
-	sim.set_cullable(v2, 0)
-	list.add_tail(v1, v2)
-	sim.place_relative_to(v2, v0, 0.0, 0.0, 400.0)
-	sim.point_at(v2, v0)
-	isim.set_indestructable(v2, 1)
-	if PogRuntime.TRACE:
-		debug.print_string("Act2 Mission 10: Meeting ship set up\n")
-	if PogRuntime.TRACE:
-		debug.print_string("Act2 Mission 10: Don't forget to make him VITAL\n")
-	v3 = iship.create("ini:/sims/ships/utility/temp_cargopod", "Cargo_LongRangeCannon")
-	list.add_tail(v1, v3)
-	object.set_int_property(v3, "cargo", 566)
-	iship.dock(v3, v2)
-	return _pog_clone(v1)
+	var _pc: int = 2999
+	while true:
+		if _pc == 2999:
+			v1 = null
+			v2 = iship.create("ini:/sims/ships/independent/tug_armed", "a2_m10_third_man")
+			await ipilotsetup.generic_military(v2)
+			sim.set_cullable(v2, 0)
+			list.add_tail(v1, v2)
+			sim.place_relative_to(v2, v0, 0.0, 0.0, 400.0)
+			sim.point_at(v2, v0)
+			isim.set_indestructable(v2, 1)
+			_pc = 3219
+			continue
+		elif _pc == 3198:
+			debug.print_string("Act2 Mission 10: Meeting ship set up\n")
+			_pc = 3219
+			continue
+		elif _pc == 3219:
+			_pc = 3245
+			continue
+		elif _pc == 3224:
+			debug.print_string("Act2 Mission 10: Don't forget to make him VITAL\n")
+			_pc = 3245
+			continue
+		elif _pc == 3245:
+			v3 = iship.create("ini:/sims/ships/utility/temp_cargopod", "Cargo_LongRangeCannon")
+			list.add_tail(v1, v3)
+			object.set_int_property(v3, "cargo", 566)
+			iship.dock(v3, v2)
+			_pc = 3364
+			continue
+		elif _pc == 3364:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3374(v0) -> Variant:
@@ -352,37 +520,50 @@ func local_3374(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = group.create()
-	v7 = ifaction.find("MAAS Corporation")
-	v2 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_one")
-	await ipilotsetup.generic_military(iship.cast(v2))
-	isim.set_faction(isim.cast(v2), v7)
-	group.add_sim(v1, v2)
-	v3 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_two")
-	await ipilotsetup.generic_military(iship.cast(v3))
-	isim.set_faction(isim.cast(v3), v7)
-	group.add_sim(v1, v3)
-	v4 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_three")
-	await ipilotsetup.generic_military(iship.cast(v4))
-	isim.set_faction(isim.cast(v4), v7)
-	group.add_sim(v1, v4)
-	v5 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_four")
-	await ipilotsetup.generic_military(iship.cast(v5))
-	isim.set_faction(isim.cast(v5), v7)
-	group.add_sim(v1, v5)
-	v6 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_five")
-	await ipilotsetup.generic_military(iship.cast(v6))
-	isim.set_faction(isim.cast(v6), v7)
-	group.add_sim(v1, v6)
-	sim.place_relative_to(v2, v0, 0.0, 0.0, 2000.0)
-	sim.place_relative_to(v3, v0, 0.0, 0.0, -2000.0)
-	sim.place_relative_to(v4, v0, 0.0, 2000.0, 0.0)
-	sim.place_relative_to(v5, v0, 0.0, -2000.0, 0.0)
-	sim.place_relative_to(v6, v0, 2000.0, 0.0, 0.0)
-	global.create_handle("g_security_force", 1, v1)
-	if PogRuntime.TRACE:
-		debug.print_string("security forces set up")
-	return v1
+	var _pc: int = 3374
+	while true:
+		if _pc == 3374:
+			v1 = group.create()
+			v7 = ifaction.find("MAAS Corporation")
+			v2 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_one")
+			await ipilotsetup.generic_military(iship.cast(v2))
+			isim.set_faction(isim.cast(v2), v7)
+			group.add_sim(v1, v2)
+			v3 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_two")
+			await ipilotsetup.generic_military(iship.cast(v3))
+			isim.set_faction(isim.cast(v3), v7)
+			group.add_sim(v1, v3)
+			v4 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_three")
+			await ipilotsetup.generic_military(iship.cast(v4))
+			isim.set_faction(isim.cast(v4), v7)
+			group.add_sim(v1, v4)
+			v5 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_four")
+			await ipilotsetup.generic_military(iship.cast(v5))
+			isim.set_faction(isim.cast(v5), v7)
+			group.add_sim(v1, v5)
+			v6 = iship.create("ini:/sims/ships/corporate/interceptor", "a2_m10_security_five")
+			await ipilotsetup.generic_military(iship.cast(v6))
+			isim.set_faction(isim.cast(v6), v7)
+			group.add_sim(v1, v6)
+			sim.place_relative_to(v2, v0, 0.0, 0.0, 2000.0)
+			sim.place_relative_to(v3, v0, 0.0, 0.0, -2000.0)
+			sim.place_relative_to(v4, v0, 0.0, 2000.0, 0.0)
+			sim.place_relative_to(v5, v0, 0.0, -2000.0, 0.0)
+			sim.place_relative_to(v6, v0, 2000.0, 0.0, 0.0)
+			global.create_handle("g_security_force", 1, v1)
+			_pc = 4297
+			continue
+		elif _pc == 4276:
+			debug.print_string("security forces set up")
+			_pc = 4297
+			continue
+		elif _pc == 4297:
+			_pc = 4307
+			continue
+		elif _pc == 4307:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4309(v0) -> Variant:
@@ -402,66 +583,211 @@ func local_4386(v0, v1, v2) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v3 = v2
-	v5 = 0
-	v6 = 0
-	v8 = iship.cast(group.leader(v0))
-	v9 = 0
-	v7 = 0
-	v4 = iship.find_player_ship()
-	if PogRuntime.TRACE:
-		debug.print_string("security monitor started")
+	var _pc: int = 4386
 	while true:
-		await _pog_wait(1)
-		if not (_pog_is_null(v5) and sim.cast(v3)):
+		if _pc == 4386:
+			v3 = v2
+			v5 = 0
+			v6 = 0
+			v8 = iship.cast(group.leader(v0))
+			v9 = 0
+			v7 = 0
+			v4 = iship.find_player_ship()
+			_pc = 4512
 			continue
-		if 300000.0 > sim.distance_between(v4, v3):
+		elif _pc == 4491:
+			debug.print_string("security monitor started")
+			_pc = 4512
 			continue
-		if _pog_is_null(v9):
+		elif _pc == 4512:
+			_pc = 4517
+			continue
+		elif _pc == 4517:
+			await _pog_frame()
+			if _pog_every(4518, 1.0):
+				_pc = 4531
+				continue
+			else:
+				_pc = 5432
+				continue
+		elif _pc == 4531:
+			if _pog_is_null(v5) and sim.cast(v3):
+				_pc = 4563
+				continue
+			else:
+				_pc = 5432
+				continue
+		elif _pc == 4563:
+			if 300000.0 <= sim.distance_between(v4, v3):
+				_pc = 4597
+				continue
+			else:
+				_pc = 5432
+				continue
+		elif _pc == 4597:
+			if _pog_is_null(v9):
+				_pc = 4609
+				continue
+			else:
+				_pc = 4644
+				continue
+		elif _pc == 4609:
 			await iconversation.one_liner(0, "a2_m10_clay", "a2_m10_dialogue_clay_careful_of_the_zone")
 			v9 = 1
-		if 25000.0 > sim.distance_between(v4, v3):
+			_pc = 4644
 			continue
-		if not (p_set.is_empty(isim.sims_in_radius_of_faction(isim.cast(v3), 5000.0, ifaction.find("Player")))) or not _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())) or iship.has_fired(v4) or 5000.0 < sim.distance_between(v4, v3):
-			if PogRuntime.TRACE:
-				debug.print_string("sound the alarm!")
+		elif _pc == 4644:
+			if 25000.0 <= sim.distance_between(v4, v3):
+				_pc = 4678
+				continue
+			else:
+				_pc = 5432
+				continue
+		elif _pc == 4678:
+			if not (p_set.is_empty(isim.sims_in_radius_of_faction(isim.cast(v3), 5000.0, ifaction.find("Player")))) or not _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())) or iship.has_fired(v4) or 5000.0 < sim.distance_between(v4, v3):
+				_pc = 4833
+				continue
+			else:
+				_pc = 4890
+				continue
+		elif _pc == 4833:
+			_pc = 4859
+			continue
+		elif _pc == 4838:
+			debug.print_string("sound the alarm!")
+			_pc = 4859
+			continue
+		elif _pc == 4859:
 			await local_4309(v0)
 			v5 = 1
-		else:
+			_pc = 5432
+			continue
+		elif _pc == 4890:
 			ihud.play_audio_cue(5)
 			if 1 >= v7:
-				if 10 >= v7:
-					if 25 >= v7:
-						if PogRuntime.TRACE:
-							debug.print_string("right - get him boys")
-						await iconversation.begin()
-						await iconversation.say(v8, "", "a2_m10_dialogue_corp_security_c2_attack_warning")
-						await iconversation.end()
-						await local_4309(v0)
-						v5 = 1
-					else:
-						if 15 == v7:
-							if PogRuntime.TRACE:
-								debug.print_string("Back off Bub!")
-							await iconversation.one_liner(v8, "", "a2_m10_dialogue_corp_security_c2_second_warning")
-							iai.give_approach_order(v0, v4)
-						else:
-							if 15 > v7:
-								if _pog_is_null(v6) and 5000.0 <= sim.distance_between(v8, v4):
-									await iconversation.one_liner(v8, "", "a2_m10_dialogue_corp_security_back_off")
-									v6 = 1
-							if 35000.0 >= sim.distance_between(v8, v3):
-								iai.give_approach_order(v0, v3)
-					v7 = 1 + v7
-				else:
-					if 1 == v7:
-						if PogRuntime.TRACE:
-							debug.print_string("This is a restricted area - back off")
-						await iconversation.one_liner(v8, "", "a2_m10_dialogue_corp_security_c2_first_warning")
-					v7 = 1 + v7
+				_pc = 4918
+				continue
 			else:
-				v7 = 1 + v7
-	return
+				_pc = 5419
+				continue
+		elif _pc == 4918:
+			if 10 >= v7:
+				_pc = 4931
+				continue
+			else:
+				_pc = 5331
+				continue
+		elif _pc == 4931:
+			if 25 >= v7:
+				_pc = 4944
+				continue
+			else:
+				_pc = 5061
+				continue
+		elif _pc == 4944:
+			_pc = 4970
+			continue
+		elif _pc == 4949:
+			debug.print_string("right - get him boys")
+			_pc = 4970
+			continue
+		elif _pc == 4970:
+			await iconversation.begin()
+			await iconversation.say(v8, "", "a2_m10_dialogue_corp_security_c2_attack_warning")
+			await iconversation.end()
+			await local_4309(v0)
+			v5 = 1
+			_pc = 5313
+			continue
+		elif _pc == 5061:
+			if 15 == v7:
+				_pc = 5074
+				continue
+			else:
+				_pc = 5161
+				continue
+		elif _pc == 5074:
+			_pc = 5100
+			continue
+		elif _pc == 5079:
+			debug.print_string("Back off Bub!")
+			_pc = 5100
+			continue
+		elif _pc == 5100:
+			await iconversation.one_liner(v8, "", "a2_m10_dialogue_corp_security_c2_second_warning")
+			iai.give_approach_order(v0, v4)
+			_pc = 5313
+			continue
+		elif _pc == 5161:
+			if 15 > v7:
+				_pc = 5174
+				continue
+			else:
+				_pc = 5255
+				continue
+		elif _pc == 5174:
+			if _pog_is_null(v6) and 5000.0 <= sim.distance_between(v8, v4):
+				_pc = 5216
+				continue
+			else:
+				_pc = 5255
+				continue
+		elif _pc == 5216:
+			await iconversation.one_liner(v8, "", "a2_m10_dialogue_corp_security_back_off")
+			v6 = 1
+			_pc = 5255
+			continue
+		elif _pc == 5255:
+			if 35000.0 >= sim.distance_between(v8, v3):
+				_pc = 5289
+				continue
+			else:
+				_pc = 5313
+				continue
+		elif _pc == 5289:
+			iai.give_approach_order(v0, v3)
+			_pc = 5313
+			continue
+		elif _pc == 5313:
+			v7 = 1 + v7
+			_pc = 5414
+			continue
+		elif _pc == 5331:
+			if 1 == v7:
+				_pc = 5343
+				continue
+			else:
+				_pc = 5401
+				continue
+		elif _pc == 5343:
+			_pc = 5369
+			continue
+		elif _pc == 5348:
+			debug.print_string("This is a restricted area - back off")
+			_pc = 5369
+			continue
+		elif _pc == 5369:
+			await iconversation.one_liner(v8, "", "a2_m10_dialogue_corp_security_c2_first_warning")
+			_pc = 5401
+			continue
+		elif _pc == 5401:
+			v7 = 1 + v7
+			_pc = 5414
+			continue
+		elif _pc == 5414:
+			_pc = 5432
+			continue
+		elif _pc == 5419:
+			v7 = 1 + v7
+			_pc = 5432
+			continue
+		elif _pc == 5432:
+			_pc = 4517
+			continue
+		elif _pc == 5437:
+			return
+		else:
+			return 0
 	return 0
 
 func local_5440(v0, v1) -> Variant:
@@ -476,98 +802,216 @@ func local_5440(v0, v1) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v2 = group.create()
-	v3 = group.create()
-	v5 = 5
-	v8 = 0
-	v9 = iship.find_player_ship()
-	v7 = await iutilities.create_waypoint_relative_to(v0, 35000.0, 0.0, 0.0)
-	object.set_string_property(v7, "name", "a2_m10_pod_store")
-	if PogRuntime.TRACE:
-		debug.print_string("making pod field")
-	isim.set_sensor_visibility(isim.cast(v7), 1)
-	v4 = 0
-	while v5 < v4:
-		group.add_sim(v2, sim.create("ini:/sims/ships/utility/freightpod", "a2_m10_waste"))
-		isim.set_sensor_visibility(isim.cast(group.nth_sim(v2, v4)), 0)
-		group.add_sim(v3, sim.create("ini:/sims/ships/utility/temp_cargopod", "a2_m10_waste"))
-		isim.set_sensor_visibility(isim.cast(group.nth_sim(v3, v4)), 0)
-		v4 = 1 + v4
-	sim.place_near(group.leader(v2), v7, 200.0)
-	sim.place_near(group.leader(v3), v7, 200.0)
-	await iformation.random_sphere(v2, 200.0, 1)
-	await iformation.random_sphere(v3, 200.0, 1)
-	group.add_group(v2, v3)
-	await iformation.apply_random_rotation(v2)
-	if PogRuntime.TRACE:
-		debug.print_string("pod field made")
-	v6 = iship.create("ini:/sims/ships/utility/temp_cargopod", "a2_m10_books")
-	global.create_handle("g_ammo_pod", 1, v6)
-	object.add_int_property(v6, "cargo", 572)
-	sim.place_near(v6, v7, 200.0)
-	sim.set_cullable(v6, 0)
-	if PogRuntime.TRACE:
-		debug.print_string("ammo pod made")
+	var _pc: int = 5440
 	while true:
-		await _pog_wait(2)
-		if not _pog_is_null(v8):
+		if _pc == 5440:
+			v2 = group.create()
+			v3 = group.create()
+			v5 = 5
+			v8 = 0
+			v9 = iship.find_player_ship()
+			v7 = await iutilities.create_waypoint_relative_to(v0, 35000.0, 0.0, 0.0)
+			object.set_string_property(v7, "name", "a2_m10_pod_store")
+			_pc = 5614
 			continue
-		if not (isim.is_docked_to(isim.cast(v9), isim.cast(v6))):
+		elif _pc == 5593:
+			debug.print_string("making pod field")
+			_pc = 5614
 			continue
-		isim.set_docking_lock(isim.cast(v9), isim.cast(v6), 1)
-		iobjectives.set_state("a2_m10_objectives_ammo", 1)
-		v10 = sim.find_subsim_by_name(isim.cast(v9), "Cargo_LongRangeCannon")
-		if _pog_is_null(v10):
-			if PogRuntime.TRACE:
-				debug.print_string("Act2 Mission 10: No sniper cannon\n")
-		else:
+		elif _pc == 5614:
+			isim.set_sensor_visibility(isim.cast(v7), 1)
+			v4 = 0
+			_pc = 5654
+			continue
+		elif _pc == 5654:
+			if v5 < v4:
+				_pc = 5670
+				continue
+			else:
+				_pc = 5880
+				continue
+		elif _pc == 5670:
+			group.add_sim(v2, sim.create("ini:/sims/ships/utility/freightpod", "a2_m10_waste"))
+			isim.set_sensor_visibility(isim.cast(group.nth_sim(v2, v4)), 0)
+			group.add_sim(v3, sim.create("ini:/sims/ships/utility/temp_cargopod", "a2_m10_waste"))
+			isim.set_sensor_visibility(isim.cast(group.nth_sim(v3, v4)), 0)
+			v4 = 1 + v4
+			_pc = 5654
+			continue
+		elif _pc == 5880:
+			sim.place_near(group.leader(v2), v7, 200.0)
+			sim.place_near(group.leader(v3), v7, 200.0)
+			await iformation.random_sphere(v2, 200.0, 1)
+			await iformation.random_sphere(v3, 200.0, 1)
+			group.add_group(v2, v3)
+			await iformation.apply_random_rotation(v2)
+			_pc = 6083
+			continue
+		elif _pc == 6062:
+			debug.print_string("pod field made")
+			_pc = 6083
+			continue
+		elif _pc == 6083:
+			v6 = iship.create("ini:/sims/ships/utility/temp_cargopod", "a2_m10_books")
+			global.create_handle("g_ammo_pod", 1, v6)
+			object.add_int_property(v6, "cargo", 572)
+			sim.place_near(v6, v7, 200.0)
+			sim.set_cullable(v6, 0)
+			_pc = 6246
+			continue
+		elif _pc == 6225:
+			debug.print_string("ammo pod made")
+			_pc = 6246
+			continue
+		elif _pc == 6246:
+			_pc = 6251
+			continue
+		elif _pc == 6251:
+			await _pog_frame()
+			if _pog_every(6252, 2.0):
+				_pc = 6265
+				continue
+			else:
+				_pc = 6933
+				continue
+		elif _pc == 6265:
+			if _pog_is_null(v8):
+				_pc = 6277
+				continue
+			else:
+				_pc = 6933
+				continue
+		elif _pc == 6277:
+			if isim.is_docked_to(isim.cast(v9), isim.cast(v6)):
+				_pc = 6331
+				continue
+			else:
+				_pc = 6933
+				continue
+		elif _pc == 6331:
+			isim.set_docking_lock(isim.cast(v9), isim.cast(v6), 1)
+			iobjectives.set_state("a2_m10_objectives_ammo", 1)
+			v10 = sim.find_subsim_by_name(isim.cast(v9), "Cargo_LongRangeCannon")
+			if _pog_is_null(v10):
+				_pc = 6461
+				continue
+			else:
+				_pc = 6492
+				continue
+		elif _pc == 6461:
+			_pc = 6487
+			continue
+		elif _pc == 6466:
+			debug.print_string("Act2 Mission 10: No sniper cannon\n")
+			_pc = 6487
+			continue
+		elif _pc == 6487:
+			_pc = 6565
+			continue
+		elif _pc == 6492:
 			object.set_float_property(v10, "ammo_count", 5.0)
-			if PogRuntime.TRACE:
-				debug.print_string("Act 2 Mission 10 Weapon loaded\n")
+			_pc = 6549
+			continue
+		elif _pc == 6528:
+			debug.print_string("Act 2 Mission 10 Weapon loaded\n")
+			_pc = 6549
+			continue
+		elif _pc == 6549:
 			gui.play_sound(5)
-		isim.set_sensor_visibility(iship.cast(global.handle("g_standin_window")), 1)
-		v12 = await iutilities.create_waypoint_relative_to(isim.cast(global.handle("g_standin_window")), 0.0, 0.0, 0.0)
-		object.set_string_property(v12, "name", "a2_m10_window")
-		isim.set_sensor_visibility(isim.cast(v12), 1)
-		sim.place_relative_to(v0, v1, 0.0, 0.0, 0.0)
-		v8 = 1
-		iobjectives.add("a2_m10_objectives_shoot")
-		isim.set_docking_lock(isim.cast(v9), isim.cast(v6), 0)
-		isim.undock(isim.cast(v9), isim.cast(v6))
-		sim.set_cullable(v6, 1)
-	return
+			_pc = 6565
+			continue
+		elif _pc == 6565:
+			isim.set_sensor_visibility(iship.cast(global.handle("g_standin_window")), 1)
+			v12 = await iutilities.create_waypoint_relative_to(isim.cast(global.handle("g_standin_window")), 0.0, 0.0, 0.0)
+			object.set_string_property(v12, "name", "a2_m10_window")
+			isim.set_sensor_visibility(isim.cast(v12), 1)
+			sim.place_relative_to(v0, v1, 0.0, 0.0, 0.0)
+			v8 = 1
+			iobjectives.add("a2_m10_objectives_shoot")
+			isim.set_docking_lock(isim.cast(v9), isim.cast(v6), 0)
+			isim.undock(isim.cast(v9), isim.cast(v6))
+			sim.set_cullable(v6, 1)
+			_pc = 6933
+			continue
+		elif _pc == 6933:
+			_pc = 6251
+			continue
+		elif _pc == 6938:
+			return
+		else:
+			return 0
 	return 0
 
 func local_6941(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = 0
-	v3 = iship.create("ini:/sims/custom/act2_mission10/window", "a2_m10_window")
-	global.create_handle("g_standin_window", 1, v3)
-	sim.add_child_relative_to(v0, v3, 20.0, 217.5, 60.0)
-	object.set_float_property(v3, "hit_points", 10.0)
+	var _pc: int = 6941
 	while true:
-		await _pog_wait(2)
-		if not _pog_is_null(v4):
+		if _pc == 6941:
+			v4 = 0
+			v3 = iship.create("ini:/sims/custom/act2_mission10/window", "a2_m10_window")
+			global.create_handle("g_standin_window", 1, v3)
+			sim.add_child_relative_to(v0, v3, 20.0, 217.5, 60.0)
+			object.set_float_property(v3, "hit_points", 10.0)
+			_pc = 7089
 			continue
-		if not _pog_is_null(sim.cast(v3)):
+		elif _pc == 7089:
+			await _pog_frame()
+			if _pog_every(7090, 2.0):
+				_pc = 7103
+				continue
+			else:
+				_pc = 7441
+				continue
+		elif _pc == 7103:
+			if _pog_is_null(v4):
+				_pc = 7115
+				continue
+			else:
+				_pc = 7441
+				continue
+		elif _pc == 7115:
+			if _pog_is_null(sim.cast(v3)):
+				_pc = 7141
+				continue
+			else:
+				_pc = 7441
+				continue
+		elif _pc == 7141:
+			_pc = 7167
 			continue
-		if PogRuntime.TRACE:
+		elif _pc == 7146:
 			debug.print_string("you got him!")
-		iobjectives.set_state("a2_m10_objectives_shoot", 1)
-		v4 = 1
-		if PogRuntime.TRACE:
+			_pc = 7167
+			continue
+		elif _pc == 7167:
+			iobjectives.set_state("a2_m10_objectives_shoot", 1)
+			v4 = 1
+			_pc = 7222
+			continue
+		elif _pc == 7201:
 			debug.print_string("Get the Player my witless minions!")
-		v5 = iship.find_player_ship()
-		iai.give_attack_order(group.cast(global.handle("g_security_force")), v5)
-		state.set_progress(v2, 4)
-		iobjectives.add("a2_m10_objectives_collect")
-		sim.destroy(v1)
-		sim.destroy(sim.find_by_name("a2_m10_window"))
-		sim.destroy(sim.find_by_name("a2_m10_pod_store"))
-		_pog_spawn(local_7449.bind(v2))
-	return
+			_pc = 7222
+			continue
+		elif _pc == 7222:
+			v5 = iship.find_player_ship()
+			iai.give_attack_order(group.cast(global.handle("g_security_force")), v5)
+			state.set_progress(v2, 4)
+			iobjectives.add("a2_m10_objectives_collect")
+			sim.destroy(v1)
+			sim.destroy(sim.find_by_name("a2_m10_window"))
+			sim.destroy(sim.find_by_name("a2_m10_pod_store"))
+			_pog_spawn(local_7449.bind(v2))
+			_pc = 7441
+			continue
+		elif _pc == 7441:
+			_pc = 7089
+			continue
+		elif _pc == 7446:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7449(v0) -> Variant:
@@ -575,33 +1019,93 @@ func local_7449(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = 0
-	v4 = imapentity.find_by_name_in_system("Hot Rock Independent Waystation", "map:/geog/badlands/santa_romera")
-	if PogRuntime.TRACE:
-		debug.print_string("start the payoff")
-	await istation.add_reactive_exception(ihabitat.cast(v4))
-	await irangecheck.add_traffic_exception(imapentity.cast(v4))
-	object.add_int_property(v4, "reactive_exception", 1)
+	var _pc: int = 7449
 	while true:
-		await _pog_wait(5)
-		v3 = iship.find_player_ship()
-		if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+		if _pc == 7449:
+			v2 = 0
+			v4 = imapentity.find_by_name_in_system("Hot Rock Independent Waystation", "map:/geog/badlands/santa_romera")
+			_pc = 7519
 			continue
-		if _pog_is_null(v4):
-			if PogRuntime.TRACE:
-				debug.print_string("O bobbins its not here")
-		if _pog_is_null(v1):
+		elif _pc == 7498:
+			debug.print_string("start the payoff")
+			_pc = 7519
+			continue
+		elif _pc == 7519:
+			await istation.add_reactive_exception(ihabitat.cast(v4))
+			await irangecheck.add_traffic_exception(imapentity.cast(v4))
+			object.add_int_property(v4, "reactive_exception", 1)
+			_pc = 7615
+			continue
+		elif _pc == 7615:
+			await _pog_frame()
+			if _pog_every(7616, 5.0):
+				_pc = 7629
+				continue
+			else:
+				_pc = 7976
+				continue
+		elif _pc == 7629:
+			v3 = iship.find_player_ship()
+			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+				_pc = 7675
+				continue
+			else:
+				_pc = 7976
+				continue
+		elif _pc == 7675:
+			if _pog_is_null(v4):
+				_pc = 7688
+				continue
+			else:
+				_pc = 7714
+				continue
+		elif _pc == 7688:
+			_pc = 7714
+			continue
+		elif _pc == 7693:
+			debug.print_string("O bobbins its not here")
+			_pc = 7714
+			continue
+		elif _pc == 7714:
+			if _pog_is_null(v1):
+				_pc = 7727
+				continue
+			else:
+				_pc = 7885
+				continue
+		elif _pc == 7727:
 			v1 = await iutilities.create_waypoint_relative_to(v4, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
 			object.set_string_property(v1, "name", "a2_m10_meeting_place")
 			isim.set_sensor_visibility(isim.cast(v1), 1)
-		if 300000.0 > sim.distance_between(v3, v1):
+			_pc = 7885
 			continue
-		if not _pog_is_null(v2):
+		elif _pc == 7885:
+			if 300000.0 <= sim.distance_between(v3, v1):
+				_pc = 7919
+				continue
+			else:
+				_pc = 7976
+				continue
+		elif _pc == 7919:
+			if _pog_is_null(v2):
+				_pc = 7931
+				continue
+			else:
+				_pc = 7976
+				continue
+		elif _pc == 7931:
+			await ibacktobase.allow()
+			await local_7984(v1, v0)
+			v2 = 1
+			_pc = 7976
 			continue
-		await ibacktobase.allow()
-		await local_7984(v1, v0)
-		v2 = 1
-	return
+		elif _pc == 7976:
+			_pc = 7615
+			continue
+		elif _pc == 7981:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7984(v0, v1) -> Variant:
@@ -672,36 +1176,110 @@ func local_9239(v0, v1, v2, v3) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v4 = 0
-	v5 = 0
-	v7 = iship.cast(group.leader(v0))
-	v8 = iship.find_player_ship()
-	if PogRuntime.TRACE:
-		debug.print_string("doublecross_monitor going")
-	v8 = iship.find_player_ship()
+	var _pc: int = 9239
 	while true:
-		await _pog_wait(1)
-		if _pog_is_null(v4) and 2000.0 < sim.distance_between(v8, v2):
+		if _pc == 9239:
+			v4 = 0
+			v5 = 0
+			v7 = iship.cast(group.leader(v0))
+			v8 = iship.find_player_ship()
+			_pc = 9340
+			continue
+		elif _pc == 9319:
+			debug.print_string("doublecross_monitor going")
+			_pc = 9340
+			continue
+		elif _pc == 9340:
+			v8 = iship.find_player_ship()
+			_pc = 9364
+			continue
+		elif _pc == 9364:
+			await _pog_frame()
+			if _pog_every(9365, 1.0):
+				_pc = 9378
+				continue
+			else:
+				_pc = 9767
+				continue
+		elif _pc == 9378:
+			if _pog_is_null(v4) and 2000.0 < sim.distance_between(v8, v2):
+				_pc = 9420
+				continue
+			else:
+				_pc = 9492
+				continue
+		elif _pc == 9420:
 			await local_222(v3)
 			iobjectives.set_state("a2_m10_objectives_collect", 1)
 			v6 = _pog_spawn(local_9775.bind(v7))
 			v4 = 1
-		if (1 - _pog_is_running(v6)) and v4:
+			_pc = 9492
+			continue
+		elif _pc == 9492:
+			if (1 - _pog_is_running(v6)) and v4:
+				_pc = 9521
+				continue
+			else:
+				_pc = 9528
+				continue
+		elif _pc == 9521:
 			v5 = 1
-		if _pog_is_null(v5):
+			_pc = 9528
+			continue
+		elif _pc == 9528:
+			if _pog_is_null(v5):
+				_pc = 9540
+				continue
+			else:
+				_pc = 9679
+				continue
+		elif _pc == 9540:
 			v9 = 0
-			while group.sim_count(v0) < v9:
-				if isim.attacked(isim.cast(group.nth_sim(v0, v9))):
-					_pog_halt(v6)
-					v5 = 1
-				v9 = 1 + v9
-		else:
+			_pc = 9547
+			continue
+		elif _pc == 9547:
+			if group.sim_count(v0) < v9:
+				_pc = 9576
+				continue
+			else:
+				_pc = 9674
+				continue
+		elif _pc == 9576:
+			if isim.attacked(isim.cast(group.nth_sim(v0, v9))):
+				_pc = 9630
+				continue
+			else:
+				_pc = 9656
+				continue
+		elif _pc == 9630:
+			_pog_halt(v6)
+			v5 = 1
+			_pc = 9656
+			continue
+		elif _pc == 9656:
+			v9 = 1 + v9
+			_pc = 9547
+			continue
+		elif _pc == 9674:
+			_pc = 9767
+			continue
+		elif _pc == 9679:
 			iai.purge_orders(v0)
 			iai.give_attack_order(v0, v8)
 			state.set_progress(v3, 6)
 			sim.destroy(v2)
+			_pc = 9773
+			continue
+		elif _pc == 9767:
+			_pc = 9364
+			continue
+		elif _pc == 9772:
+			_pc = 9773
+			continue
+		elif _pc == 9773:
 			return
-	return
+		else:
+			return 0
 	return 0
 
 func local_9775(v0) -> Variant:
@@ -719,35 +1297,94 @@ func local_9901() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = imapentity.find_by_name_in_system("Hot Rock Independent Waystation", "map:/geog/badlands/santa_romera")
-	v2 = 0
-	if PogRuntime.TRACE:
-		if _pog_is_null(v1):
+	var _pc: int = 9901
+	while true:
+		if _pc == 9901:
+			v1 = imapentity.find_by_name_in_system("Hot Rock Independent Waystation", "map:/geog/badlands/santa_romera")
+			v2 = 0
+			_pc = 9984
+			continue
+		elif _pc == 9950:
+			if _pog_is_null(v1):
+				_pc = 9963
+				continue
+			else:
+				_pc = 9984
+				continue
+		elif _pc == 9963:
 			debug.print_string("O bobbins its not here")
-	await istation.add_reactive_exception(ihabitat.cast(v1))
-	await irangecheck.add_traffic_exception(imapentity.cast(v1))
-	object.add_int_property(v1, "reactive_exception", 1)
-	v0 = await iutilities.create_waypoint_relative_to(v1, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
-	object.set_string_property(v0, "name", "a2_m10_meeting_place")
-	isim.set_sensor_visibility(isim.cast(v0), 1)
-	if PogRuntime.TRACE:
-		debug.print_string("Act2 Mission 10 - meeting waypoint setup")
-	while true:
-		await _pog_wait(1)
-		v3 = iship.find_player_ship()
-		if 300000.0 > sim.distance_between(v3, v0):
+			_pc = 9984
 			continue
-		if not (_pog_is_null(iship.cast(v4)) or _pog_is_null(v2)):
+		elif _pc == 9984:
+			await istation.add_reactive_exception(ihabitat.cast(v1))
+			await irangecheck.add_traffic_exception(imapentity.cast(v1))
+			object.add_int_property(v1, "reactive_exception", 1)
+			v0 = await iutilities.create_waypoint_relative_to(v1, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
+			object.set_string_property(v0, "name", "a2_m10_meeting_place")
+			isim.set_sensor_visibility(isim.cast(v0), 1)
+			_pc = 10259
 			continue
-		v4 = iship.create("ini:/sims/ships/utility/temp_cargopod", "Cargo_LongRangeCannon")
-		object.set_int_property(v4, "cargo", 566)
-		sim.place_at(v4, v0)
-		v2 = 1
-	return 0
-	while true:
-		await _pog_wait(1)
-		ihud.set_prompt("State velue is currently:", string.from_int(state.progress(v0)))
-	return
+		elif _pc == 10238:
+			debug.print_string("Act2 Mission 10 - meeting waypoint setup")
+			_pc = 10259
+			continue
+		elif _pc == 10259:
+			_pc = 10264
+			continue
+		elif _pc == 10264:
+			await _pog_frame()
+			if _pog_every(10265, 1.0):
+				_pc = 10278
+				continue
+			else:
+				_pc = 10457
+				continue
+		elif _pc == 10278:
+			v3 = iship.find_player_ship()
+			if 300000.0 <= sim.distance_between(v3, v0):
+				_pc = 10331
+				continue
+			else:
+				_pc = 10457
+				continue
+		elif _pc == 10331:
+			if _pog_is_null(iship.cast(v4)) or _pog_is_null(v2):
+				_pc = 10365
+				continue
+			else:
+				_pc = 10457
+				continue
+		elif _pc == 10365:
+			v4 = iship.create("ini:/sims/ships/utility/temp_cargopod", "Cargo_LongRangeCannon")
+			object.set_int_property(v4, "cargo", 566)
+			sim.place_at(v4, v0)
+			v2 = 1
+			_pc = 10457
+			continue
+		elif _pc == 10457:
+			_pc = 10264
+			continue
+		elif _pc == 10462:
+			return 0
+		elif _pc == 10471:
+			await _pog_frame()
+			if _pog_every(10472, 1.0):
+				_pc = 10485
+				continue
+			else:
+				_pc = 10538
+				continue
+		elif _pc == 10485:
+			ihud.set_prompt("State velue is currently:", string.from_int(state.progress(v0)))
+			_pc = 10538
+			continue
+		elif _pc == 10538:
+			_pc = 10471
+			continue
+		elif _pc == 10543:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -907,6 +1544,7 @@ func mission_handler() -> Variant:
 			_pc = 11511
 			continue
 		elif _pc == 11441:
+			state.progress(v1)
 			if not _pog_is_null(state.progress(v1)):
 				_pc = 11467
 				continue
@@ -1013,14 +1651,46 @@ func mission_handler() -> Variant:
 	return 0
 
 func local_12117(v0) -> Variant:
-	if not (v0):
-		if PogRuntime.TRACE:
+	var _pc: int = 12117
+	while true:
+		if _pc == 12117:
+			if not (v0):
+				_pc = 12128
+				continue
+			else:
+				_pc = 12159
+				continue
+		elif _pc == 12128:
+			_pc = 12154
+			continue
+		elif _pc == 12133:
 			debug.print_string("iAct2Mission10.add_state_properties: State is invalid - not adding properties. \n")
-	else:
-		if not (object.property_exists(v0, "gun_pod_handle")):
+			_pc = 12154
+			continue
+		elif _pc == 12154:
+			_pc = 12243
+			continue
+		elif _pc == 12159:
+			if not (object.property_exists(v0, "gun_pod_handle")):
+				_pc = 12190
+				continue
+			else:
+				_pc = 12217
+				continue
+		elif _pc == 12190:
 			object.add_handle_property(v0, "gun_pod_handle", 0)
-		if PogRuntime.TRACE:
+			_pc = 12217
+			continue
+		elif _pc == 12217:
+			_pc = 12243
+			continue
+		elif _pc == 12222:
 			debug.print_string("iAct2Mission10.add_state_properties: Added State Properties\n")
-	return 0
+			_pc = 12243
+			continue
+		elif _pc == 12243:
+			return 0
+		else:
+			return 0
 	return 0
 

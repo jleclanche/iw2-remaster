@@ -74,90 +74,262 @@ func local_851() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v5 = null
-	v6 = null
-	v7 = null
-	v8 = null
-	v9 = null
-	v0 = gui.cast(global.handle("g_time_hr_txt"))
-	v1 = gui.cast(global.handle("g_time_min_txt"))
-	v2 = gui.cast(global.handle("g_date_day_txt"))
-	v3 = gui.cast(global.handle("g_date_month_txt"))
-	v4 = gui.cast(global.handle("g_date_year_txt"))
-	v5 = gui.edit_box_value(v0)
-	v6 = gui.edit_box_value(v1)
-	v7 = gui.edit_box_value(v2)
-	v8 = gui.edit_box_value(v3)
-	v9 = gui.edit_box_value(v4)
-	v10 = string.to_int(v5)
-	v11 = string.to_int(v6)
-	v12 = string.to_int(v7)
-	v13 = string.to_int(v8)
-	v14 = string.to_int(v9)
-	if 0 < v10:
-		v10 = 0
-	else:
-		if 23 > v10:
+	var _pc: int = 851
+	while true:
+		if _pc == 851:
+			v5 = null
+			v6 = null
+			v7 = null
+			v8 = null
+			v9 = null
+			v0 = gui.cast(global.handle("g_time_hr_txt"))
+			v1 = gui.cast(global.handle("g_time_min_txt"))
+			v2 = gui.cast(global.handle("g_date_day_txt"))
+			v3 = gui.cast(global.handle("g_date_month_txt"))
+			v4 = gui.cast(global.handle("g_date_year_txt"))
+			v5 = gui.edit_box_value(v0)
+			v6 = gui.edit_box_value(v1)
+			v7 = gui.edit_box_value(v2)
+			v8 = gui.edit_box_value(v3)
+			v9 = gui.edit_box_value(v4)
+			v10 = string.to_int(v5)
+			v11 = string.to_int(v6)
+			v12 = string.to_int(v7)
+			v13 = string.to_int(v8)
+			v14 = string.to_int(v9)
+			if 0 < v10:
+				_pc = 1368
+				continue
+			else:
+				_pc = 1380
+				continue
+		elif _pc == 1368:
+			v10 = 0
+			_pc = 1401
+			continue
+		elif _pc == 1380:
+			if 23 > v10:
+				_pc = 1393
+				continue
+			else:
+				_pc = 1401
+				continue
+		elif _pc == 1393:
 			v10 = 23
-	if 0 < v11:
-		v11 = 0
-	else:
-		if 59 > v11:
+			_pc = 1401
+			continue
+		elif _pc == 1401:
+			if 0 < v11:
+				_pc = 1413
+				continue
+			else:
+				_pc = 1425
+				continue
+		elif _pc == 1413:
+			v11 = 0
+			_pc = 1446
+			continue
+		elif _pc == 1425:
+			if 59 > v11:
+				_pc = 1438
+				continue
+			else:
+				_pc = 1446
+				continue
+		elif _pc == 1438:
 			v11 = 59
-	if 2320 < v14:
-		v14 = 2320
-	else:
-		if 2350 > v14:
+			_pc = 1446
+			continue
+		elif _pc == 1446:
+			if 2320 < v14:
+				_pc = 1460
+				continue
+			else:
+				_pc = 1474
+				continue
+		elif _pc == 1460:
+			v14 = 2320
+			_pc = 1497
+			continue
+		elif _pc == 1474:
+			if 2350 > v14:
+				_pc = 1488
+				continue
+			else:
+				_pc = 1497
+				continue
+		elif _pc == 1488:
 			v14 = 2350
-	v15 = 0
-	if _pog_is_null(4 % v14):
-		if not _pog_is_null(100 % v14):
+			_pc = 1497
+			continue
+		elif _pc == 1497:
+			v15 = 0
+			if _pog_is_null(4 % v14):
+				_pc = 1519
+				continue
+			else:
+				_pc = 1569
+				continue
+		elif _pc == 1519:
+			if not _pog_is_null(100 % v14):
+				_pc = 1534
+				continue
+			else:
+				_pc = 1546
+				continue
+		elif _pc == 1534:
 			v15 = 1
-		else:
+			_pc = 1569
+			continue
+		elif _pc == 1546:
 			if _pog_is_null(400 % v14):
-				v15 = 1
-	if 1 < v13:
-		v13 = 1
-	else:
-		if 12 > v13:
+				_pc = 1562
+				continue
+			else:
+				_pc = 1569
+				continue
+		elif _pc == 1562:
+			v15 = 1
+			_pc = 1569
+			continue
+		elif _pc == 1569:
+			if 1 < v13:
+				_pc = 1581
+				continue
+			else:
+				_pc = 1593
+				continue
+		elif _pc == 1581:
+			v13 = 1
+			_pc = 1614
+			continue
+		elif _pc == 1593:
+			if 12 > v13:
+				_pc = 1606
+				continue
+			else:
+				_pc = 1614
+				continue
+		elif _pc == 1606:
 			v13 = 12
-	v16 = 31
-	if 11 == v13 or 6 == v13 or 4 == v13 or 9 == v13:
-		v16 = 30
-	else:
-		if 2 == v13:
+			_pc = 1614
+			continue
+		elif _pc == 1614:
+			v16 = 31
+			if 11 == v13 or 6 == v13 or 4 == v13 or 9 == v13:
+				_pc = 1662
+				continue
+			else:
+				_pc = 1675
+				continue
+		elif _pc == 1662:
+			v16 = 30
+			_pc = 1719
+			continue
+		elif _pc == 1675:
+			if 2 == v13:
+				_pc = 1688
+				continue
+			else:
+				_pc = 1719
+				continue
+		elif _pc == 1688:
 			v16 = 28
 			if v15:
-				v16 = 1 + v16
-	if 1 < v12:
-		v12 = 1
-	else:
-		if v16 > v12:
+				_pc = 1706
+				continue
+			else:
+				_pc = 1719
+				continue
+		elif _pc == 1706:
+			v16 = 1 + v16
+			_pc = 1719
+			continue
+		elif _pc == 1719:
+			if 1 < v12:
+				_pc = 1731
+				continue
+			else:
+				_pc = 1743
+				continue
+		elif _pc == 1731:
+			v12 = 1
+			_pc = 1770
+			continue
+		elif _pc == 1743:
+			if v16 > v12:
+				_pc = 1759
+				continue
+			else:
+				_pc = 1770
+				continue
+		elif _pc == 1759:
 			v12 = v16
-	global.set_int("g_time_hr", v10)
-	global.set_int("g_time_min", v11)
-	global.set_int("g_date_day", v12)
-	global.set_int("g_date_month", v13)
-	global.set_int("g_date_year", v14)
-	v5 = string.from_int(v10)
-	v6 = string.from_int(v11)
-	v7 = string.from_int(v12)
-	v8 = string.from_int(v13)
-	v9 = string.from_int(v14)
-	if 10 < v10:
-		v5 = string.join("0", v5)
-	if 10 < v11:
-		v6 = string.join("0", v6)
-	if 10 < v12:
-		v7 = string.join("0", v7)
-	if 10 < v13:
-		v8 = string.join("0", v8)
-	gui.set_edit_box_value(v0, v5)
-	gui.set_edit_box_value(v1, v6)
-	gui.set_edit_box_value(v2, v7)
-	gui.set_edit_box_value(v3, v8)
-	gui.set_edit_box_value(v4, v9)
-	return 0
+			_pc = 1770
+			continue
+		elif _pc == 1770:
+			global.set_int("g_time_hr", v10)
+			global.set_int("g_time_min", v11)
+			global.set_int("g_date_day", v12)
+			global.set_int("g_date_month", v13)
+			global.set_int("g_date_year", v14)
+			v5 = string.from_int(v10)
+			v6 = string.from_int(v11)
+			v7 = string.from_int(v12)
+			v8 = string.from_int(v13)
+			v9 = string.from_int(v14)
+			if 10 < v10:
+				_pc = 2043
+				continue
+			else:
+				_pc = 2075
+				continue
+		elif _pc == 2043:
+			v5 = string.join("0", v5)
+			_pc = 2075
+			continue
+		elif _pc == 2075:
+			if 10 < v11:
+				_pc = 2088
+				continue
+			else:
+				_pc = 2120
+				continue
+		elif _pc == 2088:
+			v6 = string.join("0", v6)
+			_pc = 2120
+			continue
+		elif _pc == 2120:
+			if 10 < v12:
+				_pc = 2133
+				continue
+			else:
+				_pc = 2165
+				continue
+		elif _pc == 2133:
+			v7 = string.join("0", v7)
+			_pc = 2165
+			continue
+		elif _pc == 2165:
+			if 10 < v13:
+				_pc = 2178
+				continue
+			else:
+				_pc = 2210
+				continue
+		elif _pc == 2178:
+			v8 = string.join("0", v8)
+			_pc = 2210
+			continue
+		elif _pc == 2210:
+			gui.set_edit_box_value(v0, v5)
+			gui.set_edit_box_value(v1, v6)
+			gui.set_edit_box_value(v2, v7)
+			gui.set_edit_box_value(v3, v8)
+			gui.set_edit_box_value(v4, v9)
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_2378() -> Variant:
@@ -373,135 +545,725 @@ func on_back() -> Variant:
 	return 0
 
 func local_6091(v0) -> Variant:
-	if _pog_is_null(v0):
-		return _pog_clone(text.field("Griffon", 0))
-	if v0 == 1:
-		return _pog_clone(text.field("Samarakand", 0))
-	if v0 == 2:
-		return _pog_clone(text.field("Greydog City", 0))
-	if v0 == 3:
-		return _pog_clone(text.field("Petra", 0))
-	if v0 == 4:
-		return _pog_clone(text.field("Timbuktu", 0))
-	if v0 == 5:
-		return _pog_clone(text.field("Shangri-La", 0))
-	if v0 == 6:
-		return _pog_clone(text.field("The Effrit", 0))
-	if v0 == 7:
-		return _pog_clone(text.field("Touchdown", 0))
-	if v0 == 8:
-		return _pog_clone(text.field("Greenback", 0))
-	if v0 == 9:
-		return _pog_clone(text.field("Hope", 0))
-	if v0 == 10:
-		return _pog_clone(text.field("Twinkle", 0))
-	if v0 == 11:
-		return _pog_clone(text.field("Pit", 0))
-	if v0 == 12:
-		return _pog_clone(text.field("Zira", 0))
-	if v0 == 13:
-		return _pog_clone(text.field("Henge", 0))
-	if v0 == 14:
-		return _pog_clone(text.field("Blackfoot", 0))
-	if v0 == 15:
-		return _pog_clone(text.field("Skavey", 0))
-	if v0 == 16:
-		return _pog_clone(text.field("Tunnel", 0))
-	if v0 == 17:
-		return _pog_clone(text.field("Galan", 0))
-	if v0 == 18:
-		return _pog_clone(text.field("Freetown", 0))
-	if v0 == 19:
-		return _pog_clone(text.field("Patchwork", 0))
-	if v0 == 20:
-		return _pog_clone(text.field("Kirk", 0))
-	if v0 == 21:
-		return _pog_clone(text.field("Blight", 0))
-	if v0 == 22:
-		return _pog_clone(text.field("Gabriel", 0))
-	if v0 == 23:
-		return _pog_clone(text.field("Topov", 0))
-	if v0 == 24:
-		return _pog_clone(text.field("Andre", 0))
-	if v0 == 25:
-		return _pog_clone(text.field("Eustace", 0))
-	if v0 == 26:
-		return _pog_clone(text.field("Grimwald", 0))
-	if v0 == 27:
-		return _pog_clone(text.field("Camel Back", 0))
-	if v0 == 28:
-		return _pog_clone(text.field("Cavanerri", 0))
-	if v0 == 29:
-		return _pog_clone(text.field("Malvem", 0))
-	if v0 == 30:
-		return _pog_clone(text.field("Tremour", 0))
-	if v0 == 31:
-		return _pog_clone(text.field("Gavin's Rock", 0))
-	if v0 == 32:
-		return _pog_clone(text.field("Le Verrier", 0))
-	if v0 == 33:
-		return _pog_clone(text.field("Ariane", 0))
-	if v0 == 34:
-		return _pog_clone(text.field("Enclave", 0))
-	if v0 == 35:
-		return _pog_clone(text.field("Zion", 0))
-	if v0 == 36:
-		return _pog_clone(text.field("Scallywag", 0))
-	if v0 == 37:
-		return _pog_clone(text.field("Rebecca", 0))
-	if v0 == 38:
-		return _pog_clone(text.field("Buddokan", 0))
-	if v0 == 39:
-		return _pog_clone(text.field("Moonmist", 0))
-	if v0 == 40:
-		return _pog_clone(text.field("Covenant", 0))
-	if v0 == 41:
-		return _pog_clone(text.field("Stanu", 0))
-	if v0 == 42:
-		return _pog_clone(text.field("Aldo", 0))
-	if v0 == 43:
-		return _pog_clone(text.field("Stockade", 0))
-	if v0 == 44:
-		return _pog_clone(text.field("Ursus", 0))
-	if v0 == 45:
-		return _pog_clone(text.field("Milo", 0))
-	if v0 == 46:
-		return _pog_clone(text.field("Torridan", 0))
-	if v0 == 47:
-		return _pog_clone(text.field("Faraday", 0))
-	if v0 == 48:
-		return _pog_clone(text.field("Gretchin", 0))
-	if v0 == 49:
-		return _pog_clone(text.field("Pebble", 0))
-	if v0 == 50:
-		return _pog_clone(text.field("Les Campanas", 0))
-	if v0 == 51:
-		return _pog_clone(text.field("Alexander", 0))
-	if v0 == 52:
-		return _pog_clone(text.field("Cleitus", 0))
-	if v0 == 53:
-		return _pog_clone(text.field("Darius", 0))
-	if v0 == 54:
-		return _pog_clone(text.field("Bessus", 0))
-	if v0 == 55:
-		return _pog_clone(text.field("Memnon", 0))
-	if v0 == 56:
-		return _pog_clone(text.field("Blackeye", 0))
-	if v0 == 57:
-		return _pog_clone(text.field("Danzig", 0))
-	if v0 == 58:
-		return _pog_clone(text.field("Krakow", 0))
-	if v0 == 59:
-		return _pog_clone(text.field("Hoffer's Wake Beta", 0))
-	if v0 == 60:
-		return _pog_clone(text.field("Corinthia", 0))
-	if v0 == 61:
-		return _pog_clone(text.field("YellowRock", 0))
-	if v0 == 62:
-		return _pog_clone(text.field("Gimble", 0))
-	if v0 == 63:
-		return _pog_clone(text.field("Hoffer's Heel", 0))
-	return _pog_clone("dummy")
+	var _pc: int = 6091
+	while true:
+		if _pc == 6091:
+			_pc = 7765
+			continue
+		elif _pc == 6096:
+			text.field("Griffon", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6122:
+			text.field("Samarakand", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6148:
+			text.field("Greydog City", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6174:
+			text.field("Petra", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6200:
+			text.field("Timbuktu", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6226:
+			text.field("Shangri-La", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6252:
+			text.field("The Effrit", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6278:
+			text.field("Touchdown", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6304:
+			text.field("Greenback", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6330:
+			text.field("Hope", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6356:
+			text.field("Twinkle", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6382:
+			text.field("Pit", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6408:
+			text.field("Zira", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6434:
+			text.field("Henge", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6460:
+			text.field("Blackfoot", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6486:
+			text.field("Skavey", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6512:
+			text.field("Tunnel", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6538:
+			text.field("Galan", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6564:
+			text.field("Freetown", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6590:
+			text.field("Patchwork", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6616:
+			text.field("Kirk", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6642:
+			text.field("Blight", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6668:
+			text.field("Gabriel", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6694:
+			text.field("Topov", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6720:
+			text.field("Andre", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6746:
+			text.field("Eustace", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6772:
+			text.field("Grimwald", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6798:
+			text.field("Camel Back", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6824:
+			text.field("Cavanerri", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6850:
+			text.field("Malvem", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6876:
+			text.field("Tremour", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6902:
+			text.field("Gavin's Rock", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6928:
+			text.field("Le Verrier", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6954:
+			text.field("Ariane", 0)
+			_pc = 8355
+			continue
+		elif _pc == 6980:
+			text.field("Enclave", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7006:
+			text.field("Zion", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7032:
+			text.field("Scallywag", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7058:
+			text.field("Rebecca", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7084:
+			text.field("Buddokan", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7110:
+			text.field("Moonmist", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7136:
+			text.field("Covenant", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7162:
+			text.field("Stanu", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7188:
+			text.field("Aldo", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7214:
+			text.field("Stockade", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7240:
+			text.field("Ursus", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7266:
+			text.field("Milo", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7292:
+			text.field("Torridan", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7318:
+			text.field("Faraday", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7344:
+			text.field("Gretchin", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7370:
+			text.field("Pebble", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7396:
+			text.field("Les Campanas", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7422:
+			text.field("Alexander", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7448:
+			text.field("Cleitus", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7474:
+			text.field("Darius", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7500:
+			text.field("Bessus", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7526:
+			text.field("Memnon", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7552:
+			text.field("Blackeye", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7578:
+			text.field("Danzig", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7604:
+			text.field("Krakow", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7630:
+			text.field("Hoffer's Wake Beta", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7656:
+			text.field("Corinthia", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7682:
+			text.field("YellowRock", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7708:
+			text.field("Gimble", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7734:
+			text.field("Hoffer's Heel", 0)
+			_pc = 8355
+			continue
+		elif _pc == 7760:
+			_pc = 8344
+			continue
+		elif _pc == 7765:
+			if not _pog_is_null(v0):
+				_pc = 7778
+				continue
+			else:
+				_pc = 6096
+				continue
+		elif _pc == 7778:
+			if not _pog_is_null(1):
+				_pc = 7786
+				continue
+			else:
+				_pc = 6122
+				continue
+		elif _pc == 7786:
+			if not _pog_is_null(2):
+				_pc = 7795
+				continue
+			else:
+				_pc = 6148
+				continue
+		elif _pc == 7795:
+			if not _pog_is_null(3):
+				_pc = 7804
+				continue
+			else:
+				_pc = 6174
+				continue
+		elif _pc == 7804:
+			if not _pog_is_null(4):
+				_pc = 7813
+				continue
+			else:
+				_pc = 6200
+				continue
+		elif _pc == 7813:
+			if not _pog_is_null(5):
+				_pc = 7822
+				continue
+			else:
+				_pc = 6226
+				continue
+		elif _pc == 7822:
+			if not _pog_is_null(6):
+				_pc = 7831
+				continue
+			else:
+				_pc = 6252
+				continue
+		elif _pc == 7831:
+			if not _pog_is_null(7):
+				_pc = 7840
+				continue
+			else:
+				_pc = 6278
+				continue
+		elif _pc == 7840:
+			if not _pog_is_null(8):
+				_pc = 7849
+				continue
+			else:
+				_pc = 6304
+				continue
+		elif _pc == 7849:
+			if not _pog_is_null(9):
+				_pc = 7858
+				continue
+			else:
+				_pc = 6330
+				continue
+		elif _pc == 7858:
+			if not _pog_is_null(10):
+				_pc = 7867
+				continue
+			else:
+				_pc = 6356
+				continue
+		elif _pc == 7867:
+			if not _pog_is_null(11):
+				_pc = 7876
+				continue
+			else:
+				_pc = 6382
+				continue
+		elif _pc == 7876:
+			if not _pog_is_null(12):
+				_pc = 7885
+				continue
+			else:
+				_pc = 6408
+				continue
+		elif _pc == 7885:
+			if not _pog_is_null(13):
+				_pc = 7894
+				continue
+			else:
+				_pc = 6434
+				continue
+		elif _pc == 7894:
+			if not _pog_is_null(14):
+				_pc = 7903
+				continue
+			else:
+				_pc = 6460
+				continue
+		elif _pc == 7903:
+			if not _pog_is_null(15):
+				_pc = 7912
+				continue
+			else:
+				_pc = 6486
+				continue
+		elif _pc == 7912:
+			if not _pog_is_null(16):
+				_pc = 7921
+				continue
+			else:
+				_pc = 6512
+				continue
+		elif _pc == 7921:
+			if not _pog_is_null(17):
+				_pc = 7930
+				continue
+			else:
+				_pc = 6538
+				continue
+		elif _pc == 7930:
+			if not _pog_is_null(18):
+				_pc = 7939
+				continue
+			else:
+				_pc = 6564
+				continue
+		elif _pc == 7939:
+			if not _pog_is_null(19):
+				_pc = 7948
+				continue
+			else:
+				_pc = 6590
+				continue
+		elif _pc == 7948:
+			if not _pog_is_null(20):
+				_pc = 7957
+				continue
+			else:
+				_pc = 6616
+				continue
+		elif _pc == 7957:
+			if not _pog_is_null(21):
+				_pc = 7966
+				continue
+			else:
+				_pc = 6642
+				continue
+		elif _pc == 7966:
+			if not _pog_is_null(22):
+				_pc = 7975
+				continue
+			else:
+				_pc = 6668
+				continue
+		elif _pc == 7975:
+			if not _pog_is_null(23):
+				_pc = 7984
+				continue
+			else:
+				_pc = 6694
+				continue
+		elif _pc == 7984:
+			if not _pog_is_null(24):
+				_pc = 7993
+				continue
+			else:
+				_pc = 6720
+				continue
+		elif _pc == 7993:
+			if not _pog_is_null(25):
+				_pc = 8002
+				continue
+			else:
+				_pc = 6746
+				continue
+		elif _pc == 8002:
+			if not _pog_is_null(26):
+				_pc = 8011
+				continue
+			else:
+				_pc = 6772
+				continue
+		elif _pc == 8011:
+			if not _pog_is_null(27):
+				_pc = 8020
+				continue
+			else:
+				_pc = 6798
+				continue
+		elif _pc == 8020:
+			if not _pog_is_null(28):
+				_pc = 8029
+				continue
+			else:
+				_pc = 6824
+				continue
+		elif _pc == 8029:
+			if not _pog_is_null(29):
+				_pc = 8038
+				continue
+			else:
+				_pc = 6850
+				continue
+		elif _pc == 8038:
+			if not _pog_is_null(30):
+				_pc = 8047
+				continue
+			else:
+				_pc = 6876
+				continue
+		elif _pc == 8047:
+			if not _pog_is_null(31):
+				_pc = 8056
+				continue
+			else:
+				_pc = 6902
+				continue
+		elif _pc == 8056:
+			if not _pog_is_null(32):
+				_pc = 8065
+				continue
+			else:
+				_pc = 6928
+				continue
+		elif _pc == 8065:
+			if not _pog_is_null(33):
+				_pc = 8074
+				continue
+			else:
+				_pc = 6954
+				continue
+		elif _pc == 8074:
+			if not _pog_is_null(34):
+				_pc = 8083
+				continue
+			else:
+				_pc = 6980
+				continue
+		elif _pc == 8083:
+			if not _pog_is_null(35):
+				_pc = 8092
+				continue
+			else:
+				_pc = 7006
+				continue
+		elif _pc == 8092:
+			if not _pog_is_null(36):
+				_pc = 8101
+				continue
+			else:
+				_pc = 7032
+				continue
+		elif _pc == 8101:
+			if not _pog_is_null(37):
+				_pc = 8110
+				continue
+			else:
+				_pc = 7058
+				continue
+		elif _pc == 8110:
+			if not _pog_is_null(38):
+				_pc = 8119
+				continue
+			else:
+				_pc = 7084
+				continue
+		elif _pc == 8119:
+			if not _pog_is_null(39):
+				_pc = 8128
+				continue
+			else:
+				_pc = 7110
+				continue
+		elif _pc == 8128:
+			if not _pog_is_null(40):
+				_pc = 8137
+				continue
+			else:
+				_pc = 7136
+				continue
+		elif _pc == 8137:
+			if not _pog_is_null(41):
+				_pc = 8146
+				continue
+			else:
+				_pc = 7162
+				continue
+		elif _pc == 8146:
+			if not _pog_is_null(42):
+				_pc = 8155
+				continue
+			else:
+				_pc = 7188
+				continue
+		elif _pc == 8155:
+			if not _pog_is_null(43):
+				_pc = 8164
+				continue
+			else:
+				_pc = 7214
+				continue
+		elif _pc == 8164:
+			if not _pog_is_null(44):
+				_pc = 8173
+				continue
+			else:
+				_pc = 7240
+				continue
+		elif _pc == 8173:
+			if not _pog_is_null(45):
+				_pc = 8182
+				continue
+			else:
+				_pc = 7266
+				continue
+		elif _pc == 8182:
+			if not _pog_is_null(46):
+				_pc = 8191
+				continue
+			else:
+				_pc = 7292
+				continue
+		elif _pc == 8191:
+			if not _pog_is_null(47):
+				_pc = 8200
+				continue
+			else:
+				_pc = 7318
+				continue
+		elif _pc == 8200:
+			if not _pog_is_null(48):
+				_pc = 8209
+				continue
+			else:
+				_pc = 7344
+				continue
+		elif _pc == 8209:
+			if not _pog_is_null(49):
+				_pc = 8218
+				continue
+			else:
+				_pc = 7370
+				continue
+		elif _pc == 8218:
+			if not _pog_is_null(50):
+				_pc = 8227
+				continue
+			else:
+				_pc = 7396
+				continue
+		elif _pc == 8227:
+			if not _pog_is_null(51):
+				_pc = 8236
+				continue
+			else:
+				_pc = 7422
+				continue
+		elif _pc == 8236:
+			if not _pog_is_null(52):
+				_pc = 8245
+				continue
+			else:
+				_pc = 7448
+				continue
+		elif _pc == 8245:
+			if not _pog_is_null(53):
+				_pc = 8254
+				continue
+			else:
+				_pc = 7474
+				continue
+		elif _pc == 8254:
+			if not _pog_is_null(54):
+				_pc = 8263
+				continue
+			else:
+				_pc = 7500
+				continue
+		elif _pc == 8263:
+			if not _pog_is_null(55):
+				_pc = 8272
+				continue
+			else:
+				_pc = 7526
+				continue
+		elif _pc == 8272:
+			if not _pog_is_null(56):
+				_pc = 8281
+				continue
+			else:
+				_pc = 7552
+				continue
+		elif _pc == 8281:
+			if not _pog_is_null(57):
+				_pc = 8290
+				continue
+			else:
+				_pc = 7578
+				continue
+		elif _pc == 8290:
+			if not _pog_is_null(58):
+				_pc = 8299
+				continue
+			else:
+				_pc = 7604
+				continue
+		elif _pc == 8299:
+			if not _pog_is_null(59):
+				_pc = 8308
+				continue
+			else:
+				_pc = 7630
+				continue
+		elif _pc == 8308:
+			if not _pog_is_null(60):
+				_pc = 8317
+				continue
+			else:
+				_pc = 7656
+				continue
+		elif _pc == 8317:
+			if not _pog_is_null(61):
+				_pc = 8326
+				continue
+			else:
+				_pc = 7682
+				continue
+		elif _pc == 8326:
+			if not _pog_is_null(62):
+				_pc = 8335
+				continue
+			else:
+				_pc = 7708
+				continue
+		elif _pc == 8335:
+			if not _pog_is_null(63):
+				_pc = 8344
+				continue
+			else:
+				_pc = 7734
+				continue
+		elif _pc == 8344:
+			_pc = 8355
+			continue
+		elif _pc == 8355:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8358() -> Variant:
@@ -522,43 +1284,99 @@ func local_8358() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v2 = 10
-	v3 = 0.5
-	v4 = 10
-	v5 = 0
-	v7 = 0.05000000074505806
-	v9 = 64
-	v11 = null
-	v12 = global.pog_int("GUI_inversebutton_textoffset") + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	if 2331 == global.pog_int("g_date_year") and 3 == global.pog_int("g_date_month") and 4 == global.pog_int("g_date_day") and 24 == global.pog_int("g_time_min") and 17 == global.pog_int("g_time_hr"):
-		v14 = 1
-	else:
-		v14 = 0
-	v6 = gui.cast(global.handle("g_result_window"))
-	if _pog_is_null(v6):
-		v0 = gui.cast(global.handle("g_shady_bar"))
-		v1 = global.pog_int("g_shady_bar_y_offset")
-		v6 = await igui.create_and_initialise_static_window(v12, v1, v12 - gui.window_canvas_width(v0), 15, v0, global.string("GUI_subtitle_font"), "")
-		gui.set_window_text_formatting(v6, 0, 0)
-		global.create_handle("g_result_window", 2, v6)
-	await local_3015()
-	v13 = math.random_int(0, 1 - v9)
-	v10 = 3 / v9
-	if not (v14):
-		v10 = 2 * v10
-	v8 = 0
-	while v10 < v8:
-		v11 = await local_6091(v9 % v8 + v13)
-		v11 = string.upper_case(v11)
-		gui.set_window_title(v6, v11)
-		await _pog_wait(v7)
-		v8 = 1 + v8
-	gui.set_window_state_colours(v6, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-	if v14:
-		gui.play_sound(2)
-		v11 = text.field("triangulation_matchfound", 0)
-		gui.set_window_title(v6, v11)
-		if not (global.exists("g_got_match")):
+	var _pc: int = 8358
+	while true:
+		if _pc == 8358:
+			v2 = 10
+			v3 = 0.5
+			v4 = 10
+			v5 = 0
+			v7 = 0.05000000074505806
+			v9 = 64
+			v11 = null
+			v12 = global.pog_int("GUI_inversebutton_textoffset") + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			if 2331 == global.pog_int("g_date_year") and 3 == global.pog_int("g_date_month") and 4 == global.pog_int("g_date_day") and 24 == global.pog_int("g_time_min") and 17 == global.pog_int("g_time_hr"):
+				_pc = 8634
+				continue
+			else:
+				_pc = 8646
+				continue
+		elif _pc == 8634:
+			v14 = 1
+			_pc = 8653
+			continue
+		elif _pc == 8646:
+			v14 = 0
+			_pc = 8653
+			continue
+		elif _pc == 8653:
+			v6 = gui.cast(global.handle("g_result_window"))
+			if _pog_is_null(v6):
+				_pc = 8705
+				continue
+			else:
+				_pc = 8906
+				continue
+		elif _pc == 8705:
+			v0 = gui.cast(global.handle("g_shady_bar"))
+			v1 = global.pog_int("g_shady_bar_y_offset")
+			v6 = await igui.create_and_initialise_static_window(v12, v1, v12 - gui.window_canvas_width(v0), 15, v0, global.string("GUI_subtitle_font"), "")
+			gui.set_window_text_formatting(v6, 0, 0)
+			global.create_handle("g_result_window", 2, v6)
+			_pc = 8906
+			continue
+		elif _pc == 8906:
+			await local_3015()
+			v13 = math.random_int(0, 1 - v9)
+			v10 = 3 / v9
+			if not (v14):
+				_pc = 8972
+				continue
+			else:
+				_pc = 8986
+				continue
+		elif _pc == 8972:
+			v10 = 2 * v10
+			_pc = 8986
+			continue
+		elif _pc == 8986:
+			v8 = 0
+			_pc = 8993
+			continue
+		elif _pc == 8993:
+			if v10 < v8:
+				_pc = 9009
+				continue
+			else:
+				_pc = 9147
+				continue
+		elif _pc == 9009:
+			v11 = await local_6091(v9 % v8 + v13)
+			v11 = string.upper_case(v11)
+			gui.set_window_title(v6, v11)
+			await _pog_wait(v7)
+			v8 = 1 + v8
+			_pc = 8993
+			continue
+		elif _pc == 9147:
+			gui.set_window_state_colours(v6, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+			if v14:
+				_pc = 9221
+				continue
+			else:
+				_pc = 9618
+				continue
+		elif _pc == 9221:
+			gui.play_sound(2)
+			v11 = text.field("triangulation_matchfound", 0)
+			gui.set_window_title(v6, v11)
+			if not (global.exists("g_got_match")):
+				_pc = 9315
+				continue
+			else:
+				_pc = 9574
+				continue
+		elif _pc == 9315:
 			_pog_detach(_pog_spawn(local_5159.bind(_pog_clone("name_smith"), _pog_clone("a1_master_smith_thats_right"))))
 			global.create_bool("g_got_position", 1, 1)
 			global.set_bool("g_act1_puzzle_active", 0)
@@ -569,13 +1387,23 @@ func local_8358() -> Variant:
 			iinventory.remove(474, v15)
 			v16 = iinventory.number_of_cargo_type(171)
 			iinventory.remove(171, v16)
-		await ibasegui.set_triangulation_screen_enabled(0)
-		global.create_bool("g_got_match", 2, 1)
-	else:
-		gui.play_sound(3)
-		v11 = text.field("triangulation_nomatches", 0)
-		gui.set_window_title(v6, v11)
-	return
+			_pc = 9574
+			continue
+		elif _pc == 9574:
+			await ibasegui.set_triangulation_screen_enabled(0)
+			global.create_bool("g_got_match", 2, 1)
+			_pc = 9686
+			continue
+		elif _pc == 9618:
+			gui.play_sound(3)
+			v11 = text.field("triangulation_nomatches", 0)
+			gui.set_window_title(v6, v11)
+			_pc = 9686
+			continue
+		elif _pc == 9686:
+			return
+		else:
+			return 0
 	return 0
 
 func calculate() -> Variant:

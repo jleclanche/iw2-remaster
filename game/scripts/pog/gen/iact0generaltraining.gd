@@ -28,121 +28,301 @@ func base_exploration_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
-	v3 = state.find(self)
-	v4 = 0
-	if PogRuntime.TRACE:
-		debug.print_string("iPrelude.BaseExplorationHandler : Task has started\n")
-	global.set_bool("g_act0_started_proving_grounds", 1)
-	if _pog_is_null(object.property_exists(v3, "said_phrase")):
-		object.add_bool_property(v3, "said_phrase", 0)
-	else:
-		v4 = object.bool_property(v3, "said_phrase")
+	var _pc: int = 0
 	while true:
-		await _pog_wait(1)
-		v2 = 1 + v2
-		v0 = gui.current_screen_classname()
-		if _pog_is_null(object.property_exists(v3, "act0_visited_main_screen")) and _pog_eq("icSPBaseScreen", v0):
+		if _pc == 0:
+			v0 = null
+			v3 = state.find(self)
+			v4 = 0
+			_pc = 81
+			continue
+		elif _pc == 60:
+			debug.print_string("iPrelude.BaseExplorationHandler : Task has started\n")
+			_pc = 81
+			continue
+		elif _pc == 81:
+			global.set_bool("g_act0_started_proving_grounds", 1)
+			if _pog_is_null(object.property_exists(v3, "said_phrase")):
+				_pc = 135
+				continue
+			else:
+				_pc = 167
+				continue
+		elif _pc == 135:
+			object.add_bool_property(v3, "said_phrase", 0)
+			_pc = 198
+			continue
+		elif _pc == 167:
+			v4 = object.bool_property(v3, "said_phrase")
+			_pc = 198
+			continue
+		elif _pc == 198:
+			_pc = 203
+			continue
+		elif _pc == 203:
+			await _pog_frame()
+			if _pog_every(204, 1.0):
+				_pc = 217
+				continue
+			else:
+				_pc = 2337
+				continue
+		elif _pc == 217:
+			v2 = 1 + v2
+			v0 = gui.current_screen_classname()
+			if _pog_is_null(object.property_exists(v3, "act0_visited_main_screen")) and _pog_eq("icSPBaseScreen", v0):
+				_pc = 296
+				continue
+			else:
+				_pc = 410
+				continue
+		elif _pc == 296:
 			object.add_int_property(v3, "act0_visited_main_screen", 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iPrelude.BaseExplorationHandler : Player has entered the main base screen for the first time\n")
+			_pc = 349
+			continue
+		elif _pc == 328:
+			debug.print_string("iPrelude.BaseExplorationHandler : Player has entered the main base screen for the first time\n")
+			_pc = 349
+			continue
+		elif _pc == 349:
 			await iconversation.begin()
 			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_well_this_is_the_nerve_centre_of_the_base")
 			await iconversation.end()
-		else:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_hangar")) and _pog_eq("icSPHangarScreen", v0):
-				if PogRuntime.TRACE:
-					debug.print_string("iPrelude.BaseExplorationHandler :  Player has entered the hangar screen for the first time\n")
-				object.add_int_property(v3, "act0_visited_hangar", 1)
-				await iconversation.begin()
-				await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_heres_the_hanger")
-				await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_the_hanger_is_where_you_can_access_all_the_systems_for_fitting_out_a_ship")
-				await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_wow_look_at_that_ship")
-				await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_yeah_thats_the_storm_petrol")
-				await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_can_i_fly_it")
-				await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_sure_you_can_but_lets_take_things_one_step_at_a_time")
-				await iconversation.end()
-			else:
-				if _pog_is_null(object.property_exists(v3, "act0_visited_ship_selector")) and _pog_eq("icSPShipTypeScreen", v0):
-					if PogRuntime.TRACE:
-						debug.print_string("iPrelude.BaseExplorationHandler :  Player has entered the ship selection screen for the first time\n")
-					object.add_int_property(v3, "act0_visited_ship_selector", 1)
-					await iconversation.begin()
-					await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_here_you_can_select_the_ship")
-					await iconversation.end()
-				else:
-					if _pog_is_null(object.property_exists(v3, "act0_visited_loadout")) and _pog_eq("icSPLoadoutScreen", v0):
-						if PogRuntime.TRACE:
-							debug.print_string("iPrelude.BaseExplorationHandler : Player has entered the loadout screen for the first time. how thrilling\n")
-						object.add_int_property(v3, "act0_visited_loadout", 1)
-						await iconversation.begin()
-						await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_there_are_four_types_of_loadout_you_can_pick_for_a_ship")
-						await iconversation.end()
-					else:
-						if _pog_is_null(object.property_exists(v3, "act0_visited_add_cargo")) and _pog_eq("icSPAddCargoScreen", v0):
-							if PogRuntime.TRACE:
-								debug.print_string("iPrelude.BaseExplorationHandler : player has entered the add cargo screen for the fist time\n")
-							object.add_int_property(v3, "act0_visited_add_cargo", 1)
-							await iconversation.begin()
-							await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_here_you_can_load_any_cargo_in_the_bases_stores")
-							await iconversation.end()
-						else:
-							if _pog_is_null(object.property_exists(v3, "act0_visited_customise_loadout")) and _pog_eq("icSPCustomiseScreen", v0):
-								if PogRuntime.TRACE:
-									debug.print_string("iPrelude.BaseExplorationHandler : player has entered the customise loadout screen for the fist time\n")
-								object.add_int_property(v3, "act0_visited_customise_loadout", 1)
-								await iconversation.begin()
-								await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_allows_you_to_modify")
-								await iconversation.end()
-							else:
-								if _pog_is_null(object.property_exists(v3, "act0_visited_manifest")) and _pog_eq("icSPManifestScreen", v0):
-									if PogRuntime.TRACE:
-										debug.print_string("iPrelude.BaseExplorationHandler : player has entered the manifest screen for the fist time\n")
-									object.add_int_property(v3, "act0_visited_manifest", 1)
-									await iconversation.begin()
-									await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_shows_all_the_current_systems_loaded_onto_your_currently_selected_ship")
-									await iconversation.end()
-								else:
-									if _pog_is_null(object.property_exists(v3, "act0_visited_inventory")) and _pog_eq("icSPInventoryScreen", v0):
-										if PogRuntime.TRACE:
-											debug.print_string("iPrelude.BaseExplorationHandler : player has entered the inventory screen for the fist time\n")
-										object.add_int_property(v3, "act0_visited_inventory", 1)
-										await iconversation.begin()
-										await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_shows_you_all_the_cargo_kept_in_the_bases_hold")
-										await iconversation.end()
-									else:
-										if _pog_is_null(object.property_exists(v3, "act0_visited_communications")) and _pog_eq("icSPCommsMainMenuScreen", v0):
-											if PogRuntime.TRACE:
-												debug.print_string("iPrelude.BaseExplorationHandler : player has entered the icommunications screen for the fist time\n")
-											object.add_int_property(v3, "act0_visited_communications", 1)
-											await iconversation.begin()
-											await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_on_this_console_you_can_access_all_the_e_mail_sent_to_the_base")
-											await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_but_i_thought_this_place_was_supposed_to_be_secret")
-											await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_well_it_is_the_mail_is_routed_through_a_nmuber_of_comms_satellites")
-											await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_hey_clay_theres_a_message_here")
-											await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_well_open_it_up_kid")
-											await iconversation.end()
-										else:
-											if _pog_is_null(object.property_exists(v3, "act0_visited_encyclopedia")) and _pog_eq("icSPEncyclopaediaScreen", v0):
-												if PogRuntime.TRACE:
-													debug.print_string("iPrelude.BaseExplorationHandler : player has entered the encyclopedia screen for the fist time\n")
-												object.add_int_property(v3, "act0_visited_encyclopedia", 1)
-												await iconversation.begin()
-												await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_ok_kid_if_theres_anything_you_need_to_know")
-												await iconversation.end()
-											else:
-												if _pog_is_null(object.property_exists(v3, "act0_visited_statistics")) and _pog_eq("icSPStatisticsScreen", v0):
-													object.add_int_property(v3, "act0_visited_statistics", 1)
-													await iconversation.begin()
-													await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_is_stats")
-													await iconversation.end()
-		if not (not (v4) and 1 == global.pog_bool("g_act0_lucrecias_mail_conversation") and _pog_eq("icSPBaseScreen", v0)):
+			_pc = 2221
 			continue
-		v4 = 1
-		object.set_bool_property(v3, "said_phrase", 1)
-		v2 = 0
-		await iconversation.one_liner(0, "name_clay", "a0_master_dialogue_clay_right_before")
-	return
+		elif _pc == 410:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_hangar")) and _pog_eq("icSPHangarScreen", v0):
+				_pc = 455
+				continue
+			else:
+				_pc = 709
+				continue
+		elif _pc == 455:
+			_pc = 481
+			continue
+		elif _pc == 460:
+			debug.print_string("iPrelude.BaseExplorationHandler :  Player has entered the hangar screen for the first time\n")
+			_pc = 481
+			continue
+		elif _pc == 481:
+			object.add_int_property(v3, "act0_visited_hangar", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_heres_the_hanger")
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_the_hanger_is_where_you_can_access_all_the_systems_for_fitting_out_a_ship")
+			await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_wow_look_at_that_ship")
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_yeah_thats_the_storm_petrol")
+			await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_can_i_fly_it")
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_sure_you_can_but_lets_take_things_one_step_at_a_time")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 709:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_ship_selector")) and _pog_eq("icSPShipTypeScreen", v0):
+				_pc = 754
+				continue
+			else:
+				_pc = 868
+				continue
+		elif _pc == 754:
+			_pc = 780
+			continue
+		elif _pc == 759:
+			debug.print_string("iPrelude.BaseExplorationHandler :  Player has entered the ship selection screen for the first time\n")
+			_pc = 780
+			continue
+		elif _pc == 780:
+			object.add_int_property(v3, "act0_visited_ship_selector", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_here_you_can_select_the_ship")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 868:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_loadout")) and _pog_eq("icSPLoadoutScreen", v0):
+				_pc = 913
+				continue
+			else:
+				_pc = 1027
+				continue
+		elif _pc == 913:
+			_pc = 939
+			continue
+		elif _pc == 918:
+			debug.print_string("iPrelude.BaseExplorationHandler : Player has entered the loadout screen for the first time. how thrilling\n")
+			_pc = 939
+			continue
+		elif _pc == 939:
+			object.add_int_property(v3, "act0_visited_loadout", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_there_are_four_types_of_loadout_you_can_pick_for_a_ship")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 1027:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_add_cargo")) and _pog_eq("icSPAddCargoScreen", v0):
+				_pc = 1072
+				continue
+			else:
+				_pc = 1186
+				continue
+		elif _pc == 1072:
+			_pc = 1098
+			continue
+		elif _pc == 1077:
+			debug.print_string("iPrelude.BaseExplorationHandler : player has entered the add cargo screen for the fist time\n")
+			_pc = 1098
+			continue
+		elif _pc == 1098:
+			object.add_int_property(v3, "act0_visited_add_cargo", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_here_you_can_load_any_cargo_in_the_bases_stores")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 1186:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_customise_loadout")) and _pog_eq("icSPCustomiseScreen", v0):
+				_pc = 1231
+				continue
+			else:
+				_pc = 1345
+				continue
+		elif _pc == 1231:
+			_pc = 1257
+			continue
+		elif _pc == 1236:
+			debug.print_string("iPrelude.BaseExplorationHandler : player has entered the customise loadout screen for the fist time\n")
+			_pc = 1257
+			continue
+		elif _pc == 1257:
+			object.add_int_property(v3, "act0_visited_customise_loadout", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_allows_you_to_modify")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 1345:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_manifest")) and _pog_eq("icSPManifestScreen", v0):
+				_pc = 1390
+				continue
+			else:
+				_pc = 1504
+				continue
+		elif _pc == 1390:
+			_pc = 1416
+			continue
+		elif _pc == 1395:
+			debug.print_string("iPrelude.BaseExplorationHandler : player has entered the manifest screen for the fist time\n")
+			_pc = 1416
+			continue
+		elif _pc == 1416:
+			object.add_int_property(v3, "act0_visited_manifest", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_shows_all_the_current_systems_loaded_onto_your_currently_selected_ship")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 1504:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_inventory")) and _pog_eq("icSPInventoryScreen", v0):
+				_pc = 1549
+				continue
+			else:
+				_pc = 1663
+				continue
+		elif _pc == 1549:
+			_pc = 1575
+			continue
+		elif _pc == 1554:
+			debug.print_string("iPrelude.BaseExplorationHandler : player has entered the inventory screen for the fist time\n")
+			_pc = 1575
+			continue
+		elif _pc == 1575:
+			object.add_int_property(v3, "act0_visited_inventory", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_shows_you_all_the_cargo_kept_in_the_bases_hold")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 1663:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_communications")) and _pog_eq("icSPCommsMainMenuScreen", v0):
+				_pc = 1708
+				continue
+			else:
+				_pc = 1934
+				continue
+		elif _pc == 1708:
+			_pc = 1734
+			continue
+		elif _pc == 1713:
+			debug.print_string("iPrelude.BaseExplorationHandler : player has entered the icommunications screen for the fist time\n")
+			_pc = 1734
+			continue
+		elif _pc == 1734:
+			object.add_int_property(v3, "act0_visited_communications", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_on_this_console_you_can_access_all_the_e_mail_sent_to_the_base")
+			await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_but_i_thought_this_place_was_supposed_to_be_secret")
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_well_it_is_the_mail_is_routed_through_a_nmuber_of_comms_satellites")
+			await iconversation.say(0, "name_young_cal", "a0_master_dialogue_young_cal_hey_clay_theres_a_message_here")
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_well_open_it_up_kid")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 1934:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_encyclopedia")) and _pog_eq("icSPEncyclopaediaScreen", v0):
+				_pc = 1979
+				continue
+			else:
+				_pc = 2093
+				continue
+		elif _pc == 1979:
+			_pc = 2005
+			continue
+		elif _pc == 1984:
+			debug.print_string("iPrelude.BaseExplorationHandler : player has entered the encyclopedia screen for the fist time\n")
+			_pc = 2005
+			continue
+		elif _pc == 2005:
+			object.add_int_property(v3, "act0_visited_encyclopedia", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_ok_kid_if_theres_anything_you_need_to_know")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 2093:
+			if _pog_is_null(object.property_exists(v3, "act0_visited_statistics")) and _pog_eq("icSPStatisticsScreen", v0):
+				_pc = 2138
+				continue
+			else:
+				_pc = 2221
+				continue
+		elif _pc == 2138:
+			object.add_int_property(v3, "act0_visited_statistics", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_is_stats")
+			await iconversation.end()
+			_pc = 2221
+			continue
+		elif _pc == 2221:
+			if not (v4) and 1 == global.pog_bool("g_act0_lucrecias_mail_conversation") and _pog_eq("icSPBaseScreen", v0):
+				_pc = 2268
+				continue
+			else:
+				_pc = 2337
+				continue
+		elif _pc == 2268:
+			v4 = 1
+			object.set_bool_property(v3, "said_phrase", 1)
+			v2 = 0
+			await iconversation.one_liner(0, "name_clay", "a0_master_dialogue_clay_right_before")
+			_pc = 2337
+			continue
+		elif _pc == 2337:
+			_pc = 203
+			continue
+		elif _pc == 2342:
+			return
+		else:
+			return 0
 	return 0
 
 func base_online_handler() -> Variant:
@@ -151,16 +331,39 @@ func base_online_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
-	v1 = 0
-	v3 = 0
-	v4 = state.find(self)
-	if PogRuntime.TRACE:
-		debug.print_string("iPrelude.BaseOnlineHandler : Task has started\n")
+	var _pc: int = 2352
 	while true:
-		await _pog_wait(1)
-		v0 = gui.current_screen_classname()
-		if _pog_is_null(object.property_exists(v4, "act0_done_introduction")):
+		if _pc == 2352:
+			v0 = null
+			v1 = 0
+			v3 = 0
+			v4 = state.find(self)
+			_pc = 2440
+			continue
+		elif _pc == 2419:
+			debug.print_string("iPrelude.BaseOnlineHandler : Task has started\n")
+			_pc = 2440
+			continue
+		elif _pc == 2440:
+			_pc = 2445
+			continue
+		elif _pc == 2445:
+			await _pog_frame()
+			if _pog_every(2446, 1.0):
+				_pc = 2459
+				continue
+			else:
+				_pc = 3161
+				continue
+		elif _pc == 2459:
+			v0 = gui.current_screen_classname()
+			if _pog_is_null(object.property_exists(v4, "act0_done_introduction")):
+				_pc = 2512
+				continue
+			else:
+				_pc = 2767
+				continue
+		elif _pc == 2512:
 			object.add_int_property(v4, "act0_done_introduction", 1)
 			await iconversation.begin()
 			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_ok_the_systems_are_online")
@@ -173,116 +376,307 @@ func base_online_handler() -> Variant:
 			await iconversation.end()
 			global.set_int("g_story_0.50", 1)
 			global.set_bool("g_act0_online_base_complete", 1)
-		else:
+			_pc = 3161
+			continue
+		elif _pc == 2767:
 			if _pog_is_null(object.property_exists(v4, "act0_done_recycling")) and _pog_eq("icSPRecyclingScreen", v0):
-				object.add_int_property(v4, "act0_done_recycling", 1)
-				await iconversation.begin()
-				await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_allows_you_to_take_anything_in_the")
-				await iconversation.end()
+				_pc = 2812
+				continue
 			else:
-				if _pog_is_null(object.property_exists(v4, "act0_done_manufacturing")) and _pog_eq("icSPManufacturingScreen", v0):
-					object.add_int_property(v4, "act0_done_manufacturing", 1)
-					await iconversation.begin()
-					await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_here_is_the_manufacturing_console")
-					await iconversation.end()
-				else:
-					if not (_pog_is_null(object.property_exists(v4, "act0_done_trade")) and _pog_eq("icSPTradingScreen", v0)):
-						continue
-					object.add_int_property(v4, "act0_done_trade", 1)
-					await iconversation.begin()
-					await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_is_trade")
-					await iconversation.end()
-	return
+				_pc = 2900
+				continue
+		elif _pc == 2812:
+			object.add_int_property(v4, "act0_done_recycling", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_console_allows_you_to_take_anything_in_the")
+			await iconversation.end()
+			_pc = 3161
+			continue
+		elif _pc == 2900:
+			if _pog_is_null(object.property_exists(v4, "act0_done_manufacturing")) and _pog_eq("icSPManufacturingScreen", v0):
+				_pc = 2945
+				continue
+			else:
+				_pc = 3033
+				continue
+		elif _pc == 2945:
+			object.add_int_property(v4, "act0_done_manufacturing", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_here_is_the_manufacturing_console")
+			await iconversation.end()
+			_pc = 3161
+			continue
+		elif _pc == 3033:
+			if _pog_is_null(object.property_exists(v4, "act0_done_trade")) and _pog_eq("icSPTradingScreen", v0):
+				_pc = 3078
+				continue
+			else:
+				_pc = 3161
+				continue
+		elif _pc == 3078:
+			object.add_int_property(v4, "act0_done_trade", 1)
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a0_master_dialogue_clay_this_is_trade")
+			await iconversation.end()
+			_pc = 3161
+			continue
+		elif _pc == 3161:
+			_pc = 2445
+			continue
+		elif _pc == 3166:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3176(v0) -> Variant:
+	var _pc: int = 3176
 	while true:
-		await _pog_wait(0.5)
-		if not (not _pog_eq(v0, ihud.current_menu_node())):
-			break
-	return 0
+		if _pc == 3176:
+			await _pog_wait(0.5)
+			if _pog_eq(v0, ihud.current_menu_node()):
+				_pc = 3235
+				continue
+			else:
+				_pc = 3176
+				continue
+		elif _pc == 3235:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_3238(v0) -> Variant:
+	var _pc: int = 3238
 	while true:
-		await _pog_wait(0.5)
-		if not (_pog_eq(v0, ihud.current_menu_node())):
-			break
-	return
+		if _pc == 3238:
+			await _pog_wait(0.5)
+			if not _pog_eq(v0, ihud.current_menu_node()):
+				_pc = 3296
+				continue
+			else:
+				_pc = 3238
+				continue
+		elif _pc == 3296:
+			return
+		else:
+			return 0
 	return 0
 
 func h_u_d_traininer() -> Variant:
 	var v0: Variant = 0
-	v0 = state.find(self)
-	if not (global.exists("g_training_disabled")) and _pog_is_null(object.property_exists(v0, "number_completed_hud_nodes")):
-		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_hud_menu2")
-		await local_3176("hud_menu_menu")
-		ihud.set_prompt("", "")
-		ihud.lock_menu(1)
-		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_hud_select")
-		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_as_you")
-		ihud.lock_menu(0)
-		await local_3176("hud_menu_menu")
-		if _pog_is_null(object.property_exists(v0, "number_completed_hud_nodes")):
-			object.add_int_property(v0, "number_completed_hud_nodes", 0)
+	var _pc: int = 3305
 	while true:
-		await _pog_wait(1)
-		if PogRuntime.TRACE:
-			debug.print_string("iact0GeneralTraining: Still running the HUD traininer!\n")
-		if global.exists("g_training_disabled"):
+		if _pc == 3305:
+			v0 = state.find(self)
+			if not (global.exists("g_training_disabled")) and _pog_is_null(object.property_exists(v0, "number_completed_hud_nodes")):
+				_pc = 3395
+				continue
+			else:
+				_pc = 3637
+				continue
+		elif _pc == 3395:
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_hud_menu2")
+			await local_3176("hud_menu_menu")
+			ihud.set_prompt("", "")
+			ihud.lock_menu(1)
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_hud_select")
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_as_you")
+			ihud.lock_menu(0)
+			await local_3176("hud_menu_menu")
+			if _pog_is_null(object.property_exists(v0, "number_completed_hud_nodes")):
+				_pc = 3610
+				continue
+			else:
+				_pc = 3637
+				continue
+		elif _pc == 3610:
+			object.add_int_property(v0, "number_completed_hud_nodes", 0)
+			_pc = 3637
 			continue
-		if 10 == object.int_property(v0, "number_completed_hud_nodes"):
+		elif _pc == 3637:
+			_pc = 3642
+			continue
+		elif _pc == 3642:
+			await _pog_frame()
+			if _pog_every(3643, 1.0):
+				_pc = 3656
+				continue
+			else:
+				_pc = 5553
+				continue
+		elif _pc == 3656:
+			_pc = 3682
+			continue
+		elif _pc == 3661:
+			debug.print_string("iact0GeneralTraining: Still running the HUD traininer!\n")
+			_pc = 3682
+			continue
+		elif _pc == 3682:
+			if not (global.exists("g_training_disabled")):
+				_pc = 3708
+				continue
+			else:
+				_pc = 5553
+				continue
+		elif _pc == 3708:
+			if 10 == object.int_property(v0, "number_completed_hud_nodes"):
+				_pc = 3741
+				continue
+			else:
+				_pc = 3773
+				continue
+		elif _pc == 3741:
 			state.destroy(self)
-			return
-		if _pog_is_null(object.property_exists(v0, "done_eng")) and _pog_eq("hud_menu_eng", ihud.current_menu_node()):
+			_pc = 5559
+			continue
+		elif _pc == 3773:
+			if _pog_is_null(object.property_exists(v0, "done_eng")) and _pog_eq("hud_menu_eng", ihud.current_menu_node()):
+				_pc = 3827
+				continue
+			else:
+				_pc = 3956
+				continue
+		elif _pc == 3827:
 			object.add_int_property(v0, "done_eng", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_eng")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_eng_screen")
-		if _pog_is_null(object.property_exists(v0, "done_wep")) and _pog_eq("hud_menu_wep", ihud.current_menu_node()):
+			_pc = 3956
+			continue
+		elif _pc == 3956:
+			if _pog_is_null(object.property_exists(v0, "done_wep")) and _pog_eq("hud_menu_wep", ihud.current_menu_node()):
+				_pc = 4010
+				continue
+			else:
+				_pc = 4089
+				continue
+		elif _pc == 4010:
 			object.add_int_property(v0, "done_wep", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
-		if _pog_is_null(object.property_exists(v0, "done_cmd")) and _pog_eq("hud_menu_cmd", ihud.current_menu_node()):
+			_pc = 4089
+			continue
+		elif _pc == 4089:
+			if _pog_is_null(object.property_exists(v0, "done_cmd")) and _pog_eq("hud_menu_cmd", ihud.current_menu_node()):
+				_pc = 4143
+				continue
+			else:
+				_pc = 4272
+				continue
+		elif _pc == 4143:
 			object.add_int_property(v0, "done_cmd", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_cmd")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_new_cmd_menu")
-		if _pog_is_null(object.property_exists(v0, "done_doc")) and _pog_eq("hud_menu_doc", ihud.current_menu_node()):
+			_pc = 4272
+			continue
+		elif _pc == 4272:
+			if _pog_is_null(object.property_exists(v0, "done_doc")) and _pog_eq("hud_menu_doc", ihud.current_menu_node()):
+				_pc = 4326
+				continue
+			else:
+				_pc = 4455
+				continue
+		elif _pc == 4326:
 			object.add_int_property(v0, "done_doc", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_doc")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_doc_menu")
-		if _pog_is_null(object.property_exists(v0, "done_log")) and _pog_eq("hud_menu_log", ihud.current_menu_node()):
+			_pc = 4455
+			continue
+		elif _pc == 4455:
+			if _pog_is_null(object.property_exists(v0, "done_log")) and _pog_eq("hud_menu_log", ihud.current_menu_node()):
+				_pc = 4509
+				continue
+			else:
+				_pc = 4638
+				continue
+		elif _pc == 4509:
 			object.add_int_property(v0, "done_log", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_log")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_log_screen")
-		if _pog_is_null(object.property_exists(v0, "done_obj")) and _pog_eq("hud_menu_objectives", ihud.current_menu_node()):
+			_pc = 4638
+			continue
+		elif _pc == 4638:
+			if _pog_is_null(object.property_exists(v0, "done_obj")) and _pog_eq("hud_menu_objectives", ihud.current_menu_node()):
+				_pc = 4692
+				continue
+			else:
+				_pc = 4821
+				continue
+		elif _pc == 4692:
 			object.add_int_property(v0, "done_obj", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_objectives")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_objective_screen")
-		if _pog_is_null(object.property_exists(v0, "done_coms")) and _pog_eq("hud_menu_comms", ihud.current_menu_node()):
+			_pc = 4821
+			continue
+		elif _pc == 4821:
+			if _pog_is_null(object.property_exists(v0, "done_coms")) and _pog_eq("hud_menu_comms", ihud.current_menu_node()):
+				_pc = 4875
+				continue
+			else:
+				_pc = 5004
+				continue
+		elif _pc == 4875:
 			object.add_int_property(v0, "done_coms", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_comms")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_comms_menu")
-		if _pog_is_null(object.property_exists(v0, "done_nav")) and _pog_eq("hud_menu_nav", ihud.current_menu_node()):
+			_pc = 5004
+			continue
+		elif _pc == 5004:
+			if _pog_is_null(object.property_exists(v0, "done_nav")) and _pog_eq("hud_menu_nav", ihud.current_menu_node()):
+				_pc = 5058
+				continue
+			else:
+				_pc = 5187
+				continue
+		elif _pc == 5058:
 			object.add_int_property(v0, "done_nav", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_nav")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_nav_menu")
-		if _pog_is_null(object.property_exists(v0, "done_map")) and _pog_eq("hud_menu_map", ihud.current_menu_node()):
+			_pc = 5187
+			continue
+		elif _pc == 5187:
+			if _pog_is_null(object.property_exists(v0, "done_map")) and _pog_eq("hud_menu_map", ihud.current_menu_node()):
+				_pc = 5241
+				continue
+			else:
+				_pc = 5370
+				continue
+		elif _pc == 5241:
 			object.add_int_property(v0, "done_map", 1)
 			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_map")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_starmap")
-		if not (_pog_is_null(object.property_exists(v0, "done_auto")) and _pog_eq("hud_menu_autopilot", ihud.current_menu_node())):
+			_pc = 5370
 			continue
-		object.add_int_property(v0, "done_auto", 1)
-		object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
-		_pog_spawn(local_3238.bind(_pog_clone("hud_menu_autopilot")))
-		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_autop")
-	return
+		elif _pc == 5370:
+			if _pog_is_null(object.property_exists(v0, "done_auto")) and _pog_eq("hud_menu_autopilot", ihud.current_menu_node()):
+				_pc = 5424
+				continue
+			else:
+				_pc = 5553
+				continue
+		elif _pc == 5424:
+			object.add_int_property(v0, "done_auto", 1)
+			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_autopilot")))
+			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_autop")
+			_pc = 5553
+			continue
+		elif _pc == 5553:
+			_pc = 3642
+			continue
+		elif _pc == 5558:
+			_pc = 5559
+			continue
+		elif _pc == 5559:
+			return
+		else:
+			return 0
 	return 0
 

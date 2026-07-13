@@ -147,6 +147,7 @@ func local_0(v0, v1, v2) -> Variant:
 			_pc = 3386
 			continue
 		elif _pc == 3336:
+			math.random_int(0, 3)
 			if not _pog_is_null(math.random_int(0, 3)):
 				_pc = 3360
 				continue
@@ -190,6 +191,7 @@ func local_0(v0, v1, v2) -> Variant:
 			_pc = 3558
 			continue
 		elif _pc == 3525:
+			math.random_int(1, 2)
 			if math.random_int(1, 2) != 1:
 				_pc = 3549
 				continue
@@ -228,13 +230,22 @@ func local_0(v0, v1, v2) -> Variant:
 	return 0
 
 func local_3829(v0, v1, v2, v3) -> Variant:
+	var _pc: int = 3829
 	while true:
-		await _pog_wait(1.0)
-		if not (not _pog_eq(v1, isim.active_world())):
-			break
-	await _pog_wait(4.0)
-	await icutsceneutilities.handle_abort(_pog_spawn(local_0.bind(v0, v2, v3)))
-	return
+		if _pc == 3829:
+			await _pog_wait(1.0)
+			if _pog_eq(v1, isim.active_world()):
+				_pc = 3888
+				continue
+			else:
+				_pc = 3829
+				continue
+		elif _pc == 3888:
+			await _pog_wait(4.0)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_0.bind(v0, v2, v3)))
+			return
+		else:
+			return 0
 	return 0
 
 func kompira() -> Variant:
@@ -481,15 +492,40 @@ func local_6176(v0, v1) -> Variant:
 
 func local_7119(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = 1
+	var _pc: int = 7119
 	while true:
-		await _pog_wait(5)
-		if idirector.is_busy():
+		if _pc == 7119:
+			v1 = 1
+			_pc = 7136
 			continue
-		await local_6176(v0, v1)
-		v1 = 1 + v1
-		await _pog_wait(10.0)
-	return
+		elif _pc == 7136:
+			await _pog_frame()
+			if _pog_every(7137, 5.0):
+				_pc = 7150
+				continue
+			else:
+				_pc = 7238
+				continue
+		elif _pc == 7150:
+			if not (idirector.is_busy()):
+				_pc = 7169
+				continue
+			else:
+				_pc = 7238
+				continue
+		elif _pc == 7169:
+			await local_6176(v0, v1)
+			v1 = 1 + v1
+			await _pog_wait(10.0)
+			_pc = 7238
+			continue
+		elif _pc == 7238:
+			_pc = 7136
+			continue
+		elif _pc == 7243:
+			return
+		else:
+			return 0
 	return 0
 
 func main() -> Variant:

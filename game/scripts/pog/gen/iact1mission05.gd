@@ -91,43 +91,95 @@ func local_272() -> Variant:
 	return 0
 
 func local_317() -> Variant:
-	while icomms.is_in_conversation():
-		await _pog_wait(0.5)
-	if not (await iutilities.skip_mission("Marauder Cache?")):
-		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
-	return
+	var _pc: int = 317
+	while true:
+		if _pc == 317:
+			if icomms.is_in_conversation():
+				_pc = 335
+				continue
+			else:
+				_pc = 372
+				continue
+		elif _pc == 335:
+			await _pog_wait(0.5)
+			_pc = 317
+			continue
+		elif _pc == 372:
+			if not (await iutilities.skip_mission("Marauder Cache?")):
+				_pc = 398
+				continue
+			else:
+				_pc = 430
+				continue
+		elif _pc == 398:
+			_pog_detach(_pog_spawn(mission_handler.bind()))
+			_pc = 444
+			continue
+		elif _pc == 430:
+			await stub()
+			_pc = 444
+			continue
+		elif _pc == 444:
+			return
+		else:
+			return 0
 	return 0
 
 func local_446(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14) -> Variant:
+	var _pc: int = 446
 	while true:
-		await _pog_wait(1)
-		if 100 != state.progress(v1):
+		if _pc == 446:
+			_pc = 451
 			continue
-		sim.destroy(v2)
-		sim.destroy(v3)
-		sim.destroy(v4)
-		sim.destroy(v5)
-		sim.destroy(v6)
-		sim.destroy(v7)
-		sim.destroy(v8)
-		sim.destroy(v14)
-		sim.destroy(sim.find_by_name("a1_m05_waypoint_meeting"))
-		group.destroy(v9, 1)
-		group.destroy(v10, 1)
-		group.destroy(v11, 1)
-		group.destroy(v12, 1)
-		group.destroy(v13, 1)
-		global.set_bool("g_skip_locked", 0)
-		_pog_detach(_pog_spawn(local_317.bind()))
-		await local_272()
-		state.destroy(v0)
-		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
-		_pog_halt(v0)
-		return
-	return
+		elif _pc == 451:
+			await _pog_frame()
+			if _pog_every(452, 1.0):
+				_pc = 465
+				continue
+			else:
+				_pc = 926
+				continue
+		elif _pc == 465:
+			if 100 == state.progress(v1):
+				_pc = 491
+				continue
+			else:
+				_pc = 926
+				continue
+		elif _pc == 491:
+			sim.destroy(v2)
+			sim.destroy(v3)
+			sim.destroy(v4)
+			sim.destroy(v5)
+			sim.destroy(v6)
+			sim.destroy(v7)
+			sim.destroy(v8)
+			sim.destroy(v14)
+			sim.destroy(sim.find_by_name("a1_m05_waypoint_meeting"))
+			group.destroy(v9, 1)
+			group.destroy(v10, 1)
+			group.destroy(v11, 1)
+			group.destroy(v12, 1)
+			group.destroy(v13, 1)
+			global.set_bool("g_skip_locked", 0)
+			_pog_detach(_pog_spawn(local_317.bind()))
+			await local_272()
+			state.destroy(v0)
+			await iutilities.remove_mission_restart()
+			await imissiontracker.remove_mission(self)
+			_pog_halt(v0)
+			_pc = 932
+			continue
+		elif _pc == 926:
+			_pc = 451
+			continue
+		elif _pc == 931:
+			_pc = 932
+			continue
+		elif _pc == 932:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -918,6 +970,7 @@ func mission_handler() -> Variant:
 			_pc = 6271
 			continue
 		elif _pc == 6236:
+			state.progress(v24)
 			if state.progress(v24) != 1:
 				_pc = 6262
 				continue
@@ -948,26 +1001,34 @@ func local_6341(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = group.create()
-	v1 = iship.create("ini:/sims/ships/utility/truck_prospector", "a1_m05_ship_miner_1")
-	group.add_sim(v4, v1)
-	await ipilotsetup.marauder(v1)
-	isim.set_faction(v1, ifaction.find(await iutilities.from_allegiance_enum(1)))
-	sim.place_near(v1, v0, 1000.0)
-	v2 = iship.create("ini:/sims/ships/utility/lightminer", "a1_m05_ship_miner_2")
-	group.add_sim(v4, v2)
-	await ipilotsetup.generic_coward(v2)
-	isim.set_faction(v2, ifaction.find(await iutilities.from_allegiance_enum(1)))
-	sim.place_near(v2, v0, 1000.0)
-	v3 = iship.create("ini:/sims/ships/utility/puffin", "a1_m05_ship_miner_3")
-	group.add_sim(v4, v3)
-	await ipilotsetup.generic_coward(v3)
-	isim.set_faction(v3, ifaction.find(await iutilities.from_allegiance_enum(1)))
-	sim.place_near(v3, v0, 1000.0)
-	_pog_spawn(iscriptedorders.loiter_near_sim.bind(v1, v0))
-	_pog_spawn(iscriptedorders.loiter_near_sim.bind(v2, v0))
-	_pog_spawn(iscriptedorders.loiter_near_sim.bind(v3, v0))
-	return v4
+	var _pc: int = 6341
+	while true:
+		if _pc == 6341:
+			v4 = group.create()
+			v1 = iship.create("ini:/sims/ships/utility/truck_prospector", "a1_m05_ship_miner_1")
+			group.add_sim(v4, v1)
+			await ipilotsetup.marauder(v1)
+			isim.set_faction(v1, ifaction.find(await iutilities.from_allegiance_enum(1)))
+			sim.place_near(v1, v0, 1000.0)
+			v2 = iship.create("ini:/sims/ships/utility/lightminer", "a1_m05_ship_miner_2")
+			group.add_sim(v4, v2)
+			await ipilotsetup.generic_coward(v2)
+			isim.set_faction(v2, ifaction.find(await iutilities.from_allegiance_enum(1)))
+			sim.place_near(v2, v0, 1000.0)
+			v3 = iship.create("ini:/sims/ships/utility/puffin", "a1_m05_ship_miner_3")
+			group.add_sim(v4, v3)
+			await ipilotsetup.generic_coward(v3)
+			isim.set_faction(v3, ifaction.find(await iutilities.from_allegiance_enum(1)))
+			sim.place_near(v3, v0, 1000.0)
+			_pog_spawn(iscriptedorders.loiter_near_sim.bind(v1, v0))
+			_pog_spawn(iscriptedorders.loiter_near_sim.bind(v2, v0))
+			_pog_spawn(iscriptedorders.loiter_near_sim.bind(v3, v0))
+			_pc = 6903
+			continue
+		elif _pc == 6903:
+			return
+		else:
+			return 0
 	return 0
 
 func local_6905(v0, v1) -> Variant:
@@ -976,51 +1037,128 @@ func local_6905(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = group.create()
-	v3 = ifaction.find("Marauders")
-	v4 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a1_m05_ship_marauder_1")
-	v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a1_m05_ship_marauder_2")
-	v6 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a1_m05_ship_marauder_3")
-	group.add_sim(v2, v4)
-	await ipilotsetup.marauder(v4)
-	isim.set_faction(v4, v3)
-	sim.place_near(v4, v0, v1)
-	group.add_sim(v2, v5)
-	await ipilotsetup.marauder(v5)
-	isim.set_faction(v5, v3)
-	group.add_sim(v2, v6)
-	await ipilotsetup.marauder(v6)
-	isim.set_faction(v6, v3)
-	return v2
+	var _pc: int = 6905
+	while true:
+		if _pc == 6905:
+			v2 = group.create()
+			v3 = ifaction.find("Marauders")
+			v4 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a1_m05_ship_marauder_1")
+			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a1_m05_ship_marauder_2")
+			v6 = iship.create("ini:/sims/ships/marauder/marauder_cutter", "a1_m05_ship_marauder_3")
+			group.add_sim(v2, v4)
+			await ipilotsetup.marauder(v4)
+			isim.set_faction(v4, v3)
+			sim.place_near(v4, v0, v1)
+			group.add_sim(v2, v5)
+			await ipilotsetup.marauder(v5)
+			isim.set_faction(v5, v3)
+			group.add_sim(v2, v6)
+			await ipilotsetup.marauder(v6)
+			isim.set_faction(v6, v3)
+			_pc = 7288
+			continue
+		elif _pc == 7288:
+			return
+		elif _pc == 7347:
+			if v2 < v6:
+				_pc = 7363
+				continue
+			else:
+				_pc = 7525
+				continue
+		elif _pc == 7363:
+			v5 = iship.create("ini:/sims/ships/marauder/fighter", await ishipcreation.ship_name("Marauders", -1))
+			group.add_sim(v3, v5)
+			await ipilotsetup.marauder(v5)
+			isim.set_faction(v5, v4)
+			sim.place_near(v5, v0, v1)
+			v6 = 1 + v6
+			_pc = 7347
+			continue
+		elif _pc == 7525:
+			_pc = 7535
+			continue
+		elif _pc == 7535:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7537(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = group.create()
-	group.add_sim(v2, v0)
-	await _pog_wait(v1)
-	if sim.is_dead(v0):
-		pass
-	else:
-		await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_the_freighters_running_for_it")
-		_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v2, _pog_clone("Random"))))
-	return
+	var _pc: int = 7537
+	while true:
+		if _pc == 7537:
+			v2 = group.create()
+			group.add_sim(v2, v0)
+			await _pog_wait(v1)
+			if sim.is_dead(v0):
+				_pc = 7640
+				continue
+			else:
+				_pc = 7645
+				continue
+		elif _pc == 7640:
+			_pc = 7713
+			continue
+		elif _pc == 7645:
+			await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_the_freighters_running_for_it")
+			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v2, _pog_clone("Random"))))
+			_pc = 7713
+			continue
+		elif _pc == 7713:
+			return
+		else:
+			return 0
 	return 0
 
 func local_7715(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = group.sim_count(v0)
-	v3 = 5
-	if v3 > v2:
-		if PogRuntime.TRACE:
+	var _pc: int = 7715
+	while true:
+		if _pc == 7715:
+			v2 = group.sim_count(v0)
+			v3 = 5
+			if v3 > v2:
+				_pc = 7768
+				continue
+			else:
+				_pc = 7800
+				continue
+		elif _pc == 7768:
+			_pc = 7794
+			continue
+		elif _pc == 7773:
 			debug.error("ERROR: dock_group - No. dockees > No. free dock ports")
-	else:
-		v4 = 0
-		while v2 < v4:
+			_pc = 7794
+			continue
+		elif _pc == 7794:
+			_pc = 7889
+			continue
+		elif _pc == 7800:
+			v4 = 0
+			_pc = 7807
+			continue
+		elif _pc == 7807:
+			if v2 < v4:
+				_pc = 7823
+				continue
+			else:
+				_pc = 7883
+				continue
+		elif _pc == 7823:
 			iship.dock(group.nth_sim(v0, v4), v1)
 			v4 = 1 + v4
-	return
+			_pc = 7807
+			continue
+		elif _pc == 7883:
+			_pc = 7889
+			continue
+		elif _pc == 7889:
+			return
+		else:
+			return 0
 	return 0
 

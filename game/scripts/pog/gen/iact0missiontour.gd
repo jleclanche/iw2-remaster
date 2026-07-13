@@ -87,53 +87,101 @@ func local_185() -> Variant:
 
 func local_209() -> Variant:
 	var v0: Variant = 0
-	while icomms.is_in_conversation():
-		await _pog_wait(0.5)
-	if not (await iutilities.skip_mission("Hoffers Wake Tour?")):
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
-	else:
-		await stub()
-	return
+	var _pc: int = 209
+	while true:
+		if _pc == 209:
+			_pc = 214
+			continue
+		elif _pc == 214:
+			if icomms.is_in_conversation():
+				_pc = 232
+				continue
+			else:
+				_pc = 269
+				continue
+		elif _pc == 232:
+			await _pog_wait(0.5)
+			_pc = 214
+			continue
+		elif _pc == 269:
+			if not (await iutilities.skip_mission("Hoffers Wake Tour?")):
+				_pc = 295
+				continue
+			else:
+				_pc = 332
+				continue
+		elif _pc == 295:
+			v0 = _pog_spawn(mission_handler.bind())
+			_pog_detach(v0)
+			_pc = 351
+			continue
+		elif _pc == 332:
+			await stub()
+			_pc = 351
+			continue
+		elif _pc == 351:
+			return
+		else:
+			return 0
 	return 0
 
 func local_353() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = group.create()
-	v2 = ifaction.find("Stepson")
-	v1 = iship.create("ini:/sims/ships/utility/tug", await ishipcreation.ship_name("Stepson", -1))
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic_cargo_pod(v1)
-	group.add_sim(v0, v1)
-	isim.set_indestructable(v1, 1)
-	object.set_bool_property(v1, "ignore_speed_limit", 1)
-	v1 = iship.create("ini:/sims/ships/utility/puffin", await ishipcreation.ship_name("Stepson", -1))
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic_cargo_pod(v1)
-	group.add_sim(v0, v1)
-	object.set_bool_property(v1, "ignore_speed_limit", 1)
-	v1 = iship.create("ini:/sims/ships/utility/tug", await ishipcreation.ship_name("Stepson", -1))
-	isim.set_faction(v1, v2)
-	await ipilotsetup.generic_cargo_pod(v1)
-	group.add_sim(v0, v1)
-	object.set_bool_property(v1, "ignore_speed_limit", 1)
-	return v0
+	var _pc: int = 353
+	while true:
+		if _pc == 353:
+			v0 = group.create()
+			v2 = ifaction.find("Stepson")
+			v1 = iship.create("ini:/sims/ships/utility/tug", await ishipcreation.ship_name("Stepson", -1))
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic_cargo_pod(v1)
+			group.add_sim(v0, v1)
+			isim.set_indestructable(v1, 1)
+			object.set_bool_property(v1, "ignore_speed_limit", 1)
+			v1 = iship.create("ini:/sims/ships/utility/puffin", await ishipcreation.ship_name("Stepson", -1))
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic_cargo_pod(v1)
+			group.add_sim(v0, v1)
+			object.set_bool_property(v1, "ignore_speed_limit", 1)
+			v1 = iship.create("ini:/sims/ships/utility/tug", await ishipcreation.ship_name("Stepson", -1))
+			isim.set_faction(v1, v2)
+			await ipilotsetup.generic_cargo_pod(v1)
+			group.add_sim(v0, v1)
+			object.set_bool_property(v1, "ignore_speed_limit", 1)
+			_pc = 859
+			continue
+		elif _pc == 859:
+			return
+		else:
+			return 0
 	return 0
 
 func local_861(v0, v1) -> Variant:
-	idirector.set_focus(v0)
-	idirector.set_secondary_focus(v1)
-	idirector.set_camera(13)
-	await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_here_we")
+	var _pc: int = 861
 	while true:
-		await _pog_wait(1.0)
-		if not (icomms.is_in_conversation()):
-			break
-	await _pog_wait(4.0)
-	idirector.end()
-	return
+		if _pc == 861:
+			idirector.set_focus(v0)
+			idirector.set_secondary_focus(v1)
+			idirector.set_camera(13)
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_here_we")
+			_pc = 943
+			continue
+		elif _pc == 943:
+			await _pog_wait(1.0)
+			if not (icomms.is_in_conversation()):
+				_pc = 993
+				continue
+			else:
+				_pc = 943
+				continue
+		elif _pc == 993:
+			await _pog_wait(4.0)
+			idirector.end()
+			return
+		else:
+			return 0
 	return 0
 
 func local_1041(v0, v1, v2, v3) -> Variant:
@@ -142,11 +190,29 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v4 = 0
-	v5 = 0
+	var _pc: int = 1041
 	while true:
-		await _pog_wait(1)
-		if await iutilities.player_in_range(v0) and not (v4):
+		if _pc == 1041:
+			v4 = 0
+			v5 = 0
+			_pc = 1065
+			continue
+		elif _pc == 1065:
+			await _pog_frame()
+			if _pog_every(1066, 1.0):
+				_pc = 1079
+				continue
+			else:
+				_pc = 1482
+				continue
+		elif _pc == 1079:
+			if await iutilities.player_in_range(v0) and not (v4):
+				_pc = 1109
+				continue
+			else:
+				_pc = 1281
+				continue
+		elif _pc == 1109:
 			v4 = 1
 			v6 = await local_353()
 			sim.place_near(group.leader(v6), v0, 2000.0)
@@ -154,38 +220,83 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 			v8 = _pog_spawn(iscriptedorders.local_patrol.bind(v6))
 			_pog_detach(v8)
 			v7 = iship.cast(group.leader(v6))
-		else:
+			_pc = 1338
+			continue
+		elif _pc == 1281:
 			if not (await iutilities.player_in_range(v0)) and v4:
-				v4 = 0
-				group.destroy(v6, 1)
-		if not (v4 and 10000.0 < sim.distance_between(v0, v2)):
+				_pc = 1311
+				continue
+			else:
+				_pc = 1338
+				continue
+		elif _pc == 1311:
+			v4 = 0
+			group.destroy(v6, 1)
+			_pc = 1338
 			continue
-		idirector.begin()
-		sim.place_at(v2, v0)
-		sim.point_at(v2, v1)
-		await icutsceneutilities.handle_abort(_pog_spawn(local_861.bind(v1, v2)))
-		break
-	iai.purge_orders(v7)
-	_pog_suspend(v8)
-	iai.give_approach_order_no_drop_off(v7, v2)
-	iobjectives.set_state("a0_m35_objectives_fly_to", 1)
-	while true:
-		await _pog_wait(1)
-		if not (not (v5) and 800.0 < sim.distance_between(v7, v2) or iai.is_order_complete(v7)):
+		elif _pc == 1338:
+			if v4 and 10000.0 < sim.distance_between(v0, v2):
+				_pc = 1378
+				continue
+			else:
+				_pc = 1482
+				continue
+		elif _pc == 1378:
+			idirector.begin()
+			sim.place_at(v2, v0)
+			sim.point_at(v2, v1)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_861.bind(v1, v2)))
+			_pc = 1487
 			continue
-		v5 = 1
-		await iconversation.begin()
-		await iconversation.say(v7, "", "a0_m35_dialogue_stepson_ah_judging")
-		await iconversation.say(0, "name_young_cal", "a0_m35_dialogue_young_cal_uh_yeah")
-		await iconversation.say(v7, "", "a0_m35_dialogue_stepson_well_in")
-		await iconversation.end()
-		iai.purge_orders(v7)
-		_pog_resume(v8)
-		await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_hmm_they")
-		state.set_progress(v3, 2)
-		sim.destroy(v0)
-		return
-	return
+		elif _pc == 1482:
+			_pc = 1065
+			continue
+		elif _pc == 1487:
+			iai.purge_orders(v7)
+			_pog_suspend(v8)
+			iai.give_approach_order_no_drop_off(v7, v2)
+			iobjectives.set_state("a0_m35_objectives_fly_to", 1)
+			_pc = 1577
+			continue
+		elif _pc == 1577:
+			await _pog_frame()
+			if _pog_every(1578, 1.0):
+				_pc = 1591
+				continue
+			else:
+				_pc = 1889
+				continue
+		elif _pc == 1591:
+			if not (v5) and 800.0 < sim.distance_between(v7, v2) or iai.is_order_complete(v7):
+				_pc = 1651
+				continue
+			else:
+				_pc = 1889
+				continue
+		elif _pc == 1651:
+			v5 = 1
+			await iconversation.begin()
+			await iconversation.say(v7, "", "a0_m35_dialogue_stepson_ah_judging")
+			await iconversation.say(0, "name_young_cal", "a0_m35_dialogue_young_cal_uh_yeah")
+			await iconversation.say(v7, "", "a0_m35_dialogue_stepson_well_in")
+			await iconversation.end()
+			iai.purge_orders(v7)
+			_pog_resume(v8)
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_hmm_they")
+			state.set_progress(v3, 2)
+			sim.destroy(v0)
+			_pc = 1895
+			continue
+		elif _pc == 1889:
+			_pc = 1577
+			continue
+		elif _pc == 1894:
+			_pc = 1895
+			continue
+		elif _pc == 1895:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1897(v0, v1) -> Variant:
@@ -240,6 +351,7 @@ func local_1897(v0, v1) -> Variant:
 			_pc = 2363
 			continue
 		elif _pc == 2332:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 2355
 				continue
@@ -281,6 +393,7 @@ func local_1897(v0, v1) -> Variant:
 			_pc = 2751
 			continue
 		elif _pc == 2720:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 2743
 				continue
@@ -356,6 +469,7 @@ func local_2781() -> Variant:
 			_pc = 3332
 			continue
 		elif _pc == 3301:
+			math.random_int(0, 1)
 			if not _pog_is_null(math.random_int(0, 1)):
 				_pc = 3324
 				continue
@@ -409,27 +523,89 @@ func local_3362(v0, v1, v2) -> Variant:
 func local_3820(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = group.sim_count(v0)
-	v2 = 0
-	while v1 < v2:
-		isim.set_hostile(isim.cast(group.nth_sim(v0, v2)), 1)
-		v2 = 1 + v2
-	return 0
+	var _pc: int = 3820
+	while true:
+		if _pc == 3820:
+			v1 = group.sim_count(v0)
+			v2 = 0
+			_pc = 3856
+			continue
+		elif _pc == 3856:
+			if v1 < v2:
+				_pc = 3872
+				continue
+			else:
+				_pc = 3941
+				continue
+		elif _pc == 3872:
+			isim.set_hostile(isim.cast(group.nth_sim(v0, v2)), 1)
+			v2 = 1 + v2
+			_pc = 3856
+			continue
+		elif _pc == 3941:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_3944(v0, v1) -> Variant:
-	iship.disrupt_l_d_s_drive(v0, 9999000.0)
+	var _pc: int = 3944
 	while true:
-		await _pog_wait(1)
-		if 0 > group.sim_count(v1):
+		if _pc == 3944:
+			iship.disrupt_l_d_s_drive(v0, 9999000.0)
+			_pc = 3973
+			continue
+		elif _pc == 3973:
+			await _pog_frame()
+			if _pog_every(3974, 1.0):
+				_pc = 3987
+				continue
+			else:
+				_pc = 4227
+				continue
+		elif _pc == 3987:
+			if 0 > group.sim_count(v1):
+				_pc = 4012
+				continue
+			else:
+				_pc = 4222
+				continue
+		elif _pc == 4012:
 			if not (iship.is_disrupted(v0)) and 28000.0 > sim.distance_between(v0, group.leader(v1)):
-				iship.disrupt(v0, 99999000.0, 0)
-				await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_we_have_been_disrupted")
+				_pc = 4079
+				continue
+			else:
+				_pc = 4132
+				continue
+		elif _pc == 4079:
+			iship.disrupt(v0, 99999000.0, 0)
+			await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_we_have_been_disrupted")
+			_pc = 4132
+			continue
+		elif _pc == 4132:
 			if iship.is_disrupted(v0) and 20000.0 < sim.distance_between(group.leader(v1), v0):
-				iship.cancel_disrupt(v0)
+				_pc = 4198
+				continue
+			else:
+				_pc = 4217
+				continue
+		elif _pc == 4198:
+			iship.cancel_disrupt(v0)
+			_pc = 4217
+			continue
+		elif _pc == 4217:
+			_pc = 4227
+			continue
+		elif _pc == 4222:
+			_pc = 4232
+			continue
+		elif _pc == 4227:
+			_pc = 3973
+			continue
+		elif _pc == 4232:
+			return
 		else:
-			break
-	return
+			return 0
 	return 0
 
 func local_4235(v0, v1) -> Variant:
@@ -450,116 +626,283 @@ func local_4235(v0, v1) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v2 = 0
-	v3 = 0
-	v4 = 0
-	v5 = 0
-	v6 = 0
-	v7 = 0
-	v8 = 0
-	v9 = 0
-	v14 = math.random_int(9, 16)
-	v10 = await local_1897(2, 0)
-	v17 = iship.cast(group.leader(v10))
-	sim.place_near(v17, v0, 15000.0)
-	await iescort.line_abreast(v10, 70.0, 8000.0, 1)
-	iai.give_approach_order_no_drop_off(v17, v0)
-	_pog_spawn(local_3944.bind(v0, v10))
+	var _pc: int = 4235
 	while true:
-		await _pog_wait(1.0)
-		if not (900.0 > sim.distance_between(v0, v17) and not (iai.is_order_complete(v17))):
-			break
-	iai.purge_orders(v10)
-	iship.cancel_disrupt(v0)
-	await icutsceneutilities.handle_abort(_pog_spawn(local_3362.bind(v10, v17, v0)))
-	iai.purge_orders(v10)
-	iship.lock_down_weapons(iship.cast(group.leader(v10)))
-	iship.lock_down_weapons(iship.cast(group.nth_sim(v10, 1)))
-	v16 = iship.cast(group.nth_sim(v10, math.random_int(0, 1 - group.sim_count(v10))))
-	iai.give_attack_order(v16, v0)
-	v13 = group.sim_count(v10)
-	v12 = v13
-	await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_come_on")
-	while true:
-		await _pog_wait(1)
-		v13 = group.sim_count(v10)
-		if not (iship.is_disrupted(v0)):
+		if _pc == 4235:
+			v2 = 0
+			v3 = 0
+			v4 = 0
+			v5 = 0
+			v6 = 0
+			v7 = 0
+			v8 = 0
+			v9 = 0
+			v14 = math.random_int(9, 16)
+			v10 = await local_1897(2, 0)
+			v17 = iship.cast(group.leader(v10))
+			sim.place_near(v17, v0, 15000.0)
+			await iescort.line_abreast(v10, 70.0, 8000.0, 1)
+			iai.give_approach_order_no_drop_off(v17, v0)
+			_pog_spawn(local_3944.bind(v0, v10))
+			_pc = 4485
+			continue
+		elif _pc == 4485:
+			await _pog_wait(1.0)
+			if not (900.0 > sim.distance_between(v0, v17) and not (iai.is_order_complete(v17))):
+				_pc = 4571
+				continue
+			else:
+				_pc = 4485
+				continue
+		elif _pc == 4571:
+			iai.purge_orders(v10)
+			iship.cancel_disrupt(v0)
+			await icutsceneutilities.handle_abort(_pog_spawn(local_3362.bind(v10, v17, v0)))
+			iai.purge_orders(v10)
+			iship.lock_down_weapons(iship.cast(group.leader(v10)))
+			iship.lock_down_weapons(iship.cast(group.nth_sim(v10, 1)))
+			v16 = iship.cast(group.nth_sim(v10, math.random_int(0, 1 - group.sim_count(v10))))
+			iai.give_attack_order(v16, v0)
+			v13 = group.sim_count(v10)
+			v12 = v13
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_come_on")
+			_pc = 4924
+			continue
+		elif _pc == 4924:
+			await _pog_frame()
+			if _pog_every(4925, 1.0):
+				_pc = 4938
+				continue
+			else:
+				_pc = 5600
+				continue
+		elif _pc == 4938:
+			v13 = group.sim_count(v10)
+			if not (iship.is_disrupted(v0)):
+				_pc = 4986
+				continue
+			else:
+				_pc = 5000
+				continue
+		elif _pc == 4986:
 			v14 = -1 + v14
-		if 100 != state.progress(v1) and _pog_is_null(group.sim_count(v10)):
-			break
-		if 100 != state.progress(v1) and v13 > v12:
+			_pc = 5000
+			continue
+		elif _pc == 5000:
+			if 100 != state.progress(v1) and _pog_is_null(group.sim_count(v10)):
+				_pc = 5047
+				continue
+			else:
+				_pc = 5052
+				continue
+		elif _pc == 5047:
+			_pc = 5605
+			continue
+		elif _pc == 5052:
+			if 100 != state.progress(v1) and v13 > v12:
+				_pc = 5090
+				continue
+			else:
+				_pc = 5293
+				continue
+		elif _pc == 5090:
 			v12 = v13
 			v15 = math.random_int(0, 1 - v13)
 			v16 = iship.cast(group.nth_sim(v10, v15))
 			iai.give_attack_order(v16, v0)
 			if 2 == v13:
-				await iconversation.one_liner(v16, "", "a0_m35_dialogue_baddies_o_a_tough")
-			else:
-				if 1 == v13:
-					await iconversation.one_liner(v16, "", "a0_m35_dialogue_baddies_you_just")
-		else:
-			if not (100 != state.progress(v1) and 0 <= v14):
+				_pc = 5207
 				continue
+			else:
+				_pc = 5244
+				continue
+		elif _pc == 5207:
+			await iconversation.one_liner(v16, "", "a0_m35_dialogue_baddies_o_a_tough")
+			_pc = 5288
+			continue
+		elif _pc == 5244:
+			if 1 == v13:
+				_pc = 5256
+				continue
+			else:
+				_pc = 5288
+				continue
+		elif _pc == 5256:
+			await iconversation.one_liner(v16, "", "a0_m35_dialogue_baddies_you_just")
+			_pc = 5288
+			continue
+		elif _pc == 5288:
+			_pc = 5600
+			continue
+		elif _pc == 5293:
+			if 100 != state.progress(v1) and 0 <= v14:
+				_pc = 5327
+				continue
+			else:
+				_pc = 5600
+				continue
+		elif _pc == 5327:
 			v14 = math.random_int(9, 17)
 			if not (v2):
-				v2 = 1
-				await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_1")
+				_pc = 5361
+				continue
 			else:
-				if not (v3):
-					v3 = 1
-					await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_2")
-				else:
-					if not (v4):
-						v4 = 1
-						await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_3")
-					else:
-						if not (v5):
-							v5 = 1
-							await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_4")
-						else:
-							if v6:
-								continue
-							v6 = 1
-							await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_5")
-	v10 = await local_1897(4, 0)
-	await local_3820(v10)
-	v11 = await local_2781()
-	v18 = iship.cast(group.leader(v11))
-	v17 = iship.cast(group.leader(v10))
-	sim.place_near(v17, v0, 18000.0)
-	sim.place_near(v18, v0, 19000.0)
-	await iformation.claw(v10, 70.0, 1)
-	await iformation.goose(v11, 70.0, 1)
-	iai.give_approach_order(v10, v0)
-	iai.give_attack_order(v11, v10)
-	await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_phew")
-	while true:
-		await _pog_wait(1)
-		if not (v7) and 10000.0 < sim.distance_between(group.leader(v11), group.leader(v10)):
+				_pc = 5401
+				continue
+		elif _pc == 5361:
+			v2 = 1
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_1")
+			_pc = 5600
+			continue
+		elif _pc == 5401:
+			if not (v3):
+				_pc = 5412
+				continue
+			else:
+				_pc = 5452
+				continue
+		elif _pc == 5412:
+			v3 = 1
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_2")
+			_pc = 5600
+			continue
+		elif _pc == 5452:
+			if not (v4):
+				_pc = 5463
+				continue
+			else:
+				_pc = 5503
+				continue
+		elif _pc == 5463:
+			v4 = 1
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_3")
+			_pc = 5600
+			continue
+		elif _pc == 5503:
+			if not (v5):
+				_pc = 5514
+				continue
+			else:
+				_pc = 5554
+				continue
+		elif _pc == 5514:
+			v5 = 1
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_4")
+			_pc = 5600
+			continue
+		elif _pc == 5554:
+			if not (v6):
+				_pc = 5565
+				continue
+			else:
+				_pc = 5600
+				continue
+		elif _pc == 5565:
+			v6 = 1
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_help_5")
+			_pc = 5600
+			continue
+		elif _pc == 5600:
+			_pc = 4924
+			continue
+		elif _pc == 5605:
+			v10 = await local_1897(4, 0)
+			await local_3820(v10)
+			v11 = await local_2781()
+			v18 = iship.cast(group.leader(v11))
+			v17 = iship.cast(group.leader(v10))
+			sim.place_near(v17, v0, 18000.0)
+			sim.place_near(v18, v0, 19000.0)
+			await iformation.claw(v10, 70.0, 1)
+			await iformation.goose(v11, 70.0, 1)
+			iai.give_approach_order(v10, v0)
+			iai.give_attack_order(v11, v10)
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_phew")
+			_pc = 5929
+			continue
+		elif _pc == 5929:
+			await _pog_frame()
+			if _pog_every(5930, 1.0):
+				_pc = 5943
+				continue
+			else:
+				_pc = 6511
+				continue
+		elif _pc == 5943:
+			if not (v7) and 10000.0 < sim.distance_between(group.leader(v11), group.leader(v10)):
+				_pc = 6010
+				continue
+			else:
+				_pc = 6101
+				continue
+		elif _pc == 6010:
 			v7 = 1
 			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_hey_there")
 			await iconversation.one_liner(v18, "", "a0_m35_dialogue_wolfgang_looks_like")
 			iship.disrupt_l_d_s_drive(v0, 0.10000000149011612)
-		if not (v9) and iship.attacked(iship.cast(group.leader(v10))):
+			_pc = 6101
+			continue
+		elif _pc == 6101:
+			if not (v9) and iship.attacked(iship.cast(group.leader(v10))):
+				_pc = 6157
+				continue
+			else:
+				_pc = 6188
+				continue
+		elif _pc == 6157:
 			v9 = 1
 			iai.give_attack_order(v10, v11)
-		if not (100 != state.progress(v1) and not (v8) and _pog_is_null(group.sim_count(v10))):
+			_pc = 6188
 			continue
-		v8 = 1
-		iai.give_approach_order(v18, v0)
-		while true:
+		elif _pc == 6188:
+			if 100 != state.progress(v1) and not (v8) and _pog_is_null(group.sim_count(v10)):
+				_pc = 6242
+				continue
+			else:
+				_pc = 6511
+				continue
+		elif _pc == 6242:
+			v8 = 1
+			iai.give_approach_order(v18, v0)
+			_pc = 6273
+			continue
+		elif _pc == 6273:
 			await _pog_wait(0.5)
-			if not (not (iai.is_order_complete(v18))):
-				break
-		await iconversation.one_liner(v18, "", "a0_m35_dialogue_wolfgang_guess_youve")
-		iai.purge_orders(v18)
-		iai.give_approach_order(v18, imapentity.find_by_name("Charlesworth Freight Service Depot"))
-		group.destroy(v10, 1)
-		group.destroy(v11, 0)
-		if 100 != state.progress(v1):
+			if iai.is_order_complete(v18):
+				_pc = 6329
+				continue
+			else:
+				_pc = 6273
+				continue
+		elif _pc == 6329:
+			await iconversation.one_liner(v18, "", "a0_m35_dialogue_wolfgang_guess_youve")
+			iai.purge_orders(v18)
+			iai.give_approach_order(v18, imapentity.find_by_name("Charlesworth Freight Service Depot"))
+			group.destroy(v10, 1)
+			group.destroy(v11, 0)
+			if 100 != state.progress(v1):
+				_pc = 6485
+				continue
+			else:
+				_pc = 6506
+				continue
+		elif _pc == 6485:
 			state.set_progress(v1, 8)
-		return
-	return
+			_pc = 6506
+			continue
+		elif _pc == 6506:
+			_pc = 6517
+			continue
+		elif _pc == 6511:
+			_pc = 5929
+			continue
+		elif _pc == 6516:
+			_pc = 6517
+			continue
+		elif _pc == 6517:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -570,49 +913,123 @@ func mission_handler() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v0 = 0
-	v1 = iship.find_player_ship()
-	v2 = imapentity.find_by_name("Touchdown Orbital Transfer Station")
-	v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, 2000.0, 4000.0)
-	v6 = self
-	text.add("csv:/text/act_0/act0_mission35")
-	text.add("csv:/text/act_0/act0_mission35_addendum")
-	text.add("csv:/text/act_2/act2_mission25")
-	await istation.add_reactive_exception(ihabitat.cast(v2))
-	v4 = state.find(v6)
-	if not (v4):
-		v4 = state.create(v6, 0)
-	await local_42(v4)
-	await imissiontracker.add_mission(self, 0, 35)
-	if _pog_is_null(state.progress(v4)):
-		await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_right_well")
-	if 2 < state.progress(v4):
-		iobjectives.add("a0_m35_objectives_fly_to")
-	state.set_progress(v4, 1)
-	sim.point_at(v3, v2)
-	await iutilities.make_waypoint_visible(v3, 1, "a0_m35_name_marker")
-	_pog_spawn(local_1041.bind(v3, v2, v1, v4))
+	var _pc: int = 6519
 	while true:
-		await _pog_wait(1)
-		if not (v0) and 2 == state.progress(v4):
+		if _pc == 6519:
+			v0 = 0
+			v1 = iship.find_player_ship()
+			v2 = imapentity.find_by_name("Touchdown Orbital Transfer Station")
+			v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, 2000.0, 4000.0)
+			v6 = self
+			text.add("csv:/text/act_0/act0_mission35")
+			text.add("csv:/text/act_0/act0_mission35_addendum")
+			text.add("csv:/text/act_2/act2_mission25")
+			await istation.add_reactive_exception(ihabitat.cast(v2))
+			v4 = state.find(v6)
+			if not (v4):
+				_pc = 6764
+				continue
+			else:
+				_pc = 6789
+				continue
+		elif _pc == 6764:
+			v4 = state.create(v6, 0)
+			_pc = 6789
+			continue
+		elif _pc == 6789:
+			await local_42(v4)
+			await imissiontracker.add_mission(self, 0, 35)
+			if _pog_is_null(state.progress(v4)):
+				_pc = 6863
+				continue
+			else:
+				_pc = 6891
+				continue
+		elif _pc == 6863:
+			await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_right_well")
+			_pc = 6891
+			continue
+		elif _pc == 6891:
+			if 2 < state.progress(v4):
+				_pc = 6917
+				continue
+			else:
+				_pc = 6938
+				continue
+		elif _pc == 6917:
+			iobjectives.add("a0_m35_objectives_fly_to")
+			_pc = 6938
+			continue
+		elif _pc == 6938:
+			state.set_progress(v4, 1)
+			sim.point_at(v3, v2)
+			await iutilities.make_waypoint_visible(v3, 1, "a0_m35_name_marker")
+			_pog_spawn(local_1041.bind(v3, v2, v1, v4))
+			_pc = 7048
+			continue
+		elif _pc == 7048:
+			await _pog_frame()
+			if _pog_every(7049, 1.0):
+				_pc = 7062
+				continue
+			else:
+				_pc = 7476
+				continue
+		elif _pc == 7062:
+			if not (v0) and 2 == state.progress(v4):
+				_pc = 7095
+				continue
+			else:
+				_pc = 7126
+				continue
+		elif _pc == 7095:
 			v0 = 1
 			_pog_spawn(local_4235.bind(v1, v4))
-		if not (100 == state.progress(v4) or 8 == state.progress(v4)):
+			_pc = 7126
 			continue
-		if 100 != state.progress(v4):
+		elif _pc == 7126:
+			if 100 == state.progress(v4) or 8 == state.progress(v4):
+				_pc = 7174
+				continue
+			else:
+				_pc = 7476
+				continue
+		elif _pc == 7174:
+			if 100 != state.progress(v4):
+				_pc = 7200
+				continue
+			else:
+				_pc = 7227
+				continue
+		elif _pc == 7200:
 			global.set_bool("g_act0_tour_complete", 1)
-		else:
+			_pc = 7311
+			continue
+		elif _pc == 7227:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_209.bind()))
 			sim.destroy(v3)
 			await local_185()
-		iship.disrupt_l_d_s_drive(v1, 0.10000000149011612)
-		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
-		text.remove("csv:/text/act_2/act2_mission25")
-		await istation.remove_reactive_exception(ihabitat.cast(imapentity.find_by_name("Touchdown Orbital Transfer Station")))
-		return
-	return
+			_pc = 7311
+			continue
+		elif _pc == 7311:
+			iship.disrupt_l_d_s_drive(v1, 0.10000000149011612)
+			await iutilities.remove_mission_restart()
+			state.destroy(self)
+			await imissiontracker.remove_mission(self)
+			text.remove("csv:/text/act_2/act2_mission25")
+			await istation.remove_reactive_exception(ihabitat.cast(imapentity.find_by_name("Touchdown Orbital Transfer Station")))
+			_pc = 7482
+			continue
+		elif _pc == 7476:
+			_pc = 7048
+			continue
+		elif _pc == 7481:
+			_pc = 7482
+			continue
+		elif _pc == 7482:
+			return
+		else:
+			return 0
 	return 0
 

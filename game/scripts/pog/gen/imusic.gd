@@ -269,150 +269,533 @@ func local_52(v0, v1) -> Variant:
 	return 0
 
 func local_587(v0) -> Variant:
-	if _pog_eq("map:/geog/badlands/hoffers_wake", v0):
-		pass
-	else:
-		if _pog_eq("map:/geog/badlands/mwari", v0):
-			pass
-		else:
-			if _pog_eq("map:/geog/badlands/coyote", v0):
-				pass
+	var _pc: int = 587
+	while true:
+		if _pc == 587:
+			if _pog_eq("map:/geog/badlands/hoffers_wake", v0):
+				_pc = 605
+				continue
 			else:
-				if _pog_eq("map:/geog/badlands/firefrost", v0):
-					pass
-				else:
-					if _pog_eq("map:/geog/badlands/e3_system", v0):
-						pass
-					else:
-						if _pog_eq("map:/geog/badlands/santa_romera", v0):
-							pass
-						else:
-							if _pog_eq("map:/geog/badlands/kompira", v0):
-								pass
-							else:
-								if _pog_eq("map:/geog/badlands/eureka", v0):
-									pass
-								else:
-									if _pog_eq("map:/geog/badlands/dagda", v0):
-										pass
-									else:
-										if _pog_eq("map:/geog/badlands/dante", v0):
-											pass
-	return
+				_pc = 611
+				continue
+		elif _pc == 605:
+			_pc = 834
+			continue
+		elif _pc == 611:
+			if _pog_eq("map:/geog/badlands/mwari", v0):
+				_pc = 629
+				continue
+			else:
+				_pc = 635
+				continue
+		elif _pc == 629:
+			_pc = 834
+			continue
+		elif _pc == 635:
+			if _pog_eq("map:/geog/badlands/coyote", v0):
+				_pc = 653
+				continue
+			else:
+				_pc = 659
+				continue
+		elif _pc == 653:
+			_pc = 834
+			continue
+		elif _pc == 659:
+			if _pog_eq("map:/geog/badlands/firefrost", v0):
+				_pc = 677
+				continue
+			else:
+				_pc = 683
+				continue
+		elif _pc == 677:
+			_pc = 834
+			continue
+		elif _pc == 683:
+			if _pog_eq("map:/geog/badlands/e3_system", v0):
+				_pc = 701
+				continue
+			else:
+				_pc = 707
+				continue
+		elif _pc == 701:
+			_pc = 834
+			continue
+		elif _pc == 707:
+			if _pog_eq("map:/geog/badlands/santa_romera", v0):
+				_pc = 725
+				continue
+			else:
+				_pc = 731
+				continue
+		elif _pc == 725:
+			_pc = 834
+			continue
+		elif _pc == 731:
+			if _pog_eq("map:/geog/badlands/kompira", v0):
+				_pc = 749
+				continue
+			else:
+				_pc = 755
+				continue
+		elif _pc == 749:
+			_pc = 834
+			continue
+		elif _pc == 755:
+			if _pog_eq("map:/geog/badlands/eureka", v0):
+				_pc = 773
+				continue
+			else:
+				_pc = 779
+				continue
+		elif _pc == 773:
+			_pc = 834
+			continue
+		elif _pc == 779:
+			if _pog_eq("map:/geog/badlands/dagda", v0):
+				_pc = 797
+				continue
+			else:
+				_pc = 803
+				continue
+		elif _pc == 797:
+			_pc = 834
+			continue
+		elif _pc == 803:
+			if _pog_eq("map:/geog/badlands/dante", v0):
+				_pc = 821
+				continue
+			else:
+				_pc = 827
+				continue
+		elif _pc == 821:
+			_pc = 834
+			continue
+		elif _pc == 827:
+			_pc = 834
+			continue
+		elif _pc == 834:
+			return
+		else:
+			return 0
 	return 0
 
 func local_836(v0) -> Variant:
-	if _pog_is_null(v0):
-		return 0
-	if v0 == 1:
-		return 0
-	if v0 == 2:
-		return 0
-	if v0 == 6:
-		return 0
-	if v0 == 9:
-		return 0
-	if v0 == 10:
-		return 0
-	if v0 == 12:
-		return 0
-	if v0 == 19:
-		return 0
-	if v0 == 20:
-		return 0
-	if v0 == 13:
-		return 0
-	if v0 == 5:
-		return 0
-	if v0 == 21:
-		return 0
-	if v0 == 22:
-		return 0
-	if v0 == 3:
-		return 1
-	if v0 == 11:
-		return 1
-	if v0 == 7:
-		return 1
-	if v0 == 14:
-		return 1
-	if v0 == 15:
-		return 1
-	if v0 == 16:
-		return 1
-	if v0 == 23:
-		return 1
-	if v0 == 24:
-		return 1
-	if v0 == 25:
-		return 1
-	if v0 == 26:
-		return 1
-	if v0 == 27:
-		return 1
-	if v0 == 28:
-		return 1
-	if v0 == 29:
-		return 1
-	if v0 == 30:
-		return 1
-	if v0 == 31:
-		return 1
-	if v0 == 32:
-		return 1
-	if v0 == 33:
-		return 1
-	if v0 == 34:
-		return 1
-	if v0 == 35:
-		return 1
-	if v0 == 36:
-		return 1
-	if v0 == 37:
-		return 1
-	if v0 == 38:
-		return 1
-	if v0 == 39:
-		return 1
-	if v0 == 40:
-		return 1
-	if v0 == 41:
-		return 1
-	if v0 == 42:
-		return 1
-	if v0 == 43:
-		return 1
-	if v0 == 44:
-		return 1
-	if v0 == 45:
-		return 1
-	if v0 == 46:
-		return 1
-	if v0 == 47:
-		return 1
-	if v0 == 48:
-		return 1
-	if v0 == 49:
-		return 1
-	if v0 == 50:
-		return 1
-	if v0 == 51:
-		return 1
-	if v0 == 52:
-		return 1
-	if v0 == 4:
-		return 2
-	if v0 == 8:
-		return 2
-	if v0 == 17:
-		return 2
-	if v0 == 18:
-		return 2
-	if v0 == 53:
-		return 2
-	if v0 == 54:
-		return 2
-	return 0
+	var _pc: int = 836
+	while true:
+		if _pc == 836:
+			_pc = 871
+			continue
+		elif _pc == 841:
+			_pc = 1380
+			continue
+		elif _pc == 847:
+			_pc = 1380
+			continue
+		elif _pc == 853:
+			_pc = 1380
+			continue
+		elif _pc == 860:
+			_pc = 1380
+			continue
+		elif _pc == 866:
+			_pc = 1374
+			continue
+		elif _pc == 871:
+			if not _pog_is_null(v0):
+				_pc = 884
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 884:
+			if not _pog_is_null(1):
+				_pc = 892
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 892:
+			if not _pog_is_null(2):
+				_pc = 901
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 901:
+			if not _pog_is_null(6):
+				_pc = 910
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 910:
+			if not _pog_is_null(9):
+				_pc = 919
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 919:
+			if not _pog_is_null(10):
+				_pc = 928
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 928:
+			if not _pog_is_null(12):
+				_pc = 937
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 937:
+			if not _pog_is_null(19):
+				_pc = 946
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 946:
+			if not _pog_is_null(20):
+				_pc = 955
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 955:
+			if not _pog_is_null(13):
+				_pc = 964
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 964:
+			if not _pog_is_null(5):
+				_pc = 973
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 973:
+			if not _pog_is_null(21):
+				_pc = 982
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 982:
+			if not _pog_is_null(22):
+				_pc = 991
+				continue
+			else:
+				_pc = 841
+				continue
+		elif _pc == 991:
+			if not _pog_is_null(3):
+				_pc = 1000
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1000:
+			if not _pog_is_null(11):
+				_pc = 1009
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1009:
+			if not _pog_is_null(7):
+				_pc = 1018
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1018:
+			if not _pog_is_null(14):
+				_pc = 1027
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1027:
+			if not _pog_is_null(15):
+				_pc = 1036
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1036:
+			if not _pog_is_null(16):
+				_pc = 1045
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1045:
+			if not _pog_is_null(23):
+				_pc = 1054
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1054:
+			if not _pog_is_null(24):
+				_pc = 1063
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1063:
+			if not _pog_is_null(25):
+				_pc = 1072
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1072:
+			if not _pog_is_null(26):
+				_pc = 1081
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1081:
+			if not _pog_is_null(27):
+				_pc = 1090
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1090:
+			if not _pog_is_null(28):
+				_pc = 1099
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1099:
+			if not _pog_is_null(29):
+				_pc = 1108
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1108:
+			if not _pog_is_null(30):
+				_pc = 1117
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1117:
+			if not _pog_is_null(31):
+				_pc = 1126
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1126:
+			if not _pog_is_null(32):
+				_pc = 1135
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1135:
+			if not _pog_is_null(33):
+				_pc = 1144
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1144:
+			if not _pog_is_null(34):
+				_pc = 1153
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1153:
+			if not _pog_is_null(35):
+				_pc = 1162
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1162:
+			if not _pog_is_null(36):
+				_pc = 1171
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1171:
+			if not _pog_is_null(37):
+				_pc = 1180
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1180:
+			if not _pog_is_null(38):
+				_pc = 1189
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1189:
+			if not _pog_is_null(39):
+				_pc = 1198
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1198:
+			if not _pog_is_null(40):
+				_pc = 1207
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1207:
+			if not _pog_is_null(41):
+				_pc = 1216
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1216:
+			if not _pog_is_null(42):
+				_pc = 1225
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1225:
+			if not _pog_is_null(43):
+				_pc = 1234
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1234:
+			if not _pog_is_null(44):
+				_pc = 1243
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1243:
+			if not _pog_is_null(45):
+				_pc = 1252
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1252:
+			if not _pog_is_null(46):
+				_pc = 1261
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1261:
+			if not _pog_is_null(47):
+				_pc = 1270
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1270:
+			if not _pog_is_null(48):
+				_pc = 1279
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1279:
+			if not _pog_is_null(49):
+				_pc = 1288
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1288:
+			if not _pog_is_null(50):
+				_pc = 1297
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1297:
+			if not _pog_is_null(51):
+				_pc = 1306
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1306:
+			if not _pog_is_null(52):
+				_pc = 1315
+				continue
+			else:
+				_pc = 847
+				continue
+		elif _pc == 1315:
+			if not _pog_is_null(4):
+				_pc = 1324
+				continue
+			else:
+				_pc = 853
+				continue
+		elif _pc == 1324:
+			if not _pog_is_null(8):
+				_pc = 1333
+				continue
+			else:
+				_pc = 853
+				continue
+		elif _pc == 1333:
+			if not _pog_is_null(17):
+				_pc = 1342
+				continue
+			else:
+				_pc = 853
+				continue
+		elif _pc == 1342:
+			if not _pog_is_null(18):
+				_pc = 1351
+				continue
+			else:
+				_pc = 853
+				continue
+		elif _pc == 1351:
+			if not _pog_is_null(53):
+				_pc = 1360
+				continue
+			else:
+				_pc = 853
+				continue
+		elif _pc == 1360:
+			if not _pog_is_null(54):
+				_pc = 1369
+				continue
+			else:
+				_pc = 853
+				continue
+		elif _pc == 1369:
+			_pc = 860
+			continue
+		elif _pc == 1374:
+			_pc = 1380
+			continue
+		elif _pc == 1380:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1382(v0, v1) -> Variant:
@@ -420,15 +803,43 @@ func local_1382(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = iship.find_player_ship()
-	v2 = list.item_count(v0)
-	v4 = 0
-	while v2 < v4:
-		v5 = isim.cast(list.get_nth(v0, v4))
-		if v1 < sim.distance_between(v3, v5):
-			return 1
-		v4 = 1 + v4
-	return 0
+	var _pc: int = 1382
+	while true:
+		if _pc == 1382:
+			v3 = iship.find_player_ship()
+			v2 = list.item_count(v0)
+			v4 = 0
+			_pc = 1437
+			continue
+		elif _pc == 1437:
+			if v2 < v4:
+				_pc = 1453
+				continue
+			else:
+				_pc = 1553
+				continue
+		elif _pc == 1453:
+			v5 = isim.cast(list.get_nth(v0, v4))
+			if v1 < sim.distance_between(v3, v5):
+				_pc = 1529
+				continue
+			else:
+				_pc = 1535
+				continue
+		elif _pc == 1529:
+			_pc = 1559
+			continue
+		elif _pc == 1535:
+			v4 = 1 + v4
+			_pc = 1437
+			continue
+		elif _pc == 1553:
+			_pc = 1559
+			continue
+		elif _pc == 1559:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1561(v0) -> Variant:
@@ -438,20 +849,60 @@ func local_1561(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = null
-	v1 = global.list("g_active_location_list")
-	v2 = iship.find_player_ship()
-	v3 = isim.faction(v2)
-	v5 = list.item_count(v1)
-	v4 = 0
-	while v5 < v4:
-		v6 = ihabitat.cast(list.get_nth(v1, v4))
-		if v6:
+	var _pc: int = 1561
+	while true:
+		if _pc == 1561:
+			v1 = null
+			v1 = global.list("g_active_location_list")
+			v2 = iship.find_player_ship()
+			v3 = isim.faction(v2)
+			v5 = list.item_count(v1)
+			v4 = 0
+			_pc = 1678
+			continue
+		elif _pc == 1678:
+			if v5 < v4:
+				_pc = 1694
+				continue
+			else:
+				_pc = 1851
+				continue
+		elif _pc == 1694:
+			v6 = ihabitat.cast(list.get_nth(v1, v4))
+			if v6:
+				_pc = 1746
+				continue
+			else:
+				_pc = 1833
+				continue
+		elif _pc == 1746:
 			if -0.20000000298023224 < ifaction.feeling(v3, isim.faction(v6)):
-				if v0 < sim.distance_between(v6, v2):
-					return 1
-		v4 = 1 + v4
-	return 0
+				_pc = 1793
+				continue
+			else:
+				_pc = 1833
+				continue
+		elif _pc == 1793:
+			if v0 < sim.distance_between(v6, v2):
+				_pc = 1827
+				continue
+			else:
+				_pc = 1833
+				continue
+		elif _pc == 1827:
+			_pc = 1857
+			continue
+		elif _pc == 1833:
+			v4 = 1 + v4
+			_pc = 1678
+			continue
+		elif _pc == 1851:
+			_pc = 1857
+			continue
+		elif _pc == 1857:
+			return
+		else:
+			return 0
 	return 0
 
 func local_1866(v0, v1) -> Variant:
@@ -793,6 +1244,7 @@ func local_2800(v0) -> Variant:
 			_pc = 2843
 			continue
 		elif _pc == 2889:
+			math.random_int(v1, v2)
 			_pc = 2917
 			continue
 		elif _pc == 2917:

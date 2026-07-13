@@ -16,18 +16,39 @@ func local_0(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = inifile.create("ini:/mission_directory")
-	v3 = 0
+	var _pc: int = 0
 	while true:
-		v2 = inifile.numbered_exists(v1, string.join("GeneratedMissionList", v0), "mission", v3)
-		if v2:
+		if _pc == 0:
+			v1 = inifile.create("ini:/mission_directory")
+			v3 = 0
+			_pc = 38
+			continue
+		elif _pc == 38:
+			v2 = inifile.numbered_exists(v1, string.join("GeneratedMissionList", v0), "mission", v3)
+			if v2:
+				_pc = 109
+				continue
+			else:
+				_pc = 176
+				continue
+		elif _pc == 109:
 			global.destroy(string.join("g_generated_mission_", string.from_int(v3)))
 			v3 = 1 + v3
-		if not (v2):
-			break
-	global.destroy("g_generated_number_of_missions")
-	inifile.destroy(v1)
-	return 0
+			_pc = 176
+			continue
+		elif _pc == 176:
+			if not (v2):
+				_pc = 186
+				continue
+			else:
+				_pc = 38
+				continue
+		elif _pc == 186:
+			global.destroy("g_generated_number_of_missions")
+			inifile.destroy(v1)
+			return 0
+		else:
+			return 0
 	return 0
 
 func cleanup_game_globals() -> Variant:

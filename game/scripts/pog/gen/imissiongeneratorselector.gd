@@ -18,18 +18,37 @@ func _link() -> void:
 
 func local_0(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = null
-	v3 = inifile.numbered_string(v0, v1, "mission", v2, "INVALID")
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGeneratorSelector.ini_for_mission - STARTED\n")
-		debug.print_string("iMissionGeneratorSelector.ini_for_mission - Act: ")
-		debug.print_string(v1)
-		debug.print_string(" Mission: ")
-		debug.print_string(v3)
-		debug.print_string("\n")
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGeneratorSelector.ini_for_mission - COMPLETED\n")
-	return inifile.create(v3)
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			v3 = null
+			v3 = inifile.numbered_string(v0, v1, "mission", v2, "INVALID")
+			_pc = 193
+			continue
+		elif _pc == 69:
+			debug.print_string("iMissionGeneratorSelector.ini_for_mission - STARTED\n")
+			debug.print_string("iMissionGeneratorSelector.ini_for_mission - Act: ")
+			debug.print_string(v1)
+			debug.print_string(" Mission: ")
+			debug.print_string(v3)
+			debug.print_string("\n")
+			_pc = 193
+			continue
+		elif _pc == 193:
+			_pc = 219
+			continue
+		elif _pc == 198:
+			debug.print_string("iMissionGeneratorSelector.ini_for_mission - COMPLETED\n")
+			_pc = 219
+			continue
+		elif _pc == 219:
+			inifile.create(v3)
+			_pc = 242
+			continue
+		elif _pc == 242:
+			return
+		else:
+			return 0
 	return 0
 
 func local_251(v0) -> Variant:
@@ -355,6 +374,7 @@ func select() -> Variant:
 			_pc = 2020
 			continue
 		elif _pc == 1959:
+			global.pog_int(v2)
 			if not _pog_is_null(global.pog_int(v2)):
 				_pc = 1985
 				continue

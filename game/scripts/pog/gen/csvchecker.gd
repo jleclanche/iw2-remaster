@@ -123,43 +123,109 @@ func set_string_repeat() -> Variant:
 
 func local_2625() -> Variant:
 	var v0: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("csvchecker.MainTask: creating a ship for the player.\n")
-	await iutilities.create_player("ini:/sims/ships/player/comsec_prefitted", imapentity.find_by_name("Hoffer's Gap"))
-	if PogRuntime.TRACE:
-		debug.print_string("csvchecker.MainTask run\n")
-	input.bind_key("csvchecker.SetStringRepeat", "ScriptKeys.repeatcsvchecker")
-	await iconversation.begin()
-	await iconversation.add_response("act zero", "I'd like to see the act zero csvs, please")
-	await iconversation.add_response("act one", "I'd like to see the act one csvs, please")
-	await iconversation.add_response("act two", "I'd like to see the act two csvs, please")
-	await iconversation.add_response("act three", "I'd like to see the act three csvs, please")
-	await iconversation.add_response("Miscellaneous", "I'd like to see the miscellaneous csvs, please")
-	await iconversation.add_response("Emails", "I'd like to read all the emails, please")
-	v0 = await iconversation.ask(0, "particle_employee", "which section of game dialogue would you like to test?")
-	await iconversation.end()
-	await iconversation.one_liner(0, "particle_employee", "Don't forget, you can repeat a line with shift+f")
-	if v0 == 1:
-		await actzerocsvs.main()
-		return v0
-	if v0 == 2:
-		await actonecsvs.main()
-		return v0
-	if v0 == 3:
-		await acttwocsvs.main()
-		return v0
-	if v0 == 4:
-		await actthreecsvs.main()
-		return v0
-	if v0 == 5:
-		await misccsvs.main()
-		return v0
-	if v0 == 6:
-		await send_all_emails()
-		await iconversation.one_liner(0, "particle_employee", "Entering player base to read emails...")
-		gui.set_screen("icSPPlayerBaseScreen")
-		return v0
-	return v0
+	var _pc: int = 2625
+	while true:
+		if _pc == 2625:
+			_pc = 2655
+			continue
+		elif _pc == 2635:
+			debug.print_string("csvchecker.MainTask: creating a ship for the player.\n")
+			_pc = 2655
+			continue
+		elif _pc == 2655:
+			await iutilities.create_player("ini:/sims/ships/player/comsec_prefitted", imapentity.find_by_name("Hoffer's Gap"))
+			_pc = 2721
+			continue
+		elif _pc == 2701:
+			debug.print_string("csvchecker.MainTask run\n")
+			_pc = 2721
+			continue
+		elif _pc == 2721:
+			input.bind_key("csvchecker.SetStringRepeat", "ScriptKeys.repeatcsvchecker")
+			await iconversation.begin()
+			await iconversation.add_response("act zero", "I'd like to see the act zero csvs, please")
+			await iconversation.add_response("act one", "I'd like to see the act one csvs, please")
+			await iconversation.add_response("act two", "I'd like to see the act two csvs, please")
+			await iconversation.add_response("act three", "I'd like to see the act three csvs, please")
+			await iconversation.add_response("Miscellaneous", "I'd like to see the miscellaneous csvs, please")
+			await iconversation.add_response("Emails", "I'd like to read all the emails, please")
+			v0 = await iconversation.ask(0, "particle_employee", "which section of game dialogue would you like to test?")
+			await iconversation.end()
+			await iconversation.one_liner(0, "particle_employee", "Don't forget, you can repeat a line with shift+f")
+			_pc = 3168
+			continue
+		elif _pc == 3005:
+			await actzerocsvs.main()
+			_pc = 3226
+			continue
+		elif _pc == 3024:
+			await actonecsvs.main()
+			_pc = 3226
+			continue
+		elif _pc == 3043:
+			await acttwocsvs.main()
+			_pc = 3226
+			continue
+		elif _pc == 3062:
+			await actthreecsvs.main()
+			_pc = 3226
+			continue
+		elif _pc == 3081:
+			await misccsvs.main()
+			_pc = 3226
+			continue
+		elif _pc == 3100:
+			await send_all_emails()
+			await iconversation.one_liner(0, "particle_employee", "Entering player base to read emails...")
+			gui.set_screen("icSPPlayerBaseScreen")
+			_pc = 3226
+			continue
+		elif _pc == 3168:
+			if v0 != 1:
+				_pc = 3181
+				continue
+			else:
+				_pc = 3005
+				continue
+		elif _pc == 3181:
+			if not _pog_is_null(2):
+				_pc = 3190
+				continue
+			else:
+				_pc = 3024
+				continue
+		elif _pc == 3190:
+			if not _pog_is_null(3):
+				_pc = 3199
+				continue
+			else:
+				_pc = 3043
+				continue
+		elif _pc == 3199:
+			if not _pog_is_null(4):
+				_pc = 3208
+				continue
+			else:
+				_pc = 3062
+				continue
+		elif _pc == 3208:
+			if not _pog_is_null(5):
+				_pc = 3217
+				continue
+			else:
+				_pc = 3081
+				continue
+		elif _pc == 3217:
+			if not _pog_is_null(6):
+				_pc = 3226
+				continue
+			else:
+				_pc = 3100
+				continue
+		elif _pc == 3226:
+			return
+		else:
+			return 0
 	return 0
 
 func main() -> Variant:

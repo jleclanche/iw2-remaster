@@ -17,10 +17,29 @@ func _link() -> void:
 	imissiongenerator = rt.script("imissiongenerator")
 
 func local_0() -> Variant:
-	if PogRuntime.TRACE:
-		if global.exists("g_debug_all_generated_missions_ok"):
-			return 1
-	return global.pog_bool("g_accept_generated_mission")
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			_pc = 36
+			continue
+		elif _pc == 5:
+			if global.exists("g_debug_all_generated_missions_ok"):
+				_pc = 30
+				continue
+			else:
+				_pc = 36
+				continue
+		elif _pc == 30:
+			_pc = 60
+			continue
+		elif _pc == 36:
+			global.pog_bool("g_accept_generated_mission")
+			_pc = 60
+			continue
+		elif _pc == 60:
+			return
+		else:
+			return 0
 	return 0
 
 func local_62() -> Variant:

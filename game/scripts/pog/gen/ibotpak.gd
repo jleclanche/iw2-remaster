@@ -45,15 +45,39 @@ func _link() -> void:
 func local_0(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
-	v4 = 0
+	var _pc: int = 0
 	while true:
-		v3 = inifile.numbered_string(v0, v1, v2, v4, "moo")
-		if not _pog_eq("moo", v3):
+		if _pc == 0:
+			v3 = null
+			v4 = 0
+			_pc = 23
+			continue
+		elif _pc == 23:
+			v3 = inifile.numbered_string(v0, v1, v2, v4, "moo")
+			if not _pog_eq("moo", v3):
+				_pc = 89
+				continue
+			else:
+				_pc = 102
+				continue
+		elif _pc == 89:
 			v4 = 1 + v4
-		if not (not _pog_eq("moo", v3)):
-			break
-	return v4
+			_pc = 102
+			continue
+		elif _pc == 102:
+			if _pog_eq("moo", v3):
+				_pc = 121
+				continue
+			else:
+				_pc = 23
+				continue
+		elif _pc == 121:
+			_pc = 131
+			continue
+		elif _pc == 131:
+			return
+		else:
+			return 0
 	return 0
 
 func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
@@ -65,31 +89,69 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	v6 = group.create()
-	v8 = inifile.create(v0)
-	v9 = null
-	v10 = null
-	v11 = 0
-	if _pog_is_null(v8):
-		if PogRuntime.TRACE:
+	var _pc: int = 140
+	while true:
+		if _pc == 140:
+			v6 = group.create()
+			v8 = inifile.create(v0)
+			v9 = null
+			v10 = null
+			v11 = 0
+			if _pog_is_null(v8):
+				_pc = 230
+				continue
+			else:
+				_pc = 262
+				continue
+		elif _pc == 230:
+			_pc = 256
+			continue
+		elif _pc == 235:
 			debug.error("iBotPak.CreateBotShips: Unable to open assigned inifile!\n")
-	else:
-		v12 = await local_0(v8, "BotShipTypes", "ship")
-		if not _pog_is_null(v4):
+			_pc = 256
+			continue
+		elif _pc == 256:
+			_pc = 1535
+			continue
+		elif _pc == 262:
+			v12 = await local_0(v8, "BotShipTypes", "ship")
+			if not _pog_is_null(v4):
+				_pc = 312
+				continue
+			else:
+				_pc = 888
+				continue
+		elif _pc == 312:
 			v11 = object.int_property(v4, "bot_index")
 			v9 = inifile.numbered_string(v8, "BotShipTypes", "ship", v11, "<none found>")
 			v10 = inifile.numbered_string(v8, v5, "name", v11, "<none found>")
 			v10 = string.join("MP_NAME_", v10)
 			v7 = iship.create(v9, v10)
 			if _pog_is_null(v7):
-				if PogRuntime.TRACE:
-					debug.print_string("iBotPak.CreateBotShips: Error: Failed to create bot with template ")
-					debug.print_string(v9)
-					debug.print_string(" and name ")
-					debug.print_string(v10)
-					debug.print_string("\n")
-				if PogRuntime.TRACE:
-					debug.error("iBotPak.CreateBotShips: Unable to create bot from ini (see log for details)")
+				_pc = 514
+				continue
+			else:
+				_pc = 648
+				continue
+		elif _pc == 514:
+			_pc = 622
+			continue
+		elif _pc == 519:
+			debug.print_string("iBotPak.CreateBotShips: Error: Failed to create bot with template ")
+			debug.print_string(v9)
+			debug.print_string(" and name ")
+			debug.print_string(v10)
+			debug.print_string("\n")
+			_pc = 622
+			continue
+		elif _pc == 622:
+			_pc = 648
+			continue
+		elif _pc == 627:
+			debug.error("iBotPak.CreateBotShips: Unable to create bot from ini (see log for details)")
+			_pc = 648
+			continue
+		elif _pc == 648:
 			await ipilotsetup.generic_cargo_pod(v7)
 			iship.set_pilot_skill_level(v7, iship.pilot_skill_level(v4))
 			isim.set_faction(v7, isim.faction(v4))
@@ -98,40 +160,90 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 			object.add_bool_property(v7, "is_bot", 1)
 			object.add_int_property(v7, "frag_count", 0)
 			object.add_int_property(v7, "bot_deaths", 0)
-			return v7
-		else:
+			_pc = 1535
+			continue
+		elif _pc == 883:
+			_pc = 1529
+			continue
+		elif _pc == 888:
 			v13 = 0
-			while v1 < v13:
-				v9 = inifile.numbered_string(v8, "BotShipTypes", "ship", v11, "<none found>")
-				v10 = inifile.numbered_string(v8, v5, "name", v11, "<none found>")
-				v10 = string.join("MP_NAME_", v10)
-				v7 = iship.create(v9, v10)
-				if _pog_is_null(v7):
-					if PogRuntime.TRACE:
-						debug.error("iBotPak.CreateBotShips: Unable to create bot from ini (see log for details)")
-					if PogRuntime.TRACE:
-						debug.print_string("iBotPak.CreateBotShips: Error: Failed to create bot with template ")
-						debug.print_string(v9)
-						debug.print_string(" and name ")
-						debug.print_string(v10)
-						debug.print_string("\n")
-				await ipilotsetup.generic_cargo_pod(v7)
-				iship.set_pilot_skill_level(v7, v2)
-				isim.set_faction(v7, v3)
-				imultiplay.set_update_flag(v7, 1)
-				object.add_int_property(v7, "bot_index", v11)
-				object.add_bool_property(v7, "is_bot", 1)
-				object.add_int_property(v7, "frag_count", 0)
-				object.add_int_property(v7, "bot_deaths", 0)
-				group.add_sim(v6, v7)
-				if 1 - v12 < v11:
-					v11 = 1 + v11
-				else:
-					v11 = 0
-				v13 = 1 + v13
+			_pc = 895
+			continue
+		elif _pc == 895:
+			if v1 < v13:
+				_pc = 911
+				continue
+			else:
+				_pc = 1500
+				continue
+		elif _pc == 911:
+			v9 = inifile.numbered_string(v8, "BotShipTypes", "ship", v11, "<none found>")
+			v10 = inifile.numbered_string(v8, v5, "name", v11, "<none found>")
+			v10 = string.join("MP_NAME_", v10)
+			v7 = iship.create(v9, v10)
+			if _pog_is_null(v7):
+				_pc = 1082
+				continue
+			else:
+				_pc = 1216
+				continue
+		elif _pc == 1082:
+			_pc = 1108
+			continue
+		elif _pc == 1087:
+			debug.error("iBotPak.CreateBotShips: Unable to create bot from ini (see log for details)")
+			_pc = 1108
+			continue
+		elif _pc == 1108:
+			_pc = 1216
+			continue
+		elif _pc == 1113:
+			debug.print_string("iBotPak.CreateBotShips: Error: Failed to create bot with template ")
+			debug.print_string(v9)
+			debug.print_string(" and name ")
+			debug.print_string(v10)
+			debug.print_string("\n")
+			_pc = 1216
+			continue
+		elif _pc == 1216:
+			await ipilotsetup.generic_cargo_pod(v7)
+			iship.set_pilot_skill_level(v7, v2)
+			isim.set_faction(v7, v3)
+			imultiplay.set_update_flag(v7, 1)
+			object.add_int_property(v7, "bot_index", v11)
+			object.add_bool_property(v7, "is_bot", 1)
+			object.add_int_property(v7, "frag_count", 0)
+			object.add_int_property(v7, "bot_deaths", 0)
+			group.add_sim(v6, v7)
+			if 1 - v12 < v11:
+				_pc = 1457
+				continue
+			else:
+				_pc = 1475
+				continue
+		elif _pc == 1457:
+			v11 = 1 + v11
+			_pc = 1482
+			continue
+		elif _pc == 1475:
+			v11 = 0
+			_pc = 1482
+			continue
+		elif _pc == 1482:
+			v13 = 1 + v13
+			_pc = 895
+			continue
+		elif _pc == 1500:
 			inifile.destroy(v8)
-			return v6
-	return
+			_pc = 1535
+			continue
+		elif _pc == 1529:
+			_pc = 1535
+			continue
+		elif _pc == 1535:
+			return
+		else:
+			return 0
 	return 0
 
 func assign_game_type(v0, v1) -> Variant:
@@ -139,50 +251,151 @@ func assign_game_type(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = iship.cast(v0)
-	if not _pog_is_null(v2):
-		if _pog_is_null(v1):
-			_pog_detach(_pog_spawn(local_3851.bind(v2)))
-		else:
-			if 1 == v1:
-				_pog_detach(_pog_spawn(local_4772.bind(v2)))
+	var _pc: int = 1551
+	while true:
+		if _pc == 1551:
+			v2 = iship.cast(v0)
+			if not _pog_is_null(v2):
+				_pc = 1593
+				continue
 			else:
-				if 2 == v1:
-					_pog_detach(_pog_spawn(local_6446.bind(v2)))
-	else:
-		v3 = group.cast(v0)
-		v4 = group.sim_count(v3)
-		v5 = 0
-		while v4 < v5:
+				_pc = 1741
+				continue
+		elif _pc == 1593:
+			if _pog_is_null(v1):
+				_pc = 1605
+				continue
+			else:
+				_pc = 1642
+				continue
+		elif _pc == 1605:
+			_pog_detach(_pog_spawn(local_3851.bind(v2)))
+			_pc = 1736
+			continue
+		elif _pc == 1642:
+			if 1 == v1:
+				_pc = 1654
+				continue
+			else:
+				_pc = 1691
+				continue
+		elif _pc == 1654:
+			_pog_detach(_pog_spawn(local_4772.bind(v2)))
+			_pc = 1736
+			continue
+		elif _pc == 1691:
+			if 2 == v1:
+				_pc = 1704
+				continue
+			else:
+				_pc = 1736
+				continue
+		elif _pc == 1704:
+			_pog_detach(_pog_spawn(local_6446.bind(v2)))
+			_pc = 1736
+			continue
+		elif _pc == 1736:
+			_pc = 2015
+			continue
+		elif _pc == 1741:
+			v3 = group.cast(v0)
+			v4 = group.sim_count(v3)
+			v5 = 0
+			_pc = 1796
+			continue
+		elif _pc == 1796:
+			if v4 < v5:
+				_pc = 1812
+				continue
+			else:
+				_pc = 2015
+				continue
+		elif _pc == 1812:
 			v2 = iship.cast(group.nth_sim(v3, v5))
 			if _pog_is_null(v1):
-				_pog_detach(_pog_spawn(local_3851.bind(v2)))
+				_pc = 1866
+				continue
 			else:
-				if 1 == v1:
-					_pog_detach(_pog_spawn(local_4772.bind(v2)))
-				else:
-					if 2 == v1:
-						_pog_detach(_pog_spawn(local_6446.bind(v2)))
+				_pc = 1903
+				continue
+		elif _pc == 1866:
+			_pog_detach(_pog_spawn(local_3851.bind(v2)))
+			_pc = 1997
+			continue
+		elif _pc == 1903:
+			if 1 == v1:
+				_pc = 1915
+				continue
+			else:
+				_pc = 1952
+				continue
+		elif _pc == 1915:
+			_pog_detach(_pog_spawn(local_4772.bind(v2)))
+			_pc = 1997
+			continue
+		elif _pc == 1952:
+			if 2 == v1:
+				_pc = 1965
+				continue
+			else:
+				_pc = 1997
+				continue
+		elif _pc == 1965:
+			_pog_detach(_pog_spawn(local_6446.bind(v2)))
+			_pc = 1997
+			continue
+		elif _pc == 1997:
 			v5 = 1 + v5
-	return 0
+			_pc = 1796
+			continue
+		elif _pc == 2015:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_2018(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = isim.cast(v1)
-	v4 = null
+	var _pc: int = 2018
 	while true:
-		v3 = isim.cast(p_set.first_element(v0))
-		if not (object.property_exists(v3, "poo")) and 0.0 <= ifaction.feeling(isim.faction(v1), isim.faction(v3)):
+		if _pc == 2018:
+			v2 = isim.cast(v1)
+			v4 = null
+			_pc = 2058
+			continue
+		elif _pc == 2058:
+			v3 = isim.cast(p_set.first_element(v0))
+			if not (object.property_exists(v3, "poo")) and 0.0 <= ifaction.feeling(isim.faction(v1), isim.faction(v3)):
+				_pc = 2182
+				continue
+			else:
+				_pc = 2235
+				continue
+		elif _pc == 2182:
 			p_set.add(v4, v3)
 			p_set.remove(v0, v3)
-		else:
+			_pc = 2259
+			continue
+		elif _pc == 2235:
 			p_set.remove(v0, v3)
-		if not (not (p_set.is_empty(v0))):
-			break
-	return _pog_clone(v4)
+			_pc = 2259
+			continue
+		elif _pc == 2259:
+			if p_set.is_empty(v0):
+				_pc = 2283
+				continue
+			else:
+				_pc = 2058
+				continue
+		elif _pc == 2283:
+			_pc = 2293
+			continue
+		elif _pc == 2293:
+			return
+		else:
+			return 0
 	return 0
 
 func local_2303(v0, v1) -> Variant:
@@ -191,41 +404,127 @@ func local_2303(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
-	v2 = list.from_set(v0)
-	v4 = list.item_count(v2)
-	v5 = 0
-	while 1 - v4 < v5:
-		v6 = 1 - v4
-		while v6 < v5:
+	var _pc: int = 2303
+	while true:
+		if _pc == 2303:
+			v2 = null
+			v2 = list.from_set(v0)
+			v4 = list.item_count(v2)
+			v5 = 0
+			_pc = 2376
+			continue
+		elif _pc == 2376:
+			if 1 - v4 < v5:
+				_pc = 2394
+				continue
+			else:
+				_pc = 2685
+				continue
+		elif _pc == 2394:
+			v6 = 1 - v4
+			_pc = 2407
+			continue
+		elif _pc == 2407:
+			if v6 < v5:
+				_pc = 2423
+				continue
+			else:
+				_pc = 2667
+				continue
+		elif _pc == 2423:
 			if sim.distance_between(v1, sim.cast(list.get_nth(v2, v6))) < sim.distance_between(v1, sim.cast(list.get_nth(v2, 1 - v6))):
-				v3 = list.get_nth(v2, 1 - v6)
-				list.set_nth(v2, 1 - v6, list.get_nth(v2, v6))
-				list.set_nth(v2, v6, v3)
+				_pc = 2539
+				continue
+			else:
+				_pc = 2648
+				continue
+		elif _pc == 2539:
+			v3 = list.get_nth(v2, 1 - v6)
+			list.set_nth(v2, 1 - v6, list.get_nth(v2, v6))
+			list.set_nth(v2, v6, v3)
+			_pc = 2648
+			continue
+		elif _pc == 2648:
 			v6 = -1 + v6
-		v5 = 1 + v5
-	return _pog_clone(v2)
+			_pc = 2407
+			continue
+		elif _pc == 2667:
+			v5 = 1 + v5
+			_pc = 2376
+			continue
+		elif _pc == 2685:
+			_pc = 2695
+			continue
+		elif _pc == 2695:
+			return
+		else:
+			return 0
 	return 0
 
 func local_2705(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v1 = list.sort_by_int_property(v0, "frag_count")
-	v2 = list.item_count(v1)
-	if 2 > v2:
-		if 5 > object.int_property(list.get_nth(v1, 2 - v2), "frag_count") - object.int_property(list.get_nth(v1, 1 - v2), "frag_count"):
-			v3 = 1
-		else:
-			if 3 > v2:
-				v3 = 3
+	var _pc: int = 2705
+	while true:
+		if _pc == 2705:
+			v1 = null
+			v1 = list.sort_by_int_property(v0, "frag_count")
+			v2 = list.item_count(v1)
+			if 2 > v2:
+				_pc = 2790
+				continue
 			else:
-				if 2 > v2:
-					v3 = 2
-	else:
-		v3 = 1
-	return iship.cast(list.get_nth(v1, math.random_int(1, v3) - v2))
+				_pc = 2953
+				continue
+		elif _pc == 2790:
+			if 5 > object.int_property(list.get_nth(v1, 2 - v2), "frag_count") - object.int_property(list.get_nth(v1, 1 - v2), "frag_count"):
+				_pc = 2889
+				continue
+			else:
+				_pc = 2901
+				continue
+		elif _pc == 2889:
+			v3 = 1
+			_pc = 2948
+			continue
+		elif _pc == 2901:
+			if 3 > v2:
+				_pc = 2914
+				continue
+			else:
+				_pc = 2927
+				continue
+		elif _pc == 2914:
+			v3 = 3
+			_pc = 2948
+			continue
+		elif _pc == 2927:
+			if 2 > v2:
+				_pc = 2940
+				continue
+			else:
+				_pc = 2948
+				continue
+		elif _pc == 2940:
+			v3 = 2
+			_pc = 2948
+			continue
+		elif _pc == 2948:
+			_pc = 2960
+			continue
+		elif _pc == 2953:
+			v3 = 1
+			_pc = 2960
+			continue
+		elif _pc == 2960:
+			iship.cast(list.get_nth(v1, math.random_int(1, v3) - v2))
+			_pc = 3021
+			continue
+		elif _pc == 3021:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3030(v0, v1, v2) -> Variant:
@@ -235,28 +534,80 @@ func local_3030(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = null
-	v3 = isim.ships_in_radius(isim.cast(v1), v2)
-	v4 = null
-	p_set.remove(v3, v0)
-	v3 = await local_2018(v3, v0)
-	v4 = await local_2303(v3, v0)
-	if 0.6000000238418579 >= iship.pilot_skill_level(v0):
-		v4 = list.sort_by_float_property(v4, "hit_points")
-	if 0.800000011920929 >= iship.pilot_skill_level(v0):
-		v5 = await local_2705(v4)
-	else:
-		v5 = iship.cast(list.get_nth(v4, 0))
-	if object.property_exists(v5, "mp_spawn_time") and v5:
-		v8 = object.int_property(v5, "mp_spawn_time")
-		if 10000 + v8 > igame.system_time():
-			if PogRuntime.TRACE:
-				debug.print_string("likely target has passed spawntime check\n")
-		else:
+	var _pc: int = 3030
+	while true:
+		if _pc == 3030:
+			v3 = null
+			v3 = isim.ships_in_radius(isim.cast(v1), v2)
+			v4 = null
+			p_set.remove(v3, v0)
+			v3 = await local_2018(v3, v0)
+			v4 = await local_2303(v3, v0)
+			if 0.6000000238418579 >= iship.pilot_skill_level(v0):
+				_pc = 3216
+				continue
+			else:
+				_pc = 3248
+				continue
+		elif _pc == 3216:
+			v4 = list.sort_by_float_property(v4, "hit_points")
+			_pc = 3248
+			continue
+		elif _pc == 3248:
+			if 0.800000011920929 >= iship.pilot_skill_level(v0):
+				_pc = 3277
+				continue
+			else:
+				_pc = 3306
+				continue
+		elif _pc == 3277:
+			v5 = await local_2705(v4)
+			_pc = 3344
+			continue
+		elif _pc == 3306:
+			v5 = iship.cast(list.get_nth(v4, 0))
+			_pc = 3344
+			continue
+		elif _pc == 3344:
+			if object.property_exists(v5, "mp_spawn_time") and v5:
+				_pc = 3381
+				continue
+			else:
+				_pc = 3504
+				continue
+		elif _pc == 3381:
+			v8 = object.int_property(v5, "mp_spawn_time")
+			if 10000 + v8 > igame.system_time():
+				_pc = 3440
+				continue
+			else:
+				_pc = 3471
+				continue
+		elif _pc == 3440:
+			_pc = 3466
+			continue
+		elif _pc == 3445:
+			debug.print_string("likely target has passed spawntime check\n")
+			_pc = 3466
+			continue
+		elif _pc == 3466:
+			_pc = 3504
+			continue
+		elif _pc == 3471:
 			v5 = 0
-			if PogRuntime.TRACE:
-				debug.print_string("discarding likely target - only just respawned\n")
-	return v5
+			_pc = 3504
+			continue
+		elif _pc == 3483:
+			debug.print_string("discarding likely target - only just respawned\n")
+			_pc = 3504
+			continue
+		elif _pc == 3504:
+			_pc = 3514
+			continue
+		elif _pc == 3514:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3530(v0, v1, v2) -> Variant:
@@ -265,24 +616,75 @@ func local_3530(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v3 = null
-	v3 = list.from_set(isim.sims_in_radius(isim.cast(v0), v1, 1073741824))
-	v5 = list.item_count(v3)
-	if _pog_is_null(v5):
-		return 0
-	else:
-		v7 = 0
-		while v5 < v7:
+	var _pc: int = 3530
+	while true:
+		if _pc == 3530:
+			v3 = null
+			v3 = list.from_set(isim.sims_in_radius(isim.cast(v0), v1, 1073741824))
+			v5 = list.item_count(v3)
+			if _pog_is_null(v5):
+				_pc = 3645
+				continue
+			else:
+				_pc = 3656
+				continue
+		elif _pc == 3645:
+			_pc = 3842
+			continue
+		elif _pc == 3651:
+			_pc = 3836
+			continue
+		elif _pc == 3656:
+			v7 = 0
+			_pc = 3663
+			continue
+		elif _pc == 3663:
+			if v5 < v7:
+				_pc = 3679
+				continue
+			else:
+				_pc = 3830
+				continue
+		elif _pc == 3679:
 			v4 = sim.cast(list.get_nth(v3, v7))
 			if 800.0 < sim.distance_between(v2, v4):
-				v6 = 2
+				_pc = 3755
+				continue
 			else:
-				v6 = 5
+				_pc = 3768
+				continue
+		elif _pc == 3755:
+			v6 = 2
+			_pc = 3776
+			continue
+		elif _pc == 3768:
+			v6 = 5
+			_pc = 3776
+			continue
+		elif _pc == 3776:
 			if _pog_is_null(math.random_int(0, v6)):
-				return v4
+				_pc = 3802
+				continue
+			else:
+				_pc = 3812
+				continue
+		elif _pc == 3802:
+			_pc = 3842
+			continue
+		elif _pc == 3812:
 			v7 = 1 + v7
-		return 0
-	return 0
+			_pc = 3663
+			continue
+		elif _pc == 3830:
+			_pc = 3842
+			continue
+		elif _pc == 3836:
+			_pc = 3842
+			continue
+		elif _pc == 3842:
+			return
+		else:
+			return 0
 	return 0
 
 func local_3851(v0) -> Variant:
@@ -292,47 +694,167 @@ func local_3851(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = 0
-	v2 = sim.cast(global.handle("g_arena_centre"))
-	v3 = global.pog_float("g_arena_radius")
+	var _pc: int = 3851
 	while true:
-		await _pog_wait(1.0)
-		if PogRuntime.TRACE:
+		if _pc == 3851:
+			v1 = 0
+			v2 = sim.cast(global.handle("g_arena_centre"))
+			v3 = global.pog_float("g_arena_radius")
+			_pc = 3927
+			continue
+		elif _pc == 3927:
+			await _pog_wait(1.0)
+			_pc = 3985
+			continue
+		elif _pc == 3964:
 			debug.print_string("iBotPak.death_match_behaviour: Behaviour suspended while no player present\n")
-		if not (_pog_is_null(list.item_count(imultiplay.server_player_list()))):
-			break
-	await _pog_wait(3.0)
-	while true:
-		await _pog_wait(1)
-		if not (sim.cast(v6)):
+			_pc = 3985
+			continue
+		elif _pc == 3985:
+			if not _pog_is_null(list.item_count(imultiplay.server_player_list())):
+				_pc = 4020
+				continue
+			else:
+				_pc = 3927
+				continue
+		elif _pc == 4020:
+			await _pog_wait(3.0)
+			_pc = 4057
+			continue
+		elif _pc == 4057:
+			await _pog_frame()
+			if _pog_every(4058, 1.0):
+				_pc = 4071
+				continue
+			else:
+				_pc = 4607
+				continue
+		elif _pc == 4071:
+			if not (sim.cast(v6)):
+				_pc = 4095
+				continue
+			else:
+				_pc = 4369
+				continue
+		elif _pc == 4095:
 			v5 = iship.cast(iship.last_attacker(v0))
 			if 5000.0 > sim.distance_between(v4, v0) or not (iai.has_order(v0)) or isim.is_dying(v4):
-				if PogRuntime.TRACE:
-					debug.print_string("iBotPak.death_match_behaviour: Vessel ")
-					debug.print_string(object.string_property(v0, "name"))
-					debug.print_string(" is finding a new target....\n")
-				v4 = await local_3030(v0, v2, v3)
-				if v4:
-					iai.give_attack_order(v0, v4)
-		else:
-			if sim.is_hidden(v6) or not (sim.cast(v6)):
-				pass
+				_pc = 4205
+				continue
 			else:
-				if not (sim.is_hidden(v6)) and 20.0 < sim.distance_between_centres(v0, v6):
-					v1 = 0
-		if v1 or not _pog_eq(v5, v4) and not _pog_is_null(v5):
+				_pc = 4364
+				continue
+		elif _pc == 4205:
+			_pc = 4294
+			continue
+		elif _pc == 4210:
+			debug.print_string("iBotPak.death_match_behaviour: Vessel ")
+			debug.print_string(object.string_property(v0, "name"))
+			debug.print_string(" is finding a new target....\n")
+			_pc = 4294
+			continue
+		elif _pc == 4294:
+			v4 = await local_3030(v0, v2, v3)
+			if v4:
+				_pc = 4340
+				continue
+			else:
+				_pc = 4364
+				continue
+		elif _pc == 4340:
+			iai.give_attack_order(v0, v4)
+			_pc = 4364
+			continue
+		elif _pc == 4364:
+			_pc = 4486
+			continue
+		elif _pc == 4369:
+			if sim.is_hidden(v6) or not (sim.cast(v6)):
+				_pc = 4412
+				continue
+			else:
+				_pc = 4425
+				continue
+		elif _pc == 4412:
+			_pc = 4486
+			continue
+		elif _pc == 4425:
+			if not (sim.is_hidden(v6)) and 20.0 < sim.distance_between_centres(v0, v6):
+				_pc = 4479
+				continue
+			else:
+				_pc = 4486
+				continue
+		elif _pc == 4479:
+			v1 = 0
+			_pc = 4486
+			continue
+		elif _pc == 4486:
+			if v1 or not _pog_eq(v5, v4) and not _pog_is_null(v5):
+				_pc = 4517
+				continue
+			else:
+				_pc = 4607
+				continue
+		elif _pc == 4517:
 			if object.float_property(v0, "hit_points") > object.float_property(v5, "hit_points"):
-				v4 = v5
-				iai.give_attack_order(v0, v4)
-		if not (v1):
+				_pc = 4572
+				continue
+			else:
+				_pc = 4607
+				continue
+		elif _pc == 4572:
+			v4 = v5
+			iai.give_attack_order(v0, v4)
+			_pc = 4607
+			continue
+		elif _pc == 4607:
+			if _pog_every(4607, 3.0):
+				_pc = 4620
+				continue
+			else:
+				_pc = 4763
+				continue
+		elif _pc == 4620:
+			if not (v1):
+				_pc = 4631
+				continue
+			else:
+				_pc = 4735
+				continue
+		elif _pc == 4631:
 			v6 = await local_3530(v2, v3, v0)
 			if not _pog_is_null(sim.cast(v6)):
-				v1 = 1
-				iai.give_approach_order_advanced(v0, v6, 0.0, 0.0, 0)
-		if not (sim.is_dead(v0)):
+				_pc = 4693
+				continue
+			else:
+				_pc = 4735
+				continue
+		elif _pc == 4693:
+			v1 = 1
+			iai.give_approach_order_advanced(v0, v6, 0.0, 0.0, 0)
+			_pc = 4735
 			continue
-		return
-	return
+		elif _pc == 4735:
+			if sim.is_dead(v0):
+				_pc = 4758
+				continue
+			else:
+				_pc = 4763
+				continue
+		elif _pc == 4758:
+			_pc = 4770
+			continue
+		elif _pc == 4763:
+			_pc = 4057
+			continue
+		elif _pc == 4768:
+			_pc = 4770
+			continue
+		elif _pc == 4770:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4772(v0) -> Variant:
@@ -346,65 +868,212 @@ func local_4772(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v1 = 0
-	v2 = 0
-	v3 = sim.cast(global.handle("g_arena_centre"))
-	v4 = global.pog_float("g_arena_radius")
-	v7 = null
-	if ifaction.find(text.field("mp_flag_team_a", 0)):
-		v5 = isim.cast(sim.find_by_name(text.field("mp_flag_a_flag_name", 0)))
-		v6 = isim.cast(sim.find_by_name(text.field("mp_flag_b_flag_name", 0)))
-		v7 = "RedFlagIsCaptured"
-	else:
-		v5 = isim.cast(sim.find_by_name(text.field("mp_flag_b_flag_name", 0)))
-		v6 = isim.cast(sim.find_by_name(text.field("mp_flag_a_flag_name", 0)))
-		v7 = "BlueFlagIsCaptured"
+	var _pc: int = 4772
 	while true:
-		await _pog_wait(1.0)
-		if PogRuntime.TRACE:
-			debug.print_string("iBotPak.death_match_behaviour: Behaviour suspended while no player present\n")
-		if not (_pog_is_null(list.item_count(imultiplay.server_player_list()))):
-			break
-	await _pog_wait(3.0)
-	while true:
-		await _pog_wait(1)
-		if _pog_is_null(global.pog_bool(v7)):
-			if not (sim.cast(v10)):
-				v9 = iship.cast(iship.last_attacker(v0))
-				if 5000.0 > sim.distance_between(v8, v0) or not (iai.has_order(v0)) or isim.is_dying(v8):
-					if PogRuntime.TRACE:
-						debug.print_string("iBotPak.death_match_behaviour: Vessel ")
-						debug.print_string(object.string_property(v0, "name"))
-						debug.print_string(" is finding a new target....\n")
-					v8 = await local_3030(v0, v3, v4)
-					if v8:
-						iai.give_attack_order(v0, v8)
+		if _pc == 4772:
+			v1 = 0
+			v2 = 0
+			v3 = sim.cast(global.handle("g_arena_centre"))
+			v4 = global.pog_float("g_arena_radius")
+			v7 = null
+			if ifaction.find(text.field("mp_flag_team_a", 0)):
+				_pc = 4906
+				continue
 			else:
-				if sim.is_hidden(v10) or not (sim.cast(v10)):
-					pass
-				else:
-					if not (sim.is_hidden(v10)) and 20.0 < sim.distance_between_centres(v0, v10):
-						v1 = 0
+				_pc = 5032
+				continue
+		elif _pc == 4906:
+			v5 = isim.cast(sim.find_by_name(text.field("mp_flag_a_flag_name", 0)))
+			v6 = isim.cast(sim.find_by_name(text.field("mp_flag_b_flag_name", 0)))
+			v7 = "RedFlagIsCaptured"
+			_pc = 5153
+			continue
+		elif _pc == 5032:
+			v5 = isim.cast(sim.find_by_name(text.field("mp_flag_b_flag_name", 0)))
+			v6 = isim.cast(sim.find_by_name(text.field("mp_flag_a_flag_name", 0)))
+			v7 = "BlueFlagIsCaptured"
+			_pc = 5153
+			continue
+		elif _pc == 5153:
+			await _pog_wait(1.0)
+			_pc = 5211
+			continue
+		elif _pc == 5190:
+			debug.print_string("iBotPak.death_match_behaviour: Behaviour suspended while no player present\n")
+			_pc = 5211
+			continue
+		elif _pc == 5211:
+			if not _pog_is_null(list.item_count(imultiplay.server_player_list())):
+				_pc = 5246
+				continue
+			else:
+				_pc = 5153
+				continue
+		elif _pc == 5246:
+			await _pog_wait(3.0)
+			_pc = 5283
+			continue
+		elif _pc == 5283:
+			await _pog_frame()
+			if _pog_every(5284, 1.0):
+				_pc = 5297
+				continue
+			else:
+				_pc = 5962
+				continue
+		elif _pc == 5297:
+			if _pog_is_null(global.pog_bool(v7)):
+				_pc = 5322
+				continue
+			else:
+				_pc = 5863
+				continue
+		elif _pc == 5322:
+			if not (sim.cast(v10)):
+				_pc = 5346
+				continue
+			else:
+				_pc = 5620
+				continue
+		elif _pc == 5346:
+			v9 = iship.cast(iship.last_attacker(v0))
+			if 5000.0 > sim.distance_between(v8, v0) or not (iai.has_order(v0)) or isim.is_dying(v8):
+				_pc = 5456
+				continue
+			else:
+				_pc = 5615
+				continue
+		elif _pc == 5456:
+			_pc = 5545
+			continue
+		elif _pc == 5461:
+			debug.print_string("iBotPak.death_match_behaviour: Vessel ")
+			debug.print_string(object.string_property(v0, "name"))
+			debug.print_string(" is finding a new target....\n")
+			_pc = 5545
+			continue
+		elif _pc == 5545:
+			v8 = await local_3030(v0, v3, v4)
+			if v8:
+				_pc = 5591
+				continue
+			else:
+				_pc = 5615
+				continue
+		elif _pc == 5591:
+			iai.give_attack_order(v0, v8)
+			_pc = 5615
+			continue
+		elif _pc == 5615:
+			_pc = 5737
+			continue
+		elif _pc == 5620:
+			if sim.is_hidden(v10) or not (sim.cast(v10)):
+				_pc = 5663
+				continue
+			else:
+				_pc = 5676
+				continue
+		elif _pc == 5663:
+			_pc = 5737
+			continue
+		elif _pc == 5676:
+			if not (sim.is_hidden(v10)) and 20.0 < sim.distance_between_centres(v0, v10):
+				_pc = 5730
+				continue
+			else:
+				_pc = 5737
+				continue
+		elif _pc == 5730:
+			v1 = 0
+			_pc = 5737
+			continue
+		elif _pc == 5737:
 			if v1 or not _pog_eq(v9, v8) and not _pog_is_null(v9):
-				if object.float_property(v0, "hit_points") > object.float_property(v9, "hit_points"):
-					v8 = v9
-					iai.give_attack_order(v0, v8)
-		else:
+				_pc = 5768
+				continue
+			else:
+				_pc = 5858
+				continue
+		elif _pc == 5768:
+			if object.float_property(v0, "hit_points") > object.float_property(v9, "hit_points"):
+				_pc = 5823
+				continue
+			else:
+				_pc = 5858
+				continue
+		elif _pc == 5823:
+			v8 = v9
+			iai.give_attack_order(v0, v8)
+			_pc = 5858
+			continue
+		elif _pc == 5858:
+			_pc = 5962
+			continue
+		elif _pc == 5863:
 			v8 = iship.cast(sim.parent(v5))
 			if v2 and not _pog_is_null(v8):
-				v2 = 1
-				iai.give_attack_order(v0, v8)
+				_pc = 5919
+				continue
 			else:
-				v2 = 0
-		if _pog_is_null(global.pog_bool(v7)) and not (v1):
+				_pc = 5955
+				continue
+		elif _pc == 5919:
+			v2 = 1
+			iai.give_attack_order(v0, v8)
+			_pc = 5962
+			continue
+		elif _pc == 5955:
+			v2 = 0
+			_pc = 5962
+			continue
+		elif _pc == 5962:
+			if _pog_every(5962, 3.0):
+				_pc = 5975
+				continue
+			else:
+				_pc = 6146
+				continue
+		elif _pc == 5975:
+			if _pog_is_null(global.pog_bool(v7)) and not (v1):
+				_pc = 6007
+				continue
+			else:
+				_pc = 6118
+				continue
+		elif _pc == 6007:
 			v10 = await local_3530(v3, v4, v0)
 			if not (v1) and not _pog_is_null(sim.cast(v10)):
-				v1 = 1
-				iai.give_approach_order_advanced(v0, v10, 0.0, 0.0, 0)
-		if not (sim.is_dead(v0)):
+				_pc = 6076
+				continue
+			else:
+				_pc = 6118
+				continue
+		elif _pc == 6076:
+			v1 = 1
+			iai.give_approach_order_advanced(v0, v10, 0.0, 0.0, 0)
+			_pc = 6118
 			continue
-		return
-	return
+		elif _pc == 6118:
+			if sim.is_dead(v0):
+				_pc = 6141
+				continue
+			else:
+				_pc = 6146
+				continue
+		elif _pc == 6141:
+			_pc = 6153
+			continue
+		elif _pc == 6146:
+			_pc = 5283
+			continue
+		elif _pc == 6151:
+			_pc = 6153
+			continue
+		elif _pc == 6153:
+			return
+		else:
+			return 0
 	return 0
 
 func local_6162(v0, v1, v2) -> Variant:
@@ -413,20 +1082,43 @@ func local_6162(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v3 = null
-	v3 = isim.ships_in_radius(isim.cast(v1), v2)
-	v4 = null
-	p_set.remove(v3, v0)
-	v4 = await local_2303(v3, v0)
-	v6 = list.item_count(v4)
+	var _pc: int = 6162
 	while true:
-		v5 = iship.cast(list.get_nth(v4, v7))
-		if not (object.property_exists(v5, "poo")):
-			return v5
-		v7 = 1 + v7
-		if not (v6 < v7):
-			break
-	return 0
+		if _pc == 6162:
+			v3 = null
+			v3 = isim.ships_in_radius(isim.cast(v1), v2)
+			v4 = null
+			p_set.remove(v3, v0)
+			v4 = await local_2303(v3, v0)
+			v6 = list.item_count(v4)
+			_pc = 6312
+			continue
+		elif _pc == 6312:
+			v5 = iship.cast(list.get_nth(v4, v7))
+			if not (object.property_exists(v5, "poo")):
+				_pc = 6385
+				continue
+			else:
+				_pc = 6395
+				continue
+		elif _pc == 6385:
+			_pc = 6430
+			continue
+		elif _pc == 6395:
+			v7 = 1 + v7
+			if v6 >= v7:
+				_pc = 6424
+				continue
+			else:
+				_pc = 6312
+				continue
+		elif _pc == 6424:
+			_pc = 6430
+			continue
+		elif _pc == 6430:
+			return
+		else:
+			return 0
 	return 0
 
 func local_6446(v0) -> Variant:
@@ -439,64 +1131,240 @@ func local_6446(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = 0
-	v2 = 0
-	v3 = 0
-	v4 = sim.cast(global.handle("g_arena_centre"))
-	v5 = global.pog_float("g_arena_radius")
+	var _pc: int = 6446
 	while true:
-		await _pog_wait(1)
-		if 0 > list.item_count(imultiplay.server_player_list()):
-			if not (sim.cast(v6)):
-				if not _pog_eq(v0, iship.cast(global.handle("g_ship_with_bomb"))) or not (global.exists("g_ship_with_bomb")):
-					if 20.0 < global.pog_float("g_time_to_detonation"):
-						v1 = 0
-						v7 = iship.cast(global.handle("g_ship_with_bomb"))
-						if not _pog_is_null(v7):
-							iai.give_flee_order(v0, v7)
-					else:
-						if global.exists("g_bomb") and not (global.exists("g_ship_with_bomb")):
-							if not (v1):
-								v2 = 0
-								v1 = 1
-								iai.give_approach_order_advanced(v0, sim.cast(global.handle("g_bomb")), 0.0, 0.0, 0)
-						else:
-							if not (v2) and global.exists("g_ship_with_bomb"):
-								v1 = 0
-								v2 = 1
-								iai.give_attack_order(v0, sim.cast(global.handle("g_ship_with_bomb")))
-				else:
-					if 20.0 < global.pog_float("g_time_to_detonation"):
-						v9 = await local_6162(v0, v4, v5)
-						if not (iai.has_order(v0)) or not _pog_eq(v8, v9):
-							v8 = v9
-							iai.give_approach_order_advanced(v0, v8, 0.0, 0.0, 0)
-					else:
-						v9 = await local_6162(v0, v4, v5)
-						if not _pog_eq(v8, v9):
-							v8 = v9
-							if _pog_is_null(v8):
-								if PogRuntime.TRACE:
-									debug.print_string("No target for me to run after :(\n")
-							else:
-								iai.give_attack_order(v0, v8)
+		if _pc == 6446:
+			v1 = 0
+			v2 = 0
+			v3 = 0
+			v4 = sim.cast(global.handle("g_arena_centre"))
+			v5 = global.pog_float("g_arena_radius")
+			_pc = 6541
+			continue
+		elif _pc == 6541:
+			await _pog_frame()
+			if _pog_every(6542, 1.0):
+				_pc = 6555
+				continue
 			else:
-				if sim.is_hidden(v6) or not (sim.cast(v6)):
-					pass
-				else:
-					if not (sim.is_hidden(v6)) and 20.0 < sim.distance_between_centres(v0, v6):
-						v3 = 0
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iBotPak.bomb_tag_behaviour: Behaviour suspended while no player present\n")
-		if not (v3):
+				_pc = 7474
+				continue
+		elif _pc == 6555:
+			if 0 > list.item_count(imultiplay.server_player_list()):
+				_pc = 6590
+				continue
+			else:
+				_pc = 7448
+				continue
+		elif _pc == 6590:
+			if not (sim.cast(v6)):
+				_pc = 6614
+				continue
+			else:
+				_pc = 7326
+				continue
+		elif _pc == 6614:
+			if not _pog_eq(v0, iship.cast(global.handle("g_ship_with_bomb"))) or not (global.exists("g_ship_with_bomb")):
+				_pc = 6679
+				continue
+			else:
+				_pc = 7040
+				continue
+		elif _pc == 6679:
+			if 20.0 < global.pog_float("g_time_to_detonation"):
+				_pc = 6710
+				continue
+			else:
+				_pc = 6798
+				continue
+		elif _pc == 6710:
+			v1 = 0
+			v7 = iship.cast(global.handle("g_ship_with_bomb"))
+			if not _pog_is_null(v7):
+				_pc = 6769
+				continue
+			else:
+				_pc = 6793
+				continue
+		elif _pc == 6769:
+			iai.give_flee_order(v0, v7)
+			_pc = 6793
+			continue
+		elif _pc == 6793:
+			_pc = 7035
+			continue
+		elif _pc == 6798:
+			if global.exists("g_bomb") and not (global.exists("g_ship_with_bomb")):
+				_pc = 6844
+				continue
+			else:
+				_pc = 6937
+				continue
+		elif _pc == 6844:
+			if not (v1):
+				_pc = 6855
+				continue
+			else:
+				_pc = 6932
+				continue
+		elif _pc == 6855:
+			v2 = 0
+			v1 = 1
+			iai.give_approach_order_advanced(v0, sim.cast(global.handle("g_bomb")), 0.0, 0.0, 0)
+			_pc = 6932
+			continue
+		elif _pc == 6932:
+			_pc = 7035
+			continue
+		elif _pc == 6937:
+			if not (v2) and global.exists("g_ship_with_bomb"):
+				_pc = 6969
+				continue
+			else:
+				_pc = 7035
+				continue
+		elif _pc == 6969:
+			v1 = 0
+			v2 = 1
+			iai.give_attack_order(v0, sim.cast(global.handle("g_ship_with_bomb")))
+			_pc = 7035
+			continue
+		elif _pc == 7035:
+			_pc = 7321
+			continue
+		elif _pc == 7040:
+			if 20.0 < global.pog_float("g_time_to_detonation"):
+				_pc = 7071
+				continue
+			else:
+				_pc = 7192
+				continue
+		elif _pc == 7071:
+			v9 = await local_6162(v0, v4, v5)
+			if not (iai.has_order(v0)) or not _pog_eq(v8, v9):
+				_pc = 7141
+				continue
+			else:
+				_pc = 7187
+				continue
+		elif _pc == 7141:
+			v8 = v9
+			iai.give_approach_order_advanced(v0, v8, 0.0, 0.0, 0)
+			_pc = 7187
+			continue
+		elif _pc == 7187:
+			_pc = 7321
+			continue
+		elif _pc == 7192:
+			v9 = await local_6162(v0, v4, v5)
+			if not _pog_eq(v8, v9):
+				_pc = 7242
+				continue
+			else:
+				_pc = 7321
+				continue
+		elif _pc == 7242:
+			v8 = v9
+			if _pog_is_null(v8):
+				_pc = 7266
+				continue
+			else:
+				_pc = 7297
+				continue
+		elif _pc == 7266:
+			_pc = 7292
+			continue
+		elif _pc == 7271:
+			debug.print_string("No target for me to run after :(\n")
+			_pc = 7292
+			continue
+		elif _pc == 7292:
+			_pc = 7321
+			continue
+		elif _pc == 7297:
+			iai.give_attack_order(v0, v8)
+			_pc = 7321
+			continue
+		elif _pc == 7321:
+			_pc = 7443
+			continue
+		elif _pc == 7326:
+			if sim.is_hidden(v6) or not (sim.cast(v6)):
+				_pc = 7369
+				continue
+			else:
+				_pc = 7382
+				continue
+		elif _pc == 7369:
+			_pc = 7443
+			continue
+		elif _pc == 7382:
+			if not (sim.is_hidden(v6)) and 20.0 < sim.distance_between_centres(v0, v6):
+				_pc = 7436
+				continue
+			else:
+				_pc = 7443
+				continue
+		elif _pc == 7436:
+			v3 = 0
+			_pc = 7443
+			continue
+		elif _pc == 7443:
+			_pc = 7474
+			continue
+		elif _pc == 7448:
+			_pc = 7474
+			continue
+		elif _pc == 7453:
+			debug.print_string("iBotPak.bomb_tag_behaviour: Behaviour suspended while no player present\n")
+			_pc = 7474
+			continue
+		elif _pc == 7474:
+			if _pog_every(7474, 3.0):
+				_pc = 7487
+				continue
+			else:
+				_pc = 7637
+				continue
+		elif _pc == 7487:
+			if not (v3):
+				_pc = 7498
+				continue
+			else:
+				_pc = 7609
+				continue
+		elif _pc == 7498:
 			v6 = await local_3530(v4, v5, v0)
 			if not (v3) and not _pog_is_null(sim.cast(v6)):
-				v3 = 1
-				iai.give_approach_order_advanced(v0, v6, 0.0, 0.0, 0)
-		if not (sim.is_dead(v0)):
+				_pc = 7567
+				continue
+			else:
+				_pc = 7609
+				continue
+		elif _pc == 7567:
+			v3 = 1
+			iai.give_approach_order_advanced(v0, v6, 0.0, 0.0, 0)
+			_pc = 7609
 			continue
-		return
-	return
+		elif _pc == 7609:
+			if sim.is_dead(v0):
+				_pc = 7632
+				continue
+			else:
+				_pc = 7637
+				continue
+		elif _pc == 7632:
+			_pc = 7644
+			continue
+		elif _pc == 7637:
+			_pc = 6541
+			continue
+		elif _pc == 7642:
+			_pc = 7644
+			continue
+		elif _pc == 7644:
+			return
+		else:
+			return 0
 	return 0
 

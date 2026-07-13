@@ -71,22 +71,60 @@ func server_on_update_scores() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v0 = null
-	v5 = null
-	v7 = group.cast(global.handle("g_bots_handle"))
-	v1 = 0
-	while group.sim_count(v7) < v1:
-		list.add_tail(v0, group.nth_sim(v7, v1))
-		v1 = 1 + v1
-	v1 = 0
-	while list.item_count(v0) < v1:
-		v2 = isim.cast(list.get_nth(v0, v1))
-		if v2:
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			v0 = null
+			v5 = null
+			v7 = group.cast(global.handle("g_bots_handle"))
+			v1 = 0
+			_pc = 73
+			continue
+		elif _pc == 73:
+			if group.sim_count(v7) < v1:
+				_pc = 102
+				continue
+			else:
+				_pc = 162
+				continue
+		elif _pc == 102:
+			list.add_tail(v0, group.nth_sim(v7, v1))
+			v1 = 1 + v1
+			_pc = 73
+			continue
+		elif _pc == 162:
+			v1 = 0
+			_pc = 169
+			continue
+		elif _pc == 169:
+			if list.item_count(v0) < v1:
+				_pc = 198
+				continue
+			else:
+				_pc = 387
+				continue
+		elif _pc == 198:
+			v2 = isim.cast(list.get_nth(v0, v1))
+			if v2:
+				_pc = 250
+				continue
+			else:
+				_pc = 369
+				continue
+		elif _pc == 250:
 			v3 = object.int_property(v2, "frag_count")
 			v4 = object.int_property(v2, "bot_deaths")
 			imultiplay.add_bot_end_game_info(object.string_property(v2, "name"), "", v3, 0, v4)
-		v1 = 1 + v1
-	return 0
+			_pc = 369
+			continue
+		elif _pc == 369:
+			v1 = 1 + v1
+			_pc = 169
+			continue
+		elif _pc == 387:
+			return 0
+		else:
+			return 0
 	return 0
 
 func server_on_end_game() -> Variant:
@@ -227,11 +265,27 @@ func local_529(v0, v1) -> Variant:
 	return 0
 
 func local_1028(v0) -> Variant:
-	if object.property_exists(v0, "player"):
-		imultiplay.server_set_player_died_count(v0, 1 + imultiplay.server_player_died_count(v0))
-	else:
-		object.set_int_property(v0, "bot_deaths", 1 + object.int_property(v0, "bot_deaths"))
-	return 0
+	var _pc: int = 1028
+	while true:
+		if _pc == 1028:
+			if object.property_exists(v0, "player"):
+				_pc = 1058
+				continue
+			else:
+				_pc = 1102
+				continue
+		elif _pc == 1058:
+			imultiplay.server_set_player_died_count(v0, 1 + imultiplay.server_player_died_count(v0))
+			_pc = 1154
+			continue
+		elif _pc == 1102:
+			object.set_int_property(v0, "bot_deaths", 1 + object.int_property(v0, "bot_deaths"))
+			_pc = 1154
+			continue
+		elif _pc == 1154:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_1157(v0, v1) -> Variant:
@@ -247,22 +301,71 @@ func server_on_user_message() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	if v0 == 15:
-		v4 = iship.cast(v1)
-		iship.undock_self(v4)
-		imultiplay.server_send_user_message(15, v4, 0, "")
-		return 0
-	if v0 == 16:
-		imultiplay.send_scores(v1)
-		return 0
-	if v0 == 99:
-		await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-		return 0
-	if v0 == 204:
-		isim.dock(isim.cast(v1), isim.cast(v2))
-		imultiplay.server_send_user_message(204, v1, v2, v3)
-		return 0
-	return 0
+	var _pc: int = 1292
+	while true:
+		if _pc == 1292:
+			_pc = 1560
+			continue
+		elif _pc == 1302:
+			v4 = iship.cast(v1)
+			iship.undock_self(v4)
+			imultiplay.server_send_user_message(15, v4, 0, "")
+			_pc = 1607
+			continue
+		elif _pc == 1379:
+			imultiplay.send_scores(v1)
+			_pc = 1607
+			continue
+		elif _pc == 1403:
+			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
+			_pc = 1607
+			continue
+		elif _pc == 1463:
+			isim.dock(isim.cast(v1), isim.cast(v2))
+			imultiplay.server_send_user_message(204, v1, v2, v3)
+			_pc = 1607
+			continue
+		elif _pc == 1550:
+			_pc = 1607
+			continue
+		elif _pc == 1555:
+			_pc = 1607
+			continue
+		elif _pc == 1560:
+			if v0 != 15:
+				_pc = 1574
+				continue
+			else:
+				_pc = 1302
+				continue
+		elif _pc == 1574:
+			if not _pog_is_null(16):
+				_pc = 1583
+				continue
+			else:
+				_pc = 1379
+				continue
+		elif _pc == 1583:
+			if not _pog_is_null(99):
+				_pc = 1592
+				continue
+			else:
+				_pc = 1403
+				continue
+		elif _pc == 1592:
+			if not _pog_is_null(204):
+				_pc = 1602
+				continue
+			else:
+				_pc = 1463
+				continue
+		elif _pc == 1602:
+			_pc = 1550
+			continue
+		elif _pc == 1607:
+			return 0
+		else:
+			return 0
 	return 0
 
 func server_player_leave() -> Variant:
@@ -301,44 +404,86 @@ func player_death() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v1 = iship.cast(iship.last_attacker(iship.cast(v0)))
-	v3 = null
-	v5 = null
-	v6 = null
-	v7 = null
-	v7 = object.string_property(v0, "name")
-	await local_1028(iship.cast(v0))
-	await imputils.spawn_killed_player_power_ups(v0)
-	v2 = sim.cast(global.handle("g_bomb"))
-	if _pog_eq(v0, sim.parent(v2)):
-		sim.detach_child(v0, v2)
-		sim.set_mass(v2, 0.0)
-		imultiplay.server_send_user_message(27, v0, 0, "")
-		imultiplay.server_send_user_message(29, v0, 0, "")
-		isim.set_faction(isim.cast(v0), ifaction.find("Player"))
-		global.destroy("g_ship_with_bomb")
-		await local_529(v1, 1)
-	else:
-		if _pog_eq(iship.cast(v0), v1) or _pog_is_null(v1):
-			pass
-		else:
+	var _pc: int = 2072
+	while true:
+		if _pc == 2072:
+			v1 = iship.cast(iship.last_attacker(iship.cast(v0)))
+			v3 = null
+			v5 = null
+			v6 = null
+			v7 = null
+			v7 = object.string_property(v0, "name")
+			await local_1028(iship.cast(v0))
+			await imputils.spawn_killed_player_power_ups(v0)
+			v2 = sim.cast(global.handle("g_bomb"))
+			if _pog_eq(v0, sim.parent(v2)):
+				_pc = 2323
+				continue
+			else:
+				_pc = 2527
+				continue
+		elif _pc == 2323:
+			sim.detach_child(v0, v2)
+			sim.set_mass(v2, 0.0)
+			imultiplay.server_send_user_message(27, v0, 0, "")
+			imultiplay.server_send_user_message(29, v0, 0, "")
+			isim.set_faction(isim.cast(v0), ifaction.find("Player"))
+			global.destroy("g_ship_with_bomb")
+			await local_529(v1, 1)
+			_pc = 2590
+			continue
+		elif _pc == 2527:
+			if _pog_eq(iship.cast(v0), v1) or _pog_is_null(v1):
+				_pc = 2565
+				continue
+			else:
+				_pc = 2570
+				continue
+		elif _pc == 2565:
+			_pc = 2590
+			continue
+		elif _pc == 2570:
 			await local_529(v1, 0)
-	sim.destroy(v0)
-	if object.property_exists(v0, "is_bot"):
-		v8 = _pog_spawn(local_2005.bind(0, _pog_clone(string.join(string.join(object.string_property(v1, "name"), text.field("mp_bomb_killed_bot", 0)), object.string_property(v0, "name")))))
-		_pog_detach(v8)
-	else:
-		if _pog_eq(iship.cast(v0), v1) or _pog_is_null(v1):
+			_pc = 2590
+			continue
+		elif _pc == 2590:
+			sim.destroy(v0)
+			if object.property_exists(v0, "is_bot"):
+				_pc = 2639
+				continue
+			else:
+				_pc = 2784
+				continue
+		elif _pc == 2639:
+			v8 = _pog_spawn(local_2005.bind(0, _pog_clone(string.join(string.join(object.string_property(v1, "name"), text.field("mp_bomb_killed_bot", 0)), object.string_property(v0, "name")))))
+			_pog_detach(v8)
+			_pc = 3036
+			continue
+		elif _pc == 2784:
+			if _pog_eq(iship.cast(v0), v1) or _pog_is_null(v1):
+				_pc = 2822
+				continue
+			else:
+				_pc = 2956
+				continue
+		elif _pc == 2822:
 			v4 = math.random_int(1, 2)
 			v3 = "mp_suicide_"
 			v3 = string.join(v3, string.from_int(v4))
 			v8 = _pog_spawn(local_2005.bind(v0, _pog_clone(v3)))
 			_pog_detach(v8)
-		else:
+			_pc = 3036
+			continue
+		elif _pc == 2956:
 			v5 = await imputils.make_death_message(v1, v0)
 			v8 = _pog_spawn(local_2005.bind(v0, _pog_clone(v5)))
 			_pog_detach(v8)
-	return 0
+			_pc = 3036
+			continue
+		elif _pc == 3036:
+			return 0
+		else:
+			return 0
 	return 0
 
 func server_player_enter() -> Variant:
@@ -349,29 +494,62 @@ func server_player_enter() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
-	if _pog_is_null(imultiplay.server_player_died_count(v0)):
-		v5 = 1
-	else:
-		v5 = 0
-	object.add_int_property(v0, "frag_count", 0)
-	object.add_bool_property(v0, "player", 1)
-	object.set_string_property(v0, "death_script", "iBombTag.PlayerDeath")
-	v1 = ifaction.find("Player")
-	isim.set_faction(isim.cast(v0), v1)
-	imultiplay.server_broadcast_message(v0, "mp_frag_player_spawned", 2)
-	imultiplay.set_ship_limits(iship.cast(v0))
-	imultiplay.link_ship_weapons(iship.cast(v0))
-	if 0 > imultiplay.a_i_bots_count() and imultiplay.use_a_i_bots() and v5:
-		v3 = group.cast(global.handle("g_bots_handle"))
-		v4 = isim.cast(group.nth_sim(v3, 0))
-		group.remove_sim(v3, v4)
-		sim.destroy(v4)
-	if not (global.exists("g_ship_with_bomb")):
-		return 0
-	v6 = iship.cast(global.handle("g_ship_with_bomb"))
-	imultiplay.server_send_user_message(31, v6, 0, "")
-	return 0
+	var _pc: int = 3068
+	while true:
+		if _pc == 3068:
+			v2 = null
+			if _pog_is_null(imultiplay.server_player_died_count(v0)):
+				_pc = 3109
+				continue
+			else:
+				_pc = 3121
+				continue
+		elif _pc == 3109:
+			v5 = 1
+			_pc = 3128
+			continue
+		elif _pc == 3121:
+			v5 = 0
+			_pc = 3128
+			continue
+		elif _pc == 3128:
+			object.add_int_property(v0, "frag_count", 0)
+			object.add_bool_property(v0, "player", 1)
+			object.set_string_property(v0, "death_script", "iBombTag.PlayerDeath")
+			v1 = ifaction.find("Player")
+			isim.set_faction(isim.cast(v0), v1)
+			imultiplay.server_broadcast_message(v0, "mp_frag_player_spawned", 2)
+			imultiplay.set_ship_limits(iship.cast(v0))
+			imultiplay.link_ship_weapons(iship.cast(v0))
+			if 0 > imultiplay.a_i_bots_count() and imultiplay.use_a_i_bots() and v5:
+				_pc = 3409
+				continue
+			else:
+				_pc = 3529
+				continue
+		elif _pc == 3409:
+			v3 = group.cast(global.handle("g_bots_handle"))
+			v4 = isim.cast(group.nth_sim(v3, 0))
+			group.remove_sim(v3, v4)
+			sim.destroy(v4)
+			_pc = 3529
+			continue
+		elif _pc == 3529:
+			if global.exists("g_ship_with_bomb"):
+				_pc = 3554
+				continue
+			else:
+				_pc = 3622
+				continue
+		elif _pc == 3554:
+			v6 = iship.cast(global.handle("g_ship_with_bomb"))
+			imultiplay.server_send_user_message(31, v6, 0, "")
+			_pc = 3622
+			continue
+		elif _pc == 3622:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_3632(v0, v1, v2) -> Variant:
@@ -382,43 +560,136 @@ func local_3632(v0, v1, v2) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = null
-	v7 = null
-	v9 = group.cast(global.handle("mp_respawn_group"))
+	var _pc: int = 3632
 	while true:
-		await _pog_wait(2)
-		v7 = imultiplay.server_player_list()
-		v8 = list.item_count(v7)
-		v4 = 0
-		while v8 < v4:
+		if _pc == 3632:
+			v5 = null
+			v7 = null
+			v9 = group.cast(global.handle("mp_respawn_group"))
+			_pc = 3703
+			continue
+		elif _pc == 3703:
+			await _pog_frame()
+			if _pog_every(3704, 2.0):
+				_pc = 3717
+				continue
+			else:
+				_pc = 4033
+				continue
+		elif _pc == 3717:
+			v7 = imultiplay.server_player_list()
+			v8 = list.item_count(v7)
+			v4 = 0
+			_pc = 3769
+			continue
+		elif _pc == 3769:
+			if v8 < v4:
+				_pc = 3785
+				continue
+			else:
+				_pc = 4033
+				continue
+		elif _pc == 3785:
 			v3 = isim.cast(list.get_nth(v7, v4))
 			if not _pog_is_null(v3):
-				if v2 > sim.distance_between(v0, v3):
-					if not (object.property_exists(v3, "mp_respawning")):
-						imultiplay.server_send_player_message(v4, "mp_frag_player_transported", 3)
-						await imputils.spawn_player(v3, v9)
-						object.add_bool_property(v3, "mp_respawning", 1)
-				else:
-					object.remove_property(v3, "mp_respawning")
+				_pc = 3840
+				continue
+			else:
+				_pc = 4015
+				continue
+		elif _pc == 3840:
+			if v2 > sim.distance_between(v0, v3):
+				_pc = 3874
+				continue
+			else:
+				_pc = 3989
+				continue
+		elif _pc == 3874:
+			if not (object.property_exists(v3, "mp_respawning")):
+				_pc = 3905
+				continue
+			else:
+				_pc = 3984
+				continue
+		elif _pc == 3905:
+			imultiplay.server_send_player_message(v4, "mp_frag_player_transported", 3)
+			await imputils.spawn_player(v3, v9)
+			object.add_bool_property(v3, "mp_respawning", 1)
+			_pc = 3984
+			continue
+		elif _pc == 3984:
+			_pc = 4015
+			continue
+		elif _pc == 3989:
+			object.remove_property(v3, "mp_respawning")
+			_pc = 4015
+			continue
+		elif _pc == 4015:
 			v4 = 1 + v4
-	return
+			_pc = 3769
+			continue
+		elif _pc == 4033:
+			_pc = 3703
+			continue
+		elif _pc == 4038:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4055() -> Variant:
 	var v0: Variant = 0
-	v0 = 120.0
+	var _pc: int = 4055
 	while true:
-		await _pog_wait(1)
-		if 10.0 > v0:
-			imultiplay.server_broadcast_message(0, string.join("mp_bomb_detonation_time+ ", await iutilities.convert_seconds_to_time(v0)), 2)
-		else:
-			imultiplay.server_broadcast_message(0, string.join("mp_bomb_detonation_time+ ", await iutilities.convert_seconds_to_time(v0)), 3)
-		v0 = 1.0 - v0
-		global.set_float("g_time_to_detonation", v0)
-		if -1.0 > v0:
+		if _pc == 4055:
+			v0 = 120.0
+			_pc = 4076
 			continue
-		return
-	return
+		elif _pc == 4076:
+			await _pog_frame()
+			if _pog_every(4077, 1.0):
+				_pc = 4090
+				continue
+			else:
+				_pc = 4291
+				continue
+		elif _pc == 4090:
+			if 10.0 > v0:
+				_pc = 4106
+				continue
+			else:
+				_pc = 4169
+				continue
+		elif _pc == 4106:
+			imultiplay.server_broadcast_message(0, string.join("mp_bomb_detonation_time+ ", await iutilities.convert_seconds_to_time(v0)), 2)
+			_pc = 4227
+			continue
+		elif _pc == 4169:
+			imultiplay.server_broadcast_message(0, string.join("mp_bomb_detonation_time+ ", await iutilities.convert_seconds_to_time(v0)), 3)
+			_pc = 4227
+			continue
+		elif _pc == 4227:
+			v0 = 1.0 - v0
+			global.set_float("g_time_to_detonation", v0)
+			if -1.0 <= v0:
+				_pc = 4286
+				continue
+			else:
+				_pc = 4291
+				continue
+		elif _pc == 4286:
+			_pc = 4297
+			continue
+		elif _pc == 4291:
+			_pc = 4076
+			continue
+		elif _pc == 4296:
+			_pc = 4297
+			continue
+		elif _pc == 4297:
+			return
+		else:
+			return 0
 	return 0
 
 func local_4299() -> Variant:
@@ -449,85 +720,211 @@ func local_4299() -> Variant:
 	var v24: Variant = 0
 	var v25: Variant = 0
 	var v26: Variant = 0
-	v2 = 0
-	v3 = 0
-	v4 = 0
-	v10 = sim.cast(global.handle("g_arena_centre"))
-	v14 = null
-	v15 = ifaction.find("AntiPlayer")
-	v20 = math.random(5.0, 8.0)
-	v23 = global.pog_float("g_arena_radius")
-	v25 = null
-	v1 = 0
-	v25 = text.field("sn_police_21", 0)
+	var _pc: int = 4299
 	while true:
-		await _pog_wait(1)
-		v16 = list.item_count(imultiplay.server_player_list())
-		if 0 <= v16:
+		if _pc == 4299:
+			v2 = 0
+			v3 = 0
+			v4 = 0
+			v10 = sim.cast(global.handle("g_arena_centre"))
+			v14 = null
+			v15 = ifaction.find("AntiPlayer")
+			v20 = math.random(5.0, 8.0)
+			v23 = global.pog_float("g_arena_radius")
+			v25 = null
+			v1 = 0
+			v25 = text.field("sn_police_21", 0)
+			_pc = 4505
 			continue
-		if not (v2):
-			if not (v3):
-				v21 = igame.game_time()
-				v3 = 1
+		elif _pc == 4505:
+			await _pog_frame()
+			if _pog_every(4506, 1.0):
+				_pc = 4519
+				continue
 			else:
-				if not (v4) and 2.0 - v20 >= v21 - igame.game_time():
-					imultiplay.server_broadcast_message(0, "mp_bomb_about_to_spawn", 3)
-					v4 = 1
-				if v20 >= v21 - igame.game_time() and v4:
-					if global.exists("g_antimater_explosion"):
-						global.destroy("g_antimater_explosion")
-					v2 = 1
-					v3 = 0
-					v4 = 0
-					global.create_float("g_time_to_detonation", 2, 120.0)
-					v11 = sim.create("ini:/sims/ships/multiplayer/utils/bomb", text.field("mp_bomb_name", 0))
-					sim.set_mass(v11, 0.0)
-					isim.set_sensor_visibility(isim.cast(v11), 1)
-					isim.set_indestructable(isim.cast(v11), 1)
-					global.create_handle("g_bomb", 2, v11)
-					isim.set_mission_critical(isim.cast(v11), 1)
-					sim.place_near(v11, v10, 6000.0)
-					imultiplay.set_transmit_flag(v11, 1)
-					imultiplay.set_update_flag(v11, 1)
-					imultiplay.server_broadcast_message(0, "mp_bomb_bomb_spawned", 3)
-					v26 = _pog_spawn(local_4055.bind())
-		else:
+				_pc = 6147
+				continue
+		elif _pc == 4519:
+			v16 = list.item_count(imultiplay.server_player_list())
+			if 0 > v16:
+				_pc = 4565
+				continue
+			else:
+				_pc = 6147
+				continue
+		elif _pc == 4565:
+			if not (v2):
+				_pc = 4576
+				continue
+			else:
+				_pc = 5138
+				continue
+		elif _pc == 4576:
+			if not (v3):
+				_pc = 4587
+				continue
+			else:
+				_pc = 4618
+				continue
+		elif _pc == 4587:
+			v21 = igame.game_time()
+			v3 = 1
+			_pc = 5133
+			continue
+		elif _pc == 4618:
+			if not (v4) and 2.0 - v20 >= v21 - igame.game_time():
+				_pc = 4661
+				continue
+			else:
+				_pc = 4692
+				continue
+		elif _pc == 4661:
+			imultiplay.server_broadcast_message(0, "mp_bomb_about_to_spawn", 3)
+			v4 = 1
+			_pc = 4692
+			continue
+		elif _pc == 4692:
+			if v20 >= v21 - igame.game_time() and v4:
+				_pc = 4728
+				continue
+			else:
+				_pc = 5133
+				continue
+		elif _pc == 4728:
+			if global.exists("g_antimater_explosion"):
+				_pc = 4753
+				continue
+			else:
+				_pc = 4774
+				continue
+		elif _pc == 4753:
+			global.destroy("g_antimater_explosion")
+			_pc = 4774
+			continue
+		elif _pc == 4774:
+			v2 = 1
+			v3 = 0
+			v4 = 0
+			global.create_float("g_time_to_detonation", 2, 120.0)
+			v11 = sim.create("ini:/sims/ships/multiplayer/utils/bomb", text.field("mp_bomb_name", 0))
+			sim.set_mass(v11, 0.0)
+			isim.set_sensor_visibility(isim.cast(v11), 1)
+			isim.set_indestructable(isim.cast(v11), 1)
+			global.create_handle("g_bomb", 2, v11)
+			isim.set_mission_critical(isim.cast(v11), 1)
+			sim.place_near(v11, v10, 6000.0)
+			imultiplay.set_transmit_flag(v11, 1)
+			imultiplay.set_update_flag(v11, 1)
+			imultiplay.server_broadcast_message(0, "mp_bomb_bomb_spawned", 3)
+			v26 = _pog_spawn(local_4055.bind())
+			_pc = 5133
+			continue
+		elif _pc == 5133:
+			_pc = 6147
+			continue
+		elif _pc == 5138:
 			v22 = global.pog_float("g_time_to_detonation")
 			if 0.0 > v22:
-				v14 = list.from_set(isim.ships_in_radius(isim.cast(v10), v23))
-				v17 = list.item_count(v14)
-				if not (global.exists("g_ship_with_bomb")):
-					v19 = 0
-					while v17 < v19:
-						v13 = isim.cast(list.get_nth(v14, v19))
-						if not (object.property_exists(v13, "poo")):
-							if not (global.exists("g_ship_with_bomb")):
-								if not (isim.is_dying(v13)) and 300.0 <= sim.distance_between(v13, v11):
-									global.create_handle("g_ship_with_bomb", 2, v13)
-									sim.add_child_relative_to(v13, v11, 0.0, 40.0 - object.float_property(v13, "radius"), 0.0)
-									sim.set_mass(v11, 0.009999999776482582)
-									isim.set_faction(v13, v15)
-									imultiplay.server_send_user_message(28, v13, 0, "")
-									imultiplay.server_send_user_message(26, v13, 0, "")
-									imultiplay.server_broadcast_message(0, string.join(object.string_property(v13, "name"), string.join("+", "mp_bomb_picked_up")), 3)
-						v19 = 1 + v19
-				else:
-					if _pog_is_null(sim.cast(global.handle("g_ship_with_bomb"))):
-						global.destroy("g_ship_with_bomb")
+				_pc = 5180
+				continue
 			else:
-				v12 = sim.create("ini:/sims/explosions/2km_antimatter_explosion", "Big Bang")
-				global.create_handle("g_antimater_explosion", 2, v12)
-				isim.set_indestructable(isim.cast(v11), 0)
-				imultiplay.server_send_user_message(30, v11, 0, "")
-				sim.place_at(v12, v11)
-				sim.destroy(v11)
-				isim.kill(isim.cast(global.handle("g_ship_with_bomb")))
-				global.destroy("g_ship_with_bomb")
-				global.destroy("g_bomb")
-				v2 = 0
-				v20 = math.random(5.0, 8.0)
-				_pog_halt(v26)
-	return
+				_pc = 5836
+				continue
+		elif _pc == 5180:
+			v14 = list.from_set(isim.ships_in_radius(isim.cast(v10), v23))
+			v17 = list.item_count(v14)
+			if not (global.exists("g_ship_with_bomb")):
+				_pc = 5288
+				continue
+			else:
+				_pc = 5769
+				continue
+		elif _pc == 5288:
+			v19 = 0
+			_pc = 5295
+			continue
+		elif _pc == 5295:
+			if v17 < v19:
+				_pc = 5311
+				continue
+			else:
+				_pc = 5764
+				continue
+		elif _pc == 5311:
+			v13 = isim.cast(list.get_nth(v14, v19))
+			if not (object.property_exists(v13, "poo")):
+				_pc = 5384
+				continue
+			else:
+				_pc = 5746
+				continue
+		elif _pc == 5384:
+			if not (global.exists("g_ship_with_bomb")):
+				_pc = 5410
+				continue
+			else:
+				_pc = 5746
+				continue
+		elif _pc == 5410:
+			if not (isim.is_dying(v13)) and 300.0 <= sim.distance_between(v13, v11):
+				_pc = 5464
+				continue
+			else:
+				_pc = 5746
+				continue
+		elif _pc == 5464:
+			global.create_handle("g_ship_with_bomb", 2, v13)
+			sim.add_child_relative_to(v13, v11, 0.0, 40.0 - object.float_property(v13, "radius"), 0.0)
+			sim.set_mass(v11, 0.009999999776482582)
+			isim.set_faction(v13, v15)
+			imultiplay.server_send_user_message(28, v13, 0, "")
+			imultiplay.server_send_user_message(26, v13, 0, "")
+			imultiplay.server_broadcast_message(0, string.join(object.string_property(v13, "name"), string.join("+", "mp_bomb_picked_up")), 3)
+			_pc = 5746
+			continue
+		elif _pc == 5746:
+			v19 = 1 + v19
+			_pc = 5295
+			continue
+		elif _pc == 5764:
+			_pc = 5831
+			continue
+		elif _pc == 5769:
+			if _pog_is_null(sim.cast(global.handle("g_ship_with_bomb"))):
+				_pc = 5810
+				continue
+			else:
+				_pc = 5831
+				continue
+		elif _pc == 5810:
+			global.destroy("g_ship_with_bomb")
+			_pc = 5831
+			continue
+		elif _pc == 5831:
+			_pc = 6147
+			continue
+		elif _pc == 5836:
+			v12 = sim.create("ini:/sims/explosions/2km_antimatter_explosion", "Big Bang")
+			global.create_handle("g_antimater_explosion", 2, v12)
+			isim.set_indestructable(isim.cast(v11), 0)
+			imultiplay.server_send_user_message(30, v11, 0, "")
+			sim.place_at(v12, v11)
+			sim.destroy(v11)
+			isim.kill(isim.cast(global.handle("g_ship_with_bomb")))
+			global.destroy("g_ship_with_bomb")
+			global.destroy("g_bomb")
+			v2 = 0
+			v20 = math.random(5.0, 8.0)
+			_pog_halt(v26)
+			_pc = 6147
+			continue
+		elif _pc == 6147:
+			_pc = 4505
+			continue
+		elif _pc == 6152:
+			return
+		else:
+			return 0
 	return 0
 
 func server_exit() -> Variant:
@@ -646,26 +1043,79 @@ func client_player_leave() -> Variant:
 func local_7747(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = 0
+	var _pc: int = 7747
 	while true:
-		await _pog_wait(2)
-		v3 = sim.cast(iship.find_player_ship())
-		if _pog_is_null(v3):
+		if _pc == 7747:
+			v4 = 0
+			_pc = 7764
 			continue
-		if v1 > sim.distance_between(v0, v3):
+		elif _pc == 7764:
+			await _pog_frame()
+			if _pog_every(7765, 2.0):
+				_pc = 7778
+				continue
+			else:
+				_pc = 8027
+				continue
+		elif _pc == 7778:
+			v3 = sim.cast(iship.find_player_ship())
+			if not _pog_is_null(v3):
+				_pc = 7823
+				continue
+			else:
+				_pc = 8027
+				continue
+		elif _pc == 7823:
+			if v1 > sim.distance_between(v0, v3):
+				_pc = 7857
+				continue
+			else:
+				_pc = 7957
+				continue
+		elif _pc == 7857:
 			if not (v4):
-				v4 = 1
-				igame.create_fog(0.009999999776482582)
-				ihud.play_audio_cue(4)
-				imultiplay.client_say(v3, "mp_frag_player_falling")
+				_pc = 7868
+				continue
+			else:
+				_pc = 7936
+				continue
+		elif _pc == 7868:
+			v4 = 1
+			igame.create_fog(0.009999999776482582)
+			ihud.play_audio_cue(4)
+			imultiplay.client_say(v3, "mp_frag_player_falling")
+			_pc = 7936
+			continue
+		elif _pc == 7936:
 			ihud.pog_print("mp_frag_player_falling")
-		if v1 > sim.distance_between(v0, v3):
+			_pc = 7957
 			continue
-		if not (v4):
+		elif _pc == 7957:
+			if v1 <= sim.distance_between(v0, v3):
+				_pc = 7991
+				continue
+			else:
+				_pc = 8027
+				continue
+		elif _pc == 7991:
+			if v4:
+				_pc = 8001
+				continue
+			else:
+				_pc = 8027
+				continue
+		elif _pc == 8001:
+			v4 = 0
+			igame.destroy_fog(0.009999999776482582)
+			_pc = 8027
 			continue
-		v4 = 0
-		igame.destroy_fog(0.009999999776482582)
-	return
+		elif _pc == 8027:
+			_pc = 7764
+			continue
+		elif _pc == 8032:
+			return
+		else:
+			return 0
 	return 0
 
 func local_8035(v0) -> Variant:
@@ -718,33 +1168,69 @@ func local_8717(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	if not _pog_is_null(v1):
-		v3 = iship.cast(await ibotpak.create_bot_ships(global.string("g_ini_name"), 1, 0.0, 0, v1, "BotNamesA"))
-		await local_1157(v1, v3)
-		imultiplay.set_ship_limits(v3)
-		v2 = group.cast(global.handle("g_bots_handle"))
-		group.add_sim(v2, v3)
-		global.set_handle("g_bots_handle", v2)
-		_pog_detach(_pog_spawn(local_8583.bind(v3)))
-	else:
-		v2 = group.cast(v0)
-		if not _pog_is_null(v2):
+	var _pc: int = 8717
+	while true:
+		if _pc == 8717:
+			if not _pog_is_null(v1):
+				_pc = 8735
+				continue
+			else:
+				_pc = 8975
+				continue
+		elif _pc == 8735:
+			v3 = iship.cast(await ibotpak.create_bot_ships(global.string("g_ini_name"), 1, 0.0, 0, v1, "BotNamesA"))
+			await local_1157(v1, v3)
+			imultiplay.set_ship_limits(v3)
+			v2 = group.cast(global.handle("g_bots_handle"))
+			group.add_sim(v2, v3)
+			global.set_handle("g_bots_handle", v2)
+			_pog_detach(_pog_spawn(local_8583.bind(v3)))
+			_pc = 9392
+			continue
+		elif _pc == 8975:
+			v2 = group.cast(v0)
+			if not _pog_is_null(v2):
+				_pc = 9012
+				continue
+			else:
+				_pc = 9207
+				continue
+		elif _pc == 9012:
 			v4 = group.sim_count(v2)
 			v5 = 0
-			while v4 < v5:
-				v3 = iship.cast(group.nth_sim(v2, v5))
-				object.set_string_property(v3, "death_script", "iBombTag.BotDeath")
-				imultiplay.set_ship_limits(v3)
-				_pog_detach(_pog_spawn(local_8583.bind(v3)))
-				v5 = 1 + v5
-		else:
+			_pc = 9043
+			continue
+		elif _pc == 9043:
+			if v4 < v5:
+				_pc = 9059
+				continue
+			else:
+				_pc = 9202
+				continue
+		elif _pc == 9059:
+			v3 = iship.cast(group.nth_sim(v2, v5))
+			object.set_string_property(v3, "death_script", "iBombTag.BotDeath")
+			imultiplay.set_ship_limits(v3)
+			_pog_detach(_pog_spawn(local_8583.bind(v3)))
+			v5 = 1 + v5
+			_pc = 9043
+			continue
+		elif _pc == 9202:
+			_pc = 9392
+			continue
+		elif _pc == 9207:
 			object.set_string_property(v0, "death_script", "iBombTag.BotDeath")
 			imultiplay.set_ship_limits(v3)
 			v2 = group.cast(global.handle("g_bots_handle"))
 			group.add_sim(v2, v3)
 			global.set_handle("g_bots_handle", v2)
 			_pog_detach(_pog_spawn(local_8583.bind(iship.cast(v0))))
-	return 0
+			_pc = 9392
+			continue
+		elif _pc == 9392:
+			return 0
+		else:
+			return 0
 	return 0
 
 func bot_death() -> Variant:
@@ -756,70 +1242,160 @@ func bot_death() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
-	v1 = object.string_property(v0, "name")
-	v2 = iship.cast(iship.last_attacker(iship.cast(v0)))
-	v3 = null
-	v4 = null
-	v5 = null
-	await local_1028(iship.cast(v0))
-	if PogRuntime.TRACE:
-		if object.property_exists(v2, "is_bot"):
+	var _pc: int = 9395
+	while true:
+		if _pc == 9395:
+			v1 = null
+			v1 = object.string_property(v0, "name")
+			v2 = iship.cast(iship.last_attacker(iship.cast(v0)))
+			v3 = null
+			v4 = null
+			v5 = null
+			await local_1028(iship.cast(v0))
+			_pc = 9751
+			continue
+		elif _pc == 9563:
+			if object.property_exists(v2, "is_bot"):
+				_pc = 9593
+				continue
+			else:
+				_pc = 9751
+				continue
+		elif _pc == 9593:
 			debug.print_string("iDeathMatch.ServerPlayerKilled: Vessel made a kill: ")
 			debug.print_string(object.string_property(v2, "name"))
 			debug.print_string(" and now has ")
 			debug.print_string(string.from_int(object.int_property(v2, "frag_count")))
 			debug.print_string(" frags\n")
-	if _pog_eq(sim.cast(p_set.first_element(sim.children(v0))), sim.cast(global.handle("g_bomb"))):
-		sim.detach_child(v0, sim.cast(p_set.first_element(sim.children(v0))))
-		sim.set_mass(sim.cast(p_set.first_element(sim.children(v0))), 0.0)
-		imultiplay.server_send_user_message(27, v0, 0, "")
-		imultiplay.server_send_user_message(29, v0, 0, "")
-		global.destroy("g_ship_with_bomb")
-		await local_529(v2, 1)
-	else:
-		await local_529(v2, 0)
-	await imputils.spawn_killed_player_power_ups(v0)
-	isim.set_faction(isim.cast(v0), ifaction.find("Player"))
-	await local_8717(0, iship.cast(v0))
-	isim.kill(isim.cast(v0))
-	if _pog_is_null(v2):
-		return
-	v5 = await imputils.make_death_message(v2, v0)
-	v7 = _pog_spawn(local_2005.bind(v0, _pog_clone(v5)))
-	_pog_detach(v7)
-	return
+			_pc = 9751
+			continue
+		elif _pc == 9751:
+			if _pog_eq(sim.cast(p_set.first_element(sim.children(v0))), sim.cast(global.handle("g_bomb"))):
+				_pc = 9835
+				continue
+			else:
+				_pc = 10069
+				continue
+		elif _pc == 9835:
+			sim.detach_child(v0, sim.cast(p_set.first_element(sim.children(v0))))
+			sim.set_mass(sim.cast(p_set.first_element(sim.children(v0))), 0.0)
+			imultiplay.server_send_user_message(27, v0, 0, "")
+			imultiplay.server_send_user_message(29, v0, 0, "")
+			global.destroy("g_ship_with_bomb")
+			await local_529(v2, 1)
+			_pc = 10089
+			continue
+		elif _pc == 10069:
+			await local_529(v2, 0)
+			_pc = 10089
+			continue
+		elif _pc == 10089:
+			await imputils.spawn_killed_player_power_ups(v0)
+			isim.set_faction(isim.cast(v0), ifaction.find("Player"))
+			await local_8717(0, iship.cast(v0))
+			isim.kill(isim.cast(v0))
+			if not _pog_is_null(v2):
+				_pc = 10238
+				continue
+			else:
+				_pc = 10318
+				continue
+		elif _pc == 10238:
+			v5 = await imputils.make_death_message(v2, v0)
+			v7 = _pog_spawn(local_2005.bind(v0, _pog_clone(v5)))
+			_pog_detach(v7)
+			_pc = 10318
+			continue
+		elif _pc == 10318:
+			return
+		else:
+			return 0
 	return 0
 
 func client_player_say() -> Variant:
-	if not (global.exists("mp_team_say_flag")):
-		global.create_bool("mp_team_say_flag", 2, 0)
-	else:
-		global.set_bool("mp_team_say_flag", 0)
-	imultiplay.client_open_h_u_d_taunt_box("")
-	return 0
+	var _pc: int = 10348
+	while true:
+		if _pc == 10348:
+			if not (global.exists("mp_team_say_flag")):
+				_pc = 10374
+				continue
+			else:
+				_pc = 10403
+				continue
+		elif _pc == 10374:
+			global.create_bool("mp_team_say_flag", 2, 0)
+			_pc = 10425
+			continue
+		elif _pc == 10403:
+			global.set_bool("mp_team_say_flag", 0)
+			_pc = 10425
+			continue
+		elif _pc == 10425:
+			imultiplay.client_open_h_u_d_taunt_box("")
+			return 0
+		else:
+			return 0
 	return 0
 
 func client_player_team_say() -> Variant:
-	if not (global.exists("mp_team_say_flag")):
-		global.create_bool("mp_team_say_flag", 2, 1)
-	else:
-		global.set_bool("mp_team_say_flag", 1)
-	imultiplay.client_open_h_u_d_taunt_box("")
-	return 0
+	var _pc: int = 10449
+	while true:
+		if _pc == 10449:
+			if not (global.exists("mp_team_say_flag")):
+				_pc = 10475
+				continue
+			else:
+				_pc = 10504
+				continue
+		elif _pc == 10475:
+			global.create_bool("mp_team_say_flag", 2, 1)
+			_pc = 10526
+			continue
+		elif _pc == 10504:
+			global.set_bool("mp_team_say_flag", 1)
+			_pc = 10526
+			continue
+		elif _pc == 10526:
+			imultiplay.client_open_h_u_d_taunt_box("")
+			return 0
+		else:
+			return 0
 	return 0
 
 func client_taunt_return() -> Variant:
 	var v0: Variant = 0
-	if _pog_eq("!", string.left(v0, 1)):
-		pass
-	else:
-		if 1 == global.pog_bool("mp_team_say_flag"):
+	var _pc: int = 10550
+	while true:
+		if _pc == 10550:
+			if _pog_eq("!", string.left(v0, 1)):
+				_pc = 10583
+				continue
+			else:
+				_pc = 10588
+				continue
+		elif _pc == 10583:
+			_pc = 10686
+			continue
+		elif _pc == 10588:
+			if 1 == global.pog_bool("mp_team_say_flag"):
+				_pc = 10615
+				continue
+			else:
+				_pc = 10653
+				continue
+		elif _pc == 10615:
 			imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
+			_pc = 10686
+			continue
+		elif _pc == 10653:
+			imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
+			_pc = 10686
+			continue
+		elif _pc == 10686:
+			await imputils.client_taunt_return(v0)
+			return 0
 		else:
-			imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
-	await imputils.client_taunt_return(v0)
-	return 0
+			return 0
 	return 0
 
 func client_default_taunt1() -> Variant:
@@ -916,25 +1492,74 @@ func client_do_undock() -> Variant:
 	return 0
 
 func local_11645(v0, v1) -> Variant:
-	if not _pog_is_null(sim.parent(v0)):
-		return
+	var _pc: int = 11645
 	while true:
-		await _pog_wait(0.20000000298023224)
-		if not (1 == isim.is_respawning(v1)):
-			break
-	sim.add_child_relative_to(v1, v0, 0.0, 40.0 - object.float_property(v1, "radius"), 0.0)
-	sim.set_mass(v0, 0.009999999776482582)
-	if _pog_eq(iship.find_player_ship(), iship.cast(v1)):
-		object.add_bool_property(v1, "mp_has_bomb", 1)
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
+		if _pc == 11645:
+			if _pog_is_null(sim.parent(v0)):
+				_pc = 11671
+				continue
+			else:
+				_pc = 11969
+				continue
+		elif _pc == 11671:
+			await _pog_wait(0.20000000298023224)
+			if 1 != isim.is_respawning(v1):
+				_pc = 11728
+				continue
+			else:
+				_pc = 11671
+				continue
+		elif _pc == 11728:
+			sim.add_child_relative_to(v1, v0, 0.0, 40.0 - object.float_property(v1, "radius"), 0.0)
+			sim.set_mass(v0, 0.009999999776482582)
+			if _pog_eq(iship.find_player_ship(), iship.cast(v1)):
+				_pc = 11854
+				continue
+			else:
+				_pc = 11881
+				continue
+		elif _pc == 11854:
+			object.add_bool_property(v1, "mp_has_bomb", 1)
+			_pc = 11881
+			continue
+		elif _pc == 11881:
+			if _pog_is_null(v0):
+				_pc = 11894
+				continue
+			else:
+				_pc = 11920
+				continue
+		elif _pc == 11894:
+			_pc = 11920
+			continue
+		elif _pc == 11899:
 			debug.error("bomb not found")
-	if not _pog_is_null(v1):
-		return
-	if PogRuntime.TRACE:
-		if PogRuntime.TRACE:
+			_pc = 11920
+			continue
+		elif _pc == 11920:
+			if _pog_is_null(v1):
+				_pc = 11933
+				continue
+			else:
+				_pc = 11969
+				continue
+		elif _pc == 11933:
+			_pc = 11964
+			continue
+		elif _pc == 11938:
+			_pc = 11964
+			continue
+		elif _pc == 11943:
 			debug.error("bomb ship not found")
-	return
+			_pc = 11964
+			continue
+		elif _pc == 11964:
+			_pc = 11969
+			continue
+		elif _pc == 11969:
+			return
+		else:
+			return 0
 	return 0
 
 func client_on_user_message() -> Variant:

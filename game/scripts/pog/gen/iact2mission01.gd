@@ -81,19 +81,47 @@ func main() -> Variant:
 
 func stub() -> Variant:
 	var v0: Variant = 0
-	v0 = isim.find_by_name_in_system("Chickasaw L-Point", "map:/geog/badlands/coyote")
-	if PogRuntime.TRACE:
-		debug.print_string("iAct2Mission01.Stub: Runninig stub for skipping picking up the pieces.\n")
-	if global.exists("g_act2_survivors_rescued"):
-		global.set_bool("g_act2_survivors_rescued", 1)
-		global.set_bool("g_act2_league_plea", 1)
-		if PogRuntime.TRACE:
+	var _pc: int = 30
+	while true:
+		if _pc == 30:
+			v0 = isim.find_by_name_in_system("Chickasaw L-Point", "map:/geog/badlands/coyote")
+			_pc = 93
+			continue
+		elif _pc == 72:
+			debug.print_string("iAct2Mission01.Stub: Runninig stub for skipping picking up the pieces.\n")
+			_pc = 93
+			continue
+		elif _pc == 93:
+			if global.exists("g_act2_survivors_rescued"):
+				_pc = 118
+				continue
+			else:
+				_pc = 193
+				continue
+		elif _pc == 118:
+			global.set_bool("g_act2_survivors_rescued", 1)
+			global.set_bool("g_act2_league_plea", 1)
+			_pc = 188
+			continue
+		elif _pc == 167:
 			debug.print_string("iAct2Mission01.Stub: survivors rescued exists, setting.\n")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 188
+			continue
+		elif _pc == 188:
+			_pc = 219
+			continue
+		elif _pc == 193:
+			_pc = 219
+			continue
+		elif _pc == 198:
 			debug.print_string("iAct2Mission01.Stub: survivors rescued doesn't exist.\n")
-	sim.place_at(iship.find_player_ship(), v0)
-	return 0
+			_pc = 219
+			continue
+		elif _pc == 219:
+			sim.place_at(iship.find_player_ship(), v0)
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_254(v0) -> Variant:
@@ -117,46 +145,101 @@ func local_411() -> Variant:
 
 func local_498() -> Variant:
 	var v0: Variant = 0
-	while icomms.is_in_conversation():
-		await _pog_wait(0.5)
-	if not (await iutilities.skip_mission("Picking up the pieces??")):
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
-	else:
-		await stub()
-	return
+	var _pc: int = 498
+	while true:
+		if _pc == 498:
+			_pc = 503
+			continue
+		elif _pc == 503:
+			if icomms.is_in_conversation():
+				_pc = 521
+				continue
+			else:
+				_pc = 558
+				continue
+		elif _pc == 521:
+			await _pog_wait(0.5)
+			_pc = 503
+			continue
+		elif _pc == 558:
+			if not (await iutilities.skip_mission("Picking up the pieces??")):
+				_pc = 584
+				continue
+			else:
+				_pc = 621
+				continue
+		elif _pc == 584:
+			v0 = _pog_spawn(mission_handler.bind())
+			_pog_detach(v0)
+			_pc = 640
+			continue
+		elif _pc == 621:
+			await stub()
+			_pc = 640
+			continue
+		elif _pc == 640:
+			return
+		else:
+			return 0
 	return 0
 
 func local_642(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16) -> Variant:
+	var _pc: int = 642
 	while true:
-		await _pog_wait(0.1)
-		if 100 != state.progress(v1):
+		if _pc == 642:
+			_pc = 647
 			continue
-		global.create_bool("g_a2_m1_restart", 2, 1)
-		sim.destroy(v2)
-		sim.destroy(v3)
-		sim.destroy(v4)
-		sim.destroy(v5)
-		sim.destroy(v6)
-		group.destroy(v7, 1)
-		group.destroy(v8, 1)
-		group.destroy(v9, 1)
-		group.destroy(v10, 1)
-		group.destroy(v11, 1)
-		group.destroy(v12, 1)
-		group.destroy(v13, 1)
-		group.destroy(v14, 1)
-		group.destroy(v15, 1)
-		group.destroy(v16, 1)
-		global.set_bool("g_skip_locked", 0)
-		_pog_detach(_pog_spawn(local_498.bind()))
-		await local_411()
-		state.destroy(v0)
-		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
-		_pog_halt(v0)
-		return
-	return
+		elif _pc == 647:
+			await _pog_frame()
+			if _pog_every(648, 0.10000000149011612):
+				_pc = 661
+				continue
+			else:
+				_pc = 1155
+				continue
+		elif _pc == 661:
+			if 100 == state.progress(v1):
+				_pc = 687
+				continue
+			else:
+				_pc = 1155
+				continue
+		elif _pc == 687:
+			global.create_bool("g_a2_m1_restart", 2, 1)
+			sim.destroy(v2)
+			sim.destroy(v3)
+			sim.destroy(v4)
+			sim.destroy(v5)
+			sim.destroy(v6)
+			group.destroy(v7, 1)
+			group.destroy(v8, 1)
+			group.destroy(v9, 1)
+			group.destroy(v10, 1)
+			group.destroy(v11, 1)
+			group.destroy(v12, 1)
+			group.destroy(v13, 1)
+			group.destroy(v14, 1)
+			group.destroy(v15, 1)
+			group.destroy(v16, 1)
+			global.set_bool("g_skip_locked", 0)
+			_pog_detach(_pog_spawn(local_498.bind()))
+			await local_411()
+			state.destroy(v0)
+			await iutilities.remove_mission_restart()
+			await imissiontracker.remove_mission(self)
+			_pog_halt(v0)
+			_pc = 1161
+			continue
+		elif _pc == 1155:
+			_pc = 647
+			continue
+		elif _pc == 1160:
+			_pc = 1161
+			continue
+		elif _pc == 1161:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -416,6 +499,7 @@ func mission_handler() -> Variant:
 			_pc = 3757
 			continue
 		elif _pc == 3696:
+			state.progress(v0)
 			if not _pog_is_null(state.progress(v0)):
 				_pc = 3722
 				continue
@@ -1181,6 +1265,7 @@ func mission_handler() -> Variant:
 			_pc = 9395
 			continue
 		elif _pc == 9334:
+			state.progress(v0)
 			if not _pog_is_null(state.progress(v0)):
 				_pc = 9360
 				continue
@@ -1303,40 +1388,80 @@ func local_10183(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = group.create()
-	v1 = 0
-	while 4 < v1:
-		v3 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris1", "Docking")
-		sim.set_cullable(v3, 0)
-		isim.set_sensor_visibility(isim.cast(v3), 0)
-		object.add_bool_property(v3, "no_shockwave", 1)
-		isim.set_indestructable(isim.cast(v3), 1)
-		sim.place_relative_to(v3, v0, math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0))
-		sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		group.add_sim(v2, v3)
-		v1 = 1 + v1
-	group.add_group(v2, group.create())
-	return v2
+	var _pc: int = 10183
+	while true:
+		if _pc == 10183:
+			v2 = group.create()
+			v1 = 0
+			_pc = 10214
+			continue
+		elif _pc == 10214:
+			if 4 < v1:
+				_pc = 10227
+				continue
+			else:
+				_pc = 10595
+				continue
+		elif _pc == 10227:
+			v3 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris1", "Docking")
+			sim.set_cullable(v3, 0)
+			isim.set_sensor_visibility(isim.cast(v3), 0)
+			object.add_bool_property(v3, "no_shockwave", 1)
+			isim.set_indestructable(isim.cast(v3), 1)
+			sim.place_relative_to(v3, v0, math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0))
+			sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			group.add_sim(v2, v3)
+			v1 = 1 + v1
+			_pc = 10214
+			continue
+		elif _pc == 10595:
+			group.add_group(v2, group.create())
+			_pc = 10637
+			continue
+		elif _pc == 10637:
+			return
+		else:
+			return 0
 	return 0
 
 func local_10639(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = group.create()
-	v1 = 0
-	while 6 < v1:
-		v3 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris2", "Unstable")
-		sim.set_cullable(v3, 0)
-		isim.set_sensor_visibility(v3, 0)
-		object.add_bool_property(v3, "no_shockwave", 1)
-		iship.set_free_without_pilot(iship.cast(v3), 1)
-		sim.place_relative_to(v3, v0, math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0))
-		sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v3, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
-		group.add_sim(v2, v3)
-		v1 = 1 + v1
-	return v2
+	var _pc: int = 10639
+	while true:
+		if _pc == 10639:
+			v2 = group.create()
+			v1 = 0
+			_pc = 10670
+			continue
+		elif _pc == 10670:
+			if 6 < v1:
+				_pc = 10683
+				continue
+			else:
+				_pc = 11126
+				continue
+		elif _pc == 10683:
+			v3 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris2", "Unstable")
+			sim.set_cullable(v3, 0)
+			isim.set_sensor_visibility(v3, 0)
+			object.add_bool_property(v3, "no_shockwave", 1)
+			iship.set_free_without_pilot(iship.cast(v3), 1)
+			sim.place_relative_to(v3, v0, math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0), math.random(-3000.0, 3000.0))
+			sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v3, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
+			group.add_sim(v2, v3)
+			v1 = 1 + v1
+			_pc = 10670
+			continue
+		elif _pc == 11126:
+			_pc = 11136
+			continue
+		elif _pc == 11136:
+			return
+		else:
+			return 0
 	return 0
 
 func local_11138(v0) -> Variant:
@@ -1346,24 +1471,44 @@ func local_11138(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = group.create()
-	v1 = 0
-	while 6 < v1:
-		v3 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris3", "Tumbling")
-		sim.set_cullable(v3, 0)
-		isim.set_sensor_visibility(v3, 0)
-		object.add_bool_property(v3, "no_shockwave", 1)
-		v4 = math.random(-25.0, 25.0)
-		v5 = math.random(-25.0, 25.0)
-		v6 = math.random(-25.0, 25.0)
-		sim.place_relative_to(v3, v0, 50.0 * v4 + math.random(-100.0, 100.0), 50.0 * v5 + math.random(-100.0, 100.0), 50.0 * v6 + math.random(-100.0, 100.0))
-		iship.set_free_without_pilot(iship.cast(v3), 1)
-		sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
-		sim.set_angular_velocity_euler(v3, math.random(-25.0, 25.0), math.random(-25.0, 25.0), math.random(-25.0, 25.0))
-		sim.set_velocity(v3, v4, v5, v6)
-		group.add_sim(v2, v3)
-		v1 = 1 + v1
-	return v2
+	var _pc: int = 11138
+	while true:
+		if _pc == 11138:
+			v2 = group.create()
+			v1 = 0
+			_pc = 11169
+			continue
+		elif _pc == 11169:
+			if 6 < v1:
+				_pc = 11182
+				continue
+			else:
+				_pc = 11782
+				continue
+		elif _pc == 11182:
+			v3 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris3", "Tumbling")
+			sim.set_cullable(v3, 0)
+			isim.set_sensor_visibility(v3, 0)
+			object.add_bool_property(v3, "no_shockwave", 1)
+			v4 = math.random(-25.0, 25.0)
+			v5 = math.random(-25.0, 25.0)
+			v6 = math.random(-25.0, 25.0)
+			sim.place_relative_to(v3, v0, 50.0 * v4 + math.random(-100.0, 100.0), 50.0 * v5 + math.random(-100.0, 100.0), 50.0 * v6 + math.random(-100.0, 100.0))
+			iship.set_free_without_pilot(iship.cast(v3), 1)
+			sim.set_orientation_euler(v3, math.random(0.0, 359.0), math.random(0.0, 359.0), math.random(0.0, 359.0))
+			sim.set_angular_velocity_euler(v3, math.random(-25.0, 25.0), math.random(-25.0, 25.0), math.random(-25.0, 25.0))
+			sim.set_velocity(v3, v4, v5, v6)
+			group.add_sim(v2, v3)
+			v1 = 1 + v1
+			_pc = 11169
+			continue
+		elif _pc == 11782:
+			_pc = 11792
+			continue
+		elif _pc == 11792:
+			return
+		else:
+			return 0
 	return 0
 
 func local_11794(v0, v1, v2) -> Variant:
@@ -1449,6 +1594,7 @@ func local_11794(v0, v1, v2) -> Variant:
 			_pc = 12532
 			continue
 		elif _pc == 12428:
+			math.random_int(0, 9)
 			if not _pog_is_null(math.random_int(0, 9)):
 				_pc = 12452
 				continue
@@ -1541,26 +1687,51 @@ func local_12700(v0, v1, v2, v3) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v8 = group.create()
-	v9 = ifaction.find("League")
-	v4 = 0
-	while v3 < v4:
-		v5 = iship.create("ini:/sims/ships/utility/puffin", string.join("a2_m01_name_ship_rescue_", string.from_int(1 + v4)))
-		await ipilotsetup.generic(v5)
-		object.add_bool_property(v5, "no_shockwave", 1)
-		isim.set_faction(v5, v9)
-		sim.set_cullable(v5, 0)
-		sim.place_near(v5, v0, 1000.0)
-		group.add_sim(v8, v5)
-		isim.set_mission_critical(v5, 1)
-		if PogRuntime.TRACE:
+	var _pc: int = 12700
+	while true:
+		if _pc == 12700:
+			v8 = group.create()
+			v9 = ifaction.find("League")
+			v4 = 0
+			_pc = 12757
+			continue
+		elif _pc == 12757:
+			if v3 < v4:
+				_pc = 12773
+				continue
+			else:
+				_pc = 13158
+				continue
+		elif _pc == 12773:
+			v5 = iship.create("ini:/sims/ships/utility/puffin", string.join("a2_m01_name_ship_rescue_", string.from_int(1 + v4)))
+			await ipilotsetup.generic(v5)
+			object.add_bool_property(v5, "no_shockwave", 1)
+			isim.set_faction(v5, v9)
+			sim.set_cullable(v5, 0)
+			sim.place_near(v5, v0, 1000.0)
+			group.add_sim(v8, v5)
+			isim.set_mission_critical(v5, 1)
+			_pc = 13036
+			continue
+		elif _pc == 13009:
 			object.add_int_property(v5, "survivors", 0)
-		iai.give_dock_order(v5, group.leader(v1))
-		group.remove_sim(v1, group.leader(v1))
-		_pog_spawn(local_13800.bind(v5, v2, v1))
-		v4 = 1 + v4
-	await ideathscript.setup_critical_group_death(v8, 0)
-	return v8
+			_pc = 13036
+			continue
+		elif _pc == 13036:
+			iai.give_dock_order(v5, group.leader(v1))
+			group.remove_sim(v1, group.leader(v1))
+			_pog_spawn(local_13800.bind(v5, v2, v1))
+			v4 = 1 + v4
+			_pc = 12757
+			continue
+		elif _pc == 13158:
+			await ideathscript.setup_critical_group_death(v8, 0)
+			_pc = 13188
+			continue
+		elif _pc == 13188:
+			return
+		else:
+			return 0
 	return 0
 
 func local_13190(v0) -> Variant:
@@ -1570,33 +1741,70 @@ func local_13190(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = ifaction.find("League")
-	v2 = ifaction.find("Stepson")
-	v3 = group.create()
-	v6 = -2500.0
-	v6 = -2000.0
-	v5 = 0
-	while 2 < v5:
-		v4 = iship.create(await ishipcreation.get_ship(9, 7), await ishipcreation.ship_name("Stepson", -1))
-		await ipilotsetup.marauder(v4)
-		object.add_bool_property(v4, "no_shockwave", 1)
-		sim.set_cullable(v4, 0)
-		isim.set_faction(v4, v2)
-		group.add_sim(v3, v4)
-		sim.place_relative_to(v4, v0, v6, -500.0, 0.0)
-		iai.give_escort_order(v4, v0, v6, -500.0, 0.0, 30000.0)
-		v6 = 4000.0 + v6
-		v5 = 1 + v5
-	return v3
+	var _pc: int = 13190
+	while true:
+		if _pc == 13190:
+			v1 = ifaction.find("League")
+			v2 = ifaction.find("Stepson")
+			v3 = group.create()
+			v6 = -2500.0
+			v6 = -2000.0
+			v5 = 0
+			_pc = 13294
+			continue
+		elif _pc == 13294:
+			if 2 < v5:
+				_pc = 13307
+				continue
+			else:
+				_pc = 13599
+				continue
+		elif _pc == 13307:
+			v4 = iship.create(await ishipcreation.get_ship(9, 7), await ishipcreation.ship_name("Stepson", -1))
+			await ipilotsetup.marauder(v4)
+			object.add_bool_property(v4, "no_shockwave", 1)
+			sim.set_cullable(v4, 0)
+			isim.set_faction(v4, v2)
+			group.add_sim(v3, v4)
+			sim.place_relative_to(v4, v0, v6, -500.0, 0.0)
+			iai.give_escort_order(v4, v0, v6, -500.0, 0.0, 30000.0)
+			v6 = 4000.0 + v6
+			v5 = 1 + v5
+			_pc = 13294
+			continue
+		elif _pc == 13599:
+			_pc = 13609
+			continue
+		elif _pc == 13609:
+			return
+		else:
+			return 0
 	return 0
 
 func local_13611(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = 0
-	while group.sim_count(v0) < v2:
-		isim.set_faction(isim.cast(group.nth_sim(v0, v2)), v1)
-		v2 = 1 + v2
-	return 0
+	var _pc: int = 13611
+	while true:
+		if _pc == 13611:
+			v2 = 0
+			_pc = 13623
+			continue
+		elif _pc == 13623:
+			if group.sim_count(v0) < v2:
+				_pc = 13652
+				continue
+			else:
+				_pc = 13725
+				continue
+		elif _pc == 13652:
+			isim.set_faction(isim.cast(group.nth_sim(v0, v2)), v1)
+			v2 = 1 + v2
+			_pc = 13623
+			continue
+		elif _pc == 13725:
+			return 0
+		else:
+			return 0
 	return 0
 
 func debris_death_script() -> Variant:
@@ -1611,70 +1819,230 @@ func local_13800(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
-	v5 = math.random_int(1, 4)
-	if PogRuntime.TRACE:
-		debug.print_string("iAct2_Mission01 - Survivor task started. Using ship: ")
-	if PogRuntime.TRACE:
-		debug.print_string(object.string_property(v0, "name"))
-	if PogRuntime.TRACE:
-		debug.print_string("\n")
+	var _pc: int = 13800
 	while true:
-		await _pog_wait(1)
-		if sim.is_dead(v0):
-			return
-		if not (isim.is_docked(v0)):
+		if _pc == 13800:
+			v3 = null
+			v5 = math.random_int(1, 4)
+			_pc = 13865
 			continue
-		if PogRuntime.TRACE:
-			debug.print_string("iAct2_Mission01 - Survivor task. Ship: ")
-		if PogRuntime.TRACE:
+		elif _pc == 13844:
+			debug.print_string("iAct2_Mission01 - Survivor task started. Using ship: ")
+			_pc = 13865
+			continue
+		elif _pc == 13865:
+			_pc = 13910
+			continue
+		elif _pc == 13870:
 			debug.print_string(object.string_property(v0, "name"))
-		if PogRuntime.TRACE:
+			_pc = 13910
+			continue
+		elif _pc == 13910:
+			_pc = 13936
+			continue
+		elif _pc == 13915:
+			debug.print_string("\n")
+			_pc = 13936
+			continue
+		elif _pc == 13936:
+			_pc = 13942
+			continue
+		elif _pc == 13942:
+			await _pog_frame()
+			if _pog_every(13943, 1.0):
+				_pc = 13956
+				continue
+			else:
+				_pc = 15019
+				continue
+		elif _pc == 13956:
+			if sim.is_dead(v0):
+				_pc = 13979
+				continue
+			else:
+				_pc = 13984
+				continue
+		elif _pc == 13979:
+			_pc = 15025
+			continue
+		elif _pc == 13984:
+			if isim.is_docked(v0):
+				_pc = 14007
+				continue
+			else:
+				_pc = 15019
+				continue
+		elif _pc == 14007:
+			_pc = 14034
+			continue
+		elif _pc == 14013:
+			debug.print_string("iAct2_Mission01 - Survivor task. Ship: ")
+			_pc = 14034
+			continue
+		elif _pc == 14034:
+			_pc = 14079
+			continue
+		elif _pc == 14039:
+			debug.print_string(object.string_property(v0, "name"))
+			_pc = 14079
+			continue
+		elif _pc == 14079:
+			_pc = 14105
+			continue
+		elif _pc == 14084:
 			debug.print_string("docked.\n")
-		v3 = sim.children(v0)
-		if not (p_set.is_empty(v3)):
+			_pc = 14105
+			continue
+		elif _pc == 14105:
+			v3 = sim.children(v0)
+			if not (p_set.is_empty(v3)):
+				_pc = 14155
+				continue
+			else:
+				_pc = 14197
+				continue
+		elif _pc == 14155:
 			v4 = sim.cast(p_set.first_element(v3))
-		else:
+			_pc = 14221
+			continue
+		elif _pc == 14197:
 			v4 = sim.parent(v0)
-		if not _pog_is_null(v4):
+			_pc = 14221
+			continue
+		elif _pc == 14221:
+			if not _pog_is_null(v4):
+				_pc = 14235
+				continue
+			else:
+				_pc = 14896
+				continue
+		elif _pc == 14235:
 			group.remove_sim(v2, v4)
 			await _pog_wait(10.0)
 			isim.undock(isim.cast(v4), v0)
 			await _pog_wait(1.0)
 			if not (object.property_exists(v0, "survivors")):
-				object.add_int_property(v0, "survivors", 0)
-			if _pog_is_null(group.sim_count(v2)):
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2_Mission01: Ship ")
-				if PogRuntime.TRACE:
-					debug.print_string(object.string_property(v0, "name"))
-				if PogRuntime.TRACE:
-					debug.print_string(" No more debris. Approaching LOR Platform.\n")
-				iai.give_approach_order(v0, v1)
-				await iconversation.one_liner(v0, "", string.join("a2_m01_dialogue_rescue_rendezvous_", string.from_int(v5)))
-				v5 = 1 + v5
-				if 5 == v5:
-					v5 = 1
-				return
+				_pc = 14391
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2_Mission01: Ship ")
-				if PogRuntime.TRACE:
-					debug.print_string(object.string_property(v0, "name"))
-				if PogRuntime.TRACE:
-					debug.print_string(" finding more debris.\n")
-				await iconversation.one_liner(v0, "", string.join("a2_m01_dialogue_rescue_survivors_", string.from_int(v5)))
-				v5 = 1 + v5
-				if 5 == v5:
-					v5 = 1
-				iai.give_dock_order(v0, v2)
+				_pc = 14418
+				continue
+		elif _pc == 14391:
+			object.add_int_property(v0, "survivors", 0)
+			_pc = 14418
+			continue
+		elif _pc == 14418:
+			if _pog_is_null(group.sim_count(v2)):
+				_pc = 14443
+				continue
+			else:
+				_pc = 14672
+				continue
+		elif _pc == 14443:
+			_pc = 14469
+			continue
+		elif _pc == 14448:
+			debug.print_string("iAct2_Mission01: Ship ")
+			_pc = 14469
+			continue
+		elif _pc == 14469:
+			_pc = 14514
+			continue
+		elif _pc == 14474:
+			debug.print_string(object.string_property(v0, "name"))
+			_pc = 14514
+			continue
+		elif _pc == 14514:
+			_pc = 14540
+			continue
+		elif _pc == 14519:
+			debug.print_string(" No more debris. Approaching LOR Platform.\n")
+			_pc = 14540
+			continue
+		elif _pc == 14540:
+			iai.give_approach_order(v0, v1)
+			await iconversation.one_liner(v0, "", string.join("a2_m01_dialogue_rescue_rendezvous_", string.from_int(v5)))
+			v5 = 1 + v5
+			if 5 == v5:
+				_pc = 14655
+				continue
+			else:
+				_pc = 14662
+				continue
+		elif _pc == 14655:
+			v5 = 1
+			_pc = 14662
+			continue
+		elif _pc == 14662:
+			_pc = 15025
+			continue
+		elif _pc == 14667:
+			_pc = 14891
+			continue
+		elif _pc == 14672:
+			_pc = 14698
+			continue
+		elif _pc == 14677:
+			debug.print_string("iAct2_Mission01: Ship ")
+			_pc = 14698
+			continue
+		elif _pc == 14698:
+			_pc = 14743
+			continue
+		elif _pc == 14703:
+			debug.print_string(object.string_property(v0, "name"))
+			_pc = 14743
+			continue
+		elif _pc == 14743:
+			_pc = 14769
+			continue
+		elif _pc == 14748:
+			debug.print_string(" finding more debris.\n")
+			_pc = 14769
+			continue
+		elif _pc == 14769:
+			await iconversation.one_liner(v0, "", string.join("a2_m01_dialogue_rescue_survivors_", string.from_int(v5)))
+			v5 = 1 + v5
+			if 5 == v5:
+				_pc = 14860
+				continue
+			else:
+				_pc = 14867
+				continue
+		elif _pc == 14860:
+			v5 = 1
+			_pc = 14867
+			continue
+		elif _pc == 14867:
+			iai.give_dock_order(v0, v2)
+			_pc = 14891
+			continue
+		elif _pc == 14891:
+			_pc = 14922
+			continue
+		elif _pc == 14896:
+			_pc = 14922
+			continue
+		elif _pc == 14901:
+			debug.print_string("iAct2_Mission01: Failed to obtain debris handle\n")
+			_pc = 14922
+			continue
+		elif _pc == 14922:
+			await _pog_wait(3.0)
+			isim.set_indestructable(isim.cast(v4), 0)
+			isim.kill(isim.cast(v4))
+			_pc = 15019
+			continue
+		elif _pc == 15019:
+			_pc = 13942
+			continue
+		elif _pc == 15024:
+			_pc = 15025
+			continue
+		elif _pc == 15025:
+			return
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission01: Failed to obtain debris handle\n")
-		await _pog_wait(3.0)
-		isim.set_indestructable(isim.cast(v4), 0)
-		isim.kill(isim.cast(v4))
-	return
+			return 0
 	return 0
 
 func local_15034() -> Variant:
@@ -1695,178 +2063,267 @@ func local_15034() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v0 = group.create()
-	v1 = group.create()
-	v2 = group.create()
-	v3 = group.create()
-	v4 = group.create()
-	v5 = await icutsceneutilities.get_kill_group()
-	v7 = iship.find_player_ship()
-	v8 = imapentity.find_by_name("Haven Station")
-	v10 = await iutilities.create_waypoint_at(v7)
-	v11 = await iutilities.create_waypoint_at(v7)
-	v12 = imapentity.find_by_name("Lucrecia's Base")
-	idirector.begin()
-	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-	await imusic.play("sound:/audio/music/a2_tension", 1, 0)
-	iship.disrupt_l_d_s_drive(v7, 1.0)
-	sim.set_velocity(v7, 0.0, 0.0, 0.0)
-	sim.place_relative_to(v7, v8, 10000000.0, 30000.0, 30000.0)
-	v9 = isim.cast(sim.create("ini:/sims/custom/act2_mission01/haven_station_substitute", ""))
-	sim.set_cullable(v9, 0)
-	sim.place_relative_to(v9, v8, 1000000.0, 0.0, 0.0)
-	sim.copy_orientation(v9, v8)
-	isim.set_indestructable(v9, 1)
-	group.add_sim(v5, v9)
-	v6 = idirector.create_dolly()
-	v16 = 0
-	while 6 < v16:
-		v13 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", "")
-		group.add_sim(v0, v13)
-		sim.set_cullable(v13, 0)
-		await ipilotsetup.marauder(v13)
-		v16 = 1 + v16
-	group.add_group(v5, v0)
-	group.add_group(v5, v2)
-	group.add_group(v5, v3)
-	group.add_group(v5, v4)
-	group.add_group(v5, v1)
-	v13 = iship.cast(group.leader(v0))
-	sim.place_relative_to(v6, v9, 2000.0, -500.0, 15000.0)
-	sim.point_at(v6, v9)
-	sim.place_relative_to(v13, v6, -100.0, -50.0, -2000.0)
-	sim.point_at(v13, v9)
-	iai.purge_orders(v0)
-	sim.add_child_relative_to(v13, group.nth_sim(v0, 1), 200.0, 10.0, -200.0)
-	sim.add_child_relative_to(v13, group.nth_sim(v0, 2), 400.0, -10.0, -400.0)
-	sim.add_child_relative_to(v13, group.nth_sim(v0, 3), -200.0, -5.0, -200.0)
-	sim.add_child_relative_to(v13, group.nth_sim(v0, 4), -400.0, 5.0, -400.0)
-	idirector.set_focus(v9)
-	await iutilities.group_set_local_velocity(v0, 0.0, 0.0, 300.0, 1, 1)
-	iai.give_approach_order(v0, v9)
-	idirector.set_dolly_camera(v6)
-	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-	await _pog_wait(1.0)
-	idirector.set_caption("Haven Station", 5.0)
-	await _pog_wait(6.0)
-	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-	group.destroy(v0, 1)
-	v0 = group.create()
-	group.add_sim(v1, await iutilities.create_waypoint_at(v9))
-	group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, 0.0, 2200.0, 0.0))
-	group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, -2200.0, 0.0, 0.0))
-	group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, 0.0, -2200.0, 0.0))
-	group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, 2200.0, 0.0, 0.0))
-	v16 = 0
-	while 6 < v16:
-		sim.point_at(group.nth_sim(v1, v16), v9)
-		v13 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", "")
-		group.add_sim(v0, v13)
-		await ipilotsetup.marauder(v13)
-		sim.set_cullable(v13, 0)
-		sim.place_relative_to(v13, group.nth_sim(v1, v16), 5000.0, -500.0, 500.0)
-		sim.copy_orientation(v13, v9)
-		iai.give_attack_order(v13, group.nth_sim(v1, v16))
-		v16 = 1 + v16
-	idirector.set_focus(group.leader(v0))
-	idirector.set_secondary_focus(v9)
-	idirector.set_camera(13)
-	idirector.fade_in(0.0, 0.0, 0.0, 0.0)
-	await _pog_wait(3.0)
-	icomms.shout(0, "Haven Station", "stock_distress_1_female_1")
-	v16 = 1
-	while 3 < v16:
-		idirector.set_focus(isim.cast(group.nth_sim(v0, v16)))
-		idirector.set_secondary_focus(isim.cast(group.nth_sim(v1, v16)))
-		await _pog_wait(3.0)
-		v16 = 1 + v16
-	idirector.fade_out(0.0, 1.0, 1.0, 1.0)
-	group.destroy(v0, 1)
-	sim.place_at(v10, v12)
-	sim.place_relative_to(v11, v10, 10000.0, 5000.0, 30000.0)
-	sim.place_between(v7, v10, v11, 0.5)
-	sim.point_at(v7, v11)
-	sim.place_relative_to(v6, v7, -40.0, 40.0, 500.0)
-	idirector.set_camera(21)
-	idirector.set_focus(v7)
-	idirector.fade_in(1.0, 1.0, 1.0, 1.0)
-	await _pog_wait(1.0)
-	await iconversation.one_liner(0, "name_clay", "stock_clay_critical_enemy_attack_2")
-	iship.set_free_without_pilot(v7, 1)
-	sim.avatar_add_channel(v7, "lz", 1.0)
-	sim.avatar_set_channel(v7, "lz", 1.0)
-	sim.set_velocity_local_to_sim(v7, 0.0, 0.0, 300.0)
-	idirector.set_dolly_camera(v6)
-	await _pog_wait(6.0)
-	idirector.fade_out(1.0, 0.0, 0.0, 0.0)
-	await _pog_wait(1.0)
-	sim.place_relative_to(v7, v9, 4000.0, 0.0, 40000.0)
-	sim.point_at(v7, v9)
-	sim.avatar_add_channel(v7, "lz", 1.0)
-	sim.avatar_set_channel(v7, "lz", 1.0)
-	sim.set_collision(v9, 0)
-	sim.set_velocity_local_to_sim(v7, 0.0, 0.0, 500.0)
-	idirector.set_camera(10)
-	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-	isim.start_explosion(isim.cast(v9))
-	await _pog_wait(1.0)
-	await _pog_wait(5.0)
-	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-	sim.place_near(v7, v9, 200000.0)
-	sim.place_relative_to(v10, v9, -4000.0, 5000.0, 10000.0)
-	sim.place_relative_to(v11, v9, -1000.0, -500.0, 8000.0)
-	v16 = 0
-	while 4 < v16:
-		v15 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris1", "Docking")
-		group.add_sim(v2, v15)
-		isim.set_indestructable(v15, 1)
-		v16 = 1 + v16
-	v16 = 0
-	while 4 < v16:
-		v15 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris2", "Docking")
-		group.add_sim(v3, v15)
-		isim.set_indestructable(v15, 1)
-		v16 = 1 + v16
-	v16 = 0
-	while 4 < v16:
-		v15 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris3", "Docking")
-		group.add_sim(v4, v15)
-		isim.set_indestructable(v15, 1)
-		v16 = 1 + v16
-	idirector.set_dolly_camera(v6)
-	idirector.set_focus(group.leader(v1))
-	sim.set_collision(v6, 1)
-	isim.set_indestructable(isim.cast(v6), 1)
-	idirector.set_direction(v6, v10, v11, 7.0, 1.0)
-	idirector.fade_in(1.0, 1.0, 1.0, 1.0)
-	await _pog_wait(2.0)
-	icomms.shout(0, "name_clay", "stock_clay_critical_ship_destroyed_4")
-	await _pog_wait(3.0)
-	isim.set_indestructable(isim.cast(v9), 0)
-	sim.set_collision(v9, 0)
-	sim.place_at(sim.create("ini:/sims/explosions/10km_antimatter_explosion", ""), v9)
-	isim.stop_explosion(isim.cast(v9), 0, 1)
-	v16 = 0
-	while 3 < v16:
-		v15 = iship.cast(group.nth_sim(v2, v16))
-		sim.place_at(v15, group.nth_sim(v1, 1 + v16))
-		sim.point_away(v15, group.leader(v1))
-		sim.set_velocity_local_to_sim(v15, 0.0, 0.0, 300.0)
-		sim.set_angular_velocity_euler(v15, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
-		v15 = iship.cast(group.nth_sim(v3, v16))
-		sim.place_at(v15, group.leader(v1))
-		sim.point_away(v15, group.leader(v1))
-		sim.set_velocity_local_to_sim(v15, 0.0, 0.0, 500.0)
-		sim.set_angular_velocity_euler(v15, math.random(-8.0, 8.0), math.random(-8.0, 8.0), math.random(-8.0, 8.0))
-		v15 = iship.cast(group.nth_sim(v4, v16))
-		sim.place_at(v15, group.leader(v1))
-		sim.point_away(v15, group.leader(v1))
-		sim.set_velocity_local_to_sim(v15, 0.0, 0.0, 600.0)
-		sim.set_angular_velocity_euler(v15, math.random(-10.0, 10.0), math.random(-10.0, 10.0), math.random(-10.0, 10.0))
-		v16 = 1 + v16
-	await _pog_wait(6.0)
-	igame.enable_blackout(1)
-	idirector.end()
-	return
+	var _pc: int = 15034
+	while true:
+		if _pc == 15034:
+			v0 = group.create()
+			v1 = group.create()
+			v2 = group.create()
+			v3 = group.create()
+			v4 = group.create()
+			v5 = await icutsceneutilities.get_kill_group()
+			v7 = iship.find_player_ship()
+			v8 = imapentity.find_by_name("Haven Station")
+			v10 = await iutilities.create_waypoint_at(v7)
+			v11 = await iutilities.create_waypoint_at(v7)
+			v12 = imapentity.find_by_name("Lucrecia's Base")
+			idirector.begin()
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			await imusic.play("sound:/audio/music/a2_tension", 1, 0)
+			iship.disrupt_l_d_s_drive(v7, 1.0)
+			sim.set_velocity(v7, 0.0, 0.0, 0.0)
+			sim.place_relative_to(v7, v8, 10000000.0, 30000.0, 30000.0)
+			v9 = isim.cast(sim.create("ini:/sims/custom/act2_mission01/haven_station_substitute", ""))
+			sim.set_cullable(v9, 0)
+			sim.place_relative_to(v9, v8, 1000000.0, 0.0, 0.0)
+			sim.copy_orientation(v9, v8)
+			isim.set_indestructable(v9, 1)
+			group.add_sim(v5, v9)
+			v6 = idirector.create_dolly()
+			v16 = 0
+			_pc = 15639
+			continue
+		elif _pc == 15639:
+			if 6 < v16:
+				_pc = 15652
+				continue
+			else:
+				_pc = 15765
+				continue
+		elif _pc == 15652:
+			v13 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", "")
+			group.add_sim(v0, v13)
+			sim.set_cullable(v13, 0)
+			await ipilotsetup.marauder(v13)
+			v16 = 1 + v16
+			_pc = 15639
+			continue
+		elif _pc == 15765:
+			group.add_group(v5, v0)
+			group.add_group(v5, v2)
+			group.add_group(v5, v3)
+			group.add_group(v5, v4)
+			group.add_group(v5, v1)
+			v13 = iship.cast(group.leader(v0))
+			sim.place_relative_to(v6, v9, 2000.0, -500.0, 15000.0)
+			sim.point_at(v6, v9)
+			sim.place_relative_to(v13, v6, -100.0, -50.0, -2000.0)
+			sim.point_at(v13, v9)
+			iai.purge_orders(v0)
+			sim.add_child_relative_to(v13, group.nth_sim(v0, 1), 200.0, 10.0, -200.0)
+			sim.add_child_relative_to(v13, group.nth_sim(v0, 2), 400.0, -10.0, -400.0)
+			sim.add_child_relative_to(v13, group.nth_sim(v0, 3), -200.0, -5.0, -200.0)
+			sim.add_child_relative_to(v13, group.nth_sim(v0, 4), -400.0, 5.0, -400.0)
+			idirector.set_focus(v9)
+			await iutilities.group_set_local_velocity(v0, 0.0, 0.0, 300.0, 1, 1)
+			iai.give_approach_order(v0, v9)
+			idirector.set_dolly_camera(v6)
+			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+			await _pog_wait(1.0)
+			idirector.set_caption("Haven Station", 5.0)
+			await _pog_wait(6.0)
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			group.destroy(v0, 1)
+			v0 = group.create()
+			group.add_sim(v1, await iutilities.create_waypoint_at(v9))
+			group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, 0.0, 2200.0, 0.0))
+			group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, -2200.0, 0.0, 0.0))
+			group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, 0.0, -2200.0, 0.0))
+			group.add_sim(v1, await iutilities.create_waypoint_relative_to(v9, 2200.0, 0.0, 0.0))
+			v16 = 0
+			_pc = 16829
+			continue
+		elif _pc == 16829:
+			if 6 < v16:
+				_pc = 16842
+				continue
+			else:
+				_pc = 17120
+				continue
+		elif _pc == 16842:
+			sim.point_at(group.nth_sim(v1, v16), v9)
+			v13 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", "")
+			group.add_sim(v0, v13)
+			await ipilotsetup.marauder(v13)
+			sim.set_cullable(v13, 0)
+			sim.place_relative_to(v13, group.nth_sim(v1, v16), 5000.0, -500.0, 500.0)
+			sim.copy_orientation(v13, v9)
+			iai.give_attack_order(v13, group.nth_sim(v1, v16))
+			v16 = 1 + v16
+			_pc = 16829
+			continue
+		elif _pc == 17120:
+			idirector.set_focus(group.leader(v0))
+			idirector.set_secondary_focus(v9)
+			idirector.set_camera(13)
+			idirector.fade_in(0.0, 0.0, 0.0, 0.0)
+			await _pog_wait(3.0)
+			icomms.shout(0, "Haven Station", "stock_distress_1_female_1")
+			v16 = 1
+			_pc = 17288
+			continue
+		elif _pc == 17288:
+			if 3 < v16:
+				_pc = 17301
+				continue
+			else:
+				_pc = 17451
+				continue
+		elif _pc == 17301:
+			idirector.set_focus(isim.cast(group.nth_sim(v0, v16)))
+			idirector.set_secondary_focus(isim.cast(group.nth_sim(v1, v16)))
+			await _pog_wait(3.0)
+			v16 = 1 + v16
+			_pc = 17288
+			continue
+		elif _pc == 17451:
+			idirector.fade_out(0.0, 1.0, 1.0, 1.0)
+			group.destroy(v0, 1)
+			sim.place_at(v10, v12)
+			sim.place_relative_to(v11, v10, 10000.0, 5000.0, 30000.0)
+			sim.place_between(v7, v10, v11, 0.5)
+			sim.point_at(v7, v11)
+			sim.place_relative_to(v6, v7, -40.0, 40.0, 500.0)
+			idirector.set_camera(21)
+			idirector.set_focus(v7)
+			idirector.fade_in(1.0, 1.0, 1.0, 1.0)
+			await _pog_wait(1.0)
+			await iconversation.one_liner(0, "name_clay", "stock_clay_critical_enemy_attack_2")
+			iship.set_free_without_pilot(v7, 1)
+			sim.avatar_add_channel(v7, "lz", 1.0)
+			sim.avatar_set_channel(v7, "lz", 1.0)
+			sim.set_velocity_local_to_sim(v7, 0.0, 0.0, 300.0)
+			idirector.set_dolly_camera(v6)
+			await _pog_wait(6.0)
+			idirector.fade_out(1.0, 0.0, 0.0, 0.0)
+			await _pog_wait(1.0)
+			sim.place_relative_to(v7, v9, 4000.0, 0.0, 40000.0)
+			sim.point_at(v7, v9)
+			sim.avatar_add_channel(v7, "lz", 1.0)
+			sim.avatar_set_channel(v7, "lz", 1.0)
+			sim.set_collision(v9, 0)
+			sim.set_velocity_local_to_sim(v7, 0.0, 0.0, 500.0)
+			idirector.set_camera(10)
+			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+			isim.start_explosion(isim.cast(v9))
+			await _pog_wait(1.0)
+			await _pog_wait(5.0)
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			sim.place_near(v7, v9, 200000.0)
+			sim.place_relative_to(v10, v9, -4000.0, 5000.0, 10000.0)
+			sim.place_relative_to(v11, v9, -1000.0, -500.0, 8000.0)
+			v16 = 0
+			_pc = 18500
+			continue
+		elif _pc == 18500:
+			if 4 < v16:
+				_pc = 18513
+				continue
+			else:
+				_pc = 18607
+				continue
+		elif _pc == 18513:
+			v15 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris1", "Docking")
+			group.add_sim(v2, v15)
+			isim.set_indestructable(v15, 1)
+			v16 = 1 + v16
+			_pc = 18500
+			continue
+		elif _pc == 18607:
+			v16 = 0
+			_pc = 18614
+			continue
+		elif _pc == 18614:
+			if 4 < v16:
+				_pc = 18627
+				continue
+			else:
+				_pc = 18721
+				continue
+		elif _pc == 18627:
+			v15 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris2", "Docking")
+			group.add_sim(v3, v15)
+			isim.set_indestructable(v15, 1)
+			v16 = 1 + v16
+			_pc = 18614
+			continue
+		elif _pc == 18721:
+			v16 = 0
+			_pc = 18728
+			continue
+		elif _pc == 18728:
+			if 4 < v16:
+				_pc = 18741
+				continue
+			else:
+				_pc = 18835
+				continue
+		elif _pc == 18741:
+			v15 = iship.create("ini:/sims/custom/haven_station/HavenStationDebris3", "Docking")
+			group.add_sim(v4, v15)
+			isim.set_indestructable(v15, 1)
+			v16 = 1 + v16
+			_pc = 18728
+			continue
+		elif _pc == 18835:
+			idirector.set_dolly_camera(v6)
+			idirector.set_focus(group.leader(v1))
+			sim.set_collision(v6, 1)
+			isim.set_indestructable(isim.cast(v6), 1)
+			idirector.set_direction(v6, v10, v11, 7.0, 1.0)
+			idirector.fade_in(1.0, 1.0, 1.0, 1.0)
+			await _pog_wait(2.0)
+			icomms.shout(0, "name_clay", "stock_clay_critical_ship_destroyed_4")
+			await _pog_wait(3.0)
+			isim.set_indestructable(isim.cast(v9), 0)
+			sim.set_collision(v9, 0)
+			sim.place_at(sim.create("ini:/sims/explosions/10km_antimatter_explosion", ""), v9)
+			isim.stop_explosion(isim.cast(v9), 0, 1)
+			v16 = 0
+			_pc = 19244
+			continue
+		elif _pc == 19244:
+			if 3 < v16:
+				_pc = 19257
+				continue
+			else:
+				_pc = 19996
+				continue
+		elif _pc == 19257:
+			v15 = iship.cast(group.nth_sim(v2, v16))
+			sim.place_at(v15, group.nth_sim(v1, 1 + v16))
+			sim.point_away(v15, group.leader(v1))
+			sim.set_velocity_local_to_sim(v15, 0.0, 0.0, 300.0)
+			sim.set_angular_velocity_euler(v15, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0, 5.0))
+			v15 = iship.cast(group.nth_sim(v3, v16))
+			sim.place_at(v15, group.leader(v1))
+			sim.point_away(v15, group.leader(v1))
+			sim.set_velocity_local_to_sim(v15, 0.0, 0.0, 500.0)
+			sim.set_angular_velocity_euler(v15, math.random(-8.0, 8.0), math.random(-8.0, 8.0), math.random(-8.0, 8.0))
+			v15 = iship.cast(group.nth_sim(v4, v16))
+			sim.place_at(v15, group.leader(v1))
+			sim.point_away(v15, group.leader(v1))
+			sim.set_velocity_local_to_sim(v15, 0.0, 0.0, 600.0)
+			sim.set_angular_velocity_euler(v15, math.random(-10.0, 10.0), math.random(-10.0, 10.0), math.random(-10.0, 10.0))
+			v16 = 1 + v16
+			_pc = 19244
+			continue
+		elif _pc == 19996:
+			await _pog_wait(6.0)
+			igame.enable_blackout(1)
+			idirector.end()
+			return
+		else:
+			return 0
 	return 0
 

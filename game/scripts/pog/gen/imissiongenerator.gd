@@ -72,85 +72,220 @@ func _link() -> void:
 
 func test_piracy_rating(v0) -> Variant:
 	var v1: Variant = 0
-	if global.pog_float("g_player_piracy_rating") > v1:
-		if PogRuntime.TRACE:
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			if global.pog_float("g_player_piracy_rating") > v1:
+				_pc = 36
+				continue
+			else:
+				_pc = 112
+				continue
+		elif _pc == 36:
+			_pc = 85
+			continue
+		elif _pc == 41:
 			debug.print_string("iMissionGenerator: failed piracy rating test")
 			debug.print_string("\n")
-		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if PogRuntime.TRACE:
+			_pc = 85
+			continue
+		elif _pc == 85:
+			global.set_bool("g_accept_generated_mission", 0)
+			_pc = 161
+			continue
+		elif _pc == 112:
+			_pc = 161
+			continue
+		elif _pc == 117:
 			debug.print_string("iMissionGenerator: passed piracy rating test")
 			debug.print_string("\n")
-	return 0
+			_pc = 161
+			continue
+		elif _pc == 161:
+			return 0
+		else:
+			return 0
 	return 0
 
 func test_email() -> Variant:
 	var v0: Variant = 0
-	if not (iemail.received(v0)):
-		if PogRuntime.TRACE:
+	var _pc: int = 164
+	while true:
+		if _pc == 164:
+			if not (iemail.received(v0)):
+				_pc = 188
+				continue
+			else:
+				_pc = 264
+				continue
+		elif _pc == 188:
+			_pc = 237
+			continue
+		elif _pc == 193:
 			debug.print_string("iMissionGenerator: failed email test")
 			debug.print_string("\n")
-		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if PogRuntime.TRACE:
+			_pc = 237
+			continue
+		elif _pc == 237:
+			global.set_bool("g_accept_generated_mission", 0)
+			_pc = 313
+			continue
+		elif _pc == 264:
+			_pc = 313
+			continue
+		elif _pc == 269:
 			debug.print_string("iMissionGenerator: passed email test")
 			debug.print_string("\n")
-	return 0
+			_pc = 313
+			continue
+		elif _pc == 313:
+			return 0
+		else:
+			return 0
 	return 0
 
 func test_faction_rating(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = ifaction.find(v0)
-	v3 = ifaction.find("player")
-	if v1 < ifaction.feeling(v2, v3):
-		if PogRuntime.TRACE:
+	var _pc: int = 316
+	while true:
+		if _pc == 316:
+			v2 = ifaction.find(v0)
+			v3 = ifaction.find("player")
+			if v1 < ifaction.feeling(v2, v3):
+				_pc = 405
+				continue
+			else:
+				_pc = 481
+				continue
+		elif _pc == 405:
+			_pc = 454
+			continue
+		elif _pc == 410:
 			debug.print_string("iMissionGenerator: failed faction rating test")
 			debug.print_string("\n")
-		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if PogRuntime.TRACE:
+			_pc = 454
+			continue
+		elif _pc == 454:
+			global.set_bool("g_accept_generated_mission", 0)
+			_pc = 530
+			continue
+		elif _pc == 481:
+			_pc = 530
+			continue
+		elif _pc == 486:
 			debug.print_string("iMissionGenerator: passed faction rating test")
 			debug.print_string("\n")
-	return 0
+			_pc = 530
+			continue
+		elif _pc == 530:
+			return 0
+		else:
+			return 0
 	return 0
 
 func test_global_int() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	if not (global.exists(v0)):
-		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if v1 >= global.pog_int(v0):
+	var _pc: int = 533
+	while true:
+		if _pc == 533:
+			if not (global.exists(v0)):
+				_pc = 557
+				continue
+			else:
+				_pc = 584
+				continue
+		elif _pc == 557:
+			global.set_bool("g_accept_generated_mission", 0)
+			_pc = 635
+			continue
+		elif _pc == 584:
+			if v1 < global.pog_int(v0):
+				_pc = 613
+				continue
+			else:
+				_pc = 635
+				continue
+		elif _pc == 613:
+			global.set_bool("g_accept_generated_mission", 0)
+			_pc = 635
+			continue
+		elif _pc == 635:
 			return 0
-		global.set_bool("g_accept_generated_mission", 0)
-	return 0
+		else:
+			return 0
 	return 0
 
 func test_global_bool(v0, v1) -> Variant:
-	if not (global.exists(v0)):
-		if PogRuntime.TRACE:
+	var _pc: int = 638
+	while true:
+		if _pc == 638:
+			if not (global.exists(v0)):
+				_pc = 662
+				continue
+			else:
+				_pc = 716
+				continue
+		elif _pc == 662:
+			_pc = 711
+			continue
+		elif _pc == 667:
 			debug.print_string("iMissionGenerator: Global bool doesn't exist: Ignoring criteria.")
 			debug.print_string("\n")
-	else:
-		if not _pog_eq(v1, global.pog_bool(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator: failed global bool test")
-				debug.print_string("\n")
+			_pc = 711
+			continue
+		elif _pc == 711:
+			_pc = 870
+			continue
+		elif _pc == 716:
+			if not _pog_eq(v1, global.pog_bool(v0)):
+				_pc = 745
+				continue
+			else:
+				_pc = 821
+				continue
+		elif _pc == 745:
+			_pc = 794
+			continue
+		elif _pc == 750:
+			debug.print_string("iMissionGenerator: failed global bool test")
+			debug.print_string("\n")
+			_pc = 794
+			continue
+		elif _pc == 794:
 			global.set_bool("g_accept_generated_mission", 0)
+			_pc = 870
+			continue
+		elif _pc == 821:
+			_pc = 870
+			continue
+		elif _pc == 826:
+			debug.print_string("iMissionGenerator: passed global bool test")
+			debug.print_string("\n")
+			_pc = 870
+			continue
+		elif _pc == 870:
+			return 0
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator: passed global bool test")
-				debug.print_string("\n")
-	return 0
+			return 0
 	return 0
 
 func local_873() -> Variant:
+	var _pc: int = 873
 	while true:
-		await _pog_wait(5000.0)
-		if not (1):
-			break
-	return 0
+		if _pc == 873:
+			await _pog_wait(5000.0)
+			if not (1):
+				_pc = 911
+				continue
+			else:
+				_pc = 873
+				continue
+		elif _pc == 911:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_914(v0) -> Variant:
@@ -169,54 +304,140 @@ func local_981(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator:DitchCargo starting\n")
-	if object.property_exists(v1, "proper_cargo") == 1:
-		iship.undock_self(v0)
-	else:
-		if object.property_exists(v1, "cargo_double_counter") == 1:
+	var _pc: int = 981
+	while true:
+		if _pc == 981:
+			_pc = 1012
+			continue
+		elif _pc == 991:
+			debug.print_string("iMissionGenerator:DitchCargo starting\n")
+			_pc = 1012
+			continue
+		elif _pc == 1012:
+			if object.property_exists(v1, "proper_cargo") == 1:
+				_pc = 1044
+				continue
+			else:
+				_pc = 1069
+				continue
+		elif _pc == 1044:
+			iship.undock_self(v0)
+			_pc = 1942
+			continue
+		elif _pc == 1069:
+			if object.property_exists(v1, "cargo_double_counter") == 1:
+				_pc = 1101
+				continue
+			else:
+				_pc = 1879
+				continue
+		elif _pc == 1101:
 			v3 = object.int_property(v1, "cargo_double_counter")
 			v3 = 2 / v3
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator - cargo_double_counter has value")
-				debug.print_int(v3)
-				debug.print_string("\n")
+			_pc = 1214
+			continue
+		elif _pc == 1151:
+			debug.print_string("iMissionGenerator - cargo_double_counter has value")
+			debug.print_int(v3)
+			debug.print_string("\n")
+			_pc = 1214
+			continue
+		elif _pc == 1214:
 			v7 = 0
 			v8 = 0
 			v6 = object.int_property(v1, "cargo_dropped_index")
 			v2 = 0
-			while v3 < v2:
-				v4 = await local_29315(v1, "cargo_to_get", 2 * v2)
-				v5 = await local_29315(v1, "cargo_to_get_quantity", 1 + 2 * v2)
-				if 1000 > v4:
-					v4 = 1000 - v4
-					v4 = iinventory.cargo_type_from_category_index(v4)
-				while true:
-					if v8 <= v6:
-						if PogRuntime.TRACE:
-							debug.print_string("iMissionGenerator.DitchCargo dropping a pod ol' matey.\n")
-						v9 = iship.create("ini:/sims/ships/utility/mail_pod", icargo.pog_name(icargo.find(v4)))
-						object.add_int_property(v9, "cargo", v4)
-						group.add_sim(v10, v9)
-						sim.set_collision(sim.cast(v9), 0)
-						sim.place_relative_to(v9, v0, 0.0, 0.0, 0.0)
-						sim.set_velocity_local_to_sim(v9, 0.0, -(v7 * 15), -215.0)
-						_pog_detach(_pog_spawn(local_914.bind(v9)))
-						await _pog_wait(1.0)
-						v7 = 1 + v7
-					v5 = -1 + v5
-					v8 = 1 + v8
-					if not (6 < v7 and 0 > v5):
-						break
-				if 6 >= v7:
-					object.set_int_property(v1, "cargo_dropped_index", v6)
-					return 0
-				v2 = 1 + v2
+			_pc = 1266
+			continue
+		elif _pc == 1266:
+			if v3 < v2:
+				_pc = 1282
+				continue
+			else:
+				_pc = 1874
+				continue
+		elif _pc == 1282:
+			v4 = await local_29315(v1, "cargo_to_get", 2 * v2)
+			v5 = await local_29315(v1, "cargo_to_get_quantity", 1 + 2 * v2)
+			if 1000 > v4:
+				_pc = 1376
+				continue
+			else:
+				_pc = 1415
+				continue
+		elif _pc == 1376:
+			v4 = 1000 - v4
+			v4 = iinventory.cargo_type_from_category_index(v4)
+			_pc = 1415
+			continue
+		elif _pc == 1415:
+			if v8 <= v6:
+				_pc = 1431
+				continue
+			else:
+				_pc = 1758
+				continue
+		elif _pc == 1431:
+			_pc = 1457
+			continue
+		elif _pc == 1436:
+			debug.print_string("iMissionGenerator.DitchCargo dropping a pod ol' matey.\n")
+			_pc = 1457
+			continue
+		elif _pc == 1457:
+			v9 = iship.create("ini:/sims/ships/utility/mail_pod", icargo.pog_name(icargo.find(v4)))
+			object.add_int_property(v9, "cargo", v4)
+			group.add_sim(v10, v9)
+			sim.set_collision(sim.cast(v9), 0)
+			sim.place_relative_to(v9, v0, 0.0, 0.0, 0.0)
+			sim.set_velocity_local_to_sim(v9, 0.0, -(v7 * 15), -215.0)
+			_pog_detach(_pog_spawn(local_914.bind(v9)))
+			await _pog_wait(1.0)
+			v7 = 1 + v7
+			_pc = 1758
+			continue
+		elif _pc == 1758:
+			v5 = -1 + v5
+			v8 = 1 + v8
+			if not (6 < v7 and 0 > v5):
+				_pc = 1806
+				continue
+			else:
+				_pc = 1415
+				continue
+		elif _pc == 1806:
+			if 6 >= v7:
+				_pc = 1819
+				continue
+			else:
+				_pc = 1856
+				continue
+		elif _pc == 1819:
+			object.set_int_property(v1, "cargo_dropped_index", v6)
+			_pc = 1942
+			continue
+		elif _pc == 1856:
+			v2 = 1 + v2
+			_pc = 1266
+			continue
+		elif _pc == 1874:
+			_pc = 1905
+			continue
+		elif _pc == 1879:
+			_pc = 1905
+			continue
+		elif _pc == 1884:
+			debug.print_string("iMissionGenerator.DitchCargo: Jumping Assmuppets, Batman! There's no cargo to ditch!\n")
+			_pc = 1905
+			continue
+		elif _pc == 1905:
+			object.set_int_property(v1, "cargo_dropped_index", v6)
+			_pc = 1942
+			continue
+		elif _pc == 1942:
+			return
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.DitchCargo: Jumping Assmuppets, Batman! There's no cargo to ditch!\n")
-		object.set_int_property(v1, "cargo_dropped_index", v6)
-	return
+			return 0
 	return 0
 
 func objective_stub(v0, v1) -> Variant:
@@ -232,41 +453,121 @@ func objective_stub(v0, v1) -> Variant:
 func local_2088(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = null
-	v3 = object.int_property(v0, string.join("objective_state", v1))
-	object.set_int_property(v0, string.join("objective_state", v1), v2)
-	v4 = string.join(object.string_property(v0, "objective_stub"), string.join("_objectives", v1))
-	if _pog_is_null(v3):
-		iobjectives.add(v4)
-	if 1 == v2:
-		iobjectives.set_state(v4, 0)
-	else:
-		iobjectives.set_state(v4, 1)
-	return 0
+	var _pc: int = 2088
+	while true:
+		if _pc == 2088:
+			v4 = null
+			v3 = object.int_property(v0, string.join("objective_state", v1))
+			object.set_int_property(v0, string.join("objective_state", v1), v2)
+			v4 = string.join(object.string_property(v0, "objective_stub"), string.join("_objectives", v1))
+			if _pog_is_null(v3):
+				_pc = 2287
+				continue
+			else:
+				_pc = 2306
+				continue
+		elif _pc == 2287:
+			iobjectives.add(v4)
+			_pc = 2306
+			continue
+		elif _pc == 2306:
+			if 1 == v2:
+				_pc = 2318
+				continue
+			else:
+				_pc = 2343
+				continue
+		elif _pc == 2318:
+			iobjectives.set_state(v4, 0)
+			_pc = 2363
+			continue
+		elif _pc == 2343:
+			iobjectives.set_state(v4, 1)
+			_pc = 2363
+			continue
+		elif _pc == 2363:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_2373(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = object.int_property(v0, "objectives_state_goto")
-	if not _pog_is_null(v1):
-		if 1 == v1:
+	var _pc: int = 2373
+	while true:
+		if _pc == 2373:
+			v1 = object.int_property(v0, "objectives_state_goto")
+			if not _pog_is_null(v1):
+				_pc = 2421
+				continue
+			else:
+				_pc = 2560
+				continue
+		elif _pc == 2421:
+			if 1 == v1:
+				_pc = 2433
+				continue
+			else:
+				_pc = 2499
+				continue
+		elif _pc == 2433:
 			iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_goto"), 0)
-		else:
+			_pc = 2560
+			continue
+		elif _pc == 2499:
 			iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_goto"), 1)
-	v1 = object.int_property(v0, "objectives_state_collect")
-	if not _pog_is_null(v1):
-		if 1 == v1:
+			_pc = 2560
+			continue
+		elif _pc == 2560:
+			v1 = object.int_property(v0, "objectives_state_collect")
+			if not _pog_is_null(v1):
+				_pc = 2603
+				continue
+			else:
+				_pc = 2742
+				continue
+		elif _pc == 2603:
+			if 1 == v1:
+				_pc = 2615
+				continue
+			else:
+				_pc = 2681
+				continue
+		elif _pc == 2615:
 			iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_collect"), 0)
-		else:
+			_pc = 2742
+			continue
+		elif _pc == 2681:
 			iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_collect"), 1)
-	v1 = object.int_property(v0, "objectives_state_deliver")
-	if _pog_is_null(v1):
-		return 0
-	if 1 == v1:
-		iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_deliver"), 0)
-	else:
-		iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_deliver"), 1)
-	return 0
+			_pc = 2742
+			continue
+		elif _pc == 2742:
+			v1 = object.int_property(v0, "objectives_state_deliver")
+			if not _pog_is_null(v1):
+				_pc = 2785
+				continue
+			else:
+				_pc = 2924
+				continue
+		elif _pc == 2785:
+			if 1 == v1:
+				_pc = 2797
+				continue
+			else:
+				_pc = 2863
+				continue
+		elif _pc == 2797:
+			iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_deliver"), 0)
+			_pc = 2924
+			continue
+		elif _pc == 2863:
+			iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_deliver"), 1)
+			_pc = 2924
+			continue
+		elif _pc == 2924:
+			return 0
+		else:
+			return 0
 	return 0
 
 func cargo_to_get(v0, v1, v2) -> Variant:
@@ -424,23 +725,66 @@ func owner_location(v0, v1, v2, v3) -> Variant:
 
 func set_briefing(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Set Briefing")
-		debug.print_string("\n")
-	v4 = state.find(v0)
-	if not (object.property_exists(v4, "comm_briefing_type")):
-		object.add_int_property(v4, "comm_briefing_type", v3)
-	else:
-		object.set_int_property(v4, "comm_briefing_type", v3)
-	if not (object.property_exists(v4, "comm_briefing_reference")):
-		object.add_string_property(v4, "comm_briefing_reference", v1)
-	else:
-		object.set_string_property(v4, "comm_briefing_reference", v1)
-	if not (object.property_exists(v4, "comm_briefing_subject")):
-		object.add_string_property(v4, "comm_briefing_subject", v2)
-	else:
-		object.set_string_property(v4, "comm_briefing_subject", v2)
-	return 0
+	var _pc: int = 5199
+	while true:
+		if _pc == 5199:
+			_pc = 5253
+			continue
+		elif _pc == 5209:
+			debug.print_string("iMissionGenerator: Set Briefing")
+			debug.print_string("\n")
+			_pc = 5253
+			continue
+		elif _pc == 5253:
+			v4 = state.find(v0)
+			if not (object.property_exists(v4, "comm_briefing_type")):
+				_pc = 5308
+				continue
+			else:
+				_pc = 5344
+				continue
+		elif _pc == 5308:
+			object.add_int_property(v4, "comm_briefing_type", v3)
+			_pc = 5375
+			continue
+		elif _pc == 5344:
+			object.set_int_property(v4, "comm_briefing_type", v3)
+			_pc = 5375
+			continue
+		elif _pc == 5375:
+			if not (object.property_exists(v4, "comm_briefing_reference")):
+				_pc = 5406
+				continue
+			else:
+				_pc = 5442
+				continue
+		elif _pc == 5406:
+			object.add_string_property(v4, "comm_briefing_reference", v1)
+			_pc = 5473
+			continue
+		elif _pc == 5442:
+			object.set_string_property(v4, "comm_briefing_reference", v1)
+			_pc = 5473
+			continue
+		elif _pc == 5473:
+			if not (object.property_exists(v4, "comm_briefing_subject")):
+				_pc = 5504
+				continue
+			else:
+				_pc = 5540
+				continue
+		elif _pc == 5504:
+			object.add_string_property(v4, "comm_briefing_subject", v2)
+			_pc = 5571
+			continue
+		elif _pc == 5540:
+			object.set_string_property(v4, "comm_briefing_subject", v2)
+			_pc = 5571
+			continue
+		elif _pc == 5571:
+			return 0
+		else:
+			return 0
 	return 0
 
 func set_prompt(v0, v1, v2, v3) -> Variant:
@@ -514,18 +858,39 @@ func local_6296(v0) -> Variant:
 func fail_if_patron_dead(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = state.find(v0)
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Adding patron is dead failure condition")
-		debug.print_string("\n")
-	if not (object.property_exists(v2, "failure_condition")):
-		v1 = 0
-		object.add_int_property(v2, "failure_condition", 0)
-	else:
-		v1 = object.int_property(v2, "failure_condition")
-	v1 = 2 | v1
-	object.set_int_property(v2, "failure_condition", 0)
-	return 0
+	var _pc: int = 6577
+	while true:
+		if _pc == 6577:
+			v2 = state.find(v0)
+			_pc = 6655
+			continue
+		elif _pc == 6611:
+			debug.print_string("iMissionGenerator: Adding patron is dead failure condition")
+			debug.print_string("\n")
+			_pc = 6655
+			continue
+		elif _pc == 6655:
+			if not (object.property_exists(v2, "failure_condition")):
+				_pc = 6686
+				continue
+			else:
+				_pc = 6725
+				continue
+		elif _pc == 6686:
+			v1 = 0
+			object.add_int_property(v2, "failure_condition", 0)
+			_pc = 6756
+			continue
+		elif _pc == 6725:
+			v1 = object.int_property(v2, "failure_condition")
+			_pc = 6756
+			continue
+		elif _pc == 6756:
+			v1 = 2 | v1
+			object.set_int_property(v2, "failure_condition", 0)
+			return 0
+		else:
+			return 0
 	return 0
 
 func owner_set_escort_faction(v0, v1) -> Variant:
@@ -540,34 +905,76 @@ func fail_if_owner_dead() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = state.find(v0)
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Adding failure clause on owner death")
-		debug.print_string("\n")
-	if not (object.property_exists(v2, "failure_condition")):
-		v1 = 0
-		object.add_int_property(v2, "failure_condition", 0)
-	else:
-		v1 = object.int_property(v2, "failure_condition")
-	v1 = 1 | v1
-	object.set_int_property(v2, "failure_condition", 0)
-	return 0
+	var _pc: int = 6806
+	while true:
+		if _pc == 6806:
+			v2 = state.find(v0)
+			_pc = 6884
+			continue
+		elif _pc == 6840:
+			debug.print_string("iMissionGenerator: Adding failure clause on owner death")
+			debug.print_string("\n")
+			_pc = 6884
+			continue
+		elif _pc == 6884:
+			if not (object.property_exists(v2, "failure_condition")):
+				_pc = 6915
+				continue
+			else:
+				_pc = 6954
+				continue
+		elif _pc == 6915:
+			v1 = 0
+			object.add_int_property(v2, "failure_condition", 0)
+			_pc = 6985
+			continue
+		elif _pc == 6954:
+			v1 = object.int_property(v2, "failure_condition")
+			_pc = 6985
+			continue
+		elif _pc == 6985:
+			v1 = 1 | v1
+			object.set_int_property(v2, "failure_condition", 0)
+			return 0
+		else:
+			return 0
 	return 0
 
 func fail_if_global_bool(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = state.find(v0)
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Adding failure on global bool test")
-		debug.print_string("\n")
-	if not (object.property_exists(v4, "failure_condition")):
-		v3 = 0
-		object.add_int_property(v4, "failure_condition", 0)
-	else:
-		v3 = object.int_property(v4, "failure_condition")
-	object.set_int_property(v4, "failure_condition", 0)
-	return 0
+	var _pc: int = 7028
+	while true:
+		if _pc == 7028:
+			v4 = state.find(v0)
+			_pc = 7106
+			continue
+		elif _pc == 7062:
+			debug.print_string("iMissionGenerator: Adding failure on global bool test")
+			debug.print_string("\n")
+			_pc = 7106
+			continue
+		elif _pc == 7106:
+			if not (object.property_exists(v4, "failure_condition")):
+				_pc = 7137
+				continue
+			else:
+				_pc = 7176
+				continue
+		elif _pc == 7137:
+			v3 = 0
+			object.add_int_property(v4, "failure_condition", 0)
+			_pc = 7207
+			continue
+		elif _pc == 7176:
+			v3 = object.int_property(v4, "failure_condition")
+			_pc = 7207
+			continue
+		elif _pc == 7207:
+			object.set_int_property(v4, "failure_condition", 0)
+			return 0
+		else:
+			return 0
 	return 0
 
 func fail_precludes() -> Variant:
@@ -619,23 +1026,225 @@ func fail_precludes() -> Variant:
 func local_8034(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
-	v1 = list.from_set(imapentity.system_habitats())
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Picking location of desired type")
-		debug.print_string("\n")
-	v2 = 0
-	while list.item_count(v1) < v2:
-		if not _pog_eq(v0, await iutilities.from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2))))):
+	var v3: Variant = 0
+	var v4: Variant = 0
+	var _pc: int = 8034
+	while true:
+		if _pc == 8034:
+			v1 = null
+			v1 = list.from_set(imapentity.system_habitats())
+			_pc = 8134
+			continue
+		elif _pc == 8090:
+			debug.print_string("iMissionGenerator: Picking location of desired type")
+			debug.print_string("\n")
+			_pc = 8134
+			continue
+		elif _pc == 8134:
+			v2 = 0
+			_pc = 8141
+			continue
+		elif _pc == 8141:
+			if list.item_count(v1) < v2:
+				_pc = 8170
+				continue
+			else:
+				_pc = 8382
+				continue
+		elif _pc == 8170:
+			if not _pog_eq(v0, await iutilities.from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2))))):
+				_pc = 8246
+				continue
+			else:
+				_pc = 8364
+				continue
+		elif _pc == 8246:
 			list.remove_nth(v1, v2)
 			if not _pog_is_null(list.item_count(v1)):
-				v2 = -1 + v2
+				_pc = 8295
+				continue
 			else:
-				if PogRuntime.TRACE:
-					debug.print_string(string.join("iMissionGenerator.PickLocation: Unable to find location of specified type: ", v0))
-				break
-		v2 = 1 + v2
-	return _pog_clone(imapentity.pog_name(imapentity.cast(ihabitat.random(p_set.from_list(v1)))))
+				_pc = 8314
+				continue
+		elif _pc == 8295:
+			v2 = -1 + v2
+			_pc = 8364
+			continue
+		elif _pc == 8314:
+			_pc = 8359
+			continue
+		elif _pc == 8319:
+			debug.print_string(string.join("iMissionGenerator.PickLocation: Unable to find location of specified type: ", v0))
+			_pc = 8359
+			continue
+		elif _pc == 8359:
+			_pc = 8382
+			continue
+		elif _pc == 8364:
+			v2 = 1 + v2
+			_pc = 8141
+			continue
+		elif _pc == 8382:
+			imapentity.pog_name(imapentity.cast(ihabitat.random(p_set.from_list(v1))))
+			_pc = 8446
+			continue
+		elif _pc == 8446:
+			return
+		elif _pc == 8519:
+			debug.print_string("iMissionGenerator: Generating patron location")
+			debug.print_string("\n")
+			_pc = 8563
+			continue
+		elif _pc == 8563:
+			if 1 == object.property_exists(v0, "patron_location_handle"):
+				_pc = 8595
+				continue
+			else:
+				_pc = 8682
+				continue
+		elif _pc == 8595:
+			if not _pog_is_null(object.handle_property(v0, "patron_location_handle")):
+				_pc = 8627
+				continue
+			else:
+				_pc = 8682
+				continue
+		elif _pc == 8627:
+			_pc = 8676
+			continue
+		elif _pc == 8632:
+			debug.print_string("iMissionGenerator: patron location already exists")
+			debug.print_string("\n")
+			_pc = 8676
+			continue
+		elif _pc == 8676:
+			_pc = 9657
+			continue
+		elif _pc == 8682:
+			v4 = list.from_set(imapentity.system_habitats())
+			if not _pog_eq("", object.string_property(v0, "patron_location_name")):
+				_pc = 8756
+				continue
+			else:
+				_pc = 8894
+				continue
+		elif _pc == 8756:
+			_pc = 8805
+			continue
+		elif _pc == 8761:
+			debug.print_string("iMissionGenerator: Finding named location")
+			debug.print_string("\n")
+			_pc = 8805
+			continue
+		elif _pc == 8805:
+			v1 = ihabitat.find_by_name(object.string_property(v0, "patron_location_name"))
+			if not _pog_is_null(v1):
+				_pc = 8863
+				continue
+			else:
+				_pc = 8894
+				continue
+		elif _pc == 8863:
+			object.add_handle_property(v0, "patron_location_handle", v1)
+			_pc = 8894
+			continue
+		elif _pc == 8894:
+			if _pog_is_null(v1):
+				_pc = 8907
+				continue
+			else:
+				_pc = 9134
+				continue
+		elif _pc == 8907:
+			_pc = 8956
+			continue
+		elif _pc == 8912:
+			debug.print_string("iMissionGenerator: Finding location of type")
+			debug.print_string("\n")
+			_pc = 8956
+			continue
+		elif _pc == 8956:
+			v4 = list.from_set(ihabitat.filter_on_type(imapentity.system_habitats(), ihabitat.cast_int_to_habitat_type(object.int_property(v0, "patron_location_type"))))
+			v3 = list.item_count(v4)
+			if 0 > v3:
+				_pc = 9078
+				continue
+			else:
+				_pc = 9134
+				continue
+		elif _pc == 9078:
+			v1 = ihabitat.cast(list.get_nth(v4, math.random_int(1, v3)))
+			_pc = 9134
+			continue
+		elif _pc == 9134:
+			if _pog_is_null(v1):
+				_pc = 9147
+				continue
+			else:
+				_pc = 9464
+				continue
+		elif _pc == 9147:
+			_pc = 9173
+			continue
+		elif _pc == 9152:
+			debug.print_string("iMissionGenerator: patron location still not found, picking randomly from within system.\n")
+			_pc = 9173
+			continue
+		elif _pc == 9173:
+			v4 = list.from_set(imapentity.system_habitats())
+			v3 = list.item_count(v4)
+			_pc = 9300
+			continue
+		elif _pc == 9237:
+			debug.print_string("iMissionGenerator: number of locations in system ")
+			debug.print_int(v3)
+			debug.print_string("\n")
+			_pc = 9300
+			continue
+		elif _pc == 9300:
+			if 0 > v3:
+				_pc = 9312
+				continue
+			else:
+				_pc = 9464
+				continue
+		elif _pc == 9312:
+			v1 = ihabitat.cast(list.get_nth(v4, math.random_int(1, v3)))
+			_pc = 9464
+			continue
+		elif _pc == 9373:
+			debug.print_string("iMissionGenerator: patron location chosen as ")
+			debug.print_string(imapentity.pog_name(imapentity.cast(v1)))
+			debug.print_string("\n")
+			_pc = 9464
+			continue
+		elif _pc == 9464:
+			v2 = imapentity.waypoint_for_entity(v1)
+			object.add_handle_property(v0, "patron_location_handle", v2)
+			if _pog_is_null(object.property_exists(v0, "patron_location_name")):
+				_pc = 9551
+				continue
+			else:
+				_pc = 9647
+				continue
+		elif _pc == 9551:
+			if _pog_eq("", object.string_property(v0, "patron_location_name")):
+				_pc = 9589
+				continue
+			else:
+				_pc = 9647
+				continue
+		elif _pc == 9589:
+			object.add_string_property(v0, "patron_location_name", imapentity.pog_name(imapentity.cast(v1)))
+			_pc = 9647
+			continue
+		elif _pc == 9647:
+			_pc = 9657
+			continue
+		elif _pc == 9657:
+			return
+		else:
+			return 0
 	return 0
 
 func local_9666(v0) -> Variant:
@@ -866,22 +1475,60 @@ func local_9726(v0, v1) -> Variant:
 func local_11861(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator.IncreaseStringNumber in ")
-	if PogRuntime.TRACE:
-		debug.print_string(v0)
-	if PogRuntime.TRACE:
-		debug.print_string("\n")
-	v2 = string.to_int(string.right(v0, 1))
-	v3 = string.join(string.trim_right(v0, 1), string.from_int(v1 + v2))
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator.IncreaseStringNumber out ")
-	if PogRuntime.TRACE:
-		debug.print_string(v3)
-	if PogRuntime.TRACE:
-		debug.print_string("\n")
-	return _pog_clone(v3)
+	var _pc: int = 11861
+	while true:
+		if _pc == 11861:
+			v3 = null
+			_pc = 11904
+			continue
+		elif _pc == 11883:
+			debug.print_string("iMissionGenerator.IncreaseStringNumber in ")
+			_pc = 11904
+			continue
+		elif _pc == 11904:
+			_pc = 11928
+			continue
+		elif _pc == 11909:
+			debug.print_string(v0)
+			_pc = 11928
+			continue
+		elif _pc == 11928:
+			_pc = 11954
+			continue
+		elif _pc == 11933:
+			debug.print_string("\n")
+			_pc = 11954
+			continue
+		elif _pc == 11954:
+			v2 = string.to_int(string.right(v0, 1))
+			v3 = string.join(string.trim_right(v0, 1), string.from_int(v1 + v2))
+			_pc = 12088
+			continue
+		elif _pc == 12067:
+			debug.print_string("iMissionGenerator.IncreaseStringNumber out ")
+			_pc = 12088
+			continue
+		elif _pc == 12088:
+			_pc = 12112
+			continue
+		elif _pc == 12093:
+			debug.print_string(v3)
+			_pc = 12112
+			continue
+		elif _pc == 12112:
+			_pc = 12138
+			continue
+		elif _pc == 12117:
+			debug.print_string("\n")
+			_pc = 12138
+			continue
+		elif _pc == 12138:
+			_pc = 12149
+			continue
+		elif _pc == 12149:
+			return
+		else:
+			return 0
 	return 0
 
 func local_12159(v0) -> Variant:
@@ -896,79 +1543,225 @@ func local_12188(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v2 = 0
-	v5 = iship.find_player_ship()
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator:WaitForOrMake character recieved state ")
-		debug.print_handle(v0)
-		debug.print_string("\n")
-	if object.property_exists(v0, string.join(v1, "_ship_handle")):
-		v2 = iship.cast(object.handle_property(v0, string.join(v1, "_ship_handle")))
-	if _pog_is_null(v2):
-		if PogRuntime.TRACE:
+	var _pc: int = 12188
+	while true:
+		if _pc == 12188:
+			v2 = 0
+			v5 = iship.find_player_ship()
+			_pc = 12287
+			continue
+		elif _pc == 12224:
+			debug.print_string("iMissionGenerator:WaitForOrMake character recieved state ")
+			debug.print_handle(v0)
+			debug.print_string("\n")
+			_pc = 12287
+			continue
+		elif _pc == 12287:
+			if object.property_exists(v0, string.join(v1, "_ship_handle")):
+				_pc = 12336
+				continue
+			else:
+				_pc = 12399
+				continue
+		elif _pc == 12336:
+			v2 = iship.cast(object.handle_property(v0, string.join(v1, "_ship_handle")))
+			_pc = 12399
+			continue
+		elif _pc == 12399:
+			if _pog_is_null(v2):
+				_pc = 12412
+				continue
+			else:
+				_pc = 14190
+				continue
+		elif _pc == 12412:
+			_pc = 12520
+			continue
+		elif _pc == 12417:
 			debug.print_string("iMissionGenerator:WaitForOrMakecharacter - ship name is")
 			debug.print_string(object.string_property(v0, string.join(v1, "_ship_name")))
 			debug.print_string("\n")
-		v3 = await local_9726(v0, v1)
-		if _pog_eq("owner", v1):
+			_pc = 12520
+			continue
+		elif _pc == 12520:
+			v3 = await local_9726(v0, v1)
+			if _pog_eq("owner", v1):
+				_pc = 12567
+				continue
+			else:
+				_pc = 12594
+				continue
+		elif _pc == 12567:
 			await local_2088(v0, "_goto", 1)
-		while true:
+			_pc = 12594
+			continue
+		elif _pc == 12594:
 			await _pog_wait(1.0)
-			if not (50000.0 > sim.distance_between(v5, v3)):
-				break
-		if PogRuntime.TRACE:
+			if 50000.0 <= sim.distance_between(v5, v3):
+				_pc = 12660
+				continue
+			else:
+				_pc = 12594
+				continue
+		elif _pc == 12660:
+			_pc = 12686
+			continue
+		elif _pc == 12665:
 			debug.print_string("iMissionGenerator:WaitForOrMakecharacter - player has closed the range.\n")
-		if _pog_eq("owner", v1):
+			_pc = 12686
+			continue
+		elif _pc == 12686:
+			if _pog_eq("owner", v1):
+				_pc = 12704
+				continue
+			else:
+				_pc = 12732
+				continue
+		elif _pc == 12704:
 			await local_2088(v0, "_goto", 2)
-		if not (v3):
+			_pc = 12732
+			continue
+		elif _pc == 12732:
+			if not (v3):
+				_pc = 12743
+				continue
+			else:
+				_pc = 12754
+				continue
+		elif _pc == 12743:
 			v3 = v5
-		if object.property_exists(v0, string.join(v1, "_escort_type")) == 1:
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator:WaitForOrMakecharacter creating character with escort\n")
+			_pc = 12754
+			continue
+		elif _pc == 12754:
+			if object.property_exists(v0, string.join(v1, "_escort_type")) == 1:
+				_pc = 12806
+				continue
+			else:
+				_pc = 13476
+				continue
+		elif _pc == 12806:
+			_pc = 12832
+			continue
+		elif _pc == 12811:
+			debug.print_string("iMissionGenerator:WaitForOrMakecharacter creating character with escort\n")
+			_pc = 12832
+			continue
+		elif _pc == 12832:
 			v4 = await ishipcreation.create_character_ships(object.int_property(v0, string.join(v1, "_ship_type")), object.string_property(v0, string.join(v1, "_ship_name")), object.string_property(v0, string.join(v1, "_character_name")), object.string_property(v0, string.join(v1, "_pilot_type")), 1, object.int_property(v0, string.join(v1, "_escort_type")), object.string_property(v0, string.join(v1, "_escort_ship_name")), object.string_property(v0, string.join(v1, "_escort_pilot_type")), object.int_property(v0, string.join(v1, "_escort_quantity")), ifaction.find(object.string_property(v0, string.join(v1, "_faction"))))
 			v7 = object.int_property(v0, string.join(v1, "_escort_quantity"))
-			while 0 >= v7:
-				v2 = iship.cast(group.nth_sim(v4, v7))
-				object.set_string_property(v2, "name", await local_11861(object.string_property(v0, string.join(v1, "_ship_name")), v7))
-				v7 = -1 + v7
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator:WaitForOrMakecharacter creating character by himself.\n")
+			_pc = 13309
+			continue
+		elif _pc == 13309:
+			if 0 >= v7:
+				_pc = 13321
+				continue
+			else:
+				_pc = 13471
+				continue
+		elif _pc == 13321:
+			v2 = iship.cast(group.nth_sim(v4, v7))
+			object.set_string_property(v2, "name", await local_11861(object.string_property(v0, string.join(v1, "_ship_name")), v7))
+			v7 = -1 + v7
+			_pc = 13309
+			continue
+		elif _pc == 13471:
+			_pc = 13876
+			continue
+		elif _pc == 13476:
+			_pc = 13502
+			continue
+		elif _pc == 13481:
+			debug.print_string("iMissionGenerator:WaitForOrMakecharacter creating character by himself.\n")
+			_pc = 13502
+			continue
+		elif _pc == 13502:
 			v4 = await ishipcreation.create_character_ships(object.int_property(v0, string.join(v1, "_ship_type")), object.string_property(v0, string.join(v1, "_ship_name")), object.string_property(v0, string.join(v1, "_character_name")), object.string_property(v0, string.join(v1, "_pilot_type")), 1, 0, "", "", 0, ifaction.find(object.string_property(v0, string.join(v1, "_faction"))))
 			v2 = iship.cast(group.leader(v4))
 			object.set_string_property(v2, "name", object.string_property(v0, string.join(v1, "_ship_name")))
-		await local_35480(v4)
-		v2 = iship.cast(group.leader(v4))
-		sim.place_near(v2, v3, 25000.0)
-		await iescort.goose(v4, 30.0, 12000.0, 1)
-		if _pog_eq("owner", v1):
+			_pc = 13876
+			continue
+		elif _pc == 13876:
+			await local_35480(v4)
+			v2 = iship.cast(group.leader(v4))
+			sim.place_near(v2, v3, 25000.0)
+			await iescort.goose(v4, 30.0, 12000.0, 1)
+			if _pog_eq("owner", v1):
+				_pc = 14009
+				continue
+			else:
+				_pc = 14033
+				continue
+		elif _pc == 14009:
 			await local_36870(v0, v2)
-		if PogRuntime.TRACE:
+			_pc = 14033
+			continue
+		elif _pc == 14033:
+			_pc = 14115
+			continue
+		elif _pc == 14039:
 			debug.print_string("iMissionGenerator: Created ")
 			debug.print_int(group.group_count(v4))
 			debug.print_string(" character vessels in group.\n")
-		await iutilities.group_set_cullable(v4, 0)
-		object.add_handle_property(v0, string.join(v1, "_ship_handle"), v2)
-	else:
-		return 0
-	object.add_handle_property(v0, string.join(v1, "_escort_group"), v4)
-	if not _pog_eq("patron", v1):
-		_pog_detach(_pog_spawn(monkey_about.bind(iship.cast(group.leader(v4)), imapentity.cast(v3))))
-	else:
-		if PogRuntime.TRACE:
+			_pc = 14115
+			continue
+		elif _pc == 14115:
+			await iutilities.group_set_cullable(v4, 0)
+			object.add_handle_property(v0, string.join(v1, "_ship_handle"), v2)
+			_pc = 14195
+			continue
+		elif _pc == 14190:
+			_pc = 14540
+			continue
+		elif _pc == 14195:
+			object.add_handle_property(v0, string.join(v1, "_escort_group"), v4)
+			if not _pog_eq("patron", v1):
+				_pc = 14264
+				continue
+			else:
+				_pc = 14345
+				continue
+		elif _pc == 14264:
+			_pog_detach(_pog_spawn(monkey_about.bind(iship.cast(group.leader(v4)), imapentity.cast(v3))))
+			_pc = 14376
+			continue
+		elif _pc == 14345:
+			_pc = 14371
+			continue
+		elif _pc == 14350:
 			debug.print_string("iMissionGenerator: Patron made, returning to delivery handler.\n")
-		return 0
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Waiting for character.")
-		debug.print_string("\n")
-	while true:
-		await _pog_wait(1.0)
-		if not (5000.0 > sim.distance_between(v5, v2)):
-			break
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Player close enough to character - returning from wait.")
-		debug.print_string("\n")
-	return 0
+			_pc = 14371
+			continue
+		elif _pc == 14371:
+			_pc = 14540
+			continue
+		elif _pc == 14376:
+			_pc = 14425
+			continue
+		elif _pc == 14381:
+			debug.print_string("iMissionGenerator: Waiting for character.")
+			debug.print_string("\n")
+			_pc = 14425
+			continue
+		elif _pc == 14425:
+			await _pog_wait(1.0)
+			if 5000.0 <= sim.distance_between(v5, v2):
+				_pc = 14491
+				continue
+			else:
+				_pc = 14425
+				continue
+		elif _pc == 14491:
+			_pc = 14540
+			continue
+		elif _pc == 14496:
+			debug.print_string("iMissionGenerator: Player close enough to character - returning from wait.")
+			debug.print_string("\n")
+			_pc = 14540
+			continue
+		elif _pc == 14540:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_14543(v0, v1, v2, v3) -> Variant:
@@ -1350,21 +2143,55 @@ func local_17063(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
-	v2 = list.from_set(isim.ships_in_radius(v0, v1))
-	v3 = null
-	v5 = list.item_count(v2)
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Checking for new cargo")
-		debug.print_string("\n")
-	v6 = 0
-	while v5 < v6:
-		v4 = list.get_nth(v2, v6)
-		if not (object.property_exists(v4, "acquired")) and object.property_exists(v4, "mission_cargo"):
+	var _pc: int = 17063
+	while true:
+		if _pc == 17063:
+			v2 = null
+			v2 = list.from_set(isim.ships_in_radius(v0, v1))
+			v3 = null
+			v5 = list.item_count(v2)
+			_pc = 17208
+			continue
+		elif _pc == 17164:
+			debug.print_string("iMissionGenerator: Checking for new cargo")
+			debug.print_string("\n")
+			_pc = 17208
+			continue
+		elif _pc == 17208:
+			v6 = 0
+			_pc = 17215
+			continue
+		elif _pc == 17215:
+			if v5 < v6:
+				_pc = 17231
+				continue
+			else:
+				_pc = 17398
+				continue
+		elif _pc == 17231:
+			v4 = list.get_nth(v2, v6)
+			if not (object.property_exists(v4, "acquired")) and object.property_exists(v4, "mission_cargo"):
+				_pc = 17316
+				continue
+			else:
+				_pc = 17380
+				continue
+		elif _pc == 17316:
 			list.add_tail(v3, v4)
 			object.add_int_property(list.tail(v3), "acquired", 1)
-		v6 = 1 + v6
-	return _pog_clone(v3)
+			_pc = 17380
+			continue
+		elif _pc == 17380:
+			v6 = 1 + v6
+			_pc = 17215
+			continue
+		elif _pc == 17398:
+			_pc = 17408
+			continue
+		elif _pc == 17408:
+			return
+		else:
+			return 0
 	return 0
 
 func local_17425(v0, v1, v2) -> Variant:
@@ -1374,74 +2201,234 @@ func local_17425(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = null
-	v4 = iship.find_player_ship()
-	v5 = 0
-	v8 = object.int_property(v0, "number_of_cargo_types")
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Count how many bits of cargo we've got")
-		debug.print_string("\n")
-	if not (object.property_exists(v1, "mission_cargo")):
-		pass
-	else:
-		v6 = 0
-		while v8 < v6:
+	var _pc: int = 17425
+	while true:
+		if _pc == 17425:
+			v3 = null
+			v4 = iship.find_player_ship()
+			v5 = 0
+			v8 = object.int_property(v0, "number_of_cargo_types")
+			_pc = 17547
+			continue
+		elif _pc == 17503:
+			debug.print_string("iMissionGenerator: Count how many bits of cargo we've got")
+			debug.print_string("\n")
+			_pc = 17547
+			continue
+		elif _pc == 17547:
+			if not (object.property_exists(v1, "mission_cargo")):
+				_pc = 17578
+				continue
+			else:
+				_pc = 17584
+				continue
+		elif _pc == 17578:
+			_pc = 18115
+			continue
+		elif _pc == 17584:
+			v6 = 0
+			_pc = 17591
+			continue
+		elif _pc == 17591:
+			if v8 < v6:
+				_pc = 17607
+				continue
+			else:
+				_pc = 18108
+				continue
+		elif _pc == 17607:
 			if _pog_eq(object.string_property(v0, await local_29122("required_cargo_type", v6)), object.string_property(v1, "mission_cargo")):
-				if object.int_property(v0, "cargo_quantity_required") > 1 + object.int_property(v0, await local_29122("acquired_cargo_quantity", v6)):
-					icomms.shout(0, object.string_property(v2, "name"), "I've got enough of that!")
-					return -1
-				while not (v5):
-					v3 = list.from_set(sim.children(v4))
-					v5 = 1
-					v7 = 0
-					while list.item_count(v3) < v7:
-						if object.property_exists(list.get_nth(v3, v7), "acquired"):
-							icomms.shout(0, object.string_property(v2, "name"), "Just drop the pod off for me!")
-							v5 = 0
-							break
-						v7 = 1 + v7
-				await ipilotsetup.generic_cargo_pod(v1)
-				iai.give_dock_order(v1, v2)
-				return v6
+				_pc = 17683
+				continue
+			else:
+				_pc = 18090
+				continue
+		elif _pc == 17683:
+			if object.int_property(v0, "cargo_quantity_required") > 1 + object.int_property(v0, await local_29122("acquired_cargo_quantity", v6)):
+				_pc = 17759
+				continue
+			else:
+				_pc = 17813
+				continue
+		elif _pc == 17759:
+			icomms.shout(0, object.string_property(v2, "name"), "I've got enough of that!")
+			_pc = 18115
+			continue
+		elif _pc == 17813:
+			if not (v5):
+				_pc = 17824
+				continue
+			else:
+				_pc = 18037
+				continue
+		elif _pc == 17824:
+			v3 = list.from_set(sim.children(v4))
+			v5 = 1
+			v7 = 0
+			_pc = 17878
+			continue
+		elif _pc == 17878:
+			if list.item_count(v3) < v7:
+				_pc = 17907
+				continue
+			else:
+				_pc = 18032
+				continue
+		elif _pc == 17907:
+			if object.property_exists(list.get_nth(v3, v7), "acquired"):
+				_pc = 17955
+				continue
+			else:
+				_pc = 18014
+				continue
+		elif _pc == 17955:
+			icomms.shout(0, object.string_property(v2, "name"), "Just drop the pod off for me!")
+			v5 = 0
+			_pc = 18032
+			continue
+		elif _pc == 18014:
+			v7 = 1 + v7
+			_pc = 17878
+			continue
+		elif _pc == 18032:
+			_pc = 17813
+			continue
+		elif _pc == 18037:
+			await ipilotsetup.generic_cargo_pod(v1)
+			iai.give_dock_order(v1, v2)
+			_pc = 18115
+			continue
+		elif _pc == 18090:
 			v6 = 1 + v6
-	return
+			_pc = 17591
+			continue
+		elif _pc == 18108:
+			_pc = 18115
+			continue
+		elif _pc == 18115:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18124(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = object.int_property(v0, "number_of_cargo_types")
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: How much cargo is there?")
-		debug.print_string("\n")
-	v3 = 0
-	while v2 < v3:
-		v1 = object.int_property(v0, await local_29122("acquired_cargo_quantity", v3)) + v1
-		v3 = 1 + v3
-	return v1
+	var _pc: int = 18124
+	while true:
+		if _pc == 18124:
+			v2 = object.int_property(v0, "number_of_cargo_types")
+			_pc = 18209
+			continue
+		elif _pc == 18165:
+			debug.print_string("iMissionGenerator: How much cargo is there?")
+			debug.print_string("\n")
+			_pc = 18209
+			continue
+		elif _pc == 18209:
+			v3 = 0
+			_pc = 18216
+			continue
+		elif _pc == 18216:
+			if v2 < v3:
+				_pc = 18232
+				continue
+			else:
+				_pc = 18306
+				continue
+		elif _pc == 18232:
+			v1 = object.int_property(v0, await local_29122("acquired_cargo_quantity", v3)) + v1
+			v3 = 1 + v3
+			_pc = 18216
+			continue
+		elif _pc == 18306:
+			_pc = 18316
+			continue
+		elif _pc == 18316:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18318(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = object.int_property(v0, "number_of_cargo_types")
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Has the patron got all his cargo?")
-		debug.print_string("\n")
-	if _pog_eq("Total", object.string_property(v0, "target_requirement_type")):
-		if object.int_property(v0, "cargo_quantity_required") >= await local_18124(v0):
-			return 1
-	else:
-		v3 = 0
-		while v1 < v3:
+	var _pc: int = 18318
+	while true:
+		if _pc == 18318:
+			v1 = object.int_property(v0, "number_of_cargo_types")
+			_pc = 18403
+			continue
+		elif _pc == 18359:
+			debug.print_string("iMissionGenerator: Has the patron got all his cargo?")
+			debug.print_string("\n")
+			_pc = 18403
+			continue
+		elif _pc == 18403:
+			if _pog_eq("Total", object.string_property(v0, "target_requirement_type")):
+				_pc = 18441
+				continue
+			else:
+				_pc = 18501
+				continue
+		elif _pc == 18441:
+			if object.int_property(v0, "cargo_quantity_required") >= await local_18124(v0):
+				_pc = 18490
+				continue
+			else:
+				_pc = 18496
+				continue
+		elif _pc == 18490:
+			_pc = 18657
+			continue
+		elif _pc == 18496:
+			_pc = 18629
+			continue
+		elif _pc == 18501:
+			v3 = 0
+			_pc = 18508
+			continue
+		elif _pc == 18508:
+			if v1 < v3:
+				_pc = 18524
+				continue
+			else:
+				_pc = 18629
+				continue
+		elif _pc == 18524:
 			if object.int_property(v0, "cargo_quantity_required") >= object.int_property(v0, await local_29122("acquired_cargo_quantity", v3)):
-				v2 = 1 + v2
+				_pc = 18598
+				continue
+			else:
+				_pc = 18611
+				continue
+		elif _pc == 18598:
+			v2 = 1 + v2
+			_pc = 18611
+			continue
+		elif _pc == 18611:
 			v3 = 1 + v3
-	if _pog_eq(v1, v2):
-		pass
-	return
+			_pc = 18508
+			continue
+		elif _pc == 18629:
+			if _pog_eq(v1, v2):
+				_pc = 18645
+				continue
+			else:
+				_pc = 18651
+				continue
+		elif _pc == 18645:
+			_pc = 18657
+			continue
+		elif _pc == 18651:
+			_pc = 18657
+			continue
+		elif _pc == 18657:
+			return
+		else:
+			return 0
 	return 0
 
 func local_18659(v0) -> Variant:
@@ -1561,61 +2548,175 @@ func local_21103(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v5 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Waiting for player piracy against owners.")
-		debug.print_string("\n")
-	v1 = group.cast(object.handle_property(v0, "owner_escort_group"))
-	v2 = iship.cast(group.leader(v1))
-	await local_2088(v0, "_collect", 1)
+	var _pc: int = 21103
 	while true:
-		await _pog_wait(1)
-		if 1 == object.property_exists(v2, "has_surrendered"):
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator: Resolve Piracy - ship has surrendered its cargo.\n")
-			break
-		if PogRuntime.TRACE:
-			debug.print_string("iMissionGenerator: Resolve Piracy - regular wait for mechanical surrender.\n")
-		if 0.3499999940395355 >= object.float_property(v2, "max_hit_points") / object.float_property(v2, "hit_points"):
+		if _pc == 21103:
+			v5 = null
+			_pc = 21168
 			continue
-		if PogRuntime.TRACE:
+		elif _pc == 21124:
+			debug.print_string("iMissionGenerator: Waiting for player piracy against owners.")
+			debug.print_string("\n")
+			_pc = 21168
+			continue
+		elif _pc == 21168:
+			v1 = group.cast(object.handle_property(v0, "owner_escort_group"))
+			v2 = iship.cast(group.leader(v1))
+			await local_2088(v0, "_collect", 1)
+			_pc = 21281
+			continue
+		elif _pc == 21281:
+			await _pog_frame()
+			if _pog_every(21282, 1.0):
+				_pc = 21295
+				continue
+			else:
+				_pc = 21476
+				continue
+		elif _pc == 21295:
+			if 1 == object.property_exists(v2, "has_surrendered"):
+				_pc = 21327
+				continue
+			else:
+				_pc = 21358
+				continue
+		elif _pc == 21327:
+			_pc = 21353
+			continue
+		elif _pc == 21332:
+			debug.print_string("iMissionGenerator: Resolve Piracy - ship has surrendered its cargo.\n")
+			_pc = 21353
+			continue
+		elif _pc == 21353:
+			_pc = 21481
+			continue
+		elif _pc == 21358:
+			_pc = 21384
+			continue
+		elif _pc == 21363:
+			debug.print_string("iMissionGenerator: Resolve Piracy - regular wait for mechanical surrender.\n")
+			_pc = 21384
+			continue
+		elif _pc == 21384:
+			if 0.3499999940395355 < object.float_property(v2, "max_hit_points") / object.float_property(v2, "hit_points"):
+				_pc = 21445
+				continue
+			else:
+				_pc = 21476
+				continue
+		elif _pc == 21445:
+			_pc = 21471
+			continue
+		elif _pc == 21450:
 			debug.print_string("iMissionGenerator: Resolve Piracy - ship is down to under a third hits.\n")
-		break
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator.ResolvePiracy: Owner has surrendered and will now ditch cargo.\n")
-	v6 = await local_981(v2, v0)
-	await local_2088(v0, "_collect", 2)
-	await iutilities.group_set_cullable(v1, 1)
-	v6 = 1
-	return v6
+			_pc = 21471
+			continue
+		elif _pc == 21471:
+			_pc = 21481
+			continue
+		elif _pc == 21476:
+			_pc = 21281
+			continue
+		elif _pc == 21481:
+			_pc = 21508
+			continue
+		elif _pc == 21487:
+			debug.print_string("iMissionGenerator.ResolvePiracy: Owner has surrendered and will now ditch cargo.\n")
+			_pc = 21508
+			continue
+		elif _pc == 21508:
+			v6 = await local_981(v2, v0)
+			await local_2088(v0, "_collect", 2)
+			await iutilities.group_set_cullable(v1, 1)
+			v6 = 1
+			_pc = 21602
+			continue
+		elif _pc == 21602:
+			return
+		else:
+			return 0
 	return 0
 
 func local_21611(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v1 = object.string_property(v0, "objective_stub")
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator:TestForCompletion will be looking for mission by the name of ")
-		debug.print_string(v1)
-		debug.print_string(" \n")
-	v2 = 1 - itrade.num_trades()
-	while 0 >= v2:
-		v3 = itrade.nth_trade(v2)
-		if not _pog_eq("", object.string_property(v3, "generated_mission")):
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator:TestForCompletion testing trade with name ")
-				debug.print_string(object.string_property(v3, "generated_mission"))
-				debug.print_string(" \n")
+	var _pc: int = 21611
+	while true:
+		if _pc == 21611:
+			v1 = null
+			v1 = object.string_property(v0, "objective_stub")
+			_pc = 21727
+			continue
+		elif _pc == 21664:
+			debug.print_string("iMissionGenerator:TestForCompletion will be looking for mission by the name of ")
+			debug.print_string(v1)
+			debug.print_string(" \n")
+			_pc = 21727
+			continue
+		elif _pc == 21727:
+			v2 = 1 - itrade.num_trades()
+			_pc = 21748
+			continue
+		elif _pc == 21748:
+			if 0 >= v2:
+				_pc = 21760
+				continue
+			else:
+				_pc = 22000
+				continue
+		elif _pc == 21760:
+			v3 = itrade.nth_trade(v2)
+			if not _pog_eq("", object.string_property(v3, "generated_mission")):
+				_pc = 21823
+				continue
+			else:
+				_pc = 21981
+				continue
+		elif _pc == 21823:
+			_pc = 21912
+			continue
+		elif _pc == 21828:
+			debug.print_string("iMissionGenerator:TestForCompletion testing trade with name ")
+			debug.print_string(object.string_property(v3, "generated_mission"))
+			debug.print_string(" \n")
+			_pc = 21912
+			continue
+		elif _pc == 21912:
 			if _pog_eq(v1, object.string_property(v3, "generated_mission")):
-				if PogRuntime.TRACE:
-					debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, so gen mission isn't closed.\n")
-				return 0
-		v2 = -1 + v2
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator:TestForCompletion found bugger all indication of trades, so gen mission must be finished.\n")
-	return 1
+				_pc = 21949
+				continue
+			else:
+				_pc = 21981
+				continue
+		elif _pc == 21949:
+			_pc = 21975
+			continue
+		elif _pc == 21954:
+			debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, so gen mission isn't closed.\n")
+			_pc = 21975
+			continue
+		elif _pc == 21975:
+			_pc = 22032
+			continue
+		elif _pc == 21981:
+			v2 = -1 + v2
+			_pc = 21748
+			continue
+		elif _pc == 22000:
+			_pc = 22026
+			continue
+		elif _pc == 22005:
+			debug.print_string("iMissionGenerator:TestForCompletion found bugger all indication of trades, so gen mission must be finished.\n")
+			_pc = 22026
+			continue
+		elif _pc == 22026:
+			_pc = 22032
+			continue
+		elif _pc == 22032:
+			return
+		else:
+			return 0
 	return 0
 
 func local_22041(v0) -> Variant:
@@ -1626,68 +2727,180 @@ func local_22041(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Setting up trade within trade system.")
-		debug.print_string("\n")
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator:SetUpTradeDelivery - cargo_needed is ")
-		debug.print_int(object.int_property(v0, "cargo_reward_double_counter"))
-		debug.print_string("\n")
-	if not _pog_eq(global.pog_int("cargo_reward_double_counter"), global.pog_int("cargo_double_counter")):
-		if PogRuntime.TRACE:
+	var _pc: int = 22041
+	while true:
+		if _pc == 22041:
+			_pc = 22095
+			continue
+		elif _pc == 22051:
+			debug.print_string("iMissionGenerator: Setting up trade within trade system.")
+			debug.print_string("\n")
+			_pc = 22095
+			continue
+		elif _pc == 22095:
+			_pc = 22183
+			continue
+		elif _pc == 22100:
+			debug.print_string("iMissionGenerator:SetUpTradeDelivery - cargo_needed is ")
+			debug.print_int(object.int_property(v0, "cargo_reward_double_counter"))
+			debug.print_string("\n")
+			_pc = 22183
+			continue
+		elif _pc == 22183:
+			if not _pog_eq(global.pog_int("cargo_reward_double_counter"), global.pog_int("cargo_double_counter")):
+				_pc = 22228
+				continue
+			else:
+				_pc = 22294
+				continue
+		elif _pc == 22228:
+			_pc = 22294
+			continue
+		elif _pc == 22233:
 			debug.print_string("iMissionGenerator:SetUpTradeDelivery - generated mission with mismatching trades encountered: ")
 			debug.print_string(object.string_property(v0, "mission_name"))
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator:SetUpTradeDelivery - faction to find is ")
-		debug.print_string(object.string_property(v0, "patron_faction"))
-		debug.print_string("\n")
-	v6 = ifaction.find(object.string_property(v0, "patron_faction"))
-	if not (v6):
-		v6 = ifaction.find("Independent")
-		if PogRuntime.TRACE:
+			_pc = 22294
+			continue
+		elif _pc == 22294:
+			_pc = 22383
+			continue
+		elif _pc == 22299:
+			debug.print_string("iMissionGenerator:SetUpTradeDelivery - faction to find is ")
+			debug.print_string(object.string_property(v0, "patron_faction"))
+			debug.print_string("\n")
+			_pc = 22383
+			continue
+		elif _pc == 22383:
+			v6 = ifaction.find(object.string_property(v0, "patron_faction"))
+			if not (v6):
+				_pc = 22439
+				continue
+			else:
+				_pc = 22491
+				continue
+		elif _pc == 22439:
+			v6 = ifaction.find("Independent")
+			_pc = 22491
+			continue
+		elif _pc == 22470:
 			debug.print_string("Trying to find independent faction\n")
-	v5 = 0
-	while object.int_property(v0, "cargo_reward_double_counter") < v5:
-		v1 = await local_29315(v0, "cargo_reward", v5)
-		v2 = await local_29315(v0, "cargo_to_get", v5)
-		v3 = await local_29315(v0, "cargo_reward_quantity", 1 + v5)
-		v4 = await local_29315(v0, "cargo_to_get_quantity", 1 + v5)
-		if PogRuntime.TRACE:
+			_pc = 22491
+			continue
+		elif _pc == 22491:
+			v5 = 0
+			_pc = 22498
+			continue
+		elif _pc == 22498:
+			if object.int_property(v0, "cargo_reward_double_counter") < v5:
+				_pc = 22534
+				continue
+			else:
+				_pc = 23162
+				continue
+		elif _pc == 22534:
+			v1 = await local_29315(v0, "cargo_reward", v5)
+			v2 = await local_29315(v0, "cargo_to_get", v5)
+			v3 = await local_29315(v0, "cargo_reward_quantity", 1 + v5)
+			v4 = await local_29315(v0, "cargo_to_get_quantity", 1 + v5)
+			_pc = 22750
+			continue
+		elif _pc == 22687:
 			debug.print_string("iMissionGenerator:SetUpTradeDelivery - cargo_needed is ")
 			debug.print_int(v1)
 			debug.print_string("\n")
-		if PogRuntime.TRACE:
+			_pc = 22750
+			continue
+		elif _pc == 22750:
+			_pc = 22818
+			continue
+		elif _pc == 22755:
 			debug.print_string("iMissionGenerator:SetUpTradeDelivery - cargo_for is ")
 			debug.print_int(v2)
 			debug.print_string("\n")
-		if PogRuntime.TRACE:
+			_pc = 22818
+			continue
+		elif _pc == 22818:
+			_pc = 22844
+			continue
+		elif _pc == 22823:
 			debug.print_string("Adding trade, w'hoo!\n")
-		if 1000 < v2:
+			_pc = 22844
+			continue
+		elif _pc == 22844:
+			if 1000 < v2:
+				_pc = 22858
+				continue
+			else:
+				_pc = 22908
+				continue
+		elif _pc == 22858:
 			v7 = itrade.create_trade_for_cargo_type(v6, v1, v3, v2, v4, 1)
-		else:
+			_pc = 22957
+			continue
+		elif _pc == 22908:
 			v7 = itrade.create_trade_for_cargo_category(v6, v1, v3, 1000 - v2, v4, 1)
-		object.add_string_property(v7, "generated_mission", object.string_property(v0, "objective_stub"))
-		itrade.offer_trade(v7)
-		if 1 == object.bool_property(v0, "personal_delivery"):
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.SetupTradeDelivery: adding 'personal_delivery' to trade.\n")
+			_pc = 22957
+			continue
+		elif _pc == 22957:
+			object.add_string_property(v7, "generated_mission", object.string_property(v0, "objective_stub"))
+			itrade.offer_trade(v7)
+			if 1 == object.bool_property(v0, "personal_delivery"):
+				_pc = 23059
+				continue
+			else:
+				_pc = 23117
+				continue
+		elif _pc == 23059:
+			_pc = 23085
+			continue
+		elif _pc == 23064:
+			debug.print_string("iMissionGenerator.SetupTradeDelivery: adding 'personal_delivery' to trade.\n")
+			_pc = 23085
+			continue
+		elif _pc == 23085:
 			object.set_int_property(v7, "personal_delivery", 1)
+			_pc = 23143
+			continue
+		elif _pc == 23117:
+			_pc = 23143
+			continue
+		elif _pc == 23122:
+			debug.print_string("iMissionGenerator.SetupTradeDelivery: not adding 'personal_delivery' to trade.\n")
+			_pc = 23143
+			continue
+		elif _pc == 23143:
+			v5 = 2 + v5
+			_pc = 22498
+			continue
+		elif _pc == 23162:
+			return 0
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.SetupTradeDelivery: not adding 'personal_delivery' to trade.\n")
-		v5 = 2 + v5
-	return 0
+			return 0
 	return 0
 
 func local_23165(v0) -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Wait for jafs to be able to deliver via the trading screen.")
-		debug.print_string("\n")
+	var _pc: int = 23165
 	while true:
-		await _pog_wait(500.0)
-		if not (1):
-			break
-	return 0
+		if _pc == 23165:
+			_pc = 23219
+			continue
+		elif _pc == 23175:
+			debug.print_string("iMissionGenerator: Wait for jafs to be able to deliver via the trading screen.")
+			debug.print_string("\n")
+			_pc = 23219
+			continue
+		elif _pc == 23219:
+			await _pog_wait(500.0)
+			if not (1):
+				_pc = 23257
+				continue
+			else:
+				_pc = 23219
+				continue
+		elif _pc == 23257:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_23260(v0) -> Variant:
@@ -1702,88 +2915,218 @@ func local_23260(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v1 = null
-	v5 = iship.find_player_ship()
-	v3 = 0
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Resolving the delivery by player or Jafs")
-		debug.print_string("\n")
-	if _pog_is_null(object.bool_property(v0, "personal_delivery")):
-		await local_23165(v0)
-	else:
-		await local_9666(v0)
-		v4 = isim.cast(object.handle_property(v0, "patron_ship_handle"))
-		while true:
+	var _pc: int = 23260
+	while true:
+		if _pc == 23260:
+			v1 = null
+			v5 = iship.find_player_ship()
+			v3 = 0
+			_pc = 23351
+			continue
+		elif _pc == 23307:
+			debug.print_string("iMissionGenerator: Resolving the delivery by player or Jafs")
+			debug.print_string("\n")
+			_pc = 23351
+			continue
+		elif _pc == 23351:
+			if _pog_is_null(object.bool_property(v0, "personal_delivery")):
+				_pc = 23383
+				continue
+			else:
+				_pc = 23407
+				continue
+		elif _pc == 23383:
+			await local_23165(v0)
+			_pc = 24341
+			continue
+		elif _pc == 23407:
+			await local_9666(v0)
+			v4 = isim.cast(object.handle_property(v0, "patron_ship_handle"))
+			_pc = 23470
+			continue
+		elif _pc == 23470:
 			await _pog_wait(0.5)
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.ResolveDelivery waiting for player to get close to patron.\n")
-			if not (50000.0 > sim.distance_between(v4, v5)):
-				break
-		v1 = list.from_set(sim.children(v5))
-		v6 = list.item_count(v1)
-		while 0 > v6:
+			_pc = 23528
+			continue
+		elif _pc == 23507:
+			debug.print_string("iMissionGenerator.ResolveDelivery waiting for player to get close to patron.\n")
+			_pc = 23528
+			continue
+		elif _pc == 23528:
+			if 50000.0 <= sim.distance_between(v4, v5):
+				_pc = 23562
+				continue
+			else:
+				_pc = 23470
+				continue
+		elif _pc == 23562:
+			v1 = list.from_set(sim.children(v5))
+			v6 = list.item_count(v1)
+			_pc = 23626
+			continue
+		elif _pc == 23626:
+			if 0 > v6:
+				_pc = 23638
+				continue
+			else:
+				_pc = 23796
+				continue
+		elif _pc == 23638:
 			v6 = -1 + v6
 			v2 = sim.cast(list.get_nth(v1, v6))
-			if not (isim.is_docked_to(isim.cast(v5), isim.cast(v2))):
+			if isim.is_docked_to(isim.cast(v5), isim.cast(v2)):
+				_pc = 23748
 				continue
-			if 1 != object.property_exists(v2, "cargo"):
+			else:
+				_pc = 23791
 				continue
+		elif _pc == 23748:
+			if 1 == object.property_exists(v2, "cargo"):
+				_pc = 23780
+				continue
+			else:
+				_pc = 23791
+				continue
+		elif _pc == 23780:
 			v3 = v2
-		if _pog_is_null(object.property_exists(v3, "cargo")) or _pog_is_null(v3):
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.ResolveDelivery has failed, the player isn't carrying cargo.\n")
+			_pc = 23791
+			continue
+		elif _pc == 23791:
+			_pc = 23626
+			continue
+		elif _pc == 23796:
+			if _pog_is_null(object.property_exists(v3, "cargo")) or _pog_is_null(v3):
+				_pc = 23837
+				continue
+			else:
+				_pc = 23877
+				continue
+		elif _pc == 23837:
+			_pc = 23863
+			continue
+		elif _pc == 23842:
+			debug.print_string("iMissionGenerator.ResolveDelivery has failed, the player isn't carrying cargo.\n")
+			_pc = 23863
+			continue
+		elif _pc == 23863:
 			await local_873()
-		if PogRuntime.TRACE:
+			_pc = 23877
+			continue
+		elif _pc == 23877:
+			_pc = 23903
+			continue
+		elif _pc == 23882:
 			debug.print_string("iMissionGenerator.ResolveDelivery player has a cargo pod, formating patron.\n")
-		iai.give_formate_order(v4, v5, 800.0, 0.0, 2000.0)
-		while true:
+			_pc = 23903
+			continue
+		elif _pc == 23903:
+			iai.give_formate_order(v4, v5, 800.0, 0.0, 2000.0)
+			_pc = 23942
+			continue
+		elif _pc == 23942:
 			await _pog_wait(0.5)
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.ResolveDelivery waiting for player to drop off the pod.")
+			_pc = 24000
+			continue
+		elif _pc == 23979:
+			debug.print_string("iMissionGenerator.ResolveDelivery waiting for player to drop off the pod.")
+			_pc = 24000
+			continue
+		elif _pc == 24000:
 			if not (isim.is_docked_to(isim.cast(v5), isim.cast(v3))):
-				break
-		if not _pog_is_null(v4):
+				_pc = 24054
+				continue
+			else:
+				_pc = 23942
+				continue
+		elif _pc == 24054:
+			if not _pog_is_null(v4):
+				_pc = 24067
+				continue
+			else:
+				_pc = 24327
+				continue
+		elif _pc == 24067:
 			iship.install_a_i_pilot(iship.cast(v3), 30.0, 30.0, 0.10000000149011612, "", "", "", "")
 			iai.purge_orders(v4)
 			iai.give_dock_order(iship.cast(v3), iship.cast(v4))
-			while true:
-				await _pog_wait(2.0)
-				if PogRuntime.TRACE:
-					debug.print_string("iMissionGenerator.ResolveDelivery: Waiting for patron and cargo to dock.\n")
-				if not (_pog_is_null(isim.is_docked_to(iship.cast(v3), iship.cast(v4)))):
-					break
-		else:
+			_pc = 24208
+			continue
+		elif _pc == 24208:
+			await _pog_wait(2.0)
+			_pc = 24266
+			continue
+		elif _pc == 24245:
+			debug.print_string("iMissionGenerator.ResolveDelivery: Waiting for patron and cargo to dock.\n")
+			_pc = 24266
+			continue
+		elif _pc == 24266:
+			if not _pog_is_null(isim.is_docked_to(iship.cast(v3), iship.cast(v4))):
+				_pc = 24322
+				continue
+			else:
+				_pc = 24208
+				continue
+		elif _pc == 24322:
+			_pc = 24341
+			continue
+		elif _pc == 24327:
 			await local_873()
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator.ResolveDelivery: Cargo safely delivered to Patron.\n")
-	return 0
-	v1 = null
-	v1 = object.string_property(v0, "success_debrief_comm_type")
-	v2 = null
-	v2 = object.string_property(v0, "success_debrief_comm_reference")
-	v3 = null
-	v3 = object.string_property(v0, "success_payment_type")
-	v4 = null
-	v4 = object.string_property(v0, "success_payment_method")
-	v5 = object.int_property(v0, "success_payment_quantity")
-	v6 = object.int_property(v0, "success_pirate_modifier")
-	v7 = ifaction.find("Player")
-	v8 = ifaction.cast(object.handle_property(v0, "patron_faction_handle"))
-	v9 = ifaction.cast(object.handle_property(v0, "owner_faction_handle"))
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Apply the rewards of success.")
-		debug.print_string("\n")
-	ifaction.increment_feeling(v8, v7, object.float_property(v0, "success_patron_modifier"))
-	ifaction.increment_feeling(v9, v7, object.float_property(v0, "success_target_modifier"))
-	if object.property_exists(v0, "comm_briefing_type"):
-		await local_14543(v0, object.int_property(v0, "comm_briefing_type"), object.string_property(v0, "comm_briefing_reference"), object.string_property(v0, "comm_briefing_subject"))
-	if not (object.property_exists(v0, "success_number_of_missions")):
-		return 0
-	v10 = object.int_property(v0, "success_number_of_missions")
-	while 0 > v10:
-		v10 = -1 + v10
-		v11 = await local_29315(v0, "success_new_mission", v10)
-	return 0
+			_pc = 24341
+			continue
+		elif _pc == 24341:
+			_pc = 24367
+			continue
+		elif _pc == 24346:
+			debug.print_string("iMissionGenerator.ResolveDelivery: Cargo safely delivered to Patron.\n")
+			_pc = 24367
+			continue
+		elif _pc == 24367:
+			return 0
+		elif _pc == 24727:
+			debug.print_string("iMissionGenerator: Apply the rewards of success.")
+			debug.print_string("\n")
+			_pc = 24771
+			continue
+		elif _pc == 24771:
+			ifaction.increment_feeling(v8, v7, object.float_property(v0, "success_patron_modifier"))
+			ifaction.increment_feeling(v9, v7, object.float_property(v0, "success_target_modifier"))
+			if object.property_exists(v0, "comm_briefing_type"):
+				_pc = 24899
+				continue
+			else:
+				_pc = 24993
+				continue
+		elif _pc == 24899:
+			await local_14543(v0, object.int_property(v0, "comm_briefing_type"), object.string_property(v0, "comm_briefing_reference"), object.string_property(v0, "comm_briefing_subject"))
+			_pc = 24993
+			continue
+		elif _pc == 24993:
+			if object.property_exists(v0, "success_number_of_missions"):
+				_pc = 25023
+				continue
+			else:
+				_pc = 25121
+				continue
+		elif _pc == 25023:
+			v10 = object.int_property(v0, "success_number_of_missions")
+			_pc = 25054
+			continue
+		elif _pc == 25054:
+			if 0 > v10:
+				_pc = 25066
+				continue
+			else:
+				_pc = 25121
+				continue
+		elif _pc == 25066:
+			v10 = -1 + v10
+			v11 = await local_29315(v0, "success_new_mission", v10)
+			_pc = 25054
+			continue
+		elif _pc == 25121:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_25152(v0) -> Variant:
@@ -1817,21 +3160,48 @@ func local_25152(v0) -> Variant:
 func new_mission(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	if PogRuntime.TRACE:
-		debug.print_string("start of newmission htask.\n")
-	v1 = _pog_spawn(new_mission_task.bind())
-	v2 = state.find(v1)
-	if not (v2):
-		state.create(v1, 0)
-		v2 = state.find(v1)
-		await local_25152(v2)
-	object.add_string_property(v2, "mission_name", v0)
-	if PogRuntime.TRACE:
-		debug.print_string("state of new function is ")
-		debug.print_handle(v2)
-		debug.print_string("\n")
-	_pog_detach(v1)
-	return v1
+	var _pc: int = 25825
+	while true:
+		if _pc == 25825:
+			_pc = 25856
+			continue
+		elif _pc == 25835:
+			debug.print_string("start of newmission htask.\n")
+			_pc = 25856
+			continue
+		elif _pc == 25856:
+			v1 = _pog_spawn(new_mission_task.bind())
+			v2 = state.find(v1)
+			if not (v2):
+				_pc = 25911
+				continue
+			else:
+				_pc = 25974
+				continue
+		elif _pc == 25911:
+			state.create(v1, 0)
+			v2 = state.find(v1)
+			await local_25152(v2)
+			_pc = 25974
+			continue
+		elif _pc == 25974:
+			object.add_string_property(v2, "mission_name", v0)
+			_pc = 26071
+			continue
+		elif _pc == 26010:
+			debug.print_string("state of new function is ")
+			debug.print_handle(v2)
+			debug.print_string("\n")
+			_pc = 26071
+			continue
+		elif _pc == 26071:
+			_pog_detach(v1)
+			_pc = 26101
+			continue
+		elif _pc == 26101:
+			return
+		else:
+			return 0
 	return 0
 
 func new_mission_task() -> Variant:
@@ -2216,6 +3586,7 @@ func new_mission_task() -> Variant:
 			_pc = 28807
 			continue
 		elif _pc == 28723:
+			state.progress(v11)
 			if not _pog_is_null(state.progress(v11)):
 				_pc = 28749
 				continue
@@ -2297,42 +3668,111 @@ func new_mission_task() -> Variant:
 
 func local_29122(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: returning mission property.")
-		debug.print_string("\n")
-	v2 = string.join(v2, v0)
-	v2 = string.join(v2, "_")
-	v2 = string.join(v2, string.from_int(v1))
-	return _pog_clone(v2)
+	var _pc: int = 29122
+	while true:
+		if _pc == 29122:
+			v2 = null
+			_pc = 29187
+			continue
+		elif _pc == 29143:
+			debug.print_string("iMissionGenerator: returning mission property.")
+			debug.print_string("\n")
+			_pc = 29187
+			continue
+		elif _pc == 29187:
+			v2 = string.join(v2, v0)
+			v2 = string.join(v2, "_")
+			v2 = string.join(v2, string.from_int(v1))
+			_pc = 29305
+			continue
+		elif _pc == 29305:
+			return
+		else:
+			return 0
 	return 0
 
 func local_29315(v0, v1, v2) -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Extracting generated mission integer")
-		debug.print_string("\n")
-	return object.int_property(v0, string.join(v1, string.from_int(v2)))
+	var _pc: int = 29315
+	while true:
+		if _pc == 29315:
+			_pc = 29364
+			continue
+		elif _pc == 29320:
+			debug.print_string("iMissionGenerator: Extracting generated mission integer")
+			debug.print_string("\n")
+			_pc = 29364
+			continue
+		elif _pc == 29364:
+			object.int_property(v0, string.join(v1, string.from_int(v2)))
+			_pc = 29425
+			continue
+		elif _pc == 29425:
+			return
+		else:
+			return 0
 	return 0
 
 func local_29427(v0, v1, v2) -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Extracting generated mission float")
-		debug.print_string("\n")
-	return object.float_property(v0, string.join(v1, string.from_int(v2)))
+	var _pc: int = 29427
+	while true:
+		if _pc == 29427:
+			_pc = 29476
+			continue
+		elif _pc == 29432:
+			debug.print_string("iMissionGenerator: Extracting generated mission float")
+			debug.print_string("\n")
+			_pc = 29476
+			continue
+		elif _pc == 29476:
+			object.float_property(v0, string.join(v1, string.from_int(v2)))
+			_pc = 29537
+			continue
+		elif _pc == 29537:
+			return
+		else:
+			return 0
 	return 0
 
 func local_29539(v0, v1, v2) -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Extracting generated mission string")
-		debug.print_string("\n")
-	return _pog_clone(object.string_property(v0, string.join(v1, string.from_int(v2))))
+	var _pc: int = 29539
+	while true:
+		if _pc == 29539:
+			_pc = 29588
+			continue
+		elif _pc == 29544:
+			debug.print_string("iMissionGenerator: Extracting generated mission string")
+			debug.print_string("\n")
+			_pc = 29588
+			continue
+		elif _pc == 29588:
+			object.string_property(v0, string.join(v1, string.from_int(v2)))
+			_pc = 29650
+			continue
+		elif _pc == 29650:
+			return
+		else:
+			return 0
 	return 0
 
 func local_29653(v0, v1, v2) -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Extracting generated mission handle")
-		debug.print_string("\n")
-	return object.handle_property(v0, string.join(v1, string.from_int(v2)))
+	var _pc: int = 29653
+	while true:
+		if _pc == 29653:
+			_pc = 29702
+			continue
+		elif _pc == 29658:
+			debug.print_string("iMissionGenerator: Extracting generated mission handle")
+			debug.print_string("\n")
+			_pc = 29702
+			continue
+		elif _pc == 29702:
+			object.handle_property(v0, string.join(v1, string.from_int(v2)))
+			_pc = 29763
+			continue
+		elif _pc == 29763:
+			return
+		else:
+			return 0
 	return 0
 
 func local_29765(v0, v1, v2, v3) -> Variant:
@@ -2539,97 +3979,296 @@ func local_33646(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v6 = null
-	v8 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Generated mission complete - set everything accordingly")
-		debug.print_string("\n")
-	if object.property_exists(v0, "success_faction_handle_counter"):
-		if PogRuntime.TRACE:
+	var _pc: int = 33646
+	while true:
+		if _pc == 33646:
+			v6 = null
+			v8 = null
+			_pc = 33722
+			continue
+		elif _pc == 33678:
+			debug.print_string("iMissionGenerator: Generated mission complete - set everything accordingly")
+			debug.print_string("\n")
+			_pc = 33722
+			continue
+		elif _pc == 33722:
+			if object.property_exists(v0, "success_faction_handle_counter"):
+				_pc = 33752
+				continue
+			else:
+				_pc = 33948
+				continue
+		elif _pc == 33752:
+			_pc = 33801
+			continue
+		elif _pc == 33757:
 			debug.print_string("iMissionGenerator: Modifiying one or more success parameters")
 			debug.print_string("\n")
-		v1 = object.int_property(v0, "success_faction_handle_counter")
-		while 0 > v1:
+			_pc = 33801
+			continue
+		elif _pc == 33801:
+			v1 = object.int_property(v0, "success_faction_handle_counter")
+			_pc = 33832
+			continue
+		elif _pc == 33832:
+			if 0 > v1:
+				_pc = 33844
+				continue
+			else:
+				_pc = 33948
+				continue
+		elif _pc == 33844:
 			v2 = ifaction.cast(await local_29653(v0, "success_faction_handle", v1))
 			v3 = await local_29427(v0, "success_faction_modifier", v1)
 			v1 = -1 + v1
-	if object.property_exists(v0, "success_bool_name_counter"):
-		v1 = object.int_property(v0, "success_bool_name_counter")
-		while 0 > v1:
+			_pc = 33832
+			continue
+		elif _pc == 33948:
+			if object.property_exists(v0, "success_bool_name_counter"):
+				_pc = 33978
+				continue
+			else:
+				_pc = 34216
+				continue
+		elif _pc == 33978:
+			v1 = object.int_property(v0, "success_bool_name_counter")
+			_pc = 34009
+			continue
+		elif _pc == 34009:
+			if 0 > v1:
+				_pc = 34021
+				continue
+			else:
+				_pc = 34216
+				continue
+		elif _pc == 34021:
 			v6 = await local_29539(v0, "success_bool_name", v1)
 			v7 = await local_29315(v0, "success_bool_value", v1)
-			if PogRuntime.TRACE:
-				if not (global.exists(v6)):
-					if PogRuntime.TRACE:
-						debug.print_string("iMissionGenerator: OnSuccess took an invalid variable name from the mission generator setup.")
-						debug.print_string("\n")
+			_pc = 34173
+			continue
+		elif _pc == 34100:
+			if not (global.exists(v6)):
+				_pc = 34124
+				continue
+			else:
+				_pc = 34173
+				continue
+		elif _pc == 34124:
+			_pc = 34173
+			continue
+		elif _pc == 34129:
+			debug.print_string("iMissionGenerator: OnSuccess took an invalid variable name from the mission generator setup.")
+			debug.print_string("\n")
+			_pc = 34173
+			continue
+		elif _pc == 34173:
 			global.set_bool(v6, v7)
 			v1 = -1 + v1
-	if 1 == object.bool_property(v0, "personal_delivery"):
-		if PogRuntime.TRACE:
+			_pc = 34009
+			continue
+		elif _pc == 34216:
+			if 1 == object.bool_property(v0, "personal_delivery"):
+				_pc = 34248
+				continue
+			else:
+				_pc = 34580
+				continue
+		elif _pc == 34248:
+			_pc = 34274
+			continue
+		elif _pc == 34253:
 			debug.print_string("iMissionGenerator.OnSuccess: adding cargo to players inventory.\n")
-		if object.property_exists(v0, "cargo_reward_double_counter"):
+			_pc = 34274
+			continue
+		elif _pc == 34274:
+			if object.property_exists(v0, "cargo_reward_double_counter"):
+				_pc = 34304
+				continue
+			else:
+				_pc = 34549
+				continue
+		elif _pc == 34304:
 			v1 = 2 / object.int_property(v0, "cargo_reward_double_counter")
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.OnSuccess:  ")
-				debug.print_int(v1)
-				debug.print_string("\n")
-			while 0 > v1:
-				v5 = await local_29315(v0, "cargo_reward_quantity", 1 - 2 * v1)
-				v4 = await local_29315(v0, "cargo_reward", 2 - 2 * v1)
-				iinventory.add(v4, v5)
-				v1 = 2 - v1
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.OnSuccess: can't find cargo reqard counter.\n")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 34406
+			continue
+		elif _pc == 34343:
+			debug.print_string("iMissionGenerator.OnSuccess:  ")
+			debug.print_int(v1)
+			debug.print_string("\n")
+			_pc = 34406
+			continue
+		elif _pc == 34406:
+			if 0 > v1:
+				_pc = 34418
+				continue
+			else:
+				_pc = 34544
+				continue
+		elif _pc == 34418:
+			v5 = await local_29315(v0, "cargo_reward_quantity", 1 - 2 * v1)
+			v4 = await local_29315(v0, "cargo_reward", 2 - 2 * v1)
+			iinventory.add(v4, v5)
+			v1 = 2 - v1
+			_pc = 34406
+			continue
+		elif _pc == 34544:
+			_pc = 34575
+			continue
+		elif _pc == 34549:
+			_pc = 34575
+			continue
+		elif _pc == 34554:
+			debug.print_string("iMissionGenerator.OnSuccess: can't find cargo reqard counter.\n")
+			_pc = 34575
+			continue
+		elif _pc == 34575:
+			_pc = 34606
+			continue
+		elif _pc == 34580:
+			_pc = 34606
+			continue
+		elif _pc == 34585:
 			debug.print_string("iMissionGenerator.OnSuccess: players already got the trade completed.\n")
-	if object.property_exists(v0, "comm_conclusion_type"):
-		if PogRuntime.TRACE:
+			_pc = 34606
+			continue
+		elif _pc == 34606:
+			if object.property_exists(v0, "comm_conclusion_type"):
+				_pc = 34636
+				continue
+			else:
+				_pc = 34805
+				continue
+		elif _pc == 34636:
+			_pc = 34662
+			continue
+		elif _pc == 34641:
 			debug.print_string("iMissionGenerator: Sending concluding message")
-		v6 = object.string_property(v0, "comm_conclusion_reference")
-		v5 = object.int_property(v0, "comm_conclusion_type")
-		await local_14543(v0, v5, object.string_property(v0, "comm_conclusion_reference"), object.string_property(v0, "comm_conclusion_subject"))
-	else:
-		if PogRuntime.TRACE:
+			_pc = 34662
+			continue
+		elif _pc == 34662:
+			v6 = object.string_property(v0, "comm_conclusion_reference")
+			v5 = object.int_property(v0, "comm_conclusion_type")
+			await local_14543(v0, v5, object.string_property(v0, "comm_conclusion_reference"), object.string_property(v0, "comm_conclusion_subject"))
+			_pc = 34831
+			continue
+		elif _pc == 34805:
+			_pc = 34831
+			continue
+		elif _pc == 34810:
 			debug.print_string("iMissionGenerator: No concluding message to send. ")
-	v8 = object.string_property(v0, "objective_stub")
-	v9 = 1 - itrade.num_trades()
-	while 0 >= v9:
-		v10 = itrade.nth_trade(v9)
-		if not _pog_eq("", object.string_property(v10, "generated_mission")):
+			_pc = 34831
+			continue
+		elif _pc == 34831:
+			v8 = object.string_property(v0, "objective_stub")
+			v9 = 1 - itrade.num_trades()
+			_pc = 34884
+			continue
+		elif _pc == 34884:
+			if 0 >= v9:
+				_pc = 34896
+				continue
+			else:
+				_pc = 35060
+				continue
+		elif _pc == 34896:
+			v10 = itrade.nth_trade(v9)
+			if not _pog_eq("", object.string_property(v10, "generated_mission")):
+				_pc = 34959
+				continue
+			else:
+				_pc = 35041
+				continue
+		elif _pc == 34959:
 			if _pog_eq(v8, object.string_property(v10, "generated_mission")):
-				if PogRuntime.TRACE:
-					debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, removing as complete.\n")
-				itrade.remove_trade(v10)
-		v9 = -1 + v9
-	await local_2088(v0, "_deliver", 2)
-	global.set_int("gl_missgen_number_currently_active", 1 - global.pog_int("gl_missgen_number_currently_active"))
-	return 0
+				_pc = 34996
+				continue
+			else:
+				_pc = 35041
+				continue
+		elif _pc == 34996:
+			_pc = 35022
+			continue
+		elif _pc == 35001:
+			debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, removing as complete.\n")
+			_pc = 35022
+			continue
+		elif _pc == 35022:
+			itrade.remove_trade(v10)
+			_pc = 35041
+			continue
+		elif _pc == 35041:
+			v9 = -1 + v9
+			_pc = 34884
+			continue
+		elif _pc == 35060:
+			await local_2088(v0, "_deliver", 2)
+			global.set_int("gl_missgen_number_currently_active", 1 - global.pog_int("gl_missgen_number_currently_active"))
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_35147(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v1 = object.string_property(v0, "objective_stub")
-	v3 = 1 - itrade.num_trades()
-	while 0 >= v3:
-		v2 = itrade.nth_trade(v3)
-		if not _pog_eq("", object.string_property(v2, "generated_mission")):
+	var _pc: int = 35147
+	while true:
+		if _pc == 35147:
+			v1 = null
+			v1 = object.string_property(v0, "objective_stub")
+			v3 = 1 - itrade.num_trades()
+			_pc = 35216
+			continue
+		elif _pc == 35216:
+			if 0 >= v3:
+				_pc = 35228
+				continue
+			else:
+				_pc = 35392
+				continue
+		elif _pc == 35228:
+			v2 = itrade.nth_trade(v3)
+			if not _pog_eq("", object.string_property(v2, "generated_mission")):
+				_pc = 35291
+				continue
+			else:
+				_pc = 35373
+				continue
+		elif _pc == 35291:
 			if _pog_eq(v1, object.string_property(v2, "generated_mission")):
-				if PogRuntime.TRACE:
-					debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, removing as failed.\n")
-				itrade.remove_trade(v2)
-		v3 = -1 + v3
-	return 0
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: Tidying up the generated mission before shutting it down.")
-		debug.print_string("\n")
-	state.set_progress(v0, 3)
-	return 0
+				_pc = 35328
+				continue
+			else:
+				_pc = 35373
+				continue
+		elif _pc == 35328:
+			_pc = 35354
+			continue
+		elif _pc == 35333:
+			debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, removing as failed.\n")
+			_pc = 35354
+			continue
+		elif _pc == 35354:
+			itrade.remove_trade(v2)
+			_pc = 35373
+			continue
+		elif _pc == 35373:
+			v3 = -1 + v3
+			_pc = 35216
+			continue
+		elif _pc == 35392:
+			return 0
+		elif _pc == 35412:
+			debug.print_string("iMissionGenerator: Tidying up the generated mission before shutting it down.")
+			debug.print_string("\n")
+			_pc = 35456
+			continue
+		elif _pc == 35456:
+			state.set_progress(v0, 3)
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_35480(v0) -> Variant:
@@ -2639,21 +4278,50 @@ func local_35480(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = group.group_count(v0)
-	v2 = 1 - v1
-	while 0 >= v2:
-		v5 = group.nth_group(v0, v2)
-		v3 = group.sim_count(v0)
-		v4 = 1 - group.sim_count(v5)
-		while 0 >= v4:
+	var _pc: int = 35480
+	while true:
+		if _pc == 35480:
+			v1 = group.group_count(v0)
+			v2 = 1 - v1
+			_pc = 35522
+			continue
+		elif _pc == 35522:
+			if 0 >= v2:
+				_pc = 35534
+				continue
+			else:
+				_pc = 35784
+				continue
+		elif _pc == 35534:
+			v5 = group.nth_group(v0, v2)
+			v3 = group.sim_count(v0)
+			v4 = 1 - group.sim_count(v5)
+			_pc = 35613
+			continue
+		elif _pc == 35613:
+			if 0 >= v4:
+				_pc = 35625
+				continue
+			else:
+				_pc = 35721
+				continue
+		elif _pc == 35625:
 			v6 = group.nth_sim(v5, v4)
 			group.add_sim(v0, v6)
 			group.remove_nth_sim(v5, v4)
 			v4 = -1 + v4
-		group.remove_nth_group(v0, v2)
-		group.destroy(v5, 0)
-		v2 = -1 + v2
-	return 0
+			_pc = 35613
+			continue
+		elif _pc == 35721:
+			group.remove_nth_group(v0, v2)
+			group.destroy(v5, 0)
+			v2 = -1 + v2
+			_pc = 35522
+			continue
+		elif _pc == 35784:
+			return 0
+		else:
+			return 0
 	return 0
 
 func base_jafs_checker() -> Variant:
@@ -2682,42 +4350,105 @@ func monkey_about(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
-	v2 = global.pog_set("g_filtered_system_habitats")
-	v3 = null
-	v3 = sim.children(v0)
-	v5 = v1
-	v6 = 800.0
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator.MonkeyAbout: vessel orders passed to \n")
-		debug.print_string(object.string_property(v0, "name"))
-		debug.print_string(" monkeying about location ")
-		debug.print_string(imapentity.pog_name(v1))
-		debug.print_string("\n")
-	v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
-	sim.place_near(v4, v5, 2500.0 + math.random(2.0 / v6, v6))
-	iai.give_approach_order(v0, v4)
+	var _pc: int = 36009
 	while true:
-		await _pog_wait(30)
-		if not (sim.cast(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.monkeyabout: monkier nolonger Exists, ending task\n")
-			break
-		if PogRuntime.TRACE:
+		if _pc == 36009:
+			v2 = null
+			v2 = global.pog_set("g_filtered_system_habitats")
+			v3 = null
+			v3 = sim.children(v0)
+			v5 = v1
+			v6 = 800.0
+			_pc = 36254
+			continue
+		elif _pc == 36115:
+			debug.print_string("iMissionGenerator.MonkeyAbout: vessel orders passed to \n")
+			debug.print_string(object.string_property(v0, "name"))
+			debug.print_string(" monkeying about location ")
+			debug.print_string(imapentity.pog_name(v1))
+			debug.print_string("\n")
+			_pc = 36254
+			continue
+		elif _pc == 36254:
+			v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
+			sim.place_near(v4, v5, 2500.0 + math.random(2.0 / v6, v6))
+			iai.give_approach_order(v0, v4)
+			_pc = 36374
+			continue
+		elif _pc == 36374:
+			await _pog_frame()
+			if _pog_every(36375, 30.0):
+				_pc = 36388
+				continue
+			else:
+				_pc = 36805
+				continue
+		elif _pc == 36388:
+			if not (sim.cast(v0)):
+				_pc = 36412
+				continue
+			else:
+				_pc = 36443
+				continue
+		elif _pc == 36412:
+			_pc = 36438
+			continue
+		elif _pc == 36417:
+			debug.print_string("iMissionGenerator.monkeyabout: monkier nolonger Exists, ending task\n")
+			_pc = 36438
+			continue
+		elif _pc == 36438:
+			_pc = 36852
+			continue
+		elif _pc == 36443:
+			_pc = 36532
+			continue
+		elif _pc == 36448:
 			debug.print_string("iMissionGenerator.monkeyabout: Checking monkier ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string(" for its order status\n")
-		if 1000.0 < sim.distance_between(v0, v4) or iai.is_order_complete(v0):
+			_pc = 36532
+			continue
+		elif _pc == 36532:
+			if 1000.0 < sim.distance_between(v0, v4) or iai.is_order_complete(v0):
+				_pc = 36585
+				continue
+			else:
+				_pc = 36805
+				continue
+		elif _pc == 36585:
 			sim.destroy(v4)
 			v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
 			sim.place_near(v4, v5, 2500.0 + math.random(2.0 / v6, v6))
 			isim.set_sensor_visibility(isim.cast(v4), 0)
 			iai.give_approach_order(v0, v4)
 			v6 = math.random(2.0, 10.0) * math.random(1000.0, 10000.0)
-		if await iutilities.player_in_range(v0):
+			_pc = 36805
 			continue
-		break
-	return
+		elif _pc == 36805:
+			if _pog_every(36805, 120.0):
+				_pc = 36818
+				continue
+			else:
+				_pc = 36847
+				continue
+		elif _pc == 36818:
+			if not (await iutilities.player_in_range(v0)):
+				_pc = 36842
+				continue
+			else:
+				_pc = 36847
+				continue
+		elif _pc == 36842:
+			_pc = 36852
+			continue
+		elif _pc == 36847:
+			_pc = 36374
+			continue
+		elif _pc == 36852:
+			return
+		else:
+			return 0
 	return 0
 
 func local_36870(v0, v1) -> Variant:
@@ -2727,57 +4458,152 @@ func local_36870(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v7 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator.StickOnCargo: trying to add physical cargo pods\n")
-	if 4 < idockport.count(v1, 3, 1):
-		return 0
-	else:
-		object.add_int_property(v0, "proper_cargo", 1)
-	if object.property_exists(v0, "cargo_double_counter") != 1:
-		return 0
-	v2 = object.int_property(v0, "cargo_double_counter")
-	v2 = 2 / v2
-	v4 = 0
-	while v2 < v4:
-		v3 = await local_29315(v0, "cargo_to_get", 2 * v4)
-		v5 = await local_29315(v0, "cargo_to_get_quantity", 1 + 2 * v4)
-		if 1000 > v3:
+	var _pc: int = 36870
+	while true:
+		if _pc == 36870:
+			v7 = null
+			_pc = 36912
+			continue
+		elif _pc == 36891:
+			debug.print_string("iMissionGenerator.StickOnCargo: trying to add physical cargo pods\n")
+			_pc = 36912
+			continue
+		elif _pc == 36912:
+			if 4 < idockport.count(v1, 3, 1):
+				_pc = 36941
+				continue
+			else:
+				_pc = 36951
+				continue
+		elif _pc == 36941:
+			_pc = 37416
+			continue
+		elif _pc == 36946:
+			_pc = 36978
+			continue
+		elif _pc == 36951:
+			object.add_int_property(v0, "proper_cargo", 1)
+			_pc = 36978
+			continue
+		elif _pc == 36978:
+			if object.property_exists(v0, "cargo_double_counter") == 1:
+				_pc = 37010
+				continue
+			else:
+				_pc = 37416
+				continue
+		elif _pc == 37010:
+			v2 = object.int_property(v0, "cargo_double_counter")
+			v2 = 2 / v2
+			v4 = 0
+			_pc = 37062
+			continue
+		elif _pc == 37062:
+			if v2 < v4:
+				_pc = 37078
+				continue
+			else:
+				_pc = 37416
+				continue
+		elif _pc == 37078:
+			v3 = await local_29315(v0, "cargo_to_get", 2 * v4)
+			v5 = await local_29315(v0, "cargo_to_get_quantity", 1 + 2 * v4)
+			if 1000 > v3:
+				_pc = 37172
+				continue
+			else:
+				_pc = 37211
+				continue
+		elif _pc == 37172:
 			v3 = 1000 - v3
 			v3 = iinventory.cargo_type_from_category_index(v3)
-		while true:
+			_pc = 37211
+			continue
+		elif _pc == 37211:
 			v6 = iship.create("ini:/sims/ships/utility/cargo_pod", icargo.pog_name(icargo.find(v3)))
 			object.add_int_property(v6, "cargo", v3)
 			iship.dock(v6, v1)
 			sim.set_cullable(v6, 0)
 			v5 = -1 + v5
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator.StickOnCargo: adding actual cargo pod.\n")
-			if not (0 > v5):
-				break
-		v4 = 1 + v4
-	return 0
+			_pc = 37386
+			continue
+		elif _pc == 37365:
+			debug.print_string("iMissionGenerator.StickOnCargo: adding actual cargo pod.\n")
+			_pc = 37386
+			continue
+		elif _pc == 37386:
+			if 0 <= v5:
+				_pc = 37398
+				continue
+			else:
+				_pc = 37211
+				continue
+		elif _pc == 37398:
+			v4 = 1 + v4
+			_pc = 37062
+			continue
+		elif _pc == 37416:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_37426(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v1 = v0
-	v3 = 1 - itrade.num_trades()
-	while 0 >= v3:
-		v2 = itrade.nth_trade(v3)
-		if not _pog_eq("", object.string_property(v2, "generated_mission")):
+	var _pc: int = 37426
+	while true:
+		if _pc == 37426:
+			v1 = null
+			v1 = v0
+			v3 = 1 - itrade.num_trades()
+			_pc = 37474
+			continue
+		elif _pc == 37474:
+			if 0 >= v3:
+				_pc = 37486
+				continue
+			else:
+				_pc = 37650
+				continue
+		elif _pc == 37486:
+			v2 = itrade.nth_trade(v3)
+			if not _pog_eq("", object.string_property(v2, "generated_mission")):
+				_pc = 37549
+				continue
+			else:
+				_pc = 37631
+				continue
+		elif _pc == 37549:
 			if _pog_eq(v1, object.string_property(v2, "generated_mission")):
-				if PogRuntime.TRACE:
-					debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, removing as failed.\n")
-				itrade.remove_trade(v2)
-		v3 = -1 + v3
-	iobjectives.remove(string.join(v0, "_objectives_collect"))
-	iobjectives.remove(string.join(v0, "_objectives_deliver"))
-	iobjectives.remove(string.join(v0, "_objectives_goto"))
-	return 0
+				_pc = 37586
+				continue
+			else:
+				_pc = 37631
+				continue
+		elif _pc == 37586:
+			_pc = 37612
+			continue
+		elif _pc == 37591:
+			debug.print_string("iMissionGenerator:TestForCompletion found a referenced trade, removing as failed.\n")
+			_pc = 37612
+			continue
+		elif _pc == 37612:
+			itrade.remove_trade(v2)
+			_pc = 37631
+			continue
+		elif _pc == 37631:
+			v3 = -1 + v3
+			_pc = 37474
+			continue
+		elif _pc == 37650:
+			iobjectives.remove(string.join(v0, "_objectives_collect"))
+			iobjectives.remove(string.join(v0, "_objectives_deliver"))
+			iobjectives.remove(string.join(v0, "_objectives_goto"))
+			return 0
+		else:
+			return 0
 	return 0
 
 func flush_g_ms(v0) -> Variant:

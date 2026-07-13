@@ -23,7 +23,16 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	return inifile.cast(global.handle("g_stock_utterance_ini"))
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			inifile.cast(global.handle("g_stock_utterance_ini"))
+			_pc = 37
+			continue
+		elif _pc == 37:
+			return
+		else:
+			return 0
 	return 0
 
 func warn_vessel() -> Variant:
@@ -34,18 +43,42 @@ func warn_vessel() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v5 = null
-	if 1 == object.i_d_modulus(v0, 2):
-		v5 = "_male_1"
-	else:
-		v5 = "_female_1"
-	v4 = await local_0()
-	v3 = inifile.pog_int(v4, "stock_warn", "num_entries", 1)
-	v2 = math.random_int(1, v3)
-	v6 = iship.find_player_ship()
-	if not (50000.0 < sim.distance_between(v6, v0) and _pog_eq(v6, v1)):
-		return
-	icomms.shout(v0, "", string.join(string.join("stock_warn_", string.from_int(v2)), v5))
-	return
+	var _pc: int = 39
+	while true:
+		if _pc == 39:
+			v5 = null
+			if 1 == object.i_d_modulus(v0, 2):
+				_pc = 82
+				continue
+			else:
+				_pc = 100
+				continue
+		elif _pc == 82:
+			v5 = "_male_1"
+			_pc = 113
+			continue
+		elif _pc == 100:
+			v5 = "_female_1"
+			_pc = 113
+			continue
+		elif _pc == 113:
+			v4 = await local_0()
+			v3 = inifile.pog_int(v4, "stock_warn", "num_entries", 1)
+			v2 = math.random_int(1, v3)
+			v6 = iship.find_player_ship()
+			if 50000.0 < sim.distance_between(v6, v0) and _pog_eq(v6, v1):
+				_pc = 260
+				continue
+			else:
+				_pc = 344
+				continue
+		elif _pc == 260:
+			icomms.shout(v0, "", string.join(string.join("stock_warn_", string.from_int(v2)), v5))
+			_pc = 344
+			continue
+		elif _pc == 344:
+			return
+		else:
+			return 0
 	return 0
 

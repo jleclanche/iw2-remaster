@@ -50,121 +50,409 @@ func detector() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v2 = null
-	v6 = null
-	if PogRuntime.TRACE:
-		debug.print_string("iBackToBase.Detector started searching.\n")
+	var _pc: int = 0
 	while true:
-		while true:
-			await _pog_wait(2.1)
+		if _pc == 0:
+			v2 = null
+			v6 = null
+			_pc = 53
+			continue
+		elif _pc == 32:
+			debug.print_string("iBackToBase.Detector started searching.\n")
+			_pc = 53
+			continue
+		elif _pc == 53:
+			_pc = 58
+			continue
+		elif _pc == 58:
+			await _pog_frame()
+			if _pog_every(59, 2.0999999046325684):
+				_pc = 72
+				continue
+			else:
+				_pc = 901
+				continue
+		elif _pc == 72:
 			if object.property_exists(v0, "player_dying"):
-				if PogRuntime.TRACE:
-					debug.print_string("iBackToBase.Detector ( Schedule ) - Player is dying. Quitting.\n")
-				return
+				_pc = 102
+				continue
+			else:
+				_pc = 133
+				continue
+		elif _pc == 102:
+			_pc = 128
+			continue
+		elif _pc == 107:
+			debug.print_string("iBackToBase.Detector ( Schedule ) - Player is dying. Quitting.\n")
+			_pc = 128
+			continue
+		elif _pc == 128:
+			_pc = 1964
+			continue
+		elif _pc == 133:
 			v1 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
 			v0 = iship.find_player_ship()
 			if 200000.0 < sim.distance_between(v0, v1):
-				v9 = sim.find_subsim_by_name(v0, "system_refuel_port")
-				if _pog_is_null(v9):
-					if PogRuntime.TRACE:
-						debug.print_string("iBackToBase.Detector: Adding bodge dockport\n")
-					v9 = subsim.cast(subsim.create("ini:/subsims/dockports/refuel_port"))
-					sim.add_subsim(v0, v9)
-				if _pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 20000.0 < sim.distance_between(v0, v1):
-					v7 = 0
-					break
+				_pc = 232
+				continue
 			else:
-				v9 = sim.find_subsim_by_name(v0, "system_refuel_port")
-				if not _pog_is_null(v9):
-					if PogRuntime.TRACE:
-						debug.print_string("iBackToBase.Detector: Destroying bodge dockport\n")
-					subsim.destroy(v9)
-				if not (_pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 200000.0 > sim.distance_between(v0, v1)):
-					continue
-				if not (iship.is_l_d_s_inhibited(v0)):
-					if not (idirector.is_busy()):
-						if PogRuntime.TRACE:
-							debug.print_string("iBackToBase.detector: Attempting to return to base. Inhibit level = ")
-						if PogRuntime.TRACE:
-							debug.print_int(global.pog_int("g_ibacktobase_level"))
-						if PogRuntime.TRACE:
-							debug.print_string(" \n")
-						if 0 <= global.pog_int("g_ibacktobase_level"):
-							v7 = 1
-							break
-						else:
-							if PogRuntime.TRACE:
-								debug.print_string("iBackToBase.Detector: ( Schedule ) Cannot return to base: Inhibit level != 0 \n")
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iBackToBase.Detector: ( Schedule ) Cannot return to base: Director is busy. \n")
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iBackToBase.Detector: ( Schedule ) Cannot return to base: LDS inhibited. \n")
-		v8 = 1
-		v10 = 10
-		while 1 >= v10:
-			if PogRuntime.TRACE:
-				debug.print_string("iBackToBase.Detector - Time remaining until base return: ")
-				debug.print_int(v10)
-				debug.print_string("\n")
+				_pc = 463
+				continue
+		elif _pc == 232:
+			v9 = sim.find_subsim_by_name(v0, "system_refuel_port")
+			if _pog_is_null(v9):
+				_pc = 276
+				continue
+			else:
+				_pc = 365
+				continue
+		elif _pc == 276:
+			_pc = 302
+			continue
+		elif _pc == 281:
+			debug.print_string("iBackToBase.Detector: Adding bodge dockport\n")
+			_pc = 302
+			continue
+		elif _pc == 302:
+			v9 = subsim.cast(subsim.create("ini:/subsims/dockports/refuel_port"))
+			sim.add_subsim(v0, v9)
+			_pc = 365
+			continue
+		elif _pc == 365:
+			if _pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 20000.0 < sim.distance_between(v0, v1):
+				_pc = 446
+				continue
+			else:
+				_pc = 458
+				continue
+		elif _pc == 446:
+			v7 = 0
+			_pc = 906
+			continue
+		elif _pc == 458:
+			_pc = 901
+			continue
+		elif _pc == 463:
+			v9 = sim.find_subsim_by_name(v0, "system_refuel_port")
+			if not _pog_is_null(v9):
+				_pc = 507
+				continue
+			else:
+				_pc = 552
+				continue
+		elif _pc == 507:
+			_pc = 533
+			continue
+		elif _pc == 512:
+			debug.print_string("iBackToBase.Detector: Destroying bodge dockport\n")
+			_pc = 533
+			continue
+		elif _pc == 533:
+			subsim.destroy(v9)
+			_pc = 552
+			continue
+		elif _pc == 552:
+			if _pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 200000.0 > sim.distance_between(v0, v1):
+				_pc = 633
+				continue
+			else:
+				_pc = 901
+				continue
+		elif _pc == 633:
+			if not (iship.is_l_d_s_inhibited(v0)):
+				_pc = 657
+				continue
+			else:
+				_pc = 875
+				continue
+		elif _pc == 657:
+			if not (idirector.is_busy()):
+				_pc = 676
+				continue
+			else:
+				_pc = 844
+				continue
+		elif _pc == 676:
+			_pc = 703
+			continue
+		elif _pc == 682:
+			debug.print_string("iBackToBase.detector: Attempting to return to base. Inhibit level = ")
+			_pc = 703
+			continue
+		elif _pc == 703:
+			_pc = 742
+			continue
+		elif _pc == 708:
+			debug.print_int(global.pog_int("g_ibacktobase_level"))
+			_pc = 742
+			continue
+		elif _pc == 742:
+			_pc = 768
+			continue
+		elif _pc == 747:
+			debug.print_string(" \n")
+			_pc = 768
+			continue
+		elif _pc == 768:
+			if 0 <= global.pog_int("g_ibacktobase_level"):
+				_pc = 796
+				continue
+			else:
+				_pc = 813
+				continue
+		elif _pc == 796:
+			v7 = 1
+			_pc = 906
+			continue
+		elif _pc == 808:
+			_pc = 839
+			continue
+		elif _pc == 813:
+			_pc = 839
+			continue
+		elif _pc == 818:
+			debug.print_string("iBackToBase.Detector: ( Schedule ) Cannot return to base: Inhibit level != 0 \n")
+			_pc = 839
+			continue
+		elif _pc == 839:
+			_pc = 870
+			continue
+		elif _pc == 844:
+			_pc = 870
+			continue
+		elif _pc == 849:
+			debug.print_string("iBackToBase.Detector: ( Schedule ) Cannot return to base: Director is busy. \n")
+			_pc = 870
+			continue
+		elif _pc == 870:
+			_pc = 901
+			continue
+		elif _pc == 875:
+			_pc = 901
+			continue
+		elif _pc == 880:
+			debug.print_string("iBackToBase.Detector: ( Schedule ) Cannot return to base: LDS inhibited. \n")
+			_pc = 901
+			continue
+		elif _pc == 901:
+			_pc = 58
+			continue
+		elif _pc == 906:
+			v8 = 1
+			v10 = 10
+			_pc = 922
+			continue
+		elif _pc == 922:
+			if 1 >= v10:
+				_pc = 934
+				continue
+			else:
+				_pc = 1393
+				continue
+		elif _pc == 934:
+			_pc = 1000
+			continue
+		elif _pc == 939:
+			debug.print_string("iBackToBase.Detector - Time remaining until base return: ")
+			debug.print_int(v10)
+			debug.print_string("\n")
+			_pc = 1000
+			continue
+		elif _pc == 1000:
 			await _pog_wait(1.0)
 			if object.property_exists(v0, "player_dying"):
-				if PogRuntime.TRACE:
-					debug.print_string("iBackToBase.Detector ( Sanity Check ) - Player is dying. Detector quitting.\n")
-				return
+				_pc = 1062
+				continue
+			else:
+				_pc = 1093
+				continue
+		elif _pc == 1062:
+			_pc = 1088
+			continue
+		elif _pc == 1067:
+			debug.print_string("iBackToBase.Detector ( Sanity Check ) - Player is dying. Detector quitting.\n")
+			_pc = 1088
+			continue
+		elif _pc == 1088:
+			_pc = 1964
+			continue
+		elif _pc == 1093:
 			if v7:
-				if 0 > global.pog_int("g_ibacktobase_level"):
-					if PogRuntime.TRACE:
-						debug.print_string("iBackToBase.Detector ( Sanity Check ) - Back to base is inhibited. Base return aborted.\n")
-					v8 = 0
-					break
+				_pc = 1103
+				continue
+			else:
+				_pc = 1168
+				continue
+		elif _pc == 1103:
+			if 0 > global.pog_int("g_ibacktobase_level"):
+				_pc = 1130
+				continue
+			else:
+				_pc = 1168
+				continue
+		elif _pc == 1130:
+			_pc = 1156
+			continue
+		elif _pc == 1135:
+			debug.print_string("iBackToBase.Detector ( Sanity Check ) - Back to base is inhibited. Base return aborted.\n")
+			_pc = 1156
+			continue
+		elif _pc == 1156:
+			v8 = 0
+			_pc = 1393
+			continue
+		elif _pc == 1168:
 			if 4 != iai.current_order_type(v0) or not _pog_eq(v1, iai.current_order_target(v0)):
-				v8 = 0
-				if PogRuntime.TRACE:
-					debug.print_string("iBackToBase.Detector ( Sanity Check ) - Player is is not docking to base. Base return Aborted.\n")
-				break
+				_pc = 1219
+				continue
+			else:
+				_pc = 1257
+				continue
+		elif _pc == 1219:
+			v8 = 0
+			_pc = 1252
+			continue
+		elif _pc == 1231:
+			debug.print_string("iBackToBase.Detector ( Sanity Check ) - Player is is not docking to base. Base return Aborted.\n")
+			_pc = 1252
+			continue
+		elif _pc == 1252:
+			_pc = 1393
+			continue
+		elif _pc == 1257:
 			if iship.is_l_d_s_inhibited(v0):
-				v8 = 0
-				if PogRuntime.TRACE:
-					debug.print_string("iBackToBase.Detector: ( Sanity Check ) Confirm failed -  Ship is LDS inhibited. Base return Aborted.\n")
-				break
+				_pc = 1280
+				continue
+			else:
+				_pc = 1318
+				continue
+		elif _pc == 1280:
+			v8 = 0
+			_pc = 1313
+			continue
+		elif _pc == 1292:
+			debug.print_string("iBackToBase.Detector: ( Sanity Check ) Confirm failed -  Ship is LDS inhibited. Base return Aborted.\n")
+			_pc = 1313
+			continue
+		elif _pc == 1313:
+			_pc = 1393
+			continue
+		elif _pc == 1318:
 			if idirector.is_busy():
-				v8 = 0
-				if PogRuntime.TRACE:
-					debug.print_string("iBackToBase.Detector: ( Sanity Check ) Confirm failed -  Director is busy. Aborting. \n")
-				break
+				_pc = 1336
+				continue
+			else:
+				_pc = 1374
+				continue
+		elif _pc == 1336:
+			v8 = 0
+			_pc = 1369
+			continue
+		elif _pc == 1348:
+			debug.print_string("iBackToBase.Detector: ( Sanity Check ) Confirm failed -  Director is busy. Aborting. \n")
+			_pc = 1369
+			continue
+		elif _pc == 1369:
+			_pc = 1393
+			continue
+		elif _pc == 1374:
 			v10 = -1 + v10
-		if not (_pog_is_null(v8)):
-			break
-	if object.property_exists(v0, "player_dying"):
-		if PogRuntime.TRACE:
+			_pc = 922
+			continue
+		elif _pc == 1393:
+			if not _pog_is_null(v8):
+				_pc = 1405
+				continue
+			else:
+				_pc = 53
+				continue
+		elif _pc == 1405:
+			if object.property_exists(v0, "player_dying"):
+				_pc = 1435
+				continue
+			else:
+				_pc = 1466
+				continue
+		elif _pc == 1435:
+			_pc = 1461
+			continue
+		elif _pc == 1440:
 			debug.print_string("iBackToBase.Detector ( Just before cut-scene ) - Player is dying. Quitting.\n")
-	else:
-		if v7:
+			_pc = 1461
+			continue
+		elif _pc == 1461:
+			_pc = 1964
+			continue
+		elif _pc == 1466:
+			if v7:
+				_pc = 1476
+				continue
+			else:
+				_pc = 1518
+				continue
+		elif _pc == 1476:
 			await icutsceneutilities.handle_abort(_pog_spawn(local_3520.bind(v0, v1)))
-		else:
+			_pc = 1555
+			continue
+		elif _pc == 1518:
 			await icutsceneutilities.handle_abort(_pog_spawn(local_6393.bind(v0, v1)))
-		if object.property_exists(v0, "player_dying"):
-			return
-		igame.enable_blackout(1)
-		sim.set_collision(v0, 0)
-		sim.set_velocity(v0, 0.0, 0.0, 0.0)
-		sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-		sim.place_relative_to_inside(v0, v1, 0.0, 0.0, 1800.0)
-		sim.point_at(v0, v1)
-		sim.destroy(v3)
-		sim.destroy(v4)
-		sim.destroy(v5)
-		if await ijafsscript.jafs_active():
+			_pc = 1555
+			continue
+		elif _pc == 1555:
+			if not (object.property_exists(v0, "player_dying")):
+				_pc = 1586
+				continue
+			else:
+				_pc = 1964
+				continue
+		elif _pc == 1586:
+			igame.enable_blackout(1)
+			sim.set_collision(v0, 0)
+			sim.set_velocity(v0, 0.0, 0.0, 0.0)
+			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+			sim.place_relative_to_inside(v0, v1, 0.0, 0.0, 1800.0)
+			sim.point_at(v0, v1)
+			sim.destroy(v3)
+			sim.destroy(v4)
+			sim.destroy(v5)
+			if await ijafsscript.jafs_active():
+				_pc = 1828
+				continue
+			else:
+				_pc = 1843
+				continue
+		elif _pc == 1828:
 			await ijafsscript.collect_pods(1)
-		v6 = "/movies/OldCalShutdown"
-		if global.exists("g_current_act"):
+			_pc = 1843
+			continue
+		elif _pc == 1843:
+			v6 = "/movies/OldCalShutdown"
+			if global.exists("g_current_act"):
+				_pc = 1881
+				continue
+			else:
+				_pc = 1921
+				continue
+		elif _pc == 1881:
 			if _pog_is_null(global.pog_int("g_current_act")):
-				v6 = "/movies/YoungCalShutdown"
-		gui.set_screen("icSPPlayerBaseScreen")
-		await _pog_movie(v6)
-	return
+				_pc = 1908
+				continue
+			else:
+				_pc = 1921
+				continue
+		elif _pc == 1908:
+			v6 = "/movies/YoungCalShutdown"
+			_pc = 1921
+			continue
+		elif _pc == 1921:
+			gui.set_screen("icSPPlayerBaseScreen")
+			await _pog_movie(v6)
+			_pc = 1964
+			continue
+		elif _pc == 1964:
+			return
+		else:
+			return 0
 	return 0
 
 func initialise() -> Variant:
@@ -243,6 +531,7 @@ func initialise() -> Variant:
 			_pc = 2248
 			continue
 		elif _pc == 2212:
+			global.pog_int("g_current_act")
 			if not _pog_is_null(global.pog_int("g_current_act")):
 				_pc = 2240
 				continue
@@ -388,62 +677,126 @@ func inhibit() -> Variant:
 	return 0
 
 func allow() -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iBackToBase.Allow: Allowing iBackToBase.\n")
-	if not (global.exists("g_ibacktobase_level")):
-		if PogRuntime.TRACE:
+	var _pc: int = 3222
+	while true:
+		if _pc == 3222:
+			_pc = 3248
+			continue
+		elif _pc == 3227:
+			debug.print_string("iBackToBase.Allow: Allowing iBackToBase.\n")
+			_pc = 3248
+			continue
+		elif _pc == 3248:
+			if not (global.exists("g_ibacktobase_level")):
+				_pc = 3274
+				continue
+			else:
+				_pc = 3324
+				continue
+		elif _pc == 3274:
+			_pc = 3300
+			continue
+		elif _pc == 3279:
 			debug.print_string("iBackToBase.Allow: Global g_ibacktobase_level not initialised, so I'm initialising it now.\n")
-		global.create_int("g_ibacktobase_level", 10, 0)
-	if 0 > global.pog_int("g_ibacktobase_level"):
-		global.set_int("g_ibacktobase_level", 1 - global.pog_int("g_ibacktobase_level"))
-	else:
-		if PogRuntime.TRACE:
+			_pc = 3300
+			continue
+		elif _pc == 3300:
+			global.create_int("g_ibacktobase_level", 10, 0)
+			_pc = 3324
+			continue
+		elif _pc == 3324:
+			if 0 > global.pog_int("g_ibacktobase_level"):
+				_pc = 3351
+				continue
+			else:
+				_pc = 3398
+				continue
+		elif _pc == 3351:
+			global.set_int("g_ibacktobase_level", 1 - global.pog_int("g_ibacktobase_level"))
+			_pc = 3424
+			continue
+		elif _pc == 3398:
+			_pc = 3424
+			continue
+		elif _pc == 3403:
 			debug.print_string("iBackToBase.Allow: WARNING: Ignoring attempt to set g_ibacktobase_level < 0 \n")
-	if PogRuntime.TRACE:
-		debug.print_string("iBackToBase.Allow: Inhibit level now = ")
-	if PogRuntime.TRACE:
-		debug.print_int(global.pog_int("g_ibacktobase_level"))
-	if PogRuntime.TRACE:
-		debug.print_string(" \n")
-	return 0
+			_pc = 3424
+			continue
+		elif _pc == 3424:
+			_pc = 3451
+			continue
+		elif _pc == 3430:
+			debug.print_string("iBackToBase.Allow: Inhibit level now = ")
+			_pc = 3451
+			continue
+		elif _pc == 3451:
+			_pc = 3490
+			continue
+		elif _pc == 3456:
+			debug.print_int(global.pog_int("g_ibacktobase_level"))
+			_pc = 3490
+			continue
+		elif _pc == 3490:
+			_pc = 3516
+			continue
+		elif _pc == 3495:
+			debug.print_string(" \n")
+			_pc = 3516
+			continue
+		elif _pc == 3516:
+			return 0
+		else:
+			return 0
 	return 0
 
 func local_3520(v0, v1) -> Variant:
-	idirector.begin()
-	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-	iship.disrupt_l_d_s_drive(v0, 120.0)
-	iai.clear_autopilot()
-	await iwingmen.purge()
-	await iwingmen.add_t_fighters(v0, await iwingmen.get_detached_t_fighters())
-	iship.lock_down_weapons(await iwingmen.get_az())
-	iship.lock_down_weapons(await iwingmen.get_lori())
-	iship.set_free_without_pilot(v0, 1)
-	iship.disrupt_l_d_s_drive(v0, 120.0)
-	iai.clear_autopilot()
-	sim.place_near(v0, v1, 10000.0)
+	var _pc: int = 3520
 	while true:
-		await _pog_wait(0.10000000149011612)
-		if not (not _pog_eq(global.string("g_player_base_system"), isim.active_world())):
-			break
-	await _pog_wait(1.0)
-	iship.set_free_without_pilot(v0, 1)
-	sim.place_relative_to(v0, v1, 3000.0, 2000.0, 15000.0)
-	sim.point_at(v0, v1)
-	sim.avatar_add_channel(v0, "lz", 1.0)
-	sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 400.0)
-	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-	idirector.set_focus(v0)
-	idirector.set_camera(10)
-	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-	await _pog_wait(5.0)
-	idirector.fade_out(1.0, 0.0, 0.0, 0.0)
-	await _pog_wait(1.0)
-	sim.avatar_set_channel(v0, "lz", 0.0)
-	iship.set_free_without_pilot(v0, 0)
-	await docking_cutscene(v0, isim.cast(v1))
-	igame.enable_blackout(1)
-	idirector.end()
-	return
+		if _pc == 3520:
+			idirector.begin()
+			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+			iship.disrupt_l_d_s_drive(v0, 120.0)
+			iai.clear_autopilot()
+			await iwingmen.purge()
+			await iwingmen.add_t_fighters(v0, await iwingmen.get_detached_t_fighters())
+			iship.lock_down_weapons(await iwingmen.get_az())
+			iship.lock_down_weapons(await iwingmen.get_lori())
+			iship.set_free_without_pilot(v0, 1)
+			iship.disrupt_l_d_s_drive(v0, 120.0)
+			iai.clear_autopilot()
+			sim.place_near(v0, v1, 10000.0)
+			_pc = 3797
+			continue
+		elif _pc == 3797:
+			await _pog_wait(0.10000000149011612)
+			if _pog_eq(global.string("g_player_base_system"), isim.active_world()):
+				_pc = 3871
+				continue
+			else:
+				_pc = 3797
+				continue
+		elif _pc == 3871:
+			await _pog_wait(1.0)
+			iship.set_free_without_pilot(v0, 1)
+			sim.place_relative_to(v0, v1, 3000.0, 2000.0, 15000.0)
+			sim.point_at(v0, v1)
+			sim.avatar_add_channel(v0, "lz", 1.0)
+			sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 400.0)
+			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+			idirector.set_focus(v0)
+			idirector.set_camera(10)
+			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+			await _pog_wait(5.0)
+			idirector.fade_out(1.0, 0.0, 0.0, 0.0)
+			await _pog_wait(1.0)
+			sim.avatar_set_channel(v0, "lz", 0.0)
+			iship.set_free_without_pilot(v0, 0)
+			await docking_cutscene(v0, isim.cast(v1))
+			igame.enable_blackout(1)
+			idirector.end()
+			return
+		else:
+			return 0
 	return 0
 
 func docking_cutscene(v0, v1) -> Variant:
@@ -513,6 +866,7 @@ func docking_cutscene(v0, v1) -> Variant:
 			_pc = 5027
 			continue
 		elif _pc == 4949:
+			isim.type(v0)
 			if isim.type(v0) != 131072:
 				_pc = 4979
 				continue
@@ -614,23 +968,69 @@ func local_6393(v0, v1) -> Variant:
 	return 0
 
 func terminate() -> Variant:
-	if PogRuntime.TRACE:
-		debug.print_string("iBackToBase.Terminate: Terminating iBackToBase\n")
-	if global.exists("g_ibacktobase_level"):
-		if PogRuntime.TRACE:
+	var _pc: int = 6462
+	while true:
+		if _pc == 6462:
+			_pc = 6488
+			continue
+		elif _pc == 6467:
+			debug.print_string("iBackToBase.Terminate: Terminating iBackToBase\n")
+			_pc = 6488
+			continue
+		elif _pc == 6488:
+			if global.exists("g_ibacktobase_level"):
+				_pc = 6513
+				continue
+			else:
+				_pc = 6565
+				continue
+		elif _pc == 6513:
+			_pc = 6539
+			continue
+		elif _pc == 6518:
 			debug.print_string("iBackToBase.Terminate: Destroying global g_ibacktobase_level \n")
-		global.destroy("g_ibacktobase_level")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 6539
+			continue
+		elif _pc == 6539:
+			global.destroy("g_ibacktobase_level")
+			_pc = 6591
+			continue
+		elif _pc == 6565:
+			_pc = 6591
+			continue
+		elif _pc == 6570:
 			debug.print_string("iBackToBase.Terminate: ERROR: global g_ibacktobase_level does not exist. \n")
-	if global.exists("g_have_started_ibacktobase_detector"):
-		if PogRuntime.TRACE:
+			_pc = 6591
+			continue
+		elif _pc == 6591:
+			if global.exists("g_have_started_ibacktobase_detector"):
+				_pc = 6616
+				continue
+			else:
+				_pc = 6715
+				continue
+		elif _pc == 6616:
+			_pc = 6642
+			continue
+		elif _pc == 6621:
 			debug.print_string("iBackToBase.Terminate: Destroying global g_have_started_ibacktobase_detector. \n")
-		_pog_halt(_pog_task_cast(global.handle("g_have_started_ibacktobase_detector")))
-		global.destroy("g_have_started_ibacktobase_detector")
-	else:
-		if PogRuntime.TRACE:
+			_pc = 6642
+			continue
+		elif _pc == 6642:
+			_pog_halt(_pog_task_cast(global.handle("g_have_started_ibacktobase_detector")))
+			global.destroy("g_have_started_ibacktobase_detector")
+			_pc = 6741
+			continue
+		elif _pc == 6715:
+			_pc = 6741
+			continue
+		elif _pc == 6720:
 			debug.print_string("iBackToBase.Terminate: ERROR: global g_have_started_ibacktobase_detector does not exist. \n")
-	return 0
+			_pc = 6741
+			continue
+		elif _pc == 6741:
+			return 0
+		else:
+			return 0
 	return 0
 

@@ -37,7 +37,16 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	return inifile.cast(global.handle("g_stock_utterance_ini"))
+	var _pc: int = 0
+	while true:
+		if _pc == 0:
+			inifile.cast(global.handle("g_stock_utterance_ini"))
+			_pc = 37
+			continue
+		elif _pc == 37:
+			return
+		else:
+			return 0
 	return 0
 
 func surrender() -> Variant:
@@ -52,61 +61,192 @@ func surrender() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = null
-	v4 = imapentity.system_habitats()
-	v5 = null
-	v8 = null
-	v10 = null
-	v10 = list.from_set(sim.children(v0))
-	iai.purge_orders(v0)
-	v7 = await local_0()
-	if 1 == object.i_d_modulus(v0, 2):
-		v8 = "_male_1"
-	else:
-		v8 = "_female_1"
-	if PogRuntime.TRACE:
-		debug.print_string("ship surrenders!\n")
-	if _pog_is_null(object.property_exists(v0, "has_surrendered")):
-		if PogRuntime.TRACE:
+	var _pc: int = 39
+	while true:
+		if _pc == 39:
+			v4 = null
+			v4 = imapentity.system_habitats()
+			v5 = null
+			v8 = null
+			v10 = null
+			v10 = list.from_set(sim.children(v0))
+			iai.purge_orders(v0)
+			v7 = await local_0()
+			if 1 == object.i_d_modulus(v0, 2):
+				_pc = 213
+				continue
+			else:
+				_pc = 231
+				continue
+		elif _pc == 213:
+			v8 = "_male_1"
+			_pc = 244
+			continue
+		elif _pc == 231:
+			v8 = "_female_1"
+			_pc = 244
+			continue
+		elif _pc == 244:
+			_pc = 270
+			continue
+		elif _pc == 249:
+			debug.print_string("ship surrenders!\n")
+			_pc = 270
+			continue
+		elif _pc == 270:
+			if _pog_is_null(object.property_exists(v0, "has_surrendered")):
+				_pc = 302
+				continue
+			else:
+				_pc = 355
+				continue
+		elif _pc == 302:
+			_pc = 328
+			continue
+		elif _pc == 307:
 			debug.print_string("adding has_surrendered property to ship.\n")
-		object.add_int_property(v0, "has_surrendered", 1)
-	if not (list.is_empty(v10)):
-		v3 = inifile.pog_int(v7, "stock_surrender_cargo", "num_entries", 1)
-		v2 = math.random_int(1, v3)
-		v9 = iship.find_player_ship()
-		if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
+			_pc = 328
+			continue
+		elif _pc == 328:
+			object.add_int_property(v0, "has_surrendered", 1)
+			_pc = 355
+			continue
+		elif _pc == 355:
+			if not (list.is_empty(v10)):
+				_pc = 379
+				continue
+			else:
+				_pc = 634
+				continue
+		elif _pc == 379:
+			v3 = inifile.pog_int(v7, "stock_surrender_cargo", "num_entries", 1)
+			v2 = math.random_int(1, v3)
+			v9 = iship.find_player_ship()
+			if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
+				_pc = 507
+				continue
+			else:
+				_pc = 591
+				continue
+		elif _pc == 507:
 			icomms.shout(v0, "", string.join(string.join("stock_surrender_cargo_", string.from_int(v2)), v8))
-		_pog_detach(_pog_spawn(iutilities.jettison_cargo.bind(_pog_clone(v10), v0)))
-	else:
-		v3 = inifile.pog_int(v7, "stock_surrender_no_cargo", "num_entries", 1)
-		v2 = math.random_int(1, v3)
-		v9 = iship.find_player_ship()
-		if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
+			_pc = 591
+			continue
+		elif _pc == 591:
+			_pog_detach(_pog_spawn(iutilities.jettison_cargo.bind(_pog_clone(v10), v0)))
+			_pc = 846
+			continue
+		elif _pc == 634:
+			v3 = inifile.pog_int(v7, "stock_surrender_no_cargo", "num_entries", 1)
+			v2 = math.random_int(1, v3)
+			v9 = iship.find_player_ship()
+			if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
+				_pc = 762
+				continue
+			else:
+				_pc = 846
+				continue
+		elif _pc == 762:
 			icomms.shout(v0, "", string.join(string.join("stock_surrender_no_cargo_", string.from_int(v2)), v8))
-	await _pog_wait(19.0)
-	v5 = ihabitat.filter_on_type(v4, 68)
-	p_set.union(v5, ihabitat.filter_on_type(v4, 69))
-	if _pog_is_null(p_set.item_count(v5)):
-		if PogRuntime.TRACE:
+			_pc = 846
+			continue
+		elif _pc == 846:
+			await _pog_wait(19.0)
+			v5 = ihabitat.filter_on_type(v4, 68)
+			p_set.union(v5, ihabitat.filter_on_type(v4, 69))
+			if _pog_is_null(p_set.item_count(v5)):
+				_pc = 972
+				continue
+			else:
+				_pc = 1003
+				continue
+		elif _pc == 972:
+			_pc = 998
+			continue
+		elif _pc == 977:
 			debug.print_string("iFlee.CivilianCallForHelp: Unable to find Police Facility to find backup from!\n")
-	else:
-		v6 = ihabitat.nearest(v5, v0)
-		iai.give_approach_order(v0, imapentity.waypoint_for_entity(v6))
-		global.create_int(string.join("g_", object.string_property(v0, "name")), 1, 2)
-		if 5 == math.random_int(1, 6):
+			_pc = 998
+			continue
+		elif _pc == 998:
+			_pc = 1484
+			continue
+		elif _pc == 1003:
+			v6 = ihabitat.nearest(v5, v0)
+			iai.give_approach_order(v0, imapentity.waypoint_for_entity(v6))
+			global.create_int(string.join("g_", object.string_property(v0, "name")), 1, 2)
+			if 5 == math.random_int(1, 6):
+				_pc = 1156
+				continue
+			else:
+				_pc = 1349
+				continue
+		elif _pc == 1156:
 			v3 = inifile.pog_int(v7, "stock_complain", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
-				icomms.shout(v0, "", string.join(string.join("stock_complain_", string.from_int(v2)), v8))
-		while true:
-			await _pog_wait(30)
-			if iai.is_order_complete(v0):
-				if PogRuntime.TRACE:
-					debug.print_string("iSelfPreservation.surrender: arrived at police station.......... killing\n")
-				break
-			if await iutilities.player_in_range(sim.cast(v0)):
+				_pc = 1265
 				continue
-			break
-	return
+			else:
+				_pc = 1349
+				continue
+		elif _pc == 1265:
+			icomms.shout(v0, "", string.join(string.join("stock_complain_", string.from_int(v2)), v8))
+			_pc = 1349
+			continue
+		elif _pc == 1349:
+			_pc = 1354
+			continue
+		elif _pc == 1354:
+			await _pog_frame()
+			if _pog_every(1355, 30.0):
+				_pc = 1368
+				continue
+			else:
+				_pc = 1422
+				continue
+		elif _pc == 1368:
+			if iai.is_order_complete(v0):
+				_pc = 1391
+				continue
+			else:
+				_pc = 1422
+				continue
+		elif _pc == 1391:
+			_pc = 1417
+			continue
+		elif _pc == 1396:
+			debug.print_string("iSelfPreservation.surrender: arrived at police station.......... killing\n")
+			_pc = 1417
+			continue
+		elif _pc == 1417:
+			_pc = 1482
+			continue
+		elif _pc == 1422:
+			if _pog_every(1422, 120.0):
+				_pc = 1435
+				continue
+			else:
+				_pc = 1477
+				continue
+		elif _pc == 1435:
+			if not (await iutilities.player_in_range(sim.cast(v0))):
+				_pc = 1472
+				continue
+			else:
+				_pc = 1477
+				continue
+		elif _pc == 1472:
+			_pc = 1482
+			continue
+		elif _pc == 1477:
+			_pc = 1354
+			continue
+		elif _pc == 1482:
+			_pc = 1484
+			continue
+		elif _pc == 1484:
+			return
+		else:
+			return 0
 	return 0
 

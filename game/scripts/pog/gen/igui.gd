@@ -258,48 +258,88 @@ func set_g_u_i_globals() -> Variant:
 
 func create_fancy_button(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = gui.create_button(v0, v1, global.pog_int("GUI_fancybutton_width"), global.pog_int("GUI_fancybutton_height"), v2)
-	gui.set_window_font(v3, global.string("GUI_title_font"))
-	gui.set_window_text_formatting(v3, 0, global.pog_int("GUI_fancybutton_textoffset"))
-	gui.set_window_state_colours(v3, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
-	gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_fancybutton_neutral_left_left"), global.pog_int("GUI_fancybutton_neutral_left_top"), global.pog_int("GUI_fancybutton_neutral_left_right"), global.pog_int("GUI_fancybutton_neutral_left_bottom"), global.pog_int("GUI_fancybutton_neutral_body_left"), global.pog_int("GUI_fancybutton_neutral_body_top"), global.pog_int("GUI_fancybutton_neutral_body_right"), global.pog_int("GUI_fancybutton_neutral_body_bottom"), global.pog_int("GUI_fancybutton_neutral_right_left"), global.pog_int("GUI_fancybutton_neutral_right_top"), global.pog_int("GUI_fancybutton_neutral_right_right"), global.pog_int("GUI_fancybutton_neutral_right_bottom"), global.pog_int("GUI_fancybutton_focused_left_left"), global.pog_int("GUI_fancybutton_focused_left_top"), global.pog_int("GUI_fancybutton_focused_left_right"), global.pog_int("GUI_fancybutton_focused_left_bottom"), global.pog_int("GUI_fancybutton_focused_body_left"), global.pog_int("GUI_fancybutton_focused_body_top"), global.pog_int("GUI_fancybutton_focused_body_right"), global.pog_int("GUI_fancybutton_focused_body_bottom"), global.pog_int("GUI_fancybutton_focused_right_left"), global.pog_int("GUI_fancybutton_focused_right_top"), global.pog_int("GUI_fancybutton_focused_right_right"), global.pog_int("GUI_fancybutton_focused_right_bottom"), global.pog_int("GUI_fancybutton_selected_left_left"), global.pog_int("GUI_fancybutton_selected_left_top"), global.pog_int("GUI_fancybutton_selected_left_right"), global.pog_int("GUI_fancybutton_selected_left_bottom"), global.pog_int("GUI_fancybutton_selected_body_left"), global.pog_int("GUI_fancybutton_selected_body_top"), global.pog_int("GUI_fancybutton_selected_body_right"), global.pog_int("GUI_fancybutton_selected_body_bottom"), global.pog_int("GUI_fancybutton_selected_right_left"), global.pog_int("GUI_fancybutton_selected_right_top"), global.pog_int("GUI_fancybutton_selected_right_right"), global.pog_int("GUI_fancybutton_selected_right_bottom"))
-	return v3
+	var _pc: int = 6670
+	while true:
+		if _pc == 6670:
+			v3 = gui.create_button(v0, v1, global.pog_int("GUI_fancybutton_width"), global.pog_int("GUI_fancybutton_height"), v2)
+			gui.set_window_font(v3, global.string("GUI_title_font"))
+			gui.set_window_text_formatting(v3, 0, global.pog_int("GUI_fancybutton_textoffset"))
+			gui.set_window_state_colours(v3, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
+			gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_fancybutton_neutral_left_left"), global.pog_int("GUI_fancybutton_neutral_left_top"), global.pog_int("GUI_fancybutton_neutral_left_right"), global.pog_int("GUI_fancybutton_neutral_left_bottom"), global.pog_int("GUI_fancybutton_neutral_body_left"), global.pog_int("GUI_fancybutton_neutral_body_top"), global.pog_int("GUI_fancybutton_neutral_body_right"), global.pog_int("GUI_fancybutton_neutral_body_bottom"), global.pog_int("GUI_fancybutton_neutral_right_left"), global.pog_int("GUI_fancybutton_neutral_right_top"), global.pog_int("GUI_fancybutton_neutral_right_right"), global.pog_int("GUI_fancybutton_neutral_right_bottom"), global.pog_int("GUI_fancybutton_focused_left_left"), global.pog_int("GUI_fancybutton_focused_left_top"), global.pog_int("GUI_fancybutton_focused_left_right"), global.pog_int("GUI_fancybutton_focused_left_bottom"), global.pog_int("GUI_fancybutton_focused_body_left"), global.pog_int("GUI_fancybutton_focused_body_top"), global.pog_int("GUI_fancybutton_focused_body_right"), global.pog_int("GUI_fancybutton_focused_body_bottom"), global.pog_int("GUI_fancybutton_focused_right_left"), global.pog_int("GUI_fancybutton_focused_right_top"), global.pog_int("GUI_fancybutton_focused_right_right"), global.pog_int("GUI_fancybutton_focused_right_bottom"), global.pog_int("GUI_fancybutton_selected_left_left"), global.pog_int("GUI_fancybutton_selected_left_top"), global.pog_int("GUI_fancybutton_selected_left_right"), global.pog_int("GUI_fancybutton_selected_left_bottom"), global.pog_int("GUI_fancybutton_selected_body_left"), global.pog_int("GUI_fancybutton_selected_body_top"), global.pog_int("GUI_fancybutton_selected_body_right"), global.pog_int("GUI_fancybutton_selected_body_bottom"), global.pog_int("GUI_fancybutton_selected_right_left"), global.pog_int("GUI_fancybutton_selected_right_top"), global.pog_int("GUI_fancybutton_selected_right_right"), global.pog_int("GUI_fancybutton_selected_right_bottom"))
+			_pc = 7753
+			continue
+		elif _pc == 7753:
+			return
+		else:
+			return 0
 	return 0
 
 func create_back_button(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = gui.create_back_button(v0, v1, global.pog_int("GUI_backbutton_width"), global.pog_int("GUI_backbutton_width"), v2)
-	gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_backbutton_neutral_left_left"), global.pog_int("GUI_backbutton_neutral_left_top"), global.pog_int("GUI_backbutton_neutral_left_right"), global.pog_int("GUI_backbutton_neutral_left_bottom"), global.pog_int("GUI_backbutton_neutral_body_left"), global.pog_int("GUI_backbutton_neutral_body_top"), global.pog_int("GUI_backbutton_neutral_body_right"), global.pog_int("GUI_backbutton_neutral_body_bottom"), global.pog_int("GUI_backbutton_neutral_right_left"), global.pog_int("GUI_backbutton_neutral_right_top"), global.pog_int("GUI_backbutton_neutral_right_right"), global.pog_int("GUI_backbutton_neutral_right_bottom"), global.pog_int("GUI_backbutton_focused_left_left"), global.pog_int("GUI_backbutton_focused_left_top"), global.pog_int("GUI_backbutton_focused_left_right"), global.pog_int("GUI_backbutton_focused_left_bottom"), global.pog_int("GUI_backbutton_focused_body_left"), global.pog_int("GUI_backbutton_focused_body_top"), global.pog_int("GUI_backbutton_focused_body_right"), global.pog_int("GUI_backbutton_focused_body_bottom"), global.pog_int("GUI_backbutton_focused_right_left"), global.pog_int("GUI_backbutton_focused_right_top"), global.pog_int("GUI_backbutton_focused_right_right"), global.pog_int("GUI_backbutton_focused_right_bottom"), global.pog_int("GUI_backbutton_selected_left_left"), global.pog_int("GUI_backbutton_selected_left_top"), global.pog_int("GUI_backbutton_selected_left_right"), global.pog_int("GUI_backbutton_selected_left_bottom"), global.pog_int("GUI_backbutton_selected_body_left"), global.pog_int("GUI_backbutton_selected_body_top"), global.pog_int("GUI_backbutton_selected_body_right"), global.pog_int("GUI_backbutton_selected_body_bottom"), global.pog_int("GUI_backbutton_selected_right_left"), global.pog_int("GUI_backbutton_selected_right_top"), global.pog_int("GUI_backbutton_selected_right_right"), global.pog_int("GUI_backbutton_selected_right_bottom"))
-	gui.set_window_state_colours(v3, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
-	return v3
+	var _pc: int = 7755
+	while true:
+		if _pc == 7755:
+			v3 = gui.create_back_button(v0, v1, global.pog_int("GUI_backbutton_width"), global.pog_int("GUI_backbutton_width"), v2)
+			gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_backbutton_neutral_left_left"), global.pog_int("GUI_backbutton_neutral_left_top"), global.pog_int("GUI_backbutton_neutral_left_right"), global.pog_int("GUI_backbutton_neutral_left_bottom"), global.pog_int("GUI_backbutton_neutral_body_left"), global.pog_int("GUI_backbutton_neutral_body_top"), global.pog_int("GUI_backbutton_neutral_body_right"), global.pog_int("GUI_backbutton_neutral_body_bottom"), global.pog_int("GUI_backbutton_neutral_right_left"), global.pog_int("GUI_backbutton_neutral_right_top"), global.pog_int("GUI_backbutton_neutral_right_right"), global.pog_int("GUI_backbutton_neutral_right_bottom"), global.pog_int("GUI_backbutton_focused_left_left"), global.pog_int("GUI_backbutton_focused_left_top"), global.pog_int("GUI_backbutton_focused_left_right"), global.pog_int("GUI_backbutton_focused_left_bottom"), global.pog_int("GUI_backbutton_focused_body_left"), global.pog_int("GUI_backbutton_focused_body_top"), global.pog_int("GUI_backbutton_focused_body_right"), global.pog_int("GUI_backbutton_focused_body_bottom"), global.pog_int("GUI_backbutton_focused_right_left"), global.pog_int("GUI_backbutton_focused_right_top"), global.pog_int("GUI_backbutton_focused_right_right"), global.pog_int("GUI_backbutton_focused_right_bottom"), global.pog_int("GUI_backbutton_selected_left_left"), global.pog_int("GUI_backbutton_selected_left_top"), global.pog_int("GUI_backbutton_selected_left_right"), global.pog_int("GUI_backbutton_selected_left_bottom"), global.pog_int("GUI_backbutton_selected_body_left"), global.pog_int("GUI_backbutton_selected_body_top"), global.pog_int("GUI_backbutton_selected_body_right"), global.pog_int("GUI_backbutton_selected_body_bottom"), global.pog_int("GUI_backbutton_selected_right_left"), global.pog_int("GUI_backbutton_selected_right_top"), global.pog_int("GUI_backbutton_selected_right_right"), global.pog_int("GUI_backbutton_selected_right_bottom"))
+			gui.set_window_state_colours(v3, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
+			_pc = 8758
+			continue
+		elif _pc == 8758:
+			return
+		else:
+			return 0
 	return 0
 
 func create_back_to_main_menu_button(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = gui.create_back_button(v0, v1, global.pog_int("GUI_backbutton_width"), global.pog_int("GUI_backbutton_height"), v2)
-	gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_mainmenubackbutton_neutral_left_left"), global.pog_int("GUI_mainmenubackbutton_neutral_left_top"), global.pog_int("GUI_mainmenubackbutton_neutral_left_right"), global.pog_int("GUI_mainmenubackbutton_neutral_left_bottom"), global.pog_int("GUI_mainmenubackbutton_neutral_body_left"), global.pog_int("GUI_mainmenubackbutton_neutral_body_top"), global.pog_int("GUI_mainmenubackbutton_neutral_body_right"), global.pog_int("GUI_mainmenubackbutton_neutral_body_bottom"), global.pog_int("GUI_mainmenubackbutton_neutral_right_left"), global.pog_int("GUI_mainmenubackbutton_neutral_right_top"), global.pog_int("GUI_mainmenubackbutton_neutral_right_right"), global.pog_int("GUI_mainmenubackbutton_neutral_right_bottom"), global.pog_int("GUI_mainmenubackbutton_focused_left_left"), global.pog_int("GUI_mainmenubackbutton_focused_left_top"), global.pog_int("GUI_mainmenubackbutton_focused_left_right"), global.pog_int("GUI_mainmenubackbutton_focused_left_bottom"), global.pog_int("GUI_mainmenubackbutton_focused_body_left"), global.pog_int("GUI_mainmenubackbutton_focused_body_top"), global.pog_int("GUI_mainmenubackbutton_focused_body_right"), global.pog_int("GUI_mainmenubackbutton_focused_body_bottom"), global.pog_int("GUI_mainmenubackbutton_focused_right_left"), global.pog_int("GUI_mainmenubackbutton_focused_right_top"), global.pog_int("GUI_mainmenubackbutton_focused_right_right"), global.pog_int("GUI_mainmenubackbutton_focused_right_bottom"), global.pog_int("GUI_mainmenubackbutton_selected_left_left"), global.pog_int("GUI_mainmenubackbutton_selected_left_top"), global.pog_int("GUI_mainmenubackbutton_selected_left_right"), global.pog_int("GUI_mainmenubackbutton_selected_left_bottom"), global.pog_int("GUI_mainmenubackbutton_selected_body_left"), global.pog_int("GUI_mainmenubackbutton_selected_body_top"), global.pog_int("GUI_mainmenubackbutton_selected_body_right"), global.pog_int("GUI_mainmenubackbutton_selected_body_bottom"), global.pog_int("GUI_mainmenubackbutton_selected_right_left"), global.pog_int("GUI_mainmenubackbutton_selected_right_top"), global.pog_int("GUI_mainmenubackbutton_selected_right_right"), global.pog_int("GUI_mainmenubackbutton_selected_right_bottom"))
-	gui.set_window_state_colours(v3, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
-	return v3
+	var _pc: int = 8760
+	while true:
+		if _pc == 8760:
+			v3 = gui.create_back_button(v0, v1, global.pog_int("GUI_backbutton_width"), global.pog_int("GUI_backbutton_height"), v2)
+			gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_mainmenubackbutton_neutral_left_left"), global.pog_int("GUI_mainmenubackbutton_neutral_left_top"), global.pog_int("GUI_mainmenubackbutton_neutral_left_right"), global.pog_int("GUI_mainmenubackbutton_neutral_left_bottom"), global.pog_int("GUI_mainmenubackbutton_neutral_body_left"), global.pog_int("GUI_mainmenubackbutton_neutral_body_top"), global.pog_int("GUI_mainmenubackbutton_neutral_body_right"), global.pog_int("GUI_mainmenubackbutton_neutral_body_bottom"), global.pog_int("GUI_mainmenubackbutton_neutral_right_left"), global.pog_int("GUI_mainmenubackbutton_neutral_right_top"), global.pog_int("GUI_mainmenubackbutton_neutral_right_right"), global.pog_int("GUI_mainmenubackbutton_neutral_right_bottom"), global.pog_int("GUI_mainmenubackbutton_focused_left_left"), global.pog_int("GUI_mainmenubackbutton_focused_left_top"), global.pog_int("GUI_mainmenubackbutton_focused_left_right"), global.pog_int("GUI_mainmenubackbutton_focused_left_bottom"), global.pog_int("GUI_mainmenubackbutton_focused_body_left"), global.pog_int("GUI_mainmenubackbutton_focused_body_top"), global.pog_int("GUI_mainmenubackbutton_focused_body_right"), global.pog_int("GUI_mainmenubackbutton_focused_body_bottom"), global.pog_int("GUI_mainmenubackbutton_focused_right_left"), global.pog_int("GUI_mainmenubackbutton_focused_right_top"), global.pog_int("GUI_mainmenubackbutton_focused_right_right"), global.pog_int("GUI_mainmenubackbutton_focused_right_bottom"), global.pog_int("GUI_mainmenubackbutton_selected_left_left"), global.pog_int("GUI_mainmenubackbutton_selected_left_top"), global.pog_int("GUI_mainmenubackbutton_selected_left_right"), global.pog_int("GUI_mainmenubackbutton_selected_left_bottom"), global.pog_int("GUI_mainmenubackbutton_selected_body_left"), global.pog_int("GUI_mainmenubackbutton_selected_body_top"), global.pog_int("GUI_mainmenubackbutton_selected_body_right"), global.pog_int("GUI_mainmenubackbutton_selected_body_bottom"), global.pog_int("GUI_mainmenubackbutton_selected_right_left"), global.pog_int("GUI_mainmenubackbutton_selected_right_top"), global.pog_int("GUI_mainmenubackbutton_selected_right_right"), global.pog_int("GUI_mainmenubackbutton_selected_right_bottom"))
+			gui.set_window_state_colours(v3, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
+			_pc = 9763
+			continue
+		elif _pc == 9763:
+			return
+		else:
+			return 0
 	return 0
 
 func create_inverse_button(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
-	v4 = gui.create_button(v0, v1, v2, global.pog_int("GUI_inversebutton_height"), v3)
-	gui.set_window_font(v4, global.string("GUI_detail_font"))
-	gui.set_window_text_formatting(v4, 0, global.pog_int("GUI_inversebutton_textoffset"))
-	gui.set_window_state_colours(v4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-	gui.set_window_state_textures(v4, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_left_left"), global.pog_int("GUI_inversebutton_neutral_left_top"), global.pog_int("GUI_inversebutton_neutral_left_right"), global.pog_int("GUI_inversebutton_neutral_left_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_right_left"), global.pog_int("GUI_inversebutton_neutral_right_top"), global.pog_int("GUI_inversebutton_neutral_right_right"), global.pog_int("GUI_inversebutton_neutral_right_bottom"), global.pog_int("GUI_inversebutton_focused_left_left"), global.pog_int("GUI_inversebutton_focused_left_top"), global.pog_int("GUI_inversebutton_focused_left_right"), global.pog_int("GUI_inversebutton_focused_left_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_right_left"), global.pog_int("GUI_inversebutton_focused_right_top"), global.pog_int("GUI_inversebutton_focused_right_right"), global.pog_int("GUI_inversebutton_focused_right_bottom"), global.pog_int("GUI_inversebutton_selected_left_left"), global.pog_int("GUI_inversebutton_selected_left_top"), global.pog_int("GUI_inversebutton_selected_left_right"), global.pog_int("GUI_inversebutton_selected_left_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_right_left"), global.pog_int("GUI_inversebutton_selected_right_top"), global.pog_int("GUI_inversebutton_selected_right_right"), global.pog_int("GUI_inversebutton_selected_right_bottom"))
-	return v4
+	var _pc: int = 9765
+	while true:
+		if _pc == 9765:
+			v4 = gui.create_button(v0, v1, v2, global.pog_int("GUI_inversebutton_height"), v3)
+			gui.set_window_font(v4, global.string("GUI_detail_font"))
+			gui.set_window_text_formatting(v4, 0, global.pog_int("GUI_inversebutton_textoffset"))
+			gui.set_window_state_colours(v4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+			gui.set_window_state_textures(v4, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_left_left"), global.pog_int("GUI_inversebutton_neutral_left_top"), global.pog_int("GUI_inversebutton_neutral_left_right"), global.pog_int("GUI_inversebutton_neutral_left_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_right_left"), global.pog_int("GUI_inversebutton_neutral_right_top"), global.pog_int("GUI_inversebutton_neutral_right_right"), global.pog_int("GUI_inversebutton_neutral_right_bottom"), global.pog_int("GUI_inversebutton_focused_left_left"), global.pog_int("GUI_inversebutton_focused_left_top"), global.pog_int("GUI_inversebutton_focused_left_right"), global.pog_int("GUI_inversebutton_focused_left_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_right_left"), global.pog_int("GUI_inversebutton_focused_right_top"), global.pog_int("GUI_inversebutton_focused_right_right"), global.pog_int("GUI_inversebutton_focused_right_bottom"), global.pog_int("GUI_inversebutton_selected_left_left"), global.pog_int("GUI_inversebutton_selected_left_top"), global.pog_int("GUI_inversebutton_selected_left_right"), global.pog_int("GUI_inversebutton_selected_left_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_right_left"), global.pog_int("GUI_inversebutton_selected_right_top"), global.pog_int("GUI_inversebutton_selected_right_right"), global.pog_int("GUI_inversebutton_selected_right_bottom"))
+			_pc = 10707
+			continue
+		elif _pc == 10707:
+			return
+		else:
+			return 0
 	return 0
 
 func create_inverse_radio_button(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = gui.create_radio_button(v0, v1, global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), v2, 0)
-	gui.set_window_font(v3, global.string("GUI_detail_font"))
-	gui.set_window_text_formatting(v3, 0, global.pog_int("GUI_inversebutton_textoffset"))
-	gui.set_window_state_colours(v3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-	gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_left_left"), global.pog_int("GUI_inversebutton_neutral_left_top"), global.pog_int("GUI_inversebutton_neutral_left_right"), global.pog_int("GUI_inversebutton_neutral_left_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_right_left"), global.pog_int("GUI_inversebutton_neutral_right_top"), global.pog_int("GUI_inversebutton_neutral_right_right"), global.pog_int("GUI_inversebutton_neutral_right_bottom"), global.pog_int("GUI_inversebutton_focused_left_left"), global.pog_int("GUI_inversebutton_focused_left_top"), global.pog_int("GUI_inversebutton_focused_left_right"), global.pog_int("GUI_inversebutton_focused_left_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_right_left"), global.pog_int("GUI_inversebutton_focused_right_top"), global.pog_int("GUI_inversebutton_focused_right_right"), global.pog_int("GUI_inversebutton_focused_right_bottom"), global.pog_int("GUI_inversebutton_selected_left_left"), global.pog_int("GUI_inversebutton_selected_left_top"), global.pog_int("GUI_inversebutton_selected_left_right"), global.pog_int("GUI_inversebutton_selected_left_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_right_left"), global.pog_int("GUI_inversebutton_selected_right_top"), global.pog_int("GUI_inversebutton_selected_right_right"), global.pog_int("GUI_inversebutton_selected_right_bottom"))
-	return v3
+	var _pc: int = 10709
+	while true:
+		if _pc == 10709:
+			v3 = gui.create_radio_button(v0, v1, global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), v2, 0)
+			gui.set_window_font(v3, global.string("GUI_detail_font"))
+			gui.set_window_text_formatting(v3, 0, global.pog_int("GUI_inversebutton_textoffset"))
+			gui.set_window_state_colours(v3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+			gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_left_left"), global.pog_int("GUI_inversebutton_neutral_left_top"), global.pog_int("GUI_inversebutton_neutral_left_right"), global.pog_int("GUI_inversebutton_neutral_left_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_right_left"), global.pog_int("GUI_inversebutton_neutral_right_top"), global.pog_int("GUI_inversebutton_neutral_right_right"), global.pog_int("GUI_inversebutton_neutral_right_bottom"), global.pog_int("GUI_inversebutton_focused_left_left"), global.pog_int("GUI_inversebutton_focused_left_top"), global.pog_int("GUI_inversebutton_focused_left_right"), global.pog_int("GUI_inversebutton_focused_left_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_right_left"), global.pog_int("GUI_inversebutton_focused_right_top"), global.pog_int("GUI_inversebutton_focused_right_right"), global.pog_int("GUI_inversebutton_focused_right_bottom"), global.pog_int("GUI_inversebutton_selected_left_left"), global.pog_int("GUI_inversebutton_selected_left_top"), global.pog_int("GUI_inversebutton_selected_left_right"), global.pog_int("GUI_inversebutton_selected_left_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_right_left"), global.pog_int("GUI_inversebutton_selected_right_top"), global.pog_int("GUI_inversebutton_selected_right_right"), global.pog_int("GUI_inversebutton_selected_right_bottom"))
+			_pc = 11666
+			continue
+		elif _pc == 11666:
+			return
+		else:
+			return 0
 	return 0
 
 func create_fancy_vertical_scrollbar() -> Variant:
@@ -308,133 +348,249 @@ func create_fancy_vertical_scrollbar() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	return gui.create_vertical_scrollbar(v0, v1, global.pog_int("GUI_fancy_scrollbar_width"), v2, v3, v4, global.pog_float("GUI_fancy_scrollbar_buttonratio"), "FancyVerticalScrollbar")
+	var _pc: int = 11668
+	while true:
+		if _pc == 11668:
+			gui.create_vertical_scrollbar(v0, v1, global.pog_int("GUI_fancy_scrollbar_width"), v2, v3, v4, global.pog_float("GUI_fancy_scrollbar_buttonratio"), "FancyVerticalScrollbar")
+			_pc = 11755
+			continue
+		elif _pc == 11755:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_text_window(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
-	v6 = gui.create_text_window(v0, v1, v2, v3, v4)
-	gui.set_window_font(v6, global.string("type_font"))
-	gui.set_text_window_resource(v6, v5)
-	return v6
+	var _pc: int = 11757
+	while true:
+		if _pc == 11757:
+			v6 = gui.create_text_window(v0, v1, v2, v3, v4)
+			gui.set_window_font(v6, global.string("type_font"))
+			gui.set_text_window_resource(v6, v5)
+			_pc = 11880
+			continue
+		elif _pc == 11880:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_static_window(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v7: Variant = 0
-	v7 = gui.create_static_window(v0, v1, v2, v3, v4)
-	gui.set_window_font(v7, v5)
-	gui.set_window_text_formatting(v7, 1, 0)
-	gui.set_window_title(v7, v6)
-	gui.set_window_state_colours(v7, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
-	return v7
+	var _pc: int = 11882
+	while true:
+		if _pc == 11882:
+			v7 = gui.create_static_window(v0, v1, v2, v3, v4)
+			gui.set_window_font(v7, v5)
+			gui.set_window_text_formatting(v7, 1, 0)
+			gui.set_window_title(v7, v6)
+			gui.set_window_state_colours(v7, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
+			_pc = 12201
+			continue
+		elif _pc == 12201:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_fancy_bordered_static(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = gui.create_static_window(v4, v1, global.pog_int("GUI_fancybutton_width"), global.pog_int("GUI_fancybutton_height"), v0)
-	gui.set_window_title(v3, v2)
-	gui.set_window_text_formatting(v3, 0, global.pog_int("GUI_fancybutton_textoffset"))
-	gui.set_window_font(v3, global.string("GUI_title_font"))
-	gui.set_window_state_colours(v3, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
-	gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_fancybutton_faded_left_left"), global.pog_int("GUI_fancybutton_faded_left_top"), global.pog_int("GUI_fancybutton_faded_left_right"), global.pog_int("GUI_fancybutton_faded_left_bottom"), global.pog_int("GUI_fancybutton_faded_body_left"), global.pog_int("GUI_fancybutton_faded_body_top"), global.pog_int("GUI_fancybutton_faded_body_right"), global.pog_int("GUI_fancybutton_faded_body_bottom"), global.pog_int("GUI_fancybutton_faded_right_left"), global.pog_int("GUI_fancybutton_faded_right_top"), global.pog_int("GUI_fancybutton_faded_right_right"), global.pog_int("GUI_fancybutton_faded_right_bottom"), global.pog_int("GUI_fancybutton_faded_left_left"), global.pog_int("GUI_fancybutton_faded_left_top"), global.pog_int("GUI_fancybutton_faded_left_right"), global.pog_int("GUI_fancybutton_faded_left_bottom"), global.pog_int("GUI_fancybutton_faded_body_left"), global.pog_int("GUI_fancybutton_faded_body_top"), global.pog_int("GUI_fancybutton_faded_body_right"), global.pog_int("GUI_fancybutton_faded_body_bottom"), global.pog_int("GUI_fancybutton_faded_right_left"), global.pog_int("GUI_fancybutton_faded_right_top"), global.pog_int("GUI_fancybutton_faded_right_right"), global.pog_int("GUI_fancybutton_faded_right_bottom"), global.pog_int("GUI_fancybutton_faded_left_left"), global.pog_int("GUI_fancybutton_faded_left_top"), global.pog_int("GUI_fancybutton_faded_left_right"), global.pog_int("GUI_fancybutton_faded_left_bottom"), global.pog_int("GUI_fancybutton_faded_body_left"), global.pog_int("GUI_fancybutton_faded_body_top"), global.pog_int("GUI_fancybutton_faded_body_right"), global.pog_int("GUI_fancybutton_faded_body_bottom"), global.pog_int("GUI_fancybutton_faded_right_left"), global.pog_int("GUI_fancybutton_faded_right_top"), global.pog_int("GUI_fancybutton_faded_right_right"), global.pog_int("GUI_fancybutton_faded_right_bottom"))
-	return v3
+	var _pc: int = 12203
+	while true:
+		if _pc == 12203:
+			v4 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v3 = gui.create_static_window(v4, v1, global.pog_int("GUI_fancybutton_width"), global.pog_int("GUI_fancybutton_height"), v0)
+			gui.set_window_title(v3, v2)
+			gui.set_window_text_formatting(v3, 0, global.pog_int("GUI_fancybutton_textoffset"))
+			gui.set_window_font(v3, global.string("GUI_title_font"))
+			gui.set_window_state_colours(v3, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
+			gui.set_window_state_textures(v3, global.string("GUI_texture_request"), global.pog_int("GUI_fancybutton_faded_left_left"), global.pog_int("GUI_fancybutton_faded_left_top"), global.pog_int("GUI_fancybutton_faded_left_right"), global.pog_int("GUI_fancybutton_faded_left_bottom"), global.pog_int("GUI_fancybutton_faded_body_left"), global.pog_int("GUI_fancybutton_faded_body_top"), global.pog_int("GUI_fancybutton_faded_body_right"), global.pog_int("GUI_fancybutton_faded_body_bottom"), global.pog_int("GUI_fancybutton_faded_right_left"), global.pog_int("GUI_fancybutton_faded_right_top"), global.pog_int("GUI_fancybutton_faded_right_right"), global.pog_int("GUI_fancybutton_faded_right_bottom"), global.pog_int("GUI_fancybutton_faded_left_left"), global.pog_int("GUI_fancybutton_faded_left_top"), global.pog_int("GUI_fancybutton_faded_left_right"), global.pog_int("GUI_fancybutton_faded_left_bottom"), global.pog_int("GUI_fancybutton_faded_body_left"), global.pog_int("GUI_fancybutton_faded_body_top"), global.pog_int("GUI_fancybutton_faded_body_right"), global.pog_int("GUI_fancybutton_faded_body_bottom"), global.pog_int("GUI_fancybutton_faded_right_left"), global.pog_int("GUI_fancybutton_faded_right_top"), global.pog_int("GUI_fancybutton_faded_right_right"), global.pog_int("GUI_fancybutton_faded_right_bottom"), global.pog_int("GUI_fancybutton_faded_left_left"), global.pog_int("GUI_fancybutton_faded_left_top"), global.pog_int("GUI_fancybutton_faded_left_right"), global.pog_int("GUI_fancybutton_faded_left_bottom"), global.pog_int("GUI_fancybutton_faded_body_left"), global.pog_int("GUI_fancybutton_faded_body_top"), global.pog_int("GUI_fancybutton_faded_body_right"), global.pog_int("GUI_fancybutton_faded_body_bottom"), global.pog_int("GUI_fancybutton_faded_right_left"), global.pog_int("GUI_fancybutton_faded_right_top"), global.pog_int("GUI_fancybutton_faded_right_right"), global.pog_int("GUI_fancybutton_faded_right_bottom"))
+			_pc = 13356
+			continue
+		elif _pc == 13356:
+			return
+		else:
+			return 0
 	return 0
 
 func create_menu_button(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = await create_fancy_button(0, 0, 0)
-	gui.set_button_function_pog(v3, v0)
-	gui.set_window_title(v3, v1)
-	list.add_tail(v2, v3)
-	return v3
+	var _pc: int = 13358
+	while true:
+		if _pc == 13358:
+			v3 = await create_fancy_button(0, 0, 0)
+			gui.set_button_function_pog(v3, v0)
+			gui.set_window_title(v3, v1)
+			list.add_tail(v2, v3)
+			_pc = 13467
+			continue
+		elif _pc == 13467:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_rectangular_inverse_button(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
-	v6 = gui.create_button(v1, v2, v3, global.pog_int("GUI_inversebutton_height"), v0)
-	gui.set_window_font(v6, global.string("GUI_detail_font"))
-	gui.set_window_text_formatting(v6, 0, global.pog_int("GUI_inversebutton_textoffset"))
-	gui.set_window_state_colours(v6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-	gui.set_window_state_textures(v6, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"))
-	gui.set_window_title(v6, v4)
-	gui.set_button_function_pog(v6, v5)
-	return v6
+	var _pc: int = 13469
+	while true:
+		if _pc == 13469:
+			v6 = gui.create_button(v1, v2, v3, global.pog_int("GUI_inversebutton_height"), v0)
+			gui.set_window_font(v6, global.string("GUI_detail_font"))
+			gui.set_window_text_formatting(v6, 0, global.pog_int("GUI_inversebutton_textoffset"))
+			gui.set_window_state_colours(v6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+			gui.set_window_state_textures(v6, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"))
+			gui.set_window_title(v6, v4)
+			gui.set_button_function_pog(v6, v5)
+			_pc = 14459
+			continue
+		elif _pc == 14459:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_rectangular_inverse_radio_button(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
-	v6 = gui.create_radio_button(v1, v2, v3, global.pog_int("GUI_inversebutton_height"), v0, v5)
-	gui.set_window_font(v6, global.string("GUI_detail_font"))
-	gui.set_window_text_formatting(v6, 0, global.pog_int("GUI_inversebutton_textoffset"))
-	gui.set_window_state_colours(v6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-	gui.set_window_state_textures(v6, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"))
-	gui.set_window_title(v6, v4)
-	return v6
+	var _pc: int = 14461
+	while true:
+		if _pc == 14461:
+			v6 = gui.create_radio_button(v1, v2, v3, global.pog_int("GUI_inversebutton_height"), v0, v5)
+			gui.set_window_font(v6, global.string("GUI_detail_font"))
+			gui.set_window_text_formatting(v6, 0, global.pog_int("GUI_inversebutton_textoffset"))
+			gui.set_window_state_colours(v6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+			gui.set_window_state_textures(v6, global.string("GUI_texture_request"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_neutral_body_left"), global.pog_int("GUI_inversebutton_neutral_body_top"), global.pog_int("GUI_inversebutton_neutral_body_right"), global.pog_int("GUI_inversebutton_neutral_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_focused_body_left"), global.pog_int("GUI_inversebutton_focused_body_top"), global.pog_int("GUI_inversebutton_focused_body_right"), global.pog_int("GUI_inversebutton_focused_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"), global.pog_int("GUI_inversebutton_selected_body_left"), global.pog_int("GUI_inversebutton_selected_body_top"), global.pog_int("GUI_inversebutton_selected_body_right"), global.pog_int("GUI_inversebutton_selected_body_bottom"))
+			gui.set_window_title(v6, v4)
+			_pc = 15432
+			continue
+		elif _pc == 15432:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_fancy_button(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v5 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v4 = await create_fancy_button(v5, v1, v0)
-	gui.set_window_title(v4, v2)
-	gui.set_button_function_pog(v4, v3)
-	return v4
+	var _pc: int = 15434
+	while true:
+		if _pc == 15434:
+			v5 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v4 = await create_fancy_button(v5, v1, v0)
+			gui.set_window_title(v4, v2)
+			gui.set_button_function_pog(v4, v3)
+			_pc = 15577
+			continue
+		elif _pc == 15577:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_tab_style_static(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
-	v5 = gui.create_static_window(v1, v2, v3, global.pog_int("GUI_tab_height"), v0)
-	gui.set_window_state_textures(v5, global.string("GUI_texture_request"), global.pog_int("GUI_tab_left_left"), global.pog_int("GUI_tab_left_top"), global.pog_int("GUI_tab_left_right"), global.pog_int("GUI_tab_left_bottom"), global.pog_int("GUI_tab_body_left"), global.pog_int("GUI_tab_body_top"), global.pog_int("GUI_tab_body_right"), global.pog_int("GUI_tab_body_bottom"), global.pog_int("GUI_tab_right_left"), global.pog_int("GUI_tab_right_top"), global.pog_int("GUI_tab_right_right"), global.pog_int("GUI_tab_right_bottom"), global.pog_int("GUI_tab_left_left"), global.pog_int("GUI_tab_left_top"), global.pog_int("GUI_tab_left_right"), global.pog_int("GUI_tab_left_bottom"), global.pog_int("GUI_tab_body_left"), global.pog_int("GUI_tab_body_top"), global.pog_int("GUI_tab_body_right"), global.pog_int("GUI_tab_body_bottom"), global.pog_int("GUI_tab_right_left"), global.pog_int("GUI_tab_right_top"), global.pog_int("GUI_tab_right_right"), global.pog_int("GUI_tab_right_bottom"), global.pog_int("GUI_tab_left_left"), global.pog_int("GUI_tab_left_top"), global.pog_int("GUI_tab_left_right"), global.pog_int("GUI_tab_left_bottom"), global.pog_int("GUI_tab_body_left"), global.pog_int("GUI_tab_body_top"), global.pog_int("GUI_tab_body_right"), global.pog_int("GUI_tab_body_bottom"), global.pog_int("GUI_tab_right_left"), global.pog_int("GUI_tab_right_top"), global.pog_int("GUI_tab_right_right"), global.pog_int("GUI_tab_right_bottom"))
-	gui.set_window_font(v5, global.string("GUI_detail_font"))
-	gui.set_window_title(v5, v4)
-	gui.set_window_text_formatting(v5, 0, 20)
-	gui.set_window_state_colours(v5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-	return v5
+	var _pc: int = 15579
+	while true:
+		if _pc == 15579:
+			v5 = gui.create_static_window(v1, v2, v3, global.pog_int("GUI_tab_height"), v0)
+			gui.set_window_state_textures(v5, global.string("GUI_texture_request"), global.pog_int("GUI_tab_left_left"), global.pog_int("GUI_tab_left_top"), global.pog_int("GUI_tab_left_right"), global.pog_int("GUI_tab_left_bottom"), global.pog_int("GUI_tab_body_left"), global.pog_int("GUI_tab_body_top"), global.pog_int("GUI_tab_body_right"), global.pog_int("GUI_tab_body_bottom"), global.pog_int("GUI_tab_right_left"), global.pog_int("GUI_tab_right_top"), global.pog_int("GUI_tab_right_right"), global.pog_int("GUI_tab_right_bottom"), global.pog_int("GUI_tab_left_left"), global.pog_int("GUI_tab_left_top"), global.pog_int("GUI_tab_left_right"), global.pog_int("GUI_tab_left_bottom"), global.pog_int("GUI_tab_body_left"), global.pog_int("GUI_tab_body_top"), global.pog_int("GUI_tab_body_right"), global.pog_int("GUI_tab_body_bottom"), global.pog_int("GUI_tab_right_left"), global.pog_int("GUI_tab_right_top"), global.pog_int("GUI_tab_right_right"), global.pog_int("GUI_tab_right_bottom"), global.pog_int("GUI_tab_left_left"), global.pog_int("GUI_tab_left_top"), global.pog_int("GUI_tab_left_right"), global.pog_int("GUI_tab_left_bottom"), global.pog_int("GUI_tab_body_left"), global.pog_int("GUI_tab_body_top"), global.pog_int("GUI_tab_body_right"), global.pog_int("GUI_tab_body_bottom"), global.pog_int("GUI_tab_right_left"), global.pog_int("GUI_tab_right_top"), global.pog_int("GUI_tab_right_right"), global.pog_int("GUI_tab_right_bottom"))
+			gui.set_window_font(v5, global.string("GUI_detail_font"))
+			gui.set_window_title(v5, v4)
+			gui.set_window_text_formatting(v5, 0, 20)
+			gui.set_window_state_colours(v5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+			_pc = 16527
+			continue
+		elif _pc == 16527:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_inverse_button(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
-	v6 = await create_inverse_button(v1, v2, v3, v0)
-	gui.set_window_title(v6, v4)
-	gui.set_button_function_pog(v6, v5)
-	return v6
+	var _pc: int = 16529
+	while true:
+		if _pc == 16529:
+			v6 = await create_inverse_button(v1, v2, v3, v0)
+			gui.set_window_title(v6, v4)
+			gui.set_button_function_pog(v6, v5)
+			_pc = 16631
+			continue
+		elif _pc == 16631:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_parentless_inverse_button(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = await create_inverse_button(0, 0, global.pog_int("GUI_inversebutton_width"), 0)
-	gui.set_button_function_pog(v3, v0)
-	gui.set_window_title(v3, v1)
-	list.add_tail(v2, v3)
-	return v3
+	var _pc: int = 16633
+	while true:
+		if _pc == 16633:
+			v3 = await create_inverse_button(0, 0, global.pog_int("GUI_inversebutton_width"), 0)
+			gui.set_button_function_pog(v3, v0)
+			gui.set_window_title(v3, v1)
+			list.add_tail(v2, v3)
+			_pc = 16762
+			continue
+		elif _pc == 16762:
+			return
+		else:
+			return 0
 	return 0
 
 func create_shady_bar() -> Variant:
-	gui.set_shady_bar_width(global.pog_int("GUI_shader_width"))
-	return gui.create_window(global.pog_int("GUI_alignment_offset"), 0, global.pog_int("GUI_shader_width"), gui.frame_height(), gui.top_window())
+	var _pc: int = 16764
+	while true:
+		if _pc == 16764:
+			gui.set_shady_bar_width(global.pog_int("GUI_shader_width"))
+			gui.create_window(global.pog_int("GUI_alignment_offset"), 0, global.pog_int("GUI_shader_width"), gui.frame_height(), gui.top_window())
+			_pc = 16881
+			continue
+		elif _pc == 16881:
+			return
+		else:
+			return 0
 	return 0
 
 func create_shady_bar_right() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = gui.frame_width()
-	v1 = global.pog_int("GUI_alignment_offset")
-	v2 = global.pog_int("GUI_shader_width")
-	gui.set_r_h_s_shady_bar_width(v2)
-	return gui.create_window(v2 + v1 - v0, 0, v2, gui.frame_height(), gui.top_window())
+	var _pc: int = 16883
+	while true:
+		if _pc == 16883:
+			v0 = gui.frame_width()
+			v1 = global.pog_int("GUI_alignment_offset")
+			v2 = global.pog_int("GUI_shader_width")
+			gui.set_r_h_s_shady_bar_width(v2)
+			gui.create_window(v2 + v1 - v0, 0, v2, gui.frame_height(), gui.top_window())
+			_pc = 17044
+			continue
+		elif _pc == 17044:
+			return
+		else:
+			return 0
 	return 0
 
 func create_wide_shady_bar() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = global.pog_int("GUI_alignment_offset")
-	v1 = v0 * 2 - 640
-	gui.set_shady_bar_width(v1)
-	return gui.create_window(global.pog_int("GUI_alignment_offset"), 0, v1, gui.frame_height(), gui.top_window())
+	var _pc: int = 17046
+	while true:
+		if _pc == 17046:
+			v0 = global.pog_int("GUI_alignment_offset")
+			v1 = v0 * 2 - 640
+			gui.set_shady_bar_width(v1)
+			gui.create_window(global.pog_int("GUI_alignment_offset"), 0, v1, gui.frame_height(), gui.top_window())
+			_pc = 17183
+			continue
+		elif _pc == 17183:
+			return
+		else:
+			return 0
 	return 0
 
 func add_back_buttons(v0, v1, v2) -> Variant:
@@ -444,17 +600,25 @@ func add_back_buttons(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v8 = null
-	v3 = gui.window_canvas_height(v0)
-	v6 = global.pog_int("GUI_backbutton_left")
-	v7 = global.pog_int("GUI_backbutton_rise") - v3
-	v4 = await create_back_button(v6, v7, v0)
-	gui.set_button_function_pog(v4, v1)
-	v5 = await create_back_to_main_menu_button(global.pog_int("GUI_backbutton_xoffset") + v6, global.pog_int("GUI_backbutton_yoffset") + v7, v0)
-	gui.set_button_function_pog(v5, v2)
-	list.add_tail(v8, v4)
-	list.add_tail(v8, v5)
-	return _pog_clone(v8)
+	var _pc: int = 17185
+	while true:
+		if _pc == 17185:
+			v8 = null
+			v3 = gui.window_canvas_height(v0)
+			v6 = global.pog_int("GUI_backbutton_left")
+			v7 = global.pog_int("GUI_backbutton_rise") - v3
+			v4 = await create_back_button(v6, v7, v0)
+			gui.set_button_function_pog(v4, v1)
+			v5 = await create_back_to_main_menu_button(global.pog_int("GUI_backbutton_xoffset") + v6, global.pog_int("GUI_backbutton_yoffset") + v7, v0)
+			gui.set_button_function_pog(v5, v2)
+			list.add_tail(v8, v4)
+			list.add_tail(v8, v5)
+			_pc = 17498
+			continue
+		elif _pc == 17498:
+			return
+		else:
+			return 0
 	return 0
 
 func add_back_button() -> Variant:
@@ -464,39 +628,81 @@ func add_back_button() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = gui.window_canvas_height(v0)
-	v4 = global.pog_int("GUI_backbutton_left")
-	v5 = global.pog_int("GUI_backbutton_rise") - v2
-	v3 = await create_back_button(v4, v5, v0)
-	gui.set_button_function_pog(v3, v1)
-	return v3
+	var _pc: int = 17508
+	while true:
+		if _pc == 17508:
+			v2 = gui.window_canvas_height(v0)
+			v4 = global.pog_int("GUI_backbutton_left")
+			v5 = global.pog_int("GUI_backbutton_rise") - v2
+			v3 = await create_back_button(v4, v5, v0)
+			gui.set_button_function_pog(v3, v1)
+			_pc = 17663
+			continue
+		elif _pc == 17663:
+			return
+		else:
+			return 0
 	return 0
 
 func add_title(v0, v1) -> Variant:
-	return await create_and_initialise_fancy_bordered_static(v0, global.pog_int("GUI_title_yoffset"), v1)
+	var _pc: int = 17665
+	while true:
+		if _pc == 17665:
+			await create_and_initialise_fancy_bordered_static(v0, global.pog_int("GUI_title_yoffset"), v1)
+			_pc = 17712
+			continue
+		elif _pc == 17712:
+			return
+		else:
+			return 0
 	return 0
 
 func arrange_windows_vertically(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v6 = v3
-	v7 = 0
-	while list.item_count(v0) < v7:
-		v5 = gui.cast(list.get_nth(v0, v7))
-		gui.reposition_window(v5, v1, v2, v6)
-		v6 = v4 + gui.window_canvas_height(v5) + v6
-		v7 = 1 + v7
-	return 0
+	var _pc: int = 17714
+	while true:
+		if _pc == 17714:
+			v6 = v3
+			v7 = 0
+			_pc = 17737
+			continue
+		elif _pc == 17737:
+			if list.item_count(v0) < v7:
+				_pc = 17766
+				continue
+			else:
+				_pc = 17896
+				continue
+		elif _pc == 17766:
+			v5 = gui.cast(list.get_nth(v0, v7))
+			gui.reposition_window(v5, v1, v2, v6)
+			v6 = v4 + gui.window_canvas_height(v5) + v6
+			v7 = 1 + v7
+			_pc = 17737
+			continue
+		elif _pc == 17896:
+			return 0
+		else:
+			return 0
 	return 0
 
 func create_menu(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = await create_shady_bar()
-	v2 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	await arrange_windows_vertically(v0, v1, v2, global.pog_int("GUI_mainmenu_yoffset"), global.pog_int("GUI_mainmenu_gap"))
-	return v1
+	var _pc: int = 17899
+	while true:
+		if _pc == 17899:
+			v1 = await create_shady_bar()
+			v2 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			await arrange_windows_vertically(v0, v1, v2, global.pog_int("GUI_mainmenu_yoffset"), global.pog_int("GUI_mainmenu_gap"))
+			_pc = 18047
+			continue
+		elif _pc == 18047:
+			return
+		else:
+			return 0
 	return 0
 
 func create_grey_box_style_screen(v0, v1, v2) -> Variant:
@@ -508,23 +714,31 @@ func create_grey_box_style_screen(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = null
-	v10 = gui.top_window()
-	v6 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-	v7 = 10 + v6 + global.pog_int("GUI_backbutton_rise") - gui.frame_height()
-	v8 = global.pog_int("GUI_alignment_offset")
-	v9 = v8 * 2 - 640
-	gui.set_shady_bar_width(v9)
-	v3 = gui.create_window(v8, 0, v9, gui.frame_height(), v10)
-	v8 = global.pog_int("GUI_greybox_xoffset")
-	v9 = v8 * 2 - v9
-	v5 = gui.create_window(v8, v6, v9, v7, v3)
-	list.add_tail(v4, v5)
-	v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), 0, global.pog_int("GUI_alignment_offset") - gui.frame_width(), 1 - v6, v10)
-	await add_title(v5, v0)
-	v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), v7 + v6, global.pog_int("GUI_alignment_offset") - gui.frame_width(), v7 + v6 - gui.frame_height(), v10)
-	list.append(v4, await add_back_buttons(v5, v1, v2))
-	return _pog_clone(v4)
+	var _pc: int = 18049
+	while true:
+		if _pc == 18049:
+			v4 = null
+			v10 = gui.top_window()
+			v6 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+			v7 = 10 + v6 + global.pog_int("GUI_backbutton_rise") - gui.frame_height()
+			v8 = global.pog_int("GUI_alignment_offset")
+			v9 = v8 * 2 - 640
+			gui.set_shady_bar_width(v9)
+			v3 = gui.create_window(v8, 0, v9, gui.frame_height(), v10)
+			v8 = global.pog_int("GUI_greybox_xoffset")
+			v9 = v8 * 2 - v9
+			v5 = gui.create_window(v8, v6, v9, v7, v3)
+			list.add_tail(v4, v5)
+			v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), 0, global.pog_int("GUI_alignment_offset") - gui.frame_width(), 1 - v6, v10)
+			await add_title(v5, v0)
+			v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), v7 + v6, global.pog_int("GUI_alignment_offset") - gui.frame_width(), v7 + v6 - gui.frame_height(), v10)
+			list.append(v4, await add_back_buttons(v5, v1, v2))
+			_pc = 18685
+			continue
+		elif _pc == 18685:
+			return
+		else:
+			return 0
 	return 0
 
 func create_h_t_m_l_grey_box_style_screen(v0, v1, v2, v3, v4) -> Variant:
@@ -536,23 +750,31 @@ func create_h_t_m_l_grey_box_style_screen(v0, v1, v2, v3, v4) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v6 = null
-	v12 = gui.top_window()
-	v8 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-	v9 = 10 + v8 + global.pog_int("GUI_backbutton_rise") - gui.frame_height()
-	v10 = global.pog_int("GUI_alignment_offset")
-	v11 = v10 * 2 - 640
-	gui.set_shady_bar_width(v11)
-	v5 = gui.create_window(v10, 0, v11, gui.frame_height(), v12)
-	v10 = global.pog_int("GUI_greybox_xoffset")
-	v11 = v10 * 2 - v11
-	v7 = gui.create_window(v10, v8, v11, v9, v5)
-	list.add_tail(v6, v7)
-	v7 = await create_and_initialise_text_window(global.pog_int("GUI_alignment_offset"), 0, v1, v2, v12, "")
-	gui.set_text_window_string(v7, v0)
-	v7 = gui.create_window(global.pog_int("GUI_alignment_offset"), v9 + v8, global.pog_int("GUI_alignment_offset") - gui.frame_width(), v9 + v8 - gui.frame_height(), v12)
-	list.append(v6, await add_back_buttons(v7, v3, v4))
-	return _pog_clone(v6)
+	var _pc: int = 18695
+	while true:
+		if _pc == 18695:
+			v6 = null
+			v12 = gui.top_window()
+			v8 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+			v9 = 10 + v8 + global.pog_int("GUI_backbutton_rise") - gui.frame_height()
+			v10 = global.pog_int("GUI_alignment_offset")
+			v11 = v10 * 2 - 640
+			gui.set_shady_bar_width(v11)
+			v5 = gui.create_window(v10, 0, v11, gui.frame_height(), v12)
+			v10 = global.pog_int("GUI_greybox_xoffset")
+			v11 = v10 * 2 - v11
+			v7 = gui.create_window(v10, v8, v11, v9, v5)
+			list.add_tail(v6, v7)
+			v7 = await create_and_initialise_text_window(global.pog_int("GUI_alignment_offset"), 0, v1, v2, v12, "")
+			gui.set_text_window_string(v7, v0)
+			v7 = gui.create_window(global.pog_int("GUI_alignment_offset"), v9 + v8, global.pog_int("GUI_alignment_offset") - gui.frame_width(), v9 + v8 - gui.frame_height(), v12)
+			list.append(v6, await add_back_buttons(v7, v3, v4))
+			_pc = 19307
+			continue
+		elif _pc == 19307:
+			return
+		else:
+			return 0
 	return 0
 
 func create_window_list_in_fancy_border(v0, v1, v2, v3) -> Variant:
@@ -561,16 +783,32 @@ func create_window_list_in_fancy_border(v0, v1, v2, v3) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v8 = global.pog_int("GUI_buttonlist_gap")
-	if _pog_is_null(list.item_count(v1)):
-		v5 = gui.create_window(v2, v3, 1, 1, v0)
-	else:
-		v6 = await local_26745(v1)
-		v7 = await local_26918(v1, v8)
-		v5 = gui.create_window(global.pog_int("GUI_fancyborder_width") + v2, global.pog_int("GUI_fancyborder_width") + v3, v6, v7, v0)
-		await arrange_windows_vertically(v1, v5, 0, 0, v8)
-		v4 = gui.create_fancy_border(v5)
-	return
+	var _pc: int = 19317
+	while true:
+		if _pc == 19317:
+			v8 = global.pog_int("GUI_buttonlist_gap")
+			if _pog_is_null(list.item_count(v1)):
+				_pc = 19373
+				continue
+			else:
+				_pc = 19419
+				continue
+		elif _pc == 19373:
+			v5 = gui.create_window(v2, v3, 1, 1, v0)
+			_pc = 19622
+			continue
+		elif _pc == 19419:
+			v6 = await local_26745(v1)
+			v7 = await local_26918(v1, v8)
+			v5 = gui.create_window(global.pog_int("GUI_fancyborder_width") + v2, global.pog_int("GUI_fancyborder_width") + v3, v6, v7, v0)
+			await arrange_windows_vertically(v1, v5, 0, 0, v8)
+			v4 = gui.create_fancy_border(v5)
+			_pc = 19622
+			continue
+		elif _pc == 19622:
+			return
+		else:
+			return 0
 	return 0
 
 func create_window_list_in_splitter(v0, v1, v2, v3, v4) -> Variant:
@@ -587,32 +825,52 @@ func create_window_list_in_splitter(v0, v1, v2, v3, v4) -> Variant:
 	var v15: Variant = 0
 	var v16: Variant = 0
 	var v17: Variant = 0
-	v10 = 0
-	v11 = 0
-	v13 = 0
-	v15 = global.pog_int("GUI_buttonlist_gap")
-	v16 = global.pog_int("GUI_fancyborder_width")
-	v17 = 9
-	v11 = await local_26918(v1, v15)
-	v10 = await local_26745(v1)
-	v10 = v16 + v10 + v16
-	v11 = v16 + v11 + v16 + v17 + v16
-	v12 = v16 + v17 + v16
-	v5 = gui.create_splitter_window(v2, v3, v10, v11, v0, v12, 1)
-	v6 = gui.splitter_window_top_window(v5)
-	v7 = gui.splitter_window_bottom_window(v5)
-	v8 = gui.create_static_window(0, 0, gui.window_canvas_width(v6), gui.window_canvas_height(v6), v6)
-	gui.set_window_font(v8, global.string("GUI_subtitle_font"))
-	gui.set_window_title(v8, v4)
-	gui.set_window_text_formatting(v8, 0, 9)
-	gui.set_window_state_colours(v8, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
-	v14 = 0
-	while list.item_count(v1) < v14:
-		v9 = gui.cast(list.get_nth(v1, v14))
-		gui.reposition_window(v9, v7, 0, v13)
-		v13 = v15 + gui.window_canvas_height(v9) + v13
-		v14 = 1 + v14
-	return v5
+	var _pc: int = 19624
+	while true:
+		if _pc == 19624:
+			v10 = 0
+			v11 = 0
+			v13 = 0
+			v15 = global.pog_int("GUI_buttonlist_gap")
+			v16 = global.pog_int("GUI_fancyborder_width")
+			v17 = 9
+			v11 = await local_26918(v1, v15)
+			v10 = await local_26745(v1)
+			v10 = v16 + v10 + v16
+			v11 = v16 + v11 + v16 + v17 + v16
+			v12 = v16 + v17 + v16
+			v5 = gui.create_splitter_window(v2, v3, v10, v11, v0, v12, 1)
+			v6 = gui.splitter_window_top_window(v5)
+			v7 = gui.splitter_window_bottom_window(v5)
+			v8 = gui.create_static_window(0, 0, gui.window_canvas_width(v6), gui.window_canvas_height(v6), v6)
+			gui.set_window_font(v8, global.string("GUI_subtitle_font"))
+			gui.set_window_title(v8, v4)
+			gui.set_window_text_formatting(v8, 0, 9)
+			gui.set_window_state_colours(v8, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
+			v14 = 0
+			_pc = 20287
+			continue
+		elif _pc == 20287:
+			if list.item_count(v1) < v14:
+				_pc = 20316
+				continue
+			else:
+				_pc = 20442
+				continue
+		elif _pc == 20316:
+			v9 = gui.cast(list.get_nth(v1, v14))
+			gui.reposition_window(v9, v7, 0, v13)
+			v13 = v15 + gui.window_canvas_height(v9) + v13
+			v14 = 1 + v14
+			_pc = 20287
+			continue
+		elif _pc == 20442:
+			_pc = 20452
+			continue
+		elif _pc == 20452:
+			return
+		else:
+			return 0
 	return 0
 
 func create_titled_list_box(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
@@ -627,30 +885,65 @@ func create_titled_list_box(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v9 = global.pog_int("GUI_main_title_height")
-	v10 = global.pog_int("GUI_main_title_x_offset")
-	v17 = global.pog_int("GUI_scrollbar_width")
-	v8 = gui.create_static_window(v10, 0, gui.window_canvas_width(v0), v9, v0)
-	v1 = string.upper_case(v1)
-	gui.set_window_title(v8, v1)
-	gui.set_window_text_formatting(v8, 0, 0)
-	gui.set_window_font(v8, global.string("GUI_main_title_font"))
-	gui.set_window_state_colours(v8, global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"))
-	if 0 > v2:
-		await create_and_initialise_tab_style_static(v0, 0, 5 + v9, v2, v3)
-	if 0 > v4:
-		await create_and_initialise_tab_style_static(v0, v2, 5 + v9, v4, v5)
-	if 0 > v6:
-		await create_and_initialise_tab_style_static(v0, v4 + v2, 5 + v9, v6, v7)
-	v12 = global.pog_int("GUI_fancyborder_width")
-	v13 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_tab_height") + 5 + v9
-	v14 = global.pog_int("GUI_fancyborder_width") + v12 - gui.window_canvas_width(v0)
-	v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v13 - gui.window_canvas_height(v0)
-	v11 = gui.create_window(v12, v13, v14, v15, v0)
-	gui.create_fancy_border(v11)
-	v18 = gui.create_list_box(0, 0, v17 * 2 - v14, v15, v11, 1, 0)
-	gui.create_vertical_scrollbar(v17 - v14, 0, v17, v15, v11, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
-	return v18
+	var _pc: int = 20454
+	while true:
+		if _pc == 20454:
+			v9 = global.pog_int("GUI_main_title_height")
+			v10 = global.pog_int("GUI_main_title_x_offset")
+			v17 = global.pog_int("GUI_scrollbar_width")
+			v8 = gui.create_static_window(v10, 0, gui.window_canvas_width(v0), v9, v0)
+			v1 = string.upper_case(v1)
+			gui.set_window_title(v8, v1)
+			gui.set_window_text_formatting(v8, 0, 0)
+			gui.set_window_font(v8, global.string("GUI_main_title_font"))
+			gui.set_window_state_colours(v8, global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"))
+			if 0 > v2:
+				_pc = 20902
+				continue
+			else:
+				_pc = 20940
+				continue
+		elif _pc == 20902:
+			await create_and_initialise_tab_style_static(v0, 0, 5 + v9, v2, v3)
+			_pc = 20940
+			continue
+		elif _pc == 20940:
+			if 0 > v4:
+				_pc = 20952
+				continue
+			else:
+				_pc = 20994
+				continue
+		elif _pc == 20952:
+			await create_and_initialise_tab_style_static(v0, v2, 5 + v9, v4, v5)
+			_pc = 20994
+			continue
+		elif _pc == 20994:
+			if 0 > v6:
+				_pc = 21006
+				continue
+			else:
+				_pc = 21054
+				continue
+		elif _pc == 21006:
+			await create_and_initialise_tab_style_static(v0, v4 + v2, 5 + v9, v6, v7)
+			_pc = 21054
+			continue
+		elif _pc == 21054:
+			v12 = global.pog_int("GUI_fancyborder_width")
+			v13 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_tab_height") + 5 + v9
+			v14 = global.pog_int("GUI_fancyborder_width") + v12 - gui.window_canvas_width(v0)
+			v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v13 - gui.window_canvas_height(v0)
+			v11 = gui.create_window(v12, v13, v14, v15, v0)
+			gui.create_fancy_border(v11)
+			v18 = gui.create_list_box(0, 0, v17 * 2 - v14, v15, v11, 1, 0)
+			gui.create_vertical_scrollbar(v17 - v14, 0, v17, v15, v11, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			_pc = 21435
+			continue
+		elif _pc == 21435:
+			return
+		else:
+			return 0
 	return 0
 
 func create_fancy_list_box() -> Variant:
@@ -667,16 +960,24 @@ func create_fancy_list_box() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v6 = v1
-	v7 = v2
-	v8 = v3
-	v9 = v4
-	v11 = global.pog_int("GUI_scrollbar_width")
-	v5 = gui.create_window(v6, v7, v8, v9, v0)
-	gui.create_fancy_border(v5)
-	v12 = gui.create_list_box(0, 0, v11 * 2 - v8, v9, v5, 1, 0)
-	gui.create_vertical_scrollbar(v11 - v8, 0, v11, v9, v5, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
-	return v12
+	var _pc: int = 21437
+	while true:
+		if _pc == 21437:
+			v6 = v1
+			v7 = v2
+			v8 = v3
+			v9 = v4
+			v11 = global.pog_int("GUI_scrollbar_width")
+			v5 = gui.create_window(v6, v7, v8, v9, v0)
+			gui.create_fancy_border(v5)
+			v12 = gui.create_list_box(0, 0, v11 * 2 - v8, v9, v5, 1, 0)
+			gui.create_vertical_scrollbar(v11 - v8, 0, v11, v9, v5, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			_pc = 21704
+			continue
+		elif _pc == 21704:
+			return
+		else:
+			return 0
 	return 0
 
 func create_titled_text_box(v0, v1, v2, v3, v4, v5, v6) -> Variant:
@@ -692,29 +993,55 @@ func create_titled_text_box(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v8 = global.pog_int("GUI_main_title_height")
-	v9 = global.pog_int("GUI_main_title_x_offset")
-	v16 = global.pog_int("GUI_scrollbar_width")
-	v17 = global.pog_int("GUI_table_alignmentoffset")
-	v7 = gui.create_static_window(v9, 0, gui.window_canvas_width(v0), v8, v0)
-	v1 = string.upper_case(v1)
-	gui.set_window_title(v7, v1)
-	gui.set_window_text_formatting(v7, 0, 0)
-	gui.set_window_font(v7, global.string("GUI_main_title_font"))
-	gui.set_window_state_colours(v7, global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"))
-	if 0 > v2:
-		await create_and_initialise_tab_style_static(v0, 0, 5 + v8, v2, v3)
-	if 0 > v4:
-		await create_and_initialise_tab_style_static(v0, v2, 5 + v8, v4, v5)
-	v11 = global.pog_int("GUI_fancyborder_width")
-	v12 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_tab_height") + 5 + v8
-	v13 = global.pog_int("GUI_fancyborder_width") + v11 - gui.window_canvas_width(v0)
-	v14 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v12 - gui.window_canvas_height(v0)
-	v10 = gui.create_window(v11, v12, v13, v14, v0)
-	gui.create_fancy_border(v10)
-	v18 = await create_and_initialise_text_window(v17, 0, v17 + v16 * 2 - v13, v14, v10, v6)
-	gui.create_vertical_scrollbar(v16 - v13, 0, v16, v14, v10, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
-	return v18
+	var _pc: int = 21706
+	while true:
+		if _pc == 21706:
+			v8 = global.pog_int("GUI_main_title_height")
+			v9 = global.pog_int("GUI_main_title_x_offset")
+			v16 = global.pog_int("GUI_scrollbar_width")
+			v17 = global.pog_int("GUI_table_alignmentoffset")
+			v7 = gui.create_static_window(v9, 0, gui.window_canvas_width(v0), v8, v0)
+			v1 = string.upper_case(v1)
+			gui.set_window_title(v7, v1)
+			gui.set_window_text_formatting(v7, 0, 0)
+			gui.set_window_font(v7, global.string("GUI_main_title_font"))
+			gui.set_window_state_colours(v7, global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"))
+			if 0 > v2:
+				_pc = 22179
+				continue
+			else:
+				_pc = 22217
+				continue
+		elif _pc == 22179:
+			await create_and_initialise_tab_style_static(v0, 0, 5 + v8, v2, v3)
+			_pc = 22217
+			continue
+		elif _pc == 22217:
+			if 0 > v4:
+				_pc = 22229
+				continue
+			else:
+				_pc = 22271
+				continue
+		elif _pc == 22229:
+			await create_and_initialise_tab_style_static(v0, v2, 5 + v8, v4, v5)
+			_pc = 22271
+			continue
+		elif _pc == 22271:
+			v11 = global.pog_int("GUI_fancyborder_width")
+			v12 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_tab_height") + 5 + v8
+			v13 = global.pog_int("GUI_fancyborder_width") + v11 - gui.window_canvas_width(v0)
+			v14 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v12 - gui.window_canvas_height(v0)
+			v10 = gui.create_window(v11, v12, v13, v14, v0)
+			gui.create_fancy_border(v10)
+			v18 = await create_and_initialise_text_window(v17, 0, v17 + v16 * 2 - v13, v14, v10, v6)
+			gui.create_vertical_scrollbar(v16 - v13, 0, v16, v14, v10, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			_pc = 22665
+			continue
+		elif _pc == 22665:
+			return
+		else:
+			return 0
 	return 0
 
 func set_cyclic_control_focus_path(v0) -> Variant:
@@ -724,29 +1051,73 @@ func set_cyclic_control_focus_path(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = list.item_count(v0)
-	v5 = 0
-	if _pog_is_null(v1):
-		pass
-	else:
-		if 1 == v1:
+	var _pc: int = 22667
+	while true:
+		if _pc == 22667:
+			v1 = list.item_count(v0)
+			v5 = 0
+			if _pog_is_null(v1):
+				_pc = 22715
+				continue
+			else:
+				_pc = 22720
+				continue
+		elif _pc == 22715:
+			_pc = 23109
+			continue
+		elif _pc == 22720:
+			if 1 == v1:
+				_pc = 22732
+				continue
+			else:
+				_pc = 22822
+				continue
+		elif _pc == 22732:
 			v2 = gui.cast(list.head(v0))
 			gui.set_window_previous_focus(v2, v2)
 			gui.set_window_next_focus(v2, v2)
-		else:
+			_pc = 23109
+			continue
+		elif _pc == 22822:
 			v2 = gui.cast(list.head(v0))
 			v4 = gui.cast(list.tail(v0))
 			v6 = 0
-			while list.item_count(v0) < v6:
-				v3 = gui.cast(list.get_nth(v0, v6))
-				gui.set_window_previous_focus(v3, v5)
-				if v5:
-					gui.set_window_next_focus(v5, v3)
-				v5 = v3
-				v6 = 1 + v6
+			_pc = 22903
+			continue
+		elif _pc == 22903:
+			if list.item_count(v0) < v6:
+				_pc = 22932
+				continue
+			else:
+				_pc = 23061
+				continue
+		elif _pc == 22932:
+			v3 = gui.cast(list.get_nth(v0, v6))
+			gui.set_window_previous_focus(v3, v5)
+			if v5:
+				_pc = 23008
+				continue
+			else:
+				_pc = 23032
+				continue
+		elif _pc == 23008:
+			gui.set_window_next_focus(v5, v3)
+			_pc = 23032
+			continue
+		elif _pc == 23032:
+			v5 = v3
+			v6 = 1 + v6
+			_pc = 22903
+			continue
+		elif _pc == 23061:
 			gui.set_window_previous_focus(v2, v4)
 			gui.set_window_next_focus(v4, v2)
-	return 0
+			_pc = 23109
+			continue
+		elif _pc == 23109:
+			return 0
+		else:
+			return 0
 	return 0
 
 func make_inverse_button_iconic(v0) -> Variant:
@@ -763,16 +1134,44 @@ func make_rectangular_inverse_button_iconic(v0) -> Variant:
 
 func local_24616(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) -> Variant:
 	var v10: Variant = 0
-	v10 = 0
+	var _pc: int = 24616
 	while true:
-		await _pog_wait(1)
-		if v10:
+		if _pc == 24616:
+			v10 = 0
+			_pc = 24633
+			continue
+		elif _pc == 24633:
+			await _pog_frame()
+			if _pog_every(24634, 1.0):
+				_pc = 24647
+				continue
+			else:
+				_pc = 24804
+				continue
+		elif _pc == 24647:
+			if v10:
+				_pc = 24657
+				continue
+			else:
+				_pc = 24733
+				continue
+		elif _pc == 24657:
 			gui.set_window_state_colours(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9)
 			v10 = 0
-		else:
+			_pc = 24804
+			continue
+		elif _pc == 24733:
 			gui.set_window_state_colours(v0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 			v10 = 1
-	return
+			_pc = 24804
+			continue
+		elif _pc == 24804:
+			_pc = 24633
+			continue
+		elif _pc == 24809:
+			return
+		else:
+			return 0
 	return 0
 
 func start_window_flashing(v0) -> Variant:
@@ -862,37 +1261,103 @@ func local_26745(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = 0
-	v1 = 0
-	while list.item_count(v0) < v1:
-		v3 = gui.cast(list.get_nth(v0, v1))
-		if v2 > gui.window_canvas_width(v3):
+	var _pc: int = 26745
+	while true:
+		if _pc == 26745:
+			v2 = 0
+			v1 = 0
+			_pc = 26764
+			continue
+		elif _pc == 26764:
+			if list.item_count(v0) < v1:
+				_pc = 26793
+				continue
+			else:
+				_pc = 26906
+				continue
+		elif _pc == 26793:
+			v3 = gui.cast(list.get_nth(v0, v1))
+			if v2 > gui.window_canvas_width(v3):
+				_pc = 26864
+				continue
+			else:
+				_pc = 26888
+				continue
+		elif _pc == 26864:
 			v2 = gui.window_canvas_width(v3)
-		v1 = 1 + v1
-	return v2
+			_pc = 26888
+			continue
+		elif _pc == 26888:
+			v1 = 1 + v1
+			_pc = 26764
+			continue
+		elif _pc == 26906:
+			_pc = 26916
+			continue
+		elif _pc == 26916:
+			return
+		else:
+			return 0
 	return 0
 
 func local_26918(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = 0
-	v2 = 0
-	while list.item_count(v0) < v2:
-		v4 = gui.cast(list.get_nth(v0, v2))
-		v3 = v1 + gui.window_canvas_height(v4) + v3
-		v2 = 1 + v2
-	if 0 > v3:
-		v3 = v1 - v3
-	return v3
+	var _pc: int = 26918
+	while true:
+		if _pc == 26918:
+			v3 = 0
+			v2 = 0
+			_pc = 26937
+			continue
+		elif _pc == 26937:
+			if list.item_count(v0) < v2:
+				_pc = 26966
+				continue
+			else:
+				_pc = 27062
+				continue
+		elif _pc == 26966:
+			v4 = gui.cast(list.get_nth(v0, v2))
+			v3 = v1 + gui.window_canvas_height(v4) + v3
+			v2 = 1 + v2
+			_pc = 26937
+			continue
+		elif _pc == 27062:
+			if 0 > v3:
+				_pc = 27074
+				continue
+			else:
+				_pc = 27091
+				continue
+		elif _pc == 27074:
+			v3 = v1 - v3
+			_pc = 27091
+			continue
+		elif _pc == 27091:
+			_pc = 27101
+			continue
+		elif _pc == 27101:
+			return
+		else:
+			return 0
 	return 0
 
 func create_and_initialise_list_box_entry_component_window(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
-	v6 = await create_and_initialise_static_window(v0, 0, v1, v2, v3, v4, v5)
-	gui.set_window_text_formatting(v6, 0, 0)
-	gui.set_window_state_colours(v6, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_listbox_focused_red"), global.pog_float("GUI_listbox_focused_green"), global.pog_float("GUI_listbox_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
-	return v6
+	var _pc: int = 27103
+	while true:
+		if _pc == 27103:
+			v6 = await create_and_initialise_static_window(v0, 0, v1, v2, v3, v4, v5)
+			gui.set_window_text_formatting(v6, 0, 0)
+			gui.set_window_state_colours(v6, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_listbox_focused_red"), global.pog_float("GUI_listbox_focused_green"), global.pog_float("GUI_listbox_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
+			_pc = 27380
+			continue
+		elif _pc == 27380:
+			return
+		else:
+			return 0
 	return 0
 
 func overlay_custom_screen(v0) -> Variant:
