@@ -5,6 +5,10 @@ extends ShipFlight
 # player, fire PBCs in range/arc). Stats and hull from the extracted INIs.
 
 var behavior := "patrol"
+# A sim's NAME is a localisation key ("sn_general_212"), and the engine resolves
+# it through FcLocalisedText::Field for display (icAIPilot::ResolveName). The
+# scripts look ships up by the key; the HUD shows the resolved text.
+var sim_key := ""
 var display_name := ""  # node names mangle punctuation; HUD uses this
 var faction := "INDPT"  # text/faction_names.csv abbreviations
 var ctype := "TRANS"    # text/hud.csv hud_type_* abbreviations

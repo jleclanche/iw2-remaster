@@ -54,12 +54,37 @@ var ldsi_mat: StandardMaterial3D
 var sky_anchor: Node3D
 var sky_mat: ShaderMaterial
 var env_ref: Environment
-var cam_mode := 0  # F1 internal, F2 tactical/chase, F3 external, F4 drop
-var cockpit_frame := true  # the original's removable cockpit dressing
+# icDirector's camera GROUPS, built in its constructor (iwar2 @ 0x100d5e20) and
+# cycled by icDirector::OnMessage (0x100d6920): pressing a camera key when you
+# are outside its group jumps to the group's first camera; pressing it again
+# steps to the next camera IN that group, wrapping. The groups, by their
+# icDirector::eCamera indices (the name table is at 0x101621e0):
+#
+#   F1 internal : cam_internal_cockpit(1), cam_internal_no_cockpit(2), cam_arcade(5)
+#   F2 tactical : cam_tactical(8), cam_inverse_tactical(9)
+#   F3 external : cam_external(6), cam_target_external(7)
+#   F4 drop     : cam_drop(11)
+#
+# So F1 is what takes the cockpit away, exactly as remembered, and it lands on
+# the arcade camera on the third press. (cam_internal_no_hud(3) exists but is
+# only in the developers' DevCycleAllCameras group, which ships unbound.)
+const CAM_GROUPS := [["cockpit", "no_cockpit", "arcade"],
+	["tactical", "inverse_tactical"], ["external", "target_external"], ["drop"]]
+var cam_mode := 0  # group: 0 internal (F1), 1 tactical, 2 external, 3 drop
+var cam_view := 0  # index within the group
+var cockpit_frame := true  # derived: the internal group's cockpit dressing
 var drop_cam_pos := Vector3.ZERO
 var zoomed := false
+# icPlayerPilot: max_zoom_factor = 10, zoom_time = 0.5 (flux.ini). The zoom ramps
+# at max/time per second and DIVIDES the yaw and pitch yoke, which is what makes
+# a zoomed-in shot aimable (icPlayerPilot::HandleLinearMessage, 0x100ae2b0).
+const ZOOM_MAX := 10.0
+const ZOOM_TIME := 0.5
+var zoom_factor := 1.0
 var free_toggle := false
+var roll_yaw_swap := false  # icPlayerPilot.RollYawToggleHold
 var ap_mode := 0  # 0 off, 1 approach, 2 formate, 3 dock, 4 match velocity
+var _bounds_cache: Dictionary = {}
 var last_aggressor: AiShip = null
 var kill_count := 0  # hostiles destroyed (missions watch this)
 var demo := false
@@ -268,6 +293,7 @@ func _build_pog() -> void:
 	pog_facs.register(pog)
 	pog_world = PogWorld.new()
 	pog_world.factions = pog_facs
+	pog_world.std = pog_std   # a sim's name is a localisation key; it needs the tables
 	pog_world.register(pog)
 	pog_world.bind_game(self)
 	pog_api = PogGameApi.new()
@@ -1006,18 +1032,31 @@ func _spawn_player() -> void:
 		cam.add_child(cockpit)
 	_apply_view()
 
-func _apply_view() -> void:
-	if cockpit != null:
-		cockpit.visible = cam_mode == 0 and cockpit_frame
-	if ship_model != null:
-		ship_model.visible = cam_mode != 0
+func cam_name() -> String:
+	return CAM_GROUPS[cam_mode][cam_view]
 
-func _set_camera(mode: int) -> void:
-	cam_mode = mode
-	if mode == 3:
+func _apply_view() -> void:
+	# only the cockpit view carries the cockpit dressing; every camera that is
+	# not inside the ship shows the hull
+	cockpit_frame = cam_mode == 0 and cam_view == 0
+	if cockpit != null:
+		cockpit.visible = cockpit_frame
+	if ship_model != null:
+		ship_model.visible = not (cam_mode == 0 and cam_view <= 1)
+
+## icDirector::OnMessage's camera-key rule: outside the group, jump to its first
+## camera; inside it, step to the next one.
+func _set_camera(group: int) -> void:
+	if group == cam_mode:
+		cam_view = (cam_view + 1) % CAM_GROUPS[group].size()
+	else:
+		cam_mode = group
+		cam_view = 0
+	if cam_name() == "drop":
 		drop_cam_pos = cam.global_position
-	if not zoomed:
-		cam.fov = FOV_INTERNAL if mode == 0 else FOV_EXTERNAL
+	zoomed = false
+	zoom_factor = 1.0
+	cam.fov = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 else FOV_EXTERNAL
 	audio.play("audio/gui/camera_change.wav", -10.0)
 	_apply_view()
 
@@ -1176,14 +1215,37 @@ func contact_list() -> Array:
 					"type": str(o.get("type", "LAGPT" if o["category"] == "lpoint"
 						else "STATN"))})
 	for a in ai_ships:
+		if not _sensor_visible(a):
+			continue
 		var hostile: bool = a.behavior == "attack"
-		list.append({"name": (a.display_name if a.display_name != "" else str(a.name)), "dist": a.global_position.length(),
+		list.append({"name": _contact_name(a), "dist": a.global_position.length(),
 				"hostile": hostile, "targeted": a == target_ai,
 				"category": "traffic",
 				"faction": "OUTLW" if hostile else a.faction,
 				"type": "FIGHT" if hostile else a.ctype})
 	list.sort_custom(func(x, y): return x["dist"] < y["dist"])
 	return list.slice(0, 12)
+
+## iiSim::VisibleToSensor (iwar2 @ 0x100013b0) gates a sim's place in the contact
+## list. The scripts clear it with isim.SetSensorVisibility to stage an ambush --
+## it applied to SHIPS as much as to stations, and we were only honouring it for
+## static records, so hidden ambushers were showing up on the list.
+func _sensor_visible(a: AiShip) -> bool:
+	if pog_world == null:
+		return true
+	var key := String(a.sim_key)
+	if key.is_empty():
+		return true
+	var s = pog_world.sims.get(key)
+	return true if s == null else s.sensor_visible
+
+## Never show a raw sim name. A sim's NAME is a localisation key and the engine
+## resolves it (icAIPilot::ResolveName) before anything displays it; a ship with
+## no name at all is "Undefined", never its Godot node name.
+func _contact_name(a: AiShip) -> String:
+	if not String(a.display_name).is_empty():
+		return String(a.display_name)
+	return "Undefined"
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Escape means "get me out of whatever is in front of me", in that order:
@@ -1210,10 +1272,24 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if menu != null and menu.visible:
 		return  # the menu handles its own input (it runs while paused)
-	# mouse steers as the joystick yoke (the original's primary control)
+	# The mouse stands in for the joystick yoke -- the original binds no mouse
+	# axis to the pilot at all (mouse is the director's, in configs/default.ini),
+	# so this is ours. It carries the yoke's two real behaviours: the zoom factor
+	# divides it, and RollYawToggleHold swaps its X channel from yaw to roll.
 	if event is InputEventMouseMotion and not demo and docked_at == "":
-		ship.input_rotate.y = clampf(ship.input_rotate.y - event.relative.x * 0.003, -1, 1)
-		ship.input_rotate.x = clampf(ship.input_rotate.x - event.relative.y * 0.003, -1, 1)
+		var mx: float = event.relative.x * 0.003 / zoom_factor
+		var my: float = event.relative.y * 0.003 / zoom_factor
+		if roll_yaw_swap:
+			ship.input_rotate.z = clampf(ship.input_rotate.z - mx, -1, 1)
+		else:
+			ship.input_rotate.y = clampf(ship.input_rotate.y - mx, -1, 1)
+		ship.input_rotate.x = clampf(ship.input_rotate.x - my, -1, 1)
+	# RollYawToggleHold: held, not toggled (flux.ini toggle_roll_yaw = 0). The
+	# original's only binding is joystick button 2; on a mouse yoke the right
+	# button is its natural home.
+	if event is InputEventMouseButton \
+			and event.button_index == MOUSE_BUTTON_RIGHT:
+		roll_yaw_swap = event.pressed
 	# conversation choices: number keys answer comms questions
 	if comms != null and comms.choosing() and event is InputEventKey \
 			and event.pressed and not event.echo \
@@ -1232,10 +1308,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				_toggle_lds()
 			KEY_U:  # Undock
 				_undock()
-			KEY_Z:  # ToggleZoom
+			KEY_Z:  # ToggleZoom -- _player_control ramps the factor and the FOV
 				zoomed = not zoomed
-				cam.fov = 30 if zoomed else \
-					(FOV_INTERNAL if cam_mode == 0 else FOV_EXTERNAL)
 			KEY_COMMA:  # CycleContactUp
 				_cycle_contact(-1)
 			KEY_PERIOD:  # CycleContactDown
@@ -1265,21 +1339,22 @@ func _unhandled_input(event: InputEvent) -> void:
 				_set_autopilot(3)
 			KEY_F9:  # AutopilotMatchVelocity
 				_set_autopilot(4)
+			# icDirector camera keys. Each cycles WITHIN its group -- F1 steps
+			# cockpit -> no cockpit -> arcade, which is the "way to turn off the
+			# cockpit view" the original had.
 			KEY_F1:  # InternalCamera
 				_set_camera(0)
+				hud.log_msg("CAMERA: %s" % cam_name().replace("_", " ").to_upper())
 			KEY_F2:  # TacticalCamera
 				_set_camera(1)
 			KEY_F3:  # ExternalCamera
 				_set_camera(2)
 			KEY_F4:  # DropCamera
 				_set_camera(3)
-			KEY_F12:
+			KEY_F12:  # fcGraphicsDeviceD3D.TakeScreenShot
 				var img := get_viewport().get_texture().get_image()
 				img.save_png(_base().path_join("data/screenshots/screenshot_%d.png"
 					% (Time.get_ticks_msec() / 1000)))
-			KEY_V:  # cockpit dressing on/off (original GUI option)
-				cockpit_frame = not cockpit_frame
-				_apply_view()
 			KEY_J:  # capsule jump at an L-point (remaster binding)
 				_try_jump()
 			KEY_K:
@@ -1742,27 +1817,66 @@ func _collisions() -> void:
 func _key(code: int) -> float:
 	return 1.0 if Input.is_physical_key_pressed(code) else 0.0
 
+## The pilot's yoke, as the original wires it.
+##
+## Bindings come from the game's OWN configs (`configs/default.ini` for a
+## joystick, `configs/keyboard_only.ini` for the rest of us); the yoke itself is
+## `icPlayerPilot::HandleLinearMessage` (iwar2 @ 0x100ae2b0). See docs/controls.md.
+##
+##   Yaw    NumPad4 / NumPad6      Pitch  NumPad2 / NumPad8   Roll  NumPad1 / NumPad3
+##   Strafe A / D (LateralX), W / S (LateralZ)   -- NOT steering; IW2 flies on the numpad
+##   Throttle  = / -  (ThrottleDelta): a FRACTION of top speed, +-1/3 per second
+##   FreeHold LeftCtrl / NumPad5   FreeToggle N   Fire Space
+##
+## Two things fall out of the binary that a keyboard player never sees:
+##   - `RollYawToggleHold` (joystick button 2) SWAPS yaw and roll on the yoke,
+##     and `flux.ini [icPlayerPilot] toggle_roll_yaw = 0` says it is a hold, not a
+##     permanent swap. We give the mouse yoke the same modifier.
+##   - the zoom factor DIVIDES yaw and pitch (not roll), which is what makes a
+##     zoomed shot aimable.
 func _player_control(delta: float) -> void:
-	# throttle wheel: = / - adjust the set speed (icPlayerPilot.ThrottleDelta)
-	var dv := ship.max_speed.z * delta / 1.2
+	# ThrottleDelta is a rate on the throttle FRACTION: `throttle += v * dt *
+	# 0.3333` clamped to [0,1] (the 1/3 is the float at 0x10119454). A full sweep
+	# is three seconds, and the throttle is a fraction of max speed, not m/s.
+	var dv := ship.max_speed.z * delta / 3.0
 	ship.set_speed = clampf(ship.set_speed
 		+ (_key(KEY_EQUAL) + _key(KEY_KP_ADD)) * dv
 		- (_key(KEY_MINUS) + _key(KEY_KP_SUBTRACT)) * dv,
 		0.0, ship.max_speed.z)
+	# icPlayerPilot::Simulate ramps the zoom at max_zoom_factor / zoom_time
+	zoom_factor = move_toward(zoom_factor, ZOOM_MAX if zoomed else 1.0,
+		ZOOM_MAX / ZOOM_TIME * delta)
+	if not docked_at.is_empty():
+		cam.fov = FOV_INTERNAL
+	else:
+		var base_fov: float = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 \
+			else FOV_EXTERNAL
+		cam.fov = base_fov / zoom_factor
 	if ap_mode == 0:
-		# thrusters: W/S fore-aft, A/D lateral (LateralZ / LateralX)
+		# THRUSTERS, not steering. LateralX = D / A, LateralZ = W / S. LateralY
+		# has no keyboard binding in either shipped config -- it is joystick-only
+		# (JoyYAxis with the ALT modifier), so vertical strafe is left unbound.
 		ship.input_thrust.z = _key(KEY_W) - _key(KEY_S)
 		ship.input_thrust.x = _key(KEY_D) - _key(KEY_A)
 		ship.input_thrust.y = 0.0
-		# steering: numpad per keyboard_only.ini, on top of the mouse yoke
-		var yaw := _key(KEY_KP_4) - _key(KEY_KP_6)
+		# keyboard_only.ini: NumPad6 = +Yaw, NumPad8 = +Pitch, NumPad3 = +Roll,
+		# and the `inverse` twins are the negative half of each axis. +Pitch is
+		# NOSE DOWN: the joystick binding is `JoyYAxis, inverse`, and an inverted
+		# DirectInput Y is positive when the stick is pushed forward.
+		var yaw := _key(KEY_KP_6) - _key(KEY_KP_4)
 		var pitch := _key(KEY_KP_8) - _key(KEY_KP_2)
-		var roll := _key(KEY_KP_1) - _key(KEY_KP_3)
+		var roll := _key(KEY_KP_3) - _key(KEY_KP_1)
+		# RollYawToggleHold swaps the yaw and roll channels
+		if roll_yaw_swap:
+			var t := yaw
+			yaw = roll
+			roll = t
+		# Godot's local axes: +x pitches the nose UP, +y yaws LEFT, +z rolls LEFT
 		if absf(yaw) > 0.0:
-			ship.input_rotate.y = yaw
+			ship.input_rotate.y = -yaw / zoom_factor
 		if absf(pitch) > 0.0:
-			ship.input_rotate.x = pitch
-		ship.input_rotate.z = roll
+			ship.input_rotate.x = -pitch / zoom_factor
+		ship.input_rotate.z = -roll
 		ship.input_rotate.x = move_toward(ship.input_rotate.x, 0.0, delta * 1.5)
 		ship.input_rotate.y = move_toward(ship.input_rotate.y, 0.0, delta * 1.5)
 	# free flight: N toggles, LeftCtrl / NumPad5 holds (FreeToggle/FreeHold)
@@ -1883,6 +1997,11 @@ func _set_autopilot(mode: int) -> void:
 		hud.warn("AUTOPILOT: NO TARGET")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
+	# icPlayerPilot::SetAutopilot (0x100af930): you cannot formate on something
+	# that has no thrusters. The engine silently downgrades Formate to Approach
+	# when the target is not an iiThrusterSim -- so F7 on a station approaches it.
+	if mode == 2 and target_ai == null:
+		mode = 1
 	if mode == 0:
 		_disengage_autopilot()
 	else:
@@ -1905,6 +2024,40 @@ func _disengage_autopilot() -> void:
 	ship.input_thrust = Vector3.ZERO
 	ship.input_rotate = Vector3.ZERO
 
+## FiSim::BoundsRadius for anything in the world. A ship's is its model's
+## bounding sphere (the engine builds it from the avatar the same way); a map
+## record carries its own authored radius.
+func sim_bounds_radius(node: Node3D) -> float:
+	if node == null or not is_instance_valid(node):
+		return 0.0
+	if not _bounds_cache.has(node.get_instance_id()):
+		var r := 0.0
+		for c in node.get_children():
+			if c is Node3D:
+				r = maxf(r, _model_bounds_radius(c as Node3D))
+		_bounds_cache[node.get_instance_id()] = SHIP_HIT_RADIUS if r <= 0.0 else r
+	return _bounds_cache[node.get_instance_id()]
+
+
+## The PogSim handle for whatever the player has targeted, so the marker maths
+## can see its class (planet / star / nebula / belt) and its radius.
+func _target_sim() -> PogWorld.PogSim:
+	if pog_world == null:
+		return null
+	if target_ai != null and is_instance_valid(target_ai):
+		return pog_world._wrap_ship(target_ai)
+	if target_idx >= 0 and target_idx < objects.size():
+		return pog_world._wrap_record(objects[target_idx])
+	return null
+
+
+## icAIServices::InnerMarkerRadius(player_ship, target) -- the autopilot's real
+## break-off distance. See docs/original.md section 4a.
+func _target_marker() -> float:
+	if pog_world == null:
+		return 0.0
+	return PogWorld.inner_marker_radius(pog_world.player_sim(), _target_sim())
+
 func _autopilot_process(delta: float) -> void:
 	var p := _target_pos()
 	if ap_mode == 3 and p == Vector3.INF:
@@ -1920,6 +2073,13 @@ func _autopilot_process(delta: float) -> void:
 		return
 	var dist := p.length()
 	_face_target()
+	# The player's autopilot IS the AI order system: icPlayerPilot::
+	# EngageAutopilotApproach (0x100afbc0) calls icAIServices::DefaultApproach
+	# and pushes an "AutopilotApproach" order onto the player's own icAIPilot.
+	# So the break-off is the same marker sphere the AI flies to, and it is
+	# derived from the TARGET -- a fighter breaks off at ~300 m, a station at a
+	# kilometre or two, a planet thousands of kilometres out.
+	var marker := _target_marker()
 	# like the original: approach/dock autopilots engage LDS for long
 	# transits once the nose is on target (LDS cruise already brakes and
 	# drops out near the destination)
@@ -1928,22 +2088,27 @@ func _autopilot_process(delta: float) -> void:
 			and (-ship.global_transform.basis.z).angle_to(p.normalized()) < 0.05:
 		_toggle_lds()
 	match ap_mode:
-		1:  # approach: decelerate to arrive 500 m out
+		1:  # approach: fly to the marker sphere and stop on it
+			var togo := dist - marker
 			if lds_state == 0:
-				ship.set_speed = clampf(dist / 8.0, 0.0, ship.max_speed.z)
-			if dist < 600.0:
+				ship.set_speed = clampf(togo / 8.0, 0.0, ship.max_speed.z)
+			# the engine settles onto the sphere and completes within
+			# min(marker*0.05, 0.5) m of it; we arrive rather than settle, so the
+			# slop is floored at icAITarget::m_waypoint_approach_distance (20 m)
+			if togo <= maxf(PogWorld.completion_tolerance(marker), 20.0):
 				ship.set_speed = 0.0
 				_set_autopilot(0)
 				hud.log_msg("APPROACH COMPLETE")
-		2:  # formate: hold 300 m abreast
+		2:  # formate: hold station on the marker sphere, matching velocity
 			var tvel := Vector3.ZERO
 			if target_ai != null and is_instance_valid(target_ai):
 				tvel = target_ai.velocity
-			var hold := clampf((dist - 300.0) * 0.5, 0.0, ship.max_speed.z)
+			# DefaultFormate (0x10056520) uses the same InnerMarkerRadius
+			var hold := clampf((dist - marker) * 0.5, 0.0, ship.max_speed.z)
 			ship.set_speed = clampf(tvel.length() + hold, 0.0, ship.max_speed.z)
 		3:  # dock: approach then hard-dock
 			if lds_state == 0:
-				ship.set_speed = clampf(dist / 6.0, 0.0, ship.max_speed.z)
+				ship.set_speed = clampf((dist - marker) / 6.0, 0.0, ship.max_speed.z)
 			if dist < DOCK_RANGE * 0.8:
 				_set_autopilot(0)
 				_try_dock()
@@ -2038,6 +2203,15 @@ func _stream_objects() -> void:
 					o["node"] = model
 					add_child(model)
 					o["coll_spheres"] = _model_coll_spheres(model)
+					# A station's map record carries no radius -- the byte at
+					# +0x138 belongs to its parent body (docs/geography.md), so
+					# the decoder zeroes it. The engine gets a station's
+					# FiSim::Radius the same way it gets any sim's: from the
+					# avatar. Everything that reasons about the station's size --
+					# above all the approach marker the autopilot breaks off at --
+					# needs it, so stamp it the moment the model exists.
+					if float(o.get("radius", 0.0)) <= 0.0:
+						o["radius"] = _model_bounds_radius(model)
 				elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
 					o["node"].queue_free()
 					o["node"] = null
@@ -2067,10 +2241,16 @@ func _chase_camera(delta: float) -> void:
 		cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
 			target.origin + Vector3(0, 0, 0), Vector3.UP)
 		return
-	match cam_mode:
-		0:  # internal (F1): rigid at the pilot's eye (the crew null)
+	# the target the "look at the target" cameras (inverse tactical, target
+	# external) frame; without one they fall back to their forward-looking twin
+	var tp := _target_pos()
+	match cam_name():
+		"cockpit", "no_cockpit":  # rigid at the pilot's eye (the crew null)
 			cam.global_transform = target.translated_local(eye)
-		1:  # tactical chase (F2)
+		"arcade":  # icArcadeCamera: hull-following, range 4 (defaults.ini)
+			var pos := target.origin + target.basis * Vector3(0, 12, 55)
+			cam.global_transform = Transform3D(target.basis, pos)
+		"tactical":
 			var want := target.translated_local(Vector3(0, 32, 130))
 			if lds_state == 2 or jump_state >= 2:
 				cam.global_transform = want.looking_at(
@@ -2080,12 +2260,25 @@ func _chase_camera(delta: float) -> void:
 					want, 1.0 - exp(-8.0 * delta))
 				cam.global_transform = cam.global_transform.looking_at(
 					target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
-		2:  # external (F3): slow orbit around the ship
+		"inverse_tactical":  # over the nose, looking back at the ship
+			var want := target.translated_local(Vector3(0, 20, -130))
+			cam.global_transform = cam.global_transform.interpolate_with(
+				want, 1.0 - exp(-8.0 * delta))
+			cam.global_transform = cam.global_transform.looking_at(
+				target.origin, target.basis.y)
+		"external":  # slow orbit around the ship
 			var a := Time.get_ticks_msec() / 1000.0 * 0.15
 			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 180.0
 			cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
 				target.origin, Vector3.UP)
-		3:  # drop camera (F4): fixed in space, tracking the ship
+		"target_external":  # orbit the ship, but framed on the current target
+			var a := Time.get_ticks_msec() / 1000.0 * 0.15
+			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 180.0
+			var look: Vector3 = target.origin + (-target.basis.z * 1000.0 \
+				if tp == Vector3.INF else (tp - target.origin).normalized() * 1000.0)
+			cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+				look, Vector3.UP)
+		"drop":  # fixed in space, tracking the ship
 			cam.global_transform = Transform3D(Basis.IDENTITY,
 				drop_cam_pos).looking_at(target.origin, Vector3.UP)
 

@@ -57,13 +57,13 @@ static func _s(v: Variant) -> String:
 #   global.CreateInt("g_current_act", 2, -1)              -- and ijafsscript.pog
 #     :1379 tests `-1 == global.Int("g_current_act")`, so -1 is the value
 #
-# THIS IS KNOWINGLY WRONG, and it is left wrong on purpose. See docs/original.md
-# "Two bugs that cancel": the ported comparison operators have their operands the
-# wrong way round, so `if (0 < global.Int("g_current_act"))` -- which gates the
-# whole Act 0 prologue in iPrelude.Main -- only passes because this stores the
-# flag (2) instead of the value (-1). Correcting this one alone stops the
-# campaign starting. The two have to be fixed together, and the comparison half
-# lives in tools/iw2/pogdec.py, pogport.py and pog/vm.gd.
+# This used to be wrong, and it had a twin: the ported comparison operators had
+# their operands reversed, so `if (0 < global.Int("g_current_act"))` -- which
+# gates the whole Act 0 prologue -- only passed because this stored the flag (2)
+# instead of the value (-1). Right behaviour, both reasons wrong; correcting
+# either alone stopped the campaign booting. Both are fixed now, and the gate
+# reads as the game wrote it: `global.Int("g_current_act") < 0`, and -1 < 0.
+# See docs/original.md.
 
 # @native global.CreateBool
 # @native global.CreateInt
@@ -346,9 +346,42 @@ func _text_remove(_t, a: Array) -> Variant:
 
 # @native text.Field
 func _text_field(_t, a: Array) -> Variant:
-	var row: Array = text_tables.get(_s(a[0]), [])
-	var col := int(a[1])
-	return row[col] if col < row.size() else ""
+	return field(_s(a[0]), int(a[1]) if a.size() > 1 else 0)
+
+
+## FcLocalisedText::Field (flux @ 0x10028d80), which is not a plain dictionary
+## lookup and cannot be treated as one:
+##
+##  - **The key is split on '+'** and each token is looked up and concatenated.
+##    That is how the scripts interpolate numbers into names:
+##    `iact1mission10.pog:394` creates a ship called
+##    `"a1_m10_ship_name_fighter+ +" + FromInt(n)`.
+##  - **A lone " " token is a literal space**, not a lookup (the engine tests for
+##    a one-character token equal to ' ').
+##  - **A token that is not in any loaded table resolves to ITSELF.** That is the
+##    engine's behaviour outside developer mode, and it is why an unloaded table
+##    leaks a raw key into the HUD rather than blanking it.
+##  - **Keys are hashed lower-case**, so the lookup is case-insensitive.
+##
+## Reading the key back whole -- which is what we used to do -- turns every one of
+## those composite names into the raw key: `A1_M10_SHIP_NAME_FIGHTER+ +2` in the
+## contact list instead of `Talon 2`.
+func field(key: String, col: int = 0) -> String:
+	if key.is_empty():
+		return ""
+	if not key.contains("+"):
+		return _field1(key, col)
+	var out := ""
+	for tok in key.split("+"):
+		out += " " if tok == " " else _field1(tok, col)
+	return out
+
+
+func _field1(key: String, col: int) -> String:
+	var row: Array = text_tables.get(key.to_lower(), [])
+	if col < row.size():
+		return String(row[col])
+	return key  # missing: the engine renders the key itself
 
 
 func _load_csv(path: String) -> void:
@@ -364,7 +397,9 @@ func _load_csv(path: String) -> void:
 		# The tables are commented with a leading ';' -- skip those, and the
 		# blank separator rows between sections.
 		if row.size() > 0 and not row[0].is_empty() and not row[0].begins_with(";"):
-			text_tables[row[0]] = Array(row).slice(1)
+			# FcLocalisedText hashes its keys lower-case, so the table is
+			# case-insensitive and every lookup must go through the same fold.
+			text_tables[row[0].to_lower()] = Array(row).slice(1)
 	f.close()
 
 

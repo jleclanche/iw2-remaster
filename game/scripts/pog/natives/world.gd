@@ -19,6 +19,7 @@ extends RefCounted
 var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var game: Node3D = null                ## main.gd, when running in-game
 var factions: PogFactions = null       ## for the hostility lookup
+var std: PogStd = null                 ## for the localised name tables
 var sims: Dictionary = {}              ## name -> PogSim
 var ship_db: Dictionary = {}           ## "sims/ships/x.ini" -> ships.json record
 var _preloaded: Dictionary = {}
@@ -89,9 +90,92 @@ class PogSim extends RefCounted:
 			return float(rec.get("radius", 100.0))
 		return 60.0
 
+	## The map record's category, which is how we tell an icPlanet from an icSun
+	## from an icNebula from an icAsteroidBelt. The approach-marker maths branches
+	## on exactly those four classes, so it has to be able to ask.
+	func category() -> String:
+		if is_player or node != null:
+			return "ship"
+		return String(rec.get("category", ""))
+
+	## FiSim::BoundsRadius (flux `FiSim+0x20`, FiSim::UpdateBoundsRadius @
+	## 0x100c05a0): the sim's own radius grown to enclose its attached children.
+	## For everything we model it is the radius; a ship has no attached sims.
+	func bounds_radius() -> float:
+		if node != null and is_instance_valid(node) and world != null \
+				and world.game != null:
+			return world.game.sim_bounds_radius(node)
+		return radius()
+
+
+## icAITarget::AvoidanceFunction (iwar2 @ 0x1005ab6e):
+##     max(a*1.1 + b*1.25, m_minimum_avoidance_radius)
+## with the floor skipped when `a` is zero. Constants read out of the shipped
+## DLL: 0x10119e94 = 1.1, 0x1011a19c = 1.25, m_minimum_avoidance_radius = 20.
+static func avoidance_function(a: float, b: float) -> float:
+	var r := a * 1.1 + b * 1.25
+	if r < 20.0 and absf(a) >= 1.0e-6:
+		r = 20.0
+	return r
+
+
+## icAIServices::InnerMarkerRadius (iwar2 @ 0x100560d0) -- the sphere an
+## approaching ship flies to and stops on. THIS is the autopilot's break-off
+## distance, and it is derived from the target, which is why a station and a
+## planet break off at wildly different ranges. Argument order is the C++ one,
+## (ship, target); the POG native takes them the other way round.
+static func inner_marker_radius(ship: PogSim, target: PogSim) -> float:
+	if target == null:
+		return 0.0
+	var cat := target.category()
+	# an icNebula is its own marker: radius * 0.9 (the float at 0x1011951c)
+	if cat == "nebula":
+		return target.radius() * 0.9
+	var ship_r := ship.bounds_radius() if ship != null else 0.0
+	# an icAsteroidBelt contributes no radius at all -- you fly into a belt
+	var tgt_r := 0.0 if cat == "belt" else target.bounds_radius()
+	if cat == "body" or cat == "star":
+		# icPlanet/icSun: (HeatDistanceAsRadiusMultiplier + 1.0) x the radius.
+		# m_heat_radius_multiplier = 0.5 (0x1011af58), so 1.5x -- you stop well
+		# outside a star's photosphere.
+		tgt_r *= 1.5
+	if absf(tgt_r) < 1.0e-6:
+		# no radius to stand off from: icAITarget::m_waypoint_approach_distance
+		return 20.0
+	var a := avoidance_function(tgt_r, ship_r) * 1.75   # 0x1011a264
+	var b := avoidance_function(ship_r, tgt_r) * 1.75
+	# the two hulls plus 200 m of clear space (0x10119470), or the avoidance
+	# radius if that is larger
+	return maxf(maxf(tgt_r + ship_r + 200.0, a), b)
+
+
+## icAIServices::OuterMarkerRadius (0x10056280): the inner marker x 1.5
+## (0x1011a268) -- except for a nebula, which reports its own radius.
+static func outer_marker_radius(ship: PogSim, target: PogSim) -> float:
+	if target == null:
+		return 0.0
+	if target.category() == "nebula":
+		return target.radius()
+	return inner_marker_radius(ship, target) * 1.5
+
+
+## icAITarget::RecomputeRadii (0x10057ede) sets the order's completion tolerance
+## to `min(radius * 0.05, m_maximum_standard_completion_radius)`, and
+## m_maximum_standard_completion_radius is 0.5 m. The engine's position
+## controller settles onto the marker sphere and holds; ours flies a waypoint and
+## cannot hold half a metre, so we treat "reached the sphere" as arrival -- see
+## docs/original.md Deliberate divergences.
+static func completion_tolerance(marker: float) -> float:
+	return minf(marker * 0.05, 0.5)
+
 
 func register(v) -> void:
 	vm = v
+	# Sims are named with localisation keys, so the world needs the text tables to
+	# turn one into something a human reads. Both hosts (PogRuntime for the port,
+	# PogVM's owner for the oracle) build their PogStd before their PogWorld.
+	if std == null and "std" in v:
+		std = v.std
 	for fq in _BINDINGS:
 		v.bind(fq, Callable(self, _BINDINGS[fq]))
 
@@ -173,7 +257,9 @@ func player_sim() -> PogSim:
 ## scripts can find the world they were written against: "Hoffer's Gap" and
 ## friends already exist in the system JSON.
 func _wrap_record(rec: Dictionary) -> PogSim:
-	var key := String(rec.get("name", ""))
+	# A record's identity is its sim NAME (a localisation key for anything the
+	# scripts created); rec["name"] is the resolved text the HUD shows.
+	var key := String(rec.get("key", rec.get("name", "")))
 	if sims.has(key):
 		return sims[key]
 	var s := PogSim.new()
@@ -185,22 +271,29 @@ func _wrap_record(rec: Dictionary) -> PogSim:
 	return s
 
 
+## The scripts look a sim up by its NAME -- the localisation key they created it
+## with, not the text it displays as. Both are accepted here because the
+## hand-authored content in mission.gd names its ships in plain English.
 func find_by_name(name: String) -> PogSim:
 	if sims.has(name):
 		return sims[name]
 	if game == null:
 		return null
 	for rec in game.objects:
-		if String(rec.get("name", "")) == name:
+		if String(rec.get("key", rec.get("name", ""))) == name \
+				or String(rec.get("name", "")) == name:
 			return _wrap_record(rec)
 	for ai in game.ai_ships:
-		if is_instance_valid(ai) and ai.display_name == name:
+		if is_instance_valid(ai) \
+				and (ai.sim_key == name or ai.display_name == name):
 			return _wrap_ship(ai)
 	return null
 
 
 func _wrap_ship(ai: Node3D) -> PogSim:
-	var key := String(ai.display_name)
+	var key := String(ai.sim_key)
+	if key.is_empty():
+		key = String(ai.display_name)
 	if sims.has(key):
 		return sims[key]
 	var s := PogSim.new()
@@ -210,6 +303,18 @@ func _wrap_ship(ai: Node3D) -> PogSim:
 	s.faction = String(ai.faction)
 	sims[key] = s
 	return s
+
+
+## icAIPilot::ResolveName (iwar2 @ 0x10055540): a sim's NAME is a localisation
+## key, and everything that displays one runs it through FcLocalisedText::Field
+## first. `iShipCreation.ShipName` hands `sim.Create` a key like `sn_general_212`
+## and the missions hand it composite keys like `a1_m10_ship_name_fighter+ +2`;
+## the display string is the resolved text, never the key. A null sim resolves to
+## "Undefined" (the literal at 0x1015c244).
+func display_name_of(key: String) -> String:
+	if key.is_empty():
+		return "Undefined"
+	return std.field(key, 0) if std != null else key
 
 
 ## Spawn from an INI path, using the authored stats out of ships.json.
@@ -226,7 +331,8 @@ func _create_ship(ini: String, name: String) -> PogSim:
 	var props: Dictionary = rec.get("properties", {})
 	var ai := AiShip.new()
 	ai.main = game
-	ai.display_name = name
+	ai.sim_key = name
+	ai.display_name = display_name_of(name)
 	ai.ctype = String(props.get("type", "TRANS")).trim_prefix("T_")
 	ai.avatar_path = avatar_path(String(rec.get("avatar", "")))
 	ai.setup(props if not props.is_empty() else {"hit_points": 600})
@@ -253,7 +359,7 @@ func _create_object(ini: String, name: String) -> PogSim:
 		sims[name] = s
 		return s
 	var rec: Dictionary = {
-		"name": name, "category": "prop",
+		"name": display_name_of(name), "key": name, "category": "prop",
 		"x": 0.0, "y": 0.0, "z": 0.0,
 		"radius": 100.0, "avatar": "", "jumps": [], "colors": [],
 		"node": null, "prop_collide": true,

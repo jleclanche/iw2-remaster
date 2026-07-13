@@ -37,16 +37,25 @@ against the reference screenshot: it is a 1280x800 render upscaled 1.4984x, and
 Those two independent measurements agree to within 1%, so the numbers below are
 literal pixel values.
 
-## Sprites
+## Sprites — the whole atlas, recovered
 
 The HUD draws almost everything as textured quads, not vectors:
 `FUN_100e9de0(x, y, sprite_id, flags, rotation)`. `sprite_id` indexes a table at
-`DAT_101741b0`, stride 0x24 = `{w, h, origin_x, origin_y, u0, v0, u1, v1, ?}`.
+`DAT_101741b0`, stride 0x24 = `{w, h, origin_x, origin_y, u0, v0, u1, v1, texture}`.
+
+That table is in **BSS** (`.data` is raw-backed only to `0x10165000`), so it reads as
+garbage from the PE — which is why an earlier pass called it unrecoverable. It is not:
+the **builder** is at `0x100e6c60`..`0x100e7f90` (undisassembled by Ghidra), and it
+fills every entry with one call to
+`FUN_100ee6b0(atlas_x, atlas_y, w, h, origin_x, origin_y, texture)` followed by a
+`rep movsd` into the entry. All **95 sprites (0..94)** come straight out of it.
+See `docs/original.md` §8c; the cells the HUD uses are in `hud.gd`'s `SPR`/`SPR_RET`.
+
+Textures (pointer list at `0x10162c9c`): 0 = `images/hud/sprites`, 1 = `.../lcd`,
+2 = `.../reticle`, 3 = `.../tri`.
 
 Note the decompiler prints small integer sprite ids as denormal floats — `1.26117e-43`
-is the float whose *bit pattern* is 90, i.e. sprite **90**. Ids seen: 90 = the reticle
-ring itself (`images/hud/reticle.png`), 20 = a charge pip, and 0x15-0x1e / 0x3e-0x40 /
-0x4e / 0x56-0x59 for the status icons (`images/hud/sprites.png`).
+is the float whose *bit pattern* is 90, i.e. sprite **90**.
 
 ## Palette
 
@@ -100,30 +109,47 @@ Geometry, all absolute pixels:
 ### The status-icon ring
 
 The constructor (`FUN_100f5a90`) builds 15 icons via
-`FUN_100f93c0(out, angle, radius_delta, sprite_id, colour, size)`, which stores
+`FUN_100f93c0(out, angle, radius_delta, sprite_id, colour, flags)`, which stores
 
 ```
 +0x00 sprite id     +0x04 angle = arg * PI      +0x08 radius = 80 + radius_delta
 +0x0c x = floor(sin(angle) * radius)            +0x10 y = floor(-cos(angle) * radius)
-+0x14 visible       +0x18..0x20 FcColour        +0x24 size    +0x28 charge 0..1
++0x14 visible       +0x18..0x20 FcColour        +0x24 flags   +0x28 charge 0..1
 ```
 
-So the angle argument is in **half-turns**, and angles run **clockwise from twelve
-o'clock**. The slots the constructor lays down:
+The angle argument is in **half-turns**, and angles run **clockwise from twelve
+o'clock**.
 
-- **-22.5, -33.75, -45, -56.25** at r=150 — the four mode icons (sprites 0x15-0x18).
-  `FUN_100f8410` makes exactly one visible, indexed by a table at `DAT_1011e04c`.
-- **-22.5** at r=110 — LDS / capsule drive (sprite 0x19 or 0x1a), with a charge ring
-- **+22.5** at r=110 — sprite 0x1e
-- **-67.5** at r=110 — sprite 0x1b / 0x1c / 0x1d
-- **+67.5** at r=110 — sprite 0x4e
-- **135, 157.5, 180** at r=110 — sprites 0x3e-0x40; each turns red (`DAT_10176018`,
-  size 0xd) when its flag is set, otherwise amber (`DAT_10174fb0`, size 9)
+**The sixth argument is a flag word, not a size.** An earlier pass read the `9` /
+`0xb` / `0xd` as pixel sizes; `FUN_100ea2b0` shows they are bits:
+`bit0|bit3` → the backing roundel (sprite 53, ring + disc), `bit1` → a wedge
+(sprite 50) spinning at 1 rev/s, `bit2` → a 2 s alpha pulse. Glyphs are always drawn
+at their **native atlas size**. So every status icon is a 32x32 roundel with a 32x32
+glyph on it — that is the "disc" in the reference shot.
+
+The slots (full table, with the atlas cells, in `docs/original.md` §8c):
+
+- **-22.5, -33.75, -45, -56.25** at r=150 — the four mode icons (sprites 0x15-0x18),
+  flags 11. `FUN_100f8410` makes at most one visible, indexed through
+  `DAT_1011e04c = [-1, 1, 0, 3, 2]` by `icPlayerPilot+0x308`.
+- **-22.5** at r=110 — the **LDS drive**: sprite 0x19 while warming up (flags 13,
+  charge = warm-up progress) or running (flags 11), and sprite **0x1A = "!"** when
+  inhibited or LDSi-disrupted (flags 13, charge = how deep in the field). Colour is
+  `DAT_10176038` **green** in every case — the draw never changes it.
+- **+22.5** at r=110 — sprite 0x1e, the capsule drive / L-point jump; within 50 km of a
+  targeted L-point it also writes the destination's name at (+24, -line).
+- **-67.5** at r=110 — sprite 0x1b when a component is down (0x1c / 0x1d otherwise, off
+  the drive controller — not resolved).
+- **+67.5** at r=110 — sprite 0x4e, incoming missile, **red**; one pip per missile.
+- **180, 157.5, 135** at r=110 — sprites 0x3e / 0x3f / 0x40 (thermometer / lightning /
+  bulb). Each is a `{value, flag}` pair on `icPlayerPilot+0xe8`; it appears when the
+  value changes, holds 2 s (`DAT_1011e03c`), and goes red + flags 13 when flagged.
 - **202.5** at r=110 — sprites 0x56, 0x57 (multiplayer team markers)
 - **225** at r=110 — sprites 0x58, 0x59 (multiplayer flag / bomb)
 
-Each icon can carry a charge ring: `FUN_100f8da0` lights `floor(charge * 24)` pips on a
-circle of radius 18, and fades the next one by the remainder.
+Each icon can carry a charge ring: `FUN_100f8da0` lights `floor(charge * 24)` pips
+(sprite 20) on a circle of radius 18, clockwise from twelve, and fades the next one by
+the remainder (skipped below 0.05).
 
 ### The target text block — `FUN_100f7e10`
 
@@ -312,10 +338,9 @@ Engineering, Log, Objectives, Score.
 
 These keep the values `hud.gd` already had, and are **guesses, not facts**:
 
-- **Which sprite glyph goes in which status-icon slot.** The sprite table
-  (`DAT_101741b0`) is populated at runtime, not stored in the PE, so sprite id -> atlas
-  cell cannot be resolved. The slot *angles and radii* above are real; the icons keep
-  our text labels rather than inventing a glyph mapping.
+- ~~Which sprite glyph goes in which status-icon slot.~~ **SOLVED** — the table's
+  builder is in `.text` even though the table is in BSS. All 95 sprites and every slot's
+  glyph are recovered; see above and `docs/original.md` §8c. The text labels are gone.
 - **The damage ramp's LERP operands** (see above) — thresholds are real, interpolation
   is ours.
 - **The exact tick-mark pattern on the reticle ring.** The ring is a texture
@@ -344,3 +369,29 @@ These keep the values `hud.gd` already had, and are **guesses, not facts**:
   sim has no shield components and inventing one would be fabrication.
 - **Contact-list max rows and sort order** are now real (6 rows, range ascending), but
   our list still comes from `main.contact_list()`, which caps at 12 before we see it.
+
+
+---
+
+## Element coverage
+
+`python -m tools.iw2.featurecov --base iiHUD` diffs the engine's own class registry
+against what we have built. Every concrete `icHUD*` element is now either implemented
+or explicitly stubbed with a reason, via `# @element` / `# @element-stub` markers next
+to the code:
+
+| built | where |
+|---|---|
+| icHUDReticle, icHUDMenuReticle, icHUDShipStatus, icHUDMessage | `hud.gd` |
+| icHUDTargetMFD, icHUDWeapons, icHUDOrbRadar, icHUDClock, icHUDContactList | `hud.gd` |
+| icHUDBrackets | `hud.gd` |
+| icHUDEngineering, icHUDStarmap, icHUDLog, icHUDObjectives | `hud_screens.gd` |
+| icHUDLagrangeIcon, icHUDWaypointIcon, icHUDReferenceGrid | `space_fx.gd` |
+
+| stubbed | why |
+|---|---|
+| icHUDShields | the component class its draw filters on (`DAT_10167e5c`) is unresolved and our sim mounts no shield components |
+| icHUDScore | no statistics are tracked anywhere in our sim |
+| icHUDContrails | its Draw was not reversed; the trail geometry would be a guess |
+| icHUDDebug | the developer overlay; deliberately not built |
+| icHUDEditBoxElement | no campaign script ever calls `ihud.GiveEditBoxControl` |

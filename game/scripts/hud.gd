@@ -1,4 +1,4 @@
-﻿class_name Hud
+class_name Hud
 extends Control
 # The original IW2 HUD, per the manual's spec and reference shots:
 # - MFD (upper-left): current target name/type, hull, wireframe feed
@@ -44,19 +44,73 @@ const ICON_PIPS := 24      # _DAT_1011e0bc  charge pips ringing an icon
 const ICON_PIP_R := 18.0   # _DAT_101190bc  pip ring radius
 const TEXT_X := 82.0       # ICON_BASE + _DAT_10119ec8 (2): target block / hull bar
 const TEXT_GAP := 9.0      # _DAT_101190b8  bar -> text gap
+# _DAT_1011b344: inside this range of a targeted L-point the reticle names its
+# destination beside the capsule-drive icon.
+const LPOINT_LABEL_RANGE := 50000.0
 # FUN_100e88c0: the damage colour ramp's thresholds.
 const HEALTH_HI := 0.75    # _DAT_10117d8c
 const HEALTH_LO := 0.25    # _DAT_101191ec
 
 var FONT_SIZE := 13
-var _font: Font       # Handel Gothic 8pt â€” panel text, like the original
-var _font_num: Font   # OCR-B 8pt â€” reticle numerics
-var _font_big: Font   # Handel Gothic 12pt â€” warnings
+var _font: Font       # Handel Gothic 8pt -- panel text, like the original
+var _font_num: Font   # OCR-B 8pt -- reticle numerics
+var _font_big: Font   # Handel Gothic 12pt -- warnings
 var num_size := 14
 var big_size := 17
 var target_view: TargetView  # live EO-feed render of the target
-var _sprites: Texture2D      # images/hud/sprites.png, 8x8 grid of 32px icons
-const SPR_BANG := Rect2(128, 96, 32, 32)  # the "!" warning glyph
+var _sprites: Texture2D      # images/hud/sprites.png
+var _reticle_tex: Texture2D  # images/hud/reticle.png
+
+# The engine's sprite atlas, recovered from the table builder at 0x100e6c60,
+# which fills DAT_101741b0 (stride 0x24) one entry at a time by calling the
+# record ctor FUN_100ee6b0(atlas_x, atlas_y, w, h, origin_x, origin_y, texture).
+# The table itself lives in .bss, so it reads as zeroes from the PE -- it had to
+# come out of the code. Only the ids the HUD actually references are listed.
+# [x, y, w, h, origin_x, origin_y]; all from texture 0 (images/hud/sprites.png).
+const SPR := {
+	20: [68, 0, 11, 11, 5.5, 5.5],       # charge pip
+	21: [0, 26, 32, 32, 16, 16],         # mode icon 1
+	22: [33, 26, 32, 32, 16, 16],        # mode icon 2
+	23: [99, 26, 32, 32, 16, 16],        # mode icon 3
+	24: [66, 26, 32, 32, 16, 16],        # mode icon 4
+	25: [132, 26, 32, 32, 16, 16],       # LDS drive (the striped capsule)
+	26: [132, 92, 32, 32, 16, 16],       # "!"  -- LDS inhibited / disrupted
+	27: [66, 125, 32, 32, 16, 16],       # power symbol -- a system is down
+	28: [99, 125, 32, 32, 16, 16],       # drive-controller state (see docs)
+	29: [132, 125, 32, 32, 16, 16],      # drive-controller state (see docs)
+	30: [165, 125, 32, 32, 16, 16],      # capsule drive / jump
+	50: [132, 59, 32, 32, 16, 16],       # rotating sweep wedge (flag bit 1)
+	51: [165, 92, 32, 32, 16, 16],       # roundel: soft disc
+	52: [165, 59, 32, 32, 16, 16],       # roundel: ring
+	53: [198, 59, 32, 32, 16, 16],       # roundel: ring + disc  (bits 0|3)
+	62: [0, 191, 32, 32, 16, 16],        # thermometer
+	63: [33, 191, 32, 32, 16, 16],       # lightning bolt
+	64: [198, 191, 32, 32, 16, 16],      # light bulb
+	78: [99, 224, 32, 32, 16, 16],       # missile
+	86: [132, 224, 32, 32, 16, 16],      # alpha  (multiplayer)
+	87: [166, 224, 32, 32, 16, 16],      # beta   (multiplayer)
+	88: [198, 224, 32, 32, 16, 16],      # flag   (multiplayer)
+	89: [132, 158, 32, 32, 16, 16],      # bomb   (multiplayer)
+}
+
+# FUN_100ea2b0's fourth argument is NOT a size (as an earlier pass assumed) --
+# it is a flag bitfield that selects the icon's backing roundel and animation:
+#   bit0|bit3 -> roundel sprite 53 (ring + disc); bit0 alone -> 51; bit3 -> 52
+#   bit1      -> sprite 50, a wedge spinning at 1 rev/s (rot = -2*PI * frac(t))
+#   bit2      -> the icon pulses: alpha = |frac(t/2) - 0.5| * 1.8 + 0.1
+# The only values the reticle passes are 9, 11 and 13, so every status icon has
+# a roundel; 11 spins a sweep over it and 13 pulses it. Glyphs are never scaled.
+const ICON_ROUNDEL := 1
+const ICON_SWEEP := 2
+const ICON_PULSE := 4
+const ICON_RING := 8
+
+# images/hud/reticle.png (texture 2 in the same table).
+const SPR_RET := {
+	90: [0, 0, 170, 170, 84, 84],     # the reticle ring
+	91: [85, 0, 85, 85, 0, 85],       # menu reticle: the static backing quadrant
+	93: [0, 186, 70, 70, 0, 70],      # menu reticle: the spinning quadrant
+}
 
 static func load_game_font(base: String, fnt: String) -> Font:
 	var path := base.path_join("data/fonts").path_join(fnt)
@@ -82,19 +136,28 @@ func _ready() -> void:
 	target_view = TargetView.new()
 	target_view.main = main
 	add_child(target_view)
-	var sprites_path := base.path_join("data/textures/images/hud/sprites.png")
-	if FileAccess.file_exists(sprites_path):
-		var img := Image.load_from_file(sprites_path)
-		if img != null:
-			# the atlas is white glyphs on black; convert to an alpha mask
-			# so tinting a glyph doesn't paint its black cell background
-			img.convert(Image.FORMAT_RGBA8)
-			for y in img.get_height():
-				for x in img.get_width():
-					var p := img.get_pixel(x, y)
-					var l := maxf(p.r, maxf(p.g, p.b))
-					img.set_pixel(x, y, Color(1, 1, 1, l))
-			_sprites = ImageTexture.create_from_image(img)
+	_sprites = _load_mask(base, "sprites.png")
+	_reticle_tex = _load_mask(base, "reticle.png")
+	screens = HudScreens.new()
+	screens.hud = self
+	screens.main = main
+	add_child(screens)
+
+static func _load_mask(base: String, file: String) -> Texture2D:
+	# the HUD atlases are white glyphs on black; convert to an alpha mask so
+	# tinting a glyph does not paint its black cell background with it
+	var path := base.path_join("data/textures/images/hud").path_join(file)
+	if not FileAccess.file_exists(path):
+		return null
+	var img := Image.load_from_file(path)
+	if img == null:
+		return null
+	img.convert(Image.FORMAT_RGBA8)
+	for y in img.get_height():
+		for x in img.get_width():
+			var p := img.get_pixel(x, y)
+			img.set_pixel(x, y, Color(1, 1, 1, maxf(p.r, maxf(p.g, p.b))))
+	return ImageTexture.create_from_image(img)
 
 func _screen() -> Vector2:
 	return get_viewport_rect().size
@@ -109,7 +172,11 @@ func log_msg(text: String, color := GREEN) -> void:
 	if log_lines.size() > 4:
 		log_lines.pop_front()
 
-func _process(_d: float) -> void:
+func _process(d: float) -> void:
+	_menu_spin += d * TAU * 0.05  # the four quadrants turn slowly together
+	_menu_process(d)
+	if screens != null:
+		screens.visible = screen != ""
 	queue_redraw()
 
 func _draw() -> void:
@@ -122,6 +189,7 @@ func _draw() -> void:
 	if not based:
 		_draw_reticle(c)
 		_draw_target_marks()
+		_draw_menu_reticle(c)
 	if main.comms != null and main.comms.speaking():
 		target_view.enabled = false
 		main.comms.portrait.visible = true  # channel stays open between lines
@@ -352,11 +420,6 @@ func _draw_reticle(c: Vector2) -> void:
 	var hull_col := _health_color(frac)
 	draw_arc(c, RET_R + 5.0, -PI / 2.0, -PI / 2.0 + TAU * frac, 64,
 			Color(hull_col.r, hull_col.g, hull_col.b, 0.65), 2.5, true)
-	# LDS inhibition: the "!" roundel, on the icon ring's -22.5 deg slot
-	var inhibited: bool = main.lds_state == 0 and main.jump_state == 0 \
-		and main._lds_clearance() < 0.0 and main.docked_at == ""
-	if inhibited or main.disrupt_time > 0.0:
-		_draw_inhibit_roundel(c + _icon_pos(-22.5, ICON_R), main.inhibit_charge())
 	# own speed, left of the reticle ("+325m/s")
 	var vel: float = main.ship.forward_speed()
 	var vel_text: String = ("%s/s" % _fmt_range(absf(vel))) if in_lds \
@@ -390,6 +453,61 @@ func _icon_pos(deg: float, radius: float) -> Vector2:
 	# clockwise from twelve o'clock.
 	var a := deg_to_rad(deg)
 	return Vector2(floor(sin(a) * radius), floor(-cos(a) * radius))
+
+# --- the sprite primitives (FUN_100e9de0 / FUN_100ea2b0) --------------------
+
+func _spr(pos: Vector2, id: int, col: Color, rot := 0.0) -> void:
+	# FUN_100e9de0(x, y, sprite, flags, rotation). The quad spans
+	# [-origin, size - origin] about the anchor and is drawn at NATIVE atlas
+	# size -- the engine never scales these.
+	if _sprites == null or not SPR.has(id):
+		return
+	var s: Array = SPR[id]
+	var w := float(s[2])
+	var h := float(s[3])
+	var off := Vector2(-float(s[4]), -float(s[5]))
+	var src := Rect2(float(s[0]), float(s[1]), w, h)
+	if is_zero_approx(rot):
+		draw_texture_rect_region(_sprites, Rect2(pos + off, Vector2(w, h)), src, col)
+		return
+	draw_set_transform(pos, rot, Vector2.ONE)
+	draw_texture_rect_region(_sprites, Rect2(off, Vector2(w, h)), src, col)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+func _icon(pos: Vector2, id: int, flags: int, col: Color, charge := 0.0) -> void:
+	# FUN_100ea2b0 (the roundel + its animation) followed by the charge ring
+	# from FUN_100f8da0.
+	var t: float = Time.get_ticks_msec() / 1000.0
+	var a := col.a
+	if flags & ICON_PULSE:
+		a *= absf(fposmod(t * 0.5, 1.0) - 0.5) * 1.8 + 0.1
+	var c := Color(col.r, col.g, col.b, a)
+	var base := 0
+	if (flags & ICON_ROUNDEL) and (flags & ICON_RING):
+		base = 53
+	elif flags & ICON_ROUNDEL:
+		base = 51
+	elif flags & ICON_RING:
+		base = 52
+	if base != 0:
+		_spr(pos, base, c)
+	if flags & ICON_SWEEP:
+		_spr(pos, 50, c, -TAU * fposmod(t, 1.0))
+	_spr(pos, id, c)
+	if charge <= 0.0:
+		return
+	# ICON_PIPS pips on a circle of ICON_PIP_R; floor(charge * 24) are lit and
+	# the next one is faded by the remainder (skipped below 0.05).
+	var f: float = clampf(charge, 0.0, 1.0) * ICON_PIPS
+	var lit := int(floor(f))
+	for i in mini(lit, ICON_PIPS):
+		var ang := TAU * i / float(ICON_PIPS)
+		_spr(pos + Vector2(sin(ang), -cos(ang)) * ICON_PIP_R, 20, col)
+	var rem := f - float(lit)
+	if rem > 0.05 and lit < ICON_PIPS:
+		var ang2 := TAU * lit / float(ICON_PIPS)
+		_spr(pos + Vector2(sin(ang2), -cos(ang2)) * ICON_PIP_R, 20,
+				Color(col.r, col.g, col.b, col.a * rem))
 
 func _draw_target_block(c: Vector2) -> void:
 	# FUN_100f7e10: to the right of the reticle at TEXT_X, a vertical segmented
@@ -440,32 +558,6 @@ func _vbar(pos: Vector2, height: float, frac: float, col: Color,
 		else:
 			draw_rect(r, Color(col.r, col.g, col.b, 0.15))
 
-func _draw_inhibit_roundel(ip: Vector2, charge: float) -> void:
-	# LDS inhibition (and LDSi missile hits): the "!" roundel. The pip ring
-	# encircles it and DISCHARGES as you approach the edge of the field —
-	# `charge` is 1 deep inside the zone, 0 at its boundary.
-	var g := Color(0.45, 1.0, 0.35)
-	draw_circle(ip, 17.0, Color(g.r, g.g, g.b, 0.12))
-	draw_circle(ip, 13.0, Color(g.r, g.g, g.b, 0.85))
-	draw_arc(ip, 14.0, 0, TAU, 40, Color(g.r, g.g, g.b, 0.95), 1.6, true)
-	if _sprites != null:
-		draw_texture_rect_region(_sprites, Rect2(ip - Vector2(9, 9),
-				Vector2(18, 18)), SPR_BANG, Color(0.0, 0.13, 0.02, 0.95))
-	else:
-		draw_string(_font_big, ip + Vector2(-3, 6), "!",
-				HORIZONTAL_ALIGNMENT_LEFT, -1, big_size, Color(0.0, 0.13, 0.02))
-	# FUN_100f8da0: the charge ring is ICON_PIPS sprites on a circle of
-	# ICON_PIP_R, lit = floor(charge * ICON_PIPS) with the next one faded by the
-	# remainder.
-	var lit := int(floor(clampf(charge, 0.0, 1.0) * ICON_PIPS))
-	for i in ICON_PIPS:
-		var a := -PI / 2.0 + TAU * i / float(ICON_PIPS)
-		var pp := ip + Vector2(cos(a), sin(a)) * ICON_PIP_R
-		if i < lit:
-			draw_circle(pp, 1.5, Color(g.r, g.g, g.b, 0.95))
-		else:
-			draw_circle(pp, 1.2, Color(g.r, g.g, g.b, 0.22))
-
 func _reticle_turn_arrow(c: Vector2) -> void:
 	# when the target is outside the reticle, an arrow inside the ring shows
 	# which way to turn (manual, HUD section)
@@ -493,44 +585,118 @@ func _target_color() -> Color:
 		return GREEN if t["category"] == "lpoint" else YELLOW
 	return YELLOW
 
+# @element icHUDReticle
+#
+# The status-icon ring. The icHUDReticle constructor (FUN_100f5a90) lays down
+# fifteen icon records via FUN_100f93c0(angle_in_half_turns, radius_delta,
+# sprite, colour, flags); the draw (FUN_100f8410) decides which are visible and
+# may swap the sprite, the colour and the flags. Every value below -- angle,
+# radius, sprite id, colour, flag bits -- is that constructor's, verbatim:
+#
+#  slot  angle   r    sprite  colour  flags  meaning
+#   0-3  -22.5 ..     0x15..  amber    11    the four mutually-exclusive
+#        -56.25 150   0x18                   autopilot mode icons
+#    4  -22.5   110   0x19    green    11/13 LDS drive; becomes 0x1A ("!") when
+#                                            the drive is inhibited or disrupted
+#    5  -67.5   110   0x1B    amber    13    a ship system is down
+#    6  +22.5   110   0x1E    green    11/13 capsule drive / L-point jump
+#    7  180     110   0x3E    amber     9    thermometer gauge
+#    8  157.5   110   0x3F    amber     9    lightning gauge
+#    9  135     110   0x40    amber     9    bulb gauge
+#   10  +67.5   110   0x4E    red       9    incoming missile
+#  11-14 202.5/225    0x56..  green   9/13   multiplayer team / flag / bomb
+#
+# Slots 0-3 are indexed by the table at DAT_1011e04c = [-1, 1, 0, 3, 2]: the
+# pilot's mode 0 lights none, mode 1 lights slot 1, mode 2 lights slot 0, and so
+# on. Our `ap_mode` (0 off, 1 approach, 2 formate, 3 dock, 4 match) has the same
+# arity and the same "0 = off" convention, so it drives them.
+const AP_ICON := [-1, 1, 0, 3, 2]   # DAT_1011e04c
+const GAUGE_HOLD := 2.0             # DAT_1011e03c: a gauge lingers 2 s after it
+                                    # stops changing
+var _gauge_last := [-1.0, -1.0, -1.0]
+var _gauge_hold := [0.0, 0.0, 0.0]
+
 func _draw_status_icons(c: Vector2) -> void:
-	# The original hangs 15 icons off a ring at ICON_R, at fixed angular slots
-	# (the icHUDReticle constructor builds them at -22.5, -67.5, +22.5, +67.5,
-	# 135, 157.5, 180, 202.5 and 225 degrees) plus four mutually-exclusive mode
-	# icons at ICON_R_MODE. Each is a sprite roundel; the sprite table is built
-	# at runtime, so which glyph goes in which slot is NOT recoverable from the
-	# binary and these keep our text labels. The slots and radii are the real
-	# ones.
-	var icons: Array = []
-	if main.lds_state == 1:
-		icons.append([-22.5, "LDS RAMP", LDS_COL])
+	# --- slots 0-3: autopilot mode, r = 150, one at most ---------------------
+	var lit: int = AP_ICON[clampi(main.ap_mode, 0, 4)]
+	if lit >= 0:
+		_icon(c + _icon_pos(-22.5 - 11.25 * lit, ICON_R_MODE), 0x15 + lit,
+				ICON_ROUNDEL | ICON_SWEEP | ICON_RING, AMBER)
+
+	# --- slot 4: the LDS drive, r = 110 --------------------------------------
+	# FUN_100f8410: while the drive is neither inhibited (ship+0x251) nor in
+	# state 3, state 1 (warming up) shows the drive glyph with the warm-up as a
+	# charge ring and state 2 (running) shows it bare. Otherwise the glyph
+	# becomes "!" and the ring shows how hard the inhibition is -- 1 - d/r inside
+	# an inhibitor's field, or the disrupt countdown after an LDSi hit. The draw
+	# never touches the colour, so the "!" is GREEN, not red.
+	var inhibited: bool = main.disrupt_time > 0.0 \
+		or (main._lds_clearance() < 0.0 and main.docked_at == "")
+	var lds_p := c + _icon_pos(-22.5, ICON_R)
+	if inhibited:
+		_icon(lds_p, 0x1A, ICON_ROUNDEL | ICON_PULSE | ICON_RING, GREEN,
+				main.inhibit_charge())
+	elif main.lds_state == 1:
+		_icon(lds_p, 0x19, ICON_ROUNDEL | ICON_PULSE | ICON_RING, GREEN,
+				clampf(main.lds_timer / main.LDS_SPOOL, 0.0, 1.0))
 	elif main.lds_state == 2:
-		icons.append([-22.5, "LDS", LDS_COL])
-	if not main.ship.assist:
-		icons.append([-67.5, "FA OFF", RED])
-	elif main.ship.thrusting():
-		icons.append([-67.5, "LAT", AMBER])
-	if main.docked_at != "":
-		icons.append([22.5, "DOCKED", GREEN])
-	match main.jump_state:
-		1: icons.append([67.5, "CAPSULE CHG", AMBER])
-		2: icons.append([67.5, "ACCEL RUN", AMBER])
-		3: icons.append([67.5, "JUMP", AMBER])
-	if main.ap_mode > 0:
-		icons.append([135.0,
-			["", "AP:APPR", "AP:FORM", "AP:DOCK", "AP:MATCH"][main.ap_mode], AMBER])
-	for entry in icons:
-		var pos := c + _icon_pos(float(entry[0]), ICON_R)
-		var text: String = entry[1]
-		var col: Color = entry[2]
-		var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1,
-				FONT_SIZE - 2).x
-		draw_rect(Rect2(pos - Vector2(w / 2 + 4, 10), Vector2(w + 8, 15)),
-				Color(0, 0.06, 0, 0.6))
-		draw_rect(Rect2(pos - Vector2(w / 2 + 4, 10), Vector2(w + 8, 15)),
-				col * Color(1, 1, 1, 0.5), false, 1.0)
-		draw_string(_font, pos + Vector2(-w / 2, 2), text,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, col)
+		_icon(lds_p, 0x19, ICON_ROUNDEL | ICON_SWEEP | ICON_RING, GREEN)
+
+	# --- slot 5: a ship system is down, r = 110 ------------------------------
+	# The draw walks the ship's components and lights sprite 0x1B if any is
+	# non-functional. (The 0x1C / 0x1D branch keys off the drive controller's
+	# state; see docs/original.md -- not resolved, so not drawn.)
+	for state: float in main.system_states().values():
+		if state >= 0.0 and state <= 0.0:
+			_icon(c + _icon_pos(-67.5, ICON_R), 0x1B,
+					ICON_ROUNDEL | ICON_PULSE | ICON_RING, AMBER)
+			break
+
+	# --- slot 6: capsule drive / L-point jump, r = 110 -----------------------
+	var cap_p := c + _icon_pos(22.5, ICON_R)
+	if main.jump_state == 1:
+		_icon(cap_p, 0x1E, ICON_ROUNDEL | ICON_PULSE | ICON_RING, GREEN,
+				clampf(main.jump_timer / 3.0, 0.0, 1.0))
+	elif main.jump_state >= 2:
+		_icon(cap_p, 0x1E, ICON_ROUNDEL | ICON_PULSE | ICON_RING, GREEN, 1.0)
+	elif main.target_idx >= 0 \
+			and main.objects[main.target_idx]["category"] == "lpoint" \
+			and main._target_distance() < LPOINT_LABEL_RANGE:
+		# ... and, within 50 km of a targeted L-point that has a destination, the
+		# draw writes the destination's name beside the icon at (+24, -line).
+		_icon(cap_p, 0x1E, ICON_ROUNDEL | ICON_PULSE | ICON_RING, GREEN)
+		var jumps: Array = main.objects[main.target_idx].get("jumps", [])
+		if not jumps.is_empty():
+			draw_string(_font_num, cap_p + Vector2(ICON_PIPS, -float(num_size)),
+					str(jumps[0]).replace("_", " ").to_upper(),
+					HORIZONTAL_ALIGNMENT_LEFT, -1, num_size, GREEN)
+
+	# --- slots 7-9: the three gauges, at 180 / 157.5 / 135 -------------------
+	# Each is a {value, flag} pair on icPlayerPilot (+0xe8, stride 8). The icon
+	# appears whenever the value CHANGES, holds GAUGE_HOLD seconds after it
+	# settles, and shows the value as a charge ring: amber + flags 9 normally,
+	# red + flags 13 when the flag is set. Only the thermometer has a source we
+	# can honestly drive; what the lightning and bulb gauges measure is UNKNOWN.
+	_gauge(c, 0, 0x3E, 180.0, main.ship_heat(), main.ship_heat() >= 1.0)
+
+	# Slot 10 (incoming missile, sprite 0x4E) has no source in our sim -- no
+	# missile ever locks the player -- so it never lights. Slots 11-14 are the
+	# multiplayer team / flag / bomb markers and are dead in the campaign.
+
+func _gauge(c: Vector2, idx: int, sprite: int, deg: float, value: float,
+		flagged: bool) -> void:
+	var dt: float = get_process_delta_time()
+	if not is_equal_approx(value, float(_gauge_last[idx])) or flagged:
+		_gauge_last[idx] = value
+		_gauge_hold[idx] = GAUGE_HOLD
+	elif _gauge_hold[idx] > 0.0:
+		_gauge_hold[idx] = float(_gauge_hold[idx]) - dt
+	if _gauge_hold[idx] <= 0.0:
+		return
+	var flags := ICON_ROUNDEL | ICON_PULSE | ICON_RING if flagged \
+			else ICON_ROUNDEL | ICON_RING
+	_icon(c + _icon_pos(deg, ICON_R), sprite, flags, RED if flagged else AMBER,
+			clampf(value, 0.0, 1.0))
 
 func _tri(p: Vector2, a: float, col: Color, size := 7.0) -> void:
 	var d := Vector2(cos(a), sin(a))
@@ -539,7 +705,270 @@ func _tri(p: Vector2, a: float, col: Color, size := 7.0) -> void:
 		p + d * size, p - d * size * 0.6 + perp * size * 0.7,
 		p - d * size * 0.6 - perp * size * 0.7]), col)
 
+# --- icHUDMenuReticle --------------------------------------------------------
+# @element icHUDMenuReticle
+#
+# The arrow-key HUD menu. Every menu node is a 0x2c-byte record whose four
+# direction links sit at +0x14 / +0x18 / +0x1c / +0x20; the draw
+# (FUN_100f1d60, which Ghidra left undisassembled) proves the order by pulling
+# a per-direction offset out of a table it builds at 0x100f1bf0:
+#
+#     +0x14 UP    (  0, -100)      +0x1c LEFT  (-100, 0)
+#     +0x18 DOWN  (  0, +100)      +0x20 RIGHT (+100, 0)
+#
+# 100 = _DAT_1011dec0 (80) + _DAT_101190b0 (20). Node +0x10 is the enabled byte
+# that ihud.SetMenuNodeEnabled writes; icHUD+0x1b6 is ihud.LockMenu's flag.
+#
+# The tree below is the one FUN_100df640 builds, link for link. The names are
+# the hud.csv keys the engine passes to FcString, which is exactly what
+# ihud.CurrentMenuNode hands back to the POG scripts.
+const MENU_R := 100.0
+const MENU_TIMEOUT := 30.0    # flux.ini [icHUD] menu_timeout
+const MENU_ROOT := "hud_menu_menu"
+
+# name -> {label, up, down, left, right, kind}
+# kind: "" submenu, "screen", "cmd", "toggle", "carousel"
+const MENU := {
+	"hud_menu_menu": {"label": "MENU",
+		"up": "hud_menu_eng", "down": "hud_menu_cmd",
+		"left": "hud_menu_nav", "right": "hud_menu_wep"},
+	"hud_menu_nav": {"label": "NAV", "right": "hud_menu_menu",
+		"up": "hud_menu_map", "left": "hud_menu_autopilot",
+		"down": "hud_menu_undock"},
+	"hud_menu_wep": {"label": "WEP", "left": "hud_menu_menu",
+		"up": "hud_menu_zoom", "down": "hud_menu_aim_assist",
+		"right": "hud_menu_fire_mode"},
+	"hud_menu_cmd": {"label": "CMD", "up": "hud_menu_menu",
+		"left": "hud_menu_doc", "right": "hud_menu_remote_link",
+		"down": "hud_menu_comms"},
+	# "hud_menu_doc" has no hud.csv entry -- the label is ours.
+	"hud_menu_doc": {"label": "DOC", "right": "hud_menu_cmd",
+		"up": "hud_menu_log", "left": "hud_menu_objectives",
+		"down": "hud_menu_score_table"},
+	"hud_menu_comms": {"label": "COMMS", "up": "hud_menu_cmd",
+		"right": "hud_menu_wingmen", "left": "hud_menu_tfighters",
+		"down": "hud_menu_call_jafs"},
+	# the five icHUD elements that register themselves as menu nodes
+	"hud_menu_eng": {"label": "ENG", "kind": "screen", "down": "hud_menu_menu"},
+	"hud_menu_map": {"label": "STARMAP", "kind": "screen", "down": "hud_menu_nav"},
+	"hud_menu_log": {"label": "LOG", "kind": "screen", "down": "hud_menu_doc"},
+	"hud_menu_objectives": {"label": "OBJECTIVES", "kind": "screen",
+		"right": "hud_menu_doc"},
+	"hud_menu_score_table": {"label": "STATISTICS", "kind": "screen",
+		"up": "hud_menu_doc"},
+	# commands and toggles
+	"hud_menu_undock": {"label": "UNDOCK", "kind": "cmd", "up": "hud_menu_nav"},
+	"hud_menu_zoom": {"label": "ZOOM IN", "kind": "toggle",
+		"down": "hud_menu_wep"},
+	"hud_menu_aim_assist": {"label": "TOGGLE AIM ASSIST", "kind": "toggle",
+		"up": "hud_menu_wep"},
+	"hud_menu_fire_mode": {"label": "TOGGLE FIRE MODE", "kind": "toggle",
+		"left": "hud_menu_wep"},
+	"hud_menu_remote_link": {"label": "REM LINK", "kind": "toggle",
+		"left": "hud_menu_cmd"},
+	"hud_menu_call_jafs": {"label": "CALL JAFS", "kind": "cmd",
+		"up": "hud_menu_comms"},
+	# The three dynamic nodes. Each really holds a PREV / NEXT pair plus a list
+	# of commands (FUN_100efe50 / FUN_100f0560 / FUN_100f0c40 build them into
+	# private slots, not into the four direction links), so left/right step the
+	# list. WHICH direction is prev and which is next was not recovered.
+	"hud_menu_autopilot": {"label": "AUTOPILOT", "kind": "carousel",
+		"right": "hud_menu_nav",
+		"items": ["APPROACH", "FORMATE", "PURSUIT", "DOCK", "DISENGAGE"]},
+	"hud_menu_wingmen": {"label": "WINGMEN", "kind": "carousel",
+		"left": "hud_menu_comms",
+		"items": ["REPORT IN", "PROTECT ME", "ATTACK MY TARGET",
+			"PROTECT MY TARGET", "DOCK WITH MY TARGET"]},
+	"hud_menu_tfighters": {"label": "T-FIGHTERS", "kind": "carousel",
+		"right": "hud_menu_comms",
+		"items": ["ATTACH/DETACH", "ATTACK MY TARGET", "WEAPONS FREE",
+			"WEAPONS HOLD"]},
+}
+const MENU_DIRS := ["up", "down", "left", "right"]
+const MENU_OFF := {"up": Vector2(0, -MENU_R), "down": Vector2(0, MENU_R),
+	"left": Vector2(-MENU_R, 0), "right": Vector2(MENU_R, 0)}
+
+var menu_active := false
+var menu_focus := MENU_ROOT
+var menu_time := 0.0            # icHUD+0x1b8, counts down; the timeout is shown
+                                # only below 10 s (_DAT_101190c0)
+var menu_locked := false        # icHUD+0x1b6, ihud.LockMenu
+var menu_disabled := {}         # node name -> true; ihud.SetMenuNodeEnabled
+var menu_carousel := {}         # carousel node -> selected index
+var screen := ""                # the open full-screen HUD element, "" for none
+var screens: HudScreens
+var _menu_spin := 0.0
+
+func menu_node_name() -> String:
+	# ihud.CurrentMenuNode (IHUDMenuFocusName, 0x100f5040): the open screen's
+	# name if one is up, otherwise the focused node's.
+	if screen != "":
+		return screen
+	return menu_focus if menu_active else ""
+
+func menu_enabled(name: String) -> bool:
+	return not menu_disabled.get(name, false)
+
+func _menu_link(name: String, dir: String) -> String:
+	var node: Dictionary = MENU.get(name, {})
+	var to: String = str(node.get(dir, ""))
+	return to if to != "" and menu_enabled(to) else ""
+
+func _menu_open(name: String) -> void:
+	var node: Dictionary = MENU.get(name, {})
+	if str(node.get("kind", "")) == "screen":
+		screen = name
+		menu_active = false
+		return
+	menu_focus = name
+	menu_time = MENU_TIMEOUT
+
+func _menu_process(dt: float) -> void:
+	if not menu_active:
+		return
+	menu_time -= dt
+	if menu_time <= 0.0:
+		menu_active = false
+		menu_focus = MENU_ROOT
+
+func _unhandled_input(e: InputEvent) -> void:
+	if main == null or main.ship == null:
+		return
+	if main.menu != null and main.menu.visible:
+		return
+	if not (e is InputEventKey and e.pressed and not e.echo):
+		return
+	var key: int = (e as InputEventKey).physical_keycode
+	# configs/default.ini [HUD.Objectives|Starmap|Log|Engineering|Statistics]
+	if (e as InputEventKey).shift_pressed:
+		var direct := {KEY_O: "hud_menu_objectives", KEY_M: "hud_menu_map",
+			KEY_L: "hud_menu_log", KEY_E: "hud_menu_eng",
+			KEY_S: "hud_menu_score_table"}
+		if direct.has(key):
+			screen = "" if screen == direct[key] else str(direct[key])
+			menu_active = false
+			get_viewport().set_input_as_handled()
+		return
+	if screen != "":
+		# a screen is up: Backspace / Escape closes it, the rest is the screen's
+		if key in [KEY_BACKSPACE, KEY_ESCAPE]:
+			screen = ""
+			get_viewport().set_input_as_handled()
+		elif screens != null and screens.handle_key(key):
+			get_viewport().set_input_as_handled()
+		return
+	if menu_locked:
+		return
+	var dir := ""
+	match key:
+		KEY_UP: dir = "up"
+		KEY_DOWN: dir = "down"
+		KEY_LEFT: dir = "left"
+		KEY_RIGHT: dir = "right"
+		KEY_BACKSPACE:  # [HUD.MenuCancel]
+			if menu_active:
+				menu_active = false
+				menu_focus = MENU_ROOT
+				get_viewport().set_input_as_handled()
+			return
+		KEY_ENTER, KEY_KP_ENTER:  # [HUD.MenuSelect]
+			if menu_active:
+				_menu_select()
+				get_viewport().set_input_as_handled()
+			return
+		_:
+			return
+	get_viewport().set_input_as_handled()
+	if not menu_active:
+		# any arrow wakes the menu at the root
+		menu_active = true
+		menu_focus = MENU_ROOT
+		menu_time = MENU_TIMEOUT
+		return
+	menu_time = MENU_TIMEOUT
+	var node: Dictionary = MENU.get(menu_focus, {})
+	if str(node.get("kind", "")) == "carousel" and dir in ["left", "right"]:
+		var items: Array = node.get("items", [])
+		var i: int = int(menu_carousel.get(menu_focus, 0))
+		if not items.is_empty():
+			menu_carousel[menu_focus] = wrapi(i + (1 if dir == "right" else -1),
+					0, items.size())
+		return
+	var to := _menu_link(menu_focus, dir)
+	if to != "":
+		_menu_open(to)
+	else:
+		main.audio.play("audio/hud/invalid_input.wav", -8.0)
+
+func _menu_select() -> void:
+	var node: Dictionary = MENU.get(menu_focus, {})
+	var kind := str(node.get("kind", ""))
+	main.audio.play("audio/hud/valid_input.wav", -8.0)
+	match menu_focus:
+		"hud_menu_undock":
+			main._undock()
+		"hud_menu_zoom":
+			main.zoomed = not main.zoomed
+		"hud_menu_aim_assist":
+			main.free_toggle = not main.free_toggle
+		"hud_menu_autopilot":
+			var i: int = int(menu_carousel.get(menu_focus, 0))
+			# APPROACH / FORMATE / PURSUIT / DOCK / DISENGAGE -> main.ap_mode
+			main.ap_mode = [1, 2, 0, 3, 0][i]
+	if kind in ["cmd", "toggle", "carousel"]:
+		menu_active = false
+		menu_focus = MENU_ROOT
+
+func _spr_ret(pos: Vector2, id: int, col: Color, rot := 0.0) -> void:
+	if _reticle_tex == null or not SPR_RET.has(id):
+		return
+	var s: Array = SPR_RET[id]
+	var sz := Vector2(float(s[2]), float(s[3]))
+	var off := Vector2(-float(s[4]), -float(s[5]))
+	var src := Rect2(float(s[0]), float(s[1]), sz.x, sz.y)
+	draw_set_transform(pos, rot, Vector2.ONE)
+	draw_texture_rect_region(_reticle_tex, Rect2(off, sz), src, col)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+func _draw_menu_reticle(c: Vector2) -> void:
+	if not menu_active:
+		return
+	# the centre: one static quadrant (sprite 91) plus four copies of sprite 93
+	# stepped by PI/2 (_DAT_1011a454), spinning together
+	_spr_ret(c, 91, GREEN)
+	for i in 4:
+		_spr_ret(c, 93, GREEN, _menu_spin + PI / 2.0 * i)
+	var node: Dictionary = MENU.get(menu_focus, {})
+	var head := str(node.get("label", menu_focus))
+	if str(node.get("kind", "")) == "carousel":
+		var items: Array = node.get("items", [])
+		var i: int = int(menu_carousel.get(menu_focus, 0))
+		if not items.is_empty():
+			head = "%s: %s" % [head, items[i]]
+	_menu_label(c, head, GREEN)
+	if menu_time < 10.0:  # _DAT_101190c0
+		_menu_label(c + Vector2(0, 30), "TIME: %d" % int(ceil(menu_time)), AMBER)
+	for dir in MENU_DIRS:
+		var to := _menu_link(menu_focus, dir)
+		if to == "":
+			continue
+		var col := AMBER if str(MENU[to].get("kind", "")) == "screen" else GREEN
+		_menu_label(c + MENU_OFF[dir], str(MENU[to]["label"]), col)
+
+func _menu_label(p: Vector2, text: String, col: Color) -> void:
+	var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			FONT_SIZE).x
+	draw_string(_font, p - Vector2(w / 2.0, -float(FONT_SIZE) / 2.0), text,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, col)
+
 # --- world-space target marks -----------------------------------------------
+# @element icHUDBrackets
+#   Draw = FUN_100e37f0. Corner brackets on the projected bounding box, the
+#   target's slam-in, and the waypoint / L-point / unidentified marks.
+# @element-stub icHUDContrails
+#   flux.ini lists it between Brackets and the TargetMFD; it streaks the
+#   velocity trails of nearby contacts. Not built -- its Draw was not reversed
+#   and inventing the trail geometry would be a guess.
 
 const BRK_ACQUIRE := 0.35   # DAT_1011d9dc: target-acquire animation length
 const BRK_SLAM := 70.0      # DAT_1011d9e0: how far outside the bracket starts
@@ -654,6 +1083,12 @@ func _diamond(p: Vector2, r: float, col: Color) -> void:
 			col, 1.4, true)
 
 # --- MFD (upper-left) -------------------------------------------------------
+# @element icHUDTargetMFD
+#   128x176 (DAT_1011e238 / DAT_1011e23c), left-anchored, chartreuse
+#   wireframe, two amber text lines, typewriter reveal at 30 chars/sec.
+# @element icHUDWeapons
+#   112 wide (DAT_1011e2f8), 32*rows + 16 tall; the header is the weapon's
+#   own localised name, uppercased.
 
 func _draw_mfd() -> void:
 	# icHUDTargetMFD: a 128x176 block in the top-left stack. The wireframe target
@@ -730,6 +1165,11 @@ func _draw_weapon_panel() -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, AMBER)
 
 # --- system status lights (top-center) --------------------------------------
+# @element icHUDShipStatus
+#   Draw = FUN_100fabd0 -> FUN_100fac60(screen_w * 0.5, 14.0): a horizontal
+#   strip of per-component bars centred on the screen at y = 14, in
+#   chartreuse (DAT_10176038). It enumerates the ship's component list
+#   (icShip+0x138), i.e. one bar per subsim -- which is what this draws.
 
 const SYSTEMS := ["DRV", "THR", "LDS", "CAP", "WEP", "SEN", "EPS", "CPU"]
 
@@ -763,6 +1203,11 @@ func _draw_system_status() -> void:
 	draw_rect(Rect2(pos - Vector2(6, 4), Vector2(w + 8, 24)), GREEN_DIM, false, 1.0)
 
 # --- ORB (top-right) --------------------------------------------------------
+# @element icHUDOrbRadar
+#   flux.ini [icHUDOrbRadar] use_thick_stalks = 1.
+# @element icHUDClock
+#   Right-anchored under the shields; "%02d:%02d:%02d.%02d" (0x10162b24),
+#   game time in centiseconds, chartreuse.
 
 func _orb_contacts() -> Array:
 	var out: Array = []
@@ -854,6 +1299,13 @@ func _ellipse(c: Vector2, radii: Vector2, col: Color) -> void:
 	draw_polyline(pts, col, 1.0, true)
 
 # --- contact list (lower-right) ---------------------------------------------
+# @element icHUDContactList
+#   Draw = FUN_100e4440. Six rows, 16px pitch, sorted by range ascending.
+# @element-stub icHUDShields
+#   112 x (32 * bars + 16), right-anchored, header hud_shield_status. NOT
+#   drawn: the component class its draw filters on (DAT_10167e5c) was never
+#   resolved, and our sim mounts no shield components, so there is nothing
+#   truthful to put in the panel.
 
 const CL_ROWS := 6        # the list shows six rows and scrolls (FUN_100e4440)
 const CL_ROW_H := 16.0    # DAT_1011d970
@@ -931,6 +1383,15 @@ func _draw_contact_list() -> void:
 		y += CL_ROW_H
 
 # --- messages ----------------------------------------------------------------
+# @element icHUDMessage
+#   flux.ini [icHUDMessage] message_delay 5, prompt_delay 10,
+#   new_message_flash_frequency 0.333333, caution_flash_frequency 1.
+# @element-stub icHUDDebug
+#   The developer overlay (hud_debug_indestructible, "Running missions: ").
+#   Deliberately not built.
+# @element-stub icHUDEditBoxElement
+#   The in-HUD text entry ihud.GiveEditBoxControl hands control to. No
+#   campaign script ever calls it, so there is nothing to drive it.
 
 func _draw_log(c: Vector2) -> void:
 	var now := Time.get_ticks_msec() / 1000.0

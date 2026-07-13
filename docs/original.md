@@ -196,6 +196,120 @@ Any model that derives an inhibition radius from a body's size is wrong in kind.
 
 ---
 
+## 4a. The approach markers -- and so the autopilots' break-off
+
+**The player's autopilot IS the AI order system.**
+`icPlayerPilot::EngageAutopilotApproach` (`iwar2 @ 0x100afbc0`) calls
+`icAIServices::DefaultApproach(player_ship, target)` and pushes the resulting
+order onto the player's *own* `icAIPilot` (`icPlayerPilot+0xc0`), named
+`"AutopilotApproach"`. `Formate`, `Dock` and `MatchVelocity` do the same. So
+there is exactly **one** approach rule in the game, and the player and the AI
+both obey it.
+
+`icPlayerPilot::Simulate` then disengages the autopilot the moment the order slot
+empties -- i.e. **the autopilot breaks off precisely when the order completes**.
+
+### The break-off distance is `InnerMarkerRadius`, and it is derived from the target
+
+`icAIServices::DefaultApproach` (`0x10056330`) builds the order's `icAITarget::
+cData` with `radius = icAIServices::InnerMarkerRadius(ship, target)` (`cData+0x44`),
+and `icAITarget::ComputeTargetVector` (`0x10058708`) drives
+`range = |distance_to_centre| - cData.radius` to zero. The ship flies to a
+**sphere around the target**, not to its centre. That is why a station and a
+planet break off at wildly different ranges: **the marker is a function of the
+target's size.**
+
+`icAIServices::InnerMarkerRadius` (`0x100560d0`), fully read:
+
+```
+InnerMarkerRadius(ship, target):
+    if target is icNebula:        return target.Radius() * 0.9      ; 0x1011951c
+    if target.category == 0x1f:   return 0
+    ship_r = ship.BoundsRadius()                                    ; FiSim+0x20
+    tgt_r  = (target is icAsteroidBelt) ? 0 : target.BoundsRadius()
+    if target is icPlanet or icSun:
+        tgt_r *= (icPlanet::m_heat_radius_multiplier + 1.0)         ; 0.5 + 1.0
+    if |tgt_r| < 1e-6:
+        return icAITarget::m_waypoint_approach_distance             ; 20 m
+    return max( tgt_r + ship_r + 200,                               ; 0x10119470
+                1.75 * Avoid(tgt_r, ship_r),                        ; 0x1011a264
+                1.75 * Avoid(ship_r, tgt_r) )
+
+Avoid(a, b)  =  max(a*1.1 + b*1.25, m_minimum_avoidance_radius)     ; 20, unless a == 0
+                     ^0x10119e94  ^0x1011a19c
+```
+
+`OuterMarkerRadius` (`0x10056280`) = `Inner * 1.5` (`0x1011a268`) -- but a nebula
+reports its plain `Radius()`. `FarOuterMarkerRadius` (`0x100562e0`) =
+`max(target.BoundsRadius() + 25000, Outer + 25000*0.2)`.
+
+`FiSim::BoundsRadius` (`FiSim+0x20`, `FiSim::UpdateBoundsRadius @ flux
+0x100c05a0`) is the sim's own radius grown to enclose its attached child sims;
+for anything without children it **is** `Radius()`.
+
+### The completion test
+
+`icAIApproachAgent::Think` (`0x1004f9c0`) completes on
+`icAITarget::IsPositionComplete` (`0x1005a047`), which is the flag
+`ComputeTargetVector` sets:
+
+```
+complete  <=>  |distance_to_centre - marker| < cData.completion_radius
+cData.completion_radius = min(marker * 0.05, m_maximum_standard_completion_radius)
+                                     ^0x1011a198          ^ = 0.5 m
+```
+
+(`icAITarget::RecomputeRadii`, `0x10057ede`.) The engine's position controller
+settles onto the sphere and holds, so half a metre is achievable for it.
+
+### The constants (all read out of the shipped `iwar2.dll` export table)
+
+| symbol | value |
+|---|---|
+| `icAITarget::m_waypoint_approach_distance` | **20** m |
+| `icAITarget::m_minimum_avoidance_radius` | **20** m |
+| `icAITarget::m_maximum_standard_completion_radius` | **0.5** m |
+| `icAITarget::m_min_completion_radius` | 0.01 |
+| `icAITarget::m_lds_approach_distance` | **25 000** m |
+| `icAITarget::m_lds_approach_completion_distance` | 1 000 m |
+| `icAITarget::m_avoidance_range_squared` | 6.4e7 (8 km) |
+| `icAITarget::m_minimum_avoidance_radius` | 20 m |
+| `icAITarget::m_min_avoidance_factor` | 0.4 |
+| `icAITarget::m_max_avoidance_time` | 8 s |
+| `icAITarget::m_emergency_avoidance_time` | 2 s |
+| `icPlanet::m_heat_radius_multiplier` | **0.5** |
+| `icAIServices::m_inner_radius_indicator` | **-1** (a sentinel: "solve it later") |
+| `icAIServices::m_outer_radius_indicator` | -2 |
+| `iiThrusterSim::m_avoidance_distance` | 5 000 m |
+
+Worked examples, with the player's tug at a ~60 m bounds radius:
+
+| target | radius | marker |
+|---|---|---|
+| a fighter | 60 m | **310 m** (`60 + 60 + 200`) |
+| a station | 1 100 m | **2 400 m** (avoidance dominates) |
+| a median body | 5.6e6 m | **1.8e7 m** (1.5x radius, then 1.75 x 1.25) |
+
+### The eAutopilot enum
+
+`icPlayerPilot::SetAutopilot` (`0x100af930`): **0 Off, 1 Formate, 2 Approach,
+3 Dock, 4 MatchVelocity, 6 RemotePilot**. It is not the F5..F9 order.
+`SetAutopilot` also **downgrades Formate to Approach when the target is not an
+`iiThrusterSim`** -- you cannot fly formation on a station.
+
+### `iai.InnerMarkerRadius`'s POG argument order is the reverse of the C++ one
+
+The C++ static is `InnerMarkerRadius(ship, target)`; the POG native is
+`(target, ship)`. `iact0mission10.pog:164` is decisive:
+
+```
+if (sim.DistanceBetween(v0, v8) < iai.InnerMarkerRadius(isim.Cast(v8), v0) + 500.0)
+```
+
+with `v0` the player's ship and `v8` the thing being approached.
+
+---
+
 ## 5. Ships and sims
 
 **Ships are spawned by INI path**, not by a model name:
@@ -645,6 +759,43 @@ External cameras: `field_of_view = 1.2` rad (68.75 deg).
   The tables are CSVs (`csv:/text/act_0/act0_master` etc.), format `key,"text"`,
   `;` comments. 178 of them.
 - The INI tree (779 files) is read at runtime by the `inifile.*` natives.
+
+### `text.Field` is not a dictionary lookup
+
+`FcLocalisedText::Field` (`flux @ 0x10028d80`) has three behaviours that a plain
+`table[key]` does not, and every one of them is load-bearing:
+
+- **The key is split on `'+'`** and each token looked up and concatenated. That
+  is how the scripts interpolate numbers into names, and they do it constantly:
+
+  ```
+  iact1mission10.pog:394  iship.Create(".../navy/fighter",
+                              string.Join("a1_m10_ship_name_fighter+ +", string.FromInt(v10)))
+  iact0mission10.pog:570  iutilities.MakeWaypointVisible(v8, 1,
+                              string.Join("a0_m10_name_other_waypoint+ +", string.FromInt(v4)))
+  ```
+
+  so the ship's name is the key `a1_m10_ship_name_fighter+ +2`, and it renders as
+  `Fighter 2`.
+- **A lone `" "` token is a literal space**, not a lookup (the engine tests for a
+  one-character token equal to `' '`). That is what the `+ +` idiom above is for.
+- **A token that is in no loaded table resolves to ITSELF.** Outside developer
+  mode the engine returns the token text; in developer mode it appends a marker.
+  So a missing table does not blank a string, it **leaks the raw key** -- which is
+  exactly how `A1_M10_SHIP_NAME_FIGHTER+ +2` ends up in a contact list.
+- Keys are hashed **lower-case**, so the lookup is case-insensitive.
+
+### A sim's NAME is a localisation key, and displaying one means resolving it
+
+`sim.Create(url, name)` takes a *key*: `iShipCreation.ShipName` composes
+`sn_general_<n>` from `ship_names.ini` (per category, a `NumberOfEntries` and a
+`Prefix`) and hands it straight to `iship.Create`. `iact2mission24.pog:3478` even
+has a literal `iship.Create(".../heavy_corvette_mca", "sn_general_212")`.
+
+Nothing displays that key. **`icAIPilot::ResolveName`** (`iwar2 @ 0x10055540`) is
+the funnel: it takes a sim, runs `FcLocalisedText::Field(sim->name)` and returns
+the text. A null sim resolves to `"Undefined"` (the literal at `0x1015c244`).
+`csv:/text/ship_names` is loaded by `istartsystem.pog:486`, at StartupSystem.
 - Both are Latin-1 in the original. We convert them to UTF-8 **at extraction**;
   the runtime never sees two encodings.
 - Avatar geometry is PSO2 (not LWO). `DELT` chunks in a PSO are **facial morph
@@ -856,6 +1007,253 @@ affects ~2,180 comparison sites (1013 `LessI`, 344 `LessF`, 298 `GreaterI`, 218
 
 ---
 
+## 8c. The HUD sprite atlas, and what the status icons really are
+
+Two things an earlier pass got wrong, both because they were inferred rather
+than read.
+
+### The sprite table is not in the file, but its *builder* is
+
+`FUN_100e9de0(x, y, sprite, flags, rot)` indexes a table at `DAT_101741b0`,
+stride `0x24`. That address is in `.data` **past the raw-data end** (`.data` is
+raw-backed only to `0x10165000`), so it is BSS: it reads as garbage from the PE,
+which is why the last pass concluded "populated at runtime, not recoverable".
+
+It *is* recoverable. The table is filled entry by entry by a static initialiser
+at **`0x100e6c60` .. `0x100e7f90`**, which Ghidra left undisassembled (the same
+failure as the Lagrange draw). Every entry is one call to the record ctor
+
+```
+FUN_100ee6b0(this, atlas_x, atlas_y, w, h, origin_x, origin_y, texture)
+    +0x00 w   +0x04 h   +0x08 origin_x   +0x0c origin_y
+    +0x10 u0 = atlas_x / 256          (_DAT_1011dc78 = 1/256)
+    +0x14 v0 = atlas_y / 256
+    +0x18 u1 = (atlas_x + w) / 256
+    +0x1c v1 = (atlas_y + h) / 256
+    +0x20 texture index
+```
+
+followed by `mov edi, <table entry>; rep movsd` (9 dwords). Walking those pairs
+recovers all **95 sprites (0..94)** exactly. The four textures are the pointer
+list at `0x10162c9c`:
+
+    0 = images/hud/sprites    1 = images/hud/lcd
+    2 = images/hud/reticle    3 = images/hud/tri
+
+The ones the HUD uses are now in `hud.gd`'s `SPR` / `SPR_RET` tables, with the
+atlas cell for each. Highlights: **20** = the charge pip (11x11 at 68,0);
+**0x15-0x18** = the four mode icons; **0x19** = the LDS drive capsule; **0x1A**
+= the "!"; **0x1B** = a power symbol; **0x1E** = the capsule-drive star;
+**0x3E / 0x3F / 0x40** = thermometer / lightning / bulb; **0x4E** = a missile;
+**0x56-0x59** = alpha / beta / flag / bomb (multiplayer); **50** = a sweep
+wedge; **51 / 52 / 53** = the three roundel backings; **90** = the reticle ring;
+**91** and **93** = the menu reticle's quadrants.
+
+### `FUN_100ea2b0`'s fourth argument is a flag word, not a size
+
+The previous pass read the reticle's per-icon `9` / `0xb` / `0xd` as a **size**.
+It is not. `FUN_100ea2b0(x, y, sprite, flags, a, b)` is:
+
+```
+bit0 | bit3  -> draw roundel sprite 53 (ring + disc) under the glyph
+bit0 alone   -> roundel 51 (soft disc)
+bit3 alone   -> roundel 52 (ring)
+bit1         -> draw sprite 50, a wedge, rotated -2*PI * frac(t)    (1 rev/s)
+bit2         -> pulse: alpha = (|frac(t/2) - 0.5| * 1.8 + 0.1) * alpha
+                (_DAT_1011dc58 = 1.8, _DAT_101184b0 = 0.1; 2 s period)
+then         -> draw the glyph itself, at its NATIVE atlas size (never scaled)
+```
+
+So `9 = 0b1001` is a plain roundel, `11 = 0b1011` is a roundel with a spinning
+sweep, and `13 = 0b1101` is a roundel that pulses. **Every status icon sits on a
+32x32 roundel.** That is where the "disc" in the reference screenshot comes
+from: it was never invented, it is sprite 53.
+
+### The icon ring: `FUN_100f5a90` (ctor) and `FUN_100f8410` (draw)
+
+The ctor builds 15 icons via
+`FUN_100f93c0(angle_half_turns, radius_delta, sprite, colour, flags)`:
+
+| slot | angle | r | sprite | colour | flags |
+|---|---|---|---|---|---|
+| 0-3 | -22.5, -33.75, -45, -56.25 | 150 | 0x15..0x18 | amber `DAT_10174fb0` | 11 |
+| 4 | -22.5 | 110 | 0x19 | **green** `DAT_10176038` | 11 |
+| 5 | -67.5 | 110 | 0x1B | amber | 13 |
+| 6 | +22.5 | 110 | 0x1E | green | 11 |
+| 7 | 180 | 110 | 0x3E | amber | 9 |
+| 8 | 157.5 | 110 | 0x3F | amber | 9 |
+| 9 | 135 | 110 | 0x40 | amber | 9 |
+| 10 | +67.5 | 110 | 0x4E | **red** `DAT_10176018` | 9 |
+| 11-12 | 202.5 | 110 | 0x56, 0x57 | green | 9 |
+| 13-14 | 225 | 110 | 0x58, 0x59 | green | 13 |
+
+(`-0.125` half-turns = -22.5 deg; the mode-icon step is `_DAT_101184a4` = 0.0625
+and the gauge step is `_DAT_1011bdd0` = 0.125. radius = `_DAT_1011e034` (80) +
+delta.)
+
+Slots 0-3 are mutually exclusive, indexed through `DAT_1011e04c = [-1, 1, 0, 3,
+2]` by `icPlayerPilot+0x308`: mode 0 lights none.
+
+### The LDS-inhibit "!" -- what it actually is
+
+It is **not** a separate element, and there is no hand-made disc, no arc and no
+16-pip ring. It is **icon slot 4** with its sprite swapped. `FUN_100f8410`:
+
+```
+drive = ship+0x25c
+if ship+0x251 == 0 and drive.state != 3:            # not inhibited
+    state 1 (warming up): sprite 0x19, flags 13,
+                          charge = 1 - WarmUpTimeRemaining / total
+    state 2 (running):    sprite 0x19, flags 11, charge = 0
+    otherwise:            hidden
+else:                                                # inhibited or disrupted
+    sprite 0x1A ("!"), flags 13
+    charge = max( drive+0x98 / drive+0x9c,                       # disrupt countdown
+                  1 - dist(ship, pilot+0xb8) / (pilot+0xb8)+0x30 )  # depth in the field
+```
+
+The draw **never touches the colour**, so the "!" keeps the ctor's
+`DAT_10176038` = **(0.5, 1.0, 0.0) green**. It pulses (flags 13, bit 2). The ring
+around it is the ordinary charge ring: `FUN_100f8da0` lights
+`floor(charge * 24)` of **24** pips (`_DAT_1011e0bc`) on a circle of radius
+**18** (`_DAT_101190bc`), clockwise from twelve, fading the next by the
+remainder (skipped below 0.05, `_DAT_1011a198`). Same slot, same ring, same
+green: LDS inhibition and an LDSi hit are the same indicator.
+
+### The other slots
+
+- **5** (0x1B, power symbol): lit when any ship component is non-functional. The
+  `else` branch swaps in **0x1C or 0x1D** off the drive controller
+  (`icShip+0x270`, vfunc `+0x40` returning a struct whose `+0xc` / `+0x10`
+  floats and `+0x1c` int decide which). See Open questions.
+- **6** (0x1E): the capsule drive charging (`ship+0x298`), *or* a targeted
+  L-point within **50 km** (`_DAT_1011b344`) that has a destination -- in which
+  case the destination's name is drawn beside the icon at `(+24, -line_height)`.
+- **7-9**: three `{float value, bool flag}` records on `icPlayerPilot+0xe8`,
+  stride 8. Each icon appears when its value **changes**, holds
+  `DAT_1011e03c` = **2.0 s** after it settles, shows the value as a charge ring,
+  and goes red + flags 13 when the flag is set (amber + flags 9 otherwise). What
+  the three measure is an Open question; only the thermometer is driven.
+- **10** (0x4E, red): lit when `icPlayerPilot+0x6c` is set; charge =
+  `pilot+0xa8 * 1/24` (`_DAT_1011e0b8` = 0.0416667) -- **one pip per incoming
+  missile**.
+- **11-14**: multiplayer only (`mp_on_team_alpha`, `mp_on_team_beta`,
+  `mp_has_opponent_flag`, `mp_has_bomb` object properties). Dead in the campaign.
+
+---
+
+## 8d. `icHUDMenuReticle` -- the arrow-key menu
+
+Registered at `0x100f1b40` against `iiHUDOverlayElement`; factory `0x100f1b80`,
+ctor `0x100f1ce0`, vtable `0x1011ded8`, **Draw = `0x100f1d60`** (another one
+Ghidra skipped; disassembled by hand).
+
+A menu node is 0x2c bytes: `+0x08` name (FcString), `+0x10` the **enabled** byte,
+then four direction links. The direction order is proved by the offset table the
+element builds at `0x100f1bf0` and which the draw indexes per link:
+
+```
++0x14 UP    -> (   0, -100)        +0x1c LEFT  -> (-100,  0)
++0x18 DOWN  -> (   0, +100)        +0x20 RIGHT -> (+100,  0)
+100 = _DAT_1011dec0 (80) + _DAT_101190b0 (20)
+```
+
+The centre is sprite **0x5B** (from `reticle.png`) plus **four** copies of sprite
+**0x5D** stepped by `_DAT_1011a454` = PI/2, spinning together. The focus node's
+name is drawn at the centre; the timeout is drawn below it only once it drops
+under **10 s** (`_DAT_101190c0`), counting down from `flux.ini [icHUD]
+menu_timeout = 30`.
+
+### The tree (`FUN_100df640`), link for link
+
+```
+                          ENG (screen)
+                               ^
+        NAV  <------------  MENU  ------------>  WEP
+         |                    |                   |
+   UP    -> STARMAP (screen)  v             UP    -> ZOOM IN / ZOOM OUT
+   LEFT  -> AUTOPILOT        CMD            DOWN  -> TOGGLE AIM ASSIST
+   DOWN  -> UNDOCK            |             RIGHT -> TOGGLE FIRE MODE
+                              |
+              DOC <-- LEFT ---+--- RIGHT --> REM LINK / REM UNLINK
+               |              v
+   UP    -> LOG (screen)    COMMS
+   LEFT  -> OBJECTIVES        |
+   DOWN  -> STATISTICS   LEFT  -> T-FIGHTERS
+                         RIGHT -> WINGMEN
+                         DOWN  -> CALL JAFS   (ijafsscript.CallJafs)
+```
+
+The five **screens** attach themselves: the builder runs
+`FcClass::InstanceIterator(<class>)` and wraps the live element in a node whose
+name is the element's own `+0xc` string. Those classes are `DAT_10176300` =
+`icHUDStarmap`, `DAT_101763ac` = `icHUDEngineering`, `DAT_10176078` =
+`icHUDLog`, `DAT_10176140` = `icHUDObjectives`, `DAT_101762c8` = `icHUDScore`.
+
+`ihud.CurrentMenuNode` is `IHUDMenuFocusName` (`0x100f5040`): it returns the
+**open screen's** key if one is up (`hud_menu_map` / `hud_menu_eng` /
+`hud_menu_log` / `hud_menu_objectives` / `hud_menu_score_table`), otherwise the
+focused node's name. `ihud.SetMenuNodeEnabled` (`0x100f53e0`) finds the node by
+name from the root and writes its `+0x10`. `ihud.LockMenu` (`0x100f51e0`) sets
+`icHUD+0x1b6`, after which `FUN_100df610` forwards no menu input at all.
+
+The keys are real, out of `configs/default.ini`:
+
+```
+[HUD.MenuLeft/Right/Up/Down]  arrows       [HUD.MenuSelect]  Return
+[HUD.MenuCancel]  Backspace                [HUD.Objectives]  Shift+O
+[HUD.Starmap]  Shift+M    [HUD.Log]  Shift+L
+[HUD.Engineering]  Shift+E    [HUD.Statistics]  Shift+S
+```
+
+---
+
+## 8e. `icHUDEngineering` and `icHUDStarmap`
+
+Both derive from `iiHUDMenuElement` and share its Draw (`0x100f1400`, vtable
+slot 9) -- **which Ghidra also left undisassembled and which we did not
+reverse**. Their content hangs off later vtable slots (Engineering 13/14 =
+`0x10105c80` / `0x10105d40`; Starmap 12..16).
+
+What *is* read, from `icHUDEngineering`'s ctor `0x101059f0`:
+
+- node name `hud_menu_eng`, caption `hud_menu_engineering` ("ENGINEERING")
+- `+0x54` = the selected row, stepped 0..5 and wrapping at both ends
+  (`FUN_10105c80`): **six rows**
+- eleven localised strings from the key table at `0x10163e94`
+  (`hud_engineering_ship`, `_iff`, `_back`, `_resettri`, `_powerhelp_part1/2`,
+  `_general_enabled/disabled`, `_powerpod_enabled/disabled`)
+- **`+0xc0`..`+0xd4` and `+0xdc`..`+0xe4`: nine floats, every one
+  `0x3eaaaaab` = 1/3.** Three triples that each sum to 1 -- the TRI is a
+  three-way split, starting even
+- five floats parked after the vtable at `0x1011e348`: 70, 160, 35, 281, 275
+
+The triangle art is the shipped `images/hud/tri.png` (texture 3), whose track
+occupies (2,2)-(146,139): an inverted triangle with graduations and three corner
+nodes, each carrying a glyph.
+
+`icHUDStarmap`'s caption is `hud_map_caption` = "STELLAR NAVIGATION OVERLAY", and
+`hud.csv` gives it both a **CLUSTER VIEW** and a **SYSTEM VIEW**, plus SELECTED /
+ZOOM IN / ZOOM OUT / JUMP DESTINATION / SELECT DESTINATION / INTERSTELLAR
+L-POINT / LOCAL L-POINT / MISSION WAYPOINTS / ROUTE. So both views exist. The
+geography it draws is real (`data/json/systems/*.json`, `geography.md`); its
+layout is not recovered.
+
+---
+
+## 8f. `icHUDShipStatus` is the top-centre strip
+
+Registered against `iiHUDOverlayElement`; factory `0x100fab00`, ctor
+`0x100fab60`, vtable `0x1011e148`, **Draw = `0x100fabd0`**, which computes
+`x = screen_width * 0.5` and calls `FUN_100fac60(x, 14.0)`. `FUN_100fac60`
+enumerates the ship's component list (`icShip+0x138`) and lays one bar per
+component along a horizontal strip in chartreuse (`DAT_10176038`).
+
+So the panel we already draw at top-centre *is* `icHUDShipStatus`: centred, at
+**y = 14**, one bar per subsim.
+
+---
+
 ## 9. Deliberate divergences
 
 Things we do differently, on purpose. Each one is a decision, not an accident.
@@ -877,6 +1275,59 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 ## 10. Open questions
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
+
+### HUD (this pass)
+
+- **What the three reticle gauges measure.** `icPlayerPilot+0xe8` holds three
+  `{float value, bool flag}` records, drawn with a thermometer (0x3E), a
+  lightning bolt (0x3F) and a light bulb (0x40). The thermometer is obviously
+  heat and we drive it from `ship_heat()`. **The other two are UNKNOWN** and are
+  therefore **not drawn**. Where `+0xe8` is written was not found. The
+  change-then-hold-2s behaviour would fit the TRI allocations, but that is a
+  guess and it is not implemented as one.
+- **Slot 5's `0x1C` / `0x1D` branch.** When no ship component is broken, the
+  draw reads `icShip+0x270` (a drive controller) through vfunc `+0x40` and picks
+  sprite **0x1C** (a capsule with a circular arrow) when the returned struct's
+  `+0xc` and `+0x10` floats are both zero *and* its `+0x1c` int is 1, else
+  **0x1D** (a capsule with left/right arrows). What that struct is was not
+  resolved, so **neither sprite is drawn** -- only the 0x1B "a system is down"
+  case is.
+- **`icPlayerPilot+0x308`.** It indexes `DAT_1011e04c = [-1, 1, 0, 3, 2]` to pick
+  one of the four mode icons, and gates the 0x1C/0x1D branch when it is 0. Our
+  `ap_mode` (0 off, 1 approach, 2 formate, 3 dock, 4 match) has the same arity
+  and the same "0 = off" convention, so it drives them -- **but that the field
+  *is* the autopilot mode is an inference, not a reading.**
+- **The incoming-missile icon (0x4E) has no source in our sim.** Nothing ever
+  locks a missile on the player, so slot 10 never lights. The engine's rule is
+  known (`pilot+0x6c` set; one pip per missile from `pilot+0xa8`).
+- **`iiHUDMenuElement::Draw` (`0x100f1400`)** -- the shared frame every
+  full-screen HUD element is drawn inside. Ghidra left it undisassembled and we
+  did not reverse it, so the caption row and body inset in `hud_screens.gd` are
+  **ours**.
+- **The TRI's three axes.** Nine floats, all 1/3, are provably a three-way split,
+  and `tri.png` provably has three corners -- but **which corner is which system
+  is UNKNOWN**. `hud_screens.gd` labels them POWER / REPAIR / HEAT and says so.
+  The five floats after the Engineering vtable (70, 160, 35, 281, 275) are
+  almost certainly its pixel geometry, but nothing proves the assignment.
+- **The starmap's projection, scale and layout.** Vtable slots 12..16 were not
+  reversed. The geography is real; the map drawing is ours.
+- **The three carousel submenus** (AUTOPILOT, WINGMEN, T-FIGHTERS). Each really
+  holds a PREV and a NEXT node plus a list of commands, but the builders
+  (`FUN_100efe50` / `FUN_100f0560` / `FUN_100f0c40`) put them in *private* slots
+  (`+0x40`..`+0x58`), not in the four direction links, and the virtual that maps
+  them onto the links was not read. **Which direction is prev and which is next
+  is UNKNOWN**; we use left/right.
+- **`hud_menu_doc`** has no entry in `hud.csv` or `hud_addendum.csv`. The node
+  exists in the tree and the scripts can address it; its **display label is
+  ours** ("DOC").
+- **`ihud.FlashElement`** maps a script-supplied name onto a HUD element to
+  flash (`FUN_100df3e0`, timing from `flux.ini [icHUD] flash_delay = 6`,
+  `flash_frequency = 3`). Which names the scripts pass, and how they resolve to
+  elements, was not recovered -- it stays a no-op.
+- **The reticle ring's own sprite.** Sprite 90 is 170x170 with origin (84,84),
+  i.e. radius ~85, but `_DAT_1011e038` says the ring radius is **63** and the
+  reference screenshot measures 63.4. The engine must scale it; how was not
+  found, so `hud.gd` still draws the ring as vectors at r = 63.
 
 - **The two cancelling bugs in section 8b** are the most valuable thing on this
   list. `global.Create*` reads the wrong argument, and the ported `<`/`>` have

@@ -336,11 +336,19 @@ func _mechcheck(_delta: float) -> void:
 						m.target_ai = null
 				m._set_autopilot(1)
 				_mech_next()
-		10:  # autopilot approach: arrive and stop
+		10:  # autopilot approach: arrive ON the marker sphere and stop
+			# The break-off is not a constant. icPlayerPilot::EngageAutopilotApproach
+			# hands the player's own icAIPilot a DefaultApproach order whose radius
+			# is icAIServices::InnerMarkerRadius(ship, target) -- so it is derived
+			# from what you are approaching, and a station, a fighter and a planet
+			# all break off at different ranges. Assert that: the ship must stop on
+			# the target's marker sphere, not inside some fixed radius.
 			if m.ap_mode == 0 and demo_t > 1.0:
 				var d: float = m._target_distance()
-				_mech("ap-approach", d < 1000.0,
-					"dist=%.0f m after %.0f s" % [d, demo_t])
+				var mk: float = m._target_marker()
+				var slop: float = maxf(PogWorld.completion_tolerance(mk), 20.0) + 100.0
+				_mech("ap-approach", mk > 0.0 and absf(d - mk) <= slop,
+					"dist=%.0f m, marker=%.0f m, after %.0f s" % [d, mk, demo_t])
 				m._set_autopilot(3)
 				_mech_next()
 			elif demo_t > 200.0:

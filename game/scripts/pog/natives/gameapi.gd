@@ -37,6 +37,11 @@ class PogOrder extends RefCounted:
 	var kind: String = ""          ## approach / attack / escort / formate / dock / flee
 	var target = null              ## PogWorld.PogSim
 	var complete := false
+	## icAITarget::cData +0x44: the marker sphere the order flies to. For an
+	## approach or a formate it is icAIServices::InnerMarkerRadius(ship, target),
+	## which is where the order completes -- so a station and a planet break off
+	## at wildly different ranges. 0 until the order is given.
+	var marker := 0.0
 
 
 func register(v, w: PogWorld) -> void:
@@ -178,12 +183,30 @@ func _ai_approach(_t, a: Array) -> Variant:
 	o.kind = "approach"
 	o.target = world._as_sim(a[1]) if a.size() > 1 else null
 	o.complete = false
-	# Steer by waypoint: AiShip already flies its waypoint list on patrol.
-	if o.target != null:
-		s.node.waypoints = [o.target.abs_pos() - world.player_pos()]
-		s.node.wp = 0
-		s.node.behavior = "patrol"
+	# icAIServices::DefaultApproach (iwar2 @ 0x10056330) builds the order's cData
+	# with radius = InnerMarkerRadius(ship, target). The ship flies to that
+	# SPHERE, not to the target's centre.
+	o.marker = PogWorld.inner_marker_radius(s, o.target)
+	_steer_to_marker(s, o)
 	return 0
+
+
+## Point the AI at the nearest point on its order's marker sphere. The engine's
+## position controller converges on that sphere and holds; AiShip flies a
+## waypoint list, so the waypoint IS that point, refreshed as the target moves.
+func _steer_to_marker(s, o: PogOrder) -> void:
+	if o.target == null or s == null or s.node == null \
+			or not is_instance_valid(s.node):
+		return
+	var tp: Vector3 = o.target.abs_pos()
+	var sp: Vector3 = s.abs_pos()
+	var away := sp - tp
+	if away.length() < 1.0:
+		away = Vector3.FORWARD
+	var stand := tp + away.normalized() * o.marker
+	s.node.waypoints = [stand - world.player_pos()]
+	s.node.wp = 0
+	s.node.behavior = "patrol"
 
 # @native iai.GiveAttackOrder
 # @native iai.GiveGenericAttackOrder
@@ -256,8 +279,22 @@ func _ai_is_complete(_t, a: Array) -> Variant:
 		return 1
 	match o.kind:
 		"approach":
-			if o.target != null and s.abs_pos().distance_to(o.target.abs_pos()) < 2000.0:
+			# icAIApproachAgent::Think (0x1004f9c0) completes on
+			# icAITarget::IsPositionComplete, which the position solver
+			# (ComputeTargetVector, 0x10058708) sets when
+			#     |distance_to_centre - marker| < min(marker*0.05, 0.5)
+			# We arrive rather than settle -- see the divergence note in
+			# PogWorld.completion_tolerance -- so "at or inside the sphere".
+			if o.target == null or not o.target.alive():
 				o.complete = true
+			else:
+				var d: float = s.abs_pos().distance_to(o.target.abs_pos())
+				if d <= o.marker + PogWorld.completion_tolerance(o.marker):
+					o.complete = true
+					s.node.waypoints.clear()
+					s.node.set_speed = 0.0
+				else:
+					_steer_to_marker(s, o)   # the target may be moving
 		"attack":
 			if o.target == null or not o.target.alive():
 				o.complete = true
@@ -284,17 +321,17 @@ func _ai_clear_autopilot(_t, _a: Array) -> Variant:
 
 # @native iai.InnerMarkerRadius
 func _ai_inner_marker(_t, a: Array) -> Variant:
-	# icAIServices::InnerMarkerRadius (iwar2 @ 0x100560d0). The approach marker
-	# a ship must reach before it is "at" something. For an ordinary sim the
-	# whole function is `target->radius * 0.9` (the 0.9 is the float at
-	# 0x1011951c); the planet/sun branch scales by the heat multiplier instead
-	# and is not read -- see docs/original.md.
+	# icAIServices::InnerMarkerRadius (iwar2 @ 0x100560d0), fully recovered -- see
+	# PogWorld.inner_marker_radius and docs/original.md section 4a. The old
+	# `target->radius * 0.9` here was only the icNebula branch.
 	#
-	# POG's argument order is (target, ship): iact0mission10.pog:117 passes the
-	# object being approached first and the player's ship second, and it is the
-	# object's size the marker is derived from.
+	# POG's argument order is (target, ship), the REVERSE of the C++ static:
+	# iact0mission10.pog:164 is
+	#     sim.DistanceBetween(v0, v8) < iai.InnerMarkerRadius(isim.Cast(v8), v0) + 500
+	# with v0 the player's ship and v8 the object being approached.
 	var target = world._as_sim(a[0])
-	return target.radius() * 0.9 if target != null else 0.0
+	var ship = world._as_sim(a[1]) if a.size() > 1 else null
+	return PogWorld.inner_marker_radius(ship, target)
 
 # @native iai.ForceLPRoute
 func _ai_force_lp_route(_t, a: Array) -> Variant:
@@ -612,33 +649,56 @@ func _h_set_target(_t, a: Array) -> Variant:
 ## ihud's menu tree: the icHUDMenuReticle from `flux.ini [icHUD]`, whose nodes the
 ## scripts address by name ("hud_menu_eng", "hud_menu_wep", "hud_menu_nav" ...).
 ## The general-training mission drives the player round it node by node, polling
-## CurrentMenuNode and gating progress on where they are. We have no such menu --
-## hud.gd never built one -- so the enable table is kept (it is real state, and
-## SetMenuNodeEnabled is what locks the player out of a system before it is
-## taught) but nothing consumes it and there is no current node to report.
-var menu_nodes: Dictionary = {}      ## node name -> enabled
+## CurrentMenuNode and gating progress on where they are. hud.gd now builds that
+## menu (the tree FUN_100df640 assembles), so these three run against it.
 var menu_locked := false
 
-# @stub ihud.SetMenuNodeEnabled
+func _hud() -> Hud:
+	return null if game == null else game.hud as Hud
+
+# @native ihud.SetMenuNodeEnabled
 func _h_set_menu_node(_t, a: Array) -> Variant:
-	menu_nodes[PogStd._s(a[0])] = PogVM._truthy(a[1]) if a.size() > 1 else true
+	# IHUDSetMenuNodeEnabled (0x100f53e0) walks the tree from the root, finds the
+	# node by name and writes its +0x10 enabled byte.
+	var h := _hud()
+	if h == null:
+		return 0
+	var name := PogStd._s(a[0])
+	var on: bool = PogVM._truthy(a[1]) if a.size() > 1 else true
+	if on:
+		h.menu_disabled.erase(name)
+	else:
+		h.menu_disabled[name] = true
+		if h.menu_focus == name:
+			h.menu_focus = Hud.MENU_ROOT
 	return 0
 
-# @stub ihud.CurrentMenuNode
+# @native ihud.CurrentMenuNode
 func _h_current_menu_node(_t, _a: Array) -> Variant:
-	# A node name, not a number: the scripts compare it against string literals.
-	return ""
+	# IHUDMenuFocusName (0x100f5040): the open screen's key if one is up, else
+	# the focused node's. A name, not a number -- the scripts compare it against
+	# string literals like "hud_menu_eng".
+	var h := _hud()
+	return "" if h == null else h.menu_node_name()
 
-# @stub ihud.LockMenu
+# @native ihud.LockMenu
 func _h_lock_menu(_t, a: Array) -> Variant:
+	# IHUDLockMenu (0x100f51e0) sets icHUD+0x1b6; FUN_100df610 then refuses to
+	# forward any menu input while it is set.
 	menu_locked = PogVM._truthy(a[0]) if a.size() > 0 else false
+	var h := _hud()
+	if h != null:
+		h.menu_locked = menu_locked
 	return 0
 
 # @stub ihud.FlashElement
 # @stub ihud.ShowScore
 func _h_noop(_t, _a: Array) -> Variant:
-	# FlashElement highlights one HUD panel to draw the eye to it during the
-	# tutorial; ShowScore raises the score readout. Neither element takes a cue.
+	# FlashElement (0x100f52a0 -> FUN_100df3e0) highlights one HUD element by
+	# class name to draw the eye to it during the tutorial; the flash timing is
+	# in flux.ini ([icHUD] flash_delay 6, flash_frequency 3) but which element
+	# each script name maps to was not recovered, so this stays a no-op.
+	# ShowScore raises the score sheet, which we do not populate.
 	return 0
 
 
