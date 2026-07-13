@@ -406,24 +406,29 @@ func _execute(t: PogTask, deadline: int) -> void:
 					missing[name] += 1
 					s.resize(s.size() - argc)
 					s.push_back(0)
+			# The compiler pushes the RIGHT operand first, so the LEFT one is on
+			# TOP. FcScriptTask::Execute is unambiguous: SubtractI (0x1b) is
+			# `second = top - second`, LessI (0x23) is `top < second`. Popping
+			# the top as the right-hand side reverses every subtraction,
+			# division, modulus and comparison in the game.
 			OP_ADD_I, OP_ADD_F:
-				var b: Variant = s.pop_back()
-				s[-1] = s[-1] + b
+				var lhs: Variant = s.pop_back()
+				s[-1] = lhs + s[-1]
 			OP_SUB_I, OP_SUB_F:
-				var b: Variant = s.pop_back()
-				s[-1] = s[-1] - b
+				var lhs: Variant = s.pop_back()
+				s[-1] = lhs - s[-1]
 			OP_MUL_I, OP_MUL_F:
-				var b: Variant = s.pop_back()
-				s[-1] = s[-1] * b
+				var lhs: Variant = s.pop_back()
+				s[-1] = lhs * s[-1]
 			OP_DIV_I:
-				var b: Variant = s.pop_back()
-				s[-1] = 0 if int(b) == 0 else int(s[-1]) / int(b)
+				var lhs: Variant = s.pop_back()
+				s[-1] = 0 if int(s[-1]) == 0 else int(lhs) / int(s[-1])
 			OP_DIV_F:
-				var b: Variant = s.pop_back()
-				s[-1] = 0.0 if float(b) == 0.0 else float(s[-1]) / float(b)
+				var lhs: Variant = s.pop_back()
+				s[-1] = 0.0 if float(s[-1]) == 0.0 else float(lhs) / float(s[-1])
 			OP_MOD_I:
-				var b: Variant = s.pop_back()
-				s[-1] = 0 if int(b) == 0 else int(s[-1]) % int(b)
+				var lhs: Variant = s.pop_back()
+				s[-1] = 0 if int(s[-1]) == 0 else int(lhs) % int(s[-1])
 			OP_NEG_I, OP_NEG_F:
 				s[-1] = -s[-1]
 			OP_EQUAL:
@@ -433,17 +438,17 @@ func _execute(t: PogTask, deadline: int) -> void:
 				var b: Variant = s.pop_back()
 				s[-1] = 0 if _vals_equal(s[-1], b) else 1
 			OP_GREATER_I, OP_GREATER_F:
-				var b: Variant = s.pop_back()
-				s[-1] = 1 if s[-1] > b else 0
+				var lhs: Variant = s.pop_back()
+				s[-1] = 1 if lhs > s[-1] else 0
 			OP_LESS_I, OP_LESS_F:
-				var b: Variant = s.pop_back()
-				s[-1] = 1 if s[-1] < b else 0
+				var lhs: Variant = s.pop_back()
+				s[-1] = 1 if lhs < s[-1] else 0
 			OP_GREATER_EQ_I, OP_GREATER_EQ_F:
-				var b: Variant = s.pop_back()
-				s[-1] = 1 if s[-1] >= b else 0
+				var lhs: Variant = s.pop_back()
+				s[-1] = 1 if lhs >= s[-1] else 0
 			OP_LESS_EQ_I, OP_LESS_EQ_F:
-				var b: Variant = s.pop_back()
-				s[-1] = 1 if s[-1] <= b else 0
+				var lhs: Variant = s.pop_back()
+				s[-1] = 1 if lhs <= s[-1] else 0
 			OP_LOGICAL_AND:
 				var b: Variant = s.pop_back()
 				s[-1] = 1 if (_truthy(s[-1]) and _truthy(b)) else 0

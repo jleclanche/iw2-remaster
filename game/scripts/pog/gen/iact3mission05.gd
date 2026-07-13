@@ -183,7 +183,7 @@ func local_961(v0, v1, v2) -> Variant:
 				_pc = 1770
 				continue
 		elif _pc == 1055:
-			if not (v3) and 700.0 < sim.distance_between(v4, v0):
+			if sim.distance_between(v4, v0) < 700.0 and not (v3):
 				_pc = 1096
 				continue
 			else:
@@ -192,7 +192,7 @@ func local_961(v0, v1, v2) -> Variant:
 		elif _pc == 1096:
 			v3 = 1
 			iobjectives.set_state("a3_m05_objectives_rendezvous", 1)
-			if 1 == iloadout.ship():
+			if iloadout.ship() == 1:
 				_pc = 1145
 				continue
 			else:
@@ -250,7 +250,7 @@ func local_961(v0, v1, v2) -> Variant:
 			_pc = 1674
 			continue
 		elif _pc == 1652:
-			if v6 != 1:
+			if 1 != v6:
 				_pc = 1665
 				continue
 			else:
@@ -300,14 +300,14 @@ func local_1778(v0, v1, v2) -> Variant:
 				_pc = 2057
 				continue
 		elif _pc == 1809:
-			if _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 1836
 				continue
 			else:
 				_pc = 2057
 				continue
 		elif _pc == 1836:
-			if not (v3) and await iutilities.player_in_range(v1):
+			if await iutilities.player_in_range(v1) and not (v3):
 				_pc = 1866
 				continue
 			else:
@@ -320,7 +320,7 @@ func local_1778(v0, v1, v2) -> Variant:
 			_pc = 1926
 			continue
 		elif _pc == 1926:
-			if not (await iutilities.player_in_range(v1)) and 2 == state.progress(v2):
+			if state.progress(v2) == 2 and not (await iutilities.player_in_range(v1)):
 				_pc = 1972
 				continue
 			else:
@@ -355,7 +355,7 @@ func local_2065(v0) -> Variant:
 			_pc = 2122
 			continue
 		elif _pc == 2122:
-			if v0 < v4:
+			if v4 < v0:
 				_pc = 2138
 				continue
 			else:
@@ -405,7 +405,7 @@ func local_2065(v0) -> Variant:
 			group.add_sim(v1, v3)
 			isim.set_faction(v3, v2)
 			await ipilotsetup.military_aggressive(v3)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 2122
 			continue
 		elif _pc == 2433:
@@ -440,14 +440,14 @@ func local_2445(v0, v1, v2, v3) -> Variant:
 				_pc = 2941
 				continue
 		elif _pc == 2490:
-			if _pog_eq("map:/geog/gagarin/owens_star", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/owens_star"):
 				_pc = 2517
 				continue
 			else:
 				_pc = 2941
 				continue
 		elif _pc == 2517:
-			if not (v4) and 20000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 20000.0 and not (v4):
 				_pc = 2558
 				continue
 			else:
@@ -463,14 +463,14 @@ func local_2445(v0, v1, v2, v3) -> Variant:
 			_pc = 2716
 			continue
 		elif _pc == 2716:
-			if not (v5) and v4:
+			if v4 and not (v5):
 				_pc = 2733
 				continue
 			else:
 				_pc = 2941
 				continue
 		elif _pc == 2733:
-			if 700.0 < sim.distance_between(v7, v0) or iai.is_order_complete(v7):
+			if iai.is_order_complete(v7) or sim.distance_between(v7, v0) < 700.0:
 				_pc = 2786
 				continue
 			else:
@@ -500,14 +500,14 @@ func local_2445(v0, v1, v2, v3) -> Variant:
 				_pc = 3186
 				continue
 		elif _pc == 2966:
-			if _pog_eq("map:/geog/gagarin/owens_star", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/owens_star"):
 				_pc = 2993
 				continue
 			else:
 				_pc = 3186
 				continue
 		elif _pc == 2993:
-			if not (v6) and isim.is_docked_to_structure(isim.cast(v0), isim.cast(v1)):
+			if isim.is_docked_to_structure(isim.cast(v0), isim.cast(v1)) and not (v6):
 				_pc = 3054
 				continue
 			else:
@@ -548,18 +548,18 @@ func local_3194(v0) -> Variant:
 			_pc = 3233
 			continue
 		elif _pc == 3233:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 3249
 				continue
 			else:
 				_pc = 3424
 				continue
 		elif _pc == 3249:
-			v2 = sim.create("ini:/sims/custom/act3_mission05/antenna", string.join("a3_m05_name_transmitter+ +", string.from_int(1 + v4)))
+			v2 = sim.create("ini:/sims/custom/act3_mission05/antenna", string.join("a3_m05_name_transmitter+ +", string.from_int(v4 + 1)))
 			group.add_sim(v1, v2)
 			isim.set_mission_critical(isim.cast(v2), 1)
 			isim.set_indestructable(isim.cast(v2), 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 3233
 			continue
 		elif _pc == 3424:
@@ -592,7 +592,7 @@ func local_3991(v0, v1, v2) -> Variant:
 			_pc = 4003
 			continue
 		elif _pc == 4003:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 4019
 				continue
 			else:
@@ -609,7 +609,7 @@ func local_3991(v0, v1, v2) -> Variant:
 			_pc = 4126
 			continue
 		elif _pc == 4101:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 4003
 			continue
 		elif _pc == 4119:
@@ -637,7 +637,7 @@ func transmitter_sabotage_handler(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 4175
 			continue
 		elif _pc == 4175:
-			if 3 <= v2:
+			if v2 <= 3:
 				_pc = 4188
 				continue
 			else:
@@ -662,7 +662,7 @@ func transmitter_sabotage_handler(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 4380
 			continue
 		elif _pc == 4357:
-			if v0 != 2:
+			if 2 != v0:
 				_pc = 4371
 				continue
 			else:
@@ -690,7 +690,7 @@ func transmitter_sabotage_handler(v0, v1, v2, v3, v4, v5) -> Variant:
 			continue
 		elif _pc == 4573:
 			await iconversation.end()
-			if _pog_eq(v1, v6):
+			if _pog_eq(v6, v1):
 				_pc = 4603
 				continue
 			else:
@@ -719,7 +719,7 @@ func transmitter_sabotage_handler(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 4781
 			continue
 		elif _pc == 4741:
-			if v2 != 1:
+			if 1 != v2:
 				_pc = 4754
 				continue
 			else:
@@ -764,7 +764,7 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 		if _pc == 4788:
 			v4 = iship.cast(group.leader(v0))
 			v6 = 3
-			if v6 < v2:
+			if v2 < v6:
 				_pc = 4854
 				continue
 			else:
@@ -776,7 +776,7 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 4893:
 			await _pog_wait(1.0)
-			if not (700.0 < sim.distance_between(v4, v1) and not (iai.is_order_complete(v4))):
+			if not (not (iai.is_order_complete(v4)) and sim.distance_between(v4, v1) < 700.0):
 				_pc = 4979
 				continue
 			else:
@@ -798,7 +798,7 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 			_pc = 5085
 			continue
 		elif _pc == 5067:
-			if v2 != 1:
+			if 1 != v2:
 				_pc = 5080
 				continue
 			else:
@@ -811,7 +811,7 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 			await iconversation.add_response("a3_m05_text_c2_option_2_rumbled", "a3_m05_dialogue_player_option2_rumbled")
 			v5 = await iconversation.ask(v4, "", "a3_m05_dialogue_security_c2_whats_going")
 			await iconversation.end()
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 5175
 				continue
 			else:
@@ -825,7 +825,7 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 5264:
 			iai.give_attack_order(v0, v1)
-			if 2 == v5:
+			if v5 == 2:
 				_pc = 5301
 				continue
 			else:
@@ -908,7 +908,7 @@ func local_5575(v0, v1, v2) -> Variant:
 			_pc = 6011
 			continue
 		elif _pc == 6011:
-			if 4 < v3:
+			if v3 < 4:
 				_pc = 6024
 				continue
 			else:
@@ -919,7 +919,7 @@ func local_5575(v0, v1, v2) -> Variant:
 			idirector.set_secondary_focus(v1)
 			idirector.set_camera(13)
 			await _pog_wait(3.0)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 6011
 			continue
 		elif _pc == 6146:
@@ -984,7 +984,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				_pc = 8041
 				continue
 		elif _pc == 6619:
-			if _pog_eq("map:/geog/gagarin/owens_star", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/owens_star"):
 				_pc = 6646
 				continue
 			else:
@@ -993,7 +993,7 @@ func local_6517(v0, v1, v2) -> Variant:
 		elif _pc == 6646:
 			await istation.add_reactive_exception(ihabitat.cast(v1))
 			await irangecheck.add_traffic_exception(imapentity.cast(v1))
-			if not (v3) and 100000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 100000.0 and not (v3):
 				_pc = 6751
 				continue
 			else:
@@ -1016,14 +1016,14 @@ func local_6517(v0, v1, v2) -> Variant:
 			_pc = 7130
 			continue
 		elif _pc == 7130:
-			if 4 < state.progress(v2) and v3:
+			if v3 and state.progress(v2) < 4:
 				_pc = 7162
 				continue
 			else:
 				_pc = 8041
 				continue
 		elif _pc == 7162:
-			if 700.0 < sim.distance_between(v9, v0) or iai.is_order_complete(v9):
+			if iai.is_order_complete(v9) or sim.distance_between(v9, v0) < 700.0:
 				_pc = 7215
 				continue
 			else:
@@ -1031,7 +1031,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 7215:
 			await iconversation.begin()
-			if 3 == state.progress(v2):
+			if state.progress(v2) == 3:
 				_pc = 7255
 				continue
 			else:
@@ -1051,7 +1051,7 @@ func local_6517(v0, v1, v2) -> Variant:
 			_pc = 7850
 			continue
 		elif _pc == 7383:
-			if 3 == state.progress(v2):
+			if state.progress(v2) == 3:
 				_pc = 7409
 				continue
 			else:
@@ -1091,7 +1091,7 @@ func local_6517(v0, v1, v2) -> Variant:
 			_pc = 7872
 			continue
 		elif _pc == 7850:
-			if v17 != 1:
+			if 1 != v17:
 				_pc = 7863
 				continue
 			else:
@@ -1105,7 +1105,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				_pc = 7698
 				continue
 		elif _pc == 7872:
-			if 4 == state.progress(v2):
+			if state.progress(v2) == 4:
 				_pc = 7898
 				continue
 			else:
@@ -1115,7 +1115,7 @@ func local_6517(v0, v1, v2) -> Variant:
 			_pc = 8046
 			continue
 		elif _pc == 7903:
-			if 10000.0 < sim.distance_between(v0, v9) and 5 == state.progress(v2):
+			if state.progress(v2) == 5 and sim.distance_between(v0, v9) < 10000.0:
 				_pc = 7959
 				continue
 			else:
@@ -1148,7 +1148,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 8129:
 			v16 = await local_3991(v0, v7, v15)
-			if v15 < v16 and 0 >= v16:
+			if v16 >= 0 and v16 < v15:
 				_pc = 8187
 				continue
 			else:
@@ -1190,7 +1190,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				_pc = 8338
 				continue
 		elif _pc == 8394:
-			if 1 == object.int_property(v2, "transmitter_1_done"):
+			if object.int_property(v2, "transmitter_1_done") == 1:
 				_pc = 8426
 				continue
 			else:
@@ -1199,12 +1199,12 @@ func local_6517(v0, v1, v2) -> Variant:
 		elif _pc == 8426:
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
 			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 0)), 0)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 8632
 			continue
 		elif _pc == 8519:
 			iship.undock(v0, group.nth_sim(v7, 0))
-			v14 = 1 + v14
+			v14 = v14 + 1
 			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
 			_pc = 8632
@@ -1233,7 +1233,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				_pc = 8737
 				continue
 		elif _pc == 8793:
-			if 1 == object.int_property(v2, "transmitter_2_done"):
+			if object.int_property(v2, "transmitter_2_done") == 1:
 				_pc = 8825
 				continue
 			else:
@@ -1242,12 +1242,12 @@ func local_6517(v0, v1, v2) -> Variant:
 		elif _pc == 8825:
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
 			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 1)), 0)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 9031
 			continue
 		elif _pc == 8918:
 			iship.undock(v0, group.nth_sim(v7, 1))
-			v14 = 1 + v14
+			v14 = v14 + 1
 			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
 			_pc = 9031
@@ -1276,7 +1276,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				_pc = 9137
 				continue
 		elif _pc == 9193:
-			if 1 == object.int_property(v2, "transmitter_3_done"):
+			if object.int_property(v2, "transmitter_3_done") == 1:
 				_pc = 9225
 				continue
 			else:
@@ -1285,12 +1285,12 @@ func local_6517(v0, v1, v2) -> Variant:
 		elif _pc == 9225:
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
 			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 2)), 0)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 9433
 			continue
 		elif _pc == 9319:
 			iship.undock(v0, group.nth_sim(v7, 2))
-			v14 = 1 + v14
+			v14 = v14 + 1
 			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
 			_pc = 9433
@@ -1319,7 +1319,7 @@ func local_6517(v0, v1, v2) -> Variant:
 				_pc = 9539
 				continue
 		elif _pc == 9595:
-			if 1 == object.int_property(v2, "transmitter_4_done"):
+			if object.int_property(v2, "transmitter_4_done") == 1:
 				_pc = 9627
 				continue
 			else:
@@ -1328,12 +1328,12 @@ func local_6517(v0, v1, v2) -> Variant:
 		elif _pc == 9627:
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
 			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 3)), 0)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 9835
 			continue
 		elif _pc == 9721:
 			iship.undock(v0, group.nth_sim(v7, 3))
-			v14 = 1 + v14
+			v14 = v14 + 1
 			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
 			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
 			_pc = 9835
@@ -1384,7 +1384,7 @@ func local_6517(v0, v1, v2) -> Variant:
 			_pc = 9901
 			continue
 		elif _pc == 9901:
-			if 4 == v13:
+			if v13 == 4:
 				_pc = 9914
 				continue
 			else:
@@ -1477,7 +1477,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 10557:
 			v2 = iship.find_player_ship()
-			if not _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 10604
 				continue
 			else:
@@ -1502,7 +1502,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 10723:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 10783
 				continue
 			else:
@@ -1513,7 +1513,7 @@ func mission_handler() -> Variant:
 			_pc = 10815
 			continue
 		elif _pc == 10815:
-			if 1 == state.progress(v7) or _pog_is_null(state.progress(v7)):
+			if _pog_is_null(state.progress(v7)) or state.progress(v7) == 1:
 				_pc = 10861
 				continue
 			else:
@@ -1538,14 +1538,14 @@ func mission_handler() -> Variant:
 				_pc = 11497
 				continue
 		elif _pc == 10996:
-			if not (v1) and 2 >= state.progress(v7):
+			if state.progress(v7) >= 2 and not (v1):
 				_pc = 11029
 				continue
 			else:
 				_pc = 11198
 				continue
 		elif _pc == 11029:
-			if 2 == state.progress(v7):
+			if state.progress(v7) == 2:
 				_pc = 11055
 				continue
 			else:
@@ -1556,7 +1556,7 @@ func mission_handler() -> Variant:
 			_pc = 11128
 			continue
 		elif _pc == 11081:
-			if 3 == state.progress(v7):
+			if state.progress(v7) == 3:
 				_pc = 11107
 				continue
 			else:
@@ -1573,14 +1573,14 @@ func mission_handler() -> Variant:
 			_pc = 11198
 			continue
 		elif _pc == 11198:
-			if 100 == state.progress(v7) or 8 == state.progress(v7):
+			if state.progress(v7) == 8 or state.progress(v7) == 100:
 				_pc = 11246
 				continue
 			else:
 				_pc = 11497
 				continue
 		elif _pc == 11246:
-			if 8 == state.progress(v7):
+			if state.progress(v7) == 8:
 				_pc = 11272
 				continue
 			else:

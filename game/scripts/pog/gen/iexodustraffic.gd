@@ -198,7 +198,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 725
 			continue
 		elif _pc == 686:
-			if v2 != 3:
+			if 3 != v2:
 				_pc = 700
 				continue
 			else:
@@ -237,7 +237,7 @@ func exodus_traffic_generator() -> Variant:
 				_pc = 2732
 				continue
 		elif _pc == 744:
-			if 2 != global.pog_int("g_story_3.145"):
+			if global.pog_int("g_story_3.145") != 2:
 				_pc = 772
 				continue
 			else:
@@ -258,7 +258,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 2884
 			continue
 		elif _pc == 820:
-			if not _pog_eq(v25, isim.active_world()):
+			if not _pog_eq(isim.active_world(), v25):
 				_pc = 847
 				continue
 			else:
@@ -266,7 +266,7 @@ func exodus_traffic_generator() -> Variant:
 				continue
 		elif _pc == 847:
 			v25 = isim.active_world()
-			if _pog_is_null(v24) and _pog_eq("map:/geog/gagarin/formhault", v25):
+			if _pog_eq(v25, "map:/geog/gagarin/formhault") and _pog_is_null(v24):
 				_pc = 894
 				continue
 			else:
@@ -288,7 +288,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 1051
 			continue
 		elif _pc == 973:
-			if 0 > group.sim_count(v26):
+			if group.sim_count(v26) > 0:
 				_pc = 998
 				continue
 			else:
@@ -307,16 +307,16 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 1051
 			continue
 		elif _pc == 1051:
-			v5 = list.from_set(isim.non_planetary_in_radius(v1, 2.0 * v0))
+			v5 = list.from_set(isim.non_planetary_in_radius(v1, v0 * 2.0))
 			v3 = await local_8094(isim.active_world())
-			if 1500000000.0 < sim.distance_between(v1, v20) and -1 == v3:
+			if v3 == -1 and sim.distance_between(v1, v20) < 1500000000.0:
 				_pc = 1179
 				continue
 			else:
 				_pc = 1531
 				continue
 		elif _pc == 1179:
-			if 350000.0 > sim.distance_between(v1, v28):
+			if sim.distance_between(v1, v28) > 350000.0:
 				_pc = 1213
 				continue
 			else:
@@ -336,7 +336,7 @@ func exodus_traffic_generator() -> Variant:
 			continue
 		elif _pc == 1266:
 			v23 = isim.sims_in_radius_from_set(v22, v1, 300000.0, 8)
-			if 0 > p_set.item_count(v23):
+			if p_set.item_count(v23) > 0:
 				_pc = 1329
 				continue
 			else:
@@ -349,7 +349,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 1342
 			continue
 		elif _pc == 1342:
-			if 1 > p_set.item_count(v23):
+			if p_set.item_count(v23) > 1:
 				_pc = 1367
 				continue
 			else:
@@ -364,7 +364,7 @@ func exodus_traffic_generator() -> Variant:
 			continue
 		elif _pc == 1393:
 			v27 = sim.cast(p_set.first_element(v23))
-			if not _pog_eq(v28, v27):
+			if not _pog_eq(v27, v28):
 				_pc = 1446
 				continue
 			else:
@@ -372,7 +372,7 @@ func exodus_traffic_generator() -> Variant:
 				continue
 		elif _pc == 1446:
 			v28 = v27
-			if global.pog_int("g_refugees_waiting_at_fomalhaut") < object.int_property(v28, "point_number"):
+			if object.int_property(v28, "point_number") < global.pog_int("g_refugees_waiting_at_fomalhaut"):
 				_pc = 1507
 				continue
 			else:
@@ -386,7 +386,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 2732
 			continue
 		elif _pc == 1531:
-			if 1 + v2 <= v3:
+			if v3 <= v2 + 1:
 				_pc = 1549
 				continue
 			else:
@@ -398,7 +398,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 1580
 			continue
 		elif _pc == 1580:
-			if v6 < v4:
+			if v4 < v6:
 				_pc = 1596
 				continue
 			else:
@@ -415,14 +415,14 @@ func exodus_traffic_generator() -> Variant:
 				continue
 		elif _pc == 1662:
 			v10 = ihabitat.population(v8)
-			if 999 < v10:
+			if v10 < 999:
 				_pc = 1700
 				continue
 			else:
 				_pc = 1761
 				continue
 		elif _pc == 1700:
-			if 0 < v10:
+			if v10 < 0:
 				_pc = 1712
 				continue
 			else:
@@ -434,25 +434,25 @@ func exodus_traffic_generator() -> Variant:
 			continue
 		elif _pc == 1719:
 			v14 = 333
-			v12 = v14 / v10 + 1
+			v12 = 1 + v10 / v14
 			v11 = 999
 			_pc = 1909
 			continue
 		elif _pc == 1761:
-			if 5000 < v10:
+			if v10 < 5000:
 				_pc = 1775
 				continue
 			else:
 				_pc = 1833
 				continue
 		elif _pc == 1775:
-			v14 = 6 / v30 - v31
-			v12 = v14 / 999 - v10 + 3
+			v14 = v31 - v30 / 6
+			v12 = 3 + v10 - 999 / v14
 			v11 = 5000
 			_pc = 1909
 			continue
 		elif _pc == 1833:
-			if 10000 > v10:
+			if v10 > 10000:
 				_pc = 1847
 				continue
 			else:
@@ -463,37 +463,37 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 1856
 			continue
 		elif _pc == 1856:
-			v14 = 5 / v31 - v32
-			v12 = v14 / 5000 - v10 + 8
+			v14 = v32 - v31 / 5
+			v12 = 8 + v10 - 5000 / v14
 			v11 = 10000
 			_pc = 1909
 			continue
 		elif _pc == 1909:
-			if v2 > v3:
+			if v3 > v2:
 				_pc = 1925
 				continue
 			else:
 				_pc = 1939
 				continue
 		elif _pc == 1925:
-			v12 = 4 / v12
+			v12 = v12 / 4
 			_pc = 1939
 			continue
 		elif _pc == 1939:
 			v18 = imapentity.radius_of_influence(v8)
-			v13 = p_set.item_count(isim.sims_in_radius(v8, v18, 536838144)) - v12
-			if v29 > global.pog_int("g_total_refugees_running") + v13:
+			v13 = v12 - p_set.item_count(isim.sims_in_radius(v8, v18, 536838144))
+			if v13 + global.pog_int("g_total_refugees_running") > v29:
 				_pc = 2055
 				continue
 			else:
 				_pc = 2087
 				continue
 		elif _pc == 2055:
-			v13 = global.pog_int("g_total_refugees_running") - v29
+			v13 = v29 - global.pog_int("g_total_refugees_running")
 			_pc = 2087
 			continue
 		elif _pc == 2087:
-			if 0 > v13:
+			if v13 > 0:
 				_pc = 2099
 				continue
 			else:
@@ -542,8 +542,8 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 2299
 			continue
 		elif _pc == 2299:
-			v13 = await local_4713(v8, await local_23575(v8), v11) - v13
-			if 0 <= v13:
+			v13 = v13 - await local_4713(v8, await local_23575(v8), v11)
+			if v13 <= 0:
 				_pc = 2364
 				continue
 			else:
@@ -601,7 +601,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 2595
 			continue
 		elif _pc == 2595:
-			if list.item_count(v16) < v15:
+			if v15 < list.item_count(v16):
 				_pc = 2624
 				continue
 			else:
@@ -610,11 +610,11 @@ func exodus_traffic_generator() -> Variant:
 		elif _pc == 2624:
 			v17 = ilagrangepoint.cast(list.get_nth(v16, v15))
 			await local_22728(v17, v2, 0, v29)
-			v15 = 1 + v15
+			v15 = v15 + 1
 			_pc = 2595
 			continue
 		elif _pc == 2714:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1580
 			continue
 		elif _pc == 2732:
@@ -625,14 +625,14 @@ func exodus_traffic_generator() -> Variant:
 				_pc = 2851
 				continue
 		elif _pc == 2745:
-			if 125 < global.pog_int("g_refugees_waiting_at_fomalhaut") and global.pog_bool("g_evacuate_through_accelerator"):
+			if global.pog_bool("g_evacuate_through_accelerator") and global.pog_int("g_refugees_waiting_at_fomalhaut") < 125:
 				_pc = 2793
 				continue
 			else:
 				_pc = 2851
 				continue
 		elif _pc == 2793:
-			global.set_int("g_refugees_waiting_at_fomalhaut", math.random_int(3, 7) + global.pog_int("g_refugees_waiting_at_fomalhaut"))
+			global.set_int("g_refugees_waiting_at_fomalhaut", global.pog_int("g_refugees_waiting_at_fomalhaut") + math.random_int(3, 7))
 			_pc = 2851
 			continue
 		elif _pc == 2851:
@@ -693,14 +693,14 @@ func create_fomalhaut_refugees(v0) -> Variant:
 			_pc = 3357
 			continue
 		elif _pc == 3357:
-			if v9 < v8:
+			if v8 < v9:
 				_pc = 3373
 				continue
 			else:
 				_pc = 3774
 				continue
 		elif _pc == 3373:
-			v7 = ifaction.cast(list.get_nth(v6, math.random_int(0, 1 - list.item_count(v6))))
+			v7 = ifaction.cast(list.get_nth(v6, math.random_int(0, list.item_count(v6) - 1)))
 			_pc = 3519
 			continue
 		elif _pc == 3449:
@@ -728,7 +728,7 @@ func create_fomalhaut_refugees(v0) -> Variant:
 			continue
 		elif _pc == 3519:
 			math.random_int(1, 7)
-			if math.random_int(1, 7) != 1:
+			if 1 != math.random_int(1, 7):
 				_pc = 3543
 				continue
 			else:
@@ -781,7 +781,7 @@ func create_fomalhaut_refugees(v0) -> Variant:
 			isim.set_faction(v2, v7)
 			await ipilotsetup.generic_coward(v2)
 			group.add_sim(v1, v2)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 3357
 			continue
 		elif _pc == 3774:
@@ -810,7 +810,7 @@ func disable_all_traffic_in_system(v0) -> Variant:
 			_pc = 3906
 			continue
 		elif _pc == 3906:
-			if list.item_count(v4) < v1:
+			if v1 < list.item_count(v4):
 				_pc = 3935
 				continue
 			else:
@@ -819,7 +819,7 @@ func disable_all_traffic_in_system(v0) -> Variant:
 		elif _pc == 3935:
 			v2 = imapentity.cast(list.get_nth(v4, v1))
 			await irangecheck.add_traffic_exception(v2)
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 3906
 			continue
 		elif _pc == 4014:
@@ -829,7 +829,7 @@ func disable_all_traffic_in_system(v0) -> Variant:
 			_pc = 4073
 			continue
 		elif _pc == 4073:
-			if list.item_count(v4) < v1:
+			if v1 < list.item_count(v4):
 				_pc = 4102
 				continue
 			else:
@@ -838,7 +838,7 @@ func disable_all_traffic_in_system(v0) -> Variant:
 		elif _pc == 4102:
 			v2 = imapentity.cast(list.get_nth(v4, v1))
 			await irangecheck.add_traffic_exception(v2)
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 4073
 			continue
 		elif _pc == 4181:
@@ -869,14 +869,14 @@ func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
 			v15 = 0
 			v5 = await iutilities.create_waypoint_relative_to(v0, v1, v2, v3)
 			sim.point_at(v5, v0)
-			v7 = 2.0 * -(v10)
-			v8 = 2.0 * -(v10)
-			v9 = 2.0 * -(v10)
+			v7 = -(v10) * 2.0
+			v8 = -(v10) * 2.0
+			v9 = -(v10) * 2.0
 			v11 = 0
 			_pc = 4364
 			continue
 		elif _pc == 4364:
-			if v14 < v11:
+			if v11 < v14:
 				_pc = 4380
 				continue
 			else:
@@ -887,7 +887,7 @@ func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
 			_pc = 4387
 			continue
 		elif _pc == 4387:
-			if v14 < v12:
+			if v12 < v14:
 				_pc = 4403
 				continue
 			else:
@@ -898,7 +898,7 @@ func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
 			_pc = 4410
 			continue
 		elif _pc == 4410:
-			if v14 < v13:
+			if v13 < v14:
 				_pc = 4426
 				continue
 			else:
@@ -908,21 +908,21 @@ func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
 			v6 = await iutilities.create_waypoint_relative_to(v5, v7, v8, v9)
 			object.add_int_property(v6, "point_number", v15)
 			p_set.add(v4, v6)
-			v15 = 1 + v15
-			v7 = v10 + v7
-			v13 = 1 + v13
+			v15 = v15 + 1
+			v7 = v7 + v10
+			v13 = v13 + 1
 			_pc = 4410
 			continue
 		elif _pc == 4568:
-			v7 = 2.0 * -(v10)
-			v8 = v10 + v8
-			v12 = 1 + v12
+			v7 = -(v10) * 2.0
+			v8 = v8 + v10
+			v12 = v12 + 1
 			_pc = 4387
 			continue
 		elif _pc == 4621:
-			v8 = 2.0 * -(v10)
-			v9 = v10 + v9
-			v11 = 1 + v11
+			v8 = -(v10) * 2.0
+			v9 = v9 + v10
+			v11 = v11 + 1
 			_pc = 4364
 			continue
 		elif _pc == 4674:
@@ -953,7 +953,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			v4 = await local_8094(isim.world_name(v0))
 			v9 = ifaction.find("Underworld")
 			v10 = ifaction.find("Police")
-			if -100 == v4:
+			if v4 == -100:
 				_pc = 4820
 				continue
 			else:
@@ -970,7 +970,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 8092
 			continue
 		elif _pc == 4854:
-			v12 = _pog_eq(isim.world_name(v0), isim.active_world())
+			v12 = _pog_eq(isim.active_world(), isim.world_name(v0))
 			if ihabitat.cast(v0):
 				_pc = 4918
 				continue
@@ -986,7 +986,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 8002
 			continue
 		elif _pc == 4999:
-			if 999 == v2:
+			if v2 == 999:
 				_pc = 5013
 				continue
 			else:
@@ -997,7 +997,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 5104
 			continue
 		elif _pc == 5040:
-			if 5000 == v2:
+			if v2 == 5000:
 				_pc = 5054
 				continue
 			else:
@@ -1045,7 +1045,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 8082
 			continue
 		elif _pc == 5355:
-			if 999 == v2:
+			if v2 == 999:
 				_pc = 5369
 				continue
 			else:
@@ -1065,7 +1065,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 5429
 			continue
 		elif _pc == 5429:
-			if v3 < v13:
+			if v13 < v3:
 				_pc = 5445
 				continue
 			else:
@@ -1111,7 +1111,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 5566:
 			math.random_int(1, 9)
-			if math.random_int(1, 9) != 1:
+			if 1 != math.random_int(1, 9):
 				_pc = 5590
 				continue
 			else:
@@ -1181,7 +1181,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			await ipilotsetup.generic_coward(v6)
 			isim.set_faction(v6, v8)
 			group.add_sim(v5, v6)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 5429
 			continue
 		elif _pc == 5831:
@@ -1217,7 +1217,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 8082
 			continue
 		elif _pc == 6038:
-			if 999 == v2:
+			if v2 == 999:
 				_pc = 6052
 				continue
 			else:
@@ -1333,7 +1333,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 8082
 			continue
 		elif _pc == 6916:
-			if 999 == v2:
+			if v2 == 999:
 				_pc = 6930
 				continue
 			else:
@@ -1381,7 +1381,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 8082
 			continue
 		elif _pc == 7215:
-			if 999 == v2:
+			if v2 == 999:
 				_pc = 7229
 				continue
 			else:
@@ -1392,7 +1392,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 7305
 			continue
 		elif _pc == 7241:
-			if 5000 == v2:
+			if v2 == 5000:
 				_pc = 7255
 				continue
 			else:
@@ -1489,7 +1489,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 7694:
 			math.random_int(1, 9)
-			if math.random_int(1, 9) != 1:
+			if 1 != math.random_int(1, 9):
 				_pc = 7718
 				continue
 			else:
@@ -1651,7 +1651,7 @@ func local_8094(v0) -> Variant:
 				_pc = 8294
 				continue
 		elif _pc == 8119:
-			if _pog_eq("map:/geog/gagarin/owens_star", v0) or _pog_eq("map:/geog/gagarin/ishime", v0) or _pog_eq("map:/geog/gagarin/new_bavaria", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/new_bavaria") or _pog_eq(v0, "map:/geog/gagarin/ishime") or _pog_eq(v0, "map:/geog/gagarin/owens_star"):
 				_pc = 8163
 				continue
 			else:
@@ -1664,7 +1664,7 @@ func local_8094(v0) -> Variant:
 			_pc = 8294
 			continue
 		elif _pc == 8175:
-			if _pog_eq("map:/geog/gagarin/batatas", v0) or _pog_eq("map:/geog/gagarin/osprey", v0) or _pog_eq("map:/geog/gagarin/drake", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/drake") or _pog_eq(v0, "map:/geog/gagarin/osprey") or _pog_eq(v0, "map:/geog/gagarin/batatas"):
 				_pc = 8219
 				continue
 			else:
@@ -1677,7 +1677,7 @@ func local_8094(v0) -> Variant:
 			_pc = 8294
 			continue
 		elif _pc == 8231:
-			if _pog_eq("map:/geog/gagarin/formhault", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/formhault"):
 				_pc = 8249
 				continue
 			else:
@@ -1713,7 +1713,7 @@ func local_8319(v0) -> Variant:
 	var _pc: int = 8319
 	while true:
 		if _pc == 8319:
-			if _pog_eq("map:/geog/gagarin/new_bavaria", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/new_bavaria"):
 				_pc = 8337
 				continue
 			else:
@@ -1726,7 +1726,7 @@ func local_8319(v0) -> Variant:
 			_pc = 8471
 			continue
 		elif _pc == 8348:
-			if _pog_eq("map:/geog/gagarin/osprey", v0) or _pog_eq("map:/geog/gagarin/drake", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/drake") or _pog_eq(v0, "map:/geog/gagarin/osprey"):
 				_pc = 8379
 				continue
 			else:
@@ -1739,7 +1739,7 @@ func local_8319(v0) -> Variant:
 			_pc = 8471
 			continue
 		elif _pc == 8390:
-			if _pog_eq("map:/geog/gagarin/ishime", v0) or _pog_eq("map:/geog/gagarin/owens_star", v0) or _pog_eq("map:/geog/gagarin/formhault", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/formhault") or _pog_eq(v0, "map:/geog/gagarin/owens_star") or _pog_eq(v0, "map:/geog/gagarin/ishime"):
 				_pc = 8434
 				continue
 			else:
@@ -1752,7 +1752,7 @@ func local_8319(v0) -> Variant:
 			_pc = 8471
 			continue
 		elif _pc == 8446:
-			if _pog_eq("map:/geog/gagarin/batatas", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/batatas"):
 				_pc = 8464
 				continue
 			else:
@@ -1805,7 +1805,7 @@ func local_8506(v0, v1) -> Variant:
 			_pc = 8586
 			continue
 		elif _pc == 8586:
-			if group.sim_count(v0) < v3:
+			if v3 < group.sim_count(v0):
 				_pc = 8615
 				continue
 			else:
@@ -1813,7 +1813,7 @@ func local_8506(v0, v1) -> Variant:
 				continue
 		elif _pc == 8615:
 			isim.capsule_jump(isim.cast(group.nth_sim(v0, v3)), v2)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 8586
 			continue
 		elif _pc == 8688:
@@ -1835,7 +1835,7 @@ func local_8691(v0, v1) -> Variant:
 			v6 = global.pog_float("g_player_sensor_range")
 			v2 = iship.find_player_ship()
 			v3 = sim.distance_between(v2, v1)
-			if v6 <= v3:
+			if v3 <= v6:
 				_pc = 8786
 				continue
 			else:
@@ -1867,7 +1867,7 @@ func local_8691(v0, v1) -> Variant:
 			_pc = 9227
 			continue
 		elif _pc == 8903:
-			if 5.0 * v6 > v3:
+			if v3 > v6 * 5.0:
 				_pc = 8925
 				continue
 			else:
@@ -1892,11 +1892,11 @@ func local_8691(v0, v1) -> Variant:
 			_pc = 9029
 			continue
 		elif _pc == 9029:
-			v4 = math.random(v6, v3 + v6)
+			v4 = math.random(v6, v6 + v3)
 			v7 = sim.create("ini:/sims/nav/waypoint", "Traffic centre")
-			sim.place_between(v7, v2, v1, v3 / v4)
-			v5 = v6 - v4
-			if v6 > v5:
+			sim.place_between(v7, v2, v1, v4 / v3)
+			v5 = v4 - v6
+			if v5 > v6:
 				_pc = 9169
 				continue
 			else:
@@ -1943,9 +1943,9 @@ func local_9230(v0, v1) -> Variant:
 			v14 = imapentity.find_by_name_in_system("Formhault System Administration Centre", "map:/geog/gagarin/formhault")
 			v4 = isim.world_name(isim.cast(group.leader(v0)))
 			v5 = await local_8094(v4)
-			global.set_int("g_total_refugees_running", v2 + global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") + v2)
 			v3 = global.pog_int("g_alien_spread_radius")
-			if v3 <= v5:
+			if v5 <= v3:
 				_pc = 9518
 				continue
 			else:
@@ -1966,14 +1966,14 @@ func local_9230(v0, v1) -> Variant:
 			_pc = 9845
 			continue
 		elif _pc == 9670:
-			if -1 == v5:
+			if v5 == -1:
 				_pc = 9683
 				continue
 			else:
 				_pc = 9810
 				continue
 		elif _pc == 9683:
-			if 2000000000.0 < sim.distance_between(group.leader(v0), v14):
+			if sim.distance_between(group.leader(v0), v14) < 2000000000.0:
 				_pc = 9730
 				continue
 			else:
@@ -2011,7 +2011,7 @@ func local_9230(v0, v1) -> Variant:
 			continue
 		elif _pc == 9913:
 			v11 = list.from_set(imapentity.system_habitats_in_system(v4))
-			v12 = isim.cast(list.get_nth(v11, math.random_int(0, 1 - list.item_count(v11))))
+			v12 = isim.cast(list.get_nth(v11, math.random_int(0, list.item_count(v11) - 1)))
 			iai.give_dock_order(v0, v12)
 			_pc = 10048
 			continue
@@ -2027,7 +2027,7 @@ func local_9230(v0, v1) -> Variant:
 				_pc = 11556
 				continue
 		elif _pc == 10067:
-			if 1 < group.sim_count(v0) or 25000000.0 > sim.distance_between(group.leader(v0), v1) and 25000000.0 > sim.distance_between(group.leader(v0), v7):
+			if sim.distance_between(group.leader(v0), v7) > 25000000.0 and sim.distance_between(group.leader(v0), v1) > 25000000.0 or group.sim_count(v0) < 1:
 				_pc = 10178
 				continue
 			else:
@@ -2037,7 +2037,7 @@ func local_9230(v0, v1) -> Variant:
 			_pc = 11561
 			continue
 		elif _pc == 10183:
-			if not _pog_eq(global.pog_int("g_alien_spread_radius"), v3) or iai.is_order_complete(iship.cast(group.leader(v0))):
+			if iai.is_order_complete(iship.cast(group.leader(v0))) or not _pog_eq(v3, global.pog_int("g_alien_spread_radius")):
 				_pc = 10259
 				continue
 			else:
@@ -2047,7 +2047,7 @@ func local_9230(v0, v1) -> Variant:
 			v3 = global.pog_int("g_alien_spread_radius")
 			v4 = isim.world_name(isim.cast(group.leader(v0)))
 			v5 = await local_8094(v4)
-			if 2000000000.0 < sim.distance_between(group.leader(v0), v14) and -1 == v5:
+			if v5 == -1 and sim.distance_between(group.leader(v0), v14) < 2000000000.0:
 				_pc = 10417
 				continue
 			else:
@@ -2055,7 +2055,7 @@ func local_9230(v0, v1) -> Variant:
 				continue
 		elif _pc == 10417:
 			await iutilities.group_set_cullable(v0, 1)
-			global.set_int("g_total_refugees_running", v2 - global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
 			_pc = 11628
 			continue
 		elif _pc == 10488:
@@ -2066,7 +2066,7 @@ func local_9230(v0, v1) -> Variant:
 				_pc = 10782
 				continue
 		elif _pc == 10542:
-			if v3 > v5:
+			if v5 > v3:
 				_pc = 10558
 				continue
 			else:
@@ -2074,7 +2074,7 @@ func local_9230(v0, v1) -> Variant:
 				continue
 		elif _pc == 10558:
 			await iutilities.group_set_cullable(v0, 1)
-			global.set_int("g_total_refugees_running", v2 - global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
 			_pc = 11628
 			continue
 		elif _pc == 10629:
@@ -2085,7 +2085,7 @@ func local_9230(v0, v1) -> Variant:
 			_pc = 10641
 			continue
 		elif _pc == 10641:
-			if group.sim_count(v0) < v15:
+			if v15 < group.sim_count(v0):
 				_pc = 10670
 				continue
 			else:
@@ -2104,11 +2104,11 @@ func local_9230(v0, v1) -> Variant:
 			_pc = 10764
 			continue
 		elif _pc == 10764:
-			v15 = 1 + v15
+			v15 = v15 + 1
 			_pc = 10641
 			continue
 		elif _pc == 10782:
-			if v3 <= v5:
+			if v5 <= v3:
 				_pc = 10798
 				continue
 			else:
@@ -2122,7 +2122,7 @@ func local_9230(v0, v1) -> Variant:
 				_pc = 11240
 				continue
 		elif _pc == 10821:
-			if _pog_eq(isim.cast(await get_interstellar_l_point_in(v4)), v12):
+			if _pog_eq(v12, isim.cast(await get_interstellar_l_point_in(v4))):
 				_pc = 10863
 				continue
 			else:
@@ -2142,7 +2142,7 @@ func local_9230(v0, v1) -> Variant:
 			_pc = 10961
 			continue
 		elif _pc == 10961:
-			if list.item_count(v10) < v15:
+			if v15 < list.item_count(v10):
 				_pc = 10990
 				continue
 			else:
@@ -2150,7 +2150,7 @@ func local_9230(v0, v1) -> Variant:
 				continue
 		elif _pc == 10990:
 			v13 = ilagrangepoint.cast(list.get_nth(v10, v15))
-			if v5 > await local_8094(isim.world_name(v13)):
+			if await local_8094(isim.world_name(v13)) > v5:
 				_pc = 11076
 				continue
 			else:
@@ -2160,7 +2160,7 @@ func local_9230(v0, v1) -> Variant:
 			_pc = 11099
 			continue
 		elif _pc == 11081:
-			v15 = 1 + v15
+			v15 = v15 + 1
 			_pc = 10961
 			continue
 		elif _pc == 11099:
@@ -2206,7 +2206,7 @@ func local_9230(v0, v1) -> Variant:
 			continue
 		elif _pc == 11421:
 			v11 = list.from_set(imapentity.system_habitats_in_system(v4))
-			v12 = isim.cast(list.get_nth(v11, math.random_int(0, 1 - list.item_count(v11))))
+			v12 = isim.cast(list.get_nth(v11, math.random_int(0, list.item_count(v11) - 1)))
 			iai.give_dock_order(v0, v12)
 			_pc = 11556
 			continue
@@ -2215,7 +2215,7 @@ func local_9230(v0, v1) -> Variant:
 			continue
 		elif _pc == 11561:
 			group.destroy(v0, 1)
-			global.set_int("g_total_refugees_running", v2 - global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
 			_pc = 11628
 			continue
 		elif _pc == 11628:
@@ -2234,7 +2234,7 @@ func local_11658(v0, v1) -> Variant:
 		if _pc == 11658:
 			v2 = iship.find_player_ship()
 			v4 = 0
-			if 50000.0 > sim.distance_between(v0, v2):
+			if sim.distance_between(v0, v2) > 50000.0:
 				_pc = 11723
 				continue
 			else:
@@ -2247,7 +2247,7 @@ func local_11658(v0, v1) -> Variant:
 			_pc = 11802
 			continue
 		elif _pc == 11802:
-			if 50000.0 < sim.distance_between(v0, v2):
+			if sim.distance_between(v0, v2) < 50000.0:
 				_pc = 11836
 				continue
 			else:
@@ -2319,7 +2319,7 @@ func local_11658(v0, v1) -> Variant:
 			_pc = 12234
 			continue
 		elif _pc == 12106:
-			if 50000000.0 > sim.distance_between(v1, v2):
+			if sim.distance_between(v1, v2) > 50000000.0:
 				_pc = 12140
 				continue
 			else:
@@ -2349,7 +2349,7 @@ func local_11658(v0, v1) -> Variant:
 				_pc = 11802
 				continue
 		elif _pc == 12234:
-			if 50000000.0 > sim.distance_between(v1, v2):
+			if sim.distance_between(v1, v2) > 50000000.0:
 				_pc = 12268
 				continue
 			else:
@@ -2487,7 +2487,7 @@ func local_12945(v0) -> Variant:
 			continue
 		elif _pc == 13006:
 			v2 = isim.world_name(v0)
-			if _pog_eq("map:/geog/gagarin/batatas", v2):
+			if _pog_eq(v2, "map:/geog/gagarin/batatas"):
 				_pc = 13050
 				continue
 			else:
@@ -2505,7 +2505,7 @@ func local_12945(v0) -> Variant:
 			_pc = 14025
 			continue
 		elif _pc == 13120:
-			if _pog_eq("map:/geog/gagarin/drake", v2):
+			if _pog_eq(v2, "map:/geog/gagarin/drake"):
 				_pc = 13138
 				continue
 			else:
@@ -2525,7 +2525,7 @@ func local_12945(v0) -> Variant:
 			_pc = 14025
 			continue
 		elif _pc == 13286:
-			if _pog_eq("map:/geog/gagarin/formhault", v2):
+			if _pog_eq(v2, "map:/geog/gagarin/formhault"):
 				_pc = 13304
 				continue
 			else:
@@ -2545,7 +2545,7 @@ func local_12945(v0) -> Variant:
 			_pc = 14025
 			continue
 		elif _pc == 13452:
-			if _pog_eq("map:/geog/gagarin/ishime", v2):
+			if _pog_eq(v2, "map:/geog/gagarin/ishime"):
 				_pc = 13470
 				continue
 			else:
@@ -2564,7 +2564,7 @@ func local_12945(v0) -> Variant:
 			_pc = 14025
 			continue
 		elif _pc == 13579:
-			if _pog_eq("map:/geog/gagarin/new_bavaria", v2):
+			if _pog_eq(v2, "map:/geog/gagarin/new_bavaria"):
 				_pc = 13597
 				continue
 			else:
@@ -2583,7 +2583,7 @@ func local_12945(v0) -> Variant:
 			_pc = 14025
 			continue
 		elif _pc == 13706:
-			if _pog_eq("map:/geog/gagarin/osprey", v2):
+			if _pog_eq(v2, "map:/geog/gagarin/osprey"):
 				_pc = 13724
 				continue
 			else:
@@ -2603,7 +2603,7 @@ func local_12945(v0) -> Variant:
 			_pc = 14025
 			continue
 		elif _pc == 13872:
-			if _pog_eq("map:/geog/gagarin/owens_star", v2):
+			if _pog_eq(v2, "map:/geog/gagarin/owens_star"):
 				_pc = 13890
 				continue
 			else:
@@ -2643,7 +2643,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 	while true:
 		if _pc == 14052:
 			v1 = 0
-			if _pog_eq("map:/geog/gagarin/batatas", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/batatas"):
 				_pc = 14082
 				continue
 			else:
@@ -2654,7 +2654,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 			_pc = 14475
 			continue
 		elif _pc == 14118:
-			if _pog_eq("map:/geog/gagarin/drake", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/drake"):
 				_pc = 14136
 				continue
 			else:
@@ -2665,7 +2665,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 			_pc = 14475
 			continue
 		elif _pc == 14172:
-			if _pog_eq("map:/geog/gagarin/formhault", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/formhault"):
 				_pc = 14190
 				continue
 			else:
@@ -2676,7 +2676,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 			_pc = 14475
 			continue
 		elif _pc == 14226:
-			if _pog_eq("map:/geog/gagarin/ishime", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/ishime"):
 				_pc = 14244
 				continue
 			else:
@@ -2687,7 +2687,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 			_pc = 14475
 			continue
 		elif _pc == 14280:
-			if _pog_eq("map:/geog/gagarin/new_bavaria", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/new_bavaria"):
 				_pc = 14298
 				continue
 			else:
@@ -2698,7 +2698,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 			_pc = 14475
 			continue
 		elif _pc == 14334:
-			if _pog_eq("map:/geog/gagarin/osprey", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/osprey"):
 				_pc = 14352
 				continue
 			else:
@@ -2709,7 +2709,7 @@ func get_interstellar_l_point_in(v0) -> Variant:
 			_pc = 14475
 			continue
 		elif _pc == 14388:
-			if _pog_eq("map:/geog/gagarin/owens_star", v0):
+			if _pog_eq(v0, "map:/geog/gagarin/owens_star"):
 				_pc = 14406
 				continue
 			else:
@@ -2764,20 +2764,20 @@ func local_14564(v0, v1) -> Variant:
 	while true:
 		if _pc == 14564:
 			v4 = null
-			v2 = 9.0 / sim.distance_between_centres(v0, v1)
+			v2 = sim.distance_between_centres(v0, v1) / 9.0
 			v5 = isim.cast(await iutilities.create_waypoint_at(v0))
 			v3 = 0.0
 			_pc = 14663
 			continue
 		elif _pc == 14663:
-			if 9.0 < v3:
+			if v3 < 9.0:
 				_pc = 14679
 				continue
 			else:
 				_pc = 14856
 				continue
 		elif _pc == 14679:
-			sim.place_between(v5, v0, v1, 9.0 / v3)
+			sim.place_between(v5, v0, v1, v3 / 9.0)
 			v4 = isim.sims_in_radius(v5, v2, 536870912)
 			if not (p_set.is_empty(v4)):
 				_pc = 14779
@@ -2791,7 +2791,7 @@ func local_14564(v0, v1) -> Variant:
 			_pc = 14881
 			continue
 		elif _pc == 14834:
-			v3 = 1.0 + v3
+			v3 = v3 + 1.0
 			_pc = 14663
 			continue
 		elif _pc == 14856:
@@ -2843,7 +2843,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 15107
 			continue
 		elif _pc == 15107:
-			global.set_int("g_total_refugees_running", v5 + global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") + v5)
 			_pc = 15158
 			continue
 		elif _pc == 15158:
@@ -2855,7 +2855,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 				_pc = 17119
 				continue
 		elif _pc == 15172:
-			if 1 < group.sim_count(v0) or 25000000.0 > sim.distance_between(group.leader(v0), v1) and 25000000.0 > sim.distance_between(v3, group.leader(v0)):
+			if sim.distance_between(v3, group.leader(v0)) > 25000000.0 and sim.distance_between(group.leader(v0), v1) > 25000000.0 or group.sim_count(v0) < 1:
 				_pc = 15283
 				continue
 			else:
@@ -2876,7 +2876,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 15410
 			continue
 		elif _pc == 15410:
-			if list.item_count(v7) < v4:
+			if v4 < list.item_count(v7):
 				_pc = 15439
 				continue
 			else:
@@ -2884,7 +2884,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 				continue
 		elif _pc == 15439:
 			v12 = iship.cast(list.get_nth(v7, v4))
-			if _pog_eq(v16, isim.faction(v12)) or _pog_eq(v15, isim.faction(v12)):
+			if _pog_eq(isim.faction(v12), v15) or _pog_eq(isim.faction(v12), v16):
 				_pc = 15535
 				continue
 			else:
@@ -2897,7 +2897,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 15614
 			continue
 		elif _pc == 15596:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 15410
 			continue
 		elif _pc == 15614:
@@ -2926,7 +2926,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 15798
 			continue
 		elif _pc == 15798:
-			if list.item_count(v6) < v4:
+			if v4 < list.item_count(v6):
 				_pc = 15827
 				continue
 			else:
@@ -2934,7 +2934,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 				continue
 		elif _pc == 15827:
 			v12 = iship.cast(list.get_nth(v6, v4))
-			if v14 < sim.distance_between(v13, v12):
+			if sim.distance_between(v13, v12) < v14:
 				_pc = 15903
 				continue
 			else:
@@ -2946,7 +2946,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 15943
 			continue
 		elif _pc == 15943:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 15798
 			continue
 		elif _pc == 15961:
@@ -2977,7 +2977,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 16153
 			continue
 		elif _pc == 16153:
-			v9 = isim.cast(list.get_nth(v8, 1 - math.random_int(1, list.item_count(v8))))
+			v9 = isim.cast(list.get_nth(v8, math.random_int(1, list.item_count(v8)) - 1))
 			v11 = iship.cast(await local_14564(group.leader(v0), v9))
 			if not _pog_is_null(v11):
 				_pc = 16292
@@ -2996,7 +2996,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 16373
 			continue
 		elif _pc == 16373:
-			if 50000.0 < sim.distance_between(group.leader(v0), v9):
+			if sim.distance_between(group.leader(v0), v9) < 50000.0:
 				_pc = 16420
 				continue
 			else:
@@ -3026,7 +3026,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 16507
 			continue
 		elif _pc == 16507:
-			if group.sim_count(v0) < v4:
+			if v4 < group.sim_count(v0):
 				_pc = 16536
 				continue
 			else:
@@ -3045,7 +3045,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 16679
 			continue
 		elif _pc == 16679:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 16507
 			continue
 		elif _pc == 16697:
@@ -3067,14 +3067,14 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 16757
 			continue
 		elif _pc == 16757:
-			if group.sim_count(v0) < v4:
+			if v4 < group.sim_count(v0):
 				_pc = 16786
 				continue
 			else:
 				_pc = 16896
 				continue
 		elif _pc == 16786:
-			if 0.5 < await iutilities.return_hull_structure(group.nth_sim(v0, v4)):
+			if await iutilities.return_hull_structure(group.nth_sim(v0, v4)) < 0.5:
 				_pc = 16833
 				continue
 			else:
@@ -3086,14 +3086,14 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			_pc = 16878
 			continue
 		elif _pc == 16878:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 16757
 			continue
 		elif _pc == 16896:
 			_pc = 17119
 			continue
 		elif _pc == 16901:
-			if 500000.0 > sim.distance_between(group.leader(v0), v11):
+			if sim.distance_between(group.leader(v0), v11) > 500000.0:
 				_pc = 16948
 				continue
 			else:
@@ -3108,7 +3108,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 			continue
 		elif _pc == 16973:
 			group.destroy(v0, 1)
-			global.set_int("g_total_refugees_running", v5 - global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v5)
 			_pc = 17125
 			continue
 		elif _pc == 17044:
@@ -3215,7 +3215,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 17392
 			continue
 		elif _pc == 17392:
-			if group.sim_count(v0) < v15:
+			if v15 < group.sim_count(v0):
 				_pc = 17421
 				continue
 			else:
@@ -3223,11 +3223,11 @@ func police_retreat_orders(v0, v1) -> Variant:
 				continue
 		elif _pc == 17421:
 			object.set_int_property(group.nth_sim(v0, v15), "ignore_speed_limit", 1)
-			v15 = 1 + v15
+			v15 = v15 + 1
 			_pc = 17392
 			continue
 		elif _pc == 17484:
-			global.set_int("g_total_refugees_running", v14 + global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") + v14)
 			_pc = 17535
 			continue
 		elif _pc == 17535:
@@ -3251,14 +3251,14 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 17634
 			continue
 		elif _pc == 17634:
-			if 25000000.0 > sim.distance_between(v10, v1) and 200000000.0 > sim.distance_between(v10, v9):
+			if sim.distance_between(v10, v9) > 200000000.0 and sim.distance_between(v10, v1) > 25000000.0:
 				_pc = 17698
 				continue
 			else:
 				_pc = 17753
 				continue
 		elif _pc == 17698:
-			if 0.05000000074505806 < math.random(0.0, 1.0):
+			if math.random(0.0, 1.0) < 0.05000000074505806:
 				_pc = 17732
 				continue
 			else:
@@ -3269,7 +3269,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 17753
 			continue
 		elif _pc == 17753:
-			if 1 < group.sim_count(v0):
+			if group.sim_count(v0) < 1:
 				_pc = 17778
 				continue
 			else:
@@ -3291,7 +3291,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 				continue
 		elif _pc == 17817:
 			v17 = list.from_set(imapentity.system_habitats_in_system(isim.world_name(v10)))
-			v12 = isim.cast(list.get_nth(v17, math.random_int(0, 1 - list.item_count(v17))))
+			v12 = isim.cast(list.get_nth(v17, math.random_int(0, list.item_count(v17) - 1)))
 			await iformation.goose(v0, 150.0, 0)
 			iai.give_approach_order(v12, v10)
 			_pc = 17991
@@ -3313,7 +3313,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			continue
 		elif _pc == 18047:
 			v3 = 1
-			if 30000.0 < sim.distance_between(v10, v9):
+			if sim.distance_between(v10, v9) < 30000.0:
 				_pc = 18088
 				continue
 			else:
@@ -3341,7 +3341,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 18439
 			continue
 		elif _pc == 18171:
-			if 5000000.0 > sim.distance_between(v10, v11):
+			if sim.distance_between(v10, v11) > 5000000.0:
 				_pc = 18205
 				continue
 			else:
@@ -3355,7 +3355,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 18439
 			continue
 		elif _pc == 18231:
-			if 0.05000000074505806 < math.random(0.0, 1.0):
+			if math.random(0.0, 1.0) < 0.05000000074505806:
 				_pc = 18265
 				continue
 			else:
@@ -3370,7 +3370,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			continue
 		elif _pc == 18291:
 			group.destroy(v0, 1)
-			global.set_int("g_total_refugees_running", v14 - global.pog_int("g_total_refugees_running"))
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v14)
 			_pc = 19985
 			continue
 		elif _pc == 18362:
@@ -3378,7 +3378,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			continue
 		elif _pc == 18367:
 			state.progress(v13)
-			if state.progress(v13) != 10:
+			if 10 != state.progress(v13):
 				_pc = 18394
 				continue
 			else:
@@ -3420,7 +3420,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 				_pc = 18291
 				continue
 		elif _pc == 18439:
-			if 6 == state.progress(v13):
+			if state.progress(v13) == 6:
 				_pc = 18465
 				continue
 			else:
@@ -3440,7 +3440,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 19979
 			continue
 		elif _pc == 18626:
-			if 50000.0 < sim.distance_between(v10, v9) and v2:
+			if v2 and sim.distance_between(v10, v9) < 50000.0:
 				_pc = 18666
 				continue
 			else:
@@ -3459,7 +3459,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 18812
 			continue
 		elif _pc == 18812:
-			if list.item_count(v16) < v15:
+			if v15 < list.item_count(v16):
 				_pc = 18841
 				continue
 			else:
@@ -3518,21 +3518,21 @@ func police_retreat_orders(v0, v1) -> Variant:
 		elif _pc == 19144:
 			v5 = ifaction.feeling(v6, isim.faction(v7))
 			v4 = ifaction.feeling(v6, isim.faction(v8))
-			if _pog_eq(v4, v5):
+			if _pog_eq(v5, v4):
 				_pc = 19244
 				continue
 			else:
 				_pc = 19508
 				continue
 		elif _pc == 19244:
-			if 36438016 & isim.type(v7):
+			if isim.type(v7) & 36438016:
 				_pc = 19273
 				continue
 			else:
 				_pc = 19390
 				continue
 		elif _pc == 19273:
-			if 0.5 < math.random(0.0, 1.0) and 36438016 & isim.type(v8):
+			if isim.type(v8) & 36438016 and math.random(0.0, 1.0) < 0.5:
 				_pc = 19332
 				continue
 			else:
@@ -3550,7 +3550,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 19503
 			continue
 		elif _pc == 19390:
-			if 0.5 < math.random(0.0, 1.0) and not (36438016 & isim.type(v8)):
+			if not (isim.type(v8) & 36438016) and math.random(0.0, 1.0) < 0.5:
 				_pc = 19450
 				continue
 			else:
@@ -3568,7 +3568,7 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 19577
 			continue
 		elif _pc == 19508:
-			if v4 > v5:
+			if v5 > v4:
 				_pc = 19524
 				continue
 			else:
@@ -3587,18 +3587,18 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 19621
 			continue
 		elif _pc == 19603:
-			v15 = 1 + v15
+			v15 = v15 + 1
 			_pc = 18812
 			continue
 		elif _pc == 19621:
-			if 6 == state.progress(v13):
+			if state.progress(v13) == 6:
 				_pc = 19647
 				continue
 			else:
 				_pc = 19979
 				continue
 		elif _pc == 19647:
-			if 0.4000000059604645 < math.random(0.0, 1.0) and 50000.0 < sim.distance_between(v10, v9) and not (v3):
+			if not (v3) and sim.distance_between(v10, v9) < 50000.0 and math.random(0.0, 1.0) < 0.4000000059604645:
 				_pc = 19718
 				continue
 			else:
@@ -3610,14 +3610,14 @@ func police_retreat_orders(v0, v1) -> Variant:
 			_pc = 19979
 			continue
 		elif _pc == 19768:
-			if 0.4000000059604645 < math.random(0.0, 1.0) and not (list.is_empty(v16)):
+			if not (list.is_empty(v16)) and math.random(0.0, 1.0) < 0.4000000059604645:
 				_pc = 19822
 				continue
 			else:
 				_pc = 19958
 				continue
 		elif _pc == 19822:
-			v7 = iship.cast(list.get_nth(v16, math.random_int(0, 1 - list.item_count(v16))))
+			v7 = iship.cast(list.get_nth(v16, math.random_int(0, list.item_count(v16) - 1)))
 			iai.give_formate_order(v10, v7, 0.0, 0.0, -500.0)
 			state.set_progress(v13, 12)
 			_pc = 19979
@@ -3708,7 +3708,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 20755
 			continue
 		elif _pc == 20733:
-			if v5 != 1:
+			if 1 != v5:
 				_pc = 20746
 				continue
 			else:
@@ -3732,7 +3732,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 20824
 			continue
 		elif _pc == 20802:
-			if v5 != 1:
+			if 1 != v5:
 				_pc = 20815
 				continue
 			else:
@@ -3753,7 +3753,7 @@ func local_20008(v0, v1) -> Variant:
 			continue
 		elif _pc == 20834:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 20858
 				continue
 			else:
@@ -3824,7 +3824,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 21643
 			continue
 		elif _pc == 21375:
-			if 0.4000000059604645 < math.random(0.0, 1.0):
+			if math.random(0.0, 1.0) < 0.4000000059604645:
 				_pc = 21409
 				continue
 			else:
@@ -3853,7 +3853,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 21643
 			continue
 		elif _pc == 21612:
-			if v5 != 1:
+			if 1 != v5:
 				_pc = 21625
 				continue
 			else:
@@ -3886,7 +3886,7 @@ func local_20008(v0, v1) -> Variant:
 			continue
 		elif _pc == 21711:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 21735
 				continue
 			else:
@@ -3918,7 +3918,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 21843
 			continue
 		elif _pc == 21821:
-			if v5 != 1:
+			if 1 != v5:
 				_pc = 21834
 				continue
 			else:
@@ -3939,7 +3939,7 @@ func local_20008(v0, v1) -> Variant:
 			continue
 		elif _pc == 21853:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 21877
 				continue
 			else:
@@ -3976,7 +3976,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 22328
 			continue
 		elif _pc == 22005:
-			if 0.5 < math.random(0.0, 1.0):
+			if math.random(0.0, 1.0) < 0.5:
 				_pc = 22039
 				continue
 			else:
@@ -4014,7 +4014,7 @@ func local_20008(v0, v1) -> Variant:
 			continue
 		elif _pc == 22255:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 22279
 				continue
 			else:
@@ -4042,7 +4042,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 22350
 			continue
 		elif _pc == 22328:
-			if v5 != 1:
+			if 1 != v5:
 				_pc = 22341
 				continue
 			else:
@@ -4059,7 +4059,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 22529
 			continue
 		elif _pc == 22355:
-			if 0.5 < math.random(0.0, 1.0):
+			if math.random(0.0, 1.0) < 0.5:
 				_pc = 22389
 				continue
 			else:
@@ -4081,7 +4081,7 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 22529
 			continue
 		elif _pc == 22489:
-			if v5 != 1:
+			if 1 != v5:
 				_pc = 22502
 				continue
 			else:
@@ -4169,14 +4169,14 @@ func local_22728(v0, v1, v2, v3) -> Variant:
 			_pc = 23572
 			continue
 		elif _pc == 22777:
-			if v1 <= await local_8094(isim.world_name(v0)):
+			if await local_8094(isim.world_name(v0)) <= v1:
 				_pc = 22821
 				continue
 			else:
 				_pc = 22970
 				continue
 		elif _pc == 22821:
-			if ilagrangepoint.interstellar(v0) or not _pog_eq(isim.active_world(), isim.world_name(v0)):
+			if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
 				_pc = 22881
 				continue
 			else:
@@ -4224,7 +4224,7 @@ func local_22728(v0, v1, v2, v3) -> Variant:
 			_pc = 23090
 			continue
 		elif _pc == 22970:
-			if ilagrangepoint.interstellar(v0) or not _pog_eq(isim.active_world(), isim.world_name(v0)):
+			if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
 				_pc = 23030
 				continue
 			else:
@@ -4255,19 +4255,19 @@ func local_22728(v0, v1, v2, v3) -> Variant:
 			_pc = 23090
 			continue
 		elif _pc == 23090:
-			v5 = p_set.item_count(isim.sims_in_radius(v0, 75000.0, 536838144)) - v4
-			if v3 > global.pog_int("g_total_refugees_running") + v5:
+			v5 = v4 - p_set.item_count(isim.sims_in_radius(v0, 75000.0, 536838144))
+			if v5 + global.pog_int("g_total_refugees_running") > v3:
 				_pc = 23182
 				continue
 			else:
 				_pc = 23214
 				continue
 		elif _pc == 23182:
-			v5 = global.pog_int("g_total_refugees_running") - v3
+			v5 = v3 - global.pog_int("g_total_refugees_running")
 			_pc = 23214
 			continue
 		elif _pc == 23214:
-			if 0 > v5:
+			if v5 > 0:
 				_pc = 23226
 				continue
 			else:
@@ -4316,8 +4316,8 @@ func local_22728(v0, v1, v2, v3) -> Variant:
 			_pc = 23426
 			continue
 		elif _pc == 23426:
-			v5 = await local_4713(v0, await local_23575(v0), v6) - v5
-			if 0 <= v5:
+			v5 = v5 - await local_4713(v0, await local_23575(v0), v6)
+			if v5 <= 0:
 				_pc = 23491
 				continue
 			else:
@@ -4396,9 +4396,9 @@ func local_23575(v0) -> Variant:
 			_pc = 23787
 			continue
 		elif _pc == 23787:
-			v9 = v7 + v6 + v8 + v5 + v4 + v3 + v2 + v1
+			v9 = v1 + v2 + v3 + v4 + v5 + v8 + v6 + v7
 			v10 = math.random(0.0, v9)
-			if v1 <= v10:
+			if v10 <= v1:
 				_pc = 23885
 				continue
 			else:
@@ -4415,8 +4415,8 @@ func local_23575(v0) -> Variant:
 			_pc = 24345
 			continue
 		elif _pc == 23917:
-			v10 = v1 - v10
-			if v2 <= v10:
+			v10 = v10 - v1
+			if v10 <= v2:
 				_pc = 23950
 				continue
 			else:
@@ -4433,8 +4433,8 @@ func local_23575(v0) -> Variant:
 			_pc = 24345
 			continue
 		elif _pc == 23982:
-			v10 = v2 - v10
-			if v3 <= v10:
+			v10 = v10 - v2
+			if v10 <= v3:
 				_pc = 24015
 				continue
 			else:
@@ -4451,8 +4451,8 @@ func local_23575(v0) -> Variant:
 			_pc = 24345
 			continue
 		elif _pc == 24048:
-			v10 = v3 - v10
-			if v4 <= v10:
+			v10 = v10 - v3
+			if v10 <= v4:
 				_pc = 24081
 				continue
 			else:
@@ -4469,8 +4469,8 @@ func local_23575(v0) -> Variant:
 			_pc = 24345
 			continue
 		elif _pc == 24114:
-			v10 = v4 - v10
-			if v5 <= v10:
+			v10 = v10 - v4
+			if v10 <= v5:
 				_pc = 24147
 				continue
 			else:
@@ -4487,8 +4487,8 @@ func local_23575(v0) -> Variant:
 			_pc = 24345
 			continue
 		elif _pc == 24180:
-			v10 = v5 - v10
-			if v8 <= v10:
+			v10 = v10 - v5
+			if v10 <= v8:
 				_pc = 24213
 				continue
 			else:
@@ -4505,8 +4505,8 @@ func local_23575(v0) -> Variant:
 			_pc = 24345
 			continue
 		elif _pc == 24246:
-			v10 = v8 - v10
-			if v6 <= v10:
+			v10 = v10 - v8
+			if v10 <= v6:
 				_pc = 24279
 				continue
 			else:

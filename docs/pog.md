@@ -117,6 +117,25 @@ goto -- and it took the goto count from 1146 to 135.
 Whatever still does not fit a known shape is emitted as a labelled `goto` rather
 than guessed at, so the output never lies about the original.
 
+## The base screens run the original scripts
+
+A screen is named by its C++ class, and the engine's screen object **called back
+into POG to build itself** -- `icSPHangarScreen`'s constructor runs
+`iBaseGUI.SPHangarScreen`. That convention resolves 33 of the 48 screens the
+campaign names (`docs/original.md` 8a), so `gui.SetScreen`/`PushScreen`/
+`OverlayScreen` now do what the engine did: look the builder up and run it.
+
+The hangar, loadout, manifest, inventory, recycling, manufacturing, comms, inbox,
+archive, encyclopaedia and statistics screens, and the whole PDA, are therefore
+the original code. `natives/ui.gd` holds the widget tree and runs the callbacks;
+`base_screens.gd` draws it and feeds it input. We do **not** rebuild the original
+skin (`igui.CreateFancyButton` splices a 38-argument nine-patch atlas onto every
+control) -- the rows, their order and the POG function behind each are faithful;
+the amber-on-black is ours, to match `menu.gd`.
+
+The trade screen is the one you would expect to be script-driven and is not:
+`icSPComputerTradingScreen` has no POG builder, and was laid out in C++.
+
 ## Extraction steps this depends on
 
 ```powershell

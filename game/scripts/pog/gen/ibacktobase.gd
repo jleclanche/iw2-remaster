@@ -92,7 +92,7 @@ func detector() -> Variant:
 		elif _pc == 133:
 			v1 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
 			v0 = iship.find_player_ship()
-			if 200000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 200000.0:
 				_pc = 232
 				continue
 			else:
@@ -119,7 +119,7 @@ func detector() -> Variant:
 			_pc = 365
 			continue
 		elif _pc == 365:
-			if _pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 20000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 20000.0 and iai.current_order_type(v0) == 4 and _pog_eq(iai.current_order_target(v0), v1):
 				_pc = 446
 				continue
 			else:
@@ -152,7 +152,7 @@ func detector() -> Variant:
 			_pc = 552
 			continue
 		elif _pc == 552:
-			if _pog_eq(v1, iai.current_order_target(v0)) and 4 == iai.current_order_type(v0) and 200000.0 > sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) > 200000.0 and iai.current_order_type(v0) == 4 and _pog_eq(iai.current_order_target(v0), v1):
 				_pc = 633
 				continue
 			else:
@@ -194,7 +194,7 @@ func detector() -> Variant:
 			_pc = 768
 			continue
 		elif _pc == 768:
-			if 0 <= global.pog_int("g_ibacktobase_level"):
+			if global.pog_int("g_ibacktobase_level") <= 0:
 				_pc = 796
 				continue
 			else:
@@ -243,7 +243,7 @@ func detector() -> Variant:
 			_pc = 922
 			continue
 		elif _pc == 922:
-			if 1 >= v10:
+			if v10 >= 1:
 				_pc = 934
 				continue
 			else:
@@ -284,7 +284,7 @@ func detector() -> Variant:
 				_pc = 1168
 				continue
 		elif _pc == 1103:
-			if 0 > global.pog_int("g_ibacktobase_level"):
+			if global.pog_int("g_ibacktobase_level") > 0:
 				_pc = 1130
 				continue
 			else:
@@ -302,7 +302,7 @@ func detector() -> Variant:
 			_pc = 1393
 			continue
 		elif _pc == 1168:
-			if 4 != iai.current_order_type(v0) or not _pog_eq(v1, iai.current_order_target(v0)):
+			if not _pog_eq(iai.current_order_target(v0), v1) or iai.current_order_type(v0) != 4:
 				_pc = 1219
 				continue
 			else:
@@ -356,7 +356,7 @@ func detector() -> Variant:
 			_pc = 1393
 			continue
 		elif _pc == 1374:
-			v10 = -1 + v10
+			v10 = v10 + -1
 			_pc = 922
 			continue
 		elif _pc == 1393:
@@ -666,7 +666,7 @@ func inhibit() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iBackToBase.Inhibit: Global g_ibacktobase_level not initialised, so I'm initialising it now.\n")
 		global.create_int("g_ibacktobase_level", 10, 0)
-	global.set_int("g_ibacktobase_level", 1 + global.pog_int("g_ibacktobase_level"))
+	global.set_int("g_ibacktobase_level", global.pog_int("g_ibacktobase_level") + 1)
 	if PogRuntime.TRACE:
 		debug.print_string("iBackToBase.Inhibit: Inhibit level now = ")
 	if PogRuntime.TRACE:
@@ -705,14 +705,14 @@ func allow() -> Variant:
 			_pc = 3324
 			continue
 		elif _pc == 3324:
-			if 0 > global.pog_int("g_ibacktobase_level"):
+			if global.pog_int("g_ibacktobase_level") > 0:
 				_pc = 3351
 				continue
 			else:
 				_pc = 3398
 				continue
 		elif _pc == 3351:
-			global.set_int("g_ibacktobase_level", 1 - global.pog_int("g_ibacktobase_level"))
+			global.set_int("g_ibacktobase_level", global.pog_int("g_ibacktobase_level") - 1)
 			_pc = 3424
 			continue
 		elif _pc == 3398:
@@ -769,7 +769,7 @@ func local_3520(v0, v1) -> Variant:
 			continue
 		elif _pc == 3797:
 			await _pog_wait(0.10000000149011612)
-			if _pog_eq(global.string("g_player_base_system"), isim.active_world()):
+			if _pog_eq(isim.active_world(), global.string("g_player_base_system")):
 				_pc = 3871
 				continue
 			else:
@@ -831,35 +831,35 @@ func docking_cutscene(v0, v1) -> Variant:
 			v9 = -1.100000023841858
 			v10 = 0.0
 			v11 = 14.0
-			v12 = 8.0 + v10
+			v12 = v10 + 8.0
 			_pc = 5027
 			continue
 		elif _pc == 4724:
 			v9 = 0.0
 			v10 = 0.0
 			v11 = 8.0
-			v12 = 7.0 + v10
+			v12 = v10 + 7.0
 			_pc = 5027
 			continue
 		elif _pc == 4779:
 			v9 = -1.100000023841858
 			v10 = -14.0
 			v11 = 35.0
-			v12 = 8.0 + v10
+			v12 = v10 + 8.0
 			_pc = 5027
 			continue
 		elif _pc == 4834:
 			v9 = -1.100000023841858
 			v10 = 0.0
 			v11 = 44.0
-			v12 = 15.0 + v10
+			v12 = v10 + 15.0
 			_pc = 5027
 			continue
 		elif _pc == 4889:
 			v9 = -1.100000023841858
 			v10 = 0.0
 			v11 = 60.0
-			v12 = 15.0 + v10
+			v12 = v10 + 15.0
 			_pc = 5027
 			continue
 		elif _pc == 4944:
@@ -867,7 +867,7 @@ func docking_cutscene(v0, v1) -> Variant:
 			continue
 		elif _pc == 4949:
 			isim.type(v0)
-			if isim.type(v0) != 131072:
+			if 131072 != isim.type(v0):
 				_pc = 4979
 				continue
 			else:
@@ -915,7 +915,7 @@ func docking_cutscene(v0, v1) -> Variant:
 			sim.place_relative_to(v0, v1, 0.0, 0.0, 2900.0)
 			sim.point_at(v0, v1)
 			sim.set_collision(v0, 0)
-			sim.place_relative_to_inside(v3, v0, v8, -(2.0 / v8), -(2.5 * v8))
+			sim.place_relative_to_inside(v3, v0, v8, -(v8 / 2.0), -(v8 * 2.5))
 			object.set_vector_property(v0, "speed", 0.0, 0.0, 300.0)
 			object.set_vector_property(v0, "acceleration", 0.0, 0.0, 50.0)
 			idirector.set_dolly_camera(v3)
@@ -930,7 +930,7 @@ func docking_cutscene(v0, v1) -> Variant:
 			continue
 		elif _pc == 5782:
 			await _pog_wait(0.10000000149011612)
-			if 50.0 <= sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) <= 50.0:
 				_pc = 5848
 				continue
 			else:
@@ -944,9 +944,9 @@ func docking_cutscene(v0, v1) -> Variant:
 			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
 			sim.place_relative_to_inside(v0, v4, 0.0, 0.0, 0.0)
 			sim.point_at(v0, v1)
-			sim.place_relative_to_inside(v4, v0, 0.0, v12, 2.0 * v8)
+			sim.place_relative_to_inside(v4, v0, 0.0, v12, v8 * 2.0)
 			sim.place_relative_to_inside(v5, v0, v9, v10, v11)
-			sim.place_relative_to_inside(v7, v0, v9, v10, 20.0 - v11)
+			sim.place_relative_to_inside(v7, v0, v9, v10, v11 - 20.0)
 			idirector.set_focus(v7)
 			idirector.set_direction(v3, v4, v5, 10.0, 2.0)
 			sim.avatar_set_channel(v1, "door", 0.0)

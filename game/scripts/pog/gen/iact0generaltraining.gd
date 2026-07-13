@@ -68,9 +68,9 @@ func base_exploration_handler() -> Variant:
 				_pc = 2337
 				continue
 		elif _pc == 217:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			v0 = gui.current_screen_classname()
-			if _pog_is_null(object.property_exists(v3, "act0_visited_main_screen")) and _pog_eq("icSPBaseScreen", v0):
+			if _pog_eq(v0, "icSPBaseScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_main_screen")):
 				_pc = 296
 				continue
 			else:
@@ -91,7 +91,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 410:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_hangar")) and _pog_eq("icSPHangarScreen", v0):
+			if _pog_eq(v0, "icSPHangarScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_hangar")):
 				_pc = 455
 				continue
 			else:
@@ -117,7 +117,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 709:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_ship_selector")) and _pog_eq("icSPShipTypeScreen", v0):
+			if _pog_eq(v0, "icSPShipTypeScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_ship_selector")):
 				_pc = 754
 				continue
 			else:
@@ -138,7 +138,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 868:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_loadout")) and _pog_eq("icSPLoadoutScreen", v0):
+			if _pog_eq(v0, "icSPLoadoutScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_loadout")):
 				_pc = 913
 				continue
 			else:
@@ -159,7 +159,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 1027:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_add_cargo")) and _pog_eq("icSPAddCargoScreen", v0):
+			if _pog_eq(v0, "icSPAddCargoScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_add_cargo")):
 				_pc = 1072
 				continue
 			else:
@@ -180,7 +180,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 1186:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_customise_loadout")) and _pog_eq("icSPCustomiseScreen", v0):
+			if _pog_eq(v0, "icSPCustomiseScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_customise_loadout")):
 				_pc = 1231
 				continue
 			else:
@@ -201,7 +201,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 1345:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_manifest")) and _pog_eq("icSPManifestScreen", v0):
+			if _pog_eq(v0, "icSPManifestScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_manifest")):
 				_pc = 1390
 				continue
 			else:
@@ -222,7 +222,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 1504:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_inventory")) and _pog_eq("icSPInventoryScreen", v0):
+			if _pog_eq(v0, "icSPInventoryScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_inventory")):
 				_pc = 1549
 				continue
 			else:
@@ -243,7 +243,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 1663:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_communications")) and _pog_eq("icSPCommsMainMenuScreen", v0):
+			if _pog_eq(v0, "icSPCommsMainMenuScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_communications")):
 				_pc = 1708
 				continue
 			else:
@@ -268,7 +268,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 1934:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_encyclopedia")) and _pog_eq("icSPEncyclopaediaScreen", v0):
+			if _pog_eq(v0, "icSPEncyclopaediaScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_encyclopedia")):
 				_pc = 1979
 				continue
 			else:
@@ -289,7 +289,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 2093:
-			if _pog_is_null(object.property_exists(v3, "act0_visited_statistics")) and _pog_eq("icSPStatisticsScreen", v0):
+			if _pog_eq(v0, "icSPStatisticsScreen") and _pog_is_null(object.property_exists(v3, "act0_visited_statistics")):
 				_pc = 2138
 				continue
 			else:
@@ -303,7 +303,7 @@ func base_exploration_handler() -> Variant:
 			_pc = 2221
 			continue
 		elif _pc == 2221:
-			if not (v4) and 1 == global.pog_bool("g_act0_lucrecias_mail_conversation") and _pog_eq("icSPBaseScreen", v0):
+			if _pog_eq(v0, "icSPBaseScreen") and global.pog_bool("g_act0_lucrecias_mail_conversation") == 1 and not (v4):
 				_pc = 2268
 				continue
 			else:
@@ -379,7 +379,7 @@ func base_online_handler() -> Variant:
 			_pc = 3161
 			continue
 		elif _pc == 2767:
-			if _pog_is_null(object.property_exists(v4, "act0_done_recycling")) and _pog_eq("icSPRecyclingScreen", v0):
+			if _pog_eq(v0, "icSPRecyclingScreen") and _pog_is_null(object.property_exists(v4, "act0_done_recycling")):
 				_pc = 2812
 				continue
 			else:
@@ -393,7 +393,7 @@ func base_online_handler() -> Variant:
 			_pc = 3161
 			continue
 		elif _pc == 2900:
-			if _pog_is_null(object.property_exists(v4, "act0_done_manufacturing")) and _pog_eq("icSPManufacturingScreen", v0):
+			if _pog_eq(v0, "icSPManufacturingScreen") and _pog_is_null(object.property_exists(v4, "act0_done_manufacturing")):
 				_pc = 2945
 				continue
 			else:
@@ -407,7 +407,7 @@ func base_online_handler() -> Variant:
 			_pc = 3161
 			continue
 		elif _pc == 3033:
-			if _pog_is_null(object.property_exists(v4, "act0_done_trade")) and _pog_eq("icSPTradingScreen", v0):
+			if _pog_eq(v0, "icSPTradingScreen") and _pog_is_null(object.property_exists(v4, "act0_done_trade")):
 				_pc = 3078
 				continue
 			else:
@@ -434,7 +434,7 @@ func local_3176(v0) -> Variant:
 	while true:
 		if _pc == 3176:
 			await _pog_wait(0.5)
-			if _pog_eq(v0, ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), v0):
 				_pc = 3235
 				continue
 			else:
@@ -451,7 +451,7 @@ func local_3238(v0) -> Variant:
 	while true:
 		if _pc == 3238:
 			await _pog_wait(0.5)
-			if not _pog_eq(v0, ihud.current_menu_node()):
+			if not _pog_eq(ihud.current_menu_node(), v0):
 				_pc = 3296
 				continue
 			else:
@@ -469,7 +469,7 @@ func h_u_d_traininer() -> Variant:
 	while true:
 		if _pc == 3305:
 			v0 = state.find(self)
-			if not (global.exists("g_training_disabled")) and _pog_is_null(object.property_exists(v0, "number_completed_hud_nodes")):
+			if _pog_is_null(object.property_exists(v0, "number_completed_hud_nodes")) and not (global.exists("g_training_disabled")):
 				_pc = 3395
 				continue
 			else:
@@ -520,7 +520,7 @@ func h_u_d_traininer() -> Variant:
 				_pc = 5553
 				continue
 		elif _pc == 3708:
-			if 10 == object.int_property(v0, "number_completed_hud_nodes"):
+			if object.int_property(v0, "number_completed_hud_nodes") == 10:
 				_pc = 3741
 				continue
 			else:
@@ -531,7 +531,7 @@ func h_u_d_traininer() -> Variant:
 			_pc = 5559
 			continue
 		elif _pc == 3773:
-			if _pog_is_null(object.property_exists(v0, "done_eng")) and _pog_eq("hud_menu_eng", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_eng") and _pog_is_null(object.property_exists(v0, "done_eng")):
 				_pc = 3827
 				continue
 			else:
@@ -539,13 +539,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 3827:
 			object.add_int_property(v0, "done_eng", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_eng")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_eng_screen")
 			_pc = 3956
 			continue
 		elif _pc == 3956:
-			if _pog_is_null(object.property_exists(v0, "done_wep")) and _pog_eq("hud_menu_wep", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_wep") and _pog_is_null(object.property_exists(v0, "done_wep")):
 				_pc = 4010
 				continue
 			else:
@@ -553,11 +553,11 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 4010:
 			object.add_int_property(v0, "done_wep", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pc = 4089
 			continue
 		elif _pc == 4089:
-			if _pog_is_null(object.property_exists(v0, "done_cmd")) and _pog_eq("hud_menu_cmd", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_cmd") and _pog_is_null(object.property_exists(v0, "done_cmd")):
 				_pc = 4143
 				continue
 			else:
@@ -565,13 +565,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 4143:
 			object.add_int_property(v0, "done_cmd", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_cmd")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_new_cmd_menu")
 			_pc = 4272
 			continue
 		elif _pc == 4272:
-			if _pog_is_null(object.property_exists(v0, "done_doc")) and _pog_eq("hud_menu_doc", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_doc") and _pog_is_null(object.property_exists(v0, "done_doc")):
 				_pc = 4326
 				continue
 			else:
@@ -579,13 +579,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 4326:
 			object.add_int_property(v0, "done_doc", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_doc")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_doc_menu")
 			_pc = 4455
 			continue
 		elif _pc == 4455:
-			if _pog_is_null(object.property_exists(v0, "done_log")) and _pog_eq("hud_menu_log", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_log") and _pog_is_null(object.property_exists(v0, "done_log")):
 				_pc = 4509
 				continue
 			else:
@@ -593,13 +593,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 4509:
 			object.add_int_property(v0, "done_log", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_log")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_log_screen")
 			_pc = 4638
 			continue
 		elif _pc == 4638:
-			if _pog_is_null(object.property_exists(v0, "done_obj")) and _pog_eq("hud_menu_objectives", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_objectives") and _pog_is_null(object.property_exists(v0, "done_obj")):
 				_pc = 4692
 				continue
 			else:
@@ -607,13 +607,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 4692:
 			object.add_int_property(v0, "done_obj", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_objectives")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_objective_screen")
 			_pc = 4821
 			continue
 		elif _pc == 4821:
-			if _pog_is_null(object.property_exists(v0, "done_coms")) and _pog_eq("hud_menu_comms", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_comms") and _pog_is_null(object.property_exists(v0, "done_coms")):
 				_pc = 4875
 				continue
 			else:
@@ -621,13 +621,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 4875:
 			object.add_int_property(v0, "done_coms", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_comms")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_comms_menu")
 			_pc = 5004
 			continue
 		elif _pc == 5004:
-			if _pog_is_null(object.property_exists(v0, "done_nav")) and _pog_eq("hud_menu_nav", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_nav") and _pog_is_null(object.property_exists(v0, "done_nav")):
 				_pc = 5058
 				continue
 			else:
@@ -635,13 +635,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 5058:
 			object.add_int_property(v0, "done_nav", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_nav")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_nav_menu")
 			_pc = 5187
 			continue
 		elif _pc == 5187:
-			if _pog_is_null(object.property_exists(v0, "done_map")) and _pog_eq("hud_menu_map", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_map") and _pog_is_null(object.property_exists(v0, "done_map")):
 				_pc = 5241
 				continue
 			else:
@@ -649,13 +649,13 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 5241:
 			object.add_int_property(v0, "done_map", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_map")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_starmap")
 			_pc = 5370
 			continue
 		elif _pc == 5370:
-			if _pog_is_null(object.property_exists(v0, "done_auto")) and _pog_eq("hud_menu_autopilot", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_autopilot") and _pog_is_null(object.property_exists(v0, "done_auto")):
 				_pc = 5424
 				continue
 			else:
@@ -663,7 +663,7 @@ func h_u_d_traininer() -> Variant:
 				continue
 		elif _pc == 5424:
 			object.add_int_property(v0, "done_auto", 1)
-			object.set_int_property(v0, "number_completed_hud_nodes", 1 + object.int_property(v0, "number_completed_hud_nodes"))
+			object.set_int_property(v0, "number_completed_hud_nodes", object.int_property(v0, "number_completed_hud_nodes") + 1)
 			_pog_spawn(local_3238.bind(_pog_clone("hud_menu_autopilot")))
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_autop")
 			_pc = 5553

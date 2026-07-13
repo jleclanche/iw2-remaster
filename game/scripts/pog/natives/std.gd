@@ -73,9 +73,13 @@ static func _s(v: Variant) -> String:
 # @native global.CreateList
 # @native global.CreateSet
 func _create(_t, a: Array) -> Variant:
+	# Create*(name, persistence_flag, value): the value is the THIRD argument.
+	# Storing the second put a 1, 2 or 14 into every global in the game --
+	# harmless for the bools by luck, fatal for the handles, whose Cast then
+	# failed and whose screens silently did nothing.
 	var name := _s(a[0])
 	if not globals.has(name):
-		globals[name] = a[1] if a.size() > 1 else 0
+		globals[name] = a[2] if a.size() > 2 else 0
 	return 0
 
 # @native global.Bool

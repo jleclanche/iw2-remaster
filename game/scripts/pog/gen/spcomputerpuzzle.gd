@@ -33,7 +33,7 @@ func local_0(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v8: Variant = 0
 	v8 = null
 	v8 = "88"
-	if 4 == v2:
+	if v2 == 4:
 		v8 = "8888"
 	v7 = gui.create_edit_box(v0, 0, v4, v5, v1, 0, v8, 1)
 	gui.set_edit_box_max_char_length(v7, v2)
@@ -97,7 +97,7 @@ func local_851() -> Variant:
 			v12 = string.to_int(v7)
 			v13 = string.to_int(v8)
 			v14 = string.to_int(v9)
-			if 0 < v10:
+			if v10 < 0:
 				_pc = 1368
 				continue
 			else:
@@ -108,7 +108,7 @@ func local_851() -> Variant:
 			_pc = 1401
 			continue
 		elif _pc == 1380:
-			if 23 > v10:
+			if v10 > 23:
 				_pc = 1393
 				continue
 			else:
@@ -119,7 +119,7 @@ func local_851() -> Variant:
 			_pc = 1401
 			continue
 		elif _pc == 1401:
-			if 0 < v11:
+			if v11 < 0:
 				_pc = 1413
 				continue
 			else:
@@ -130,7 +130,7 @@ func local_851() -> Variant:
 			_pc = 1446
 			continue
 		elif _pc == 1425:
-			if 59 > v11:
+			if v11 > 59:
 				_pc = 1438
 				continue
 			else:
@@ -141,7 +141,7 @@ func local_851() -> Variant:
 			_pc = 1446
 			continue
 		elif _pc == 1446:
-			if 2320 < v14:
+			if v14 < 2320:
 				_pc = 1460
 				continue
 			else:
@@ -152,7 +152,7 @@ func local_851() -> Variant:
 			_pc = 1497
 			continue
 		elif _pc == 1474:
-			if 2350 > v14:
+			if v14 > 2350:
 				_pc = 1488
 				continue
 			else:
@@ -164,14 +164,14 @@ func local_851() -> Variant:
 			continue
 		elif _pc == 1497:
 			v15 = 0
-			if _pog_is_null(4 % v14):
+			if _pog_is_null(v14 % 4):
 				_pc = 1519
 				continue
 			else:
 				_pc = 1569
 				continue
 		elif _pc == 1519:
-			if not _pog_is_null(100 % v14):
+			if not _pog_is_null(v14 % 100):
 				_pc = 1534
 				continue
 			else:
@@ -182,7 +182,7 @@ func local_851() -> Variant:
 			_pc = 1569
 			continue
 		elif _pc == 1546:
-			if _pog_is_null(400 % v14):
+			if _pog_is_null(v14 % 400):
 				_pc = 1562
 				continue
 			else:
@@ -193,7 +193,7 @@ func local_851() -> Variant:
 			_pc = 1569
 			continue
 		elif _pc == 1569:
-			if 1 < v13:
+			if v13 < 1:
 				_pc = 1581
 				continue
 			else:
@@ -204,7 +204,7 @@ func local_851() -> Variant:
 			_pc = 1614
 			continue
 		elif _pc == 1593:
-			if 12 > v13:
+			if v13 > 12:
 				_pc = 1606
 				continue
 			else:
@@ -216,7 +216,7 @@ func local_851() -> Variant:
 			continue
 		elif _pc == 1614:
 			v16 = 31
-			if 11 == v13 or 6 == v13 or 4 == v13 or 9 == v13:
+			if v13 == 9 or v13 == 4 or v13 == 6 or v13 == 11:
 				_pc = 1662
 				continue
 			else:
@@ -227,7 +227,7 @@ func local_851() -> Variant:
 			_pc = 1719
 			continue
 		elif _pc == 1675:
-			if 2 == v13:
+			if v13 == 2:
 				_pc = 1688
 				continue
 			else:
@@ -242,11 +242,11 @@ func local_851() -> Variant:
 				_pc = 1719
 				continue
 		elif _pc == 1706:
-			v16 = 1 + v16
+			v16 = v16 + 1
 			_pc = 1719
 			continue
 		elif _pc == 1719:
-			if 1 < v12:
+			if v12 < 1:
 				_pc = 1731
 				continue
 			else:
@@ -257,7 +257,7 @@ func local_851() -> Variant:
 			_pc = 1770
 			continue
 		elif _pc == 1743:
-			if v16 > v12:
+			if v12 > v16:
 				_pc = 1759
 				continue
 			else:
@@ -278,7 +278,7 @@ func local_851() -> Variant:
 			v7 = string.from_int(v12)
 			v8 = string.from_int(v13)
 			v9 = string.from_int(v14)
-			if 10 < v10:
+			if v10 < 10:
 				_pc = 2043
 				continue
 			else:
@@ -289,7 +289,7 @@ func local_851() -> Variant:
 			_pc = 2075
 			continue
 		elif _pc == 2075:
-			if 10 < v11:
+			if v11 < 10:
 				_pc = 2088
 				continue
 			else:
@@ -300,7 +300,7 @@ func local_851() -> Variant:
 			_pc = 2120
 			continue
 		elif _pc == 2120:
-			if 10 < v12:
+			if v12 < 10:
 				_pc = 2133
 				continue
 			else:
@@ -311,7 +311,7 @@ func local_851() -> Variant:
 			_pc = 2165
 			continue
 		elif _pc == 2165:
-			if 10 < v13:
+			if v13 < 10:
 				_pc = 2178
 				continue
 			else:
@@ -410,11 +410,11 @@ func main() -> Variant:
 	var v16: Variant = 0
 	v6 = null
 	v7 = null
-	v8 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+	v8 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 	v9 = global.pog_int("GUI_inversebutton_width")
 	v10 = global.pog_int("GUI_inversebutton_height")
 	v11 = 10
-	v12 = 2 * v11
+	v12 = v11 * 2
 	v13 = 0
 	v14 = 0
 	v15 = 10
@@ -425,42 +425,42 @@ func main() -> Variant:
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "SPComputerPuzzle.OnBack", "SPComputerPuzzle.OnBack")
 	await igui.add_title(v0, text.field("basemenu_triangulation", 0))
-	v13 = v15 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset") + v13
+	v13 = v13 + global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + v15
 	v3 = gui.create_window(0, 0, v9, v10, 0)
 	list.add_tail(v7, v3)
 	v2 = await igui.create_window_list_in_splitter(v0, v7, v8, v13, text.field("triangulation_time", 0))
 	gui.delete_window(v3)
-	v13 = v15 + gui.window_canvas_height(v2) + v13
+	v13 = v13 + gui.window_canvas_height(v2) + v15
 	v1 = gui.splitter_window_bottom_window(v2)
 	v14 = v16
 	await local_0(v14, v1, 2, "g_time_hr_txt", v12, v10, v6)
-	v14 = v12 + v14
+	v14 = v14 + v12
 	await local_527(v14, v1, ":", v11, v10)
-	v14 = v11 + v14
+	v14 = v14 + v11
 	await local_0(v14, v1, 2, "g_time_min_txt", v12, v10, v6)
-	v14 = v12 + v14
+	v14 = v14 + v12
 	v14 = v16
 	v3 = gui.create_window(0, 0, v9, v10, 0)
 	list.remove_all(v7)
 	list.add_tail(v7, v3)
 	v2 = await igui.create_window_list_in_splitter(v0, v7, v8, v13, text.field("triangulation_date", 0))
 	gui.delete_window(v3)
-	v13 = v15 + gui.window_canvas_height(v2) + v13
+	v13 = v13 + gui.window_canvas_height(v2) + v15
 	v1 = gui.splitter_window_bottom_window(v2)
 	await local_0(v14, v1, 2, "g_date_day_txt", v12, v10, v6)
-	v14 = v12 + v14
+	v14 = v14 + v12
 	await local_527(v14, v1, "/", v11, v10)
-	v14 = v11 + v14
+	v14 = v14 + v11
 	await local_0(v14, v1, 2, "g_date_month_txt", v12, v10, v6)
-	v14 = v12 + v14
+	v14 = v14 + v12
 	await local_527(v14, v1, "/", v11, v10)
-	v14 = v11 + v14
-	await local_0(v14, v1, 4, "g_date_year_txt", 2 * v12, v10, v6)
-	v14 = 2 * v12 + v14
+	v14 = v14 + v11
+	await local_0(v14, v1, 4, "g_date_year_txt", v12 * 2, v10, v6)
+	v14 = v14 + v12 * 2
 	await local_2378()
 	v4 = await igui.create_and_initialise_fancy_button(v0, v13, text.field("triangulation_calculate", 0), "SPComputerPuzzle.Calculate")
 	list.add_tail(v6, v4)
-	v13 = v15 + global.pog_int("GUI_fancybutton_height") + v13
+	v13 = v13 + global.pog_int("GUI_fancybutton_height") + v15
 	global.create_handle("g_shady_bar", 2, v0)
 	global.create_int("g_shady_bar_y_offset", 2, v13)
 	gui.set_first_control_focus(gui.cast(list.head(v6)))
@@ -496,7 +496,7 @@ func on_increment() -> Variant:
 	v0 = gui.focused_window()
 	v1 = gui.edit_box_value(v0)
 	v2 = string.to_int(v1)
-	v2 = 1 + v2
+	v2 = v2 + 1
 	v1 = string.from_int(v2)
 	gui.set_edit_box_value(v0, v1)
 	await local_851()
@@ -512,7 +512,7 @@ func on_decrement() -> Variant:
 	v0 = gui.focused_window()
 	v1 = gui.edit_box_value(v0)
 	v2 = string.to_int(v1)
-	v2 = -1 + v2
+	v2 = v2 + -1
 	v1 = string.from_int(v2)
 	gui.set_edit_box_value(v0, v1)
 	await local_851()
@@ -1294,8 +1294,8 @@ func local_8358() -> Variant:
 			v7 = 0.05000000074505806
 			v9 = 64
 			v11 = null
-			v12 = global.pog_int("GUI_inversebutton_textoffset") + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-			if 2331 == global.pog_int("g_date_year") and 3 == global.pog_int("g_date_month") and 4 == global.pog_int("g_date_day") and 24 == global.pog_int("g_time_min") and 17 == global.pog_int("g_time_hr"):
+			v12 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_inversebutton_textoffset")
+			if global.pog_int("g_time_hr") == 17 and global.pog_int("g_time_min") == 24 and global.pog_int("g_date_day") == 4 and global.pog_int("g_date_month") == 3 and global.pog_int("g_date_year") == 2331:
 				_pc = 8634
 				continue
 			else:
@@ -1320,15 +1320,15 @@ func local_8358() -> Variant:
 		elif _pc == 8705:
 			v0 = gui.cast(global.handle("g_shady_bar"))
 			v1 = global.pog_int("g_shady_bar_y_offset")
-			v6 = await igui.create_and_initialise_static_window(v12, v1, v12 - gui.window_canvas_width(v0), 15, v0, global.string("GUI_subtitle_font"), "")
+			v6 = await igui.create_and_initialise_static_window(v12, v1, gui.window_canvas_width(v0) - v12, 15, v0, global.string("GUI_subtitle_font"), "")
 			gui.set_window_text_formatting(v6, 0, 0)
 			global.create_handle("g_result_window", 2, v6)
 			_pc = 8906
 			continue
 		elif _pc == 8906:
 			await local_3015()
-			v13 = math.random_int(0, 1 - v9)
-			v10 = 3 / v9
+			v13 = math.random_int(0, v9 - 1)
+			v10 = v9 / 3
 			if not (v14):
 				_pc = 8972
 				continue
@@ -1336,7 +1336,7 @@ func local_8358() -> Variant:
 				_pc = 8986
 				continue
 		elif _pc == 8972:
-			v10 = 2 * v10
+			v10 = v10 * 2
 			_pc = 8986
 			continue
 		elif _pc == 8986:
@@ -1344,18 +1344,18 @@ func local_8358() -> Variant:
 			_pc = 8993
 			continue
 		elif _pc == 8993:
-			if v10 < v8:
+			if v8 < v10:
 				_pc = 9009
 				continue
 			else:
 				_pc = 9147
 				continue
 		elif _pc == 9009:
-			v11 = await local_6091(v9 % v8 + v13)
+			v11 = await local_6091(v13 + v8 % v9)
 			v11 = string.upper_case(v11)
 			gui.set_window_title(v6, v11)
 			await _pog_wait(v7)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 8993
 			continue
 		elif _pc == 9147:

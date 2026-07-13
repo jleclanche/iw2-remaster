@@ -18,7 +18,7 @@ func local_0() -> Variant:
 		if _pc == 0:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_picked_up_distress_1_:", "a1_master_dialogue_picked_up_distress_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 76
 				continue
 			else:
@@ -30,7 +30,7 @@ func local_0() -> Variant:
 		elif _pc == 77:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_jafs_signal_coment_1_:", "a1_master_dialogue_jafs_signal_coment_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 153
 				continue
 			else:
@@ -42,7 +42,7 @@ func local_0() -> Variant:
 		elif _pc == 154:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_spirit_of_capitalism_:", "a1_master_spirit_of_capitalism")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 230
 				continue
 			else:
@@ -54,7 +54,7 @@ func local_0() -> Variant:
 		elif _pc == 231:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_victim_threat_1_:", "a1_master_dialogue_victim_threat_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 307
 				continue
 			else:
@@ -66,7 +66,7 @@ func local_0() -> Variant:
 		elif _pc == 308:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_option_1_:", "a1_master_player_option_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 384
 				continue
 			else:
@@ -78,7 +78,7 @@ func local_0() -> Variant:
 		elif _pc == 385:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_option_2_:", "a1_master_player_option_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 461
 				continue
 			else:
@@ -90,7 +90,7 @@ func local_0() -> Variant:
 		elif _pc == 462:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_option_3_:", "a1_master_player_option_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 538
 				continue
 			else:
@@ -102,7 +102,7 @@ func local_0() -> Variant:
 		elif _pc == 539:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_option_4_:", "a1_master_player_option_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 615
 				continue
 			else:
@@ -114,7 +114,7 @@ func local_0() -> Variant:
 		elif _pc == 616:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_comment_1_:", "a1_victim_comment_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 692
 				continue
 			else:
@@ -126,7 +126,7 @@ func local_0() -> Variant:
 		elif _pc == 693:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_comment_2_:", "a1_victim_comment_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 769
 				continue
 			else:
@@ -138,7 +138,7 @@ func local_0() -> Variant:
 		elif _pc == 770:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_comment_3_:", "a1_victim_comment_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 846
 				continue
 			else:
@@ -150,7 +150,7 @@ func local_0() -> Variant:
 		elif _pc == 847:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_comment_4_:", "a1_victim_comment_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 923
 				continue
 			else:
@@ -162,7 +162,7 @@ func local_0() -> Variant:
 		elif _pc == 924:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_comment_5_:", "a1_victim_comment_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1000
 				continue
 			else:
@@ -174,7 +174,7 @@ func local_0() -> Variant:
 		elif _pc == 1001:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_plea_1_:", "a1_victim_plea_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1077
 				continue
 			else:
@@ -186,7 +186,7 @@ func local_0() -> Variant:
 		elif _pc == 1078:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_plea_2_:", "a1_victim_plea_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1154
 				continue
 			else:
@@ -198,7 +198,7 @@ func local_0() -> Variant:
 		elif _pc == 1155:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_plea_3_:", "a1_victim_plea_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1231
 				continue
 			else:
@@ -210,7 +210,7 @@ func local_0() -> Variant:
 		elif _pc == 1232:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_victim_question_2_:", "a1_master_dialogue_victim_question_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1308
 				continue
 			else:
@@ -222,7 +222,7 @@ func local_0() -> Variant:
 		elif _pc == 1309:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_option_5_:", "a1_master_player_option_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1385
 				continue
 			else:
@@ -234,7 +234,7 @@ func local_0() -> Variant:
 		elif _pc == 1386:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_option_6_:", "a1_master_player_option_6")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1462
 				continue
 			else:
@@ -246,7 +246,7 @@ func local_0() -> Variant:
 		elif _pc == 1463:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_option_7_:", "a1_master_player_option_7")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1539
 				continue
 			else:
@@ -258,7 +258,7 @@ func local_0() -> Variant:
 		elif _pc == 1540:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_plea_4_:", "a1_victim_plea_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1616
 				continue
 			else:
@@ -270,7 +270,7 @@ func local_0() -> Variant:
 		elif _pc == 1617:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_victim_plea_5_:", "a1_victim_plea_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1693
 				continue
 			else:
@@ -282,7 +282,7 @@ func local_0() -> Variant:
 		elif _pc == 1694:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_clay_hes_bluffing_:", "a1_master_clay_hes_bluffing")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1770
 				continue
 			else:
@@ -294,7 +294,7 @@ func local_0() -> Variant:
 		elif _pc == 1771:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_tiger_lilly_:", "a1_master_tiger_lilly")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1847
 				continue
 			else:
@@ -306,7 +306,7 @@ func local_0() -> Variant:
 		elif _pc == 1848:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_tl_player_affirmative_:", "a1_master_tl_player_affirmative")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 1924
 				continue
 			else:
@@ -318,7 +318,7 @@ func local_0() -> Variant:
 		elif _pc == 1925:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_tl_player_negative_:", "a1_master_player_tl_player_negative")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2001
 				continue
 			else:
@@ -330,7 +330,7 @@ func local_0() -> Variant:
 		elif _pc == 2002:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_tl_want_to_go_to_haven_station_:", "a1_master_tl_want_to_go_to_haven_station")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2078
 				continue
 			else:
@@ -342,7 +342,7 @@ func local_0() -> Variant:
 		elif _pc == 2079:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_tl_then_dock_to_me_:", "a1_master_tl_then_dock_to_me")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2155
 				continue
 			else:
@@ -354,7 +354,7 @@ func local_0() -> Variant:
 		elif _pc == 2156:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_tl_hold_on_tight_:", "a1_master_tl_hold_on_tight")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2232
 				continue
 			else:
@@ -366,7 +366,7 @@ func local_0() -> Variant:
 		elif _pc == 2233:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_suit_yourself_:", "a1_master_suit_yourself")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2309
 				continue
 			else:
@@ -378,7 +378,7 @@ func local_0() -> Variant:
 		elif _pc == 2310:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_welcome_haven_station_:", "a1_master_welcome_haven_station")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2386
 				continue
 			else:
@@ -390,7 +390,7 @@ func local_0() -> Variant:
 		elif _pc == 2387:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_tl_want_to_go_to_hoffers_wake_alpha_:", "a1_master_tl_want_to_go_to_hoffers_wake_alpha")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2463
 				continue
 			else:
@@ -402,7 +402,7 @@ func local_0() -> Variant:
 		elif _pc == 2464:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_welcome_hoffers_alpha_:", "a1_master_welcome_hoffers_alpha")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2540
 				continue
 			else:
@@ -414,7 +414,7 @@ func local_0() -> Variant:
 		elif _pc == 2541:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_sure_got_ourselves_:", "a1_master_sure_got_ourselves")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2617
 				continue
 			else:
@@ -426,7 +426,7 @@ func local_0() -> Variant:
 		elif _pc == 2618:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_and_fitted_out_with_eveything_a_man_like_me_:", "a1_master_and_fitted_out_with_eveything_a_man_like_me")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2694
 				continue
 			else:
@@ -438,7 +438,7 @@ func local_0() -> Variant:
 		elif _pc == 2695:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_ive_already_has_a_play_:", "a1_master_ive_already_has_a_play")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2771
 				continue
 			else:
@@ -450,7 +450,7 @@ func local_0() -> Variant:
 		elif _pc == 2772:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_reackon_itll_fly_like_a_dream_:", "a1_master_reackon_itll_fly_like_a_dream")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2848
 				continue
 			else:
@@ -462,7 +462,7 @@ func local_0() -> Variant:
 		elif _pc == 2849:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_only_thing_she_needs_now_is_a_name_:", "a1_master_only_thing_she_needs_now_is_a_name")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 2925
 				continue
 			else:
@@ -474,7 +474,7 @@ func local_0() -> Variant:
 		elif _pc == 2926:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_lamb_chop_:", "a1_master_lamb_chop")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3002
 				continue
 			else:
@@ -486,7 +486,7 @@ func local_0() -> Variant:
 		elif _pc == 3003:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_lamb_chop_how_about_that_:", "a1_master_lamb_chop_how_about_that")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3079
 				continue
 			else:
@@ -498,7 +498,7 @@ func local_0() -> Variant:
 		elif _pc == 3080:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_southern_cross_:", "a1_master_southern_cross")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3156
 				continue
 			else:
@@ -510,7 +510,7 @@ func local_0() -> Variant:
 		elif _pc == 3157:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_the_southern_cross_thats_a_good_name_:", "a1_master_the_southern_cross_thats_a_good_name")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3233
 				continue
 			else:
@@ -522,7 +522,7 @@ func local_0() -> Variant:
 		elif _pc == 3234:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_crazy_horse_:", "a1_master_crazy_horse")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3310
 				continue
 			else:
@@ -534,7 +534,7 @@ func local_0() -> Variant:
 		elif _pc == 3311:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_how_about_crazy_horse_:", "a1_master_how_about_crazy_horse")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3387
 				continue
 			else:
@@ -546,7 +546,7 @@ func local_0() -> Variant:
 		elif _pc == 3388:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jolly_roger_:", "a1_master_jolly_roger")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3464
 				continue
 			else:
@@ -558,7 +558,7 @@ func local_0() -> Variant:
 		elif _pc == 3465:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_what_about_jolly_roger_:", "a1_master_what_about_jolly_roger")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3541
 				continue
 			else:
@@ -570,7 +570,7 @@ func local_0() -> Variant:
 		elif _pc == 3542:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_black_pig_:", "a1_master_black_pig")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3618
 				continue
 			else:
@@ -582,7 +582,7 @@ func local_0() -> Variant:
 		elif _pc == 3619:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_mmmm_black_pig_is_a_good_name_:", "a1_master_mmmm_black_pig_is_a_good_name")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3695
 				continue
 			else:
@@ -594,7 +594,7 @@ func local_0() -> Variant:
 		elif _pc == 3696:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_lambchop_what_kind_of_stupid_name_is_that_:", "a1_master_lambchop_what_kind_of_stupid_name_is_that")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3772
 				continue
 			else:
@@ -606,7 +606,7 @@ func local_0() -> Variant:
 		elif _pc == 3773:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_well_you_did_ask_:", "a1_master_well_you_did_ask")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3849
 				continue
 			else:
@@ -618,7 +618,7 @@ func local_0() -> Variant:
 		elif _pc == 3850:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_sigh_lambchop_it_is_:", "a1_master_sigh_lambchop_it_is")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 3926
 				continue
 			else:
@@ -630,7 +630,7 @@ func local_0() -> Variant:
 		elif _pc == 3927:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_good_name_:", "a1_master_good_name")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4003
 				continue
 			else:
@@ -642,7 +642,7 @@ func local_0() -> Variant:
 		elif _pc == 4004:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_crazy_horse_good_has_a_fugative_edge_:", "a1_master_crazy_horse_good_has_a_fugative_edge")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4080
 				continue
 			else:
@@ -654,7 +654,7 @@ func local_0() -> Variant:
 		elif _pc == 4081:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_well_its_not_the_most_subtle_:", "a1_master_well_its_not_the_most_subtle")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4157
 				continue
 			else:
@@ -666,7 +666,7 @@ func local_0() -> Variant:
 		elif _pc == 4158:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_black_pig_well_its_you_who_will_flying_it_:", "a1_master_black_pig_well_its_you_who_will_flying_it")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4234
 				continue
 			else:
@@ -678,7 +678,7 @@ func local_0() -> Variant:
 		elif _pc == 4235:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_want_to_use_:", "a1_master_smith_want_to_use")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4311
 				continue
 			else:
@@ -690,7 +690,7 @@ func local_0() -> Variant:
 		elif _pc == 4312:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_yes_:", "a1_master_player_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4388
 				continue
 			else:
@@ -702,7 +702,7 @@ func local_0() -> Variant:
 		elif _pc == 4389:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_player_no_:", "a1_master_player_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4465
 				continue
 			else:
@@ -714,7 +714,7 @@ func local_0() -> Variant:
 		elif _pc == 4466:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_thats_right_:", "a1_master_smith_thats_right")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4542
 				continue
 			else:
@@ -726,7 +726,7 @@ func local_0() -> Variant:
 		elif _pc == 4543:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_lori_look_outside_:", "a1_master_lori_look_outside")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4619
 				continue
 			else:
@@ -738,7 +738,7 @@ func local_0() -> Variant:
 		elif _pc == 4620:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_thats_wrong_:", "a1_master_smith_thats_wrong")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4696
 				continue
 			else:
@@ -750,7 +750,7 @@ func local_0() -> Variant:
 		elif _pc == 4697:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_email_:", "a1_master_smith_email")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4773
 				continue
 			else:
@@ -762,7 +762,7 @@ func local_0() -> Variant:
 		elif _pc == 4774:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_lori_now_what_:", "a1_master_lori_now_what")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4850
 				continue
 			else:
@@ -774,7 +774,7 @@ func local_0() -> Variant:
 		elif _pc == 4851:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_I_have_a_plan_:", "a1_master_cal_I_have_a_plan")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 4927
 				continue
 			else:
@@ -786,7 +786,7 @@ func local_0() -> Variant:
 		elif _pc == 4928:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_space_pirates_:", "a1_master_jafs_space_pirates")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5004
 				continue
 			else:
@@ -798,7 +798,7 @@ func local_0() -> Variant:
 		elif _pc == 5005:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_lori_ok_im_in_:", "a1_master_lori_ok_im_in")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5081
 				continue
 			else:
@@ -810,7 +810,7 @@ func local_0() -> Variant:
 		elif _pc == 5082:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_ibuki_well_our_:", "a1_master_ibuki_well_our")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5158
 				continue
 			else:
@@ -822,7 +822,7 @@ func local_0() -> Variant:
 		elif _pc == 5159:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_ibuki_right_:", "a1_master_smith_ibuki_right")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5235
 				continue
 			else:
@@ -834,7 +834,7 @@ func local_0() -> Variant:
 		elif _pc == 5236:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_youre_right_:", "a1_master_cal_youre_right")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5312
 				continue
 			else:
@@ -846,7 +846,7 @@ func local_0() -> Variant:
 		elif _pc == 5313:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_ok_kid_:", "a1_master_smith_ok_kid")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5389
 				continue
 			else:
@@ -858,7 +858,7 @@ func local_0() -> Variant:
 		elif _pc == 5390:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_hey_cal_:", "a1_master_jafs_hey_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5466
 				continue
 			else:
@@ -870,7 +870,7 @@ func local_0() -> Variant:
 		elif _pc == 5467:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_while_you_:", "a1_master_cal_while_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5543
 				continue
 			else:
@@ -882,7 +882,7 @@ func local_0() -> Variant:
 		elif _pc == 5544:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_yeah_while_i_:", "a1_master_jafs_yeah_while_i")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5620
 				continue
 			else:
@@ -894,7 +894,7 @@ func local_0() -> Variant:
 		elif _pc == 5621:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_ive_been_looking_:", "a1_master_jafs_ive_been_looking")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5697
 				continue
 			else:
@@ -906,7 +906,7 @@ func local_0() -> Variant:
 		elif _pc == 5698:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_i_thought_you_had_contacts_:", "a1_master_cal_i_thought_you_had_contacts")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5774
 				continue
 			else:
@@ -918,7 +918,7 @@ func local_0() -> Variant:
 		elif _pc == 5775:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_times_have_changed_:", "a1_master_jafs_times_have_changed")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5851
 				continue
 			else:
@@ -930,7 +930,7 @@ func local_0() -> Variant:
 		elif _pc == 5852:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_tick_off_:", "a1_master_jafs_tick_off")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 5928
 				continue
 			else:
@@ -942,7 +942,7 @@ func local_0() -> Variant:
 		elif _pc == 5929:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_bad_news_:", "a1_master_jafs_bad_news")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6005
 				continue
 			else:
@@ -954,7 +954,7 @@ func local_0() -> Variant:
 		elif _pc == 6006:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_stepsons_mail_sender_:", "a1_master_stepsons_mail_sender")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6082
 				continue
 			else:
@@ -966,7 +966,7 @@ func local_0() -> Variant:
 		elif _pc == 6083:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.40_mail_subject_:", "a1_master_story1.40_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6159
 				continue
 			else:
@@ -978,7 +978,7 @@ func local_0() -> Variant:
 		elif _pc == 6160:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.40_mail_subject_:", "a1_master_story1.40_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6236
 				continue
 			else:
@@ -990,7 +990,7 @@ func local_0() -> Variant:
 		elif _pc == 6237:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_brand_new_turret_fighters_:", "a1_master_cal_brand_new_turret_fighters")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6313
 				continue
 			else:
@@ -1002,7 +1002,7 @@ func local_0() -> Variant:
 		elif _pc == 6314:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_ibuki_what_do_you_think_:", "a1_master_ibuki_what_do_you_think")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6390
 				continue
 			else:
@@ -1014,7 +1014,7 @@ func local_0() -> Variant:
 		elif _pc == 6391:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_what_about_you_:", "a1_master_cal_what_about_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6467
 				continue
 			else:
@@ -1026,7 +1026,7 @@ func local_0() -> Variant:
 		elif _pc == 6468:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_lori_listen_up_:", "a1_master_lori_listen_up")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6544
 				continue
 			else:
@@ -1038,7 +1038,7 @@ func local_0() -> Variant:
 		elif _pc == 6545:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_ok_ok_im_sorry_:", "a1_master_cal_ok_ok_im_sorry")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6621
 				continue
 			else:
@@ -1050,7 +1050,7 @@ func local_0() -> Variant:
 		elif _pc == 6622:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.40_mail_subject_:", "a1_master_story1.40_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6698
 				continue
 			else:
@@ -1062,7 +1062,7 @@ func local_0() -> Variant:
 		elif _pc == 6699:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_my_buddy_maurice_:", "a1_master_smith_my_buddy_maurice")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6775
 				continue
 			else:
@@ -1074,7 +1074,7 @@ func local_0() -> Variant:
 		elif _pc == 6776:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_maurice_mail_sender_:", "a1_master_maurice_mail_sender")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6852
 				continue
 			else:
@@ -1086,7 +1086,7 @@ func local_0() -> Variant:
 		elif _pc == 6853:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.80_maurice_mail_subject_:", "a1_master_story1.80_maurice_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 6929
 				continue
 			else:
@@ -1098,7 +1098,7 @@ func local_0() -> Variant:
 		elif _pc == 6930:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.90_stepson_mail_subject_:", "a1_master_story1.90_stepson_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7006
 				continue
 			else:
@@ -1110,7 +1110,7 @@ func local_0() -> Variant:
 		elif _pc == 7007:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.90_maurice_mail_subject_:", "a1_master_story1.90_maurice_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7083
 				continue
 			else:
@@ -1122,7 +1122,7 @@ func local_0() -> Variant:
 		elif _pc == 7084:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_ibuki_latest_mails_:", "a1_master_ibuki_latest_mails")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7160
 				continue
 			else:
@@ -1134,7 +1134,7 @@ func local_0() -> Variant:
 		elif _pc == 7161:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_smith_dunno_but_im_inclined_to_think_:", "a1_master_smith_dunno_but_im_inclined_to_think")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7237
 				continue
 			else:
@@ -1146,7 +1146,7 @@ func local_0() -> Variant:
 		elif _pc == 7238:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_and_thats_the_problem_:", "a1_master_cal_and_thats_the_problem")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7314
 				continue
 			else:
@@ -1158,7 +1158,7 @@ func local_0() -> Variant:
 		elif _pc == 7315:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_how_about_exploit_the_situation_:", "a1_master_jafs_how_about_exploit_the_situation")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7391
 				continue
 			else:
@@ -1170,7 +1170,7 @@ func local_0() -> Variant:
 		elif _pc == 7392:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_not_quite_the_plan_:", "a1_master_cal_not_quite_the_plan")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7468
 				continue
 			else:
@@ -1182,7 +1182,7 @@ func local_0() -> Variant:
 		elif _pc == 7469:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.100_mail_subject_:", "a1_master_story1.100_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7545
 				continue
 			else:
@@ -1194,7 +1194,7 @@ func local_0() -> Variant:
 		elif _pc == 7546:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_league_mail_sender_:", "a1_master_league_mail_sender")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7622
 				continue
 			else:
@@ -1206,7 +1206,7 @@ func local_0() -> Variant:
 		elif _pc == 7623:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_story1.110_mail_subject_:", "a1_master_story1.110_mail_subject")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7699
 				continue
 			else:
@@ -1218,7 +1218,7 @@ func local_0() -> Variant:
 		elif _pc == 7700:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_lucrecias_horde_hey_aint_lucrecia_your_grandma_:", "a1_master_jafs_lucrecias_horde_hey_aint_lucrecia_your_grandma")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7776
 				continue
 			else:
@@ -1230,7 +1230,7 @@ func local_0() -> Variant:
 		elif _pc == 7777:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_yup_thats_her_but_I_dont_know_what_this_horde_is_all_about_:", "a1_master_cal_yup_thats_her_but_I_dont_know_what_this_horde_is_all_about")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7853
 				continue
 			else:
@@ -1242,7 +1242,7 @@ func local_0() -> Variant:
 		elif _pc == 7854:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_clay_before_she_dissapeared_your_grandma_stashed_a_good_portion_of_her_loot_:", "a1_master_clay_before_she_dissapeared_your_grandma_stashed_a_good_portion_of_her_loot")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 7930
 				continue
 			else:
@@ -1254,7 +1254,7 @@ func local_0() -> Variant:
 		elif _pc == 7931:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_cal_so_we_know_where_both_the_locations_to_triangulate_from_are_but_what_about_the_date_:", "a1_master_cal_so_we_know_where_both_the_locations_to_triangulate_from_are_but_what_about_the_date")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8007
 				continue
 			else:
@@ -1266,7 +1266,7 @@ func local_0() -> Variant:
 		elif _pc == 8008:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_clay_i_dont_know_as_i_could_be_hacked_she_trusted_me_even_less_:", "a1_master_clay_i_dont_know_as_i_could_be_hacked_she_trusted_me_even_less")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8084
 				continue
 			else:
@@ -1278,7 +1278,7 @@ func local_0() -> Variant:
 		elif _pc == 8085:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_jafs_you_dumb_piece_of_jumk_think_:", "a1_master_jafs_you_dumb_piece_of_jumk_think")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8161
 				continue
 			else:
@@ -1296,7 +1296,7 @@ func local_8165() -> Variant:
 		if _pc == 8165:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_cal_hey_anyone_home_:", "a1_master_dialogue_cal_hey_anyone_home")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8241
 				continue
 			else:
@@ -1308,7 +1308,7 @@ func local_8165() -> Variant:
 		elif _pc == 8242:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_cal_clay_its_me_cal_:", "a1_master_dialogue_cal_clay_its_me_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8318
 				continue
 			else:
@@ -1320,7 +1320,7 @@ func local_8165() -> Variant:
 		elif _pc == 8319:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_thats_it_fifteen_years_and_you_come_back_with_just_a_hi_honey_im_home_:", "a1_master_dialogue_clay_thats_it_fifteen_years_and_you_come_back_with_just_a_hi_honey_im_home")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8395
 				continue
 			else:
@@ -1332,7 +1332,7 @@ func local_8165() -> Variant:
 		elif _pc == 8396:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_cal_er_its_a_long_story_:", "a1_master_dialogue_cal_er_its_a_long_story")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8472
 				continue
 			else:
@@ -1344,7 +1344,7 @@ func local_8165() -> Variant:
 		elif _pc == 8473:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_ill_give_you_long_story_:", "a1_master_dialogue_clay_ill_give_you_long_story")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8549
 				continue
 			else:
@@ -1356,7 +1356,7 @@ func local_8165() -> Variant:
 		elif _pc == 8550:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_cal_sorry_clay_but_i_had_run_in_with_kaleb_maas_:", "a1_master_dialogue_cal_sorry_clay_but_i_had_run_in_with_kaleb_maas")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8626
 				continue
 			else:
@@ -1368,7 +1368,7 @@ func local_8165() -> Variant:
 		elif _pc == 8627:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_oh_right_well_i_guess_you_guys_better_make_yourself_at_home_:", "a1_master_dialogue_clay_oh_right_well_i_guess_you_guys_better_make_yourself_at_home")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8703
 				continue
 			else:
@@ -1380,7 +1380,7 @@ func local_8165() -> Variant:
 		elif _pc == 8704:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_victim_question_1_:", "a1_master_dialogue_victim_question_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8780
 				continue
 			else:
@@ -1392,7 +1392,7 @@ func local_8165() -> Variant:
 		elif _pc == 8781:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_jafs_mail_from_stepsons_:", "a1_master_dialogue_jafs_mail_from_stepsons")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8857
 				continue
 			else:
@@ -1410,7 +1410,7 @@ func local_8861() -> Variant:
 		if _pc == 8861:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_waypoint_name_distress_:", "a1_waypoint_name_distress")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 8937
 				continue
 			else:
@@ -1422,7 +1422,7 @@ func local_8861() -> Variant:
 		elif _pc == 8938:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_ship_name_1_:", "a1_ship_name_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9014
 				continue
 			else:
@@ -1434,7 +1434,7 @@ func local_8861() -> Variant:
 		elif _pc == 9015:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_ship_name_2_:", "a1_ship_name_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9091
 				continue
 			else:
@@ -1446,7 +1446,7 @@ func local_8861() -> Variant:
 		elif _pc == 9092:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_ship_name_3_:", "a1_ship_name_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9168
 				continue
 			else:
@@ -1458,7 +1458,7 @@ func local_8861() -> Variant:
 		elif _pc == 9169:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_ship_name_4_:", "a1_ship_name_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9245
 				continue
 			else:
@@ -1470,7 +1470,7 @@ func local_8861() -> Variant:
 		elif _pc == 9246:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_ship_name_5_:", "a1_ship_name_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9322
 				continue
 			else:
@@ -1488,7 +1488,7 @@ func local_9326() -> Variant:
 		if _pc == 9326:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_its_a_good_:", "a1_master_dialogue_clay_its_a_good")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9402
 				continue
 			else:
@@ -1500,7 +1500,7 @@ func local_9326() -> Variant:
 		elif _pc == 9403:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_well_done_:", "a1_master_dialogue_clay_well_done")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9479
 				continue
 			else:
@@ -1512,7 +1512,7 @@ func local_9326() -> Variant:
 		elif _pc == 9480:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_call_jafs_:", "a1_master_dialogue_clay_call_jafs")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9556
 				continue
 			else:
@@ -1524,7 +1524,7 @@ func local_9326() -> Variant:
 		elif _pc == 9557:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_good_comment_1_:", "a1_master_dialogue_clay_good_comment_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9633
 				continue
 			else:
@@ -1536,7 +1536,7 @@ func local_9326() -> Variant:
 		elif _pc == 9634:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_medium_comment_1_:", "a1_master_dialogue_clay_medium_comment_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9710
 				continue
 			else:
@@ -1548,7 +1548,7 @@ func local_9326() -> Variant:
 		elif _pc == 9711:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_medium_comment_2_:", "a1_master_dialogue_clay_medium_comment_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9787
 				continue
 			else:
@@ -1560,7 +1560,7 @@ func local_9326() -> Variant:
 		elif _pc == 9788:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_medium_comment_3_:", "a1_master_dialogue_clay_medium_comment_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9864
 				continue
 			else:
@@ -1572,7 +1572,7 @@ func local_9326() -> Variant:
 		elif _pc == 9865:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_bad_comment_1_:", "a1_master_dialogue_clay_bad_comment_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 9941
 				continue
 			else:
@@ -1584,7 +1584,7 @@ func local_9326() -> Variant:
 		elif _pc == 9942:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_bad_comment_2_:", "a1_master_dialogue_clay_bad_comment_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10018
 				continue
 			else:
@@ -1596,7 +1596,7 @@ func local_9326() -> Variant:
 		elif _pc == 10019:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_bad_comment_3_:", "a1_master_dialogue_clay_bad_comment_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10095
 				continue
 			else:
@@ -1608,7 +1608,7 @@ func local_9326() -> Variant:
 		elif _pc == 10096:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_get_a_move_on_:", "a1_master_dialogue_clay_get_a_move_on")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10172
 				continue
 			else:
@@ -1620,7 +1620,7 @@ func local_9326() -> Variant:
 		elif _pc == 10173:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_call_jafs_long_:", "a1_master_dialogue_clay_call_jafs_long")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10249
 				continue
 			else:
@@ -1632,7 +1632,7 @@ func local_9326() -> Variant:
 		elif _pc == 10250:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_end_speech_:", "a1_master_dialogue_clay_end_speech")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10326
 				continue
 			else:
@@ -1644,7 +1644,7 @@ func local_9326() -> Variant:
 		elif _pc == 10327:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_go_back_:", "a1_master_dialogue_clay_go_back")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10403
 				continue
 			else:
@@ -1656,7 +1656,7 @@ func local_9326() -> Variant:
 		elif _pc == 10404:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_end_speech2_:", "a1_master_dialogue_clay_end_speech2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10480
 				continue
 			else:
@@ -1674,7 +1674,7 @@ func local_10484() -> Variant:
 		if _pc == 10484:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_master_dialogue_clay_end_speech2_:", "a1_master_dialogue_clay_end_speech2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10560
 				continue
 			else:
@@ -1692,7 +1692,7 @@ func local_10564() -> Variant:
 		if _pc == 10564:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_after_a_daring_:", "a1_m01_dialogue_after_a_daring")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10640
 				continue
 			else:
@@ -1704,7 +1704,7 @@ func local_10564() -> Variant:
 		elif _pc == 10641:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_ibuki_well_we_cant_:", "a1_m01_dialogue_ibuki_well_we_cant")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10717
 				continue
 			else:
@@ -1716,7 +1716,7 @@ func local_10564() -> Variant:
 		elif _pc == 10718:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_lori_yeah_at_least_:", "a1_m01_dialogue_lori_yeah_at_least")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10794
 				continue
 			else:
@@ -1728,7 +1728,7 @@ func local_10564() -> Variant:
 		elif _pc == 10795:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_jafs_hey_this_is_natural_:", "a1_m01_dialogue_jafs_hey_this_is_natural")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10871
 				continue
 			else:
@@ -1740,7 +1740,7 @@ func local_10564() -> Variant:
 		elif _pc == 10872:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_lori_uggh_:", "a1_m01_dialogue_lori_uggh")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 10948
 				continue
 			else:
@@ -1752,7 +1752,7 @@ func local_10564() -> Variant:
 		elif _pc == 10949:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_cal_calm_down_:", "a1_m01_dialogue_cal_calm_down")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11025
 				continue
 			else:
@@ -1764,7 +1764,7 @@ func local_10564() -> Variant:
 		elif _pc == 11026:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_lori_well_what_:", "a1_m01_dialogue_lori_well_what")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11102
 				continue
 			else:
@@ -1776,7 +1776,7 @@ func local_10564() -> Variant:
 		elif _pc == 11103:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_uh_oh_looks_like_:", "a1_m01_dialogue_smith_uh_oh_looks_like")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11179
 				continue
 			else:
@@ -1788,7 +1788,7 @@ func local_10564() -> Variant:
 		elif _pc == 11180:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_marshall_what_do_we_have_here_:", "a1_m01_dialogue_marshall_what_do_we_have_here")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11256
 				continue
 			else:
@@ -1800,7 +1800,7 @@ func local_10564() -> Variant:
 		elif _pc == 11257:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_o_dear_:", "a1_m01_dialogue_smith_o_dear")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11333
 				continue
 			else:
@@ -1812,7 +1812,7 @@ func local_10564() -> Variant:
 		elif _pc == 11334:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_ibuki_well_thats_just_great_:", "a1_m01_dialogue_ibuki_well_thats_just_great")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11410
 				continue
 			else:
@@ -1824,7 +1824,7 @@ func local_10564() -> Variant:
 		elif _pc == 11411:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_calm_down_:", "a1_m01_dialogue_smith_calm_down")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11487
 				continue
 			else:
@@ -1836,7 +1836,7 @@ func local_10564() -> Variant:
 		elif _pc == 11488:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_ibuki_and_the_point_:", "a1_m01_dialogue_ibuki_and_the_point")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11564
 				continue
 			else:
@@ -1848,7 +1848,7 @@ func local_10564() -> Variant:
 		elif _pc == 11565:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_the_point_is_:", "a1_m01_dialogue_smith_the_point_is")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11641
 				continue
 			else:
@@ -1860,7 +1860,7 @@ func local_10564() -> Variant:
 		elif _pc == 11642:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_lori_but_hoffers_gap_:", "a1_m01_dialogue_lori_but_hoffers_gap")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11718
 				continue
 			else:
@@ -1872,7 +1872,7 @@ func local_10564() -> Variant:
 		elif _pc == 11719:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_got_a_better_:", "a1_m01_dialogue_smith_got_a_better")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11795
 				continue
 			else:
@@ -1884,7 +1884,7 @@ func local_10564() -> Variant:
 		elif _pc == 11796:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_jafs_whatever_we_do_:", "a1_m01_dialogue_jafs_whatever_we_do")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11872
 				continue
 			else:
@@ -1896,7 +1896,7 @@ func local_10564() -> Variant:
 		elif _pc == 11873:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_smith_lds_disrupt_:", "a1_m01_smith_lds_disrupt")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 11949
 				continue
 			else:
@@ -1908,7 +1908,7 @@ func local_10564() -> Variant:
 		elif _pc == 11950:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_piratescout_c1_who_are_you_:", "a1_m01_dialogue_piratescout_c1_who_are_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12026
 				continue
 			else:
@@ -1920,7 +1920,7 @@ func local_10564() -> Variant:
 		elif _pc == 12027:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c1_option_1_im_the_law_:", "a1_m01_text_player_c1_option_1_im_the_law")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12103
 				continue
 			else:
@@ -1932,7 +1932,7 @@ func local_10564() -> Variant:
 		elif _pc == 12104:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c1_option_1_im_the_law_:", "a1_m01_dialogue_player_c1_option_1_im_the_law")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12180
 				continue
 			else:
@@ -1944,7 +1944,7 @@ func local_10564() -> Variant:
 		elif _pc == 12181:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_piratescout_c1_response_1_holly_cow_:", "a1_m01_dialogue_piratescout_c1_response_1_holly_cow")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12257
 				continue
 			else:
@@ -1956,7 +1956,7 @@ func local_10564() -> Variant:
 		elif _pc == 12258:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c1_option_2_help_im_:", "a1_m01_text_player_c1_option_2_help_im")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12334
 				continue
 			else:
@@ -1968,7 +1968,7 @@ func local_10564() -> Variant:
 		elif _pc == 12335:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c1_option_2_help_im_:", "a1_m01_dialogue_player_c1_option_2_help_im")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12411
 				continue
 			else:
@@ -1980,7 +1980,7 @@ func local_10564() -> Variant:
 		elif _pc == 12412:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_piratescout_c1_response_2_shit_boy_:", "a1_m01_dialogue_piratescout_c1_response_2_shit_boy")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12488
 				continue
 			else:
@@ -1992,7 +1992,7 @@ func local_10564() -> Variant:
 		elif _pc == 12489:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c1_option_3_look_over_:", "a1_m01_text_player_c1_option_3_look_over")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12565
 				continue
 			else:
@@ -2004,7 +2004,7 @@ func local_10564() -> Variant:
 		elif _pc == 12566:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c1_option_3_look_over_:", "a1_m01_dialogue_player_c1_option_3_look_over")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12642
 				continue
 			else:
@@ -2016,7 +2016,7 @@ func local_10564() -> Variant:
 		elif _pc == 12643:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_piratescout_c1_response_3_eh_what_:", "a1_m01_dialogue_piratescout_c1_response_3_eh_what")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12719
 				continue
 			else:
@@ -2028,7 +2028,7 @@ func local_10564() -> Variant:
 		elif _pc == 12720:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_piratescout_c1_response_3_damn_u_:", "a1_m01_dialogue_piratescout_c1_response_3_damn_u")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12796
 				continue
 			else:
@@ -2040,7 +2040,7 @@ func local_10564() -> Variant:
 		elif _pc == 12797:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_now_were_in_trouble_:", "a1_m01_dialogue_smith_now_were_in_trouble")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12873
 				continue
 			else:
@@ -2052,7 +2052,7 @@ func local_10564() -> Variant:
 		elif _pc == 12874:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_jafs_i_think_:", "a1_m01_dialogue_jafs_i_think")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 12950
 				continue
 			else:
@@ -2064,7 +2064,7 @@ func local_10564() -> Variant:
 		elif _pc == 12951:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_jafs_er_i_think_:", "a1_m01_dialogue_jafs_er_i_think")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13027
 				continue
 			else:
@@ -2076,7 +2076,7 @@ func local_10564() -> Variant:
 		elif _pc == 13028:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_cal_where_is_your_mate_:", "a1_m01_dialogue_cal_where_is_your_mate")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13104
 				continue
 			else:
@@ -2088,7 +2088,7 @@ func local_10564() -> Variant:
 		elif _pc == 13105:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_should_be_any_minute_:", "a1_m01_dialogue_smith_should_be_any_minute")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13181
 				continue
 			else:
@@ -2100,7 +2100,7 @@ func local_10564() -> Variant:
 		elif _pc == 13182:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_ah_there_it_is_:", "a1_m01_dialogue_smith_ah_there_it_is")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13258
 				continue
 			else:
@@ -2112,7 +2112,7 @@ func local_10564() -> Variant:
 		elif _pc == 13259:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_maurice_smith_you_old_dog_:", "a1_m01_dialogue_maurice_smith_you_old_dog")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13335
 				continue
 			else:
@@ -2124,7 +2124,7 @@ func local_10564() -> Variant:
 		elif _pc == 13336:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_just_in_the_area_:", "a1_m01_dialogue_smith_just_in_the_area")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13412
 				continue
 			else:
@@ -2136,7 +2136,7 @@ func local_10564() -> Variant:
 		elif _pc == 13413:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_maurice_ha_same_old_smith_:", "a1_m01_dialogue_maurice_ha_same_old_smith")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13489
 				continue
 			else:
@@ -2148,7 +2148,7 @@ func local_10564() -> Variant:
 		elif _pc == 13490:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_just_be_a_jiffy_:", "a1_m01_dialogue_smith_just_be_a_jiffy")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13566
 				continue
 			else:
@@ -2160,7 +2160,7 @@ func local_10564() -> Variant:
 		elif _pc == 13567:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_smith_ive_set_a_waypoint_:", "a1_m01_dialogue_smith_ive_set_a_waypoint")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13643
 				continue
 			else:
@@ -2172,7 +2172,7 @@ func local_10564() -> Variant:
 		elif _pc == 13644:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_jafs_the_fuzz_:", "a1_m01_dialogue_jafs_the_fuzz")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13720
 				continue
 			else:
@@ -2184,7 +2184,7 @@ func local_10564() -> Variant:
 		elif _pc == 13721:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_hold_your_positon_:", "a1_m01_dialogue_police_hold_your_positon")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13797
 				continue
 			else:
@@ -2196,7 +2196,7 @@ func local_10564() -> Variant:
 		elif _pc == 13798:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_we_warned_you_:", "a1_m01_dialogue_police_we_warned_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13874
 				continue
 			else:
@@ -2208,7 +2208,7 @@ func local_10564() -> Variant:
 		elif _pc == 13875:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_all_vessels_attack_:", "a1_m01_dialogue_police_all_vessels_attack")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 13951
 				continue
 			else:
@@ -2220,7 +2220,7 @@ func local_10564() -> Variant:
 		elif _pc == 13952:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_c2_hm_vessel_mona_lisa_:", "a1_m01_dialogue_police_c2_hm_vessel_mona_lisa")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14028
 				continue
 			else:
@@ -2232,7 +2232,7 @@ func local_10564() -> Variant:
 		elif _pc == 14029:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c2_option_1_special_tour_:", "a1_m01_text_player_c2_option_1_special_tour")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14105
 				continue
 			else:
@@ -2244,7 +2244,7 @@ func local_10564() -> Variant:
 		elif _pc == 14106:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c2_option_1_special_tour_:", "a1_m01_dialogue_player_c2_option_1_special_tour")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14182
 				continue
 			else:
@@ -2256,7 +2256,7 @@ func local_10564() -> Variant:
 		elif _pc == 14183:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c2_option_2_er_yeah_:", "a1_m01_text_player_c2_option_2_er_yeah")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14259
 				continue
 			else:
@@ -2268,7 +2268,7 @@ func local_10564() -> Variant:
 		elif _pc == 14260:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c2_option_2_er_yeah_:", "a1_m01_dialogue_player_c2_option_2_er_yeah")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14336
 				continue
 			else:
@@ -2280,7 +2280,7 @@ func local_10564() -> Variant:
 		elif _pc == 14337:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_c3_i_see_:", "a1_m01_dialogue_police_c3_i_see")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14413
 				continue
 			else:
@@ -2292,7 +2292,7 @@ func local_10564() -> Variant:
 		elif _pc == 14414:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c3_option_1_after_my_ex_girlfried_:", "a1_m01_text_player_c3_option_1_after_my_ex_girlfried")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14490
 				continue
 			else:
@@ -2304,7 +2304,7 @@ func local_10564() -> Variant:
 		elif _pc == 14491:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c3_option_1_my_ex_girlfriend_:", "a1_m01_dialogue_player_c3_option_1_my_ex_girlfriend")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14567
 				continue
 			else:
@@ -2316,7 +2316,7 @@ func local_10564() -> Variant:
 		elif _pc == 14568:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c3_option_2_its_my_favourite_:", "a1_m01_text_player_c3_option_2_its_my_favourite")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14644
 				continue
 			else:
@@ -2328,7 +2328,7 @@ func local_10564() -> Variant:
 		elif _pc == 14645:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c3_option_2_its_my_favourite_:", "a1_m01_dialogue_player_c3_option_2_its_my_favourite")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14721
 				continue
 			else:
@@ -2340,7 +2340,7 @@ func local_10564() -> Variant:
 		elif _pc == 14722:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_c4_right_so_why_:", "a1_m01_dialogue_police_c4_right_so_why")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14798
 				continue
 			else:
@@ -2352,7 +2352,7 @@ func local_10564() -> Variant:
 		elif _pc == 14799:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c4_option_1_my_last_one_:", "a1_m01_text_player_c4_option_1_my_last_one")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14875
 				continue
 			else:
@@ -2364,7 +2364,7 @@ func local_10564() -> Variant:
 		elif _pc == 14876:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c4_option_1_my_last_one_:", "a1_m01_dialogue_player_c4_option_1_my_last_one")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 14952
 				continue
 			else:
@@ -2376,7 +2376,7 @@ func local_10564() -> Variant:
 		elif _pc == 14953:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c4_option_2_this_is_a_tug_:", "a1_m01_text_player_c4_option_2_this_is_a_tug")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15029
 				continue
 			else:
@@ -2388,7 +2388,7 @@ func local_10564() -> Variant:
 		elif _pc == 15030:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c4_option_2_this_is_a_tug_:", "a1_m01_dialogue_player_c4_option_2_this_is_a_tug")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15106
 				continue
 			else:
@@ -2400,7 +2400,7 @@ func local_10564() -> Variant:
 		elif _pc == 15107:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_all_right_:", "a1_m01_dialogue_police_all_right")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15183
 				continue
 			else:
@@ -2412,7 +2412,7 @@ func local_10564() -> Variant:
 		elif _pc == 15184:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_not_convinced_:", "a1_m01_dialogue_police_not_convinced")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15260
 				continue
 			else:
@@ -2424,7 +2424,7 @@ func local_10564() -> Variant:
 		elif _pc == 15261:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_text_player_c2_option_3_look_over_:", "a1_m01_text_player_c2_option_3_look_over")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15337
 				continue
 			else:
@@ -2436,7 +2436,7 @@ func local_10564() -> Variant:
 		elif _pc == 15338:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_player_c2_option_3_look_over_:", "a1_m01_dialogue_player_c2_option_3_look_over")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15414
 				continue
 			else:
@@ -2448,7 +2448,7 @@ func local_10564() -> Variant:
 		elif _pc == 15415:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_police_c2_response_3_where_:", "a1_m01_dialogue_police_c2_response_3_where")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15491
 				continue
 			else:
@@ -2460,7 +2460,7 @@ func local_10564() -> Variant:
 		elif _pc == 15492:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_jafs_lets_move_:", "a1_m01_dialogue_jafs_lets_move")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15568
 				continue
 			else:
@@ -2472,7 +2472,7 @@ func local_10564() -> Variant:
 		elif _pc == 15569:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_cal_there_it_is_:", "a1_m01_dialogue_cal_there_it_is")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15645
 				continue
 			else:
@@ -2484,7 +2484,7 @@ func local_10564() -> Variant:
 		elif _pc == 15646:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_jafs_base_coment_:", "a1_m01_dialogue_jafs_base_coment")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15722
 				continue
 			else:
@@ -2496,7 +2496,7 @@ func local_10564() -> Variant:
 		elif _pc == 15723:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_lori_lori_base_coment_:", "a1_m01_dialogue_lori_lori_base_coment")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15799
 				continue
 			else:
@@ -2508,7 +2508,7 @@ func local_10564() -> Variant:
 		elif _pc == 15800:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_cal_did_i_neglect_to_mention_:", "a1_m01_dialogue_cal_did_i_neglect_to_mention")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15876
 				continue
 			else:
@@ -2526,7 +2526,7 @@ func local_15880() -> Variant:
 		if _pc == 15880:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m01_dialogue_after_a_daring_:", "a1_m01_dialogue_after_a_daring")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 15956
 				continue
 			else:
@@ -2538,7 +2538,7 @@ func local_15880() -> Variant:
 		elif _pc == 15957:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_narrator_intro2_:", "a1_m04_dialogue_narrator_intro2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16033
 				continue
 			else:
@@ -2556,7 +2556,7 @@ func local_16037() -> Variant:
 		if _pc == 16037:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_come_to_join_:", "a1_m02_dialogue_stepson_c1_come_to_join")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16113
 				continue
 			else:
@@ -2568,7 +2568,7 @@ func local_16037() -> Variant:
 		elif _pc == 16114:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c1_option_1_yes_:", "a1_m02_text_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16190
 				continue
 			else:
@@ -2580,7 +2580,7 @@ func local_16037() -> Variant:
 		elif _pc == 16191:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c1_option_1_yes_:", "a1_m02_dialogue_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16267
 				continue
 			else:
@@ -2592,7 +2592,7 @@ func local_16037() -> Variant:
 		elif _pc == 16268:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_response_1_excellant_we_want_:", "a1_m02_dialogue_stepson_c1_response_1_excellant_we_want")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16344
 				continue
 			else:
@@ -2604,7 +2604,7 @@ func local_16037() -> Variant:
 		elif _pc == 16345:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_response_1_maas_courier_:", "a1_m02_dialogue_stepson_c1_response_1_maas_courier")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16421
 				continue
 			else:
@@ -2616,7 +2616,7 @@ func local_16037() -> Variant:
 		elif _pc == 16422:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_response_1_well_armed_:", "a1_m02_dialogue_stepson_c1_response_1_well_armed")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16498
 				continue
 			else:
@@ -2628,7 +2628,7 @@ func local_16037() -> Variant:
 		elif _pc == 16499:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c1_option_2_no_:", "a1_m02_text_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16575
 				continue
 			else:
@@ -2640,7 +2640,7 @@ func local_16037() -> Variant:
 		elif _pc == 16576:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c1_option_2_no_:", "a1_m02_dialogue_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16652
 				continue
 			else:
@@ -2652,7 +2652,7 @@ func local_16037() -> Variant:
 		elif _pc == 16653:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_reponse_2_bye_:", "a1_m02_dialogue_stepson_c1_reponse_2_bye")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16729
 				continue
 			else:
@@ -2664,7 +2664,7 @@ func local_16037() -> Variant:
 		elif _pc == 16730:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c1_option_3_kill_you_:", "a1_m02_text_player_c1_option_3_kill_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16806
 				continue
 			else:
@@ -2676,7 +2676,7 @@ func local_16037() -> Variant:
 		elif _pc == 16807:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c1_option_3_kill_you_:", "a1_m02_dialogue_player_c1_option_3_kill_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16883
 				continue
 			else:
@@ -2688,7 +2688,7 @@ func local_16037() -> Variant:
 		elif _pc == 16884:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_response_3_crush_you_:", "a1_m02_dialogue_stepson_c1_response_3_crush_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 16960
 				continue
 			else:
@@ -2700,7 +2700,7 @@ func local_16037() -> Variant:
 		elif _pc == 16961:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c1_option_1_sorry_:", "a1_m02_text_player_c1_option_1_sorry")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17037
 				continue
 			else:
@@ -2712,7 +2712,7 @@ func local_16037() -> Variant:
 		elif _pc == 17038:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c1_option_1_sorry_:", "a1_m02_dialogue_player_c1_option_1_sorry")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17114
 				continue
 			else:
@@ -2724,7 +2724,7 @@ func local_16037() -> Variant:
 		elif _pc == 17115:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_response_1_let_off_:", "a1_m02_dialogue_stepson_c1_response_1_let_off")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17191
 				continue
 			else:
@@ -2736,7 +2736,7 @@ func local_16037() -> Variant:
 		elif _pc == 17192:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c1_option_2_die_:", "a1_m02_text_player_c1_option_2_die")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17268
 				continue
 			else:
@@ -2748,7 +2748,7 @@ func local_16037() -> Variant:
 		elif _pc == 17269:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c1_option_2_die_:", "a1_m02_dialogue_player_c1_option_2_die")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17345
 				continue
 			else:
@@ -2760,7 +2760,7 @@ func local_16037() -> Variant:
 		elif _pc == 17346:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c1_response_2_have_at_you_:", "a1_m02_dialogue_stepson_c1_response_2_have_at_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17422
 				continue
 			else:
@@ -2772,7 +2772,7 @@ func local_16037() -> Variant:
 		elif _pc == 17423:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c2_your_back_:", "a1_m02_dialogue_stepson_c2_your_back")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17499
 				continue
 			else:
@@ -2784,7 +2784,7 @@ func local_16037() -> Variant:
 		elif _pc == 17500:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c2_thread_1_option_1_forgot_:", "a1_m02_text_player_c2_thread_1_option_1_forgot")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17576
 				continue
 			else:
@@ -2796,7 +2796,7 @@ func local_16037() -> Variant:
 		elif _pc == 17577:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c2_thread_1_option_1_forgot_:", "a1_m02_dialogue_player_c2_thread_1_option_1_forgot")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17653
 				continue
 			else:
@@ -2808,7 +2808,7 @@ func local_16037() -> Variant:
 		elif _pc == 17654:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c2_thread_1_response_1_want_you_:", "a1_m02_dialogue_stepson_c2_thread_1_response_1_want_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17730
 				continue
 			else:
@@ -2820,7 +2820,7 @@ func local_16037() -> Variant:
 		elif _pc == 17731:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c2_thread_2_option_1_changed_mind_:", "a1_m02_text_player_c2_thread_2_option_1_changed_mind")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17807
 				continue
 			else:
@@ -2832,7 +2832,7 @@ func local_16037() -> Variant:
 		elif _pc == 17808:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c2_thread_2_option_1_changed_mind_:", "a1_m02_dialogue_player_c2_thread_2_option_1_changed_mind")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17884
 				continue
 			else:
@@ -2844,7 +2844,7 @@ func local_16037() -> Variant:
 		elif _pc == 17885:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c2_thread_2_response_1_do_something_:", "a1_m02_dialogue_stepson_c2_thread_2_response_1_do_something")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 17961
 				continue
 			else:
@@ -2856,7 +2856,7 @@ func local_16037() -> Variant:
 		elif _pc == 17962:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c2_option_2_passing_through_:", "a1_m02_text_player_c2_option_2_passing_through")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18038
 				continue
 			else:
@@ -2868,7 +2868,7 @@ func local_16037() -> Variant:
 		elif _pc == 18039:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c2_option_2_passing_through_:", "a1_m02_dialogue_player_c2_option_2_passing_through")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18115
 				continue
 			else:
@@ -2880,7 +2880,7 @@ func local_16037() -> Variant:
 		elif _pc == 18116:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c2_response_2_dont_miss_:", "a1_m02_dialogue_stepson_c2_response_2_dont_miss")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18192
 				continue
 			else:
@@ -2892,7 +2892,7 @@ func local_16037() -> Variant:
 		elif _pc == 18193:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c2_option_3_kill_you_:", "a1_m02_text_player_c2_option_3_kill_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18269
 				continue
 			else:
@@ -2904,7 +2904,7 @@ func local_16037() -> Variant:
 		elif _pc == 18270:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c2_option_3_kill_you_:", "a1_m02_dialogue_player_c2_option_3_kill_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18346
 				continue
 			else:
@@ -2916,7 +2916,7 @@ func local_16037() -> Variant:
 		elif _pc == 18347:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_maas_unidentified_order_:", "a1_m02_dialogue_maas_unidentified_order")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18423
 				continue
 			else:
@@ -2928,7 +2928,7 @@ func local_16037() -> Variant:
 		elif _pc == 18424:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_maas_warned_you_:", "a1_m02_dialogue_maas_warned_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18500
 				continue
 			else:
@@ -2940,7 +2940,7 @@ func local_16037() -> Variant:
 		elif _pc == 18501:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_maas_take_anything_:", "a1_m02_dialogue_maas_take_anything")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18577
 				continue
 			else:
@@ -2952,7 +2952,7 @@ func local_16037() -> Variant:
 		elif _pc == 18578:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_clay_nice_one_:", "a1_m02_dialogue_clay_nice_one")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18654
 				continue
 			else:
@@ -2964,7 +2964,7 @@ func local_16037() -> Variant:
 		elif _pc == 18655:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_clay_got_away_:", "a1_m02_dialogue_clay_got_away")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18731
 				continue
 			else:
@@ -2976,7 +2976,7 @@ func local_16037() -> Variant:
 		elif _pc == 18732:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c3_done_it_:", "a1_m02_dialogue_stepson_c3_done_it")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18808
 				continue
 			else:
@@ -2988,7 +2988,7 @@ func local_16037() -> Variant:
 		elif _pc == 18809:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c3_option_1_yes_:", "a1_m02_text_player_c3_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18885
 				continue
 			else:
@@ -3000,7 +3000,7 @@ func local_16037() -> Variant:
 		elif _pc == 18886:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c3_option_1_yes_:", "a1_m02_dialogue_player_c3_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 18962
 				continue
 			else:
@@ -3012,7 +3012,7 @@ func local_16037() -> Variant:
 		elif _pc == 18963:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c3_response_1_well_done_:", "a1_m02_dialogue_stepson_c3_response_1_well_done")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19039
 				continue
 			else:
@@ -3024,7 +3024,7 @@ func local_16037() -> Variant:
 		elif _pc == 19040:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c3_response_1_drop_off_:", "a1_m02_dialogue_stepson_c3_response_1_drop_off")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19116
 				continue
 			else:
@@ -3036,7 +3036,7 @@ func local_16037() -> Variant:
 		elif _pc == 19117:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c3_response_1_thanks_:", "a1_m02_dialogue_stepson_c3_response_1_thanks")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19193
 				continue
 			else:
@@ -3048,7 +3048,7 @@ func local_16037() -> Variant:
 		elif _pc == 19194:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_text_player_c3_option_2_no_:", "a1_m02_text_player_c3_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19270
 				continue
 			else:
@@ -3060,7 +3060,7 @@ func local_16037() -> Variant:
 		elif _pc == 19271:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_player_c3_option_2_no_:", "a1_m02_dialogue_player_c3_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19347
 				continue
 			else:
@@ -3072,7 +3072,7 @@ func local_16037() -> Variant:
 		elif _pc == 19348:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_stepson_c3_response_2_damn_you_:", "a1_m02_dialogue_stepson_c3_response_2_damn_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19424
 				continue
 			else:
@@ -3084,7 +3084,7 @@ func local_16037() -> Variant:
 		elif _pc == 19425:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_dialogue_maas_you_again_:", "a1_m02_dialogue_maas_you_again")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19501
 				continue
 			else:
@@ -3102,7 +3102,7 @@ func local_19505() -> Variant:
 		if _pc == 19505:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_name_stepson_waypoint_:", "a1_m02_name_stepson_waypoint")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19581
 				continue
 			else:
@@ -3114,7 +3114,7 @@ func local_19505() -> Variant:
 		elif _pc == 19582:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_name_maas_courier_:", "a1_m02_name_maas_courier")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19658
 				continue
 			else:
@@ -3126,7 +3126,7 @@ func local_19505() -> Variant:
 		elif _pc == 19659:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_name_black_:", "a1_m02_name_black")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19735
 				continue
 			else:
@@ -3138,7 +3138,7 @@ func local_19505() -> Variant:
 		elif _pc == 19736:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_name_tyrant_:", "a1_m02_name_tyrant")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19812
 				continue
 			else:
@@ -3150,7 +3150,7 @@ func local_19505() -> Variant:
 		elif _pc == 19813:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m02_name_snapper_:", "a1_m02_name_snapper")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19889
 				continue
 			else:
@@ -3168,7 +3168,7 @@ func local_19893() -> Variant:
 		if _pc == 19893:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_name_defense1_:", "a1_m03_name_defense1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 19969
 				continue
 			else:
@@ -3180,7 +3180,7 @@ func local_19893() -> Variant:
 		elif _pc == 19970:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_name_defense2_:", "a1_m03_name_defense2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20046
 				continue
 			else:
@@ -3192,7 +3192,7 @@ func local_19893() -> Variant:
 		elif _pc == 20047:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_name_meeting_:", "a1_m03_name_meeting")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20123
 				continue
 			else:
@@ -3204,7 +3204,7 @@ func local_19893() -> Variant:
 		elif _pc == 20124:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_name_base_loc_:", "a1_m03_name_base_loc")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20200
 				continue
 			else:
@@ -3216,7 +3216,7 @@ func local_19893() -> Variant:
 		elif _pc == 20201:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_stepson_:", "a1_m03_dialogue_stepson")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20277
 				continue
 			else:
@@ -3228,7 +3228,7 @@ func local_19893() -> Variant:
 		elif _pc == 20278:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_text_player_:", "a1_m03_text_player")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20354
 				continue
 			else:
@@ -3240,7 +3240,7 @@ func local_19893() -> Variant:
 		elif _pc == 20355:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_player_:", "a1_m03_dialogue_player")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20431
 				continue
 			else:
@@ -3252,7 +3252,7 @@ func local_19893() -> Variant:
 		elif _pc == 20432:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_clay_:", "a1_m03_dialogue_clay")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20508
 				continue
 			else:
@@ -3264,7 +3264,7 @@ func local_19893() -> Variant:
 		elif _pc == 20509:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_any_:", "a1_m03_dialogue_any")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20585
 				continue
 			else:
@@ -3276,7 +3276,7 @@ func local_19893() -> Variant:
 		elif _pc == 20586:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_stepson_c1_cal_youve_arrived_:", "a1_m03_dialogue_stepson_c1_cal_youve_arrived")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20662
 				continue
 			else:
@@ -3288,7 +3288,7 @@ func local_19893() -> Variant:
 		elif _pc == 20663:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_stepson_c1_youre_back_:", "a1_m03_dialogue_stepson_c1_youre_back")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20739
 				continue
 			else:
@@ -3300,7 +3300,7 @@ func local_19893() -> Variant:
 		elif _pc == 20740:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_text_player_c1_option_1_yes_:", "a1_m03_text_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20816
 				continue
 			else:
@@ -3312,7 +3312,7 @@ func local_19893() -> Variant:
 		elif _pc == 20817:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_player_c1_option_1_yes_:", "a1_m03_dialogue_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20893
 				continue
 			else:
@@ -3324,7 +3324,7 @@ func local_19893() -> Variant:
 		elif _pc == 20894:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_stepson_c1_response_1_ok_were_sending_:", "a1_m03_dialogue_stepson_c1_response_1_ok_were_sending")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 20970
 				continue
 			else:
@@ -3336,7 +3336,7 @@ func local_19893() -> Variant:
 		elif _pc == 20971:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_text_player_c1_option_2_no_:", "a1_m03_text_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21047
 				continue
 			else:
@@ -3348,7 +3348,7 @@ func local_19893() -> Variant:
 		elif _pc == 21048:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_player_c1_option_2_no_:", "a1_m03_dialogue_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21124
 				continue
 			else:
@@ -3360,7 +3360,7 @@ func local_19893() -> Variant:
 		elif _pc == 21125:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_stepson_c1_response_2_wait_:", "a1_m03_dialogue_stepson_c1_response_2_wait")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21201
 				continue
 			else:
@@ -3372,7 +3372,7 @@ func local_19893() -> Variant:
 		elif _pc == 21202:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_clay_theres_the_base_:", "a1_m03_dialogue_clay_theres_the_base")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21278
 				continue
 			else:
@@ -3384,7 +3384,7 @@ func local_19893() -> Variant:
 		elif _pc == 21279:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_any_the_station_:", "a1_m03_dialogue_any_the_station")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21355
 				continue
 			else:
@@ -3396,7 +3396,7 @@ func local_19893() -> Variant:
 		elif _pc == 21356:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_wingmen_thanks_for_:", "a1_m03_dialogue_wingmen_thanks_for")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21432
 				continue
 			else:
@@ -3408,7 +3408,7 @@ func local_19893() -> Variant:
 		elif _pc == 21433:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_wingmen_there_you_go_:", "a1_m03_dialogue_wingmen_there_you_go")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21509
 				continue
 			else:
@@ -3420,7 +3420,7 @@ func local_19893() -> Variant:
 		elif _pc == 21510:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_guess_we_can_:", "a1_m03_dialogue_guess_we_can")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21586
 				continue
 			else:
@@ -3432,7 +3432,7 @@ func local_19893() -> Variant:
 		elif _pc == 21587:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_clay_hm_too_bad_:", "a1_m03_dialogue_clay_hm_too_bad")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21663
 				continue
 			else:
@@ -3444,7 +3444,7 @@ func local_19893() -> Variant:
 		elif _pc == 21664:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m03_dialogue_stepsons_youve_returned_:", "a1_m03_dialogue_stepsons_youve_returned")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21740
 				continue
 			else:
@@ -3462,7 +3462,7 @@ func local_21744() -> Variant:
 		if _pc == 21744:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_fighter_:", "a1_m04_name_fighter")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21820
 				continue
 			else:
@@ -3474,7 +3474,7 @@ func local_21744() -> Variant:
 		elif _pc == 21821:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_fighters_:", "a1_m04_name_fighters")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21897
 				continue
 			else:
@@ -3486,7 +3486,7 @@ func local_21744() -> Variant:
 		elif _pc == 21898:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_pod_:", "a1_m04_name_pod")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 21974
 				continue
 			else:
@@ -3498,7 +3498,7 @@ func local_21744() -> Variant:
 		elif _pc == 21975:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_refuse_:", "a1_m04_name_refuse")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22051
 				continue
 			else:
@@ -3510,7 +3510,7 @@ func local_21744() -> Variant:
 		elif _pc == 22052:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_drone_:", "a1_m04_name_drone")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22128
 				continue
 			else:
@@ -3522,7 +3522,7 @@ func local_21744() -> Variant:
 		elif _pc == 22129:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_gabage_:", "a1_m04_name_gabage")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22205
 				continue
 			else:
@@ -3534,7 +3534,7 @@ func local_21744() -> Variant:
 		elif _pc == 22206:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_bill_:", "a1_m04_name_bill")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22282
 				continue
 			else:
@@ -3546,7 +3546,7 @@ func local_21744() -> Variant:
 		elif _pc == 22283:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_ben_:", "a1_m04_name_ben")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22359
 				continue
 			else:
@@ -3558,7 +3558,7 @@ func local_21744() -> Variant:
 		elif _pc == 22360:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_doxer_:", "a1_m04_name_doxer")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22436
 				continue
 			else:
@@ -3570,7 +3570,7 @@ func local_21744() -> Variant:
 		elif _pc == 22437:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_crane_:", "a1_m04_name_crane")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22513
 				continue
 			else:
@@ -3582,7 +3582,7 @@ func local_21744() -> Variant:
 		elif _pc == 22514:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_psycho_:", "a1_m04_name_psycho")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22590
 				continue
 			else:
@@ -3594,7 +3594,7 @@ func local_21744() -> Variant:
 		elif _pc == 22591:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_badger_:", "a1_m04_name_badger")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22667
 				continue
 			else:
@@ -3606,7 +3606,7 @@ func local_21744() -> Variant:
 		elif _pc == 22668:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_security_:", "a1_m04_name_security")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22744
 				continue
 			else:
@@ -3618,7 +3618,7 @@ func local_21744() -> Variant:
 		elif _pc == 22745:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_meeting_:", "a1_m04_name_meeting")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22821
 				continue
 			else:
@@ -3630,7 +3630,7 @@ func local_21744() -> Variant:
 		elif _pc == 22822:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_jafsmeeting_:", "a1_m04_name_jafsmeeting")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22898
 				continue
 			else:
@@ -3642,7 +3642,7 @@ func local_21744() -> Variant:
 		elif _pc == 22899:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_name_junk_:", "a1_m04_name_junk")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 22975
 				continue
 			else:
@@ -3654,7 +3654,7 @@ func local_21744() -> Variant:
 		elif _pc == 22976:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_stepson_c1_ah_cal_:", "a1_m04_dialogue_stepson_c1_ah_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23052
 				continue
 			else:
@@ -3666,7 +3666,7 @@ func local_21744() -> Variant:
 		elif _pc == 23053:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_text_player_c1_option_1_yes_:", "a1_m04_text_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23129
 				continue
 			else:
@@ -3678,7 +3678,7 @@ func local_21744() -> Variant:
 		elif _pc == 23130:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_player_c1_option_1_yes_:", "a1_m04_dialogue_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23206
 				continue
 			else:
@@ -3690,7 +3690,7 @@ func local_21744() -> Variant:
 		elif _pc == 23207:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_stepson_c1_response_1_we_thought_we_were_:", "a1_m04_dialogue_stepson_c1_response_1_we_thought_we_were")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23283
 				continue
 			else:
@@ -3702,7 +3702,7 @@ func local_21744() -> Variant:
 		elif _pc == 23284:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_text_player_c1_option_2_no_:", "a1_m04_text_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23360
 				continue
 			else:
@@ -3714,7 +3714,7 @@ func local_21744() -> Variant:
 		elif _pc == 23361:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_player_c1_option_2_no_:", "a1_m04_dialogue_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23437
 				continue
 			else:
@@ -3726,7 +3726,7 @@ func local_21744() -> Variant:
 		elif _pc == 23438:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_stepson_c1_response_2_go_away_:", "a1_m04_dialogue_stepson_c1_response_2_go_away")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23514
 				continue
 			else:
@@ -3738,7 +3738,7 @@ func local_21744() -> Variant:
 		elif _pc == 23515:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_clay_try_the_junkyard_:", "a1_m04_dialogue_clay_try_the_junkyard")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23591
 				continue
 			else:
@@ -3750,7 +3750,7 @@ func local_21744() -> Variant:
 		elif _pc == 23592:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_what_do_you_want_:", "a1_m04_dialogue_junker_c2_what_do_you_want")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23668
 				continue
 			else:
@@ -3762,7 +3762,7 @@ func local_21744() -> Variant:
 		elif _pc == 23669:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_text_player_c2_option_1_how_going_:", "a1_m04_text_player_c2_option_1_how_going")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23745
 				continue
 			else:
@@ -3774,7 +3774,7 @@ func local_21744() -> Variant:
 		elif _pc == 23746:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_player_c2_option_1_how_going_:", "a1_m04_dialogue_player_c2_option_1_how_going")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23822
 				continue
 			else:
@@ -3786,7 +3786,7 @@ func local_21744() -> Variant:
 		elif _pc == 23823:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_response_1_whats_it_to_you_:", "a1_m04_dialogue_junker_c2_response_1_whats_it_to_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23899
 				continue
 			else:
@@ -3798,7 +3798,7 @@ func local_21744() -> Variant:
 		elif _pc == 23900:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_text_player_c2_option_2_help_me_:", "a1_m04_text_player_c2_option_2_help_me")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 23976
 				continue
 			else:
@@ -3810,7 +3810,7 @@ func local_21744() -> Variant:
 		elif _pc == 23977:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_player_c2_option_2_help_me_:", "a1_m04_dialogue_player_c2_option_2_help_me")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24053
 				continue
 			else:
@@ -3822,7 +3822,7 @@ func local_21744() -> Variant:
 		elif _pc == 24054:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_response_2_ah_let_see_:", "a1_m04_dialogue_junker_c2_response_2_ah_let_see")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24130
 				continue
 			else:
@@ -3834,7 +3834,7 @@ func local_21744() -> Variant:
 		elif _pc == 24131:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_response_2_recieved_old_vessel_:", "a1_m04_dialogue_junker_c2_response_2_recieved_old_vessel")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24207
 				continue
 			else:
@@ -3846,7 +3846,7 @@ func local_21744() -> Variant:
 		elif _pc == 24208:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_response_2_your_for_price_:", "a1_m04_dialogue_junker_c2_response_2_your_for_price")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24284
 				continue
 			else:
@@ -3858,7 +3858,7 @@ func local_21744() -> Variant:
 		elif _pc == 24285:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_player_c2_response_2_here_:", "a1_m04_dialogue_player_c2_response_2_here")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24361
 				continue
 			else:
@@ -3870,7 +3870,7 @@ func local_21744() -> Variant:
 		elif _pc == 24362:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_clay_right_now_:", "a1_m04_dialogue_clay_right_now")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24438
 				continue
 			else:
@@ -3882,7 +3882,7 @@ func local_21744() -> Variant:
 		elif _pc == 24439:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_cal_cal_to_jafs_:", "a1_m04_dialogue_cal_cal_to_jafs")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24515
 				continue
 			else:
@@ -3894,7 +3894,7 @@ func local_21744() -> Variant:
 		elif _pc == 24516:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_go_ahead_:", "a1_m04_dialogue_jafs_go_ahead")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24592
 				continue
 			else:
@@ -3906,7 +3906,7 @@ func local_21744() -> Variant:
 		elif _pc == 24593:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_cal_can_you_meet_:", "a1_m04_dialogue_cal_can_you_meet")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24669
 				continue
 			else:
@@ -3918,7 +3918,7 @@ func local_21744() -> Variant:
 		elif _pc == 24670:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_sure_:", "a1_m04_dialogue_jafs_sure")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24746
 				continue
 			else:
@@ -3930,7 +3930,7 @@ func local_21744() -> Variant:
 		elif _pc == 24747:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_hi_cal_:", "a1_m04_dialogue_jafs_hi_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24823
 				continue
 			else:
@@ -3942,7 +3942,7 @@ func local_21744() -> Variant:
 		elif _pc == 24824:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_cal_urm_well_:", "a1_m04_dialogue_cal_urm_well")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24900
 				continue
 			else:
@@ -3954,7 +3954,7 @@ func local_21744() -> Variant:
 		elif _pc == 24901:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_no_probs_:", "a1_m04_dialogue_jafs_no_probs")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 24977
 				continue
 			else:
@@ -3966,7 +3966,7 @@ func local_21744() -> Variant:
 		elif _pc == 24978:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_cal_er_a_mass_:", "a1_m04_dialogue_cal_er_a_mass")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25054
 				continue
 			else:
@@ -3978,7 +3978,7 @@ func local_21744() -> Variant:
 		elif _pc == 25055:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_what_:", "a1_m04_dialogue_jafs_what")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25131
 				continue
 			else:
@@ -3990,7 +3990,7 @@ func local_21744() -> Variant:
 		elif _pc == 25132:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_clay_hey_chill_:", "a1_m04_dialogue_clay_hey_chill")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25208
 				continue
 			else:
@@ -4002,7 +4002,7 @@ func local_21744() -> Variant:
 		elif _pc == 25209:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_i_hope_:", "a1_m04_dialogue_jafs_i_hope")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25285
 				continue
 			else:
@@ -4014,7 +4014,7 @@ func local_21744() -> Variant:
 		elif _pc == 25286:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_iff_active_:", "a1_m04_dialogue_jafs_iff_active")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25362
 				continue
 			else:
@@ -4026,7 +4026,7 @@ func local_21744() -> Variant:
 		elif _pc == 25363:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_maas_vessel_cz9_:", "a1_m04_dialogue_maas_vessel_cz9")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25439
 				continue
 			else:
@@ -4038,7 +4038,7 @@ func local_21744() -> Variant:
 		elif _pc == 25440:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_maas_cleared_for_refuse_:", "a1_m04_dialogue_maas_cleared_for_refuse")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25516
 				continue
 			else:
@@ -4050,7 +4050,7 @@ func local_21744() -> Variant:
 		elif _pc == 25517:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_clay_hm_that_looks_:", "a1_m04_dialogue_clay_hm_that_looks")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25593
 				continue
 			else:
@@ -4062,7 +4062,7 @@ func local_21744() -> Variant:
 		elif _pc == 25594:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_nice_one_:", "a1_m04_dialogue_jafs_nice_one")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25670
 				continue
 			else:
@@ -4074,7 +4074,7 @@ func local_21744() -> Variant:
 		elif _pc == 25671:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_jafs_im_setting_off_:", "a1_m04_dialogue_jafs_im_setting_off")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25747
 				continue
 			else:
@@ -4086,7 +4086,7 @@ func local_21744() -> Variant:
 		elif _pc == 25748:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_security_alert_:", "a1_m04_dialogue_security_alert")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25824
 				continue
 			else:
@@ -4104,7 +4104,7 @@ func local_25828() -> Variant:
 		if _pc == 25828:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_response_2_bring_us_:", "a1_m04_dialogue_junker_c2_response_2_bring_us")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25904
 				continue
 			else:
@@ -4116,7 +4116,7 @@ func local_25828() -> Variant:
 		elif _pc == 25905:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_response_2_havin_a_joke_:", "a1_m04_dialogue_junker_c2_response_2_havin_a_joke")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 25981
 				continue
 			else:
@@ -4128,7 +4128,7 @@ func local_25828() -> Variant:
 		elif _pc == 25982:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_dialogue_junker_c2_response_2_thatll_do_nicely_:", "a1_m04_dialogue_junker_c2_response_2_thatll_do_nicely")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26058
 				continue
 			else:
@@ -4140,7 +4140,7 @@ func local_25828() -> Variant:
 		elif _pc == 26059:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m04_objective_obtain_:", "a1_m04_objective_obtain")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26135
 				continue
 			else:
@@ -4158,7 +4158,7 @@ func local_26139() -> Variant:
 		if _pc == 26139:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_miner_1_:", "a1_m05_ship_miner_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26215
 				continue
 			else:
@@ -4170,7 +4170,7 @@ func local_26139() -> Variant:
 		elif _pc == 26216:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_miner_2_:", "a1_m05_ship_miner_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26292
 				continue
 			else:
@@ -4182,7 +4182,7 @@ func local_26139() -> Variant:
 		elif _pc == 26293:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_miner_3_:", "a1_m05_ship_miner_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26369
 				continue
 			else:
@@ -4194,7 +4194,7 @@ func local_26139() -> Variant:
 		elif _pc == 26370:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_marauder_freighter_:", "a1_m05_ship_marauder_freighter")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26446
 				continue
 			else:
@@ -4206,7 +4206,7 @@ func local_26139() -> Variant:
 		elif _pc == 26447:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_asteroid_:", "a1_m05_ship_asteroid")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26523
 				continue
 			else:
@@ -4218,7 +4218,7 @@ func local_26139() -> Variant:
 		elif _pc == 26524:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_marauder_1_:", "a1_m05_ship_marauder_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26600
 				continue
 			else:
@@ -4230,7 +4230,7 @@ func local_26139() -> Variant:
 		elif _pc == 26601:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_marauder_2_:", "a1_m05_ship_marauder_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26677
 				continue
 			else:
@@ -4242,7 +4242,7 @@ func local_26139() -> Variant:
 		elif _pc == 26678:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_marauder_3_:", "a1_m05_ship_marauder_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26754
 				continue
 			else:
@@ -4254,7 +4254,7 @@ func local_26139() -> Variant:
 		elif _pc == 26755:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_marauder_4_:", "a1_m05_ship_marauder_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26831
 				continue
 			else:
@@ -4266,7 +4266,7 @@ func local_26139() -> Variant:
 		elif _pc == 26832:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_marauder_5_:", "a1_m05_ship_marauder_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26908
 				continue
 			else:
@@ -4278,7 +4278,7 @@ func local_26139() -> Variant:
 		elif _pc == 26909:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_marauder_6_:", "a1_m05_ship_marauder_6")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 26985
 				continue
 			else:
@@ -4290,7 +4290,7 @@ func local_26139() -> Variant:
 		elif _pc == 26986:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_ship_cargo_pod_:", "a1_m05_ship_cargo_pod")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27062
 				continue
 			else:
@@ -4302,7 +4302,7 @@ func local_26139() -> Variant:
 		elif _pc == 27063:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_waypoint_meeting_:", "a1_m05_waypoint_meeting")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27139
 				continue
 			else:
@@ -4314,7 +4314,7 @@ func local_26139() -> Variant:
 		elif _pc == 27140:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_waypoint_cache_:", "a1_m05_waypoint_cache")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27216
 				continue
 			else:
@@ -4326,7 +4326,7 @@ func local_26139() -> Variant:
 		elif _pc == 27217:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_who_goes_there_:", "a1_m05_dialogue_miner_who_goes_there")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27293
 				continue
 			else:
@@ -4338,7 +4338,7 @@ func local_26139() -> Variant:
 		elif _pc == 27294:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_player_its_cal_what_did_you_want_:", "a1_m05_dialogue_player_its_cal_what_did_you_want")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27370
 				continue
 			else:
@@ -4350,7 +4350,7 @@ func local_26139() -> Variant:
 		elif _pc == 27371:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_i_have_some_marauder_info_:", "a1_m05_dialogue_miner_i_have_some_marauder_info")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27447
 				continue
 			else:
@@ -4362,7 +4362,7 @@ func local_26139() -> Variant:
 		elif _pc == 27448:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_oh_no_its_the_marauders_:", "a1_m05_dialogue_miner_oh_no_its_the_marauders")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27524
 				continue
 			else:
@@ -4374,7 +4374,7 @@ func local_26139() -> Variant:
 		elif _pc == 27525:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_help_the_marauders_are_here_:", "a1_m05_dialogue_miner_help_the_marauders_are_here")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27601
 				continue
 			else:
@@ -4386,7 +4386,7 @@ func local_26139() -> Variant:
 		elif _pc == 27602:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_arrrghhh_:", "a1_m05_dialogue_miner_arrrghhh")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27678
 				continue
 			else:
@@ -4398,7 +4398,7 @@ func local_26139() -> Variant:
 		elif _pc == 27679:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_we_cant_help_him_now_:", "a1_m05_dialogue_clay_we_cant_help_him_now")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27755
 				continue
 			else:
@@ -4410,7 +4410,7 @@ func local_26139() -> Variant:
 		elif _pc == 27756:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_darn_the_marauders_got_him_:", "a1_m05_dialogue_clay_darn_the_marauders_got_him")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27832
 				continue
 			else:
@@ -4422,7 +4422,7 @@ func local_26139() -> Variant:
 		elif _pc == 27833:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_we_messed_up_there_:", "a1_m05_dialogue_clay_we_messed_up_there")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27909
 				continue
 			else:
@@ -4434,7 +4434,7 @@ func local_26139() -> Variant:
 		elif _pc == 27910:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_thanks_:", "a1_m05_dialogue_miner_thanks")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 27986
 				continue
 			else:
@@ -4446,7 +4446,7 @@ func local_26139() -> Variant:
 		elif _pc == 27987:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_i_found_a_marauder_supply_cache_:", "a1_m05_dialogue_miner_i_found_a_marauder_supply_cache")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28063
 				continue
 			else:
@@ -4458,7 +4458,7 @@ func local_26139() -> Variant:
 		elif _pc == 28064:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_miner_ive_transmitted_you_the_waypoint_:", "a1_m05_dialogue_miner_ive_transmitted_you_the_waypoint")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28140
 				continue
 			else:
@@ -4470,7 +4470,7 @@ func local_26139() -> Variant:
 		elif _pc == 28141:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_well_we_avenged_him_for_what_its_worth_:", "a1_m05_dialogue_clay_well_we_avenged_him_for_what_its_worth")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28217
 				continue
 			else:
@@ -4482,7 +4482,7 @@ func local_26139() -> Variant:
 		elif _pc == 28218:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_hey_kid_check_your_sensors_:", "a1_m05_dialogue_clay_hey_kid_check_your_sensors")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28294
 				continue
 			else:
@@ -4494,7 +4494,7 @@ func local_26139() -> Variant:
 		elif _pc == 28295:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_there_it_is_:", "a1_m05_dialogue_clay_there_it_is")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28371
 				continue
 			else:
@@ -4506,7 +4506,7 @@ func local_26139() -> Variant:
 		elif _pc == 28372:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_uhoh_marauders_ahead_:", "a1_m05_dialogue_clay_uhoh_marauders_ahead")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28448
 				continue
 			else:
@@ -4518,7 +4518,7 @@ func local_26139() -> Variant:
 		elif _pc == 28449:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_that_took_care_of_the_marauders_:", "a1_m05_dialogue_clay_that_took_care_of_the_marauders")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28525
 				continue
 			else:
@@ -4530,7 +4530,7 @@ func local_26139() -> Variant:
 		elif _pc == 28526:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_the_freighters_running_for_it_:", "a1_m05_dialogue_clay_the_freighters_running_for_it")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28602
 				continue
 			else:
@@ -4542,7 +4542,7 @@ func local_26139() -> Variant:
 		elif _pc == 28603:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_the_freighters_escaped_:", "a1_m05_dialogue_clay_the_freighters_escaped")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28679
 				continue
 			else:
@@ -4554,7 +4554,7 @@ func local_26139() -> Variant:
 		elif _pc == 28680:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m05_dialogue_clay_darn_the_beacons_gone_:", "a1_m05_dialogue_clay_darn_the_beacons_gone")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28756
 				continue
 			else:
@@ -4572,7 +4572,7 @@ func local_28760() -> Variant:
 		if _pc == 28760:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_ship_gunstar_1_:", "a1_m06_ship_gunstar_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28836
 				continue
 			else:
@@ -4584,7 +4584,7 @@ func local_28760() -> Variant:
 		elif _pc == 28837:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_ship_gunstar_2_:", "a1_m06_ship_gunstar_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28913
 				continue
 			else:
@@ -4596,7 +4596,7 @@ func local_28760() -> Variant:
 		elif _pc == 28914:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_ship_gunstar_3_:", "a1_m06_ship_gunstar_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 28990
 				continue
 			else:
@@ -4608,7 +4608,7 @@ func local_28760() -> Variant:
 		elif _pc == 28991:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_ship_gunstar_4_:", "a1_m06_ship_gunstar_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29067
 				continue
 			else:
@@ -4620,7 +4620,7 @@ func local_28760() -> Variant:
 		elif _pc == 29068:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_ship_gunstar_5_:", "a1_m06_ship_gunstar_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29144
 				continue
 			else:
@@ -4632,7 +4632,7 @@ func local_28760() -> Variant:
 		elif _pc == 29145:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_ship_gunstar_6_:", "a1_m06_ship_gunstar_6")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29221
 				continue
 			else:
@@ -4644,7 +4644,7 @@ func local_28760() -> Variant:
 		elif _pc == 29222:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_waypoint_:", "a1_m06_waypoint")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29298
 				continue
 			else:
@@ -4656,7 +4656,7 @@ func local_28760() -> Variant:
 		elif _pc == 29299:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_clay_lets_go_:", "a1_m06_dialogue_clay_lets_go")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29375
 				continue
 			else:
@@ -4668,7 +4668,7 @@ func local_28760() -> Variant:
 		elif _pc == 29376:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_lets_dock_:", "a1_m06_dialogue_smith_lets_dock")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29452
 				continue
 			else:
@@ -4680,7 +4680,7 @@ func local_28760() -> Variant:
 		elif _pc == 29453:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_ill_get_the_arming_codes_:", "a1_m06_dialogue_smith_ill_get_the_arming_codes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29529
 				continue
 			else:
@@ -4692,7 +4692,7 @@ func local_28760() -> Variant:
 		elif _pc == 29530:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_be_careful_:", "a1_m06_dialogue_cal_be_careful")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29606
 				continue
 			else:
@@ -4704,7 +4704,7 @@ func local_28760() -> Variant:
 		elif _pc == 29607:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_dont_worry_:", "a1_m06_dialogue_smith_dont_worry")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29683
 				continue
 			else:
@@ -4716,7 +4716,7 @@ func local_28760() -> Variant:
 		elif _pc == 29684:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_oops_:", "a1_m06_dialogue_smith_oops")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29760
 				continue
 			else:
@@ -4728,7 +4728,7 @@ func local_28760() -> Variant:
 		elif _pc == 29761:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_whats_wrong_:", "a1_m06_dialogue_cal_whats_wrong")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29837
 				continue
 			else:
@@ -4740,7 +4740,7 @@ func local_28760() -> Variant:
 		elif _pc == 29838:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_we_have_a_problem_:", "a1_m06_dialogue_smith_we_have_a_problem")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29914
 				continue
 			else:
@@ -4752,7 +4752,7 @@ func local_28760() -> Variant:
 		elif _pc == 29915:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_what_did_you_do_:", "a1_m06_dialogue_cal_what_did_you_do")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 29991
 				continue
 			else:
@@ -4764,7 +4764,7 @@ func local_28760() -> Variant:
 		elif _pc == 29992:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_the_gunstars_are_online_:", "a1_m06_dialogue_smith_the_gunstars_are_online")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30068
 				continue
 			else:
@@ -4776,7 +4776,7 @@ func local_28760() -> Variant:
 		elif _pc == 30069:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_thats_great_:", "a1_m06_dialogue_cal_thats_great")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30145
 				continue
 			else:
@@ -4788,7 +4788,7 @@ func local_28760() -> Variant:
 		elif _pc == 30146:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_theres_a_mine_field_:", "a1_m06_dialogue_smith_theres_a_mine_field")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30222
 				continue
 			else:
@@ -4800,7 +4800,7 @@ func local_28760() -> Variant:
 		elif _pc == 30223:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_clay_clever_comment_:", "a1_m06_dialogue_clay_clever_comment")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30299
 				continue
 			else:
@@ -4812,7 +4812,7 @@ func local_28760() -> Variant:
 		elif _pc == 30300:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_what_do_we_do_:", "a1_m06_dialogue_cal_what_do_we_do")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30376
 				continue
 			else:
@@ -4824,7 +4824,7 @@ func local_28760() -> Variant:
 		elif _pc == 30377:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_we_could_remove_the_arming_keys_:", "a1_m06_dialogue_smith_we_could_remove_the_arming_keys")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30453
 				continue
 			else:
@@ -4836,7 +4836,7 @@ func local_28760() -> Variant:
 		elif _pc == 30454:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_thats_suicide_:", "a1_m06_dialogue_cal_thats_suicide")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30530
 				continue
 			else:
@@ -4848,7 +4848,7 @@ func local_28760() -> Variant:
 		elif _pc == 30531:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_clay_its_our_only_way_out_:", "a1_m06_dialogue_clay_its_our_only_way_out")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30607
 				continue
 			else:
@@ -4860,7 +4860,7 @@ func local_28760() -> Variant:
 		elif _pc == 30608:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_the_gunstars_have_low_power_:", "a1_m06_dialogue_smith_the_gunstars_have_low_power")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30684
 				continue
 			else:
@@ -4872,7 +4872,7 @@ func local_28760() -> Variant:
 		elif _pc == 30685:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_thats_one_:", "a1_m06_dialogue_smith_thats_one")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30761
 				continue
 			else:
@@ -4884,7 +4884,7 @@ func local_28760() -> Variant:
 		elif _pc == 30762:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_thats_two_:", "a1_m06_dialogue_smith_thats_two")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30838
 				continue
 			else:
@@ -4896,7 +4896,7 @@ func local_28760() -> Variant:
 		elif _pc == 30839:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_half_done_:", "a1_m06_dialogue_smith_half_done")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30915
 				continue
 			else:
@@ -4908,7 +4908,7 @@ func local_28760() -> Variant:
 		elif _pc == 30916:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_two_more_:", "a1_m06_dialogue_smith_two_more")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 30992
 				continue
 			else:
@@ -4920,7 +4920,7 @@ func local_28760() -> Variant:
 		elif _pc == 30993:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_one_to_go_:", "a1_m06_dialogue_smith_one_to_go")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31069
 				continue
 			else:
@@ -4932,7 +4932,7 @@ func local_28760() -> Variant:
 		elif _pc == 31070:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_smith_thats_the_last_one_:", "a1_m06_dialogue_smith_thats_the_last_one")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31146
 				continue
 			else:
@@ -4944,7 +4944,7 @@ func local_28760() -> Variant:
 		elif _pc == 31147:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_clay_the_mines_have_deactivated_:", "a1_m06_dialogue_clay_the_mines_have_deactivated")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31223
 				continue
 			else:
@@ -4956,7 +4956,7 @@ func local_28760() -> Variant:
 		elif _pc == 31224:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_call_in_the_freighter_:", "a1_m06_dialogue_cal_call_in_the_freighter")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31300
 				continue
 			else:
@@ -4968,7 +4968,7 @@ func local_28760() -> Variant:
 		elif _pc == 31301:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_clay_minefield_:", "a1_m06_dialogue_clay_minefield")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31377
 				continue
 			else:
@@ -4986,7 +4986,7 @@ func local_31381() -> Variant:
 		if _pc == 31381:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_jafs_brought_the_freighter_:", "a1_m06_dialogue_jafs_brought_the_freighter")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31457
 				continue
 			else:
@@ -4998,7 +4998,7 @@ func local_31381() -> Variant:
 		elif _pc == 31458:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m06_dialogue_cal_we_had_a_few_problems_:", "a1_m06_dialogue_cal_we_had_a_few_problems")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31534
 				continue
 			else:
@@ -5016,7 +5016,7 @@ func local_31538() -> Variant:
 		if _pc == 31538:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_name_hoffers_gap_:", "a1_m07_name_hoffers_gap")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31614
 				continue
 			else:
@@ -5028,7 +5028,7 @@ func local_31538() -> Variant:
 		elif _pc == 31615:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_stepson_truck_1_:", "a1_m07_ship_stepson_truck_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31691
 				continue
 			else:
@@ -5040,7 +5040,7 @@ func local_31538() -> Variant:
 		elif _pc == 31692:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_stepson_truck_2_:", "a1_m07_ship_stepson_truck_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31768
 				continue
 			else:
@@ -5052,7 +5052,7 @@ func local_31538() -> Variant:
 		elif _pc == 31769:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_stepson_truck_3_:", "a1_m07_ship_stepson_truck_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31845
 				continue
 			else:
@@ -5064,7 +5064,7 @@ func local_31538() -> Variant:
 		elif _pc == 31846:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_league_1_:", "a1_m07_ship_league_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31922
 				continue
 			else:
@@ -5076,7 +5076,7 @@ func local_31538() -> Variant:
 		elif _pc == 31923:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_league_2_:", "a1_m07_ship_league_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 31999
 				continue
 			else:
@@ -5088,7 +5088,7 @@ func local_31538() -> Variant:
 		elif _pc == 32000:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_league_3_:", "a1_m07_ship_league_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32076
 				continue
 			else:
@@ -5100,7 +5100,7 @@ func local_31538() -> Variant:
 		elif _pc == 32077:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_league_4_:", "a1_m07_ship_league_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32153
 				continue
 			else:
@@ -5112,7 +5112,7 @@ func local_31538() -> Variant:
 		elif _pc == 32154:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_carva_1_:", "a1_m07_ship_carva_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32230
 				continue
 			else:
@@ -5124,7 +5124,7 @@ func local_31538() -> Variant:
 		elif _pc == 32231:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_carva_2_:", "a1_m07_ship_carva_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32307
 				continue
 			else:
@@ -5136,7 +5136,7 @@ func local_31538() -> Variant:
 		elif _pc == 32308:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_carva_3_:", "a1_m07_ship_carva_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32384
 				continue
 			else:
@@ -5148,7 +5148,7 @@ func local_31538() -> Variant:
 		elif _pc == 32385:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_carva_4_:", "a1_m07_ship_carva_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32461
 				continue
 			else:
@@ -5160,7 +5160,7 @@ func local_31538() -> Variant:
 		elif _pc == 32462:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_kong_1_:", "a1_m07_ship_kong_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32538
 				continue
 			else:
@@ -5172,7 +5172,7 @@ func local_31538() -> Variant:
 		elif _pc == 32539:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_kong_2_:", "a1_m07_ship_kong_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32615
 				continue
 			else:
@@ -5184,7 +5184,7 @@ func local_31538() -> Variant:
 		elif _pc == 32616:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_kong_3_:", "a1_m07_ship_kong_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32692
 				continue
 			else:
@@ -5196,7 +5196,7 @@ func local_31538() -> Variant:
 		elif _pc == 32693:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_reinforcement_1_:", "a1_m07_ship_marauder_reinforcement_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32769
 				continue
 			else:
@@ -5208,7 +5208,7 @@ func local_31538() -> Variant:
 		elif _pc == 32770:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_reinforcement_2_:", "a1_m07_ship_marauder_reinforcement_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32846
 				continue
 			else:
@@ -5220,7 +5220,7 @@ func local_31538() -> Variant:
 		elif _pc == 32847:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_reinforcement_3_:", "a1_m07_ship_marauder_reinforcement_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 32923
 				continue
 			else:
@@ -5232,7 +5232,7 @@ func local_31538() -> Variant:
 		elif _pc == 32924:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_mother_:", "a1_m07_ship_marauder_mother")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33000
 				continue
 			else:
@@ -5244,7 +5244,7 @@ func local_31538() -> Variant:
 		elif _pc == 33001:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_escort_1_:", "a1_m07_ship_marauder_escort_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33077
 				continue
 			else:
@@ -5256,7 +5256,7 @@ func local_31538() -> Variant:
 		elif _pc == 33078:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_escort_2_:", "a1_m07_ship_marauder_escort_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33154
 				continue
 			else:
@@ -5268,7 +5268,7 @@ func local_31538() -> Variant:
 		elif _pc == 33155:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_escort_3_:", "a1_m07_ship_marauder_escort_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33231
 				continue
 			else:
@@ -5280,7 +5280,7 @@ func local_31538() -> Variant:
 		elif _pc == 33232:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_escort_4_:", "a1_m07_ship_marauder_escort_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33308
 				continue
 			else:
@@ -5292,7 +5292,7 @@ func local_31538() -> Variant:
 		elif _pc == 33309:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_gunstar_1_:", "a1_m07_ship_marauder_gunstar_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33385
 				continue
 			else:
@@ -5304,7 +5304,7 @@ func local_31538() -> Variant:
 		elif _pc == 33386:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_gunstar_2_:", "a1_m07_ship_marauder_gunstar_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33462
 				continue
 			else:
@@ -5316,7 +5316,7 @@ func local_31538() -> Variant:
 		elif _pc == 33463:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_gunstar_3_:", "a1_m07_ship_marauder_gunstar_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33539
 				continue
 			else:
@@ -5328,7 +5328,7 @@ func local_31538() -> Variant:
 		elif _pc == 33540:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_gunstar_4_:", "a1_m07_ship_marauder_gunstar_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33616
 				continue
 			else:
@@ -5340,7 +5340,7 @@ func local_31538() -> Variant:
 		elif _pc == 33617:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_gunstar_5_:", "a1_m07_ship_marauder_gunstar_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33693
 				continue
 			else:
@@ -5352,7 +5352,7 @@ func local_31538() -> Variant:
 		elif _pc == 33694:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_gunstar_6_:", "a1_m07_ship_marauder_gunstar_6")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33770
 				continue
 			else:
@@ -5364,7 +5364,7 @@ func local_31538() -> Variant:
 		elif _pc == 33771:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_ship_marauder_bomber_:", "a1_m07_ship_marauder_bomber")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33847
 				continue
 			else:
@@ -5376,7 +5376,7 @@ func local_31538() -> Variant:
 		elif _pc == 33848:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_text_reactor_integrity_:", "a1_m07_text_reactor_integrity")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 33924
 				continue
 			else:
@@ -5388,7 +5388,7 @@ func local_31538() -> Variant:
 		elif _pc == 33925:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_boarding_1_:", "a1_m07_dialogue_smith_boarding_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34001
 				continue
 			else:
@@ -5400,7 +5400,7 @@ func local_31538() -> Variant:
 		elif _pc == 34002:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_armed_1_:", "a1_m07_dialogue_smith_armed_1")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34078
 				continue
 			else:
@@ -5412,7 +5412,7 @@ func local_31538() -> Variant:
 		elif _pc == 34079:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_boarding_2_:", "a1_m07_dialogue_smith_boarding_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34155
 				continue
 			else:
@@ -5424,7 +5424,7 @@ func local_31538() -> Variant:
 		elif _pc == 34156:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_armed_2_:", "a1_m07_dialogue_smith_armed_2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34232
 				continue
 			else:
@@ -5436,7 +5436,7 @@ func local_31538() -> Variant:
 		elif _pc == 34233:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_boarding_3_:", "a1_m07_dialogue_smith_boarding_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34309
 				continue
 			else:
@@ -5448,7 +5448,7 @@ func local_31538() -> Variant:
 		elif _pc == 34310:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_armed_3_:", "a1_m07_dialogue_smith_armed_3")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34386
 				continue
 			else:
@@ -5460,7 +5460,7 @@ func local_31538() -> Variant:
 		elif _pc == 34387:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_boarding_4_:", "a1_m07_dialogue_smith_boarding_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34463
 				continue
 			else:
@@ -5472,7 +5472,7 @@ func local_31538() -> Variant:
 		elif _pc == 34464:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_armed_4_:", "a1_m07_dialogue_smith_armed_4")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34540
 				continue
 			else:
@@ -5484,7 +5484,7 @@ func local_31538() -> Variant:
 		elif _pc == 34541:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_boarding_5_:", "a1_m07_dialogue_smith_boarding_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34617
 				continue
 			else:
@@ -5496,7 +5496,7 @@ func local_31538() -> Variant:
 		elif _pc == 34618:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_armed_5_:", "a1_m07_dialogue_smith_armed_5")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34694
 				continue
 			else:
@@ -5508,7 +5508,7 @@ func local_31538() -> Variant:
 		elif _pc == 34695:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_boarding_6_:", "a1_m07_dialogue_smith_boarding_6")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34771
 				continue
 			else:
@@ -5520,7 +5520,7 @@ func local_31538() -> Variant:
 		elif _pc == 34772:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_armed_6_:", "a1_m07_dialogue_smith_armed_6")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34848
 				continue
 			else:
@@ -5532,7 +5532,7 @@ func local_31538() -> Variant:
 		elif _pc == 34849:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_well_done_thats_all_of_them_:", "a1_m07_dialogue_cal_well_done_thats_all_of_them")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 34925
 				continue
 			else:
@@ -5544,7 +5544,7 @@ func local_31538() -> Variant:
 		elif _pc == 34926:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_looks_like_they_got_the_gunstars_in_place_:", "a1_m07_dialogue_smith_looks_like_they_got_the_gunstars_in_place")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35002
 				continue
 			else:
@@ -5556,7 +5556,7 @@ func local_31538() -> Variant:
 		elif _pc == 35003:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_good_to_see_you_:", "a1_m07_dialogue_hoffers_gap_good_to_see_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35079
 				continue
 			else:
@@ -5568,7 +5568,7 @@ func local_31538() -> Variant:
 		elif _pc == 35080:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_weve_got_the_keys_:", "a1_m07_dialogue_cal_weve_got_the_keys")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35156
 				continue
 			else:
@@ -5580,7 +5580,7 @@ func local_31538() -> Variant:
 		elif _pc == 35157:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_great_just_stick_them_on_will_you_:", "a1_m07_dialogue_hoffers_gap_great_just_stick_them_on_will_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35233
 				continue
 			else:
@@ -5592,7 +5592,7 @@ func local_31538() -> Variant:
 		elif _pc == 35234:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_willdo_whats_going_on_:", "a1_m07_dialogue_cal_willdo_whats_going_on")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35310
 				continue
 			else:
@@ -5604,7 +5604,7 @@ func local_31538() -> Variant:
 		elif _pc == 35311:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_this_is_the_hoffers_wake_defense_fleet_:", "a1_m07_dialogue_hoffers_gap_this_is_the_hoffers_wake_defense_fleet")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35387
 				continue
 			else:
@@ -5616,7 +5616,7 @@ func local_31538() -> Variant:
 		elif _pc == 35388:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_wheres_the_traffic_:", "a1_m07_dialogue_cal_wheres_the_traffic")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35464
 				continue
 			else:
@@ -5628,7 +5628,7 @@ func local_31538() -> Variant:
 		elif _pc == 35465:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_we_kept_them_away_:", "a1_m07_dialogue_hoffers_gap_we_kept_them_away")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35541
 				continue
 			else:
@@ -5640,7 +5640,7 @@ func local_31538() -> Variant:
 		elif _pc == 35542:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_weve_detected_incoming_marauders_:", "a1_m07_dialogue_hoffers_gap_weve_detected_incoming_marauders")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35618
 				continue
 			else:
@@ -5652,7 +5652,7 @@ func local_31538() -> Variant:
 		elif _pc == 35619:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_dammit_they_must_have_heard_about_the_gunstars_:", "a1_m07_dialogue_cal_dammit_they_must_have_heard_about_the_gunstars")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35695
 				continue
 			else:
@@ -5664,7 +5664,7 @@ func local_31538() -> Variant:
 		elif _pc == 35696:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_clay_you_got_a_choice_you_can_arm_the_gunstars_or_leave_them_:", "a1_m07_dialogue_clay_you_got_a_choice_you_can_arm_the_gunstars_or_leave_them")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35772
 				continue
 			else:
@@ -5676,7 +5676,7 @@ func local_31538() -> Variant:
 		elif _pc == 35773:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_id_choose_quick_:", "a1_m07_dialogue_smith_id_choose_quick")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35849
 				continue
 			else:
@@ -5688,7 +5688,7 @@ func local_31538() -> Variant:
 		elif _pc == 35850:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_the_kong_have_offered_to_be_your_wingmen_:", "a1_m07_dialogue_hoffers_gap_the_kong_have_offered_to_be_your_wingmen")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 35926
 				continue
 			else:
@@ -5700,7 +5700,7 @@ func local_31538() -> Variant:
 		elif _pc == 35927:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_we_lost_a_gunstar_:", "a1_m07_dialogue_hoffers_gap_we_lost_a_gunstar")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36003
 				continue
 			else:
@@ -5712,7 +5712,7 @@ func local_31538() -> Variant:
 		elif _pc == 36004:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_how_did_they_do_it_:", "a1_m07_dialogue_cal_how_did_they_do_it")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36080
 				continue
 			else:
@@ -5724,7 +5724,7 @@ func local_31538() -> Variant:
 		elif _pc == 36081:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_using_short_range_disruptors_:", "a1_m07_dialogue_smith_using_short_range_disruptors")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36157
 				continue
 			else:
@@ -5736,7 +5736,7 @@ func local_31538() -> Variant:
 		elif _pc == 36158:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_clay_those_old_gunstars_are_vulnerable_:", "a1_m07_dialogue_clay_those_old_gunstars_are_vulnerable")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36234
 				continue
 			else:
@@ -5748,7 +5748,7 @@ func local_31538() -> Variant:
 		elif _pc == 36235:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_it_takes_time_to_work_:", "a1_m07_dialogue_smith_it_takes_time_to_work")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36311
 				continue
 			else:
@@ -5760,7 +5760,7 @@ func local_31538() -> Variant:
 		elif _pc == 36312:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_the_mothership_launched_a_ship_:", "a1_m07_dialogue_smith_the_mothership_launched_a_ship")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36388
 				continue
 			else:
@@ -5772,7 +5772,7 @@ func local_31538() -> Variant:
 		elif _pc == 36389:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_theyre_headed_into_the_gap_what_are_they_doing_:", "a1_m07_dialogue_cal_theyre_headed_into_the_gap_what_are_they_doing")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36465
 				continue
 			else:
@@ -5784,7 +5784,7 @@ func local_31538() -> Variant:
 		elif _pc == 36466:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_the_power_core_:", "a1_m07_dialogue_smith_the_power_core")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36542
 				continue
 			else:
@@ -5796,7 +5796,7 @@ func local_31538() -> Variant:
 		elif _pc == 36543:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_clay_youd_better_stop_them_:", "a1_m07_dialogue_clay_youd_better_stop_them")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36619
 				continue
 			else:
@@ -5808,7 +5808,7 @@ func local_31538() -> Variant:
 		elif _pc == 36620:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_clay_havent_you_got_a_job_to_do_:", "a1_m07_dialogue_clay_havent_you_got_a_job_to_do")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36696
 				continue
 			else:
@@ -5820,7 +5820,7 @@ func local_31538() -> Variant:
 		elif _pc == 36697:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_clay_ill_say_it_again_go_back_:", "a1_m07_dialogue_clay_ill_say_it_again_go_back")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36773
 				continue
 			else:
@@ -5832,7 +5832,7 @@ func local_31538() -> Variant:
 		elif _pc == 36774:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_hoffers_gap_thanks_:", "a1_m07_dialogue_hoffers_gap_thanks")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36850
 				continue
 			else:
@@ -5844,7 +5844,7 @@ func local_31538() -> Variant:
 		elif _pc == 36851:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_youre_welcome_:", "a1_m07_dialogue_cal_youre_welcome")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 36927
 				continue
 			else:
@@ -5856,7 +5856,7 @@ func local_31538() -> Variant:
 		elif _pc == 36928:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_clay_im_impressed_:", "a1_m07_dialogue_clay_im_impressed")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37004
 				continue
 			else:
@@ -5868,7 +5868,7 @@ func local_31538() -> Variant:
 		elif _pc == 37005:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_smith_we_got_the_marauders_:", "a1_m07_dialogue_smith_we_got_the_marauders")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37081
 				continue
 			else:
@@ -5880,7 +5880,7 @@ func local_31538() -> Variant:
 		elif _pc == 37082:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_dialogue_cal_dont_get_overconfident_:", "a1_m07_dialogue_cal_dont_get_overconfident")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37158
 				continue
 			else:
@@ -5898,7 +5898,7 @@ func local_37162() -> Variant:
 		if _pc == 37162:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m07_text_caption_mission_failed_:", "a1_m07_text_caption_mission_failed")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37238
 				continue
 			else:
@@ -5916,7 +5916,7 @@ func local_37242() -> Variant:
 		if _pc == 37242:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c1_cal_there_you_:", "a1_m08_dialogue_league_c1_cal_there_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37318
 				continue
 			else:
@@ -5928,7 +5928,7 @@ func local_37242() -> Variant:
 		elif _pc == 37319:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_text_player_c1_option_1_yes_:", "a1_m08_text_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37395
 				continue
 			else:
@@ -5940,7 +5940,7 @@ func local_37242() -> Variant:
 		elif _pc == 37396:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_player_c1_option_1_yes_:", "a1_m08_dialogue_player_c1_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37472
 				continue
 			else:
@@ -5952,7 +5952,7 @@ func local_37242() -> Variant:
 		elif _pc == 37473:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c1_response_1_good_we_want_:", "a1_m08_dialogue_league_c1_response_1_good_we_want")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37549
 				continue
 			else:
@@ -5964,7 +5964,7 @@ func local_37242() -> Variant:
 		elif _pc == 37550:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c1_response_1_we_have_been_:", "a1_m08_dialogue_league_c1_response_1_we_have_been")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37626
 				continue
 			else:
@@ -5976,7 +5976,7 @@ func local_37242() -> Variant:
 		elif _pc == 37627:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c1_response_1_heres_the_droid_:", "a1_m08_dialogue_league_c1_response_1_heres_the_droid")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37703
 				continue
 			else:
@@ -5988,7 +5988,7 @@ func local_37242() -> Variant:
 		elif _pc == 37704:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_text_player_c1_option_2_no_:", "a1_m08_text_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37780
 				continue
 			else:
@@ -6000,7 +6000,7 @@ func local_37242() -> Variant:
 		elif _pc == 37781:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_player_c1_option_2_no_:", "a1_m08_dialogue_player_c1_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37857
 				continue
 			else:
@@ -6012,7 +6012,7 @@ func local_37242() -> Variant:
 		elif _pc == 37858:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c1_response_2_well_be_waiting_:", "a1_m08_dialogue_league_c1_response_2_well_be_waiting")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 37934
 				continue
 			else:
@@ -6024,7 +6024,7 @@ func local_37242() -> Variant:
 		elif _pc == 37935:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_clay_well_done_:", "a1_m08_clay_well_done")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38011
 				continue
 			else:
@@ -6036,7 +6036,7 @@ func local_37242() -> Variant:
 		elif _pc == 38012:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_clay_that_munitions_store_:", "a1_m08_clay_that_munitions_store")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38088
 				continue
 			else:
@@ -6048,7 +6048,7 @@ func local_37242() -> Variant:
 		elif _pc == 38089:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_security_alert_:", "a1_m08_security_alert")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38165
 				continue
 			else:
@@ -6060,7 +6060,7 @@ func local_37242() -> Variant:
 		elif _pc == 38166:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c2_did_you_do_:", "a1_m08_dialogue_league_c2_did_you_do")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38242
 				continue
 			else:
@@ -6072,7 +6072,7 @@ func local_37242() -> Variant:
 		elif _pc == 38243:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_text_player_c2_option_1_yes_:", "a1_m08_text_player_c2_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38319
 				continue
 			else:
@@ -6084,7 +6084,7 @@ func local_37242() -> Variant:
 		elif _pc == 38320:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_player_c2_option_1_yes_:", "a1_m08_dialogue_player_c2_option_1_yes")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38396
 				continue
 			else:
@@ -6096,7 +6096,7 @@ func local_37242() -> Variant:
 		elif _pc == 38397:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c2_response_1_what_have_you_done_:", "a1_m08_dialogue_league_c2_response_1_what_have_you_done")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38473
 				continue
 			else:
@@ -6108,7 +6108,7 @@ func local_37242() -> Variant:
 		elif _pc == 38474:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c2_response_1_and_the_drone_:", "a1_m08_dialogue_league_c2_response_1_and_the_drone")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38550
 				continue
 			else:
@@ -6120,7 +6120,7 @@ func local_37242() -> Variant:
 		elif _pc == 38551:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c2_response_1_welcome_:", "a1_m08_dialogue_league_c2_response_1_welcome")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38627
 				continue
 			else:
@@ -6132,7 +6132,7 @@ func local_37242() -> Variant:
 		elif _pc == 38628:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_text_player_c2_option_2_no_:", "a1_m08_text_player_c2_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38704
 				continue
 			else:
@@ -6144,7 +6144,7 @@ func local_37242() -> Variant:
 		elif _pc == 38705:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_player_c2_option_2_no_:", "a1_m08_dialogue_player_c2_option_2_no")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38781
 				continue
 			else:
@@ -6156,7 +6156,7 @@ func local_37242() -> Variant:
 		elif _pc == 38782:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_league_c2_response_2_failed_:", "a1_m08_dialogue_league_c2_response_2_failed")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38858
 				continue
 			else:
@@ -6174,7 +6174,7 @@ func local_38862() -> Variant:
 		if _pc == 38862:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_name_league_waypoint_:", "a1_m08_name_league_waypoint")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 38938
 				continue
 			else:
@@ -6186,7 +6186,7 @@ func local_38862() -> Variant:
 		elif _pc == 38939:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_name_munitions_:", "a1_m08_name_munitions")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39015
 				continue
 			else:
@@ -6198,7 +6198,7 @@ func local_38862() -> Variant:
 		elif _pc == 39016:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_name_flag_ship_:", "a1_m08_name_flag_ship")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39092
 				continue
 			else:
@@ -6210,7 +6210,7 @@ func local_38862() -> Variant:
 		elif _pc == 39093:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_name_paint_droid_:", "a1_m08_name_paint_droid")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39169
 				continue
 			else:
@@ -6222,7 +6222,7 @@ func local_38862() -> Variant:
 		elif _pc == 39170:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_name_wilbert_:", "a1_m08_name_wilbert")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39246
 				continue
 			else:
@@ -6234,7 +6234,7 @@ func local_38862() -> Variant:
 		elif _pc == 39247:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_name_little_:", "a1_m08_name_little")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39323
 				continue
 			else:
@@ -6246,7 +6246,7 @@ func local_38862() -> Variant:
 		elif _pc == 39324:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_name_security_patrol_:", "a1_m08_name_security_patrol")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39400
 				continue
 			else:
@@ -6258,7 +6258,7 @@ func local_38862() -> Variant:
 		elif _pc == 39401:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_paint_droid_sfx_:", "a1_m08_dialogue_paint_droid_sfx")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39477
 				continue
 			else:
@@ -6270,7 +6270,7 @@ func local_38862() -> Variant:
 		elif _pc == 39478:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m08_dialogue_clay_flying_droid_too_fast_:", "a1_m08_dialogue_clay_flying_droid_too_fast")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39554
 				continue
 			else:
@@ -6288,7 +6288,7 @@ func local_39558() -> Variant:
 		if _pc == 39558:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m09_name_lor_:", "a1_m09_name_lor")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39634
 				continue
 			else:
@@ -6300,7 +6300,7 @@ func local_39558() -> Variant:
 		elif _pc == 39635:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m09_name_security_:", "a1_m09_name_security")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39711
 				continue
 			else:
@@ -6312,7 +6312,7 @@ func local_39558() -> Variant:
 		elif _pc == 39712:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m09_name_droid_:", "a1_m09_name_droid")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39788
 				continue
 			else:
@@ -6324,7 +6324,7 @@ func local_39558() -> Variant:
 		elif _pc == 39789:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m09_name_hab_module_:", "a1_m09_name_hab_module")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39865
 				continue
 			else:
@@ -6336,7 +6336,7 @@ func local_39558() -> Variant:
 		elif _pc == 39866:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m09_name_league_waypoint_:", "a1_m09_name_league_waypoint")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 39942
 				continue
 			else:
@@ -6348,7 +6348,7 @@ func local_39558() -> Variant:
 		elif _pc == 39943:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m09_name_lor_waypoint_:", "a1_m09_name_lor_waypoint")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40019
 				continue
 			else:
@@ -6360,7 +6360,7 @@ func local_39558() -> Variant:
 		elif _pc == 40020:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m09_dialogue_security_alert_:", "a1_m09_dialogue_security_alert")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40096
 				continue
 			else:
@@ -6378,7 +6378,7 @@ func local_40100() -> Variant:
 		if _pc == 40100:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_mad_bill_c1_who_are_you_:", "a1_m10_dialogue_mad_bill_c1_who_are_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40176
 				continue
 			else:
@@ -6390,7 +6390,7 @@ func local_40100() -> Variant:
 		elif _pc == 40177:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_text_player_c1_option_1_greet_im_cal_:", "a1_m10_text_player_c1_option_1_greet_im_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40253
 				continue
 			else:
@@ -6402,7 +6402,7 @@ func local_40100() -> Variant:
 		elif _pc == 40254:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_player_c1_option_1_greet_im_cal_:", "a1_m10_dialogue_player_c1_option_1_greet_im_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40330
 				continue
 			else:
@@ -6414,7 +6414,7 @@ func local_40100() -> Variant:
 		elif _pc == 40331:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_mad_bill_c1_response_1_ahh_clay_:", "a1_m10_dialogue_mad_bill_c1_response_1_ahh_clay")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40407
 				continue
 			else:
@@ -6426,7 +6426,7 @@ func local_40100() -> Variant:
 		elif _pc == 40408:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_text_player_c1_option_2_threaten_im_cal_:", "a1_m10_text_player_c1_option_2_threaten_im_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40484
 				continue
 			else:
@@ -6438,7 +6438,7 @@ func local_40100() -> Variant:
 		elif _pc == 40485:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_player_c1_option_2_threaten_im_cal_:", "a1_m10_dialogue_player_c1_option_2_threaten_im_cal")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40561
 				continue
 			else:
@@ -6450,7 +6450,7 @@ func local_40100() -> Variant:
 		elif _pc == 40562:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_mad_bill_c1_response_2_really_and_what_:", "a1_m10_dialogue_mad_bill_c1_response_2_really_and_what")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40638
 				continue
 			else:
@@ -6462,7 +6462,7 @@ func local_40100() -> Variant:
 		elif _pc == 40639:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_malcomb_tezler_c2_who_are_you_:", "a1_m10_dialogue_malcomb_tezler_c2_who_are_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40715
 				continue
 			else:
@@ -6474,7 +6474,7 @@ func local_40100() -> Variant:
 		elif _pc == 40716:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_text_player_c2_option_1_im_cal_device_:", "a1_m10_text_player_c2_option_1_im_cal_device")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40792
 				continue
 			else:
@@ -6486,7 +6486,7 @@ func local_40100() -> Variant:
 		elif _pc == 40793:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_player_c2_option_1_im_cal_device_:", "a1_m10_dialogue_player_c2_option_1_im_cal_device")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40869
 				continue
 			else:
@@ -6498,7 +6498,7 @@ func local_40100() -> Variant:
 		elif _pc == 40870:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_malcomb_tezler_c2_response_1_you_must_mean_:", "a1_m10_dialogue_malcomb_tezler_c2_response_1_you_must_mean")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 40946
 				continue
 			else:
@@ -6510,7 +6510,7 @@ func local_40100() -> Variant:
 		elif _pc == 40947:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_malcomb_tezler_c2_response_1_here_ya_go_:", "a1_m10_dialogue_malcomb_tezler_c2_response_1_here_ya_go")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41023
 				continue
 			else:
@@ -6522,7 +6522,7 @@ func local_40100() -> Variant:
 		elif _pc == 41024:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_text_player_c2_option_2_no_need_to_be_rude_:", "a1_m10_text_player_c2_option_2_no_need_to_be_rude")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41100
 				continue
 			else:
@@ -6534,7 +6534,7 @@ func local_40100() -> Variant:
 		elif _pc == 41101:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_player_c2_option_2_no_need_to_be_rude_:", "a1_m10_dialogue_player_c2_option_2_no_need_to_be_rude")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41177
 				continue
 			else:
@@ -6546,7 +6546,7 @@ func local_40100() -> Variant:
 		elif _pc == 41178:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_malcomb_tezler_c2_response_2_really_bugger_off_:", "a1_m10_dialogue_malcomb_tezler_c2_response_2_really_bugger_off")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41254
 				continue
 			else:
@@ -6558,7 +6558,7 @@ func local_40100() -> Variant:
 		elif _pc == 41255:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_jacob_gareth_we_have_your_friends_:", "a1_m10_dialogue_jacob_gareth_we_have_your_friends")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41331
 				continue
 			else:
@@ -6570,7 +6570,7 @@ func local_40100() -> Variant:
 		elif _pc == 41332:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_jacob_gareth_ok_i_want_you_to_:", "a1_m10_dialogue_jacob_gareth_ok_i_want_you_to")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41408
 				continue
 			else:
@@ -6582,7 +6582,7 @@ func local_40100() -> Variant:
 		elif _pc == 41409:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_jacob_gareth_im_engaging_now_:", "a1_m10_dialogue_jacob_gareth_im_engaging_now")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41485
 				continue
 			else:
@@ -6594,7 +6594,7 @@ func local_40100() -> Variant:
 		elif _pc == 41486:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_jacob_gareth_here_we_are_:", "a1_m10_dialogue_jacob_gareth_here_we_are")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41562
 				continue
 			else:
@@ -6606,7 +6606,7 @@ func local_40100() -> Variant:
 		elif _pc == 41563:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_clay_that_ice_asteroid_looks_like_:", "a1_m10_dialogue_clay_that_ice_asteroid_looks_like")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41639
 				continue
 			else:
@@ -6618,7 +6618,7 @@ func local_40100() -> Variant:
 		elif _pc == 41640:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_clay_hey_theres_a_failsafe_on_the_:", "a1_m10_dialogue_clay_hey_theres_a_failsafe_on_the")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41716
 				continue
 			else:
@@ -6630,7 +6630,7 @@ func local_40100() -> Variant:
 		elif _pc == 41717:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_jacob_gareth_what_the_:", "a1_m10_dialogue_jacob_gareth_what_the")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41793
 				continue
 			else:
@@ -6642,7 +6642,7 @@ func local_40100() -> Variant:
 		elif _pc == 41794:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_clay_theres_the_device_:", "a1_m10_dialogue_clay_theres_the_device")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41870
 				continue
 			else:
@@ -6654,7 +6654,7 @@ func local_40100() -> Variant:
 		elif _pc == 41871:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_clay_weve_got_the_device_:", "a1_m10_dialogue_clay_weve_got_the_device")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 41947
 				continue
 			else:
@@ -6666,7 +6666,7 @@ func local_40100() -> Variant:
 		elif _pc == 41948:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_lori_what_took_you_:", "a1_m10_dialogue_lori_what_took_you")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42024
 				continue
 			else:
@@ -6678,7 +6678,7 @@ func local_40100() -> Variant:
 		elif _pc == 42025:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_lori_never_thought_id_be_:", "a1_m10_dialogue_lori_never_thought_id_be")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42101
 				continue
 			else:
@@ -6690,7 +6690,7 @@ func local_40100() -> Variant:
 		elif _pc == 42102:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_temp_info_:", "a1_m10_temp_info")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42178
 				continue
 			else:
@@ -6702,7 +6702,7 @@ func local_40100() -> Variant:
 		elif _pc == 42179:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_temp_info2_:", "a1_m10_temp_info2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42255
 				continue
 			else:
@@ -6714,7 +6714,7 @@ func local_40100() -> Variant:
 		elif _pc == 42256:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_clay_hey_call_old_mad_:", "a1_m10_dialogue_clay_hey_call_old_mad")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42332
 				continue
 			else:
@@ -6726,7 +6726,7 @@ func local_40100() -> Variant:
 		elif _pc == 42333:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_cal_you_always_said_all_my_grandmas_henchemen_were_dead_:", "a1_m10_dialogue_cal_you_always_said_all_my_grandmas_henchemen_were_dead")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42409
 				continue
 			else:
@@ -6738,7 +6738,7 @@ func local_40100() -> Variant:
 		elif _pc == 42410:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_clay_trust_me_when_you_meet_mad_bill_youll_know_why_:", "a1_m10_dialogue_clay_trust_me_when_you_meet_mad_bill_youll_know_why")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42486
 				continue
 			else:
@@ -6756,7 +6756,7 @@ func local_42490() -> Variant:
 		if _pc == 42490:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_will_:", "a1_m10_ship_name_will")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42566
 				continue
 			else:
@@ -6768,7 +6768,7 @@ func local_42490() -> Variant:
 		elif _pc == 42567:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_red_:", "a1_m10_ship_name_red")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42643
 				continue
 			else:
@@ -6780,7 +6780,7 @@ func local_42490() -> Variant:
 		elif _pc == 42644:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_rogue_:", "a1_m10_ship_name_rogue")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42720
 				continue
 			else:
@@ -6792,7 +6792,7 @@ func local_42490() -> Variant:
 		elif _pc == 42721:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_tiger_:", "a1_m10_ship_name_tiger")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42797
 				continue
 			else:
@@ -6804,7 +6804,7 @@ func local_42490() -> Variant:
 		elif _pc == 42798:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_fighter_:", "a1_m10_ship_name_fighter")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42874
 				continue
 			else:
@@ -6816,7 +6816,7 @@ func local_42490() -> Variant:
 		elif _pc == 42875:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_hostages_:", "a1_m10_ship_name_hostages")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 42951
 				continue
 			else:
@@ -6828,7 +6828,7 @@ func local_42490() -> Variant:
 		elif _pc == 42952:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_ice_:", "a1_m10_ship_name_ice")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43028
 				continue
 			else:
@@ -6840,7 +6840,7 @@ func local_42490() -> Variant:
 		elif _pc == 43029:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_alien_:", "a1_m10_ship_name_alien")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43105
 				continue
 			else:
@@ -6852,7 +6852,7 @@ func local_42490() -> Variant:
 		elif _pc == 43106:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_name_waypoint_hoffers_heel_:", "a1_m10_name_waypoint_hoffers_heel")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43182
 				continue
 			else:
@@ -6870,7 +6870,7 @@ func local_43186() -> Variant:
 		if _pc == 43186:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_league_:", "a1_m10_ship_name_league")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43262
 				continue
 			else:
@@ -6882,7 +6882,7 @@ func local_43186() -> Variant:
 		elif _pc == 43263:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_ship_name_league_two_:", "a1_m10_ship_name_league_two")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43339
 				continue
 			else:
@@ -6894,7 +6894,7 @@ func local_43186() -> Variant:
 		elif _pc == 43340:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_cal_i_found_the_hoard_:", "a1_m10_dialogue_cal_i_found_the_hoard")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43416
 				continue
 			else:
@@ -6906,7 +6906,7 @@ func local_43186() -> Variant:
 		elif _pc == 43417:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_league_well_done_:", "a1_m10_dialogue_league_well_done")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43493
 				continue
 			else:
@@ -6918,7 +6918,7 @@ func local_43186() -> Variant:
 		elif _pc == 43494:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_smith_damn_things_glowing_:", "a1_m10_dialogue_smith_damn_things_glowing")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43570
 				continue
 			else:
@@ -6930,7 +6930,7 @@ func local_43186() -> Variant:
 		elif _pc == 43571:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_cal_i_did_indeed_:", "a1_m10_dialogue_cal_i_did_indeed")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43647
 				continue
 			else:
@@ -6942,7 +6942,7 @@ func local_43186() -> Variant:
 		elif _pc == 43648:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_league_we_can_take_it_:", "a1_m10_dialogue_league_we_can_take_it")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43724
 				continue
 			else:
@@ -6954,7 +6954,7 @@ func local_43186() -> Variant:
 		elif _pc == 43725:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_cal_a_capsule_drive_:", "a1_m10_dialogue_cal_a_capsule_drive")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43801
 				continue
 			else:
@@ -6966,7 +6966,7 @@ func local_43186() -> Variant:
 		elif _pc == 43802:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_league_pretty_expensive_:", "a1_m10_dialogue_league_pretty_expensive")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43878
 				continue
 			else:
@@ -6978,7 +6978,7 @@ func local_43186() -> Variant:
 		elif _pc == 43879:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_cal_holding_out_:", "a1_m10_dialogue_cal_holding_out")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 43955
 				continue
 			else:
@@ -6990,7 +6990,7 @@ func local_43186() -> Variant:
 		elif _pc == 43956:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_league_we_can_get_you_one_:", "a1_m10_dialogue_league_we_can_get_you_one")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44032
 				continue
 			else:
@@ -7002,7 +7002,7 @@ func local_43186() -> Variant:
 		elif _pc == 44033:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_league_youre_in_luck_:", "a1_m10_dialogue_league_youre_in_luck")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44109
 				continue
 			else:
@@ -7014,7 +7014,7 @@ func local_43186() -> Variant:
 		elif _pc == 44110:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_league_two_heres_the_drive_:", "a1_m10_dialogue_league_two_heres_the_drive")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44186
 				continue
 			else:
@@ -7026,7 +7026,7 @@ func local_43186() -> Variant:
 		elif _pc == 44187:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_league_two_enjoy_your_drive_:", "a1_m10_dialogue_league_two_enjoy_your_drive")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44263
 				continue
 			else:
@@ -7038,7 +7038,7 @@ func local_43186() -> Variant:
 		elif _pc == 44264:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_m10_dialogue_smith_lets_go_fit_it_:", "a1_m10_dialogue_smith_lets_go_fit_it")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44340
 				continue
 			else:
@@ -7056,7 +7056,7 @@ func local_44344() -> Variant:
 		if _pc == 44344:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_clay_try_them_out_:", "a1_training_clay_try_them_out")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44420
 				continue
 			else:
@@ -7068,7 +7068,7 @@ func local_44344() -> Variant:
 		elif _pc == 44421:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_clay_just_fly_:", "a1_training_clay_just_fly")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44497
 				continue
 			else:
@@ -7080,7 +7080,7 @@ func local_44344() -> Variant:
 		elif _pc == 44498:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_waypoint_training_point_:", "a1_training_waypoint_training_point")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44574
 				continue
 			else:
@@ -7092,7 +7092,7 @@ func local_44344() -> Variant:
 		elif _pc == 44575:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_name_dock_:", "a1_training_name_dock")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44651
 				continue
 			else:
@@ -7104,7 +7104,7 @@ func local_44344() -> Variant:
 		elif _pc == 44652:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_name_mine_:", "a1_training_name_mine")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44728
 				continue
 			else:
@@ -7116,7 +7116,7 @@ func local_44344() -> Variant:
 		elif _pc == 44729:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_name_mine_layer_:", "a1_training_name_mine_layer")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44805
 				continue
 			else:
@@ -7128,7 +7128,7 @@ func local_44344() -> Variant:
 		elif _pc == 44806:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_time_remain_:", "a1_training_time_remain")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44882
 				continue
 			else:
@@ -7140,7 +7140,7 @@ func local_44344() -> Variant:
 		elif _pc == 44883:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_at_course_:", "a1_training_dialogue_clay_at_course")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 44959
 				continue
 			else:
@@ -7152,7 +7152,7 @@ func local_44344() -> Variant:
 		elif _pc == 44960:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_text_cal_about_:", "a1_training_text_cal_about")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45036
 				continue
 			else:
@@ -7164,7 +7164,7 @@ func local_44344() -> Variant:
 		elif _pc == 45037:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_cal_about_:", "a1_training_dialogue_cal_about")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45113
 				continue
 			else:
@@ -7176,7 +7176,7 @@ func local_44344() -> Variant:
 		elif _pc == 45114:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_about_tfighters_:", "a1_training_dialogue_clay_about_tfighters")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45190
 				continue
 			else:
@@ -7188,7 +7188,7 @@ func local_44344() -> Variant:
 		elif _pc == 45191:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_text_cal_fastest_:", "a1_training_text_cal_fastest")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45267
 				continue
 			else:
@@ -7200,7 +7200,7 @@ func local_44344() -> Variant:
 		elif _pc == 45268:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_cal_fastest_:", "a1_training_dialogue_cal_fastest")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45344
 				continue
 			else:
@@ -7212,7 +7212,7 @@ func local_44344() -> Variant:
 		elif _pc == 45345:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_the_fastest_:", "a1_training_dialogue_clay_the_fastest")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45421
 				continue
 			else:
@@ -7224,7 +7224,7 @@ func local_44344() -> Variant:
 		elif _pc == 45422:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_text_cal_start_:", "a1_training_text_cal_start")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45498
 				continue
 			else:
@@ -7236,7 +7236,7 @@ func local_44344() -> Variant:
 		elif _pc == 45499:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_cal_start_:", "a1_training_dialogue_cal_start")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45575
 				continue
 			else:
@@ -7248,7 +7248,7 @@ func local_44344() -> Variant:
 		elif _pc == 45576:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_ok_:", "a1_training_dialogue_clay_ok")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45652
 				continue
 			else:
@@ -7260,7 +7260,7 @@ func local_44344() -> Variant:
 		elif _pc == 45653:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_ok2_:", "a1_training_dialogue_clay_ok2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45729
 				continue
 			else:
@@ -7272,7 +7272,7 @@ func local_44344() -> Variant:
 		elif _pc == 45730:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_alt_ok_:", "a1_training_dialogue_clay_alt_ok")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45806
 				continue
 			else:
@@ -7284,7 +7284,7 @@ func local_44344() -> Variant:
 		elif _pc == 45807:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_alt_ok2_:", "a1_training_dialogue_clay_alt_ok2")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45883
 				continue
 			else:
@@ -7296,7 +7296,7 @@ func local_44344() -> Variant:
 		elif _pc == 45884:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_text_cal_nothing_:", "a1_training_text_cal_nothing")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 45960
 				continue
 			else:
@@ -7308,7 +7308,7 @@ func local_44344() -> Variant:
 		elif _pc == 45961:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_cal_nothing_:", "a1_training_dialogue_cal_nothing")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46037
 				continue
 			else:
@@ -7320,7 +7320,7 @@ func local_44344() -> Variant:
 		elif _pc == 46038:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_go_:", "a1_training_dialogue_clay_go")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46114
 				continue
 			else:
@@ -7332,7 +7332,7 @@ func local_44344() -> Variant:
 		elif _pc == 46115:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_lets_see_:", "a1_training_dialogue_clay_lets_see")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46191
 				continue
 			else:
@@ -7344,7 +7344,7 @@ func local_44344() -> Variant:
 		elif _pc == 46192:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_good_:", "a1_training_dialogue_clay_good")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46268
 				continue
 			else:
@@ -7356,7 +7356,7 @@ func local_44344() -> Variant:
 		elif _pc == 46269:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_good_bad_:", "a1_training_dialogue_clay_good_bad")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46345
 				continue
 			else:
@@ -7368,7 +7368,7 @@ func local_44344() -> Variant:
 		elif _pc == 46346:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_tough_luck_:", "a1_training_dialogue_clay_tough_luck")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46422
 				continue
 			else:
@@ -7380,7 +7380,7 @@ func local_44344() -> Variant:
 		elif _pc == 46423:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_whats_wrong_:", "a1_training_dialogue_clay_whats_wrong")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46499
 				continue
 			else:
@@ -7392,7 +7392,7 @@ func local_44344() -> Variant:
 		elif _pc == 46500:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_reseting_:", "a1_training_dialogue_clay_reseting")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46576
 				continue
 			else:
@@ -7404,7 +7404,7 @@ func local_44344() -> Variant:
 		elif _pc == 46577:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_ready_:", "a1_training_dialogue_clay_ready")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46653
 				continue
 			else:
@@ -7416,7 +7416,7 @@ func local_44344() -> Variant:
 		elif _pc == 46654:
 			global.set_bool("g_repeat_last_string", 0)
 			await iconversation.one_liner(0, "a1_training_dialogue_clay_wait_:", "a1_training_dialogue_clay_wait")
-			if 1 != global.pog_bool("g_repeat_last_string"):
+			if global.pog_bool("g_repeat_last_string") != 1:
 				_pc = 46730
 				continue
 			else:
@@ -7666,7 +7666,7 @@ func local_46734() -> Variant:
 			_pc = 48718
 			continue
 		elif _pc == 48498:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 48511
 				continue
 			else:

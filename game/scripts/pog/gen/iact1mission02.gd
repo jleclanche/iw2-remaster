@@ -169,7 +169,7 @@ func local_572(v0) -> Variant:
 				continue
 		elif _pc == 638:
 			v2 = sim.cast(p_set.first_element(v1))
-			if object.property_exists(v2, "cargo") and not (object.property_exists(v2, "checked")):
+			if not (object.property_exists(v2, "checked")) and object.property_exists(v2, "cargo"):
 				_pc = 731
 				continue
 			else:
@@ -222,14 +222,14 @@ func local_812(v0, v1, v2) -> Variant:
 				_pc = 1944
 				continue
 		elif _pc == 967:
-			if _pog_is_null(v3) and sim.cast(v9):
+			if sim.cast(v9) and _pog_is_null(v3):
 				_pc = 999
 				continue
 			else:
 				_pc = 1907
 				continue
 		elif _pc == 999:
-			if _pog_is_null(state.progress(v2)) and 6000.0 <= sim.distance_between(v0, v10):
+			if sim.distance_between(v0, v10) <= 6000.0 and _pog_is_null(state.progress(v2)):
 				_pc = 1054
 				continue
 			else:
@@ -282,7 +282,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 1707
 			continue
 		elif _pc == 1707:
-			if 3 < v5:
+			if v5 < 3:
 				_pc = 1720
 				continue
 			else:
@@ -290,7 +290,7 @@ func local_812(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 1720:
 			iai.give_attack_order(iship.cast(group.nth_sim(v1, v5)), v10)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 1707
 			continue
 		elif _pc == 1793:
@@ -302,7 +302,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 1871
 			continue
 		elif _pc == 1849:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 1862
 				continue
 			else:
@@ -319,7 +319,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 1907
 			continue
 		elif _pc == 1876:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 1889
 				continue
 			else:
@@ -356,14 +356,14 @@ func local_812(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 1963:
 			v10 = iship.find_player_ship()
-			if _pog_is_null(object.property_exists(v9, "still_here")) and _pog_is_null(v3) and sim.cast(v9):
+			if sim.cast(v9) and _pog_is_null(v3) and _pog_is_null(object.property_exists(v9, "still_here")):
 				_pc = 2042
 				continue
 			else:
 				_pc = 3188
 				continue
 		elif _pc == 2042:
-			if 1 == state.progress(v2) or 2 == state.progress(v2) and 6000.0 <= sim.distance_between(v10, v9):
+			if sim.distance_between(v10, v9) <= 6000.0 and state.progress(v2) == 2 or state.progress(v2) == 1:
 				_pc = 2119
 				continue
 			else:
@@ -372,7 +372,7 @@ func local_812(v0, v1, v2) -> Variant:
 		elif _pc == 2119:
 			v3 = 1
 			await iconversation.begin()
-			if 2 == state.progress(v2):
+			if state.progress(v2) == 2:
 				_pc = 2166
 				continue
 			else:
@@ -383,7 +383,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 2193
 			continue
 		elif _pc == 2193:
-			if 1 == state.progress(v2):
+			if state.progress(v2) == 1:
 				_pc = 2218
 				continue
 			else:
@@ -400,7 +400,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 3157
 			continue
 		elif _pc == 2341:
-			if 2 == state.progress(v2):
+			if state.progress(v2) == 2:
 				_pc = 2367
 				continue
 			else:
@@ -414,7 +414,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 2477
 			continue
 		elif _pc == 2477:
-			if 1 == state.progress(v2):
+			if state.progress(v2) == 1:
 				_pc = 2502
 				continue
 			else:
@@ -460,7 +460,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 2988
 			continue
 		elif _pc == 2988:
-			if 3 < v5:
+			if v5 < 3:
 				_pc = 3001
 				continue
 			else:
@@ -468,7 +468,7 @@ func local_812(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 3001:
 			iai.give_attack_order(iship.cast(group.nth_sim(v1, v5)), v10)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 2988
 			continue
 		elif _pc == 3074:
@@ -477,7 +477,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 3147
 			continue
 		elif _pc == 3125:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 3138
 				continue
 			else:
@@ -497,7 +497,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 3188
 			continue
 		elif _pc == 3157:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 3170
 				continue
 			else:
@@ -525,14 +525,14 @@ func local_812(v0, v1, v2) -> Variant:
 				_pc = 4065
 				continue
 		elif _pc == 3201:
-			if _pog_is_null(v3) and sim.cast(v9):
+			if sim.cast(v9) and _pog_is_null(v3):
 				_pc = 3233
 				continue
 			else:
 				_pc = 4065
 				continue
 		elif _pc == 3233:
-			if 5 == state.progress(v2) and 6000.0 <= sim.distance_between(v10, v9):
+			if sim.distance_between(v10, v9) <= 6000.0 and state.progress(v2) == 5:
 				_pc = 3289
 				continue
 			else:
@@ -613,7 +613,7 @@ func local_812(v0, v1, v2) -> Variant:
 			_pc = 4065
 			continue
 		elif _pc == 4043:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 4056
 				continue
 			else:
@@ -657,7 +657,7 @@ func local_4081(v0, v1) -> Variant:
 				_pc = 4427
 				continue
 		elif _pc == 4131:
-			if _pog_is_null(v2) and 150000.0 < sim.distance_between(v5, v0):
+			if sim.distance_between(v5, v0) < 150000.0 and _pog_is_null(v2):
 				_pc = 4173
 				continue
 			else:
@@ -674,7 +674,7 @@ func local_4081(v0, v1) -> Variant:
 			_pc = 4427
 			continue
 		elif _pc == 4358:
-			if 1 == v2 and 150000.0 > sim.distance_between(v5, v0):
+			if sim.distance_between(v5, v0) > 150000.0 and v2 == 1:
 				_pc = 4400
 				continue
 			else:
@@ -820,14 +820,14 @@ func local_5653(v0, v1) -> Variant:
 				_pc = 6646
 				continue
 		elif _pc == 5857:
-			if 5 < state.progress(v1) and _pog_eq(v5, sim.group(v8)):
+			if _pog_eq(sim.group(v8), v5) and state.progress(v1) < 5:
 				_pc = 5908
 				continue
 			else:
 				_pc = 6144
 				continue
 		elif _pc == 5908:
-			if 3 >= state.progress(v1) and not (await iutilities.player_in_range(v8)):
+			if not (await iutilities.player_in_range(v8)) and state.progress(v1) >= 3:
 				_pc = 5954
 				continue
 			else:
@@ -845,7 +845,7 @@ func local_5653(v0, v1) -> Variant:
 			_pc = 7315
 			continue
 		elif _pc == 6144:
-			if 4 != state.progress(v1) and 5 < state.progress(v1) and not _pog_eq(v5, sim.group(v8)):
+			if not _pog_eq(sim.group(v8), v5) and state.progress(v1) < 5 and state.progress(v1) != 4:
 				_pc = 6217
 				continue
 			else:
@@ -859,7 +859,7 @@ func local_5653(v0, v1) -> Variant:
 			_pc = 6646
 			continue
 		elif _pc == 6326:
-			if 4 != state.progress(v1) and 5 < state.progress(v1) and _pog_is_null(group.sim_count(v6)):
+			if _pog_is_null(group.sim_count(v6)) and state.progress(v1) < 5 and state.progress(v1) != 4:
 				_pc = 6395
 				continue
 			else:
@@ -885,7 +885,7 @@ func local_5653(v0, v1) -> Variant:
 				_pc = 7308
 				continue
 		elif _pc == 6659:
-			if 3 < state.progress(v1) and not (v2) and await iutilities.player_in_range(v0):
+			if await iutilities.player_in_range(v0) and not (v2) and state.progress(v1) < 3:
 				_pc = 6711
 				continue
 			else:
@@ -906,7 +906,7 @@ func local_5653(v0, v1) -> Variant:
 			_pc = 7308
 			continue
 		elif _pc == 7003:
-			if 9000.0 < sim.distance_between(v8, v7) and not (v3) and v4 and v2:
+			if v2 and v4 and not (v3) and sim.distance_between(v8, v7) < 9000.0:
 				_pc = 7056
 				continue
 			else:
@@ -920,7 +920,7 @@ func local_5653(v0, v1) -> Variant:
 			_pc = 7143
 			continue
 		elif _pc == 7143:
-			if 9000.0 < sim.distance_between(v8, v7) and not (v4) and v2:
+			if v2 and not (v4) and sim.distance_between(v8, v7) < 9000.0:
 				_pc = 7190
 				continue
 			else:
@@ -932,7 +932,7 @@ func local_5653(v0, v1) -> Variant:
 			_pc = 7229
 			continue
 		elif _pc == 7229:
-			if _pog_eq(v7, iship.cast(isim.last_attacker(v8))) and not (v3) and v2:
+			if v2 and not (v3) and _pog_eq(iship.cast(isim.last_attacker(v8)), v7):
 				_pc = 7284
 				continue
 			else:
@@ -989,7 +989,7 @@ func local_7317(v0, v1) -> Variant:
 				_pc = 7983
 				continue
 		elif _pc == 7417:
-			if 5 < state.progress(v1) and _pog_eq(v4, sim.group(v7)) and v2:
+			if v2 and _pog_eq(sim.group(v7), v4) and state.progress(v1) < 5:
 				_pc = 7474
 				continue
 			else:
@@ -1008,7 +1008,7 @@ func local_7317(v0, v1) -> Variant:
 			_pc = 7525
 			continue
 		elif _pc == 7525:
-			if 5 < state.progress(v1) and not _pog_eq(v4, sim.group(v7)):
+			if not _pog_eq(sim.group(v7), v4) and state.progress(v1) < 5:
 				_pc = 7576
 				continue
 			else:
@@ -1022,7 +1022,7 @@ func local_7317(v0, v1) -> Variant:
 			_pc = 7983
 			continue
 		elif _pc == 7685:
-			if 5 < state.progress(v1) and _pog_is_null(group.sim_count(v5)):
+			if _pog_is_null(group.sim_count(v5)) and state.progress(v1) < 5:
 				_pc = 7732
 				continue
 			else:
@@ -1048,7 +1048,7 @@ func local_7317(v0, v1) -> Variant:
 				_pc = 8409
 				continue
 		elif _pc == 7996:
-			if await iutilities.player_in_range(v0) and not (v2):
+			if not (v2) and await iutilities.player_in_range(v0):
 				_pc = 8026
 				continue
 			else:
@@ -1067,7 +1067,7 @@ func local_7317(v0, v1) -> Variant:
 			_pc = 8409
 			continue
 		elif _pc == 8275:
-			if not (v3) and 12000.0 < sim.distance_between(v7, v6) and v2:
+			if v2 and sim.distance_between(v7, v6) < 12000.0 and not (v3):
 				_pc = 8322
 				continue
 			else:
@@ -1190,7 +1190,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 9150:
 			v6 = _pog_spawn(local_4081.bind(v2, v9))
-			if 5 == state.progress(v9):
+			if state.progress(v9) == 5:
 				_pc = 9205
 				continue
 			else:
@@ -1216,7 +1216,7 @@ func mission_handler() -> Variant:
 				_pc = 9534
 				continue
 		elif _pc == 9396:
-			if not (v0) and 2 == state.progress(v9):
+			if state.progress(v9) == 2 and not (v0):
 				_pc = 9429
 				continue
 			else:
@@ -1228,7 +1228,7 @@ func mission_handler() -> Variant:
 			_pc = 9465
 			continue
 		elif _pc == 9465:
-			if not (v1) and 4 == state.progress(v9):
+			if state.progress(v9) == 4 and not (v1):
 				_pc = 9498
 				continue
 			else:
@@ -1247,14 +1247,14 @@ func mission_handler() -> Variant:
 				_pc = 10082
 				continue
 		elif _pc == 9547:
-			if 100 == state.progress(v9) or 6 == state.progress(v9):
+			if state.progress(v9) == 6 or state.progress(v9) == 100:
 				_pc = 9595
 				continue
 			else:
 				_pc = 10082
 				continue
 		elif _pc == 9595:
-			if 6 == state.progress(v9):
+			if state.progress(v9) == 6:
 				_pc = 9621
 				continue
 			else:
@@ -1267,7 +1267,7 @@ func mission_handler() -> Variant:
 		elif _pc == 9648:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_386.bind()))
-			if 4.0 == ifaction.feeling(v11, v12):
+			if ifaction.feeling(v11, v12) == 4.0:
 				_pc = 9733
 				continue
 			else:

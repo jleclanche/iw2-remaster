@@ -39,12 +39,12 @@ func local_0(v0, v1, v2, v3) -> Variant:
 			v10 = 0.0
 			v4 = group.sim_count(v0)
 			v7 = await iutilities.get_largest_ship_radius(v0)
-			v7 = v1 + 2.0 * v7
+			v7 = v7 * 2.0 + v1
 			v5 = 0
 			_pc = 112
 			continue
 		elif _pc == 112:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 128
 				continue
 			else:
@@ -63,14 +63,14 @@ func local_0(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 174:
 			v11 = group.nth_sim(v0, v5)
-			if 1 == v6:
+			if v6 == 1:
 				_pc = 215
 				continue
 			else:
 				_pc = 321
 				continue
 		elif _pc == 215:
-			if 0.0 < v9:
+			if v9 < 0.0:
 				_pc = 231
 				continue
 			else:
@@ -81,7 +81,7 @@ func local_0(v0, v1, v2, v3) -> Variant:
 			_pc = 243
 			continue
 		elif _pc == 243:
-			v9 = v7 + v9
+			v9 = v9 + v7
 			v6 = 0
 			if v3:
 				_pc = 277
@@ -90,11 +90,11 @@ func local_0(v0, v1, v2, v3) -> Variant:
 				_pc = 299
 				continue
 		elif _pc == 277:
-			v10 = v7 - v10
+			v10 = v10 - v7
 			_pc = 316
 			continue
 		elif _pc == 299:
-			v10 = v7 + v10
+			v10 = v10 + v7
 			_pc = 316
 			continue
 		elif _pc == 316:
@@ -134,7 +134,7 @@ func local_0(v0, v1, v2, v3) -> Variant:
 			_pc = 584
 			continue
 		elif _pc == 584:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 112
 			continue
 		elif _pc == 602:
@@ -180,12 +180,12 @@ func wedge(v0, v1, v2) -> Variant:
 			v10 = 0.0
 			v3 = group.sim_count(v0)
 			v8 = await iutilities.get_largest_ship_radius(v0)
-			v8 = v1 + 2.0 * v8
+			v8 = v8 * 2.0 + v1
 			v4 = 0
 			_pc = 837
 			continue
 		elif _pc == 837:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 853
 				continue
 			else:
@@ -211,20 +211,20 @@ func wedge(v0, v1, v2) -> Variant:
 				_pc = 986
 				continue
 		elif _pc == 940:
-			v10 = v8 - v10
+			v10 = v10 - v8
 			v9 = 0.0
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 1100
 			continue
 		elif _pc == 986:
-			if 1 == v6:
+			if v6 == 1:
 				_pc = 998
 				continue
 			else:
 				_pc = 1068
 				continue
 		elif _pc == 998:
-			if 0.0 < v9:
+			if v9 < 0.0:
 				_pc = 1014
 				continue
 			else:
@@ -235,15 +235,15 @@ func wedge(v0, v1, v2) -> Variant:
 			_pc = 1026
 			continue
 		elif _pc == 1026:
-			v9 = v8 + v9
+			v9 = v9 + v8
 			v6 = 0
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 1100
 			continue
 		elif _pc == 1068:
 			v9 = -(v9)
 			v6 = 1
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 1100
 			continue
 		elif _pc == 1100:
@@ -275,19 +275,19 @@ func wedge(v0, v1, v2) -> Variant:
 			_pc = 1321
 			continue
 		elif _pc == 1321:
-			if _pog_eq(v7, v5):
+			if _pog_eq(v5, v7):
 				_pc = 1337
 				continue
 			else:
 				_pc = 1358
 				continue
 		elif _pc == 1337:
-			v7 = 2 + v7
+			v7 = v7 + 2
 			v5 = 0
 			_pc = 1358
 			continue
 		elif _pc == 1358:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 837
 			continue
 		elif _pc == 1376:
@@ -313,12 +313,12 @@ func line_abreast(v0, v1, v2) -> Variant:
 			v8 = 0.0
 			v3 = group.sim_count(v0)
 			v6 = await iutilities.get_largest_ship_radius(v0)
-			v6 = v1 + 2.0 * v6
+			v6 = v6 * 2.0 + v1
 			v4 = 0
 			_pc = 1480
 			continue
 		elif _pc == 1480:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 1496
 				continue
 			else:
@@ -337,14 +337,14 @@ func line_abreast(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 1555:
 			v9 = group.nth_sim(v0, v4)
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 1596
 				continue
 			else:
 				_pc = 1653
 				continue
 		elif _pc == 1596:
-			if 0.0 < v8:
+			if v8 < 0.0:
 				_pc = 1612
 				continue
 			else:
@@ -355,7 +355,7 @@ func line_abreast(v0, v1, v2) -> Variant:
 			_pc = 1624
 			continue
 		elif _pc == 1624:
-			v8 = v6 + v8
+			v8 = v8 + v6
 			v5 = 0
 			_pc = 1672
 			continue
@@ -393,7 +393,7 @@ func line_abreast(v0, v1, v2) -> Variant:
 			_pc = 1893
 			continue
 		elif _pc == 1893:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1480
 			continue
 		elif _pc == 1911:
@@ -417,12 +417,12 @@ func line_ahead(v0, v1, v2) -> Variant:
 			v7 = 0.0
 			v3 = group.sim_count(v0)
 			v5 = await iutilities.get_largest_ship_radius(v0)
-			v5 = v1 + 2.0 * v5
+			v5 = v5 * 2.0 + v1
 			v4 = 0
 			_pc = 2008
 			continue
 		elif _pc == 2008:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 2024
 				continue
 			else:
@@ -441,7 +441,7 @@ func line_ahead(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 2070:
 			v8 = group.nth_sim(v0, v4)
-			v7 = v5 - v7
+			v7 = v7 - v5
 			if v2:
 				_pc = 2126
 				continue
@@ -470,7 +470,7 @@ func line_ahead(v0, v1, v2) -> Variant:
 			_pc = 2337
 			continue
 		elif _pc == 2337:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 2008
 			continue
 		elif _pc == 2355:
@@ -503,7 +503,7 @@ func parade(v0, v1, v2) -> Variant:
 			v13 = 0.0
 			v3 = group.sim_count(v0)
 			v13 = await iutilities.get_largest_ship_radius(v0)
-			v13 = v1 + 2.0 * v13
+			v13 = v13 * 2.0 + v1
 			v9 = v3
 			v10 = math.pog_sqrt(v9)
 			v4 = v10
@@ -511,7 +511,7 @@ func parade(v0, v1, v2) -> Variant:
 			_pc = 2529
 			continue
 		elif _pc == 2529:
-			if v3 < v6:
+			if v6 < v3:
 				_pc = 2545
 				continue
 			else:
@@ -526,12 +526,12 @@ func parade(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 2557:
 			v15 = group.nth_sim(v0, v6)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 2940
 			continue
 		elif _pc == 2604:
 			v14 = group.nth_sim(v0, v6)
-			if _pog_eq(v4, v8):
+			if _pog_eq(v8, v4):
 				_pc = 2649
 				continue
 			else:
@@ -539,13 +539,13 @@ func parade(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 2649:
 			v11 = 0.0
-			v12 = v13 - v12
+			v12 = v12 - v13
 			v8 = 1
 			_pc = 2719
 			continue
 		elif _pc == 2689:
-			v11 = v13 + v11
-			v8 = 1 + v8
+			v11 = v11 + v13
+			v8 = v8 + 1
 			_pc = 2719
 			continue
 		elif _pc == 2719:
@@ -577,7 +577,7 @@ func parade(v0, v1, v2) -> Variant:
 			_pc = 2940
 			continue
 		elif _pc == 2940:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 2529
 			continue
 		elif _pc == 2958:
@@ -611,14 +611,14 @@ func skirmish_line(v0, v1, v2) -> Variant:
 			v12 = 0.0
 			v3 = group.sim_count(v0)
 			v7 = await iutilities.get_largest_ship_radius(v0)
-			v7 = v1 + 2.0 * v7
+			v7 = v7 * 2.0 + v1
 			v12 = -(v7)
 			v11 = v12
 			v4 = 0
 			_pc = 3125
 			continue
 		elif _pc == 3125:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 3141
 				continue
 			else:
@@ -637,14 +637,14 @@ func skirmish_line(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 3187:
 			v13 = group.nth_sim(v0, v4)
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 3228
 				continue
 			else:
 				_pc = 3298
 				continue
 		elif _pc == 3228:
-			if 0.0 < v10:
+			if v10 < 0.0:
 				_pc = 3244
 				continue
 			else:
@@ -655,15 +655,15 @@ func skirmish_line(v0, v1, v2) -> Variant:
 			_pc = 3256
 			continue
 		elif _pc == 3256:
-			v10 = v7 + v10
+			v10 = v10 + v7
 			v5 = 0
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 3330
 			continue
 		elif _pc == 3298:
 			v10 = -(v10)
 			v5 = 1
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 3330
 			continue
 		elif _pc == 3330:
@@ -695,7 +695,7 @@ func skirmish_line(v0, v1, v2) -> Variant:
 			_pc = 3551
 			continue
 		elif _pc == 3551:
-			if 2 == v6:
+			if v6 == 2:
 				_pc = 3564
 				continue
 			else:
@@ -718,7 +718,7 @@ func skirmish_line(v0, v1, v2) -> Variant:
 			_pc = 3614
 			continue
 		elif _pc == 3614:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 3125
 			continue
 		elif _pc == 3632:
@@ -741,7 +741,7 @@ func cross(v0, v1, v2) -> Variant:
 		if _pc == 3635:
 			v3 = group.sim_count(v0)
 			v4 = 1
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 3683
 				continue
 			else:
@@ -752,14 +752,14 @@ func cross(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 3688:
 			v10 = group.nth_sim(v0, 0)
-			v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			v8 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
 			_pc = 3749
 			continue
 		elif _pc == 3749:
-			v5 = 1.0 + v5
+			v5 = v5 + 1.0
 			v9 = group.nth_sim(v0, v4)
-			v6 = v8 * v5
-			v7 = v8 * v5
+			v6 = v5 * v8
+			v7 = v5 * v8
 			if v2:
 				_pc = 3839
 				continue
@@ -786,8 +786,8 @@ func cross(v0, v1, v2) -> Variant:
 			_pc = 4023
 			continue
 		elif _pc == 4023:
-			v4 = 1 + v4
-			if v3 < v4:
+			v4 = v4 + 1
+			if v4 < v3:
 				_pc = 4052
 				continue
 			else:
@@ -795,8 +795,8 @@ func cross(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 4052:
 			v9 = group.nth_sim(v0, v4)
-			v6 = v8 * v5
-			v7 = -(v8 * v5)
+			v6 = v5 * v8
+			v7 = -(v5 * v8)
 			if v2:
 				_pc = 4126
 				continue
@@ -823,8 +823,8 @@ func cross(v0, v1, v2) -> Variant:
 			_pc = 4310
 			continue
 		elif _pc == 4310:
-			v4 = 1 + v4
-			if v3 < v4:
+			v4 = v4 + 1
+			if v4 < v3:
 				_pc = 4339
 				continue
 			else:
@@ -832,8 +832,8 @@ func cross(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 4339:
 			v9 = group.nth_sim(v0, v4)
-			v6 = -(v8 * v5)
-			v7 = v8 * v5
+			v6 = -(v5 * v8)
+			v7 = v5 * v8
 			if v2:
 				_pc = 4413
 				continue
@@ -860,8 +860,8 @@ func cross(v0, v1, v2) -> Variant:
 			_pc = 4597
 			continue
 		elif _pc == 4597:
-			v4 = 1 + v4
-			if v3 < v4:
+			v4 = v4 + 1
+			if v4 < v3:
 				_pc = 4626
 				continue
 			else:
@@ -869,8 +869,8 @@ func cross(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 4626:
 			v9 = group.nth_sim(v0, v4)
-			v6 = -(v8 * v5)
-			v7 = -(v8 * v5)
+			v6 = -(v5 * v8)
+			v7 = -(v5 * v8)
 			if v2:
 				_pc = 4701
 				continue
@@ -897,11 +897,11 @@ func cross(v0, v1, v2) -> Variant:
 			_pc = 4885
 			continue
 		elif _pc == 4885:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 4898
 			continue
 		elif _pc == 4898:
-			if v3 >= v4:
+			if v4 >= v3:
 				_pc = 4914
 				continue
 			else:
@@ -932,7 +932,7 @@ func impi(v0, v1, v2) -> Variant:
 			v3 = group.sim_count(v0)
 			v4 = 1
 			v7 = 10.0
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 4979
 				continue
 			else:
@@ -943,19 +943,19 @@ func impi(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 4984:
 			v10 = group.nth_sim(v0, 0)
-			v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			v8 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
 			_pc = 5045
 			continue
 		elif _pc == 5045:
-			v5 = 1.0 + v5
-			if 4.0 < v5:
+			v5 = v5 + 1.0
+			if v5 < 4.0:
 				_pc = 5078
 				continue
 			else:
 				_pc = 5100
 				continue
 		elif _pc == 5078:
-			v7 = v5 * v7
+			v7 = v7 * v5
 			_pc = 5117
 			continue
 		elif _pc == 5100:
@@ -964,7 +964,7 @@ func impi(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 5117:
 			v9 = group.nth_sim(v0, v4)
-			v6 = v1 + v8 * v5
+			v6 = v5 * v8 + v1
 			if v2:
 				_pc = 5179
 				continue
@@ -991,8 +991,8 @@ func impi(v0, v1, v2) -> Variant:
 			_pc = 5363
 			continue
 		elif _pc == 5363:
-			v4 = 1 + v4
-			if v3 < v4:
+			v4 = v4 + 1
+			if v4 < v3:
 				_pc = 5392
 				continue
 			else:
@@ -1000,7 +1000,7 @@ func impi(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 5392:
 			v9 = group.nth_sim(v0, v4)
-			v6 = -(v8 * v5)
+			v6 = -(v5 * v8)
 			if v2:
 				_pc = 5449
 				continue
@@ -1027,11 +1027,11 @@ func impi(v0, v1, v2) -> Variant:
 			_pc = 5633
 			continue
 		elif _pc == 5633:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 5646
 			continue
 		elif _pc == 5646:
-			if v3 >= v4:
+			if v4 >= v3:
 				_pc = 5662
 				continue
 			else:
@@ -1056,7 +1056,7 @@ func outrider(v0, v1, v2) -> Variant:
 	while true:
 		if _pc == 5665:
 			v3 = group.sim_count(v0)
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 5706
 				continue
 			else:
@@ -1067,12 +1067,12 @@ func outrider(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 5711:
 			v10 = group.nth_sim(v0, 0)
-			v4 = 2 / 1 - v3
-			v8 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			v4 = v3 - 1 / 2
+			v8 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
 			_pc = 5788
 			continue
 		elif _pc == 5788:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			v9 = group.nth_sim(v0, v5)
 			if v2:
 				_pc = 5840
@@ -1081,7 +1081,7 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 5971
 				continue
 		elif _pc == 5840:
-			sim.place_relative_to(v9, v10, v7, 0.0, 10.0 + v8)
+			sim.place_relative_to(v9, v10, v7, 0.0, v8 + 10.0)
 			if iship.cast(v9):
 				_pc = 5908
 				continue
@@ -1089,26 +1089,26 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 5966
 				continue
 		elif _pc == 5908:
-			iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, 10.0 + v8)
+			iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, v8 + 10.0)
 			_pc = 5966
 			continue
 		elif _pc == 5966:
 			_pc = 6042
 			continue
 		elif _pc == 5971:
-			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, 10.0 + v8)
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, v8 + 10.0)
 			_pc = 6042
 			continue
 		elif _pc == 6042:
-			v7 = v8 + v7
-			if v4 <= 1 + v5:
+			v7 = v7 + v8
+			if v5 + 1 <= v4:
 				_pc = 6077
 				continue
 			else:
 				_pc = 6334
 				continue
 		elif _pc == 6077:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			v9 = group.nth_sim(v0, v5)
 			if v2:
 				_pc = 6129
@@ -1117,7 +1117,7 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 6262
 				continue
 		elif _pc == 6129:
-			sim.place_relative_to(v9, v10, -(v7), 0.0, 10.0 + v8)
+			sim.place_relative_to(v9, v10, -(v7), 0.0, v8 + 10.0)
 			if iship.cast(v9):
 				_pc = 6198
 				continue
@@ -1125,18 +1125,18 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 6257
 				continue
 		elif _pc == 6198:
-			iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, 10.0 + v8)
+			iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, v8 + 10.0)
 			_pc = 6257
 			continue
 		elif _pc == 6257:
 			_pc = 6334
 			continue
 		elif _pc == 6262:
-			iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, 10.0 + v8)
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, v8 + 10.0)
 			_pc = 6334
 			continue
 		elif _pc == 6334:
-			if v4 >= v5:
+			if v5 >= v4:
 				_pc = 6350
 				continue
 			else:
@@ -1147,7 +1147,7 @@ func outrider(v0, v1, v2) -> Variant:
 			_pc = 6361
 			continue
 		elif _pc == 6361:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			v9 = group.nth_sim(v0, v5)
 			if v2:
 				_pc = 6413
@@ -1156,7 +1156,7 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 6546
 				continue
 		elif _pc == 6413:
-			sim.place_relative_to(v9, v10, v7, 0.0, -(10.0 + v8))
+			sim.place_relative_to(v9, v10, v7, 0.0, -(v8 + 10.0))
 			if iship.cast(v9):
 				_pc = 6482
 				continue
@@ -1164,26 +1164,26 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 6541
 				continue
 		elif _pc == 6482:
-			iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, -(10.0 + v8))
+			iai.give_formate_order(iship.cast(v9), v10, v7, 0.0, -(v8 + 10.0))
 			_pc = 6541
 			continue
 		elif _pc == 6541:
 			_pc = 6618
 			continue
 		elif _pc == 6546:
-			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, -(10.0 + v8))
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), v7, 0.0, -(v8 + 10.0))
 			_pc = 6618
 			continue
 		elif _pc == 6618:
-			v7 = v8 + v7
-			if 1 - v3 <= 1 + v5:
+			v7 = v7 + v8
+			if v5 + 1 <= v3 - 1:
 				_pc = 6655
 				continue
 			else:
 				_pc = 6915
 				continue
 		elif _pc == 6655:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			v9 = group.nth_sim(v0, v5)
 			if v2:
 				_pc = 6707
@@ -1192,7 +1192,7 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 6842
 				continue
 		elif _pc == 6707:
-			sim.place_relative_to(v9, v10, -(v7), 0.0, -(10.0 + v8))
+			sim.place_relative_to(v9, v10, -(v7), 0.0, -(v8 + 10.0))
 			if iship.cast(v9):
 				_pc = 6777
 				continue
@@ -1200,18 +1200,18 @@ func outrider(v0, v1, v2) -> Variant:
 				_pc = 6837
 				continue
 		elif _pc == 6777:
-			iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, -(10.0 + v8))
+			iai.give_formate_order(iship.cast(v9), v10, -(v7), 0.0, -(v8 + 10.0))
 			_pc = 6837
 			continue
 		elif _pc == 6837:
 			_pc = 6915
 			continue
 		elif _pc == 6842:
-			iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, -(10.0 + v8))
+			iai.give_formate_order(iship.cast(v9), iship.cast(v10), -(v7), 0.0, -(v8 + 10.0))
 			_pc = 6915
 			continue
 		elif _pc == 6915:
-			if 1 - v3 >= v5:
+			if v5 >= v3 - 1:
 				_pc = 6933
 				continue
 			else:
@@ -1238,12 +1238,12 @@ func line_astern(v0, v1, v2) -> Variant:
 			v7 = 0.0
 			v3 = group.sim_count(v0)
 			v5 = await iutilities.get_largest_ship_radius(v0)
-			v5 = v1 + 2.0 * v5
+			v5 = v5 * 2.0 + v1
 			v4 = 0
 			_pc = 7030
 			continue
 		elif _pc == 7030:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 7046
 				continue
 			else:
@@ -1262,7 +1262,7 @@ func line_astern(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 7092:
 			v8 = group.nth_sim(v0, v4)
-			v7 = v5 + v7
+			v7 = v7 + v5
 			if v2:
 				_pc = 7148
 				continue
@@ -1290,7 +1290,7 @@ func line_astern(v0, v1, v2) -> Variant:
 			_pc = 7348
 			continue
 		elif _pc == 7348:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 7030
 			continue
 		elif _pc == 7366:
@@ -1327,7 +1327,7 @@ func box(v0, v1, v2) -> Variant:
 			v15 = 0.0
 			v3 = group.sim_count(v0)
 			v15 = await iutilities.get_largest_ship_radius(v0)
-			v15 = v1 + 2.0 * v15
+			v15 = v15 * 2.0 + v1
 			v10 = v3
 			v11 = math.cube_root(v10)
 			v4 = v11
@@ -1335,7 +1335,7 @@ func box(v0, v1, v2) -> Variant:
 			_pc = 7558
 			continue
 		elif _pc == 7558:
-			if v3 < v6:
+			if v6 < v3:
 				_pc = 7574
 				continue
 			else:
@@ -1350,12 +1350,12 @@ func box(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 7586:
 			v17 = group.nth_sim(v0, v6)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 8022
 			continue
 		elif _pc == 7633:
 			v16 = group.nth_sim(v0, v6)
-			if _pog_eq(v4, v8):
+			if _pog_eq(v8, v4):
 				_pc = 7678
 				continue
 			else:
@@ -1363,18 +1363,18 @@ func box(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 7678:
 			v12 = 0.0
-			v13 = v15 - v13
+			v13 = v13 - v15
 			v8 = 1
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 7761
 			continue
 		elif _pc == 7731:
-			v12 = v15 + v12
-			v8 = 1 + v8
+			v12 = v12 + v15
+			v8 = v8 + 1
 			_pc = 7761
 			continue
 		elif _pc == 7761:
-			if _pog_eq(v4, v9):
+			if _pog_eq(v9, v4):
 				_pc = 7777
 				continue
 			else:
@@ -1383,7 +1383,7 @@ func box(v0, v1, v2) -> Variant:
 		elif _pc == 7777:
 			v9 = 0
 			v13 = 0.0
-			v14 = v15 - v14
+			v14 = v14 - v15
 			_pc = 7812
 			continue
 		elif _pc == 7812:
@@ -1414,7 +1414,7 @@ func box(v0, v1, v2) -> Variant:
 			_pc = 8022
 			continue
 		elif _pc == 8022:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 7558
 			continue
 		elif _pc == 8040:
@@ -1439,7 +1439,7 @@ func claw(v0, v1, v2) -> Variant:
 			v3 = group.sim_count(v0)
 			v4 = 1
 			v8 = 10.0
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 8102
 				continue
 			else:
@@ -1450,19 +1450,19 @@ func claw(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 8107:
 			v11 = group.nth_sim(v0, 0)
-			v9 = v1 + await iutilities.get_largest_ship_radius(v0) * 2.0
+			v9 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
 			_pc = 8168
 			continue
 		elif _pc == 8168:
-			v5 = 1.0 + v5
-			if 4.0 < v5:
+			v5 = v5 + 1.0
+			if v5 < 4.0:
 				_pc = 8201
 				continue
 			else:
 				_pc = 8223
 				continue
 		elif _pc == 8201:
-			v8 = v5 * v8
+			v8 = v8 * v5
 			_pc = 8240
 			continue
 		elif _pc == 8223:
@@ -1471,8 +1471,8 @@ func claw(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 8240:
 			v10 = group.nth_sim(v0, v4)
-			v6 = v1 + v9 * v5
-			v7 = v1 + v9 * v5
+			v6 = v5 * v9 + v1
+			v7 = v5 * v9 + v1
 			if v2:
 				_pc = 8325
 				continue
@@ -1499,8 +1499,8 @@ func claw(v0, v1, v2) -> Variant:
 			_pc = 8509
 			continue
 		elif _pc == 8509:
-			v4 = 1 + v4
-			if v3 < v4:
+			v4 = v4 + 1
+			if v4 < v3:
 				_pc = 8538
 				continue
 			else:
@@ -1508,8 +1508,8 @@ func claw(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 8538:
 			v10 = group.nth_sim(v0, v4)
-			v6 = v9 * v5
-			v7 = -(v9 * v5)
+			v6 = v5 * v9
+			v7 = -(v5 * v9)
 			if v2:
 				_pc = 8612
 				continue
@@ -1536,8 +1536,8 @@ func claw(v0, v1, v2) -> Variant:
 			_pc = 8796
 			continue
 		elif _pc == 8796:
-			v4 = 1 + v4
-			if v3 < v4:
+			v4 = v4 + 1
+			if v4 < v3:
 				_pc = 8825
 				continue
 			else:
@@ -1545,8 +1545,8 @@ func claw(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 8825:
 			v10 = group.nth_sim(v0, v4)
-			v6 = -(v9 * v5)
-			v7 = v9 * v5
+			v6 = -(v5 * v9)
+			v7 = v5 * v9
 			if v2:
 				_pc = 8899
 				continue
@@ -1573,8 +1573,8 @@ func claw(v0, v1, v2) -> Variant:
 			_pc = 9083
 			continue
 		elif _pc == 9083:
-			v4 = 1 + v4
-			if v3 < v4:
+			v4 = v4 + 1
+			if v4 < v3:
 				_pc = 9112
 				continue
 			else:
@@ -1582,8 +1582,8 @@ func claw(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 9112:
 			v10 = group.nth_sim(v0, v4)
-			v6 = -(v9 * v5)
-			v7 = -(v9 * v5)
+			v6 = -(v5 * v9)
+			v7 = -(v5 * v9)
 			if v2:
 				_pc = 9187
 				continue
@@ -1610,11 +1610,11 @@ func claw(v0, v1, v2) -> Variant:
 			_pc = 9371
 			continue
 		elif _pc == 9371:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 9384
 			continue
 		elif _pc == 9384:
-			if v3 >= v4:
+			if v4 >= v3:
 				_pc = 9400
 				continue
 			else:
@@ -1650,7 +1650,7 @@ func wall(v0, v1, v2) -> Variant:
 			v13 = 0.0
 			v3 = group.sim_count(v0)
 			v13 = await iutilities.get_largest_ship_radius(v0)
-			v13 = v1 + 2.0 * v13
+			v13 = v13 * 2.0 + v1
 			v9 = v3
 			v10 = math.pog_sqrt(v9)
 			v4 = v10
@@ -1658,7 +1658,7 @@ func wall(v0, v1, v2) -> Variant:
 			_pc = 9574
 			continue
 		elif _pc == 9574:
-			if v3 < v6:
+			if v6 < v3:
 				_pc = 9590
 				continue
 			else:
@@ -1673,12 +1673,12 @@ func wall(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 9602:
 			v15 = group.nth_sim(v0, v6)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 9974
 			continue
 		elif _pc == 9649:
 			v14 = group.nth_sim(v0, v6)
-			if _pog_eq(v4, v8):
+			if _pog_eq(v8, v4):
 				_pc = 9694
 				continue
 			else:
@@ -1686,13 +1686,13 @@ func wall(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 9694:
 			v11 = 0.0
-			v12 = v13 - v12
+			v12 = v12 - v13
 			v8 = 1
 			_pc = 9764
 			continue
 		elif _pc == 9734:
-			v11 = v13 + v11
-			v8 = 1 + v8
+			v11 = v11 + v13
+			v8 = v8 + 1
 			_pc = 9764
 			continue
 		elif _pc == 9764:
@@ -1723,7 +1723,7 @@ func wall(v0, v1, v2) -> Variant:
 			_pc = 9974
 			continue
 		elif _pc == 9974:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 9574
 			continue
 		elif _pc == 9992:
@@ -1753,52 +1753,52 @@ func random_rectangle(v0, v1, v2) -> Variant:
 			_pc = 10087
 			continue
 		elif _pc == 10087:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			v5 = math.random(1.0, 3.0)
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 10142
 				continue
 			else:
 				_pc = 10182
 				continue
 		elif _pc == 10142:
-			v7 = math.random(v6, v1 + v6)
+			v7 = math.random(v6, v6 + v1)
 			_pc = 10218
 			continue
 		elif _pc == 10182:
-			v7 = -(math.random(v6, v1 + v6))
+			v7 = -(math.random(v6, v6 + v1))
 			_pc = 10218
 			continue
 		elif _pc == 10218:
 			v5 = math.random(1.0, 3.0)
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 10260
 				continue
 			else:
 				_pc = 10300
 				continue
 		elif _pc == 10260:
-			v8 = math.random(v6, v1 + v6)
+			v8 = math.random(v6, v6 + v1)
 			_pc = 10336
 			continue
 		elif _pc == 10300:
-			v8 = -(math.random(v6, v1 + v6))
+			v8 = -(math.random(v6, v6 + v1))
 			_pc = 10336
 			continue
 		elif _pc == 10336:
 			v5 = math.random(1.0, 3.0)
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 10378
 				continue
 			else:
 				_pc = 10418
 				continue
 		elif _pc == 10378:
-			v9 = math.random(v6, v1 + v6)
+			v9 = math.random(v6, v6 + v1)
 			_pc = 10454
 			continue
 		elif _pc == 10418:
-			v9 = -(math.random(v6, v1 + v6))
+			v9 = -(math.random(v6, v6 + v1))
 			_pc = 10454
 			continue
 		elif _pc == 10454:
@@ -1829,7 +1829,7 @@ func random_rectangle(v0, v1, v2) -> Variant:
 			_pc = 10677
 			continue
 		elif _pc == 10677:
-			if 1 - v4 >= v3:
+			if v3 >= v4 - 1:
 				_pc = 10695
 				continue
 			else:
@@ -1862,9 +1862,9 @@ func random_sphere(v0, v1, v2) -> Variant:
 			_pc = 10790
 			continue
 		elif _pc == 10790:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			v10 = math.random(0.0, 1.0)
-			v10 = v1 * v10 * v10 - 1.0
+			v10 = 1.0 - v10 * v10 * v1
 			v12 = group.nth_sim(v0, v3)
 			if v2:
 				_pc = 10900
@@ -1892,7 +1892,7 @@ func random_sphere(v0, v1, v2) -> Variant:
 			_pc = 11074
 			continue
 		elif _pc == 11074:
-			if 1 - v4 >= v3:
+			if v3 >= v4 - 1:
 				_pc = 11092
 				continue
 			else:
@@ -1922,12 +1922,12 @@ func stack() -> Variant:
 			v7 = 0.0
 			v3 = group.sim_count(v0)
 			v5 = await iutilities.get_largest_ship_radius(v0)
-			v5 = v1 + 2.0 * v5
+			v5 = v5 * 2.0 + v1
 			v4 = 0
 			_pc = 11189
 			continue
 		elif _pc == 11189:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 11205
 				continue
 			else:
@@ -1946,7 +1946,7 @@ func stack() -> Variant:
 			continue
 		elif _pc == 11251:
 			v8 = group.nth_sim(v0, v4)
-			v7 = v5 - v7
+			v7 = v7 - v5
 			if v2:
 				_pc = 11307
 				continue
@@ -1975,7 +1975,7 @@ func stack() -> Variant:
 			_pc = 11518
 			continue
 		elif _pc == 11518:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 11189
 			continue
 		elif _pc == 11536:
@@ -2045,7 +2045,7 @@ func apply_random_rotation(v0) -> Variant:
 			_pc = 11825
 			continue
 		elif _pc == 11825:
-			if v1 < v2:
+			if v2 < v1:
 				_pc = 11841
 				continue
 			else:
@@ -2056,7 +2056,7 @@ func apply_random_rotation(v0) -> Variant:
 			v4 = math.random(0.0, 360.0)
 			v5 = math.random(0.0, 360.0)
 			sim.set_angular_velocity_euler(group.nth_sim(v0, v2), v3, v4, v5)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 11825
 			continue
 		elif _pc == 11998:
@@ -2076,7 +2076,7 @@ func jiggle(v0, v1, v2) -> Variant:
 	while true:
 		if _pc == 12001:
 			v3 = group.sim_count(v0)
-			if 1 < v3:
+			if v3 < 1:
 				_pc = 12042
 				continue
 			else:
@@ -2086,7 +2086,7 @@ func jiggle(v0, v1, v2) -> Variant:
 			_pc = 12354
 			continue
 		elif _pc == 12047:
-			if 1.0 < v2 and 1.0 < v1:
+			if v1 < 1.0 and v2 < 1.0:
 				_pc = 12075
 				continue
 			else:
@@ -2100,7 +2100,7 @@ func jiggle(v0, v1, v2) -> Variant:
 			_pc = 12087
 			continue
 		elif _pc == 12087:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 12103
 				continue
 			else:
@@ -2108,7 +2108,7 @@ func jiggle(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 12103:
 			v8 = group.nth_sim(v0, v4)
-			if 0.0 > v1:
+			if v1 > 0.0:
 				_pc = 12148
 				continue
 			else:
@@ -2119,7 +2119,7 @@ func jiggle(v0, v1, v2) -> Variant:
 			_pc = 12196
 			continue
 		elif _pc == 12196:
-			if 0.0 > v2:
+			if v2 > 0.0:
 				_pc = 12212
 				continue
 			else:
@@ -2133,7 +2133,7 @@ func jiggle(v0, v1, v2) -> Variant:
 			_pc = 12336
 			continue
 		elif _pc == 12336:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 12087
 			continue
 		elif _pc == 12354:

@@ -145,11 +145,11 @@ func local_658() -> Variant:
 	return 0
 	v1 = group.create()
 	v3 = 0
-	while 5 < v3:
+	while v3 < 5:
 		v2 = await iutilities.create_waypoint_near(v0, math.random(4000.0, 5000.0))
 		await iutilities.make_waypoint_visible(v2, 1, "a0_m10_name_other")
 		group.add_sim(v1, v2)
-		v3 = 1 + v3
+		v3 = v3 + 1
 	return v1
 	return 0
 
@@ -174,7 +174,7 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 			ihud.set_prompt("", "")
 			await _pog_wait(1.0)
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_contact_list_more")
-			v8 = await iutilities.create_waypoint_near(v1, 4500.0 + object.float_property(v1, "radius"))
+			v8 = await iutilities.create_waypoint_near(v1, object.float_property(v1, "radius") + 4500.0)
 			await iutilities.make_waypoint_visible(v8, 1, "a0_m10_name_waypoint")
 			ihud.set_prompt("", "")
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_now_select")
@@ -190,7 +190,7 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 				_pc = 1917
 				continue
 		elif _pc == 1800:
-			if 100 == state.progress(v3):
+			if state.progress(v3) == 100:
 				_pc = 1826
 				continue
 			else:
@@ -202,7 +202,7 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 			_pc = 3662
 			continue
 		elif _pc == 1870:
-			if _pog_eq(isim.cast(v8), iship.current_target(v0)):
+			if _pog_eq(iship.current_target(v0), isim.cast(v8)):
 				_pc = 1912
 				continue
 			else:
@@ -228,7 +228,7 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 				_pc = 2230
 				continue
 		elif _pc == 1990:
-			if 100 == state.progress(v3):
+			if state.progress(v3) == 100:
 				_pc = 2016
 				continue
 			else:
@@ -240,7 +240,7 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 			_pc = 3662
 			continue
 		elif _pc == 2060:
-			if 500.0 + iai.inner_marker_radius(isim.cast(v8), v0) < sim.distance_between(v0, v8):
+			if sim.distance_between(v0, v8) < iai.inner_marker_radius(isim.cast(v8), v0) + 500.0:
 				_pc = 2131
 				continue
 			else:
@@ -306,7 +306,7 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 2471:
 			await _pog_wait(1.0)
-			if 2 == iai.current_order_type(v0):
+			if iai.current_order_type(v0) == 2:
 				_pc = 2529
 				continue
 			else:
@@ -351,7 +351,7 @@ func local_1276(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 2813:
 			await _pog_wait(1.0)
-			if 3 == iai.current_order_type(v0):
+			if iai.current_order_type(v0) == 3:
 				_pc = 2871
 				continue
 			else:
@@ -452,7 +452,7 @@ func local_3664(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 3792:
 			await _pog_wait(0.5)
-			if _pog_eq("hud_menu_map", ihud.current_menu_node()):
+			if _pog_eq(ihud.current_menu_node(), "hud_menu_map"):
 				_pc = 3852
 				continue
 			else:
@@ -468,7 +468,7 @@ func local_3664(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 3977:
 			await _pog_wait(0.5)
-			if _pog_eq(object.string_property(v1, "name"), object.string_property(iship.current_target(v0), "name")):
+			if _pog_eq(object.string_property(iship.current_target(v0), "name"), object.string_property(v1, "name")):
 				_pc = 4080
 				continue
 			else:
@@ -491,7 +491,7 @@ func local_3664(v0, v1, v2) -> Variant:
 				_pc = 4600
 				continue
 		elif _pc == 4238:
-			if not (v3) and iship.is_in_l_d_s(v0) and 2 == iai.current_order_type(v0) or 3 == iai.current_order_type(v0):
+			if iai.current_order_type(v0) == 3 or iai.current_order_type(v0) == 2 and iship.is_in_l_d_s(v0) and not (v3):
 				_pc = 4312
 				continue
 			else:
@@ -503,7 +503,7 @@ func local_3664(v0, v1, v2) -> Variant:
 			_pc = 4347
 			continue
 		elif _pc == 4347:
-			if not (global.exists("g_training_disabled")) and 25000.0 > sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) > 25000.0 and not (global.exists("g_training_disabled")):
 				_pc = 4403
 				continue
 			else:
@@ -514,7 +514,7 @@ func local_3664(v0, v1, v2) -> Variant:
 			_pc = 4426
 			continue
 		elif _pc == 4426:
-			if 50.0 + iai.inner_marker_radius(isim.cast(v1), v0) < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < iai.inner_marker_radius(isim.cast(v1), v0) + 50.0:
 				_pc = 4497
 				continue
 			else:
@@ -616,7 +616,7 @@ func local_4839(v0, v1) -> Variant:
 			_pc = 5154
 			continue
 		elif _pc == 5154:
-			if v1 < v4:
+			if v4 < v1:
 				_pc = 5170
 				continue
 			else:
@@ -657,7 +657,7 @@ func local_4839(v0, v1) -> Variant:
 			sim.set_angular_velocity(v3, math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(5.0, 20.0))
 			isim.set_sensor_visibility(isim.cast(v3), 0)
 			group.add_sim(v2, v3)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 5154
 			continue
 		elif _pc == 5606:
@@ -688,7 +688,7 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 5729:
 			await _pog_wait(1.0)
-			if _pog_eq(object.string_property(v7, "name"), object.string_property(iship.current_target(v0), "name")):
+			if _pog_eq(object.string_property(iship.current_target(v0), "name"), object.string_property(v7, "name")):
 				_pc = 5832
 				continue
 			else:
@@ -708,7 +708,7 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 				_pc = 6060
 				continue
 		elif _pc == 5920:
-			if 25000.0 < sim.distance_between(v0, v7):
+			if sim.distance_between(v0, v7) < 25000.0:
 				_pc = 5954
 				continue
 			else:
@@ -725,7 +725,7 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 			_pc = 5906
 			continue
 		elif _pc == 6065:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			v8 = await local_4608(v7, v2, 0.10000000149011612)
 			iobjectives.add("a0_m10_objectives_follow_waypoints")
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_im_bringing")
@@ -764,16 +764,16 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 			_pc = 6996
 			continue
 		elif _pc == 6530:
-			if 500.0 + iai.inner_marker_radius(isim.cast(v8), v0) < sim.distance_between(v8, v0):
+			if sim.distance_between(v8, v0) < iai.inner_marker_radius(isim.cast(v8), v0) + 500.0:
 				_pc = 6601
 				continue
 			else:
 				_pc = 6996
 				continue
 		elif _pc == 6601:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			sim.destroy(v8)
-			if 3 <= v4:
+			if v4 <= 3:
 				_pc = 6646
 				continue
 			else:
@@ -781,7 +781,7 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 6646:
 			v8 = await local_4608(v7, v2, v6)
-			v9 = await local_4839(v8, 2 * v4 + 3)
+			v9 = await local_4839(v8, 3 + v4 * 2)
 			await iutilities.make_waypoint_visible(v8, 1, string.join("a0_m10_name_other_waypoint+ +", string.from_int(v4)))
 			_pc = 6917
 			continue
@@ -834,7 +834,7 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 				_pc = 6879
 				continue
 		elif _pc == 6967:
-			v6 = 0.30000001192092896 + v6
+			v6 = v6 + 0.30000001192092896
 			_pc = 6996
 			continue
 		elif _pc == 6989:
@@ -915,7 +915,7 @@ func mission_handler() -> Variant:
 				_pc = 7854
 				continue
 		elif _pc == 7679:
-			if not (v1) and 2 == state.progress(v9):
+			if state.progress(v9) == 2 and not (v1):
 				_pc = 7712
 				continue
 			else:
@@ -927,7 +927,7 @@ func mission_handler() -> Variant:
 			_pc = 7753
 			continue
 		elif _pc == 7753:
-			if not (v0) and 1 == state.progress(v9):
+			if state.progress(v9) == 1 and not (v0):
 				_pc = 7785
 				continue
 			else:
@@ -947,14 +947,14 @@ func mission_handler() -> Variant:
 				_pc = 8522
 				continue
 		elif _pc == 7867:
-			if 100 == state.progress(v9) or 8 == state.progress(v9):
+			if state.progress(v9) == 8 or state.progress(v9) == 100:
 				_pc = 7915
 				continue
 			else:
 				_pc = 8522
 				continue
 		elif _pc == 7915:
-			if 100 != state.progress(v9):
+			if state.progress(v9) != 100:
 				_pc = 7941
 				continue
 			else:

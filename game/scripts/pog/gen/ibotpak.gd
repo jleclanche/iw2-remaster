@@ -54,18 +54,18 @@ func local_0(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 23:
 			v3 = inifile.numbered_string(v0, v1, v2, v4, "moo")
-			if not _pog_eq("moo", v3):
+			if not _pog_eq(v3, "moo"):
 				_pc = 89
 				continue
 			else:
 				_pc = 102
 				continue
 		elif _pc == 89:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 102
 			continue
 		elif _pc == 102:
-			if _pog_eq("moo", v3):
+			if _pog_eq(v3, "moo"):
 				_pc = 121
 				continue
 			else:
@@ -170,7 +170,7 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 895
 			continue
 		elif _pc == 895:
-			if v1 < v13:
+			if v13 < v1:
 				_pc = 911
 				continue
 			else:
@@ -215,14 +215,14 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 			object.add_int_property(v7, "frag_count", 0)
 			object.add_int_property(v7, "bot_deaths", 0)
 			group.add_sim(v6, v7)
-			if 1 - v12 < v11:
+			if v11 < v12 - 1:
 				_pc = 1457
 				continue
 			else:
 				_pc = 1475
 				continue
 		elif _pc == 1457:
-			v11 = 1 + v11
+			v11 = v11 + 1
 			_pc = 1482
 			continue
 		elif _pc == 1475:
@@ -230,7 +230,7 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 1482
 			continue
 		elif _pc == 1482:
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 895
 			continue
 		elif _pc == 1500:
@@ -273,7 +273,7 @@ func assign_game_type(v0, v1) -> Variant:
 			_pc = 1736
 			continue
 		elif _pc == 1642:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 1654
 				continue
 			else:
@@ -284,7 +284,7 @@ func assign_game_type(v0, v1) -> Variant:
 			_pc = 1736
 			continue
 		elif _pc == 1691:
-			if 2 == v1:
+			if v1 == 2:
 				_pc = 1704
 				continue
 			else:
@@ -304,7 +304,7 @@ func assign_game_type(v0, v1) -> Variant:
 			_pc = 1796
 			continue
 		elif _pc == 1796:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 1812
 				continue
 			else:
@@ -323,7 +323,7 @@ func assign_game_type(v0, v1) -> Variant:
 			_pc = 1997
 			continue
 		elif _pc == 1903:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 1915
 				continue
 			else:
@@ -334,7 +334,7 @@ func assign_game_type(v0, v1) -> Variant:
 			_pc = 1997
 			continue
 		elif _pc == 1952:
-			if 2 == v1:
+			if v1 == 2:
 				_pc = 1965
 				continue
 			else:
@@ -345,7 +345,7 @@ func assign_game_type(v0, v1) -> Variant:
 			_pc = 1997
 			continue
 		elif _pc == 1997:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 1796
 			continue
 		elif _pc == 2015:
@@ -367,7 +367,7 @@ func local_2018(v0, v1) -> Variant:
 			continue
 		elif _pc == 2058:
 			v3 = isim.cast(p_set.first_element(v0))
-			if not (object.property_exists(v3, "poo")) and 0.0 <= ifaction.feeling(isim.faction(v1), isim.faction(v3)):
+			if ifaction.feeling(isim.faction(v1), isim.faction(v3)) <= 0.0 and not (object.property_exists(v3, "poo")):
 				_pc = 2182
 				continue
 			else:
@@ -414,42 +414,42 @@ func local_2303(v0, v1) -> Variant:
 			_pc = 2376
 			continue
 		elif _pc == 2376:
-			if 1 - v4 < v5:
+			if v5 < v4 - 1:
 				_pc = 2394
 				continue
 			else:
 				_pc = 2685
 				continue
 		elif _pc == 2394:
-			v6 = 1 - v4
+			v6 = v4 - 1
 			_pc = 2407
 			continue
 		elif _pc == 2407:
-			if v6 < v5:
+			if v5 < v6:
 				_pc = 2423
 				continue
 			else:
 				_pc = 2667
 				continue
 		elif _pc == 2423:
-			if sim.distance_between(v1, sim.cast(list.get_nth(v2, v6))) < sim.distance_between(v1, sim.cast(list.get_nth(v2, 1 - v6))):
+			if sim.distance_between(v1, sim.cast(list.get_nth(v2, v6 - 1))) < sim.distance_between(v1, sim.cast(list.get_nth(v2, v6))):
 				_pc = 2539
 				continue
 			else:
 				_pc = 2648
 				continue
 		elif _pc == 2539:
-			v3 = list.get_nth(v2, 1 - v6)
-			list.set_nth(v2, 1 - v6, list.get_nth(v2, v6))
+			v3 = list.get_nth(v2, v6 - 1)
+			list.set_nth(v2, v6 - 1, list.get_nth(v2, v6))
 			list.set_nth(v2, v6, v3)
 			_pc = 2648
 			continue
 		elif _pc == 2648:
-			v6 = -1 + v6
+			v6 = v6 + -1
 			_pc = 2407
 			continue
 		elif _pc == 2667:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 2376
 			continue
 		elif _pc == 2685:
@@ -471,14 +471,14 @@ func local_2705(v0) -> Variant:
 			v1 = null
 			v1 = list.sort_by_int_property(v0, "frag_count")
 			v2 = list.item_count(v1)
-			if 2 > v2:
+			if v2 > 2:
 				_pc = 2790
 				continue
 			else:
 				_pc = 2953
 				continue
 		elif _pc == 2790:
-			if 5 > object.int_property(list.get_nth(v1, 2 - v2), "frag_count") - object.int_property(list.get_nth(v1, 1 - v2), "frag_count"):
+			if object.int_property(list.get_nth(v1, v2 - 1), "frag_count") - object.int_property(list.get_nth(v1, v2 - 2), "frag_count") > 5:
 				_pc = 2889
 				continue
 			else:
@@ -489,7 +489,7 @@ func local_2705(v0) -> Variant:
 			_pc = 2948
 			continue
 		elif _pc == 2901:
-			if 3 > v2:
+			if v2 > 3:
 				_pc = 2914
 				continue
 			else:
@@ -500,7 +500,7 @@ func local_2705(v0) -> Variant:
 			_pc = 2948
 			continue
 		elif _pc == 2927:
-			if 2 > v2:
+			if v2 > 2:
 				_pc = 2940
 				continue
 			else:
@@ -518,7 +518,7 @@ func local_2705(v0) -> Variant:
 			_pc = 2960
 			continue
 		elif _pc == 2960:
-			iship.cast(list.get_nth(v1, math.random_int(1, v3) - v2))
+			iship.cast(list.get_nth(v1, v2 - math.random_int(1, v3)))
 			_pc = 3021
 			continue
 		elif _pc == 3021:
@@ -543,7 +543,7 @@ func local_3030(v0, v1, v2) -> Variant:
 			p_set.remove(v3, v0)
 			v3 = await local_2018(v3, v0)
 			v4 = await local_2303(v3, v0)
-			if 0.6000000238418579 >= iship.pilot_skill_level(v0):
+			if iship.pilot_skill_level(v0) >= 0.6000000238418579:
 				_pc = 3216
 				continue
 			else:
@@ -554,7 +554,7 @@ func local_3030(v0, v1, v2) -> Variant:
 			_pc = 3248
 			continue
 		elif _pc == 3248:
-			if 0.800000011920929 >= iship.pilot_skill_level(v0):
+			if iship.pilot_skill_level(v0) >= 0.800000011920929:
 				_pc = 3277
 				continue
 			else:
@@ -569,7 +569,7 @@ func local_3030(v0, v1, v2) -> Variant:
 			_pc = 3344
 			continue
 		elif _pc == 3344:
-			if object.property_exists(v5, "mp_spawn_time") and v5:
+			if v5 and object.property_exists(v5, "mp_spawn_time"):
 				_pc = 3381
 				continue
 			else:
@@ -577,7 +577,7 @@ func local_3030(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 3381:
 			v8 = object.int_property(v5, "mp_spawn_time")
-			if 10000 + v8 > igame.system_time():
+			if igame.system_time() > v8 + 10000:
 				_pc = 3440
 				continue
 			else:
@@ -639,7 +639,7 @@ func local_3530(v0, v1, v2) -> Variant:
 			_pc = 3663
 			continue
 		elif _pc == 3663:
-			if v5 < v7:
+			if v7 < v5:
 				_pc = 3679
 				continue
 			else:
@@ -647,7 +647,7 @@ func local_3530(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 3679:
 			v4 = sim.cast(list.get_nth(v3, v7))
-			if 800.0 < sim.distance_between(v2, v4):
+			if sim.distance_between(v2, v4) < 800.0:
 				_pc = 3755
 				continue
 			else:
@@ -672,7 +672,7 @@ func local_3530(v0, v1, v2) -> Variant:
 			_pc = 3842
 			continue
 		elif _pc == 3812:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 3663
 			continue
 		elif _pc == 3830:
@@ -738,7 +738,7 @@ func local_3851(v0) -> Variant:
 				continue
 		elif _pc == 4095:
 			v5 = iship.cast(iship.last_attacker(v0))
-			if 5000.0 > sim.distance_between(v4, v0) or not (iai.has_order(v0)) or isim.is_dying(v4):
+			if isim.is_dying(v4) or not (iai.has_order(v0)) or sim.distance_between(v4, v0) > 5000.0:
 				_pc = 4205
 				continue
 			else:
@@ -769,7 +769,7 @@ func local_3851(v0) -> Variant:
 			_pc = 4486
 			continue
 		elif _pc == 4369:
-			if sim.is_hidden(v6) or not (sim.cast(v6)):
+			if not (sim.cast(v6)) or sim.is_hidden(v6):
 				_pc = 4412
 				continue
 			else:
@@ -779,7 +779,7 @@ func local_3851(v0) -> Variant:
 			_pc = 4486
 			continue
 		elif _pc == 4425:
-			if not (sim.is_hidden(v6)) and 20.0 < sim.distance_between_centres(v0, v6):
+			if sim.distance_between_centres(v0, v6) < 20.0 and not (sim.is_hidden(v6)):
 				_pc = 4479
 				continue
 			else:
@@ -790,14 +790,14 @@ func local_3851(v0) -> Variant:
 			_pc = 4486
 			continue
 		elif _pc == 4486:
-			if v1 or not _pog_eq(v5, v4) and not _pog_is_null(v5):
+			if not _pog_is_null(v5) and not _pog_eq(v4, v5) or v1:
 				_pc = 4517
 				continue
 			else:
 				_pc = 4607
 				continue
 		elif _pc == 4517:
-			if object.float_property(v0, "hit_points") > object.float_property(v5, "hit_points"):
+			if object.float_property(v5, "hit_points") > object.float_property(v0, "hit_points"):
 				_pc = 4572
 				continue
 			else:
@@ -937,7 +937,7 @@ func local_4772(v0) -> Variant:
 				continue
 		elif _pc == 5346:
 			v9 = iship.cast(iship.last_attacker(v0))
-			if 5000.0 > sim.distance_between(v8, v0) or not (iai.has_order(v0)) or isim.is_dying(v8):
+			if isim.is_dying(v8) or not (iai.has_order(v0)) or sim.distance_between(v8, v0) > 5000.0:
 				_pc = 5456
 				continue
 			else:
@@ -968,7 +968,7 @@ func local_4772(v0) -> Variant:
 			_pc = 5737
 			continue
 		elif _pc == 5620:
-			if sim.is_hidden(v10) or not (sim.cast(v10)):
+			if not (sim.cast(v10)) or sim.is_hidden(v10):
 				_pc = 5663
 				continue
 			else:
@@ -978,7 +978,7 @@ func local_4772(v0) -> Variant:
 			_pc = 5737
 			continue
 		elif _pc == 5676:
-			if not (sim.is_hidden(v10)) and 20.0 < sim.distance_between_centres(v0, v10):
+			if sim.distance_between_centres(v0, v10) < 20.0 and not (sim.is_hidden(v10)):
 				_pc = 5730
 				continue
 			else:
@@ -989,14 +989,14 @@ func local_4772(v0) -> Variant:
 			_pc = 5737
 			continue
 		elif _pc == 5737:
-			if v1 or not _pog_eq(v9, v8) and not _pog_is_null(v9):
+			if not _pog_is_null(v9) and not _pog_eq(v8, v9) or v1:
 				_pc = 5768
 				continue
 			else:
 				_pc = 5858
 				continue
 		elif _pc == 5768:
-			if object.float_property(v0, "hit_points") > object.float_property(v9, "hit_points"):
+			if object.float_property(v9, "hit_points") > object.float_property(v0, "hit_points"):
 				_pc = 5823
 				continue
 			else:
@@ -1012,7 +1012,7 @@ func local_4772(v0) -> Variant:
 			continue
 		elif _pc == 5863:
 			v8 = iship.cast(sim.parent(v5))
-			if v2 and not _pog_is_null(v8):
+			if not _pog_is_null(v8) and v2:
 				_pc = 5919
 				continue
 			else:
@@ -1035,7 +1035,7 @@ func local_4772(v0) -> Variant:
 				_pc = 6146
 				continue
 		elif _pc == 5975:
-			if _pog_is_null(global.pog_bool(v7)) and not (v1):
+			if not (v1) and _pog_is_null(global.pog_bool(v7)):
 				_pc = 6007
 				continue
 			else:
@@ -1043,7 +1043,7 @@ func local_4772(v0) -> Variant:
 				continue
 		elif _pc == 6007:
 			v10 = await local_3530(v3, v4, v0)
-			if not (v1) and not _pog_is_null(sim.cast(v10)):
+			if not _pog_is_null(sim.cast(v10)) and not (v1):
 				_pc = 6076
 				continue
 			else:
@@ -1105,8 +1105,8 @@ func local_6162(v0, v1, v2) -> Variant:
 			_pc = 6430
 			continue
 		elif _pc == 6395:
-			v7 = 1 + v7
-			if v6 >= v7:
+			v7 = v7 + 1
+			if v7 >= v6:
 				_pc = 6424
 				continue
 			else:
@@ -1150,7 +1150,7 @@ func local_6446(v0) -> Variant:
 				_pc = 7474
 				continue
 		elif _pc == 6555:
-			if 0 > list.item_count(imultiplay.server_player_list()):
+			if list.item_count(imultiplay.server_player_list()) > 0:
 				_pc = 6590
 				continue
 			else:
@@ -1164,14 +1164,14 @@ func local_6446(v0) -> Variant:
 				_pc = 7326
 				continue
 		elif _pc == 6614:
-			if not _pog_eq(v0, iship.cast(global.handle("g_ship_with_bomb"))) or not (global.exists("g_ship_with_bomb")):
+			if not (global.exists("g_ship_with_bomb")) or not _pog_eq(iship.cast(global.handle("g_ship_with_bomb")), v0):
 				_pc = 6679
 				continue
 			else:
 				_pc = 7040
 				continue
 		elif _pc == 6679:
-			if 20.0 < global.pog_float("g_time_to_detonation"):
+			if global.pog_float("g_time_to_detonation") < 20.0:
 				_pc = 6710
 				continue
 			else:
@@ -1194,7 +1194,7 @@ func local_6446(v0) -> Variant:
 			_pc = 7035
 			continue
 		elif _pc == 6798:
-			if global.exists("g_bomb") and not (global.exists("g_ship_with_bomb")):
+			if not (global.exists("g_ship_with_bomb")) and global.exists("g_bomb"):
 				_pc = 6844
 				continue
 			else:
@@ -1217,7 +1217,7 @@ func local_6446(v0) -> Variant:
 			_pc = 7035
 			continue
 		elif _pc == 6937:
-			if not (v2) and global.exists("g_ship_with_bomb"):
+			if global.exists("g_ship_with_bomb") and not (v2):
 				_pc = 6969
 				continue
 			else:
@@ -1233,7 +1233,7 @@ func local_6446(v0) -> Variant:
 			_pc = 7321
 			continue
 		elif _pc == 7040:
-			if 20.0 < global.pog_float("g_time_to_detonation"):
+			if global.pog_float("g_time_to_detonation") < 20.0:
 				_pc = 7071
 				continue
 			else:
@@ -1241,7 +1241,7 @@ func local_6446(v0) -> Variant:
 				continue
 		elif _pc == 7071:
 			v9 = await local_6162(v0, v4, v5)
-			if not (iai.has_order(v0)) or not _pog_eq(v8, v9):
+			if not _pog_eq(v9, v8) or not (iai.has_order(v0)):
 				_pc = 7141
 				continue
 			else:
@@ -1257,7 +1257,7 @@ func local_6446(v0) -> Variant:
 			continue
 		elif _pc == 7192:
 			v9 = await local_6162(v0, v4, v5)
-			if not _pog_eq(v8, v9):
+			if not _pog_eq(v9, v8):
 				_pc = 7242
 				continue
 			else:
@@ -1289,7 +1289,7 @@ func local_6446(v0) -> Variant:
 			_pc = 7443
 			continue
 		elif _pc == 7326:
-			if sim.is_hidden(v6) or not (sim.cast(v6)):
+			if not (sim.cast(v6)) or sim.is_hidden(v6):
 				_pc = 7369
 				continue
 			else:
@@ -1299,7 +1299,7 @@ func local_6446(v0) -> Variant:
 			_pc = 7443
 			continue
 		elif _pc == 7382:
-			if not (sim.is_hidden(v6)) and 20.0 < sim.distance_between_centres(v0, v6):
+			if sim.distance_between_centres(v0, v6) < 20.0 and not (sim.is_hidden(v6)):
 				_pc = 7436
 				continue
 			else:
@@ -1335,7 +1335,7 @@ func local_6446(v0) -> Variant:
 				continue
 		elif _pc == 7498:
 			v6 = await local_3530(v4, v5, v0)
-			if not (v3) and not _pog_is_null(sim.cast(v6)):
+			if not _pog_is_null(sim.cast(v6)) and not (v3):
 				_pc = 7567
 				continue
 			else:

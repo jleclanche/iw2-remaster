@@ -188,14 +188,14 @@ func local_608(v0, v1, v2) -> Variant:
 			_pc = 1662
 			continue
 		elif _pc == 865:
-			if _pog_is_null(v3) and sim.is_alive(v6):
+			if sim.is_alive(v6) and _pog_is_null(v3):
 				_pc = 896
 				continue
 			else:
 				_pc = 1657
 				continue
 		elif _pc == 896:
-			if 2500.0 <= sim.distance_between(v8, v6):
+			if sim.distance_between(v8, v6) <= 2500.0:
 				_pc = 930
 				continue
 			else:
@@ -241,7 +241,7 @@ func local_608(v0, v1, v2) -> Variant:
 			_pc = 1657
 			continue
 		elif _pc == 1635:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 1648
 				continue
 			else:
@@ -295,7 +295,7 @@ func local_1691(v0) -> Variant:
 				_pc = 2455
 				continue
 		elif _pc == 1806:
-			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 1833
 				continue
 			else:
@@ -342,7 +342,7 @@ func local_1691(v0) -> Variant:
 			_pc = 2455
 			continue
 		elif _pc == 2191:
-			if 250000.0 <= sim.distance_between(v1, v4):
+			if sim.distance_between(v1, v4) <= 250000.0:
 				_pc = 2225
 				continue
 			else:
@@ -444,7 +444,7 @@ func local_2464(v0) -> Variant:
 				continue
 		elif _pc == 2873:
 			v4 = iship.find_player_ship()
-			if 300000.0 <= sim.distance_between(v4, v1):
+			if sim.distance_between(v4, v1) <= 300000.0:
 				_pc = 2926
 				continue
 			else:
@@ -611,14 +611,14 @@ func local_4386(v0, v1, v2) -> Variant:
 				_pc = 5432
 				continue
 		elif _pc == 4531:
-			if _pog_is_null(v5) and sim.cast(v3):
+			if sim.cast(v3) and _pog_is_null(v5):
 				_pc = 4563
 				continue
 			else:
 				_pc = 5432
 				continue
 		elif _pc == 4563:
-			if 300000.0 <= sim.distance_between(v4, v3):
+			if sim.distance_between(v4, v3) <= 300000.0:
 				_pc = 4597
 				continue
 			else:
@@ -637,14 +637,14 @@ func local_4386(v0, v1, v2) -> Variant:
 			_pc = 4644
 			continue
 		elif _pc == 4644:
-			if 25000.0 <= sim.distance_between(v4, v3):
+			if sim.distance_between(v4, v3) <= 25000.0:
 				_pc = 4678
 				continue
 			else:
 				_pc = 5432
 				continue
 		elif _pc == 4678:
-			if not (p_set.is_empty(isim.sims_in_radius_of_faction(isim.cast(v3), 5000.0, ifaction.find("Player")))) or not _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())) or iship.has_fired(v4) or 5000.0 < sim.distance_between(v4, v3):
+			if sim.distance_between(v4, v3) < 5000.0 or iship.has_fired(v4) or not _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())) or not (p_set.is_empty(isim.sims_in_radius_of_faction(isim.cast(v3), 5000.0, ifaction.find("Player")))):
 				_pc = 4833
 				continue
 			else:
@@ -664,21 +664,21 @@ func local_4386(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 4890:
 			ihud.play_audio_cue(5)
-			if 1 >= v7:
+			if v7 >= 1:
 				_pc = 4918
 				continue
 			else:
 				_pc = 5419
 				continue
 		elif _pc == 4918:
-			if 10 >= v7:
+			if v7 >= 10:
 				_pc = 4931
 				continue
 			else:
 				_pc = 5331
 				continue
 		elif _pc == 4931:
-			if 25 >= v7:
+			if v7 >= 25:
 				_pc = 4944
 				continue
 			else:
@@ -700,7 +700,7 @@ func local_4386(v0, v1, v2) -> Variant:
 			_pc = 5313
 			continue
 		elif _pc == 5061:
-			if 15 == v7:
+			if v7 == 15:
 				_pc = 5074
 				continue
 			else:
@@ -719,14 +719,14 @@ func local_4386(v0, v1, v2) -> Variant:
 			_pc = 5313
 			continue
 		elif _pc == 5161:
-			if 15 > v7:
+			if v7 > 15:
 				_pc = 5174
 				continue
 			else:
 				_pc = 5255
 				continue
 		elif _pc == 5174:
-			if _pog_is_null(v6) and 5000.0 <= sim.distance_between(v8, v4):
+			if sim.distance_between(v8, v4) <= 5000.0 and _pog_is_null(v6):
 				_pc = 5216
 				continue
 			else:
@@ -738,7 +738,7 @@ func local_4386(v0, v1, v2) -> Variant:
 			_pc = 5255
 			continue
 		elif _pc == 5255:
-			if 35000.0 >= sim.distance_between(v8, v3):
+			if sim.distance_between(v8, v3) >= 35000.0:
 				_pc = 5289
 				continue
 			else:
@@ -749,11 +749,11 @@ func local_4386(v0, v1, v2) -> Variant:
 			_pc = 5313
 			continue
 		elif _pc == 5313:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5414
 			continue
 		elif _pc == 5331:
-			if 1 == v7:
+			if v7 == 1:
 				_pc = 5343
 				continue
 			else:
@@ -771,14 +771,14 @@ func local_4386(v0, v1, v2) -> Variant:
 			_pc = 5401
 			continue
 		elif _pc == 5401:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5414
 			continue
 		elif _pc == 5414:
 			_pc = 5432
 			continue
 		elif _pc == 5419:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5432
 			continue
 		elif _pc == 5432:
@@ -824,7 +824,7 @@ func local_5440(v0, v1) -> Variant:
 			_pc = 5654
 			continue
 		elif _pc == 5654:
-			if v5 < v4:
+			if v4 < v5:
 				_pc = 5670
 				continue
 			else:
@@ -835,7 +835,7 @@ func local_5440(v0, v1) -> Variant:
 			isim.set_sensor_visibility(isim.cast(group.nth_sim(v2, v4)), 0)
 			group.add_sim(v3, sim.create("ini:/sims/ships/utility/temp_cargopod", "a2_m10_waste"))
 			isim.set_sensor_visibility(isim.cast(group.nth_sim(v3, v4)), 0)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 5654
 			continue
 		elif _pc == 5880:
@@ -1046,7 +1046,7 @@ func local_7449(v0) -> Variant:
 				continue
 		elif _pc == 7629:
 			v3 = iship.find_player_ship()
-			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 7675
 				continue
 			else:
@@ -1080,7 +1080,7 @@ func local_7449(v0) -> Variant:
 			_pc = 7885
 			continue
 		elif _pc == 7885:
-			if 300000.0 <= sim.distance_between(v3, v1):
+			if sim.distance_between(v3, v1) <= 300000.0:
 				_pc = 7919
 				continue
 			else:
@@ -1202,7 +1202,7 @@ func local_9239(v0, v1, v2, v3) -> Variant:
 				_pc = 9767
 				continue
 		elif _pc == 9378:
-			if _pog_is_null(v4) and 2000.0 < sim.distance_between(v8, v2):
+			if sim.distance_between(v8, v2) < 2000.0 and _pog_is_null(v4):
 				_pc = 9420
 				continue
 			else:
@@ -1216,7 +1216,7 @@ func local_9239(v0, v1, v2, v3) -> Variant:
 			_pc = 9492
 			continue
 		elif _pc == 9492:
-			if (1 - _pog_is_running(v6)) and v4:
+			if v4 and (1 - _pog_is_running(v6)):
 				_pc = 9521
 				continue
 			else:
@@ -1238,7 +1238,7 @@ func local_9239(v0, v1, v2, v3) -> Variant:
 			_pc = 9547
 			continue
 		elif _pc == 9547:
-			if group.sim_count(v0) < v9:
+			if v9 < group.sim_count(v0):
 				_pc = 9576
 				continue
 			else:
@@ -1257,7 +1257,7 @@ func local_9239(v0, v1, v2, v3) -> Variant:
 			_pc = 9656
 			continue
 		elif _pc == 9656:
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 9547
 			continue
 		elif _pc == 9674:
@@ -1341,14 +1341,14 @@ func local_9901() -> Variant:
 				continue
 		elif _pc == 10278:
 			v3 = iship.find_player_ship()
-			if 300000.0 <= sim.distance_between(v3, v0):
+			if sim.distance_between(v3, v0) <= 300000.0:
 				_pc = 10331
 				continue
 			else:
 				_pc = 10457
 				continue
 		elif _pc == 10331:
-			if _pog_is_null(iship.cast(v4)) or _pog_is_null(v2):
+			if _pog_is_null(v2) or _pog_is_null(iship.cast(v4)):
 				_pc = 10365
 				continue
 			else:
@@ -1396,7 +1396,7 @@ func mission_handler() -> Variant:
 		if _pc == 10546:
 			v0 = iship.find_player_ship()
 			v1 = state.find(self)
-			if _pog_is_null(v1) and _pog_is_null(global.exists("g_grassy_knoll_going")):
+			if _pog_is_null(global.exists("g_grassy_knoll_going")) and _pog_is_null(v1):
 				_pc = 10638
 				continue
 			else:
@@ -1497,7 +1497,7 @@ func mission_handler() -> Variant:
 			_pc = 11198
 			continue
 		elif _pc == 11198:
-			if not _pog_is_null(sim.find_subsim_by_name(v0, "Cargo_LongRangeCannon")) or not _pog_is_null(iinventory.number_of_cargo_type(566)):
+			if not _pog_is_null(iinventory.number_of_cargo_type(566)) or not _pog_is_null(sim.find_subsim_by_name(v0, "Cargo_LongRangeCannon")):
 				_pc = 11250
 				continue
 			else:
@@ -1598,7 +1598,7 @@ func mission_handler() -> Variant:
 				_pc = 11583
 				continue
 		elif _pc == 11530:
-			if 100 == state.progress(v1) or 6 == state.progress(v1):
+			if state.progress(v1) == 6 or state.progress(v1) == 100:
 				_pc = 11578
 				continue
 			else:
@@ -1611,7 +1611,7 @@ func mission_handler() -> Variant:
 			_pc = 11516
 			continue
 		elif _pc == 11588:
-			if 6 == state.progress(v1):
+			if state.progress(v1) == 6:
 				_pc = 11615
 				continue
 			else:

@@ -61,7 +61,7 @@ func _link() -> void:
 	subsim = api.subsim
 
 func jafs_comment(v0) -> Variant:
-	if 1 == global.pog_int("g_jafs_comment"):
+	if global.pog_int("g_jafs_comment") == 1:
 		await iconversation.begin()
 		await iconversation.say(v0, "name_jafs", "jafs_comment_1")
 		await iconversation.say(v0, "name_jafs", "jafs_comment_2")
@@ -138,7 +138,7 @@ func local_176(v0) -> Variant:
 			_pc = 1090
 			continue
 		elif _pc == 489:
-			if 10000.0 < sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) < 10000.0:
 				_pc = 523
 				continue
 			else:
@@ -155,7 +155,7 @@ func local_176(v0) -> Variant:
 			_pc = 624
 			continue
 		elif _pc == 554:
-			if 300000.0 > sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) > 300000.0:
 				_pc = 588
 				continue
 			else:
@@ -175,7 +175,7 @@ func local_176(v0) -> Variant:
 			_pc = 407
 			continue
 		elif _pc == 624:
-			if not (idirector.is_busy()) and 20000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 20000.0 and not (idirector.is_busy()):
 				_pc = 674
 				continue
 			else:
@@ -274,7 +274,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 1348
 			continue
 		elif _pc == 1348:
-			if 0 > global.pog_int("g_jafs_comment"):
+			if global.pog_int("g_jafs_comment") > 0:
 				_pc = 1375
 				continue
 			else:
@@ -362,7 +362,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 1627
 			continue
 		elif _pc == 1859:
-			if not (isim.is_docked_to(v3, v0)) and isim.is_docked(v3):
+			if isim.is_docked(v3) and not (isim.is_docked_to(v3, v0)):
 				_pc = 1907
 				continue
 			else:
@@ -381,7 +381,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 1627
 			continue
 		elif _pc == 1983:
-			if v8 > sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) > v8:
 				_pc = 2017
 				continue
 			else:
@@ -461,7 +461,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 5409
 			continue
 		elif _pc == 2311:
-			if not (v10) and v14 < group.total_sim_count(v1):
+			if group.total_sim_count(v1) < v14 and not (v10):
 				_pc = 2347
 				continue
 			else:
@@ -474,7 +474,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 2382:
 			await _pog_wait(1.0)
-			if not (not (isim.is_docked(v3)) and sim.is_alive(v3) and sim.is_alive(v0) and 1 == v11):
+			if not (v11 == 1 and sim.is_alive(v0) and sim.is_alive(v3) and not (isim.is_docked(v3))):
 				_pc = 2484
 				continue
 			else:
@@ -516,7 +516,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 1627
 			continue
 		elif _pc == 2606:
-			if not (isim.is_docked_to(v3, v0)) and isim.is_docked(v3):
+			if isim.is_docked(v3) and not (isim.is_docked_to(v3, v0)):
 				_pc = 2654
 				continue
 			else:
@@ -595,7 +595,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 5409
 			continue
 		elif _pc == 3132:
-			if not (v10) and v14 < group.total_sim_count(v1):
+			if group.total_sim_count(v1) < v14 and not (v10):
 				_pc = 3168
 				continue
 			else:
@@ -607,7 +607,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 3203
 			continue
 		elif _pc == 3203:
-			if not (not (isim.is_docked(v3)) and sim.is_alive(v3) and not (iai.is_order_complete(v0))):
+			if not (not (iai.is_order_complete(v0)) and sim.is_alive(v3) and not (isim.is_docked(v3))):
 				_pc = 3266
 				continue
 			else:
@@ -649,7 +649,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 3627
 			continue
 		elif _pc == 3627:
-			v17 = 1 + v17
+			v17 = v17 + 1
 			v19 = await enable_pod_dockport(v3)
 			idockport.enable(idockport.cast(v18))
 			iai.give_dock_order_with_dockport(v19, v18)
@@ -658,7 +658,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			isim.set_mission_critical(v3, 0)
 			isim.set_faction(v3, v7)
 			await _pog_wait(2.0)
-			if 50000.0 < sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) < 50000.0:
 				_pc = 3882
 				continue
 			else:
@@ -666,7 +666,7 @@ func local_1092(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 3882:
 			v16 = math.random_int(0, 100)
-			if 30 < v16:
+			if v16 < 30:
 				_pc = 3917
 				continue
 			else:
@@ -674,7 +674,7 @@ func local_1092(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 3917:
 			v15 = icargo.value(icargo.find(object.int_property(v3, "cargo")))
-			if 1 <= v15:
+			if v15 <= 1:
 				_pc = 3986
 				continue
 			else:
@@ -685,7 +685,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 4107
 			continue
 		elif _pc == 4021:
-			if 7 < v15 and 1 > v15:
+			if v15 > 1 and v15 < 7:
 				_pc = 4042
 				continue
 			else:
@@ -719,7 +719,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 4167:
 			object.int_property(v3, "cargo")
-			if object.int_property(v3, "cargo") != 27:
+			if 27 != object.int_property(v3, "cargo"):
 				_pc = 4201
 				continue
 			else:
@@ -881,7 +881,7 @@ func local_1092(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 4399:
 			await _pog_wait(5.0)
-			if not (12 < group.sim_count(v5) and 0 > group.sim_count(v1)):
+			if not (group.sim_count(v1) > 0 and group.sim_count(v5) < 12):
 				_pc = 4478
 				continue
 			else:
@@ -946,7 +946,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 4666
 			continue
 		elif _pc == 4666:
-			if group.sim_count(v5) < v14:
+			if v14 < group.sim_count(v5):
 				_pc = 4695
 				continue
 			else:
@@ -954,7 +954,7 @@ func local_1092(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 4695:
 			v3 = iship.cast(group.nth_sim(v5, v14))
-			if not (v10) and v14 < group.total_sim_count(v1):
+			if group.total_sim_count(v1) < v14 and not (v10):
 				_pc = 4773
 				continue
 			else:
@@ -986,11 +986,11 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 4917
 			continue
 		elif _pc == 4917:
-			v14 = 1 + v14
+			v14 = v14 + 1
 			_pc = 4666
 			continue
 		elif _pc == 4935:
-			if 1 == v9:
+			if v9 == 1:
 				_pc = 4947
 				continue
 			else:
@@ -1127,7 +1127,7 @@ func collect_pods(v0) -> Variant:
 			continue
 		elif _pc == 5487:
 			v2 = group.nth_group(v1, 0)
-			if 1 == v0:
+			if v0 == 1:
 				_pc = 5524
 				continue
 			else:
@@ -1149,7 +1149,7 @@ func collect_pods(v0) -> Variant:
 			v5 = iship.cast(group.leader(v1))
 			group.add_sim(v2, v5)
 			await _pog_wait(0.009999999776482582)
-			if 0 <= group.sim_count(v1):
+			if group.sim_count(v1) <= 0:
 				_pc = 5724
 				continue
 			else:
@@ -1202,7 +1202,7 @@ func collect_pods(v0) -> Variant:
 			continue
 		elif _pc == 5942:
 			v5 = iship.cast(group.leader(v2))
-			if not _pog_is_null(object.int_property(v5, "cargo")) and object.property_exists(v5, "cargo"):
+			if object.property_exists(v5, "cargo") and not _pog_is_null(object.int_property(v5, "cargo")):
 				_pc = 6036
 				continue
 			else:
@@ -1221,7 +1221,7 @@ func collect_pods(v0) -> Variant:
 			iinventory.add(object.int_property(v5, "cargo"), 1)
 			iscore.add_piracy(object.int_property(v5, "cargo"), 1)
 			v7 = icargo.value(icargo.find(object.int_property(v5, "cargo")))
-			global.set_int("g_piracy_rating", v7 + global.pog_int("g_piracy_rating"))
+			global.set_int("g_piracy_rating", global.pog_int("g_piracy_rating") + v7)
 			_pc = 6402
 			continue
 		elif _pc == 6339:
@@ -1242,8 +1242,8 @@ func collect_pods(v0) -> Variant:
 			continue
 		elif _pc == 6433:
 			group.add_sim(v8, v5)
-			v3 = 1 + v3
-			if 0 <= group.sim_count(v2):
+			v3 = v3 + 1
+			if group.sim_count(v2) <= 0:
 				_pc = 6495
 				continue
 			else:
@@ -1433,7 +1433,7 @@ func local_8690() -> Variant:
 			continue
 		elif _pc == 9127:
 			v6 = isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
-			if await local_19034(v6, v3, 30000.0) and 30000.0 < sim.distance_between(v6, v1):
+			if sim.distance_between(v6, v1) < 30000.0 and await local_19034(v6, v3, 30000.0):
 				_pc = 9249
 				continue
 			else:
@@ -1470,7 +1470,7 @@ func local_8690() -> Variant:
 				_pc = 9487
 				continue
 		elif _pc == 9447:
-			if 1 == global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") == 1:
 				_pc = 9474
 				continue
 			else:
@@ -1960,7 +1960,7 @@ func pod_tag_toggle() -> Variant:
 			_pc = 12165
 			continue
 		elif _pc == 11643:
-			if 2048 != isim.type(v2):
+			if isim.type(v2) != 2048:
 				_pc = 11670
 				continue
 			else:
@@ -2056,7 +2056,7 @@ func pod_tag_toggle() -> Variant:
 			_pc = 12165
 			continue
 		elif _pc == 12083:
-			if not _pog_eq(v0, sim.group(v2)):
+			if not _pog_eq(sim.group(v2), v0):
 				_pc = 12112
 				continue
 			else:
@@ -2081,7 +2081,7 @@ func tag_pod(v0, v1) -> Variant:
 	var _pc: int = 12168
 	while true:
 		if _pc == 12168:
-			if 11 > group.sim_count(v0):
+			if group.sim_count(v0) > 11:
 				_pc = 12199
 				continue
 			else:
@@ -2370,7 +2370,7 @@ func tag_pods_in_f_o_v() -> Variant:
 			_pc = 13729
 			continue
 		elif _pc == 13729:
-			if list.item_count(v8) < v10:
+			if v10 < list.item_count(v8):
 				_pc = 13758
 				continue
 			else:
@@ -2399,7 +2399,7 @@ func tag_pods_in_f_o_v() -> Variant:
 			continue
 		elif _pc == 13834:
 			v2 = iship.cast(list.get_nth(v8, v10))
-			if _pog_is_null(v2) or sim.is_dead(v2):
+			if sim.is_dead(v2) or _pog_is_null(v2):
 				_pc = 13908
 				continue
 			else:
@@ -2512,7 +2512,7 @@ func tag_pods_in_f_o_v() -> Variant:
 			_pc = 14287
 			continue
 		elif _pc == 14287:
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 13729
 			continue
 		elif _pc == 14305:
@@ -2555,7 +2555,7 @@ func tag_pods_in_f_o_v() -> Variant:
 			_pc = 14448
 			continue
 		elif _pc == 14448:
-			if 1 == v10:
+			if v10 == 1:
 				_pc = 14460
 				continue
 			else:
@@ -2592,7 +2592,7 @@ func tag_pods_in_f_o_v() -> Variant:
 			_pc = 14638
 			continue
 		elif _pc == 14638:
-			if list.item_count(v9) < v10:
+			if v10 < list.item_count(v9):
 				_pc = 14667
 				continue
 			else:
@@ -2629,7 +2629,7 @@ func tag_pods_in_f_o_v() -> Variant:
 				continue
 		elif _pc == 14808:
 			v7 = sim.distance_between(v0, v2)
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 14853
 				continue
 			else:
@@ -2652,7 +2652,7 @@ func tag_pods_in_f_o_v() -> Variant:
 			_pc = 14917
 			continue
 		elif _pc == 14917:
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 14638
 			continue
 		elif _pc == 14935:
@@ -2679,7 +2679,7 @@ func tag_pods_in_f_o_v() -> Variant:
 		elif _pc == 15011:
 			list.remove(v9, v3)
 			await tag_pod(v1, v3)
-			if not (not _pog_is_null(list.item_count(v9)) and 12 < group.sim_count(v1)):
+			if not (group.sim_count(v1) < 12 and not _pog_is_null(list.item_count(v9))):
 				_pc = 15106
 				continue
 			else:
@@ -2893,7 +2893,7 @@ func local_15683(v0, v1) -> Variant:
 			_pc = 16253
 			continue
 		elif _pc == 15830:
-			if _pog_eq(isim.cast(v2), v1):
+			if _pog_eq(v1, isim.cast(v2)):
 				_pc = 15859
 				continue
 			else:
@@ -2925,7 +2925,7 @@ func local_15683(v0, v1) -> Variant:
 			iai.purge_orders(v0)
 			iai.purge_orders(v3)
 			iai.purge_orders(v4)
-			if 0 > group.sim_count(v4):
+			if group.sim_count(v4) > 0:
 				_pc = 16058
 				continue
 			else:
@@ -2937,7 +2937,7 @@ func local_15683(v0, v1) -> Variant:
 			object.remove_property(v6, "loading")
 			iship.undock_self(v6)
 			await _pog_wait(0.5)
-			if 0 <= group.sim_count(v4):
+			if group.sim_count(v4) <= 0:
 				_pc = 16221
 				continue
 			else:
@@ -2980,7 +2980,7 @@ func local_16262(v0, v1) -> Variant:
 			_pc = 17026
 			continue
 		elif _pc == 16326:
-			if 1 == group.sim_count(v1):
+			if group.sim_count(v1) == 1:
 				_pc = 16351
 				continue
 			else:
@@ -3000,11 +3000,11 @@ func local_16262(v0, v1) -> Variant:
 		elif _pc == 16414:
 			v3 = isim.cast(group.leader(v1))
 			v4 = sim.distance_between(v0, v3)
-			v6 = 1 - group.sim_count(v1)
+			v6 = group.sim_count(v1) - 1
 			_pc = 16506
 			continue
 		elif _pc == 16506:
-			if 0 >= v6:
+			if v6 >= 0:
 				_pc = 16518
 				continue
 			else:
@@ -3062,7 +3062,7 @@ func local_16262(v0, v1) -> Variant:
 			_pc = 16764
 			continue
 		elif _pc == 16764:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 16780
 				continue
 			else:
@@ -3085,7 +3085,7 @@ func local_16262(v0, v1) -> Variant:
 			_pc = 16844
 			continue
 		elif _pc == 16844:
-			v6 = -1 + v6
+			v6 = v6 + -1
 			_pc = 16506
 			continue
 		elif _pc == 16863:
@@ -3145,7 +3145,7 @@ func local_17028(v0, v1, v2, v3) -> Variant:
 	var _pc: int = 17028
 	while true:
 		if _pc == 17028:
-			if v3 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < v3:
 				_pc = 17067
 				continue
 			else:
@@ -3162,7 +3162,7 @@ func local_17028(v0, v1, v2, v3) -> Variant:
 			_pc = 17341
 			continue
 		elif _pc == 17099:
-			if 0 > group.sim_count(v2):
+			if group.sim_count(v2) > 0:
 				_pc = 17124
 				continue
 			else:
@@ -3173,7 +3173,7 @@ func local_17028(v0, v1, v2, v3) -> Variant:
 			_pc = 17131
 			continue
 		elif _pc == 17131:
-			if group.sim_count(v2) < v5:
+			if v5 < group.sim_count(v2):
 				_pc = 17160
 				continue
 			else:
@@ -3188,7 +3188,7 @@ func local_17028(v0, v1, v2, v3) -> Variant:
 				_pc = 17291
 				continue
 		elif _pc == 17225:
-			if v3 < sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) < v3:
 				_pc = 17259
 				continue
 			else:
@@ -3205,7 +3205,7 @@ func local_17028(v0, v1, v2, v3) -> Variant:
 			_pc = 17341
 			continue
 		elif _pc == 17291:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 17131
 			continue
 		elif _pc == 17309:
@@ -3221,15 +3221,15 @@ func local_17028(v0, v1, v2, v3) -> Variant:
 		elif _pc == 17341:
 			return
 		elif _pc == 17383:
-			if 0 > v1:
+			if v1 > 0:
 				_pc = 17395
 				continue
 			else:
 				_pc = 17458
 				continue
 		elif _pc == 17395:
-			list.add_tail(v2, group.nth_sim(v0, 1 - v1))
-			v1 = -1 + v1
+			list.add_tail(v2, group.nth_sim(v0, v1 - 1))
+			v1 = v1 + -1
 			_pc = 17383
 			continue
 		elif _pc == 17458:
@@ -3329,7 +3329,7 @@ func jafs_functionality_available() -> Variant:
 	var _pc: int = 17773
 	while true:
 		if _pc == 17773:
-			if -1 == global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") == -1:
 				_pc = 17801
 				continue
 			else:
@@ -3381,7 +3381,7 @@ func local_17890(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 17936:
 			v3 = object.int_property(v0, "attacked_count")
-			v3 = 1 + v3
+			v3 = v3 + 1
 			object.set_int_property(v0, "attacked_count", v3)
 			_pc = 18037
 			continue
@@ -3404,7 +3404,7 @@ func local_17890(v0, v1, v2) -> Variant:
 			_pc = 18087
 			continue
 		elif _pc == 18087:
-			if v2 >= v3:
+			if v3 >= v2:
 				_pc = 18103
 				continue
 			else:
@@ -3416,7 +3416,7 @@ func local_17890(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 18146:
 			v5 = isim.last_attacker(v0)
-			if _pog_eq(ifaction.find("player"), isim.faction(v5)) or _pog_eq(isim.cast(v1), v5):
+			if _pog_eq(v5, isim.cast(v1)) or _pog_eq(isim.faction(v5), ifaction.find("player")):
 				_pc = 18239
 				continue
 			else:
@@ -3456,7 +3456,7 @@ func local_18414(v0, v1, v2, v3) -> Variant:
 				_pc = 18471
 				continue
 		elif _pc == 18424:
-			if 11000.0 > sim.distance_between(v0, iship.find_player_ship()):
+			if sim.distance_between(v0, iship.find_player_ship()) > 11000.0:
 				_pc = 18466
 				continue
 			else:
@@ -3479,7 +3479,7 @@ func local_18517(v0, v1, v2) -> Variant:
 	var _pc: int = 18517
 	while true:
 		if _pc == 18517:
-			if _pog_is_null(v2) and icomms.is_busy():
+			if icomms.is_busy() and _pog_is_null(v2):
 				_pc = 18543
 				continue
 			else:
@@ -3610,14 +3610,14 @@ func local_19034(v0, v1, v2) -> Variant:
 			_pc = 19046
 			continue
 		elif _pc == 19046:
-			if group.sim_count(v1) < v3:
+			if v3 < group.sim_count(v1):
 				_pc = 19075
 				continue
 			else:
 				_pc = 19151
 				continue
 		elif _pc == 19075:
-			if v2 > sim.distance_between(v0, group.nth_sim(v1, v3)):
+			if sim.distance_between(v0, group.nth_sim(v1, v3)) > v2:
 				_pc = 19127
 				continue
 			else:
@@ -3627,7 +3627,7 @@ func local_19034(v0, v1, v2) -> Variant:
 			_pc = 19157
 			continue
 		elif _pc == 19133:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 19046
 			continue
 		elif _pc == 19151:
@@ -3661,7 +3661,7 @@ func local_19159(v0, v1) -> Variant:
 			sim.point_at(v0, v1)
 			v7 = object.float_property(v0, "radius")
 			sim.set_collision(v0, 0)
-			sim.place_relative_to_inside(v2, v0, v7, 2.0 / v7, -(2.5 * v7))
+			sim.place_relative_to_inside(v2, v0, v7, v7 / 2.0, -(v7 * 2.5))
 			object.set_vector_property(v0, "speed", 0.0, 0.0, 300.0)
 			object.set_vector_property(v0, "acceleration", 0.0, 0.0, 50.0)
 			idirector.set_dolly_camera(v2)
@@ -3676,7 +3676,7 @@ func local_19159(v0, v1) -> Variant:
 			continue
 		elif _pc == 19873:
 			await _pog_wait(0.10000000149011612)
-			if 50.0 <= sim.distance_between(v0, v5):
+			if sim.distance_between(v0, v5) <= 50.0:
 				_pc = 19939
 				continue
 			else:
@@ -3781,7 +3781,7 @@ func auto_tag_valuable_pods() -> Variant:
 			_pc = 20405
 			continue
 		elif _pc == 20405:
-			if list.item_count(v8) < v10:
+			if v10 < list.item_count(v8):
 				_pc = 20434
 				continue
 			else:
@@ -3810,7 +3810,7 @@ func auto_tag_valuable_pods() -> Variant:
 			continue
 		elif _pc == 20510:
 			v2 = iship.cast(list.get_nth(v8, v10))
-			if _pog_is_null(v2) or sim.is_dead(v2):
+			if sim.is_dead(v2) or _pog_is_null(v2):
 				_pc = 20584
 				continue
 			else:
@@ -3902,12 +3902,12 @@ func auto_tag_valuable_pods() -> Variant:
 			_pc = 20874
 			continue
 		elif _pc == 20874:
-			object.add_int_property(v2, "value", icargo.value(icargo.find(object.int_property(v2, "cargo"))) - 9)
+			object.add_int_property(v2, "value", 9 - icargo.value(icargo.find(object.int_property(v2, "cargo"))))
 			list.add_tail(v9, v2)
 			_pc = 20977
 			continue
 		elif _pc == 20977:
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 20405
 			continue
 		elif _pc == 20995:
@@ -3938,7 +3938,7 @@ func auto_tag_valuable_pods() -> Variant:
 			_pc = 21131
 			continue
 		elif _pc == 21131:
-			if 1 == v10:
+			if v10 == 1:
 				_pc = 21143
 				continue
 			else:
@@ -3972,7 +3972,7 @@ func auto_tag_valuable_pods() -> Variant:
 		elif _pc == 21277:
 			v8 = list.sort_by_int_property(v9, "value")
 			v13 = list.item_count(v8)
-			if 12 > v13:
+			if v13 > 12:
 				_pc = 21346
 				continue
 			else:
@@ -3987,7 +3987,7 @@ func auto_tag_valuable_pods() -> Variant:
 			continue
 		elif _pc == 21359:
 			debug.print_string("iJafsScript.AutoTagValuablePods: Collecting ")
-			debug.print_int(v12 - v13)
+			debug.print_int(v13 - v12)
 			debug.print_string(" pods. \n")
 			_pc = 21428
 			continue
@@ -3996,7 +3996,7 @@ func auto_tag_valuable_pods() -> Variant:
 			_pc = 21435
 			continue
 		elif _pc == 21435:
-			if v13 < v10:
+			if v10 < v13:
 				_pc = 21451
 				continue
 			else:
@@ -4012,13 +4012,13 @@ func auto_tag_valuable_pods() -> Variant:
 			debug.print_string(" (")
 			debug.print_string(object.string_property(v2, "name"))
 			debug.print_string(") of value  ")
-			debug.print_int(object.int_property(v2, "value") - 9)
+			debug.print_int(9 - object.int_property(v2, "value"))
 			debug.print_string(" \n")
 			_pc = 21685
 			continue
 		elif _pc == 21685:
 			await tag_pod(v1, v2)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 21435
 			continue
 		elif _pc == 21727:
@@ -4043,11 +4043,11 @@ func local_21770() -> Variant:
 	while true:
 		if _pc == 21770:
 			v2 = await get_tag_group()
-			v0 = 1 - group.sim_count(v2)
+			v0 = group.sim_count(v2) - 1
 			_pc = 21820
 			continue
 		elif _pc == 21820:
-			if 0 >= v0:
+			if v0 >= 0:
 				_pc = 21832
 				continue
 			else:
@@ -4055,7 +4055,7 @@ func local_21770() -> Variant:
 				continue
 		elif _pc == 21832:
 			v3 = isim.cast(group.nth_sim(v2, v0))
-			if not _pog_eq(isim.active_world(), isim.world_name(v3)):
+			if not _pog_eq(isim.world_name(v3), isim.active_world()):
 				_pc = 21915
 				continue
 			else:
@@ -4065,11 +4065,11 @@ func local_21770() -> Variant:
 			group.remove_sim(v2, v3)
 			sim.set_cullable(v3, 1)
 			sim.destroy(v3)
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 21991
 			continue
 		elif _pc == 21991:
-			v0 = -1 + v0
+			v0 = v0 + -1
 			_pc = 21820
 			continue
 		elif _pc == 22010:

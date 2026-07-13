@@ -90,7 +90,7 @@ func gangster_run_for_help() -> Variant:
 			continue
 		elif _pc == 279:
 			object.add_int_property(v0, "fleeing", 1)
-			if 1 == object.i_d_modulus(v0, 2):
+			if object.i_d_modulus(v0, 2) == 1:
 				_pc = 333
 				continue
 			else:
@@ -141,7 +141,7 @@ func gangster_run_for_help() -> Variant:
 				continue
 		elif _pc == 590:
 			v11 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v11, v0) and _pog_eq(v11, v1):
+			if _pog_eq(v1, v11) and sim.distance_between(v11, v0) < 50000.0:
 				_pc = 655
 				continue
 			else:
@@ -169,7 +169,7 @@ func gangster_run_for_help() -> Variant:
 			_pc = 916
 			continue
 		elif _pc == 916:
-			if 1 > group.sim_count(v9):
+			if group.sim_count(v9) > 1:
 				_pc = 941
 				continue
 			else:
@@ -303,7 +303,7 @@ func civilian_run_for_help() -> Variant:
 			_pc = 2938
 			continue
 		elif _pc == 1601:
-			if 1 == object.i_d_modulus(v0, 2):
+			if object.i_d_modulus(v0, 2) == 1:
 				_pc = 1628
 				continue
 			else:
@@ -341,7 +341,7 @@ func civilian_run_for_help() -> Variant:
 				continue
 		elif _pc == 1978:
 			v10 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v10, v0) and _pog_eq(v10, v1):
+			if _pog_eq(v1, v10) and sim.distance_between(v10, v0) < 50000.0:
 				_pc = 2043
 				continue
 			else:

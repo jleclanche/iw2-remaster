@@ -143,7 +143,7 @@ func local_459(v0, v1, v2, v3) -> Variant:
 			v10 = inifile.numbered_float(v0, "Geography", "geog_yaw", v3, 0.0)
 			v11 = inifile.numbered_float(v0, "Geography", "geog_pitch", v3, 0.0)
 			v12 = inifile.numbered_float(v0, "Geography", "geog_roll", v3, 0.0)
-			if _pog_eq("icShip", v5) or _pog_eq("icCargoPod", v5):
+			if _pog_eq(v5, "icCargoPod") or _pog_eq(v5, "icShip"):
 				_pc = 850
 				continue
 			else:
@@ -155,7 +155,7 @@ func local_459(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 922:
 			v6 = sim.create(v1, inifile.numbered_string(v0, "Geography", "name", v3, "none"))
-			if 4 == isim.type(v6):
+			if isim.type(v6) == 4:
 				_pc = 1015
 				continue
 			else:
@@ -173,7 +173,7 @@ func local_459(v0, v1, v2, v3) -> Variant:
 			sim.set_cullable(v6, 0)
 			sim.place_relative_to_inside(v6, v2, v7, -(v8), v9)
 			sim.set_orientation_euler(v6, v10, v11, v12)
-			if _pog_eq("Alpha", string.left(object.string_property(v6, "name"), 5)):
+			if _pog_eq(string.left(object.string_property(v6, "name"), 5), "Alpha"):
 				_pc = 1296
 				continue
 			else:
@@ -184,7 +184,7 @@ func local_459(v0, v1, v2, v3) -> Variant:
 			_pc = 1489
 			continue
 		elif _pc == 1368:
-			if _pog_eq("Beta", string.left(object.string_property(v6, "name"), 4)):
+			if _pog_eq(string.left(object.string_property(v6, "name"), 4), "Beta"):
 				_pc = 1422
 				continue
 			else:
@@ -231,7 +231,7 @@ func get_geography(v0, v1) -> Variant:
 			_pc = 1744
 			continue
 		elif _pc == 1744:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 1760
 				continue
 			else:
@@ -239,7 +239,7 @@ func get_geography(v0, v1) -> Variant:
 				continue
 		elif _pc == 1760:
 			v10 = await local_459(v0, inifile.numbered_string(v0, "Geography", "resource", v7, "none"), v1, v7)
-			if _pog_eq(v8, isim.faction(isim.cast(v10))):
+			if _pog_eq(isim.faction(isim.cast(v10)), v8):
 				_pc = 1879
 				continue
 			else:
@@ -250,7 +250,7 @@ func get_geography(v0, v1) -> Variant:
 			_pc = 2003
 			continue
 		elif _pc == 1908:
-			if _pog_eq(v9, isim.faction(isim.cast(v10))):
+			if _pog_eq(isim.faction(isim.cast(v10)), v9):
 				_pc = 1950
 				continue
 			else:
@@ -265,7 +265,7 @@ func get_geography(v0, v1) -> Variant:
 			_pc = 2003
 			continue
 		elif _pc == 2003:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 1744
 			continue
 		elif _pc == 2021:
@@ -304,7 +304,7 @@ func get_spawn_points(v0, v1) -> Variant:
 			_pc = 2302
 			continue
 		elif _pc == 2302:
-			if v7 < v10:
+			if v10 < v7:
 				_pc = 2318
 				continue
 			else:
@@ -316,7 +316,7 @@ func get_spawn_points(v0, v1) -> Variant:
 			imultiplay.set_update_flag(v6, 0)
 			sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "alpha_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "alpha_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "alpha_geog_roll", v10, 0.0))
 			group.add_sim(v3, v6)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 2302
 			continue
 		elif _pc == 2686:
@@ -324,7 +324,7 @@ func get_spawn_points(v0, v1) -> Variant:
 			_pc = 2693
 			continue
 		elif _pc == 2693:
-			if v8 < v10:
+			if v10 < v8:
 				_pc = 2709
 				continue
 			else:
@@ -336,7 +336,7 @@ func get_spawn_points(v0, v1) -> Variant:
 			imultiplay.set_update_flag(v6, 0)
 			sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "beta_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "beta_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "beta_geog_roll", v10, 0.0))
 			group.add_sim(v4, v6)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 2693
 			continue
 		elif _pc == 3077:
@@ -344,7 +344,7 @@ func get_spawn_points(v0, v1) -> Variant:
 			_pc = 3084
 			continue
 		elif _pc == 3084:
-			if v9 < v10:
+			if v10 < v9:
 				_pc = 3100
 				continue
 			else:
@@ -356,7 +356,7 @@ func get_spawn_points(v0, v1) -> Variant:
 			imultiplay.set_update_flag(v6, 0)
 			sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "hero_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "hero_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "hero_geog_roll", v10, 0.0))
 			group.add_sim(v5, v6)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 3084
 			continue
 		elif _pc == 3468:
@@ -431,7 +431,7 @@ func main() -> Variant:
 	var v2: Variant = 0
 	v0 = iship.create("ini:/sims/ships/player/fast_attack_prefitted", "Killer")
 	v1 = imapentity.system_centre()
-	v2 = await iutilities.create_waypoint_relative_to(v1, 3.0 * object.float_property(v1, "radius"), 0.0, 0.0)
+	v2 = await iutilities.create_waypoint_relative_to(v1, object.float_property(v1, "radius") * 3.0, 0.0, 0.0)
 	isim.set_sensor_visibility(isim.cast(v2), 1)
 	iship.install_player_pilot(v0)
 	_pog_spawn(local_3950.bind(v2))

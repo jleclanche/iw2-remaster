@@ -47,7 +47,7 @@ func warn_vessel() -> Variant:
 	while true:
 		if _pc == 39:
 			v5 = null
-			if 1 == object.i_d_modulus(v0, 2):
+			if object.i_d_modulus(v0, 2) == 1:
 				_pc = 82
 				continue
 			else:
@@ -66,7 +66,7 @@ func warn_vessel() -> Variant:
 			v3 = inifile.pog_int(v4, "stock_warn", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v6 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v6, v0) and _pog_eq(v6, v1):
+			if _pog_eq(v1, v6) and sim.distance_between(v6, v0) < 50000.0:
 				_pc = 260
 				continue
 			else:

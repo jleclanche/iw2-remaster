@@ -89,7 +89,7 @@ func gangster_call_for_backup() -> Variant:
 			_pc = 1261
 			continue
 		elif _pc == 260:
-			if 1 == object.i_d_modulus(v0, 2):
+			if object.i_d_modulus(v0, 2) == 1:
 				_pc = 287
 				continue
 			else:
@@ -134,7 +134,7 @@ func gangster_call_for_backup() -> Variant:
 			v3 = inifile.pog_int(v8, "stock_warn", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v11 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v11, v0) and _pog_eq(v11, v1):
+			if _pog_eq(v1, v11) and sim.distance_between(v11, v0) < 50000.0:
 				_pc = 601
 				continue
 			else:
@@ -162,7 +162,7 @@ func gangster_call_for_backup() -> Variant:
 			_pc = 862
 			continue
 		elif _pc == 862:
-			if 1 > group.sim_count(v9):
+			if group.sim_count(v9) > 1:
 				_pc = 887
 				continue
 			else:
@@ -188,7 +188,7 @@ func gangster_call_for_backup() -> Variant:
 			_pc = 1003
 			continue
 		elif _pc == 1003:
-			if not _pog_is_null(v1) and not _pog_is_null(v0):
+			if not _pog_is_null(v0) and not _pog_is_null(v1):
 				_pc = 1025
 				continue
 			else:
@@ -309,7 +309,7 @@ func police_call_for_backup() -> Variant:
 			_pc = 2539
 			continue
 		elif _pc == 1544:
-			if 1 == object.i_d_modulus(v0, 2):
+			if object.i_d_modulus(v0, 2) == 1:
 				_pc = 1571
 				continue
 			else:
@@ -355,7 +355,7 @@ func police_call_for_backup() -> Variant:
 			v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v12 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v12, v0) and _pog_eq(v12, v1):
+			if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
 				_pc = 1923
 				continue
 			else:
@@ -399,7 +399,7 @@ func police_call_for_backup() -> Variant:
 			_pc = 2281
 			continue
 		elif _pc == 2281:
-			if not _pog_is_null(v1) and not _pog_is_null(v0):
+			if not _pog_is_null(v0) and not _pog_is_null(v1):
 				_pc = 2303
 				continue
 			else:
@@ -562,7 +562,7 @@ func military_call_for_backup() -> Variant:
 			_pc = 3351
 			continue
 		elif _pc == 3351:
-			if 1 == object.i_d_modulus(v0, 2):
+			if object.i_d_modulus(v0, 2) == 1:
 				_pc = 3378
 				continue
 			else:
@@ -600,7 +600,7 @@ func military_call_for_backup() -> Variant:
 			v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v12 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v12, v0) and _pog_eq(v12, v1):
+			if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
 				_pc = 3811
 				continue
 			else:
@@ -618,7 +618,7 @@ func military_call_for_backup() -> Variant:
 			_pc = 3921
 			continue
 		elif _pc == 3921:
-			if not _pog_is_null(v1) and not _pog_is_null(v0):
+			if not _pog_is_null(v0) and not _pog_is_null(v1):
 				_pc = 3943
 				continue
 			else:

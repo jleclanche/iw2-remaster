@@ -75,7 +75,7 @@ func test_piracy_rating(v0) -> Variant:
 	var _pc: int = 0
 	while true:
 		if _pc == 0:
-			if global.pog_float("g_player_piracy_rating") > v1:
+			if v1 > global.pog_float("g_player_piracy_rating"):
 				_pc = 36
 				continue
 			else:
@@ -152,7 +152,7 @@ func test_faction_rating(v0, v1) -> Variant:
 		if _pc == 316:
 			v2 = ifaction.find(v0)
 			v3 = ifaction.find("player")
-			if v1 < ifaction.feeling(v2, v3):
+			if ifaction.feeling(v2, v3) < v1:
 				_pc = 405
 				continue
 			else:
@@ -201,7 +201,7 @@ func test_global_int() -> Variant:
 			_pc = 635
 			continue
 		elif _pc == 584:
-			if v1 < global.pog_int(v0):
+			if global.pog_int(v0) < v1:
 				_pc = 613
 				continue
 			else:
@@ -239,7 +239,7 @@ func test_global_bool(v0, v1) -> Variant:
 			_pc = 870
 			continue
 		elif _pc == 716:
-			if not _pog_eq(v1, global.pog_bool(v0)):
+			if not _pog_eq(global.pog_bool(v0), v1):
 				_pc = 745
 				continue
 			else:
@@ -314,7 +314,7 @@ func local_981(v0, v1) -> Variant:
 			_pc = 1012
 			continue
 		elif _pc == 1012:
-			if object.property_exists(v1, "proper_cargo") == 1:
+			if 1 == object.property_exists(v1, "proper_cargo"):
 				_pc = 1044
 				continue
 			else:
@@ -325,7 +325,7 @@ func local_981(v0, v1) -> Variant:
 			_pc = 1942
 			continue
 		elif _pc == 1069:
-			if object.property_exists(v1, "cargo_double_counter") == 1:
+			if 1 == object.property_exists(v1, "cargo_double_counter"):
 				_pc = 1101
 				continue
 			else:
@@ -333,7 +333,7 @@ func local_981(v0, v1) -> Variant:
 				continue
 		elif _pc == 1101:
 			v3 = object.int_property(v1, "cargo_double_counter")
-			v3 = 2 / v3
+			v3 = v3 / 2
 			_pc = 1214
 			continue
 		elif _pc == 1151:
@@ -350,28 +350,28 @@ func local_981(v0, v1) -> Variant:
 			_pc = 1266
 			continue
 		elif _pc == 1266:
-			if v3 < v2:
+			if v2 < v3:
 				_pc = 1282
 				continue
 			else:
 				_pc = 1874
 				continue
 		elif _pc == 1282:
-			v4 = await local_29315(v1, "cargo_to_get", 2 * v2)
-			v5 = await local_29315(v1, "cargo_to_get_quantity", 1 + 2 * v2)
-			if 1000 > v4:
+			v4 = await local_29315(v1, "cargo_to_get", v2 * 2)
+			v5 = await local_29315(v1, "cargo_to_get_quantity", v2 * 2 + 1)
+			if v4 > 1000:
 				_pc = 1376
 				continue
 			else:
 				_pc = 1415
 				continue
 		elif _pc == 1376:
-			v4 = 1000 - v4
+			v4 = v4 - 1000
 			v4 = iinventory.cargo_type_from_category_index(v4)
 			_pc = 1415
 			continue
 		elif _pc == 1415:
-			if v8 <= v6:
+			if v6 <= v8:
 				_pc = 1431
 				continue
 			else:
@@ -390,23 +390,23 @@ func local_981(v0, v1) -> Variant:
 			group.add_sim(v10, v9)
 			sim.set_collision(sim.cast(v9), 0)
 			sim.place_relative_to(v9, v0, 0.0, 0.0, 0.0)
-			sim.set_velocity_local_to_sim(v9, 0.0, -(v7 * 15), -215.0)
+			sim.set_velocity_local_to_sim(v9, 0.0, -(15 * v7), -215.0)
 			_pog_detach(_pog_spawn(local_914.bind(v9)))
 			await _pog_wait(1.0)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 1758
 			continue
 		elif _pc == 1758:
-			v5 = -1 + v5
-			v8 = 1 + v8
-			if not (6 < v7 and 0 > v5):
+			v5 = v5 + -1
+			v8 = v8 + 1
+			if not (v5 > 0 and v7 < 6):
 				_pc = 1806
 				continue
 			else:
 				_pc = 1415
 				continue
 		elif _pc == 1806:
-			if 6 >= v7:
+			if v7 >= 6:
 				_pc = 1819
 				continue
 			else:
@@ -417,7 +417,7 @@ func local_981(v0, v1) -> Variant:
 			_pc = 1942
 			continue
 		elif _pc == 1856:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 1266
 			continue
 		elif _pc == 1874:
@@ -471,7 +471,7 @@ func local_2088(v0, v1, v2) -> Variant:
 			_pc = 2306
 			continue
 		elif _pc == 2306:
-			if 1 == v2:
+			if v2 == 1:
 				_pc = 2318
 				continue
 			else:
@@ -504,7 +504,7 @@ func local_2373(v0) -> Variant:
 				_pc = 2560
 				continue
 		elif _pc == 2421:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 2433
 				continue
 			else:
@@ -527,7 +527,7 @@ func local_2373(v0) -> Variant:
 				_pc = 2742
 				continue
 		elif _pc == 2603:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 2615
 				continue
 			else:
@@ -550,7 +550,7 @@ func local_2373(v0) -> Variant:
 				_pc = 2924
 				continue
 		elif _pc == 2785:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 2797
 				continue
 			else:
@@ -587,7 +587,7 @@ func cargo_to_get_category(v0, v1, v2) -> Variant:
 		debug.print_string("iMissionGenerator: Set cargo for player to fetch")
 		debug.print_string("\n")
 	v3 = state.find(v0)
-	await local_29765(v3, "cargo_to_get", "cargo_double_counter", 1000 + v1)
+	await local_29765(v3, "cargo_to_get", "cargo_double_counter", v1 + 1000)
 	await local_29765(v3, "cargo_to_get_quantity", "cargo_double_counter", v2)
 	return 0
 	return 0
@@ -667,7 +667,7 @@ func patron_location(v0, v1, v2, v3) -> Variant:
 	v4 = state.find(v0)
 	object.add_int_property(v4, "patron_location_type", v1)
 	object.add_string_property(v4, "patron_location_system", v2)
-	if _pog_eq("", v3):
+	if _pog_eq(v3, ""):
 		return 0
 	object.add_string_property(v4, "patron_location_name", v3)
 	return 0
@@ -795,7 +795,7 @@ func set_prompt(v0, v1, v2, v3) -> Variant:
 	v4 = state.find(v0)
 	object.add_int_property(v4, "comm_prompt_type", v3)
 	object.add_string_property(v4, "comm_prompt_reference", v1)
-	if 4 != v3:
+	if v3 != 4:
 		return 0
 	object.add_string_property(v4, "comm_prompt_subject", v2)
 	return 0
@@ -821,7 +821,7 @@ func set_repeat_msg(v0, v1, v2, v3) -> Variant:
 	v4 = state.find(v0)
 	object.add_int_property(v4, "comm_repeat_msg_type", v3)
 	object.add_string_property(v4, "comm_repeat_msg_reference", v1)
-	if 4 != v3:
+	if v3 != 4:
 		return 0
 	object.add_string_property(v4, "comm_repeat_msg_subject", v2)
 	return 0
@@ -886,7 +886,7 @@ func fail_if_patron_dead(v0) -> Variant:
 			_pc = 6756
 			continue
 		elif _pc == 6756:
-			v1 = 2 | v1
+			v1 = v1 | 2
 			object.set_int_property(v2, "failure_condition", 0)
 			return 0
 		else:
@@ -933,7 +933,7 @@ func fail_if_owner_dead() -> Variant:
 			_pc = 6985
 			continue
 		elif _pc == 6985:
-			v1 = 1 | v1
+			v1 = v1 | 1
 			object.set_int_property(v2, "failure_condition", 0)
 			return 0
 		else:
@@ -998,28 +998,28 @@ func fail_precludes() -> Variant:
 		debug.print_string("\n")
 	v1 = object.int_property(v0, "failure_clause_number")
 	v2 = 0
-	while v1 < v2:
+	while v2 < v1:
 		v4 = object.int_property(v0, string.join("failure_type", string.from_int(v3)))
-		v3 = 1 + v3
-		if 2 == v4:
-			if 1 != object.int_property(v0, "patron_state"):
+		v3 = v3 + 1
+		if v4 == 2:
+			if object.int_property(v0, "patron_state") != 1:
 				break
 			v6 = iship.cast(object.handle_property(v0, "patron_ship_handle"))
 			if sim.is_dead(v6):
 				icomms.shout(0, "", object.string_property(v0, await local_29122("failure_clause_reference", v2)))
 				return 1
-		if 1 == v4:
-			if 1 != object.int_property(v0, "owner_state"):
+		if v4 == 1:
+			if object.int_property(v0, "owner_state") != 1:
 				break
 			v7 = iship.cast(object.handle_property(v0, "owner_ship"))
 			if not (sim.is_dead(v7)):
 				break
 			v5 = object.string_property(v0, string.join("failure_clause_reference", string.from_int(v3)))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			if object.property_exists(v0, v5):
 				icomms.shout(0, "", v5)
 			return 1
-		v2 = 1 + v2
+		v2 = v2 + 1
 	return 0
 	return 0
 
@@ -1045,14 +1045,14 @@ func local_8034(v0) -> Variant:
 			_pc = 8141
 			continue
 		elif _pc == 8141:
-			if list.item_count(v1) < v2:
+			if v2 < list.item_count(v1):
 				_pc = 8170
 				continue
 			else:
 				_pc = 8382
 				continue
 		elif _pc == 8170:
-			if not _pog_eq(v0, await iutilities.from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2))))):
+			if not _pog_eq(await iutilities.from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2)))), v0):
 				_pc = 8246
 				continue
 			else:
@@ -1067,7 +1067,7 @@ func local_8034(v0) -> Variant:
 				_pc = 8314
 				continue
 		elif _pc == 8295:
-			v2 = -1 + v2
+			v2 = v2 + -1
 			_pc = 8364
 			continue
 		elif _pc == 8314:
@@ -1081,7 +1081,7 @@ func local_8034(v0) -> Variant:
 			_pc = 8382
 			continue
 		elif _pc == 8364:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 8141
 			continue
 		elif _pc == 8382:
@@ -1096,7 +1096,7 @@ func local_8034(v0) -> Variant:
 			_pc = 8563
 			continue
 		elif _pc == 8563:
-			if 1 == object.property_exists(v0, "patron_location_handle"):
+			if object.property_exists(v0, "patron_location_handle") == 1:
 				_pc = 8595
 				continue
 			else:
@@ -1122,7 +1122,7 @@ func local_8034(v0) -> Variant:
 			continue
 		elif _pc == 8682:
 			v4 = list.from_set(imapentity.system_habitats())
-			if not _pog_eq("", object.string_property(v0, "patron_location_name")):
+			if not _pog_eq(object.string_property(v0, "patron_location_name"), ""):
 				_pc = 8756
 				continue
 			else:
@@ -1166,7 +1166,7 @@ func local_8034(v0) -> Variant:
 		elif _pc == 8956:
 			v4 = list.from_set(ihabitat.filter_on_type(imapentity.system_habitats(), ihabitat.cast_int_to_habitat_type(object.int_property(v0, "patron_location_type"))))
 			v3 = list.item_count(v4)
-			if 0 > v3:
+			if v3 > 0:
 				_pc = 9078
 				continue
 			else:
@@ -1202,7 +1202,7 @@ func local_8034(v0) -> Variant:
 			_pc = 9300
 			continue
 		elif _pc == 9300:
-			if 0 > v3:
+			if v3 > 0:
 				_pc = 9312
 				continue
 			else:
@@ -1228,7 +1228,7 @@ func local_8034(v0) -> Variant:
 				_pc = 9647
 				continue
 		elif _pc == 9551:
-			if _pog_eq("", object.string_property(v0, "patron_location_name")):
+			if _pog_eq(object.string_property(v0, "patron_location_name"), ""):
 				_pc = 9589
 				continue
 			else:
@@ -1285,7 +1285,7 @@ func local_9726(v0, v1) -> Variant:
 			continue
 		elif _pc == 9912:
 			v6 = object.string_property(v0, string.join(v1, "_location_system"))
-			if 1 == object.property_exists(v0, string.join(v1, "_location_handle")):
+			if object.property_exists(v0, string.join(v1, "_location_handle")) == 1:
 				_pc = 10014
 				continue
 			else:
@@ -1363,7 +1363,7 @@ func local_9726(v0, v1) -> Variant:
 		elif _pc == 10772:
 			v7 = list.from_set(ihabitat.filter_on_type(imapentity.system_habitats(), ihabitat.cast_int_to_habitat_type(object.int_property(v0, string.join(v1, "_location_type")))))
 			v5 = list.item_count(v7)
-			if 0 > v5:
+			if v5 > 0:
 				_pc = 10913
 				continue
 			else:
@@ -1374,7 +1374,7 @@ func local_9726(v0, v1) -> Variant:
 			_pc = 10969
 			continue
 		elif _pc == 10969:
-			if not _pog_eq(isim.active_world(), v6):
+			if not _pog_eq(v6, isim.active_world()):
 				_pc = 10996
 				continue
 			else:
@@ -1393,7 +1393,7 @@ func local_9726(v0, v1) -> Variant:
 			continue
 		elif _pc == 11114:
 			await _pog_wait(7.5)
-			if _pog_eq(isim.active_world(), v6):
+			if _pog_eq(v6, isim.active_world()):
 				_pc = 11173
 				continue
 			else:
@@ -1425,7 +1425,7 @@ func local_9726(v0, v1) -> Variant:
 			_pc = 11339
 			continue
 		elif _pc == 11339:
-			if 0 > v5:
+			if v5 > 0:
 				_pc = 11351
 				continue
 			else:
@@ -1444,7 +1444,7 @@ func local_9726(v0, v1) -> Variant:
 		elif _pc == 11503:
 			v3 = v2
 			object.add_handle_property(v0, string.join(v1, "_location_handle"), v3)
-			if _pog_eq("", object.string_property(v0, string.join(v1, "_location_name"))) or _pog_is_null(object.property_exists(v0, string.join(v1, "_location_name"))):
+			if _pog_is_null(object.property_exists(v0, string.join(v1, "_location_name"))) or _pog_eq(object.string_property(v0, string.join(v1, "_location_name")), ""):
 				_pc = 11667
 				continue
 			else:
@@ -1501,7 +1501,7 @@ func local_11861(v0, v1) -> Variant:
 			continue
 		elif _pc == 11954:
 			v2 = string.to_int(string.right(v0, 1))
-			v3 = string.join(string.trim_right(v0, 1), string.from_int(v1 + v2))
+			v3 = string.join(string.trim_right(v0, 1), string.from_int(v2 + v1))
 			_pc = 12088
 			continue
 		elif _pc == 12067:
@@ -1585,7 +1585,7 @@ func local_12188(v0, v1) -> Variant:
 			continue
 		elif _pc == 12520:
 			v3 = await local_9726(v0, v1)
-			if _pog_eq("owner", v1):
+			if _pog_eq(v1, "owner"):
 				_pc = 12567
 				continue
 			else:
@@ -1597,7 +1597,7 @@ func local_12188(v0, v1) -> Variant:
 			continue
 		elif _pc == 12594:
 			await _pog_wait(1.0)
-			if 50000.0 <= sim.distance_between(v5, v3):
+			if sim.distance_between(v5, v3) <= 50000.0:
 				_pc = 12660
 				continue
 			else:
@@ -1611,7 +1611,7 @@ func local_12188(v0, v1) -> Variant:
 			_pc = 12686
 			continue
 		elif _pc == 12686:
-			if _pog_eq("owner", v1):
+			if _pog_eq(v1, "owner"):
 				_pc = 12704
 				continue
 			else:
@@ -1633,7 +1633,7 @@ func local_12188(v0, v1) -> Variant:
 			_pc = 12754
 			continue
 		elif _pc == 12754:
-			if object.property_exists(v0, string.join(v1, "_escort_type")) == 1:
+			if 1 == object.property_exists(v0, string.join(v1, "_escort_type")):
 				_pc = 12806
 				continue
 			else:
@@ -1652,7 +1652,7 @@ func local_12188(v0, v1) -> Variant:
 			_pc = 13309
 			continue
 		elif _pc == 13309:
-			if 0 >= v7:
+			if v7 >= 0:
 				_pc = 13321
 				continue
 			else:
@@ -1661,7 +1661,7 @@ func local_12188(v0, v1) -> Variant:
 		elif _pc == 13321:
 			v2 = iship.cast(group.nth_sim(v4, v7))
 			object.set_string_property(v2, "name", await local_11861(object.string_property(v0, string.join(v1, "_ship_name")), v7))
-			v7 = -1 + v7
+			v7 = v7 + -1
 			_pc = 13309
 			continue
 		elif _pc == 13471:
@@ -1685,7 +1685,7 @@ func local_12188(v0, v1) -> Variant:
 			v2 = iship.cast(group.leader(v4))
 			sim.place_near(v2, v3, 25000.0)
 			await iescort.goose(v4, 30.0, 12000.0, 1)
-			if _pog_eq("owner", v1):
+			if _pog_eq(v1, "owner"):
 				_pc = 14009
 				continue
 			else:
@@ -1714,7 +1714,7 @@ func local_12188(v0, v1) -> Variant:
 			continue
 		elif _pc == 14195:
 			object.add_handle_property(v0, string.join(v1, "_escort_group"), v4)
-			if not _pog_eq("patron", v1):
+			if not _pog_eq(v1, "patron"):
 				_pc = 14264
 				continue
 			else:
@@ -1744,7 +1744,7 @@ func local_12188(v0, v1) -> Variant:
 			continue
 		elif _pc == 14425:
 			await _pog_wait(1.0)
-			if 5000.0 <= sim.distance_between(v5, v2):
+			if sim.distance_between(v5, v2) <= 5000.0:
 				_pc = 14491
 				continue
 			else:
@@ -1794,7 +1794,7 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 14651
 			continue
 		elif _pc == 14651:
-			if not _pog_eq("", object.string_property(v0, "patron_character_name")):
+			if not _pog_eq(object.string_property(v0, "patron_character_name"), ""):
 				_pc = 14690
 				continue
 			else:
@@ -1813,7 +1813,7 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 14783:
 			await _pog_wait(1.0)
-			if _pog_eq("", global.string("gl_genmission_jafs")):
+			if _pog_eq(global.string("gl_genmission_jafs"), ""):
 				_pc = 14849
 				continue
 			else:
@@ -1876,7 +1876,7 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 15303
 			continue
 		elif _pc == 15249:
-			if v1 != 4:
+			if 4 != v1:
 				_pc = 15263
 				continue
 			else:
@@ -1921,14 +1921,14 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 15360
 			continue
 		elif _pc == 15360:
-			if _pog_eq("TravelTo", v1):
+			if _pog_eq(v1, "TravelTo"):
 				_pc = 15378
 				continue
 			else:
 				_pc = 15664
 				continue
 		elif _pc == 15378:
-			if not _pog_eq("None", v2):
+			if not _pog_eq(v2, "None"):
 				_pc = 15397
 				continue
 			else:
@@ -1966,14 +1966,14 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 16267
 			continue
 		elif _pc == 15664:
-			if _pog_eq("TravelBetween", v1):
+			if _pog_eq(v1, "TravelBetween"):
 				_pc = 15682
 				continue
 			else:
 				_pc = 15968
 				continue
 		elif _pc == 15682:
-			if not _pog_eq("None", v2):
+			if not _pog_eq(v2, "None"):
 				_pc = 15701
 				continue
 			else:
@@ -2011,14 +2011,14 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 16267
 			continue
 		elif _pc == 15968:
-			if _pog_eq("MonkeyAbout", v1):
+			if _pog_eq(v1, "MonkeyAbout"):
 				_pc = 15986
 				continue
 			else:
 				_pc = 16267
 				continue
 		elif _pc == 15986:
-			if not _pog_eq("None", v2):
+			if not _pog_eq(v2, "None"):
 				_pc = 16005
 				continue
 			else:
@@ -2063,7 +2063,7 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 16377
 			continue
 		elif _pc == 16377:
-			if _pog_eq("Yes", object.string_property(v0, "target_locomotion")):
+			if _pog_eq(object.string_property(v0, "target_locomotion"), "Yes"):
 				_pc = 16415
 				continue
 			else:
@@ -2078,7 +2078,7 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 16429
 			continue
 		elif _pc == 16429:
-			if v7 < v4:
+			if v4 < v7:
 				_pc = 16445
 				continue
 			else:
@@ -2091,7 +2091,7 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 16544
 			continue
 		elif _pc == 16544:
-			if v6 < v5:
+			if v5 < v6:
 				_pc = 16560
 				continue
 			else:
@@ -2124,11 +2124,11 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 			_pc = 17010
 			continue
 		elif _pc == 17010:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 16544
 			continue
 		elif _pc == 17028:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 16429
 			continue
 		elif _pc == 17046:
@@ -2162,7 +2162,7 @@ func local_17063(v0, v1) -> Variant:
 			_pc = 17215
 			continue
 		elif _pc == 17215:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 17231
 				continue
 			else:
@@ -2170,7 +2170,7 @@ func local_17063(v0, v1) -> Variant:
 				continue
 		elif _pc == 17231:
 			v4 = list.get_nth(v2, v6)
-			if not (object.property_exists(v4, "acquired")) and object.property_exists(v4, "mission_cargo"):
+			if object.property_exists(v4, "mission_cargo") and not (object.property_exists(v4, "acquired")):
 				_pc = 17316
 				continue
 			else:
@@ -2182,7 +2182,7 @@ func local_17063(v0, v1) -> Variant:
 			_pc = 17380
 			continue
 		elif _pc == 17380:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 17215
 			continue
 		elif _pc == 17398:
@@ -2230,21 +2230,21 @@ func local_17425(v0, v1, v2) -> Variant:
 			_pc = 17591
 			continue
 		elif _pc == 17591:
-			if v8 < v6:
+			if v6 < v8:
 				_pc = 17607
 				continue
 			else:
 				_pc = 18108
 				continue
 		elif _pc == 17607:
-			if _pog_eq(object.string_property(v0, await local_29122("required_cargo_type", v6)), object.string_property(v1, "mission_cargo")):
+			if _pog_eq(object.string_property(v1, "mission_cargo"), object.string_property(v0, await local_29122("required_cargo_type", v6))):
 				_pc = 17683
 				continue
 			else:
 				_pc = 18090
 				continue
 		elif _pc == 17683:
-			if object.int_property(v0, "cargo_quantity_required") > 1 + object.int_property(v0, await local_29122("acquired_cargo_quantity", v6)):
+			if object.int_property(v0, await local_29122("acquired_cargo_quantity", v6)) + 1 > object.int_property(v0, "cargo_quantity_required"):
 				_pc = 17759
 				continue
 			else:
@@ -2268,7 +2268,7 @@ func local_17425(v0, v1, v2) -> Variant:
 			_pc = 17878
 			continue
 		elif _pc == 17878:
-			if list.item_count(v3) < v7:
+			if v7 < list.item_count(v3):
 				_pc = 17907
 				continue
 			else:
@@ -2287,7 +2287,7 @@ func local_17425(v0, v1, v2) -> Variant:
 			_pc = 18032
 			continue
 		elif _pc == 18014:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 17878
 			continue
 		elif _pc == 18032:
@@ -2299,7 +2299,7 @@ func local_17425(v0, v1, v2) -> Variant:
 			_pc = 18115
 			continue
 		elif _pc == 18090:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 17591
 			continue
 		elif _pc == 18108:
@@ -2331,15 +2331,15 @@ func local_18124(v0) -> Variant:
 			_pc = 18216
 			continue
 		elif _pc == 18216:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 18232
 				continue
 			else:
 				_pc = 18306
 				continue
 		elif _pc == 18232:
-			v1 = object.int_property(v0, await local_29122("acquired_cargo_quantity", v3)) + v1
-			v3 = 1 + v3
+			v1 = v1 + object.int_property(v0, await local_29122("acquired_cargo_quantity", v3))
+			v3 = v3 + 1
 			_pc = 18216
 			continue
 		elif _pc == 18306:
@@ -2367,14 +2367,14 @@ func local_18318(v0) -> Variant:
 			_pc = 18403
 			continue
 		elif _pc == 18403:
-			if _pog_eq("Total", object.string_property(v0, "target_requirement_type")):
+			if _pog_eq(object.string_property(v0, "target_requirement_type"), "Total"):
 				_pc = 18441
 				continue
 			else:
 				_pc = 18501
 				continue
 		elif _pc == 18441:
-			if object.int_property(v0, "cargo_quantity_required") >= await local_18124(v0):
+			if await local_18124(v0) >= object.int_property(v0, "cargo_quantity_required"):
 				_pc = 18490
 				continue
 			else:
@@ -2391,29 +2391,29 @@ func local_18318(v0) -> Variant:
 			_pc = 18508
 			continue
 		elif _pc == 18508:
-			if v1 < v3:
+			if v3 < v1:
 				_pc = 18524
 				continue
 			else:
 				_pc = 18629
 				continue
 		elif _pc == 18524:
-			if object.int_property(v0, "cargo_quantity_required") >= object.int_property(v0, await local_29122("acquired_cargo_quantity", v3)):
+			if object.int_property(v0, await local_29122("acquired_cargo_quantity", v3)) >= object.int_property(v0, "cargo_quantity_required"):
 				_pc = 18598
 				continue
 			else:
 				_pc = 18611
 				continue
 		elif _pc == 18598:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 18611
 			continue
 		elif _pc == 18611:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 18508
 			continue
 		elif _pc == 18629:
-			if _pog_eq(v1, v2):
+			if _pog_eq(v2, v1):
 				_pc = 18645
 				continue
 			else:
@@ -2464,24 +2464,24 @@ func local_18659(v0) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator.patronh: starting patron task\n")
 		debug.print_string("\n")
-	if 2 != object.int_property(v0, "patron_state"):
+	if object.int_property(v0, "patron_state") != 2:
 		pass
 	else:
 		if object.property_exists(v0, "patron_ship_type"):
 			v5 = iship.cast(group.nth_sim(v1, 0))
 			v14 = object.string_property(v5, "name")
 			v9 = 0
-			while object.int_property(v0, "number_of_cargo_types") < v9:
-				if 0 > object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)):
+			while v9 < object.int_property(v0, "number_of_cargo_types"):
+				if object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)) > 0:
 					v11 = 0
-					while object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)) < v11:
+					while v11 < object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)):
 						v15 = await iutilities.get_cargo_name_from_i_n_i(object.string_property(v0, await local_29122("required_cargo_type", v9)))
 						v8 = iship.create("ini:/sims/ships/utility/cargo_pod", string.join("Pod of ", v15))
 						object.add_string_property(v8, "mission_cargo", object.string_property(v0, await local_29122("required_cargo_type", v9)))
 						object.add_int_property(v8, "acquired", 1)
 						iship.dock(v8, v5)
-						v11 = 1 + v11
-				v9 = 1 + v9
+						v11 = v11 + 1
+				v9 = v9 + 1
 		if not (object.property_exists(v0, "patron_x_pos")):
 			object.add_float_property(v0, "patron_x_pos", math.random(800.0, 3000.0))
 			object.add_float_property(v0, "patron_y_pos", math.random(1000.0, 2000.0))
@@ -2490,37 +2490,37 @@ func local_18659(v0) -> Variant:
 		await iformation.claw(v1, 30.0, 1)
 		while true:
 			await _pog_wait(10)
-			if 1 != object.int_property(v0, "patron_destroyed") and not _pog_eq(v1, sim.group(v5)):
+			if not _pog_eq(sim.group(v5), v1) and object.int_property(v0, "patron_destroyed") != 1:
 				if PogRuntime.TRACE:
 					debug.print_string("iMissionGenerator: Noted Patron Destroyed.... Setting flag")
 				object.set_int_property(v0, "patron_destroyed", 1)
 				break
-			if 250.0 <= sim.distance_between(v7, v5):
+			if sim.distance_between(v7, v5) <= 250.0:
 				v2 = await local_17063(v5, 1600.0)
 			else:
 				v2 = v3
-			if list.is_empty(v2) and 250.0 <= sim.distance_between(v7, v5):
+			if sim.distance_between(v7, v5) <= 250.0 and list.is_empty(v2):
 				pass
 			else:
 				v9 = 0
-				while list.item_count(v2) < v9:
+				while v9 < list.item_count(v2):
 					v8 = iship.cast(list.get_nth(v2, v9))
 					v10 = await local_17425(v0, v8, v5)
-					if -1 != v10:
+					if v10 != -1:
 						while true:
 							await _pog_wait(7.0)
 							if not (not (iai.is_order_complete(v8))):
 								break
-						object.set_int_property(v0, await local_29122("acquired_cargo_quantity", v10), 1 + object.int_property(v0, await local_29122("acquired_cargo_quantity", v10)))
+						object.set_int_property(v0, await local_29122("acquired_cargo_quantity", v10), object.int_property(v0, await local_29122("acquired_cargo_quantity", v10)) + 1)
 						if not (await local_18318(v0)):
-							if _pog_eq("Unit", object.string_property(v0, "success_payment_method")):
+							if _pog_eq(object.string_property(v0, "success_payment_method"), "Unit"):
 								iinventory.add(object.int_property(v0, "success_payment_type"), object.int_property(v0, "success_payment_quantity"))
 							icomms.shout(0, v14, inifile.string(v16, "Success", "intrim_comm_reference", "default"))
 							await _pog_wait(10.0)
 					else:
 						icomms.shout(0, v14, "Thats not what I asked for!")
-					v9 = 1 + v9
-				if _pog_eq("Unit", object.string_property(v0, "success_payment_method")):
+					v9 = v9 + 1
+				if _pog_eq(object.string_property(v0, "success_payment_method"), "Unit"):
 					iinventory.add(object.int_property(v0, "success_payment_type"), object.int_property(v0, "success_payment_quantity"))
 				await _pog_wait(20.0)
 				await local_18659(v1)
@@ -2532,11 +2532,11 @@ func local_18659(v0) -> Variant:
 			debug.print_string("\n")
 		v13 = group.sim_count(v1)
 		v9 = 0
-		while v13 < v9:
+		while v9 < v13:
 			v4 = list.from_set(sim.children(group.nth_sim(v1, v9)))
 			if not _pog_is_null(list.item_count(v4)):
 				await iutilities.kill_list_of_sims(v4)
-			v9 = 1 + v9
+			v9 = v9 + 1
 		group.destroy(v1, 1)
 	return
 	return 0
@@ -2574,7 +2574,7 @@ func local_21103(v0) -> Variant:
 				_pc = 21476
 				continue
 		elif _pc == 21295:
-			if 1 == object.property_exists(v2, "has_surrendered"):
+			if object.property_exists(v2, "has_surrendered") == 1:
 				_pc = 21327
 				continue
 			else:
@@ -2598,7 +2598,7 @@ func local_21103(v0) -> Variant:
 			_pc = 21384
 			continue
 		elif _pc == 21384:
-			if 0.3499999940395355 < object.float_property(v2, "max_hit_points") / object.float_property(v2, "hit_points"):
+			if object.float_property(v2, "hit_points") / object.float_property(v2, "max_hit_points") < 0.3499999940395355:
 				_pc = 21445
 				continue
 			else:
@@ -2655,11 +2655,11 @@ func local_21611(v0) -> Variant:
 			_pc = 21727
 			continue
 		elif _pc == 21727:
-			v2 = 1 - itrade.num_trades()
+			v2 = itrade.num_trades() - 1
 			_pc = 21748
 			continue
 		elif _pc == 21748:
-			if 0 >= v2:
+			if v2 >= 0:
 				_pc = 21760
 				continue
 			else:
@@ -2667,7 +2667,7 @@ func local_21611(v0) -> Variant:
 				continue
 		elif _pc == 21760:
 			v3 = itrade.nth_trade(v2)
-			if not _pog_eq("", object.string_property(v3, "generated_mission")):
+			if not _pog_eq(object.string_property(v3, "generated_mission"), ""):
 				_pc = 21823
 				continue
 			else:
@@ -2683,7 +2683,7 @@ func local_21611(v0) -> Variant:
 			_pc = 21912
 			continue
 		elif _pc == 21912:
-			if _pog_eq(v1, object.string_property(v3, "generated_mission")):
+			if _pog_eq(object.string_property(v3, "generated_mission"), v1):
 				_pc = 21949
 				continue
 			else:
@@ -2700,7 +2700,7 @@ func local_21611(v0) -> Variant:
 			_pc = 22032
 			continue
 		elif _pc == 21981:
-			v2 = -1 + v2
+			v2 = v2 + -1
 			_pc = 21748
 			continue
 		elif _pc == 22000:
@@ -2747,7 +2747,7 @@ func local_22041(v0) -> Variant:
 			_pc = 22183
 			continue
 		elif _pc == 22183:
-			if not _pog_eq(global.pog_int("cargo_reward_double_counter"), global.pog_int("cargo_double_counter")):
+			if not _pog_eq(global.pog_int("cargo_double_counter"), global.pog_int("cargo_reward_double_counter")):
 				_pc = 22228
 				continue
 			else:
@@ -2791,7 +2791,7 @@ func local_22041(v0) -> Variant:
 			_pc = 22498
 			continue
 		elif _pc == 22498:
-			if object.int_property(v0, "cargo_reward_double_counter") < v5:
+			if v5 < object.int_property(v0, "cargo_reward_double_counter"):
 				_pc = 22534
 				continue
 			else:
@@ -2800,8 +2800,8 @@ func local_22041(v0) -> Variant:
 		elif _pc == 22534:
 			v1 = await local_29315(v0, "cargo_reward", v5)
 			v2 = await local_29315(v0, "cargo_to_get", v5)
-			v3 = await local_29315(v0, "cargo_reward_quantity", 1 + v5)
-			v4 = await local_29315(v0, "cargo_to_get_quantity", 1 + v5)
+			v3 = await local_29315(v0, "cargo_reward_quantity", v5 + 1)
+			v4 = await local_29315(v0, "cargo_to_get_quantity", v5 + 1)
 			_pc = 22750
 			continue
 		elif _pc == 22687:
@@ -2827,7 +2827,7 @@ func local_22041(v0) -> Variant:
 			_pc = 22844
 			continue
 		elif _pc == 22844:
-			if 1000 < v2:
+			if v2 < 1000:
 				_pc = 22858
 				continue
 			else:
@@ -2838,13 +2838,13 @@ func local_22041(v0) -> Variant:
 			_pc = 22957
 			continue
 		elif _pc == 22908:
-			v7 = itrade.create_trade_for_cargo_category(v6, v1, v3, 1000 - v2, v4, 1)
+			v7 = itrade.create_trade_for_cargo_category(v6, v1, v3, v2 - 1000, v4, 1)
 			_pc = 22957
 			continue
 		elif _pc == 22957:
 			object.add_string_property(v7, "generated_mission", object.string_property(v0, "objective_stub"))
 			itrade.offer_trade(v7)
-			if 1 == object.bool_property(v0, "personal_delivery"):
+			if object.bool_property(v0, "personal_delivery") == 1:
 				_pc = 23059
 				continue
 			else:
@@ -2869,7 +2869,7 @@ func local_22041(v0) -> Variant:
 			_pc = 23143
 			continue
 		elif _pc == 23143:
-			v5 = 2 + v5
+			v5 = v5 + 2
 			_pc = 22498
 			continue
 		elif _pc == 23162:
@@ -2953,7 +2953,7 @@ func local_23260(v0) -> Variant:
 			_pc = 23528
 			continue
 		elif _pc == 23528:
-			if 50000.0 <= sim.distance_between(v4, v5):
+			if sim.distance_between(v4, v5) <= 50000.0:
 				_pc = 23562
 				continue
 			else:
@@ -2965,14 +2965,14 @@ func local_23260(v0) -> Variant:
 			_pc = 23626
 			continue
 		elif _pc == 23626:
-			if 0 > v6:
+			if v6 > 0:
 				_pc = 23638
 				continue
 			else:
 				_pc = 23796
 				continue
 		elif _pc == 23638:
-			v6 = -1 + v6
+			v6 = v6 + -1
 			v2 = sim.cast(list.get_nth(v1, v6))
 			if isim.is_docked_to(isim.cast(v5), isim.cast(v2)):
 				_pc = 23748
@@ -2981,7 +2981,7 @@ func local_23260(v0) -> Variant:
 				_pc = 23791
 				continue
 		elif _pc == 23748:
-			if 1 == object.property_exists(v2, "cargo"):
+			if object.property_exists(v2, "cargo") == 1:
 				_pc = 23780
 				continue
 			else:
@@ -2995,7 +2995,7 @@ func local_23260(v0) -> Variant:
 			_pc = 23626
 			continue
 		elif _pc == 23796:
-			if _pog_is_null(object.property_exists(v3, "cargo")) or _pog_is_null(v3):
+			if _pog_is_null(v3) or _pog_is_null(object.property_exists(v3, "cargo")):
 				_pc = 23837
 				continue
 			else:
@@ -3112,14 +3112,14 @@ func local_23260(v0) -> Variant:
 			_pc = 25054
 			continue
 		elif _pc == 25054:
-			if 0 > v10:
+			if v10 > 0:
 				_pc = 25066
 				continue
 			else:
 				_pc = 25121
 				continue
 		elif _pc == 25066:
-			v10 = -1 + v10
+			v10 = v10 + -1
 			v11 = await local_29315(v0, "success_new_mission", v10)
 			_pc = 25054
 			continue
@@ -3243,7 +3243,7 @@ func new_mission_task() -> Variant:
 			_pc = 26298
 			continue
 		elif _pc == 26298:
-			if object.property_exists(v11, "patron_location_system") == 1:
+			if 1 == object.property_exists(v11, "patron_location_system"):
 				_pc = 26330
 				continue
 			else:
@@ -3260,14 +3260,14 @@ func new_mission_task() -> Variant:
 			_pc = 26429
 			continue
 		elif _pc == 26429:
-			if 4 > v10:
+			if v10 > 4:
 				_pc = 26442
 				continue
 			else:
 				_pc = 26723
 				continue
 		elif _pc == 26442:
-			global.set_int("gl_missgen_number_currently_active", 1 - global.pog_int("gl_missgen_number_currently_active"))
+			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_goto"), 2)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_collect"), 2)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_deliver"), 2)
@@ -3276,7 +3276,7 @@ func new_mission_task() -> Variant:
 			_pc = 29113
 			continue
 		elif _pc == 26723:
-			object.set_int_property(v11, "countout", 1 + v10)
+			object.set_int_property(v11, "countout", v10 + 1)
 			_pc = 26788
 			continue
 		elif _pc == 26761:
@@ -3293,7 +3293,7 @@ func new_mission_task() -> Variant:
 			continue
 		elif _pc == 26837:
 			v9 = state.progress(v11)
-			if 1 > v9:
+			if v9 > 1:
 				_pc = 26873
 				continue
 			else:
@@ -3318,7 +3318,7 @@ func new_mission_task() -> Variant:
 			_pc = 27006
 			continue
 		elif _pc == 27006:
-			if 5 >= v9:
+			if v9 >= 5:
 				_pc = 27019
 				continue
 			else:
@@ -3333,7 +3333,7 @@ func new_mission_task() -> Variant:
 				continue
 		elif _pc == 27042:
 			await local_33646(v11)
-			global.set_int("gl_missgen_number_currently_active", 1 - global.pog_int("gl_missgen_number_currently_active"))
+			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
 			state.set_progress(v11, 3)
 			_pc = 27126
 			continue
@@ -3420,7 +3420,7 @@ func new_mission_task() -> Variant:
 			_pc = 27608
 			continue
 		elif _pc == 27608:
-			if 5 == v7:
+			if v7 == 5:
 				_pc = 27621
 				continue
 			else:
@@ -3431,7 +3431,7 @@ func new_mission_task() -> Variant:
 			_pc = 27696
 			continue
 		elif _pc == 27696:
-			if 4 != v7:
+			if v7 != 4:
 				_pc = 27709
 				continue
 			else:
@@ -3447,7 +3447,7 @@ func new_mission_task() -> Variant:
 			_pc = 27775
 			continue
 		elif _pc == 27775:
-			if 1 == v7:
+			if v7 == 1:
 				_pc = 27787
 				continue
 			else:
@@ -3639,7 +3639,7 @@ func new_mission_task() -> Variant:
 			_pc = 28669
 			continue
 		elif _pc == 28807:
-			if 3 == state.progress(v11):
+			if state.progress(v11) == 3:
 				_pc = 28833
 				continue
 			else:
@@ -3656,7 +3656,7 @@ func new_mission_task() -> Variant:
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_goto"), 1)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_collect"), 1)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_deliver"), 1)
-			global.set_int("gl_missgen_number_currently_active", 1 - global.pog_int("gl_missgen_number_currently_active"))
+			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
 			state.destroy(self)
 			_pc = 29113
 			continue
@@ -3793,7 +3793,7 @@ func local_29765(v0, v1, v2, v3) -> Variant:
 		debug.print_string(v5)
 		debug.print_string("\n")
 	object.add_int_property(v0, v5, v3)
-	object.set_int_property(v0, v2, 1 + v4)
+	object.set_int_property(v0, v2, v4 + 1)
 	return 0
 	return 0
 
@@ -3808,7 +3808,7 @@ func local_30142(v0, v1, v2, v3) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Setting GMission Float")
 		debug.print_string("\n")
-	v4 = 1 + object.int_property(v0, v2)
+	v4 = object.int_property(v0, v2) + 1
 	v5 = string.join(v1, string.from_int(v4))
 	object.set_float_property(v0, v5, v3)
 	return 0
@@ -3825,7 +3825,7 @@ func local_30426(v0, v1, v2, v3) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Setting GMission String")
 		debug.print_string("\n")
-	v4 = 1 + object.int_property(v0, v2)
+	v4 = object.int_property(v0, v2) + 1
 	v5 = string.join(v1, string.from_int(v4))
 	object.set_string_property(v0, v5, v3)
 	return 0
@@ -3843,7 +3843,7 @@ func local_30712(v0, v1, v2, v3) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Setting GMission Handle")
 		debug.print_string("\n")
-	v4 = 1 + object.int_property(v0, v2)
+	v4 = object.int_property(v0, v2) + 1
 	v5 = string.join(v1, string.from_int(v4))
 	object.set_handle_property(v0, v5, v3)
 	return 0
@@ -3855,17 +3855,17 @@ func local_30712(v0, v1, v2, v3) -> Variant:
 		debug.print_string("iMissionGenerator: Add cargo properties - old function")
 		debug.print_string("\n")
 	v3 = 0
-	while v2 < v3:
+	while v3 < v2:
 		v6 = inifile.numbered_string(v1, "Target", "required_cargo", v3, "Invalid!")
 		object.add_string_property(v0, await local_29122("required_cargo_type", v3), v6)
 		object.add_int_property(v0, await local_29122("acquired_cargo_quantity", v3), 0)
 		v4 = inifile.numbered_int(v1, "Target", "cargo_quantity", v3, -666)
 		object.add_int_property(v0, await local_29122("cargo_quantity", v3), inifile.numbered_int(v1, "Target", "cargo_quantity", v3, -666))
-		if -666 == object.int_property(v0, await local_29122("cargo_quantity", v3)):
+		if object.int_property(v0, await local_29122("cargo_quantity", v3)) == -666:
 			if PogRuntime.TRACE:
 				debug.print_string("iMissionGenerator: Error - unable to read in cargo quantity")
 				debug.print_string("\n")
-		v3 = 1 + v3
+		v3 = v3 + 1
 	object.add_int_property(v0, "cargo_quantity_required", inifile.pog_int(v1, "Target", "required_quantity", -666))
 	object.add_int_property(v0, "number_of_cargo_types", v2)
 	return 0
@@ -3875,14 +3875,14 @@ func local_30712(v0, v1, v2, v3) -> Variant:
 		debug.print_string("iMissionGenerator: Add failure properties from ini - old function")
 		debug.print_string("\n")
 	v3 = 0
-	while v2 < v3:
-		if not _pog_eq("None", inifile.numbered_string(v1, "Failure", "clause", v3, "default")):
+	while v3 < v2:
+		if not _pog_eq(inifile.numbered_string(v1, "Failure", "clause", v3, "default"), "None"):
 			object.add_string_property(v0, await local_29122("failure_clause", v3), inifile.numbered_string(v1, "Failure", "clause", v3, "default"))
 			object.add_int_property(v0, await local_29122("failure_clause_value", v3), inifile.numbered_int(v1, "Failure", "clause_value", v3, -666))
 			object.add_string_property(v0, await local_29122("failure_clause_comm_type", v3), inifile.numbered_string(v1, "Failure", "comm_type", v3, "default"))
 			object.add_string_property(v0, await local_29122("failure_clause_reference", v3), inifile.numbered_string(v1, "Failure", "reference", v3, "default"))
 			object.add_string_property(v0, await local_29122("failure_clause_knockon", v3), inifile.numbered_string(v1, "Failure", "reference", v3, "default"))
-		v3 = 1 + v3
+		v3 = v3 + 1
 	object.add_int_property(v0, "number_of_failure_clauses", v2)
 	return 0
 	return 0
@@ -3958,9 +3958,9 @@ func success_add_mission(v0, v1) -> Variant:
 		debug.print_string("\n")
 	if object.property_exists(v0, "failure_preclusion_counter"):
 		v2 = object.int_property(v0, "failure_preclusion_counter")
-		while 0 > v2:
+		while v2 > 0:
 			v1 = await local_29315(v0, "failure_preclusion_enum", v2)
-			v2 = -1 + v2
+			v2 = v2 + -1
 	if object.property_exists(v0, "comms_conclusion"):
 		v3 = object.string_property(v0, "comm_conclusion_reference")
 		v1 = object.int_property(v0, "comm_conclustion_type")
@@ -4011,7 +4011,7 @@ func local_33646(v0) -> Variant:
 			_pc = 33832
 			continue
 		elif _pc == 33832:
-			if 0 > v1:
+			if v1 > 0:
 				_pc = 33844
 				continue
 			else:
@@ -4020,7 +4020,7 @@ func local_33646(v0) -> Variant:
 		elif _pc == 33844:
 			v2 = ifaction.cast(await local_29653(v0, "success_faction_handle", v1))
 			v3 = await local_29427(v0, "success_faction_modifier", v1)
-			v1 = -1 + v1
+			v1 = v1 + -1
 			_pc = 33832
 			continue
 		elif _pc == 33948:
@@ -4035,7 +4035,7 @@ func local_33646(v0) -> Variant:
 			_pc = 34009
 			continue
 		elif _pc == 34009:
-			if 0 > v1:
+			if v1 > 0:
 				_pc = 34021
 				continue
 			else:
@@ -4063,11 +4063,11 @@ func local_33646(v0) -> Variant:
 			continue
 		elif _pc == 34173:
 			global.set_bool(v6, v7)
-			v1 = -1 + v1
+			v1 = v1 + -1
 			_pc = 34009
 			continue
 		elif _pc == 34216:
-			if 1 == object.bool_property(v0, "personal_delivery"):
+			if object.bool_property(v0, "personal_delivery") == 1:
 				_pc = 34248
 				continue
 			else:
@@ -4088,7 +4088,7 @@ func local_33646(v0) -> Variant:
 				_pc = 34549
 				continue
 		elif _pc == 34304:
-			v1 = 2 / object.int_property(v0, "cargo_reward_double_counter")
+			v1 = object.int_property(v0, "cargo_reward_double_counter") / 2
 			_pc = 34406
 			continue
 		elif _pc == 34343:
@@ -4098,17 +4098,17 @@ func local_33646(v0) -> Variant:
 			_pc = 34406
 			continue
 		elif _pc == 34406:
-			if 0 > v1:
+			if v1 > 0:
 				_pc = 34418
 				continue
 			else:
 				_pc = 34544
 				continue
 		elif _pc == 34418:
-			v5 = await local_29315(v0, "cargo_reward_quantity", 1 - 2 * v1)
-			v4 = await local_29315(v0, "cargo_reward", 2 - 2 * v1)
+			v5 = await local_29315(v0, "cargo_reward_quantity", v1 * 2 - 1)
+			v4 = await local_29315(v0, "cargo_reward", v1 * 2 - 2)
 			iinventory.add(v4, v5)
-			v1 = 2 - v1
+			v1 = v1 - 2
 			_pc = 34406
 			continue
 		elif _pc == 34544:
@@ -4160,11 +4160,11 @@ func local_33646(v0) -> Variant:
 			continue
 		elif _pc == 34831:
 			v8 = object.string_property(v0, "objective_stub")
-			v9 = 1 - itrade.num_trades()
+			v9 = itrade.num_trades() - 1
 			_pc = 34884
 			continue
 		elif _pc == 34884:
-			if 0 >= v9:
+			if v9 >= 0:
 				_pc = 34896
 				continue
 			else:
@@ -4172,14 +4172,14 @@ func local_33646(v0) -> Variant:
 				continue
 		elif _pc == 34896:
 			v10 = itrade.nth_trade(v9)
-			if not _pog_eq("", object.string_property(v10, "generated_mission")):
+			if not _pog_eq(object.string_property(v10, "generated_mission"), ""):
 				_pc = 34959
 				continue
 			else:
 				_pc = 35041
 				continue
 		elif _pc == 34959:
-			if _pog_eq(v8, object.string_property(v10, "generated_mission")):
+			if _pog_eq(object.string_property(v10, "generated_mission"), v8):
 				_pc = 34996
 				continue
 			else:
@@ -4197,12 +4197,12 @@ func local_33646(v0) -> Variant:
 			_pc = 35041
 			continue
 		elif _pc == 35041:
-			v9 = -1 + v9
+			v9 = v9 + -1
 			_pc = 34884
 			continue
 		elif _pc == 35060:
 			await local_2088(v0, "_deliver", 2)
-			global.set_int("gl_missgen_number_currently_active", 1 - global.pog_int("gl_missgen_number_currently_active"))
+			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
 			return 0
 		else:
 			return 0
@@ -4217,11 +4217,11 @@ func local_35147(v0) -> Variant:
 		if _pc == 35147:
 			v1 = null
 			v1 = object.string_property(v0, "objective_stub")
-			v3 = 1 - itrade.num_trades()
+			v3 = itrade.num_trades() - 1
 			_pc = 35216
 			continue
 		elif _pc == 35216:
-			if 0 >= v3:
+			if v3 >= 0:
 				_pc = 35228
 				continue
 			else:
@@ -4229,14 +4229,14 @@ func local_35147(v0) -> Variant:
 				continue
 		elif _pc == 35228:
 			v2 = itrade.nth_trade(v3)
-			if not _pog_eq("", object.string_property(v2, "generated_mission")):
+			if not _pog_eq(object.string_property(v2, "generated_mission"), ""):
 				_pc = 35291
 				continue
 			else:
 				_pc = 35373
 				continue
 		elif _pc == 35291:
-			if _pog_eq(v1, object.string_property(v2, "generated_mission")):
+			if _pog_eq(object.string_property(v2, "generated_mission"), v1):
 				_pc = 35328
 				continue
 			else:
@@ -4254,7 +4254,7 @@ func local_35147(v0) -> Variant:
 			_pc = 35373
 			continue
 		elif _pc == 35373:
-			v3 = -1 + v3
+			v3 = v3 + -1
 			_pc = 35216
 			continue
 		elif _pc == 35392:
@@ -4282,11 +4282,11 @@ func local_35480(v0) -> Variant:
 	while true:
 		if _pc == 35480:
 			v1 = group.group_count(v0)
-			v2 = 1 - v1
+			v2 = v1 - 1
 			_pc = 35522
 			continue
 		elif _pc == 35522:
-			if 0 >= v2:
+			if v2 >= 0:
 				_pc = 35534
 				continue
 			else:
@@ -4295,11 +4295,11 @@ func local_35480(v0) -> Variant:
 		elif _pc == 35534:
 			v5 = group.nth_group(v0, v2)
 			v3 = group.sim_count(v0)
-			v4 = 1 - group.sim_count(v5)
+			v4 = group.sim_count(v5) - 1
 			_pc = 35613
 			continue
 		elif _pc == 35613:
-			if 0 >= v4:
+			if v4 >= 0:
 				_pc = 35625
 				continue
 			else:
@@ -4309,13 +4309,13 @@ func local_35480(v0) -> Variant:
 			v6 = group.nth_sim(v5, v4)
 			group.add_sim(v0, v6)
 			group.remove_nth_sim(v5, v4)
-			v4 = -1 + v4
+			v4 = v4 + -1
 			_pc = 35613
 			continue
 		elif _pc == 35721:
 			group.remove_nth_group(v0, v2)
 			group.destroy(v5, 0)
-			v2 = -1 + v2
+			v2 = v2 + -1
 			_pc = 35522
 			continue
 		elif _pc == 35784:
@@ -4332,7 +4332,7 @@ func base_jafs_checker() -> Variant:
 		debug.print_string("iMissionGenerator.BaseJafsChecker - message key is '")
 		debug.print_string(v0)
 		debug.print_string("'\n")
-	if _pog_eq("", v0):
+	if _pog_eq(v0, ""):
 		return
 	await iconversation.one_liner(0, "name_jafs", v0)
 	global.set_string("gl_genmission_jafs", "")
@@ -4371,7 +4371,7 @@ func monkey_about(v0, v1) -> Variant:
 			continue
 		elif _pc == 36254:
 			v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
-			sim.place_near(v4, v5, 2500.0 + math.random(2.0 / v6, v6))
+			sim.place_near(v4, v5, math.random(v6 / 2.0, v6) + 2500.0)
 			iai.give_approach_order(v0, v4)
 			_pc = 36374
 			continue
@@ -4410,7 +4410,7 @@ func monkey_about(v0, v1) -> Variant:
 			_pc = 36532
 			continue
 		elif _pc == 36532:
-			if 1000.0 < sim.distance_between(v0, v4) or iai.is_order_complete(v0):
+			if iai.is_order_complete(v0) or sim.distance_between(v0, v4) < 1000.0:
 				_pc = 36585
 				continue
 			else:
@@ -4419,10 +4419,10 @@ func monkey_about(v0, v1) -> Variant:
 		elif _pc == 36585:
 			sim.destroy(v4)
 			v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
-			sim.place_near(v4, v5, 2500.0 + math.random(2.0 / v6, v6))
+			sim.place_near(v4, v5, math.random(v6 / 2.0, v6) + 2500.0)
 			isim.set_sensor_visibility(isim.cast(v4), 0)
 			iai.give_approach_order(v0, v4)
-			v6 = math.random(2.0, 10.0) * math.random(1000.0, 10000.0)
+			v6 = math.random(1000.0, 10000.0) * math.random(2.0, 10.0)
 			_pc = 36805
 			continue
 		elif _pc == 36805:
@@ -4469,7 +4469,7 @@ func local_36870(v0, v1) -> Variant:
 			_pc = 36912
 			continue
 		elif _pc == 36912:
-			if 4 < idockport.count(v1, 3, 1):
+			if idockport.count(v1, 3, 1) < 4:
 				_pc = 36941
 				continue
 			else:
@@ -4486,7 +4486,7 @@ func local_36870(v0, v1) -> Variant:
 			_pc = 36978
 			continue
 		elif _pc == 36978:
-			if object.property_exists(v0, "cargo_double_counter") == 1:
+			if 1 == object.property_exists(v0, "cargo_double_counter"):
 				_pc = 37010
 				continue
 			else:
@@ -4494,28 +4494,28 @@ func local_36870(v0, v1) -> Variant:
 				continue
 		elif _pc == 37010:
 			v2 = object.int_property(v0, "cargo_double_counter")
-			v2 = 2 / v2
+			v2 = v2 / 2
 			v4 = 0
 			_pc = 37062
 			continue
 		elif _pc == 37062:
-			if v2 < v4:
+			if v4 < v2:
 				_pc = 37078
 				continue
 			else:
 				_pc = 37416
 				continue
 		elif _pc == 37078:
-			v3 = await local_29315(v0, "cargo_to_get", 2 * v4)
-			v5 = await local_29315(v0, "cargo_to_get_quantity", 1 + 2 * v4)
-			if 1000 > v3:
+			v3 = await local_29315(v0, "cargo_to_get", v4 * 2)
+			v5 = await local_29315(v0, "cargo_to_get_quantity", v4 * 2 + 1)
+			if v3 > 1000:
 				_pc = 37172
 				continue
 			else:
 				_pc = 37211
 				continue
 		elif _pc == 37172:
-			v3 = 1000 - v3
+			v3 = v3 - 1000
 			v3 = iinventory.cargo_type_from_category_index(v3)
 			_pc = 37211
 			continue
@@ -4524,7 +4524,7 @@ func local_36870(v0, v1) -> Variant:
 			object.add_int_property(v6, "cargo", v3)
 			iship.dock(v6, v1)
 			sim.set_cullable(v6, 0)
-			v5 = -1 + v5
+			v5 = v5 + -1
 			_pc = 37386
 			continue
 		elif _pc == 37365:
@@ -4532,14 +4532,14 @@ func local_36870(v0, v1) -> Variant:
 			_pc = 37386
 			continue
 		elif _pc == 37386:
-			if 0 <= v5:
+			if v5 <= 0:
 				_pc = 37398
 				continue
 			else:
 				_pc = 37211
 				continue
 		elif _pc == 37398:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 37062
 			continue
 		elif _pc == 37416:
@@ -4557,11 +4557,11 @@ func local_37426(v0) -> Variant:
 		if _pc == 37426:
 			v1 = null
 			v1 = v0
-			v3 = 1 - itrade.num_trades()
+			v3 = itrade.num_trades() - 1
 			_pc = 37474
 			continue
 		elif _pc == 37474:
-			if 0 >= v3:
+			if v3 >= 0:
 				_pc = 37486
 				continue
 			else:
@@ -4569,14 +4569,14 @@ func local_37426(v0) -> Variant:
 				continue
 		elif _pc == 37486:
 			v2 = itrade.nth_trade(v3)
-			if not _pog_eq("", object.string_property(v2, "generated_mission")):
+			if not _pog_eq(object.string_property(v2, "generated_mission"), ""):
 				_pc = 37549
 				continue
 			else:
 				_pc = 37631
 				continue
 		elif _pc == 37549:
-			if _pog_eq(v1, object.string_property(v2, "generated_mission")):
+			if _pog_eq(object.string_property(v2, "generated_mission"), v1):
 				_pc = 37586
 				continue
 			else:
@@ -4594,7 +4594,7 @@ func local_37426(v0) -> Variant:
 			_pc = 37631
 			continue
 		elif _pc == 37631:
-			v3 = -1 + v3
+			v3 = v3 + -1
 			_pc = 37474
 			continue
 		elif _pc == 37650:
@@ -4611,12 +4611,12 @@ func flush_g_ms(v0) -> Variant:
 	var _pc: int = 37780
 	while true:
 		if _pc == 37780:
-			v0 = 4 - v0
+			v0 = v0 - 4
 			v1 = 0
 			_pc = 37806
 			continue
 		elif _pc == 37806:
-			if v0 < v1:
+			if v1 < v0:
 				_pc = 37822
 				continue
 			else:
@@ -4769,7 +4769,7 @@ func flush_g_ms(v0) -> Variant:
 			_pc = 39061
 			continue
 		elif _pc == 38742:
-			if v1 != 1:
+			if 1 != v1:
 				_pc = 38755
 				continue
 			else:
@@ -5014,7 +5014,7 @@ func flush_g_ms(v0) -> Variant:
 				_pc = 38711
 				continue
 		elif _pc == 39061:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 37806
 			continue
 		elif _pc == 39079:

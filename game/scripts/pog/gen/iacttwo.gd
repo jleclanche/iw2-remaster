@@ -677,7 +677,7 @@ func local_9581() -> Variant:
 			_pc = 9664
 			continue
 		elif _pc == 9664:
-			if v3 < v5:
+			if v5 < v3:
 				_pc = 9680
 				continue
 			else:
@@ -772,7 +772,7 @@ func local_9581() -> Variant:
 			continue
 		elif _pc == 10224:
 			sim.set_cullable(v1, 0)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 9664
 			continue
 		elif _pc == 10262:
@@ -843,7 +843,7 @@ func local_11088(v0) -> Variant:
 			_pc = 11208
 			continue
 		elif _pc == 11208:
-			v1 = v0 + v1
+			v1 = v1 + v0
 			_pc = 11293
 			continue
 		elif _pc == 11230:
@@ -853,7 +853,7 @@ func local_11088(v0) -> Variant:
 			_pc = 11293
 			continue
 		elif _pc == 11293:
-			if global.exists("g_revealed_hoffer") and 300 >= v1:
+			if v1 >= 300 and global.exists("g_revealed_hoffer"):
 				_pc = 11328
 				continue
 			else:
@@ -925,7 +925,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			_pc = 11627
 			continue
 		elif _pc == 11627:
-			if 2 != global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") != 2:
 				_pc = 11655
 				continue
 			else:
@@ -942,7 +942,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			_pc = 12793
 			continue
 		elif _pc == 11686:
-			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 11713
 				continue
 			else:
@@ -950,7 +950,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 				continue
 		elif _pc == 11713:
 			v3 = isim.cast(sim.find_by_name("Jump Accelerator"))
-			if 20000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 20000.0:
 				_pc = 11786
 				continue
 			else:
@@ -969,7 +969,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			_pc = 12751
 			continue
 		elif _pc == 11856:
-			if 8000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 8000.0:
 				_pc = 11890
 				continue
 			else:
@@ -1025,7 +1025,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_just_want_to_know_about_the_accelerator", "a2_master_dialogue_cal_just_want_to_know_about_the_accelerator")
 			await iconversation.add_response("a2_master_dialogue_cal_just_passing_through", "a2_master_dialogue_cal_just_passing_through")
 			v11 = await iconversation.ask(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_unidentified_ship_this_area_is_restricted_to_corporate_traffic_please_state_your_business")
-			if 1 == v11:
+			if v11 == 1:
 				_pc = 12431
 				continue
 			else:
@@ -1037,7 +1037,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			_pc = 12725
 			continue
 		elif _pc == 12496:
-			if 2 == v11:
+			if v11 == 2:
 				_pc = 12509
 				continue
 			else:
@@ -1049,7 +1049,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			_pc = 12725
 			continue
 		elif _pc == 12574:
-			if 3 == v11:
+			if v11 == 3:
 				_pc = 12587
 				continue
 			else:
@@ -1061,7 +1061,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			_pc = 12725
 			continue
 		elif _pc == 12652:
-			if 4 == v11:
+			if v11 == 4:
 				_pc = 12665
 				continue
 			else:
@@ -1142,7 +1142,7 @@ func ritz_intro_monitor() -> Variant:
 				_pc = 13239
 				continue
 		elif _pc == 13033:
-			if 10000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 10000.0:
 				_pc = 13067
 				continue
 			else:
@@ -1160,7 +1160,7 @@ func ritz_intro_monitor() -> Variant:
 			_pc = 13234
 			continue
 		elif _pc == 13130:
-			if 3000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 3000.0:
 				_pc = 13164
 				continue
 			else:
@@ -1236,7 +1236,7 @@ func ritz_intro_monitor() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_just_curious", "a2_master_dialogue_cal_just_curious")
 			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_mca", "a2_master_dialogue_cal_tell_me_about_mca")
 			v5 = await iconversation.ask(0, "a2_master_character_name_indigo", "a2_master_dialogue_indigo_word_has_passed_down")
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 13672
 				continue
 			else:
@@ -1247,7 +1247,7 @@ func ritz_intro_monitor() -> Variant:
 			_pc = 13792
 			continue
 		elif _pc == 13705:
-			if 2 == v5:
+			if v5 == 2:
 				_pc = 13718
 				continue
 			else:
@@ -1258,7 +1258,7 @@ func ritz_intro_monitor() -> Variant:
 			_pc = 13792
 			continue
 		elif _pc == 13751:
-			if 3 == v5:
+			if v5 == 3:
 				_pc = 13764
 				continue
 			else:
@@ -1363,7 +1363,7 @@ func local_14092() -> Variant:
 				_pc = 16813
 				continue
 		elif _pc == 14208:
-			if not (v9) and not (v6):
+			if not (v6) and not (v9):
 				_pc = 14226
 				continue
 			else:
@@ -1405,7 +1405,7 @@ func local_14092() -> Variant:
 			_pc = 15033
 			continue
 		elif _pc == 15033:
-			if 500000.0 > sim.distance_between(iship.cast(group.leader(v0)), v5):
+			if sim.distance_between(iship.cast(group.leader(v0)), v5) > 500000.0:
 				_pc = 15093
 				continue
 			else:
@@ -1425,7 +1425,7 @@ func local_14092() -> Variant:
 			_pc = 16681
 			continue
 		elif _pc == 15158:
-			if _pog_is_null(v7) and 50000.0 < sim.distance_between(iship.cast(group.leader(v0)), v5):
+			if sim.distance_between(iship.cast(group.leader(v0)), v5) < 50000.0 and _pog_is_null(v7):
 				_pc = 15226
 				continue
 			else:
@@ -1439,7 +1439,7 @@ func local_14092() -> Variant:
 			_pc = 16681
 			continue
 		elif _pc == 15294:
-			if _pog_is_null(v8) and 10000.0 < sim.distance_between(iship.cast(group.leader(v0)), v5):
+			if sim.distance_between(iship.cast(group.leader(v0)), v5) < 10000.0 and _pog_is_null(v8):
 				_pc = 15362
 				continue
 			else:
@@ -1473,7 +1473,7 @@ func local_14092() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_i_wish_to_speak_to_your_commander", "a2_master_dialogue_cal_i_wish_to_speak_to_your_commander")
 			await iconversation.add_response("a2_master_dialogue_cal_dont_mind_me", "a2_master_dialogue_cal_dont_mind_me")
 			v10 = await iconversation.ask(group.leader(v0), "", "a2_master_dialogue_freelancer_what_is_your_business_here")
-			if 1 == v10:
+			if v10 == 1:
 				_pc = 15694
 				continue
 			else:
@@ -1493,7 +1493,7 @@ func local_14092() -> Variant:
 			_pc = 16582
 			continue
 		elif _pc == 16005:
-			if 2 == v10:
+			if v10 == 2:
 				_pc = 16018
 				continue
 			else:
@@ -1512,7 +1512,7 @@ func local_14092() -> Variant:
 			_pc = 16582
 			continue
 		elif _pc == 16282:
-			if 3 == v10:
+			if v10 == 3:
 				_pc = 16295
 				continue
 			else:
@@ -1548,7 +1548,7 @@ func local_14092() -> Variant:
 			continue
 		elif _pc == 16696:
 			await _pog_wait(1.0)
-			if 350000.0 >= sim.distance_between(iship.cast(group.leader(v0)), v5):
+			if sim.distance_between(iship.cast(group.leader(v0)), v5) >= 350000.0:
 				_pc = 16788
 				continue
 			else:
@@ -1620,7 +1620,7 @@ func jackson_encounter_setup() -> Variant:
 			continue
 		elif _pc == 17034:
 			await _pog_wait(2.0)
-			if 7000.0 <= sim.distance_between(v3, v4):
+			if sim.distance_between(v3, v4) <= 7000.0:
 				_pc = 17100
 				continue
 			else:
@@ -1727,7 +1727,7 @@ func jackson_encounter_setup() -> Variant:
 			_pc = 17746
 			continue
 		elif _pc == 17746:
-			if _pog_is_null(global.pog_bool("g_jackson_question_1")) and 1 == v6:
+			if v6 == 1 and _pog_is_null(global.pog_bool("g_jackson_question_1")):
 				_pc = 17781
 				continue
 			else:
@@ -1740,7 +1740,7 @@ func jackson_encounter_setup() -> Variant:
 			_pc = 18400
 			continue
 		elif _pc == 17843:
-			if 1 == global.pog_bool("g_jackson_question_1") and 1 == v6:
+			if v6 == 1 and global.pog_bool("g_jackson_question_1") == 1:
 				_pc = 17878
 				continue
 			else:
@@ -1752,7 +1752,7 @@ func jackson_encounter_setup() -> Variant:
 			_pc = 18400
 			continue
 		elif _pc == 17918:
-			if _pog_is_null(global.pog_bool("g_jackson_question_2")) and 2 == v6:
+			if v6 == 2 and _pog_is_null(global.pog_bool("g_jackson_question_2")):
 				_pc = 17954
 				continue
 			else:
@@ -1765,7 +1765,7 @@ func jackson_encounter_setup() -> Variant:
 			_pc = 18400
 			continue
 		elif _pc == 18016:
-			if 1 == global.pog_bool("g_jackson_question_2") and 2 == v6:
+			if v6 == 2 and global.pog_bool("g_jackson_question_2") == 1:
 				_pc = 18052
 				continue
 			else:
@@ -1777,7 +1777,7 @@ func jackson_encounter_setup() -> Variant:
 			_pc = 18400
 			continue
 		elif _pc == 18092:
-			if 3 == v6:
+			if v6 == 3:
 				_pc = 18105
 				continue
 			else:
@@ -1790,7 +1790,7 @@ func jackson_encounter_setup() -> Variant:
 			_pc = 18400
 			continue
 		elif _pc == 18167:
-			if _pog_is_null(global.pog_bool("g_jackson_question_4")) and 4 == v6:
+			if v6 == 4 and _pog_is_null(global.pog_bool("g_jackson_question_4")):
 				_pc = 18203
 				continue
 			else:
@@ -1803,7 +1803,7 @@ func jackson_encounter_setup() -> Variant:
 			_pc = 18400
 			continue
 		elif _pc == 18265:
-			if 5 == v6 or 1 == global.pog_bool("g_jackson_question_4") and 4 == v6:
+			if v6 == 4 and global.pog_bool("g_jackson_question_4") == 1 or v6 == 5:
 				_pc = 18310
 				continue
 			else:
@@ -1970,7 +1970,7 @@ func local_18968() -> Variant:
 			_pc = 19283
 			continue
 		elif _pc == 19283:
-			if v12 < v2:
+			if v2 < v12:
 				_pc = 19299
 				continue
 			else:
@@ -1985,14 +1985,14 @@ func local_18968() -> Variant:
 			_pc = 19367
 			continue
 		elif _pc == 19367:
-			if 53 == ihabitat.allegiance(ihabitat.cast(v3)):
+			if ihabitat.allegiance(ihabitat.cast(v3)) == 53:
 				_pc = 19406
 				continue
 			else:
 				_pc = 20650
 				continue
 		elif _pc == 19406:
-			if not _pog_eq("Belial L-Point STC HQ", imapentity.pog_name(v3)) and _pog_is_null(list.contains(v1, v3)):
+			if _pog_is_null(list.contains(v1, v3)) and not _pog_eq(imapentity.pog_name(v3), "Belial L-Point STC HQ"):
 				_pc = 19465
 				continue
 			else:
@@ -2007,7 +2007,7 @@ func local_18968() -> Variant:
 			continue
 		elif _pc == 19491:
 			await iconversation.begin()
-			if 1 == global.pog_bool("g_act2_third_way_provided_pilots"):
+			if global.pog_bool("g_act2_third_way_provided_pilots") == 1:
 				_pc = 19532
 				continue
 			else:
@@ -2018,7 +2018,7 @@ func local_18968() -> Variant:
 			_pc = 20566
 			continue
 		elif _pc == 19551:
-			if 1 == global.pog_bool("g_act2_need_pilots"):
+			if global.pog_bool("g_act2_need_pilots") == 1:
 				_pc = 19578
 				continue
 			else:
@@ -2032,7 +2032,7 @@ func local_18968() -> Variant:
 			_pc = 19604
 			continue
 		elif _pc == 19604:
-			if _pog_eq("Eureka System Administration", imapentity.pog_name(v3)):
+			if _pog_eq(imapentity.pog_name(v3), "Eureka System Administration"):
 				_pc = 19636
 				continue
 			else:
@@ -2073,7 +2073,7 @@ func local_18968() -> Variant:
 			continue
 		elif _pc == 19940:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 19964
 				continue
 			else:
@@ -2103,7 +2103,7 @@ func local_18968() -> Variant:
 			_pc = 20566
 			continue
 		elif _pc == 20074:
-			if 1 == global.pog_bool("g_act2_badlands_food_sorted"):
+			if global.pog_bool("g_act2_badlands_food_sorted") == 1:
 				_pc = 20101
 				continue
 			else:
@@ -2130,7 +2130,7 @@ func local_18968() -> Variant:
 			continue
 		elif _pc == 20289:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 20313
 				continue
 			else:
@@ -2174,7 +2174,7 @@ func local_18968() -> Variant:
 			continue
 		elif _pc == 20510:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 20534
 				continue
 			else:
@@ -2233,7 +2233,7 @@ func local_18968() -> Variant:
 			_pc = 20861
 			continue
 		elif _pc == 20861:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 19283
 			continue
 		elif _pc == 20879:
@@ -2244,7 +2244,7 @@ func local_18968() -> Variant:
 				_pc = 21948
 				continue
 		elif _pc == 20907:
-			if 1 == global.pog_bool("g_act2_third_way_provided_pilots"):
+			if global.pog_bool("g_act2_third_way_provided_pilots") == 1:
 				_pc = 20934
 				continue
 			else:
@@ -2274,7 +2274,7 @@ func local_18968() -> Variant:
 		elif _pc == 21050:
 			await iconversation.begin()
 			await iconversation.add_response("a2_master_dialogue_cal_mwari_needs_third_way_pilots", "a2_master_dialogue_cal_mwari_is_where_the_decisive_battle_agaisnt_the_marauders")
-			if _pog_is_null(v8) and 1 == v9:
+			if v9 == 1 and _pog_is_null(v8):
 				_pc = 21111
 				continue
 			else:
@@ -2317,7 +2317,7 @@ func local_18968() -> Variant:
 		elif _pc == 21285:
 			await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
 			v13 = await iconversation.ask(0, "Third_way_elders", "a2_master_dialogue_third_way_elders_so_what_do_you_wish_to_discuss")
-			if 1 == v13:
+			if v13 == 1:
 				_pc = 21357
 				continue
 			else:
@@ -2328,7 +2328,7 @@ func local_18968() -> Variant:
 			_pc = 21795
 			continue
 		elif _pc == 21390:
-			if not (v11) and 1 == v8 and 1 == v9 and 2 == v13:
+			if v13 == 2 and v9 == 1 and v8 == 1 and not (v11):
 				_pc = 21426
 				continue
 			else:
@@ -2340,7 +2340,7 @@ func local_18968() -> Variant:
 			_pc = 21795
 			continue
 		elif _pc == 21466:
-			if _pog_is_null(v8) and 2 == v13:
+			if v13 == 2 and _pog_is_null(v8):
 				_pc = 21487
 				continue
 			else:
@@ -2352,7 +2352,7 @@ func local_18968() -> Variant:
 			_pc = 21795
 			continue
 		elif _pc == 21527:
-			if 2 == v13:
+			if v13 == 2:
 				_pc = 21540
 				continue
 			else:
@@ -2367,7 +2367,7 @@ func local_18968() -> Variant:
 			_pc = 21795
 			continue
 		elif _pc == 21632:
-			if _pog_is_null(v9) and 3 == v13:
+			if v13 == 3 and _pog_is_null(v9):
 				_pc = 21653
 				continue
 			else:
@@ -2379,7 +2379,7 @@ func local_18968() -> Variant:
 			_pc = 21795
 			continue
 		elif _pc == 21693:
-			if 1 == v9 and 3 == v13:
+			if v13 == 3 and v9 == 1:
 				_pc = 21714
 				continue
 			else:
@@ -2390,7 +2390,7 @@ func local_18968() -> Variant:
 			_pc = 21795
 			continue
 		elif _pc == 21747:
-			if 4 == v13:
+			if v13 == 4:
 				_pc = 21760
 				continue
 			else:
@@ -2403,7 +2403,7 @@ func local_18968() -> Variant:
 			continue
 		elif _pc == 21795:
 			await iconversation.end()
-			if not (isim.is_docked_to_structure(v4, v5) and not (v10)):
+			if not (not (v10) and isim.is_docked_to_structure(v4, v5)):
 				_pc = 21844
 				continue
 			else:
@@ -2454,7 +2454,7 @@ func eureka_story_script() -> Variant:
 			v3 = imapentity.find_by_name("Belial L-Point STC HQ")
 			v4 = 0
 			v5 = 0
-			if not _pog_eq("map:/geog/badlands/eureka", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
 				_pc = 22109
 				continue
 			else:
@@ -2533,7 +2533,7 @@ func eureka_story_script() -> Variant:
 			continue
 		elif _pc == 22572:
 			await _pog_wait(0.10000000149011612)
-			if 30000.0 <= sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) <= 30000.0:
 				_pc = 22638
 				continue
 			else:
@@ -2545,7 +2545,7 @@ func eureka_story_script() -> Variant:
 			await iconversation.add_response("a2_master_option_cal_representative_from_hoffers_wake", "a2_master_dialogue_cal_representative_from_hoffers_wake")
 			await iconversation.add_response("a2_master_dialogue_cal_just_wandering", "a2_master_dialogue_cal_just_wandering")
 			v4 = await iconversation.ask(0, "a2_master_stc_control", "a2_master_dialogue_stc_hi_there_traffic_control")
-			if 1 == v4:
+			if v4 == 1:
 				_pc = 22778
 				continue
 			else:
@@ -2556,7 +2556,7 @@ func eureka_story_script() -> Variant:
 			_pc = 22898
 			continue
 		elif _pc == 22811:
-			if 2 == v4:
+			if v4 == 2:
 				_pc = 22824
 				continue
 			else:
@@ -2567,7 +2567,7 @@ func eureka_story_script() -> Variant:
 			_pc = 22898
 			continue
 		elif _pc == 22857:
-			if 3 == v4:
+			if v4 == 3:
 				_pc = 22870
 				continue
 			else:
@@ -2589,14 +2589,14 @@ func eureka_story_script() -> Variant:
 			_pc = 23075
 			continue
 		elif _pc == 23075:
-			if _pog_eq("map:/geog/badlands/eureka", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
 				_pc = 23102
 				continue
 			else:
 				_pc = 24215
 				continue
 		elif _pc == 23102:
-			if 30000.0 < sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) < 30000.0:
 				_pc = 23136
 				continue
 			else:
@@ -2644,7 +2644,7 @@ func eureka_story_script() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_why_are_you_so_chatty", "a2_master_dialogue_cal_why_are_you_so_chatty")
 			await iconversation.add_response("a2_master_dialogue_cal_no_im_fine", "a2_master_dialogue_cal_no_im_fine")
 			v4 = await iconversation.ask(0, "a2_master_stc_control", "a2_master_dialogue_stc_why_hello_again")
-			if 1 == v4:
+			if v4 == 1:
 				_pc = 23413
 				continue
 			else:
@@ -2653,11 +2653,11 @@ func eureka_story_script() -> Variant:
 		elif _pc == 23413:
 			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_a_strange_bunch")
 			await iconversation.end()
-			global.set_int("g_eureka_conversation_number", 1 + global.pog_int("g_eureka_conversation_number"))
+			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
 			_pc = 23659
 			continue
 		elif _pc == 23502:
-			if 2 == v4:
+			if v4 == 2:
 				_pc = 23515
 				continue
 			else:
@@ -2666,11 +2666,11 @@ func eureka_story_script() -> Variant:
 		elif _pc == 23515:
 			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_just_enjoy_the_company")
 			await iconversation.end()
-			global.set_int("g_eureka_conversation_number", 1 + global.pog_int("g_eureka_conversation_number"))
+			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
 			_pc = 23659
 			continue
 		elif _pc == 23604:
-			if 3 == v4:
+			if v4 == 3:
 				_pc = 23617
 				continue
 			else:
@@ -2694,7 +2694,7 @@ func eureka_story_script() -> Variant:
 		elif _pc == 23690:
 			await iconversation.begin()
 			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_hello_there_again_back_for_another_visit")
-			global.set_int("g_eureka_conversation_number", 1 + global.pog_int("g_eureka_conversation_number"))
+			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
 			await iconversation.end()
 			_pc = 24203
 			continue
@@ -2709,7 +2709,7 @@ func eureka_story_script() -> Variant:
 			await iconversation.begin()
 			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_hello_again")
 			await iconversation.end()
-			global.set_int("g_eureka_conversation_number", 1 + global.pog_int("g_eureka_conversation_number"))
+			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
 			_pc = 24203
 			continue
 		elif _pc == 23922:
@@ -2722,7 +2722,7 @@ func eureka_story_script() -> Variant:
 		elif _pc == 23948:
 			await iconversation.begin()
 			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_my_captain_johnson_you_seem_to")
-			global.set_int("g_eureka_conversation_number", 1 + global.pog_int("g_eureka_conversation_number"))
+			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
 			await iconversation.end()
 			_pc = 24203
 			continue
@@ -2744,7 +2744,7 @@ func eureka_story_script() -> Variant:
 			continue
 		elif _pc == 24143:
 			global.pog_int("g_eureka_conversation_number")
-			if global.pog_int("g_eureka_conversation_number") != 1:
+			if 1 != global.pog_int("g_eureka_conversation_number"):
 				_pc = 24171
 				continue
 			else:
@@ -2970,7 +2970,7 @@ func local_24677(v0) -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_any_problems_i_can_help_you_with", "a2_master_dialogue_cal_any_problems_i_can_help_you_with")
 			await iconversation.add_response("a2_master_dialogue_cal_bye", "a2_master_dialogue_cal_bye")
 			v4 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_abdul_welcome_back_Cal_johnston")
-			if _pog_is_null(v5) and 1 == v4:
+			if v4 == 1 and _pog_is_null(v5):
 				_pc = 25083
 				continue
 			else:
@@ -2983,7 +2983,7 @@ func local_24677(v0) -> Variant:
 			_pc = 25553
 			continue
 		elif _pc == 25137:
-			if 1 == v5 and 1 == v4:
+			if v4 == 1 and v5 == 1:
 				_pc = 25157
 				continue
 			else:
@@ -2995,7 +2995,7 @@ func local_24677(v0) -> Variant:
 			_pc = 25553
 			continue
 		elif _pc == 25204:
-			if _pog_is_null(v6) and 2 == v4:
+			if v4 == 2 and _pog_is_null(v6):
 				_pc = 25225
 				continue
 			else:
@@ -3008,7 +3008,7 @@ func local_24677(v0) -> Variant:
 			_pc = 25553
 			continue
 		elif _pc == 25279:
-			if 1 == v6 and 2 == v4:
+			if v4 == 2 and v6 == 1:
 				_pc = 25300
 				continue
 			else:
@@ -3020,7 +3020,7 @@ func local_24677(v0) -> Variant:
 			_pc = 25553
 			continue
 		elif _pc == 25347:
-			if 3 == v4:
+			if v4 == 3:
 				_pc = 25360
 				continue
 			else:
@@ -3045,7 +3045,7 @@ func local_24677(v0) -> Variant:
 			_pc = 25553
 			continue
 		elif _pc == 25491:
-			if 4 == v4:
+			if v4 == 4:
 				_pc = 25504
 				continue
 			else:
@@ -3115,7 +3115,7 @@ func local_24677(v0) -> Variant:
 		elif _pc == 25770:
 			await iconversation.add_response("a2_master_dialogue_cal_bye", "a2_master_dialogue_cal_bye")
 			v4 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_abdul_welcome_back_Cal_johnston")
-			if _pog_is_null(v5) and 1 == v4:
+			if v4 == 1 and _pog_is_null(v5):
 				_pc = 25850
 				continue
 			else:
@@ -3128,7 +3128,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26383
 			continue
 		elif _pc == 25904:
-			if 1 == v5 and 1 == v4:
+			if v4 == 1 and v5 == 1:
 				_pc = 25924
 				continue
 			else:
@@ -3140,7 +3140,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26383
 			continue
 		elif _pc == 25971:
-			if _pog_is_null(v6) and 2 == v4:
+			if v4 == 2 and _pog_is_null(v6):
 				_pc = 25992
 				continue
 			else:
@@ -3153,7 +3153,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26383
 			continue
 		elif _pc == 26046:
-			if 1 == v6 and 2 == v4:
+			if v4 == 2 and v6 == 1:
 				_pc = 26067
 				continue
 			else:
@@ -3165,7 +3165,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26383
 			continue
 		elif _pc == 26114:
-			if _pog_is_null(v7) and 3 == v4:
+			if v4 == 3 and _pog_is_null(v7):
 				_pc = 26135
 				continue
 			else:
@@ -3194,7 +3194,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26383
 			continue
 		elif _pc == 26312:
-			if 3 == v4 or 4 == v4:
+			if v4 == 4 or v4 == 3:
 				_pc = 26334
 				continue
 			else:
@@ -3216,7 +3216,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26420
 			continue
 		elif _pc == 26398:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 26411
 				continue
 			else:
@@ -3233,7 +3233,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26491
 			continue
 		elif _pc == 26425:
-			if 1 == v9:
+			if v9 == 1:
 				_pc = 26437
 				continue
 			else:
@@ -3253,14 +3253,14 @@ func local_24677(v0) -> Variant:
 		elif _pc == 26496:
 			return
 		elif _pc == 26582:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 26598
 				continue
 			else:
 				_pc = 26731
 				continue
 		elif _pc == 26598:
-			if _pog_eq(v1, ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v5)))):
+			if _pog_eq(ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v5))), v1):
 				_pc = 26658
 				continue
 			else:
@@ -3271,7 +3271,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26713
 			continue
 		elif _pc == 26713:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 26582
 			continue
 		elif _pc == 26731:
@@ -3316,7 +3316,7 @@ func kompira_story_script() -> Variant:
 			v11 = 0
 			v14 = 0
 			v15 = 0
-			if 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 26919
 				continue
 			else:
@@ -3327,7 +3327,7 @@ func kompira_story_script() -> Variant:
 			_pc = 26933
 			continue
 		elif _pc == 26933:
-			if not _pog_eq("map:/geog/badlands/kompira", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/kompira"):
 				_pc = 26961
 				continue
 			else:
@@ -3394,14 +3394,14 @@ func kompira_story_script() -> Variant:
 				_pc = 28853
 				continue
 		elif _pc == 27302:
-			if 300000.0 < sim.distance_between(v4, ihabitat.nearest(v5, v4)):
+			if sim.distance_between(v4, ihabitat.nearest(v5, v4)) < 300000.0:
 				_pc = 27354
 				continue
 			else:
 				_pc = 28790
 				continue
 		elif _pc == 27354:
-			if not (v15) and not (v7):
+			if not (v7) and not (v15):
 				_pc = 27372
 				continue
 			else:
@@ -3428,7 +3428,7 @@ func kompira_story_script() -> Variant:
 				_pc = 28754
 				continue
 		elif _pc == 27463:
-			if not (iship.is_in_l_d_s(iship.cast(group.leader(v6)))) and 500000.0 > sim.distance_between(group.leader(v6), v4):
+			if sim.distance_between(group.leader(v6), v4) > 500000.0 and not (iship.is_in_l_d_s(iship.cast(group.leader(v6)))):
 				_pc = 27556
 				continue
 			else:
@@ -3449,7 +3449,7 @@ func kompira_story_script() -> Variant:
 			_pc = 28749
 			continue
 		elif _pc == 27628:
-			if _pog_is_null(v8) and 50000.0 < sim.distance_between(group.leader(v6), v4):
+			if sim.distance_between(group.leader(v6), v4) < 50000.0 and _pog_is_null(v8):
 				_pc = 27683
 				continue
 			else:
@@ -3476,7 +3476,7 @@ func kompira_story_script() -> Variant:
 			_pc = 28749
 			continue
 		elif _pc == 27773:
-			if not (v15) and _pog_is_null(v9) and 10000.0 < sim.distance_between(group.leader(v6), v4):
+			if sim.distance_between(group.leader(v6), v4) < 10000.0 and _pog_is_null(v9) and not (v15):
 				_pc = 27835
 				continue
 			else:
@@ -3508,7 +3508,7 @@ func kompira_story_script() -> Variant:
 			_pc = 28749
 			continue
 		elif _pc == 27984:
-			if not (v15) and 1000.0 < sim.distance_between(group.leader(v6), v4) or iai.is_order_complete(group.leader(v6)):
+			if iai.is_order_complete(group.leader(v6)) or sim.distance_between(group.leader(v6), v4) < 1000.0 and not (v15):
 				_pc = 28070
 				continue
 			else:
@@ -3533,7 +3533,7 @@ func kompira_story_script() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_i_wish_to_speak_to_your_commander", "a2_master_dialogue_cal_i_wish_to_speak_to_your_commander")
 			await iconversation.add_response("a2_master_dialogue_cal_dont_mind_me", "a2_master_dialogue_cal_dont_mind_me")
 			v12 = await iconversation.ask(group.leader(v6), "", "a2_master_dialogue_oman_what_is_your_business_here")
-			if 1 == v12:
+			if v12 == 1:
 				_pc = 28301
 				continue
 			else:
@@ -3547,7 +3547,7 @@ func kompira_story_script() -> Variant:
 			_pc = 28686
 			continue
 		elif _pc == 28379:
-			if 2 == v12:
+			if v12 == 2:
 				_pc = 28392
 				continue
 			else:
@@ -3561,7 +3561,7 @@ func kompira_story_script() -> Variant:
 			_pc = 28686
 			continue
 		elif _pc == 28470:
-			if 3 == v12:
+			if v12 == 3:
 				_pc = 28483
 				continue
 			else:
@@ -3624,7 +3624,7 @@ func kompira_story_script() -> Variant:
 			_pc = 27291
 			continue
 		elif _pc == 28853:
-			if 3 == iai.current_order_type(v4) or 2 == iai.current_order_type(v4) and _pog_eq(v6, sim.group(iship.current_target(v4))):
+			if _pog_eq(sim.group(iship.current_target(v4)), v6) and iai.current_order_type(v4) == 2 or iai.current_order_type(v4) == 3:
 				_pc = 28939
 				continue
 			else:
@@ -3674,7 +3674,7 @@ func kompira_story_script() -> Variant:
 			continue
 		elif _pc == 29142:
 			await _pog_wait(2.0)
-			if not (100000.0 > sim.distance_between(group.leader(v6), v13) and not (iai.is_order_complete(v6))):
+			if not (not (iai.is_order_complete(v6)) and sim.distance_between(group.leader(v6), v13) > 100000.0):
 				_pc = 29241
 				continue
 			else:
@@ -3686,7 +3686,7 @@ func kompira_story_script() -> Variant:
 			v8 = 0
 			v9 = 0
 			v11 = 1
-			if 100000.0 <= sim.distance_between(v4, v13):
+			if sim.distance_between(v4, v13) <= 100000.0:
 				_pc = 29335
 				continue
 			else:
@@ -3705,7 +3705,7 @@ func kompira_story_script() -> Variant:
 			continue
 		elif _pc == 29382:
 			await _pog_wait(1.0)
-			if 8000.0 <= sim.distance_between(v4, v13):
+			if sim.distance_between(v4, v13) <= 8000.0:
 				_pc = 29448
 				continue
 			else:
@@ -3755,7 +3755,7 @@ func kompira_story_script() -> Variant:
 			await iconversation.add_response("a2_master_option_cal_hoffers_wake_needs_help", "a2_master_dialogue_cal_hoffers_wake_needs_help")
 			await iconversation.add_response("a2_master_option_cal_i_represent_the_league", "a2_master_dialogue_cal_i_represent_the_league")
 			v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_welcome_stranger_i_am_the_elder")
-			if 1 == v12:
+			if v12 == 1:
 				_pc = 29772
 				continue
 			else:
@@ -3766,7 +3766,7 @@ func kompira_story_script() -> Variant:
 			_pc = 29846
 			continue
 		elif _pc == 29805:
-			if 2 == v12:
+			if v12 == 2:
 				_pc = 29818
 				continue
 			else:
@@ -3785,7 +3785,7 @@ func kompira_story_script() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_yes_ill_take_the_test", "a2_master_dialogue_cal_yes_ill_take_the_test")
 			await iconversation.add_response("a2_master_dialogue_cal_not_just_yet", "a2_master_dialogue_cal_not_just_yet")
 			v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_do_you_wish_to_take_the_test")
-			if 1 == v12:
+			if v12 == 1:
 				_pc = 30085
 				continue
 			else:
@@ -3825,7 +3825,7 @@ func kompira_story_script() -> Variant:
 			_pc = 30674
 			continue
 		elif _pc == 30299:
-			if 1 == global.pog_bool("g_act2_oman_test_offered"):
+			if global.pog_bool("g_act2_oman_test_offered") == 1:
 				_pc = 30326
 				continue
 			else:
@@ -3843,7 +3843,7 @@ func kompira_story_script() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_yes_ill_take_the_test", "a2_master_dialogue_cal_yes_ill_take_the_test")
 			await iconversation.add_response("a2_master_dialogue_cal_not_just_yet", "a2_master_not_just_yet")
 			v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_welcome_back")
-			if 1 == v12:
+			if v12 == 1:
 				_pc = 30465
 				continue
 			else:
@@ -4135,7 +4135,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 32600
 			continue
 		elif _pc == 32600:
-			if _pog_is_null(v2) and 12000.0 < sim.distance_between(v5, v3):
+			if sim.distance_between(v5, v3) < 12000.0 and _pog_is_null(v2):
 				_pc = 32642
 				continue
 			else:
@@ -4162,7 +4162,7 @@ func firefrost_conversations() -> Variant:
 			continue
 		elif _pc == 32814:
 			await iconversation.begin()
-			if _pog_is_null(v7) and _pog_is_null(global.pog_bool("g_act2_need_pilots")):
+			if _pog_is_null(global.pog_bool("g_act2_need_pilots")) and _pog_is_null(v7):
 				_pc = 32863
 				continue
 			else:
@@ -4173,7 +4173,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 32989
 			continue
 		elif _pc == 32895:
-			if _pog_is_null(v7) and 1 == global.pog_bool("g_act2_need_pilots"):
+			if global.pog_bool("g_act2_need_pilots") == 1 and _pog_is_null(v7):
 				_pc = 32930
 				continue
 			else:
@@ -4221,7 +4221,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 33203
 			continue
 		elif _pc == 33203:
-			if _pog_is_null(v7) and 1 == v13:
+			if v13 == 1 and _pog_is_null(v7):
 				_pc = 33223
 				continue
 			else:
@@ -4233,7 +4233,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 33568
 			continue
 		elif _pc == 33263:
-			if 1 == v7 and 1 == v13:
+			if v13 == 1 and v7 == 1:
 				_pc = 33283
 				continue
 			else:
@@ -4246,7 +4246,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 33568
 			continue
 		elif _pc == 33359:
-			if _pog_is_null(v8) and 2 == v13:
+			if v13 == 2 and _pog_is_null(v8):
 				_pc = 33380
 				continue
 			else:
@@ -4258,7 +4258,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 33568
 			continue
 		elif _pc == 33420:
-			if 1 == v8 and 2 == v13:
+			if v13 == 2 and v8 == 1:
 				_pc = 33441
 				continue
 			else:
@@ -4269,7 +4269,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 33568
 			continue
 		elif _pc == 33474:
-			if 3 == v13:
+			if v13 == 3:
 				_pc = 33487
 				continue
 			else:
@@ -4280,7 +4280,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 33568
 			continue
 		elif _pc == 33520:
-			if 4 == v13:
+			if v13 == 4:
 				_pc = 33533
 				continue
 			else:
@@ -4304,7 +4304,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 35410
 			continue
 		elif _pc == 33618:
-			if _pog_is_null(v12) and 1 == global.pog_bool("g_firfrost_sherrif_referred") and 5000.0 < sim.distance_between(v5, v4):
+			if sim.distance_between(v5, v4) < 5000.0 and global.pog_bool("g_firfrost_sherrif_referred") == 1 and _pog_is_null(v12):
 				_pc = 33683
 				continue
 			else:
@@ -4345,7 +4345,7 @@ func firefrost_conversations() -> Variant:
 				continue
 		elif _pc == 33903:
 			await iconversation.begin()
-			if 1 == global.pog_bool("g_act2_high_noon_offered"):
+			if global.pog_bool("g_act2_high_noon_offered") == 1:
 				_pc = 33944
 				continue
 			else:
@@ -4356,7 +4356,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34137
 			continue
 		elif _pc == 33976:
-			if _pog_is_null(v7) and _pog_is_null(global.pog_bool("g_act2_need_pilots")):
+			if _pog_is_null(global.pog_bool("g_act2_need_pilots")) and _pog_is_null(v7):
 				_pc = 34011
 				continue
 			else:
@@ -4367,7 +4367,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34137
 			continue
 		elif _pc == 34043:
-			if _pog_is_null(v7) and 1 == global.pog_bool("g_act2_need_pilots"):
+			if global.pog_bool("g_act2_need_pilots") == 1 and _pog_is_null(v7):
 				_pc = 34078
 				continue
 			else:
@@ -4401,7 +4401,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34308
 			continue
 		elif _pc == 34308:
-			if 1 == global.pog_bool("g_act2_high_noon_offered") and 1 == v13:
+			if v13 == 1 and global.pog_bool("g_act2_high_noon_offered") == 1:
 				_pc = 34343
 				continue
 			else:
@@ -4412,7 +4412,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34755
 			continue
 		elif _pc == 34376:
-			if _pog_is_null(v7) and 1 == v13:
+			if v13 == 1 and _pog_is_null(v7):
 				_pc = 34396
 				continue
 			else:
@@ -4424,7 +4424,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34755
 			continue
 		elif _pc == 34436:
-			if 1 == v7 and 1 == v13:
+			if v13 == 1 and v7 == 1:
 				_pc = 34456
 				continue
 			else:
@@ -4434,7 +4434,7 @@ func firefrost_conversations() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_sure", "a2_master_dialogue_cal_sure")
 			await iconversation.add_response("a2_master_dialogue_cal_im_busy", "a2_master_dialogue_cal_im_busy")
 			v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_well_boy_we_got_ourselves_hurt_real_bad")
-			if 1 == v13:
+			if v13 == 1:
 				_pc = 34555
 				continue
 			else:
@@ -4453,7 +4453,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34755
 			continue
 		elif _pc == 34643:
-			if 2 == v13:
+			if v13 == 2:
 				_pc = 34656
 				continue
 			else:
@@ -4464,7 +4464,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34755
 			continue
 		elif _pc == 34689:
-			if 3 == v13:
+			if v13 == 3:
 				_pc = 34702
 				continue
 			else:
@@ -4475,7 +4475,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 34755
 			continue
 		elif _pc == 34735:
-			if 4 == v13:
+			if v13 == 4:
 				_pc = 34748
 				continue
 			else:
@@ -4518,7 +4518,7 @@ func firefrost_conversations() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_firefrost", "a2_master_dialogue_cal_tell_me_about_firefrost")
 			await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
 			v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_what_can_i_do_for_you_boy")
-			if _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")) and 1 == v13:
+			if v13 == 1 and _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
 				_pc = 35054
 				continue
 			else:
@@ -4529,7 +4529,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 35328
 			continue
 		elif _pc == 35087:
-			if 1 == global.pog_bool("g_act2_need_pilots") and 1 == v13:
+			if v13 == 1 and global.pog_bool("g_act2_need_pilots") == 1:
 				_pc = 35122
 				continue
 			else:
@@ -4544,7 +4544,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 35328
 			continue
 		elif _pc == 35216:
-			if 2 == v13:
+			if v13 == 2:
 				_pc = 35229
 				continue
 			else:
@@ -4555,7 +4555,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 35328
 			continue
 		elif _pc == 35262:
-			if 3 == v13:
+			if v13 == 3:
 				_pc = 35275
 				continue
 			else:
@@ -4566,7 +4566,7 @@ func firefrost_conversations() -> Variant:
 			_pc = 35328
 			continue
 		elif _pc == 35308:
-			if 4 == v13:
+			if v13 == 4:
 				_pc = 35321
 				continue
 			else:
@@ -4621,7 +4621,7 @@ func firefrost_story_script() -> Variant:
 		if _pc == 35457:
 			v0 = self
 			v1 = state.find(v0)
-			if 1 != global.pog_bool("g_skip_to_specific") and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/firefrost") and global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 35555
 				continue
 			else:
@@ -4668,7 +4668,7 @@ func firefrost_story_script() -> Variant:
 			_pc = 35719
 			continue
 		elif _pc == 35719:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 35746
 				continue
 			else:
@@ -4709,7 +4709,7 @@ func firefrost_story_script() -> Variant:
 			_pc = 36167
 			continue
 		elif _pc == 36167:
-			if 1 != global.pog_bool("g_skip_to_specific") and _pog_is_null(global.pog_bool("g_act2_high_noon_offered")):
+			if _pog_is_null(global.pog_bool("g_act2_high_noon_offered")) and global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 36216
 				continue
 			else:
@@ -4852,7 +4852,7 @@ func coyote_story_script() -> Variant:
 		if _pc == 36852:
 			v0 = self
 			v1 = state.find(v0)
-			if not _pog_eq("map:/geog/badlands/coyote", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
 				_pc = 36928
 				continue
 			else:
@@ -4888,7 +4888,7 @@ func coyote_story_script() -> Variant:
 			_pc = 37047
 			continue
 		elif _pc == 37047:
-			if 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 37074
 				continue
 			else:
@@ -4911,7 +4911,7 @@ func coyote_story_script() -> Variant:
 			_pc = 37172
 			continue
 		elif _pc == 37172:
-			if _pog_is_null(object.property_exists(v1, "ran_jackson_encounter")) and _pog_is_null(global.pog_bool("g_act2_spoken_to_hoffer")):
+			if _pog_is_null(global.pog_bool("g_act2_spoken_to_hoffer")) and _pog_is_null(object.property_exists(v1, "ran_jackson_encounter")):
 				_pc = 37226
 				continue
 			else:
@@ -4951,7 +4951,7 @@ func coyote_story_script() -> Variant:
 			_pc = 37401
 			continue
 		elif _pc == 37401:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 37429
 				continue
 			else:
@@ -5001,7 +5001,7 @@ func coyote_story_script() -> Variant:
 			_pc = 37810
 			continue
 		elif _pc == 37810:
-			if 1 == global.pog_bool("g_act2_referred_to_hoffer"):
+			if global.pog_bool("g_act2_referred_to_hoffer") == 1:
 				_pc = 37837
 				continue
 			else:
@@ -5012,15 +5012,15 @@ func coyote_story_script() -> Variant:
 			_pc = 37858
 			continue
 		elif _pc == 37858:
-			if 1 == global.pog_bool("g_act2_referred_to_hoffer"):
+			if global.pog_bool("g_act2_referred_to_hoffer") == 1:
 				_pc = 37885
 				continue
 			else:
 				_pc = 38095
 				continue
 		elif _pc == 37885:
-			v2 = 1 + v2
-			if 30 == v2:
+			v2 = v2 + 1
+			if v2 == 30:
 				_pc = 37911
 				continue
 			else:
@@ -5160,14 +5160,14 @@ func local_39403(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 39434:
 			await _pog_wait(1.0)
-			if 1 >= state.progress(v3):
+			if state.progress(v3) >= 1:
 				_pc = 39491
 				continue
 			else:
 				_pc = 39434
 				continue
 		elif _pc == 39491:
-			global.set_int("g_act2_dagda_visits", 1 + global.pog_int("g_act2_dagda_visits"))
+			global.set_int("g_act2_dagda_visits", global.pog_int("g_act2_dagda_visits") + 1)
 			_pc = 39533
 			continue
 		elif _pc == 39533:
@@ -5188,7 +5188,7 @@ func local_39403(v0, v1, v2, v3) -> Variant:
 			_pc = 40092
 			continue
 		elif _pc == 39574:
-			if 3000.0 < sim.distance_between(v4, v2):
+			if sim.distance_between(v4, v2) < 3000.0:
 				_pc = 39608
 				continue
 			else:
@@ -5224,7 +5224,7 @@ func local_39403(v0, v1, v2, v3) -> Variant:
 			_pc = 40070
 			continue
 		elif _pc == 40070:
-			if not (not _pog_is_null(v1) and not _pog_is_null(v0)):
+			if not (not _pog_is_null(v0) and not _pog_is_null(v1)):
 				_pc = 40092
 				continue
 			else:
@@ -5270,7 +5270,7 @@ func dagda_story_script() -> Variant:
 			v8 = ihabitat.cast(imapentity.find_by_name_in_system("Dagda Maas Systems STC", "map:/geog/badlands/dagda"))
 			v9 = iship.find_player_ship()
 			v12 = await local_10299(v8)
-			if not _pog_eq("map:/geog/badlands/dagda", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/dagda"):
 				_pc = 40349
 				continue
 			else:
@@ -5382,7 +5382,7 @@ func dagda_story_script() -> Variant:
 			_pc = 41582
 			continue
 		elif _pc == 41582:
-			if 15000.0 < sim.distance_between(v9, v7):
+			if sim.distance_between(v9, v7) < 15000.0:
 				_pc = 41616
 				continue
 			else:
@@ -5396,7 +5396,7 @@ func dagda_story_script() -> Variant:
 				_pc = 42072
 				continue
 		elif _pc == 41626:
-			if 5000.0 < sim.distance_between(v9, v7):
+			if sim.distance_between(v9, v7) < 5000.0:
 				_pc = 41660
 				continue
 			else:
@@ -5584,7 +5584,7 @@ func santa_romera_story_script() -> Variant:
 		if _pc == 42612:
 			v0 = self
 			v1 = state.find(v0)
-			if 1 != global.pog_bool("g_skip_to_specific") and not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera") and global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 42710
 				continue
 			else:
@@ -5640,7 +5640,7 @@ func santa_romera_story_script() -> Variant:
 			continue
 		elif _pc == 42964:
 			await _pog_wait(5.0)
-			if not (1 != global.pog_bool("g_skip_to_specific") and _pog_is_null(global.pog_bool("g_act2_ritz_introduced"))):
+			if not (_pog_is_null(global.pog_bool("g_act2_ritz_introduced")) and global.pog_bool("g_skip_to_specific") != 1):
 				_pc = 43045
 				continue
 			else:
@@ -5803,7 +5803,7 @@ func mwari_blockade_events() -> Variant:
 			_pc = 44232
 			continue
 		elif _pc == 43779:
-			if 1 != global.pog_bool("g_skip_to_specific") and _pog_is_null(global.pog_bool("g_act2_received_selling_secrets_intro")):
+			if _pog_is_null(global.pog_bool("g_act2_received_selling_secrets_intro")) and global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 43828
 				continue
 			else:
@@ -5833,7 +5833,7 @@ func mwari_blockade_events() -> Variant:
 			continue
 		elif _pc == 43938:
 			await _pog_wait(10.0)
-			if not (1 != global.pog_bool("g_skip_to_specific") and _pog_is_null(global.pog_bool("g_act2_mommma_wolf_destroyed"))):
+			if not (_pog_is_null(global.pog_bool("g_act2_mommma_wolf_destroyed")) and global.pog_bool("g_skip_to_specific") != 1):
 				_pc = 44019
 				continue
 			else:
@@ -5853,7 +5853,7 @@ func mwari_blockade_events() -> Variant:
 			continue
 		elif _pc == 44080:
 			await _pog_wait(10.0)
-			if not (1 != global.pog_bool("g_skip_to_specific") and _pog_is_null(global.pog_bool("g_act2_corporate_holdings_complete"))):
+			if not (_pog_is_null(global.pog_bool("g_act2_corporate_holdings_complete")) and global.pog_bool("g_skip_to_specific") != 1):
 				_pc = 44161
 				continue
 			else:
@@ -5909,7 +5909,7 @@ func mwari_story_script() -> Variant:
 			v2 = imapentity.find_by_name_in_system("Longshot MCA Defence HQ", "map:/geog/badlands/mwari")
 			v3 = iship.find_player_ship()
 			v4 = 0
-			if 1 != global.pog_bool("g_skip_to_specific") and not _pog_eq("map:/geog/badlands/mwari", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/mwari") and global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 44434
 				continue
 			else:
@@ -5958,21 +5958,21 @@ func mwari_story_script() -> Variant:
 			_pc = 44692
 			continue
 		elif _pc == 44692:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 44719
 				continue
 			else:
 				_pc = 46175
 				continue
 		elif _pc == 44719:
-			if 10000.0 < sim.distance_between(v3, v2):
+			if sim.distance_between(v3, v2) < 10000.0:
 				_pc = 44753
 				continue
 			else:
 				_pc = 45452
 				continue
 		elif _pc == 44753:
-			if global.exists("g_blockade_runner_running") or 1 == global.pog_bool("g_act2_completed_blockade_run"):
+			if global.pog_bool("g_act2_completed_blockade_run") == 1 or global.exists("g_blockade_runner_running"):
 				_pc = 44800
 				continue
 			else:
@@ -6010,7 +6010,7 @@ func mwari_story_script() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_come_to_fight_marauders", "a2_master_dialogue_cal_come_to_fight_marauders")
 			await iconversation.add_response("a2_master_dialogue_cal_mca_just_passing", "a2_master_dialogue_cal_mca_just_passing")
 			v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_you_have_entered_mca_space")
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 45052
 				continue
 			else:
@@ -6021,7 +6021,7 @@ func mwari_story_script() -> Variant:
 			_pc = 45172
 			continue
 		elif _pc == 45085:
-			if 2 == v5:
+			if v5 == 2:
 				_pc = 45098
 				continue
 			else:
@@ -6032,7 +6032,7 @@ func mwari_story_script() -> Variant:
 			_pc = 45172
 			continue
 		elif _pc == 45131:
-			if 3 == v5:
+			if v5 == 3:
 				_pc = 45144
 				continue
 			else:
@@ -6044,14 +6044,14 @@ func mwari_story_script() -> Variant:
 			continue
 		elif _pc == 45172:
 			await iconversation.end()
-			global.set_int("g_act2_mwari_conversations", 1 + global.pog_int("g_act2_mwari_conversations"))
+			global.set_int("g_act2_mwari_conversations", global.pog_int("g_act2_mwari_conversations") + 1)
 			_pc = 45447
 			continue
 		elif _pc == 45233:
 			await iconversation.begin()
 			await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_you_again")
 			await iconversation.end()
-			global.set_int("g_act2_mwari_conversations", 1 + global.pog_int("g_act2_mwari_conversations"))
+			global.set_int("g_act2_mwari_conversations", global.pog_int("g_act2_mwari_conversations") + 1)
 			_pc = 45447
 			continue
 		elif _pc == 45336:
@@ -6122,7 +6122,7 @@ func mwari_story_script() -> Variant:
 				_pc = 45537
 				continue
 		elif _pc == 45620:
-			if 0 > global.pog_int("g_act2_mwari_conversations"):
+			if global.pog_int("g_act2_mwari_conversations") > 0:
 				_pc = 45647
 				continue
 			else:
@@ -6142,7 +6142,7 @@ func mwari_story_script() -> Variant:
 			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_mca", "a2_master_dialogue_cal_tell_me_about_the_mca")
 			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_marauders", "a2_master_dialogue_cal_tell_me_about_the_marauders")
 			v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_unfortunately_the_situation_with_the_marauders")
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 45835
 				continue
 			else:
@@ -6152,7 +6152,7 @@ func mwari_story_script() -> Variant:
 			await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_we_are_a_democracy")
 			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_marauders", "a2_master_dialogue_cal_tell_me_about_the_marauders")
 			v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_anything_else")
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 45935
 				continue
 			else:
@@ -6166,7 +6166,7 @@ func mwari_story_script() -> Variant:
 			_pc = 46109
 			continue
 		elif _pc == 45968:
-			if 2 == v5:
+			if v5 == 2:
 				_pc = 45981
 				continue
 			else:
@@ -6176,7 +6176,7 @@ func mwari_story_script() -> Variant:
 			await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_the_marauders_have_been")
 			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_marauders", "a2_master_dialogue_cal_tell_me_about_the_marauders")
 			v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_anything_else")
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 46081
 				continue
 			else:
@@ -6286,7 +6286,7 @@ func marauder_hunt_story_script() -> Variant:
 				_pc = 46574
 				continue
 		elif _pc == 46671:
-			if 240 < object.int_property(v2, "delay"):
+			if object.int_property(v2, "delay") < 240:
 				_pc = 46705
 				continue
 			else:
@@ -6294,7 +6294,7 @@ func marauder_hunt_story_script() -> Variant:
 				continue
 		elif _pc == 46705:
 			await _pog_wait(1.0)
-			object.set_int_property(v2, "delay", 1 + object.int_property(v2, "delay"))
+			object.set_int_property(v2, "delay", object.int_property(v2, "delay") + 1)
 			_pc = 46815
 			continue
 		elif _pc == 46794:
@@ -6302,7 +6302,7 @@ func marauder_hunt_story_script() -> Variant:
 			_pc = 46815
 			continue
 		elif _pc == 46815:
-			if 120 >= object.int_property(v2, "delay"):
+			if object.int_property(v2, "delay") >= 120:
 				_pc = 46848
 				continue
 			else:
@@ -6450,21 +6450,21 @@ func hoffer_creation_handler() -> Variant:
 			v4 = iship.find_player_ship()
 			v1 = global.string("g_player_base_system")
 			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
-			if _pog_eq(v1, isim.active_world()):
+			if _pog_eq(isim.active_world(), v1):
 				_pc = 48012
 				continue
 			else:
 				_pc = 48237
 				continue
 		elif _pc == 48012:
-			if _pog_is_null(global.exists("g_hoffer_disabled")) and 1 != global.pog_bool("g_act3_ready_for_mission_ten"):
+			if global.pog_bool("g_act3_ready_for_mission_ten") != 1 and _pog_is_null(global.exists("g_hoffer_disabled")):
 				_pc = 48061
 				continue
 			else:
 				_pc = 48237
 				continue
 		elif _pc == 48061:
-			if not (v5) and 300000.0 > sim.distance_between(v4, v3):
+			if sim.distance_between(v4, v3) > 300000.0 and not (v5):
 				_pc = 48102
 				continue
 			else:
@@ -6477,7 +6477,7 @@ func hoffer_creation_handler() -> Variant:
 			_pc = 48237
 			continue
 		elif _pc == 48155:
-			if 300000.0 < sim.distance_between(v4, v3) and v5:
+			if v5 and sim.distance_between(v4, v3) < 300000.0:
 				_pc = 48195
 				continue
 			else:
@@ -6519,7 +6519,7 @@ func hoffer_reveal_monitor() -> Variant:
 			_pc = 48377
 			continue
 		elif _pc == 48377:
-			if _pog_is_null(global.exists("g_revealed_hoffer")) and 1 == global.exists("g_told_about_hoffer"):
+			if global.exists("g_told_about_hoffer") == 1 and _pog_is_null(global.exists("g_revealed_hoffer")):
 				_pc = 48426
 				continue
 			else:
@@ -6541,21 +6541,21 @@ func hoffer_reveal_monitor() -> Variant:
 				_pc = 49240
 				continue
 		elif _pc == 48466:
-			if _pog_eq("map:/geog/badlands/coyote", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
 				_pc = 48493
 				continue
 			else:
 				_pc = 49240
 				continue
 		elif _pc == 48493:
-			if _pog_is_null(global.exists("g_revealed_hoffer")) and 1 == global.exists("g_told_about_hoffer"):
+			if global.exists("g_told_about_hoffer") == 1 and _pog_is_null(global.exists("g_revealed_hoffer")):
 				_pc = 48542
 				continue
 			else:
 				_pc = 49214
 				continue
 		elif _pc == 48542:
-			if not (v2) and 7000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 7000.0 and not (v2):
 				_pc = 48583
 				continue
 			else:
@@ -6567,7 +6567,7 @@ func hoffer_reveal_monitor() -> Variant:
 			_pc = 48670
 			continue
 		elif _pc == 48623:
-			if v2 and 7000.0 > sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) > 7000.0 and v2:
 				_pc = 48663
 				continue
 			else:
@@ -6578,7 +6578,7 @@ func hoffer_reveal_monitor() -> Variant:
 			_pc = 48670
 			continue
 		elif _pc == 48670:
-			if isim.is_docked_to_structure(v0, v1) and v2:
+			if v2 and isim.is_docked_to_structure(v0, v1):
 				_pc = 48704
 				continue
 			else:
@@ -6669,7 +6669,7 @@ func mwari_wars_story_script() -> Variant:
 			_pc = 49407
 			continue
 		elif _pc == 49407:
-			if idirector.is_busy() and _pog_is_null(global.pog_bool("g_act2_eureka_visited")):
+			if _pog_is_null(global.pog_bool("g_act2_eureka_visited")) and idirector.is_busy():
 				_pc = 49448
 				continue
 			else:
@@ -6732,7 +6732,7 @@ func mwari_wars_story_script() -> Variant:
 			continue
 		elif _pc == 49765:
 			await _pog_wait(5.0)
-			if not (1 != global.pog_bool("g_skip_to_specific") and _pog_is_null(global.pog_bool("g_act2_reached_pilot_total"))):
+			if not (_pog_is_null(global.pog_bool("g_act2_reached_pilot_total")) and global.pog_bool("g_skip_to_specific") != 1):
 				_pc = 49846
 				continue
 			else:
@@ -6779,7 +6779,7 @@ func mwari_wars_story_script() -> Variant:
 			_pc = 50105
 			continue
 		elif _pc == 50105:
-			if 1 != global.pog_bool("g_skip_to_specific") and _pog_is_null(global.pog_bool("g_act2_ready_for_battle_of_mwari")):
+			if _pog_is_null(global.pog_bool("g_act2_ready_for_battle_of_mwari")) and global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 50154
 				continue
 			else:
@@ -6917,7 +6917,7 @@ func local_50472() -> Variant:
 			_pc = 50734
 			continue
 		elif _pc == 50734:
-			if not _pog_eq("map:/geog/badlands/dagda", v2) and global.exists("g_dagda_waypoints"):
+			if global.exists("g_dagda_waypoints") and not _pog_eq(v2, "map:/geog/badlands/dagda"):
 				_pc = 50773
 				continue
 			else:
@@ -6929,7 +6929,7 @@ func local_50472() -> Variant:
 			_pc = 50842
 			continue
 		elif _pc == 50842:
-			if not _pog_eq(v1, v2):
+			if not _pog_eq(v2, v1):
 				_pc = 50859
 				continue
 			else:
@@ -6945,7 +6945,7 @@ func local_50472() -> Variant:
 				continue
 		elif _pc == 50914:
 			v1 = v2
-			if _pog_eq("map:/geog/badlands/hoffers_wake", v2):
+			if _pog_eq(v2, "map:/geog/badlands/hoffers_wake"):
 				_pc = 50943
 				continue
 			else:
@@ -6966,7 +6966,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 51065:
-			if _pog_eq("map:/geog/badlands/coyote", v2):
+			if _pog_eq(v2, "map:/geog/badlands/coyote"):
 				_pc = 51083
 				continue
 			else:
@@ -7031,7 +7031,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 51422:
-			if _pog_eq("map:/geog/badlands/dagda", v2):
+			if _pog_eq(v2, "map:/geog/badlands/dagda"):
 				_pc = 51440
 				continue
 			else:
@@ -7095,7 +7095,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 51781:
-			if _pog_eq("map:/geog/badlands/dante", v2):
+			if _pog_eq(v2, "map:/geog/badlands/dante"):
 				_pc = 51799
 				continue
 			else:
@@ -7116,7 +7116,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 51921:
-			if _pog_eq("map:/geog/badlands/eureka", v2):
+			if _pog_eq(v2, "map:/geog/badlands/eureka"):
 				_pc = 51939
 				continue
 			else:
@@ -7180,7 +7180,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 52280:
-			if _pog_eq("map:/geog/badlands/firefrost", v2):
+			if _pog_eq(v2, "map:/geog/badlands/firefrost"):
 				_pc = 52298
 				continue
 			else:
@@ -7245,7 +7245,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 52637:
-			if _pog_eq("map:/geog/badlands/kompira", v2):
+			if _pog_eq(v2, "map:/geog/badlands/kompira"):
 				_pc = 52655
 				continue
 			else:
@@ -7310,7 +7310,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 52994:
-			if _pog_eq("map:/geog/badlands/mwari", v2):
+			if _pog_eq(v2, "map:/geog/badlands/mwari"):
 				_pc = 53012
 				continue
 			else:
@@ -7375,7 +7375,7 @@ func local_50472() -> Variant:
 			_pc = 53734
 			continue
 		elif _pc == 53351:
-			if _pog_eq("map:/geog/badlands/santa_romera", v2):
+			if _pog_eq(v2, "map:/geog/badlands/santa_romera"):
 				_pc = 53369
 				continue
 			else:
@@ -7501,8 +7501,8 @@ func allied_search_encounters() -> Variant:
 			_pc = 55515
 			continue
 		elif _pc == 53948:
-			await _pog_wait(math.random_int(300, 1000) + 300)
-			if not _pog_eq("map:/geog/badlands/mwari", isim.active_world()) and not _pog_eq("map:/geog/badlands/dante", isim.active_world()) and not _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
+			await _pog_wait(300 + math.random_int(300, 1000))
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/firefrost") and not _pog_eq(isim.active_world(), "map:/geog/badlands/dante") and not _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
 				_pc = 54073
 				continue
 			else:
@@ -7521,7 +7521,7 @@ func allied_search_encounters() -> Variant:
 			_pc = 54142
 			continue
 		elif _pc == 54142:
-			if 2000000.0 > sim.distance_between(group.leader(v2), v4):
+			if sim.distance_between(group.leader(v2), v4) > 2000000.0:
 				_pc = 54189
 				continue
 			else:
@@ -7542,7 +7542,7 @@ func allied_search_encounters() -> Variant:
 			_pc = 55445
 			continue
 		elif _pc == 54261:
-			if not (v5) and 50000.0 < sim.distance_between(group.leader(v2), v4):
+			if sim.distance_between(group.leader(v2), v4) < 50000.0 and not (v5):
 				_pc = 54315
 				continue
 			else:
@@ -7557,7 +7557,7 @@ func allied_search_encounters() -> Variant:
 			_pc = 55445
 			continue
 		elif _pc == 54428:
-			if not (v6) and iai.is_order_complete(group.leader(v2)):
+			if iai.is_order_complete(group.leader(v2)) and not (v6):
 				_pc = 54471
 				continue
 			else:
@@ -7568,7 +7568,7 @@ func allied_search_encounters() -> Variant:
 			await iconversation.add_response("a2_master_option_cal_any_sign_of_the_marauders", "a2_master_option_cal_any_sign_of_the_marauders")
 			await iconversation.add_response("a2_master_dialogue_cal_hows_things", "a2_master_dialogue_cal_hows_things")
 			v7 = await iconversation.ask(group.leader(v2), "", "a2_master_dialogue_league_patrol_didnt_expect_to_see_you_around_these_parts_cal")
-			if 1 == v7:
+			if v7 == 1:
 				_pc = 54601
 				continue
 			else:
@@ -7598,7 +7598,7 @@ func allied_search_encounters() -> Variant:
 			continue
 		elif _pc == 54811:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 54835
 				continue
 			else:
@@ -7660,7 +7660,7 @@ func allied_search_encounters() -> Variant:
 			continue
 		elif _pc == 55177:
 			math.random_int(1, 6)
-			if math.random_int(1, 6) != 1:
+			if 1 != math.random_int(1, 6):
 				_pc = 55201
 				continue
 			else:
@@ -7888,7 +7888,7 @@ func master_script() -> Variant:
 			_pc = 59025
 			continue
 		elif _pc == 58955:
-			if not _pog_eq("The Great Escape?", global.string("g_skip_to_mission")) and 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1 and not _pog_eq(global.string("g_skip_to_mission"), "The Great Escape?"):
 				_pc = 59011
 				continue
 			else:
@@ -7926,7 +7926,7 @@ func master_script() -> Variant:
 				_pc = 59213
 				continue
 		elif _pc == 59124:
-			if 1 == global.pog_bool("g_act2_survivors_rescued"):
+			if global.pog_bool("g_act2_survivors_rescued") == 1:
 				_pc = 59151
 				continue
 			else:
@@ -8069,7 +8069,7 @@ func master_script() -> Variant:
 			_pc = 60036
 			continue
 		elif _pc == 60036:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 60063
 				continue
 			else:
@@ -8091,7 +8091,7 @@ func master_script() -> Variant:
 				_pc = 60063
 				continue
 		elif _pc == 60160:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 60187
 				continue
 			else:
@@ -8230,7 +8230,7 @@ func master_script() -> Variant:
 			_pc = 61297
 			continue
 		elif _pc == 61297:
-			if 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 61324
 				continue
 			else:
@@ -8262,9 +8262,9 @@ func master_script() -> Variant:
 			_pc = 61465
 			continue
 		elif _pc == 61465:
-			object.set_int_property(v1, "a2_m24_waiter", 1 + object.int_property(v1, "a2_m24_waiter"))
+			object.set_int_property(v1, "a2_m24_waiter", object.int_property(v1, "a2_m24_waiter") + 1)
 			await _pog_wait(1.0)
-			if 120 >= object.int_property(v1, "a2_m24_waiter"):
+			if object.int_property(v1, "a2_m24_waiter") >= 120:
 				_pc = 61582
 				continue
 			else:
@@ -8295,7 +8295,7 @@ func master_script() -> Variant:
 				_pc = 61643
 				continue
 		elif _pc == 61728:
-			if 25 != global.pog_int("g_skip_to_mission_number") and 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1 and global.pog_int("g_skip_to_mission_number") != 25:
 				_pc = 61778
 				continue
 			else:
@@ -8314,7 +8314,7 @@ func master_script() -> Variant:
 			_pc = 61837
 			continue
 		elif _pc == 61837:
-			if _pog_is_null(iemail.find("html:/text/act_2/act2_master_hoffermail_mwari")) and _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")):
+			if _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")) and _pog_is_null(iemail.find("html:/text/act_2/act2_master_hoffermail_mwari")):
 				_pc = 61887
 				continue
 			else:
@@ -8348,7 +8348,7 @@ func master_script() -> Variant:
 			_pc = 62046
 			continue
 		elif _pc == 62046:
-			if 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 62073
 				continue
 			else:
@@ -8576,7 +8576,7 @@ func local_62490() -> Variant:
 				_pc = 62872
 				continue
 		elif _pc == 62647:
-			if _pog_is_null(global.exists("g_flagged_first_mine_done")) and 0 > iinventory.number_of_cargo_type(534):
+			if iinventory.number_of_cargo_type(534) > 0 and _pog_is_null(global.exists("g_flagged_first_mine_done")):
 				_pc = 62693
 				continue
 			else:
@@ -8588,7 +8588,7 @@ func local_62490() -> Variant:
 			_pc = 62745
 			continue
 		elif _pc == 62745:
-			if _pog_is_null(global.exists("g_flagged_made_all_mines")) and 10 >= iinventory.number_of_cargo_type(534):
+			if iinventory.number_of_cargo_type(534) >= 10 and _pog_is_null(global.exists("g_flagged_made_all_mines")):
 				_pc = 62792
 				continue
 			else:
@@ -8601,7 +8601,7 @@ func local_62490() -> Variant:
 			_pc = 62872
 			continue
 		elif _pc == 62872:
-			if 2 != global.pog_int("g_story_2.10b") and iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_1")):
+			if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_1")) and global.pog_int("g_story_2.10b") != 2:
 				_pc = 62933
 				continue
 			else:
@@ -8620,7 +8620,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63006:
-			if 1 == global.pog_int("g_story_2.10"):
+			if global.pog_int("g_story_2.10") == 1:
 				_pc = 63033
 				continue
 			else:
@@ -8639,7 +8639,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63106:
-			if 1 == global.pog_int("g_story_2.170"):
+			if global.pog_int("g_story_2.170") == 1:
 				_pc = 63133
 				continue
 			else:
@@ -8658,7 +8658,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63206:
-			if 1 == global.pog_int("g_story_2.190"):
+			if global.pog_int("g_story_2.190") == 1:
 				_pc = 63233
 				continue
 			else:
@@ -8677,7 +8677,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63306:
-			if 1 == global.pog_int("g_story_2.200"):
+			if global.pog_int("g_story_2.200") == 1:
 				_pc = 63333
 				continue
 			else:
@@ -8696,7 +8696,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63406:
-			if 1 == global.pog_int("g_story_2.180"):
+			if global.pog_int("g_story_2.180") == 1:
 				_pc = 63433
 				continue
 			else:
@@ -8715,7 +8715,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63506:
-			if 1 == global.pog_int("g_story_2.210"):
+			if global.pog_int("g_story_2.210") == 1:
 				_pc = 63533
 				continue
 			else:
@@ -8734,7 +8734,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63606:
-			if 1 == global.pog_int("g_story_2.220"):
+			if global.pog_int("g_story_2.220") == 1:
 				_pc = 63633
 				continue
 			else:
@@ -8753,7 +8753,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63706:
-			if 1 == global.pog_int("g_story_2.231"):
+			if global.pog_int("g_story_2.231") == 1:
 				_pc = 63733
 				continue
 			else:
@@ -8772,7 +8772,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63806:
-			if 1 == global.pog_int("g_story_2.230"):
+			if global.pog_int("g_story_2.230") == 1:
 				_pc = 63833
 				continue
 			else:
@@ -8791,7 +8791,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 63906:
-			if 1 == global.pog_int("g_story_2.250"):
+			if global.pog_int("g_story_2.250") == 1:
 				_pc = 63933
 				continue
 			else:
@@ -8810,7 +8810,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64006:
-			if 1 == global.pog_int("g_story_2.270"):
+			if global.pog_int("g_story_2.270") == 1:
 				_pc = 64033
 				continue
 			else:
@@ -8829,7 +8829,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64106:
-			if 1 == global.pog_int("g_story_2.260"):
+			if global.pog_int("g_story_2.260") == 1:
 				_pc = 64133
 				continue
 			else:
@@ -8848,7 +8848,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64206:
-			if 1 == global.pog_int("g_story_2.160"):
+			if global.pog_int("g_story_2.160") == 1:
 				_pc = 64233
 				continue
 			else:
@@ -8867,7 +8867,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64306:
-			if 1 == global.pog_int("g_story_2.150"):
+			if global.pog_int("g_story_2.150") == 1:
 				_pc = 64333
 				continue
 			else:
@@ -8886,7 +8886,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64406:
-			if 1 == global.pog_int("g_story_2.290"):
+			if global.pog_int("g_story_2.290") == 1:
 				_pc = 64433
 				continue
 			else:
@@ -8905,7 +8905,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64506:
-			if 1 == global.pog_int("g_story_2.130"):
+			if global.pog_int("g_story_2.130") == 1:
 				_pc = 64533
 				continue
 			else:
@@ -8924,7 +8924,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64606:
-			if 1 == global.pog_int("g_story_2.140"):
+			if global.pog_int("g_story_2.140") == 1:
 				_pc = 64633
 				continue
 			else:
@@ -8943,7 +8943,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64706:
-			if 1 == global.pog_int("g_story_2.140b"):
+			if global.pog_int("g_story_2.140b") == 1:
 				_pc = 64733
 				continue
 			else:
@@ -8962,7 +8962,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64806:
-			if 1 == global.pog_int("g_story_2.300"):
+			if global.pog_int("g_story_2.300") == 1:
 				_pc = 64833
 				continue
 			else:
@@ -8981,7 +8981,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 64906:
-			if 1 == global.pog_int("g_story_2.310"):
+			if global.pog_int("g_story_2.310") == 1:
 				_pc = 64933
 				continue
 			else:
@@ -9000,7 +9000,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 65006:
-			if 1 == global.pog_int("g_story_2.320"):
+			if global.pog_int("g_story_2.320") == 1:
 				_pc = 65033
 				continue
 			else:
@@ -9019,7 +9019,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 65106:
-			if 1 == global.pog_int("g_story_2.330"):
+			if global.pog_int("g_story_2.330") == 1:
 				_pc = 65133
 				continue
 			else:
@@ -9038,7 +9038,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 65206:
-			if 1 == global.pog_int("g_story_2.280"):
+			if global.pog_int("g_story_2.280") == 1:
 				_pc = 65233
 				continue
 			else:
@@ -9057,7 +9057,7 @@ func local_62490() -> Variant:
 			_pc = 65495
 			continue
 		elif _pc == 65306:
-			if _pog_is_null(global.exists("g_told_about_hoffer")) and 1 == global.pog_bool("g_act2_base_has_moved") and iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_180")) and iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_150")):
+			if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_150")) and iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_180")) and global.pog_bool("g_act2_base_has_moved") == 1 and _pog_is_null(global.exists("g_told_about_hoffer")):
 				_pc = 65421
 				continue
 			else:
@@ -9100,7 +9100,7 @@ func main() -> Variant:
 	while true:
 		if _pc == 65560:
 			v0 = 0
-			if 1 <= global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") <= 1:
 				_pc = 65599
 				continue
 			else:
@@ -9389,7 +9389,7 @@ func local_68543(v0, v1) -> Variant:
 			_pc = 68809
 			continue
 		elif _pc == 68809:
-			if 30 < v11:
+			if v11 < 30:
 				_pc = 68822
 				continue
 			else:
@@ -9400,7 +9400,7 @@ func local_68543(v0, v1) -> Variant:
 			iship.dock(v5, v4)
 			sim.set_cullable(v5, 0)
 			group.add_sim(v10, v5)
-			v11 = 1 + v11
+			v11 = v11 + 1
 			_pc = 68809
 			continue
 		elif _pc == 68940:
@@ -9468,20 +9468,20 @@ func local_68543(v0, v1) -> Variant:
 			_pc = 70449
 			continue
 		elif _pc == 70449:
-			if 1000.0 < v12:
+			if v12 < 1000.0:
 				_pc = 70465
 				continue
 			else:
 				_pc = 70516
 				continue
 		elif _pc == 70465:
-			v12 = 3.0 + v12
+			v12 = v12 + 3.0
 			sim.set_velocity_local_to_sim(v4, 0.0, 0.0, v12)
 			_pc = 70516
 			continue
 		elif _pc == 70516:
 			await _pog_wait(0.10000000149011612)
-			if 200.0 <= sim.distance_between_centres(v4, v1):
+			if sim.distance_between_centres(v4, v1) <= 200.0:
 				_pc = 70582
 				continue
 			else:

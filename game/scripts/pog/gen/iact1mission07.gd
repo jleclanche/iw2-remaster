@@ -157,7 +157,7 @@ func local_449(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, 
 				_pc = 1272
 				continue
 		elif _pc == 468:
-			if 100 == state.progress(v1):
+			if state.progress(v1) == 100:
 				_pc = 494
 				continue
 			else:
@@ -433,7 +433,7 @@ func mission_handler() -> Variant:
 				_pc = 3293
 				continue
 		elif _pc == 3254:
-			if 1000000.0 < sim.distance_between(v0, v10):
+			if sim.distance_between(v0, v10) < 1000000.0:
 				_pc = 3288
 				continue
 			else:
@@ -480,7 +480,7 @@ func mission_handler() -> Variant:
 				_pc = 5028
 				continue
 		elif _pc == 3838:
-			if 2 == state.progress(v50):
+			if state.progress(v50) == 2:
 				_pc = 3864
 				continue
 			else:
@@ -497,14 +497,14 @@ func mission_handler() -> Variant:
 			_pc = 5033
 			continue
 		elif _pc == 3895:
-			if 30000.0 < sim.distance_between(v0, v10):
+			if sim.distance_between(v0, v10) < 30000.0:
 				_pc = 3929
 				continue
 			else:
 				_pc = 4359
 				continue
 		elif _pc == 3929:
-			if 1 == object.bool_property(v50, "give_welcome_message"):
+			if object.bool_property(v50, "give_welcome_message") == 1:
 				_pc = 3961
 				continue
 			else:
@@ -516,11 +516,11 @@ func mission_handler() -> Variant:
 			await local_13806(v50, "give_welcome_message", 0)
 			v47 = 0
 			_pog_spawn(local_22122.bind(v10))
-			v53 = 1 - group.sim_count(v18)
+			v53 = group.sim_count(v18) - 1
 			_pc = 4083
 			continue
 		elif _pc == 4083:
-			if 0 > v53:
+			if v53 > 0:
 				_pc = 4095
 				continue
 			else:
@@ -528,7 +528,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 4095:
 			sim.set_angular_velocity_euler(group.nth_sim(v18, v53), 0.0, 0.0, 0.0)
-			v53 = -1 + v53
+			v53 = v53 + -1
 			_pc = 4083
 			continue
 		elif _pc == 4166:
@@ -546,11 +546,11 @@ func mission_handler() -> Variant:
 			v47 = 0
 			iobjectives.set_state("a1_m07_objective_go_to_hoffers", 1)
 			iobjectives.add("a1_m07_objective_arm_gunstars")
-			v53 = 1 - group.sim_count(v18)
+			v53 = group.sim_count(v18) - 1
 			_pc = 4276
 			continue
 		elif _pc == 4276:
-			if 0 > v53:
+			if v53 > 0:
 				_pc = 4288
 				continue
 			else:
@@ -558,18 +558,18 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 4288:
 			sim.set_angular_velocity_euler(group.nth_sim(v18, v53), 0.0, 0.0, 0.0)
-			v53 = -1 + v53
+			v53 = v53 + -1
 			_pc = 4276
 			continue
 		elif _pc == 4359:
-			if 2000000.0 > sim.distance_between(v0, v10):
+			if sim.distance_between(v0, v10) > 2000000.0:
 				_pc = 4393
 				continue
 			else:
 				_pc = 4572
 				continue
 		elif _pc == 4393:
-			if 1 == object.bool_property(v50, "give_running_away_message"):
+			if object.bool_property(v50, "give_running_away_message") == 1:
 				_pc = 4425
 				continue
 			else:
@@ -577,7 +577,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 4425:
 			await local_13806(v50, "give_running_away_message", 0)
-			if 1 == object.bool_property(v50, "give_first_running_away_message"):
+			if object.bool_property(v50, "give_first_running_away_message") == 1:
 				_pc = 4484
 				continue
 			else:
@@ -593,7 +593,7 @@ func mission_handler() -> Variant:
 			_pc = 4572
 			continue
 		elif _pc == 4572:
-			if 5000000.0 > sim.distance_between(v0, v10):
+			if sim.distance_between(v0, v10) > 5000000.0:
 				_pc = 4606
 				continue
 			else:
@@ -622,7 +622,7 @@ func mission_handler() -> Variant:
 				_pc = 4854
 				continue
 		elif _pc == 4761:
-			if not _pog_eq(v35, isim.faction(v1)) and _pog_eq(v18, sim.group(v1)):
+			if _pog_eq(sim.group(v1), v18) and not _pog_eq(isim.faction(v1), v35):
 				_pc = 4815
 				continue
 			else:
@@ -634,7 +634,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 4854:
 			v54 = object.int_property(v50, "armed_gunstar_count")
-			if 3 == v54:
+			if v54 == 3:
 				_pc = 4898
 				continue
 			else:
@@ -652,7 +652,7 @@ func mission_handler() -> Variant:
 			_pc = 5033
 			continue
 		elif _pc == 4950:
-			if 6 < group.sim_count(v18):
+			if group.sim_count(v18) < 6:
 				_pc = 4976
 				continue
 			else:
@@ -673,7 +673,7 @@ func mission_handler() -> Variant:
 			_pc = 3824
 			continue
 		elif _pc == 5033:
-			if 1 != state.progress(v50):
+			if state.progress(v50) != 1:
 				_pc = 5059
 				continue
 			else:
@@ -733,7 +733,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 5993:
 			v56 = object.int_property(v13, "reactor_integrity")
-			if 150000.0 > sim.distance_between(v0, v10) or 0 <= v56:
+			if v56 <= 0 or sim.distance_between(v0, v10) > 150000.0:
 				_pc = 6066
 				continue
 			else:
@@ -775,7 +775,7 @@ func mission_handler() -> Variant:
 			_pc = 8395
 			continue
 		elif _pc == 6672:
-			if 1 == v43 and 60 > v56 and 100 < v56:
+			if v56 < 100 and v56 > 60 and v43 == 1:
 				_pc = 6702
 				continue
 			else:
@@ -787,7 +787,7 @@ func mission_handler() -> Variant:
 			_pc = 6728
 			continue
 		elif _pc == 6728:
-			if 1 == v44 and 60 < v56:
+			if v56 < 60 and v44 == 1:
 				_pc = 6749
 				continue
 			else:
@@ -817,7 +817,7 @@ func mission_handler() -> Variant:
 				_pc = 6948
 				continue
 		elif _pc == 6855:
-			if not _pog_eq(v35, isim.faction(v1)) and _pog_eq(v18, sim.group(v1)):
+			if _pog_eq(sim.group(v1), v18) and not _pog_eq(isim.faction(v1), v35):
 				_pc = 6909
 				continue
 			else:
@@ -828,14 +828,14 @@ func mission_handler() -> Variant:
 			_pc = 6948
 			continue
 		elif _pc == 6948:
-			if 6 < group.sim_count(v18):
+			if group.sim_count(v18) < 6:
 				_pc = 6974
 				continue
 			else:
 				_pc = 7012
 				continue
 		elif _pc == 6974:
-			if 1 == v46:
+			if v46 == 1:
 				_pc = 6986
 				continue
 			else:
@@ -847,14 +847,14 @@ func mission_handler() -> Variant:
 			_pc = 7012
 			continue
 		elif _pc == 7012:
-			if not (isim.is_dying(v8)) and sim.is_alive(v8):
+			if sim.is_alive(v8) and not (isim.is_dying(v8)):
 				_pc = 7055
 				continue
 			else:
 				_pc = 7649
 				continue
 		elif _pc == 7055:
-			if 120 > v57 or 5 < group.sim_count(v18):
+			if group.sim_count(v18) < 5 or v57 > 120:
 				_pc = 7090
 				continue
 			else:
@@ -864,7 +864,7 @@ func mission_handler() -> Variant:
 			group.remove_sim(v24, v8)
 			iai.give_generic_attack_order(v24)
 			group.add_sim(v24, v8)
-			if not (isim.is_dying(v8)) and sim.is_alive(v8) and 8 < v58:
+			if v58 < 8 and sim.is_alive(v8) and not (isim.is_dying(v8)):
 				_pc = 7209
 				continue
 			else:
@@ -878,7 +878,7 @@ func mission_handler() -> Variant:
 			_pc = 7235
 			continue
 		elif _pc == 7235:
-			if sim.is_alive(v8) and _pog_is_null(group.sim_count(v26)):
+			if _pog_is_null(group.sim_count(v26)) and sim.is_alive(v8):
 				_pc = 7279
 				continue
 			else:
@@ -900,8 +900,8 @@ func mission_handler() -> Variant:
 			sim.place_near(v9, v8, 100.0)
 			sim.point_away(v9, v8)
 			_pog_spawn(local_21400.bind(v8, v9, v27, v13, v12))
-			v58 = 1 + v58
-			if 1 == v45:
+			v58 = v58 + 1
+			if v45 == 1:
 				_pc = 7550
 				continue
 			else:
@@ -950,7 +950,7 @@ func mission_handler() -> Variant:
 			_pc = 7685
 			continue
 		elif _pc == 7685:
-			v57 = 1 + v57
+			v57 = v57 + 1
 			_pc = 7698
 			continue
 		elif _pc == 7698:
@@ -961,7 +961,7 @@ func mission_handler() -> Variant:
 				_pc = 7791
 				continue
 		elif _pc == 7711:
-			if _pog_is_null(v43) and 0 > v56:
+			if v56 > 0 and _pog_is_null(v43):
 				_pc = 7731
 				continue
 			else:
@@ -997,7 +997,7 @@ func mission_handler() -> Variant:
 				_pc = 8133
 				continue
 		elif _pc == 8094:
-			if 100000000.0 > sim.distance_between(v0, v10):
+			if sim.distance_between(v0, v10) > 100000000.0:
 				_pc = 8128
 				continue
 			else:
@@ -1066,7 +1066,7 @@ func local_8404(v0, v1, v2) -> Variant:
 			sim.place_relative_to(v4, v1, v2, 0.0, 0.0)
 			sim.set_orientation_euler(v4, 0.0, 0.0, -90.0)
 			isim.set_indestructable(v4, 1)
-			if 1 == object.bool_property(v0, "a1_m06_ship_gunstar_1"):
+			if object.bool_property(v0, "a1_m06_ship_gunstar_1") == 1:
 				_pc = 8730
 				continue
 			else:
@@ -1099,7 +1099,7 @@ func local_8404(v0, v1, v2) -> Variant:
 			sim.place_relative_to(v4, v1, -(v2), 0.0, 0.0)
 			sim.set_orientation_euler(v4, 0.0, 0.0, 90.0)
 			isim.set_indestructable(v4, 1)
-			if 1 == object.bool_property(v0, "a1_m06_ship_gunstar_2_gatling"):
+			if object.bool_property(v0, "a1_m06_ship_gunstar_2_gatling") == 1:
 				_pc = 9051
 				continue
 			else:
@@ -1131,7 +1131,7 @@ func local_8404(v0, v1, v2) -> Variant:
 			group.add_sim(v3, v4)
 			sim.place_relative_to(v4, v1, 0.0, v2, 0.0)
 			isim.set_indestructable(v4, 1)
-			if 1 == object.bool_property(v0, "a1_m06_ship_gunstar_3"):
+			if object.bool_property(v0, "a1_m06_ship_gunstar_3") == 1:
 				_pc = 9337
 				continue
 			else:
@@ -1164,7 +1164,7 @@ func local_8404(v0, v1, v2) -> Variant:
 			sim.place_relative_to(v4, v1, 0.0, -(v2), 0.0)
 			sim.set_orientation_euler(v4, 0.0, 180.0, 0.0)
 			isim.set_indestructable(v4, 1)
-			if 1 == object.bool_property(v0, "a1_m06_ship_gunstar_4"):
+			if object.bool_property(v0, "a1_m06_ship_gunstar_4") == 1:
 				_pc = 9658
 				continue
 			else:
@@ -1197,7 +1197,7 @@ func local_8404(v0, v1, v2) -> Variant:
 			sim.place_relative_to(v4, v1, 0.0, 0.0, v2)
 			sim.set_orientation_euler(v4, 0.0, 90.0, 0.0)
 			isim.set_indestructable(v4, 1)
-			if 1 == object.bool_property(v0, "a1_m06_ship_gunstar_5"):
+			if object.bool_property(v0, "a1_m06_ship_gunstar_5") == 1:
 				_pc = 9978
 				continue
 			else:
@@ -1229,7 +1229,7 @@ func local_8404(v0, v1, v2) -> Variant:
 			isim.set_faction(v4, v5)
 			sim.place_relative_to(v4, v1, 0.0, 0.0, -(v2))
 			sim.set_orientation_euler(v4, 0.0, -90.0, 0.0)
-			if 1 == object.bool_property(v0, "a1_m06_ship_gunstar_6"):
+			if object.bool_property(v0, "a1_m06_ship_gunstar_6") == 1:
 				_pc = 10279
 				continue
 			else:
@@ -1571,7 +1571,7 @@ func local_13806(v0, v1, v2) -> Variant:
 			debug.print_string("iAct1Mission07.save: State property ")
 			debug.print_string(v1)
 			debug.print_string(" set to ")
-			if 1 == v2:
+			if v2 == 1:
 				_pc = 13913
 				continue
 			else:
@@ -1688,11 +1688,11 @@ func local_13984(v0, v1, v2, v3, v4) -> Variant:
 			isim.set_faction(v2, v4)
 			isim.set_faction(v2, v4)
 			iship.weapon_targets_from_contact_list(v2)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			await local_13806(v0, object.string_property(v2, "name"), 1)
 			object.set_int_property(v0, "armed_gunstar_count", v8)
 			await iconversation.one_liner(0, "name_smith", v6)
-			if 6 == v8:
+			if v8 == 6:
 				_pc = 14582
 				continue
 			else:
@@ -1797,7 +1797,7 @@ func local_15436(v0, v1, v2) -> Variant:
 			_pc = 16216
 			continue
 		elif _pc == 16216:
-			if group.sim_count(v3) < v7:
+			if v7 < group.sim_count(v3):
 				_pc = 16245
 				continue
 			else:
@@ -1807,8 +1807,8 @@ func local_15436(v0, v1, v2) -> Variant:
 			v4 = iship.cast(group.nth_sim(v3, v7))
 			v5 = iship.cast(group.nth_sim(v1, v8))
 			_pog_spawn(local_16432.bind(v4, v5))
-			v8 = 1 + v8
-			if group.sim_count(v1) > v8:
+			v8 = v8 + 1
+			if v8 > group.sim_count(v1):
 				_pc = 16395
 				continue
 			else:
@@ -1819,7 +1819,7 @@ func local_15436(v0, v1, v2) -> Variant:
 			_pc = 16402
 			continue
 		elif _pc == 16402:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 16216
 			continue
 		elif _pc == 16420:
@@ -1841,7 +1841,7 @@ func local_16432(v0, v1) -> Variant:
 		if _pc == 16432:
 			v2 = 0
 			v3 = object.float_property(v1, "max_hit_points")
-			v4 = 15.0 / v3
+			v4 = v3 / 15.0
 			v5 = sim.group(v1)
 			_pc = 16666
 			continue
@@ -1909,7 +1909,7 @@ func local_16432(v0, v1) -> Variant:
 			_pc = 17292
 			continue
 		elif _pc == 17073:
-			if 2000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 2000.0:
 				_pc = 17107
 				continue
 			else:
@@ -1964,14 +1964,14 @@ func local_16432(v0, v1) -> Variant:
 			_pc = 18660
 			continue
 		elif _pc == 17429:
-			if isim.is_dying(v1) or sim.is_dead(v1):
+			if sim.is_dead(v1) or isim.is_dying(v1):
 				_pc = 17471
 				continue
 			else:
 				_pc = 17854
 				continue
 		elif _pc == 17471:
-			if 0 > group.sim_count(v5):
+			if group.sim_count(v5) > 0:
 				_pc = 17496
 				continue
 			else:
@@ -2009,7 +2009,7 @@ func local_16432(v0, v1) -> Variant:
 			_pc = 18660
 			continue
 		elif _pc == 17854:
-			if 0.0 < v3:
+			if v3 < 0.0:
 				_pc = 17870
 				continue
 			else:
@@ -2028,7 +2028,7 @@ func local_16432(v0, v1) -> Variant:
 			_pc = 18017
 			continue
 		elif _pc == 18017:
-			if 2000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 2000.0:
 				_pc = 18051
 				continue
 			else:
@@ -2050,7 +2050,7 @@ func local_16432(v0, v1) -> Variant:
 		elif _pc == 18241:
 			iship.disrupt(v1, 5.0, 0)
 			v3 = object.float_property(v1, "hit_points")
-			object.set_float_property(v1, "hit_points", v4 - v3)
+			object.set_float_property(v1, "hit_points", v3 - v4)
 			sim.set_angular_velocity_euler(v1, 10.0, 10.0, 10.0)
 			_pc = 18648
 			continue
@@ -2066,7 +2066,7 @@ func local_16432(v0, v1) -> Variant:
 			_pc = 18523
 			continue
 		elif _pc == 18523:
-			if 1 == v2:
+			if v2 == 1:
 				_pc = 18535
 				continue
 			else:
@@ -2210,7 +2210,7 @@ func local_20254(v0) -> Variant:
 		elif _pc == 21200:
 			return
 		elif _pc == 21214:
-			if group.sim_count(v0) < v2:
+			if v2 < group.sim_count(v0):
 				_pc = 21243
 				continue
 			else:
@@ -2219,7 +2219,7 @@ func local_20254(v0) -> Variant:
 		elif _pc == 21243:
 			isim.set_sensor_visibility(isim.cast(group.nth_sim(v0, v2)), 1)
 			await iutilities.rename_sim(group.nth_sim(v0, v2), string.join(v1, string.from_int(v2)))
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 21214
 			continue
 		elif _pc == 21388:
@@ -2241,8 +2241,8 @@ func local_21400(v0, v1, v2, v3, v4) -> Variant:
 	var _pc: int = 21400
 	while true:
 		if _pc == 21400:
-			v8 = 5 / object.int_property(v3, "reactor_integrity")
-			v10 = math.random_int(0, 1 - group.group_count(v2))
+			v8 = object.int_property(v3, "reactor_integrity") / 5
+			v10 = math.random_int(0, group.group_count(v2) - 1)
 			v6 = group.nth_group(v2, v10)
 			_pc = 21591
 			continue
@@ -2265,7 +2265,7 @@ func local_21400(v0, v1, v2, v3, v4) -> Variant:
 				_pc = 21699
 				continue
 		elif _pc == 21647:
-			if 1500.0 < sim.distance_between(v1, group.leader(v6)):
+			if sim.distance_between(v1, group.leader(v6)) < 1500.0:
 				_pc = 21694
 				continue
 			else:
@@ -2308,7 +2308,7 @@ func local_21400(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 22120
 			continue
 		elif _pc == 21847:
-			if 200.0 < sim.distance_between(v1, v3):
+			if sim.distance_between(v1, v3) < 200.0:
 				_pc = 21881
 				continue
 			else:
@@ -2323,7 +2323,7 @@ func local_21400(v0, v1, v2, v3, v4) -> Variant:
 			continue
 		elif _pc == 21907:
 			sim.place_at(sim.create("ini:/sims/explosions/harmless_antimatter_explosion", "explosion"), v4)
-			v9 = v8 - object.int_property(v3, "reactor_integrity")
+			v9 = object.int_property(v3, "reactor_integrity") - v8
 			object.set_int_property(v3, "reactor_integrity", v9)
 			ihud.set_prompt(string.join("a1_m07_text_reactor_integrity+ +", string.from_int(v9)), "")
 			await _pog_wait(5.0)
@@ -2478,7 +2478,7 @@ func local_23018(v0, v1, v2) -> Variant:
 			_pc = 25698
 			continue
 		elif _pc == 23759:
-			if 300.0 < sim.distance_between(v4, v0):
+			if sim.distance_between(v4, v0) < 300.0:
 				_pc = 23793
 				continue
 			else:
@@ -2518,7 +2518,7 @@ func local_23018(v0, v1, v2) -> Variant:
 			_pc = 24010
 			continue
 		elif _pc == 23979:
-			if v14 != 1:
+			if 1 != v14:
 				_pc = 23992
 				continue
 			else:
@@ -2539,8 +2539,8 @@ func local_23018(v0, v1, v2) -> Variant:
 				_pc = 23915
 				continue
 		elif _pc == 24010:
-			v14 = 1 + v14
-			if 4 == v14:
+			v14 = v14 + 1
+			if v14 == 4:
 				_pc = 24036
 				continue
 			else:
@@ -2602,7 +2602,7 @@ func local_23018(v0, v1, v2) -> Variant:
 			_pc = 25163
 			continue
 		elif _pc == 25163:
-			if 40 < v13:
+			if v13 < 40:
 				_pc = 25176
 				continue
 			else:
@@ -2617,7 +2617,7 @@ func local_23018(v0, v1, v2) -> Variant:
 			sim.set_velocity_local_to_sim(v8, 0.0, 0.0, math.random(1000.0, 1200.0))
 			sim.set_angular_velocity_euler(v8, math.random(-120.0, 120.0), math.random(-120.0, 120.0), math.random(-120.0, 120.0))
 			group.add_sim(v5, v8)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 25163
 			continue
 		elif _pc == 25509:
@@ -2625,14 +2625,14 @@ func local_23018(v0, v1, v2) -> Variant:
 			_pc = 25516
 			continue
 		elif _pc == 25516:
-			if 60 < v13:
+			if v13 < 60:
 				_pc = 25529
 				continue
 			else:
 				_pc = 25618
 				continue
 		elif _pc == 25529:
-			if 50.0 < sim.distance_between(v10, v9):
+			if sim.distance_between(v10, v9) < 50.0:
 				_pc = 25563
 				continue
 			else:
@@ -2643,7 +2643,7 @@ func local_23018(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 25568:
 			await _pog_wait(0.10000000149011612)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 25516
 			continue
 		elif _pc == 25618:

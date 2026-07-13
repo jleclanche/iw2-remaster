@@ -173,7 +173,7 @@ func end_tasker(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) -> Variant:
 				_pc = 1658
 				continue
 		elif _pc == 953:
-			if 100 == state.progress(v1):
+			if state.progress(v1) == 100:
 				_pc = 979
 				continue
 			else:
@@ -408,7 +408,7 @@ func mission_handler() -> Variant:
 				_pc = 2743
 				continue
 		elif _pc == 2711:
-			if _pog_eq("map:/geog/badlands/dante", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/dante"):
 				_pc = 2738
 				continue
 			else:
@@ -429,7 +429,7 @@ func mission_handler() -> Variant:
 			_pc = 2796
 			continue
 		elif _pc == 2796:
-			if 1 == state.progress(v28):
+			if state.progress(v28) == 1:
 				_pc = 2821
 				continue
 			else:
@@ -530,7 +530,7 @@ func mission_handler() -> Variant:
 			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake")), 1)
 			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")), 1)
 			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost"), 1)
-			if 5 != state.progress(v28):
+			if state.progress(v28) != 5:
 				_pc = 4033
 				continue
 			else:
@@ -583,7 +583,7 @@ func mission_handler() -> Variant:
 				_pc = 4317
 				continue
 		elif _pc == 4286:
-			if 5 == state.progress(v28):
+			if state.progress(v28) == 5:
 				_pc = 4312
 				continue
 			else:
@@ -665,7 +665,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 				_pc = 4936
 				continue
 		elif _pc == 4821:
-			if 5 == state.progress(v1):
+			if state.progress(v1) == 5:
 				_pc = 4847
 				continue
 			else:
@@ -683,7 +683,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 			_pc = 6153
 			continue
 		elif _pc == 4897:
-			if 2000000.0 < sim.distance_between(v9, v0):
+			if sim.distance_between(v9, v0) < 2000000.0:
 				_pc = 4931
 				continue
 			else:
@@ -735,7 +735,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 				_pc = 6142
 				continue
 		elif _pc == 5426:
-			if _pog_is_null(v12) and 10000.0 < sim.distance_between(v9, v0):
+			if sim.distance_between(v9, v0) < 10000.0 and _pog_is_null(v12):
 				_pc = 5468
 				continue
 			else:
@@ -760,7 +760,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 			await iconversation.say(0, "name_cal", "a2_m25_dialogue_cal_thanks")
 			await iconversation.end()
 			await local_16286(v7, 3, "ini:/sims/ships/independent/heavy_corvette_mca_mk2", v6, v13)
-			v13 = 3 + v13
+			v13 = v13 + 3
 			await local_15770(v1, "lpoint_wingmen_launched", v13)
 			await local_15770(v1, "lpoint_first_time", 1)
 			_pc = 6050
@@ -773,7 +773,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 				_pc = 6050
 				continue
 		elif _pc == 5882:
-			if v15 < v13:
+			if v13 < v15:
 				_pc = 5898
 				continue
 			else:
@@ -782,7 +782,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 		elif _pc == 5898:
 			await iconversation.one_liner(v3, "name_hoffer", "a2_m25_dialogue_hoffer_here_have_some_wingmen")
 			await local_16286(v7, 3, "ini:/sims/ships/independent/heavy_corvette_mca_mk2", v6, v13)
-			v13 = 3 + v13
+			v13 = v13 + 3
 			await local_15770(v1, "lpoint_wingmen_launched", v13)
 			_pc = 6050
 			continue
@@ -791,7 +791,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 			_pc = 6050
 			continue
 		elif _pc == 6050:
-			if 2100000.0 > sim.distance_between(v9, v0):
+			if sim.distance_between(v9, v0) > 2100000.0:
 				_pc = 6084
 				continue
 			else:
@@ -871,7 +871,7 @@ func local_6155(v0, v1, v2) -> Variant:
 		elif _pc == 7126:
 			return
 		elif _pc == 7188:
-			if list.item_count(v2) < v5:
+			if v5 < list.item_count(v2):
 				_pc = 7217
 				continue
 			else:
@@ -879,7 +879,7 @@ func local_6155(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 7217:
 			v4 = isim.cast(list.get_nth(v2, v5))
-			if _pog_eq(v1, isim.faction(v4)):
+			if _pog_eq(isim.faction(v4), v1):
 				_pc = 7288
 				continue
 			else:
@@ -890,7 +890,7 @@ func local_6155(v0, v1, v2) -> Variant:
 			_pc = 7312
 			continue
 		elif _pc == 7312:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 7188
 			continue
 		elif _pc == 7330:
@@ -899,8 +899,8 @@ func local_6155(v0, v1, v2) -> Variant:
 		elif _pc == 7340:
 			return
 		elif _pc == 7375:
-			v2 = 24 / v1
-			v1 = 24 * v2 - v1
+			v2 = v1 / 24
+			v1 = v1 - v2 * 24
 			_pc = 7409
 			continue
 		elif _pc == 7409:
@@ -925,7 +925,7 @@ func local_7475(v0, v1, v2, v3) -> Variant:
 			v4 = group.create()
 			v5 = group.create()
 			group.add_group(v4, v5)
-			if 30 > v1 or 1 < v1:
+			if v1 < 1 or v1 > 30:
 				_pc = 7563
 				continue
 			else:
@@ -950,7 +950,7 @@ func local_7475(v0, v1, v2, v3) -> Variant:
 			_pc = 7721
 			continue
 		elif _pc == 7721:
-			if v1 < v8:
+			if v8 < v1:
 				_pc = 7737
 				continue
 			else:
@@ -962,7 +962,7 @@ func local_7475(v0, v1, v2, v3) -> Variant:
 			sim.set_cullable(v7, 0)
 			isim.set_faction(v7, v3)
 			group.add_sim(v5, v7)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 7721
 			continue
 		elif _pc == 7879:
@@ -981,7 +981,7 @@ func local_7891(v0, v1, v2) -> Variant:
 	var _pc: int = 7891
 	while true:
 		if _pc == 7891:
-			if 20 > v1 or 1 < v1:
+			if v1 < 1 or v1 > 20:
 				_pc = 7917
 				continue
 			else:
@@ -1004,7 +1004,7 @@ func local_7891(v0, v1, v2) -> Variant:
 			_pc = 8017
 			continue
 		elif _pc == 8017:
-			if v1 < v5:
+			if v5 < v1:
 				_pc = 8033
 				continue
 			else:
@@ -1013,7 +1013,7 @@ func local_7891(v0, v1, v2) -> Variant:
 		elif _pc == 8033:
 			v4 = iship.create("ini:/sims/ships/utility/freightpod", "Cargo Pod")
 			iship.dock(v4, v3)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 8017
 			continue
 		elif _pc == 8107:
@@ -1032,7 +1032,7 @@ func local_8119(v0, v1, v2) -> Variant:
 	var _pc: int = 8119
 	while true:
 		if _pc == 8119:
-			if 20 > v1 or 1 < v1:
+			if v1 < 1 or v1 > 20:
 				_pc = 8145
 				continue
 			else:
@@ -1055,7 +1055,7 @@ func local_8119(v0, v1, v2) -> Variant:
 			_pc = 8245
 			continue
 		elif _pc == 8245:
-			if v1 < v5:
+			if v5 < v1:
 				_pc = 8261
 				continue
 			else:
@@ -1064,7 +1064,7 @@ func local_8119(v0, v1, v2) -> Variant:
 		elif _pc == 8261:
 			v4 = iship.create("ini:/sims/ships/utility/containerpod", "name_cargo_pod")
 			iship.dock(v4, v3)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 8245
 			continue
 		elif _pc == 8335:
@@ -1125,7 +1125,7 @@ func monitor_hq(v0, v1) -> Variant:
 				_pc = 8672
 				continue
 		elif _pc == 8633:
-			if 1000000.0 < sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) < 1000000.0:
 				_pc = 8667
 				continue
 			else:
@@ -1160,7 +1160,7 @@ func monitor_hq(v0, v1) -> Variant:
 				_pc = 10172
 				continue
 		elif _pc == 8802:
-			if 1100000.0 > sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) > 1100000.0:
 				_pc = 8836
 				continue
 			else:
@@ -1194,14 +1194,14 @@ func monitor_hq(v0, v1) -> Variant:
 				continue
 		elif _pc == 9128:
 			await local_10588(v0, v2, v4, 6, v5, 6)
-			if 50000.0 < sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) < 50000.0:
 				_pc = 9200
 				continue
 			else:
 				_pc = 10172
 				continue
 		elif _pc == 9200:
-			if isim.is_dying(v0) or sim.is_dead(v0):
+			if sim.is_dead(v0) or isim.is_dying(v0):
 				_pc = 9242
 				continue
 			else:
@@ -1213,7 +1213,7 @@ func monitor_hq(v0, v1) -> Variant:
 			_pc = 10177
 			continue
 		elif _pc == 9293:
-			if 1 == object.int_property(v1, "hq_first_time"):
+			if object.int_property(v1, "hq_first_time") == 1:
 				_pc = 9325
 				continue
 			else:
@@ -1230,21 +1230,21 @@ func monitor_hq(v0, v1) -> Variant:
 			_pc = 9492
 			continue
 		elif _pc == 9492:
-			if 0 > group.sim_count(v6):
+			if group.sim_count(v6) > 0:
 				_pc = 9517
 				continue
 			else:
 				_pc = 10001
 				continue
 		elif _pc == 9517:
-			if 15000.0 < sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) < 15000.0:
 				_pc = 9551
 				continue
 			else:
 				_pc = 9996
 				continue
 		elif _pc == 9551:
-			if _pog_eq(v0, iship.current_target(v2)):
+			if _pog_eq(iship.current_target(v2), v0):
 				_pc = 9580
 				continue
 			else:
@@ -1264,7 +1264,7 @@ func monitor_hq(v0, v1) -> Variant:
 			_pc = 9624
 			continue
 		elif _pc == 9624:
-			if group.sim_count(v6) < v8:
+			if v8 < group.sim_count(v6):
 				_pc = 9653
 				continue
 			else:
@@ -1274,11 +1274,11 @@ func monitor_hq(v0, v1) -> Variant:
 			v3 = iship.cast(group.nth_sim(v6, v8))
 			isim.set_indestructable(v3, 0)
 			iship.lock_down_weapons(v3)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 9624
 			continue
 		elif _pc == 9752:
-			if 1 == object.int_property(v1, "hq_gunstar_first_time"):
+			if object.int_property(v1, "hq_gunstar_first_time") == 1:
 				_pc = 9784
 				continue
 			else:
@@ -1305,7 +1305,7 @@ func monitor_hq(v0, v1) -> Variant:
 			_pc = 9868
 			continue
 		elif _pc == 9868:
-			if group.sim_count(v6) < v8:
+			if v8 < group.sim_count(v6):
 				_pc = 9897
 				continue
 			else:
@@ -1314,7 +1314,7 @@ func monitor_hq(v0, v1) -> Variant:
 		elif _pc == 9897:
 			v3 = iship.cast(group.nth_sim(v6, v8))
 			isim.set_indestructable(v3, 1)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 9868
 			continue
 		elif _pc == 9977:
@@ -1365,7 +1365,7 @@ func monitor_hq(v0, v1) -> Variant:
 			iobjectives.set_state("a2_m25_objectives_destroy_hq", 1)
 			await iconversation.one_liner(0, "name_cal", "a2_m25_dialogue_cal_we_did_it")
 			await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_lets_clear_off")
-			state.set_progress(v1, 1 + state.progress(v1))
+			state.set_progress(v1, state.progress(v1) + 1)
 			await ibacktobase.allow()
 			_pc = 10586
 			continue
@@ -1404,7 +1404,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			v15 = 30000.0
 			v17 = 0
 			v18 = null
-			if v3 < group.sim_count(v2):
+			if group.sim_count(v2) < v3:
 				_pc = 10735
 				continue
 			else:
@@ -1466,7 +1466,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 11005
 			continue
 		elif _pc == 10965:
-			if v16 != 1:
+			if 1 != v16:
 				_pc = 10978
 				continue
 			else:
@@ -1521,7 +1521,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			group.add_sim(v2, v6)
 			sim.set_cullable(v6, 0)
 			v17 = math.random_int(0, 2)
-			if v13 > sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) > v13:
 				_pc = 11272
 				continue
 			else:
@@ -1540,7 +1540,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 11441
 			continue
 		elif _pc == 11441:
-			if 1 == math.random_int(0, 9):
+			if math.random_int(0, 9) == 1:
 				_pc = 11464
 				continue
 			else:
@@ -1555,7 +1555,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 11527
 			continue
 		elif _pc == 11527:
-			if 0 > v17:
+			if v17 > 0:
 				_pc = 11539
 				continue
 			else:
@@ -1577,7 +1577,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			sim.set_cullable(v7, 0)
 			iai.give_escort_order(v7, v6, -75.0, -75.0, 0.0, 1500.0)
 			_pog_spawn(local_13840.bind(v7, v6, v0, v12, v4))
-			if 1 > v17:
+			if v17 > 1:
 				_pc = 11833
 				continue
 			else:
@@ -1602,7 +1602,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 12115
 			continue
 		elif _pc == 12115:
-			if v5 < group.sim_count(v4):
+			if group.sim_count(v4) < v5:
 				_pc = 12144
 				continue
 			else:
@@ -1664,7 +1664,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 12414
 			continue
 		elif _pc == 12374:
-			if v16 != 1:
+			if 1 != v16:
 				_pc = 12387
 				continue
 			else:
@@ -1719,7 +1719,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			group.add_sim(v4, v6)
 			sim.set_cullable(v6, 0)
 			v17 = math.random_int(0, 2)
-			if v13 > sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) > v13:
 				_pc = 12681
 				continue
 			else:
@@ -1739,7 +1739,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			continue
 		elif _pc == 12850:
 			_pog_spawn(local_13482.bind(v6, v0, v12, v2))
-			if 0 > v17:
+			if v17 > 0:
 				_pc = 12896
 				continue
 			else:
@@ -1761,7 +1761,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			iai.give_escort_order(v7, v6, -75.0, -75.0, 0.0, 1500.0)
 			sim.set_cullable(v7, 0)
 			_pog_spawn(local_13840.bind(v7, v6, v0, v12, v2))
-			if 1 > v17:
+			if v17 > 1:
 				_pc = 13190
 				continue
 			else:
@@ -1818,7 +1818,7 @@ func local_13482(v0, v1, v2, v3) -> Variant:
 			_pc = 13838
 			continue
 		elif _pc == 13553:
-			if isim.is_dying(isim.cast(v1)) or sim.is_dead(v1):
+			if sim.is_dead(v1) or isim.is_dying(isim.cast(v1)):
 				_pc = 13608
 				continue
 			else:
@@ -1830,14 +1830,14 @@ func local_13482(v0, v1, v2, v3) -> Variant:
 			_pc = 13838
 			continue
 		elif _pc == 13656:
-			if v2 > sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) > v2:
 				_pc = 13690
 				continue
 			else:
 				_pc = 13764
 				continue
 		elif _pc == 13690:
-			if 3 != iai.current_order_type(v0):
+			if iai.current_order_type(v0) != 3:
 				_pc = 13716
 				continue
 			else:
@@ -1852,7 +1852,7 @@ func local_13482(v0, v1, v2, v3) -> Variant:
 			_pc = 13832
 			continue
 		elif _pc == 13764:
-			if 1 != iai.current_order_type(v0):
+			if iai.current_order_type(v0) != 1:
 				_pc = 13789
 				continue
 			else:
@@ -2156,7 +2156,7 @@ func local_15948(v0, v1, v2) -> Variant:
 			_pc = 15986
 			continue
 		elif _pc == 15986:
-			if v1 < v3:
+			if v3 < v1:
 				_pc = 16002
 				continue
 			else:
@@ -2176,7 +2176,7 @@ func local_15948(v0, v1, v2) -> Variant:
 			sim.place_near(v4, group.nth_sim(v0, v3), 1000.0)
 			_pog_spawn(iscriptedorders.follow_route.bind(v4, v0, 0.5, 0.5, 1, 1, v3))
 			group.add_sim(v5, v4)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 15986
 			continue
 		elif _pc == 16233:
@@ -2208,7 +2208,7 @@ func local_16286(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 16347
 			continue
 		elif _pc == 16347:
-			if v1 + v4 < v9:
+			if v9 < v4 + v1:
 				_pc = 16369
 				continue
 			else:
@@ -2242,7 +2242,7 @@ func local_16286(v0, v1, v2, v3, v4) -> Variant:
 			sim.avatar_set_channel(v6, "door", 0.0)
 			await _pog_wait(2.0)
 			isim.set_indestructable(v7, 0)
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 16347
 			continue
 		elif _pc == 16903:
@@ -2301,7 +2301,7 @@ func monitor_cargo(v0, v1) -> Variant:
 				_pc = 17274
 				continue
 		elif _pc == 17235:
-			if 1000000.0 < sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) < 1000000.0:
 				_pc = 17269
 				continue
 			else:
@@ -2353,7 +2353,7 @@ func monitor_cargo(v0, v1) -> Variant:
 				continue
 		elif _pc == 17755:
 			await local_10588(v0, v2, v6, 6, v7, 6)
-			if 20000.0 < sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) < 20000.0:
 				_pc = 17827
 				continue
 			else:
@@ -2389,8 +2389,8 @@ func monitor_cargo(v0, v1) -> Variant:
 				continue
 		elif _pc == 18115:
 			await local_10588(v0, v2, v6, 6, v7, 6)
-			v11 = -1 + v11
-			if 1 < v11:
+			v11 = v11 + -1
+			if v11 < 1:
 				_pc = 18179
 				continue
 			else:
@@ -2400,7 +2400,7 @@ func monitor_cargo(v0, v1) -> Variant:
 			_pc = 18348
 			continue
 		elif _pc == 18184:
-			if 1000000.0 > sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) > 1000000.0:
 				_pc = 18218
 				continue
 			else:
@@ -2456,7 +2456,7 @@ func monitor_cargo(v0, v1) -> Variant:
 		elif _pc == 18730:
 			isim.kill(isim.cast(group.leader(v8)))
 			await _pog_wait(0.30000001192092896)
-			if 0 <= group.sim_count(v8):
+			if group.sim_count(v8) <= 0:
 				_pc = 18832
 				continue
 			else:
@@ -2476,7 +2476,7 @@ func monitor_cargo(v0, v1) -> Variant:
 			iai.give_flee_order(v3, v2)
 			object.set_string_property(v3, "death_script", "")
 			await local_15770(v1, "cargo_destroyed", 1)
-			state.set_progress(v1, 1 + state.progress(v1))
+			state.set_progress(v1, state.progress(v1) + 1)
 			await local_624(v1)
 			await ibacktobase.allow()
 			return
@@ -2518,7 +2518,7 @@ func local_19230(v0, v1, v2, v3) -> Variant:
 				_pc = 19428
 				continue
 		elif _pc == 19357:
-			if v9 < group.sim_count(v0):
+			if group.sim_count(v0) < v9:
 				_pc = 19386
 				continue
 			else:
@@ -2529,7 +2529,7 @@ func local_19230(v0, v1, v2, v3) -> Variant:
 			_pc = 19433
 			continue
 		elif _pc == 19398:
-			if 1 < v3:
+			if v3 < 1:
 				_pc = 19410
 				continue
 			else:
@@ -2539,7 +2539,7 @@ func local_19230(v0, v1, v2, v3) -> Variant:
 			_pc = 19433
 			continue
 		elif _pc == 19415:
-			v3 = 1 - v3
+			v3 = v3 - 1
 			_pc = 19428
 			continue
 		elif _pc == 19428:
@@ -2557,7 +2557,7 @@ func local_19230(v0, v1, v2, v3) -> Variant:
 			_pc = 19484
 			continue
 		elif _pc == 19484:
-			if 0 >= v11:
+			if v11 >= 0:
 				_pc = 19496
 				continue
 			else:
@@ -2565,7 +2565,7 @@ func local_19230(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 19496:
 			isim.set_standard_sensor_visibility(isim.cast(group.nth_sim(v0, v11)), 1)
-			v11 = -1 + v11
+			v11 = v11 + -1
 			_pc = 19484
 			continue
 		elif _pc == 19566:
@@ -2584,7 +2584,7 @@ func local_19230(v0, v1, v2, v3) -> Variant:
 				_pc = 20477
 				continue
 		elif _pc == 19693:
-			if 0 > group.sim_count(v0):
+			if group.sim_count(v0) > 0:
 				_pc = 19718
 				continue
 			else:
@@ -2708,7 +2708,7 @@ func local_20637(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 20668
 			continue
 		elif _pc == 20668:
-			if v4 < v8:
+			if v8 < v4:
 				_pc = 20684
 				continue
 			else:
@@ -2720,7 +2720,7 @@ func local_20637(v0, v1, v2, v3, v4, v5) -> Variant:
 			sim.set_cullable(v7, 0)
 			isim.set_faction(v7, v5)
 			isim.set_sensor_visibility(v7, 0)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 20668
 			continue
 		elif _pc == 20822:
@@ -2789,7 +2789,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 				_pc = 21328
 				continue
 		elif _pc == 21289:
-			if 1000000.0 < sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) < 1000000.0:
 				_pc = 21323
 				continue
 			else:
@@ -2828,7 +2828,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 				continue
 		elif _pc == 21546:
 			await local_10588(v0, v2, v8, 6, v9, 6)
-			if 20000.0 < sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) < 20000.0:
 				_pc = 21618
 				continue
 			else:
@@ -2868,7 +2868,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 			_pc = 22651
 			continue
 		elif _pc == 21790:
-			v12 = v13 + v12
+			v12 = v12 + v13
 			await local_10588(v0, v2, v8, 6, v9, 6)
 			if _pog_is_null(v17):
 				_pc = 21857
@@ -2877,7 +2877,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 				_pc = 21912
 				continue
 		elif _pc == 21857:
-			if 5000.0 < sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) < 5000.0:
 				_pc = 21891
 				continue
 			else:
@@ -2889,7 +2889,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 			_pc = 21912
 			continue
 		elif _pc == 21912:
-			if 40000.0 > sim.distance_between(v2, v0) or 100.0 >= v12:
+			if v12 >= 100.0 or sim.distance_between(v2, v0) > 40000.0:
 				_pc = 21958
 				continue
 			else:
@@ -2909,7 +2909,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 			_pc = 23038
 			continue
 		elif _pc == 22217:
-			if isim.is_indestructable(v3) and _pog_is_null(group.sim_count(v6)):
+			if _pog_is_null(group.sim_count(v6)) and isim.is_indestructable(v3):
 				_pc = 22261
 				continue
 			else:
@@ -2940,7 +2940,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 				_pc = 22646
 				continue
 		elif _pc == 22561:
-			if 100.0 < v12 and 1 == v17:
+			if v17 == 1 and v12 < 100.0:
 				_pc = 22585
 				continue
 			else:
@@ -2967,7 +2967,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 			await iconversation.one_liner(0, "name_cal", "a2_m25_dialogue_cal_take_that")
 			await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_well_done_lets_go")
 			await local_15770(v1, "shipyard_destroyed", 1)
-			state.set_progress(v1, 1 + state.progress(v1))
+			state.set_progress(v1, state.progress(v1) + 1)
 			await ibacktobase.allow()
 			group.destroy(v5, 0)
 			_pc = 23038
@@ -2987,7 +2987,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 				continue
 		elif _pc == 23185:
 			v3 = iship.cast(p_set.first_element(v2))
-			if 0.0 < ifaction.feeling(v5, isim.faction(v3)):
+			if ifaction.feeling(v5, isim.faction(v3)) < 0.0:
 				_pc = 23269
 				continue
 			else:
@@ -3087,7 +3087,7 @@ func local_23505() -> Variant:
 			_pc = 24724
 			continue
 		elif _pc == 24724:
-			if 6 < v12:
+			if v12 < 6:
 				_pc = 24737
 				continue
 			else:
@@ -3100,7 +3100,7 @@ func local_23505() -> Variant:
 			await ipilotsetup.marauder(v9)
 			isim.set_faction(v9, v11)
 			group.add_sim(v1, v2)
-			v12 = 1 + v12
+			v12 = v12 + 1
 			_pc = 24724
 			continue
 		elif _pc == 24907:
@@ -3188,9 +3188,9 @@ func local_24920(v0, v1, v2, v3) -> Variant:
 			v10 = group.nth_group(v9, 0)
 			v11 = group.nth_group(v9, 1)
 			v12 = group.nth_group(v9, 2)
-			sim.destroy(group.nth_sim(v10, 1 - group.sim_count(v10)))
-			sim.destroy(group.nth_sim(v11, 1 - group.sim_count(v11)))
-			sim.destroy(group.nth_sim(v12, 1 - group.sim_count(v12)))
+			sim.destroy(group.nth_sim(v10, group.sim_count(v10) - 1))
+			sim.destroy(group.nth_sim(v11, group.sim_count(v11) - 1))
+			sim.destroy(group.nth_sim(v12, group.sim_count(v12) - 1))
 			v5 = iship.cast(group.leader(v14))
 			v15 = group.nth_group(v14, 0)
 			v16 = group.nth_group(v14, 1)
@@ -3225,7 +3225,7 @@ func local_24920(v0, v1, v2, v3) -> Variant:
 				_pc = 27713
 				continue
 		elif _pc == 26954:
-			if not (isim.is_capsule_jumping(v0)) and not _pog_eq("map:/geog/badlands/dante", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/dante") and not (isim.is_capsule_jumping(v0)):
 				_pc = 27002
 				continue
 			else:
@@ -3245,7 +3245,7 @@ func local_24920(v0, v1, v2, v3) -> Variant:
 			_pc = 27251
 			continue
 		elif _pc == 27251:
-			if _pog_eq("map:/geog/badlands/dante", isim.active_world()) and 150000.0 > sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) > 150000.0 and _pog_eq(isim.active_world(), "map:/geog/badlands/dante"):
 				_pc = 27308
 				continue
 			else:
@@ -3331,7 +3331,7 @@ func local_24920(v0, v1, v2, v3) -> Variant:
 			_pc = 27660
 			continue
 		elif _pc == 27660:
-			if _pog_eq("map:/geog/badlands/dante", isim.active_world()) and _pog_is_null(group.total_sim_count(v14)):
+			if _pog_is_null(group.total_sim_count(v14)) and _pog_eq(isim.active_world(), "map:/geog/badlands/dante"):
 				_pc = 27708
 				continue
 			else:
@@ -3560,7 +3560,7 @@ func local_31706() -> Variant:
 			_pc = 32271
 			continue
 		elif _pc == 32271:
-			if 3 < v8:
+			if v8 < 3:
 				_pc = 32284
 				continue
 			else:
@@ -3572,7 +3572,7 @@ func local_31706() -> Variant:
 			isim.set_faction(v0, v2)
 			group.add_sim(v5, v0)
 			iship.lock_down_weapons(v0)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 32271
 			continue
 		elif _pc == 32436:
@@ -3580,7 +3580,7 @@ func local_31706() -> Variant:
 			_pc = 32443
 			continue
 		elif _pc == 32443:
-			if 3 < v8:
+			if v8 < 3:
 				_pc = 32456
 				continue
 			else:
@@ -3592,7 +3592,7 @@ func local_31706() -> Variant:
 			isim.set_faction(v0, v2)
 			group.add_sim(v6, v0)
 			iship.lock_down_weapons(v0)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 32443
 			continue
 		elif _pc == 32608:
@@ -3600,7 +3600,7 @@ func local_31706() -> Variant:
 			_pc = 32615
 			continue
 		elif _pc == 32615:
-			if 3 < v8:
+			if v8 < 3:
 				_pc = 32628
 				continue
 			else:
@@ -3612,7 +3612,7 @@ func local_31706() -> Variant:
 			isim.set_faction(v0, v3)
 			group.add_sim(v7, v0)
 			iship.lock_down_weapons(v0)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 32615
 			continue
 		elif _pc == 32780:
@@ -3875,7 +3875,7 @@ func local_38181(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 38201
 			continue
 		elif _pc == 38201:
-			if group.sim_count(v0) < v5:
+			if v5 < group.sim_count(v0):
 				_pc = 38230
 				continue
 			else:
@@ -3894,7 +3894,7 @@ func local_38181(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 38344
 			continue
 		elif _pc == 38344:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 38201
 			continue
 		elif _pc == 38362:
@@ -3935,7 +3935,7 @@ func local_38366(v0, v1, v2) -> Variant:
 			_pc = 38438
 			continue
 		elif _pc == 38438:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 38454
 				continue
 			else:
@@ -3945,7 +3945,7 @@ func local_38366(v0, v1, v2) -> Variant:
 			v5 = iship.cast(group.nth_sim(v0, v4))
 			iship.set_free_without_pilot(v5, v1)
 			sim.avatar_set_channel(v5, "lz", 0.0)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 38438
 			continue
 		elif _pc == 38569:
@@ -3964,7 +3964,7 @@ func local_38366(v0, v1, v2) -> Variant:
 			_pc = 38617
 			continue
 		elif _pc == 38617:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 38633
 				continue
 			else:
@@ -3972,7 +3972,7 @@ func local_38366(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 38633:
 			await local_38366(group.nth_group(v0, v4), v1, v2)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 38617
 			continue
 		elif _pc == 38698:
@@ -4025,7 +4025,7 @@ func local_39487(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 39499
 			continue
 		elif _pc == 39499:
-			if group.sim_count(v0) < v5:
+			if v5 < group.sim_count(v0):
 				_pc = 39528
 				continue
 			else:
@@ -4048,7 +4048,7 @@ func local_39487(v0, v1, v2, v3, v4) -> Variant:
 			iship.set_free_without_pilot(v6, v4)
 			sim.avatar_set_channel(v6, "lz", 1.0)
 			await _pog_wait(v3)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 39499
 			continue
 		elif _pc == 39805:

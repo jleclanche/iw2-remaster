@@ -888,23 +888,150 @@ func _recheck_cargo_space() -> void:
 	loadout.cargo_warning = player_inv().total_items() > _cargo_slots()
 
 
-# @stub iloadout.RearmFromJaffs
-# @stub iloadout.RearmFromThirdParty
-# @stub iloadout.StripShip
-# @stub iloadout.StripTurretFighters
-# @stub iloadout.LoadoutName
-# @stub iloadout.LoadoutDescription
-# @stub iloadout.SetManifestWindow
+## iloadout::eLoadout, read straight out of the loadout screen. ibasegui builds
+## the buttons in the order standard, assault, stealth, ecm (local_13541) and
+## pushes them into the "LoadoutButtons" list; SPLoadoutScreen_OnLoadout finds the
+## checked one's index and maps 0->1, 1->2, 2->3, 3->4 before calling
+## CalculateLoadout. So the enum is one-based, in button order.
+##
+## The names are limited to eight characters "because of the hangar", says the
+## comment above them in text/gui.csv.
+const LOADOUT_NAMES := {
+	1: "loadoutmenu_standard",
+	2: "loadoutmenu_assault",
+	3: "loadoutmenu_stealth",
+	4: "loadoutmenu_ecm",
+}
+
+## The manifest text window, when the loadout screen has given us one.
+var manifest_window = null
+
+# @native iloadout.LoadoutName
+func _l_loadout_name(_t, a: Array) -> Variant:
+	# Returns a *key*: ibasegui wraps it in text.Field(). The screens only ever
+	# build four buttons, so 5 and 6 -- which OnLoadout can also produce -- and 0
+	# have no shipped name; "custom" is the only other name in the table, and it
+	# is what StartCustomisedLoadout leaves behind.
+	return LOADOUT_NAMES.get(int(a[0]), "loadoutmenu_custom")
+
+# @native iloadout.LoadoutDescription
+func _l_loadout_description(_t, _a: Array) -> Variant:
+	# What the manifest window shows: the hull, and what is bolted to it. The
+	# subsim list is real (ship_systems.gd builds it from the ship INI's
+	# [Subsims]), so this is the ship's actual fit, not a description of one.
+	var lines: Array[String] = []
+	var name: String = SHIP_NAMES[loadout.ship] \
+			if loadout.ship >= 0 and loadout.ship < SHIP_NAMES.size() else "?"
+	lines.append(name.to_upper())
+	var sys = game.sys if (game != null and "sys" in game) else null
+	if sys == null:
+		lines.append("No ship fitted.")
+		return "\n".join(lines)
+	lines.append("Hull %d/%d   Armour %d"
+			% [roundi(sys.hull), roundi(sys.hull_max), roundi(sys.armour)])
+	lines.append("")
+	# In the HUD's own order: DRV THR LDS CAP WEP SEN EPS CPU.
+	for g in ShipSystems.GROUPS:
+		for s in sys.systems:
+			if String(s.get("group", "")) != g:
+				continue
+			var hp: float = float(s.get("hp_max", 0))
+			if hp <= 0.0:
+				continue                  # an empty mount point, not a device
+			lines.append("%-4s %-26s %3d%%"
+					% [g, String(s.get("name", "")),
+					roundi(100.0 * float(s.get("hp", 0)) / hp)])
+	var slots: int = int(_l_unused_slots(null, []))
+	lines.append("")
+	lines.append("Cargo: %d of %d slots free" % [slots, _cargo_slots()])
+	if loadout.turret_fighters > 0:
+		lines.append("Turret fighters: %d" % loadout.turret_fighters)
+	return "\n".join(lines)
+
+# @native iloadout.SetManifestWindow
+func _l_set_manifest_window(_t, a: Array) -> Variant:
+	# The loadout and manifest screens hand us the text window they want the fit
+	# written into, and then never write it themselves.
+	manifest_window = a[0] if a.size() > 0 else null
+	if manifest_window is PogUi.PogWindow:
+		manifest_window.text = PogStd._s(_l_loadout_description(null, []))
+		_ui_dirty()
+	return 0
+
+
+## The subsims of a sim: the player's are main.sys, an AI ship's are its own.
+func _systems_of(s) -> ShipSystems:
+	if s == null:
+		return null
+	if s.is_player:
+		return game.sys if (game != null and "sys" in game) else null
+	if s.node != null and is_instance_valid(s.node) and "sys" in s.node:
+		return s.node.sys
+	return null
+
+
+## Rearm: put a ship's subsims back to `frac` of their hit points, and its hull
+## with them. iiShipSystem hit points go negative and are still repairable, so a
+## rearm is a clamp back up, not a heal from zero.
+func _rearm(s, frac: float) -> void:
+	var sys := _systems_of(s)
+	if sys == null:
+		return
+	sys.hull = maxf(sys.hull, sys.hull_max * frac)
+	for d in sys.systems:
+		var hp: float = float(d.get("hp_max", 0))
+		if hp <= 0.0:
+			continue
+		d["hp"] = maxf(float(d.get("hp", 0)), hp * frac)
+		d["destroyed"] = false
+		if d.has("energy"):
+			d["energy"] = d.get("capacity", 0)
+		if d.has("defends"):
+			d["defends"] = d.get("defend_count", 0)
+
+# @native iloadout.RearmFromJaffs
+func _l_rearm_jaffs(_t, _a: Array) -> Variant:
+	# Jaffs rearms you at the base, on the way out of the hangar: a full refit.
+	_rearm(world.player_sim() if world != null else null, 1.0)
+	return 0
+
+# @native iloadout.RearmFromThirdParty
+func _l_rearm_third_party(_t, a: Array) -> Variant:
+	# RearmFromThirdParty(ship, fraction): somebody else's hangar, and they are
+	# not as generous. Every shipped call passes 1.0.
+	_rearm(world._as_sim(a[0]), float(a[1]) if a.size() > 1 else 1.0)
+	return 0
+
+# @native iloadout.StripShip
+# @native iloadout.StripTurretFighters
+func _l_strip(_t, a: Array) -> Variant:
+	# istartsystem strips the hulls it hands the player between acts, so they
+	# arrive empty and have to be refitted. Stripping empties the mount points:
+	# an empty mount has hit_points 0 and cannot be damaged, which is exactly what
+	# ship_systems.gd already models, so the devices simply go.
+	var s = world._as_sim(a[0])
+	loadout.turret_fighters = 0
+	loadout.desired_turret_fighters = 0
+	var sys := _systems_of(s)
+	if sys == null:
+		return 0
+	var keep: Array = []
+	for d in sys.systems:
+		if float(d.get("hp_max", 0)) <= 0.0:
+			keep.append(d)          # the mount point itself stays; the device goes
+	sys.systems = keep
+	sys.ldas.clear()
+	return 0
+
+# The customise screen: the one base screen with no POG builder we could run --
+# icSPCustomiseScreen exists, but fitting a device into a named mount point needs
+# the drag-and-drop pylon UI, and these five natives are its event handlers.
 # @stub iloadout.StartCustomisedLoadout
 # @stub iloadout.EndCustomisedLoadout
 # @stub iloadout.OnCustomiseScreenBack
 # @stub iloadout.OnCustomiseScreenSelect
 # @stub iloadout.UpdateCustomisedLoadoutTextBox
 func _l_noop(_t, _a: Array) -> Variant:
-	# Rearming refills magazines and stripping empties mount points; both need
-	# the subsim/mount-point model the ships do not have yet, and the rest is the
-	# customise screen itself. The scripts pop every one of these return values,
-	# so nothing branches on what we hand back.
 	return 0
 
 
@@ -981,13 +1108,13 @@ const _BINDINGS := {
 	"iloadout.removeturretfighters": "_l_remove_fighters",
 	"iloadout.remotefightermounted": "_l_remote_mounted",
 	"iloadout.removeremotefighter": "_l_remove_remote",
-	"iloadout.rearmfromjaffs": "_l_noop",
-	"iloadout.rearmfromthirdparty": "_l_noop",
-	"iloadout.stripship": "_l_noop",
-	"iloadout.stripturretfighters": "_l_noop",
-	"iloadout.loadoutname": "_l_noop",
-	"iloadout.loadoutdescription": "_l_noop",
-	"iloadout.setmanifestwindow": "_l_noop",
+	"iloadout.rearmfromjaffs": "_l_rearm_jaffs",
+	"iloadout.rearmfromthirdparty": "_l_rearm_third_party",
+	"iloadout.stripship": "_l_strip",
+	"iloadout.stripturretfighters": "_l_strip",
+	"iloadout.loadoutname": "_l_loadout_name",
+	"iloadout.loadoutdescription": "_l_loadout_description",
+	"iloadout.setmanifestwindow": "_l_set_manifest_window",
 	"iloadout.startcustomisedloadout": "_l_noop",
 	"iloadout.endcustomisedloadout": "_l_noop",
 	"iloadout.oncustomisescreenback": "_l_noop",

@@ -55,8 +55,8 @@ func wrong_disk_screen() -> Variant:
 	while true:
 		if _pc == 137:
 			v3 = null
-			v6 = 2 / gui.frame_width()
-			v7 = 2 / gui.frame_height()
+			v6 = gui.frame_width() / 2
+			v7 = gui.frame_height() / 2
 			v10 = null
 			text.add("csv:/text/gui")
 			text.add("csv:/text/gui_addendum")
@@ -70,9 +70,9 @@ func wrong_disk_screen() -> Variant:
 			v4 = global.pog_int("GUI_fancybutton_width")
 			v5 = global.pog_int("GUI_fancybutton_height")
 			v8 = global.pog_int("GUI_main_title_height")
-			v9 = 2 * v8 - v7
+			v9 = v7 - v8 * 2
 			await wrong_disk_screen__on_retry()
-			if 1 == global.exists("WrongDiskScreen_GotDisk"):
+			if global.exists("WrongDiskScreen_GotDisk") == 1:
 				_pc = 529
 				continue
 			else:
@@ -84,9 +84,9 @@ func wrong_disk_screen() -> Variant:
 			continue
 		elif _pc == 555:
 			await local_1187(v9, "wrongdisk_pleaseinsert")
-			v9 = v8 + v9
+			v9 = v9 + v8
 			await local_1187(v9, "wrongdisk_playdisk")
-			v1 = gui.create_window(2 / v4 - v6, v7, 2 / v4 + v6, v5 + v7, gui.top_window())
+			v1 = gui.create_window(v6 - v4 / 2, v7, v6 + v4 / 2, v7 + v5, gui.top_window())
 			v2 = await igui.create_fancy_button(0, 0, v1)
 			gui.set_window_title(v2, text.field("gui_cancel", 0))
 			gui.set_button_function_pog(v2, "iFrontendGUI.WrongDiskScreen_OnQuit")
@@ -184,7 +184,7 @@ func local_1624() -> Variant:
 			v2 = config.count_number("system", "icGame", "movies")
 			gui.pop_screen()
 			gui.overlay_screen("icSPMainPDAScreen")
-			if not _pog_eq("", igame.session_name()) or imultiplay.network_is_lobby_session():
+			if imultiplay.network_is_lobby_session() or not _pog_eq(igame.session_name(), ""):
 				_pc = 1756
 				continue
 			else:
@@ -194,11 +194,11 @@ func local_1624() -> Variant:
 			_pc = 1868
 			continue
 		elif _pc == 1761:
-			v1 = 1 - v2
+			v1 = v2 - 1
 			_pc = 1774
 			continue
 		elif _pc == 1774:
-			if 0 >= v1:
+			if v1 >= 0:
 				_pc = 1786
 				continue
 			else:
@@ -207,7 +207,7 @@ func local_1624() -> Variant:
 		elif _pc == 1786:
 			v0 = config.get_numbered_string("system", "icGame", "movies", v1)
 			await _pog_movie(v0)
-			v1 = -1 + v1
+			v1 = v1 + -1
 			_pc = 1774
 			continue
 		elif _pc == 1868:

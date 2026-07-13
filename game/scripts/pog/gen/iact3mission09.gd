@@ -198,7 +198,7 @@ func local_1089(v0, v1) -> Variant:
 			_pc = 1125
 			continue
 		elif _pc == 1125:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 1141
 				continue
 			else:
@@ -206,7 +206,7 @@ func local_1089(v0, v1) -> Variant:
 				continue
 		elif _pc == 1141:
 			iship.disrupt_l_d_s_drive(iship.cast(group.nth_sim(v0, v3)), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 1125
 			continue
 		elif _pc == 1215:
@@ -262,7 +262,7 @@ func local_1503(v0, v1) -> Variant:
 				_pc = 2270
 				continue
 		elif _pc == 1734:
-			if 0 <= v5:
+			if v5 <= 0:
 				_pc = 1746
 				continue
 			else:
@@ -280,7 +280,7 @@ func local_1503(v0, v1) -> Variant:
 			_pc = 1843
 			continue
 		elif _pc == 1843:
-			if v3 < v6:
+			if v6 < v3:
 				_pc = 1859
 				continue
 			else:
@@ -294,33 +294,33 @@ func local_1503(v0, v1) -> Variant:
 				_pc = 1944
 				continue
 		elif _pc == 1931:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1944
 			continue
 		elif _pc == 1944:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 1843
 			continue
 		elif _pc == 1962:
-			if 100 < v5:
+			if v5 < 100:
 				_pc = 1975
 				continue
 			else:
 				_pc = 1992
 				continue
 		elif _pc == 1975:
-			v5 = v4 + v5
+			v5 = v5 + v4
 			_pc = 1992
 			continue
 		elif _pc == 1992:
-			if 3 != state.progress(v1):
+			if state.progress(v1) != 3:
 				_pc = 2018
 				continue
 			else:
 				_pc = 2150
 				continue
 		elif _pc == 2018:
-			if 0 > v4:
+			if v4 > 0:
 				_pc = 2030
 				continue
 			else:
@@ -342,7 +342,7 @@ func local_1503(v0, v1) -> Variant:
 			_pc = 2145
 			continue
 		elif _pc == 2106:
-			if 0 < v4:
+			if v4 < 0:
 				_pc = 2118
 				continue
 			else:
@@ -415,14 +415,14 @@ func local_1503(v0, v1) -> Variant:
 		elif _pc == 2484:
 			return
 		elif _pc == 2525:
-			if v4 < v3:
+			if v3 < v4:
 				_pc = 2541
 				continue
 			else:
 				_pc = 2559
 				continue
 		elif _pc == 2541:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 2525
 			continue
 		elif _pc == 2559:
@@ -503,7 +503,7 @@ func local_3185(v0, v1, v2) -> Variant:
 				_pc = 3620
 				continue
 		elif _pc == 3544:
-			if not _pog_eq("map:/geog/gagarin/batatas", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/gagarin/batatas"):
 				_pc = 3572
 				continue
 			else:
@@ -543,7 +543,7 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 			v7 = 0
 			v8 = 0
 			v9 = 1
-			v11 = 2.0 / v1
+			v11 = v1 / 2.0
 			_pc = 3732
 			continue
 		elif _pc == 3732:
@@ -555,7 +555,7 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 				_pc = 4657
 				continue
 		elif _pc == 3746:
-			if not (v7) and v11 <= sim.distance_between(v2, v0):
+			if sim.distance_between(v2, v0) <= v11 and not (v7):
 				_pc = 3787
 				continue
 			else:
@@ -580,7 +580,7 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 			_pc = 4374
 			continue
 		elif _pc == 3982:
-			if 2 == state.progress(v3):
+			if state.progress(v3) == 2:
 				_pc = 4008
 				continue
 			else:
@@ -588,7 +588,7 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 4008:
 			v7 = 1
-			v10 = 1 + v10
+			v10 = v10 + 1
 			if v9:
 				_pc = 4038
 				continue
@@ -642,7 +642,7 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 			_pc = 4374
 			continue
 		elif _pc == 4374:
-			if 500000.0 > sim.distance_between(v6, v2):
+			if sim.distance_between(v6, v2) > 500000.0:
 				_pc = 4408
 				continue
 			else:
@@ -653,14 +653,14 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 			_pc = 4427
 			continue
 		elif _pc == 4427:
-			if _pog_is_null(group.sim_count(v5)) and v7:
+			if v7 and _pog_is_null(group.sim_count(v5)):
 				_pc = 4458
 				continue
 			else:
 				_pc = 4657
 				continue
 		elif _pc == 4458:
-			if 4 >= v10:
+			if v10 >= 4:
 				_pc = 4471
 				continue
 			else:
@@ -706,7 +706,7 @@ func local_4665(v0) -> Variant:
 			_pc = 4704
 			continue
 		elif _pc == 4704:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 4720
 				continue
 			else:
@@ -719,7 +719,7 @@ func local_4665(v0) -> Variant:
 			object.set_int_property(v2, "cargo", 471)
 			object.set_string_property(v2, "death_script", "iDeathScript.Antimatter")
 			group.add_sim(v1, v2)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 4704
 			continue
 		elif _pc == 4894:
@@ -744,7 +744,7 @@ func local_4983(v0) -> Variant:
 			_pc = 5019
 			continue
 		elif _pc == 5019:
-			if v2 < v1:
+			if v1 < v2:
 				_pc = 5035
 				continue
 			else:
@@ -752,7 +752,7 @@ func local_4983(v0) -> Variant:
 				continue
 		elif _pc == 5035:
 			iship.remove_pilot(iship.cast(group.nth_sim(v0, v1)))
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 5019
 			continue
 		elif _pc == 5103:
@@ -786,7 +786,7 @@ func local_5106(v0, v1, v2, v3) -> Variant:
 				_pc = 5413
 				continue
 		elif _pc == 5158:
-			if not (v6) and await iutilities.player_in_range(v1):
+			if await iutilities.player_in_range(v1) and not (v6):
 				_pc = 5188
 				continue
 			else:
@@ -798,7 +798,7 @@ func local_5106(v0, v1, v2, v3) -> Variant:
 			_pc = 5219
 			continue
 		elif _pc == 5219:
-			if not (idirector.is_busy()) and not (v9) and v6:
+			if v6 and not (v9) and not (idirector.is_busy()):
 				_pc = 5251
 				continue
 			else:
@@ -823,7 +823,7 @@ func local_5106(v0, v1, v2, v3) -> Variant:
 				_pc = 5613
 				continue
 		elif _pc == 5426:
-			if not (v7) and v6 and iai.is_order_complete(v4):
+			if iai.is_order_complete(v4) and v6 and not (v7):
 				_pc = 5462
 				continue
 			else:
@@ -884,19 +884,19 @@ func local_5828() -> Variant:
 			_pc = 5874
 			continue
 		elif _pc == 5874:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 5890
 				continue
 			else:
 				_pc = 6057
 				continue
 		elif _pc == 5890:
-			v0 = iship.create("ini:/sims/ships/corporate/interceptor", string.join("a3_m09_name_alpha+ +", string.from_int(1 + v3)))
+			v0 = iship.create("ini:/sims/ships/corporate/interceptor", string.join("a3_m09_name_alpha+ +", string.from_int(v3 + 1)))
 			isim.set_faction(v0, v1)
 			sim.set_cullable(v0, 0)
 			await ipilotsetup.generic_cargo_pod(v0)
 			await iwingmen.add_wingman(v0)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 5874
 			continue
 		elif _pc == 6057:
@@ -959,7 +959,7 @@ func local_6860(v0) -> Variant:
 			_pc = 6915
 			continue
 		elif _pc == 6915:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 6931
 				continue
 			else:
@@ -967,7 +967,7 @@ func local_6860(v0) -> Variant:
 				continue
 		elif _pc == 6931:
 			v2 = isim.cast(group.nth_sim(v1, v4))
-			if not _pog_eq("map:/geog/gagarin/batatas", isim.world_name(v2)) and not (isim.is_docked(v2)):
+			if not (isim.is_docked(v2)) and not _pog_eq(isim.world_name(v2), "map:/geog/gagarin/batatas"):
 				_pc = 7026
 				continue
 			else:
@@ -978,7 +978,7 @@ func local_6860(v0) -> Variant:
 			_pc = 7063
 			continue
 		elif _pc == 7063:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 6915
 			continue
 		elif _pc == 7081:
@@ -1084,7 +1084,7 @@ func mission_handler() -> Variant:
 			_pc = 7646
 			continue
 		elif _pc == 7646:
-			if not _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 7674
 				continue
 			else:
@@ -1097,7 +1097,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 7755:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 7815
 				continue
 			else:
@@ -1129,7 +1129,7 @@ func mission_handler() -> Variant:
 				_pc = 9168
 				continue
 		elif _pc == 8155:
-			if not (v1) and _pog_eq("map:/geog/gagarin/batatas", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/batatas") and not (v1):
 				_pc = 8189
 				continue
 			else:
@@ -1149,7 +1149,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 8433:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/gagarin/batatas", isim.world_name(v5)):
+			if _pog_eq(isim.world_name(v5), "map:/geog/gagarin/batatas"):
 				_pc = 8498
 				continue
 			else:
@@ -1175,7 +1175,7 @@ func mission_handler() -> Variant:
 			_pc = 8709
 			continue
 		elif _pc == 8709:
-			if not (v0) and 1 >= state.progress(v11):
+			if state.progress(v11) >= 1 and not (v0):
 				_pc = 8741
 				continue
 			else:
@@ -1187,14 +1187,14 @@ func mission_handler() -> Variant:
 			_pc = 8800
 			continue
 		elif _pc == 8800:
-			if 100 == state.progress(v11) or 10 == state.progress(v11):
+			if state.progress(v11) == 10 or state.progress(v11) == 100:
 				_pc = 8848
 				continue
 			else:
 				_pc = 9168
 				continue
 		elif _pc == 8848:
-			if 10 == state.progress(v11):
+			if state.progress(v11) == 10:
 				_pc = 8874
 				continue
 			else:
@@ -1202,7 +1202,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 8874:
 			global.set_bool("g_act3_antimatter_cordon_complete", 1)
-			global.set_int("g_iBackToBase_level", 1 + global.pog_int("g_iBackToBase_level"))
+			global.set_int("g_iBackToBase_level", global.pog_int("g_iBackToBase_level") + 1)
 			await iwingmen.purge()
 			_pc = 9041
 			continue

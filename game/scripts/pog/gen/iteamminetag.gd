@@ -99,7 +99,7 @@ func local_108(v0) -> Variant:
 				_pc = 182
 				continue
 		elif _pc == 138:
-			imultiplay.server_set_player_flags_count(v0, 1 + imultiplay.server_player_flags_count(v0))
+			imultiplay.server_set_player_flags_count(v0, imultiplay.server_player_flags_count(v0) + 1)
 			_pc = 270
 			continue
 		elif _pc == 182:
@@ -113,7 +113,7 @@ func local_108(v0) -> Variant:
 			_pc = 270
 			continue
 		elif _pc == 218:
-			object.set_int_property(v0, "frag_count", 1 + object.int_property(v0, "frag_count"))
+			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 1)
 			_pc = 270
 			continue
 		elif _pc == 270:
@@ -133,7 +133,7 @@ func local_273(v0) -> Variant:
 				_pc = 347
 				continue
 		elif _pc == 303:
-			imultiplay.server_set_player_flags_count(v0, 1 - imultiplay.server_player_flags_count(v0))
+			imultiplay.server_set_player_flags_count(v0, imultiplay.server_player_flags_count(v0) - 1)
 			_pc = 435
 			continue
 		elif _pc == 347:
@@ -147,7 +147,7 @@ func local_273(v0) -> Variant:
 			_pc = 435
 			continue
 		elif _pc == 383:
-			object.set_int_property(v0, "frag_count", 1 - object.int_property(v0, "frag_count"))
+			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") - 1)
 			_pc = 435
 			continue
 		elif _pc == 435:
@@ -164,25 +164,25 @@ func local_438(v0) -> Variant:
 		if _pc == 438:
 			v1 = ifaction.find(text.field("mp_flag_team_a", 0))
 			v2 = ifaction.find(text.field("mp_flag_team_b", 0))
-			if _pog_eq(v1, isim.faction(v0)):
+			if _pog_eq(isim.faction(v0), v1):
 				_pc = 553
 				continue
 			else:
 				_pc = 600
 				continue
 		elif _pc == 553:
-			global.set_int("ATeamOre", 1 + global.pog_int("ATeamOre"))
+			global.set_int("ATeamOre", global.pog_int("ATeamOre") + 1)
 			_pc = 671
 			continue
 		elif _pc == 600:
-			if _pog_eq(v2, isim.faction(v0)):
+			if _pog_eq(isim.faction(v0), v2):
 				_pc = 629
 				continue
 			else:
 				_pc = 671
 				continue
 		elif _pc == 629:
-			global.set_int("BTeamOre", 1 + global.pog_int("BTeamOre"))
+			global.set_int("BTeamOre", global.pog_int("BTeamOre") + 1)
 			_pc = 671
 			continue
 		elif _pc == 671:
@@ -202,7 +202,7 @@ func local_674(v0) -> Variant:
 				_pc = 748
 				continue
 		elif _pc == 704:
-			imultiplay.server_set_player_frags_count(v0, 1 + imultiplay.server_player_frag_count(v0))
+			imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) + 1)
 			_pc = 836
 			continue
 		elif _pc == 748:
@@ -216,7 +216,7 @@ func local_674(v0) -> Variant:
 			_pc = 836
 			continue
 		elif _pc == 784:
-			object.set_int_property(v0, "tag_count", 1 + object.int_property(v0, "tag_count"))
+			object.set_int_property(v0, "tag_count", object.int_property(v0, "tag_count") + 1)
 			_pc = 836
 			continue
 		elif _pc == 836:
@@ -236,11 +236,11 @@ func local_839(v0) -> Variant:
 				_pc = 913
 				continue
 		elif _pc == 869:
-			imultiplay.server_set_player_died_count(v0, 1 + imultiplay.server_player_died_count(v0))
+			imultiplay.server_set_player_died_count(v0, imultiplay.server_player_died_count(v0) + 1)
 			_pc = 965
 			continue
 		elif _pc == 913:
-			object.set_int_property(v0, "bot_deaths", 1 + object.int_property(v0, "bot_deaths"))
+			object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
 			_pc = 965
 			continue
 		elif _pc == 965:
@@ -277,7 +277,7 @@ func server_on_update_scores() -> Variant:
 			_pc = 1242
 			continue
 		elif _pc == 1242:
-			if group.sim_count(v7) < v1:
+			if v1 < group.sim_count(v7):
 				_pc = 1271
 				continue
 			else:
@@ -285,7 +285,7 @@ func server_on_update_scores() -> Variant:
 				continue
 		elif _pc == 1271:
 			list.add_tail(v0, group.nth_sim(v7, v1))
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 1242
 			continue
 		elif _pc == 1331:
@@ -294,7 +294,7 @@ func server_on_update_scores() -> Variant:
 			_pc = 1377
 			continue
 		elif _pc == 1377:
-			if group.sim_count(v7) < v1:
+			if v1 < group.sim_count(v7):
 				_pc = 1406
 				continue
 			else:
@@ -302,7 +302,7 @@ func server_on_update_scores() -> Variant:
 				continue
 		elif _pc == 1406:
 			list.add_tail(v0, group.nth_sim(v7, v1))
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 1377
 			continue
 		elif _pc == 1466:
@@ -310,7 +310,7 @@ func server_on_update_scores() -> Variant:
 			_pc = 1473
 			continue
 		elif _pc == 1473:
-			if list.item_count(v0) < v1:
+			if v1 < list.item_count(v0):
 				_pc = 1502
 				continue
 			else:
@@ -346,11 +346,11 @@ func server_on_update_scores() -> Variant:
 			_pc = 1776
 			continue
 		elif _pc == 1776:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 1473
 			continue
 		elif _pc == 1794:
-			if global.pog_int("BTeamOre") < global.pog_int("ATeamOre"):
+			if global.pog_int("ATeamOre") < global.pog_int("BTeamOre"):
 				_pc = 1839
 				continue
 			else:
@@ -361,7 +361,7 @@ func server_on_update_scores() -> Variant:
 			_pc = 1987
 			continue
 		elif _pc == 1880:
-			if global.pog_int("BTeamOre") > global.pog_int("ATeamOre"):
+			if global.pog_int("ATeamOre") > global.pog_int("BTeamOre"):
 				_pc = 1925
 				continue
 			else:
@@ -416,7 +416,7 @@ func server_on_user_message() -> Variant:
 			isim.set_faction(isim.cast(v1), v11)
 			imultiplay.server_set_player_team(v1, v3)
 			await imputils.spawn_player(v1, v6)
-			if _pog_eq(text.field("mp_flag_team_b", 0), v3):
+			if _pog_eq(v3, text.field("mp_flag_team_b", 0)):
 				_pc = 2303
 				continue
 			else:
@@ -433,14 +433,14 @@ func server_on_user_message() -> Variant:
 		elif _pc == 2334:
 			imultiplay.server_send_user_message(1, v1, 0, v3)
 			imultiplay.server_broadcast_message(v1, v5, 3)
-			if 0 > imultiplay.a_i_bots_count() and imultiplay.use_a_i_bots():
+			if imultiplay.use_a_i_bots() and imultiplay.a_i_bots_count() > 0:
 				_pc = 2420
 				continue
 			else:
 				_pc = 3002
 				continue
 		elif _pc == 2420:
-			if _pog_eq(text.field("mp_flag_team_a", 0), v3):
+			if _pog_eq(v3, text.field("mp_flag_team_a", 0)):
 				_pc = 2453
 				continue
 			else:
@@ -464,7 +464,7 @@ func server_on_user_message() -> Variant:
 			group.add_sim(v8, v7)
 			isim.set_faction(v7, v10)
 			v12 = object.int_property(v7, "bot_index")
-			v12 = 2 / imultiplay.a_i_bots_count() + v12
+			v12 = v12 + imultiplay.a_i_bots_count() / 2
 			object.set_int_property(v7, "bot_index", v12)
 			await imputils.spawn_player(v7, group.cast(global.handle("mp_respawn_group")))
 			imultiplay.server_send_user_message(1, v7, 0, ifaction.pog_name(isim.faction(v7)))
@@ -498,7 +498,7 @@ func server_on_user_message() -> Variant:
 				continue
 		elif _pc == 3242:
 			await local_674(iship.cast(v1))
-			if _pog_eq(v14, isim.faction(isim.cast(v1))):
+			if _pog_eq(isim.faction(isim.cast(v1)), v14):
 				_pc = 3316
 				continue
 			else:
@@ -573,7 +573,7 @@ func server_on_user_message() -> Variant:
 			_pc = 3865
 			continue
 		elif _pc == 3781:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 3794
 				continue
 			else:
@@ -670,7 +670,7 @@ func local_4122(v0) -> Variant:
 			_pc = 4173
 			continue
 		elif _pc == 4173:
-			if group.sim_count(v1) < v4:
+			if v4 < group.sim_count(v1):
 				_pc = 4202
 				continue
 			else:
@@ -699,7 +699,7 @@ func local_4122(v0) -> Variant:
 			_pc = 4445
 			continue
 		elif _pc == 4445:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 4173
 			continue
 		elif _pc == 4463:
@@ -732,7 +732,7 @@ func player_death() -> Variant:
 			v9 = isim.faction(v6)
 			await imputils.spawn_killed_player_power_ups(v0)
 			await local_839(iship.cast(v0))
-			if _pog_eq(iship.cast(v0), v6) or _pog_is_null(v6):
+			if _pog_is_null(v6) or _pog_eq(v6, iship.cast(v0)):
 				_pc = 4748
 				continue
 			else:
@@ -747,7 +747,7 @@ func player_death() -> Variant:
 			_pc = 5021
 			continue
 		elif _pc == 4882:
-			if not _pog_eq(v8, v9):
+			if not _pog_eq(v9, v8):
 				_pc = 4898
 				continue
 			else:
@@ -786,7 +786,7 @@ func local_5072(v0) -> Variant:
 			_pc = 5123
 			continue
 		elif _pc == 5123:
-			if group.sim_count(v1) < v3:
+			if v3 < group.sim_count(v1):
 				_pc = 5152
 				continue
 			else:
@@ -801,7 +801,7 @@ func local_5072(v0) -> Variant:
 				_pc = 5374
 				continue
 		elif _pc == 5211:
-			if _pog_eq(sim.cast(object.handle_property(v2, "mp_tagged_by")), v0):
+			if _pog_eq(v0, sim.cast(object.handle_property(v2, "mp_tagged_by"))):
 				_pc = 5260
 				continue
 			else:
@@ -823,7 +823,7 @@ func local_5072(v0) -> Variant:
 			_pc = 5426
 			continue
 		elif _pc == 5426:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 5123
 			continue
 		elif _pc == 5444:
@@ -844,7 +844,7 @@ func local_5447(v0) -> Variant:
 			_pc = 5498
 			continue
 		elif _pc == 5498:
-			if group.sim_count(v1) < v3:
+			if v3 < group.sim_count(v1):
 				_pc = 5527
 				continue
 			else:
@@ -863,7 +863,7 @@ func local_5447(v0) -> Variant:
 			_pc = 5638
 			continue
 		elif _pc == 5638:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 5498
 			continue
 		elif _pc == 5656:
@@ -913,7 +913,7 @@ func server_player_enter() -> Variant:
 			object.set_string_property(v0, "death_script", "iTeamMineTag.PlayerDeath")
 			object.add_bool_property(v0, "player", 1)
 			v9 = imultiplay.server_player_team(v0)
-			if _pog_eq("none", v9):
+			if _pog_eq(v9, "none"):
 				_pc = 5948
 				continue
 			else:
@@ -942,7 +942,7 @@ func server_player_enter() -> Variant:
 			isim.set_faction(isim.cast(v0), v12)
 			imultiplay.server_set_player_team(v0, v9)
 			imultiplay.server_send_user_message(1, v0, 0, v9)
-			if _pog_eq(text.field("mp_flag_team_b", 0), v9):
+			if _pog_eq(v9, text.field("mp_flag_team_b", 0)):
 				_pc = 6235
 				continue
 			else:
@@ -970,7 +970,7 @@ func server_player_enter() -> Variant:
 			await imputils.spawn_player(v0, v8)
 			imultiplay.set_ship_limits(iship.cast(v0))
 			imultiplay.link_ship_weapons(iship.cast(v0))
-			if 0 > imultiplay.a_i_bots_count() and imultiplay.use_a_i_bots() and v4:
+			if v4 and imultiplay.use_a_i_bots() and imultiplay.a_i_bots_count() > 0:
 				_pc = 6512
 				continue
 			else:
@@ -1031,7 +1031,7 @@ func local_6685(v0, v1, v2) -> Variant:
 			_pc = 6822
 			continue
 		elif _pc == 6822:
-			if v6 < v4:
+			if v4 < v6:
 				_pc = 6838
 				continue
 			else:
@@ -1046,7 +1046,7 @@ func local_6685(v0, v1, v2) -> Variant:
 				_pc = 7068
 				continue
 		elif _pc == 6893:
-			if v2 > sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) > v2:
 				_pc = 6927
 				continue
 			else:
@@ -1073,7 +1073,7 @@ func local_6685(v0, v1, v2) -> Variant:
 			_pc = 7068
 			continue
 		elif _pc == 7068:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 6822
 			continue
 		elif _pc == 7086:
@@ -1090,7 +1090,7 @@ func local_6685(v0, v1, v2) -> Variant:
 				_pc = 7315
 				continue
 		elif _pc == 7127:
-			if imultiplay.frag_limit() >= global.pog_int("ATeamOre"):
+			if global.pog_int("ATeamOre") >= imultiplay.frag_limit():
 				_pc = 7166
 				continue
 			else:
@@ -1102,7 +1102,7 @@ func local_6685(v0, v1, v2) -> Variant:
 			_pc = 7320
 			continue
 		elif _pc == 7221:
-			if imultiplay.frag_limit() >= global.pog_int("BTeamOre"):
+			if global.pog_int("BTeamOre") >= imultiplay.frag_limit():
 				_pc = 7260
 				continue
 			else:
@@ -1224,8 +1224,8 @@ func server_main() -> Variant:
 	_pog_detach(v26)
 	v26 = _pog_spawn(local_6685.bind(v14, 55000.0, 60000.0))
 	global.create_float("g_arena_radius", 1, 60000.0)
-	if 1 > imultiplay.a_i_bots_count():
-		v25 = 2 / imultiplay.a_i_bots_count()
+	if imultiplay.a_i_bots_count() > 1:
+		v25 = imultiplay.a_i_bots_count() / 2
 		v23 = group.cast(await ibotpak.create_bot_ships(imultiplay.package_i_n_i(), v25, imultiplay.a_i_bots_skill_level(), ifaction.find(text.field("mp_flag_team_a", 0)), 0, "BotNamesA"))
 		global.create_handle("g_bots_a_handle", 2, v23)
 		v24 = group.cast(await ibotpak.create_bot_ships(imultiplay.package_i_n_i(), v25, imultiplay.a_i_bots_skill_level(), ifaction.find(text.field("mp_flag_team_b", 0)), 0, "BotNamesB"))
@@ -1241,7 +1241,7 @@ func server_main() -> Variant:
 	return 0
 
 func client_scores() -> Variant:
-	if _pog_eq("icMultiplayScreenInGame", gui.current_screen_classname()):
+	if _pog_eq(gui.current_screen_classname(), "icMultiplayScreenInGame"):
 		return 0
 	gui.pop_screens_to("icSpaceFlightScreen")
 	gui.overlay_screen("icPDAOverlayManager")
@@ -1304,7 +1304,7 @@ func local_9997(v0, v1) -> Variant:
 		if _pc == 9997:
 			v2 = null
 			v2 = ifaction.pog_name(isim.faction(iship.find_player_ship()))
-			if _pog_eq(v2, v1):
+			if _pog_eq(v1, v2):
 				_pc = 10076
 				continue
 			else:
@@ -1423,7 +1423,7 @@ func local_10219() -> Variant:
 				_pc = 10859
 				continue
 		elif _pc == 10694:
-			if _pog_eq(text.field("mp_flag_team_a", 0), v13):
+			if _pog_eq(v13, text.field("mp_flag_team_a", 0)):
 				_pc = 10727
 				continue
 			else:
@@ -1434,7 +1434,7 @@ func local_10219() -> Variant:
 			_pc = 10854
 			continue
 		elif _pc == 10760:
-			if _pog_eq(text.field("mp_flag_team_b", 0), v13):
+			if _pog_eq(v13, text.field("mp_flag_team_b", 0)):
 				_pc = 10793
 				continue
 			else:
@@ -1453,7 +1453,7 @@ func local_10219() -> Variant:
 			continue
 		elif _pc == 10859:
 			v42 = ifaction.pog_name(isim.faction(iship.find_player_ship()))
-			if _pog_eq(text.field("mp_flag_team_a", 0), v42):
+			if _pog_eq(v42, text.field("mp_flag_team_a", 0)):
 				_pc = 10939
 				continue
 			else:
@@ -1490,7 +1490,7 @@ func local_10219() -> Variant:
 			_pc = 11159
 			continue
 		elif _pc == 11159:
-			if v6 < v40:
+			if v40 < v6:
 				_pc = 11175
 				continue
 			else:
@@ -1498,7 +1498,7 @@ func local_10219() -> Variant:
 				continue
 		elif _pc == 11175:
 			v12 = text.field(imultiplay.client_end_game_info_name(v40), 0)
-			if _pog_eq("*DUMMYSCORE*", v12) or _pog_eq("DUMMYSCORE", v12):
+			if _pog_eq(v12, "DUMMYSCORE") or _pog_eq(v12, "*DUMMYSCORE*"):
 				_pc = 11247
 				continue
 			else:
@@ -1533,7 +1533,7 @@ func local_10219() -> Variant:
 			_pc = 11936
 			continue
 		elif _pc == 11936:
-			v40 = 1 + v40
+			v40 = v40 + 1
 			_pc = 11159
 			continue
 		elif _pc == 11954:
@@ -1543,13 +1543,13 @@ func local_10219() -> Variant:
 			list.add_head(v26, v27)
 			await igui.create_window_list_in_splitter(v41, v26, v37, 70, text.field("mp_ore_totals", 0))
 			await igui.create_window_list_in_splitter(v41, v20, v37, v39, text.field("mp_game_player", 0))
-			v37 = v38 + 10 + v32 + v37
+			v37 = v37 + v32 + 10 + v38
 			await igui.create_window_list_in_splitter(v41, v25, v37, v39, text.field("mp_game_team", 0))
-			v37 = v38 + 10 + v33 + v37
+			v37 = v37 + v33 + 10 + v38
 			await igui.create_window_list_in_splitter(v41, v21, v37, v39, text.field("mp_game_tag", 0))
-			v37 = v38 + 10 + v34 + v37
+			v37 = v37 + v34 + 10 + v38
 			await igui.create_window_list_in_splitter(v41, v22, v37, v39, text.field("mp_game_frags", 0))
-			v37 = v38 + 10 + v35 + v37
+			v37 = v37 + v35 + 10 + v38
 			await igui.create_window_list_in_splitter(v41, v23, v37, v39, text.field("mp_game_died", 0))
 			if imultiplay.is_game_ended():
 				_pc = 12641
@@ -1616,7 +1616,7 @@ func local_12911(v0, v1, v2) -> Variant:
 				_pc = 13191
 				continue
 		elif _pc == 12987:
-			if v1 > sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) > v1:
 				_pc = 13021
 				continue
 			else:
@@ -1641,7 +1641,7 @@ func local_12911(v0, v1, v2) -> Variant:
 			_pc = 13121
 			continue
 		elif _pc == 13121:
-			if v1 <= sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) <= v1:
 				_pc = 13155
 				continue
 			else:
@@ -1710,7 +1710,7 @@ func local_13199() -> Variant:
 			idirector.end()
 			input.resume_bindings()
 			sim.destroy(v4)
-			if _pog_eq(ifaction.find(text.field("mp_flag_team_a", 0)), v5) or _pog_eq(ifaction.find(text.field("mp_flag_team_b", 0)), v5):
+			if _pog_eq(v5, ifaction.find(text.field("mp_flag_team_b", 0))) or _pog_eq(v5, ifaction.find(text.field("mp_flag_team_a", 0))):
 				_pc = 13687
 				continue
 			else:
@@ -1764,7 +1764,7 @@ func local_13973(v0, v1) -> Variant:
 				_pc = 14597
 				continue
 		elif _pc == 13991:
-			if _pog_eq(ifaction.find(text.field("mp_flag_team_a", 0)), isim.faction(v1)):
+			if _pog_eq(isim.faction(v1), ifaction.find(text.field("mp_flag_team_a", 0))):
 				_pc = 14050
 				continue
 			else:
@@ -1779,7 +1779,7 @@ func local_13973(v0, v1) -> Variant:
 			_pc = 14197
 			continue
 		elif _pc == 14197:
-			if _pog_eq(ifaction.find(text.field("mp_flag_team_a", 0)), isim.faction(v1)):
+			if _pog_eq(isim.faction(v1), ifaction.find(text.field("mp_flag_team_a", 0))):
 				_pc = 14256
 				continue
 			else:
@@ -1814,7 +1814,7 @@ func local_13973(v0, v1) -> Variant:
 				_pc = 14997
 				continue
 		elif _pc == 14634:
-			if _pog_eq(ifaction.find(text.field("mp_flag_team_a", 0)), isim.faction(isim.cast(group.leader(v2)))):
+			if _pog_eq(isim.faction(isim.cast(group.leader(v2))), ifaction.find(text.field("mp_flag_team_a", 0))):
 				_pc = 14719
 				continue
 			else:
@@ -1834,7 +1834,7 @@ func local_13973(v0, v1) -> Variant:
 			_pc = 14833
 			continue
 		elif _pc == 14833:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 14849
 				continue
 			else:
@@ -1845,14 +1845,14 @@ func local_13973(v0, v1) -> Variant:
 			object.set_string_property(v3, "death_script", "iTeamMineTag.BotDeath")
 			imultiplay.set_ship_limits(v3)
 			_pog_detach(_pog_spawn(local_13840.bind(v3)))
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 14833
 			continue
 		elif _pc == 14992:
 			_pc = 15248
 			continue
 		elif _pc == 14997:
-			if _pog_eq(ifaction.find(text.field("mp_flag_team_a", 0)), isim.faction(isim.cast(v0))):
+			if _pog_eq(isim.faction(isim.cast(v0)), ifaction.find(text.field("mp_flag_team_a", 0))):
 				_pc = 15069
 				continue
 			else:
@@ -1966,7 +1966,7 @@ func client_taunt_return() -> Variant:
 	var _pc: int = 16024
 	while true:
 		if _pc == 16024:
-			if _pog_eq("!", string.left(v0, 1)):
+			if _pog_eq(string.left(v0, 1), "!"):
 				_pc = 16057
 				continue
 			else:
@@ -1976,7 +1976,7 @@ func client_taunt_return() -> Variant:
 			_pc = 16160
 			continue
 		elif _pc == 16062:
-			if 1 == global.pog_bool("mp_team_say_flag"):
+			if global.pog_bool("mp_team_say_flag") == 1:
 				_pc = 16089
 				continue
 			else:
@@ -2113,7 +2113,7 @@ func client_on_user_message() -> Variant:
 		elif _pc == 17224:
 			v6 = ifaction.find(v3)
 			isim.set_faction(isim.cast(v1), v6)
-			if _pog_eq(text.field("mp_flag_team_b", 0), v3):
+			if _pog_eq(v3, text.field("mp_flag_team_b", 0)):
 				_pc = 17318
 				continue
 			else:
@@ -2137,7 +2137,7 @@ func client_on_user_message() -> Variant:
 			_pc = 19692
 			continue
 		elif _pc == 17539:
-			if not _pog_eq(iship.find_player_ship(), v4):
+			if not _pog_eq(v4, iship.find_player_ship()):
 				_pc = 17563
 				continue
 			else:
@@ -2154,7 +2154,7 @@ func client_on_user_message() -> Variant:
 		elif _pc == 17611:
 			v2 = sim.find_by_name(v3)
 			isim.set_faction(isim.cast(v2), v8)
-			if _pog_eq(v5, v4):
+			if _pog_eq(v4, v5):
 				_pc = 17688
 				continue
 			else:
@@ -2165,7 +2165,7 @@ func client_on_user_message() -> Variant:
 			_pc = 17704
 			continue
 		elif _pc == 17704:
-			if _pog_eq(isim.faction(v5), isim.faction(v4)):
+			if _pog_eq(isim.faction(v4), isim.faction(v5)):
 				_pc = 17746
 				continue
 			else:
@@ -2188,7 +2188,7 @@ func client_on_user_message() -> Variant:
 		elif _pc == 17907:
 			v2 = sim.find_by_name(v3)
 			isim.set_faction(isim.cast(v2), v7)
-			if _pog_eq(v5, v4):
+			if _pog_eq(v4, v5):
 				_pc = 17984
 				continue
 			else:
@@ -2199,7 +2199,7 @@ func client_on_user_message() -> Variant:
 			_pc = 18000
 			continue
 		elif _pc == 18000:
-			if _pog_eq(isim.faction(v5), isim.faction(v4)):
+			if _pog_eq(isim.faction(v4), isim.faction(v5)):
 				_pc = 18042
 				continue
 			else:
@@ -2228,7 +2228,7 @@ func client_on_user_message() -> Variant:
 			_pc = 19692
 			continue
 		elif _pc == 18372:
-			if _pog_eq(iship.find_player_ship(), v4):
+			if _pog_eq(v4, iship.find_player_ship()):
 				_pc = 18396
 				continue
 			else:
@@ -2246,7 +2246,7 @@ func client_on_user_message() -> Variant:
 			_pc = 19692
 			continue
 		elif _pc == 18566:
-			if _pog_eq(iship.find_player_ship(), v4):
+			if _pog_eq(v4, iship.find_player_ship()):
 				_pc = 18590
 				continue
 			else:
@@ -2254,7 +2254,7 @@ func client_on_user_message() -> Variant:
 				continue
 		elif _pc == 18590:
 			v2 = sim.find_by_name(v3)
-			if _pog_eq(v7, isim.faction(iship.find_player_ship())):
+			if _pog_eq(isim.faction(iship.find_player_ship()), v7):
 				_pc = 18651
 				continue
 			else:
@@ -2278,7 +2278,7 @@ func client_on_user_message() -> Variant:
 			_pc = 19692
 			continue
 		elif _pc == 18824:
-			if _pog_eq(iship.find_player_ship(), v4):
+			if _pog_eq(v4, iship.find_player_ship()):
 				_pc = 18848
 				continue
 			else:
@@ -2301,7 +2301,7 @@ func client_on_user_message() -> Variant:
 			continue
 		elif _pc == 19055:
 			v2 = sim.find_by_name(v3)
-			if _pog_eq(isim.faction(isim.cast(v2)), isim.faction(v5)):
+			if _pog_eq(isim.faction(v5), isim.faction(isim.cast(v2))):
 				_pc = 19134
 				continue
 			else:
@@ -2321,7 +2321,7 @@ func client_on_user_message() -> Variant:
 			_pc = 19692
 			continue
 		elif _pc == 19268:
-			if _pog_eq(iship.cast(v1), v5):
+			if _pog_eq(v5, iship.cast(v1)):
 				_pc = 19297
 				continue
 			else:
@@ -2337,7 +2337,7 @@ func client_on_user_message() -> Variant:
 			_pc = 19692
 			continue
 		elif _pc == 19382:
-			if not _pog_eq(iship.cast(v1), v5):
+			if not _pog_eq(v5, iship.cast(v1)):
 				_pc = 19411
 				continue
 			else:
@@ -2363,7 +2363,7 @@ func client_on_user_message() -> Variant:
 			_pc = 19692
 			continue
 		elif _pc == 19563:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 19576
 				continue
 			else:
@@ -2519,7 +2519,7 @@ func local_20418(v0, v1) -> Variant:
 			_pc = 20467
 			continue
 		elif _pc == 20467:
-			if group.group_count(v0) < v6:
+			if v6 < group.group_count(v0):
 				_pc = 20496
 				continue
 			else:
@@ -2532,7 +2532,7 @@ func local_20418(v0, v1) -> Variant:
 			_pc = 20599
 			continue
 		elif _pc == 20599:
-			if group.sim_count(v9) < v5:
+			if v5 < group.sim_count(v9):
 				_pc = 20628
 				continue
 			else:
@@ -2540,7 +2540,7 @@ func local_20418(v0, v1) -> Variant:
 				continue
 		elif _pc == 20628:
 			v3 = isim.cast(group.nth_sim(v9, v5))
-			if 8192 == isim.type(v3):
+			if isim.type(v3) == 8192:
 				_pc = 20697
 				continue
 			else:
@@ -2557,7 +2557,7 @@ func local_20418(v0, v1) -> Variant:
 				continue
 		elif _pc == 20820:
 			await local_19702(v1, v10)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 20857
 			continue
 		elif _pc == 20857:
@@ -2568,11 +2568,11 @@ func local_20418(v0, v1) -> Variant:
 			_pc = 20942
 			continue
 		elif _pc == 20942:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 20599
 			continue
 		elif _pc == 20960:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 20467
 			continue
 		elif _pc == 20978:
@@ -2614,7 +2614,7 @@ func local_21016() -> Variant:
 			_pc = 21207
 			continue
 		elif _pc == 21207:
-			if group.sim_count(v1) < v5:
+			if v5 < group.sim_count(v1):
 				_pc = 21236
 				continue
 			else:
@@ -2633,7 +2633,7 @@ func local_21016() -> Variant:
 			_pc = 21316
 			continue
 		elif _pc == 21316:
-			if group.sim_count(v0) < v6:
+			if v6 < group.sim_count(v0):
 				_pc = 21345
 				continue
 			else:
@@ -2650,7 +2650,7 @@ func local_21016() -> Variant:
 		elif _pc == 21415:
 			imultiplay.server_send_user_message(48, v2, 0, "")
 			v4 = iship.cast(object.handle_property(v2, "mp_remote_linked"))
-			if _pog_eq(v8, isim.faction(v4)):
+			if _pog_eq(isim.faction(v4), v8):
 				_pc = 21517
 				continue
 			else:
@@ -2671,7 +2671,7 @@ func local_21016() -> Variant:
 			_pc = 21725
 			continue
 		elif _pc == 21725:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 21316
 			continue
 		elif _pc == 21743:
@@ -2710,7 +2710,7 @@ func local_21016() -> Variant:
 			_pc = 22137
 			continue
 		elif _pc == 22137:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 21207
 			continue
 		elif _pc == 22155:

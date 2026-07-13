@@ -400,7 +400,7 @@ func create_and_initialise_fancy_bordered_static(v0, v1, v2) -> Variant:
 	var _pc: int = 12203
 	while true:
 		if _pc == 12203:
-			v4 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v4 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancybutton_alignmentoffset")
 			v3 = gui.create_static_window(v4, v1, global.pog_int("GUI_fancybutton_width"), global.pog_int("GUI_fancybutton_height"), v0)
 			gui.set_window_title(v3, v2)
 			gui.set_window_text_formatting(v3, 0, global.pog_int("GUI_fancybutton_textoffset"))
@@ -477,7 +477,7 @@ func create_and_initialise_fancy_button(v0, v1, v2, v3) -> Variant:
 	var _pc: int = 15434
 	while true:
 		if _pc == 15434:
-			v5 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v5 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancybutton_alignmentoffset")
 			v4 = await create_fancy_button(v5, v1, v0)
 			gui.set_window_title(v4, v2)
 			gui.set_button_function_pog(v4, v3)
@@ -566,7 +566,7 @@ func create_shady_bar_right() -> Variant:
 			v1 = global.pog_int("GUI_alignment_offset")
 			v2 = global.pog_int("GUI_shader_width")
 			gui.set_r_h_s_shady_bar_width(v2)
-			gui.create_window(v2 + v1 - v0, 0, v2, gui.frame_height(), gui.top_window())
+			gui.create_window(v0 - v1 + v2, 0, v2, gui.frame_height(), gui.top_window())
 			_pc = 17044
 			continue
 		elif _pc == 17044:
@@ -582,7 +582,7 @@ func create_wide_shady_bar() -> Variant:
 	while true:
 		if _pc == 17046:
 			v0 = global.pog_int("GUI_alignment_offset")
-			v1 = v0 * 2 - 640
+			v1 = 640 - 2 * v0
 			gui.set_shady_bar_width(v1)
 			gui.create_window(global.pog_int("GUI_alignment_offset"), 0, v1, gui.frame_height(), gui.top_window())
 			_pc = 17183
@@ -606,10 +606,10 @@ func add_back_buttons(v0, v1, v2) -> Variant:
 			v8 = null
 			v3 = gui.window_canvas_height(v0)
 			v6 = global.pog_int("GUI_backbutton_left")
-			v7 = global.pog_int("GUI_backbutton_rise") - v3
+			v7 = v3 - global.pog_int("GUI_backbutton_rise")
 			v4 = await create_back_button(v6, v7, v0)
 			gui.set_button_function_pog(v4, v1)
-			v5 = await create_back_to_main_menu_button(global.pog_int("GUI_backbutton_xoffset") + v6, global.pog_int("GUI_backbutton_yoffset") + v7, v0)
+			v5 = await create_back_to_main_menu_button(v6 + global.pog_int("GUI_backbutton_xoffset"), v7 + global.pog_int("GUI_backbutton_yoffset"), v0)
 			gui.set_button_function_pog(v5, v2)
 			list.add_tail(v8, v4)
 			list.add_tail(v8, v5)
@@ -633,7 +633,7 @@ func add_back_button() -> Variant:
 		if _pc == 17508:
 			v2 = gui.window_canvas_height(v0)
 			v4 = global.pog_int("GUI_backbutton_left")
-			v5 = global.pog_int("GUI_backbutton_rise") - v2
+			v5 = v2 - global.pog_int("GUI_backbutton_rise")
 			v3 = await create_back_button(v4, v5, v0)
 			gui.set_button_function_pog(v3, v1)
 			_pc = 17663
@@ -669,7 +669,7 @@ func arrange_windows_vertically(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 17737
 			continue
 		elif _pc == 17737:
-			if list.item_count(v0) < v7:
+			if v7 < list.item_count(v0):
 				_pc = 17766
 				continue
 			else:
@@ -678,8 +678,8 @@ func arrange_windows_vertically(v0, v1, v2, v3, v4) -> Variant:
 		elif _pc == 17766:
 			v5 = gui.cast(list.get_nth(v0, v7))
 			gui.reposition_window(v5, v1, v2, v6)
-			v6 = v4 + gui.window_canvas_height(v5) + v6
-			v7 = 1 + v7
+			v6 = v6 + gui.window_canvas_height(v5) + v4
+			v7 = v7 + 1
 			_pc = 17737
 			continue
 		elif _pc == 17896:
@@ -695,7 +695,7 @@ func create_menu(v0) -> Variant:
 	while true:
 		if _pc == 17899:
 			v1 = await create_shady_bar()
-			v2 = global.pog_int("GUI_fancybutton_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v2 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancybutton_alignmentoffset")
 			await arrange_windows_vertically(v0, v1, v2, global.pog_int("GUI_mainmenu_yoffset"), global.pog_int("GUI_mainmenu_gap"))
 			_pc = 18047
 			continue
@@ -719,19 +719,19 @@ func create_grey_box_style_screen(v0, v1, v2) -> Variant:
 		if _pc == 18049:
 			v4 = null
 			v10 = gui.top_window()
-			v6 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v7 = 10 + v6 + global.pog_int("GUI_backbutton_rise") - gui.frame_height()
+			v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
+			v7 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v6 + 10
 			v8 = global.pog_int("GUI_alignment_offset")
-			v9 = v8 * 2 - 640
+			v9 = 640 - 2 * v8
 			gui.set_shady_bar_width(v9)
 			v3 = gui.create_window(v8, 0, v9, gui.frame_height(), v10)
 			v8 = global.pog_int("GUI_greybox_xoffset")
-			v9 = v8 * 2 - v9
+			v9 = v9 - 2 * v8
 			v5 = gui.create_window(v8, v6, v9, v7, v3)
 			list.add_tail(v4, v5)
-			v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), 0, global.pog_int("GUI_alignment_offset") - gui.frame_width(), 1 - v6, v10)
+			v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), 0, gui.frame_width() - global.pog_int("GUI_alignment_offset"), v6 - 1, v10)
 			await add_title(v5, v0)
-			v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), v7 + v6, global.pog_int("GUI_alignment_offset") - gui.frame_width(), v7 + v6 - gui.frame_height(), v10)
+			v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), v6 + v7, gui.frame_width() - global.pog_int("GUI_alignment_offset"), gui.frame_height() - v6 + v7, v10)
 			list.append(v4, await add_back_buttons(v5, v1, v2))
 			_pc = 18685
 			continue
@@ -755,19 +755,19 @@ func create_h_t_m_l_grey_box_style_screen(v0, v1, v2, v3, v4) -> Variant:
 		if _pc == 18695:
 			v6 = null
 			v12 = gui.top_window()
-			v8 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v9 = 10 + v8 + global.pog_int("GUI_backbutton_rise") - gui.frame_height()
+			v8 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
+			v9 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v8 + 10
 			v10 = global.pog_int("GUI_alignment_offset")
-			v11 = v10 * 2 - 640
+			v11 = 640 - 2 * v10
 			gui.set_shady_bar_width(v11)
 			v5 = gui.create_window(v10, 0, v11, gui.frame_height(), v12)
 			v10 = global.pog_int("GUI_greybox_xoffset")
-			v11 = v10 * 2 - v11
+			v11 = v11 - 2 * v10
 			v7 = gui.create_window(v10, v8, v11, v9, v5)
 			list.add_tail(v6, v7)
 			v7 = await create_and_initialise_text_window(global.pog_int("GUI_alignment_offset"), 0, v1, v2, v12, "")
 			gui.set_text_window_string(v7, v0)
-			v7 = gui.create_window(global.pog_int("GUI_alignment_offset"), v9 + v8, global.pog_int("GUI_alignment_offset") - gui.frame_width(), v9 + v8 - gui.frame_height(), v12)
+			v7 = gui.create_window(global.pog_int("GUI_alignment_offset"), v8 + v9, gui.frame_width() - global.pog_int("GUI_alignment_offset"), gui.frame_height() - v8 + v9, v12)
 			list.append(v6, await add_back_buttons(v7, v3, v4))
 			_pc = 19307
 			continue
@@ -800,7 +800,7 @@ func create_window_list_in_fancy_border(v0, v1, v2, v3) -> Variant:
 		elif _pc == 19419:
 			v6 = await local_26745(v1)
 			v7 = await local_26918(v1, v8)
-			v5 = gui.create_window(global.pog_int("GUI_fancyborder_width") + v2, global.pog_int("GUI_fancyborder_width") + v3, v6, v7, v0)
+			v5 = gui.create_window(v2 + global.pog_int("GUI_fancyborder_width"), v3 + global.pog_int("GUI_fancyborder_width"), v6, v7, v0)
 			await arrange_windows_vertically(v1, v5, 0, 0, v8)
 			v4 = gui.create_fancy_border(v5)
 			_pc = 19622
@@ -837,7 +837,7 @@ func create_window_list_in_splitter(v0, v1, v2, v3, v4) -> Variant:
 			v11 = await local_26918(v1, v15)
 			v10 = await local_26745(v1)
 			v10 = v16 + v10 + v16
-			v11 = v16 + v11 + v16 + v17 + v16
+			v11 = v16 + v17 + v16 + v11 + v16
 			v12 = v16 + v17 + v16
 			v5 = gui.create_splitter_window(v2, v3, v10, v11, v0, v12, 1)
 			v6 = gui.splitter_window_top_window(v5)
@@ -851,7 +851,7 @@ func create_window_list_in_splitter(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 20287
 			continue
 		elif _pc == 20287:
-			if list.item_count(v1) < v14:
+			if v14 < list.item_count(v1):
 				_pc = 20316
 				continue
 			else:
@@ -860,8 +860,8 @@ func create_window_list_in_splitter(v0, v1, v2, v3, v4) -> Variant:
 		elif _pc == 20316:
 			v9 = gui.cast(list.get_nth(v1, v14))
 			gui.reposition_window(v9, v7, 0, v13)
-			v13 = v15 + gui.window_canvas_height(v9) + v13
-			v14 = 1 + v14
+			v13 = v13 + gui.window_canvas_height(v9) + v15
+			v14 = v14 + 1
 			_pc = 20287
 			continue
 		elif _pc == 20442:
@@ -897,47 +897,47 @@ func create_titled_list_box(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			gui.set_window_text_formatting(v8, 0, 0)
 			gui.set_window_font(v8, global.string("GUI_main_title_font"))
 			gui.set_window_state_colours(v8, global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"))
-			if 0 > v2:
+			if v2 > 0:
 				_pc = 20902
 				continue
 			else:
 				_pc = 20940
 				continue
 		elif _pc == 20902:
-			await create_and_initialise_tab_style_static(v0, 0, 5 + v9, v2, v3)
+			await create_and_initialise_tab_style_static(v0, 0, v9 + 5, v2, v3)
 			_pc = 20940
 			continue
 		elif _pc == 20940:
-			if 0 > v4:
+			if v4 > 0:
 				_pc = 20952
 				continue
 			else:
 				_pc = 20994
 				continue
 		elif _pc == 20952:
-			await create_and_initialise_tab_style_static(v0, v2, 5 + v9, v4, v5)
+			await create_and_initialise_tab_style_static(v0, v2, v9 + 5, v4, v5)
 			_pc = 20994
 			continue
 		elif _pc == 20994:
-			if 0 > v6:
+			if v6 > 0:
 				_pc = 21006
 				continue
 			else:
 				_pc = 21054
 				continue
 		elif _pc == 21006:
-			await create_and_initialise_tab_style_static(v0, v4 + v2, 5 + v9, v6, v7)
+			await create_and_initialise_tab_style_static(v0, v2 + v4, v9 + 5, v6, v7)
 			_pc = 21054
 			continue
 		elif _pc == 21054:
 			v12 = global.pog_int("GUI_fancyborder_width")
-			v13 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_tab_height") + 5 + v9
-			v14 = global.pog_int("GUI_fancyborder_width") + v12 - gui.window_canvas_width(v0)
-			v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v13 - gui.window_canvas_height(v0)
+			v13 = v9 + 5 + global.pog_int("GUI_tab_height") + global.pog_int("GUI_fancyborder_alignmentoffset") + 5
+			v14 = gui.window_canvas_width(v0) - v12 + global.pog_int("GUI_fancyborder_width")
+			v15 = gui.window_canvas_height(v0) - v13 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v11 = gui.create_window(v12, v13, v14, v15, v0)
 			gui.create_fancy_border(v11)
-			v18 = gui.create_list_box(0, 0, v17 * 2 - v14, v15, v11, 1, 0)
-			gui.create_vertical_scrollbar(v17 - v14, 0, v17, v15, v11, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			v18 = gui.create_list_box(0, 0, v14 - 2 * v17, v15, v11, 1, 0)
+			gui.create_vertical_scrollbar(v14 - v17, 0, v17, v15, v11, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			_pc = 21435
 			continue
 		elif _pc == 21435:
@@ -970,8 +970,8 @@ func create_fancy_list_box() -> Variant:
 			v11 = global.pog_int("GUI_scrollbar_width")
 			v5 = gui.create_window(v6, v7, v8, v9, v0)
 			gui.create_fancy_border(v5)
-			v12 = gui.create_list_box(0, 0, v11 * 2 - v8, v9, v5, 1, 0)
-			gui.create_vertical_scrollbar(v11 - v8, 0, v11, v9, v5, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			v12 = gui.create_list_box(0, 0, v8 - 2 * v11, v9, v5, 1, 0)
+			gui.create_vertical_scrollbar(v8 - v11, 0, v11, v9, v5, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			_pc = 21704
 			continue
 		elif _pc == 21704:
@@ -1006,36 +1006,36 @@ func create_titled_text_box(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			gui.set_window_text_formatting(v7, 0, 0)
 			gui.set_window_font(v7, global.string("GUI_main_title_font"))
 			gui.set_window_state_colours(v7, global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"), global.pog_float("GUI_faded_red"), global.pog_float("GUI_faded_green"), global.pog_float("GUI_faded_blue"))
-			if 0 > v2:
+			if v2 > 0:
 				_pc = 22179
 				continue
 			else:
 				_pc = 22217
 				continue
 		elif _pc == 22179:
-			await create_and_initialise_tab_style_static(v0, 0, 5 + v8, v2, v3)
+			await create_and_initialise_tab_style_static(v0, 0, v8 + 5, v2, v3)
 			_pc = 22217
 			continue
 		elif _pc == 22217:
-			if 0 > v4:
+			if v4 > 0:
 				_pc = 22229
 				continue
 			else:
 				_pc = 22271
 				continue
 		elif _pc == 22229:
-			await create_and_initialise_tab_style_static(v0, v2, 5 + v8, v4, v5)
+			await create_and_initialise_tab_style_static(v0, v2, v8 + 5, v4, v5)
 			_pc = 22271
 			continue
 		elif _pc == 22271:
 			v11 = global.pog_int("GUI_fancyborder_width")
-			v12 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_tab_height") + 5 + v8
-			v13 = global.pog_int("GUI_fancyborder_width") + v11 - gui.window_canvas_width(v0)
-			v14 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v12 - gui.window_canvas_height(v0)
+			v12 = v8 + 5 + global.pog_int("GUI_tab_height") + global.pog_int("GUI_fancyborder_alignmentoffset") + 5
+			v13 = gui.window_canvas_width(v0) - v11 + global.pog_int("GUI_fancyborder_width")
+			v14 = gui.window_canvas_height(v0) - v12 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v10 = gui.create_window(v11, v12, v13, v14, v0)
 			gui.create_fancy_border(v10)
-			v18 = await create_and_initialise_text_window(v17, 0, v17 + v16 * 2 - v13, v14, v10, v6)
-			gui.create_vertical_scrollbar(v16 - v13, 0, v16, v14, v10, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			v18 = await create_and_initialise_text_window(v17, 0, v13 - 2 * v16 + v17, v14, v10, v6)
+			gui.create_vertical_scrollbar(v13 - v16, 0, v16, v14, v10, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			_pc = 22665
 			continue
 		elif _pc == 22665:
@@ -1066,7 +1066,7 @@ func set_cyclic_control_focus_path(v0) -> Variant:
 			_pc = 23109
 			continue
 		elif _pc == 22720:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 22732
 				continue
 			else:
@@ -1085,7 +1085,7 @@ func set_cyclic_control_focus_path(v0) -> Variant:
 			_pc = 22903
 			continue
 		elif _pc == 22903:
-			if list.item_count(v0) < v6:
+			if v6 < list.item_count(v0):
 				_pc = 22932
 				continue
 			else:
@@ -1106,7 +1106,7 @@ func set_cyclic_control_focus_path(v0) -> Variant:
 			continue
 		elif _pc == 23032:
 			v5 = v3
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 22903
 			continue
 		elif _pc == 23061:
@@ -1269,7 +1269,7 @@ func local_26745(v0) -> Variant:
 			_pc = 26764
 			continue
 		elif _pc == 26764:
-			if list.item_count(v0) < v1:
+			if v1 < list.item_count(v0):
 				_pc = 26793
 				continue
 			else:
@@ -1277,7 +1277,7 @@ func local_26745(v0) -> Variant:
 				continue
 		elif _pc == 26793:
 			v3 = gui.cast(list.get_nth(v0, v1))
-			if v2 > gui.window_canvas_width(v3):
+			if gui.window_canvas_width(v3) > v2:
 				_pc = 26864
 				continue
 			else:
@@ -1288,7 +1288,7 @@ func local_26745(v0) -> Variant:
 			_pc = 26888
 			continue
 		elif _pc == 26888:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 26764
 			continue
 		elif _pc == 26906:
@@ -1312,7 +1312,7 @@ func local_26918(v0, v1) -> Variant:
 			_pc = 26937
 			continue
 		elif _pc == 26937:
-			if list.item_count(v0) < v2:
+			if v2 < list.item_count(v0):
 				_pc = 26966
 				continue
 			else:
@@ -1320,19 +1320,19 @@ func local_26918(v0, v1) -> Variant:
 				continue
 		elif _pc == 26966:
 			v4 = gui.cast(list.get_nth(v0, v2))
-			v3 = v1 + gui.window_canvas_height(v4) + v3
-			v2 = 1 + v2
+			v3 = v3 + gui.window_canvas_height(v4) + v1
+			v2 = v2 + 1
 			_pc = 26937
 			continue
 		elif _pc == 27062:
-			if 0 > v3:
+			if v3 > 0:
 				_pc = 27074
 				continue
 			else:
 				_pc = 27091
 				continue
 		elif _pc == 27074:
-			v3 = v1 - v3
+			v3 = v3 - v1
 			_pc = 27091
 			continue
 		elif _pc == 27091:

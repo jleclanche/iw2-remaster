@@ -99,7 +99,7 @@ func select() -> Variant:
 			_pc = 2119
 			continue
 		elif _pc == 513:
-			if global.pog_int("g_generated_max_number_of_missions") >= global.pog_int("g_generated_missions_running"):
+			if global.pog_int("g_generated_missions_running") >= global.pog_int("g_generated_max_number_of_missions"):
 				_pc = 558
 				continue
 			else:
@@ -136,7 +136,7 @@ func select() -> Variant:
 			_pc = 2119
 			continue
 		elif _pc == 651:
-			if global.pog_int("g_generated_mission_chance") > math.random_int(1, 100):
+			if math.random_int(1, 100) > global.pog_int("g_generated_mission_chance"):
 				_pc = 693
 				continue
 			else:
@@ -154,7 +154,7 @@ func select() -> Variant:
 			_pc = 2119
 			continue
 		elif _pc == 758:
-			v6 = math.random_int(0, 1 - v4)
+			v6 = math.random_int(0, v4 - 1)
 			v5 = v6
 			_pc = 864
 			continue
@@ -250,7 +250,7 @@ func select() -> Variant:
 			_pc = 1318
 			continue
 		elif _pc == 1318:
-			global.set_int("g_generated_missions_running", 1 + global.pog_int("g_generated_missions_running"))
+			global.set_int("g_generated_missions_running", global.pog_int("g_generated_missions_running") + 1)
 			_pc = 1443
 			continue
 		elif _pc == 1365:
@@ -314,7 +314,7 @@ func select() -> Variant:
 			_pc = 1642
 			continue
 		elif _pc == 1642:
-			global.set_int("g_generated_missions_running", 1 + global.pog_int("g_generated_missions_running"))
+			global.set_int("g_generated_missions_running", global.pog_int("g_generated_missions_running") + 1)
 			_pc = 1767
 			continue
 		elif _pc == 1689:
@@ -345,7 +345,7 @@ func select() -> Variant:
 			_pc = 1848
 			continue
 		elif _pc == 1848:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 2020
 			continue
 		elif _pc == 1866:
@@ -356,7 +356,7 @@ func select() -> Variant:
 			_pc = 1892
 			continue
 		elif _pc == 1892:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 2020
 			continue
 		elif _pc == 1910:
@@ -367,7 +367,7 @@ func select() -> Variant:
 			_pc = 1936
 			continue
 		elif _pc == 1936:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 2020
 			continue
 		elif _pc == 1954:
@@ -410,7 +410,7 @@ func select() -> Variant:
 				_pc = 1910
 				continue
 		elif _pc == 2020:
-			if v4 > 1 + v6:
+			if v6 + 1 > v4:
 				_pc = 2038
 				continue
 			else:
@@ -421,7 +421,7 @@ func select() -> Variant:
 			_pc = 2045
 			continue
 		elif _pc == 2045:
-			if _pog_eq(v5, v6):
+			if _pog_eq(v6, v5):
 				_pc = 2061
 				continue
 			else:

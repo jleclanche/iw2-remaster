@@ -519,7 +519,7 @@ func new_mail_notification(v0) -> Variant:
 				_pc = 3484
 				continue
 		elif _pc == 2856:
-			if 0 > iemail.unread():
+			if iemail.unread() > 0:
 				_pc = 2876
 				continue
 			else:
@@ -801,14 +801,14 @@ func s_p_base_screen() -> Variant:
 			gui.set_first_control_focus(v0)
 			await igui.set_cyclic_control_focus_path(v11)
 			gui.set_control_focus_cancel_function("iBaseGUI.SPBaseScreen_OnCancelButton")
-			if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_2")) and _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_1")):
+			if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_1")) and _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_2")):
 				_pc = 5835
 				continue
 			else:
 				_pc = 5922
 				continue
 		elif _pc == 5835:
-			if 0.5 > math.random(0.0, 1.0):
+			if math.random(0.0, 1.0) > 0.5:
 				_pc = 5869
 				continue
 			else:
@@ -1018,7 +1018,7 @@ func s_p_base_screen__on_hangar_button() -> Variant:
 	await local_6873()
 	gui.overlay_screen("icSPHangarScreen")
 	v0 = iloadout.current_loadout()
-	if not (4 == v0 or 3 == v0 or 2 == v0 or 1 == v0):
+	if not (v0 == 1 or v0 == 2 or v0 == 3 or v0 == 4):
 		return 0
 	iloadout.calculate_loadout(v0)
 	return 0
@@ -1122,17 +1122,17 @@ func local_6973() -> Variant:
 			v3 = 42
 			v4 = global.pog_int("GUI_scrollbar_width")
 			v5 = 4
-			v6 = 13 + global.pog_int("GUI_fancyborder_width") * 2
+			v6 = 2 * global.pog_int("GUI_fancyborder_width") + 13
 			v17 = null
 			v17 = "hangarmenu_manifest"
 			v18 = null
 			v19 = 9
 			v16 = await igui.create_shady_bar_right()
-			v1 = global.pog_int("GUI_backbutton_rise") + v2 - gui.window_canvas_height(v16)
-			v0 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v10 = v0 - v1
-			v7 = v5 + global.pog_int("GUI_alignment_offset")
-			v9 = 2 * v7 - v5 + global.pog_int("GUI_shader_width")
+			v1 = gui.window_canvas_height(v16) - v2 + global.pog_int("GUI_backbutton_rise")
+			v0 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
+			v10 = v1 - v0
+			v7 = global.pog_int("GUI_alignment_offset") + v5
+			v9 = global.pog_int("GUI_shader_width") + v5 - v7 * 2
 			v11 = gui.create_splitter_window(v7, v0, v9, v10, v16, v6, 0)
 			v13 = gui.splitter_window_top_window(v11)
 			v14 = gui.create_static_window(0, 0, gui.window_canvas_width(v13), gui.window_canvas_height(v13), v13)
@@ -1142,11 +1142,11 @@ func local_6973() -> Variant:
 			gui.set_window_text_formatting(v14, 0, 9)
 			gui.set_window_state_colours(v14, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
 			v13 = gui.splitter_window_bottom_window(v11)
-			v12 = await igui.create_and_initialise_text_window(v19, 0, v4 * 2 + v19 - gui.window_canvas_width(v13), gui.window_canvas_height(v13), v13, "")
+			v12 = await igui.create_and_initialise_text_window(v19, 0, gui.window_canvas_width(v13) - v19 + 2 * v4, gui.window_canvas_height(v13), v13, "")
 			gui.set_window_font(v12, global.string("GUI_detail_font"))
 			gui.set_text_window_string(v12, iloadout.loadout_description())
 			global.create_handle("HangarManifestWindow", 2, v12)
-			gui.create_vertical_scrollbar(v4 - gui.window_canvas_width(v13), 0, v4, gui.window_canvas_height(v13), v13, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			gui.create_vertical_scrollbar(gui.window_canvas_width(v13) - v4, 0, v4, gui.window_canvas_height(v13), v13, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			iloadout.set_manifest_window(v12)
 			_pc = 8102
 			continue
@@ -1202,24 +1202,24 @@ func s_p_hangar_screen() -> Variant:
 	await igui.add_title(v0, text.field("basemenu_hangar", 0))
 	v1 = await igui.create_and_initialise_parentless_inverse_button("iBaseGUI.SPHangarScreen_OnShipButton", text.field("hangarmenu_ship", 0), v5)
 	v2 = await igui.create_and_initialise_parentless_inverse_button("iBaseGUI.SPHangarScreen_OnLoadoutButton", text.field("hangarmenu_loadout", 0), v5)
-	v10 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v11 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v11 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	v4 = await igui.create_window_list_in_fancy_border(v0, v5, v10, v11)
-	v16 = 10 + gui.window_canvas_height(v4) + v11
-	v12 = global.pog_int("GUI_inversebutton_textoffset") + global.pog_int("GUI_fancyborder_width") + v10
-	v14 = v12 - gui.window_canvas_width(v0)
+	v16 = v11 + gui.window_canvas_height(v4) + 10
+	v12 = v10 + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_inversebutton_textoffset")
+	v14 = gui.window_canvas_width(v0) - v12
 	v15 = 15
 	v19 = string.join(string.join(text.field("hangarmenu_ship", 0), ": "), text.field(iloadout.ship_name(iloadout.ship()), 0))
 	v6 = await igui.create_and_initialise_static_window(v12, v16, v14, v15, v0, global.string("GUI_subtitle_font"), v19)
 	gui.set_window_text_formatting(v6, 0, 0)
 	v20 = string.join(string.join(text.field("hangarmenu_loadout", 0), ": "), text.field(iloadout.loadout_name(iloadout.current_loadout()), 0))
-	v7 = await igui.create_and_initialise_static_window(v12, v15 + v16, v14, v15, v0, global.string("GUI_subtitle_font"), v20)
+	v7 = await igui.create_and_initialise_static_window(v12, v16 + v15, v14, v15, v0, global.string("GUI_subtitle_font"), v20)
 	gui.set_window_text_formatting(v7, 0, 0)
-	v16 = v15 + v15 + v16
+	v16 = v16 + v15 + v15
 	if not (iloadout.good_to_go()):
 		v8 = await igui.create_and_initialise_static_window(v12, v16, v14, v15, v0, global.string("GUI_subtitle_font"), text.field("hangarmenu_loadout_not_spaceworthy", 0))
 		gui.set_window_text_formatting(v8, 0, 0)
-		v9 = await igui.create_and_initialise_static_window(v12, v15 + v16, v14, v15, v0, global.string("GUI_subtitle_font"), text.field("hangarmenu_loadout_check_manifest", 0))
+		v9 = await igui.create_and_initialise_static_window(v12, v16 + v15, v14, v15, v0, global.string("GUI_subtitle_font"), text.field("hangarmenu_loadout_check_manifest", 0))
 		gui.set_window_text_formatting(v9, 0, 0)
 		gui.set_window_state_colours(v8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 		gui.set_window_state_colours(v9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -1228,7 +1228,7 @@ func s_p_hangar_screen() -> Variant:
 		global.create_bool("Hangar_Flashing", 2, 1)
 		global.create_handle("Hangar_SpaceworthyWindow", 2, v8)
 		global.create_handle("Hangar_ManifestWindow", 2, v9)
-		v16 = v15 + v15 + v16
+		v16 = v16 + v15 + v15
 	v3 = await igui.create_and_initialise_fancy_button(v0, v16, text.field("hangarmenu_launch", 0), "iBaseGUI.SPHangarScreen_OnLaunchButton")
 	list.add_tail(v5, v3)
 	gui.set_first_control_focus(gui.cast(list.head(v5)))
@@ -1340,30 +1340,30 @@ func s_p_loadout_screen() -> Variant:
 	await igui.add_back_buttons(v0, "iBaseGUI.SPLoadoutScreen_OnBackButton", "iBaseGUI.SPLoadoutScreen_OnBackToMainMenuButton")
 	await local_6973()
 	await igui.add_title(v0, text.field("hangarmenu_loadout", 0))
-	v8 = 20 + v6 + global.pog_int("GUI_title_yoffset")
+	v8 = global.pog_int("GUI_title_yoffset") + v6 + 20
 	v12 = await local_12830(v0, v8, v5, v1)
-	v8 = v7 + gui.window_canvas_height(v12) + v8
-	v3 = gui.cast(list.get_nth(v1, 1 - iloadout.current_loadout()))
+	v8 = v8 + gui.window_canvas_height(v12) + v7
+	v3 = gui.cast(list.get_nth(v1, iloadout.current_loadout() - 1))
 	gui.set_radio_button_checked(v3, 1)
 	global.create_list("LoadoutButtons", 2, v1)
-	if 3 == iloadout.ship() or 2 == iloadout.ship() or 1 == iloadout.ship():
+	if iloadout.ship() == 1 or iloadout.ship() == 2 or iloadout.ship() == 3:
 		v13 = iinventory.number_of_cargo_type(474)
 		v14 = iloadout.turret_fighters_in_loadout()
-		v13 = v14 + v13
-		if 0 > v13:
+		v13 = v13 + v14
+		if v13 > 0:
 			v12 = await local_15522(v0, v8, v5, v2)
-			v8 = v7 + gui.window_canvas_height(v12) + v8
+			v8 = v8 + gui.window_canvas_height(v12) + v7
 			v4 = gui.cast(list.get_nth(v2, v14))
 			gui.set_radio_button_checked(v4, 1)
 			global.create_list("FighterButtons", 2, v2)
 	if not _pog_is_null(iloadout.ship()):
 		v10 = await igui.create_and_initialise_fancy_button(v0, v8, text.field("loadoutmenu_add_cargo", 0), "iBaseGUI.SPLoadoutScreen_OnAddCargoButton")
 		list.add_tail(v5, v10)
-		v8 = v6 + v8
+		v8 = v8 + v6
 	if not (await local_1266()):
 		v9 = await igui.create_and_initialise_fancy_button(v0, v8, text.field("loadoutmenu_customise", 0), "iBaseGUI.SPLoadoutScreen_OnCustomiseButton")
 		list.add_tail(v5, v9)
-		v8 = v6 + v8
+		v8 = v8 + v6
 	gui.set_first_control_focus(gui.cast(list.head(v5)))
 	await igui.set_cyclic_control_focus_path(v5)
 	gui.set_control_focus_cancel_function("iBaseGUI.SPLoadoutScreen_OnBackButton")
@@ -1414,7 +1414,7 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 			_pc = 11819
 			continue
 		elif _pc == 11819:
-			if 7 < v1:
+			if v1 < 7:
 				_pc = 11832
 				continue
 			else:
@@ -1440,11 +1440,11 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 			_pc = 11944
 			continue
 		elif _pc == 11926:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 11819
 			continue
 		elif _pc == 11944:
-			if -1 != v2:
+			if v2 != -1:
 				_pc = 11957
 				continue
 			else:
@@ -1462,7 +1462,7 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 			_pc = 12105
 			continue
 		elif _pc == 11981:
-			if 1 == v2:
+			if v2 == 1:
 				_pc = 11993
 				continue
 			else:
@@ -1473,7 +1473,7 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 			_pc = 12105
 			continue
 		elif _pc == 12006:
-			if 2 == v2:
+			if v2 == 2:
 				_pc = 12019
 				continue
 			else:
@@ -1484,7 +1484,7 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 			_pc = 12105
 			continue
 		elif _pc == 12032:
-			if 3 == v2:
+			if v2 == 3:
 				_pc = 12045
 				continue
 			else:
@@ -1495,7 +1495,7 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 			_pc = 12105
 			continue
 		elif _pc == 12058:
-			if 4 == v2:
+			if v2 == 4:
 				_pc = 12071
 				continue
 			else:
@@ -1506,7 +1506,7 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 			_pc = 12105
 			continue
 		elif _pc == 12084:
-			if 5 == v2:
+			if v2 == 5:
 				_pc = 12097
 				continue
 			else:
@@ -1553,7 +1553,7 @@ func s_p_loadout_screen__on_fighter() -> Variant:
 			_pc = 12391
 			continue
 		elif _pc == 12391:
-			if list.item_count(v5) < v1:
+			if v1 < list.item_count(v5):
 				_pc = 12420
 				continue
 			else:
@@ -1572,12 +1572,12 @@ func s_p_loadout_screen__on_fighter() -> Variant:
 			_pc = 12519
 			continue
 		elif _pc == 12501:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 12391
 			continue
 		elif _pc == 12519:
 			iloadout.set_desired_number_of_turret_fighters(v2)
-			if not _pog_eq(v4, v2):
+			if not _pog_eq(v2, v4):
 				_pc = 12554
 				continue
 			else:
@@ -1586,7 +1586,7 @@ func s_p_loadout_screen__on_fighter() -> Variant:
 		elif _pc == 12554:
 			gui.play_sound(4)
 			v3 = iloadout.current_loadout()
-			if 3 == v3 or 4 == v3 or 2 == v3 or 1 == v3:
+			if v3 == 1 or v3 == 2 or v3 == 4 or v3 == 3:
 				_pc = 12628
 				continue
 			else:
@@ -1632,9 +1632,9 @@ func local_12830(v0, v1, v2, v3) -> Variant:
 	var _pc: int = 12830
 	while true:
 		if _pc == 12830:
-			v5 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v5 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v6 = iloadout.ship()
-			if 4 == v6:
+			if v6 == 4:
 				_pc = 12913
 				continue
 			else:
@@ -1656,7 +1656,7 @@ func local_12830(v0, v1, v2, v3) -> Variant:
 			_pc = 13103
 			continue
 		elif _pc == 12983:
-			if 1 == v6:
+			if v6 == 1:
 				_pc = 12995
 				continue
 			else:
@@ -1667,7 +1667,7 @@ func local_12830(v0, v1, v2, v3) -> Variant:
 			_pc = 13103
 			continue
 		elif _pc == 13024:
-			if 2 == v6:
+			if v6 == 2:
 				_pc = 13037
 				continue
 			else:
@@ -1678,7 +1678,7 @@ func local_12830(v0, v1, v2, v3) -> Variant:
 			_pc = 13103
 			continue
 		elif _pc == 13066:
-			if 3 == v6:
+			if v6 == 3:
 				_pc = 13079
 				continue
 			else:
@@ -1804,9 +1804,9 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 			v6 = iinventory.number_of_cargo_type(474)
 			v7 = iloadout.turret_fighters_in_loadout()
 			v9 = null
-			v10 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-			v6 = v7 + v6
-			if 2 > v6:
+			v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+			v6 = v6 + v7
+			if v6 > 2:
 				_pc = 15655
 				continue
 			else:
@@ -1822,7 +1822,7 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 			_pc = 15689
 			continue
 		elif _pc == 15689:
-			if v6 <= v8:
+			if v8 <= v6:
 				_pc = 15705
 				continue
 			else:
@@ -1872,7 +1872,7 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 			await igui.make_inverse_button_iconic(v5)
 			gui.set_input_override_functions(v5, "", "", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "")
 			list.add_tail(v3, v5)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 15689
 			continue
 		elif _pc == 16008:
@@ -1936,13 +1936,13 @@ func local_16088(v0, v1, v2, v3) -> Variant:
 			_pc = 16318
 			continue
 		elif _pc == 16318:
-			v5 = global.pog_int("GUI_fancyborder_alignmentoffset") + v4
-			v6 = v1 + 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v7 = v5 + v11 * 2 - v10
-			v8 = 45 + global.pog_int("GUI_backbutton_rise") + v6 - gui.window_canvas_height(v0)
+			v5 = v4 + global.pog_int("GUI_fancyborder_alignmentoffset")
+			v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20 + v1
+			v7 = v10 - 2 * v11 + v5
+			v8 = gui.window_canvas_height(v0) - v6 + global.pog_int("GUI_backbutton_rise") + 45
 			v12 = gui.create_window(0, 0, v7, v8, 0)
-			v13 = await igui.create_and_initialise_text_window(v15, 0, v9 * 2 + v15 - v7, v8, v12, "")
-			gui.create_vertical_scrollbar(v9 - v7, 0, v9, v8, v12, v13, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			v13 = await igui.create_and_initialise_text_window(v15, 0, v7 - v15 + 2 * v9, v8, v12, "")
+			gui.create_vertical_scrollbar(v7 - v9, 0, v9, v8, v12, v13, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			list.add_tail(v14, v12)
 			await igui.create_window_list_in_splitter(v0, v14, v5, v6, v3)
 			gui.set_window_font(v13, global.string("GUI_detail_font"))
@@ -1992,10 +1992,10 @@ func s_p_comms_main_menu_screen() -> Variant:
 	await igui.add_title(v0, text.field("basemenu_communications", 0))
 	v1 = await igui.create_and_initialise_parentless_inverse_button("iBaseGUI.SPCommsMainMenuScreen_OnNewButton", text.field("commsmenu_read_new_messages", 0), v3)
 	v2 = await igui.create_and_initialise_parentless_inverse_button("iBaseGUI.SPCommsMainMenuScreen_OnArchivedButton", text.field("commsmenu_view_archived_messages", 0), v3)
-	v4 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v5 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v4 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v5 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	await igui.create_window_list_in_fancy_border(v0, v3, v4, v5)
-	v6 = 50 + global.pog_int("GUI_backbutton_rise") - 480
+	v6 = 480 - global.pog_int("GUI_backbutton_rise") + 50
 	await local_17725(v0, v6)
 	gui.set_first_control_focus(v1)
 	list.remove_all(v3)
@@ -2055,7 +2055,7 @@ func local_17725(v0, v1) -> Variant:
 			v6 = await igui.create_and_initialise_static_window(v10, v1, v11, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field("commsmenu_you_have", 0))
 			list.add_tail(v9, v6)
 			v2 = iemail.unread()
-			if 10 < v2:
+			if v2 < 10:
 				_pc = 17942
 				continue
 			else:
@@ -2071,10 +2071,10 @@ func local_17725(v0, v1) -> Variant:
 			continue
 		elif _pc == 17987:
 			v4 = string.from_int(v2)
-			v7 = await igui.create_and_initialise_static_window(v11 + v10, v1, v12, v14, v0, v3, v4)
+			v7 = await igui.create_and_initialise_static_window(v10 + v11, v1, v12, v14, v0, v3, v4)
 			list.add_tail(v9, v7)
 			gui.set_window_state_textures(v7, global.string("GUI_texture_request"), 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30, 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30, 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30)
-			if 1 == v2:
+			if v2 == 1:
 				_pc = 18212
 				continue
 			else:
@@ -2089,7 +2089,7 @@ func local_17725(v0, v1) -> Variant:
 			_pc = 18243
 			continue
 		elif _pc == 18243:
-			v8 = await igui.create_and_initialise_static_window(v12 + v11 + v10, v1, v13, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field(v5, 0))
+			v8 = await igui.create_and_initialise_static_window(v10 + v11 + v12, v1, v13, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field(v5, 0))
 			list.add_tail(v9, v8)
 			_pc = 18360
 			continue
@@ -2122,7 +2122,7 @@ func local_18391(v0, v1) -> Variant:
 		if _pc == 18391:
 			v6 = global.pog_int("GUI_tab_text_offset")
 			v7 = gui.window_canvas_width(v1)
-			v8 = 3 / v7
+			v8 = v7 / 3
 			v9 = v7
 			v10 = 13
 			v15 = global.pog_int("GUI_listbox_entryheight")
@@ -2133,9 +2133,9 @@ func local_18391(v0, v1) -> Variant:
 			v18 = global.string("type_font")
 			v2 = gui.create_window(0, 0, v7, v15, 0)
 			v12 = v10
-			v11 = 5 + v12 - v8
-			v14 = 2 - v6 + v8
-			v13 = 5 + v14 - v9
+			v11 = v8 - v12 + 5
+			v14 = v8 + v6 - 2
+			v13 = v9 - v14 + 5
 			if not (iemail.read(v0)):
 				_pc = 18713
 				continue
@@ -2174,9 +2174,9 @@ func s_p_inbox_screen() -> Variant:
 			v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPInboxScreen_OnBackButton", "iBaseGUI.SPInboxScreen_OnBackToMainMenuButton")
 			v0 = gui.cast(list.head(v1))
 			list.remove_head(v1)
-			v6 = global.pog_int("GUI_scrollbar_width") * 2 - gui.window_canvas_width(v0)
-			v6 = 3 / v6
-			v7 = 2 * v6
+			v6 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+			v6 = v6 / 3
+			v7 = v6 * 2
 			v2 = await igui.create_titled_list_box(v0, text.field("comms_new_messages", 0), v6, text.field("commsmenu_sender", 0), v7, text.field("commsmenu_subject", 0), 0, "")
 			list.add_head(v1, v2)
 			v4 = iemail.inbox_size()
@@ -2184,7 +2184,7 @@ func s_p_inbox_screen() -> Variant:
 			_pc = 19295
 			continue
 		elif _pc == 19295:
-			if v4 < v3:
+			if v3 < v4:
 				_pc = 19311
 				continue
 			else:
@@ -2193,7 +2193,7 @@ func s_p_inbox_screen() -> Variant:
 		elif _pc == 19311:
 			v5 = iemail.nth_in_inbox(v3)
 			await local_18391(v5, v2)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 19295
 			continue
 		elif _pc == 19377:
@@ -2229,7 +2229,7 @@ func s_p_inbox_screen__on_email_list_box_select() -> Variant:
 		if _pc == 19640:
 			v2 = gui.cast(global.handle("InboxListBox"))
 			v0 = gui.list_box_focused_entry(v2)
-			if -1 > v0:
+			if v0 > -1:
 				_pc = 19721
 				continue
 			else:
@@ -2265,9 +2265,9 @@ func s_p_archive_screen() -> Variant:
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPArchiveScreen_OnBackButton", "iBaseGUI.SPArchiveScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	list.remove_head(v1)
-	v6 = global.pog_int("GUI_scrollbar_width") * 2 - gui.window_canvas_width(v0)
-	v6 = 3 / v6
-	v7 = 2 * v6
+	v6 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+	v6 = v6 / 3
+	v7 = v6 * 2
 	v2 = await igui.create_titled_list_box(v0, text.field("comms_view_archive", 0), v6, text.field("commsmenu_sender", 0), v7, text.field("commsmenu_subject", 0), 0, "")
 	iemail.fill_archived_email_list_box(v2)
 	global.create_handle("ArchiveListBox", 2, v2)
@@ -2299,7 +2299,7 @@ func s_p_archive_screen__on_email_list_box_select() -> Variant:
 		if _pc == 20404:
 			v2 = gui.cast(global.handle("ArchiveListBox"))
 			v0 = gui.list_box_focused_entry(v2)
-			if -1 > v0:
+			if v0 > -1:
 				_pc = 20485
 				continue
 			else:
@@ -2335,9 +2335,9 @@ func s_p_messages_screen() -> Variant:
 	global.set_bool("ReadingMessage", 1)
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPMessagesScreen_OnBackButton", "iBaseGUI.SPMessagesScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
-	v3 = global.pog_int("GUI_scrollbar_width") * 2 - gui.window_canvas_width(v0)
-	v3 = 3 / v3
-	v4 = 2 * v3
+	v3 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+	v3 = v3 / 3
+	v4 = v3 * 2
 	v2 = await igui.create_titled_text_box(v0, text.field("comms_message", 0), v3, string.upper_case(iemail.sender(v5)), v4, string.upper_case(iemail.subject(v5)), iemail.body(v5))
 	gui.set_window_font(v2, global.string("type_font"))
 	list.add_head(v1, v2)
@@ -2410,7 +2410,7 @@ func force_email_read(v0) -> Variant:
 			_pc = 21710
 			continue
 		elif _pc == 21565:
-			if not _pog_eq("icSPBaseScreen", gui.current_screen_classname()):
+			if not _pog_eq(gui.current_screen_classname(), "icSPBaseScreen"):
 				_pc = 21593
 				continue
 			else:
@@ -2457,7 +2457,7 @@ func s_p_encyclopaedia_screen() -> Variant:
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_encyclopedia", 0), "iBaseGUI.SPEncyclopaediaScreen_OnBackButton", "iBaseGUI.SPEncyclopaediaScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	v7 = global.string("encyclopaedia_default_entry")
-	if _pog_eq("", v7):
+	if _pog_eq(v7, ""):
 		v7 = "html:/html/encyclopedia/index"
 	v2 = await igui.create_titled_text_box(v0, text.field("basemenu_encyclopedia", 0), v5, string.upper_case(text.field("encyclopaedia_topic", 0)), 0, "", v7)
 	gui.set_window_font(v2, global.string("type_font"))
@@ -2528,7 +2528,7 @@ func s_p_trading_screen__on_cancel_button() -> Variant:
 	var v1: Variant = 0
 	v0 = gui.cast(global.handle("TradingScreen_Listbox"))
 	v1 = gui.list_box_selected_index(v0)
-	if -1 == v1:
+	if v1 == -1:
 		gui.queue_sound(3)
 	gui.cancel_list_box_selection(v0)
 	gui.set_list_box_focused_entry(v0, v1)
@@ -2547,7 +2547,7 @@ func s_p_trading_screen__on_trade_button() -> Variant:
 		if _pc == 23352:
 			v4 = gui.cast(global.handle("TradingScreen_Listbox"))
 			v0 = gui.list_box_selected_index(v4)
-			if -1 > v0:
+			if v0 > -1:
 				_pc = 23433
 				continue
 			else:
@@ -2575,7 +2575,7 @@ func s_p_trading_screen__on_trade_button() -> Variant:
 			_pc = 23565
 			continue
 		elif _pc == 23551:
-			v3 = -1 + v3
+			v3 = v3 + -1
 			_pc = 23565
 			continue
 		elif _pc == 23565:
@@ -2588,8 +2588,8 @@ func s_p_trading_screen__on_trade_button() -> Variant:
 				_pc = 23665
 				continue
 		elif _pc == 23615:
-			v0 = -1 + v0
-			if 0 > itrade.num_trades() and -1 == v0:
+			v0 = v0 + -1
+			if v0 == -1 and itrade.num_trades() > 0:
 				_pc = 23658
 				continue
 			else:
@@ -2672,7 +2672,7 @@ func local_23974() -> Variant:
 		if _pc == 23974:
 			v2 = null
 			v8 = global.pog_int("GUI_alignment_offset")
-			v11 = 290 - gui.frame_height()
+			v11 = gui.frame_height() - 290
 			v13 = global.pog_int("GUI_scrollbar_width")
 			v18 = global.pog_int("GUI_table_alignmentoffset")
 			v21 = global.pog_int("GUI_inversebutton_height")
@@ -2684,29 +2684,29 @@ func local_23974() -> Variant:
 			list.remove_all(v2)
 			v9 = gui.window_canvas_height(v0)
 			v10 = gui.window_canvas_width(v0)
-			v12 = global.pog_int("GUI_scrollbar_width") * 2 - v10
-			v12 = 3 / v12
+			v12 = v10 - 2 * global.pog_int("GUI_scrollbar_width")
+			v12 = v12 / 3
 			v1 = gui.create_window(0, 0, v10, v11, v0)
 			v4 = await igui.create_titled_list_box(v1, text.field("basemenu_trade", 0), v12, text.field("trading_faction", 0), v12, text.field("trading_offer", 0), v12, text.field("trading_want", 0))
 			list.add_tail(v2, v4)
 			v19 = v10
-			v20 = v22 * 2 + v24 - v19
-			v20 = 2 / v20
-			v1 = gui.create_window(v22, v11, 2 * v20 + v24, v21, v0)
+			v20 = v19 - v24 + 2 * v22
+			v20 = v20 / 2
+			v1 = gui.create_window(v22, v11, v24 + v20 * 2, v21, v0)
 			v7 = await igui.create_and_initialise_inverse_button(v1, 0, 0, v20, text.field("trading_trade", 0), "iBaseGUI.SPTradingScreen_OnTradeButton")
 			list.add_tail(v2, v7)
-			v7 = await igui.create_and_initialise_inverse_button(v1, 5 + v20, 0, v20, text.field("gui_cancel", 0), "iBaseGUI.SPTradingScreen_OnCancelButton")
+			v7 = await igui.create_and_initialise_inverse_button(v1, v20 + 5, 0, v20, text.field("gui_cancel", 0), "iBaseGUI.SPTradingScreen_OnCancelButton")
 			list.add_tail(v2, v7)
-			v25 = v23 + v21 + v11
-			v1 = gui.create_window(0, v25, v19, v25 - v9, v0)
+			v25 = v11 + v21 + v23
+			v1 = gui.create_window(0, v25, v19, v9 - v25, v0)
 			v14 = global.pog_int("GUI_fancyborder_width")
-			v15 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset")
-			v16 = global.pog_int("GUI_fancyborder_width") + v14 - gui.window_canvas_width(v1)
-			v17 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v15 - gui.window_canvas_height(v1)
+			v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 5
+			v16 = gui.window_canvas_width(v1) - v14 + global.pog_int("GUI_fancyborder_width")
+			v17 = gui.window_canvas_height(v1) - v15 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v6 = gui.create_window(v14, v15, v16, v17, v1)
 			gui.create_fancy_border(v6)
-			v5 = await igui.create_and_initialise_text_window(v18, 0, v18 + v13 * 2 - v16, v17, v6, "")
-			gui.create_vertical_scrollbar(v13 - v16, 0, v13, v17, v6, v5, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			v5 = await igui.create_and_initialise_text_window(v18, 0, v16 - 2 * v13 + v18, v17, v6, "")
+			gui.create_vertical_scrollbar(v16 - v13, 0, v13, v17, v6, v5, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			list.add_tail(v2, v5)
 			_pc = 25266
 			continue
@@ -2730,7 +2730,7 @@ func local_25276(v0) -> Variant:
 			_pc = 25318
 			continue
 		elif _pc == 25318:
-			if v4 < v3:
+			if v3 < v4:
 				_pc = 25334
 				continue
 			else:
@@ -2739,7 +2739,7 @@ func local_25276(v0) -> Variant:
 		elif _pc == 25334:
 			v2 = itrade.nth_trade(v3)
 			list.add_tail(v1, await local_25428(v0, v2))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 25318
 			continue
 		elif _pc == 25418:
@@ -2777,8 +2777,8 @@ func local_25428(v0, v1) -> Variant:
 			v5 = global.pog_int("GUI_listbox_entryheight")
 			v6 = 5
 			v7 = global.pog_int("GUI_tab_text_offset")
-			v16 = 3 / v4
-			v17 = 3 / v4 * 2
+			v16 = v4 / 3
+			v17 = 2 * v4 / 3
 			v18 = v4
 			v19 = null
 			v19 = global.string("type_font")
@@ -2787,12 +2787,12 @@ func local_25428(v0, v1) -> Variant:
 			v21 = object.string_property(v1, "generated_mission")
 			v8 = 0
 			v9 = 13
-			v10 = v9 + v8
-			v11 = 5 + v10 - v16
-			v12 = 1 - v7 + v16
-			v13 = 5 + v12 - v17
-			v14 = 3 + v7 + v17
-			v15 = 5 + v14 - v18
+			v10 = v8 + v9
+			v11 = v16 - v10 + 5
+			v12 = v16 + v7 - 1
+			v13 = v17 - v12 + 5
+			v14 = v17 + v7 + 3
+			v15 = v18 - v14 + 5
 			v2 = gui.create_window(0, 0, v4, v5, 0)
 			if itrade.can_satisfy_trade(v1):
 				_pc = 25858
@@ -2810,7 +2810,7 @@ func local_25428(v0, v1) -> Variant:
 			continue
 		elif _pc == 25889:
 			await igui.create_and_initialise_list_box_entry_component_window(v8, v9, v5, v2, v19, v3)
-			if _pog_eq("", v21):
+			if _pog_eq(v21, ""):
 				_pc = 25951
 				continue
 			else:
@@ -2849,7 +2849,7 @@ func s_p_trading_screen__on_trades_list_box_select() -> Variant:
 			v2 = gui.cast(global.handle("TradingScreen_Listbox"))
 			v3 = gui.cast(global.handle("TradingScreen_Textbox"))
 			v0 = gui.list_box_focused_entry(v2)
-			if -1 == v0:
+			if v0 == -1:
 				_pc = 26412
 				continue
 			else:
@@ -2932,7 +2932,7 @@ func local_26725(v0, v1) -> Variant:
 				continue
 		elif _pc == 26781:
 			v4 = gui.list_box_selected_index(v0)
-			if -1 == v4:
+			if v4 == -1:
 				_pc = 26818
 				continue
 			else:
@@ -2953,7 +2953,7 @@ func local_26725(v0, v1) -> Variant:
 			continue
 		elif _pc == 26858:
 			v7 = gui.list_box_focused_entry(v0)
-			if -1 == v7:
+			if v7 == -1:
 				_pc = 26895
 				continue
 			else:
@@ -2977,7 +2977,7 @@ func local_26725(v0, v1) -> Variant:
 			continue
 		elif _pc == 26940:
 			v6 = itrade.nth_trade(v7)
-			if not _pog_eq(v5, v6):
+			if not _pog_eq(v6, v5):
 				_pc = 26980
 				continue
 			else:
@@ -2994,7 +2994,7 @@ func local_26725(v0, v1) -> Variant:
 			continue
 		elif _pc == 27029:
 			v3 = itrade.nth_trade(v4)
-			if not _pog_eq(v2, v3):
+			if not _pog_eq(v3, v2):
 				_pc = 27069
 				continue
 			else:
@@ -3094,20 +3094,20 @@ func s_p_inventory_screen() -> Variant:
 			continue
 		elif _pc == 27620:
 			v12 = gui.window_canvas_height(v0)
-			v12 = global.pog_int("GUI_inversebutton_height") - v12
+			v12 = v12 - global.pog_int("GUI_inversebutton_height")
 			v1 = gui.create_window(0, 0, gui.window_canvas_width(v0), v12, v0)
-			v9 = global.pog_int("GUI_scrollbar_width") * 2 - gui.window_canvas_width(v1)
-			v9 = 4 / v9 * 2
-			v10 = 2 / v9
+			v9 = gui.window_canvas_width(v1) - 2 * global.pog_int("GUI_scrollbar_width")
+			v9 = 2 * v9 / 4
+			v10 = v9 / 2
 			v11 = v10
 			v3 = await igui.create_titled_list_box(v1, text.field("basemenu_inventory", 0), v9, text.field("gui_item", 0), v10, text.field("inventory_quantity", 0), v11, text.field("recycling_value", 0))
 			list.add_head(v2, v3)
 			global.create_handle("InventoryListBox", 2, v3)
-			v1 = gui.create_window(0, v12, gui.window_canvas_width(v0), global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_inversebutton_height"), v0)
+			v1 = gui.create_window(0, v12, gui.window_canvas_width(v0), global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height"), v0)
 			v5 = await igui.create_and_initialise_inverse_button(v1, 0, 0, v16, string.upper_case(text.field("inventory_equipment", 0)), "iBaseGUI.SPInventoryScreen_OnEquipment")
 			list.add_tail(v2, v5)
 			await igui.make_inverse_button_iconic(v5)
-			v6 = await igui.create_and_initialise_inverse_button(v1, v20 + v16, 0, v16, text.field("manifest_ship_cargo", 0), "iBaseGUI.SPInventoryScreen_OnCargo")
+			v6 = await igui.create_and_initialise_inverse_button(v1, v16 + v20, 0, v16, text.field("manifest_ship_cargo", 0), "iBaseGUI.SPInventoryScreen_OnCargo")
 			list.add_tail(v2, v6)
 			await igui.make_inverse_button_iconic(v6)
 			global.create_handle("SPInventoryScreen_Equipment", 2, v5)
@@ -3276,12 +3276,12 @@ func s_p_cargo_screen() -> Variant:
 			v1 = await igui.create_grey_box_style_screen(text.field("loadoutmenu_add_cargo", 0), "iBaseGUI.SPCargoScreen_OnBackButton", "iBaseGUI.SPCargoScreen_OnBackToMainMenuButton")
 			v0 = gui.cast(list.head(v1))
 			list.remove_all(v1)
-			v10 = global.pog_int("GUI_scrollbar_width") * 2 - gui.window_canvas_width(v0)
-			v10 = 4 / v10 * 2
-			v11 = 2 / v10
+			v10 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+			v10 = 2 * v10 / 4
+			v11 = v10 / 2
 			v12 = v11
 			v9 = gui.window_canvas_height(v0)
-			v9 = 2 * v15 - v9
+			v9 = v9 - v15 * 2
 			v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), v9, v0)
 			v2 = await igui.create_titled_list_box(v3, text.field("loadoutmenu_add_cargo", 0), v10, text.field("gui_item", 0), v11, text.field("inventory_quantity", 0), v12, text.field("recycling_value", 0))
 			list.add_tail(v1, v2)
@@ -3299,7 +3299,7 @@ func s_p_cargo_screen() -> Variant:
 			_pc = 30078
 			continue
 		elif _pc == 30078:
-			if list.item_count(v6) < v7:
+			if v7 < list.item_count(v6):
 				_pc = 30107
 				continue
 			else:
@@ -3307,7 +3307,7 @@ func s_p_cargo_screen() -> Variant:
 				continue
 		elif _pc == 30107:
 			v14 = icargo.cast(list.get_nth(v6, v7))
-			if _pog_eq(v13, v14):
+			if _pog_eq(v14, v13):
 				_pc = 30165
 				continue
 			else:
@@ -3318,7 +3318,7 @@ func s_p_cargo_screen() -> Variant:
 			_pc = 30212
 			continue
 		elif _pc == 30194:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 30078
 			continue
 		elif _pc == 30212:
@@ -3327,13 +3327,13 @@ func s_p_cargo_screen() -> Variant:
 			gui.set_input_override_functions(v2, "", "", "", "", "iBaseGUI.SPCargoScreen_OnCargoListBoxSelect", "iBaseGUI.SPCargoScreen_OnBackButton", "", "iBaseGUI.SPCargoScreen_OnCargoListBoxSelect", "")
 			v5 = await igui.create_and_initialise_fancy_button(v0, v16, text.field("addcargo_removecargo", 0), "iBaseGUI.SPCargoScreen_OnRemoveCargo")
 			list.add_tail(v1, v5)
-			v16 = v15 + v16
-			v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_alignment_offset"), v16, gui.window_canvas_width(v0), v15, v0, global.string("type_font"), "")
+			v16 = v16 + v15
+			v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width"), v16, gui.window_canvas_width(v0), v15, v0, global.string("type_font"), "")
 			gui.set_window_text_formatting(v4, 0, 0)
 			gui.set_window_state_colours(v4, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
 			global.create_handle("CargoScreen_TextWindow", 2, v4)
 			await local_31807(v4)
-			v16 = v15 + v16
+			v16 = v16 + v15
 			gui.set_first_control_focus(gui.cast(list.head(v1)))
 			await igui.set_cyclic_control_focus_path(v1)
 			gui.set_control_focus_cancel_function("iBaseGUI.SPCargoScreen_OnBackButton")
@@ -3379,7 +3379,7 @@ func s_p_cargo_screen__on_cargo_list_box_select() -> Variant:
 			v7 = 0
 			v10 = 0
 			v0 = gui.list_box_focused_entry(v1)
-			if -1 == v0:
+			if v0 == -1:
 				_pc = 31221
 				continue
 			else:
@@ -3403,7 +3403,7 @@ func s_p_cargo_screen__on_cargo_list_box_select() -> Variant:
 			continue
 		elif _pc == 31318:
 			v4 = object.int_property(v3, "type")
-			if _pog_eq(v4, iloadout.cargo()):
+			if _pog_eq(iloadout.cargo(), v4):
 				_pc = 31373
 				continue
 			else:
@@ -3414,7 +3414,7 @@ func s_p_cargo_screen__on_cargo_list_box_select() -> Variant:
 			_pc = 31569
 			continue
 		elif _pc == 31394:
-			if -1 != iloadout.cargo():
+			if iloadout.cargo() != -1:
 				_pc = 31415
 				continue
 			else:
@@ -3446,7 +3446,7 @@ func s_p_cargo_screen__on_remove_cargo() -> Variant:
 		if _pc == 31579:
 			v0 = gui.cast(global.handle("CargoListBox"))
 			v1 = iloadout.cargo()
-			if -1 == v1:
+			if v1 == -1:
 				_pc = 31655
 				continue
 			else:
@@ -3482,7 +3482,7 @@ func local_31807(v0) -> Variant:
 			v2 = null
 			v3 = null
 			v4 = null
-			if -1 == v1:
+			if v1 == -1:
 				_pc = 31877
 				continue
 			else:
@@ -3526,18 +3526,18 @@ func s_p_recycling_screen() -> Variant:
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_recycling", 0), "iBaseGUI.SPRecyclingScreen_OnBackButton", "iBaseGUI.SPRecyclingScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	list.remove_head(v1)
-	v8 = global.pog_int("GUI_scrollbar_width") * 2 - gui.window_canvas_width(v0)
-	v8 = 4 / v8 * 2
-	v9 = 2 / v8
+	v8 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+	v8 = 2 * v8 / 4
+	v9 = v8 / 2
 	v10 = v9
 	v11 = gui.window_canvas_height(v0)
-	v11 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_inversebutton_height") - v11
+	v11 = v11 - global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height")
 	v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), v11, v0)
 	v2 = await igui.create_titled_list_box(v3, text.field("basemenu_recycling", 0), v8, text.field("gui_item", 0), v9, text.field("inventory_quantity", 0), v10, text.field("recycling_value", 0))
 	list.add_head(v1, v2)
-	v3 = gui.create_window(0, v11, gui.window_canvas_width(v0), global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_inversebutton_height"), v0)
+	v3 = gui.create_window(0, v11, gui.window_canvas_width(v0), global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height"), v0)
 	await local_35323(v3)
-	v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_alignment_offset"), 15, gui.window_canvas_width(v3), v12, v3, global.string("type_font"), "")
+	v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width"), 15, gui.window_canvas_width(v3), v12, v3, global.string("type_font"), "")
 	gui.set_window_text_formatting(v4, 0, 0)
 	gui.set_window_state_colours(v4, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
 	global.create_handle("RecyclingScreen_RecycleUnitsWindow", 2, v4)
@@ -3574,7 +3574,7 @@ func s_p_recycling_screen__on_cancel_button() -> Variant:
 	var v1: Variant = 0
 	v0 = gui.cast(global.handle("RecyclingListBox"))
 	v1 = gui.list_box_selected_index(v0)
-	if -1 == v1:
+	if v1 == -1:
 		gui.queue_sound(3)
 	gui.cancel_list_box_selection(v0)
 	gui.set_list_box_focused_entry(v0, v1)
@@ -3597,7 +3597,7 @@ func s_p_recycling_screen__on_recycle_one_button() -> Variant:
 			v1 = null
 			v1 = global.list("RecyclingScreen_CargoList")
 			v6 = gui.list_box_selected_index(v0)
-			if -1 != v6:
+			if v6 != -1:
 				_pc = 33777
 				continue
 			else:
@@ -3619,7 +3619,7 @@ func s_p_recycling_screen__on_recycle_one_button() -> Variant:
 			continue
 		elif _pc == 33907:
 			iinventory.recycle(v4, 1)
-			v5 = 1 - v5
+			v5 = v5 - 1
 			_pc = 33940
 			continue
 		elif _pc == 33940:
@@ -3662,7 +3662,7 @@ func s_p_recycling_screen__on_recycle_all_button() -> Variant:
 			v1 = null
 			v1 = global.list("RecyclingScreen_CargoList")
 			v6 = gui.list_box_selected_index(v0)
-			if -1 != v6:
+			if v6 != -1:
 				_pc = 34172
 				continue
 			else:
@@ -3725,8 +3725,8 @@ func local_34423(v0, v1) -> Variant:
 				_pc = 34736
 				continue
 		elif _pc == 34684:
-			gui.remove_list_box_entry(v0, 1 - v1)
-			list.remove_nth(v2, 1 - v1)
+			gui.remove_list_box_entry(v0, v1 - 1)
+			list.remove_nth(v2, v1 - 1)
 			_pc = 34736
 			continue
 		elif _pc == 34736:
@@ -3737,14 +3737,14 @@ func local_34423(v0, v1) -> Variant:
 				_pc = 34802
 				continue
 		elif _pc == 34748:
-			gui.remove_list_box_entry(v0, 2 - v1)
-			list.remove_nth(v2, 2 - v1)
+			gui.remove_list_box_entry(v0, v1 - 2)
+			list.remove_nth(v2, v1 - 2)
 			_pc = 34802
 			continue
 		elif _pc == 34802:
 			global.set_list("RecyclingScreen_CargoList", v2)
 			v5 = list.item_count(v2)
-			if v5 < v1:
+			if v1 < v5:
 				_pc = 34868
 				continue
 			else:
@@ -3755,14 +3755,14 @@ func local_34423(v0, v1) -> Variant:
 			_pc = 34961
 			continue
 		elif _pc == 34897:
-			if 0 > v1:
+			if v1 > 0:
 				_pc = 34909
 				continue
 			else:
 				_pc = 34940
 				continue
 		elif _pc == 34909:
-			gui.select_list_box_entry(v0, 1 - v5)
+			gui.select_list_box_entry(v0, v5 - 1)
 			_pc = 34961
 			continue
 		elif _pc == 34940:
@@ -3785,7 +3785,7 @@ func s_p_recycling_screen__on_recycling_list_box_select() -> Variant:
 	v1 = global.list("RecyclingScreen_CargoList")
 	v3 = gui.cast(global.handle("RecyclingListBox"))
 	v0 = gui.list_box_focused_entry(v3)
-	if -1 == v0:
+	if v0 == -1:
 		gui.queue_sound(3)
 		return 0
 	else:
@@ -3811,16 +3811,16 @@ func local_35323(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	v4 = null
-	v5 = 6 - global.pog_int("GUI_inversebutton_width")
+	v5 = global.pog_int("GUI_inversebutton_width") - 6
 	v6 = global.pog_int("GUI_inversebutton_height")
 	v7 = 10
 	v8 = 0
 	v9 = 5
 	v1 = await igui.create_and_initialise_inverse_button(v0, 0, 0, v5, text.field("recycling_recycle_one", 0), "iBaseGUI.SPRecyclingScreen_OnRecycleOneButton")
 	list.add_tail(v4, v1)
-	v2 = await igui.create_and_initialise_inverse_button(v0, v9 + v5, 0, v5, text.field("recycling_recycle_all", 0), "iBaseGUI.SPRecyclingScreen_OnRecycleAllButton")
+	v2 = await igui.create_and_initialise_inverse_button(v0, v5 + v9, 0, v5, text.field("recycling_recycle_all", 0), "iBaseGUI.SPRecyclingScreen_OnRecycleAllButton")
 	list.add_tail(v4, v2)
-	v3 = await igui.create_and_initialise_inverse_button(v0, 2 * v9 + v5, 0, v5, text.field("gui_cancel", 0), "iBaseGUI.SPRecyclingScreen_OnCancelButton")
+	v3 = await igui.create_and_initialise_inverse_button(v0, v5 + v9 * 2, 0, v5, text.field("gui_cancel", 0), "iBaseGUI.SPRecyclingScreen_OnCancelButton")
 	list.add_tail(v4, v3)
 	gui.set_input_override_functions(v1, "iBaseGUI.SPRecyclingScreen_FocusToCancel", "", "iBaseGUI.SPRecyclingScreen_FocusToRecycleAll", "", "", "iBaseGUI.SPRecyclingScreen_OnCancelButton", "", "", "")
 	gui.set_input_override_functions(v2, "iBaseGUI.SPRecyclingScreen_FocusToRecycleOne", "", "iBaseGUI.SPRecyclingScreen_FocusToCancel", "", "", "iBaseGUI.SPRecyclingScreen_OnCancelButton", "", "", "")
@@ -3874,17 +3874,17 @@ func s_p_manufacturing_screen() -> Variant:
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_manufacturing", 0), "iBaseGUI.SPManufacturingScreen_OnBackButton", "iBaseGUI.SPManufacturingScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	list.remove_head(v1)
-	v6 = global.pog_int("GUI_scrollbar_width") * 2 - gui.window_canvas_width(v0)
-	v7 = 4 / v6
-	v6 = v7 * 3
+	v6 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+	v7 = v6 / 4
+	v6 = 3 * v7
 	v5 = gui.window_canvas_height(v0)
-	v5 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_inversebutton_height") - v5
+	v5 = v5 - global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height")
 	v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), v5, v0)
 	v2 = await igui.create_titled_list_box(v3, text.field("basemenu_manufacturing", 0), v6, text.field("gui_item", 0), v7, text.field("manufacturing_cost", 0), 0, "")
 	list.add_head(v1, v2)
-	v3 = gui.create_window(0, v5, gui.window_canvas_width(v0), global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_inversebutton_height"), v0)
+	v3 = gui.create_window(0, v5, gui.window_canvas_width(v0), global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height"), v0)
 	await local_38446(v3)
-	v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_alignment_offset"), 15, gui.window_canvas_width(v3), v8, v3, global.string("type_font"), "")
+	v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width"), 15, gui.window_canvas_width(v3), v8, v3, global.string("type_font"), "")
 	gui.set_window_text_formatting(v4, 0, 0)
 	gui.set_window_state_colours(v4, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
 	global.create_handle("ManufacturingScreen_RecycleUnitsWindow", 2, v4)
@@ -3905,7 +3905,7 @@ func s_p_manufacturing_screen__on_cancel_button() -> Variant:
 		if _pc == 37475:
 			v0 = gui.cast(global.handle("ManufacturingListBox"))
 			v1 = gui.list_box_selected_index(v0)
-			if -1 == v1:
+			if v1 == -1:
 				_pc = 37556
 				continue
 			else:
@@ -3941,7 +3941,7 @@ func s_p_manufacturing_screen__on_manufacturing_button() -> Variant:
 			v1 = null
 			v1 = global.list("ManufacturingScreen_CargoList")
 			v5 = gui.list_box_selected_index(v0)
-			if -1 != v5:
+			if v5 != -1:
 				_pc = 37760
 				continue
 			else:
@@ -3951,7 +3951,7 @@ func s_p_manufacturing_screen__on_manufacturing_button() -> Variant:
 			v2 = icargo.cast(list.get_nth(v1, v5))
 			v3 = object.int_property(v2, "type")
 			v4 = icargo.manufacture_value(v2)
-			if iinventory.manufacture_units() > v4:
+			if v4 > iinventory.manufacture_units():
 				_pc = 37881
 				continue
 			else:
@@ -3967,7 +3967,7 @@ func s_p_manufacturing_screen__on_manufacturing_button() -> Variant:
 			await local_38945(v0)
 			gui.select_list_box_entry(v0, v5)
 			await local_36173(gui.cast(global.handle("ManufacturingScreen_RecycleUnitsWindow")))
-			if iinventory.manufacture_units() > v4:
+			if v4 > iinventory.manufacture_units():
 				_pc = 38050
 				continue
 			else:
@@ -4037,7 +4037,7 @@ func local_38446(v0) -> Variant:
 	v8 = 5
 	v1 = await igui.create_and_initialise_inverse_button(v0, 0, 0, v4, text.field("manufacturing_manufacture", 0), "iBaseGUI.SPManufacturingScreen_OnManufacturingButton")
 	list.add_tail(v3, v1)
-	v2 = await igui.create_and_initialise_inverse_button(v0, v8 + v4, 0, v4, text.field("gui_cancel", 0), "iBaseGUI.SPManufacturingScreen_OnCancelButton")
+	v2 = await igui.create_and_initialise_inverse_button(v0, v4 + v8, 0, v4, text.field("gui_cancel", 0), "iBaseGUI.SPManufacturingScreen_OnCancelButton")
 	list.add_tail(v3, v2)
 	gui.set_input_override_functions(v1, "iBaseGUI.SPManufacturingScreen_FocusToCancel", "", "iBaseGUI.SPManufacturingScreen_FocusToCancel", "", "", "iBaseGUI.SPManufacturingScreen_OnCancelButton", "", "", "")
 	gui.set_input_override_functions(v2, "iBaseGUI.SPManufacturingScreen_FocusToManufacturing", "", "iBaseGUI.SPManufacturingScreen_FocusToManufacturing", "", "", "iBaseGUI.SPManufacturingScreen_OnCancelButton", "", "", "")
@@ -4085,18 +4085,18 @@ func local_38945(v0) -> Variant:
 			v20 = 0
 			v21 = null
 			v21 = global.string("type_font")
-			v22 = 4 / v12 * 3
+			v22 = 3 * v12 / 4
 			v23 = v12
-			v16 = 4 - v14 + v15
-			v17 = 5 + v16 - v22
-			v18 = 1 + v11 + v22
-			v19 = 5 + v18 - v23
+			v16 = v15 + v14 - 4
+			v17 = v22 - v16 + 5
+			v18 = v22 + v11 + 1
+			v19 = v23 - v18 + 5
 			gui.remove_list_box_entries(v0)
 			v6 = 0
 			_pc = 39259
 			continue
 		elif _pc == 39259:
-			if v9 < v6:
+			if v6 < v9:
 				_pc = 39275
 				continue
 			else:
@@ -4104,7 +4104,7 @@ func local_38945(v0) -> Variant:
 				continue
 		elif _pc == 39275:
 			v10 = icargo.find(v6)
-			if iinventory.got_blueprints(v6) and icargo.can_manufacture(v10):
+			if icargo.can_manufacture(v10) and iinventory.got_blueprints(v6):
 				_pc = 39341
 				continue
 			else:
@@ -4115,7 +4115,7 @@ func local_38945(v0) -> Variant:
 			v7 = icargo.pog_name(v10)
 			v8 = icargo.manufacture_value(v10)
 			v1 = gui.create_window(0, 0, v12, v13, 0)
-			if v8 >= iinventory.manufacture_units():
+			if iinventory.manufacture_units() >= v8:
 				_pc = 39471
 				continue
 			else:
@@ -4132,7 +4132,7 @@ func local_38945(v0) -> Variant:
 			_pc = 39644
 			continue
 		elif _pc == 39644:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 39259
 			continue
 		elif _pc == 39662:
@@ -4147,7 +4147,7 @@ func s_p_manufacturing_screen__on_manufacturing_list_box_select() -> Variant:
 	var v1: Variant = 0
 	v1 = gui.cast(global.handle("ManufacturingListBox"))
 	v0 = gui.list_box_focused_entry(v1)
-	if -1 == v0:
+	if v0 == -1:
 		gui.queue_sound(3)
 		return 0
 	else:
@@ -4190,33 +4190,33 @@ func s_p_ship_type_screen() -> Variant:
 	if iinventory.got_tug():
 		v5 = await local_46444(text.field("ship_type_tug", 0), v1)
 		await igui.make_inverse_button_iconic(v5)
-		if 1 == v9:
+		if v9 == 1:
 			gui.set_radio_button_checked(v5, 1)
 		gui.set_input_override_functions(v5, "", "", "", "", "iBaseGUI.SPShipTypeScreen_OnTug", "iBaseGUI.SPShipTypeScreen_OnBackButton", "", "iBaseGUI.SPShipTypeScreen_OnTug", "")
 		global.create_handle("shiptype_tug", 2, v5)
 	if iinventory.got_fast_attack_ship():
 		v6 = await local_46444(text.field("ship_type_fast_attack_ship", 0), v1)
 		await igui.make_inverse_button_iconic(v6)
-		if 2 == v9:
+		if v9 == 2:
 			gui.set_radio_button_checked(v6, 1)
 		gui.set_input_override_functions(v6, "", "", "", "", "iBaseGUI.SPShipTypeScreen_OnFastAttackShip", "iBaseGUI.SPShipTypeScreen_OnBackButton", "", "iBaseGUI.SPShipTypeScreen_OnFastAttackShip", "")
 		global.create_handle("shiptype_fastattackship", 2, v6)
 	if iinventory.got_heavy_corvette():
 		v7 = await local_46444(text.field("ship_type_heavy_corvette", 0), v1)
 		await igui.make_inverse_button_iconic(v7)
-		if 3 == v9:
+		if v9 == 3:
 			gui.set_radio_button_checked(v7, 1)
 		gui.set_input_override_functions(v7, "", "", "", "", "iBaseGUI.SPShipTypeScreen_OnHeavyCorvette", "iBaseGUI.SPShipTypeScreen_OnBackButton", "", "iBaseGUI.SPShipTypeScreen_OnHeavyCorvette", "")
 		global.create_handle("shiptype_heavycorvette", 2, v7)
 	if iinventory.got_storm_petrel():
 		v8 = await local_46444(text.field("ship_type_storm_petrel", 0), v1)
 		await igui.make_inverse_button_iconic(v8)
-		if 4 == v9:
+		if v9 == 4:
 			gui.set_radio_button_checked(v8, 1)
 		gui.set_input_override_functions(v8, "", "", "", "", "iBaseGUI.SPShipTypeScreen_OnStormPetrel", "iBaseGUI.SPShipTypeScreen_OnBackButton", "", "iBaseGUI.SPShipTypeScreen_OnStormPetrel", "")
 		global.create_handle("shiptype_stormpetrel", 2, v8)
-	v2 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v2 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v3 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	await igui.create_window_list_in_splitter(v0, v1, v2, v3, text.field("hangarmenu_ship", 0))
 	gui.set_first_control_focus(v4)
 	await igui.set_cyclic_control_focus_path(v1)
@@ -4226,12 +4226,12 @@ func s_p_ship_type_screen() -> Variant:
 
 func local_41431(v0) -> Variant:
 	gui.cancel_focus_lock()
-	if _pog_eq(v0, iloadout.ship()):
+	if _pog_eq(iloadout.ship(), v0):
 		return 0
 	gui.play_sound(4)
 	iloadout.set_ship(v0)
 	await local_8118()
-	if not (-1 != iloadout.cargo() and _pog_is_null(iloadout.ship())):
+	if not (_pog_is_null(iloadout.ship()) and iloadout.cargo() != -1):
 		return 0
 	iinventory.add_without_marking_new(iloadout.cargo(), 1)
 	iloadout.set_cargo(-1)
@@ -4329,21 +4329,21 @@ func local_42175() -> Variant:
 			v8 = 42
 			v9 = global.pog_int("GUI_scrollbar_width")
 			v10 = 4
-			v11 = 13 + global.pog_int("GUI_fancyborder_width") * 2
+			v11 = 2 * global.pog_int("GUI_fancyborder_width") + 13
 			v22 = null
 			v22 = "hangarmenu_manifest"
 			v23 = null
 			v24 = 9
 			v21 = await igui.create_shady_bar_right()
-			v1 = global.pog_int("GUI_backbutton_rise") + v7 - gui.window_canvas_height(v21)
-			v0 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v2 = v0 - v1
-			v4 = v5 - v1
-			v3 = v6 - v4
-			v12 = v10 + global.pog_int("GUI_alignment_offset")
+			v1 = gui.window_canvas_height(v21) - v7 + global.pog_int("GUI_backbutton_rise")
+			v0 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
+			v2 = v1 - v0
+			v4 = v1 - v5
+			v3 = v4 - v6
+			v12 = global.pog_int("GUI_alignment_offset") + v10
 			v13 = v0
-			v14 = 2 * v12 - v10 + global.pog_int("GUI_shader_width")
-			v15 = v13 - v3
+			v14 = global.pog_int("GUI_shader_width") + v10 - v12 * 2
+			v15 = v3 - v13
 			v16 = gui.create_splitter_window(v12, v13, v14, v15, v21, v11, 0)
 			v18 = gui.splitter_window_top_window(v16)
 			v19 = gui.create_static_window(0, 0, gui.window_canvas_width(v18), gui.window_canvas_height(v18), v18)
@@ -4353,10 +4353,10 @@ func local_42175() -> Variant:
 			gui.set_window_text_formatting(v19, 0, 9)
 			gui.set_window_state_colours(v19, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
 			v18 = gui.splitter_window_bottom_window(v16)
-			v17 = await igui.create_and_initialise_text_window(v24, 0, v9 * 2 + v24 - gui.window_canvas_width(v18), gui.window_canvas_height(v18), v18, "")
+			v17 = await igui.create_and_initialise_text_window(v24, 0, gui.window_canvas_width(v18) - v24 + 2 * v9, gui.window_canvas_height(v18), v18, "")
 			gui.set_window_font(v17, global.string("GUI_detail_font"))
 			gui.set_text_window_string(v17, iloadout.loadout_description())
-			gui.create_vertical_scrollbar(v9 - gui.window_canvas_width(v18), 0, v9, gui.window_canvas_height(v18), v18, v17, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			gui.create_vertical_scrollbar(gui.window_canvas_width(v18) - v9, 0, v9, gui.window_canvas_height(v18), v18, v17, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			v13 = v4
 			await local_44051(v21, v13)
 			iloadout.set_manifest_window(v17)
@@ -4431,16 +4431,16 @@ func local_44051(v0, v1) -> Variant:
 	v9 = null
 	v10 = 9
 	v4 = global.string("type_font")
-	v5 = global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
-	v6 = 2 * v5 - global.pog_int("GUI_shader_width")
-	v5 = global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v5 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width")
+	v6 = global.pog_int("GUI_shader_width") - v5 * 2
+	v5 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width")
 	v8 = 40
 	v7 = 45
 	v2 = gui.create_window(v5, v1, v6, v7, v0)
-	v3 = await igui.create_and_initialise_static_window(v10, 2, v8 - v6, 2 + 3 / v7, v2, v4, "")
+	v3 = await igui.create_and_initialise_static_window(v10, 2, v6 - v8, v7 / 3 + 2, v2, v4, "")
 	gui.set_window_text_formatting(v3, 0, 0)
 	list.add_tail(v9, v3)
-	v3 = await igui.create_and_initialise_static_window(v8 - v6, 2, v8, 2 + 3 / v7, v2, v4, "")
+	v3 = await igui.create_and_initialise_static_window(v6 - v8, 2, v8, v7 / 3 + 2, v2, v4, "")
 	gui.set_window_text_formatting(v3, 0, 0)
 	list.add_tail(v9, v3)
 	global.create_list("customiseloadout_indicators", 2, v9)
@@ -4475,23 +4475,23 @@ func local_44605(v0) -> Variant:
 	v8 = 8
 	v9 = global.pog_int("GUI_scrollbar_width")
 	v10 = 4
-	v11 = 13 + global.pog_int("GUI_fancyborder_width") * 2
+	v11 = 2 * global.pog_int("GUI_fancyborder_width") + 13
 	v22 = null
-	v2 = global.pog_int("GUI_backbutton_rise") + v8 - gui.window_canvas_height(v0)
-	v1 = global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-	v3 = v1 - v2
-	v5 = v6 - v2
-	v4 = v7 - v5
-	v12 = v10 + global.pog_int("GUI_alignment_offset")
+	v2 = gui.window_canvas_height(v0) - v8 + global.pog_int("GUI_backbutton_rise")
+	v1 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
+	v3 = v2 - v1
+	v5 = v2 - v6
+	v4 = v5 - v7
+	v12 = global.pog_int("GUI_alignment_offset") + v10
 	v13 = v1
-	v14 = 2 * v12 - v10 + global.pog_int("GUI_shader_width")
-	v15 = v13 - v4
+	v14 = global.pog_int("GUI_shader_width") + v10 - v12 * 2
+	v15 = v4 - v13
 	v16 = gui.create_splitter_window(v12, v13, v14, v15, v0, v11, 0)
 	global.create_handle("customiseloadout_splitter", 2, v16)
-	v12 = 9 + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_alignment_offset")
+	v12 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_fancyborder_alignmentoffset") + 9
 	v13 = v5
-	v14 = 2 * global.pog_int("GUI_alignment_offset") - global.pog_int("GUI_shader_width")
-	v15 = v5 - v2
+	v14 = global.pog_int("GUI_shader_width") - global.pog_int("GUI_alignment_offset") * 2
+	v15 = v2 - v5
 	v17 = await igui.create_and_initialise_text_window(v12, v13, v14, v15, v0, "")
 	gui.set_window_font(v17, global.string("type_font"))
 	global.create_handle("customiseloadout_textbox", 2, v17)

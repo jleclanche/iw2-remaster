@@ -37,7 +37,7 @@ func local_0(v0) -> Variant:
 				_pc = 306
 				continue
 		elif _pc == 63:
-			if 0.0 <= object.float_property(v1, "hit_points"):
+			if object.float_property(v1, "hit_points") <= 0.0:
 				_pc = 98
 				continue
 			else:
@@ -62,7 +62,7 @@ func local_0(v0) -> Variant:
 			_pc = 306
 			continue
 		elif _pc == 178:
-			if 0.0 <= object.float_property(v0, "hit_points"):
+			if object.float_property(v0, "hit_points") <= 0.0:
 				_pc = 213
 				continue
 			else:
@@ -186,7 +186,7 @@ func enable_remote_connection(v0, v1) -> Variant:
 	var _pc: int = 1199
 	while true:
 		if _pc == 1199:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 1211
 				continue
 			else:

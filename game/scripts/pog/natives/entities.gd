@@ -680,30 +680,25 @@ func _hab_cast_int(_t, a: Array) -> Variant:
 	# already the enum value.
 	return int(a[0])
 
-## IeHabitatType is authored per station instance, in the system map record: it
-## is the byte at record offset +308, which our extractor keeps as the second
-## byte of `unknown1` (tools/iw2/map_decoder.py reads unknown1 = buf[307:311]).
+## IeHabitatType is authored per station instance, in the system map record: the
+## byte at `+0x135`, which map_decoder.py calls `station_subtype` and which
+## `icStation::Load` copies to `icStation+0x1e0` -- exactly the field
+## `icStation::HabitatType()` (iwar2 @ 0x1004ada0) returns. The getter is a bare
+## field read, so there is no logic to recover beyond the value.
 ##
-## How we know, without the enum ever being named in the binary:
-##   - every station whose avatar is `policestation` has the byte 68 or 69, and
+## The enum is never named in the binary, but the data names it for us:
+##   - every station whose avatar is `policestation` has 68 or 69, and
 ##     ifight.pog:111 builds its "police" set as exactly
 ##     FilterOnType(68) UNION FilterOnType(69);
-##   - 54 is every `securitystation`, 55 the fortresses, and ifight.pog:187
-##     unions 72,73,70,71,79,82,85,54,55,78 for its "military" set -- which is
-##     precisely the naval/defence/security band;
-##   - reading the names back confirms it: 70 "Defense Station", 71 "Defence
-##     Dock", 73 "Naval Training Base", 79 "Naval Defences", 122 "Orbital
-##     Transfer Station".
-## icStation::HabitatType (iwar2 @ 0x1004ada0) is a bare field read, so there is
-## no logic to recover beyond the value itself.
+##   - 54 is `securitystation` (26 of 27) and 55 the fortresses; every subtype on
+##     a `navalbasestation` -- 70, 71, 73, 74, 79, 81, 85 -- falls inside the set
+##     ifight.pog:187 unions for "military" (72,73,70,71,79,82,85,54,55,78);
+##   - the names read back straight: 70 "Defense Station", 71 "Defence Dock",
+##     73 "Naval Training Base", 79 "Naval Defences", 122 "Orbital Transfer
+##     Station".
 func _habitat_type(s) -> int:
 	var g := _geog_of(s)
-	if g.is_empty():
-		return 0
-	var u := String(g.get("unknown1", ""))
-	if u.length() != 8:
-		return 0
-	return u.substr(2, 2).hex_to_int()
+	return int(g.get("station_subtype", 0)) if not g.is_empty() else 0
 
 # @native ihabitat.Type
 func _hab_type(_t, a: Array) -> Variant:
@@ -873,13 +868,14 @@ func _b_habitats_around(_t, a: Array) -> Variant:
 # @stub ibody.Type
 # @stub ibody.FilterOnType
 func _b_type_filter(_t, a: Array) -> Variant:
-	# NOT the same story as IeHabitatType. The habitat type turned out to be the
-	# map record's +308 byte, but the body records' +308 spreads over 89 distinct
-	# values in [0,239] -- far too wide for the small enum the scripts compare
-	# against (iscriptedorders.pog:517 tests `5 != ibody.Type(v1)` and unions 5
-	# and 7). icPlanet::Type is a bare field read, so the binary gives no clue
-	# where the loader read it from either. Which field carries it is an open
-	# question; pass the set through, report "unknown".
+	# NOT the same story as IeHabitatType, which came out of the record cleanly.
+	# The map record has two candidate fields and neither fits: `body_type`
+	# (+0x134) only ever holds 2, 3, 4 or 6 across every shipped system, and
+	# `planet_type` (+0x13C) only 1 or 2 -- while iscriptedorders.pog:517 tests
+	# `5 != ibody.Type(v1)` and :1853 unions types 5 and 7. Nothing in the
+	# geography produces a 5 or a 7. icPlanet::Type is a bare field read, so the
+	# binary does not say where the loader got it either. Which field carries it
+	# is an open question; pass the set through, report "unknown".
 	var v = a[0] if a.size() > 0 else null
 	if v is Array:
 		return (v as Array).duplicate()

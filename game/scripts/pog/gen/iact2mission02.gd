@@ -160,7 +160,7 @@ func local_577(v0) -> Variant:
 				_pc = 740
 				continue
 		elif _pc == 625:
-			if not _pog_eq(v0, await iremotepilot.return_current_remote_vessel()) or 1000.0 > sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) > 1000.0 or not _pog_eq(await iremotepilot.return_current_remote_vessel(), v0):
 				_pc = 679
 				continue
 			else:
@@ -198,14 +198,14 @@ func local_748(v0) -> Variant:
 			_pc = 787
 			continue
 		elif _pc == 787:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 803
 				continue
 			else:
 				_pc = 1104
 				continue
 		elif _pc == 803:
-			if 1 == math.random_int(0, 1):
+			if math.random_int(0, 1) == 1:
 				_pc = 825
 				continue
 			else:
@@ -224,7 +224,7 @@ func local_748(v0) -> Variant:
 			sim.place_near(v2, v0, math.random(300.0, 3000.0))
 			sim.set_orientation_euler(v2, math.random(10.0, 360.0), math.random(10.0, 360.0), math.random(10.0, 360.0))
 			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 787
 			continue
 		elif _pc == 1104:
@@ -252,7 +252,7 @@ func local_1116(v0) -> Variant:
 			_pc = 1181
 			continue
 		elif _pc == 1181:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 1197
 				continue
 			else:
@@ -267,7 +267,7 @@ func local_1116(v0) -> Variant:
 			object.set_string_property(v3, "death_script", "iDeathScript.Explosives")
 			object.add_float_property(v3, "explosive_damage", 300.0)
 			object.add_float_property(v3, "explosive_radius", 200.0)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 1181
 			continue
 		elif _pc == 1537:
@@ -314,7 +314,7 @@ func local_1696(v0, v1, v2) -> Variant:
 			_pc = 1783
 			continue
 		elif _pc == 1783:
-			if 0.0 <= object.float_property(v0, "hit_points"):
+			if object.float_property(v0, "hit_points") <= 0.0:
 				_pc = 1819
 				continue
 			else:
@@ -329,7 +329,7 @@ func local_1696(v0, v1, v2) -> Variant:
 			_pc = 1850
 			continue
 		elif _pc == 1850:
-			if v7 < v9:
+			if v9 < v7:
 				_pc = 1866
 				continue
 			else:
@@ -338,14 +338,14 @@ func local_1696(v0, v1, v2) -> Variant:
 		elif _pc == 1866:
 			v3 = iship.cast(group.nth_sim(v1, v9))
 			v8 = sim.distance_between(v0, v3)
-			if 6000.0 < v8:
+			if v8 < 6000.0:
 				_pc = 1953
 				continue
 			else:
 				_pc = 2147
 				continue
 		elif _pc == 1953:
-			if 150.0 < v8:
+			if v8 < 150.0:
 				_pc = 1969
 				continue
 			else:
@@ -373,7 +373,7 @@ func local_1696(v0, v1, v2) -> Variant:
 			_pc = 2262
 			continue
 		elif _pc == 2147:
-			if 6010.0 > v8:
+			if v8 > 6010.0:
 				_pc = 2163
 				continue
 			else:
@@ -393,7 +393,7 @@ func local_1696(v0, v1, v2) -> Variant:
 			_pc = 2262
 			continue
 		elif _pc == 2262:
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 1850
 			continue
 		elif _pc == 2280:
@@ -426,8 +426,8 @@ func local_2324(v0, v1) -> Variant:
 				_pc = 2482
 				continue
 		elif _pc == 2348:
-			v2 = v0 - igame.game_time() - v1
-			if 0 <= v2:
+			v2 = v1 - igame.game_time() - v0
+			if v2 <= 0:
 				_pc = 2394
 				continue
 			else:
@@ -481,7 +481,7 @@ func local_2490(v0, v1, v2) -> Variant:
 				_pc = 5120
 				continue
 		elif _pc == 2542:
-			if global.exists("g_times_up") or _pog_is_null(sim.cast(v1)):
+			if _pog_is_null(sim.cast(v1)) or global.exists("g_times_up"):
 				_pc = 2589
 				continue
 			else:
@@ -517,14 +517,14 @@ func local_2490(v0, v1, v2) -> Variant:
 			_pc = 5126
 			continue
 		elif _pc == 3008:
-			if _pog_eq(v1, await iremotepilot.return_current_remote_vessel()):
+			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v1):
 				_pc = 3032
 				continue
 			else:
 				_pc = 4950
 				continue
 		elif _pc == 3032:
-			if not (v3) and 10000.0 < sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) < 10000.0 and not (v3):
 				_pc = 3073
 				continue
 			else:
@@ -538,7 +538,7 @@ func local_2490(v0, v1, v2) -> Variant:
 			_pc = 3152
 			continue
 		elif _pc == 3152:
-			if not (v6) and 800.0 < sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) < 800.0 and not (v6):
 				_pc = 3193
 				continue
 			else:
@@ -592,7 +592,7 @@ func local_2490(v0, v1, v2) -> Variant:
 			await iconversation.add_response("a2_m02_text_yes", "")
 			await iconversation.add_response("a2_m02_text_repeat", "")
 			v7 = await iconversation.ask(group.leader(group.cast(global.handle("g_oman_escort"))), "", "a2_m02_dialogue_c1_any_are_you_ready")
-			if 2 == v7:
+			if v7 == 2:
 				_pc = 3719
 				continue
 			else:
@@ -606,7 +606,7 @@ func local_2490(v0, v1, v2) -> Variant:
 			_pc = 3949
 			continue
 		elif _pc == 3949:
-			if not (not (global.exists("g_player_cheating")) and 1 != v7):
+			if not (v7 != 1 and not (global.exists("g_player_cheating"))):
 				_pc = 3983
 				continue
 			else:
@@ -620,7 +620,7 @@ func local_2490(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 4039:
 			await _pog_wait(0.10000000149011612)
-			if 5000.0 <= sim.distance_between(v1, v10):
+			if sim.distance_between(v1, v10) <= 5000.0:
 				_pc = 4105
 				continue
 			else:
@@ -641,7 +641,7 @@ func local_2490(v0, v1, v2) -> Variant:
 				_pc = 4619
 				continue
 		elif _pc == 4271:
-			if isim.is_docked_to(v10, v1) and 600.0 < sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) < 600.0 and isim.is_docked_to(v10, v1):
 				_pc = 4329
 				continue
 			else:
@@ -662,7 +662,7 @@ func local_2490(v0, v1, v2) -> Variant:
 			_pc = 5126
 			continue
 		elif _pc == 4619:
-			if 1 == v4:
+			if v4 == 1:
 				_pc = 4631
 				continue
 			else:
@@ -786,7 +786,7 @@ func local_6148(v0) -> Variant:
 			_pc = 6198
 			continue
 		elif _pc == 6198:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 6214
 				continue
 			else:
@@ -797,8 +797,8 @@ func local_6148(v0) -> Variant:
 			await ipilotsetup.generic_cargo_pod(v2)
 			sim.place_relative_to(v2, group.leader(v0), v3, 0.0, 0.0)
 			group.add_sim(v1, v2)
-			v3 = -2000.0 + v3
-			v5 = 1 + v5
+			v3 = v3 + -2000.0
+			v5 = v5 + 1
 			_pc = 6198
 			continue
 		elif _pc == 6409:
@@ -824,7 +824,7 @@ func local_6421(v0, v1) -> Variant:
 			_pc = 6476
 			continue
 		elif _pc == 6476:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 6492
 				continue
 			else:
@@ -837,7 +837,7 @@ func local_6421(v0, v1) -> Variant:
 			await iutilities.sim_place_between_exact(v3, group.nth_sim(v0, v5), group.nth_sim(v1, 0), 300.0)
 			sim.set_orientation_euler(v3, math.random(10.0, 360.0), math.random(10.0, 360.0), math.random(10.0, 360.0))
 			group.add_sim(v2, v3)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 6476
 			continue
 		elif _pc == 6786:
@@ -860,14 +860,14 @@ func local_6798(v0, v1) -> Variant:
 			_pc = 6834
 			continue
 		elif _pc == 6834:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 6850
 				continue
 			else:
 				_pc = 6926
 				continue
 		elif _pc == 6850:
-			if 500.0 < sim.distance_between(v0, group.nth_sim(v1, v3)):
+			if sim.distance_between(v0, group.nth_sim(v1, v3)) < 500.0:
 				_pc = 6902
 				continue
 			else:
@@ -877,7 +877,7 @@ func local_6798(v0, v1) -> Variant:
 			_pc = 6932
 			continue
 		elif _pc == 6908:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 6834
 			continue
 		elif _pc == 6926:
@@ -905,7 +905,7 @@ func local_6934(v0, v1) -> Variant:
 			_pc = 7019
 			continue
 		elif _pc == 7019:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 7035
 				continue
 			else:
@@ -913,7 +913,7 @@ func local_6934(v0, v1) -> Variant:
 				continue
 		elif _pc == 7035:
 			v4 = sim.distance_between(v0, group.nth_sim(v1, v6))
-			if v4 > v3:
+			if v3 > v4:
 				_pc = 7098
 				continue
 			else:
@@ -925,7 +925,7 @@ func local_6934(v0, v1) -> Variant:
 			_pc = 7120
 			continue
 		elif _pc == 7120:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 7019
 			continue
 		elif _pc == 7138:
@@ -969,7 +969,7 @@ func local_7181(v0, v1, v2, v3) -> Variant:
 				_pc = 7683
 				continue
 		elif _pc == 7355:
-			if 300.0 < sim.distance_between(v0, v5):
+			if sim.distance_between(v0, v5) < 300.0:
 				_pc = 7389
 				continue
 			else:
@@ -977,8 +977,8 @@ func local_7181(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 7389:
 			isim.set_sensor_visibility(isim.cast(v5), 0)
-			v12 = 1 + v12
-			if _pog_eq(v11, v12):
+			v12 = v12 + 1
+			if _pog_eq(v12, v11):
 				_pc = 7451
 				continue
 			else:
@@ -996,7 +996,7 @@ func local_7181(v0, v1, v2, v3) -> Variant:
 			_pc = 7590
 			continue
 		elif _pc == 7590:
-			if v4 and await local_6798(v0, v1):
+			if await local_6798(v0, v1) and v4:
 				_pc = 7624
 				continue
 			else:
@@ -1025,7 +1025,7 @@ func local_7181(v0, v1, v2, v3) -> Variant:
 		elif _pc == 7725:
 			v4 = 1
 			v6 = await local_6934(v0, v2)
-			if not _pog_eq(v7, v6):
+			if not _pog_eq(v6, v7):
 				_pc = 7777
 				continue
 			else:
@@ -1073,7 +1073,7 @@ func local_7854(v0, v1, v2) -> Variant:
 				_pc = 9767
 				continue
 		elif _pc == 7892:
-			if global.exists("g_times_up") or _pog_is_null(sim.cast(v1)):
+			if _pog_is_null(sim.cast(v1)) or global.exists("g_times_up"):
 				_pc = 7939
 				continue
 			else:
@@ -1108,14 +1108,14 @@ func local_7854(v0, v1, v2) -> Variant:
 			_pc = 9773
 			continue
 		elif _pc == 8327:
-			if _pog_eq(v1, await iremotepilot.return_current_remote_vessel()):
+			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v1):
 				_pc = 8351
 				continue
 			else:
 				_pc = 9550
 				continue
 		elif _pc == 8351:
-			if not (v3) and 5000.0 < sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) < 5000.0 and not (v3):
 				_pc = 8392
 				continue
 			else:
@@ -1161,7 +1161,7 @@ func local_7854(v0, v1, v2) -> Variant:
 			await iconversation.add_response("a2_m02_text_yes", "")
 			await iconversation.add_response("a2_m02_text_repeat", "")
 			v8 = await iconversation.ask(group.leader(group.cast(global.handle("g_oman_escort"))), "", "a2_m02_dialogue_c1_any_are_you_ready")
-			if 2 == v8:
+			if v8 == 2:
 				_pc = 8897
 				continue
 			else:
@@ -1174,7 +1174,7 @@ func local_7854(v0, v1, v2) -> Variant:
 			_pc = 9055
 			continue
 		elif _pc == 9055:
-			if not (not (global.exists("g_player_cheating")) and 1 != v8):
+			if not (v8 != 1 and not (global.exists("g_player_cheating"))):
 				_pc = 9089
 				continue
 			else:
@@ -1189,7 +1189,7 @@ func local_7854(v0, v1, v2) -> Variant:
 			_pc = 9214
 			continue
 		elif _pc == 9214:
-			if 6 == state.progress(v2):
+			if state.progress(v2) == 6:
 				_pc = 9240
 				continue
 			else:
@@ -1267,14 +1267,14 @@ func local_9777(v0) -> Variant:
 			_pc = 9841
 			continue
 		elif _pc == 9841:
-			if 16 < v5:
+			if v5 < 16:
 				_pc = 9854
 				continue
 			else:
 				_pc = 12138
 				continue
 		elif _pc == 9854:
-			if 15 != v5 and 10 != v5 and 5 != v5 and 2 != v5:
+			if v5 != 2 and v5 != 5 and v5 != 10 and v5 != 15:
 				_pc = 9894
 				continue
 			else:
@@ -1289,7 +1289,7 @@ func local_9777(v0) -> Variant:
 				continue
 		elif _pc == 9905:
 			v11 = math.random_int(0, 4)
-			if 2 < v6 and _pog_is_null(v11):
+			if _pog_is_null(v11) and v6 < 2:
 				_pc = 9948
 				continue
 			else:
@@ -1300,7 +1300,7 @@ func local_9777(v0) -> Variant:
 			_pc = 9955
 			continue
 		elif _pc == 9955:
-			if 2 < v7 and 1 == v11:
+			if v11 == 1 and v7 < 2:
 				_pc = 9976
 				continue
 			else:
@@ -1311,7 +1311,7 @@ func local_9777(v0) -> Variant:
 			_pc = 9983
 			continue
 		elif _pc == 9983:
-			if 3 < v9 and 2 == v11:
+			if v11 == 2 and v9 < 3:
 				_pc = 10005
 				continue
 			else:
@@ -1322,7 +1322,7 @@ func local_9777(v0) -> Variant:
 			_pc = 10012
 			continue
 		elif _pc == 10012:
-			if 2 < v8 and 3 == v11:
+			if v11 == 3 and v8 < 2:
 				_pc = 10034
 				continue
 			else:
@@ -1333,7 +1333,7 @@ func local_9777(v0) -> Variant:
 			_pc = 10041
 			continue
 		elif _pc == 10041:
-			if 3 < v10 and 4 == v11:
+			if v11 == 4 and v10 < 3:
 				_pc = 10063
 				continue
 			else:
@@ -1356,7 +1356,7 @@ func local_9777(v0) -> Variant:
 			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
 			group.add_sim(v1, v3)
 			isim.set_indestructable(v3, 1)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 11135
 			continue
 		elif _pc == 10286:
@@ -1365,7 +1365,7 @@ func local_9777(v0) -> Variant:
 			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
 			group.add_sim(v1, v3)
 			isim.set_indestructable(v3, 1)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 11135
 			continue
 		elif _pc == 10485:
@@ -1374,7 +1374,7 @@ func local_9777(v0) -> Variant:
 			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
 			group.add_sim(v1, v3)
 			isim.set_indestructable(v3, 1)
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 11135
 			continue
 		elif _pc == 10684:
@@ -1383,7 +1383,7 @@ func local_9777(v0) -> Variant:
 			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
 			group.add_sim(v1, v3)
 			isim.set_indestructable(v3, 1)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 11135
 			continue
 		elif _pc == 10883:
@@ -1392,7 +1392,7 @@ func local_9777(v0) -> Variant:
 			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
 			group.add_sim(v1, v3)
 			isim.set_indestructable(v3, 1)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 11135
 			continue
 		elif _pc == 11082:
@@ -1437,7 +1437,7 @@ func local_9777(v0) -> Variant:
 			_pc = 12120
 			continue
 		elif _pc == 11140:
-			if 2 == v5:
+			if v5 == 2:
 				_pc = 11153
 				continue
 			else:
@@ -1454,7 +1454,7 @@ func local_9777(v0) -> Variant:
 			_pc = 11385
 			continue
 		elif _pc == 11385:
-			if 5 == v5:
+			if v5 == 5:
 				_pc = 11398
 				continue
 			else:
@@ -1471,7 +1471,7 @@ func local_9777(v0) -> Variant:
 			_pc = 11630
 			continue
 		elif _pc == 11630:
-			if 10 == v5:
+			if v5 == 10:
 				_pc = 11643
 				continue
 			else:
@@ -1488,7 +1488,7 @@ func local_9777(v0) -> Variant:
 			_pc = 11875
 			continue
 		elif _pc == 11875:
-			if 15 == v5:
+			if v5 == 15:
 				_pc = 11888
 				continue
 			else:
@@ -1505,7 +1505,7 @@ func local_9777(v0) -> Variant:
 			_pc = 12120
 			continue
 		elif _pc == 12120:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 9841
 			continue
 		elif _pc == 12138:
@@ -1527,7 +1527,7 @@ func local_12227(v0, v1) -> Variant:
 		if _pc == 12227:
 			v2 = ifaction.find("The Oman")
 			v3 = ifaction.find("Independent")
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 12295
 				continue
 			else:
@@ -1579,7 +1579,7 @@ func local_12227(v0, v1) -> Variant:
 			_pc = 12777
 			continue
 		elif _pc == 12579:
-			if 1 == object.int_property(v0, "flagged"):
+			if object.int_property(v0, "flagged") == 1:
 				_pc = 12611
 				continue
 			else:
@@ -1608,7 +1608,7 @@ func local_12780(v0) -> Variant:
 	var _pc: int = 12780
 	while true:
 		if _pc == 12780:
-			if 34 == object.int_property(v0, "cargo"):
+			if object.int_property(v0, "cargo") == 34:
 				_pc = 12813
 				continue
 			else:
@@ -1620,7 +1620,7 @@ func local_12780(v0) -> Variant:
 			_pc = 13495
 			continue
 		elif _pc == 12923:
-			if 42 == object.int_property(v0, "cargo"):
+			if object.int_property(v0, "cargo") == 42:
 				_pc = 12956
 				continue
 			else:
@@ -1632,7 +1632,7 @@ func local_12780(v0) -> Variant:
 			_pc = 13495
 			continue
 		elif _pc == 13066:
-			if 45 == object.int_property(v0, "cargo"):
+			if object.int_property(v0, "cargo") == 45:
 				_pc = 13099
 				continue
 			else:
@@ -1644,7 +1644,7 @@ func local_12780(v0) -> Variant:
 			_pc = 13495
 			continue
 		elif _pc == 13209:
-			if 35 == object.int_property(v0, "cargo"):
+			if object.int_property(v0, "cargo") == 35:
 				_pc = 13242
 				continue
 			else:
@@ -1656,7 +1656,7 @@ func local_12780(v0) -> Variant:
 			_pc = 13495
 			continue
 		elif _pc == 13352:
-			if 27 == object.int_property(v0, "cargo"):
+			if object.int_property(v0, "cargo") == 27:
 				_pc = 13385
 				continue
 			else:
@@ -1696,7 +1696,7 @@ func local_13498(v0, v1, v2) -> Variant:
 			_pc = 13536
 			continue
 		elif _pc == 13536:
-			if 16 < v5:
+			if v5 < 16:
 				_pc = 13549
 				continue
 			else:
@@ -1718,7 +1718,7 @@ func local_13498(v0, v1, v2) -> Variant:
 				_pc = 13708
 				continue
 		elif _pc == 13645:
-			if _pog_eq(v1, iship.last_attacker(iship.cast(v3))):
+			if _pog_eq(iship.last_attacker(iship.cast(v3)), v1):
 				_pc = 13689
 				continue
 			else:
@@ -1732,7 +1732,7 @@ func local_13498(v0, v1, v2) -> Variant:
 			_pc = 15254
 			continue
 		elif _pc == 13713:
-			if 45 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 45:
 				_pc = 13746
 				continue
 			else:
@@ -1744,14 +1744,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 13771:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 13804
 			continue
 		elif _pc == 13804:
 			_pc = 15401
 			continue
 		elif _pc == 13809:
-			if 35 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 35:
 				_pc = 13842
 				continue
 			else:
@@ -1763,14 +1763,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 13867:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 13900
 			continue
 		elif _pc == 13900:
 			_pc = 15401
 			continue
 		elif _pc == 13905:
-			if 34 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 34:
 				_pc = 13938
 				continue
 			else:
@@ -1782,14 +1782,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 13963:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 13996
 			continue
 		elif _pc == 13996:
 			_pc = 15401
 			continue
 		elif _pc == 14001:
-			if 42 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 42:
 				_pc = 14034
 				continue
 			else:
@@ -1801,14 +1801,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14059:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14092
 			continue
 		elif _pc == 14092:
 			_pc = 15401
 			continue
 		elif _pc == 14097:
-			if 34 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 34:
 				_pc = 14130
 				continue
 			else:
@@ -1820,14 +1820,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14155:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14188
 			continue
 		elif _pc == 14188:
 			_pc = 15401
 			continue
 		elif _pc == 14193:
-			if 42 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 42:
 				_pc = 14226
 				continue
 			else:
@@ -1839,14 +1839,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14251:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14284
 			continue
 		elif _pc == 14284:
 			_pc = 15401
 			continue
 		elif _pc == 14289:
-			if 27 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 27:
 				_pc = 14322
 				continue
 			else:
@@ -1858,14 +1858,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14347:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14380
 			continue
 		elif _pc == 14380:
 			_pc = 15401
 			continue
 		elif _pc == 14385:
-			if 45 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 45:
 				_pc = 14418
 				continue
 			else:
@@ -1877,14 +1877,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14443:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14476
 			continue
 		elif _pc == 14476:
 			_pc = 15401
 			continue
 		elif _pc == 14481:
-			if 27 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 27:
 				_pc = 14514
 				continue
 			else:
@@ -1896,14 +1896,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14539:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14572
 			continue
 		elif _pc == 14572:
 			_pc = 15401
 			continue
 		elif _pc == 14577:
-			if 45 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 45:
 				_pc = 14610
 				continue
 			else:
@@ -1915,14 +1915,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14635:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14668
 			continue
 		elif _pc == 14668:
 			_pc = 15401
 			continue
 		elif _pc == 14673:
-			if 35 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 35:
 				_pc = 14706
 				continue
 			else:
@@ -1934,14 +1934,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14731:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14764
 			continue
 		elif _pc == 14764:
 			_pc = 15401
 			continue
 		elif _pc == 14769:
-			if 34 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 34:
 				_pc = 14802
 				continue
 			else:
@@ -1953,14 +1953,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14827:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14860
 			continue
 		elif _pc == 14860:
 			_pc = 15401
 			continue
 		elif _pc == 14865:
-			if 35 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 35:
 				_pc = 14898
 				continue
 			else:
@@ -1972,14 +1972,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 14923:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 14956
 			continue
 		elif _pc == 14956:
 			_pc = 15401
 			continue
 		elif _pc == 14961:
-			if 34 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 34:
 				_pc = 14994
 				continue
 			else:
@@ -1991,14 +1991,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 15019:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 15052
 			continue
 		elif _pc == 15052:
 			_pc = 15401
 			continue
 		elif _pc == 15057:
-			if 42 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 42:
 				_pc = 15090
 				continue
 			else:
@@ -2010,14 +2010,14 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 15115:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 15148
 			continue
 		elif _pc == 15148:
 			_pc = 15401
 			continue
 		elif _pc == 15153:
-			if 27 != object.int_property(v3, "cargo"):
+			if object.int_property(v3, "cargo") != 27:
 				_pc = 15186
 				continue
 			else:
@@ -2029,7 +2029,7 @@ func local_13498(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 15211:
 			await local_12227(v3, 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 15244
 			continue
 		elif _pc == 15244:
@@ -2154,15 +2154,15 @@ func local_13498(v0, v1, v2) -> Variant:
 			_pc = 15419
 			continue
 		elif _pc == 15406:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 15419
 			continue
 		elif _pc == 15419:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 13536
 			continue
 		elif _pc == 15437:
-			if 16 == v4:
+			if v4 == 16:
 				_pc = 15450
 				continue
 			else:
@@ -2208,14 +2208,14 @@ func local_15504(v0, v1, v2) -> Variant:
 				_pc = 17500
 				continue
 		elif _pc == 15549:
-			if _pog_eq(v1, await iremotepilot.return_current_remote_vessel()):
+			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v1):
 				_pc = 15573
 				continue
 			else:
 				_pc = 17369
 				continue
 		elif _pc == 15573:
-			if not (v3) and 800.0 < sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) < 800.0 and not (v3):
 				_pc = 15614
 				continue
 			else:
@@ -2240,7 +2240,7 @@ func local_15504(v0, v1, v2) -> Variant:
 			await iconversation.add_response("a2_m02_text_yes", "")
 			await iconversation.add_response("a2_m02_text_repeat", "")
 			v6 = await iconversation.ask(group.leader(group.cast(global.handle("g_oman_escort"))), "", "a2_m02_dialogue_c1_any_are_you_ready")
-			if 2 == v6:
+			if v6 == 2:
 				_pc = 16401
 				continue
 			else:
@@ -2259,7 +2259,7 @@ func local_15504(v0, v1, v2) -> Variant:
 			_pc = 16991
 			continue
 		elif _pc == 16991:
-			if not (await iremotepilot.remote_active() and icomms.is_in_conversation() and 1 != v6):
+			if not (v6 != 1 and icomms.is_in_conversation() and await iremotepilot.remote_active()):
 				_pc = 17031
 				continue
 			else:
@@ -2271,7 +2271,7 @@ func local_15504(v0, v1, v2) -> Variant:
 			_pc = 17066
 			continue
 		elif _pc == 17066:
-			if not (v5) and v3:
+			if v3 and not (v5):
 				_pc = 17083
 				continue
 			else:
@@ -2283,7 +2283,7 @@ func local_15504(v0, v1, v2) -> Variant:
 			_pc = 17119
 			continue
 		elif _pc == 17119:
-			if 7 == state.progress(v2):
+			if state.progress(v2) == 7:
 				_pc = 17145
 				continue
 			else:
@@ -2347,7 +2347,7 @@ func local_17508(v0) -> Variant:
 			_pc = 17656
 			continue
 		elif _pc == 17656:
-			if 5 < v4:
+			if v4 < 5:
 				_pc = 17669
 				continue
 			else:
@@ -2358,7 +2358,7 @@ func local_17508(v0) -> Variant:
 			isim.set_sensor_visibility(iship.cast(v2), 0)
 			isim.set_faction(v2, v3)
 			iship.dock(v2, v1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 17656
 			continue
 		elif _pc == 17800:
@@ -2412,7 +2412,7 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 			continue
 		elif _pc == 18057:
 			await _pog_wait(1.0)
-			if 400000.0 > sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) > 400000.0:
 				_pc = 18123
 				continue
 			else:
@@ -2422,7 +2422,7 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 19473
 			continue
 		elif _pc == 18128:
-			if 8000.0 <= sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) <= 8000.0:
 				_pc = 18162
 				continue
 			else:
@@ -2467,7 +2467,7 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 19428
 			continue
 		elif _pc == 18400:
-			if 1 == object.int_property(v4, "courage"):
+			if object.int_property(v4, "courage") == 1:
 				_pc = 18432
 				continue
 			else:
@@ -2507,7 +2507,7 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 19459
 			continue
 		elif _pc == 18741:
-			if 1 == object.int_property(v4, "cunning"):
+			if object.int_property(v4, "cunning") == 1:
 				_pc = 18773
 				continue
 			else:
@@ -2547,7 +2547,7 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 19459
 			continue
 		elif _pc == 19082:
-			if 1 == object.int_property(v4, "wisdom"):
+			if object.int_property(v4, "wisdom") == 1:
 				_pc = 19114
 				continue
 			else:
@@ -2590,7 +2590,7 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 19459
 			continue
 		elif _pc == 19428:
-			if v7 != 1:
+			if 1 != v7:
 				_pc = 19441
 				continue
 			else:
@@ -2656,14 +2656,14 @@ func local_19678(v0) -> Variant:
 			_pc = 19765
 			continue
 		elif _pc == 19765:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 19781
 				continue
 			else:
 				_pc = 19861
 				continue
 		elif _pc == 19781:
-			if _pog_eq("a2_m02_name_training", object.string_property(list.get_nth(v1, v3), "name")):
+			if _pog_eq(object.string_property(list.get_nth(v1, v3), "name"), "a2_m02_name_training"):
 				_pc = 19837
 				continue
 			else:
@@ -2673,7 +2673,7 @@ func local_19678(v0) -> Variant:
 			_pc = 19867
 			continue
 		elif _pc == 19843:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 19765
 			continue
 		elif _pc == 19861:
@@ -2716,7 +2716,7 @@ func local_19876(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 20047:
 			await _pog_wait(2.0)
-			if not (2 != iai.current_order_type(v1) or not _pog_eq(isim.cast(v9), iship.current_target(v1))):
+			if not (not _pog_eq(iship.current_target(v1), isim.cast(v9)) or iai.current_order_type(v1) != 2):
 				_pc = 20143
 				continue
 			else:
@@ -2740,7 +2740,7 @@ func local_19876(v0, v1, v2) -> Variant:
 				_pc = 21251
 				continue
 		elif _pc == 20220:
-			if not (v5) and iai.is_order_complete(v9):
+			if iai.is_order_complete(v9) and not (v5):
 				_pc = 20250
 				continue
 			else:
@@ -2758,7 +2758,7 @@ func local_19876(v0, v1, v2) -> Variant:
 			_pc = 20447
 			continue
 		elif _pc == 20447:
-			if not (v3) and await iutilities.player_in_range(v7):
+			if await iutilities.player_in_range(v7) and not (v3):
 				_pc = 20477
 				continue
 			else:
@@ -2797,7 +2797,7 @@ func local_19876(v0, v1, v2) -> Variant:
 			_pc = 20839
 			continue
 		elif _pc == 20750:
-			if v3 and not (await iutilities.player_in_range(v7)):
+			if not (await iutilities.player_in_range(v7)) and v3:
 				_pc = 20780
 				continue
 			else:
@@ -2825,14 +2825,14 @@ func local_19876(v0, v1, v2) -> Variant:
 				_pc = 21251
 				continue
 		elif _pc == 20860:
-			if 1 != object.int_property(v2, "wisdom") or 1 != object.int_property(v2, "cunning") or 1 != object.int_property(v2, "courage"):
+			if object.int_property(v2, "courage") != 1 or object.int_property(v2, "cunning") != 1 or object.int_property(v2, "wisdom") != 1:
 				_pc = 20946
 				continue
 			else:
 				_pc = 21152
 				continue
 		elif _pc == 20946:
-			if 5 == state.progress(v2):
+			if state.progress(v2) == 5:
 				_pc = 20972
 				continue
 			else:
@@ -2906,7 +2906,7 @@ func mission_handler() -> Variant:
 			object.add_int_property(v3, "courage", 0)
 			object.add_int_property(v3, "cunning", 0)
 			object.add_int_property(v3, "wisdom", 0)
-			if not _pog_eq("map:/geog/badlands/kompira", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/kompira"):
 				_pc = 21577
 				continue
 			else:
@@ -2943,7 +2943,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 21915:
 			await _pog_wait(2.0)
-			if 1000.0 <= sim.distance_between(group.leader(v2), v0):
+			if sim.distance_between(group.leader(v2), v0) <= 1000.0:
 				_pc = 21994
 				continue
 			else:
@@ -2968,14 +2968,14 @@ func mission_handler() -> Variant:
 				_pc = 22500
 				continue
 		elif _pc == 22130:
-			if 100 == state.progress(v3) or 8 == state.progress(v3):
+			if state.progress(v3) == 8 or state.progress(v3) == 100:
 				_pc = 22178
 				continue
 			else:
 				_pc = 22500
 				continue
 		elif _pc == 22178:
-			if 8 == state.progress(v3):
+			if state.progress(v3) == 8:
 				_pc = 22204
 				continue
 			else:

@@ -121,7 +121,7 @@ func group() -> Variant:
 			_pc = 450
 			continue
 		elif _pc == 450:
-			if not _pog_eq(v0, sim.group(v1)):
+			if not _pog_eq(sim.group(v1), v0):
 				_pc = 479
 				continue
 			else:
@@ -136,7 +136,7 @@ func group() -> Variant:
 			continue
 		elif _pc == 505:
 			p_group.add_sim(v0, v1)
-			p_group.promote_sim(v0, 1 - p_group.sim_count(v0))
+			p_group.promote_sim(v0, p_group.sim_count(v0) - 1)
 			_pc = 570
 			continue
 		elif _pc == 570:
@@ -144,7 +144,7 @@ func group() -> Variant:
 			continue
 		elif _pc == 575:
 			debug.print_string("iWingmen.Group: Returning wingmen group containing the player and ")
-			debug.print_int(1 - p_group.sim_count(v0))
+			debug.print_int(p_group.sim_count(v0) - 1)
 			debug.print_string(" wingmen.\n")
 			_pc = 653
 			continue
@@ -165,7 +165,7 @@ func count() -> Variant:
 		if _pc == 666:
 			v0 = list.item_count(await get_detached_t_fighters())
 			v1 = p_group.sim_count(await group())
-			if 0 > v0:
+			if v0 > 0:
 				_pc = 750
 				continue
 			else:
@@ -193,11 +193,11 @@ func count() -> Variant:
 			_pc = 826
 			continue
 		elif _pc == 826:
-			v1 = v0 - v1
+			v1 = v1 - v0
 			_pc = 843
 			continue
 		elif _pc == 843:
-			v1 = -1 + v1
+			v1 = v1 + -1
 			_pc = 883
 			continue
 		elif _pc == 862:
@@ -267,7 +267,7 @@ func add_wingman(v0) -> Variant:
 			_pc = 1601
 			continue
 		elif _pc == 1068:
-			if _pog_eq(v1, sim.group(v0)):
+			if _pog_eq(sim.group(v0), v1):
 				_pc = 1097
 				continue
 			else:
@@ -287,7 +287,7 @@ func add_wingman(v0) -> Variant:
 			p_group.add_sim(v1, v0)
 			sim.set_cullable(v0, 0)
 			object.add_handle_property(v0, "original_faction", isim.faction(v0))
-			if _pog_eq("", object.string_property(v0, "death_script")):
+			if _pog_eq(object.string_property(v0, "death_script"), ""):
 				_pc = 1254
 				continue
 			else:
@@ -305,7 +305,7 @@ func add_wingman(v0) -> Variant:
 			debug.print_string("iWingmen.AddWingman: Wingman ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string(" added. Total wingmen = ")
-			debug.print_string(string.from_int(1 - p_group.sim_count(v1)))
+			debug.print_string(string.from_int(p_group.sim_count(v1) - 1))
 			debug.print_string("\n")
 			_pc = 1490
 			continue
@@ -334,7 +334,7 @@ func remove_wingman(v0) -> Variant:
 		if _pc == 1604:
 			v1 = await group()
 			v2 = iship.find_player_ship()
-			if _pog_eq(v2, v0):
+			if _pog_eq(v0, v2):
 				_pc = 1663
 				continue
 			else:
@@ -417,7 +417,7 @@ func local_1777(v0) -> Variant:
 			_pc = 2895
 			continue
 		elif _pc == 1899:
-			if not _pog_eq(v1, sim.group(v0)):
+			if not _pog_eq(sim.group(v0), v1):
 				_pc = 1928
 				continue
 			else:
@@ -500,7 +500,7 @@ func local_1777(v0) -> Variant:
 			_pc = 2517
 			continue
 		elif _pc == 2517:
-			if _pog_eq("iWingmen.WingmanDeathScript", object.string_property(v0, "death_script")):
+			if _pog_eq(object.string_property(v0, "death_script"), "iWingmen.WingmanDeathScript"):
 				_pc = 2555
 				continue
 			else:
@@ -519,7 +519,7 @@ func local_1777(v0) -> Variant:
 			debug.print_string("iWingmen.remove_wingman: Wingman ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string(" removed. Total wingmen = ")
-			debug.print_string(string.from_int(1 - p_group.sim_count(v1)))
+			debug.print_string(string.from_int(p_group.sim_count(v1) - 1))
 			debug.print_string("\n")
 			_pc = 2784
 			continue
@@ -583,7 +583,7 @@ func from_group(v0, v1) -> Variant:
 			_pc = 3253
 			continue
 		elif _pc == 3010:
-			if _pog_eq(v2, v0):
+			if _pog_eq(v0, v2):
 				_pc = 3026
 				continue
 			else:
@@ -601,7 +601,7 @@ func from_group(v0, v1) -> Variant:
 			continue
 		elif _pc == 3057:
 			v5 = p_group.sim_count(v0)
-			if 1 < v5:
+			if v5 < 1:
 				_pc = 3093
 				continue
 			else:
@@ -622,7 +622,7 @@ func from_group(v0, v1) -> Variant:
 			_pc = 3131
 			continue
 		elif _pc == 3131:
-			if v5 < v4:
+			if v4 < v5:
 				_pc = 3147
 				continue
 			else:
@@ -631,11 +631,11 @@ func from_group(v0, v1) -> Variant:
 		elif _pc == 3147:
 			v3 = iship.cast(p_group.leader(v0))
 			await add_wingman(v3)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 3131
 			continue
 		elif _pc == 3221:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 3233
 				continue
 			else:
@@ -677,7 +677,7 @@ func purge() -> Variant:
 			_pc = 3584
 			continue
 		elif _pc == 3324:
-			v3 = 1 - p_group.sim_count(v0)
+			v3 = p_group.sim_count(v0) - 1
 			if _pog_is_null(v3):
 				_pc = 3362
 				continue
@@ -706,7 +706,7 @@ func purge() -> Variant:
 			_pc = 3430
 			continue
 		elif _pc == 3430:
-			if 0 > v2:
+			if v2 > 0:
 				_pc = 3442
 				continue
 			else:
@@ -732,7 +732,7 @@ func purge() -> Variant:
 			_pc = 3565
 			continue
 		elif _pc == 3565:
-			v2 = -1 + v2
+			v2 = v2 + -1
 			_pc = 3430
 			continue
 		elif _pc == 3584:
@@ -769,7 +769,7 @@ func purge_to_group() -> Variant:
 			_pc = 3970
 			continue
 		elif _pc == 3675:
-			v4 = 1 - p_group.sim_count(v0)
+			v4 = p_group.sim_count(v0) - 1
 			if _pog_is_null(v4):
 				_pc = 3713
 				continue
@@ -798,7 +798,7 @@ func purge_to_group() -> Variant:
 			_pc = 3782
 			continue
 		elif _pc == 3782:
-			if 0 > v3:
+			if v3 > 0:
 				_pc = 3794
 				continue
 			else:
@@ -825,7 +825,7 @@ func purge_to_group() -> Variant:
 			_pc = 3941
 			continue
 		elif _pc == 3941:
-			v3 = -1 + v3
+			v3 = v3 + -1
 			_pc = 3782
 			continue
 		elif _pc == 3960:
@@ -896,7 +896,7 @@ func report_status() -> Variant:
 			_pc = 4875
 			continue
 		elif _pc == 4145:
-			if 2 < p_group.sim_count(v1):
+			if p_group.sim_count(v1) < 2:
 				_pc = 4171
 				continue
 			else:
@@ -918,7 +918,7 @@ func report_status() -> Variant:
 				_pc = 4401
 				continue
 		elif _pc == 4317:
-			if _pog_eq(v0, iship.cast(v4)):
+			if _pog_eq(iship.cast(v4), v0):
 				_pc = 4346
 				continue
 			else:
@@ -1074,7 +1074,7 @@ func defend_player() -> Variant:
 			_pc = 5249
 			continue
 		elif _pc == 5040:
-			if 2 < p_group.sim_count(v1):
+			if p_group.sim_count(v1) < 2:
 				_pc = 5066
 				continue
 			else:
@@ -1153,7 +1153,7 @@ func attack_target() -> Variant:
 			_pc = 6086
 			continue
 		elif _pc == 5407:
-			if 2 < p_group.sim_count(v1):
+			if p_group.sim_count(v1) < 2:
 				_pc = 5433
 				continue
 			else:
@@ -1178,7 +1178,7 @@ func attack_target() -> Variant:
 			_pc = 6086
 			continue
 		elif _pc == 5582:
-			if _pog_is_null(536870144 & isim.type(v2)):
+			if _pog_is_null(isim.type(v2) & 536870144):
 				_pc = 5613
 				continue
 			else:
@@ -1190,7 +1190,7 @@ func attack_target() -> Variant:
 			_pc = 6086
 			continue
 		elif _pc == 5678:
-			if _pog_eq(v1, sim.group(v2)):
+			if _pog_eq(sim.group(v2), v1):
 				_pc = 5707
 				continue
 			else:
@@ -1202,7 +1202,7 @@ func attack_target() -> Variant:
 			_pc = 6086
 			continue
 		elif _pc == 5772:
-			if 0.0 > ifaction.feeling(ifaction.find("Player"), isim.faction(v2)):
+			if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) > 0.0:
 				_pc = 5834
 				continue
 			else:
@@ -1281,7 +1281,7 @@ func defend_target() -> Variant:
 			_pc = 6936
 			continue
 		elif _pc == 6244:
-			if 2 < p_group.sim_count(v1):
+			if p_group.sim_count(v1) < 2:
 				_pc = 6270
 				continue
 			else:
@@ -1306,7 +1306,7 @@ func defend_target() -> Variant:
 			_pc = 6936
 			continue
 		elif _pc == 6432:
-			if _pog_eq(v1, sim.group(v2)):
+			if _pog_eq(sim.group(v2), v1):
 				_pc = 6461
 				continue
 			else:
@@ -1318,7 +1318,7 @@ func defend_target() -> Variant:
 			_pc = 6936
 			continue
 		elif _pc == 6526:
-			if _pog_is_null(536870144 & isim.type(v2)):
+			if _pog_is_null(isim.type(v2) & 536870144):
 				_pc = 6557
 				continue
 			else:
@@ -1330,7 +1330,7 @@ func defend_target() -> Variant:
 			_pc = 6936
 			continue
 		elif _pc == 6622:
-			if 0.0 < ifaction.feeling(ifaction.find("Player"), isim.faction(v2)):
+			if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) < 0.0:
 				_pc = 6684
 				continue
 			else:
@@ -1416,7 +1416,7 @@ func dock_to_target() -> Variant:
 			continue
 		elif _pc == 7105:
 			v2 = iship.cast(iship.current_target(v0))
-			if _pog_eq(v0, v2):
+			if _pog_eq(v2, v0):
 				_pc = 7158
 				continue
 			else:
@@ -1428,7 +1428,7 @@ func dock_to_target() -> Variant:
 			_pc = 8709
 			continue
 		elif _pc == 7223:
-			if 0 & isim.type(v2):
+			if isim.type(v2) & 0:
 				_pc = 7248
 				continue
 			else:
@@ -1440,7 +1440,7 @@ func dock_to_target() -> Variant:
 			_pc = 8709
 			continue
 		elif _pc == 7313:
-			if 2 < p_group.sim_count(v1):
+			if p_group.sim_count(v1) < 2:
 				_pc = 7339
 				continue
 			else:
@@ -1457,7 +1457,7 @@ func dock_to_target() -> Variant:
 			_pc = 7400
 			continue
 		elif _pc == 7400:
-			if await count() <= v6:
+			if v6 <= await count():
 				_pc = 7424
 				continue
 			else:
@@ -1526,14 +1526,14 @@ func dock_to_target() -> Variant:
 			_pc = 7897
 			continue
 		elif _pc == 7897:
-			if 0 > v7:
+			if v7 > 0:
 				_pc = 7909
 				continue
 			else:
 				_pc = 8112
 				continue
 		elif _pc == 7909:
-			isim.undock(v3, isim.cast(list.get_nth(v4, 1 - v7)))
+			isim.undock(v3, isim.cast(list.get_nth(v4, v7 - 1)))
 			_pc = 8093
 			continue
 		elif _pc == 7971:
@@ -1545,15 +1545,15 @@ func dock_to_target() -> Variant:
 			_pc = 8093
 			continue
 		elif _pc == 8093:
-			v7 = -1 + v7
+			v7 = v7 + -1
 			_pc = 7897
 			continue
 		elif _pc == 8112:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 7400
 			continue
 		elif _pc == 8130:
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 8142
 				continue
 			else:
@@ -1578,7 +1578,7 @@ func dock_to_target() -> Variant:
 			_pc = 8709
 			continue
 		elif _pc == 8332:
-			if _pog_eq(v1, sim.group(v2)):
+			if _pog_eq(sim.group(v2), v1):
 				_pc = 8361
 				continue
 			else:
@@ -1590,7 +1590,7 @@ func dock_to_target() -> Variant:
 			_pc = 8709
 			continue
 		elif _pc == 8426:
-			if 0.0 < ifaction.feeling(ifaction.find("Player"), isim.faction(v2)):
+			if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) < 0.0:
 				_pc = 8488
 				continue
 			else:
@@ -1667,7 +1667,7 @@ func pog_halt() -> Variant:
 			_pc = 9059
 			continue
 		elif _pc == 8874:
-			if 2 < p_group.sim_count(v1):
+			if p_group.sim_count(v1) < 2:
 				_pc = 8900
 				continue
 			else:
@@ -1736,7 +1736,7 @@ func escort_ship(v0, v1) -> Variant:
 			_pc = 9223
 			continue
 		elif _pc == 9223:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 9239
 				continue
 			else:
@@ -1745,7 +1745,7 @@ func escort_ship(v0, v1) -> Variant:
 		elif _pc == 9239:
 			v13 = iship.cast(p_group.nth_sim(v0, v3))
 			v9 = object.float_property(v13, "radius")
-			if v10 > v9:
+			if v9 > v10:
 				_pc = 9328
 				continue
 			else:
@@ -1756,11 +1756,11 @@ func escort_ship(v0, v1) -> Variant:
 			_pc = 9339
 			continue
 		elif _pc == 9339:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 9223
 			continue
 		elif _pc == 9357:
-			if v11 < v10:
+			if v10 < v11:
 				_pc = 9373
 				continue
 			else:
@@ -1775,26 +1775,26 @@ func escort_ship(v0, v1) -> Variant:
 			_pc = 9400
 			continue
 		elif _pc == 9400:
-			v5 = 70.0 + 2.0 * v5
+			v5 = v5 * 2.0 + 70.0
 			v3 = 1
 			_pc = 9430
 			continue
 		elif _pc == 9430:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 9446
 				continue
 			else:
 				_pc = 9655
 				continue
 		elif _pc == 9446:
-			if 1 == v4:
+			if v4 == 1:
 				_pc = 9458
 				continue
 			else:
 				_pc = 9532
 				continue
 		elif _pc == 9458:
-			if 0.0 < v7:
+			if v7 < 0.0:
 				_pc = 9474
 				continue
 			else:
@@ -1805,9 +1805,9 @@ func escort_ship(v0, v1) -> Variant:
 			_pc = 9486
 			continue
 		elif _pc == 9486:
-			v7 = v5 + v7
+			v7 = v7 + v5
 			v4 = 0
-			v8 = v5 - v8
+			v8 = v8 - v5
 			_pc = 9551
 			continue
 		elif _pc == 9532:
@@ -1818,7 +1818,7 @@ func escort_ship(v0, v1) -> Variant:
 		elif _pc == 9551:
 			v13 = iship.cast(p_group.nth_sim(v0, v3))
 			iai.give_escort_order(v13, v1, v7, 0.0, v8, 5000.0)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 9430
 			continue
 		elif _pc == 9655:
@@ -1838,7 +1838,7 @@ func local_9658(v0) -> Variant:
 			_pc = 9670
 			continue
 		elif _pc == 9670:
-			if await count() <= v3:
+			if v3 <= await count():
 				_pc = 9694
 				continue
 			else:
@@ -1868,7 +1868,7 @@ func local_9658(v0) -> Variant:
 			_pc = 9861
 			continue
 		elif _pc == 9861:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 9670
 			continue
 		elif _pc == 9879:
@@ -1934,7 +1934,7 @@ func add_t_fighters(v0, v1) -> Variant:
 			_pc = 10239
 			continue
 		elif _pc == 10129:
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 10141
 				continue
 			else:
@@ -1990,7 +1990,7 @@ func t_fighter_attach_detach() -> Variant:
 			_pc = 10401
 			continue
 		elif _pc == 10333:
-			if 0 > list.item_count(await get_attached_t_fighters()):
+			if list.item_count(await get_attached_t_fighters()) > 0:
 				_pc = 10368
 				continue
 			else:
@@ -2035,7 +2035,7 @@ func get_attached_t_fighters() -> Variant:
 			continue
 		elif _pc == 10496:
 			v2 = await get_az()
-			if object.property_exists(v2, "attached") and isim.is_docked_to(v2, v0) and sim.is_alive(v2):
+			if sim.is_alive(v2) and isim.is_docked_to(v2, v0) and object.property_exists(v2, "attached"):
 				_pc = 10588
 				continue
 			else:
@@ -2068,7 +2068,7 @@ func get_attached_t_fighters() -> Variant:
 			continue
 		elif _pc == 10693:
 			v3 = await get_lori()
-			if object.property_exists(v3, "attached") and isim.is_docked_to(v3, v0) and sim.is_alive(v3):
+			if sim.is_alive(v3) and isim.is_docked_to(v3, v0) and object.property_exists(v3, "attached"):
 				_pc = 10785
 				continue
 			else:
@@ -2121,7 +2121,7 @@ func get_detached_t_fighters() -> Variant:
 			continue
 		elif _pc == 10964:
 			v3 = await get_az()
-			if _pog_eq(v2, sim.group(v3)) and sim.is_alive(v3):
+			if sim.is_alive(v3) and _pog_eq(sim.group(v3), v2):
 				_pc = 11031
 				continue
 			else:
@@ -2154,7 +2154,7 @@ func get_detached_t_fighters() -> Variant:
 			continue
 		elif _pc == 11136:
 			v4 = await get_lori()
-			if _pog_eq(v2, sim.group(v4)) and sim.is_alive(v4):
+			if sim.is_alive(v4) and _pog_eq(sim.group(v4), v2):
 				_pc = 11203
 				continue
 			else:
@@ -2317,7 +2317,7 @@ func t_fighter_attack_target() -> Variant:
 			_pc = 12612
 			continue
 		elif _pc == 11909:
-			if _pog_eq(await group(), sim.group(v1)):
+			if _pog_eq(sim.group(v1), await group()):
 				_pc = 11946
 				continue
 			else:
@@ -2329,7 +2329,7 @@ func t_fighter_attack_target() -> Variant:
 			_pc = 12612
 			continue
 		elif _pc == 11997:
-			if _pog_is_null(536870144 & isim.type(v1)):
+			if _pog_is_null(isim.type(v1) & 536870144):
 				_pc = 12028
 				continue
 			else:
@@ -2341,7 +2341,7 @@ func t_fighter_attack_target() -> Variant:
 			_pc = 12612
 			continue
 		elif _pc == 12079:
-			if 0.0 > ifaction.feeling(ifaction.find("Player"), isim.faction(v1)):
+			if ifaction.feeling(ifaction.find("Player"), isim.faction(v1)) > 0.0:
 				_pc = 12141
 				continue
 			else:
@@ -2713,7 +2713,7 @@ func local_13741(v0, v1) -> Variant:
 			_pc = 14384
 			continue
 		elif _pc == 14252:
-			if not _pog_eq(v1, iai.current_order_target(v0)) or 4 != iai.current_order_type(v0):
+			if iai.current_order_type(v0) != 4 or not _pog_eq(iai.current_order_target(v0), v1):
 				_pc = 14305
 				continue
 			else:
@@ -2802,7 +2802,7 @@ func local_14617(v0, v1) -> Variant:
 			v3 = null
 			v3 = list.from_set(idockport.dockports_of_type(v1, 7, 1))
 			v6 = null
-			if _pog_is_null(v0) or sim.is_dead(v0):
+			if sim.is_dead(v0) or _pog_is_null(v0):
 				_pc = 14772
 				continue
 			else:
@@ -2958,7 +2958,7 @@ func get_live_t_fighter() -> Variant:
 			_pc = 15953
 			continue
 		elif _pc == 15740:
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 15752
 				continue
 			else:
@@ -3159,7 +3159,7 @@ func t_fighters_attach() -> Variant:
 			v5 = await get_detached_t_fighters()
 			v6 = list.item_count(v5)
 			v4 = list.from_set(idockport.dockports_compatible_with(v0, 7, 4))
-			if v6 < list.item_count(v4):
+			if list.item_count(v4) < v6:
 				_pc = 16652
 				continue
 			else:
@@ -3179,7 +3179,7 @@ func t_fighters_attach() -> Variant:
 			await local_22684()
 			v8 = _pog_task_cast(object.handle_property(await get_az(), "docking_task"))
 			v9 = _pog_task_cast(object.handle_property(await get_lori(), "docking_task"))
-			if not (_pog_is_running(v9)) and not (_pog_is_running(v8)):
+			if not (_pog_is_running(v8)) and not (_pog_is_running(v9)):
 				_pc = 16845
 				continue
 			else:
@@ -3195,7 +3195,7 @@ func t_fighters_attach() -> Variant:
 			_pc = 16916
 			continue
 		elif _pc == 16916:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 16932
 				continue
 			else:
@@ -3221,7 +3221,7 @@ func t_fighters_attach() -> Variant:
 			_pc = 17081
 			continue
 		elif _pc == 17081:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 16916
 			continue
 		elif _pc == 17099:
@@ -3414,7 +3414,7 @@ func t_fighters_detach() -> Variant:
 			_pc = 17958
 			continue
 		elif _pc == 17958:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 17974
 				continue
 			else:
@@ -3422,8 +3422,8 @@ func t_fighters_detach() -> Variant:
 				continue
 		elif _pc == 17974:
 			await local_18158(iship.cast(list.get_nth(v1, v3)), v0, v4)
-			v4 = 200.0 - v4
-			v3 = 1 + v3
+			v4 = v4 - 200.0
+			v3 = v3 + 1
 			_pc = 17958
 			continue
 		elif _pc == 18069:
@@ -3614,7 +3614,7 @@ func t_fighter_death_script() -> Variant:
 				_pc = 19256
 				continue
 		elif _pc == 19101:
-			if _pog_eq("name_az", v1):
+			if _pog_eq(v1, "name_az"):
 				_pc = 19119
 				continue
 			else:
@@ -3638,7 +3638,7 @@ func t_fighter_death_script() -> Variant:
 			isim.stop_explosion(v0, 0, 1)
 			ihud.pog_print(string.join("wingmen_tfighters+: +", string.join("wingmen_tfighter_destroyed+ - +", v1)))
 			await _pog_wait(2.0)
-			if sim.is_dead(v3) or sim.is_hidden(v3) or object.property_exists(v4, "player_dying"):
+			if object.property_exists(v4, "player_dying") or sim.is_hidden(v3) or sim.is_dead(v3):
 				_pc = 19488
 				continue
 			else:
@@ -3669,7 +3669,7 @@ func local_19618(v0, v1, v2) -> Variant:
 			v3 = "gunbabe_diag_"
 			v4 = null
 			v5 = null
-			if sim.is_dead(v0) or _pog_is_null(v0):
+			if _pog_is_null(v0) or sim.is_dead(v0):
 				_pc = 19701
 				continue
 			else:
@@ -3681,7 +3681,7 @@ func local_19618(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 19720:
 			v4 = object.string_property(v0, "name")
-			if _pog_eq("name_az", v4):
+			if _pog_eq(v4, "name_az"):
 				_pc = 19770
 				continue
 			else:
@@ -3696,7 +3696,7 @@ func local_19618(v0, v1, v2) -> Variant:
 			_pc = 19801
 			continue
 		elif _pc == 19801:
-			if 1 != v2:
+			if v2 != 1:
 				_pc = 19813
 				continue
 			else:
@@ -3799,7 +3799,7 @@ func attack_death_script() -> Variant:
 		elif _pc == 20438:
 			await local_19618(0, "_makeskill_", 3)
 			ihud.pog_print(string.join("wingmen_tfighters+: +", string.join("wingmen_target_destroyed+ - +", v7)))
-			if _pog_is_null(iai.current_order_type(v4)) and not _pog_is_null(list.item_count(await get_detached_t_fighters())):
+			if not _pog_is_null(list.item_count(await get_detached_t_fighters())) and _pog_is_null(iai.current_order_type(v4)):
 				_pc = 20578
 				continue
 			else:
@@ -3946,7 +3946,7 @@ func local_21141(v0, v1) -> Variant:
 				continue
 		elif _pc == 21447:
 			v4 = object.string_property(v3, "death_script")
-			if _pog_eq("iWingmen.EscortDeathScript", v4) or _pog_eq("iWingmen.AttackDeathScript", v4):
+			if _pog_eq(v4, "iWingmen.AttackDeathScript") or _pog_eq(v4, "iWingmen.EscortDeathScript"):
 				_pc = 21510
 				continue
 			else:
@@ -4009,7 +4009,7 @@ func local_21141(v0, v1) -> Variant:
 			_pc = 21772
 			continue
 		elif _pc == 21772:
-			if _pog_eq("", object.string_property(v0, "death_script")):
+			if _pog_eq(object.string_property(v0, "death_script"), ""):
 				_pc = 21810
 				continue
 			else:
@@ -4093,7 +4093,7 @@ func local_22081() -> Variant:
 				_pc = 22375
 				continue
 		elif _pc == 22208:
-			if _pog_eq("iWingmen.AttackDeathScript", object.string_property(v1, "death_script")):
+			if _pog_eq(object.string_property(v1, "death_script"), "iWingmen.AttackDeathScript"):
 				_pc = 22246
 				continue
 			else:
@@ -4142,7 +4142,7 @@ func t_fighter_warn() -> Variant:
 			v2 = null
 			v2 = object.string_property(v0, "name")
 			v3 = null
-			if _pog_eq(v1, iship.cast(iship.last_attacker(v0))):
+			if _pog_eq(iship.cast(iship.last_attacker(v0)), v1):
 				_pc = 22498
 				continue
 			else:
@@ -4173,7 +4173,7 @@ func t_fighters_enabled() -> Variant:
 				_pc = 22634
 				continue
 		elif _pc == 22600:
-			if -1 == global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") == -1:
 				_pc = 22628
 				continue
 			else:
@@ -4245,7 +4245,7 @@ func true_wingman_list() -> Variant:
 			_pc = 23167
 			continue
 		elif _pc == 22804:
-			v3 = 1 - p_group.sim_count(v0)
+			v3 = p_group.sim_count(v0) - 1
 			if _pog_is_null(v3):
 				_pc = 22842
 				continue
@@ -4274,7 +4274,7 @@ func true_wingman_list() -> Variant:
 			_pc = 22916
 			continue
 		elif _pc == 22916:
-			if 0 > v2:
+			if v2 > 0:
 				_pc = 22928
 				continue
 			else:
@@ -4300,7 +4300,7 @@ func true_wingman_list() -> Variant:
 			_pc = 23056
 			continue
 		elif _pc == 23056:
-			v2 = -1 + v2
+			v2 = v2 + -1
 			_pc = 22916
 			continue
 		elif _pc == 23075:

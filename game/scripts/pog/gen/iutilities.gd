@@ -81,7 +81,7 @@ func clean_inactive_map_entities() -> Variant:
 				_pc = 342
 				continue
 		elif _pc == 152:
-			if 1 == ihabitat.type(v4):
+			if ihabitat.type(v4) == 1:
 				_pc = 177
 				continue
 			else:
@@ -180,7 +180,7 @@ func filter_on_friendly_habitats(v0, v1) -> Variant:
 			_pc = 784
 			continue
 		elif _pc == 784:
-			if not _pog_eq(v1, ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v2)))):
+			if not _pog_eq(ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v2))), v1):
 				_pc = 844
 				continue
 			else:
@@ -191,11 +191,11 @@ func filter_on_friendly_habitats(v0, v1) -> Variant:
 			_pc = 886
 			continue
 		elif _pc == 873:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 886
 			continue
 		elif _pc == 886:
-			if list.item_count(v3) >= v2:
+			if v2 >= list.item_count(v3):
 				_pc = 915
 				continue
 			else:
@@ -229,14 +229,14 @@ func filter_on_friendly_sims() -> Variant:
 			_pc = 1033
 			continue
 		elif _pc == 1033:
-			if v3 < v2:
+			if v2 < v3:
 				_pc = 1049
 				continue
 			else:
 				_pc = 1213
 				continue
 		elif _pc == 1049:
-			if 0.10000000149011612 >= ifaction.feeling(isim.faction(isim.cast(v1)), isim.faction(isim.cast(list.get_nth(v5, v2)))):
+			if ifaction.feeling(isim.faction(isim.cast(v1)), isim.faction(isim.cast(list.get_nth(v5, v2)))) >= 0.10000000149011612:
 				_pc = 1153
 				continue
 			else:
@@ -247,7 +247,7 @@ func filter_on_friendly_sims() -> Variant:
 			_pc = 1195
 			continue
 		elif _pc == 1195:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 1033
 			continue
 		elif _pc == 1213:
@@ -2618,11 +2618,11 @@ func find_number_of_i_n_i_entries(v0, v1, v2) -> Variant:
 				_pc = 6010
 				continue
 		elif _pc == 5997:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 6010
 			continue
 		elif _pc == 6010:
-			if 1 != v3:
+			if v3 != 1:
 				_pc = 6022
 				continue
 			else:
@@ -2660,7 +2660,7 @@ func get_cargo_name_from_i_n_i(v0) -> Variant:
 			continue
 		elif _pc == 6132:
 			v2 = inifile.string(v1, "General_info", "Name", "None")
-			if _pog_eq("None", v2):
+			if _pog_eq(v2, "None"):
 				_pc = 6194
 				continue
 			else:
@@ -2696,14 +2696,14 @@ func pick_random_location_of_type() -> Variant:
 			_pc = 6336
 			continue
 		elif _pc == 6336:
-			if list.item_count(v1) < v2:
+			if v2 < list.item_count(v1):
 				_pc = 6365
 				continue
 			else:
 				_pc = 6577
 				continue
 		elif _pc == 6365:
-			if not _pog_eq(v0, await from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2))))):
+			if not _pog_eq(await from_location_enum(ihabitat.type(ihabitat.cast(list.get_nth(v1, v2)))), v0):
 				_pc = 6441
 				continue
 			else:
@@ -2718,7 +2718,7 @@ func pick_random_location_of_type() -> Variant:
 				_pc = 6509
 				continue
 		elif _pc == 6490:
-			v2 = -1 + v2
+			v2 = v2 + -1
 			_pc = 6559
 			continue
 		elif _pc == 6509:
@@ -2732,7 +2732,7 @@ func pick_random_location_of_type() -> Variant:
 			_pc = 6577
 			continue
 		elif _pc == 6559:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 6336
 			continue
 		elif _pc == 6577:
@@ -2802,7 +2802,7 @@ func get_largest_ship_radius(v0) -> Variant:
 			_pc = 6900
 			continue
 		elif _pc == 6900:
-			if v2 < v1:
+			if v1 < v2:
 				_pc = 6916
 				continue
 			else:
@@ -2811,7 +2811,7 @@ func get_largest_ship_radius(v0) -> Variant:
 		elif _pc == 6916:
 			v5 = group.nth_sim(v0, v1)
 			v4 = object.float_property(v5, "radius")
-			if v3 > v4:
+			if v4 > v3:
 				_pc = 6992
 				continue
 			else:
@@ -2822,7 +2822,7 @@ func get_largest_ship_radius(v0) -> Variant:
 			_pc = 7003
 			continue
 		elif _pc == 7003:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 6900
 			continue
 		elif _pc == 7021:
@@ -2861,7 +2861,7 @@ func player_in_range(v0) -> Variant:
 			continue
 		elif _pc == 7141:
 			v2 = 2000.0
-			if v2 + v1 <= sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) <= v1 + v2:
 				_pc = 7192
 				continue
 			else:
@@ -2903,29 +2903,29 @@ func player_in_range_of_group(v0) -> Variant:
 			_pc = 7309
 			continue
 		elif _pc == 7309:
-			if v4 < v6:
+			if v6 < v4:
 				_pc = 7325
 				continue
 			else:
 				_pc = 7414
 				continue
 		elif _pc == 7325:
-			if v3 + v2 <= sim.distance_between(group.nth_sim(v0, v6), v1):
+			if sim.distance_between(group.nth_sim(v0, v6), v1) <= v2 + v3:
 				_pc = 7383
 				continue
 			else:
 				_pc = 7396
 				continue
 		elif _pc == 7383:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 7396
 			continue
 		elif _pc == 7396:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 7309
 			continue
 		elif _pc == 7414:
-			if 0 > v5:
+			if v5 > 0:
 				_pc = 7426
 				continue
 			else:
@@ -2952,7 +2952,7 @@ func kill_list_of_sims(v0) -> Variant:
 			_pc = 7452
 			continue
 		elif _pc == 7452:
-			if list.item_count(v0) < v1:
+			if v1 < list.item_count(v0):
 				_pc = 7481
 				continue
 			else:
@@ -2960,7 +2960,7 @@ func kill_list_of_sims(v0) -> Variant:
 				continue
 		elif _pc == 7481:
 			sim.destroy(sim.cast(list.get_nth(v0, v1)))
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 7452
 			continue
 		elif _pc == 7549:
@@ -2995,7 +2995,7 @@ func jettison_cargo(v0, v1) -> Variant:
 			_pc = 7627
 			continue
 		elif _pc == 7627:
-			if list.item_count(v0) < v4:
+			if v4 < list.item_count(v0):
 				_pc = 7656
 				continue
 			else:
@@ -3004,7 +3004,7 @@ func jettison_cargo(v0, v1) -> Variant:
 		elif _pc == 7656:
 			v2 = iship.cast(list.get_nth(v0, v4))
 			iship.undock(v2, v1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 7627
 			continue
 		elif _pc == 7740:
@@ -3198,7 +3198,7 @@ func get_surface_locations_from_orbital() -> Variant:
 				_pc = 8979
 				continue
 		elif _pc == 8845:
-			if _pog_eq(v1, imapentity.parent(imapentity.cast(p_set.first_element(v2)))):
+			if _pog_eq(imapentity.parent(imapentity.cast(p_set.first_element(v2))), v1):
 				_pc = 8900
 				continue
 			else:
@@ -3249,7 +3249,7 @@ func allow_mission_skipping() -> Variant:
 			_pc = 9228
 			continue
 		elif _pc == 9228:
-			if 1 == global.pog_bool("g_setup_skipper_already") and 1 == global.exists("g_setup_skipper_already"):
+			if global.exists("g_setup_skipper_already") == 1 and global.pog_bool("g_setup_skipper_already") == 1:
 				_pc = 9277
 				continue
 			else:
@@ -3324,7 +3324,7 @@ func local_9508() -> Variant:
 			continue
 		elif _pc == 9649:
 			await _pog_wait(2.0)
-			if 1 != global.pog_bool("g_skip_locked"):
+			if global.pog_bool("g_skip_locked") != 1:
 				_pc = 9708
 				continue
 			else:
@@ -3354,7 +3354,7 @@ func local_9508() -> Variant:
 			_pc = 9803
 			continue
 		elif _pc == 9803:
-			if 1 != v0:
+			if v0 != 1:
 				_pc = 9816
 				continue
 			else:
@@ -3388,7 +3388,7 @@ func local_9845() -> Variant:
 	v1 = await iconversation.ask(0, "utils_particle_employee", string.join("utils_dial_wanna_skip", v0))
 	await iconversation.end()
 	text.remove("csv:/text/utils")
-	if 2 == v1:
+	if v1 == 2:
 		if PogRuntime.TRACE:
 			debug.print_string("skipping next mission!")
 	return
@@ -3402,7 +3402,7 @@ func skip_act(v0, v1) -> Variant:
 			_pc = 10327
 			continue
 		elif _pc == 10156:
-			if 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+			if global.exists("g_skip_ok") and global.pog_bool("g_skip_ok") == 1:
 				_pc = 10203
 				continue
 			else:
@@ -3410,14 +3410,14 @@ func skip_act(v0, v1) -> Variant:
 				continue
 		elif _pc == 10203:
 			text.add("csv:/text/utils")
-			if 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 10251
 				continue
 			else:
 				_pc = 10327
 				continue
 		elif _pc == 10251:
-			if v1 > global.pog_int("g_skip_to_act"):
+			if global.pog_int("g_skip_to_act") > v1:
 				_pc = 10282
 				continue
 			else:
@@ -3468,7 +3468,7 @@ func skip_mission(v0) -> Variant:
 			continue
 		elif _pc == 10418:
 			await local_9508()
-			if 1 == global.pog_bool("g_skip_missions_is_ok") and 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+			if global.exists("g_skip_ok") and global.pog_bool("g_skip_ok") == 1 and global.pog_bool("g_skip_missions_is_ok") == 1:
 				_pc = 10501
 				continue
 			else:
@@ -3476,7 +3476,7 @@ func skip_mission(v0) -> Variant:
 				continue
 		elif _pc == 10501:
 			text.add("csv:/text/utils")
-			if 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 10549
 				continue
 			else:
@@ -3494,7 +3494,7 @@ func skip_mission(v0) -> Variant:
 			_pc = 10673
 			continue
 		elif _pc == 10673:
-			if _pog_eq(global.string("g_skip_to_mission"), v0):
+			if _pog_eq(v0, global.string("g_skip_to_mission")):
 				_pc = 10705
 				continue
 			else:
@@ -3520,7 +3520,7 @@ func skip_mission(v0) -> Variant:
 			_pc = 10941
 			continue
 		elif _pc == 10867:
-			if 1 == global.pog_bool("g_skip_ok"):
+			if global.pog_bool("g_skip_ok") == 1:
 				_pc = 10894
 				continue
 			else:
@@ -3655,7 +3655,7 @@ func super_skip() -> Variant:
 			await iconversation.add_response("no ta.", "no ta.")
 			await iconversation.add_response("yes please.", "yes please.")
 			v0 = await iconversation.ask(0, "utils_particle_employee", "utils_want_to_super_skip")
-			if 1 == v0:
+			if v0 == 1:
 				_pc = 11516
 				continue
 			else:
@@ -3672,7 +3672,7 @@ func super_skip() -> Variant:
 			_pc = 11592
 			continue
 		elif _pc == 11592:
-			if 1 == global.pog_bool("g_skip_ok"):
+			if global.pog_bool("g_skip_ok") == 1:
 				_pc = 11619
 				continue
 			else:
@@ -3748,7 +3748,7 @@ func super_skip() -> Variant:
 			_pc = 12570
 			continue
 		elif _pc == 12512:
-			if v1 != 1:
+			if 1 != v1:
 				_pc = 12525
 				continue
 			else:
@@ -3870,7 +3870,7 @@ func super_skip() -> Variant:
 			_pc = 13751
 			continue
 		elif _pc == 13657:
-			if v1 != 1:
+			if 1 != v1:
 				_pc = 13670
 				continue
 			else:
@@ -4062,7 +4062,7 @@ func super_skip() -> Variant:
 			_pc = 15626
 			continue
 		elif _pc == 15478:
-			if v1 != 1:
+			if 1 != v1:
 				_pc = 15491
 				continue
 			else:
@@ -4247,7 +4247,7 @@ func super_skip() -> Variant:
 			_pc = 16703
 			continue
 		elif _pc == 16618:
-			if v1 != 1:
+			if 1 != v1:
 				_pc = 16631
 				continue
 			else:
@@ -4316,7 +4316,7 @@ func super_skip() -> Variant:
 			_pc = 16753
 			continue
 		elif _pc == 16713:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 16726
 				continue
 			else:
@@ -4377,7 +4377,7 @@ func task_skip_mission() -> Variant:
 				_pc = 17201
 				continue
 		elif _pc == 16884:
-			if 1 == global.pog_bool("g_skip_ok"):
+			if global.pog_bool("g_skip_ok") == 1:
 				_pc = 16911
 				continue
 			else:
@@ -4391,7 +4391,7 @@ func task_skip_mission() -> Variant:
 			v2 = await iconversation.ask(0, "utils_particle_employee", string.join("utils_dial_wanna_skip+", v0))
 			await iconversation.end()
 			text.remove("csv:/text/utils")
-			if 2 == v2:
+			if v2 == 2:
 				_pc = 17100
 				continue
 			else:
@@ -4456,7 +4456,7 @@ func wait_on_skip_mission() -> Variant:
 				_pc = 17351
 				continue
 		elif _pc == 17320:
-			if 1 == global.pog_bool(v1):
+			if global.pog_bool(v1) == 1:
 				_pc = 17345
 				continue
 			else:
@@ -4483,14 +4483,14 @@ func skip_wait_for_bool(v0, v1, v2) -> Variant:
 			_pc = 17799
 			continue
 		elif _pc == 17383:
-			if 1 == global.pog_bool("g_skip_ok") and global.exists("g_skip_ok"):
+			if global.exists("g_skip_ok") and global.pog_bool("g_skip_ok") == 1:
 				_pc = 17430
 				continue
 			else:
 				_pc = 17799
 				continue
 		elif _pc == 17430:
-			if 1 == global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 17457
 				continue
 			else:
@@ -4523,7 +4523,7 @@ func skip_wait_for_bool(v0, v1, v2) -> Variant:
 			v3 = await iconversation.ask(0, "utils_particle_employee", v0)
 			await iconversation.end()
 			text.remove("csv:/text/utils")
-			if 2 == v3:
+			if v3 == 2:
 				_pc = 17722
 				continue
 			else:
@@ -4614,71 +4614,71 @@ func local_17833() -> Variant:
 	await iconversation.add_response("Owen's Star", "Owen's Star")
 	await iconversation.add_response("None", "None")
 	v0 = await iconversation.ask(0, "Particle employee", "Jump to?")
-	if 1 == v0:
+	if v0 == 1:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v9)
-	if 2 == v0:
+	if v0 == 2:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v2)
-	if 3 == v0:
+	if v0 == 3:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v3)
-	if 4 == v0:
+	if v0 == 4:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v4)
-	if 5 == v0:
+	if v0 == 5:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v5)
-	if 6 == v0:
+	if v0 == 6:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v6)
-	if 7 == v0:
+	if v0 == 7:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v7)
-	if 8 == v0:
+	if v0 == 8:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v8)
-	if 9 == v0:
+	if v0 == 9:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v10)
-	if 10 == v0:
+	if v0 == 10:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v11)
-	if 11 == v0:
+	if v0 == 11:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v12)
-	if 12 == v0:
+	if v0 == 12:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v13)
-	if 13 == v0:
+	if v0 == 13:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v14)
-	if 14 == v0:
+	if v0 == 14:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v15)
-	if 15 == v0:
+	if v0 == 15:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v16)
-	if 16 == v0:
+	if v0 == 16:
 		await iconversation.say(0, "Particle employee", "SHAZAM !")
 		await iconversation.end()
 		isim.capsule_jump(v1, v17)
-	if 17 != v0:
+	if v0 != 17:
 		return
 	await iconversation.say(0, "Particle Employee", "As you wish")
 	await iconversation.end()
@@ -4707,7 +4707,7 @@ func sim_place_between_exact(v0, v1, v2, v3) -> Variant:
 			_pc = 20316
 			continue
 		elif _pc == 20276:
-			sim.place_between(v0, v1, v2, v4 / v3)
+			sim.place_between(v0, v1, v2, v3 / v4)
 			_pc = 20316
 			continue
 		elif _pc == 20316:
@@ -4734,7 +4734,7 @@ func group_set_cullable(v0, v1) -> Variant:
 			_pc = 20367
 			continue
 		elif _pc == 20367:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 20383
 				continue
 			else:
@@ -4742,7 +4742,7 @@ func group_set_cullable(v0, v1) -> Variant:
 				continue
 		elif _pc == 20383:
 			sim.set_cullable(group.nth_sim(v0, v3), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 20367
 			continue
 		elif _pc == 20443:
@@ -4761,7 +4761,7 @@ func group_set_cullable(v0, v1) -> Variant:
 			_pc = 20491
 			continue
 		elif _pc == 20491:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 20507
 				continue
 			else:
@@ -4769,7 +4769,7 @@ func group_set_cullable(v0, v1) -> Variant:
 				continue
 		elif _pc == 20507:
 			await group_set_cullable(group.nth_group(v0, v3), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 20491
 			continue
 		elif _pc == 20567:
@@ -4796,7 +4796,7 @@ func capsule_jump_player(v0) -> Variant:
 			continue
 		elif _pc == 20668:
 			await _pog_wait(0.5)
-			if _pog_eq(v2, isim.active_world()):
+			if _pog_eq(isim.active_world(), v2):
 				_pc = 20727
 				continue
 			else:
@@ -4823,7 +4823,7 @@ func capsule_jump_player(v0) -> Variant:
 			_pc = 20923
 			continue
 		elif _pc == 20923:
-			if v5 < v4:
+			if v4 < v5:
 				_pc = 20939
 				continue
 			else:
@@ -4863,7 +4863,7 @@ func capsule_jump_player(v0) -> Variant:
 			continue
 		elif _pc == 21174:
 			await _pog_wait(math.random(1.5, 2.5))
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 20923
 			continue
 		elif _pc == 21242:
@@ -4908,7 +4908,7 @@ func local_21360(v0) -> Variant:
 			_pc = 21396
 			continue
 		elif _pc == 21396:
-			if v1 < v2:
+			if v2 < v1:
 				_pc = 21412
 				continue
 			else:
@@ -4916,7 +4916,7 @@ func local_21360(v0) -> Variant:
 				continue
 		elif _pc == 21412:
 			iship.set_free_without_pilot(iship.cast(group.nth_sim(v0, v2)), 0)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 21396
 			continue
 		elif _pc == 21481:
@@ -4930,7 +4930,7 @@ func local_21484(v0) -> Variant:
 	while true:
 		if _pc == 21484:
 			await _pog_wait(0.10000000149011612)
-			if not (iship.is_free_without_pilot(v0) and isim.is_capsule_jumping(v0)):
+			if not (isim.is_capsule_jumping(v0) and iship.is_free_without_pilot(v0)):
 				_pc = 21558
 				continue
 			else:
@@ -4938,7 +4938,7 @@ func local_21484(v0) -> Variant:
 				continue
 		elif _pc == 21558:
 			iship.set_free_without_pilot(v0, 1)
-			if 1 == object.property_exists(v0, "mega_freighter"):
+			if object.property_exists(v0, "mega_freighter") == 1:
 				_pc = 21610
 				continue
 			else:
@@ -4949,7 +4949,7 @@ func local_21484(v0) -> Variant:
 			_pc = 21744
 			continue
 		elif _pc == 21665:
-			if 33554432 == isim.type(v0):
+			if isim.type(v0) == 33554432:
 				_pc = 21694
 				continue
 			else:
@@ -5001,7 +5001,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 			_pc = 22060
 			continue
 		elif _pc == 22060:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 22076
 				continue
 			else:
@@ -5020,7 +5020,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 22146:
 			debug.print_string("iUtilities.CapsuleJumpGroup: Adding sim no. ")
-			debug.print_int(1 + v4)
+			debug.print_int(v4 + 1)
 			debug.print_string(" (")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(") to the jump list. \n")
@@ -5052,7 +5052,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 			_pc = 22375
 			continue
 		elif _pc == 22375:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 22060
 			continue
 		elif _pc == 22393:
@@ -5062,7 +5062,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 			_pc = 22457
 			continue
 		elif _pc == 22457:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 22473
 				continue
 			else:
@@ -5081,7 +5081,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 22543:
 			debug.print_string("iUtilities.CapsuleJumpGroup: Jumping sim no. ")
-			debug.print_int(1 + v4)
+			debug.print_int(v4 + 1)
 			debug.print_string(" name = ")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" to ")
@@ -5116,7 +5116,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 			_pc = 22852
 			continue
 		elif _pc == 22852:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 22457
 			continue
 		elif _pc == 22870:
@@ -5145,7 +5145,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 			_pc = 23005
 			continue
 		elif _pc == 23005:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 23021
 				continue
 			else:
@@ -5153,7 +5153,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 23021:
 			await capsule_jump_group(group.nth_group(v0, v4), v1, v2)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 23005
 			continue
 		elif _pc == 23086:
@@ -5179,7 +5179,7 @@ func list_from_compound_group(v0) -> Variant:
 			_pc = 23168
 			continue
 		elif _pc == 23168:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 23184
 				continue
 			else:
@@ -5187,7 +5187,7 @@ func list_from_compound_group(v0) -> Variant:
 				continue
 		elif _pc == 23184:
 			list.add_head(v1, group.nth_sim(v0, v4))
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 23168
 			continue
 		elif _pc == 23244:
@@ -5195,7 +5195,7 @@ func list_from_compound_group(v0) -> Variant:
 			_pc = 23251
 			continue
 		elif _pc == 23251:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 23267
 				continue
 			else:
@@ -5203,7 +5203,7 @@ func list_from_compound_group(v0) -> Variant:
 				continue
 		elif _pc == 23267:
 			list.append(v1, await list_from_compound_group(group.nth_group(v0, v6)))
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 23251
 			continue
 		elif _pc == 23342:
@@ -5225,7 +5225,7 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 		if _pc == 23363:
 			v5 = group.sim_count(v1)
 			v6 = group.group_count(v1)
-			if _pog_is_null(v6) and _pog_is_null(v5):
+			if _pog_is_null(v5) and _pog_is_null(v6):
 				_pc = 23436
 				continue
 			else:
@@ -5239,7 +5239,7 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 			_pc = 23449
 			continue
 		elif _pc == 23449:
-			if v5 < v7:
+			if v7 < v5:
 				_pc = 23465
 				continue
 			else:
@@ -5247,7 +5247,7 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 23465:
 			v4 = isim.cast(group.nth_sim(v1, v7))
-			if v2 < sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) < v2:
 				_pc = 23541
 				continue
 			else:
@@ -5257,11 +5257,11 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 			_pc = 23714
 			continue
 		elif _pc == 23551:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 23449
 			continue
 		elif _pc == 23569:
-			if 0 > v6 and v3:
+			if v3 and v6 > 0:
 				_pc = 23587
 				continue
 			else:
@@ -5272,7 +5272,7 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 			_pc = 23594
 			continue
 		elif _pc == 23594:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 23610
 				continue
 			else:
@@ -5290,7 +5290,7 @@ func near_to_group(v0, v1, v2, v3) -> Variant:
 			_pc = 23714
 			continue
 		elif _pc == 23690:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 23594
 			continue
 		elif _pc == 23708:
@@ -5312,7 +5312,7 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 		if _pc == 23716:
 			v5 = group.sim_count(v1)
 			v6 = group.group_count(v1)
-			if _pog_is_null(v6) and _pog_is_null(v5):
+			if _pog_is_null(v5) and _pog_is_null(v6):
 				_pc = 23789
 				continue
 			else:
@@ -5326,7 +5326,7 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 			_pc = 23802
 			continue
 		elif _pc == 23802:
-			if v5 < v7:
+			if v7 < v5:
 				_pc = 23818
 				continue
 			else:
@@ -5334,7 +5334,7 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 23818:
 			v4 = isim.cast(group.nth_sim(v1, v7))
-			if v2 > sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) > v2:
 				_pc = 23894
 				continue
 			else:
@@ -5344,11 +5344,11 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 			_pc = 24067
 			continue
 		elif _pc == 23904:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 23802
 			continue
 		elif _pc == 23922:
-			if 0 > v6 and v3:
+			if v3 and v6 > 0:
 				_pc = 23940
 				continue
 			else:
@@ -5359,7 +5359,7 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 			_pc = 23947
 			continue
 		elif _pc == 23947:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 23963
 				continue
 			else:
@@ -5377,7 +5377,7 @@ func far_from_group(v0, v1, v2, v3) -> Variant:
 			_pc = 24067
 			continue
 		elif _pc == 24043:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 23947
 			continue
 		elif _pc == 24061:
@@ -5431,7 +5431,7 @@ func create_player(v0, v1) -> Variant:
 			_pc = 24275
 			continue
 		elif _pc == 24275:
-			if _pog_eq("", v0):
+			if _pog_eq(v0, ""):
 				_pc = 24293
 				continue
 			else:
@@ -5456,7 +5456,7 @@ func create_player(v0, v1) -> Variant:
 				_pc = 24608
 				continue
 		elif _pc == 24454:
-			if _pog_eq(imapentity.find_by_name("Hoffer's Gap"), v1):
+			if _pog_eq(v1, imapentity.find_by_name("Hoffer's Gap")):
 				_pc = 24487
 				continue
 			else:
@@ -5518,7 +5518,7 @@ func convert_seconds_to_time(v0) -> Variant:
 			v1 = await local_24642(v0)
 			v3 = string.join(string.from_int(v1), ":")
 			v2 = await local_24657(v1, v0)
-			if 10 < v2:
+			if v2 < 10:
 				_pc = 24806
 				continue
 			else:
@@ -5576,7 +5576,7 @@ func group_set_faction(v0, v1) -> Variant:
 			_pc = 25202
 			continue
 		elif _pc == 25202:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 25218
 				continue
 			else:
@@ -5584,7 +5584,7 @@ func group_set_faction(v0, v1) -> Variant:
 				continue
 		elif _pc == 25218:
 			isim.set_faction(isim.cast(group.nth_sim(v0, v3)), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 25202
 			continue
 		elif _pc == 25291:
@@ -5603,7 +5603,7 @@ func group_set_faction(v0, v1) -> Variant:
 			_pc = 25339
 			continue
 		elif _pc == 25339:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 25355
 				continue
 			else:
@@ -5611,7 +5611,7 @@ func group_set_faction(v0, v1) -> Variant:
 				continue
 		elif _pc == 25355:
 			await group_set_faction(group.nth_group(v0, v3), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 25339
 			continue
 		elif _pc == 25415:
@@ -5624,7 +5624,7 @@ func local_25418(v0) -> Variant:
 	var _pc: int = 25418
 	while true:
 		if _pc == 25418:
-			if 0.5 < v0:
+			if v0 < 0.5:
 				_pc = 25434
 				continue
 			else:
@@ -5679,14 +5679,14 @@ func send_story_element(v0, v1, v2) -> Variant:
 	var _pc: int = 25631
 	while true:
 		if _pc == 25631:
-			if 1 == global.pog_bool("g_skip_to_specific") and global.exists("g_skip_to_specific"):
+			if global.exists("g_skip_to_specific") and global.pog_bool("g_skip_to_specific") == 1:
 				_pc = 25678
 				continue
 			else:
 				_pc = 25762
 				continue
 		elif _pc == 25678:
-			if not _pog_eq(global.pog_int("g_skip_to_act"), v1) or not _pog_eq(global.pog_int("g_skip_to_mission_number"), v2):
+			if not _pog_eq(v2, global.pog_int("g_skip_to_mission_number")) or not _pog_eq(v1, global.pog_int("g_skip_to_act")):
 				_pc = 25735
 				continue
 			else:
@@ -5719,7 +5719,7 @@ func critical_ship_monitor() -> Variant:
 			v3 = math.random_int(0, 3)
 			v4 = math.random_int(0, 3)
 			v5 = 0
-			if 0.0 < v1:
+			if v1 < 0.0:
 				_pc = 25862
 				continue
 			else:
@@ -5729,7 +5729,7 @@ func critical_ship_monitor() -> Variant:
 			_pc = 25874
 			continue
 		elif _pc == 25874:
-			if _pog_is_null(v0) or isim.is_dying(v0) or sim.is_dead(v0):
+			if sim.is_dead(v0) or isim.is_dying(v0) or _pog_is_null(v0):
 				_pc = 25925
 				continue
 			else:
@@ -5823,7 +5823,7 @@ func critical_ship_monitor() -> Variant:
 				_pc = 27007
 				continue
 		elif _pc == 26269:
-			if isim.is_dying(v0) or sim.is_dead(v0):
+			if sim.is_dead(v0) or isim.is_dying(v0):
 				_pc = 26311
 				continue
 			else:
@@ -5875,15 +5875,15 @@ func critical_ship_monitor() -> Variant:
 				_pc = 27007
 				continue
 		elif _pc == 26479:
-			if _pog_eq(v2, iship.last_attacker(v0)):
+			if _pog_eq(iship.last_attacker(v0), v2):
 				_pc = 26510
 				continue
 			else:
 				_pc = 26761
 				continue
 		elif _pc == 26510:
-			v3 = 1 + v3
-			if 3 > v3:
+			v3 = v3 + 1
+			if v3 > 3:
 				_pc = 26536
 				continue
 			else:
@@ -5948,8 +5948,8 @@ func critical_ship_monitor() -> Variant:
 			_pc = 27007
 			continue
 		elif _pc == 26761:
-			v4 = 1 + v4
-			if 3 > v4:
+			v4 = v4 + 1
+			if v4 > 3:
 				_pc = 26787
 				continue
 			else:
@@ -6043,7 +6043,7 @@ func group_set_local_velocity(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 27165
 			continue
 		elif _pc == 27165:
-			if group.sim_count(v0) < v6:
+			if v6 < group.sim_count(v0):
 				_pc = 27194
 				continue
 			else:
@@ -6062,7 +6062,7 @@ func group_set_local_velocity(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 27308
 			continue
 		elif _pc == 27308:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 27165
 			continue
 		elif _pc == 27326:
@@ -6091,7 +6091,7 @@ func group_set_local_velocity(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 27390
 			continue
 		elif _pc == 27390:
-			if v7 < v6:
+			if v6 < v7:
 				_pc = 27406
 				continue
 			else:
@@ -6099,7 +6099,7 @@ func group_set_local_velocity(v0, v1, v2, v3, v4, v5) -> Variant:
 				continue
 		elif _pc == 27406:
 			await group_set_local_velocity(group.nth_group(v8, v6), v1, v2, v3, v4, v5)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 27390
 			continue
 		elif _pc == 27486:
@@ -6116,11 +6116,11 @@ func local_27489() -> Variant:
 	var _pc: int = 27489
 	while true:
 		if _pc == 27489:
-			v0 = 1 - itrade.num_trades()
+			v0 = itrade.num_trades() - 1
 			_pc = 27515
 			continue
 		elif _pc == 27515:
-			if 0 >= v0:
+			if v0 >= 0:
 				_pc = 27527
 				continue
 			else:
@@ -6130,14 +6130,14 @@ func local_27489() -> Variant:
 			v1 = itrade.nth_trade(v0)
 			v2 = itrade.num_offers(v1)
 			v3 = iinventory.cargo_type_from_name(itrade.offered(v1))
-			if _pog_eq("", object.string_property(v1, "generated_mission")):
+			if _pog_eq(object.string_property(v1, "generated_mission"), ""):
 				_pc = 27652
 				continue
 			else:
 				_pc = 27733
 				continue
 		elif _pc == 27652:
-			if 0 <= v2:
+			if v2 <= 0:
 				_pc = 27664
 				continue
 			else:
@@ -6153,7 +6153,7 @@ func local_27489() -> Variant:
 			_pc = 27733
 			continue
 		elif _pc == 27733:
-			v0 = -1 + v0
+			v0 = v0 + -1
 			_pc = 27515
 			continue
 		elif _pc == 27752:

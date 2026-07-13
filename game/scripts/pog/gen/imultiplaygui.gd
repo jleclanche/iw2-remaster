@@ -69,14 +69,14 @@ func valid_ship_i_n_i(v0) -> Variant:
 		elif _pc == 211:
 			return
 		elif _pc == 226:
-			if await valid_ship_count() < v1:
+			if v1 < await valid_ship_count():
 				_pc = 250
 				continue
 			else:
 				_pc = 305
 				continue
 		elif _pc == 250:
-			if _pog_eq(v0, await valid_ship_i_n_i(v1)):
+			if _pog_eq(await valid_ship_i_n_i(v1), v0):
 				_pc = 281
 				continue
 			else:
@@ -86,7 +86,7 @@ func valid_ship_i_n_i(v0) -> Variant:
 			_pc = 311
 			continue
 		elif _pc == 287:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 226
 			continue
 		elif _pc == 305:
@@ -141,8 +141,8 @@ func local_592(v0, v1, v2, v3) -> Variant:
 		if _pc == 592:
 			v9 = global.pog_int("GUI_tab_text_offset")
 			v10 = gui.window_canvas_width(v3)
-			v11 = 3 / v10
-			v12 = 100 + 3 / v10
+			v11 = v10 / 3
+			v12 = v10 / 3 + 100
 			v13 = v10
 			v14 = 13
 			v21 = global.pog_int("GUI_listbox_entryheight")
@@ -153,11 +153,11 @@ func local_592(v0, v1, v2, v3) -> Variant:
 			v24 = global.string("type_font")
 			v4 = gui.create_window(0, 0, v10, global.pog_int("GUI_listbox_entryheight"), 0)
 			v16 = v14
-			v15 = 5 + v16 - v11
-			v18 = 2 - v9 + v11
-			v17 = 5 + v18 - v12
-			v20 = 2 - v9 + v12
-			v19 = 5 + v20 - v13
+			v15 = v11 - v16 + 5
+			v18 = v11 + v9 - 2
+			v17 = v12 - v18 + 5
+			v20 = v12 + v9 - 2
+			v19 = v13 - v20 + 5
 			v6 = await local_313(v16, v15, v21, v4, v23, v0)
 			v7 = await local_313(v18, v17, v21, v4, v24, string.from_int(v1))
 			v8 = await local_313(v20, v19, v21, v4, v24, string.from_int(v2))
@@ -203,10 +203,10 @@ func multiplay_score_screen() -> Variant:
 			v5 = 63
 			v6 = 220
 			v7 = 82
-			v8 = v4 - v6
-			v9 = v5 - v7
-			v10 = 3 / v8 + v4
-			v11 = v10 * 2 + v4
+			v8 = v6 - v4
+			v9 = v7 - v5
+			v10 = v4 + v8 / 3
+			v11 = v4 + 2 * v10
 			v14 = 200
 			v15 = 100
 			v16 = 100
@@ -252,7 +252,7 @@ func multiplay_score_screen() -> Variant:
 			_pc = 1820
 			continue
 		elif _pc == 1820:
-			if v13 < v12:
+			if v12 < v13:
 				_pc = 1836
 				continue
 			else:
@@ -263,7 +263,7 @@ func multiplay_score_screen() -> Variant:
 			v21 = imultiplay.client_end_game_info_frags(v12)
 			v22 = imultiplay.client_end_game_info_died(v12)
 			await local_592(v20, v21, v22, v3)
-			v12 = 1 + v12
+			v12 = v12 + 1
 			_pc = 1820
 			continue
 		elif _pc == 1977:

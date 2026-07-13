@@ -125,7 +125,7 @@ func string_description(v0, v1) -> Variant:
 	var _pc: int = 1410
 	while true:
 		if _pc == 1410:
-			if _pog_eq("Generic", v1):
+			if _pog_eq(v1, "Generic"):
 				_pc = 1428
 				continue
 			else:
@@ -136,7 +136,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1452:
-			if _pog_eq("GenericAggressive", v1):
+			if _pog_eq(v1, "GenericAggressive"):
 				_pc = 1470
 				continue
 			else:
@@ -147,7 +147,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1494:
-			if _pog_eq("GenericCoward", v1):
+			if _pog_eq(v1, "GenericCoward"):
 				_pc = 1512
 				continue
 			else:
@@ -158,7 +158,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1536:
-			if _pog_eq("GenericSupply", v1):
+			if _pog_eq(v1, "GenericSupply"):
 				_pc = 1554
 				continue
 			else:
@@ -169,7 +169,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1578:
-			if _pog_eq("GenericTrade", v1):
+			if _pog_eq(v1, "GenericTrade"):
 				_pc = 1596
 				continue
 			else:
@@ -180,7 +180,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1620:
-			if _pog_eq("GenericFreight", v1):
+			if _pog_eq(v1, "GenericFreight"):
 				_pc = 1638
 				continue
 			else:
@@ -191,7 +191,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1662:
-			if _pog_eq("GenericCargoPod", v1):
+			if _pog_eq(v1, "GenericCargoPod"):
 				_pc = 1680
 				continue
 			else:
@@ -202,7 +202,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1704:
-			if _pog_eq("GenericPolice", v1):
+			if _pog_eq(v1, "GenericPolice"):
 				_pc = 1722
 				continue
 			else:
@@ -213,7 +213,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1746:
-			if _pog_eq("GenericMilitary", v1):
+			if _pog_eq(v1, "GenericMilitary"):
 				_pc = 1764
 				continue
 			else:
@@ -224,7 +224,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1788:
-			if _pog_eq("GenericOfficial", v1):
+			if _pog_eq(v1, "GenericOfficial"):
 				_pc = 1806
 				continue
 			else:
@@ -235,7 +235,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1830:
-			if _pog_eq("GenericUnderworld", v1):
+			if _pog_eq(v1, "GenericUnderworld"):
 				_pc = 1848
 				continue
 			else:
@@ -246,7 +246,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1872:
-			if _pog_eq("GenericScum", v1):
+			if _pog_eq(v1, "GenericScum"):
 				_pc = 1890
 				continue
 			else:
@@ -257,7 +257,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1914:
-			if _pog_eq("GangsterAggressive", v1):
+			if _pog_eq(v1, "GangsterAggressive"):
 				_pc = 1932
 				continue
 			else:
@@ -268,7 +268,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1956:
-			if _pog_eq("GangsterCoward", v1):
+			if _pog_eq(v1, "GangsterCoward"):
 				_pc = 1974
 				continue
 			else:
@@ -279,7 +279,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 1998:
-			if _pog_eq("PoliceHeroic", v1):
+			if _pog_eq(v1, "PoliceHeroic"):
 				_pc = 2016
 				continue
 			else:
@@ -290,7 +290,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 2040:
-			if _pog_eq("MilitaryAggessive", v1):
+			if _pog_eq(v1, "MilitaryAggessive"):
 				_pc = 2058
 				continue
 			else:
@@ -301,7 +301,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 2082:
-			if _pog_eq("MilitarySupply", v1):
+			if _pog_eq(v1, "MilitarySupply"):
 				_pc = 2100
 				continue
 			else:
@@ -312,7 +312,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 2124:
-			if _pog_eq("TradeAggressive", v1):
+			if _pog_eq(v1, "TradeAggressive"):
 				_pc = 2142
 				continue
 			else:
@@ -323,7 +323,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 2166:
-			if _pog_eq("TradeCoward", v1):
+			if _pog_eq(v1, "TradeCoward"):
 				_pc = 2184
 				continue
 			else:
@@ -334,7 +334,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 2208:
-			if _pog_eq("CourierSecure", v1):
+			if _pog_eq(v1, "CourierSecure"):
 				_pc = 2226
 				continue
 			else:
@@ -345,7 +345,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 2250:
-			if _pog_eq("Marauder", v1):
+			if _pog_eq(v1, "Marauder"):
 				_pc = 2268
 				continue
 			else:
@@ -356,7 +356,7 @@ func string_description(v0, v1) -> Variant:
 			_pc = 2428
 			continue
 		elif _pc == 2292:
-			if _pog_eq("None", v1):
+			if _pog_eq(v1, "None"):
 				_pc = 2310
 				continue
 			else:

@@ -95,7 +95,7 @@ func local_108(v0) -> Variant:
 				_pc = 182
 				continue
 		elif _pc == 138:
-			imultiplay.server_set_player_frags_count(v0, 1 + imultiplay.server_player_frag_count(v0))
+			imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) + 1)
 			_pc = 270
 			continue
 		elif _pc == 182:
@@ -109,7 +109,7 @@ func local_108(v0) -> Variant:
 			_pc = 270
 			continue
 		elif _pc == 218:
-			object.set_int_property(v0, "frag_count", 1 + object.int_property(v0, "frag_count"))
+			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 1)
 			_pc = 270
 			continue
 		elif _pc == 270:
@@ -129,11 +129,11 @@ func local_273(v0) -> Variant:
 				_pc = 347
 				continue
 		elif _pc == 303:
-			imultiplay.server_set_player_died_count(v0, 1 + imultiplay.server_player_died_count(v0))
+			imultiplay.server_set_player_died_count(v0, imultiplay.server_player_died_count(v0) + 1)
 			_pc = 399
 			continue
 		elif _pc == 347:
-			object.set_int_property(v0, "bot_deaths", 1 + object.int_property(v0, "bot_deaths"))
+			object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
 			_pc = 399
 			continue
 		elif _pc == 399:
@@ -168,7 +168,7 @@ func server_on_update_scores() -> Variant:
 			_pc = 610
 			continue
 		elif _pc == 610:
-			if group.sim_count(v7) < v1:
+			if v1 < group.sim_count(v7):
 				_pc = 639
 				continue
 			else:
@@ -176,7 +176,7 @@ func server_on_update_scores() -> Variant:
 				continue
 		elif _pc == 639:
 			list.add_tail(v0, group.nth_sim(v7, v1))
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 610
 			continue
 		elif _pc == 699:
@@ -184,7 +184,7 @@ func server_on_update_scores() -> Variant:
 			_pc = 706
 			continue
 		elif _pc == 706:
-			if list.item_count(v0) < v1:
+			if v1 < list.item_count(v0):
 				_pc = 735
 				continue
 			else:
@@ -205,7 +205,7 @@ func server_on_update_scores() -> Variant:
 			_pc = 906
 			continue
 		elif _pc == 906:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 706
 			continue
 		elif _pc == 924:
@@ -256,7 +256,7 @@ func server_on_user_message() -> Variant:
 			_pc = 1273
 			continue
 		elif _pc == 1226:
-			if v0 != 15:
+			if 15 != v0:
 				_pc = 1240
 				continue
 			else:
@@ -329,7 +329,7 @@ func player_death() -> Variant:
 			v6 = iship.cast(iship.last_attacker(iship.cast(v0)))
 			await imputils.spawn_killed_player_power_ups(v0)
 			await local_273(iship.cast(v0))
-			if _pog_eq(iship.cast(v0), v6) or _pog_is_null(v6):
+			if _pog_is_null(v6) or _pog_eq(v6, iship.cast(v0)):
 				_pc = 1712
 				continue
 			else:
@@ -391,7 +391,7 @@ func server_player_enter() -> Variant:
 			imultiplay.server_broadcast_message(v0, "mp_frag_player_spawned", 2)
 			imultiplay.set_ship_limits(iship.cast(v0))
 			imultiplay.link_ship_weapons(iship.cast(v0))
-			if 0 > imultiplay.a_i_bots_count() and imultiplay.use_a_i_bots() and v5:
+			if v5 and imultiplay.use_a_i_bots() and imultiplay.a_i_bots_count() > 0:
 				_pc = 2337
 				continue
 			else:
@@ -441,7 +441,7 @@ func local_2467(v0, v1, v2) -> Variant:
 			_pc = 2604
 			continue
 		elif _pc == 2604:
-			if v6 < v4:
+			if v4 < v6:
 				_pc = 2620
 				continue
 			else:
@@ -456,7 +456,7 @@ func local_2467(v0, v1, v2) -> Variant:
 				_pc = 2850
 				continue
 		elif _pc == 2675:
-			if v2 > sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) > v2:
 				_pc = 2709
 				continue
 			else:
@@ -483,7 +483,7 @@ func local_2467(v0, v1, v2) -> Variant:
 			_pc = 2850
 			continue
 		elif _pc == 2850:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 2604
 			continue
 		elif _pc == 2868:
@@ -578,7 +578,7 @@ func server_main() -> Variant:
 	global.create_handle("g_arena_centre", 2, v14)
 	v21 = _pog_spawn(local_2467.bind(v14, 55000.0, 60000.0))
 	global.create_float("g_arena_radius", 1, 60000.0)
-	if 0 > imultiplay.a_i_bots_count():
+	if imultiplay.a_i_bots_count() > 0:
 		v17 = group.cast(await ibotpak.create_bot_ships(imultiplay.package_i_n_i(), imultiplay.a_i_bots_count(), imultiplay.a_i_bots_skill_level(), v25, 0, "BotNamesA"))
 		global.create_string("g_ini_name", 1, imultiplay.package_i_n_i())
 		global.create_handle("g_bots_handle", 2, v17)
@@ -590,7 +590,7 @@ func server_main() -> Variant:
 	return 0
 
 func client_scores() -> Variant:
-	if _pog_eq("icMultiplayScreenInGame", gui.current_screen_classname()):
+	if _pog_eq(gui.current_screen_classname(), "icMultiplayScreenInGame"):
 		return 0
 	gui.pop_screens_to("icSpaceFlightScreen")
 	gui.overlay_screen("icPDAOverlayManager")
@@ -647,7 +647,7 @@ func local_4689(v0, v1, v2) -> Variant:
 				_pc = 4969
 				continue
 		elif _pc == 4765:
-			if v1 > sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) > v1:
 				_pc = 4799
 				continue
 			else:
@@ -672,7 +672,7 @@ func local_4689(v0, v1, v2) -> Variant:
 			_pc = 4899
 			continue
 		elif _pc == 4899:
-			if v1 <= sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) <= v1:
 				_pc = 4933
 				continue
 			else:
@@ -776,7 +776,7 @@ func local_5529(v0, v1) -> Variant:
 			_pc = 5855
 			continue
 		elif _pc == 5855:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 5871
 				continue
 			else:
@@ -787,7 +787,7 @@ func local_5529(v0, v1) -> Variant:
 			object.set_string_property(v3, "death_script", "iDeathMatch.BotDeath")
 			imultiplay.set_ship_limits(v3)
 			_pog_detach(_pog_spawn(local_5396.bind(v3)))
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 5855
 			continue
 		elif _pc == 6014:
@@ -892,7 +892,7 @@ func client_taunt_return() -> Variant:
 	var _pc: int = 6872
 	while true:
 		if _pc == 6872:
-			if _pog_eq("!", string.left(v0, 1)):
+			if _pog_eq(string.left(v0, 1), "!"):
 				_pc = 6905
 				continue
 			else:
@@ -902,7 +902,7 @@ func client_taunt_return() -> Variant:
 			_pc = 7008
 			continue
 		elif _pc == 6910:
-			if 1 == global.pog_bool("mp_team_say_flag"):
+			if global.pog_bool("mp_team_say_flag") == 1:
 				_pc = 6937
 				continue
 			else:
@@ -1018,7 +1018,7 @@ func client_on_user_message() -> Variant:
 			_pc = 7981
 			continue
 		elif _pc == 7844:
-			if not _pog_eq(iship.find_player_ship(), v4):
+			if not _pog_eq(v4, iship.find_player_ship()):
 				_pc = 7868
 				continue
 			else:
@@ -1043,7 +1043,7 @@ func client_on_user_message() -> Variant:
 			_pc = 8010
 			continue
 		elif _pc == 7981:
-			if v0 != 15:
+			if 15 != v0:
 				_pc = 7995
 				continue
 			else:

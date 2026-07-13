@@ -60,7 +60,7 @@ func local_0(v0, v1) -> Variant:
 			v4 = global.pog_float("g_player_sensor_range")
 			v2 = iship.find_player_ship()
 			v3 = sim.distance_between(v2, v1)
-			if _pog_is_null(math.random_int(0, 1)) and ilagrangepoint.cast(v1):
+			if ilagrangepoint.cast(v1) and _pog_is_null(math.random_int(0, 1)):
 				_pc = 121
 				continue
 			else:
@@ -81,7 +81,7 @@ func local_0(v0, v1) -> Variant:
 			_pc = 355
 			continue
 		elif _pc == 194:
-			if 200000.0 - v4 < v3:
+			if v3 < v4 - 200000.0:
 				_pc = 216
 				continue
 			else:
@@ -95,7 +95,7 @@ func local_0(v0, v1) -> Variant:
 			_pc = 242
 			continue
 		elif _pc == 242:
-			sim.place_near(v0, v2, 100000.0 - v4)
+			sim.place_near(v0, v2, v4 - 100000.0)
 			_pc = 355
 			continue
 		elif _pc == 282:
@@ -139,8 +139,8 @@ func local_363(v0) -> Variant:
 			continue
 		elif _pc == 407:
 			v2 = ihabitat.population(v0)
-			v1 = 1000 / v2
-			if 4 > v1:
+			v1 = v2 / 1000
+			if v1 > 4:
 				_pc = 459
 				continue
 			else:
@@ -170,7 +170,7 @@ func local_479(v0) -> Variant:
 				_pc = 549
 				continue
 		elif _pc == 509:
-			8 * p_set.item_count(sim.children(v0))
+			p_set.item_count(sim.children(v0)) * 8
 			_pc = 586
 			continue
 		elif _pc == 549:
@@ -195,19 +195,19 @@ func local_588(v0) -> Variant:
 			_pc = 624
 			continue
 		elif _pc == 624:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 640
 				continue
 			else:
 				_pc = 706
 				continue
 		elif _pc == 640:
-			v1 = await local_479(group.nth_sim(v0, v3)) + v1
-			v3 = 1 + v3
+			v1 = v1 + await local_479(group.nth_sim(v0, v3))
+			v3 = v3 + 1
 			_pc = 624
 			continue
 		elif _pc == 706:
-			if 1 == object.property_exists(group.leader(v0), "mega_freighter"):
+			if object.property_exists(group.leader(v0), "mega_freighter") == 1:
 				_pc = 751
 				continue
 			else:
@@ -220,7 +220,7 @@ func local_588(v0) -> Variant:
 			_pc = 868
 			continue
 		elif _pc == 763:
-			if 15 >= v1:
+			if v1 >= 15:
 				_pc = 776
 				continue
 			else:
@@ -233,7 +233,7 @@ func local_588(v0) -> Variant:
 			_pc = 868
 			continue
 		elif _pc == 788:
-			if 10 >= v1:
+			if v1 >= 10:
 				_pc = 801
 				continue
 			else:
@@ -246,7 +246,7 @@ func local_588(v0) -> Variant:
 			_pc = 868
 			continue
 		elif _pc == 813:
-			if 5 >= v1:
+			if v1 >= 5:
 				_pc = 826
 				continue
 			else:
@@ -259,7 +259,7 @@ func local_588(v0) -> Variant:
 			_pc = 868
 			continue
 		elif _pc == 838:
-			if 3 >= v1:
+			if v1 >= 3:
 				_pc = 851
 				continue
 			else:
@@ -302,7 +302,7 @@ func local_876(v0) -> Variant:
 			_pc = 923
 			continue
 		elif _pc == 923:
-			if v6 < v8:
+			if v8 < v6:
 				_pc = 939
 				continue
 			else:
@@ -312,29 +312,29 @@ func local_876(v0) -> Variant:
 			v1 = group.nth_sim(v0, v8)
 			v3 = await local_479(v1)
 			v2 = list.from_set(sim.children(v1))
-			v4 = v3 + v4
+			v4 = v4 + v3
 			v9 = 0
 			_pc = 1056
 			continue
 		elif _pc == 1056:
-			if v3 < v9:
+			if v9 < v3:
 				_pc = 1072
 				continue
 			else:
 				_pc = 1151
 				continue
 		elif _pc == 1072:
-			v5 = icargo.value(icargo.cast(list.get_nth(v2, v9))) + v5
-			v9 = 1 + v9
+			v5 = v5 + icargo.value(icargo.cast(list.get_nth(v2, v9)))
+			v9 = v9 + 1
 			_pc = 1056
 			continue
 		elif _pc == 1151:
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 923
 			continue
 		elif _pc == 1169:
-			v7 = v4 / v5
-			if 6 >= v7:
+			v7 = v5 / v4
+			if v7 >= 6:
 				_pc = 1199
 				continue
 			else:
@@ -347,7 +347,7 @@ func local_876(v0) -> Variant:
 			_pc = 1243
 			continue
 		elif _pc == 1211:
-			if 3 >= v7:
+			if v7 >= 3:
 				_pc = 1224
 				continue
 			else:
@@ -382,7 +382,7 @@ func local_1259(v0, v1) -> Variant:
 			_pc = 1282
 			continue
 		elif _pc == 1282:
-			if v1 < v3:
+			if v3 < v1:
 				_pc = 1298
 				continue
 			else:
@@ -424,7 +424,7 @@ func local_1259(v0, v1) -> Variant:
 			_pc = 1504
 			continue
 		elif _pc == 1479:
-			debug.print_int(v3 - v1)
+			debug.print_int(v1 - v3)
 			_pc = 1504
 			continue
 		elif _pc == 1504:
@@ -436,7 +436,7 @@ func local_1259(v0, v1) -> Variant:
 			continue
 		elif _pc == 1530:
 			await _pog_wait(1.0)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 1282
 			continue
 		elif _pc == 1580:
@@ -490,7 +490,7 @@ func haulage_in(v0) -> Variant:
 			v27 = null
 			v29 = 0
 			v33 = 0
-			if 7 >= global.pog_int("g_total_haulage_running"):
+			if global.pog_int("g_total_haulage_running") >= 7:
 				_pc = 1714
 				continue
 			else:
@@ -544,7 +544,7 @@ func haulage_in(v0) -> Variant:
 			v24 = ihabitat.nearest(v26, v30)
 			v7 = ihabitat.type(v24)
 			v28 = v7
-			if 34 <= v28 and 11 >= v28:
+			if v28 >= 11 and v28 <= 34:
 				_pc = 1982
 				continue
 			else:
@@ -563,7 +563,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 2257
 			continue
 		elif _pc == 2082:
-			if 1 == p_set.is_empty(v26):
+			if p_set.is_empty(v26) == 1:
 				_pc = 2107
 				continue
 			else:
@@ -608,7 +608,7 @@ func haulage_in(v0) -> Variant:
 		elif _pc == 2293:
 			v7 = ihabitat.type(v24)
 			v10 = ihabitat.allegiance(v24)
-			if 121 == v7 or 122 == v7:
+			if v7 == 122 or v7 == 121:
 				_pc = 2363
 				continue
 			else:
@@ -631,7 +631,7 @@ func haulage_in(v0) -> Variant:
 			continue
 		elif _pc == 2477:
 			v2 = await local_363(v24)
-			if 1 == v2:
+			if v2 == 1:
 				_pc = 2513
 				continue
 			else:
@@ -643,14 +643,14 @@ func haulage_in(v0) -> Variant:
 			continue
 		elif _pc == 2521:
 			v3 = math.random_int(1, v2)
-			if 7 > v3 + global.pog_int("g_total_haulage_running"):
+			if global.pog_int("g_total_haulage_running") + v3 > 7:
 				_pc = 2580
 				continue
 			else:
 				_pc = 2609
 				continue
 		elif _pc == 2580:
-			v3 = global.pog_int("g_total_haulage_running") - 7
+			v3 = 7 - global.pog_int("g_total_haulage_running")
 			_pc = 2609
 			continue
 		elif _pc == 2609:
@@ -663,18 +663,18 @@ func haulage_in(v0) -> Variant:
 			continue
 		elif _pc == 2691:
 			v32 = math.random(10.0, 100.0)
-			if 32 == v7 or 22 == v7:
+			if v7 == 22 or v7 == 32:
 				_pc = 2742
 				continue
 			else:
 				_pc = 2759
 				continue
 		elif _pc == 2742:
-			v32 = 20.0 + v32
+			v32 = v32 + 20.0
 			_pc = 2759
 			continue
 		elif _pc == 2759:
-			if 90.0 > v32:
+			if v32 > 90.0:
 				_pc = 2775
 				continue
 			else:
@@ -685,7 +685,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 2892
 			continue
 		elif _pc == 2811:
-			if 50.0 >= v32:
+			if v32 >= 50.0:
 				_pc = 2827
 				continue
 			else:
@@ -702,7 +702,7 @@ func haulage_in(v0) -> Variant:
 		elif _pc == 2892:
 			v5 = group.sim_count(v12)
 			v4 = math.random_int(0, 4)
-			if 1 == object.property_exists(group.leader(v12), "mega_freighter") or 3 <= v4:
+			if v4 <= 3 or object.property_exists(group.leader(v12), "mega_freighter") == 1:
 				_pc = 2992
 				continue
 			else:
@@ -796,7 +796,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 3368
 			continue
 		elif _pc == 3283:
-			if v14 != 1:
+			if 1 != v14:
 				_pc = 3296
 				continue
 			else:
@@ -882,7 +882,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 3482
 			continue
 		elif _pc == 3451:
-			if v14 != 1:
+			if 1 != v14:
 				_pc = 3464
 				continue
 			else:
@@ -926,7 +926,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 3596
 			continue
 		elif _pc == 3565:
-			if v14 != 1:
+			if 1 != v14:
 				_pc = 3578
 				continue
 			else:
@@ -974,7 +974,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 3732
 			continue
 		elif _pc == 3692:
-			if v14 != 1:
+			if 1 != v14:
 				_pc = 3705
 				continue
 			else:
@@ -1009,7 +1009,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 3985
 			continue
 		elif _pc == 3750:
-			if v7 != 11:
+			if 11 != v7:
 				_pc = 3764
 				continue
 			else:
@@ -1200,7 +1200,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 4086
 			continue
 		elif _pc == 4086:
-			if v5 < v1:
+			if v1 < v5:
 				_pc = 4102
 				continue
 			else:
@@ -1217,12 +1217,12 @@ func haulage_in(v0) -> Variant:
 			continue
 		elif _pc == 4226:
 			await ishipcreation.create_haulage_cargo(v15, v8)
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 4086
 			continue
 		elif _pc == 4268:
 			v11 = await local_588(v12)
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 4304
 				continue
 			else:
@@ -1263,7 +1263,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 4568
 			continue
 		elif _pc == 4568:
-			if 1 > v5:
+			if v5 > 1:
 				_pc = 4580
 				continue
 			else:
@@ -1309,7 +1309,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 4822
 			continue
 		elif _pc == 4822:
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 4834
 				continue
 			else:
@@ -1323,7 +1323,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 4860
 			continue
 		elif _pc == 4860:
-			if 1 > v11:
+			if v11 > 1:
 				_pc = 4872
 				continue
 			else:
@@ -1377,7 +1377,7 @@ func haulage_in(v0) -> Variant:
 			_pc = 5297
 			continue
 		elif _pc == 5297:
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 5309
 				continue
 			else:
@@ -1399,7 +1399,7 @@ func haulage_in(v0) -> Variant:
 		elif _pc == 5436:
 			v31 = _pog_spawn(iscriptedorders.haulage.bind(v12, v0))
 			_pog_detach(v31)
-			if 3 <= v4:
+			if v4 <= 3:
 				_pc = 5497
 				continue
 			else:
@@ -1473,7 +1473,7 @@ func haulage_out(v0) -> Variant:
 			v26 = null
 			v28 = 0
 			v32 = 0
-			if 7 >= global.pog_int("g_total_haulage_running"):
+			if global.pog_int("g_total_haulage_running") >= 7:
 				_pc = 5822
 				continue
 			else:
@@ -1535,7 +1535,7 @@ func haulage_out(v0) -> Variant:
 		elif _pc == 6121:
 			v8 = ihabitat.type(v23)
 			v27 = v8
-			if 34 <= v27 and 11 >= v27:
+			if v27 >= 11 and v27 <= 34:
 				_pc = 6178
 				continue
 			else:
@@ -1554,7 +1554,7 @@ func haulage_out(v0) -> Variant:
 			_pc = 6427
 			continue
 		elif _pc == 6278:
-			if 1 == p_set.is_empty(v25):
+			if p_set.is_empty(v25) == 1:
 				_pc = 6303
 				continue
 			else:
@@ -1592,7 +1592,7 @@ func haulage_out(v0) -> Variant:
 		elif _pc == 6463:
 			v8 = ihabitat.type(v23)
 			v9 = ihabitat.allegiance(v23)
-			if 121 == v8 or 122 == v8:
+			if v8 == 122 or v8 == 121:
 				_pc = 6533
 				continue
 			else:
@@ -1607,7 +1607,7 @@ func haulage_out(v0) -> Variant:
 			continue
 		elif _pc == 6559:
 			v3 = await local_363(v23)
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 6595
 				continue
 			else:
@@ -1619,14 +1619,14 @@ func haulage_out(v0) -> Variant:
 			continue
 		elif _pc == 6603:
 			v4 = math.random_int(1, v3)
-			if 7 > v4 + global.pog_int("g_total_haulage_running"):
+			if global.pog_int("g_total_haulage_running") + v4 > 7:
 				_pc = 6662
 				continue
 			else:
 				_pc = 6691
 				continue
 		elif _pc == 6662:
-			v4 = global.pog_int("g_total_haulage_running") - 7
+			v4 = 7 - global.pog_int("g_total_haulage_running")
 			_pc = 6691
 			continue
 		elif _pc == 6691:
@@ -1640,18 +1640,18 @@ func haulage_out(v0) -> Variant:
 			continue
 		elif _pc == 6797:
 			v31 = math.random(10.0, 100.0)
-			if 32 == v8 or 22 == v8:
+			if v8 == 22 or v8 == 32:
 				_pc = 6848
 				continue
 			else:
 				_pc = 6865
 				continue
 		elif _pc == 6848:
-			v31 = 20.0 + v31
+			v31 = v31 + 20.0
 			_pc = 6865
 			continue
 		elif _pc == 6865:
-			if 90.0 > v31:
+			if v31 > 90.0:
 				_pc = 6881
 				continue
 			else:
@@ -1662,7 +1662,7 @@ func haulage_out(v0) -> Variant:
 			_pc = 6998
 			continue
 		elif _pc == 6917:
-			if 50.0 >= v31:
+			if v31 >= 50.0:
 				_pc = 6933
 				continue
 			else:
@@ -1679,7 +1679,7 @@ func haulage_out(v0) -> Variant:
 		elif _pc == 6998:
 			v6 = group.sim_count(v11)
 			v5 = math.random_int(0, 4)
-			if 1 == object.property_exists(group.leader(v11), "mega_freighter") or 3 <= v5:
+			if v5 <= 3 or object.property_exists(group.leader(v11), "mega_freighter") == 1:
 				_pc = 7098
 				continue
 			else:
@@ -1690,7 +1690,7 @@ func haulage_out(v0) -> Variant:
 			_pc = 7105
 			continue
 		elif _pc == 7105:
-			if v6 < v2:
+			if v2 < v6:
 				_pc = 7121
 				continue
 			else:
@@ -1707,12 +1707,12 @@ func haulage_out(v0) -> Variant:
 			continue
 		elif _pc == 7245:
 			await ishipcreation.create_haulage_cargo(v14, v8)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 7105
 			continue
 		elif _pc == 7287:
 			v10 = await local_588(v11)
-			if 0 > v10:
+			if v10 > 0:
 				_pc = 7323
 				continue
 			else:
@@ -1753,7 +1753,7 @@ func haulage_out(v0) -> Variant:
 			_pc = 7587
 			continue
 		elif _pc == 7587:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 7599
 				continue
 			else:
@@ -1799,7 +1799,7 @@ func haulage_out(v0) -> Variant:
 			_pc = 7880
 			continue
 		elif _pc == 7880:
-			if 0 > v10:
+			if v10 > 0:
 				_pc = 7892
 				continue
 			else:
@@ -1813,7 +1813,7 @@ func haulage_out(v0) -> Variant:
 			_pc = 7918
 			continue
 		elif _pc == 7918:
-			if 1 > v10:
+			if v10 > 1:
 				_pc = 7930
 				continue
 			else:
@@ -1867,7 +1867,7 @@ func haulage_out(v0) -> Variant:
 			_pc = 8355
 			continue
 		elif _pc == 8355:
-			if 0 > v10:
+			if v10 > 0:
 				_pc = 8367
 				continue
 			else:
@@ -1889,7 +1889,7 @@ func haulage_out(v0) -> Variant:
 		elif _pc == 8494:
 			v30 = _pog_spawn(iscriptedorders.haulage.bind(v11, v0))
 			_pog_detach(v30)
-			if 3 <= v5:
+			if v5 <= 3:
 				_pc = 8555
 				continue
 			else:
@@ -1971,7 +1971,7 @@ func supply(v0) -> Variant:
 			v32 = 0
 			v35 = 0
 			v37 = 0
-			if 7 >= global.pog_int("g_total_supply_running"):
+			if global.pog_int("g_total_supply_running") >= 7:
 				_pc = 8894
 				continue
 			else:
@@ -2024,7 +2024,7 @@ func supply(v0) -> Variant:
 		elif _pc == 9189:
 			v9 = ihabitat.allegiance(v24)
 			v8 = ihabitat.type(v24)
-			if 121 == v8 or 122 == v8:
+			if v8 == 122 or v8 == 121:
 				_pc = 9259
 				continue
 			else:
@@ -2055,7 +2055,7 @@ func supply(v0) -> Variant:
 			_pc = 9581
 			continue
 		elif _pc == 9333:
-			if v8 != 22:
+			if 22 != v8:
 				_pc = 9347
 				continue
 			else:
@@ -2261,7 +2261,7 @@ func supply(v0) -> Variant:
 			_pc = 9850
 			continue
 		elif _pc == 9629:
-			if v8 != 20:
+			if 20 != v8:
 				_pc = 9643
 				continue
 			else:
@@ -2429,7 +2429,7 @@ func supply(v0) -> Variant:
 				_pc = 9586
 				continue
 		elif _pc == 9850:
-			if v30 and v31:
+			if v31 and v30:
 				_pc = 9866
 				continue
 			else:
@@ -2456,7 +2456,7 @@ func supply(v0) -> Variant:
 			_pc = 10034
 			continue
 		elif _pc == 9946:
-			if 1 == v14:
+			if v14 == 1:
 				_pc = 9958
 				continue
 			else:
@@ -2578,7 +2578,7 @@ func supply(v0) -> Variant:
 			continue
 		elif _pc == 10296:
 			v3 = await local_363(v24)
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 10332
 				continue
 			else:
@@ -2590,14 +2590,14 @@ func supply(v0) -> Variant:
 			continue
 		elif _pc == 10340:
 			v4 = math.random_int(1, v3)
-			if 7 > v4 + global.pog_int("g_total_supply_running"):
+			if global.pog_int("g_total_supply_running") + v4 > 7:
 				_pc = 10399
 				continue
 			else:
 				_pc = 10428
 				continue
 		elif _pc == 10399:
-			v4 = global.pog_int("g_total_supply_running") - 7
+			v4 = 7 - global.pog_int("g_total_supply_running")
 			_pc = 10428
 			continue
 		elif _pc == 10428:
@@ -2643,7 +2643,7 @@ func supply(v0) -> Variant:
 			_pc = 10652
 			continue
 		elif _pc == 10652:
-			if v6 < v2:
+			if v2 < v6:
 				_pc = 10668
 				continue
 			else:
@@ -2660,12 +2660,12 @@ func supply(v0) -> Variant:
 			continue
 		elif _pc == 10792:
 			await ishipcreation.create_supply_cargo(v15, v33)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 10652
 			continue
 		elif _pc == 10834:
 			v11 = await local_588(v12)
-			if -2 == v33:
+			if v33 == -2:
 				_pc = 10871
 				continue
 			else:
@@ -2679,11 +2679,11 @@ func supply(v0) -> Variant:
 			_pc = 10897
 			continue
 		elif _pc == 10897:
-			v11 = 1 + v11
+			v11 = v11 + 1
 			_pc = 10910
 			continue
 		elif _pc == 10910:
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 10922
 				continue
 			else:
@@ -2724,7 +2724,7 @@ func supply(v0) -> Variant:
 			_pc = 11186
 			continue
 		elif _pc == 11186:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 11198
 				continue
 			else:
@@ -2770,7 +2770,7 @@ func supply(v0) -> Variant:
 			_pc = 11443
 			continue
 		elif _pc == 11443:
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 11455
 				continue
 			else:
@@ -2784,7 +2784,7 @@ func supply(v0) -> Variant:
 			_pc = 11481
 			continue
 		elif _pc == 11481:
-			if 1 > v11:
+			if v11 > 1:
 				_pc = 11493
 				continue
 			else:
@@ -2838,7 +2838,7 @@ func supply(v0) -> Variant:
 			_pc = 11918
 			continue
 		elif _pc == 11918:
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 11930
 				continue
 			else:
@@ -2908,7 +2908,7 @@ func trade(v0) -> Variant:
 			v26 = null
 			v28 = null
 			v30 = 0
-			if 7 >= global.pog_int("g_total_trade_running"):
+			if global.pog_int("g_total_trade_running") >= 7:
 				_pc = 12230
 				continue
 			else:
@@ -3098,7 +3098,7 @@ func trade(v0) -> Variant:
 			_pc = 12853
 			continue
 		elif _pc == 12853:
-			if v6 < v2:
+			if v2 < v6:
 				_pc = 12869
 				continue
 			else:
@@ -3115,12 +3115,12 @@ func trade(v0) -> Variant:
 			continue
 		elif _pc == 12993:
 			await ishipcreation.create_trade_cargo(v15, v28)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 12853
 			continue
 		elif _pc == 13035:
 			v11 = await local_588(v12)
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 13071
 				continue
 			else:
@@ -3147,7 +3147,7 @@ func trade(v0) -> Variant:
 			continue
 		elif _pc == 13227:
 			v30 = await local_0(group.nth_sim(v12, 0), v0)
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 13282
 				continue
 			else:
@@ -3193,7 +3193,7 @@ func trade(v0) -> Variant:
 			_pc = 13553
 			continue
 		elif _pc == 13553:
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 13565
 				continue
 			else:
@@ -3207,7 +3207,7 @@ func trade(v0) -> Variant:
 			_pc = 13591
 			continue
 		elif _pc == 13591:
-			if 1 > v11:
+			if v11 > 1:
 				_pc = 13603
 				continue
 			else:
@@ -3261,7 +3261,7 @@ func trade(v0) -> Variant:
 			_pc = 14054
 			continue
 		elif _pc == 14054:
-			if 0 > v11:
+			if v11 > 0:
 				_pc = 14066
 				continue
 			else:
@@ -3341,7 +3341,7 @@ func security(v0) -> Variant:
 		elif _pc == 14510:
 			v2 = global.pog_set("g_filtered_system_habitats")
 			v3 = 1
-			if 1 == ilagrangepoint.interstellar(v5):
+			if ilagrangepoint.interstellar(v5) == 1:
 				_pc = 14569
 				continue
 			else:
@@ -3444,7 +3444,7 @@ func security(v0) -> Variant:
 			_pc = 15145
 			continue
 		elif _pc == 15145:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 15157
 				continue
 			else:
@@ -3548,7 +3548,7 @@ func security(v0) -> Variant:
 			_pc = 15910
 			continue
 		elif _pc == 15910:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 15922
 				continue
 			else:
@@ -3738,7 +3738,7 @@ func security(v0) -> Variant:
 			_pc = 17288
 			continue
 		elif _pc == 17288:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 17300
 				continue
 			else:
@@ -3812,7 +3812,7 @@ func security(v0) -> Variant:
 			_pc = 17784
 			continue
 		elif _pc == 17784:
-			if v8 < sim.distance_between(v11, imapentity.waypoint_for_entity(v0)):
+			if sim.distance_between(v11, imapentity.waypoint_for_entity(v0)) < v8:
 				_pc = 17831
 				continue
 			else:
@@ -3842,7 +3842,7 @@ func security(v0) -> Variant:
 			_pc = 18086
 			continue
 		elif _pc == 18086:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 18098
 				continue
 			else:
@@ -3908,7 +3908,7 @@ func security(v0) -> Variant:
 			_pc = 18481
 			continue
 		elif _pc == 18432:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 18445
 				continue
 			else:
@@ -4032,7 +4032,7 @@ func tanker(v0) -> Variant:
 			continue
 		elif _pc == 18933:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 18957
 				continue
 			else:
@@ -4068,7 +4068,7 @@ func tanker(v0) -> Variant:
 			_pc = 19079
 			continue
 		elif _pc == 19079:
-			if 1 > v1:
+			if v1 > 1:
 				_pc = 19091
 				continue
 			else:
@@ -4227,7 +4227,7 @@ func official(v0) -> Variant:
 			v13 = ihabitat.allegiance(v1)
 			v11 = iship.find_player_ship()
 			v10 = sim.distance_between(v11, imapentity.waypoint_for_entity(v0))
-			v9 = math.random(v8, v10 + v8)
+			v9 = math.random(v8, v8 + v10)
 			v6 = math.random_int(0, await local_363(v1))
 			if _pog_is_null(v6):
 				_pc = 20122
@@ -4268,7 +4268,7 @@ func official(v0) -> Variant:
 			_pc = 20478
 			continue
 		elif _pc == 20213:
-			if v12 != 1:
+			if 1 != v12:
 				_pc = 20226
 				continue
 			else:
@@ -4501,7 +4501,7 @@ func official(v0) -> Variant:
 			_pc = 20686
 			continue
 		elif _pc == 20582:
-			if v13 != 3:
+			if 3 != v13:
 				_pc = 20596
 				continue
 			else:
@@ -4600,7 +4600,7 @@ func official(v0) -> Variant:
 			_pc = 21019
 			continue
 		elif _pc == 21019:
-			v19 = v18 + v17 + v16 + v15 + v14
+			v19 = v14 + v15 + v16 + v17 + v18
 			v20 = math.random_int(1, v19)
 			_pc = 21208
 			continue
@@ -4621,7 +4621,7 @@ func official(v0) -> Variant:
 				_pc = 22968
 				continue
 		elif _pc == 21219:
-			if 1 == v14:
+			if v14 == 1:
 				_pc = 21231
 				continue
 			else:
@@ -4635,7 +4635,7 @@ func official(v0) -> Variant:
 			_pc = 21257
 			continue
 		elif _pc == 21257:
-			if 1 == v20:
+			if v20 == 1:
 				_pc = 21269
 				continue
 			else:
@@ -4738,7 +4738,7 @@ func official(v0) -> Variant:
 			continue
 		elif _pc == 21652:
 			math.random_int(1, 6)
-			if math.random_int(1, 6) != 1:
+			if 1 != math.random_int(1, 6):
 				_pc = 21676
 				continue
 			else:
@@ -4783,7 +4783,7 @@ func official(v0) -> Variant:
 			_pc = 21739
 			continue
 		elif _pc == 21726:
-			v20 = 1 - v20
+			v20 = v20 - 1
 			_pc = 21739
 			continue
 		elif _pc == 21739:
@@ -4791,7 +4791,7 @@ func official(v0) -> Variant:
 			_pc = 22963
 			continue
 		elif _pc == 21751:
-			if 1 == v15:
+			if v15 == 1:
 				_pc = 21763
 				continue
 			else:
@@ -4805,7 +4805,7 @@ func official(v0) -> Variant:
 			_pc = 21789
 			continue
 		elif _pc == 21789:
-			if 1 == v20:
+			if v20 == 1:
 				_pc = 21801
 				continue
 			else:
@@ -4831,7 +4831,7 @@ func official(v0) -> Variant:
 			continue
 		elif _pc == 21866:
 			v6 = 1
-			v31 = 2 * math.random_int(0, 3)
+			v31 = math.random_int(0, 3) * 2
 			v21 = 12
 			v25 = 1
 			v34 = 1
@@ -4870,7 +4870,7 @@ func official(v0) -> Variant:
 			continue
 		elif _pc == 22050:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 22074
 				continue
 			else:
@@ -4894,7 +4894,7 @@ func official(v0) -> Variant:
 			_pc = 22110
 			continue
 		elif _pc == 22097:
-			v20 = 1 - v20
+			v20 = v20 - 1
 			_pc = 22110
 			continue
 		elif _pc == 22110:
@@ -4902,7 +4902,7 @@ func official(v0) -> Variant:
 			_pc = 22963
 			continue
 		elif _pc == 22122:
-			if 1 == v16:
+			if v16 == 1:
 				_pc = 22134
 				continue
 			else:
@@ -4916,7 +4916,7 @@ func official(v0) -> Variant:
 			_pc = 22160
 			continue
 		elif _pc == 22160:
-			if 1 == v20:
+			if v20 == 1:
 				_pc = 22172
 				continue
 			else:
@@ -4990,7 +4990,7 @@ func official(v0) -> Variant:
 			continue
 		elif _pc == 22428:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 22452
 				continue
 			else:
@@ -5021,7 +5021,7 @@ func official(v0) -> Variant:
 			_pc = 22497
 			continue
 		elif _pc == 22484:
-			v20 = 1 - v20
+			v20 = v20 - 1
 			_pc = 22497
 			continue
 		elif _pc == 22497:
@@ -5029,7 +5029,7 @@ func official(v0) -> Variant:
 			_pc = 22963
 			continue
 		elif _pc == 22509:
-			if 1 == v17:
+			if v17 == 1:
 				_pc = 22521
 				continue
 			else:
@@ -5043,7 +5043,7 @@ func official(v0) -> Variant:
 			_pc = 22547
 			continue
 		elif _pc == 22547:
-			if 1 == v20:
+			if v20 == 1:
 				_pc = 22559
 				continue
 			else:
@@ -5064,7 +5064,7 @@ func official(v0) -> Variant:
 			_pc = 22633
 			continue
 		elif _pc == 22620:
-			v20 = 1 - v20
+			v20 = v20 - 1
 			_pc = 22633
 			continue
 		elif _pc == 22633:
@@ -5072,7 +5072,7 @@ func official(v0) -> Variant:
 			_pc = 22963
 			continue
 		elif _pc == 22645:
-			if 1 == v18:
+			if v18 == 1:
 				_pc = 22657
 				continue
 			else:
@@ -5086,7 +5086,7 @@ func official(v0) -> Variant:
 			_pc = 22683
 			continue
 		elif _pc == 22683:
-			if 1 == v20:
+			if v20 == 1:
 				_pc = 22695
 				continue
 			else:
@@ -5136,7 +5136,7 @@ func official(v0) -> Variant:
 			continue
 		elif _pc == 22860:
 			math.random_int(1, 2)
-			if math.random_int(1, 2) != 1:
+			if 1 != math.random_int(1, 2):
 				_pc = 22884
 				continue
 			else:
@@ -5153,7 +5153,7 @@ func official(v0) -> Variant:
 			_pc = 22911
 			continue
 		elif _pc == 22898:
-			v20 = 1 - v20
+			v20 = v20 - 1
 			_pc = 22911
 			continue
 		elif _pc == 22911:
@@ -5192,7 +5192,7 @@ func official(v0) -> Variant:
 			_pc = 23106
 			continue
 		elif _pc == 23106:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 23118
 				continue
 			else:
@@ -5238,7 +5238,7 @@ func official(v0) -> Variant:
 			_pc = 23399
 			continue
 		elif _pc == 23399:
-			if 0 > v31:
+			if v31 > 0:
 				_pc = 23411
 				continue
 			else:
@@ -5254,7 +5254,7 @@ func official(v0) -> Variant:
 			continue
 		elif _pc == 23493:
 			v32 = await ishipcreation.get_traffic(6, v13, v31)
-			if 1 > v31:
+			if v31 > 1:
 				_pc = 23536
 				continue
 			else:
@@ -5697,7 +5697,7 @@ func maintenance(v0) -> Variant:
 			_pc = 26817
 			continue
 		elif _pc == 26817:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 26829
 				continue
 			else:
@@ -5792,7 +5792,7 @@ func maintenance(v0) -> Variant:
 			_pc = 27479
 			continue
 		elif _pc == 27479:
-			if 1 > v6:
+			if v6 > 1:
 				_pc = 27491
 				continue
 			else:
@@ -5862,7 +5862,7 @@ func maintenance(v0) -> Variant:
 			_pc = 27994
 			continue
 		elif _pc == 27954:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 27967
 				continue
 			else:
@@ -5970,7 +5970,7 @@ func mining(v0) -> Variant:
 		elif _pc == 28349:
 			v12 = ihabitat.type(v1)
 			v16 = v12
-			if 59 == v16 or 53 == v16 or 20 <= v16 and 1 >= v16:
+			if v16 >= 1 and v16 <= 20 or v16 == 53 or v16 == 59:
 				_pc = 28423
 				continue
 			else:
@@ -6034,7 +6034,7 @@ func mining(v0) -> Variant:
 		elif _pc == 28693:
 			v11 = iship.find_player_ship()
 			v10 = sim.distance_between(v11, imapentity.waypoint_for_entity(v0))
-			v9 = math.random(v8, v10 + v8)
+			v9 = math.random(v8, v8 + v10)
 			_pc = 28970
 			continue
 		elif _pc == 28794:
@@ -6089,7 +6089,7 @@ func mining(v0) -> Variant:
 			_pc = 29142
 			continue
 		elif _pc == 28970:
-			if v12 != 11:
+			if 11 != v12:
 				_pc = 28984
 				continue
 			else:
@@ -6253,7 +6253,7 @@ func mining(v0) -> Variant:
 				_pc = 29521
 				continue
 		elif _pc == 29365:
-			if 1 == math.random_int(0, 1):
+			if math.random_int(0, 1) == 1:
 				_pc = 29387
 				continue
 			else:
@@ -6328,7 +6328,7 @@ func underworld(v0) -> Variant:
 			v7 = global.pog_set("g_filtered_system_habitats")
 			v1 = iship.find_player_ship()
 			v10 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v12 = math.random(v11, v10 + v11)
+			v12 = math.random(v11, v11 + v10)
 			if _pog_is_null(v5):
 				_pc = 30027
 				continue
@@ -6545,7 +6545,7 @@ func underworld(v0) -> Variant:
 			_pc = 31779
 			continue
 		elif _pc == 31779:
-			v13 = 2 * math.random_int(0, 3)
+			v13 = math.random_int(0, 3) * 2
 			if v17:
 				_pc = 31814
 				continue
@@ -6572,7 +6572,7 @@ func underworld(v0) -> Variant:
 		elif _pc == 31999:
 			v16 = iship.cast(group.nth_sim(v2, 0))
 			await ishipcreation.create_trade_cargo(v16, "Expensive")
-			if 0 > v13:
+			if v13 > 0:
 				_pc = 32075
 				continue
 			else:
@@ -6595,7 +6595,7 @@ func underworld(v0) -> Variant:
 			_pc = 32210
 			continue
 		elif _pc == 32210:
-			if 1 > v13:
+			if v13 > 1:
 				_pc = 32222
 				continue
 			else:
@@ -6731,7 +6731,7 @@ func underworld(v0) -> Variant:
 			_pc = 33420
 			continue
 		elif _pc == 33335:
-			if v9 != 1:
+			if 1 != v9:
 				_pc = 33348
 				continue
 			else:
@@ -6832,7 +6832,7 @@ func oddball(v0) -> Variant:
 			v7 = global.pog_set("g_filtered_system_habitats")
 			v1 = iship.find_player_ship()
 			v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v11 = math.random(v10, v9 + v10)
+			v11 = math.random(v10, v10 + v9)
 			if _pog_is_null(v5):
 				_pc = 33751
 				continue
@@ -7033,7 +7033,7 @@ func oddball(v0) -> Variant:
 			_pc = 35340
 			continue
 		elif _pc == 35300:
-			if v8 != 1:
+			if 1 != v8:
 				_pc = 35313
 				continue
 			else:
@@ -7099,7 +7099,7 @@ func civilian(v0) -> Variant:
 			v7 = global.pog_set("g_filtered_system_habitats")
 			v1 = iship.find_player_ship()
 			v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v11 = math.random(v10, v9 + v10)
+			v11 = math.random(v10, v10 + v9)
 			if _pog_is_null(v5):
 				_pc = 35671
 				continue
@@ -7119,7 +7119,7 @@ func civilian(v0) -> Variant:
 			continue
 		elif _pc == 35726:
 			v8 = math.random_int(1, 3)
-			if 22 == math.random_int(0, 100):
+			if math.random_int(0, 100) == 22:
 				_pc = 35772
 				continue
 			else:
@@ -7323,7 +7323,7 @@ func civilian(v0) -> Variant:
 			_pc = 37387
 			continue
 		elif _pc == 37347:
-			if v8 != 1:
+			if 1 != v8:
 				_pc = 37360
 				continue
 			else:
@@ -7370,14 +7370,14 @@ func local_37397(v0) -> Variant:
 			_pc = 37465
 			continue
 		elif _pc == 37465:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 37481
 				continue
 			else:
 				_pc = 37605
 				continue
 		elif _pc == 37481:
-			if 0.0 < ifaction.feeling(ifaction.cast(list.get_nth(v1, v3)), v0):
+			if ifaction.feeling(ifaction.cast(list.get_nth(v1, v3)), v0) < 0.0:
 				_pc = 37546
 				continue
 			else:
@@ -7388,7 +7388,7 @@ func local_37397(v0) -> Variant:
 			_pc = 37611
 			continue
 		elif _pc == 37587:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 37465
 			continue
 		elif _pc == 37605:
@@ -7435,7 +7435,7 @@ func hostile(v0) -> Variant:
 			v7 = global.pog_set("g_filtered_system_habitats")
 			v1 = iship.find_player_ship()
 			v11 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v13 = math.random(v12, v11 + v12)
+			v13 = math.random(v12, v12 + v11)
 			if _pog_is_null(v5):
 				_pc = 37941
 				continue
@@ -7461,9 +7461,9 @@ func hostile(v0) -> Variant:
 			v3 = ihabitat.type(v5)
 			v4 = ifaction.allegiance(await local_37397(ifaction.find(await iutilities.from_allegiance_enum(ihabitat.allegiance(v5)))))
 			v10 = ihabitat.population(v5)
-			v10 = 200 / v10
-			v9 = math.random_int(3 - v10, 3 + v10)
-			if 5 > v9:
+			v10 = v10 / 200
+			v9 = math.random_int(v10 - 3, v10 + 3)
+			if v9 > 5:
 				_pc = 38212
 				continue
 			else:
@@ -7525,7 +7525,7 @@ func hostile(v0) -> Variant:
 			_pc = 38699
 			continue
 		elif _pc == 38668:
-			if v8 != 1:
+			if 1 != v8:
 				_pc = 38681
 				continue
 			else:
@@ -7567,7 +7567,7 @@ func hostile(v0) -> Variant:
 			_pc = 38889
 			continue
 		elif _pc == 38858:
-			if v8 != 1:
+			if 1 != v8:
 				_pc = 38871
 				continue
 			else:
@@ -7708,7 +7708,7 @@ func scum(v0) -> Variant:
 				_pc = 39811
 				continue
 		elif _pc == 39724:
-			if 1 == ilagrangepoint.interstellar(v6):
+			if ilagrangepoint.interstellar(v6) == 1:
 				_pc = 39749
 				continue
 			else:
@@ -7742,7 +7742,7 @@ func scum(v0) -> Variant:
 			v4 = 1
 			v1 = iship.find_player_ship()
 			v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v11 = math.random(v10, v9 + v10)
+			v11 = math.random(v10, v10 + v9)
 			v7 = math.random_int(0, 2)
 			_pc = 41500
 			continue

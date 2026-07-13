@@ -206,7 +206,7 @@ func local_752(v0, v1) -> Variant:
 			_pc = 817
 			continue
 		elif _pc == 817:
-			if v7 < v8:
+			if v8 < v7:
 				_pc = 833
 				continue
 			else:
@@ -218,7 +218,7 @@ func local_752(v0, v1) -> Variant:
 			_pc = 859
 			continue
 		elif _pc == 859:
-			if 3 < v9:
+			if v9 < 3:
 				_pc = 872
 				continue
 			else:
@@ -227,7 +227,7 @@ func local_752(v0, v1) -> Variant:
 		elif _pc == 872:
 			v5 = await local_454(v4)
 			group.add_sim(v3, v5)
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 859
 			continue
 		elif _pc == 938:
@@ -237,7 +237,7 @@ func local_752(v0, v1) -> Variant:
 			_pog_detach(v6)
 			object.add_handle_property(group.leader(v3), "g_task_handle", v6)
 			group.add_group(v2, v3)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 817
 			continue
 		elif _pc == 1205:
@@ -262,7 +262,7 @@ func local_1217(v0) -> Variant:
 			_pc = 1253
 			continue
 		elif _pc == 1253:
-			if v1 < v3:
+			if v3 < v1:
 				_pc = 1269
 				continue
 			else:
@@ -274,7 +274,7 @@ func local_1217(v0) -> Variant:
 			_pc = 1318
 			continue
 		elif _pc == 1318:
-			if v2 < v4:
+			if v4 < v2:
 				_pc = 1334
 				continue
 			else:
@@ -282,11 +282,11 @@ func local_1217(v0) -> Variant:
 				continue
 		elif _pc == 1334:
 			object.set_bool_property(group.nth_sim(group.nth_group(v0, v4), v3), "ignore_speed_limit", 1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1318
 			continue
 		elif _pc == 1415:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 1253
 			continue
 		elif _pc == 1433:
@@ -382,14 +382,14 @@ func local_2357(v0, v1, v2) -> Variant:
 				_pc = 2858
 				continue
 		elif _pc == 2555:
-			if 20000.0 < sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) < 20000.0:
 				_pc = 2589
 				continue
 			else:
 				_pc = 2858
 				continue
 		elif _pc == 2589:
-			if 1 != state.progress(v2):
+			if state.progress(v2) != 1:
 				_pc = 2614
 				continue
 			else:
@@ -480,7 +480,7 @@ func local_2357(v0, v1, v2) -> Variant:
 			_pc = 3320
 			continue
 		elif _pc == 3320:
-			if v17 < v19:
+			if v19 < v17:
 				_pc = 3336
 				continue
 			else:
@@ -488,7 +488,7 @@ func local_2357(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 3336:
 			v15 = group.nth_sim(v11, v19)
-			if sim.distance_between(v14, v0) < sim.distance_between(v15, v0):
+			if sim.distance_between(v15, v0) < sim.distance_between(v14, v0):
 				_pc = 3417
 				continue
 			else:
@@ -499,12 +499,12 @@ func local_2357(v0, v1, v2) -> Variant:
 			_pc = 3428
 			continue
 		elif _pc == 3428:
-			v19 = 1 + v19
+			v19 = v19 + 1
 			_pc = 3320
 			continue
 		elif _pc == 3446:
 			v7 = iship.brightness_of(v0, v14, 8000.0, 0)
-			if not (v3) and v4 or 0.1899999976158142 > v7:
+			if v7 > 0.1899999976158142 or v4 and not (v3):
 				_pc = 3510
 				continue
 			else:
@@ -518,8 +518,8 @@ func local_2357(v0, v1, v2) -> Variant:
 				_pc = 3788
 				continue
 		elif _pc == 3520:
-			v18 = 1 + v18
-			if 0.1899999976158142 > v7 and 5 > v18:
+			v18 = v18 + 1
+			if v18 > 5 and v7 > 0.1899999976158142:
 				_pc = 3558
 				continue
 			else:
@@ -534,7 +534,7 @@ func local_2357(v0, v1, v2) -> Variant:
 			_pc = 3783
 			continue
 		elif _pc == 3751:
-			if 0.2199999988079071 < v7 and 5 > v18:
+			if v18 > 5 and v7 < 0.2199999988079071:
 				_pc = 3776
 				continue
 			else:
@@ -584,7 +584,7 @@ func local_2357(v0, v1, v2) -> Variant:
 				_pc = 4292
 				continue
 		elif _pc == 4109:
-			if v13 <= sim.distance_between(v0, v10):
+			if sim.distance_between(v0, v10) <= v13:
 				_pc = 4143
 				continue
 			else:
@@ -668,7 +668,7 @@ func mission_handler() -> Variant:
 				_pc = 5313
 				continue
 		elif _pc == 4703:
-			if 2 != state.progress(v3) and not (v0) and 350000.0 < sim.distance_between(v2, v1):
+			if sim.distance_between(v2, v1) < 350000.0 and not (v0) and state.progress(v3) != 2:
 				_pc = 4766
 				continue
 			else:
@@ -680,7 +680,7 @@ func mission_handler() -> Variant:
 			_pc = 4890
 			continue
 		elif _pc == 4812:
-			if 2 != state.progress(v3) and not (await iutilities.player_in_range(v1)) and v0:
+			if v0 and not (await iutilities.player_in_range(v1)) and state.progress(v3) != 2:
 				_pc = 4864
 				continue
 			else:
@@ -692,14 +692,14 @@ func mission_handler() -> Variant:
 			_pc = 4890
 			continue
 		elif _pc == 4890:
-			if 8 == state.progress(v3):
+			if state.progress(v3) == 8:
 				_pc = 4916
 				continue
 			else:
 				_pc = 5313
 				continue
 		elif _pc == 4916:
-			if 100 != state.progress(v3):
+			if state.progress(v3) != 100:
 				_pc = 4943
 				continue
 			else:
@@ -769,7 +769,7 @@ func local_5321(v0, v1) -> Variant:
 			_pc = 5565
 			continue
 		elif _pc == 5565:
-			if 3 < v2:
+			if v2 < 3:
 				_pc = 5578
 				continue
 			else:
@@ -780,7 +780,7 @@ func local_5321(v0, v1) -> Variant:
 			idirector.set_secondary_focus(v0)
 			idirector.set_camera(13)
 			await _pog_wait(5.0)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 5565
 			continue
 		elif _pc == 5726:

@@ -157,7 +157,7 @@ func local_407(v0) -> Variant:
 			_pc = 936
 			continue
 		elif _pc == 936:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 952
 				continue
 			else:
@@ -208,7 +208,7 @@ func local_407(v0) -> Variant:
 			sim.set_cullable(v4, 0)
 			iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
 			group.add_sim(v2, v4)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 936
 			continue
 		elif _pc == 1307:
@@ -238,7 +238,7 @@ func local_1528(v0, v1) -> Variant:
 			_pc = 1639
 			continue
 		elif _pc == 1639:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 1655
 				continue
 			else:
@@ -246,7 +246,7 @@ func local_1528(v0, v1) -> Variant:
 				continue
 		elif _pc == 1655:
 			isim.set_faction(isim.cast(list.get_nth(v2, v4)), v1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1639
 			continue
 		elif _pc == 1728:
@@ -269,7 +269,7 @@ func local_1738(v0, v1, v2) -> Variant:
 			v3 = ifaction.find("MAAS Corporation")
 			v4 = ifaction.find("M.C.A.")
 			v5 = ifaction.find("Player")
-			if 1 == v2:
+			if v2 == 1:
 				_pc = 1831
 				continue
 			else:
@@ -282,7 +282,7 @@ func local_1738(v0, v1, v2) -> Variant:
 			_pc = 1886
 			continue
 		elif _pc == 1886:
-			if v9 < v7:
+			if v7 < v9:
 				_pc = 1902
 				continue
 			else:
@@ -294,7 +294,7 @@ func local_1738(v0, v1, v2) -> Variant:
 			_pc = 1951
 			continue
 		elif _pc == 1951:
-			if v8 < v6:
+			if v6 < v8:
 				_pc = 1967
 				continue
 			else:
@@ -302,11 +302,11 @@ func local_1738(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 1967:
 			isim.set_faction(isim.cast(group.nth_sim(group.nth_group(v0, v7), v6)), v4)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 1951
 			continue
 		elif _pc == 2058:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 1886
 			continue
 		elif _pc == 2076:
@@ -319,7 +319,7 @@ func local_1738(v0, v1, v2) -> Variant:
 			_pc = 2136
 			continue
 		elif _pc == 2136:
-			if v9 < v7:
+			if v7 < v9:
 				_pc = 2152
 				continue
 			else:
@@ -331,7 +331,7 @@ func local_1738(v0, v1, v2) -> Variant:
 			_pc = 2201
 			continue
 		elif _pc == 2201:
-			if v8 < v6:
+			if v6 < v8:
 				_pc = 2217
 				continue
 			else:
@@ -339,17 +339,17 @@ func local_1738(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 2217:
 			isim.set_faction(isim.cast(group.nth_sim(group.nth_group(v0, v7), v6)), v3)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 2201
 			continue
 		elif _pc == 2308:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 2136
 			continue
 		elif _pc == 2326:
 			return 0
 		elif _pc == 2365:
-			if v1 < v2:
+			if v2 < v1:
 				_pc = 2381
 				continue
 			else:
@@ -357,7 +357,7 @@ func local_1738(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 2381:
 			debug.error(object.string_property(group.leader(group.nth_group(v0, v2)), "name"))
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 2365
 			continue
 		elif _pc == 2470:
@@ -391,7 +391,7 @@ func local_2473(v0, v1, v2) -> Variant:
 				_pc = 3392
 				continue
 		elif _pc == 2636:
-			if not (v3) and 800.0 < sim.distance_between(v1, v4):
+			if sim.distance_between(v1, v4) < 800.0 and not (v3):
 				_pc = 2677
 				continue
 			else:
@@ -481,7 +481,7 @@ func local_3427(v0) -> Variant:
 			_pc = 3922
 			continue
 		elif _pc == 3922:
-			if v8 < v9:
+			if v9 < v8:
 				_pc = 3938
 				continue
 			else:
@@ -531,7 +531,7 @@ func local_3427(v0) -> Variant:
 			isim.set_faction(v7, v3)
 			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
 			group.add_sim(v2, v7)
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 3922
 			continue
 		elif _pc == 4273:
@@ -549,7 +549,7 @@ func local_3427(v0) -> Variant:
 			_pc = 4633
 			continue
 		elif _pc == 4633:
-			if v8 < v9:
+			if v9 < v8:
 				_pc = 4649
 				continue
 			else:
@@ -637,14 +637,14 @@ func local_3427(v0) -> Variant:
 		elif _pc == 4986:
 			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
 			group.add_sim(v2, v7)
-			if 2 < v10:
+			if v10 < 2:
 				_pc = 5082
 				continue
 			else:
 				_pc = 5100
 				continue
 		elif _pc == 5082:
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 5107
 			continue
 		elif _pc == 5100:
@@ -652,7 +652,7 @@ func local_3427(v0) -> Variant:
 			_pc = 5107
 			continue
 		elif _pc == 5107:
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 4633
 			continue
 		elif _pc == 5125:
@@ -678,7 +678,7 @@ func local_5161(v0, v1) -> Variant:
 			_pc = 5235
 			continue
 		elif _pc == 5235:
-			if v2 < v4:
+			if v4 < v2:
 				_pc = 5251
 				continue
 			else:
@@ -686,7 +686,7 @@ func local_5161(v0, v1) -> Variant:
 				continue
 		elif _pc == 5251:
 			isim.capsule_jump_staggered(isim.cast(group.nth_sim(group.nth_group(v0, 1), v4)), v1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 5235
 			continue
 		elif _pc == 5338:
@@ -694,7 +694,7 @@ func local_5161(v0, v1) -> Variant:
 			_pc = 5345
 			continue
 		elif _pc == 5345:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 5361
 				continue
 			else:
@@ -702,7 +702,7 @@ func local_5161(v0, v1) -> Variant:
 				continue
 		elif _pc == 5361:
 			isim.capsule_jump_staggered(isim.cast(group.nth_sim(group.nth_group(v0, 0), v4)), v1)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 5345
 			continue
 		elif _pc == 5448:
@@ -740,7 +740,7 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 				_pc = 7738
 				continue
 		elif _pc == 5536:
-			if not (v7) and _pog_eq("map:/geog/gagarin/ishime", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/ishime") and not (v7):
 				_pc = 5570
 				continue
 			else:
@@ -758,7 +758,7 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 			_pc = 5947
 			continue
 		elif _pc == 5786:
-			if v7 and not _pog_eq("map:/geog/gagarin/ishime", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/gagarin/ishime") and v7:
 				_pc = 5820
 				continue
 			else:
@@ -773,7 +773,7 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 			_pc = 5947
 			continue
 		elif _pc == 5947:
-			if not (v4) and await iutilities.player_in_range(v2):
+			if await iutilities.player_in_range(v2) and not (v4):
 				_pc = 5977
 				continue
 			else:
@@ -809,7 +809,7 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 				_pc = 7738
 				continue
 		elif _pc == 6646:
-			if not (v5) and _pog_is_null(group.total_sim_count(group.nth_group(v8, 1))):
+			if _pog_is_null(group.total_sim_count(group.nth_group(v8, 1))) and not (v5):
 				_pc = 6692
 				continue
 			else:
@@ -825,7 +825,7 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 			await iconversation.add_response("a3_m06_text_c1_option_1_cabal", "a3_m06_dialogue_player_c1_option_1_cabal")
 			await iconversation.add_response("a3_m06_text_c1_option_2_split", "a3_m06_dialogue_player_c1_option_2_split")
 			v12 = await iconversation.ask(0, "a3_m06_name_maashq", "a3_m06_dialogue_maashq_c1_cabal")
-			if 1 == v12:
+			if v12 == 1:
 				_pc = 6939
 				continue
 			else:
@@ -846,7 +846,7 @@ func local_5451(v0, v1, v2, v3) -> Variant:
 			await iconversation.add_response("a3_m06_text_c1_option_1_cabal", "a3_m06_dialogue_player_c1_option_1_cabal")
 			await iconversation.add_response("a3_m06_text_c1_option_3_remit", "a3_m06_dialogue_player_c1_option_3_remit")
 			v12 = await iconversation.ask(0, "", "")
-			if 1 == v12:
+			if v12 == 1:
 				_pc = 7265
 				continue
 			else:
@@ -913,7 +913,7 @@ func local_7746(v0, v1, v2) -> Variant:
 				_pc = 8160
 				continue
 		elif _pc == 7858:
-			if not (v3) and await iutilities.player_in_range(v1):
+			if await iutilities.player_in_range(v1) and not (v3):
 				_pc = 7888
 				continue
 			else:
@@ -933,7 +933,7 @@ func local_7746(v0, v1, v2) -> Variant:
 				_pc = 8160
 				continue
 		elif _pc == 7962:
-			if 2000.0 < sim.distance_between(v0, v4):
+			if sim.distance_between(v0, v4) < 2000.0:
 				_pc = 7996
 				continue
 			else:
@@ -992,7 +992,7 @@ func local_8168(v0, v1, v2) -> Variant:
 			_pc = 8240
 			continue
 		elif _pc == 8240:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 8256
 				continue
 			else:
@@ -1002,7 +1002,7 @@ func local_8168(v0, v1, v2) -> Variant:
 			v5 = iship.cast(group.nth_sim(v0, v4))
 			iship.set_free_without_pilot(v5, v1)
 			sim.avatar_set_channel(v5, "lz", 0.0)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 8240
 			continue
 		elif _pc == 8371:
@@ -1048,7 +1048,7 @@ func local_8374(v0, v1, v2, v3, v4, v5) -> Variant:
 			continue
 		elif _pc == 9203:
 			await _pog_wait(0.10000000149011612)
-			if _pog_eq("map:/geog/gagarin/ishime", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/ishime"):
 				_pc = 9263
 				continue
 			else:
@@ -1137,7 +1137,7 @@ func mission_handler() -> Variant:
 			_pc = 10977
 			continue
 		elif _pc == 10164:
-			if not _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 10192
 				continue
 			else:
@@ -1150,7 +1150,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 10257:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 10317
 				continue
 			else:
@@ -1186,7 +1186,7 @@ func mission_handler() -> Variant:
 				_pc = 10971
 				continue
 		elif _pc == 10492:
-			if not (v0) and 1 == state.progress(v6):
+			if state.progress(v6) == 1 and not (v0):
 				_pc = 10524
 				continue
 			else:
@@ -1198,7 +1198,7 @@ func mission_handler() -> Variant:
 			_pc = 10565
 			continue
 		elif _pc == 10565:
-			if not (v1) and 2 == state.progress(v6):
+			if state.progress(v6) == 2 and not (v1):
 				_pc = 10598
 				continue
 			else:
@@ -1210,14 +1210,14 @@ func mission_handler() -> Variant:
 			_pc = 10634
 			continue
 		elif _pc == 10634:
-			if 100 == state.progress(v6) or 8 == state.progress(v6):
+			if state.progress(v6) == 8 or state.progress(v6) == 100:
 				_pc = 10682
 				continue
 			else:
 				_pc = 10971
 				continue
 		elif _pc == 10682:
-			if 8 == state.progress(v6):
+			if state.progress(v6) == 8:
 				_pc = 10708
 				continue
 			else:

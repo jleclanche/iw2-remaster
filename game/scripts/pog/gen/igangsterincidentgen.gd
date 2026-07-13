@@ -108,7 +108,7 @@ func set_faction(v0) -> Variant:
 			_pc = 534
 			continue
 		elif _pc == 498:
-			if v0 != 17:
+			if 17 != v0:
 				_pc = 512
 				continue
 			else:
@@ -174,7 +174,7 @@ func local_624(v0) -> Variant:
 			_pc = 758
 			continue
 		elif _pc == 758:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 774
 				continue
 			else:
@@ -182,7 +182,7 @@ func local_624(v0) -> Variant:
 				continue
 		elif _pc == 774:
 			v2 = ihabitat.cast(list.get_nth(v1, v4))
-			if 1 == ihabitat.type(v2):
+			if ihabitat.type(v2) == 1:
 				_pc = 841
 				continue
 			else:
@@ -193,7 +193,7 @@ func local_624(v0) -> Variant:
 			_pc = 865
 			continue
 		elif _pc == 865:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 758
 			continue
 		elif _pc == 883:
@@ -232,7 +232,7 @@ func gangster_war_generator() -> Variant:
 				_pc = 1132
 				continue
 		elif _pc == 1052:
-			if 1 == global.pog_bool("g_gangster_locking_global"):
+			if global.pog_bool("g_gangster_locking_global") == 1:
 				_pc = 1079
 				continue
 			else:
@@ -259,7 +259,7 @@ func gangster_war_generator() -> Variant:
 				_pc = 2746
 				continue
 		elif _pc == 1174:
-			if 1 == global.pog_bool("g_gangster_incident_generator_active"):
+			if global.pog_bool("g_gangster_incident_generator_active") == 1:
 				_pc = 1201
 				continue
 			else:
@@ -281,29 +281,29 @@ func gangster_war_generator() -> Variant:
 			continue
 		elif _pc == 1344:
 			v6 = list.item_count(v4)
-			if not (isim.is_capsule_jumping(isim.cast(v0))) and not (idirector.is_busy()):
+			if not (idirector.is_busy()) and not (isim.is_capsule_jumping(isim.cast(v0))):
 				_pc = 1420
 				continue
 			else:
 				_pc = 2649
 				continue
 		elif _pc == 1420:
-			if 0 > v6:
+			if v6 > 0:
 				_pc = 1432
 				continue
 			else:
 				_pc = 2266
 				continue
 		elif _pc == 1432:
-			if _pog_is_null(global.pog_bool("g_gangster_incident_running")) and 3 == math.random_int(0, 4):
+			if math.random_int(0, 4) == 3 and _pog_is_null(global.pog_bool("g_gangster_incident_running")):
 				_pc = 1479
 				continue
 			else:
 				_pc = 2261
 				continue
 		elif _pc == 1479:
-			v3 = imapentity.cast(list.get_nth(v4, math.random_int(0, 1 - v6)))
-			if 5000.0 < imapentity.entity_to_sim_distance(v3, v0):
+			v3 = imapentity.cast(list.get_nth(v4, math.random_int(0, v6 - 1)))
+			if imapentity.entity_to_sim_distance(v3, v0) < 5000.0:
 				_pc = 1571
 				continue
 			else:
@@ -322,7 +322,7 @@ func gangster_war_generator() -> Variant:
 			continue
 		elif _pc == 1625:
 			global.set_bool("g_gangster_incident_running", 1)
-			v1 = await iutilities.create_waypoint_relative_to_player(math.random(10000.0 - v5, v5), math.random(10000.0 - v5, v5), math.random(10000.0 - v5, v5))
+			v1 = await iutilities.create_waypoint_relative_to_player(math.random(v5 - 10000.0, v5), math.random(v5 - 10000.0, v5), math.random(v5 - 10000.0, v5))
 			object.set_string_property(v1, "name", "a2_master_name_distress")
 			isim.set_sensor_visibility(isim.cast(v1), 1)
 			sim.set_cullable(v1, 0)
@@ -386,7 +386,7 @@ func gangster_war_generator() -> Variant:
 			_pc = 2261
 			continue
 		elif _pc == 2230:
-			if v8 != 1:
+			if 1 != v8:
 				_pc = 2243
 				continue
 			else:
@@ -410,7 +410,7 @@ func gangster_war_generator() -> Variant:
 			_pc = 2649
 			continue
 		elif _pc == 2266:
-			if 3500000.0 > sim.distance_between(v0, v2):
+			if sim.distance_between(v0, v2) > 3500000.0:
 				_pc = 2300
 				continue
 			else:
@@ -418,7 +418,7 @@ func gangster_war_generator() -> Variant:
 				continue
 		elif _pc == 2300:
 			v7 = math.random_int(0, 4)
-			if _pog_is_null(global.pog_bool("g_gangster_incident_running")) and 4 == v7:
+			if v7 == 4 and _pog_is_null(global.pog_bool("g_gangster_incident_running")):
 				_pc = 2358
 				continue
 			else:
@@ -426,7 +426,7 @@ func gangster_war_generator() -> Variant:
 				continue
 		elif _pc == 2358:
 			global.set_bool("g_gangster_incident_running", 1)
-			v1 = await iutilities.create_waypoint_relative_to_player(math.random(50000.0 - v5, 100000.0 + v5), math.random(50000.0 - v5, 100000.0 + v5), math.random(50000.0 - v5, 100000.0 + v5))
+			v1 = await iutilities.create_waypoint_relative_to_player(math.random(v5 - 50000.0, v5 + 100000.0), math.random(v5 - 50000.0, v5 + 100000.0), math.random(v5 - 50000.0, v5 + 100000.0))
 			object.set_string_property(v1, "name", "a2_master_name_distress")
 			isim.set_sensor_visibility(isim.cast(v1), 1)
 			sim.set_cullable(v1, 0)
@@ -442,7 +442,7 @@ func gangster_war_generator() -> Variant:
 			continue
 		elif _pc == 2649:
 			await _pog_wait(global.pog_float("g_gangster_delay_check"))
-			if 1 != global.pog_bool("g_gangster_incident_generator_active"):
+			if global.pog_bool("g_gangster_incident_generator_active") != 1:
 				_pc = 2715
 				continue
 			else:
@@ -491,7 +491,7 @@ func local_2783(v0) -> Variant:
 			_pc = 2878
 			continue
 		elif _pc == 2878:
-			if v2 < v1:
+			if v1 < v2:
 				_pc = 2894
 				continue
 			else:
@@ -499,7 +499,7 @@ func local_2783(v0) -> Variant:
 				continue
 		elif _pc == 2894:
 			await ishipcreation.create_supply_cargo(iship.cast(group.nth_sim(v3, v1)), -1)
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 2878
 			continue
 		elif _pc == 2964:
@@ -538,14 +538,14 @@ func local_3175() -> Variant:
 			_pc = 3268
 			continue
 		elif _pc == 3268:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 3284
 				continue
 			else:
 				_pc = 3408
 				continue
 		elif _pc == 3284:
-			if 0.0 < ifaction.feeling(ifaction.cast(list.get_nth(v0, v3)), v1):
+			if ifaction.feeling(ifaction.cast(list.get_nth(v0, v3)), v1) < 0.0:
 				_pc = 3349
 				continue
 			else:
@@ -556,7 +556,7 @@ func local_3175() -> Variant:
 			_pc = 3414
 			continue
 		elif _pc == 3390:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 3268
 			continue
 		elif _pc == 3408:
@@ -590,7 +590,7 @@ func local_3513(v0) -> Variant:
 			_pc = 3549
 			continue
 		elif _pc == 3549:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 3565
 				continue
 			else:
@@ -600,7 +600,7 @@ func local_3513(v0) -> Variant:
 			v1 = iship.cast(group.nth_sim(v0, v3))
 			iship.remove_pilot(v1)
 			iship.install_a_i_pilot(v1, 0.10000000149011612, 4.0, 0.20000000298023224, "", "", "", "iGangsterIncidentGen.LegIt")
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 3549
 			continue
 		elif _pc == 3703:
@@ -720,7 +720,7 @@ func local_3706(v0) -> Variant:
 			continue
 		elif _pc == 4307:
 			global.pog_int("g_gangster_faction")
-			if global.pog_int("g_gangster_faction") != 1:
+			if 1 != global.pog_int("g_gangster_faction"):
 				_pc = 4335
 				continue
 			else:
@@ -847,7 +847,7 @@ func local_3706(v0) -> Variant:
 			continue
 		elif _pc == 4927:
 			global.pog_int("g_gangster_faction")
-			if global.pog_int("g_gangster_faction") != 1:
+			if 1 != global.pog_int("g_gangster_faction"):
 				_pc = 4955
 				continue
 			else:
@@ -875,7 +875,7 @@ func local_3706(v0) -> Variant:
 				_pc = 4839
 				continue
 		elif _pc == 4982:
-			if 1 == global.pog_int("g_gangster_faction"):
+			if global.pog_int("g_gangster_faction") == 1:
 				_pc = 5009
 				continue
 			else:
@@ -910,7 +910,7 @@ func local_5040(v0) -> Variant:
 		elif _pc == 5206:
 			return
 		elif _pc == 5255:
-			if v4 < v1:
+			if v1 < v4:
 				_pc = 5271
 				continue
 			else:
@@ -939,7 +939,7 @@ func local_5040(v0) -> Variant:
 			_pc = 5353
 			continue
 		elif _pc == 5353:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 5255
 			continue
 		elif _pc == 5371:
@@ -1053,8 +1053,8 @@ func local_5708(v0) -> Variant:
 				continue
 		elif _pc == 6011:
 			v3 = iship.find_player_ship()
-			v14 = 30.0 + v14
-			if not _pog_eq(isim.world_name(isim.cast(v0)), isim.active_world()) or global.pog_float("g_player_sensor_range") > sim.distance_between(v3, v0) and 900.0 > v14:
+			v14 = v14 + 30.0
+			if v14 > 900.0 and sim.distance_between(v3, v0) > global.pog_float("g_player_sensor_range") or not _pog_eq(isim.active_world(), isim.world_name(isim.cast(v0))):
 				_pc = 6157
 				continue
 			else:
@@ -1077,7 +1077,7 @@ func local_5708(v0) -> Variant:
 			_pc = 6405
 			continue
 		elif _pc == 6219:
-			if _pog_is_null(v2) and global.pog_float("g_player_sensor_range") < sim.distance_between(v3, v0):
+			if sim.distance_between(v3, v0) < global.pog_float("g_player_sensor_range") and _pog_is_null(v2):
 				_pc = 6276
 				continue
 			else:
@@ -1115,14 +1115,14 @@ func local_5708(v0) -> Variant:
 		elif _pc == 6428:
 			v10 = group.sim_count(v6)
 			v11 = group.sim_count(v5)
-			if not _pog_is_null(group.sim_count(v6)) and _pog_is_null(group.sim_count(v5)):
+			if _pog_is_null(group.sim_count(v5)) and not _pog_is_null(group.sim_count(v6)):
 				_pc = 6522
 				continue
 			else:
 				_pc = 6646
 				continue
 		elif _pc == 6522:
-			if 1 == global.pog_int("g_gangster_faction"):
+			if global.pog_int("g_gangster_faction") == 1:
 				_pc = 6549
 				continue
 			else:
@@ -1141,7 +1141,7 @@ func local_5708(v0) -> Variant:
 			_pc = 6995
 			continue
 		elif _pc == 6646:
-			if not _pog_is_null(group.sim_count(v5)) and _pog_is_null(group.sim_count(v6)):
+			if _pog_is_null(group.sim_count(v6)) and not _pog_is_null(group.sim_count(v5)):
 				_pc = 6692
 				continue
 			else:
@@ -1205,7 +1205,7 @@ func local_7105(v0, v1) -> Variant:
 		elif _pc == 7150:
 			await _pog_wait(v2)
 			v7 = group.sim_count(v0)
-			if 2 < v7:
+			if v7 < 2:
 				_pc = 7219
 				continue
 			else:
@@ -1215,8 +1215,8 @@ func local_7105(v0, v1) -> Variant:
 			_pc = 7257
 			continue
 		elif _pc == 7224:
-			v5 = v2 + v5
-			if v4 >= v5:
+			v5 = v5 + v2
+			if v5 >= v4:
 				_pc = 7257
 				continue
 			else:
@@ -1224,7 +1224,7 @@ func local_7105(v0, v1) -> Variant:
 				continue
 		elif _pc == 7257:
 			await iformation.claw(v0, 50.0, 0)
-			if 1 == global.pog_int("g_gangster_faction"):
+			if global.pog_int("g_gangster_faction") == 1:
 				_pc = 7309
 				continue
 			else:
@@ -1265,7 +1265,7 @@ func local_7460(v0) -> Variant:
 			_pc = 7573
 			continue
 		elif _pc == 7573:
-			if 1 == global.pog_int("g_gangster_faction"):
+			if global.pog_int("g_gangster_faction") == 1:
 				_pc = 7600
 				continue
 			else:
@@ -1307,7 +1307,7 @@ func local_7912(v0, v1, v2) -> Variant:
 		elif _pc == 7957:
 			v6 = group.sim_count(v1)
 			v8 = group.sim_count(v0)
-			if 2 < v8:
+			if v8 < 2:
 				_pc = 8018
 				continue
 			else:
@@ -1318,8 +1318,8 @@ func local_7912(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 8023:
 			await _pog_wait(v3)
-			v5 = v3 + v5
-			if v4 >= v5:
+			v5 = v5 + v3
+			if v5 >= v4:
 				_pc = 8088
 				continue
 			else:
@@ -1327,7 +1327,7 @@ func local_7912(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 8088:
 			await iformation.claw(v0, 50.0, 0)
-			if 1 == global.pog_int("g_gangster_faction"):
+			if global.pog_int("g_gangster_faction") == 1:
 				_pc = 8140
 				continue
 			else:
@@ -1373,7 +1373,7 @@ func local_8291(v0) -> Variant:
 		elif _pc == 8474:
 			group.add_sim(v5, v0)
 			v3 = group.sim_count(v5)
-			if 1 == global.pog_int("g_gangster_faction"):
+			if global.pog_int("g_gangster_faction") == 1:
 				_pc = 8549
 				continue
 			else:

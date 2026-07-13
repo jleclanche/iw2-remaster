@@ -53,7 +53,7 @@ func local_0(v0, v1, v2) -> Variant:
 			v3 = 0
 			v4 = group.sim_count(v0)
 			v5 = 0.0
-			v6 = v4 / v1
+			v6 = v1 / v4
 			v7 = iship.create("ini:/sims/ships/player/fast_ghost", "I am a Ghost")
 			v8 = iship.find_player_ship()
 			v9 = imapentity.system_centre()
@@ -66,32 +66,32 @@ func local_0(v0, v1, v2) -> Variant:
 			_pc = 266
 			continue
 		elif _pc == 266:
-			if v1 < v5:
+			if v5 < v1:
 				_pc = 282
 				continue
 			else:
 				_pc = 3693
 				continue
 		elif _pc == 282:
-			if not _pog_is_null(v3) and v3 * v6 < v5:
+			if v5 < v6 * v3 and not _pog_is_null(v3):
 				_pc = 313
 				continue
 			else:
 				_pc = 335
 				continue
 		elif _pc == 313:
-			v5 = 1.0 + v5
+			v5 = v5 + 1.0
 			_pc = 3693
 			continue
 		elif _pc == 335:
-			if v4 > v3:
+			if v3 > v4:
 				_pc = 351
 				continue
 			else:
 				_pc = 403
 				continue
 		elif _pc == 351:
-			if icomms.is_in_conversation() and v2:
+			if v2 and icomms.is_in_conversation():
 				_pc = 375
 				continue
 			else:
@@ -108,7 +108,7 @@ func local_0(v0, v1, v2) -> Variant:
 		elif _pc == 403:
 			sim.destroy(v10)
 			group.destroy(v12, 1)
-			v10 = await iutilities.create_waypoint_between_exact(group.nth_sim(v0, v3), v9, 12.0 * object.float_property(group.nth_sim(v0, v3), "radius"))
+			v10 = await iutilities.create_waypoint_between_exact(group.nth_sim(v0, v3), v9, object.float_property(group.nth_sim(v0, v3), "radius") * 12.0)
 			sim.place_relative_to(v7, v10, 0.0, 0.0, -850000.0)
 			idirector.attach_dolly_to_sim(v11, v7)
 			idirector.set_focus(group.nth_sim(v0, v3))
@@ -116,31 +116,31 @@ func local_0(v0, v1, v2) -> Variant:
 			_pc = 3336
 			continue
 		elif _pc == 662:
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius"), 0.0, 6.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius"), 0.0, 0.0))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), 12.0 * object.float_property(group.nth_sim(v0, v3), "radius"), object.float_property(group.nth_sim(v0, v3), "radius"), 16.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), 12.0 * object.float_property(group.nth_sim(v0, v3), "radius"), object.float_property(group.nth_sim(v0, v3), "radius"), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0, 0.0, object.float_property(group.nth_sim(v0, v3), "radius") * 6.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0, 0.0, 0.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), object.float_property(group.nth_sim(v0, v3), "radius") * 12.0, object.float_property(group.nth_sim(v0, v3), "radius"), object.float_property(group.nth_sim(v0, v3), "radius") * 16.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), object.float_property(group.nth_sim(v0, v3), "radius") * 12.0, object.float_property(group.nth_sim(v0, v3), "radius"), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0))
 			_pc = 3386
 			continue
 		elif _pc == 1326:
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(22.0 * object.float_property(group.nth_sim(v0, v3), "radius")), 0.0, 6.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(22.0 * object.float_property(group.nth_sim(v0, v3), "radius")), 0.0, 0.0))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(12.0 * object.float_property(group.nth_sim(v0, v3), "radius")), object.float_property(group.nth_sim(v0, v3), "radius"), 16.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(12.0 * object.float_property(group.nth_sim(v0, v3), "radius")), object.float_property(group.nth_sim(v0, v3), "radius"), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 22.0), 0.0, object.float_property(group.nth_sim(v0, v3), "radius") * 6.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 22.0), 0.0, 0.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 12.0), object.float_property(group.nth_sim(v0, v3), "radius"), object.float_property(group.nth_sim(v0, v3), "radius") * 16.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 12.0), object.float_property(group.nth_sim(v0, v3), "radius"), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0))
 			_pc = 3386
 			continue
 		elif _pc == 1994:
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(22.0 * object.float_property(group.nth_sim(v0, v3), "radius")), 0.0, 6.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(22.0 * object.float_property(group.nth_sim(v0, v3), "radius")), 0.0, 0.0))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(12.0 * object.float_property(group.nth_sim(v0, v3), "radius")), -(object.float_property(group.nth_sim(v0, v3), "radius")), 16.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(12.0 * object.float_property(group.nth_sim(v0, v3), "radius")), -(object.float_property(group.nth_sim(v0, v3), "radius")), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 22.0), 0.0, object.float_property(group.nth_sim(v0, v3), "radius") * 6.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 22.0), 0.0, 0.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 12.0), -(object.float_property(group.nth_sim(v0, v3), "radius")), object.float_property(group.nth_sim(v0, v3), "radius") * 16.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 12.0), -(object.float_property(group.nth_sim(v0, v3), "radius")), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0))
 			_pc = 3386
 			continue
 		elif _pc == 2664:
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius"), 0.0, 6.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius"), 0.0, 0.0))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(12.0 * object.float_property(group.nth_sim(v0, v3), "radius")), -(object.float_property(group.nth_sim(v0, v3), "radius")), 16.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
-			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), 12.0 * object.float_property(group.nth_sim(v0, v3), "radius"), -(object.float_property(group.nth_sim(v0, v3), "radius")), 22.0 * object.float_property(group.nth_sim(v0, v3), "radius")))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0, 0.0, object.float_property(group.nth_sim(v0, v3), "radius") * 6.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0, 0.0, 0.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), -(object.float_property(group.nth_sim(v0, v3), "radius") * 12.0), -(object.float_property(group.nth_sim(v0, v3), "radius")), object.float_property(group.nth_sim(v0, v3), "radius") * 16.0))
+			group.add_sim(v12, await iutilities.create_waypoint_relative_to(group.nth_sim(v0, v3), object.float_property(group.nth_sim(v0, v3), "radius") * 12.0, -(object.float_property(group.nth_sim(v0, v3), "radius")), object.float_property(group.nth_sim(v0, v3), "radius") * 22.0))
 			_pc = 3386
 			continue
 		elif _pc == 3331:
@@ -180,11 +180,11 @@ func local_0(v0, v1, v2) -> Variant:
 			_pc = 3525
 			continue
 		elif _pc == 3428:
-			idirector.set_interpolate_field_of_view(60.0, 30.0, 3.0 / v6 - v6)
+			idirector.set_interpolate_field_of_view(60.0, 30.0, v6 - v6 / 3.0)
 			_pc = 3558
 			continue
 		elif _pc == 3474:
-			idirector.set_interpolate_field_of_view(30.0, 60.0, 3.0 / v6 - v6)
+			idirector.set_interpolate_field_of_view(30.0, 60.0, v6 - v6 / 3.0)
 			_pc = 3558
 			continue
 		elif _pc == 3520:
@@ -192,7 +192,7 @@ func local_0(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 3525:
 			math.random_int(1, 2)
-			if math.random_int(1, 2) != 1:
+			if 1 != math.random_int(1, 2):
 				_pc = 3549
 				continue
 			else:
@@ -208,12 +208,12 @@ func local_0(v0, v1, v2) -> Variant:
 		elif _pc == 3558:
 			idirector.set_caption(string.join("hud_long_type_planet+", string.join(" :+", object.string_property(group.nth_sim(v0, v3), "name"))), 5.0)
 			idirector.set_dolly_camera(v11)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 3693
 			continue
 		elif _pc == 3693:
 			await _pog_wait(0.699999988079071)
-			if not (icomms.is_in_conversation() or v1 < v5):
+			if not (v5 < v1 or icomms.is_in_conversation()):
 				_pc = 3755
 				continue
 			else:
@@ -234,7 +234,7 @@ func local_3829(v0, v1, v2, v3) -> Variant:
 	while true:
 		if _pc == 3829:
 			await _pog_wait(1.0)
-			if _pog_eq(v1, isim.active_world()):
+			if _pog_eq(isim.active_world(), v1):
 				_pc = 3888
 				continue
 			else:
@@ -344,7 +344,7 @@ func local_6176(v0, v1) -> Variant:
 			continue
 		elif _pc == 6247:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/badlands/kompira", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/kompira"):
 				_pc = 6307
 				continue
 			else:
@@ -361,7 +361,7 @@ func local_6176(v0, v1) -> Variant:
 			continue
 		elif _pc == 6392:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/badlands/eureka", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
 				_pc = 6452
 				continue
 			else:
@@ -378,7 +378,7 @@ func local_6176(v0, v1) -> Variant:
 			continue
 		elif _pc == 6537:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/badlands/firefrost", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/firefrost"):
 				_pc = 6597
 				continue
 			else:
@@ -395,7 +395,7 @@ func local_6176(v0, v1) -> Variant:
 			continue
 		elif _pc == 6682:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/badlands/dagda", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/dagda"):
 				_pc = 6742
 				continue
 			else:
@@ -412,7 +412,7 @@ func local_6176(v0, v1) -> Variant:
 			continue
 		elif _pc == 6827:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/badlands/mwari", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
 				_pc = 6887
 				continue
 			else:
@@ -429,7 +429,7 @@ func local_6176(v0, v1) -> Variant:
 			continue
 		elif _pc == 6972:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/badlands/coyote", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
 				_pc = 7032
 				continue
 			else:
@@ -443,7 +443,7 @@ func local_6176(v0, v1) -> Variant:
 			_pc = 7116
 			continue
 		elif _pc == 7056:
-			if v1 != 100:
+			if 100 != v1:
 				_pc = 7070
 				continue
 			else:
@@ -515,7 +515,7 @@ func local_7119(v0) -> Variant:
 				continue
 		elif _pc == 7169:
 			await local_6176(v0, v1)
-			v1 = 1 + v1
+			v1 = v1 + 1
 			await _pog_wait(10.0)
 			_pc = 7238
 			continue

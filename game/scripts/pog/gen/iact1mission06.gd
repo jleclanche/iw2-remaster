@@ -146,7 +146,7 @@ func local_427(v0, v1, v2, v3, v4, v5) -> Variant:
 				_pc = 733
 				continue
 		elif _pc == 446:
-			if 100 == state.progress(v1):
+			if state.progress(v1) == 100:
 				_pc = 472
 				continue
 			else:
@@ -310,7 +310,7 @@ func mission_handler() -> Variant:
 				_pc = 1691
 				continue
 		elif _pc == 1652:
-			if 500000.0 < sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) < 500000.0:
 				_pc = 1686
 				continue
 			else:
@@ -342,7 +342,7 @@ func mission_handler() -> Variant:
 				_pc = 1810
 				continue
 		elif _pc == 1771:
-			if 40000.0 < sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) < 40000.0:
 				_pc = 1805
 				continue
 			else:
@@ -441,7 +441,7 @@ func mission_handler() -> Variant:
 				_pc = 2889
 				continue
 		elif _pc == 2858:
-			if 6 == group.sim_count(v4):
+			if group.sim_count(v4) == 6:
 				_pc = 2884
 				continue
 			else:
@@ -461,7 +461,7 @@ func mission_handler() -> Variant:
 			_pc = 2964
 			continue
 		elif _pc == 2964:
-			if group.sim_count(v4) < v13:
+			if v13 < group.sim_count(v4):
 				_pc = 2993
 				continue
 			else:
@@ -470,7 +470,7 @@ func mission_handler() -> Variant:
 		elif _pc == 2993:
 			iship.lock_down_weapons(iship.cast(group.nth_sim(v4, v13)))
 			isim.set_hostile(iship.cast(group.nth_sim(v4, v13)), 0)
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 2964
 			continue
 		elif _pc == 3112:
@@ -664,7 +664,7 @@ func local_5736(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 6101
 			continue
 		elif _pc == 5957:
-			if _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())) and not _pog_is_null(sim.parent(v6)):
+			if not _pog_is_null(sim.parent(v6)) and _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())):
 				_pc = 6014
 				continue
 			else:
@@ -679,7 +679,7 @@ func local_5736(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 6062
 			continue
 		elif _pc == 6062:
-			if v1 >= v10:
+			if v10 >= v1:
 				_pc = 6078
 				continue
 			else:
@@ -689,7 +689,7 @@ func local_5736(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 6101
 			continue
 		elif _pc == 6083:
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 6096
 			continue
 		elif _pc == 6096:
@@ -732,7 +732,7 @@ func local_5736(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 6331
 			continue
 		elif _pc == 6259:
-			if v2 >= v10:
+			if v10 >= v2:
 				_pc = 6275
 				continue
 			else:
@@ -742,7 +742,7 @@ func local_5736(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 6331
 			continue
 		elif _pc == 6280:
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 6293
 			continue
 		elif _pc == 6293:
@@ -809,7 +809,7 @@ func local_6541(v0) -> Variant:
 			_pc = 6765
 			continue
 		elif _pc == 6716:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 6729
 				continue
 			else:
@@ -856,7 +856,7 @@ func local_6768(v0, v1) -> Variant:
 	var _pc: int = 6768
 	while true:
 		if _pc == 6768:
-			v4 = 10 / object.int_property(v0, "hit_points")
+			v4 = object.int_property(v0, "hit_points") / 10
 			_pc = 6812
 			continue
 		elif _pc == 6812:
@@ -868,7 +868,7 @@ func local_6768(v0, v1) -> Variant:
 				_pc = 7269
 				continue
 		elif _pc == 6826:
-			if 15000.0 > sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) > 15000.0:
 				_pc = 6860
 				continue
 			else:
@@ -880,7 +880,7 @@ func local_6768(v0, v1) -> Variant:
 			_pc = 6895
 			continue
 		elif _pc == 6895:
-			if 10 < v3:
+			if v3 < 10:
 				_pc = 6908
 				continue
 			else:
@@ -902,9 +902,9 @@ func local_6768(v0, v1) -> Variant:
 			_pc = 7121
 			continue
 		elif _pc == 7121:
-			object.set_int_property(v0, "hit_points", v4 - object.int_property(v0, "hit_points"))
+			object.set_int_property(v0, "hit_points", object.int_property(v0, "hit_points") - v4)
 			await _pog_wait(math.random(0.10000000149011612, 0.25))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 6895
 			continue
 		elif _pc == 7245:
@@ -966,7 +966,7 @@ func local_7277(v0, v1, v2, v3) -> Variant:
 			_pc = 8145
 			continue
 		elif _pc == 8145:
-			if group.sim_count(v2) < v11:
+			if v11 < group.sim_count(v2):
 				_pc = 8174
 				continue
 			else:
@@ -977,7 +977,7 @@ func local_7277(v0, v1, v2, v3) -> Variant:
 			isim.dock(v4, v0)
 			sim.detach_child(v0, v4)
 			sim.place_relative_to_inside(v4, v4, 0.0, -200.0, 0.0)
-			v11 = 1 + v11
+			v11 = v11 + 1
 			_pc = 8145
 			continue
 		elif _pc == 8323:
@@ -996,7 +996,7 @@ func local_7277(v0, v1, v2, v3) -> Variant:
 			_pc = 8690
 			continue
 		elif _pc == 8690:
-			if group.sim_count(v2) < v11:
+			if v11 < group.sim_count(v2):
 				_pc = 8719
 				continue
 			else:
@@ -1005,7 +1005,7 @@ func local_7277(v0, v1, v2, v3) -> Variant:
 		elif _pc == 8719:
 			v4 = iship.cast(group.nth_sim(v2, v11))
 			isim.dock(v4, v0)
-			v11 = 1 + v11
+			v11 = v11 + 1
 			_pc = 8690
 			continue
 		elif _pc == 8803:

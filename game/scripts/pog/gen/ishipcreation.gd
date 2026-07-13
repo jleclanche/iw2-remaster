@@ -57,7 +57,7 @@ func ship_name(v0, v1) -> Variant:
 			v4 = inifile.pog_int(v2, v0, "NumberOfEntries", -1)
 			v5 = null
 			v6 = null
-			if -1 == v4:
+			if v4 == -1:
 				_pc = 116
 				continue
 			else:
@@ -99,7 +99,7 @@ func ship_name(v0, v1) -> Variant:
 			_pc = 367
 			continue
 		elif _pc == 367:
-			if -1 == v1:
+			if v1 == -1:
 				_pc = 380
 				continue
 			else:
@@ -124,29 +124,29 @@ func ship_name(v0, v1) -> Variant:
 			continue
 		elif _pc == 517:
 			v5 = string.join(inifile.string(v2, v0, "Prefix", "none"), string.from_int(v1))
-			if 15 > v4:
+			if v4 > 15:
 				_pc = 606
 				continue
 			else:
 				_pc = 639
 				continue
 		elif _pc == 606:
-			v1 = math.random_int(1, 3) + v1
+			v1 = v1 + math.random_int(1, 3)
 			_pc = 652
 			continue
 		elif _pc == 639:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 652
 			continue
 		elif _pc == 652:
-			if v4 >= v1:
+			if v1 >= v4:
 				_pc = 668
 				continue
 			else:
 				_pc = 685
 				continue
 		elif _pc == 668:
-			v1 = v4 - v1
+			v1 = v1 - v4
 			_pc = 685
 			continue
 		elif _pc == 685:
@@ -154,7 +154,7 @@ func ship_name(v0, v1) -> Variant:
 			_pc = 897
 			continue
 		elif _pc == 714:
-			if v4 > v1:
+			if v1 > v4:
 				_pc = 730
 				continue
 			else:
@@ -333,16 +333,16 @@ func stack_cargo(v0, v1) -> Variant:
 			_pc = 1616
 			continue
 		elif _pc == 1616:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 1632
 				continue
 			else:
 				_pc = 1723
 				continue
 		elif _pc == 1632:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			await local_924(v0, iship.cast(group.nth_sim(v2, v6)), v4)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 1616
 			continue
 		elif _pc == 1723:
@@ -369,7 +369,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 			_pc = 1830
 			continue
 		elif _pc == 1830:
-			if v1 < v8:
+			if v8 < v1:
 				_pc = 1846
 				continue
 			else:
@@ -495,7 +495,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 			_pc = 2384
 			continue
 		elif _pc == 2339:
-			if v2 != -2:
+			if -2 != v2:
 				_pc = 2353
 				continue
 			else:
@@ -526,7 +526,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 			_pc = 2310
 			continue
 		elif _pc == 2384:
-			if 531 == v5 or 530 == v5 or 514 == v5 or 230 == v5 or 549 == v5 or 472 == v5 or 471 == v5 or 482 == v5:
+			if v5 == 482 or v5 == 471 or v5 == 472 or v5 == 549 or v5 == 230 or v5 == 514 or v5 == 530 or v5 == 531:
 				_pc = 2468
 				continue
 			else:
@@ -598,7 +598,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 			object.set_int_property(v7, "cargo", v5)
 			await iutilities.rename_sim(v7, icargo.pog_name(icargo.find(v5)))
 			group.add_sim(v3, v7)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 1830
 			continue
 		elif _pc == 2793:
@@ -1043,7 +1043,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 3437:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 3461
 				continue
 			else:
@@ -1487,7 +1487,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 4088:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 4112
 				continue
 			else:
@@ -2334,7 +2334,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 5296:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 5320
 				continue
 			else:
@@ -2384,7 +2384,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 5910
 			continue
 		elif _pc == 5416:
-			if v0 != 5:
+			if 5 != v0:
 				_pc = 5430
 				continue
 			else:
@@ -2797,7 +2797,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 6000:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 6024
 				continue
 			else:
@@ -2878,7 +2878,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 6686
 			continue
 		elif _pc == 6192:
-			if v0 != 3:
+			if 3 != v0:
 				_pc = 6206
 				continue
 			else:
@@ -3351,7 +3351,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 7422
 			continue
 		elif _pc == 6928:
-			if v0 != 3:
+			if 3 != v0:
 				_pc = 6942
 				continue
 			else:
@@ -3838,7 +3838,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 8188
 			continue
 		elif _pc == 7694:
-			if v0 != 3:
+			if 3 != v0:
 				_pc = 7708
 				continue
 			else:
@@ -4739,7 +4739,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 9032:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 9056
 				continue
 			else:
@@ -4792,7 +4792,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 9170:
 			math.random_int(1, 5)
-			if math.random_int(1, 5) != 1:
+			if 1 != math.random_int(1, 5):
 				_pc = 9194
 				continue
 			else:
@@ -4853,7 +4853,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 9304:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 9328
 				continue
 			else:
@@ -4900,7 +4900,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 9420:
 			math.random_int(1, 5)
-			if math.random_int(1, 5) != 1:
+			if 1 != math.random_int(1, 5):
 				_pc = 9444
 				continue
 			else:
@@ -4948,7 +4948,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 10010
 			continue
 		elif _pc == 9516:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 9529
 				continue
 			else:
@@ -6357,7 +6357,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 12159
 			continue
 		elif _pc == 11665:
-			if v0 != 5:
+			if 5 != v0:
 				_pc = 11679
 				continue
 			else:
@@ -6834,7 +6834,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 12904
 			continue
 		elif _pc == 12410:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 12423
 				continue
 			else:
@@ -7247,7 +7247,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 12994:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 13018
 				continue
 			else:
@@ -7304,7 +7304,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 13130:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 13154
 				continue
 			else:
@@ -7358,7 +7358,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 13255:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 13279
 				continue
 			else:
@@ -7392,7 +7392,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 13827
 			continue
 		elif _pc == 13333:
-			if v0 != 3:
+			if 3 != v0:
 				_pc = 13347
 				continue
 			else:
@@ -7802,7 +7802,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 13906:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 13930
 				continue
 			else:
@@ -8236,7 +8236,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 14520:
 			math.random_int(1, 2)
-			if math.random_int(1, 2) != 1:
+			if 1 != math.random_int(1, 2):
 				_pc = 14544
 				continue
 			else:
@@ -8263,7 +8263,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 15089
 			continue
 		elif _pc == 14595:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 14608
 				continue
 			else:
@@ -8676,7 +8676,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 15179:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 15203
 				continue
 			else:
@@ -9124,7 +9124,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 15828:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 15852
 				continue
 			else:
@@ -9565,7 +9565,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 16468:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 16492
 				continue
 			else:
@@ -10009,7 +10009,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 17119:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 17143
 				continue
 			else:
@@ -10468,7 +10468,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 17825:
 			math.random_int(1, 8)
-			if math.random_int(1, 8) != 1:
+			if 1 != math.random_int(1, 8):
 				_pc = 17849
 				continue
 			else:
@@ -10559,7 +10559,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 18019:
 			math.random_int(1, 7)
-			if math.random_int(1, 7) != 1:
+			if 1 != math.random_int(1, 7):
 				_pc = 18043
 				continue
 			else:
@@ -10640,7 +10640,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 18193:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 18217
 				continue
 			else:
@@ -10681,7 +10681,7 @@ func get_ship(v0, v1) -> Variant:
 			_pc = 18774
 			continue
 		elif _pc == 18280:
-			if v0 != 14:
+			if 14 != v0:
 				_pc = 18294
 				continue
 			else:
@@ -12005,7 +12005,7 @@ func get_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 20189:
 			math.random_int(1, 2)
-			if math.random_int(1, 2) != 1:
+			if 1 != math.random_int(1, 2):
 				_pc = 20213
 				continue
 			else:
@@ -12654,7 +12654,7 @@ func create_character_group(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 21182
 			continue
 		elif _pc == 21182:
-			if v2 < v9:
+			if v9 < v2:
 				_pc = 21198
 				continue
 			else:
@@ -12698,7 +12698,7 @@ func create_character_group(v0, v1, v2, v3, v4) -> Variant:
 			continue
 		elif _pc == 21483:
 			isim.set_faction(v5, v3)
-			if _pog_eq("Random", v4):
+			if _pog_eq(v4, "Random"):
 				_pc = 21525
 				continue
 			else:
@@ -12725,7 +12725,7 @@ func create_character_group(v0, v1, v2, v3, v4) -> Variant:
 			continue
 		elif _pc == 21635:
 			v7 = await ship_name(v4, v15)
-			v15 = 1 + v15
+			v15 = v15 + 1
 			_pc = 21679
 			continue
 		elif _pc == 21679:
@@ -12733,7 +12733,7 @@ func create_character_group(v0, v1, v2, v3, v4) -> Variant:
 			group.add_sim(v6, v5)
 			await ipilotsetup.string_description(v5, v1)
 			v11 = 1
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 21182
 			continue
 		elif _pc == 21783:
@@ -12760,7 +12760,7 @@ func local_21809(v0, v1) -> Variant:
 			_pc = 21868
 			continue
 		elif _pc == 21868:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 21884
 				continue
 			else:
@@ -12782,7 +12782,7 @@ func local_21809(v0, v1) -> Variant:
 			_pc = 22211
 			continue
 		elif _pc == 22211:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 21868
 			continue
 		elif _pc == 22229:
@@ -12835,7 +12835,7 @@ func create_supply_cargo(v0, v1) -> Variant:
 			_pc = 22388
 			continue
 		elif _pc == 22388:
-			if 1 == object.property_exists(v0, "mega_freighter"):
+			if object.property_exists(v0, "mega_freighter") == 1:
 				_pc = 22420
 				continue
 			else:
@@ -12864,7 +12864,7 @@ func create_supply_cargo(v0, v1) -> Variant:
 			_pc = 22712
 			continue
 		elif _pc == 22712:
-			if v9 < v3:
+			if v3 < v9:
 				_pc = 22728
 				continue
 			else:
@@ -12929,7 +12929,7 @@ func create_supply_cargo(v0, v1) -> Variant:
 			continue
 		elif _pc == 22981:
 			list.add_tail(v11, v16)
-			if -2 == v1:
+			if v1 == -2:
 				_pc = 23018
 				continue
 			else:
@@ -12940,7 +12940,7 @@ func create_supply_cargo(v0, v1) -> Variant:
 			_pc = 23116
 			continue
 		elif _pc == 23042:
-			if -1 == v1:
+			if v1 == -1:
 				_pc = 23055
 				continue
 			else:
@@ -12955,7 +12955,7 @@ func create_supply_cargo(v0, v1) -> Variant:
 			_pc = 23116
 			continue
 		elif _pc == 23116:
-			if 531 == v13 or 530 == v13 or 514 == v13 or 230 == v13 or 549 == v13 or 472 == v13 or 471 == v13 or 482 == v13:
+			if v13 == 482 or v13 == 471 or v13 == 472 or v13 == 549 or v13 == 230 or v13 == 514 or v13 == 530 or v13 == 531:
 				_pc = 23200
 				continue
 			else:
@@ -12980,7 +12980,7 @@ func create_supply_cargo(v0, v1) -> Variant:
 			_pc = 23478
 			continue
 		elif _pc == 23478:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 22712
 			continue
 		elif _pc == 23496:
@@ -13023,7 +13023,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			_pc = 23662
 			continue
 		elif _pc == 23662:
-			if 1 == object.property_exists(v0, "mega_freighter"):
+			if object.property_exists(v0, "mega_freighter") == 1:
 				_pc = 23694
 				continue
 			else:
@@ -13040,7 +13040,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			_pc = 23784
 			continue
 		elif _pc == 23784:
-			if v9 < v3:
+			if v3 < v9:
 				_pc = 23800
 				continue
 			else:
@@ -13050,7 +13050,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			v13 = iship.create("ini:/sims/ships/utility/freightpod", "")
 			object.add_int_property(v13, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v11, v13)
-			if _pog_eq("Cheap", v1):
+			if _pog_eq(v1, "Cheap"):
 				_pc = 23931
 				continue
 			else:
@@ -13061,7 +13061,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			_pc = 24128
 			continue
 		elif _pc == 23955:
-			if _pog_eq("Medium", v1):
+			if _pog_eq(v1, "Medium"):
 				_pc = 23973
 				continue
 			else:
@@ -13072,7 +13072,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			_pc = 24128
 			continue
 		elif _pc == 23997:
-			if _pog_eq("High", v1):
+			if _pog_eq(v1, "High"):
 				_pc = 24015
 				continue
 			else:
@@ -13083,7 +13083,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			_pc = 24128
 			continue
 		elif _pc == 24039:
-			if _pog_eq("Expensive", v1):
+			if _pog_eq(v1, "Expensive"):
 				_pc = 24057
 				continue
 			else:
@@ -13102,7 +13102,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			_pc = 24128
 			continue
 		elif _pc == 24128:
-			if 531 == v14 or 530 == v14 or 514 == v14 or 230 == v14 or 549 == v14 or 472 == v14 or 471 == v14 or 482 == v14:
+			if v14 == 482 or v14 == 471 or v14 == 472 or v14 == 549 or v14 == 230 or v14 == 514 or v14 == 530 or v14 == 531:
 				_pc = 24212
 				continue
 			else:
@@ -13127,7 +13127,7 @@ func create_trade_cargo(v0, v1) -> Variant:
 			_pc = 24490
 			continue
 		elif _pc == 24490:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 23784
 			continue
 		elif _pc == 24508:
@@ -13175,7 +13175,7 @@ func create_haulage_cargo(v0, v1) -> Variant:
 			_pc = 24707
 			continue
 		elif _pc == 24707:
-			if 1 == object.property_exists(v0, "mega_freighter"):
+			if object.property_exists(v0, "mega_freighter") == 1:
 				_pc = 24739
 				continue
 			else:
@@ -13220,7 +13220,7 @@ func create_haulage_cargo(v0, v1) -> Variant:
 			_pc = 25090
 			continue
 		elif _pc == 25090:
-			if v11 < v5:
+			if v5 < v11:
 				_pc = 25106
 				continue
 			else:
@@ -13271,7 +13271,7 @@ func create_haulage_cargo(v0, v1) -> Variant:
 			object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v13, v15)
 			v17 = await icargoscript.find_cargo_for_location(v1)
-			if 531 == v17 or 530 == v17 or 514 == v17 or 230 == v17 or 549 == v17 or 472 == v17 or 471 == v17 or 482 == v17:
+			if v17 == 482 or v17 == 471 or v17 == 472 or v17 == 549 or v17 == 230 or v17 == 514 or v17 == 530 or v17 == 531:
 				_pc = 25431
 				continue
 			else:
@@ -13296,7 +13296,7 @@ func create_haulage_cargo(v0, v1) -> Variant:
 			_pc = 25709
 			continue
 		elif _pc == 25709:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 25090
 			continue
 		elif _pc == 25727:
@@ -13372,7 +13372,7 @@ func return_supply_cargo() -> Variant:
 			_pc = 26146
 			continue
 		elif _pc == 26146:
-			if v9 < v3:
+			if v3 < v9:
 				_pc = 26162
 				continue
 			else:
@@ -13422,7 +13422,7 @@ func return_supply_cargo() -> Variant:
 			v16 = iship.create(v14, "name_cargo_pod")
 			object.add_int_property(v16, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v11, v16)
-			if -2 == v1:
+			if v1 == -2:
 				_pc = 26392
 				continue
 			else:
@@ -13433,7 +13433,7 @@ func return_supply_cargo() -> Variant:
 			_pc = 26490
 			continue
 		elif _pc == 26416:
-			if -1 == v1:
+			if v1 == -1:
 				_pc = 26429
 				continue
 			else:
@@ -13448,7 +13448,7 @@ func return_supply_cargo() -> Variant:
 			_pc = 26490
 			continue
 		elif _pc == 26490:
-			if 531 == v13 or 530 == v13 or 514 == v13 or 230 == v13 or 549 == v13 or 472 == v13 or 471 == v13 or 482 == v13:
+			if v13 == 482 or v13 == 471 or v13 == 472 or v13 == 549 or v13 == 230 or v13 == 514 or v13 == 530 or v13 == 531:
 				_pc = 26574
 				continue
 			else:
@@ -13472,7 +13472,7 @@ func return_supply_cargo() -> Variant:
 			_pc = 26828
 			continue
 		elif _pc == 26828:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 26146
 			continue
 		elif _pc == 26846:
@@ -13537,7 +13537,7 @@ func return_trade_cargo() -> Variant:
 			_pc = 27231
 			continue
 		elif _pc == 27231:
-			if v9 < v3:
+			if v3 < v9:
 				_pc = 27247
 				continue
 			else:
@@ -13547,7 +13547,7 @@ func return_trade_cargo() -> Variant:
 			v13 = iship.create("ini:/sims/ships/utility/freightpod", "name_cargo_pod")
 			object.add_int_property(v13, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v11, v13)
-			if _pog_eq("Cheap", v1):
+			if _pog_eq(v1, "Cheap"):
 				_pc = 27378
 				continue
 			else:
@@ -13558,7 +13558,7 @@ func return_trade_cargo() -> Variant:
 			_pc = 27575
 			continue
 		elif _pc == 27402:
-			if _pog_eq("Medium", v1):
+			if _pog_eq(v1, "Medium"):
 				_pc = 27420
 				continue
 			else:
@@ -13569,7 +13569,7 @@ func return_trade_cargo() -> Variant:
 			_pc = 27575
 			continue
 		elif _pc == 27444:
-			if _pog_eq("High", v1):
+			if _pog_eq(v1, "High"):
 				_pc = 27462
 				continue
 			else:
@@ -13580,7 +13580,7 @@ func return_trade_cargo() -> Variant:
 			_pc = 27575
 			continue
 		elif _pc == 27486:
-			if _pog_eq("Expensive", v1):
+			if _pog_eq(v1, "Expensive"):
 				_pc = 27504
 				continue
 			else:
@@ -13599,7 +13599,7 @@ func return_trade_cargo() -> Variant:
 			_pc = 27575
 			continue
 		elif _pc == 27575:
-			if 531 == v14 or 530 == v14 or 514 == v14 or 230 == v14 or 549 == v14 or 472 == v14 or 471 == v14 or 482 == v14:
+			if v14 == 482 or v14 == 471 or v14 == 472 or v14 == 549 or v14 == 230 or v14 == 514 or v14 == 530 or v14 == 531:
 				_pc = 27659
 				continue
 			else:
@@ -13624,7 +13624,7 @@ func return_trade_cargo() -> Variant:
 			_pc = 27964
 			continue
 		elif _pc == 27964:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 27231
 			continue
 		elif _pc == 27982:
@@ -13697,7 +13697,7 @@ func return_haulage_cargo(v0, v1) -> Variant:
 			_pc = 28341
 			continue
 		elif _pc == 28341:
-			if v11 < v5:
+			if v5 < v11:
 				_pc = 28357
 				continue
 			else:
@@ -13748,7 +13748,7 @@ func return_haulage_cargo(v0, v1) -> Variant:
 			object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v13, v15)
 			v17 = await icargoscript.find_cargo_for_location(v1)
-			if 531 == v17 or 530 == v17 or 514 == v17 or 230 == v17 or 549 == v17 or 472 == v17 or 471 == v17 or 482 == v17:
+			if v17 == 482 or v17 == 471 or v17 == 472 or v17 == 549 or v17 == 230 or v17 == 514 or v17 == 530 or v17 == 531:
 				_pc = 28682
 				continue
 			else:
@@ -13772,7 +13772,7 @@ func return_haulage_cargo(v0, v1) -> Variant:
 			_pc = 28936
 			continue
 		elif _pc == 28936:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 28341
 			continue
 		elif _pc == 28954:
@@ -13828,7 +13828,7 @@ func get_traffic(v0, v1, v2) -> Variant:
 			_pc = 29167
 			continue
 		elif _pc == 29167:
-			if v2 < v7:
+			if v7 < v2:
 				_pc = 29183
 				continue
 			else:
@@ -13886,7 +13886,7 @@ func get_traffic(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 29539:
 			group.add_sim(v4, v3)
-			if 20 > idockport.count(v3, 3, 4):
+			if idockport.count(v3, 3, 4) > 20:
 				_pc = 29593
 				continue
 			else:
@@ -13897,7 +13897,7 @@ func get_traffic(v0, v1, v2) -> Variant:
 			_pc = 29620
 			continue
 		elif _pc == 29620:
-			if 3 == v0 or 2 == v0 or 1 == v0 or _pog_is_null(v0):
+			if _pog_is_null(v0) or v0 == 1 or v0 == 2 or v0 == 3:
 				_pc = 29658
 				continue
 			else:
@@ -13912,7 +13912,7 @@ func get_traffic(v0, v1, v2) -> Variant:
 			_pc = 29701
 			continue
 		elif _pc == 29701:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 29167
 			continue
 		elif _pc == 29719:
@@ -14114,7 +14114,7 @@ func create_character_ships(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) -> Variant:
 		if _pc == 30393:
 			v10 = group.create()
 			v11 = group.create()
-			if 0 > v4:
+			if v4 > 0:
 				_pc = 30448
 				continue
 			else:
@@ -14125,7 +14125,7 @@ func create_character_ships(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) -> Variant:
 			_pc = 30492
 			continue
 		elif _pc == 30492:
-			if 0 > v8:
+			if v8 > 0:
 				_pc = 30504
 				continue
 			else:
@@ -14171,7 +14171,7 @@ func create_cargo_pods(v0, v1) -> Variant:
 			_pc = 30666
 			continue
 		elif _pc == 30666:
-			if v1 < v2:
+			if v2 < v1:
 				_pc = 30682
 				continue
 			else:
@@ -14181,7 +14181,7 @@ func create_cargo_pods(v0, v1) -> Variant:
 			v4 = iship.create("ini:/sims/ships/utility/freightpod", icargo.pog_name(icargo.find(v0)))
 			object.set_int_property(v4, "cargo", v0)
 			group.add_sim(v3, v4)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 30666
 			continue
 		elif _pc == 30813:

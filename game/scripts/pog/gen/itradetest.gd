@@ -30,7 +30,7 @@ func give_all_cargo() -> Variant:
 	var _pc: int = 83
 	while true:
 		if _pc == 83:
-			if 90 > iinventory.number_of_cargo_type(34):
+			if iinventory.number_of_cargo_type(34) > 90:
 				_pc = 106
 				continue
 			else:

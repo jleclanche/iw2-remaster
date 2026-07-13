@@ -238,7 +238,7 @@ func local_2274() -> Variant:
 			await iconversation.add_response("a1_master_jolly_roger", "a1_master_what_about_jolly_roger")
 			await iconversation.add_response("a1_master_black_pig", "a1_master_mmmm_black_pig_is_a_good_name")
 			v0 = await iconversation.ask(0, "name_smith", "a1_master_only_thing_she_needs_now_is_a_name")
-			if 1 == v0:
+			if v0 == 1:
 				_pc = 2631
 				continue
 			else:
@@ -253,7 +253,7 @@ func local_2274() -> Variant:
 			_pc = 3104
 			continue
 		elif _pc == 2761:
-			if 2 == v0:
+			if v0 == 2:
 				_pc = 2774
 				continue
 			else:
@@ -266,7 +266,7 @@ func local_2274() -> Variant:
 			_pc = 3104
 			continue
 		elif _pc == 2848:
-			if 3 == v0:
+			if v0 == 3:
 				_pc = 2861
 				continue
 			else:
@@ -279,7 +279,7 @@ func local_2274() -> Variant:
 			_pc = 3104
 			continue
 		elif _pc == 2935:
-			if 4 == v0:
+			if v0 == 4:
 				_pc = 2948
 				continue
 			else:
@@ -292,7 +292,7 @@ func local_2274() -> Variant:
 			_pc = 3104
 			continue
 		elif _pc == 3022:
-			if 5 == v0:
+			if v0 == 5:
 				_pc = 3035
 				continue
 			else:
@@ -549,7 +549,7 @@ func local_6855(v0) -> Variant:
 			_pc = 7141
 			continue
 		elif _pc == 7101:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 7114
 				continue
 			else:
@@ -670,7 +670,7 @@ func local_7144(v0) -> Variant:
 			_pc = 7687
 			continue
 		elif _pc == 7647:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 7660
 				continue
 			else:
@@ -821,8 +821,8 @@ func stepson_member() -> Variant:
 			_pc = 10929
 			continue
 		elif _pc == 10929:
-			v0 = 1 + v0
-			if 5 == v0:
+			v0 = v0 + 1
+			if v0 == 5:
 				_pc = 10955
 				continue
 			else:
@@ -843,7 +843,7 @@ func stepson_member() -> Variant:
 			_pc = 11124
 			continue
 		elif _pc == 11013:
-			if 0 > v0:
+			if v0 > 0:
 				_pc = 11025
 				continue
 			else:
@@ -924,7 +924,7 @@ func piracy_rating_handler() -> Variant:
 				_pc = 11397
 				continue
 		elif _pc == 11258:
-			global.set_int("g_piracy_rating", 100 + global.pog_int("g_piracy_rating"))
+			global.set_int("g_piracy_rating", global.pog_int("g_piracy_rating") + 100)
 			_pc = 11397
 			continue
 		elif _pc == 11306:
@@ -1034,7 +1034,7 @@ func piracy_rating_tracker() -> Variant:
 				_pc = 12056
 				continue
 		elif _pc == 12007:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 12051
 				continue
 			else:
@@ -1054,7 +1054,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 12088
 			continue
 		elif _pc == 12088:
-			object.set_int_property(v1, "next_piracy_level", 17 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 17)
 			state.set_progress(v1, 1)
 			_pc = 12161
 			continue
@@ -1070,7 +1070,7 @@ func piracy_rating_tracker() -> Variant:
 				_pc = 12229
 				continue
 		elif _pc == 12180:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 12224
 				continue
 			else:
@@ -1090,7 +1090,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 12261
 			continue
 		elif _pc == 12261:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(1)
 			state.set_progress(v1, 2)
 			_pc = 12350
@@ -1118,7 +1118,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 12532
 			continue
 		elif _pc == 12532:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 12576
 				continue
 			else:
@@ -1138,7 +1138,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 12613
 			continue
 		elif _pc == 12613:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_7144(1)
 			state.set_progress(v1, 3)
 			_pc = 12702
@@ -1166,7 +1166,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 12884
 			continue
 		elif _pc == 12884:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 12928
 				continue
 			else:
@@ -1186,7 +1186,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 12965
 			continue
 		elif _pc == 12965:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(2)
 			state.set_progress(v1, 4)
 			_pc = 13055
@@ -1214,7 +1214,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 13237
 			continue
 		elif _pc == 13237:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 13281
 				continue
 			else:
@@ -1234,7 +1234,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 13318
 			continue
 		elif _pc == 13318:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_7144(2)
 			state.set_progress(v1, 5)
 			_pc = 13408
@@ -1262,7 +1262,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 13590
 			continue
 		elif _pc == 13590:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 13634
 				continue
 			else:
@@ -1282,7 +1282,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 13671
 			continue
 		elif _pc == 13671:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(3)
 			state.set_progress(v1, 6)
 			_pc = 13761
@@ -1310,7 +1310,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 13943
 			continue
 		elif _pc == 13943:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 13987
 				continue
 			else:
@@ -1330,7 +1330,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 14024
 			continue
 		elif _pc == 14024:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_7144(3)
 			state.set_progress(v1, 7)
 			_pc = 14114
@@ -1358,7 +1358,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 14296
 			continue
 		elif _pc == 14296:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 14340
 				continue
 			else:
@@ -1378,7 +1378,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 14377
 			continue
 		elif _pc == 14377:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(4)
 			state.set_progress(v1, 8)
 			_pc = 14467
@@ -1406,7 +1406,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 14649
 			continue
 		elif _pc == 14649:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 14693
 				continue
 			else:
@@ -1426,7 +1426,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 14730
 			continue
 		elif _pc == 14730:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_7144(4)
 			state.set_progress(v1, 9)
 			_pc = 14820
@@ -1454,7 +1454,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 15002
 			continue
 		elif _pc == 15002:
-			if object.int_property(v1, "next_piracy_level") >= iscore.pod_piracy_value():
+			if iscore.pod_piracy_value() >= object.int_property(v1, "next_piracy_level"):
 				_pc = 15046
 				continue
 			else:
@@ -1474,7 +1474,7 @@ func piracy_rating_tracker() -> Variant:
 			_pc = 15083
 			continue
 		elif _pc == 15083:
-			object.set_int_property(v1, "next_piracy_level", 20 + object.int_property(v1, "next_piracy_level"))
+			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			global.set_bool("g_act1_stepsons_intro", 1)
 			state.destroy(self)
 			_pc = 15296
@@ -1644,8 +1644,8 @@ func marauder_encounters() -> Variant:
 			_pc = 15754
 			continue
 		elif _pc == 15754:
-			global.set_int("g_marauder_encounter_count", 1 + global.pog_int("g_marauder_encounter_count"))
-			if 24 == global.pog_int("g_marauder_encounter_count"):
+			global.set_int("g_marauder_encounter_count", global.pog_int("g_marauder_encounter_count") + 1)
+			if global.pog_int("g_marauder_encounter_count") == 24:
 				_pc = 15824
 				continue
 			else:
@@ -1745,8 +1745,8 @@ func marauder_encounters() -> Variant:
 			_pc = 16285
 			continue
 		elif _pc == 16285:
-			global.set_int("g_marauder_encounter_count", 1 + global.pog_int("g_marauder_encounter_count"))
-			if 3 == global.pog_int("g_marauder_encounter_count"):
+			global.set_int("g_marauder_encounter_count", global.pog_int("g_marauder_encounter_count") + 1)
+			if global.pog_int("g_marauder_encounter_count") == 3:
 				_pc = 16355
 				continue
 			else:
@@ -1768,7 +1768,7 @@ func marauder_encounters() -> Variant:
 			_pc = 16489
 			continue
 		elif _pc == 16435:
-			if 5 > global.pog_int("g_marauder_encounter_count"):
+			if global.pog_int("g_marauder_encounter_count") > 5:
 				_pc = 16463
 				continue
 			else:
@@ -1908,7 +1908,7 @@ func haven_station_introduction() -> Variant:
 			_pc = 17462
 			continue
 		elif _pc == 17462:
-			if 1 != global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") != 1:
 				_pc = 17489
 				continue
 			else:
@@ -1987,7 +1987,7 @@ func haven_station_introduction() -> Variant:
 			_pc = 17988
 			continue
 		elif _pc == 17988:
-			if 1 == global.pog_int("g_current_act") and v10:
+			if v10 and global.pog_int("g_current_act") == 1:
 				_pc = 18021
 				continue
 			else:
@@ -2001,7 +2001,7 @@ func haven_station_introduction() -> Variant:
 				_pc = 18703
 				continue
 		elif _pc == 18032:
-			if 1 != global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") != 1:
 				_pc = 18059
 				continue
 			else:
@@ -2020,7 +2020,7 @@ func haven_station_introduction() -> Variant:
 			_pc = 20452
 			continue
 		elif _pc == 18136:
-			if 20000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 20000.0:
 				_pc = 18170
 				continue
 			else:
@@ -2039,7 +2039,7 @@ func haven_station_introduction() -> Variant:
 			_pc = 18698
 			continue
 		elif _pc == 18240:
-			if 8000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 8000.0:
 				_pc = 18274
 				continue
 			else:
@@ -2069,7 +2069,7 @@ func haven_station_introduction() -> Variant:
 			await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
 			await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_player_tl_player_negative")
 			v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_haven_station")
-			if 1 == v9:
+			if v9 == 1:
 				_pc = 18472
 				continue
 			else:
@@ -2198,7 +2198,7 @@ func haven_station_introduction() -> Variant:
 				_pc = 20115
 				continue
 		elif _pc == 19548:
-			if 10000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 10000.0:
 				_pc = 19582
 				continue
 			else:
@@ -2217,7 +2217,7 @@ func haven_station_introduction() -> Variant:
 			_pc = 20110
 			continue
 		elif _pc == 19652:
-			if 1000.0 > sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) > 1000.0:
 				_pc = 19686
 				continue
 			else:
@@ -2247,7 +2247,7 @@ func haven_station_introduction() -> Variant:
 			await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
 			await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_tl_player_affirmative")
 			v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_hoffers_wake_alpha")
-			if 1 == v9:
+			if v9 == 1:
 				_pc = 19884
 				continue
 			else:
@@ -2456,7 +2456,7 @@ func master_script() -> Variant:
 			_pc = 21132
 			continue
 		elif _pc == 21132:
-			if 2 == global.pog_int("g_story_1.50"):
+			if global.pog_int("g_story_1.50") == 2:
 				_pc = 21160
 				continue
 			else:
@@ -2618,7 +2618,7 @@ func master_script() -> Variant:
 			_pc = 27372
 			continue
 		elif _pc == 27372:
-			if 1 == global.pog_bool("g_act1_character_intro") and _pog_is_null(global.exists("g_finished_email_hinter")):
+			if _pog_is_null(global.exists("g_finished_email_hinter")) and global.pog_bool("g_act1_character_intro") == 1:
 				_pc = 27421
 				continue
 			else:
@@ -2649,7 +2649,7 @@ func master_script() -> Variant:
 				_pc = 27596
 				continue
 		elif _pc == 27507:
-			if 1 == global.pog_bool("g_act1_found_base"):
+			if global.pog_bool("g_act1_found_base") == 1:
 				_pc = 27534
 				continue
 			else:
@@ -2701,7 +2701,7 @@ func master_script() -> Variant:
 				_pc = 27757
 				continue
 		elif _pc == 27668:
-			if 1 == global.pog_bool("g_act1_character_intro"):
+			if global.pog_bool("g_act1_character_intro") == 1:
 				_pc = 27695
 				continue
 			else:
@@ -2749,7 +2749,7 @@ func master_script() -> Variant:
 				_pc = 27948
 				continue
 		elif _pc == 27859:
-			if 1 == global.pog_bool("g_act1_stepsons_intro"):
+			if global.pog_bool("g_act1_stepsons_intro") == 1:
 				_pc = 27886
 				continue
 			else:
@@ -2795,7 +2795,7 @@ func master_script() -> Variant:
 				_pc = 28097
 				continue
 		elif _pc == 28008:
-			if 1 == global.pog_bool("g_act1_stepson_member"):
+			if global.pog_bool("g_act1_stepson_member") == 1:
 				_pc = 28035
 				continue
 			else:
@@ -2841,7 +2841,7 @@ func master_script() -> Variant:
 				_pc = 28259
 				continue
 		elif _pc == 28170:
-			if 1 == global.pog_bool("g_act1_stepsons_pleased"):
+			if global.pog_bool("g_act1_stepsons_pleased") == 1:
 				_pc = 28197
 				continue
 			else:
@@ -2886,7 +2886,7 @@ func master_script() -> Variant:
 				_pc = 28394
 				continue
 		elif _pc == 28305:
-			if 1 == global.pog_bool("g_act1_stepsons_pleased"):
+			if global.pog_bool("g_act1_stepsons_pleased") == 1:
 				_pc = 28332
 				continue
 			else:
@@ -2933,7 +2933,7 @@ func master_script() -> Variant:
 				_pc = 28565
 				continue
 		elif _pc == 28476:
-			if 1 == global.pog_bool("g_act1_got_turret_fighters"):
+			if global.pog_bool("g_act1_got_turret_fighters") == 1:
 				_pc = 28503
 				continue
 			else:
@@ -2983,7 +2983,7 @@ func master_script() -> Variant:
 				_pc = 28821
 				continue
 		elif _pc == 28732:
-			if 1 == global.pog_bool("g_act1_marauders_encountered"):
+			if global.pog_bool("g_act1_marauders_encountered") == 1:
 				_pc = 28759
 				continue
 			else:
@@ -3029,7 +3029,7 @@ func master_script() -> Variant:
 				_pc = 28970
 				continue
 		elif _pc == 28881:
-			if 1 == global.pog_bool("g_act1_destroyed_marauder_cache"):
+			if global.pog_bool("g_act1_destroyed_marauder_cache") == 1:
 				_pc = 28908
 				continue
 			else:
@@ -3076,7 +3076,7 @@ func master_script() -> Variant:
 				_pc = 29141
 				continue
 		elif _pc == 29052:
-			if 1 == global.pog_bool("g_act1_hoffers_wake_warning"):
+			if global.pog_bool("g_act1_hoffers_wake_warning") == 1:
 				_pc = 29079
 				continue
 			else:
@@ -3133,7 +3133,7 @@ func master_script() -> Variant:
 				_pc = 29349
 				continue
 		elif _pc == 29260:
-			if 1 == global.pog_bool("g_act1_retreived_gunstars"):
+			if global.pog_bool("g_act1_retreived_gunstars") == 1:
 				_pc = 29287
 				continue
 			else:
@@ -3179,7 +3179,7 @@ func master_script() -> Variant:
 				_pc = 29498
 				continue
 		elif _pc == 29409:
-			if 1 == global.pog_bool("g_act1_saved_hoffers_wake"):
+			if global.pog_bool("g_act1_saved_hoffers_wake") == 1:
 				_pc = 29436
 				continue
 			else:
@@ -3225,7 +3225,7 @@ func master_script() -> Variant:
 				_pc = 29655
 				continue
 		elif _pc == 29566:
-			if 1 == global.pog_bool("g_act1_league_introduction"):
+			if global.pog_bool("g_act1_league_introduction") == 1:
 				_pc = 29593
 				continue
 			else:
@@ -3271,7 +3271,7 @@ func master_script() -> Variant:
 				_pc = 29804
 				continue
 		elif _pc == 29715:
-			if 1 == global.pog_bool("g_act1_league_initiation"):
+			if global.pog_bool("g_act1_league_initiation") == 1:
 				_pc = 29742
 				continue
 			else:
@@ -3352,7 +3352,7 @@ func master_script() -> Variant:
 				_pc = 31878
 				continue
 		elif _pc == 31789:
-			if 1 == global.pog_bool("g_act1_lor_stolen"):
+			if global.pog_bool("g_act1_lor_stolen") == 1:
 				_pc = 31816
 				continue
 			else:
@@ -3398,7 +3398,7 @@ func master_script() -> Variant:
 				_pc = 32027
 				continue
 		elif _pc == 31938:
-			if 1 == global.pog_bool("g_act1_retrieved_artefact"):
+			if global.pog_bool("g_act1_retrieved_artefact") == 1:
 				_pc = 31965
 				continue
 			else:
@@ -3574,7 +3574,7 @@ func local_32297() -> Variant:
 	while true:
 		if _pc == 32297:
 			v2 = iemail.find("html:/text/act_1/act1_mission10_email")
-			if 1 == global.pog_bool("g_act1_puzzle_active"):
+			if global.pog_bool("g_act1_puzzle_active") == 1:
 				_pc = 32355
 				continue
 			else:
@@ -3596,7 +3596,7 @@ func local_32297() -> Variant:
 			_pc = 32519
 			continue
 		elif _pc == 32506:
-			if v1 != 1:
+			if 1 != v1:
 				_pc = 32519
 				continue
 			else:
@@ -3607,14 +3607,14 @@ func local_32297() -> Variant:
 			_pc = 32533
 			continue
 		elif _pc == 32533:
-			if 1 != global.pog_bool("g_act1_lor_stolen") and 2 > iemail.unread():
+			if iemail.unread() > 2 and global.pog_bool("g_act1_lor_stolen") != 1:
 				_pc = 32577
 				continue
 			else:
 				_pc = 32628
 				continue
 		elif _pc == 32577:
-			if 1 == math.random_int(1, 2):
+			if math.random_int(1, 2) == 1:
 				_pc = 32600
 				continue
 			else:
@@ -3625,7 +3625,7 @@ func local_32297() -> Variant:
 			_pc = 32628
 			continue
 		elif _pc == 32628:
-			if 1 == global.pog_bool("g_act1_character_intro") and _pog_is_null(global.exists("g_finished_email_hinter")):
+			if _pog_is_null(global.exists("g_finished_email_hinter")) and global.pog_bool("g_act1_character_intro") == 1:
 				_pc = 32677
 				continue
 			else:
@@ -3678,7 +3678,7 @@ func local_32297() -> Variant:
 			_pc = 32817
 			continue
 		elif _pc == 32817:
-			if 1 == global.pog_int("g_story_1.05"):
+			if global.pog_int("g_story_1.05") == 1:
 				_pc = 32844
 				continue
 			else:
@@ -3690,7 +3690,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 32891:
-			if 1 == global.pog_int("g_story_1.10"):
+			if global.pog_int("g_story_1.10") == 1:
 				_pc = 32918
 				continue
 			else:
@@ -3702,7 +3702,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 32965:
-			if 1 == global.pog_int("g_story_1.30"):
+			if global.pog_int("g_story_1.30") == 1:
 				_pc = 32992
 				continue
 			else:
@@ -3714,7 +3714,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33039:
-			if 1 == global.pog_int("g_story_1.20"):
+			if global.pog_int("g_story_1.20") == 1:
 				_pc = 33066
 				continue
 			else:
@@ -3726,7 +3726,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33113:
-			if 1 == global.pog_int("g_story_1.25"):
+			if global.pog_int("g_story_1.25") == 1:
 				_pc = 33140
 				continue
 			else:
@@ -3738,7 +3738,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33187:
-			if 1 == global.pog_int("g_story_1.35"):
+			if global.pog_int("g_story_1.35") == 1:
 				_pc = 33214
 				continue
 			else:
@@ -3750,7 +3750,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33261:
-			if 1 == global.pog_int("g_story_1.36"):
+			if global.pog_int("g_story_1.36") == 1:
 				_pc = 33288
 				continue
 			else:
@@ -3762,7 +3762,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33335:
-			if 1 == global.pog_int("g_story_1.40"):
+			if global.pog_int("g_story_1.40") == 1:
 				_pc = 33362
 				continue
 			else:
@@ -3774,7 +3774,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33409:
-			if 1 == global.pog_int("g_story_1.50"):
+			if global.pog_int("g_story_1.50") == 1:
 				_pc = 33436
 				continue
 			else:
@@ -3786,7 +3786,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33483:
-			if 1 == global.pog_int("g_story_1.70"):
+			if global.pog_int("g_story_1.70") == 1:
 				_pc = 33510
 				continue
 			else:
@@ -3798,7 +3798,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33557:
-			if 1 == global.pog_int("g_story_1.60"):
+			if global.pog_int("g_story_1.60") == 1:
 				_pc = 33584
 				continue
 			else:
@@ -3810,7 +3810,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33631:
-			if 1 == global.pog_int("g_story_1.80"):
+			if global.pog_int("g_story_1.80") == 1:
 				_pc = 33658
 				continue
 			else:
@@ -3822,7 +3822,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33705:
-			if 1 == global.pog_int("g_story_1.90"):
+			if global.pog_int("g_story_1.90") == 1:
 				_pc = 33732
 				continue
 			else:
@@ -3834,7 +3834,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33779:
-			if 1 == global.pog_int("g_story_1.100"):
+			if global.pog_int("g_story_1.100") == 1:
 				_pc = 33806
 				continue
 			else:
@@ -3846,7 +3846,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33853:
-			if 1 == global.pog_int("g_story_1.110"):
+			if global.pog_int("g_story_1.110") == 1:
 				_pc = 33880
 				continue
 			else:
@@ -3858,7 +3858,7 @@ func local_32297() -> Variant:
 			_pc = 34045
 			continue
 		elif _pc == 33927:
-			if iemail.read(v2) and _pog_is_null(global.pog_bool("g_act1_treasure_hunt_conversation")):
+			if _pog_is_null(global.pog_bool("g_act1_treasure_hunt_conversation")) and iemail.read(v2):
 				_pc = 33973
 				continue
 			else:
@@ -3896,7 +3896,7 @@ func main() -> Variant:
 			v0 = 0
 			v3 = iship.find_player_ship()
 			await local_20461()
-			if 1 < global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") < 1:
 				_pc = 34125
 				continue
 			else:
@@ -3989,9 +3989,9 @@ func local_34470(v0) -> Variant:
 	v5 = 0
 	while true:
 		sim.place_relative_to(v0, v1, math.random_int(0, v2), math.random_int(0, v2), math.random_int(0, v2))
-		v5 = 1 + v5
+		v5 = v5 + 1
 		await _pog_wait(v3)
-		if not (v4 < v5):
+		if not (v5 < v4):
 			break
 	return 0
 	return 0
@@ -4024,7 +4024,7 @@ func local_35213(v0) -> Variant:
 			_pc = 35351
 			continue
 		elif _pc == 35311:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 35324
 				continue
 			else:
@@ -4088,7 +4088,7 @@ func local_35371(v0) -> Variant:
 			_pc = 35509
 			continue
 		elif _pc == 35469:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 35482
 				continue
 			else:
@@ -4142,7 +4142,7 @@ func piracy_email_hinter() -> Variant:
 			_pc = 35668
 			continue
 		elif _pc == 35668:
-			if _pog_is_null(global.pog_int("g_current_hint_mail")) or iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail")))):
+			if iemail.read(iemail.find(await local_35213(global.pog_int("g_current_hint_mail")))) or _pog_is_null(global.pog_int("g_current_hint_mail")):
 				_pc = 35755
 				continue
 			else:
@@ -4164,18 +4164,18 @@ func piracy_email_hinter() -> Variant:
 				_pc = 36242
 				continue
 		elif _pc == 35796:
-			if 1 == global.pog_bool("g_read_current_mail"):
+			if global.pog_bool("g_read_current_mail") == 1:
 				_pc = 35823
 				continue
 			else:
 				_pc = 35865
 				continue
 		elif _pc == 35823:
-			global.set_int("g_hint_timer", 1 + global.pog_int("g_hint_timer"))
+			global.set_int("g_hint_timer", global.pog_int("g_hint_timer") + 1)
 			_pc = 35865
 			continue
 		elif _pc == 35865:
-			if global.pog_int("g_current_waiter") > global.pog_int("g_hint_timer"):
+			if global.pog_int("g_hint_timer") > global.pog_int("g_current_waiter"):
 				_pc = 35910
 				continue
 			else:
@@ -4184,9 +4184,9 @@ func piracy_email_hinter() -> Variant:
 		elif _pc == 35910:
 			global.set_int("g_hint_timer", 0)
 			global.set_int("g_current_waiter", math.random_int(60, 300))
-			global.set_int("g_current_hint_mail", 1 + global.pog_int("g_current_hint_mail"))
+			global.set_int("g_current_hint_mail", global.pog_int("g_current_hint_mail") + 1)
 			iemail.send_email("a1_master_stepsons_mail_sender", await local_35371(global.pog_int("g_current_hint_mail")), await local_35213(global.pog_int("g_current_hint_mail")), 1)
-			if 4 == global.pog_int("g_current_hint_mail"):
+			if global.pog_int("g_current_hint_mail") == 4:
 				_pc = 36129
 				continue
 			else:

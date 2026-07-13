@@ -272,7 +272,7 @@ func local_587(v0) -> Variant:
 	var _pc: int = 587
 	while true:
 		if _pc == 587:
-			if _pog_eq("map:/geog/badlands/hoffers_wake", v0):
+			if _pog_eq(v0, "map:/geog/badlands/hoffers_wake"):
 				_pc = 605
 				continue
 			else:
@@ -282,7 +282,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 611:
-			if _pog_eq("map:/geog/badlands/mwari", v0):
+			if _pog_eq(v0, "map:/geog/badlands/mwari"):
 				_pc = 629
 				continue
 			else:
@@ -292,7 +292,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 635:
-			if _pog_eq("map:/geog/badlands/coyote", v0):
+			if _pog_eq(v0, "map:/geog/badlands/coyote"):
 				_pc = 653
 				continue
 			else:
@@ -302,7 +302,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 659:
-			if _pog_eq("map:/geog/badlands/firefrost", v0):
+			if _pog_eq(v0, "map:/geog/badlands/firefrost"):
 				_pc = 677
 				continue
 			else:
@@ -312,7 +312,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 683:
-			if _pog_eq("map:/geog/badlands/e3_system", v0):
+			if _pog_eq(v0, "map:/geog/badlands/e3_system"):
 				_pc = 701
 				continue
 			else:
@@ -322,7 +322,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 707:
-			if _pog_eq("map:/geog/badlands/santa_romera", v0):
+			if _pog_eq(v0, "map:/geog/badlands/santa_romera"):
 				_pc = 725
 				continue
 			else:
@@ -332,7 +332,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 731:
-			if _pog_eq("map:/geog/badlands/kompira", v0):
+			if _pog_eq(v0, "map:/geog/badlands/kompira"):
 				_pc = 749
 				continue
 			else:
@@ -342,7 +342,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 755:
-			if _pog_eq("map:/geog/badlands/eureka", v0):
+			if _pog_eq(v0, "map:/geog/badlands/eureka"):
 				_pc = 773
 				continue
 			else:
@@ -352,7 +352,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 779:
-			if _pog_eq("map:/geog/badlands/dagda", v0):
+			if _pog_eq(v0, "map:/geog/badlands/dagda"):
 				_pc = 797
 				continue
 			else:
@@ -362,7 +362,7 @@ func local_587(v0) -> Variant:
 			_pc = 834
 			continue
 		elif _pc == 803:
-			if _pog_eq("map:/geog/badlands/dante", v0):
+			if _pog_eq(v0, "map:/geog/badlands/dante"):
 				_pc = 821
 				continue
 			else:
@@ -812,7 +812,7 @@ func local_1382(v0, v1) -> Variant:
 			_pc = 1437
 			continue
 		elif _pc == 1437:
-			if v2 < v4:
+			if v4 < v2:
 				_pc = 1453
 				continue
 			else:
@@ -820,7 +820,7 @@ func local_1382(v0, v1) -> Variant:
 				continue
 		elif _pc == 1453:
 			v5 = isim.cast(list.get_nth(v0, v4))
-			if v1 < sim.distance_between(v3, v5):
+			if sim.distance_between(v3, v5) < v1:
 				_pc = 1529
 				continue
 			else:
@@ -830,7 +830,7 @@ func local_1382(v0, v1) -> Variant:
 			_pc = 1559
 			continue
 		elif _pc == 1535:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1437
 			continue
 		elif _pc == 1553:
@@ -861,7 +861,7 @@ func local_1561(v0) -> Variant:
 			_pc = 1678
 			continue
 		elif _pc == 1678:
-			if v5 < v4:
+			if v4 < v5:
 				_pc = 1694
 				continue
 			else:
@@ -876,14 +876,14 @@ func local_1561(v0) -> Variant:
 				_pc = 1833
 				continue
 		elif _pc == 1746:
-			if -0.20000000298023224 < ifaction.feeling(v3, isim.faction(v6)):
+			if ifaction.feeling(v3, isim.faction(v6)) < -0.20000000298023224:
 				_pc = 1793
 				continue
 			else:
 				_pc = 1833
 				continue
 		elif _pc == 1793:
-			if v0 < sim.distance_between(v6, v2):
+			if sim.distance_between(v6, v2) < v0:
 				_pc = 1827
 				continue
 			else:
@@ -893,7 +893,7 @@ func local_1561(v0) -> Variant:
 			_pc = 1857
 			continue
 		elif _pc == 1833:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1678
 			continue
 		elif _pc == 1851:
@@ -1032,7 +1032,7 @@ func local_1866(v0, v1) -> Variant:
 				_pc = 2140
 				continue
 		elif _pc == 2275:
-			if 3 != v3 and 4 != v3:
+			if v3 != 4 and v3 != 3:
 				_pc = 2297
 				continue
 			else:
@@ -1077,7 +1077,7 @@ func local_2347(v0) -> Variant:
 			_pc = 2421
 			continue
 		elif _pc == 2421:
-			if v6 < v5:
+			if v5 < v6:
 				_pc = 2437
 				continue
 			else:
@@ -1096,15 +1096,15 @@ func local_2347(v0) -> Variant:
 			_pc = 2603
 			continue
 		elif _pc == 2544:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 2633
 			continue
 		elif _pc == 2562:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 2633
 			continue
 		elif _pc == 2580:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 2633
 			continue
 		elif _pc == 2598:
@@ -1132,11 +1132,11 @@ func local_2347(v0) -> Variant:
 				_pc = 2580
 				continue
 		elif _pc == 2633:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 2421
 			continue
 		elif _pc == 2651:
-			if _pog_is_null(v2) and _pog_is_null(v3) and _pog_is_null(v4):
+			if _pog_is_null(v4) and _pog_is_null(v3) and _pog_is_null(v2):
 				_pc = 2679
 				continue
 			else:
@@ -1146,14 +1146,14 @@ func local_2347(v0) -> Variant:
 			_pc = 2791
 			continue
 		elif _pc == 2689:
-			if v3 >= v4:
+			if v4 >= v3:
 				_pc = 2705
 				continue
 			else:
 				_pc = 2746
 				continue
 		elif _pc == 2705:
-			if v2 >= v4:
+			if v4 >= v2:
 				_pc = 2721
 				continue
 			else:
@@ -1171,7 +1171,7 @@ func local_2347(v0) -> Variant:
 			_pc = 2781
 			continue
 		elif _pc == 2746:
-			if v3 >= v2:
+			if v2 >= v3:
 				_pc = 2762
 				continue
 			else:
@@ -1294,12 +1294,12 @@ func monitor() -> Variant:
 			v1 = global.pog_int("g_music_suite")
 			v3 = v1
 			v4 = global.string("g_music_current")
-			v8 = 1.0 - v8
+			v8 = v8 - 1.0
 			v9 = math.random(0.0, 1.0)
 			v10 = 0
 			v12 = 0
 			v1 = global.pog_int("g_music_suite")
-			if not _pog_eq(imapentity.system_name(), v6):
+			if not _pog_eq(v6, imapentity.system_name()):
 				_pc = 3204
 				continue
 			else:
@@ -1308,7 +1308,7 @@ func monitor() -> Variant:
 		elif _pc == 3204:
 			v6 = imapentity.system_name()
 			v3 = await local_587(v6)
-			if 0.5 > v9:
+			if v9 > 0.5:
 				_pc = 3265
 				continue
 			else:
@@ -1326,7 +1326,7 @@ func monitor() -> Variant:
 			_pc = 3330
 			continue
 		elif _pc == 3290:
-			if 0.0 < v8:
+			if v8 < 0.0:
 				_pc = 3306
 				continue
 			else:
@@ -1337,7 +1337,7 @@ func monitor() -> Variant:
 			_pc = 3330
 			continue
 		elif _pc == 3330:
-			if not _pog_eq(v13, global.pog_int("g_music_ambient_environment")):
+			if not _pog_eq(global.pog_int("g_music_ambient_environment"), v13):
 				_pc = 3361
 				continue
 			else:
@@ -1421,7 +1421,7 @@ func monitor() -> Variant:
 			_pc = 3646
 			continue
 		elif _pc == 3646:
-			if 6 != v0 and _pog_is_null(stream.is_playing(0)):
+			if _pog_is_null(stream.is_playing(0)) and v0 != 6:
 				_pc = 3676
 				continue
 			else:
@@ -1436,14 +1436,14 @@ func monitor() -> Variant:
 			continue
 		elif _pc == 3702:
 			v2 = await local_1866(v0, 1)
-			if 4 == v0 and 4 == v2:
+			if v2 == 4 and v0 == 4:
 				_pc = 3749
 				continue
 			else:
 				_pc = 3787
 				continue
 		elif _pc == 3749:
-			if 1 == v11:
+			if v11 == 1:
 				_pc = 3761
 				continue
 			else:
@@ -1463,7 +1463,7 @@ func monitor() -> Variant:
 			_pc = 3840
 			continue
 		elif _pc == 3799:
-			if _pog_eq(v0, v2):
+			if _pog_eq(v2, v0):
 				_pc = 3815
 				continue
 			else:
@@ -1474,7 +1474,7 @@ func monitor() -> Variant:
 			_pc = 3840
 			continue
 		elif _pc == 3840:
-			if not _pog_eq(v1, v3):
+			if not _pog_eq(v3, v1):
 				_pc = 3856
 				continue
 			else:
@@ -1496,7 +1496,7 @@ func monitor() -> Variant:
 			_pc = 3968
 			continue
 		elif _pc == 3968:
-			if not _pog_eq(v0, v2):
+			if not _pog_eq(v2, v0):
 				_pc = 3984
 				continue
 			else:
@@ -1514,14 +1514,14 @@ func monitor() -> Variant:
 		elif _pc == 4052:
 			global.set_int("g_music_mood", v2)
 			v10 = 1
-			if 3 == v2 or 4 == v2:
+			if v2 == 4 or v2 == 3:
 				_pc = 4107
 				continue
 			else:
 				_pc = 4176
 				continue
 		elif _pc == 4107:
-			if 0.699999988079071 > v9:
+			if v9 > 0.699999988079071:
 				_pc = 4123
 				continue
 			else:
@@ -1532,7 +1532,7 @@ func monitor() -> Variant:
 			_pc = 4176
 			continue
 		elif _pc == 4144:
-			if 0.30000001192092896 > v9:
+			if v9 > 0.30000001192092896:
 				_pc = 4160
 				continue
 			else:
@@ -1550,7 +1550,7 @@ func monitor() -> Variant:
 				_pc = 4522
 				continue
 		elif _pc == 4186:
-			if 6 == v2:
+			if v2 == 6:
 				_pc = 4199
 				continue
 			else:
@@ -1597,7 +1597,7 @@ func monitor() -> Variant:
 			continue
 		elif _pc == 4468:
 			global.set_string("g_music_current", v5)
-			stream.play(0, v5, 1, 1 == v2)
+			stream.play(0, v5, 1, v2 == 1)
 			_pc = 4522
 			continue
 		elif _pc == 4522:
@@ -1615,7 +1615,7 @@ func monitor() -> Variant:
 				_pc = 4702
 				continue
 		elif _pc == 4554:
-			if 0.0 < v14:
+			if v14 < 0.0:
 				_pc = 4570
 				continue
 			else:
@@ -1645,7 +1645,7 @@ func monitor() -> Variant:
 			_pc = 4702
 			continue
 		elif _pc == 4685:
-			v14 = 1.0 - v14
+			v14 = v14 - 1.0
 			_pc = 4702
 			continue
 		elif _pc == 4702:

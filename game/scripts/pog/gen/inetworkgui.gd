@@ -133,7 +133,7 @@ func on_session_refresh() -> Variant:
 				continue
 		elif _pc == 834:
 			gui.remove_list_box_entries(v0)
-			if 1 == global.pog_bool("Network_Internet_connect"):
+			if global.pog_bool("Network_Internet_connect") == 1:
 				_pc = 880
 				continue
 			else:
@@ -199,7 +199,7 @@ func add_server_entry_call_back() -> Variant:
 			v20 = null
 			v20 = global.string("type_font")
 			v21 = string.to_int(v3)
-			if not (v5) and not _pog_eq(imultiplay.protocol_version(), v21):
+			if not _pog_eq(v21, imultiplay.protocol_version()) and not (v5):
 				_pc = 1242
 				continue
 			else:
@@ -223,13 +223,13 @@ func add_server_entry_call_back() -> Variant:
 		elif _pc == 1334:
 			v6 = gui.cast(global.handle("mp_network_session_list_box"))
 			v7 = gui.create_window(0, 0, gui.window_canvas_width(v6), v18, 0)
-			v19 = 6 / gui.window_canvas_width(v6)
-			v9 = v11 + 0
-			v10 = v11 - 4 * v19
-			v12 = v14 + 4 * v19
-			v13 = v14 - v19
-			v15 = v17 + v19 + 4 * v19
-			v16 = v17 - v19
+			v19 = gui.window_canvas_width(v6) / 6
+			v9 = 0 + v11
+			v10 = v19 * 4 - v11
+			v12 = v19 * 4 + v14
+			v13 = v19 - v14
+			v15 = v19 * 4 + v19 + v17
+			v16 = v19 - v17
 			v8 = await igui.create_and_initialise_list_box_entry_component_window(v9, v10, v18, v7, v20, v0)
 			if v4:
 				_pc = 1617
@@ -306,7 +306,7 @@ func network_l_a_n_screen() -> Variant:
 			imultiplay.network_reset()
 			await local_0()
 			gui.set_default_font(global.string("GUI_title_font"))
-			if 1 == global.pog_bool("Network_Internet_connect"):
+			if global.pog_bool("Network_Internet_connect") == 1:
 				_pc = 2191
 				continue
 			else:
@@ -388,7 +388,7 @@ func local_2660(v0) -> Variant:
 		if _pc == 2660:
 			v3 = null
 			v8 = global.pog_int("GUI_alignment_offset")
-			v11 = 290 - gui.frame_height()
+			v11 = gui.frame_height() - 290
 			v13 = global.pog_int("GUI_scrollbar_width")
 			v18 = global.pog_int("GUI_table_alignmentoffset")
 			v20 = global.pog_int("GUI_inversebutton_width")
@@ -417,10 +417,10 @@ func local_2660(v0) -> Variant:
 			list.remove_all(v3)
 			v9 = gui.window_canvas_height(v1)
 			v10 = gui.window_canvas_width(v1)
-			v12 = global.pog_int("GUI_scrollbar_width") * 2 - v10
-			v12 = 6 / v12
+			v12 = v10 - 2 * global.pog_int("GUI_scrollbar_width")
+			v12 = v12 / 6
 			v2 = gui.create_window(0, 0, v10, v11, v1)
-			v4 = await igui.create_titled_list_box(v2, v26, 4 * v12, text.field("mp_server_name", 0), v12, text.field("mp_network_players", 0), v12, text.field("mp_network_ping_time", 0))
+			v4 = await igui.create_titled_list_box(v2, v26, v12 * 4, text.field("mp_server_name", 0), v12, text.field("mp_network_players", 0), v12, text.field("mp_network_ping_time", 0))
 			list.add_tail(v3, v4)
 			global.create_handle("mp_network_session_list_box", 2, v4)
 			v7 = await igui.create_and_initialise_inverse_button(v1, v22, v11, v20, text.field("mp_network_refresh", 0), "iNetworkGUI.OnSessionRefresh")
@@ -444,15 +444,15 @@ func local_2660(v0) -> Variant:
 			_pc = 3618
 			continue
 		elif _pc == 3618:
-			v24 = v23 + v21 + v11
-			v2 = gui.create_window(0, v24, v10, v24 - v9, v1)
+			v24 = v11 + v21 + v23
+			v2 = gui.create_window(0, v24, v10, v9 - v24, v1)
 			v14 = global.pog_int("GUI_fancyborder_width")
-			v15 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset")
-			v16 = global.pog_int("GUI_fancyborder_width") + v14 - gui.window_canvas_width(v2)
-			v17 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v15 - gui.window_canvas_height(v2)
+			v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 5
+			v16 = gui.window_canvas_width(v2) - v14 + global.pog_int("GUI_fancyborder_width")
+			v17 = gui.window_canvas_height(v2) - v15 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v6 = gui.create_window(v14, v15, v16, v17, v2)
 			gui.create_fancy_border(v6)
-			v5 = await igui.create_and_initialise_text_window(v18, 0, v18 + v13 * 2 - v16, v17, v6, "")
+			v5 = await igui.create_and_initialise_text_window(v18, 0, v16 - 2 * v13 + v18, v17, v6, "")
 			list.add_tail(v3, v5)
 			global.create_handle("mp_network_text_box", 2, v5)
 			_pc = 4034
@@ -489,7 +489,7 @@ func local_4058(v0, v1) -> Variant:
 			_pc = 4164
 			continue
 		elif _pc == 4164:
-			if 1 == global.pog_bool("NetworkSessionContinue"):
+			if global.pog_bool("NetworkSessionContinue") == 1:
 				_pc = 4191
 				continue
 			else:
@@ -497,7 +497,7 @@ func local_4058(v0, v1) -> Variant:
 				continue
 		elif _pc == 4191:
 			v5 = gui.list_box_focused_entry(v0)
-			if -1 == v5:
+			if v5 == -1:
 				_pc = 4228
 				continue
 			else:
@@ -508,7 +508,7 @@ func local_4058(v0, v1) -> Variant:
 			_pc = 4314
 			continue
 		elif _pc == 4259:
-			if not _pog_eq(v3, v5):
+			if not _pog_eq(v5, v3):
 				_pc = 4275
 				continue
 			else:
@@ -521,14 +521,14 @@ func local_4058(v0, v1) -> Variant:
 		elif _pc == 4314:
 			v3 = v5
 			v4 = gui.list_box_selected_index(v0)
-			if not _pog_eq(v2, v4) and -1 != v4:
+			if v4 != -1 and not _pog_eq(v4, v2):
 				_pc = 4374
 				continue
 			else:
 				_pc = 4724
 				continue
 		elif _pc == 4374:
-			if imultiplay.server_browser_max_players(v4) >= imultiplay.server_browser_players(v4):
+			if imultiplay.server_browser_players(v4) >= imultiplay.server_browser_max_players(v4):
 				_pc = 4416
 				continue
 			else:
@@ -544,7 +544,7 @@ func local_4058(v0, v1) -> Variant:
 			gui.play_sound(2)
 			v10 = imultiplay.server_browser_address(v4)
 			v11 = imultiplay.server_browser_session_index(v4)
-			if -1 == v11:
+			if v11 == -1:
 				_pc = 4545
 				continue
 			else:
@@ -557,7 +557,7 @@ func local_4058(v0, v1) -> Variant:
 			_pc = 4592
 			continue
 		elif _pc == 4592:
-			if -1 != v11:
+			if v11 != -1:
 				_pc = 4605
 				continue
 			else:
@@ -591,10 +591,10 @@ func show_ship(v0) -> Variant:
 	v2 = null
 	v3 = null
 	v4 = null
-	if _pog_eq("", v0):
+	if _pog_eq(v0, ""):
 		return 0
 	v4 = global.string("MoviePlaying")
-	if _pog_eq(v4, v0):
+	if _pog_eq(v0, v4):
 		return 0
 	global.set_string("MoviePlaying", v0)
 	v1 = inifile.create(v0)
@@ -665,13 +665,13 @@ func local_5146(v0) -> Variant:
 			v8 = imultiplay.get_server_map_list(v26)
 			v15 = imultiplay.client_options_server_map()
 			gui.remove_list_box_entries(v1)
-			v6 = 4 + v9 - v6
+			v6 = v6 - v9 + 4
 			v22 = v20
 			v7 = 0
 			_pc = 5739
 			continue
 		elif _pc == 5739:
-			if v8 < v7:
+			if v7 < v8:
 				_pc = 5755
 				continue
 			else:
@@ -679,7 +679,7 @@ func local_5146(v0) -> Variant:
 				continue
 		elif _pc == 5755:
 			v16 = imultiplay.server_map_list_item(v7)
-			if _pog_eq(v16, v15):
+			if _pog_eq(v15, v16):
 				_pc = 5797
 				continue
 			else:
@@ -690,7 +690,7 @@ func local_5146(v0) -> Variant:
 			_pc = 5804
 			continue
 		elif _pc == 5804:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5739
 			continue
 		elif _pc == 5822:
@@ -698,7 +698,7 @@ func local_5146(v0) -> Variant:
 			_pc = 5829
 			continue
 		elif _pc == 5829:
-			if v8 < v7:
+			if v7 < v8:
 				_pc = 5845
 				continue
 			else:
@@ -710,7 +710,7 @@ func local_5146(v0) -> Variant:
 			v19 = inifile.create(v16)
 			v18 = string.upper_case(inifile.string(v19, "Info", "description", ""))
 			inifile.destroy(v19)
-			if v22 >= string.length(v18):
+			if string.length(v18) >= v22:
 				_pc = 6027
 				continue
 			else:
@@ -722,7 +722,7 @@ func local_5146(v0) -> Variant:
 			_pc = 6090
 			continue
 		elif _pc == 6090:
-			if _pog_is_null(v13) and _pog_eq(v15, v16):
+			if _pog_eq(v16, v15) and _pog_is_null(v13):
 				_pc = 6114
 				continue
 			else:
@@ -755,7 +755,7 @@ func local_5146(v0) -> Variant:
 			gui.set_input_override_functions(v10, "", "", "", "", "", "iNetworkGUI.OnBackButton", "", "", "")
 			gui.add_list_box_entry(v1, v10)
 			list.add_tail(v11, v10)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5829
 			continue
 		elif _pc == 6424:
@@ -791,14 +791,14 @@ func on_ship_selection() -> Variant:
 			_pc = 6632
 			continue
 		elif _pc == 6632:
-			if await imultiplaygui.valid_ship_count() < v1:
+			if v1 < await imultiplaygui.valid_ship_count():
 				_pc = 6656
 				continue
 			else:
 				_pc = 6767
 				continue
 		elif _pc == 6656:
-			if _pog_eq(gui.cast(list.get_nth(v0, v1)), v3):
+			if _pog_eq(v3, gui.cast(list.get_nth(v0, v1))):
 				_pc = 6703
 				continue
 			else:
@@ -810,7 +810,7 @@ func on_ship_selection() -> Variant:
 			_pc = 6749
 			continue
 		elif _pc == 6749:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 6632
 			continue
 		elif _pc == 6767:
@@ -838,7 +838,7 @@ func on_player_options_back_button() -> Variant:
 			_pc = 6948
 			continue
 		elif _pc == 6948:
-			if await imultiplaygui.valid_ship_count() < v2:
+			if v2 < await imultiplaygui.valid_ship_count():
 				_pc = 6972
 				continue
 			else:
@@ -856,7 +856,7 @@ func on_player_options_back_button() -> Variant:
 			_pc = 7060
 			continue
 		elif _pc == 7060:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 6948
 			continue
 		elif _pc == 7078:
@@ -906,16 +906,16 @@ func player_options() -> Variant:
 			v0 = await igui.create_shady_bar()
 			await igui.add_back_buttons(v0, "iNetworkGUI.OnPlayerOptionsBackButton", "iNetworkGUI.OnPlayerOptionsBackToMainMenuButton")
 			await igui.add_title(v0, text.field("mp_options_title", 0))
-			v3 = 10 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v6 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v3 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 10
+			v6 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v9 = gui.create_window(0, 0, global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), 0)
-			v8 = gui.create_edit_box(v10, 0, v10 - global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), v9, 0, v11, 0)
+			v8 = gui.create_edit_box(v10, 0, global.pog_int("GUI_inversebutton_width") - v10, global.pog_int("GUI_inversebutton_height"), v9, 0, v11, 0)
 			gui.set_window_font(v8, global.string("type_font"))
 			gui.set_edit_box_max_char_length(v8, 20)
 			gui.set_window_state_colours(v8, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
 			list.add_tail(v4, v9)
 			await igui.create_window_list_in_splitter(v0, v4, v6, v3, text.field("mp_options_name", 0))
-			v3 = 10 + global.pog_int("GUI_fancybutton_height") + gui.window_canvas_height(v8) + v3
+			v3 = v3 + gui.window_canvas_height(v8) + global.pog_int("GUI_fancybutton_height") + 10
 			global.create_handle("multiplayer_options_name_box", 2, v8)
 			list.remove_all(v4)
 			list.add_tail(v4, v8)
@@ -923,7 +923,7 @@ func player_options() -> Variant:
 			_pc = 8181
 			continue
 		elif _pc == 8181:
-			if v12 < v2:
+			if v2 < v12:
 				_pc = 8197
 				continue
 			else:
@@ -934,7 +934,7 @@ func player_options() -> Variant:
 			list.add_tail(v4, v1)
 			await igui.make_inverse_button_iconic(v1)
 			gui.set_input_override_functions(v1, "", "", "", "", "iNetworkGUI.OnShipSelection", "iNetworkGUI.OnPlayerOptionsBackButton", "", "", "iNetworkGUI.OnShipSelection")
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 8181
 			continue
 		elif _pc == 8376:
@@ -944,14 +944,14 @@ func player_options() -> Variant:
 			_pc = 8440
 			continue
 		elif _pc == 8440:
-			if v12 < v2:
+			if v2 < v12:
 				_pc = 8456
 				continue
 			else:
 				_pc = 8599
 				continue
 		elif _pc == 8456:
-			if _pog_eq(imultiplay.client_options_ship(), await imultiplaygui.valid_ship_i_n_i(v2)):
+			if _pog_eq(await imultiplaygui.valid_ship_i_n_i(v2), imultiplay.client_options_ship()):
 				_pc = 8496
 				continue
 			else:
@@ -963,7 +963,7 @@ func player_options() -> Variant:
 			_pc = 8581
 			continue
 		elif _pc == 8581:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 8440
 			continue
 		elif _pc == 8599:
@@ -1020,7 +1020,7 @@ func local_8762() -> Variant:
 			_pc = 8954
 			continue
 		elif _pc == 8954:
-			if list.item_count(v2) < v4:
+			if v4 < list.item_count(v2):
 				_pc = 8983
 				continue
 			else:
@@ -1038,7 +1038,7 @@ func local_8762() -> Variant:
 			_pc = 9048
 			continue
 		elif _pc == 9048:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 8954
 			continue
 		elif _pc == 9066:
@@ -1046,7 +1046,7 @@ func local_8762() -> Variant:
 			_pc = 9073
 			continue
 		elif _pc == 9073:
-			if list.item_count(v3) < v4:
+			if v4 < list.item_count(v3):
 				_pc = 9102
 				continue
 			else:
@@ -1064,11 +1064,11 @@ func local_8762() -> Variant:
 			_pc = 9167
 			continue
 		elif _pc == 9167:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 9073
 			continue
 		elif _pc == 9185:
-			if -1 == v9:
+			if v9 == -1:
 				_pc = 9198
 				continue
 			else:
@@ -1089,7 +1089,7 @@ func local_8762() -> Variant:
 			_pc = 9279
 			continue
 		elif _pc == 9279:
-			if -1 == v8:
+			if v8 == -1:
 				_pc = 9292
 				continue
 			else:
@@ -1110,7 +1110,7 @@ func local_8762() -> Variant:
 			v1 = gui.cast(global.handle("NetworkServerOptionsTime"))
 			v5 = gui.edit_box_value(v1)
 			v7 = string.to_int(v5)
-			v7 = 60 * v7
+			v7 = v7 * 60
 			v5 = string.from_int(v7)
 			v1 = gui.cast(global.handle("NetworkServerOptionsScore"))
 			v6 = gui.edit_box_value(v1)
@@ -1226,35 +1226,35 @@ func network_server_screen() -> Variant:
 	v17 = null
 	v18 = null
 	v19 = 10
-	v20 = v19 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_inversebutton_height")
+	v20 = global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height") + v19
 	v21 = 4
-	v22 = 13 + global.pog_int("GUI_fancyborder_width") * 2
+	v22 = 2 * global.pog_int("GUI_fancyborder_width") + 13
 	imultiplay.client_options_load()
 	v16 = imultiplay.client_options_server_name()
-	v17 = string.from_int(60 / imultiplay.client_options_server_time_limit())
+	v17 = string.from_int(imultiplay.client_options_server_time_limit() / 60)
 	v18 = string.from_int(imultiplay.client_options_server_frag_limit())
-	if _pog_eq("", v16):
+	if _pog_eq(v16, ""):
 		v16 = text.field("mp_server_default_session_name", 0)
-	if _pog_eq("", v17):
+	if _pog_eq(v17, ""):
 		v17 = "0"
-	if _pog_eq("", v18):
+	if _pog_eq(v18, ""):
 		v18 = "0"
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "iNetworkGUI.OnServerScreenBackButton", "iNetworkGUI.OnServerScreenBackToMainMenuButton")
 	await igui.add_title(v0, text.field("mp_options_host_session", 0))
-	v6 = v19 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-	v3 = global.pog_int("GUI_backbutton_rise") + 8 - gui.window_canvas_height(v0)
-	v10 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = global.pog_int("GUI_fancybutton_height") - v3
+	v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + v19
+	v3 = gui.window_canvas_height(v0) - 8 + global.pog_int("GUI_backbutton_rise")
+	v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v3 = v3 - global.pog_int("GUI_fancybutton_height")
 	v13 = await igui.create_and_initialise_fancy_button(v0, v3, text.field("mp_server_start", 0), "iNetworkGUI.OnServerScreenOK")
 	list.add_head(v7, v13)
-	v3 = global.pog_int("GUI_fancybutton_height") - v3
+	v3 = v3 - global.pog_int("GUI_fancybutton_height")
 	v14 = await igui.create_and_initialise_fancy_button(v0, v3, text.field("mp_server_advanced_button", 0), "iNetworkGUI.OnServerAdvancedOptions")
 	list.add_head(v7, v14)
-	v3 = v20 - v3
+	v3 = v3 - v20
 	v12 = gui.create_window(0, 0, global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), 0)
-	v11 = gui.create_edit_box(v15, 0, v15 - global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), v12, 0, v18, 1)
+	v11 = gui.create_edit_box(v15, 0, global.pog_int("GUI_inversebutton_width") - v15, global.pog_int("GUI_inversebutton_height"), v12, 0, v18, 1)
 	gui.set_window_font(v11, global.string("type_font"))
 	gui.set_edit_box_max_char_length(v11, 10)
 	gui.set_window_state_colours(v11, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
@@ -1263,9 +1263,9 @@ func network_server_screen() -> Variant:
 	await igui.create_window_list_in_splitter(v0, v9, v10, v3, text.field("mp_server_score_limit", 0))
 	global.create_handle("NetworkServerOptionsScore", 2, v11)
 	list.add_head(v7, v11)
-	v3 = v20 - v3
+	v3 = v3 - v20
 	v12 = gui.create_window(0, 0, global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), 0)
-	v11 = gui.create_edit_box(v15, 0, v15 - global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), v12, 0, v17, 1)
+	v11 = gui.create_edit_box(v15, 0, global.pog_int("GUI_inversebutton_width") - v15, global.pog_int("GUI_inversebutton_height"), v12, 0, v17, 1)
 	gui.set_window_font(v11, global.string("type_font"))
 	gui.set_edit_box_max_char_length(v11, 6)
 	gui.set_window_state_colours(v11, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
@@ -1274,9 +1274,9 @@ func network_server_screen() -> Variant:
 	await igui.create_window_list_in_splitter(v0, v9, v10, v3, text.field("mp_server_time_limit", 0))
 	global.create_handle("NetworkServerOptionsTime", 2, v11)
 	list.add_head(v7, v11)
-	v3 = v20 - v3
+	v3 = v3 - v20
 	v12 = gui.create_window(0, 0, global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), 0)
-	v11 = gui.create_edit_box(v15, 0, v15 - global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), v12, 0, v16, 0)
+	v11 = gui.create_edit_box(v15, 0, global.pog_int("GUI_inversebutton_width") - v15, global.pog_int("GUI_inversebutton_height"), v12, 0, v16, 0)
 	gui.set_window_font(v11, global.string("type_font"))
 	gui.set_edit_box_max_char_length(v11, 20)
 	gui.set_window_state_colours(v11, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
@@ -1285,14 +1285,14 @@ func network_server_screen() -> Variant:
 	await igui.create_window_list_in_splitter(v0, v9, v10, v3, text.field("mp_server_session_name", 0))
 	global.create_handle("NetworkServerOptionsName", 2, v11)
 	list.add_head(v7, v11)
-	v2 = v21 + global.pog_int("GUI_alignment_offset")
-	v4 = 2 * v2 - v21 + global.pog_int("GUI_shader_width")
-	v5 = 2 / v19 + v6 - v3
-	v23 = gui.create_splitter_window(v2, v5 + v6, v4, v5, v0, v22, 0)
+	v2 = global.pog_int("GUI_alignment_offset") + v21
+	v4 = global.pog_int("GUI_shader_width") + v21 - v2 * 2
+	v5 = v3 - v6 + v19 / 2
+	v23 = gui.create_splitter_window(v2, v6 + v5, v4, v5, v0, v22, 0)
 	await local_19161(imultiplay.client_options_server_package(), v23, v7)
-	v2 = v21 + global.pog_int("GUI_alignment_offset")
-	v4 = 2 * v2 - v21 + global.pog_int("GUI_shader_width")
-	v5 = 2 / v19 + v6 - v3
+	v2 = global.pog_int("GUI_alignment_offset") + v21
+	v4 = global.pog_int("GUI_shader_width") + v21 - v2 * 2
+	v5 = v3 - v6 + v19 / 2
 	v23 = gui.create_splitter_window(v2, v6, v4, v5, v0, v22, 0)
 	await local_17494(v23, v7)
 	gui.set_first_control_focus(gui.cast(list.head(v7)))
@@ -1346,10 +1346,10 @@ func local_14325(v0, v1) -> Variant:
 			v2 = 20
 			v3 = 13
 			v6 = gui.window_canvas_width(v1)
-			v7 = 2 / v6
+			v7 = v6 / 2
 			v4 = gui.create_window(0, 0, v6, v2, 0)
 			gui.add_list_box_entry(v1, v4)
-			v5 = await igui.create_and_initialise_static_window(0, 0, v3 - v7, v2, v4, global.string("GUI_title_font"), text.field(v0, 0))
+			v5 = await igui.create_and_initialise_static_window(0, 0, v7 - v3, v2, v4, global.string("GUI_title_font"), text.field(v0, 0))
 			gui.set_window_state_colours(v5, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
 			gui.set_window_text_formatting(v5, 0, v3)
 			_pc = 14749
@@ -1399,8 +1399,8 @@ func network_server_screen_advanced() -> Variant:
 	v8 = imultiplay.client_options_server_a_i_bots()
 	v9 = imultiplay.client_options_server_a_i_bots_skill()
 	v10 = imultiplay.client_options_server_a_i_bots_count()
-	v11 = v15 - v14 + 2 / gui.window_canvas_width(v2)
-	v17 = v14 + v11 - gui.window_canvas_width(v2)
+	v11 = gui.window_canvas_width(v2) / 2 + v14 - v15
+	v17 = gui.window_canvas_width(v2) - v11 + v14
 	global.create_int("NetworkServerAdvancedFocusedEntry", 2, -1)
 	v3 = await local_14325("mp_server_advanced_ai_count", v2)
 	v4 = gui.create_edit_box(v11, 0, v17, v13, v3, 0, string.from_int(v10), 1)
@@ -1487,14 +1487,14 @@ func on_advanced_left() -> Variant:
 			continue
 		elif _pc == 16487:
 			v5 = string.to_int(gui.edit_box_value(v0))
-			if 0 > v5:
+			if v5 > 0:
 				_pc = 16538
 				continue
 			else:
 				_pc = 16597
 				continue
 		elif _pc == 16538:
-			v5 = -1 + v5
+			v5 = v5 + -1
 			gui.set_edit_box_value(v0, string.from_int(v5))
 			_pc = 16613
 			continue
@@ -1560,14 +1560,14 @@ func on_advanced_right() -> Variant:
 			continue
 		elif _pc == 16848:
 			v4 = string.to_int(gui.edit_box_value(v0))
-			if 9 < v4:
+			if v4 < 9:
 				_pc = 16900
 				continue
 			else:
 				_pc = 16958
 				continue
 		elif _pc == 16900:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			gui.set_edit_box_value(v0, string.from_int(v4))
 			_pc = 16974
 			continue
@@ -1678,7 +1678,7 @@ func on_advanced_mouse_down() -> Variant:
 	return 0
 
 func on_advanced_mouse_up() -> Variant:
-	if not _pog_eq(global.pog_int("NetworkServerAdvancedFocusedEntry"), await local_16187()):
+	if not _pog_eq(await local_16187(), global.pog_int("NetworkServerAdvancedFocusedEntry")):
 		return 0
 	await on_advanced_select()
 	return 0
@@ -1749,7 +1749,7 @@ func local_17494(v0, v1) -> Variant:
 			v3 = await igui.create_and_initialise_static_window(0, 0, gui.window_canvas_width(v2), gui.window_canvas_height(v2), v2, v4, text.field("mp_server_game_type", 0))
 			gui.set_window_text_formatting(v3, 0, 9)
 			v2 = gui.splitter_window_bottom_window(v0)
-			if gui.window_canvas_height(v2) > v6 + v5 * v10:
+			if v10 * v5 + v6 > gui.window_canvas_height(v2):
 				_pc = 17964
 				continue
 			else:
@@ -1757,7 +1757,7 @@ func local_17494(v0, v1) -> Variant:
 				continue
 		elif _pc == 17964:
 			v9 = 1
-			v7 = 4 + v11 - v7
+			v7 = v7 - v11 + 4
 			_pc = 18003
 			continue
 		elif _pc == 17996:
@@ -1774,7 +1774,7 @@ func local_17494(v0, v1) -> Variant:
 				_pc = 18186
 				continue
 		elif _pc == 18088:
-			gui.create_vertical_scrollbar(v11 - gui.window_canvas_width(v2), 0, v11, gui.window_canvas_height(v2), v2, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			gui.create_vertical_scrollbar(gui.window_canvas_width(v2) - v11, 0, v11, gui.window_canvas_height(v2), v2, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			_pc = 18186
 			continue
 		elif _pc == 18186:
@@ -1797,7 +1797,7 @@ func local_17494(v0, v1) -> Variant:
 			_pc = 18230
 			continue
 		elif _pc == 18230:
-			if v10 < v8:
+			if v8 < v10:
 				_pc = 18246
 				continue
 			else:
@@ -1810,7 +1810,7 @@ func local_17494(v0, v1) -> Variant:
 			v21 = string.upper_case(inifile.string(v22, "Default", "Name", ""))
 			v20 = inifile.string(v22, "Default", "Map", "")
 			inifile.destroy(v22)
-			if v25 >= string.length(v21):
+			if string.length(v21) >= v25:
 				_pc = 18472
 				continue
 			else:
@@ -1822,7 +1822,7 @@ func local_17494(v0, v1) -> Variant:
 			_pc = 18535
 			continue
 		elif _pc == 18535:
-			if _pog_is_null(v16) and _pog_eq(v17, v19):
+			if _pog_eq(v19, v17) and _pog_is_null(v16):
 				_pc = 18559
 				continue
 			else:
@@ -1844,7 +1844,7 @@ func local_17494(v0, v1) -> Variant:
 			v15 = 0
 			gui.set_input_override_functions(v13, "", "", "", "", "iNetworkGUI.OnGameSelection", "iNetworkGUI.OnBackButton", "", "", "iNetworkGUI.OnGameSelection")
 			gui.add_list_box_entry(v12, v13)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 18230
 			continue
 		elif _pc == 18880:
@@ -1854,14 +1854,14 @@ func local_17494(v0, v1) -> Variant:
 			_pc = 18941
 			continue
 		elif _pc == 18941:
-			if v10 < v8:
+			if v8 < v10:
 				_pc = 18957
 				continue
 			else:
 				_pc = 19081
 				continue
 		elif _pc == 18957:
-			if _pog_eq(v17, object.string_property(list.get_nth(v14, v8), "package_ini")):
+			if _pog_eq(object.string_property(list.get_nth(v14, v8), "package_ini"), v17):
 				_pc = 19012
 				continue
 			else:
@@ -1872,7 +1872,7 @@ func local_17494(v0, v1) -> Variant:
 			_pc = 19063
 			continue
 		elif _pc == 19063:
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 18941
 			continue
 		elif _pc == 19081:
@@ -1932,17 +1932,17 @@ func local_19161(v0, v1, v2) -> Variant:
 			v4 = await igui.create_and_initialise_static_window(0, 0, gui.window_canvas_width(v3), gui.window_canvas_height(v3), v3, v5, text.field("mp_server_map", 0))
 			gui.set_window_text_formatting(v4, 0, 9)
 			v3 = gui.splitter_window_bottom_window(v1)
-			v8 = 4 + v11 - v8
+			v8 = v8 - v11 + 4
 			v12 = gui.create_list_box(0, 0, v8, gui.window_canvas_height(v3), v3, 1, 0)
 			global.create_handle("MapListBoxHandle", 2, v12)
 			list.add_head(v2, v12)
-			v14 = gui.create_vertical_scrollbar(v11 - gui.window_canvas_width(v3), 0, v11, gui.window_canvas_height(v3), v3, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			v14 = gui.create_vertical_scrollbar(gui.window_canvas_width(v3) - v11, 0, v11, gui.window_canvas_height(v3), v3, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			v26 = v24
 			v9 = 0
 			_pc = 19827
 			continue
 		elif _pc == 19827:
-			if v10 < v9:
+			if v9 < v10:
 				_pc = 19843
 				continue
 			else:
@@ -1950,7 +1950,7 @@ func local_19161(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 19843:
 			v20 = imultiplay.server_map_list_item(v9)
-			if _pog_eq(v20, v19):
+			if _pog_eq(v19, v20):
 				_pc = 19885
 				continue
 			else:
@@ -1961,7 +1961,7 @@ func local_19161(v0, v1, v2) -> Variant:
 			_pc = 19892
 			continue
 		elif _pc == 19892:
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 19827
 			continue
 		elif _pc == 19910:
@@ -1969,7 +1969,7 @@ func local_19161(v0, v1, v2) -> Variant:
 			_pc = 19917
 			continue
 		elif _pc == 19917:
-			if v10 < v9:
+			if v9 < v10:
 				_pc = 19933
 				continue
 			else:
@@ -1981,7 +1981,7 @@ func local_19161(v0, v1, v2) -> Variant:
 			v23 = inifile.create(v20)
 			v22 = string.upper_case(inifile.string(v23, "Info", "description", ""))
 			inifile.destroy(v23)
-			if v26 >= string.length(v22):
+			if string.length(v22) >= v26:
 				_pc = 20115
 				continue
 			else:
@@ -1993,7 +1993,7 @@ func local_19161(v0, v1, v2) -> Variant:
 			_pc = 20178
 			continue
 		elif _pc == 20178:
-			if _pog_is_null(v17) and _pog_eq(v19, v20):
+			if _pog_eq(v20, v19) and _pog_is_null(v17):
 				_pc = 20202
 				continue
 			else:
@@ -2026,7 +2026,7 @@ func local_19161(v0, v1, v2) -> Variant:
 			gui.set_input_override_functions(v13, "", "", "", "", "", "iNetworkGUI.OnBackButton", "", "", "")
 			gui.add_list_box_entry(v12, v13)
 			list.add_tail(v15, v13)
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 19917
 			continue
 		elif _pc == 20512:
@@ -2078,7 +2078,7 @@ func network_screen() -> Variant:
 			_pc = 20786
 			continue
 		elif _pc == 20786:
-			if 1 < imultiplay.client_rejected_count() and imultiplay.network_is_lobby_session():
+			if imultiplay.network_is_lobby_session() and imultiplay.client_rejected_count() < 1:
 				_pc = 20820
 				continue
 			else:
@@ -2090,7 +2090,7 @@ func network_screen() -> Variant:
 			_pc = 21946
 			continue
 		elif _pc == 20853:
-			if 1 < imultiplay.client_rejected_count() and not _pog_eq("", igame.session_name()):
+			if not _pog_eq(igame.session_name(), "") and imultiplay.client_rejected_count() < 1:
 				_pc = 20897
 				continue
 			else:
@@ -2101,7 +2101,7 @@ func network_screen() -> Variant:
 			imultiplay.client_set_last_session(igame.session_name())
 			await local_0()
 			v10 = imultiplay.server_session_index_from_name(igame.server_address(), igame.session_name())
-			if -1 != v10:
+			if v10 != -1:
 				_pc = 21030
 				continue
 			else:
@@ -2130,7 +2130,7 @@ func network_screen() -> Variant:
 			imultiplay.network_reset()
 			await local_0()
 			v10 = imultiplay.server_session_index_from_name(imultiplay.client_last_address(), imultiplay.client_last_session())
-			if -1 != v10:
+			if v10 != -1:
 				_pc = 21201
 				continue
 			else:
@@ -2181,8 +2181,8 @@ func network_screen() -> Variant:
 		elif _pc == 21691:
 			v9 = string.upper_case(v9)
 			v4 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGui.OnHostSession", v9, v6)
-			v7 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-			v8 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+			v7 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+			v8 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 			v5 = await igui.create_window_list_in_fancy_border(v0, v6, v7, v8)
 			gui.set_first_control_focus(v1)
 			await igui.set_cyclic_control_focus_path(v6)
@@ -2222,22 +2222,22 @@ func c_d_key_screen() -> Variant:
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "iNetworkGUI.CDKeyScreen_OnBackButton", "iNetworkGUI.CDKeyScreen_OnBackToMainMenuButton")
 	await igui.add_title(v0, text.field("mp_cd_key_enter", 0))
-	v2 = 10 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-	v4 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+	v2 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 10
+	v4 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 	v7 = gui.create_window(0, 0, global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), 0)
-	v5 = gui.create_edit_box(v8, 0, v8 - global.pog_int("GUI_inversebutton_width"), global.pog_int("GUI_inversebutton_height"), v7, 0, v9, 0)
+	v5 = gui.create_edit_box(v8, 0, global.pog_int("GUI_inversebutton_width") - v8, global.pog_int("GUI_inversebutton_height"), v7, 0, v9, 0)
 	gui.set_window_font(v5, global.string("type_font"))
 	gui.set_edit_box_max_char_length(v5, 20)
 	gui.set_edit_box_overrides(v5, "iNetworkGUI.CDKeyScreen_OnEditBoxStarted", "iNetworkGUI.CDKeyScreen_OnBackButton", "iNetworkGUI.CDKeyScreen_OnEditBoxFinish")
 	gui.set_window_state_colours(v5, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_selected_red"), global.pog_float("GUI_selected_green"), global.pog_float("GUI_selected_blue"))
 	list.add_tail(v3, v7)
 	await igui.create_window_list_in_splitter(v0, v3, v4, v2, text.field("mp_cd_key_enter", 0))
-	v2 = 10 + global.pog_int("GUI_fancybutton_height") + gui.window_canvas_height(v5) + v2
+	v2 = v2 + gui.window_canvas_height(v5) + global.pog_int("GUI_fancybutton_height") + 10
 	global.create_handle("multiplayer_cdkey_editbox", 2, v5)
 	list.remove_all(v3)
 	list.add_tail(v3, v5)
-	v10 = global.pog_int("GUI_inversebutton_textoffset") + global.pog_int("GUI_fancyborder_width") + v4
-	v11 = v10 - gui.window_canvas_width(v0)
+	v10 = v4 + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_inversebutton_textoffset")
+	v11 = gui.window_canvas_width(v0) - v10
 	v12 = 15
 	v6 = await igui.create_and_initialise_static_window(v10, v2, v11, v12, v0, global.string("GUI_subtitle_font"), "")
 	gui.set_window_text_formatting(v6, 0, 0)
@@ -2350,7 +2350,7 @@ func rejection_screen() -> Variant:
 	var v27: Variant = 0
 	v4 = null
 	v7 = global.pog_int("GUI_alignment_offset")
-	v10 = 400 - gui.frame_height()
+	v10 = gui.frame_height() - 400
 	v12 = global.pog_int("GUI_scrollbar_width")
 	v17 = global.pog_int("GUI_table_alignmentoffset")
 	v19 = global.pog_int("GUI_inversebutton_width")
@@ -2364,15 +2364,15 @@ func rejection_screen() -> Variant:
 	await igui.add_title(v1, text.field("mp_rejection_title", 0))
 	v8 = gui.window_canvas_height(v1)
 	v9 = gui.window_canvas_width(v1)
-	v23 = v22 + v20 + v10
-	v25 = gui.create_window(0, 100 - v23, v9, 100, v1)
+	v23 = v10 + v20 + v22
+	v25 = gui.create_window(0, v23 - 100, v9, 100, v1)
 	v13 = global.pog_int("GUI_fancyborder_width")
-	v14 = 5 + global.pog_int("GUI_fancyborder_alignmentoffset")
-	v15 = global.pog_int("GUI_fancyborder_width") + v13 - gui.window_canvas_width(v25)
-	v16 = global.pog_int("GUI_fancyborder_alignmentoffset") + 10 + v14 - gui.window_canvas_height(v25)
+	v14 = global.pog_int("GUI_fancyborder_alignmentoffset") + 5
+	v15 = gui.window_canvas_width(v25) - v13 + global.pog_int("GUI_fancyborder_width")
+	v16 = gui.window_canvas_height(v25) - v14 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
 	v24 = gui.create_window(v13, v14, v15, v16, v25)
 	gui.create_fancy_border(v24)
-	v26 = await igui.create_and_initialise_text_window(v17, 0, v17 + v12 * 2 - v15, v16, v24, "")
+	v26 = await igui.create_and_initialise_text_window(v17, 0, v15 - 2 * v12 + v17, v16, v24, "")
 	gui.set_text_window_string(v26, v0)
 	gui.set_control_focus_cancel_function("iNetworkGUI.RejectedOnBackToMainMenuButton")
 	return 0

@@ -185,7 +185,7 @@ func local_657(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13) -> Va
 				_pc = 1249
 				continue
 		elif _pc == 676:
-			if 100 == state.progress(v1):
+			if state.progress(v1) == 100:
 				_pc = 702
 				continue
 			else:
@@ -323,11 +323,11 @@ func mission_handler() -> Variant:
 			v17 = isim.find_by_name_in_system("Longshot MCA Defence HQ", "map:/geog/badlands/mwari")
 			v31 = global.pog_float("g_player_sensor_range")
 			v32 = v31
-			v33 = 50000.0 + v31
+			v33 = v31 + 50000.0
 			v34 = 10000.0
 			v35 = 1500000.0
 			v36 = 2000000.0
-			v37 = 0.8999999761581421 * v36
+			v37 = v36 * 0.8999999761581421
 			v38 = 3000000.0
 			v39 = 0.0
 			v40 = 3000000.0
@@ -361,7 +361,7 @@ func mission_handler() -> Variant:
 			_pc = 2171
 			continue
 		elif _pc == 2171:
-			if _pog_is_null(object.property_exists(v3, "true_task")) and global.exists("g_blockade_runner_going"):
+			if global.exists("g_blockade_runner_going") and _pog_is_null(object.property_exists(v3, "true_task")):
 				_pc = 2223
 				continue
 			else:
@@ -379,7 +379,7 @@ func mission_handler() -> Variant:
 				_pc = 2403
 				continue
 		elif _pc == 2282:
-			if 1 == global.pog_bool("g_act2_completed_blockade_run"):
+			if global.pog_bool("g_act2_completed_blockade_run") == 1:
 				_pc = 2309
 				continue
 			else:
@@ -690,7 +690,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 4561:
 			await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0)
-			if await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0) != 16:
+			if 16 != await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0):
 				_pc = 4611
 				continue
 			else:
@@ -762,7 +762,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 5225:
 			await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0)
-			if await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0) != 16:
+			if 16 != await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0):
 				_pc = 5275
 				continue
 			else:
@@ -799,7 +799,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 5817:
 			await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0)
-			if await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0) != 32:
+			if 32 != await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0):
 				_pc = 5866
 				continue
 			else:
@@ -847,7 +847,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 6094:
 			await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0)
-			if await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0) != 16:
+			if 16 != await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0):
 				_pc = 6144
 				continue
 			else:
@@ -883,7 +883,7 @@ func mission_handler() -> Variant:
 				_pc = 6198
 				continue
 		elif _pc == 6253:
-			if _pog_eq("map:/geog/badlands/mwari", isim.world_name(v4)):
+			if _pog_eq(isim.world_name(v4), "map:/geog/badlands/mwari"):
 				_pc = 6285
 				continue
 			else:
@@ -929,7 +929,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 6425:
 			await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0)
-			if await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0) != 32:
+			if 32 != await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0):
 				_pc = 6475
 				continue
 			else:
@@ -1012,7 +1012,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 7251:
 			await _pog_wait(1.0)
-			if not _pog_eq("map:/geog/badlands/mwari", isim.active_world()) or 300000.0 > sim.distance_between(v4, v15):
+			if sim.distance_between(v4, v15) > 300000.0 or not _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
 				_pc = 7341
 				continue
 			else:
@@ -1020,7 +1020,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 7341:
 			await _pog_wait(1.0)
-			if not _pog_eq("Loading", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "Loading"):
 				_pc = 7400
 				continue
 			else:
@@ -1042,7 +1042,7 @@ func mission_handler() -> Variant:
 			_pc = 12819
 			continue
 		elif _pc == 7546:
-			if _pog_eq("map:/geog/badlands/mwari", isim.world_name(isim.cast(group.leader(v5)))):
+			if _pog_eq(isim.world_name(isim.cast(group.leader(v5))), "map:/geog/badlands/mwari"):
 				_pc = 7605
 				continue
 			else:
@@ -1053,7 +1053,7 @@ func mission_handler() -> Variant:
 			_pc = 7612
 			continue
 		elif _pc == 7612:
-			if group.sim_count(v5) < v28:
+			if v28 < group.sim_count(v5):
 				_pc = 7641
 				continue
 			else:
@@ -1062,7 +1062,7 @@ func mission_handler() -> Variant:
 		elif _pc == 7641:
 			isim.set_sensor_visibility(isim.cast(group.nth_sim(v5, v28)), 1)
 			isim.set_mission_critical(isim.cast(group.nth_sim(v5, v28)), 1)
-			v28 = 1 + v28
+			v28 = v28 + 1
 			_pc = 7612
 			continue
 		elif _pc == 7761:
@@ -1077,7 +1077,7 @@ func mission_handler() -> Variant:
 			_pc = 8039
 			continue
 		elif _pc == 8039:
-			if not _pog_eq("map:/geog/badlands/mwari", isim.active_world()) or 300000.0 > sim.distance_between(v4, v15):
+			if sim.distance_between(v4, v15) > 300000.0 or not _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
 				_pc = 8097
 				continue
 			else:
@@ -1085,7 +1085,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 8097:
 			await _pog_wait(1.0)
-			if not _pog_eq("Loading", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "Loading"):
 				_pc = 8156
 				continue
 			else:
@@ -1186,7 +1186,7 @@ func mission_handler() -> Variant:
 				_pc = 9213
 				continue
 		elif _pc == 8868:
-			if _pog_eq(v5, sim.group(iai.current_order_target(v4))) and 2 == iai.current_order_type(v4):
+			if iai.current_order_type(v4) == 2 and _pog_eq(sim.group(iai.current_order_target(v4)), v5):
 				_pc = 8932
 				continue
 			else:
@@ -1196,7 +1196,7 @@ func mission_handler() -> Variant:
 			_pc = 9276
 			continue
 		elif _pc == 8937:
-			if not _pog_eq("map:/geog/badlands/mwari", isim.active_world()) or 1000000.0 > sim.distance_between(v4, group.leader(v5)):
+			if sim.distance_between(v4, group.leader(v5)) > 1000000.0 or not _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
 				_pc = 9008
 				continue
 			else:
@@ -1204,7 +1204,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 9008:
 			await _pog_wait(1.0)
-			if not _pog_eq("Loading", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "Loading"):
 				_pc = 9067
 				continue
 			else:
@@ -1242,8 +1242,8 @@ func mission_handler() -> Variant:
 		elif _pc == 9276:
 			iai.give_approach_order(group.leader(v5), v18)
 			v42 = sim.distance_between(isim.cast(group.leader(v5)), v18)
-			v43 = math.random(v42, 1.0 + v25 / v25 * v42)
-			if 3.0 * v32 < v43:
+			v43 = math.random(v42, v42 * v25 / v25 + 1.0)
+			if v43 < v32 * 3.0:
 				_pc = 9441
 				continue
 			else:
@@ -1298,7 +1298,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 10206:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 10230
 				continue
 			else:
@@ -1326,7 +1326,7 @@ func mission_handler() -> Variant:
 			_pc = 10326
 			continue
 		elif _pc == 10326:
-			if 1000000.0 > sim.distance_between(v4, group.leader(v5)):
+			if sim.distance_between(v4, group.leader(v5)) > 1000000.0:
 				_pc = 10373
 				continue
 			else:
@@ -1376,7 +1376,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 10666:
 			math.random_int(1, 2)
-			if math.random_int(1, 2) != 1:
+			if 1 != math.random_int(1, 2):
 				_pc = 10690
 				continue
 			else:
@@ -1412,7 +1412,7 @@ func mission_handler() -> Variant:
 			_pc = 10892
 			continue
 		elif _pc == 10780:
-			v25 = -1 + v25
+			v25 = v25 + -1
 			_pc = 8849
 			continue
 		elif _pc == 10799:
@@ -1423,7 +1423,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 10809:
 			await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0)
-			if await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0) != 16:
+			if 16 != await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0):
 				_pc = 10884
 				continue
 			else:
@@ -1440,7 +1440,7 @@ func mission_handler() -> Variant:
 			_pc = 10909
 			continue
 		elif _pc == 10897:
-			if 0 <= v25:
+			if v25 <= 0:
 				_pc = 10909
 				continue
 			else:
@@ -1467,7 +1467,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 11024:
 			await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0)
-			if await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0) != 16:
+			if 16 != await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0):
 				_pc = 11099
 				continue
 			else:
@@ -1497,7 +1497,7 @@ func mission_handler() -> Variant:
 			_pc = 11203
 			continue
 		elif _pc == 11203:
-			if group.sim_count(v5) < v28:
+			if v28 < group.sim_count(v5):
 				_pc = 11232
 				continue
 			else:
@@ -1505,7 +1505,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 11232:
 			isim.set_standard_sensor_visibility(isim.cast(group.nth_sim(v5, v28)), 1)
-			v28 = 1 + v28
+			v28 = v28 + 1
 			_pc = 11203
 			continue
 		elif _pc == 11301:
@@ -1513,7 +1513,7 @@ func mission_handler() -> Variant:
 			await iconversation.one_liner(v17, "", "a2_m05_dialogue_MCA_Longshot_HQ_pleased_to_see_you_dock_now")
 			iai.purge_orders(v5)
 			v7 = await iwingmen.purge_to_group()
-			if 0 > group.sim_count(v7):
+			if group.sim_count(v7) > 0:
 				_pc = 11441
 				continue
 			else:
@@ -1553,7 +1553,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 11761:
 			group.sim_count(v5)
-			if group.sim_count(v5) != 1:
+			if 1 != group.sim_count(v5):
 				_pc = 11787
 				continue
 			else:
@@ -1695,7 +1695,7 @@ func mission_handler() -> Variant:
 			_pc = 12701
 			continue
 		elif _pc == 12652:
-			if v44 != 5:
+			if 5 != v44:
 				_pc = 12666
 				continue
 			else:
@@ -1787,12 +1787,12 @@ func local_12821() -> Variant:
 		await iconversation.add_response(icargo.pog_name(icargo.find(v7)), "")
 		v12 = await iconversation.ask(0, "name_cal", v11)
 		await iconversation.end()
-		while v12 == 1:
+		while 1 == v12:
 			iinventory.add(v4, 1)
 			v4 = await icargoscript.cheap_cargo_generator()
 			break
 		v11 = v10
-		v0 = -1 + v0
+		v0 = v0 + -1
 	v4 = await icargoscript.medium_cargo_generator()
 	v5 = await icargoscript.medium_cargo_generator()
 	v6 = await icargoscript.medium_cargo_generator()
@@ -1805,12 +1805,12 @@ func local_12821() -> Variant:
 		await iconversation.add_response(icargo.pog_name(icargo.find(v7)), v11)
 		v12 = await iconversation.ask(0, "name_cal", v11)
 		await iconversation.end()
-		while v12 == 1:
+		while 1 == v12:
 			iinventory.add(v4, 1)
 			v4 = await icargoscript.medium_cargo_generator()
 			break
 		v11 = v10
-		v1 = -1 + v1
+		v1 = v1 + -1
 	v4 = await icargoscript.high_cargo_generator()
 	v5 = await icargoscript.high_cargo_generator()
 	v6 = await icargoscript.high_cargo_generator()
@@ -1823,12 +1823,12 @@ func local_12821() -> Variant:
 		await iconversation.add_response(icargo.pog_name(icargo.find(v7)), "")
 		v12 = await iconversation.ask(0, "name_cal", v11)
 		await iconversation.end()
-		while v12 == 1:
+		while 1 == v12:
 			iinventory.add(v4, 1)
 			v4 = await icargoscript.high_cargo_generator()
 			break
 		v11 = v10
-		v2 = -1 + v2
+		v2 = v2 + -1
 	v4 = await icargoscript.very_high_cargo_generator()
 	v5 = await icargoscript.very_high_cargo_generator()
 	v6 = await icargoscript.very_high_cargo_generator()
@@ -1841,19 +1841,19 @@ func local_12821() -> Variant:
 		await iconversation.add_response(icargo.pog_name(icargo.find(v7)), "")
 		v12 = await iconversation.ask(0, "name_cal", v11)
 		await iconversation.end()
-		while v12 == 1:
+		while 1 == v12:
 			iinventory.add(v4, 1)
 			v4 = await icargoscript.very_high_cargo_generator()
 			break
 		v11 = v10
-		v3 = -1 + v3
+		v3 = v3 + -1
 	return 0
 	v3 = await icutsceneutilities.get_kill_group()
 	idirector.begin()
 	await _pog_wait(1.0)
 	isim.capsule_jump(v0, v2)
 	while true:
-		if 40000.0 < sim.distance_between(v0, v2):
+		if sim.distance_between(v0, v2) < 40000.0:
 			break
 		await _pog_wait(0.10000000149011612)
 		if not (1):
@@ -2064,7 +2064,7 @@ func local_16978(v0, v1) -> Variant:
 			_pc = 17009
 			continue
 		elif _pc == 17009:
-			if v1 < v3:
+			if v3 < v1:
 				_pc = 17025
 				continue
 			else:
@@ -2072,7 +2072,7 @@ func local_16978(v0, v1) -> Variant:
 				continue
 		elif _pc == 17025:
 			group.add_sim(v2, await local_17527(v0))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 17009
 			continue
 		elif _pc == 17080:
@@ -2096,7 +2096,7 @@ func local_17092(v0, v1) -> Variant:
 			_pc = 17123
 			continue
 		elif _pc == 17123:
-			if v0 < v4:
+			if v4 < v0:
 				_pc = 17139
 				continue
 			else:
@@ -2104,7 +2104,7 @@ func local_17092(v0, v1) -> Variant:
 				continue
 		elif _pc == 17139:
 			group.add_sim(v2, await local_17318())
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 17123
 			continue
 		elif _pc == 17189:
@@ -2367,7 +2367,7 @@ func local_19143(v0, v1) -> Variant:
 			_pc = 19278
 			continue
 		elif _pc == 19278:
-			if v7 < v6:
+			if v6 < v7:
 				_pc = 19294
 				continue
 			else:
@@ -2384,21 +2384,21 @@ func local_19143(v0, v1) -> Variant:
 				continue
 		elif _pc == 19391:
 			v2 = iship.cast(p_set.first_element(v5))
-			if not _pog_eq(v4, isim.faction(v2)):
+			if not _pog_eq(isim.faction(v2), v4):
 				_pc = 19457
 				continue
 			else:
 				_pc = 19773
 				continue
 		elif _pc == 19457:
-			if iai.is_order_complete(v3) or 1000.0 < sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) < 1000.0 or iai.is_order_complete(v3):
 				_pc = 19510
 				continue
 			else:
 				_pc = 19698
 				continue
 		elif _pc == 19510:
-			if 150.0 < sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) < 150.0:
 				_pc = 19544
 				continue
 			else:
@@ -2437,7 +2437,7 @@ func local_19143(v0, v1) -> Variant:
 			_pc = 19773
 			continue
 		elif _pc == 19773:
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 19278
 			continue
 		elif _pc == 19791:

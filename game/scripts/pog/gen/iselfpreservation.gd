@@ -72,7 +72,7 @@ func surrender() -> Variant:
 			v10 = list.from_set(sim.children(v0))
 			iai.purge_orders(v0)
 			v7 = await local_0()
-			if 1 == object.i_d_modulus(v0, 2):
+			if object.i_d_modulus(v0, 2) == 1:
 				_pc = 213
 				continue
 			else:
@@ -122,7 +122,7 @@ func surrender() -> Variant:
 			v3 = inifile.pog_int(v7, "stock_surrender_cargo", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v9 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
+			if _pog_eq(v1, v9) and sim.distance_between(v9, v0) < 50000.0:
 				_pc = 507
 				continue
 			else:
@@ -140,7 +140,7 @@ func surrender() -> Variant:
 			v3 = inifile.pog_int(v7, "stock_surrender_no_cargo", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v9 = iship.find_player_ship()
-			if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
+			if _pog_eq(v1, v9) and sim.distance_between(v9, v0) < 50000.0:
 				_pc = 762
 				continue
 			else:
@@ -174,7 +174,7 @@ func surrender() -> Variant:
 			v6 = ihabitat.nearest(v5, v0)
 			iai.give_approach_order(v0, imapentity.waypoint_for_entity(v6))
 			global.create_int(string.join("g_", object.string_property(v0, "name")), 1, 2)
-			if 5 == math.random_int(1, 6):
+			if math.random_int(1, 6) == 5:
 				_pc = 1156
 				continue
 			else:
@@ -183,7 +183,7 @@ func surrender() -> Variant:
 		elif _pc == 1156:
 			v3 = inifile.pog_int(v7, "stock_complain", "num_entries", 1)
 			v2 = math.random_int(1, v3)
-			if 50000.0 < sim.distance_between(v9, v0) and _pog_eq(v9, v1):
+			if _pog_eq(v1, v9) and sim.distance_between(v9, v0) < 50000.0:
 				_pc = 1265
 				continue
 			else:

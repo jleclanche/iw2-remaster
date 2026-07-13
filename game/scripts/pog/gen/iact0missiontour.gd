@@ -206,7 +206,7 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 				_pc = 1482
 				continue
 		elif _pc == 1079:
-			if await iutilities.player_in_range(v0) and not (v4):
+			if not (v4) and await iutilities.player_in_range(v0):
 				_pc = 1109
 				continue
 			else:
@@ -223,7 +223,7 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 			_pc = 1338
 			continue
 		elif _pc == 1281:
-			if not (await iutilities.player_in_range(v0)) and v4:
+			if v4 and not (await iutilities.player_in_range(v0)):
 				_pc = 1311
 				continue
 			else:
@@ -235,7 +235,7 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 			_pc = 1338
 			continue
 		elif _pc == 1338:
-			if v4 and 10000.0 < sim.distance_between(v0, v2):
+			if sim.distance_between(v0, v2) < 10000.0 and v4:
 				_pc = 1378
 				continue
 			else:
@@ -267,7 +267,7 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 				_pc = 1889
 				continue
 		elif _pc == 1591:
-			if not (v5) and 800.0 < sim.distance_between(v7, v2) or iai.is_order_complete(v7):
+			if iai.is_order_complete(v7) or sim.distance_between(v7, v2) < 800.0 and not (v5):
 				_pc = 1651
 				continue
 			else:
@@ -313,7 +313,7 @@ func local_1897(v0, v1) -> Variant:
 			_pc = 1954
 			continue
 		elif _pc == 1954:
-			if v0 < v5:
+			if v5 < v0:
 				_pc = 1970
 				continue
 			else:
@@ -408,7 +408,7 @@ func local_1897(v0, v1) -> Variant:
 				_pc = 2544
 				continue
 		elif _pc == 2751:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 1954
 			continue
 		elif _pc == 2769:
@@ -440,7 +440,7 @@ func local_2781() -> Variant:
 			_pc = 2984
 			continue
 		elif _pc == 2984:
-			if 4 < v3:
+			if v3 < 4:
 				_pc = 2997
 				continue
 			else:
@@ -484,7 +484,7 @@ func local_2781() -> Variant:
 				_pc = 3149
 				continue
 		elif _pc == 3332:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 2984
 			continue
 		elif _pc == 3350:
@@ -531,7 +531,7 @@ func local_3820(v0) -> Variant:
 			_pc = 3856
 			continue
 		elif _pc == 3856:
-			if v1 < v2:
+			if v2 < v1:
 				_pc = 3872
 				continue
 			else:
@@ -539,7 +539,7 @@ func local_3820(v0) -> Variant:
 				continue
 		elif _pc == 3872:
 			isim.set_hostile(isim.cast(group.nth_sim(v0, v2)), 1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 3856
 			continue
 		elif _pc == 3941:
@@ -564,14 +564,14 @@ func local_3944(v0, v1) -> Variant:
 				_pc = 4227
 				continue
 		elif _pc == 3987:
-			if 0 > group.sim_count(v1):
+			if group.sim_count(v1) > 0:
 				_pc = 4012
 				continue
 			else:
 				_pc = 4222
 				continue
 		elif _pc == 4012:
-			if not (iship.is_disrupted(v0)) and 28000.0 > sim.distance_between(v0, group.leader(v1)):
+			if sim.distance_between(v0, group.leader(v1)) > 28000.0 and not (iship.is_disrupted(v0)):
 				_pc = 4079
 				continue
 			else:
@@ -583,7 +583,7 @@ func local_3944(v0, v1) -> Variant:
 			_pc = 4132
 			continue
 		elif _pc == 4132:
-			if iship.is_disrupted(v0) and 20000.0 < sim.distance_between(group.leader(v1), v0):
+			if sim.distance_between(group.leader(v1), v0) < 20000.0 and iship.is_disrupted(v0):
 				_pc = 4198
 				continue
 			else:
@@ -648,7 +648,7 @@ func local_4235(v0, v1) -> Variant:
 			continue
 		elif _pc == 4485:
 			await _pog_wait(1.0)
-			if not (900.0 > sim.distance_between(v0, v17) and not (iai.is_order_complete(v17))):
+			if not (not (iai.is_order_complete(v17)) and sim.distance_between(v0, v17) > 900.0):
 				_pc = 4571
 				continue
 			else:
@@ -661,7 +661,7 @@ func local_4235(v0, v1) -> Variant:
 			iai.purge_orders(v10)
 			iship.lock_down_weapons(iship.cast(group.leader(v10)))
 			iship.lock_down_weapons(iship.cast(group.nth_sim(v10, 1)))
-			v16 = iship.cast(group.nth_sim(v10, math.random_int(0, 1 - group.sim_count(v10))))
+			v16 = iship.cast(group.nth_sim(v10, math.random_int(0, group.sim_count(v10) - 1)))
 			iai.give_attack_order(v16, v0)
 			v13 = group.sim_count(v10)
 			v12 = v13
@@ -685,11 +685,11 @@ func local_4235(v0, v1) -> Variant:
 				_pc = 5000
 				continue
 		elif _pc == 4986:
-			v14 = -1 + v14
+			v14 = v14 + -1
 			_pc = 5000
 			continue
 		elif _pc == 5000:
-			if 100 != state.progress(v1) and _pog_is_null(group.sim_count(v10)):
+			if _pog_is_null(group.sim_count(v10)) and state.progress(v1) != 100:
 				_pc = 5047
 				continue
 			else:
@@ -699,7 +699,7 @@ func local_4235(v0, v1) -> Variant:
 			_pc = 5605
 			continue
 		elif _pc == 5052:
-			if 100 != state.progress(v1) and v13 > v12:
+			if v12 > v13 and state.progress(v1) != 100:
 				_pc = 5090
 				continue
 			else:
@@ -707,10 +707,10 @@ func local_4235(v0, v1) -> Variant:
 				continue
 		elif _pc == 5090:
 			v12 = v13
-			v15 = math.random_int(0, 1 - v13)
+			v15 = math.random_int(0, v13 - 1)
 			v16 = iship.cast(group.nth_sim(v10, v15))
 			iai.give_attack_order(v16, v0)
-			if 2 == v13:
+			if v13 == 2:
 				_pc = 5207
 				continue
 			else:
@@ -721,7 +721,7 @@ func local_4235(v0, v1) -> Variant:
 			_pc = 5288
 			continue
 		elif _pc == 5244:
-			if 1 == v13:
+			if v13 == 1:
 				_pc = 5256
 				continue
 			else:
@@ -735,7 +735,7 @@ func local_4235(v0, v1) -> Variant:
 			_pc = 5600
 			continue
 		elif _pc == 5293:
-			if 100 != state.progress(v1) and 0 <= v14:
+			if v14 <= 0 and state.progress(v1) != 100:
 				_pc = 5327
 				continue
 			else:
@@ -829,7 +829,7 @@ func local_4235(v0, v1) -> Variant:
 				_pc = 6511
 				continue
 		elif _pc == 5943:
-			if not (v7) and 10000.0 < sim.distance_between(group.leader(v11), group.leader(v10)):
+			if sim.distance_between(group.leader(v11), group.leader(v10)) < 10000.0 and not (v7):
 				_pc = 6010
 				continue
 			else:
@@ -843,7 +843,7 @@ func local_4235(v0, v1) -> Variant:
 			_pc = 6101
 			continue
 		elif _pc == 6101:
-			if not (v9) and iship.attacked(iship.cast(group.leader(v10))):
+			if iship.attacked(iship.cast(group.leader(v10))) and not (v9):
 				_pc = 6157
 				continue
 			else:
@@ -855,7 +855,7 @@ func local_4235(v0, v1) -> Variant:
 			_pc = 6188
 			continue
 		elif _pc == 6188:
-			if 100 != state.progress(v1) and not (v8) and _pog_is_null(group.sim_count(v10)):
+			if _pog_is_null(group.sim_count(v10)) and not (v8) and state.progress(v1) != 100:
 				_pc = 6242
 				continue
 			else:
@@ -880,7 +880,7 @@ func local_4235(v0, v1) -> Variant:
 			iai.give_approach_order(v18, imapentity.find_by_name("Charlesworth Freight Service Depot"))
 			group.destroy(v10, 1)
 			group.destroy(v11, 0)
-			if 100 != state.progress(v1):
+			if state.progress(v1) != 100:
 				_pc = 6485
 				continue
 			else:
@@ -950,7 +950,7 @@ func mission_handler() -> Variant:
 			_pc = 6891
 			continue
 		elif _pc == 6891:
-			if 2 < state.progress(v4):
+			if state.progress(v4) < 2:
 				_pc = 6917
 				continue
 			else:
@@ -976,7 +976,7 @@ func mission_handler() -> Variant:
 				_pc = 7476
 				continue
 		elif _pc == 7062:
-			if not (v0) and 2 == state.progress(v4):
+			if state.progress(v4) == 2 and not (v0):
 				_pc = 7095
 				continue
 			else:
@@ -988,14 +988,14 @@ func mission_handler() -> Variant:
 			_pc = 7126
 			continue
 		elif _pc == 7126:
-			if 100 == state.progress(v4) or 8 == state.progress(v4):
+			if state.progress(v4) == 8 or state.progress(v4) == 100:
 				_pc = 7174
 				continue
 			else:
 				_pc = 7476
 				continue
 		elif _pc == 7174:
-			if 100 != state.progress(v4):
+			if state.progress(v4) != 100:
 				_pc = 7200
 				continue
 			else:

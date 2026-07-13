@@ -33,7 +33,7 @@ func materialise_group_near(v0, v1, v2) -> Variant:
 			_pc = 12
 			continue
 		elif _pc == 12:
-			if group.group_count(v0) < v3:
+			if v3 < group.group_count(v0):
 				_pc = 41
 				continue
 			else:
@@ -50,7 +50,7 @@ func materialise_group_near(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 107:
 			await materialise_group_near(group.nth_group(v0, v3), v1, v2)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 12
 			continue
 		elif _pc == 172:
@@ -58,7 +58,7 @@ func materialise_group_near(v0, v1, v2) -> Variant:
 			_pc = 274
 			continue
 		elif _pc == 201:
-			if 0 > v5:
+			if v5 > 0:
 				_pc = 213
 				continue
 			else:
@@ -75,7 +75,7 @@ func materialise_group_near(v0, v1, v2) -> Variant:
 			_pc = 281
 			continue
 		elif _pc == 281:
-			if v5 < v4:
+			if v4 < v5:
 				_pc = 297
 				continue
 			else:
@@ -83,7 +83,7 @@ func materialise_group_near(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 297:
 			sim.place_near(group.nth_sim(v0, v4), v1, v2)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 281
 			continue
 		elif _pc == 362:
@@ -102,7 +102,7 @@ func set_cullable_group(v0, v1) -> Variant:
 			_pc = 377
 			continue
 		elif _pc == 377:
-			if group.group_count(v0) < v2:
+			if v2 < group.group_count(v0):
 				_pc = 406
 				continue
 			else:
@@ -110,7 +110,7 @@ func set_cullable_group(v0, v1) -> Variant:
 				continue
 		elif _pc == 406:
 			await set_cullable_group(group.nth_group(v0, v2), v1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 377
 			continue
 		elif _pc == 466:
@@ -118,7 +118,7 @@ func set_cullable_group(v0, v1) -> Variant:
 			_pc = 473
 			continue
 		elif _pc == 473:
-			if group.sim_count(v0) < v3:
+			if v3 < group.sim_count(v0):
 				_pc = 502
 				continue
 			else:
@@ -126,7 +126,7 @@ func set_cullable_group(v0, v1) -> Variant:
 				continue
 		elif _pc == 502:
 			sim.set_cullable(group.nth_sim(v0, v3), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 473
 			continue
 		elif _pc == 562:
@@ -145,7 +145,7 @@ func set_faction_group(v0, v1) -> Variant:
 			_pc = 577
 			continue
 		elif _pc == 577:
-			if group.group_count(v0) < v2:
+			if v2 < group.group_count(v0):
 				_pc = 606
 				continue
 			else:
@@ -153,7 +153,7 @@ func set_faction_group(v0, v1) -> Variant:
 				continue
 		elif _pc == 606:
 			await set_faction_group(group.nth_group(v0, v2), v1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 577
 			continue
 		elif _pc == 666:
@@ -161,7 +161,7 @@ func set_faction_group(v0, v1) -> Variant:
 			_pc = 673
 			continue
 		elif _pc == 673:
-			if group.sim_count(v0) < v3:
+			if v3 < group.sim_count(v0):
 				_pc = 702
 				continue
 			else:
@@ -169,7 +169,7 @@ func set_faction_group(v0, v1) -> Variant:
 				continue
 		elif _pc == 702:
 			isim.set_faction(isim.cast(group.nth_sim(v0, v3)), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 673
 			continue
 		elif _pc == 775:
@@ -188,7 +188,7 @@ func set_pilot_no_scripts_group(v0, v1, v2, v3) -> Variant:
 			_pc = 790
 			continue
 		elif _pc == 790:
-			if group.group_count(v0) < v4:
+			if v4 < group.group_count(v0):
 				_pc = 819
 				continue
 			else:
@@ -196,7 +196,7 @@ func set_pilot_no_scripts_group(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 819:
 			await set_pilot_no_scripts_group(group.nth_group(v0, v4), v1, v2, v3)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 790
 			continue
 		elif _pc == 889:
@@ -204,7 +204,7 @@ func set_pilot_no_scripts_group(v0, v1, v2, v3) -> Variant:
 			_pc = 896
 			continue
 		elif _pc == 896:
-			if group.sim_count(v0) < v5:
+			if v5 < group.sim_count(v0):
 				_pc = 925
 				continue
 			else:
@@ -212,7 +212,7 @@ func set_pilot_no_scripts_group(v0, v1, v2, v3) -> Variant:
 				continue
 		elif _pc == 925:
 			iship.install_a_i_pilot(iship.cast(group.nth_sim(v0, v5)), v1, v2, v3, "", "", "", "")
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 896
 			continue
 		elif _pc == 1033:
@@ -231,7 +231,7 @@ func remove_pilot_group(v0) -> Variant:
 			_pc = 1048
 			continue
 		elif _pc == 1048:
-			if group.group_count(v0) < v1:
+			if v1 < group.group_count(v0):
 				_pc = 1077
 				continue
 			else:
@@ -239,7 +239,7 @@ func remove_pilot_group(v0) -> Variant:
 				continue
 		elif _pc == 1077:
 			await remove_pilot_group(group.nth_group(v0, v1))
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 1048
 			continue
 		elif _pc == 1132:
@@ -247,7 +247,7 @@ func remove_pilot_group(v0) -> Variant:
 			_pc = 1139
 			continue
 		elif _pc == 1139:
-			if group.sim_count(v0) < v2:
+			if v2 < group.sim_count(v0):
 				_pc = 1168
 				continue
 			else:
@@ -255,7 +255,7 @@ func remove_pilot_group(v0) -> Variant:
 				continue
 		elif _pc == 1168:
 			iship.remove_pilot(iship.cast(group.nth_sim(v0, v2)))
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 1139
 			continue
 		elif _pc == 1236:
@@ -275,7 +275,7 @@ func disrupt_l_d_s_group(v0, v1) -> Variant:
 			_pc = 1251
 			continue
 		elif _pc == 1251:
-			if group.group_count(v0) < v2:
+			if v2 < group.group_count(v0):
 				_pc = 1280
 				continue
 			else:
@@ -292,7 +292,7 @@ func disrupt_l_d_s_group(v0, v1) -> Variant:
 			continue
 		elif _pc == 1346:
 			await disrupt_l_d_s_group(group.nth_group(v0, v2), v1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 1251
 			continue
 		elif _pc == 1406:
@@ -300,7 +300,7 @@ func disrupt_l_d_s_group(v0, v1) -> Variant:
 			_pc = 1508
 			continue
 		elif _pc == 1435:
-			if 0 > v4:
+			if v4 > 0:
 				_pc = 1447
 				continue
 			else:
@@ -317,7 +317,7 @@ func disrupt_l_d_s_group(v0, v1) -> Variant:
 			_pc = 1515
 			continue
 		elif _pc == 1515:
-			if v4 < v3:
+			if v3 < v4:
 				_pc = 1531
 				continue
 			else:
@@ -325,7 +325,7 @@ func disrupt_l_d_s_group(v0, v1) -> Variant:
 				continue
 		elif _pc == 1531:
 			iship.disrupt_l_d_s_drive(iship.cast(group.nth_sim(v0, v3)), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 1515
 			continue
 		elif _pc == 1604:
@@ -348,7 +348,7 @@ func empty_group(v0) -> Variant:
 			_pc = 1667
 			continue
 		elif _pc == 1667:
-			if v1 < v3:
+			if v3 < v1:
 				_pc = 1683
 				continue
 			else:
@@ -356,7 +356,7 @@ func empty_group(v0) -> Variant:
 				continue
 		elif _pc == 1683:
 			group.remove_nth_group(v0, 0)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 1667
 			continue
 		elif _pc == 1721:
@@ -364,7 +364,7 @@ func empty_group(v0) -> Variant:
 			_pc = 1728
 			continue
 		elif _pc == 1728:
-			if v2 < v4:
+			if v4 < v2:
 				_pc = 1744
 				continue
 			else:
@@ -372,7 +372,7 @@ func empty_group(v0) -> Variant:
 				continue
 		elif _pc == 1744:
 			group.remove_nth_sim(v0, 0)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1728
 			continue
 		elif _pc == 1782:
@@ -467,7 +467,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2059
 			continue
 		elif _pc == 2059:
-			if 2048 & v6:
+			if v6 & 2048:
 				_pc = 2073
 				continue
 			else:
@@ -485,7 +485,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2664
 			continue
 		elif _pc == 2098:
-			if not (1024 & v6):
+			if not (v6 & 1024):
 				_pc = 2113
 				continue
 			else:
@@ -499,7 +499,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			debug.print_string("' plus ")
 			debug.print_int(v8)
 			debug.print_string(" additional groups, with options: ")
-			if 256 & v6:
+			if v6 & 256:
 				_pc = 2310
 				continue
 			else:
@@ -510,7 +510,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2331
 			continue
 		elif _pc == 2331:
-			if 512 & v6:
+			if v6 & 512:
 				_pc = 2345
 				continue
 			else:
@@ -521,7 +521,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2366
 			continue
 		elif _pc == 2366:
-			if 16 & v6:
+			if v6 & 16:
 				_pc = 2379
 				continue
 			else:
@@ -532,7 +532,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2400
 			continue
 		elif _pc == 2400:
-			if 64 & v6:
+			if v6 & 64:
 				_pc = 2413
 				continue
 			else:
@@ -543,7 +543,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2434
 			continue
 		elif _pc == 2434:
-			if 32 & v6:
+			if v6 & 32:
 				_pc = 2447
 				continue
 			else:
@@ -554,7 +554,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2468
 			continue
 		elif _pc == 2468:
-			if 128 & v6:
+			if v6 & 128:
 				_pc = 2482
 				continue
 			else:
@@ -565,7 +565,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2503
 			continue
 		elif _pc == 2503:
-			if 4096 & v6:
+			if v6 & 4096:
 				_pc = 2517
 				continue
 			else:
@@ -576,7 +576,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2538
 			continue
 		elif _pc == 2538:
-			if 8192 & v6:
+			if v6 & 8192:
 				_pc = 2552
 				continue
 			else:
@@ -587,7 +587,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2573
 			continue
 		elif _pc == 2573:
-			if 16384 & v6:
+			if v6 & 16384:
 				_pc = 2587
 				continue
 			else:
@@ -598,7 +598,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2608
 			continue
 		elif _pc == 2608:
-			if 1024 & v6:
+			if v6 & 1024:
 				_pc = 2622
 				continue
 			else:
@@ -616,27 +616,27 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 2897
 			continue
 		elif _pc == 2669:
-			v10 = group.nth_group(v2, 4 - v8)
+			v10 = group.nth_group(v2, v8 - 4)
 			v14 = await recursive_sim_count(v10)
 			_pc = 2725
 			continue
 		elif _pc == 2725:
-			v11 = group.nth_group(v2, 3 - v8)
+			v11 = group.nth_group(v2, v8 - 3)
 			v15 = await recursive_sim_count(v11)
 			_pc = 2781
 			continue
 		elif _pc == 2781:
-			v12 = group.nth_group(v2, 2 - v8)
+			v12 = group.nth_group(v2, v8 - 2)
 			v16 = await recursive_sim_count(v12)
 			_pc = 2837
 			continue
 		elif _pc == 2837:
-			v13 = group.nth_group(v2, 1 - v8)
+			v13 = group.nth_group(v2, v8 - 1)
 			v17 = await recursive_sim_count(v13)
 			_pc = 2937
 			continue
 		elif _pc == 2897:
-			if v8 != 4:
+			if 4 != v8:
 				_pc = 2911
 				continue
 			else:
@@ -664,7 +664,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 2837
 				continue
 		elif _pc == 2937:
-			if 12288 & v6:
+			if v6 & 12288:
 				_pc = 2951
 				continue
 			else:
@@ -675,7 +675,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			continue
 		elif _pc == 2956:
 			v19 = await recursive_sim_count(v10)
-			if _pog_is_null(v19) and 4096 & v6:
+			if v6 & 4096 and _pog_is_null(v19):
 				_pc = 3002
 				continue
 			else:
@@ -692,7 +692,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4661
 			continue
 		elif _pc == 3051:
-			if not _pog_eq(v19, v14) and 8192 & v6:
+			if v6 & 8192 and not _pog_eq(v14, v19):
 				_pc = 3077
 				continue
 			else:
@@ -710,7 +710,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			continue
 		elif _pc == 3126:
 			v19 = await recursive_sim_count(v11)
-			if _pog_is_null(v19) and 4096 & v6:
+			if v6 & 4096 and _pog_is_null(v19):
 				_pc = 3172
 				continue
 			else:
@@ -727,7 +727,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4661
 			continue
 		elif _pc == 3221:
-			if not _pog_eq(v19, v15) and 8192 & v6:
+			if v6 & 8192 and not _pog_eq(v15, v19):
 				_pc = 3247
 				continue
 			else:
@@ -745,7 +745,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			continue
 		elif _pc == 3296:
 			v19 = await recursive_sim_count(v12)
-			if _pog_is_null(v19) and 4096 & v6:
+			if v6 & 4096 and _pog_is_null(v19):
 				_pc = 3342
 				continue
 			else:
@@ -762,7 +762,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4661
 			continue
 		elif _pc == 3391:
-			if not _pog_eq(v19, v16) and 8192 & v6:
+			if v6 & 8192 and not _pog_eq(v16, v19):
 				_pc = 3417
 				continue
 			else:
@@ -780,7 +780,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			continue
 		elif _pc == 3466:
 			v19 = await recursive_sim_count(v13)
-			if _pog_is_null(v19) and 4096 & v6:
+			if v6 & 4096 and _pog_is_null(v19):
 				_pc = 3512
 				continue
 			else:
@@ -797,7 +797,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4661
 			continue
 		elif _pc == 3560:
-			if not _pog_eq(v19, v17) and 8192 & v6:
+			if v6 & 8192 and not _pog_eq(v17, v19):
 				_pc = 3586
 				continue
 			else:
@@ -817,7 +817,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3679
 			continue
 		elif _pc == 3639:
-			if v8 != 4:
+			if 4 != v8:
 				_pc = 3653
 				continue
 			else:
@@ -845,7 +845,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 3466
 				continue
 		elif _pc == 3679:
-			if 16384 & v6:
+			if v6 & 16384:
 				_pc = 3693
 				continue
 			else:
@@ -926,7 +926,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4078
 			continue
 		elif _pc == 4038:
-			if v8 != 4:
+			if 4 != v8:
 				_pc = 4052
 				continue
 			else:
@@ -954,7 +954,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 3950
 				continue
 		elif _pc == 4078:
-			if 32768 & v6:
+			if v6 & 32768:
 				_pc = 4094
 				continue
 			else:
@@ -1035,7 +1035,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4487
 			continue
 		elif _pc == 4447:
-			if v8 != 4:
+			if 4 != v8:
 				_pc = 4461
 				continue
 			else:
@@ -1063,7 +1063,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 4357
 				continue
 		elif _pc == 4487:
-			if 65536 & v6:
+			if v6 & 65536:
 				_pc = 4503
 				continue
 			else:
@@ -1080,8 +1080,8 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4661
 			continue
 		elif _pc == 4536:
-			v20 = await watch_sims_movement(v0, v1, v3, v4, 1024 | v6, 0.0)
-			if 1024 != v20:
+			v20 = await watch_sims_movement(v0, v1, v3, v4, v6 | 1024, 0.0)
+			if v20 != 1024:
 				_pc = 4603
 				continue
 			else:
@@ -1119,7 +1119,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5116
 			continue
 		elif _pc == 4695:
-			if not (1024 & v4):
+			if not (v4 & 1024):
 				_pc = 4710
 				continue
 			else:
@@ -1131,7 +1131,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			debug.print_string("' relative to sim '")
 			debug.print_string(object.string_property(v1, "name"))
 			debug.print_string("' with options: ")
-			if 256 & v4:
+			if v4 & 256:
 				_pc = 4867
 				continue
 			else:
@@ -1142,7 +1142,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 4888
 			continue
 		elif _pc == 4888:
-			if 512 & v4:
+			if v4 & 512:
 				_pc = 4902
 				continue
 			else:
@@ -1153,7 +1153,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 4923
 			continue
 		elif _pc == 4923:
-			if 16 & v4:
+			if v4 & 16:
 				_pc = 4936
 				continue
 			else:
@@ -1164,7 +1164,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 4957
 			continue
 		elif _pc == 4957:
-			if 64 & v4:
+			if v4 & 64:
 				_pc = 4970
 				continue
 			else:
@@ -1175,7 +1175,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 4991
 			continue
 		elif _pc == 4991:
-			if 32 & v4:
+			if v4 & 32:
 				_pc = 5004
 				continue
 			else:
@@ -1186,7 +1186,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5025
 			continue
 		elif _pc == 5025:
-			if 128 & v4:
+			if v4 & 128:
 				_pc = 5039
 				continue
 			else:
@@ -1197,7 +1197,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5060
 			continue
 		elif _pc == 5060:
-			if 1024 & v4:
+			if v4 & 1024:
 				_pc = 5074
 				continue
 			else:
@@ -1212,7 +1212,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5116
 			continue
 		elif _pc == 5116:
-			if not (isim.cast(v1)) or not (isim.cast(v0)):
+			if not (isim.cast(v0)) or not (isim.cast(v1)):
 				_pc = 5160
 				continue
 			else:
@@ -1229,7 +1229,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5883
 			continue
 		elif _pc == 5192:
-			if 768 & v4:
+			if v4 & 768:
 				_pc = 5206
 				continue
 			else:
@@ -1238,7 +1238,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 		elif _pc == 5206:
 			v7 = isim.world_name(v0)
 			v8 = isim.world_name(v1)
-			if _pog_eq("Loading", v8) or _pog_eq("None", v8) or _pog_eq("Loading", v7) or _pog_eq("None", v7):
+			if _pog_eq(v7, "None") or _pog_eq(v7, "Loading") or _pog_eq(v8, "None") or _pog_eq(v8, "Loading"):
 				_pc = 5315
 				continue
 			else:
@@ -1249,14 +1249,14 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5116
 			continue
 		elif _pc == 5352:
-			if 256 & v4:
+			if v4 & 256:
 				_pc = 5366
 				continue
 			else:
 				_pc = 5417
 				continue
 		elif _pc == 5366:
-			if not _pog_eq(v8, v7):
+			if not _pog_eq(v7, v8):
 				_pc = 5383
 				continue
 			else:
@@ -1273,14 +1273,14 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5883
 			continue
 		elif _pc == 5417:
-			if 512 & v4:
+			if v4 & 512:
 				_pc = 5431
 				continue
 			else:
 				_pc = 5481
 				continue
 		elif _pc == 5431:
-			if _pog_eq(v8, v7):
+			if _pog_eq(v7, v8):
 				_pc = 5447
 				continue
 			else:
@@ -1297,7 +1297,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5883
 			continue
 		elif _pc == 5481:
-			if 176 & v4:
+			if v4 & 176:
 				_pc = 5495
 				continue
 			else:
@@ -1308,14 +1308,14 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5524
 			continue
 		elif _pc == 5524:
-			if 16 & v4:
+			if v4 & 16:
 				_pc = 5537
 				continue
 			else:
 				_pc = 5586
 				continue
 		elif _pc == 5537:
-			if v2 < v6:
+			if v6 < v2:
 				_pc = 5553
 				continue
 			else:
@@ -1332,14 +1332,14 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5883
 			continue
 		elif _pc == 5586:
-			if 64 & v4:
+			if v4 & 64:
 				_pc = 5599
 				continue
 			else:
 				_pc = 5648
 				continue
 		elif _pc == 5599:
-			if v3 < v6:
+			if v6 < v3:
 				_pc = 5615
 				continue
 			else:
@@ -1356,14 +1356,14 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5883
 			continue
 		elif _pc == 5648:
-			if 128 & v4:
+			if v4 & 128:
 				_pc = 5662
 				continue
 			else:
 				_pc = 5712
 				continue
 		elif _pc == 5662:
-			if v3 > v6:
+			if v6 > v3:
 				_pc = 5678
 				continue
 			else:
@@ -1380,14 +1380,14 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5883
 			continue
 		elif _pc == 5712:
-			if 32 & v4:
+			if v4 & 32:
 				_pc = 5725
 				continue
 			else:
 				_pc = 5774
 				continue
 		elif _pc == 5725:
-			if v2 > v6:
+			if v6 > v2:
 				_pc = 5741
 				continue
 			else:
@@ -1404,7 +1404,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5883
 			continue
 		elif _pc == 5774:
-			if 1024 & v4:
+			if v4 & 1024:
 				_pc = 5788
 				continue
 			else:
@@ -1414,7 +1414,7 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5829
 			continue
 		elif _pc == 5793:
-			if not (1024 & v4):
+			if not (v4 & 1024):
 				_pc = 5808
 				continue
 			else:
@@ -1452,14 +1452,14 @@ func recursive_sim_count(v0) -> Variant:
 	while true:
 		if _pc == 5899:
 			v2 = group.group_count(v0)
-			if _pog_eq(await iwingmen.group(), v0):
+			if _pog_eq(v0, await iwingmen.group()):
 				_pc = 5952
 				continue
 			else:
 				_pc = 5983
 				continue
 		elif _pc == 5952:
-			v3 = 1 - group.sim_count(v0)
+			v3 = group.sim_count(v0) - 1
 			_pc = 6007
 			continue
 		elif _pc == 5983:
@@ -1471,15 +1471,15 @@ func recursive_sim_count(v0) -> Variant:
 			_pc = 6014
 			continue
 		elif _pc == 6014:
-			if v2 < v1:
+			if v1 < v2:
 				_pc = 6030
 				continue
 			else:
 				_pc = 6096
 				continue
 		elif _pc == 6030:
-			v3 = await recursive_sim_count(group.nth_group(v0, v1)) + v3
-			v1 = 1 + v1
+			v3 = v3 + await recursive_sim_count(group.nth_group(v0, v1))
+			v1 = v1 + 1
 			_pc = 6014
 			continue
 		elif _pc == 6096:
@@ -1495,7 +1495,7 @@ func local_6108(v0, v1) -> Variant:
 	var _pc: int = 6108
 	while true:
 		if _pc == 6108:
-			if v1 < v0:
+			if v0 < v1:
 				_pc = 6124
 				continue
 			else:

@@ -169,7 +169,7 @@ func local_1066(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) -> Variant:
 				_pc = 1464
 				continue
 		elif _pc == 1085:
-			if 100 == state.progress(v1):
+			if state.progress(v1) == 100:
 				_pc = 1111
 				continue
 			else:
@@ -223,7 +223,7 @@ func local_1472(v0) -> Variant:
 			_pc = 1559
 			continue
 		elif _pc == 1559:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 1575
 				continue
 			else:
@@ -231,7 +231,7 @@ func local_1472(v0) -> Variant:
 				continue
 		elif _pc == 1575:
 			v2 = iship.cast(list.get_nth(v1, v4))
-			if 534 == object.int_property(v2, "cargo"):
+			if object.int_property(v2, "cargo") == 534:
 				_pc = 1651
 				continue
 			else:
@@ -241,7 +241,7 @@ func local_1472(v0) -> Variant:
 			_pc = 1685
 			continue
 		elif _pc == 1661:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1559
 			continue
 		elif _pc == 1679:
@@ -267,7 +267,7 @@ func local_1694(v0) -> Variant:
 			_pc = 1784
 			continue
 		elif _pc == 1784:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 1800
 				continue
 			else:
@@ -275,7 +275,7 @@ func local_1694(v0) -> Variant:
 				continue
 		elif _pc == 1800:
 			idockport.disable(idockport.cast(list.get_nth(v1, v3)))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 1784
 			continue
 		elif _pc == 1868:
@@ -412,7 +412,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 2641:
 			await _pog_wait(1.0)
-			if _pog_eq("map:/geog/badlands/eureka", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
 				_pc = 2701
 				continue
 			else:
@@ -427,7 +427,7 @@ func mission_handler() -> Variant:
 			_pc = 2746
 			continue
 		elif _pc == 2746:
-			if _pog_eq("map:/geog/badlands/eureka", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
 				_pc = 2773
 				continue
 			else:
@@ -461,7 +461,7 @@ func mission_handler() -> Variant:
 			_pc = 2935
 			continue
 		elif _pc == 2935:
-			if 25000.0 <= sim.distance_between(v3, v2):
+			if sim.distance_between(v3, v2) <= 25000.0:
 				_pc = 2969
 				continue
 			else:
@@ -493,7 +493,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 3249:
 			await _pog_wait(0.5)
-			if 40000.0 >= sim.distance_between(v3, v2):
+			if sim.distance_between(v3, v2) >= 40000.0:
 				_pc = 3315
 				continue
 			else:
@@ -506,7 +506,7 @@ func mission_handler() -> Variant:
 			_pc = 3383
 			continue
 		elif _pc == 3383:
-			if 3 < v22:
+			if v22 < 3:
 				_pc = 3396
 				continue
 			else:
@@ -514,7 +514,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 3396:
 			await ishipcreation.create_trade_cargo(iship.cast(group.nth_sim(v4, v22)), "Medium")
-			v22 = 1 + v22
+			v22 = v22 + 1
 			_pc = 3383
 			continue
 		elif _pc == 3471:
@@ -541,7 +541,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 4058:
 			await _pog_wait(0.9800000190734863)
-			if not (250000.0 < sim.distance_between(v8, v7) and 0 > group.sim_count(v5) and 1 > group.sim_count(v4)):
+			if not (group.sim_count(v4) > 1 and group.sim_count(v5) > 0 and sim.distance_between(v8, v7) < 250000.0):
 				_pc = 4166
 				continue
 			else:
@@ -568,7 +568,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 4497:
 			await _pog_wait(1.0)
-			if 24000.0 <= sim.distance_between(v3, v2):
+			if sim.distance_between(v3, v2) <= 24000.0:
 				_pc = 4563
 				continue
 			else:
@@ -597,7 +597,7 @@ func mission_handler() -> Variant:
 		elif _pc == 5019:
 			await irangecheck.add_traffic_exception(imapentity.cast(v11))
 			await _pog_wait(0.10000000149011612)
-			if 350000.0 <= sim.distance_between(v3, v11):
+			if sim.distance_between(v3, v11) <= 350000.0:
 				_pc = 5117
 				continue
 			else:
@@ -633,7 +633,7 @@ func mission_handler() -> Variant:
 			await iconversation.add_response("a2_m03_text_c8_cal_option_ask", "a2_m03_dialogue_c8_cal_ask")
 			await iconversation.add_response("a2_m03_text_c8_cal_option_demand", "a2_m03_dialogue_c8_cal_demand")
 			v1 = await iconversation.ask(0, "name_middeon", "a2_m03_dialogue_c8_middeon_whatdya_want")
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 5595
 				continue
 			else:
@@ -645,7 +645,7 @@ func mission_handler() -> Variant:
 			await iconversation.add_response("a2_m03_text_c8_cal_option_really", "a2_m03_dialogue_c8_cal_really")
 			await iconversation.add_response("a2_m03_text_c8_cal_option_no_time", "a2_m03_dialogue_c8_cal_no_time")
 			v1 = await iconversation.ask(0, "name_middeon", "a2_m03_dialogue_c8_middeon_my_folks_are_great")
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 5750
 				continue
 			else:
@@ -698,7 +698,7 @@ func mission_handler() -> Variant:
 			_pc = 6512
 			continue
 		elif _pc == 6512:
-			if 0 > group.sim_count(v13):
+			if group.sim_count(v13) > 0:
 				_pc = 6537
 				continue
 			else:
@@ -736,7 +736,7 @@ func mission_handler() -> Variant:
 			_pc = 7075
 			continue
 		elif _pc == 7075:
-			if sim.is_dead(v9) or _pog_is_null(v9):
+			if _pog_is_null(v9) or sim.is_dead(v9):
 				_pc = 7107
 				continue
 			else:
@@ -751,7 +751,7 @@ func mission_handler() -> Variant:
 			_pc = 7237
 			continue
 		elif _pc == 7237:
-			if 1 >= iinventory.number_of_cargo_type(164):
+			if iinventory.number_of_cargo_type(164) >= 1:
 				_pc = 7260
 				continue
 			else:
@@ -793,7 +793,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 7607:
 			await _pog_wait(2.0)
-			if 350000.0 <= sim.distance_between(v3, v2):
+			if sim.distance_between(v3, v2) <= 350000.0:
 				_pc = 7673
 				continue
 			else:
@@ -826,7 +826,7 @@ func mission_handler() -> Variant:
 			_pc = 8077
 			continue
 		elif _pc == 8077:
-			if 0 > group.sim_count(v6):
+			if group.sim_count(v6) > 0:
 				_pc = 8102
 				continue
 			else:
@@ -834,7 +834,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 8102:
 			await _pog_wait(2.0)
-			if not _pog_is_null(v9) and sim.is_dead(v9):
+			if sim.is_dead(v9) and not _pog_is_null(v9):
 				_pc = 8166
 				continue
 			else:
@@ -853,7 +853,7 @@ func mission_handler() -> Variant:
 			_pc = 8227
 			continue
 		elif _pc == 8227:
-			if 8000.0 > sim.distance_between(v3, v2):
+			if sim.distance_between(v3, v2) > 8000.0:
 				_pc = 8261
 				continue
 			else:
@@ -919,7 +919,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 8880:
 			state.progress(v0)
-			if state.progress(v0) != 1:
+			if 1 != state.progress(v0):
 				_pc = 8906
 				continue
 			else:
@@ -1062,7 +1062,7 @@ func local_9087(v0, v1) -> Variant:
 			_pc = 9099
 			continue
 		elif _pc == 9099:
-			if group.sim_count(v0) < v2:
+			if v2 < group.sim_count(v0):
 				_pc = 9128
 				continue
 			else:
@@ -1070,7 +1070,7 @@ func local_9087(v0, v1) -> Variant:
 				continue
 		elif _pc == 9128:
 			isim.set_faction(isim.cast(group.nth_sim(v0, v2)), v1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 9099
 			continue
 		elif _pc == 9201:
@@ -1095,7 +1095,7 @@ func local_9204(v0) -> Variant:
 			_pc = 9269
 			continue
 		elif _pc == 9269:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 9285
 				continue
 			else:
@@ -1105,14 +1105,14 @@ func local_9204(v0) -> Variant:
 			v3 = iship.create("ini:/sims/custom/act2_mission03/fudge_mine", "a2_m03_name_mine")
 			isim.set_faction(isim.cast(v3), v1)
 			group.add_sim(v2, v3)
-			sim.place_near(v3, v0, math.random(-500.0, 500.0) + 6000.0)
+			sim.place_near(v3, v0, 6000.0 + math.random(-500.0, 500.0))
 			sim.set_orientation_euler(v3, math.random(10.0, 360.0), math.random(10.0, 360.0), math.random(10.0, 360.0))
 			isim.set_indestructable(isim.cast(v3), 0)
 			object.set_string_property(v3, "death_script", "iDeathScript.Explosives")
 			object.add_float_property(v3, "explosive_damage", 300.0)
 			object.add_float_property(v3, "explosive_radius", 400.0)
 			object.set_bool_property(v3, "ignore_speed_limit", 1)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 9269
 			continue
 		elif _pc == 9691:
@@ -1141,7 +1141,7 @@ func local_9703(v0, v1, v2) -> Variant:
 			_pc = 9790
 			continue
 		elif _pc == 9790:
-			if 0.0 <= object.float_property(v0, "hit_points"):
+			if object.float_property(v0, "hit_points") <= 0.0:
 				_pc = 9826
 				continue
 			else:
@@ -1160,7 +1160,7 @@ func local_9703(v0, v1, v2) -> Variant:
 			_pc = 9894
 			continue
 		elif _pc == 9894:
-			if v7 < v8:
+			if v8 < v7:
 				_pc = 9910
 				continue
 			else:
@@ -1168,14 +1168,14 @@ func local_9703(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 9910:
 			v3 = iship.cast(group.nth_sim(v1, v8))
-			if iai.is_order_complete(v3) or 5000.0 < sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) < 5000.0 or iai.is_order_complete(v3):
 				_pc = 10005
 				continue
 			else:
 				_pc = 10217
 				continue
 		elif _pc == 10005:
-			if 250.0 < sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) < 250.0:
 				_pc = 10039
 				continue
 			else:
@@ -1203,7 +1203,7 @@ func local_9703(v0, v1, v2) -> Variant:
 			_pc = 10335
 			continue
 		elif _pc == 10217:
-			if iai.is_order_complete(v3) and object.property_exists(v3, "triggered"):
+			if object.property_exists(v3, "triggered") and iai.is_order_complete(v3):
 				_pc = 10266
 				continue
 			else:
@@ -1216,7 +1216,7 @@ func local_9703(v0, v1, v2) -> Variant:
 			_pc = 10335
 			continue
 		elif _pc == 10335:
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 9894
 			continue
 		elif _pc == 10353:

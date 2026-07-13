@@ -41,7 +41,7 @@ func give_all_ships() -> Variant:
 			_pc = 108
 			continue
 		elif _pc == 108:
-			if iinventory.got_heavy_corvette() and iinventory.got_fast_attack_ship() and iinventory.got_tug():
+			if iinventory.got_tug() and iinventory.got_fast_attack_ship() and iinventory.got_heavy_corvette():
 				_pc = 155
 				continue
 			else:
@@ -92,7 +92,7 @@ func give_all_cargo() -> Variant:
 	while true:
 		if _pc == 509:
 			v0 = iinventory.number_of_cargo_types()
-			if 90 > iinventory.number_of_cargo_type(34):
+			if iinventory.number_of_cargo_type(34) > 90:
 				_pc = 556
 				continue
 			else:
@@ -120,7 +120,7 @@ func give_all_cargo() -> Variant:
 			_pc = 620
 			continue
 		elif _pc == 620:
-			if v0 < v2:
+			if v2 < v0:
 				_pc = 636
 				continue
 			else:
@@ -139,7 +139,7 @@ func give_all_cargo() -> Variant:
 			_pc = 694
 			continue
 		elif _pc == 694:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 620
 			continue
 		elif _pc == 712:

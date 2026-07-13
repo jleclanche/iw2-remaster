@@ -122,7 +122,7 @@ func junkyard_handler() -> Variant:
 				_pc = 1514
 				continue
 		elif _pc == 953:
-			if 0 > global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") > 0:
 				_pc = 980
 				continue
 			else:
@@ -134,14 +134,14 @@ func junkyard_handler() -> Variant:
 			_pc = 1520
 			continue
 		elif _pc == 1025:
-			if _pog_eq("map:/geog/badlands/hoffers_wake", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/hoffers_wake"):
 				_pc = 1052
 				continue
 			else:
 				_pc = 1514
 				continue
 		elif _pc == 1052:
-			if not (v0) and await iutilities.player_in_range(v3):
+			if await iutilities.player_in_range(v3) and not (v0):
 				_pc = 1082
 				continue
 			else:
@@ -193,7 +193,7 @@ func junkyard_handler() -> Variant:
 			_pc = 1514
 			continue
 		elif _pc == 1415:
-			if _pog_is_null(sim.cast(v4)) or not (await iutilities.player_in_range(v3)) and v0:
+			if v0 and not (await iutilities.player_in_range(v3)) or _pog_is_null(sim.cast(v4)):
 				_pc = 1467
 				continue
 			else:
@@ -346,7 +346,7 @@ func master_script() -> Variant:
 			_pc = 2791
 			continue
 		elif _pc == 2791:
-			if 10 < object.int_property(global.handle("g_hud_handler"), "number_completed_hud_nodes") and not (object.property_exists(global.handle("g_hud_handler"), "number_completed_hud_nodes")) and 1 == global.exists("g_hud_handler"):
+			if global.exists("g_hud_handler") == 1 and not (object.property_exists(global.handle("g_hud_handler"), "number_completed_hud_nodes")) and object.int_property(global.handle("g_hud_handler"), "number_completed_hud_nodes") < 10:
 				_pc = 2900
 				continue
 			else:
@@ -377,7 +377,7 @@ func master_script() -> Variant:
 				_pc = 3121
 				continue
 		elif _pc == 3032:
-			if 1 == global.pog_bool("g_act0_found_base"):
+			if global.pog_bool("g_act0_found_base") == 1:
 				_pc = 3059
 				continue
 			else:
@@ -413,7 +413,7 @@ func master_script() -> Variant:
 			_pc = 3194
 			continue
 		elif _pc == 3194:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 3221
 				continue
 			else:
@@ -431,7 +431,7 @@ func master_script() -> Variant:
 				_pc = 3329
 				continue
 		elif _pc == 3240:
-			if 1 == global.pog_bool("g_act0_started_proving_grounds"):
+			if global.pog_bool("g_act0_started_proving_grounds") == 1:
 				_pc = 3267
 				continue
 			else:
@@ -469,7 +469,7 @@ func master_script() -> Variant:
 			_pc = 3370
 			continue
 		elif _pc == 3370:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 3397
 				continue
 			else:
@@ -487,7 +487,7 @@ func master_script() -> Variant:
 				_pc = 3505
 				continue
 		elif _pc == 3416:
-			if 1 == global.pog_bool("g_act0_proving_grounds_complete"):
+			if global.pog_bool("g_act0_proving_grounds_complete") == 1:
 				_pc = 3443
 				continue
 			else:
@@ -525,7 +525,7 @@ func master_script() -> Variant:
 			_pc = 3555
 			continue
 		elif _pc == 3555:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 3582
 				continue
 			else:
@@ -543,7 +543,7 @@ func master_script() -> Variant:
 				_pc = 3690
 				continue
 		elif _pc == 3601:
-			if 1 == global.pog_bool("g_act0_started_tour"):
+			if global.pog_bool("g_act0_started_tour") == 1:
 				_pc = 3628
 				continue
 			else:
@@ -581,7 +581,7 @@ func master_script() -> Variant:
 			_pc = 3731
 			continue
 		elif _pc == 3731:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 3758
 				continue
 			else:
@@ -599,7 +599,7 @@ func master_script() -> Variant:
 				_pc = 3866
 				continue
 		elif _pc == 3777:
-			if 1 == global.pog_bool("g_act0_tour_complete"):
+			if global.pog_bool("g_act0_tour_complete") == 1:
 				_pc = 3804
 				continue
 			else:
@@ -638,7 +638,7 @@ func master_script() -> Variant:
 			_pc = 3935
 			continue
 		elif _pc == 3935:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 3962
 				continue
 			else:
@@ -656,7 +656,7 @@ func master_script() -> Variant:
 				_pc = 4070
 				continue
 		elif _pc == 3981:
-			if 1 == global.pog_bool("g_act0_errand_boy_complete"):
+			if global.pog_bool("g_act0_errand_boy_complete") == 1:
 				_pc = 4008
 				continue
 			else:
@@ -707,7 +707,7 @@ func master_script() -> Variant:
 				_pc = 4279
 				continue
 		elif _pc == 4190:
-			if 1 == global.pog_bool("g_act0_recovered_reactor"):
+			if global.pog_bool("g_act0_recovered_reactor") == 1:
 				_pc = 4217
 				continue
 			else:
@@ -743,7 +743,7 @@ func master_script() -> Variant:
 			_pc = 4342
 			continue
 		elif _pc == 4342:
-			if 1 != global.pog_bool("g_skip_to_specific"):
+			if global.pog_bool("g_skip_to_specific") != 1:
 				_pc = 4369
 				continue
 			else:
@@ -761,7 +761,7 @@ func master_script() -> Variant:
 				_pc = 4477
 				continue
 		elif _pc == 4388:
-			if 1 == global.pog_bool("g_act0_online_base_complete"):
+			if global.pog_bool("g_act0_online_base_complete") == 1:
 				_pc = 4415
 				continue
 			else:
@@ -810,7 +810,7 @@ func master_script() -> Variant:
 				_pc = 4626
 				continue
 		elif _pc == 4537:
-			if 1 == global.pog_bool("g_act0_nemesis_complete"):
+			if global.pog_bool("g_act0_nemesis_complete") == 1:
 				_pc = 4564
 				continue
 			else:
@@ -933,7 +933,7 @@ func local_4842() -> Variant:
 	var _pc: int = 4842
 	while true:
 		if _pc == 4842:
-			if 2 == global.pog_int("g_story_0.20"):
+			if global.pog_int("g_story_0.20") == 2:
 				_pc = 4875
 				continue
 			else:
@@ -944,7 +944,7 @@ func local_4842() -> Variant:
 			_pc = 4922
 			continue
 		elif _pc == 4922:
-			if 2 == global.pog_int("g_act0_base_online"):
+			if global.pog_int("g_act0_base_online") == 2:
 				_pc = 4950
 				continue
 			else:
@@ -998,7 +998,7 @@ func local_4842() -> Variant:
 			_pc = 5149
 			continue
 		elif _pc == 5149:
-			if 1 == global.pog_int("g_story_0.20"):
+			if global.pog_int("g_story_0.20") == 1:
 				_pc = 5176
 				continue
 			else:
@@ -1013,7 +1013,7 @@ func local_4842() -> Variant:
 			_pc = 5880
 			continue
 		elif _pc == 5294:
-			if _pog_is_null(global.pog_bool("g_act0_lucrecias_mail_conversation")) and iemail.read(v4):
+			if iemail.read(v4) and _pog_is_null(global.pog_bool("g_act0_lucrecias_mail_conversation")):
 				_pc = 5340
 				continue
 			else:
@@ -1025,7 +1025,7 @@ func local_4842() -> Variant:
 			_pc = 5880
 			continue
 		elif _pc == 5381:
-			if 1 == global.pog_int("g_story_0.30"):
+			if global.pog_int("g_story_0.30") == 1:
 				_pc = 5408
 				continue
 			else:
@@ -1037,7 +1037,7 @@ func local_4842() -> Variant:
 			_pc = 5880
 			continue
 		elif _pc == 5455:
-			if 1 == global.pog_int("g_story_0.40"):
+			if global.pog_int("g_story_0.40") == 1:
 				_pc = 5482
 				continue
 			else:
@@ -1049,7 +1049,7 @@ func local_4842() -> Variant:
 			_pc = 5880
 			continue
 		elif _pc == 5529:
-			if _pog_is_null(v1) and 2 == global.pog_int("g_act0_base_online") and _pog_is_null(global.pog_bool("g_act0_online_base_complete")) or 1 == global.pog_int("g_act0_base_online"):
+			if global.pog_int("g_act0_base_online") == 1 or _pog_is_null(global.pog_bool("g_act0_online_base_complete")) and global.pog_int("g_act0_base_online") == 2 and _pog_is_null(v1):
 				_pc = 5610
 				continue
 			else:
@@ -1073,7 +1073,7 @@ func local_4842() -> Variant:
 			_pc = 5880
 			continue
 		elif _pc == 5780:
-			if 1 == global.pog_int("g_story_0.50"):
+			if global.pog_int("g_story_0.50") == 1:
 				_pc = 5807
 				continue
 			else:
@@ -1108,7 +1108,7 @@ func main() -> Variant:
 		if _pc == 5888:
 			v0 = 0
 			v1 = iship.find_player_ship()
-			if 0 < global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") < 0:
 				_pc = 5946
 				continue
 			else:

@@ -47,7 +47,7 @@ func local_27(v0) -> Variant:
 				_pc = 84
 				continue
 		elif _pc == 52:
-			if 1 == global.pog_bool("gl_Range_creation_no_report"):
+			if global.pog_bool("gl_Range_creation_no_report") == 1:
 				_pc = 79
 				continue
 			else:
@@ -71,7 +71,7 @@ func local_27(v0) -> Variant:
 			_pc = 211
 			continue
 		elif _pc == 211:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 227
 				continue
 			else:
@@ -83,7 +83,7 @@ func local_27(v0) -> Variant:
 			debug.print_string(" ")
 			debug.print_handle(list.get_nth(v1, v3))
 			debug.print_string("\n")
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 211
 			continue
 		elif _pc == 379:
@@ -254,7 +254,7 @@ func remove_out_of_system_traffic_exception() -> Variant:
 	var v2: Variant = 0
 	v1 = null
 	v2 = null
-	if 1 != global.exists("g_out_of_system_exceptions"):
+	if global.exists("g_out_of_system_exceptions") != 1:
 		return 0
 	v1 = global.pog_set("g_out_of_system_exceptions")
 	p_set.add(v2, v0)
@@ -363,7 +363,7 @@ func monitor_range() -> Variant:
 				_pc = 2634
 				continue
 		elif _pc == 2193:
-			if _pog_is_null(global.exists("g_disable_traffic_monitor")) and v0:
+			if v0 and _pog_is_null(global.exists("g_disable_traffic_monitor")):
 				_pc = 2226
 				continue
 			else:
@@ -378,7 +378,7 @@ func monitor_range() -> Variant:
 			_pc = 2370
 			continue
 		elif _pc == 2370:
-			if v14 < v15:
+			if v15 < v14:
 				_pc = 2386
 				continue
 			else:
@@ -386,14 +386,14 @@ func monitor_range() -> Variant:
 				continue
 		elif _pc == 2386:
 			v13 = imapentity.cast(list.get_nth(v6, v15))
-			if not (imapentity.is_destroyed(v13)) and not (imapentity.is_visible_on_map(v13)) and _pog_eq(v8, isim.faction(isim.cast(v13))):
+			if _pog_eq(isim.faction(isim.cast(v13)), v8) and not (imapentity.is_visible_on_map(v13)) and not (imapentity.is_destroyed(v13)):
 				_pc = 2510
 				continue
 			else:
 				_pc = 2564
 				continue
 		elif _pc == 2510:
-			if 300000.0 < sim.distance_between(v7, v13):
+			if sim.distance_between(v7, v13) < 300000.0:
 				_pc = 2544
 				continue
 			else:
@@ -404,7 +404,7 @@ func monitor_range() -> Variant:
 			_pc = 2564
 			continue
 		elif _pc == 2564:
-			v15 = 1 + v15
+			v15 = v15 + 1
 			_pc = 2370
 			continue
 		elif _pc == 2582:

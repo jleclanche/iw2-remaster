@@ -41,7 +41,7 @@ func local_0() -> Variant:
 			_pc = 101
 			continue
 		elif _pc == 101:
-			if 1 < v1:
+			if v1 < 1:
 				_pc = 113
 				continue
 			else:
@@ -51,7 +51,7 @@ func local_0() -> Variant:
 			_pc = 804
 			continue
 		elif _pc == 119:
-			v0 = math.random_int(0, 1 - v1)
+			v0 = math.random_int(0, v1 - 1)
 			_pc = 212
 			continue
 		elif _pc == 151:
@@ -62,7 +62,7 @@ func local_0() -> Variant:
 			continue
 		elif _pc == 212:
 			v2 = itrade.nth_trade(v0)
-			if 40 < math.random_int(0, 51) and 1 == object.bool_property(v2, "generated_mission"):
+			if object.bool_property(v2, "generated_mission") == 1 and math.random_int(0, 51) < 40:
 				_pc = 288
 				continue
 			else:
@@ -107,7 +107,7 @@ func local_0() -> Variant:
 			_pc = 798
 			continue
 		elif _pc == 543:
-			if 1 == v5:
+			if v5 == 1:
 				_pc = 555
 				continue
 			else:
@@ -163,7 +163,7 @@ func local_813() -> Variant:
 	var _pc: int = 813
 	while true:
 		if _pc == 813:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 837
 				continue
 			else:
@@ -186,7 +186,7 @@ func local_865() -> Variant:
 	var _pc: int = 865
 	while true:
 		if _pc == 865:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 889
 				continue
 			else:
@@ -263,7 +263,7 @@ func local_1030() -> Variant:
 	var _pc: int = 1030
 	while true:
 		if _pc == 1030:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 1054
 				continue
 			else:
@@ -433,7 +433,7 @@ func local_1310() -> Variant:
 	var _pc: int = 1310
 	while true:
 		if _pc == 1310:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 1334
 				continue
 			else:
@@ -513,7 +513,7 @@ func local_1469() -> Variant:
 	var _pc: int = 1469
 	while true:
 		if _pc == 1469:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 1493
 				continue
 			else:
@@ -590,7 +590,7 @@ func local_1616() -> Variant:
 	var _pc: int = 1616
 	while true:
 		if _pc == 1616:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 1640
 				continue
 			else:
@@ -656,7 +656,7 @@ func local_1754() -> Variant:
 	var _pc: int = 1754
 	while true:
 		if _pc == 1754:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 1778
 				continue
 			else:
@@ -853,7 +853,7 @@ func local_2077() -> Variant:
 	var _pc: int = 2077
 	while true:
 		if _pc == 2077:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 2101
 				continue
 			else:
@@ -957,7 +957,7 @@ func local_2268() -> Variant:
 	var _pc: int = 2268
 	while true:
 		if _pc == 2268:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 2292
 				continue
 			else:
@@ -1023,7 +1023,7 @@ func local_2406() -> Variant:
 	var _pc: int = 2406
 	while true:
 		if _pc == 2406:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 2430
 				continue
 			else:
@@ -1121,7 +1121,7 @@ func local_2581() -> Variant:
 	var _pc: int = 2581
 	while true:
 		if _pc == 2581:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 2605
 				continue
 			else:
@@ -1257,7 +1257,7 @@ func local_2808() -> Variant:
 	var _pc: int = 2808
 	while true:
 		if _pc == 2808:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 2832
 				continue
 			else:
@@ -1367,7 +1367,7 @@ func local_3017() -> Variant:
 	var _pc: int = 3017
 	while true:
 		if _pc == 3017:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 3041
 				continue
 			else:
@@ -1582,7 +1582,7 @@ func local_3422() -> Variant:
 	var _pc: int = 3422
 	while true:
 		if _pc == 3422:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 3446
 				continue
 			else:
@@ -1742,7 +1742,7 @@ func local_3688() -> Variant:
 	var _pc: int = 3688
 	while true:
 		if _pc == 3688:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 3712
 				continue
 			else:
@@ -1808,7 +1808,7 @@ func local_3826() -> Variant:
 	var _pc: int = 3826
 	while true:
 		if _pc == 3826:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 3850
 				continue
 			else:
@@ -1926,7 +1926,7 @@ func local_4035() -> Variant:
 	var _pc: int = 4035
 	while true:
 		if _pc == 4035:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 4059
 				continue
 			else:
@@ -2085,7 +2085,7 @@ func local_4305() -> Variant:
 	var _pc: int = 4305
 	while true:
 		if _pc == 4305:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 4329
 				continue
 			else:
@@ -2151,7 +2151,7 @@ func local_4443() -> Variant:
 	var _pc: int = 4443
 	while true:
 		if _pc == 4443:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 4467
 				continue
 			else:
@@ -2197,7 +2197,7 @@ func local_4548() -> Variant:
 	var _pc: int = 4548
 	while true:
 		if _pc == 4548:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 4572
 				continue
 			else:
@@ -2358,7 +2358,7 @@ func local_4833() -> Variant:
 	var _pc: int = 4833
 	while true:
 		if _pc == 4833:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 4857
 				continue
 			else:
@@ -4116,7 +4116,7 @@ func local_7438() -> Variant:
 	var _pc: int = 7438
 	while true:
 		if _pc == 7438:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 7462
 				continue
 			else:
@@ -4226,7 +4226,7 @@ func local_7640() -> Variant:
 	var _pc: int = 7640
 	while true:
 		if _pc == 7640:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 7664
 				continue
 			else:
@@ -4546,7 +4546,7 @@ func local_8181() -> Variant:
 	var _pc: int = 8181
 	while true:
 		if _pc == 8181:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 8205
 				continue
 			else:
@@ -4969,7 +4969,7 @@ func local_8922() -> Variant:
 	var _pc: int = 8922
 	while true:
 		if _pc == 8922:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 8946
 				continue
 			else:
@@ -5306,7 +5306,7 @@ func local_9454() -> Variant:
 	var _pc: int = 9454
 	while true:
 		if _pc == 9454:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 9478
 				continue
 			else:
@@ -5978,7 +5978,7 @@ func local_10483() -> Variant:
 	var _pc: int = 10483
 	while true:
 		if _pc == 10483:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 10507
 				continue
 			else:
@@ -6492,7 +6492,7 @@ func local_11250() -> Variant:
 	var _pc: int = 11250
 	while true:
 		if _pc == 11250:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 11274
 				continue
 			else:
@@ -6939,7 +6939,7 @@ func local_11962() -> Variant:
 	var _pc: int = 11962
 	while true:
 		if _pc == 11962:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 11986
 				continue
 			else:
@@ -7230,7 +7230,7 @@ func local_12410() -> Variant:
 	var _pc: int = 12410
 	while true:
 		if _pc == 12410:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 12434
 				continue
 			else:
@@ -7324,7 +7324,7 @@ func local_12587() -> Variant:
 	var _pc: int = 12587
 	while true:
 		if _pc == 12587:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 12611
 				continue
 			else:
@@ -7494,7 +7494,7 @@ func local_12899() -> Variant:
 	var _pc: int = 12899
 	while true:
 		if _pc == 12899:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 12923
 				continue
 			else:
@@ -7714,7 +7714,7 @@ func local_13295() -> Variant:
 	var _pc: int = 13295
 	while true:
 		if _pc == 13295:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 13319
 				continue
 			else:
@@ -7831,7 +7831,7 @@ func local_13511() -> Variant:
 	var _pc: int = 13511
 	while true:
 		if _pc == 13511:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 13535
 				continue
 			else:
@@ -7948,7 +7948,7 @@ func local_13727() -> Variant:
 	var _pc: int = 13727
 	while true:
 		if _pc == 13727:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 13751
 				continue
 			else:
@@ -8024,7 +8024,7 @@ func local_13880() -> Variant:
 	var _pc: int = 13880
 	while true:
 		if _pc == 13880:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 13904
 				continue
 			else:
@@ -8257,7 +8257,7 @@ func local_14299() -> Variant:
 	var _pc: int = 14299
 	while true:
 		if _pc == 14299:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 14323
 				continue
 			else:
@@ -8383,7 +8383,7 @@ func local_14539() -> Variant:
 	var _pc: int = 14539
 	while true:
 		if _pc == 14539:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 14563
 				continue
 			else:
@@ -8553,7 +8553,7 @@ func local_14851() -> Variant:
 	var _pc: int = 14851
 	while true:
 		if _pc == 14851:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 14875
 				continue
 			else:
@@ -8753,7 +8753,7 @@ func local_15211() -> Variant:
 	var _pc: int = 15211
 	while true:
 		if _pc == 15211:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 15235
 				continue
 			else:
@@ -8951,7 +8951,7 @@ func local_15211() -> Variant:
 			continue
 		elif _pc == 15717:
 			math.random_int(0, 61)
-			if math.random_int(0, 61) != 1:
+			if 1 != math.random_int(0, 61):
 				_pc = 15741
 				continue
 			else:
@@ -9390,7 +9390,7 @@ func local_16289() -> Variant:
 	var _pc: int = 16289
 	while true:
 		if _pc == 16289:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 16313
 				continue
 			else:
@@ -9510,7 +9510,7 @@ func local_16516() -> Variant:
 	var _pc: int = 16516
 	while true:
 		if _pc == 16516:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 16540
 				continue
 			else:
@@ -9567,7 +9567,7 @@ func local_16516() -> Variant:
 			continue
 		elif _pc == 16660:
 			math.random_int(0, 13)
-			if math.random_int(0, 13) != 1:
+			if 1 != math.random_int(0, 13):
 				_pc = 16684
 				continue
 			else:
@@ -9670,7 +9670,7 @@ func local_16800() -> Variant:
 	var _pc: int = 16800
 	while true:
 		if _pc == 16800:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 16824
 				continue
 			else:
@@ -9730,7 +9730,7 @@ func local_16923() -> Variant:
 	var _pc: int = 16923
 	while true:
 		if _pc == 16923:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 16947
 				continue
 			else:
@@ -9790,7 +9790,7 @@ func local_17046() -> Variant:
 	var _pc: int = 17046
 	while true:
 		if _pc == 17046:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 17070
 				continue
 			else:
@@ -9840,7 +9840,7 @@ func local_17152() -> Variant:
 	var _pc: int = 17152
 	while true:
 		if _pc == 17152:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 17176
 				continue
 			else:
@@ -9890,7 +9890,7 @@ func local_17258() -> Variant:
 	var _pc: int = 17258
 	while true:
 		if _pc == 17258:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 17282
 				continue
 			else:
@@ -10631,7 +10631,7 @@ func local_18331() -> Variant:
 	var _pc: int = 18331
 	while true:
 		if _pc == 18331:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 18355
 				continue
 			else:
@@ -10691,7 +10691,7 @@ func local_18453() -> Variant:
 	var _pc: int = 18453
 	while true:
 		if _pc == 18453:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 18477
 				continue
 			else:
@@ -10844,7 +10844,7 @@ func local_18705() -> Variant:
 	var _pc: int = 18705
 	while true:
 		if _pc == 18705:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 18729
 				continue
 			else:
@@ -11095,7 +11095,7 @@ func local_19106() -> Variant:
 	var _pc: int = 19106
 	while true:
 		if _pc == 19106:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 19130
 				continue
 			else:
@@ -11248,7 +11248,7 @@ func local_19358() -> Variant:
 	var _pc: int = 19358
 	while true:
 		if _pc == 19358:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 19382
 				continue
 			else:
@@ -11326,7 +11326,7 @@ func local_19501() -> Variant:
 	var _pc: int = 19501
 	while true:
 		if _pc == 19501:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 19525
 				continue
 			else:
@@ -11361,7 +11361,7 @@ func local_19561() -> Variant:
 	var _pc: int = 19561
 	while true:
 		if _pc == 19561:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 19585
 				continue
 			else:
@@ -11451,7 +11451,7 @@ func local_19733() -> Variant:
 	var _pc: int = 19733
 	while true:
 		if _pc == 19733:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 19757
 				continue
 			else:
@@ -11541,7 +11541,7 @@ func local_19905() -> Variant:
 	var _pc: int = 19905
 	while true:
 		if _pc == 19905:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 19929
 				continue
 			else:
@@ -11657,7 +11657,7 @@ func local_20124() -> Variant:
 	var _pc: int = 20124
 	while true:
 		if _pc == 20124:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 20148
 				continue
 			else:
@@ -11737,7 +11737,7 @@ func local_20279() -> Variant:
 	var _pc: int = 20279
 	while true:
 		if _pc == 20279:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 20303
 				continue
 			else:
@@ -11827,7 +11827,7 @@ func local_20453() -> Variant:
 	var _pc: int = 20453
 	while true:
 		if _pc == 20453:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 20477
 				continue
 			else:
@@ -12031,7 +12031,7 @@ func local_20453() -> Variant:
 			continue
 		elif _pc == 20990:
 			math.random_int(0, 64)
-			if math.random_int(0, 64) != 1:
+			if 1 != math.random_int(0, 64):
 				_pc = 21014
 				continue
 			else:
@@ -12504,7 +12504,7 @@ func local_21609() -> Variant:
 	var _pc: int = 21609
 	while true:
 		if _pc == 21609:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 21633
 				continue
 			else:
@@ -14321,7 +14321,7 @@ func local_24723() -> Variant:
 	var _pc: int = 24723
 	while true:
 		if _pc == 24723:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 24747
 				continue
 			else:
@@ -14391,7 +14391,7 @@ func local_24865() -> Variant:
 	var _pc: int = 24865
 	while true:
 		if _pc == 24865:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 24889
 				continue
 			else:
@@ -14414,7 +14414,7 @@ func local_24915() -> Variant:
 	var _pc: int = 24915
 	while true:
 		if _pc == 24915:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 24939
 				continue
 			else:
@@ -14464,7 +14464,7 @@ func local_25021() -> Variant:
 	var _pc: int = 25021
 	while true:
 		if _pc == 25021:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 25045
 				continue
 			else:
@@ -15047,7 +15047,7 @@ func local_25939() -> Variant:
 	var _pc: int = 25939
 	while true:
 		if _pc == 25939:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 25963
 				continue
 			else:
@@ -15137,7 +15137,7 @@ func local_26111() -> Variant:
 	var _pc: int = 26111
 	while true:
 		if _pc == 26111:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 26135
 				continue
 			else:
@@ -15227,7 +15227,7 @@ func local_26283() -> Variant:
 	var _pc: int = 26283
 	while true:
 		if _pc == 26283:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 26307
 				continue
 			else:
@@ -15317,7 +15317,7 @@ func local_26455() -> Variant:
 	var _pc: int = 26455
 	while true:
 		if _pc == 26455:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 26479
 				continue
 			else:
@@ -15407,7 +15407,7 @@ func local_26629() -> Variant:
 	var _pc: int = 26629
 	while true:
 		if _pc == 26629:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 26653
 				continue
 			else:
@@ -15497,7 +15497,7 @@ func local_26804() -> Variant:
 	var _pc: int = 26804
 	while true:
 		if _pc == 26804:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 26828
 				continue
 			else:
@@ -15587,7 +15587,7 @@ func local_26979() -> Variant:
 	var _pc: int = 26979
 	while true:
 		if _pc == 26979:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 27003
 				continue
 			else:
@@ -15677,7 +15677,7 @@ func local_27154() -> Variant:
 	var _pc: int = 27154
 	while true:
 		if _pc == 27154:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 27178
 				continue
 			else:
@@ -15767,7 +15767,7 @@ func local_27329() -> Variant:
 	var _pc: int = 27329
 	while true:
 		if _pc == 27329:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 27353
 				continue
 			else:
@@ -15837,7 +15837,7 @@ func local_27471() -> Variant:
 	var _pc: int = 27471
 	while true:
 		if _pc == 27471:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 27495
 				continue
 			else:
@@ -15937,7 +15937,7 @@ func local_27663() -> Variant:
 	var _pc: int = 27663
 	while true:
 		if _pc == 27663:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 27687
 				continue
 			else:
@@ -15960,7 +15960,7 @@ func local_27715() -> Variant:
 	var _pc: int = 27715
 	while true:
 		if _pc == 27715:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 27739
 				continue
 			else:
@@ -16170,7 +16170,7 @@ func local_28095() -> Variant:
 	var _pc: int = 28095
 	while true:
 		if _pc == 28095:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 28119
 				continue
 			else:
@@ -16772,7 +16772,7 @@ func local_29094() -> Variant:
 	var _pc: int = 29094
 	while true:
 		if _pc == 29094:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 29118
 				continue
 			else:
@@ -16795,7 +16795,7 @@ func local_29146() -> Variant:
 	var _pc: int = 29146
 	while true:
 		if _pc == 29146:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 29170
 				continue
 			else:
@@ -17422,7 +17422,7 @@ func local_30145() -> Variant:
 	var _pc: int = 30145
 	while true:
 		if _pc == 30145:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 30169
 				continue
 			else:
@@ -17464,7 +17464,7 @@ func local_30145() -> Variant:
 			continue
 		elif _pc == 30261:
 			math.random_int(0, 15)
-			if math.random_int(0, 15) != 1:
+			if 1 != math.random_int(0, 15):
 				_pc = 30285
 				continue
 			else:
@@ -17581,7 +17581,7 @@ func local_30419() -> Variant:
 	var _pc: int = 30419
 	while true:
 		if _pc == 30419:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 30443
 				continue
 			else:
@@ -17631,7 +17631,7 @@ func local_30525() -> Variant:
 	var _pc: int = 30525
 	while true:
 		if _pc == 30525:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 30549
 				continue
 			else:
@@ -17681,7 +17681,7 @@ func local_30631() -> Variant:
 	var _pc: int = 30631
 	while true:
 		if _pc == 30631:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 30655
 				continue
 			else:
@@ -17731,7 +17731,7 @@ func local_30737() -> Variant:
 	var _pc: int = 30737
 	while true:
 		if _pc == 30737:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 30761
 				continue
 			else:
@@ -17820,7 +17820,7 @@ func local_30907() -> Variant:
 	var _pc: int = 30907
 	while true:
 		if _pc == 30907:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 30931
 				continue
 			else:
@@ -17870,7 +17870,7 @@ func local_31013() -> Variant:
 	var _pc: int = 31013
 	while true:
 		if _pc == 31013:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 31037
 				continue
 			else:
@@ -17920,7 +17920,7 @@ func local_31119() -> Variant:
 	var _pc: int = 31119
 	while true:
 		if _pc == 31119:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 31143
 				continue
 			else:
@@ -17970,7 +17970,7 @@ func local_31225() -> Variant:
 	var _pc: int = 31225
 	while true:
 		if _pc == 31225:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 31249
 				continue
 			else:
@@ -18020,7 +18020,7 @@ func local_31331() -> Variant:
 	var _pc: int = 31331
 	while true:
 		if _pc == 31331:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 31355
 				continue
 			else:
@@ -18070,7 +18070,7 @@ func local_31437() -> Variant:
 	var _pc: int = 31437
 	while true:
 		if _pc == 31437:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 31461
 				continue
 			else:
@@ -18349,7 +18349,7 @@ func local_31882() -> Variant:
 	var _pc: int = 31882
 	while true:
 		if _pc == 31882:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 31906
 				continue
 			else:
@@ -18669,7 +18669,7 @@ func local_32420() -> Variant:
 	var _pc: int = 32420
 	while true:
 		if _pc == 32420:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 32444
 				continue
 			else:
@@ -19008,7 +19008,7 @@ func local_32976() -> Variant:
 	var _pc: int = 32976
 	while true:
 		if _pc == 32976:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 33000
 				continue
 			else:
@@ -19031,7 +19031,7 @@ func local_33027() -> Variant:
 	var _pc: int = 33027
 	while true:
 		if _pc == 33027:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 33051
 				continue
 			else:
@@ -19151,7 +19151,7 @@ func local_33254() -> Variant:
 	var _pc: int = 33254
 	while true:
 		if _pc == 33254:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 33278
 				continue
 			else:
@@ -19271,7 +19271,7 @@ func local_33481() -> Variant:
 	var _pc: int = 33481
 	while true:
 		if _pc == 33481:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 33505
 				continue
 			else:
@@ -19391,7 +19391,7 @@ func local_33708() -> Variant:
 	var _pc: int = 33708
 	while true:
 		if _pc == 33708:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 33732
 				continue
 			else:
@@ -19731,7 +19731,7 @@ func local_34309() -> Variant:
 	var _pc: int = 34309
 	while true:
 		if _pc == 34309:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 34333
 				continue
 			else:
@@ -19961,7 +19961,7 @@ func local_34714() -> Variant:
 	var _pc: int = 34714
 	while true:
 		if _pc == 34714:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 34738
 				continue
 			else:
@@ -19984,7 +19984,7 @@ func local_34765() -> Variant:
 	var _pc: int = 34765
 	while true:
 		if _pc == 34765:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 34789
 				continue
 			else:
@@ -20725,7 +20725,7 @@ func local_35838() -> Variant:
 	var _pc: int = 35838
 	while true:
 		if _pc == 35838:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 35862
 				continue
 			else:
@@ -21466,7 +21466,7 @@ func local_36911() -> Variant:
 	var _pc: int = 36911
 	while true:
 		if _pc == 36911:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 36935
 				continue
 			else:
@@ -21540,7 +21540,7 @@ func local_37053() -> Variant:
 	var _pc: int = 37053
 	while true:
 		if _pc == 37053:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 37077
 				continue
 			else:
@@ -21800,7 +21800,7 @@ func local_37509() -> Variant:
 	var _pc: int = 37509
 	while true:
 		if _pc == 37509:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 37533
 				continue
 			else:
@@ -21823,7 +21823,7 @@ func local_37560() -> Variant:
 	var _pc: int = 37560
 	while true:
 		if _pc == 37560:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 37584
 				continue
 			else:
@@ -21913,7 +21913,7 @@ func local_37730() -> Variant:
 	var _pc: int = 37730
 	while true:
 		if _pc == 37730:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 37754
 				continue
 			else:
@@ -21983,7 +21983,7 @@ func local_37871() -> Variant:
 	var _pc: int = 37871
 	while true:
 		if _pc == 37871:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 37895
 				continue
 			else:
@@ -22143,7 +22143,7 @@ func local_38159() -> Variant:
 	var _pc: int = 38159
 	while true:
 		if _pc == 38159:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 38183
 				continue
 			else:
@@ -22273,7 +22273,7 @@ func local_38395() -> Variant:
 	var _pc: int = 38395
 	while true:
 		if _pc == 38395:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 38419
 				continue
 			else:
@@ -24418,7 +24418,7 @@ func find_mini_cargo_for_location() -> Variant:
 	var _pc: int = 74534
 	while true:
 		if _pc == 74534:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 74563
 				continue
 			else:
@@ -24451,7 +24451,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 74626:
 			math.random_int(0, 20)
-			if math.random_int(0, 20) != 1:
+			if 1 != math.random_int(0, 20):
 				_pc = 74650
 				continue
 			else:
@@ -24484,7 +24484,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 74698:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 74722
 				continue
 			else:
@@ -24528,7 +24528,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 74783:
 			math.random_int(1, 4)
-			if math.random_int(1, 4) != 1:
+			if 1 != math.random_int(1, 4):
 				_pc = 74807
 				continue
 			else:
@@ -24575,7 +24575,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 74874:
 			math.random_int(0, 18)
-			if math.random_int(0, 18) != 1:
+			if 1 != math.random_int(0, 18):
 				_pc = 74898
 				continue
 			else:
@@ -24643,7 +24643,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 74991:
 			math.random_int(1, 3)
-			if math.random_int(1, 3) != 1:
+			if 1 != math.random_int(1, 3):
 				_pc = 75015
 				continue
 			else:
@@ -24686,7 +24686,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 75083:
 			math.random_int(0, 9)
-			if math.random_int(0, 9) != 1:
+			if 1 != math.random_int(0, 9):
 				_pc = 75107
 				continue
 			else:
@@ -24745,7 +24745,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 75205:
 			math.random_int(0, 9)
-			if math.random_int(0, 9) != 1:
+			if 1 != math.random_int(0, 9):
 				_pc = 75229
 				continue
 			else:
@@ -24832,7 +24832,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 75363:
 			math.random_int(0, 15)
-			if math.random_int(0, 15) != 1:
+			if 1 != math.random_int(0, 15):
 				_pc = 75387
 				continue
 			else:
@@ -24932,7 +24932,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 75544:
 			math.random_int(0, 15)
-			if math.random_int(0, 15) != 1:
+			if 1 != math.random_int(0, 15):
 				_pc = 75568
 				continue
 			else:
@@ -25056,7 +25056,7 @@ func find_mini_cargo_for_location() -> Variant:
 			continue
 		elif _pc == 75760:
 			math.random_int(0, 15)
-			if math.random_int(0, 15) != 1:
+			if 1 != math.random_int(0, 15):
 				_pc = 75784
 				continue
 			else:
@@ -25795,7 +25795,7 @@ func cheap_cargo_generator() -> Variant:
 	var _pc: int = 76877
 	while true:
 		if _pc == 76877:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 76901
 				continue
 			else:
@@ -26572,7 +26572,7 @@ func medium_cargo_generator() -> Variant:
 	var _pc: int = 78191
 	while true:
 		if _pc == 78191:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 78215
 				continue
 			else:
@@ -28136,7 +28136,7 @@ func high_cargo_generator() -> Variant:
 	var _pc: int = 80846
 	while true:
 		if _pc == 80846:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 80870
 				continue
 			else:
@@ -29616,7 +29616,7 @@ func very_high_cargo_generator() -> Variant:
 	var _pc: int = 83366
 	while true:
 		if _pc == 83366:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 83390
 				continue
 			else:
@@ -30096,7 +30096,7 @@ func supply_cargo_generator() -> Variant:
 	var _pc: int = 84201
 	while true:
 		if _pc == 84201:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 84225
 				continue
 			else:
@@ -30968,7 +30968,7 @@ func military_supply_cargo_generator() -> Variant:
 	var _pc: int = 85522
 	while true:
 		if _pc == 85522:
-			if 18 < math.random_int(0, 99):
+			if math.random_int(0, 99) < 18:
 				_pc = 85546
 				continue
 			else:

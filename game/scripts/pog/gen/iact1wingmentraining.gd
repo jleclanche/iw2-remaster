@@ -60,7 +60,7 @@ func local_17(v0, v1) -> Variant:
 			_pc = 53
 			continue
 		elif _pc == 53:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 69
 				continue
 			else:
@@ -68,7 +68,7 @@ func local_17(v0, v1) -> Variant:
 				continue
 		elif _pc == 69:
 			isim.set_sensor_visibility(isim.cast(group.nth_sim(v0, v3)), v1)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 53
 			continue
 		elif _pc == 142:
@@ -89,7 +89,7 @@ func local_145(v0, v1) -> Variant:
 			v2 = ifaction.find("Marauders")
 			v3 = ifaction.find("Independent")
 			v5 = group.sim_count(v0)
-			if 1 == v1:
+			if v1 == 1:
 				_pc = 237
 				continue
 			else:
@@ -100,7 +100,7 @@ func local_145(v0, v1) -> Variant:
 			_pc = 244
 			continue
 		elif _pc == 244:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 260
 				continue
 			else:
@@ -110,7 +110,7 @@ func local_145(v0, v1) -> Variant:
 			v4 = isim.cast(group.nth_sim(v0, v6))
 			isim.set_faction(v4, v2)
 			isim.set_indestructable(v4, 0)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 244
 			continue
 		elif _pc == 364:
@@ -121,7 +121,7 @@ func local_145(v0, v1) -> Variant:
 			_pc = 376
 			continue
 		elif _pc == 376:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 392
 				continue
 			else:
@@ -131,7 +131,7 @@ func local_145(v0, v1) -> Variant:
 			v4 = isim.cast(group.nth_sim(v0, v6))
 			isim.set_faction(v4, v3)
 			isim.set_indestructable(v4, 1)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 376
 			continue
 		elif _pc == 496:
@@ -154,14 +154,14 @@ func local_499(v0, v1, v2) -> Variant:
 			v3 = group.nth_group(v1, 0)
 			v4 = iship.cast(group.nth_sim(v1, 2))
 			v6 = group.leader(v1)
-			v8 = group.sim_count(v3) - 30
+			v8 = 30 - group.sim_count(v3)
 			state.set_progress(v2, 3)
 			iai.give_approach_order(v4, v6)
 			v9 = 0
 			_pc = 671
 			continue
 		elif _pc == 671:
-			if v8 < v9:
+			if v9 < v8:
 				_pc = 687
 				continue
 			else:
@@ -187,7 +187,7 @@ func local_499(v0, v1, v2) -> Variant:
 			isim.set_sensor_visibility(v5, 0)
 			sim.place_at(v5, v4)
 			group.add_sim(v3, v5)
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 671
 			continue
 		elif _pc == 971:
@@ -229,7 +229,7 @@ func local_1094(v0) -> Variant:
 			_pc = 1515
 			continue
 		elif _pc == 1515:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 1531
 				continue
 			else:
@@ -240,7 +240,7 @@ func local_1094(v0) -> Variant:
 			isim.set_sensor_visibility(v3, 0)
 			sim.place_near(v3, v4, math.random(0.0, 700.0))
 			group.add_sim(v2, v3)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 1515
 			continue
 		elif _pc == 1672:
@@ -272,14 +272,14 @@ func local_1728(v0) -> Variant:
 				_pc = 1936
 				continue
 		elif _pc == 1787:
-			if 0 > v1:
+			if v1 > 0:
 				_pc = 1799
 				continue
 			else:
 				_pc = 1818
 				continue
 		elif _pc == 1799:
-			v1 = -1 + v1
+			v1 = v1 + -1
 			_pc = 1850
 			continue
 		elif _pc == 1818:
@@ -312,7 +312,7 @@ func local_1944(v0, v1, v2) -> Variant:
 			_pc = 2024
 			continue
 		elif _pc == 2024:
-			if 250.0 <= sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) <= 250.0:
 				_pc = 2058
 				continue
 			else:
@@ -320,7 +320,7 @@ func local_1944(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 2058:
 			isim.kill(isim.cast(v0))
-			if 0 <= 50 - object.int_property(v1, "hit_points"):
+			if object.int_property(v1, "hit_points") - 50 <= 0:
 				_pc = 2125
 				continue
 			else:
@@ -331,7 +331,7 @@ func local_1944(v0, v1, v2) -> Variant:
 			_pc = 2202
 			continue
 		elif _pc == 2149:
-			object.set_int_property(v1, "hit_points", 50 - object.int_property(v1, "hit_points"))
+			object.set_int_property(v1, "hit_points", object.int_property(v1, "hit_points") - 50)
 			_pc = 2202
 			continue
 		elif _pc == 2202:
@@ -339,7 +339,7 @@ func local_1944(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 2207:
 			await _pog_wait(1.0)
-			if not (1 == state.progress(v2) and 2000.0 < sim.distance_between(v1, v0)):
+			if not (sim.distance_between(v1, v0) < 2000.0 and state.progress(v2) == 1):
 				_pc = 2294
 				continue
 			else:
@@ -380,7 +380,7 @@ func local_2328(v0, v1) -> Variant:
 			_pc = 2402
 			continue
 		elif _pc == 2402:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 2418
 				continue
 			else:
@@ -388,7 +388,7 @@ func local_2328(v0, v1) -> Variant:
 				continue
 		elif _pc == 2418:
 			v3 = group.nth_sim(v0, v5)
-			if not (object.property_exists(v3, "mine_active")) and 700.0 < sim.distance_between(v2, v3):
+			if sim.distance_between(v2, v3) < 700.0 and not (object.property_exists(v3, "mine_active")):
 				_pc = 2508
 				continue
 			else:
@@ -399,7 +399,7 @@ func local_2328(v0, v1) -> Variant:
 			_pc = 2537
 			continue
 		elif _pc == 2537:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 2402
 			continue
 		elif _pc == 2555:
@@ -415,14 +415,14 @@ func local_2563(v0, v1) -> Variant:
 	var _pc: int = 2563
 	while true:
 		if _pc == 2563:
-			if 2 == list.item_count(v0):
+			if list.item_count(v0) == 2:
 				_pc = 2589
 				continue
 			else:
 				_pc = 2706
 				continue
 		elif _pc == 2589:
-			if isim.is_docked_to(isim.cast(list.get_nth(v0, 1)), v1) and isim.is_docked_to(isim.cast(list.get_nth(v0, 0)), v1):
+			if isim.is_docked_to(isim.cast(list.get_nth(v0, 0)), v1) and isim.is_docked_to(isim.cast(list.get_nth(v0, 1)), v1):
 				_pc = 2695
 				continue
 			else:
@@ -493,7 +493,7 @@ func local_2775(v0, v1, v2) -> Variant:
 			_pog_detach(_pog_spawn(local_499.bind(v1, v0, v2)))
 			await iconversation.one_liner(0, "name_clay", "a1_training_dialogue_clay_reseting")
 			ihud.set_prompt("", "")
-			if 8 != state.progress(v2):
+			if state.progress(v2) != 8:
 				_pc = 3130
 				continue
 			else:
@@ -536,14 +536,14 @@ func local_2775(v0, v1, v2) -> Variant:
 				_pc = 3512
 				continue
 		elif _pc == 3346:
-			if object.int_property(v2, "best_time") < v7 - v6:
+			if v6 - v7 < object.int_property(v2, "best_time"):
 				_pc = 3388
 				continue
 			else:
 				_pc = 3458
 				continue
 		elif _pc == 3388:
-			object.set_int_property(v2, "best_time", v7 - v6)
+			object.set_int_property(v2, "best_time", v6 - v7)
 			await iconversation.one_liner(0, "name_clay", "a1_training_dialogue_clay_good")
 			_pc = 3486
 			continue
@@ -557,7 +557,7 @@ func local_2775(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 3512:
 			await iconversation.one_liner(0, "name_clay", "a1_training_dialogue_clay_tough_luck")
-			if 8 != state.progress(v2):
+			if state.progress(v2) != 8:
 				_pc = 3566
 				continue
 			else:
@@ -610,7 +610,7 @@ func local_3705(v0, v1, v2) -> Variant:
 			_pc = 4333
 			continue
 		elif _pc == 4020:
-			if 3 != state.progress(v2):
+			if state.progress(v2) != 3:
 				_pc = 4046
 				continue
 			else:
@@ -641,7 +641,7 @@ func local_3705(v0, v1, v2) -> Variant:
 			_pc = 4333
 			continue
 		elif _pc == 4297:
-			if v4 != 1:
+			if 1 != v4:
 				_pc = 4310
 				continue
 			else:
@@ -694,7 +694,7 @@ func local_4349(v0, v1, v2) -> Variant:
 				_pc = 4641
 				continue
 		elif _pc == 4424:
-			if 1 != state.progress(v2) and 1 == (1 - _pog_is_running(v6)) and 800.0 <= sim.distance_between(v0, v3):
+			if sim.distance_between(v0, v3) <= 800.0 and (1 - _pog_is_running(v6)) == 1 and state.progress(v2) != 1:
 				_pc = 4500
 				continue
 			else:
@@ -741,7 +741,7 @@ func main_task() -> Variant:
 			v3 = iship.find_player_ship()
 			v5 = null
 			v6 = state.find(self)
-			if _pog_is_null(v6) and global.exists("g_started_wingmen_training"):
+			if global.exists("g_started_wingmen_training") and _pog_is_null(v6):
 				_pc = 4757
 				continue
 			else:
@@ -764,7 +764,7 @@ func main_task() -> Variant:
 			_pc = 5495
 			continue
 		elif _pc == 4859:
-			if not _pog_is_null(await iwingmen.t_fighter_count()) and _pog_is_null(v6):
+			if _pog_is_null(v6) and not _pog_is_null(await iwingmen.t_fighter_count()):
 				_pc = 4888
 				continue
 			else:
@@ -797,14 +797,14 @@ func main_task() -> Variant:
 				_pc = 5489
 				continue
 		elif _pc == 5168:
-			if 1 == global.pog_int("g_current_act"):
+			if global.pog_int("g_current_act") == 1:
 				_pc = 5195
 				continue
 			else:
 				_pc = 5287
 				continue
 		elif _pc == 5195:
-			if not (v0) and global.pog_float("g_player_sensor_range") < sim.distance_between(v3, v4):
+			if sim.distance_between(v3, v4) < global.pog_float("g_player_sensor_range") and not (v0):
 				_pc = 5251
 				continue
 			else:
@@ -826,7 +826,7 @@ func main_task() -> Variant:
 			_pc = 5495
 			continue
 		elif _pc == 5380:
-			if 1 == (1 - _pog_is_running(v2)) and 700.0 <= sim.distance_between(v3, v4):
+			if sim.distance_between(v3, v4) <= 700.0 and (1 - _pog_is_running(v2)) == 1:
 				_pc = 5435
 				continue
 			else:

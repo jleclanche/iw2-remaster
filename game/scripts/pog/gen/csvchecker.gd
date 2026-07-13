@@ -181,7 +181,7 @@ func local_2625() -> Variant:
 			_pc = 3226
 			continue
 		elif _pc == 3168:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 3181
 				continue
 			else:

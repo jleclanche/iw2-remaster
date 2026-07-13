@@ -290,7 +290,7 @@ func local_1487(v0, v1) -> Variant:
 			continue
 		elif _pc == 2180:
 			isim.type(v0)
-			if isim.type(v0) != 131072:
+			if 131072 != isim.type(v0):
 				_pc = 2210
 				continue
 			else:
@@ -346,7 +346,7 @@ func local_1487(v0, v1) -> Variant:
 			continue
 		elif _pc == 2633:
 			await _pog_wait(0.10000000149011612)
-			if 2300.0 >= sim.distance_between(v0, v2):
+			if sim.distance_between(v0, v2) >= 2300.0:
 				_pc = 2699
 				continue
 			else:
@@ -396,7 +396,7 @@ func local_3258(v0) -> Variant:
 			_pc = 3331
 			continue
 		elif _pc == 3331:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 3347
 				continue
 			else:
@@ -404,7 +404,7 @@ func local_3258(v0) -> Variant:
 				continue
 		elif _pc == 3347:
 			isim.lock_down_weapons(isim.cast(list.get_nth(v1, v3)))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 3331
 			continue
 		elif _pc == 3415:
@@ -803,7 +803,7 @@ func local_7005() -> Variant:
 	global.create_list("g_turret_fighters", 2, v3)
 	await iwingmen.add_t_fighters(v4, v3)
 	v2 = iloadout.cargo()
-	if not _pog_is_null(iloadout.ship()) and -1 != v2:
+	if v2 != -1 and not _pog_is_null(iloadout.ship()):
 		v0 = iship.create("ini:/sims/ships/utility/freightpod", "name_cargo_pod")
 		object.set_int_property(v0, "cargo", v2)
 		sim.set_cullable(v0, 0)
@@ -863,7 +863,7 @@ func local_7610() -> Variant:
 			_pc = 7752
 			continue
 		elif _pc == 7752:
-			if list.item_count(v0) < v3:
+			if v3 < list.item_count(v0):
 				_pc = 7781
 				continue
 			else:
@@ -871,7 +871,7 @@ func local_7610() -> Variant:
 				continue
 		elif _pc == 7781:
 			v10 = sim.cast(list.get_nth(v0, v3))
-			if not (sim.is_hidden(v10)) and sim.is_alive(v10):
+			if sim.is_alive(v10) and not (sim.is_hidden(v10)):
 				_pc = 7866
 				continue
 			else:
@@ -882,7 +882,7 @@ func local_7610() -> Variant:
 			_pc = 7890
 			continue
 		elif _pc == 7890:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 7752
 			continue
 		elif _pc == 7908:
@@ -906,7 +906,7 @@ func local_7610() -> Variant:
 			_pc = 8030
 			continue
 		elif _pc == 8030:
-			if sim.is_dead(v7) or _pog_is_null(v7):
+			if _pog_is_null(v7) or sim.is_dead(v7):
 				_pc = 8062
 				continue
 			else:
@@ -923,9 +923,9 @@ func local_7610() -> Variant:
 			continue
 		elif _pc == 8116:
 			v9 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
-			v6 = list.from_set(isim.sims_in_radius(isim.cast(v9), 25000.0 + object.float_property(v9, "radius"), 1050624))
+			v6 = list.from_set(isim.sims_in_radius(isim.cast(v9), object.float_property(v9, "radius") + 25000.0, 1050624))
 			v4 = list.item_count(v6)
-			if 0 > v4:
+			if v4 > 0:
 				_pc = 8286
 				continue
 			else:
@@ -936,7 +936,7 @@ func local_7610() -> Variant:
 			_pc = 8293
 			continue
 		elif _pc == 8293:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 8309
 				continue
 			else:
@@ -971,7 +971,7 @@ func local_7610() -> Variant:
 			_pc = 8588
 			continue
 		elif _pc == 8588:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 8293
 			continue
 		elif _pc == 8606:
@@ -1019,7 +1019,7 @@ func local_8720() -> Variant:
 			_pc = 8908
 			continue
 		elif _pc == 8801:
-			if _pog_eq("", v0):
+			if _pog_eq(v0, ""):
 				_pc = 8820
 				continue
 			else:
@@ -1144,7 +1144,7 @@ func local_9700(v0) -> Variant:
 			_pc = 10034
 			continue
 		elif _pc == 9886:
-			if v0 != 1:
+			if 1 != v0:
 				_pc = 9899
 				continue
 			else:
@@ -1347,8 +1347,8 @@ func hide_map_locations() -> Variant:
 			_pc = 11399
 			continue
 		elif _pc == 11598:
-			v3 = 1 + v3
-			if 17 >= v3:
+			v3 = v3 + 1
+			if v3 >= 17:
 				_pc = 11624
 				continue
 			else:
@@ -1390,7 +1390,7 @@ func local_11670() -> Variant:
 func local_12002() -> Variant:
 	if not (global.exists("g_jafs_menu_option_enabled")):
 		ihud.set_menu_node_enabled("hud_menu_call_jafs", 0)
-	if not (2 != igame.game_type() and not (global.exists("g_tfighters_menu_option_enabled"))):
+	if not (not (global.exists("g_tfighters_menu_option_enabled")) and igame.game_type() != 2):
 		return 0
 	ihud.set_menu_node_enabled("hud_menu_wingmen", 0)
 	ihud.set_menu_node_enabled("hud_menu_tfighters", 0)
@@ -1416,7 +1416,7 @@ func startup_session() -> Variant:
 	return 0
 
 func startup_space() -> Variant:
-	if 3 != igame.game_type() and 2 != igame.game_type():
+	if igame.game_type() != 2 and igame.game_type() != 3:
 		igame.enable_blackout(1)
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.StartupSpace: Setting up for spaceflight...\n")
@@ -1483,7 +1483,7 @@ func final_setup() -> Variant:
 			_pc = 12647
 			continue
 		elif _pc == 12647:
-			if _pog_eq("map:/geog/badlands/santa_romera", global.string("g_player_base_system")):
+			if _pog_eq(global.string("g_player_base_system"), "map:/geog/badlands/santa_romera"):
 				_pc = 12680
 				continue
 			else:
@@ -1503,7 +1503,7 @@ func final_setup() -> Variant:
 			_pc = 12803
 			continue
 		elif _pc == 12803:
-			if 1 == global.pog_bool("g_act3_ready_for_mission_ten"):
+			if global.pog_bool("g_act3_ready_for_mission_ten") == 1:
 				_pc = 12830
 				continue
 			else:
@@ -1562,7 +1562,7 @@ func final_setup() -> Variant:
 			continue
 		elif _pc == 13298:
 			isim.type(v1)
-			if isim.type(v1) != 131072:
+			if 131072 != isim.type(v1):
 				_pc = 13328
 				continue
 			else:
@@ -1620,7 +1620,7 @@ func final_setup() -> Variant:
 				_pc = 13765
 				continue
 		elif _pc == 13522:
-			if 1 == global.pog_bool("g_act3_capture_accelerator_complete"):
+			if global.pog_bool("g_act3_capture_accelerator_complete") == 1:
 				_pc = 13549
 				continue
 			else:
@@ -1669,7 +1669,7 @@ func startup_system() -> Variant:
 			v0 = null
 			v1 = null
 			v2 = null
-			if 2 != igame.game_type():
+			if igame.game_type() != 2:
 				_pc = 14006
 				continue
 			else:
@@ -1696,7 +1696,7 @@ func startup_system() -> Variant:
 			_pc = 14188
 			continue
 		elif _pc == 14188:
-			if not _pog_eq(v2, v1):
+			if not _pog_eq(v1, v2):
 				_pc = 14205
 				continue
 			else:
@@ -1710,7 +1710,7 @@ func startup_system() -> Variant:
 			_pc = 14231
 			continue
 		elif _pc == 14231:
-			if not _pog_eq("", v2):
+			if not _pog_eq(v2, ""):
 				_pc = 14250
 				continue
 			else:
@@ -1796,7 +1796,7 @@ func startup_system() -> Variant:
 		elif _pc == 14805:
 			ihabitat.set_reactive_function("iStation.StationReactive")
 			await local_0("g_monitor_station_reaction", _pog_spawn(istation.check_station_reaction.bind()))
-			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 14887
 				continue
 			else:
@@ -1810,7 +1810,7 @@ func startup_system() -> Variant:
 				_pc = 14970
 				continue
 		elif _pc == 14912:
-			if 1 == global.pog_bool("g_act3_capture_accelerator_complete"):
+			if global.pog_bool("g_act3_capture_accelerator_complete") == 1:
 				_pc = 14939
 				continue
 			else:
@@ -1893,7 +1893,7 @@ func local_15348(v0) -> Variant:
 			_pc = 15405
 			continue
 		elif _pc == 15405:
-			if 6 < v3:
+			if v3 < 6:
 				_pc = 15418
 				continue
 			else:
@@ -1907,7 +1907,7 @@ func local_15348(v0) -> Variant:
 			isim.set_indestructable(v2, 1)
 			isim.set_sensor_visibility(v2, 0)
 			sim.avatar_add_channel(v2, "lda_on", 1.0)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 15405
 			continue
 		elif _pc == 15607:
@@ -1951,7 +1951,7 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 	var _pc: int = 15790
 	while true:
 		if _pc == 15790:
-			if sim.is_dead(v0) or _pog_is_null(v0):
+			if _pog_is_null(v0) or sim.is_dead(v0):
 				_pc = 15827
 				continue
 			else:
@@ -1968,7 +1968,7 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 			_pc = 16866
 			continue
 		elif _pc == 15858:
-			if 8192 != isim.type(v0):
+			if isim.type(v0) != 8192:
 				_pc = 15885
 				continue
 			else:
@@ -1985,7 +1985,7 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 			_pc = 16866
 			continue
 		elif _pc == 15916:
-			if not _pog_eq("Formhault Jump Accelerator", sim.pog_name(v0)) and not _pog_eq("Jump Accelerator", sim.pog_name(v0)):
+			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
 				_pc = 15977
 				continue
 			else:
@@ -2064,7 +2064,7 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 			continue
 		elif _pc == 16279:
 			v2 = group.cast(object.handle_property(v0, "node_group"))
-			if _pog_is_null(group.sim_count(v2)) or _pog_is_null(v2):
+			if _pog_is_null(v2) or _pog_is_null(group.sim_count(v2)):
 				_pc = 16357
 				continue
 			else:
@@ -2088,7 +2088,7 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 			_pc = 16470
 			continue
 		elif _pc == 16470:
-			if group.sim_count(v2) < v5:
+			if v5 < group.sim_count(v2):
 				_pc = 16499
 				continue
 			else:
@@ -2096,7 +2096,7 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 				continue
 		elif _pc == 16499:
 			sim.avatar_add_channel(group.nth_sim(v2, v5), "lda_on", 1.0)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 16470
 			continue
 		elif _pc == 16566:
@@ -2167,7 +2167,7 @@ func jumpgate_shield_off(v0) -> Variant:
 	var _pc: int = 16869
 	while true:
 		if _pc == 16869:
-			if sim.is_dead(v0) or _pog_is_null(v0):
+			if _pog_is_null(v0) or sim.is_dead(v0):
 				_pc = 16906
 				continue
 			else:
@@ -2184,7 +2184,7 @@ func jumpgate_shield_off(v0) -> Variant:
 			_pc = 17603
 			continue
 		elif _pc == 16937:
-			if 8192 != isim.type(v0):
+			if isim.type(v0) != 8192:
 				_pc = 16964
 				continue
 			else:
@@ -2201,7 +2201,7 @@ func jumpgate_shield_off(v0) -> Variant:
 			_pc = 17603
 			continue
 		elif _pc == 16995:
-			if not _pog_eq("Formhault Jump Accelerator", sim.pog_name(v0)) and not _pog_eq("Jump Accelerator", sim.pog_name(v0)):
+			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
 				_pc = 17056
 				continue
 			else:
@@ -2253,7 +2253,7 @@ func jumpgate_shield_off(v0) -> Variant:
 			continue
 		elif _pc == 17211:
 			v1 = group.cast(object.handle_property(v0, "node_group"))
-			if _pog_is_null(group.sim_count(v1)) or _pog_is_null(v1):
+			if _pog_is_null(v1) or _pog_is_null(group.sim_count(v1)):
 				_pc = 17289
 				continue
 			else:
@@ -2271,7 +2271,7 @@ func jumpgate_shield_off(v0) -> Variant:
 			continue
 		elif _pc == 17320:
 			v2 = isim.cast(object.handle_property(v0, "shield_handle"))
-			if sim.is_dead(v2) or _pog_is_null(v2):
+			if _pog_is_null(v2) or sim.is_dead(v2):
 				_pc = 17396
 				continue
 			else:
@@ -2292,7 +2292,7 @@ func jumpgate_shield_off(v0) -> Variant:
 			_pc = 17434
 			continue
 		elif _pc == 17434:
-			if group.sim_count(v1) < v3:
+			if v3 < group.sim_count(v1):
 				_pc = 17463
 				continue
 			else:
@@ -2301,7 +2301,7 @@ func jumpgate_shield_off(v0) -> Variant:
 		elif _pc == 17463:
 			await _pog_wait(0.25)
 			sim.avatar_remove_channel(group.nth_sim(v1, v3), "lda_on")
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 17434
 			continue
 		elif _pc == 17557:
@@ -2337,7 +2337,7 @@ func local_17606() -> Variant:
 			_pc = 17708
 			continue
 		elif _pc == 17708:
-			if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 17736
 				continue
 			else:
@@ -2355,7 +2355,7 @@ func local_17606() -> Variant:
 			continue
 		elif _pc == 17767:
 			await _pog_wait(1.0)
-			if 10000000.0 <= sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) <= 10000000.0:
 				_pc = 17833
 				continue
 			else:
@@ -2370,7 +2370,7 @@ func local_17606() -> Variant:
 			_pc = 17879
 			continue
 		elif _pc == 17879:
-			if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 17907
 				continue
 			else:
@@ -2388,7 +2388,7 @@ func local_17606() -> Variant:
 			continue
 		elif _pc == 17938:
 			await _pog_wait(5.0)
-			if 10000000.0 > sim.distance_between(v0, v1):
+			if sim.distance_between(v0, v1) > 10000000.0:
 				_pc = 18004
 				continue
 			else:

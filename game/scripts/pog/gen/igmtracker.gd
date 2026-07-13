@@ -80,7 +80,7 @@ func add_g_m_enum(v0) -> Variant:
 		debug.print_string("\n")
 	v2 = string.join("gl_missgen_list_", string.from_int(v1))
 	global.create_int(v2, 2, v0)
-	v1 = 1 + v1
+	v1 = v1 + 1
 	global.set_int("gl_missgen_number_available", v1)
 	return 0
 	global.set_int("gl_missgen_number_available", 0)
@@ -90,7 +90,7 @@ func add_g_m_enum(v0) -> Variant:
 func set_g_m_range(v0, v1) -> Variant:
 	var v2: Variant = 0
 	v2 = global.pog_int("gl_missgen_index")
-	if v2 < v0:
+	if v0 < v2:
 		v0 = v2
 	global.set_int("gl_missgen_index", v0)
 	global.set_int("gl_missgen_max_index", v1)
@@ -171,7 +171,7 @@ func g_m_tracker() -> Variant:
 			_pc = 1176
 			continue
 		elif _pc == 1176:
-			if v5 < v4:
+			if v4 < v5:
 				_pc = 1192
 				continue
 			else:
@@ -192,7 +192,7 @@ func g_m_tracker() -> Variant:
 			_pc = 1384
 			continue
 		elif _pc == 1384:
-			if v7 <= v6:
+			if v6 <= v7:
 				_pc = 1400
 				continue
 			else:
@@ -208,7 +208,7 @@ func g_m_tracker() -> Variant:
 			continue
 		elif _pc == 1424:
 			await _pog_wait(5.0)
-			if -1 != v3:
+			if v3 != -1:
 				_pc = 1469
 				continue
 			else:
@@ -224,8 +224,8 @@ func g_m_tracker() -> Variant:
 				continue
 		elif _pc == 1504:
 			global.set_int(v2, -1)
-			global.set_int("gl_missgen_number_currently_active", 1 + v4)
-			global.set_int("gl_missgen_index", 1 + global.pog_int("gl_missgen_index"))
+			global.set_int("gl_missgen_number_currently_active", v4 + 1)
+			global.set_int("gl_missgen_index", global.pog_int("gl_missgen_index") + 1)
 			_pc = 1595
 			continue
 		elif _pc == 1595:
@@ -259,7 +259,7 @@ func stepover_mission() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	global.set_int("gl_missgen_index", 1 + global.pog_int("gl_missgen_index"))
+	global.set_int("gl_missgen_index", global.pog_int("gl_missgen_index") + 1)
 	return 0
 	v2 = null
 	input.bind_key("iGMTracker.RunGMission", "ScriptKeys.StartGMission")
@@ -283,13 +283,13 @@ func stepover_mission() -> Variant:
 		debug.print_string(" maximum is ")
 		debug.print_int(v5)
 		debug.print_string("\n")
-	if v5 < v4 and not _pog_is_null(v0):
+	if not _pog_is_null(v0) and v4 < v5:
 		while true:
 			await _pog_wait(5.0)
 			if PogRuntime.TRACE:
 				debug.print_string("iGMTracker.GMTracker: picking a mission to try and start.\n")
-			if 1 > v0:
-				v1 = math.random_int(0, 1 - v0)
+			if v0 > 1:
+				v1 = math.random_int(0, v0 - 1)
 			else:
 				v0 = 0
 			v2 = string.join("gl_missgen_list_", string.from_int(v1))
@@ -302,12 +302,12 @@ func stepover_mission() -> Variant:
 				debug.print_string("iGMTracker.GMTracker: picked mission enum is ")
 				debug.print_int(v3)
 				debug.print_string("\n")
-			if not (-1 == v3):
+			if not (v3 == -1):
 				break
 		v6 = await igmtemplates.instantiate_mission(v3)
 		if v6:
 			global.set_int(v2, -1)
-			global.set_int("gl_missgen_number_currently_active", 1 + v4)
+			global.set_int("gl_missgen_number_currently_active", v4 + 1)
 	while true:
 		await _pog_wait(100.0)
 		if not (1):

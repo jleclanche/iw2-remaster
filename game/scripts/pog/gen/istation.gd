@@ -130,7 +130,7 @@ func local_498(v0, v1, v2) -> Variant:
 				_pc = 555
 				continue
 		elif _pc == 523:
-			if 1 == global.pog_bool("gl_station_reaction_no_report"):
+			if global.pog_bool("gl_station_reaction_no_report") == 1:
 				_pc = 550
 				continue
 			else:
@@ -176,7 +176,7 @@ func local_745(v0) -> Variant:
 	var _pc: int = 745
 	while true:
 		if _pc == 745:
-			if 14 == ifaction.allegiance(isim.faction(v0)):
+			if ifaction.allegiance(isim.faction(v0)) == 14:
 				_pc = 784
 				continue
 			else:
@@ -216,7 +216,7 @@ func local_837(v0, v1) -> Variant:
 	while true:
 		if _pc == 837:
 			v2 = null
-			if 53 == ihabitat.allegiance(v0):
+			if ihabitat.allegiance(v0) == 53:
 				_pc = 879
 				continue
 			else:
@@ -269,7 +269,7 @@ func local_837(v0, v1) -> Variant:
 			_pc = 1057
 			continue
 		elif _pc == 1034:
-			if v1 != 6:
+			if 6 != v1:
 				_pc = 1048
 				continue
 			else:
@@ -287,7 +287,7 @@ func local_837(v0, v1) -> Variant:
 			v4 = inifile.pog_int(v3, v2, "num_entries", 1)
 			v5 = math.random_int(1, v4)
 			v2 = string.join(v2, string.from_int(v5))
-			if 7 > object.i_d_modulus(v0, 13):
+			if object.i_d_modulus(v0, 13) > 7:
 				_pc = 1224
 				continue
 			else:
@@ -474,14 +474,14 @@ func local_1627(v0, v1, v2) -> Variant:
 		elif _pc == 1674:
 			object.add_list_property(v1, "enemy_list", v4)
 			object.add_float_property(v0, "warned_time", igame.game_time())
-			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+			if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
 				_pc = 1788
 				continue
 			else:
 				_pc = 1851
 				continue
 		elif _pc == 1788:
-			if 1000.0 < v2:
+			if v2 < 1000.0:
 				_pc = 1804
 				continue
 			else:
@@ -496,7 +496,7 @@ func local_1627(v0, v1, v2) -> Variant:
 			_pc = 1851
 			continue
 		elif _pc == 1851:
-			if 1000.0 < v2:
+			if v2 < 1000.0:
 				_pc = 1867
 				continue
 			else:
@@ -522,7 +522,7 @@ func local_1627(v0, v1, v2) -> Variant:
 				_pc = 2115
 				continue
 		elif _pc == 1995:
-			if 1000.0 < v2:
+			if v2 < 1000.0:
 				_pc = 2011
 				continue
 			else:
@@ -542,18 +542,18 @@ func local_1627(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 2115:
 			v5 = object.int_property(v0, "warned_level")
-			v3 = object.float_property(v0, "warned_time") - igame.game_time()
+			v3 = igame.game_time() - object.float_property(v0, "warned_time")
 			_pc = 2939
 			continue
 		elif _pc == 2196:
-			if 10.0 <= v3:
+			if v3 <= 10.0:
 				_pc = 2212
 				continue
 			else:
 				_pc = 2349
 				continue
 		elif _pc == 2212:
-			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+			if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
 				_pc = 2256
 				continue
 			else:
@@ -570,14 +570,14 @@ func local_1627(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 2349:
 			await local_498("add_station_enemy: This vessel was warned a while ago - sticking with gentle warn...", v1, v0)
-			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+			if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
 				_pc = 2424
 				continue
 			else:
 				_pc = 2487
 				continue
 		elif _pc == 2424:
-			if 1000.0 < v2:
+			if v2 < 1000.0:
 				_pc = 2440
 				continue
 			else:
@@ -592,7 +592,7 @@ func local_1627(v0, v1, v2) -> Variant:
 			_pc = 2487
 			continue
 		elif _pc == 2487:
-			if 1000.0 < v2:
+			if v2 < 1000.0:
 				_pc = 2503
 				continue
 			else:
@@ -614,7 +614,7 @@ func local_1627(v0, v1, v2) -> Variant:
 			_pc = 2966
 			continue
 		elif _pc == 2607:
-			if _pog_eq(await iremotepilot.return_current_remote_vessel(), v0) or _pog_eq(iship.find_player_ship(), v0):
+			if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
 				_pc = 2651
 				continue
 			else:
@@ -652,7 +652,7 @@ func local_1627(v0, v1, v2) -> Variant:
 			_pc = 2966
 			continue
 		elif _pc == 2939:
-			if v5 != 1:
+			if 1 != v5:
 				_pc = 2952
 				continue
 			else:
@@ -688,7 +688,7 @@ func local_2976(v0, v1) -> Variant:
 			continue
 		elif _pc == 3012:
 			v3 = isim.cast(list.get_nth(v1, v5))
-			if 15000.0 < sim.distance_between(v3, v0) and not (v2) and not _pog_is_null(v3):
+			if not _pog_is_null(v3) and not (v2) and sim.distance_between(v3, v0) < 15000.0:
 				_pc = 3104
 				continue
 			else:
@@ -701,11 +701,11 @@ func local_2976(v0, v1) -> Variant:
 			continue
 		elif _pc == 3140:
 			v2 = 0
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 3160
 			continue
 		elif _pc == 3160:
-			if v4 >= v5:
+			if v5 >= v4:
 				_pc = 3176
 				continue
 			else:
@@ -725,7 +725,7 @@ func local_3185(v0, v1, v2, v3) -> Variant:
 	while true:
 		if _pc == 3185:
 			v4 = ifaction.allegiance(isim.faction(v0))
-			if 6 == v4 or 2 == v4 or 1 == v4:
+			if v4 == 1 or v4 == 2 or v4 == 6:
 				_pc = 3257
 				continue
 			else:
@@ -781,7 +781,7 @@ func local_3185(v0, v1, v2, v3) -> Variant:
 			_pc = 3487
 			continue
 		elif _pc == 3487:
-			if v2 < v6:
+			if v6 < v2:
 				_pc = 3503
 				continue
 			else:
@@ -791,7 +791,7 @@ func local_3185(v0, v1, v2, v3) -> Variant:
 			object.set_bool_property(group.nth_sim(v5, v6), "ignore_speed_limit", 1)
 			object.add_handle_property(group.nth_sim(v5, v6), "traffic_handler_task", 0)
 			sim.set_cullable(group.nth_sim(v5, v6), 1)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 3487
 			continue
 		elif _pc == 3649:
@@ -855,7 +855,7 @@ func local_3661(v0, v1, v2, v3) -> Variant:
 			_pc = 3909
 			continue
 		elif _pc == 3909:
-			if v2 < v6:
+			if v6 < v2:
 				_pc = 3925
 				continue
 			else:
@@ -865,7 +865,7 @@ func local_3661(v0, v1, v2, v3) -> Variant:
 			object.set_bool_property(group.nth_sim(v5, v6), "ignore_speed_limit", 1)
 			object.add_handle_property(group.nth_sim(v5, v6), "traffic_handler_task", 0)
 			sim.set_cullable(group.nth_sim(v5, v6), 1)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 3909
 			continue
 		elif _pc == 4071:
@@ -897,7 +897,7 @@ func local_4083(v0, v1, v2) -> Variant:
 				_pc = 4246
 				continue
 		elif _pc == 4146:
-			if 4 >= list.item_count(v1):
+			if list.item_count(v1) >= 4:
 				_pc = 4172
 				continue
 			else:
@@ -915,7 +915,7 @@ func local_4083(v0, v1, v2) -> Variant:
 			_pc = 4317
 			continue
 		elif _pc == 4246:
-			if 3 < group.total_sim_count(v4):
+			if group.total_sim_count(v4) < 3:
 				_pc = 4272
 				continue
 			else:
@@ -946,11 +946,11 @@ func local_4083(v0, v1, v2) -> Variant:
 		elif _pc == 4367:
 			v6 = isim.cast(list.head(v1))
 			ihabitat.set_armed_with_target(v0, v6)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 4441
 			continue
 		elif _pc == 4441:
-			if 1 == list.item_count(v1):
+			if list.item_count(v1) == 1:
 				_pc = 4466
 				continue
 			else:
@@ -964,7 +964,7 @@ func local_4083(v0, v1, v2) -> Variant:
 		elif _pc == 4532:
 			v7 = isim.cast(list.get_nth(v1, v8))
 			iai.give_attack_order(v4, v7)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 4611
 			continue
 		elif _pc == 4611:
@@ -980,7 +980,7 @@ func local_4083(v0, v1, v2) -> Variant:
 				continue
 		elif _pc == 4630:
 			v1 = object.list_property(v0, "enemy_list")
-			if not (v3) and _pog_is_null(list.item_count(v1)):
+			if _pog_is_null(list.item_count(v1)) and not (v3):
 				_pc = 4694
 				continue
 			else:
@@ -1018,14 +1018,14 @@ func local_4083(v0, v1, v2) -> Variant:
 				_pc = 4996
 				continue
 		elif _pc == 4854:
-			if 15000.0 > sim.distance_between(v6, v0) or _pog_is_null(v6):
+			if _pog_is_null(v6) or sim.distance_between(v6, v0) > 15000.0:
 				_pc = 4897
 				continue
 			else:
 				_pc = 4996
 				continue
 		elif _pc == 4897:
-			if 1 == list.item_count(v1):
+			if list.item_count(v1) == 1:
 				_pc = 4922
 				continue
 			else:
@@ -1034,11 +1034,11 @@ func local_4083(v0, v1, v2) -> Variant:
 		elif _pc == 4922:
 			v6 = isim.cast(list.head(v1))
 			ihabitat.set_armed_with_target(v0, v6)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 4996
 			continue
 		elif _pc == 4996:
-			if 150000.0 > sim.distance_between(v7, v0):
+			if sim.distance_between(v7, v0) > 150000.0:
 				_pc = 5030
 				continue
 			else:
@@ -1053,14 +1053,14 @@ func local_4083(v0, v1, v2) -> Variant:
 			_pc = 5144
 			continue
 		elif _pc == 5144:
-			if 150000.0 < sim.distance_between(v7, v0) and _pog_is_null(v7):
+			if _pog_is_null(v7) and sim.distance_between(v7, v0) < 150000.0:
 				_pc = 5187
 				continue
 			else:
 				_pc = 5357
 				continue
 		elif _pc == 5187:
-			if 1 == list.item_count(v1):
+			if list.item_count(v1) == 1:
 				_pc = 5212
 				continue
 			else:
@@ -1074,7 +1074,7 @@ func local_4083(v0, v1, v2) -> Variant:
 		elif _pc == 5278:
 			v7 = isim.cast(list.get_nth(v1, v8))
 			iai.give_attack_order(v4, v7)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 5357
 			continue
 		elif _pc == 5357:
@@ -1114,16 +1114,16 @@ func local_5500(v0) -> Variant:
 		if _pc == 5500:
 			v1 = object.float_property(v0, "radius")
 			v2 = null
-			v2 = list.from_set(isim.sims_in_radius(isim.cast(v0), 50000.0 + v1, 536838144))
+			v2 = list.from_set(isim.sims_in_radius(isim.cast(v0), v1 + 50000.0, 536838144))
 			v3 = isim.faction(isim.cast(v0))
 			v4 = ifaction.find("Police")
 			v5 = ifaction.find("Military")
 			v8 = list.item_count(v2)
-			v9 = 1 - v8
+			v9 = v8 - 1
 			_pc = 5739
 			continue
 		elif _pc == 5739:
-			if 0 >= v9:
+			if v9 >= 0:
 				_pc = 5751
 				continue
 			else:
@@ -1131,7 +1131,7 @@ func local_5500(v0) -> Variant:
 				continue
 		elif _pc == 5751:
 			v7 = isim.cast(list.get_nth(v2, v9))
-			if not (object.property_exists(v7, "traffic_handler_task")) or not _pog_eq(v5, v3) and not _pog_eq(v4, v3) and not _pog_eq(isim.faction(v7), v3):
+			if not _pog_eq(v3, isim.faction(v7)) and not _pog_eq(v3, v4) and not _pog_eq(v3, v5) or not (object.property_exists(v7, "traffic_handler_task")):
 				_pc = 5873
 				continue
 			else:
@@ -1142,7 +1142,7 @@ func local_5500(v0) -> Variant:
 			_pc = 5897
 			continue
 		elif _pc == 5897:
-			v9 = -1 + v9
+			v9 = v9 + -1
 			_pc = 5739
 			continue
 		elif _pc == 5916:
@@ -1265,11 +1265,11 @@ func local_6298(v0) -> Variant:
 		elif _pc == 6355:
 			v2 = object.list_property(v0, "enemy_list")
 			v9 = list.item_count(v2)
-			v11 = 1 - v9
+			v11 = v9 - 1
 			_pc = 6424
 			continue
 		elif _pc == 6424:
-			if 0 >= v11:
+			if v11 >= 0:
 				_pc = 6436
 				continue
 			else:
@@ -1277,7 +1277,7 @@ func local_6298(v0) -> Variant:
 				continue
 		elif _pc == 6436:
 			v4 = iship.cast(list.get_nth(v2, v11))
-			if 150000.0 > sim.distance_between(v4, v0) or sim.is_dead(v4) or isim.is_dying(v4):
+			if isim.is_dying(v4) or sim.is_dead(v4) or sim.distance_between(v4, v0) > 150000.0:
 				_pc = 6550
 				continue
 			else:
@@ -1288,20 +1288,20 @@ func local_6298(v0) -> Variant:
 			_pc = 6574
 			continue
 		elif _pc == 6574:
-			v11 = -1 + v11
+			v11 = v11 + -1
 			_pc = 6424
 			continue
 		elif _pc == 6593:
 			object.set_list_property(v0, "enemy_list", v2)
 			v9 = list.item_count(v2)
-			if not _pog_eq(v8, v9):
+			if not _pog_eq(v9, v8):
 				_pc = 6664
 				continue
 			else:
 				_pc = 6840
 				continue
 		elif _pc == 6664:
-			if _pog_is_null(sim.find_subsim_by_name(v0, "fortress_cannon")) or 2 > v9:
+			if v9 > 2 or _pog_is_null(sim.find_subsim_by_name(v0, "fortress_cannon")):
 				_pc = 6706
 				continue
 			else:
@@ -1322,7 +1322,7 @@ func local_6298(v0) -> Variant:
 			_pc = 6840
 			continue
 		elif _pc == 6766:
-			if not (_pog_is_running(v7)) and not (_pog_is_running(v6)):
+			if not (_pog_is_running(v6)) and not (_pog_is_running(v7)):
 				_pc = 6810
 				continue
 			else:
@@ -1347,7 +1347,7 @@ func local_6298(v0) -> Variant:
 			_pc = 6920
 			continue
 		elif _pc == 6920:
-			if v10 < v11:
+			if v11 < v10:
 				_pc = 6936
 				continue
 			else:
@@ -1362,11 +1362,11 @@ func local_6298(v0) -> Variant:
 				_pc = 7094
 				continue
 		elif _pc == 7010:
-			_pog_detach(_pog_spawn(local_5936.bind(v5, iship.cast(list.get_nth(v2, math.random_int(0, 1 - v9))))))
+			_pog_detach(_pog_spawn(local_5936.bind(v5, iship.cast(list.get_nth(v2, math.random_int(0, v9 - 1))))))
 			_pc = 7094
 			continue
 		elif _pc == 7094:
-			v11 = 1 + v11
+			v11 = v11 + 1
 			_pc = 6920
 			continue
 		elif _pc == 7112:
@@ -1445,7 +1445,7 @@ func check_station_reaction() -> Variant:
 		elif _pc == 7474:
 			await local_498("Checking active location list.\n", 0, 0)
 			v7 = iship.find_player_ship()
-			if 1 == global.exists("g_active_location_list"):
+			if global.exists("g_active_location_list") == 1:
 				_pc = 7543
 				continue
 			else:
@@ -1466,7 +1466,7 @@ func check_station_reaction() -> Variant:
 			_pc = 7702
 			continue
 		elif _pc == 7702:
-			if v10 < v12:
+			if v12 < v10:
 				_pc = 7718
 				continue
 			else:
@@ -1490,7 +1490,7 @@ func check_station_reaction() -> Variant:
 				_pc = 8378
 				continue
 		elif _pc == 7877:
-			if not (object.property_exists(v3, "initial_greet")) and 50000.0 + v9 <= sim.distance_between(v7, v3):
+			if sim.distance_between(v7, v3) <= v9 + 50000.0 and not (object.property_exists(v3, "initial_greet")):
 				_pc = 7944
 				continue
 			else:
@@ -1499,7 +1499,7 @@ func check_station_reaction() -> Variant:
 		elif _pc == 7944:
 			object.add_bool_property(v3, "initial_greet", 1)
 			iship.has_fired(v7)
-			if 0.0 < ifaction.feeling(v2, isim.faction(v7)):
+			if ifaction.feeling(v2, isim.faction(v7)) < 0.0:
 				_pc = 8037
 				continue
 			else:
@@ -1522,7 +1522,7 @@ func check_station_reaction() -> Variant:
 			_pc = 8231
 			continue
 		elif _pc == 8163:
-			if 0.0 > ifaction.feeling(v2, isim.faction(v7)):
+			if ifaction.feeling(v2, isim.faction(v7)) > 0.0:
 				_pc = 8210
 				continue
 			else:
@@ -1536,14 +1536,14 @@ func check_station_reaction() -> Variant:
 			_pc = 8378
 			continue
 		elif _pc == 8236:
-			if object.property_exists(v3, "initial_greet") and 50000.0 + v9 <= sim.distance_between(v7, v3):
+			if sim.distance_between(v7, v3) <= v9 + 50000.0 and object.property_exists(v3, "initial_greet"):
 				_pc = 8302
 				continue
 			else:
 				_pc = 8378
 				continue
 		elif _pc == 8302:
-			if 0.0 < ifaction.feeling(v2, isim.faction(v7)):
+			if ifaction.feeling(v2, isim.faction(v7)) < 0.0:
 				_pc = 8349
 				continue
 			else:
@@ -1561,7 +1561,7 @@ func check_station_reaction() -> Variant:
 				_pc = 8830
 				continue
 		elif _pc == 8391:
-			v1 = isim.sims_in_radius(v3, 50000.0 + v9, 502398976)
+			v1 = isim.sims_in_radius(v3, v9 + 50000.0, 502398976)
 			_pc = 8433
 			continue
 		elif _pc == 8433:
@@ -1574,14 +1574,14 @@ func check_station_reaction() -> Variant:
 				continue
 		elif _pc == 8493:
 			v8 = iship.cast(iship.last_fire_target(v6))
-			if not _pog_eq(v3, v8):
+			if not _pog_eq(v8, v3):
 				_pc = 8548
 				continue
 			else:
 				_pc = 8782
 				continue
 		elif _pc == 8548:
-			if _pog_eq(sim.cast(v6), sim.cast(iship.last_fire_target(v8))) or _pog_eq(v5, v2) or _pog_eq(v4, isim.faction(v8)) and not _pog_eq(v4, v2) or _pog_eq(sim.cast(v3), sim.cast(iship.last_fire_target(v8))):
+			if _pog_eq(sim.cast(iship.last_fire_target(v8)), sim.cast(v3)) or not _pog_eq(v2, v4) and _pog_eq(isim.faction(v8), v4) or _pog_eq(v2, v5) or _pog_eq(sim.cast(iship.last_fire_target(v8)), sim.cast(v6)):
 				_pc = 8703
 				continue
 			else:
@@ -1611,7 +1611,7 @@ func check_station_reaction() -> Variant:
 				_pc = 8433
 				continue
 		elif _pc == 8830:
-			v12 = 1 + v12
+			v12 = v12 + 1
 			_pc = 7702
 			continue
 		elif _pc == 8848:
@@ -1648,7 +1648,7 @@ func station_reactive() -> Variant:
 			continue
 		elif _pc == 8940:
 			v3 = global.list("g_active_location_list")
-			if not (object.property_exists(v0, "reactive_exception")) and list.contains(v3, v0):
+			if list.contains(v3, v0) and not (object.property_exists(v0, "reactive_exception")):
 				_pc = 9022
 				continue
 			else:
@@ -1673,7 +1673,7 @@ func station_reactive() -> Variant:
 				_pc = 9170
 				continue
 		elif _pc == 9131:
-			if 3 == object.int_property(v1, "warned_level"):
+			if object.int_property(v1, "warned_level") == 3:
 				_pc = 9164
 				continue
 			else:

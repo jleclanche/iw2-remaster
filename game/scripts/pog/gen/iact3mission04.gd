@@ -168,7 +168,7 @@ func local_487(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, 
 				_pc = 1103
 				continue
 		elif _pc == 506:
-			if 100 == state.progress(v1):
+			if state.progress(v1) == 100:
 				_pc = 532
 				continue
 			else:
@@ -410,7 +410,7 @@ func mission_handler() -> Variant:
 			_pc = 10235
 			continue
 		elif _pc == 2591:
-			if not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 2619
 				continue
 			else:
@@ -424,7 +424,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 2718:
 			await _pog_wait(0.10000000149011612)
-			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 2778
 				continue
 			else:
@@ -452,7 +452,7 @@ func mission_handler() -> Variant:
 			_pc = 3297
 			continue
 		elif _pc == 3297:
-			if 4 < v30:
+			if v30 < 4:
 				_pc = 3310
 				continue
 			else:
@@ -467,11 +467,11 @@ func mission_handler() -> Variant:
 			sim.set_cullable(v14, 0)
 			group.add_sim(v9, v14)
 			isim.set_indestructable(v14, 1)
-			v15 = iship.create("ini:/sims/ships/independent/heavy_corvette_mca", string.join("a3_m04_ship_wingman_1+ +", string.from_int(1 + v30)))
+			v15 = iship.create("ini:/sims/ships/independent/heavy_corvette_mca", string.join("a3_m04_ship_wingman_1+ +", string.from_int(v30 + 1)))
 			group.add_sim(v10, v15)
 			await ipilotsetup.marauder(v15)
 			isim.set_faction(v15, v41)
-			v30 = 1 + v30
+			v30 = v30 + 1
 			_pc = 3297
 			continue
 		elif _pc == 3698:
@@ -487,7 +487,7 @@ func mission_handler() -> Variant:
 			_pc = 3944
 			continue
 		elif _pc == 3944:
-			if v31 < v30:
+			if v30 < v31:
 				_pc = 3960
 				continue
 			else:
@@ -498,7 +498,7 @@ func mission_handler() -> Variant:
 			iship.dock(v14, v11)
 			sim.set_cullable(v14, 0)
 			isim.set_indestructable(v14, 1)
-			v30 = 1 + v30
+			v30 = v30 + 1
 			_pc = 3944
 			continue
 		elif _pc == 4074:
@@ -519,7 +519,7 @@ func mission_handler() -> Variant:
 				_pc = 4321
 				continue
 		elif _pc == 4282:
-			if 4000.0 < sim.distance_between(v0, v11):
+			if sim.distance_between(v0, v11) < 4000.0:
 				_pc = 4316
 				continue
 			else:
@@ -549,7 +549,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 4659:
 			await _pog_wait(0.10000000149011612)
-			if _pog_eq("map:/geog/gagarin/formhault", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 4719
 				continue
 			else:
@@ -602,7 +602,7 @@ func mission_handler() -> Variant:
 			_pc = 5597
 			continue
 		elif _pc == 5597:
-			if group.sim_count(v10) < v30:
+			if v30 < group.sim_count(v10):
 				_pc = 5626
 				continue
 			else:
@@ -623,7 +623,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 5751:
 			sim.set_velocity(v17, 0.0, 0.0, 0.0)
-			v30 = 1 + v30
+			v30 = v30 + 1
 			_pc = 5597
 			continue
 		elif _pc == 5803:
@@ -668,7 +668,7 @@ func mission_handler() -> Variant:
 				_pc = 7056
 				continue
 		elif _pc == 6410:
-			if 40 > v30 or 40000.0 > sim.distance_between(v0, v13):
+			if sim.distance_between(v0, v13) > 40000.0 or v30 > 40:
 				_pc = 6453
 				continue
 			else:
@@ -689,7 +689,7 @@ func mission_handler() -> Variant:
 				_pc = 7051
 				continue
 		elif _pc == 6582:
-			if 0.75 < await iutilities.return_hull_structure(v13) and _pog_eq(await iwingmen.group(), sim.group(isim.last_attacker(v13))):
+			if _pog_eq(sim.group(isim.last_attacker(v13)), await iwingmen.group()) and await iutilities.return_hull_structure(v13) < 0.75:
 				_pc = 6657
 				continue
 			else:
@@ -748,7 +748,7 @@ func mission_handler() -> Variant:
 			_pc = 7450
 			continue
 		elif _pc == 7450:
-			if 6 < v30:
+			if v30 < 6:
 				_pc = 7463
 				continue
 			else:
@@ -758,7 +758,7 @@ func mission_handler() -> Variant:
 			v24 = iship.cast(group.nth_sim(v19, v30))
 			isim.set_indestructable(v24, 0)
 			sim.avatar_add_channel(v24, "lda_on", 1.0)
-			v30 = 1 + v30
+			v30 = v30 + 1
 			_pc = 7450
 			continue
 		elif _pc == 7574:
@@ -782,9 +782,9 @@ func mission_handler() -> Variant:
 				_pc = 8074
 				continue
 		elif _pc == 7820:
-			v30 = -1 + v30
+			v30 = v30 + -1
 			ihud.set_prompt(string.join("a3_m04_caption_fleet_arrives+ +", string.from_int(v30)), "")
-			if 1 < v30:
+			if v30 < 1:
 				_pc = 7906
 				continue
 			else:
@@ -832,7 +832,7 @@ func mission_handler() -> Variant:
 			group.add_sim(v8, iship.create("ini:/sims/ships/navy/old_corvette", "a3_m04_ship_interceptor3"))
 			group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor2"))
 			group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor3"))
-			if 0 > group.sim_count(v19):
+			if group.sim_count(v19) > 0:
 				_pc = 8492
 				continue
 			else:
@@ -858,7 +858,7 @@ func mission_handler() -> Variant:
 			_pc = 8795
 			continue
 		elif _pc == 8795:
-			if group.sim_count(v8) < v30:
+			if v30 < group.sim_count(v8):
 				_pc = 8824
 				continue
 			else:
@@ -869,7 +869,7 @@ func mission_handler() -> Variant:
 			iship.set_free_without_pilot(v24, 0)
 			sim.set_velocity(v24, 0.0, 0.0, 0.0)
 			isim.set_faction(v24, v41)
-			v30 = 1 + v30
+			v30 = v30 + 1
 			_pc = 8795
 			continue
 		elif _pc == 8962:
@@ -880,14 +880,14 @@ func mission_handler() -> Variant:
 			sim.set_velocity(v0, 0.0, 0.0, 0.0)
 			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
 			v10 = await iwingmen.purge_to_group()
-			if 0 > group.sim_count(v10):
+			if group.sim_count(v10) > 0:
 				_pc = 9209
 				continue
 			else:
 				_pc = 9309
 				continue
 		elif _pc == 9209:
-			if 1 > group.sim_count(v10):
+			if group.sim_count(v10) > 1:
 				_pc = 9234
 				continue
 			else:
@@ -910,7 +910,7 @@ func mission_handler() -> Variant:
 			isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Super Freighter Service Depot", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
 			isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
 			await icutsceneutilities.handle_abort(_pog_spawn(local_15369.bind(v5, v6, v0)))
-			if not (isim.is_capsule_jumping(v0)) and not _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera") and not (isim.is_capsule_jumping(v0)):
 				_pc = 9765
 				continue
 			else:
@@ -922,7 +922,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 9804:
 			await _pog_wait(0.10000000149011612)
-			if _pog_eq("map:/geog/badlands/santa_romera", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				_pc = 9864
 				continue
 			else:
@@ -982,7 +982,7 @@ func local_10251(v0, v1, v2, v3) -> Variant:
 			_pc = 10308
 			continue
 		elif _pc == 10308:
-			if v3 < v7:
+			if v7 < v3:
 				_pc = 10324
 				continue
 			else:
@@ -994,7 +994,7 @@ func local_10251(v0, v1, v2, v3) -> Variant:
 			sim.place_near(v6, v2, 5000.0)
 			await ipilotsetup.military_aggressive(v6)
 			isim.set_faction(v6, v5)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 10308
 			continue
 		elif _pc == 10467:
@@ -1054,10 +1054,10 @@ func local_10479(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			continue
 		elif _pc == 11339:
 			v13 = sim.distance_between_centres(v1, v2)
-			v12 = 0.5 * v13
+			v12 = v13 * 0.5
 			sim.set_velocity_local_to_sim(v1, 0.0, 0.0, -(v12))
 			await _pog_wait(0.20000000298023224)
-			if 30.0 <= v13:
+			if v13 <= 30.0:
 				_pc = 11468
 				continue
 			else:
@@ -1115,7 +1115,7 @@ func local_10479(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			continue
 		elif _pc == 12888:
 			await _pog_wait(0.10000000149011612)
-			if 300.0 <= sim.distance_between_centres(v0, v6):
+			if sim.distance_between_centres(v0, v6) <= 300.0:
 				_pc = 12954
 				continue
 			else:
@@ -1131,7 +1131,7 @@ func local_10479(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			continue
 		elif _pc == 13105:
 			await _pog_wait(0.10000000149011612)
-			if not (not _pog_eq("map:/geog/gagarin/formhault", isim.world_name(v0)) and not _pog_eq("map:/geog/gagarin/formhault", isim.active_world())):
+			if not (not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault") and not _pog_eq(isim.world_name(v0), "map:/geog/gagarin/formhault")):
 				_pc = 13193
 				continue
 			else:
@@ -1184,7 +1184,7 @@ func local_13470(v0, v1) -> Variant:
 			_pc = 13879
 			continue
 		elif _pc == 13879:
-			if 6 < v8:
+			if v8 < 6:
 				_pc = 13892
 				continue
 			else:
@@ -1194,7 +1194,7 @@ func local_13470(v0, v1) -> Variant:
 			isim.start_explosion(v1)
 			isim.stop_explosion(v1, 0, 0)
 			await _pog_wait(math.random(1.0, 2.0))
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 13879
 			continue
 		elif _pc == 14000:
@@ -1244,7 +1244,7 @@ func local_14088(v0, v1, v2) -> Variant:
 			_pc = 14733
 			continue
 		elif _pc == 14733:
-			if 0 > v10:
+			if v10 > 0:
 				_pc = 14745
 				continue
 			else:
@@ -1260,7 +1260,7 @@ func local_14088(v0, v1, v2) -> Variant:
 			iai.give_approach_order(v3, v7)
 			isim.capsule_jump_custom(v3, v0, math.random(-1.0, 1.0), math.random(-1.0, 1.0), 1000.0)
 			await _pog_wait(0.5)
-			v10 = -1 + v10
+			v10 = v10 + -1
 			_pc = 14733
 			continue
 		elif _pc == 15088:
@@ -1320,7 +1320,7 @@ func local_15369(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 15923:
 			await _pog_wait(0.10000000149011612)
-			if 100.0 <= sim.distance_between_centres(v2, v0):
+			if sim.distance_between_centres(v2, v0) <= 100.0:
 				_pc = 15989
 				continue
 			else:
@@ -1340,7 +1340,7 @@ func local_15369(v0, v1, v2) -> Variant:
 				_pc = 16199
 				continue
 		elif _pc == 16104:
-			if not _pog_eq(v1, isim.last_attacker(v0)):
+			if not _pog_eq(isim.last_attacker(v0), v1):
 				_pc = 16135
 				continue
 			else:
@@ -1403,7 +1403,7 @@ func local_16657(v0) -> Variant:
 			_pc = 16688
 			continue
 		elif _pc == 16688:
-			if 6 < v3:
+			if v3 < 6:
 				_pc = 16701
 				continue
 			else:
@@ -1416,7 +1416,7 @@ func local_16657(v0) -> Variant:
 			isim.dock(v1, v0)
 			isim.set_indestructable(v1, 1)
 			isim.set_sensor_visibility(v1, 0)
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 16688
 			continue
 		elif _pc == 16859:
@@ -1460,7 +1460,7 @@ func local_16871(v0, v1, v2, v3, v4) -> Variant:
 			_pc = 17361
 			continue
 		elif _pc == 17361:
-			if group.sim_count(v3) < v7:
+			if v7 < group.sim_count(v3):
 				_pc = 17390
 				continue
 			else:
@@ -1488,7 +1488,7 @@ func local_16871(v0, v1, v2, v3, v4) -> Variant:
 			continue
 		elif _pc == 17725:
 			await _pog_wait(0.5)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 17361
 			continue
 		elif _pc == 17775:
@@ -1726,7 +1726,7 @@ func local_22733(v0, v1) -> Variant:
 			_pc = 22745
 			continue
 		elif _pc == 22745:
-			if group.sim_count(v0) < v2:
+			if v2 < group.sim_count(v0):
 				_pc = 22774
 				continue
 			else:
@@ -1735,7 +1735,7 @@ func local_22733(v0, v1) -> Variant:
 		elif _pc == 22774:
 			v3 = isim.cast(group.nth_sim(v0, v2))
 			isim.set_indestructable(v3, v1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 22745
 			continue
 		elif _pc == 22858:

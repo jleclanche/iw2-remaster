@@ -656,6 +656,206 @@ External cameras: `field_of_view = 1.2` rad (68.75 deg).
 
 ---
 
+## 8-0. `IeHabitatType` is the station record's `+0x135`
+
+The station sub-type byte the geography notes had as unidentified (`+0x135` ->
+`icStation+0x1e0`, values 0..122) **is `IeHabitatType`**: `icStation::HabitatType()`
+(`iwar2 @ 0x1004ada0`) is exactly `return *(this + 0x1e0)`. `map_decoder.py` calls
+it `station_subtype`.
+
+The enum is never named in either binary, but the shipped data names it:
+
+- Every station whose avatar is `policestation` carries **68 or 69** -- and
+  `ifight.pog:111` builds its police set as precisely
+  `FilterOnType(68) UNION FilterOnType(69)`. Nothing else in the game has those
+  values.
+- **54** is `securitystation` (26 of 27 instances) and **55** the fortresses.
+  Every subtype found on a `navalbasestation` -- 70, 71, 73, 74, 79, 81, 85 --
+  lies inside the set `ifight.pog:187` unions for "military"
+  (72, 73, 70, 71, 79, 82, 85, 54, 55, 78).
+- The names read straight back: **70** "Defense Station", **71** "Defence Dock",
+  **73** "Naval Training Base", **79** "Naval Defences", **122** "Orbital Transfer
+  Station".
+
+Checked end to end: in Hoffer's Wake, `FilterOnType(68) | FilterOnType(69)`
+returns exactly `Police Patrol Station` and `Hoffers Wake Police Headquarters`,
+and all 109 habitats in the system resolve to a type.
+
+This is what `ihabitat.FilterOnType` (81 call sites) and `ihabitat.Type` (40) run
+on -- the traffic generator, the mission generator and every `ifight`/`iflee`
+"who will respond to this" query.
+
+**`IeBodyType` is still not found**, and it is *not* the analogous byte:
+`body_type` (`+0x134`) only ever holds 2, 3, 4 or 6, and `planet_type` (`+0x13C`)
+only 1 or 2, while `iscriptedorders.pog` compares `ibody.Type` against **5** and
+**7**. See Open questions.
+
+### `icAIServices::InnerMarkerRadius` -- the approach marker
+
+`iwar2 @ 0x100560d0`. For an ordinary sim the whole function is
+
+    inner = target.Radius() * 0.9          ; the 0.9 is the float at 0x1011951c
+
+and `OuterMarkerRadius` (`0x10056280`) is `InnerMarkerRadius * 1.5`
+(`0x1011a268`). A planet or sun instead scales by
+`(HeatDistanceAsRadiusMultiplier + 1.0)`, and a target whose category is `0x1f`
+returns 0 -- those branches are not fully read.
+
+POG's argument order is `(target, ship)`: `iact0mission10.pog:117` passes the
+object being approached first and the player's ship second, and it is the
+object's size the marker comes from.
+
+### `iloadout::eLoadout` is one-based, in button order
+
+`ibasegui` builds the loadout buttons standard, assault, stealth, ecm
+(`local_13541`) and pushes them into the `LoadoutButtons` list;
+`SPLoadoutScreen_OnLoadout` finds the checked one's index and maps 0->1, 1->2,
+2->3, 3->4 before calling `CalculateLoadout`. So **1 = STANDARD, 2 = ASSAULT,
+3 = STEALTH, 4 = ECM**. The screens build only four buttons, though the mapping
+runs to 6. The names are capped at eight characters "because of the hangar", says
+the comment above them in `text/gui.csv`.
+
+---
+
+## 8a. The base screens are POG, and the engine called back into them
+
+A screen is named by its C++ class (`gui.SetScreen("icSPPlayerBaseScreen")`), and
+the engine's screen object **built itself by calling a POG function**. The
+constructor of `icSPBaseScreen` (`iwar2 @ 0x10029230`) ends in
+`FcScriptEngine::CallFunction`, and its destructor (`0x10029350`) calls another
+before `HaltAllTasks`.
+
+The function is the class name **without its `ic`**, in whichever package defines
+it -- `icSPHangarScreen` -> `iBaseGUI.SPHangarScreen`. Checked across every screen
+the campaign names: 33 of the 48 resolve to a function in **exactly one** package
+(`ibasegui` owns the `SP*` base screens, `ipdagui` the PDA, `inetworkgui` and
+`ifrontendgui` the rest). The other 15 -- `icSpaceFlightScreen`,
+`icSPComputerTradingScreen`, `icSPAddCargoScreen`, `icSPComputerPuzzleScreen`,
+`icPopUpCommsScreen`, `icNotYetImplementedScreen` and the multiplayer lobby --
+have **no POG builder at all**: they were built in C++. Their factories
+(e.g. `0x100299f0`) just `operator_new` the base class and set a vtable.
+
+**So the trade screen is not POG.** It is worth being clear about, because it is
+the one base screen you would most expect to be script-driven and it is not.
+Manufacturing, recycling, inventory, the hangar, the loadout, the manifest, the
+comms/inbox/archive, the encyclopaedia and the statistics screens all *are*.
+
+### `icSPPlayerBaseScreen` is an overlay manager, not a screen
+
+It derives from `iiGUIOverlayManager` (`FcRegistry::RegisterClass` at
+`0x10023710`), and its constructor (`0x10024000`) builds a hash map of the screens
+it hosts -- `icSPBaseScreen` -> 0, `icSPHangarScreen` -> 3, `icSPLoadoutScreen`
+-> ... -- against a diorama index, alongside the base's backdrop URLs
+(`main_bay_url`, `office_interior_url`, `jafs_url`, `smith_url`, `gunbabes_url`,
+`fritz_delay`, `diorama_delay`). It hosts the base menu; it is not the menu.
+
+**No POG script ever pushes `icSPBaseScreen`** -- yet every Back button in
+`ibasegui` unwinds with `gui.RemoveOverlaysAfter("icSPBaseScreen")` (17 sites) and
+`iact0generaltraining.pog:20` tests `"icSPBaseScreen" == gui.CurrentScreenClassname()`.
+It can only be on the overlay stack because the manager put it there. That last
+step is an inference, not a read instruction, but nothing else can put it there.
+
+### The nine input-override slots
+
+`gui.SetInputOverrideFunctions(window, s1..s9)` writes
+`FcWindow+0xa0 .. +0xc0` (`FcWindow::SetInputOverrideFunctions`, `flux @
+0x10094090`). The slots are `FcWindowManager::eInputMessages`, and the indices are
+read straight off the handlers, each of which asks
+`FcWindowManager::InputMessageOverrideFunction(window, <n>)` (`0x10097550`, a jump
+into a table of accessors):
+
+| slot | message | handler |
+|---|---|---|
+| 0 | Left | `FcWindow::OnControlFocusLeft` `0x100941f0` |
+| 1 | Up | `0x10094270` |
+| 2 | Right | `0x100943a0` |
+| 3 | Down | `0x10094420` |
+| 4 | **Select** | `0x10094530` |
+| 5 | Cancel | -- |
+| 6 | LeftMouseDown | `0x10094b40` |
+| 7 | **LeftMouseUp** | `0x10094bb0` |
+| 8 | LeftMouseDownHeld | `0x10094c20` |
+
+**Slot 5 is dead in the original.** `FcWindow::OnControlFocusCancel`
+(`0x10094720`) never consults the table: it walks up to the parent and, failing
+that, calls the window manager's single global cancel function -- which is what
+`gui.SetControlFocusCancelFunction` sets. Every base screen sets both, to the same
+POG function, so honouring only the global one loses nothing. Slots 4 and 7 are
+the pair that matter (keyboard select and mouse click), and `ibasegui` always
+wires them to the same function.
+
+### `gui.ListBoxFocusedEntry` returns an int, not the entry
+
+`FcListBox::FocusedEntry` (`flux @ 0x100870d0`) is `return *(int *)(this + 0xdc)`,
+and `SetFocusedEntry` (`0x100870e0`) takes an int. `ibasegui` reads it as a row
+number and indexes a *parallel list* with it:
+
+```
+global.CreateList("InventoryScreen_CargoList", 2, v1);
+iinventory.FillInventoryListBox(v4, !v0, v1);   <- the same v1
+...
+v0 = gui.ListBoxFocusedEntry(v1);               <- a row number
+v8 = icargo.Cast(list.GetNth(v7, v0));          <- back to the cargo
+```
+
+That is why `iinventory.Fill*ListBox` and `iemail.FillArchivedEmailListBox` are
+*natives*: they fill the list box **and** the script's list, and the two orders
+have to agree.
+
+---
+
+## 8b. Two bugs that cancel, and must be fixed together
+
+Found while implementing the base screens. **Neither is fixed**, because fixing
+either one alone breaks the campaign. They are recorded here in full so that
+whoever fixes them fixes both.
+
+**Bug 1 -- `global.Create*` reads the wrong argument.** The signature is
+`Create<T>(name, flag, value)`: all seven are `argc=3`, and the value is the
+**third** argument. The middle one is the save-game persistence scope (`1`, `2`,
+`14`).
+
+```
+global.CreateInt("GUI_inversebutton_height", 14, 16)   ; igui then passes
+global.Int("GUI_inversebutton_height") as a button's height -- so 16 is the value
+global.CreateBool("Hangar_Flashing", 2, 1)             ; 2 is not a bool
+global.CreateInt("g_current_act", 2, -1)               ; and ijafsscript.pog:1379
+tests `-1 == global.Int("g_current_act")` -- so -1 is the value
+```
+
+`natives/std.gd::_create` stores `a[1]`, the flag. Every global in the game
+therefore holds a `1`, `2` or `14` instead of its value: harmless for the bools by
+luck, fatal for the handles and lists, whose `Cast` then fails and whose screens
+silently do nothing.
+
+**Bug 2 -- the comparison operators have their operands the wrong way round.**
+`pogdis`/`pogdec` render `LessI` on the stack `[a, b]` as `a < b`, `pogport` emits
+that, and `vm.gd` computes it the same way (`OP_LESS_I: s[-1] < b`). The evidence
+says it is `b < a`:
+
+- `iprelude.JunkyardHandler` is an **Act 0** task. Its `every 1 seconds` loop
+  begins `if (0 > global.Int("g_current_act")) { sim.Destroy(v4); ... return; }` --
+  its tear-down test. As rendered that means "act == -1", which is the *initial*
+  state, so the task would destroy itself on its first tick. It only makes sense
+  as `act > 0`: "the campaign has left Act 0".
+- The act gates line up only under the same reading: `iactone.pog:985`
+  `if (1 < act) { SetInt("g_current_act", 1); ...}` is "if act **<** 1, start Act
+  One", and `iactthree.pog:1655` likewise for 3.
+
+**How they cancel.** `istartsystem.pog:329` does
+`global.CreateInt("g_current_act", 2, -1)`. Bug 1 stores `2` instead of `-1`;
+`iprelude.Main`'s gate `if (0 < global.Int("g_current_act"))` then passes because
+`0 < 2`, and the Act 0 prologue starts. Fix bug 1 alone and the global correctly
+becomes `-1`, `0 < -1` is false, **and the campaign never starts**. Fix bug 2
+alone and the same gate inverts against a value that is still wrong.
+
+Bug 2 lives in `tools/iw2/pogdec.py`, `tools/iw2/pogport.py` and
+`game/scripts/pog/vm.gd`, and fixing it means regenerating `pog/gen/*.gd`. It
+affects ~2,180 comparison sites (1013 `LessI`, 344 `LessF`, 298 `GreaterI`, 218
+`GreaterF`, plus the `*Equal*` forms), so it is much the larger of the two.
+
+---
+
 ## 9. Deliberate divergences
 
 Things we do differently, on purpose. Each one is a decision, not an accident.
@@ -669,12 +869,44 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 | The player flies `tug_prefitted.ini`'s subsim list | `tug.ini`'s empty mountpoints, filled by the fitting screen | Same hull (1000 hp / 65 armour) and the avatar we already render. The fitting screen is not ported, and empty mountpoints have `hit_points=0`, so they cannot be damaged -- a tug fitted from `tug.ini` would have no shields and no subsystem damage at all. |
 | Every impact lands exactly `N` subsim criticals | The same, via an RNG gate that re-rolls until they all land | The `critical_chance_scale` roll in `icShip::ApplyWeaponDamage` does not consume a loop iteration when it fails, so it is a no-op that only costs spins. We do the N hits directly. |
 | Bodies and stars are drawn as impostors: pulled in to 250 km and scaled down by the same factor, so the *angular* size is right, with the apparent radius capped at `0.4 x` the draw distance | Drew them at their true distance and size | Floating origin + a 600 km far plane. The cap only bites when a body would subtend more than ~44 degrees, which happens because a few authored star radii are enormous (see `geography.md`). |
+| The base screens run the original POG builders, but are drawn in the remaster's own amber-on-black (`base_screens.gd`) | A skinned widget toolkit: `igui.CreateFancyButton` splices a 38-argument nine-patch atlas onto every control | The content and the control flow are the original's -- the rows, their order, and the POG function behind every one of them. Only the skin is ours, and the front end already is (`menu.gd`). |
+| `natives/std.gd::_create` knowingly reads `global.Create*`'s persistence flag as its value | -- | It is a bug, and it is left in **on purpose**: it cancels a second bug in the ported comparison operators, and fixing either alone stops the campaign starting. See **8b**. |
 
 ---
 
 ## 10. Open questions
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
+
+- **The two cancelling bugs in section 8b** are the most valuable thing on this
+  list. `global.Create*` reads the wrong argument, and the ported `<`/`>` have
+  their operands reversed. Both are diagnosed; neither is fixed, because fixing
+  one alone breaks the boot. The comparison half needs `pogdec.py`, `pogport.py`
+  and `vm.gd` changed together and `pog/gen/*.gd` regenerated.
+- **`IeBodyType`.** `ibody.Type` is compared against **5** and **7**
+  (`iscriptedorders.pog:517`, `:1853`) and no field in the map record produces
+  either: `body_type` (`+0x134`) holds only 2/3/4/6, `planet_type` (`+0x13C`) only
+  1/2. `icPlanet::Type` is a bare field read, so the binary does not say where the
+  loader filled it from. 6 call sites; left stubbed.
+- **The HUD menu tree.** `ihud.CurrentMenuNode` returns a *node name*
+  ("hud_menu_eng", "hud_menu_wep", "hud_menu_nav" ...) and `SetMenuNodeEnabled`
+  (70 call sites) locks the player out of a system until it has been taught. That
+  is `icHUDMenuReticle` from `flux.ini [icHUD]`, and we never built it, so the
+  whole of `iact0generaltraining`'s menu tour has nothing to walk. The node names
+  are in the scripts; the tree's shape is not.
+- **The original keymap.** `input.KeyCombinations("icPlayerPilot.CycleContactUp")`
+  renders the bound key into a prompt ("press %s to..."). The action names are in
+  the scripts, but the engine-side action -> key table is not recovered, so the
+  prompts come out without the key name.
+- **The C++ base screens.** `icSPComputerTradingScreen`, `icSPAddCargoScreen` and
+  `icSPComputerPuzzleScreen` have no POG builder -- they were laid out in C++, and
+  their window trees are in `iwar2.dll` rather than in any script. Trading itself
+  (`itrade`, 15 natives) is fully implemented and driven by the scripts; it is
+  only the *screen* that is missing.
+- **The alien infection.** `isim.AlienInfectionEffect` / `SetAlienInfectionDamage`
+  / `IsAlienInfectionEffectOn` (30 call sites, all Act 3) put a spreading crust on
+  an infected hull with a damage-over-time behind it. Neither the shader nor the
+  damage rate is read.
 
 - **`IeSimType`**: only `T_CommandSection = 131072` is confirmed. The rest of the
   bit flags are unknown; our table has placeholders and says so.

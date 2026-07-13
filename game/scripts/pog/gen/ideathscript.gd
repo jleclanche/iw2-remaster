@@ -100,8 +100,8 @@ func local_82(v0, v1) -> Variant:
 			continue
 		elif _pc == 167:
 			v2 = object.float_property(v0, "hit_points")
-			object.set_float_property(v0, "hit_points", v1 - v2)
-			if 0.0 <= v2:
+			object.set_float_property(v0, "hit_points", v2 - v1)
+			if v2 <= 0.0:
 				_pc = 251
 				continue
 			else:
@@ -202,7 +202,7 @@ func explosives() -> Variant:
 			_pc = 1056
 			continue
 		elif _pc == 1056:
-			if v5 < v4:
+			if v4 < v5:
 				_pc = 1072
 				continue
 			else:
@@ -211,9 +211,9 @@ func explosives() -> Variant:
 		elif _pc == 1072:
 			v2 = sim.cast(list.get_nth(v1, v4))
 			v8 = sim.distance_between(v2, v3)
-			v9 = v7 / v8 - v7 * v6
+			v9 = v6 * v7 - v8 / v7
 			await local_82(v2, v9)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 1056
 			continue
 		elif _pc == 1214:
@@ -299,7 +299,7 @@ func restore_player_ship(v0, v1) -> Variant:
 			continue
 		elif _pc == 2193:
 			v3 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
-			v2 = await iutilities.create_waypoint_relative_to(v3, 0.0, 0.0, 500.0 + object.float_property(v3, "radius"))
+			v2 = await iutilities.create_waypoint_relative_to(v3, 0.0, 0.0, object.float_property(v3, "radius") + 500.0)
 			_pc = 2304
 			continue
 		elif _pc == 2304:
@@ -357,7 +357,7 @@ func local_2700(v0) -> Variant:
 			_pc = 2819
 			continue
 		elif _pc == 2819:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 2835
 				continue
 			else:
@@ -378,7 +378,7 @@ func local_2700(v0) -> Variant:
 			_pc = 2995
 			continue
 		elif _pc == 2995:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 2819
 			continue
 		elif _pc == 3013:
@@ -412,7 +412,7 @@ func local_3270(v0) -> Variant:
 			_pc = 3389
 			continue
 		elif _pc == 3389:
-			if v4 < v5:
+			if v5 < v4:
 				_pc = 3405
 				continue
 			else:
@@ -433,7 +433,7 @@ func local_3270(v0) -> Variant:
 			_pc = 3565
 			continue
 		elif _pc == 3565:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 3389
 			continue
 		elif _pc == 3583:
@@ -473,7 +473,7 @@ func player_death_script(v0) -> Variant:
 			icomms.abort(1)
 			object.add_bool_property(v0, "player_dying", 1)
 			global.create_bool("g_disable_mission_restart", 2, 1)
-			if 2 != igame.game_type() and _pog_is_null(global.exists("g_disable_mission_restart")):
+			if _pog_is_null(global.exists("g_disable_mission_restart")) and igame.game_type() != 2:
 				_pc = 3806
 				continue
 			else:
@@ -555,7 +555,7 @@ func player_death_script(v0) -> Variant:
 			_pc = 4776
 			continue
 		elif _pc == 4725:
-			if 1 == object.bool_property(v0, "destroy_sim"):
+			if object.bool_property(v0, "destroy_sim") == 1:
 				_pc = 4757
 				continue
 			else:
@@ -587,7 +587,7 @@ func player_death_script(v0) -> Variant:
 			global.destroy("restart_screen_made_decision")
 			await _pog_wait(2.0)
 			object.remove_property(v0, "player_dying")
-			if 1 == global.pog_bool("restart_screen_restarting"):
+			if global.pog_bool("restart_screen_restarting") == 1:
 				_pc = 5134
 				continue
 			else:
@@ -608,7 +608,7 @@ func player_death_script(v0) -> Variant:
 			continue
 		elif _pc == 5254:
 			idirector.begin()
-			if 1 == object.property_exists(v0, "death_caption"):
+			if object.property_exists(v0, "death_caption") == 1:
 				_pc = 5300
 				continue
 			else:
@@ -644,7 +644,7 @@ func player_death_script(v0) -> Variant:
 			_pc = 5700
 			continue
 		elif _pc == 5661:
-			if 1 == object.bool_property(v0, "destroy_sim"):
+			if object.bool_property(v0, "destroy_sim") == 1:
 				_pc = 5693
 				continue
 			else:
@@ -673,7 +673,7 @@ func player_death_script(v0) -> Variant:
 			_pc = 5822
 			continue
 		elif _pc == 5822:
-			if idirector.is_obituary_view() and 10 < v7:
+			if v7 < 10 and idirector.is_obituary_view():
 				_pc = 5849
 				continue
 			else:
@@ -681,11 +681,11 @@ func player_death_script(v0) -> Variant:
 				continue
 		elif _pc == 5849:
 			await _pog_wait(1.0)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5822
 			continue
 		elif _pc == 5899:
-			if 10 == v7:
+			if v7 == 10:
 				_pc = 5912
 				continue
 			else:
@@ -696,7 +696,7 @@ func player_death_script(v0) -> Variant:
 			_pc = 5938
 			continue
 		elif _pc == 5938:
-			if idirector.is_obituary_view() and 60 < v7:
+			if v7 < 60 and idirector.is_obituary_view():
 				_pc = 5965
 				continue
 			else:
@@ -704,7 +704,7 @@ func player_death_script(v0) -> Variant:
 				continue
 		elif _pc == 5965:
 			await _pog_wait(1.0)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5938
 			continue
 		elif _pc == 6015:
@@ -739,7 +739,7 @@ func mega_pod_death() -> Variant:
 			v10 = object.int_property(v0, "type_cargo")
 			v11 = object.int_property(v0, "number_small_pods")
 			object.set_bool_property(v0, "no_explode_fling_child", 1)
-			if _pog_eq(iship.find_player_ship(), iship.cast(isim.last_attacker(isim.cast(v0)))) and 1 == v8:
+			if v8 == 1 and _pog_eq(iship.cast(isim.last_attacker(isim.cast(v0))), iship.find_player_ship()):
 				_pc = 6288
 				continue
 			else:
@@ -794,7 +794,7 @@ func mega_pod_death() -> Variant:
 			_pc = 6739
 			continue
 		elif _pc == 6739:
-			if v1 or v2:
+			if v2 or v1:
 				_pc = 6755
 				continue
 			else:
@@ -815,7 +815,7 @@ func mega_pod_death() -> Variant:
 			_pc = 6869
 			continue
 		elif _pc == 6869:
-			if v11 < v12:
+			if v12 < v11:
 				_pc = 6885
 				continue
 			else:
@@ -839,7 +839,7 @@ func mega_pod_death() -> Variant:
 			_pc = 7223
 			continue
 		elif _pc == 7223:
-			v12 = 1 + v12
+			v12 = v12 + 1
 			_pc = 6869
 			continue
 		elif _pc == 7241:
@@ -870,7 +870,7 @@ func critical_ship_death(v0) -> Variant:
 			v3 = isim.last_attacker(v0)
 			idirector.begin()
 			idirector.set_focus(v0)
-			if not _pog_eq(v3, v0) and sim.is_alive(v3) or not _pog_is_null(v3):
+			if not _pog_is_null(v3) or sim.is_alive(v3) and not _pog_eq(v0, v3):
 				_pc = 7503
 				continue
 			else:
@@ -941,7 +941,7 @@ func setup_critical_group_death(v0, v1) -> Variant:
 			_pc = 8547
 			continue
 		elif _pc == 7973:
-			if 0 < v1:
+			if v1 < 0:
 				_pc = 7985
 				continue
 			else:
@@ -959,7 +959,7 @@ func setup_critical_group_death(v0, v1) -> Variant:
 			_pc = 8018
 			continue
 		elif _pc == 8018:
-			if group.sim_count(v0) > v1:
+			if v1 > group.sim_count(v0):
 				_pc = 8047
 				continue
 			else:
@@ -1009,7 +1009,7 @@ func setup_critical_group_death(v0, v1) -> Variant:
 			_pc = 8217
 			continue
 		elif _pc == 8217:
-			if group.sim_count(v0) < v2:
+			if v2 < group.sim_count(v0):
 				_pc = 8246
 				continue
 			else:
@@ -1021,7 +1021,7 @@ func setup_critical_group_death(v0, v1) -> Variant:
 			object.add_handle_property(v3, "critical_group", v0)
 			object.add_int_property(v3, "critical_number", v1)
 			isim.set_mission_critical(v3, 1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 8217
 			continue
 		elif _pc == 8420:
@@ -1129,7 +1129,7 @@ func critical_group_death() -> Variant:
 			_pc = 8833
 			continue
 		elif _pc == 8833:
-			if not _pog_eq(v3, sim.group(v0)):
+			if not _pog_eq(sim.group(v0), v3):
 				_pc = 8862
 				continue
 			else:
@@ -1173,7 +1173,7 @@ func critical_group_death() -> Variant:
 			_pc = 9045
 			continue
 		elif _pc == 9045:
-			if v6 > group.sim_count(v3):
+			if group.sim_count(v3) > v6:
 				_pc = 9074
 				continue
 			else:

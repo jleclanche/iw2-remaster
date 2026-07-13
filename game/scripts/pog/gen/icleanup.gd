@@ -33,7 +33,7 @@ func local_0(v0) -> Variant:
 				continue
 		elif _pc == 109:
 			global.destroy(string.join("g_generated_mission_", string.from_int(v3)))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 176
 			continue
 		elif _pc == 176:

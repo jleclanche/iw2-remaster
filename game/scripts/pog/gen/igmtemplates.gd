@@ -43,7 +43,7 @@ func local_0() -> Variant:
 	return 0
 
 func local_62() -> Variant:
-	global.set_int("gl_missgen_index", 1 + global.pog_int("gl_missgen_index"))
+	global.set_int("gl_missgen_index", global.pog_int("gl_missgen_index") + 1)
 	return 0
 	return 0
 
@@ -181,7 +181,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.10000000149011612)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(3)
-			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
 			_pc = 24169
 			continue
 		elif _pc == 2273:
@@ -326,7 +326,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_add_mission(v1, 14)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(13)
-			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
 			_pc = 24169
 			continue
 		elif _pc == 4596:
@@ -371,7 +371,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Police"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(14)
-			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
 			_pc = 24169
 			continue
 		elif _pc == 5333:
@@ -551,7 +551,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Maas"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(1)
-			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
 			_pc = 24169
 			continue
 		elif _pc == 8160:
@@ -602,7 +602,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Maas"), -0.30000001192092896)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(9)
-			global.set_int("gl_number_of_stepson_missions", global.pog_int("gl_number_of_stepson_missions") + 1)
+			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
 			_pc = 24169
 			continue
 		elif _pc == 8965:
@@ -1641,7 +1641,7 @@ func instantiate_mission(v0) -> Variant:
 			_pc = 24163
 			continue
 		elif _pc == 23844:
-			if v0 != 2:
+			if 2 != v0:
 				_pc = 23858
 				continue
 			else:

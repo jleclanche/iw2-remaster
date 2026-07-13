@@ -86,14 +86,14 @@ func s_p_main_p_d_a_screen() -> Variant:
 			gui.register_sound("sound:/audio/gui/add_upgrade", 8)
 			gui.register_sound("sound:/audio/gui/remove_upgrade", 9)
 			gui.set_default_font(global.string("GUI_title_font"))
-			if imultiplay.network_is_lobby_session() or not _pog_eq("", igame.session_name()):
+			if not _pog_eq(igame.session_name(), "") or imultiplay.network_is_lobby_session():
 				_pc = 486
 				continue
 			else:
 				_pc = 525
 				continue
 		elif _pc == 486:
-			if 1 < imultiplay.client_rejected_count():
+			if imultiplay.client_rejected_count() < 1:
 				_pc = 506
 				continue
 			else:
@@ -104,7 +104,7 @@ func s_p_main_p_d_a_screen() -> Variant:
 			_pc = 1182
 			continue
 		elif _pc == 525:
-			if v11 and not (igame.is_multiplayer_only()):
+			if not (igame.is_multiplayer_only()) and v11:
 				_pc = 550
 				continue
 			else:
@@ -164,7 +164,7 @@ func s_p_main_p_d_a_screen__on_start() -> Variant:
 	v1 = null
 	v1 = config.get_string("system", "Test", "system")
 	gui.play_sound(2)
-	if _pog_eq("", v0):
+	if _pog_eq(v0, ""):
 		if PogRuntime.TRACE:
 			debug.print_string("SPMainPDAScreen_OnStart: No test package specified - using normal game package \"iPrelude\"")
 		v0 = "iPrelude"
@@ -172,7 +172,7 @@ func s_p_main_p_d_a_screen__on_start() -> Variant:
 		debug.print_string("SPMainPDAScreen_OnStart: Starting story package \"")
 		debug.print_string(v0)
 		debug.print_string("\"\n")
-	if _pog_eq("", v1):
+	if _pog_eq(v1, ""):
 		if PogRuntime.TRACE:
 			debug.print_string("SPMainPDAScreen_OnStart: No test system specified - using normal game system \"map:/geog/badlands/hoffers_wake\"")
 		v1 = "map:/geog/badlands/hoffers_wake"
@@ -337,8 +337,8 @@ func p_d_a_confirm_screen() -> Variant:
 	await igui.add_title(v0, text.field("pda_quit_button", 0))
 	v2 = await igui.create_and_initialise_parentless_inverse_button("iPDAGUI.PDAConfirmScreen_OnCancel", text.field("gui_cancel", 0), v4)
 	v1 = await igui.create_and_initialise_parentless_inverse_button("iPDAGUI.PDAConfirmScreen_OnOK", text.field("pda_quit_button", 0), v4)
-	v5 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v6 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v5 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	v3 = await igui.create_window_list_in_fancy_border(v0, v4, v5, v6)
 	gui.set_first_control_focus(v2)
 	await igui.set_cyclic_control_focus_path(v4)
@@ -348,7 +348,7 @@ func p_d_a_confirm_screen() -> Variant:
 
 func p_d_a_confirm_screen__on_o_k() -> Variant:
 	imultiplay.server_app_terminate()
-	if 1 == igame.game_type():
+	if igame.game_type() == 1:
 		await _pog_movie("pop")
 		await _pog_movie("/movies/splash5")
 		await _pog_movie("/movies/splash4")
@@ -380,8 +380,8 @@ func flight_confirm_screen() -> Variant:
 	await igui.add_title(v0, text.field("pda_quit_button", 0))
 	v2 = await igui.create_and_initialise_parentless_inverse_button("iPDAGUI.FlightConfirmScreen_OnCancel", text.field("gui_cancel", 0), v4)
 	v1 = await igui.create_and_initialise_parentless_inverse_button("iPDAGUI.FlightConfirmScreen_OnOK", text.field("pda_quit_button", 0), v4)
-	v5 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v6 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v5 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	v3 = await igui.create_window_list_in_fancy_border(v0, v4, v5, v6)
 	gui.set_first_control_focus(v2)
 	await igui.set_cyclic_control_focus_path(v4)
@@ -510,14 +510,14 @@ func s_p_flight_p_d_a_screen() -> Variant:
 		if _pc == 5093:
 			v7 = null
 			gui.set_default_font(global.string("GUI_title_font"))
-			if imultiplay.client_is_team_game() and 3 == igame.game_type():
+			if igame.game_type() == 3 and imultiplay.client_is_team_game():
 				_pc = 5179
 				continue
 			else:
 				_pc = 5355
 				continue
 		elif _pc == 5179:
-			if _pog_eq(ifaction.find(text.field("mp_flag_team_a", 0)), isim.faction(iship.find_player_ship())):
+			if _pog_eq(isim.faction(iship.find_player_ship()), ifaction.find(text.field("mp_flag_team_a", 0))):
 				_pc = 5246
 				continue
 			else:
@@ -547,7 +547,7 @@ func s_p_flight_p_d_a_screen() -> Variant:
 			_pc = 5458
 			continue
 		elif _pc == 5458:
-			if 1 != igame.game_type() and 2 != igame.game_type() and 3 != igame.game_type():
+			if igame.game_type() != 3 and igame.game_type() != 2 and igame.game_type() != 1:
 				_pc = 5512
 				continue
 			else:
@@ -596,7 +596,7 @@ func s_p_flight_p_d_a_screen__on_select_team() -> Variant:
 			v0 = iship.find_player_ship()
 			v1 = isim.faction(v0)
 			v2 = null
-			if _pog_eq(ifaction.find(text.field("mp_flag_team_a", 0)), v1):
+			if _pog_eq(v1, ifaction.find(text.field("mp_flag_team_a", 0))):
 				_pc = 5984
 				continue
 			else:
@@ -633,8 +633,8 @@ func s_p_p_d_a_save_screen() -> Variant:
 	await igui.add_back_buttons(v0, "iPDAGUI.SPPDALoadScreen_OnBackButton", "iPDAGUI.SPPDALoadScreen_OnBackButton")
 	await igui.add_title(v0, text.field("pda_save_game", 0))
 	await local_8548(v4, v5)
-	v2 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v2 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v3 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	await igui.create_window_list_in_fancy_border(v0, v5, v2, v3)
 	global.create_list("saved_game_buttons", 2, v4)
 	gui.set_first_control_focus(gui.cast(list.head(v4)))
@@ -666,7 +666,7 @@ func s_p_p_d_a_save_screen__set_default_name() -> Variant:
 			_pc = 6693
 			continue
 		elif _pc == 6693:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 6709
 				continue
 			else:
@@ -674,7 +674,7 @@ func s_p_p_d_a_save_screen__set_default_name() -> Variant:
 				continue
 		elif _pc == 6709:
 			v2 = gui.cast(list.get_nth(v1, v4))
-			if _pog_eq(v2, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v2):
 				_pc = 6775
 				continue
 			else:
@@ -691,7 +691,7 @@ func s_p_p_d_a_save_screen__set_default_name() -> Variant:
 			_pc = 7011
 			continue
 		elif _pc == 7011:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 6693
 			continue
 		elif _pc == 7029:
@@ -718,7 +718,7 @@ func s_p_p_d_a_save_screen__on_save() -> Variant:
 			_pc = 7147
 			continue
 		elif _pc == 7147:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 7163
 				continue
 			else:
@@ -726,7 +726,7 @@ func s_p_p_d_a_save_screen__on_save() -> Variant:
 				continue
 		elif _pc == 7163:
 			v2 = gui.cast(list.get_nth(v1, v4))
-			if _pog_eq(v2, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v2):
 				_pc = 7229
 				continue
 			else:
@@ -738,7 +738,7 @@ func s_p_p_d_a_save_screen__on_save() -> Variant:
 			_pc = 7302
 			continue
 		elif _pc == 7284:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 7147
 			continue
 		elif _pc == 7302:
@@ -754,12 +754,12 @@ func local_7319(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	v5 = global.pog_int("GUI_inversebutton_textoffset")
-	v6 = global.pog_int("GUI_alignment_offset") * 2 - 640
-	v7 = global.pog_int("GUI_inversebutton_width") - global.pog_int("GUI_shader_width")
-	v7 = v7 - v6
+	v6 = 640 - 2 * global.pog_int("GUI_alignment_offset")
+	v7 = global.pog_int("GUI_shader_width") - global.pog_int("GUI_inversebutton_width")
+	v7 = v6 - v7
 	v4 = gui.create_static_window(0, 0, v7, global.pog_int("GUI_inversebutton_height"), 0)
 	gui.set_window_client_area(v4, 0, 0, v7, global.pog_int("GUI_inversebutton_height"))
-	v3 = gui.create_edit_box(v5, 0, v5 * 2 - v7, global.pog_int("GUI_inversebutton_height"), v4, 0, v0, 0)
+	v3 = gui.create_edit_box(v5, 0, v7 - 2 * v5, global.pog_int("GUI_inversebutton_height"), v4, 0, v0, 0)
 	gui.set_edit_box_overrides(v3, "iPDAGUI.SPPDASaveScreen_SetDefaultName", "", "iPDAGUI.SPPDASaveScreen_OnSave")
 	gui.set_window_font(v3, global.string("GUI_detail_font"))
 	gui.set_window_text_formatting(v3, 0, 0)
@@ -783,7 +783,7 @@ func local_8548(v0, v1) -> Variant:
 			_pc = 8590
 			continue
 		elif _pc == 8590:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 8606
 				continue
 			else:
@@ -791,7 +791,7 @@ func local_8548(v0, v1) -> Variant:
 				continue
 		elif _pc == 8606:
 			v2 = igame.name_of_save_in_slot(v4)
-			if not _pog_eq("", v2):
+			if not _pog_eq(v2, ""):
 				_pc = 8651
 				continue
 			else:
@@ -806,7 +806,7 @@ func local_8548(v0, v1) -> Variant:
 			_pc = 8731
 			continue
 		elif _pc == 8731:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 8590
 			continue
 		elif _pc == 8749:
@@ -822,12 +822,12 @@ func local_8759(v0, v1, v2, v3) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v6 = global.pog_int("GUI_inversebutton_textoffset")
-	v7 = global.pog_int("GUI_alignment_offset") * 2 - 640
-	v8 = global.pog_int("GUI_inversebutton_width") - global.pog_int("GUI_shader_width")
-	v8 = v8 - v7
+	v7 = 640 - 2 * global.pog_int("GUI_alignment_offset")
+	v8 = global.pog_int("GUI_shader_width") - global.pog_int("GUI_inversebutton_width")
+	v8 = v7 - v8
 	v5 = gui.create_static_window(0, 0, v8, global.pog_int("GUI_inversebutton_height"), 0)
 	gui.set_window_client_area(v5, 0, 0, v8, global.pog_int("GUI_inversebutton_height"))
-	v4 = gui.create_button(v6, 0, v6 * 2 - v8, global.pog_int("GUI_inversebutton_height"), v5)
+	v4 = gui.create_button(v6, 0, v8 - 2 * v6, global.pog_int("GUI_inversebutton_height"), v5)
 	gui.set_button_function_pog(v4, v0)
 	gui.set_window_title(v4, v1)
 	gui.set_window_font(v4, global.string("GUI_detail_font"))
@@ -857,8 +857,8 @@ func s_p_p_d_a_load_screen() -> Variant:
 	if v6:
 		await local_8759("iPDAGUI.SPPDALoadScreen_OnAutosaveLoad", text.field("savegame_autosave", 0), v4, v5)
 	await local_11058(v4, v5)
-	v2 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v2 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v3 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	await igui.create_window_list_in_fancy_border(v0, v5, v2, v3)
 	gui.set_first_control_focus(gui.cast(list.head(v4)))
 	await igui.set_cyclic_control_focus_path(v4)
@@ -904,7 +904,7 @@ func s_p_p_d_a_load_screen__on_load() -> Variant:
 			_pc = 10820
 			continue
 		elif _pc == 10820:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 10836
 				continue
 			else:
@@ -912,7 +912,7 @@ func s_p_p_d_a_load_screen__on_load() -> Variant:
 				continue
 		elif _pc == 10836:
 			v2 = gui.cast(list.get_nth(v1, v4))
-			if _pog_eq(v2, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v2):
 				_pc = 10902
 				continue
 			else:
@@ -928,7 +928,7 @@ func s_p_p_d_a_load_screen__on_load() -> Variant:
 			_pc = 11041
 			continue
 		elif _pc == 11023:
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 10820
 			continue
 		elif _pc == 11041:
@@ -950,7 +950,7 @@ func local_11058(v0, v1) -> Variant:
 			_pc = 11100
 			continue
 		elif _pc == 11100:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 11116
 				continue
 			else:
@@ -958,7 +958,7 @@ func local_11058(v0, v1) -> Variant:
 				continue
 		elif _pc == 11116:
 			v4 = igame.name_of_save_in_slot(v3)
-			if not _pog_eq("", v4):
+			if not _pog_eq(v4, ""):
 				_pc = 11161
 				continue
 			else:
@@ -969,7 +969,7 @@ func local_11058(v0, v1) -> Variant:
 			_pc = 11197
 			continue
 		elif _pc == 11197:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 11100
 			continue
 		elif _pc == 11215:
@@ -1008,11 +1008,11 @@ func s_p_p_d_a_options_screen() -> Variant:
 	v11 = text.field("options_controls", 0)
 	v11 = string.upper_case(v11)
 	v3 = await igui.create_and_initialise_parentless_inverse_button("iPDAGUI.SPPDAOptionsScreen_OnControls", v11, v6)
-	v7 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v8 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v7 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v8 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	v5 = await igui.create_window_list_in_fancy_border(v0, v6, v7, v8)
-	if 1 == gui.num_screens():
-		v4 = await igui.create_and_initialise_fancy_button(v0, 10 + gui.window_canvas_height(v5) + v8, text.field("options_restoredefaults", 0), "iPDAGUI.SPPDAOptionsScreen_OnRestoreDefaults")
+	if gui.num_screens() == 1:
+		v4 = await igui.create_and_initialise_fancy_button(v0, v8 + gui.window_canvas_height(v5) + 10, text.field("options_restoredefaults", 0), "iPDAGUI.SPPDAOptionsScreen_OnRestoreDefaults")
 		list.add_tail(v6, v4)
 	gui.set_first_control_focus(v1)
 	await igui.set_cyclic_control_focus_path(v6)
@@ -1074,7 +1074,7 @@ func s_p_p_d_a_graphics_screen() -> Variant:
 	v0 = gui.cast(list.head(v1))
 	list.remove_head(v1)
 	list.remove_all(v1)
-	v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), v7 - gui.window_canvas_height(v0), v0)
+	v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), gui.window_canvas_height(v0) - v7, v0)
 	v2 = await igui.create_titled_list_box(v3, text.field("options_graphics", 0), 0, "", 0, "", 0, "")
 	list.add_head(v1, v2)
 	gui.set_input_override_functions(v2, "iPDAGUI.SPPDAOptionsCategory_OnLeftOption", "", "iPDAGUI.SPPDAOptionsCategory_OnRightOption", "", "iPDAGUI.SPPDAOptionsCategory_OnSelectOption", "iPDAGUI.SPPDAOptionsCategory_OnBackButton", "iPDAGUI.SPPDAOptionsCategory_OnMouseDown", "iPDAGUI.SPPDAOptionsCategory_OnMouseUp", "")
@@ -1083,37 +1083,37 @@ func s_p_p_d_a_graphics_screen() -> Variant:
 	ioptions.register_float("options_modeldetail", "FcDetailSwitchNode", "cull_detail", 0.005499999970197678, 0.0020000000949949026, 0)
 	ioptions.register_float("options_modeldetail", "FcDetailSwitchNode", "box_detail", 0.027499999850988388, 0.004000000189989805, 0)
 	ioptions.register_float("options_brightness", "fcGraphicsDeviceD3D", "brightness", 0.0, 1.0, 1)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		ioptions.register_int("options_texture_size", "fcGraphicsDeviceD3D", "texture_size", 2, 0, 0)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		ioptions.register_int("options_texturequality", "fcGraphicsDeviceD3D", "texture_quality", 0, 1, 0)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		ioptions.register_bool("options_compressedtextures", "fcGraphicsDeviceD3D", "use_compressed_textures", 0)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		ioptions.register_int("options_shader_quality", "FcModel", "shader_quality", 0, 2, 0)
 	ioptions.register_bool("options_trilinear", "fcGraphicsDeviceD3D", "use_trilinear", 0)
 	ioptions.register_bool("options_anistropic_filtering", "fcGraphicsDeviceD3D", "use_anisotropic_filtering", 0)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		ioptions.register_bool("options_multitexture", "fcGraphicsDeviceD3D", "use_multitexture", 0)
 	ioptions.register_int("options_lightingquality", "fcGraphicsDeviceD3D", "max_simultaneous_lights", 2, 8, 0)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		ioptions.register_bool("options_hardwaretnl", "fcGraphicsDeviceD3D", "use_hardware_tnl", 0)
 	ioptions.register_bool("options_vsync", "fcGraphicsDeviceD3D", "vsync", 1)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		ioptions.register_bool("options_starfieldquality", "icStarfieldAvatar", "high_quality", 0)
 	ioptions.register_bool("options_antialiasedhudlines", "icHUD", "use_thick_lines", 0)
 	ioptions.register_bool("options_antialiasedorbstalks", "icHUDOrbRadar", "use_thick_stalks", 0)
 	if ioptions.direct_x8_available():
-		if 1 == gui.num_screens():
+		if gui.num_screens() == 1:
 			ioptions.register_bool("options_directx8", "icOptions", "use_directx8", 0)
-		if 1 == gui.num_screens():
+		if gui.num_screens() == 1:
 			ioptions.register_int("options_antialiasing", "fcGraphicsDeviceD3D", "fsaa_samples", 1, 16, 0)
 	ioptions.create_windows(v2)
 	global.create_handle("options_screen_list_box", 2, v2)
-	if 1 == gui.num_screens():
+	if gui.num_screens() == 1:
 		v6 = text.field("options_resolution", 0)
 		v6 = string.upper_case(v6)
-		v4 = await igui.create_and_initialise_fancy_button(v0, v7 - gui.window_canvas_height(v0), v6, "iPDAGUI.SPPDAGraphicsScreen_OnDeviceSwitch")
+		v4 = await igui.create_and_initialise_fancy_button(v0, gui.window_canvas_height(v0) - v7, v6, "iPDAGUI.SPPDAGraphicsScreen_OnDeviceSwitch")
 		list.add_tail(v1, v4)
 	gui.set_first_control_focus(v2)
 	await igui.set_cyclic_control_focus_path(v1)
@@ -1212,7 +1212,7 @@ func s_p_p_d_a_controls_screen() -> Variant:
 	v0 = gui.cast(list.head(v1))
 	list.remove_head(v1)
 	list.remove_all(v1)
-	v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), v19 - gui.window_canvas_height(v0), v0)
+	v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), gui.window_canvas_height(v0) - v19, v0)
 	v2 = await igui.create_titled_list_box(v3, text.field("options_controls", 0), 0, "", 0, "", 0, "")
 	list.add_head(v1, v2)
 	gui.set_input_override_functions(v2, "iPDAGUI.SPPDAOptionsCategory_OnLeftOption", "", "iPDAGUI.SPPDAOptionsCategory_OnRightOption", "", "iPDAGUI.SPPDAOptionsCategory_OnSelectOption", "iPDAGUI.SPPDAOptionsCategory_OnBackButton", "iPDAGUI.SPPDAOptionsCategory_OnMouseDown", "iPDAGUI.SPPDAOptionsCategory_OnMouseUp", "")
@@ -1221,10 +1221,10 @@ func s_p_p_d_a_controls_screen() -> Variant:
 	ioptions.register_bool("options_swaprollandyaw", "icPlayerPilot", "toggle_roll_yaw", 0)
 	ioptions.create_windows(v2)
 	global.create_handle("options_screen_list_box", 2, v2)
-	if 0 > input.num_input_schemes():
+	if input.num_input_schemes() > 0:
 		v18 = text.field("options_controlstyle", 0)
 		v18 = string.upper_case(v18)
-		v4 = await igui.create_and_initialise_fancy_button(v0, v19 - gui.window_canvas_height(v0), v18, "iPDAGUI.SPPDAControlsScreen_OnControlStyle")
+		v4 = await igui.create_and_initialise_fancy_button(v0, gui.window_canvas_height(v0) - v19, v18, "iPDAGUI.SPPDAControlsScreen_OnControlStyle")
 		list.add_tail(v1, v4)
 	gui.set_first_control_focus(v2)
 	await igui.set_cyclic_control_focus_path(v1)
@@ -1288,7 +1288,7 @@ func s_p_p_d_a_options_category__on_mouse_up() -> Variant:
 	v2 = gui.cast(global.handle("options_screen_list_box"))
 	v0 = gui.list_box_focused_entry(v2)
 	v1 = global.pog_int("SPPDAOptionsCategory_FocusedOption")
-	if _pog_eq(v0, v1):
+	if _pog_eq(v1, v0):
 		ioptions.on_select(v2)
 	global.create_int("SPPDAOptionsCategory_FocusedOption", 2, -1)
 	return 0
@@ -1361,11 +1361,11 @@ func s_p_p_d_a_device_screen() -> Variant:
 	while true:
 		if _pc == 16730:
 			v2 = null
-			v6 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
+			v6 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v9 = 20
 			v12 = 4
-			v13 = 13 + global.pog_int("GUI_fancyborder_width") * 2
-			v14 = v12 + global.pog_int("GUI_alignment_offset")
+			v13 = 2 * global.pog_int("GUI_fancyborder_width") + 13
+			v14 = global.pog_int("GUI_alignment_offset") + v12
 			v16 = null
 			if global.exists("update_task"):
 				_pc = 16906
@@ -1386,14 +1386,14 @@ func s_p_p_d_a_device_screen() -> Variant:
 			v16 = text.field("options_graphics", 0)
 			v16 = string.upper_case(v16)
 			await igui.add_title(v0, v16)
-			v7 = v9 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v8 = v9 + global.pog_int("GUI_backbutton_rise") - gui.frame_height()
+			v7 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + v9
+			v8 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v9
 			v2 = ioptions.create_graphics_device_option_buttons()
 			v18 = 0
 			_pc = 17276
 			continue
 		elif _pc == 17276:
-			if list.item_count(v2) < v18:
+			if v18 < list.item_count(v2):
 				_pc = 17305
 				continue
 			else:
@@ -1401,7 +1401,7 @@ func s_p_p_d_a_device_screen() -> Variant:
 				continue
 		elif _pc == 17305:
 			await igui.make_inverse_button_iconic(gui.cast(list.get_nth(v2, v18)))
-			v18 = 1 + v18
+			v18 = v18 + 1
 			_pc = 17276
 			continue
 		elif _pc == 17373:
@@ -1412,13 +1412,13 @@ func s_p_p_d_a_device_screen() -> Variant:
 			v4 = ioptions.graphics_device_index()
 			v5 = gui.cast(list.get_nth(v2, v4))
 			gui.set_radio_button_checked(v5, 1)
-			v7 = v9 + gui.window_canvas_height(v10) + v7
-			v3 = global.pog_int("GUI_fancybutton_height") - v8
+			v7 = v7 + gui.window_canvas_height(v10) + v9
+			v3 = v8 - global.pog_int("GUI_fancybutton_height")
 			v1 = await igui.create_and_initialise_fancy_button(v0, v3, string.upper_case(text.field("options_apply", 0)), "iPDAGUI.SPPDADeviceScreen_OnApply")
-			v8 = v9 - v3
+			v8 = v3 - v9
 			global.create_handle("SPPDADeviceScreen_ApplyButton", 2, v1)
-			v17 = 2 * v14 - v12 + global.pog_int("GUI_shader_width")
-			v10 = gui.create_splitter_window(v12 + global.pog_int("GUI_alignment_offset"), v7, v17, v7 - v8, v0, v13, 0)
+			v17 = global.pog_int("GUI_shader_width") + v12 - v14 * 2
+			v10 = gui.create_splitter_window(global.pog_int("GUI_alignment_offset") + v12, v7, v17, v8 - v7, v0, v13, 0)
 			v11 = gui.splitter_window_top_window(v10)
 			v16 = text.field("options_resolution", 0)
 			v16 = string.upper_case(v16)
@@ -1457,7 +1457,7 @@ func local_18464() -> Variant:
 				continue
 		elif _pc == 18483:
 			v1 = await local_20333()
-			if not _pog_eq(v0, v1):
+			if not _pog_eq(v1, v0):
 				_pc = 18518
 				continue
 			else:
@@ -1511,7 +1511,7 @@ func s_p_p_d_a_device_screen__on_apply() -> Variant:
 	v1 = await local_20333()
 	v2 = ioptions.graphics_resolution_index(v0)
 	v3 = await local_20538()
-	if not (not _pog_eq(v3, v2) or not _pog_eq(v1, v0)):
+	if not (not _pog_eq(v0, v1) or not _pog_eq(v2, v3)):
 		return 0
 	ioptions.set_graphics_device(v1, v3)
 	await s_p_p_d_a_device_screen__on_back_button()
@@ -1556,8 +1556,8 @@ func local_19067(v0) -> Variant:
 			v2 = gui.cast(global.handle("SPPDADeviceScreen_Splitter"))
 			v5 = gui.splitter_window_bottom_window(v2)
 			v8 = gui.window_canvas_height(v5)
-			v9 = 3 + global.pog_int("GUI_inversebutton_height") * ioptions.number_of_resolution_options(v0)
-			if v8 > v9:
+			v9 = ioptions.number_of_resolution_options(v0) * global.pog_int("GUI_inversebutton_height") + 3
+			if v9 > v8:
 				_pc = 19389
 				continue
 			else:
@@ -1576,7 +1576,7 @@ func local_19067(v0) -> Variant:
 				_pc = 19450
 				continue
 		elif _pc == 19430:
-			v10 = 4 + v11 - v10
+			v10 = v10 - v11 + 4
 			_pc = 19450
 			continue
 		elif _pc == 19450:
@@ -1590,7 +1590,7 @@ func local_19067(v0) -> Variant:
 				_pc = 19689
 				continue
 		elif _pc == 19558:
-			v7 = gui.create_vertical_scrollbar(v11 - gui.window_canvas_width(v5), 0, v11, gui.window_canvas_height(v5), v5, v4, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			v7 = gui.create_vertical_scrollbar(gui.window_canvas_width(v5) - v11, 0, v11, gui.window_canvas_height(v5), v5, v4, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			global.create_handle("SPPDADeviceScreen_Scrollbar", 2, v7)
 			_pc = 19689
 			continue
@@ -1600,7 +1600,7 @@ func local_19067(v0) -> Variant:
 			_pc = 19727
 			continue
 		elif _pc == 19727:
-			if list.item_count(v1) < v13:
+			if v13 < list.item_count(v1):
 				_pc = 19756
 				continue
 			else:
@@ -1608,7 +1608,7 @@ func local_19067(v0) -> Variant:
 				continue
 		elif _pc == 19756:
 			await igui.make_rectangular_inverse_button_iconic(gui.cast(list.get_nth(v1, v13)))
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 19727
 			continue
 		elif _pc == 19824:
@@ -1617,7 +1617,7 @@ func local_19067(v0) -> Variant:
 			_pc = 19859
 			continue
 		elif _pc == 19859:
-			if list.item_count(v1) < v13:
+			if v13 < list.item_count(v1):
 				_pc = 19888
 				continue
 			else:
@@ -1625,7 +1625,7 @@ func local_19067(v0) -> Variant:
 				continue
 		elif _pc == 19888:
 			gui.add_list_box_entry(v4, gui.cast(list.get_nth(v1, v13)))
-			v13 = 1 + v13
+			v13 = v13 + 1
 			_pc = 19859
 			continue
 		elif _pc == 19961:
@@ -1672,7 +1672,7 @@ func local_20333() -> Variant:
 			_pc = 20391
 			continue
 		elif _pc == 20391:
-			if list.item_count(v1) < v0:
+			if v0 < list.item_count(v1):
 				_pc = 20420
 				continue
 			else:
@@ -1691,7 +1691,7 @@ func local_20333() -> Variant:
 			_pc = 20519
 			continue
 		elif _pc == 20501:
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 20391
 			continue
 		elif _pc == 20519:
@@ -1756,7 +1756,7 @@ func local_20538() -> Variant:
 			continue
 		elif _pc == 20758:
 			list.remove_head(v2)
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 20588
 			continue
 		elif _pc == 20795:
@@ -1811,8 +1811,8 @@ func movies_screen() -> Variant:
 		v14 = text.field("movie_outro", 0)
 		v14 = string.upper_case(v14)
 		v6 = await igui.create_and_initialise_parentless_inverse_button("iPDAGUI.MoviesScreen_OnOutro", v14, v9)
-	v10 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v11 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v11 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	v8 = await igui.create_window_list_in_fancy_border(v0, v9, v10, v11)
 	gui.set_first_control_focus(v1)
 	await igui.set_cyclic_control_focus_path(v9)
@@ -1867,12 +1867,12 @@ func local_21926(v0, v1, v2, v3) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v6 = global.pog_int("GUI_inversebutton_textoffset")
-	v7 = global.pog_int("GUI_alignment_offset") * 2 - 640
-	v8 = global.pog_int("GUI_inversebutton_width") - global.pog_int("GUI_shader_width")
-	v8 = v8 - v7
+	v7 = 640 - 2 * global.pog_int("GUI_alignment_offset")
+	v8 = global.pog_int("GUI_shader_width") - global.pog_int("GUI_inversebutton_width")
+	v8 = v7 - v8
 	v5 = gui.create_static_window(0, 0, v8, global.pog_int("GUI_inversebutton_height"), 0)
 	gui.set_window_client_area(v5, 0, 0, v8, global.pog_int("GUI_inversebutton_height"))
-	v4 = gui.create_button(v6, 0, v6 * 2 - v8, global.pog_int("GUI_inversebutton_height"), v5)
+	v4 = gui.create_button(v6, 0, v8 - 2 * v6, global.pog_int("GUI_inversebutton_height"), v5)
 	gui.set_button_function_pog(v4, v0)
 	gui.set_window_title(v4, v1)
 	gui.set_window_font(v4, global.string("GUI_detail_font"))
@@ -1901,14 +1901,14 @@ func local_22453(v0, v1) -> Variant:
 			_pc = 22522
 			continue
 		elif _pc == 22522:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 22538
 				continue
 			else:
 				_pc = 22726
 				continue
 		elif _pc == 22538:
-			if _pog_eq(v4, v3):
+			if _pog_eq(v3, v4):
 				_pc = 22554
 				continue
 			else:
@@ -1921,7 +1921,7 @@ func local_22453(v0, v1) -> Variant:
 			v5 = input.nth_input_scheme_name(v3)
 			v5 = string.upper_case(v5)
 			await local_21926("iPDAGUI.ControlScreen_OnSelectScheme", v5, v0, v1)
-			if _pog_eq(v6, v3):
+			if _pog_eq(v3, v6):
 				_pc = 22663
 				continue
 			else:
@@ -1932,7 +1932,7 @@ func local_22453(v0, v1) -> Variant:
 			_pc = 22708
 			continue
 		elif _pc == 22708:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 22522
 			continue
 		elif _pc == 22726:
@@ -1955,8 +1955,8 @@ func control_screen() -> Variant:
 	await igui.add_back_buttons(v0, "iPDAGUI.ControlScreen_OnBackButton", "iPDAGUI.ControlScreen_OnBackButtonToMainMenu")
 	await igui.add_title(v0, string.upper_case(text.field("options_controlstyle", 0)))
 	await local_22453(v4, v5)
-	v2 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v2 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v3 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	await igui.create_window_list_in_fancy_border(v0, v5, v2, v3)
 	gui.set_first_control_focus(gui.cast(list.head(v4)))
 	await igui.set_cyclic_control_focus_path(v4)
@@ -1982,7 +1982,7 @@ func control_screen__on_select_scheme() -> Variant:
 			_pc = 23268
 			continue
 		elif _pc == 23268:
-			if list.item_count(v0) < v2:
+			if v2 < list.item_count(v0):
 				_pc = 23297
 				continue
 			else:
@@ -1990,14 +1990,14 @@ func control_screen__on_select_scheme() -> Variant:
 				continue
 		elif _pc == 23297:
 			v1 = gui.cast(list.get_nth(v0, v2))
-			if _pog_eq(v4, v2):
+			if _pog_eq(v2, v4):
 				_pc = 23355
 				continue
 			else:
 				_pc = 23408
 				continue
 		elif _pc == 23355:
-			if _pog_eq(v1, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v1):
 				_pc = 23379
 				continue
 			else:
@@ -2014,7 +2014,7 @@ func control_screen__on_select_scheme() -> Variant:
 			_pc = 23470
 			continue
 		elif _pc == 23408:
-			if _pog_eq(v1, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v1):
 				_pc = 23432
 				continue
 			else:
@@ -2026,7 +2026,7 @@ func control_screen__on_select_scheme() -> Variant:
 			_pc = 23470
 			continue
 		elif _pc == 23470:
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 23268
 			continue
 		elif _pc == 23488:
@@ -2079,7 +2079,7 @@ func local_23590() -> Variant:
 			_pc = 23740
 			continue
 		elif _pc == 23740:
-			if v1 < v0:
+			if v0 < v1:
 				_pc = 23756
 				continue
 			else:
@@ -2142,7 +2142,7 @@ func local_23590() -> Variant:
 			_pc = 24099
 			continue
 		elif _pc == 24099:
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 23740
 			continue
 		elif _pc == 24117:
@@ -2161,7 +2161,7 @@ func local_23590() -> Variant:
 func local_24153(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = null
-	if _pog_eq(v0, global.string("g_pda_current_mod")):
+	if _pog_eq(global.string("g_pda_current_mod"), v0):
 		return 0
 	global.set_string("g_pda_current_mod", v0)
 	v1 = string.join("html:/mods/", string.join(string.join(v0, "/"), v0))
@@ -2201,7 +2201,7 @@ func local_24581(v0, v1) -> Variant:
 			v2 = global.pog_int("GUI_inversebutton_height")
 			v3 = 3
 			v4 = gui.splitter_window_bottom_window(v0)
-			gui.window_canvas_height(v4) > v3 + v2 * v1
+			v1 * v2 + v3 > gui.window_canvas_height(v4)
 			_pc = 24685
 			continue
 		elif _pc == 24685:
@@ -2230,7 +2230,7 @@ func local_24687(v0, v1, v2) -> Variant:
 				_pc = 24826
 				continue
 		elif _pc == 24806:
-			v3 = 4 + v4 - v3
+			v3 = v3 - v4 + 4
 			_pc = 24826
 			continue
 		elif _pc == 24826:
@@ -2242,7 +2242,7 @@ func local_24687(v0, v1, v2) -> Variant:
 				_pc = 24989
 				continue
 		elif _pc == 24891:
-			gui.create_vertical_scrollbar(v4 - gui.window_canvas_width(v5), 0, v4, gui.window_canvas_height(v5), v5, v6, global.pog_float("GUI_scrollbar_buttonratio"), "")
+			gui.create_vertical_scrollbar(gui.window_canvas_width(v5) - v4, 0, v4, gui.window_canvas_height(v5), v5, v6, global.pog_float("GUI_scrollbar_buttonratio"), "")
 			_pc = 24989
 			continue
 		elif _pc == 24989:
@@ -2294,10 +2294,10 @@ func mod_screen() -> Variant:
 			v0 = global.pog_int("GUI_alignment_offset")
 			v1 = global.pog_int("GUI_fancyborder_alignmentoffset")
 			v2 = global.pog_int("GUI_fancybutton_height")
-			v3 = v1 + v0
-			v4 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
-			v5 = v0 + v1 * 2 - v1 + global.pog_int("GUI_shader_width")
-			v7 = 13 + global.pog_int("GUI_fancyborder_width") * 2
+			v3 = v0 + v1
+			v4 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
+			v5 = global.pog_int("GUI_shader_width") + v1 - 2 * v1 + v0
+			v7 = 2 * global.pog_int("GUI_fancyborder_width") + 13
 			v15 = null
 			v16 = null
 			v18 = null
@@ -2309,17 +2309,17 @@ func mod_screen() -> Variant:
 			v10 = await igui.create_shady_bar()
 			await igui.add_back_buttons(v10, "iPDAGUI.ModScreen_OnBackButton", "iPDAGUI.ModScreen_OnBackButton")
 			await igui.add_title(v10, text.field("pda_extras", 0))
-			v9 = global.pog_int("GUI_backbutton_rise") + v1 * 5 + v2 + v4 - gui.window_canvas_height(v10)
-			v6 = v1 - 2 / v9
+			v9 = gui.window_canvas_height(v10) - v4 + v2 + 5 * v1 + global.pog_int("GUI_backbutton_rise")
+			v6 = v9 / 2 - v1
 			v8 = v4
 			v11 = await local_24335(v10, v3, v8, v5, v6, v7, "pda_installed_mods")
-			v8 = v1 * 4 + v6 + v8
+			v8 = v8 + v6 + 4 * v1
 			v12 = await local_24687(v11, v21, 1)
 			v20 = 0
 			_pc = 25757
 			continue
 		elif _pc == 25757:
-			if v21 < v20:
+			if v20 < v21:
 				_pc = 25773
 				continue
 			else:
@@ -2335,7 +2335,7 @@ func mod_screen() -> Variant:
 		elif _pc == 25797:
 			v22 = imod.pog_name(v20)
 			v23 = imod.display_name(v20)
-			if 19 >= string.length(v23):
+			if string.length(v23) >= 19:
 				_pc = 25875
 				continue
 			else:
@@ -2371,18 +2371,18 @@ func mod_screen() -> Variant:
 			_pc = 26188
 			continue
 		elif _pc == 26188:
-			v20 = 1 + v20
+			v20 = v20 + 1
 			_pc = 25757
 			continue
 		elif _pc == 26206:
 			v13 = await local_24335(v10, v3, v8, v5, v6, v7, "pda_installed_missions")
-			v8 = v1 + v6 + v8
+			v8 = v8 + v6 + v1
 			v14 = await local_24687(v13, 1, 0)
 			v20 = 0
 			_pc = 26318
 			continue
 		elif _pc == 26318:
-			if v21 < v20:
+			if v20 < v21:
 				_pc = 26334
 				continue
 			else:
@@ -2398,7 +2398,7 @@ func mod_screen() -> Variant:
 		elif _pc == 26357:
 			v22 = imod.pog_name(v20)
 			v23 = imod.display_name(v20)
-			if 19 >= string.length(v23):
+			if string.length(v23) >= 19:
 				_pc = 26435
 				continue
 			else:
@@ -2420,7 +2420,7 @@ func mod_screen() -> Variant:
 			_pc = 26688
 			continue
 		elif _pc == 26688:
-			v20 = 1 + v20
+			v20 = v20 + 1
 			_pc = 26318
 			continue
 		elif _pc == 26706:
@@ -2522,7 +2522,7 @@ func mod_screen__on_mission_select() -> Variant:
 			_pc = 27692
 			continue
 		elif _pc == 27692:
-			if list.item_count(v0) < v1:
+			if v1 < list.item_count(v0):
 				_pc = 27721
 				continue
 			else:
@@ -2530,7 +2530,7 @@ func mod_screen__on_mission_select() -> Variant:
 				continue
 		elif _pc == 27721:
 			gui.deselect_window(gui.cast(list.get_nth(v0, v1)))
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 27692
 			continue
 		elif _pc == 27789:
@@ -2557,7 +2557,7 @@ func mod_screen__on_mission_play() -> Variant:
 			_pc = 27928
 			continue
 		elif _pc == 27928:
-			if imod.count() >= v0 or 0 < v0:
+			if v0 < 0 or v0 >= imod.count():
 				_pc = 27960
 				continue
 			else:
@@ -2644,8 +2644,8 @@ func instant_action_ship_choice_screen() -> Variant:
 		v7 = await igui.create_and_initialise_parentless_inverse_button("iPDAGUI.InstantActionShipChoiceScreen_OnShipSelect", text.field("ship_type_heavy_corvette", 0), v1)
 		gui.set_input_override_functions(v7, "", "", "", "", "", "iPDAGUI.InstantActionShipChoiceScreen_OnBackButton", "", "", "")
 		global.create_handle("shiptype_heavycorvette", 2, v7)
-	v2 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v2 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v3 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	await igui.create_window_list_in_splitter(v0, v1, v2, v3, text.field("hangarmenu_ship", 0))
 	gui.set_first_control_focus(v4)
 	await igui.set_cyclic_control_focus_path(v1)
@@ -2667,7 +2667,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			v2 = gui.cast(global.handle("shiptype_fastattackship"))
 			v3 = gui.cast(global.handle("shiptype_heavycorvette"))
 			v4 = null
-			if _pog_eq(v1, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v1):
 				_pc = 29575
 				continue
 			else:
@@ -2678,7 +2678,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			_pc = 29714
 			continue
 		elif _pc == 29593:
-			if _pog_eq(v2, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v2):
 				_pc = 29617
 				continue
 			else:
@@ -2689,7 +2689,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			_pc = 29714
 			continue
 		elif _pc == 29635:
-			if _pog_eq(v3, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v3):
 				_pc = 29659
 				continue
 			else:
@@ -2700,7 +2700,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			_pc = 29714
 			continue
 		elif _pc == 29677:
-			if _pog_eq(v0, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v0):
 				_pc = 29701
 				continue
 			else:
@@ -2730,7 +2730,7 @@ func local_29812(v0, v1, v2, v3) -> Variant:
 	var _pc: int = 29812
 	while true:
 		if _pc == 29812:
-			v4 = 2 * global.pog_int("GUI_fancybutton_width")
+			v4 = global.pog_int("GUI_fancybutton_width") * 2
 			v5 = gui.create_button(0, v1, v4, global.pog_int("GUI_fancybutton_height"), v0)
 			gui.set_window_font(v5, global.string("GUI_title_font"))
 			gui.set_window_text_formatting(v5, 1, 0)
@@ -2761,10 +2761,10 @@ func restart_screen() -> Variant:
 		if _pc == 30936:
 			v3 = null
 			v4 = null
-			v5 = 2 * global.pog_int("GUI_fancybutton_width")
+			v5 = global.pog_int("GUI_fancybutton_width") * 2
 			v6 = global.pog_int("GUI_fancybutton_height")
-			v7 = 2 / gui.frame_width()
-			v8 = 2 / gui.frame_height()
+			v7 = gui.frame_width() / 2
+			v8 = gui.frame_height() / 2
 			if global.pog_bool("restart_screen_mission_running"):
 				_pc = 31086
 				continue
@@ -2782,7 +2782,7 @@ func restart_screen() -> Variant:
 		elif _pc == 31117:
 			v4 = text.field(v4, 0)
 			v4 = string.upper_case(v4)
-			v0 = gui.create_window(2 / v5 - v7, v6 - v8, 2 / v5 + v7, v6 + v8, gui.top_window())
+			v0 = gui.create_window(v7 - v5 / 2, v8 - v6, v7 + v5 / 2, v8 + v6, gui.top_window())
 			v1 = await local_29812(v0, 0, v4, "iPDAGUI.RestartScreen_OnRestart")
 			v2 = await local_29812(v0, v6, string.upper_case(text.field("stock_quit_or_load", 0)), "iPDAGUI.RestartScreen_OnQuit")
 			list.add_tail(v3, v1)
@@ -2822,7 +2822,7 @@ func local_31597() -> Variant:
 			_pc = 31794
 			continue
 		elif _pc == 31794:
-			if idirector.is_obituary_view() and 2 < v0:
+			if v0 < 2 and idirector.is_obituary_view():
 				_pc = 31821
 				continue
 			else:
@@ -2830,11 +2830,11 @@ func local_31597() -> Variant:
 				continue
 		elif _pc == 31821:
 			await _pog_wait(1.0)
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 31794
 			continue
 		elif _pc == 31871:
-			if 2 == v0:
+			if v0 == 2:
 				_pc = 31884
 				continue
 			else:
@@ -2845,7 +2845,7 @@ func local_31597() -> Variant:
 			_pc = 31910
 			continue
 		elif _pc == 31910:
-			if idirector.is_obituary_view() and 60 < v0:
+			if v0 < 60 and idirector.is_obituary_view():
 				_pc = 31937
 				continue
 			else:
@@ -2853,7 +2853,7 @@ func local_31597() -> Variant:
 				continue
 		elif _pc == 31937:
 			await _pog_wait(1.0)
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 31910
 			continue
 		elif _pc == 31987:

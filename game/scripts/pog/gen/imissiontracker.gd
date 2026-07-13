@@ -53,7 +53,7 @@ func local_56() -> Variant:
 			_pc = 204
 			continue
 		elif _pc == 204:
-			if v1 < v0:
+			if v0 < v1:
 				_pc = 220
 				continue
 			else:
@@ -72,7 +72,7 @@ func local_56() -> Variant:
 			_pc = 394
 			continue
 		elif _pc == 394:
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 204
 			continue
 		elif _pc == 412:
@@ -99,7 +99,7 @@ func add_mission(v0, v1, v2) -> Variant:
 	v3 = global.pog_int("g_mt_mtask_counter")
 	global.create_string(string.join("g_mt_mtask_string", string.from_int(v3)), 2, string.join(" ", string.join(string.from_int(v1), string.join("-", string.from_int(v2)))))
 	global.create_handle(string.join("g_mt_mtask_handle", string.from_int(v3)), 2, v0)
-	v3 = 1 + v3
+	v3 = v3 + 1
 	global.set_int("g_mt_mtask_counter", v3)
 	await local_56()
 	return 0
@@ -135,7 +135,7 @@ func remove_mission(v0) -> Variant:
 			_pc = 981
 			continue
 		elif _pc == 981:
-			if v2 < v1:
+			if v1 < v2:
 				_pc = 997
 				continue
 			else:
@@ -143,7 +143,7 @@ func remove_mission(v0) -> Variant:
 				continue
 		elif _pc == 997:
 			v3 = _pog_task_cast(global.handle(string.join("g_mt_mtask_handle", string.from_int(v1))))
-			if _pog_eq(v0, v3):
+			if _pog_eq(v3, v0):
 				_pc = 1085
 				continue
 			else:
@@ -154,7 +154,7 @@ func remove_mission(v0) -> Variant:
 			_pc = 1140
 			continue
 		elif _pc == 1140:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 981
 			continue
 		elif _pc == 1158:
@@ -183,7 +183,7 @@ func local_1175() -> Variant:
 				_pc = 1211
 				continue
 		elif _pc == 1193:
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 1187
 			continue
 		elif _pc == 1211:
@@ -204,7 +204,7 @@ func test() -> Variant:
 			_pc = 1239
 			continue
 		elif _pc == 1239:
-			if 5 < v0:
+			if v0 < 5:
 				_pc = 1252
 				continue
 			else:
@@ -215,7 +215,7 @@ func test() -> Variant:
 			_pc = 1259
 			continue
 		elif _pc == 1259:
-			if 5 < v1:
+			if v1 < 5:
 				_pc = 1272
 				continue
 			else:
@@ -224,7 +224,7 @@ func test() -> Variant:
 		elif _pc == 1272:
 			v2 = _pog_spawn(local_1175.bind())
 			await add_mission(v2, v0, v1)
-			if 2.0 > math.random(0.0, 4.0):
+			if math.random(0.0, 4.0) > 2.0:
 				_pc = 1354
 				continue
 			else:
@@ -239,11 +239,11 @@ func test() -> Variant:
 			_pc = 1399
 			continue
 		elif _pc == 1399:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 1259
 			continue
 		elif _pc == 1417:
-			v0 = 1 + v0
+			v0 = v0 + 1
 			_pc = 1239
 			continue
 		elif _pc == 1435:

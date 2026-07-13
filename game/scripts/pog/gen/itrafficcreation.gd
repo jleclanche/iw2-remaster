@@ -60,7 +60,7 @@ func local_27(v0) -> Variant:
 				_pc = 84
 				continue
 		elif _pc == 52:
-			if 1 == global.pog_bool("gl_traffic_creation_no_report"):
+			if global.pog_bool("gl_traffic_creation_no_report") == 1:
 				_pc = 79
 				continue
 			else:
@@ -1737,21 +1737,21 @@ func local_111(v0) -> Variant:
 			_pc = 8317
 			continue
 		elif _pc == 8317:
-			v3 = v19 * v3
+			v3 = v3 * v19
 			v4 = v4 * v4
-			v5 = v21 * v5
-			v6 = v22 * v6
-			v7 = v23 * v7
-			v8 = v24 * v8
-			v9 = v25 * v9
-			v10 = v26 * v10
-			v11 = v27 * v11
-			v12 = v28 * v12
-			v13 = v29 * v13
-			v14 = v30 * v14
-			v15 = v31 * v15
-			v16 = v32 * v16
-			v17 = v16 + v15 + v14 + v13 + v12 + v11 + v10 + v9 + v8 + v7 + v6 + v5 + v4 + v3
+			v5 = v5 * v21
+			v6 = v6 * v22
+			v7 = v7 * v23
+			v8 = v8 * v24
+			v9 = v9 * v25
+			v10 = v10 * v26
+			v11 = v11 * v27
+			v12 = v12 * v28
+			v13 = v13 * v29
+			v14 = v14 * v30
+			v15 = v15 * v31
+			v16 = v16 * v32
+			v17 = v3 + v4 + v5 + v6 + v7 + v8 + v9 + v10 + v11 + v12 + v13 + v14 + v15 + v16
 			if _pog_is_null(v17):
 				_pc = 8660
 				continue
@@ -1770,7 +1770,7 @@ func local_111(v0) -> Variant:
 			continue
 		elif _pc == 8692:
 			v18 = math.random(0.0, v17)
-			if v3 <= v18:
+			if v18 <= v3:
 				_pc = 8737
 				continue
 			else:
@@ -1789,8 +1789,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 8826:
-			v18 = v3 - v18
-			if v4 <= v18:
+			v18 = v18 - v3
+			if v18 <= v4:
 				_pc = 8859
 				continue
 			else:
@@ -1809,8 +1809,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 8949:
-			v18 = v4 - v18
-			if v5 <= v18:
+			v18 = v18 - v4
+			if v18 <= v5:
 				_pc = 8982
 				continue
 			else:
@@ -1829,8 +1829,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9072:
-			v18 = v5 - v18
-			if v6 <= v18:
+			v18 = v18 - v5
+			if v18 <= v6:
 				_pc = 9105
 				continue
 			else:
@@ -1849,8 +1849,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9195:
-			v18 = v6 - v18
-			if v7 <= v18:
+			v18 = v18 - v6
+			if v18 <= v7:
 				_pc = 9228
 				continue
 			else:
@@ -1869,8 +1869,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9318:
-			v18 = v7 - v18
-			if v8 <= v18:
+			v18 = v18 - v7
+			if v18 <= v8:
 				_pc = 9351
 				continue
 			else:
@@ -1889,8 +1889,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9441:
-			v18 = v8 - v18
-			if v9 <= v18:
+			v18 = v18 - v8
+			if v18 <= v9:
 				_pc = 9474
 				continue
 			else:
@@ -1909,8 +1909,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9564:
-			v18 = v9 - v18
-			if v10 <= v18:
+			v18 = v18 - v9
+			if v18 <= v10:
 				_pc = 9597
 				continue
 			else:
@@ -1929,8 +1929,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9687:
-			v18 = v10 - v18
-			if v11 <= v18:
+			v18 = v18 - v10
+			if v18 <= v11:
 				_pc = 9720
 				continue
 			else:
@@ -1949,8 +1949,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9810:
-			v18 = v11 - v18
-			if v12 <= v18:
+			v18 = v18 - v11
+			if v18 <= v12:
 				_pc = 9843
 				continue
 			else:
@@ -1969,8 +1969,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 9933:
-			v18 = v12 - v18
-			if v13 <= v18:
+			v18 = v18 - v12
+			if v18 <= v13:
 				_pc = 9966
 				continue
 			else:
@@ -1989,8 +1989,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 10056:
-			v18 = v13 - v18
-			if v14 <= v18:
+			v18 = v18 - v13
+			if v18 <= v14:
 				_pc = 10089
 				continue
 			else:
@@ -2009,8 +2009,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 10179:
-			v18 = v14 - v18
-			if v15 <= v18:
+			v18 = v18 - v14
+			if v18 <= v15:
 				_pc = 10212
 				continue
 			else:
@@ -2029,8 +2029,8 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 10302:
-			v18 = v15 - v18
-			if v16 <= v18:
+			v18 = v18 - v15
+			if v18 <= v16:
 				_pc = 10335
 				continue
 			else:
@@ -2049,7 +2049,7 @@ func local_111(v0) -> Variant:
 			_pc = 10474
 			continue
 		elif _pc == 10425:
-			v18 = v16 - v18
+			v18 = v18 - v16
 			_pc = 10468
 			continue
 		elif _pc == 10447:
@@ -2399,11 +2399,11 @@ func local_11676(v0) -> Variant:
 				_pc = 11791
 				continue
 		elif _pc == 11757:
-			v9 = 1000 / ihabitat.population(v1) + v9
+			v9 = v9 + ihabitat.population(v1) / 1000
 			_pc = 11791
 			continue
 		elif _pc == 11791:
-			if 8 > v9:
+			if v9 > 8:
 				_pc = 11804
 				continue
 			else:
@@ -2415,7 +2415,7 @@ func local_11676(v0) -> Variant:
 			continue
 		elif _pc == 11812:
 			object.set_int_property(v0, "active_slots", v9)
-			if 1 > v9:
+			if v9 > 1:
 				_pc = 11855
 				continue
 			else:
@@ -2463,7 +2463,7 @@ func local_11676(v0) -> Variant:
 			continue
 		elif _pc == 12177:
 			await local_27("iTrafficCreation: Generating a traffic scenario for slot ")
-			await local_27(string.from_int(1 + v8))
+			await local_27(string.from_int(v8 + 1))
 			await local_27(" of ")
 			await local_27(string.from_int(v10))
 			await local_27(" \n")
@@ -2471,8 +2471,8 @@ func local_11676(v0) -> Variant:
 			continue
 		elif _pc == 12312:
 			await local_10476(v0)
-			v8 = 1 + v8
-			if v10 >= v8:
+			v8 = v8 + 1
+			if v8 >= v10:
 				_pc = 12360
 				continue
 			else:
@@ -2516,7 +2516,7 @@ func start(v0) -> Variant:
 			_pc = 12552
 			continue
 		elif _pc == 12552:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 12568
 				continue
 			else:
@@ -2525,18 +2525,18 @@ func start(v0) -> Variant:
 		elif _pc == 12568:
 			group.add_sim(v3, sim.create("ini:/sims/nav/waypoint", string.join(imapentity.pog_name(v0), string.join(" Unload Slot ", string.from_int(v7)))))
 			object.add_int_property(group.nth_sim(v3, v7), "occupied", 0)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 12552
 			continue
 		elif _pc == 12742:
 			v5 = group.nth_sim(v3, 0)
-			sim.place_relative_to(v5, v0, 0.0, -1000.0, 2.5 * object.float_property(v0, "radius"))
+			sim.place_relative_to(v5, v0, 0.0, -1000.0, object.float_property(v0, "radius") * 2.5)
 			sim.point_at(v5, v0)
 			v7 = 1
 			_pc = 12863
 			continue
 		elif _pc == 12863:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 12879
 				continue
 			else:
@@ -2544,7 +2544,7 @@ func start(v0) -> Variant:
 				continue
 		elif _pc == 12879:
 			sim.copy_orientation(group.nth_sim(v3, v7), v5)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 12863
 			continue
 		elif _pc == 12939:
@@ -2554,7 +2554,7 @@ func start(v0) -> Variant:
 			_pc = 12982
 			continue
 		elif _pc == 12982:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 12998
 				continue
 			else:
@@ -2563,18 +2563,18 @@ func start(v0) -> Variant:
 		elif _pc == 12998:
 			group.add_sim(v3, sim.create("ini:/sims/nav/waypoint", string.join(imapentity.pog_name(v0), string.join(" Load Slot ", string.from_int(v7)))))
 			object.add_int_property(group.nth_sim(v3, v7), "occupied", 0)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 12982
 			continue
 		elif _pc == 13172:
 			v5 = group.nth_sim(v3, 0)
-			sim.place_relative_to(v5, v0, 0.0, -1000.0, -(2.5 * object.float_property(v0, "radius")))
+			sim.place_relative_to(v5, v0, 0.0, -1000.0, -(object.float_property(v0, "radius") * 2.5))
 			sim.point_at(v5, v0)
 			v7 = 1
 			_pc = 13294
 			continue
 		elif _pc == 13294:
-			if v6 < v7:
+			if v7 < v6:
 				_pc = 13310
 				continue
 			else:
@@ -2582,7 +2582,7 @@ func start(v0) -> Variant:
 				continue
 		elif _pc == 13310:
 			sim.copy_orientation(group.nth_sim(v3, v7), v5)
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 13294
 			continue
 		elif _pc == 13370:
@@ -2615,7 +2615,7 @@ func terminate() -> Variant:
 			_pc = 13461
 			continue
 		elif _pc == 13461:
-			if global.pog_int("g_parking_slots") < v1:
+			if v1 < global.pog_int("g_parking_slots"):
 				_pc = 13492
 				continue
 			else:
@@ -2660,7 +2660,7 @@ func terminate() -> Variant:
 			_pc = 13828
 			continue
 		elif _pc == 13828:
-			v1 = 1 + v1
+			v1 = v1 + 1
 			_pc = 13461
 			continue
 		elif _pc == 13846:
@@ -2719,7 +2719,7 @@ func monitor_traffic() -> Variant:
 			_pc = 14070
 			continue
 		elif _pc == 14070:
-			if v5 < v3:
+			if v3 < v5:
 				_pc = 14086
 				continue
 			else:
@@ -2763,28 +2763,28 @@ func monitor_traffic() -> Variant:
 				_pc = 14385
 				continue
 		elif _pc == 14348:
-			v8 = global.pog_float("g_player_sensor_range") + 100000.0
+			v8 = 100000.0 + global.pog_float("g_player_sensor_range")
 			_pc = 14417
 			continue
 		elif _pc == 14385:
-			v8 = global.pog_float("g_player_sensor_range") + 100000.0
+			v8 = 100000.0 + global.pog_float("g_player_sensor_range")
 			_pc = 14417
 			continue
 		elif _pc == 14417:
 			v9 = isim.sims_in_radius(v2, v8, 536838144)
 			v6 = p_set.item_count(v9)
-			if v8 < sim.distance_between(v2, v12):
+			if sim.distance_between(v2, v12) < v8:
 				_pc = 14511
 				continue
 			else:
 				_pc = 14524
 				continue
 		elif _pc == 14511:
-			v6 = 1 - v6
+			v6 = v6 - 1
 			_pc = 14524
 			continue
 		elif _pc == 14524:
-			v4 = 2 * object.int_property(v2, "active_slots")
+			v4 = object.int_property(v2, "active_slots") * 2
 			_pc = 14902
 			continue
 		elif _pc == 14563:
@@ -2815,7 +2815,7 @@ func monitor_traffic() -> Variant:
 			_pc = 14902
 			continue
 		elif _pc == 14902:
-			if v4 < v6:
+			if v6 < v4:
 				_pc = 14918
 				continue
 			else:
@@ -2826,7 +2826,7 @@ func monitor_traffic() -> Variant:
 			_pc = 14937
 			continue
 		elif _pc == 14937:
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 14070
 			continue
 		elif _pc == 14955:

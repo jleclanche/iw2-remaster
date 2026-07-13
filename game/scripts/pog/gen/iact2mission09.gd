@@ -276,7 +276,7 @@ func local_1705(v0) -> Variant:
 				_pc = 4428
 				continue
 		elif _pc == 2079:
-			if 400000.0 <= sim.distance_between(v9, v7):
+			if sim.distance_between(v9, v7) <= 400000.0:
 				_pc = 2113
 				continue
 			else:
@@ -304,7 +304,7 @@ func local_1705(v0) -> Variant:
 			_pc = 4428
 			continue
 		elif _pc == 2561:
-			if 10000.0 <= sim.distance_between(v9, v11):
+			if sim.distance_between(v9, v11) <= 10000.0:
 				_pc = 2595
 				continue
 			else:
@@ -332,7 +332,7 @@ func local_1705(v0) -> Variant:
 			_pc = 4428
 			continue
 		elif _pc == 2720:
-			if 2 == state.progress(v0) and _pog_is_null(v3) and not (_pog_is_running(v10)) and 1 == v4:
+			if v4 == 1 and not (_pog_is_running(v10)) and _pog_is_null(v3) and state.progress(v0) == 2:
 				_pc = 2782
 				continue
 			else:
@@ -437,7 +437,7 @@ func local_4436(v0, v1, v2, v3) -> Variant:
 				_pc = 4719
 				continue
 		elif _pc == 4488:
-			if 1 == object.int_property(v0, "g_a2_m09_signal_1"):
+			if object.int_property(v0, "g_a2_m09_signal_1") == 1:
 				_pc = 4520
 				continue
 			else:
@@ -462,7 +462,7 @@ func local_4436(v0, v1, v2, v3) -> Variant:
 			_pc = 4565
 			continue
 		elif _pc == 4565:
-			if 1 == object.int_property(v0, "g_a2_m09_signal_2"):
+			if object.int_property(v0, "g_a2_m09_signal_2") == 1:
 				_pc = 4597
 				continue
 			else:
@@ -487,7 +487,7 @@ func local_4436(v0, v1, v2, v3) -> Variant:
 			_pc = 4642
 			continue
 		elif _pc == 4642:
-			if 1 == object.int_property(v0, "g_a2_m09_signal_3"):
+			if object.int_property(v0, "g_a2_m09_signal_3") == 1:
 				_pc = 4674
 				continue
 			else:
@@ -519,7 +519,7 @@ func local_4436(v0, v1, v2, v3) -> Variant:
 				_pc = 5140
 				continue
 		elif _pc == 4732:
-			if _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_2") and 1 == object.int_property(v0, "g_a2_m09_signal_3") or _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_3") and 1 == object.int_property(v0, "g_a2_m09_signal_1") or _pog_is_null(v4) and 1 == object.int_property(v0, "g_a2_m09_signal_2") and 1 == object.int_property(v0, "g_a2_m09_signal_1"):
+			if object.int_property(v0, "g_a2_m09_signal_1") == 1 and object.int_property(v0, "g_a2_m09_signal_2") == 1 and _pog_is_null(v4) or object.int_property(v0, "g_a2_m09_signal_1") == 1 and object.int_property(v0, "g_a2_m09_signal_3") == 1 and _pog_is_null(v4) or object.int_property(v0, "g_a2_m09_signal_3") == 1 and object.int_property(v0, "g_a2_m09_signal_2") == 1 and _pog_is_null(v4):
 				_pc = 4923
 				continue
 			else:
@@ -580,14 +580,14 @@ func local_5149(v0, v1, v2) -> Variant:
 				_pc = 5410
 				continue
 		elif _pc == 5232:
-			if 1 == v4:
+			if v4 == 1:
 				_pc = 5244
 				continue
 			else:
 				_pc = 5369
 				continue
 		elif _pc == 5244:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 5283
 			continue
 		elif _pc == 5262:
@@ -609,7 +609,7 @@ func local_5149(v0, v1, v2) -> Variant:
 			_pc = 5322
 			continue
 		elif _pc == 5322:
-			if 5 == v5:
+			if v5 == 5:
 				_pc = 5335
 				continue
 			else:
@@ -623,7 +623,7 @@ func local_5149(v0, v1, v2) -> Variant:
 			_pc = 5410
 			continue
 		elif _pc == 5369:
-			if 50000.0 <= sim.distance_between(v3, v0):
+			if sim.distance_between(v3, v0) <= 50000.0:
 				_pc = 5403
 				continue
 			else:
@@ -678,7 +678,7 @@ func local_5418(v0, v1, v2) -> Variant:
 				_pc = 6250
 				continue
 		elif _pc == 5565:
-			if 50000.0 <= sim.distance_between(v3, v0):
+			if sim.distance_between(v3, v0) <= 50000.0:
 				_pc = 5599
 				continue
 			else:
@@ -773,7 +773,7 @@ func local_6258(v0, v1, v2) -> Variant:
 				_pc = 7961
 				continue
 		elif _pc == 6412:
-			if 10000.0 <= sim.distance_between(v3, v0):
+			if sim.distance_between(v3, v0) <= 10000.0:
 				_pc = 6446
 				continue
 			else:
@@ -1065,7 +1065,7 @@ func local_11103(v0, v1, v2) -> Variant:
 				_pc = 16660
 				continue
 		elif _pc == 11818:
-			if 300000.0 <= sim.distance_between(v6, v5):
+			if sim.distance_between(v6, v5) <= 300000.0:
 				_pc = 11852
 				continue
 			else:
@@ -1245,7 +1245,7 @@ func local_11103(v0, v1, v2) -> Variant:
 			_pc = 16660
 			continue
 		elif _pc == 15778:
-			if _pog_is_null(v36) and 25 >= v35:
+			if v35 >= 25 and _pog_is_null(v36):
 				_pc = 15799
 				continue
 			else:
@@ -1265,11 +1265,11 @@ func local_11103(v0, v1, v2) -> Variant:
 				_pc = 15892
 				continue
 		elif _pc == 15879:
-			v35 = 1 + v35
+			v35 = v35 + 1
 			_pc = 15892
 			continue
 		elif _pc == 15892:
-			if 10000.0 <= sim.distance_between(v23, v3):
+			if sim.distance_between(v23, v3) <= 10000.0:
 				_pc = 15926
 				continue
 			else:
@@ -1365,7 +1365,7 @@ func local_16668(v0, v1, v2) -> Variant:
 			_pc = 17003
 			continue
 		elif _pc == 16981:
-			if v3 != 1:
+			if 1 != v3:
 				_pc = 16994
 				continue
 			else:
@@ -1441,7 +1441,7 @@ func local_17019(v0, v1, v2) -> Variant:
 				_pc = 18924
 				continue
 		elif _pc == 17372:
-			if 40000.0 <= sim.distance_between(v4, v3):
+			if sim.distance_between(v4, v3) <= 40000.0:
 				_pc = 17406
 				continue
 			else:
@@ -1466,7 +1466,7 @@ func local_17019(v0, v1, v2) -> Variant:
 			_pc = 17619
 			continue
 		elif _pc == 17619:
-			if v17 < v16:
+			if v16 < v17:
 				_pc = 17635
 				continue
 			else:
@@ -1476,7 +1476,7 @@ func local_17019(v0, v1, v2) -> Variant:
 			v15 = iship.create("ini:/sims/ships/utility/freightpod", "a2_m09_Cargo_Pod")
 			iship.dock(v15, v14)
 			object.set_int_property(v15, "cargo", 438)
-			v16 = 1 + v16
+			v16 = v16 + 1
 			_pc = 17619
 			continue
 		elif _pc == 17738:
@@ -1520,7 +1520,7 @@ func local_17019(v0, v1, v2) -> Variant:
 			_pc = 18362
 			continue
 		elif _pc == 18362:
-			if 10 == v7:
+			if v7 == 10:
 				_pc = 18375
 				continue
 			else:
@@ -1556,7 +1556,7 @@ func local_17019(v0, v1, v2) -> Variant:
 			_pc = 18924
 			continue
 		elif _pc == 18885:
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 18924
 			continue
 		elif _pc == 18903:
@@ -1589,7 +1589,7 @@ func local_18932(v0) -> Variant:
 				_pc = 19033
 				continue
 		elif _pc == 18975:
-			if 10000.0 <= sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) <= 10000.0:
 				_pc = 19009
 				continue
 			else:
@@ -1629,7 +1629,7 @@ func local_19041(v0) -> Variant:
 				_pc = 19142
 				continue
 		elif _pc == 19084:
-			if 10000.0 <= sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) <= 10000.0:
 				_pc = 19118
 				continue
 			else:
@@ -1661,7 +1661,7 @@ func local_19041(v0) -> Variant:
 			_pc = 19276
 			continue
 		elif _pc == 19276:
-			if v1 < v5:
+			if v5 < v1:
 				_pc = 19292
 				continue
 			else:
@@ -1670,7 +1670,7 @@ func local_19041(v0) -> Variant:
 		elif _pc == 19292:
 			v4 = iship.create("ini:/sims/ships/utility/freightpod", "a2_m09_Cargo_Pod")
 			iship.dock(v4, v3)
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 19276
 			continue
 		elif _pc == 19366:
@@ -1776,7 +1776,7 @@ func mission_handler() -> Variant:
 				_pc = 20481
 				continue
 		elif _pc == 19982:
-			if _pog_eq("map:/geog/badlands/mwari", isim.active_world()):
+			if _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
 				_pc = 20009
 				continue
 			else:
@@ -1802,14 +1802,14 @@ func mission_handler() -> Variant:
 			_pc = 20073
 			continue
 		elif _pc == 20073:
-			if 100 == state.progress(v2) or 6 == state.progress(v2):
+			if state.progress(v2) == 6 or state.progress(v2) == 100:
 				_pc = 20121
 				continue
 			else:
 				_pc = 20481
 				continue
 		elif _pc == 20121:
-			if 100 == state.progress(v2):
+			if state.progress(v2) == 100:
 				_pc = 20147
 				continue
 			else:

@@ -913,10 +913,15 @@ class Decompiler:
             if stack:
                 stack[-1] = Call("clone", [stack[-1]])
         elif mn in _BIN:
-            b = stack.pop() if stack else Const(0)
-            a = stack.pop() if stack else Const(0)
+            # The compiler pushes the RIGHT operand first, so the LEFT one is on
+            # top. FcScriptTask::Execute is unambiguous: SubtractI (0x1b) is
+            # `second = top - second`, and LessI (0x23) is `top < second`.
+            # Reading them the other way round silently reverses every
+            # subtraction, division, modulus and comparison in the game.
+            lhs = stack.pop() if stack else Const(0)
+            rhs = stack.pop() if stack else Const(0)
             op, prec = _BIN[mn]
-            stack.append(Bin(op, a, b, prec))
+            stack.append(Bin(op, lhs, rhs, prec))
         elif mn in _UN:
             a = stack.pop() if stack else Const(0)
             stack.append(_not(a) if mn == "LogicalNot" else Un(_UN[mn], a))

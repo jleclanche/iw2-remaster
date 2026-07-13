@@ -124,7 +124,7 @@ func main_task() -> Variant:
 				_pc = 663
 				continue
 		elif _pc == 406:
-			if 300000.0 < sim.distance_between(imapentity.find_by_name("Lucrecia's Base"), v6):
+			if sim.distance_between(imapentity.find_by_name("Lucrecia's Base"), v6) < 300000.0:
 				_pc = 455
 				continue
 			else:
@@ -254,7 +254,7 @@ func main_task() -> Variant:
 			_pc = 1338
 			continue
 		elif _pc == 1338:
-			if 9000.0 < sim.distance_between(sim.cast(global.handle("g_maas_ship")), v6):
+			if sim.distance_between(sim.cast(global.handle("g_maas_ship")), v6) < 9000.0:
 				_pc = 1400
 				continue
 			else:
@@ -274,7 +274,7 @@ func main_task() -> Variant:
 			await iconversation.add_response("a1_master_player_option_3", "a1_master_player_option_3")
 			await iconversation.add_response("a1_master_player_option_4", "a1_master_player_option_4")
 			v7 = await iconversation.ask(v8, "a1_master_spirit_of_capitalism", "a1_master_dialogue_victim_threat_1")
-			if 1 == v7:
+			if v7 == 1:
 				_pc = 1597
 				continue
 			else:
@@ -290,7 +290,7 @@ func main_task() -> Variant:
 			_pc = 2125
 			continue
 		elif _pc == 1737:
-			if 2 == v7:
+			if v7 == 2:
 				_pc = 1750
 				continue
 			else:
@@ -305,7 +305,7 @@ func main_task() -> Variant:
 			_pc = 2125
 			continue
 		elif _pc == 1868:
-			if 3 == v7:
+			if v7 == 3:
 				_pc = 1881
 				continue
 			else:
@@ -320,7 +320,7 @@ func main_task() -> Variant:
 			_pc = 2125
 			continue
 		elif _pc == 1999:
-			if 4 == v7:
+			if v7 == 4:
 				_pc = 2012
 				continue
 			else:
@@ -363,7 +363,7 @@ func main_task() -> Variant:
 			_pc = 2240
 			continue
 		elif _pc == 2240:
-			if 100000.0 < sim.distance_between(v3, v6):
+			if sim.distance_between(v3, v6) < 100000.0:
 				_pc = 2274
 				continue
 			else:
@@ -437,7 +437,7 @@ func local_2402() -> Variant:
 				_pc = 2585
 				continue
 		elif _pc == 2515:
-			if 3 == iai.current_order_type(v1) and _pog_eq(isim.cast(v0), iai.current_order_target(v1)):
+			if _pog_eq(iai.current_order_target(v1), isim.cast(v0)) and iai.current_order_type(v1) == 3:
 				_pc = 2579
 				continue
 			else:
@@ -506,7 +506,7 @@ func cargo_hint_handler(v0) -> Variant:
 				_pc = 4135
 				continue
 		elif _pc == 2841:
-			if 100000.0 < sim.distance_between(v5, v8):
+			if sim.distance_between(v5, v8) < 100000.0:
 				_pc = 2875
 				continue
 			else:
@@ -514,7 +514,7 @@ func cargo_hint_handler(v0) -> Variant:
 				continue
 		elif _pc == 2875:
 			v6 = isim.sims_in_radius(isim.cast(v8), 30000.0, 2048)
-			if not (v2) and _pog_is_null(p_set.item_count(v6)) or await local_2402():
+			if await local_2402() or _pog_is_null(p_set.item_count(v6)) and not (v2):
 				_pc = 2968
 				continue
 			else:
@@ -533,7 +533,7 @@ func cargo_hint_handler(v0) -> Variant:
 			continue
 		elif _pc == 3092:
 			v6 = isim.sims_in_radius(isim.cast(v8), 30000.0, 2048)
-			if not (v1) and not (v3) and not _pog_is_null(p_set.item_count(v6)):
+			if not _pog_is_null(p_set.item_count(v6)) and not (v3) and not (v1):
 				_pc = 3178
 				continue
 			else:
@@ -547,7 +547,7 @@ func cargo_hint_handler(v0) -> Variant:
 		elif _pc == 3213:
 			v4 = await ijafsscript.get_tag_group()
 			v11 = group.sim_count(v4)
-			if v10 > v11:
+			if v11 > v10:
 				_pc = 3272
 				continue
 			else:
@@ -565,8 +565,8 @@ func cargo_hint_handler(v0) -> Variant:
 				_pc = 3969
 				continue
 		elif _pc == 3294:
-			v9 = 1 + v9
-			if not (v1) and 80 > v9:
+			v9 = v9 + 1
+			if v9 > 80 and not (v1):
 				_pc = 3327
 				continue
 			else:
@@ -582,7 +582,7 @@ func cargo_hint_handler(v0) -> Variant:
 			_pc = 3369
 			continue
 		elif _pc == 3369:
-			if v11 < v12:
+			if v12 < v11:
 				_pc = 3385
 				continue
 			else:
@@ -599,7 +599,7 @@ func cargo_hint_handler(v0) -> Variant:
 		elif _pc == 3446:
 			object.add_int_property(v7, "commented", 1)
 			v9 = 0
-			if 6 >= icargo.value(icargo.find(object.int_property(v7, "cargo"))):
+			if icargo.value(icargo.find(object.int_property(v7, "cargo"))) >= 6:
 				_pc = 3539
 				continue
 			else:
@@ -610,7 +610,7 @@ func cargo_hint_handler(v0) -> Variant:
 			_pc = 3946
 			continue
 		elif _pc == 3565:
-			if 2 >= icargo.value(icargo.find(object.int_property(v7, "cargo"))):
+			if icargo.value(icargo.find(object.int_property(v7, "cargo"))) >= 2:
 				_pc = 3624
 				continue
 			else:
@@ -660,7 +660,7 @@ func cargo_hint_handler(v0) -> Variant:
 			_pc = 3946
 			continue
 		elif _pc == 3758:
-			if 2 < icargo.value(icargo.find(object.int_property(v7, "cargo"))):
+			if icargo.value(icargo.find(object.int_property(v7, "cargo"))) < 2:
 				_pc = 3817
 				continue
 			else:
@@ -707,22 +707,22 @@ func cargo_hint_handler(v0) -> Variant:
 				_pc = 3874
 				continue
 		elif _pc == 3946:
-			v12 = 1 + v12
+			v12 = v12 + 1
 			_pc = 3369
 			continue
 		elif _pc == 3964:
 			_pc = 4058
 			continue
 		elif _pc == 3969:
-			if not (await ijafsscript.jafs_active()) and 6 >= v10:
+			if v10 >= 6 and not (await ijafsscript.jafs_active()):
 				_pc = 3997
 				continue
 			else:
 				_pc = 4058
 				continue
 		elif _pc == 3997:
-			v9 = 1 + v9
-			if 50 > v9:
+			v9 = v9 + 1
+			if v9 > 50:
 				_pc = 4023
 				continue
 			else:
@@ -734,7 +734,7 @@ func cargo_hint_handler(v0) -> Variant:
 			_pc = 4058
 			continue
 		elif _pc == 4058:
-			if not (v1) and not (await ijafsscript.jafs_active()) and 6 >= v10:
+			if v10 >= 6 and not (await ijafsscript.jafs_active()) and not (v1):
 				_pc = 4093
 				continue
 			else:
@@ -808,7 +808,7 @@ func hitpointmonitortask(v0) -> Variant:
 				_pc = 6030
 				continue
 		elif _pc == 4490:
-			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag") and _pog_is_null(sim.cast(v0)):
+			if _pog_is_null(sim.cast(v0)) and global.pog_bool("g_piracy_mission_one_ship_flag") == 1:
 				_pc = 4539
 				continue
 			else:
@@ -830,14 +830,14 @@ func hitpointmonitortask(v0) -> Variant:
 			_pc = 6030
 			continue
 		elif _pc == 4615:
-			if v2 < 150.0 + object.float_property(v0, "hit_points"):
+			if object.float_property(v0, "hit_points") + 150.0 < v2:
 				_pc = 4657
 				continue
 			else:
 				_pc = 6030
 				continue
 		elif _pc == 4657:
-			if 1 == v4:
+			if v4 == 1:
 				_pc = 4669
 				continue
 			else:
@@ -851,7 +851,7 @@ func hitpointmonitortask(v0) -> Variant:
 			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_1")
 			await iconversation.end()
 			v2 = object.float_property(v0, "hit_points")
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 5036
 			continue
 		elif _pc == 4783:
@@ -859,7 +859,7 @@ func hitpointmonitortask(v0) -> Variant:
 			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_2")
 			await iconversation.end()
 			v2 = object.float_property(v0, "hit_points")
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 5036
 			continue
 		elif _pc == 4892:
@@ -867,7 +867,7 @@ func hitpointmonitortask(v0) -> Variant:
 			await iconversation.say(v0, "a1_master_spirit_of_capitalism", "a1_victim_plea_3")
 			await iconversation.end()
 			v2 = object.float_property(v0, "hit_points")
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 5036
 			continue
 		elif _pc == 5001:
@@ -898,7 +898,7 @@ func hitpointmonitortask(v0) -> Variant:
 			_pc = 6030
 			continue
 		elif _pc == 5041:
-			if 1 == global.pog_bool("g_ship_threat"):
+			if global.pog_bool("g_ship_threat") == 1:
 				_pc = 5068
 				continue
 			else:
@@ -919,7 +919,7 @@ func hitpointmonitortask(v0) -> Variant:
 			_pc = 5251
 			continue
 		elif _pc == 5251:
-			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
+			if global.pog_bool("g_piracy_mission_one_ship_flag") == 1:
 				_pc = 5278
 				continue
 			else:
@@ -941,7 +941,7 @@ func hitpointmonitortask(v0) -> Variant:
 			await iconversation.add_response("a1_master_player_option_6", "a1_master_player_option_6")
 			await iconversation.add_response("a1_master_player_option_7", "a1_master_player_option_7")
 			v3 = await iconversation.ask(v0, "a1_master_spirit_of_capitalism", "a1_master_dialogue_victim_question_2")
-			if 1 == v3:
+			if v3 == 1:
 				_pc = 5465
 				continue
 			else:
@@ -954,7 +954,7 @@ func hitpointmonitortask(v0) -> Variant:
 			await local_4157(v0)
 			v2 = object.float_property(v0, "hit_points")
 			v4 = 1
-			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
+			if global.pog_bool("g_piracy_mission_one_ship_flag") == 1:
 				_pc = 5635
 				continue
 			else:
@@ -968,7 +968,7 @@ func hitpointmonitortask(v0) -> Variant:
 			_pc = 6036
 			continue
 		elif _pc == 5673:
-			if 2 == v3:
+			if v3 == 2:
 				_pc = 5686
 				continue
 			else:
@@ -982,7 +982,7 @@ func hitpointmonitortask(v0) -> Variant:
 			await local_4157(v0)
 			v2 = object.float_property(v0, "hit_points")
 			v4 = 1
-			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
+			if global.pog_bool("g_piracy_mission_one_ship_flag") == 1:
 				_pc = 5888
 				continue
 			else:
@@ -1034,7 +1034,7 @@ func local_6052(v0) -> Variant:
 			_pc = 6083
 			continue
 		elif _pc == 6083:
-			if v4 < v2:
+			if v2 < v4:
 				_pc = 6099
 				continue
 			else:
@@ -1190,7 +1190,7 @@ func local_6052(v0) -> Variant:
 		elif _pc == 6652:
 			await iutilities.rename_sim(v7, icargo.pog_name(icargo.find(object.int_property(v7, "cargo"))))
 			isim.dock(v7, v0)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 6083
 			continue
 		elif _pc == 6765:
@@ -1216,14 +1216,14 @@ func piracy_mission_one_ship_generator(v0) -> Variant:
 			_pc = 6825
 			continue
 		elif _pc == 6825:
-			if global.pog_float("g_player_sensor_range") > sim.distance_between(v0, v5):
+			if sim.distance_between(v0, v5) > global.pog_float("g_player_sensor_range"):
 				_pc = 6874
 				continue
 			else:
 				_pc = 7085
 				continue
 		elif _pc == 6874:
-			if 1 == global.pog_bool("g_piracy_mission_one_ship_flag"):
+			if global.pog_bool("g_piracy_mission_one_ship_flag") == 1:
 				_pc = 6901
 				continue
 			else:
@@ -1357,7 +1357,7 @@ func piracy_mission_one_shut_down_monitor(v0, v1) -> Variant:
 			_pc = 7578
 			continue
 		elif _pc == 7578:
-			if not _pog_is_null(sim.cast(global.handle("g_maas_ship"))) and global.pog_bool("g_piracy_mission_one_ship_flag"):
+			if global.pog_bool("g_piracy_mission_one_ship_flag") and not _pog_is_null(sim.cast(global.handle("g_maas_ship"))):
 				_pc = 7639
 				continue
 			else:

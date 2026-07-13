@@ -58,7 +58,7 @@ func local_0() -> Variant:
 			_pc = 92
 			continue
 		elif _pc == 92:
-			if v1 < v2:
+			if v2 < v1:
 				_pc = 108
 				continue
 			else:
@@ -66,7 +66,7 @@ func local_0() -> Variant:
 				continue
 		elif _pc == 108:
 			iship.set_a_i_disabled(iship.cast(list.get_nth(v0, v2)), 1)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 92
 			continue
 		elif _pc == 177:
@@ -89,7 +89,7 @@ func local_197(v0) -> Variant:
 			_pc = 233
 			continue
 		elif _pc == 233:
-			if v1 < v2:
+			if v2 < v1:
 				_pc = 249
 				continue
 			else:
@@ -97,7 +97,7 @@ func local_197(v0) -> Variant:
 				continue
 		elif _pc == 249:
 			iship.set_a_i_disabled(iship.cast(list.get_nth(v0, v2)), 0)
-			v2 = 1 + v2
+			v2 = v2 + 1
 			_pc = 233
 			continue
 		elif _pc == 318:
@@ -175,7 +175,7 @@ func handle_abort(v0) -> Variant:
 			continue
 		elif _pc == 661:
 			v11 = await iwingmen.get_detached_t_fighters()
-			if 0 > list.item_count(v11):
+			if list.item_count(v11) > 0:
 				_pc = 707
 				continue
 			else:
@@ -203,7 +203,7 @@ func handle_abort(v0) -> Variant:
 			_pc = 782
 			continue
 		elif _pc == 782:
-			if _pog_eq(v8, sim.group(v9)):
+			if _pog_eq(sim.group(v9), v8):
 				_pc = 811
 				continue
 			else:
@@ -214,7 +214,7 @@ func handle_abort(v0) -> Variant:
 			_pc = 830
 			continue
 		elif _pc == 830:
-			if not (isim.is_docked_to(v9, v6)) and isim.is_docked(v9):
+			if isim.is_docked(v9) and not (isim.is_docked_to(v9, v6)):
 				_pc = 878
 				continue
 			else:
@@ -239,7 +239,7 @@ func handle_abort(v0) -> Variant:
 			_pc = 946
 			continue
 		elif _pc == 946:
-			if _pog_eq(v8, sim.group(v10)):
+			if _pog_eq(sim.group(v10), v8):
 				_pc = 975
 				continue
 			else:
@@ -250,7 +250,7 @@ func handle_abort(v0) -> Variant:
 			_pc = 994
 			continue
 		elif _pc == 994:
-			if not (isim.is_docked_to(v10, v6)) and isim.is_docked(v10):
+			if isim.is_docked(v10) and not (isim.is_docked_to(v10, v6)):
 				_pc = 1042
 				continue
 			else:
@@ -285,7 +285,7 @@ func handle_abort(v0) -> Variant:
 			_pc = 1420
 			continue
 		elif _pc == 1274:
-			if 1 == global.pog_bool("g_cutscene_skip"):
+			if global.pog_bool("g_cutscene_skip") == 1:
 				_pc = 1301
 				continue
 			else:
@@ -362,7 +362,7 @@ func enable_player_autopilot() -> Variant:
 				_pc = 1818
 				continue
 		elif _pc == 1724:
-			object.set_int_property(v1, "cutscene_utilities_player_autopilot_enabled_count", 1 + object.int_property(v1, "cutscene_utilities_player_autopilot_enabled_count"))
+			object.set_int_property(v1, "cutscene_utilities_player_autopilot_enabled_count", object.int_property(v1, "cutscene_utilities_player_autopilot_enabled_count") + 1)
 			v1 = iship.cast(sim.parent(v1))
 			_pc = 2254
 			continue
@@ -375,7 +375,7 @@ func enable_player_autopilot() -> Variant:
 			sim.place_at(v0, v1)
 			sim.set_cullable(v1, 0)
 			iship.install_player_pilot(v0)
-			if object.property_exists(v1, "wingmen_group") or object.property_exists(v1, "name_lori") or object.property_exists(v1, "name_az"):
+			if object.property_exists(v1, "name_az") or object.property_exists(v1, "name_lori") or object.property_exists(v1, "wingmen_group"):
 				_pc = 2079
 				continue
 			else:
@@ -445,14 +445,14 @@ func local_2285(v0) -> Variant:
 				continue
 		elif _pc == 2383:
 			v3 = object.int_property(v2, "cutscene_utilities_player_autopilot_enabled_count")
-			if 1 > v3:
+			if v3 > 1:
 				_pc = 2426
 				continue
 			else:
 				_pc = 2490
 				continue
 		elif _pc == 2426:
-			object.set_int_property(v2, "cutscene_utilities_player_autopilot_enabled_count", 1 - v3)
+			object.set_int_property(v2, "cutscene_utilities_player_autopilot_enabled_count", v3 - 1)
 			_pc = 2485
 			continue
 		elif _pc == 2464:
@@ -505,7 +505,7 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 2677
 			continue
 		elif _pc == 2677:
-			if 1.0 > v2 or 0.0 <= v2:
+			if v2 <= 0.0 or v2 > 1.0:
 				_pc = 2705
 				continue
 			else:
@@ -516,7 +516,7 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 2716
 			continue
 		elif _pc == 2716:
-			if 0.0 <= v3:
+			if v3 <= 0.0:
 				_pc = 2732
 				continue
 			else:
@@ -527,7 +527,7 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 2743
 			continue
 		elif _pc == 2743:
-			if group.sim_count(v1) > v5 or 0 < v5:
+			if v5 < 0 or v5 > group.sim_count(v1):
 				_pc = 2780
 				continue
 			else:
@@ -538,7 +538,7 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 2787
 			continue
 		elif _pc == 2787:
-			if 2 < group.sim_count(v1):
+			if group.sim_count(v1) < 2:
 				_pc = 2813
 				continue
 			else:
@@ -563,7 +563,7 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 				_pc = 3310
 				continue
 		elif _pc == 2912:
-			v7 = v2 * sim.distance_between(v0, v6)
+			v7 = sim.distance_between(v0, v6) * v2
 			iai.give_approach_order_advanced(v0, v6, 0.0, 1.0, 0)
 			_pc = 3149
 			continue
@@ -578,7 +578,7 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 3149
 			continue
 		elif _pc == 3149:
-			if 2 < group.sim_count(v1):
+			if group.sim_count(v1) < 2:
 				_pc = 3175
 				continue
 			else:
@@ -596,14 +596,14 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 			continue
 		elif _pc == 3206:
 			await _pog_wait(v3)
-			if not (not (iai.is_order_complete(v0)) and v7 > sim.distance_between(v0, v6)):
+			if not (sim.distance_between(v0, v6) > v7 and not (iai.is_order_complete(v0))):
 				_pc = 3292
 				continue
 			else:
 				_pc = 3149
 				continue
 		elif _pc == 3292:
-			v5 = 1 + v5
+			v5 = v5 + 1
 			_pc = 3343
 			continue
 		elif _pc == 3310:
@@ -625,11 +625,11 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 				_pc = 3381
 				continue
 		elif _pc == 3367:
-			v4 = -1 + v4
+			v4 = v4 + -1
 			_pc = 3381
 			continue
 		elif _pc == 3381:
-			if 0 <= v4:
+			if v4 <= 0:
 				_pc = 3393
 				continue
 			else:
@@ -674,23 +674,23 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 	var _pc: int = 3468
 	while true:
 		if _pc == 3468:
-			v9 = 1.0 - v5 / v3 - v4
+			v9 = v4 - v3 / v5 - 1.0
 			v15 = await get_kill_group()
 			v16 = group.create()
 			v6 = 0
 			_pc = 3548
 			continue
 		elif _pc == 3548:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 3564
 				continue
 			else:
 				_pc = 4095
 				continue
 		elif _pc == 3564:
-			v8 = v9 * v6 + v3
-			v10 = math.pog_cos(v8) * v2
-			v11 = math.pog_sin(v8) * v2
+			v8 = v3 + v6 * v9
+			v10 = v2 * math.pog_cos(v8)
+			v11 = v2 * math.pog_sin(v8)
 			_pc = 3847
 			continue
 		elif _pc == 3653:
@@ -753,7 +753,7 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 		elif _pc == 4001:
 			v7 = isim.cast(await iutilities.create_waypoint_relative_to(v0, v12, v13, v14))
 			group.add_sim(v16, v7)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 3548
 			continue
 		elif _pc == 4095:
@@ -841,7 +841,7 @@ func orbit_sim() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v9 = 360.0 / math.pog_abs(v7 - v8) * 16.0
+	v9 = 16.0 * math.pog_abs(v8 - v7) / 360.0
 	v10 = await build_circular_path(v3, v5, v6, v7, v8, v9)
 	sim.place_at(v2, group.nth_sim(v10, 0))
 	await watch(v0, v1)
@@ -896,7 +896,7 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5491
 			continue
 		elif _pc == 5491:
-			if v10 < v8:
+			if v8 < v10:
 				_pc = 5507
 				continue
 			else:
@@ -904,7 +904,7 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 				continue
 		elif _pc == 5507:
 			await setup_directed_death(group.nth_sim(v6, v8), v1, v2, v3, v4, v5)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 5491
 			continue
 		elif _pc == 5587:
@@ -912,7 +912,7 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 			_pc = 5594
 			continue
 		elif _pc == 5594:
-			if v11 < v9:
+			if v9 < v11:
 				_pc = 5610
 				continue
 			else:
@@ -920,7 +920,7 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 				continue
 		elif _pc == 5610:
 			await setup_directed_death(group.nth_group(v6, v9), v1, v2, v3, v4, v5)
-			v9 = 1 + v9
+			v9 = v9 + 1
 			_pc = 5594
 			continue
 		elif _pc == 5690:
@@ -976,7 +976,7 @@ func setup_directed_group_death() -> Variant:
 			_pc = 5989
 			continue
 		elif _pc == 5989:
-			if v9 < v8:
+			if v8 < v9:
 				_pc = 6005
 				continue
 			else:
@@ -984,7 +984,7 @@ func setup_directed_group_death() -> Variant:
 				continue
 		elif _pc == 6005:
 			await setup_directed_death(group.nth_sim(v6, v8), v1, v2, v3, v4, v5)
-			v8 = 1 + v8
+			v8 = v8 + 1
 			_pc = 5989
 			continue
 		elif _pc == 6085:
@@ -1021,7 +1021,7 @@ func local_6290(v0, v1, v2, v3, v4) -> Variant:
 	v6 = await get_kill_group()
 	idirector.begin()
 	v5 = idirector.create_dolly()
-	sim.place_near(v5, v0, 7.0 * object.float_property(v0, "radius"))
+	sim.place_near(v5, v0, object.float_property(v0, "radius") * 7.0)
 	idirector.set_dolly_camera(v5)
 	idirector.set_focus(v0)
 	isim.kill(v0)
@@ -1054,7 +1054,7 @@ func local_6581(v0, v1) -> Variant:
 				_pc = 6725
 				continue
 		elif _pc == 6629:
-			if 1 > group.sim_count(v3):
+			if group.sim_count(v3) > 1:
 				_pc = 6654
 				continue
 			else:
@@ -1085,7 +1085,7 @@ func local_6581(v0, v1) -> Variant:
 			v8 = object.string_property(v4, "Cutscene_DirectedDeath_Obituary")
 			v9 = object.string_property(v4, "Cutscene_DirectedDeath_Epitaph")
 			v5 = object.int_property(v4, "Cutscene_DirectedDeath_EndGame")
-			if _pog_eq("", v7) and _pog_is_null(v6):
+			if _pog_is_null(v6) and _pog_eq(v7, ""):
 				_pc = 6935
 				continue
 			else:
@@ -1098,7 +1098,7 @@ func local_6581(v0, v1) -> Variant:
 		elif _pc == 6946:
 			await handle_abort(_pog_spawn(local_6290.bind(v0, v6, _pog_clone(v7), _pog_clone(v8), _pog_clone(v9))))
 			await _pog_wait(5.0)
-			if _pog_is_null(object.property_exists(iship.find_player_ship(), "player_dying")) and v5:
+			if v5 and _pog_is_null(object.property_exists(iship.find_player_ship(), "player_dying")):
 				_pc = 7079
 				continue
 			else:
@@ -1132,7 +1132,7 @@ func get_station_modules(v0) -> Variant:
 	var _pc: int = 7288
 	while true:
 		if _pc == 7288:
-			isim.sims_in_radius(isim.cast(v0), 1.5 * object.float_property(v0, "radius"), 8192)
+			isim.sims_in_radius(isim.cast(v0), object.float_property(v0, "radius") * 1.5, 8192)
 			_pc = 7358
 			continue
 		elif _pc == 7358:
@@ -1155,7 +1155,7 @@ func get_things_called(v0, v1) -> Variant:
 			continue
 		elif _pc == 7412:
 			v2 = isim.cast(p_set.first_element(v3))
-			if _pog_eq(v1, object.string_property(v2, "name")):
+			if _pog_eq(object.string_property(v2, "name"), v1):
 				_pc = 7486
 				continue
 			else:

@@ -86,14 +86,14 @@ func local_0(v0) -> Variant:
 			_pc = 85
 			continue
 		elif _pc == 85:
-			if v4 < v6:
+			if v6 < v4:
 				_pc = 101
 				continue
 			else:
 				_pc = 523
 				continue
 		elif _pc == 101:
-			if 1 == math.random_int(0, 1):
+			if math.random_int(0, 1) == 1:
 				_pc = 123
 				continue
 			else:
@@ -114,7 +114,7 @@ func local_0(v0) -> Variant:
 			iship.set_free_without_pilot(iship.cast(v2), 1)
 			sim.set_angular_velocity_euler(v2, math.random(5.0, 10.0), math.random(5.0, 10.0), math.random(5.0, 10.0))
 			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 85
 			continue
 		elif _pc == 523:
@@ -123,14 +123,14 @@ func local_0(v0) -> Variant:
 			_pc = 569
 			continue
 		elif _pc == 569:
-			if v4 < v6:
+			if v6 < v4:
 				_pc = 585
 				continue
 			else:
 				_pc = 1007
 				continue
 		elif _pc == 585:
-			if 1 == math.random_int(0, 1):
+			if math.random_int(0, 1) == 1:
 				_pc = 607
 				continue
 			else:
@@ -151,7 +151,7 @@ func local_0(v0) -> Variant:
 			iship.set_free_without_pilot(iship.cast(v2), 1)
 			sim.set_angular_velocity_euler(v2, math.random(5.0, 10.0), math.random(5.0, 10.0), math.random(5.0, 10.0))
 			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 569
 			continue
 		elif _pc == 1007:
@@ -160,14 +160,14 @@ func local_0(v0) -> Variant:
 			_pc = 1053
 			continue
 		elif _pc == 1053:
-			if v4 < v6:
+			if v6 < v4:
 				_pc = 1069
 				continue
 			else:
 				_pc = 1491
 				continue
 		elif _pc == 1069:
-			if 1 == math.random_int(0, 1):
+			if math.random_int(0, 1) == 1:
 				_pc = 1091
 				continue
 			else:
@@ -188,7 +188,7 @@ func local_0(v0) -> Variant:
 			iship.set_free_without_pilot(iship.cast(v2), 1)
 			sim.set_angular_velocity_euler(v2, math.random(5.0, 10.0), math.random(5.0, 10.0), math.random(5.0, 10.0))
 			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 1053
 			continue
 		elif _pc == 1491:
@@ -197,14 +197,14 @@ func local_0(v0) -> Variant:
 			_pc = 1537
 			continue
 		elif _pc == 1537:
-			if v4 < v6:
+			if v6 < v4:
 				_pc = 1553
 				continue
 			else:
 				_pc = 1975
 				continue
 		elif _pc == 1553:
-			if 1 == math.random_int(0, 1):
+			if math.random_int(0, 1) == 1:
 				_pc = 1575
 				continue
 			else:
@@ -225,7 +225,7 @@ func local_0(v0) -> Variant:
 			iship.set_free_without_pilot(iship.cast(v2), 1)
 			sim.set_angular_velocity_euler(v2, math.random(5.0, 10.0), math.random(5.0, 10.0), math.random(5.0, 10.0))
 			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 1537
 			continue
 		elif _pc == 1975:
@@ -234,7 +234,7 @@ func local_0(v0) -> Variant:
 			_pc = 2021
 			continue
 		elif _pc == 2021:
-			if v5 < v6:
+			if v6 < v5:
 				_pc = 2037
 				continue
 			else:
@@ -247,7 +247,7 @@ func local_0(v0) -> Variant:
 			sim.set_orientation_euler(v2, math.random(5.0, 360.0), math.random(5.0, 360.0), math.random(5.0, 360.0))
 			iship.set_free_without_pilot(iship.cast(v2), 1)
 			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 2021
 			continue
 		elif _pc == 2312:
@@ -273,7 +273,7 @@ func score_death_script() -> Variant:
 			v2 = isim.faction(isim.cast(v0))
 			v3 = object.int_property(v0, "class")
 			v4 = object.int_property(v0, "score")
-			if not _pog_eq(v1, v2):
+			if not _pog_eq(v2, v1):
 				_pc = 2487
 				continue
 			else:
@@ -283,19 +283,19 @@ func score_death_script() -> Variant:
 			_pc = 2685
 			continue
 		elif _pc == 2492:
-			global.set_int("g_num_easy_in_world", 1 - global.pog_int("g_num_easy_in_world"))
+			global.set_int("g_num_easy_in_world", global.pog_int("g_num_easy_in_world") - 1)
 			_pc = 2724
 			continue
 		elif _pc == 2539:
-			global.set_int("g_num_med_in_world", 1 - global.pog_int("g_num_med_in_world"))
+			global.set_int("g_num_med_in_world", global.pog_int("g_num_med_in_world") - 1)
 			_pc = 2724
 			continue
 		elif _pc == 2586:
-			global.set_int("g_num_hard_in_world", 1 - global.pog_int("g_num_hard_in_world"))
+			global.set_int("g_num_hard_in_world", global.pog_int("g_num_hard_in_world") - 1)
 			_pc = 2724
 			continue
 		elif _pc == 2633:
-			global.set_int("g_num_vhard_in_world", 1 - global.pog_int("g_num_vhard_in_world"))
+			global.set_int("g_num_vhard_in_world", global.pog_int("g_num_vhard_in_world") - 1)
 			_pc = 2724
 			continue
 		elif _pc == 2680:
@@ -704,7 +704,7 @@ func local_4144(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 4210:
 			await _pog_wait(1.0)
-			if _pog_eq(isim.active_world(), isim.world_name(isim.cast(group.nth_sim(v0, 1 - group.sim_count(v0))))):
+			if _pog_eq(isim.world_name(isim.cast(group.nth_sim(v0, group.sim_count(v0) - 1))), isim.active_world()):
 				_pc = 4329
 				continue
 			else:
@@ -716,7 +716,7 @@ func local_4144(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 4353:
 			await _pog_wait(0.5)
-			if 7500.0 <= sim.distance_between(v3, v4):
+			if sim.distance_between(v3, v4) <= 7500.0:
 				_pc = 4419
 				continue
 			else:
@@ -751,12 +751,12 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 				_pc = 4792
 				continue
 		elif _pc == 4555:
-			global.set_int("g_num_easy_in_world", v3 + global.pog_int("g_num_easy_in_world"))
+			global.set_int("g_num_easy_in_world", global.pog_int("g_num_easy_in_world") + v3)
 			v10 = 0
 			_pc = 4608
 			continue
 		elif _pc == 4608:
-			if v3 < v10:
+			if v10 < v3:
 				_pc = 4624
 				continue
 			else:
@@ -768,7 +768,7 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			isim.set_faction(v9, v7)
 			isim.capsule_jump(isim.cast(v9), isim.cast(v0))
 			await _pog_wait(0.10000000149011612)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 4608
 			continue
 		elif _pc == 4792:
@@ -779,12 +779,12 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 				_pc = 5041
 				continue
 		elif _pc == 4804:
-			global.set_int("g_num_med_in_world", v4 + global.pog_int("g_num_med_in_world"))
+			global.set_int("g_num_med_in_world", global.pog_int("g_num_med_in_world") + v4)
 			v10 = 0
 			_pc = 4857
 			continue
 		elif _pc == 4857:
-			if v4 < v10:
+			if v10 < v4:
 				_pc = 4873
 				continue
 			else:
@@ -796,7 +796,7 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			isim.set_faction(v9, v7)
 			isim.capsule_jump(isim.cast(v9), isim.cast(v0))
 			await _pog_wait(0.10000000149011612)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 4857
 			continue
 		elif _pc == 5041:
@@ -807,12 +807,12 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 				_pc = 5291
 				continue
 		elif _pc == 5053:
-			global.set_int("g_num_hard_in_world", v5 + global.pog_int("g_num_hard_in_world"))
+			global.set_int("g_num_hard_in_world", global.pog_int("g_num_hard_in_world") + v5)
 			v10 = 0
 			_pc = 5106
 			continue
 		elif _pc == 5106:
-			if v5 < v10:
+			if v10 < v5:
 				_pc = 5122
 				continue
 			else:
@@ -824,7 +824,7 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			isim.set_faction(v9, v7)
 			isim.capsule_jump(isim.cast(v9), isim.cast(v0))
 			await _pog_wait(0.10000000149011612)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 5106
 			continue
 		elif _pc == 5291:
@@ -835,12 +835,12 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 				_pc = 5541
 				continue
 		elif _pc == 5303:
-			global.set_int("g_num_vhard_in_world", v6 + global.pog_int("g_num_vhard_in_world"))
+			global.set_int("g_num_vhard_in_world", global.pog_int("g_num_vhard_in_world") + v6)
 			v10 = 0
 			_pc = 5356
 			continue
 		elif _pc == 5356:
-			if v6 < v10:
+			if v10 < v6:
 				_pc = 5372
 				continue
 			else:
@@ -852,7 +852,7 @@ func local_4493(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 			isim.set_faction(v9, v7)
 			isim.capsule_jump(isim.cast(v9), isim.cast(v0))
 			await _pog_wait(0.10000000149011612)
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 5356
 			continue
 		elif _pc == 5541:
@@ -868,7 +868,7 @@ func local_5605(v0, v1) -> Variant:
 	while true:
 		if _pc == 5605:
 			await _pog_wait(1.0)
-			if _pog_eq(isim.active_world(), isim.world_name(isim.cast(v0))):
+			if _pog_eq(isim.world_name(isim.cast(v0)), isim.active_world()):
 				_pc = 5691
 				continue
 			else:
@@ -893,9 +893,9 @@ func local_5718(v0, v1) -> Variant:
 		if _pc == 5718:
 			v3 = ifaction.find("Player")
 			v4 = await iwingmen.group()
-			v6 = 1 - group.sim_count(v4)
-			v5 = v6 - v1
-			if 0 <= v5:
+			v6 = group.sim_count(v4) - 1
+			v5 = v1 - v6
+			if v5 <= 0:
 				_pc = 5823
 				continue
 			else:
@@ -909,7 +909,7 @@ func local_5718(v0, v1) -> Variant:
 			_pc = 5835
 			continue
 		elif _pc == 5835:
-			if v5 < v7:
+			if v7 < v5:
 				_pc = 5851
 				continue
 			else:
@@ -921,7 +921,7 @@ func local_5718(v0, v1) -> Variant:
 			isim.set_faction(v2, v3)
 			isim.capsule_jump(isim.cast(v2), isim.cast(v0))
 			_pog_detach(_pog_spawn(local_5605.bind(v2, v4)))
-			v7 = 1 + v7
+			v7 = v7 + 1
 			_pc = 5835
 			continue
 		elif _pc == 6020:
@@ -944,7 +944,7 @@ func local_6023(v0) -> Variant:
 			_pc = 6113
 			continue
 		elif _pc == 6113:
-			if v2 < v3:
+			if v3 < v2:
 				_pc = 6129
 				continue
 			else:
@@ -952,7 +952,7 @@ func local_6023(v0) -> Variant:
 				continue
 		elif _pc == 6129:
 			idockport.disable(idockport.cast(list.get_nth(v1, v3)))
-			v3 = 1 + v3
+			v3 = v3 + 1
 			_pc = 6113
 			continue
 		elif _pc == 6197:
@@ -977,7 +977,7 @@ func local_6207(v0) -> Variant:
 			_pc = 6305
 			continue
 		elif _pc == 6305:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 6321
 				continue
 			else:
@@ -985,7 +985,7 @@ func local_6207(v0) -> Variant:
 				continue
 		elif _pc == 6321:
 			isim.undock(v0, iship.cast(list.get_nth(v1, v4)))
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 6305
 			continue
 		elif _pc == 6394:
@@ -995,7 +995,7 @@ func local_6207(v0) -> Variant:
 			_pc = 6468
 			continue
 		elif _pc == 6468:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 6484
 				continue
 			else:
@@ -1003,7 +1003,7 @@ func local_6207(v0) -> Variant:
 				continue
 		elif _pc == 6484:
 			idockport.disable(idockport.cast(list.get_nth(v1, v4)))
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 6468
 			continue
 		elif _pc == 6552:
@@ -1039,7 +1039,7 @@ func local_6569(v0, v1) -> Variant:
 			continue
 		elif _pc == 6798:
 			await _pog_wait(1.0)
-			if _pog_eq(isim.active_world(), isim.world_name(isim.cast(v6))):
+			if _pog_eq(isim.world_name(isim.cast(v6)), isim.active_world()):
 				_pc = 6884
 				continue
 			else:
@@ -1068,7 +1068,7 @@ func local_6569(v0, v1) -> Variant:
 			_pc = 7065
 			continue
 		elif _pc == 7065:
-			if not (isim.is_docked_to(isim.cast(group.leader(v1)), v6)) and v8:
+			if v8 and not (isim.is_docked_to(isim.cast(group.leader(v1)), v6)):
 				_pc = 7126
 				continue
 			else:
@@ -1083,7 +1083,7 @@ func local_6569(v0, v1) -> Variant:
 			_pc = 7140
 			continue
 		elif _pc == 7140:
-			if v9 < v10:
+			if v10 < v9:
 				_pc = 7156
 				continue
 			else:
@@ -1091,7 +1091,7 @@ func local_6569(v0, v1) -> Variant:
 				continue
 		elif _pc == 7156:
 			v3 = sim.cast(list.get_nth(v7, v10))
-			if not (v8) and _pog_eq(group.leader(v1), v3):
+			if _pog_eq(v3, group.leader(v1)) and not (v8):
 				_pc = 7234
 				continue
 			else:
@@ -1119,7 +1119,7 @@ func local_6569(v0, v1) -> Variant:
 			_pc = 7443
 			continue
 		elif _pc == 7443:
-			if object.float_property(v3, "max_hit_points") < object.float_property(v3, "hit_points"):
+			if object.float_property(v3, "hit_points") < object.float_property(v3, "max_hit_points"):
 				_pc = 7498
 				continue
 			else:
@@ -1149,13 +1149,13 @@ func local_6569(v0, v1) -> Variant:
 			_pc = 7728
 			continue
 		elif _pc == 7728:
-			v10 = 1 + v10
+			v10 = v10 + 1
 			_pc = 7140
 			continue
 		elif _pc == 7746:
 			await _pog_wait(0.8999999761581421)
-			v11 = 1 + v11
-			if not (sim.is_dead(v6) or 120 < v11):
+			v11 = v11 + 1
+			if not (v11 < 120 or sim.is_dead(v6)):
 				_pc = 7823
 				continue
 			else:
@@ -1187,7 +1187,7 @@ func local_7997() -> Variant:
 	var _pc: int = 7997
 	while true:
 		if _pc == 7997:
-			global.pog_int("g_num_vhard_in_world") + global.pog_int("g_num_hard_in_world") + global.pog_int("g_num_med_in_world") + global.pog_int("g_num_easy_in_world")
+			global.pog_int("g_num_easy_in_world") + global.pog_int("g_num_med_in_world") + global.pog_int("g_num_hard_in_world") + global.pog_int("g_num_vhard_in_world")
 			_pc = 8081
 			continue
 		elif _pc == 8081:
@@ -1300,48 +1300,48 @@ func local_8219(v0) -> Variant:
 			_pc = 8974
 			continue
 		elif _pc == 8974:
-			if v11 >= v5:
+			if v5 >= v11:
 				_pc = 8990
 				continue
 			else:
 				_pc = 9125
 				continue
 		elif _pc == 8990:
-			v10 = 1 + v10
-			if v8 > v10:
+			v10 = v10 + 1
+			if v10 > v8:
 				_pc = 9019
 				continue
 			else:
 				_pc = 9039
 				continue
 		elif _pc == 9019:
-			v11 = 1000 + v5
+			v11 = v5 + 1000
 			_pc = 9125
 			continue
 		elif _pc == 9039:
-			if v7 > v10:
+			if v10 > v7:
 				_pc = 9055
 				continue
 			else:
 				_pc = 9075
 				continue
 		elif _pc == 9055:
-			v11 = 500 + v5
+			v11 = v5 + 500
 			_pc = 9125
 			continue
 		elif _pc == 9075:
-			if v6 > v10:
+			if v10 > v6:
 				_pc = 9091
 				continue
 			else:
 				_pc = 9111
 				continue
 		elif _pc == 9091:
-			v11 = 200 + v5
+			v11 = v5 + 200
 			_pc = 9125
 			continue
 		elif _pc == 9111:
-			v11 = 100 + v5
+			v11 = v5 + 100
 			_pc = 9125
 			continue
 		elif _pc == 9125:
@@ -1353,7 +1353,7 @@ func local_8219(v0) -> Variant:
 				continue
 		elif _pc == 9137:
 			v20 = await local_8083(v1, 25000)
-			if 1 <= v20:
+			if v20 <= 1:
 				_pc = 9176
 				continue
 			else:
@@ -1361,7 +1361,7 @@ func local_8219(v0) -> Variant:
 				continue
 		elif _pc == 9176:
 			v14 = 0
-			if 1 == (1 - _pog_is_running(v4)):
+			if (1 - _pog_is_running(v4)) == 1:
 				_pc = 9208
 				continue
 			else:
@@ -1373,7 +1373,7 @@ func local_8219(v0) -> Variant:
 			_pc = 9244
 			continue
 		elif _pc == 9244:
-			if 41 <= v19 and 1 != (1 - _pog_is_running(v4)):
+			if (1 - _pog_is_running(v4)) != 1 and v19 <= 41:
 				_pc = 9278
 				continue
 			else:
@@ -1387,14 +1387,14 @@ func local_8219(v0) -> Variant:
 				_pc = 9311
 				continue
 		elif _pc == 9298:
-			v19 = 1 + v19
+			v19 = v19 + 1
 			_pc = 9311
 			continue
 		elif _pc == 9311:
 			_pc = 9358
 			continue
 		elif _pc == 9316:
-			if 41 < v19 and 1 == (1 - _pog_is_running(v4)):
+			if (1 - _pog_is_running(v4)) == 1 and v19 < 41:
 				_pc = 9350
 				continue
 			else:
@@ -1423,7 +1423,7 @@ func local_8219(v0) -> Variant:
 			_pc = 9488
 			continue
 		elif _pc == 9488:
-			if _pog_is_null(v20) and 40 > v19:
+			if v19 > 40 and _pog_is_null(v20):
 				_pc = 9509
 				continue
 			else:
@@ -1666,8 +1666,8 @@ func local_8219(v0) -> Variant:
 				_pc = 10373
 				continue
 		elif _pc == 10603:
-			v12 = 1 + v12
-			if 20 >= v12:
+			v12 = v12 + 1
+			if v12 >= 20:
 				_pc = 10629
 				continue
 			else:
@@ -1678,12 +1678,12 @@ func local_8219(v0) -> Variant:
 			_pc = 10637
 			continue
 		elif _pc == 10637:
-			v13 = 1 + v13
+			v13 = v13 + 1
 			ihud.set_prompt(string.join("instant_action_text_new+ +", string.from_int(v13)), "")
 			_pc = 10710
 			continue
 		elif _pc == 10710:
-			if v16 > v12 and not (config.get_bool("system", "InstantAction", "tug")):
+			if not (config.get_bool("system", "InstantAction", "tug")) and v12 > v16:
 				_pc = 10760
 				continue
 			else:
@@ -1711,7 +1711,7 @@ func local_8219(v0) -> Variant:
 			_pc = 10969
 			continue
 		elif _pc == 10969:
-			if v17 > v12 and not (config.get_bool("system", "InstantAction", "fast_attack_ship")):
+			if not (config.get_bool("system", "InstantAction", "fast_attack_ship")) and v12 > v17:
 				_pc = 11019
 				continue
 			else:
@@ -1739,7 +1739,7 @@ func local_8219(v0) -> Variant:
 			_pc = 11228
 			continue
 		elif _pc == 11228:
-			if v18 > v12 and not (config.get_bool("system", "InstantAction", "heavy_corvette")):
+			if not (config.get_bool("system", "InstantAction", "heavy_corvette")) and v12 > v18:
 				_pc = 11278
 				continue
 			else:
@@ -1814,7 +1814,7 @@ func local_11591() -> Variant:
 		elif _pc == 11668:
 			text.add("csv:/text/act_1/act1_master_addendum2")
 			v8 = global.string("g_instant_action_ship_ini")
-			if _pog_eq("", v8):
+			if _pog_eq(v8, ""):
 				_pc = 11734
 				continue
 			else:
@@ -1915,7 +1915,7 @@ func local_11591() -> Variant:
 			_pc = 12403
 			continue
 		elif _pc == 12403:
-			if v7 < v6:
+			if v6 < v7:
 				_pc = 12419
 				continue
 			else:
@@ -1923,7 +1923,7 @@ func local_11591() -> Variant:
 				continue
 		elif _pc == 12419:
 			await irangecheck.add_traffic_exception(imapentity.cast(list.get_nth(v4, v6)))
-			v6 = 1 + v6
+			v6 = v6 + 1
 			_pc = 12403
 			continue
 		elif _pc == 12487:
@@ -2016,8 +2016,8 @@ func instant_action_ship_choice_screen() -> Variant:
 		v7 = await igui.create_and_initialise_parentless_inverse_button("iinstantaction.InstantActionShipChoiceScreen_OnShipSelect", text.field("ship_type_heavy_corvette", 0), v1)
 		gui.set_input_override_functions(v7, "", "", "", "", "", "iinstantaction.InstantActionShipChoiceScreen_OnBackButton", "", "", "")
 		global.create_handle("shiptype_heavycorvette", 2, v7)
-	v2 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset")
-	v3 = 20 + global.pog_int("GUI_fancybutton_height") + global.pog_int("GUI_title_yoffset")
+	v2 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v3 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	await igui.create_window_list_in_splitter(v0, v1, v2, v3, text.field("hangarmenu_ship", 0))
 	gui.set_first_control_focus(v4)
 	await igui.set_cyclic_control_focus_path(v1)
@@ -2039,7 +2039,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			v2 = gui.cast(global.handle("shiptype_fastattackship"))
 			v3 = gui.cast(global.handle("shiptype_heavycorvette"))
 			v4 = null
-			if _pog_eq(v1, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v1):
 				_pc = 14252
 				continue
 			else:
@@ -2050,7 +2050,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			_pc = 14391
 			continue
 		elif _pc == 14270:
-			if _pog_eq(v2, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v2):
 				_pc = 14294
 				continue
 			else:
@@ -2061,7 +2061,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			_pc = 14391
 			continue
 		elif _pc == 14312:
-			if _pog_eq(v3, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v3):
 				_pc = 14336
 				continue
 			else:
@@ -2072,7 +2072,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 			_pc = 14391
 			continue
 		elif _pc == 14354:
-			if _pog_eq(v0, gui.focused_window()):
+			if _pog_eq(gui.focused_window(), v0):
 				_pc = 14378
 				continue
 			else:

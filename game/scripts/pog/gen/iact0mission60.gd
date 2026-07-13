@@ -141,17 +141,17 @@ func local_402(v0) -> Variant:
 			_pc = 441
 			continue
 		elif _pc == 441:
-			if v3 < v4:
+			if v4 < v3:
 				_pc = 457
 				continue
 			else:
 				_pc = 599
 				continue
 		elif _pc == 457:
-			v2 = sim.create("ini:/sims/ships/utility/megapod", string.join("a0_m60_name_lockup + +", string.from_int(1 + v4)))
+			v2 = sim.create("ini:/sims/ships/utility/megapod", string.join("a0_m60_name_lockup + +", string.from_int(v4 + 1)))
 			group.add_sim(v1, v2)
 			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 441
 			continue
 		elif _pc == 599:
@@ -187,7 +187,7 @@ func local_831(v0, v1, v2) -> Variant:
 				_pc = 1207
 				continue
 		elif _pc == 862:
-			if not (v3) and 100000.0 <= sim.distance_between(v1, v0):
+			if sim.distance_between(v1, v0) <= 100000.0 and not (v3):
 				_pc = 903
 				continue
 			else:
@@ -375,7 +375,7 @@ func local_2414(v0, v1) -> Variant:
 			continue
 		elif _pc == 2767:
 			await _pog_wait(1.0)
-			if 1000.0 <= sim.distance_between(v6, v0):
+			if sim.distance_between(v6, v0) <= 1000.0:
 				_pc = 2833
 				continue
 			else:
@@ -399,12 +399,12 @@ func local_2414(v0, v1) -> Variant:
 			continue
 		elif _pc == 3097:
 			await iconversation.say(v6, "", "a0_m60_dialogue_caleb_c1_response1_im_caleb")
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 3242
 			continue
 		elif _pc == 3147:
 			await iconversation.say(v6, "", "a0_m60_dialogue_caleb_c1_respose2_ah_yes")
-			v4 = 1 + v4
+			v4 = v4 + 1
 			_pc = 3242
 			continue
 		elif _pc == 3197:
@@ -415,7 +415,7 @@ func local_2414(v0, v1) -> Variant:
 			_pc = 3242
 			continue
 		elif _pc == 3215:
-			if v7 != 1:
+			if 1 != v7:
 				_pc = 3228
 				continue
 			else:
@@ -432,7 +432,7 @@ func local_2414(v0, v1) -> Variant:
 			_pc = 3197
 			continue
 		elif _pc == 3242:
-			if 2 >= v4:
+			if v4 >= 2:
 				_pc = 3255
 				continue
 			else:
@@ -548,7 +548,7 @@ func mission_handler() -> Variant:
 				_pc = 5828
 				continue
 		elif _pc == 5192:
-			if not (v0) and 1 == state.progress(v3):
+			if state.progress(v3) == 1 and not (v0):
 				_pc = 5224
 				continue
 			else:
@@ -563,14 +563,14 @@ func mission_handler() -> Variant:
 			_pc = 5408
 			continue
 		elif _pc == 5408:
-			if 100 == state.progress(v3) or 8 == state.progress(v3):
+			if state.progress(v3) == 8 or state.progress(v3) == 100:
 				_pc = 5456
 				continue
 			else:
 				_pc = 5828
 				continue
 		elif _pc == 5456:
-			if 100 != state.progress(v3):
+			if state.progress(v3) != 100:
 				_pc = 5482
 				continue
 			else:
