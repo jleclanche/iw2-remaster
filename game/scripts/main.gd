@@ -41,9 +41,7 @@ var menu: Menu
 var weapons: PbcWeapons
 var audio: AudioManager
 var sun: DirectionalLight3D
-var grid: MeshInstance3D
-var grid_mesh: ImmediateMesh
-var grid_mat: StandardMaterial3D
+var space_fx: SpaceFx
 var ldsi_mesh: ImmediateMesh
 var ldsi_mat: StandardMaterial3D
 var sky_anchor: Node3D
@@ -626,18 +624,10 @@ func _make_additive(node: Node3D) -> void:
 				m.set_surface_override_material(i, sm)
 
 func _build_grid() -> void:
-	# the original's motion grid: translucent LINES anchored in space whose
-	# length shows your speed (manual: "how fast you are travelling,
-	# represented by the length of the lines"). Orange normally, green in LDS.
-	grid_mat = StandardMaterial3D.new()
-	grid_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	grid_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	grid_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	grid_mat.albedo_color = Color(1.0, 0.55, 0.15, 0.30)
-	grid_mesh = ImmediateMesh.new()
-	grid = MeshInstance3D.new()
-	grid.mesh = grid_mesh
-	add_child(grid)
+	# icHUDReferenceGrid: a 9x9x9 lattice of streaks pointing back along the
+	# velocity vector, decoded from iwar2.dll FUN_100f5550 (see docs/hud.md)
+	space_fx = SpaceFx.new()
+	add_child(space_fx)
 	# LDSI boundary fence: vertical pillars marking the inhibition limit
 	ldsi_mat = StandardMaterial3D.new()
 	ldsi_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -679,26 +669,8 @@ func _update_ldsi_fence() -> void:
 	ldsi_mesh.surface_end()
 
 func _update_grid() -> void:
-	grid_mesh.clear_surfaces()
-	var spd := ship.velocity.length()
-	if docked_at != "" or spd < 3.0:
-		return
-	# lattice spacing grows with speed so passing rate stays readable (LDS)
-	var s := clampf(spd * 0.7, 500.0, 1.0e10)
-	var dirv := ship.velocity / spd
-	var trail := clampf(spd * 0.1, 25.0, s * 0.45)
-	var off := Vector3(fposmod(px, s), fposmod(py, s), fposmod(pz, s))
-	grid_mesh.surface_begin(Mesh.PRIMITIVE_LINES, grid_mat)
-	for x in range(-3, 4):
-		for y in range(-3, 4):
-			for z in range(-3, 4):
-				var p := Vector3(x, y, z) * s - off
-				grid_mesh.surface_add_vertex(p)
-				grid_mesh.surface_add_vertex(p - dirv * trail)
-	grid_mesh.surface_end()
-	var want := Color(0.3, 1.0, 0.4, 0.35) if lds_state == 2 \
-		else Color(1.0, 0.55, 0.15, 0.30)
-	grid_mat.albedo_color = grid_mat.albedo_color.lerp(want, 0.1)
+	space_fx.update_grid(cam, Vector3(px, py, pz), ship.velocity,
+		lds_state == 2, docked_at != "")
 
 func _starfield_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
@@ -823,25 +795,23 @@ func _spawn_impostor(rec: Dictionary) -> void:
 	rec["node"] = node
 
 func _spawn_beacon(rec: Dictionary) -> Node3D:
-	# waypoints/L-points render as the original's green wireframe cube
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	mat.albedo_color = Color(0.35, 1.0, 0.45, 0.9)
-	var mesh := ImmediateMesh.new()
-	mesh.surface_begin(Mesh.PRIMITIVE_LINES, mat)
-	var s := 26.0
-	for e in [[0, 1], [1, 3], [3, 2], [2, 0], [4, 5], [5, 7], [7, 6],
-			[6, 4], [0, 4], [1, 5], [2, 6], [3, 7]]:
-		for vi in e:
-			mesh.surface_add_vertex(Vector3(
-				s if vi & 1 else -s, s if vi & 2 else -s, s if vi & 4 else -s))
-	mesh.surface_end()
-	var node := MeshInstance3D.new()
-	node.mesh = mesh
+	# icHUDLagrangeIcon: the blue/red wireframe double funnel (docs/hud.md)
+	var node := SpaceFx.make_lagrange_icon(_lpoint_axis(rec))
 	add_child(node)
 	return node
+
+func _lpoint_axis(rec: Dictionary) -> Vector3:
+	# PLACEHOLDER. The funnel is drawn in the L-point sim's own frame with the
+	# jump axis on local +Z, but our extracted system JSON carries no
+	# orientation for lpoint records, so the true axis is not available. The
+	# star -> L-point line is a stand-in and is NOT from the binary.
+	var here := Vector3(rec["x"], rec["y"], rec["z"])
+	for o in objects:
+		if o["category"] == "star":
+			var axis := here - Vector3(o["x"], o["y"], o["z"])
+			if axis.length_squared() > 1.0:
+				return axis.normalized()
+	return Vector3.BACK
 
 func _spawn_player() -> void:
 	ship = ShipFlight.new()
@@ -1764,6 +1734,9 @@ func _fold_motion() -> void:
 		a.global_position -= p
 
 func _stream_objects() -> void:
+	# the original funnels only the nearest L-point
+	# (icPlayerContactList::NearestLagrangePoint feeds icHUDLagrangeIcon)
+	var near_lp: Dictionary = _nearest("lpoint", SpaceFx.LP_DRAW_DIST)
 	for o in objects:
 		var dx: float = o["x"] - px
 		var dy: float = o["y"] - py
@@ -1809,6 +1782,11 @@ func _stream_objects() -> void:
 					o["node"] = null
 				if o["node"] != null:
 					o["node"].position = Vector3(dx, dy, dz)
+					# _nearest always stamps "dist", so has("name") is the
+					# only reliable "did it find one" test
+					var lit: bool = near_lp.has("name") \
+						and near_lp["name"] == o["name"]
+					SpaceFx.update_lagrange_icon(o["node"], cam, lit)
 
 func _chase_camera(delta: float) -> void:
 	var target := ship.global_transform
