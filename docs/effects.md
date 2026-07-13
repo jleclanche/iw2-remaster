@@ -386,13 +386,25 @@ gets both of them wrong.
 z-write off, then walks the particles through `FcBillBoard::Add(pos, size,
 roll)`. So a particle is a camera-facing quad that spins about the view axis.
 
-`eBlend` is a 4-value enum (`0/1/2/3` all appear); the HUD and sprites use `2`
-and `3`, particles use `1`. The enum-to-D3D mapping lives in `dx7graph.dll`,
-which we have not decompiled -- but **`1` must be additive**, on two independent
-pieces of evidence: the colour arrays carry no alpha and every ramp *ends* at
-`(0, 0, 0)`, and `fade_on_emitter_age` fades a particle out by scaling its
-colour toward black. Black can only mean "invisible" under `src=ONE, dst=ONE`.
-The ramp is an emitted intensity, not a tint.
+**The `eBlend` enum is now fully resolved.** `dx7graph.dll` is decompiled
+(`data/decomp/dx7graph.dll.c`); the enum is applied by
+`fcGraphicsDeviceD3D`'s SetBlend implementation (vtable `0x1001526c` slot
+`+0xb4` -> `dx7graph.dll @ 0x10007e00`, reached from
+`FcGraphicsEngine::DispatchState`, `flux.dll @ 0x1005d540`, engine state
+`+0x175c`), through two 4-entry lookup tables the device builds from the D3D
+caps in `dx7graph.dll @ 0x10004a10` ("Building source/destination blend
+factor lookup table"). Best-case (every 2001 card):
+
+| eBlend | SRCBLEND | DESTBLEND | meaning |
+|---|---|---|---|
+| 0 | -- | -- | blending and alpha test disabled: opaque |
+| 1 | ONE | ONE | pure additive (particles, beams, Draw4x4) |
+| 2 | SRCALPHA | ONE | additive scaled by alpha (HUD, shockwave state, movies, LDA) |
+| 3 | SRCALPHA | INVSRCALPHA | standard alpha blend (cornflakes, planet atmosphere) |
+
+For non-zero modes the device also enables alpha *test* iff the source
+factor is SRCALPHA (`0x10007e86`). This confirms the additive inference
+below, and pins the other three values.
 
 ---
 
@@ -447,36 +459,38 @@ The ramp is an emitted intensity, not a tint.
 
 ## 5. Open questions
 
-- **The `eBlend` enum.** We know particles use `1` and the HUD uses `2`, and we
-  are confident `1` is additive (above), but the enum is only *applied* in
-  `dx7graph.dll`, which is not decompiled. The other three values are unknown.
-- **`icCornflakeDraw`'s size.** The class has no properties and we did not find
-  the constant that sizes a flake. `ParticleFx.CORNFLAKE_SIZE` is an explicit
-  placeholder, scaled by the emitter transform like everything else.
-- **`icCornflakeDraw`'s blend mode and atlas-cell choice.** We infer
-  alpha-blended from the existence of the mask sheet, and pick a cell at
-  random. Neither is read from the binary.
-- **`icMovieAvatar`'s playback rate and quad size.** The scenes are 60 frames
-  long at 60 fps (`explosion`) or 30 fps (`hull_impact`), but the flipbooks have
-  50 and 40 frames. Nothing says whether the movie plays at the scene rate, is
-  stretched over the scene, or has its own. Nor do we know how many metres the
-  quad spans per unit of scene scale. `MOVIE_FPS` (25) and `MOVIE_QUAD` (0.52)
-  in `explosion_fx.gd` are marked placeholders, inherited from the old code.
-- **`icShockwaveAvatar` / `icLDAAvatar` / `icBeamAvatar` geometry.** We now know
-  `icShockwaveAvatar` hardcodes `texture:/images/sfx/shockwave` (the file is in
-  `data/textures/images/sfx/shockwave.png`) and picks a **random unit vector**
-  in its constructor (`0x100cfa50`), so the primitive has an orientation axis;
-  and we have every scene's `tint` and `lifetime`. But the draw code is where
-  Ghidra gives up: the display virtuals are vtable `0x1011d140` slots 14 and 16
-  (`0x100cfc90`, `0x100cfcb0`), and the decompiler bails there with "could not
-  recover jumptable", with the actual primitives living in the undecompiled
-  `dx7graph.dll`. So we do **not** draw a shockwave: the antimatter / reactor /
-  alien / LDSI explosions play their light and sound only. Inventing a ring or a
-  sphere here would be inventing art, not recovering it.
-- **`antimatter_explosion`'s beam rig.** Eight `icBeamAvatar` nodes
-  (`texture=SearchBeam`) parented through `FatBeamsH`/`SkinnyBeamsP`/
-  `beam_scaler_*` nulls -- the radiating spikes. Extracted into the JSON with
-  parenting resolved, but unplayed, for the same reason as the shockwave.
+Resolved this pass (details in section 6): ~~the `eBlend` enum~~,
+~~`icCornflakeDraw`'s size / blend / cell choice~~, ~~`icMovieAvatar`'s
+playback rate and quad size~~, ~~`icShockwaveAvatar` / `icLDAAvatar` /
+`icBeamAvatar` geometry~~, ~~the sun corona~~ -- all recovered by
+decompiling `dx7graph.dll` and raw-disassembling the draw methods Ghidra
+drops from `iwar2.dll.c` (`tools/ghidra/disasm.py`).
+
+Still open:
+
+- **The extractor drops the beam rig.** `sfx_effects.json` carries the eight
+  `antimatter_explosion` `icBeamAvatar` nodes with their directions (`hpb`)
+  but writes `"scale": 0.0` for all of them: `tools/iw2/sfx.py` collapses the
+  per-axis LWS scale (`0.3/0.2/0.05 x ... x 2`) to one scalar and drops the
+  `FatBeamsH/P` / `SkinnyBeamsH/P` spinner nulls and the `beam_scaler_thick`
+  / `_thin` envelopes entirely. `explosion_fx.gd` carries the rig as a
+  hand-transcribed constant (`AM_BEAM_RIG`, cited to
+  `resource.zip:sfx/antimatter_explosion_high_0.lws`) until sfx.py exports
+  per-axis scale and parent animation for avatar nodes. (sfx.py is owned by
+  another task; see the report.)
+- **`m_game_time` units.** The shockwave spin is
+  `frac(FnTimeWin32::m_game_time * 1e-5) * 2pi`; `m_game_time` is a uint we
+  believe is milliseconds (giving 3.6 deg/s), but we have not read the
+  variable's writer in flux.dll. `SHOCKWAVE_SPIN` assumes ms.
+- **The sun/planet LOD camera scalar.** The apparent-size cull in
+  `FUN_100ce2d0` (`0x100ce2d0`) is `radius / cameraZ < 0.0025
+  (_DAT_1011d068) * camera+0x34`; `camera+0x34` is an unread camera parameter
+  (fov-derived). We draw the sun unconditionally -- the cull only matters at
+  extreme range.
+- **`icPlanetAvatar`'s atmosphere/halo pass.** The display virtual
+  (`0x100ccc80`, ~3.8 KB of FPU code) is structurally recovered (section 6)
+  but the atmosphere-ring vertex construction is not fully decoded; the
+  remaster's planet halo stays as it is.
 - **Does the light range scale with the effect's size?** The engine sets the
   effect node's scale to `size` (`0x100d3210`) and the light hangs inside that
   node, so we multiply `LightRange` by `size`. Whether the original's D3D light
@@ -493,3 +507,190 @@ The ramp is an emitted intensity, not a tint.
   runtime-initialised global (`0x10166318`), returns >= 0. Both the category
   enum and the global's value are set at runtime, so "what counts as rock" is
   known by shape but not by name -- we do not fire `asteroid_impact` yet.
+
+---
+
+## 6. The avatar draws, recovered by raw disassembly
+
+Ghidra's decompiler **silently omits** functions it cannot recover ("could
+not recover jumptable", or regions its disassembler never reaches) -- in both
+`iwar2.dll` *and* `dx7graph.dll` (`fcGraphicsDeviceD3D`'s vtable methods are
+missing from `dx7graph.dll.c` even though the DLL decompiles). The bytes are
+in the file: `tools/ghidra/disasm.py <dll> <va> [end|+len]` reads them out of
+the PE section table and disassembles with capstone, resolving import thunks
+and `symbols.txt` names. Vtables are data, so dispatch targets are read with
+a 4-byte scan at the vtable VA (the method used for the HUD sprite atlas,
+`docs/hud_elements.md`).
+
+Every `Fi/FcSceneNode` subclass below shares one vtable shape: **slot 14
+(`+0x38`) is Prepare, slot 16 (`+0x40`) is the display draw**; slot 15 is
+Build (push onto the display list).
+
+### The engine state block (flux.dll -> device)
+
+`FcGraphicsEngine` keeps the current polygon state at `this+0x1758` and
+`DispatchState` (`flux.dll @ 0x1005d540`) forwards dirty entries to
+`fcGraphicsDeviceD3D` (vtable `dx7graph.dll @ 0x1001526c`):
+
+| engine | dirty bit | device slot | meaning |
+|---|---|---|---|
+| `+0x1758` | 8 | `+0xb0` | eCull (device table `+0x864`: 0 = none) |
+| `+0x175c` | 9 | `+0xb4` `0x10007e00` | eBlend (see section 3) |
+| `+0x1760` | 10 | `+0xb8` `0x10007f00` | eZTest |
+| `+0x1764` | 11 | `+0xbc` `0x10007f80` | z-write enable (renderstate 0xe) |
+| `+0x1768` | 13 | `+0xc4` -> SetTexture stage 0 | current sTexture |
+| `+0x1774` | 14 | `+0xcc` -> `FUN_10008010` | texture filter (min/mag) |
+| `+0x1778..` | 0/1 | -- | current vertex colour RGBA (`+0x1784` = alpha) |
+
+An avatar's `sPolygonState` is `{eCull, eBlend, eZTest, bool zwrite, bool,
+sTexture}` -- each avatar class keeps one static instance, built by a static
+initialiser that Ghidra *does* decompile, which is where the blend/ztest
+values below come from.
+
+### FcBillBoard::Draw4x4 (`flux.dll @ 0x1004c420`)
+
+`Draw4x4(pos, roll, scale_vec, intensity, colour, fade_by_depth, depth_cull)`
+draws **one texture quadrant mirrored 4x**: an 8-triangle fan around `pos`,
+centre UV exactly `(1, 1)`, corners `(0.0078125, 0.0078125)` (a half-texel
+inset), edge midpoints at the texture's other two corners. The quad axes are
+the camera's world-space right (`engine+0xe0`) and up (`engine+0xec`) rotated
+by `roll`, scaled by `scale_vec.x` / `.y` (`.z` unused). It **forces
+`eBlend = 1` (pure additive) and `eCull = 0`**, and writes
+`colour * intensity` (optionally scaled by `(far - depth)/far` when
+`fade_by_depth`). This is the primitive behind both the sun corona and the
+shockwave; `StarFx.quadrant_fan_mesh()` is its Godot form.
+
+### icSunAvatar (ctor `0x100d2910`, Prepare `0x100d2b30`, draw `0x100d2b80`, vtable `0x1011d1fc`)
+
+This is the answer to "the halo moves":
+
+- **Prepare**: `phase (this+0xe0, double) += dt * 0.010472` (double @
+  `0x1011d248` = 0.6 deg/s), then positions the node on the sim.
+- **Draw**: two `Draw4x4` calls at the sun's position, scale = `radius * 1.3`
+  (`_DAT_1011d250`; the ctor's 1.4 @ `_DAT_1011a440` is only the *bounding*
+  radius), texture = `icPlanetProperties+0x14` = `images/planets/sun_halo`
+  (`LoadTextures @ 0x100cbc90`), through `Push`/`Pop` with linear filtering.
+  - roll = `-atan2(sunY . cam_up, sunY . cam_right)` where sunY is the node's
+    world Y axis (`this+0x8c`) -- **the halo counter-rotates as the camera
+    rolls**, which is the motion the original shows.
+  - layer 1: `roll + phase`, colour `this+0xc0`; layer 2: `roll - phase`,
+    colour `this+0xcc`, scale * **1.05** (`0x100d2d40`). The two colours are
+    two *independent* `icSun::PickColour` draws from the ctor, so the layers
+    differ in tint and counter-rotate at 1.2 deg/s.
+- **The disc** is one of the three `planets.ini planet_models[]` LOD spheres
+  (`icPlanetProperties+0x28`), LOD-picked by `FUN_100ce2d0` (cull below
+  apparent size `0.0025 * camera+0x34`, thresholds = `detail_switch[]`),
+  rendered with the avatar's class-texture shader as
+  `FiSurface::m_p_global_shader`.
+
+### icShockwaveAvatar (ctor `0x100cfa50`, Prepare `0x100cfc90`, draw `0x100cfcb0`, vtable `0x1011d140`)
+
+- struct: tint at `+0xbc..0xc4` (property `tint`), lifetime at `+0xc8`
+  (property `lifetime`), age at `+0xcc`, random unit axis at `+0xd0`.
+- `sPolygonState` @ `0x10171e10` (init `0x100cf9d0`): cull 0, **blend 2**,
+  ztest 1, z-write off, texture `images/sfx/shockwave` -- but `Draw4x4`
+  then forces blend 1, so the shockwave is **pure additive**.
+- Prepare: `age += dt`.
+- Draw: **two counter-rotating `Draw4x4` fans**, scale = the node's
+  **world radius** (the LWS animates the null's scale 0 -> 1 over the scene,
+  x the effect size), colour = `tint`, intensity = `clamp(1 - age/lifetime)`,
+  both depth-fade bools true. Roll = `-atan2(axis . cam_up, axis . cam_right)
+  +/- frac(m_game_time * 1e-5) * 2pi` (`0x1011d18c` / `0x10119f94`).
+
+### icBeamAvatar (ctor `0x100bb5e0`, Prepare `0x100bb810`, draw `0x100bb830`, vtable `0x1011c9b0`)
+
+- properties (`0x100bb3d0`): `repeat` (float, `+0xbc`, default 1), `speed`
+  (float, `+0xc0`, default 0), `texture` (string, `+0xc4`).
+- `sPolygonState` @ `0x10168230` (init `0x100bb560`): cull 0, **blend 1
+  (pure additive)**, ztest 2, z-write off.
+- Prepare: `u_phase (+0xc8) += dt * speed` -- the texture scrolls.
+- Draw: an **axial billboard**: one quad from the node origin along local +Z
+  x `world_scale.z`, half-width = `world_scale.x`, turned about the beam axis
+  to face the camera (`side = normalize(cross(beamZ, campos - pos))`).
+  UVs: u runs `phase .. repeat + phase` along the LENGTH, v `0..1` across.
+  So the PBC bolt (LWS scale `4 1 800`) is **8 m wide** and 800 m long.
+- LOD: apparent = `scale.x / cameraZ`; below `2e-05 * gfx` (`0x1011c9a8`)
+  nothing; below `0.001 * gfx` (`0x1011c9ac`) a **line primitive** from
+  (0,0,0) to (0,0,1) with blend 2 and alpha fading in the transition band
+  (`gfx` = `engine+0x108`, the detail scalar).
+
+### icLDAAvatar (ctor `0x100c9bf0`, Prepare `0x100c9d80`, draw `0x100c9dd0`, vtable `0x1011cfcc`)
+
+- texture `images/sfx/lda`; `sPolygonState` @ `0x10171b10` (init
+  `0x100c9af0`): cull 0, **blend 2**, ztest 2, z-write off. Age at `+0xbc`.
+- Prepare: `age += dt`; **self-destructs after 1 s** (`0x1011cfc0`).
+- Draw (fan helper `FUN_100c9f40 @ 0x100c9f40`): a **16-triangle cone**,
+  apex at local `+Z * 4.0` (`0x1011cfbc`), rim on the z=0 circle. Rim radius
+  = `(2 * 30 / life) * age` for the first half of the life (`0x10117738` =
+  0.5), then **30** (`0x1011cfb8`) while alpha = `2 * (1 - age/life)` fades
+  out. Apex UV u = 0.5, rim u alternates 0/1 per triangle; **v scrolls
+  rim-to-apex**: apex v = `-age * 1.0` (`0x1011cfc4`), rim v = `1 - age`.
+  Apex alpha = the fade, **rim alpha = 0**. Vertex colour white; the purple
+  is the texture and the scene light.
+
+### icMovieAvatar (ctor `0x100ca660`, Prepare `0x100ca990`, draw `0x100caa50`, vtable `0x1011d018`)
+
+- properties (`0x100ca410`): `url` (string, `+0xbc`), `frame_count` (int,
+  `+0xc0`); per-frame textures in a grown array at `+0xc4`; frame counter at
+  `+0xc8`; **random unit roll axis** at `+0xcc` from the ctor.
+- `sPolygonState` @ `0x10171be8` (init `0x100ca5e0`): cull 0, **blend 2**,
+  ztest 2, z-write off.
+- Prepare: `frame += 0.5` **per rendered frame** (`0x10117738`), gated on
+  `m_game_delta_time > 0` -- playback is framerate-locked (30 flipbook fps at
+  the original's 60 Hz), not clock-based.
+- Draw: stops once `floor(frame) > frame_count`. Builds a billboard basis
+  around the camera view direction with the random axis fixing the roll,
+  quad **half-extent = the node's world radius** (LWS scale x effect size;
+  ctor base radius 1.0). Draws **two quads, frame N and N+1, alpha-crossfaded
+  by the fractional frame** (`alpha = 1 - |i - frame|`) -- that is why the
+  state is blend 2, not 1.
+
+### icCornflakeDraw (ctor `0x100bc340`, draw `0x100bc620`, vtable `0x1011cb58`)
+
+- `sPolygonState` @ `0x101682c8` (init `0x100bc2b0`): cull 0,
+  **blend 3 (standard alpha)**, ztest 2, **z-write ON** -- the flakes are the
+  only alpha-cutout in the effect system, which is what the mask sheet is for.
+- The ctor builds one combined colour+mask texture from
+  `images/sfx/cornflakes` + `cornflake_masks`.
+- `FUN_100bc480 @ 0x100bc480` precomputes **4 random tumble axes x 256
+  rotation steps** (step = 2pi/256, `0x1011cb90`).
+- Draw, per particle: a **tumbling world-space plate** (not a billboard):
+  rotation = the particle's roll angle (x 256/2pi, `0x1011cb94`) about axis
+  `index & 3`; half-extents `size x size/2` where **size = 0.075
+  (`0x1011cb98`) x the emitter scale**; atlas cell = **`index & 15`,
+  sequential** (UV table `0x1011ca58`, row-major 4x4); colour =
+  `(normal . world_light_dir)^2` grey (`FcWorld+0x60c`) -- the flakes are
+  *lit*, tumbling dark as they turn edge-on to the sun.
+
+### icPlanetAvatar (Prepare `0x100ccbb0`, Build `0x100ccc60`, draw `0x100ccc80`)
+
+Structurally recovered, not fully decoded:
+
+- Prepare positions the avatar on the sim and -- property `3rfts_mode`
+  (`0x100cc820`, a bool) -- pulses the X/Y scale with `sin^2/cos^2` of game
+  time, the engine's joke mode.
+- Build pushes onto the display list iff the global planet-visibility byte
+  `0x10171df0` is set.
+- The draw builds the world transform from orientation x scale, LOD-picks the
+  `planet_models[]` sphere with the same `FUN_100ce2d0` as the sun, renders
+  it with the class shader, and -- when the record has an atmosphere and
+  `sim+0x210 > 0` -- builds a camera-facing basis for the atmosphere pass
+  (`sPolygonState` @ `0x10171dc0`: cull 0, blend 3, **ztest 0**, z-write
+  off -- `planethalo`). The atmosphere-ring vertex loop is not decoded; see
+  Open questions.
+
+### What we built from this
+
+- `star_fx.gd`: the real corona -- two counter-rotating, camera-roll-tracking
+  quadrant fans at radius x 1.3 / x 1.365, independent PickColour tints,
+  0.6 deg/s phase. (`# @element icSunAvatar`)
+- `explosion_fx.gd`: `icShockwaveAvatar` (the reactor / antimatter / alien /
+  LDSI explosions now draw), `icMovieAvatar` (real quad size, framerate-locked
+  crossfade -- `MOVIE_QUAD`/`MOVIE_FPS` placeholders retired),
+  `icLDAAvatar` (the shield-hit cone), and the antimatter 8-beam rig
+  (`icBeamAvatar` axial billboards under `AM_BEAM_RIG`).
+- `particle_fx.gd`: `icCornflakeDraw` -- real size (0.075), 2:1 plate, 3D
+  tumble, sequential atlas cell, sun-lit grey.
+- `tools/ghidra/disasm.py`: the raw-disassembly tool.
+
+---

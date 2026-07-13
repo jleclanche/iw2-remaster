@@ -11,24 +11,40 @@ extends Node3D
 #          class < 7 -> icPlanetProperties+0x18 = images/planets/sun_yellow
 #          else      -> icPlanetProperties+0x1c = images/planets/sun_red
 #      scaled to FiSim::Radius() on all three axes, with a bounding radius of
-#      radius * 1.4 (_DAT_1011a440) -- the extra 40% is the corona reaching
-#      past the disc, which is what images/planets/sun_halo is for.
+#      radius * 1.4 (_DAT_1011a440).
 #   2. a lens flare at the sun's position (FcLensFlareNode, mode 0),
 #   3. a second lens flare (mode 2) whose variant is 3 for class <= 2 and 1
 #      otherwise.
-# Both flares and both of the avatar's own colours come from
-# icSun::PickColour(class), which LERPs the class's colour pair with rand().
 #
-# NOT RECOVERED: Ghidra leaves the icSunAvatar draw (0x100d2b30 / 0x100d2b80)
-# undisassembled, so the corona's exact geometry and blend are unread.  What we
-# do know from the assets and the ctor: sun_halo is ONE QUADRANT of a spiky
-# corona, white on black, and the avatar's bound is 1.4x the disc.  We mirror
-# the quadrant into a 2.8x-diameter billboard and add it.  See docs/geography.md.
+# The draw (vtable 0x1011d1fc slots 14/16 -> 0x100d2b30 / 0x100d2b80; Ghidra
+# bails on both, recovered by raw disassembly -- docs/effects.md section 6):
+#   - the DISC is one of the three planets.ini planet_models[] LOD spheres
+#     (icPlanetProperties+0x28), rendered with the class texture as the
+#     global shader;
+#   - the CORONA is TWO FcBillBoard::Draw4x4 quads (flux.dll @ 0x1004c420) at
+#     the sun's position, both sized radius * 1.3 (_DAT_1011d250) with the
+#     second layer 5% bigger (1.05 @ 0x100d2d40), additive (Draw4x4 forces
+#     eBlend=1 = ONE/ONE), each coloured by its OWN icSun::PickColour draw
+#     (this+0xc0 / this+0xcc from the ctor).
+#   - the roll TRACKS THE CAMERA: roll = -atan2(sunY . cam_up, sunY . cam_right)
+#     (0x100d2c22..0x100d2cf1), so rolling your ship rotates the halo -- that
+#     is the "the halo moves" the original shows.  On top of that a phase
+#     accumulator (this+0xe0, Prepare @ 0x100d2b30) advances at 0.010472 rad/s
+#     (= 0.6 deg/s, double @ 0x1011d248); layer 1 draws at roll + phase and
+#     layer 2 at roll - phase, so the layers counter-rotate at 1.2 deg/s.
+#   - Draw4x4 draws the quad as an 8-triangle fan whose CENTRE has UV (1, 1)
+#     and whose corners have UV (0.008, 0.008): sun_halo.png is one quadrant,
+#     mirrored 4x, spikes meeting at the centre.
 
-const HALO_BOUND := 1.4  # _DAT_1011a440: icSunAvatar bounding radius multiplier
+const HALO_BOUND := 1.4    # _DAT_1011a440: icSunAvatar bounding radius multiplier
+const HALO_SCALE := 1.3    # _DAT_1011d250: drawn corona quad half-extent, x radius
+const HALO_LAYER2 := 1.05  # 0x100d2d40: second layer is 5% bigger
+const PHASE_RATE := 0.010472  # double @ 0x1011d248: rad/s, layers at +/- phase
 
 var _body: MeshInstance3D
-var _halo: MeshInstance3D
+var _halo_a: MeshInstance3D
+var _halo_b: MeshInstance3D
+var _phase := 0.0
 
 
 static func _tex(stem: String, base: String) -> ImageTexture:
@@ -53,14 +69,18 @@ static func _pick_colour(pair: Array, seed_value: int) -> Color:
 		lerpf(float(a[2]), float(b[2]), t))
 
 
+# @element icSunAvatar
 func setup(rec: Dictionary, base: String) -> void:
 	var stem := str(rec.get("sun_texture", "sun_yellow"))
 	var pair: Array = rec.get("sun_colours", [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]])
 	var h := absi(str(rec.get("name", "")).hash())
-	var tint := _pick_colour(pair, h)
-	var corona := _pick_colour(pair, h / 1000)
+	# the ctor calls PickColour TWICE (0x100d2903/0x100d2907): each corona
+	# layer gets an independent draw from the class colour pair
+	var col_a := _pick_colour(pair, h)
+	var col_b := _pick_colour(pair, h / 1000)
 
-	# the body: the class's plasma texture, unshaded and emissive
+	# the disc: the original renders a planet_models[] LOD sphere with the
+	# class's plasma texture; a Godot sphere is the same thing
 	var sphere := SphereMesh.new()
 	sphere.radius = 1.0
 	sphere.height = 2.0
@@ -69,9 +89,9 @@ func setup(rec: Dictionary, base: String) -> void:
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_texture = _tex(stem, base)
-	mat.albedo_color = tint
+	mat.albedo_color = col_a
 	mat.emission_enabled = true
-	mat.emission = tint
+	mat.emission = col_a
 	mat.emission_energy_multiplier = 4.0
 	if mat.albedo_texture != null:
 		mat.emission_texture = mat.albedo_texture
@@ -81,42 +101,89 @@ func setup(rec: Dictionary, base: String) -> void:
 	_body.mesh = sphere
 	add_child(_body)
 
-	# the corona: sun_halo is one quadrant, so mirror it into four and add it
-	_halo = MeshInstance3D.new()
-	_halo.mesh = _halo_mesh()
+	# the corona: two counter-rotating Draw4x4 layers, oriented on the CPU
+	# each frame (the roll must track the camera; BILLBOARD_ENABLED would
+	# overwrite the basis and lose it)
+	var tex := _tex("sun_halo", base)
+	_halo_a = _make_halo(tex, col_a)
+	_halo_b = _make_halo(tex, col_b)
+	add_child(_halo_a)
+	add_child(_halo_b)
+
+
+func _make_halo(tex: Texture2D, colour: Color) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = StarFx.quadrant_fan_mesh()
 	var hm := StandardMaterial3D.new()
 	hm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	hm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	hm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	hm.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	hm.disable_receive_shadows = true
-	hm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
-	hm.billboard_keep_scale = true
-	hm.albedo_texture = _tex("sun_halo", base)
-	hm.albedo_color = corona
-	hm.vertex_color_use_as_albedo = false
-	_halo.mesh.surface_set_material(0, hm)
-	_halo.scale = Vector3.ONE * HALO_BOUND
-	add_child(_halo)
+	hm.albedo_texture = tex
+	hm.albedo_color = colour
+	mi.mesh.surface_set_material(0, hm)
+	return mi
 
 
-func _halo_mesh() -> ArrayMesh:
-	# sun_halo.png is the +u/+v quadrant of the corona: four quads, each with
-	# the UVs mirrored so the spikes meet at the centre of the star.
+func _process(delta: float) -> void:
+	# icSunAvatar Prepare (0x100d2b30): phase += dt * 0.010472
+	_phase += delta * PHASE_RATE
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	if cam == null or _halo_a == null:
+		return
+	var cb := cam.global_transform.basis
+	# roll = -atan2(sunY . cam_up, sunY . cam_right)  (0x100d2c22..0x100d2cf1)
+	var sun_y := global_transform.basis.y.normalized()
+	var roll := -atan2(sun_y.dot(cb.y), sun_y.dot(cb.x))
+	# main scales this node to the star's (draw) radius; setting the halos'
+	# GLOBAL basis bypasses that, so fold it back in
+	var radius := global_transform.basis.get_scale().x
+	_orient(_halo_a, cb, roll + _phase, HALO_SCALE * radius)
+	_orient(_halo_b, cb, roll - _phase, HALO_SCALE * HALO_LAYER2 * radius)
+
+
+func _orient(halo: MeshInstance3D, cb: Basis, roll: float, size: float) -> void:
+	# FcBillBoard::Draw4x4 (flux.dll @ 0x1004c420): the quad's axes are the
+	# camera right/up rotated by the roll --
+	#   right' = right*cos - up*sin ;  up' = up*cos + right*sin
+	var c := cos(roll)
+	var s := sin(roll)
+	var right := cb.x * c - cb.y * s
+	var up := cb.y * c + cb.x * s
+	halo.global_transform.basis = Basis(right * size, up * size, cb.z * size)
+
+
+# The Draw4x4 primitive: an 8-triangle fan, centre UV (1, 1), corners at
+# (0.008, 0.008) and edge midpoints at the texture's other two corners --
+# one texture quadrant mirrored into all four.
+# icShockwaveAvatar draws through the very same routine, so ExplosionFx
+# shares this mesh.
+static func quadrant_fan_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
 	var uvs := PackedVector2Array()
-	for qi in 4:
-		var sx := 1.0 if qi == 0 or qi == 3 else -1.0
-		var sy := 1.0 if qi < 2 else -1.0
-		# quad corners, centre of the star at (0,0)
-		var c := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
-		var order := [0, 1, 2, 0, 2, 3]
-		if sx * sy < 0.0:
-			order = [0, 2, 1, 0, 3, 2]  # keep winding consistent when mirrored
-		for i in order:
-			var p: Vector2 = c[i]
-			verts.append(Vector3(p.x * sx, p.y * sy, 0.0))
-			uvs.append(Vector2(1.0 - p.x, 1.0 - p.y))
+	# 1/128 = the original's half-texel inset (0.0078125 / 0.9921875)
+	var lo := 0.0078125
+	var hi := 0.9921875
+	# ring of 8 points around the centre: corners and edge midpoints
+	var ring := [
+		Vector2(-1, -1), Vector2(0, -1), Vector2(1, -1), Vector2(1, 0),
+		Vector2(1, 1), Vector2(0, 1), Vector2(-1, 1), Vector2(-1, 0),
+	]
+	# corner -> UV (lo, lo); edge midpoint -> the quadrant's outer edge
+	var ring_uv := [
+		Vector2(lo, lo), Vector2(hi, lo), Vector2(lo, lo), Vector2(lo, hi),
+		Vector2(lo, lo), Vector2(hi, lo), Vector2(lo, lo), Vector2(lo, hi),
+	]
+	for i in 8:
+		var j := (i + 1) % 8
+		verts.append(Vector3.ZERO)
+		uvs.append(Vector2(1.0, 1.0))  # the centre samples the texture corner exactly
+		verts.append(Vector3(ring[i].x, ring[i].y, 0.0))
+		uvs.append(ring_uv[i])
+		verts.append(Vector3(ring[j].x, ring[j].y, 0.0))
+		uvs.append(ring_uv[j])
 	var arr := []
 	arr.resize(Mesh.ARRAY_MAX)
 	arr[Mesh.ARRAY_VERTEX] = verts

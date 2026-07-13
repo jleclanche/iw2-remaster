@@ -97,7 +97,7 @@ extends RefCounted
 # @element-stub icCluster -- covered-elsewhere: main.gd loads every system (data/json/systems) and flies the L-point links between them
 # @element-stub icComms -- covered-elsewhere: comms.gd (VO, subtitles, Clay's head) driven by the icomms natives in natives/gameapi.gd
 # @element-stub icConversation -- covered-elsewhere: comms.gd dialogue queue + iconversation natives (natives/gameapi.gd)
-# @element-stub icCornflakeDraw -- covered-elsewhere: particle_fx.gd DRAW_CORNFLAKE (hull-plate debris atlas)
+# (icCornflakeDraw is really built: its @element marker is in particle_fx.gd)
 # @element-stub icDirector -- covered-elsewhere: idirector natives (natives/gameapi.gd): dolly, focus, fades, captions
 # @element-stub icEmail -- covered-elsewhere: natives/misc.gd iemail (real inbox: sender/subject/body/read/archive)
 # @element-stub icFaction -- covered-elsewhere: natives/factions.gd
@@ -140,14 +140,14 @@ extends RefCounted
 # FcParticleEmitterNode)
 # ---------------------------------------------------------------------------
 # @element-stub icFlameConeAvatar -- covered-elsewhere: ship_effects.gd additive cone meshes on the channel rig
-# @element-stub icMovieAvatar -- covered-elsewhere: explosion_fx.gd flipbook quads
+# (icMovieAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icPlanetAvatar -- covered-elsewhere: main.gd planet spheres, ring + atmosphere materials
 # @element-stub icPlanetsAvatar -- covered-elsewhere: main.gd _spawn_impostor (distant-planet impostors)
-# @element-stub icShockwaveAvatar -- covered-elsewhere: explosion_fx.gd shockwave rings
+# (icShockwaveAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icStarfieldAvatar -- covered-elsewhere: main.gd _starfield_material shader dome
 # (icSunAvatar is really built: its @element marker is in star_fx.gd)
 # @element-stub icNebulaAvatar -- covered-elsewhere: main.gd _setup_sky loads the per-system nebula backdrop model additively
-# @element-stub icBeamAvatar -- covered-elsewhere: weapons.gd bolt streaks + explosion_fx.gd crossed textured streaks
+# (icBeamAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icCockpitAvatar -- covered-elsewhere: main.gd cockpit dressing shown in the F1 view
 # @element-stub icWaypointAvatar -- covered-elsewhere: space_fx.gd draws the waypoint marker (icHUDWaypointIcon is @element there)
 # @element-stub icAggressorAvatar -- GENUINE GAP: aggressor-shield visual (player device, with icAggressorShield)
@@ -159,7 +159,7 @@ extends RefCounted
 # @element-stub icCloudAvatar -- GENUINE GAP: in-system dust-cloud sprite volumes (sensor cover the act 2 scripts use)
 # @element-stub icElectricEffectAvatar -- GENUINE GAP: electric-arc emitter (disruptor / damage arcing)
 # @element-stub icGasBallAvatar -- GENUINE GAP: gas-ball avatar (cosmetic; exact use not yet traced in the campaign)
-# @element-stub icLDAAvatar -- GENUINE GAP: the LDA shield-hit shimmer (mechanic is in ship_systems.gd; sfx_effects.json references this node class)
+# (icLDAAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icMissileTrailAvatar -- GENUINE GAP: missile exhaust trail (part of the missile system gap)
 # @element-stub icRocketTrailAvatar -- GENUINE GAP: rocket exhaust trail (part of the missile system gap)
 # @element-stub icSignAvatar -- GENUINE GAP: station signage boards (cosmetic)

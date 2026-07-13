@@ -21,10 +21,17 @@ const DRAW_MODEL := "FcParticleDrawModel"
 # cornflakes.png / cornflake_masks.png are a 4x4 atlas of torn hull plates.
 const CORNFLAKE_CELLS := 4
 
-# NOT recovered. icCornflakeDraw has no size property and we did not find
-# its size constant in iwar2.dll, so the flake's intrinsic size is a
-# placeholder scaled by the emitter transform like everything else.
-const CORNFLAKE_SIZE := 0.09
+# icCornflakeDraw's draw (iwar2.dll @ 0x100bc620, recovered by raw
+# disassembly -- docs/effects.md section 6): a flake is a 2:1 rectangle of
+# half-extents size x size/2, where size = 0.075 (0x1011cb98) * the emitter
+# scale. It is NOT a billboard: it TUMBLES in 3D, rotated by the particle's
+# accumulated roll angle about one of FOUR random unit axes (chosen by
+# particle index & 3; the class precomputes 256 rotation steps per axis at
+# 2pi/256 = 0x1011cb90). The atlas cell is particle index & 15 -- sequential,
+# not random (UV table @ 0x1011ca58). The flake is LIT: its colour is
+# (normal . world_light_dir)^2 grey (0x100bc6f1..0x100bc89d), alpha-blended
+# (sPolygonState @ 0x101682c8: blend 3 = SRCALPHA/INVSRCALPHA) WITH z-write.
+const CORNFLAKE_SIZE := 0.075
 
 static var _systems: Dictionary = {}
 static var _textures: Dictionary = {}
@@ -36,9 +43,13 @@ var emitter_vel := Vector3.ZERO
 var _age := 0.0
 var _accum := 0.0        # fractional particles owed, FcParticleDynamics+0x48
 var _spawned := 0        # total ever spawned, +0x4c (the `once` budget)
-var _live: Array = []    # {life, pos, vel, roll, spin, cell}
+var _live: Array = []    # {life, pos, vel, roll, spin, cell, axis}
 var _mm: MultiMeshInstance3D
 var _models: Array = []  # FcParticleDrawModel: one child per live particle
+# icCornflakeDraw's four random tumble axes (FUN_100bc480 @ 0x100bc480)
+var _flake_axes: Array = []
+var _sun_dir := Vector3(0, 0, -1)
+var _sun_dir_found := false
 
 # --- INI loading ------------------------------------------------------------
 
@@ -118,9 +129,10 @@ static func additive_material(tex: Texture2D) -> StandardMaterial3D:
 	mat.albedo_texture = tex
 	return mat
 
-# icCornflakeDraw draws hull-plate art, not light: the shipped mask sheet only
-# makes sense as a cutout, so these are alpha-blended and pick one of the 16
-# atlas cells per particle (carried in the multimesh's custom data).
+# @element icCornflakeDraw
+# icCornflakeDraw draws hull-plate art, not light: alpha-blended with z-write
+# (sPolygonState @ 0x101682c8, blend 3) with the mask sheet as the cutout.
+# The atlas cell rides in the multimesh's custom data.
 const CORNFLAKE_SHADER := """
 shader_type spatial;
 render_mode unshaded, cull_disabled, depth_draw_opaque;
@@ -337,7 +349,10 @@ func _spawn_one() -> void:
 		"vel": vel,
 		"roll": randf() * TAU,
 		"spin": deg_to_rad(ParticleFx.centre_weighted(-spin, spin)),
-		"cell": randi() % (CORNFLAKE_CELLS * CORNFLAKE_CELLS),
+		# icCornflakeDraw picks both by particle index, not at random
+		# (0x100bc783 / 0x100bc7a3): cell = index & 15, tumble axis = index & 3
+		"cell": _spawned % (CORNFLAKE_CELLS * CORNFLAKE_CELLS),
+		"axis": _spawned % 4,
 		"model": null,
 	})
 	_spawned += 1
@@ -405,19 +420,35 @@ func _draw_billboards() -> void:
 	var fade := 1.0
 	if sys["fade_on_emitter_age"] and sys["time"] > 0.0:
 		fade = clampf(_age / sys["time"], 0.0, 1.0)
+	var flake: bool = sys["draw_class"] == DRAW_CORNFLAKE
+	if flake and _flake_axes.is_empty():
+		# FUN_100bc480 (@ 0x100bc480) rolls four random unit axes when the
+		# first cornflake system is created
+		for k in 4:
+			_flake_axes.append(_random_unit())
 	var n := mini(_live.size(), _mm.multimesh.instance_count)
 	for i in n:
 		var p: Dictionary = _live[i]
 		var t := _ramp_t(p["life"])
 		var size: float = lerpf(sys["scale_birth"], sys["scale_death"], t) * emit_scale
-		if sys["draw_class"] == DRAW_CORNFLAKE:
+		var b: Basis
+		var c: Color
+		if flake:
+			# a tumbling world-space plate, not a billboard: the particle's
+			# roll angle turned about its tumble axis, half-extents size x
+			# size/2 (0x100bc767 / 0x10117738)
 			size = CORNFLAKE_SIZE * emitter_scale
-		var b := cb.rotated(cb.z, p["roll"]).scaled(Vector3(size, size, size))
+			var axis: Vector3 = _flake_axes[p["axis"]]
+			var rot := Basis(axis, p["roll"])
+			# lit by the world light: colour = (normal . light)^2 grey
+			var d := absf(rot.z.dot(_light_dir()))
+			c = Color(d * d, d * d, d * d)
+			b = Basis(rot.x * size, rot.y * (size * 0.5), rot.z * size)
+		else:
+			b = cb.rotated(cb.z, p["roll"]).scaled(Vector3(size, size, size))
+			c = _ramp_colour(t)
 		_mm.multimesh.set_instance_transform(i,
 				Transform3D(b, origin + p["pos"] - global_position))
-		var c := _ramp_colour(t)
-		if sys["draw_class"] == DRAW_CORNFLAKE:
-			c = Color(1, 1, 1)  # icCornflakeDraw has no ramp; the sheet is lit art
 		_mm.multimesh.set_instance_color(i, Color(c.r * fade, c.g * fade, c.b * fade))
 		if _mm.multimesh.use_custom_data:
 			var cell: int = p["cell"]
@@ -467,6 +498,23 @@ func _load_model(url: String) -> Node3D:
 	var node := doc.generate_scene(state)
 	_meshes[rel] = node
 	return null if node == null else (node as Node3D).duplicate()
+
+static func _random_unit() -> Vector3:
+	# FnRandom::UnitVector
+	var v := Vector3(randfn(0.0, 1.0), randfn(0.0, 1.0), randfn(0.0, 1.0))
+	return v.normalized() if v.length() > 0.0001 else Vector3.UP
+
+# the world light the original lights cornflakes with (FcWorld+0x60c) is the
+# system's sun; ours is the scene's DirectionalLight3D
+func _light_dir() -> Vector3:
+	if not _sun_dir_found:
+		_sun_dir_found = true
+		var lights := get_tree().root.find_children("*", "DirectionalLight3D",
+				true, false)
+		if not lights.is_empty():
+			_sun_dir = -(lights[0] as DirectionalLight3D) \
+					.global_transform.basis.z
+	return _sun_dir
 
 # floating origin: our parent node is moved for us, but particles that were
 # left behind in world space (fixed_particles = 0) hold absolute positions

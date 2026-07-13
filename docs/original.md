@@ -536,11 +536,34 @@ Type 4 is the ringed gas giant, and it is the only type that gets rings.
   yellow -> orange -> red. The table is written by a runtime static-init
   (`FUN_10069f70`) so it is zeros in the file; the values are in `geography.md`.
 - The avatar is scaled to `FiSim::Radius()` with a bounding radius of
-  **radius x 1.4** (`_DAT_1011a440`) -- the extra 40% is the corona, which is what
-  `sun_halo` (one quadrant, mirrored 4x, additive) is for.
+  **radius x 1.4** (`_DAT_1011a440`) -- but the corona itself draws at x1.3.
+- **The corona draw is recovered** (vtable `0x1011d1fc` slots 14/16 ->
+  `0x100d2b30` Prepare / `0x100d2b80` draw, raw-disassembled -- Ghidra bails
+  here). The disc is a `planets.ini planet_models[]` LOD sphere with the class
+  texture; the corona is TWO `FcBillBoard::Draw4x4` mirrored-quadrant fans
+  (`flux.dll @ 0x1004c420`) of `sun_halo`, scale radius x **1.3**
+  (`_DAT_1011d250`), second layer x1.05, additive, each tinted by an
+  independent `icSun::PickColour` draw. Roll = `-atan2(sunY . cam_up,
+  sunY . cam_right)` -- **the halo turns as the camera rolls** -- plus a
+  `+/-` phase advancing 0.010472 rad/s (`0x1011d248`), so the two layers
+  counter-rotate. That is why the original's halo "moves".
 - `icSun::CreateAvatar` (`0x1006a960`) also attaches **two `FcLensFlareNode`s**,
   both coloured by `PickColour`; the second's variant is 3 for class <= 2 and 1
   otherwise. `UpdateAvatar` pushes the first flare toward the camera each frame.
+- `icPlanetProperties::LoadTextures` (`0x100cbc90`) hardcodes the sun assets
+  (`+0x14` sun_halo, `+0x18/1c/20` sun_yellow/red/blue) and the shared
+  `planet_models[]` LOD spheres (`+0x28..0x30`, thresholds `detail_switch[]`
+  at `+0x88`; cull below apparent `0.0025 x camera+0x34`, `0x100ce2d0`).
+- **The `eBlend` enum is resolved** (dx7graph.dll decompiled): 0 = opaque,
+  1 = ONE/ONE additive, 2 = SRCALPHA/ONE, 3 = SRCALPHA/INVSRCALPHA. Tables
+  from D3D caps at `dx7graph.dll @ 0x10004a10`, applied at `0x10007e00`;
+  alpha test rides with SRCALPHA sources.
+- `icPlanetAvatar` has a **`3rfts_mode`** bool property (`0x100cc820`) that
+  pulses the planet's X/Y scale with sin^2/cos^2 of game time -- the
+  wobbly-planets easter egg, off by default.
+- Ghidra silently drops functions from **dx7graph.dll** too (the whole
+  `fcGraphicsDeviceD3D` vtable dispatch); `tools/ghidra/disasm.py` is the
+  recovery path for anything missing from a `.c`.
 
 ### Planets: `planets.ini` is the config, and the record is the content
 
