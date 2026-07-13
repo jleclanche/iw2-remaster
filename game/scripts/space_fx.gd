@@ -91,6 +91,8 @@ static func _line_material() -> StandardMaterial3D:
 	return mat
 
 # --- icHUDLagrangeIcon -------------------------------------------------------
+# @element icHUDLagrangeIcon
+# @element icHUDWaypointIcon
 
 static func _lp_build() -> void:
 	if not _lp_lines.is_empty():
@@ -169,6 +171,7 @@ static func update_lagrange_icon(mi: MeshInstance3D, cam: Camera3D,
 	mesh.surface_end()
 
 # --- icHUDReferenceGrid ------------------------------------------------------
+# @element icHUDReferenceGrid
 
 static func grid_cell(speed: float) -> float:
 	# spacing snaps to a decade chosen by speed, clamped to 1e3 .. 1e10 m
