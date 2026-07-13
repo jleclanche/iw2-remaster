@@ -292,6 +292,57 @@ texture or INI). The blue/red funnel is entirely procedural code, in
 `icHUDLagrangeIcon`, whose base class `iiHUDUnderlayElement` places it in world
 space.
 
+### The world-space HUD elements (recovered; see `hud.md` for the full write-up)
+
+Vtable **slot 9 (`+0x24`) is `Draw`**.
+
+| class | ctor | vtable | Draw |
+|---|---|---|---|
+| `icHUDLagrangeIcon` | `0x100ee8b0` | `0x1011dc90` | `0x100ee920` |
+| `icHUDReferenceGrid` | `0x100f54d0` | `0x1011e004` | `0x100f5550` |
+| `icHUDWaypointIcon` | `0x10104040` | `0x1011e2cc` | `0x101040b0` |
+
+(Ghidra leaves the Lagrange `Draw` undisassembled -- it has to be read from the
+raw bytes.)
+
+**The L-point funnel.** 84 vertices, 132 lines: 12 segments, 7 rings at
+`z = -1500..+1500` step 500, with
+
+```
+radius(z) = (3 - 2*cos(z*PI/3000)) * 375
+```
+
+so a **375 m waist**, **1125 m mouths**, **3000 m** long. No spokes across the
+waist. The arithmetic self-checks: `0x410 + 132*2*2 = 0x620`, exactly the
+`operator_new` size in the factory.
+
+**What blue and red mean** -- not near/far, which is the obvious guess.
+`icLagrangePointWaypoint::TryToJump` (`0x1006ad40`) refuses a jump unless the
+ship's offset from the L-point has **local z < 0**. That makes the L-point's
+local **Z axis the jump axis**, and so:
+
+- **blue = the -Z *entry* funnel** (the side you must be on to jump)
+- **red = the +Z exit side**
+- the waist ring is green `(0.5, 1, 0)`
+
+Exactly **one** funnel is drawn, for the **nearest** L-point
+(`icPlayerContactList::NearestLagrangePoint`, `0x10002800`, is a bare field
+read). Hard **50 km** cutoff; per-vertex alpha `0.4 + 0.6t`.
+
+**The reference grid is neither blue/red nor a grid.** It is a **9x9x9 lattice of
+729 velocity streaks**:
+
+```
+cell   = 10^clamp(floor(log10(speed) + 0.3), 3, 10)   ; snaps to a decade
+length = speed / 3                                    ; a third of a second of travel
+anchor = fmod(world_pos, cell)                        ; absolute, not ship-relative
+alpha  = clamp(speed*0.007, 0, 1) * t                 ; fades out at 5.5 cells
+colour = (1.0, 0.592, 0) amber, or (0.5, 1, 0) yellow-green under LDS
+```
+
+**The waypoint icon is a 300 m cube** at 15 km draw distance. Our beacon cube was
+right in kind; its 26 m size was invented.
+
 ### Cameras
 `flux.ini`: `[icInternalCamera] field_of_view = 1.1` rad (63 deg),
 `neck_stiffness = 2`, `acceleration_stiffness = 1`, `acceleration_scale = 0.01`,
@@ -344,8 +395,13 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
   it. Until we do, every planet and star is the wrong size.
 - **Which sun texture a given star uses** (`sun_yellow` / `sun_red` /
   `sun_blue`), and where the star's colour/class comes from.
-- **`icHUDLagrangeIcon` / `icHUDReferenceGrid` draw code** -- the funnel's
-  geometry, colours and the grid's cell size. Being extracted now.
+- **The L-point's orientation.** We now know the funnel is drawn in the L-point
+  sim's frame and that its local +Z is the jump axis (`TryToJump`) -- but nothing
+  in the HUD code *sets* that basis; it comes from the solar-system loader, and
+  our extracted `data/json/systems/*.json` carries **no orientation at all** for
+  `lpoint` records. `main.gd::_lpoint_axis` therefore uses an explicit,
+  clearly-marked placeholder. The orientation has to be re-extracted from the
+  system files.
 - **HUD colour palette** -- the actual RGB constants, and the per-state colours
   (hostile/friendly/neutral).
 - **Subsim damage model** -- how hit points, armour, power and heat interact.
