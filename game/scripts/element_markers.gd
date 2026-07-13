@@ -1,0 +1,459 @@
+extends RefCounted
+# ============================================================================
+# THE CLASSIFICATION LEDGER (task #44).
+#
+# tools/iw2/featurecov.py extracts every class the engine registers with
+# FcRegistry (257 in iwar2.dll, 127 in flux.dll) and diffs it against our
+# `# @element` / `# @element-stub` markers. This file classifies everything
+# that is NOT implemented in a specific file, so that `featurecov --todo`
+# shows only the genuine gaps instead of a 360-line wall.
+#
+# RULES:
+#   * Markers for really-built classes (the "element" marker without "-stub")
+#     do NOT belong here -- they belong in the file that implements the
+#     thing. This file is stubs only.
+#   * Every reason starts with a category tag featurecov understands:
+#       covered-elsewhere  the behaviour exists, in the named file, without a
+#                          per-class marker (usually because one file plays a
+#                          whole data-driven family)
+#       engine-internal    plumbing Godot (or an offline tool) supplies; the
+#                          replacement is named
+#       mp-only            deathmatch/CTF multiplayer, out of scope
+#       editor-only        development-workflow surface
+#       debug-only         debug screens and dev builds
+#       GENUINE GAP        not built and player-visible in single player.
+#                          These are the work queue.
+#
+# Everything here was checked against the sources named in the reason on
+# 2026-07-13; if you implement one of these, move it to an `# @element`
+# marker in the implementing file and delete the line here.
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- single-player GUI screens (base iiSPGUIScreen)
+#
+# The POG-driven screens: gen/ibasegui.gd and gen/ipdagui.gd hold the ported
+# builder for each (verified per class: the snake_case builder function
+# exists and ui.gd SCREEN_BUILDERS maps the class to it); PogUi (natives/
+# ui.gd) holds the widget tree and base_screens.gd draws it and feeds input.
+# ---------------------------------------------------------------------------
+# @element-stub icSPBaseScreen -- covered-elsewhere: gen/ibasegui.gd s_p_base_screen + ui.gd SCREEN_BUILDERS + base_screens.gd
+# @element-stub icSPHangarScreen -- covered-elsewhere: gen/ibasegui.gd s_p_hangar_screen + ui.gd + base_screens.gd
+# @element-stub icSPLoadoutScreen -- covered-elsewhere: gen/ibasegui.gd s_p_loadout_screen + ui.gd + base_screens.gd
+# @element-stub icSPManifestScreen -- covered-elsewhere: gen/ibasegui.gd s_p_manifest_screen + ui.gd + base_screens.gd
+# @element-stub icSPInventoryScreen -- covered-elsewhere: gen/ibasegui.gd s_p_inventory_screen + ui.gd + base_screens.gd
+# @element-stub icSPRecyclingScreen -- covered-elsewhere: gen/ibasegui.gd s_p_recycling_screen + ui.gd + base_screens.gd
+# @element-stub icSPManufacturingScreen -- covered-elsewhere: gen/ibasegui.gd s_p_manufacturing_screen + ui.gd + base_screens.gd
+# @element-stub icSPCommsMainMenuScreen -- covered-elsewhere: gen/ibasegui.gd s_p_comms_main_menu_screen + ui.gd + base_screens.gd
+# @element-stub icSPInboxScreen -- covered-elsewhere: gen/ibasegui.gd s_p_inbox_screen + ui.gd + base_screens.gd
+# @element-stub icSPArchiveScreen -- covered-elsewhere: gen/ibasegui.gd s_p_archive_screen + ui.gd + base_screens.gd
+# @element-stub icSPMessagesScreen -- covered-elsewhere: gen/ibasegui.gd s_p_messages_screen + ui.gd + base_screens.gd
+# @element-stub icSPEncyclopaediaScreen -- covered-elsewhere: gen/ibasegui.gd s_p_encyclopaedia_screen + ui.gd + base_screens.gd
+# @element-stub icSPStatisticsScreen -- covered-elsewhere: gen/ibasegui.gd s_p_statistics_screen + ui.gd + base_screens.gd
+# @element-stub icSPShipTypeScreen -- covered-elsewhere: gen/ibasegui.gd s_p_ship_type_screen + ui.gd + base_screens.gd
+# @element-stub icSPCustomiseScreen -- covered-elsewhere: gen/ibasegui.gd s_p_customise_screen builds the screen shell; its five iloadout.*Customise* event natives are @stub in natives/economy.gd (drag-and-drop fitting missing -- see docs/coverage.md)
+# @element-stub icSPMainPDAScreen -- covered-elsewhere: gen/ipdagui.gd s_p_main_p_d_a_screen + ui.gd + base_screens.gd
+# @element-stub icSPBasePDAScreen -- covered-elsewhere: gen/ipdagui.gd s_p_base_p_d_a_screen + ui.gd + base_screens.gd
+# @element-stub icSPPDAOptionsScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_options_screen + ui.gd + base_screens.gd
+# @element-stub icSPPDAControlsScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_controls_screen + ui.gd + base_screens.gd
+# @element-stub icSPPDAGraphicsScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_graphics_screen + ui.gd + base_screens.gd
+# @element-stub icSPPDASoundScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_sound_screen + ui.gd + base_screens.gd
+# @element-stub icSPPDADeviceScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_device_screen + ui.gd + base_screens.gd
+# @element-stub icSPPDASaveScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_save_screen + ui.gd + base_screens.gd
+# @element-stub icSPPDALoadScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_load_screen + ui.gd + base_screens.gd
+# @element-stub icPDAConfirmScreen -- covered-elsewhere: gen/ipdagui.gd p_d_a_confirm_screen + ui.gd + base_screens.gd
+# @element-stub icFlightConfirmScreen -- covered-elsewhere: gen/ipdagui.gd flight_confirm_screen + ui.gd + base_screens.gd
+# @element-stub icRestartScreen -- covered-elsewhere: gen/ipdagui.gd restart_screen + ui.gd + base_screens.gd
+# @element-stub icControlScreen -- covered-elsewhere: gen/ipdagui.gd control_screen + ui.gd + base_screens.gd
+# @element-stub icMoviesScreen -- covered-elsewhere: gen/ipdagui.gd movies_screen + ui.gd + base_screens.gd
+# @element-stub icModScreen -- covered-elsewhere: gen/ipdagui.gd mod_screen + ui.gd + base_screens.gd
+# @element-stub icSPFlightPDAScreen -- covered-elsewhere: menu.gd is the remaster's in-flight pause menu; gen/ipdagui.gd s_p_flight_p_d_a_screen exists but ui.gd SCREEN_BUILDERS does not map it (see docs/coverage.md)
+# @element-stub icMainMenuScreen -- covered-elsewhere: menu.gd front end; no shipped script ever raises this class (the menu flow runs through icSPMainPDAScreen)
+# @element-stub icSPDemoMainScreen -- debug-only: the demo build's main menu; retail scripts never raise it (builder exists in gen/ipdagui.gd if ever wanted)
+# @element-stub icSPPDAResolutionScreen -- engine-internal: the resolution picker sub-screen; display modes are Godot/OS business now, and no shipped script ever raises it
+# @element-stub icWrongDiskScreen -- engine-internal: the disc-check failure screen; the remaster has no disc check
+# @element-stub icCDKeyScreen -- mp-only: CD-key entry for the network lobby
+# @element-stub icNetworkScreen -- mp-only: network game lobby
+# @element-stub icMultiplayScreen -- mp-only: multiplayer menu
+# @element-stub icMultiplayScreenInGame -- mp-only: in-game MP menu
+# @element-stub icMultiplayLANScreen -- mp-only: LAN session browser
+# @element-stub icMultiplayOptionsScreen -- mp-only: MP options
+# @element-stub icMultiplayServerScreen -- mp-only: server setup
+# @element-stub icMultiplayServerScreenEx -- mp-only: server setup (extended)
+# @element-stub icMultiplayTeamScreen -- mp-only: team selection
+# @element-stub icNotYetImplementedScreen -- GENUINE GAP: the apology screen the ORIGINAL pushes for the base Starmap button (ibasegui SPBaseScreen_OnStarmapButton); ui.gd currently pushes an empty screen with no Back handler. Trivial: a title and a back action
+# @element-stub icSPAddCargoScreen -- GENUINE GAP: "Add Cargo" from the loadout screen (ibasegui SPLoadoutScreen_OnAddCargoButton) and the act 0 training tour; C++-built, no POG builder, so it comes up empty
+# @element-stub icSPComputerTradingScreen -- GENUINE GAP: the base trading screen (ibasegui SPBaseScreen_OnTradeButton overlays it); C++-built commodity buy/sell UI over the economy natives/economy.gd already models
+# @element-stub icSPComputerPuzzleScreen -- GENUINE GAP: the triangulation / computer-hacking minigame (base menu Triangulation button, act 1 iactone); C++-built
+# @element-stub icSPComputerMenuScreen -- GENUINE GAP: the remote base-computer menu; hosted by icSPPlayerBaseScreen's screen map (iwar2 0x100245xx), part of the remote-link flow
+# @element-stub icSPComputerCommsScreen -- GENUINE GAP: the remote base-computer comms screen; hosted by icSPPlayerBaseScreen's screen map, part of the remote-link flow
+# @element-stub icCustomGUIScreen -- GENUINE GAP: C++ screen that runs the POG builder named in global g_custom_gui_screen (igui.OverlayCustomScreen); Instant Action's ship-choice screen comes through it (iinstantaction, ipdagui SPMainPDAScreen_OnInstant)
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- game-object singletons and managers (base FcObject)
+# ---------------------------------------------------------------------------
+# @element-stub icAITarget -- covered-elsewhere: AI targeting state lives in ai_ship.gd and the iai natives (natives/gameapi.gd)
+# @element-stub icCargo -- covered-elsewhere: natives/economy.gd (icargo model; the 611 icargo.Create commodities)
+# @element-stub icCluster -- covered-elsewhere: main.gd loads every system (data/json/systems) and flies the L-point links between them
+# @element-stub icComms -- covered-elsewhere: comms.gd (VO, subtitles, Clay's head) driven by the icomms natives in natives/gameapi.gd
+# @element-stub icConversation -- covered-elsewhere: comms.gd dialogue queue + iconversation natives (natives/gameapi.gd)
+# @element-stub icCornflakeDraw -- covered-elsewhere: particle_fx.gd DRAW_CORNFLAKE (hull-plate debris atlas)
+# @element-stub icDirector -- covered-elsewhere: idirector natives (natives/gameapi.gd): dolly, focus, fades, captions
+# @element-stub icEmail -- covered-elsewhere: natives/misc.gd iemail (real inbox: sender/subject/body/read/archive)
+# @element-stub icFaction -- covered-elsewhere: natives/factions.gd
+# @element-stub icFactions -- covered-elsewhere: natives/factions.gd feelings matrix
+# @element-stub icHUD -- covered-elsewhere: hud.gd is the HUD manager; its elements carry their own @element markers
+# @element-stub icLog -- covered-elsewhere: hud.gd log_msg + the icHUDLog element (hud_screens.gd)
+# @element-stub icMovie -- covered-elsewhere: main.gd _play_movie / igame.PlayMovie native
+# @element-stub icObjectives -- covered-elsewhere: mission.gd objectives + iobjectives natives (natives/gameapi.gd)
+# @element-stub icOptions -- covered-elsewhere: ioptions natives (natives/ui.gd) + menu.gd
+# @element-stub icPauseScreen -- covered-elsewhere: menu.gd pauses the tree and owns its input
+# @element-stub icPlanetProperties -- covered-elsewhere: main.gd planet/sun materials read the same record fields (star_fx.gd documents the icSun paths)
+# @element-stub icPopUpCommsScreen -- covered-elsewhere: comms.gd draws conversations wherever they happen; ibasegui overlays this class on OnConversationStart and the empty overlay is benign (worth a runtime check)
+# @element-stub icSPMasterScreen -- covered-elsewhere: the screen-stack container; natives/ui.gd screens/overlays arrays are that stack
+# @element-stub icScoreTable -- covered-elsewhere: natives/misc.gd iscore (kill values, skill rating)
+# @element-stub icSpaceFlightScreen -- covered-elsewhere: main.gd flight view + hud.gd
+# @element-stub icSpaceFlightScreenOverlay -- covered-elsewhere: hud.gd draws the flight GUI overlay
+# @element-stub icTrade -- covered-elsewhere: natives/economy.gd itrade offers
+# @element-stub icVisualEffects -- covered-elsewhere: explosion_fx.gd (data/json/sfx_effects.json carries its constants)
+# @element-stub icWindowAvatarFactory -- engine-internal: widget-skin factory; base_screens.gd draws controls directly
+# @element-stub iiCamera -- engine-internal: abstract camera base; Godot Camera3D + main.gd camera rig
+# @element-stub iiHUDElement -- engine-internal: abstract base; the concrete elements are marked in hud.gd
+# @element-stub iiPilot -- engine-internal: abstract base of icAIPilot / icPlayerPilot
+# @element-stub iiRegion -- engine-internal: abstract base; iregion natives (natives/world.gd) serve the concrete regions
+# @element-stub iiSimField -- engine-internal: abstract base of the two ambient fields (which are themselves a gap, below)
+# @element-stub icClient -- mp-only: the network client object
+# @element-stub icMPMasterScreen -- mp-only: the MP GUI master screen
+# @element-stub icDebugScreenShip -- debug-only: ship inspector debug screen
+# @element-stub icDebugScreenBounds -- debug-only: bounds inspector debug screen
+# @element-stub icFFEffects -- engine-internal: force-feedback effect table; joystick FF is not reproduced (Godot Input.start_joy_vibration would be the hook)
+# @element-stub icAlienSwarmDraw -- GENUINE GAP: act 3 alien swarm particle draw (with icAlienSwarmDynamics/icAlienSwarmAvatar/icAlienSwarm)
+# @element-stub icAlienSwarmDynamics -- GENUINE GAP: act 3 alien swarm particle dynamics
+# @element-stub icCapsuleSpace -- GENUINE GAP: capsule-space interior world; main.gd currently white-fades through every jump (jump_state 3)
+# @element-stub icCreditScreen -- GENUINE GAP: the credits screen (main menu Credits button, SPMainPDAScreen_OnCredits); needs the icScroller element
+# @element-stub icDisruptorDynamics -- GENUINE GAP: sensor-disruptor strike visual; the disruption mechanic itself is main.gd disrupt()
+# @element-stub icScroller -- GENUINE GAP: the scrolling-text element the credits screen drives
+# @element-stub icTeleportDynamics -- GENUINE GAP: act 3 alien teleport particle visual
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- world avatars (base FiSceneNode / FcSceneNode /
+# FcParticleEmitterNode)
+# ---------------------------------------------------------------------------
+# @element-stub icFlameConeAvatar -- covered-elsewhere: ship_effects.gd additive cone meshes on the channel rig
+# @element-stub icMovieAvatar -- covered-elsewhere: explosion_fx.gd flipbook quads
+# @element-stub icPlanetAvatar -- covered-elsewhere: main.gd planet spheres, ring + atmosphere materials
+# @element-stub icPlanetsAvatar -- covered-elsewhere: main.gd _spawn_impostor (distant-planet impostors)
+# @element-stub icShockwaveAvatar -- covered-elsewhere: explosion_fx.gd shockwave rings
+# @element-stub icStarfieldAvatar -- covered-elsewhere: main.gd _starfield_material shader dome
+# (icSunAvatar is really built: its @element marker is in star_fx.gd)
+# @element-stub icNebulaAvatar -- covered-elsewhere: main.gd _setup_sky loads the per-system nebula backdrop model additively
+# @element-stub icBeamAvatar -- covered-elsewhere: weapons.gd bolt streaks + explosion_fx.gd crossed textured streaks
+# @element-stub icCockpitAvatar -- covered-elsewhere: main.gd cockpit dressing shown in the F1 view
+# @element-stub icWaypointAvatar -- covered-elsewhere: space_fx.gd draws the waypoint marker (icHUDWaypointIcon is @element there)
+# @element-stub icAggressorAvatar -- GENUINE GAP: aggressor-shield visual (player device, with icAggressorShield)
+# @element-stub icAlienSwarmAvatar -- GENUINE GAP: act 3 alien swarm emitter node
+# @element-stub icAsteroidAvatar -- GENUINE GAP: tumbling-rock avatar for the ambient fields (script-built debris sims DO render via natives/world.gd models)
+# @element-stub icCapsuleEffectNode -- GENUINE GAP: capsule-jump entry/exit effect node
+# @element-stub icCapsuleEntryBlankAvatar -- GENUINE GAP: the blanking avatar over capsule entry
+# @element-stub icCapsuleSpaceAvatar -- GENUINE GAP: the capsule-space tunnel visual
+# @element-stub icCloudAvatar -- GENUINE GAP: in-system dust-cloud sprite volumes (sensor cover the act 2 scripts use)
+# @element-stub icElectricEffectAvatar -- GENUINE GAP: electric-arc emitter (disruptor / damage arcing)
+# @element-stub icGasBallAvatar -- GENUINE GAP: gas-ball avatar (cosmetic; exact use not yet traced in the campaign)
+# @element-stub icLDAAvatar -- GENUINE GAP: the LDA shield-hit shimmer (mechanic is in ship_systems.gd; sfx_effects.json references this node class)
+# @element-stub icMissileTrailAvatar -- GENUINE GAP: missile exhaust trail (part of the missile system gap)
+# @element-stub icRocketTrailAvatar -- GENUINE GAP: rocket exhaust trail (part of the missile system gap)
+# @element-stub icSignAvatar -- GENUINE GAP: station signage boards (cosmetic)
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- ship systems (base iiShipSystem / FcSubsim / icCapacitor /
+# iiLDA / iiPilot)
+# ---------------------------------------------------------------------------
+# @element-stub iiShipSystem -- engine-internal: abstract base; ship_systems.gd is the recovered damage/power model
+# @element-stub icActiveSensor -- covered-elsewhere: ship_systems.gd SEN group + main.gd contact list ranges
+# @element-stub icAutorepair -- covered-elsewhere: ship_systems.gd reads autorepair_rate and runs the repair pool
+# @element-stub icCPU -- covered-elsewhere: ship_systems.gd CPU group
+# @element-stub icCapacitor -- covered-elsewhere: ship_systems.gd capacitor pool
+# @element-stub icCrew -- covered-elsewhere: a subsim in ship_systems.gd's generic INI-driven damage model (nps_crew.ini); no crew-specific behaviour was recovered
+# @element-stub icDockPort -- covered-elsewhere: idockport natives (natives/entities.gd) + main.gd docking
+# @element-stub icDrive -- covered-elsewhere: ship_systems.gd DRV group + ship_flight.gd
+# @element-stub icEPS -- covered-elsewhere: ship_systems.gd EPS group
+# @element-stub icHeatSink -- covered-elsewhere: ship_systems.gd heat model (HEATSINK_MIN_RAMP)
+# @element-stub icLDSDrive -- covered-elsewhere: ship_systems.gd LDS group + main.gd LDS cruise
+# @element-stub icMountPoint -- covered-elsewhere: ship_systems.gd mounts subsims at named nulls from the mountpoint INIs
+# @element-stub icReactor -- covered-elsewhere: ship_systems.gd power model
+# @element-stub icSensor -- covered-elsewhere: ship_systems.gd SEN group + main.gd sensor visibility
+# @element-stub icSensorDisruptor -- covered-elsewhere: main.gd disrupt() applies the disruption; the subsim takes damage like any other
+# @element-stub icThrusters -- covered-elsewhere: ship_systems.gd THR group + ship_flight.gd
+# @element-stub icCapsuleDrive -- covered-elsewhere: main.gd capsule jump + ship_systems.gd CAP group
+# @element-stub iiLDA -- engine-internal: abstract base; the LDA deflection maths is ship_systems.gd
+# @element-stub icAILDA -- covered-elsewhere: ship_systems.gd LDA deflection (icAILDA @ 0x1002b940 constants)
+# @element-stub icPlayerLDA -- covered-elsewhere: ship_systems.gd LDA deflection (m_min_energy, max chance)
+# @element-stub icAIPilot -- covered-elsewhere: ai_ship.gd flies the same flight model with patrol/attack behaviours
+# @element-stub icPlayerPilot -- covered-elsewhere: main.gd _player_control is the recovered yoke (docs/controls.md)
+# @element-stub icWeaponLink -- GENUINE GAP: fire-group linking of mounted weapons; weapons.gd fires a fixed PBC pair only
+# @element-stub icProgram -- GENUINE GAP: software subsims (stealth_program, aggressor_shield_control, imaging_module, ... in data/ini/subsims/systems/player/programs); the autopilot programs' effects exist as main.gd autopilots, the rest do nothing
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- weapons and ordnance (base iiWeapon / iiGun / iiProjectile /
+# icMagazine / icMissile / iiThrusterSim / icShip / icPowerUp)
+# ---------------------------------------------------------------------------
+# @element-stub iiWeapon -- engine-internal: abstract weapon base
+# @element-stub iiGun -- engine-internal: abstract gun base
+# @element-stub iiProjectile -- engine-internal: abstract projectile base
+# @element-stub icCannon -- covered-elsewhere: weapons.gd PBC manager (bolts, refire, INI stats)
+# @element-stub icBullet -- covered-elsewhere: weapons.gd swept-sphere bolts + main.on_bolt_hit damage chain
+# @element-stub icShip -- covered-elsewhere: ship_flight.gd flight model + ship_systems.gd damage model + ai_ship.gd
+# @element-stub icCargoPod -- covered-elsewhere: spawned as ordinary sims from their INI (natives/world.gd sim.Create; ipilotsetup.generic_cargo_pod)
+# @element-stub icBeamProjector -- GENUINE GAP: beam weapons (antimatter beam, mining laser, comms laser -- data/ini/subsims/systems)
+# @element-stub icBeam -- GENUINE GAP: the beam sim a projector fires
+# @element-stub icSlugThrower -- GENUINE GAP: slug-thrower guns (assault/fortress cannon INIs)
+# @element-stub icTurret -- GENUINE GAP: turret guns -- station and gunstar defence (nps_turret_*.ini); also behind the ihabitat.SetArmed stubs
+# @element-stub icTurretShip -- GENUINE GAP: turret-ship (gunstar) hulls
+# @element-stub icAggressorShield -- GENUINE GAP: the player's aggressor-shield device
+# @element-stub icMagazine -- GENUINE GAP: ammunition magazines (missile system)
+# @element-stub icMissileMagazine -- GENUINE GAP: missile magazine (missile system)
+# @element-stub icCounterMeasureMagazine -- GENUINE GAP: countermeasure magazine (missile system)
+# @element-stub icMissileLauncher -- GENUINE GAP: missile launcher weapon (missile system)
+# @element-stub icMissile -- GENUINE GAP: powered missile sim (missile system)
+# @element-stub icSimTrackingMissile -- GENUINE GAP: seeker missile (missile system)
+# @element-stub icRemoteMissile -- GENUINE GAP: player-flyable remote missile (missile system)
+# @element-stub icLDSIMissile -- GENUINE GAP: LDS-inhibitor missile (missile system)
+# @element-stub icMine -- GENUINE GAP: mines (missile system)
+# @element-stub icCounterMeasure -- GENUINE GAP: countermeasure decoy projectile (missile system)
+# @element-stub icRocket -- GENUINE GAP: unguided rockets (missile system)
+# @element-stub icPowerUp -- mp-only: deathmatch pickup (imultiplay.AddPowerupWeapon and friends)
+# @element-stub icPowerUpBomb -- mp-only: deathmatch bomb pickup
+# @element-stub icAlienSwarm -- GENUINE GAP: the act 3 alien swarm ship
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- cameras (base iiCamera)
+# ---------------------------------------------------------------------------
+# @element-stub icInternalCamera -- covered-elsewhere: main.gd F1 cockpit/no-cockpit views (FOV from flux.ini)
+# @element-stub icTacticalCamera -- covered-elsewhere: main.gd F2 tactical / inverse-tactical
+# @element-stub icExternalCamera -- covered-elsewhere: main.gd F3 external orbit / target-external
+# @element-stub icDropCamera -- covered-elsewhere: main.gd F4 fixed-in-space tracking view
+# @element-stub icArcadeCamera -- covered-elsewhere: main.gd hull-following arcade view
+# @element-stub icOrbitCamera -- covered-elsewhere: main.gd external slow-orbit framing
+# @element-stub icContactCamera -- covered-elsewhere: main.gd target_external frames ship and target
+# @element-stub icChaseCamera -- covered-elsewhere: gameapi.gd dolly attached to a sim serves the cutscene chase shots
+# @element-stub icDollyCamera -- covered-elsewhere: gameapi.gd PogDolly (idirector.CreateDolly/SetDollyCamera)
+# @element-stub icSwapCamera -- covered-elsewhere: gameapi.gd dolly shot composition (idirector.SetDirection)
+# @element-stub icConversationCamera -- covered-elsewhere: comms.gd talking-head view replaces conversation framing
+# @element-stub icTwoShotCamera -- covered-elsewhere: comms.gd talking-head view replaces the two-shot
+# @element-stub icBridgeShotCamera -- covered-elsewhere: comms.gd talking-head view replaces the bridge shot
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- sims, geography, fields, regions
+# ---------------------------------------------------------------------------
+# @element-stub iiSim -- engine-internal: abstract sim base; natives/world.gd PogSim is the handle
+# @element-stub iiThrusterSim -- engine-internal: abstract base; ship_flight.gd is the flight model
+# @element-stub icInertSim -- covered-elsewhere: plain sims via natives/world.gd sim.Create
+# @element-stub icDolly -- covered-elsewhere: gameapi.gd PogDolly
+# @element-stub icExplosion -- covered-elsewhere: explosion_fx.gd composite effects + isim.StartExplosion native
+# @element-stub icShockwave -- covered-elsewhere: explosion_fx.gd shockwaves
+# @element-stub icTimedWaypoint -- covered-elsewhere: mission.gd waypoint steps + natives/world.gd waypoints
+# @element-stub icGeography -- covered-elsewhere: the authored map records (data/json/systems) main.gd loads
+# @element-stub icPlanet -- covered-elsewhere: main.gd planets (spheres, rings, atmosphere, impostors)
+# @element-stub icStation -- covered-elsewhere: main.gd stations (models, factions, docking)
+# @element-stub icSun -- covered-elsewhere: star_fx.gd builds the original's three-part sun
+# @element-stub icLagrangePointWaypoint -- covered-elsewhere: main.gd L-points, jump gating + space_fx.gd funnel
+# @element-stub icNebula -- covered-elsewhere: nebula geography records; the visual is main.gd's per-system sky backdrop
+# @element-stub icAsteroidBelt -- GENUINE GAP: belt geography spawning ambient rocks (records load, nothing is spawned from them)
+# @element-stub icFieldSphere -- GENUINE GAP: spherical field volume for ambient asteroid/debris fields
+# @element-stub icFieldSim -- GENUINE GAP: the per-rock sim the fields manage
+# @element-stub icAsteroidField -- GENUINE GAP: ambient asteroid field around the ship
+# @element-stub icDebrisField -- GENUINE GAP: ambient debris field (the Junkyard's authored sims DO render; the ambient filler does not)
+# @element-stub icSolarSystem -- covered-elsewhere: main.gd _load_system builds the system from its record
+# @element-stub icCapsuleSpaceSystem -- GENUINE GAP: the capsule-space "system" flown between jumps (with icCapsuleSpace)
+# @element-stub icLDSIRegion -- covered-elsewhere: main.gd LDSI fence + iregion natives (natives/world.gd)
+# @element-stub icTrafficControlRegion -- covered-elsewhere: main.gd _spawn_traffic + iregion natives
+# @element-stub icGame -- covered-elsewhere: main.gd is the game loop; igame natives (natives/gameapi.gd)
+# @element-stub icServer -- mp-only: the network server object
+# @element-stub icServerApp -- mp-only: the dedicated-server app shell
+# @element-stub icGUIMovie -- covered-elsewhere: main.gd movie playback; the scripts only touch this class as a config key
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- HUD elements not implemented in hud.gd (their bare @element-stub
+# markers live there; the classification is here)
+# ---------------------------------------------------------------------------
+# @element-stub icHUDShields -- GENUINE GAP: the shield-arc HUD readout (main.gd shield_bars() exists; nothing draws it)
+# @element-stub icHUDContrails -- GENUINE GAP: HUD motion-streak contrails (cosmetic)
+# @element-stub icHUDDebug -- debug-only: HUD debug readout
+# @element-stub icHUDScore -- mp-only: deathmatch score HUD element
+# @element-stub icHUDEditBoxElement -- mp-only: the HUD chat/taunt entry box (imultiplay.ClientOpenHUDTauntBox)
+# @element-stub iiHUDMenuElement -- engine-internal: abstract base of the full-screen HUD overlays (hud_screens.gd)
+# @element-stub iiHUDList -- engine-internal: abstract base of the HUD list screens (hud_screens.gd)
+# @element-stub iiHUDBlockElement -- engine-internal: abstract HUD block base (hud.gd concrete elements are marked)
+# @element-stub iiHUDOverlayElement -- engine-internal: abstract HUD overlay base
+# @element-stub iiHUDUnderlayElement -- engine-internal: abstract 3D-underlay base (space_fx.gd concrete elements are marked)
+
+# ---------------------------------------------------------------------------
+# iwar2.dll -- GUI widget skins (base icWindowAvatar / icCustomisableWindowAvatar
+# / FcWindowAvatar) and screen-stack plumbing
+# ---------------------------------------------------------------------------
+# @element-stub icWindowAvatar -- engine-internal: widget-skin base; base_screens.gd draws controls with Godot's canvas
+# @element-stub icBorderAvatar -- engine-internal: border skin; base_screens.gd draws frames directly
+# @element-stub icFancyBorderAvatar -- engine-internal: nine-patch border skin (the remaster deliberately has its own look)
+# @element-stub icCheckBoxAvatar -- engine-internal: checkbox skin; base_screens.gd draws the control kind
+# @element-stub icComboBoxAvatar -- engine-internal: combobox skin
+# @element-stub icDropDownListBoxAvatar -- engine-internal: dropdown skin
+# @element-stub icListBoxAvatar -- engine-internal: listbox skin; base_screens.gd _draw_listbox
+# @element-stub icTextWindowAvatar -- engine-internal: text-window skin; base_screens.gd _draw_text
+# @element-stub icSliderControlAvatar -- engine-internal: slider skin
+# @element-stub icHorizontalScrollbarAvatar -- engine-internal: scrollbar skin
+# @element-stub icVerticalScrollbarAvatar -- engine-internal: scrollbar skin
+# @element-stub icFancyVerticalScrollbarAvatar -- engine-internal: scrollbar skin
+# @element-stub icDualScrollbarsAvatar -- engine-internal: scrollbar-pair skin
+# @element-stub icSplitterWindowAvatar -- engine-internal: splitter skin
+# @element-stub icFancySplitterWindowAvatar -- engine-internal: splitter skin
+# @element-stub icCustomisableWindowAvatar -- engine-internal: skinnable-widget base
+# @element-stub icBackButtonAvatar -- engine-internal: back-button skin; base_screens.gd renders back actions
+# @element-stub icEditBoxAvatar -- engine-internal: edit-box skin; base_screens.gd draws edit rows
+# @element-stub iiSPGUIScreen -- engine-internal: abstract base of the SP screens; natives/ui.gd owns the stack
+# @element-stub iiGUIOverlayManager -- engine-internal: abstract overlay-manager base; natives/ui.gd overlays array
+# @element-stub icPDAOverlayManager -- covered-elsewhere: natives/ui.gd screen/overlay stack handles the PDA overlay flow the scripts drive (25 bytecode references)
+# @element-stub icSPPlayerBaseScreen -- covered-elsewhere: natives/ui.gd AUTO_OVERLAY raises the base menu when docked (main.gd _enter_base)
+# @element-stub icDebugScreen -- debug-only: the debug screen-overlay manager
+
+# ---------------------------------------------------------------------------
+# flux.dll -- object model, app shells, script engine
+# ---------------------------------------------------------------------------
+# @element-stub FcObject -- engine-internal: the object-model root; Godot Object/RefCounted
+# @element-stub FcApp -- engine-internal: app shell; Godot SceneTree main loop
+# @element-stub FcGame -- engine-internal: game-app shell; main.gd
+# @element-stub FcMainApp -- engine-internal: windowed-app shell; Godot
+# @element-stub FcDemoApp -- debug-only: the demo build's app shell
+# @element-stub FcGroup -- engine-internal: object container; GDScript arrays/dictionaries
+# @element-stub FcTree -- engine-internal: tree container
+# @element-stub FcPointer -- engine-internal: smart pointer; GC'd references
+# @element-stub FcSpacePartition -- engine-internal: spatial index; the remaster's swept-sphere checks scan the small live-sim set
+# @element-stub FcSceneGraph -- engine-internal: Godot's scene tree
+# @element-stub FcResourceManager -- engine-internal: Godot ResourceLoader + per-file caches
+# @element-stub FcPackage -- engine-internal: resource packages; tools/iw2/pkg.py extracts them offline
+# @element-stub FcScriptEngine -- covered-elsewhere: pog/vm.gd runs the original mission bytecode
+# @element-stub FcScriptState -- covered-elsewhere: pog/vm.gd holds VM state
+# @element-stub FcScriptTask -- covered-elsewhere: pog/runtime.gd cooperative tasks
+# @element-stub FcScriptableBindings -- covered-elsewhere: pog/natives/*.gd native registry
+# @element-stub FiCompiler -- editor-only: compiles POG source; we run shipped bytecode (ported offline by tools/iw2/pogport.py)
+# @element-stub FcWorld -- covered-elsewhere: main.gd world root; natives/world.gd floating origin
+# @element-stub FcSubsim -- engine-internal: abstract subsim base; ship_systems.gd
+# @element-stub FiSim -- engine-internal: abstract sim base; natives/world.gd PogSim
+# @element-stub FcConsole -- debug-only: the in-engine console
+# @element-stub FcMovie -- engine-internal: movie resource; Godot VideoStreamPlayer via main.gd
+# @element-stub FiMovieDevice -- engine-internal: movie codec device; Godot VideoStream
+# @element-stub FcForceFeedback -- engine-internal: FF hardware layer; not reproduced
+# @element-stub FiCDAudioDevice -- engine-internal: CD audio; audio_manager.gd streams the GOG MP3s
+# @element-stub FiInputDevice -- engine-internal: Godot Input
+# @element-stub FcInputMapper -- engine-internal: Godot InputMap; bindings read from the game's configs in main.gd
+# @element-stub FiGraphicsDevice -- engine-internal: Godot RenderingDevice
+# @element-stub FcGraphicsEngine -- engine-internal: Godot RenderingServer
+# @element-stub FiSound -- engine-internal: audio_manager.gd players
+# @element-stub FiSoundDevice -- engine-internal: Godot audio output
+# @element-stub FiNetworkDevice -- mp-only: network transport
+# @element-stub FcClient -- mp-only: client session
+# @element-stub FcServer -- mp-only: server session
+# @element-stub FcServerBrowser -- mp-only: session browser
+# @element-stub FcServerResolver -- mp-only: address resolver
+# @element-stub FcWindowManager -- engine-internal: window/widget manager; natives/ui.gd + Godot Control
+# @element-stub FcWindowFrameSim -- engine-internal: window-frame sim; not needed under Godot
+# @element-stub FiPrimitive -- engine-internal: renderer primitive
+# @element-stub FiShader -- engine-internal: Godot ShaderMaterial
+# @element-stub FiSurface -- engine-internal: Godot ImageTexture surface
+# @element-stub FiResource -- engine-internal: abstract resource base
+# @element-stub FiTextureImage -- engine-internal: FTEX textures are converted offline (tools/iw2/textures.py) and loaded as Godot images
+# @element-stub FcBitmap -- engine-internal: bitmap resource; offline conversion + Godot Image
+# @element-stub FcFont -- engine-internal: bitmap fonts; tools/iw2/fonts.py + Godot FontFile
+# @element-stub FcModel -- engine-internal: model resource; tools/iw2/pso.py -> glTF -> Godot meshes
+# @element-stub FcHullMesh -- engine-internal: collision hull resource; main.gd derives collision spheres from models
+# @element-stub FcWaveform -- engine-internal: WAV resource; audio_manager.gd
+# @element-stub FiWindowAvatarFactory -- engine-internal: widget-skin factory base
+# @element-stub FcWindowAvatarFactory -- engine-internal: widget-skin factory
+
+# ---------------------------------------------------------------------------
+# flux.dll -- scene nodes (base FiSceneNode / FcSceneNode)
+# ---------------------------------------------------------------------------
+# @element-stub FiSceneNode -- engine-internal: abstract scene-node base; Godot Node3D
+# @element-stub FcSceneNode -- engine-internal: scene node; Godot Node3D
+# @element-stub FcModelNode -- engine-internal: Godot MeshInstance3D from the converted glTF
+# @element-stub FcCameraNode -- engine-internal: Godot Camera3D
+# @element-stub FcLightNode -- engine-internal: Godot Light3D (explosion_fx.gd drives effect lights)
+# @element-stub FcAnimationNode -- engine-internal: LWS motions are baked by tools/iw2/lws.py; Godot AnimationPlayer
+# @element-stub FcMotionNode -- engine-internal: baked motion; Godot AnimationPlayer
+# @element-stub FcEnvelopeNode -- engine-internal: LWS envelopes baked offline
+# @element-stub FcChannelGeneratorNode -- covered-elsewhere: ship_effects.gd evaluates the channel expressions
+# @element-stub FcChannelSwitchNode -- covered-elsewhere: ship_effects.gd interpolates the tagged poses by channel value
+# @element-stub FcClipPlaneNode -- engine-internal: renderer clip plane; unused under Godot
+# @element-stub FcDetailLevelNode -- engine-internal: LOD switching; Godot visibility ranges
+# @element-stub FcDetailSwitchNode -- engine-internal: LOD switching; Godot visibility ranges
+# @element-stub FcFeedbackNode -- engine-internal: force-feedback trigger node; not reproduced
+# @element-stub FcLensFlareNode -- covered-elsewhere: star_fx.gd flares + main.gd _add_sky_flare
+# @element-stub FcLoopSoundNode -- engine-internal: looped 3D sound; audio_manager.gd players
+# @element-stub FcSoundNode -- engine-internal: one-shot 3D sound; audio_manager.gd
+# @element-stub FcThreePartSoundNode -- engine-internal: start/loop/end sound; audio_manager.gd approximates with plain loops
+# @element-stub FcParticleEmitterNode -- covered-elsewhere: particle_fx.gd systems
+
+# ---------------------------------------------------------------------------
+# flux.dll -- particles and colliders
+# ---------------------------------------------------------------------------
+# @element-stub FiParticleDynamics -- engine-internal: abstract dynamics base
+# @element-stub FcParticleDynamics -- covered-elsewhere: particle_fx.gd (semantics read from FcParticleDynamics::Spawn @ 0x10053f80)
+# @element-stub FiParticleEmitter -- engine-internal: abstract emitter base
+# @element-stub FcParticleEmitter -- covered-elsewhere: particle_fx.gd emitters
+# @element-stub FiParticleDraw -- engine-internal: abstract particle-draw base
+# @element-stub FcParticleDrawBillBoard -- covered-elsewhere: particle_fx.gd DRAW_BILLBOARD
+# @element-stub FcParticleDrawModel -- covered-elsewhere: particle_fx.gd DRAW_MODEL
+# @element-stub FcParticleDrawLensFlare -- GENUINE GAP: lens-flare particle draw (minor cosmetic; billboard/model/cornflake are in particle_fx.gd)
+# @element-stub FiCollider -- engine-internal: abstract collider base; main.gd swept-sphere collision
+# @element-stub FcSphereCollider -- engine-internal: main.gd _collide_sphere / _model_coll_spheres
+# @element-stub FcHullCollider -- engine-internal: hull collision approximated by main.gd's model spheres
+# @element-stub FcLineCollider -- engine-internal: weapons.gd swept-sphere bolt tests do this job
+
+# ---------------------------------------------------------------------------
+# flux.dll -- screens, windows, widget skins
+# ---------------------------------------------------------------------------
+# @element-stub FiScreen -- engine-internal: abstract screen base; natives/ui.gd stack
+# @element-stub FcGUIScreen -- engine-internal: GUI screen base; natives/ui.gd + base_screens.gd
+# @element-stub FcScreenOverlayManager -- covered-elsewhere: natives/ui.gd screens/overlays arrays are the stack
+# @element-stub FcDebugScreen -- debug-only: debug screen-overlay manager
+# @element-stub FcLogoScreen -- engine-internal: boot logo screen; Godot splash + menu.gd
+# @element-stub FcSceneDemoScreen -- debug-only: scene-viewer demo screen
+# @element-stub cMovieScreen -- covered-elsewhere: main.gd _play_movie plays fullscreen movies
+# @element-stub cDebugScreenFPS -- debug-only: FPS readout (Godot's monitor overlays replace it)
+# @element-stub cDebugScreenProfile -- debug-only: profiler readout (Godot profiler replaces it)
+# @element-stub cDebugScreenStatistics -- debug-only: statistics readout
+# @element-stub cDebugScreenTasks -- debug-only: task-list readout
+# @element-stub FcWindow -- engine-internal: widget base; PogWindow in natives/ui.gd + base_screens.gd drawing
+# @element-stub FcBorder -- engine-internal: Godot-drawn frame (base_screens.gd)
+# @element-stub FcButton -- engine-internal: PogWindow kind "button"
+# @element-stub FcCheckBox -- engine-internal: PogWindow kind "checkbox"
+# @element-stub FcComboBox -- engine-internal: PogWindow kind "combobox"
+# @element-stub FcDropDownListBox -- engine-internal: PogWindow list kinds
+# @element-stub FcDualScrollbars -- engine-internal: scrolling handled by base_screens.gd
+# @element-stub FcEditBox -- engine-internal: PogWindow kind "editbox"
+# @element-stub FcHorizontalScrollbar -- engine-internal: scrolling handled by base_screens.gd
+# @element-stub FcVerticalScrollbar -- engine-internal: scrolling handled by base_screens.gd
+# @element-stub FcListBox -- engine-internal: PogWindow kind "listbox" (base_screens.gd _draw_listbox)
+# @element-stub FcRadioButton -- engine-internal: PogWindow selected-state buttons
+# @element-stub FcShaderWindow -- engine-internal: shader-filled window; Godot canvas
+# @element-stub FcSliderControl -- engine-internal: PogWindow kind "slider"
+# @element-stub FcSplitterWindow -- engine-internal: layout; base_screens.gd row layout
+# @element-stub FcStaticWindow -- engine-internal: PogWindow kind "window"
+# @element-stub FcTextWindow -- engine-internal: PogWindow text windows (base_screens.gd _draw_text)
+# @element-stub FcWindowAvatar -- engine-internal: widget-skin base; the remaster draws widgets directly
+# @element-stub FcBorderAvatar -- engine-internal: widget skin
+# @element-stub FcButtonAvatar -- engine-internal: widget skin
+# @element-stub FcCheckBoxAvatar -- engine-internal: widget skin
+# @element-stub FcComboBoxAvatar -- engine-internal: widget skin
+# @element-stub FcDropDownListBoxAvatar -- engine-internal: widget skin
+# @element-stub FcDualScrollbarsAvatar -- engine-internal: widget skin
+# @element-stub FcEditBoxAvatar -- engine-internal: widget skin
+# @element-stub FcHorizontalScrollbarAvatar -- engine-internal: widget skin
+# @element-stub FcListBoxAvatar -- engine-internal: widget skin
+# @element-stub FcRadioButtonAvatar -- engine-internal: widget skin
+# @element-stub FcShaderWindowAvatar -- engine-internal: widget skin
+# @element-stub FcSliderControlAvatar -- engine-internal: widget skin
+# @element-stub FcSplitterWindowAvatar -- engine-internal: widget skin
+# @element-stub FcStaticWindowAvatar -- engine-internal: widget skin
+# @element-stub FcTextWindowAvatar -- engine-internal: widget skin
+# @element-stub FcVerticalScrollbarAvatar -- engine-internal: widget skin
+# @element-stub FcWindowFrameAvatar -- engine-internal: window-frame skin

@@ -83,6 +83,9 @@ def main() -> None:
     ap.add_argument("--coverage", action="store_true")
     ap.add_argument("--pkg")
     ap.add_argument("--todo", action="store_true", help="only the unimplemented, by call count")
+    ap.add_argument("--stubs", action="store_true",
+                    help="the bound-but-inert natives, per package, by call "
+                         "count (the raw data behind docs/coverage.md)")
     ap.add_argument("--list", nargs="*", metavar="PKG",
                     help="list each package's functions with call counts")
     args = ap.parse_args()
@@ -122,6 +125,30 @@ def main() -> None:
                 print("   %s %-34s %5d   argc=%s" % (mark, fn, n, argc))
             print()
         print("  + implemented   ~ stubbed   * not bound")
+        return
+
+    if args.stubs:
+        # A stub is bound so the bytecode runs, but inert. This lists them with
+        # their weight so the audit in docs/coverage.md can be regenerated and
+        # checked against the tree instead of trusted as prose.
+        by: dict[str, list[tuple[str, int, int]]] = collections.defaultdict(list)
+        for (pkg, fn), n in counts.items():
+            if (pkg, fn) in stubbed:
+                by[pkg].append((fn, n, len(callers[(pkg, fn)])))
+        # stub markers for functions the census never sees are dead markers
+        dead = sorted(k for k in stubbed if k not in counts)
+        total = sum(len(v) for v in by.values())
+        print("# %d stubbed natives (+%d stub markers with no call sites)"
+              % (total, len(dead)))
+        for pkg in sorted(by, key=lambda p: -sum(n for _, n, _ in by[p])):
+            fns = sorted(by[pkg], key=lambda t: -t[1])
+            print("\n%s  (%d stubs, %d calls)"
+                  % (pkg, len(fns), sum(n for _, n, _ in fns)))
+            for fn, n, c in fns:
+                print("   %-40s %5d calls, %d packages" % (fn, n, c))
+        for pkg, fn in dead:
+            print("\nDEAD MARKER (no call site in any .pogasm): %s.%s"
+                  % (pkg, fn))
         return
 
     if args.todo:
