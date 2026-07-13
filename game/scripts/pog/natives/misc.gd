@@ -16,7 +16,7 @@ extends RefCounted
 ##
 ## imultiplay is deliberately not ported: see the note above that section.
 
-var vm: PogVM
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld = null
 var game: Node3D = null
 
@@ -53,7 +53,7 @@ class PogMod extends RefCounted:
 	var enabled := false
 
 
-func register(v: PogVM, w: PogWorld = null) -> void:
+func register(v, w: PogWorld = null) -> void:
 	vm = v
 	world = w
 	for fq in _BINDINGS:

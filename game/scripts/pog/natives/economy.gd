@@ -48,7 +48,7 @@ const SHIP_NAMES := [
 ## cargo-space warning actually needs to be monotonic in.
 const SHIP_CARGO_SLOTS := [4, 24, 8, 16, 12]
 
-var vm: PogVM
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld
 var game: Node3D = null
 
@@ -147,7 +147,7 @@ class PogLoadout extends RefCounted:
 	var cargo_warning := false
 
 
-func register(v: PogVM, w: PogWorld) -> void:
+func register(v, w: PogWorld) -> void:
 	vm = v
 	world = w
 	for fq in _BINDINGS:

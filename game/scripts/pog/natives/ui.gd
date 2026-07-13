@@ -23,7 +23,7 @@ extends RefCounted
 ## and writes the config store, a key binding table that can dispatch back into
 ## POG, and a persistent key/value store backed by ConfigFile.
 
-var vm: PogVM
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld = null
 var game: Node3D = null
 
@@ -109,7 +109,7 @@ class PogOption extends RefCounted:
 	var dflt: Variant = 0
 
 
-func register(v: PogVM, w: PogWorld = null) -> void:
+func register(v, w: PogWorld = null) -> void:
 	vm = v
 	world = w
 	for fq in _BINDINGS:

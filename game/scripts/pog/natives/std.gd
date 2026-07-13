@@ -13,8 +13,7 @@ extends RefCounted
 ## Each binding carries a `# @native pkg.Func` marker; tools/iw2/apicov.py
 ## scans for those to report coverage against the real call census.
 
-var vm: PogVM
-
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 ## global.* -- typed, named, persistent-ish variable store.
 var globals: Dictionary = {}
 ## object.* -- property bags hung off arbitrary script objects.
@@ -32,7 +31,7 @@ class PogState extends RefCounted:
 	var task_id: int = 0
 
 
-func register(v: PogVM) -> void:
+func register(v) -> void:
 	vm = v
 	for fq in _BINDINGS:
 		v.bind(fq, Callable(self, _BINDINGS[fq]))

@@ -16,7 +16,7 @@ extends RefCounted
 ## just says "put this here", so PogSim hides it: every native works in absolute
 ## metres and abs_pos()/set_abs_pos() do the conversion per object kind.
 
-var vm: PogVM
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var game: Node3D = null                ## main.gd, when running in-game
 var factions: PogFactions = null       ## for the hostility lookup
 var sims: Dictionary = {}              ## name -> PogSim
@@ -89,7 +89,7 @@ class PogSim extends RefCounted:
 		return 60.0
 
 
-func register(v: PogVM) -> void:
+func register(v) -> void:
 	vm = v
 	for fq in _BINDINGS:
 		v.bind(fq, Callable(self, _BINDINGS[fq]))
@@ -694,13 +694,32 @@ func _i_attacked(_t, _a: Array) -> Variant:
 func _i_world(_t, _a: Array) -> Variant:
 	return game.system_name if game != null else ""
 
+## The engine's IeSimType is a bit flag, and the scripts compare against the raw
+## number (isim.Type(s) == 131072). The ship INIs name the same thing in words
+## ("T_CommandSection"), so map between them here.
+const SIM_TYPE := {
+	"T_CommandSection": 1 << 17,   # 131072, the hull the campaign opens in
+	"T_Fighter": 1 << 0,
+	"T_Corvette": 1 << 1,
+	"T_Freighter": 1 << 2,
+	"T_Transport": 1 << 3,
+	"T_Station": 1 << 4,
+	"T_Alien": 1 << 5,
+	"T_Utility": 1 << 6,
+	"T_Tug": 1 << 7,
+}
+
 # @native isim.Type
 func _i_type(_t, a: Array) -> Variant:
+	# NB only T_CommandSection is confirmed against the bytecode (131072); the
+	# rest of the flags are placeholders until we read the enum out of the
+	# engine. Returning an int either way keeps the scripts' comparisons legal.
 	var s := _as_sim(a[0])
-	if s != null and s.node != null and is_instance_valid(s.node) \
-			and "ctype" in s.node:
-		return s.node.ctype
-	return ""
+	if s == null or s.node == null or not is_instance_valid(s.node):
+		return 0
+	if not ("ctype" in s.node):
+		return 0
+	return int(SIM_TYPE.get("T_" + String(s.node.ctype), 0))
 
 # @native isim.IsDocked
 # @native isim.IsDockedTo

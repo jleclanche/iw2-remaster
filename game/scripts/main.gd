@@ -76,6 +76,12 @@ var pog_boot: Array = []
 var pog_boot_task: PogVM.PogTask = null
 var use_pog := false
 
+# The ported campaign: the same missions, decompiled to GDScript and running
+# natively (game/scripts/pog/gen/). --port runs those; --pog runs the same
+# missions on the bytecode VM, which is what we diff them against.
+var pog_rt: PogRuntime
+var use_port := false
+
 var px := 0.0
 var py := 0.0
 var pz := 0.0
@@ -120,6 +126,7 @@ func _ready() -> void:
 	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
 	campcheck = "--campcheck" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
+	use_port = "--port" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck:
 		demo = true
 	if demo:
@@ -157,8 +164,8 @@ func _ready() -> void:
 	cl.process_mode = Node.PROCESS_MODE_ALWAYS
 	audio.process_mode = Node.PROCESS_MODE_ALWAYS  # GUI sounds while paused
 	add_child(cl)
-	if use_pog and "--pogplay" in OS.get_cmdline_user_args():
-		# Straight into the campaign, no front end: the bytecode drives it.
+	if (use_pog or use_port) and "--pogplay" in OS.get_cmdline_user_args():
+		# Straight into the campaign, no front end.
 		menu.visible = false
 		start_campaign()
 
@@ -180,6 +187,22 @@ func _pog_boot_process() -> void:
 	pog_boot_task = null
 	if not pog_boot.is_empty():
 		_pog_boot_next()
+
+## The campaign, running as ported GDScript. Same sequence the engine drove:
+## istartsystem brings the world up, then iprelude opens Act 0. These are
+## coroutines now, so the ordering is just `await`.
+func _port_boot() -> void:
+	var ss: PogScript = pog_rt.script("istartsystem")
+	if ss == null:
+		return
+	await ss.startup_new_game()
+	await ss.startup_session()
+	await ss.startup_space()
+	await ss.startup_system()
+	await ss.final_setup()
+	var prelude: PogScript = pog_rt.script("iprelude")
+	if prelude != null:
+		await prelude.main()
 
 func _build_pog() -> void:
 	# The POG virtual machine, running the game's original mission bytecode.
@@ -215,6 +238,11 @@ func _build_pog() -> void:
 	pog_misc = PogMisc.new()
 	pog_misc.register(pog, pog_world)
 	pog_misc.bind_game(self)
+	# The ported campaign gets its own instances of the same native modules, so
+	# the two paths never share state and can be diffed against each other.
+	pog_rt = PogRuntime.new()
+	add_child(pog_rt)
+	pog_rt.bind_game(self)
 
 func _exit_tree() -> void:
 	ExplosionFx.release_cache()
@@ -258,6 +286,9 @@ func start_campaign() -> void:
 	_fit_player("sims/ships/player/comsec.ini",
 		"data/avatars/avatars/command_section/setup.gltf")
 	_setup_act0_scene()
+	if use_port:
+		_port_boot()
+		return
 	if use_pog:
 		# Hand the campaign to the original bytecode, through the game's own
 		# boot sequence rather than jumping straight into a mission.

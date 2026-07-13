@@ -18,7 +18,7 @@ extends RefCounted
 ## set -0.3 for "annoyed" and -1.0 for war -- puts the line at zero.
 const HOSTILE_BELOW := 0.0
 
-var vm: PogVM
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var factions: Dictionary = {}     ## name -> PogFaction
 
 
@@ -47,7 +47,7 @@ class PogGroup extends RefCounted:
 		return out
 
 
-func register(v: PogVM) -> void:
+func register(v) -> void:
 	vm = v
 	for fq in _BINDINGS:
 		v.bind(fq, Callable(self, _BINDINGS[fq]))

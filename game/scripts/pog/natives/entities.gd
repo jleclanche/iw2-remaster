@@ -22,7 +22,7 @@ extends RefCounted
 ## map) lives in the system JSON but not in the records main.gd builds from it,
 ## so it is re-read here and cached.
 
-var vm: PogVM
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld
 var game: Node3D = null
 
@@ -76,7 +76,7 @@ class PogSubsim extends RefCounted:
 		return is_dockport() and not dead and not disabled and docked == null
 
 
-func register(v: PogVM, w: PogWorld) -> void:
+func register(v, w: PogWorld) -> void:
 	vm = v
 	world = w
 	for fq in _BINDINGS:

@@ -16,7 +16,7 @@ extends RefCounted
 ## AiShip only had "patrol" and "attack", so orders are modelled here and the
 ## ship's waypoint/behaviour fields are driven from them.
 
-var vm: PogVM
+var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld
 var game: Node3D = null
 
@@ -39,7 +39,7 @@ class PogOrder extends RefCounted:
 	var complete := false
 
 
-func register(v: PogVM, w: PogWorld) -> void:
+func register(v, w: PogWorld) -> void:
 	vm = v
 	world = w
 	for fq in _BINDINGS:
