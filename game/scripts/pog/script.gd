@@ -89,8 +89,12 @@ func _pog_spawn(c: Callable) -> PogTaskHandle:
 func _run(c: Callable, h: PogTaskHandle) -> void:
 	var caller: int = rt.current_seq
 	rt.current_seq = h.seq
+	if PogRuntime.TRACE:
+		print("[task] start %s.%s (#%d)" % [name, c.get_method(), h.seq])
 	await c.call()
 	h.done = true
+	if PogRuntime.TRACE:
+		print("[task] done  %s.%s (#%d)" % [name, c.get_method(), h.seq])
 	rt.current_seq = caller
 
 

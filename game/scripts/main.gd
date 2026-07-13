@@ -1396,8 +1396,17 @@ func _physics_process(delta: float) -> void:
 	if use_pog:
 		_pog_boot_process()
 		pog_api.director_process(delta)   # cutscene camera, while one is staged
+	elif use_port and pog_rt != null and pog_rt.gameapi != null:
+		pog_rt.gameapi.director_process(delta)
 	if demo:
 		checks.step(delta)
+	elif in_cutscene():
+		# The scripts fly the ship during a cutscene (the launch sequence takes
+		# the yoke off you and flies you out of the tube), so the player does
+		# not. Without this you sit in the cockpit flying around while a
+		# cutscene you cannot see runs to completion behind you.
+		ship.input_rotate = Vector3.ZERO
+		ship.input_thrust = Vector3.ZERO
 	elif docked_at == "" and not menu.visible and movie == null:
 		_player_control(delta)
 		if ap_mode > 0:
