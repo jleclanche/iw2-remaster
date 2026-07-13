@@ -343,6 +343,63 @@ colour = (1.0, 0.592, 0) amber, or (0.5, 1, 0) yellow-green under LDS
 **The waypoint icon is a 300 m cube** at 15 km draw distance. Our beacon cube was
 right in kind; its 26 m size was invented.
 
+### The 2D HUD (recovered; full write-up in `hud_elements.md`)
+
+Two things that make this code hard to read, worth knowing before you go back in:
+the **vtables are not in Ghidra's output** and must be dumped from the PE, and the
+**colours are written by tiny runtime static-init functions**, so they read as
+garbage from the file -- you find them by grepping for `DAT_xxx = 0x3f800000;`
+and reinterpreting the hex as IEEE-754 bits.
+
+**HUD coordinates are absolute pixels. There is no resolution scaling.**
+Cross-checked against a reference screenshot (a 1280x800 render upscaled
+1.4984x): the reticle ring measures `95/1.4984 = 63.4` against the binary's
+**63**, and the icon ring `166/1.4984 = 110.8` against **110**. Two independent
+measurements agreeing to 1%.
+
+**The palette** -- the actual constants, which we had been eyeballing:
+
+| colour | RGB | used for |
+|---|---|---|
+| chartreuse | `(0.5, 1, 0)` | the HUD's base green; the clock; the L-point waist ring |
+| amber | `(1, 0.592, 0)` | the reference grid |
+| gold | `(1, 0.8, 0)` | **neutral** contacts (not yellow) |
+| red | `(1, 0.07, 0)` | hostiles |
+| blue | `(0.1, 0.1, 1)` | **friendlies only** |
+
+The damage ramp breaks at **0.75 / 0.25** (we had guessed 0.66/0.33).
+
+**Reticle** (`0x100f6340`): ring **r=63**; off-reticle threshold `63+10`; status
+icons on rings of **110** (and **150** for the four mode icons) at fixed angular
+slots, clockwise from twelve o'clock (the ctor stores
+`x = floor(sin(a)*r), y = floor(-cos(a)*r)`). Charge rings are **24 pips at
+r=18**.
+
+**Contact list**: **6 rows** plus a scrollbar, sorted by range ascending, and the
+format string is literally
+
+```
+"%-5s %-5s %-5s %-12.12s%c"
+```
+
+a monospace character grid. That is exactly the "tighter, more readable" quality
+the original has. There is **no highlight box** on the selected row. Its range
+formatter is deliberately *different* from the reticle's: `7103m` in the list,
+`7.1km` in the reticle, for the same contact.
+
+**Brackets** are not geometry: four corner **sprites** on the target's projected
+bounding box, with a **0.35 s slam-in** from 70 px out.
+
+**Panels**: `iiHUDBlockElement` stacks blocks into the screen corners. Margin 6,
+border 4, gap 3, header 16, advance `h+11`. MFD **128x176**; weapons and shields
+**112** wide; 32 px rows; **14-segment** bars.
+
+**Not statically recoverable** (left alone rather than invented): font metrics are
+*measured at runtime* and zero in the file, so the clock block's size, the MFD's
+text-line Y and the contact-list block width cannot be read out; the sprite table
+mapping a glyph to each status-icon slot is built at runtime (the slots and radii
+are real, the icons are not); the reticle ring's tick pattern is a texture.
+
 ### Cameras
 `flux.ini`: `[icInternalCamera] field_of_view = 1.1` rad (63 deg),
 `neck_stiffness = 2`, `acceleration_stiffness = 1`, `acceleration_scale = 0.01`,
@@ -402,8 +459,15 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
   `lpoint` records. `main.gd::_lpoint_axis` therefore uses an explicit,
   clearly-marked placeholder. The orientation has to be re-extracted from the
   system files.
-- **HUD colour palette** -- the actual RGB constants, and the per-state colours
-  (hostile/friendly/neutral).
+- **The status-icon glyphs.** The reticle's icon *slots and radii* are recovered,
+  but the sprite table that maps a glyph to each slot is built at runtime, so
+  which icon sits in which slot is unknown. Ours currently use text labels.
+- **Font metrics.** Measured at runtime, zero in the file. The clock block's
+  size, the MFD's text-line Y and the contact-list block width cannot be read
+  out of the binary; they have to come from the bitmap font itself.
+- **Shields.** Our sim has no shield components at all, so there is no shields
+  panel. The panel's geometry is known (112 wide, 14-segment bars); the model
+  behind it is not built.
 - **Subsim damage model** -- how hit points, armour, power and heat interact.
 - **The `gui` widget toolkit** (99 natives) -- the base screens (trade,
   manufacturing, recycling) are POG scripts driving it; we replaced the front end,
