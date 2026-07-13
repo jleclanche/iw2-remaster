@@ -734,21 +734,30 @@ func _draw_weapon_panel() -> void:
 const SYSTEMS := ["DRV", "THR", "LDS", "CAP", "WEP", "SEN", "EPS", "CPU"]
 
 func _draw_system_status() -> void:
+	# Each cell is one mounted subsim group: the top bar is its condition, the
+	# bottom its available power. These are the real subsims now (main.sys), not
+	# a curve fitted to the hull -- a drive hit reads on DRV, not on everything.
 	var s := _screen()
 	var w := SYSTEMS.size() * 32.0
 	var pos := Vector2(s.x / 2.0 - w / 2.0, 12)
-	var hull_frac: float = main.hull / main.hull_max
+	var states: Dictionary = main.system_states()
 	var blink := int(Time.get_ticks_msec() / 300.0) % 2 == 0
 	for i in SYSTEMS.size():
 		var x := pos.x + i * 32.0
-		# damage light: our prototype has a single hull pool, so systems
-		# yellow/red out progressively as the hull goes down
-		var sys_health := clampf(hull_frac * 1.4 - i * 0.05, 0.0, 1.0)
-		var dcol := _health_color(sys_health)
-		if sys_health < 1.0 and blink:
+		var health: float = states.get(SYSTEMS[i], -1.0)
+		if health < 0.0:
+			# the hull mounts nothing of this kind: an empty socket, not a
+			# healthy one
+			draw_rect(Rect2(x, pos.y, 20, 7), GREEN_DIM, false, 1.0)
+			draw_string(_font, Vector2(x, pos.y + 28), SYSTEMS[i],
+					HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(GREEN_DIM, 0.35))
+			continue
+		var dcol := _health_color(health)
+		if health < 1.0 and blink:
 			dcol = Color(dcol.r, dcol.g, dcol.b, 0.35)
 		draw_rect(Rect2(x, pos.y, 20, 7), dcol)
-		draw_rect(Rect2(x, pos.y + 9, 20, 7), Color(0.3, 0.5, 1.0, 0.9))
+		draw_rect(Rect2(x, pos.y + 9, 20.0 * health, 7),
+				Color(0.3, 0.5, 1.0, 0.9))
 		draw_string(_font, Vector2(x, pos.y + 28), SYSTEMS[i],
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 8, GREEN_DIM)
 	draw_rect(Rect2(pos - Vector2(6, 4), Vector2(w + 8, 24)), GREEN_DIM, false, 1.0)

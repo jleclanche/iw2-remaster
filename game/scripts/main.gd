@@ -1768,10 +1768,27 @@ func _set_autopilot(mode: int) -> void:
 		hud.warn("AUTOPILOT: NO TARGET")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
-	ap_mode = mode
+	if mode == 0:
+		_disengage_autopilot()
+	else:
+		ap_mode = mode
 	audio.play("audio/gui/confirm.wav", -10.0)
 	var names := ["OFF", "APPROACH", "FORMATE", "DOCK", "MATCH VELOCITY"]
 	hud.log_msg("AUTOPILOT: %s" % names[mode])
+
+## Hand the throttle back. The autopilot writes set_speed every tick, so on
+## release it is whatever the autopilot last wanted -- not what the ship is
+## actually doing. Leaving it there means the throttle wheel appears dead: the
+## ship jumps to the stale demand the moment you nudge it, or sits at a demand it
+## has already reached. Handing it back at the current speed makes the wheel pick
+## up exactly where the autopilot left off. Every path that drops the autopilot
+## goes through here.
+func _disengage_autopilot() -> void:
+	ap_mode = 0
+	ship.set_speed = clampf(maxf(ship.forward_speed(), 0.0),
+		0.0, ship.max_speed.z)
+	ship.input_thrust = Vector3.ZERO
+	ship.input_rotate = Vector3.ZERO
 
 func _autopilot_process(delta: float) -> void:
 	var p := _target_pos()
@@ -1784,7 +1801,7 @@ func _autopilot_process(delta: float) -> void:
 					target_ai = null
 			p = _target_pos()
 	if p == Vector3.INF:
-		ap_mode = 0
+		_disengage_autopilot()   # the target went away under us
 		return
 	var dist := p.length()
 	_face_target()
