@@ -1101,6 +1101,27 @@ That is why `iinventory.Fill*ListBox` and `iemail.FillArchivedEmailListBox` are
 *natives*: they fill the list box **and** the script's list, and the two orders
 have to agree.
 
+**Every icSP* screen's vtable slot 16 is `Initialise`** =
+`FcGUIScreen::Initialise` + one `CallFunction` on a hard-coded name -- and the
+name is not always the class name: icSPComputerTradingScreen ->
+`iBaseGUI.SPTradingScreen` (0x10029a80), icSPAddCargoScreen ->
+`iBaseGUI.SPCargoScreen` (0x10028f80), icSPComputerPuzzleScreen ->
+`SPComputerPuzzle.Main` (0x10029930), icSPFlightPDAScreen ->
+`iPDAGUI.SPFlightPDAScreen` (.rdata 0x1015a48c), icNotYetImplementedScreen ->
+`iFrontendGUI.NotYetImplementedScreen` (0x10028100 -- the function is absent
+from the shipped POG, so retail's screen was blank), icCustomGUIScreen -> the
+value of the POG global `g_custom_gui_screen` (ctor 0x100166b0).
+icSPComputerMenuScreen and icSPComputerCommsScreen are registered but **dead**:
+builders absent, zero push sites in the whole image. The customise screen is a
+**list-box mode machine** (icLoadout, 0x100863c0..0x10090c50), not
+drag-and-drop; Back is consume-or-close on a history stack. icCreditScreen =
+icScroller over `html:\html\credits\credits` at 50 px/s (0x10117be8), pops at
+the end, skips on `Game.MovieSkip`, streams `sound:/audio/music/badlands`.
+Overlays belong to their base screen: `PushScreen` covers them, `PopScreen`
+restores them -- there is no global overlay stack. And POG's `NewObject`
+opcode creates a live list object; a port rendering it as null breaks the
+parallel-handle-list pattern above (porter fix pending).
+
 ---
 
 ## 8b. Two bugs that cancel, and must be fixed together

@@ -281,7 +281,7 @@ _MARK_STUB = re.compile(r"#\s*@element-stub\s+(\w+)(?:\s*--\s*(.*))?")
 # Recognised classification tags, checked against the start of the stub reason.
 # GENUINE GAP is the one --todo exists to surface.
 CATEGORIES = ("GENUINE GAP", "covered-elsewhere", "engine-internal",
-              "mp-only", "editor-only", "debug-only")
+              "mp-only", "editor-only", "debug-only", "dead-in-original")
 
 
 def category(reason: str) -> str:

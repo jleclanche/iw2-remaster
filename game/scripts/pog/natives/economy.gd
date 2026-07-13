@@ -268,7 +268,19 @@ func _c_create(_t, a: Array) -> Variant:
 	if not cargo_types.has(c.type):
 		type_order.append(c.type)
 	cargo_types[c.type] = c
+	# icCargo's engine property map exposes "type": the add-cargo screen reads
+	# it back with object.IntProperty (ibasegui SPCargoScreen_OnCargoListBoxSelect),
+	# so seed the script-visible property bag the way the engine map would.
+	_seed_property(c, "type", c.type)
 	return c
+
+
+## Engine classes carried sPropertyMaps the scripts read through object.*Property.
+## The ported natives keep those properties in PogStd's bag, so an engine-backed
+## object has to arrive with its map already in it.
+func _seed_property(o: Variant, key: String, value: Variant) -> void:
+	if vm != null and vm.get("std") != null:
+		vm.std._bag(o)[key] = value
 
 # @native icargo.Find
 func _c_find(_t, a: Array) -> Variant:
@@ -567,9 +579,25 @@ func _held(filter: Callable) -> Array:
 
 
 ## Add the rows to the list box and the handles to the script's parallel list.
-func _fill(a: Array, list_at: int, rows: Array, with_value: bool) -> void:
+##
+## The parallel list is the trap: in the original VM a list-typed local is a
+## live list object from the moment the frame is set up, so the script can pass
+## it in empty and read the handles back out of its *global* copy afterwards
+## (`iinventory.FillInventoryListBox(v4, !v0, v1); global.CreateList(..., v1)`).
+## The port declares those locals as null, so the handles would go nowhere and
+## every row select would come back null. Each Fill* caller in the shipped
+## ibasegui stores the same list under one fixed global name, so when the script
+## hands us null we plant the list under that name ourselves; the CreateList
+## that follows creates-only-if-absent and keeps it, and the screen's back
+## button destroys it.
+func _fill(a: Array, list_at: int, rows: Array, with_value: bool,
+		global_name: String = "") -> void:
 	var lb = a[0] if a.size() > 0 else null
 	var parallel = a[list_at] if a.size() > list_at else null
+	if not (parallel is Array) and not global_name.is_empty() \
+			and vm != null and vm.get("std") != null:
+		parallel = []
+		vm.std.globals[global_name] = parallel
 	if lb is PogUi.PogWindow:
 		lb.entries.clear()
 		lb.focused_entry = -1
@@ -604,20 +632,23 @@ func _i_fill_inventory(_t, a: Array) -> Variant:
 	var equipment := PogVM._truthy(a[1]) if a.size() > 1 else false
 	var rows := _held(func(c: PogCargo) -> bool:
 		return (not c.ship_system.is_empty()) == equipment)
-	_fill(a, 2, rows, false)
+	_fill(a, 2, rows, false, "InventoryScreen_CargoList")
 	return 0
 
+# @element icSPAddCargoScreen
 # @native iinventory.FillAddCargoListBox
 func _i_fill_add_cargo(_t, a: Array) -> Variant:
 	# The loadout screen's "add cargo" list: everything in the hold that is not
 	# already fitted, so the player can put it in the pods.
-	_fill(a, 1, _held(func(c: PogCargo) -> bool: return true), true)
+	_fill(a, 1, _held(func(c: PogCargo) -> bool: return true), true,
+			"CargoScreen_CargoList")
 	return 0
 
 # @native iinventory.FillRecyclingListBox
 func _i_fill_recycling(_t, a: Array) -> Variant:
 	# Only what can actually be broken down, priced at what it would pay.
-	_fill(a, 1, _held(func(c: PogCargo) -> bool: return c.can_recycle), true)
+	_fill(a, 1, _held(func(c: PogCargo) -> bool: return c.can_recycle), true,
+			"RecyclingScreen_CargoList")
 	return 0
 
 # @native iinventory.ResetWindows
@@ -641,6 +672,11 @@ func _make_trade(a: Array, cargo_class: int) -> PogTrade:
 	tr.wanted = int(a[3])
 	tr.num_wanted = int(a[4])
 	tr.offers = int(a[5]) if int(a[5]) > 0 else -1
+	# The trading screen tests object.StringProperty(trade, "generated_mission")
+	# against "": in the engine an unset string property reads as empty, and only
+	# iMissionGenerator (imissiongenerator.pog:1534) ever sets it. Seed the empty
+	# default so an ordinary trade takes the faction-name branch.
+	_seed_property(tr, "generated_mission", "")
 	return tr
 
 # @native itrade.CreateTradeForCargoType
@@ -1023,16 +1059,397 @@ func _l_strip(_t, a: Array) -> Variant:
 	sys.ldas.clear()
 	return 0
 
-# The customise screen: its POG builder (s_p_customise_screen) exists and is
-# mapped, but fitting a device into a named mount point needs the drag-and-drop
-# pylon UI, and these five natives are its event handlers.
-# @stub iloadout.StartCustomisedLoadout
-# @stub iloadout.EndCustomisedLoadout
-# @stub iloadout.OnCustomiseScreenBack
-# @stub iloadout.OnCustomiseScreenSelect
-# @stub iloadout.UpdateCustomisedLoadoutTextBox
-func _l_noop(_t, _a: Array) -> Variant:
+# ------------------------------------------------------- iloadout: customise
+# @element icSPCustomiseScreen
+#
+# The customise screen. The POG side (s_p_customise_screen) builds the shell --
+# shady bar, splitter, text window -- and hands the splitter and text window to
+# iloadout.StartCustomisedLoadout; everything inside is icLoadout's C++ mode
+# machine, NOT drag-and-drop: the engine builds a list box wired to
+# "iBaseGUI.SPCustomiseScreen_OnSelect" (UpdateCustomisationSplitterWindow @
+# 0x10092170), fills it per mode (CreateListBoxEntries @ 0x100867d0 dispatches
+# through m_create_options_functions on eCustomisationMode), and drills down:
+#
+#   ShipOverview (mode 0)  four category rows -- the localisation keys
+#                          customise_propulsion / _offensive / _defensive /
+#                          _general (FUN_100840f0), plus SHIP UPGRADES when the
+#                          hull INI has [Modifiers] templates
+#   CategoryView (mode 1)  the ship's subsims in that category
+#                          (SubsimCategory @ 0x100927e0 on the subsim type)
+#   deeper modes           per-subsim-type fitting: SystemView, UpgradeView,
+#                          CPU options/programs, missile launcher/magazines,
+#                          pylons, turret fighters, dock-on arms
+#
+# Back pops one mode off a history stack and returns whether it consumed the
+# press (OnCustomiseScreenBack @ 0x10090c50: depth > 1 -> pop, true; else
+# false and the POG closes the screen). The text window shows per-focused-row
+# copy (the customise_*instructions_* keys), refreshed by the POG's 0.1s task.
+#
+# What is reproduced here: the mode stack, the four extracted category rows and
+# their instruction keys, the drill-down, and Back's consume-or-close contract.
+# DELIBERATE DIVERGENCE: the remaster has no subsim/mount-point model (systems
+# are ShipSystems' flat INI list), so the deep per-type modes collapse into one
+# generic SystemView -- pick a fitted system, then fit / swap / remove against
+# the equipment cargo in the inventory. Category membership approximates
+# SubsimCategory from ShipSystems groups; ship upgrades, CPU programs, missile
+# magazines, pylon hardpoints and the chain/salvo fire-mode row need the mount
+# model and are omitted.
+
+const CUST_SHIP := 0
+const CUST_CATEGORY := 1
+const CUST_SYSTEM := 2
+
+const CUST_ROW_BACK := -100          ## the engine's AddCustomisedBackButton id
+
+## FUN_100840f0's four names, in eCustomisationCategory order.
+const CUST_CATEGORY_KEYS := [
+	"customise_propulsion", "customise_offensive",
+	"customise_defensive", "customise_general",
+]
+
+## text/gui.csv rows 693-713: three keys per category, shown while the row has
+## the focus (UpdateCustomisedLoadoutTextBoxForShipOverviewMode @ 0x10086c50).
+const CUST_INSTRUCTION_KEYS := [
+	["customise_propulsioninstructions_1", "customise_propulsioninstructions_2",
+			"customise_propulsioninstructions_3"],
+	["customise_offensiveinstructions_1", "customise_offensiveinstructions_2",
+			"customise_offensiveinstructions_3"],
+	["customise_defensiveinstructions_1", "customise_defensiveinstructions_2",
+			"customise_defensiveinstructions_3"],
+	["customise_generalinstructions_1", "customise_generalinstructions_2",
+			"customise_generalinstructions_3"],
+]
+
+## The customise session. Empty dictionary = not customising.
+var cust: Dictionary = {}
+
+
+func _cust_ui() -> PogUi:
+	return vm.ui if (vm != null and vm.get("ui") != null) else null
+
+
+func _cust_sys() -> ShipSystems:
+	return _systems_of(world.player_sim() if world != null else null)
+
+
+## "propulsion and power systems" / "weapon" / "defensive" / "other" -- an
+## approximation of SubsimCategory (0x100927e0), which keyed off subsim type
+## flags we do not model. The propulsion instructions say "propulsion and power
+## systems", so EPS/CAP ride with DRV/THR/LDS.
+func _cust_category_of(sysd: Dictionary) -> int:
+	var cls := String(sysd.get("class", ""))
+	if sysd.has("lda") or "LDA" in cls or "CounterMeasure" in cls:
+		return 2
+	match String(sysd.get("group", "")):
+		"DRV", "THR", "LDS", "CAP", "EPS":
+			return 0
+		"WEP":
+			return 1
+	return 3
+
+
+# @native iloadout.StartCustomisedLoadout
+func _l_start_customise(_t, a: Array) -> Variant:
+	var ui := _cust_ui()
+	if ui == null:
+		return 0
+	# The splitter (a[0]) held the breadcrumb trail of mode titles; we fold the
+	# trail into the list box title instead. The text window (a[1]) is real.
+	var lb := ui._new_window("listbox", [], 0)
+	# The engine wires the list box's Select and mouse-up to the POG's
+	# SPCustomiseScreen_OnSelect and its cancel slot to the back handler
+	# (UpdateCustomisationSplitterWindow, strings @ 1015f2b4 / 1015f28c).
+	lb.overrides[PogUi.IN_SELECT] = "iBaseGUI.SPCustomiseScreen_OnSelect"
+	lb.overrides[PogUi.IN_MOUSE_UP] = "iBaseGUI.SPCustomiseScreen_OnSelect"
+	cust = {
+		"listbox": lb,
+		"textbox": a[1] if a.size() > 1 else null,
+		"stack": [{"mode": CUST_SHIP, "param": -1,
+				"title": _text(SHIP_NAMES[loadout.ship] if loadout.ship >= 0
+						and loadout.ship < SHIP_NAMES.size() else "")}],
+		"rows": [],
+		"last_focus": -2,
+	}
+	_cust_rebuild()
+	ui.focused = lb
+	if lb.screen != null:
+		lb.screen.focus = lb
 	return 0
+
+
+# @native iloadout.EndCustomisedLoadout
+func _l_end_customise(_t, _a: Array) -> Variant:
+	var ui := _cust_ui()
+	if ui != null and cust.has("listbox"):
+		ui._delete_window(null, [cust["listbox"]])
+	cust = {}
+	return 0
+
+
+# @native iloadout.OnCustomiseScreenBack
+func _l_customise_back(_t, _a: Array) -> Variant:
+	# OnCustomiseScreenBack @ 0x10090c50: deeper than the ship overview -> pop
+	# one mode and report it consumed; at the root report false so the POG's
+	# SPCustomiseScreen_OnBackButton closes the screen.
+	if cust.is_empty():
+		return 0
+	var stack: Array = cust["stack"]
+	if stack.size() <= 1:
+		return 0
+	stack.pop_back()
+	cust["last_focus"] = -2
+	_cust_rebuild()
+	return 1
+
+
+# @native iloadout.OnCustomiseScreenSelect
+func _l_customise_select(_t, _a: Array) -> Variant:
+	if cust.is_empty():
+		return 0
+	var lb: PogUi.PogWindow = cust["listbox"]
+	var rows: Array = cust["rows"]
+	var at: int = lb.focused_entry
+	if at < 0 or at >= rows.size():
+		return 0
+	var id: int = rows[at]
+	if id == CUST_ROW_BACK:
+		return _l_customise_back(_t, [])
+	var stack: Array = cust["stack"]
+	match int(stack[-1]["mode"]):
+		CUST_SHIP:
+			stack.append({"mode": CUST_CATEGORY, "param": id,
+					"title": _text(CUST_CATEGORY_KEYS[id])})
+		CUST_CATEGORY:
+			var sys := _cust_sys()
+			if sys == null or id < 0 or id >= sys.systems.size():
+				return 0
+			stack.append({"mode": CUST_SYSTEM, "param": id,
+					"title": _cust_slot_name(sys.systems[id])})
+		CUST_SYSTEM:
+			_cust_fit(int(stack[-1]["param"]), id)
+	cust["last_focus"] = -2
+	_cust_rebuild()
+	return 0
+
+
+# @native iloadout.UpdateCustomisedLoadoutTextBox
+func _l_customise_update(_t, _a: Array) -> Variant:
+	# The POG polls this every 0.1s; only a focus change redraws the copy
+	# (UpdateCustomisedLoadoutTextBox @ 0x10086820 keeps m_last_focus the same way).
+	if cust.is_empty():
+		return 0
+	var lb: PogUi.PogWindow = cust["listbox"]
+	if lb.focused_entry == int(cust["last_focus"]):
+		return 0
+	cust["last_focus"] = lb.focused_entry
+	var tw = cust["textbox"]
+	if tw is PogUi.PogWindow:
+		tw.text = _cust_copy_for(lb.focused_entry)
+		_ui_dirty()
+	return 0
+
+
+## Rebuild the list box for the mode on top of the stack.
+func _cust_rebuild() -> void:
+	var lb: PogUi.PogWindow = cust["listbox"]
+	var rows: Array = cust["rows"]
+	var stack: Array = cust["stack"]
+	lb.entries.clear()
+	rows.clear()
+	var trail: Array[String] = []
+	for e in stack:
+		trail.append(String(e["title"]).to_upper())
+	lb.title = " > ".join(trail)
+	match int(stack[-1]["mode"]):
+		CUST_SHIP:
+			for i in CUST_CATEGORY_KEYS.size():
+				lb.entries.append(_text(CUST_CATEGORY_KEYS[i]))
+				rows.append(i)
+		CUST_CATEGORY:
+			var cat: int = int(stack[-1]["param"])
+			var sys := _cust_sys()
+			if sys != null:
+				for i in sys.systems.size():
+					var d: Dictionary = sys.systems[i]
+					if _cust_category_of(d) != cat:
+						continue
+					lb.entries.append(_cust_slot_label(d))
+					rows.append(i)
+		CUST_SYSTEM:
+			var idx: int = int(stack[-1]["param"])
+			for type in _cust_candidates(idx):
+				var c := _cargo(type)
+				lb.entries.append("%-30s x%d" % [_text(c.name),
+						player_inv().quantity(type)])
+				rows.append(type)
+			if _cust_removable(idx):
+				# "[Empty]" -- fitting nothing is how the slot is cleared.
+				lb.entries.append(_text("customise_empty"))
+				rows.append(-3)
+	if int(stack[-1]["mode"]) != CUST_SHIP:
+		# AddCustomisedBackButton: every non-root mode ends with a BACK row.
+		lb.entries.append(_text("mp_back_button"))
+		rows.append(CUST_ROW_BACK)
+	lb.focused_entry = 0 if not lb.entries.is_empty() else -1
+	lb.selected_index = -1
+	cust["last_focus"] = -2
+	_l_customise_update(null, [])
+	_ui_dirty()
+
+
+func _cust_slot_name(d: Dictionary) -> String:
+	if float(d.get("hp_max", 0)) <= 0.0:
+		return _text("customise_emptyslot").rstrip(",")
+	return String(d.get("name", "?"))
+
+
+func _cust_slot_label(d: Dictionary) -> String:
+	var name := _cust_slot_name(d)
+	if float(d.get("hp_max", 0)) <= 0.0:
+		return "%-30s %s" % [name, _text("customise_nosystemmounted")]
+	var hp := float(d.get("hp", 0)) / maxf(float(d.get("hp_max", 1)), 1.0)
+	return "%-30s %3d%%" % [name, roundi(100.0 * hp)]
+
+
+## Which inventory cargo could go into slot `idx`: equipment (a ship_system
+## template) whose class maps to the same customisation category as the slot.
+func _cust_candidates(idx: int) -> Array[int]:
+	var out: Array[int] = []
+	var sys := _cust_sys()
+	if sys == null or idx < 0 or idx >= sys.systems.size():
+		return out
+	var slot: Dictionary = sys.systems[idx]
+	var slot_cat := _cust_category_of(slot)
+	var inv := player_inv()
+	for type in type_order:
+		if inv.quantity(int(type)) <= 0:
+			continue
+		var c := _cargo(int(type))
+		if c == null or c.ship_system.is_empty():
+			continue
+		var ini := ShipSystems.read_ini(c.ship_system)
+		var probe := {
+			"class": String(ini.get("class", "")),
+			"group": sys._group_of(String(ini.get("class", "")),
+					ini.get("props", {})),
+		}
+		if _cust_category_of(probe) == slot_cat:
+			out.append(int(type))
+	return out
+
+
+func _cust_removable(idx: int) -> bool:
+	var sys := _cust_sys()
+	if sys == null or idx < 0 or idx >= sys.systems.size():
+		return false
+	var d: Dictionary = sys.systems[idx]
+	return float(d.get("hp_max", 0)) > 0.0 \
+			and _type_for_template(String(d.get("template", ""))) >= 0
+
+
+## The cargo type whose ship-system template built this device, if any -- what
+## lets a swapped-out system go back into the hold.
+func _type_for_template(tpl: String) -> int:
+	if tpl.is_empty():
+		return -1
+	var want := _tpl_norm(tpl)
+	for type in type_order:
+		var c := _cargo(int(type))
+		if c != null and not c.ship_system.is_empty() \
+				and _tpl_norm(c.ship_system) == want:
+			return int(type)
+	return -1
+
+
+static func _tpl_norm(tpl: String) -> String:
+	return tpl.to_lower().trim_prefix("ini:").trim_prefix("/") \
+			.trim_suffix(".ini").replace("\\", "/")
+
+
+## Fit inventory cargo `type` into systems[idx] (or clear the slot: type -3).
+## The old device goes back to the hold when a cargo type maps to its template.
+func _cust_fit(idx: int, type: int) -> void:
+	var sys := _cust_sys()
+	if sys == null or idx < 0 or idx >= sys.systems.size():
+		return
+	var old: Dictionary = sys.systems[idx]
+	var null_name := String(old.get("null", ""))
+	var group := String(old.get("group", ""))
+	if type >= 0:
+		var c := _cargo(type)
+		if c == null or c.ship_system.is_empty() \
+				or not player_inv().take(type, 1):
+			return
+		_cust_unmount(sys, idx)
+		sys._mount(c.ship_system, null_name)
+		var fitted: Dictionary = sys.systems.pop_back()
+		sys.systems.insert(idx, fitted)
+	elif type == -3:
+		if not _cust_removable(idx):
+			return
+		_cust_unmount(sys, idx)
+		sys.systems.insert(idx, {
+			# an empty socket: hp_max 0 means it cannot be damaged and
+			# ship_systems.gd's simulate leaves it alone, same as a stripped hull
+			"name": _text("customise_emptyslot").rstrip(","), "class": "icMountPoint",
+			"template": "", "null": null_name, "group": group,
+			"hp": 0.0, "hp_max": 0.0, "power": 0.0, "heat_rate": 0.0,
+			"repair_rate": 0.0, "min_eff": 0.0, "pos": Vector3.ZERO,
+			"efficiency": 1.0, "usage": 0.0, "destroyed": false,
+			"underpowered": false,
+		})
+	_recheck_cargo_space()
+	if manifest_window is PogUi.PogWindow:
+		manifest_window.text = PogStd._s(_l_loadout_description(null, []))
+	_ui_dirty()
+
+
+## Take systems[idx] out, returning the device to the hold when it maps back
+## to a cargo type.
+func _cust_unmount(sys: ShipSystems, idx: int) -> void:
+	var old: Dictionary = sys.systems[idx]
+	if float(old.get("hp_max", 0)) > 0.0:
+		var t := _type_for_template(String(old.get("template", "")))
+		if t >= 0:
+			player_inv().add(t, 1)
+	sys.systems.remove_at(idx)
+	sys.ldas.erase(old)
+
+
+## The text-window copy for the focused row.
+func _cust_copy_for(at: int) -> String:
+	var rows: Array = cust["rows"]
+	var stack: Array = cust["stack"]
+	if at < 0 or at >= rows.size():
+		return ""
+	var id: int = rows[at]
+	if id == CUST_ROW_BACK:
+		return ""
+	match int(stack[-1]["mode"]):
+		CUST_SHIP:
+			var lines: Array[String] = []
+			for key in CUST_INSTRUCTION_KEYS[id]:
+				var s := _text(String(key))
+				if not s.is_empty() and s != String(key):
+					lines.append(s)
+			return " ".join(lines)
+		CUST_CATEGORY:
+			var sys := _cust_sys()
+			if sys == null:
+				return ""
+			var d: Dictionary = sys.systems[id]
+			if float(d.get("hp_max", 0)) <= 0.0:
+				return _text("customise_nosystemmounted")
+			return "%s\n%s%.0f" % [String(d.get("name", "")),
+					_text("customise_maxpowerusage"), float(d.get("power", 0))]
+		CUST_SYSTEM:
+			if id == -3:
+				return _text("customise_nosystemmounted")
+			var c := _cargo(id)
+			if c == null:
+				return ""
+			return "%s\nValue: %d" % [_text(c.name), c.value]
+	return ""
 
 
 const _BINDINGS := {
@@ -1115,9 +1532,9 @@ const _BINDINGS := {
 	"iloadout.loadoutname": "_l_loadout_name",
 	"iloadout.loadoutdescription": "_l_loadout_description",
 	"iloadout.setmanifestwindow": "_l_set_manifest_window",
-	"iloadout.startcustomisedloadout": "_l_noop",
-	"iloadout.endcustomisedloadout": "_l_noop",
-	"iloadout.oncustomisescreenback": "_l_noop",
-	"iloadout.oncustomisescreenselect": "_l_noop",
-	"iloadout.updatecustomisedloadouttextbox": "_l_noop",
+	"iloadout.startcustomisedloadout": "_l_start_customise",
+	"iloadout.endcustomisedloadout": "_l_end_customise",
+	"iloadout.oncustomisescreenback": "_l_customise_back",
+	"iloadout.oncustomisescreenselect": "_l_customise_select",
+	"iloadout.updatecustomisedloadouttextbox": "_l_customise_update",
 }

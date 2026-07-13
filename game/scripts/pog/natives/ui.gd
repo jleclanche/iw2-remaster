@@ -33,10 +33,12 @@ var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld = null
 var game: Node3D = null
 
-## The screen stack. `screens` is the base stack (SetScreen/PushScreen);
-## `overlays` sit on top of it (OverlayScreen) and pop independently.
+## The screen stack (SetScreen/PushScreen). Overlays belong to the screen they
+## cover -- FcGame::AddOverlayScreen stacks them on the *current* screen, and a
+## later PushScreen shows a fresh screen with no overlays, so pushing the
+## credits over the PDA really covers the PDA menu -- so they live on each
+## PogScreen (`over`), not in a global pile.
 var screens: Array[PogScreen] = []
-var overlays: Array[PogScreen] = []
 
 var focused: PogWindow = null
 var top_window: PogWindow = null
@@ -93,11 +95,33 @@ const IN_MOUSE_HELD := 8
 
 ## Screen class -> the POG function that builds it. Derived from the shipped
 ## scripts: for each screen the campaign names, the function called `<class minus
-## "ic">` exists in exactly one package. The screens absent from this table
-## (icSpaceFlightScreen, icSPComputerTradingScreen, icSPAddCargoScreen,
-## icSPComputerPuzzleScreen, icPopUpCommsScreen, icNotYetImplementedScreen, the
-## multiplayer lobby...) have no POG builder at all: they were built in C++, and
-## so they stay empty here rather than being invented.
+## "ic">` exists in exactly one package -- and, where it does not, from the
+## engine itself. Each icSP* screen's Initialise (vtable slot 16, e.g. iwar2 @
+## 0x10029540 for icSPCommsMainMenuScreen) is `FcGUIScreen::Initialise` plus one
+## `FcScriptEngine::CallFunction` on a hard-coded name, so the name is not always
+## the class name: icSPComputerTradingScreen (Initialise @ 0x10029a80) calls
+## "iBaseGUI.SPTradingScreen", icSPAddCargoScreen (@ 0x10028f80) calls
+## "iBaseGUI.SPCargoScreen", and icSPComputerPuzzleScreen (@ 0x10029930) calls
+## "SPComputerPuzzle.Main". All three builders shipped in the POG and are ported,
+## so those screens are as real as the hangar.
+##
+## The screens still absent from this table fall into three bins:
+##  * built in C++ with no POG callback at all (icSpaceFlightScreen, the
+##    multiplayer lobby, icPopUpCommsScreen -- a comms panel icComms drives,
+##    which comms.gd covers);
+##  * icCreditScreen / icNotYetImplementedScreen, C++-built, mirrored engine-side
+##    in _enter below;
+##  * dead in the original: icSPComputerMenuScreen (@ 0x100297e0) and
+##    icSPComputerCommsScreen (@ 0x10029690) call "iBaseGUI.SPComputerMenuScreen"
+##    / "iBaseGUI.SPComputerCommsScreen", but no such functions exist in the
+##    shipped ibasegui.pog, and nothing -- POG or C++ -- ever raises either class
+##    (their names' only other reference is icSPPlayerBaseScreen's diorama map @
+##    0x100245xx). They came up empty in the retail game too, so they stay
+##    unmapped rather than being invented.
+# @element icSPComputerTradingScreen
+# @element icSPAddCargoScreen
+# @element icSPComputerPuzzleScreen
+# @element icSPFlightPDAScreen
 const SCREEN_BUILDERS := {
 	"icSPBaseScreen": "ibasegui.SPBaseScreen",
 	"icSPHangarScreen": "ibasegui.SPHangarScreen",
@@ -115,6 +139,13 @@ const SCREEN_BUILDERS := {
 	"icSPShipTypeScreen": "ibasegui.SPShipTypeScreen",
 	"icSPCustomiseScreen": "ibasegui.SPCustomiseScreen",
 
+	# The base Trade button (iBaseGUI.SPBaseScreen_OnTradeButton overlays it).
+	"icSPComputerTradingScreen": "ibasegui.SPTradingScreen",
+	# The loadout screen's Add Cargo button and the act-0 training tour.
+	"icSPAddCargoScreen": "ibasegui.SPCargoScreen",
+	# The triangulation minigame: the base Triangulation button and act 1.
+	"icSPComputerPuzzleScreen": "spcomputerpuzzle.Main",
+
 	"icSPMainPDAScreen": "ipdagui.SPMainPDAScreen",
 	"icSPBasePDAScreen": "ipdagui.SPBasePDAScreen",
 	"icSPPDAOptionsScreen": "ipdagui.SPPDAOptionsScreen",
@@ -124,6 +155,9 @@ const SCREEN_BUILDERS := {
 	"icSPPDADeviceScreen": "ipdagui.SPPDADeviceScreen",
 	"icSPPDASaveScreen": "ipdagui.SPPDASaveScreen",
 	"icSPPDALoadScreen": "ipdagui.SPPDALoadScreen",
+	# The in-flight PDA. iwar2 keeps the class name and its builder name side by
+	# side in .rdata (1015a478 / 1015a48c), the same Initialise pattern as above.
+	"icSPFlightPDAScreen": "ipdagui.SPFlightPDAScreen",
 	"icPDAConfirmScreen": "ipdagui.PDAConfirmScreen",
 	"icFlightConfirmScreen": "ipdagui.FlightConfirmScreen",
 	"icRestartScreen": "ipdagui.RestartScreen",
@@ -153,8 +187,12 @@ const AUTO_OVERLAY := {
 class PogScreen extends RefCounted:
 	var name := ""
 	var windows: Array[PogWindow] = []
+	var over: Array[PogScreen] = []    ## this screen's own overlay stack
 	var cancel_fn := ""
 	var focus: PogWindow = null
+	## Engine-built screens (credits, the apology screen) have no POG cancel
+	## function; Escape just pops them, the way FcGame::PopScreen did.
+	var pop_on_cancel := false
 
 
 ## A window, button, list box, edit box, slider or checkbox. One class, because
@@ -167,6 +205,7 @@ class PogWindow extends RefCounted:
 	var w := 0
 	var h := 0
 	var parent: PogWindow = null
+	var children: Array = []           ## windows created with this as parent
 	var title := ""
 	var text := ""
 	var enabled := true
@@ -195,6 +234,12 @@ class PogWindow extends RefCounted:
 	var on_press := ""                 ## SetButtonFunctionPog
 	var on_select := ""                ## SetListBoxSelectFunction
 	var overrides: PackedStringArray = PackedStringArray()  ## the nine slots
+	## Engine-built controls have engine actions instead of POG functions.
+	## "pop_screen" is the only one: the apology screen's Back row.
+	var engine_action := ""
+	## kind == "scroller": how far the text has scrolled (px). base_screens.gd
+	## advances it at SCROLL_SPEED and calls scroller_done() at the end.
+	var scroll := 0.0
 
 	func override(slot: int) -> String:
 		if slot < 0 or slot >= overrides.size():
@@ -258,6 +303,15 @@ func _new_window(kind: String, a: Array, rect_at: int) -> PogWindow:
 		win.y = int(a[rect_at + 1])
 		win.w = int(a[rect_at + 2])
 		win.h = int(a[rect_at + 3])
+	# Every Create* takes its parent right after the rect; capture it so a
+	# multi-column list-box row (a window holding component static windows,
+	# igui.CreateAndInitialiseListBoxEntryComponentWindow) can be read back as
+	# one row: the renderer joins the children's titles.
+	for arg in a:
+		if arg is PogWindow:
+			win.parent = arg
+			(arg as PogWindow).children.append(win)
+			break
 	win.neutral = default_colour
 	win.focused_col = default_colour
 	win.selected_col = default_colour
@@ -316,10 +370,15 @@ func dispatch(fq: String) -> Variant:
 # The scripts name screens by their C++ class ("icSPHangarScreen"). Raising one
 # runs its POG builder, which is what fills it with controls.
 
-func top_screen() -> PogScreen:
-	if not overlays.is_empty():
-		return overlays[-1]
+func _cur() -> PogScreen:
 	return screens[-1] if not screens.is_empty() else null
+
+
+func top_screen() -> PogScreen:
+	var cur := _cur()
+	if cur == null:
+		return null
+	return cur.over[-1] if not cur.over.is_empty() else cur
 
 
 ## Raise a screen: push the record, then run its builder, so that every window the
@@ -330,18 +389,151 @@ func _enter(name: String, stack: Array[PogScreen]) -> PogScreen:
 	stack.append(scr)
 	dirty = true
 	if AUTO_OVERLAY.has(name):
-		_enter(String(AUTO_OVERLAY[name]), overlays)
+		_enter(String(AUTO_OVERLAY[name]), scr.over)
 		return scr
 	var builder: String = SCREEN_BUILDERS.get(name, "")
+	match name:
+		"icCustomGUIScreen":
+			# The one screen whose builder is data: its ctor (iwar2 @ 0x100166b0)
+			# reads the POG global "g_custom_gui_screen", which
+			# igui.OverlayCustomScreen has just set -- Instant Action's ship
+			# choice comes through here as iinstantaction.InstantActionShipChoiceScreen.
+			builder = _pog_global_string("g_custom_gui_screen")
+		"icCreditScreen":
+			_build_credit_screen(scr)
+		"icNotYetImplementedScreen":
+			_build_not_yet_implemented(scr)
 	if not builder.is_empty():
 		dispatch(builder)
+	if name == "icSPComputerTradingScreen":
+		_repair_trading(scr)
 	return scr
+
+
+## The trading screen builds itself through a POG *list*: iBaseGUI's helper
+## returns [listbox, trade, cancel, textwindow] and SPTradingScreen pulls its
+## widgets back out with list.Head. The original VM's NewObject opcode made
+## that list a live object; the porter renders NewObject as null (pogdec.py's
+## `Null()`), so on the ported runtime every one of those pulls comes back
+## null, the four TradingScreen_* handles the script stores are null, and the
+## row fill runs against a null listbox. Until the porter grows a typed
+## NewObject, put back exactly what the shipped bytecode wired: the same four
+## handles, the same input-override functions (ibasegui.pog SPTradingScreen),
+## the same first focus, and one re-run of the row filler (local_25276) with
+## the real listbox.
+func _repair_trading(scr: PogScreen) -> void:
+	if vm == null or not vm.has_method("script") or vm.get("std") == null:
+		return
+	if _win(vm.std.globals.get("TradingScreen_Listbox")) != null:
+		return                            # the port has been fixed; nothing to do
+	var lb: PogWindow = null
+	var lb_at := -1
+	for i in scr.windows.size():
+		if scr.windows[i].kind == "listbox":
+			lb = scr.windows[i]
+			lb_at = i
+			break
+	if lb == null:
+		return
+	var buttons: Array = []
+	var text_win: PogWindow = null
+	for i in range(lb_at + 1, scr.windows.size()):
+		var w := scr.windows[i]
+		if w.kind == "button" and buttons.size() < 2:
+			buttons.append(w)
+		elif w.kind == "text" and text_win == null:
+			text_win = w
+	vm.std.globals["TradingScreen_Listbox"] = lb
+	vm.std.globals["TradingScreen_Textbox"] = text_win
+	# Same nine slots the script passes to gui.SetInputOverrideFunctions.
+	lb.overrides[IN_SELECT] = "iBaseGUI.SPTradingScreen_OnTradesListBoxSelect"
+	lb.overrides[IN_CANCEL] = "iBaseGUI.SPTradingScreen_OnBackButton"
+	lb.overrides[IN_MOUSE_UP] = "iBaseGUI.SPTradingScreen_OnTradesListBoxSelect"
+	if buttons.size() == 2:
+		var trade: PogWindow = buttons[0]
+		var cancl: PogWindow = buttons[1]
+		vm.std.globals["TradingScreen_TradeButton"] = trade
+		vm.std.globals["TradingScreen_CancelButton"] = cancl
+		trade.overrides[IN_LEFT] = "iBaseGUI.SPTradingScreen_OnTradeButtonLeftOrRight"
+		trade.overrides[IN_RIGHT] = "iBaseGUI.SPTradingScreen_OnTradeButtonLeftOrRight"
+		trade.overrides[IN_CANCEL] = "iBaseGUI.SPTradingScreen_OnCancelButton"
+		cancl.overrides[IN_LEFT] = "iBaseGUI.SPTradingScreen_OnCancelButtonLeftOrRight"
+		cancl.overrides[IN_RIGHT] = "iBaseGUI.SPTradingScreen_OnCancelButtonLeftOrRight"
+		cancl.overrides[IN_CANCEL] = "iBaseGUI.SPTradingScreen_OnCancelButton"
+	if lb.entries.is_empty():
+		var s = vm.script("ibasegui")
+		if s != null and s.has_method("local_25276"):
+			s.local_25276(lb)             # runs to completion; no real suspension
+	focused = lb
+	scr.focus = lb
+	dirty = true
+
+
+## A POG global out of the std store (the ported scripts' side of `global.*`).
+func _pog_global_string(name: String) -> String:
+	if vm != null and vm.get("std") != null:
+		return PogStd._s(vm.std.globals.get(name, ""))
+	return ""
+
+
+# @element icCustomGUIScreen
+# @element icCreditScreen
+## icCreditScreen (iwar2 ctor @ 0x10016180) is C++: an icScroller over the
+## resource "html:\html\credits\credits" inset 0x40 px from the frame, scrolling
+## at 50 px/s (constant @ 0x10117be8), popping itself when the text runs out
+## (Tick @ 0x100164e0) or on the "Game.MovieSkip" input (OnActivate @
+## 0x10016350). The scroll itself is base_screens.gd's job; the backing movie
+## ("\movies\credits") and the music stream ("sound:/audio/music/badlands") are
+## presentation we do not reproduce here.
+func _build_credit_screen(scr: PogScreen) -> void:
+	scr.pop_on_cancel = true
+	var win := _new_window("scroller", [], 0)
+	win.title = "CREDITS"
+	win.text = _credits_text()
+
+
+## The credits copy, out of the extracted resource the original scrolled.
+func _credits_text() -> String:
+	var text := ""
+	if game != null and game.has_method("_base"):
+		var f := FileAccess.open(String(game._base()).path_join(
+				"data/html/credits/credits.html"), FileAccess.READ)
+		if f != null:
+			text = f.get_as_text()
+	if text.is_empty():
+		return "CREDITS\n\n(data/html/credits/credits.html not extracted)"
+	# FrontPage-era HTML: <BR> is the only line structure it has.
+	var t := text.replace("\r", "").replace("\n", " ")
+	for br in ["<BR>", "<br>", "<Br>", "<bR>"]:
+		t = t.replace(br, "\n")
+	t = BaseScreens._plain(t)
+	t = t.replace("&amp;", "&").replace("&nbsp;", " ")
+	var out: Array[String] = []
+	for line in t.split("\n"):
+		out.append(String(line).strip_edges())
+	return "\n".join(out)
+
+
+# @element icNotYetImplementedScreen
+## The original's own apology screen, pushed by the base Starmap button. Its
+## Initialise (iwar2 @ 0x10028100) calls "iFrontendGUI.NotYetImplementedScreen"
+## -- a function that does NOT exist in the shipped ifrontendgui.pog, and no
+## text table carries an apology string, so in the retail game this screen came
+## up empty. The class name is the whole message; we show it and give the
+## player a way back (the retail escape path -- whatever FcGUIScreen did with
+## an empty window manager -- is unrecovered).
+func _build_not_yet_implemented(scr: PogScreen) -> void:
+	scr.pop_on_cancel = true
+	var label := _new_window("window", [], 0)
+	label.title = "NOT YET IMPLEMENTED"   # the class's own words; no shipped copy
+	var back := _new_window("button", [], 0)
+	back.title = "BACK"
+	back.engine_action = "pop_screen"
 
 
 # @native gui.SetScreen
 func _set_screen(_t, a: Array) -> Variant:
 	screens.clear()
-	overlays.clear()
 	focused = null
 	_enter(PogStd._s(a[0]), screens)
 	return 0
@@ -353,14 +545,20 @@ func _push_screen(_t, a: Array) -> Variant:
 
 # @native gui.OverlayScreen
 func _overlay_screen(_t, a: Array) -> Variant:
-	_enter(PogStd._s(a[0]), overlays)
+	var cur := _cur()
+	if cur == null:
+		_enter(PogStd._s(a[0]), screens)
+	else:
+		_enter(PogStd._s(a[0]), cur.over)
 	return 0
 
 # @native gui.PopScreen
 func _pop_screen(_t, _a: Array) -> Variant:
-	if not overlays.is_empty():
-		overlays.pop_back()
+	var cur := _cur()
+	if cur != null and not cur.over.is_empty():
+		cur.over.pop_back()
 	elif screens.size() > 1:
+		# the screen below comes back with its own overlays intact
 		screens.pop_back()
 	focused = null
 	dirty = true
@@ -368,8 +566,9 @@ func _pop_screen(_t, _a: Array) -> Variant:
 
 # @native gui.RemoveLastOverlay
 func _remove_last_overlay(_t, _a: Array) -> Variant:
-	if not overlays.is_empty():
-		overlays.pop_back()
+	var cur := _cur()
+	if cur != null and not cur.over.is_empty():
+		cur.over.pop_back()
 	focused = null
 	dirty = true
 	return 0
@@ -377,7 +576,6 @@ func _remove_last_overlay(_t, _a: Array) -> Variant:
 # @native gui.PopScreensTo
 func _pop_screens_to(_t, a: Array) -> Variant:
 	var name := PogStd._s(a[0])
-	overlays.clear()
 	for i in range(screens.size() - 1, -1, -1):
 		if screens[i].name == name:
 			screens.resize(i + 1)
@@ -391,13 +589,15 @@ func _remove_overlays_after(_t, a: Array) -> Variant:
 	# The argument names the screen to be left on top: everything above it goes.
 	# This is how every Back button in ibasegui returns to the base menu.
 	var name := PogStd._s(a[0])
-	for i in range(overlays.size() - 1, -1, -1):
-		if overlays[i].name == name:
-			overlays.resize(i + 1)
-			focused = null
-			dirty = true
-			return 0
-	overlays.clear()
+	var cur := _cur()
+	if cur != null:
+		for i in range(cur.over.size() - 1, -1, -1):
+			if cur.over[i].name == name:
+				cur.over.resize(i + 1)
+				focused = null
+				dirty = true
+				return 0
+		cur.over.clear()
 	for i in range(screens.size() - 1, -1, -1):
 		if screens[i].name == name:
 			screens.resize(i + 1)
@@ -409,14 +609,14 @@ func _remove_overlays_after(_t, a: Array) -> Variant:
 # @native gui.ClearAllScreens
 func _clear_screens(_t, _a: Array) -> Variant:
 	screens.clear()
-	overlays.clear()
 	focused = null
 	dirty = true
 	return 0
 
 # @native gui.NumScreens
 func _num_screens(_t, _a: Array) -> Variant:
-	return screens.size() + overlays.size()
+	var cur := _cur()
+	return screens.size() + (cur.over.size() if cur != null else 0)
 
 # @native gui.CurrentScreenClassname
 func _current_screen(_t, _a: Array) -> Variant:
@@ -441,6 +641,8 @@ func _delete_window(_t, a: Array) -> Variant:
 	if win.screen != null:
 		win.screen.windows.erase(win)
 	win.entries.clear()
+	if win.parent != null:
+		win.parent.children.erase(win)
 	win.parent = null
 	dirty = true
 	return 0
@@ -938,16 +1140,53 @@ func activate(win: PogWindow) -> Variant:
 		fn = win.on_select if win.kind == "listbox" else win.on_press
 	if fn.is_empty():
 		fn = win.on_press
+	if fn.is_empty() and win.engine_action == "pop_screen":
+		return _pop_screen(null, [])
 	return dispatch(fn) if not fn.is_empty() else 0
 
 
 ## Escape. FcWindow::OnControlFocusCancel ends at the window manager's global
-## cancel function, which is the one the screen's builder registered.
+## cancel function, which is the one the screen's builder registered. In the
+## engine that function is a single global slot, so a windowless C++ overlay
+## (icPopUpCommsScreen) leaves the previous screen's cancel in force -- which is
+## what the fall-through below reproduces.
 func cancel() -> Variant:
-	var scr := top_screen()
-	if scr == null or scr.cancel_fn.is_empty():
-		return 0
-	return dispatch(scr.cancel_fn)
+	for scr in _view_order():
+		if not scr.cancel_fn.is_empty():
+			return dispatch(scr.cancel_fn)
+		if scr.pop_on_cancel:
+			return _pop_screen(null, [])
+		if not scr.windows.is_empty():
+			return 0                # a real screen chose to have no cancel
+	return 0
+
+
+## Top-down: the current screen's overlays, the screen, then on down the stack.
+func _view_order() -> Array[PogScreen]:
+	var out: Array[PogScreen] = []
+	for i in range(screens.size() - 1, -1, -1):
+		var s := screens[i]
+		for j in range(s.over.size() - 1, -1, -1):
+			out.append(s.over[j])
+		out.append(s)
+	return out
+
+
+## The screen worth drawing: the topmost one that actually has windows.
+## icPopUpCommsScreen (a windowless C++ overlay whose content comms.gd draws)
+## must not blank the base menu underneath it.
+func visible_screen() -> PogScreen:
+	for scr in _view_order():
+		if not scr.windows.is_empty():
+			return scr
+	return null
+
+
+## base_screens.gd calls this when a scroller's text has fully run out: the
+## credits pop themselves, exactly as icCreditScreen's Tick @ 0x100164e0 does.
+func scroller_done(win: PogWindow) -> void:
+	if win.screen != null and win.screen == top_screen():
+		_pop_screen(null, [])
 
 
 # ---------------------------------------------------------------- gui: skin

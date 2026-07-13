@@ -51,10 +51,14 @@ func _ready() -> void:
 		_font_small = Hud.load_game_font(main._base(), "handelgothic bt_8pt.fnt")
 
 
-func _process(_delta: float) -> void:
+const SCROLL_SPEED := 50.0   ## px/s -- icCreditScreen's constant @ 0x10117be8
+
+func _process(delta: float) -> void:
 	if ui == null:
 		return
-	var scr := ui.top_screen()
+	# The topmost screen with content. A windowless C++ overlay (the popup
+	# comms panel) falls through to whatever it covers.
+	var scr: PogUi.PogScreen = ui.visible_screen()
 	var want := scr != null and not _rows(scr).is_empty()
 	if want != visible:
 		visible = want
@@ -63,18 +67,71 @@ func _process(_delta: float) -> void:
 		ui.dirty = false
 		_rebuild(scr)
 		queue_redraw()
+	if visible and scr != null:
+		_advance_scrollers(scr, delta)
+
+
+## icScroller: the credits crawl. Advance at the engine's 50 px/s and pop the
+## screen when the last line has scrolled off the top (Tick @ 0x100164e0).
+func _advance_scrollers(scr: PogUi.PogScreen, delta: float) -> void:
+	for w in scr.windows:
+		if w.kind != "scroller":
+			continue
+		w.scroll += SCROLL_SPEED * delta
+		if w.scroll > _scroller_end(w):
+			ui.scroller_done(w)
+		queue_redraw()
+
+
+func _scroller_end(w: PogUi.PogWindow) -> float:
+	var view_h := size.y - MARGIN * 2.0 - 46.0
+	if _font_small == null:
+		return view_h
+	var lines := w.text.split("\n").size()
+	return view_h + lines * _scroll_line_h() + 40.0
+
+
+func _scroll_line_h() -> float:
+	return maxf(_font_small.get_height(10), 14.0)
 
 
 ## The windows worth drawing: the ones that carry something to show.
+## Windows living *inside* a list-box entry (the multi-column rows the inbox,
+## trading and manufacturing screens build out of component static windows) are
+## drawn by the list box, not as rows of their own.
 func _rows(scr: PogUi.PogScreen) -> Array:
 	var out: Array = []
 	if scr == null:
 		return out
+	var absorbed := _absorbed(scr)
 	for w in scr.windows:
+		if absorbed.has(w):
+			continue
 		if w.kind == "listbox" or w.focusable() \
 				or not w.title.is_empty() or not w.text.is_empty():
 			out.append(w)
 	return out
+
+
+## Every window that is a list-box entry, or sits inside one.
+func _absorbed(scr: PogUi.PogScreen) -> Dictionary:
+	var got := {}
+	for w in scr.windows:
+		if w.kind != "listbox":
+			continue
+		for e in w.entries:
+			if e is PogUi.PogWindow:
+				_absorb(e, got)
+	return got
+
+
+func _absorb(w: PogUi.PogWindow, got: Dictionary) -> void:
+	if got.has(w):
+		return
+	got[w] = true
+	for c in w.children:
+		if c is PogUi.PogWindow:
+			_absorb(c, got)
 
 
 func _rebuild(scr: PogUi.PogScreen) -> void:
@@ -157,6 +214,13 @@ func _step(dir: int) -> void:
 
 func _activate(win: PogUi.PogWindow) -> void:
 	if win == null:
+		# Nothing focusable: on an engine screen (the credits) Enter skips,
+		# the way the original's Game.MovieSkip binding did.
+		var scr: PogUi.PogScreen = ui.visible_screen()
+		if scr != null and scr.pop_on_cancel:
+			_beep(false)
+			ui.cancel()
+			return
 		_beep(true)
 		return
 	_beep(false)
@@ -202,7 +266,7 @@ func _beep(bad: bool) -> void:
 func _draw() -> void:
 	if ui == null or _font == null:
 		return
-	var scr := ui.top_screen()
+	var scr: PogUi.PogScreen = ui.visible_screen()
 	var rows := _rows(scr)
 	if rows.is_empty():
 		return
@@ -229,6 +293,8 @@ func _draw() -> void:
 		match w.kind:
 			"listbox":
 				y = _draw_listbox(w, x, y, wide, focused, panel.end.y - PAD)
+			"scroller":
+				y = _draw_scroller(w, x, y, wide, panel.end.y - PAD)
 			"text":
 				y = _draw_text(w, x, y, wide)
 			"window":
@@ -291,6 +357,30 @@ func _draw_listbox(w: PogUi.PogWindow, x: float, y: float, wide: float,
 	return y
 
 
+# @element icScroller
+## The credits crawl: lines enter from below the panel and leave over the top,
+## `scroll` px into the run. The engine's icScroller was an FcTextWindow with a
+## moving view offset (iwar2 @ 0x100187c0); this is the same arithmetic with
+## per-line clipping instead of a viewport.
+func _draw_scroller(w: PogUi.PogWindow, x: float, top: float, wide: float,
+		bottom: float) -> float:
+	var lh := _scroll_line_h()
+	var lines := w.text.split("\n")
+	var y := bottom + lh - w.scroll   # line 0 starts just below the panel
+	for i in lines.size():
+		var ly := y + i * lh
+		if ly < top + lh * 0.5:
+			continue
+		if ly > bottom:
+			break
+		var line := String(lines[i])
+		if line.is_empty():
+			continue
+		draw_string(_font_small, Vector2(x + 10.0, ly), line,
+				HORIZONTAL_ALIGNMENT_CENTER, wide - 20.0, 10, AMBER)
+	return bottom
+
+
 func _draw_text(w: PogUi.PogWindow, x: float, y: float, wide: float) -> float:
 	if w.text.is_empty():
 		return y
@@ -317,7 +407,18 @@ func _entry_text(e: Variant) -> String:
 	if e is String:
 		return _label(e)
 	if e is PogUi.PogWindow:
-		return _label(e.title)
+		var w: PogUi.PogWindow = e
+		if not w.title.is_empty():
+			return _label(w.title)
+		# A component row: the columns are child static windows, in x order.
+		var cols: Array = w.children.duplicate()
+		cols.sort_custom(func(a, b) -> bool: return a.x < b.x)
+		var parts: Array[String] = []
+		for c in cols:
+			var t := _label((c as PogUi.PogWindow).title)
+			if not t.is_empty():
+				parts.append(t)
+		return "  ".join(parts)
 	return PogStd._s(e)
 
 

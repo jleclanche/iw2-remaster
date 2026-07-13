@@ -51,7 +51,7 @@ extends RefCounted
 # @element-stub icSPEncyclopaediaScreen -- covered-elsewhere: gen/ibasegui.gd s_p_encyclopaedia_screen + ui.gd + base_screens.gd
 # @element-stub icSPStatisticsScreen -- covered-elsewhere: gen/ibasegui.gd s_p_statistics_screen + ui.gd + base_screens.gd
 # @element-stub icSPShipTypeScreen -- covered-elsewhere: gen/ibasegui.gd s_p_ship_type_screen + ui.gd + base_screens.gd
-# @element-stub icSPCustomiseScreen -- covered-elsewhere: gen/ibasegui.gd s_p_customise_screen builds the screen shell; its five iloadout.*Customise* event natives are @stub in natives/economy.gd (drag-and-drop fitting missing -- see docs/coverage.md)
+# (icSPCustomiseScreen is really built: its @element marker is in economy.gd (the original is a list-box mode machine, not drag-and-drop))
 # @element-stub icSPMainPDAScreen -- covered-elsewhere: gen/ipdagui.gd s_p_main_p_d_a_screen + ui.gd + base_screens.gd
 # @element-stub icSPBasePDAScreen -- covered-elsewhere: gen/ipdagui.gd s_p_base_p_d_a_screen + ui.gd + base_screens.gd
 # @element-stub icSPPDAOptionsScreen -- covered-elsewhere: gen/ipdagui.gd s_p_p_d_a_options_screen + ui.gd + base_screens.gd
@@ -67,7 +67,7 @@ extends RefCounted
 # @element-stub icControlScreen -- covered-elsewhere: gen/ipdagui.gd control_screen + ui.gd + base_screens.gd
 # @element-stub icMoviesScreen -- covered-elsewhere: gen/ipdagui.gd movies_screen + ui.gd + base_screens.gd
 # @element-stub icModScreen -- covered-elsewhere: gen/ipdagui.gd mod_screen + ui.gd + base_screens.gd
-# @element-stub icSPFlightPDAScreen -- covered-elsewhere: menu.gd is the remaster's in-flight pause menu; gen/ipdagui.gd s_p_flight_p_d_a_screen exists but ui.gd SCREEN_BUILDERS does not map it (see docs/coverage.md)
+# (icSPFlightPDAScreen is really built: its @element marker is in ui.gd (mapped to ipdagui's builder))
 # @element-stub icMainMenuScreen -- covered-elsewhere: menu.gd front end; no shipped script ever raises this class (the menu flow runs through icSPMainPDAScreen)
 # @element-stub icSPDemoMainScreen -- debug-only: the demo build's main menu; retail scripts never raise it (builder exists in gen/ipdagui.gd if ever wanted)
 # @element-stub icSPPDAResolutionScreen -- engine-internal: the resolution picker sub-screen; display modes are Godot/OS business now, and no shipped script ever raises it
@@ -81,13 +81,13 @@ extends RefCounted
 # @element-stub icMultiplayServerScreen -- mp-only: server setup
 # @element-stub icMultiplayServerScreenEx -- mp-only: server setup (extended)
 # @element-stub icMultiplayTeamScreen -- mp-only: team selection
-# @element-stub icNotYetImplementedScreen -- GENUINE GAP: the apology screen the ORIGINAL pushes for the base Starmap button (ibasegui SPBaseScreen_OnStarmapButton); ui.gd currently pushes an empty screen with no Back handler. Trivial: a title and a back action
-# @element-stub icSPAddCargoScreen -- GENUINE GAP: "Add Cargo" from the loadout screen (ibasegui SPLoadoutScreen_OnAddCargoButton) and the act 0 training tour; C++-built, no POG builder, so it comes up empty
-# @element-stub icSPComputerTradingScreen -- GENUINE GAP: the base trading screen (ibasegui SPBaseScreen_OnTradeButton overlays it); C++-built commodity buy/sell UI over the economy natives/economy.gd already models
-# @element-stub icSPComputerPuzzleScreen -- GENUINE GAP: the triangulation / computer-hacking minigame (base menu Triangulation button, act 1 iactone); C++-built
-# @element-stub icSPComputerMenuScreen -- GENUINE GAP: the remote base-computer menu; hosted by icSPPlayerBaseScreen's screen map (iwar2 0x100245xx), part of the remote-link flow
-# @element-stub icSPComputerCommsScreen -- GENUINE GAP: the remote base-computer comms screen; hosted by icSPPlayerBaseScreen's screen map, part of the remote-link flow
-# @element-stub icCustomGUIScreen -- GENUINE GAP: C++ screen that runs the POG builder named in global g_custom_gui_screen (igui.OverlayCustomScreen); Instant Action's ship-choice screen comes through it (iinstantaction, ipdagui SPMainPDAScreen_OnInstant)
+# (icNotYetImplementedScreen is really built: its @element marker is in base_screens.gd (retail's own builder was never shipped; ours adds a Back row, noted))
+# (icSPAddCargoScreen is really built: its @element marker is in base_screens.gd (iBaseGUI.SPCargoScreen))
+# (icSPComputerTradingScreen is really built: its @element marker is in base_screens.gd (iBaseGUI.SPTradingScreen))
+# (icSPComputerPuzzleScreen is really built: its @element marker is in base_screens.gd (SPComputerPuzzle.Main))
+# @element-stub icSPComputerMenuScreen -- dead-in-original: its builder is absent from the shipped POG and the image has zero push sites (the remote-link flow is ship takeover, not this)
+# @element-stub icSPComputerCommsScreen -- dead-in-original: builder absent from shipped POG, zero push sites
+# (icCustomGUIScreen is really built: its @element marker is in base_screens.gd (runs the builder named in g_custom_gui_screen))
 
 # ---------------------------------------------------------------------------
 # iwar2.dll -- game-object singletons and managers (base FcObject)
@@ -130,9 +130,9 @@ extends RefCounted
 # @element-stub icAlienSwarmDraw -- GENUINE GAP: act 3 alien swarm particle draw (with icAlienSwarmDynamics/icAlienSwarmAvatar/icAlienSwarm)
 # @element-stub icAlienSwarmDynamics -- GENUINE GAP: act 3 alien swarm particle dynamics
 # @element-stub icCapsuleSpace -- GENUINE GAP: capsule-space interior world; main.gd currently white-fades through every jump (jump_state 3)
-# @element-stub icCreditScreen -- GENUINE GAP: the credits screen (main menu Credits button, SPMainPDAScreen_OnCredits); needs the icScroller element
+# (icCreditScreen is really built: its @element marker is in base_screens.gd (html credits roll, 50 px/s @ 0x10117be8))
 # @element-stub icDisruptorDynamics -- GENUINE GAP: sensor-disruptor strike visual; the disruption mechanic itself is main.gd disrupt()
-# @element-stub icScroller -- GENUINE GAP: the scrolling-text element the credits screen drives
+# (icScroller is really built: its @element marker is in base_screens.gd (the credits scroller))
 # @element-stub icTeleportDynamics -- GENUINE GAP: act 3 alien teleport particle visual
 
 # ---------------------------------------------------------------------------
