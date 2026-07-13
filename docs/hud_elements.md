@@ -138,12 +138,25 @@ The slots (full table, with the atlas cells, in `docs/original.md` §8c):
   `DAT_10176038` **green** in every case — the draw never changes it.
 - **+22.5** at r=110 — sprite 0x1e, the capsule drive / L-point jump; within 50 km of a
   targeted L-point it also writes the destination's name at (+24, -line).
-- **-67.5** at r=110 — sprite 0x1b when a component is down (0x1c / 0x1d otherwise, off
-  the drive controller — not resolved).
+- **-67.5** at r=110 — sprite 0x1b when a non-turret component is down.
+  **RESOLVED** otherwise (autopilot off only): `ship+0x270` is the `iiPilot`
+  (`icShip::Pilot`), vfunc +0x40 is `Yoke()` (`0x100af8c0`, the `sYoke` at
+  pilot+0x30). Sprite **0x1D** while a lateral thruster input is held
+  (yoke+0x0c/+0x10, `HandleLinearMessage` msgs 5/6 = LateralX/Y); sprite
+  **0x1C** in free flight (yoke+0x1c = 1, set by FreeHold/FreeToggle in
+  `HandleButtonMessage`) with no strafe. So it is the **manoeuvring-state**
+  icon: side-arrows = strafing, circular arrow = assist off.
 - **+67.5** at r=110 — sprite 0x4e, incoming missile, **red**; one pip per missile.
 - **180, 157.5, 135** at r=110 — sprites 0x3e / 0x3f / 0x40 (thermometer / lightning /
-  bulb). Each is a `{value, flag}` pair on `icPlayerPilot+0xe8`; it appears when the
-  value changes, holds 2 s (`DAT_1011e03c`), and goes red + flags 13 when flagged.
+  bulb). Each is a `{value, flag}` pair at **`icHUD+0xe8`** (stride 8 — NOT on
+  icPlayerPilot as previously written); it appears when the value changes, holds 2 s
+  (`DAT_1011e03c`), and goes red + flags 13 when flagged. **The writer is
+  `FUN_100e07f0`** (the icHUD player feed): thermometer =
+  `(ship+0x288 + ship+0x28c) * 0.75 / icShip::m_heat_damage_threshold` (red at
+  >= 0.75, i.e. heat at the damage threshold); lightning = **reactor charge**
+  (`ship+0x2a0` is the first `icReactor` subsim; `+0x7c / +0x98`, red below
+  0.25); bulb = **`icShip::Brightness()`** (`0x10075420`, the ship's
+  visible/EM signature, red above 0.75).
 - **202.5** at r=110 — sprites 0x56, 0x57 (multiplayer team markers)
 - **225** at r=110 — sprites 0x58, 0x59 (multiplayer flag / bomb)
 
@@ -280,14 +293,118 @@ bar use style 1** (5px pitch, sprite 10 full / 9 partial) **with length 74**, gi
 `floor(74/5) = ` **14 segments**. The segment straddling the fill boundary is drawn with
 alpha equal to the remainder, so the bar fades rather than snapping.
 
-## icHUDTargetMFD
+## icHUDTargetMFD — fully recovered
 
-**128 x 176** (`DAT_1011e238` / `DAT_1011e23c`), left-anchored, top of the stack. Header
-label at (3, 3). The body is a wireframe render of the target in **chartreuse**
-(`DAT_10176038`). Two text lines sit at the bottom in **amber** (`DAT_10174fb0`),
-indented **32px**: line 1 the ship name, line 2 the owner/route. 18 localised keys, all
-present in `hud.csv` (`hud_target_target_mode`, `hud_target_no_target`, ...). Text is
-revealed with a typewriter effect at **30 chars/sec** (`DAT_1011dc0c`).
+The master Draw is **`0x10101730`** — missing from the decompiled C because it
+dispatches through a jumptable at `0x10101b20`; recovered from raw bytes. The
+element is a six-mode machine (`this+0x34`), and the mode decides the block
+size, the caption, the icon/model and the overlay effect. Mode select is
+`FUN_10102930`; captions are 18 `hud.csv` keys loaded from the table at
+`0x10163bd0`.
+
+| mode | set by | caption | block | body |
+|---|---|---|---|---|
+| 0 | no target (`FUN_10102d30`) | `hud_target_no_target` | 128x**48** | nothing (`FUN_100bb300` is a literal no-op) |
+| 1 | unidentified (`FUN_10102db0`) | `hud_target_unknown_target` | 128x48 | class icon 0x31 ("?") |
+| 2 | ship target (`FUN_10102e30`) | `hud_target_target_mode` | 128x176 | 3D model + hull bars (`FUN_10101c80`) |
+| 3 | waypoint / L-point / icon-class sim (`FUN_10102f70`) | `hud_target_waypoint_mode` | 128x48 | class icon; line 2 = `hud_target_waypoint_details` |
+| 4 | cargo pod, category 0xc (`FUN_10102a40`) | `hud_target_ucp_scan_mode` = **"UCP SCAN"** | 128x176 | pod + contents + **barcode bands** (`FUN_10101f00`) |
+| 5 | comms (`FUN_10102fd0`) | `hud_target_comm_channel_open` | 128x176 | portrait + **static + scan band** (`FUN_10102490`) |
+
+Shared behaviour (the master Draw):
+
+- **Block sizes**: `FUN_10103e00` restores 128x176 (`DAT_1011e238/23c`);
+  `FUN_10103d80` shrinks to 128x**48** (`DAT_1011e240`) for modes 0/1/3.
+- **1-second fade-in**: on any mode change `this+0xb0` resets to 0 and ramps at
+  `dt / 1.0` (`0x1011e24c`); while < 1 it *is* the master alpha for the whole
+  block. Mode 5 skips it (`FUN_10102fd0` writes 1.0 directly).
+- Caption at (3,3) (the two `0x40400000` pushes), chartreuse.
+- **Text lines** (amber `DAT_10174fb0`): line 1 at `y = h - 4 - 2*line_height
+  - 3`, line 2 at `y = h - 4 - line_height + 2` (`_DAT_1011e244` = 4,
+  `0x10162c6c` = the runtime line height, `0x10118490` = 3, `0x10119ec8` = 2).
+  X-indent **32** (2 x `DAT_1011d970`) in modes 2/3, **0** in modes 4/5.
+- **Class icon** (short modes only — the draw literally tests `height == 48`):
+  sprite `this+0xdc` at **(16, 32)**, coloured by the contact record's colour,
+  then an overlay (icon 0x2f/0x3c -> sprite **0x2e**, icon 0x31 -> **0x30**),
+  then roundel **0x33** on top. The icon comes from `FUN_100e86d0`: category
+  table `DAT_1011db64` (1 -> 54, 3/4 -> 47, 5 -> **60** the L-point, 0xb -> 58),
+  ship-type table `DAT_1011dbe4` (54/55/57/56/58/56 for types 1..6).
+
+### The 3D model render (`FUN_10103060`) — what sits over it
+
+The model is rendered **into a viewport inside the block** (SetViewport) through
+a dedicated director camera (**23** for the target, **22** for comms), with a
+**global override shader** (`m_p_global_shader = this+0xd4`): an `FiShader`
+built in the ctor (`0x10101530`) with one `cLayer(1)` whose **tint is set to
+the contact's own colour** (layer+0x18 = the FcColour passed in) and opacity
+0.99 (`0x3f7d70a4`). It is drawn **twice** — once solid, once with engine
+`+0x17a8 = 2` — and `2` is **proven wireframe**: `+0x17a8` is
+`FcGraphicsEngine::eRenderFill` (`SetRenderFillStyle @ flux 0x100141f0`),
+dispatched through device vtable `+0xfc/+0x100/+0x104` which set D3D
+renderstate 8 (FILLMODE) to POINT(1)/SOLID(3)/WIREFRAME(2)
+(`dx7graph 0x10008bb0/0x10008bd0/0x10008bf0`). The solid-dark-plus-wireframe
+look. Lighting: one white directional light; while the contact is
+unidentified (flag 0x200 on `sim+0x128`) the light is full white, and when the
+flag clears `this+0xd8` ramps 0.3 -> 0 (`DAT_1011e250`) making an
+**identification flash**: light = white x (2t + 0.8).
+
+Over the model, mode 2 draws the **target-designator lines** (the "effect on
+top of the model"): `this+0xb4` starts at 1 on a target change and decays at
+**1.5/s** (`_DAT_1011a268`); two vertical and two horizontal chartreuse lines
+sweep in from the body edges (x 0/128, y 16/144) toward the **targeted
+subsystem's projected position** — or the fixed anchor (64, 96)
+(`16*_DAT_101190b4`, `16*_DAT_101183f0 + 16`) when none — with each line's far
+end faded to alpha **0.25** (`_DAT_101191ec`). With a subsystem targeted they
+lock on (parameter clamps at 0) and sprite **3** marks the subsystem; without
+one the parameter continues to -1 (`_DAT_10119ae0`) so the lines sweep back
+out and vanish. That is the acquisition animation.
+
+### The hull bars (`FUN_10101c80`) — the "small segmented bar" identified
+
+It **is** the shared segmented-bar routine after all: `FUN_100ebde0(x=1,
+y=16*9.5=152, length=2*16-3=29, frac, style 1, 0)` — 5 segments at the 5px
+pitch — coloured by the damage ramp `FUN_100e88c0`. With a targeted subsystem
+the y=152 bar shows the **subsystem's** health (`+0x54/+0x58` or
+`+0x1ac/+0x1b0`) and the hull moves to a second bar at y = 16*10.5 = **168**
+(`_DAT_1011e280`); with none, y=152 shows the hull.
+
+### Mode 4 — the UCP barcode
+
+The ctor loads `texture:/images/hud/ucp` (a 256x32 barcode strip: digits in
+the top half, bars in the bottom) into `this+0xc0`. `FUN_10101f00` renders the
+**pod ghosted** (layer alpha 0.5 for the solid pass) with its **contents**
+drawn inside, flashes `hud_target_trade_item` when the cargo is recognised
+(`this+0xac`), and scrolls two 16px bands across the body top: the bar half
+(v 0.5..1) at y 16..32 with `u = -phase/2 .. 0.5 - phase/2`, and the digit
+half (v 0..0.5) at y 32..48 with `u = phase .. 0.5 + phase`; `phase` advances
+at **0.2/s** (`_DAT_1011e248`). Chartreuse, alpha 0.25. The two bands
+counter-scroll.
+
+### Mode 5 — the comms monitor (the "effect over the speaker")
+
+`FUN_10102490`: a **solid black quad** backs the body (x 0..128, y 16..144),
+then either `icComms::RenderPortrait` (FMV feed, `icComms+0x138`) or the
+speaking sim's 3D model (white tint, camera 22). On top:
+
+- **Interference static** (`FUN_100ec850`): one horizontal line every **2px**
+  over x 2..127, y 19..143, each line's brightness pulled from a **1024-float
+  noise table** (`DAT_1017500c`, filled once at HUD init with
+  `(1-r)*0.75 + r`, r uniform — so 0.75..1.0), starting at a random index
+  every frame. Colour chartreuse x **0.4** (`_DAT_10117558`); the overall
+  strength flickers per frame: `(1-r)*0.1 + r*0.3` over video,
+  `(1-r)*0.3 + r*0.7` over a 3D feed, pegged 1.0 while the sim is
+  unidentified.
+- **The scan band**: a 4px-tall (`_DAT_101190b4`) quad, chartreuse x 0.3
+  (`_DAT_1011c034`), alpha 0 at its top edge to full at its bottom, sweeping
+  down the portrait every **3 s** (`frac(game_ms / 3000)`,
+  `_DAT_10118498 = 1/3000`).
+
+Line 1 is the speaker's name (`icComms+0x50`, uppercased); line 2 is
+`hud_target_receiving_video` / `hud_target_no_video_feed`.
+
+Text is revealed with a typewriter effect at **30 chars/sec** (`DAT_1011dc0c`)
+— the scroll-text child elements at +0x38/+0x64/+0x88 were not reversed
+further.
 
 ## icHUDWeapons
 
@@ -343,23 +460,31 @@ These keep the values `hud.gd` already had, and are **guesses, not facts**:
   glyph are recovered; see above and `docs/original.md` §8c. The text labels are gone.
 - **The damage ramp's LERP operands** (see above) — thresholds are real, interpolation
   is ours.
-- **The exact tick-mark pattern on the reticle ring.** The ring is a texture
-  (`images/hud/reticle.png`), not vector geometry; the radius is real, the tick count
-  and lengths in `hud.gd` are eyeballed from that texture.
+- ~~The exact tick-mark pattern on the reticle ring.~~ **RESOLVED**: the engine
+  never scales sprites — `icHUDReticle::Draw` (`0x100f60c0`, raw bytes) builds
+  a translate-only matrix to the screen centre and `FUN_100e9de0` blits cells
+  1:1 — so sprite 90 (170x170, origin 84,84) IS the on-screen ring, drawn
+  native and tinted chartreuse. The art's circle stroke sits at r ~72.5 with
+  ticks to ~79; `_DAT_1011e038 = 63` is the *layout* radius (the in-reticle
+  test `(63+10)^2` and the gauge ring), not the drawn circle. `hud.gd` now
+  draws the sprite itself.
 - **Font metrics.** `DAT_10162c68` (char width) and `DAT_10162c6c` (line height) are
   measured at runtime from the loaded font and are zero in the file. Several positions
   are expressed in terms of them, so these are **not** recoverable statically:
   - the **clock block's** pixel width and height,
-  - the **MFD's two text-line Y positions**,
+  - the **MFD's two text-line Y positions** (the *formula* is now recovered —
+    `h - 4 - 2*lh - 3` and `h - 4 - lh + 2` — but `lh` is the runtime metric),
   - the **contact list block's width** (`DAT_10173f48`, a width in characters, is never
     assigned anywhere in the decompilation).
 
   We use our own font's metrics for all of these.
 - **Which screen corner each block registers into.** Left/right is established (the
   anchor-mode ctor arg); top/bottom is not — it is inferred from the reference shot.
-- **The MFD's small segmented bar** (the thing left of "SEA QUEEN" in the reference
-  shot). There is no `FUN_100ebde0` call anywhere in the MFD's draw path, so whatever it
-  is, it is not the shared bar routine. Not identified.
+- ~~The MFD's small segmented bar~~ **RESOLVED** — it *is* the shared bar
+  routine after all: the calls live in `FUN_10101c80`, which is reached only
+  through the mode jumptable in the undisassembled master Draw (`0x10101730`),
+  which is why the earlier pass could not find a caller. `FUN_100ebde0(1, 152,
+  29, hull_frac, 1, 0)`, damage-ramp coloured; see the icHUDTargetMFD section.
 - **The text primitive's alignment argument** (`FUN_100eb270` args a2/a6/a7). The
   function clearly does half-width/half-height centring, but which argument selects it
   was not pinned down — so we cannot prove how the weapons "100%" readout is aligned

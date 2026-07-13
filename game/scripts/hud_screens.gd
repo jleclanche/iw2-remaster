@@ -14,19 +14,41 @@ extends Control
 # key is what ihud.CurrentMenuNode reports while the screen is up
 # (IHUDMenuFocusName, 0x100f5040).
 #
-# The shared frame is drawn by iiHUDMenuElement::Draw (0x100f1400), which Ghidra
-# left undisassembled and which is NOT reproduced here: the caption row and the
-# body inset below are OUR layout. What IS from the binary is called out
-# per-screen. See docs/original.md.
+# The shared frame -- RESOLVED from raw bytes (iiHUDMenuElement::Draw @
+# 0x100f1400 was a jumptable casualty). The Draw itself is thin: it calls the
+# element's body virtual (vtable slot 14, +0x38), then draws the mouse
+# crosshair cursor when active, then the in-screen comms overlay. The parts
+# every screen shares are:
+#  - FUN_100f1920, called first by every body draw: the CAPTION BAND -- a
+#    translucent chartreuse quad from (16,16) to (screen_w - 16, 48)
+#    (_DAT_101184a0 = 16), alpha = 0.25 * master (_DAT_101191ec), with the
+#    localised caption drawn at (20, 19) (0x41a00000 / 0x41980000).
+#  - a one-second fade-in per element (icHUDEngineering ramps this+0x58 to
+#    _DAT_1011e330 = 1.0 and sets the master alpha to the ratio).
+#  - the OPEN FLASH, drawn by icHUD itself (FUN_100de1a0 tail): for the first
+#    0.5 s (_DAT_1011d814) after a menu element opens, the whole screen is
+#    washed with 2px-pitch noise scanlines (FUN_100ec850 / FUN_100eca30) in
+#    chartreuse * 0.9 (_DAT_1011951c), alpha (1 - t/0.5); after that the wash
+#    alpha collapses to 0 (it returns only under damage flicker, pilot+0x74).
+# The BODY layout inside each screen (row positions, the starmap projection)
+# is still OURS; the per-screen constants that are real are called out below.
 
 var hud: Hud
 var main: Node3D
+const OPEN_FLASH_T := 0.5   # _DAT_1011d814
+const FADE_T := 1.0         # _DAT_1011e330 (icHUDEngineering this+0x58 ramp)
+var _open_t := 10.0
+var _last_screen := ""
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-func _process(_d: float) -> void:
+func _process(d: float) -> void:
+	if hud != null and hud.screen != _last_screen:
+		_last_screen = hud.screen
+		_open_t = 0.0
+	_open_t += d
 	queue_redraw()
 
 # Returns true when the key was consumed by the open screen.
@@ -42,8 +64,13 @@ func _draw() -> void:
 	if hud == null or main == null or hud.screen == "":
 		return
 	var size := get_viewport_rect().size
-	# the screens dim the scene behind them rather than replacing it
+	# ours: dim the scene so the green text stays readable over bright space
+	# (the original relies on its opaque body panels instead)
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0, 0.03, 0, 0.72))
+	# the element's one-second fade-in (icHUDEngineering this+0x58)
+	var fade := clampf(_open_t / FADE_T, 0.0, 1.0)
+	# the caption band (FUN_100f1920): chartreuse quad (16,16)-(w-16,48) at
+	# 0.25 alpha, caption text at (20,19)
 	var captions := {
 		"hud_menu_eng": "ENGINEERING",             # hud_menu_engineering
 		"hud_menu_map": "STELLAR NAVIGATION OVERLAY",  # hud_map_caption
@@ -52,11 +79,19 @@ func _draw() -> void:
 		"hud_menu_score_table": "STATISTICS",      # hud_score_sheet_caption
 	}
 	var caption := str(captions.get(hud.screen, ""))
+	draw_rect(Rect2(Vector2(16, 16), Vector2(size.x - 32.0, 32.0)),
+			Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.25 * fade))
+	draw_string(hud._font, Vector2(20, 19 + hud.FONT_SIZE), caption,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.FONT_SIZE,
+			Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade))
+	# the open flash: full-screen noise scanlines for the first 0.5 s
+	var flash := 1.0 - _open_t / OPEN_FLASH_T
+	if flash > 0.0:
+		hud.scanlines(self, Rect2(Vector2.ZERO, size), flash,
+				Color(Hud.GREEN.r * 0.9, Hud.GREEN.g * 0.9, Hud.GREEN.b * 0.9, 1.0))
 	var body := Rect2(Vector2(60, 90), size - Vector2(120, 150))
 	draw_rect(Rect2(body.position - Vector2(8, 34), body.size + Vector2(16, 42)),
-			Hud.GREEN * Color(1, 1, 1, 0.5), false, 1.0)
-	draw_string(hud._font, body.position + Vector2(0, -14), caption,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.FONT_SIZE, Hud.GREEN)
+			Hud.GREEN * Color(1, 1, 1, 0.5 * fade), false, 1.0)
 	match hud.screen:
 		"hud_menu_eng":
 			_draw_engineering(body)

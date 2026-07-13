@@ -691,13 +691,19 @@ func _h_lock_menu(_t, a: Array) -> Variant:
 		h.menu_locked = menu_locked
 	return 0
 
-# @stub ihud.FlashElement
+# @native ihud.FlashElement
+func _h_flash_element(_t, a: Array) -> Variant:
+	# FlashElement (0x100f52a0 -> FUN_100df3e0): the scripts pass an icHUD
+	# CLASS name ("icHUDTargetMFD" etc., iact0mission10.pog); the matching
+	# element blinks to alpha 0.3 at ftol(t*3)&1 for 6 s. hud.flash_element
+	# is the recovered receiver.
+	var h := _hud()
+	if h != null and a.size() > 0:
+		h.flash_element(str(a[0]))
+	return 0
+
 # @stub ihud.ShowScore
 func _h_noop(_t, _a: Array) -> Variant:
-	# FlashElement (0x100f52a0 -> FUN_100df3e0) highlights one HUD element by
-	# class name to draw the eye to it during the tutorial; the flash timing is
-	# in flux.ini ([icHUD] flash_delay 6, flash_frequency 3) but which element
-	# each script name maps to was not recovered, so this stays a no-op.
 	# ShowScore raises the multiplayer score sheet -- mp-only.
 	return 0
 
@@ -1082,7 +1088,7 @@ const _BINDINGS := {
 	"ihud.playaudiocue": "_h_audio_cue", "ihud.settarget": "_h_set_target",
 	"ihud.setmenunodeenabled": "_h_set_menu_node",
 	"ihud.currentmenunode": "_h_current_menu_node",
-	"ihud.flashelement": "_h_noop", "ihud.lockmenu": "_h_lock_menu",
+	"ihud.flashelement": "_h_flash_element", "ihud.lockmenu": "_h_lock_menu",
 	"ihud.showscore": "_h_noop",
 
 	"igame.playmovie": "_g_play_movie",

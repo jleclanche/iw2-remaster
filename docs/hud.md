@@ -211,3 +211,5 @@ right in kind; only its size (26 m) is invented. Not changed here.
 3. `FUN_100e8960`'s exact viewport-depth convention (`TransformToViewport`) was
    read from the call site, not re-derived; the remaster uses the camera-forward
    projection of each vertex as the depth, which is the same quantity.
+
+---

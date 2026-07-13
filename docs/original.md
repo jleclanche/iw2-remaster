@@ -1395,44 +1395,44 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
 
-### HUD (this pass)
+### HUD
 
-- **What the three reticle gauges measure.** `icPlayerPilot+0xe8` holds three
-  `{float value, bool flag}` records, drawn with a thermometer (0x3E), a
-  lightning bolt (0x3F) and a light bulb (0x40). The thermometer is obviously
-  heat and we drive it from `ship_heat()`. **The other two are UNKNOWN** and are
-  therefore **not drawn**. Where `+0xe8` is written was not found. The
-  change-then-hold-2s behaviour would fit the TRI allocations, but that is a
-  guess and it is not implemented as one.
-- **Slot 5's `0x1C` / `0x1D` branch.** When no ship component is broken, the
-  draw reads `icShip+0x270` (a drive controller) through vfunc `+0x40` and picks
-  sprite **0x1C** (a capsule with a circular arrow) when the returned struct's
-  `+0xc` and `+0x10` floats are both zero *and* its `+0x1c` int is 1, else
-  **0x1D** (a capsule with left/right arrows). What that struct is was not
-  resolved, so **neither sprite is drawn** -- only the 0x1B "a system is down"
-  case is.
-- ~~**`icPlayerPilot+0x308`.**~~ **RESOLVED, and it needs a fix.** `+0x308` *is*
-  the autopilot mode, by direct reading: `icPlayerPilot::SetAutopilot`
-  (`0x100af930`) ends `*(eAutopilot *)(this + 0x308) = param_1`, `Autopilot()`
-  (`0x10005370`) returns it and `AutopilotEngaged()` (`0x10005360`) is
-  `+0x308 != 0`. No inference left.
+Most of the earlier HUD open questions are **resolved** -- the full recovery
+(the six-mode `icHUDTargetMFD` at `0x10101730` with its three real overlays:
+sweeping target-designator lines, the counter-scrolling UCP barcode, the
+noise-table comms static with its 3 s scan band; `iiHUDMenuElement`'s shared
+frame `FUN_100f1920` and the 0.5 s scanline open-flash; the ring sprite drawn
+1:1 with **no scaling**, `_DAT_1011e038=63` being a layout radius only) is in
+`docs/hud_elements.md` and `docs/hud.md`, all with addresses. Resolutions of
+former entries here:
 
-  **But the enum is not ours.** The engine's is **0 Off, 1 Formate, 2 Approach,
-  3 Dock, 4 MatchVelocity** (6 = RemotePilot); `main.gd`'s `ap_mode` is 0 off,
-  **1 approach, 2 formate**, 3 dock, 4 match -- 1 and 2 are swapped. So
-  `hud.gd`'s `AP_ICON = DAT_1011e04c = [-1, 1, 0, 3, 2]`, which is indexed by the
-  *engine's* mode, currently lights the **formate** icon for an approach and vice
-  versa. Either remap on read (`AP_ICON[[0,2,1,3,4][ap_mode]]`) or renumber
-  `ap_mode` to the engine's enum -- but `hud.gd:917` also *writes* `ap_mode` from
-  the HUD menu, so both ends have to move together. Left for the HUD owner;
-  `main.gd` keeps its own numbering so nothing changes under `hud.gd`'s feet.
-- **The incoming-missile icon (0x4E) has no source in our sim.** Nothing ever
-  locks a missile on the player, so slot 10 never lights. The engine's rule is
-  known (`pilot+0x6c` set; one pip per missile from `pilot+0xa8`).
-- **`iiHUDMenuElement::Draw` (`0x100f1400`)** -- the shared frame every
-  full-screen HUD element is drawn inside. Ghidra left it undisassembled and we
-  did not reverse it, so the caption row and body inset in `hud_screens.gd` are
-  **ours**.
+- **The three reticle gauges** live at `icHUD+0xe8` (not icPlayerPilot),
+  writer `FUN_100e07f0`: thermometer 0x3E = total heat x 0.75 / threshold
+  (red >= 0.75); lightning 0x3F = **icReactor charge** (`ship+0x2a0`, value
+  `+0x7c / +0x98`, red < 0.25); bulb 0x40 = **`icShip::Brightness()`**
+  (`0x10075420`, the visible/EM signature, red > 0.75). The meanings are no
+  longer unknown; the lightning and bulb stay undrawn only until our sim
+  models reactor charge and brightness (task list).
+- **Slot 5's 0x1C/0x1D**: `icShip+0x270` is the `iiPilot`, vfunc +0x40 is
+  `Yoke()`; 0x1D while LateralX/Y is held, 0x1C in free flight. The
+  manoeuvring-state icon; drawn now.
+- **The autopilot enum swap** is fixed (`AP_MODE_TO_ENGINE` in `hud.gd`).
+- **The carousels step on UP/DOWN** (vtable `0x1011de18` slot 4 =
+  `FUN_100f0380`; 0=prev, 1=next, clamped with the beep); the autopilot list
+  is APPROACH/FORMATE/PURSUIT/DOCK with DISENGAGE swapped in while engaged.
+- **`ihud.FlashElement`** stores a **class name** ("icHUDTargetMFD" etc.,
+  `iact0mission10.pog`); the matching element blinks to master alpha 0.3 at
+  `ftol(t*3)&1` for 6 s (`FUN_100e1e30`). Implemented and routed.
+- **The MFD's wireframe pass is proven**: `FcGraphicsEngine+0x17a8` is
+  `eRenderFill` (`SetRenderFillStyle @ flux 0x100141f0`), dispatched to
+  device vtable +0xfc/+0x100/+0x104, which set D3D renderstate 8 (FILLMODE)
+  to POINT(1)/SOLID(3)/**WIREFRAME(2)** (`dx7graph 0x10008bb0/bd0/bf0`).
+
+Still open:
+
+- **The incoming-missile icon (0x4E) has no source in our sim** until the
+  missile system lands (task #45). The engine's rule is known (`pilot+0x6c`
+  set; one pip per missile from `pilot+0xa8`).
 - **The TRI's three axes.** Nine floats, all 1/3, are provably a three-way split,
   and `tri.png` provably has three corners -- but **which corner is which system
   is UNKNOWN**. `hud_screens.gd` labels them POWER / REPAIR / HEAT and says so.
@@ -1440,23 +1440,15 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
   almost certainly its pixel geometry, but nothing proves the assignment.
 - **The starmap's projection, scale and layout.** Vtable slots 12..16 were not
   reversed. The geography is real; the map drawing is ours.
-- **The three carousel submenus** (AUTOPILOT, WINGMEN, T-FIGHTERS). Each really
-  holds a PREV and a NEXT node plus a list of commands, but the builders
-  (`FUN_100efe50` / `FUN_100f0560` / `FUN_100f0c40`) put them in *private* slots
-  (`+0x40`..`+0x58`), not in the four direction links, and the virtual that maps
-  them onto the links was not read. **Which direction is prev and which is next
-  is UNKNOWN**; we use left/right.
 - **`hud_menu_doc`** has no entry in `hud.csv` or `hud_addendum.csv`. The node
   exists in the tree and the scripts can address it; its **display label is
   ours** ("DOC").
-- **`ihud.FlashElement`** maps a script-supplied name onto a HUD element to
-  flash (`FUN_100df3e0`, timing from `flux.ini [icHUD] flash_delay = 6`,
-  `flash_frequency = 3`). Which names the scripts pass, and how they resolve to
-  elements, was not recovered -- it stays a no-op.
-- **The reticle ring's own sprite.** Sprite 90 is 170x170 with origin (84,84),
-  i.e. radius ~85, but `_DAT_1011e038` says the ring radius is **63** and the
-  reference screenshot measures 63.4. The engine must scale it; how was not
-  found, so `hud.gd` still draws the ring as vectors at r = 63.
+- **The MFD scroll-text children** (`+0x38/+0x64/+0x88`, `FUN_100ee1f0`
+  family) beyond the 30 cps typewriter constant; **the exact model-viewport
+  insets** for MFD modes 2/4; **the icHUD 9-float open-flash alpha profile**
+  (orientation terms at `+0x3c..+0x5c`, clamped [0.4, 1] -- simplified to a
+  uniform wash); **the hull-arc wedge table** `DAT_10174f0c` (9 floats, BSS,
+  filler not found -- our vector arc stays).
 
 - **The two cancelling bugs in section 8b** are the most valuable thing on this
   list. `global.Create*` reads the wrong argument, and the ported `<`/`>` have
