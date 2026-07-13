@@ -9,26 +9,79 @@ var display_name := ""  # node names mangle punctuation; HUD uses this
 var faction := "INDPT"  # text/faction_names.csv abbreviations
 var ctype := "TRANS"    # text/hud.csv hud_type_* abbreviations
 var avatar_path := ""   # for the MFD's EO-feed render
-var hull := 1000.0
-var hull_max := 1000.0
+# When a subsim model is fitted it owns the hull; these proxy onto it so the
+# HUD and the ported scripts keep reading and writing one number.
+var _hull := 1000.0
+var _hull_max := 1000.0
+var hull: float:
+	get:
+		return sys.hull if sys != null else _hull
+	set(value):
+		if sys == null:
+			_hull = value
+			return
+		sys.hull = value
+		sys.killed = value <= 0.0
+var hull_max: float:
+	get:
+		return sys.hull_max if sys != null else _hull_max
+	set(value):
+		if sys == null:
+			_hull_max = value
+		else:
+			sys.hull_max = value
 var main: Node3D
 var waypoints: Array[Vector3] = []
 var wp := 0
 var fire_cooldown := 0.0
 var bolt_speed := 6000.0
 var weapon_range := 2500.0
+var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
 
 func setup(props: Dictionary) -> void:
 	load_stats(props)
 	hull_max = float(props.get("hit_points", 1000))
 	hull = hull_max
 
+func setup_ini(ini_path: String, model: Node3D = null) -> void:
+	# the authored hull: hit_points, armour and the full subsim list
+	var fitted := ShipSystems.for_ship(ini_path)
+	if fitted.hull_max <= 0.0:
+		return
+	fitted.bind_model(model)
+	sys = fitted
+
+func armour() -> float:
+	return sys.armour if sys != null else 0.0
+
 func damage(amount: float) -> bool:
+	# iiSim::ApplyDamage -- the raw hull path, no armour (collision, scripts)
+	if sys != null:
+		return sys.apply_damage(amount)
 	hull -= amount
 	return hull <= 0.0
 
+func hit_by_bolt(spec: Dictionary, age: float, at: Vector3) -> Dictionary:
+	# icBullet::OnCollision -> icShip::ApplyWeaponDamage
+	var dmg: float = float(spec.get("damage", 160.0)) \
+			/ ShipSystems.age_factor(age, float(spec.get("half_time", 0.35)))
+	var pen: float = float(spec.get("penetration", 50.0))
+	var bypass: bool = bool(spec.get("bypass_shields", false))
+	if sys == null:
+		# no INI record: fall back to the armourless hull pool
+		hull -= dmg
+		return {"applied": dmg, "deflected": false, "hit": "",
+			"killed": hull <= 0.0}
+	var inv := global_transform.affine_inverse()
+	var local := inv * at
+	var dir := (inv.basis * (at - global_position)).normalized()
+	return sys.apply_weapon_damage(dmg, pen, local, dir,
+			ShipSystems.SRC_BYPASS if bypass else ShipSystems.SRC_WEAPON)
+
 func _physics_process(delta: float) -> void:
 	fire_cooldown = maxf(0.0, fire_cooldown - delta)
+	if sys != null:
+		sys.simulate(delta)
 	match behavior:
 		"attack":
 			_attack(delta)

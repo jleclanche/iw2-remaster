@@ -216,6 +216,86 @@ a `Prefix` (e.g. `[General] NumberOfEntries = 343, Prefix = "sn_general_"`).
 `iShipCreation.ShipName` picks a random index and looks `sn_general_<n>` up in
 the localised CSV tables.
 
+### Subsims are mounted at named model nulls, and a `mountpoint` is an empty socket
+
+A ship INI's `[Subsims]` names a template and (optionally) a null:
+`template[14]=ini:/subsims/mountpoints/lda`, `null[14]=shield_upper`. The
+`mountpoints/*.ini` are **sockets**, not devices -- all they carry is a `name`
+and a `type` bit flag, no `hit_points`, and `iiShipSystem::InflictDamage`
+(`0x1003bed0`) refuses to damage anything whose max hit points are 0. The
+fitting screen fills them from the player's inventory. `tug_prefitted.ini` is the
+game's own already-fitted tug, and is the record to fit from when the fitting
+screen is not in play.
+
+The `type` flags are the HUD's `DRV THR LDS CAP WEP SEN EPS CPU` strip:
+`1` heatsink, `2` reactor, `4` eps, `8` thrusters, `16`/`32` active/passive
+sensors, `64` lds, `128` lda, `256` drive, `512` capsule drive, `1024`
+auto-repair, `2048` aggressor shield, `4096` every weapon mount, `16384` sensor
+disruptor, `32768` cpu, `65536` point-defence turret, `131072` dock-on turret.
+
+---
+
+## 5a. Combat and damage
+
+Full write-up with the disassembly in **`combat.md`**. The short version:
+
+**The damage formula.** `iiSim::ApplyWeaponDamage` (`iwar2.dll @ 0x100796a0`):
+
+```
+applied = damage,                                penetration >= armour
+applied = damage / 2^(armour/penetration - 1),   penetration <  armour
+```
+
+Penetration at or above the armour rating does full damage; there is no bonus
+for exceeding it. Below it the damage halves for every whole multiple of the
+ratio. **Penetration, not hit points, is what makes capital ships immune to
+light weapons**: a light PBC bolt (`light_pbc_bolt.ini`, damage 130,
+penetration 35) does **0.32%** of a navy heavy cruiser (16500 hp, armour 80) per
+hit, and 22% of a patcom (700 hp, armour 50).
+
+**Bolts lose damage with flight time**, not distance -- the same curve, from the
+same `2.0` constant at `0x1011a5e0`. `icBullet::OnCollision` (`0x100630c0`):
+`damage / 2^(age/half_time - 1)` once `age > half_time`. A standard PBC bolt
+(`half_time=0.35`) does 160 at 2.1 km, 80 at 4.2 km, 40 at 6.3 km.
+
+**Subsim damage.** `icShip::ApplyWeaponDamage` (`0x10073cf0`) spalls
+`N = max(2, int(subsim_count * 0.2))` criticals off every impact: the subsim
+whose mount null is *nearest the impact point* takes `0.2 x` the hull damage
+that got through, and `N-1` uniformly random subsims take `0.2 x 0.4 x` it.
+(The `critical_chance_scale` RNG gate on the random ones is a **no-op**: a failed
+roll does not consume a loop iteration, so it just re-rolls. Every impact lands
+exactly N.)
+
+**Damage degrades a subsim linearly**: `efficiency = (hp/max_hp) x power_ratio`
+(`iiShipSystem::Simulate`, `0x1003bbd0`). There is no destruction threshold --
+instead each device's INI declares a `minimum_efficiency` below which it snaps
+to zero (`cpu2` 0.1, `light_pbc` 0.3, `nps_pbc` 0.5, `ships_drive` 0). Hit points
+go *negative* (to `-max_hp`) and are still repairable.
+
+**Auto-repair is a shared budget.** `icAutorepair`'s `autorepair_rate` fills a
+ship-wide pool each frame; each damaged subsim draws its own `repair_rate` out of
+it, first come first served. No autorepair fitted, nothing ever repairs.
+
+**LDA (the shields) deflect the whole bolt or nothing.** `icShip::ApplyWeaponDamage`
+walks the subsims for anything `IsKindOf(iiLDA)` and calls its virtual at slot
+`+0x54` *before* any damage is computed; if it returns true the shot is gone.
+There is no partial absorption and no shield hit-point pool. `icPlayerLDA`
+(`0x100acda0`) pays `shield_energy_cost` out of an energy bank recharged at
+`efficiency x power` per second, with `chance = reliability x efficiency`
+(capped 0.98) and a hood-coverage arc test. `icAILDA` (`0x1002b940`) instead has
+`defend_count` deflections regenerating over `recharge_time` --
+`nps_lda.ini` is one deflection every 0.1 s at 50%, which is why NPC warships
+feel spongy. A weapon INI's `bypass_shields` skips the whole loop (it is passed
+as the `eDamageSource` argument).
+
+**Death.** Hull to 0 -> `Kill()` -> `iiSim::OnKilled` (`0x10079b80`): score
+credit, killed flag, **the ship's death script** (a POG task name at `+0x1c4`),
+`Explode()`, director cue `0xc`, removed from its group.
+
+`flux.ini [icShip]` carries the tuning: `critical_chance_scale=12`,
+`critical_damage_scale=0.2`, `criticals_per_impact=0.2`, `heat_gain_factor=1`,
+`heat_loss_factor=0.5`, `heat_damage_threshold=500`, `heat_damage_rate=0.08`.
+
 ---
 
 ## 6. Factions
@@ -400,6 +480,54 @@ text-line Y and the contact-list block width cannot be read out; the sprite tabl
 mapping a glyph to each status-icon slot is built at runtime (the slots and radii
 are real, the icons are not); the reticle ring's tick pattern is a texture.
 
+### Effects are a two-layer system, and we only had the bottom layer
+(Full write-up in `effects.md`.)
+
+`data/ini/sfx/<name>/` -- twelve particle systems, each `node.ini` +
+`emitter.ini` + `dynamics.ini` + `draw.ini`. Nothing in `sims/weapons/*.ini`
+references any of them, which is why the link looked missing: **a weapon does
+not name its effects.**
+
+The layer above is **`sfx/*.lws`** -- 23 LightWave scenes in `resource.zip`
+that our extractor drops. Each composes particle systems, a sprite flipbook, a
+sound and a light into one effect. `icVisualEffects` (`iwar2.dll`, string table
+`0x10161f14`) holds twelve URL *prefixes* (`lws:/sfx/explosion_`,
+`lws:/sfx/hull_impact_`, ...) and builds the URL with `"%slow"` or
+`"%shigh_%d"` (`0x101620a0`). So the engine picks the effect from the *kind of
+event*, and a ship death is `lws:/sfx/explosion_high_{0,1,2}` = the `deba`
+50-frame fireball + the `cornflakes` and `spark_shower` particle systems + a
+`large_explosion` WAV + an orange flash.
+
+Three facts that guessing had wrong:
+
+- **A ramp is keyed on *seconds remaining*, not on normalised lifetime.**
+  `FiParticle::AgeStep` (`0x1004da70`) is `remaining -= dt`, and
+  `FcParticleDrawBillBoard::Setup` (`0x10050770`) uses
+  `t = clamp(1 - remaining/max_age, 0, 1)`. `max_age` defaults to **1.0**
+  (`OnPropertiesChanged`, `0x1004ff20`) and **no shipped `draw.ini` sets it** --
+  so every colour/size ramp in the game plays over the final *one second* of a
+  particle's life and is clamped flat before that.
+- **Particles are additive.** `OnDisplay` (`0x1004ffd0`) sets `eBlend = 1`,
+  z-write off. The colour arrays have no alpha, every ramp *ends* at `(0,0,0)`,
+  and `fade_on_emitter_age` fades by scaling the colour toward black -- which
+  only means "invisible" under `src=ONE, dst=ONE`. The ramp is an emitted
+  intensity, not a tint.
+- **Speed is multiplied by the emitter's scale**, so the authored speeds are
+  small numbers (`0.8`-`1.2`) and the emitter transform sizes the effect to the
+  thing that blew up (`FcParticleDynamics::Spawn`, `0x10053f80`).
+
+`FnRandom::CentreWeighted(a,b)` (`0x100480b0`), which picks every random
+quantity in the system, is one uniform run through an S-curve
+(`w = 2u^2` / `1-2(1-u)^2`), biased to the centre of the range.
+
+**The muzzle flash and the bolt are not particle systems.** The muzzle flash is
+a lens-flare light on `avatars/standard_pbc/setup_effects.lws`, parented to an
+`<anim channel="fire?o(5.0)">` null -- the same channel rig as the thrusters.
+The bolt (`avatars/standard_pbc_bolt/setup.lws`) is one
+`<node class=icBeamAvatar texture=pbc_standard>` scaled **`4 1 800`**: an 800 m
+textured streak, matching `length=800` in `sims/weapons/pbc_bolt.ini`. Not a
+bullet.
+
 ### Cameras
 `flux.ini`: `[icInternalCamera] field_of_view = 1.1` rad (63 deg),
 `neck_stiffness = 2`, `acceleration_stiffness = 1`, `acceleration_scale = 0.01`,
@@ -436,6 +564,8 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 | Floating origin: player at the scene origin, true position in `main.px/py/pz`, AI ships positioned *relative to the player* | World coordinates | float precision at solar-system scale. **Consequence:** moving the player moves the origin, so AI ships must be re-anchored or they are dragged along. |
 | `MarkObject`/`DeleteMarkedObjects` are no-ops | Manual object-scope GC | Godot refcounts. Memory management, not behaviour. |
 | Multiplayer (`imultiplay`, 118 natives) not ported | -- | Single-player remaster. |
+| The player flies `tug_prefitted.ini`'s subsim list | `tug.ini`'s empty mountpoints, filled by the fitting screen | Same hull (1000 hp / 65 armour) and the avatar we already render. The fitting screen is not ported, and empty mountpoints have `hit_points=0`, so they cannot be damaged -- a tug fitted from `tug.ini` would have no shields and no subsystem damage at all. |
+| Every impact lands exactly `N` subsim criticals | The same, via an RNG gate that re-rolls until they all land | The `critical_chance_scale` roll in `icShip::ApplyWeaponDamage` does not consume a loop iteration when it fails, so it is a no-op that only costs spins. We do the N hits directly. |
 
 ---
 
@@ -465,10 +595,45 @@ Known gaps. **Do not fill these in with plausible values** -- find the answer.
 - **Font metrics.** Measured at runtime, zero in the file. The clock block's
   size, the MFD's text-line Y and the contact-list block width cannot be read
   out of the binary; they have to come from the bitmap font itself.
-- **Shields.** Our sim has no shield components at all, so there is no shields
-  panel. The panel's geometry is known (112 wide, 14-segment bars); the model
-  behind it is not built.
-- **Subsim damage model** -- how hit points, armour, power and heat interact.
+- **The TRI weight table.** `iiShipSystem::m_tri_weights`, indexed by a system's
+  TRI position, multiplies an `icPlayerLDA`'s deflect chance and recharge rate --
+  for the player only (`TRIWeight`, `0x1003c170`, returns 1.0 for everything
+  else). The table's values were not read out. `ship_systems.gd` uses 1.0.
+- **The LDA's second arc test.** `icPlayerLDA` (`0x100acda0`) runs a second
+  coverage test against the sim it is currently tracking (`+0xa0`, chosen by
+  `0x100ad000` from the contact list), gated by `field_coverage` and
+  `field_hold_time`. Only half read; we implement the hood test and skip it, so
+  our LDAs deflect slightly more than the original's.
+- **The explosion sequence.** `iiSim::StartExplosion` (`0x1007c950`) is a two-line
+  timer set; `DoFinalExplosion` (`0x1007c990`, 718 bytes) is what actually
+  spawns the thing, and it is not read.
+- **The `eBlend` enum.** Particles use `1`, the HUD and sprites use `2` and `3`.
+  We are confident `1` is additive (see `effects.md`), but the enum is only
+  *applied* in `dx7graph.dll`, which is not decompiled, so the mapping to actual
+  blend factors -- and the meaning of `0` and `3` -- is unread.
+- **The shockwave avatars.** `icShockwaveAvatar`, `icLDAAvatar`, `icBeamAvatar`
+  and `icMovieAvatar` are named in the `sfx/*.lws` scenes with their textures
+  and their `tint`/`lifetime` parameters, but we have neither their meshes nor
+  their draw code. Every antimatter, reactor, alien and LDSI explosion is
+  shockwave-driven and we do not play them.
+- **`icCornflakeDraw`'s flake size** and blend mode. The class has *no*
+  properties (it hardcodes `images/sfx/cornflakes` + `cornflake_masks`, a 4x4
+  atlas) and we did not find the constant that sizes a flake; ours is a marked
+  placeholder.
+- **Which effect fires for which event.** We have the twelve `icVisualEffects`
+  names and matched the obvious ones, but the call sites in `icBullet` /
+  `icShockwave` / the ship-death path are not traced, so what triggers
+  `small_explosion` rather than `explosion`, or `plasma_fire` at all, is unknown.
+- **`sfx/*.lws` are not extracted.** The composite recipes are transcribed into
+  `explosion_fx.gd` rather than loaded from `data/`. The extractor should pick
+  them up.
+- **`eDamageSource`** beyond `0` (weapon), `1` (shield-bypassing weapon) and `3`
+  (heat). There is a log-event table at `DAT_1011bf14` indexed by it.
+- **Flag `0x100`** on a subsim (`iiShipSystem+0x68`) means "destroy me when my
+  hit points go negative" rather than merely stop working. Which subsims set it
+  is unread, so in our model nothing is ever permanently removed.
+- **`icShip+0x2ac`** -- the subsystem that drives the flat hull regen at
+  `0x10076028` (`hull += (+0x80) * dt`). Not identified; we do not implement it.
 - **The `gui` widget toolkit** (99 natives) -- the base screens (trade,
   manufacturing, recycling) are POG scripts driving it; we replaced the front end,
   so most of it is stubbed.

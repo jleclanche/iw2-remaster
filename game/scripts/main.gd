@@ -21,7 +21,6 @@ const FOV_INTERNAL := 63.0  # flux.ini icInternalCamera field_of_view 1.1 rad
 const FOV_EXTERNAL := 68.75  # flux.ini cameras field_of_view 1.2 rad
 const DOCK_RANGE := 4000.0
 const JUMP_RANGE := 3.0e4  # must be this close to an L-point to capsule jump
-const PBC_DAMAGE := 160.0  # sims/weapons/pbc_bolt.ini
 const SHIP_HIT_RADIUS := 60.0
 
 const PLANET_TEXTURES := [
@@ -97,8 +96,29 @@ var jump_timer := 0.0
 var jump_dest := ""
 var jump_sel := 0
 var jump_fade: ColorRect
-var hull := 1000.0
-var hull_max := 1000.0
+# The hull is owned by the subsim model when one is fitted; these stay as plain
+# properties so the HUD and the ported scripts (which set game.hull on load and
+# on respawn) keep working against a single number.
+var _hull := 1000.0
+var _hull_max := 1000.0
+var hull: float:
+	get:
+		return sys.hull if sys != null else _hull
+	set(value):
+		if sys == null:
+			_hull = value
+			return
+		sys.hull = value
+		sys.killed = value <= 0.0
+var hull_max: float:
+	get:
+		return sys.hull_max if sys != null else _hull_max
+	set(value):
+		if sys == null:
+			_hull_max = value
+		else:
+			sys.hull_max = value
+var sys: ShipSystems  # the player's subsims, armour and hull (docs/combat.md)
 var docked_at := ""
 var ship_stats: Dictionary = {}
 var weapon_name := "L-PBC / R-PBC"  # HUD weapon-panel title
@@ -287,22 +307,45 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 		if rec.get("path", "") == ini_path:
 			ship_stats = rec["properties"]
 			ship.load_stats(ship_stats)
-			hull_max = float(ship_stats.get("hit_points", 500))
-			hull = hull_max
+	_fit_systems(ini_path)
 	weapons.set_muzzles(ship_model)
 	if "comsec" in ini_path:
 		# single light PBC on the nose hardpoint (comsec.ini + comsec.lws:
 		# nose_hardpoint at LW (1.625,-1.5,10.625); light_pbc.ini refire 0.8)
 		weapons.refire = 0.8
+		weapons.bolt_spec = PbcWeapons.LIGHT_PBC_BOLT
 		weapons.muzzle_fallback = [Vector3(1.625, -1.5, -14.0)]
 		weapon_name = "LIGHT PBC"
 		eye = Vector3(-1.125, 0.425, -12.975)  # comsec.lws crew null
 	else:
-		weapons.refire = 0.3
+		# the tug's fitted PBCs (subsims/systems/player/pbc.ini: refire 0.7,
+		# projectile sims/weapons/pbc_bolt)
+		weapons.refire = 0.7
+		weapons.bolt_spec = PbcWeapons.PBC_BOLT
 		weapons.muzzle_fallback = PbcWeapons.MUZZLES
 		weapon_name = "L-PBC / R-PBC"
 		eye = Vector3(-1.19, -13.85, -40.05)  # tug.lws crew null
 	_apply_view()
+
+func _fit_systems(ini_path: String) -> void:
+	# The player's hull, armour and subsim list, from the ship's own INI.
+	#
+	# sims/ships/player/tug.ini mounts empty *sockets* (subsims/mountpoints/*):
+	# in the original the fitting screen fills them from the player's inventory,
+	# which we have not ported. tug_prefitted.ini is the game's own already-
+	# fitted tug -- same hull (1000 hp / 65 armour), and it is already the avatar
+	# we render (setup_prefitted) -- so that is the record we fit from.
+	var path := ini_path
+	if path == "sims/ships/player/tug.ini":
+		path = "sims/ships/player/tug_prefitted.ini"
+	var fitted := ShipSystems.for_ship(path)
+	if fitted.hull_max <= 0.0:
+		sys = null
+		hull_max = float(ship_stats.get("hit_points", 500))
+		hull = hull_max
+		return
+	fitted.bind_model(ship_model)
+	sys = fitted
 
 func start_campaign() -> void:
 	# The pause menu needs to know a game is running, or Escape has nothing to
@@ -821,8 +864,6 @@ func _spawn_player() -> void:
 		if rec.get("path", "") == "sims/ships/player/tug.ini":
 			ship_stats = rec["properties"]
 			ship.load_stats(ship_stats)
-			hull_max = float(ship_stats.get("hit_points", 1000))
-			hull = hull_max
 			break
 	ship_model = _load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf")
 	ship.add_child(ship_model)
@@ -832,9 +873,11 @@ func _spawn_player() -> void:
 		ShipEffects.graft_jets(ship_model, cs)
 	ShipEffects.attach(ship, ship_model)
 	add_child(ship)
+	_fit_systems("sims/ships/player/tug.ini")
 	weapons = PbcWeapons.new()
 	weapons.ship = ship
 	weapons.main = self
+	weapons.refire = 0.7  # subsims/systems/player/pbc.ini refire_delay
 	add_child(weapons)
 	cam = Camera3D.new()
 	cam.far = 6.0e5
@@ -909,6 +952,9 @@ func spawn_hostile(at: Vector3) -> AiShip:
 		model = _load_gltf(ai.avatar_path)
 	ai.add_child(model)
 	ShipEffects.attach(ai, model)
+	# the authored cutter: 1500 hp, 55 armour, an icAILDA shield and ten other
+	# subsims (sims/ships/marauder/marauder_cutter.ini)
+	ai.setup_ini("sims/ships/marauder/marauder_cutter.ini", model)
 	ai.position = at
 	add_child(ai)
 	ai_ships.append(ai)
@@ -918,19 +964,31 @@ func spawn_hostile(at: Vector3) -> AiShip:
 	return ai
 
 func spawn_bolt(shooter: Node3D, dir: Vector3) -> void:
-	weapons.spawn(shooter, dir)
+	# NPC cannons: nps_pbc.ini fires the same sims/weapons/pbc_bolt
+	weapons.spawn(shooter, dir, PbcWeapons.PBC_BOLT)
 	audio.play("audio/sfx/light_pbc.wav", -8.0)
 
-func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null) -> void:
-	audio.play("audio/sfx/impact.wav", -6.0)
-	_flash(pos, 8.0)
+func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
+		bolt: Dictionary = {}) -> void:
+	# lws:/sfx/hull_impact_high_0: the impact sound, the pbc_spark system and
+	# a flash, with the sparks thrown back out along the surface normal
+	var out := pos - target.global_position
+	out = out.normalized() if out.length_squared() > 1.0 else Vector3.FORWARD
+	var spec: Dictionary = bolt.get("spec", PbcWeapons.PBC_BOLT)
+	var age: float = float(bolt.get("age", 0.0))
 	if target == ship:
 		if shooter is AiShip:
 			last_aggressor = shooter
-		damage_player(PBC_DAMAGE, "HULL HIT")
+		var hit := hit_player(spec, age, pos)
+		# a deflected bolt never reaches the hull: it flares on the LDA field
+		ExplosionFx.play(self, "hull_impact",
+				Transform3D(Basis.looking_at(-out), pos),
+				0.6 if hit["deflected"] else 1.0)
 		return
+	ExplosionFx.play(self, "hull_impact",
+			Transform3D(Basis.looking_at(-out), pos), 1.0)
 	var ai := target as AiShip
-	if ai != null and ai.damage(PBC_DAMAGE):
+	if ai != null and ai.hit_by_bolt(spec, age, pos)["killed"]:
 		ExplosionFx.boom(self, ai.global_position, 70.0)
 		kill_count += 1
 		hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
@@ -1393,6 +1451,8 @@ func _physics_process(delta: float) -> void:
 		ship.set_speed = 0.0
 		ship.input_thrust = Vector3.ZERO
 		ship.input_rotate = Vector3.ZERO
+	if sys != null:
+		sys.simulate(delta)
 	_fold_motion()
 	_stream_objects()
 	_collisions()
@@ -1401,6 +1461,31 @@ func _physics_process(delta: float) -> void:
 	_chase_camera(delta)
 	if sky_anchor != null:
 		sky_anchor.global_position = cam.global_position
+
+# --- read-only views of the damage model, for the HUD -----------------------
+
+func system_states() -> Dictionary:
+	# {"DRV": 0..1, ...}; -1 where the hull mounts nothing of that kind
+	if sys == null:
+		var out: Dictionary = {}
+		for g in ShipSystems.GROUPS:
+			out[g] = -1.0
+		return out
+	return sys.group_states()
+
+func shield_bars() -> Array:
+	# the tug's two LDAs (shield_upper / shield_lower) as 0..1 charge fractions
+	return [] if sys == null else sys.shield_bars()
+
+func armour_rating() -> float:
+	return 0.0 if sys == null else sys.armour
+
+func ship_heat() -> float:
+	# 0..1 of flux.ini [icShip] heat_damage_threshold
+	if sys == null:
+		return 0.0
+	return clampf((sys.heat + sys.heat_external)
+			/ ShipSystems.HEAT_DAMAGE_THRESHOLD, 0.0, 1.0)
 
 func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 		what: String) -> void:
@@ -1419,14 +1504,61 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 	ship.global_position = center + n * radius
 
 func damage_player(dmg: float, why: String) -> void:
-	hull = maxf(hull - dmg, 0.0)
+	# iiSim::ApplyDamage: the raw hull path -- collisions and script damage do
+	# not go through armour and do not spall into the subsims
+	if sys != null:
+		sys.apply_damage(dmg)
+	else:
+		hull = maxf(hull - dmg, 0.0)
 	hud.warn("%s  HULL %d%%" % [why, int(100.0 * hull / hull_max)])
 	if hull <= 0.0:
-		ExplosionFx.boom(self, ship.global_position, 60.0)
-		hud.warn("SHIP DESTROYED - resetting", 5.0)
-		hull = hull_max
-		ship.velocity = Vector3.ZERO
-		ship.set_speed = 0.0
+		_kill_player()
+
+func hit_player(spec: Dictionary, age: float, at: Vector3) -> Dictionary:
+	# icBullet::OnCollision -> icShip::ApplyWeaponDamage, on the player's hull
+	var dmg: float = float(spec.get("damage", 160.0)) \
+			/ ShipSystems.age_factor(age, float(spec.get("half_time", 0.35)))
+	var pen: float = float(spec.get("penetration", 50.0))
+	var out := {"applied": dmg, "deflected": false, "hit": "", "killed": false}
+	if sys == null:
+		damage_player(dmg, "HULL HIT")
+		return out
+	var inv := ship.global_transform.affine_inverse()
+	var dir := (inv.basis * (at - ship.global_position)).normalized()
+	var src: int = ShipSystems.SRC_BYPASS if bool(spec.get("bypass_shields", false)) \
+			else ShipSystems.SRC_WEAPON
+	out = sys.apply_weapon_damage(dmg, pen, inv * at, dir, src)
+	if out["deflected"]:
+		hud.warn("SHIELD DEFLECT")
+		return out
+	var what: String = str(out["hit"])
+	if what.is_empty():
+		hud.warn("HULL HIT  HULL %d%%" % int(100.0 * hull / hull_max))
+	else:
+		hud.warn("HULL HIT  %s  HULL %d%%"
+				% [_system_label(what), int(100.0 * hull / hull_max)])
+	if out["killed"]:
+		_kill_player()
+	return out
+
+func _system_label(name: String) -> String:
+	# subsim names are localisation keys ("Cargo_ShipsDrive", "system_lda_shield")
+	var s := name.get_slice("_", 0)
+	if s == "Cargo" or s == "system":
+		s = name.substr(name.find("_") + 1)
+	else:
+		s = name
+	return s.to_upper()
+
+func _kill_player() -> void:
+	ExplosionFx.boom(self, ship.global_position, 60.0)
+	hud.warn("SHIP DESTROYED - resetting", 5.0)
+	if sys != null:
+		for s in sys.systems:
+			s["hp"] = s["hp_max"]
+	hull = hull_max
+	ship.velocity = Vector3.ZERO
+	ship.set_speed = 0.0
 
 func _model_bounds_radius(model: Node3D) -> float:
 	# bounding-sphere radius of an instanced model (must be in the tree)
@@ -1730,6 +1862,8 @@ func _fold_motion() -> void:
 	cam.global_position -= p
 	drop_cam_pos -= p
 	weapons.shift_world(p)
+	for fx in get_tree().get_nodes_in_group("worldfx"):
+		fx.shift_world(p)
 	for a in ai_ships:
 		a.global_position -= p
 
