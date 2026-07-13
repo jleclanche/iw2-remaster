@@ -40,16 +40,46 @@ const GRID_COLOR := Color(1.0, 0.592, 0.0)  # DAT_10174fb0, 0x3f178d50 = 0.592
 
 static var _lp_lines: Array = []  # [[Vector3 p0, Vector3 p1, Color rgb], ...]
 
-var _mesh: ImmediateMesh
 var _mat: StandardMaterial3D
+
+# The grid is 729 streaks = 1458 vertices. Rebuilding an ImmediateMesh with that
+# many individual surface_add_vertex calls, once per frame, from GDScript, is far
+# too slow. An ArrayMesh filled from pre-sized packed arrays and committed in one
+# go costs a fraction of it.
+var _grid_mesh: ArrayMesh
+var _grid_mi: MeshInstance3D
+var _gv: PackedVector3Array
+var _gc: PackedColorArray
+
+# The simulation ticks at 60 Hz but the game renders faster, and the grid is the
+# player's only sense of motion: rebuilt on the physics tick it visibly steps
+# while everything around it flows. So it is rebuilt every *rendered* frame, from
+# the last known state, with the position carried forward by the velocity.
+var _cam: Camera3D
+var _pos := Vector3.ZERO
+var _vel := Vector3.ZERO
+var _lds := false
+var _hidden := true
 
 func _init() -> void:
 	_mat = _line_material()
-	_mesh = ImmediateMesh.new()
-	var mi := MeshInstance3D.new()
-	mi.mesh = _mesh
-	mi.material_override = _mat
-	add_child(mi)
+	_grid_mesh = ArrayMesh.new()
+	_grid_mi = MeshInstance3D.new()
+	_grid_mi.mesh = _grid_mesh
+	_grid_mi.material_override = _mat
+	# the lattice is in scene space around the ship; it must never be culled by
+	# its own (empty) starting AABB
+	_grid_mi.custom_aabb = AABB(Vector3.ONE * -1.0e9, Vector3.ONE * 2.0e9)
+	add_child(_grid_mi)
+	var n := GRID_STEPS * GRID_STEPS * GRID_STEPS * 2
+	_gv.resize(n)
+	_gc.resize(n)
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	_pos += _vel * delta
+	_render_grid()
 
 static func _line_material() -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
@@ -146,39 +176,53 @@ static func grid_cell(speed: float) -> float:
 		GRID_DECADE_MIN, GRID_DECADE_MAX)
 	return pow(10.0, e)
 
+## Called from the simulation tick. Only records the state; the mesh itself is
+## rebuilt on every rendered frame in _process, or the streaks step at 60 Hz
+## while the world around them flows.
 func update_grid(cam: Camera3D, pos: Vector3, vel: Vector3, lds: bool,
 		hidden: bool) -> void:
-	_mesh.clear_surfaces()
-	var speed := vel.length()
-	if hidden or cam == null or speed < 1e-6:
+	_cam = cam
+	_pos = pos
+	_vel = vel
+	_lds = lds
+	_hidden = hidden
+
+
+func _render_grid() -> void:
+	_grid_mesh.clear_surfaces()
+	var speed := _vel.length()
+	if _hidden or _cam == null or speed < 1e-6:
 		return
 	var cell := grid_cell(speed)
 	var fade := clampf(speed * GRID_ALPHA_RATE, 0.0, 1.0)
-	var streak := vel * GRID_TRAIL
+	var streak := _vel * GRID_TRAIL
 	var far := GRID_FADE_SPAN * cell
 	# the lattice is anchored to absolute world coordinates and slides through
 	# the ship: the fmod pins it to a world grid, not to the ship
 	var start := Vector3(
-		-GRID_SPAN * cell - fmod(pos.x, cell),
-		-GRID_SPAN * cell - fmod(pos.y, cell),
-		-GRID_SPAN * cell - fmod(pos.z, cell))
-	var rgb := GRID_COLOR_LDS if lds else GRID_COLOR
-	var eye := cam.global_transform.origin
-	var fwd := -cam.global_transform.basis.z
-	_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+		-GRID_SPAN * cell - fmod(_pos.x, cell),
+		-GRID_SPAN * cell - fmod(_pos.y, cell),
+		-GRID_SPAN * cell - fmod(_pos.z, cell))
+	var rgb := GRID_COLOR_LDS if _lds else GRID_COLOR
+	var eye := _cam.global_transform.origin
+	var fwd := -_cam.global_transform.basis.z
+	var n := 0
 	for i in GRID_STEPS:
 		for j in GRID_STEPS:
 			for k in GRID_STEPS:
 				var p := start + Vector3(i, j, k) * cell
 				var q := p - streak
-				_grid_vertex(p, rgb, fade, far, eye, fwd)
-				_grid_vertex(q, rgb, fade, far, eye, fwd)
-	_mesh.surface_end()
-
-func _grid_vertex(p: Vector3, rgb: Color, fade: float, far: float,
-		eye: Vector3, fwd: Vector3) -> void:
-	var t: float = clampf(1.0 - fwd.dot(p - eye) / far, 0.0, 1.0)
-	var col := rgb
-	col.a = fade * t
-	_mesh.surface_set_color(col)
-	_mesh.surface_add_vertex(p)
+				var col := rgb
+				col.a = fade * clampf(1.0 - fwd.dot(p - eye) / far, 0.0, 1.0)
+				_gv[n] = p
+				_gc[n] = col
+				n += 1
+				col.a = fade * clampf(1.0 - fwd.dot(q - eye) / far, 0.0, 1.0)
+				_gv[n] = q
+				_gc[n] = col
+				n += 1
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = _gv
+	arrays[Mesh.ARRAY_COLOR] = _gc
+	_grid_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
