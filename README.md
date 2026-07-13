@@ -60,6 +60,14 @@ $env:IW2_GAME_DIR = "C:\...\Independence War 2"   # if not the GOG default
    navigable, **LDS travel with real drive constants + LDSI dropout**,
    targeting HUD. Run: `godot --path game`; automated flight test:
    `godot --path game -- --demo`
-3. Next: docking, weapons (PBC + projectile templates), remaining systems, POG-derived
-   AI/traffic/factions (see docs/mechanics.md), capsule-drive jumps between
-   systems, DELT/FRAM animation decode, .giz collision hulls
+3. ✅ The game runs its own content: all 114 POG packages ported to
+   GDScript and verified against their bytecode (`pogverify`), campaign
+   Act 0 end-to-end, docking, PBC + the full missile system, subsim
+   damage/heat model, mission checkpoints, the original HUD (target MFD,
+   TRI, starmap, hat-menu) — every constant extracted from the binaries
+   (`docs/original.md` is the evidence log; `featurecov`/`apicov` measure
+   what is honestly built vs stubbed)
+4. Next (`featurecov --todo` is the authoritative list): turrets and beam
+   weapons, capsule-space jump tunnel, asteroid/debris fields, act 3
+   aliens, remaining base screens (trading, puzzle, customise), Acts 1-3
+   mission authoring
