@@ -27,91 +27,29 @@ func _link() -> void:
 	text = api.text
 
 func valid_ship_count() -> Variant:
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			imultiplay.get_server_ship_list()
-			_pc = 18
-			continue
-		elif _pc == 18:
-			return
-		else:
-			return 0
+	return imultiplay.get_server_ship_list()
 	return 0
 
 func valid_ship_display_name(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 20
-	while true:
-		if _pc == 20:
-			v2 = null
-			v1 = inifile.create(imultiplay.server_ship_list_item(v0))
-			v2 = string.upper_case(inifile.string(v1, "Properties", "name", ""))
-			inifile.destroy(v1)
-			text.field(v2, 0)
-			_pc = 177
-			continue
-		elif _pc == 177:
-			return
-		else:
-			return 0
+	v2 = null
+	v1 = inifile.create(imultiplay.server_ship_list_item(v0))
+	v2 = string.upper_case(inifile.string(v1, "Properties", "name", ""))
+	inifile.destroy(v1)
+	return _pog_clone(text.field(v2, 0))
 	return 0
 
 func valid_ship_i_n_i(v0) -> Variant:
-	var v1: Variant = 0
-	var _pc: int = 187
-	while true:
-		if _pc == 187:
-			imultiplay.server_ship_list_item(v0)
-			_pc = 211
-			continue
-		elif _pc == 211:
-			return
-		elif _pc == 226:
-			if v1 < await valid_ship_count():
-				_pc = 250
-				continue
-			else:
-				_pc = 305
-				continue
-		elif _pc == 250:
-			if _pog_eq(await valid_ship_i_n_i(v1), v0):
-				_pc = 281
-				continue
-			else:
-				_pc = 287
-				continue
-		elif _pc == 281:
-			_pc = 311
-			continue
-		elif _pc == 287:
-			v1 = v1 + 1
-			_pc = 226
-			continue
-		elif _pc == 305:
-			_pc = 311
-			continue
-		elif _pc == 311:
-			return
-		else:
-			return 0
+	return _pog_clone(imultiplay.server_ship_list_item(v0))
 	return 0
 
 func local_313(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
-	var _pc: int = 313
-	while true:
-		if _pc == 313:
-			v6 = await igui.create_and_initialise_static_window(v0, 0, v1, v2, v3, v4, v5)
-			gui.set_window_text_formatting(v6, 0, 0)
-			gui.set_window_state_colours(v6, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
-			_pc = 590
-			continue
-		elif _pc == 590:
-			return
-		else:
-			return 0
+	v6 = await igui.create_and_initialise_static_window(v0, 0, v1, v2, v3, v4, v5)
+	gui.set_window_text_formatting(v6, 0, 0)
+	gui.set_window_state_colours(v6, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
+	return v6
 	return 0
 
 func local_592(v0, v1, v2, v3) -> Variant:
@@ -136,38 +74,30 @@ func local_592(v0, v1, v2, v3) -> Variant:
 	var v22: Variant = 0
 	var v23: Variant = 0
 	var v24: Variant = 0
-	var _pc: int = 592
-	while true:
-		if _pc == 592:
-			v9 = global.pog_int("GUI_tab_text_offset")
-			v10 = gui.window_canvas_width(v3)
-			v11 = v10 / 3
-			v12 = v10 / 3 + 100
-			v13 = v10
-			v14 = 13
-			v21 = global.pog_int("GUI_listbox_entryheight")
-			v22 = 5
-			v23 = null
-			v23 = global.string("type_font")
-			v24 = null
-			v24 = global.string("type_font")
-			v4 = gui.create_window(0, 0, v10, global.pog_int("GUI_listbox_entryheight"), 0)
-			v16 = v14
-			v15 = v11 - v16 + 5
-			v18 = v11 + v9 - 2
-			v17 = v12 - v18 + 5
-			v20 = v12 + v9 - 2
-			v19 = v13 - v20 + 5
-			v6 = await local_313(v16, v15, v21, v4, v23, v0)
-			v7 = await local_313(v18, v17, v21, v4, v24, string.from_int(v1))
-			v8 = await local_313(v20, v19, v21, v4, v24, string.from_int(v2))
-			gui.add_list_box_entry(v3, v4)
-			_pc = 1173
-			continue
-		elif _pc == 1173:
-			return
-		else:
-			return 0
+	v9 = global.pog_int("GUI_tab_text_offset")
+	v10 = gui.window_canvas_width(v3)
+	v11 = v10 / 3
+	v12 = v10 / 3 + 100
+	v13 = v10
+	v14 = 13
+	v21 = global.pog_int("GUI_listbox_entryheight")
+	v22 = 5
+	v23 = null
+	v23 = global.string("type_font")
+	v24 = null
+	v24 = global.string("type_font")
+	v4 = gui.create_window(0, 0, v10, global.pog_int("GUI_listbox_entryheight"), 0)
+	v16 = v14
+	v15 = v11 - v16 + 5
+	v18 = v11 + v9 - 2
+	v17 = v12 - v18 + 5
+	v20 = v12 + v9 - 2
+	v19 = v13 - v20 + 5
+	v6 = await local_313(v16, v15, v21, v4, v23, v0)
+	v7 = await local_313(v18, v17, v21, v4, v24, string.from_int(v1))
+	v8 = await local_313(v20, v19, v21, v4, v24, string.from_int(v2))
+	gui.add_list_box_entry(v3, v4)
+	return v4
 	return 0
 
 func multiplay_score_screen() -> Variant:
@@ -194,157 +124,71 @@ func multiplay_score_screen() -> Variant:
 	var v20: Variant = 0
 	var v21: Variant = 0
 	var v22: Variant = 0
-	var _pc: int = 1189
-	while true:
-		if _pc == 1189:
-			v1 = null
-			v2 = null
-			v4 = 135
-			v5 = 63
-			v6 = 220
-			v7 = 82
-			v8 = v6 - v4
-			v9 = v7 - v5
-			v10 = v4 + v8 / 3
-			v11 = v4 + 2 * v10
-			v14 = 200
-			v15 = 100
-			v16 = 100
-			v17 = null
-			v18 = null
-			v20 = null
-			gui.stop_all_movies()
-			if imultiplay.is_game_ended():
-				_pc = 1414
-				continue
-			else:
-				_pc = 1471
-				continue
-		elif _pc == 1414:
-			idirector.begin()
-			idirector.set_focus(iship.find_player_ship())
-			idirector.set_camera(12)
-			_pc = 1471
-			continue
-		elif _pc == 1471:
-			v13 = imultiplay.client_end_game_info_count()
-			v1 = await igui.create_grey_box_style_screen(text.field("mp_game_scores_title", 0), "iMultiplayGUI.OnMultiplayScoreScreenStartButton", "iMultiplayGUI.OnMultiplayScoreScreenQuitButton")
-			v0 = gui.cast(list.head(v1))
-			list.remove_head(v1)
-			if global.exists("g_mp_score_title_key"):
-				_pc = 1625
-				continue
-			else:
-				_pc = 1678
-				continue
-		elif _pc == 1625:
-			v18 = global.string("g_mp_score_title_key")
-			global.destroy("g_mp_score_title_key")
-			_pc = 1691
-			continue
-		elif _pc == 1678:
-			v18 = "mp_game_frags"
-			_pc = 1691
-			continue
-		elif _pc == 1691:
-			v3 = await igui.create_titled_list_box(v0, global.string("GUI_titles_texture_request"), v14, text.field("mp_game_player", 0), v15, text.field(v18, 0), v16, text.field("mp_game_died", 0))
-			v12 = 0
-			_pc = 1820
-			continue
-		elif _pc == 1820:
-			if v12 < v13:
-				_pc = 1836
-				continue
-			else:
-				_pc = 1977
-				continue
-		elif _pc == 1836:
-			v20 = text.field(imultiplay.client_end_game_info_name(v12), 0)
-			v21 = imultiplay.client_end_game_info_frags(v12)
-			v22 = imultiplay.client_end_game_info_died(v12)
-			await local_592(v20, v21, v22, v3)
-			v12 = v12 + 1
-			_pc = 1820
-			continue
-		elif _pc == 1977:
-			if not (list.is_empty(v2)):
-				_pc = 2001
-				continue
-			else:
-				_pc = 2046
-				continue
-		elif _pc == 2001:
-			gui.set_first_control_focus(gui.cast(list.head(v2)))
-			_pc = 2046
-			continue
-		elif _pc == 2046:
-			await igui.set_cyclic_control_focus_path(v2)
-			if imultiplay.is_game_ended():
-				_pc = 2083
-				continue
-			else:
-				_pc = 2104
-				continue
-		elif _pc == 2083:
-			gui.set_control_focus_cancel_function("iMultiplayGUI.OnMultiplayScoreScreenQuitButton")
-			_pc = 2104
-			continue
-		elif _pc == 2104:
-			return 0
-		else:
-			return 0
+	v1 = null
+	v2 = null
+	v4 = 135
+	v5 = 63
+	v6 = 220
+	v7 = 82
+	v8 = v6 - v4
+	v9 = v7 - v5
+	v10 = v4 + v8 / 3
+	v11 = v4 + 2 * v10
+	v14 = 200
+	v15 = 100
+	v16 = 100
+	v17 = null
+	v18 = null
+	v20 = null
+	gui.stop_all_movies()
+	if imultiplay.is_game_ended():
+		idirector.begin()
+		idirector.set_focus(iship.find_player_ship())
+		idirector.set_camera(12)
+	v13 = imultiplay.client_end_game_info_count()
+	v1 = await igui.create_grey_box_style_screen(text.field("mp_game_scores_title", 0), "iMultiplayGUI.OnMultiplayScoreScreenStartButton", "iMultiplayGUI.OnMultiplayScoreScreenQuitButton")
+	v0 = gui.cast(list.head(v1))
+	list.remove_head(v1)
+	if global.exists("g_mp_score_title_key"):
+		v18 = global.string("g_mp_score_title_key")
+		global.destroy("g_mp_score_title_key")
+	else:
+		v18 = "mp_game_frags"
+	v3 = await igui.create_titled_list_box(v0, global.string("GUI_titles_texture_request"), v14, text.field("mp_game_player", 0), v15, text.field(v18, 0), v16, text.field("mp_game_died", 0))
+	v12 = 0
+	while v12 < v13:
+		v20 = text.field(imultiplay.client_end_game_info_name(v12), 0)
+		v21 = imultiplay.client_end_game_info_frags(v12)
+		v22 = imultiplay.client_end_game_info_died(v12)
+		await local_592(v20, v21, v22, v3)
+		v12 = v12 + 1
+	if not (list.is_empty(v2)):
+		gui.set_first_control_focus(gui.cast(list.head(v2)))
+	await igui.set_cyclic_control_focus_path(v2)
+	if not (imultiplay.is_game_ended()):
+		return 0
+	gui.set_control_focus_cancel_function("iMultiplayGUI.OnMultiplayScoreScreenQuitButton")
+	return 0
 	return 0
 
 func on_multiplay_score_screen_start_button() -> Variant:
-	var _pc: int = 2142
-	while true:
-		if _pc == 2142:
-			if imultiplay.is_game_ended():
-				_pc = 2160
-				continue
-			else:
-				_pc = 2236
-				continue
-		elif _pc == 2160:
-			imultiplay.client_set_requested_to_cycle(0)
-			gui.pop_screen()
-			gui.push_screen("icPDAOverlayManager")
-			gui.overlay_screen("icNetworkScreen")
-			_pc = 2257
-			continue
-		elif _pc == 2236:
-			gui.remove_overlays_after("icSpaceFlightScreenOverlay")
-			_pc = 2257
-			continue
-		elif _pc == 2257:
-			return 0
-		else:
-			return 0
+	if imultiplay.is_game_ended():
+		imultiplay.client_set_requested_to_cycle(0)
+		gui.pop_screen()
+		gui.push_screen("icPDAOverlayManager")
+		gui.overlay_screen("icNetworkScreen")
+	else:
+		gui.remove_overlays_after("icSpaceFlightScreenOverlay")
+	return 0
 	return 0
 
 func on_multiplay_score_screen_quit_button() -> Variant:
-	var _pc: int = 2260
-	while true:
-		if _pc == 2260:
-			if imultiplay.is_game_ended():
-				_pc = 2278
-				continue
-			else:
-				_pc = 2326
-				continue
-		elif _pc == 2278:
-			imultiplay.client_set_requested_to_cycle(0)
-			gui.pop_screen()
-			gui.pop_screen()
-			_pc = 2347
-			continue
-		elif _pc == 2326:
-			gui.remove_overlays_after("icSpaceFlightScreenOverlay")
-			_pc = 2347
-			continue
-		elif _pc == 2347:
-			return 0
-		else:
-			return 0
+	if imultiplay.is_game_ended():
+		imultiplay.client_set_requested_to_cycle(0)
+		gui.pop_screen()
+		gui.pop_screen()
+	else:
+		gui.remove_overlays_after("icSpaceFlightScreenOverlay")
+	return 0
 	return 0
 

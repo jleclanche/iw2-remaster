@@ -384,34 +384,13 @@ func local_5253() -> Variant:
 	return 0
 
 func local_5315() -> Variant:
-	var _pc: int = 5315
-	while true:
-		if _pc == 5315:
-			_pc = 5341
-			continue
-		elif _pc == 5320:
-			debug.print_string("iActTwo.StoryElement2_200 : Story element has begun.\n")
-			_pc = 5341
-			continue
-		elif _pc == 5341:
-			if _pog_is_null(global.pog_bool("g_act2_kong_fracture_success")):
-				_pc = 5368
-				continue
-			else:
-				_pc = 5407
-				continue
-		elif _pc == 5368:
-			iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.200b_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_200b", 1)
-			_pc = 5441
-			continue
-		elif _pc == 5407:
-			iemail.send_email("a2_master_kong_mail_sender", "a2_master_story2.200_mail_subject", "html:/text/act_2/act2_master_kongmail_2_200", 1)
-			_pc = 5441
-			continue
-		elif _pc == 5441:
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.StoryElement2_200 : Story element has begun.\n")
+	if _pog_is_null(global.pog_bool("g_act2_kong_fracture_success")):
+		iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.200b_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_200b", 1)
+	else:
+		iemail.send_email("a2_master_kong_mail_sender", "a2_master_story2.200_mail_subject", "html:/text/act_2/act2_master_kongmail_2_200", 1)
+	return
 	return 0
 
 func local_5443() -> Variant:
@@ -629,34 +608,26 @@ func local_8945(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 8945
-	while true:
-		if _pc == 8945:
-			v1 = group.create()
-			v2 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("TheOman", -1))
-			v3 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("TheOman", -1))
-			v4 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("TheOman", -1))
-			group.add_sim(v1, v2)
-			await ipilotsetup.generic_cargo_pod(v2)
-			isim.set_faction(v2, ifaction.find(await iutilities.from_allegiance_enum(19)))
-			sim.place_near(v2, v0, global.pog_float("g_player_sensor_range"))
-			sim.set_cullable(v2, 0)
-			group.add_sim(v1, v3)
-			await ipilotsetup.generic_cargo_pod(v3)
-			isim.set_faction(v3, ifaction.find(await iutilities.from_allegiance_enum(19)))
-			sim.place_relative_to(v3, v2, 100.0, 100.0, 100.0)
-			sim.set_cullable(v3, 0)
-			group.add_sim(v1, v4)
-			await ipilotsetup.generic_cargo_pod(v4)
-			isim.set_faction(v4, ifaction.find(await iutilities.from_allegiance_enum(19)))
-			sim.place_relative_to(v4, v2, -100.0, -100.0, -100.0)
-			sim.set_cullable(v3, 0)
-			_pc = 9579
-			continue
-		elif _pc == 9579:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("TheOman", -1))
+	v3 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("TheOman", -1))
+	v4 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("TheOman", -1))
+	group.add_sim(v1, v2)
+	await ipilotsetup.generic_cargo_pod(v2)
+	isim.set_faction(v2, ifaction.find(await iutilities.from_allegiance_enum(19)))
+	sim.place_near(v2, v0, global.pog_float("g_player_sensor_range"))
+	sim.set_cullable(v2, 0)
+	group.add_sim(v1, v3)
+	await ipilotsetup.generic_cargo_pod(v3)
+	isim.set_faction(v3, ifaction.find(await iutilities.from_allegiance_enum(19)))
+	sim.place_relative_to(v3, v2, 100.0, 100.0, 100.0)
+	sim.set_cullable(v3, 0)
+	group.add_sim(v1, v4)
+	await ipilotsetup.generic_cargo_pod(v4)
+	isim.set_faction(v4, ifaction.find(await iutilities.from_allegiance_enum(19)))
+	sim.place_relative_to(v4, v2, -100.0, -100.0, -100.0)
+	sim.set_cullable(v3, 0)
+	return v1
 	return 0
 
 func local_9581() -> Variant:
@@ -777,8 +748,7 @@ func local_9581() -> Variant:
 			continue
 		elif _pc == 10262:
 			await iformation.goose(v0, 50.0, 1)
-			_pc = 10297
-			continue
+			return v0
 		elif _pc == 10297:
 			return
 		else:
@@ -791,93 +761,54 @@ func local_10299(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 10299
-	while true:
-		if _pc == 10299:
-			v1 = group.create()
-			v2 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
-			v3 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
-			v4 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
-			v5 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
-			group.add_sim(v1, v2)
-			await ipilotsetup.generic_aggressive(v2)
-			isim.set_faction(v2, ifaction.find(await iutilities.from_allegiance_enum(11)))
-			sim.place_near(v2, v0, 200.0)
-			sim.set_cullable(v2, 0)
-			group.add_sim(v1, v3)
-			await ipilotsetup.generic_aggressive(v3)
-			isim.set_faction(v3, ifaction.find(await iutilities.from_allegiance_enum(11)))
-			sim.place_near(v3, v0, 200.0)
-			sim.set_cullable(v3, 0)
-			group.add_sim(v1, v4)
-			await ipilotsetup.generic_aggressive(v4)
-			isim.set_faction(v4, ifaction.find(await iutilities.from_allegiance_enum(11)))
-			sim.place_near(v4, v0, 200.0)
-			sim.set_cullable(v4, 0)
-			group.add_sim(v1, v5)
-			await ipilotsetup.generic_aggressive(v5)
-			isim.set_faction(v5, ifaction.find(await iutilities.from_allegiance_enum(11)))
-			sim.place_near(v5, v0, 200.0)
-			sim.set_cullable(v5, 0)
-			_pc = 11086
-			continue
-		elif _pc == 11086:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
+	v3 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
+	v4 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
+	v5 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
+	group.add_sim(v1, v2)
+	await ipilotsetup.generic_aggressive(v2)
+	isim.set_faction(v2, ifaction.find(await iutilities.from_allegiance_enum(11)))
+	sim.place_near(v2, v0, 200.0)
+	sim.set_cullable(v2, 0)
+	group.add_sim(v1, v3)
+	await ipilotsetup.generic_aggressive(v3)
+	isim.set_faction(v3, ifaction.find(await iutilities.from_allegiance_enum(11)))
+	sim.place_near(v3, v0, 200.0)
+	sim.set_cullable(v3, 0)
+	group.add_sim(v1, v4)
+	await ipilotsetup.generic_aggressive(v4)
+	isim.set_faction(v4, ifaction.find(await iutilities.from_allegiance_enum(11)))
+	sim.place_near(v4, v0, 200.0)
+	sim.set_cullable(v4, 0)
+	group.add_sim(v1, v5)
+	await ipilotsetup.generic_aggressive(v5)
+	isim.set_faction(v5, ifaction.find(await iutilities.from_allegiance_enum(11)))
+	sim.place_near(v5, v0, 200.0)
+	sim.set_cullable(v5, 0)
+	return v1
 	return 0
 
 func local_11088(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 11088
-	while true:
-		if _pc == 11088:
-			v1 = global.pog_int("g_act2_mwari_pilots")
-			_pc = 11208
-			continue
-		elif _pc == 11124:
-			debug.print_string("iActTwo.MwariPiloyTally : Updating Mwari Pilot Tally\n")
-			debug.print_string("iActTwo.MwariPilotTally : Old Pilot Tally = ")
-			debug.print_int(v1)
-			debug.print_string(" pilots\n")
-			_pc = 11208
-			continue
-		elif _pc == 11208:
-			v1 = v1 + v0
-			_pc = 11293
-			continue
-		elif _pc == 11230:
-			debug.print_string("iActTwo.MwariPilotTally : New Pilot Tally = ")
-			debug.print_int(v1)
-			debug.print_string(" pilots\n")
-			_pc = 11293
-			continue
-		elif _pc == 11293:
-			if v1 >= 300 and global.exists("g_revealed_hoffer"):
-				_pc = 11328
-				continue
-			else:
-				_pc = 11381
-				continue
-		elif _pc == 11328:
-			_pc = 11354
-			continue
-		elif _pc == 11333:
+	v1 = global.pog_int("g_act2_mwari_pilots")
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.MwariPiloyTally : Updating Mwari Pilot Tally\n")
+		debug.print_string("iActTwo.MwariPilotTally : Old Pilot Tally = ")
+		debug.print_int(v1)
+		debug.print_string(" pilots\n")
+	v1 = v1 + v0
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.MwariPilotTally : New Pilot Tally = ")
+		debug.print_int(v1)
+		debug.print_string(" pilots\n")
+	if v1 >= 300 and global.exists("g_revealed_hoffer"):
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.'MwariPilotsTally : player has reached reqwuired pilot level!\n")
-			_pc = 11354
-			continue
-		elif _pc == 11354:
-			global.set_bool("g_act2_reached_pilot_total", 1)
-			_pc = 11407
-			continue
-		elif _pc == 11381:
-			global.set_int("g_act2_mwari_pilots", v1)
-			_pc = 11407
-			continue
-		elif _pc == 11407:
-			return 0
-		else:
-			return 0
+		global.set_bool("g_act2_reached_pilot_total", 1)
+	else:
+		global.set_int("g_act2_mwari_pilots", v1)
+	return 0
 	return 0
 
 func accelerator_cut_scene_monitor() -> Variant:
@@ -893,210 +824,83 @@ func accelerator_cut_scene_monitor() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 11410
+	v0 = self
+	v1 = state.find(v0)
+	v2 = iship.find_player_ship()
+	v3 = isim.cast(sim.find_by_name("Jump Accelerator"))
+	v4 = 0
+	v5 = 1
+	v6 = 0
+	v7 = 0
+	v8 = 0
+	v9 = 0
+	v10 = 0
+	if not (v1):
+		v1 = state.create(v0, 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.AcceleratorCutSceneMonitor -  Starting cut scene monitor task.\n")
 	while true:
-		if _pc == 11410:
-			v0 = self
-			v1 = state.find(v0)
-			v2 = iship.find_player_ship()
-			v3 = isim.cast(sim.find_by_name("Jump Accelerator"))
-			v4 = 0
-			v5 = 1
-			v6 = 0
-			v7 = 0
-			v8 = 0
-			v9 = 0
-			v10 = 0
-			if not (v1):
-				_pc = 11576
-				continue
-			else:
-				_pc = 11601
-				continue
-		elif _pc == 11576:
-			v1 = state.create(v0, 0)
-			_pc = 11601
-			continue
-		elif _pc == 11601:
-			_pc = 11627
-			continue
-		elif _pc == 11606:
-			debug.print_string("iActTwo.AcceleratorCutSceneMonitor -  Starting cut scene monitor task.\n")
-			_pc = 11627
-			continue
-		elif _pc == 11627:
-			if global.pog_int("g_current_act") != 2:
-				_pc = 11655
-				continue
-			else:
-				_pc = 11686
-				continue
-		elif _pc == 11655:
-			_pc = 11681
-			continue
-		elif _pc == 11660:
-			debug.print_string("iActTwo.AcceleratorCutSceneMonitor: Hang on - this is only supposed to happen in act 2!\n")
-			_pc = 11681
-			continue
-		elif _pc == 11681:
-			_pc = 12793
-			continue
-		elif _pc == 11686:
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
-				_pc = 11713
-				continue
-			else:
-				_pc = 12751
-				continue
-		elif _pc == 11713:
+		if global.pog_int("g_current_act") != 2:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.AcceleratorCutSceneMonitor: Hang on - this is only supposed to happen in act 2!\n")
+			break
+		if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 			v3 = isim.cast(sim.find_by_name("Jump Accelerator"))
 			if sim.distance_between(v2, v3) > 20000.0:
-				_pc = 11786
-				continue
+				v6 = 0
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.AcceleratorCutSceneMonitor : Player is more than 20k from the jump accelerator, sleeping for ten seconds\n")
+				await _pog_wait(5.0)
 			else:
-				_pc = 11856
-				continue
-		elif _pc == 11786:
-			v6 = 0
-			_pc = 11819
-			continue
-		elif _pc == 11798:
-			debug.print_string("iActTwo.AcceleratorCutSceneMonitor : Player is more than 20k from the jump accelerator, sleeping for ten seconds\n")
-			_pc = 11819
-			continue
-		elif _pc == 11819:
-			await _pog_wait(5.0)
-			_pc = 12751
-			continue
-		elif _pc == 11856:
-			if sim.distance_between(v2, v3) > 8000.0:
-				_pc = 11890
-				continue
-			else:
-				_pc = 11953
-				continue
-		elif _pc == 11890:
-			_pc = 11916
-			continue
-		elif _pc == 11895:
-			debug.print_string("iActTwo.AcceleratorcutSceneMonitor : player is more than 8k from the jump accelerator, sleeping for one second\n")
-			_pc = 11916
-			continue
-		elif _pc == 11916:
-			await _pog_wait(1.0)
-			_pc = 12751
-			continue
-		elif _pc == 11953:
-			if _pog_is_null(global.pog_bool("g_act2_accelerator_cut_scene")):
-				_pc = 11980
-				continue
-			else:
-				_pc = 12249
-				continue
-		elif _pc == 11980:
-			_pc = 12006
-			continue
-		elif _pc == 11985:
-			debug.print_string("iActTwo.AcceleratorCutSceneMonitor : Starting cut scene 2.60 - Introduction to the Jump Accelrator\n")
-			_pc = 12006
-			continue
-		elif _pc == 12006:
-			text.add("csv:/text/act_2/act2_mission09")
-			await icutsceneutilities.handle_abort(_pog_spawn(local_68543.bind(v2, v3)))
-			sim.place_relative_to(v2, v3, 1000.0, 500.0, -5000.0)
-			sim.point_at(v2, v3)
-			sim.set_velocity(v2, 0.0, 0.0, 0.0)
-			await iescort.goose(await iwingmen.group(), 0.0, 0.0, 1)
-			text.remove("csv:/text/act_2/act2_mission09")
-			global.set_bool("g_act2_accelerator_cut_scene", 1)
-			_pc = 12751
-			continue
-		elif _pc == 12249:
-			if not (v6):
-				_pc = 12260
-				continue
-			else:
-				_pc = 12751
-				continue
-		elif _pc == 12260:
-			await iconversation.begin()
-			await iconversation.add_response("a2_master_dialogue_cal_just_signtseeing", "a2_master_dialogue_cal_just_signtseeing")
-			await iconversation.add_response("a2_master_dialogue_cal_how_do_i_get_through_the_accelerator", "a2_master_dialogue_cal_how_do_i_get_through_the_accelerator")
-			await iconversation.add_response("a2_master_dialogue_cal_just_want_to_know_about_the_accelerator", "a2_master_dialogue_cal_just_want_to_know_about_the_accelerator")
-			await iconversation.add_response("a2_master_dialogue_cal_just_passing_through", "a2_master_dialogue_cal_just_passing_through")
-			v11 = await iconversation.ask(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_unidentified_ship_this_area_is_restricted_to_corporate_traffic_please_state_your_business")
-			if v11 == 1:
-				_pc = 12431
-				continue
-			else:
-				_pc = 12496
-				continue
-		elif _pc == 12431:
-			await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_as_i_said_this_is_restricted_coporate")
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
-			_pc = 12725
-			continue
-		elif _pc == 12496:
-			if v11 == 2:
-				_pc = 12509
-				continue
-			else:
-				_pc = 12574
-				continue
-		elif _pc == 12509:
-			await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_in_a_word_buddy_you_dont")
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
-			_pc = 12725
-			continue
-		elif _pc == 12574:
-			if v11 == 3:
-				_pc = 12587
-				continue
-			else:
-				_pc = 12652
-				continue
-		elif _pc == 12587:
-			await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_there_isnt_nothing_much_to_know_buddy")
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
-			_pc = 12725
-			continue
-		elif _pc == 12652:
-			if v11 == 4:
-				_pc = 12665
-				continue
-			else:
-				_pc = 12725
-				continue
-		elif _pc == 12665:
-			await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_the_just_pass_through_somewhere_else")
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
-			_pc = 12725
-			continue
-		elif _pc == 12725:
-			await iconversation.end()
-			v6 = 1
-			_pc = 12793
-			continue
-		elif _pc == 12751:
-			await _pog_wait(0.5)
-			if not (v5):
-				_pc = 12793
-				continue
-			else:
-				_pc = 11627
-				continue
-		elif _pc == 12793:
-			_pc = 12819
-			continue
-		elif _pc == 12798:
-			debug.print_string("iActTwo.AcceleratorCutSceneMonitor: Terminating and destroying State.\n")
-			_pc = 12819
-			continue
-		elif _pc == 12819:
-			state.destroy(self)
-			return
-		else:
-			return 0
+				if sim.distance_between(v2, v3) > 8000.0:
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.AcceleratorcutSceneMonitor : player is more than 8k from the jump accelerator, sleeping for one second\n")
+					await _pog_wait(1.0)
+				else:
+					if _pog_is_null(global.pog_bool("g_act2_accelerator_cut_scene")):
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.AcceleratorCutSceneMonitor : Starting cut scene 2.60 - Introduction to the Jump Accelrator\n")
+						text.add("csv:/text/act_2/act2_mission09")
+						await icutsceneutilities.handle_abort(_pog_spawn(local_68543.bind(v2, v3)))
+						sim.place_relative_to(v2, v3, 1000.0, 500.0, -5000.0)
+						sim.point_at(v2, v3)
+						sim.set_velocity(v2, 0.0, 0.0, 0.0)
+						await iescort.goose(await iwingmen.group(), 0.0, 0.0, 1)
+						text.remove("csv:/text/act_2/act2_mission09")
+						global.set_bool("g_act2_accelerator_cut_scene", 1)
+					else:
+						if not (v6):
+							await iconversation.begin()
+							await iconversation.add_response("a2_master_dialogue_cal_just_signtseeing", "a2_master_dialogue_cal_just_signtseeing")
+							await iconversation.add_response("a2_master_dialogue_cal_how_do_i_get_through_the_accelerator", "a2_master_dialogue_cal_how_do_i_get_through_the_accelerator")
+							await iconversation.add_response("a2_master_dialogue_cal_just_want_to_know_about_the_accelerator", "a2_master_dialogue_cal_just_want_to_know_about_the_accelerator")
+							await iconversation.add_response("a2_master_dialogue_cal_just_passing_through", "a2_master_dialogue_cal_just_passing_through")
+							v11 = await iconversation.ask(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_unidentified_ship_this_area_is_restricted_to_corporate_traffic_please_state_your_business")
+							if v11 == 1:
+								await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_as_i_said_this_is_restricted_coporate")
+								await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
+							else:
+								if v11 == 2:
+									await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_in_a_word_buddy_you_dont")
+									await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
+								else:
+									if v11 == 3:
+										await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_there_isnt_nothing_much_to_know_buddy")
+										await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
+									else:
+										if v11 == 4:
+											await iconversation.say(v3, "accelerator_control", "a2_master_dialogue_accelerator_control_the_just_pass_through_somewhere_else")
+											await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_these_folks_aint_too_freindly")
+							await iconversation.end()
+							v6 = 1
+							break
+		await _pog_wait(0.5)
+		if not (v5):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.AcceleratorCutSceneMonitor: Terminating and destroying State.\n")
+	state.destroy(self)
+	return
 	return 0
 
 func ritz_intro_monitor() -> Variant:
@@ -1336,48 +1140,20 @@ func local_14092() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 14092
+	v0 = group.create()
+	v5 = iship.find_player_ship()
+	v6 = 0
+	v7 = 0
+	v8 = 0
+	v9 = 0
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2.CoyoteFreelancerEncounter : Starting freelncer encounter, this is Story sequence 2.120 \n")
 	while true:
-		if _pc == 14092:
-			v0 = group.create()
-			v5 = iship.find_player_ship()
-			v6 = 0
-			v7 = 0
-			v8 = 0
-			v9 = 0
-			_pc = 14189
-			continue
-		elif _pc == 14168:
-			debug.print_string("iAct2.CoyoteFreelancerEncounter : Starting freelncer encounter, this is Story sequence 2.120 \n")
-			_pc = 14189
-			continue
-		elif _pc == 14189:
-			_pc = 14194
-			continue
-		elif _pc == 14194:
-			await _pog_frame()
-			if _pog_every(14195, 3.0):
-				_pc = 14208
-				continue
-			else:
-				_pc = 16813
-				continue
-		elif _pc == 14208:
-			if not (v6) and not (v9):
-				_pc = 14226
-				continue
-			else:
-				_pc = 16696
-				continue
-		elif _pc == 14226:
+		await _pog_wait(3)
+		if not (v6) and not (v9):
 			v6 = 1
-			_pc = 14259
-			continue
-		elif _pc == 14238:
-			debug.print_string("iAct2.CoyoteFreelancerEncounter : Creating intercept group to meet player....\n")
-			_pc = 14259
-			continue
-		elif _pc == 14259:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2.CoyoteFreelancerEncounter : Creating intercept group to meet player....\n")
 			v1 = iship.create("ini:/sims/ships/independent/puffin_armed", await ishipcreation.ship_name("Independent", -1))
 			v2 = iship.create("ini:/sims/ships/independent/armoured_tug", await ishipcreation.ship_name("Independent", -1))
 			v3 = iship.create("ini:/sims/ships/independent/armoured_tug", await ishipcreation.ship_name("Independent", -1))
@@ -1402,172 +1178,81 @@ func local_14092() -> Variant:
 			await iformation.line_abreast(v0, 70.0, 1)
 			await _pog_wait(8.0)
 			iai.give_approach_order(group.leader(v0), v5)
-			_pc = 15033
-			continue
-		elif _pc == 15033:
-			if sim.distance_between(iship.cast(group.leader(v0)), v5) > 500000.0:
-				_pc = 15093
-				continue
-			else:
-				_pc = 15158
-				continue
-		elif _pc == 15093:
-			_pc = 15119
-			continue
-		elif _pc == 15098:
-			debug.print_string("iAct2.CoyoteFreelancerEncounter : player has lost the freelancer intercept group.\n")
-			_pc = 15119
-			continue
-		elif _pc == 15119:
-			group.destroy(v0, 1)
-			v6 = 0
-			v7 = 0
-			_pc = 16681
-			continue
-		elif _pc == 15158:
-			if sim.distance_between(iship.cast(group.leader(v0)), v5) < 50000.0 and _pog_is_null(v7):
-				_pc = 15226
-				continue
-			else:
-				_pc = 15294
-				continue
-		elif _pc == 15226:
-			await iconversation.begin()
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_looks_like_the_locals_have_spotted_us")
-			await iconversation.end()
-			v7 = 1
-			_pc = 16681
-			continue
-		elif _pc == 15294:
-			if sim.distance_between(iship.cast(group.leader(v0)), v5) < 10000.0 and _pog_is_null(v8):
-				_pc = 15362
-				continue
-			else:
-				_pc = 15501
-				continue
-		elif _pc == 15362:
-			_pc = 15388
-			continue
-		elif _pc == 15367:
-			debug.print_string("iAct2.CoyoteFreelancerEncounter : freelancers are in hailing range of the player, starting comunication...\n")
-			_pc = 15388
-			continue
-		elif _pc == 15388:
-			v8 = 1
-			await iconversation.begin()
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_ho_there_stranger_heave_too")
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_they_dont_look_like_marauders_perhaps_we_should_do_as_they_say")
-			await iconversation.end()
-			_pc = 16681
-			continue
-		elif _pc == 15501:
-			if iai.is_order_complete(group.leader(v0)):
-				_pc = 15537
-				continue
-			else:
-				_pc = 16681
-				continue
-		elif _pc == 15537:
-			await iconversation.begin()
-			await iconversation.add_response("a2_master_option_cal_im_looking_for_assistance", "a2_master_dialogue_cal_im_looking_for_assistance")
-			await iconversation.add_response("a2_master_dialogue_cal_i_wish_to_speak_to_your_commander", "a2_master_dialogue_cal_i_wish_to_speak_to_your_commander")
-			await iconversation.add_response("a2_master_dialogue_cal_dont_mind_me", "a2_master_dialogue_cal_dont_mind_me")
-			v10 = await iconversation.ask(group.leader(v0), "", "a2_master_dialogue_freelancer_what_is_your_business_here")
-			if v10 == 1:
-				_pc = 15694
-				continue
-			else:
-				_pc = 16005
-				continue
-		elif _pc == 15694:
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_join_the_club_pal")
-			await iconversation.say(group.nth_sim(v0, 1), "", "a2_master_dialogue_freelancer_sright_we_aint_soliders")
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_freddie_jackson")
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_freddie_jackson_knows_more_about_the_goings_on_around_here")
-			await iconversation.say(group.nth_sim(v0, 2), "", "a2_master_dialogue_freelancer_you_aint_just_gonna_let_him_go")
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_shoot_elmo_if_we_search_everything")
-			await iconversation.end()
-			v6 = 0
-			v9 = 1
-			global.set_bool("g_act2_referred_to_hoffer", 1)
-			_pc = 16582
-			continue
-		elif _pc == 16005:
-			if v10 == 2:
-				_pc = 16018
-				continue
-			else:
-				_pc = 16282
-				continue
-		elif _pc == 16018:
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_shoot_listen_to_this_feller_cleitus")
-			await iconversation.say(group.nth_sim(v0, 1), "", "a2_master_dialogue_freelancer_sure_think_he_does_elmo")
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_well_stranger_i_think_your_mistaken")
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_freddie_jackson")
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_freddie_jackson_knows_more_about_the_goings_on_around_here")
-			await iconversation.end()
-			v6 = 0
-			v9 = 1
-			global.set_bool("g_act2_referred_to_hoffer", 1)
-			_pc = 16582
-			continue
-		elif _pc == 16282:
-			if v10 == 3:
-				_pc = 16295
-				continue
-			else:
-				_pc = 16582
-				continue
-		elif _pc == 16295:
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_just_you_wait_one_minute_boy")
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_well_erm")
-			await iconversation.say(group.nth_sim(v0, 1), "", "a2_master_dialogue_freelancer_ah_shoot_elmo_he_aint_not_marauder")
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_guess_yer_lucky_boy")
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_freddie_jackson")
-			await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_freddie_jackson_knows_more_about_the_goings_on_around_here")
-			await iconversation.end()
-			v6 = 0
-			v9 = 1
-			global.set_bool("g_act2_referred_to_hoffer", 1)
-			_pc = 16582
-			continue
-		elif _pc == 16582:
-			iai.give_approach_order(group.leader(v0), ihabitat.nearest(imapentity.system_habitats(), group.leader(v0)))
-			iobjectives.add("a2_master_objectives_talk_jackson")
-			_pc = 16681
-			continue
-		elif _pc == 16681:
-			if not (v6):
-				_pc = 16691
-				continue
-			else:
-				_pc = 15033
-				continue
-		elif _pc == 16691:
-			_pc = 16813
-			continue
-		elif _pc == 16696:
-			await _pog_wait(1.0)
-			if sim.distance_between(iship.cast(group.leader(v0)), v5) >= 350000.0:
-				_pc = 16788
-				continue
-			else:
-				_pc = 16696
-				continue
-		elif _pc == 16788:
-			group.destroy(v0, 1)
-			_pc = 16819
-			continue
-		elif _pc == 16813:
-			_pc = 14194
-			continue
-		elif _pc == 16818:
-			_pc = 16819
-			continue
-		elif _pc == 16819:
-			return
+			while true:
+				if sim.distance_between(iship.cast(group.leader(v0)), v5) > 500000.0:
+					if PogRuntime.TRACE:
+						debug.print_string("iAct2.CoyoteFreelancerEncounter : player has lost the freelancer intercept group.\n")
+					group.destroy(v0, 1)
+					v6 = 0
+					v7 = 0
+				else:
+					if sim.distance_between(iship.cast(group.leader(v0)), v5) < 50000.0 and _pog_is_null(v7):
+						await iconversation.begin()
+						await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_looks_like_the_locals_have_spotted_us")
+						await iconversation.end()
+						v7 = 1
+					else:
+						if sim.distance_between(iship.cast(group.leader(v0)), v5) < 10000.0 and _pog_is_null(v8):
+							if PogRuntime.TRACE:
+								debug.print_string("iAct2.CoyoteFreelancerEncounter : freelancers are in hailing range of the player, starting comunication...\n")
+							v8 = 1
+							await iconversation.begin()
+							await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_ho_there_stranger_heave_too")
+							await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_they_dont_look_like_marauders_perhaps_we_should_do_as_they_say")
+							await iconversation.end()
+						else:
+							if iai.is_order_complete(group.leader(v0)):
+								await iconversation.begin()
+								await iconversation.add_response("a2_master_option_cal_im_looking_for_assistance", "a2_master_dialogue_cal_im_looking_for_assistance")
+								await iconversation.add_response("a2_master_dialogue_cal_i_wish_to_speak_to_your_commander", "a2_master_dialogue_cal_i_wish_to_speak_to_your_commander")
+								await iconversation.add_response("a2_master_dialogue_cal_dont_mind_me", "a2_master_dialogue_cal_dont_mind_me")
+								v10 = await iconversation.ask(group.leader(v0), "", "a2_master_dialogue_freelancer_what_is_your_business_here")
+								if v10 == 1:
+									await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_join_the_club_pal")
+									await iconversation.say(group.nth_sim(v0, 1), "", "a2_master_dialogue_freelancer_sright_we_aint_soliders")
+									await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_freddie_jackson")
+									await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_freddie_jackson_knows_more_about_the_goings_on_around_here")
+									await iconversation.say(group.nth_sim(v0, 2), "", "a2_master_dialogue_freelancer_you_aint_just_gonna_let_him_go")
+									await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_shoot_elmo_if_we_search_everything")
+									await iconversation.end()
+									v6 = 0
+									v9 = 1
+									global.set_bool("g_act2_referred_to_hoffer", 1)
+								else:
+									if v10 == 2:
+										await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_shoot_listen_to_this_feller_cleitus")
+										await iconversation.say(group.nth_sim(v0, 1), "", "a2_master_dialogue_freelancer_sure_think_he_does_elmo")
+										await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_well_stranger_i_think_your_mistaken")
+										await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_freddie_jackson")
+										await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_freddie_jackson_knows_more_about_the_goings_on_around_here")
+										await iconversation.end()
+										v6 = 0
+										v9 = 1
+										global.set_bool("g_act2_referred_to_hoffer", 1)
+									else:
+										if v10 == 3:
+											await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_just_you_wait_one_minute_boy")
+											await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_well_erm")
+											await iconversation.say(group.nth_sim(v0, 1), "", "a2_master_dialogue_freelancer_ah_shoot_elmo_he_aint_not_marauder")
+											await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_guess_yer_lucky_boy")
+											await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_freddie_jackson")
+											await iconversation.say(group.leader(v0), "", "a2_master_dialogue_freelancer_freddie_jackson_knows_more_about_the_goings_on_around_here")
+											await iconversation.end()
+											v6 = 0
+											v9 = 1
+											global.set_bool("g_act2_referred_to_hoffer", 1)
+								iai.give_approach_order(group.leader(v0), ihabitat.nearest(imapentity.system_habitats(), group.leader(v0)))
+								iobjectives.add("a2_master_objectives_talk_jackson")
+				if not (v6):
+					break
 		else:
-			return 0
+			while true:
+				await _pog_wait(1.0)
+				if not (sim.distance_between(iship.cast(group.leader(v0)), v5) < 350000.0):
+					break
+			group.destroy(v0, 1)
+			return
+	return
 	return 0
 
 func jackson_encounter_setup() -> Variant:
@@ -3223,7 +2908,7 @@ func local_24677(v0) -> Variant:
 				_pc = 24808
 				continue
 		elif _pc == 26411:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 26420
 				continue
 			else:
@@ -3275,8 +2960,7 @@ func local_24677(v0) -> Variant:
 			_pc = 26582
 			continue
 		elif _pc == 26731:
-			_pc = 26741
-			continue
+			return _pog_clone(v2)
 		elif _pc == 26741:
 			return
 		else:
@@ -4117,500 +3801,178 @@ func firefrost_conversations() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 32412
+	v0 = self
+	v2 = 0
+	v3 = ihabitat.cast(imapentity.find_by_name_in_system("Blue Note Social", "map:/geog/badlands/firefrost"))
+	v4 = ihabitat.cast(imapentity.find_by_name_in_system("Firefrost System Administration", "map:/geog/badlands/firefrost"))
+	v5 = iship.find_player_ship()
+	v6 = 1
+	v7 = 0
+	v8 = 0
+	v9 = 0
+	v10 = 0
+	v11 = 0
+	v12 = 0
 	while true:
-		if _pc == 32412:
-			v0 = self
-			v2 = 0
-			v3 = ihabitat.cast(imapentity.find_by_name_in_system("Blue Note Social", "map:/geog/badlands/firefrost"))
-			v4 = ihabitat.cast(imapentity.find_by_name_in_system("Firefrost System Administration", "map:/geog/badlands/firefrost"))
-			v5 = iship.find_player_ship()
-			v6 = 1
-			v7 = 0
-			v8 = 0
-			v9 = 0
-			v10 = 0
-			v11 = 0
-			v12 = 0
-			_pc = 32600
-			continue
-		elif _pc == 32600:
-			if sim.distance_between(v5, v3) < 12000.0 and _pog_is_null(v2):
-				_pc = 32642
-				continue
-			else:
-				_pc = 32738
-				continue
-		elif _pc == 32642:
+		if sim.distance_between(v5, v3) < 12000.0 and _pog_is_null(v2):
 			await iconversation.begin()
 			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_the_blue_note_social")
 			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_save_it")
 			await iconversation.end()
 			v2 = 1
-			_pc = 35410
-			continue
-		elif _pc == 32738:
-			if isim.is_docked_to_structure(isim.cast(v5), isim.cast(v3)):
-				_pc = 32792
-				continue
-			else:
-				_pc = 33618
-				continue
-		elif _pc == 32792:
-			iobjectives.set_state("a2_master_objectives_firefrost1", 1)
-			_pc = 32814
-			continue
-		elif _pc == 32814:
-			await iconversation.begin()
-			if _pog_is_null(global.pog_bool("g_act2_need_pilots")) and _pog_is_null(v7):
-				_pc = 32863
-				continue
-			else:
-				_pc = 32895
-				continue
-		elif _pc == 32863:
-			await iconversation.add_response("a2_master_option_cal_im_looking_for_help_in_fighting_the_marauders", "a2_master_dialogue_cal_im_looking_for_help_in_fighting_the_marauders")
-			_pc = 32989
-			continue
-		elif _pc == 32895:
-			if global.pog_bool("g_act2_need_pilots") == 1 and _pog_is_null(v7):
-				_pc = 32930
-				continue
-			else:
-				_pc = 32962
-				continue
-		elif _pc == 32930:
-			await iconversation.add_response("a2_master_dialogue_cal_im_looking_to_recruit_pilots", "a2_master_dialogue_cal_im_looking_to_recruit_pilots")
-			_pc = 32989
-			continue
-		elif _pc == 32962:
-			await iconversation.add_response("a2_master_dialogue_cal_where_can_i_find_this_sherriff", "a2_master_dialogue_cal_where_can_i_find_this_sherriff")
-			_pc = 32989
-			continue
-		elif _pc == 32989:
-			if not (v8):
-				_pc = 33000
-				continue
-			else:
-				_pc = 33032
-				continue
-		elif _pc == 33000:
-			await iconversation.add_response("a2_master_dialogue_cal_kind_of_quiet", "a2_master_dialogue_cal_a_freind_of_mine")
-			_pc = 33059
-			continue
-		elif _pc == 33032:
-			await iconversation.add_response("a2_master_dialogue_cal_so_where_did_everyone_go", "a2_master_dialogue_cal_so_where_did_everyone_go")
-			_pc = 33059
-			continue
-		elif _pc == 33059:
-			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_firefrost", "a2_master_dialogue_cal_tell_me_about_firefrost")
-			await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
-			if _pog_is_null(v11):
-				_pc = 33125
-				continue
-			else:
-				_pc = 33170
-				continue
-		elif _pc == 33125:
-			v13 = await iconversation.ask(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_welcome_to_the_blue_note_social_can_i_help_you")
-			v11 = 1
-			_pc = 33203
-			continue
-		elif _pc == 33170:
-			v13 = await iconversation.ask(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_anything_else")
-			_pc = 33203
-			continue
-		elif _pc == 33203:
-			if v13 == 1 and _pog_is_null(v7):
-				_pc = 33223
-				continue
-			else:
-				_pc = 33263
-				continue
-		elif _pc == 33223:
-			await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_wouldnt_know_about_that_speak_to_the_sherrif")
-			v7 = 1
-			_pc = 33568
-			continue
-		elif _pc == 33263:
-			if v13 == 1 and v7 == 1:
-				_pc = 33283
-				continue
-			else:
-				_pc = 33359
-				continue
-		elif _pc == 33283:
-			await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_the_sherriff_is_the_law")
-			global.set_bool("g_firfrost_sherrif_referred", 1)
-			iobjectives.add("a2_master_objectives_firefrost2")
-			_pc = 33568
-			continue
-		elif _pc == 33359:
-			if v13 == 2 and _pog_is_null(v8):
-				_pc = 33380
-				continue
-			else:
-				_pc = 33420
-				continue
-		elif _pc == 33380:
-			await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_well_your_freind_aint_been_here_for_some_time")
-			v8 = 1
-			_pc = 33568
-			continue
-		elif _pc == 33420:
-			if v13 == 2 and v8 == 1:
-				_pc = 33441
-				continue
-			else:
-				_pc = 33474
-				continue
-		elif _pc == 33441:
-			await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_guess_folks_have_more_important_things_on_their_mind")
-			_pc = 33568
-			continue
-		elif _pc == 33474:
-			if v13 == 3:
-				_pc = 33487
-				continue
-			else:
-				_pc = 33520
-				continue
-		elif _pc == 33487:
-			await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_well_as_youve_seen_this_is_one_big_system")
-			_pc = 33568
-			continue
-		elif _pc == 33520:
-			if v13 == 4:
-				_pc = 33533
-				continue
-			else:
-				_pc = 33568
-				continue
-		elif _pc == 33533:
-			await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_ok_be_seeing_you")
-			v10 = 1
-			_pc = 33568
-			continue
-		elif _pc == 33568:
-			await iconversation.end()
-			if not _pog_is_null(v10):
-				_pc = 33594
-				continue
-			else:
-				_pc = 32814
-				continue
-		elif _pc == 33594:
-			iship.undock_self(v5)
-			_pc = 35410
-			continue
-		elif _pc == 33618:
-			if sim.distance_between(v5, v4) < 5000.0 and global.pog_bool("g_firfrost_sherrif_referred") == 1 and _pog_is_null(v12):
-				_pc = 33683
-				continue
-			else:
-				_pc = 33778
-				continue
-		elif _pc == 33683:
-			if _pog_is_null(global.pog_bool("g_act2_high_noon_offered")):
-				_pc = 33710
-				continue
-			else:
-				_pc = 33766
-				continue
-		elif _pc == 33710:
-			await iconversation.begin()
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_well_i_guess_this_is_the_sherrifs_place")
-			await iconversation.end()
-			_pc = 33766
-			continue
-		elif _pc == 33766:
-			v12 = 1
-			_pc = 35410
-			continue
-		elif _pc == 33778:
-			if isim.is_docked_to_structure(isim.cast(v5), isim.cast(v4)):
-				_pc = 33832
-				continue
-			else:
-				_pc = 35378
-				continue
-		elif _pc == 33832:
-			iobjectives.set_state("a2_master_objectives_firefrost2", 1)
-			global.set_bool("g_act2_firefrost_sherrif_introduction", 1)
-			if _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
-				_pc = 33903
-				continue
-			else:
-				_pc = 34805
-				continue
-		elif _pc == 33903:
-			await iconversation.begin()
-			if global.pog_bool("g_act2_high_noon_offered") == 1:
-				_pc = 33944
-				continue
-			else:
-				_pc = 33976
-				continue
-		elif _pc == 33944:
-			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_this_mission", "a2_master_dialogue_cal_tell_me_about_this_mission")
-			_pc = 34137
-			continue
-		elif _pc == 33976:
-			if _pog_is_null(global.pog_bool("g_act2_need_pilots")) and _pog_is_null(v7):
-				_pc = 34011
-				continue
-			else:
-				_pc = 34043
-				continue
-		elif _pc == 34011:
-			await iconversation.add_response("a2_master_option_cal_im_looking_for_help_in_fighting_the_marauders", "a2_master_dialogue_cal_im_looking_for_help_in_fighting_the_marauders")
-			_pc = 34137
-			continue
-		elif _pc == 34043:
-			if global.pog_bool("g_act2_need_pilots") == 1 and _pog_is_null(v7):
-				_pc = 34078
-				continue
-			else:
-				_pc = 34110
-				continue
-		elif _pc == 34078:
-			await iconversation.add_response("a2_master_dialogue_cal_im_looking_to_recruit_pilots", "a2_master_dialogue_cal_im_looking_to_recruit_pilots")
-			_pc = 34137
-			continue
-		elif _pc == 34110:
-			await iconversation.add_response("a2_master_dialogue_cal_what_troubles", "a2_master_dialogue_cal_what_troubles")
-			_pc = 34137
-			continue
-		elif _pc == 34137:
-			await iconversation.add_response("a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system", "a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system")
-			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_firefrost", "a2_master_dialogue_cal_tell_me_about_firefrost")
-			await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
-			if _pog_is_null(v11):
-				_pc = 34230
-				continue
-			else:
-				_pc = 34275
-				continue
-		elif _pc == 34230:
-			v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_what_can_i_do_for_you_boy")
-			v11 = 1
-			_pc = 34308
-			continue
-		elif _pc == 34275:
-			v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_anything_else_boy")
-			_pc = 34308
-			continue
-		elif _pc == 34308:
-			if v13 == 1 and global.pog_bool("g_act2_high_noon_offered") == 1:
-				_pc = 34343
-				continue
-			else:
-				_pc = 34376
-				continue
-		elif _pc == 34343:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_were_getting_a_posse_together")
-			_pc = 34755
-			continue
-		elif _pc == 34376:
-			if v13 == 1 and _pog_is_null(v7):
-				_pc = 34396
-				continue
-			else:
-				_pc = 34436
-				continue
-		elif _pc == 34396:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_id_like_to_help_you_boy")
-			v7 = 1
-			_pc = 34755
-			continue
-		elif _pc == 34436:
-			if v13 == 1 and v7 == 1:
-				_pc = 34456
-				continue
-			else:
-				_pc = 34643
-				continue
-		elif _pc == 34456:
-			await iconversation.add_response("a2_master_dialogue_cal_sure", "a2_master_dialogue_cal_sure")
-			await iconversation.add_response("a2_master_dialogue_cal_im_busy", "a2_master_dialogue_cal_im_busy")
-			v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_well_boy_we_got_ourselves_hurt_real_bad")
-			if v13 == 1:
-				_pc = 34555
-				continue
-			else:
-				_pc = 34610
-				continue
-		elif _pc == 34555:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_thats_ma_boy_you_scrath_our_back")
-			global.set_bool("g_act2_high_noon_offered", 1)
-			_pc = 34638
-			continue
-		elif _pc == 34610:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_suit_yourself")
-			_pc = 34638
-			continue
-		elif _pc == 34638:
-			_pc = 34755
-			continue
-		elif _pc == 34643:
-			if v13 == 2:
-				_pc = 34656
-				continue
-			else:
-				_pc = 34689
-				continue
-		elif _pc == 34656:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_hell_no_boy")
-			_pc = 34755
-			continue
-		elif _pc == 34689:
-			if v13 == 3:
-				_pc = 34702
-				continue
-			else:
-				_pc = 34735
-				continue
-		elif _pc == 34702:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_this_is_the_plum_biggest")
-			_pc = 34755
-			continue
-		elif _pc == 34735:
-			if v13 == 4:
-				_pc = 34748
-				continue
-			else:
-				_pc = 34755
-				continue
-		elif _pc == 34748:
-			v10 = 1
-			_pc = 34755
-			continue
-		elif _pc == 34755:
-			await iconversation.end()
-			if not _pog_is_null(v10):
-				_pc = 34781
-				continue
-			else:
-				_pc = 33903
-				continue
-		elif _pc == 34781:
-			iship.undock_self(v5)
-			_pc = 35373
-			continue
-		elif _pc == 34805:
-			await iconversation.begin()
-			if _pog_is_null(global.pog_bool("g_act2_need_pilots")):
-				_pc = 34846
-				continue
-			else:
-				_pc = 34878
-				continue
-		elif _pc == 34846:
-			await iconversation.add_response("a2_master_option_cal_im_looking_for_help_in_fighting_the_marauders", "a2_master_dialogue_cal_im_looking_for_help_in_fighting_the_marauders")
-			_pc = 34905
-			continue
-		elif _pc == 34878:
-			await iconversation.add_response("a2_master_dialogue_cal_im_looking_to_recruit_pilots", "a2_master_dialogue_cal_im_looking_to_recruit_pilots")
-			_pc = 34905
-			continue
-		elif _pc == 34905:
-			await iconversation.add_response("a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system", "a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system")
-			await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_firefrost", "a2_master_dialogue_cal_tell_me_about_firefrost")
-			await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
-			v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_what_can_i_do_for_you_boy")
-			if v13 == 1 and _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
-				_pc = 35054
-				continue
-			else:
-				_pc = 35087
-				continue
-		elif _pc == 35054:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_well_were_all_fighting_the_marauders_boy_i_appreciate_you_helping_us")
-			_pc = 35328
-			continue
-		elif _pc == 35087:
-			if v13 == 1 and global.pog_bool("g_act2_need_pilots") == 1:
-				_pc = 35122
-				continue
-			else:
-				_pc = 35216
-				continue
-		elif _pc == 35122:
-			await iconversation.end()
-			await iconversation.one_liner(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_ive_heard_on_the_grapeving_that_there_was_gonna_be_a_big_rukus")
-			await local_11088(100)
-			global.create_bool("g_got_firefrost_pilots", 2, 1)
-			v10 = 1
-			_pc = 35328
-			continue
-		elif _pc == 35216:
-			if v13 == 2:
-				_pc = 35229
-				continue
-			else:
-				_pc = 35262
-				continue
-		elif _pc == 35229:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_hell_no_boy")
-			_pc = 35328
-			continue
-		elif _pc == 35262:
-			if v13 == 3:
-				_pc = 35275
-				continue
-			else:
-				_pc = 35308
-				continue
-		elif _pc == 35275:
-			await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_this_is_the_plum_biggest")
-			_pc = 35328
-			continue
-		elif _pc == 35308:
-			if v13 == 4:
-				_pc = 35321
-				continue
-			else:
-				_pc = 35328
-				continue
-		elif _pc == 35321:
-			v10 = 1
-			_pc = 35328
-			continue
-		elif _pc == 35328:
-			await iconversation.end()
-			if not _pog_is_null(v10):
-				_pc = 35354
-				continue
-			else:
-				_pc = 34805
-				continue
-		elif _pc == 35354:
-			iship.undock_self(v5)
-			_pc = 35373
-			continue
-		elif _pc == 35373:
-			_pc = 35410
-			continue
-		elif _pc == 35378:
-			await _pog_wait(3.0)
-			_pc = 35410
-			continue
-		elif _pc == 35410:
-			v7 = 0
-			v8 = 0
-			v9 = 0
-			v10 = 0
-			v11 = 0
-			if not (v6):
-				_pc = 35455
-				continue
-			else:
-				_pc = 32600
-				continue
-		elif _pc == 35455:
-			return
 		else:
-			return 0
+			if isim.is_docked_to_structure(isim.cast(v5), isim.cast(v3)):
+				iobjectives.set_state("a2_master_objectives_firefrost1", 1)
+				while true:
+					await iconversation.begin()
+					if _pog_is_null(global.pog_bool("g_act2_need_pilots")) and _pog_is_null(v7):
+						await iconversation.add_response("a2_master_option_cal_im_looking_for_help_in_fighting_the_marauders", "a2_master_dialogue_cal_im_looking_for_help_in_fighting_the_marauders")
+					else:
+						if global.pog_bool("g_act2_need_pilots") == 1 and _pog_is_null(v7):
+							await iconversation.add_response("a2_master_dialogue_cal_im_looking_to_recruit_pilots", "a2_master_dialogue_cal_im_looking_to_recruit_pilots")
+						else:
+							await iconversation.add_response("a2_master_dialogue_cal_where_can_i_find_this_sherriff", "a2_master_dialogue_cal_where_can_i_find_this_sherriff")
+					if not (v8):
+						await iconversation.add_response("a2_master_dialogue_cal_kind_of_quiet", "a2_master_dialogue_cal_a_freind_of_mine")
+					else:
+						await iconversation.add_response("a2_master_dialogue_cal_so_where_did_everyone_go", "a2_master_dialogue_cal_so_where_did_everyone_go")
+					await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_firefrost", "a2_master_dialogue_cal_tell_me_about_firefrost")
+					await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
+					if _pog_is_null(v11):
+						v13 = await iconversation.ask(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_welcome_to_the_blue_note_social_can_i_help_you")
+						v11 = 1
+					else:
+						v13 = await iconversation.ask(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_anything_else")
+					if v13 == 1 and _pog_is_null(v7):
+						await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_wouldnt_know_about_that_speak_to_the_sherrif")
+						v7 = 1
+					else:
+						if v13 == 1 and v7 == 1:
+							await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_the_sherriff_is_the_law")
+							global.set_bool("g_firfrost_sherrif_referred", 1)
+							iobjectives.add("a2_master_objectives_firefrost2")
+						else:
+							if v13 == 2 and _pog_is_null(v8):
+								await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_well_your_freind_aint_been_here_for_some_time")
+								v8 = 1
+							else:
+								if v13 == 2 and v8 == 1:
+									await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_guess_folks_have_more_important_things_on_their_mind")
+								else:
+									if v13 == 3:
+										await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_well_as_youve_seen_this_is_one_big_system")
+									else:
+										if v13 == 4:
+											await iconversation.say(0, "a2_master_name_mariana", "a2_master_dialogue_mariana_ok_be_seeing_you")
+											v10 = 1
+					await iconversation.end()
+					if not (_pog_is_null(v10)):
+						break
+				iship.undock_self(v5)
+			else:
+				if sim.distance_between(v5, v4) < 5000.0 and global.pog_bool("g_firfrost_sherrif_referred") == 1 and _pog_is_null(v12):
+					if _pog_is_null(global.pog_bool("g_act2_high_noon_offered")):
+						await iconversation.begin()
+						await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_well_i_guess_this_is_the_sherrifs_place")
+						await iconversation.end()
+					v12 = 1
+				else:
+					if isim.is_docked_to_structure(isim.cast(v5), isim.cast(v4)):
+						iobjectives.set_state("a2_master_objectives_firefrost2", 1)
+						global.set_bool("g_act2_firefrost_sherrif_introduction", 1)
+						if _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
+							while true:
+								await iconversation.begin()
+								if global.pog_bool("g_act2_high_noon_offered") == 1:
+									await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_this_mission", "a2_master_dialogue_cal_tell_me_about_this_mission")
+								else:
+									if _pog_is_null(global.pog_bool("g_act2_need_pilots")) and _pog_is_null(v7):
+										await iconversation.add_response("a2_master_option_cal_im_looking_for_help_in_fighting_the_marauders", "a2_master_dialogue_cal_im_looking_for_help_in_fighting_the_marauders")
+									else:
+										if global.pog_bool("g_act2_need_pilots") == 1 and _pog_is_null(v7):
+											await iconversation.add_response("a2_master_dialogue_cal_im_looking_to_recruit_pilots", "a2_master_dialogue_cal_im_looking_to_recruit_pilots")
+										else:
+											await iconversation.add_response("a2_master_dialogue_cal_what_troubles", "a2_master_dialogue_cal_what_troubles")
+								await iconversation.add_response("a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system", "a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system")
+								await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_firefrost", "a2_master_dialogue_cal_tell_me_about_firefrost")
+								await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
+								if _pog_is_null(v11):
+									v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_what_can_i_do_for_you_boy")
+									v11 = 1
+								else:
+									v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_anything_else_boy")
+								if v13 == 1 and global.pog_bool("g_act2_high_noon_offered") == 1:
+									await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_were_getting_a_posse_together")
+								else:
+									if v13 == 1 and _pog_is_null(v7):
+										await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_id_like_to_help_you_boy")
+										v7 = 1
+									else:
+										if v13 == 1 and v7 == 1:
+											await iconversation.add_response("a2_master_dialogue_cal_sure", "a2_master_dialogue_cal_sure")
+											await iconversation.add_response("a2_master_dialogue_cal_im_busy", "a2_master_dialogue_cal_im_busy")
+											v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_well_boy_we_got_ourselves_hurt_real_bad")
+											if v13 == 1:
+												await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_thats_ma_boy_you_scrath_our_back")
+												global.set_bool("g_act2_high_noon_offered", 1)
+											else:
+												await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_suit_yourself")
+										else:
+											if v13 == 2:
+												await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_hell_no_boy")
+											else:
+												if v13 == 3:
+													await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_this_is_the_plum_biggest")
+												else:
+													if v13 == 4:
+														v10 = 1
+								await iconversation.end()
+								if not (_pog_is_null(v10)):
+									break
+							iship.undock_self(v5)
+						else:
+							while true:
+								await iconversation.begin()
+								if _pog_is_null(global.pog_bool("g_act2_need_pilots")):
+									await iconversation.add_response("a2_master_option_cal_im_looking_for_help_in_fighting_the_marauders", "a2_master_dialogue_cal_im_looking_for_help_in_fighting_the_marauders")
+								else:
+									await iconversation.add_response("a2_master_dialogue_cal_im_looking_to_recruit_pilots", "a2_master_dialogue_cal_im_looking_to_recruit_pilots")
+								await iconversation.add_response("a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system", "a2_master_dialogue_cal_people_around_here_seem_to_think_youre_in_charge_of_the_system")
+								await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_firefrost", "a2_master_dialogue_cal_tell_me_about_firefrost")
+								await iconversation.add_response("a2_master_dialogue_cal_goodbye", "a2_master_dialogue_cal_goodbye")
+								v13 = await iconversation.ask(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_what_can_i_do_for_you_boy")
+								if v13 == 1 and _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
+									await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_well_were_all_fighting_the_marauders_boy_i_appreciate_you_helping_us")
+								else:
+									if v13 == 1 and global.pog_bool("g_act2_need_pilots") == 1:
+										await iconversation.end()
+										await iconversation.one_liner(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_ive_heard_on_the_grapeving_that_there_was_gonna_be_a_big_rukus")
+										await local_11088(100)
+										global.create_bool("g_got_firefrost_pilots", 2, 1)
+										v10 = 1
+									else:
+										if v13 == 2:
+											await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_hell_no_boy")
+										else:
+											if v13 == 3:
+												await iconversation.say(0, "a2_master_name_sheriff_kane", "a2_master_dialogue_kane_this_is_the_plum_biggest")
+											else:
+												if v13 == 4:
+													v10 = 1
+								await iconversation.end()
+								if not (_pog_is_null(v10)):
+									break
+							iship.undock_self(v5)
+					else:
+						await _pog_wait(3.0)
+		v7 = 0
+		v8 = 0
+		v9 = 0
+		v10 = 0
+		v11 = 0
+		if not (v6):
+			break
+	return
 	return 0
 
 func firefrost_story_script() -> Variant:
@@ -5151,50 +4513,19 @@ func coyote_story_script() -> Variant:
 func local_39403(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 39403
+	v4 = iship.find_player_ship()
+	v5 = 0
 	while true:
-		if _pc == 39403:
-			v4 = iship.find_player_ship()
-			v5 = 0
-			_pc = 39434
-			continue
-		elif _pc == 39434:
-			await _pog_wait(1.0)
-			if state.progress(v3) >= 1:
-				_pc = 39491
-				continue
-			else:
-				_pc = 39434
-				continue
-		elif _pc == 39491:
-			global.set_int("g_act2_dagda_visits", global.pog_int("g_act2_dagda_visits") + 1)
-			_pc = 39533
-			continue
-		elif _pc == 39533:
-			if v5:
-				_pc = 39543
-				continue
-			else:
-				_pc = 39574
-				continue
-		elif _pc == 39543:
-			_pc = 39569
-			continue
-		elif _pc == 39548:
-			debug.print_string("iActTwo.DagdaConversation : Dagda character ships have spoken to the player, exiting\n")
-			_pc = 39569
-			continue
-		elif _pc == 39569:
-			_pc = 40092
-			continue
-		elif _pc == 39574:
-			if sim.distance_between(v4, v2) < 3000.0:
-				_pc = 39608
-				continue
-			else:
-				_pc = 40012
-				continue
-		elif _pc == 39608:
+		await _pog_wait(1.0)
+		if not (state.progress(v3) < 1):
+			break
+	global.set_int("g_act2_dagda_visits", global.pog_int("g_act2_dagda_visits") + 1)
+	while true:
+		if v5:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.DagdaConversation : Dagda character ships have spoken to the player, exiting\n")
+			break
+		if sim.distance_between(v4, v2) < 3000.0:
 			await iconversation.begin()
 			await iconversation.say(v0, "", "a2_master_dialogue_jarvis_howdy")
 			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_yeah_whats_the_score_with_all_this_entry_permit_stuff")
@@ -5210,30 +4541,13 @@ func local_39403(v0, v1, v2, v3) -> Variant:
 			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_thanks_for_your_help")
 			await iconversation.end()
 			v5 = 1
-			_pc = 40070
-			continue
-		elif _pc == 40012:
-			_pc = 40038
-			continue
-		elif _pc == 40017:
-			debug.print_string("iactTwo.DagdaConversations : player is not neat staging point 1, sleeping\n")
-			_pc = 40038
-			continue
-		elif _pc == 40038:
-			await _pog_wait(5.0)
-			_pc = 40070
-			continue
-		elif _pc == 40070:
-			if not (not _pog_is_null(v0) and not _pog_is_null(v1)):
-				_pc = 40092
-				continue
-			else:
-				_pc = 39533
-				continue
-		elif _pc == 40092:
-			return
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iactTwo.DagdaConversations : player is not neat staging point 1, sleeping\n")
+			await _pog_wait(5.0)
+		if not (not _pog_is_null(v0) and not _pog_is_null(v1)):
+			break
+	return
 	return 0
 
 func dagda_story_script() -> Variant:
@@ -5535,45 +4849,19 @@ func dagda_story_script() -> Variant:
 
 func santa_waiter() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 42361
+	v0 = state.find(self)
+	if not (v0):
+		v0 = state.create(self, 0)
 	while true:
-		if _pc == 42361:
-			v0 = state.find(self)
-			if not (v0):
-				_pc = 42409
-				continue
-			else:
-				_pc = 42442
-				continue
-		elif _pc == 42409:
-			v0 = state.create(self, 0)
-			_pc = 42442
-			continue
-		elif _pc == 42442:
-			_pc = 42468
-			continue
-		elif _pc == 42447:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct2SantaRomeraStoryScript : wating for the player to complete a blocakde run to Mwari. sleeping for 30 seconds\n")
-			_pc = 42468
-			continue
-		elif _pc == 42468:
-			await _pog_wait(1.0)
-			if not _pog_is_null(global.pog_bool("g_act2_completed_blockade_run")):
-				_pc = 42527
-				continue
-			else:
-				_pc = 42442
-				continue
-		elif _pc == 42527:
-			state.destroy(self)
-			state.destroy(self)
-			await iutilities.send_story_element("g_story_2.140b", 2, 0)
-			_pc = 42610
-			continue
-		elif _pc == 42610:
-			return
-		else:
-			return 0
+		await _pog_wait(1.0)
+		if not (_pog_is_null(global.pog_bool("g_act2_completed_blockade_run"))):
+			break
+	state.destroy(self)
+	state.destroy(self)
+	await iutilities.send_story_element("g_story_2.140b", 2, 0)
+	return
 	return 0
 
 func santa_romera_story_script() -> Variant:
@@ -6380,33 +5668,25 @@ func local_47195(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 47195
-	while true:
-		if _pc == 47195:
-			v1 = group.create()
-			v3 = ifaction.find("League")
-			v2 = iship.create("ini:/sims/ships/navy/old_destroyer", "a2_master_name_franklyn")
-			isim.set_faction(isim.cast(v2), v3)
-			isim.set_indestructable(v2, 1)
-			await ipilotsetup.generic_cargo_pod(v2)
-			group.add_sim(v1, v2)
-			v2 = iship.create("ini:/sims/ships/navy/patcom", "a2_master_name_black")
-			isim.set_faction(isim.cast(v2), v3)
-			await ipilotsetup.generic_cargo_pod(v2)
-			group.add_sim(v1, v2)
-			v2 = iship.create("ini:/sims/ships/navy/patcom", "a2_master_name_lion")
-			isim.set_faction(isim.cast(v2), v3)
-			await ipilotsetup.generic_cargo_pod(v2)
-			group.add_sim(v1, v2)
-			sim.place_relative_to(group.leader(v1), v0, 5000.0, 0.0, 0.0)
-			await iformation.goose(v1, 40.0, 1)
-			global.create_handle("g_hoffers_vessels", 2, v1)
-			_pc = 47716
-			continue
-		elif _pc == 47716:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v3 = ifaction.find("League")
+	v2 = iship.create("ini:/sims/ships/navy/old_destroyer", "a2_master_name_franklyn")
+	isim.set_faction(isim.cast(v2), v3)
+	isim.set_indestructable(v2, 1)
+	await ipilotsetup.generic_cargo_pod(v2)
+	group.add_sim(v1, v2)
+	v2 = iship.create("ini:/sims/ships/navy/patcom", "a2_master_name_black")
+	isim.set_faction(isim.cast(v2), v3)
+	await ipilotsetup.generic_cargo_pod(v2)
+	group.add_sim(v1, v2)
+	v2 = iship.create("ini:/sims/ships/navy/patcom", "a2_master_name_lion")
+	isim.set_faction(isim.cast(v2), v3)
+	await ipilotsetup.generic_cargo_pod(v2)
+	group.add_sim(v1, v2)
+	sim.place_relative_to(group.leader(v1), v0, 5000.0, 0.0, 0.0)
+	await iformation.goose(v1, 40.0, 1)
+	global.create_handle("g_hoffers_vessels", 2, v1)
+	return v1
 	return 0
 
 func hoffer_creation_handler() -> Variant:
@@ -6416,223 +5696,85 @@ func hoffer_creation_handler() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 47718
+	v1 = null
+	v1 = global.string("g_player_base_system")
+	v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
+	v3 = v2
+	v4 = iship.find_player_ship()
+	v5 = 1
+	if _pog_is_null(state.find(self)):
+		state.create(self, 0)
 	while true:
-		if _pc == 47718:
-			v1 = null
-			v1 = global.string("g_player_base_system")
-			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
-			v3 = v2
-			v4 = iship.find_player_ship()
-			v5 = 1
-			if _pog_is_null(state.find(self)):
-				_pc = 47862
-				continue
-			else:
-				_pc = 47890
-				continue
-		elif _pc == 47862:
-			state.create(self, 0)
-			_pc = 47890
+		await _pog_wait(2)
+		v4 = iship.find_player_ship()
+		v1 = global.string("g_player_base_system")
+		v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
+		if not _pog_eq(isim.active_world(), v1):
 			continue
-		elif _pc == 47890:
-			_pc = 47895
+		if not (global.pog_bool("g_act3_ready_for_mission_ten") != 1 and _pog_is_null(global.exists("g_hoffer_disabled"))):
 			continue
-		elif _pc == 47895:
-			await _pog_frame()
-			if _pog_every(47896, 2.0):
-				_pc = 47909
-				continue
-			else:
-				_pc = 48237
-				continue
-		elif _pc == 47909:
-			v4 = iship.find_player_ship()
-			v1 = global.string("g_player_base_system")
-			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
-			if _pog_eq(isim.active_world(), v1):
-				_pc = 48012
-				continue
-			else:
-				_pc = 48237
-				continue
-		elif _pc == 48012:
-			if global.pog_bool("g_act3_ready_for_mission_ten") != 1 and _pog_is_null(global.exists("g_hoffer_disabled")):
-				_pc = 48061
-				continue
-			else:
-				_pc = 48237
-				continue
-		elif _pc == 48061:
-			if sim.distance_between(v4, v3) > 300000.0 and not (v5):
-				_pc = 48102
-				continue
-			else:
-				_pc = 48155
-				continue
-		elif _pc == 48102:
+		if sim.distance_between(v4, v3) > 300000.0 and not (v5):
 			v5 = 1
 			group.destroy(v0, 1)
 			global.destroy("g_hoffers_vessels")
-			_pc = 48237
-			continue
-		elif _pc == 48155:
-			if v5 and sim.distance_between(v4, v3) < 300000.0:
-				_pc = 48195
+		else:
+			if not (v5 and sim.distance_between(v4, v3) < 300000.0):
 				continue
-			else:
-				_pc = 48237
-				continue
-		elif _pc == 48195:
 			v0 = await local_47195(v2)
 			v5 = 0
 			v3 = v2
-			_pc = 48237
-			continue
-		elif _pc == 48237:
-			_pc = 47895
-			continue
-		elif _pc == 48242:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func hoffer_reveal_monitor() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 48252
+	v0 = iship.find_player_ship()
+	v1 = imapentity.find_by_name_in_system("Jackson's Yard", "map:/geog/badlands/coyote")
+	v2 = 0
+	if _pog_is_null(state.find(self)):
+		state.create(self, 0)
+	if global.exists("g_told_about_hoffer") == 1 and _pog_is_null(global.exists("g_revealed_hoffer")):
+		iobjectives.add("a2_master_objectives_leader")
 	while true:
-		if _pc == 48252:
-			v0 = iship.find_player_ship()
-			v1 = imapentity.find_by_name_in_system("Jackson's Yard", "map:/geog/badlands/coyote")
-			v2 = 0
-			if _pog_is_null(state.find(self)):
-				_pc = 48349
-				continue
-			else:
-				_pc = 48377
-				continue
-		elif _pc == 48349:
-			state.create(self, 0)
-			_pc = 48377
+		await _pog_wait(2)
+		if not _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
 			continue
-		elif _pc == 48377:
-			if global.exists("g_told_about_hoffer") == 1 and _pog_is_null(global.exists("g_revealed_hoffer")):
-				_pc = 48426
-				continue
-			else:
-				_pc = 48447
-				continue
-		elif _pc == 48426:
-			iobjectives.add("a2_master_objectives_leader")
-			_pc = 48447
-			continue
-		elif _pc == 48447:
-			_pc = 48452
-			continue
-		elif _pc == 48452:
-			await _pog_frame()
-			if _pog_every(48453, 2.0):
-				_pc = 48466
-				continue
-			else:
-				_pc = 49240
-				continue
-		elif _pc == 48466:
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
-				_pc = 48493
-				continue
-			else:
-				_pc = 49240
-				continue
-		elif _pc == 48493:
-			if global.exists("g_told_about_hoffer") == 1 and _pog_is_null(global.exists("g_revealed_hoffer")):
-				_pc = 48542
-				continue
-			else:
-				_pc = 49214
-				continue
-		elif _pc == 48542:
+		if global.exists("g_told_about_hoffer") == 1 and _pog_is_null(global.exists("g_revealed_hoffer")):
 			if sim.distance_between(v0, v1) < 7000.0 and not (v2):
-				_pc = 48583
-				continue
+				v2 = 1
+				await iconversation.one_liner(0, "frederick_jackson", "a2_master_dialogue_hoffer_returned")
 			else:
-				_pc = 48623
-				continue
-		elif _pc == 48583:
-			v2 = 1
-			await iconversation.one_liner(0, "frederick_jackson", "a2_master_dialogue_hoffer_returned")
-			_pc = 48670
-			continue
-		elif _pc == 48623:
-			if sim.distance_between(v0, v1) > 7000.0 and v2:
-				_pc = 48663
-				continue
-			else:
-				_pc = 48670
-				continue
-		elif _pc == 48663:
-			v2 = 0
-			_pc = 48670
-			continue
-		elif _pc == 48670:
+				if sim.distance_between(v0, v1) > 7000.0 and v2:
+					v2 = 0
 			if v2 and isim.is_docked_to_structure(v0, v1):
-				_pc = 48704
-				continue
-			else:
-				_pc = 49209
-				continue
-		elif _pc == 48704:
-			isim.set_docking_lock(v0, v1, 1)
-			await iconversation.begin()
-			await iconversation.say(0, "frederick_jackson", "a2_master_dialogue_hoffer_what_can_i")
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_i_know_sounds")
-			await iconversation.say(0, "frederick_jackson", "a2_master_dialogue_hoffer_jefferson")
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_not_so_young")
-			await iconversation.say(0, "frederick_jackson", "a2_master_dialogue_hoffer_really_am")
-			global.create_bool("g_revealed_hoffer", 2, 1)
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_yes_sir")
-			await iconversation.say(0, "a2_master_name_franklyn", "a2_master_dialogue_hoffer_call_me_franklyn")
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_with_all_youve")
-			await iconversation.say(0, "a2_master_name_franklyn", "a2_master_dialogue_hoffer_proud_to_stand")
-			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_fantastic")
-			await iconversation.say(0, "a2_master_name_franklyn", "a2_master_dialogue_hoffer_few_calls")
-			await iconversation.end()
-			await local_11088(0)
-			_pc = 49130
-			continue
-		elif _pc == 49109:
-			debug.print_string("iActTwo.hoffer_reveal_monitor: Player revealed hoffer\n")
-			_pc = 49130
-			continue
-		elif _pc == 49130:
-			isim.set_docking_lock(v0, v1, 0)
-			iobjectives.set_state("a2_master_objectives_leader", 1)
-			_pog_detach(_pog_spawn(hoffer_creation_handler.bind()))
-			_pc = 49246
-			continue
-		elif _pc == 49209:
-			_pc = 49240
-			continue
-		elif _pc == 49214:
-			_pc = 49240
-			continue
-		elif _pc == 49219:
-			debug.print_string("iActTwo.hoffer_reveal_monitor: Waiting for player to pursued hoffer\n")
-			_pc = 49240
-			continue
-		elif _pc == 49240:
-			_pc = 48452
-			continue
-		elif _pc == 49245:
-			_pc = 49246
-			continue
-		elif _pc == 49246:
-			return
+				isim.set_docking_lock(v0, v1, 1)
+				await iconversation.begin()
+				await iconversation.say(0, "frederick_jackson", "a2_master_dialogue_hoffer_what_can_i")
+				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_i_know_sounds")
+				await iconversation.say(0, "frederick_jackson", "a2_master_dialogue_hoffer_jefferson")
+				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_not_so_young")
+				await iconversation.say(0, "frederick_jackson", "a2_master_dialogue_hoffer_really_am")
+				global.create_bool("g_revealed_hoffer", 2, 1)
+				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_yes_sir")
+				await iconversation.say(0, "a2_master_name_franklyn", "a2_master_dialogue_hoffer_call_me_franklyn")
+				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_with_all_youve")
+				await iconversation.say(0, "a2_master_name_franklyn", "a2_master_dialogue_hoffer_proud_to_stand")
+				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_fantastic")
+				await iconversation.say(0, "a2_master_name_franklyn", "a2_master_dialogue_hoffer_few_calls")
+				await iconversation.end()
+				await local_11088(0)
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.hoffer_reveal_monitor: Player revealed hoffer\n")
+				isim.set_docking_lock(v0, v1, 0)
+				iobjectives.set_state("a2_master_objectives_leader", 1)
+				_pog_detach(_pog_spawn(hoffer_creation_handler.bind()))
+				return
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.hoffer_reveal_monitor: Waiting for player to pursued hoffer\n")
+	return
 	return 0
 
 func mwari_wars_story_script() -> Variant:
@@ -6879,594 +6021,190 @@ func local_50472() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 50472
+	v0 = iship.find_player_ship()
+	v1 = null
+	v1 = isim.active_world()
+	v2 = null
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.Act2SystemMonitor: starting task up.\n")
 	while true:
-		if _pc == 50472:
-			v0 = iship.find_player_ship()
-			v1 = null
-			v1 = isim.active_world()
-			v2 = null
-			_pc = 50565
-			continue
-		elif _pc == 50544:
-			debug.print_string("iActTwo.Act2SystemMonitor: starting task up.\n")
-			_pc = 50565
-			continue
-		elif _pc == 50565:
-			_pc = 50570
-			continue
-		elif _pc == 50570:
-			await _pog_frame()
-			if _pog_every(50571, 0.5):
-				_pc = 50584
-				continue
-			else:
-				_pc = 53797
-				continue
-		elif _pc == 50584:
-			v2 = isim.active_world()
-			_pc = 50734
-			continue
-		elif _pc == 50610:
+		await _pog_wait(0.5)
+		v2 = isim.active_world()
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.Act2SystemMonitor : Start system is ")
 			debug.print_string(v1)
 			debug.print_string("\n")
 			debug.print_string("iActTwo.Act2SystemMonitor : Current system is ")
 			debug.print_string(v2)
 			debug.print_string("\n")
-			_pc = 50734
-			continue
-		elif _pc == 50734:
-			if global.exists("g_dagda_waypoints") and not _pog_eq(v2, "map:/geog/badlands/dagda"):
-				_pc = 50773
-				continue
-			else:
-				_pc = 50842
-				continue
-		elif _pc == 50773:
+		if global.exists("g_dagda_waypoints") and not _pog_eq(v2, "map:/geog/badlands/dagda"):
 			group.destroy(group.cast(global.handle("g_dagda_waypoints")), 1)
 			global.destroy("g_dagda_waypoints")
-			_pc = 50842
-			continue
-		elif _pc == 50842:
-			if not _pog_eq(v2, v1):
-				_pc = 50859
-				continue
-			else:
-				_pc = 53739
-				continue
-		elif _pc == 50859:
-			await _pog_wait(1.0)
-			if not (isim.is_capsule_jumping(v0)):
-				_pc = 50914
-				continue
-			else:
-				_pc = 50859
-				continue
-		elif _pc == 50914:
+		if not _pog_eq(v2, v1):
+			while true:
+				await _pog_wait(1.0)
+				if not (isim.is_capsule_jumping(v0)):
+					break
 			v1 = v2
 			if _pog_eq(v2, "map:/geog/badlands/hoffers_wake"):
-				_pc = 50943
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Hoffers Wake system\n")
+				v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+				_pog_halt(v3)
+				v3 = 0
+				global.set_handle("g_current_active_system_script", v3)
 			else:
-				_pc = 51065
-				continue
-		elif _pc == 50943:
-			_pc = 50969
-			continue
-		elif _pc == 50948:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Hoffers Wake system\n")
-			_pc = 50969
-			continue
-		elif _pc == 50969:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			v3 = 0
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 51065:
-			if _pog_eq(v2, "map:/geog/badlands/coyote"):
-				_pc = 51083
-				continue
-			else:
-				_pc = 51422
-				continue
-		elif _pc == 51083:
-			_pc = 51109
-			continue
-		elif _pc == 51088:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Coyote system\n")
-			_pc = 51109
-			continue
-		elif _pc == 51109:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			if _pog_is_null(global.pog_bool("g_coyote_script_complete")):
-				_pc = 51194
-				continue
-			else:
-				_pc = 51384
-				continue
-		elif _pc == 51194:
-			if _pog_is_null(global.handle("g_coyote_state")):
-				_pc = 51221
-				continue
-			else:
-				_pc = 51271
-				continue
-		elif _pc == 51221:
-			_pc = 51247
-			continue
-		elif _pc == 51226:
-			debug.print_string("iActTwo.Act2SystemMonitor : Task for coyote doesn't exist starting a fresh\n")
-			_pc = 51247
-			continue
-		elif _pc == 51247:
-			v3 = _pog_spawn(coyote_story_script.bind())
-			_pc = 51379
-			continue
-		elif _pc == 51271:
-			_pc = 51297
-			continue
-		elif _pc == 51276:
-			debug.print_string("iActTwo.Act2SystemMonitor : Resuming coyote task from state\n")
-			_pc = 51297
-			continue
-		elif _pc == 51297:
-			v4 = state.cast(global.handle("g_coyote_state"))
-			state.restore(v4)
-			v3 = state.task(v4)
-			_pc = 51379
-			continue
-		elif _pc == 51379:
-			_pc = 51391
-			continue
-		elif _pc == 51384:
-			v3 = 0
-			_pc = 51391
-			continue
-		elif _pc == 51391:
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 51422:
-			if _pog_eq(v2, "map:/geog/badlands/dagda"):
-				_pc = 51440
-				continue
-			else:
-				_pc = 51781
-				continue
-		elif _pc == 51440:
-			_pc = 51466
-			continue
-		elif _pc == 51445:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Dagda system\n")
-			_pc = 51466
-			continue
-		elif _pc == 51466:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			if _pog_is_null(global.pog_bool("g_dagda_script_complete")):
-				_pc = 51551
-				continue
-			else:
-				_pc = 51741
-				continue
-		elif _pc == 51551:
-			if _pog_is_null(global.handle("g_dagda_state")):
-				_pc = 51578
-				continue
-			else:
-				_pc = 51628
-				continue
-		elif _pc == 51578:
-			_pc = 51604
-			continue
-		elif _pc == 51583:
-			debug.print_string("iActTwo.Act2SystemMonitor : Task for dagda doesn't exist starting a fresh\n")
-			_pc = 51604
-			continue
-		elif _pc == 51604:
-			v3 = _pog_spawn(dagda_story_script.bind())
-			_pc = 51736
-			continue
-		elif _pc == 51628:
-			_pc = 51654
-			continue
-		elif _pc == 51633:
-			debug.print_string("iActTwo.Act2SystemMonitor : Resuming dagda task from state\n")
-			_pc = 51654
-			continue
-		elif _pc == 51654:
-			v4 = state.cast(global.handle("g_dagda_state"))
-			state.restore(v4)
-			v3 = state.task(v4)
-			_pc = 51736
-			continue
-		elif _pc == 51736:
-			_pc = 51750
-			continue
-		elif _pc == 51741:
-			_pc = 51750
-			continue
-		elif _pc == 51750:
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 51781:
-			if _pog_eq(v2, "map:/geog/badlands/dante"):
-				_pc = 51799
-				continue
-			else:
-				_pc = 51921
-				continue
-		elif _pc == 51799:
-			_pc = 51825
-			continue
-		elif _pc == 51804:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Dante system\n")
-			_pc = 51825
-			continue
-		elif _pc == 51825:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			v3 = 0
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 51921:
-			if _pog_eq(v2, "map:/geog/badlands/eureka"):
-				_pc = 51939
-				continue
-			else:
-				_pc = 52280
-				continue
-		elif _pc == 51939:
-			_pc = 51965
-			continue
-		elif _pc == 51944:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Eureka system\n")
-			_pc = 51965
-			continue
-		elif _pc == 51965:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			if _pog_is_null(global.pog_bool("g_eureka_script_complete")):
-				_pc = 52050
-				continue
-			else:
-				_pc = 52240
-				continue
-		elif _pc == 52050:
-			if _pog_is_null(global.handle("g_eureka_state")):
-				_pc = 52077
-				continue
-			else:
-				_pc = 52127
-				continue
-		elif _pc == 52077:
-			_pc = 52103
-			continue
-		elif _pc == 52082:
-			debug.print_string("iActTwo.Act2SystemMonitor : Task for eureka doesn't exist starting a fresh\n")
-			_pc = 52103
-			continue
-		elif _pc == 52103:
-			v3 = _pog_spawn(eureka_story_script.bind())
-			_pc = 52235
-			continue
-		elif _pc == 52127:
-			_pc = 52153
-			continue
-		elif _pc == 52132:
-			debug.print_string("iActTwo.Act2SystemMonitor : Resuming eureka task from state\n")
-			_pc = 52153
-			continue
-		elif _pc == 52153:
-			v4 = state.cast(global.handle("g_eureka_state"))
-			state.restore(v4)
-			v3 = state.task(v4)
-			_pc = 52235
-			continue
-		elif _pc == 52235:
-			_pc = 52249
-			continue
-		elif _pc == 52240:
-			_pc = 52249
-			continue
-		elif _pc == 52249:
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 52280:
-			if _pog_eq(v2, "map:/geog/badlands/firefrost"):
-				_pc = 52298
-				continue
-			else:
-				_pc = 52637
-				continue
-		elif _pc == 52298:
-			_pc = 52324
-			continue
-		elif _pc == 52303:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Firefrost system\n")
-			_pc = 52324
-			continue
-		elif _pc == 52324:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			if _pog_is_null(global.pog_bool("g_firefrost_script_complete")):
-				_pc = 52409
-				continue
-			else:
-				_pc = 52599
-				continue
-		elif _pc == 52409:
-			if _pog_is_null(global.handle("g_firefrost_state")):
-				_pc = 52436
-				continue
-			else:
-				_pc = 52486
-				continue
-		elif _pc == 52436:
-			_pc = 52462
-			continue
-		elif _pc == 52441:
-			debug.print_string("iActTwo.Act2SystemMonitor : Task for firefrost doesn't exist starting a fresh\n")
-			_pc = 52462
-			continue
-		elif _pc == 52462:
-			v3 = _pog_spawn(firefrost_story_script.bind())
-			_pc = 52594
-			continue
-		elif _pc == 52486:
-			_pc = 52512
-			continue
-		elif _pc == 52491:
-			debug.print_string("iActTwo.Act2SystemMonitor : Resuming firefrost task from state\n")
-			_pc = 52512
-			continue
-		elif _pc == 52512:
-			v4 = state.cast(global.handle("g_firefrost_state"))
-			state.restore(v4)
-			v3 = state.task(v4)
-			_pc = 52594
-			continue
-		elif _pc == 52594:
-			_pc = 52606
-			continue
-		elif _pc == 52599:
-			v3 = 0
-			_pc = 52606
-			continue
-		elif _pc == 52606:
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 52637:
-			if _pog_eq(v2, "map:/geog/badlands/kompira"):
-				_pc = 52655
-				continue
-			else:
-				_pc = 52994
-				continue
-		elif _pc == 52655:
-			_pc = 52681
-			continue
-		elif _pc == 52660:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Kompira system\n")
-			_pc = 52681
-			continue
-		elif _pc == 52681:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			if _pog_is_null(global.pog_bool("g_kompira_script_complete")):
-				_pc = 52766
-				continue
-			else:
-				_pc = 52956
-				continue
-		elif _pc == 52766:
-			if _pog_is_null(global.handle("g_kompira_state")):
-				_pc = 52793
-				continue
-			else:
-				_pc = 52843
-				continue
-		elif _pc == 52793:
-			_pc = 52819
-			continue
-		elif _pc == 52798:
-			debug.print_string("iActTwo.Act2SystemMonitor : Task for kompira doesn't exist starting a fresh\n")
-			_pc = 52819
-			continue
-		elif _pc == 52819:
-			v3 = _pog_spawn(kompira_story_script.bind())
-			_pc = 52951
-			continue
-		elif _pc == 52843:
-			_pc = 52869
-			continue
-		elif _pc == 52848:
-			debug.print_string("iActTwo.Act2SystemMonitor : Resuming kompira task from state\n")
-			_pc = 52869
-			continue
-		elif _pc == 52869:
-			v4 = state.cast(global.handle("g_kompira_state"))
-			state.restore(v4)
-			v3 = state.task(v4)
-			_pc = 52951
-			continue
-		elif _pc == 52951:
-			_pc = 52963
-			continue
-		elif _pc == 52956:
-			v3 = 0
-			_pc = 52963
-			continue
-		elif _pc == 52963:
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 52994:
-			if _pog_eq(v2, "map:/geog/badlands/mwari"):
-				_pc = 53012
-				continue
-			else:
-				_pc = 53351
-				continue
-		elif _pc == 53012:
-			_pc = 53038
-			continue
-		elif _pc == 53017:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Mwari system\n")
-			_pc = 53038
-			continue
-		elif _pc == 53038:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			if _pog_is_null(global.pog_bool("g_mwari_script_complete")):
-				_pc = 53123
-				continue
-			else:
-				_pc = 53313
-				continue
-		elif _pc == 53123:
-			if _pog_is_null(global.handle("g_mwari_state")):
-				_pc = 53150
-				continue
-			else:
-				_pc = 53200
-				continue
-		elif _pc == 53150:
-			_pc = 53176
-			continue
-		elif _pc == 53155:
-			debug.print_string("iActTwo.Act2SystemMonitor : Task for mwari doesn't exist starting a fresh\n")
-			_pc = 53176
-			continue
-		elif _pc == 53176:
-			v3 = _pog_spawn(mwari_story_script.bind())
-			_pc = 53308
-			continue
-		elif _pc == 53200:
-			_pc = 53226
-			continue
-		elif _pc == 53205:
-			debug.print_string("iActTwo.Act2SystemMonitor : Resuming mwari task from state\n")
-			_pc = 53226
-			continue
-		elif _pc == 53226:
-			v4 = state.cast(global.handle("g_mwari_state"))
-			state.restore(v4)
-			v3 = state.task(v4)
-			_pc = 53308
-			continue
-		elif _pc == 53308:
-			_pc = 53320
-			continue
-		elif _pc == 53313:
-			v3 = 0
-			_pc = 53320
-			continue
-		elif _pc == 53320:
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 53351:
-			if _pog_eq(v2, "map:/geog/badlands/santa_romera"):
-				_pc = 53369
-				continue
-			else:
-				_pc = 53708
-				continue
-		elif _pc == 53369:
-			_pc = 53395
-			continue
-		elif _pc == 53374:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Santa Romera system\n")
-			_pc = 53395
-			continue
-		elif _pc == 53395:
-			v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
-			_pog_halt(v3)
-			if _pog_is_null(global.pog_bool("g_santaromera_script_complete")):
-				_pc = 53480
-				continue
-			else:
-				_pc = 53670
-				continue
-		elif _pc == 53480:
-			if _pog_is_null(global.handle("g_santa_romera_state")):
-				_pc = 53507
-				continue
-			else:
-				_pc = 53557
-				continue
-		elif _pc == 53507:
-			_pc = 53533
-			continue
-		elif _pc == 53512:
-			debug.print_string("iActTwo.Act2SystemMonitor : Task for santa romera doesn't exist starting a fresh\n")
-			_pc = 53533
-			continue
-		elif _pc == 53533:
-			v3 = _pog_spawn(santa_romera_story_script.bind())
-			_pc = 53665
-			continue
-		elif _pc == 53557:
-			_pc = 53583
-			continue
-		elif _pc == 53562:
-			debug.print_string("iActTwo.Act2SystemMonitor : Resuming santa romera task from state\n")
-			_pc = 53583
-			continue
-		elif _pc == 53583:
-			v4 = state.cast(global.handle("g_santa_romera_state"))
-			state.restore(v4)
-			v3 = state.task(v4)
-			_pc = 53665
-			continue
-		elif _pc == 53665:
-			_pc = 53677
-			continue
-		elif _pc == 53670:
-			v3 = 0
-			_pc = 53677
-			continue
-		elif _pc == 53677:
-			global.set_handle("g_current_active_system_script", v3)
-			_pc = 53734
-			continue
-		elif _pc == 53708:
-			_pc = 53734
-			continue
-		elif _pc == 53713:
-			debug.print_string("iActTwo.Act2SystemMonitor : player has changed system, but it's not one I'm fussed about or know about\n")
-			_pc = 53734
-			continue
-		elif _pc == 53734:
-			_pc = 53797
-			continue
-		elif _pc == 53739:
-			_pc = 53765
-			continue
-		elif _pc == 53744:
-			debug.print_string("iActTwo.Act2systemMonitor : player has not changed system, sleeping\n")
-			_pc = 53765
-			continue
-		elif _pc == 53765:
-			await _pog_wait(1.0)
-			_pc = 53797
-			continue
-		elif _pc == 53797:
-			_pc = 50570
-			continue
-		elif _pc == 53802:
-			return
+				if _pog_eq(v2, "map:/geog/badlands/coyote"):
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Coyote system\n")
+					v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+					_pog_halt(v3)
+					if _pog_is_null(global.pog_bool("g_coyote_script_complete")):
+						if _pog_is_null(global.handle("g_coyote_state")):
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.Act2SystemMonitor : Task for coyote doesn't exist starting a fresh\n")
+							v3 = _pog_spawn(coyote_story_script.bind())
+						else:
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.Act2SystemMonitor : Resuming coyote task from state\n")
+							v4 = state.cast(global.handle("g_coyote_state"))
+							state.restore(v4)
+							v3 = state.task(v4)
+					else:
+						v3 = 0
+					global.set_handle("g_current_active_system_script", v3)
+				else:
+					if _pog_eq(v2, "map:/geog/badlands/dagda"):
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Dagda system\n")
+						v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+						_pog_halt(v3)
+						if _pog_is_null(global.pog_bool("g_dagda_script_complete")):
+							if _pog_is_null(global.handle("g_dagda_state")):
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.Act2SystemMonitor : Task for dagda doesn't exist starting a fresh\n")
+								v3 = _pog_spawn(dagda_story_script.bind())
+							else:
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.Act2SystemMonitor : Resuming dagda task from state\n")
+								v4 = state.cast(global.handle("g_dagda_state"))
+								state.restore(v4)
+								v3 = state.task(v4)
+						global.set_handle("g_current_active_system_script", v3)
+					else:
+						if _pog_eq(v2, "map:/geog/badlands/dante"):
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Dante system\n")
+							v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+							_pog_halt(v3)
+							v3 = 0
+							global.set_handle("g_current_active_system_script", v3)
+						else:
+							if _pog_eq(v2, "map:/geog/badlands/eureka"):
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Eureka system\n")
+								v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+								_pog_halt(v3)
+								if _pog_is_null(global.pog_bool("g_eureka_script_complete")):
+									if _pog_is_null(global.handle("g_eureka_state")):
+										if PogRuntime.TRACE:
+											debug.print_string("iActTwo.Act2SystemMonitor : Task for eureka doesn't exist starting a fresh\n")
+										v3 = _pog_spawn(eureka_story_script.bind())
+									else:
+										if PogRuntime.TRACE:
+											debug.print_string("iActTwo.Act2SystemMonitor : Resuming eureka task from state\n")
+										v4 = state.cast(global.handle("g_eureka_state"))
+										state.restore(v4)
+										v3 = state.task(v4)
+								global.set_handle("g_current_active_system_script", v3)
+							else:
+								if _pog_eq(v2, "map:/geog/badlands/firefrost"):
+									if PogRuntime.TRACE:
+										debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Firefrost system\n")
+									v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+									_pog_halt(v3)
+									if _pog_is_null(global.pog_bool("g_firefrost_script_complete")):
+										if _pog_is_null(global.handle("g_firefrost_state")):
+											if PogRuntime.TRACE:
+												debug.print_string("iActTwo.Act2SystemMonitor : Task for firefrost doesn't exist starting a fresh\n")
+											v3 = _pog_spawn(firefrost_story_script.bind())
+										else:
+											if PogRuntime.TRACE:
+												debug.print_string("iActTwo.Act2SystemMonitor : Resuming firefrost task from state\n")
+											v4 = state.cast(global.handle("g_firefrost_state"))
+											state.restore(v4)
+											v3 = state.task(v4)
+									else:
+										v3 = 0
+									global.set_handle("g_current_active_system_script", v3)
+								else:
+									if _pog_eq(v2, "map:/geog/badlands/kompira"):
+										if PogRuntime.TRACE:
+											debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Kompira system\n")
+										v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+										_pog_halt(v3)
+										if _pog_is_null(global.pog_bool("g_kompira_script_complete")):
+											if _pog_is_null(global.handle("g_kompira_state")):
+												if PogRuntime.TRACE:
+													debug.print_string("iActTwo.Act2SystemMonitor : Task for kompira doesn't exist starting a fresh\n")
+												v3 = _pog_spawn(kompira_story_script.bind())
+											else:
+												if PogRuntime.TRACE:
+													debug.print_string("iActTwo.Act2SystemMonitor : Resuming kompira task from state\n")
+												v4 = state.cast(global.handle("g_kompira_state"))
+												state.restore(v4)
+												v3 = state.task(v4)
+										else:
+											v3 = 0
+										global.set_handle("g_current_active_system_script", v3)
+									else:
+										if _pog_eq(v2, "map:/geog/badlands/mwari"):
+											if PogRuntime.TRACE:
+												debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Mwari system\n")
+											v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+											_pog_halt(v3)
+											if _pog_is_null(global.pog_bool("g_mwari_script_complete")):
+												if _pog_is_null(global.handle("g_mwari_state")):
+													if PogRuntime.TRACE:
+														debug.print_string("iActTwo.Act2SystemMonitor : Task for mwari doesn't exist starting a fresh\n")
+													v3 = _pog_spawn(mwari_story_script.bind())
+												else:
+													if PogRuntime.TRACE:
+														debug.print_string("iActTwo.Act2SystemMonitor : Resuming mwari task from state\n")
+													v4 = state.cast(global.handle("g_mwari_state"))
+													state.restore(v4)
+													v3 = state.task(v4)
+											else:
+												v3 = 0
+											global.set_handle("g_current_active_system_script", v3)
+										else:
+											if _pog_eq(v2, "map:/geog/badlands/santa_romera"):
+												if PogRuntime.TRACE:
+													debug.print_string("iActTwo.Act2SystemMonitor : player has entered the Santa Romera system\n")
+												v3 = _pog_task_cast(global.handle("g_current_active_system_script"))
+												_pog_halt(v3)
+												if _pog_is_null(global.pog_bool("g_santaromera_script_complete")):
+													if _pog_is_null(global.handle("g_santa_romera_state")):
+														if PogRuntime.TRACE:
+															debug.print_string("iActTwo.Act2SystemMonitor : Task for santa romera doesn't exist starting a fresh\n")
+														v3 = _pog_spawn(santa_romera_story_script.bind())
+													else:
+														if PogRuntime.TRACE:
+															debug.print_string("iActTwo.Act2SystemMonitor : Resuming santa romera task from state\n")
+														v4 = state.cast(global.handle("g_santa_romera_state"))
+														state.restore(v4)
+														v3 = state.task(v4)
+												else:
+													v3 = 0
+												global.set_handle("g_current_active_system_script", v3)
+											else:
+												if PogRuntime.TRACE:
+													debug.print_string("iActTwo.Act2SystemMonitor : player has changed system, but it's not one I'm fussed about or know about\n")
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.Act2systemMonitor : player has not changed system, sleeping\n")
+			await _pog_wait(1.0)
+	return
 	return 0
 
 func allied_search_encounters() -> Variant:
@@ -8524,564 +7262,175 @@ func master_script() -> Variant:
 
 func local_62490() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 62490
 	while true:
-		if _pc == 62490:
-			_pc = 62500
-			continue
-		elif _pc == 62500:
-			await _pog_frame()
-			if _pog_every(62501, 1.0):
-				_pc = 62514
-				continue
-			else:
-				_pc = 65495
-				continue
-		elif _pc == 62514:
-			_pc = 62540
-			continue
-		elif _pc == 62519:
+		await _pog_wait(1)
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.BaseMasterScript - Checking to see if any new story sequences are needed....\n")
-			_pc = 62540
-			continue
-		elif _pc == 62540:
-			if _pog_is_running(v0):
-				_pc = 62563
-				continue
-			else:
-				_pc = 62594
-				continue
-		elif _pc == 62563:
-			_pc = 62589
-			continue
-		elif _pc == 62568:
-			debug.print_string("iActTwo.BaseMasterScript - A story sequence is currently running.\n")
-			_pc = 62589
-			continue
-		elif _pc == 62589:
-			_pc = 65495
-			continue
-		elif _pc == 62594:
-			_pc = 62620
-			continue
-		elif _pc == 62599:
-			debug.print_string("iActTwo.BaseMasterScript - No story sequences are currnetly runing, checking to see if any are waiting to run\n")
-			_pc = 62620
-			continue
-		elif _pc == 62620:
-			if _pog_is_null(global.pog_bool("g_act2_badlands_food_sorted")):
-				_pc = 62647
-				continue
-			else:
-				_pc = 62872
-				continue
-		elif _pc == 62647:
-			if iinventory.number_of_cargo_type(534) > 0 and _pog_is_null(global.exists("g_flagged_first_mine_done")):
-				_pc = 62693
-				continue
-			else:
-				_pc = 62745
-				continue
-		elif _pc == 62693:
-			global.create_bool("g_flagged_first_mine_done", 2, 1)
-			await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c10_jafs_mine_is_ready")
-			_pc = 62745
-			continue
-		elif _pc == 62745:
-			if iinventory.number_of_cargo_type(534) >= 10 and _pog_is_null(global.exists("g_flagged_made_all_mines")):
-				_pc = 62792
-				continue
-			else:
-				_pc = 62872
-				continue
-		elif _pc == 62792:
-			global.create_bool("g_flagged_made_all_mines", 2, 1)
-			await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c11_jafs_mines_are_ready")
-			await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c11_jafs_you_deliver_one")
-			_pc = 62872
-			continue
-		elif _pc == 62872:
-			if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_1")) and global.pog_int("g_story_2.10b") != 2:
-				_pc = 62933
-				continue
-			else:
-				_pc = 63006
-				continue
-		elif _pc == 62933:
-			_pc = 62959
-			continue
-		elif _pc == 62938:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.10b has been activated\n")
-			_pc = 62959
-			continue
-		elif _pc == 62959:
-			v0 = _pog_spawn(local_4967.bind())
-			global.set_int("g_story_2.10b", 2)
-			_pc = 65495
-			continue
-		elif _pc == 63006:
-			if global.pog_int("g_story_2.10") == 1:
-				_pc = 63033
-				continue
-			else:
-				_pc = 63106
-				continue
-		elif _pc == 63033:
-			_pc = 63059
-			continue
-		elif _pc == 63038:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.10 has been activated\n")
-			_pc = 63059
-			continue
-		elif _pc == 63059:
-			v0 = _pog_spawn(local_4883.bind())
-			global.set_int("g_story_2.10", 2)
-			_pc = 65495
-			continue
-		elif _pc == 63106:
-			if global.pog_int("g_story_2.170") == 1:
-				_pc = 63133
-				continue
-			else:
-				_pc = 63206
-				continue
-		elif _pc == 63133:
-			_pc = 63159
-			continue
-		elif _pc == 63138:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.170 has been activated\n")
-			_pc = 63159
-			continue
-		elif _pc == 63159:
-			global.set_int("g_story_2.170", 2)
-			v0 = _pog_spawn(local_5191.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63206:
-			if global.pog_int("g_story_2.190") == 1:
-				_pc = 63233
-				continue
-			else:
-				_pc = 63306
-				continue
-		elif _pc == 63233:
-			_pc = 63259
-			continue
-		elif _pc == 63238:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.190 has been activated\n")
-			_pc = 63259
-			continue
-		elif _pc == 63259:
-			global.set_int("g_story_2.190", 2)
-			v0 = _pog_spawn(local_5253.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63306:
-			if global.pog_int("g_story_2.200") == 1:
-				_pc = 63333
-				continue
-			else:
-				_pc = 63406
-				continue
-		elif _pc == 63333:
-			_pc = 63359
-			continue
-		elif _pc == 63338:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.200 has been activated\n")
-			_pc = 63359
-			continue
-		elif _pc == 63359:
-			global.set_int("g_story_2.200", 2)
-			v0 = _pog_spawn(local_5315.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63406:
-			if global.pog_int("g_story_2.180") == 1:
-				_pc = 63433
-				continue
-			else:
-				_pc = 63506
-				continue
-		elif _pc == 63433:
-			_pc = 63459
-			continue
-		elif _pc == 63438:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.180 has been activated\n")
-			_pc = 63459
-			continue
-		elif _pc == 63459:
-			global.set_int("g_story_2.180", 2)
-			v0 = _pog_spawn(local_5443.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63506:
-			if global.pog_int("g_story_2.210") == 1:
-				_pc = 63533
-				continue
-			else:
-				_pc = 63606
-				continue
-		elif _pc == 63533:
-			_pc = 63559
-			continue
-		elif _pc == 63538:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.210 has been activated\n")
-			_pc = 63559
-			continue
-		elif _pc == 63559:
-			global.set_int("g_story_2.210", 2)
-			v0 = _pog_spawn(local_5829.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63606:
-			if global.pog_int("g_story_2.220") == 1:
-				_pc = 63633
-				continue
-			else:
-				_pc = 63706
-				continue
-		elif _pc == 63633:
-			_pc = 63659
-			continue
-		elif _pc == 63638:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.220 has been activated\n")
-			_pc = 63659
-			continue
-		elif _pc == 63659:
-			global.set_int("g_story_2.220", 2)
-			v0 = _pog_spawn(local_5527.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63706:
-			if global.pog_int("g_story_2.231") == 1:
-				_pc = 63733
-				continue
-			else:
-				_pc = 63806
-				continue
-		elif _pc == 63733:
-			_pc = 63759
-			continue
-		elif _pc == 63738:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.231 has been activated\n")
-			_pc = 63759
-			continue
-		elif _pc == 63759:
-			global.set_int("g_story_2.231", 2)
-			v0 = _pog_spawn(local_6126.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63806:
-			if global.pog_int("g_story_2.230") == 1:
-				_pc = 63833
-				continue
-			else:
-				_pc = 63906
-				continue
-		elif _pc == 63833:
-			_pc = 63859
-			continue
-		elif _pc == 63838:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.230 has been activated\n")
-			_pc = 63859
-			continue
-		elif _pc == 63859:
-			global.set_int("g_story_2.230", 2)
-			v0 = _pog_spawn(local_6244.bind())
-			_pc = 65495
-			continue
-		elif _pc == 63906:
-			if global.pog_int("g_story_2.250") == 1:
-				_pc = 63933
-				continue
-			else:
-				_pc = 64006
-				continue
-		elif _pc == 63933:
-			_pc = 63959
-			continue
-		elif _pc == 63938:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.250 has been activated\n")
-			_pc = 63959
-			continue
-		elif _pc == 63959:
-			global.set_int("g_story_2.250", 2)
-			v0 = _pog_spawn(local_5891.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64006:
-			if global.pog_int("g_story_2.270") == 1:
-				_pc = 64033
-				continue
-			else:
-				_pc = 64106
-				continue
-		elif _pc == 64033:
-			_pc = 64059
-			continue
-		elif _pc == 64038:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.270 has been activated\n")
-			_pc = 64059
-			continue
-		elif _pc == 64059:
-			global.set_int("g_story_2.270", 2)
-			v0 = _pog_spawn(local_6002.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64106:
-			if global.pog_int("g_story_2.260") == 1:
-				_pc = 64133
-				continue
-			else:
-				_pc = 64206
-				continue
-		elif _pc == 64133:
-			_pc = 64159
-			continue
-		elif _pc == 64138:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.260 has been activated\n")
-			_pc = 64159
-			continue
-		elif _pc == 64159:
-			global.set_int("g_story_2.260", 2)
-			v0 = _pog_spawn(local_5940.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64206:
-			if global.pog_int("g_story_2.160") == 1:
-				_pc = 64233
-				continue
-			else:
-				_pc = 64306
-				continue
-		elif _pc == 64233:
-			_pc = 64259
-			continue
-		elif _pc == 64238:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.160 has been activated\n")
-			_pc = 64259
-			continue
-		elif _pc == 64259:
-			global.set_int("g_story_2.160", 2)
-			v0 = _pog_spawn(local_6328.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64306:
-			if global.pog_int("g_story_2.150") == 1:
-				_pc = 64333
-				continue
-			else:
-				_pc = 64406
-				continue
-		elif _pc == 64333:
-			_pc = 64359
-			continue
-		elif _pc == 64338:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.150 has been activated\n")
-			_pc = 64359
-			continue
-		elif _pc == 64359:
-			global.set_int("g_story_2.150", 2)
-			v0 = _pog_spawn(local_6390.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64406:
-			if global.pog_int("g_story_2.290") == 1:
-				_pc = 64433
-				continue
-			else:
-				_pc = 64506
-				continue
-		elif _pc == 64433:
-			_pc = 64459
-			continue
-		elif _pc == 64438:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.290 has been activated\n")
-			_pc = 64459
-			continue
-		elif _pc == 64459:
-			global.set_int("g_story_2.290", 2)
-			v0 = _pog_spawn(local_6614.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64506:
-			if global.pog_int("g_story_2.130") == 1:
-				_pc = 64533
-				continue
-			else:
-				_pc = 64606
-				continue
-		elif _pc == 64533:
-			_pc = 64559
-			continue
-		elif _pc == 64538:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.130 has been activated\n")
-			_pc = 64559
-			continue
-		elif _pc == 64559:
-			global.set_int("g_story_2.130", 2)
-			v0 = _pog_spawn(local_6698.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64606:
-			if global.pog_int("g_story_2.140") == 1:
-				_pc = 64633
-				continue
-			else:
-				_pc = 64706
-				continue
-		elif _pc == 64633:
-			_pc = 64659
-			continue
-		elif _pc == 64638:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.140 has been activated\n")
-			_pc = 64659
-			continue
-		elif _pc == 64659:
-			global.set_int("g_story_2.140", 2)
-			v0 = _pog_spawn(local_6747.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64706:
-			if global.pog_int("g_story_2.140b") == 1:
-				_pc = 64733
-				continue
-			else:
-				_pc = 64806
-				continue
-		elif _pc == 64733:
-			_pc = 64759
-			continue
-		elif _pc == 64738:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.140 has been activated\n")
-			_pc = 64759
-			continue
-		elif _pc == 64759:
-			global.set_int("g_story_2.140b", 2)
-			v0 = _pog_spawn(local_6809.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64806:
-			if global.pog_int("g_story_2.300") == 1:
-				_pc = 64833
-				continue
-			else:
-				_pc = 64906
-				continue
-		elif _pc == 64833:
-			_pc = 64859
-			continue
-		elif _pc == 64838:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.300 has been activated\n")
-			_pc = 64859
-			continue
-		elif _pc == 64859:
-			global.set_int("g_story_2.300", 2)
-			v0 = _pog_spawn(local_8697.bind())
-			_pc = 65495
-			continue
-		elif _pc == 64906:
-			if global.pog_int("g_story_2.310") == 1:
-				_pc = 64933
-				continue
-			else:
-				_pc = 65006
-				continue
-		elif _pc == 64933:
-			_pc = 64959
-			continue
-		elif _pc == 64938:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.310 has been activated\n")
-			_pc = 64959
-			continue
-		elif _pc == 64959:
-			global.set_int("g_story_2.310", 2)
-			v0 = _pog_spawn(local_8759.bind())
-			_pc = 65495
-			continue
-		elif _pc == 65006:
-			if global.pog_int("g_story_2.320") == 1:
-				_pc = 65033
-				continue
-			else:
-				_pc = 65106
-				continue
-		elif _pc == 65033:
-			_pc = 65059
-			continue
-		elif _pc == 65038:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.320 has been activated\n")
-			_pc = 65059
-			continue
-		elif _pc == 65059:
-			global.set_int("g_story_2.320", 2)
-			v0 = _pog_spawn(local_8821.bind())
-			_pc = 65495
-			continue
-		elif _pc == 65106:
-			if global.pog_int("g_story_2.330") == 1:
-				_pc = 65133
-				continue
-			else:
-				_pc = 65206
-				continue
-		elif _pc == 65133:
-			_pc = 65159
-			continue
-		elif _pc == 65138:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.330 has been activated\n")
-			_pc = 65159
-			continue
-		elif _pc == 65159:
-			global.set_int("g_story_2.330", 2)
-			v0 = _pog_spawn(local_8883.bind())
-			_pc = 65495
-			continue
-		elif _pc == 65206:
-			if global.pog_int("g_story_2.280") == 1:
-				_pc = 65233
-				continue
-			else:
-				_pc = 65306
-				continue
-		elif _pc == 65233:
-			_pc = 65259
-			continue
-		elif _pc == 65238:
-			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.280 has been activated\n")
-			_pc = 65259
-			continue
-		elif _pc == 65259:
-			global.set_int("g_story_2.280", 2)
-			v0 = _pog_spawn(local_6064.bind())
-			_pc = 65495
-			continue
-		elif _pc == 65306:
-			if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_150")) and iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_180")) and global.pog_bool("g_act2_base_has_moved") == 1 and _pog_is_null(global.exists("g_told_about_hoffer")):
-				_pc = 65421
-				continue
-			else:
-				_pc = 65469
-				continue
-		elif _pc == 65421:
-			global.create_bool("g_told_about_hoffer", 2, 1)
-			v0 = _pog_spawn(local_6474.bind())
-			_pc = 65495
-			continue
-		elif _pc == 65469:
-			_pc = 65495
-			continue
-		elif _pc == 65474:
-			debug.print_string(" iActTwo.MasterBaseScript - No story sequences are wating to be executed, sleeping for a bit...\n")
-			_pc = 65495
-			continue
-		elif _pc == 65495:
-			_pc = 62500
-			continue
-		elif _pc == 65500:
-			return
+		if _pog_is_running(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.BaseMasterScript - A story sequence is currently running.\n")
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.BaseMasterScript - No story sequences are currnetly runing, checking to see if any are waiting to run\n")
+			if _pog_is_null(global.pog_bool("g_act2_badlands_food_sorted")):
+				if iinventory.number_of_cargo_type(534) > 0 and _pog_is_null(global.exists("g_flagged_first_mine_done")):
+					global.create_bool("g_flagged_first_mine_done", 2, 1)
+					await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c10_jafs_mine_is_ready")
+				if iinventory.number_of_cargo_type(534) >= 10 and _pog_is_null(global.exists("g_flagged_made_all_mines")):
+					global.create_bool("g_flagged_made_all_mines", 2, 1)
+					await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c11_jafs_mines_are_ready")
+					await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c11_jafs_you_deliver_one")
+			if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_1")) and global.pog_int("g_story_2.10b") != 2:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.10b has been activated\n")
+				v0 = _pog_spawn(local_4967.bind())
+				global.set_int("g_story_2.10b", 2)
+			else:
+				if global.pog_int("g_story_2.10") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.10 has been activated\n")
+					v0 = _pog_spawn(local_4883.bind())
+					global.set_int("g_story_2.10", 2)
+				else:
+					if global.pog_int("g_story_2.170") == 1:
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.170 has been activated\n")
+						global.set_int("g_story_2.170", 2)
+						v0 = _pog_spawn(local_5191.bind())
+					else:
+						if global.pog_int("g_story_2.190") == 1:
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.190 has been activated\n")
+							global.set_int("g_story_2.190", 2)
+							v0 = _pog_spawn(local_5253.bind())
+						else:
+							if global.pog_int("g_story_2.200") == 1:
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.200 has been activated\n")
+								global.set_int("g_story_2.200", 2)
+								v0 = _pog_spawn(local_5315.bind())
+							else:
+								if global.pog_int("g_story_2.180") == 1:
+									if PogRuntime.TRACE:
+										debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.180 has been activated\n")
+									global.set_int("g_story_2.180", 2)
+									v0 = _pog_spawn(local_5443.bind())
+								else:
+									if global.pog_int("g_story_2.210") == 1:
+										if PogRuntime.TRACE:
+											debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.210 has been activated\n")
+										global.set_int("g_story_2.210", 2)
+										v0 = _pog_spawn(local_5829.bind())
+									else:
+										if global.pog_int("g_story_2.220") == 1:
+											if PogRuntime.TRACE:
+												debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.220 has been activated\n")
+											global.set_int("g_story_2.220", 2)
+											v0 = _pog_spawn(local_5527.bind())
+										else:
+											if global.pog_int("g_story_2.231") == 1:
+												if PogRuntime.TRACE:
+													debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.231 has been activated\n")
+												global.set_int("g_story_2.231", 2)
+												v0 = _pog_spawn(local_6126.bind())
+											else:
+												if global.pog_int("g_story_2.230") == 1:
+													if PogRuntime.TRACE:
+														debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.230 has been activated\n")
+													global.set_int("g_story_2.230", 2)
+													v0 = _pog_spawn(local_6244.bind())
+												else:
+													if global.pog_int("g_story_2.250") == 1:
+														if PogRuntime.TRACE:
+															debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.250 has been activated\n")
+														global.set_int("g_story_2.250", 2)
+														v0 = _pog_spawn(local_5891.bind())
+													else:
+														if global.pog_int("g_story_2.270") == 1:
+															if PogRuntime.TRACE:
+																debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.270 has been activated\n")
+															global.set_int("g_story_2.270", 2)
+															v0 = _pog_spawn(local_6002.bind())
+														else:
+															if global.pog_int("g_story_2.260") == 1:
+																if PogRuntime.TRACE:
+																	debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.260 has been activated\n")
+																global.set_int("g_story_2.260", 2)
+																v0 = _pog_spawn(local_5940.bind())
+															else:
+																if global.pog_int("g_story_2.160") == 1:
+																	if PogRuntime.TRACE:
+																		debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.160 has been activated\n")
+																	global.set_int("g_story_2.160", 2)
+																	v0 = _pog_spawn(local_6328.bind())
+																else:
+																	if global.pog_int("g_story_2.150") == 1:
+																		if PogRuntime.TRACE:
+																			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.150 has been activated\n")
+																		global.set_int("g_story_2.150", 2)
+																		v0 = _pog_spawn(local_6390.bind())
+																	else:
+																		if global.pog_int("g_story_2.290") == 1:
+																			if PogRuntime.TRACE:
+																				debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.290 has been activated\n")
+																			global.set_int("g_story_2.290", 2)
+																			v0 = _pog_spawn(local_6614.bind())
+																		else:
+																			if global.pog_int("g_story_2.130") == 1:
+																				if PogRuntime.TRACE:
+																					debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.130 has been activated\n")
+																				global.set_int("g_story_2.130", 2)
+																				v0 = _pog_spawn(local_6698.bind())
+																			else:
+																				if global.pog_int("g_story_2.140") == 1:
+																					if PogRuntime.TRACE:
+																						debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.140 has been activated\n")
+																					global.set_int("g_story_2.140", 2)
+																					v0 = _pog_spawn(local_6747.bind())
+																				else:
+																					if global.pog_int("g_story_2.140b") == 1:
+																						if PogRuntime.TRACE:
+																							debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.140 has been activated\n")
+																						global.set_int("g_story_2.140b", 2)
+																						v0 = _pog_spawn(local_6809.bind())
+																					else:
+																						if global.pog_int("g_story_2.300") == 1:
+																							if PogRuntime.TRACE:
+																								debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.300 has been activated\n")
+																							global.set_int("g_story_2.300", 2)
+																							v0 = _pog_spawn(local_8697.bind())
+																						else:
+																							if global.pog_int("g_story_2.310") == 1:
+																								if PogRuntime.TRACE:
+																									debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.310 has been activated\n")
+																								global.set_int("g_story_2.310", 2)
+																								v0 = _pog_spawn(local_8759.bind())
+																							else:
+																								if global.pog_int("g_story_2.320") == 1:
+																									if PogRuntime.TRACE:
+																										debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.320 has been activated\n")
+																									global.set_int("g_story_2.320", 2)
+																									v0 = _pog_spawn(local_8821.bind())
+																								else:
+																									if global.pog_int("g_story_2.330") == 1:
+																										if PogRuntime.TRACE:
+																											debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.330 has been activated\n")
+																										global.set_int("g_story_2.330", 2)
+																										v0 = _pog_spawn(local_8883.bind())
+																									else:
+																										if global.pog_int("g_story_2.280") == 1:
+																											if PogRuntime.TRACE:
+																												debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.280 has been activated\n")
+																											global.set_int("g_story_2.280", 2)
+																											v0 = _pog_spawn(local_6064.bind())
+																										else:
+																											if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_150")) and iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_180")) and global.pog_bool("g_act2_base_has_moved") == 1 and _pog_is_null(global.exists("g_told_about_hoffer")):
+																												global.create_bool("g_told_about_hoffer", 2, 1)
+																												v0 = _pog_spawn(local_6474.bind())
+																											else:
+																												if PogRuntime.TRACE:
+																													debug.print_string(" iActTwo.MasterBaseScript - No story sequences are wating to be executed, sleeping for a bit...\n")
+	return
 	return 0
 
 func base_main() -> Variant:
@@ -9096,171 +7445,48 @@ func main() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 65560
-	while true:
-		if _pc == 65560:
-			v0 = 0
-			if global.pog_int("g_current_act") <= 1:
-				_pc = 65599
-				continue
-			else:
-				_pc = 65712
-				continue
-		elif _pc == 65599:
-			_pc = 65625
-			continue
-		elif _pc == 65604:
+	v0 = 0
+	if global.pog_int("g_current_act") <= 1:
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.ActTwoStart : initialising act two\n")
-			_pc = 65625
-			continue
-		elif _pc == 65625:
-			await local_0()
-			v2 = _pog_spawn(master_script.bind())
-			_pog_detach(v2)
-			global.set_int("g_current_act", 2)
-			v0 = 1
-			_pc = 66344
-			continue
-		elif _pc == 65712:
-			_pc = 65738
-			continue
-		elif _pc == 65717:
+		await local_0()
+		v2 = _pog_spawn(master_script.bind())
+		_pog_detach(v2)
+		global.set_int("g_current_act", 2)
+		v0 = 1
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.ActTwoStart : Act Two has already been initialised.\n")
-			_pc = 65738
-			continue
-		elif _pc == 65738:
-			if _pog_is_null(global.exists("g_current_active_system_script")):
-				_pc = 65765
-				continue
-			else:
-				_pc = 66344
-				continue
-		elif _pc == 65765:
+		if _pog_is_null(global.exists("g_current_active_system_script")):
 			global.create_handle("g_current_active_system_script", 2, 0)
 			if not (global.exists("g_hoffers_wake_state")):
-				_pc = 65815
-				continue
-			else:
-				_pc = 65839
-				continue
-		elif _pc == 65815:
-			global.create_handle("g_hoffers_wake_state", 2, 0)
-			_pc = 65839
-			continue
-		elif _pc == 65839:
+				global.create_handle("g_hoffers_wake_state", 2, 0)
 			if not (global.exists("g_coyote_state")):
-				_pc = 65865
-				continue
-			else:
-				_pc = 65889
-				continue
-		elif _pc == 65865:
-			global.create_handle("g_coyote_state", 2, 0)
-			_pc = 65889
-			continue
-		elif _pc == 65889:
+				global.create_handle("g_coyote_state", 2, 0)
 			if not (global.exists("g_kompira_state")):
-				_pc = 65915
-				continue
-			else:
-				_pc = 65939
-				continue
-		elif _pc == 65915:
-			global.create_handle("g_kompira_state", 2, 0)
-			_pc = 65939
-			continue
-		elif _pc == 65939:
+				global.create_handle("g_kompira_state", 2, 0)
 			if not (global.exists("g_eureka_state")):
-				_pc = 65965
-				continue
-			else:
-				_pc = 65989
-				continue
-		elif _pc == 65965:
-			global.create_handle("g_eureka_state", 2, 0)
-			_pc = 65989
-			continue
-		elif _pc == 65989:
+				global.create_handle("g_eureka_state", 2, 0)
 			if not (global.exists("g_firefrost_state")):
-				_pc = 66015
-				continue
-			else:
-				_pc = 66039
-				continue
-		elif _pc == 66015:
-			global.create_handle("g_firefrost_state", 2, 0)
-			_pc = 66039
-			continue
-		elif _pc == 66039:
+				global.create_handle("g_firefrost_state", 2, 0)
 			if not (global.exists("g_dagda_state")):
-				_pc = 66065
-				continue
-			else:
-				_pc = 66089
-				continue
-		elif _pc == 66065:
-			global.create_handle("g_dagda_state", 2, 0)
-			_pc = 66089
-			continue
-		elif _pc == 66089:
+				global.create_handle("g_dagda_state", 2, 0)
 			if not (global.exists("g_mwari_state")):
-				_pc = 66115
-				continue
-			else:
-				_pc = 66139
-				continue
-		elif _pc == 66115:
-			global.create_handle("g_mwari_state", 2, 0)
-			_pc = 66139
-			continue
-		elif _pc == 66139:
+				global.create_handle("g_mwari_state", 2, 0)
 			if not (global.exists("g_dante_state")):
-				_pc = 66165
-				continue
-			else:
-				_pc = 66189
-				continue
-		elif _pc == 66165:
-			global.create_handle("g_dante_state", 2, 0)
-			_pc = 66189
-			continue
-		elif _pc == 66189:
+				global.create_handle("g_dante_state", 2, 0)
 			if not (global.exists("g_santa_romera_state")):
-				_pc = 66215
-				continue
-			else:
-				_pc = 66239
-				continue
-		elif _pc == 66215:
-			global.create_handle("g_santa_romera_state", 2, 0)
-			_pc = 66239
-			continue
-		elif _pc == 66239:
+				global.create_handle("g_santa_romera_state", 2, 0)
 			text.add("csv:/text/act_2/act2_master")
 			text.add("csv:/text/act_2/act2_master_addendum")
 			text.add("csv:/text/act_2/act2_master_addendum2")
 			text.add("csv:/text/act_2/act2_master_addendum3")
 			text.add("csv:/text/act_2/act2_master_addendum4")
-			_pc = 66344
-			continue
-		elif _pc == 66344:
-			if v0:
-				_pc = 66354
-				continue
-			else:
-				_pc = 66359
-				continue
-		elif _pc == 66354:
-			_pc = 66419
-			continue
-		elif _pc == 66359:
-			await iutilities.create_player("", imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
-			_pc = 66419
-			continue
-		elif _pc == 66419:
-			return 0
-		else:
-			return 0
+	if v0:
+		pass
+	else:
+		await iutilities.create_player("", imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
+	return 0
 	return 0
 
 func local_66422(v0) -> Variant:
@@ -9372,133 +7598,91 @@ func local_68543(v0, v1) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	var _pc: int = 68543
+	v2 = imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera")
+	v3 = isim.cast(imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault"))
+	v10 = await icutsceneutilities.get_kill_group()
+	await icutsceneutilities.enable_player_autopilot()
+	text.add("csv:/text/act_2/act2_mission09")
+	idirector.begin()
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	v4 = iship.create("ini:/sims/ships/utility/megatransporter", "a2_m09_Freighter")
+	group.add_sim(v10, v4)
+	sim.set_cullable(v4, 0)
+	v11 = 0
+	while v11 < 30:
+		v5 = iship.create("ini:/sims/ships/utility/megapod", "")
+		iship.dock(v5, v4)
+		sim.set_cullable(v5, 0)
+		group.add_sim(v10, v5)
+		v11 = v11 + 1
+	sim.place_relative_to(v0, v1, 3000.0, 2000.0, 8000.0)
+	sim.point_at(v0, v1)
+	sim.set_velocity(v0, 0.0, 0.0, 0.0)
+	if not _pog_is_null(await iwingmen.count()):
+		await iescort.goose(await iwingmen.group(), 0.0, 1.0, 1)
+	sim.place_relative_to_inside(v4, v1, 0.0, 0.0, -5000.0)
+	v6 = idirector.create_dolly()
+	v7 = sim.create("ini:/sims/nav/waypoint", "Dolly Start")
+	v8 = sim.create("ini:/sims/nav/waypoint", "Dolly Finish")
+	v9 = sim.create("ini:/sims/nav/waypoint", "waypoint")
+	group.add_sim(v10, v6)
+	group.add_sim(v10, v7)
+	group.add_sim(v10, v8)
+	group.add_sim(v10, v9)
+	idirector.set_dolly_camera(v6)
+	idirector.set_focus(v1)
+	sim.place_relative_to(v7, v1, -3000.0, 4000.0, 6000.0)
+	sim.place_relative_to(v8, v1, 2500.0, 400.0, 4000.0)
+	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+	idirector.set_direction(v6, v7, v8, 8.0, 4.0)
+	await _pog_wait(1.0)
+	idirector.set_caption("a2_master_text_caption_santa", 4.0)
+	await _pog_wait(7.0)
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	idirector.set_dolly_camera(v6)
+	idirector.set_focus(v1)
+	sim.place_relative_to(v7, v1, 2500.0, 600.0, 4000.0)
+	sim.place_relative_to(v8, v1, 2500.0, 600.0, -5000.0)
+	sim.place_relative_to_inside(v6, v1, 4500.0, 600.0, 0.0)
+	sim.point_at(v6, v1)
+	idirector.dolly_look_forward(v6)
+	idirector.set_direction(v6, v7, v8, 15.0, 4.0)
+	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+	await _pog_wait(5.0)
+	icomms.shout(v1, "", "a2_master_dialogue_stc_freighter")
+	await _pog_wait(10.0)
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	sim.destroy(v6)
+	v6 = idirector.create_dolly()
+	group.add_sim(v10, v6)
+	idirector.set_dolly_camera(v6)
+	idirector.set_focus(v1)
+	sim.place_relative_to_inside(v6, v4, 500.0, 100.0, 0.0)
+	sim.place_relative_to(v7, v6, 10.0, 10.0, 10.0)
+	sim.place_relative_to(v9, v1, 0.0, 0.0, 20000.0)
+	idirector.fade_in(0.0, 0.0, 0.0, 0.0)
+	await ipilotsetup.generic(v4)
+	await _pog_wait(1.0)
+	icomms.shout(v4, "", "a2_master_dialogue_freighter_roger")
+	iai.give_approach_order(v4, v9)
+	await istartsystem.jumpgate_shield_off(v1)
+	v12 = 0.0
 	while true:
-		if _pc == 68543:
-			v2 = imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera")
-			v3 = isim.cast(imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault"))
-			v10 = await icutsceneutilities.get_kill_group()
-			await icutsceneutilities.enable_player_autopilot()
-			text.add("csv:/text/act_2/act2_mission09")
-			idirector.begin()
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			v4 = iship.create("ini:/sims/ships/utility/megatransporter", "a2_m09_Freighter")
-			group.add_sim(v10, v4)
-			sim.set_cullable(v4, 0)
-			v11 = 0
-			_pc = 68809
-			continue
-		elif _pc == 68809:
-			if v11 < 30:
-				_pc = 68822
-				continue
-			else:
-				_pc = 68940
-				continue
-		elif _pc == 68822:
-			v5 = iship.create("ini:/sims/ships/utility/megapod", "")
-			iship.dock(v5, v4)
-			sim.set_cullable(v5, 0)
-			group.add_sim(v10, v5)
-			v11 = v11 + 1
-			_pc = 68809
-			continue
-		elif _pc == 68940:
-			sim.place_relative_to(v0, v1, 3000.0, 2000.0, 8000.0)
-			sim.point_at(v0, v1)
-			sim.set_velocity(v0, 0.0, 0.0, 0.0)
-			if not _pog_is_null(await iwingmen.count()):
-				_pc = 69058
-				continue
-			else:
-				_pc = 69096
-				continue
-		elif _pc == 69058:
-			await iescort.goose(await iwingmen.group(), 0.0, 1.0, 1)
-			_pc = 69096
-			continue
-		elif _pc == 69096:
-			sim.place_relative_to_inside(v4, v1, 0.0, 0.0, -5000.0)
-			v6 = idirector.create_dolly()
-			v7 = sim.create("ini:/sims/nav/waypoint", "Dolly Start")
-			v8 = sim.create("ini:/sims/nav/waypoint", "Dolly Finish")
-			v9 = sim.create("ini:/sims/nav/waypoint", "waypoint")
-			group.add_sim(v10, v6)
-			group.add_sim(v10, v7)
-			group.add_sim(v10, v8)
-			group.add_sim(v10, v9)
-			idirector.set_dolly_camera(v6)
-			idirector.set_focus(v1)
-			sim.place_relative_to(v7, v1, -3000.0, 4000.0, 6000.0)
-			sim.place_relative_to(v8, v1, 2500.0, 400.0, 4000.0)
-			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-			idirector.set_direction(v6, v7, v8, 8.0, 4.0)
-			await _pog_wait(1.0)
-			idirector.set_caption("a2_master_text_caption_santa", 4.0)
-			await _pog_wait(7.0)
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			idirector.set_dolly_camera(v6)
-			idirector.set_focus(v1)
-			sim.place_relative_to(v7, v1, 2500.0, 600.0, 4000.0)
-			sim.place_relative_to(v8, v1, 2500.0, 600.0, -5000.0)
-			sim.place_relative_to_inside(v6, v1, 4500.0, 600.0, 0.0)
-			sim.point_at(v6, v1)
-			idirector.dolly_look_forward(v6)
-			idirector.set_direction(v6, v7, v8, 15.0, 4.0)
-			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-			await _pog_wait(5.0)
-			icomms.shout(v1, "", "a2_master_dialogue_stc_freighter")
-			await _pog_wait(10.0)
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			sim.destroy(v6)
-			v6 = idirector.create_dolly()
-			group.add_sim(v10, v6)
-			idirector.set_dolly_camera(v6)
-			idirector.set_focus(v1)
-			sim.place_relative_to_inside(v6, v4, 500.0, 100.0, 0.0)
-			sim.place_relative_to(v7, v6, 10.0, 10.0, 10.0)
-			sim.place_relative_to(v9, v1, 0.0, 0.0, 20000.0)
-			idirector.fade_in(0.0, 0.0, 0.0, 0.0)
-			await ipilotsetup.generic(v4)
-			await _pog_wait(1.0)
-			icomms.shout(v4, "", "a2_master_dialogue_freighter_roger")
-			iai.give_approach_order(v4, v9)
-			await istartsystem.jumpgate_shield_off(v1)
-			v12 = 0.0
-			_pc = 70449
-			continue
-		elif _pc == 70449:
-			if v12 < 1000.0:
-				_pc = 70465
-				continue
-			else:
-				_pc = 70516
-				continue
-		elif _pc == 70465:
+		if v12 < 1000.0:
 			v12 = v12 + 3.0
 			sim.set_velocity_local_to_sim(v4, 0.0, 0.0, v12)
-			_pc = 70516
-			continue
-		elif _pc == 70516:
-			await _pog_wait(0.10000000149011612)
-			if sim.distance_between_centres(v4, v1) <= 200.0:
-				_pc = 70582
-				continue
-			else:
-				_pc = 70449
-				continue
-		elif _pc == 70582:
-			isim.capsule_jump(v4, v3)
-			await _pog_wait(5.0)
-			await istartsystem.jumpgate_shield_on(v1, 1)
-			await _pog_wait(2.0)
-			idirector.fade_out(1.0, 0.0, 0.0, 0.0)
-			await _pog_wait(1.0)
-			idirector.fade_in(0.0, 0.0, 0.0, 0.0)
-			idirector.end()
-			await icutsceneutilities.disable_player_autopilot()
-			return
-		else:
-			return 0
+		await _pog_wait(0.10000000149011612)
+		if not (sim.distance_between_centres(v4, v1) > 200.0):
+			break
+	isim.capsule_jump(v4, v3)
+	await _pog_wait(5.0)
+	await istartsystem.jumpgate_shield_on(v1, 1)
+	await _pog_wait(2.0)
+	idirector.fade_out(1.0, 0.0, 0.0, 0.0)
+	await _pog_wait(1.0)
+	idirector.fade_in(0.0, 0.0, 0.0, 0.0)
+	idirector.end()
+	await icutsceneutilities.disable_player_autopilot()
+	return
 	return 0
 

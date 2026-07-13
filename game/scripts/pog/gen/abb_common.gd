@@ -26,312 +26,106 @@ func materialise_group_near(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			v3 = 0
-			_pc = 12
-			continue
-		elif _pc == 12:
-			if v3 < group.group_count(v0):
-				_pc = 41
-				continue
-			else:
-				_pc = 172
-				continue
-		elif _pc == 41:
-			_pc = 107
-			continue
-		elif _pc == 46:
+	v3 = 0
+	while v3 < group.group_count(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("Materialising Group ")
 			debug.print_int(v3)
 			debug.print_string("\n")
-			_pc = 107
-			continue
-		elif _pc == 107:
-			await materialise_group_near(group.nth_group(v0, v3), v1, v2)
-			v3 = v3 + 1
-			_pc = 12
-			continue
-		elif _pc == 172:
-			v5 = group.sim_count(v0)
-			_pc = 274
-			continue
-		elif _pc == 201:
-			if v5 > 0:
-				_pc = 213
-				continue
-			else:
-				_pc = 274
-				continue
-		elif _pc == 213:
+		await materialise_group_near(group.nth_group(v0, v3), v1, v2)
+		v3 = v3 + 1
+	v5 = group.sim_count(v0)
+	if PogRuntime.TRACE:
+		if v5 > 0:
 			debug.print_string("Materialising ")
 			debug.print_int(v5)
 			debug.print_string(" Sims \n")
-			_pc = 274
-			continue
-		elif _pc == 274:
-			v4 = 0
-			_pc = 281
-			continue
-		elif _pc == 281:
-			if v4 < v5:
-				_pc = 297
-				continue
-			else:
-				_pc = 362
-				continue
-		elif _pc == 297:
-			sim.place_near(group.nth_sim(v0, v4), v1, v2)
-			v4 = v4 + 1
-			_pc = 281
-			continue
-		elif _pc == 362:
-			return 0
-		else:
-			return 0
+	v4 = 0
+	while v4 < v5:
+		sim.place_near(group.nth_sim(v0, v4), v1, v2)
+		v4 = v4 + 1
+	return 0
 	return 0
 
 func set_cullable_group(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 365
-	while true:
-		if _pc == 365:
-			v2 = 0
-			_pc = 377
-			continue
-		elif _pc == 377:
-			if v2 < group.group_count(v0):
-				_pc = 406
-				continue
-			else:
-				_pc = 466
-				continue
-		elif _pc == 406:
-			await set_cullable_group(group.nth_group(v0, v2), v1)
-			v2 = v2 + 1
-			_pc = 377
-			continue
-		elif _pc == 466:
-			v3 = 0
-			_pc = 473
-			continue
-		elif _pc == 473:
-			if v3 < group.sim_count(v0):
-				_pc = 502
-				continue
-			else:
-				_pc = 562
-				continue
-		elif _pc == 502:
-			sim.set_cullable(group.nth_sim(v0, v3), v1)
-			v3 = v3 + 1
-			_pc = 473
-			continue
-		elif _pc == 562:
-			return 0
-		else:
-			return 0
+	v2 = 0
+	while v2 < group.group_count(v0):
+		await set_cullable_group(group.nth_group(v0, v2), v1)
+		v2 = v2 + 1
+	v3 = 0
+	while v3 < group.sim_count(v0):
+		sim.set_cullable(group.nth_sim(v0, v3), v1)
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func set_faction_group(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 565
-	while true:
-		if _pc == 565:
-			v2 = 0
-			_pc = 577
-			continue
-		elif _pc == 577:
-			if v2 < group.group_count(v0):
-				_pc = 606
-				continue
-			else:
-				_pc = 666
-				continue
-		elif _pc == 606:
-			await set_faction_group(group.nth_group(v0, v2), v1)
-			v2 = v2 + 1
-			_pc = 577
-			continue
-		elif _pc == 666:
-			v3 = 0
-			_pc = 673
-			continue
-		elif _pc == 673:
-			if v3 < group.sim_count(v0):
-				_pc = 702
-				continue
-			else:
-				_pc = 775
-				continue
-		elif _pc == 702:
-			isim.set_faction(isim.cast(group.nth_sim(v0, v3)), v1)
-			v3 = v3 + 1
-			_pc = 673
-			continue
-		elif _pc == 775:
-			return 0
-		else:
-			return 0
+	v2 = 0
+	while v2 < group.group_count(v0):
+		await set_faction_group(group.nth_group(v0, v2), v1)
+		v2 = v2 + 1
+	v3 = 0
+	while v3 < group.sim_count(v0):
+		isim.set_faction(isim.cast(group.nth_sim(v0, v3)), v1)
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func set_pilot_no_scripts_group(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 778
-	while true:
-		if _pc == 778:
-			v4 = 0
-			_pc = 790
-			continue
-		elif _pc == 790:
-			if v4 < group.group_count(v0):
-				_pc = 819
-				continue
-			else:
-				_pc = 889
-				continue
-		elif _pc == 819:
-			await set_pilot_no_scripts_group(group.nth_group(v0, v4), v1, v2, v3)
-			v4 = v4 + 1
-			_pc = 790
-			continue
-		elif _pc == 889:
-			v5 = 0
-			_pc = 896
-			continue
-		elif _pc == 896:
-			if v5 < group.sim_count(v0):
-				_pc = 925
-				continue
-			else:
-				_pc = 1033
-				continue
-		elif _pc == 925:
-			iship.install_a_i_pilot(iship.cast(group.nth_sim(v0, v5)), v1, v2, v3, "", "", "", "")
-			v5 = v5 + 1
-			_pc = 896
-			continue
-		elif _pc == 1033:
-			return 0
-		else:
-			return 0
+	v4 = 0
+	while v4 < group.group_count(v0):
+		await set_pilot_no_scripts_group(group.nth_group(v0, v4), v1, v2, v3)
+		v4 = v4 + 1
+	v5 = 0
+	while v5 < group.sim_count(v0):
+		iship.install_a_i_pilot(iship.cast(group.nth_sim(v0, v5)), v1, v2, v3, "", "", "", "")
+		v5 = v5 + 1
+	return 0
 	return 0
 
 func remove_pilot_group(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1036
-	while true:
-		if _pc == 1036:
-			v1 = 0
-			_pc = 1048
-			continue
-		elif _pc == 1048:
-			if v1 < group.group_count(v0):
-				_pc = 1077
-				continue
-			else:
-				_pc = 1132
-				continue
-		elif _pc == 1077:
-			await remove_pilot_group(group.nth_group(v0, v1))
-			v1 = v1 + 1
-			_pc = 1048
-			continue
-		elif _pc == 1132:
-			v2 = 0
-			_pc = 1139
-			continue
-		elif _pc == 1139:
-			if v2 < group.sim_count(v0):
-				_pc = 1168
-				continue
-			else:
-				_pc = 1236
-				continue
-		elif _pc == 1168:
-			iship.remove_pilot(iship.cast(group.nth_sim(v0, v2)))
-			v2 = v2 + 1
-			_pc = 1139
-			continue
-		elif _pc == 1236:
-			return 0
-		else:
-			return 0
+	v1 = 0
+	while v1 < group.group_count(v0):
+		await remove_pilot_group(group.nth_group(v0, v1))
+		v1 = v1 + 1
+	v2 = 0
+	while v2 < group.sim_count(v0):
+		iship.remove_pilot(iship.cast(group.nth_sim(v0, v2)))
+		v2 = v2 + 1
+	return 0
 	return 0
 
 func disrupt_l_d_s_group(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 1239
-	while true:
-		if _pc == 1239:
-			v2 = 0
-			_pc = 1251
-			continue
-		elif _pc == 1251:
-			if v2 < group.group_count(v0):
-				_pc = 1280
-				continue
-			else:
-				_pc = 1406
-				continue
-		elif _pc == 1280:
-			_pc = 1346
-			continue
-		elif _pc == 1285:
+	v2 = 0
+	while v2 < group.group_count(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("Disrupting LDS on subgroup ")
 			debug.print_int(v2)
 			debug.print_string("\n")
-			_pc = 1346
-			continue
-		elif _pc == 1346:
-			await disrupt_l_d_s_group(group.nth_group(v0, v2), v1)
-			v2 = v2 + 1
-			_pc = 1251
-			continue
-		elif _pc == 1406:
-			v4 = group.sim_count(v0)
-			_pc = 1508
-			continue
-		elif _pc == 1435:
-			if v4 > 0:
-				_pc = 1447
-				continue
-			else:
-				_pc = 1508
-				continue
-		elif _pc == 1447:
+		await disrupt_l_d_s_group(group.nth_group(v0, v2), v1)
+		v2 = v2 + 1
+	v4 = group.sim_count(v0)
+	if PogRuntime.TRACE:
+		if v4 > 0:
 			debug.print_string("Disrupting LDS on ")
 			debug.print_int(v4)
 			debug.print_string(" Sims \n")
-			_pc = 1508
-			continue
-		elif _pc == 1508:
-			v3 = 0
-			_pc = 1515
-			continue
-		elif _pc == 1515:
-			if v3 < v4:
-				_pc = 1531
-				continue
-			else:
-				_pc = 1604
-				continue
-		elif _pc == 1531:
-			iship.disrupt_l_d_s_drive(iship.cast(group.nth_sim(v0, v3)), v1)
-			v3 = v3 + 1
-			_pc = 1515
-			continue
-		elif _pc == 1604:
-			return 0
-		else:
-			return 0
+	v3 = 0
+	while v3 < v4:
+		iship.disrupt_l_d_s_drive(iship.cast(group.nth_sim(v0, v3)), v1)
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func empty_group(v0) -> Variant:
@@ -339,79 +133,29 @@ func empty_group(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 1607
-	while true:
-		if _pc == 1607:
-			v1 = group.group_count(v0)
-			v2 = group.sim_count(v0)
-			v3 = 0
-			_pc = 1667
-			continue
-		elif _pc == 1667:
-			if v3 < v1:
-				_pc = 1683
-				continue
-			else:
-				_pc = 1721
-				continue
-		elif _pc == 1683:
-			group.remove_nth_group(v0, 0)
-			v3 = v3 + 1
-			_pc = 1667
-			continue
-		elif _pc == 1721:
-			v4 = 0
-			_pc = 1728
-			continue
-		elif _pc == 1728:
-			if v4 < v2:
-				_pc = 1744
-				continue
-			else:
-				_pc = 1782
-				continue
-		elif _pc == 1744:
-			group.remove_nth_sim(v0, 0)
-			v4 = v4 + 1
-			_pc = 1728
-			continue
-		elif _pc == 1782:
-			return 0
-		else:
-			return 0
+	v1 = group.group_count(v0)
+	v2 = group.sim_count(v0)
+	v3 = 0
+	while v3 < v1:
+		group.remove_nth_group(v0, 0)
+		v3 = v3 + 1
+	v4 = 0
+	while v4 < v2:
+		group.remove_nth_sim(v0, 0)
+		v4 = v4 + 1
+	return 0
 	return 0
 
 func attach_way_point_to_group_leader(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 1785
 	while true:
-		if _pc == 1785:
-			_pc = 1790
-			continue
-		elif _pc == 1790:
-			if sim.is_dead(v2):
-				_pc = 1813
-				continue
-			else:
-				_pc = 1861
-				continue
-		elif _pc == 1813:
+		if sim.is_dead(v2):
 			v2 = group.leader(v0)
 			sim.attach_child(v2, v1)
-			_pc = 1861
-			continue
-		elif _pc == 1861:
-			await _pog_wait(1.0)
-			if not (1):
-				_pc = 1899
-				continue
-			else:
-				_pc = 1790
-				continue
-		elif _pc == 1899:
-			return
-		else:
-			return 0
+		await _pog_wait(1.0)
+		if not (1):
+			break
+	return
 	return 0
 
 func watch_sims_and_group_combat() -> Variant:
@@ -422,16 +166,7 @@ func watch_sims_and_group_combat() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 1901
-	while true:
-		if _pc == 1901:
-			await watch_group_combat_task(v0, v1, v2, v3, v4, 0, v5, v6)
-			_pc = 1955
-			continue
-		elif _pc == 1955:
-			return
-		else:
-			return 0
+	return await watch_group_combat_task(v0, v1, v2, v3, v4, 0, v5, v6)
 	return 0
 
 func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
@@ -643,21 +378,21 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 2669
 				continue
 		elif _pc == 2911:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 2920
 				continue
 			else:
 				_pc = 2725
 				continue
 		elif _pc == 2920:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 2929
 				continue
 			else:
 				_pc = 2781
 				continue
 		elif _pc == 2929:
-			if not _pog_is_null(1):
+			if 1 != v8:
 				_pc = 2937
 				continue
 			else:
@@ -689,8 +424,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3028
 			continue
 		elif _pc == 3028:
-			_pc = 4661
-			continue
+			return 4096 | v9 & v8 - 4
 		elif _pc == 3051:
 			if v6 & 8192 and not _pog_eq(v14, v19):
 				_pc = 3077
@@ -706,8 +440,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3103
 			continue
 		elif _pc == 3103:
-			_pc = 4661
-			continue
+			return 8192 | v9 & v8 - 4
 		elif _pc == 3126:
 			v19 = await recursive_sim_count(v11)
 			if v6 & 4096 and _pog_is_null(v19):
@@ -724,8 +457,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3198
 			continue
 		elif _pc == 3198:
-			_pc = 4661
-			continue
+			return 4096 | v9 & v8 - 3
 		elif _pc == 3221:
 			if v6 & 8192 and not _pog_eq(v15, v19):
 				_pc = 3247
@@ -741,8 +473,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3273
 			continue
 		elif _pc == 3273:
-			_pc = 4661
-			continue
+			return 8192 | v9 & v8 - 3
 		elif _pc == 3296:
 			v19 = await recursive_sim_count(v12)
 			if v6 & 4096 and _pog_is_null(v19):
@@ -759,8 +490,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3368
 			continue
 		elif _pc == 3368:
-			_pc = 4661
-			continue
+			return 4096 | v9 & v8 - 2
 		elif _pc == 3391:
 			if v6 & 8192 and not _pog_eq(v16, v19):
 				_pc = 3417
@@ -776,8 +506,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3443
 			continue
 		elif _pc == 3443:
-			_pc = 4661
-			continue
+			return 8192 | v9 & v8 - 2
 		elif _pc == 3466:
 			v19 = await recursive_sim_count(v13)
 			if v6 & 4096 and _pog_is_null(v19):
@@ -794,8 +523,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3538
 			continue
 		elif _pc == 3538:
-			_pc = 4661
-			continue
+			return 4096 | v9 & v8 - 1
 		elif _pc == 3560:
 			if v6 & 8192 and not _pog_eq(v17, v19):
 				_pc = 3586
@@ -811,8 +539,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3612
 			continue
 		elif _pc == 3612:
-			_pc = 4661
-			continue
+			return 8192 | v9 & v8 - 1
 		elif _pc == 3634:
 			_pc = 3679
 			continue
@@ -824,21 +551,21 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 2956
 				continue
 		elif _pc == 3653:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 3662
 				continue
 			else:
 				_pc = 3126
 				continue
 		elif _pc == 3662:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 3671
 				continue
 			else:
 				_pc = 3296
 				continue
 		elif _pc == 3671:
-			if not _pog_is_null(1):
+			if 1 != v8:
 				_pc = 3679
 				continue
 			else:
@@ -869,8 +596,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3759
 			continue
 		elif _pc == 3759:
-			_pc = 4661
-			continue
+			return 16384 | v9 & v8 - 4
 		elif _pc == 3782:
 			if not (await iutilities.near_to_group(v1, v11, v3, 1)):
 				_pc = 3817
@@ -886,8 +612,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3843
 			continue
 		elif _pc == 3843:
-			_pc = 4661
-			continue
+			return 16384 | v9 & v8 - 3
 		elif _pc == 3866:
 			if not (await iutilities.near_to_group(v1, v12, v3, 1)):
 				_pc = 3901
@@ -903,8 +628,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3927
 			continue
 		elif _pc == 3927:
-			_pc = 4661
-			continue
+			return 16384 | v9 & v8 - 2
 		elif _pc == 3950:
 			if not (await iutilities.near_to_group(v1, v13, v3, 1)):
 				_pc = 3985
@@ -920,8 +644,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4011
 			continue
 		elif _pc == 4011:
-			_pc = 4661
-			continue
+			return 16384 | v9 & v8 - 1
 		elif _pc == 4033:
 			_pc = 4078
 			continue
@@ -933,21 +656,21 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 3698
 				continue
 		elif _pc == 4052:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 4061
 				continue
 			else:
 				_pc = 3782
 				continue
 		elif _pc == 4061:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 4070
 				continue
 			else:
 				_pc = 3866
 				continue
 		elif _pc == 4070:
-			if not _pog_is_null(1):
+			if 1 != v8:
 				_pc = 4078
 				continue
 			else:
@@ -978,8 +701,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4160
 			continue
 		elif _pc == 4160:
-			_pc = 4661
-			continue
+			return 32768 | v9 & v8 - 4
 		elif _pc == 4185:
 			if not (await iutilities.far_from_group(v1, v11, v3, 1)):
 				_pc = 4220
@@ -995,8 +717,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4246
 			continue
 		elif _pc == 4246:
-			_pc = 4661
-			continue
+			return 32768 | v9 & v8 - 3
 		elif _pc == 4271:
 			if not (await iutilities.far_from_group(v1, v12, v3, 1)):
 				_pc = 4306
@@ -1012,8 +733,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4332
 			continue
 		elif _pc == 4332:
-			_pc = 4661
-			continue
+			return 32768 | v9 & v8 - 2
 		elif _pc == 4357:
 			if not (await iutilities.far_from_group(v1, v13, v3, 1)):
 				_pc = 4392
@@ -1029,8 +749,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4418
 			continue
 		elif _pc == 4418:
-			_pc = 4661
-			continue
+			return 32768 | v9 & v8 - 1
 		elif _pc == 4442:
 			_pc = 4487
 			continue
@@ -1042,21 +761,21 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 4099
 				continue
 		elif _pc == 4461:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 4470
 				continue
 			else:
 				_pc = 4185
 				continue
 		elif _pc == 4470:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 4479
 				continue
 			else:
 				_pc = 4271
 				continue
 		elif _pc == 4479:
-			if not _pog_is_null(1):
+			if 1 != v8:
 				_pc = 4487
 				continue
 			else:
@@ -1077,8 +796,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 4536
 				continue
 		elif _pc == 4526:
-			_pc = 4661
-			continue
+			return 65536
 		elif _pc == 4536:
 			v20 = await watch_sims_movement(v0, v1, v3, v4, v6 | 1024, 0.0)
 			if v20 != 1024:
@@ -1088,8 +806,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 4613
 				continue
 		elif _pc == 4603:
-			_pc = 4661
-			continue
+			return v20
 		elif _pc == 4613:
 			await _pog_wait(v7)
 			if not (1):
@@ -1099,8 +816,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 				_pc = 2937
 				continue
 		elif _pc == 4651:
-			_pc = 4661
-			continue
+			return v20
 		elif _pc == 4661:
 			return
 		else:
@@ -1111,405 +827,103 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 4663
-	while true:
-		if _pc == 4663:
-			v7 = null
-			v8 = null
-			_pc = 5116
-			continue
-		elif _pc == 4695:
-			if not (v4 & 1024):
-				_pc = 4710
-				continue
-			else:
-				_pc = 5116
-				continue
-		elif _pc == 4710:
+	v7 = null
+	v8 = null
+	if PogRuntime.TRACE:
+		if not (v4 & 1024):
 			debug.print_string("watching sim '")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("' relative to sim '")
 			debug.print_string(object.string_property(v1, "name"))
 			debug.print_string("' with options: ")
 			if v4 & 256:
-				_pc = 4867
-				continue
-			else:
-				_pc = 4888
-				continue
-		elif _pc == 4867:
-			debug.print_string("LSYS ")
-			_pc = 4888
-			continue
-		elif _pc == 4888:
+				debug.print_string("LSYS ")
 			if v4 & 512:
-				_pc = 4902
-				continue
-			else:
-				_pc = 4923
-				continue
-		elif _pc == 4902:
-			debug.print_string("ESYS ")
-			_pc = 4923
-			continue
-		elif _pc == 4923:
+				debug.print_string("ESYS ")
 			if v4 & 16:
-				_pc = 4936
-				continue
-			else:
-				_pc = 4957
-				continue
-		elif _pc == 4936:
-			debug.print_string("ECLO ")
-			_pc = 4957
-			continue
-		elif _pc == 4957:
+				debug.print_string("ECLO ")
 			if v4 & 64:
-				_pc = 4970
-				continue
-			else:
-				_pc = 4991
-				continue
-		elif _pc == 4970:
-			debug.print_string("ELON ")
-			_pc = 4991
-			continue
-		elif _pc == 4991:
+				debug.print_string("ELON ")
 			if v4 & 32:
-				_pc = 5004
-				continue
-			else:
-				_pc = 5025
-				continue
-		elif _pc == 5004:
-			debug.print_string("LCLO ")
-			_pc = 5025
-			continue
-		elif _pc == 5025:
+				debug.print_string("LCLO ")
 			if v4 & 128:
-				_pc = 5039
-				continue
-			else:
-				_pc = 5060
-				continue
-		elif _pc == 5039:
-			debug.print_string("LLON ")
-			_pc = 5060
-			continue
-		elif _pc == 5060:
+				debug.print_string("LLON ")
 			if v4 & 1024:
-				_pc = 5074
-				continue
-			else:
-				_pc = 5095
-				continue
-		elif _pc == 5074:
-			debug.print_string("Don't Wait ")
-			_pc = 5095
-			continue
-		elif _pc == 5095:
+				debug.print_string("Don't Wait ")
 			debug.print_string("\n")
-			_pc = 5116
-			continue
-		elif _pc == 5116:
-			if not (isim.cast(v0)) or not (isim.cast(v1)):
-				_pc = 5160
-				continue
-			else:
-				_pc = 5192
-				continue
-		elif _pc == 5160:
-			_pc = 5186
-			continue
-		elif _pc == 5165:
-			debug.print_string("Watch result : WS_Destroyed\n")
-			_pc = 5186
-			continue
-		elif _pc == 5186:
-			_pc = 5883
-			continue
-		elif _pc == 5192:
-			if v4 & 768:
-				_pc = 5206
-				continue
-			else:
-				_pc = 5481
-				continue
-		elif _pc == 5206:
+	while true:
+		if not (isim.cast(v0)) or not (isim.cast(v1)):
+			if PogRuntime.TRACE:
+				debug.print_string("Watch result : WS_Destroyed\n")
+			return 0
+		if v4 & 768:
 			v7 = isim.world_name(v0)
 			v8 = isim.world_name(v1)
 			if _pog_eq(v7, "None") or _pog_eq(v7, "Loading") or _pog_eq(v8, "None") or _pog_eq(v8, "Loading"):
-				_pc = 5315
+				await _pog_wait(1.0)
 				continue
-			else:
-				_pc = 5352
-				continue
-		elif _pc == 5315:
-			await _pog_wait(1.0)
-			_pc = 5116
-			continue
-		elif _pc == 5352:
 			if v4 & 256:
-				_pc = 5366
-				continue
-			else:
-				_pc = 5417
-				continue
-		elif _pc == 5366:
-			if not _pog_eq(v7, v8):
-				_pc = 5383
-				continue
-			else:
-				_pc = 5417
-				continue
-		elif _pc == 5383:
-			_pc = 5409
-			continue
-		elif _pc == 5388:
-			debug.print_string("Watch result : WS_Leave_Same_System\n")
-			_pc = 5409
-			continue
-		elif _pc == 5409:
-			_pc = 5883
-			continue
-		elif _pc == 5417:
+				if not _pog_eq(v7, v8):
+					if PogRuntime.TRACE:
+						debug.print_string("Watch result : WS_Leave_Same_System\n")
+					return 256
 			if v4 & 512:
-				_pc = 5431
-				continue
-			else:
-				_pc = 5481
-				continue
-		elif _pc == 5431:
-			if _pog_eq(v7, v8):
-				_pc = 5447
-				continue
-			else:
-				_pc = 5481
-				continue
-		elif _pc == 5447:
-			_pc = 5473
-			continue
-		elif _pc == 5452:
-			debug.print_string("Watch result : WS_Enter_Same_System\n")
-			_pc = 5473
-			continue
-		elif _pc == 5473:
-			_pc = 5883
-			continue
-		elif _pc == 5481:
-			if v4 & 176:
-				_pc = 5495
-				continue
-			else:
-				_pc = 5524
-				continue
-		elif _pc == 5495:
+				if _pog_eq(v7, v8):
+					if PogRuntime.TRACE:
+						debug.print_string("Watch result : WS_Enter_Same_System\n")
+					return 512
+		if v4 & 176:
 			v6 = sim.distance_between(v0, v1)
-			_pc = 5524
-			continue
-		elif _pc == 5524:
-			if v4 & 16:
-				_pc = 5537
-				continue
-			else:
-				_pc = 5586
-				continue
-		elif _pc == 5537:
+		if v4 & 16:
 			if v6 < v2:
-				_pc = 5553
-				continue
-			else:
-				_pc = 5586
-				continue
-		elif _pc == 5553:
-			_pc = 5579
-			continue
-		elif _pc == 5558:
-			debug.print_string("Watch result : WS_Enter_Close_Range\n")
-			_pc = 5579
-			continue
-		elif _pc == 5579:
-			_pc = 5883
-			continue
-		elif _pc == 5586:
-			if v4 & 64:
-				_pc = 5599
-				continue
-			else:
-				_pc = 5648
-				continue
-		elif _pc == 5599:
+				if PogRuntime.TRACE:
+					debug.print_string("Watch result : WS_Enter_Close_Range\n")
+				return 16
+		if v4 & 64:
 			if v6 < v3:
-				_pc = 5615
-				continue
-			else:
-				_pc = 5648
-				continue
-		elif _pc == 5615:
-			_pc = 5641
-			continue
-		elif _pc == 5620:
-			debug.print_string("Watch result : WS_Enter_Long_Range\n")
-			_pc = 5641
-			continue
-		elif _pc == 5641:
-			_pc = 5883
-			continue
-		elif _pc == 5648:
-			if v4 & 128:
-				_pc = 5662
-				continue
-			else:
-				_pc = 5712
-				continue
-		elif _pc == 5662:
+				if PogRuntime.TRACE:
+					debug.print_string("Watch result : WS_Enter_Long_Range\n")
+				return 64
+		if v4 & 128:
 			if v6 > v3:
-				_pc = 5678
-				continue
-			else:
-				_pc = 5712
-				continue
-		elif _pc == 5678:
-			_pc = 5704
-			continue
-		elif _pc == 5683:
-			debug.print_string("Watch result : WS_Leave_Long_Range\n")
-			_pc = 5704
-			continue
-		elif _pc == 5704:
-			_pc = 5883
-			continue
-		elif _pc == 5712:
-			if v4 & 32:
-				_pc = 5725
-				continue
-			else:
-				_pc = 5774
-				continue
-		elif _pc == 5725:
+				if PogRuntime.TRACE:
+					debug.print_string("Watch result : WS_Leave_Long_Range\n")
+				return 128
+		if v4 & 32:
 			if v6 > v2:
-				_pc = 5741
-				continue
-			else:
-				_pc = 5774
-				continue
-		elif _pc == 5741:
-			_pc = 5767
-			continue
-		elif _pc == 5746:
-			debug.print_string("Watch result : WS_Leave_Close_Range\n")
-			_pc = 5767
-			continue
-		elif _pc == 5767:
-			_pc = 5883
-			continue
-		elif _pc == 5774:
-			if v4 & 1024:
-				_pc = 5788
-				continue
-			else:
-				_pc = 5837
-				continue
-		elif _pc == 5788:
-			_pc = 5829
-			continue
-		elif _pc == 5793:
-			if not (v4 & 1024):
-				_pc = 5808
-				continue
-			else:
-				_pc = 5829
-				continue
-		elif _pc == 5808:
-			debug.print_string("Watch result : WS_Nothing\n")
-			_pc = 5829
-			continue
-		elif _pc == 5829:
-			_pc = 5883
-			continue
-		elif _pc == 5837:
-			await _pog_wait(v5)
-			if not (1):
-				_pc = 5875
-				continue
-			else:
-				_pc = 5116
-				continue
-		elif _pc == 5875:
-			_pc = 5883
-			continue
-		elif _pc == 5883:
-			return
-		else:
-			return 0
+				if PogRuntime.TRACE:
+					debug.print_string("Watch result : WS_Leave_Close_Range\n")
+				return 32
+		if v4 & 1024:
+			if PogRuntime.TRACE:
+				if not (v4 & 1024):
+					debug.print_string("Watch result : WS_Nothing\n")
+			return 1024
+		await _pog_wait(v5)
+		if not (1):
+			break
+	return 1024
 	return 0
 
 func recursive_sim_count(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 5899
-	while true:
-		if _pc == 5899:
-			v2 = group.group_count(v0)
-			if _pog_eq(v0, await iwingmen.group()):
-				_pc = 5952
-				continue
-			else:
-				_pc = 5983
-				continue
-		elif _pc == 5952:
-			v3 = group.sim_count(v0) - 1
-			_pc = 6007
-			continue
-		elif _pc == 5983:
-			v3 = group.sim_count(v0)
-			_pc = 6007
-			continue
-		elif _pc == 6007:
-			v1 = 0
-			_pc = 6014
-			continue
-		elif _pc == 6014:
-			if v1 < v2:
-				_pc = 6030
-				continue
-			else:
-				_pc = 6096
-				continue
-		elif _pc == 6030:
-			v3 = v3 + await recursive_sim_count(group.nth_group(v0, v1))
-			v1 = v1 + 1
-			_pc = 6014
-			continue
-		elif _pc == 6096:
-			_pc = 6106
-			continue
-		elif _pc == 6106:
-			return
-		else:
-			return 0
+	v2 = group.group_count(v0)
+	if _pog_eq(v0, await iwingmen.group()):
+		v3 = group.sim_count(v0) - 1
+	else:
+		v3 = group.sim_count(v0)
+	v1 = 0
+	while v1 < v2:
+		v3 = v3 + await recursive_sim_count(group.nth_group(v0, v1))
+		v1 = v1 + 1
+	return v3
 	return 0
 
 func local_6108(v0, v1) -> Variant:
-	var _pc: int = 6108
-	while true:
-		if _pc == 6108:
-			if v0 < v1:
-				_pc = 6124
-				continue
-			else:
-				_pc = 6134
-				continue
-		elif _pc == 6124:
-			_pc = 6144
-			continue
-		elif _pc == 6134:
-			_pc = 6144
-			continue
-		elif _pc == 6144:
-			return
-		else:
-			return 0
+	if v0 < v1:
+		return v0
+	return v1
 	return 0
 

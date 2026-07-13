@@ -41,16 +41,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			inifile.cast(global.handle("g_stock_utterance_ini"))
-			_pc = 37
-			continue
-		elif _pc == 37:
-			return
-		else:
-			return 0
+	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
 func gangster_run_for_help() -> Variant:
@@ -67,199 +58,67 @@ func gangster_run_for_help() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	var _pc: int = 39
-	while true:
-		if _pc == 39:
-			v4 = null
-			v4 = imapentity.system_habitats()
-			v5 = null
-			v6 = 11
-			v7 = inifile.cast(global.handle("g_shipping_ini"))
-			v9 = await ishipcreation.get_traffic(9, v6, math.random_int(1, 5))
-			v10 = iship.cast(group.nth_sim(v9, 0))
-			v12 = null
-			if object.property_exists(v0, "fleeing"):
-				_pc = 254
-				continue
-			else:
-				_pc = 279
-				continue
-		elif _pc == 254:
-			group.destroy(v9, 1)
-			_pc = 1311
-			continue
-		elif _pc == 279:
-			object.add_int_property(v0, "fleeing", 1)
-			if object.i_d_modulus(v0, 2) == 1:
-				_pc = 333
-				continue
-			else:
-				_pc = 351
-				continue
-		elif _pc == 333:
+	v4 = null
+	v4 = imapentity.system_habitats()
+	v5 = null
+	v6 = 11
+	v7 = inifile.cast(global.handle("g_shipping_ini"))
+	v9 = await ishipcreation.get_traffic(9, v6, math.random_int(1, 5))
+	v10 = iship.cast(group.nth_sim(v9, 0))
+	v12 = null
+	if object.property_exists(v0, "fleeing"):
+		group.destroy(v9, 1)
+	else:
+		object.add_int_property(v0, "fleeing", 1)
+		if object.i_d_modulus(v0, 2) == 1:
 			v12 = "_male_1"
-			_pc = 364
-			continue
-		elif _pc == 351:
+		else:
 			v12 = "_female_1"
-			_pc = 364
-			continue
-		elif _pc == 364:
-			_pc = 390
-			continue
-		elif _pc == 369:
+		if PogRuntime.TRACE:
 			debug.print_string("iFlee.GangsterCallForHelp: Starting task\n")
-			_pc = 390
-			continue
-		elif _pc == 390:
-			v5 = await iutilities.filter_on_friendly_habitats(v4, v6)
-			if _pog_is_null(p_set.item_count(v5)):
-				_pc = 446
-				continue
-			else:
-				_pc = 477
-				continue
-		elif _pc == 446:
-			_pc = 472
-			continue
-		elif _pc == 451:
-			debug.print_string("iFlee.GangsterCallForHelp: Unable to find habitat of the correct allegiance to send out ships from!!\n")
-			_pc = 472
-			continue
-		elif _pc == 472:
-			_pc = 1311
-			continue
-		elif _pc == 477:
+		v5 = await iutilities.filter_on_friendly_habitats(v4, v6)
+		if _pog_is_null(p_set.item_count(v5)):
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Unable to find habitat of the correct allegiance to send out ships from!!\n")
+		else:
 			v8 = await local_0()
 			v3 = inifile.pog_int(v8, "stock_flee_gangster", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			if not (object.property_exists(v0, "hard_dude")):
-				_pc = 590
-				continue
-			else:
-				_pc = 739
-				continue
-		elif _pc == 590:
-			v11 = iship.find_player_ship()
-			if _pog_eq(v1, v11) and sim.distance_between(v11, v0) < 50000.0:
-				_pc = 655
-				continue
-			else:
-				_pc = 739
-				continue
-		elif _pc == 655:
-			icomms.shout(v0, "", string.join(string.join("stock_flee_gangster_", string.from_int(v2)), v12))
-			_pc = 739
-			continue
-		elif _pc == 739:
-			_pc = 765
-			continue
-		elif _pc == 744:
-			debug.print_string("iFlee.GangsterCallForHelp: Placing Head Ship\n")
-			_pc = 765
-			continue
-		elif _pc == 765:
+				v11 = iship.find_player_ship()
+				if _pog_eq(v1, v11) and sim.distance_between(v11, v0) < 50000.0:
+					icomms.shout(v0, "", string.join(string.join("stock_flee_gangster_", string.from_int(v2)), v12))
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Placing Head Ship\n")
 			sim.place_relative_to(v10, imapentity.waypoint_for_entity(ihabitat.nearest(v5, v0)), 500.0, 0.0, 0.0)
-			_pc = 916
-			continue
-		elif _pc == 840:
-			debug.print_string("iFlee.GangsterCallForHelp: Placing ")
-			debug.print_int(group.sim_count(v9))
-			debug.print_string(" Ships in Formation\n")
-			_pc = 916
-			continue
-		elif _pc == 916:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Placing ")
+				debug.print_int(group.sim_count(v9))
+				debug.print_string(" Ships in Formation\n")
 			if group.sim_count(v9) > 1:
-				_pc = 941
-				continue
-			else:
-				_pc = 966
-				continue
-		elif _pc == 941:
-			await iformation.impi(v9, 20.0, 1)
-			_pc = 966
-			continue
-		elif _pc == 966:
-			_pc = 992
-			continue
-		elif _pc == 971:
-			debug.print_string("iFlee.GangsterCallForHelp: Giving support ships destination orders\n")
-			_pc = 992
-			continue
-		elif _pc == 992:
+				await iformation.impi(v9, 20.0, 1)
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Giving support ships destination orders\n")
 			iai.give_formate_order(v10, v0, 0.0, 0.0, 0.0)
-			_pc = 1057
-			continue
-		elif _pc == 1036:
-			debug.print_string("iFlee.GangsterCallForHelp: Giving requestor ship orders to head for support\n")
-			_pc = 1057
-			continue
-		elif _pc == 1057:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Giving requestor ship orders to head for support\n")
 			iai.remove_order(v0)
 			iai.give_approach_order(v0, v10)
-			_pc = 1126
-			continue
-		elif _pc == 1105:
-			debug.print_string("iFlee.GangsterCallForHelp: Starting Wait for arrival loop\n")
-			_pc = 1126
-			continue
-		elif _pc == 1126:
-			_pc = 1131
-			continue
-		elif _pc == 1131:
-			await _pog_frame()
-			if _pog_every(1132, 30.0):
-				_pc = 1145
-				continue
-			else:
-				_pc = 1173
-				continue
-		elif _pc == 1145:
-			if iai.is_order_complete(v10):
-				_pc = 1168
-				continue
-			else:
-				_pc = 1173
-				continue
-		elif _pc == 1168:
-			_pc = 1178
-			continue
-		elif _pc == 1173:
-			_pc = 1131
-			continue
-		elif _pc == 1178:
-			_pc = 1205
-			continue
-		elif _pc == 1184:
-			debug.print_string("iFlee.GangsterCallForHelp: Arrived at destination, staying alive while player is here\n")
-			_pc = 1205
-			continue
-		elif _pc == 1205:
-			if await iutilities.player_in_range(v10):
-				_pc = 1228
-				continue
-			else:
-				_pc = 1265
-				continue
-		elif _pc == 1228:
-			await _pog_wait(30.0)
-			_pc = 1205
-			continue
-		elif _pc == 1265:
-			_pc = 1291
-			continue
-		elif _pc == 1270:
-			debug.print_string("iFlee.GangsterCallForHelp: Destroying support vessels\n")
-			_pc = 1291
-			continue
-		elif _pc == 1291:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Starting Wait for arrival loop\n")
+			while true:
+				await _pog_wait(30)
+				if not (iai.is_order_complete(v10)):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Arrived at destination, staying alive while player is here\n")
+			while await iutilities.player_in_range(v10):
+				await _pog_wait(30.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.GangsterCallForHelp: Destroying support vessels\n")
 			group.destroy(v9, 1)
-			_pc = 1311
-			continue
-		elif _pc == 1311:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func civilian_run_for_help() -> Variant:
@@ -279,229 +138,82 @@ func civilian_run_for_help() -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	var _pc: int = 1334
-	while true:
-		if _pc == 1334:
-			v4 = 1
-			v5 = null
-			v5 = imapentity.system_habitats()
-			v6 = null
-			v7 = 14
-			v8 = inifile.cast(global.handle("g_shipping_ini"))
-			v10 = iship.find_player_ship()
-			v13 = await ishipcreation.get_traffic(9, v7, math.random_int(2, 5))
-			v14 = iship.cast(group.nth_sim(v13, 0))
-			v15 = null
-			if object.property_exists(v0, "fleeing"):
-				_pc = 1576
-				continue
-			else:
-				_pc = 1601
-				continue
-		elif _pc == 1576:
-			group.destroy(v13, 1)
-			_pc = 2938
-			continue
-		elif _pc == 1601:
-			if object.i_d_modulus(v0, 2) == 1:
-				_pc = 1628
-				continue
-			else:
-				_pc = 1646
-				continue
-		elif _pc == 1628:
+	v4 = 1
+	v5 = null
+	v5 = imapentity.system_habitats()
+	v6 = null
+	v7 = 14
+	v8 = inifile.cast(global.handle("g_shipping_ini"))
+	v10 = iship.find_player_ship()
+	v13 = await ishipcreation.get_traffic(9, v7, math.random_int(2, 5))
+	v14 = iship.cast(group.nth_sim(v13, 0))
+	v15 = null
+	if object.property_exists(v0, "fleeing"):
+		group.destroy(v13, 1)
+	else:
+		if object.i_d_modulus(v0, 2) == 1:
 			v15 = "_male_1"
-			_pc = 1659
-			continue
-		elif _pc == 1646:
+		else:
 			v15 = "_female_1"
-			_pc = 1659
-			continue
-		elif _pc == 1659:
-			object.add_int_property(v0, "fleeing", 1)
-			_pc = 1712
-			continue
-		elif _pc == 1691:
+		object.add_int_property(v0, "fleeing", 1)
+		if PogRuntime.TRACE:
 			debug.print_string("iFlee.CivilianCallForHelp: Starting task\n")
-			_pc = 1712
-			continue
-		elif _pc == 1712:
-			v11 = sim.create("ini:/sims/nav/waypoint", "Attack Location")
-			sim.place_relative_to(v11, sim.cast(v0), 0.0, 0.0, 0.0)
-			v6 = ihabitat.filter_on_type(v5, 68)
-			p_set.union(v6, ihabitat.filter_on_type(v5, 69))
-			v9 = await local_0()
-			v3 = inifile.pog_int(v9, "stock_flee_civillian", "num_entries", 1)
-			v2 = math.random_int(1, v3)
-			if not (object.property_exists(v0, "hard_dude")):
-				_pc = 1978
-				continue
-			else:
-				_pc = 2127
-				continue
-		elif _pc == 1978:
+		v11 = sim.create("ini:/sims/nav/waypoint", "Attack Location")
+		sim.place_relative_to(v11, sim.cast(v0), 0.0, 0.0, 0.0)
+		v6 = ihabitat.filter_on_type(v5, 68)
+		p_set.union(v6, ihabitat.filter_on_type(v5, 69))
+		v9 = await local_0()
+		v3 = inifile.pog_int(v9, "stock_flee_civillian", "num_entries", 1)
+		v2 = math.random_int(1, v3)
+		if not (object.property_exists(v0, "hard_dude")):
 			v10 = iship.find_player_ship()
 			if _pog_eq(v1, v10) and sim.distance_between(v10, v0) < 50000.0:
-				_pc = 2043
-				continue
-			else:
-				_pc = 2127
-				continue
-		elif _pc == 2043:
-			icomms.shout(v0, "", string.join(string.join("stock_flee_civillian_", string.from_int(v2)), v15))
-			_pc = 2127
-			continue
-		elif _pc == 2127:
-			_pc = 2153
-			continue
-		elif _pc == 2132:
+				icomms.shout(v0, "", string.join(string.join("stock_flee_civillian_", string.from_int(v2)), v15))
+		if PogRuntime.TRACE:
 			debug.print_string("iFlee.GangsterCallForHelp: Placing Head Ship\n")
-			_pc = 2153
-			continue
-		elif _pc == 2153:
-			if _pog_is_null(p_set.item_count(v6)):
-				_pc = 2178
-				continue
-			else:
-				_pc = 2209
-				continue
-		elif _pc == 2178:
-			_pc = 2204
-			continue
-		elif _pc == 2183:
-			debug.print_string("iFlee.CivilianCallForHelp: Unable to find Police Facility to find backup from!\n")
-			_pc = 2204
-			continue
-		elif _pc == 2204:
-			_pc = 2938
-			continue
-		elif _pc == 2209:
+		if _pog_is_null(p_set.item_count(v6)):
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Unable to find Police Facility to find backup from!\n")
+		else:
 			v12 = ihabitat.nearest(v6, v0)
-			_pc = 2264
-			continue
-		elif _pc == 2243:
-			debug.print_string("iFlee.CivilianCallForHelp: Placing Head Ship\n")
-			_pc = 2264
-			continue
-		elif _pc == 2264:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Placing Head Ship\n")
 			sim.place_relative_to(v14, imapentity.waypoint_for_entity(v12), 500.0, 0.0, 0.0)
-			_pc = 2397
-			continue
-		elif _pc == 2321:
-			debug.print_string("iFlee.CivilianCallForHelp: Placing ")
-			debug.print_int(group.sim_count(v13))
-			debug.print_string(" Ships in Formation\n")
-			_pc = 2397
-			continue
-		elif _pc == 2397:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Placing ")
+				debug.print_int(group.sim_count(v13))
+				debug.print_string(" Ships in Formation\n")
 			await iformation.impi(v13, 20.0, 1)
-			_pc = 2448
-			continue
-		elif _pc == 2427:
-			debug.print_string("iFlee.CivilianCallForHelp: Giving support ships destination orders\n")
-			_pc = 2448
-			continue
-		elif _pc == 2448:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Giving support ships destination orders\n")
 			iai.give_approach_order(v14, v0)
-			_pc = 2498
-			continue
-		elif _pc == 2477:
-			debug.print_string("iFlee.CivilianCallForHelp: Giving requestor ship orders to head for support\n")
-			_pc = 2498
-			continue
-		elif _pc == 2498:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Giving requestor ship orders to head for support\n")
 			iai.remove_order(v0)
 			iai.give_approach_order(v0, group.nth_sim(v13, 0))
-			_pc = 2581
-			continue
-		elif _pc == 2560:
-			debug.print_string("iFlee.CivilianCallForHelp: Starting Wait for arrival loop\n")
-			_pc = 2581
-			continue
-		elif _pc == 2581:
-			_pc = 2586
-			continue
-		elif _pc == 2586:
-			await _pog_frame()
-			if _pog_every(2587, 30.0):
-				_pc = 2600
-				continue
-			else:
-				_pc = 2628
-				continue
-		elif _pc == 2600:
-			if iai.is_order_complete(v14):
-				_pc = 2623
-				continue
-			else:
-				_pc = 2628
-				continue
-		elif _pc == 2623:
-			_pc = 2633
-			continue
-		elif _pc == 2628:
-			_pc = 2586
-			continue
-		elif _pc == 2633:
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Starting Wait for arrival loop\n")
+			while true:
+				await _pog_wait(30)
+				if not (iai.is_order_complete(v14)):
+					continue
+				break
 			iai.remove_order(v14)
 			iai.give_formate_order(v14, v0, 20.0, 0.0, 0.0)
 			iai.give_approach_order(v0, imapentity.waypoint_for_entity(v12))
 			iai.give_approach_order(v14, v11)
-			_pc = 2758
-			continue
-		elif _pc == 2758:
-			await _pog_frame()
-			if _pog_every(2759, 30.0):
-				_pc = 2772
-				continue
-			else:
-				_pc = 2800
-				continue
-		elif _pc == 2772:
-			if iai.is_order_complete(v14):
-				_pc = 2795
-				continue
-			else:
-				_pc = 2800
-				continue
-		elif _pc == 2795:
-			_pc = 2805
-			continue
-		elif _pc == 2800:
-			_pc = 2758
-			continue
-		elif _pc == 2805:
-			_pc = 2832
-			continue
-		elif _pc == 2811:
-			debug.print_string("iFlee.CivilianCallForHelp: Arrived at destination, staying alive while player is here\n")
-			_pc = 2832
-			continue
-		elif _pc == 2832:
-			if await iutilities.player_in_range(v14):
-				_pc = 2855
-				continue
-			else:
-				_pc = 2892
-				continue
-		elif _pc == 2855:
-			await _pog_wait(50.0)
-			_pc = 2832
-			continue
-		elif _pc == 2892:
-			_pc = 2918
-			continue
-		elif _pc == 2897:
-			debug.print_string("iFlee.CivilianCallForHelp: Destroying support vessels\n")
-			_pc = 2918
-			continue
-		elif _pc == 2918:
+			while true:
+				await _pog_wait(30)
+				if not (iai.is_order_complete(v14)):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Arrived at destination, staying alive while player is here\n")
+			while await iutilities.player_in_range(v14):
+				await _pog_wait(50.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iFlee.CivilianCallForHelp: Destroying support vessels\n")
 			group.destroy(v13, 1)
-			_pc = 2938
-			continue
-		elif _pc == 2938:
-			return
-		else:
-			return 0
+	return
 	return 0
 

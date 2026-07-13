@@ -17,29 +17,10 @@ func _link() -> void:
 	imissiongenerator = rt.script("imissiongenerator")
 
 func local_0() -> Variant:
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			_pc = 36
-			continue
-		elif _pc == 5:
-			if global.exists("g_debug_all_generated_missions_ok"):
-				_pc = 30
-				continue
-			else:
-				_pc = 36
-				continue
-		elif _pc == 30:
-			_pc = 60
-			continue
-		elif _pc == 36:
-			global.pog_bool("g_accept_generated_mission")
-			_pc = 60
-			continue
-		elif _pc == 60:
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		if global.exists("g_debug_all_generated_missions_ok"):
+			return 1
+	return global.pog_bool("g_accept_generated_mission")
 	return 0
 
 func local_62() -> Variant:
@@ -93,8 +74,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.10000000149011612)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(2)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 871:
 			if not (await local_0()):
 				_pc = 890
@@ -103,8 +83,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 896
 				continue
 		elif _pc == 890:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 896:
 			_pc = 24163
 			continue
@@ -134,8 +113,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Underworld"), 0.15000000596046448)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(4)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 1465:
 			if not (await local_0()):
 				_pc = 1484
@@ -144,8 +122,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 1490
 				continue
 		elif _pc == 1484:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 1490:
 			_pc = 24163
 			continue
@@ -182,8 +159,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(3)
 			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 2273:
 			if not (await local_0()):
 				_pc = 2292
@@ -192,15 +168,13 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 2298
 				continue
 		elif _pc == 2292:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 2298:
 			_pc = 24163
 			continue
 		elif _pc == 2303:
 			await local_62()
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 2323:
 			await imissiongenerator.test_piracy_rating(1000.0)
 			await imissiongenerator.test_faction_rating("Oman", 0.5)
@@ -231,8 +205,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.30000001192092896)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(15)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 2997:
 			if not (await local_0()):
 				_pc = 3016
@@ -241,8 +214,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 3022
 				continue
 		elif _pc == 3016:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 3022:
 			_pc = 24163
 			continue
@@ -277,8 +249,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(16)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 3713:
 			if not (await local_0()):
 				_pc = 3732
@@ -287,8 +258,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 3738
 				continue
 		elif _pc == 3732:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 3738:
 			_pc = 24163
 			continue
@@ -327,8 +297,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(13)
 			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 4596:
 			if not (await local_0()):
 				_pc = 4615
@@ -337,8 +306,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 4621
 				continue
 		elif _pc == 4615:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 4621:
 			_pc = 24163
 			continue
@@ -372,8 +340,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(14)
 			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 5333:
 			if not (await local_0()):
 				_pc = 5352
@@ -382,8 +349,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 5358
 				continue
 		elif _pc == 5352:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 5358:
 			_pc = 24163
 			continue
@@ -414,8 +380,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MAAS Corporation"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(10)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 5910:
 			if not (await local_0()):
 				_pc = 5929
@@ -424,8 +389,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 5935
 				continue
 		elif _pc == 5929:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 5935:
 			_pc = 24163
 			continue
@@ -460,8 +424,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Police"), -0.20000000298023224)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(25)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 6683:
 			if not (await local_0()):
 				_pc = 6702
@@ -470,8 +433,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 6708
 				continue
 		elif _pc == 6702:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 6708:
 			_pc = 24163
 			continue
@@ -503,8 +465,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("CarvaCartel"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(7)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 7338:
 			if not (await local_0()):
 				_pc = 7357
@@ -513,8 +474,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 7363
 				continue
 		elif _pc == 7357:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 7363:
 			_pc = 24163
 			continue
@@ -552,8 +512,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(1)
 			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 8160:
 			if not (await local_0()):
 				_pc = 8179
@@ -562,15 +521,13 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 8185
 				continue
 		elif _pc == 8179:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 8185:
 			_pc = 24163
 			continue
 		elif _pc == 8190:
 			await local_62()
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 8210:
 			await imissiongenerator.test_piracy_rating(450.0)
 			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
@@ -603,8 +560,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(9)
 			global.set_int("gl_number_of_stepson_missions", 1 + global.pog_int("gl_number_of_stepson_missions"))
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 8965:
 			if not (await local_0()):
 				_pc = 8984
@@ -613,15 +569,13 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 8990
 				continue
 		elif _pc == 8984:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 8990:
 			_pc = 24163
 			continue
 		elif _pc == 8995:
 			await local_62()
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 9015:
 			await imissiongenerator.test_piracy_rating(250.0)
 			await imissiongenerator.test_global_bool("g_act1_stepsons_member", 1)
@@ -649,8 +603,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("League"), 1.0)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(6)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 9581:
 			if not (await local_0()):
 				_pc = 9600
@@ -659,8 +612,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 9606
 				continue
 		elif _pc == 9600:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 9606:
 			_pc = 24163
 			continue
@@ -694,8 +646,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Government"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(5)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 10313:
 			if not (await local_0()):
 				_pc = 10332
@@ -704,8 +655,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 10338
 				continue
 		elif _pc == 10332:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 10338:
 			_pc = 24163
 			continue
@@ -734,8 +684,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Datagontechnologies"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(26)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 10830:
 			if not (await local_0()):
 				_pc = 10849
@@ -744,15 +693,13 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 10855
 				continue
 		elif _pc == 10849:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 10855:
 			_pc = 24163
 			continue
 		elif _pc == 10860:
 			await local_62()
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 10880:
 			await imissiongenerator.test_piracy_rating(400.0)
 			if await local_0():
@@ -782,8 +729,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_add_mission(v1, 29)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(8)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 11431:
 			if not (await local_0()):
 				_pc = 11450
@@ -792,8 +738,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 11456
 				continue
 		elif _pc == 11450:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 11456:
 			_pc = 24163
 			continue
@@ -825,8 +770,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MaasCorporation"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(29)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 12074:
 			if not (await local_0()):
 				_pc = 12093
@@ -835,8 +779,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 12099
 				continue
 		elif _pc == 12093:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 12099:
 			_pc = 24163
 			continue
@@ -868,8 +811,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MaasCorporation"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(12)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 12720:
 			if not (await local_0()):
 				_pc = 12739
@@ -878,8 +820,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 12745
 				continue
 		elif _pc == 12739:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 12745:
 			_pc = 24163
 			continue
@@ -913,8 +854,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Underworld"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(24)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 13374:
 			if not (await local_0()):
 				_pc = 13393
@@ -923,8 +863,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 13399
 				continue
 		elif _pc == 13393:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 13399:
 			_pc = 24163
 			continue
@@ -956,8 +895,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("League"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(11)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 14019:
 			if not (await local_0()):
 				_pc = 14038
@@ -966,8 +904,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 14044
 				continue
 		elif _pc == 14038:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 14044:
 			_pc = 24163
 			continue
@@ -1006,8 +943,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Stepson"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(27)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 14838:
 			if not (await local_0()):
 				_pc = 14857
@@ -1016,8 +952,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 14863
 				continue
 		elif _pc == 14857:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 14863:
 			_pc = 24163
 			continue
@@ -1053,8 +988,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Marauder"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(28)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 15534:
 			if not (await local_0()):
 				_pc = 15553
@@ -1063,8 +997,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 15559
 				continue
 		elif _pc == 15553:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 15559:
 			_pc = 24163
 			continue
@@ -1095,8 +1028,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(17)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 16092:
 			if not (await local_0()):
 				_pc = 16111
@@ -1105,8 +1037,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 16117
 				continue
 		elif _pc == 16111:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 16117:
 			_pc = 24163
 			continue
@@ -1139,8 +1070,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("NOMEXCorporation"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(18)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 16758:
 			if not (await local_0()):
 				_pc = 16777
@@ -1149,8 +1079,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 16783
 				continue
 		elif _pc == 16777:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 16783:
 			_pc = 24163
 			continue
@@ -1183,8 +1112,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("MAASCorporation"), -0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(19)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 17425:
 			if not (await local_0()):
 				_pc = 17444
@@ -1193,8 +1121,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 17450
 				continue
 		elif _pc == 17444:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 17450:
 			_pc = 24163
 			continue
@@ -1225,8 +1152,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(20)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 17983:
 			if not (await local_0()):
 				_pc = 18002
@@ -1235,8 +1161,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 18008
 				continue
 		elif _pc == 18002:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 18008:
 			_pc = 24163
 			continue
@@ -1268,8 +1193,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(21)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 18605:
 			if not (await local_0()):
 				_pc = 18624
@@ -1278,8 +1202,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 18630
 				continue
 		elif _pc == 18624:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 18630:
 			_pc = 24163
 			continue
@@ -1311,8 +1234,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(22)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 19226:
 			if not (await local_0()):
 				_pc = 19245
@@ -1321,8 +1243,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 19251
 				continue
 		elif _pc == 19245:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 19251:
 			_pc = 24163
 			continue
@@ -1356,8 +1277,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(23)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 19893:
 			if not (await local_0()):
 				_pc = 19912
@@ -1366,8 +1286,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 19918
 				continue
 		elif _pc == 19912:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 19918:
 			_pc = 24163
 			continue
@@ -1401,8 +1320,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("Oman"), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(30)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 20520:
 			if not (await local_0()):
 				_pc = 20539
@@ -1411,8 +1329,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 20545
 				continue
 		elif _pc == 20539:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 20545:
 			_pc = 24163
 			continue
@@ -1444,8 +1361,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(31)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 21167:
 			if not (await local_0()):
 				_pc = 21186
@@ -1454,8 +1370,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 21192
 				continue
 		elif _pc == 21186:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 21192:
 			_pc = 24163
 			continue
@@ -1487,8 +1402,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(32)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 21801:
 			if not (await local_0()):
 				_pc = 21820
@@ -1497,8 +1411,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 21826
 				continue
 		elif _pc == 21820:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 21826:
 			_pc = 24163
 			continue
@@ -1535,8 +1448,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(33)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 22539:
 			if not (await local_0()):
 				_pc = 22558
@@ -1545,8 +1457,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 22564
 				continue
 		elif _pc == 22558:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 22564:
 			_pc = 24163
 			continue
@@ -1579,8 +1490,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(34)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 23185:
 			if not (await local_0()):
 				_pc = 23204
@@ -1589,8 +1499,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 23210
 				continue
 		elif _pc == 23204:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 23210:
 			_pc = 24163
 			continue
@@ -1622,8 +1531,7 @@ func instantiate_mission(v0) -> Variant:
 			await imissiongenerator.success_faction_modifier(v1, ifaction.find("M.C.A."), 0.5)
 			await imissiongenerator.activate(v1)
 			await imissiongenerator.flush_g_ms(35)
-			_pc = 24169
-			continue
+			return 1
 		elif _pc == 23809:
 			if not (await local_0()):
 				_pc = 23828
@@ -1632,8 +1540,7 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 23834
 				continue
 		elif _pc == 23828:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 23834:
 			_pc = 24163
 			continue
@@ -1648,246 +1555,245 @@ func instantiate_mission(v0) -> Variant:
 				_pc = 209
 				continue
 		elif _pc == 23858:
-			if not _pog_is_null(4):
+			if 4 != v0:
 				_pc = 23867
 				continue
 			else:
 				_pc = 901
 				continue
 		elif _pc == 23867:
-			if not _pog_is_null(3):
+			if 3 != v0:
 				_pc = 23876
 				continue
 			else:
 				_pc = 1495
 				continue
 		elif _pc == 23876:
-			if not _pog_is_null(15):
+			if 15 != v0:
 				_pc = 23885
 				continue
 			else:
 				_pc = 2303
 				continue
 		elif _pc == 23885:
-			if not _pog_is_null(16):
+			if 16 != v0:
 				_pc = 23894
 				continue
 			else:
 				_pc = 3027
 				continue
 		elif _pc == 23894:
-			if not _pog_is_null(13):
+			if 13 != v0:
 				_pc = 23903
 				continue
 			else:
 				_pc = 3743
 				continue
 		elif _pc == 23903:
-			if not _pog_is_null(14):
+			if 14 != v0:
 				_pc = 23912
 				continue
 			else:
 				_pc = 4626
 				continue
 		elif _pc == 23912:
-			if not _pog_is_null(10):
+			if 10 != v0:
 				_pc = 23921
 				continue
 			else:
 				_pc = 5363
 				continue
 		elif _pc == 23921:
-			if not _pog_is_null(25):
+			if 25 != v0:
 				_pc = 23930
 				continue
 			else:
 				_pc = 5940
 				continue
 		elif _pc == 23930:
-			if not _pog_is_null(7):
+			if 7 != v0:
 				_pc = 23939
 				continue
 			else:
 				_pc = 6713
 				continue
 		elif _pc == 23939:
-			if not _pog_is_null(1):
+			if 1 != v0:
 				_pc = 23947
 				continue
 			else:
 				_pc = 7368
 				continue
 		elif _pc == 23947:
-			if not _pog_is_null(9):
+			if 9 != v0:
 				_pc = 23956
 				continue
 			else:
 				_pc = 8190
 				continue
 		elif _pc == 23956:
-			if not _pog_is_null(6):
+			if 6 != v0:
 				_pc = 23965
 				continue
 			else:
 				_pc = 8995
 				continue
 		elif _pc == 23965:
-			if not _pog_is_null(5):
+			if 5 != v0:
 				_pc = 23974
 				continue
 			else:
 				_pc = 9611
 				continue
 		elif _pc == 23974:
-			if not _pog_is_null(26):
+			if 26 != v0:
 				_pc = 23983
 				continue
 			else:
 				_pc = 10343
 				continue
 		elif _pc == 23983:
-			if not _pog_is_null(8):
+			if 8 != v0:
 				_pc = 23992
 				continue
 			else:
 				_pc = 10860
 				continue
 		elif _pc == 23992:
-			if not _pog_is_null(29):
+			if 29 != v0:
 				_pc = 24001
 				continue
 			else:
 				_pc = 11461
 				continue
 		elif _pc == 24001:
-			if not _pog_is_null(12):
+			if 12 != v0:
 				_pc = 24010
 				continue
 			else:
 				_pc = 12104
 				continue
 		elif _pc == 24010:
-			if not _pog_is_null(24):
+			if 24 != v0:
 				_pc = 24019
 				continue
 			else:
 				_pc = 12750
 				continue
 		elif _pc == 24019:
-			if not _pog_is_null(11):
+			if 11 != v0:
 				_pc = 24028
 				continue
 			else:
 				_pc = 13404
 				continue
 		elif _pc == 24028:
-			if not _pog_is_null(27):
+			if 27 != v0:
 				_pc = 24037
 				continue
 			else:
 				_pc = 14049
 				continue
 		elif _pc == 24037:
-			if not _pog_is_null(28):
+			if 28 != v0:
 				_pc = 24046
 				continue
 			else:
 				_pc = 14868
 				continue
 		elif _pc == 24046:
-			if not _pog_is_null(17):
+			if 17 != v0:
 				_pc = 24055
 				continue
 			else:
 				_pc = 15564
 				continue
 		elif _pc == 24055:
-			if not _pog_is_null(18):
+			if 18 != v0:
 				_pc = 24064
 				continue
 			else:
 				_pc = 16122
 				continue
 		elif _pc == 24064:
-			if not _pog_is_null(19):
+			if 19 != v0:
 				_pc = 24073
 				continue
 			else:
 				_pc = 16788
 				continue
 		elif _pc == 24073:
-			if not _pog_is_null(20):
+			if 20 != v0:
 				_pc = 24082
 				continue
 			else:
 				_pc = 17455
 				continue
 		elif _pc == 24082:
-			if not _pog_is_null(21):
+			if 21 != v0:
 				_pc = 24091
 				continue
 			else:
 				_pc = 18013
 				continue
 		elif _pc == 24091:
-			if not _pog_is_null(22):
+			if 22 != v0:
 				_pc = 24100
 				continue
 			else:
 				_pc = 18635
 				continue
 		elif _pc == 24100:
-			if not _pog_is_null(23):
+			if 23 != v0:
 				_pc = 24109
 				continue
 			else:
 				_pc = 19256
 				continue
 		elif _pc == 24109:
-			if not _pog_is_null(30):
+			if 30 != v0:
 				_pc = 24118
 				continue
 			else:
 				_pc = 19923
 				continue
 		elif _pc == 24118:
-			if not _pog_is_null(31):
+			if 31 != v0:
 				_pc = 24127
 				continue
 			else:
 				_pc = 20550
 				continue
 		elif _pc == 24127:
-			if not _pog_is_null(32):
+			if 32 != v0:
 				_pc = 24136
 				continue
 			else:
 				_pc = 21197
 				continue
 		elif _pc == 24136:
-			if not _pog_is_null(33):
+			if 33 != v0:
 				_pc = 24145
 				continue
 			else:
 				_pc = 21831
 				continue
 		elif _pc == 24145:
-			if not _pog_is_null(34):
+			if 34 != v0:
 				_pc = 24154
 				continue
 			else:
 				_pc = 22569
 				continue
 		elif _pc == 24154:
-			if not _pog_is_null(35):
+			if 35 != v0:
 				_pc = 24163
 				continue
 			else:
 				_pc = 23215
 				continue
 		elif _pc == 24163:
-			_pc = 24169
-			continue
+			return 0
 		elif _pc == 24169:
 			return
 		else:

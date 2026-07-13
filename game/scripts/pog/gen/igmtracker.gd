@@ -28,45 +28,22 @@ func _link() -> void:
 
 func initialise_mission_generator() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			if _pog_is_null(global.exists("gl_missgen_number_available")):
-				_pc = 32
-				continue
-			else:
-				_pc = 273
-				continue
-		elif _pc == 32:
-			global.create_int("gl_missgen_number_available", 2, 0)
-			global.create_int("gl_missgen_number_max_active", 2, 1)
-			global.create_int("gl_missgen_number_currently_active", 2, 0)
-			global.create_int("gl_missgen_index", 2, 1)
-			global.create_int("gl_missgen_max_index", 2, 0)
-			global.create_string("gl_genmission_jafs", 2, "")
-			text.add("csv:/generated_missions/GeneratedMissions")
-			v0 = _pog_spawn(g_m_tracker.bind())
-			_pog_detach(v0)
-			_pc = 267
-			continue
-		elif _pc == 246:
+	if _pog_is_null(global.exists("gl_missgen_number_available")):
+		global.create_int("gl_missgen_number_available", 2, 0)
+		global.create_int("gl_missgen_number_max_active", 2, 1)
+		global.create_int("gl_missgen_number_currently_active", 2, 0)
+		global.create_int("gl_missgen_index", 2, 1)
+		global.create_int("gl_missgen_max_index", 2, 0)
+		global.create_string("gl_genmission_jafs", 2, "")
+		text.add("csv:/generated_missions/GeneratedMissions")
+		v0 = _pog_spawn(g_m_tracker.bind())
+		_pog_detach(v0)
+		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker:InitialiseMissionGenerator created and detached task.\n")
-			_pc = 267
-			continue
-		elif _pc == 267:
-			_pc = 299
-			continue
-		elif _pc == 273:
-			_pc = 299
-			continue
-		elif _pc == 278:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker:InitialiseMissionGenerator mission generator already initialised.\n")
-			_pc = 299
-			continue
-		elif _pc == 299:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func add_g_m_enum(v0) -> Variant:
@@ -114,140 +91,60 @@ func g_m_tracker() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 781
-	while true:
-		if _pc == 781:
-			v2 = null
-			v3 = -1
-			v8 = 0
-			input.bind_key("iGMTracker.RunGMission", "ScriptKeys.StartGMission")
-			v9 = state.find(self)
-			if not _pog_is_null(v9):
-				_pc = 884
-				continue
-			else:
-				_pc = 915
-				continue
-		elif _pc == 884:
-			_pc = 910
-			continue
-		elif _pc == 889:
+	v2 = null
+	v3 = -1
+	v8 = 0
+	input.bind_key("iGMTracker.RunGMission", "ScriptKeys.StartGMission")
+	v9 = state.find(self)
+	if not _pog_is_null(v9):
+		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker.GMTracker: restarted\n")
-			_pc = 910
-			continue
-		elif _pc == 910:
-			_pc = 969
-			continue
-		elif _pc == 915:
-			_pc = 941
-			continue
-		elif _pc == 920:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker.GMTracker: started\n")
-			_pc = 941
-			continue
-		elif _pc == 941:
-			state.create(self, 0)
-			_pc = 969
-			continue
-		elif _pc == 969:
-			text.add("csv:/text/generated_missions/generatedmissions")
-			_pc = 1016
-			continue
-		elif _pc == 995:
-			debug.print_string("iGMTracker.GMTracker: checking count of existing missions.\n")
-			_pc = 1016
-			continue
-		elif _pc == 1016:
-			v4 = global.pog_int("gl_missgen_number_currently_active")
-			v5 = global.pog_int("gl_missgen_number_max_active")
-			_pc = 1176
-			continue
-		elif _pc == 1073:
+		state.create(self, 0)
+	text.add("csv:/text/generated_missions/generatedmissions")
+	if PogRuntime.TRACE:
+		debug.print_string("iGMTracker.GMTracker: checking count of existing missions.\n")
+	while true:
+		v4 = global.pog_int("gl_missgen_number_currently_active")
+		v5 = global.pog_int("gl_missgen_number_max_active")
+		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker.GMTracker: existing count ")
 			debug.print_int(v4)
 			debug.print_string(" maximum is ")
 			debug.print_int(v5)
 			debug.print_string(" \n")
-			_pc = 1176
-			continue
-		elif _pc == 1176:
-			if v4 < v5:
-				_pc = 1192
-				continue
-			else:
-				_pc = 1424
-				continue
-		elif _pc == 1192:
+		if v4 < v5:
 			await _pog_wait(5.0)
 			v6 = global.pog_int("gl_missgen_index")
 			v7 = global.pog_int("gl_missgen_max_index")
-			_pc = 1384
-			continue
-		elif _pc == 1281:
-			debug.print_string("iGMTracker.GMTracker: mission lower range ")
-			debug.print_int(v6)
-			debug.print_string(" to ")
-			debug.print_int(v7)
-			debug.print_string(" \n")
-			_pc = 1384
-			continue
-		elif _pc == 1384:
+			if PogRuntime.TRACE:
+				debug.print_string("iGMTracker.GMTracker: mission lower range ")
+				debug.print_int(v6)
+				debug.print_string(" to ")
+				debug.print_int(v7)
+				debug.print_string(" \n")
 			if v6 <= v7:
-				_pc = 1400
-				continue
+				v3 = v6
 			else:
-				_pc = 1416
-				continue
-		elif _pc == 1400:
-			v3 = v6
-			_pc = 1424
+				v3 = -1
+		await _pog_wait(5.0)
+		if v3 == -1:
 			continue
-		elif _pc == 1416:
-			v3 = -1
-			_pc = 1424
-			continue
-		elif _pc == 1424:
-			await _pog_wait(5.0)
-			if v3 != -1:
-				_pc = 1469
-				continue
-			else:
-				_pc = 1016
-				continue
-		elif _pc == 1469:
-			v8 = await igmtemplates.instantiate_mission(v3)
-			if v8:
-				_pc = 1504
-				continue
-			else:
-				_pc = 1595
-				continue
-		elif _pc == 1504:
+		v8 = await igmtemplates.instantiate_mission(v3)
+		if v8:
 			global.set_int(v2, -1)
 			global.set_int("gl_missgen_number_currently_active", v4 + 1)
 			global.set_int("gl_missgen_index", global.pog_int("gl_missgen_index") + 1)
-			_pc = 1595
-			continue
-		elif _pc == 1595:
-			await _pog_wait(1.0)
-			if v8:
-				_pc = 1639
-				continue
-			else:
-				_pc = 1016
-				continue
-		elif _pc == 1639:
-			await _pog_wait(100.0)
-			if not (1):
-				_pc = 1677
-				continue
-			else:
-				_pc = 1639
-				continue
-		elif _pc == 1677:
-			return
-		else:
-			return 0
+		await _pog_wait(1.0)
+		if not (not (v8)):
+			break
+	while true:
+		await _pog_wait(100.0)
+		if not (1):
+			break
+	return
 	return 0
 
 func stepover_mission() -> Variant:
@@ -344,40 +241,16 @@ func give_all_generated_missions() -> Variant:
 
 func cheat_trigger_mission(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 2987
-	while true:
-		if _pc == 2987:
-			if global.exists("g_debug_all_generated_missions_ok"):
-				_pc = 3017
-				continue
-			else:
-				_pc = 3048
-				continue
-		elif _pc == 3017:
-			v1 = global.pog_bool("g_debug_all_generated_missions_ok")
-			_pc = 3055
-			continue
-		elif _pc == 3048:
-			v1 = 0
-			_pc = 3055
-			continue
-		elif _pc == 3055:
-			global.create_bool("g_debug_all_generated_missions_ok", 2, 1)
-			await igmtemplates.instantiate_mission(v0)
-			if _pog_is_null(v1):
-				_pc = 3110
-				continue
-			else:
-				_pc = 3132
-				continue
-		elif _pc == 3110:
-			global.set_bool("g_debug_all_generated_missions_ok", 0)
-			_pc = 3132
-			continue
-		elif _pc == 3132:
-			return 0
-		else:
-			return 0
+	if global.exists("g_debug_all_generated_missions_ok"):
+		v1 = global.pog_bool("g_debug_all_generated_missions_ok")
+	else:
+		v1 = 0
+	global.create_bool("g_debug_all_generated_missions_ok", 2, 1)
+	await igmtemplates.instantiate_mission(v0)
+	if not _pog_is_null(v1):
+		return 0
+	global.set_bool("g_debug_all_generated_missions_ok", 0)
+	return 0
 	return 0
 
 func local_3135() -> Variant:

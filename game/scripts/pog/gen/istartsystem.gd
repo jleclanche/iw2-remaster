@@ -100,63 +100,21 @@ func local_207() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 207
+	v2 = null
 	while true:
-		if _pc == 207:
-			v2 = null
-			_pc = 228
+		await _pog_wait(2)
+		v0 = iship.find_player_ship()
+		v1 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
+		if not (isim.is_docked_to(isim.cast(v1), v0)):
 			continue
-		elif _pc == 228:
-			await _pog_frame()
-			if _pog_every(229, 2.0):
-				_pc = 242
-				continue
-			else:
-				_pc = 471
-				continue
-		elif _pc == 242:
-			v0 = iship.find_player_ship()
-			v1 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
-			if isim.is_docked_to(isim.cast(v1), v0):
-				_pc = 348
-				continue
-			else:
-				_pc = 471
-				continue
-		elif _pc == 348:
-			v2 = "/movies/OldCalShutdown"
-			if global.exists("g_current_act"):
-				_pc = 386
-				continue
-			else:
-				_pc = 426
-				continue
-		elif _pc == 386:
+		v2 = "/movies/OldCalShutdown"
+		if global.exists("g_current_act"):
 			if _pog_is_null(global.pog_int("g_current_act")):
-				_pc = 413
-				continue
-			else:
-				_pc = 426
-				continue
-		elif _pc == 413:
-			v2 = "/movies/YoungCalShutdown"
-			_pc = 426
-			continue
-		elif _pc == 426:
-			gui.set_screen("icSPPlayerBaseScreen")
-			await _pog_movie(v2)
-			_pc = 477
-			continue
-		elif _pc == 471:
-			_pc = 228
-			continue
-		elif _pc == 476:
-			_pc = 477
-			continue
-		elif _pc == 477:
-			return
-		else:
-			return 0
+				v2 = "/movies/YoungCalShutdown"
+		gui.set_screen("icSPPlayerBaseScreen")
+		await _pog_movie(v2)
+		return
+	return
 	return 0
 
 func local_486() -> Variant:
@@ -386,31 +344,14 @@ func local_3258(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 3258
-	while true:
-		if _pc == 3258:
-			v1 = null
-			v1 = list.from_set(v0)
-			v2 = list.item_count(v1)
-			v3 = 0
-			_pc = 3331
-			continue
-		elif _pc == 3331:
-			if v3 < v2:
-				_pc = 3347
-				continue
-			else:
-				_pc = 3415
-				continue
-		elif _pc == 3347:
-			isim.lock_down_weapons(isim.cast(list.get_nth(v1, v3)))
-			v3 = v3 + 1
-			_pc = 3331
-			continue
-		elif _pc == 3415:
-			return 0
-		else:
-			return 0
+	v1 = null
+	v1 = list.from_set(v0)
+	v2 = list.item_count(v1)
+	v3 = 0
+	while v3 < v2:
+		isim.lock_down_weapons(isim.cast(list.get_nth(v1, v3)))
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func local_3425() -> Variant:
@@ -422,136 +363,46 @@ func local_3425() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 3425
-	while true:
-		if _pc == 3425:
-			v0 = imapentity.find_by_name("Lucrecia's Base")
-			v1 = imapentity.find_by_name("Remek L-Point")
-			v2 = imapentity.find_by_name("Formhault Jump Accelerator")
-			v3 = imapentity.find_by_name("Liberty L-Point")
-			v4 = imapentity.find_by_name("Jump Accelerator")
-			v5 = null
-			v6 = null
-			v7 = null
-			_pc = 3615
-			continue
-		elif _pc == 3594:
-			debug.print_string("iStartSystem.create_filtered_habitat_set: Creating set...\n")
-			_pc = 3615
-			continue
-		elif _pc == 3615:
-			v6 = imapentity.system_habitats()
-			p_set.union(v6, imapentity.system_lagrange_points())
-			v5 = ihabitat.filter_on_type(v6, 1)
-			await local_3258(v5)
-			if global.exists("g_out_of_system_exceptions"):
-				_pc = 3741
-				continue
-			else:
-				_pc = 3781
-				continue
-		elif _pc == 3741:
-			p_set.union(v5, global.pog_set("g_out_of_system_exceptions"))
-			_pc = 3781
-			continue
-		elif _pc == 3781:
-			if not _pog_is_null(v0):
-				_pc = 3794
-				continue
-			else:
-				_pc = 3818
-				continue
-		elif _pc == 3794:
-			p_set.add(v5, v0)
-			_pc = 3818
-			continue
-		elif _pc == 3818:
-			if not _pog_is_null(v1):
-				_pc = 3831
-				continue
-			else:
-				_pc = 3855
-				continue
-		elif _pc == 3831:
-			p_set.add(v5, v1)
-			_pc = 3855
-			continue
-		elif _pc == 3855:
-			if not _pog_is_null(v2):
-				_pc = 3868
-				continue
-			else:
-				_pc = 3892
-				continue
-		elif _pc == 3868:
-			p_set.add(v5, v2)
-			_pc = 3892
-			continue
-		elif _pc == 3892:
-			if not _pog_is_null(v3):
-				_pc = 3905
-				continue
-			else:
-				_pc = 3929
-				continue
-		elif _pc == 3905:
-			p_set.add(v5, v3)
-			_pc = 3929
-			continue
-		elif _pc == 3929:
-			if not _pog_is_null(v4):
-				_pc = 3942
-				continue
-			else:
-				_pc = 3966
-				continue
-		elif _pc == 3942:
-			p_set.add(v5, v4)
-			_pc = 3966
-			continue
-		elif _pc == 3966:
-			_pc = 4047
-			continue
-		elif _pc == 3971:
-			debug.print_string("iStartSystem.create_filtered_habitat_set: Removing ")
-			debug.print_int(p_set.item_count(v5))
-			debug.print_string(" traffic exceptions\n")
-			_pc = 4047
-			continue
-		elif _pc == 4047:
-			p_set.difference(v6, v5)
-			_pc = 4152
-			continue
-		elif _pc == 4076:
-			debug.print_string("iStartSystem.create_filtered_habitat_set: ")
-			debug.print_int(p_set.item_count(v6))
-			debug.print_string(" traffic locations remaining\n")
-			_pc = 4152
-			continue
-		elif _pc == 4152:
-			_pc = 4206
-			continue
-		elif _pc == 4157:
-			if p_set.is_empty(v6):
-				_pc = 4180
-				continue
-			else:
-				_pc = 4206
-				continue
-		elif _pc == 4180:
-			_pc = 4206
-			continue
-		elif _pc == 4185:
-			debug.print_string("iStartSystem.create_filtered_habitat_set: No habitats for traffic!\n")
-			_pc = 4206
-			continue
-		elif _pc == 4206:
-			_pc = 4216
-			continue
-		elif _pc == 4216:
-			return
-		else:
-			return 0
+	v0 = imapentity.find_by_name("Lucrecia's Base")
+	v1 = imapentity.find_by_name("Remek L-Point")
+	v2 = imapentity.find_by_name("Formhault Jump Accelerator")
+	v3 = imapentity.find_by_name("Liberty L-Point")
+	v4 = imapentity.find_by_name("Jump Accelerator")
+	v5 = null
+	v6 = null
+	v7 = null
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.create_filtered_habitat_set: Creating set...\n")
+	v6 = imapentity.system_habitats()
+	p_set.union(v6, imapentity.system_lagrange_points())
+	v5 = ihabitat.filter_on_type(v6, 1)
+	await local_3258(v5)
+	if global.exists("g_out_of_system_exceptions"):
+		p_set.union(v5, global.pog_set("g_out_of_system_exceptions"))
+	if not _pog_is_null(v0):
+		p_set.add(v5, v0)
+	if not _pog_is_null(v1):
+		p_set.add(v5, v1)
+	if not _pog_is_null(v2):
+		p_set.add(v5, v2)
+	if not _pog_is_null(v3):
+		p_set.add(v5, v3)
+	if not _pog_is_null(v4):
+		p_set.add(v5, v4)
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.create_filtered_habitat_set: Removing ")
+		debug.print_int(p_set.item_count(v5))
+		debug.print_string(" traffic exceptions\n")
+	p_set.difference(v6, v5)
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.create_filtered_habitat_set: ")
+		debug.print_int(p_set.item_count(v6))
+		debug.print_string(" traffic locations remaining\n")
+	if PogRuntime.TRACE:
+		if p_set.is_empty(v6):
+			if PogRuntime.TRACE:
+				debug.print_string("iStartSystem.create_filtered_habitat_set: No habitats for traffic!\n")
+	return _pog_clone(v6)
 	return 0
 
 func local_4240() -> Variant:
@@ -559,103 +410,34 @@ func local_4240() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 4240
-	while true:
-		if _pc == 4240:
-			v3 = null
-			_pc = 4282
-			continue
-		elif _pc == 4261:
-			debug.print_string("iStartSystem.create_station_regions: Initialising traffic control regions...\n")
-			_pc = 4282
-			continue
-		elif _pc == 4282:
-			v3 = await local_3425()
-			_pc = 4303
-			continue
-		elif _pc == 4303:
-			if not (p_set.is_empty(v3)):
-				_pc = 4327
-				continue
-			else:
-				_pc = 4725
-				continue
-		elif _pc == 4327:
-			v1 = p_set.first_element(v3)
-			v0 = imapentity.cast(v1)
-			p_set.remove(v3, v1)
-			if _pog_is_null(v0):
-				_pc = 4412
-				continue
-			else:
-				_pc = 4514
-				continue
-		elif _pc == 4412:
-			_pc = 4438
-			continue
-		elif _pc == 4417:
-			debug.print_string("iStartSystem.create_station_regions : No waypoint for orbiting habitat. [object was ")
-			_pc = 4438
-			continue
-		elif _pc == 4438:
-			_pc = 4483
-			continue
-		elif _pc == 4443:
-			debug.print_string(object.string_property(v1, "name"))
-			_pc = 4483
-			continue
-		elif _pc == 4483:
-			_pc = 4509
-			continue
-		elif _pc == 4488:
-			debug.print_string("].\n")
-			_pc = 4509
-			continue
-		elif _pc == 4509:
-			_pc = 4720
-			continue
-		elif _pc == 4514:
-			_pc = 4597
-			continue
-		elif _pc == 4519:
-			debug.print_string("iStartSystem.create_station_regions: creating traffic control region for ")
-			debug.print_string(imapentity.pog_name(v0))
-			debug.print_string("\n")
-			_pc = 4597
-			continue
-		elif _pc == 4597:
-			if not (ilagrangepoint.cast(v0)):
-				_pc = 4621
-				continue
-			else:
-				_pc = 4660
-				continue
-		elif _pc == 4621:
-			v2 = iregion.create_traffic_control(v0, 10000.0, 250.0)
-			_pc = 4689
-			continue
-		elif _pc == 4660:
-			v2 = iregion.create_l_d_s_i(v0, 15000.0)
-			_pc = 4689
-			continue
-		elif _pc == 4689:
-			object.add_handle_property(v0, "traffic_control_region", v2)
-			_pc = 4720
-			continue
-		elif _pc == 4720:
-			_pc = 4303
-			continue
-		elif _pc == 4725:
-			_pc = 4751
-			continue
-		elif _pc == 4730:
-			debug.print_string("iStartSystem.create_station_regions: Finished\n")
-			_pc = 4751
-			continue
-		elif _pc == 4751:
-			return 0
+	v3 = null
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.create_station_regions: Initialising traffic control regions...\n")
+	v3 = await local_3425()
+	while not (p_set.is_empty(v3)):
+		v1 = p_set.first_element(v3)
+		v0 = imapentity.cast(v1)
+		p_set.remove(v3, v1)
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iStartSystem.create_station_regions : No waypoint for orbiting habitat. [object was ")
+			if PogRuntime.TRACE:
+				debug.print_string(object.string_property(v1, "name"))
+			if PogRuntime.TRACE:
+				debug.print_string("].\n")
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iStartSystem.create_station_regions: creating traffic control region for ")
+				debug.print_string(imapentity.pog_name(v0))
+				debug.print_string("\n")
+			if not (ilagrangepoint.cast(v0)):
+				v2 = iregion.create_traffic_control(v0, 10000.0, 250.0)
+			else:
+				v2 = iregion.create_l_d_s_i(v0, 15000.0)
+			object.add_handle_property(v0, "traffic_control_region", v2)
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.create_station_regions: Finished\n")
+	return 0
 	return 0
 
 func local_4761() -> Variant:
@@ -841,211 +623,72 @@ func local_7610() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	var _pc: int = 7610
-	while true:
-		if _pc == 7610:
-			v0 = null
-			v1 = null
-			v2 = null
-			v6 = null
-			v7 = 0
-			v8 = iship.find_player_ship()
-			v12 = 0
-			_pc = 7718
-			continue
-		elif _pc == 7697:
-			debug.print_string("iStartSystem.strip_player_ship: Reimbursing ship to loadout...\n")
-			_pc = 7718
-			continue
-		elif _pc == 7718:
-			v0 = global.list("g_turret_fighters")
-			v3 = 0
-			_pc = 7752
-			continue
-		elif _pc == 7752:
-			if v3 < list.item_count(v0):
-				_pc = 7781
-				continue
-			else:
-				_pc = 7908
-				continue
-		elif _pc == 7781:
-			v10 = sim.cast(list.get_nth(v0, v3))
-			if sim.is_alive(v10) and not (sim.is_hidden(v10)):
-				_pc = 7866
-				continue
-			else:
-				_pc = 7890
-				continue
-		elif _pc == 7866:
+	v0 = null
+	v1 = null
+	v2 = null
+	v6 = null
+	v7 = 0
+	v8 = iship.find_player_ship()
+	v12 = 0
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.strip_player_ship: Reimbursing ship to loadout...\n")
+	v0 = global.list("g_turret_fighters")
+	v3 = 0
+	while v3 < list.item_count(v0):
+		v10 = sim.cast(list.get_nth(v0, v3))
+		if sim.is_alive(v10) and not (sim.is_hidden(v10)):
 			list.add_tail(v1, v10)
-			_pc = 7890
-			continue
-		elif _pc == 7890:
-			v3 = v3 + 1
-			_pc = 7752
-			continue
-		elif _pc == 7908:
-			iloadout.strip_turret_fighters(v1)
-			global.destroy("g_turret_fighters")
-			if iloadout.remote_fighter_mounted():
-				_pc = 7966
-				continue
-			else:
-				_pc = 8116
-				continue
-		elif _pc == 7966:
-			if global.exists("g_remote_fighter"):
-				_pc = 7991
-				continue
-			else:
-				_pc = 8030
-				continue
-		elif _pc == 7991:
+		v3 = v3 + 1
+	iloadout.strip_turret_fighters(v1)
+	global.destroy("g_turret_fighters")
+	if iloadout.remote_fighter_mounted():
+		if global.exists("g_remote_fighter"):
 			v7 = iship.cast(global.handle("g_remote_fighter"))
-			_pc = 8030
-			continue
-		elif _pc == 8030:
-			if _pog_is_null(v7) or sim.is_dead(v7):
-				_pc = 8062
-				continue
-			else:
-				_pc = 8076
-				continue
-		elif _pc == 8062:
+		if _pog_is_null(v7) or sim.is_dead(v7):
 			iloadout.remove_remote_fighter()
-			_pc = 8076
-			continue
-		elif _pc == 8076:
-			sim.destroy(v7)
-			global.destroy("g_remote_fighter")
-			_pc = 8116
-			continue
-		elif _pc == 8116:
-			v9 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
-			v6 = list.from_set(isim.sims_in_radius(isim.cast(v9), object.float_property(v9, "radius") + 25000.0, 1050624))
-			v4 = list.item_count(v6)
-			if v4 > 0:
-				_pc = 8286
-				continue
-			else:
-				_pc = 8606
-				continue
-		elif _pc == 8286:
-			v5 = 0
-			_pc = 8293
-			continue
-		elif _pc == 8293:
-			if v5 < v4:
-				_pc = 8309
-				continue
-			else:
-				_pc = 8606
-				continue
-		elif _pc == 8309:
+		sim.destroy(v7)
+		global.destroy("g_remote_fighter")
+	v9 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
+	v6 = list.from_set(isim.sims_in_radius(isim.cast(v9), object.float_property(v9, "radius") + 25000.0, 1050624))
+	v4 = list.item_count(v6)
+	if v4 > 0:
+		v5 = 0
+		while v5 < v4:
 			v11 = sim.cast(list.get_nth(v6, v5))
 			if object.property_exists(v11, "cargo"):
-				_pc = 8381
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iStartSystem.strip_player_ship: Adding Cargo to inventory of type: ")
+					debug.print_string(string.from_int(object.int_property(list.get_nth(v6, v5), "cargo")))
+					debug.print_string("\n")
+				iinventory.add(object.int_property(list.get_nth(v6, v5), "cargo"), 1)
 			else:
-				_pc = 8562
-				continue
-		elif _pc == 8381:
-			_pc = 8499
-			continue
-		elif _pc == 8386:
-			debug.print_string("iStartSystem.strip_player_ship: Adding Cargo to inventory of type: ")
-			debug.print_string(string.from_int(object.int_property(list.get_nth(v6, v5), "cargo")))
-			debug.print_string("\n")
-			_pc = 8499
-			continue
-		elif _pc == 8499:
-			iinventory.add(object.int_property(list.get_nth(v6, v5), "cargo"), 1)
-			_pc = 8588
-			continue
-		elif _pc == 8562:
-			_pc = 8588
-			continue
-		elif _pc == 8567:
-			debug.print_string("iStartSystem.strip_player_ship: Skipping item with no cargo property. \n")
-			_pc = 8588
-			continue
-		elif _pc == 8588:
+				if PogRuntime.TRACE:
+					debug.print_string("iStartSystem.strip_player_ship: Skipping item with no cargo property. \n")
 			v5 = v5 + 1
-			_pc = 8293
-			continue
-		elif _pc == 8606:
-			if iloadout.loadout_active():
-				_pc = 8624
-				continue
-			else:
-				_pc = 8648
-				continue
-		elif _pc == 8624:
-			iloadout.strip_ship(v8)
-			_pc = 8663
-			continue
-		elif _pc == 8648:
-			iloadout.calculate_loadout(1)
-			_pc = 8663
-			continue
-		elif _pc == 8663:
-			_pc = 8689
-			continue
-		elif _pc == 8668:
-			debug.print_string("iStartSystem.strip_player_ship: Completed\n")
-			_pc = 8689
-			continue
-		elif _pc == 8689:
-			return 0
-		else:
-			return 0
+	if iloadout.loadout_active():
+		iloadout.strip_ship(v8)
+	else:
+		iloadout.calculate_loadout(1)
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.strip_player_ship: Completed\n")
+	return 0
 	return 0
 
 func local_8720() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 8720
-	while true:
-		if _pc == 8720:
-			v0 = null
-			if _pog_is_null(iship.find_player_ship()):
-				_pc = 8757
-				continue
-			else:
-				_pc = 8967
-				continue
-		elif _pc == 8757:
-			v0 = config.get_string("system", "Test", "ship")
-			_pc = 8908
-			continue
-		elif _pc == 8801:
-			if _pog_eq(v0, ""):
-				_pc = 8820
-				continue
-			else:
-				_pc = 8846
-				continue
-		elif _pc == 8820:
+	v0 = null
+	if not _pog_is_null(iship.find_player_ship()):
+		return 0
+	v0 = config.get_string("system", "Test", "ship")
+	if PogRuntime.TRACE:
+		if _pog_eq(v0, ""):
 			debug.print_string("iStartSystem.check_player_ship: Story didn't give the player a ship - creating ship from loadout\n")
-			_pc = 8907
-			continue
-		elif _pc == 8846:
+		else:
 			debug.print_string("iStartSystem.check_player_ship: Story didn't give the player a ship - creating \"")
 			debug.print_string(v0)
 			debug.print_string("\"\n")
-			_pc = 8907
-			continue
-		elif _pc == 8907:
-			_pc = 8908
-			continue
-		elif _pc == 8908:
-			await iutilities.create_player(v0, imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
-			_pc = 8967
-			continue
-		elif _pc == 8967:
-			return 0
-		else:
-			return 0
+	await iutilities.create_player(v0, imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
+	return 0
 	return 0
 
 func skip_cutscene() -> Variant:
@@ -1087,181 +730,39 @@ func local_9002() -> Variant:
 	return 0
 
 func local_9700(v0) -> Variant:
-	var _pc: int = 9700
-	while true:
-		if _pc == 9700:
-			_pc = 9886
-			continue
-		elif _pc == 9705:
-			_pc = 10045
-			continue
-		elif _pc == 9716:
-			_pc = 10045
-			continue
-		elif _pc == 9727:
-			_pc = 10045
-			continue
-		elif _pc == 9738:
-			_pc = 10045
-			continue
-		elif _pc == 9749:
-			_pc = 10045
-			continue
-		elif _pc == 9760:
-			_pc = 10045
-			continue
-		elif _pc == 9771:
-			_pc = 10045
-			continue
-		elif _pc == 9782:
-			_pc = 10045
-			continue
-		elif _pc == 9793:
-			_pc = 10045
-			continue
-		elif _pc == 9804:
-			_pc = 10045
-			continue
-		elif _pc == 9815:
-			_pc = 10045
-			continue
-		elif _pc == 9826:
-			_pc = 10045
-			continue
-		elif _pc == 9837:
-			_pc = 10045
-			continue
-		elif _pc == 9848:
-			_pc = 10045
-			continue
-		elif _pc == 9859:
-			_pc = 10045
-			continue
-		elif _pc == 9870:
-			_pc = 10045
-			continue
-		elif _pc == 9881:
-			_pc = 10034
-			continue
-		elif _pc == 9886:
-			if 1 != v0:
-				_pc = 9899
-				continue
-			else:
-				_pc = 9705
-				continue
-		elif _pc == 9899:
-			if not _pog_is_null(2):
-				_pc = 9908
-				continue
-			else:
-				_pc = 9716
-				continue
-		elif _pc == 9908:
-			if not _pog_is_null(3):
-				_pc = 9917
-				continue
-			else:
-				_pc = 9727
-				continue
-		elif _pc == 9917:
-			if not _pog_is_null(4):
-				_pc = 9926
-				continue
-			else:
-				_pc = 9738
-				continue
-		elif _pc == 9926:
-			if not _pog_is_null(5):
-				_pc = 9935
-				continue
-			else:
-				_pc = 9749
-				continue
-		elif _pc == 9935:
-			if not _pog_is_null(6):
-				_pc = 9944
-				continue
-			else:
-				_pc = 9760
-				continue
-		elif _pc == 9944:
-			if not _pog_is_null(7):
-				_pc = 9953
-				continue
-			else:
-				_pc = 9771
-				continue
-		elif _pc == 9953:
-			if not _pog_is_null(8):
-				_pc = 9962
-				continue
-			else:
-				_pc = 9782
-				continue
-		elif _pc == 9962:
-			if not _pog_is_null(9):
-				_pc = 9971
-				continue
-			else:
-				_pc = 9793
-				continue
-		elif _pc == 9971:
-			if not _pog_is_null(10):
-				_pc = 9980
-				continue
-			else:
-				_pc = 9804
-				continue
-		elif _pc == 9980:
-			if not _pog_is_null(11):
-				_pc = 9989
-				continue
-			else:
-				_pc = 9815
-				continue
-		elif _pc == 9989:
-			if not _pog_is_null(12):
-				_pc = 9998
-				continue
-			else:
-				_pc = 9826
-				continue
-		elif _pc == 9998:
-			if not _pog_is_null(13):
-				_pc = 10007
-				continue
-			else:
-				_pc = 9837
-				continue
-		elif _pc == 10007:
-			if not _pog_is_null(14):
-				_pc = 10016
-				continue
-			else:
-				_pc = 9848
-				continue
-		elif _pc == 10016:
-			if not _pog_is_null(15):
-				_pc = 10025
-				continue
-			else:
-				_pc = 9859
-				continue
-		elif _pc == 10025:
-			if not _pog_is_null(16):
-				_pc = 10034
-				continue
-			else:
-				_pc = 9870
-				continue
-		elif _pc == 10034:
-			_pc = 10045
-			continue
-		elif _pc == 10045:
-			return
-		else:
-			return 0
+	if 1 == v0:
+		return _pog_clone("map:/geog/badlands/hoffers_wake")
+	if 2 == v0:
+		return _pog_clone("map:/geog/badlands/coyote")
+	if 3 == v0:
+		return _pog_clone("map:/geog/badlands/kompira")
+	if 4 == v0:
+		return _pog_clone("map:/geog/badlands/eureka")
+	if 5 == v0:
+		return _pog_clone("map:/geog/badlands/firefrost")
+	if 6 == v0:
+		return _pog_clone("map:/geog/badlands/dagda")
+	if 7 == v0:
+		return _pog_clone("map:/geog/badlands/mwari")
+	if 8 == v0:
+		return _pog_clone("map:/geog/badlands/santa_romera")
+	if 9 == v0:
+		return _pog_clone("map:/geog/badlands/dante")
+	if 10 == v0:
+		return _pog_clone("map:/geog/gagarin/formhault")
+	if 11 == v0:
+		return _pog_clone("map:/geog/gagarin/batatas")
+	if 12 == v0:
+		return _pog_clone("map:/geog/gagarin/owens_star")
+	if 13 == v0:
+		return _pog_clone("map:/geog/gagarin/osprey")
+	if 14 == v0:
+		return _pog_clone("map:/geog/gagarin/new_bavaria")
+	if 15 == v0:
+		return _pog_clone("map:/geog/gagarin/drake")
+	if 16 == v0:
+		return _pog_clone("map:/geog/gagarin/ishime")
+	return _pog_clone("")
 	return 0
 
 func hide_map_locations() -> Variant:
@@ -1269,95 +770,56 @@ func hide_map_locations() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 10048
+	v0 = null
+	v2 = null
+	v3 = 1
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSytem.hide_map_locations: Starting location hiding.....\n")
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Military FTL Outpost", "map:/geog/badlands/hoffers_wake"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake"), 0)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake")), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Interstellar L-Point Defense Station", "map:/geog/badlands/dante"), 0)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante")), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost"), 0)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost"), 0)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost")), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake"), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera"), 0)
+	imapentity.set_hidden(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera"), 1)
+	isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")), 0)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault"), 0)
+	imapentity.set_hidden(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault"), 1)
+	isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault")), 0)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")), 0)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera")), 0)
 	while true:
-		if _pc == 10048:
-			v0 = null
-			v2 = null
-			v3 = 1
-			_pc = 10108
-			continue
-		elif _pc == 10087:
-			debug.print_string("iStartSytem.hide_map_locations: Starting location hiding.....\n")
-			_pc = 10108
-			continue
-		elif _pc == 10108:
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Military FTL Outpost", "map:/geog/badlands/hoffers_wake"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake"), 0)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake")), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Marauder Interstellar L-Point Defense Station", "map:/geog/badlands/dante"), 0)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante")), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost"), 0)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost"), 0)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost")), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake"), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera"), 0)
-			imapentity.set_hidden(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera"), 1)
-			isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")), 0)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault"), 0)
-			imapentity.set_hidden(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault"), 1)
-			isim.set_sensor_visibility(isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault")), 0)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")), 0)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera")), 0)
-			_pc = 11237
-			continue
-		elif _pc == 11237:
-			v2 = await local_9700(v3)
-			_pc = 11331
-			continue
-		elif _pc == 11268:
+		v2 = await local_9700(v3)
+		if PogRuntime.TRACE:
 			debug.print_string("iStartSytem.hide_map_locations: Processing Sytem:")
 			debug.print_string(v2)
 			debug.print_string("......\n")
-			_pc = 11331
-			continue
-		elif _pc == 11331:
-			v0 = imapentity.system_habitats_in_system(await local_9700(v3))
-			v0 = ihabitat.filter_on_allegiance(v0, 17)
-			_pc = 11399
-			continue
-		elif _pc == 11399:
-			if not (p_set.is_empty(v0)):
-				_pc = 11423
-				continue
-			else:
-				_pc = 11598
-				continue
-		elif _pc == 11423:
+		v0 = imapentity.system_habitats_in_system(await local_9700(v3))
+		v0 = ihabitat.filter_on_allegiance(v0, 17)
+		while not (p_set.is_empty(v0)):
 			v1 = imapentity.cast(p_set.first_element(v0))
-			_pc = 11549
-			continue
-		elif _pc == 11465:
-			debug.print_string("iStartSytem.hide_map_locations: Hiding habitat:")
-			debug.print_string(object.string_property(v1, "name"))
-			debug.print_string("......\n")
-			_pc = 11549
-			continue
-		elif _pc == 11549:
+			if PogRuntime.TRACE:
+				debug.print_string("iStartSytem.hide_map_locations: Hiding habitat:")
+				debug.print_string(object.string_property(v1, "name"))
+				debug.print_string("......\n")
 			imapentity.set_map_visibility(v1, 0)
 			p_set.remove(v0, v1)
-			_pc = 11399
-			continue
-		elif _pc == 11598:
-			v3 = v3 + 1
-			if v3 >= 17:
-				_pc = 11624
-				continue
-			else:
-				_pc = 11237
-				continue
-		elif _pc == 11624:
-			return 0
-		else:
-			return 0
+		v3 = v3 + 1
+		if not (v3 < 17):
+			break
+	return 0
 	return 0
 
 func set_player_base_movies_visible(v0) -> Variant:
@@ -1663,198 +1125,70 @@ func startup_system() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 13947
-	while true:
-		if _pc == 13947:
-			v0 = null
-			v1 = null
-			v2 = null
-			if igame.game_type() != 2:
-				_pc = 14006
-				continue
-			else:
-				_pc = 15080
-				continue
-		elif _pc == 14006:
-			_pc = 14032
-			continue
-		elif _pc == 14011:
-			debug.print_string("iStartSystem.StartupSystem: Starting up new solar system...\n")
-			_pc = 14032
-			continue
-		elif _pc == 14032:
-			v1 = global.string("g_active_system_name")
-			v2 = isim.active_world()
-			_pc = 14188
-			continue
-		elif _pc == 14085:
-			debug.print_string("iStartSystem.StartupSystem: Old system was \"")
-			debug.print_string(v1)
-			debug.print_string("\", new system is \"")
-			debug.print_string(v2)
-			debug.print_string("\"\n")
-			_pc = 14188
-			continue
-		elif _pc == 14188:
-			if not _pog_eq(v1, v2):
-				_pc = 14205
-				continue
-			else:
-				_pc = 14467
-				continue
-		elif _pc == 14205:
-			_pc = 14231
-			continue
-		elif _pc == 14210:
+	v0 = null
+	v1 = null
+	v2 = null
+	if igame.game_type() == 2:
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.StartupSystem: Starting up new solar system...\n")
+	v1 = global.string("g_active_system_name")
+	v2 = isim.active_world()
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.StartupSystem: Old system was \"")
+		debug.print_string(v1)
+		debug.print_string("\", new system is \"")
+		debug.print_string(v2)
+		debug.print_string("\"\n")
+	if not _pog_eq(v1, v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iStartSystem.StartupSystem: System has changed\n")
-			_pc = 14231
-			continue
-		elif _pc == 14231:
-			if not _pog_eq(v2, ""):
-				_pc = 14250
-				continue
-			else:
-				_pc = 14378
-				continue
-		elif _pc == 14250:
-			_pc = 14276
-			continue
-		elif _pc == 14255:
-			debug.print_string("iStartSystem.StartupSystem: Making new list of traffic locations\n")
-			_pc = 14276
-			continue
-		elif _pc == 14276:
+		if not _pog_eq(v2, ""):
+			if PogRuntime.TRACE:
+				debug.print_string("iStartSystem.StartupSystem: Making new list of traffic locations\n")
 			if global.exists("g_filtered_system_habitats"):
-				_pc = 14301
-				continue
+				global.set_set("g_filtered_system_habitats", await local_3425())
 			else:
-				_pc = 14341
-				continue
-		elif _pc == 14301:
-			global.set_set("g_filtered_system_habitats", await local_3425())
-			_pc = 14378
-			continue
-		elif _pc == 14341:
-			global.create_set("g_filtered_system_habitats", 2, await local_3425())
-			_pc = 14378
-			continue
-		elif _pc == 14378:
-			if global.exists("g_active_system_name"):
-				_pc = 14403
-				continue
-			else:
-				_pc = 14434
-				continue
-		elif _pc == 14403:
+				global.create_set("g_filtered_system_habitats", 2, await local_3425())
+		if global.exists("g_active_system_name"):
 			global.set_string("g_active_system_name", v2)
-			_pc = 14462
-			continue
-		elif _pc == 14434:
-			global.create_string("g_active_system_name", 10, v2)
-			_pc = 14462
-			continue
-		elif _pc == 14462:
-			_pc = 14493
-			continue
-		elif _pc == 14467:
-			_pc = 14493
-			continue
-		elif _pc == 14472:
-			debug.print_string("iStartSystem.StartupSystem: System hasn't changed\n")
-			_pc = 14493
-			continue
-		elif _pc == 14493:
-			await local_4240()
-			global.create_list("g_active_location_list", 2, v0)
-			global.create_list("g_old_active_location_list", 2, v0)
-			global.create_int("g_maximum_generated_ships", 1, 30)
-			global.create_int("g_total_haulage_running", 2, 0)
-			global.create_int("g_total_trade_running", 2, 0)
-			global.create_int("g_total_supply_running", 2, 0)
-			_pc = 14685
-			continue
-		elif _pc == 14664:
-			debug.print_string("iStartSystem.StartupSystem: Starting range monitor...\n")
-			_pc = 14685
-			continue
-		elif _pc == 14685:
-			await local_0("g_monitor_range_task", _pog_spawn(irangecheck.monitor_range.bind()))
-			_pc = 14745
-			continue
-		elif _pc == 14724:
-			debug.print_string("iStartSystem.StartupSystem: Starting traffic monitor...\n")
-			_pc = 14745
-			continue
-		elif _pc == 14745:
-			await local_0("g_monitor_traffic_task", _pog_spawn(itrafficcreation.monitor_traffic.bind()))
-			_pc = 14805
-			continue
-		elif _pc == 14784:
-			debug.print_string("iStartSystem.StartupSystem: Starting station reactive monitor...\n")
-			_pc = 14805
-			continue
-		elif _pc == 14805:
-			ihabitat.set_reactive_function("iStation.StationReactive")
-			await local_0("g_monitor_station_reaction", _pog_spawn(istation.check_station_reaction.bind()))
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
-				_pc = 14887
-				continue
-			else:
-				_pc = 15028
-				continue
-		elif _pc == 14887:
-			if global.exists("g_act3_capture_accelerator_complete"):
-				_pc = 14912
-				continue
-			else:
-				_pc = 14970
-				continue
-		elif _pc == 14912:
-			if global.pog_bool("g_act3_capture_accelerator_complete") == 1:
-				_pc = 14939
-				continue
-			else:
-				_pc = 14970
-				continue
-		elif _pc == 14939:
-			_pc = 14965
-			continue
-		elif _pc == 14944:
-			debug.print_string("iStartSystem.StartupSystem: Accelerators captured. Not starting Jump Accelerator Monitor\n")
-			_pc = 14965
-			continue
-		elif _pc == 14965:
-			_pc = 15080
-			continue
-		elif _pc == 14970:
-			_pc = 14996
-			continue
-		elif _pc == 14975:
-			debug.print_string("iStartSystem.StartupSystem: Starting Jump Accelerator Monitor...\n")
-			_pc = 14996
-			continue
-		elif _pc == 14996:
-			_pog_detach(_pog_spawn(local_17606.bind()))
-			_pc = 15054
-			continue
-		elif _pc == 15028:
-			_pc = 15054
-			continue
-		elif _pc == 15033:
-			debug.print_string("iStartSystem.StartupSystem: System is not Santa Romera - not starting Jump Accelerator Monitor.\n")
-			_pc = 15054
-			continue
-		elif _pc == 15054:
-			_pc = 15080
-			continue
-		elif _pc == 15059:
-			debug.print_string("iStartSystem.StartupSystem: Completed\n")
-			_pc = 15080
-			continue
-		elif _pc == 15080:
-			return 0
 		else:
-			return 0
+			global.create_string("g_active_system_name", 10, v2)
+	else:
+		if PogRuntime.TRACE:
+			debug.print_string("iStartSystem.StartupSystem: System hasn't changed\n")
+	await local_4240()
+	global.create_list("g_active_location_list", 2, v0)
+	global.create_list("g_old_active_location_list", 2, v0)
+	global.create_int("g_maximum_generated_ships", 1, 30)
+	global.create_int("g_total_haulage_running", 2, 0)
+	global.create_int("g_total_trade_running", 2, 0)
+	global.create_int("g_total_supply_running", 2, 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.StartupSystem: Starting range monitor...\n")
+	await local_0("g_monitor_range_task", _pog_spawn(irangecheck.monitor_range.bind()))
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.StartupSystem: Starting traffic monitor...\n")
+	await local_0("g_monitor_traffic_task", _pog_spawn(itrafficcreation.monitor_traffic.bind()))
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.StartupSystem: Starting station reactive monitor...\n")
+	ihabitat.set_reactive_function("iStation.StationReactive")
+	await local_0("g_monitor_station_reaction", _pog_spawn(istation.check_station_reaction.bind()))
+	if _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
+		if global.exists("g_act3_capture_accelerator_complete"):
+			if global.pog_bool("g_act3_capture_accelerator_complete") == 1:
+				if PogRuntime.TRACE:
+					debug.print_string("iStartSystem.StartupSystem: Accelerators captured. Not starting Jump Accelerator Monitor\n")
+				return 0
+		if PogRuntime.TRACE:
+			debug.print_string("iStartSystem.StartupSystem: Starting Jump Accelerator Monitor...\n")
+		_pog_detach(_pog_spawn(local_17606.bind()))
+	else:
+		if PogRuntime.TRACE:
+			debug.print_string("iStartSystem.StartupSystem: System is not Santa Romera - not starting Jump Accelerator Monitor.\n")
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.StartupSystem: Completed\n")
+	return 0
 	return 0
 
 func shutdown_system() -> Variant:
@@ -1878,69 +1212,31 @@ func local_15348(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 15348
-	while true:
-		if _pc == 15348:
-			v1 = group.create()
-			_pc = 15398
-			continue
-		elif _pc == 15377:
-			debug.print_string("iActTwo:create_jumpgate_nodes - Creating LDA nodes\n")
-			_pc = 15398
-			continue
-		elif _pc == 15398:
-			v3 = 0
-			_pc = 15405
-			continue
-		elif _pc == 15405:
-			if v3 < 6:
-				_pc = 15418
-				continue
-			else:
-				_pc = 15607
-				continue
-		elif _pc == 15418:
-			v2 = iship.create("ini:/sims/custom/jumpgate/jumpgate_node", "")
-			group.add_sim(v1, v2)
-			sim.set_cullable(v2, 0)
-			isim.dock(v2, v0)
-			isim.set_indestructable(v2, 1)
-			isim.set_sensor_visibility(v2, 0)
-			sim.avatar_add_channel(v2, "lda_on", 1.0)
-			v3 = v3 + 1
-			_pc = 15405
-			continue
-		elif _pc == 15607:
-			_pc = 15617
-			continue
-		elif _pc == 15617:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo:create_jumpgate_nodes - Creating LDA nodes\n")
+	v3 = 0
+	while v3 < 6:
+		v2 = iship.create("ini:/sims/custom/jumpgate/jumpgate_node", "")
+		group.add_sim(v1, v2)
+		sim.set_cullable(v2, 0)
+		isim.dock(v2, v0)
+		isim.set_indestructable(v2, 1)
+		isim.set_sensor_visibility(v2, 0)
+		sim.avatar_add_channel(v2, "lda_on", 1.0)
+		v3 = v3 + 1
+	return v1
 	return 0
 
 func local_15619(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 15619
-	while true:
-		if _pc == 15619:
-			v1 = isim.cast(sim.create("ini:/sims/custom/jumpgate/jumpgate_shield", "shield"))
-			_pc = 15695
-			continue
-		elif _pc == 15674:
-			debug.print_string("iActTwo:create_jumpgate_shield - Adding shield to jump accelerator\n")
-			_pc = 15695
-			continue
-		elif _pc == 15695:
-			isim.set_indestructable(v1, 1)
-			sim.copy_orientation(v1, v0)
-			sim.add_child_relative_to(v0, v1, 0.0, 0.0, 0.0)
-			_pc = 15788
-			continue
-		elif _pc == 15788:
-			return
-		else:
-			return 0
+	v1 = isim.cast(sim.create("ini:/sims/custom/jumpgate/jumpgate_shield", "shield"))
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo:create_jumpgate_shield - Adding shield to jump accelerator\n")
+	isim.set_indestructable(v1, 1)
+	sim.copy_orientation(v1, v0)
+	sim.add_child_relative_to(v0, v1, 0.0, 0.0, 0.0)
+	return v1
 	return 0
 
 func jumpgate_shield_on(v0, v1) -> Variant:
@@ -1948,463 +1244,142 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 15790
-	while true:
-		if _pc == 15790:
-			if _pog_is_null(v0) or sim.is_dead(v0):
-				_pc = 15827
-				continue
-			else:
-				_pc = 15858
-				continue
-		elif _pc == 15827:
-			_pc = 15853
-			continue
-		elif _pc == 15832:
+	if _pog_is_null(v0) or sim.is_dead(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is dead / null.\n")
-			_pc = 15853
-			continue
-		elif _pc == 15853:
-			_pc = 16866
-			continue
-		elif _pc == 15858:
-			if isim.type(v0) != 8192:
-				_pc = 15885
-				continue
-			else:
-				_pc = 15916
-				continue
-		elif _pc == 15885:
-			_pc = 15911
-			continue
-		elif _pc == 15890:
-			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station.\n")
-			_pc = 15911
-			continue
-		elif _pc == 15911:
-			_pc = 16866
-			continue
-		elif _pc == 15916:
-			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
-				_pc = 15977
-				continue
-			else:
-				_pc = 16008
-				continue
-		elif _pc == 15977:
-			_pc = 16003
-			continue
-		elif _pc == 15982:
-			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
-			_pc = 16003
-			continue
-		elif _pc == 16003:
-			_pc = 16866
-			continue
-		elif _pc == 16008:
-			if object.property_exists(v0, "deactivated"):
-				_pc = 16038
-				continue
-			else:
-				_pc = 16136
-				continue
-		elif _pc == 16038:
-			if v1:
-				_pc = 16048
-				continue
-			else:
-				_pc = 16105
-				continue
-		elif _pc == 16048:
-			_pc = 16074
-			continue
-		elif _pc == 16053:
-			debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Forcing active.\n")
-			_pc = 16074
-			continue
-		elif _pc == 16074:
-			object.remove_property(v0, "deactivated")
-			_pc = 16136
-			continue
-		elif _pc == 16105:
-			_pc = 16131
-			continue
-		elif _pc == 16110:
-			debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Not activating.\n")
-			_pc = 16131
-			continue
-		elif _pc == 16131:
-			_pc = 16866
-			continue
-		elif _pc == 16136:
-			if not (object.property_exists(v0, "node_group")):
-				_pc = 16167
-				continue
-			else:
-				_pc = 16253
-				continue
-		elif _pc == 16167:
-			_pc = 16193
-			continue
-		elif _pc == 16172:
-			debug.print_string("iActTwo.JumpgateShieldOn - Node group property not found. Adding LDA nodes to jumpgate\n")
-			_pc = 16193
-			continue
-		elif _pc == 16193:
-			v2 = await local_15348(v0)
-			object.add_handle_property(v0, "node_group", v2)
-			_pc = 16566
-			continue
-		elif _pc == 16253:
-			_pc = 16279
-			continue
-		elif _pc == 16258:
-			debug.print_string("iActTwo.JumpgateShieldOn - Node group property is null or nodes are null. Adding LDA nodes to jumpgate\n")
-			_pc = 16279
-			continue
-		elif _pc == 16279:
-			v2 = group.cast(object.handle_property(v0, "node_group"))
-			if _pog_is_null(v2) or _pog_is_null(group.sim_count(v2)):
-				_pc = 16357
-				continue
-			else:
-				_pc = 16437
-				continue
-		elif _pc == 16357:
-			group.destroy(v2, 1)
-			v2 = await local_15348(v0)
-			object.set_handle_property(v0, "node_group", v2)
-			_pc = 16566
-			continue
-		elif _pc == 16437:
-			_pc = 16463
-			continue
-		elif _pc == 16442:
-			debug.print_string("iActTwo.JumpgateShieldOn - Activating nodes\n")
-			_pc = 16463
-			continue
-		elif _pc == 16463:
-			v5 = 0
-			_pc = 16470
-			continue
-		elif _pc == 16470:
-			if v5 < group.sim_count(v2):
-				_pc = 16499
-				continue
-			else:
-				_pc = 16566
-				continue
-		elif _pc == 16499:
-			sim.avatar_add_channel(group.nth_sim(v2, v5), "lda_on", 1.0)
-			v5 = v5 + 1
-			_pc = 16470
-			continue
-		elif _pc == 16566:
-			if object.property_exists(v0, "shield_handle"):
-				_pc = 16596
-				continue
-			else:
-				_pc = 16780
-				continue
-		elif _pc == 16596:
-			v4 = isim.cast(object.handle_property(v0, "shield_handle"))
-			if _pog_is_null(v4):
-				_pc = 16653
-				continue
-			else:
-				_pc = 16744
-				continue
-		elif _pc == 16653:
-			_pc = 16679
-			continue
-		elif _pc == 16658:
-			debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property found, but handle is null, creating.\n")
-			_pc = 16679
-			continue
-		elif _pc == 16679:
-			v4 = await local_15619(v0)
-			object.set_handle_property(v0, "shield_handle", v4)
-			_pc = 16866
-			continue
-		elif _pc == 16739:
-			_pc = 16775
-			continue
-		elif _pc == 16744:
-			_pc = 16770
-			continue
-		elif _pc == 16749:
-			debug.print_string("iActTwo.JumpgateShieldOn - Shield already exists\n")
-			_pc = 16770
-			continue
-		elif _pc == 16770:
-			_pc = 16866
-			continue
-		elif _pc == 16775:
-			_pc = 16866
-			continue
-		elif _pc == 16780:
-			_pc = 16806
-			continue
-		elif _pc == 16785:
-			debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property not found. Creating shield.\n")
-			_pc = 16806
-			continue
-		elif _pc == 16806:
-			v4 = await local_15619(v0)
-			object.add_handle_property(v0, "shield_handle", v4)
-			_pc = 16866
-			continue
-		elif _pc == 16866:
-			return 0
+	else:
+		if isim.type(v0) != 8192:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station.\n")
 		else:
-			return 0
+			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
+			else:
+				if object.property_exists(v0, "deactivated"):
+					if v1:
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Forcing active.\n")
+						object.remove_property(v0, "deactivated")
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Not activating.\n")
+				else:
+					if not (object.property_exists(v0, "node_group")):
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.JumpgateShieldOn - Node group property not found. Adding LDA nodes to jumpgate\n")
+						v2 = await local_15348(v0)
+						object.add_handle_property(v0, "node_group", v2)
+					else:
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.JumpgateShieldOn - Node group property is null or nodes are null. Adding LDA nodes to jumpgate\n")
+						v2 = group.cast(object.handle_property(v0, "node_group"))
+						if _pog_is_null(v2) or _pog_is_null(group.sim_count(v2)):
+							group.destroy(v2, 1)
+							v2 = await local_15348(v0)
+							object.set_handle_property(v0, "node_group", v2)
+						else:
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.JumpgateShieldOn - Activating nodes\n")
+							v5 = 0
+							while v5 < group.sim_count(v2):
+								sim.avatar_add_channel(group.nth_sim(v2, v5), "lda_on", 1.0)
+								v5 = v5 + 1
+					if object.property_exists(v0, "shield_handle"):
+						v4 = isim.cast(object.handle_property(v0, "shield_handle"))
+						if _pog_is_null(v4):
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property found, but handle is null, creating.\n")
+							v4 = await local_15619(v0)
+							object.set_handle_property(v0, "shield_handle", v4)
+							return 0
+						else:
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.JumpgateShieldOn - Shield already exists\n")
+							return 0
+					else:
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property not found. Creating shield.\n")
+						v4 = await local_15619(v0)
+						object.add_handle_property(v0, "shield_handle", v4)
+	return 0
 	return 0
 
 func jumpgate_shield_off(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 16869
-	while true:
-		if _pc == 16869:
-			if _pog_is_null(v0) or sim.is_dead(v0):
-				_pc = 16906
-				continue
-			else:
-				_pc = 16937
-				continue
-		elif _pc == 16906:
-			_pc = 16932
-			continue
-		elif _pc == 16911:
+	if _pog_is_null(v0) or sim.is_dead(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is dead / null.\n")
-			_pc = 16932
-			continue
-		elif _pc == 16932:
-			_pc = 17603
-			continue
-		elif _pc == 16937:
-			if isim.type(v0) != 8192:
-				_pc = 16964
-				continue
-			else:
-				_pc = 16995
-				continue
-		elif _pc == 16964:
-			_pc = 16990
-			continue
-		elif _pc == 16969:
-			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station/ null.\n")
-			_pc = 16990
-			continue
-		elif _pc == 16990:
-			_pc = 17603
-			continue
-		elif _pc == 16995:
-			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
-				_pc = 17056
-				continue
-			else:
-				_pc = 17087
-				continue
-		elif _pc == 17056:
-			_pc = 17082
-			continue
-		elif _pc == 17061:
-			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
-			_pc = 17082
-			continue
-		elif _pc == 17082:
-			_pc = 17603
-			continue
-		elif _pc == 17087:
-			if not (object.property_exists(v0, "node_group")):
-				_pc = 17118
-				continue
-			else:
-				_pc = 17149
-				continue
-		elif _pc == 17118:
-			_pc = 17144
-			continue
-		elif _pc == 17123:
-			debug.print_string("iActTwo.deactivate_jumpgate - node group handle property not found, can't deactivate.\n")
-			_pc = 17144
-			continue
-		elif _pc == 17144:
-			_pc = 17603
-			continue
-		elif _pc == 17149:
-			if not (object.property_exists(v0, "shield_handle")):
-				_pc = 17180
-				continue
-			else:
-				_pc = 17211
-				continue
-		elif _pc == 17180:
-			_pc = 17206
-			continue
-		elif _pc == 17185:
-			debug.print_string("iActTwo.deactivate_jumpgate - shield handle property not found, can't deactivate shield.\n")
-			_pc = 17206
-			continue
-		elif _pc == 17206:
-			_pc = 17603
-			continue
-		elif _pc == 17211:
-			v1 = group.cast(object.handle_property(v0, "node_group"))
-			if _pog_is_null(v1) or _pog_is_null(group.sim_count(v1)):
-				_pc = 17289
-				continue
-			else:
-				_pc = 17320
-				continue
-		elif _pc == 17289:
-			_pc = 17315
-			continue
-		elif _pc == 17294:
-			debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Node group is invalid or empty. Can't deactivate\n")
-			_pc = 17315
-			continue
-		elif _pc == 17315:
-			_pc = 17603
-			continue
-		elif _pc == 17320:
-			v2 = isim.cast(object.handle_property(v0, "shield_handle"))
-			if _pog_is_null(v2) or sim.is_dead(v2):
-				_pc = 17396
-				continue
-			else:
-				_pc = 17427
-				continue
-		elif _pc == 17396:
-			_pc = 17422
-			continue
-		elif _pc == 17401:
-			debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Shield is invalid / dead. Can't deactivate\n")
-			_pc = 17422
-			continue
-		elif _pc == 17422:
-			_pc = 17603
-			continue
-		elif _pc == 17427:
-			v3 = 0
-			_pc = 17434
-			continue
-		elif _pc == 17434:
-			if v3 < group.sim_count(v1):
-				_pc = 17463
-				continue
-			else:
-				_pc = 17557
-				continue
-		elif _pc == 17463:
-			await _pog_wait(0.25)
-			sim.avatar_remove_channel(group.nth_sim(v1, v3), "lda_on")
-			v3 = v3 + 1
-			_pc = 17434
-			continue
-		elif _pc == 17557:
-			sim.destroy(v2)
-			object.add_bool_property(v0, "deactivated", 1)
-			_pc = 17603
-			continue
-		elif _pc == 17603:
-			return 0
+	else:
+		if isim.type(v0) != 8192:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station/ null.\n")
 		else:
-			return 0
+			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
+			else:
+				if not (object.property_exists(v0, "node_group")):
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.deactivate_jumpgate - node group handle property not found, can't deactivate.\n")
+				else:
+					if not (object.property_exists(v0, "shield_handle")):
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.deactivate_jumpgate - shield handle property not found, can't deactivate shield.\n")
+					else:
+						v1 = group.cast(object.handle_property(v0, "node_group"))
+						if _pog_is_null(v1) or _pog_is_null(group.sim_count(v1)):
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Node group is invalid or empty. Can't deactivate\n")
+						else:
+							v2 = isim.cast(object.handle_property(v0, "shield_handle"))
+							if _pog_is_null(v2) or sim.is_dead(v2):
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Shield is invalid / dead. Can't deactivate\n")
+							else:
+								v3 = 0
+								while v3 < group.sim_count(v1):
+									await _pog_wait(0.25)
+									sim.avatar_remove_channel(group.nth_sim(v1, v3), "lda_on")
+									v3 = v3 + 1
+								sim.destroy(v2)
+								object.add_bool_property(v0, "deactivated", 1)
+	return 0
 	return 0
 
 func local_17606() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 17606
+	v0 = iship.find_player_ship()
+	v1 = imapentity.find_by_name("Jump Accelerator")
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.jumpgate_shield_monitor : Started. \n")
 	while true:
-		if _pc == 17606:
-			v0 = iship.find_player_ship()
-			v1 = imapentity.find_by_name("Jump Accelerator")
-			_pc = 17682
-			continue
-		elif _pc == 17661:
-			debug.print_string("iStartSystem.jumpgate_shield_monitor : Started. \n")
-			_pc = 17682
-			continue
-		elif _pc == 17682:
-			_pc = 17708
-			continue
-		elif _pc == 17687:
+		if PogRuntime.TRACE:
 			debug.print_string("iStartSystem.jumpgate_shield_monitor : Waiting for player to reach Jump Accelerator.\n")
-			_pc = 17708
-			continue
-		elif _pc == 17708:
+		while true:
 			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
-				_pc = 17736
-				continue
-			else:
-				_pc = 17767
-				continue
-		elif _pc == 17736:
-			_pc = 17762
-			continue
-		elif _pc == 17741:
-			debug.print_string("iStartSystem.jumpgate_shield_monitor : Player is not in Santa Romera, quitting task.\n")
-			_pc = 17762
-			continue
-		elif _pc == 17762:
-			_pc = 18010
-			continue
-		elif _pc == 17767:
+				if PogRuntime.TRACE:
+					debug.print_string("iStartSystem.jumpgate_shield_monitor : Player is not in Santa Romera, quitting task.\n")
+				return
 			await _pog_wait(1.0)
-			if sim.distance_between(v0, v1) <= 10000000.0:
-				_pc = 17833
-				continue
-			else:
-				_pc = 17708
-				continue
-		elif _pc == 17833:
-			await jumpgate_shield_on(v1, 0)
-			_pc = 17879
-			continue
-		elif _pc == 17858:
+			if not (sim.distance_between(v0, v1) > 10000000.0):
+				break
+		await jumpgate_shield_on(v1, 0)
+		if PogRuntime.TRACE:
 			debug.print_string("iStartSystem.jumpgate_shield_monitor : Waiting for player to fly away from Jump Accelerator.\n")
-			_pc = 17879
-			continue
-		elif _pc == 17879:
+		while true:
 			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
-				_pc = 17907
-				continue
-			else:
-				_pc = 17938
-				continue
-		elif _pc == 17907:
-			_pc = 17933
-			continue
-		elif _pc == 17912:
-			debug.print_string("iStartSystem.jumpgate_shield_monitor : Player is not in Santa Romera, quitting task.\n")
-			_pc = 17933
-			continue
-		elif _pc == 17933:
-			_pc = 18010
-			continue
-		elif _pc == 17938:
+				if PogRuntime.TRACE:
+					debug.print_string("iStartSystem.jumpgate_shield_monitor : Player is not in Santa Romera, quitting task.\n")
+				return
 			await _pog_wait(5.0)
-			if sim.distance_between(v0, v1) > 10000000.0:
-				_pc = 18004
-				continue
-			else:
-				_pc = 17879
-				continue
-		elif _pc == 18004:
-			if not (1):
-				_pc = 18010
-				continue
-			else:
-				_pc = 17682
-				continue
-		elif _pc == 18010:
-			return
-		else:
-			return 0
+			if not (sim.distance_between(v0, v1) <= 10000000.0):
+				break
+		if not (1):
+			break
+	return
 	return 0
 
 func blank_screen() -> Variant:
@@ -2417,26 +1392,18 @@ func unblank_screen() -> Variant:
 
 func move_player_base(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 18018
-	while true:
-		if _pc == 18018:
-			igame.enable_blackout(1)
-			global.set_string("g_player_base_system", v1)
-			igame.move_player_base(v1)
-			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v0)
-			imapentity.set_hidden(v2, 1)
-			imapentity.set_map_visibility(v2, 0)
-			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
-			imapentity.set_hidden(v2, 0)
-			imapentity.set_map_visibility(v2, 1)
-			isim.set_sensor_visibility(isim.cast(v2), 1)
-			igame.enable_blackout(0)
-			_pc = 18318
-			continue
-		elif _pc == 18318:
-			return
-		else:
-			return 0
+	igame.enable_blackout(1)
+	global.set_string("g_player_base_system", v1)
+	igame.move_player_base(v1)
+	v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v0)
+	imapentity.set_hidden(v2, 1)
+	imapentity.set_map_visibility(v2, 0)
+	isim.set_sensor_visibility(isim.cast(v2), 0)
+	v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
+	imapentity.set_hidden(v2, 0)
+	imapentity.set_map_visibility(v2, 1)
+	isim.set_sensor_visibility(isim.cast(v2), 1)
+	igame.enable_blackout(0)
+	return v2
 	return 0
 

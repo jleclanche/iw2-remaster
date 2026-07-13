@@ -74,295 +74,148 @@ func main() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			v1 = imapentity.find_by_name("Touchdown")
-			v4 = null
-			v9 = object.float_property(v1, "radius")
-			v10 = 10000000.0
-			v13 = null
-			v14 = inifile.create("ini:/iAITestShips")
-			v13 = inifile.string(v14, "Player", "ship", "ini:/sims/ships/player/fast_attack_prefitted")
-			v0 = iship.create(v13, "Player Ship")
-			input.bind_key("iAITestSuit.CallSetupMenu", "ScriptKeys.SetupMenu")
-			input.bind_key("iAITestSuit.CallOrderMenu", "ScriptKeys.OrdersMenu")
-			global.create_int("g_setup_state", 2, 0)
-			global.create_int("g_amt_grp_1", 2, math.random_int(2, 10))
-			global.create_int("g_amt_grp_2", 2, math.random_int(2, 10))
-			global.create_handle("g_object1_handle", 2, 0)
-			global.create_handle("g_object2_handle", 2, 0)
-			global.create_bool("g_faction_hatred", 2, 0)
-			v6 = ifaction.create("Goodies", "GOO", 1)
-			v7 = ifaction.create("Baddies", "BAA", 17)
-			v8 = ifaction.create("Player", "PLY", 21)
-			ifaction.set_feeling(v8, v8, 1.0)
-			ifaction.set_feeling(v8, v6, 1.0)
-			ifaction.set_feeling(v8, v7, -1.0)
-			await local_2648()
-			isim.set_faction(v0, v8)
-			v5 = 0
-			_pc = 657
-			continue
-		elif _pc == 657:
-			if v5 < list.item_count(v4):
-				_pc = 686
-				continue
-			else:
-				_pc = 759
-				continue
-		elif _pc == 686:
-			isim.set_faction(iship.cast(list.get_nth(v4, v5)), v8)
-			v5 = v5 + 1
-			_pc = 657
-			continue
-		elif _pc == 759:
-			sim.place_relative_to(v0, v1, v9 + v10, 0.0, 0.0)
-			iinventory.add(474, 2)
-			object.add_int_property(v0, "turret_fighters", 2)
-			list.add_head(v4, iship.create("ini:/sims/ships/player/turret_fighter_prefitted", "turret fighter"))
-			list.add_tail(v4, iship.create("ini:/sims/ships/player/turret_fighter_prefitted", "turret fighter"))
-			global.create_list("g_turret_fighters", 2, v4)
-			iship.install_player_pilot(v0)
-			await iwingmen.add_t_fighters(v0, v4)
-			iship.weapon_targets_from_contact_list(iship.cast(list.get_nth(v4, 0)))
-			iship.weapon_targets_from_contact_list(iship.cast(list.get_nth(v4, 1)))
-			isim.set_faction(iship.cast(list.get_nth(v4, 0)), v8)
-			isim.set_faction(iship.cast(list.get_nth(v4, 1)), v8)
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, v9 + v10 + 30000.0, 0.0, 0.0), 1, "Approach Waypoint 1")
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, -(v9 + v10 + 30000.0), 0.0, 0.0), 1, "Approach Waypoint 1a")
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, v9 + v10 + 300000.0, 0.0, 0.0), 1, "Approach Waypoint 2")
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, -(v9 + v10 + 300000.0), 0.0, 0.0), 1, "Approach Waypoint 2a")
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, v9 + v10 + 3000000.0, 0.0, 0.0), 1, "Approach Waypoint 3")
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, -(v9 + v10 + 3000000.0), 0.0, 0.0), 1, "Approach Waypoint 3a")
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 0.0), 1, "Avoidance Test Start")
-			await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 9000.0), 1, "Avoidance Test End")
-			v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 2500.0)
-			if _pog_is_null(v14):
-				_pc = 1809
-				continue
-			else:
-				_pc = 1829
-				continue
-		elif _pc == 1809:
-			debug.error("Unable to open ini!")
-			_pc = 1829
-			continue
-		elif _pc == 1829:
-			v12 = inifile.pog_float(v14, "A_Spacing", "value", -1.0)
-			if v12 == -1.0:
-				_pc = 1888
-				continue
-			else:
-				_pc = 1920
-				continue
-		elif _pc == 1888:
-			debug.error("Unable to find avoidance spacing in ini... using standin!")
-			v12 = 2300.0
-			_pc = 1920
-			continue
-		elif _pc == 1920:
-			inifile.destroy(v14)
-			v5 = 0
-			_pc = 1946
-			continue
-		elif _pc == 1946:
-			if v5 < 30:
-				_pc = 1959
-				continue
-			else:
-				_pc = 2131
-				continue
-		elif _pc == 1959:
-			v11 = math.random(0.0, 1.0)
-			v11 = 1.0 - v11 * v11 * v12
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
-			sim.place_near(v3, v2, v11)
-			sim.set_cullable(v3, 0)
-			v5 = v5 + 1
-			_pc = 1946
-			continue
-		elif _pc == 2131:
-			v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 5000.0)
-			v5 = 0
-			_pc = 2189
-			continue
-		elif _pc == 2189:
-			if v5 < 30:
-				_pc = 2202
-				continue
-			else:
-				_pc = 2374
-				continue
-		elif _pc == 2202:
-			v11 = math.random(0.0, 1.0)
-			v11 = 1.0 - v11 * v11 * v12
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
-			sim.place_near(v3, v2, v11)
-			sim.set_cullable(v3, 0)
-			v5 = v5 + 1
-			_pc = 2189
-			continue
-		elif _pc == 2374:
-			v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 8000.0)
-			v5 = 0
-			_pc = 2432
-			continue
-		elif _pc == 2432:
-			if v5 < 30:
-				_pc = 2445
-				continue
-			else:
-				_pc = 2617
-				continue
-		elif _pc == 2445:
-			v11 = math.random(0.0, 1.0)
-			v11 = 1.0 - v11 * v11 * v12
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
-			sim.place_near(v3, v2, v11)
-			sim.set_cullable(v3, 0)
-			v5 = v5 + 1
-			_pc = 2432
-			continue
-		elif _pc == 2617:
-			_pog_spawn(local_4249.bind())
-			return 0
-		else:
-			return 0
+	v1 = imapentity.find_by_name("Touchdown")
+	v4 = null
+	v9 = object.float_property(v1, "radius")
+	v10 = 10000000.0
+	v13 = null
+	v14 = inifile.create("ini:/iAITestShips")
+	v13 = inifile.string(v14, "Player", "ship", "ini:/sims/ships/player/fast_attack_prefitted")
+	v0 = iship.create(v13, "Player Ship")
+	input.bind_key("iAITestSuit.CallSetupMenu", "ScriptKeys.SetupMenu")
+	input.bind_key("iAITestSuit.CallOrderMenu", "ScriptKeys.OrdersMenu")
+	global.create_int("g_setup_state", 2, 0)
+	global.create_int("g_amt_grp_1", 2, math.random_int(2, 10))
+	global.create_int("g_amt_grp_2", 2, math.random_int(2, 10))
+	global.create_handle("g_object1_handle", 2, 0)
+	global.create_handle("g_object2_handle", 2, 0)
+	global.create_bool("g_faction_hatred", 2, 0)
+	v6 = ifaction.create("Goodies", "GOO", 1)
+	v7 = ifaction.create("Baddies", "BAA", 17)
+	v8 = ifaction.create("Player", "PLY", 21)
+	ifaction.set_feeling(v8, v8, 1.0)
+	ifaction.set_feeling(v8, v6, 1.0)
+	ifaction.set_feeling(v8, v7, -1.0)
+	await local_2648()
+	isim.set_faction(v0, v8)
+	v5 = 0
+	while v5 < list.item_count(v4):
+		isim.set_faction(iship.cast(list.get_nth(v4, v5)), v8)
+		v5 = v5 + 1
+	sim.place_relative_to(v0, v1, v9 + v10, 0.0, 0.0)
+	iinventory.add(474, 2)
+	object.add_int_property(v0, "turret_fighters", 2)
+	list.add_head(v4, iship.create("ini:/sims/ships/player/turret_fighter_prefitted", "turret fighter"))
+	list.add_tail(v4, iship.create("ini:/sims/ships/player/turret_fighter_prefitted", "turret fighter"))
+	global.create_list("g_turret_fighters", 2, v4)
+	iship.install_player_pilot(v0)
+	await iwingmen.add_t_fighters(v0, v4)
+	iship.weapon_targets_from_contact_list(iship.cast(list.get_nth(v4, 0)))
+	iship.weapon_targets_from_contact_list(iship.cast(list.get_nth(v4, 1)))
+	isim.set_faction(iship.cast(list.get_nth(v4, 0)), v8)
+	isim.set_faction(iship.cast(list.get_nth(v4, 1)), v8)
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, v9 + v10 + 30000.0, 0.0, 0.0), 1, "Approach Waypoint 1")
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, -(v9 + v10 + 30000.0), 0.0, 0.0), 1, "Approach Waypoint 1a")
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, v9 + v10 + 300000.0, 0.0, 0.0), 1, "Approach Waypoint 2")
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, -(v9 + v10 + 300000.0), 0.0, 0.0), 1, "Approach Waypoint 2a")
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, v9 + v10 + 3000000.0, 0.0, 0.0), 1, "Approach Waypoint 3")
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, -(v9 + v10 + 3000000.0), 0.0, 0.0), 1, "Approach Waypoint 3a")
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 0.0), 1, "Avoidance Test Start")
+	await iutilities.make_waypoint_visible(await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 9000.0), 1, "Avoidance Test End")
+	v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 2500.0)
+	if _pog_is_null(v14):
+		debug.error("Unable to open ini!")
+	v12 = inifile.pog_float(v14, "A_Spacing", "value", -1.0)
+	if v12 == -1.0:
+		debug.error("Unable to find avoidance spacing in ini... using standin!")
+		v12 = 2300.0
+	inifile.destroy(v14)
+	v5 = 0
+	while v5 < 30:
+		v11 = math.random(0.0, 1.0)
+		v11 = 1.0 - v11 * v11 * v12
+		v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
+		sim.place_near(v3, v2, v11)
+		sim.set_cullable(v3, 0)
+		v5 = v5 + 1
+	v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 5000.0)
+	v5 = 0
+	while v5 < 30:
+		v11 = math.random(0.0, 1.0)
+		v11 = 1.0 - v11 * v11 * v12
+		v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
+		sim.place_near(v3, v2, v11)
+		sim.set_cullable(v3, 0)
+		v5 = v5 + 1
+	v2 = await iutilities.create_waypoint_relative_to(v1, 0.0, v9 + v10 + 3000000.0, 8000.0)
+	v5 = 0
+	while v5 < 30:
+		v11 = math.random(0.0, 1.0)
+		v11 = 1.0 - v11 * v11 * v12
+		v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
+		sim.place_near(v3, v2, v11)
+		sim.set_cullable(v3, 0)
+		v5 = v5 + 1
+	_pog_spawn(local_4249.bind())
+	return 0
 	return 0
 
 func local_2648() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 2648
-	while true:
-		if _pc == 2648:
-			v0 = ifaction.find("Goodies")
-			v1 = ifaction.find("Baddies")
-			v2 = ifaction.find("Player")
-			ifaction.set_feeling(v2, v2, 1.0)
-			ifaction.set_feeling(v2, v0, 1.0)
-			ifaction.set_feeling(v2, v1, -1.0)
-			if global.pog_bool("g_faction_hatred"):
-				_pc = 2842
-				continue
-			else:
-				_pc = 2964
-				continue
-		elif _pc == 2842:
-			ifaction.set_feeling(v0, v2, -1.0)
-			ifaction.set_feeling(v1, v2, -1.0)
-			ifaction.set_feeling(v1, v0, -1.0)
-			ifaction.set_feeling(v0, v1, -1.0)
-			_pc = 3080
-			continue
-		elif _pc == 2964:
-			ifaction.set_feeling(v0, v2, 0.0)
-			ifaction.set_feeling(v1, v2, 0.0)
-			ifaction.set_feeling(v1, v0, 0.0)
-			ifaction.set_feeling(v0, v1, 0.0)
-			_pc = 3080
-			continue
-		elif _pc == 3080:
-			return 0
-		else:
-			return 0
+	v0 = ifaction.find("Goodies")
+	v1 = ifaction.find("Baddies")
+	v2 = ifaction.find("Player")
+	ifaction.set_feeling(v2, v2, 1.0)
+	ifaction.set_feeling(v2, v0, 1.0)
+	ifaction.set_feeling(v2, v1, -1.0)
+	if global.pog_bool("g_faction_hatred"):
+		ifaction.set_feeling(v0, v2, -1.0)
+		ifaction.set_feeling(v1, v2, -1.0)
+		ifaction.set_feeling(v1, v0, -1.0)
+		ifaction.set_feeling(v0, v1, -1.0)
+	else:
+		ifaction.set_feeling(v0, v2, 0.0)
+		ifaction.set_feeling(v1, v2, 0.0)
+		ifaction.set_feeling(v1, v0, 0.0)
+		ifaction.set_feeling(v0, v1, 0.0)
+	return 0
 	return 0
 
 func local_3083(v0) -> Variant:
-	var _pc: int = 3083
-	while true:
-		if _pc == 3083:
-			if not _pog_is_null(group.cast(v0)):
-				_pc = 3109
-				continue
-			else:
-				_pc = 3147
-				continue
-		elif _pc == 3109:
-			group.destroy(group.cast(v0), 1)
-			_pc = 3179
-			continue
-		elif _pc == 3147:
-			sim.destroy(sim.cast(v0))
-			_pc = 3179
-			continue
-		elif _pc == 3179:
-			return 0
-		else:
-			return 0
+	if not _pog_is_null(group.cast(v0)):
+		group.destroy(group.cast(v0), 1)
+	else:
+		sim.destroy(sim.cast(v0))
+	return 0
 	return 0
 
 func local_3182(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
-	var _pc: int = 3182
-	while true:
-		if _pc == 3182:
-			if not _pog_is_null(group.cast(v0)):
-				_pc = 3213
-				continue
-			else:
-				_pc = 3319
-				continue
-		elif _pc == 3213:
-			v5 = group.cast(v0)
-			sim.place_relative_to(group.leader(v5), v1, v2, v3, v4)
-			await iformation.goose(v5, 90.0, 1)
-			_pc = 3371
-			continue
-		elif _pc == 3319:
-			sim.place_relative_to(sim.cast(v0), v1, v2, v3, v4)
-			_pc = 3371
-			continue
-		elif _pc == 3371:
-			return 0
-		else:
-			return 0
+	if not _pog_is_null(group.cast(v0)):
+		v5 = group.cast(v0)
+		sim.place_relative_to(group.leader(v5), v1, v2, v3, v4)
+		await iformation.goose(v5, 90.0, 1)
+	else:
+		sim.place_relative_to(sim.cast(v0), v1, v2, v3, v4)
+	return 0
 	return 0
 
 func local_3374(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 3374
-	while true:
-		if _pc == 3374:
-			if not _pog_is_null(group.cast(v0)):
-				_pc = 3405
-				continue
-			else:
-				_pc = 3549
-				continue
-		elif _pc == 3405:
-			v1 = group.cast(v0)
-			v2 = group.sim_count(v1)
-			v3 = 0
-			_pc = 3460
-			continue
-		elif _pc == 3460:
-			if v3 < v2:
-				_pc = 3476
-				continue
-			else:
-				_pc = 3544
-				continue
-		elif _pc == 3476:
+	if not _pog_is_null(group.cast(v0)):
+		v1 = group.cast(v0)
+		v2 = group.sim_count(v1)
+		v3 = 0
+		while v3 < v2:
 			await ipilotsetup.generic_cargo_pod(iship.cast(group.nth_sim(v1, v3)))
 			v3 = v3 + 1
-			_pc = 3460
-			continue
-		elif _pc == 3544:
-			_pc = 3581
-			continue
-		elif _pc == 3549:
-			await ipilotsetup.generic_cargo_pod(iship.cast(v0))
-			_pc = 3581
-			continue
-		elif _pc == 3581:
-			return 0
-		else:
-			return 0
+	else:
+		await ipilotsetup.generic_cargo_pod(iship.cast(v0))
+	return 0
 	return 0
 
 func local_3584(v0, v1, v2) -> Variant:
@@ -371,48 +224,19 @@ func local_3584(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 3584
-	while true:
-		if _pc == 3584:
-			v3 = group.create()
-			v5 = null
-			v6 = await iutilities.find_number_of_i_n_i_entries(v0, "TestShips", "ship")
-			v7 = 0
-			_pc = 3663
-			continue
-		elif _pc == 3663:
-			if v7 < v1:
-				_pc = 3679
-				continue
-			else:
-				_pc = 3942
-				continue
-		elif _pc == 3679:
-			v5 = inifile.numbered_string(v0, "TestShips", "ship", math.random_int(0, v6 - 1), "none")
-			if _pog_eq(v5, "none"):
-				_pc = 3761
-				continue
-			else:
-				_pc = 3781
-				continue
-		elif _pc == 3761:
+	v3 = group.create()
+	v5 = null
+	v6 = await iutilities.find_number_of_i_n_i_entries(v0, "TestShips", "ship")
+	v7 = 0
+	while v7 < v1:
+		v5 = inifile.numbered_string(v0, "TestShips", "ship", math.random_int(0, v6 - 1), "none")
+		if _pog_eq(v5, "none"):
 			debug.error("Unable to get template from ini")
-			_pc = 3781
-			continue
-		elif _pc == 3781:
-			v4 = isim.cast(sim.create(v5, string.join(v2, string.join("Ship ", string.from_int(v7 + 1)))))
-			group.add_sim(v3, v4)
-			sim.set_cullable(v4, 0)
-			v7 = v7 + 1
-			_pc = 3663
-			continue
-		elif _pc == 3942:
-			_pc = 3952
-			continue
-		elif _pc == 3952:
-			return
-		else:
-			return 0
+		v4 = isim.cast(sim.create(v5, string.join(v2, string.join("Ship ", string.from_int(v7 + 1)))))
+		group.add_sim(v3, v4)
+		sim.set_cullable(v4, 0)
+		v7 = v7 + 1
+	return v3
 	return 0
 
 func local_3961(v0, v1) -> Variant:
@@ -420,59 +244,20 @@ func local_3961(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 3961
-	while true:
-		if _pc == 3961:
-			if v1 == 1:
-				_pc = 3978
-				continue
-			else:
-				_pc = 4008
-				continue
-		elif _pc == 3978:
-			v3 = ifaction.find("Goodies")
-			_pc = 4033
-			continue
-		elif _pc == 4008:
-			v3 = ifaction.find("Baddies")
-			_pc = 4033
-			continue
-		elif _pc == 4033:
-			if not _pog_is_null(group.cast(v0)):
-				_pc = 4060
-				continue
-			else:
-				_pc = 4209
-				continue
-		elif _pc == 4060:
-			v2 = group.cast(v0)
-			v4 = group.sim_count(v2)
-			v5 = 0
-			_pc = 4115
-			continue
-		elif _pc == 4115:
-			if v5 < v4:
-				_pc = 4131
-				continue
-			else:
-				_pc = 4204
-				continue
-		elif _pc == 4131:
+	if v1 == 1:
+		v3 = ifaction.find("Goodies")
+	else:
+		v3 = ifaction.find("Baddies")
+	if not _pog_is_null(group.cast(v0)):
+		v2 = group.cast(v0)
+		v4 = group.sim_count(v2)
+		v5 = 0
+		while v5 < v4:
 			isim.set_faction(isim.cast(group.nth_sim(v2, v5)), v3)
 			v5 = v5 + 1
-			_pc = 4115
-			continue
-		elif _pc == 4204:
-			_pc = 4246
-			continue
-		elif _pc == 4209:
-			isim.set_faction(isim.cast(v0), v3)
-			_pc = 4246
-			continue
-		elif _pc == 4246:
-			return 0
-		else:
-			return 0
+	else:
+		isim.set_faction(isim.cast(v0), v3)
+	return 0
 	return 0
 
 func local_4249() -> Variant:
@@ -595,43 +380,16 @@ func local_5574(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 5574
-	while true:
-		if _pc == 5574:
-			v4 = ifaction.find("Player")
-			if v0 == 1:
-				_pc = 5617
-				continue
-			else:
-				_pc = 5647
-				continue
-		elif _pc == 5617:
-			v3 = ifaction.find("Goodies")
-			_pc = 5672
-			continue
-		elif _pc == 5647:
-			v3 = ifaction.find("Baddies")
-			_pc = 5672
-			continue
-		elif _pc == 5672:
-			if v1:
-				_pc = 5683
-				continue
-			else:
-				_pc = 5717
-				continue
-		elif _pc == 5683:
-			ifaction.set_feeling(v3, v4, -1.0)
-			_pc = 5746
-			continue
-		elif _pc == 5717:
-			ifaction.set_feeling(v3, v4, 1.0)
-			_pc = 5746
-			continue
-		elif _pc == 5746:
-			return 0
-		else:
-			return 0
+	v4 = ifaction.find("Player")
+	if v0 == 1:
+		v3 = ifaction.find("Goodies")
+	else:
+		v3 = ifaction.find("Baddies")
+	if v1:
+		ifaction.set_feeling(v3, v4, -1.0)
+	else:
+		ifaction.set_feeling(v3, v4, 1.0)
+	return 0
 	return 0
 
 func local_5749() -> Variant:
@@ -673,14 +431,14 @@ func local_5749() -> Variant:
 				_pc = 5914
 				continue
 		elif _pc == 6020:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 6029
 				continue
 			else:
 				_pc = 5941
 				continue
 		elif _pc == 6029:
-			if not _pog_is_null(3):
+			if 3 != v0:
 				_pc = 6038
 				continue
 			else:
@@ -703,51 +461,16 @@ func call_setup_menu() -> Variant:
 
 func local_6076() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 6076
-	while true:
-		if _pc == 6076:
-			await iconversation.begin()
-			await iconversation.add_response("Object 1", "")
-			await iconversation.add_response("Object 2", "")
-			v0 = await iconversation.ask(0, "Martyn", "Select Object to Manipulate:")
-			await iconversation.end()
-			_pc = 6256
-			continue
-		elif _pc == 6201:
-			global.handle("g_object1_handle")
-			_pc = 6284
-			continue
-		elif _pc == 6225:
-			_pc = 6226
-			continue
-		elif _pc == 6226:
-			global.handle("g_object2_handle")
-			_pc = 6284
-			continue
-		elif _pc == 6250:
-			_pc = 6278
-			continue
-		elif _pc == 6256:
-			if 1 != v0:
-				_pc = 6269
-				continue
-			else:
-				_pc = 6201
-				continue
-		elif _pc == 6269:
-			if not _pog_is_null(2):
-				_pc = 6278
-				continue
-			else:
-				_pc = 6226
-				continue
-		elif _pc == 6278:
-			_pc = 6284
-			continue
-		elif _pc == 6284:
-			return
-		else:
-			return 0
+	await iconversation.begin()
+	await iconversation.add_response("Object 1", "")
+	await iconversation.add_response("Object 2", "")
+	v0 = await iconversation.ask(0, "Martyn", "Select Object to Manipulate:")
+	await iconversation.end()
+	if 1 == v0:
+		return global.handle("g_object1_handle")
+	if 2 == v0:
+		return global.handle("g_object2_handle")
+	return 0
 	return 0
 
 func local_6286() -> Variant:
@@ -1472,224 +1195,224 @@ func local_6286() -> Variant:
 				_pc = 7356
 				continue
 		elif _pc == 12332:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 12341
 				continue
 			else:
 				_pc = 7430
 				continue
 		elif _pc == 12341:
-			if not _pog_is_null(3):
+			if 3 != v0:
 				_pc = 12350
 				continue
 			else:
 				_pc = 7534
 				continue
 		elif _pc == 12350:
-			if not _pog_is_null(4):
+			if 4 != v0:
 				_pc = 12359
 				continue
 			else:
 				_pc = 7608
 				continue
 		elif _pc == 12359:
-			if not _pog_is_null(5):
+			if 5 != v0:
 				_pc = 12368
 				continue
 			else:
 				_pc = 7682
 				continue
 		elif _pc == 12368:
-			if not _pog_is_null(6):
+			if 6 != v0:
 				_pc = 12377
 				continue
 			else:
 				_pc = 7706
 				continue
 		elif _pc == 12377:
-			if not _pog_is_null(7):
+			if 7 != v0:
 				_pc = 12386
 				continue
 			else:
 				_pc = 7911
 				continue
 		elif _pc == 12386:
-			if not _pog_is_null(8):
+			if 8 != v0:
 				_pc = 12395
 				continue
 			else:
 				_pc = 8116
 				continue
 		elif _pc == 12395:
-			if not _pog_is_null(9):
+			if 9 != v0:
 				_pc = 12404
 				continue
 			else:
 				_pc = 8268
 				continue
 		elif _pc == 12404:
-			if not _pog_is_null(10):
+			if 10 != v0:
 				_pc = 12413
 				continue
 			else:
 				_pc = 8736
 				continue
 		elif _pc == 12413:
-			if not _pog_is_null(11):
+			if 11 != v0:
 				_pc = 12422
 				continue
 			else:
 				_pc = 9065
 				continue
 		elif _pc == 12422:
-			if not _pog_is_null(12):
+			if 12 != v0:
 				_pc = 12431
 				continue
 			else:
 				_pc = 9141
 				continue
 		elif _pc == 12431:
-			if not _pog_is_null(13):
+			if 13 != v0:
 				_pc = 12440
 				continue
 			else:
 				_pc = 9165
 				continue
 		elif _pc == 12440:
-			if not _pog_is_null(14):
+			if 14 != v0:
 				_pc = 12449
 				continue
 			else:
 				_pc = 9189
 				continue
 		elif _pc == 12449:
-			if not _pog_is_null(15):
+			if 15 != v0:
 				_pc = 12458
 				continue
 			else:
 				_pc = 9450
 				continue
 		elif _pc == 12458:
-			if not _pog_is_null(16):
+			if 16 != v0:
 				_pc = 12467
 				continue
 			else:
 				_pc = 9634
 				continue
 		elif _pc == 12467:
-			if not _pog_is_null(17):
+			if 17 != v0:
 				_pc = 12476
 				continue
 			else:
 				_pc = 9692
 				continue
 		elif _pc == 12476:
-			if not _pog_is_null(18):
+			if 18 != v0:
 				_pc = 12485
 				continue
 			else:
 				_pc = 9750
 				continue
 		elif _pc == 12485:
-			if not _pog_is_null(19):
+			if 19 != v0:
 				_pc = 12494
 				continue
 			else:
 				_pc = 9831
 				continue
 		elif _pc == 12494:
-			if not _pog_is_null(20):
+			if 20 != v0:
 				_pc = 12503
 				continue
 			else:
 				_pc = 10018
 				continue
 		elif _pc == 12503:
-			if not _pog_is_null(21):
+			if 21 != v0:
 				_pc = 12512
 				continue
 			else:
 				_pc = 10205
 				continue
 		elif _pc == 12512:
-			if not _pog_is_null(22):
+			if 22 != v0:
 				_pc = 12521
 				continue
 			else:
 				_pc = 10405
 				continue
 		elif _pc == 12521:
-			if not _pog_is_null(23):
+			if 23 != v0:
 				_pc = 12530
 				continue
 			else:
 				_pc = 10605
 				continue
 		elif _pc == 12530:
-			if not _pog_is_null(24):
+			if 24 != v0:
 				_pc = 12539
 				continue
 			else:
 				_pc = 10805
 				continue
 		elif _pc == 12539:
-			if not _pog_is_null(25):
+			if 25 != v0:
 				_pc = 12548
 				continue
 			else:
 				_pc = 10920
 				continue
 		elif _pc == 12548:
-			if not _pog_is_null(26):
+			if 26 != v0:
 				_pc = 12557
 				continue
 			else:
 				_pc = 11054
 				continue
 		elif _pc == 12557:
-			if not _pog_is_null(27):
+			if 27 != v0:
 				_pc = 12566
 				continue
 			else:
 				_pc = 11168
 				continue
 		elif _pc == 12566:
-			if not _pog_is_null(28):
+			if 28 != v0:
 				_pc = 12575
 				continue
 			else:
 				_pc = 11340
 				continue
 		elif _pc == 12575:
-			if not _pog_is_null(29):
+			if 29 != v0:
 				_pc = 12584
 				continue
 			else:
 				_pc = 11492
 				continue
 		elif _pc == 12584:
-			if not _pog_is_null(30):
+			if 30 != v0:
 				_pc = 12593
 				continue
 			else:
 				_pc = 11619
 				continue
 		elif _pc == 12593:
-			if not _pog_is_null(31):
+			if 31 != v0:
 				_pc = 12602
 				continue
 			else:
 				_pc = 11819
 				continue
 		elif _pc == 12602:
-			if not _pog_is_null(32):
+			if 32 != v0:
 				_pc = 12611
 				continue
 			else:
 				_pc = 11904
 				continue
 		elif _pc == 12611:
-			if not _pog_is_null(33):
+			if 33 != v0:
 				_pc = 12620
 				continue
 			else:

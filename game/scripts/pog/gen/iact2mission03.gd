@@ -94,28 +94,12 @@ func local_218() -> Variant:
 
 func local_326() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 326
-	while true:
-		if _pc == 326:
-			if not (await iutilities.skip_mission("Trouble at the Ranch??")):
-				_pc = 357
-				continue
-			else:
-				_pc = 394
-				continue
-		elif _pc == 357:
-			v0 = _pog_spawn(mission_handler.bind())
-			_pog_detach(v0)
-			_pc = 413
-			continue
-		elif _pc == 394:
-			await stub()
-			_pc = 413
-			continue
-		elif _pc == 413:
-			return
-		else:
-			return 0
+	if not (await iutilities.skip_mission("Trouble at the Ranch??")):
+		v0 = _pog_spawn(mission_handler.bind())
+		_pog_detach(v0)
+	else:
+		await stub()
+	return
 	return 0
 
 func local_415() -> Variant:
@@ -155,57 +139,30 @@ func local_501(v0, v1, v2, v3, v4, v5) -> Variant:
 	return 0
 
 func local_1066(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) -> Variant:
-	var _pc: int = 1066
 	while true:
-		if _pc == 1066:
-			_pc = 1071
+		await _pog_wait(0.1)
+		if state.progress(v1) != 100:
 			continue
-		elif _pc == 1071:
-			await _pog_frame()
-			if _pog_every(1072, 0.10000000149011612):
-				_pc = 1085
-				continue
-			else:
-				_pc = 1464
-				continue
-		elif _pc == 1085:
-			if state.progress(v1) == 100:
-				_pc = 1111
-				continue
-			else:
-				_pc = 1464
-				continue
-		elif _pc == 1111:
-			await iwingmen.purge()
-			sim.destroy(v6)
-			sim.destroy(v7)
-			sim.destroy(v8)
-			sim.destroy(v9)
-			group.destroy(v2, 1)
-			group.destroy(v3, 1)
-			group.destroy(v4, 1)
-			group.destroy(v5, 1)
-			group.destroy(v10, 1)
-			global.set_bool("g_skip_locked", 0)
-			_pog_detach(_pog_spawn(local_326.bind()))
-			await local_218()
-			state.destroy(v0)
-			await iutilities.remove_mission_restart()
-			await imissiontracker.remove_mission(self)
-			_pog_halt(v0)
-			iscore.goto_restart_point()
-			_pc = 1470
-			continue
-		elif _pc == 1464:
-			_pc = 1071
-			continue
-		elif _pc == 1469:
-			_pc = 1470
-			continue
-		elif _pc == 1470:
-			return
-		else:
-			return 0
+		await iwingmen.purge()
+		sim.destroy(v6)
+		sim.destroy(v7)
+		sim.destroy(v8)
+		sim.destroy(v9)
+		group.destroy(v2, 1)
+		group.destroy(v3, 1)
+		group.destroy(v4, 1)
+		group.destroy(v5, 1)
+		group.destroy(v10, 1)
+		global.set_bool("g_skip_locked", 0)
+		_pog_detach(_pog_spawn(local_326.bind()))
+		await local_218()
+		state.destroy(v0)
+		await iutilities.remove_mission_restart()
+		await imissiontracker.remove_mission(self)
+		_pog_halt(v0)
+		iscore.goto_restart_point()
+		return
+	return
 	return 0
 
 func local_1472(v0) -> Variant:
@@ -213,75 +170,30 @@ func local_1472(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 1472
-	while true:
-		if _pc == 1472:
-			v1 = null
-			v1 = list.from_set(sim.children(v0))
-			v3 = list.item_count(v1)
-			v4 = 0
-			_pc = 1559
-			continue
-		elif _pc == 1559:
-			if v4 < v3:
-				_pc = 1575
-				continue
-			else:
-				_pc = 1679
-				continue
-		elif _pc == 1575:
-			v2 = iship.cast(list.get_nth(v1, v4))
-			if object.int_property(v2, "cargo") == 534:
-				_pc = 1651
-				continue
-			else:
-				_pc = 1661
-				continue
-		elif _pc == 1651:
-			_pc = 1685
-			continue
-		elif _pc == 1661:
-			v4 = v4 + 1
-			_pc = 1559
-			continue
-		elif _pc == 1679:
-			_pc = 1685
-			continue
-		elif _pc == 1685:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = list.from_set(sim.children(v0))
+	v3 = list.item_count(v1)
+	v4 = 0
+	while v4 < v3:
+		v2 = iship.cast(list.get_nth(v1, v4))
+		if object.int_property(v2, "cargo") == 534:
+			return v2
+		v4 = v4 + 1
+	return 0
 	return 0
 
 func local_1694(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 1694
-	while true:
-		if _pc == 1694:
-			v1 = null
-			v1 = list.from_set(idockport.dockports_of_type(v0, 0, 4))
-			v2 = list.item_count(v1)
-			v3 = 0
-			_pc = 1784
-			continue
-		elif _pc == 1784:
-			if v3 < v2:
-				_pc = 1800
-				continue
-			else:
-				_pc = 1868
-				continue
-		elif _pc == 1800:
-			idockport.disable(idockport.cast(list.get_nth(v1, v3)))
-			v3 = v3 + 1
-			_pc = 1784
-			continue
-		elif _pc == 1868:
-			return 0
-		else:
-			return 0
+	v1 = null
+	v1 = list.from_set(idockport.dockports_of_type(v0, 0, 4))
+	v2 = list.item_count(v1)
+	v3 = 0
+	while v3 < v2:
+		idockport.disable(idockport.cast(list.get_nth(v1, v3)))
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -1055,28 +967,11 @@ func mission_handler() -> Variant:
 
 func local_9087(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 9087
-	while true:
-		if _pc == 9087:
-			v2 = 0
-			_pc = 9099
-			continue
-		elif _pc == 9099:
-			if v2 < group.sim_count(v0):
-				_pc = 9128
-				continue
-			else:
-				_pc = 9201
-				continue
-		elif _pc == 9128:
-			isim.set_faction(isim.cast(group.nth_sim(v0, v2)), v1)
-			v2 = v2 + 1
-			_pc = 9099
-			continue
-		elif _pc == 9201:
-			return 0
-		else:
-			return 0
+	v2 = 0
+	while v2 < group.sim_count(v0):
+		isim.set_faction(isim.cast(group.nth_sim(v0, v2)), v1)
+		v2 = v2 + 1
+	return 0
 	return 0
 
 func local_9204(v0) -> Variant:
@@ -1085,43 +980,23 @@ func local_9204(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 9204
-	while true:
-		if _pc == 9204:
-			v1 = ifaction.find("Marauders")
-			v2 = group.create()
-			v4 = 50
-			v5 = 0
-			_pc = 9269
-			continue
-		elif _pc == 9269:
-			if v5 < v4:
-				_pc = 9285
-				continue
-			else:
-				_pc = 9691
-				continue
-		elif _pc == 9285:
-			v3 = iship.create("ini:/sims/custom/act2_mission03/fudge_mine", "a2_m03_name_mine")
-			isim.set_faction(isim.cast(v3), v1)
-			group.add_sim(v2, v3)
-			sim.place_near(v3, v0, 6000.0 + math.random(-500.0, 500.0))
-			sim.set_orientation_euler(v3, math.random(10.0, 360.0), math.random(10.0, 360.0), math.random(10.0, 360.0))
-			isim.set_indestructable(isim.cast(v3), 0)
-			object.set_string_property(v3, "death_script", "iDeathScript.Explosives")
-			object.add_float_property(v3, "explosive_damage", 300.0)
-			object.add_float_property(v3, "explosive_radius", 400.0)
-			object.set_bool_property(v3, "ignore_speed_limit", 1)
-			v5 = v5 + 1
-			_pc = 9269
-			continue
-		elif _pc == 9691:
-			_pc = 9701
-			continue
-		elif _pc == 9701:
-			return
-		else:
-			return 0
+	v1 = ifaction.find("Marauders")
+	v2 = group.create()
+	v4 = 50
+	v5 = 0
+	while v5 < v4:
+		v3 = iship.create("ini:/sims/custom/act2_mission03/fudge_mine", "a2_m03_name_mine")
+		isim.set_faction(isim.cast(v3), v1)
+		group.add_sim(v2, v3)
+		sim.place_near(v3, v0, 6000.0 + math.random(-500.0, 500.0))
+		sim.set_orientation_euler(v3, math.random(10.0, 360.0), math.random(10.0, 360.0), math.random(10.0, 360.0))
+		isim.set_indestructable(isim.cast(v3), 0)
+		object.set_string_property(v3, "death_script", "iDeathScript.Explosives")
+		object.add_float_property(v3, "explosive_damage", 300.0)
+		object.add_float_property(v3, "explosive_radius", 400.0)
+		object.set_bool_property(v3, "ignore_speed_limit", 1)
+		v5 = v5 + 1
+	return v2
 	return 0
 
 func local_9703(v0, v1, v2) -> Variant:
@@ -1131,105 +1006,37 @@ func local_9703(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 9703
+	v4 = ifaction.find("Marauders")
+	v5 = ifaction.find("Independent")
+	v6 = 1
+	v7 = group.sim_count(v1)
 	while true:
-		if _pc == 9703:
-			v4 = ifaction.find("Marauders")
-			v5 = ifaction.find("Independent")
-			v6 = 1
-			v7 = group.sim_count(v1)
-			_pc = 9790
-			continue
-		elif _pc == 9790:
-			if object.float_property(v0, "hit_points") <= 0.0:
-				_pc = 9826
-				continue
-			else:
-				_pc = 9887
-				continue
-		elif _pc == 9826:
+		if object.float_property(v0, "hit_points") <= 0.0:
 			isim.kill(isim.cast(v0))
 			iai.purge_orders(v1)
-			_pc = 10395
-			continue
-		elif _pc == 9882:
-			_pc = 10353
-			continue
-		elif _pc == 9887:
-			v8 = 0
-			_pc = 9894
-			continue
-		elif _pc == 9894:
-			if v8 < v7:
-				_pc = 9910
-				continue
-			else:
-				_pc = 10353
-				continue
-		elif _pc == 9910:
-			v3 = iship.cast(group.nth_sim(v1, v8))
-			if sim.distance_between(v0, v3) < 5000.0 or iai.is_order_complete(v3):
-				_pc = 10005
-				continue
-			else:
-				_pc = 10217
-				continue
-		elif _pc == 10005:
-			if sim.distance_between(v0, v3) < 250.0:
-				_pc = 10039
-				continue
-			else:
-				_pc = 10076
-				continue
-		elif _pc == 10039:
-			isim.kill(isim.cast(v3))
-			_pc = 10212
-			continue
-		elif _pc == 10076:
-			if not (object.property_exists(v3, "triggered")):
-				_pc = 10107
-				continue
-			else:
-				_pc = 10212
-				continue
-		elif _pc == 10107:
-			object.add_int_property(v3, "triggered", 1)
-			await ipilotsetup.generic_cargo_pod(v3)
-			isim.set_faction(v3, v4)
-			iai.give_approach_order_advanced(v3, v0, 0.0, 0.0, 0)
-			_pc = 10212
-			continue
-		elif _pc == 10212:
-			_pc = 10335
-			continue
-		elif _pc == 10217:
-			if object.property_exists(v3, "triggered") and iai.is_order_complete(v3):
-				_pc = 10266
-				continue
-			else:
-				_pc = 10335
-				continue
-		elif _pc == 10266:
-			object.remove_property(v3, "triggered")
-			iship.remove_pilot(v3)
-			isim.set_faction(v3, v5)
-			_pc = 10335
-			continue
-		elif _pc == 10335:
-			v8 = v8 + 1
-			_pc = 9894
-			continue
-		elif _pc == 10353:
-			await _pog_wait(v2)
-			if not (v6):
-				_pc = 10395
-				continue
-			else:
-				_pc = 9790
-				continue
-		elif _pc == 10395:
-			return
+			break
 		else:
-			return 0
+			v8 = 0
+			while v8 < v7:
+				v3 = iship.cast(group.nth_sim(v1, v8))
+				if sim.distance_between(v0, v3) < 5000.0 or iai.is_order_complete(v3):
+					if sim.distance_between(v0, v3) < 250.0:
+						isim.kill(isim.cast(v3))
+					else:
+						if not (object.property_exists(v3, "triggered")):
+							object.add_int_property(v3, "triggered", 1)
+							await ipilotsetup.generic_cargo_pod(v3)
+							isim.set_faction(v3, v4)
+							iai.give_approach_order_advanced(v3, v0, 0.0, 0.0, 0)
+				else:
+					if object.property_exists(v3, "triggered") and iai.is_order_complete(v3):
+						object.remove_property(v3, "triggered")
+						iship.remove_pilot(v3)
+						isim.set_faction(v3, v5)
+				v8 = v8 + 1
+		await _pog_wait(v2)
+		if not (v6):
+			break
+	return
 	return 0
 

@@ -51,58 +51,42 @@ func wrong_disk_screen() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 137
-	while true:
-		if _pc == 137:
-			v3 = null
-			v6 = gui.frame_width() / 2
-			v7 = gui.frame_height() / 2
-			v10 = null
-			text.add("csv:/text/gui")
-			text.add("csv:/text/gui_addendum")
-			text.add("csv:/text/gui_addendum_2")
-			text.add("csv:/text/gui_addendum_3")
-			text.add("csv:/text/gui_addendum_4")
-			text.add("csv:/text/gui_addendum_5")
-			text.add("csv:/text/gui_addendum_6")
-			text.add("csv:/text/objectives")
-			await igui.set_g_u_i_globals()
-			v4 = global.pog_int("GUI_fancybutton_width")
-			v5 = global.pog_int("GUI_fancybutton_height")
-			v8 = global.pog_int("GUI_main_title_height")
-			v9 = v7 - v8 * 2
-			await wrong_disk_screen__on_retry()
-			if global.exists("WrongDiskScreen_GotDisk") == 1:
-				_pc = 529
-				continue
-			else:
-				_pc = 555
-				continue
-		elif _pc == 529:
-			global.destroy("WrongDiskScreen_GotDisk")
-			_pc = 968
-			continue
-		elif _pc == 555:
-			await local_1187(v9, "wrongdisk_pleaseinsert")
-			v9 = v9 + v8
-			await local_1187(v9, "wrongdisk_playdisk")
-			v1 = gui.create_window(v6 - v4 / 2, v7, v6 + v4 / 2, v7 + v5, gui.top_window())
-			v2 = await igui.create_fancy_button(0, 0, v1)
-			gui.set_window_title(v2, text.field("gui_cancel", 0))
-			gui.set_button_function_pog(v2, "iFrontendGUI.WrongDiskScreen_OnQuit")
-			gui.set_window_text_formatting(v2, 1, 0)
-			list.add_tail(v3, v2)
-			gui.set_first_control_focus(gui.cast(list.head(v3)))
-			await igui.set_cyclic_control_focus_path(v3)
-			v0 = _pog_spawn(local_1016.bind())
-			_pog_detach(v0)
-			global.create_handle("wrong_disk_monitor_task", 2, v0)
-			_pc = 968
-			continue
-		elif _pc == 968:
-			return 0
-		else:
-			return 0
+	v3 = null
+	v6 = gui.frame_width() / 2
+	v7 = gui.frame_height() / 2
+	v10 = null
+	text.add("csv:/text/gui")
+	text.add("csv:/text/gui_addendum")
+	text.add("csv:/text/gui_addendum_2")
+	text.add("csv:/text/gui_addendum_3")
+	text.add("csv:/text/gui_addendum_4")
+	text.add("csv:/text/gui_addendum_5")
+	text.add("csv:/text/gui_addendum_6")
+	text.add("csv:/text/objectives")
+	await igui.set_g_u_i_globals()
+	v4 = global.pog_int("GUI_fancybutton_width")
+	v5 = global.pog_int("GUI_fancybutton_height")
+	v8 = global.pog_int("GUI_main_title_height")
+	v9 = v7 - v8 * 2
+	await wrong_disk_screen__on_retry()
+	if global.exists("WrongDiskScreen_GotDisk") == 1:
+		global.destroy("WrongDiskScreen_GotDisk")
+	else:
+		await local_1187(v9, "wrongdisk_pleaseinsert")
+		v9 = v9 + v8
+		await local_1187(v9, "wrongdisk_playdisk")
+		v1 = gui.create_window(v6 - v4 / 2, v7, v6 + v4 / 2, v7 + v5, gui.top_window())
+		v2 = await igui.create_fancy_button(0, 0, v1)
+		gui.set_window_title(v2, text.field("gui_cancel", 0))
+		gui.set_button_function_pog(v2, "iFrontendGUI.WrongDiskScreen_OnQuit")
+		gui.set_window_text_formatting(v2, 1, 0)
+		list.add_tail(v3, v2)
+		gui.set_first_control_focus(gui.cast(list.head(v3)))
+		await igui.set_cyclic_control_focus_path(v3)
+		v0 = _pog_spawn(local_1016.bind())
+		_pog_detach(v0)
+		global.create_handle("wrong_disk_monitor_task", 2, v0)
+	return 0
 	return 0
 
 func wrong_disk_screen__on_quit() -> Variant:
@@ -112,40 +96,13 @@ func wrong_disk_screen__on_quit() -> Variant:
 	return 0
 
 func local_1016() -> Variant:
-	var _pc: int = 1016
 	while true:
-		if _pc == 1016:
-			_pc = 1021
+		await _pog_wait(1)
+		await wrong_disk_screen__on_retry()
+		if not (global.exists("WrongDiskScreen_GotDisk")):
 			continue
-		elif _pc == 1021:
-			await _pog_frame()
-			if _pog_every(1022, 1.0):
-				_pc = 1035
-				continue
-			else:
-				_pc = 1079
-				continue
-		elif _pc == 1035:
-			await wrong_disk_screen__on_retry()
-			if global.exists("WrongDiskScreen_GotDisk"):
-				_pc = 1074
-				continue
-			else:
-				_pc = 1079
-				continue
-		elif _pc == 1074:
-			_pc = 1085
-			continue
-		elif _pc == 1079:
-			_pc = 1021
-			continue
-		elif _pc == 1084:
-			_pc = 1085
-			continue
-		elif _pc == 1085:
-			return
-		else:
-			return 0
+		return
+	return
 	return 0
 
 func local_1087() -> Variant:
@@ -177,42 +134,18 @@ func local_1624() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1624
-	while true:
-		if _pc == 1624:
-			v0 = null
-			v2 = config.count_number("system", "icGame", "movies")
-			gui.pop_screen()
-			gui.overlay_screen("icSPMainPDAScreen")
-			if imultiplay.network_is_lobby_session() or not _pog_eq(igame.session_name(), ""):
-				_pc = 1756
-				continue
-			else:
-				_pc = 1761
-				continue
-		elif _pc == 1756:
-			_pc = 1868
-			continue
-		elif _pc == 1761:
-			v1 = v2 - 1
-			_pc = 1774
-			continue
-		elif _pc == 1774:
-			if v1 >= 0:
-				_pc = 1786
-				continue
-			else:
-				_pc = 1868
-				continue
-		elif _pc == 1786:
+	v0 = null
+	v2 = config.count_number("system", "icGame", "movies")
+	gui.pop_screen()
+	gui.overlay_screen("icSPMainPDAScreen")
+	if imultiplay.network_is_lobby_session() or not _pog_eq(igame.session_name(), ""):
+		pass
+	else:
+		v1 = v2 - 1
+		while v1 >= 0:
 			v0 = config.get_numbered_string("system", "icGame", "movies", v1)
 			await _pog_movie(v0)
 			v1 = v1 + -1
-			_pc = 1774
-			continue
-		elif _pc == 1868:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 

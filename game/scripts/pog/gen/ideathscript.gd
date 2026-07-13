@@ -69,72 +69,27 @@ func antimatter() -> Variant:
 
 func local_82(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 82
-	while true:
-		if _pc == 82:
-			if _pog_is_null(v0):
-				_pc = 100
-				continue
-			else:
-				_pc = 105
-				continue
-		elif _pc == 100:
-			_pc = 523
-			continue
-		elif _pc == 105:
-			if not (object.property_exists(v0, "hit_points")):
-				_pc = 136
-				continue
-			else:
-				_pc = 167
-				continue
-		elif _pc == 136:
-			_pc = 162
-			continue
-		elif _pc == 141:
-			debug.print_string("iDeathScript.ApplyDamage: Error hit point property not found in sim!")
-			_pc = 162
-			continue
-		elif _pc == 162:
-			_pc = 523
-			continue
-		elif _pc == 167:
+	if _pog_is_null(v0):
+		pass
+	else:
+		if not (object.property_exists(v0, "hit_points")):
+			if PogRuntime.TRACE:
+				debug.print_string("iDeathScript.ApplyDamage: Error hit point property not found in sim!")
+		else:
 			v2 = object.float_property(v0, "hit_points")
 			object.set_float_property(v0, "hit_points", v2 - v1)
 			if v2 <= 0.0:
-				_pc = 251
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string(string.join("iDeathScript: Explosives have destroyed.. ", object.string_property(v0, "name")))
+					debug.print_string("\n")
+				isim.kill(isim.cast(v0))
+				return 0
 			else:
-				_pc = 381
-				continue
-		elif _pc == 251:
-			_pc = 339
-			continue
-		elif _pc == 256:
-			debug.print_string(string.join("iDeathScript: Explosives have destroyed.. ", object.string_property(v0, "name")))
-			debug.print_string("\n")
-			_pc = 339
-			continue
-		elif _pc == 339:
-			isim.kill(isim.cast(v0))
-			_pc = 523
-			continue
-		elif _pc == 376:
-			_pc = 523
-			continue
-		elif _pc == 381:
-			_pc = 523
-			continue
-		elif _pc == 386:
-			debug.print_string(string.join("iDeathScript: Explosives have damaged.. ", object.string_property(v0, "name")))
-			debug.print_string(string.join(" by this many points: ", string.from_float(v1)))
-			debug.print_string("\n")
-			_pc = 523
-			continue
-		elif _pc == 523:
-			return 0
-		else:
-			return 0
+				if PogRuntime.TRACE:
+					debug.print_string(string.join("iDeathScript: Explosives have damaged.. ", object.string_property(v0, "name")))
+					debug.print_string(string.join(" by this many points: ", string.from_float(v1)))
+					debug.print_string("\n")
+	return 0
 	return 0
 
 func explosives() -> Variant:
@@ -148,79 +103,35 @@ func explosives() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 526
-	while true:
-		if _pc == 526:
-			v1 = null
-			v3 = await iutilities.create_waypoint_at(v0)
-			if object.property_exists(v0, "explosive_damage"):
-				_pc = 596
-				continue
-			else:
-				_pc = 632
-				continue
-		elif _pc == 596:
-			v6 = object.float_property(v0, "explosive_damage")
-			_pc = 643
-			continue
-		elif _pc == 632:
-			v6 = 500.0
-			_pc = 643
-			continue
-		elif _pc == 643:
-			if object.property_exists(v0, "explosive_radius"):
-				_pc = 673
-				continue
-			else:
-				_pc = 709
-				continue
-		elif _pc == 673:
-			v7 = object.float_property(v0, "explosive_radius")
-			_pc = 720
-			continue
-		elif _pc == 709:
-			v7 = 1000.0
-			_pc = 720
-			continue
-		elif _pc == 720:
-			_pc = 898
-			continue
-		elif _pc == 725:
-			debug.print_string("iDeathScript: Calling Explosives with the values:\n")
-			debug.print_string(string.join("max_damage: ", string.from_float(v6)))
-			debug.print_string("\n")
-			debug.print_string(string.join("max_explosive_radius: ", string.from_float(v7)))
-			debug.print_string("\n")
-			_pc = 898
-			continue
-		elif _pc == 898:
-			v1 = list.from_set(isim.sims_in_radius(isim.cast(v0), v7, 536848384))
-			v5 = list.item_count(v1)
-			object.set_string_property(v0, "death_script", "")
-			isim.kill(isim.cast(v0))
-			v4 = 0
-			_pc = 1056
-			continue
-		elif _pc == 1056:
-			if v4 < v5:
-				_pc = 1072
-				continue
-			else:
-				_pc = 1214
-				continue
-		elif _pc == 1072:
-			v2 = sim.cast(list.get_nth(v1, v4))
-			v8 = sim.distance_between(v2, v3)
-			v9 = v6 * v7 - v8 / v7
-			await local_82(v2, v9)
-			v4 = v4 + 1
-			_pc = 1056
-			continue
-		elif _pc == 1214:
-			sim.destroy(v3)
-			return
-		else:
-			return 0
+	v1 = null
+	v3 = await iutilities.create_waypoint_at(v0)
+	if object.property_exists(v0, "explosive_damage"):
+		v6 = object.float_property(v0, "explosive_damage")
+	else:
+		v6 = 500.0
+	if object.property_exists(v0, "explosive_radius"):
+		v7 = object.float_property(v0, "explosive_radius")
+	else:
+		v7 = 1000.0
+	if PogRuntime.TRACE:
+		debug.print_string("iDeathScript: Calling Explosives with the values:\n")
+		debug.print_string(string.join("max_damage: ", string.from_float(v6)))
+		debug.print_string("\n")
+		debug.print_string(string.join("max_explosive_radius: ", string.from_float(v7)))
+		debug.print_string("\n")
+	v1 = list.from_set(isim.sims_in_radius(isim.cast(v0), v7, 536848384))
+	v5 = list.item_count(v1)
+	object.set_string_property(v0, "death_script", "")
+	isim.kill(isim.cast(v0))
+	v4 = 0
+	while v4 < v5:
+		v2 = sim.cast(list.get_nth(v1, v4))
+		v8 = sim.distance_between(v2, v3)
+		v9 = v6 * v7 - v8 / v7
+		await local_82(v2, v9)
+		v4 = v4 + 1
+	sim.destroy(v3)
+	return
 	return 0
 
 func local_1242(v0) -> Variant:
@@ -229,26 +140,11 @@ func local_1242(v0) -> Variant:
 	return 0
 
 func local_1277(v0) -> Variant:
-	var _pc: int = 1277
-	while true:
-		if _pc == 1277:
-			if _pog_is_null(v0):
-				_pc = 1290
-				continue
-			else:
-				_pc = 1295
-				continue
-		elif _pc == 1290:
-			_pc = 1332
-			continue
-		elif _pc == 1295:
-			iloadout.rearm_from_third_party(iship.cast(v0), 1.0)
-			_pc = 1332
-			continue
-		elif _pc == 1332:
-			return 0
-		else:
-			return 0
+	if _pog_is_null(v0):
+		pass
+	else:
+		iloadout.rearm_from_third_party(iship.cast(v0), 1.0)
+	return 0
 	return 0
 
 func local_1335(v0) -> Variant:
@@ -284,60 +180,28 @@ func local_1335(v0) -> Variant:
 func restore_player_ship(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 2159
-	while true:
-		if _pc == 2159:
-			if not _pog_is_null(v1):
-				_pc = 2177
-				continue
-			else:
-				_pc = 2193
-				continue
-		elif _pc == 2177:
-			v2 = v1
-			_pc = 2304
-			continue
-		elif _pc == 2193:
-			v3 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
-			v2 = await iutilities.create_waypoint_relative_to(v3, 0.0, 0.0, object.float_property(v3, "radius") + 500.0)
-			_pc = 2304
-			continue
-		elif _pc == 2304:
-			sim.place_at(v0, v2)
-			await _pog_wait(2.0)
-			await local_1242(v0)
-			object.set_string_property(v0, "death_script", "iDeathScript.PlayerDeathScript")
-			await local_1277(v0)
-			await local_1335(v0)
-			if not _pog_is_null(v1):
-				_pc = 2462
-				continue
-			else:
-				_pc = 2481
-				continue
-		elif _pc == 2462:
-			sim.destroy(v2)
-			_pc = 2481
-			continue
-		elif _pc == 2481:
-			sim.set_hidden(v0, 0)
-			if isim.is_alien_infection_effect_on(isim.cast(v0)):
-				_pc = 2537
-				continue
-			else:
-				_pc = 2607
-				continue
-		elif _pc == 2537:
-			isim.alien_infection_effect(isim.cast(v0), 0)
-			isim.set_alien_infection_damage(isim.cast(v0), 0.0)
-			_pc = 2607
-			continue
-		elif _pc == 2607:
-			isim.set_indestructable(isim.cast(v0), 0)
-			iship.set_free_without_pilot(iship.cast(v0), 0)
-			return 0
-		else:
-			return 0
+	if not _pog_is_null(v1):
+		v2 = v1
+	else:
+		v3 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
+		v2 = await iutilities.create_waypoint_relative_to(v3, 0.0, 0.0, object.float_property(v3, "radius") + 500.0)
+	sim.place_at(v0, v2)
+	await _pog_wait(2.0)
+	await local_1242(v0)
+	object.set_string_property(v0, "death_script", "iDeathScript.PlayerDeathScript")
+	await local_1277(v0)
+	await local_1335(v0)
+	if not _pog_is_null(v1):
+		sim.destroy(v2)
+	sim.set_hidden(v0, 0)
+	if isim.is_alien_infection_effect_on(isim.cast(v0)):
+		isim.alien_infection_effect(isim.cast(v0), 0)
+		isim.set_alien_infection_damage(isim.cast(v0), 0.0)
+	isim.set_indestructable(isim.cast(v0), 0)
+	iship.set_free_without_pilot(iship.cast(v0), 0)
+	return 0
+	state.set_progress(v0, 100)
+	return 0
 	return 0
 
 func local_2700(v0) -> Variant:
@@ -346,53 +210,27 @@ func local_2700(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 2700
-	while true:
-		if _pc == 2700:
-			v3 = null
-			v3 = list.from_set(sim.children(v0))
-			v4 = list.item_count(v3)
-			isim.start_explosion(isim.cast(v0))
-			v5 = 0
-			_pc = 2819
-			continue
-		elif _pc == 2819:
-			if v5 < v4:
-				_pc = 2835
-				continue
-			else:
-				_pc = 3013
-				continue
-		elif _pc == 2835:
-			v1 = isim.cast(list.get_nth(v3, v5))
-			if not (sim.is_hidden(v1)):
-				_pc = 2901
-				continue
-			else:
-				_pc = 2995
-				continue
-		elif _pc == 2901:
+	v3 = null
+	v3 = list.from_set(sim.children(v0))
+	v4 = list.item_count(v3)
+	isim.start_explosion(isim.cast(v0))
+	v5 = 0
+	while v5 < v4:
+		v1 = isim.cast(list.get_nth(v3, v5))
+		if not (sim.is_hidden(v1)):
 			isim.set_docking_lock(v1, isim.cast(v0), 0)
 			isim.undock(v1, isim.cast(v0))
 			isim.kill(v1)
-			_pc = 2995
-			continue
-		elif _pc == 2995:
-			v5 = v5 + 1
-			_pc = 2819
-			continue
-		elif _pc == 3013:
-			await _pog_wait(3.0)
-			isim.stop_explosion(isim.cast(v0), 0, 0)
-			await _pog_wait(0.10000000149011612)
-			sim.set_hidden(v0, 1)
-			isim.set_indestructable(isim.cast(v0), 1)
-			v2 = group.from_set(isim.player_hostiles_in_radius(300000.0, 536838144))
-			sim.place_at(v0, imapentity.system_centre())
-			group.destroy(v2, 1)
-			return 0
-		else:
-			return 0
+		v5 = v5 + 1
+	await _pog_wait(3.0)
+	isim.stop_explosion(isim.cast(v0), 0, 0)
+	await _pog_wait(0.10000000149011612)
+	sim.set_hidden(v0, 1)
+	isim.set_indestructable(isim.cast(v0), 1)
+	v2 = group.from_set(isim.player_hostiles_in_radius(300000.0, 536838144))
+	sim.place_at(v0, imapentity.system_centre())
+	group.destroy(v2, 1)
+	return 0
 	return 0
 
 func local_3270(v0) -> Variant:
@@ -401,45 +239,19 @@ func local_3270(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 3270
-	while true:
-		if _pc == 3270:
-			v3 = null
-			v3 = list.from_set(sim.children(v0))
-			v4 = list.item_count(v3)
-			isim.start_explosion(isim.cast(v0))
-			v5 = 0
-			_pc = 3389
-			continue
-		elif _pc == 3389:
-			if v5 < v4:
-				_pc = 3405
-				continue
-			else:
-				_pc = 3583
-				continue
-		elif _pc == 3405:
-			v1 = isim.cast(list.get_nth(v3, v5))
-			if not (sim.is_hidden(v1)):
-				_pc = 3471
-				continue
-			else:
-				_pc = 3565
-				continue
-		elif _pc == 3471:
+	v3 = null
+	v3 = list.from_set(sim.children(v0))
+	v4 = list.item_count(v3)
+	isim.start_explosion(isim.cast(v0))
+	v5 = 0
+	while v5 < v4:
+		v1 = isim.cast(list.get_nth(v3, v5))
+		if not (sim.is_hidden(v1)):
 			isim.set_docking_lock(v1, isim.cast(v0), 0)
 			isim.undock(v1, isim.cast(v0))
 			isim.kill(v1)
-			_pc = 3565
-			continue
-		elif _pc == 3565:
-			v5 = v5 + 1
-			_pc = 3389
-			continue
-		elif _pc == 3583:
-			return 0
-		else:
-			return 0
+		v5 = v5 + 1
+	return 0
 	return 0
 
 func player_death_script(v0) -> Variant:
@@ -454,263 +266,111 @@ func player_death_script(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 3593
-	while true:
-		if _pc == 3593:
-			v1 = 0
-			v5 = 0
-			v9 = null
-			v10 = null
-			if _pog_is_null(object.property_exists(v0, "player_dying")):
-				_pc = 3666
-				continue
-			else:
-				_pc = 6015
-				continue
-		elif _pc == 3666:
-			input.suspend_bindings()
-			iscore.disable_logging()
-			icomms.abort(1)
-			object.add_bool_property(v0, "player_dying", 1)
-			global.create_bool("g_disable_mission_restart", 2, 1)
-			if _pog_is_null(global.exists("g_disable_mission_restart")) and igame.game_type() != 2:
-				_pc = 3806
-				continue
-			else:
-				_pc = 5254
-				continue
-		elif _pc == 3806:
-			_pc = 3832
-			continue
-		elif _pc == 3811:
+	v1 = 0
+	v5 = 0
+	v9 = null
+	v10 = null
+	if not _pog_is_null(object.property_exists(v0, "player_dying")):
+		return
+	input.suspend_bindings()
+	iscore.disable_logging()
+	icomms.abort(1)
+	object.add_bool_property(v0, "player_dying", 1)
+	global.create_bool("g_disable_mission_restart", 2, 1)
+	if _pog_is_null(global.exists("g_disable_mission_restart")) and igame.game_type() != 2:
+		if PogRuntime.TRACE:
 			debug.error("iDeathScript.PlayerDeathScript : Attempting to restart...that's not on.")
-			_pc = 3832
-			continue
-		elif _pc == 3832:
-			if isim.is_docked(isim.cast(v0)):
-				_pc = 3868
-				continue
-			else:
-				_pc = 3918
-				continue
-		elif _pc == 3868:
+		if isim.is_docked(isim.cast(v0)):
 			iship.undock(iship.cast(v0), sim.parent(v0))
-			_pc = 3918
-			continue
-		elif _pc == 3918:
-			if object.property_exists(v0, "restart_waypoint"):
-				_pc = 3948
-				continue
-			else:
-				_pc = 4056
-				continue
-		elif _pc == 3948:
+		if object.property_exists(v0, "restart_waypoint"):
 			v1 = 1
 			v6 = state.cast(object.handle_property(v0, "current_mission_state"))
 			v5 = await iutilities.create_waypoint_at(sim.cast(object.handle_property(v0, "restart_waypoint")))
-			_pc = 4056
-			continue
-		elif _pc == 4056:
-			iai.purge_orders(v0)
-			iai.clear_autopilot()
-			sim.set_velocity(v0, 0.0, 0.0, 0.0)
-			ihud.set_prompt("", "")
-			iship.has_fired(iship.cast(v0))
-			ihud.set_prompt("", "")
-			if object.property_exists(v0, "death_caption"):
-				_pc = 4239
-				continue
-			else:
-				_pc = 4276
-				continue
-		elif _pc == 4239:
+		iai.purge_orders(v0)
+		iai.clear_autopilot()
+		sim.set_velocity(v0, 0.0, 0.0, 0.0)
+		ihud.set_prompt("", "")
+		iship.has_fired(iship.cast(v0))
+		ihud.set_prompt("", "")
+		if object.property_exists(v0, "death_caption"):
 			v9 = object.string_property(v0, "death_caption")
-			_pc = 4387
-			continue
-		elif _pc == 4276:
+		else:
 			v9 = text.field("E_VesselDestroyed", 0)
 			v9 = string.join(v9, "+: +")
 			v9 = string.join(v9, object.string_property(v0, "name"))
-			_pc = 4387
-			continue
-		elif _pc == 4387:
-			idirector.begin()
-			idirector.set_caption(v9, 20.0)
-			sim.set_angular_velocity(v0, 0.0, 0.0, 0.0, 0.0)
-			sim.set_velocity(v0, 0.0, 0.0, 0.0)
-			v2 = await iutilities.create_waypoint_relative_to(v0, -100.0, 0.0, 0.0)
-			v3 = await iutilities.create_waypoint_relative_to(v0, 100.0, 0.0, 0.0)
-			v4 = await iutilities.create_waypoint_relative_to(v0, 0.0, 0.0, 0.0)
-			idirector.set_focus(v2)
-			idirector.set_secondary_focus(v3)
-			idirector.set_camera(15)
-			if _pog_is_null(object.property_exists(v0, "destroy_sim")):
-				_pc = 4701
-				continue
-			else:
-				_pc = 4725
-				continue
-		elif _pc == 4701:
+		idirector.begin()
+		idirector.set_caption(v9, 20.0)
+		sim.set_angular_velocity(v0, 0.0, 0.0, 0.0, 0.0)
+		sim.set_velocity(v0, 0.0, 0.0, 0.0)
+		v2 = await iutilities.create_waypoint_relative_to(v0, -100.0, 0.0, 0.0)
+		v3 = await iutilities.create_waypoint_relative_to(v0, 100.0, 0.0, 0.0)
+		v4 = await iutilities.create_waypoint_relative_to(v0, 0.0, 0.0, 0.0)
+		idirector.set_focus(v2)
+		idirector.set_secondary_focus(v3)
+		idirector.set_camera(15)
+		if _pog_is_null(object.property_exists(v0, "destroy_sim")):
 			await local_2700(v0)
-			_pc = 4776
-			continue
-		elif _pc == 4725:
+		else:
 			if object.bool_property(v0, "destroy_sim") == 1:
-				_pc = 4757
-				continue
-			else:
-				_pc = 4776
-				continue
-		elif _pc == 4757:
-			await local_2700(v0)
-			_pc = 4776
-			continue
-		elif _pc == 4776:
-			await _pog_wait(4.0)
-			global.create_bool("restart_screen_mission_running", 2, v1)
-			global.create_handle("restart_screen_mission_state", 2, v6)
-			global.create_handle("restart_screen_player_ship", 2, v0)
-			global.create_handle("restart_screen_mission_waypoint", 2, v5)
-			global.create_handle("restart_screen_point_of_death", 2, v4)
-			gui.overlay_screen("icRestartScreen")
-			_pc = 4969
-			continue
-		elif _pc == 4969:
+				await local_2700(v0)
+		await _pog_wait(4.0)
+		global.create_bool("restart_screen_mission_running", 2, v1)
+		global.create_handle("restart_screen_mission_state", 2, v6)
+		global.create_handle("restart_screen_player_ship", 2, v0)
+		global.create_handle("restart_screen_mission_waypoint", 2, v5)
+		global.create_handle("restart_screen_point_of_death", 2, v4)
+		gui.overlay_screen("icRestartScreen")
+		while true:
 			await _pog_wait(0.5)
-			if not _pog_is_null(global.exists("restart_screen_made_decision")):
-				_pc = 5028
-				continue
-			else:
-				_pc = 4969
-				continue
-		elif _pc == 5028:
-			global.destroy("restart_screen_made_decision")
-			await _pog_wait(2.0)
-			object.remove_property(v0, "player_dying")
-			if global.pog_bool("restart_screen_restarting") == 1:
-				_pc = 5134
-				continue
-			else:
-				_pc = 5148
-				continue
-		elif _pc == 5134:
+			if not (_pog_is_null(global.exists("restart_screen_made_decision"))):
+				break
+		global.destroy("restart_screen_made_decision")
+		await _pog_wait(2.0)
+		object.remove_property(v0, "player_dying")
+		if global.pog_bool("restart_screen_restarting") == 1:
 			idirector.end()
-			_pc = 5148
-			continue
-		elif _pc == 5148:
-			global.destroy("restart_screen_restarting")
-			icomms.abort_end()
-			sim.destroy(v2)
-			sim.destroy(v3)
-			input.resume_bindings()
-			iscore.enable_logging()
-			_pc = 6015
-			continue
-		elif _pc == 5254:
-			idirector.begin()
-			if object.property_exists(v0, "death_caption") == 1:
-				_pc = 5300
-				continue
-			else:
-				_pc = 5409
-				continue
-		elif _pc == 5300:
+		global.destroy("restart_screen_restarting")
+		icomms.abort_end()
+		sim.destroy(v2)
+		sim.destroy(v3)
+		input.resume_bindings()
+		iscore.enable_logging()
+	else:
+		idirector.begin()
+		if object.property_exists(v0, "death_caption") == 1:
 			v9 = object.string_property(v0, "death_caption")
 			v9 = text.field(v9, 0)
 			idirector.obituary(v9)
 			object.remove_property(v0, "death_caption")
-			_pc = 5578
-			continue
-		elif _pc == 5409:
+		else:
 			v9 = text.field("E_VesselDestroyed", 0)
 			v9 = string.join(v9, ": ")
 			v10 = object.string_property(v0, "name")
 			v10 = text.field(v10, 0)
 			v9 = string.join(v9, v10)
 			idirector.obituary(v9)
-			_pc = 5578
-			continue
-		elif _pc == 5578:
-			await _pog_wait(1.0)
-			v11 = 0
-			if _pog_is_null(object.property_exists(v0, "destroy_sim")):
-				_pc = 5649
-				continue
-			else:
-				_pc = 5661
-				continue
-		elif _pc == 5649:
+		await _pog_wait(1.0)
+		v11 = 0
+		if _pog_is_null(object.property_exists(v0, "destroy_sim")):
 			v11 = 1
-			_pc = 5700
-			continue
-		elif _pc == 5661:
+		else:
 			if object.bool_property(v0, "destroy_sim") == 1:
-				_pc = 5693
-				continue
-			else:
-				_pc = 5700
-				continue
-		elif _pc == 5693:
-			v11 = 1
-			_pc = 5700
-			continue
-		elif _pc == 5700:
-			if v11:
-				_pc = 5710
-				continue
-			else:
-				_pc = 5815
-				continue
-		elif _pc == 5710:
+				v11 = 1
+		if v11:
 			await local_3270(v0)
 			await _pog_wait(4.0)
 			isim.stop_explosion(isim.cast(v0), 0, 0)
 			sim.set_hidden(v0, 1)
-			_pc = 5815
-			continue
-		elif _pc == 5815:
-			v7 = 0
-			_pc = 5822
-			continue
-		elif _pc == 5822:
-			if v7 < 10 and idirector.is_obituary_view():
-				_pc = 5849
-				continue
-			else:
-				_pc = 5899
-				continue
-		elif _pc == 5849:
+		v7 = 0
+		while v7 < 10 and idirector.is_obituary_view():
 			await _pog_wait(1.0)
 			v7 = v7 + 1
-			_pc = 5822
-			continue
-		elif _pc == 5899:
-			if v7 == 10:
-				_pc = 5912
-				continue
-			else:
-				_pc = 5938
-				continue
-		elif _pc == 5912:
+		if v7 == 10:
 			idirector.set_caption("cam_press_space", 0.0)
-			_pc = 5938
-			continue
-		elif _pc == 5938:
-			if v7 < 60 and idirector.is_obituary_view():
-				_pc = 5965
-				continue
-			else:
-				_pc = 6015
-				continue
-		elif _pc == 5965:
+		while v7 < 60 and idirector.is_obituary_view():
 			await _pog_wait(1.0)
 			v7 = v7 + 1
-			_pc = 5938
-			continue
-		elif _pc == 6015:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func mega_pod_death() -> Variant:
@@ -727,345 +387,132 @@ func mega_pod_death() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	var _pc: int = 6031
-	while true:
-		if _pc == 6031:
-			v1 = 0
-			v2 = 0
-			v3 = null
-			v5 = ifaction.find("Marauders")
-			v8 = math.random_int(0, 10)
-			v9 = math.random_int(0, 1)
-			v10 = object.int_property(v0, "type_cargo")
-			v11 = object.int_property(v0, "number_small_pods")
-			object.set_bool_property(v0, "no_explode_fling_child", 1)
-			if v8 == 1 and _pog_eq(iship.cast(isim.last_attacker(isim.cast(v0))), iship.find_player_ship()):
-				_pc = 6288
-				continue
-			else:
-				_pc = 6295
-				continue
-		elif _pc == 6288:
-			v1 = 1
-			_pc = 6295
-			continue
-		elif _pc == 6295:
-			if _pog_is_null(v9):
-				_pc = 6307
-				continue
-			else:
-				_pc = 6314
-				continue
-		elif _pc == 6307:
-			v2 = 1
-			_pc = 6314
-			continue
-		elif _pc == 6314:
-			if v1:
-				_pc = 6324
-				continue
-			else:
-				_pc = 6645
-				continue
-		elif _pc == 6324:
-			v6 = iship.create("ini:/sims/ships/marauder/fighter", await ishipcreation.ship_name("Marauders", -1))
-			isim.set_faction(v6, v5)
-			await ipilotsetup.generic_cargo_pod(v6)
-			sim.add_child_relative_to(v0, v6, -30.0, 0.0, 10.0)
-			group.add_sim(v4, v6)
-			v6 = iship.create("ini:/sims/ships/marauder/fighter", await ishipcreation.ship_name("Marauders", -1))
-			isim.set_faction(v6, v5)
-			await ipilotsetup.gangster_aggressive(v6)
-			sim.add_child_relative_to(v0, v6, -30.0, 0.0, 10.0)
-			group.add_sim(v4, v6)
-			v11 = 2
-			_pc = 6739
-			continue
-		elif _pc == 6645:
-			if v2:
-				_pc = 6655
-				continue
-			else:
-				_pc = 6739
-				continue
-		elif _pc == 6655:
+	v1 = 0
+	v2 = 0
+	v3 = null
+	v5 = ifaction.find("Marauders")
+	v8 = math.random_int(0, 10)
+	v9 = math.random_int(0, 1)
+	v10 = object.int_property(v0, "type_cargo")
+	v11 = object.int_property(v0, "number_small_pods")
+	object.set_bool_property(v0, "no_explode_fling_child", 1)
+	if v8 == 1 and _pog_eq(iship.cast(isim.last_attacker(isim.cast(v0))), iship.find_player_ship()):
+		v1 = 1
+	if _pog_is_null(v9):
+		v2 = 1
+	if v1:
+		v6 = iship.create("ini:/sims/ships/marauder/fighter", await ishipcreation.ship_name("Marauders", -1))
+		isim.set_faction(v6, v5)
+		await ipilotsetup.generic_cargo_pod(v6)
+		sim.add_child_relative_to(v0, v6, -30.0, 0.0, 10.0)
+		group.add_sim(v4, v6)
+		v6 = iship.create("ini:/sims/ships/marauder/fighter", await ishipcreation.ship_name("Marauders", -1))
+		isim.set_faction(v6, v5)
+		await ipilotsetup.gangster_aggressive(v6)
+		sim.add_child_relative_to(v0, v6, -30.0, 0.0, 10.0)
+		group.add_sim(v4, v6)
+		v11 = 2
+	else:
+		if v2:
 			v4 = await ishipcreation.create_megapod_cargo(iship.cast(v0), v11, v10)
 			await ishipcreation.stack_cargo(iship.cast(v0), v4)
-			_pc = 6739
-			continue
-		elif _pc == 6739:
-			if v2 or v1:
-				_pc = 6755
-				continue
-			else:
-				_pc = 7300
-				continue
-		elif _pc == 6755:
-			sim.avatar_add_channel(v0, "door", 1.0)
-			isim.start_explosion(isim.cast(v0))
-			await _pog_wait(0.5)
-			if not _pog_is_null(v11):
-				_pc = 6862
-				continue
-			else:
-				_pc = 7241
-				continue
-		elif _pc == 6862:
+	if v2 or v1:
+		sim.avatar_add_channel(v0, "door", 1.0)
+		isim.start_explosion(isim.cast(v0))
+		await _pog_wait(0.5)
+		if not _pog_is_null(v11):
 			v12 = 0
-			_pc = 6869
-			continue
-		elif _pc == 6869:
-			if v12 < v11:
-				_pc = 6885
-				continue
-			else:
-				_pc = 7241
-				continue
-		elif _pc == 6885:
-			v7 = iship.cast(group.nth_sim(v4, v12))
-			sim.detach_child(v0, v7)
-			sim.set_angular_velocity_euler(v7, math.random(3.0, 10.0), math.random(3.0, 10.0), math.random(3.0, 10.0))
-			sim.set_velocity_local_to_sim(v7, math.random(3.0, 10.0), math.random(3.0, 10.0), math.random(450.0, 550.0))
-			await _pog_wait(1.5)
-			sim.set_collision(v7, 1)
-			if v1:
-				_pc = 7191
-				continue
-			else:
-				_pc = 7223
-				continue
-		elif _pc == 7191:
-			iai.give_attack_order(v4, iship.find_player_ship())
-			_pc = 7223
-			continue
-		elif _pc == 7223:
-			v12 = v12 + 1
-			_pc = 6869
-			continue
-		elif _pc == 7241:
-			isim.stop_explosion(isim.cast(v0), 0, 1)
-			group.destroy(v4, 0)
-			_pc = 7332
-			continue
-		elif _pc == 7300:
-			isim.kill(isim.cast(v0))
-			_pc = 7332
-			continue
-		elif _pc == 7332:
-			return
-		else:
-			return 0
+			while v12 < v11:
+				v7 = iship.cast(group.nth_sim(v4, v12))
+				sim.detach_child(v0, v7)
+				sim.set_angular_velocity_euler(v7, math.random(3.0, 10.0), math.random(3.0, 10.0), math.random(3.0, 10.0))
+				sim.set_velocity_local_to_sim(v7, math.random(3.0, 10.0), math.random(3.0, 10.0), math.random(450.0, 550.0))
+				await _pog_wait(1.5)
+				sim.set_collision(v7, 1)
+				if v1:
+					iai.give_attack_order(v4, iship.find_player_ship())
+				v12 = v12 + 1
+		isim.stop_explosion(isim.cast(v0), 0, 1)
+		group.destroy(v4, 0)
+	else:
+		isim.kill(isim.cast(v0))
+	return
 	return 0
 
 func critical_ship_death(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 7341
-	while true:
-		if _pc == 7341:
-			v1 = iship.find_player_ship()
-			v2 = null
-			v2 = sim.pog_name(v0)
-			v3 = isim.last_attacker(v0)
-			idirector.begin()
-			idirector.set_focus(v0)
-			if not _pog_is_null(v3) or sim.is_alive(v3) and not _pog_eq(v0, v3):
-				_pc = 7503
-				continue
-			else:
-				_pc = 7543
-				continue
-		elif _pc == 7503:
-			idirector.set_secondary_focus(v3)
-			idirector.set_camera(13)
-			_pc = 7559
-			continue
-		elif _pc == 7543:
-			idirector.set_camera(6)
-			_pc = 7559
-			continue
-		elif _pc == 7559:
-			await _pog_wait(1.0)
-			idirector.set_caption(string.join("caption_failed_ship_destroyed+: +", v2), 5.0)
-			isim.start_explosion(v0)
-			await _pog_wait(4.0)
-			isim.stop_explosion(v0, 0, 1)
-			await _pog_wait(2.0)
-			idirector.end()
-			object.add_bool_property(v1, "destroy_sim", 0)
-			object.add_string_property(v1, "death_caption", "caption_failed_generic")
-			_pog_detach(_pog_spawn(player_death_script.bind(v1)))
-			return
-		else:
-			return 0
+	v1 = iship.find_player_ship()
+	v2 = null
+	v2 = sim.pog_name(v0)
+	v3 = isim.last_attacker(v0)
+	idirector.begin()
+	idirector.set_focus(v0)
+	if not _pog_is_null(v3) or sim.is_alive(v3) and not _pog_eq(v0, v3):
+		idirector.set_secondary_focus(v3)
+		idirector.set_camera(13)
+	else:
+		idirector.set_camera(6)
+	await _pog_wait(1.0)
+	idirector.set_caption(string.join("caption_failed_ship_destroyed+: +", v2), 5.0)
+	isim.start_explosion(v0)
+	await _pog_wait(4.0)
+	isim.stop_explosion(v0, 0, 1)
+	await _pog_wait(2.0)
+	idirector.end()
+	object.add_bool_property(v1, "destroy_sim", 0)
+	object.add_string_property(v1, "death_caption", "caption_failed_generic")
+	_pog_detach(_pog_spawn(player_death_script.bind(v1)))
+	return
 	return 0
 
 func setup_critical_group_death(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 7854
-	while true:
-		if _pc == 7854:
-			if not (group.cast(v0)):
-				_pc = 7884
-				continue
-			else:
-				_pc = 7916
-				continue
-		elif _pc == 7884:
-			_pc = 7910
-			continue
-		elif _pc == 7889:
+	if not (group.cast(v0)):
+		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Invalid group handle. Cannot add deathscript.\n")
-			_pc = 7910
-			continue
-		elif _pc == 7910:
-			_pc = 8547
-			continue
-		elif _pc == 7916:
-			if _pog_is_null(group.sim_count(v0)):
-				_pc = 7941
-				continue
-			else:
-				_pc = 7973
-				continue
-		elif _pc == 7941:
-			_pc = 7967
-			continue
-		elif _pc == 7946:
-			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Group is empty. Cannot add deathscript.\n")
-			_pc = 7967
-			continue
-		elif _pc == 7967:
-			_pc = 8547
-			continue
-		elif _pc == 7973:
-			if v1 < 0:
-				_pc = 7985
-				continue
-			else:
-				_pc = 8018
-				continue
-		elif _pc == 7985:
-			_pc = 8011
-			continue
-		elif _pc == 7990:
-			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical number is < 0. Capping to 0.\n")
-			_pc = 8011
-			continue
-		elif _pc == 8011:
-			v1 = 0
-			_pc = 8018
-			continue
-		elif _pc == 8018:
-			if v1 > group.sim_count(v0):
-				_pc = 8047
-				continue
-			else:
-				_pc = 8210
-				continue
-		elif _pc == 8047:
-			_pc = 8073
-			continue
-		elif _pc == 8052:
-			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical group sim count (")
-			_pc = 8073
-			continue
-		elif _pc == 8073:
-			_pc = 8110
-			continue
-		elif _pc == 8078:
-			debug.print_int(group.sim_count(v0))
-			_pc = 8110
-			continue
-		elif _pc == 8110:
-			_pc = 8136
-			continue
-		elif _pc == 8115:
-			debug.print_string(") > the critical number (")
-			_pc = 8136
-			continue
-		elif _pc == 8136:
-			_pc = 8160
-			continue
-		elif _pc == 8141:
-			debug.print_int(v1)
-			_pc = 8160
-			continue
-		elif _pc == 8160:
-			_pc = 8186
-			continue
-		elif _pc == 8165:
-			debug.print_string(") Capping to the sim count.\n")
-			_pc = 8186
-			continue
-		elif _pc == 8186:
-			v1 = group.sim_count(v0)
-			_pc = 8210
-			continue
-		elif _pc == 8210:
-			v2 = 0
-			_pc = 8217
-			continue
-		elif _pc == 8217:
-			if v2 < group.sim_count(v0):
-				_pc = 8246
-				continue
-			else:
-				_pc = 8420
-				continue
-		elif _pc == 8246:
-			v3 = isim.cast(group.nth_sim(v0, v2))
-			object.set_string_property(v3, "death_script", "iDeathScript.CriticalGroupDeath")
-			object.add_handle_property(v3, "critical_group", v0)
-			object.add_int_property(v3, "critical_number", v1)
-			isim.set_mission_critical(v3, 1)
-			v2 = v2 + 1
-			_pc = 8217
-			continue
-		elif _pc == 8420:
-			_pc = 8446
-			continue
-		elif _pc == 8425:
-			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Added Critical group Deathcript to ")
-			_pc = 8446
-			continue
-		elif _pc == 8446:
-			_pc = 8470
-			continue
-		elif _pc == 8451:
-			debug.print_int(v2)
-			_pc = 8470
-			continue
-		elif _pc == 8470:
-			_pc = 8496
-			continue
-		elif _pc == 8475:
-			debug.print_string(" sims. Critical number = ")
-			_pc = 8496
-			continue
-		elif _pc == 8496:
-			_pc = 8520
-			continue
-		elif _pc == 8501:
-			debug.print_int(v1)
-			_pc = 8520
-			continue
-		elif _pc == 8520:
-			_pc = 8546
-			continue
-		elif _pc == 8525:
-			debug.print_string(" \n")
-			_pc = 8546
-			continue
-		elif _pc == 8546:
-			_pc = 8547
-			continue
-		elif _pc == 8547:
-			return 0
+	else:
+		if _pog_is_null(group.sim_count(v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iDeathScript.SetupCriticalGroupDeath: Group is empty. Cannot add deathscript.\n")
 		else:
-			return 0
+			if v1 < 0:
+				if PogRuntime.TRACE:
+					debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical number is < 0. Capping to 0.\n")
+				v1 = 0
+			if v1 > group.sim_count(v0):
+				if PogRuntime.TRACE:
+					debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical group sim count (")
+				if PogRuntime.TRACE:
+					debug.print_int(group.sim_count(v0))
+				if PogRuntime.TRACE:
+					debug.print_string(") > the critical number (")
+				if PogRuntime.TRACE:
+					debug.print_int(v1)
+				if PogRuntime.TRACE:
+					debug.print_string(") Capping to the sim count.\n")
+				v1 = group.sim_count(v0)
+			v2 = 0
+			while v2 < group.sim_count(v0):
+				v3 = isim.cast(group.nth_sim(v0, v2))
+				object.set_string_property(v3, "death_script", "iDeathScript.CriticalGroupDeath")
+				object.add_handle_property(v3, "critical_group", v0)
+				object.add_int_property(v3, "critical_number", v1)
+				isim.set_mission_critical(v3, 1)
+				v2 = v2 + 1
+			if PogRuntime.TRACE:
+				debug.print_string("iDeathScript.SetupCriticalGroupDeath: Added Critical group Deathcript to ")
+			if PogRuntime.TRACE:
+				debug.print_int(v2)
+			if PogRuntime.TRACE:
+				debug.print_string(" sims. Critical number = ")
+			if PogRuntime.TRACE:
+				debug.print_int(v1)
+			if PogRuntime.TRACE:
+				debug.print_string(" \n")
+	return 0
 	return 0
 
 func critical_group_death() -> Variant:
@@ -1077,244 +524,73 @@ func critical_group_death() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 8550
-	while true:
-		if _pc == 8550:
-			v1 = iship.find_player_ship()
-			v2 = isim.last_attacker(v0)
-			v4 = null
-			v4 = sim.pog_name(v0)
-			v6 = 0
-			v7 = 1
-			if object.property_exists(v0, "critical_group"):
-				_pc = 8680
-				continue
-			else:
-				_pc = 8724
-				continue
-		elif _pc == 8680:
-			v3 = group.cast(object.handle_property(v0, "critical_group"))
-			_pc = 8724
-			continue
-		elif _pc == 8724:
-			if not (v3):
-				_pc = 8735
-				continue
-			else:
-				_pc = 8833
-				continue
-		elif _pc == 8735:
-			_pc = 8761
-			continue
-		elif _pc == 8740:
+	v1 = iship.find_player_ship()
+	v2 = isim.last_attacker(v0)
+	v4 = null
+	v4 = sim.pog_name(v0)
+	v6 = 0
+	v7 = 1
+	if object.property_exists(v0, "critical_group"):
+		v3 = group.cast(object.handle_property(v0, "critical_group"))
+	if not (v3):
+		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.CriticalGroupDeath: Invalid group handle. ")
-			_pc = 8761
-			continue
-		elif _pc == 8761:
-			_pc = 8800
-			continue
-		elif _pc == 8766:
+		if PogRuntime.TRACE:
 			debug.print_string(sim.pog_name(v0))
-			_pc = 8800
-			continue
-		elif _pc == 8800:
-			_pc = 8826
-			continue
-		elif _pc == 8805:
+		if PogRuntime.TRACE:
 			debug.print_string(" exploding normally.\n")
-			_pc = 8826
-			continue
-		elif _pc == 8826:
-			v7 = 0
-			_pc = 8833
-			continue
-		elif _pc == 8833:
-			if not _pog_eq(sim.group(v0), v3):
-				_pc = 8862
-				continue
-			else:
-				_pc = 8960
-				continue
-		elif _pc == 8862:
-			_pc = 8888
-			continue
-		elif _pc == 8867:
+		v7 = 0
+	if not _pog_eq(sim.group(v0), v3):
+		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.CriticalGroupDeath: ")
-			_pc = 8888
-			continue
-		elif _pc == 8888:
-			_pc = 8927
-			continue
-		elif _pc == 8893:
+		if PogRuntime.TRACE:
 			debug.print_string(sim.pog_name(v0))
-			_pc = 8927
-			continue
-		elif _pc == 8927:
-			_pc = 8953
-			continue
-		elif _pc == 8932:
+		if PogRuntime.TRACE:
 			debug.print_string(" is no longer a member of the critical group. Exploding normally.\n")
-			_pc = 8953
-			continue
-		elif _pc == 8953:
-			v7 = 0
-			_pc = 8960
-			continue
-		elif _pc == 8960:
-			group.remove_sim(v3, v0)
-			if object.property_exists(v0, "critical_number"):
-				_pc = 9014
-				continue
-			else:
-				_pc = 9045
-				continue
-		elif _pc == 9014:
-			v6 = object.int_property(v0, "critical_number")
-			_pc = 9045
-			continue
-		elif _pc == 9045:
-			if group.sim_count(v3) > v6:
-				_pc = 9074
-				continue
-			else:
-				_pc = 9311
-				continue
-		elif _pc == 9074:
-			_pc = 9100
-			continue
-		elif _pc == 9079:
+		v7 = 0
+	group.remove_sim(v3, v0)
+	if object.property_exists(v0, "critical_number"):
+		v6 = object.int_property(v0, "critical_number")
+	if group.sim_count(v3) > v6:
+		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.CriticalGroupDeath: Critical group sim count (")
-			_pc = 9100
-			continue
-		elif _pc == 9100:
-			_pc = 9137
-			continue
-		elif _pc == 9105:
+		if PogRuntime.TRACE:
 			debug.print_int(group.sim_count(v3))
-			_pc = 9137
-			continue
-		elif _pc == 9137:
-			_pc = 9163
-			continue
-		elif _pc == 9142:
+		if PogRuntime.TRACE:
 			debug.print_string(") > the critical number (")
-			_pc = 9163
-			continue
-		elif _pc == 9163:
-			_pc = 9187
-			continue
-		elif _pc == 9168:
+		if PogRuntime.TRACE:
 			debug.print_int(v6)
-			_pc = 9187
-			continue
-		elif _pc == 9187:
-			_pc = 9213
-			continue
-		elif _pc == 9192:
+		if PogRuntime.TRACE:
 			debug.print_string(") \n")
-			_pc = 9213
-			continue
-		elif _pc == 9213:
-			_pc = 9239
-			continue
-		elif _pc == 9218:
+		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.CriticalGroupDeath: ")
-			_pc = 9239
-			continue
-		elif _pc == 9239:
-			_pc = 9278
-			continue
-		elif _pc == 9244:
+		if PogRuntime.TRACE:
 			debug.print_string(sim.pog_name(v0))
-			_pc = 9278
-			continue
-		elif _pc == 9278:
-			_pc = 9304
-			continue
-		elif _pc == 9283:
+		if PogRuntime.TRACE:
 			debug.print_string(" exploding normally.\n")
-			_pc = 9304
-			continue
-		elif _pc == 9304:
-			v7 = 0
-			_pc = 9311
-			continue
-		elif _pc == 9311:
-			if _pog_is_null(v7):
-				_pc = 9324
-				continue
-			else:
-				_pc = 9420
-				continue
-		elif _pc == 9324:
-			ihud.pog_print(string.join("log_critical_ship_destroyed+: +", v4))
-			object.set_string_property(v0, "death_script", "")
-			isim.kill(v0)
-			_pc = 9684
-			continue
-		elif _pc == 9420:
-			_pc = 9447
-			continue
-		elif _pc == 9426:
+		v7 = 0
+	if _pog_is_null(v7):
+		ihud.pog_print(string.join("log_critical_ship_destroyed+: +", v4))
+		object.set_string_property(v0, "death_script", "")
+		isim.kill(v0)
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.CriticalGroupDeath: Critical group sim count (")
-			_pc = 9447
-			continue
-		elif _pc == 9447:
-			_pc = 9484
-			continue
-		elif _pc == 9452:
+		if PogRuntime.TRACE:
 			debug.print_int(group.sim_count(v3))
-			_pc = 9484
-			continue
-		elif _pc == 9484:
-			_pc = 9510
-			continue
-		elif _pc == 9489:
+		if PogRuntime.TRACE:
 			debug.print_string(") is <= the critical number (")
-			_pc = 9510
-			continue
-		elif _pc == 9510:
-			_pc = 9534
-			continue
-		elif _pc == 9515:
+		if PogRuntime.TRACE:
 			debug.print_int(v6)
-			_pc = 9534
-			continue
-		elif _pc == 9534:
-			_pc = 9560
-			continue
-		elif _pc == 9539:
+		if PogRuntime.TRACE:
 			debug.print_string(") \n")
-			_pc = 9560
-			continue
-		elif _pc == 9560:
-			_pc = 9586
-			continue
-		elif _pc == 9565:
+		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.CriticalGroupDeath: Killing sim ")
-			_pc = 9586
-			continue
-		elif _pc == 9586:
-			_pc = 9625
-			continue
-		elif _pc == 9591:
+		if PogRuntime.TRACE:
 			debug.print_string(sim.pog_name(v0))
-			_pc = 9625
-			continue
-		elif _pc == 9625:
-			_pc = 9651
-			continue
-		elif _pc == 9630:
+		if PogRuntime.TRACE:
 			debug.print_string(" and ending the game.\n")
-			_pc = 9651
-			continue
-		elif _pc == 9651:
-			_pog_detach(_pog_spawn(critical_ship_death.bind(v0)))
-			_pc = 9684
-			continue
-		elif _pc == 9684:
-			return
-		else:
-			return 0
+		_pog_detach(_pog_spawn(critical_ship_death.bind(v0)))
+	return
 	return 0
 

@@ -41,16 +41,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			inifile.cast(global.handle("g_stock_utterance_ini"))
-			_pc = 37
-			continue
-		elif _pc == 37:
-			return
-		else:
-			return 0
+	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
 func gangster_call_for_backup() -> Variant:
@@ -67,208 +58,68 @@ func gangster_call_for_backup() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	var _pc: int = 39
-	while true:
-		if _pc == 39:
-			v4 = global.pog_float("g_player_sensor_range")
-			v5 = null
-			v5 = imapentity.system_habitats()
-			v6 = null
-			v7 = 1
-			v9 = await ishipcreation.get_traffic(9, v7, math.random_int(1, 5))
-			v10 = iship.cast(group.nth_sim(v9, 0))
-			v12 = null
-			if global.exists("g_running_gangster_call_for_backup"):
-				_pc = 235
-				continue
-			else:
-				_pc = 260
-				continue
-		elif _pc == 235:
-			group.destroy(v9, 1)
-			_pc = 1261
-			continue
-		elif _pc == 260:
-			if object.i_d_modulus(v0, 2) == 1:
-				_pc = 287
-				continue
-			else:
-				_pc = 305
-				continue
-		elif _pc == 287:
+	v4 = global.pog_float("g_player_sensor_range")
+	v5 = null
+	v5 = imapentity.system_habitats()
+	v6 = null
+	v7 = 1
+	v9 = await ishipcreation.get_traffic(9, v7, math.random_int(1, 5))
+	v10 = iship.cast(group.nth_sim(v9, 0))
+	v12 = null
+	if global.exists("g_running_gangster_call_for_backup"):
+		group.destroy(v9, 1)
+	else:
+		if object.i_d_modulus(v0, 2) == 1:
 			v12 = "_male_1"
-			_pc = 318
-			continue
-		elif _pc == 305:
+		else:
 			v12 = "_female_1"
-			_pc = 318
-			continue
-		elif _pc == 318:
-			global.create_bool("g_running_gangster_call_for_backup", 1, 1)
-			_pc = 367
-			continue
-		elif _pc == 346:
+		global.create_bool("g_running_gangster_call_for_backup", 1, 1)
+		if PogRuntime.TRACE:
 			debug.print_string("iFight.GangsterCallForBackup: Starting task\n")
-			_pc = 367
-			continue
-		elif _pc == 367:
-			v6 = await iutilities.filter_on_friendly_habitats(v5, v7)
-			if _pog_is_null(p_set.item_count(v6)):
-				_pc = 423
-				continue
-			else:
-				_pc = 454
-				continue
-		elif _pc == 423:
-			_pc = 449
-			continue
-		elif _pc == 428:
-			debug.print_string("iFight.GangsterCallForBackup: Unable to find habitat of the correct allegiance to send out ships from!!\n")
-			_pc = 449
-			continue
-		elif _pc == 449:
-			_pc = 1261
-			continue
-		elif _pc == 454:
+		v6 = await iutilities.filter_on_friendly_habitats(v5, v7)
+		if _pog_is_null(p_set.item_count(v6)):
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.GangsterCallForBackup: Unable to find habitat of the correct allegiance to send out ships from!!\n")
+		else:
 			v8 = await local_0()
 			v3 = inifile.pog_int(v8, "stock_warn", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v11 = iship.find_player_ship()
 			if _pog_eq(v1, v11) and sim.distance_between(v11, v0) < 50000.0:
-				_pc = 601
-				continue
-			else:
-				_pc = 685
-				continue
-		elif _pc == 601:
-			icomms.shout(v0, "", string.join(string.join("stock_warn_", string.from_int(v2)), v12))
-			_pc = 685
-			continue
-		elif _pc == 685:
-			_pc = 711
-			continue
-		elif _pc == 690:
-			debug.print_string("iFight.GangsterCallForBackup: Placing Head Ship\n")
-			_pc = 711
-			continue
-		elif _pc == 711:
+				icomms.shout(v0, "", string.join(string.join("stock_warn_", string.from_int(v2)), v12))
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.GangsterCallForBackup: Placing Head Ship\n")
 			sim.place_relative_to(v10, imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
-			_pc = 862
-			continue
-		elif _pc == 786:
-			debug.print_string("iFight.GangsterCallForBackup: Placing ")
-			debug.print_int(group.sim_count(v9))
-			debug.print_string(" Ships in Formation\n")
-			_pc = 862
-			continue
-		elif _pc == 862:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.GangsterCallForBackup: Placing ")
+				debug.print_int(group.sim_count(v9))
+				debug.print_string(" Ships in Formation\n")
 			if group.sim_count(v9) > 1:
-				_pc = 887
-				continue
-			else:
-				_pc = 912
-				continue
-		elif _pc == 887:
-			await iformation.impi(v9, 20.0, 1)
-			_pc = 912
-			continue
-		elif _pc == 912:
-			_pc = 938
-			continue
-		elif _pc == 917:
-			debug.print_string("iFight.GangsterCallForBackup: Giving formate orders at destination\n")
-			_pc = 938
-			continue
-		elif _pc == 938:
+				await iformation.impi(v9, 20.0, 1)
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.GangsterCallForBackup: Giving formate orders at destination\n")
 			iai.give_formate_order(v10, v0, 0.0, 0.0, 0.0)
-			_pc = 1003
-			continue
-		elif _pc == 982:
-			debug.print_string("iFight.GangsterCallForBackup: Starting Wait for arrival loop\n")
-			_pc = 1003
-			continue
-		elif _pc == 1003:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.GangsterCallForBackup: Starting Wait for arrival loop\n")
 			if not _pog_is_null(v0) and not _pog_is_null(v1):
-				_pc = 1025
-				continue
-			else:
-				_pc = 1049
-				continue
-		elif _pc == 1025:
-			iai.give_attack_order(v0, v1)
-			_pc = 1049
-			continue
-		elif _pc == 1049:
-			_pc = 1054
-			continue
-		elif _pc == 1054:
-			await _pog_frame()
-			if _pog_every(1055, 30.0):
-				_pc = 1068
-				continue
-			else:
-				_pc = 1096
-				continue
-		elif _pc == 1068:
-			if iai.is_order_complete(v10):
-				_pc = 1091
-				continue
-			else:
-				_pc = 1096
-				continue
-		elif _pc == 1091:
-			_pc = 1101
-			continue
-		elif _pc == 1096:
-			_pc = 1054
-			continue
-		elif _pc == 1101:
-			_pc = 1128
-			continue
-		elif _pc == 1107:
-			debug.print_string("iFight.GangsterCallForBackup: Arrived at destination, staying alive while player is here\n")
-			_pc = 1128
-			continue
-		elif _pc == 1128:
-			_pc = 1133
-			continue
-		elif _pc == 1133:
-			await _pog_frame()
-			if _pog_every(1134, 50.0):
-				_pc = 1147
-				continue
-			else:
-				_pc = 1188
-				continue
-		elif _pc == 1147:
-			if await iutilities.player_in_range(group.leader(v9)):
-				_pc = 1183
-				continue
-			else:
-				_pc = 1188
-				continue
-		elif _pc == 1183:
-			_pc = 1193
-			continue
-		elif _pc == 1188:
-			_pc = 1133
-			continue
-		elif _pc == 1193:
-			_pc = 1220
-			continue
-		elif _pc == 1199:
-			debug.print_string("iFight.GangsterCallForBackup: Destroying support vessels\n")
-			_pc = 1220
-			continue
-		elif _pc == 1220:
+				iai.give_attack_order(v0, v1)
+			while true:
+				await _pog_wait(30)
+				if not (iai.is_order_complete(v10)):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.GangsterCallForBackup: Arrived at destination, staying alive while player is here\n")
+			while true:
+				await _pog_wait(50)
+				if not (await iutilities.player_in_range(group.leader(v9))):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.GangsterCallForBackup: Destroying support vessels\n")
 			group.destroy(v9, 1)
 			global.destroy("g_running_gangster_call_for_backup")
-			_pc = 1261
-			continue
-		elif _pc == 1261:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func police_call_for_backup() -> Variant:
@@ -286,200 +137,69 @@ func police_call_for_backup() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 1284
-	while true:
-		if _pc == 1284:
-			v4 = global.pog_float("g_player_sensor_range")
-			v5 = null
-			v5 = imapentity.system_habitats()
-			v6 = null
-			v7 = 14
-			v8 = inifile.cast(global.handle("g_shipping_ini"))
-			v10 = await ishipcreation.get_traffic(9, v7, math.random_int(1, 5))
-			v11 = iship.cast(group.nth_sim(v10, 0))
-			v13 = null
-			if global.exists("g_running_police_call_for_backup"):
-				_pc = 1519
-				continue
-			else:
-				_pc = 1544
-				continue
-		elif _pc == 1519:
-			group.destroy(v10, 1)
-			_pc = 2539
-			continue
-		elif _pc == 1544:
-			if object.i_d_modulus(v0, 2) == 1:
-				_pc = 1571
-				continue
-			else:
-				_pc = 1589
-				continue
-		elif _pc == 1571:
+	v4 = global.pog_float("g_player_sensor_range")
+	v5 = null
+	v5 = imapentity.system_habitats()
+	v6 = null
+	v7 = 14
+	v8 = inifile.cast(global.handle("g_shipping_ini"))
+	v10 = await ishipcreation.get_traffic(9, v7, math.random_int(1, 5))
+	v11 = iship.cast(group.nth_sim(v10, 0))
+	v13 = null
+	if global.exists("g_running_police_call_for_backup"):
+		group.destroy(v10, 1)
+	else:
+		if object.i_d_modulus(v0, 2) == 1:
 			v13 = "_male_1"
-			_pc = 1602
-			continue
-		elif _pc == 1589:
+		else:
 			v13 = "_female_1"
-			_pc = 1602
-			continue
-		elif _pc == 1602:
-			global.create_bool("g_running_police_call_for_backup", 1, 1)
-			_pc = 1651
-			continue
-		elif _pc == 1630:
+		global.create_bool("g_running_police_call_for_backup", 1, 1)
+		if PogRuntime.TRACE:
 			debug.print_string("iFight.PoliceCallForBackup: Starting task\n")
-			_pc = 1651
-			continue
-		elif _pc == 1651:
-			v6 = ihabitat.filter_on_type(v5, 68)
-			p_set.union(v6, ihabitat.filter_on_type(v5, 69))
-			if _pog_is_null(p_set.item_count(v6)):
-				_pc = 1745
-				continue
-			else:
-				_pc = 1776
-				continue
-		elif _pc == 1745:
-			_pc = 1771
-			continue
-		elif _pc == 1750:
-			debug.print_string("iFight.PoliceCallForBackup: Unable to find Police Facility to find backup from!\n")
-			_pc = 1771
-			continue
-		elif _pc == 1771:
-			_pc = 2539
-			continue
-		elif _pc == 1776:
+		v6 = ihabitat.filter_on_type(v5, 68)
+		p_set.union(v6, ihabitat.filter_on_type(v5, 69))
+		if _pog_is_null(p_set.item_count(v6)):
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.PoliceCallForBackup: Unable to find Police Facility to find backup from!\n")
+		else:
 			v9 = await local_0()
 			v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v12 = iship.find_player_ship()
 			if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
-				_pc = 1923
-				continue
-			else:
-				_pc = 1988
-				continue
-		elif _pc == 1923:
-			icomms.shout(v0, "", string.join("stock_attack_", string.from_int(v2)))
-			_pc = 1988
-			continue
-		elif _pc == 1988:
-			_pc = 2014
-			continue
-		elif _pc == 1993:
-			debug.print_string("iFight.PoliceCallForBackup: Placing Head Ship\n")
-			_pc = 2014
-			continue
-		elif _pc == 2014:
+				icomms.shout(v0, "", string.join("stock_attack_", string.from_int(v2)))
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.PoliceCallForBackup: Placing Head Ship\n")
 			sim.place_relative_to(v11, imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
-			_pc = 2165
-			continue
-		elif _pc == 2089:
-			debug.print_string("iFight.PoliceCallForBackup: Placing ")
-			debug.print_int(group.sim_count(v10))
-			debug.print_string(" Ships in Formation\n")
-			_pc = 2165
-			continue
-		elif _pc == 2165:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.PoliceCallForBackup: Placing ")
+				debug.print_int(group.sim_count(v10))
+				debug.print_string(" Ships in Formation\n")
 			await iformation.claw(v10, 20.0, 1)
-			_pc = 2216
-			continue
-		elif _pc == 2195:
-			debug.print_string("iFight.PoliceCallForBackup: Giving support ships destination orders\n")
-			_pc = 2216
-			continue
-		elif _pc == 2216:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.PoliceCallForBackup: Giving support ships destination orders\n")
 			iai.give_formate_order(v11, v0, 0.0, 0.0, 0.0)
-			_pc = 2281
-			continue
-		elif _pc == 2260:
-			debug.print_string("iFight.PoliceCallForBackup: Starting Wait for arrival loop\n")
-			_pc = 2281
-			continue
-		elif _pc == 2281:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.PoliceCallForBackup: Starting Wait for arrival loop\n")
 			if not _pog_is_null(v0) and not _pog_is_null(v1):
-				_pc = 2303
-				continue
-			else:
-				_pc = 2327
-				continue
-		elif _pc == 2303:
-			iai.give_attack_order(v0, v1)
-			_pc = 2327
-			continue
-		elif _pc == 2327:
-			_pc = 2332
-			continue
-		elif _pc == 2332:
-			await _pog_frame()
-			if _pog_every(2333, 30.0):
-				_pc = 2346
-				continue
-			else:
-				_pc = 2374
-				continue
-		elif _pc == 2346:
-			if iai.is_order_complete(v11):
-				_pc = 2369
-				continue
-			else:
-				_pc = 2374
-				continue
-		elif _pc == 2369:
-			_pc = 2379
-			continue
-		elif _pc == 2374:
-			_pc = 2332
-			continue
-		elif _pc == 2379:
-			_pc = 2406
-			continue
-		elif _pc == 2385:
-			debug.print_string("iFight.PoliceCallForBackup: Arrived at destination, staying alive while player is here\n")
-			_pc = 2406
-			continue
-		elif _pc == 2406:
-			_pc = 2411
-			continue
-		elif _pc == 2411:
-			await _pog_frame()
-			if _pog_every(2412, 50.0):
-				_pc = 2425
-				continue
-			else:
-				_pc = 2466
-				continue
-		elif _pc == 2425:
-			if await iutilities.player_in_range(group.leader(v10)):
-				_pc = 2461
-				continue
-			else:
-				_pc = 2466
-				continue
-		elif _pc == 2461:
-			_pc = 2471
-			continue
-		elif _pc == 2466:
-			_pc = 2411
-			continue
-		elif _pc == 2471:
-			_pc = 2498
-			continue
-		elif _pc == 2477:
-			debug.print_string("iFight.PoliceCallForBackup: Destroying support vessels\n")
-			_pc = 2498
-			continue
-		elif _pc == 2498:
+				iai.give_attack_order(v0, v1)
+			while true:
+				await _pog_wait(30)
+				if not (iai.is_order_complete(v11)):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.PoliceCallForBackup: Arrived at destination, staying alive while player is here\n")
+			while true:
+				await _pog_wait(50)
+				if not (await iutilities.player_in_range(group.leader(v10))):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.PoliceCallForBackup: Destroying support vessels\n")
 			global.destroy("g_running_police_call_for_backup")
 			group.destroy(v10, 1)
-			_pc = 2539
-			continue
-		elif _pc == 2539:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func military_call_for_backup() -> Variant:
@@ -497,207 +217,76 @@ func military_call_for_backup() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 2562
-	while true:
-		if _pc == 2562:
-			v4 = global.pog_float("g_player_sensor_range")
-			v5 = null
-			v5 = imapentity.system_habitats()
-			v6 = null
-			v7 = 3
-			v8 = inifile.cast(global.handle("g_shipping_ini"))
-			v10 = await ishipcreation.get_traffic(9, v7, math.random_int(3, 5))
-			v11 = iship.cast(group.nth_sim(v10, 0))
-			v13 = null
-			if global.exists("g_running_military_call_for_backup"):
-				_pc = 2798
-				continue
-			else:
-				_pc = 2823
-				continue
-		elif _pc == 2798:
-			group.destroy(v10, 1)
-			_pc = 4179
-			continue
-		elif _pc == 2823:
-			global.create_bool("g_running_military_call_for_backup", 1, 1)
-			_pc = 2872
-			continue
-		elif _pc == 2851:
+	v4 = global.pog_float("g_player_sensor_range")
+	v5 = null
+	v5 = imapentity.system_habitats()
+	v6 = null
+	v7 = 3
+	v8 = inifile.cast(global.handle("g_shipping_ini"))
+	v10 = await ishipcreation.get_traffic(9, v7, math.random_int(3, 5))
+	v11 = iship.cast(group.nth_sim(v10, 0))
+	v13 = null
+	if global.exists("g_running_military_call_for_backup"):
+		group.destroy(v10, 1)
+	else:
+		global.create_bool("g_running_military_call_for_backup", 1, 1)
+		if PogRuntime.TRACE:
 			debug.print_string("iFight.MilitaryCallForBackup: Starting task\n")
-			_pc = 2872
-			continue
-		elif _pc == 2872:
-			v6 = ihabitat.filter_on_type(v5, 72)
-			p_set.union(v6, ihabitat.filter_on_type(v5, 73))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 70))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 71))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 79))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 82))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 85))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 54))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 55))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 78))
-			if _pog_is_null(p_set.item_count(v6)):
-				_pc = 3294
-				continue
-			else:
-				_pc = 3325
-				continue
-		elif _pc == 3294:
-			_pc = 3320
-			continue
-		elif _pc == 3299:
-			debug.print_string("iFight.MilitaryCallForBackup: Unable to find Police Facility to find backup from!\n")
-			_pc = 3320
-			continue
-		elif _pc == 3320:
-			_pc = 4179
-			continue
-		elif _pc == 3325:
-			_pc = 3351
-			continue
-		elif _pc == 3330:
-			debug.print_string("iFight.MilitaryCallForBackup: Placing Head Ship\n")
-			_pc = 3351
-			continue
-		elif _pc == 3351:
+		v6 = ihabitat.filter_on_type(v5, 72)
+		p_set.union(v6, ihabitat.filter_on_type(v5, 73))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 70))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 71))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 79))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 82))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 85))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 54))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 55))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 78))
+		if _pog_is_null(p_set.item_count(v6)):
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.MilitaryCallForBackup: Unable to find Police Facility to find backup from!\n")
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.MilitaryCallForBackup: Placing Head Ship\n")
 			if object.i_d_modulus(v0, 2) == 1:
-				_pc = 3378
-				continue
+				v13 = "_male_1"
 			else:
-				_pc = 3396
-				continue
-		elif _pc == 3378:
-			v13 = "_male_1"
-			_pc = 3409
-			continue
-		elif _pc == 3396:
-			v13 = "_female_1"
-			_pc = 3409
-			continue
-		elif _pc == 3409:
+				v13 = "_female_1"
 			sim.place_relative_to(group.nth_sim(v10, 0), imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
-			_pc = 3574
-			continue
-		elif _pc == 3498:
-			debug.print_string("iFight.MilitaryCallForBackup: Placing ")
-			debug.print_int(group.sim_count(v10))
-			debug.print_string(" Ships in Formation\n")
-			_pc = 3574
-			continue
-		elif _pc == 3574:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.MilitaryCallForBackup: Placing ")
+				debug.print_int(group.sim_count(v10))
+				debug.print_string(" Ships in Formation\n")
 			await iformation.wedge(v10, 20.0, 1)
-			_pc = 3625
-			continue
-		elif _pc == 3604:
-			debug.print_string("iFight.MilitaryCallForBackup: Giving support ships destination orders\n")
-			_pc = 3625
-			continue
-		elif _pc == 3625:
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.MilitaryCallForBackup: Giving support ships destination orders\n")
 			iai.give_formate_order(v11, v0, 0.0, 0.0, 0.0)
 			v9 = await local_0()
 			v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
 			v2 = math.random_int(1, v3)
 			v12 = iship.find_player_ship()
 			if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
-				_pc = 3811
-				continue
-			else:
-				_pc = 3895
-				continue
-		elif _pc == 3811:
-			icomms.shout(v0, "", string.join(string.join("stock_attack_", string.from_int(v2)), v13))
-			_pc = 3895
-			continue
-		elif _pc == 3895:
-			_pc = 3921
-			continue
-		elif _pc == 3900:
-			debug.print_string("iFight.MilitaryCallForBackup: Starting Wait for arrival loop\n")
-			_pc = 3921
-			continue
-		elif _pc == 3921:
+				icomms.shout(v0, "", string.join(string.join("stock_attack_", string.from_int(v2)), v13))
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.MilitaryCallForBackup: Starting Wait for arrival loop\n")
 			if not _pog_is_null(v0) and not _pog_is_null(v1):
-				_pc = 3943
-				continue
-			else:
-				_pc = 3967
-				continue
-		elif _pc == 3943:
-			iai.give_attack_order(v0, v1)
-			_pc = 3967
-			continue
-		elif _pc == 3967:
-			_pc = 3972
-			continue
-		elif _pc == 3972:
-			await _pog_frame()
-			if _pog_every(3973, 30.0):
-				_pc = 3986
-				continue
-			else:
-				_pc = 4014
-				continue
-		elif _pc == 3986:
-			if iai.is_order_complete(v11):
-				_pc = 4009
-				continue
-			else:
-				_pc = 4014
-				continue
-		elif _pc == 4009:
-			_pc = 4019
-			continue
-		elif _pc == 4014:
-			_pc = 3972
-			continue
-		elif _pc == 4019:
-			_pc = 4046
-			continue
-		elif _pc == 4025:
-			debug.print_string("iFight.MilitaryCallForBackup: Arrived at destination, staying alive while player is here\n")
-			_pc = 4046
-			continue
-		elif _pc == 4046:
-			_pc = 4051
-			continue
-		elif _pc == 4051:
-			await _pog_frame()
-			if _pog_every(4052, 50.0):
-				_pc = 4065
-				continue
-			else:
-				_pc = 4106
-				continue
-		elif _pc == 4065:
-			if await iutilities.player_in_range(group.leader(v10)):
-				_pc = 4101
-				continue
-			else:
-				_pc = 4106
-				continue
-		elif _pc == 4101:
-			_pc = 4111
-			continue
-		elif _pc == 4106:
-			_pc = 4051
-			continue
-		elif _pc == 4111:
-			_pc = 4138
-			continue
-		elif _pc == 4117:
-			debug.print_string("iFight.MilitaryCallForBackup: Destroying support vessels\n")
-			_pc = 4138
-			continue
-		elif _pc == 4138:
+				iai.give_attack_order(v0, v1)
+			while true:
+				await _pog_wait(30)
+				if not (iai.is_order_complete(v11)):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.MilitaryCallForBackup: Arrived at destination, staying alive while player is here\n")
+			while true:
+				await _pog_wait(50)
+				if not (await iutilities.player_in_range(group.leader(v10))):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iFight.MilitaryCallForBackup: Destroying support vessels\n")
 			global.destroy("g_running_military_call_for_backup")
 			group.destroy(v10, 1)
-			_pc = 4179
-			continue
-		elif _pc == 4179:
-			return
-		else:
-			return 0
+	return
 	return 0
 

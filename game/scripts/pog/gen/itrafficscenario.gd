@@ -54,233 +54,64 @@ func local_0(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			v4 = global.pog_float("g_player_sensor_range")
-			v2 = iship.find_player_ship()
-			v3 = sim.distance_between(v2, v1)
-			if ilagrangepoint.cast(v1) and _pog_is_null(math.random_int(0, 1)):
-				_pc = 121
-				continue
-			else:
-				_pc = 127
-				continue
-		elif _pc == 121:
-			_pc = 361
-			continue
-		elif _pc == 127:
-			if _pog_is_null(sim.find_subsim_by_name(v0, "system_lds")):
-				_pc = 160
-				continue
-			else:
-				_pc = 194
-				continue
-		elif _pc == 160:
-			sim.place_near(v0, v2, 15000.0)
-			_pc = 355
-			continue
-		elif _pc == 194:
-			if v3 < v4 - 200000.0:
-				_pc = 216
-				continue
-			else:
-				_pc = 282
-				continue
-		elif _pc == 216:
-			_pc = 242
-			continue
-		elif _pc == 221:
-			debug.print_string(" iTrafficScenario.PlaceTraffic - Station is with players sensor range - placing traffic on edge of player range\n")
-			_pc = 242
-			continue
-		elif _pc == 242:
+	v4 = global.pog_float("g_player_sensor_range")
+	v2 = iship.find_player_ship()
+	v3 = sim.distance_between(v2, v1)
+	if ilagrangepoint.cast(v1) and _pog_is_null(math.random_int(0, 1)):
+		return 1
+	if _pog_is_null(sim.find_subsim_by_name(v0, "system_lds")):
+		sim.place_near(v0, v2, 15000.0)
+	else:
+		if v3 < v4 - 200000.0:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.PlaceTraffic - Station is with players sensor range - placing traffic on edge of player range\n")
 			sim.place_near(v0, v2, v4 - 100000.0)
-			_pc = 355
-			continue
-		elif _pc == 282:
-			_pc = 308
-			continue
-		elif _pc == 287:
-			debug.print_string(" iTrafficScenario.PlaceTraffic - Station is outside players sensor range - placing traffic between player & ship \n")
-			_pc = 308
-			continue
-		elif _pc == 308:
-			sim.place_near(v0, v1, math.random(1000.0, 5000.0))
-			_pc = 355
-			continue
-		elif _pc == 355:
-			_pc = 361
-			continue
-		elif _pc == 361:
-			return
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.PlaceTraffic - Station is outside players sensor range - placing traffic between player & ship \n")
+			sim.place_near(v0, v1, math.random(1000.0, 5000.0))
+	return 0
 	return 0
 
 func local_363(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 363
-	while true:
-		if _pc == 363:
-			if _pog_is_null(v0):
-				_pc = 381
-				continue
-			else:
-				_pc = 407
-				continue
-		elif _pc == 381:
-			_pc = 407
-			continue
-		elif _pc == 386:
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string(" iTrafficSceanrio.Calculate_maximum_ships - Passed a null location handle to me! \n ")
-			_pc = 407
-			continue
-		elif _pc == 407:
-			v2 = ihabitat.population(v0)
-			v1 = v2 / 1000
-			if v1 > 4:
-				_pc = 459
-				continue
-			else:
-				_pc = 467
-				continue
-		elif _pc == 459:
-			v1 = 4
-			_pc = 467
-			continue
-		elif _pc == 467:
-			_pc = 477
-			continue
-		elif _pc == 477:
-			return
-		else:
-			return 0
+	v2 = ihabitat.population(v0)
+	v1 = v2 / 1000
+	if v1 > 4:
+		v1 = 4
+	return v1
 	return 0
 
 func local_479(v0) -> Variant:
-	var _pc: int = 479
-	while true:
-		if _pc == 479:
-			if object.property_exists(v0, "mega_freighter"):
-				_pc = 509
-				continue
-			else:
-				_pc = 549
-				continue
-		elif _pc == 509:
-			p_set.item_count(sim.children(v0)) * 8
-			_pc = 586
-			continue
-		elif _pc == 549:
-			p_set.item_count(sim.children(v0))
-			_pc = 586
-			continue
-		elif _pc == 586:
-			return
-		else:
-			return 0
+	if object.property_exists(v0, "mega_freighter"):
+		return p_set.item_count(sim.children(v0)) * 8
+	return p_set.item_count(sim.children(v0))
 	return 0
 
 func local_588(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 588
-	while true:
-		if _pc == 588:
-			v2 = group.sim_count(v0)
-			v3 = 0
-			_pc = 624
-			continue
-		elif _pc == 624:
-			if v3 < v2:
-				_pc = 640
-				continue
-			else:
-				_pc = 706
-				continue
-		elif _pc == 640:
-			v1 = v1 + await local_479(group.nth_sim(v0, v3))
-			v3 = v3 + 1
-			_pc = 624
-			continue
-		elif _pc == 706:
-			if object.property_exists(group.leader(v0), "mega_freighter") == 1:
-				_pc = 751
-				continue
-			else:
-				_pc = 763
-				continue
-		elif _pc == 751:
-			_pc = 874
-			continue
-		elif _pc == 758:
-			_pc = 868
-			continue
-		elif _pc == 763:
-			if v1 >= 15:
-				_pc = 776
-				continue
-			else:
-				_pc = 788
-				continue
-		elif _pc == 776:
-			_pc = 874
-			continue
-		elif _pc == 783:
-			_pc = 868
-			continue
-		elif _pc == 788:
-			if v1 >= 10:
-				_pc = 801
-				continue
-			else:
-				_pc = 813
-				continue
-		elif _pc == 801:
-			_pc = 874
-			continue
-		elif _pc == 808:
-			_pc = 868
-			continue
-		elif _pc == 813:
-			if v1 >= 5:
-				_pc = 826
-				continue
-			else:
-				_pc = 838
-				continue
-		elif _pc == 826:
-			_pc = 874
-			continue
-		elif _pc == 833:
-			_pc = 868
-			continue
-		elif _pc == 838:
-			if v1 >= 3:
-				_pc = 851
-				continue
-			else:
-				_pc = 862
-				continue
-		elif _pc == 851:
-			_pc = 874
-			continue
-		elif _pc == 857:
-			_pc = 868
-			continue
-		elif _pc == 862:
-			_pc = 874
-			continue
-		elif _pc == 868:
-			_pc = 874
-			continue
-		elif _pc == 874:
-			return
-		else:
-			return 0
+	v2 = group.sim_count(v0)
+	v3 = 0
+	while v3 < v2:
+		v1 = v1 + await local_479(group.nth_sim(v0, v3))
+		v3 = v3 + 1
+	if object.property_exists(group.leader(v0), "mega_freighter") == 1:
+		return 6
+	if v1 >= 15:
+		return 4
+	if v1 >= 10:
+		return 3
+	if v1 >= 5:
+		return 2
+	if v1 >= 3:
+		return 1
+	return 0
 	return 0
 
 func local_876(v0) -> Variant:
@@ -293,156 +124,49 @@ func local_876(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 876
-	while true:
-		if _pc == 876:
-			v2 = null
-			v6 = group.sim_count(v0)
-			v8 = 0
-			_pc = 923
-			continue
-		elif _pc == 923:
-			if v8 < v6:
-				_pc = 939
-				continue
-			else:
-				_pc = 1169
-				continue
-		elif _pc == 939:
-			v1 = group.nth_sim(v0, v8)
-			v3 = await local_479(v1)
-			v2 = list.from_set(sim.children(v1))
-			v4 = v4 + v3
-			v9 = 0
-			_pc = 1056
-			continue
-		elif _pc == 1056:
-			if v9 < v3:
-				_pc = 1072
-				continue
-			else:
-				_pc = 1151
-				continue
-		elif _pc == 1072:
+	v2 = null
+	v6 = group.sim_count(v0)
+	v8 = 0
+	while v8 < v6:
+		v1 = group.nth_sim(v0, v8)
+		v3 = await local_479(v1)
+		v2 = list.from_set(sim.children(v1))
+		v4 = v4 + v3
+		v9 = 0
+		while v9 < v3:
 			v5 = v5 + icargo.value(icargo.cast(list.get_nth(v2, v9)))
 			v9 = v9 + 1
-			_pc = 1056
-			continue
-		elif _pc == 1151:
-			v8 = v8 + 1
-			_pc = 923
-			continue
-		elif _pc == 1169:
-			v7 = v5 / v4
-			if v7 >= 6:
-				_pc = 1199
-				continue
-			else:
-				_pc = 1211
-				continue
-		elif _pc == 1199:
-			_pc = 1250
-			continue
-		elif _pc == 1206:
-			_pc = 1243
-			continue
-		elif _pc == 1211:
-			if v7 >= 3:
-				_pc = 1224
-				continue
-			else:
-				_pc = 1236
-				continue
-		elif _pc == 1224:
-			_pc = 1250
-			continue
-		elif _pc == 1231:
-			_pc = 1243
-			continue
-		elif _pc == 1236:
-			_pc = 1250
-			continue
-		elif _pc == 1243:
-			_pc = 1250
-			continue
-		elif _pc == 1250:
-			return
-		else:
-			return 0
+		v8 = v8 + 1
+	v7 = v5 / v4
+	if v7 >= 6:
+		return 7
+	if v7 >= 3:
+		return 9
+	return 6
 	return 0
 
 func local_1259(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 1259
-	while true:
-		if _pc == 1259:
-			v2 = null
-			v3 = 0
-			_pc = 1282
-			continue
-		elif _pc == 1282:
-			if v3 < v1:
-				_pc = 1298
-				continue
-			else:
-				_pc = 1580
-				continue
-		elif _pc == 1298:
-			v2 = isim.sims_in_cone(isim.cast(v0), 375.0, 800.0, 2000.0, 536838144)
-			if p_set.is_empty(v2):
-				_pc = 1380
-				continue
-			else:
-				_pc = 1385
-				continue
-		elif _pc == 1380:
-			_pc = 1580
-			continue
-		elif _pc == 1385:
-			_pc = 1411
-			continue
-		elif _pc == 1390:
+	v2 = null
+	v3 = 0
+	while v3 < v1:
+		v2 = isim.sims_in_cone(isim.cast(v0), 375.0, 800.0, 2000.0, 536838144)
+		if p_set.is_empty(v2):
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario:Waiting for Lagrange Point to be clear - blocked by: ")
-			_pc = 1411
-			continue
-		elif _pc == 1411:
-			_pc = 1448
-			continue
-		elif _pc == 1416:
+		if PogRuntime.TRACE:
 			debug.print_int(p_set.item_count(v2))
-			_pc = 1448
-			continue
-		elif _pc == 1448:
-			_pc = 1474
-			continue
-		elif _pc == 1453:
+		if PogRuntime.TRACE:
 			debug.print_string(" ships. Time left: ")
-			_pc = 1474
-			continue
-		elif _pc == 1474:
-			_pc = 1504
-			continue
-		elif _pc == 1479:
+		if PogRuntime.TRACE:
 			debug.print_int(v1 - v3)
-			_pc = 1504
-			continue
-		elif _pc == 1504:
-			_pc = 1530
-			continue
-		elif _pc == 1509:
+		if PogRuntime.TRACE:
 			debug.print_string(" \n")
-			_pc = 1530
-			continue
-		elif _pc == 1530:
-			await _pog_wait(1.0)
-			v3 = v3 + 1
-			_pc = 1282
-			continue
-		elif _pc == 1580:
-			return 0
-		else:
-			return 0
+		await _pog_wait(1.0)
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func haulage_in(v0) -> Variant:
@@ -803,56 +527,56 @@ func haulage_in(v0) -> Variant:
 				_pc = 3161
 				continue
 		elif _pc == 3296:
-			if not _pog_is_null(2):
+			if 2 != v14:
 				_pc = 3305
 				continue
 			else:
 				_pc = 3174
 				continue
 		elif _pc == 3305:
-			if not _pog_is_null(3):
+			if 3 != v14:
 				_pc = 3314
 				continue
 			else:
 				_pc = 3187
 				continue
 		elif _pc == 3314:
-			if not _pog_is_null(4):
+			if 4 != v14:
 				_pc = 3323
 				continue
 			else:
 				_pc = 3200
 				continue
 		elif _pc == 3323:
-			if not _pog_is_null(5):
+			if 5 != v14:
 				_pc = 3332
 				continue
 			else:
 				_pc = 3213
 				continue
 		elif _pc == 3332:
-			if not _pog_is_null(6):
+			if 6 != v14:
 				_pc = 3341
 				continue
 			else:
 				_pc = 3226
 				continue
 		elif _pc == 3341:
-			if not _pog_is_null(7):
+			if 7 != v14:
 				_pc = 3350
 				continue
 			else:
 				_pc = 3239
 				continue
 		elif _pc == 3350:
-			if not _pog_is_null(8):
+			if 8 != v14:
 				_pc = 3359
 				continue
 			else:
 				_pc = 3252
 				continue
 		elif _pc == 3359:
-			if not _pog_is_null(9):
+			if 9 != v14:
 				_pc = 3368
 				continue
 			else:
@@ -889,14 +613,14 @@ func haulage_in(v0) -> Variant:
 				_pc = 3407
 				continue
 		elif _pc == 3464:
-			if not _pog_is_null(2):
+			if 2 != v14:
 				_pc = 3473
 				continue
 			else:
 				_pc = 3420
 				continue
 		elif _pc == 3473:
-			if not _pog_is_null(3):
+			if 3 != v14:
 				_pc = 3482
 				continue
 			else:
@@ -933,14 +657,14 @@ func haulage_in(v0) -> Variant:
 				_pc = 3521
 				continue
 		elif _pc == 3578:
-			if not _pog_is_null(2):
+			if 2 != v14:
 				_pc = 3587
 				continue
 			else:
 				_pc = 3534
 				continue
 		elif _pc == 3587:
-			if not _pog_is_null(3):
+			if 3 != v14:
 				_pc = 3596
 				continue
 			else:
@@ -981,21 +705,21 @@ func haulage_in(v0) -> Variant:
 				_pc = 3635
 				continue
 		elif _pc == 3705:
-			if not _pog_is_null(2):
+			if 2 != v14:
 				_pc = 3714
 				continue
 			else:
 				_pc = 3648
 				continue
 		elif _pc == 3714:
-			if not _pog_is_null(3):
+			if 3 != v14:
 				_pc = 3723
 				continue
 			else:
 				_pc = 3661
 				continue
 		elif _pc == 3723:
-			if not _pog_is_null(4):
+			if 4 != v14:
 				_pc = 3732
 				continue
 			else:
@@ -1016,168 +740,168 @@ func haulage_in(v0) -> Variant:
 				_pc = 2997
 				continue
 		elif _pc == 3764:
-			if not _pog_is_null(12):
+			if 12 != v7:
 				_pc = 3773
 				continue
 			else:
 				_pc = 3010
 				continue
 		elif _pc == 3773:
-			if not _pog_is_null(13):
+			if 13 != v7:
 				_pc = 3782
 				continue
 			else:
 				_pc = 3023
 				continue
 		elif _pc == 3782:
-			if not _pog_is_null(14):
+			if 14 != v7:
 				_pc = 3791
 				continue
 			else:
 				_pc = 3036
 				continue
 		elif _pc == 3791:
-			if not _pog_is_null(15):
+			if 15 != v7:
 				_pc = 3800
 				continue
 			else:
 				_pc = 3049
 				continue
 		elif _pc == 3800:
-			if not _pog_is_null(16):
+			if 16 != v7:
 				_pc = 3809
 				continue
 			else:
 				_pc = 3062
 				continue
 		elif _pc == 3809:
-			if not _pog_is_null(17):
+			if 17 != v7:
 				_pc = 3818
 				continue
 			else:
 				_pc = 3075
 				continue
 		elif _pc == 3818:
-			if not _pog_is_null(18):
+			if 18 != v7:
 				_pc = 3827
 				continue
 			else:
 				_pc = 3088
 				continue
 		elif _pc == 3827:
-			if not _pog_is_null(19):
+			if 19 != v7:
 				_pc = 3836
 				continue
 			else:
 				_pc = 3101
 				continue
 		elif _pc == 3836:
-			if not _pog_is_null(20):
+			if 20 != v7:
 				_pc = 3845
 				continue
 			else:
 				_pc = 3114
 				continue
 		elif _pc == 3845:
-			if not _pog_is_null(22):
+			if 22 != v7:
 				_pc = 3854
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3854:
-			if not _pog_is_null(25):
+			if 25 != v7:
 				_pc = 3863
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3863:
-			if not _pog_is_null(26):
+			if 26 != v7:
 				_pc = 3872
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3872:
-			if not _pog_is_null(27):
+			if 27 != v7:
 				_pc = 3881
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3881:
-			if not _pog_is_null(31):
+			if 31 != v7:
 				_pc = 3890
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3890:
-			if not _pog_is_null(32):
+			if 32 != v7:
 				_pc = 3899
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3899:
-			if not _pog_is_null(33):
+			if 33 != v7:
 				_pc = 3908
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3908:
-			if not _pog_is_null(30):
+			if 30 != v7:
 				_pc = 3917
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3917:
-			if not _pog_is_null(34):
+			if 34 != v7:
 				_pc = 3926
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3926:
-			if not _pog_is_null(35):
+			if 35 != v7:
 				_pc = 3935
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3935:
-			if not _pog_is_null(24):
+			if 24 != v7:
 				_pc = 3944
 				continue
 			else:
 				_pc = 3373
 				continue
 		elif _pc == 3944:
-			if not _pog_is_null(23):
+			if 23 != v7:
 				_pc = 3953
 				continue
 			else:
 				_pc = 3373
 				continue
 		elif _pc == 3953:
-			if not _pog_is_null(28):
+			if 28 != v7:
 				_pc = 3962
 				continue
 			else:
 				_pc = 3373
 				continue
 		elif _pc == 3962:
-			if not _pog_is_null(29):
+			if 29 != v7:
 				_pc = 3971
 				continue
 			else:
 				_pc = 3487
 				continue
 		elif _pc == 3971:
-			if not _pog_is_null(38):
+			if 38 != v7:
 				_pc = 3980
 				continue
 			else:
@@ -1463,461 +1187,146 @@ func haulage_out(v0) -> Variant:
 	var v30: Variant = 0
 	var v31: Variant = 0
 	var v32: Variant = 0
-	var _pc: int = 5709
-	while true:
-		if _pc == 5709:
-			v7 = null
-			v13 = 0
-			v21 = global.pog_float("g_player_sensor_range")
-			v25 = null
-			v26 = null
-			v28 = 0
-			v32 = 0
-			if global.pog_int("g_total_haulage_running") >= 7:
-				_pc = 5822
-				continue
-			else:
-				_pc = 5853
-				continue
-		elif _pc == 5822:
-			_pc = 5848
-			continue
-		elif _pc == 5827:
+	v7 = null
+	v13 = 0
+	v21 = global.pog_float("g_player_sensor_range")
+	v25 = null
+	v26 = null
+	v28 = 0
+	v32 = 0
+	if global.pog_int("g_total_haulage_running") >= 7:
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Haualge: Aborting haulage sceneario.... capped value reached\n")
-			_pc = 5848
-			continue
-		elif _pc == 5848:
-			_pc = 8736
-			continue
-		elif _pc == 5853:
-			_pc = 5941
-			continue
-		elif _pc == 5858:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string(string.join(" iTrafficScenario.HaulageOut - Created HaulageOut Scenario for - ", object.string_property(v0, "name")))
 			debug.print_string(" \n")
-			_pc = 5941
-			continue
-		elif _pc == 5941:
-			v23 = ihabitat.cast(v0)
-			if _pog_is_null(v23):
-				_pc = 5978
-				continue
-			else:
-				_pc = 6437
-				continue
-		elif _pc == 5978:
+		v23 = ihabitat.cast(v0)
+		if _pog_is_null(v23):
 			v29 = ilagrangepoint.cast(v0)
-			_pc = 6028
-			continue
-		elif _pc == 6007:
-			debug.print_string("iTrafficScenario.HaulageOut  - location is an l-point, finding a location to generate ships \n")
-			_pc = 6028
-			continue
-		elif _pc == 6028:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.HaulageOut  - location is an l-point, finding a location to generate ships \n")
 			v25 = global.pog_set("g_filtered_system_habitats")
-			_pc = 6055
-			continue
-		elif _pc == 6055:
-			if not (v28):
-				_pc = 6066
-				continue
-			else:
-				_pc = 6432
-				continue
-		elif _pc == 6066:
-			v23 = ihabitat.nearest(v25, v29)
-			_pc = 6121
-			continue
-		elif _pc == 6100:
-			debug.print_string("iTrafficScenario.HaulageOut - l point is local \n")
-			_pc = 6121
-			continue
-		elif _pc == 6121:
-			v8 = ihabitat.type(v23)
-			v27 = v8
-			if v27 >= 11 and v27 <= 34:
-				_pc = 6178
-				continue
-			else:
-				_pc = 6278
-				continue
-		elif _pc == 6178:
-			_pc = 6266
-			continue
-		elif _pc == 6183:
-			debug.print_string(string.join("iTrafficScenario.HaulagEOut - substitute location for interstellar L-point is - ", object.string_property(v23, "name")))
-			debug.print_string("\n")
-			_pc = 6266
-			continue
-		elif _pc == 6266:
-			v28 = 1
-			_pc = 6427
-			continue
-		elif _pc == 6278:
-			if p_set.is_empty(v25) == 1:
-				_pc = 6303
-				continue
-			else:
-				_pc = 6403
-				continue
-		elif _pc == 6303:
-			_pc = 6391
-			continue
-		elif _pc == 6308:
-			debug.print_string(string.join("iTrafficScenario.HaulageOut - unable to find appropriate haualge out location for system, gonna have to take water to - ", object.string_property(v23, "name")))
-			debug.print_string("\n")
-			_pc = 6391
-			continue
-		elif _pc == 6391:
-			v28 = 1
-			_pc = 6427
-			continue
-		elif _pc == 6403:
-			p_set.remove(v25, v23)
-			_pc = 6427
-			continue
-		elif _pc == 6427:
-			_pc = 6055
-			continue
-		elif _pc == 6432:
-			_pc = 6463
-			continue
-		elif _pc == 6437:
-			_pc = 6463
-			continue
-		elif _pc == 6442:
-			debug.print_string(" ITrafficScenario.HaulageOut - location is a habitat.\n")
-			_pc = 6463
-			continue
-		elif _pc == 6463:
-			v8 = ihabitat.type(v23)
-			v9 = ihabitat.allegiance(v23)
-			if v8 == 122 or v8 == 121:
-				_pc = 6533
-				continue
-			else:
-				_pc = 6559
-				continue
-		elif _pc == 6533:
-			_pc = 6559
-			continue
-		elif _pc == 6538:
-			debug.print_string(" iTrafficScenario.HaulageOut - location is a beanstalk or transfer station - finding a surface location\n ")
-			_pc = 6559
-			continue
-		elif _pc == 6559:
-			v3 = await local_363(v23)
-			if v3 == 1:
-				_pc = 6595
-				continue
-			else:
-				_pc = 6603
-				continue
-		elif _pc == 6595:
+			while not (v28):
+				v23 = ihabitat.nearest(v25, v29)
+				if PogRuntime.TRACE:
+					debug.print_string("iTrafficScenario.HaulageOut - l point is local \n")
+				v8 = ihabitat.type(v23)
+				v27 = v8
+				if v27 >= 11 and v27 <= 34:
+					if PogRuntime.TRACE:
+						debug.print_string(string.join("iTrafficScenario.HaulagEOut - substitute location for interstellar L-point is - ", object.string_property(v23, "name")))
+						debug.print_string("\n")
+					v28 = 1
+				else:
+					if p_set.is_empty(v25) == 1:
+						if PogRuntime.TRACE:
+							debug.print_string(string.join("iTrafficScenario.HaulageOut - unable to find appropriate haualge out location for system, gonna have to take water to - ", object.string_property(v23, "name")))
+							debug.print_string("\n")
+						v28 = 1
+					else:
+						p_set.remove(v25, v23)
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string(" ITrafficScenario.HaulageOut - location is a habitat.\n")
+		v8 = ihabitat.type(v23)
+		v9 = ihabitat.allegiance(v23)
+		if v8 == 122 or v8 == 121:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.HaulageOut - location is a beanstalk or transfer station - finding a surface location\n ")
+		v3 = await local_363(v23)
+		if v3 == 1:
 			v3 = 2
-			_pc = 6603
-			continue
-		elif _pc == 6603:
-			v4 = math.random_int(1, v3)
-			if global.pog_int("g_total_haulage_running") + v4 > 7:
-				_pc = 6662
-				continue
-			else:
-				_pc = 6691
-				continue
-		elif _pc == 6662:
+		v4 = math.random_int(1, v3)
+		if global.pog_int("g_total_haulage_running") + v4 > 7:
 			v4 = 7 - global.pog_int("g_total_haulage_running")
-			_pc = 6691
-			continue
-		elif _pc == 6691:
-			v9 = ihabitat.allegiance(v23)
-			_pc = 6797
-			continue
-		elif _pc == 6720:
+		v9 = ihabitat.allegiance(v23)
+		if PogRuntime.TRACE:
 			debug.print_string(string.join("iTrafficScenario.HaulageOut - total freighters to create =  ", string.from_int(v4)))
 			debug.print_string("\n")
-			_pc = 6797
-			continue
-		elif _pc == 6797:
-			v31 = math.random(10.0, 100.0)
-			if v8 == 22 or v8 == 32:
-				_pc = 6848
-				continue
-			else:
-				_pc = 6865
-				continue
-		elif _pc == 6848:
+		v31 = math.random(10.0, 100.0)
+		if v8 == 22 or v8 == 32:
 			v31 = v31 + 20.0
-			_pc = 6865
-			continue
-		elif _pc == 6865:
-			if v31 > 90.0:
-				_pc = 6881
-				continue
-			else:
-				_pc = 6917
-				continue
-		elif _pc == 6881:
+		if v31 > 90.0:
 			v11 = await ishipcreation.get_traffic(3, v9, v4)
-			_pc = 6998
-			continue
-		elif _pc == 6917:
+		else:
 			if v31 >= 50.0:
-				_pc = 6933
-				continue
+				v11 = await ishipcreation.get_traffic(1, v9, v4)
 			else:
-				_pc = 6968
-				continue
-		elif _pc == 6933:
-			v11 = await ishipcreation.get_traffic(1, v9, v4)
-			_pc = 6998
-			continue
-		elif _pc == 6968:
-			v11 = await ishipcreation.get_traffic(0, v9, v4)
-			_pc = 6998
-			continue
-		elif _pc == 6998:
-			v6 = group.sim_count(v11)
-			v5 = math.random_int(0, 4)
-			if v5 <= 3 or object.property_exists(group.leader(v11), "mega_freighter") == 1:
-				_pc = 7098
-				continue
-			else:
-				_pc = 7287
-				continue
-		elif _pc == 7098:
+				v11 = await ishipcreation.get_traffic(0, v9, v4)
+		v6 = group.sim_count(v11)
+		v5 = math.random_int(0, 4)
+		if v5 <= 3 or object.property_exists(group.leader(v11), "mega_freighter") == 1:
 			v2 = 0
-			_pc = 7105
-			continue
-		elif _pc == 7105:
-			if v2 < v6:
-				_pc = 7121
-				continue
-			else:
-				_pc = 7287
-				continue
-		elif _pc == 7121:
-			v14 = iship.cast(group.nth_sim(v11, v2))
-			_pc = 7245
-			continue
-		elif _pc == 7168:
-			debug.print_string(string.join(" ITrafficScenario.HaulOut - Installing Cargo for ship number  - ", string.from_int(v2)))
-			debug.print_string(" \n ")
-			_pc = 7245
-			continue
-		elif _pc == 7245:
-			await ishipcreation.create_haulage_cargo(v14, v8)
-			v2 = v2 + 1
-			_pc = 7105
-			continue
-		elif _pc == 7287:
-			v10 = await local_588(v11)
-			if v10 > 0:
-				_pc = 7323
-				continue
-			else:
-				_pc = 7457
-				continue
-		elif _pc == 7323:
-			_pc = 7405
-			continue
-		elif _pc == 7328:
-			debug.print_string(string.join("iTrafficScenario.HaulageOut - Number of escorts to create = ", string.from_int(v10)))
-			debug.print_string("\n")
-			_pc = 7405
-			continue
-		elif _pc == 7405:
+			while v2 < v6:
+				v14 = iship.cast(group.nth_sim(v11, v2))
+				if PogRuntime.TRACE:
+					debug.print_string(string.join(" ITrafficScenario.HaulOut - Installing Cargo for ship number  - ", string.from_int(v2)))
+					debug.print_string(" \n ")
+				await ishipcreation.create_haulage_cargo(v14, v8)
+				v2 = v2 + 1
+		v10 = await local_588(v11)
+		if v10 > 0:
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.HaulageOut - Number of escorts to create = ", string.from_int(v10)))
+				debug.print_string("\n")
 			v12 = await ishipcreation.get_traffic(await local_876(v11), v9, v10)
-			_pc = 7483
-			continue
-		elif _pc == 7457:
-			_pc = 7483
-			continue
-		elif _pc == 7462:
-			debug.print_string("iTrafficScenario.HaulageOut -  No escorts generated \n")
-			_pc = 7483
-			continue
-		elif _pc == 7483:
-			if not _pog_is_null(v29):
-				_pc = 7496
-				continue
-			else:
-				_pc = 7544
-				continue
-		elif _pc == 7496:
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.HaulageOut -  No escorts generated \n")
+		if not _pog_is_null(v29):
 			v32 = await local_0(group.nth_sim(v11, 0), v29)
-			_pc = 7587
-			continue
-		elif _pc == 7544:
+		else:
 			v32 = await local_0(group.nth_sim(v11, 0), v0)
-			_pc = 7587
-			continue
-		elif _pc == 7587:
-			if v6 > 1:
-				_pc = 7599
-				continue
-			else:
-				_pc = 7799
-				continue
-		elif _pc == 7599:
-			_pc = 7625
-			continue
-		elif _pc == 7604:
-			debug.print_string(" iTrafficScenario.HaulOut - Placing  additional freighters in formation \n")
-			_pc = 7625
-			continue
-		elif _pc == 7625:
+		if v6 > 1:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.HaulOut - Placing  additional freighters in formation \n")
 			if v32:
-				_pc = 7635
-				continue
+				await local_1259(v29, 30)
+				await iutilities.capsule_jump_group(v11, v29, math.random(1.0, 2.0))
+				await iformation.line_ahead(v11, math.random(1.0, 100.0), 0)
 			else:
-				_pc = 7751
-				continue
-		elif _pc == 7635:
-			await local_1259(v29, 30)
-			await iutilities.capsule_jump_group(v11, v29, math.random(1.0, 2.0))
-			await iformation.line_ahead(v11, math.random(1.0, 100.0), 0)
-			_pc = 7794
-			continue
-		elif _pc == 7751:
-			await iformation.line_ahead(v11, math.random(1.0, 100.0), 1)
-			_pc = 7794
-			continue
-		elif _pc == 7794:
-			_pc = 7880
-			continue
-		elif _pc == 7799:
+				await iformation.line_ahead(v11, math.random(1.0, 100.0), 1)
+		else:
 			if v32:
-				_pc = 7809
-				continue
-			else:
-				_pc = 7880
-				continue
-		elif _pc == 7809:
-			await local_1259(v29, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v11)), v29)
-			_pc = 7880
-			continue
-		elif _pc == 7880:
-			if v10 > 0:
-				_pc = 7892
-				continue
-			else:
-				_pc = 8355
-				continue
-		elif _pc == 7892:
-			_pc = 7918
-			continue
-		elif _pc == 7897:
-			debug.print_string(" iTrafficScenario.HaulOut - Placing lead escort\n")
-			_pc = 7918
-			continue
-		elif _pc == 7918:
+				await local_1259(v29, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v11)), v29)
+		if v10 > 0:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.HaulOut - Placing lead escort\n")
 			if v10 > 1:
-				_pc = 7930
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string(" iTrafficScenario.HaulIn  - placing additional escorts in formation \n ")
+				if v32:
+					await local_1259(v29, 3)
+					await iutilities.capsule_jump_group(v12, v29, math.random(1.0, 2.0))
+					await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 0)
+				else:
+					await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 1)
 			else:
-				_pc = 8146
-				continue
-		elif _pc == 7930:
-			_pc = 7956
-			continue
-		elif _pc == 7935:
-			debug.print_string(" iTrafficScenario.HaulIn  - placing additional escorts in formation \n ")
-			_pc = 7956
-			continue
-		elif _pc == 7956:
-			if v32:
-				_pc = 7966
-				continue
-			else:
-				_pc = 8090
-				continue
-		elif _pc == 7966:
-			await local_1259(v29, 3)
-			await iutilities.capsule_jump_group(v12, v29, math.random(1.0, 2.0))
-			await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 0)
-			_pc = 8141
-			continue
-		elif _pc == 8090:
-			await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 1)
-			_pc = 8141
-			continue
-		elif _pc == 8141:
-			_pc = 8355
-			continue
-		elif _pc == 8146:
-			if v32:
-				_pc = 8156
-				continue
-			else:
-				_pc = 8232
-				continue
-		elif _pc == 8156:
-			await local_1259(v29, 3)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v12)), v29)
-			_pc = 8298
-			continue
-		elif _pc == 8232:
-			sim.place_relative_to(group.leader(v12), group.nth_sim(v11, 0), 0.0, 100.0, -100.0)
-			_pc = 8298
-			continue
-		elif _pc == 8298:
-			iai.give_escort_order(group.leader(v12), v11, 0.0, 100.0, -100.0, 8000.0)
-			_pc = 8355
-			continue
-		elif _pc == 8355:
-			if v10 > 0:
-				_pc = 8367
-				continue
-			else:
-				_pc = 8391
-				continue
-		elif _pc == 8367:
+				if v32:
+					await local_1259(v29, 3)
+					isim.capsule_jump_staggered(isim.cast(group.leader(v12)), v29)
+				else:
+					sim.place_relative_to(group.leader(v12), group.nth_sim(v11, 0), 0.0, 100.0, -100.0)
+				iai.give_escort_order(group.leader(v12), v11, 0.0, 100.0, -100.0, 8000.0)
+		if v10 > 0:
 			group.add_group(v11, v12)
-			_pc = 8391
-			continue
-		elif _pc == 8391:
-			_pc = 8494
-			continue
-		elif _pc == 8396:
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.HaulOut - Assigning haualge orders to list, lead by ship called -  ")
 			debug.print_string(object.string_property(group.nth_sim(v11, 0), "name"))
 			debug.print_string("\n")
-			_pc = 8494
-			continue
-		elif _pc == 8494:
-			v30 = _pog_spawn(iscriptedorders.haulage.bind(v11, v0))
-			_pog_detach(v30)
-			if v5 <= 3:
-				_pc = 8555
-				continue
-			else:
-				_pc = 8648
-				continue
-		elif _pc == 8555:
-			_pc = 8643
-			continue
-		elif _pc == 8560:
-			debug.print_string(string.join("iTrafficScenario.HaulOut  - Hauled goods are being carried from  -  ", object.string_property(v0, "name")))
-			debug.print_string("\n")
-			_pc = 8643
-			continue
-		elif _pc == 8643:
-			_pc = 8736
-			continue
-		elif _pc == 8648:
-			_pc = 8736
-			continue
-		elif _pc == 8653:
-			debug.print_string(string.join("iTrafficScenario.HaulOut - empty ships are approaching ", object.string_property(v0, "name")))
-			debug.print_string("\n")
-			_pc = 8736
-			continue
-		elif _pc == 8736:
-			return 0
+		v30 = _pog_spawn(iscriptedorders.haulage.bind(v11, v0))
+		_pog_detach(v30)
+		if v5 <= 3:
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.HaulOut  - Hauled goods are being carried from  -  ", object.string_property(v0, "name")))
+				debug.print_string("\n")
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.HaulOut - empty ships are approaching ", object.string_property(v0, "name")))
+				debug.print_string("\n")
+	return 0
 	return 0
 
 func supply(v0) -> Variant:
@@ -2062,182 +1471,182 @@ func supply(v0) -> Variant:
 				_pc = 9290
 				continue
 		elif _pc == 9347:
-			if not _pog_is_null(23):
+			if 23 != v8:
 				_pc = 9356
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9356:
-			if not _pog_is_null(24):
+			if 24 != v8:
 				_pc = 9365
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9365:
-			if not _pog_is_null(25):
+			if 25 != v8:
 				_pc = 9374
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9374:
-			if not _pog_is_null(26):
+			if 26 != v8:
 				_pc = 9383
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9383:
-			if not _pog_is_null(27):
+			if 27 != v8:
 				_pc = 9392
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9392:
-			if not _pog_is_null(28):
+			if 28 != v8:
 				_pc = 9401
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9401:
-			if not _pog_is_null(29):
+			if 29 != v8:
 				_pc = 9410
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9410:
-			if not _pog_is_null(30):
+			if 30 != v8:
 				_pc = 9419
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9419:
-			if not _pog_is_null(31):
+			if 31 != v8:
 				_pc = 9428
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9428:
-			if not _pog_is_null(32):
+			if 32 != v8:
 				_pc = 9437
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9437:
-			if not _pog_is_null(33):
+			if 33 != v8:
 				_pc = 9446
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9446:
-			if not _pog_is_null(39):
+			if 39 != v8:
 				_pc = 9455
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9455:
-			if not _pog_is_null(40):
+			if 40 != v8:
 				_pc = 9464
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9464:
-			if not _pog_is_null(42):
+			if 42 != v8:
 				_pc = 9473
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9473:
-			if not _pog_is_null(43):
+			if 43 != v8:
 				_pc = 9482
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9482:
-			if not _pog_is_null(84):
+			if 84 != v8:
 				_pc = 9491
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9491:
-			if not _pog_is_null(110):
+			if 110 != v8:
 				_pc = 9500
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9500:
-			if not _pog_is_null(97):
+			if 97 != v8:
 				_pc = 9509
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9509:
-			if not _pog_is_null(98):
+			if 98 != v8:
 				_pc = 9518
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9518:
-			if not _pog_is_null(67):
+			if 67 != v8:
 				_pc = 9527
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9527:
-			if not _pog_is_null(107):
+			if 107 != v8:
 				_pc = 9536
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9536:
-			if not _pog_is_null(48):
+			if 48 != v8:
 				_pc = 9545
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9545:
-			if not _pog_is_null(63):
+			if 63 != v8:
 				_pc = 9554
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9554:
-			if not _pog_is_null(89):
+			if 89 != v8:
 				_pc = 9563
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9563:
-			if not _pog_is_null(81):
+			if 81 != v8:
 				_pc = 9572
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9572:
-			if not _pog_is_null(113):
+			if 113 != v8:
 				_pc = 9581
 				continue
 			else:
@@ -2268,161 +1677,161 @@ func supply(v0) -> Variant:
 				_pc = 9586
 				continue
 		elif _pc == 9643:
-			if not _pog_is_null(42):
+			if 42 != v8:
 				_pc = 9652
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9652:
-			if not _pog_is_null(43):
+			if 43 != v8:
 				_pc = 9661
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9661:
-			if not _pog_is_null(53):
+			if 53 != v8:
 				_pc = 9670
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9670:
-			if not _pog_is_null(54):
+			if 54 != v8:
 				_pc = 9679
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9679:
-			if not _pog_is_null(55):
+			if 55 != v8:
 				_pc = 9688
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9688:
-			if not _pog_is_null(56):
+			if 56 != v8:
 				_pc = 9697
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9697:
-			if not _pog_is_null(60):
+			if 60 != v8:
 				_pc = 9706
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9706:
-			if not _pog_is_null(68):
+			if 68 != v8:
 				_pc = 9715
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9715:
-			if not _pog_is_null(69):
+			if 69 != v8:
 				_pc = 9724
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9724:
-			if not _pog_is_null(70):
+			if 70 != v8:
 				_pc = 9733
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9733:
-			if not _pog_is_null(71):
+			if 71 != v8:
 				_pc = 9742
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9742:
-			if not _pog_is_null(72):
+			if 72 != v8:
 				_pc = 9751
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9751:
-			if not _pog_is_null(73):
+			if 73 != v8:
 				_pc = 9760
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9760:
-			if not _pog_is_null(74):
+			if 74 != v8:
 				_pc = 9769
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9769:
-			if not _pog_is_null(78):
+			if 78 != v8:
 				_pc = 9778
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9778:
-			if not _pog_is_null(79):
+			if 79 != v8:
 				_pc = 9787
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9787:
-			if not _pog_is_null(80):
+			if 80 != v8:
 				_pc = 9796
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9796:
-			if not _pog_is_null(82):
+			if 82 != v8:
 				_pc = 9805
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9805:
-			if not _pog_is_null(85):
+			if 85 != v8:
 				_pc = 9814
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9814:
-			if not _pog_is_null(101):
+			if 101 != v8:
 				_pc = 9823
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9823:
-			if not _pog_is_null(102):
+			if 102 != v8:
 				_pc = 9832
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9832:
-			if not _pog_is_null(103):
+			if 103 != v8:
 				_pc = 9841
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9841:
-			if not _pog_is_null(104):
+			if 104 != v8:
 				_pc = 9850
 				continue
 			else:
@@ -3001,91 +2410,91 @@ func trade(v0) -> Variant:
 				_pc = 12486
 				continue
 		elif _pc == 12680:
-			if not _pog_is_null(1):
+			if 1 != v14:
 				_pc = 12688
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12688:
-			if not _pog_is_null(2):
+			if 2 != v14:
 				_pc = 12697
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12697:
-			if not _pog_is_null(3):
+			if 3 != v14:
 				_pc = 12706
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12706:
-			if not _pog_is_null(4):
+			if 4 != v14:
 				_pc = 12715
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12715:
-			if not _pog_is_null(5):
+			if 5 != v14:
 				_pc = 12724
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12724:
-			if not _pog_is_null(6):
+			if 6 != v14:
 				_pc = 12733
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12733:
-			if not _pog_is_null(7):
+			if 7 != v14:
 				_pc = 12742
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12742:
-			if not _pog_is_null(8):
+			if 8 != v14:
 				_pc = 12751
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12751:
-			if not _pog_is_null(9):
+			if 9 != v14:
 				_pc = 12760
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12760:
-			if not _pog_is_null(10):
+			if 10 != v14:
 				_pc = 12769
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12769:
-			if not _pog_is_null(11):
+			if 11 != v14:
 				_pc = 12778
 				continue
 			else:
 				_pc = 12574
 				continue
 		elif _pc == 12778:
-			if not _pog_is_null(12):
+			if 12 != v14:
 				_pc = 12787
 				continue
 			else:
 				_pc = 12574
 				continue
 		elif _pc == 12787:
-			if not _pog_is_null(13):
+			if 13 != v14:
 				_pc = 12796
 				continue
 			else:
@@ -3915,28 +3324,28 @@ func security(v0) -> Variant:
 				_pc = 14845
 				continue
 		elif _pc == 18445:
-			if not _pog_is_null(2):
+			if 2 != v4:
 				_pc = 18454
 				continue
 			else:
 				_pc = 15610
 				continue
 		elif _pc == 18454:
-			if not _pog_is_null(3):
+			if 3 != v4:
 				_pc = 18463
 				continue
 			else:
 				_pc = 16380
 				continue
 		elif _pc == 18463:
-			if not _pog_is_null(4):
+			if 4 != v4:
 				_pc = 18472
 				continue
 			else:
 				_pc = 16988
 				continue
 		elif _pc == 18472:
-			if not _pog_is_null(5):
+			if 5 != v4:
 				_pc = 18481
 				continue
 			else:
@@ -4275,196 +3684,196 @@ func official(v0) -> Variant:
 				_pc = 20134
 				continue
 		elif _pc == 20226:
-			if not _pog_is_null(44):
+			if 44 != v12:
 				_pc = 20235
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20235:
-			if not _pog_is_null(45):
+			if 45 != v12:
 				_pc = 20244
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20244:
-			if not _pog_is_null(47):
+			if 47 != v12:
 				_pc = 20253
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20253:
-			if not _pog_is_null(49):
+			if 49 != v12:
 				_pc = 20262
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20262:
-			if not _pog_is_null(50):
+			if 50 != v12:
 				_pc = 20271
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20271:
-			if not _pog_is_null(52):
+			if 52 != v12:
 				_pc = 20280
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20280:
-			if not _pog_is_null(82):
+			if 82 != v12:
 				_pc = 20289
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20289:
-			if not _pog_is_null(92):
+			if 92 != v12:
 				_pc = 20298
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20298:
-			if not _pog_is_null(93):
+			if 93 != v12:
 				_pc = 20307
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20307:
-			if not _pog_is_null(94):
+			if 94 != v12:
 				_pc = 20316
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20316:
-			if not _pog_is_null(95):
+			if 95 != v12:
 				_pc = 20325
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20325:
-			if not _pog_is_null(96):
+			if 96 != v12:
 				_pc = 20334
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20334:
-			if not _pog_is_null(86):
+			if 86 != v12:
 				_pc = 20343
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20343:
-			if not _pog_is_null(87):
+			if 87 != v12:
 				_pc = 20352
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20352:
-			if not _pog_is_null(88):
+			if 88 != v12:
 				_pc = 20361
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20361:
-			if not _pog_is_null(89):
+			if 89 != v12:
 				_pc = 20370
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20370:
-			if not _pog_is_null(90):
+			if 90 != v12:
 				_pc = 20379
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20379:
-			if not _pog_is_null(91):
+			if 91 != v12:
 				_pc = 20388
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20388:
-			if not _pog_is_null(56):
+			if 56 != v12:
 				_pc = 20397
 				continue
 			else:
 				_pc = 20165
 				continue
 		elif _pc == 20397:
-			if not _pog_is_null(57):
+			if 57 != v12:
 				_pc = 20406
 				continue
 			else:
 				_pc = 20165
 				continue
 		elif _pc == 20406:
-			if not _pog_is_null(58):
+			if 58 != v12:
 				_pc = 20415
 				continue
 			else:
 				_pc = 20165
 				continue
 		elif _pc == 20415:
-			if not _pog_is_null(68):
+			if 68 != v12:
 				_pc = 20424
 				continue
 			else:
 				_pc = 20177
 				continue
 		elif _pc == 20424:
-			if not _pog_is_null(69):
+			if 69 != v12:
 				_pc = 20433
 				continue
 			else:
 				_pc = 20177
 				continue
 		elif _pc == 20433:
-			if not _pog_is_null(72):
+			if 72 != v12:
 				_pc = 20442
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20442:
-			if not _pog_is_null(73):
+			if 73 != v12:
 				_pc = 20451
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20451:
-			if not _pog_is_null(78):
+			if 78 != v12:
 				_pc = 20460
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20460:
-			if not _pog_is_null(80):
+			if 80 != v12:
 				_pc = 20469
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20469:
-			if not _pog_is_null(81):
+			if 81 != v12:
 				_pc = 20478
 				continue
 			else:
@@ -4508,70 +3917,70 @@ func official(v0) -> Variant:
 				_pc = 20483
 				continue
 		elif _pc == 20596:
-			if not _pog_is_null(5):
+			if 5 != v13:
 				_pc = 20605
 				continue
 			else:
 				_pc = 20495
 				continue
 		elif _pc == 20605:
-			if not _pog_is_null(9):
+			if 9 != v13:
 				_pc = 20614
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20614:
-			if not _pog_is_null(10):
+			if 10 != v13:
 				_pc = 20623
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20623:
-			if not _pog_is_null(17):
+			if 17 != v13:
 				_pc = 20632
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20632:
-			if not _pog_is_null(18):
+			if 18 != v13:
 				_pc = 20641
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20641:
-			if not _pog_is_null(19):
+			if 19 != v13:
 				_pc = 20650
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20650:
-			if not _pog_is_null(22):
+			if 22 != v13:
 				_pc = 20659
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20659:
-			if not _pog_is_null(12):
+			if 12 != v13:
 				_pc = 20668
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20668:
-			if not _pog_is_null(20):
+			if 20 != v13:
 				_pc = 20677
 				continue
 			else:
 				_pc = 20542
 				continue
 		elif _pc == 20677:
-			if not _pog_is_null(14):
+			if 14 != v13:
 				_pc = 20686
 				continue
 			else:
@@ -5869,21 +5278,21 @@ func maintenance(v0) -> Variant:
 				_pc = 25765
 				continue
 		elif _pc == 27967:
-			if not _pog_is_null(2):
+			if 2 != v4:
 				_pc = 27976
 				continue
 			else:
 				_pc = 26199
 				continue
 		elif _pc == 27976:
-			if not _pog_is_null(3):
+			if 3 != v4:
 				_pc = 27985
 				continue
 			else:
 				_pc = 26599
 				continue
 		elif _pc == 27985:
-			if not _pog_is_null(4):
+			if 4 != v4:
 				_pc = 27994
 				continue
 			else:
@@ -6096,119 +5505,119 @@ func mining(v0) -> Variant:
 				_pc = 28794
 				continue
 		elif _pc == 28984:
-			if not _pog_is_null(12):
+			if 12 != v12:
 				_pc = 28993
 				continue
 			else:
 				_pc = 28807
 				continue
 		elif _pc == 28993:
-			if not _pog_is_null(13):
+			if 13 != v12:
 				_pc = 29002
 				continue
 			else:
 				_pc = 28820
 				continue
 		elif _pc == 29002:
-			if not _pog_is_null(14):
+			if 14 != v12:
 				_pc = 29011
 				continue
 			else:
 				_pc = 28833
 				continue
 		elif _pc == 29011:
-			if not _pog_is_null(15):
+			if 15 != v12:
 				_pc = 29020
 				continue
 			else:
 				_pc = 28846
 				continue
 		elif _pc == 29020:
-			if not _pog_is_null(16):
+			if 16 != v12:
 				_pc = 29029
 				continue
 			else:
 				_pc = 28859
 				continue
 		elif _pc == 29029:
-			if not _pog_is_null(17):
+			if 17 != v12:
 				_pc = 29038
 				continue
 			else:
 				_pc = 28872
 				continue
 		elif _pc == 29038:
-			if not _pog_is_null(18):
+			if 18 != v12:
 				_pc = 29047
 				continue
 			else:
 				_pc = 28885
 				continue
 		elif _pc == 29047:
-			if not _pog_is_null(19):
+			if 19 != v12:
 				_pc = 29056
 				continue
 			else:
 				_pc = 28898
 				continue
 		elif _pc == 29056:
-			if not _pog_is_null(20):
+			if 20 != v12:
 				_pc = 29065
 				continue
 			else:
 				_pc = 28911
 				continue
 		elif _pc == 29065:
-			if not _pog_is_null(2):
+			if 2 != v12:
 				_pc = 29074
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29074:
-			if not _pog_is_null(3):
+			if 3 != v12:
 				_pc = 29083
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29083:
-			if not _pog_is_null(4):
+			if 4 != v12:
 				_pc = 29092
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29092:
-			if not _pog_is_null(5):
+			if 5 != v12:
 				_pc = 29101
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29101:
-			if not _pog_is_null(6):
+			if 6 != v12:
 				_pc = 29110
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29110:
-			if not _pog_is_null(7):
+			if 7 != v12:
 				_pc = 29119
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29119:
-			if not _pog_is_null(8):
+			if 8 != v12:
 				_pc = 29128
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29128:
-			if not _pog_is_null(9):
+			if 9 != v12:
 				_pc = 29137
 				continue
 			else:
@@ -6738,56 +6147,56 @@ func underworld(v0) -> Variant:
 				_pc = 30109
 				continue
 		elif _pc == 33348:
-			if not _pog_is_null(2):
+			if 2 != v9:
 				_pc = 33357
 				continue
 			else:
 				_pc = 30672
 				continue
 		elif _pc == 33357:
-			if not _pog_is_null(3):
+			if 3 != v9:
 				_pc = 33366
 				continue
 			else:
 				_pc = 30672
 				continue
 		elif _pc == 33366:
-			if not _pog_is_null(4):
+			if 4 != v9:
 				_pc = 33375
 				continue
 			else:
 				_pc = 30672
 				continue
 		elif _pc == 33375:
-			if not _pog_is_null(5):
+			if 5 != v9:
 				_pc = 33384
 				continue
 			else:
 				_pc = 31149
 				continue
 		elif _pc == 33384:
-			if not _pog_is_null(6):
+			if 6 != v9:
 				_pc = 33393
 				continue
 			else:
 				_pc = 31149
 				continue
 		elif _pc == 33393:
-			if not _pog_is_null(7):
+			if 7 != v9:
 				_pc = 33402
 				continue
 			else:
 				_pc = 31149
 				continue
 		elif _pc == 33402:
-			if not _pog_is_null(8):
+			if 8 != v9:
 				_pc = 33411
 				continue
 			else:
 				_pc = 31626
 				continue
 		elif _pc == 33411:
-			if not _pog_is_null(9):
+			if 9 != v9:
 				_pc = 33420
 				continue
 			else:
@@ -7040,21 +6449,21 @@ func oddball(v0) -> Variant:
 				_pc = 33833
 				continue
 		elif _pc == 35313:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 35322
 				continue
 			else:
 				_pc = 34192
 				continue
 		elif _pc == 35322:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 35331
 				continue
 			else:
 				_pc = 34551
 				continue
 		elif _pc == 35331:
-			if not _pog_is_null(4):
+			if 4 != v8:
 				_pc = 35340
 				continue
 			else:
@@ -7330,21 +6739,21 @@ func civilian(v0) -> Variant:
 				_pc = 35785
 				continue
 		elif _pc == 37360:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 37369
 				continue
 			else:
 				_pc = 36144
 				continue
 		elif _pc == 37369:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 37378
 				continue
 			else:
 				_pc = 36503
 				continue
 		elif _pc == 37378:
-			if not _pog_is_null(4):
+			if 4 != v8:
 				_pc = 37387
 				continue
 			else:
@@ -7360,44 +6769,15 @@ func local_37397(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 37397
-	while true:
-		if _pc == 37397:
-			v1 = null
-			v1 = ifaction.all()
-			v2 = list.item_count(v1)
-			v3 = 0
-			_pc = 37465
-			continue
-		elif _pc == 37465:
-			if v3 < v2:
-				_pc = 37481
-				continue
-			else:
-				_pc = 37605
-				continue
-		elif _pc == 37481:
-			if ifaction.feeling(ifaction.cast(list.get_nth(v1, v3)), v0) < 0.0:
-				_pc = 37546
-				continue
-			else:
-				_pc = 37587
-				continue
-		elif _pc == 37546:
-			ifaction.cast(list.get_nth(v1, v3))
-			_pc = 37611
-			continue
-		elif _pc == 37587:
-			v3 = v3 + 1
-			_pc = 37465
-			continue
-		elif _pc == 37605:
-			_pc = 37611
-			continue
-		elif _pc == 37611:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = ifaction.all()
+	v2 = list.item_count(v1)
+	v3 = 0
+	while v3 < v2:
+		if ifaction.feeling(ifaction.cast(list.get_nth(v1, v3)), v0) < 0.0:
+			return ifaction.cast(list.get_nth(v1, v3))
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func hostile(v0) -> Variant:
@@ -7532,14 +6912,14 @@ func hostile(v0) -> Variant:
 				_pc = 38519
 				continue
 		elif _pc == 38681:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 38690
 				continue
 			else:
 				_pc = 38567
 				continue
 		elif _pc == 38690:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 38699
 				continue
 			else:
@@ -7574,14 +6954,14 @@ func hostile(v0) -> Variant:
 				_pc = 38709
 				continue
 		elif _pc == 38871:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 38880
 				continue
 			else:
 				_pc = 38757
 				continue
 		elif _pc == 38880:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 38889
 				continue
 			else:
@@ -7919,14 +7299,14 @@ func scum(v0) -> Variant:
 				_pc = 39965
 				continue
 		elif _pc == 41513:
-			if not _pog_is_null(1):
+			if 1 != v7:
 				_pc = 41521
 				continue
 			else:
 				_pc = 40524
 				continue
 		elif _pc == 41521:
-			if not _pog_is_null(2):
+			if 2 != v7:
 				_pc = 41530
 				continue
 			else:

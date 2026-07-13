@@ -9,75 +9,33 @@ func _link() -> void:
 	icomms = api.icomms
 
 func begin() -> Variant:
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			if not (icomms.begin_conversation()):
-				_pc = 19
-				continue
-			else:
-				_pc = 70
-				continue
-		elif _pc == 19:
+	if not (icomms.begin_conversation()):
+		while true:
 			await _pog_wait(0.5)
-			if icomms.begin_conversation():
-				_pc = 70
-				continue
-			else:
-				_pc = 19
-				continue
-		elif _pc == 70:
-			icomms.clear_responses()
-			return 0
-		else:
-			return 0
+			if not (not (icomms.begin_conversation())):
+				break
+	icomms.clear_responses()
+	return 0
 	return 0
 
 func end() -> Variant:
-	var _pc: int = 87
-	while true:
-		if _pc == 87:
-			icomms.clear_responses()
-			if not (icomms.can_end()):
-				_pc = 120
-				continue
-			else:
-				_pc = 171
-				continue
-		elif _pc == 120:
+	icomms.clear_responses()
+	if not (icomms.can_end()):
+		while true:
 			await _pog_wait(0.5)
-			if icomms.can_end():
-				_pc = 171
-				continue
-			else:
-				_pc = 120
-				continue
-		elif _pc == 171:
-			icomms.end_conversation()
-			return 0
-		else:
-			return 0
+			if not (not (icomms.can_end())):
+				break
+	icomms.end_conversation()
+	return 0
 	return 0
 
 func say(v0, v1, v2) -> Variant:
-	var _pc: int = 188
+	icomms.say(v0, v1, v2)
 	while true:
-		if _pc == 188:
-			icomms.say(v0, v1, v2)
-			_pc = 217
-			continue
-		elif _pc == 217:
-			await _pog_wait(0.20000000298023224)
-			if not (icomms.is_saying(v0, v1, v2)):
-				_pc = 282
-				continue
-			else:
-				_pc = 217
-				continue
-		elif _pc == 282:
-			return 0
-		else:
-			return 0
+		await _pog_wait(0.20000000298023224)
+		if not (icomms.is_saying(v0, v1, v2)):
+			break
+	return 0
 	return 0
 
 func add_response(v0, v1) -> Variant:
@@ -87,29 +45,14 @@ func add_response(v0, v1) -> Variant:
 
 func ask(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	var _pc: int = 312
+	icomms.ask(v0, v1, v2)
 	while true:
-		if _pc == 312:
-			icomms.ask(v0, v1, v2)
-			_pc = 346
-			continue
-		elif _pc == 346:
-			await _pog_wait(0.20000000298023224)
-			if not (icomms.is_saying(v0, v1, v2)):
-				_pc = 411
-				continue
-			else:
-				_pc = 346
-				continue
-		elif _pc == 411:
-			v3 = icomms.response()
-			icomms.clear_responses()
-			_pc = 454
-			continue
-		elif _pc == 454:
-			return
-		else:
-			return 0
+		await _pog_wait(0.20000000298023224)
+		if not (icomms.is_saying(v0, v1, v2)):
+			break
+	v3 = icomms.response()
+	icomms.clear_responses()
+	return v3
 	return 0
 
 func one_liner(v0, v1, v2) -> Variant:

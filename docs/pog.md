@@ -37,8 +37,10 @@ godot --headless --path game --script res://scripts/pog/portcheck.gd
 ```
 
     114/114 packages compile
-    2783/2878 functions ported cleanly (96.7%)
-    95 functions still contain an unstructured jump, marked in the source
+    2878/2878 functions provably agree with their bytecode (pogverify: 100%,
+               MISSING 0, INVENTED 0)
+    2661/2878 ported as structured code (92.5%)
+    217 fall back to the basic-block dispatch form (irreducible, but exact)
 
 Run it:
 
@@ -116,6 +118,39 @@ goto -- and it took the goto count from 1146 to 135.
 
 Whatever still does not fit a known shape is emitted as a labelled `goto` rather
 than guessed at, so the output never lies about the original.
+
+### The coverage check, and keeping its books honest
+
+Skipping the cursor forward over a switch's case bodies is only sound if every
+body is inlined back at the branch that selects it; when inlining fails the code
+is simply *gone*, and the output looks perfectly clean while missing statements.
+So after structuring, every reachable instruction must have been consumed, or
+the function falls back to the dispatch form (`_lost_code` in pogdec).
+
+When that check landed it ballooned the dispatch count from 223 to 1849 -- not
+because structuring was that broken, but because the books were not: an
+instruction that is consumed *structurally* (a case arm's trailing `Goto` that
+became the fall into the shared exit, the `Return` a `_epilogue` folded into a
+`return` statement, a loop latch that became the `while` itself, the
+jump-over-the-else that became the `if/else`) was emitted but never marked.
+Marking exactly those -- and only on success: `_epilogue`/`_inline` simulate
+speculatively, so their marks merge in only when the result is actually used --
+brought the count to 217 with the check fully intact.
+
+The check also caught one recogniser that really was wrong: a then-branch
+ending in `Goto exit` with a value still on its stack is an early
+`return <value>`, not a jump over an else; treating it as if/else silently
+dropped the value (and any call inside it). The if/else shape now requires the
+then-part to end value-clean, or the join to be the shared exit consuming that
+value.
+
+Two facts about the dispatch form, for when you read one: a block that jumps to
+the shared exit with values on its stack folds the exit in as `return <value>`
+(each arm carries a *different* value, so `_pc = exit` cannot express it), and a
+compare ladder's selector carries across the fall-through edge like any other
+mid-expression value. Both matter for the switch-over-string-table functions
+(`iutilities.FromAllegianceEnum` and friends) that used to lose their string
+literals in dispatch form.
 
 ## The base screens run the original scripts
 

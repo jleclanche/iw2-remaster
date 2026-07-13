@@ -34,91 +34,43 @@ func _link() -> void:
 
 func get_author(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			v1 = null
-			v1 = inifile.string(v0, "Info", "author", "None")
-			_pc = 70
-			continue
-		elif _pc == 70:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = inifile.string(v0, "Info", "author", "None")
+	return _pog_clone(v1)
 	return 0
 
 func get_description(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 80
-	while true:
-		if _pc == 80:
-			v1 = null
-			v1 = inifile.string(v0, "Info", "description", "None")
-			_pc = 150
-			continue
-		elif _pc == 150:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = inifile.string(v0, "Info", "description", "None")
+	return _pog_clone(v1)
 	return 0
 
 func get_date(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 160
-	while true:
-		if _pc == 160:
-			v1 = null
-			v1 = inifile.string(v0, "Info", "date", "None")
-			_pc = 230
-			continue
-		elif _pc == 230:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = inifile.string(v0, "Info", "date", "None")
+	return _pog_clone(v1)
 	return 0
 
 func pog_get_name(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 240
-	while true:
-		if _pc == 240:
-			v1 = null
-			v1 = inifile.string(v0, "Info", "mapname", "None")
-			_pc = 310
-			continue
-		elif _pc == 310:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = inifile.string(v0, "Info", "mapname", "None")
+	return _pog_clone(v1)
 	return 0
 
 func get_map(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 320
-	while true:
-		if _pc == 320:
-			v1 = null
-			v1 = inifile.string(v0, "General", "map", "None")
-			_pc = 390
-			continue
-		elif _pc == 390:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = inifile.string(v0, "General", "map", "None")
+	return _pog_clone(v1)
 	return 0
 
 func get_map_size(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 400
-	while true:
-		if _pc == 400:
-			v1 = inifile.pog_float(v0, "General", "radius", 0.0)
-			_pc = 457
-			continue
-		elif _pc == 457:
-			return
-		else:
-			return 0
+	v1 = inifile.pog_float(v0, "General", "radius", 0.0)
+	return v1
 	return 0
 
 func local_459(v0, v1, v2, v3) -> Variant:
@@ -131,80 +83,34 @@ func local_459(v0, v1, v2, v3) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	var _pc: int = 459
-	while true:
-		if _pc == 459:
-			v4 = inifile.create(v1)
-			v5 = null
-			v5 = inifile.string(v4, "Class", "name", "none")
-			v7 = inifile.numbered_float(v0, "Geography", "geog_x", v3, 0.0)
-			v8 = inifile.numbered_float(v0, "Geography", "geog_y", v3, 0.0)
-			v9 = inifile.numbered_float(v0, "Geography", "geog_z", v3, 0.0)
-			v10 = inifile.numbered_float(v0, "Geography", "geog_yaw", v3, 0.0)
-			v11 = inifile.numbered_float(v0, "Geography", "geog_pitch", v3, 0.0)
-			v12 = inifile.numbered_float(v0, "Geography", "geog_roll", v3, 0.0)
-			if _pog_eq(v5, "icCargoPod") or _pog_eq(v5, "icShip"):
-				_pc = 850
-				continue
-			else:
-				_pc = 922
-				continue
-		elif _pc == 850:
-			v6 = iship.create(v1, inifile.numbered_string(v0, "Geography", "name", v3, "none"))
-			_pc = 1048
-			continue
-		elif _pc == 922:
-			v6 = sim.create(v1, inifile.numbered_string(v0, "Geography", "name", v3, "none"))
-			if isim.type(v6) == 4:
-				_pc = 1015
-				continue
-			else:
-				_pc = 1048
-				continue
-		elif _pc == 1015:
+	v4 = inifile.create(v1)
+	v5 = null
+	v5 = inifile.string(v4, "Class", "name", "none")
+	v7 = inifile.numbered_float(v0, "Geography", "geog_x", v3, 0.0)
+	v8 = inifile.numbered_float(v0, "Geography", "geog_y", v3, 0.0)
+	v9 = inifile.numbered_float(v0, "Geography", "geog_z", v3, 0.0)
+	v10 = inifile.numbered_float(v0, "Geography", "geog_yaw", v3, 0.0)
+	v11 = inifile.numbered_float(v0, "Geography", "geog_pitch", v3, 0.0)
+	v12 = inifile.numbered_float(v0, "Geography", "geog_roll", v3, 0.0)
+	if _pog_eq(v5, "icCargoPod") or _pog_eq(v5, "icShip"):
+		v6 = iship.create(v1, inifile.numbered_string(v0, "Geography", "name", v3, "none"))
+	else:
+		v6 = sim.create(v1, inifile.numbered_string(v0, "Geography", "name", v3, "none"))
+		if isim.type(v6) == 4:
 			isim.set_sensor_visibility(isim.cast(v6), 0)
-			_pc = 1048
-			continue
-		elif _pc == 1048:
-			imultiplay.set_transmit_flag(v6, 0)
-			imultiplay.set_update_flag(v6, 0)
-			object.add_bool_property(v6, "poo", 1)
-			isim.set_indestructable(isim.cast(v6), 1)
-			sim.set_cullable(v6, 0)
-			sim.place_relative_to_inside(v6, v2, v7, -(v8), v9)
-			sim.set_orientation_euler(v6, v10, v11, v12)
-			if _pog_eq(string.left(object.string_property(v6, "name"), 5), "Alpha"):
-				_pc = 1296
-				continue
-			else:
-				_pc = 1368
-				continue
-		elif _pc == 1296:
-			isim.set_faction(isim.cast(v6), ifaction.find(text.field("mp_flag_team_a", 0)))
-			_pc = 1489
-			continue
-		elif _pc == 1368:
-			if _pog_eq(string.left(object.string_property(v6, "name"), 4), "Beta"):
-				_pc = 1422
-				continue
-			else:
-				_pc = 1489
-				continue
-		elif _pc == 1422:
+	imultiplay.set_transmit_flag(v6, 0)
+	imultiplay.set_update_flag(v6, 0)
+	object.add_bool_property(v6, "poo", 1)
+	isim.set_indestructable(isim.cast(v6), 1)
+	sim.set_cullable(v6, 0)
+	sim.place_relative_to_inside(v6, v2, v7, -(v8), v9)
+	sim.set_orientation_euler(v6, v10, v11, v12)
+	if _pog_eq(string.left(object.string_property(v6, "name"), 5), "Alpha"):
+		isim.set_faction(isim.cast(v6), ifaction.find(text.field("mp_flag_team_a", 0)))
+	else:
+		if _pog_eq(string.left(object.string_property(v6, "name"), 4), "Beta"):
 			isim.set_faction(isim.cast(v6), ifaction.find(text.field("mp_flag_team_b", 0)))
-			_pc = 1489
-			continue
-		elif _pc == 1489:
-			_pc = 1528
-			continue
-		elif _pc == 1499:
-			inifile.destroy(v4)
-			_pc = 1528
-			continue
-		elif _pc == 1528:
-			return
-		else:
-			return 0
+	return v6
 	return 0
 
 func get_geography(v0, v1) -> Variant:
@@ -217,67 +123,28 @@ func get_geography(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 1537
-	while true:
-		if _pc == 1537:
-			v2 = group.create()
-			v3 = group.create()
-			v4 = group.create()
-			v5 = group.create()
-			v8 = ifaction.find(text.field("mp_flag_team_a", 0))
-			v9 = ifaction.find(text.field("mp_flag_team_b", 0))
-			v6 = await iutilities.find_number_of_i_n_i_entries(v0, "Geography", "resource")
-			v7 = 0
-			_pc = 1744
-			continue
-		elif _pc == 1744:
-			if v7 < v6:
-				_pc = 1760
-				continue
-			else:
-				_pc = 2021
-				continue
-		elif _pc == 1760:
-			v10 = await local_459(v0, inifile.numbered_string(v0, "Geography", "resource", v7, "none"), v1, v7)
-			if _pog_eq(isim.faction(isim.cast(v10)), v8):
-				_pc = 1879
-				continue
-			else:
-				_pc = 1908
-				continue
-		elif _pc == 1879:
+	v2 = group.create()
+	v3 = group.create()
+	v4 = group.create()
+	v5 = group.create()
+	v8 = ifaction.find(text.field("mp_flag_team_a", 0))
+	v9 = ifaction.find(text.field("mp_flag_team_b", 0))
+	v6 = await iutilities.find_number_of_i_n_i_entries(v0, "Geography", "resource")
+	v7 = 0
+	while v7 < v6:
+		v10 = await local_459(v0, inifile.numbered_string(v0, "Geography", "resource", v7, "none"), v1, v7)
+		if _pog_eq(isim.faction(isim.cast(v10)), v8):
 			group.add_sim(v3, v10)
-			_pc = 2003
-			continue
-		elif _pc == 1908:
-			if _pog_eq(isim.faction(isim.cast(v10)), v9):
-				_pc = 1950
-				continue
-			else:
-				_pc = 1979
-				continue
-		elif _pc == 1950:
-			group.add_sim(v4, v10)
-			_pc = 2003
-			continue
-		elif _pc == 1979:
-			group.add_sim(v5, v10)
-			_pc = 2003
-			continue
-		elif _pc == 2003:
-			v7 = v7 + 1
-			_pc = 1744
-			continue
-		elif _pc == 2021:
-			group.add_group(v2, v3)
-			group.add_group(v2, v4)
-			group.add_group(v2, v5)
-			_pc = 2103
-			continue
-		elif _pc == 2103:
-			return
 		else:
-			return 0
+			if _pog_eq(isim.faction(isim.cast(v10)), v9):
+				group.add_sim(v4, v10)
+			else:
+				group.add_sim(v5, v10)
+		v7 = v7 + 1
+	group.add_group(v2, v3)
+	group.add_group(v2, v4)
+	group.add_group(v2, v5)
+	return v2
 	return 0
 
 func get_spawn_points(v0, v1) -> Variant:
@@ -290,85 +157,41 @@ func get_spawn_points(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 2105
-	while true:
-		if _pc == 2105:
-			v2 = group.create()
-			v3 = group.create()
-			v4 = group.create()
-			v5 = group.create()
-			v7 = await iutilities.find_number_of_i_n_i_entries(v0, "Spawn", "alpha_spawn_x")
-			v8 = await iutilities.find_number_of_i_n_i_entries(v0, "Spawn", "beta_spawn_x")
-			v9 = await iutilities.find_number_of_i_n_i_entries(v0, "Spawn", "hero_spawn_x")
-			v10 = 0
-			_pc = 2302
-			continue
-		elif _pc == 2302:
-			if v10 < v7:
-				_pc = 2318
-				continue
-			else:
-				_pc = 2686
-				continue
-		elif _pc == 2318:
-			v6 = await iutilities.create_waypoint_relative_to(v1, inifile.numbered_float(v0, "Spawn", "alpha_spawn_x", v10, 0.0), -(inifile.numbered_float(v0, "Spawn", "alpha_spawn_y", v10, 0.0)), inifile.numbered_float(v0, "Spawn", "alpha_spawn_z", v10, 0.0))
-			imultiplay.set_transmit_flag(v6, 0)
-			imultiplay.set_update_flag(v6, 0)
-			sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "alpha_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "alpha_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "alpha_geog_roll", v10, 0.0))
-			group.add_sim(v3, v6)
-			v10 = v10 + 1
-			_pc = 2302
-			continue
-		elif _pc == 2686:
-			v10 = 0
-			_pc = 2693
-			continue
-		elif _pc == 2693:
-			if v10 < v8:
-				_pc = 2709
-				continue
-			else:
-				_pc = 3077
-				continue
-		elif _pc == 2709:
-			v6 = await iutilities.create_waypoint_relative_to(v1, inifile.numbered_float(v0, "Spawn", "beta_spawn_x", v10, 0.0), -(inifile.numbered_float(v0, "Spawn", "beta_spawn_y", v10, 0.0)), inifile.numbered_float(v0, "Spawn", "beta_spawn_z", v10, 0.0))
-			imultiplay.set_transmit_flag(v6, 0)
-			imultiplay.set_update_flag(v6, 0)
-			sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "beta_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "beta_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "beta_geog_roll", v10, 0.0))
-			group.add_sim(v4, v6)
-			v10 = v10 + 1
-			_pc = 2693
-			continue
-		elif _pc == 3077:
-			v10 = 0
-			_pc = 3084
-			continue
-		elif _pc == 3084:
-			if v10 < v9:
-				_pc = 3100
-				continue
-			else:
-				_pc = 3468
-				continue
-		elif _pc == 3100:
-			v6 = await iutilities.create_waypoint_relative_to(v1, inifile.numbered_float(v0, "Spawn", "hero_spawn_x", v10, 0.0), -(inifile.numbered_float(v0, "Spawn", "hero_spawn_y", v10, 0.0)), inifile.numbered_float(v0, "Spawn", "hero_spawn_z", v10, 0.0))
-			imultiplay.set_transmit_flag(v6, 0)
-			imultiplay.set_update_flag(v6, 0)
-			sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "hero_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "hero_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "hero_geog_roll", v10, 0.0))
-			group.add_sim(v5, v6)
-			v10 = v10 + 1
-			_pc = 3084
-			continue
-		elif _pc == 3468:
-			group.add_group(v2, v3)
-			group.add_group(v2, v4)
-			group.add_group(v2, v5)
-			_pc = 3550
-			continue
-		elif _pc == 3550:
-			return
-		else:
-			return 0
+	v2 = group.create()
+	v3 = group.create()
+	v4 = group.create()
+	v5 = group.create()
+	v7 = await iutilities.find_number_of_i_n_i_entries(v0, "Spawn", "alpha_spawn_x")
+	v8 = await iutilities.find_number_of_i_n_i_entries(v0, "Spawn", "beta_spawn_x")
+	v9 = await iutilities.find_number_of_i_n_i_entries(v0, "Spawn", "hero_spawn_x")
+	v10 = 0
+	while v10 < v7:
+		v6 = await iutilities.create_waypoint_relative_to(v1, inifile.numbered_float(v0, "Spawn", "alpha_spawn_x", v10, 0.0), -(inifile.numbered_float(v0, "Spawn", "alpha_spawn_y", v10, 0.0)), inifile.numbered_float(v0, "Spawn", "alpha_spawn_z", v10, 0.0))
+		imultiplay.set_transmit_flag(v6, 0)
+		imultiplay.set_update_flag(v6, 0)
+		sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "alpha_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "alpha_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "alpha_geog_roll", v10, 0.0))
+		group.add_sim(v3, v6)
+		v10 = v10 + 1
+	v10 = 0
+	while v10 < v8:
+		v6 = await iutilities.create_waypoint_relative_to(v1, inifile.numbered_float(v0, "Spawn", "beta_spawn_x", v10, 0.0), -(inifile.numbered_float(v0, "Spawn", "beta_spawn_y", v10, 0.0)), inifile.numbered_float(v0, "Spawn", "beta_spawn_z", v10, 0.0))
+		imultiplay.set_transmit_flag(v6, 0)
+		imultiplay.set_update_flag(v6, 0)
+		sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "beta_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "beta_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "beta_geog_roll", v10, 0.0))
+		group.add_sim(v4, v6)
+		v10 = v10 + 1
+	v10 = 0
+	while v10 < v9:
+		v6 = await iutilities.create_waypoint_relative_to(v1, inifile.numbered_float(v0, "Spawn", "hero_spawn_x", v10, 0.0), -(inifile.numbered_float(v0, "Spawn", "hero_spawn_y", v10, 0.0)), inifile.numbered_float(v0, "Spawn", "hero_spawn_z", v10, 0.0))
+		imultiplay.set_transmit_flag(v6, 0)
+		imultiplay.set_update_flag(v6, 0)
+		sim.set_orientation_euler(v6, inifile.numbered_float(v0, "Spawn", "hero_geog_yaw", v10, 0.0), inifile.numbered_float(v0, "Spawn", "hero_geog_pitch", v10, 0.0), inifile.numbered_float(v0, "Spawn", "hero_geog_roll", v10, 0.0))
+		group.add_sim(v5, v6)
+		v10 = v10 + 1
+	group.add_group(v2, v3)
+	group.add_group(v2, v4)
+	group.add_group(v2, v5)
+	return v2
 	return 0
 
 func pog_load(v0, v1) -> Variant:
@@ -381,41 +204,25 @@ func pog_load(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 3552
-	while true:
-		if _pc == 3552:
-			v2 = null
-			v3 = null
-			v4 = null
-			v5 = null
-			v6 = null
-			v10 = inifile.create(v0)
-			if _pog_is_null(v10):
-				_pc = 3649
-				continue
-			else:
-				_pc = 3676
-				continue
-		elif _pc == 3649:
-			debug.error("Unable to load map ini")
-			_pc = 3913
-			continue
-		elif _pc == 3676:
-			v2 = await get_author(v10)
-			v3 = await get_description(v10)
-			v4 = await get_date(v10)
-			v5 = await pog_get_name(v10)
-			v6 = await get_map(v10)
-			v7 = await get_map_size(v10)
-			v8 = await get_geography(v10, v1)
-			v9 = await get_spawn_points(v10, v1)
-			inifile.destroy(v10)
-			_pc = 3913
-			continue
-		elif _pc == 3913:
-			return
-		else:
-			return 0
+	v2 = null
+	v3 = null
+	v4 = null
+	v5 = null
+	v6 = null
+	v10 = inifile.create(v0)
+	if _pog_is_null(v10):
+		debug.error("Unable to load map ini")
+		return 0
+	v2 = await get_author(v10)
+	v3 = await get_description(v10)
+	v4 = await get_date(v10)
+	v5 = await pog_get_name(v10)
+	v6 = await get_map(v10)
+	v7 = await get_map_size(v10)
+	v8 = await get_geography(v10, v1)
+	v9 = await get_spawn_points(v10, v1)
+	inifile.destroy(v10)
+	return 1
 	return 0
 
 func local_3950(v0) -> Variant:

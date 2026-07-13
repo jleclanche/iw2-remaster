@@ -89,42 +89,14 @@ func stub() -> Variant:
 
 func local_258() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 258
-	while true:
-		if _pc == 258:
-			_pc = 263
-			continue
-		elif _pc == 263:
-			if icomms.is_in_conversation():
-				_pc = 281
-				continue
-			else:
-				_pc = 318
-				continue
-		elif _pc == 281:
-			await _pog_wait(0.5)
-			_pc = 263
-			continue
-		elif _pc == 318:
-			if not (await iutilities.skip_mission("Nemesis?")):
-				_pc = 344
-				continue
-			else:
-				_pc = 381
-				continue
-		elif _pc == 344:
-			v0 = _pog_spawn(mission_handler.bind())
-			_pog_detach(v0)
-			_pc = 400
-			continue
-		elif _pc == 381:
-			await stub()
-			_pc = 400
-			continue
-		elif _pc == 400:
-			return
-		else:
-			return 0
+	while icomms.is_in_conversation():
+		await _pog_wait(0.5)
+	if not (await iutilities.skip_mission("Nemesis?")):
+		v0 = _pog_spawn(mission_handler.bind())
+		_pog_detach(v0)
+	else:
+		await stub()
+	return
 	return 0
 
 func local_402(v0) -> Variant:
@@ -132,216 +104,114 @@ func local_402(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 402
-	while true:
-		if _pc == 402:
-			v1 = group.create()
-			v3 = 12
-			v4 = 0
-			_pc = 441
-			continue
-		elif _pc == 441:
-			if v4 < v3:
-				_pc = 457
-				continue
-			else:
-				_pc = 599
-				continue
-		elif _pc == 457:
-			v2 = sim.create("ini:/sims/ships/utility/megapod", string.join("a0_m60_name_lockup + +", string.from_int(v4 + 1)))
-			group.add_sim(v1, v2)
-			isim.set_sensor_visibility(isim.cast(v2), 0)
-			v4 = v4 + 1
-			_pc = 441
-			continue
-		elif _pc == 599:
-			sim.place_relative_to(group.leader(v1), v0, 9000.0, 0.0, 0.0)
-			await iformation.parade(v1, 100.0, 1)
-			object.set_string_property(group.nth_sim(v1, 4), "name", "a0_m60_name_felix")
-			isim.set_sensor_visibility(isim.cast(group.nth_sim(v1, 4)), 1)
-			isim.set_indestructable(isim.cast(group.nth_sim(v1, 4)), 1)
-			_pc = 829
-			continue
-		elif _pc == 829:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v3 = 12
+	v4 = 0
+	while v4 < v3:
+		v2 = sim.create("ini:/sims/ships/utility/megapod", string.join("a0_m60_name_lockup + +", string.from_int(v4 + 1)))
+		group.add_sim(v1, v2)
+		isim.set_sensor_visibility(isim.cast(v2), 0)
+		v4 = v4 + 1
+	sim.place_relative_to(group.leader(v1), v0, 9000.0, 0.0, 0.0)
+	await iformation.parade(v1, 100.0, 1)
+	object.set_string_property(group.nth_sim(v1, 4), "name", "a0_m60_name_felix")
+	isim.set_sensor_visibility(isim.cast(group.nth_sim(v1, 4)), 1)
+	isim.set_indestructable(isim.cast(group.nth_sim(v1, 4)), 1)
+	return v1
 	return 0
 
 func local_831(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 831
+	v3 = 0
 	while true:
-		if _pc == 831:
-			v3 = 0
-			_pc = 848
-			continue
-		elif _pc == 848:
-			await _pog_frame()
-			if _pog_every(849, 2.0):
-				_pc = 862
-				continue
-			else:
-				_pc = 1207
-				continue
-		elif _pc == 862:
-			if sim.distance_between(v1, v0) <= 100000.0 and not (v3):
-				_pc = 903
-				continue
-			else:
-				_pc = 965
-				continue
-		elif _pc == 903:
+		await _pog_wait(2)
+		if sim.distance_between(v1, v0) <= 100000.0 and not (v3):
 			v3 = 1
 			v4 = await local_402(v1)
 			v5 = group.nth_sim(v4, 4)
-			_pc = 1207
-			continue
-		elif _pc == 965:
-			if v3:
-				_pc = 975
+		else:
+			if not (v3):
 				continue
-			else:
-				_pc = 1207
-				continue
-		elif _pc == 975:
 			if isim.is_docked_to(isim.cast(v0), isim.cast(v5)):
-				_pc = 1029
+				state.set_progress(v2, 1)
+				await iconversation.one_liner(0, "name_young_cal", "a0_m60_dialogue_young_cal_right_ill")
+				await _pog_wait(9.0)
+				iobjectives.set_state("a0_m60_objectives_recover", 1)
+				group.destroy(v4, 0)
+				return
+			if await iutilities.player_in_range(v1):
 				continue
-			else:
-				_pc = 1156
-				continue
-		elif _pc == 1029:
-			state.set_progress(v2, 1)
-			await iconversation.one_liner(0, "name_young_cal", "a0_m60_dialogue_young_cal_right_ill")
-			await _pog_wait(9.0)
-			iobjectives.set_state("a0_m60_objectives_recover", 1)
-			group.destroy(v4, 0)
-			_pc = 1213
-			continue
-		elif _pc == 1156:
-			if not (await iutilities.player_in_range(v1)):
-				_pc = 1180
-				continue
-			else:
-				_pc = 1207
-				continue
-		elif _pc == 1180:
 			v3 = 0
 			group.destroy(v4, 1)
-			_pc = 1207
-			continue
-		elif _pc == 1207:
-			_pc = 848
-			continue
-		elif _pc == 1212:
-			_pc = 1213
-			continue
-		elif _pc == 1213:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_1215() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1215
-	while true:
-		if _pc == 1215:
-			v0 = group.create()
-			v2 = ifaction.find("MAAS Corporation")
-			v1 = iship.create("ini:/sims/ships/corporate/maas_cutter", "a0_m60_name_maas")
-			await ipilotsetup.generic_cargo_pod(v1)
-			isim.set_faction(v1, v2)
-			object.set_bool_property(v1, "ignore_speed_limit", 1)
-			isim.set_indestructable(v1, 1)
-			group.add_sim(v0, v1)
-			v1 = iship.create("ini:/sims/ships/corporate/yacht_mk2", "a0_m60_name_eye")
-			await ipilotsetup.generic_cargo_pod(v1)
-			iship.set_pilot_skill_level(v1, 0.699999988079071)
-			isim.set_faction(v1, v2)
-			object.set_bool_property(v1, "ignore_speed_limit", 1)
-			group.add_sim(v0, v1)
-			v1 = iship.create("ini:/sims/ships/corporate/yacht_mk2", "a0_m60_name_bruiser")
-			await ipilotsetup.generic_cargo_pod(v1)
-			iship.set_pilot_skill_level(v1, 0.699999988079071)
-			isim.set_faction(v1, v2)
-			object.set_bool_property(v1, "ignore_speed_limit", 1)
-			group.add_sim(v0, v1)
-			_pc = 1721
-			continue
-		elif _pc == 1721:
-			return
-		else:
-			return 0
+	v0 = group.create()
+	v2 = ifaction.find("MAAS Corporation")
+	v1 = iship.create("ini:/sims/ships/corporate/maas_cutter", "a0_m60_name_maas")
+	await ipilotsetup.generic_cargo_pod(v1)
+	isim.set_faction(v1, v2)
+	object.set_bool_property(v1, "ignore_speed_limit", 1)
+	isim.set_indestructable(v1, 1)
+	group.add_sim(v0, v1)
+	v1 = iship.create("ini:/sims/ships/corporate/yacht_mk2", "a0_m60_name_eye")
+	await ipilotsetup.generic_cargo_pod(v1)
+	iship.set_pilot_skill_level(v1, 0.699999988079071)
+	isim.set_faction(v1, v2)
+	object.set_bool_property(v1, "ignore_speed_limit", 1)
+	group.add_sim(v0, v1)
+	v1 = iship.create("ini:/sims/ships/corporate/yacht_mk2", "a0_m60_name_bruiser")
+	await ipilotsetup.generic_cargo_pod(v1)
+	iship.set_pilot_skill_level(v1, 0.699999988079071)
+	isim.set_faction(v1, v2)
+	object.set_bool_property(v1, "ignore_speed_limit", 1)
+	group.add_sim(v0, v1)
+	return v0
 	return 0
 
 func local_1723() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1723
-	while true:
-		if _pc == 1723:
-			v0 = group.create()
-			v2 = ifaction.find("Police")
-			v1 = iship.create("ini:/sims/ships/cops/interceptor", await ishipcreation.ship_name("Police", -1))
-			await ipilotsetup.generic_police(v1)
-			isim.set_faction(v1, v2)
-			object.set_int_property(v1, "ignore_speed_limit", 1)
-			group.add_sim(v0, v1)
-			v1 = iship.create("ini:/sims/ships/cops/interceptor", await ishipcreation.ship_name("Police", -1))
-			await ipilotsetup.generic_police(v1)
-			isim.set_faction(v1, v2)
-			object.set_int_property(v1, "ignore_speed_limit", 1)
-			group.add_sim(v0, v1)
-			v1 = iship.create("ini:/sims/ships/cops/interceptor", await ishipcreation.ship_name("Police", -1))
-			await ipilotsetup.generic_police(v1)
-			isim.set_faction(v1, v2)
-			object.set_int_property(v1, "ignore_speed_limit", 1)
-			group.add_sim(v0, v1)
-			_pc = 2209
-			continue
-		elif _pc == 2209:
-			return
-		else:
-			return 0
+	v0 = group.create()
+	v2 = ifaction.find("Police")
+	v1 = iship.create("ini:/sims/ships/cops/interceptor", await ishipcreation.ship_name("Police", -1))
+	await ipilotsetup.generic_police(v1)
+	isim.set_faction(v1, v2)
+	object.set_int_property(v1, "ignore_speed_limit", 1)
+	group.add_sim(v0, v1)
+	v1 = iship.create("ini:/sims/ships/cops/interceptor", await ishipcreation.ship_name("Police", -1))
+	await ipilotsetup.generic_police(v1)
+	isim.set_faction(v1, v2)
+	object.set_int_property(v1, "ignore_speed_limit", 1)
+	group.add_sim(v0, v1)
+	v1 = iship.create("ini:/sims/ships/cops/interceptor", await ishipcreation.ship_name("Police", -1))
+	await ipilotsetup.generic_police(v1)
+	isim.set_faction(v1, v2)
+	object.set_int_property(v1, "ignore_speed_limit", 1)
+	group.add_sim(v0, v1)
+	return v0
 	return 0
 
 func local_2211(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 2211
-	while true:
-		if _pc == 2211:
-			v4 = 0
-			v6 = await local_1723()
-			iship.disrupt_l_d_s_drive(iship.cast(v0), 30.0)
-			if await icutsceneutilities.handle_abort(_pog_spawn(local_3303.bind(v5, v6, v0, v1))):
-				_pc = 2330
-				continue
-			else:
-				_pc = 2345
-				continue
-		elif _pc == 2330:
-			igame.enable_blackout(1)
-			_pc = 2345
-			continue
-		elif _pc == 2345:
-			state.set_progress(v3, 8)
-			group.destroy(v2, 0)
-			group.destroy(v6, 0)
-			_pc = 2411
-			continue
-		elif _pc == 2411:
-			return 0
-		else:
-			return 0
+	v4 = 0
+	v6 = await local_1723()
+	iship.disrupt_l_d_s_drive(iship.cast(v0), 30.0)
+	if await icutsceneutilities.handle_abort(_pog_spawn(local_3303.bind(v5, v6, v0, v1))):
+		igame.enable_blackout(1)
+	state.set_progress(v3, 8)
+	group.destroy(v2, 0)
+	group.destroy(v6, 0)
+	return 0
 	return 0
 
 func local_2414(v0, v1) -> Variant:
@@ -422,7 +292,7 @@ func local_2414(v0, v1) -> Variant:
 				_pc = 3097
 				continue
 		elif _pc == 3228:
-			if not _pog_is_null(2):
+			if 2 != v7:
 				_pc = 3237
 				continue
 			else:
@@ -509,106 +379,50 @@ func mission_handler() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 4821
+	v0 = 0
+	v1 = imapentity.find_by_name("Hoffer's Gap")
+	v2 = iship.find_player_ship()
+	v5 = self
+	text.add("csv:/text/act_0/act0_mission60")
+	text.add("csv:/text/act_0/act0_mission60_addendum")
+	v3 = state.find(v5)
+	if not (v3):
+		v3 = state.create(v5, 0)
+	await ibacktobase.inhibit()
+	await local_17(v3)
+	await imissiontracker.add_mission(self, 0, 60)
+	await iconversation.one_liner(0, "name_clay", "a0_m60_dialogue_clay_ok_kid")
+	iobjectives.add("a0_m60_objectives_recover")
+	_pog_spawn(local_831.bind(v2, v1, v3))
+	isim.set_sensor_visibility(isim.cast(v1), 1)
 	while true:
-		if _pc == 4821:
-			v0 = 0
-			v1 = imapentity.find_by_name("Hoffer's Gap")
-			v2 = iship.find_player_ship()
-			v5 = self
-			text.add("csv:/text/act_0/act0_mission60")
-			text.add("csv:/text/act_0/act0_mission60_addendum")
-			v3 = state.find(v5)
-			if not (v3):
-				_pc = 4974
-				continue
-			else:
-				_pc = 4999
-				continue
-		elif _pc == 4974:
-			v3 = state.create(v5, 0)
-			_pc = 4999
-			continue
-		elif _pc == 4999:
-			await ibacktobase.inhibit()
-			await local_17(v3)
-			await imissiontracker.add_mission(self, 0, 60)
-			await iconversation.one_liner(0, "name_clay", "a0_m60_dialogue_clay_ok_kid")
-			iobjectives.add("a0_m60_objectives_recover")
-			_pog_spawn(local_831.bind(v2, v1, v3))
-			isim.set_sensor_visibility(isim.cast(v1), 1)
-			_pc = 5178
-			continue
-		elif _pc == 5178:
-			await _pog_frame()
-			if _pog_every(5179, 2.0):
-				_pc = 5192
-				continue
-			else:
-				_pc = 5828
-				continue
-		elif _pc == 5192:
-			if state.progress(v3) == 1 and not (v0):
-				_pc = 5224
-				continue
-			else:
-				_pc = 5408
-				continue
-		elif _pc == 5224:
+		await _pog_wait(2)
+		if state.progress(v3) == 1 and not (v0):
 			v0 = 1
 			await _pog_wait(9.0)
 			await icutsceneutilities.handle_abort(_pog_spawn(local_2414.bind(v2, v3)))
 			iship.undock_self(v2)
 			await local_2211(v2, iship.cast(sim.find_by_name("a0_m60_name_maas")), sim.group(sim.find_by_name("a0_m60_name_maas")), v3)
-			_pc = 5408
+		if not (state.progress(v3) == 8 or state.progress(v3) == 100):
 			continue
-		elif _pc == 5408:
-			if state.progress(v3) == 8 or state.progress(v3) == 100:
-				_pc = 5456
-				continue
-			else:
-				_pc = 5828
-				continue
-		elif _pc == 5456:
-			if state.progress(v3) != 100:
-				_pc = 5482
-				continue
-			else:
-				_pc = 5556
-				continue
-		elif _pc == 5482:
+		if state.progress(v3) != 100:
 			global.set_bool("g_act0_nemesis_complete", 1)
 			iinventory.remove_storm_petrel()
 			isim.set_standard_sensor_visibility(isim.cast(v1), 1)
-			_pc = 5668
-			continue
-		elif _pc == 5556:
+		else:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_258.bind()))
 			await local_160()
 			isim.set_sensor_visibility(isim.cast(v1), 0)
 			await ibacktobase.allow()
-			_pc = 5668
-			continue
-		elif _pc == 5668:
-			await iutilities.remove_mission_restart()
-			state.destroy(self)
-			await imissiontracker.remove_mission(self)
-			text.remove("csv:/text/act_0/act0_mission60")
-			text.remove("csv:/text/act_0/act0_mission60_addendum")
-			global.destroy("g_running_already")
-			global.set_bool("g_skip_locked", 0)
-			_pc = 5834
-			continue
-		elif _pc == 5828:
-			_pc = 5178
-			continue
-		elif _pc == 5833:
-			_pc = 5834
-			continue
-		elif _pc == 5834:
-			return
-		else:
-			return 0
+		await iutilities.remove_mission_restart()
+		state.destroy(self)
+		await imissiontracker.remove_mission(self)
+		text.remove("csv:/text/act_0/act0_mission60")
+		text.remove("csv:/text/act_0/act0_mission60_addendum")
+		global.destroy("g_running_already")
+		global.set_bool("g_skip_locked", 0)
+		return
+	return
 	return 0
 

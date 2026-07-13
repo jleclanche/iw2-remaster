@@ -22,278 +22,99 @@ func _link() -> void:
 
 func local_0(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 0
+	v1 = iship.cast(global.handle("g_player_ship_handle"))
 	while true:
-		if _pc == 0:
-			v1 = iship.cast(global.handle("g_player_ship_handle"))
-			_pc = 49
-			continue
-		elif _pc == 49:
-			await _pog_frame()
-			if _pog_every(50, 4.0):
-				_pc = 63
-				continue
-			else:
-				_pc = 306
-				continue
-		elif _pc == 63:
-			if object.float_property(v1, "hit_points") <= 0.0:
-				_pc = 98
-				continue
-			else:
-				_pc = 142
-				continue
-		elif _pc == 98:
+		await _pog_wait(4)
+		if object.float_property(v1, "hit_points") <= 0.0:
 			iship.remove_pilot(v0)
 			iship.install_player_pilot(v1)
-			_pc = 312
-			continue
-		elif _pc == 142:
-			if not (global.exists("g_player_ship_handle")):
-				_pc = 167
+			return
+		if not (global.exists("g_player_ship_handle")):
+			return
+		else:
+			if object.float_property(v0, "hit_points") > 0.0:
 				continue
-			else:
-				_pc = 178
-				continue
-		elif _pc == 167:
-			_pc = 312
-			continue
-		elif _pc == 172:
-			_pc = 306
-			continue
-		elif _pc == 178:
-			if object.float_property(v0, "hit_points") <= 0.0:
-				_pc = 213
-				continue
-			else:
-				_pc = 306
-				continue
-		elif _pc == 213:
 			iship.remove_pilot(v0)
 			iship.install_player_pilot(v1)
 			global.destroy("g_player_ship_handle")
 			icomms.shout(0, "Generic", "Remote Link Terminated....")
-			_pc = 312
-			continue
-		elif _pc == 306:
-			_pc = 49
-			continue
-		elif _pc == 311:
-			_pc = 312
-			continue
-		elif _pc == 312:
 			return
-		else:
-			return 0
+	return
 	return 0
 
 func install() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 314
-	while true:
-		if _pc == 314:
-			if not (global.exists("g_player_ship_handle")):
-				_pc = 344
-				continue
-			else:
-				_pc = 1041
-				continue
-		elif _pc == 344:
-			v0 = iship.find_player_ship()
-			v2 = iship.current_target(v0)
-			_pc = 476
-			continue
-		elif _pc == 393:
+	if not (global.exists("g_player_ship_handle")):
+		v0 = iship.find_player_ship()
+		v2 = iship.current_target(v0)
+		if PogRuntime.TRACE:
 			debug.print_string(string.join("iRemotePilot.Install: attempting to link to vessel ", object.string_property(v2, "name")))
 			debug.print_string("\n")
-			_pc = 476
-			continue
-		elif _pc == 476:
-			if object.property_exists(v2, "remote_connection_available"):
-				_pc = 505
-				continue
-			else:
-				_pc = 883
-				continue
-		elif _pc == 505:
+		if object.property_exists(v2, "remote_connection_available"):
 			if iship.cast(v2):
-				_pc = 528
-				continue
+				sim.set_cullable(v0, 0)
+				global.create_handle("g_player_ship_handle", 1, v0)
+				global.create_handle("g_remote_vessel_handle", 1, v2)
+				iship.remove_pilot(v0)
+				iship.remove_pilot(iship.cast(v2))
+				iship.install_player_pilot(iship.cast(v2))
+				icomms.shout(0, "Generic", string.join("Remote Linked To: ", object.string_property(v2, "name")))
 			else:
-				_pc = 758
-				continue
-		elif _pc == 528:
-			sim.set_cullable(v0, 0)
-			global.create_handle("g_player_ship_handle", 1, v0)
-			global.create_handle("g_remote_vessel_handle", 1, v2)
-			iship.remove_pilot(v0)
-			iship.remove_pilot(iship.cast(v2))
-			iship.install_player_pilot(iship.cast(v2))
-			icomms.shout(0, "Generic", string.join("Remote Linked To: ", object.string_property(v2, "name")))
-			_pc = 878
-			continue
-		elif _pc == 758:
-			icomms.shout(0, "Generic", "Unable to make remote connection....")
-			_pc = 873
-			continue
-		elif _pc == 791:
-			debug.print_string("iRemotePilot.Install: Invalid ship set as remote enabled - THIS IS PROBABLY A BUG!!\n")
-			debug.print_string("iRemotePilot.Install: Vessels handle was ")
-			debug.print_handle(v2)
-			debug.print_string("\n")
-			_pc = 873
-			continue
-		elif _pc == 873:
-			_pc = 1196
-			continue
-		elif _pc == 878:
-			_pc = 1004
-			continue
-		elif _pc == 883:
-			_pc = 971
-			continue
-		elif _pc == 888:
-			debug.print_string(string.join("iRemotePilot.Install: Unable to find remote enable property in ", object.string_property(v2, "name")))
-			debug.print_string("\n")
-			_pc = 971
-			continue
-		elif _pc == 971:
-			icomms.shout(0, "Generic", "Unable to make remote connection....")
-			_pc = 1196
-			continue
-		elif _pc == 1004:
-			_pog_spawn(local_0.bind(iship.cast(v2)))
-			_pc = 1196
-			continue
-		elif _pc == 1041:
-			v1 = iship.find_player_ship()
-			iship.remove_pilot(v1)
-			iship.install_player_pilot(iship.cast(global.handle("g_player_ship_handle")))
-			global.destroy("g_player_ship_handle")
-			global.destroy("g_remote_vessel_handle")
-			icomms.shout(0, "Generic", "Remote Link Terminated....")
-			_pc = 1196
-			continue
-		elif _pc == 1196:
-			return 0
+				icomms.shout(0, "Generic", "Unable to make remote connection....")
+				if PogRuntime.TRACE:
+					debug.print_string("iRemotePilot.Install: Invalid ship set as remote enabled - THIS IS PROBABLY A BUG!!\n")
+					debug.print_string("iRemotePilot.Install: Vessels handle was ")
+					debug.print_handle(v2)
+					debug.print_string("\n")
+				return 0
 		else:
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iRemotePilot.Install: Unable to find remote enable property in ", object.string_property(v2, "name")))
+				debug.print_string("\n")
+			icomms.shout(0, "Generic", "Unable to make remote connection....")
 			return 0
+		_pog_spawn(local_0.bind(iship.cast(v2)))
+	else:
+		v1 = iship.find_player_ship()
+		iship.remove_pilot(v1)
+		iship.install_player_pilot(iship.cast(global.handle("g_player_ship_handle")))
+		global.destroy("g_player_ship_handle")
+		global.destroy("g_remote_vessel_handle")
+		icomms.shout(0, "Generic", "Remote Link Terminated....")
+	return 0
 	return 0
 
 func enable_remote_connection(v0, v1) -> Variant:
-	var _pc: int = 1199
-	while true:
-		if _pc == 1199:
-			if v1 == 1:
-				_pc = 1211
-				continue
-			else:
-				_pc = 1357
-				continue
-		elif _pc == 1211:
-			if not (object.property_exists(v0, "remote_connection_available")):
-				_pc = 1241
-				continue
-			else:
-				_pc = 1299
-				continue
-		elif _pc == 1241:
-			_pc = 1266
-			continue
-		elif _pc == 1246:
-			debug.print_string("iRemotePilot.EnableRemote: Adding remote_connection_avaialbe int\n")
-			_pc = 1266
-			continue
-		elif _pc == 1266:
+	if v1 == 1:
+		if not (object.property_exists(v0, "remote_connection_available")):
+			if PogRuntime.TRACE:
+				debug.print_string("iRemotePilot.EnableRemote: Adding remote_connection_avaialbe int\n")
 			object.add_int_property(v0, "remote_connection_available", 1)
-			_pc = 1352
-			continue
-		elif _pc == 1299:
-			_pc = 1324
-			continue
-		elif _pc == 1304:
-			debug.print_string("iRemotePilot.EnableRemote: Setting remote_connection_avaialbe int\n")
-			_pc = 1324
-			continue
-		elif _pc == 1324:
-			object.set_int_property(v0, "remote_connection_available", 1)
-			_pc = 1352
-			continue
-		elif _pc == 1352:
-			_pc = 1438
-			continue
-		elif _pc == 1357:
-			if object.property_exists(v0, "remote_connection_available"):
-				_pc = 1386
-				continue
-			else:
-				_pc = 1438
-				continue
-		elif _pc == 1386:
-			_pc = 1411
-			continue
-		elif _pc == 1391:
-			debug.print_string("iRemotePilot.EnableRemote: Removing remote_connection_avaialbe int\n")
-			_pc = 1411
-			continue
-		elif _pc == 1411:
-			object.remove_property(v0, "remote_connection_available")
-			_pc = 1438
-			continue
-		elif _pc == 1438:
-			return 0
 		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iRemotePilot.EnableRemote: Setting remote_connection_avaialbe int\n")
+			object.set_int_property(v0, "remote_connection_available", 1)
+	else:
+		if not (object.property_exists(v0, "remote_connection_available")):
 			return 0
+		if PogRuntime.TRACE:
+			debug.print_string("iRemotePilot.EnableRemote: Removing remote_connection_avaialbe int\n")
+		object.remove_property(v0, "remote_connection_available")
+	return 0
 	return 0
 
 func remote_active() -> Variant:
-	var _pc: int = 1441
-	while true:
-		if _pc == 1441:
-			if global.exists("g_player_ship_handle"):
-				_pc = 1465
-				continue
-			else:
-				_pc = 1471
-				continue
-		elif _pc == 1465:
-			_pc = 1478
-			continue
-		elif _pc == 1471:
-			_pc = 1478
-			continue
-		elif _pc == 1478:
-			return
-		else:
-			return 0
+	if global.exists("g_player_ship_handle"):
+		return 1
+	return 0
 	return 0
 
 func return_current_remote_vessel() -> Variant:
-	var _pc: int = 1480
-	while true:
-		if _pc == 1480:
-			if global.exists("g_remote_vessel_handle"):
-				_pc = 1504
-				continue
-			else:
-				_pc = 1542
-				continue
-		elif _pc == 1504:
-			iship.cast(global.handle("g_remote_vessel_handle"))
-			_pc = 1548
-			continue
-		elif _pc == 1541:
-			_pc = 1542
-			continue
-		elif _pc == 1542:
-			_pc = 1548
-			continue
-		elif _pc == 1548:
-			return
-		else:
-			return 0
+	if global.exists("g_remote_vessel_handle"):
+		return iship.cast(global.handle("g_remote_vessel_handle"))
+	return 0
 	return 0
 
 func deactivate_connection() -> Variant:

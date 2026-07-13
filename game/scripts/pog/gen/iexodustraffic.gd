@@ -53,16 +53,7 @@ func _link() -> void:
 	string = api.string
 
 func local_0() -> Variant:
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")
-			_pc = 30
-			continue
-		elif _pc == 30:
-			return
-		else:
-			return 0
+	return imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")
 	return 0
 
 func exodus_traffic_generator() -> Variant:
@@ -205,21 +196,21 @@ func exodus_traffic_generator() -> Variant:
 				_pc = 529
 				continue
 		elif _pc == 700:
-			if not _pog_is_null(2):
+			if 2 != v2:
 				_pc = 709
 				continue
 			else:
 				_pc = 550
 				continue
 		elif _pc == 709:
-			if not _pog_is_null(1):
+			if 1 != v2:
 				_pc = 717
 				continue
 			else:
 				_pc = 613
 				continue
 		elif _pc == 717:
-			if not _pog_is_null(0):
+			if not _pog_is_null(v2):
 				_pc = 725
 				continue
 			else:
@@ -346,6 +337,7 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 1342
 			continue
 		elif _pc == 1334:
+			"iAct3.Event3_30: Player in range of refugee fleet.\n"
 			_pc = 1342
 			continue
 		elif _pc == 1342:
@@ -786,8 +778,7 @@ func create_fomalhaut_refugees(v0) -> Variant:
 			continue
 		elif _pc == 3774:
 			await iutilities.group_set_cullable(v1, 0)
-			_pc = 3804
-			continue
+			return v1
 		elif _pc == 3804:
 			return
 		else:
@@ -799,52 +790,23 @@ func disable_all_traffic_in_system(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 3820
-	while true:
-		if _pc == 3820:
-			v3 = null
-			v4 = null
-			v3 = imapentity.system_habitats_in_system(v0)
-			v4 = list.from_set(v3)
-			v1 = 0
-			_pc = 3906
-			continue
-		elif _pc == 3906:
-			if v1 < list.item_count(v4):
-				_pc = 3935
-				continue
-			else:
-				_pc = 4014
-				continue
-		elif _pc == 3935:
-			v2 = imapentity.cast(list.get_nth(v4, v1))
-			await irangecheck.add_traffic_exception(v2)
-			v1 = v1 + 1
-			_pc = 3906
-			continue
-		elif _pc == 4014:
-			v3 = imapentity.system_lagrange_points_in_system(v0)
-			v4 = list.from_set(v3)
-			v1 = 0
-			_pc = 4073
-			continue
-		elif _pc == 4073:
-			if v1 < list.item_count(v4):
-				_pc = 4102
-				continue
-			else:
-				_pc = 4181
-				continue
-		elif _pc == 4102:
-			v2 = imapentity.cast(list.get_nth(v4, v1))
-			await irangecheck.add_traffic_exception(v2)
-			v1 = v1 + 1
-			_pc = 4073
-			continue
-		elif _pc == 4181:
-			return 0
-		else:
-			return 0
+	v3 = null
+	v4 = null
+	v3 = imapentity.system_habitats_in_system(v0)
+	v4 = list.from_set(v3)
+	v1 = 0
+	while v1 < list.item_count(v4):
+		v2 = imapentity.cast(list.get_nth(v4, v1))
+		await irangecheck.add_traffic_exception(v2)
+		v1 = v1 + 1
+	v3 = imapentity.system_lagrange_points_in_system(v0)
+	v4 = list.from_set(v3)
+	v1 = 0
+	while v1 < list.item_count(v4):
+		v2 = imapentity.cast(list.get_nth(v4, v1))
+		await irangecheck.add_traffic_exception(v2)
+		v1 = v1 + 1
+	return 0
 	return 0
 
 func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
@@ -860,79 +822,35 @@ func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	var _pc: int = 4198
-	while true:
-		if _pc == 4198:
-			v4 = null
-			v10 = 750000.0
-			v14 = 5
-			v15 = 0
-			v5 = await iutilities.create_waypoint_relative_to(v0, v1, v2, v3)
-			sim.point_at(v5, v0)
-			v7 = -(v10) * 2.0
-			v8 = -(v10) * 2.0
-			v9 = -(v10) * 2.0
-			v11 = 0
-			_pc = 4364
-			continue
-		elif _pc == 4364:
-			if v11 < v14:
-				_pc = 4380
-				continue
-			else:
-				_pc = 4674
-				continue
-		elif _pc == 4380:
-			v12 = 0
-			_pc = 4387
-			continue
-		elif _pc == 4387:
-			if v12 < v14:
-				_pc = 4403
-				continue
-			else:
-				_pc = 4621
-				continue
-		elif _pc == 4403:
+	v4 = null
+	v10 = 750000.0
+	v14 = 5
+	v15 = 0
+	v5 = await iutilities.create_waypoint_relative_to(v0, v1, v2, v3)
+	sim.point_at(v5, v0)
+	v7 = -(v10) * 2.0
+	v8 = -(v10) * 2.0
+	v9 = -(v10) * 2.0
+	v11 = 0
+	while v11 < v14:
+		v12 = 0
+		while v12 < v14:
 			v13 = 0
-			_pc = 4410
-			continue
-		elif _pc == 4410:
-			if v13 < v14:
-				_pc = 4426
-				continue
-			else:
-				_pc = 4568
-				continue
-		elif _pc == 4426:
-			v6 = await iutilities.create_waypoint_relative_to(v5, v7, v8, v9)
-			object.add_int_property(v6, "point_number", v15)
-			p_set.add(v4, v6)
-			v15 = v15 + 1
-			v7 = v7 + v10
-			v13 = v13 + 1
-			_pc = 4410
-			continue
-		elif _pc == 4568:
+			while v13 < v14:
+				v6 = await iutilities.create_waypoint_relative_to(v5, v7, v8, v9)
+				object.add_int_property(v6, "point_number", v15)
+				p_set.add(v4, v6)
+				v15 = v15 + 1
+				v7 = v7 + v10
+				v13 = v13 + 1
 			v7 = -(v10) * 2.0
 			v8 = v8 + v10
 			v12 = v12 + 1
-			_pc = 4387
-			continue
-		elif _pc == 4621:
-			v8 = -(v10) * 2.0
-			v9 = v9 + v10
-			v11 = v11 + 1
-			_pc = 4364
-			continue
-		elif _pc == 4674:
-			sim.destroy(v5)
-			_pc = 4703
-			continue
-		elif _pc == 4703:
-			return
-		else:
-			return 0
+		v8 = -(v10) * 2.0
+		v9 = v9 + v10
+		v11 = v11 + 1
+	sim.destroy(v5)
+	return _pog_clone(v4)
 	return 0
 
 func local_4713(v0, v1, v2) -> Variant:
@@ -967,8 +885,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 4846
 			continue
 		elif _pc == 4846:
-			_pc = 8092
-			continue
+			return 255
 		elif _pc == 4854:
 			v12 = _pog_eq(isim.active_world(), isim.world_name(v0))
 			if ihabitat.cast(v0):
@@ -1447,8 +1364,7 @@ func local_4713(v0, v1, v2) -> Variant:
 				_pc = 7573
 				continue
 		elif _pc == 7567:
-			_pc = 8092
-			continue
+			return 0
 		elif _pc == 7573:
 			_pc = 7694
 			continue
@@ -1580,49 +1496,49 @@ func local_4713(v0, v1, v2) -> Variant:
 				_pc = 4999
 				continue
 		elif _pc == 8015:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 8023
 				continue
 			else:
 				_pc = 5355
 				continue
 		elif _pc == 8023:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 8032
 				continue
 			else:
 				_pc = 6038
 				continue
 		elif _pc == 8032:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 8041
 				continue
 			else:
 				_pc = 6352
 				continue
 		elif _pc == 8041:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 8050
 				continue
 			else:
 				_pc = 6642
 				continue
 		elif _pc == 8050:
-			if not _pog_is_null(5):
+			if 5 != v1:
 				_pc = 8059
 				continue
 			else:
 				_pc = 6916
 				continue
 		elif _pc == 8059:
-			if not _pog_is_null(6):
+			if 6 != v1:
 				_pc = 8068
 				continue
 			else:
 				_pc = 7215
 				continue
 		elif _pc == 8068:
-			if not _pog_is_null(7):
+			if 7 != v1:
 				_pc = 8077
 				continue
 			else:
@@ -1632,8 +1548,7 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 7964
 			continue
 		elif _pc == 8082:
-			_pc = 8092
-			continue
+			return v3
 		elif _pc == 8092:
 			return
 		else:
@@ -1641,185 +1556,46 @@ func local_4713(v0, v1, v2) -> Variant:
 	return 0
 
 func local_8094(v0) -> Variant:
-	var _pc: int = 8094
-	while true:
-		if _pc == 8094:
-			if global.pog_bool("g_evacuate_through_accelerator"):
-				_pc = 8119
-				continue
-			else:
-				_pc = 8294
-				continue
-		elif _pc == 8119:
-			if _pog_eq(v0, "map:/geog/gagarin/new_bavaria") or _pog_eq(v0, "map:/geog/gagarin/ishime") or _pog_eq(v0, "map:/geog/gagarin/owens_star"):
-				_pc = 8163
-				continue
-			else:
-				_pc = 8175
-				continue
-		elif _pc == 8163:
-			_pc = 8317
-			continue
-		elif _pc == 8170:
-			_pc = 8294
-			continue
-		elif _pc == 8175:
-			if _pog_eq(v0, "map:/geog/gagarin/drake") or _pog_eq(v0, "map:/geog/gagarin/osprey") or _pog_eq(v0, "map:/geog/gagarin/batatas"):
-				_pc = 8219
-				continue
-			else:
-				_pc = 8231
-				continue
-		elif _pc == 8219:
-			_pc = 8317
-			continue
-		elif _pc == 8226:
-			_pc = 8294
-			continue
-		elif _pc == 8231:
-			if _pog_eq(v0, "map:/geog/gagarin/formhault"):
-				_pc = 8249
-				continue
-			else:
-				_pc = 8261
-				continue
-		elif _pc == 8249:
-			_pc = 8317
-			continue
-		elif _pc == 8256:
-			_pc = 8294
-			continue
-		elif _pc == 8261:
-			_pc = 8287
-			continue
-		elif _pc == 8266:
+	if global.pog_bool("g_evacuate_through_accelerator"):
+		if _pog_eq(v0, "map:/geog/gagarin/new_bavaria") or _pog_eq(v0, "map:/geog/gagarin/ishime") or _pog_eq(v0, "map:/geog/gagarin/owens_star"):
+			return -3
+		if _pog_eq(v0, "map:/geog/gagarin/drake") or _pog_eq(v0, "map:/geog/gagarin/osprey") or _pog_eq(v0, "map:/geog/gagarin/batatas"):
+			return -2
+		if _pog_eq(v0, "map:/geog/gagarin/formhault"):
+			return -1
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.system_at_desirability: System not in Gagarin cluster.\n")
-			_pc = 8287
-			continue
-		elif _pc == 8287:
-			_pc = 8317
-			continue
-		elif _pc == 8294:
-			await local_8319(v0)
-			_pc = 8317
-			continue
-		elif _pc == 8317:
-			return
-		else:
-			return 0
+		return -100
+	return await local_8319(v0)
 	return 0
 
 func local_8319(v0) -> Variant:
-	var _pc: int = 8319
-	while true:
-		if _pc == 8319:
-			if _pog_eq(v0, "map:/geog/gagarin/new_bavaria"):
-				_pc = 8337
-				continue
-			else:
-				_pc = 8348
-				continue
-		elif _pc == 8337:
-			_pc = 8504
-			continue
-		elif _pc == 8343:
-			_pc = 8471
-			continue
-		elif _pc == 8348:
-			if _pog_eq(v0, "map:/geog/gagarin/drake") or _pog_eq(v0, "map:/geog/gagarin/osprey"):
-				_pc = 8379
-				continue
-			else:
-				_pc = 8390
-				continue
-		elif _pc == 8379:
-			_pc = 8504
-			continue
-		elif _pc == 8385:
-			_pc = 8471
-			continue
-		elif _pc == 8390:
-			if _pog_eq(v0, "map:/geog/gagarin/formhault") or _pog_eq(v0, "map:/geog/gagarin/owens_star") or _pog_eq(v0, "map:/geog/gagarin/ishime"):
-				_pc = 8434
-				continue
-			else:
-				_pc = 8446
-				continue
-		elif _pc == 8434:
-			_pc = 8504
-			continue
-		elif _pc == 8441:
-			_pc = 8471
-			continue
-		elif _pc == 8446:
-			if _pog_eq(v0, "map:/geog/gagarin/batatas"):
-				_pc = 8464
-				continue
-			else:
-				_pc = 8471
-				continue
-		elif _pc == 8464:
-			_pc = 8504
-			continue
-		elif _pc == 8471:
-			_pc = 8497
-			continue
-		elif _pc == 8476:
-			debug.print_string("iAct3.system_at_desirability: System not in Gagarin cluster.\n")
-			_pc = 8497
-			continue
-		elif _pc == 8497:
-			_pc = 8504
-			continue
-		elif _pc == 8504:
-			return
-		else:
-			return 0
+	if _pog_eq(v0, "map:/geog/gagarin/new_bavaria"):
+		return 0
+	if _pog_eq(v0, "map:/geog/gagarin/drake") or _pog_eq(v0, "map:/geog/gagarin/osprey"):
+		return 1
+	if _pog_eq(v0, "map:/geog/gagarin/formhault") or _pog_eq(v0, "map:/geog/gagarin/owens_star") or _pog_eq(v0, "map:/geog/gagarin/ishime"):
+		return 2
+	if _pog_eq(v0, "map:/geog/gagarin/batatas"):
+		return 3
+	if PogRuntime.TRACE:
+		debug.print_string("iAct3.system_at_desirability: System not in Gagarin cluster.\n")
+	return -100
 	return 0
 
 func local_8506(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 8506
-	while true:
-		if _pc == 8506:
-			v2 = ilagrangepoint.cast(v1)
-			if _pog_is_null(v2):
-				_pc = 8548
-				continue
-			else:
-				_pc = 8579
-				continue
-		elif _pc == 8548:
-			_pc = 8574
-			continue
-		elif _pc == 8553:
+	v2 = ilagrangepoint.cast(v1)
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.error("iAct3.group_jump: destination is not a LaGrange point!")
-			_pc = 8574
-			continue
-		elif _pc == 8574:
-			_pc = 8688
-			continue
-		elif _pc == 8579:
-			v3 = 0
-			_pc = 8586
-			continue
-		elif _pc == 8586:
-			if v3 < group.sim_count(v0):
-				_pc = 8615
-				continue
-			else:
-				_pc = 8688
-				continue
-		elif _pc == 8615:
+	else:
+		v3 = 0
+		while v3 < group.sim_count(v0):
 			isim.capsule_jump(isim.cast(group.nth_sim(v0, v3)), v2)
 			v3 = v3 + 1
-			_pc = 8586
-			continue
-		elif _pc == 8688:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func local_8691(v0, v1) -> Variant:
@@ -1829,91 +1605,32 @@ func local_8691(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 8691
-	while true:
-		if _pc == 8691:
-			v6 = global.pog_float("g_player_sensor_range")
-			v2 = iship.find_player_ship()
-			v3 = sim.distance_between(v2, v1)
-			if v3 <= v6:
-				_pc = 8786
-				continue
-			else:
-				_pc = 8903
-				continue
-		elif _pc == 8786:
-			_pc = 8812
-			continue
-		elif _pc == 8791:
+	v6 = global.pog_float("g_player_sensor_range")
+	v2 = iship.find_player_ship()
+	v3 = sim.distance_between(v2, v1)
+	if v3 <= v6:
+		if PogRuntime.TRACE:
 			debug.print_string(" iAct3.place_traffic - Station is with players senser range - placing traffic on edge of player range\n")
-			_pc = 8812
-			continue
-		elif _pc == 8812:
-			if ilagrangepoint.cast(v1):
-				_pc = 8835
-				continue
-			else:
-				_pc = 8869
-				continue
-		elif _pc == 8835:
+		if ilagrangepoint.cast(v1):
 			sim.place_near(v0, v2, v6)
-			_pc = 8898
-			continue
-		elif _pc == 8869:
+		else:
 			sim.place_near(v0, v1, 5000.0)
-			_pc = 8898
-			continue
-		elif _pc == 8898:
-			_pc = 9227
-			continue
-		elif _pc == 8903:
-			if v3 > v6 * 5.0:
-				_pc = 8925
-				continue
-			else:
-				_pc = 9003
-				continue
-		elif _pc == 8925:
-			_pc = 8951
-			continue
-		elif _pc == 8930:
-			debug.print_string("iAct3.place_traffic - location is miles from player, placing in close vicinity.\n")
-			_pc = 8951
-			continue
-		elif _pc == 8951:
+	else:
+		if v3 > v6 * 5.0:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct3.place_traffic - location is miles from player, placing in close vicinity.\n")
 			sim.place_near(v0, v1, math.random(5000.0, 50000.0))
-			_pc = 9227
-			continue
-		elif _pc == 9003:
-			_pc = 9029
-			continue
-		elif _pc == 9008:
-			debug.print_string("iAct3.place_traffic - Station is outside players senser range - placing traffic between player & ship \n")
-			_pc = 9029
-			continue
-		elif _pc == 9029:
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct3.place_traffic - Station is outside players senser range - placing traffic between player & ship \n")
 			v4 = math.random(v6, v6 + v3)
 			v7 = sim.create("ini:/sims/nav/waypoint", "Traffic centre")
 			sim.place_between(v7, v2, v1, v4 / v3)
 			v5 = v4 - v6
 			if v5 > v6:
-				_pc = 9169
-				continue
-			else:
-				_pc = 9180
-				continue
-		elif _pc == 9169:
-			v5 = v6
-			_pc = 9180
-			continue
-		elif _pc == 9180:
+				v5 = v6
 			sim.place_near(v0, v7, math.random(0.0, v5))
-			_pc = 9227
-			continue
-		elif _pc == 9227:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func local_9230(v0, v1) -> Variant:
@@ -1931,297 +1648,99 @@ func local_9230(v0, v1) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	var _pc: int = 9230
-	while true:
-		if _pc == 9230:
-			v2 = group.sim_count(v0)
-			v4 = null
-			v7 = iship.find_player_ship()
-			v9 = null
-			v10 = null
-			v11 = null
-			v14 = imapentity.find_by_name_in_system("Formhault System Administration Centre", "map:/geog/gagarin/formhault")
-			v4 = isim.world_name(isim.cast(group.leader(v0)))
-			v5 = await local_8094(v4)
-			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") + v2)
-			v3 = global.pog_int("g_alien_spread_radius")
-			if v5 <= v3:
-				_pc = 9518
-				continue
-			else:
-				_pc = 9850
-				continue
-		elif _pc == 9518:
-			v9 = imapentity.system_lagrange_points_in_system(v4)
-			v12 = ilagrangepoint.nearest(v9, group.leader(v0))
-			v6 = await local_14564(group.leader(v0), v12)
-			if not _pog_is_null(v6):
-				_pc = 9641
-				continue
-			else:
-				_pc = 9670
-				continue
-		elif _pc == 9641:
+	v2 = group.sim_count(v0)
+	v4 = null
+	v7 = iship.find_player_ship()
+	v9 = null
+	v10 = null
+	v11 = null
+	v14 = imapentity.find_by_name_in_system("Formhault System Administration Centre", "map:/geog/gagarin/formhault")
+	v4 = isim.world_name(isim.cast(group.leader(v0)))
+	v5 = await local_8094(v4)
+	global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") + v2)
+	v3 = global.pog_int("g_alien_spread_radius")
+	if v5 <= v3:
+		v9 = imapentity.system_lagrange_points_in_system(v4)
+		v12 = ilagrangepoint.nearest(v9, group.leader(v0))
+		v6 = await local_14564(group.leader(v0), v12)
+		if not _pog_is_null(v6):
 			iai.give_flee_order(v0, v6)
-			_pc = 9845
-			continue
-		elif _pc == 9670:
+		else:
 			if v5 == -1:
-				_pc = 9683
-				continue
+				if sim.distance_between(group.leader(v0), v14) < 2000000000.0:
+					iai.give_approach_order_advanced(v0, v14, 100000.0, 500000.0, 1)
+				else:
+					iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
 			else:
-				_pc = 9810
-				continue
-		elif _pc == 9683:
-			if sim.distance_between(group.leader(v0), v14) < 2000000000.0:
-				_pc = 9730
-				continue
-			else:
-				_pc = 9770
-				continue
-		elif _pc == 9730:
-			iai.give_approach_order_advanced(v0, v14, 100000.0, 500000.0, 1)
-			_pc = 9805
-			continue
-		elif _pc == 9770:
-			iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
-			_pc = 9805
-			continue
-		elif _pc == 9805:
-			_pc = 9845
-			continue
-		elif _pc == 9810:
-			iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
-			_pc = 9845
-			continue
-		elif _pc == 9845:
-			_pc = 10048
-			continue
-		elif _pc == 9850:
-			if ihabitat.cast(v1):
-				_pc = 9873
-				continue
-			else:
-				_pc = 9913
-				continue
-		elif _pc == 9873:
+				iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
+	else:
+		if ihabitat.cast(v1):
 			v12 = v1
 			iai.give_dock_order(v0, v12)
-			_pc = 10048
-			continue
-		elif _pc == 9913:
-			v11 = list.from_set(imapentity.system_habitats_in_system(v4))
-			v12 = isim.cast(list.get_nth(v11, math.random_int(0, list.item_count(v11) - 1)))
-			iai.give_dock_order(v0, v12)
-			_pc = 10048
-			continue
-		elif _pc == 10048:
-			_pc = 10053
-			continue
-		elif _pc == 10053:
-			await _pog_frame()
-			if _pog_every(10054, 15.0):
-				_pc = 10067
-				continue
-			else:
-				_pc = 11556
-				continue
-		elif _pc == 10067:
-			if sim.distance_between(group.leader(v0), v7) > 25000000.0 and sim.distance_between(group.leader(v0), v1) > 25000000.0 or group.sim_count(v0) < 1:
-				_pc = 10178
-				continue
-			else:
-				_pc = 10183
-				continue
-		elif _pc == 10178:
-			_pc = 11561
-			continue
-		elif _pc == 10183:
-			if iai.is_order_complete(iship.cast(group.leader(v0))) or not _pog_eq(v3, global.pog_int("g_alien_spread_radius")):
-				_pc = 10259
-				continue
-			else:
-				_pc = 11556
-				continue
-		elif _pc == 10259:
-			v3 = global.pog_int("g_alien_spread_radius")
-			v4 = isim.world_name(isim.cast(group.leader(v0)))
-			v5 = await local_8094(v4)
-			if v5 == -1 and sim.distance_between(group.leader(v0), v14) < 2000000000.0:
-				_pc = 10417
-				continue
-			else:
-				_pc = 10488
-				continue
-		elif _pc == 10417:
-			await iutilities.group_set_cullable(v0, 1)
-			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
-			_pc = 11628
-			continue
-		elif _pc == 10488:
-			if isim.is_docked_to(iship.cast(group.leader(v0)), v12):
-				_pc = 10542
-				continue
-			else:
-				_pc = 10782
-				continue
-		elif _pc == 10542:
-			if v5 > v3:
-				_pc = 10558
-				continue
-			else:
-				_pc = 10634
-				continue
-		elif _pc == 10558:
-			await iutilities.group_set_cullable(v0, 1)
-			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
-			_pc = 11628
-			continue
-		elif _pc == 10629:
-			_pc = 10782
-			continue
-		elif _pc == 10634:
-			v15 = 0
-			_pc = 10641
-			continue
-		elif _pc == 10641:
-			if v15 < group.sim_count(v0):
-				_pc = 10670
-				continue
-			else:
-				_pc = 10782
-				continue
-		elif _pc == 10670:
-			v8 = iship.cast(group.nth_sim(v0, v15))
-			if isim.is_docked_to(v8, v12):
-				_pc = 10740
-				continue
-			else:
-				_pc = 10764
-				continue
-		elif _pc == 10740:
-			iship.undock(v8, v12)
-			_pc = 10764
-			continue
-		elif _pc == 10764:
-			v15 = v15 + 1
-			_pc = 10641
-			continue
-		elif _pc == 10782:
-			if v5 <= v3:
-				_pc = 10798
-				continue
-			else:
-				_pc = 11421
-				continue
-		elif _pc == 10798:
-			if ilagrangepoint.cast(v12):
-				_pc = 10821
-				continue
-			else:
-				_pc = 11240
-				continue
-		elif _pc == 10821:
-			if _pog_eq(v12, isim.cast(await get_interstellar_l_point_in(v4))):
-				_pc = 10863
-				continue
-			else:
-				_pc = 11150
-				continue
-		elif _pc == 10863:
-			_pc = 10889
-			continue
-		elif _pc == 10868:
-			debug.print_string("iAct3.refugee_retreat_orders: At interstellar l-point, finding best way out.\n")
-			_pc = 10889
-			continue
-		elif _pc == 10889:
-			v9 = await local_12945(ilagrangepoint.cast(v12))
-			v10 = list.from_set(v9)
-			v15 = 0
-			_pc = 10961
-			continue
-		elif _pc == 10961:
-			if v15 < list.item_count(v10):
-				_pc = 10990
-				continue
-			else:
-				_pc = 11099
-				continue
-		elif _pc == 10990:
-			v13 = ilagrangepoint.cast(list.get_nth(v10, v15))
-			if await local_8094(isim.world_name(v13)) > v5:
-				_pc = 11076
-				continue
-			else:
-				_pc = 11081
-				continue
-		elif _pc == 11076:
-			_pc = 11099
-			continue
-		elif _pc == 11081:
-			v15 = v15 + 1
-			_pc = 10961
-			continue
-		elif _pc == 11099:
-			v12 = v13
-			iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
-			_pc = 11235
-			continue
-		elif _pc == 11150:
-			_pc = 11176
-			continue
-		elif _pc == 11155:
-			debug.print_string("iAct3.refugee_retreat_orders: At local l-point, heading for interstellar l-point.\n")
-			_pc = 11176
-			continue
-		elif _pc == 11176:
-			v12 = await get_interstellar_l_point_in(v4)
-			iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
-			_pc = 11235
-			continue
-		elif _pc == 11235:
-			_pc = 11416
-			continue
-		elif _pc == 11240:
-			v9 = imapentity.system_lagrange_points_in_system(v4)
-			v12 = ilagrangepoint.nearest(v9, group.leader(v0))
-			v6 = await local_14564(group.leader(v0), v12)
-			if not _pog_is_null(v6):
-				_pc = 11363
-				continue
-			else:
-				_pc = 11392
-				continue
-		elif _pc == 11363:
-			iai.give_flee_order(v0, v6)
-			_pc = 11416
-			continue
-		elif _pc == 11392:
-			iai.give_approach_order(v0, v12)
-			_pc = 11416
-			continue
-		elif _pc == 11416:
-			_pc = 11556
-			continue
-		elif _pc == 11421:
-			v11 = list.from_set(imapentity.system_habitats_in_system(v4))
-			v12 = isim.cast(list.get_nth(v11, math.random_int(0, list.item_count(v11) - 1)))
-			iai.give_dock_order(v0, v12)
-			_pc = 11556
-			continue
-		elif _pc == 11556:
-			_pc = 10053
-			continue
-		elif _pc == 11561:
-			group.destroy(v0, 1)
-			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
-			_pc = 11628
-			continue
-		elif _pc == 11628:
-			return
 		else:
-			return 0
+			v11 = list.from_set(imapentity.system_habitats_in_system(v4))
+			v12 = isim.cast(list.get_nth(v11, math.random_int(0, list.item_count(v11) - 1)))
+			iai.give_dock_order(v0, v12)
+	while true:
+		await _pog_wait(15)
+		if sim.distance_between(group.leader(v0), v7) > 25000000.0 and sim.distance_between(group.leader(v0), v1) > 25000000.0 or group.sim_count(v0) < 1:
+			break
+		if not (iai.is_order_complete(iship.cast(group.leader(v0))) or not _pog_eq(v3, global.pog_int("g_alien_spread_radius"))):
+			continue
+		v3 = global.pog_int("g_alien_spread_radius")
+		v4 = isim.world_name(isim.cast(group.leader(v0)))
+		v5 = await local_8094(v4)
+		if v5 == -1 and sim.distance_between(group.leader(v0), v14) < 2000000000.0:
+			await iutilities.group_set_cullable(v0, 1)
+			global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
+			return
+		if isim.is_docked_to(iship.cast(group.leader(v0)), v12):
+			if v5 > v3:
+				await iutilities.group_set_cullable(v0, 1)
+				global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
+				return
+			else:
+				v15 = 0
+				while v15 < group.sim_count(v0):
+					v8 = iship.cast(group.nth_sim(v0, v15))
+					if isim.is_docked_to(v8, v12):
+						iship.undock(v8, v12)
+					v15 = v15 + 1
+		if v5 <= v3:
+			if ilagrangepoint.cast(v12):
+				if _pog_eq(v12, isim.cast(await get_interstellar_l_point_in(v4))):
+					if PogRuntime.TRACE:
+						debug.print_string("iAct3.refugee_retreat_orders: At interstellar l-point, finding best way out.\n")
+					v9 = await local_12945(ilagrangepoint.cast(v12))
+					v10 = list.from_set(v9)
+					v15 = 0
+					while v15 < list.item_count(v10):
+						v13 = ilagrangepoint.cast(list.get_nth(v10, v15))
+						if await local_8094(isim.world_name(v13)) > v5:
+							break
+						v15 = v15 + 1
+					v12 = v13
+					iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iAct3.refugee_retreat_orders: At local l-point, heading for interstellar l-point.\n")
+					v12 = await get_interstellar_l_point_in(v4)
+					iai.give_approach_order_advanced(v0, v12, 3000.0, 10000.0, 1)
+			else:
+				v9 = imapentity.system_lagrange_points_in_system(v4)
+				v12 = ilagrangepoint.nearest(v9, group.leader(v0))
+				v6 = await local_14564(group.leader(v0), v12)
+				if not _pog_is_null(v6):
+					iai.give_flee_order(v0, v6)
+				else:
+					iai.give_approach_order(v0, v12)
+		else:
+			v11 = list.from_set(imapentity.system_habitats_in_system(v4))
+			v12 = isim.cast(list.get_nth(v11, math.random_int(0, list.item_count(v11) - 1)))
+			iai.give_dock_order(v0, v12)
+	group.destroy(v0, 1)
+	global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v2)
+	return
 	return 0
 
 func local_11658(v0, v1) -> Variant:
@@ -2288,28 +1807,28 @@ func local_11658(v0, v1) -> Variant:
 				_pc = 11863
 				continue
 		elif _pc == 12066:
-			if not _pog_is_null(1):
+			if 1 != v5:
 				_pc = 12074
 				continue
 			else:
 				_pc = 11900
 				continue
 		elif _pc == 12074:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 12083
 				continue
 			else:
 				_pc = 11937
 				continue
 		elif _pc == 12083:
-			if not _pog_is_null(3):
+			if 3 != v5:
 				_pc = 12092
 				continue
 			else:
 				_pc = 11974
 				continue
 		elif _pc == 12092:
-			if not _pog_is_null(4):
+			if 4 != v5:
 				_pc = 12101
 				continue
 			else:
@@ -2428,28 +1947,28 @@ func local_11658(v0, v1) -> Variant:
 				_pc = 12606
 				continue
 		elif _pc == 12809:
-			if not _pog_is_null(1):
+			if 1 != v5:
 				_pc = 12817
 				continue
 			else:
 				_pc = 12643
 				continue
 		elif _pc == 12817:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 12826
 				continue
 			else:
 				_pc = 12680
 				continue
 		elif _pc == 12826:
-			if not _pog_is_null(3):
+			if 3 != v5:
 				_pc = 12835
 				continue
 			else:
 				_pc = 12717
 				continue
 		elif _pc == 12835:
-			if not _pog_is_null(4):
+			if 4 != v5:
 				_pc = 12844
 				continue
 			else:
@@ -2463,7 +1982,7 @@ func local_11658(v0, v1) -> Variant:
 			_pc = 12943
 			continue
 		elif _pc == 12943:
-			return
+			return v5
 		else:
 			return 0
 	return 0
@@ -2471,288 +1990,93 @@ func local_11658(v0, v1) -> Variant:
 func local_12945(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 12945
-	while true:
-		if _pc == 12945:
-			v1 = null
-			v2 = null
-			if not (ilagrangepoint.interstellar(v0)):
-				_pc = 12996
-				continue
-			else:
-				_pc = 13006
-				continue
-		elif _pc == 12996:
-			_pc = 14035
-			continue
-		elif _pc == 13006:
-			v2 = isim.world_name(v0)
-			if _pog_eq(v2, "map:/geog/gagarin/batatas"):
-				_pc = 13050
-				continue
-			else:
-				_pc = 13120
-				continue
-		elif _pc == 13050:
-			_pc = 13076
-			continue
-		elif _pc == 13055:
+	v1 = null
+	v2 = null
+	if not (ilagrangepoint.interstellar(v0)):
+		return _pog_clone(v1)
+	v2 = isim.world_name(v0)
+	if _pog_eq(v2, "map:/geog/gagarin/batatas"):
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Batatas.\n")
-			_pc = 13076
-			continue
-		elif _pc == 13076:
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/formhault"))
-			_pc = 14025
-			continue
-		elif _pc == 13120:
-			if _pog_eq(v2, "map:/geog/gagarin/drake"):
-				_pc = 13138
-				continue
-			else:
-				_pc = 13286
-				continue
-		elif _pc == 13138:
-			_pc = 13164
-			continue
-		elif _pc == 13143:
-			debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Drake.\n")
-			_pc = 13164
-			continue
-		elif _pc == 13164:
+		p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/formhault"))
+	else:
+		if _pog_eq(v2, "map:/geog/gagarin/drake"):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Drake.\n")
 			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/new_bavaria"))
 			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/formhault"))
 			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/ishime"))
-			_pc = 14025
-			continue
-		elif _pc == 13286:
-			if _pog_eq(v2, "map:/geog/gagarin/formhault"):
-				_pc = 13304
-				continue
-			else:
-				_pc = 13452
-				continue
-		elif _pc == 13304:
-			_pc = 13330
-			continue
-		elif _pc == 13309:
-			debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Formhault.\n")
-			_pc = 13330
-			continue
-		elif _pc == 13330:
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/drake"))
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/osprey"))
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/batatas"))
-			_pc = 14025
-			continue
-		elif _pc == 13452:
-			if _pog_eq(v2, "map:/geog/gagarin/ishime"):
-				_pc = 13470
-				continue
-			else:
-				_pc = 13579
-				continue
-		elif _pc == 13470:
-			_pc = 13496
-			continue
-		elif _pc == 13475:
-			debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Ishime.\n")
-			_pc = 13496
-			continue
-		elif _pc == 13496:
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/drake"))
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/owens_star"))
-			_pc = 14025
-			continue
-		elif _pc == 13579:
-			if _pog_eq(v2, "map:/geog/gagarin/new_bavaria"):
-				_pc = 13597
-				continue
-			else:
-				_pc = 13706
-				continue
-		elif _pc == 13597:
-			_pc = 13623
-			continue
-		elif _pc == 13602:
-			debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for New Bavaria.\n")
-			_pc = 13623
-			continue
-		elif _pc == 13623:
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/drake"))
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/osprey"))
-			_pc = 14025
-			continue
-		elif _pc == 13706:
-			if _pog_eq(v2, "map:/geog/gagarin/osprey"):
-				_pc = 13724
-				continue
-			else:
-				_pc = 13872
-				continue
-		elif _pc == 13724:
-			_pc = 13750
-			continue
-		elif _pc == 13729:
-			debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Osprey.\n")
-			_pc = 13750
-			continue
-		elif _pc == 13750:
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/new_bavaria"))
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/formhault"))
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/owens_star"))
-			_pc = 14025
-			continue
-		elif _pc == 13872:
-			if _pog_eq(v2, "map:/geog/gagarin/owens_star"):
-				_pc = 13890
-				continue
-			else:
-				_pc = 13999
-				continue
-		elif _pc == 13890:
-			_pc = 13916
-			continue
-		elif _pc == 13895:
-			debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Owen's Star.\n")
-			_pc = 13916
-			continue
-		elif _pc == 13916:
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/ishime"))
-			p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/osprey"))
-			_pc = 14025
-			continue
-		elif _pc == 13999:
-			_pc = 14025
-			continue
-		elif _pc == 14004:
-			debug.print_string("iAct3.get_interstellar_destination_l_points: Called from outside gagarin cluster.\n")
-			_pc = 14025
-			continue
-		elif _pc == 14025:
-			_pc = 14035
-			continue
-		elif _pc == 14035:
-			return
 		else:
-			return 0
+			if _pog_eq(v2, "map:/geog/gagarin/formhault"):
+				if PogRuntime.TRACE:
+					debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Formhault.\n")
+				p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/drake"))
+				p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/osprey"))
+				p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/batatas"))
+			else:
+				if _pog_eq(v2, "map:/geog/gagarin/ishime"):
+					if PogRuntime.TRACE:
+						debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Ishime.\n")
+					p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/drake"))
+					p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/owens_star"))
+				else:
+					if _pog_eq(v2, "map:/geog/gagarin/new_bavaria"):
+						if PogRuntime.TRACE:
+							debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for New Bavaria.\n")
+						p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/drake"))
+						p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/osprey"))
+					else:
+						if _pog_eq(v2, "map:/geog/gagarin/osprey"):
+							if PogRuntime.TRACE:
+								debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Osprey.\n")
+							p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/new_bavaria"))
+							p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/formhault"))
+							p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/owens_star"))
+						else:
+							if _pog_eq(v2, "map:/geog/gagarin/owens_star"):
+								if PogRuntime.TRACE:
+									debug.print_string("iAct3.get_interstellar_destination_l_points: Getting for Owen's Star.\n")
+								p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/ishime"))
+								p_set.add(v1, await get_interstellar_l_point_in("map:/geog/gagarin/osprey"))
+							else:
+								if PogRuntime.TRACE:
+									debug.print_string("iAct3.get_interstellar_destination_l_points: Called from outside gagarin cluster.\n")
+	return _pog_clone(v1)
 	return 0
 
 func get_interstellar_l_point_in(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 14052
-	while true:
-		if _pc == 14052:
-			v1 = 0
-			if _pog_eq(v0, "map:/geog/gagarin/batatas"):
-				_pc = 14082
-				continue
-			else:
-				_pc = 14118
-				continue
-		elif _pc == 14082:
-			v1 = imapentity.find_by_name_in_system("Kraken L-Point", v0)
-			_pc = 14475
-			continue
-		elif _pc == 14118:
-			if _pog_eq(v0, "map:/geog/gagarin/drake"):
-				_pc = 14136
-				continue
-			else:
-				_pc = 14172
-				continue
-		elif _pc == 14136:
+	v1 = 0
+	if _pog_eq(v0, "map:/geog/gagarin/batatas"):
+		v1 = imapentity.find_by_name_in_system("Kraken L-Point", v0)
+	else:
+		if _pog_eq(v0, "map:/geog/gagarin/drake"):
 			v1 = imapentity.find_by_name_in_system("St Petersburg L-Point", v0)
-			_pc = 14475
-			continue
-		elif _pc == 14172:
+		else:
 			if _pog_eq(v0, "map:/geog/gagarin/formhault"):
-				_pc = 14190
-				continue
+				v1 = imapentity.find_by_name_in_system("Christmas L-Point", v0)
 			else:
-				_pc = 14226
-				continue
-		elif _pc == 14190:
-			v1 = imapentity.find_by_name_in_system("Christmas L-Point", v0)
-			_pc = 14475
-			continue
-		elif _pc == 14226:
-			if _pog_eq(v0, "map:/geog/gagarin/ishime"):
-				_pc = 14244
-				continue
-			else:
-				_pc = 14280
-				continue
-		elif _pc == 14244:
-			v1 = imapentity.find_by_name_in_system("Haitsuchi L-Point", v0)
-			_pc = 14475
-			continue
-		elif _pc == 14280:
-			if _pog_eq(v0, "map:/geog/gagarin/new_bavaria"):
-				_pc = 14298
-				continue
-			else:
-				_pc = 14334
-				continue
-		elif _pc == 14298:
-			v1 = imapentity.find_by_name_in_system("Pepin L-Point", v0)
-			_pc = 14475
-			continue
-		elif _pc == 14334:
-			if _pog_eq(v0, "map:/geog/gagarin/osprey"):
-				_pc = 14352
-				continue
-			else:
-				_pc = 14388
-				continue
-		elif _pc == 14352:
-			v1 = imapentity.find_by_name_in_system("Vedas L-Point", v0)
-			_pc = 14475
-			continue
-		elif _pc == 14388:
-			if _pog_eq(v0, "map:/geog/gagarin/owens_star"):
-				_pc = 14406
-				continue
-			else:
-				_pc = 14442
-				continue
-		elif _pc == 14406:
-			v1 = imapentity.find_by_name_in_system("Marshall System L-Point", v0)
-			_pc = 14475
-			continue
-		elif _pc == 14442:
-			_pc = 14468
-			continue
-		elif _pc == 14447:
-			debug.print_string("iAct3.get_interstellar_l_point_in: called for outside gagarin cluster.\n")
-			_pc = 14468
-			continue
-		elif _pc == 14468:
-			v1 = 0
-			_pc = 14475
-			continue
-		elif _pc == 14475:
-			if _pog_is_null(v1):
-				_pc = 14488
-				continue
-			else:
-				_pc = 14556
-				continue
-		elif _pc == 14488:
-			_pc = 14556
-			continue
-		elif _pc == 14493:
+				if _pog_eq(v0, "map:/geog/gagarin/ishime"):
+					v1 = imapentity.find_by_name_in_system("Haitsuchi L-Point", v0)
+				else:
+					if _pog_eq(v0, "map:/geog/gagarin/new_bavaria"):
+						v1 = imapentity.find_by_name_in_system("Pepin L-Point", v0)
+					else:
+						if _pog_eq(v0, "map:/geog/gagarin/osprey"):
+							v1 = imapentity.find_by_name_in_system("Vedas L-Point", v0)
+						else:
+							if _pog_eq(v0, "map:/geog/gagarin/owens_star"):
+								v1 = imapentity.find_by_name_in_system("Marshall System L-Point", v0)
+							else:
+								if PogRuntime.TRACE:
+									debug.print_string("iAct3.get_interstellar_l_point_in: called for outside gagarin cluster.\n")
+								v1 = 0
+	if _pog_is_null(v1):
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_interstellar_l_point_in: Can't find interstellar l-point for:")
 			debug.print_string(v0)
 			debug.print_string(".\n")
-			_pc = 14556
-			continue
-		elif _pc == 14556:
-			_pc = 14562
-			continue
-		elif _pc == 14562:
-			return
-		else:
-			return 0
+	return 0
 	return 0
 
 func local_14564(v0, v1) -> Variant:
@@ -2760,48 +2084,19 @@ func local_14564(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 14564
-	while true:
-		if _pc == 14564:
-			v4 = null
-			v2 = sim.distance_between_centres(v0, v1) / 9.0
-			v5 = isim.cast(await iutilities.create_waypoint_at(v0))
-			v3 = 0.0
-			_pc = 14663
-			continue
-		elif _pc == 14663:
-			if v3 < 9.0:
-				_pc = 14679
-				continue
-			else:
-				_pc = 14856
-				continue
-		elif _pc == 14679:
-			sim.place_between(v5, v0, v1, v3 / 9.0)
-			v4 = isim.sims_in_radius(v5, v2, 536870912)
-			if not (p_set.is_empty(v4)):
-				_pc = 14779
-				continue
-			else:
-				_pc = 14834
-				continue
-		elif _pc == 14779:
+	v4 = null
+	v2 = sim.distance_between_centres(v0, v1) / 9.0
+	v5 = isim.cast(await iutilities.create_waypoint_at(v0))
+	v3 = 0.0
+	while v3 < 9.0:
+		sim.place_between(v5, v0, v1, v3 / 9.0)
+		v4 = isim.sims_in_radius(v5, v2, 536870912)
+		if not (p_set.is_empty(v4)):
 			sim.destroy(v5)
-			isim.cast(p_set.first_element(v4))
-			_pc = 14881
-			continue
-		elif _pc == 14834:
-			v3 = v3 + 1.0
-			_pc = 14663
-			continue
-		elif _pc == 14856:
-			sim.destroy(v5)
-			_pc = 14881
-			continue
-		elif _pc == 14881:
-			return
-		else:
-			return 0
+			return isim.cast(p_set.first_element(v4))
+		v3 = v3 + 1.0
+	sim.destroy(v5)
+	return 0
 	return 0
 
 func pillager_retreat_orders(v0, v1) -> Variant:
@@ -3715,7 +3010,7 @@ func local_20008(v0, v1) -> Variant:
 				_pc = 20602
 				continue
 		elif _pc == 20746:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 20755
 				continue
 			else:
@@ -3739,7 +3034,7 @@ func local_20008(v0, v1) -> Variant:
 				_pc = 20506
 				continue
 		elif _pc == 20815:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 20824
 				continue
 			else:
@@ -3860,14 +3155,14 @@ func local_20008(v0, v1) -> Variant:
 				_pc = 21293
 				continue
 		elif _pc == 21625:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 21634
 				continue
 			else:
 				_pc = 21375
 				continue
 		elif _pc == 21634:
-			if not _pog_is_null(3):
+			if 3 != v5:
 				_pc = 21643
 				continue
 			else:
@@ -3925,7 +3220,7 @@ func local_20008(v0, v1) -> Variant:
 				_pc = 21107
 				continue
 		elif _pc == 21834:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 21843
 				continue
 			else:
@@ -4049,7 +3344,7 @@ func local_20008(v0, v1) -> Variant:
 				_pc = 22005
 				continue
 		elif _pc == 22341:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 22350
 				continue
 			else:
@@ -4088,21 +3383,21 @@ func local_20008(v0, v1) -> Variant:
 				_pc = 20265
 				continue
 		elif _pc == 22502:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 22511
 				continue
 			else:
 				_pc = 20890
 				continue
 		elif _pc == 22511:
-			if not _pog_is_null(3):
+			if 3 != v5:
 				_pc = 22520
 				continue
 			else:
 				_pc = 21909
 				continue
 		elif _pc == 22520:
-			if not _pog_is_null(4):
+			if 4 != v5:
 				_pc = 22529
 				continue
 			else:
@@ -4110,8 +3405,7 @@ func local_20008(v0, v1) -> Variant:
 				continue
 		elif _pc == 22529:
 			await iconversation.end()
-			_pc = 22553
-			continue
+			return v4
 		elif _pc == 22553:
 			return
 		else:
@@ -4120,237 +3414,74 @@ func local_20008(v0, v1) -> Variant:
 
 func local_22555(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 22555
-	while true:
-		if _pc == 22555:
-			v1 = null
-			v1 = imapentity.system_lagrange_points_in_system(isim.world_name(v0))
-			p_set.remove(v1, v0)
-			if not (ilagrangepoint.interstellar(v0)):
-				_pc = 22659
-				continue
-			else:
-				_pc = 22669
-				continue
-		elif _pc == 22659:
-			_pc = 22718
-			continue
-		elif _pc == 22669:
-			p_set.union(v1, await local_12945(v0))
-			_pc = 22718
-			continue
-		elif _pc == 22718:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = imapentity.system_lagrange_points_in_system(isim.world_name(v0))
+	p_set.remove(v1, v0)
+	if not (ilagrangepoint.interstellar(v0)):
+		return _pog_clone(v1)
+	p_set.union(v1, await local_12945(v0))
+	return _pog_clone(v1)
 	return 0
 
 func local_22728(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 22728
-	while true:
-		if _pc == 22728:
-			if _pog_is_null(v0):
-				_pc = 22746
-				continue
-			else:
-				_pc = 22777
-				continue
-		elif _pc == 22746:
-			_pc = 22772
-			continue
-		elif _pc == 22751:
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.generate_flavour_for_l_point: Passed Null L-point.\n")
-			_pc = 22772
-			continue
-		elif _pc == 22772:
-			_pc = 23572
-			continue
-		elif _pc == 22777:
-			if await local_8094(isim.world_name(v0)) <= v1:
-				_pc = 22821
-				continue
-			else:
-				_pc = 22970
-				continue
-		elif _pc == 22821:
+	else:
+		if await local_8094(isim.world_name(v0)) <= v1:
 			if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
-				_pc = 22881
-				continue
+				if v2:
+					v4 = 15
+				else:
+					v4 = 3
+				v6 = 10000
 			else:
-				_pc = 22926
-				continue
-		elif _pc == 22881:
-			if v2:
-				_pc = 22891
-				continue
-			else:
-				_pc = 22904
-				continue
-		elif _pc == 22891:
-			v4 = 15
-			_pc = 22912
-			continue
-		elif _pc == 22904:
-			v4 = 3
-			_pc = 22912
-			continue
-		elif _pc == 22912:
-			v6 = 10000
-			_pc = 22965
-			continue
-		elif _pc == 22926:
-			if v2:
-				_pc = 22936
-				continue
-			else:
-				_pc = 22949
-				continue
-		elif _pc == 22936:
-			v4 = 3
-			_pc = 22956
-			continue
-		elif _pc == 22949:
-			v4 = 1
-			_pc = 22956
-			continue
-		elif _pc == 22956:
-			v6 = 999
-			_pc = 22965
-			continue
-		elif _pc == 22965:
-			_pc = 23090
-			continue
-		elif _pc == 22970:
-			if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
-				_pc = 23030
-				continue
-			else:
-				_pc = 23074
-				continue
-		elif _pc == 23030:
-			if v2:
-				_pc = 23040
-				continue
-			else:
-				_pc = 23053
-				continue
-		elif _pc == 23040:
-			v4 = 3
-			_pc = 23060
-			continue
-		elif _pc == 23053:
-			v4 = 1
-			_pc = 23060
-			continue
-		elif _pc == 23060:
-			v6 = 10000
-			_pc = 23090
-			continue
-		elif _pc == 23074:
-			v4 = 1
-			v6 = 999
-			_pc = 23090
-			continue
-		elif _pc == 23090:
-			v5 = v4 - p_set.item_count(isim.sims_in_radius(v0, 75000.0, 536838144))
-			if v5 + global.pog_int("g_total_refugees_running") > v3:
-				_pc = 23182
-				continue
-			else:
-				_pc = 23214
-				continue
-		elif _pc == 23182:
-			v5 = v3 - global.pog_int("g_total_refugees_running")
-			_pc = 23214
-			continue
-		elif _pc == 23214:
-			if v5 > 0:
-				_pc = 23226
-				continue
-			else:
-				_pc = 23496
-				continue
-		elif _pc == 23226:
-			_pc = 23252
-			continue
-		elif _pc == 23231:
-			debug.print_string("iAct3.generate_flavour_at_l_point: Creating ")
-			_pc = 23252
-			continue
-		elif _pc == 23252:
-			_pc = 23291
-			continue
-		elif _pc == 23257:
-			debug.print_string(string.from_int(v5))
-			_pc = 23291
-			continue
-		elif _pc == 23291:
-			_pc = 23350
-			continue
-		elif _pc == 23296:
-			debug.print_string(string.join(" from ", string.from_int(v4)))
-			_pc = 23350
-			continue
-		elif _pc == 23350:
-			_pc = 23376
-			continue
-		elif _pc == 23355:
-			debug.print_string(" at ")
-			_pc = 23376
-			continue
-		elif _pc == 23376:
-			_pc = 23400
-			continue
-		elif _pc == 23381:
-			debug.print_handle(v0)
-			_pc = 23400
-			continue
-		elif _pc == 23400:
-			_pc = 23426
-			continue
-		elif _pc == 23405:
-			debug.print_string("\n")
-			_pc = 23426
-			continue
-		elif _pc == 23426:
-			v5 = v5 - await local_4713(v0, await local_23575(v0), v6)
-			if v5 <= 0:
-				_pc = 23491
-				continue
-			else:
-				_pc = 23426
-				continue
-		elif _pc == 23491:
-			_pc = 23572
-			continue
-		elif _pc == 23496:
-			_pc = 23522
-			continue
-		elif _pc == 23501:
-			debug.print_string("iAct3.Event3_30: No free slots after capping at ")
-			_pc = 23522
-			continue
-		elif _pc == 23522:
-			_pc = 23546
-			continue
-		elif _pc == 23527:
-			debug.print_handle(v0)
-			_pc = 23546
-			continue
-		elif _pc == 23546:
-			_pc = 23572
-			continue
-		elif _pc == 23551:
-			debug.print_string(".\n")
-			_pc = 23572
-			continue
-		elif _pc == 23572:
-			return 0
+				if v2:
+					v4 = 3
+				else:
+					v4 = 1
+				v6 = 999
 		else:
-			return 0
+			if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
+				if v2:
+					v4 = 3
+				else:
+					v4 = 1
+				v6 = 10000
+			else:
+				v4 = 1
+				v6 = 999
+		v5 = v4 - p_set.item_count(isim.sims_in_radius(v0, 75000.0, 536838144))
+		if v5 + global.pog_int("g_total_refugees_running") > v3:
+			v5 = v3 - global.pog_int("g_total_refugees_running")
+		if v5 > 0:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct3.generate_flavour_at_l_point: Creating ")
+			if PogRuntime.TRACE:
+				debug.print_string(string.from_int(v5))
+			if PogRuntime.TRACE:
+				debug.print_string(string.join(" from ", string.from_int(v4)))
+			if PogRuntime.TRACE:
+				debug.print_string(" at ")
+			if PogRuntime.TRACE:
+				debug.print_handle(v0)
+			if PogRuntime.TRACE:
+				debug.print_string("\n")
+			while true:
+				v5 = v5 - await local_4713(v0, await local_23575(v0), v6)
+				if not (v5 > 0):
+					break
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct3.Event3_30: No free slots after capping at ")
+			if PogRuntime.TRACE:
+				debug.print_handle(v0)
+			if PogRuntime.TRACE:
+				debug.print_string(".\n")
+	return 0
 	return 0
 
 func local_23575(v0) -> Variant:
@@ -4364,177 +3495,62 @@ func local_23575(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 23575
-	while true:
-		if _pc == 23575:
-			if not _pog_is_null(ihabitat.cast(v0)):
-				_pc = 23606
-				continue
-			else:
-				_pc = 23699
-				continue
-		elif _pc == 23606:
-			v1 = 0.20000000298023224
-			v2 = 0.6000000238418579
-			v3 = 0.10000000149011612
-			v4 = 0.4000000059604645
-			v5 = 0.30000001192092896
-			v6 = 0.20000000298023224
-			v7 = 0.4000000059604645
-			v8 = 0.10000000149011612
-			_pc = 23787
-			continue
-		elif _pc == 23699:
-			v1 = 0.20000000298023224
-			v2 = 0.6000000238418579
-			v3 = 0.10000000149011612
-			v4 = 0.4000000059604645
-			v5 = 0.30000001192092896
-			v6 = 0.20000000298023224
-			v7 = 0.4000000059604645
-			v8 = 0.10000000149011612
-			_pc = 23787
-			continue
-		elif _pc == 23787:
-			v9 = v1 + v2 + v3 + v4 + v5 + v8 + v6 + v7
-			v10 = math.random(0.0, v9)
-			if v10 <= v1:
-				_pc = 23885
-				continue
-			else:
-				_pc = 23917
-				continue
-		elif _pc == 23885:
-			_pc = 23911
-			continue
-		elif _pc == 23890:
+	if not _pog_is_null(ihabitat.cast(v0)):
+		v1 = 0.20000000298023224
+		v2 = 0.6000000238418579
+		v3 = 0.10000000149011612
+		v4 = 0.4000000059604645
+		v5 = 0.30000001192092896
+		v6 = 0.20000000298023224
+		v7 = 0.4000000059604645
+		v8 = 0.10000000149011612
+	else:
+		v1 = 0.20000000298023224
+		v2 = 0.6000000238418579
+		v3 = 0.10000000149011612
+		v4 = 0.4000000059604645
+		v5 = 0.30000001192092896
+		v6 = 0.20000000298023224
+		v7 = 0.4000000059604645
+		v8 = 0.10000000149011612
+	v9 = v1 + v2 + v3 + v4 + v5 + v8 + v6 + v7
+	v10 = math.random(0.0, v9)
+	if v10 <= v1:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_retreat_type: Returning 'Armed'\n")
-			_pc = 23911
-			continue
-		elif _pc == 23911:
-			_pc = 24345
-			continue
-		elif _pc == 23917:
-			v10 = v10 - v1
-			if v10 <= v2:
-				_pc = 23950
-				continue
-			else:
-				_pc = 23982
-				continue
-		elif _pc == 23950:
-			_pc = 23976
-			continue
-		elif _pc == 23955:
+		return 0
+	v10 = v10 - v1
+	if v10 <= v2:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_retreat_type: Returning 'Civilian'\n")
-			_pc = 23976
-			continue
-		elif _pc == 23976:
-			_pc = 24345
-			continue
-		elif _pc == 23982:
-			v10 = v10 - v2
-			if v10 <= v3:
-				_pc = 24015
-				continue
-			else:
-				_pc = 24048
-				continue
-		elif _pc == 24015:
-			_pc = 24041
-			continue
-		elif _pc == 24020:
+		return 1
+	v10 = v10 - v2
+	if v10 <= v3:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_retreat_type: Returning 'Mining'\n")
-			_pc = 24041
-			continue
-		elif _pc == 24041:
-			_pc = 24345
-			continue
-		elif _pc == 24048:
-			v10 = v10 - v3
-			if v10 <= v4:
-				_pc = 24081
-				continue
-			else:
-				_pc = 24114
-				continue
-		elif _pc == 24081:
-			_pc = 24107
-			continue
-		elif _pc == 24086:
+		return 2
+	v10 = v10 - v3
+	if v10 <= v4:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_retreat_type: Returning 'Pillager'\n")
-			_pc = 24107
-			continue
-		elif _pc == 24107:
-			_pc = 24345
-			continue
-		elif _pc == 24114:
-			v10 = v10 - v4
-			if v10 <= v5:
-				_pc = 24147
-				continue
-			else:
-				_pc = 24180
-				continue
-		elif _pc == 24147:
-			_pc = 24173
-			continue
-		elif _pc == 24152:
+		return 3
+	v10 = v10 - v4
+	if v10 <= v5:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_retreat_type: Returning 'Police'\n")
-			_pc = 24173
-			continue
-		elif _pc == 24173:
-			_pc = 24345
-			continue
-		elif _pc == 24180:
-			v10 = v10 - v5
-			if v10 <= v8:
-				_pc = 24213
-				continue
-			else:
-				_pc = 24246
-				continue
-		elif _pc == 24213:
-			_pc = 24239
-			continue
-		elif _pc == 24218:
+		return 4
+	v10 = v10 - v5
+	if v10 <= v8:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_retreat_type: Returning 'Stranded'\n")
-			_pc = 24239
-			continue
-		elif _pc == 24239:
-			_pc = 24345
-			continue
-		elif _pc == 24246:
-			v10 = v10 - v8
-			if v10 <= v6:
-				_pc = 24279
-				continue
-			else:
-				_pc = 24312
-				continue
-		elif _pc == 24279:
-			_pc = 24305
-			continue
-		elif _pc == 24284:
+		return 7
+	v10 = v10 - v8
+	if v10 <= v6:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3.get_retreat_type: Returning 'Tanker'\n")
-			_pc = 24305
-			continue
-		elif _pc == 24305:
-			_pc = 24345
-			continue
-		elif _pc == 24312:
-			_pc = 24338
-			continue
-		elif _pc == 24317:
-			debug.print_string("iAct3.get_retreat_type: Returning 'Trade'\n")
-			_pc = 24338
-			continue
-		elif _pc == 24338:
-			_pc = 24345
-			continue
-		elif _pc == 24345:
-			return
-		else:
-			return 0
+		return 5
+	if PogRuntime.TRACE:
+		debug.print_string("iAct3.get_retreat_type: Returning 'Trade'\n")
+	return 6
 	return 0
 

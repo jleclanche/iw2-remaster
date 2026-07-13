@@ -112,113 +112,47 @@ func local_226() -> Variant:
 
 func local_334() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 334
-	while true:
-		if _pc == 334:
-			_pc = 339
-			continue
-		elif _pc == 339:
-			if icomms.is_in_conversation():
-				_pc = 357
-				continue
-			else:
-				_pc = 394
-				continue
-		elif _pc == 357:
-			await _pog_wait(0.5)
-			_pc = 339
-			continue
-		elif _pc == 394:
-			if await iutilities.skip_mission("Kong Fracture?"):
-				_pc = 419
-				continue
-			else:
-				_pc = 443
-				continue
-		elif _pc == 419:
-			await stub()
-			_pc = 481
-			continue
-		elif _pc == 438:
-			_pc = 481
-			continue
-		elif _pc == 443:
-			v0 = _pog_spawn(mission_handler.bind())
-			_pog_detach(v0)
-			_pc = 481
-			continue
-		elif _pc == 481:
-			return
-		else:
-			return 0
+	while icomms.is_in_conversation():
+		await _pog_wait(0.5)
+	if await iutilities.skip_mission("Kong Fracture?"):
+		await stub()
+		return
+	else:
+		v0 = _pog_spawn(mission_handler.bind())
+		_pog_detach(v0)
+	return
 	return 0
 
 func local_483(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12) -> Variant:
-	var _pc: int = 483
 	while true:
-		if _pc == 483:
-			_pc = 488
+		await _pog_wait(0.1)
+		if state.progress(v1) != 100:
 			continue
-		elif _pc == 488:
-			await _pog_frame()
-			if _pog_every(489, 0.10000000149011612):
-				_pc = 502
-				continue
-			else:
-				_pc = 1037
-				continue
-		elif _pc == 502:
-			if state.progress(v1) == 100:
-				_pc = 528
-				continue
-			else:
-				_pc = 1037
-				continue
-		elif _pc == 528:
-			await iwingmen.purge()
-			isim.set_faction(iship.find_player_ship(), ifaction.find("Player"))
-			if global.exists("g_added_disruptor"):
-				_pc = 614
-				continue
-			else:
-				_pc = 682
-				continue
-		elif _pc == 614:
+		await iwingmen.purge()
+		isim.set_faction(iship.find_player_ship(), ifaction.find("Player"))
+		if global.exists("g_added_disruptor"):
 			subsim.destroy(sim.find_subsim_by_name(iship.find_player_ship(), "Cargo_DisruptorMissile"))
 			global.destroy("g_added_disruptor")
-			_pc = 682
-			continue
-		elif _pc == 682:
-			sim.destroy(v6)
-			sim.destroy(v7)
-			sim.destroy(v8)
-			sim.destroy(v9)
-			sim.destroy(v10)
-			sim.destroy(v11)
-			group.destroy(v2, 1)
-			group.destroy(v3, 1)
-			group.destroy(v4, 1)
-			group.destroy(v5, 1)
-			group.destroy(v12, 1)
-			global.set_bool("g_skip_locked", 0)
-			_pog_detach(_pog_spawn(local_334.bind()))
-			await local_226()
-			state.destroy(v0)
-			await iutilities.remove_mission_restart()
-			await imissiontracker.remove_mission(v0)
-			_pog_halt(v0)
-			_pc = 1043
-			continue
-		elif _pc == 1037:
-			_pc = 488
-			continue
-		elif _pc == 1042:
-			_pc = 1043
-			continue
-		elif _pc == 1043:
-			return
-		else:
-			return 0
+		sim.destroy(v6)
+		sim.destroy(v7)
+		sim.destroy(v8)
+		sim.destroy(v9)
+		sim.destroy(v10)
+		sim.destroy(v11)
+		group.destroy(v2, 1)
+		group.destroy(v3, 1)
+		group.destroy(v4, 1)
+		group.destroy(v5, 1)
+		group.destroy(v12, 1)
+		global.set_bool("g_skip_locked", 0)
+		_pog_detach(_pog_spawn(local_334.bind()))
+		await local_226()
+		state.destroy(v0)
+		await iutilities.remove_mission_restart()
+		await imissiontracker.remove_mission(v0)
+		_pog_halt(v0)
+		return
+	return
 	return 0
 
 func mission_handler() -> Variant:
@@ -1297,39 +1231,31 @@ func local_13987(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 13987
-	while true:
-		if _pc == 13987:
-			v2 = group.create()
-			v3 = ifaction.find("League")
-			v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
-			sim.set_cullable(v1, 0)
-			isim.set_faction(v1, v3)
-			await ipilotsetup.generic_cargo_pod(v1)
-			group.add_sim(v2, v1)
-			sim.place_near(v1, v0, 3000.0)
-			v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
-			sim.set_cullable(v1, 0)
-			isim.set_faction(v1, v3)
-			await ipilotsetup.generic_cargo_pod(v1)
-			group.add_sim(v2, v1)
-			v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
-			sim.set_cullable(v1, 0)
-			isim.set_faction(v1, v3)
-			await ipilotsetup.generic_cargo_pod(v1)
-			group.add_sim(v2, v1)
-			v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
-			sim.set_cullable(v1, 0)
-			isim.set_faction(v1, v3)
-			await ipilotsetup.generic_cargo_pod(v1)
-			group.add_sim(v2, v1)
-			await iformation.line_abreast(v2, 50.0, 1)
-			_pc = 14641
-			continue
-		elif _pc == 14641:
-			return
-		else:
-			return 0
+	v2 = group.create()
+	v3 = ifaction.find("League")
+	v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
+	sim.set_cullable(v1, 0)
+	isim.set_faction(v1, v3)
+	await ipilotsetup.generic_cargo_pod(v1)
+	group.add_sim(v2, v1)
+	sim.place_near(v1, v0, 3000.0)
+	v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
+	sim.set_cullable(v1, 0)
+	isim.set_faction(v1, v3)
+	await ipilotsetup.generic_cargo_pod(v1)
+	group.add_sim(v2, v1)
+	v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
+	sim.set_cullable(v1, 0)
+	isim.set_faction(v1, v3)
+	await ipilotsetup.generic_cargo_pod(v1)
+	group.add_sim(v2, v1)
+	v1 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
+	sim.set_cullable(v1, 0)
+	isim.set_faction(v1, v3)
+	await ipilotsetup.generic_cargo_pod(v1)
+	group.add_sim(v2, v1)
+	await iformation.line_abreast(v2, 50.0, 1)
+	return v2
 	return 0
 
 func local_14643(v0) -> Variant:
@@ -1343,32 +1269,15 @@ func local_14680(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 14680
-	while true:
-		if _pc == 14680:
-			v3 = 5
-			v1 = await ishipcreation.create_cargo_pods(471, v3)
-			v4 = 0
-			_pc = 14727
-			continue
-		elif _pc == 14727:
-			if v4 < v3:
-				_pc = 14743
-				continue
-			else:
-				_pc = 14859
-				continue
-		elif _pc == 14743:
-			v2 = iship.cast(group.nth_sim(v1, v4))
-			iship.dock(v2, v0)
-			object.add_string_property(v2, "death_script", "iDeathScript.Antimatter")
-			v4 = v4 + 1
-			_pc = 14727
-			continue
-		elif _pc == 14859:
-			return 0
-		else:
-			return 0
+	v3 = 5
+	v1 = await ishipcreation.create_cargo_pods(471, v3)
+	v4 = 0
+	while v4 < v3:
+		v2 = iship.cast(group.nth_sim(v1, v4))
+		iship.dock(v2, v0)
+		object.add_string_property(v2, "death_script", "iDeathScript.Antimatter")
+		v4 = v4 + 1
+	return 0
 	return 0
 
 func local_14862(v0, v1, v2) -> Variant:
@@ -1376,54 +1285,25 @@ func local_14862(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 14862
-	while true:
-		if _pc == 14862:
-			v3 = ifaction.find("Police")
-			v4 = ifaction.find("League")
-			v6 = 0
-			_pc = 14925
-			continue
-		elif _pc == 14925:
-			if v6 < 8:
-				_pc = 14938
-				continue
-			else:
-				_pc = 15118
-				continue
-		elif _pc == 14938:
-			v5 = iship.create("ini:/sims/ships/navy/advanced_patcom_mk1", await ishipcreation.ship_name("Police", -1))
-			isim.set_faction(v5, v3)
-			sim.place_near(v5, v0, math.random(1000.0, 3000.0))
-			await ipilotsetup.marauder(v5)
-			group.add_sim(v1, v5)
-			v6 = v6 + 1
-			_pc = 14925
-			continue
-		elif _pc == 15118:
-			v6 = 0
-			_pc = 15125
-			continue
-		elif _pc == 15125:
-			if v6 < 4:
-				_pc = 15138
-				continue
-			else:
-				_pc = 15318
-				continue
-		elif _pc == 15138:
-			v5 = iship.create("ini:/sims/ships/navy/patcom", await ishipcreation.ship_name("League", -1))
-			isim.set_faction(v5, v4)
-			sim.place_near(v5, v0, math.random(1000.0, 3000.0))
-			await ipilotsetup.marauder(v5)
-			group.add_sim(v2, v5)
-			v6 = v6 + 1
-			_pc = 15125
-			continue
-		elif _pc == 15318:
-			return 0
-		else:
-			return 0
+	v3 = ifaction.find("Police")
+	v4 = ifaction.find("League")
+	v6 = 0
+	while v6 < 8:
+		v5 = iship.create("ini:/sims/ships/navy/advanced_patcom_mk1", await ishipcreation.ship_name("Police", -1))
+		isim.set_faction(v5, v3)
+		sim.place_near(v5, v0, math.random(1000.0, 3000.0))
+		await ipilotsetup.marauder(v5)
+		group.add_sim(v1, v5)
+		v6 = v6 + 1
+	v6 = 0
+	while v6 < 4:
+		v5 = iship.create("ini:/sims/ships/navy/patcom", await ishipcreation.ship_name("League", -1))
+		isim.set_faction(v5, v4)
+		sim.place_near(v5, v0, math.random(1000.0, 3000.0))
+		await ipilotsetup.marauder(v5)
+		group.add_sim(v2, v5)
+		v6 = v6 + 1
+	return 0
 	return 0
 
 func local_15321(v0) -> Variant:
@@ -1443,75 +1323,38 @@ func local_15321(v0) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 15321
-	while true:
-		if _pc == 15321:
-			v1 = ifaction.find("Marauders")
-			v2 = group.create()
-			v3 = group.create()
-			v4 = group.create()
-			v5 = group.create()
-			v6 = group.create()
-			_pc = 15473
-			continue
-		elif _pc == 15452:
-			debug.print_string("iAct2Mission13,setup_ldsi_ship: Creating LDSI ship\n")
-			_pc = 15473
-			continue
-		elif _pc == 15473:
-			group.add_group(v2, v4)
-			group.add_group(v2, v5)
-			group.add_group(v2, v6)
-			v7 = iship.create("ini:/sims/custom/act2_mission18/ldsi_freighter", "a2_m15_shipname_akela")
-			group.add_sim(v2, v7)
-			isim.set_indestructable(v7, 1)
-			v16 = 0
-			_pc = 15628
-			continue
-		elif _pc == 15628:
-			if v16 < 6:
-				_pc = 15641
-				continue
-			else:
-				_pc = 15759
-				continue
-		elif _pc == 15641:
-			v14 = iship.create("ini:/sims/custom/act2_mission18/ldsi_antenna", "LDSi Antenna")
-			isim.dock(v14, v7)
-			group.add_sim(v6, v14)
-			isim.set_indestructable(v14, 1)
-			v16 = v16 + 1
-			_pc = 15628
-			continue
-		elif _pc == 15759:
-			v16 = 0
-			_pc = 15766
-			continue
-		elif _pc == 15766:
-			if v16 < 24:
-				_pc = 15779
-				continue
-			else:
-				_pc = 15897
-				continue
-		elif _pc == 15779:
-			v15 = iship.create("ini:/sims/ships/utility/megapod", "Megapod")
-			isim.dock(v15, v7)
-			group.add_sim(v5, v15)
-			isim.set_indestructable(v15, 1)
-			v16 = v16 + 1
-			_pc = 15766
-			continue
-		elif _pc == 15897:
-			await iutilities.group_set_cullable(v2, 0)
-			await iutilities.group_set_faction(v2, ifaction.find("Marauders"))
-			sim.place_at(v7, v0)
-			_pc = 15990
-			continue
-		elif _pc == 15990:
-			return
-		else:
-			return 0
+	v1 = ifaction.find("Marauders")
+	v2 = group.create()
+	v3 = group.create()
+	v4 = group.create()
+	v5 = group.create()
+	v6 = group.create()
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission13,setup_ldsi_ship: Creating LDSI ship\n")
+	group.add_group(v2, v4)
+	group.add_group(v2, v5)
+	group.add_group(v2, v6)
+	v7 = iship.create("ini:/sims/custom/act2_mission18/ldsi_freighter", "a2_m15_shipname_akela")
+	group.add_sim(v2, v7)
+	isim.set_indestructable(v7, 1)
+	v16 = 0
+	while v16 < 6:
+		v14 = iship.create("ini:/sims/custom/act2_mission18/ldsi_antenna", "LDSi Antenna")
+		isim.dock(v14, v7)
+		group.add_sim(v6, v14)
+		isim.set_indestructable(v14, 1)
+		v16 = v16 + 1
+	v16 = 0
+	while v16 < 24:
+		v15 = iship.create("ini:/sims/ships/utility/megapod", "Megapod")
+		isim.dock(v15, v7)
+		group.add_sim(v5, v15)
+		isim.set_indestructable(v15, 1)
+		v16 = v16 + 1
+	await iutilities.group_set_cullable(v2, 0)
+	await iutilities.group_set_faction(v2, ifaction.find("Marauders"))
+	sim.place_at(v7, v0)
+	return v2
 	return 0
 
 func local_15992(v0) -> Variant:
@@ -1571,14 +1414,14 @@ func local_15992(v0) -> Variant:
 				_pc = 16317
 				continue
 		elif _pc == 16671:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 16680
 				continue
 			else:
 				_pc = 16407
 				continue
 		elif _pc == 16680:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 16689
 				continue
 			else:
@@ -1600,80 +1443,45 @@ func local_16734(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 16734
-	while true:
-		if _pc == 16734:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			v6 = iship.cast(object.handle_property(v0, "chang_handle"))
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v2)
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1", "a2_m13_dialogue_diplomacy_cal_a1_b1")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b2", "a2_m13_dialogue_diplomacy_cal_a1_b2")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b3", "a2_m13_dialogue_diplomacy_cal_a1_b3")
-			v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1")
-			_pc = 17565
-			continue
-		elif _pc == 17088:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1")
-			await local_18859(v0)
-			_pc = 17596
-			continue
-		elif _pc == 17178:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b2")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b2")
-			state.set_progress(v0, 8)
-			_pc = 17596
-			continue
-		elif _pc == 17336:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b3")
-			idirector.set_focus(v6)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b3")
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b3")
-			state.set_progress(v0, 8)
-			_pc = 17596
-			continue
-		elif _pc == 17560:
-			_pc = 17596
-			continue
-		elif _pc == 17565:
-			if 1 != v1:
-				_pc = 17578
-				continue
-			else:
-				_pc = 17088
-				continue
-		elif _pc == 17578:
-			if not _pog_is_null(2):
-				_pc = 17587
-				continue
-			else:
-				_pc = 17178
-				continue
-		elif _pc == 17587:
-			if not _pog_is_null(3):
-				_pc = 17596
-				continue
-			else:
-				_pc = 17336
-				continue
-		elif _pc == 17596:
-			return 0
-		else:
-			return 0
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	v6 = iship.cast(object.handle_property(v0, "chang_handle"))
+	idirector.set_focus(v4)
+	idirector.set_secondary_focus(v2)
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1", "a2_m13_dialogue_diplomacy_cal_a1_b1")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b2", "a2_m13_dialogue_diplomacy_cal_a1_b2")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b3", "a2_m13_dialogue_diplomacy_cal_a1_b3")
+	v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1")
+	if 1 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1")
+		await local_18859(v0)
+		return 0
+	if 2 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b2")
+		state.set_progress(v0, 8)
+		return 0
+	if 3 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b3")
+		idirector.set_focus(v6)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b3")
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b3")
+		state.set_progress(v0, 8)
+		return 0
+	return 0
 	return 0
 
 func local_17599(v0) -> Variant:
@@ -1711,76 +1519,41 @@ func local_18105(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 18105
-	while true:
-		if _pc == 18105:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v2)
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1", "a2_m13_dialogue_diplomacy_cal_a3_b1")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2", "a2_m13_dialogue_diplomacy_cal_a3_b2")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b3", "a2_m13_dialogue_diplomacy_cal_a3_b3")
-			v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3")
-			_pc = 18825
-			continue
-		elif _pc == 18416:
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b1")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1")
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b1")
-			await local_21569(v0)
-			_pc = 18856
-			continue
-		elif _pc == 18638:
-			await local_22133(v0)
-			_pc = 18856
-			continue
-		elif _pc == 18662:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
-			state.set_progress(v0, 6)
-			_pc = 18856
-			continue
-		elif _pc == 18820:
-			_pc = 18856
-			continue
-		elif _pc == 18825:
-			if 1 != v1:
-				_pc = 18838
-				continue
-			else:
-				_pc = 18416
-				continue
-		elif _pc == 18838:
-			if not _pog_is_null(2):
-				_pc = 18847
-				continue
-			else:
-				_pc = 18638
-				continue
-		elif _pc == 18847:
-			if not _pog_is_null(3):
-				_pc = 18856
-				continue
-			else:
-				_pc = 18662
-				continue
-		elif _pc == 18856:
-			return 0
-		else:
-			return 0
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	idirector.set_focus(v4)
+	idirector.set_secondary_focus(v2)
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1", "a2_m13_dialogue_diplomacy_cal_a3_b1")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2", "a2_m13_dialogue_diplomacy_cal_a3_b2")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b3", "a2_m13_dialogue_diplomacy_cal_a3_b3")
+	v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3")
+	if 1 == v1:
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b1")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1")
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b1")
+		await local_21569(v0)
+		return 0
+	if 2 == v1:
+		await local_22133(v0)
+		return 0
+	if 3 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
+		state.set_progress(v0, 6)
+		return 0
+	return 0
 	return 0
 
 func local_18859(v0) -> Variant:
@@ -1789,88 +1562,53 @@ func local_18859(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 18859
-	while true:
-		if _pc == 18859:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c1", "a2_m13_dialogue_diplomacy_cal_a1_b1_c1")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c2")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3")
-			v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1")
-			_pc = 19841
-			continue
-		elif _pc == 19170:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c1")
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v3)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c1")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
-			await local_20702(v0)
-			_pc = 19872
-			continue
-		elif _pc == 19392:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c2")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c2")
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v4)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c2")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_2_a1_b1_c2")
-			await local_20702(v0)
-			_pc = 19872
-			continue
-		elif _pc == 19680:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v3)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3")
-			await local_19875(v0)
-			_pc = 19872
-			continue
-		elif _pc == 19836:
-			_pc = 19872
-			continue
-		elif _pc == 19841:
-			if 1 != v1:
-				_pc = 19854
-				continue
-			else:
-				_pc = 19170
-				continue
-		elif _pc == 19854:
-			if not _pog_is_null(2):
-				_pc = 19863
-				continue
-			else:
-				_pc = 19392
-				continue
-		elif _pc == 19863:
-			if not _pog_is_null(3):
-				_pc = 19872
-				continue
-			else:
-				_pc = 19680
-				continue
-		elif _pc == 19872:
-			return 0
-		else:
-			return 0
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	idirector.set_focus(v3)
+	idirector.set_secondary_focus(v2)
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c1", "a2_m13_dialogue_diplomacy_cal_a1_b1_c1")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c2")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3")
+	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1")
+	if 1 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c1")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v3)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c1")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
+		await local_20702(v0)
+		return 0
+	if 2 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c2")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v4)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_2_a1_b1_c2")
+		await local_20702(v0)
+		return 0
+	if 3 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v3)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3")
+		await local_19875(v0)
+		return 0
+	return 0
 	return 0
 
 func local_19875(v0) -> Variant:
@@ -1880,78 +1618,43 @@ func local_19875(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 19875
-	while true:
-		if _pc == 19875:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			v6 = iship.cast(object.handle_property(v0, "chang_handle"))
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d1", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d1")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d2")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d3")
-			v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1_c3")
-			_pc = 20668
-			continue
-		elif _pc == 20229:
-			await iconversation.say(0, "name_cal", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d1")
-			state.set_progress(v0, 8)
-			_pc = 20699
-			continue
-		elif _pc == 20283:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3_d2")
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v3)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c3_d2")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
-			await local_20702(v0)
-			_pc = 20699
-			continue
-		elif _pc == 20505:
-			idirector.set_focus(v6)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b1_c3_d3")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3_d3")
-			state.set_progress(v0, 8)
-			_pc = 20699
-			continue
-		elif _pc == 20663:
-			_pc = 20699
-			continue
-		elif _pc == 20668:
-			if 1 != v1:
-				_pc = 20681
-				continue
-			else:
-				_pc = 20229
-				continue
-		elif _pc == 20681:
-			if not _pog_is_null(2):
-				_pc = 20690
-				continue
-			else:
-				_pc = 20283
-				continue
-		elif _pc == 20690:
-			if not _pog_is_null(3):
-				_pc = 20699
-				continue
-			else:
-				_pc = 20505
-				continue
-		elif _pc == 20699:
-			return 0
-		else:
-			return 0
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	v6 = iship.cast(object.handle_property(v0, "chang_handle"))
+	idirector.set_focus(v3)
+	idirector.set_secondary_focus(v2)
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d1", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d1")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d2")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d3")
+	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1_c3")
+	if 1 == v1:
+		await iconversation.say(0, "name_cal", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d1")
+		state.set_progress(v0, 8)
+		return 0
+	if 2 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3_d2")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v3)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c3_d2")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
+		await local_20702(v0)
+		return 0
+	if 3 == v1:
+		idirector.set_focus(v6)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b1_c3_d3")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3_d3")
+		state.set_progress(v0, 8)
+		return 0
+	return 0
 	return 0
 
 func local_20702(v0) -> Variant:
@@ -1961,80 +1664,45 @@ func local_20702(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 20702
-	while true:
-		if _pc == 20702:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			v6 = iship.cast(object.handle_property(v0, "chang_handle"))
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v6)
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c1", ". . .")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c2", "a2_m13_dialogue_diplomacy_cal_a2_b1_c2")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c3", "a2_m13_dialogue_diplomacy_cal_a2_b1_c3")
-			v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a2_b1")
-			_pc = 21535
-			continue
-		elif _pc == 21056:
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v6)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c1")
-			idirector.set_focus(v6)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a2_b1_c1")
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v5)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c1")
-			state.set_progress(v0, 8)
-			_pc = 21566
-			continue
-		elif _pc == 21280:
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c2")
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v4)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a2_b1_c2")
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c2")
-			state.set_progress(v0, 6)
-			_pc = 21566
-			continue
-		elif _pc == 21504:
-			state.set_progress(v0, 8)
-			_pc = 21566
-			continue
-		elif _pc == 21530:
-			_pc = 21566
-			continue
-		elif _pc == 21535:
-			if 1 != v1:
-				_pc = 21548
-				continue
-			else:
-				_pc = 21056
-				continue
-		elif _pc == 21548:
-			if not _pog_is_null(2):
-				_pc = 21557
-				continue
-			else:
-				_pc = 21280
-				continue
-		elif _pc == 21557:
-			if not _pog_is_null(3):
-				_pc = 21566
-				continue
-			else:
-				_pc = 21504
-				continue
-		elif _pc == 21566:
-			return 0
-		else:
-			return 0
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	v6 = iship.cast(object.handle_property(v0, "chang_handle"))
+	idirector.set_focus(v5)
+	idirector.set_secondary_focus(v6)
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c1", ". . .")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c2", "a2_m13_dialogue_diplomacy_cal_a2_b1_c2")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c3", "a2_m13_dialogue_diplomacy_cal_a2_b1_c3")
+	v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a2_b1")
+	if 1 == v1:
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v6)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c1")
+		idirector.set_focus(v6)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a2_b1_c1")
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v5)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c1")
+		state.set_progress(v0, 8)
+		return 0
+	if 2 == v1:
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c2")
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v4)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a2_b1_c2")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c2")
+		state.set_progress(v0, 6)
+		return 0
+	if 3 == v1:
+		state.set_progress(v0, 8)
+		return 0
+	return 0
 	return 0
 
 func local_21569(v0) -> Variant:
@@ -2043,58 +1711,31 @@ func local_21569(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 21569
-	while true:
-		if _pc == 21569:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v2)
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c1", "a2_m13_dialogue_diplomacy_cal_a3_b1_c1")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c2", "a2_m13_dialogue_diplomacy_cal_a3_b1_c2")
-			v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a3_b1")
-			_pc = 22108
-			continue
-		elif _pc == 21853:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
-			idirector.set_focus(v5)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
-			state.set_progress(v0, 6)
-			_pc = 22130
-			continue
-		elif _pc == 22011:
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1_c2")
-			state.set_progress(v0, 8)
-			_pc = 22130
-			continue
-		elif _pc == 22103:
-			_pc = 22130
-			continue
-		elif _pc == 22108:
-			if 1 != v1:
-				_pc = 22121
-				continue
-			else:
-				_pc = 21853
-				continue
-		elif _pc == 22121:
-			if not _pog_is_null(2):
-				_pc = 22130
-				continue
-			else:
-				_pc = 22011
-				continue
-		elif _pc == 22130:
-			return 0
-		else:
-			return 0
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	idirector.set_focus(v5)
+	idirector.set_secondary_focus(v2)
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c1", "a2_m13_dialogue_diplomacy_cal_a3_b1_c1")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c2", "a2_m13_dialogue_diplomacy_cal_a3_b1_c2")
+	v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a3_b1")
+	if 1 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
+		idirector.set_focus(v5)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
+		state.set_progress(v0, 6)
+		return 0
+	if 2 == v1:
+		idirector.set_focus(v4)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1_c2")
+		state.set_progress(v0, 8)
+		return 0
+	return 0
 	return 0
 
 func local_22133(v0) -> Variant:
@@ -2103,182 +1744,79 @@ func local_22133(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 22133
-	while true:
-		if _pc == 22133:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c1", "a2_m13_dialogue_diplomacy_cal_a3_b2_c1")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c2", "a2_m13_dialogue_diplomacy_cal_a3_b2_c2")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c3", "a2_m13_dialogue_diplomacy_cal_a3_b2_c3")
-			v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2")
-			_pc = 22857
-			continue
-		elif _pc == 22444:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c1")
-			idirector.set_focus(v2)
-			idirector.set_secondary_focus(v3)
-			await iconversation.say(0, "Cal", "a2_m13_dialogue_diplomacy_cal_2_a3_b2_c1")
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a3_b2_c1")
-			state.set_progress(v0, 6)
-			_pc = 22888
-			continue
-		elif _pc == 22668:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c2")
-			state.set_progress(v0, 8)
-			_pc = 22888
-			continue
-		elif _pc == 22760:
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c3")
-			state.set_progress(v0, 8)
-			_pc = 22888
-			continue
-		elif _pc == 22852:
-			_pc = 22888
-			continue
-		elif _pc == 22857:
-			if 1 != v1:
-				_pc = 22870
-				continue
-			else:
-				_pc = 22444
-				continue
-		elif _pc == 22870:
-			if not _pog_is_null(2):
-				_pc = 22879
-				continue
-			else:
-				_pc = 22668
-				continue
-		elif _pc == 22879:
-			if not _pog_is_null(3):
-				_pc = 22888
-				continue
-			else:
-				_pc = 22760
-				continue
-		elif _pc == 22888:
-			return 0
-		else:
-			return 0
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	idirector.set_focus(v3)
+	idirector.set_secondary_focus(v2)
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c1", "a2_m13_dialogue_diplomacy_cal_a3_b2_c1")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c2", "a2_m13_dialogue_diplomacy_cal_a3_b2_c2")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c3", "a2_m13_dialogue_diplomacy_cal_a3_b2_c3")
+	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2")
+	if 1 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c1")
+		idirector.set_focus(v2)
+		idirector.set_secondary_focus(v3)
+		await iconversation.say(0, "Cal", "a2_m13_dialogue_diplomacy_cal_2_a3_b2_c1")
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a3_b2_c1")
+		state.set_progress(v0, 6)
+		return 0
+	if 2 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c2")
+		state.set_progress(v0, 8)
+		return 0
+	if 3 == v1:
+		idirector.set_focus(v3)
+		idirector.set_secondary_focus(v2)
+		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c3")
+		state.set_progress(v0, 8)
+		return 0
+	return 0
 	return 0
 
 func local_22891(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 22891
-	while true:
-		if _pc == 22891:
-			v2 = 0
-			_pc = 22903
-			continue
-		elif _pc == 22903:
-			if v2 < group.sim_count(v0):
-				_pc = 22932
-				continue
-			else:
-				_pc = 22992
-				continue
-		elif _pc == 22932:
-			sim.set_cullable(group.nth_sim(v0, v2), v1)
-			v2 = v2 + 1
-			_pc = 22903
-			continue
-		elif _pc == 22992:
-			return 0
-		else:
-			return 0
+	v2 = 0
+	while v2 < group.sim_count(v0):
+		sim.set_cullable(group.nth_sim(v0, v2), v1)
+		v2 = v2 + 1
+	return 0
 	return 0
 
 func local_22995(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 22995
-	while true:
-		if _pc == 22995:
-			v2 = 0
-			_pc = 23007
-			continue
-		elif _pc == 23007:
-			if v2 < group.sim_count(v0):
-				_pc = 23036
-				continue
-			else:
-				_pc = 23109
-				continue
-		elif _pc == 23036:
-			isim.set_faction(isim.cast(group.nth_sim(v0, v2)), v1)
-			v2 = v2 + 1
-			_pc = 23007
-			continue
-		elif _pc == 23109:
-			return 0
-		else:
-			return 0
+	v2 = 0
+	while v2 < group.sim_count(v0):
+		isim.set_faction(isim.cast(group.nth_sim(v0, v2)), v1)
+		v2 = v2 + 1
+	return 0
 	return 0
 
 func local_23112(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 23112
-	while true:
-		if _pc == 23112:
-			v1 = 0
-			_pc = 23124
-			continue
-		elif _pc == 23124:
-			if v1 < group.sim_count(v0):
-				_pc = 23153
-				continue
-			else:
-				_pc = 23216
-				continue
-		elif _pc == 23153:
-			object.set_int_property(group.nth_sim(v0, v1), "ignore_speed_limit", 1)
-			v1 = v1 + 1
-			_pc = 23124
-			continue
-		elif _pc == 23216:
-			return 0
-		else:
-			return 0
+	v1 = 0
+	while v1 < group.sim_count(v0):
+		object.set_int_property(group.nth_sim(v0, v1), "ignore_speed_limit", 1)
+		v1 = v1 + 1
+	return 0
 	return 0
 
 func local_23219(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 23219
-	while true:
-		if _pc == 23219:
-			v2 = 0
-			_pc = 23231
-			continue
-		elif _pc == 23231:
-			if v2 < group.sim_count(v0):
-				_pc = 23260
-				continue
-			else:
-				_pc = 23431
-				continue
-		elif _pc == 23260:
-			iship.set_free_without_pilot(iship.cast(group.nth_sim(v0, v2)), v1)
-			sim.avatar_add_channel(group.nth_sim(v0, v2), "lz", 1.0)
-			sim.avatar_set_channel(group.nth_sim(v0, v2), "lz", 1.0)
-			v2 = v2 + 1
-			_pc = 23231
-			continue
-		elif _pc == 23431:
-			return 0
-		else:
-			return 0
+	v2 = 0
+	while v2 < group.sim_count(v0):
+		iship.set_free_without_pilot(iship.cast(group.nth_sim(v0, v2)), v1)
+		sim.avatar_add_channel(group.nth_sim(v0, v2), "lz", 1.0)
+		sim.avatar_set_channel(group.nth_sim(v0, v2), "lz", 1.0)
+		v2 = v2 + 1
+	return 0
 	return 0
 
 func local_23434(v0, v1, v2, v3, v4) -> Variant:
@@ -2287,80 +1825,49 @@ func local_23434(v0, v1, v2, v3, v4) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 23434
-	while true:
-		if _pc == 23434:
-			v8 = await icutsceneutilities.get_kill_group()
-			idirector.begin()
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			iai.clear_autopilot()
-			iai.purge_orders(await iwingmen.group())
-			sim.place_relative_to(v0, v4, 3000.0, 2000.0, 8000.0)
-			await iformation.goose(await iwingmen.group(), 0.0, 1)
-			v6 = idirector.create_dolly()
-			v7 = await iutilities.create_waypoint_at(v4)
-			sim.place_relative_to(v7, v4, 0.0, 0.0, 30000.0)
-			sim.place_relative_to(v6, v4, 50.0, -300.0, 1000.0)
-			group.add_sim(v8, v6)
-			idirector.set_dolly_camera(v6)
-			idirector.set_focus(v4)
-			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-			await _pog_wait(1.0)
-			icomms.shout(0, "name_smith", "a2_m13_dialogue_smith_there_they_are")
-			v9 = group.sim_count(v3)
-			_pc = 23920
-			continue
-		elif _pc == 23920:
-			if v9 >= 0:
-				_pc = 23932
-				continue
-			else:
-				_pc = 24176
-				continue
-		elif _pc == 23932:
-			v5 = iship.cast(group.nth_sim(v3, v9))
-			isim.capsule_jump_staggered(v5, v4)
-			_pc = 23998
-			continue
-		elif _pc == 23998:
+	v8 = await icutsceneutilities.get_kill_group()
+	idirector.begin()
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	iai.clear_autopilot()
+	iai.purge_orders(await iwingmen.group())
+	sim.place_relative_to(v0, v4, 3000.0, 2000.0, 8000.0)
+	await iformation.goose(await iwingmen.group(), 0.0, 1)
+	v6 = idirector.create_dolly()
+	v7 = await iutilities.create_waypoint_at(v4)
+	sim.place_relative_to(v7, v4, 0.0, 0.0, 30000.0)
+	sim.place_relative_to(v6, v4, 50.0, -300.0, 1000.0)
+	group.add_sim(v8, v6)
+	idirector.set_dolly_camera(v6)
+	idirector.set_focus(v4)
+	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+	await _pog_wait(1.0)
+	icomms.shout(0, "name_smith", "a2_m13_dialogue_smith_there_they_are")
+	v9 = group.sim_count(v3)
+	while v9 >= 0:
+		v5 = iship.cast(group.nth_sim(v3, v9))
+		isim.capsule_jump_staggered(v5, v4)
+		while true:
 			await _pog_wait(0.10000000149011612)
 			if not (isim.is_capsule_jumping(v5)):
-				_pc = 24053
-				continue
-			else:
-				_pc = 23998
-				continue
-		elif _pc == 24053:
-			iship.set_free_without_pilot(v5, 1)
-			sim.set_velocity_local_to_sim(v5, 0.0, 0.0, 500.0)
-			await _pog_wait(math.random(1.0, 2.0))
-			v9 = v9 + -1
-			_pc = 23920
-			continue
-		elif _pc == 24176:
-			isim.capsule_jump(v2, v4)
-			_pc = 24200
-			continue
-		elif _pc == 24200:
-			await _pog_wait(0.009999999776482582)
-			if not (isim.is_capsule_jumping(v2)):
-				_pc = 24255
-				continue
-			else:
-				_pc = 24200
-				continue
-		elif _pc == 24255:
-			iship.set_free_without_pilot(v2, 1)
-			sim.set_velocity_local_to_sim(v2, 0.0, 0.0, 400.0)
-			idirector.set_focus(v2)
-			await _pog_wait(2.0)
-			idirector.set_focus(v2)
-			await _pog_wait(6.0)
-			await icutsceneutilities.disable_player_autopilot()
-			idirector.end()
-			return
-		else:
-			return 0
+				break
+		iship.set_free_without_pilot(v5, 1)
+		sim.set_velocity_local_to_sim(v5, 0.0, 0.0, 500.0)
+		await _pog_wait(math.random(1.0, 2.0))
+		v9 = v9 + -1
+	isim.capsule_jump(v2, v4)
+	while true:
+		await _pog_wait(0.009999999776482582)
+		if not (isim.is_capsule_jumping(v2)):
+			break
+	iship.set_free_without_pilot(v2, 1)
+	sim.set_velocity_local_to_sim(v2, 0.0, 0.0, 400.0)
+	idirector.set_focus(v2)
+	await _pog_wait(2.0)
+	idirector.set_focus(v2)
+	await _pog_wait(6.0)
+	await icutsceneutilities.disable_player_autopilot()
+	idirector.end()
+	return
 	return 0
 
 func local_24441(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11) -> Variant:

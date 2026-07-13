@@ -77,28 +77,28 @@ func local_52(v0, v1) -> Variant:
 				_pc = 78
 				continue
 		elif _pc == 186:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 194
 				continue
 			else:
 				_pc = 96
 				continue
 		elif _pc == 194:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 203
 				continue
 			else:
 				_pc = 114
 				continue
 		elif _pc == 203:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 212
 				continue
 			else:
 				_pc = 132
 				continue
 		elif _pc == 212:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 221
 				continue
 			else:
@@ -141,28 +141,28 @@ func local_52(v0, v1) -> Variant:
 				_pc = 231
 				continue
 		elif _pc == 339:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 347
 				continue
 			else:
 				_pc = 249
 				continue
 		elif _pc == 347:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 356
 				continue
 			else:
 				_pc = 267
 				continue
 		elif _pc == 356:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 365
 				continue
 			else:
 				_pc = 285
 				continue
 		elif _pc == 365:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 374
 				continue
 			else:
@@ -205,28 +205,28 @@ func local_52(v0, v1) -> Variant:
 				_pc = 384
 				continue
 		elif _pc == 492:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 500
 				continue
 			else:
 				_pc = 402
 				continue
 		elif _pc == 500:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 509
 				continue
 			else:
 				_pc = 420
 				continue
 		elif _pc == 509:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 518
 				continue
 			else:
 				_pc = 438
 				continue
 		elif _pc == 518:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 527
 				continue
 			else:
@@ -246,22 +246,21 @@ func local_52(v0, v1) -> Variant:
 				_pc = 73
 				continue
 		elif _pc == 550:
-			if not _pog_is_null(1):
+			if 1 != v0:
 				_pc = 558
 				continue
 			else:
 				_pc = 226
 				continue
 		elif _pc == 558:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 567
 				continue
 			else:
 				_pc = 379
 				continue
 		elif _pc == 567:
-			_pc = 577
-			continue
+			return _pog_clone(v2)
 		elif _pc == 577:
 			return
 		else:
@@ -269,533 +268,141 @@ func local_52(v0, v1) -> Variant:
 	return 0
 
 func local_587(v0) -> Variant:
-	var _pc: int = 587
-	while true:
-		if _pc == 587:
-			if _pog_eq(v0, "map:/geog/badlands/hoffers_wake"):
-				_pc = 605
-				continue
-			else:
-				_pc = 611
-				continue
-		elif _pc == 605:
-			_pc = 834
-			continue
-		elif _pc == 611:
-			if _pog_eq(v0, "map:/geog/badlands/mwari"):
-				_pc = 629
-				continue
-			else:
-				_pc = 635
-				continue
-		elif _pc == 629:
-			_pc = 834
-			continue
-		elif _pc == 635:
-			if _pog_eq(v0, "map:/geog/badlands/coyote"):
-				_pc = 653
-				continue
-			else:
-				_pc = 659
-				continue
-		elif _pc == 653:
-			_pc = 834
-			continue
-		elif _pc == 659:
-			if _pog_eq(v0, "map:/geog/badlands/firefrost"):
-				_pc = 677
-				continue
-			else:
-				_pc = 683
-				continue
-		elif _pc == 677:
-			_pc = 834
-			continue
-		elif _pc == 683:
-			if _pog_eq(v0, "map:/geog/badlands/e3_system"):
-				_pc = 701
-				continue
-			else:
-				_pc = 707
-				continue
-		elif _pc == 701:
-			_pc = 834
-			continue
-		elif _pc == 707:
-			if _pog_eq(v0, "map:/geog/badlands/santa_romera"):
-				_pc = 725
-				continue
-			else:
-				_pc = 731
-				continue
-		elif _pc == 725:
-			_pc = 834
-			continue
-		elif _pc == 731:
-			if _pog_eq(v0, "map:/geog/badlands/kompira"):
-				_pc = 749
-				continue
-			else:
-				_pc = 755
-				continue
-		elif _pc == 749:
-			_pc = 834
-			continue
-		elif _pc == 755:
-			if _pog_eq(v0, "map:/geog/badlands/eureka"):
-				_pc = 773
-				continue
-			else:
-				_pc = 779
-				continue
-		elif _pc == 773:
-			_pc = 834
-			continue
-		elif _pc == 779:
-			if _pog_eq(v0, "map:/geog/badlands/dagda"):
-				_pc = 797
-				continue
-			else:
-				_pc = 803
-				continue
-		elif _pc == 797:
-			_pc = 834
-			continue
-		elif _pc == 803:
-			if _pog_eq(v0, "map:/geog/badlands/dante"):
-				_pc = 821
-				continue
-			else:
-				_pc = 827
-				continue
-		elif _pc == 821:
-			_pc = 834
-			continue
-		elif _pc == 827:
-			_pc = 834
-			continue
-		elif _pc == 834:
-			return
-		else:
-			return 0
+	if _pog_eq(v0, "map:/geog/badlands/hoffers_wake"):
+		return 0
+	if _pog_eq(v0, "map:/geog/badlands/mwari"):
+		return 0
+	if _pog_eq(v0, "map:/geog/badlands/coyote"):
+		return 0
+	if _pog_eq(v0, "map:/geog/badlands/firefrost"):
+		return 0
+	if _pog_eq(v0, "map:/geog/badlands/e3_system"):
+		return 0
+	if _pog_eq(v0, "map:/geog/badlands/santa_romera"):
+		return 1
+	if _pog_eq(v0, "map:/geog/badlands/kompira"):
+		return 1
+	if _pog_eq(v0, "map:/geog/badlands/eureka"):
+		return 1
+	if _pog_eq(v0, "map:/geog/badlands/dagda"):
+		return 1
+	if _pog_eq(v0, "map:/geog/badlands/dante"):
+		return 1
+	return 2
 	return 0
 
 func local_836(v0) -> Variant:
-	var _pc: int = 836
-	while true:
-		if _pc == 836:
-			_pc = 871
-			continue
-		elif _pc == 841:
-			_pc = 1380
-			continue
-		elif _pc == 847:
-			_pc = 1380
-			continue
-		elif _pc == 853:
-			_pc = 1380
-			continue
-		elif _pc == 860:
-			_pc = 1380
-			continue
-		elif _pc == 866:
-			_pc = 1374
-			continue
-		elif _pc == 871:
-			if not _pog_is_null(v0):
-				_pc = 884
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 884:
-			if not _pog_is_null(1):
-				_pc = 892
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 892:
-			if not _pog_is_null(2):
-				_pc = 901
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 901:
-			if not _pog_is_null(6):
-				_pc = 910
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 910:
-			if not _pog_is_null(9):
-				_pc = 919
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 919:
-			if not _pog_is_null(10):
-				_pc = 928
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 928:
-			if not _pog_is_null(12):
-				_pc = 937
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 937:
-			if not _pog_is_null(19):
-				_pc = 946
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 946:
-			if not _pog_is_null(20):
-				_pc = 955
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 955:
-			if not _pog_is_null(13):
-				_pc = 964
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 964:
-			if not _pog_is_null(5):
-				_pc = 973
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 973:
-			if not _pog_is_null(21):
-				_pc = 982
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 982:
-			if not _pog_is_null(22):
-				_pc = 991
-				continue
-			else:
-				_pc = 841
-				continue
-		elif _pc == 991:
-			if not _pog_is_null(3):
-				_pc = 1000
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1000:
-			if not _pog_is_null(11):
-				_pc = 1009
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1009:
-			if not _pog_is_null(7):
-				_pc = 1018
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1018:
-			if not _pog_is_null(14):
-				_pc = 1027
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1027:
-			if not _pog_is_null(15):
-				_pc = 1036
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1036:
-			if not _pog_is_null(16):
-				_pc = 1045
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1045:
-			if not _pog_is_null(23):
-				_pc = 1054
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1054:
-			if not _pog_is_null(24):
-				_pc = 1063
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1063:
-			if not _pog_is_null(25):
-				_pc = 1072
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1072:
-			if not _pog_is_null(26):
-				_pc = 1081
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1081:
-			if not _pog_is_null(27):
-				_pc = 1090
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1090:
-			if not _pog_is_null(28):
-				_pc = 1099
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1099:
-			if not _pog_is_null(29):
-				_pc = 1108
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1108:
-			if not _pog_is_null(30):
-				_pc = 1117
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1117:
-			if not _pog_is_null(31):
-				_pc = 1126
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1126:
-			if not _pog_is_null(32):
-				_pc = 1135
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1135:
-			if not _pog_is_null(33):
-				_pc = 1144
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1144:
-			if not _pog_is_null(34):
-				_pc = 1153
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1153:
-			if not _pog_is_null(35):
-				_pc = 1162
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1162:
-			if not _pog_is_null(36):
-				_pc = 1171
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1171:
-			if not _pog_is_null(37):
-				_pc = 1180
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1180:
-			if not _pog_is_null(38):
-				_pc = 1189
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1189:
-			if not _pog_is_null(39):
-				_pc = 1198
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1198:
-			if not _pog_is_null(40):
-				_pc = 1207
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1207:
-			if not _pog_is_null(41):
-				_pc = 1216
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1216:
-			if not _pog_is_null(42):
-				_pc = 1225
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1225:
-			if not _pog_is_null(43):
-				_pc = 1234
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1234:
-			if not _pog_is_null(44):
-				_pc = 1243
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1243:
-			if not _pog_is_null(45):
-				_pc = 1252
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1252:
-			if not _pog_is_null(46):
-				_pc = 1261
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1261:
-			if not _pog_is_null(47):
-				_pc = 1270
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1270:
-			if not _pog_is_null(48):
-				_pc = 1279
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1279:
-			if not _pog_is_null(49):
-				_pc = 1288
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1288:
-			if not _pog_is_null(50):
-				_pc = 1297
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1297:
-			if not _pog_is_null(51):
-				_pc = 1306
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1306:
-			if not _pog_is_null(52):
-				_pc = 1315
-				continue
-			else:
-				_pc = 847
-				continue
-		elif _pc == 1315:
-			if not _pog_is_null(4):
-				_pc = 1324
-				continue
-			else:
-				_pc = 853
-				continue
-		elif _pc == 1324:
-			if not _pog_is_null(8):
-				_pc = 1333
-				continue
-			else:
-				_pc = 853
-				continue
-		elif _pc == 1333:
-			if not _pog_is_null(17):
-				_pc = 1342
-				continue
-			else:
-				_pc = 853
-				continue
-		elif _pc == 1342:
-			if not _pog_is_null(18):
-				_pc = 1351
-				continue
-			else:
-				_pc = 853
-				continue
-		elif _pc == 1351:
-			if not _pog_is_null(53):
-				_pc = 1360
-				continue
-			else:
-				_pc = 853
-				continue
-		elif _pc == 1360:
-			if not _pog_is_null(54):
-				_pc = 1369
-				continue
-			else:
-				_pc = 853
-				continue
-		elif _pc == 1369:
-			_pc = 860
-			continue
-		elif _pc == 1374:
-			_pc = 1380
-			continue
-		elif _pc == 1380:
-			return
-		else:
-			return 0
+	if _pog_is_null(v0):
+		return 0
+	if 1 == v0:
+		return 0
+	if 2 == v0:
+		return 0
+	if 6 == v0:
+		return 0
+	if 9 == v0:
+		return 0
+	if 10 == v0:
+		return 0
+	if 12 == v0:
+		return 0
+	if 19 == v0:
+		return 0
+	if 20 == v0:
+		return 0
+	if 13 == v0:
+		return 0
+	if 5 == v0:
+		return 0
+	if 21 == v0:
+		return 0
+	if 22 == v0:
+		return 0
+	if 3 == v0:
+		return 1
+	if 11 == v0:
+		return 1
+	if 7 == v0:
+		return 1
+	if 14 == v0:
+		return 1
+	if 15 == v0:
+		return 1
+	if 16 == v0:
+		return 1
+	if 23 == v0:
+		return 1
+	if 24 == v0:
+		return 1
+	if 25 == v0:
+		return 1
+	if 26 == v0:
+		return 1
+	if 27 == v0:
+		return 1
+	if 28 == v0:
+		return 1
+	if 29 == v0:
+		return 1
+	if 30 == v0:
+		return 1
+	if 31 == v0:
+		return 1
+	if 32 == v0:
+		return 1
+	if 33 == v0:
+		return 1
+	if 34 == v0:
+		return 1
+	if 35 == v0:
+		return 1
+	if 36 == v0:
+		return 1
+	if 37 == v0:
+		return 1
+	if 38 == v0:
+		return 1
+	if 39 == v0:
+		return 1
+	if 40 == v0:
+		return 1
+	if 41 == v0:
+		return 1
+	if 42 == v0:
+		return 1
+	if 43 == v0:
+		return 1
+	if 44 == v0:
+		return 1
+	if 45 == v0:
+		return 1
+	if 46 == v0:
+		return 1
+	if 47 == v0:
+		return 1
+	if 48 == v0:
+		return 1
+	if 49 == v0:
+		return 1
+	if 50 == v0:
+		return 1
+	if 51 == v0:
+		return 1
+	if 52 == v0:
+		return 1
+	if 4 == v0:
+		return 2
+	if 8 == v0:
+		return 2
+	if 17 == v0:
+		return 2
+	if 18 == v0:
+		return 2
+	if 53 == v0:
+		return 2
+	if 54 == v0:
+		return 2
+	return 0
 	return 0
 
 func local_1382(v0, v1) -> Variant:
@@ -803,43 +410,15 @@ func local_1382(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 1382
-	while true:
-		if _pc == 1382:
-			v3 = iship.find_player_ship()
-			v2 = list.item_count(v0)
-			v4 = 0
-			_pc = 1437
-			continue
-		elif _pc == 1437:
-			if v4 < v2:
-				_pc = 1453
-				continue
-			else:
-				_pc = 1553
-				continue
-		elif _pc == 1453:
-			v5 = isim.cast(list.get_nth(v0, v4))
-			if sim.distance_between(v3, v5) < v1:
-				_pc = 1529
-				continue
-			else:
-				_pc = 1535
-				continue
-		elif _pc == 1529:
-			_pc = 1559
-			continue
-		elif _pc == 1535:
-			v4 = v4 + 1
-			_pc = 1437
-			continue
-		elif _pc == 1553:
-			_pc = 1559
-			continue
-		elif _pc == 1559:
-			return
-		else:
-			return 0
+	v3 = iship.find_player_ship()
+	v2 = list.item_count(v0)
+	v4 = 0
+	while v4 < v2:
+		v5 = isim.cast(list.get_nth(v0, v4))
+		if sim.distance_between(v3, v5) < v1:
+			return 1
+		v4 = v4 + 1
+	return 0
 	return 0
 
 func local_1561(v0) -> Variant:
@@ -849,60 +428,20 @@ func local_1561(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 1561
-	while true:
-		if _pc == 1561:
-			v1 = null
-			v1 = global.list("g_active_location_list")
-			v2 = iship.find_player_ship()
-			v3 = isim.faction(v2)
-			v5 = list.item_count(v1)
-			v4 = 0
-			_pc = 1678
-			continue
-		elif _pc == 1678:
-			if v4 < v5:
-				_pc = 1694
-				continue
-			else:
-				_pc = 1851
-				continue
-		elif _pc == 1694:
-			v6 = ihabitat.cast(list.get_nth(v1, v4))
-			if v6:
-				_pc = 1746
-				continue
-			else:
-				_pc = 1833
-				continue
-		elif _pc == 1746:
+	v1 = null
+	v1 = global.list("g_active_location_list")
+	v2 = iship.find_player_ship()
+	v3 = isim.faction(v2)
+	v5 = list.item_count(v1)
+	v4 = 0
+	while v4 < v5:
+		v6 = ihabitat.cast(list.get_nth(v1, v4))
+		if v6:
 			if ifaction.feeling(v3, isim.faction(v6)) < -0.20000000298023224:
-				_pc = 1793
-				continue
-			else:
-				_pc = 1833
-				continue
-		elif _pc == 1793:
-			if sim.distance_between(v6, v2) < v0:
-				_pc = 1827
-				continue
-			else:
-				_pc = 1833
-				continue
-		elif _pc == 1827:
-			_pc = 1857
-			continue
-		elif _pc == 1833:
-			v4 = v4 + 1
-			_pc = 1678
-			continue
-		elif _pc == 1851:
-			_pc = 1857
-			continue
-		elif _pc == 1857:
-			return
-		else:
-			return 0
+				if sim.distance_between(v6, v2) < v0:
+					return 1
+		v4 = v4 + 1
+	return 0
 	return 0
 
 func local_1866(v0, v1) -> Variant:
@@ -1004,28 +543,28 @@ func local_1866(v0, v1) -> Variant:
 				_pc = 1972
 				continue
 		elif _pc == 2240:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 2249
 				continue
 			else:
 				_pc = 1972
 				continue
 		elif _pc == 2249:
-			if not _pog_is_null(1):
+			if 1 != v0:
 				_pc = 2257
 				continue
 			else:
 				_pc = 1972
 				continue
 		elif _pc == 2257:
-			if not _pog_is_null(3):
+			if 3 != v0:
 				_pc = 2266
 				continue
 			else:
 				_pc = 2059
 				continue
 		elif _pc == 2266:
-			if not _pog_is_null(4):
+			if 4 != v0:
 				_pc = 2275
 				continue
 			else:
@@ -1050,8 +589,7 @@ func local_1866(v0, v1) -> Variant:
 			_pc = 2328
 			continue
 		elif _pc == 2328:
-			_pc = 2338
-			continue
+			return v3
 		elif _pc == 2338:
 			return
 		else:
@@ -1118,14 +656,14 @@ func local_2347(v0) -> Variant:
 				_pc = 2544
 				continue
 		elif _pc == 2616:
-			if not _pog_is_null(1):
+			if 1 != v8:
 				_pc = 2624
 				continue
 			else:
 				_pc = 2562
 				continue
 		elif _pc == 2624:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 2633
 				continue
 			else:
@@ -1143,8 +681,7 @@ func local_2347(v0) -> Variant:
 				_pc = 2689
 				continue
 		elif _pc == 2679:
-			_pc = 2791
-			continue
+			return v0
 		elif _pc == 2689:
 			if v4 >= v3:
 				_pc = 2705
@@ -1186,8 +723,7 @@ func local_2347(v0) -> Variant:
 			_pc = 2781
 			continue
 		elif _pc == 2781:
-			_pc = 2791
-			continue
+			return v8
 		elif _pc == 2791:
 			return
 		else:
@@ -1203,19 +739,16 @@ func local_2800(v0) -> Variant:
 			_pc = 2854
 			continue
 		elif _pc == 2810:
-			_pc = 2917
-			continue
+			return 0
 		elif _pc == 2816:
-			_pc = 2917
-			continue
+			return 0
 		elif _pc == 2822:
 			v1 = 5
 			v2 = 9
 			_pc = 2889
 			continue
 		elif _pc == 2843:
-			_pc = 2917
-			continue
+			return 0
 		elif _pc == 2849:
 			_pc = 2889
 			continue
@@ -1227,14 +760,14 @@ func local_2800(v0) -> Variant:
 				_pc = 2810
 				continue
 		elif _pc == 2867:
-			if not _pog_is_null(1):
+			if 1 != v0:
 				_pc = 2875
 				continue
 			else:
 				_pc = 2816
 				continue
 		elif _pc == 2875:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 2884
 				continue
 			else:
@@ -1244,9 +777,7 @@ func local_2800(v0) -> Variant:
 			_pc = 2843
 			continue
 		elif _pc == 2889:
-			math.random_int(v1, v2)
-			_pc = 2917
-			continue
+			return math.random_int(v1, v2)
 		elif _pc == 2917:
 			return
 		else:
@@ -1400,14 +931,14 @@ func monitor() -> Variant:
 				_pc = 3392
 				continue
 		elif _pc == 3613:
-			if not _pog_is_null(1):
+			if 1 != v13:
 				_pc = 3621
 				continue
 			else:
 				_pc = 3440
 				continue
 		elif _pc == 3621:
-			if not _pog_is_null(2):
+			if 2 != v13:
 				_pc = 3630
 				continue
 			else:
@@ -1773,63 +1304,63 @@ func local_5167(v0) -> Variant:
 				_pc = 5212
 				continue
 		elif _pc == 5428:
-			if not _pog_is_null(1):
+			if 1 != v0:
 				_pc = 5436
 				continue
 			else:
 				_pc = 5217
 				continue
 		elif _pc == 5436:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 5445
 				continue
 			else:
 				_pc = 5235
 				continue
 		elif _pc == 5445:
-			if not _pog_is_null(3):
+			if 3 != v0:
 				_pc = 5454
 				continue
 			else:
 				_pc = 5253
 				continue
 		elif _pc == 5454:
-			if not _pog_is_null(4):
+			if 4 != v0:
 				_pc = 5463
 				continue
 			else:
 				_pc = 5271
 				continue
 		elif _pc == 5463:
-			if not _pog_is_null(5):
+			if 5 != v0:
 				_pc = 5472
 				continue
 			else:
 				_pc = 5289
 				continue
 		elif _pc == 5472:
-			if not _pog_is_null(6):
+			if 6 != v0:
 				_pc = 5481
 				continue
 			else:
 				_pc = 5307
 				continue
 		elif _pc == 5481:
-			if not _pog_is_null(7):
+			if 7 != v0:
 				_pc = 5490
 				continue
 			else:
 				_pc = 5325
 				continue
 		elif _pc == 5490:
-			if not _pog_is_null(8):
+			if 8 != v0:
 				_pc = 5499
 				continue
 			else:
 				_pc = 5343
 				continue
 		elif _pc == 5499:
-			if not _pog_is_null(9):
+			if 9 != v0:
 				_pc = 5508
 				continue
 			else:

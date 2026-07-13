@@ -60,105 +60,32 @@ func local_0(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			v1 = group.sim_count(v0)
-			v2 = 0
-			_pc = 37
-			continue
-		elif _pc == 37:
-			if v2 < v1:
-				_pc = 53
-				continue
-			else:
-				_pc = 221
-				continue
-		elif _pc == 53:
-			v3 = iship.cast(group.nth_sim(v0, v2))
-			if not _pog_is_null(v3):
-				_pc = 108
-				continue
-			else:
-				_pc = 203
-				continue
-		elif _pc == 108:
+	v1 = group.sim_count(v0)
+	v2 = 0
+	while v2 < v1:
+		v3 = iship.cast(group.nth_sim(v0, v2))
+		if not _pog_is_null(v3):
 			if await iutilities.player_in_range(v3):
-				_pc = 131
-				continue
-			else:
-				_pc = 138
-				continue
-		elif _pc == 131:
-			_pc = 228
-			continue
-		elif _pc == 138:
+				return 0
 			if iship.is_in_l_d_s(v3):
-				_pc = 161
-				continue
-			else:
-				_pc = 173
-				continue
-		elif _pc == 161:
-			_pc = 228
-			continue
-		elif _pc == 168:
-			_pc = 203
-			continue
-		elif _pc == 173:
+				return 0
 			if iship.is_l_d_s_scrambled(v3):
-				_pc = 196
-				continue
-			else:
-				_pc = 203
-				continue
-		elif _pc == 196:
-			_pc = 228
-			continue
-		elif _pc == 203:
-			v2 = v2 + 1
-			_pc = 37
-			continue
-		elif _pc == 221:
-			_pc = 228
-			continue
-		elif _pc == 228:
-			return
-		else:
-			return 0
+				return 0
+		v2 = v2 + 1
+	return 1
 	return 0
 
 func local_230(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 230
-	while true:
-		if _pc == 230:
-			v1 = null
-			v2 = group.sim_count(v0)
-			v3 = 0
-			_pc = 277
-			continue
-		elif _pc == 277:
-			if v3 < v2:
-				_pc = 293
-				continue
-			else:
-				_pc = 353
-				continue
-		elif _pc == 293:
-			list.add_tail(v1, group.nth_sim(v0, v3))
-			v3 = v3 + 1
-			_pc = 277
-			continue
-		elif _pc == 353:
-			_pc = 363
-			continue
-		elif _pc == 363:
-			return
-		else:
-			return 0
+	v1 = null
+	v2 = group.sim_count(v0)
+	v3 = 0
+	while v3 < v2:
+		list.add_tail(v1, group.nth_sim(v0, v3))
+		v3 = v3 + 1
+	return _pog_clone(v1)
 	return 0
 
 func lagrange_handler(v0, v1) -> Variant:
@@ -168,294 +95,96 @@ func lagrange_handler(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 373
-	while true:
-		if _pc == 373:
-			v2 = iship.cast(group.leader(v0))
-			v3 = null
-			v3 = imapentity.system_lagrange_points()
-			v4 = 1
-			v5 = null
-			v7 = group.sim_count(v0)
-			_pc = 515
-			continue
-		elif _pc == 494:
-			debug.print_string("iScriptedOrders.Lagrangeh: Stating lagrange handler\n")
-			_pc = 515
-			continue
-		elif _pc == 515:
-			await iutilities.group_set_cullable(v0, 0)
-			if _pog_eq(v1, "Random"):
-				_pc = 553
-				continue
-			else:
-				_pc = 621
-				continue
-		elif _pc == 553:
-			v6 = ilagrangepoint.random(v3)
-			if _pog_is_null(v6):
-				_pc = 590
-				continue
-			else:
-				_pc = 616
-				continue
-		elif _pc == 590:
-			_pc = 616
-			continue
-		elif _pc == 595:
-			debug.error("Unable to find random Lagrange")
-			_pc = 616
-			continue
-		elif _pc == 616:
-			_pc = 830
-			continue
-		elif _pc == 621:
-			if _pog_eq(v1, "Dainn I L-Point") or _pog_eq(v1, "Dainn II L-Point"):
-				_pc = 652
-				continue
-			else:
-				_pc = 701
-				continue
-		elif _pc == 652:
+	v2 = iship.cast(group.leader(v0))
+	v3 = null
+	v3 = imapentity.system_lagrange_points()
+	v4 = 1
+	v5 = null
+	v7 = group.sim_count(v0)
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.Lagrangeh: Stating lagrange handler\n")
+	await iutilities.group_set_cullable(v0, 0)
+	if _pog_eq(v1, "Random"):
+		v6 = ilagrangepoint.random(v3)
+		if _pog_is_null(v6):
+			if PogRuntime.TRACE:
+				debug.error("Unable to find random Lagrange")
+	else:
+		if _pog_eq(v1, "Dainn I L-Point") or _pog_eq(v1, "Dainn II L-Point"):
 			v6 = ilagrangepoint.cast(imapentity.find_by_name_in_system(v1, "map:/geog/badlands/firefrost"))
-			_pc = 725
-			continue
-		elif _pc == 701:
-			v6 = ilagrangepoint.find_by_name(v1)
-			_pc = 725
-			continue
-		elif _pc == 725:
-			if _pog_is_null(v6):
-				_pc = 738
-				continue
-			else:
-				_pc = 830
-				continue
-		elif _pc == 738:
-			_pc = 830
-			continue
-		elif _pc == 743:
-			debug.print_string(string.join("Unable to find requested Lagrange: ", v1))
-			debug.print_string(" using random\n")
-			v6 = ilagrangepoint.random(v3)
-			_pc = 830
-			continue
-		elif _pc == 830:
-			_pc = 974
-			continue
-		elif _pc == 835:
-			debug.print_string("iScriptedOrders.Lagrangeh: telling vessel ")
-			debug.print_string(object.string_property(v2, "name"))
-			debug.print_string(" to move off to lagrange ")
-			debug.print_string(imapentity.pog_name(v6))
-			debug.print_string("\n")
-			_pc = 974
-			continue
-		elif _pc == 974:
-			iai.give_approach_order(v2, v6)
-			_pc = 1003
-			continue
-		elif _pc == 1003:
-			await _pog_frame()
-			if _pog_every(1004, 5.0):
-				_pc = 1017
-				continue
-			else:
-				_pc = 1373
-				continue
-		elif _pc == 1017:
-			_pc = 1043
-			continue
-		elif _pc == 1022:
-			debug.print_string("iScriptedOrders.Lagrange: Checking to see if we've reached our destination\n")
-			_pc = 1043
-			continue
-		elif _pc == 1043:
-			if _pog_eq(sim.group(v2), v0):
-				_pc = 1072
-				continue
-			else:
-				_pc = 1252
-				continue
-		elif _pc == 1072:
-			if iai.is_order_complete(v2):
-				_pc = 1095
-				continue
-			else:
-				_pc = 1219
-				continue
-		elif _pc == 1095:
-			v5 = list.from_set(ilagrangepoint.local_destinations(v6))
-			iai.give_approach_order(v2, imapentity.cast(list.get_nth(v5, math.random_int(0, list.item_count(v5) - 1))))
-			_pc = 1219
-			continue
-		elif _pc == 1219:
-			if await local_0(v0):
-				_pc = 1242
-				continue
-			else:
-				_pc = 1247
-				continue
-		elif _pc == 1242:
-			_pc = 1378
-			continue
-		elif _pc == 1247:
-			_pc = 1373
-			continue
-		elif _pc == 1252:
-			if not _pog_is_null(group.sim_count(v0)):
-				_pc = 1277
-				continue
-			else:
-				_pc = 1368
-				continue
-		elif _pc == 1277:
-			v2 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_approach_order(v2, v6)
-			_pc = 1373
-			continue
-		elif _pc == 1368:
-			_pc = 1378
-			continue
-		elif _pc == 1373:
-			_pc = 1003
-			continue
-		elif _pc == 1378:
-			await iutilities.group_set_cullable(v0, 1)
-			group.destroy(v0, 0)
-			return
 		else:
-			return 0
+			v6 = ilagrangepoint.find_by_name(v1)
+		if _pog_is_null(v6):
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("Unable to find requested Lagrange: ", v1))
+				debug.print_string(" using random\n")
+				v6 = ilagrangepoint.random(v3)
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.Lagrangeh: telling vessel ")
+		debug.print_string(object.string_property(v2, "name"))
+		debug.print_string(" to move off to lagrange ")
+		debug.print_string(imapentity.pog_name(v6))
+		debug.print_string("\n")
+	iai.give_approach_order(v2, v6)
+	while true:
+		await _pog_wait(5)
+		if PogRuntime.TRACE:
+			debug.print_string("iScriptedOrders.Lagrange: Checking to see if we've reached our destination\n")
+		if _pog_eq(sim.group(v2), v0):
+			if iai.is_order_complete(v2):
+				v5 = list.from_set(ilagrangepoint.local_destinations(v6))
+				iai.give_approach_order(v2, imapentity.cast(list.get_nth(v5, math.random_int(0, list.item_count(v5) - 1))))
+			if await local_0(v0):
+				break
+		else:
+			if not _pog_is_null(group.sim_count(v0)):
+				v2 = iship.cast(group.leader(v0))
+				await iformation.line_abreast(v0, 40.0, 0)
+				iai.give_approach_order(v2, v6)
+			else:
+				break
+	await iutilities.group_set_cullable(v0, 1)
+	group.destroy(v0, 0)
+	return
 	return 0
 
 func local_1442(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 1442
-	while true:
-		if _pc == 1442:
-			v3 = 0
-			_pc = 1454
-			continue
-		elif _pc == 1454:
-			if v3 < global.pog_int("g_parking_slots"):
-				_pc = 1485
-				continue
-			else:
-				_pc = 1663
-				continue
-		elif _pc == 1485:
-			v2 = sim.find_by_name(string.join(string.join(imapentity.pog_name(v0), v1), string.from_int(v3)))
-			if _pog_is_null(object.int_property(v2, "occupied")):
-				_pc = 1608
-				continue
-			else:
-				_pc = 1645
-				continue
-		elif _pc == 1608:
+	v3 = 0
+	while v3 < global.pog_int("g_parking_slots"):
+		v2 = sim.find_by_name(string.join(string.join(imapentity.pog_name(v0), v1), string.from_int(v3)))
+		if _pog_is_null(object.int_property(v2, "occupied")):
 			object.set_int_property(v2, "occupied", 1)
-			_pc = 1669
-			continue
-		elif _pc == 1645:
-			v3 = v3 + 1
-			_pc = 1454
-			continue
-		elif _pc == 1663:
-			_pc = 1669
-			continue
-		elif _pc == 1669:
-			return
-		elif _pc == 1783:
-			await _pog_frame()
-			if _pog_every(1784, 30.0):
-				_pc = 1797
-				continue
-			else:
-				_pc = 1825
-				continue
-		elif _pc == 1797:
-			if iai.is_order_complete(v0):
-				_pc = 1820
-				continue
-			else:
-				_pc = 1825
-				continue
-		elif _pc == 1820:
-			_pc = 1830
-			continue
-		elif _pc == 1825:
-			_pc = 1783
-			continue
-		elif _pc == 1830:
-			sim.destroy(v1)
-			group.destroy(v0, 1)
-			return
-		else:
-			return 0
+			return v2
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func local_1872(v0, v1, v2) -> Variant:
-	var _pc: int = 1872
-	while true:
-		if _pc == 1872:
-			if _pog_is_null(ihabitat.spew(v2, v1)):
-				_pc = 1902
-				continue
-			else:
-				_pc = 1928
-				continue
-		elif _pc == 1902:
-			_pc = 1928
-			continue
-		elif _pc == 1907:
+	if _pog_is_null(ihabitat.spew(v2, v1)):
+		if PogRuntime.TRACE:
 			debug.error("Unable to spew pod!!")
-			_pc = 1928
-			continue
-		elif _pc == 1928:
-			_pc = 2016
-			continue
-		elif _pc == 1933:
-			debug.print_string(string.join("Spewing pod for pickup: ", object.string_property(v1, "name")))
-			debug.print_string("\n")
-			_pc = 2016
-			continue
-		elif _pc == 2016:
-			await _pog_wait(1.0)
-			if isim.is_docked(isim.cast(v1)):
-				_pc = 2085
-				continue
-			else:
-				_pc = 2016
-				continue
-		elif _pc == 2085:
-			_pc = 2173
-			continue
-		elif _pc == 2090:
-			debug.print_string(string.join("Pod ready for pickup: ", object.string_property(v1, "name")))
-			debug.print_string("\n")
-			_pc = 2173
-			continue
-		elif _pc == 2173:
-			iship.undock(iship.cast(v1), v2)
-			await ipilotsetup.generic_cargo_pod(iship.cast(v1))
-			iai.give_dock_order(v1, v0)
-			_pc = 2266
-			continue
-		elif _pc == 2266:
-			await _pog_wait(1.0)
-			if iai.is_order_complete(v1):
-				_pc = 2322
-				continue
-			else:
-				_pc = 2266
-				continue
-		elif _pc == 2322:
-			iship.remove_pilot(iship.cast(v1))
-			global.set_int(string.join("g_running_spews_for_", object.string_property(v2, "name")), global.pog_int(string.join("g_running_spews_for_", object.string_property(v2, "name"))) - 1)
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join("Spewing pod for pickup: ", object.string_property(v1, "name")))
+		debug.print_string("\n")
+	while true:
+		await _pog_wait(1.0)
+		if not (not (isim.is_docked(isim.cast(v1)))):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string(string.join("Pod ready for pickup: ", object.string_property(v1, "name")))
+		debug.print_string("\n")
+	iship.undock(iship.cast(v1), v2)
+	await ipilotsetup.generic_cargo_pod(iship.cast(v1))
+	iai.give_dock_order(v1, v0)
+	while true:
+		await _pog_wait(1.0)
+		if not (not (iai.is_order_complete(v1))):
+			break
+	iship.remove_pilot(iship.cast(v1))
+	global.set_int(string.join("g_running_spews_for_", object.string_property(v2, "name")), global.pog_int(string.join("g_running_spews_for_", object.string_property(v2, "name"))) - 1)
+	return
 	return 0
 
 func local_2476(v0, v1) -> Variant:
@@ -464,119 +193,54 @@ func local_2476(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 2476
-	while true:
-		if _pc == 2476:
-			v5 = math.random_int(2, 8)
-			object.add_int_property(v0, "number_small_pods", v5)
-			object.add_int_property(v0, "type_cargo", 2)
-			sim.avatar_add_channel(v0, "door", 1.0)
-			v3 = await ishipcreation.create_megapod_cargo(v0, v5, 2)
-			v6 = 0
-			_pc = 2632
-			continue
-		elif _pc == 2632:
-			if v6 < v5:
-				_pc = 2648
-				continue
-			else:
-				_pc = 3037
-				continue
-		elif _pc == 2648:
-			v4 = iship.cast(group.nth_sim(v3, v6))
-			_pc = 2690
-			continue
-		elif _pc == 2690:
+	v5 = math.random_int(2, 8)
+	object.add_int_property(v0, "number_small_pods", v5)
+	object.add_int_property(v0, "type_cargo", 2)
+	sim.avatar_add_channel(v0, "door", 1.0)
+	v3 = await ishipcreation.create_megapod_cargo(v0, v5, 2)
+	v6 = 0
+	while v6 < v5:
+		v4 = iship.cast(group.nth_sim(v3, v6))
+		while true:
 			await _pog_wait(1.0)
-			if not _pog_is_null(ihabitat.has_spewer_slot_free(v1)):
-				_pc = 2747
-				continue
-			else:
-				_pc = 2690
-				continue
-		elif _pc == 2747:
-			v2 = subsim.create("ini:/subsims/dockports/cargo_port")
-			sim.add_subsim(v0, v2)
-			subsim.place(v2, 0.0, 0.0, 10.0)
-			_pc = 2870
-			continue
-		elif _pc == 2836:
+			if not (_pog_is_null(ihabitat.has_spewer_slot_free(v1))):
+				break
+		v2 = subsim.create("ini:/subsims/dockports/cargo_port")
+		sim.add_subsim(v0, v2)
+		subsim.place(v2, 0.0, 0.0, 10.0)
+		if PogRuntime.TRACE:
 			if _pog_is_null(v2):
-				_pc = 2849
-				continue
-			else:
-				_pc = 2870
-				continue
-		elif _pc == 2849:
-			debug.error("weres me dockport gone")
-			_pc = 2870
-			continue
-		elif _pc == 2870:
-			_pog_detach(_pog_spawn(local_1872.bind(v0, v4, v1)))
-			_pc = 2912
-			continue
-		elif _pc == 2912:
+				debug.error("weres me dockport gone")
+		_pog_detach(_pog_spawn(local_1872.bind(v0, v4, v1)))
+		while true:
 			await _pog_wait(1.0)
 			if not (not (isim.is_docked_to(v4, v0)) and not _pog_is_null(iship.cast(v4))):
-				_pc = 2995
-				continue
-			else:
-				_pc = 2912
-				continue
-		elif _pc == 2995:
-			await ishipcreation.stack_cargo(v0, v4)
-			v6 = v6 + 1
-			_pc = 2632
-			continue
-		elif _pc == 3037:
-			sim.avatar_add_channel(v0, "door", 0.0)
-			group.destroy(v3, 0)
-			return 0
-		elif _pc == 3178:
-			if v6 < v5:
-				_pc = 3194
-				continue
-			else:
-				_pc = 3278
-				continue
-		elif _pc == 3194:
-			v4 = iship.cast(list.get_nth(v3, v6))
-			await local_2476(v4, v2)
-			v6 = v6 + 1
-			_pc = 3178
-			continue
-		elif _pc == 3278:
-			return 0
-		else:
-			return 0
+				break
+		await ishipcreation.stack_cargo(v0, v4)
+		v6 = v6 + 1
+	sim.avatar_add_channel(v0, "door", 0.0)
+	group.destroy(v3, 0)
+	return 0
+	v3 = null
+	v3 = list.from_set(sim.children(v0))
+	v5 = list.item_count(v3)
+	v6 = 0
+	while v6 < v5:
+		v4 = iship.cast(list.get_nth(v3, v6))
+		await local_2476(v4, v2)
+		v6 = v6 + 1
+	return 0
 	return 0
 
 func local_3288(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 3288
-	while true:
-		if _pc == 3288:
-			v1 = group.sim_count(v0)
-			v2 = 0
-			_pc = 3324
-			continue
-		elif _pc == 3324:
-			if v2 < v1:
-				_pc = 3340
-				continue
-			else:
-				_pc = 3395
-				continue
-		elif _pc == 3340:
-			iai.purge_orders(group.nth_sim(v0, v2))
-			v2 = v2 + 1
-			_pc = 3324
-			continue
-		elif _pc == 3395:
-			return 0
-		else:
-			return 0
+	v1 = group.sim_count(v0)
+	v2 = 0
+	while v2 < v1:
+		iai.purge_orders(group.nth_sim(v0, v2))
+		v2 = v2 + 1
+	return 0
 	return 0
 
 func local_3398(v0, v1, v2, v3) -> Variant:
@@ -587,159 +251,62 @@ func local_3398(v0, v1, v2, v3) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 3398
+	v4 = null
+	v7 = group.sim_count(v0)
 	while true:
-		if _pc == 3398:
-			v4 = null
-			v7 = group.sim_count(v0)
-			_pc = 3438
-			continue
-		elif _pc == 3438:
-			_pc = 3540
-			continue
-		elif _pc == 3443:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: ")
 			debug.print_string(object.string_property(group.leader(v0), "name"))
 			debug.print_string(" is waiting for spewer to be free. \n")
-			_pc = 3540
-			continue
-		elif _pc == 3540:
-			await _pog_wait(1.0)
-			if global.exists("g_spewer_in_use") != 1:
-				_pc = 3599
-				continue
-			else:
-				_pc = 3438
-				continue
-		elif _pc == 3599:
-			global.create_bool("g_spewer_in_use", 2, 1)
-			_pc = 3746
-			continue
-		elif _pc == 3628:
-			debug.print_string("iScriptedOrders: Empty freighter group led by ")
-			debug.print_string(object.string_property(group.leader(v0), "name"))
-			debug.print_string(" is loading up from spewer")
-			debug.print_string("\n")
-			_pc = 3746
-			continue
-		elif _pc == 3746:
-			await local_3288(v0)
-			v9 = 0
-			_pc = 3772
-			continue
-		elif _pc == 3772:
-			if v9 < v7:
-				_pc = 3788
-				continue
-			else:
-				_pc = 4709
-				continue
-		elif _pc == 3788:
-			v5 = iship.cast(group.nth_sim(v0, v9))
-			iai.give_reserved_dock_order(v5, v1)
-			_pc = 3854
-			continue
-		elif _pc == 3854:
+		await _pog_wait(1.0)
+		if not (global.exists("g_spewer_in_use") == 1):
+			break
+	global.create_bool("g_spewer_in_use", 2, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders: Empty freighter group led by ")
+		debug.print_string(object.string_property(group.leader(v0), "name"))
+		debug.print_string(" is loading up from spewer")
+		debug.print_string("\n")
+	await local_3288(v0)
+	v9 = 0
+	while v9 < v7:
+		v5 = iship.cast(group.nth_sim(v0, v9))
+		iai.give_reserved_dock_order(v5, v1)
+		while true:
 			await _pog_wait(1.0)
 			if _pog_is_null(sim.cast(v5)):
-				_pc = 3912
-				continue
-			else:
-				_pc = 3938
-				continue
-		elif _pc == 3912:
-			global.destroy("g_spewer_in_use")
-			_pc = 4730
-			continue
-		elif _pc == 3938:
-			if isim.is_docked_to(isim.cast(v5), isim.cast(v1)):
-				_pc = 3993
-				continue
-			else:
-				_pc = 3854
-				continue
-		elif _pc == 3993:
-			_pc = 4019
-			continue
-		elif _pc == 3998:
+				global.destroy("g_spewer_in_use")
+				return 0
+			if not (not (isim.is_docked_to(isim.cast(v5), isim.cast(v1)))):
+				break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.load_vessels_from_spewer: docked freighter to loading port.... loading...\n")
-			_pc = 4019
-			continue
-		elif _pc == 4019:
-			if _pog_is_null(object.property_exists(v5, "mega_freighter")):
-				_pc = 4051
-				continue
-			else:
-				_pc = 4349
-				continue
-		elif _pc == 4051:
+		if _pog_is_null(object.property_exists(v5, "mega_freighter")):
 			v4 = await ishipcreation.return_haulage_cargo(v5, v2)
 			v8 = list.item_count(v4)
 			global.create_int(string.join("g_running_spews_for_", object.string_property(v1, "name")), 2, v8)
 			v10 = 0
-			_pc = 4180
-			continue
-		elif _pc == 4180:
-			if v10 < v8:
-				_pc = 4196
-				continue
-			else:
-				_pc = 4344
-				continue
-		elif _pc == 4196:
+			while v10 < v8:
+				while true:
+					await _pog_wait(1.0)
+					if not (_pog_is_null(ihabitat.has_spewer_slot_free(v1))):
+						break
+				_pog_detach(_pog_spawn(local_1872.bind(v5, sim.cast(list.get_nth(v4, v10)), v1)))
+				v10 = v10 + 1
+		while true:
 			await _pog_wait(1.0)
-			if not _pog_is_null(ihabitat.has_spewer_slot_free(v1)):
-				_pc = 4253
-				continue
-			else:
-				_pc = 4196
-				continue
-		elif _pc == 4253:
-			_pog_detach(_pog_spawn(local_1872.bind(v5, sim.cast(list.get_nth(v4, v10)), v1)))
-			v10 = v10 + 1
-			_pc = 4180
-			continue
-		elif _pc == 4344:
-			_pc = 4349
-			continue
-		elif _pc == 4349:
-			await _pog_wait(1.0)
-			if _pog_is_null(global.pog_int(string.join("g_running_spews_for_", object.string_property(v1, "name")))):
-				_pc = 4447
-				continue
-			else:
-				_pc = 4349
-				continue
-		elif _pc == 4447:
-			global.destroy(string.join("g_running_spews_for_", object.string_property(v1, "name")))
-			iship.undock(v5, v1)
-			if _pog_is_null(v9):
-				_pc = 4543
-				continue
-			else:
-				_pc = 4641
-				continue
-		elif _pc == 4543:
+			if not (not _pog_is_null(global.pog_int(string.join("g_running_spews_for_", object.string_property(v1, "name"))))):
+				break
+		global.destroy(string.join("g_running_spews_for_", object.string_property(v1, "name")))
+		iship.undock(v5, v1)
+		if _pog_is_null(v9):
 			iai.give_formate_order(v5, v1, math.random(3000.0, 4000.0), math.random(3000.0, 4000.0), math.random(3000.0, 4000.0))
-			_pc = 4680
-			continue
-		elif _pc == 4641:
-			iai.give_formate_order(v5, v6, 0.0, -70.0, 0.0)
-			_pc = 4680
-			continue
-		elif _pc == 4680:
-			v6 = v5
-			v9 = v9 + 1
-			_pc = 3772
-			continue
-		elif _pc == 4709:
-			global.destroy("g_spewer_in_use")
-			_pc = 4730
-			continue
-		elif _pc == 4730:
-			return 0
 		else:
-			return 0
+			iai.give_formate_order(v5, v6, 0.0, -70.0, 0.0)
+		v6 = v5
+		v9 = v9 + 1
+	global.destroy("g_spewer_in_use")
+	return 0
 	return 0
 
 func local_4740(v0, v1) -> Variant:
@@ -758,68 +325,37 @@ func local_5017(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 5017
-	while true:
-		if _pc == 5017:
-			v4 = object.int_property(v0, "type_cargo")
-			v5 = object.int_property(v0, "number_small_pods")
-			v2 = await ishipcreation.create_megapod_cargo(v0, v5, v4)
-			await ishipcreation.stack_cargo(v0, v2)
-			sim.avatar_add_channel(v0, "door", 1.0)
-			await _pog_wait(1.0)
-			v6 = 0
-			_pc = 5211
-			continue
-		elif _pc == 5211:
-			if v6 < v5:
-				_pc = 5227
-				continue
-			else:
-				_pc = 5704
-				continue
-		elif _pc == 5227:
-			_pc = 5316
-			continue
-		elif _pc == 5232:
+	v4 = object.int_property(v0, "type_cargo")
+	v5 = object.int_property(v0, "number_small_pods")
+	v2 = await ishipcreation.create_megapod_cargo(v0, v5, v4)
+	await ishipcreation.stack_cargo(v0, v2)
+	sim.avatar_add_channel(v0, "door", 1.0)
+	await _pog_wait(1.0)
+	v6 = 0
+	while v6 < v5:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.unload_at_spewer: Processing cargo ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("\n")
-			_pc = 5316
-			continue
-		elif _pc == 5316:
+		while true:
 			await _pog_wait(0.5)
-			if not _pog_is_null(ihabitat.has_spewer_slot_free(v1)):
-				_pc = 5373
-				continue
-			else:
-				_pc = 5316
-				continue
-		elif _pc == 5373:
-			v3 = iship.cast(group.nth_sim(v2, v6))
-			await local_4740(v0, v3)
-			object.set_int_property(v0, "number_small_pods", object.int_property(v0, "number_small_pods") - 1)
-			_pc = 5641
-			continue
-		elif _pc == 5496:
+			if not (_pog_is_null(ihabitat.has_spewer_slot_free(v1))):
+				break
+		v3 = iship.cast(group.nth_sim(v2, v6))
+		await local_4740(v0, v3)
+		object.set_int_property(v0, "number_small_pods", object.int_property(v0, "number_small_pods") - 1)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.unload_at_spewer: Undocking cargo ")
 			debug.print_string(object.string_property(v3, "name"))
 			debug.print_string(" from ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("\n")
-			_pc = 5641
-			continue
-		elif _pc == 5641:
-			await ipilotsetup.generic_cargo_pod(v3)
-			iai.give_reserved_dock_order(v3, v1)
-			v6 = v6 + 1
-			_pc = 5211
-			continue
-		elif _pc == 5704:
-			sim.avatar_set_channel(v0, "door", 0.0)
-			group.destroy(v2, 0)
-			return 0
-		else:
-			return 0
+		await ipilotsetup.generic_cargo_pod(v3)
+		iai.give_reserved_dock_order(v3, v1)
+		v6 = v6 + 1
+	sim.avatar_set_channel(v0, "door", 0.0)
+	group.destroy(v2, 0)
+	return 0
 	return 0
 
 func local_5758(v0, v1, v2, v3) -> Variant:
@@ -831,177 +367,72 @@ func local_5758(v0, v1, v2, v3) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 5758
+	v4 = null
+	v8 = group.sim_count(v0)
 	while true:
-		if _pc == 5758:
-			v4 = null
-			v8 = group.sim_count(v0)
-			_pc = 5798
-			continue
-		elif _pc == 5798:
-			_pc = 5900
-			continue
-		elif _pc == 5803:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: ")
 			debug.print_string(object.string_property(group.leader(v0), "name"))
 			debug.print_string(" is waiting for spewer to be free. \n")
-			_pc = 5900
-			continue
-		elif _pc == 5900:
-			await _pog_wait(1.0)
-			if global.exists("g_spewer_in_use") != 1:
-				_pc = 5959
-				continue
-			else:
-				_pc = 5798
-				continue
-		elif _pc == 5959:
-			global.create_bool("g_spewer_in_use", 2, 1)
-			_pc = 6106
-			continue
-		elif _pc == 5988:
-			debug.print_string("iScriptedOrders: Full freighter group led by ")
-			debug.print_string(object.string_property(group.leader(v0), "name"))
-			debug.print_string(" is emptying at spewer")
-			debug.print_string("\n")
-			_pc = 6106
-			continue
-		elif _pc == 6106:
-			await local_3288(v0)
-			v10 = 0
-			_pc = 6132
-			continue
-		elif _pc == 6132:
-			if v10 < v8:
-				_pc = 6148
-				continue
-			else:
-				_pc = 7186
-				continue
-		elif _pc == 6148:
-			v5 = iship.cast(group.nth_sim(v0, v10))
-			iai.give_reserved_dock_order(v5, v1)
-			_pc = 6214
-			continue
-		elif _pc == 6214:
+		await _pog_wait(1.0)
+		if not (global.exists("g_spewer_in_use") == 1):
+			break
+	global.create_bool("g_spewer_in_use", 2, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders: Full freighter group led by ")
+		debug.print_string(object.string_property(group.leader(v0), "name"))
+		debug.print_string(" is emptying at spewer")
+		debug.print_string("\n")
+	await local_3288(v0)
+	v10 = 0
+	while v10 < v8:
+		v5 = iship.cast(group.nth_sim(v0, v10))
+		iai.give_reserved_dock_order(v5, v1)
+		while true:
 			await _pog_wait(1.0)
 			if _pog_is_null(sim.cast(v5)):
-				_pc = 6272
-				continue
-			else:
-				_pc = 6298
-				continue
-		elif _pc == 6272:
-			global.destroy("g_spewer_in_use")
-			_pc = 7207
-			continue
-		elif _pc == 6298:
-			if isim.is_docked_to(isim.cast(v5), isim.cast(v1)):
-				_pc = 6353
-				continue
-			else:
-				_pc = 6214
-				continue
-		elif _pc == 6353:
-			_pc = 6379
-			continue
-		elif _pc == 6358:
+				global.destroy("g_spewer_in_use")
+				return 0
+			if not (not (isim.is_docked_to(isim.cast(v5), isim.cast(v1)))):
+				break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.unload_vessels_at_spewer: docked freighter to loading port.... unloading...\n")
-			_pc = 6379
-			continue
-		elif _pc == 6379:
-			v4 = list.from_set(sim.children(v5))
-			v9 = list.item_count(v4)
-			v11 = 0
-			_pc = 6450
-			continue
-		elif _pc == 6450:
-			if v11 < v9:
-				_pc = 6466
-				continue
-			else:
-				_pc = 6952
-				continue
-		elif _pc == 6466:
+		v4 = list.from_set(sim.children(v5))
+		v9 = list.item_count(v4)
+		v11 = 0
+		while v11 < v9:
 			v7 = iship.cast(list.get_nth(v4, v11))
 			if _pog_is_null(object.property_exists(v5, "mega_freighter")):
-				_pc = 6540
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.unload_at_spewer: Processing cargo ")
+					debug.print_string(object.string_property(v7, "name"))
+					debug.print_string("\n")
+				while true:
+					await _pog_wait(0.5)
+					if not (_pog_is_null(ihabitat.has_spewer_slot_free(v1))):
+						break
+				iship.undock(v7, v5)
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.unload_at_spewer: Undocking cargo ")
+					debug.print_string(object.string_property(v7, "name"))
+					debug.print_string(" from ")
+					debug.print_string(object.string_property(v5, "name"))
+					debug.print_string("\n")
+				await ipilotsetup.generic_cargo_pod(v7)
+				iai.give_reserved_dock_order(v7, v1)
 			else:
-				_pc = 6910
-				continue
-		elif _pc == 6540:
-			_pc = 6629
-			continue
-		elif _pc == 6545:
-			debug.print_string("iScriptedOrders.unload_at_spewer: Processing cargo ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string("\n")
-			_pc = 6629
-			continue
-		elif _pc == 6629:
-			await _pog_wait(0.5)
-			if not _pog_is_null(ihabitat.has_spewer_slot_free(v1)):
-				_pc = 6686
-				continue
-			else:
-				_pc = 6629
-				continue
-		elif _pc == 6686:
-			iship.undock(v7, v5)
-			_pc = 6860
-			continue
-		elif _pc == 6715:
-			debug.print_string("iScriptedOrders.unload_at_spewer: Undocking cargo ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string(" from ")
-			debug.print_string(object.string_property(v5, "name"))
-			debug.print_string("\n")
-			_pc = 6860
-			continue
-		elif _pc == 6860:
-			await ipilotsetup.generic_cargo_pod(v7)
-			iai.give_reserved_dock_order(v7, v1)
-			_pc = 6934
-			continue
-		elif _pc == 6910:
-			await local_5017(v7, v1)
-			_pc = 6934
-			continue
-		elif _pc == 6934:
+				await local_5017(v7, v1)
 			v11 = v11 + 1
-			_pc = 6450
-			continue
-		elif _pc == 6952:
-			await _pog_wait(5.0)
-			iship.undock(v5, v1)
-			if _pog_is_null(v10):
-				_pc = 7020
-				continue
-			else:
-				_pc = 7118
-				continue
-		elif _pc == 7020:
+		await _pog_wait(5.0)
+		iship.undock(v5, v1)
+		if _pog_is_null(v10):
 			iai.give_formate_order(v5, v1, math.random(3000.0, 4000.0), math.random(3000.0, 4000.0), math.random(3000.0, 4000.0))
-			_pc = 7157
-			continue
-		elif _pc == 7118:
-			iai.give_formate_order(v5, v6, 0.0, -70.0, 0.0)
-			_pc = 7157
-			continue
-		elif _pc == 7157:
-			v6 = v5
-			v10 = v10 + 1
-			_pc = 6132
-			continue
-		elif _pc == 7186:
-			global.destroy("g_spewer_in_use")
-			_pc = 7207
-			continue
-		elif _pc == 7207:
-			return 0
 		else:
-			return 0
+			iai.give_formate_order(v5, v6, 0.0, -70.0, 0.0)
+		v6 = v5
+		v10 = v10 + 1
+	global.destroy("g_spewer_in_use")
+	return 0
 	return 0
 
 func local_7217(v0, v1, v2) -> Variant:
@@ -1016,387 +447,127 @@ func local_7217(v0, v1, v2) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 7217
-	while true:
-		if _pc == 7217:
-			v5 = iship.cast(group.leader(v0))
-			v6 = null
-			v6 = sim.children(v5)
-			v7 = group.create()
-			v8 = 0
-			v12 = group.sim_count(v0)
-			v13 = 0
-			_pc = 7379
-			continue
-		elif _pc == 7358:
-			debug.print_string("iScriptedOrders.trafficontrol: Stating traffic Controler routine\n")
-			_pc = 7379
-			continue
-		elif _pc == 7379:
-			if _pog_is_null(group.sim_count(v0)):
-				_pc = 7404
-				continue
-			else:
-				_pc = 7513
-				continue
-		elif _pc == 7404:
-			_pc = 7430
-			continue
-		elif _pc == 7409:
+	v5 = iship.cast(group.leader(v0))
+	v6 = null
+	v6 = sim.children(v5)
+	v7 = group.create()
+	v8 = 0
+	v12 = group.sim_count(v0)
+	v13 = 0
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.trafficontrol: Stating traffic Controler routine\n")
+	if _pog_is_null(group.sim_count(v0)):
+		if PogRuntime.TRACE:
 			debug.error("iScriptedOrders.location_traffic_control : I've been passed an empty group of ships")
-			_pc = 7430
-			continue
-		elif _pc == 7430:
-			_pc = 7513
-			continue
-		elif _pc == 7435:
+		if PogRuntime.TRACE:
 			debug.print_string(" iScriptedOrders.location_traffic_control : I've been passed an emtpy group of ships, for location")
 			debug.print_string(imapentity.pog_name(v1))
 			debug.print_string("\n")
-			_pc = 7513
-			continue
-		elif _pc == 7513:
-			_pc = 7623
-			continue
-		elif _pc == 7518:
-			debug.print_string("iScriptedOrders.traffcontrol: telling vessel ")
-			debug.print_string(object.string_property(v5, "name"))
-			debug.print_string(" to join freight yard ")
-			debug.print_string("\n")
-			_pc = 7623
-			continue
-		elif _pc == 7623:
-			if p_set.is_empty(v6):
-				_pc = 7646
-				continue
-			else:
-				_pc = 8253
-				continue
-		elif _pc == 7646:
-			_pc = 7735
-			continue
-		elif _pc == 7651:
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.traffcontrol: telling vessel ")
+		debug.print_string(object.string_property(v5, "name"))
+		debug.print_string(" to join freight yard ")
+		debug.print_string("\n")
+	if p_set.is_empty(v6):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.traffcontrol: Empty vessel ")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" parking up to recieve cargo\n")
-			_pc = 7735
-			continue
-		elif _pc == 7735:
-			_pc = 7740
-			continue
-		elif _pc == 7740:
-			await _pog_frame()
-			if _pog_every(7741, 2.0):
-				_pc = 7754
-				continue
-			else:
-				_pc = 7898
-				continue
-		elif _pc == 7754:
+		while true:
+			await _pog_wait(2)
 			v4 = await local_1442(v1, " Load Slot ")
 			if not _pog_is_null(v4):
-				_pc = 7798
-				continue
+				await iformation.line_ahead(v0, 80.0, 0)
+				iai.give_formate_order(v5, v4, 0.0, 0.0, 0.0)
+				break
 			else:
-				_pc = 7872
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.location_traffic_control : unable to find free loading parking slot\n")
+		while true:
+			await _pog_wait(2)
+			if sim.distance_between(v5, v4) >= 2000.0:
 				continue
-		elif _pc == 7798:
-			await iformation.line_ahead(v0, 80.0, 0)
-			iai.give_formate_order(v5, v4, 0.0, 0.0, 0.0)
-			_pc = 7903
-			continue
-		elif _pc == 7867:
-			_pc = 7898
-			continue
-		elif _pc == 7872:
-			_pc = 7898
-			continue
-		elif _pc == 7877:
-			debug.print_string("iScriptedOrders.location_traffic_control : unable to find free loading parking slot\n")
-			_pc = 7898
-			continue
-		elif _pc == 7898:
-			_pc = 7740
-			continue
-		elif _pc == 7903:
-			_pc = 7909
-			continue
-		elif _pc == 7909:
-			await _pog_frame()
-			if _pog_every(7910, 2.0):
-				_pc = 7923
-				continue
-			else:
-				_pc = 7962
-				continue
-		elif _pc == 7923:
-			if sim.distance_between(v5, v4) < 2000.0:
-				_pc = 7957
-				continue
-			else:
-				_pc = 7962
-				continue
-		elif _pc == 7957:
-			_pc = 7967
-			continue
-		elif _pc == 7962:
-			_pc = 7909
-			continue
-		elif _pc == 7967:
-			v13 = 20
-			_pc = 7981
-			continue
-		elif _pc == 7981:
-			await _pog_frame()
-			if _pog_every(7982, 2.0):
-				_pc = 7995
-				continue
-			else:
-				_pc = 8054
-				continue
-		elif _pc == 7995:
+			break
+		v13 = 20
+		while true:
+			await _pog_wait(2)
 			v13 = v13 - 2
 			if v13 <= 0:
-				_pc = 8021
+				break
+			if not (iai.is_order_complete(v0)):
 				continue
-			else:
-				_pc = 8026
-				continue
-		elif _pc == 8021:
-			_pc = 8059
-			continue
-		elif _pc == 8026:
-			if iai.is_order_complete(v0):
-				_pc = 8049
-				continue
-			else:
-				_pc = 8054
-				continue
-		elif _pc == 8049:
-			_pc = 8059
-			continue
-		elif _pc == 8054:
-			_pc = 7981
-			continue
-		elif _pc == 8059:
-			_pc = 8148
-			continue
-		elif _pc == 8065:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string(string.join("Empty vessel has reached load slot and is loading: ", object.string_property(v5, "name")))
 			debug.print_string("\n")
-			_pc = 8148
-			continue
-		elif _pc == 8148:
-			await local_3398(v0, ihabitat.cast(v1), ihabitat.type(ihabitat.cast(v1)), v4)
-			object.set_int_property(v4, "occupied", 0)
-			_pc = 8913
-			continue
-		elif _pc == 8253:
-			_pc = 8342
-			continue
-		elif _pc == 8258:
+		await local_3398(v0, ihabitat.cast(v1), ihabitat.type(ihabitat.cast(v1)), v4)
+		object.set_int_property(v4, "occupied", 0)
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.traffcontrol: Full vessel ")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" parking up to deposit cargo. \n")
-			_pc = 8342
-			continue
-		elif _pc == 8342:
-			_pc = 8347
-			continue
-		elif _pc == 8347:
-			await _pog_frame()
-			if _pog_every(8348, 2.0):
-				_pc = 8361
-				continue
-			else:
-				_pc = 8505
-				continue
-		elif _pc == 8361:
+		while true:
+			await _pog_wait(2)
 			v4 = await local_1442(v1, " Unload Slot ")
 			if not _pog_is_null(v4):
-				_pc = 8405
-				continue
+				await iformation.line_ahead(v0, 80.0, 0)
+				iai.give_formate_order(v5, v4, 0.0, 0.0, 0.0)
+				break
 			else:
-				_pc = 8479
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.location_traffic_control : unable to find free unload parking slot\n")
+		while true:
+			await _pog_wait(2)
+			if sim.distance_between(v5, v4) >= 2000.0:
 				continue
-		elif _pc == 8405:
-			await iformation.line_ahead(v0, 80.0, 0)
-			iai.give_formate_order(v5, v4, 0.0, 0.0, 0.0)
-			_pc = 8510
-			continue
-		elif _pc == 8474:
-			_pc = 8505
-			continue
-		elif _pc == 8479:
-			_pc = 8505
-			continue
-		elif _pc == 8484:
-			debug.print_string("iScriptedOrders.location_traffic_control : unable to find free unload parking slot\n")
-			_pc = 8505
-			continue
-		elif _pc == 8505:
-			_pc = 8347
-			continue
-		elif _pc == 8510:
-			_pc = 8516
-			continue
-		elif _pc == 8516:
-			await _pog_frame()
-			if _pog_every(8517, 2.0):
-				_pc = 8530
-				continue
-			else:
-				_pc = 8569
-				continue
-		elif _pc == 8530:
-			if sim.distance_between(v5, v4) < 2000.0:
-				_pc = 8564
-				continue
-			else:
-				_pc = 8569
-				continue
-		elif _pc == 8564:
-			_pc = 8574
-			continue
-		elif _pc == 8569:
-			_pc = 8516
-			continue
-		elif _pc == 8574:
-			v13 = 20
-			_pc = 8588
-			continue
-		elif _pc == 8588:
-			await _pog_frame()
-			if _pog_every(8589, 2.0):
-				_pc = 8602
-				continue
-			else:
-				_pc = 8661
-				continue
-		elif _pc == 8602:
+			break
+		v13 = 20
+		while true:
+			await _pog_wait(2)
 			v13 = v13 - 2
 			if v13 <= 0:
-				_pc = 8628
+				break
+			if not (iai.is_order_complete(v0)):
 				continue
-			else:
-				_pc = 8633
-				continue
-		elif _pc == 8628:
-			_pc = 8666
-			continue
-		elif _pc == 8633:
-			if iai.is_order_complete(v0):
-				_pc = 8656
-				continue
-			else:
-				_pc = 8661
-				continue
-		elif _pc == 8656:
-			_pc = 8666
-			continue
-		elif _pc == 8661:
-			_pc = 8588
-			continue
-		elif _pc == 8666:
-			_pc = 8755
-			continue
-		elif _pc == 8672:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string(string.join("Full vessel has reached unload slot and is loading: ", object.string_property(v5, "name")))
 			debug.print_string(" \n")
-			_pc = 8755
-			continue
-		elif _pc == 8755:
-			await local_5758(v0, ihabitat.cast(v1), ihabitat.type(ihabitat.cast(v1)), v4)
-			await _pog_wait(5.0)
-			_pc = 8886
-			continue
-		elif _pc == 8865:
+		await local_5758(v0, ihabitat.cast(v1), ihabitat.type(ihabitat.cast(v1)), v4)
+		await _pog_wait(5.0)
+		if PogRuntime.TRACE:
 			debug.print_string("Finished LALALALAL\n")
-			_pc = 8886
-			continue
-		elif _pc == 8886:
-			object.set_int_property(v4, "occupied", 0)
-			_pc = 8913
-			continue
-		elif _pc == 8913:
-			await iformation.line_ahead(v0, 30.0, 0)
-			_pog_resume(v2)
-			return
-		elif _pc == 8998:
-			debug.print_string(" iScriptedOrders.Haulage : Location picked for haualage destinations is not orbital !\n")
-			_pc = 9019
-			continue
-		elif _pc == 9019:
-			v1 = ibody.cast(imapentity.parent(v0))
-			if _pog_is_null(v1):
-				_pc = 9069
-				continue
-			else:
-				_pc = 9095
-				continue
-		elif _pc == 9069:
-			_pc = 9095
-			continue
-		elif _pc == 9074:
+		object.set_int_property(v4, "occupied", 0)
+	await iformation.line_ahead(v0, 30.0, 0)
+	_pog_resume(v2)
+	return
+	v2 = null
+	v3 = null
+	if PogRuntime.TRACE:
+		debug.print_string(" iScriptedOrders.Haulage : Location picked for haualage destinations is not orbital !\n")
+	v1 = ibody.cast(imapentity.parent(v0))
+	if _pog_is_null(v1):
+		if PogRuntime.TRACE:
 			debug.error("iScriptedOrders.Haulage - Damn and blast! Tried to get get parent of a location, and it's not a body! See pog log for parent name")
-			_pc = 9095
-			continue
-		elif _pc == 9095:
-			_pc = 9259
-			continue
-		elif _pc == 9100:
-			debug.print_string("iScriptedOrders.orbital_check : The parent of ")
-			debug.print_string(imapentity.pog_name(imapentity.cast(v0)))
-			debug.print_string("is not a body. Parents name is ")
-			debug.print_string(imapentity.pog_name(imapentity.parent(v0)))
-			debug.print_string("\n")
-			_pc = 9259
-			continue
-		elif _pc == 9259:
-			if ibody.type(v1) != 5:
-				_pc = 9285
-				continue
-			else:
-				_pc = 9541
-				continue
-		elif _pc == 9285:
-			_pc = 9311
-			continue
-		elif _pc == 9290:
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.orbital_check : The parent of ")
+		debug.print_string(imapentity.pog_name(imapentity.cast(v0)))
+		debug.print_string("is not a body. Parents name is ")
+		debug.print_string(imapentity.pog_name(imapentity.parent(v0)))
+		debug.print_string("\n")
+	if ibody.type(v1) != 5:
+		if PogRuntime.TRACE:
 			debug.print_string(" iScriptedOrders.Haulage : Location picked for haualage is not an asteroid, searching for beanstalk or transfer station\n")
-			_pc = 9311
-			continue
-		elif _pc == 9311:
-			v2 = ibody.habitats_around_body(v1)
-			p_set.union(v3, ihabitat.filter_on_type(v2, 122))
-			p_set.union(v3, ihabitat.filter_on_type(v2, 121))
-			if not (p_set.is_empty(v3)):
-				_pc = 9443
-				continue
-			else:
-				_pc = 9482
-				continue
-		elif _pc == 9443:
+		v2 = ibody.habitats_around_body(v1)
+		p_set.union(v3, ihabitat.filter_on_type(v2, 122))
+		p_set.union(v3, ihabitat.filter_on_type(v2, 121))
+		if not (p_set.is_empty(v3)):
 			v0 = ihabitat.random(v3)
-			_pc = 9551
-			continue
-		elif _pc == 9477:
-			_pc = 9541
-			continue
-		elif _pc == 9482:
-			_pc = 9541
-			continue
-		elif _pc == 9487:
+			return v0
+		if PogRuntime.TRACE:
 			debug.error(string.join("iScriptedOrders.Haulage: found surface haulage location with no transfer station at ", imapentity.pog_name(v1)))
-			_pc = 9541
-			continue
-		elif _pc == 9541:
-			_pc = 9551
-			continue
-		elif _pc == 9551:
-			return
-		else:
-			return 0
+	return v0
 	return 0
 
 func local_9567(v0) -> Variant:
@@ -1404,68 +575,26 @@ func local_9567(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 9567
-	while true:
-		if _pc == 9567:
-			v1 = 0
-			v3 = group.sim_count(v0)
-			_pc = 9767
-			continue
-		elif _pc == 9608:
-			debug.print_string("iScriptedOrders:escort_handler: Handling ")
-			debug.print_int(v3)
-			debug.print_string(" ships\n")
-			debug.print_string("iScriptedOrders:escort_handler: Leader: ")
-			debug.print_string(object.string_property(group.nth_sim(v0, 0), "name"))
-			debug.print_string(" \n")
-			_pc = 9767
-			continue
-		elif _pc == 9767:
-			v4 = 0
-			_pc = 9774
-			continue
-		elif _pc == 9774:
-			if v4 < v3:
-				_pc = 9790
-				continue
-			else:
-				_pc = 9924
-				continue
-		elif _pc == 9790:
-			if iship.attacked(iship.cast(group.nth_sim(v0, v4))):
-				_pc = 9844
-				continue
-			else:
-				_pc = 9906
-				continue
-		elif _pc == 9844:
+	v1 = 0
+	v3 = group.sim_count(v0)
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders:escort_handler: Handling ")
+		debug.print_int(v3)
+		debug.print_string(" ships\n")
+		debug.print_string("iScriptedOrders:escort_handler: Leader: ")
+		debug.print_string(object.string_property(group.nth_sim(v0, 0), "name"))
+		debug.print_string(" \n")
+	v4 = 0
+	while v4 < v3:
+		if iship.attacked(iship.cast(group.nth_sim(v0, v4))):
 			v1 = 1
 			v2 = iship.last_attacker(iship.cast(group.nth_sim(v0, v4)))
-			_pc = 9906
-			continue
-		elif _pc == 9906:
-			v4 = v4 + 1
-			_pc = 9774
-			continue
-		elif _pc == 9924:
-			if v1:
-				_pc = 9934
-				continue
-			else:
-				_pc = 9963
-				continue
-		elif _pc == 9934:
-			iai.give_attack_order(v0, v2)
-			_pc = 10008
-			continue
-		elif _pc == 9963:
-			_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
-			_pc = 10008
-			continue
-		elif _pc == 10008:
-			return 0
-		else:
-			return 0
+		v4 = v4 + 1
+	if v1:
+		iai.give_attack_order(v0, v2)
+	else:
+		_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
+	return 0
 	return 0
 
 func haulage(v0, v1) -> Variant:
@@ -1736,7 +865,7 @@ func haulage(v0, v1) -> Variant:
 				_pc = 12013
 				continue
 		elif _pc == 12721:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 12729
 				continue
 			else:
@@ -1904,21 +1033,21 @@ func haulage(v0, v1) -> Variant:
 				_pc = 13169
 				continue
 		elif _pc == 13239:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 13247
 				continue
 			else:
 				_pc = 13182
 				continue
 		elif _pc == 13247:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 13256
 				continue
 			else:
 				_pc = 13195
 				continue
 		elif _pc == 13256:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 13265
 				continue
 			else:
@@ -1974,42 +1103,42 @@ func haulage(v0, v1) -> Variant:
 				_pc = 13305
 				continue
 		elif _pc == 13414:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 13422
 				continue
 			else:
 				_pc = 13318
 				continue
 		elif _pc == 13422:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 13431
 				continue
 			else:
 				_pc = 13331
 				continue
 		elif _pc == 13431:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 13440
 				continue
 			else:
 				_pc = 13344
 				continue
 		elif _pc == 13440:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 13449
 				continue
 			else:
 				_pc = 13357
 				continue
 		elif _pc == 13449:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 13458
 				continue
 			else:
 				_pc = 13370
 				continue
 		elif _pc == 13458:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 13467
 				continue
 			else:
@@ -2081,70 +1210,70 @@ func haulage(v0, v1) -> Variant:
 				_pc = 13507
 				continue
 		elif _pc == 13668:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 13676
 				continue
 			else:
 				_pc = 13520
 				continue
 		elif _pc == 13676:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 13685
 				continue
 			else:
 				_pc = 13533
 				continue
 		elif _pc == 13685:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 13694
 				continue
 			else:
 				_pc = 13546
 				continue
 		elif _pc == 13694:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 13703
 				continue
 			else:
 				_pc = 13559
 				continue
 		elif _pc == 13703:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 13712
 				continue
 			else:
 				_pc = 13572
 				continue
 		elif _pc == 13712:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 13721
 				continue
 			else:
 				_pc = 13585
 				continue
 		elif _pc == 13721:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 13730
 				continue
 			else:
 				_pc = 13598
 				continue
 		elif _pc == 13730:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 13739
 				continue
 			else:
 				_pc = 13611
 				continue
 		elif _pc == 13739:
-			if not _pog_is_null(9):
+			if 9 != v10:
 				_pc = 13748
 				continue
 			else:
 				_pc = 13624
 				continue
 		elif _pc == 13748:
-			if not _pog_is_null(10):
+			if 10 != v10:
 				_pc = 13757
 				continue
 			else:
@@ -2228,91 +1357,91 @@ func haulage(v0, v1) -> Variant:
 				_pc = 13797
 				continue
 		elif _pc == 13997:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 14005
 				continue
 			else:
 				_pc = 13810
 				continue
 		elif _pc == 14005:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 14014
 				continue
 			else:
 				_pc = 13823
 				continue
 		elif _pc == 14014:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 14023
 				continue
 			else:
 				_pc = 13836
 				continue
 		elif _pc == 14023:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 14032
 				continue
 			else:
 				_pc = 13849
 				continue
 		elif _pc == 14032:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 14041
 				continue
 			else:
 				_pc = 13862
 				continue
 		elif _pc == 14041:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 14050
 				continue
 			else:
 				_pc = 13875
 				continue
 		elif _pc == 14050:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 14059
 				continue
 			else:
 				_pc = 13888
 				continue
 		elif _pc == 14059:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 14068
 				continue
 			else:
 				_pc = 13901
 				continue
 		elif _pc == 14068:
-			if not _pog_is_null(9):
+			if 9 != v10:
 				_pc = 14077
 				continue
 			else:
 				_pc = 13914
 				continue
 		elif _pc == 14077:
-			if not _pog_is_null(10):
+			if 10 != v10:
 				_pc = 14086
 				continue
 			else:
 				_pc = 13927
 				continue
 		elif _pc == 14086:
-			if not _pog_is_null(11):
+			if 11 != v10:
 				_pc = 14095
 				continue
 			else:
 				_pc = 13940
 				continue
 		elif _pc == 14095:
-			if not _pog_is_null(12):
+			if 12 != v10:
 				_pc = 14104
 				continue
 			else:
 				_pc = 13953
 				continue
 		elif _pc == 14104:
-			if not _pog_is_null(13):
+			if 13 != v10:
 				_pc = 14113
 				continue
 			else:
@@ -2384,70 +1513,70 @@ func haulage(v0, v1) -> Variant:
 				_pc = 14153
 				continue
 		elif _pc == 14314:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 14322
 				continue
 			else:
 				_pc = 14166
 				continue
 		elif _pc == 14322:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 14331
 				continue
 			else:
 				_pc = 14179
 				continue
 		elif _pc == 14331:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 14340
 				continue
 			else:
 				_pc = 14192
 				continue
 		elif _pc == 14340:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 14349
 				continue
 			else:
 				_pc = 14205
 				continue
 		elif _pc == 14349:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 14358
 				continue
 			else:
 				_pc = 14218
 				continue
 		elif _pc == 14358:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 14367
 				continue
 			else:
 				_pc = 14231
 				continue
 		elif _pc == 14367:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 14376
 				continue
 			else:
 				_pc = 14244
 				continue
 		elif _pc == 14376:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 14385
 				continue
 			else:
 				_pc = 14257
 				continue
 		elif _pc == 14385:
-			if not _pog_is_null(9):
+			if 9 != v10:
 				_pc = 14394
 				continue
 			else:
 				_pc = 14270
 				continue
 		elif _pc == 14394:
-			if not _pog_is_null(10):
+			if 10 != v10:
 				_pc = 14403
 				continue
 			else:
@@ -2523,77 +1652,77 @@ func haulage(v0, v1) -> Variant:
 				_pc = 14443
 				continue
 		elif _pc == 14617:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 14625
 				continue
 			else:
 				_pc = 14456
 				continue
 		elif _pc == 14625:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 14634
 				continue
 			else:
 				_pc = 14469
 				continue
 		elif _pc == 14634:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 14643
 				continue
 			else:
 				_pc = 14482
 				continue
 		elif _pc == 14643:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 14652
 				continue
 			else:
 				_pc = 14495
 				continue
 		elif _pc == 14652:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 14661
 				continue
 			else:
 				_pc = 14508
 				continue
 		elif _pc == 14661:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 14670
 				continue
 			else:
 				_pc = 14521
 				continue
 		elif _pc == 14670:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 14679
 				continue
 			else:
 				_pc = 14534
 				continue
 		elif _pc == 14679:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 14688
 				continue
 			else:
 				_pc = 14547
 				continue
 		elif _pc == 14688:
-			if not _pog_is_null(9):
+			if 9 != v10:
 				_pc = 14697
 				continue
 			else:
 				_pc = 14560
 				continue
 		elif _pc == 14697:
-			if not _pog_is_null(10):
+			if 10 != v10:
 				_pc = 14706
 				continue
 			else:
 				_pc = 14573
 				continue
 		elif _pc == 14706:
-			if not _pog_is_null(11):
+			if 11 != v10:
 				_pc = 14715
 				continue
 			else:
@@ -2657,56 +1786,56 @@ func haulage(v0, v1) -> Variant:
 				_pc = 14755
 				continue
 		elif _pc == 14890:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 14898
 				continue
 			else:
 				_pc = 14768
 				continue
 		elif _pc == 14898:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 14907
 				continue
 			else:
 				_pc = 14781
 				continue
 		elif _pc == 14907:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 14916
 				continue
 			else:
 				_pc = 14794
 				continue
 		elif _pc == 14916:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 14925
 				continue
 			else:
 				_pc = 14807
 				continue
 		elif _pc == 14925:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 14934
 				continue
 			else:
 				_pc = 14820
 				continue
 		elif _pc == 14934:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 14943
 				continue
 			else:
 				_pc = 14833
 				continue
 		elif _pc == 14943:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 14952
 				continue
 			else:
 				_pc = 14846
 				continue
 		elif _pc == 14952:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 14961
 				continue
 			else:
@@ -2770,56 +1899,56 @@ func haulage(v0, v1) -> Variant:
 				_pc = 15001
 				continue
 		elif _pc == 15136:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 15144
 				continue
 			else:
 				_pc = 15014
 				continue
 		elif _pc == 15144:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 15153
 				continue
 			else:
 				_pc = 15027
 				continue
 		elif _pc == 15153:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 15162
 				continue
 			else:
 				_pc = 15040
 				continue
 		elif _pc == 15162:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 15171
 				continue
 			else:
 				_pc = 15053
 				continue
 		elif _pc == 15171:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 15180
 				continue
 			else:
 				_pc = 15066
 				continue
 		elif _pc == 15180:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 15189
 				continue
 			else:
 				_pc = 15079
 				continue
 		elif _pc == 15189:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 15198
 				continue
 			else:
 				_pc = 15092
 				continue
 		elif _pc == 15198:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 15207
 				continue
 			else:
@@ -2883,56 +2012,56 @@ func haulage(v0, v1) -> Variant:
 				_pc = 15247
 				continue
 		elif _pc == 15382:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 15390
 				continue
 			else:
 				_pc = 15260
 				continue
 		elif _pc == 15390:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 15399
 				continue
 			else:
 				_pc = 15273
 				continue
 		elif _pc == 15399:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 15408
 				continue
 			else:
 				_pc = 15286
 				continue
 		elif _pc == 15408:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 15417
 				continue
 			else:
 				_pc = 15299
 				continue
 		elif _pc == 15417:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 15426
 				continue
 			else:
 				_pc = 15312
 				continue
 		elif _pc == 15426:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 15435
 				continue
 			else:
 				_pc = 15325
 				continue
 		elif _pc == 15435:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 15444
 				continue
 			else:
 				_pc = 15338
 				continue
 		elif _pc == 15444:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 15453
 				continue
 			else:
@@ -2996,56 +2125,56 @@ func haulage(v0, v1) -> Variant:
 				_pc = 15493
 				continue
 		elif _pc == 15628:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 15636
 				continue
 			else:
 				_pc = 15506
 				continue
 		elif _pc == 15636:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 15645
 				continue
 			else:
 				_pc = 15519
 				continue
 		elif _pc == 15645:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 15654
 				continue
 			else:
 				_pc = 15532
 				continue
 		elif _pc == 15654:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 15663
 				continue
 			else:
 				_pc = 15545
 				continue
 		elif _pc == 15663:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 15672
 				continue
 			else:
 				_pc = 15558
 				continue
 		elif _pc == 15672:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 15681
 				continue
 			else:
 				_pc = 15571
 				continue
 		elif _pc == 15681:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 15690
 				continue
 			else:
 				_pc = 15584
 				continue
 		elif _pc == 15690:
-			if not _pog_is_null(8):
+			if 8 != v10:
 				_pc = 15699
 				continue
 			else:
@@ -3105,49 +2234,49 @@ func haulage(v0, v1) -> Variant:
 				_pc = 15739
 				continue
 		elif _pc == 15861:
-			if not _pog_is_null(1):
+			if 1 != v10:
 				_pc = 15869
 				continue
 			else:
 				_pc = 15752
 				continue
 		elif _pc == 15869:
-			if not _pog_is_null(2):
+			if 2 != v10:
 				_pc = 15878
 				continue
 			else:
 				_pc = 15765
 				continue
 		elif _pc == 15878:
-			if not _pog_is_null(3):
+			if 3 != v10:
 				_pc = 15887
 				continue
 			else:
 				_pc = 15778
 				continue
 		elif _pc == 15887:
-			if not _pog_is_null(4):
+			if 4 != v10:
 				_pc = 15896
 				continue
 			else:
 				_pc = 15791
 				continue
 		elif _pc == 15896:
-			if not _pog_is_null(5):
+			if 5 != v10:
 				_pc = 15905
 				continue
 			else:
 				_pc = 15804
 				continue
 		elif _pc == 15905:
-			if not _pog_is_null(6):
+			if 6 != v10:
 				_pc = 15914
 				continue
 			else:
 				_pc = 15817
 				continue
 		elif _pc == 15914:
-			if not _pog_is_null(7):
+			if 7 != v10:
 				_pc = 15923
 				continue
 			else:
@@ -3586,7 +2715,7 @@ func trade(v0) -> Variant:
 				_pc = 19164
 				continue
 		elif _pc == 19279:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 19287
 				continue
 			else:
@@ -3809,7 +2938,7 @@ func tanker(v0) -> Variant:
 				_pc = 20719
 				continue
 		elif _pc == 20834:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 20842
 				continue
 			else:
@@ -4173,7 +3302,7 @@ func supply(v0) -> Variant:
 				_pc = 22712
 				continue
 		elif _pc == 23174:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 23182
 				continue
 			else:
@@ -4242,7 +3371,7 @@ func supply(v0) -> Variant:
 				_pc = 23247
 				continue
 		elif _pc == 23505:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 23513
 				continue
 			else:
@@ -4447,282 +3576,129 @@ func local_patrol(v0) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 24926
-	while true:
-		if _pc == 24926:
-			v2 = 8
-			v3 = group.sim_count(v0)
-			v5 = group.create()
-			v8 = null
-			v8 = global.pog_set("g_filtered_system_habitats")
-			v9 = ihabitat.nearest(v8, group.leader(v0))
-			v11 = iship.cast(group.leader(v0))
-			v12 = iai.inner_marker_radius(v9, isim.cast(group.leader(v0)))
-			v13 = math.random(v12 + 200.0, v12 + 800.0)
-			v14 = 0.0
-			v15 = iship.find_player_ship()
-			v16 = 24
-			if not (v11):
-				_pc = 25244
-				continue
-			else:
-				_pc = 25275
-				continue
-		elif _pc == 25244:
-			_pc = 25270
-			continue
-		elif _pc == 25249:
+	v2 = 8
+	v3 = group.sim_count(v0)
+	v5 = group.create()
+	v8 = null
+	v8 = global.pog_set("g_filtered_system_habitats")
+	v9 = ihabitat.nearest(v8, group.leader(v0))
+	v11 = iship.cast(group.leader(v0))
+	v12 = iai.inner_marker_radius(v9, isim.cast(group.leader(v0)))
+	v13 = math.random(v12 + 200.0, v12 + 800.0)
+	v14 = 0.0
+	v15 = iship.find_player_ship()
+	v16 = 24
+	if not (v11):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.localpatrol: Invalid Lead patroler!\n")
-			_pc = 25270
-			continue
-		elif _pc == 25270:
-			_pc = 28758
-			continue
-		elif _pc == 25275:
-			_pc = 25301
-			continue
-		elif _pc == 25280:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
-			_pc = 25301
-			continue
-		elif _pc == 25301:
-			object.add_handle_property(v11, "traffic_handler_task", self)
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 0)), v9, v13, 0.0, v14)
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 1)), v9, v13, v13 - 100.0, v14)
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 2)), v9, 0.0, v13, v14)
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 3)), v9, -(v13), v13 - 100.0, v14)
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 4)), v9, -(v13), 0.0, v14)
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 5)), v9, -(v13), -(v13) + 100.0, v14)
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 6)), v9, 0.0, -(v13), v14)
-			sim.place_relative_to(sim.cast(group.nth_sim(v5, 7)), v9, v13, -(v13) + 100.0, v14)
-			v1 = 0
-			iai.give_escort_order(v11, group.nth_sim(v5, v1), 0.0, 0.0, 0.0, 8000.0)
-			_pc = 26497
-			continue
-		elif _pc == 26338:
+		object.add_handle_property(v11, "traffic_handler_task", self)
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
+		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 0)), v9, v13, 0.0, v14)
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 1)), v9, v13, v13 - 100.0, v14)
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 2)), v9, 0.0, v13, v14)
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 3)), v9, -(v13), v13 - 100.0, v14)
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 4)), v9, -(v13), 0.0, v14)
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 5)), v9, -(v13), -(v13) + 100.0, v14)
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 6)), v9, 0.0, -(v13), v14)
+		sim.place_relative_to(sim.cast(group.nth_sim(v5, 7)), v9, v13, -(v13) + 100.0, v14)
+		v1 = 0
+		iai.give_escort_order(v11, group.nth_sim(v5, v1), 0.0, 0.0, 0.0, 8000.0)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: LocalPatrol ship ")
 			debug.print_string(object.string_property(v11, "name"))
 			debug.print_string(" setting of for destination ")
 			debug.print_string(object.string_property(group.nth_sim(v5, 0), "name"))
 			debug.print_string("\n")
-			_pc = 26497
-			continue
-		elif _pc == 26497:
-			if object.property_exists(v11, "no_run_off"):
-				_pc = 26527
-				continue
-			else:
-				_pc = 26539
-				continue
-		elif _pc == 26527:
+		if object.property_exists(v11, "no_run_off"):
 			v4 = 0
-			_pc = 26546
-			continue
-		elif _pc == 26539:
+		else:
 			v4 = 1
-			_pc = 26546
-			continue
-		elif _pc == 26546:
-			_pc = 26551
-			continue
-		elif _pc == 26551:
-			await _pog_frame()
-			if _pog_every(26552, 5.0):
-				_pc = 26565
-				continue
-			else:
-				_pc = 28527
-				continue
-		elif _pc == 26565:
+		while true:
+			await _pog_wait(5)
 			if not _pog_eq(group.sim_count(v0), v3):
-				_pc = 26594
-				continue
-			else:
-				_pc = 26764
-				continue
-		elif _pc == 26594:
-			v3 = group.sim_count(v0)
-			if not _pog_is_null(v3):
-				_pc = 26630
-				continue
-			else:
-				_pc = 26759
-				continue
-		elif _pc == 26630:
-			v11 = iship.cast(group.leader(v0))
-			await iformation.goose(v0, 40.0, 0)
-			iai.give_escort_order(v11, group.nth_sim(v5, v1), 0.0, 0.0, 0.0, 8000.0)
-			_pc = 26764
-			continue
-		elif _pc == 26759:
-			_pc = 28532
-			continue
-		elif _pc == 26764:
+				v3 = group.sim_count(v0)
+				if not _pog_is_null(v3):
+					v11 = iship.cast(group.leader(v0))
+					await iformation.goose(v0, 40.0, 0)
+					iai.give_escort_order(v11, group.nth_sim(v5, v1), 0.0, 0.0, 0.0, 8000.0)
+				else:
+					break
 			if v4:
-				_pc = 26774
-				continue
-			else:
-				_pc = 26788
-				continue
-		elif _pc == 26774:
-			v16 = v16 + -1
-			_pc = 26788
-			continue
-		elif _pc == 26788:
+				v16 = v16 + -1
 			if v16 < 0:
-				_pc = 26800
-				continue
-			else:
-				_pc = 26824
-				continue
-		elif _pc == 26800:
-			iai.give_flee_order(v11, v15)
-			_pc = 26824
-			continue
-		elif _pc == 26824:
+				iai.give_flee_order(v11, v15)
 			if not _pog_eq(sim.group(v11), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 26873
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.Localpatrol: player out of range......\n")
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.LocalPatrol: Checking vessel ")
+				debug.print_string(object.string_property(v11, "name"))
+				debug.print_string(" for its order status\n")
+			if sim.distance_between(v11, group.nth_sim(v5, v1)) > 300.0:
 				continue
-			else:
-				_pc = 26904
-				continue
-		elif _pc == 26873:
-			_pc = 26899
-			continue
-		elif _pc == 26878:
-			debug.print_string("iScriptedOrders.Localpatrol: player out of range......\n")
-			_pc = 26899
-			continue
-		elif _pc == 26899:
-			_pc = 28532
-			continue
-		elif _pc == 26904:
-			_pc = 26993
-			continue
-		elif _pc == 26909:
-			debug.print_string("iScriptedOrders.LocalPatrol: Checking vessel ")
-			debug.print_string(object.string_property(v11, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 26993
-			continue
-		elif _pc == 26993:
-			if sim.distance_between(v11, group.nth_sim(v5, v1)) <= 300.0:
-				_pc = 27045
-				continue
-			else:
-				_pc = 28527
-				continue
-		elif _pc == 27045:
 			if v1 < 8:
-				_pc = 27058
-				continue
+				v1 = v1 + 1
 			else:
-				_pc = 27076
-				continue
-		elif _pc == 27058:
-			v1 = v1 + 1
-			_pc = 28271
-			continue
-		elif _pc == 27076:
-			_pc = 27165
-			continue
-		elif _pc == 27081:
-			debug.print_string("iScriptedOrders: LocalPatrol ship ")
-			debug.print_string(object.string_property(v11, "name"))
-			debug.print_string(" its first pass of waypoints.\n")
-			_pc = 27165
-			continue
-		elif _pc == 27165:
-			group.destroy(v5, 1)
-			v14 = math.random(100.0, 300.0)
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
-			group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
-			sim.place_relative_to(group.nth_sim(v5, 0), v9, v13, 0.0, v14)
-			sim.place_relative_to(group.nth_sim(v5, 1), v9, v13, v13 - 100.0, v14)
-			sim.place_relative_to(group.nth_sim(v5, 2), v9, 0.0, v13, v14)
-			sim.place_relative_to(group.nth_sim(v5, 3), v9, -(v13), v13 - 100.0, v14)
-			sim.place_relative_to(group.nth_sim(v5, 4), v9, -(v13), 0.0, v14)
-			sim.place_relative_to(group.nth_sim(v5, 5), v9, -(v13), -(v13) + 100.0, v14)
-			sim.place_relative_to(group.nth_sim(v5, 6), v9, 0.0, -(v13), v14)
-			sim.place_relative_to(group.nth_sim(v5, 7), v9, v13, -(v13) + 100.0, v14)
-			v1 = 0
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders: LocalPatrol ship ")
+					debug.print_string(object.string_property(v11, "name"))
+					debug.print_string(" its first pass of waypoints.\n")
+				group.destroy(v5, 1)
+				v14 = math.random(100.0, 300.0)
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
+				group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
+				sim.place_relative_to(group.nth_sim(v5, 0), v9, v13, 0.0, v14)
+				sim.place_relative_to(group.nth_sim(v5, 1), v9, v13, v13 - 100.0, v14)
+				sim.place_relative_to(group.nth_sim(v5, 2), v9, 0.0, v13, v14)
+				sim.place_relative_to(group.nth_sim(v5, 3), v9, -(v13), v13 - 100.0, v14)
+				sim.place_relative_to(group.nth_sim(v5, 4), v9, -(v13), 0.0, v14)
+				sim.place_relative_to(group.nth_sim(v5, 5), v9, -(v13), -(v13) + 100.0, v14)
+				sim.place_relative_to(group.nth_sim(v5, 6), v9, 0.0, -(v13), v14)
+				sim.place_relative_to(group.nth_sim(v5, 7), v9, v13, -(v13) + 100.0, v14)
+				v1 = 0
+				iai.give_escort_order(v11, group.nth_sim(v5, v1), 0.0, 0.0, 0.0, 8000.0)
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders: LocalPatrol ship ")
+					debug.print_string(object.string_property(v11, "name"))
+					debug.print_string(" setting of for destination ")
+					debug.print_string(object.string_property(group.nth_sim(v5, v1), "name"))
+					debug.print_string("\n")
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders: Waypoint Reached\n")
 			iai.give_escort_order(v11, group.nth_sim(v5, v1), 0.0, 0.0, 0.0, 8000.0)
-			_pc = 28271
-			continue
-		elif _pc == 28108:
-			debug.print_string("iScriptedOrders: LocalPatrol ship ")
-			debug.print_string(object.string_property(v11, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(object.string_property(group.nth_sim(v5, v1), "name"))
-			debug.print_string("\n")
-			_pc = 28271
-			continue
-		elif _pc == 28271:
-			_pc = 28297
-			continue
-		elif _pc == 28276:
-			debug.print_string("iScriptedOrders: Waypoint Reached\n")
-			_pc = 28297
-			continue
-		elif _pc == 28297:
-			iai.give_escort_order(v11, group.nth_sim(v5, v1), 0.0, 0.0, 0.0, 8000.0)
-			_pc = 28527
-			continue
-		elif _pc == 28364:
-			debug.print_string("iScriptedOrders: LocalPatrol ship ")
-			debug.print_string(object.string_property(v11, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(object.string_property(group.nth_sim(v5, v1), "name"))
-			debug.print_string("\n")
-			_pc = 28527
-			continue
-		elif _pc == 28527:
-			_pc = 26551
-			continue
-		elif _pc == 28532:
-			_pc = 28622
-			continue
-		elif _pc == 28538:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders: LocalPatrol ship ")
+				debug.print_string(object.string_property(v11, "name"))
+				debug.print_string(" setting of for destination ")
+				debug.print_string(object.string_property(group.nth_sim(v5, v1), "name"))
+				debug.print_string("\n")
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: LocalPatrol ship ")
 			debug.print_string(object.string_property(v11, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 28622
-			continue
-		elif _pc == 28622:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 28647
-				continue
-			else:
-				_pc = 28718
-				continue
-		elif _pc == 28647:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 28718
-			continue
-		elif _pc == 28718:
-			group.destroy(v0, 0)
-			group.destroy(v5, 1)
-			_pc = 28758
-			continue
-		elif _pc == 28758:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+		group.destroy(v5, 1)
+	return
 	return 0
 
 func system_patrol(v0) -> Variant:
@@ -4735,301 +3711,97 @@ func system_patrol(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 28767
-	while true:
-		if _pc == 28767:
-			v2 = group.sim_count(v0)
-			v3 = null
-			v3 = global.pog_set("g_filtered_system_habitats")
-			v4 = null
-			v5 = ihabitat.nearest(v3, group.leader(v0))
-			v7 = iship.cast(group.leader(v0))
-			v8 = iship.find_player_ship()
-			v9 = 30
-			_pc = 28977
-			continue
-		elif _pc == 28956:
-			debug.print_string("iScriptedOrders.SystemPatrol : Starting a system patrol task\n")
-			_pc = 28977
-			continue
-		elif _pc == 28977:
-			if not (v7):
-				_pc = 28988
-				continue
-			else:
-				_pc = 29019
-				continue
-		elif _pc == 28988:
-			_pc = 29014
-			continue
-		elif _pc == 28993:
+	v2 = group.sim_count(v0)
+	v3 = null
+	v3 = global.pog_set("g_filtered_system_habitats")
+	v4 = null
+	v5 = ihabitat.nearest(v3, group.leader(v0))
+	v7 = iship.cast(group.leader(v0))
+	v8 = iship.find_player_ship()
+	v9 = 30
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.SystemPatrol : Starting a system patrol task\n")
+	if not (v7):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.syspatrol: Invalid Lead patroler!\n")
-			_pc = 29014
-			continue
-		elif _pc == 29014:
-			_pc = 30725
-			continue
-		elif _pc == 29019:
-			object.add_handle_property(v7, "traffic_handler_task", self)
-			v4 = list.from_set(v3)
-			if list.is_empty(v4):
-				_pc = 29107
-				continue
-			else:
-				_pc = 29178
-				continue
-		elif _pc == 29107:
-			_pc = 29133
-			continue
-		elif _pc == 29112:
-			debug.print_string("iScriptedOrders.SystemPatrol: Habitats list is empty!\n")
-			_pc = 29133
-			continue
-		elif _pc == 29133:
+	else:
+		object.add_handle_property(v7, "traffic_handler_task", self)
+		v4 = list.from_set(v3)
+		if list.is_empty(v4):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.SystemPatrol: Habitats list is empty!\n")
 			_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
-			_pc = 30725
-			continue
-		elif _pc == 29178:
-			if _pog_is_null(ihabitat.cast(list.get_nth(v4, 1))):
-				_pc = 29218
-				continue
-			else:
-				_pc = 29244
-				continue
-		elif _pc == 29218:
-			_pc = 29244
-			continue
-		elif _pc == 29223:
-			debug.print_string("iScriptedOrders.SystemPatrol : location in filtered habitats is not a habitat!\n")
-			_pc = 29244
-			continue
-		elif _pc == 29244:
-			if not _pog_eq(ihabitat.allegiance(ihabitat.cast(list.get_nth(v4, v1))), ihabitat.allegiance(v5)):
-				_pc = 29317
-				continue
-			else:
-				_pc = 29346
-				continue
-		elif _pc == 29317:
-			list.remove_nth(v4, v1)
-			_pc = 29359
-			continue
-		elif _pc == 29346:
-			v1 = v1 + 1
-			_pc = 29359
-			continue
-		elif _pc == 29359:
-			if v1 >= list.item_count(v4):
-				_pc = 29388
-				continue
-			else:
-				_pc = 29178
-				continue
-		elif _pc == 29388:
-			v1 = 0
-			_pc = 29395
-			continue
-		elif _pc == 29395:
-			if v1 < list.item_count(v4):
-				_pc = 29424
-				continue
-			else:
-				_pc = 29592
-				continue
-		elif _pc == 29424:
-			if _pog_eq(imapentity.pog_name(imapentity.cast(list.get_nth(v4, v1))), imapentity.pog_name(v5)):
-				_pc = 29500
-				continue
-			else:
-				_pc = 29574
-				continue
-		elif _pc == 29500:
-			_pc = 29526
-			continue
-		elif _pc == 29505:
-			debug.print_string("iScriptedOrders: Found Starting Patrol Station. Removing from list.........\n")
-			_pc = 29526
-			continue
-		elif _pc == 29526:
-			list.remove_nth(v4, v1)
-			v1 = list.item_count(v4)
-			_pc = 29574
-			continue
-		elif _pc == 29574:
-			v1 = v1 + 1
-			_pc = 29395
-			continue
-		elif _pc == 29592:
-			v4 = list.from_set(v3)
-			_pc = 29644
-			continue
-		elif _pc == 29623:
-			debug.print_string("iScriptedOrders: Starting to create System Patrol Orders\n")
-			_pc = 29644
-			continue
-		elif _pc == 29644:
-			if list.item_count(v4) <= 1:
-				_pc = 29669
-				continue
-			else:
-				_pc = 29700
-				continue
-		elif _pc == 29669:
-			_pc = 29695
-			continue
-		elif _pc == 29674:
-			debug.print_string("iScriptedOrders: ERROR - unable to find habitats of same alligience to visit.... Exiting task\n")
-			_pc = 29695
-			continue
-		elif _pc == 29695:
-			_pc = 30725
-			continue
-		elif _pc == 29700:
-			v6 = ihabitat.cast(list.get_nth(v4, 0))
-			_pc = 29882
-			continue
-		elif _pc == 29743:
-			debug.print_string("iScriptedOrders:  SystemPatrol ship ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(imapentity.pog_name(v6))
-			debug.print_string("\n")
-			_pc = 29882
-			continue
-		elif _pc == 29882:
-			v1 = 0
-			iai.give_escort_order(v7, v6, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 29938
-			continue
-		elif _pc == 29938:
-			await _pog_frame()
-			if _pog_every(29939, 10.0):
-				_pc = 29952
-				continue
-			else:
-				_pc = 30446
-				continue
-		elif _pc == 29952:
-			_pc = 30041
-			continue
-		elif _pc == 29957:
-			debug.print_string("iScriptedOrders.SystemPatrol: Checking vessel ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 30041
-			continue
-		elif _pc == 30041:
-			if not _pog_eq(group.sim_count(v0), v2):
-				_pc = 30070
-				continue
-			else:
-				_pc = 30222
-				continue
-		elif _pc == 30070:
-			v2 = group.sim_count(v0)
-			if not _pog_is_null(v2):
-				_pc = 30106
-				continue
-			else:
-				_pc = 30217
-				continue
-		elif _pc == 30106:
-			v7 = iship.cast(group.leader(v0))
-			await iformation.goose(v0, 40.0, 0)
-			iai.give_escort_order(v7, v6, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 30222
-			continue
-		elif _pc == 30217:
-			_pc = 30518
-			continue
-		elif _pc == 30222:
-			if sim.distance_between(v7, v6) <= 1000.0:
-				_pc = 30256
-				continue
-			else:
-				_pc = 30396
-				continue
-		elif _pc == 30256:
-			if v1 <= list.item_count(v4):
-				_pc = 30285
-				continue
-			else:
-				_pc = 30303
-				continue
-		elif _pc == 30285:
-			v1 = v1 + 1
-			_pc = 30310
-			continue
-		elif _pc == 30303:
-			v1 = 0
-			_pc = 30310
-			continue
-		elif _pc == 30310:
-			v6 = ihabitat.cast(list.get_nth(v4, v1))
-			iai.give_escort_order(v7, v6, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 30396
-			continue
-		elif _pc == 30396:
-			v9 = v9 + -1
-			if v9 < 0:
-				_pc = 30422
-				continue
-			else:
-				_pc = 30446
-				continue
-		elif _pc == 30422:
-			iai.give_flee_order(v7, v8)
-			_pc = 30446
-			continue
-		elif _pc == 30446:
-			if _pog_every(30446, 30.0):
-				_pc = 30459
-				continue
-			else:
-				_pc = 30513
-				continue
-		elif _pc == 30459:
-			if not _pog_eq(sim.group(v7), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 30508
-				continue
-			else:
-				_pc = 30513
-				continue
-		elif _pc == 30508:
-			_pc = 30518
-			continue
-		elif _pc == 30513:
-			_pc = 29938
-			continue
-		elif _pc == 30518:
-			_pc = 30609
-			continue
-		elif _pc == 30525:
-			debug.print_string("iScriptedOrders: SystemPatrol ship ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 30609
-			continue
-		elif _pc == 30609:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 30634
-				continue
-			else:
-				_pc = 30705
-				continue
-		elif _pc == 30634:
-			await local_9567(group.nth_group(v0, 0))
-			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 30705
-			continue
-		elif _pc == 30705:
-			group.destroy(v0, 0)
-			_pc = 30725
-			continue
-		elif _pc == 30725:
-			return
 		else:
-			return 0
+			while true:
+				if _pog_is_null(ihabitat.cast(list.get_nth(v4, 1))):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.SystemPatrol : location in filtered habitats is not a habitat!\n")
+				if not _pog_eq(ihabitat.allegiance(ihabitat.cast(list.get_nth(v4, v1))), ihabitat.allegiance(v5)):
+					list.remove_nth(v4, v1)
+				else:
+					v1 = v1 + 1
+				if not (v1 < list.item_count(v4)):
+					break
+			v1 = 0
+			while v1 < list.item_count(v4):
+				if _pog_eq(imapentity.pog_name(imapentity.cast(list.get_nth(v4, v1))), imapentity.pog_name(v5)):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders: Found Starting Patrol Station. Removing from list.........\n")
+					list.remove_nth(v4, v1)
+					v1 = list.item_count(v4)
+				v1 = v1 + 1
+			v4 = list.from_set(v3)
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders: Starting to create System Patrol Orders\n")
+			if list.item_count(v4) <= 1:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders: ERROR - unable to find habitats of same alligience to visit.... Exiting task\n")
+			else:
+				v6 = ihabitat.cast(list.get_nth(v4, 0))
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders:  SystemPatrol ship ")
+					debug.print_string(object.string_property(v7, "name"))
+					debug.print_string(" setting of for destination ")
+					debug.print_string(imapentity.pog_name(v6))
+					debug.print_string("\n")
+				v1 = 0
+				iai.give_escort_order(v7, v6, 0.0, 0.0, 0.0, 8000.0)
+				while true:
+					await _pog_wait(10)
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.SystemPatrol: Checking vessel ")
+						debug.print_string(object.string_property(v7, "name"))
+						debug.print_string(" for its order status\n")
+					if not _pog_eq(group.sim_count(v0), v2):
+						v2 = group.sim_count(v0)
+						if not _pog_is_null(v2):
+							v7 = iship.cast(group.leader(v0))
+							await iformation.goose(v0, 40.0, 0)
+							iai.give_escort_order(v7, v6, 0.0, 0.0, 0.0, 8000.0)
+						else:
+							break
+					if sim.distance_between(v7, v6) <= 1000.0:
+						if v1 <= list.item_count(v4):
+							v1 = v1 + 1
+						else:
+							v1 = 0
+						v6 = ihabitat.cast(list.get_nth(v4, v1))
+						iai.give_escort_order(v7, v6, 0.0, 0.0, 0.0, 8000.0)
+					v9 = v9 + -1
+					if v9 < 0:
+						iai.give_flee_order(v7, v8)
+					if not (not _pog_eq(sim.group(v7), v0) or not (await iutilities.player_in_range_of_group(v0))):
+						continue
+					break
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders: SystemPatrol ship ")
+					debug.print_string(object.string_property(v7, "name"))
+					debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
+				if not _pog_is_null(group.group_count(v0)):
+					await local_9567(group.nth_group(v0, 0))
+					group.remove_group(v0, group.nth_group(v0, 0))
+				group.destroy(v0, 0)
+	return
 	return 0
 
 func freelance_mine(v0) -> Variant:
@@ -5045,196 +3817,77 @@ func freelance_mine(v0) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	var _pc: int = 30741
-	while true:
-		if _pc == 30741:
-			v3 = group.sim_count(v0)
-			v4 = null
-			v4 = global.pog_set("g_filtered_system_habitats")
-			v5 = null
-			v6 = ihabitat.nearest(v4, group.leader(v0))
-			v8 = iship.cast(group.leader(v0))
-			v9 = iship.find_player_ship()
-			v10 = iai.inner_marker_radius(v6, isim.cast(group.leader(v0)))
-			if not (v8):
-				_pc = 30983
-				continue
-			else:
-				_pc = 31014
-				continue
-		elif _pc == 30983:
-			_pc = 31009
-			continue
-		elif _pc == 30988:
+	v3 = group.sim_count(v0)
+	v4 = null
+	v4 = global.pog_set("g_filtered_system_habitats")
+	v5 = null
+	v6 = ihabitat.nearest(v4, group.leader(v0))
+	v8 = iship.cast(group.leader(v0))
+	v9 = iship.find_player_ship()
+	v10 = iai.inner_marker_radius(v6, isim.cast(group.leader(v0)))
+	if not (v8):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.freeminer: Invalid Lead miner!\n")
-			_pc = 31009
-			continue
-		elif _pc == 31009:
-			_pc = 32412
-			continue
-		elif _pc == 31014:
-			v5 = list.from_set(isim.sims_in_radius(v9, 20000.0, 1024))
-			v12 = list.item_count(v5)
-			_pc = 31215
-			continue
-		elif _pc == 31091:
+	else:
+		v5 = list.from_set(isim.sims_in_radius(v9, 20000.0, 1024))
+		v12 = list.item_count(v5)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.freeminer: miner: ")
 			debug.print_string(object.string_property(v8, "name"))
 			debug.print_string(" reporting ")
 			debug.print_int(v12)
 			debug.print_string(" mine locations in area\n")
-			_pc = 31215
-			continue
-		elif _pc == 31215:
-			if _pog_is_null(v12):
-				_pc = 31227
-				continue
-			else:
-				_pc = 31272
-				continue
-		elif _pc == 31227:
+		if _pog_is_null(v12):
 			_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
-			_pc = 32412
-			continue
-		elif _pc == 31272:
+		else:
 			v7 = sim.cast(list.get_nth(v5, math.random_int(0, v12 - 1)))
 			v1 = 0
 			iai.give_approach_order(v8, v7)
-			_pc = 31511
-			continue
-		elif _pc == 31366:
-			debug.print_string("iScriptedOrders.freeminer: FreelanceMiner ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" setting off for destination ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string("\n")
-			_pc = 31511
-			continue
-		elif _pc == 31511:
-			_pc = 31516
-			continue
-		elif _pc == 31516:
-			await _pog_frame()
-			if _pog_every(31517, 10.0):
-				_pc = 31530
-				continue
-			else:
-				_pc = 32133
-				continue
-		elif _pc == 31530:
-			if not _pog_eq(group.sim_count(v0), v3):
-				_pc = 31559
-				continue
-			else:
-				_pc = 31691
-				continue
-		elif _pc == 31559:
-			v3 = group.sim_count(v0)
-			if not _pog_is_null(v3):
-				_pc = 31595
-				continue
-			else:
-				_pc = 31686
-				continue
-		elif _pc == 31595:
-			v8 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_approach_order(v8, v7)
-			_pc = 31691
-			continue
-		elif _pc == 31686:
-			_pc = 32205
-			continue
-		elif _pc == 31691:
-			if iai.is_order_complete(v8):
-				_pc = 31714
-				continue
-			else:
-				_pc = 32133
-				continue
-		elif _pc == 31714:
-			_pc = 31740
-			continue
-		elif _pc == 31719:
-			debug.print_string("iScriptedOrders.freeminer: Reached Asteroid\n")
-			_pc = 31740
-			continue
-		elif _pc == 31740:
-			await _pog_wait(5.0)
-			v5 = list.from_set(isim.sims_in_radius(v9, 10000.0, 1024))
-			v12 = list.item_count(v5)
-			if _pog_is_null(v12):
-				_pc = 31856
-				continue
-			else:
-				_pc = 31901
-				continue
-		elif _pc == 31856:
-			_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
-			_pc = 32412
-			continue
-		elif _pc == 31901:
-			v7 = sim.cast(list.get_nth(v5, math.random_int(0, v12 - 1)))
-			iai.give_approach_order(v8, v7)
-			_pc = 32133
-			continue
-		elif _pc == 31988:
-			debug.print_string("iScriptedOrders.freeminer: FreelanceMiner ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" setting off for destination ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string("\n")
-			_pc = 32133
-			continue
-		elif _pc == 32133:
-			if _pog_every(32133, 30.0):
-				_pc = 32146
-				continue
-			else:
-				_pc = 32200
-				continue
-		elif _pc == 32146:
-			if not _pog_eq(sim.group(v8), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 32195
-				continue
-			else:
-				_pc = 32200
-				continue
-		elif _pc == 32195:
-			_pc = 32205
-			continue
-		elif _pc == 32200:
-			_pc = 31516
-			continue
-		elif _pc == 32205:
-			_pc = 32296
-			continue
-		elif _pc == 32212:
-			debug.print_string("iScriptedOrders.freeminer: FreelanceMiner ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 32296
-			continue
-		elif _pc == 32296:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.freeminer: FreelanceMiner ship ")
+				debug.print_string(object.string_property(v8, "name"))
+				debug.print_string(" setting off for destination ")
+				debug.print_string(object.string_property(v7, "name"))
+				debug.print_string("\n")
+			while true:
+				await _pog_wait(10)
+				if not _pog_eq(group.sim_count(v0), v3):
+					v3 = group.sim_count(v0)
+					if not _pog_is_null(v3):
+						v8 = iship.cast(group.leader(v0))
+						await iformation.line_abreast(v0, 40.0, 0)
+						iai.give_approach_order(v8, v7)
+					else:
+						break
+				if iai.is_order_complete(v8):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.freeminer: Reached Asteroid\n")
+					await _pog_wait(5.0)
+					v5 = list.from_set(isim.sims_in_radius(v9, 10000.0, 1024))
+					v12 = list.item_count(v5)
+					if _pog_is_null(v12):
+						_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
+						return
+					v7 = sim.cast(list.get_nth(v5, math.random_int(0, v12 - 1)))
+					iai.give_approach_order(v8, v7)
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.freeminer: FreelanceMiner ship ")
+						debug.print_string(object.string_property(v8, "name"))
+						debug.print_string(" setting off for destination ")
+						debug.print_string(object.string_property(v7, "name"))
+						debug.print_string("\n")
+				if not (not _pog_eq(sim.group(v8), v0) or not (await iutilities.player_in_range_of_group(v0))):
+					continue
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.freeminer: FreelanceMiner ship ")
+				debug.print_string(object.string_property(v8, "name"))
+				debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
 			if not _pog_is_null(group.group_count(v0)):
-				_pc = 32321
-				continue
-			else:
-				_pc = 32392
-				continue
-		elif _pc == 32321:
-			await local_9567(group.nth_group(v0, 0))
-			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 32392
-			continue
-		elif _pc == 32392:
+				await local_9567(group.nth_group(v0, 0))
+				group.remove_group(v0, group.nth_group(v0, 0))
 			group.destroy(v0, 0)
-			_pc = 32412
-			continue
-		elif _pc == 32412:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func factory_mine() -> Variant:
@@ -5248,287 +3901,108 @@ func factory_mine() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 32428
-	while true:
-		if _pc == 32428:
-			v3 = group.sim_count(v0)
-			v4 = null
-			v4 = global.pog_set("g_filtered_system_habitats")
-			v5 = null
-			v6 = ihabitat.nearest(v4, group.leader(v0))
-			v8 = iship.cast(group.leader(v0))
-			v9 = iai.inner_marker_radius(v6, isim.cast(group.leader(v0)))
-			_pc = 32666
-			continue
-		elif _pc == 32645:
-			debug.print_string("iScriptedOrders.factorymine: Been passed FactoryMine orders (INCOMPLETE)\n")
-			_pc = 32666
-			continue
-		elif _pc == 32666:
-			if not (v8):
-				_pc = 32677
-				continue
-			else:
-				_pc = 32748
-				continue
-		elif _pc == 32677:
-			_pc = 32703
-			continue
-		elif _pc == 32682:
+	v3 = group.sim_count(v0)
+	v4 = null
+	v4 = global.pog_set("g_filtered_system_habitats")
+	v5 = null
+	v6 = ihabitat.nearest(v4, group.leader(v0))
+	v8 = iship.cast(group.leader(v0))
+	v9 = iai.inner_marker_radius(v6, isim.cast(group.leader(v0)))
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.factorymine: Been passed FactoryMine orders (INCOMPLETE)\n")
+	if not (v8):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.factorymine: Invalid Lead miner!\n")
-			_pc = 32703
-			continue
-		elif _pc == 32703:
-			_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
-			_pc = 34408
-			continue
-		elif _pc == 32748:
-			p_set.union(v5, ibody.filter_on_type(imapentity.system_bodies(), 5))
-			p_set.union(v5, ibody.filter_on_type(imapentity.system_bodies(), 7))
-			v7 = ibody.nearest(v5, sim.cast(v8))
-			if _pog_is_null(v7):
-				_pc = 32903
-				continue
-			else:
-				_pc = 32992
-				continue
-		elif _pc == 32903:
-			_pc = 32992
-			continue
-		elif _pc == 32908:
-			debug.print_string("iScriptedOrders.factorymine: ARRgggghh - theres nothing for me (")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(") to mine\n")
-			_pc = 32992
-			continue
-		elif _pc == 32992:
-			v1 = math.random_int(0, 1)
-			if _pog_is_null(v1):
-				_pc = 33025
-				continue
-			else:
-				_pc = 33204
-				continue
-		elif _pc == 33025:
+		_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
+	else:
+		p_set.union(v5, ibody.filter_on_type(imapentity.system_bodies(), 5))
+		p_set.union(v5, ibody.filter_on_type(imapentity.system_bodies(), 7))
+		v7 = ibody.nearest(v5, sim.cast(v8))
+		if _pog_is_null(v7):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.factorymine: ARRgggghh - theres nothing for me (")
+				debug.print_string(object.string_property(v8, "name"))
+				debug.print_string(") to mine\n")
+		v1 = math.random_int(0, 1)
+		if _pog_is_null(v1):
 			iai.give_approach_order(v8, v7)
-			_pc = 33199
-			continue
-		elif _pc == 33054:
-			debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string("\n")
-			_pc = 33199
-			continue
-		elif _pc == 33199:
-			_pc = 33378
-			continue
-		elif _pc == 33204:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
+				debug.print_string(object.string_property(v8, "name"))
+				debug.print_string(" setting of for destination ")
+				debug.print_string(object.string_property(v7, "name"))
+				debug.print_string("\n")
+		else:
 			iai.give_approach_order(v8, v6)
-			_pc = 33378
-			continue
-		elif _pc == 33233:
-			debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string("\n")
-			_pc = 33378
-			continue
-		elif _pc == 33378:
-			_pc = 33383
-			continue
-		elif _pc == 33383:
-			await _pog_frame()
-			if _pog_every(33384, 10.0):
-				_pc = 33397
-				continue
-			else:
-				_pc = 34129
-				continue
-		elif _pc == 33397:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
+				debug.print_string(object.string_property(v8, "name"))
+				debug.print_string(" setting of for destination ")
+				debug.print_string(object.string_property(v7, "name"))
+				debug.print_string("\n")
+		while true:
+			await _pog_wait(10)
 			if not _pog_eq(group.sim_count(v0), v3):
-				_pc = 33426
-				continue
-			else:
-				_pc = 33558
-				continue
-		elif _pc == 33426:
-			v3 = group.sim_count(v0)
-			if not _pog_is_null(v3):
-				_pc = 33462
-				continue
-			else:
-				_pc = 33553
-				continue
-		elif _pc == 33462:
-			v8 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_approach_order(v8, v6)
-			_pc = 33558
-			continue
-		elif _pc == 33553:
-			_pc = 34201
-			continue
-		elif _pc == 33558:
+				v3 = group.sim_count(v0)
+				if not _pog_is_null(v3):
+					v8 = iship.cast(group.leader(v0))
+					await iformation.line_abreast(v0, 40.0, 0)
+					iai.give_approach_order(v8, v6)
+				else:
+					break
 			if _pog_is_null(v1):
-				_pc = 33570
-				continue
+				if iai.is_order_complete(v8):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.factorymine: Reached Asteroid\n")
+					await _pog_wait(60.0)
+					v1 = 1
+					iai.give_formate_order(v8, v6, 0.0, 0.0, 0.0)
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
+						debug.print_string(object.string_property(v8, "name"))
+						debug.print_string(" setting of for destination ")
+						debug.print_string(object.string_property(v7, "name"))
+						debug.print_string("\n")
 			else:
-				_pc = 33852
+				if iai.is_order_complete(v8):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.factorymine: Reached base\n")
+					await _pog_wait(60.0)
+					v1 = 0
+					iai.give_formate_order(v8, v7, 0.0, 0.0, 0.0)
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
+						debug.print_string(object.string_property(v8, "name"))
+						debug.print_string(" setting of for destination ")
+						debug.print_string(object.string_property(v7, "name"))
+						debug.print_string("\n")
+			if not (not _pog_eq(sim.group(v8), v0) or not (await iutilities.player_in_range_of_group(v0))):
 				continue
-		elif _pc == 33570:
-			if iai.is_order_complete(v8):
-				_pc = 33593
-				continue
-			else:
-				_pc = 33847
-				continue
-		elif _pc == 33593:
-			_pc = 33619
-			continue
-		elif _pc == 33598:
-			debug.print_string("iScriptedOrders.factorymine: Reached Asteroid\n")
-			_pc = 33619
-			continue
-		elif _pc == 33619:
-			await _pog_wait(60.0)
-			v1 = 1
-			iai.give_formate_order(v8, v6, 0.0, 0.0, 0.0)
-			_pc = 33847
-			continue
-		elif _pc == 33702:
-			debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string("\n")
-			_pc = 33847
-			continue
-		elif _pc == 33847:
-			_pc = 34129
-			continue
-		elif _pc == 33852:
-			if iai.is_order_complete(v8):
-				_pc = 33875
-				continue
-			else:
-				_pc = 34129
-				continue
-		elif _pc == 33875:
-			_pc = 33901
-			continue
-		elif _pc == 33880:
-			debug.print_string("iScriptedOrders.factorymine: Reached base\n")
-			_pc = 33901
-			continue
-		elif _pc == 33901:
-			await _pog_wait(60.0)
-			v1 = 0
-			iai.give_formate_order(v8, v7, 0.0, 0.0, 0.0)
-			_pc = 34129
-			continue
-		elif _pc == 33984:
-			debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string("\n")
-			_pc = 34129
-			continue
-		elif _pc == 34129:
-			if _pog_every(34129, 30.0):
-				_pc = 34142
-				continue
-			else:
-				_pc = 34196
-				continue
-		elif _pc == 34142:
-			if not _pog_eq(sim.group(v8), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 34191
-				continue
-			else:
-				_pc = 34196
-				continue
-		elif _pc == 34191:
-			_pc = 34201
-			continue
-		elif _pc == 34196:
-			_pc = 33383
-			continue
-		elif _pc == 34201:
-			_pc = 34292
-			continue
-		elif _pc == 34208:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.factorymine: factorymine ship ")
 			debug.print_string(object.string_property(v8, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 34292
-			continue
-		elif _pc == 34292:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 34317
-				continue
-			else:
-				_pc = 34388
-				continue
-		elif _pc == 34317:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 34388
-			continue
-		elif _pc == 34388:
-			group.destroy(v0, 0)
-			_pc = 34408
-			continue
-		elif _pc == 34408:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+	return
 	return 0
 
 func local_34424(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 34424
-	while true:
-		if _pc == 34424:
-			v2 = null
-			v2 = ifaction.all()
-			v1 = 0
-			_pc = 34468
-			continue
-		elif _pc == 34468:
-			if v1 < list.item_count(v2):
-				_pc = 34497
-				continue
-			else:
-				_pc = 34601
-				continue
-		elif _pc == 34497:
-			v3 = ifaction.cast(list.get_nth(v2, v1))
-			if ifaction.feeling(v3, v0) < 0.0:
-				_pc = 34573
-				continue
-			else:
-				_pc = 34583
-				continue
-		elif _pc == 34573:
-			_pc = 34607
-			continue
-		elif _pc == 34583:
-			v1 = v1 + 1
-			_pc = 34468
-			continue
-		elif _pc == 34601:
-			_pc = 34607
-			continue
-		elif _pc == 34607:
-			return
-		else:
-			return 0
+	v2 = null
+	v2 = ifaction.all()
+	v1 = 0
+	while v1 < list.item_count(v2):
+		v3 = ifaction.cast(list.get_nth(v2, v1))
+		if ifaction.feeling(v3, v0) < 0.0:
+			return v3
+		v1 = v1 + 1
+	return 0
 	return 0
 
 func scout() -> Variant:
@@ -5546,227 +4020,78 @@ func scout() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 34616
-	while true:
-		if _pc == 34616:
-			v3 = group.sim_count(v0)
-			v5 = null
-			v5 = ifaction.all()
-			v6 = null
-			v6 = global.pog_set("g_filtered_system_habitats")
-			v7 = null
-			v8 = iship.cast(group.leader(v0))
-			v9 = isim.faction(v8)
-			v13 = ihabitat.nearest(v6, v8)
-			if _pog_is_null(v13):
-				_pc = 34828
-				continue
-			else:
-				_pc = 34899
-				continue
-		elif _pc == 34828:
-			_pc = 34854
-			continue
-		elif _pc == 34833:
+	v3 = group.sim_count(v0)
+	v5 = null
+	v5 = ifaction.all()
+	v6 = null
+	v6 = global.pog_set("g_filtered_system_habitats")
+	v7 = null
+	v8 = iship.cast(group.leader(v0))
+	v9 = isim.faction(v8)
+	v13 = ihabitat.nearest(v6, v8)
+	if _pog_is_null(v13):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Scount: Local habitat was none.. \n")
-			_pc = 34854
-			continue
-		elif _pc == 34854:
-			_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
-			_pc = 36125
-			continue
-		elif _pc == 34899:
-			object.add_handle_property(v8, "traffic_handler_task", self)
-			_pc = 34964
-			continue
-		elif _pc == 34943:
+		_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
+	else:
+		object.add_handle_property(v8, "traffic_handler_task", self)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Scout: Starting.... \n")
-			_pc = 34964
-			continue
-		elif _pc == 34964:
-			v10 = ifaction.cast(list.get_nth(v5, ihabitat.allegiance(v13)))
-			if ifaction.feeling(v9, v10) >= 0.0:
-				_pc = 35053
-				continue
-			else:
-				_pc = 35253
-				continue
-		elif _pc == 35053:
-			_pc = 35079
-			continue
-		elif _pc == 35058:
-			debug.print_string("iScriptedOrders.scout: found match on local station with ship faction\n")
-			_pc = 35079
-			continue
-		elif _pc == 35079:
+		v10 = ifaction.cast(list.get_nth(v5, ihabitat.allegiance(v13)))
+		if ifaction.feeling(v9, v10) >= 0.0:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.scout: found match on local station with ship faction\n")
 			v11 = await local_34424(v9)
 			if _pog_is_null(v11):
-				_pc = 35116
-				continue
-			else:
-				_pc = 35167
-				continue
-		elif _pc == 35116:
-			_pc = 35142
-			continue
-		elif _pc == 35121:
-			debug.print_string("iScriptedOrders.Scout: unable to find opposing faction ending task\n")
-			_pc = 35142
-			continue
-		elif _pc == 35142:
-			group.destroy(v0, 1)
-			_pc = 36125
-			continue
-		elif _pc == 35167:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.Scout: unable to find opposing faction ending task\n")
+				group.destroy(v0, 1)
+				return
 			v7 = await iutilities.filter_on_friendly_habitats(v6, ifaction.allegiance(v11))
 			v12 = ihabitat.cast(p_set.first_element(v7))
-			_pc = 35371
-			continue
-		elif _pc == 35253:
-			_pc = 35279
-			continue
-		elif _pc == 35258:
-			debug.print_string("iScriptedOrders.Scout: Local station faction selected as opposing faction\n")
-			_pc = 35279
-			continue
-		elif _pc == 35279:
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Scout: Local station faction selected as opposing faction\n")
 			v11 = v10
 			v12 = v13
 			v13 = ihabitat.cast(p_set.first_element(await iutilities.filter_on_friendly_habitats(v6, ifaction.allegiance(v9))))
-			_pc = 35371
-			continue
-		elif _pc == 35371:
-			iai.give_approach_order(v8, v12)
-			_pc = 35400
-			continue
-		elif _pc == 35400:
-			await _pog_frame()
-			if _pog_every(35401, 10.0):
-				_pc = 35414
-				continue
-			else:
-				_pc = 35935
-				continue
-		elif _pc == 35414:
+		iai.give_approach_order(v8, v12)
+		while true:
+			await _pog_wait(10)
 			if not _pog_eq(group.sim_count(v0), v3):
-				_pc = 35443
-				continue
-			else:
-				_pc = 35575
-				continue
-		elif _pc == 35443:
-			v3 = group.sim_count(v0)
-			if not _pog_is_null(v3):
-				_pc = 35479
-				continue
-			else:
-				_pc = 35570
-				continue
-		elif _pc == 35479:
-			v8 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_approach_order(v8, v12)
-			_pc = 35575
-			continue
-		elif _pc == 35570:
-			_pc = 36007
-			continue
-		elif _pc == 35575:
+				v3 = group.sim_count(v0)
+				if not _pog_is_null(v3):
+					v8 = iship.cast(group.leader(v0))
+					await iformation.line_abreast(v0, 40.0, 0)
+					iai.give_approach_order(v8, v12)
+				else:
+					break
 			if _pog_is_null(v2):
-				_pc = 35587
-				continue
+				if iai.is_order_complete(v8):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.Scout: Reached Scouting position\n")
+					await _pog_wait(6.0)
+					iai.give_dock_order(v8, v13)
+					v2 = 1
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.Scout: Scout ship ")
+						debug.print_string(object.string_property(v8, "name"))
+						debug.print_string(" setting of for destination ")
+						debug.print_string(object.string_property(v12, "name"))
+						debug.print_string("\n")
 			else:
-				_pc = 35854
+				if iai.is_order_complete(v8):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.Scout: Reached base\n")
+					await _pog_wait(30.0)
+			if not (not _pog_eq(sim.group(v8), v0) or not (await iutilities.player_in_range_of_group(v0))):
 				continue
-		elif _pc == 35587:
-			if iai.is_order_complete(v8):
-				_pc = 35610
-				continue
-			else:
-				_pc = 35849
-				continue
-		elif _pc == 35610:
-			_pc = 35636
-			continue
-		elif _pc == 35615:
-			debug.print_string("iScriptedOrders.Scout: Reached Scouting position\n")
-			_pc = 35636
-			continue
-		elif _pc == 35636:
-			await _pog_wait(6.0)
-			iai.give_dock_order(v8, v13)
-			v2 = 1
-			_pc = 35849
-			continue
-		elif _pc == 35704:
-			debug.print_string("iScriptedOrders.Scout: Scout ship ")
-			debug.print_string(object.string_property(v8, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(object.string_property(v12, "name"))
-			debug.print_string("\n")
-			_pc = 35849
-			continue
-		elif _pc == 35849:
-			_pc = 35935
-			continue
-		elif _pc == 35854:
-			if iai.is_order_complete(v8):
-				_pc = 35877
-				continue
-			else:
-				_pc = 35935
-				continue
-		elif _pc == 35877:
-			_pc = 35903
-			continue
-		elif _pc == 35882:
-			debug.print_string("iScriptedOrders.Scout: Reached base\n")
-			_pc = 35903
-			continue
-		elif _pc == 35903:
-			await _pog_wait(30.0)
-			_pc = 35935
-			continue
-		elif _pc == 35935:
-			if _pog_every(35935, 30.0):
-				_pc = 35948
-				continue
-			else:
-				_pc = 36002
-				continue
-		elif _pc == 35948:
-			if not _pog_eq(sim.group(v8), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 35997
-				continue
-			else:
-				_pc = 36002
-				continue
-		elif _pc == 35997:
-			_pc = 36007
-			continue
-		elif _pc == 36002:
-			_pc = 35400
-			continue
-		elif _pc == 36007:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 36034
-				continue
-			else:
-				_pc = 36105
-				continue
-		elif _pc == 36034:
+			break
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 36105
-			continue
-		elif _pc == 36105:
-			group.destroy(v0, 0)
-			_pc = 36125
-			continue
-		elif _pc == 36125:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+	return
 	return 0
 
 func official_visitor(v0) -> Variant:
@@ -5779,43 +4104,19 @@ func official_visitor(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 36148
-	while true:
-		if _pc == 36148:
-			v3 = group.sim_count(v0)
-			v4 = null
-			v4 = global.pog_set("g_filtered_system_habitats")
-			v5 = null
-			v6 = ihabitat.nearest(v4, group.leader(v0))
-			v9 = iship.cast(group.leader(v0))
-			if not (v9):
-				_pc = 36316
-				continue
-			else:
-				_pc = 36347
-				continue
-		elif _pc == 36316:
-			_pc = 36342
-			continue
-		elif _pc == 36321:
+	v3 = group.sim_count(v0)
+	v4 = null
+	v4 = global.pog_set("g_filtered_system_habitats")
+	v5 = null
+	v6 = ihabitat.nearest(v4, group.leader(v0))
+	v9 = iship.cast(group.leader(v0))
+	if not (v9):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.officialvisitor: Invalid Lead visitor!\n")
-			_pc = 36342
-			continue
-		elif _pc == 36342:
-			_pc = 38168
-			continue
-		elif _pc == 36347:
-			if ihabitat.type(v6) == 44 or ihabitat.type(v6) == 45 or ihabitat.type(v6) == 92 or ihabitat.type(v6) == 93 or ihabitat.type(v6) == 94 or ihabitat.type(v6) == 95 or ihabitat.type(v6) == 87 or ihabitat.type(v6) == 47:
-				_pc = 36527
-				continue
-			else:
-				_pc = 36543
-				continue
-		elif _pc == 36527:
+	else:
+		if ihabitat.type(v6) == 44 or ihabitat.type(v6) == 45 or ihabitat.type(v6) == 92 or ihabitat.type(v6) == 93 or ihabitat.type(v6) == 94 or ihabitat.type(v6) == 95 or ihabitat.type(v6) == 87 or ihabitat.type(v6) == 47:
 			v8 = v6
-			_pc = 36934
-			continue
-		elif _pc == 36543:
+		else:
 			p_set.union(v5, ihabitat.filter_on_type(v4, 44))
 			p_set.union(v5, ihabitat.filter_on_type(v4, 45))
 			p_set.union(v5, ihabitat.filter_on_type(v4, 92))
@@ -5826,202 +4127,67 @@ func official_visitor(v0) -> Variant:
 			p_set.union(v5, ihabitat.filter_on_type(v4, 47))
 			v8 = ihabitat.random(v4)
 			if _pog_is_null(v8):
-				_pc = 36908
-				continue
-			else:
-				_pc = 36934
-				continue
-		elif _pc == 36908:
-			_pc = 36934
-			continue
-		elif _pc == 36913:
-			debug.print_string("iScriptedOrders: Official Visitor Error - there appears to be nowhere for me to make a home.\n")
-			_pc = 36934
-			continue
-		elif _pc == 36934:
-			_pc = 37017
-			continue
-		elif _pc == 36939:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders: Official Visitor Error - there appears to be nowhere for me to make a home.\n")
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Official Orders Passed with ")
 			debug.print_string(imapentity.pog_name(v8))
 			debug.print_string(" as vessel base\n")
-			_pc = 37017
-			continue
-		elif _pc == 37017:
-			v7 = ihabitat.random(v4)
-			v2 = math.random_int(0, 1)
-			if _pog_eq(v8, v6):
-				_pc = 37078
-				continue
-			else:
-				_pc = 37085
-				continue
-		elif _pc == 37078:
+		v7 = ihabitat.random(v4)
+		v2 = math.random_int(0, 1)
+		if _pog_eq(v8, v6):
 			v2 = 1
-			_pc = 37085
-			continue
-		elif _pc == 37085:
-			if _pog_is_null(v2):
-				_pc = 37097
-				continue
-			else:
-				_pc = 37270
-				continue
-		elif _pc == 37097:
+		if _pog_is_null(v2):
 			iai.give_dock_order(v9, v6)
-			_pc = 37265
-			continue
-		elif _pc == 37126:
-			debug.print_string("iScriptedOrders: Official Visitor ship ")
-			debug.print_string(object.string_property(v9, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(imapentity.pog_name(v6))
-			debug.print_string("\n")
-			_pc = 37265
-			continue
-		elif _pc == 37265:
-			_pc = 37438
-			continue
-		elif _pc == 37270:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders: Official Visitor ship ")
+				debug.print_string(object.string_property(v9, "name"))
+				debug.print_string(" setting of for destination ")
+				debug.print_string(imapentity.pog_name(v6))
+				debug.print_string("\n")
+		else:
 			iai.give_dock_order(v9, v7)
-			_pc = 37438
-			continue
-		elif _pc == 37299:
-			debug.print_string("iScriptedOrders: Official Visitor ship ")
-			debug.print_string(object.string_property(v9, "name"))
-			debug.print_string(" setting of for destination ")
-			debug.print_string(imapentity.pog_name(v7))
-			debug.print_string("\n")
-			_pc = 37438
-			continue
-		elif _pc == 37438:
-			_pc = 37443
-			continue
-		elif _pc == 37443:
-			await _pog_frame()
-			if _pog_every(37444, 10.0):
-				_pc = 37457
-				continue
-			else:
-				_pc = 37889
-				continue
-		elif _pc == 37457:
-			_pc = 37546
-			continue
-		elif _pc == 37462:
-			debug.print_string("iScriptedOrders.OfficialVisitor: Checking vessel ")
-			debug.print_string(object.string_property(v9, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 37546
-			continue
-		elif _pc == 37546:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders: Official Visitor ship ")
+				debug.print_string(object.string_property(v9, "name"))
+				debug.print_string(" setting of for destination ")
+				debug.print_string(imapentity.pog_name(v7))
+				debug.print_string("\n")
+		while true:
+			await _pog_wait(10)
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.OfficialVisitor: Checking vessel ")
+				debug.print_string(object.string_property(v9, "name"))
+				debug.print_string(" for its order status\n")
 			if not _pog_eq(group.sim_count(v0), v3):
-				_pc = 37575
-				continue
-			else:
-				_pc = 37707
-				continue
-		elif _pc == 37575:
-			v3 = group.sim_count(v0)
-			if not _pog_is_null(v3):
-				_pc = 37611
-				continue
-			else:
-				_pc = 37702
-				continue
-		elif _pc == 37611:
-			v9 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_dock_order(v9, v7)
-			_pc = 37707
-			continue
-		elif _pc == 37702:
-			_pc = 37961
-			continue
-		elif _pc == 37707:
+				v3 = group.sim_count(v0)
+				if not _pog_is_null(v3):
+					v9 = iship.cast(group.leader(v0))
+					await iformation.line_abreast(v0, 40.0, 0)
+					iai.give_dock_order(v9, v7)
+				else:
+					break
 			if _pog_is_null(v2):
-				_pc = 37719
-				continue
+				if iai.is_order_complete(v9):
+					await _pog_wait(60.0)
 			else:
-				_pc = 37779
+				if iai.is_order_complete(v9):
+					await _pog_wait(30.0)
+					iship.undock(v9, v7)
+					v2 = 0
+					iai.give_approach_order(v9, v8)
+			if not (not _pog_eq(sim.group(v9), v0) or not (await iutilities.player_in_range_of_group(v0))):
 				continue
-		elif _pc == 37719:
-			if iai.is_order_complete(v9):
-				_pc = 37742
-				continue
-			else:
-				_pc = 37774
-				continue
-		elif _pc == 37742:
-			await _pog_wait(60.0)
-			_pc = 37774
-			continue
-		elif _pc == 37774:
-			_pc = 37889
-			continue
-		elif _pc == 37779:
-			if iai.is_order_complete(v9):
-				_pc = 37802
-				continue
-			else:
-				_pc = 37889
-				continue
-		elif _pc == 37802:
-			await _pog_wait(30.0)
-			iship.undock(v9, v7)
-			v2 = 0
-			iai.give_approach_order(v9, v8)
-			_pc = 37889
-			continue
-		elif _pc == 37889:
-			if _pog_every(37889, 30.0):
-				_pc = 37902
-				continue
-			else:
-				_pc = 37956
-				continue
-		elif _pc == 37902:
-			if not _pog_eq(sim.group(v9), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 37951
-				continue
-			else:
-				_pc = 37956
-				continue
-		elif _pc == 37951:
-			_pc = 37961
-			continue
-		elif _pc == 37956:
-			_pc = 37443
-			continue
-		elif _pc == 37961:
-			_pc = 38052
-			continue
-		elif _pc == 37968:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: OfficialVisitor ship ")
 			debug.print_string(object.string_property(v9, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 38052
-			continue
-		elif _pc == 38052:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 38077
-				continue
-			else:
-				_pc = 38148
-				continue
-		elif _pc == 38077:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 38148
-			continue
-		elif _pc == 38148:
-			group.destroy(v0, 0)
-			_pc = 38168
-			continue
-		elif _pc == 38168:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+	return
 	return 0
 
 func local_38184(v0, v1) -> Variant:
@@ -6029,46 +4195,17 @@ func local_38184(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 38184
-	while true:
-		if _pc == 38184:
-			v2 = null
-			v2 = global.pog_set("g_filtered_system_habitats")
-			v3 = ihabitat.nearest(v2, v0)
-			v4 = null
-			v4 = list.from_set(isim.sims_in_radius(v3, 2000.0, 536838144))
-			v5 = 0
-			_pc = 38323
-			continue
-		elif _pc == 38323:
-			if v5 < list.item_count(v4):
-				_pc = 38352
-				continue
-			else:
-				_pc = 38470
-				continue
-		elif _pc == 38352:
-			if object.property_exists(sim.cast(list.get_nth(v4, v5)), v1):
-				_pc = 38411
-				continue
-			else:
-				_pc = 38452
-				continue
-		elif _pc == 38411:
-			iship.cast(list.get_nth(v4, v5))
-			_pc = 38476
-			continue
-		elif _pc == 38452:
-			v5 = v5 + 1
-			_pc = 38323
-			continue
-		elif _pc == 38470:
-			_pc = 38476
-			continue
-		elif _pc == 38476:
-			return
-		else:
-			return 0
+	v2 = null
+	v2 = global.pog_set("g_filtered_system_habitats")
+	v3 = ihabitat.nearest(v2, v0)
+	v4 = null
+	v4 = list.from_set(isim.sims_in_radius(v3, 2000.0, 536838144))
+	v5 = 0
+	while v5 < list.item_count(v4):
+		if object.property_exists(sim.cast(list.get_nth(v4, v5)), v1):
+			return iship.cast(list.get_nth(v4, v5))
+		v5 = v5 + 1
+	return 0
 	return 0
 
 func piracy(v0) -> Variant:
@@ -6081,263 +4218,92 @@ func piracy(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 38492
-	while true:
-		if _pc == 38492:
-			v1 = 0
-			v3 = group.sim_count(v0)
-			v5 = null
-			v5 = global.pog_set("g_filtered_system_habitats")
-			v6 = null
-			v9 = iship.cast(group.leader(v0))
-			if not (v9):
-				_pc = 38625
-				continue
-			else:
-				_pc = 38656
-				continue
-		elif _pc == 38625:
-			_pc = 38651
-			continue
-		elif _pc == 38630:
+	v1 = 0
+	v3 = group.sim_count(v0)
+	v5 = null
+	v5 = global.pog_set("g_filtered_system_habitats")
+	v6 = null
+	v9 = iship.cast(group.leader(v0))
+	if not (v9):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Piracy: Invalid Lead Pirate!\n")
-			_pc = 38651
-			continue
-		elif _pc == 38651:
-			_pc = 40310
-			continue
-		elif _pc == 38656:
-			_pc = 38682
-			continue
-		elif _pc == 38661:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Been passed Piracy orders\n")
-			_pc = 38682
-			continue
-		elif _pc == 38682:
-			v7 = await local_38184(v9, "cargo_origin")
-			_pc = 38802
-			continue
-		elif _pc == 38718:
+		v7 = await local_38184(v9, "cargo_origin")
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: I've decided to pirate that juicy looking vessel: ")
 			debug.print_string(object.string_property(v7, "name"))
 			debug.print_string("\n ")
-			_pc = 38802
-			continue
-		elif _pc == 38802:
-			p_set.union(v6, ihabitat.filter_on_type(v5, 60))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 101))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 102))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 103))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 104))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 111))
-			if _pog_is_null(p_set.item_count(v6)):
-				_pc = 39073
-				continue
-			else:
-				_pc = 39099
-				continue
-		elif _pc == 39073:
-			_pc = 39099
-			continue
-		elif _pc == 39078:
-			debug.print_string("iScriptedOrders: Bugger, this no pirate base for me to run to leaving......\n")
-			_pc = 39099
-			continue
-		elif _pc == 39099:
-			v8 = ihabitat.random(v6)
-			_pc = 39206
-			continue
-		elif _pc == 39128:
+		p_set.union(v6, ihabitat.filter_on_type(v5, 60))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 101))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 102))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 103))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 104))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 111))
+		if _pog_is_null(p_set.item_count(v6)):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders: Bugger, this no pirate base for me to run to leaving......\n")
+		v8 = ihabitat.random(v6)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Found Pirate Base location: ")
 			debug.print_string(imapentity.pog_name(v8))
 			debug.print_string("\n ")
-			_pc = 39206
-			continue
-		elif _pc == 39206:
-			if _pog_is_null(v7):
-				_pc = 39219
-				continue
-			else:
-				_pc = 39270
-				continue
-		elif _pc == 39219:
+		if _pog_is_null(v7):
 			iai.give_formate_order(v9, v8, -20.0, 0.0, 0.0)
 			v1 = 1
-			_pc = 39309
-			continue
-		elif _pc == 39270:
+		else:
 			iai.give_formate_order(v9, v7, 0.0, 0.0, -40.0)
-			_pc = 39309
-			continue
-		elif _pc == 39309:
-			_pc = 39314
-			continue
-		elif _pc == 39314:
-			await _pog_frame()
-			if _pog_every(39315, 10.0):
-				_pc = 39328
-				continue
-			else:
-				_pc = 40018
-				continue
-		elif _pc == 39328:
+		while true:
+			await _pog_wait(10)
 			if not _pog_eq(group.sim_count(v0), v3):
-				_pc = 39357
-				continue
-			else:
-				_pc = 39509
-				continue
-		elif _pc == 39357:
-			v3 = group.sim_count(v0)
-			if not _pog_is_null(v3):
-				_pc = 39393
-				continue
-			else:
-				_pc = 39504
-				continue
-		elif _pc == 39393:
-			v9 = iship.cast(group.leader(v0))
-			await iescort.goose(v0, 40.0, 8000.0, 0)
-			iai.give_formate_order(v9, v7, 0.0, 0.0, -40.0)
-			_pc = 39509
-			continue
-		elif _pc == 39504:
-			_pc = 40090
-			continue
-		elif _pc == 39509:
-			_pc = 39598
-			continue
-		elif _pc == 39514:
-			debug.print_string("iScriptedOrders.Piracy: Checking vessel ")
-			debug.print_string(object.string_property(v9, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 39598
-			continue
-		elif _pc == 39598:
+				v3 = group.sim_count(v0)
+				if not _pog_is_null(v3):
+					v9 = iship.cast(group.leader(v0))
+					await iescort.goose(v0, 40.0, 8000.0, 0)
+					iai.give_formate_order(v9, v7, 0.0, 0.0, -40.0)
+				else:
+					break
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Piracy: Checking vessel ")
+				debug.print_string(object.string_property(v9, "name"))
+				debug.print_string(" for its order status\n")
 			if iai.is_order_complete(v9) or sim.distance_between(v9, v7) < 300.0 and _pog_is_null(v1):
-				_pc = 39659
-				continue
+				iai.give_attack_order(v9, v7)
+				while true:
+					v4 = await local_38184(v9, "cargo")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(v4)):
+						break
+				iai.remove_order(v9)
+				iai.give_dock_order(v9, v4)
+				while true:
+					await _pog_wait(5.0)
+					if not (not (iai.is_order_complete(v9))):
+						break
+				if _pog_is_null(v8):
+					iai.give_approach_order(v9, v8)
+				else:
+					_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders: Finished piracy - leggin' it\n")
+				v1 = 1
 			else:
-				_pc = 39978
+				if v1 == 1:
+					if iai.is_order_complete(v9):
+						break
+			if not (not _pog_eq(sim.group(v9), v0) or not (await iutilities.player_in_range_of_group(v0))):
 				continue
-		elif _pc == 39659:
-			iai.give_attack_order(v9, v7)
-			_pc = 39683
-			continue
-		elif _pc == 39683:
-			v4 = await local_38184(v9, "cargo")
-			await _pog_wait(2.0)
-			if not _pog_is_null(v4):
-				_pc = 39759
-				continue
-			else:
-				_pc = 39683
-				continue
-		elif _pc == 39759:
-			iai.remove_order(v9)
-			iai.give_dock_order(v9, v4)
-			_pc = 39802
-			continue
-		elif _pc == 39802:
-			await _pog_wait(5.0)
-			if iai.is_order_complete(v9):
-				_pc = 39858
-				continue
-			else:
-				_pc = 39802
-				continue
-		elif _pc == 39858:
-			if _pog_is_null(v8):
-				_pc = 39871
-				continue
-			else:
-				_pc = 39900
-				continue
-		elif _pc == 39871:
-			iai.give_approach_order(v9, v8)
-			_pc = 39940
-			continue
-		elif _pc == 39900:
-			_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
-			_pc = 39940
-			continue
-		elif _pc == 39940:
-			_pc = 39966
-			continue
-		elif _pc == 39945:
-			debug.print_string("iScriptedOrders: Finished piracy - leggin' it\n")
-			_pc = 39966
-			continue
-		elif _pc == 39966:
-			v1 = 1
-			_pc = 40018
-			continue
-		elif _pc == 39978:
-			if v1 == 1:
-				_pc = 39990
-				continue
-			else:
-				_pc = 40018
-				continue
-		elif _pc == 39990:
-			if iai.is_order_complete(v9):
-				_pc = 40013
-				continue
-			else:
-				_pc = 40018
-				continue
-		elif _pc == 40013:
-			_pc = 40090
-			continue
-		elif _pc == 40018:
-			if _pog_every(40018, 30.0):
-				_pc = 40031
-				continue
-			else:
-				_pc = 40085
-				continue
-		elif _pc == 40031:
-			if not _pog_eq(sim.group(v9), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 40080
-				continue
-			else:
-				_pc = 40085
-				continue
-		elif _pc == 40080:
-			_pc = 40090
-			continue
-		elif _pc == 40085:
-			_pc = 39314
-			continue
-		elif _pc == 40090:
-			_pc = 40194
-			continue
-		elif _pc == 40097:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Pirate ship ")
 			debug.print_string(object.string_property(group.leader(v0), "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 40194
-			continue
-		elif _pc == 40194:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 40219
-				continue
-			else:
-				_pc = 40290
-				continue
-		elif _pc == 40219:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 40290
-			continue
-		elif _pc == 40290:
-			group.destroy(v0, 0)
-			_pc = 40310
-			continue
-		elif _pc == 40310:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+	return
 	return 0
 
 func hot_rodder(v0) -> Variant:
@@ -6352,237 +4318,91 @@ func hot_rodder(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 40326
-	while true:
-		if _pc == 40326:
-			v1 = 0
-			v2 = 0
-			v4 = group.sim_count(v0)
-			v5 = null
-			v5 = global.pog_set("g_filtered_system_habitats")
-			v6 = null
-			v7 = ihabitat.nearest(v5, group.leader(v0))
-			v9 = iship.find_player_ship()
-			v10 = iship.cast(group.leader(v0))
-			v11 = null
-			if not (v10):
-				_pc = 40538
-				continue
-			else:
-				_pc = 40590
-				continue
-		elif _pc == 40538:
-			_pc = 40564
-			continue
-		elif _pc == 40543:
+	v1 = 0
+	v2 = 0
+	v4 = group.sim_count(v0)
+	v5 = null
+	v5 = global.pog_set("g_filtered_system_habitats")
+	v6 = null
+	v7 = ihabitat.nearest(v5, group.leader(v0))
+	v9 = iship.find_player_ship()
+	v10 = iship.cast(group.leader(v0))
+	v11 = null
+	if not (v10):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.hotrodder: Invalid Lead hotrodder!\n")
-			_pc = 40564
-			continue
-		elif _pc == 40564:
-			global.destroy("g_hot_rodder_running")
-			_pc = 42207
-			continue
-		elif _pc == 40590:
-			if object.i_d_modulus(v10, 2) == 1:
-				_pc = 40617
-				continue
-			else:
-				_pc = 40635
-				continue
-		elif _pc == 40617:
+		global.destroy("g_hot_rodder_running")
+	else:
+		if object.i_d_modulus(v10, 2) == 1:
 			v11 = "_male_1"
-			_pc = 40648
-			continue
-		elif _pc == 40635:
+		else:
 			v11 = "_female_1"
-			_pc = 40648
-			continue
-		elif _pc == 40648:
-			_pc = 40674
-			continue
-		elif _pc == 40653:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.hotrodder: Been passed HotRodder orders\n")
-			_pc = 40674
-			continue
-		elif _pc == 40674:
-			object.set_int_property(v10, "ignore_speed_limit", 1)
-			p_set.union(v6, ihabitat.filter_on_type(v5, 112))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 107))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 67))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 59))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 46))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 114))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 119))
-			p_set.union(v6, ihabitat.filter_on_type(v5, 120))
-			v8 = ihabitat.random(v6)
-			_pc = 41136
-			continue
-		elif _pc == 41058:
+		object.set_int_property(v10, "ignore_speed_limit", 1)
+		p_set.union(v6, ihabitat.filter_on_type(v5, 112))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 107))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 67))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 59))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 46))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 114))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 119))
+		p_set.union(v6, ihabitat.filter_on_type(v5, 120))
+		v8 = ihabitat.random(v6)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.hotrodder: Found home location: ")
 			debug.print_string(imapentity.pog_name(v8))
 			debug.print_string("\n ")
-			_pc = 41136
-			continue
-		elif _pc == 41136:
-			iai.give_formate_order(v10, v9, 60.0, 0.0, 0.0)
-			_pc = 41180
-			continue
-		elif _pc == 41180:
-			await _pog_frame()
-			if _pog_every(41181, 10.0):
-				_pc = 41194
-				continue
-			else:
-				_pc = 41975
-				continue
-		elif _pc == 41194:
+		iai.give_formate_order(v10, v9, 60.0, 0.0, 0.0)
+		while true:
+			await _pog_wait(10)
 			if not _pog_eq(group.sim_count(v0), v4):
-				_pc = 41223
-				continue
-			else:
-				_pc = 41345
-				continue
-		elif _pc == 41223:
-			v4 = group.sim_count(v0)
-			if not _pog_is_null(v4):
-				_pc = 41259
-				continue
-			else:
-				_pc = 41340
-				continue
-		elif _pc == 41259:
-			v10 = iship.cast(group.leader(v0))
-			iai.give_formate_order(v10, v9, 60.0, 0.0, 0.0)
-			_pc = 41345
-			continue
-		elif _pc == 41340:
-			_pc = 41980
-			continue
-		elif _pc == 41345:
+				v4 = group.sim_count(v0)
+				if not _pog_is_null(v4):
+					v10 = iship.cast(group.leader(v0))
+					iai.give_formate_order(v10, v9, 60.0, 0.0, 0.0)
+				else:
+					break
 			if _pog_eq(sim.group(v10), v0):
-				_pc = 41374
-				continue
+				if not (await iutilities.player_in_range_of_group(v0)):
+					break
 			else:
-				_pc = 41408
-				continue
-		elif _pc == 41374:
-			if not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 41398
-				continue
-			else:
-				_pc = 41403
-				continue
-		elif _pc == 41398:
-			_pc = 41980
-			continue
-		elif _pc == 41403:
-			_pc = 41439
-			continue
-		elif _pc == 41408:
-			_pc = 41434
-			continue
-		elif _pc == 41413:
-			debug.print_string("iScriptedOrders.Hotrodder: Ship nolonger exists, ending task\n")
-			_pc = 41434
-			continue
-		elif _pc == 41434:
-			_pc = 41980
-			continue
-		elif _pc == 41439:
-			_pc = 41528
-			continue
-		elif _pc == 41444:
-			debug.print_string("iScriptedOrders.HotRodder: Checking vessel ")
-			debug.print_string(object.string_property(v10, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 41528
-			continue
-		elif _pc == 41528:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.Hotrodder: Ship nolonger exists, ending task\n")
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.HotRodder: Checking vessel ")
+				debug.print_string(object.string_property(v10, "name"))
+				debug.print_string(" for its order status\n")
 			if sim.distance_between(v10, v9) < 4000.0 and not (v2):
-				_pc = 41569
-				continue
-			else:
-				_pc = 41659
-				continue
-		elif _pc == 41569:
-			v2 = 1
-			icomms.shout(v10, "", string.join("stock_hotrodder_nice_ship", v11))
-			await _pog_wait(3.0)
-			_pc = 41659
-			continue
-		elif _pc == 41659:
+				v2 = 1
+				icomms.shout(v10, "", string.join("stock_hotrodder_nice_ship", v11))
+				await _pog_wait(3.0)
 			if iai.is_order_complete(v10) or sim.distance_between(v9, v10) <= 1500.0 and _pog_is_null(v1):
-				_pc = 41720
-				continue
+				v1 = 1
+				icomms.shout(v10, "", string.join("stock_hotrodder_ready", v11))
+				await _pog_wait(4.0)
+				icomms.shout(v10, "", string.join("stock_hotrodder_go", v11))
+				iai.purge_orders(v10)
+				iai.give_approach_order(v10, v8)
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.hotrodder: Finished hotrodding - legging it\n")
 			else:
-				_pc = 41935
-				continue
-		elif _pc == 41720:
-			v1 = 1
-			icomms.shout(v10, "", string.join("stock_hotrodder_ready", v11))
-			await _pog_wait(4.0)
-			icomms.shout(v10, "", string.join("stock_hotrodder_go", v11))
-			iai.purge_orders(v10)
-			iai.give_approach_order(v10, v8)
-			_pc = 41930
-			continue
-		elif _pc == 41909:
-			debug.print_string("iScriptedOrders.hotrodder: Finished hotrodding - legging it\n")
-			_pc = 41930
-			continue
-		elif _pc == 41930:
-			_pc = 41975
-			continue
-		elif _pc == 41935:
-			if v1 == 1:
-				_pc = 41947
-				continue
-			else:
-				_pc = 41975
-				continue
-		elif _pc == 41947:
-			if iai.is_order_complete(v10):
-				_pc = 41970
-				continue
-			else:
-				_pc = 41975
-				continue
-		elif _pc == 41970:
-			_pc = 41980
-			continue
-		elif _pc == 41975:
-			_pc = 41180
-			continue
-		elif _pc == 41980:
-			_pc = 42070
-			continue
-		elif _pc == 41986:
+				if v1 != 1:
+					continue
+				if not (iai.is_order_complete(v10)):
+					continue
+				break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.hotrodder: HotRodder ship ")
 			debug.print_string(object.string_property(v10, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 42070
-			continue
-		elif _pc == 42070:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 42095
-				continue
-			else:
-				_pc = 42166
-				continue
-		elif _pc == 42095:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 42166
-			continue
-		elif _pc == 42166:
-			group.destroy(v0, 0)
-			global.destroy("g_hot_rodder_running")
-			_pc = 42207
-			continue
-		elif _pc == 42207:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+		global.destroy("g_hot_rodder_running")
+	return
 	return 0
 
 func local_wander(v0) -> Variant:
@@ -6907,28 +4727,12 @@ func cabbie(v0) -> Variant:
 func local_44422(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 44422
-	while true:
-		if _pc == 44422:
-			v1 = null
-			v1 = list.from_set(idockport.dockports_of_type(v0, 8, 1))
-			v2 = list.item_count(v1)
-			if not _pog_is_null(v2):
-				_pc = 44517
-				continue
-			else:
-				_pc = 44523
-				continue
-		elif _pc == 44517:
-			_pc = 44529
-			continue
-		elif _pc == 44523:
-			_pc = 44529
-			continue
-		elif _pc == 44529:
-			return
-		else:
-			return 0
+	v1 = null
+	v1 = list.from_set(idockport.dockports_of_type(v0, 8, 1))
+	v2 = list.item_count(v1)
+	if not _pog_is_null(v2):
+		return 1
+	return 0
 	return 0
 
 func speed_trap(v0) -> Variant:
@@ -7225,160 +5029,61 @@ func flitter(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 46541
-	while true:
-		if _pc == 46541:
-			v1 = group.sim_count(v0)
-			v2 = null
-			v2 = global.pog_set("g_filtered_system_habitats")
-			v3 = ihabitat.nearest(v2, group.leader(v0))
-			v4 = v3
-			v5 = iai.inner_marker_radius(v3, isim.cast(group.leader(v0)))
-			v7 = iship.cast(group.leader(v0))
-			if not (v7):
-				_pc = 46764
-				continue
-			else:
-				_pc = 46795
-				continue
-		elif _pc == 46764:
-			_pc = 46790
-			continue
-		elif _pc == 46769:
+	v1 = group.sim_count(v0)
+	v2 = null
+	v2 = global.pog_set("g_filtered_system_habitats")
+	v3 = ihabitat.nearest(v2, group.leader(v0))
+	v4 = v3
+	v5 = iai.inner_marker_radius(v3, isim.cast(group.leader(v0)))
+	v7 = iship.cast(group.leader(v0))
+	if not (v7):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Flitter: Invalid Lead Flitter!\n")
-			_pc = 46790
-			continue
-		elif _pc == 46790:
-			_pc = 47769
-			continue
-		elif _pc == 46795:
-			_pc = 46939
-			continue
-		elif _pc == 46800:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Flitter orders passed to \n")
 			debug.print_string(object.string_property(v7, "name"))
 			debug.print_string(" flitting round location ")
 			debug.print_string(imapentity.pog_name(v3))
 			debug.print_string("\n")
-			_pc = 46939
-			continue
-		elif _pc == 46939:
-			v6 = sim.create("ini:/sims/nav/waypoint", "flitter destination")
-			sim.place_near(v6, v4, v5 + math.random(500.0, 800.0))
-			iai.give_approach_order(v7, v6)
-			_pc = 47053
-			continue
-		elif _pc == 47053:
-			await _pog_frame()
-			if _pog_every(47054, 15.0):
-				_pc = 47067
-				continue
-			else:
-				_pc = 47539
-				continue
-		elif _pc == 47067:
+		v6 = sim.create("ini:/sims/nav/waypoint", "flitter destination")
+		sim.place_near(v6, v4, v5 + math.random(500.0, 800.0))
+		iai.give_approach_order(v7, v6)
+		while true:
+			await _pog_wait(15)
 			if not _pog_eq(group.sim_count(v0), v1):
-				_pc = 47096
-				continue
-			else:
-				_pc = 47228
-				continue
-		elif _pc == 47096:
-			v1 = group.sim_count(v0)
-			if not _pog_is_null(v1):
-				_pc = 47132
-				continue
-			else:
-				_pc = 47223
-				continue
-		elif _pc == 47132:
-			v7 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_approach_order(v7, v6)
-			_pc = 47228
-			continue
-		elif _pc == 47223:
-			_pc = 47544
-			continue
-		elif _pc == 47228:
+				v1 = group.sim_count(v0)
+				if not _pog_is_null(v1):
+					v7 = iship.cast(group.leader(v0))
+					await iformation.line_abreast(v0, 40.0, 0)
+					iai.give_approach_order(v7, v6)
+				else:
+					break
 			if _pog_eq(sim.group(v7), v0):
-				_pc = 47257
-				continue
+				if not (await iutilities.player_in_range_of_group(v0)):
+					break
 			else:
-				_pc = 47291
-				continue
-		elif _pc == 47257:
-			if not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 47281
-				continue
-			else:
-				_pc = 47286
-				continue
-		elif _pc == 47281:
-			_pc = 47544
-			continue
-		elif _pc == 47286:
-			_pc = 47322
-			continue
-		elif _pc == 47291:
-			_pc = 47317
-			continue
-		elif _pc == 47296:
-			debug.print_string("iScriptedOrders.Flitter: Flitter nolonger Exists, ending task\n")
-			_pc = 47317
-			continue
-		elif _pc == 47317:
-			_pc = 47544
-			continue
-		elif _pc == 47322:
-			_pc = 47411
-			continue
-		elif _pc == 47327:
-			debug.print_string("iScriptedOrders.Flitter: Checking ship ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 47411
-			continue
-		elif _pc == 47411:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.Flitter: Flitter nolonger Exists, ending task\n")
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Flitter: Checking ship ")
+				debug.print_string(object.string_property(v7, "name"))
+				debug.print_string(" for its order status\n")
 			sim.destroy(v6)
 			v6 = sim.create("ini:/sims/nav/waypoint", "flitter destination")
 			sim.place_near(v6, v4, v5 + math.random(500.0, 800.0))
 			iai.give_approach_order(v7, v6)
-			_pc = 47539
-			continue
-		elif _pc == 47539:
-			_pc = 47053
-			continue
-		elif _pc == 47544:
-			_pc = 47634
-			continue
-		elif _pc == 47550:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Flitter ship ")
 			debug.print_string(object.string_property(v7, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 47634
-			continue
-		elif _pc == 47634:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 47659
-				continue
-			else:
-				_pc = 47730
-				continue
-		elif _pc == 47659:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 47730
-			continue
-		elif _pc == 47730:
-			group.destroy(v0, 0)
-			sim.destroy(v6)
-			_pc = 47769
-			continue
-		elif _pc == 47769:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+		sim.destroy(v6)
+	return
 	return 0
 
 func recovery(v0, v1) -> Variant:
@@ -7389,184 +5094,59 @@ func recovery(v0, v1) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 47778
-	while true:
-		if _pc == 47778:
-			v2 = 0
-			v4 = group.sim_count(v0)
-			v5 = null
-			v5 = global.pog_set("g_filtered_system_habitats")
-			v6 = ihabitat.nearest(v5, group.leader(v0))
-			v7 = iship.cast(group.leader(v0))
-			v8 = null
-			if not (v7):
-				_pc = 47953
-				continue
-			else:
-				_pc = 47984
-				continue
-		elif _pc == 47953:
-			_pc = 47979
-			continue
-		elif _pc == 47958:
+	v2 = 0
+	v4 = group.sim_count(v0)
+	v5 = null
+	v5 = global.pog_set("g_filtered_system_habitats")
+	v6 = ihabitat.nearest(v5, group.leader(v0))
+	v7 = iship.cast(group.leader(v0))
+	v8 = null
+	if not (v7):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.recovery: Invalid Lead hotrodder!\n")
-			_pc = 47979
-			continue
-		elif _pc == 47979:
-			_pc = 48770
-			continue
-		elif _pc == 47984:
-			_pc = 48010
-			continue
-		elif _pc == 47989:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.recovery: Been passed Recovery orders\n")
-			_pc = 48010
-			continue
-		elif _pc == 48010:
-			iai.give_dock_order(v7, v1)
-			_pc = 48039
-			continue
-		elif _pc == 48039:
-			await _pog_frame()
-			if _pog_every(48040, 10.0):
-				_pc = 48053
-				continue
-			else:
-				_pc = 48432
-				continue
-		elif _pc == 48053:
-			_pc = 48142
-			continue
-		elif _pc == 48058:
-			debug.print_string("iScriptedOrders.Recovery: Checking vessel ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 48142
-			continue
-		elif _pc == 48142:
+		iai.give_dock_order(v7, v1)
+		while true:
+			await _pog_wait(10)
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Recovery: Checking vessel ")
+				debug.print_string(object.string_property(v7, "name"))
+				debug.print_string(" for its order status\n")
 			if not _pog_eq(group.sim_count(v0), v4):
-				_pc = 48171
-				continue
-			else:
-				_pc = 48303
-				continue
-		elif _pc == 48171:
-			v4 = group.sim_count(v0)
-			if not _pog_is_null(v4):
-				_pc = 48207
-				continue
-			else:
-				_pc = 48298
-				continue
-		elif _pc == 48207:
-			v7 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_dock_order(v7, v1)
-			_pc = 48303
-			continue
-		elif _pc == 48298:
-			_pc = 48544
-			continue
-		elif _pc == 48303:
+				v4 = group.sim_count(v0)
+				if not _pog_is_null(v4):
+					v7 = iship.cast(group.leader(v0))
+					await iformation.line_abreast(v0, 40.0, 0)
+					iai.give_dock_order(v7, v1)
+				else:
+					break
 			if iai.is_order_complete(v7) and _pog_is_null(v2):
-				_pc = 48334
-				continue
-			else:
-				_pc = 48432
-				continue
-		elif _pc == 48334:
-			if v2 == 1:
-				_pc = 48346
-				continue
-			else:
-				_pc = 48375
-				continue
-		elif _pc == 48346:
-			iship.undock(v7, v1)
-			_pc = 48544
-			continue
-		elif _pc == 48375:
-			iai.give_dock_order(v7, v6)
-			_pc = 48425
-			continue
-		elif _pc == 48404:
-			debug.print_string("iScriptedOrders: Finished recovering - legging it\n")
-			_pc = 48425
-			continue
-		elif _pc == 48425:
-			v2 = 1
-			_pc = 48432
-			continue
-		elif _pc == 48432:
-			if _pog_every(48432, 30.0):
-				_pc = 48445
-				continue
-			else:
-				_pc = 48539
-				continue
-		elif _pc == 48445:
+				if v2 == 1:
+					iship.undock(v7, v1)
+					break
+				iai.give_dock_order(v7, v6)
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders: Finished recovering - legging it\n")
+				v2 = 1
 			if _pog_eq(sim.group(v7), v0):
-				_pc = 48474
-				continue
+				if not (await iutilities.player_in_range_of_group(v0)):
+					break
 			else:
-				_pc = 48508
-				continue
-		elif _pc == 48474:
-			if not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 48498
-				continue
-			else:
-				_pc = 48503
-				continue
-		elif _pc == 48498:
-			_pc = 48544
-			continue
-		elif _pc == 48503:
-			_pc = 48539
-			continue
-		elif _pc == 48508:
-			_pc = 48534
-			continue
-		elif _pc == 48513:
-			debug.print_string("iScriptedOrders.recover: Ship nolonger exists, ending task\n")
-			_pc = 48534
-			continue
-		elif _pc == 48534:
-			_pc = 48544
-			continue
-		elif _pc == 48539:
-			_pc = 48039
-			continue
-		elif _pc == 48544:
-			_pc = 48635
-			continue
-		elif _pc == 48551:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.recover: Ship nolonger exists, ending task\n")
+				break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Recoverer ship ")
 			debug.print_string(object.string_property(v7, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 48635
-			continue
-		elif _pc == 48635:
-			sim.destroy(v1)
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 48679
-				continue
-			else:
-				_pc = 48750
-				continue
-		elif _pc == 48679:
+		sim.destroy(v1)
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 48750
-			continue
-		elif _pc == 48750:
-			group.destroy(v0, 0)
-			_pc = 48770
-			continue
-		elif _pc == 48770:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+	return
 	return 0
 
 func wander(v0) -> Variant:
@@ -7650,7 +5230,7 @@ func wander(v0) -> Variant:
 				_pc = 49107
 				continue
 		elif _pc == 49252:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 49260
 				continue
 			else:
@@ -7818,169 +5398,64 @@ func loiter(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 50438
-	while true:
-		if _pc == 50438:
-			v1 = null
-			v1 = global.pog_set("g_filtered_system_habitats")
-			v2 = ihabitat.nearest(v1, group.leader(v0))
-			v3 = v2
-			v5 = iship.cast(group.leader(v0))
-			v6 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
-			v7 = group.sim_count(v0)
-			v8 = iship.find_player_ship()
-			v9 = 18
-			if not (v5):
-				_pc = 50688
-				continue
-			else:
-				_pc = 50719
-				continue
-		elif _pc == 50688:
-			_pc = 50714
-			continue
-		elif _pc == 50693:
+	v1 = null
+	v1 = global.pog_set("g_filtered_system_habitats")
+	v2 = ihabitat.nearest(v1, group.leader(v0))
+	v3 = v2
+	v5 = iship.cast(group.leader(v0))
+	v6 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
+	v7 = group.sim_count(v0)
+	v8 = iship.find_player_ship()
+	v9 = 18
+	if not (v5):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.loiterer: Invalid Lead loiterer!\n")
-			_pc = 50714
-			continue
-		elif _pc == 50714:
-			_pc = 51855
-			continue
-		elif _pc == 50719:
-			object.add_handle_property(v5, "traffic_handler_task", self)
-			_pc = 50902
-			continue
-		elif _pc == 50763:
+	else:
+		object.add_handle_property(v5, "traffic_handler_task", self)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.loiterer: loiterer orders passed to \n")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" loitering round location ")
 			debug.print_string(imapentity.pog_name(v2))
 			debug.print_string("\n")
-			_pc = 50902
-			continue
-		elif _pc == 50902:
-			v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
-			sim.place_near(v4, v3, v6 + math.random(500.0, 800.0))
-			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 51036
-			continue
-		elif _pc == 51036:
-			await _pog_frame()
-			if _pog_every(51037, 10.0):
-				_pc = 51050
-				continue
-			else:
-				_pc = 51557
-				continue
-		elif _pc == 51050:
-			_pc = 51139
-			continue
-		elif _pc == 51055:
-			debug.print_string("iScriptedOrders.Loiter: Checking ship ")
-			debug.print_string(object.string_property(v5, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 51139
-			continue
-		elif _pc == 51139:
+		v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
+		sim.place_near(v4, v3, v6 + math.random(500.0, 800.0))
+		iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
+		while true:
+			await _pog_wait(10)
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Loiter: Checking ship ")
+				debug.print_string(object.string_property(v5, "name"))
+				debug.print_string(" for its order status\n")
 			if not _pog_eq(group.sim_count(v0), v7):
-				_pc = 51168
-				continue
-			else:
-				_pc = 51325
-				continue
-		elif _pc == 51168:
-			v7 = group.sim_count(v0)
-			if not _pog_is_null(v7):
-				_pc = 51204
-				continue
-			else:
-				_pc = 51320
-				continue
-		elif _pc == 51204:
-			v5 = iship.cast(group.leader(v0))
-			await iescort.goose(v0, 40.0, 8000.0, 0)
-			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 51325
-			continue
-		elif _pc == 51320:
-			_pc = 51629
-			continue
-		elif _pc == 51325:
+				v7 = group.sim_count(v0)
+				if not _pog_is_null(v7):
+					v5 = iship.cast(group.leader(v0))
+					await iescort.goose(v0, 40.0, 8000.0, 0)
+					iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
+				else:
+					break
 			if sim.distance_between(v5, v4) <= 300.0:
-				_pc = 51359
-				continue
-			else:
-				_pc = 51507
-				continue
-		elif _pc == 51359:
-			sim.destroy(v4)
-			v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
-			sim.place_near(v4, v3, v6 + math.random(500.0, 800.0))
-			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 51507
-			continue
-		elif _pc == 51507:
+				sim.destroy(v4)
+				v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
+				sim.place_near(v4, v3, v6 + math.random(500.0, 800.0))
+				iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
 			v9 = v9 + -1
 			if v9 < 0:
-				_pc = 51533
+				iai.give_flee_order(v5, v8)
+			if not (not _pog_eq(sim.group(v5), v0) or not (await iutilities.player_in_range_of_group(v0))):
 				continue
-			else:
-				_pc = 51557
-				continue
-		elif _pc == 51533:
-			iai.give_flee_order(v5, v8)
-			_pc = 51557
-			continue
-		elif _pc == 51557:
-			if _pog_every(51557, 30.0):
-				_pc = 51570
-				continue
-			else:
-				_pc = 51624
-				continue
-		elif _pc == 51570:
-			if not _pog_eq(sim.group(v5), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 51619
-				continue
-			else:
-				_pc = 51624
-				continue
-		elif _pc == 51619:
-			_pc = 51629
-			continue
-		elif _pc == 51624:
-			_pc = 51036
-			continue
-		elif _pc == 51629:
-			_pc = 51720
-			continue
-		elif _pc == 51636:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.loiterer: loiterer ship ")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 51720
-			continue
-		elif _pc == 51720:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 51745
-				continue
-			else:
-				_pc = 51816
-				continue
-		elif _pc == 51745:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 51816
-			continue
-		elif _pc == 51816:
-			group.destroy(v0, 0)
-			sim.destroy(v4)
-			_pc = 51855
-			continue
-		elif _pc == 51855:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+		sim.destroy(v4)
+	return
 	return 0
 
 func local_51864(v0, v1) -> Variant:
@@ -7989,45 +5464,17 @@ func local_51864(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 51864
-	while true:
-		if _pc == 51864:
-			v2 = null
-			v2 = list.from_set(isim.ships_in_radius(v0, v1))
-			v3 = ifaction.allegiance(isim.faction(v0))
-			v6 = list.item_count(v2)
-			v5 = 0
-			_pc = 51993
-			continue
-		elif _pc == 51993:
-			if v5 < v6:
-				_pc = 52009
-				continue
-			else:
-				_pc = 52121
-				continue
-		elif _pc == 52009:
-			v4 = iship.cast(list.get_nth(v2, v5))
-			if not _pog_eq(v3, ifaction.allegiance(isim.faction(v4))):
-				_pc = 52093
-				continue
-			else:
-				_pc = 52103
-				continue
-		elif _pc == 52093:
-			_pc = 52127
-			continue
-		elif _pc == 52103:
-			v5 = v5 + 1
-			_pc = 51993
-			continue
-		elif _pc == 52121:
-			_pc = 52127
-			continue
-		elif _pc == 52127:
-			return
-		else:
-			return 0
+	v2 = null
+	v2 = list.from_set(isim.ships_in_radius(v0, v1))
+	v3 = ifaction.allegiance(isim.faction(v0))
+	v6 = list.item_count(v2)
+	v5 = 0
+	while v5 < v6:
+		v4 = iship.cast(list.get_nth(v2, v5))
+		if not _pog_eq(v3, ifaction.allegiance(isim.faction(v4))):
+			return v4
+		v5 = v5 + 1
+	return 0
 	return 0
 
 func aggressive_loiter(v0) -> Variant:
@@ -8040,274 +5487,89 @@ func aggressive_loiter(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 52136
-	while true:
-		if _pc == 52136:
-			v1 = null
-			v1 = global.pog_set("g_filtered_system_habitats")
-			v2 = ihabitat.nearest(v1, group.leader(v0))
-			v3 = v2
-			v5 = iship.cast(group.leader(v0))
-			v8 = group.sim_count(v0)
-			v9 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
-			if not (v5):
-				_pc = 52359
-				continue
-			else:
-				_pc = 52390
-				continue
-		elif _pc == 52359:
-			_pc = 52385
-			continue
-		elif _pc == 52364:
+	v1 = null
+	v1 = global.pog_set("g_filtered_system_habitats")
+	v2 = ihabitat.nearest(v1, group.leader(v0))
+	v3 = v2
+	v5 = iship.cast(group.leader(v0))
+	v8 = group.sim_count(v0)
+	v9 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
+	if not (v5):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.AgressiveLoiterer: Invalid Lead loiterer!\n")
-			_pc = 52385
-			continue
-		elif _pc == 52385:
-			_pc = 53998
-			continue
-		elif _pc == 52390:
-			object.add_handle_property(v5, "traffic_handler_task", self)
-			_pc = 52573
-			continue
-		elif _pc == 52434:
+	else:
+		object.add_handle_property(v5, "traffic_handler_task", self)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.AgressiveLoiterer: loiterer orders passed to \n")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" loitering round location ")
 			debug.print_string(imapentity.pog_name(v2))
 			debug.print_string("\n")
-			_pc = 52573
-			continue
-		elif _pc == 52573:
-			v7 = math.random_int(0, 1)
-			if _pog_is_null(v7):
-				_pc = 52606
-				continue
-			else:
-				_pc = 52766
-				continue
-		elif _pc == 52606:
-			_pc = 52632
-			continue
-		elif _pc == 52611:
-			debug.print_string("iScriptedOrders.AggressiceLoiter: giving inital orders of loiter\n")
-			_pc = 52632
-			continue
-		elif _pc == 52632:
+		v7 = math.random_int(0, 1)
+		if _pog_is_null(v7):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.AggressiceLoiter: giving inital orders of loiter\n")
 			v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
 			sim.place_near(v4, v3, v9 + math.random(500.0, 800.0))
 			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 52889
-			continue
-		elif _pc == 52766:
-			_pc = 52792
-			continue
-		elif _pc == 52771:
-			debug.print_string("iScriptedOrders.AggressiceLoiter: giving inital orders of aggressive behaviour\n")
-			_pc = 52792
-			continue
-		elif _pc == 52792:
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.AggressiceLoiter: giving inital orders of aggressive behaviour\n")
 			v6 = await local_51864(v5, 6000.0)
 			if _pog_is_null(v6):
-				_pc = 52834
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.AggressiceLoiter: nobody in area to attack, doing nothing\n")
 			else:
-				_pc = 52865
-				continue
-		elif _pc == 52834:
-			_pc = 52860
-			continue
-		elif _pc == 52839:
-			debug.print_string("iScriptedOrders.AggressiceLoiter: nobody in area to attack, doing nothing\n")
-			_pc = 52860
-			continue
-		elif _pc == 52860:
-			_pc = 52889
-			continue
-		elif _pc == 52865:
-			iai.give_attack_order(v5, v6)
-			_pc = 52889
-			continue
-		elif _pc == 52889:
-			_pc = 52894
-			continue
-		elif _pc == 52894:
-			await _pog_frame()
-			if _pog_every(52895, 10.0):
-				_pc = 52908
-				continue
-			else:
-				_pc = 53700
-				continue
-		elif _pc == 52908:
-			_pc = 52997
-			continue
-		elif _pc == 52913:
-			debug.print_string("iScriptedOrders.AgressiveLoiterer: Checking ship ")
-			debug.print_string(object.string_property(v5, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 52997
-			continue
-		elif _pc == 52997:
+				iai.give_attack_order(v5, v6)
+		while true:
+			await _pog_wait(10)
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.AgressiveLoiterer: Checking ship ")
+				debug.print_string(object.string_property(v5, "name"))
+				debug.print_string(" for its order status\n")
 			if not _pog_eq(group.sim_count(v0), v8):
-				_pc = 53026
-				continue
-			else:
-				_pc = 53183
-				continue
-		elif _pc == 53026:
-			v8 = group.sim_count(v0)
-			if not _pog_is_null(v8):
-				_pc = 53062
-				continue
-			else:
-				_pc = 53178
-				continue
-		elif _pc == 53062:
-			v5 = iship.cast(group.leader(v0))
-			await iescort.goose(v0, 40.0, 8000.0, 0)
-			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 53183
-			continue
-		elif _pc == 53178:
-			_pc = 53772
-			continue
-		elif _pc == 53183:
+				v8 = group.sim_count(v0)
+				if not _pog_is_null(v8):
+					v5 = iship.cast(group.leader(v0))
+					await iescort.goose(v0, 40.0, 8000.0, 0)
+					iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
+				else:
+					break
 			if not _pog_is_null(v7):
-				_pc = 53195
-				continue
-			else:
-				_pc = 53277
-				continue
-		elif _pc == 53195:
-			if object.float_property(v6, "hit_points") <= 20.0 or _pog_is_null(iship.cast(v6)):
-				_pc = 53253
-				continue
-			else:
-				_pc = 53277
-				continue
-		elif _pc == 53253:
-			iai.give_approach_order(v5, v2)
-			_pc = 53277
-			continue
-		elif _pc == 53277:
+				if object.float_property(v6, "hit_points") <= 20.0 or _pog_is_null(iship.cast(v6)):
+					iai.give_approach_order(v5, v2)
 			if iai.is_order_complete(v5) or not _pog_is_null(v4):
-				_pc = 53309
+				if not _pog_is_null(sim.cast(v4)) and sim.distance_between(v5, v4) <= 300.0:
+					sim.destroy(v4)
+				v7 = math.random_int(0, 1)
+				if _pog_is_null(v7):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.AggressiceLoiter: giving new orders of loiter\n")
+					v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
+					sim.place_near(v4, v3, v9 + math.random(500.0, 800.0))
+					iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.AggressiceLoiter: giving new orders of aggressive behaviour\n")
+					v6 = await local_51864(v5, 6000.0)
+					if _pog_is_null(v6):
+						if PogRuntime.TRACE:
+							debug.print_string("iScriptedOrders.AggressiceLoiter: nobody in area to attack, doing nothing\n")
+					else:
+						iai.give_attack_order(v5, v6)
+			if not (not _pog_eq(sim.group(v5), v0) or not (await iutilities.player_in_range_of_group(v0))):
 				continue
-			else:
-				_pc = 53700
-				continue
-		elif _pc == 53309:
-			if not _pog_is_null(sim.cast(v4)) and sim.distance_between(v5, v4) <= 300.0:
-				_pc = 53365
-				continue
-			else:
-				_pc = 53384
-				continue
-		elif _pc == 53365:
-			sim.destroy(v4)
-			_pc = 53384
-			continue
-		elif _pc == 53384:
-			v7 = math.random_int(0, 1)
-			if _pog_is_null(v7):
-				_pc = 53417
-				continue
-			else:
-				_pc = 53577
-				continue
-		elif _pc == 53417:
-			_pc = 53443
-			continue
-		elif _pc == 53422:
-			debug.print_string("iScriptedOrders.AggressiceLoiter: giving new orders of loiter\n")
-			_pc = 53443
-			continue
-		elif _pc == 53443:
-			v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
-			sim.place_near(v4, v3, v9 + math.random(500.0, 800.0))
-			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 53700
-			continue
-		elif _pc == 53577:
-			_pc = 53603
-			continue
-		elif _pc == 53582:
-			debug.print_string("iScriptedOrders.AggressiceLoiter: giving new orders of aggressive behaviour\n")
-			_pc = 53603
-			continue
-		elif _pc == 53603:
-			v6 = await local_51864(v5, 6000.0)
-			if _pog_is_null(v6):
-				_pc = 53645
-				continue
-			else:
-				_pc = 53676
-				continue
-		elif _pc == 53645:
-			_pc = 53671
-			continue
-		elif _pc == 53650:
-			debug.print_string("iScriptedOrders.AggressiceLoiter: nobody in area to attack, doing nothing\n")
-			_pc = 53671
-			continue
-		elif _pc == 53671:
-			_pc = 53700
-			continue
-		elif _pc == 53676:
-			iai.give_attack_order(v5, v6)
-			_pc = 53700
-			continue
-		elif _pc == 53700:
-			if _pog_every(53700, 30.0):
-				_pc = 53713
-				continue
-			else:
-				_pc = 53767
-				continue
-		elif _pc == 53713:
-			if not _pog_eq(sim.group(v5), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 53762
-				continue
-			else:
-				_pc = 53767
-				continue
-		elif _pc == 53762:
-			_pc = 53772
-			continue
-		elif _pc == 53767:
-			_pc = 52894
-			continue
-		elif _pc == 53772:
-			_pc = 53863
-			continue
-		elif _pc == 53779:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.AgressiveLoiterer: loiterer ship ")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 53863
-			continue
-		elif _pc == 53863:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 53888
-				continue
-			else:
-				_pc = 53959
-				continue
-		elif _pc == 53888:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 53959
-			continue
-		elif _pc == 53959:
-			group.destroy(v0, 0)
-			sim.destroy(v4)
-			_pc = 53998
-			continue
-		elif _pc == 53998:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+		sim.destroy(v4)
+	return
 	return 0
 
 func police_raid(v0) -> Variant:
@@ -8320,236 +5582,80 @@ func police_raid(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 54007
-	while true:
-		if _pc == 54007:
-			v1 = null
-			v1 = global.pog_set("g_filtered_system_habitats")
-			v2 = null
-			v2 = ihabitat.filter_on_allegiance(v1, 14)
-			v3 = null
-			v3 = list.from_set(global.pog_set("g_filtered_system_habitats"))
-			v4 = ihabitat.nearest(v1, group.leader(v0))
-			v5 = ihabitat.cast(p_set.first_element(v2))
-			v7 = iship.cast(group.leader(v0))
-			v9 = group.sim_count(v0)
-			_pc = 54305
-			continue
-		elif _pc == 54284:
-			debug.print_string("iScriptedOrders.PoliceRaid : starting a police raid task\n")
-			_pc = 54305
-			continue
-		elif _pc == 54305:
-			if not (v7):
-				_pc = 54316
-				continue
-			else:
-				_pc = 54347
-				continue
-		elif _pc == 54316:
-			_pc = 54342
-			continue
-		elif _pc == 54321:
+	v1 = null
+	v1 = global.pog_set("g_filtered_system_habitats")
+	v2 = null
+	v2 = ihabitat.filter_on_allegiance(v1, 14)
+	v3 = null
+	v3 = list.from_set(global.pog_set("g_filtered_system_habitats"))
+	v4 = ihabitat.nearest(v1, group.leader(v0))
+	v5 = ihabitat.cast(p_set.first_element(v2))
+	v7 = iship.cast(group.leader(v0))
+	v9 = group.sim_count(v0)
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.PoliceRaid : starting a police raid task\n")
+	if not (v7):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.PoliceRaiders: Invalid Lead Police Raider!\n")
-			_pc = 54342
-			continue
-		elif _pc == 54342:
-			_pc = 55346
-			continue
-		elif _pc == 54347:
-			if not (v4):
-				_pc = 54358
-				continue
-			else:
-				_pc = 54384
-				continue
-		elif _pc == 54358:
-			_pc = 54384
-			continue
-		elif _pc == 54363:
-			debug.print_string("iScriptedOrders.PoliceRaiders: Local station was none!\n")
-			_pc = 54384
-			continue
-		elif _pc == 54384:
-			if ihabitat.allegiance(v4) == 14:
-				_pc = 54410
-				continue
-			else:
-				_pc = 54527
-				continue
-		elif _pc == 54410:
-			if ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v8))) == 14:
-				_pc = 54467
-				continue
-			else:
-				_pc = 54485
-				continue
-		elif _pc == 54467:
-			v8 = v8 + 1
-			_pc = 54410
-			continue
-		elif _pc == 54485:
+	else:
+		if not (v4):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.PoliceRaiders: Local station was none!\n")
+		if ihabitat.allegiance(v4) == 14:
+			while ihabitat.allegiance(ihabitat.cast(list.get_nth(v3, v8))) == 14:
+				v8 = v8 + 1
 			v4 = ihabitat.cast(list.get_nth(v3, v8))
-			_pc = 54527
-			continue
-		elif _pc == 54527:
-			_pc = 54671
-			continue
-		elif _pc == 54532:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.PoliceRaid: Police Raid orders passed to \n")
 			debug.print_string(object.string_property(v7, "name"))
 			debug.print_string("Raiding location ")
 			debug.print_string(imapentity.pog_name(v4))
 			debug.print_string("\n")
-			_pc = 54671
-			continue
-		elif _pc == 54671:
-			iai.give_dock_order(v7, v4)
-			_pc = 54700
-			continue
-		elif _pc == 54700:
-			await _pog_frame()
-			if _pog_every(54701, 10.0):
-				_pc = 54714
-				continue
-			else:
-				_pc = 55067
-				continue
-		elif _pc == 54714:
-			_pc = 54803
-			continue
-		elif _pc == 54719:
-			debug.print_string("iScriptedOrders.PoliceRaider: Checking ship ")
-			debug.print_string(object.string_property(v7, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 54803
-			continue
-		elif _pc == 54803:
+		iai.give_dock_order(v7, v4)
+		while true:
+			await _pog_wait(10)
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.PoliceRaider: Checking ship ")
+				debug.print_string(object.string_property(v7, "name"))
+				debug.print_string(" for its order status\n")
 			if not _pog_eq(group.sim_count(v0), v9):
-				_pc = 54832
-				continue
-			else:
-				_pc = 54964
-				continue
-		elif _pc == 54832:
-			v9 = group.sim_count(v0)
-			if not _pog_is_null(v9):
-				_pc = 54868
-				continue
-			else:
-				_pc = 54959
-				continue
-		elif _pc == 54868:
-			v7 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_dock_order(v7, v4)
-			_pc = 54964
-			continue
-		elif _pc == 54959:
-			_pc = 55139
-			continue
-		elif _pc == 54964:
+				v9 = group.sim_count(v0)
+				if not _pog_is_null(v9):
+					v7 = iship.cast(group.leader(v0))
+					await iformation.line_abreast(v0, 40.0, 0)
+					iai.give_dock_order(v7, v4)
+				else:
+					break
 			if iai.is_order_complete(v7):
-				_pc = 54987
+				await _pog_wait(10.0)
+				iship.undock(v7, v4)
+				iai.give_dock_order(v7, v5)
+			if not (not _pog_eq(sim.group(v7), v0) or not (await iutilities.player_in_range_of_group(v0))):
 				continue
-			else:
-				_pc = 55067
-				continue
-		elif _pc == 54987:
-			await _pog_wait(10.0)
-			iship.undock(v7, v4)
-			iai.give_dock_order(v7, v5)
-			_pc = 55067
-			continue
-		elif _pc == 55067:
-			if _pog_every(55067, 30.0):
-				_pc = 55080
-				continue
-			else:
-				_pc = 55134
-				continue
-		elif _pc == 55080:
-			if not _pog_eq(sim.group(v7), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 55129
-				continue
-			else:
-				_pc = 55134
-				continue
-		elif _pc == 55129:
-			_pc = 55139
-			continue
-		elif _pc == 55134:
-			_pc = 54700
-			continue
-		elif _pc == 55139:
-			_pc = 55230
-			continue
-		elif _pc == 55146:
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.PoliceRaid: Police Raider ship ")
 			debug.print_string(object.string_property(v7, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 55230
-			continue
-		elif _pc == 55230:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 55255
-				continue
-			else:
-				_pc = 55326
-				continue
-		elif _pc == 55255:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 55326
-			continue
-		elif _pc == 55326:
-			group.destroy(v0, 0)
-			_pc = 55346
-			continue
-		elif _pc == 55346:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+	return
 	return 0
 
 func inspection(v0) -> Variant:
-	var _pc: int = 55369
-	while true:
-		if _pc == 55369:
-			_pc = 55395
-			continue
-		elif _pc == 55374:
-			debug.print_string("iScriptedOrders.Inspection: Using loiterer scripted orders.\n")
-			_pc = 55395
-			continue
-		elif _pc == 55395:
-			_pog_detach(_pog_spawn(loiter.bind(v0)))
-			_pc = 55432
-			continue
-		elif _pc == 55432:
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.Inspection: Using loiterer scripted orders.\n")
+	_pog_detach(_pog_spawn(loiter.bind(v0)))
+	return
 	return 0
 
 func station_repair(v0) -> Variant:
-	var _pc: int = 55434
-	while true:
-		if _pc == 55434:
-			_pc = 55460
-			continue
-		elif _pc == 55439:
-			debug.print_string("iScriptedOrders.StationRepair: Using loiterer scripted orders.\n")
-			_pc = 55460
-			continue
-		elif _pc == 55460:
-			_pog_detach(_pog_spawn(loiter.bind(v0)))
-			_pc = 55497
-			continue
-		elif _pc == 55497:
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.StationRepair: Using loiterer scripted orders.\n")
+	_pog_detach(_pog_spawn(loiter.bind(v0)))
+	return
 	return 0
 
 func unpredictable(v0) -> Variant:
@@ -8560,146 +5666,57 @@ func unpredictable(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 55499
-	while true:
-		if _pc == 55499:
-			v1 = null
-			v1 = global.pog_set("g_filtered_system_habitats")
-			v2 = ihabitat.nearest(v1, group.leader(v0))
-			v3 = v2
-			v5 = iship.cast(group.leader(v0))
-			v6 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
-			v7 = group.sim_count(v0)
-			if not (v5):
-				_pc = 55722
-				continue
-			else:
-				_pc = 55753
-				continue
-		elif _pc == 55722:
-			_pc = 55748
-			continue
-		elif _pc == 55727:
+	v1 = null
+	v1 = global.pog_set("g_filtered_system_habitats")
+	v2 = ihabitat.nearest(v1, group.leader(v0))
+	v3 = v2
+	v5 = iship.cast(group.leader(v0))
+	v6 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
+	v7 = group.sim_count(v0)
+	if not (v5):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.unpredictable: Invalid Lead bloke!\n")
-			_pc = 55748
-			continue
-		elif _pc == 55748:
-			_pc = 56762
-			continue
-		elif _pc == 55753:
-			_pc = 55897
-			continue
-		elif _pc == 55758:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.unpredictable: orders passed to \n")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" flitting round location ")
 			debug.print_string(imapentity.pog_name(v2))
 			debug.print_string("\n")
-			_pc = 55897
-			continue
-		elif _pc == 55897:
-			v4 = sim.create("ini:/sims/nav/waypoint", "unpredictable destination")
-			sim.place_near(v4, v3, v6 + math.random(500.0, 800.0))
-			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 56031
-			continue
-		elif _pc == 56031:
-			await _pog_frame()
-			if _pog_every(56032, 15.0):
-				_pc = 56045
-				continue
-			else:
-				_pc = 56551
-				continue
-		elif _pc == 56045:
+		v4 = sim.create("ini:/sims/nav/waypoint", "unpredictable destination")
+		sim.place_near(v4, v3, v6 + math.random(500.0, 800.0))
+		iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
+		while true:
+			await _pog_wait(15)
 			if not _pog_eq(group.sim_count(v0), v7):
-				_pc = 56074
-				continue
-			else:
-				_pc = 56226
-				continue
-		elif _pc == 56074:
-			v7 = group.sim_count(v0)
-			if not _pog_is_null(v7):
-				_pc = 56110
-				continue
-			else:
-				_pc = 56221
-				continue
-		elif _pc == 56110:
-			v5 = iship.cast(group.leader(v0))
-			await iformation.goose(v0, 40.0, 0)
-			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 56226
-			continue
-		elif _pc == 56221:
-			_pc = 56556
-			continue
-		elif _pc == 56226:
+				v7 = group.sim_count(v0)
+				if not _pog_is_null(v7):
+					v5 = iship.cast(group.leader(v0))
+					await iformation.goose(v0, 40.0, 0)
+					iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
+				else:
+					break
 			if not _pog_eq(sim.group(v5), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 56275
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Unpredictable: Checking bloke ")
+				debug.print_string(object.string_property(v5, "name"))
+				debug.print_string(" for its order status\n")
+			if sim.distance_between(v5, v4) > 300.0:
 				continue
-			else:
-				_pc = 56280
-				continue
-		elif _pc == 56275:
-			_pc = 56556
-			continue
-		elif _pc == 56280:
-			_pc = 56369
-			continue
-		elif _pc == 56285:
-			debug.print_string("iScriptedOrders.Unpredictable: Checking bloke ")
-			debug.print_string(object.string_property(v5, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 56369
-			continue
-		elif _pc == 56369:
-			if sim.distance_between(v5, v4) <= 300.0:
-				_pc = 56403
-				continue
-			else:
-				_pc = 56551
-				continue
-		elif _pc == 56403:
 			sim.destroy(v4)
 			v4 = sim.create("ini:/sims/nav/waypoint", "unpredictable destination")
 			sim.place_near(v4, v3, v6 + math.random(500.0, 800.0))
 			iai.give_escort_order(v5, v4, 0.0, 0.0, 0.0, 8000.0)
-			_pc = 56551
-			continue
-		elif _pc == 56551:
-			_pc = 56031
-			continue
-		elif _pc == 56556:
-			_pc = 56646
-			continue
-		elif _pc == 56562:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.unpredictable: ship ")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 56646
-			continue
-		elif _pc == 56646:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 56671
-				continue
-			else:
-				_pc = 56742
-				continue
-		elif _pc == 56671:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 56742
-			continue
-		elif _pc == 56742:
-			group.destroy(v0, 0)
-			_pc = 56762
-			continue
-		elif _pc == 56762:
-			return
-		else:
-			return 0
+		group.destroy(v0, 0)
+	return
 	return 0
 
 func maneuvre(v0) -> Variant:
@@ -8849,21 +5866,21 @@ func maneuvre(v0) -> Variant:
 				_pc = 57874
 				continue
 		elif _pc == 58032:
-			if not _pog_is_null(1):
+			if 1 != v5:
 				_pc = 58040
 				continue
 			else:
 				_pc = 57909
 				continue
 		elif _pc == 58040:
-			if not _pog_is_null(2):
+			if 2 != v5:
 				_pc = 58049
 				continue
 			else:
 				_pc = 57944
 				continue
 		elif _pc == 58049:
-			if not _pog_is_null(3):
+			if 3 != v5:
 				_pc = 58058
 				continue
 			else:
@@ -8908,23 +5925,10 @@ func maneuvre(v0) -> Variant:
 	return 0
 
 func station_construction(v0) -> Variant:
-	var _pc: int = 58322
-	while true:
-		if _pc == 58322:
-			_pc = 58348
-			continue
-		elif _pc == 58327:
-			debug.print_string("iScriptedOrders.StationConstruction: Using loiterer scripted orders.\n")
-			_pc = 58348
-			continue
-		elif _pc == 58348:
-			_pog_detach(_pog_spawn(loiter.bind(v0)))
-			_pc = 58385
-			continue
-		elif _pc == 58385:
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.StationConstruction: Using loiterer scripted orders.\n")
+	_pog_detach(_pog_spawn(loiter.bind(v0)))
+	return
 	return 0
 
 func naughty(v0) -> Variant:
@@ -8937,302 +5941,98 @@ func naughty(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 58387
-	while true:
-		if _pc == 58387:
-			v1 = null
-			v1 = global.pog_set("g_filtered_system_habitats")
-			v2 = ihabitat.nearest(v1, group.leader(v0))
-			v3 = v2
-			v5 = iship.cast(group.leader(v0))
-			v8 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
-			v9 = group.sim_count(v0)
-			if not (v5):
-				_pc = 58610
-				continue
-			else:
-				_pc = 58641
-				continue
-		elif _pc == 58610:
-			_pc = 58636
-			continue
-		elif _pc == 58615:
+	v1 = null
+	v1 = global.pog_set("g_filtered_system_habitats")
+	v2 = ihabitat.nearest(v1, group.leader(v0))
+	v3 = v2
+	v5 = iship.cast(group.leader(v0))
+	v8 = iai.inner_marker_radius(v2, isim.cast(group.leader(v0)))
+	v9 = group.sim_count(v0)
+	if not (v5):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.naughty: Invalid Lead naughty person!\n")
-			_pc = 58636
-			continue
-		elif _pc == 58636:
-			_pc = 60179
-			continue
-		elif _pc == 58641:
-			_pc = 58785
-			continue
-		elif _pc == 58646:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Naughty: naughty person orders passed to \n")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" loitering round location ")
 			debug.print_string(imapentity.pog_name(v2))
 			debug.print_string("\n")
-			_pc = 58785
-			continue
-		elif _pc == 58785:
-			v7 = math.random_int(0, 1)
-			if _pog_is_null(v7):
-				_pc = 58818
-				continue
-			else:
-				_pc = 58958
-				continue
-		elif _pc == 58818:
-			_pc = 58844
-			continue
-		elif _pc == 58823:
-			debug.print_string("iScriptedOrders.Naughty: giving inital orders of loiter\n")
-			_pc = 58844
-			continue
-		elif _pc == 58844:
+		v7 = math.random_int(0, 1)
+		if _pog_is_null(v7):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Naughty: giving inital orders of loiter\n")
 			v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
 			sim.place_near(v4, v3, v8 + math.random(500.0, 800.0))
 			iai.give_approach_order(v5, v4)
-			_pc = 59124
-			continue
-		elif _pc == 58958:
-			_pc = 58984
-			continue
-		elif _pc == 58963:
-			debug.print_string("iScriptedOrders.Naughty: giving inital orders of annoying behaviour\n")
-			_pc = 58984
-			continue
-		elif _pc == 58984:
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Naughty: giving inital orders of annoying behaviour\n")
 			v6 = iship.cast(p_set.first_element(isim.ships_in_radius(v5, 6000.0)))
 			if _pog_is_null(v6):
-				_pc = 59054
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.Naughty: nobody in area to annoy, doing nothing\n")
 			else:
-				_pc = 59085
-				continue
-		elif _pc == 59054:
-			_pc = 59080
-			continue
-		elif _pc == 59059:
-			debug.print_string("iScriptedOrders.Naughty: nobody in area to annoy, doing nothing\n")
-			_pc = 59080
-			continue
-		elif _pc == 59080:
-			_pc = 59124
-			continue
-		elif _pc == 59085:
-			iai.give_formate_order(v5, v6, 0.0, 35.0, 0.0)
-			_pc = 59124
-			continue
-		elif _pc == 59124:
-			_pc = 59129
-			continue
-		elif _pc == 59129:
-			await _pog_frame()
-			if _pog_every(59130, 10.0):
-				_pc = 59143
-				continue
-			else:
-				_pc = 59815
-				continue
-		elif _pc == 59143:
-			_pc = 59232
-			continue
-		elif _pc == 59148:
-			debug.print_string("iScriptedOrders.Naughty: Checking vessel ")
-			debug.print_string(object.string_property(v5, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 59232
-			continue
-		elif _pc == 59232:
+				iai.give_formate_order(v5, v6, 0.0, 35.0, 0.0)
+		while true:
+			await _pog_wait(10)
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.Naughty: Checking vessel ")
+				debug.print_string(object.string_property(v5, "name"))
+				debug.print_string(" for its order status\n")
 			if not _pog_eq(group.sim_count(v0), v9):
-				_pc = 59261
-				continue
-			else:
-				_pc = 59408
-				continue
-		elif _pc == 59261:
-			v9 = group.sim_count(v0)
-			if not _pog_is_null(v9):
-				_pc = 59297
-				continue
-			else:
-				_pc = 59403
-				continue
-		elif _pc == 59297:
-			v5 = iship.cast(group.leader(v0))
-			await iformation.line_abreast(v0, 40.0, 0)
-			iai.give_formate_order(v5, v6, 0.0, 35.0, 0.0)
-			_pc = 59408
-			continue
-		elif _pc == 59403:
-			_pc = 59927
-			continue
-		elif _pc == 59408:
+				v9 = group.sim_count(v0)
+				if not _pog_is_null(v9):
+					v5 = iship.cast(group.leader(v0))
+					await iformation.line_abreast(v0, 40.0, 0)
+					iai.give_formate_order(v5, v6, 0.0, 35.0, 0.0)
+				else:
+					break
 			if iai.is_order_complete(v5):
-				_pc = 59431
-				continue
-			else:
-				_pc = 59815
-				continue
-		elif _pc == 59431:
-			if not _pog_is_null(sim.cast(v4)):
-				_pc = 59457
-				continue
-			else:
-				_pc = 59476
-				continue
-		elif _pc == 59457:
-			sim.destroy(v4)
-			_pc = 59476
-			continue
-		elif _pc == 59476:
-			v7 = math.random_int(0, 1)
-			if _pog_is_null(v7):
-				_pc = 59509
-				continue
-			else:
-				_pc = 59649
-				continue
-		elif _pc == 59509:
-			_pc = 59535
-			continue
-		elif _pc == 59514:
-			debug.print_string("iScriptedOrders.Naughty: giving new orders of loiter\n")
-			_pc = 59535
-			continue
-		elif _pc == 59535:
-			v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
-			sim.place_near(v4, v3, v8 + math.random(500.0, 800.0))
-			iai.give_approach_order(v5, v4)
-			_pc = 59815
-			continue
-		elif _pc == 59649:
-			_pc = 59675
-			continue
-		elif _pc == 59654:
-			debug.print_string("iScriptedOrders.Naughty: giving new orders of annoying behaviour\n")
-			_pc = 59675
-			continue
-		elif _pc == 59675:
-			v6 = iship.cast(p_set.first_element(isim.ships_in_radius(v5, 6000.0)))
-			if _pog_is_null(v6):
-				_pc = 59745
-				continue
-			else:
-				_pc = 59776
-				continue
-		elif _pc == 59745:
-			_pc = 59771
-			continue
-		elif _pc == 59750:
-			debug.print_string("iScriptedOrders.Naughty: nobody in area to annoy, doing nothing\n")
-			_pc = 59771
-			continue
-		elif _pc == 59771:
-			_pc = 59815
-			continue
-		elif _pc == 59776:
-			iai.give_formate_order(v5, v6, 0.0, 35.0, 0.0)
-			_pc = 59815
-			continue
-		elif _pc == 59815:
-			if _pog_every(59815, 30.0):
-				_pc = 59828
-				continue
-			else:
-				_pc = 59922
-				continue
-		elif _pc == 59828:
+				if not _pog_is_null(sim.cast(v4)):
+					sim.destroy(v4)
+				v7 = math.random_int(0, 1)
+				if _pog_is_null(v7):
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.Naughty: giving new orders of loiter\n")
+					v4 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
+					sim.place_near(v4, v3, v8 + math.random(500.0, 800.0))
+					iai.give_approach_order(v5, v4)
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iScriptedOrders.Naughty: giving new orders of annoying behaviour\n")
+					v6 = iship.cast(p_set.first_element(isim.ships_in_radius(v5, 6000.0)))
+					if _pog_is_null(v6):
+						if PogRuntime.TRACE:
+							debug.print_string("iScriptedOrders.Naughty: nobody in area to annoy, doing nothing\n")
+					else:
+						iai.give_formate_order(v5, v6, 0.0, 35.0, 0.0)
 			if _pog_eq(sim.group(v5), v0):
-				_pc = 59857
-				continue
+				if not (await iutilities.player_in_range_of_group(v0)):
+					break
 			else:
-				_pc = 59891
-				continue
-		elif _pc == 59857:
-			if not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 59881
-				continue
-			else:
-				_pc = 59886
-				continue
-		elif _pc == 59881:
-			_pc = 59927
-			continue
-		elif _pc == 59886:
-			_pc = 59922
-			continue
-		elif _pc == 59891:
-			_pc = 59917
-			continue
-		elif _pc == 59896:
-			debug.print_string("iScriptedOrders.Naughty: vessel nolonger Exists, ending task\n")
-			_pc = 59917
-			continue
-		elif _pc == 59917:
-			_pc = 59927
-			continue
-		elif _pc == 59922:
-			_pc = 59129
-			continue
-		elif _pc == 59927:
-			_pc = 60018
-			continue
-		elif _pc == 59934:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.Naughty: vessel nolonger Exists, ending task\n")
+				break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Naughty: ship ")
 			debug.print_string(object.string_property(v5, "name"))
 			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 60018
-			continue
-		elif _pc == 60018:
-			if not _pog_is_null(group.group_count(v0)):
-				_pc = 60043
-				continue
-			else:
-				_pc = 60114
-				continue
-		elif _pc == 60043:
+		if not _pog_is_null(group.group_count(v0)):
 			await local_9567(group.nth_group(v0, 0))
 			group.remove_group(v0, group.nth_group(v0, 0))
-			_pc = 60114
-			continue
-		elif _pc == 60114:
-			group.destroy(v0, 0)
-			if not _pog_is_null(sim.cast(v4)):
-				_pc = 60160
-				continue
-			else:
-				_pc = 60179
-				continue
-		elif _pc == 60160:
-			sim.destroy(v4)
-			_pc = 60179
-			continue
-		elif _pc == 60179:
+		group.destroy(v0, 0)
+		if _pog_is_null(sim.cast(v4)):
 			return
-		else:
-			return 0
+		sim.destroy(v4)
+	return
 	return 0
 
 func scavanger(v0) -> Variant:
-	var _pc: int = 60188
-	while true:
-		if _pc == 60188:
-			_pc = 60214
-			continue
-		elif _pc == 60193:
-			debug.print_string("iScriptedOrders.Scavenger: Using Tourist scripted orders.\n")
-			_pc = 60214
-			continue
-		elif _pc == 60214:
-			_pog_detach(_pog_spawn(tourist.bind(v0)))
-			_pc = 60251
-			continue
-		elif _pc == 60251:
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.Scavenger: Using Tourist scripted orders.\n")
+	_pog_detach(_pog_spawn(tourist.bind(v0)))
+	return
 	return 0
 
 func station_assault(v0) -> Variant:
@@ -9242,96 +6042,33 @@ func station_assault(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 60253
+	v1 = null
+	v1 = global.pog_set("g_filtered_system_habitats")
+	v2 = ihabitat.nearest(v1, group.leader(v0))
+	v3 = iship.find_player_ship()
+	v4 = group.sim_count(v0)
+	v5 = 0
+	v6 = 0
+	iai.give_specific_attack_order(v0, v2, 1)
 	while true:
-		if _pc == 60253:
-			v1 = null
-			v1 = global.pog_set("g_filtered_system_habitats")
-			v2 = ihabitat.nearest(v1, group.leader(v0))
-			v3 = iship.find_player_ship()
-			v4 = group.sim_count(v0)
-			v5 = 0
-			v6 = 0
-			iai.give_specific_attack_order(v0, v2, 1)
-			_pc = 60425
-			continue
-		elif _pc == 60425:
-			await _pog_frame()
-			if _pog_every(60426, 10.0):
-				_pc = 60439
-				continue
-			else:
-				_pc = 60658
-				continue
-		elif _pc == 60439:
-			_pc = 60541
-			continue
-		elif _pc == 60444:
+		await _pog_wait(10)
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Checking base assault vessels led by ")
 			debug.print_string(object.string_property(group.leader(v0), "name"))
 			debug.print_string(" for its order status\n")
-			_pc = 60541
-			continue
-		elif _pc == 60541:
-			if v5 > 10 and not (v6):
-				_pc = 60561
-				continue
-			else:
-				_pc = 60597
-				continue
-		elif _pc == 60561:
+		if v5 > 10 and not (v6):
 			v6 = 1
 			iai.give_flee_order(v0, v3)
-			_pc = 60658
-			continue
-		elif _pc == 60597:
-			if sim.distance_between(group.leader(v0), v2) < 10000.0:
-				_pc = 60644
-				continue
-			else:
-				_pc = 60658
-				continue
-		elif _pc == 60644:
-			v5 = v5 + 10
-			_pc = 60658
-			continue
-		elif _pc == 60658:
-			if _pog_every(60658, 30.0):
-				_pc = 60671
-				continue
-			else:
-				_pc = 60736
-				continue
-		elif _pc == 60671:
-			if not (await iutilities.player_in_range_of_group(v0)):
-				_pc = 60695
-				continue
-			else:
-				_pc = 60705
-				continue
-		elif _pc == 60695:
-			_pc = 60741
-			continue
-		elif _pc == 60700:
-			_pc = 60736
-			continue
-		elif _pc == 60705:
-			_pc = 60731
-			continue
-		elif _pc == 60710:
-			debug.print_string("iScriptedOrders.scavanger: scavanger nolonger Exists, ending task\n")
-			_pc = 60731
-			continue
-		elif _pc == 60731:
-			_pc = 60741
-			continue
-		elif _pc == 60736:
-			_pc = 60425
-			continue
-		elif _pc == 60741:
-			return
 		else:
-			return 0
+			if sim.distance_between(group.leader(v0), v2) < 10000.0:
+				v5 = v5 + 10
+		if not (await iutilities.player_in_range_of_group(v0)):
+			break
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.scavanger: scavanger nolonger Exists, ending task\n")
+			break
+	return
 	return 0
 
 func travel_to(v0, v1) -> Variant:
@@ -9339,119 +6076,43 @@ func travel_to(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 60752
+	v2 = null
+	v2 = global.pog_set("g_filtered_system_habitats")
+	v3 = null
+	v3 = sim.children(v0)
+	v4 = ihabitat.nearest(v2, v0)
+	v5 = v1
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.TravelBetween: vessel orders passed to \n")
+		debug.print_string(object.string_property(v0, "name"))
+		debug.print_string(" travelling to location ")
+		debug.print_string(imapentity.pog_name(v1))
+		debug.print_string("\n")
+	iai.give_approach_order(v0, v5)
 	while true:
-		if _pc == 60752:
-			v2 = null
-			v2 = global.pog_set("g_filtered_system_habitats")
-			v3 = null
-			v3 = sim.children(v0)
-			v4 = ihabitat.nearest(v2, v0)
-			v5 = v1
-			_pc = 61015
-			continue
-		elif _pc == 60876:
-			debug.print_string("iScriptedOrders.TravelBetween: vessel orders passed to \n")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" travelling to location ")
-			debug.print_string(imapentity.pog_name(v1))
-			debug.print_string("\n")
-			_pc = 61015
-			continue
-		elif _pc == 61015:
-			iai.give_approach_order(v0, v5)
-			_pc = 61044
-			continue
-		elif _pc == 61044:
-			await _pog_frame()
-			if _pog_every(61045, 30.0):
-				_pc = 61058
-				continue
-			else:
-				_pc = 61257
-				continue
-		elif _pc == 61058:
-			if not (sim.cast(v0)):
-				_pc = 61082
-				continue
-			else:
-				_pc = 61113
-				continue
-		elif _pc == 61082:
-			_pc = 61108
-			continue
-		elif _pc == 61087:
-			debug.print_string("iScriptedOrders.monkeyabout: monkier nolonger Exists, ending task\n")
-			_pc = 61108
-			continue
-		elif _pc == 61108:
-			_pc = 61304
-			continue
-		elif _pc == 61113:
-			_pc = 61202
-			continue
-		elif _pc == 61118:
+		await _pog_wait(30)
+		if not (sim.cast(v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.monkeyabout: monkier nolonger Exists, ending task\n")
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.TravelBetween: Checking traveller ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string(" for its order status\n")
-			_pc = 61202
-			continue
-		elif _pc == 61202:
-			if iai.is_order_complete(v0):
-				_pc = 61225
-				continue
-			else:
-				_pc = 61257
-				continue
-		elif _pc == 61225:
+		if iai.is_order_complete(v0):
 			await _pog_wait(30.0)
-			_pc = 61257
+		if await iutilities.player_in_range(v0):
 			continue
-		elif _pc == 61257:
-			if _pog_every(61257, 120.0):
-				_pc = 61270
-				continue
-			else:
-				_pc = 61299
-				continue
-		elif _pc == 61270:
-			if not (await iutilities.player_in_range(v0)):
-				_pc = 61294
-				continue
-			else:
-				_pc = 61299
-				continue
-		elif _pc == 61294:
-			_pc = 61304
-			continue
-		elif _pc == 61299:
-			_pc = 61044
-			continue
-		elif _pc == 61304:
-			_pc = 61395
-			continue
-		elif _pc == 61311:
-			debug.print_string("iScriptedOrders.travelbetween: traveller ship ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 61395
-			continue
-		elif _pc == 61395:
-			sim.destroy(v0)
-			if not (p_set.is_empty(v3)):
-				_pc = 61438
-				continue
-			else:
-				_pc = 61472
-				continue
-		elif _pc == 61438:
-			await iutilities.kill_list_of_sims(list.from_set(v3))
-			_pc = 61472
-			continue
-		elif _pc == 61472:
-			return
-		else:
-			return 0
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.travelbetween: traveller ship ")
+		debug.print_string(object.string_property(v0, "name"))
+		debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
+	sim.destroy(v0)
+	if p_set.is_empty(v3):
+		return
+	await iutilities.kill_list_of_sims(list.from_set(v3))
+	return
 	return 0
 
 func travel_between(v0, v1) -> Variant:
@@ -9460,134 +6121,50 @@ func travel_between(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 61488
+	v2 = null
+	v2 = global.pog_set("g_filtered_system_habitats")
+	v3 = null
+	v3 = sim.children(v0)
+	v4 = ihabitat.nearest(v2, v0)
+	v5 = v1
+	v6 = 1
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.TravelBetween: vessel orders passed to \n")
+		debug.print_string(object.string_property(v0, "name"))
+		debug.print_string(" travelling to location ")
+		debug.print_string(imapentity.pog_name(v1))
+		debug.print_string("\n")
+	iai.give_approach_order(v0, v5)
 	while true:
-		if _pc == 61488:
-			v2 = null
-			v2 = global.pog_set("g_filtered_system_habitats")
-			v3 = null
-			v3 = sim.children(v0)
-			v4 = ihabitat.nearest(v2, v0)
-			v5 = v1
-			v6 = 1
-			_pc = 61758
-			continue
-		elif _pc == 61619:
-			debug.print_string("iScriptedOrders.TravelBetween: vessel orders passed to \n")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" travelling to location ")
-			debug.print_string(imapentity.pog_name(v1))
-			debug.print_string("\n")
-			_pc = 61758
-			continue
-		elif _pc == 61758:
-			iai.give_approach_order(v0, v5)
-			_pc = 61787
-			continue
-		elif _pc == 61787:
-			await _pog_frame()
-			if _pog_every(61788, 30.0):
-				_pc = 61801
-				continue
-			else:
-				_pc = 62079
-				continue
-		elif _pc == 61801:
-			if not (sim.cast(v0)):
-				_pc = 61825
-				continue
-			else:
-				_pc = 61856
-				continue
-		elif _pc == 61825:
-			_pc = 61851
-			continue
-		elif _pc == 61830:
-			debug.print_string("iScriptedOrders.monkeyabout: monkier nolonger Exists, ending task\n")
-			_pc = 61851
-			continue
-		elif _pc == 61851:
-			_pc = 62126
-			continue
-		elif _pc == 61856:
-			_pc = 61945
-			continue
-		elif _pc == 61861:
+		await _pog_wait(30)
+		if not (sim.cast(v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.monkeyabout: monkier nolonger Exists, ending task\n")
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.TravelBetween: Checking traveller ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string(" for its order status\n")
-			_pc = 61945
-			continue
-		elif _pc == 61945:
-			if iai.is_order_complete(v0):
-				_pc = 61968
-				continue
-			else:
-				_pc = 62079
-				continue
-		elif _pc == 61968:
+		if iai.is_order_complete(v0):
 			await _pog_wait(30.0)
 			if v6 == 1:
-				_pc = 62012
-				continue
+				iai.give_approach_order(v0, v4)
+				v6 = 0
 			else:
-				_pc = 62048
-				continue
-		elif _pc == 62012:
-			iai.give_approach_order(v0, v4)
-			v6 = 0
-			_pc = 62079
+				iai.give_approach_order(v0, v5)
+				v6 = 1
+		if await iutilities.player_in_range(v0):
 			continue
-		elif _pc == 62048:
-			iai.give_approach_order(v0, v5)
-			v6 = 1
-			_pc = 62079
-			continue
-		elif _pc == 62079:
-			if _pog_every(62079, 120.0):
-				_pc = 62092
-				continue
-			else:
-				_pc = 62121
-				continue
-		elif _pc == 62092:
-			if not (await iutilities.player_in_range(v0)):
-				_pc = 62116
-				continue
-			else:
-				_pc = 62121
-				continue
-		elif _pc == 62116:
-			_pc = 62126
-			continue
-		elif _pc == 62121:
-			_pc = 61787
-			continue
-		elif _pc == 62126:
-			_pc = 62217
-			continue
-		elif _pc == 62133:
-			debug.print_string("iScriptedOrders.travelbetween: traveller ship ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 62217
-			continue
-		elif _pc == 62217:
-			sim.destroy(v0)
-			if not (p_set.is_empty(v3)):
-				_pc = 62260
-				continue
-			else:
-				_pc = 62294
-				continue
-		elif _pc == 62260:
-			await iutilities.kill_list_of_sims(list.from_set(v3))
-			_pc = 62294
-			continue
-		elif _pc == 62294:
-			return
-		else:
-			return 0
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.travelbetween: traveller ship ")
+		debug.print_string(object.string_property(v0, "name"))
+		debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
+	sim.destroy(v0)
+	if p_set.is_empty(v3):
+		return
+	await iutilities.kill_list_of_sims(list.from_set(v3))
+	return
 	return 0
 
 func monkey_about(v0, v1) -> Variant:
@@ -9595,124 +6172,48 @@ func monkey_about(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 62310
+	v2 = null
+	v2 = global.pog_set("g_filtered_system_habitats")
+	v3 = null
+	v3 = sim.children(v0)
+	v5 = v1
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.MonkeyAbout: vessel orders passed to \n")
+		debug.print_string(object.string_property(v0, "name"))
+		debug.print_string(" monkeying about location ")
+		debug.print_string(imapentity.pog_name(v1))
+		debug.print_string("\n")
+	v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
+	sim.place_near(v4, v5, math.random(500.0, 800.0))
+	iai.give_approach_order(v0, v4)
 	while true:
-		if _pc == 62310:
-			v2 = null
-			v2 = global.pog_set("g_filtered_system_habitats")
-			v3 = null
-			v3 = sim.children(v0)
-			v5 = v1
-			_pc = 62544
-			continue
-		elif _pc == 62405:
-			debug.print_string("iScriptedOrders.MonkeyAbout: vessel orders passed to \n")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" monkeying about location ")
-			debug.print_string(imapentity.pog_name(v1))
-			debug.print_string("\n")
-			_pc = 62544
-			continue
-		elif _pc == 62544:
-			v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
-			sim.place_near(v4, v5, math.random(500.0, 800.0))
-			iai.give_approach_order(v0, v4)
-			_pc = 62652
-			continue
-		elif _pc == 62652:
-			await _pog_frame()
-			if _pog_every(62653, 30.0):
-				_pc = 62666
-				continue
-			else:
-				_pc = 62955
-				continue
-		elif _pc == 62666:
-			if not (sim.cast(v0)):
-				_pc = 62690
-				continue
-			else:
-				_pc = 62721
-				continue
-		elif _pc == 62690:
-			_pc = 62716
-			continue
-		elif _pc == 62695:
-			debug.print_string("iScriptedOrders.monkeyabout: monkier nolonger Exists, ending task\n")
-			_pc = 62716
-			continue
-		elif _pc == 62716:
-			_pc = 63002
-			continue
-		elif _pc == 62721:
-			_pc = 62810
-			continue
-		elif _pc == 62726:
+		await _pog_wait(30)
+		if not (sim.cast(v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.monkeyabout: monkier nolonger Exists, ending task\n")
+			break
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.MonkeyAbout: Checking monkey ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string(" for its order status\n")
-			_pc = 62810
-			continue
-		elif _pc == 62810:
-			if iai.is_order_complete(v0):
-				_pc = 62833
-				continue
-			else:
-				_pc = 62955
-				continue
-		elif _pc == 62833:
+		if iai.is_order_complete(v0):
 			sim.destroy(v4)
 			v4 = sim.create("ini:/sims/nav/waypoint", "monkey destination")
 			sim.place_near(v4, v5, math.random(500.0, 800.0))
 			iai.give_approach_order(v0, v4)
-			_pc = 62955
+		if await iutilities.player_in_range(v0):
 			continue
-		elif _pc == 62955:
-			if _pog_every(62955, 120.0):
-				_pc = 62968
-				continue
-			else:
-				_pc = 62997
-				continue
-		elif _pc == 62968:
-			if not (await iutilities.player_in_range(v0)):
-				_pc = 62992
-				continue
-			else:
-				_pc = 62997
-				continue
-		elif _pc == 62992:
-			_pc = 63002
-			continue
-		elif _pc == 62997:
-			_pc = 62652
-			continue
-		elif _pc == 63002:
-			_pc = 63093
-			continue
-		elif _pc == 63009:
-			debug.print_string("iScriptedOrders.Monkeyabout: monkier ship ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
-			_pc = 63093
-			continue
-		elif _pc == 63093:
-			sim.destroy(v0)
-			sim.destroy(v4)
-			if not (p_set.is_empty(v3)):
-				_pc = 63155
-				continue
-			else:
-				_pc = 63189
-				continue
-		elif _pc == 63155:
-			await iutilities.kill_list_of_sims(list.from_set(v3))
-			_pc = 63189
-			continue
-		elif _pc == 63189:
-			return
-		else:
-			return 0
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders.Monkeyabout: monkier ship ")
+		debug.print_string(object.string_property(v0, "name"))
+		debug.print_string(" Has Out lived its usefulness and is about to be killed\n")
+	sim.destroy(v0)
+	sim.destroy(v4)
+	if p_set.is_empty(v3):
+		return
+	await iutilities.kill_list_of_sims(list.from_set(v3))
+	return
 	return 0
 
 func create_new_orders() -> Variant:
@@ -9830,352 +6331,113 @@ func loiter_near_sim(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 65126
-	while true:
-		if _pc == 65126:
-			v3 = iship.cast(v0)
-			v4 = 0
-			v5 = object.float_property(v1, "radius")
-			if not (v3):
-				_pc = 65204
-				continue
-			else:
-				_pc = 65235
-				continue
-		elif _pc == 65204:
-			_pc = 65230
-			continue
-		elif _pc == 65209:
+	v3 = iship.cast(v0)
+	v4 = 0
+	v5 = object.float_property(v1, "radius")
+	if not (v3):
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.loiterNearSim: Invalid loiterer!\n")
-			_pc = 65230
-			continue
-		elif _pc == 65230:
-			_pc = 65922
-			continue
-		elif _pc == 65235:
-			_pc = 65385
-			continue
-		elif _pc == 65240:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.LoiterNearSim: loiterer orders passed to \n")
 			debug.print_string(object.string_property(v3, "name"))
 			debug.print_string(" loitering round location ")
 			debug.print_string(object.string_property(v1, "name"))
 			debug.print_string("\n")
-			_pc = 65385
-			continue
-		elif _pc == 65385:
-			v2 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
-			sim.place_near(v2, v1, v5 + math.random(500.0, 800.0))
-			iai.give_approach_order(v3, v2)
-			_pc = 65494
-			continue
-		elif _pc == 65494:
+		v2 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
+		sim.place_near(v2, v1, v5 + math.random(500.0, 800.0))
+		iai.give_approach_order(v3, v2)
+		while true:
 			if not (sim.cast(v3)):
-				_pc = 65518
-				continue
-			else:
-				_pc = 65549
-				continue
-		elif _pc == 65518:
-			_pc = 65544
-			continue
-		elif _pc == 65523:
-			debug.print_string("iScriptedOrders.loiterer: loiterer no longer Exists, ending task\n")
-			_pc = 65544
-			continue
-		elif _pc == 65544:
-			_pc = 65922
-			continue
-		elif _pc == 65549:
-			_pc = 65638
-			continue
-		elif _pc == 65554:
-			debug.print_string("iScriptedOrders.LoiterNearSim: Checking loiterer ")
-			debug.print_string(object.string_property(v3, "name"))
-			debug.print_string(" for its order status\n")
-			_pc = 65638
-			continue
-		elif _pc == 65638:
+				if PogRuntime.TRACE:
+					debug.print_string("iScriptedOrders.loiterer: loiterer no longer Exists, ending task\n")
+				break
+			if PogRuntime.TRACE:
+				debug.print_string("iScriptedOrders.LoiterNearSim: Checking loiterer ")
+				debug.print_string(object.string_property(v3, "name"))
+				debug.print_string(" for its order status\n")
 			if iai.is_order_complete(v3):
-				_pc = 65661
-				continue
-			else:
-				_pc = 65789
-				continue
-		elif _pc == 65661:
-			sim.destroy(v2)
-			v2 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
-			sim.place_near(v2, v1, v5 + math.random(500.0, 800.0))
-			iai.give_approach_order(v3, v2)
-			_pc = 65789
-			continue
-		elif _pc == 65789:
+				sim.destroy(v2)
+				v2 = sim.create("ini:/sims/nav/waypoint", "loiterer destination")
+				sim.place_near(v2, v1, v5 + math.random(500.0, 800.0))
+				iai.give_approach_order(v3, v2)
 			if sim.distance_between(v3, v1) > 30000.0:
-				_pc = 65823
-				continue
-			else:
-				_pc = 65866
-				continue
-		elif _pc == 65823:
-			iai.remove_order(v3)
-			iai.give_approach_order(v3, v2)
-			_pc = 65866
-			continue
-		elif _pc == 65866:
+				iai.remove_order(v3)
+				iai.give_approach_order(v3, v2)
 			await _pog_wait(math.random(5.0, 30.0))
 			if not (1):
-				_pc = 65922
-				continue
-			else:
-				_pc = 65494
-				continue
-		elif _pc == 65922:
-			return
-		else:
-			return 0
+				break
+	return
 	return 0
 
 func follow_route(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 65924
+	if PogRuntime.TRACE:
+		debug.print_string("FollowWaypoints: Ordering Ship: ")
+	if PogRuntime.TRACE:
+		debug.print_string(object.string_property(v0, "name"))
+	if PogRuntime.TRACE:
+		debug.print_string(" to follow route.\n")
+	if v2 <= 0.0 or v2 > 1.0:
+		v2 = 0.9900000095367432
+	if v3 <= 0.0:
+		v3 = 1.0
+	if v6 < 0 or v6 > group.sim_count(v1):
+		v6 = 0
 	while true:
-		if _pc == 65924:
-			_pc = 65955
-			continue
-		elif _pc == 65934:
-			debug.print_string("FollowWaypoints: Ordering Ship: ")
-			_pc = 65955
-			continue
-		elif _pc == 65955:
-			_pc = 66000
-			continue
-		elif _pc == 65960:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 66000
-			continue
-		elif _pc == 66000:
-			_pc = 66026
-			continue
-		elif _pc == 66005:
-			debug.print_string(" to follow route.\n")
-			_pc = 66026
-			continue
-		elif _pc == 66026:
-			if v2 <= 0.0 or v2 > 1.0:
-				_pc = 66054
-				continue
-			else:
-				_pc = 66065
-				continue
-		elif _pc == 66054:
-			v2 = 0.9900000095367432
-			_pc = 66065
-			continue
-		elif _pc == 66065:
-			if v3 <= 0.0:
-				_pc = 66081
-				continue
-			else:
-				_pc = 66092
-				continue
-		elif _pc == 66081:
-			v3 = 1.0
-			_pc = 66092
-			continue
-		elif _pc == 66092:
-			if v6 < 0 or v6 > group.sim_count(v1):
-				_pc = 66129
-				continue
-			else:
-				_pc = 66136
-				continue
-		elif _pc == 66129:
-			v6 = 0
-			_pc = 66136
-			continue
-		elif _pc == 66136:
-			if group.sim_count(v1) < 2:
-				_pc = 66162
-				continue
-			else:
-				_pc = 66193
-				continue
-		elif _pc == 66162:
-			_pc = 66188
-			continue
-		elif _pc == 66167:
-			debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
-			_pc = 66188
-			continue
-		elif _pc == 66188:
-			_pc = 66987
-			continue
-		elif _pc == 66193:
-			if sim.is_dead(v0):
-				_pc = 66216
-				continue
-			else:
-				_pc = 66318
-				continue
-		elif _pc == 66216:
-			_pc = 66242
-			continue
-		elif _pc == 66221:
-			debug.print_string("FollowWaypoints: Route following ship ")
-			_pc = 66242
-			continue
-		elif _pc == 66242:
-			_pc = 66287
-			continue
-		elif _pc == 66247:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 66287
-			continue
-		elif _pc == 66287:
-			_pc = 66313
-			continue
-		elif _pc == 66292:
-			debug.print_string("is dead. Exiting.\n")
-			_pc = 66313
-			continue
-		elif _pc == 66313:
-			_pc = 66987
-			continue
-		elif _pc == 66318:
-			v7 = group.nth_sim(v1, v6)
-			if not _pog_is_null(isim.cast(v7)):
-				_pc = 66373
-				continue
-			else:
-				_pc = 66896
-				continue
-		elif _pc == 66373:
+		if group.sim_count(v1) < 2:
+			if PogRuntime.TRACE:
+				debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
+			return
+		if sim.is_dead(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("FollowWaypoints: Route following ship ")
+			if PogRuntime.TRACE:
+				debug.print_string(object.string_property(v0, "name"))
+			if PogRuntime.TRACE:
+				debug.print_string("is dead. Exiting.\n")
+			return
+		v7 = group.nth_sim(v1, v6)
+		if not _pog_is_null(isim.cast(v7)):
 			v8 = sim.distance_between(v0, v7) * v2
 			iai.give_approach_order_advanced(v0, v7, 0.0, 1.0, v4)
-			_pc = 66473
-			continue
-		elif _pc == 66452:
-			debug.print_string("FollowWaypoints: Ship")
-			_pc = 66473
-			continue
-		elif _pc == 66473:
-			_pc = 66518
-			continue
-		elif _pc == 66478:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 66518
-			continue
-		elif _pc == 66518:
-			_pc = 66544
-			continue
-		elif _pc == 66523:
-			debug.print_string(" approaching location ")
-			_pc = 66544
-			continue
-		elif _pc == 66544:
-			_pc = 66568
-			continue
-		elif _pc == 66549:
-			debug.print_int(v6)
-			_pc = 66568
-			continue
-		elif _pc == 66568:
-			_pc = 66594
-			continue
-		elif _pc == 66573:
-			debug.print_string("\n")
-			_pc = 66594
-			continue
-		elif _pc == 66594:
-			await _pog_wait(v3)
-			if sim.is_dead(v0):
-				_pc = 66649
-				continue
-			else:
-				_pc = 66751
-				continue
-		elif _pc == 66649:
-			_pc = 66675
-			continue
-		elif _pc == 66654:
-			debug.print_string("FollowWaypoints: Route following ship ")
-			_pc = 66675
-			continue
-		elif _pc == 66675:
-			_pc = 66720
-			continue
-		elif _pc == 66680:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 66720
-			continue
-		elif _pc == 66720:
-			_pc = 66746
-			continue
-		elif _pc == 66725:
-			debug.print_string("is dead. Exiting.\n")
-			_pc = 66746
-			continue
-		elif _pc == 66746:
-			_pc = 66987
-			continue
-		elif _pc == 66751:
-			if sim.is_dead(v7):
-				_pc = 66774
-				continue
-			else:
-				_pc = 66824
-				continue
-		elif _pc == 66774:
-			_pc = 66800
-			continue
-		elif _pc == 66779:
-			debug.print_string("FollowWaypoints: Destination is dead. Skipping to next destination\n")
-			_pc = 66800
-			continue
-		elif _pc == 66800:
-			iai.purge_orders(v0)
-			_pc = 66878
-			continue
-		elif _pc == 66824:
-			if not (sim.distance_between(v0, v7) > v8 and not (iai.is_order_complete(v0))):
-				_pc = 66878
-				continue
-			else:
-				_pc = 66594
-				continue
-		elif _pc == 66878:
+			if PogRuntime.TRACE:
+				debug.print_string("FollowWaypoints: Ship")
+			if PogRuntime.TRACE:
+				debug.print_string(object.string_property(v0, "name"))
+			if PogRuntime.TRACE:
+				debug.print_string(" approaching location ")
+			if PogRuntime.TRACE:
+				debug.print_int(v6)
+			if PogRuntime.TRACE:
+				debug.print_string("\n")
+			while true:
+				await _pog_wait(v3)
+				if sim.is_dead(v0):
+					if PogRuntime.TRACE:
+						debug.print_string("FollowWaypoints: Route following ship ")
+					if PogRuntime.TRACE:
+						debug.print_string(object.string_property(v0, "name"))
+					if PogRuntime.TRACE:
+						debug.print_string("is dead. Exiting.\n")
+					return
+				if sim.is_dead(v7):
+					if PogRuntime.TRACE:
+						debug.print_string("FollowWaypoints: Destination is dead. Skipping to next destination\n")
+					iai.purge_orders(v0)
+					break
+				if not (sim.distance_between(v0, v7) > v8 and not (iai.is_order_complete(v0))):
+					break
 			v6 = v6 + 1
-			_pc = 66929
-			continue
-		elif _pc == 66896:
-			_pc = 66922
-			continue
-		elif _pc == 66901:
-			debug.print_string("FollowWaypoints: Last route marker reached. Looping back to beginning\n")
-			_pc = 66922
-			continue
-		elif _pc == 66922:
-			v6 = 0
-			_pc = 66929
-			continue
-		elif _pc == 66929:
-			if not (not _pog_is_null(isim.cast(v7)) or v5):
-				_pc = 66961
-				continue
-			else:
-				_pc = 66136
-				continue
-		elif _pc == 66961:
-			_pc = 66987
-			continue
-		elif _pc == 66966:
-			debug.print_string("FollowWaypoints: Completed. \n")
-			_pc = 66987
-			continue
-		elif _pc == 66987:
-			return
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("FollowWaypoints: Last route marker reached. Looping back to beginning\n")
+			v6 = 0
+		if not (not _pog_is_null(isim.cast(v7)) or v5):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("FollowWaypoints: Completed. \n")
+	return
 	return 0
 

@@ -418,41 +418,15 @@ func main_task() -> Variant:
 func local_2402() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 2402
-	while true:
-		if _pc == 2402:
-			v0 = imapentity.find_by_name("Lucrecia's Base")
-			v1 = iship.cast(sim.find_by_name("name_jafs"))
-			if await ijafsscript.jafs_active():
-				_pc = 2489
-				continue
-			else:
-				_pc = 2585
-				continue
-		elif _pc == 2489:
-			if not _pog_is_null(iship.cast(v1)):
-				_pc = 2515
-				continue
-			else:
-				_pc = 2585
-				continue
-		elif _pc == 2515:
-			if _pog_eq(iai.current_order_target(v1), isim.cast(v0)) and iai.current_order_type(v1) == 3:
-				_pc = 2579
-				continue
-			else:
-				_pc = 2585
-				continue
-		elif _pc == 2579:
-			_pc = 2591
-			continue
-		elif _pc == 2585:
-			_pc = 2591
-			continue
-		elif _pc == 2591:
-			return
-		else:
+	v0 = imapentity.find_by_name("Lucrecia's Base")
+	v1 = iship.cast(sim.find_by_name("name_jafs"))
+	if await ijafsscript.jafs_active():
+		if _pog_is_null(iship.cast(v1)):
 			return 0
+		if not (_pog_eq(iai.current_order_target(v1), isim.cast(v0)) and iai.current_order_type(v1) == 3):
+			return 0
+		return 1
+	return 0
 	return 0
 
 func local_2593(v0) -> Variant:
@@ -881,14 +855,14 @@ func hitpointmonitortask(v0) -> Variant:
 				_pc = 4674
 				continue
 		elif _pc == 5019:
-			if not _pog_is_null(1):
+			if 1 != v5:
 				_pc = 5027
 				continue
 			else:
 				_pc = 4783
 				continue
 		elif _pc == 5027:
-			if not _pog_is_null(3):
+			if 3 != v5:
 				_pc = 5036
 				continue
 			else:
@@ -1132,56 +1106,56 @@ func local_6052(v0) -> Variant:
 				_pc = 6260
 				continue
 		elif _pc == 6581:
-			if not _pog_is_null(1):
+			if 1 != v2:
 				_pc = 6589
 				continue
 			else:
 				_pc = 6293
 				continue
 		elif _pc == 6589:
-			if not _pog_is_null(2):
+			if 2 != v2:
 				_pc = 6598
 				continue
 			else:
 				_pc = 6327
 				continue
 		elif _pc == 6598:
-			if not _pog_is_null(3):
+			if 3 != v2:
 				_pc = 6607
 				continue
 			else:
 				_pc = 6361
 				continue
 		elif _pc == 6607:
-			if not _pog_is_null(4):
+			if 4 != v2:
 				_pc = 6616
 				continue
 			else:
 				_pc = 6395
 				continue
 		elif _pc == 6616:
-			if not _pog_is_null(5):
+			if 5 != v2:
 				_pc = 6625
 				continue
 			else:
 				_pc = 6428
 				continue
 		elif _pc == 6625:
-			if not _pog_is_null(6):
+			if 6 != v2:
 				_pc = 6634
 				continue
 			else:
 				_pc = 6462
 				continue
 		elif _pc == 6634:
-			if not _pog_is_null(7):
+			if 7 != v2:
 				_pc = 6643
 				continue
 			else:
 				_pc = 6496
 				continue
 		elif _pc == 6643:
-			if not _pog_is_null(8):
+			if 8 != v2:
 				_pc = 6652
 				continue
 			else:
@@ -1207,227 +1181,82 @@ func piracy_mission_one_ship_generator(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 6775
+	v1 = 1
+	v5 = iship.find_player_ship()
+	v4 = self
 	while true:
-		if _pc == 6775:
-			v1 = 1
-			v5 = iship.find_player_ship()
-			v4 = self
-			_pc = 6825
-			continue
-		elif _pc == 6825:
-			if sim.distance_between(v0, v5) > global.pog_float("g_player_sensor_range"):
-				_pc = 6874
-				continue
-			else:
-				_pc = 7085
-				continue
-		elif _pc == 6874:
+		if sim.distance_between(v0, v5) > global.pog_float("g_player_sensor_range"):
 			if global.pog_bool("g_piracy_mission_one_ship_flag") == 1:
-				_pc = 6901
-				continue
-			else:
-				_pc = 7030
-				continue
-		elif _pc == 6901:
-			_pc = 6927
-			continue
-		elif _pc == 6906:
-			debug.print_string("iActOne.PiracyMissionOneShipGenerator - player is out of range, deleting the ship\n")
-			_pc = 6927
-			continue
-		elif _pc == 6927:
-			global.set_bool("g_piracy_mission_one_ship_flag", 0)
-			sim.destroy(sim.cast(v3))
-			if _pog_is_running(v7):
-				_pc = 7004
-				continue
-			else:
-				_pc = 7023
-				continue
-		elif _pc == 7004:
-			_pog_halt(v7)
-			_pc = 7023
-			continue
-		elif _pc == 7023:
-			v1 = 1
-			_pc = 7030
-			continue
-		elif _pc == 7030:
-			_pc = 7056
-			continue
-		elif _pc == 7035:
-			debug.print_string("iActOne.PiracyMissionOneShipGenerator - Player is not in range of the waypoint, sleeping.\n")
-			_pc = 7056
-			continue
-		elif _pc == 7056:
+				if PogRuntime.TRACE:
+					debug.print_string("iActOne.PiracyMissionOneShipGenerator - player is out of range, deleting the ship\n")
+				global.set_bool("g_piracy_mission_one_ship_flag", 0)
+				sim.destroy(sim.cast(v3))
+				if _pog_is_running(v7):
+					_pog_halt(v7)
+				v1 = 1
+			if PogRuntime.TRACE:
+				debug.print_string("iActOne.PiracyMissionOneShipGenerator - Player is not in range of the waypoint, sleeping.\n")
 			await _pog_wait(1.0)
-			_pc = 7465
-			continue
-		elif _pc == 7085:
-			if _pog_is_null(global.pog_bool("g_piracy_mission_one_ship_flag")):
-				_pc = 7112
-				continue
-			else:
-				_pc = 7415
-				continue
-		elif _pc == 7112:
-			_pc = 7138
-			continue
-		elif _pc == 7117:
-			debug.print_string("iActOne.PiracyMissionOneShipGenerator - Player is in range of waypoint, generating ship\n")
-			_pc = 7138
-			continue
-		elif _pc == 7138:
-			v3 = iship.create("ini:/sims/ships/utility/freighter", "a1_master_spirit_of_capitalism")
-			isim.set_faction(v3, ifaction.find("Maas Corporation"))
-			global.set_handle("g_maas_ship", v3)
-			_pc = 7261
-			continue
-		elif _pc == 7240:
-			debug.print_string("iActOne.PiracyMissionOneShipGenerator - assigning cargo to ship\n")
-			_pc = 7261
-			continue
-		elif _pc == 7261:
-			await local_6052(v3)
-			_pc = 7306
-			continue
-		elif _pc == 7285:
-			debug.print_string("iActOne.piracyMissionOneShipGenerator - Placing ship\n")
-			_pc = 7306
-			continue
-		elif _pc == 7306:
-			sim.place_relative_to(v3, v0, 0.0, 0.0, -500.0)
-			v7 = _pog_spawn(hitpointmonitortask.bind(v3))
-			_pog_detach(v7)
-			global.set_bool("g_piracy_mission_one_ship_flag", 1)
-			_pc = 7441
-			continue
-		elif _pc == 7415:
-			_pc = 7441
-			continue
-		elif _pc == 7420:
-			debug.print_string("iActone.PiracySpecialMissionOneShipGenerator - target ship is created, & player is within range, doing nowt & sleeping for a bit\n")
-			_pc = 7441
-			continue
-		elif _pc == 7441:
-			await _pog_wait(1.0)
-			_pc = 7465
-			continue
-		elif _pc == 7465:
-			if not (v1):
-				_pc = 7475
-				continue
-			else:
-				_pc = 6825
-				continue
-		elif _pc == 7475:
-			return
 		else:
-			return 0
+			if _pog_is_null(global.pog_bool("g_piracy_mission_one_ship_flag")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActOne.PiracyMissionOneShipGenerator - Player is in range of waypoint, generating ship\n")
+				v3 = iship.create("ini:/sims/ships/utility/freighter", "a1_master_spirit_of_capitalism")
+				isim.set_faction(v3, ifaction.find("Maas Corporation"))
+				global.set_handle("g_maas_ship", v3)
+				if PogRuntime.TRACE:
+					debug.print_string("iActOne.PiracyMissionOneShipGenerator - assigning cargo to ship\n")
+				await local_6052(v3)
+				if PogRuntime.TRACE:
+					debug.print_string("iActOne.piracyMissionOneShipGenerator - Placing ship\n")
+				sim.place_relative_to(v3, v0, 0.0, 0.0, -500.0)
+				v7 = _pog_spawn(hitpointmonitortask.bind(v3))
+				_pog_detach(v7)
+				global.set_bool("g_piracy_mission_one_ship_flag", 1)
+			else:
+				if PogRuntime.TRACE:
+					debug.print_string("iActone.PiracySpecialMissionOneShipGenerator - target ship is created, & player is within range, doing nowt & sleeping for a bit\n")
+			await _pog_wait(1.0)
+		if not (v1):
+			break
+	return
 	return 0
 
 func piracy_mission_one_shut_down_monitor(v0, v1) -> Variant:
-	var _pc: int = 7477
+	await _pog_wait(50.0)
 	while true:
-		if _pc == 7477:
-			await _pog_wait(50.0)
-			_pc = 7514
-			continue
-		elif _pc == 7514:
-			await _pog_frame()
-			if _pog_every(7515, 1.0):
-				_pc = 7528
-				continue
-			else:
-				_pc = 8137
-				continue
-		elif _pc == 7528:
-			if not (_pog_is_running(v0)):
-				_pc = 7552
-				continue
-			else:
-				_pc = 7892
-				continue
-		elif _pc == 7552:
-			_pc = 7578
-			continue
-		elif _pc == 7557:
-			debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Main piracy special mission 1 task has finished/n")
-			_pc = 7578
-			continue
-		elif _pc == 7578:
+		await _pog_wait(1)
+		if not (_pog_is_running(v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Main piracy special mission 1 task has finished/n")
 			if global.pog_bool("g_piracy_mission_one_ship_flag") and not _pog_is_null(sim.cast(global.handle("g_maas_ship"))):
-				_pc = 7639
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Main task has halted, but the 'Spirit of Capitalism' is still alive\n")
 			else:
-				_pc = 7670
-				continue
-		elif _pc == 7639:
-			_pc = 7665
-			continue
-		elif _pc == 7644:
-			debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Main task has halted, but the 'Spirit of Capitalism' is still alive\n")
-			_pc = 7665
-			continue
-		elif _pc == 7665:
-			_pc = 7887
-			continue
-		elif _pc == 7670:
-			_pc = 7696
-			continue
-		elif _pc == 7675:
-			debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Main task has halted, and target ship is not alive - shutting mission down...\n")
-			_pc = 7696
-			continue
-		elif _pc == 7696:
-			_pog_halt(v1)
-			global.destroy("g_piracy_mission_one_ship_flag")
-			iobjectives.remove("a1_m00_objective_checkout")
-			sim.destroy(sim.cast(global.handle("g_mission_waypoint")))
-			global.destroy("g_mission_waypoint")
-			state.destroy(v0)
-			_pog_halt(v0)
-			_pog_halt(v1)
-			_pc = 8142
-			continue
-		elif _pc == 7887:
-			_pc = 8137
-			continue
-		elif _pc == 7892:
-			if global.pog_bool("g_piracy_mission_one_ship_flag"):
-				_pc = 7917
-				continue
-			else:
-				_pc = 7948
-				continue
-		elif _pc == 7917:
-			_pc = 7943
-			continue
-		elif _pc == 7922:
-			debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Target ship is alive and piracy special mission one task is still runnig - mission is underway/n")
-			_pc = 7943
-			continue
-		elif _pc == 7943:
-			_pc = 8137
-			continue
-		elif _pc == 7948:
-			state.destroy(v0)
-			_pog_halt(v0)
-			_pog_halt(v1)
-			iobjectives.remove("a1_m00_objective_checkout")
-			sim.destroy(sim.cast(global.handle("g_mission_waypoint")))
-			global.destroy("g_mission_waypoint")
-			global.destroy("g_piracy_mission_one_ship_flag")
-			global.set_int("g_story_1.25", 1)
-			_pc = 8137
-			continue
-		elif _pc == 8137:
-			_pc = 7514
-			continue
-		elif _pc == 8142:
-			return
+				if PogRuntime.TRACE:
+					debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Main task has halted, and target ship is not alive - shutting mission down...\n")
+				_pog_halt(v1)
+				global.destroy("g_piracy_mission_one_ship_flag")
+				iobjectives.remove("a1_m00_objective_checkout")
+				sim.destroy(sim.cast(global.handle("g_mission_waypoint")))
+				global.destroy("g_mission_waypoint")
+				state.destroy(v0)
+				_pog_halt(v0)
+				_pog_halt(v1)
+				break
 		else:
-			return 0
+			if global.pog_bool("g_piracy_mission_one_ship_flag"):
+				if PogRuntime.TRACE:
+					debug.print_string("iActOne.PiracyMissionOneShutDownMonitor : Target ship is alive and piracy special mission one task is still runnig - mission is underway/n")
+			else:
+				state.destroy(v0)
+				_pog_halt(v0)
+				_pog_halt(v1)
+				iobjectives.remove("a1_m00_objective_checkout")
+				sim.destroy(sim.cast(global.handle("g_mission_waypoint")))
+				global.destroy("g_mission_waypoint")
+				global.destroy("g_piracy_mission_one_ship_flag")
+				global.set_int("g_story_1.25", 1)
+	return
 	return 0
 

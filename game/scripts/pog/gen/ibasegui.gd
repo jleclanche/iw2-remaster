@@ -60,300 +60,130 @@ func local_249() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 249
-	while true:
-		if _pc == 249:
-			v0 = null
-			v0 = "g_hangar_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 319
-				continue
-			else:
-				_pc = 343
-				continue
-		elif _pc == 319:
-			v2 = global.pog_bool(v0)
-			_pc = 343
-			continue
-		elif _pc == 343:
-			_pc = 353
-			continue
-		elif _pc == 353:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_hangar_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_362() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 362
-	while true:
-		if _pc == 362:
-			v0 = null
-			v0 = "g_trade_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 432
-				continue
-			else:
-				_pc = 456
-				continue
-		elif _pc == 432:
-			v2 = global.pog_bool(v0)
-			_pc = 456
-			continue
-		elif _pc == 456:
-			_pc = 466
-			continue
-		elif _pc == 466:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_trade_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_475() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 475
-	while true:
-		if _pc == 475:
-			v0 = null
-			v0 = "g_inventory_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 545
-				continue
-			else:
-				_pc = 569
-				continue
-		elif _pc == 545:
-			v2 = global.pog_bool(v0)
-			_pc = 569
-			continue
-		elif _pc == 569:
-			_pc = 579
-			continue
-		elif _pc == 579:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_inventory_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_588() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 588
-	while true:
-		if _pc == 588:
-			v0 = null
-			v0 = "g_recycling_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 658
-				continue
-			else:
-				_pc = 682
-				continue
-		elif _pc == 658:
-			v2 = global.pog_bool(v0)
-			_pc = 682
-			continue
-		elif _pc == 682:
-			_pc = 692
-			continue
-		elif _pc == 692:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_recycling_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_701() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 701
-	while true:
-		if _pc == 701:
-			v0 = null
-			v0 = "g_manufacturing_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 771
-				continue
-			else:
-				_pc = 795
-				continue
-		elif _pc == 771:
-			v2 = global.pog_bool(v0)
-			_pc = 795
-			continue
-		elif _pc == 795:
-			_pc = 805
-			continue
-		elif _pc == 805:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_manufacturing_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_814() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 814
-	while true:
-		if _pc == 814:
-			v0 = null
-			v0 = "g_comms_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 884
-				continue
-			else:
-				_pc = 908
-				continue
-		elif _pc == 884:
-			v2 = global.pog_bool(v0)
-			_pc = 908
-			continue
-		elif _pc == 908:
-			_pc = 918
-			continue
-		elif _pc == 918:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_comms_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_927() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 927
-	while true:
-		if _pc == 927:
-			v0 = null
-			v0 = "g_encyclopaedia_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 997
-				continue
-			else:
-				_pc = 1021
-				continue
-		elif _pc == 997:
-			v2 = global.pog_bool(v0)
-			_pc = 1021
-			continue
-		elif _pc == 1021:
-			_pc = 1031
-			continue
-		elif _pc == 1031:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_encyclopaedia_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_1040() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1040
-	while true:
-		if _pc == 1040:
-			v0 = null
-			v0 = "g_statistics_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 1110
-				continue
-			else:
-				_pc = 1134
-				continue
-		elif _pc == 1110:
-			v2 = global.pog_bool(v0)
-			_pc = 1134
-			continue
-		elif _pc == 1134:
-			_pc = 1144
-			continue
-		elif _pc == 1144:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_statistics_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_1153() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1153
-	while true:
-		if _pc == 1153:
-			v0 = null
-			v0 = "g_triangulation_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 1223
-				continue
-			else:
-				_pc = 1247
-				continue
-		elif _pc == 1223:
-			v2 = global.pog_bool(v0)
-			_pc = 1247
-			continue
-		elif _pc == 1247:
-			_pc = 1257
-			continue
-		elif _pc == 1257:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_triangulation_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func local_1266() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1266
-	while true:
-		if _pc == 1266:
-			v0 = null
-			v0 = "g_customised_loadout_disabled"
-			v2 = 0
-			v1 = global.exists(v0)
-			if v1:
-				_pc = 1336
-				continue
-			else:
-				_pc = 1360
-				continue
-		elif _pc == 1336:
-			v2 = global.pog_bool(v0)
-			_pc = 1360
-			continue
-		elif _pc == 1360:
-			_pc = 1370
-			continue
-		elif _pc == 1370:
-			return
-		else:
-			return 0
+	v0 = null
+	v0 = "g_customised_loadout_disabled"
+	v2 = 0
+	v1 = global.exists(v0)
+	if v1:
+		v2 = global.pog_bool(v0)
+	return v2
 	return 0
 
 func set_hangar_screen_enabled() -> Variant:
@@ -459,104 +289,65 @@ func new_mail_notification(v0) -> Variant:
 	var v44: Variant = 0
 	var v45: Variant = 0
 	var v46: Variant = 0
-	var _pc: int = 1699
+	v1 = 0
+	v2 = global.pog_float("GUI_neutral_red")
+	v3 = global.pog_float("GUI_neutral_green")
+	v4 = global.pog_float("GUI_neutral_blue")
+	v5 = global.pog_float("GUI_focused_red")
+	v6 = global.pog_float("GUI_focused_green")
+	v7 = global.pog_float("GUI_focused_blue")
+	v8 = global.pog_float("GUI_selected_red")
+	v9 = global.pog_float("GUI_selected_green")
+	v10 = global.pog_float("GUI_selected_blue")
+	v11 = global.pog_int("GUI_fancybutton_neutral_left_left")
+	v12 = global.pog_int("GUI_fancybutton_neutral_left_top")
+	v13 = global.pog_int("GUI_fancybutton_neutral_left_right")
+	v14 = global.pog_int("GUI_fancybutton_neutral_left_bottom")
+	v15 = global.pog_int("GUI_fancybutton_neutral_body_left")
+	v16 = global.pog_int("GUI_fancybutton_neutral_body_top")
+	v17 = global.pog_int("GUI_fancybutton_neutral_body_right")
+	v18 = global.pog_int("GUI_fancybutton_neutral_body_bottom")
+	v19 = global.pog_int("GUI_fancybutton_neutral_right_left")
+	v20 = global.pog_int("GUI_fancybutton_neutral_right_top")
+	v21 = global.pog_int("GUI_fancybutton_neutral_right_right")
+	v22 = global.pog_int("GUI_fancybutton_neutral_right_bottom")
+	v23 = global.pog_int("GUI_fancybutton_focused_left_left")
+	v24 = global.pog_int("GUI_fancybutton_focused_left_top")
+	v25 = global.pog_int("GUI_fancybutton_focused_left_right")
+	v26 = global.pog_int("GUI_fancybutton_focused_left_bottom")
+	v27 = global.pog_int("GUI_fancybutton_focused_body_left")
+	v28 = global.pog_int("GUI_fancybutton_focused_body_top")
+	v29 = global.pog_int("GUI_fancybutton_focused_body_right")
+	v30 = global.pog_int("GUI_fancybutton_focused_body_bottom")
+	v31 = global.pog_int("GUI_fancybutton_focused_right_left")
+	v32 = global.pog_int("GUI_fancybutton_focused_right_top")
+	v33 = global.pog_int("GUI_fancybutton_focused_right_right")
+	v34 = global.pog_int("GUI_fancybutton_focused_right_bottom")
+	v35 = global.pog_int("GUI_fancybutton_selected_left_left")
+	v36 = global.pog_int("GUI_fancybutton_selected_left_top")
+	v37 = global.pog_int("GUI_fancybutton_selected_left_right")
+	v38 = global.pog_int("GUI_fancybutton_selected_left_bottom")
+	v39 = global.pog_int("GUI_fancybutton_selected_body_left")
+	v40 = global.pog_int("GUI_fancybutton_selected_body_top")
+	v41 = global.pog_int("GUI_fancybutton_selected_body_right")
+	v42 = global.pog_int("GUI_fancybutton_selected_body_bottom")
+	v43 = global.pog_int("GUI_fancybutton_selected_right_left")
+	v44 = global.pog_int("GUI_fancybutton_selected_right_top")
+	v45 = global.pog_int("GUI_fancybutton_selected_right_right")
+	v46 = global.pog_int("GUI_fancybutton_selected_right_bottom")
 	while true:
-		if _pc == 1699:
-			v1 = 0
-			v2 = global.pog_float("GUI_neutral_red")
-			v3 = global.pog_float("GUI_neutral_green")
-			v4 = global.pog_float("GUI_neutral_blue")
-			v5 = global.pog_float("GUI_focused_red")
-			v6 = global.pog_float("GUI_focused_green")
-			v7 = global.pog_float("GUI_focused_blue")
-			v8 = global.pog_float("GUI_selected_red")
-			v9 = global.pog_float("GUI_selected_green")
-			v10 = global.pog_float("GUI_selected_blue")
-			v11 = global.pog_int("GUI_fancybutton_neutral_left_left")
-			v12 = global.pog_int("GUI_fancybutton_neutral_left_top")
-			v13 = global.pog_int("GUI_fancybutton_neutral_left_right")
-			v14 = global.pog_int("GUI_fancybutton_neutral_left_bottom")
-			v15 = global.pog_int("GUI_fancybutton_neutral_body_left")
-			v16 = global.pog_int("GUI_fancybutton_neutral_body_top")
-			v17 = global.pog_int("GUI_fancybutton_neutral_body_right")
-			v18 = global.pog_int("GUI_fancybutton_neutral_body_bottom")
-			v19 = global.pog_int("GUI_fancybutton_neutral_right_left")
-			v20 = global.pog_int("GUI_fancybutton_neutral_right_top")
-			v21 = global.pog_int("GUI_fancybutton_neutral_right_right")
-			v22 = global.pog_int("GUI_fancybutton_neutral_right_bottom")
-			v23 = global.pog_int("GUI_fancybutton_focused_left_left")
-			v24 = global.pog_int("GUI_fancybutton_focused_left_top")
-			v25 = global.pog_int("GUI_fancybutton_focused_left_right")
-			v26 = global.pog_int("GUI_fancybutton_focused_left_bottom")
-			v27 = global.pog_int("GUI_fancybutton_focused_body_left")
-			v28 = global.pog_int("GUI_fancybutton_focused_body_top")
-			v29 = global.pog_int("GUI_fancybutton_focused_body_right")
-			v30 = global.pog_int("GUI_fancybutton_focused_body_bottom")
-			v31 = global.pog_int("GUI_fancybutton_focused_right_left")
-			v32 = global.pog_int("GUI_fancybutton_focused_right_top")
-			v33 = global.pog_int("GUI_fancybutton_focused_right_right")
-			v34 = global.pog_int("GUI_fancybutton_focused_right_bottom")
-			v35 = global.pog_int("GUI_fancybutton_selected_left_left")
-			v36 = global.pog_int("GUI_fancybutton_selected_left_top")
-			v37 = global.pog_int("GUI_fancybutton_selected_left_right")
-			v38 = global.pog_int("GUI_fancybutton_selected_left_bottom")
-			v39 = global.pog_int("GUI_fancybutton_selected_body_left")
-			v40 = global.pog_int("GUI_fancybutton_selected_body_top")
-			v41 = global.pog_int("GUI_fancybutton_selected_body_right")
-			v42 = global.pog_int("GUI_fancybutton_selected_body_bottom")
-			v43 = global.pog_int("GUI_fancybutton_selected_right_left")
-			v44 = global.pog_int("GUI_fancybutton_selected_right_top")
-			v45 = global.pog_int("GUI_fancybutton_selected_right_right")
-			v46 = global.pog_int("GUI_fancybutton_selected_right_bottom")
-			_pc = 2842
-			continue
-		elif _pc == 2842:
-			await _pog_frame()
-			if _pog_every(2843, 1.0):
-				_pc = 2856
-				continue
-			else:
-				_pc = 3484
-				continue
-		elif _pc == 2856:
-			if iemail.unread() > 0:
-				_pc = 2876
-				continue
-			else:
-				_pc = 2893
-				continue
-		elif _pc == 2876:
+		await _pog_wait(1)
+		if iemail.unread() > 0:
 			v1 = not (v1)
-			_pc = 2900
-			continue
-		elif _pc == 2893:
+		else:
 			v1 = 0
-			_pc = 2900
-			continue
-		elif _pc == 2900:
-			if not (v1):
-				_pc = 2911
-				continue
-			else:
-				_pc = 3200
-				continue
-		elif _pc == 2911:
+		if not (v1):
 			gui.set_window_state_colours(v0, v2, v3, v4, v5, v6, v7, v8, v9, v10)
 			gui.set_window_state_textures(v0, global.string("GUI_texture_request"), v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46)
-			_pc = 3484
-			continue
-		elif _pc == 3200:
+		else:
 			gui.set_window_state_colours(v0, v8, v9, v10, v8, v9, v10, v8, v9, v10)
 			gui.set_window_state_textures(v0, global.string("GUI_texture_request"), v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46)
-			_pc = 3484
-			continue
-		elif _pc == 3484:
-			_pc = 2842
-			continue
-		elif _pc == 3489:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func start_new_mail_notification(v0) -> Variant:
@@ -596,236 +387,77 @@ func s_p_base_screen() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 3891
-	while true:
-		if _pc == 3891:
-			v9 = 0
-			v11 = null
-			await local_5932()
-			text.add("csv:/text/gui")
-			text.add("csv:/text/gui_addendum")
-			text.add("csv:/text/gui_addendum_2")
-			text.add("csv:/text/gui_addendum_3")
-			text.add("csv:/text/gui_addendum_4")
-			text.add("csv:/text/statistics")
-			text.add("csv:/text/mount_points")
-			await igui.set_g_u_i_globals()
-			await local_0()
-			gui.set_default_font(global.string("GUI_title_font"))
-			if not (await local_249()):
-				_pc = 4157
-				continue
-			else:
-				_pc = 4307
-				continue
-		elif _pc == 4157:
-			v0 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnHangarButton", text.field("basemenu_hangar", 0), v11)
-			gui.set_input_override_functions(v0, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 4296
-				continue
-			else:
-				_pc = 4307
-				continue
-		elif _pc == 4296:
+	v9 = 0
+	v11 = null
+	await local_5932()
+	text.add("csv:/text/gui")
+	text.add("csv:/text/gui_addendum")
+	text.add("csv:/text/gui_addendum_2")
+	text.add("csv:/text/gui_addendum_3")
+	text.add("csv:/text/gui_addendum_4")
+	text.add("csv:/text/statistics")
+	text.add("csv:/text/mount_points")
+	await igui.set_g_u_i_globals()
+	await local_0()
+	gui.set_default_font(global.string("GUI_title_font"))
+	if not (await local_249()):
+		v0 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnHangarButton", text.field("basemenu_hangar", 0), v11)
+		gui.set_input_override_functions(v0, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v0
-			_pc = 4307
-			continue
-		elif _pc == 4307:
-			if not (await local_362()):
-				_pc = 4326
-				continue
-			else:
-				_pc = 4476
-				continue
-		elif _pc == 4326:
-			v1 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnTradeButton", text.field("basemenu_trade", 0), v11)
-			gui.set_input_override_functions(v1, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 4465
-				continue
-			else:
-				_pc = 4476
-				continue
-		elif _pc == 4465:
+	if not (await local_362()):
+		v1 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnTradeButton", text.field("basemenu_trade", 0), v11)
+		gui.set_input_override_functions(v1, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v1
-			_pc = 4476
-			continue
-		elif _pc == 4476:
-			if not (await local_475()):
-				_pc = 4495
-				continue
-			else:
-				_pc = 4645
-				continue
-		elif _pc == 4495:
-			v2 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnInventoryButton", text.field("basemenu_inventory", 0), v11)
-			gui.set_input_override_functions(v2, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 4634
-				continue
-			else:
-				_pc = 4645
-				continue
-		elif _pc == 4634:
+	if not (await local_475()):
+		v2 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnInventoryButton", text.field("basemenu_inventory", 0), v11)
+		gui.set_input_override_functions(v2, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v2
-			_pc = 4645
-			continue
-		elif _pc == 4645:
-			if not (await local_588()):
-				_pc = 4664
-				continue
-			else:
-				_pc = 4814
-				continue
-		elif _pc == 4664:
-			v3 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnRecyclingButton", text.field("basemenu_recycling", 0), v11)
-			gui.set_input_override_functions(v3, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 4803
-				continue
-			else:
-				_pc = 4814
-				continue
-		elif _pc == 4803:
+	if not (await local_588()):
+		v3 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnRecyclingButton", text.field("basemenu_recycling", 0), v11)
+		gui.set_input_override_functions(v3, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v3
-			_pc = 4814
-			continue
-		elif _pc == 4814:
-			if not (await local_701()):
-				_pc = 4833
-				continue
-			else:
-				_pc = 4983
-				continue
-		elif _pc == 4833:
-			v4 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnManufacturingButton", text.field("basemenu_manufacturing", 0), v11)
-			gui.set_input_override_functions(v4, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 4972
-				continue
-			else:
-				_pc = 4983
-				continue
-		elif _pc == 4972:
+	if not (await local_701()):
+		v4 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnManufacturingButton", text.field("basemenu_manufacturing", 0), v11)
+		gui.set_input_override_functions(v4, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v4
-			_pc = 4983
-			continue
-		elif _pc == 4983:
-			if not (await local_814()):
-				_pc = 5002
-				continue
-			else:
-				_pc = 5199
-				continue
-		elif _pc == 5002:
-			v5 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnCommsButton", text.field("basemenu_communications", 0), v11)
-			gui.set_input_override_functions(v5, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 5141
-				continue
-			else:
-				_pc = 5152
-				continue
-		elif _pc == 5141:
+	if not (await local_814()):
+		v5 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnCommsButton", text.field("basemenu_communications", 0), v11)
+		gui.set_input_override_functions(v5, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v5
-			_pc = 5152
-			continue
-		elif _pc == 5152:
-			await start_new_mail_notification(v5)
-			global.create_handle("SPBaseScreen_CommsButton", 2, v5)
-			_pc = 5199
-			continue
-		elif _pc == 5199:
-			if not (await local_927()):
-				_pc = 5218
-				continue
-			else:
-				_pc = 5368
-				continue
-		elif _pc == 5218:
-			v6 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnEncyclopaediaButton", text.field("basemenu_encyclopedia", 0), v11)
-			gui.set_input_override_functions(v6, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 5357
-				continue
-			else:
-				_pc = 5368
-				continue
-		elif _pc == 5357:
+		await start_new_mail_notification(v5)
+		global.create_handle("SPBaseScreen_CommsButton", 2, v5)
+	if not (await local_927()):
+		v6 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnEncyclopaediaButton", text.field("basemenu_encyclopedia", 0), v11)
+		gui.set_input_override_functions(v6, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v6
-			_pc = 5368
-			continue
-		elif _pc == 5368:
-			if not (await local_1040()):
-				_pc = 5387
-				continue
-			else:
-				_pc = 5537
-				continue
-		elif _pc == 5387:
-			v7 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnStatisticsButton", text.field("basemenu_statistics", 0), v11)
-			gui.set_input_override_functions(v7, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 5526
-				continue
-			else:
-				_pc = 5537
-				continue
-		elif _pc == 5526:
+	if not (await local_1040()):
+		v7 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnStatisticsButton", text.field("basemenu_statistics", 0), v11)
+		gui.set_input_override_functions(v7, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v7
-			_pc = 5537
-			continue
-		elif _pc == 5537:
-			if not (await local_1153()):
-				_pc = 5556
-				continue
-			else:
-				_pc = 5706
-				continue
-		elif _pc == 5556:
-			v8 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnTriangulationButton", text.field("basemenu_triangulation", 0), v11)
-			gui.set_input_override_functions(v8, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
-			if not _pog_is_null(v9):
-				_pc = 5695
-				continue
-			else:
-				_pc = 5706
-				continue
-		elif _pc == 5695:
+	if not (await local_1153()):
+		v8 = await igui.create_menu_button("iBaseGUI.SPBaseScreen_OnTriangulationButton", text.field("basemenu_triangulation", 0), v11)
+		gui.set_input_override_functions(v8, "", "", "", "", "", "iBaseGUI.SPBaseScreen_OnCancelButton", "", "", "")
+		if not _pog_is_null(v9):
 			v9 = v8
-			_pc = 5706
-			continue
-		elif _pc == 5706:
-			await igui.create_menu(v11)
-			gui.set_first_control_focus(v0)
-			await igui.set_cyclic_control_focus_path(v11)
-			gui.set_control_focus_cancel_function("iBaseGUI.SPBaseScreen_OnCancelButton")
-			if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_1")) and _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_2")):
-				_pc = 5835
-				continue
-			else:
-				_pc = 5922
-				continue
-		elif _pc == 5835:
-			if math.random(0.0, 1.0) > 0.5:
-				_pc = 5869
-				continue
-			else:
-				_pc = 5898
-				continue
-		elif _pc == 5869:
-			stream.play(0, "sound:/audio/music/base_ambient_1", 1, 1)
-			_pc = 5922
-			continue
-		elif _pc == 5898:
-			stream.play(0, "sound:/audio/music/base_ambient_2", 1, 1)
-			_pc = 5922
-			continue
-		elif _pc == 5922:
-			return 0
-		else:
-			return 0
+	await igui.create_menu(v11)
+	gui.set_first_control_focus(v0)
+	await igui.set_cyclic_control_focus_path(v11)
+	gui.set_control_focus_cancel_function("iBaseGUI.SPBaseScreen_OnCancelButton")
+	if not (_pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_1")) and _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/base_ambient_2"))):
+		return 0
+	if math.random(0.0, 1.0) > 0.5:
+		stream.play(0, "sound:/audio/music/base_ambient_1", 1, 1)
+	else:
+		stream.play(0, "sound:/audio/music/base_ambient_2", 1, 1)
+	return 0
 	return 0
 
 func local_5932() -> Variant:
@@ -1115,45 +747,37 @@ func local_6973() -> Variant:
 	var v17: Variant = 0
 	var v18: Variant = 0
 	var v19: Variant = 0
-	var _pc: int = 6973
-	while true:
-		if _pc == 6973:
-			v2 = 8
-			v3 = 42
-			v4 = global.pog_int("GUI_scrollbar_width")
-			v5 = 4
-			v6 = 2 * global.pog_int("GUI_fancyborder_width") + 13
-			v17 = null
-			v17 = "hangarmenu_manifest"
-			v18 = null
-			v19 = 9
-			v16 = await igui.create_shady_bar_right()
-			v1 = gui.window_canvas_height(v16) - v2 + global.pog_int("GUI_backbutton_rise")
-			v0 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
-			v10 = v1 - v0
-			v7 = global.pog_int("GUI_alignment_offset") + v5
-			v9 = global.pog_int("GUI_shader_width") + v5 - v7 * 2
-			v11 = gui.create_splitter_window(v7, v0, v9, v10, v16, v6, 0)
-			v13 = gui.splitter_window_top_window(v11)
-			v14 = gui.create_static_window(0, 0, gui.window_canvas_width(v13), gui.window_canvas_height(v13), v13)
-			v17 = string.upper_case(text.field(v17, 0))
-			gui.set_window_font(v14, global.string("GUI_subtitle_font"))
-			gui.set_window_title(v14, v17)
-			gui.set_window_text_formatting(v14, 0, 9)
-			gui.set_window_state_colours(v14, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
-			v13 = gui.splitter_window_bottom_window(v11)
-			v12 = await igui.create_and_initialise_text_window(v19, 0, gui.window_canvas_width(v13) - v19 + 2 * v4, gui.window_canvas_height(v13), v13, "")
-			gui.set_window_font(v12, global.string("GUI_detail_font"))
-			gui.set_text_window_string(v12, iloadout.loadout_description())
-			global.create_handle("HangarManifestWindow", 2, v12)
-			gui.create_vertical_scrollbar(gui.window_canvas_width(v13) - v4, 0, v4, gui.window_canvas_height(v13), v13, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
-			iloadout.set_manifest_window(v12)
-			_pc = 8102
-			continue
-		elif _pc == 8102:
-			return
-		else:
-			return 0
+	v2 = 8
+	v3 = 42
+	v4 = global.pog_int("GUI_scrollbar_width")
+	v5 = 4
+	v6 = 2 * global.pog_int("GUI_fancyborder_width") + 13
+	v17 = null
+	v17 = "hangarmenu_manifest"
+	v18 = null
+	v19 = 9
+	v16 = await igui.create_shady_bar_right()
+	v1 = gui.window_canvas_height(v16) - v2 + global.pog_int("GUI_backbutton_rise")
+	v0 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
+	v10 = v1 - v0
+	v7 = global.pog_int("GUI_alignment_offset") + v5
+	v9 = global.pog_int("GUI_shader_width") + v5 - v7 * 2
+	v11 = gui.create_splitter_window(v7, v0, v9, v10, v16, v6, 0)
+	v13 = gui.splitter_window_top_window(v11)
+	v14 = gui.create_static_window(0, 0, gui.window_canvas_width(v13), gui.window_canvas_height(v13), v13)
+	v17 = string.upper_case(text.field(v17, 0))
+	gui.set_window_font(v14, global.string("GUI_subtitle_font"))
+	gui.set_window_title(v14, v17)
+	gui.set_window_text_formatting(v14, 0, 9)
+	gui.set_window_state_colours(v14, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
+	v13 = gui.splitter_window_bottom_window(v11)
+	v12 = await igui.create_and_initialise_text_window(v19, 0, gui.window_canvas_width(v13) - v19 + 2 * v4, gui.window_canvas_height(v13), v13, "")
+	gui.set_window_font(v12, global.string("GUI_detail_font"))
+	gui.set_text_window_string(v12, iloadout.loadout_description())
+	global.create_handle("HangarManifestWindow", 2, v12)
+	gui.create_vertical_scrollbar(gui.window_canvas_width(v13) - v4, 0, v4, gui.window_canvas_height(v13), v13, v12, global.pog_float("GUI_scrollbar_buttonratio"), "")
+	iloadout.set_manifest_window(v12)
+	return v12
 	return 0
 
 func local_8118() -> Variant:
@@ -1238,33 +862,17 @@ func s_p_hangar_screen() -> Variant:
 	return 0
 
 func s_p_hangar_screen__on_launch_button() -> Variant:
-	var _pc: int = 9914
-	while true:
-		if _pc == 9914:
-			if iloadout.good_to_go():
-				_pc = 9932
-				continue
-			else:
-				_pc = 10045
-				continue
-		elif _pc == 9932:
-			gui.play_sound(2)
-			await local_10275()
-			await local_8199()
-			iloadout.rearm_from_jaffs(0)
-			igame.save_autosave()
-			iinventory.cancel_new_cargo_flags()
-			gui.set_screen("icSpaceFlightScreen")
-			_pc = 10061
-			continue
-		elif _pc == 10045:
-			gui.queue_sound(3)
-			_pc = 10061
-			continue
-		elif _pc == 10061:
-			return 0
-		else:
-			return 0
+	if iloadout.good_to_go():
+		gui.play_sound(2)
+		await local_10275()
+		await local_8199()
+		iloadout.rearm_from_jaffs(0)
+		igame.save_autosave()
+		iinventory.cancel_new_cargo_flags()
+		gui.set_screen("icSpaceFlightScreen")
+	else:
+		gui.queue_sound(3)
+	return 0
 	return 0
 
 func s_p_hangar_screen__on_ship_button() -> Variant:
@@ -1398,137 +1006,49 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 11654
-	while true:
-		if _pc == 11654:
-			v2 = -1
-			v5 = null
-			v5 = global.list("LoadoutButtons")
-			v6 = null
-			v6 = global.list("FighterButtons")
-			v8 = gui.focused_window()
-			gui.set_radio_button_checked(v8, 1)
-			gui.set_focus(0)
-			gui.play_sound(2)
-			v1 = 0
-			_pc = 11819
-			continue
-		elif _pc == 11819:
-			if v1 < 7:
-				_pc = 11832
-				continue
-			else:
-				_pc = 11944
-				continue
-		elif _pc == 11832:
-			v0 = gui.cast(list.get_nth(v5, v1))
-			if not _pog_is_null(v0):
-				_pc = 11887
-				continue
-			else:
-				_pc = 11926
-				continue
-		elif _pc == 11887:
+	v2 = -1
+	v5 = null
+	v5 = global.list("LoadoutButtons")
+	v6 = null
+	v6 = global.list("FighterButtons")
+	v8 = gui.focused_window()
+	gui.set_radio_button_checked(v8, 1)
+	gui.set_focus(0)
+	gui.play_sound(2)
+	v1 = 0
+	while v1 < 7:
+		v0 = gui.cast(list.get_nth(v5, v1))
+		if not _pog_is_null(v0):
 			if gui.radio_button_value(v0):
-				_pc = 11910
-				continue
-			else:
-				_pc = 11926
-				continue
-		elif _pc == 11910:
-			v2 = v1
-			_pc = 11944
-			continue
-		elif _pc == 11926:
-			v1 = v1 + 1
-			_pc = 11819
-			continue
-		elif _pc == 11944:
-			if v2 != -1:
-				_pc = 11957
-				continue
-			else:
-				_pc = 12235
-				continue
-		elif _pc == 11957:
-			if _pog_is_null(v2):
-				_pc = 11969
-				continue
-			else:
-				_pc = 11981
-				continue
-		elif _pc == 11969:
-			v3 = 1
-			_pc = 12105
-			continue
-		elif _pc == 11981:
-			if v2 == 1:
-				_pc = 11993
-				continue
-			else:
-				_pc = 12006
-				continue
-		elif _pc == 11993:
+				v2 = v1
+				break
+		v1 = v1 + 1
+	if v2 == -1:
+		return 0
+	if _pog_is_null(v2):
+		v3 = 1
+	else:
+		if v2 == 1:
 			v3 = 2
-			_pc = 12105
-			continue
-		elif _pc == 12006:
-			if v2 == 2:
-				_pc = 12019
-				continue
-			else:
-				_pc = 12032
-				continue
-		elif _pc == 12019:
-			v3 = 3
-			_pc = 12105
-			continue
-		elif _pc == 12032:
-			if v2 == 3:
-				_pc = 12045
-				continue
-			else:
-				_pc = 12058
-				continue
-		elif _pc == 12045:
-			v3 = 4
-			_pc = 12105
-			continue
-		elif _pc == 12058:
-			if v2 == 4:
-				_pc = 12071
-				continue
-			else:
-				_pc = 12084
-				continue
-		elif _pc == 12071:
-			v3 = 5
-			_pc = 12105
-			continue
-		elif _pc == 12084:
-			if v2 == 5:
-				_pc = 12097
-				continue
-			else:
-				_pc = 12105
-				continue
-		elif _pc == 12097:
-			v3 = 6
-			_pc = 12105
-			continue
-		elif _pc == 12105:
-			gui.play_sound(4)
-			iloadout.calculate_loadout(v3)
-			v4 = iloadout.turret_fighters_in_loadout()
-			v7 = gui.cast(list.get_nth(v6, v4))
-			gui.set_radio_button_checked(v7, 1)
-			await local_8118()
-			_pc = 12235
-			continue
-		elif _pc == 12235:
-			return 0
 		else:
-			return 0
+			if v2 == 2:
+				v3 = 3
+			else:
+				if v2 == 3:
+					v3 = 4
+				else:
+					if v2 == 4:
+						v3 = 5
+					else:
+						if v2 == 5:
+							v3 = 6
+	gui.play_sound(4)
+	iloadout.calculate_loadout(v3)
+	v4 = iloadout.turret_fighters_in_loadout()
+	v7 = gui.cast(list.get_nth(v6, v4))
+	gui.set_radio_button_checked(v7, 1)
+	await local_8118()
+	return 0
 	return 0
 
 func s_p_loadout_screen__on_fighter() -> Variant:
@@ -1539,75 +1059,31 @@ func s_p_loadout_screen__on_fighter() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 12252
-	while true:
-		if _pc == 12252:
-			v4 = iloadout.turret_fighters_in_loadout()
-			v5 = null
-			v5 = global.list("FighterButtons")
-			v6 = gui.focused_window()
-			gui.set_radio_button_checked(v6, 1)
-			gui.set_focus(0)
-			gui.play_sound(2)
-			v1 = 0
-			_pc = 12391
-			continue
-		elif _pc == 12391:
-			if v1 < list.item_count(v5):
-				_pc = 12420
-				continue
-			else:
-				_pc = 12519
-				continue
-		elif _pc == 12420:
-			v0 = gui.cast(list.get_nth(v5, v1))
-			if gui.radio_button_value(v0):
-				_pc = 12485
-				continue
-			else:
-				_pc = 12501
-				continue
-		elif _pc == 12485:
+	v4 = iloadout.turret_fighters_in_loadout()
+	v5 = null
+	v5 = global.list("FighterButtons")
+	v6 = gui.focused_window()
+	gui.set_radio_button_checked(v6, 1)
+	gui.set_focus(0)
+	gui.play_sound(2)
+	v1 = 0
+	while v1 < list.item_count(v5):
+		v0 = gui.cast(list.get_nth(v5, v1))
+		if gui.radio_button_value(v0):
 			v2 = v1
-			_pc = 12519
-			continue
-		elif _pc == 12501:
-			v1 = v1 + 1
-			_pc = 12391
-			continue
-		elif _pc == 12519:
-			iloadout.set_desired_number_of_turret_fighters(v2)
-			if not _pog_eq(v2, v4):
-				_pc = 12554
-				continue
-			else:
-				_pc = 12681
-				continue
-		elif _pc == 12554:
-			gui.play_sound(4)
-			v3 = iloadout.current_loadout()
-			if v3 == 1 or v3 == 2 or v3 == 4 or v3 == 3:
-				_pc = 12628
-				continue
-			else:
-				_pc = 12652
-				continue
-		elif _pc == 12628:
-			iloadout.calculate_loadout(v3)
-			_pc = 12667
-			continue
-		elif _pc == 12652:
-			iloadout.calculate_loadout(1)
-			_pc = 12667
-			continue
-		elif _pc == 12667:
-			await local_8118()
-			_pc = 12681
-			continue
-		elif _pc == 12681:
-			return 0
-		else:
-			return 0
+			break
+		v1 = v1 + 1
+	iloadout.set_desired_number_of_turret_fighters(v2)
+	if _pog_eq(v2, v4):
+		return 0
+	gui.play_sound(4)
+	v3 = iloadout.current_loadout()
+	if v3 == 1 or v3 == 2 or v3 == 4 or v3 == 3:
+		iloadout.calculate_loadout(v3)
+	else:
+		iloadout.calculate_loadout(1)
+	await local_8118()
+	return 0
 	return 0
 
 func s_p_loadout_screen__on_back_button() -> Variant:
@@ -1629,73 +1105,24 @@ func local_12830(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 12830
-	while true:
-		if _pc == 12830:
-			v5 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
-			v6 = iloadout.ship()
-			if v6 == 4:
-				_pc = 12913
-				continue
-			else:
-				_pc = 12942
-				continue
-		elif _pc == 12913:
-			await local_13189(v2, v3)
-			_pc = 13103
-			continue
-		elif _pc == 12942:
-			if _pog_is_null(v6):
-				_pc = 12954
-				continue
-			else:
-				_pc = 12983
-				continue
-		elif _pc == 12954:
+	v5 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v6 = iloadout.ship()
+	if v6 == 4:
+		await local_13189(v2, v3)
+	else:
+		if _pog_is_null(v6):
 			await local_13365(v2, v3)
-			_pc = 13103
-			continue
-		elif _pc == 12983:
-			if v6 == 1:
-				_pc = 12995
-				continue
-			else:
-				_pc = 13024
-				continue
-		elif _pc == 12995:
-			await local_13541(v2, v3)
-			_pc = 13103
-			continue
-		elif _pc == 13024:
-			if v6 == 2:
-				_pc = 13037
-				continue
-			else:
-				_pc = 13066
-				continue
-		elif _pc == 13037:
-			await local_14146(v2, v3)
-			_pc = 13103
-			continue
-		elif _pc == 13066:
-			if v6 == 3:
-				_pc = 13079
-				continue
-			else:
-				_pc = 13103
-				continue
-		elif _pc == 13079:
-			await local_14751(v2, v3)
-			_pc = 13103
-			continue
-		elif _pc == 13103:
-			v4 = await igui.create_window_list_in_splitter(v0, v2, v5, v1, text.field(iloadout.ship_name(v6), 0))
-			_pc = 13187
-			continue
-		elif _pc == 13187:
-			return
 		else:
-			return 0
+			if v6 == 1:
+				await local_13541(v2, v3)
+			else:
+				if v6 == 2:
+					await local_14146(v2, v3)
+				else:
+					if v6 == 3:
+						await local_14751(v2, v3)
+	v4 = await igui.create_window_list_in_splitter(v0, v2, v5, v1, text.field(iloadout.ship_name(v6), 0))
+	return v4
 	return 0
 
 func local_13189(v0, v1) -> Variant:
@@ -1854,14 +1281,14 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 				_pc = 15710
 				continue
 		elif _pc == 15827:
-			if not _pog_is_null(1):
+			if 1 != v8:
 				_pc = 15835
 				continue
 			else:
 				_pc = 15743
 				continue
 		elif _pc == 15835:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 15844
 				continue
 			else:
@@ -1877,8 +1304,7 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 			continue
 		elif _pc == 16008:
 			v4 = await igui.create_window_list_in_splitter(v0, v3, v10, v1, text.field("manifest_ship_tfighters", 0))
-			_pc = 16079
-			continue
+			return v4
 		elif _pc == 16079:
 			return
 		else:
@@ -1900,59 +1326,31 @@ func local_16088(v0, v1, v2, v3) -> Variant:
 	var v15: Variant = 0
 	var v16: Variant = 0
 	var v17: Variant = 0
-	var _pc: int = 16088
-	while true:
-		if _pc == 16088:
-			v4 = global.pog_int("GUI_alignment_offset")
-			v9 = global.pog_int("GUI_scrollbar_width")
-			v10 = global.pog_int("GUI_fancybutton_width")
-			v11 = global.pog_int("GUI_fancyborder_width")
-			v14 = null
-			v15 = 9
-			v16 = null
-			if not _pog_is_null(string.length(v2)):
-				_pc = 16249
-				continue
-			else:
-				_pc = 16261
-				continue
-		elif _pc == 16249:
-			v17 = 1
-			_pc = 16268
-			continue
-		elif _pc == 16261:
-			v17 = 0
-			_pc = 16268
-			continue
-		elif _pc == 16268:
-			if v17:
-				_pc = 16278
-				continue
-			else:
-				_pc = 16318
-				continue
-		elif _pc == 16278:
-			await igui.add_title(v0, text.field(v2, 0))
-			_pc = 16318
-			continue
-		elif _pc == 16318:
-			v5 = v4 + global.pog_int("GUI_fancyborder_alignmentoffset")
-			v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20 + v1
-			v7 = v10 - 2 * v11 + v5
-			v8 = gui.window_canvas_height(v0) - v6 + global.pog_int("GUI_backbutton_rise") + 45
-			v12 = gui.create_window(0, 0, v7, v8, 0)
-			v13 = await igui.create_and_initialise_text_window(v15, 0, v7 - v15 + 2 * v9, v8, v12, "")
-			gui.create_vertical_scrollbar(v7 - v9, 0, v9, v8, v12, v13, global.pog_float("GUI_scrollbar_buttonratio"), "")
-			list.add_tail(v14, v12)
-			await igui.create_window_list_in_splitter(v0, v14, v5, v6, v3)
-			gui.set_window_font(v13, global.string("GUI_detail_font"))
-			gui.set_text_window_string(v13, iloadout.loadout_description())
-			_pc = 16798
-			continue
-		elif _pc == 16798:
-			return
-		else:
-			return 0
+	v4 = global.pog_int("GUI_alignment_offset")
+	v9 = global.pog_int("GUI_scrollbar_width")
+	v10 = global.pog_int("GUI_fancybutton_width")
+	v11 = global.pog_int("GUI_fancyborder_width")
+	v14 = null
+	v15 = 9
+	v16 = null
+	if not _pog_is_null(string.length(v2)):
+		v17 = 1
+	else:
+		v17 = 0
+	if v17:
+		await igui.add_title(v0, text.field(v2, 0))
+	v5 = v4 + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20 + v1
+	v7 = v10 - 2 * v11 + v5
+	v8 = gui.window_canvas_height(v0) - v6 + global.pog_int("GUI_backbutton_rise") + 45
+	v12 = gui.create_window(0, 0, v7, v8, 0)
+	v13 = await igui.create_and_initialise_text_window(v15, 0, v7 - v15 + 2 * v9, v8, v12, "")
+	gui.create_vertical_scrollbar(v7 - v9, 0, v9, v8, v12, v13, global.pog_float("GUI_scrollbar_buttonratio"), "")
+	list.add_tail(v14, v12)
+	await igui.create_window_list_in_splitter(v0, v14, v5, v6, v3)
+	gui.set_window_font(v13, global.string("GUI_detail_font"))
+	gui.set_text_window_string(v13, iloadout.loadout_description())
+	return v13
 	return 0
 
 func s_p_manifest_screen() -> Variant:
@@ -2040,63 +1438,33 @@ func local_17725(v0, v1) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	var _pc: int = 17725
-	while true:
-		if _pc == 17725:
-			v3 = null
-			v4 = null
-			v5 = null
-			v9 = null
-			v10 = 10
-			v11 = 75
-			v12 = 30
-			v13 = 115
-			v14 = 30
-			v6 = await igui.create_and_initialise_static_window(v10, v1, v11, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field("commsmenu_you_have", 0))
-			list.add_tail(v9, v6)
-			v2 = iemail.unread()
-			if v2 < 10:
-				_pc = 17942
-				continue
-			else:
-				_pc = 17974
-				continue
-		elif _pc == 17942:
-			v3 = global.string("BaseGUI_largenumber_font")
-			_pc = 17987
-			continue
-		elif _pc == 17974:
-			v3 = "font:/fonts/handelgothic bt_8pt"
-			_pc = 17987
-			continue
-		elif _pc == 17987:
-			v4 = string.from_int(v2)
-			v7 = await igui.create_and_initialise_static_window(v10 + v11, v1, v12, v14, v0, v3, v4)
-			list.add_tail(v9, v7)
-			gui.set_window_state_textures(v7, global.string("GUI_texture_request"), 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30, 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30, 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30)
-			if v2 == 1:
-				_pc = 18212
-				continue
-			else:
-				_pc = 18230
-				continue
-		elif _pc == 18212:
-			v5 = "commsmenu_new_message"
-			_pc = 18243
-			continue
-		elif _pc == 18230:
-			v5 = "commsmenu_new_messages"
-			_pc = 18243
-			continue
-		elif _pc == 18243:
-			v8 = await igui.create_and_initialise_static_window(v10 + v11 + v12, v1, v13, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field(v5, 0))
-			list.add_tail(v9, v8)
-			_pc = 18360
-			continue
-		elif _pc == 18360:
-			return
-		else:
-			return 0
+	v3 = null
+	v4 = null
+	v5 = null
+	v9 = null
+	v10 = 10
+	v11 = 75
+	v12 = 30
+	v13 = 115
+	v14 = 30
+	v6 = await igui.create_and_initialise_static_window(v10, v1, v11, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field("commsmenu_you_have", 0))
+	list.add_tail(v9, v6)
+	v2 = iemail.unread()
+	if v2 < 10:
+		v3 = global.string("BaseGUI_largenumber_font")
+	else:
+		v3 = "font:/fonts/handelgothic bt_8pt"
+	v4 = string.from_int(v2)
+	v7 = await igui.create_and_initialise_static_window(v10 + v11, v1, v12, v14, v0, v3, v4)
+	list.add_tail(v9, v7)
+	gui.set_window_state_textures(v7, global.string("GUI_texture_request"), 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30, 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30, 22, 0, 32, 30, 32, 0, 42, 30, 42, 0, 52, 30)
+	if v2 == 1:
+		v5 = "commsmenu_new_message"
+	else:
+		v5 = "commsmenu_new_messages"
+	v8 = await igui.create_and_initialise_static_window(v10 + v11 + v12, v1, v13, v14, v0, "font:/fonts/handelgothic bt_7pt", text.field(v5, 0))
+	list.add_tail(v9, v8)
+	return _pog_clone(v9)
 	return 0
 
 func local_18391(v0, v1) -> Variant:
@@ -2117,45 +1485,28 @@ func local_18391(v0, v1) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	var _pc: int = 18391
-	while true:
-		if _pc == 18391:
-			v6 = global.pog_int("GUI_tab_text_offset")
-			v7 = gui.window_canvas_width(v1)
-			v8 = v7 / 3
-			v9 = v7
-			v10 = 13
-			v15 = global.pog_int("GUI_listbox_entryheight")
-			v16 = 5
-			v17 = null
-			v17 = global.string("type_font")
-			v18 = null
-			v18 = global.string("type_font")
-			v2 = gui.create_window(0, 0, v7, v15, 0)
-			v12 = v10
-			v11 = v8 - v12 + 5
-			v14 = v8 + v6 - 2
-			v13 = v9 - v14 + 5
-			if not (iemail.read(v0)):
-				_pc = 18713
-				continue
-			else:
-				_pc = 18760
-				continue
-		elif _pc == 18713:
-			v3 = await igui.create_and_initialise_list_box_entry_component_window(0, v10, v15, v2, v17, "*")
-			_pc = 18760
-			continue
-		elif _pc == 18760:
-			v4 = await igui.create_and_initialise_list_box_entry_component_window(v12, v11, v15, v2, v17, iemail.sender(v0))
-			v5 = await igui.create_and_initialise_list_box_entry_component_window(v14, v13, v15, v2, v18, iemail.subject(v0))
-			gui.add_list_box_entry(v1, v2)
-			_pc = 18922
-			continue
-		elif _pc == 18922:
-			return
-		else:
-			return 0
+	v6 = global.pog_int("GUI_tab_text_offset")
+	v7 = gui.window_canvas_width(v1)
+	v8 = v7 / 3
+	v9 = v7
+	v10 = 13
+	v15 = global.pog_int("GUI_listbox_entryheight")
+	v16 = 5
+	v17 = null
+	v17 = global.string("type_font")
+	v18 = null
+	v18 = global.string("type_font")
+	v2 = gui.create_window(0, 0, v7, v15, 0)
+	v12 = v10
+	v11 = v8 - v12 + 5
+	v14 = v8 + v6 - 2
+	v13 = v9 - v14 + 5
+	if not (iemail.read(v0)):
+		v3 = await igui.create_and_initialise_list_box_entry_component_window(0, v10, v15, v2, v17, "*")
+	v4 = await igui.create_and_initialise_list_box_entry_component_window(v12, v11, v15, v2, v17, iemail.sender(v0))
+	v5 = await igui.create_and_initialise_list_box_entry_component_window(v14, v13, v15, v2, v18, iemail.subject(v0))
+	gui.add_list_box_entry(v1, v2)
+	return v2
 	return 0
 
 func s_p_inbox_screen() -> Variant:
@@ -2167,43 +1518,26 @@ func s_p_inbox_screen() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 18938
-	while true:
-		if _pc == 18938:
-			v1 = null
-			v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPInboxScreen_OnBackButton", "iBaseGUI.SPInboxScreen_OnBackToMainMenuButton")
-			v0 = gui.cast(list.head(v1))
-			list.remove_head(v1)
-			v6 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
-			v6 = v6 / 3
-			v7 = v6 * 2
-			v2 = await igui.create_titled_list_box(v0, text.field("comms_new_messages", 0), v6, text.field("commsmenu_sender", 0), v7, text.field("commsmenu_subject", 0), 0, "")
-			list.add_head(v1, v2)
-			v4 = iemail.inbox_size()
-			v3 = 0
-			_pc = 19295
-			continue
-		elif _pc == 19295:
-			if v3 < v4:
-				_pc = 19311
-				continue
-			else:
-				_pc = 19377
-				continue
-		elif _pc == 19311:
-			v5 = iemail.nth_in_inbox(v3)
-			await local_18391(v5, v2)
-			v3 = v3 + 1
-			_pc = 19295
-			continue
-		elif _pc == 19377:
-			global.create_handle("InboxListBox", 2, v2)
-			gui.set_first_control_focus(v2)
-			gui.set_input_override_functions(v2, "", "", "", "", "iBaseGUI.SPInboxScreen_OnEmailListBoxSelect", "iBaseGUI.SPInboxScreen_OnBackButton", "", "iBaseGUI.SPInboxScreen_OnEmailListBoxSelect", "")
-			gui.set_control_focus_cancel_function("iBaseGUI.SPInboxScreen_OnBackButton")
-			return 0
-		else:
-			return 0
+	v1 = null
+	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPInboxScreen_OnBackButton", "iBaseGUI.SPInboxScreen_OnBackToMainMenuButton")
+	v0 = gui.cast(list.head(v1))
+	list.remove_head(v1)
+	v6 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+	v6 = v6 / 3
+	v7 = v6 * 2
+	v2 = await igui.create_titled_list_box(v0, text.field("comms_new_messages", 0), v6, text.field("commsmenu_sender", 0), v7, text.field("commsmenu_subject", 0), 0, "")
+	list.add_head(v1, v2)
+	v4 = iemail.inbox_size()
+	v3 = 0
+	while v3 < v4:
+		v5 = iemail.nth_in_inbox(v3)
+		await local_18391(v5, v2)
+		v3 = v3 + 1
+	global.create_handle("InboxListBox", 2, v2)
+	gui.set_first_control_focus(v2)
+	gui.set_input_override_functions(v2, "", "", "", "", "iBaseGUI.SPInboxScreen_OnEmailListBoxSelect", "iBaseGUI.SPInboxScreen_OnBackButton", "", "iBaseGUI.SPInboxScreen_OnEmailListBoxSelect", "")
+	gui.set_control_focus_cancel_function("iBaseGUI.SPInboxScreen_OnBackButton")
+	return 0
 	return 0
 
 func s_p_inbox_screen__on_back_button() -> Variant:
@@ -2224,32 +1558,16 @@ func s_p_inbox_screen__on_email_list_box_select() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 19640
-	while true:
-		if _pc == 19640:
-			v2 = gui.cast(global.handle("InboxListBox"))
-			v0 = gui.list_box_focused_entry(v2)
-			if v0 > -1:
-				_pc = 19721
-				continue
-			else:
-				_pc = 19815
-				continue
-		elif _pc == 19721:
-			gui.queue_sound(2)
-			v1 = iemail.nth_in_inbox(v0)
-			global.create_handle("MessageToDisplay", 2, v1)
-			gui.overlay_screen("icSPMessagesScreen")
-			_pc = 19831
-			continue
-		elif _pc == 19815:
-			gui.queue_sound(3)
-			_pc = 19831
-			continue
-		elif _pc == 19831:
-			return 0
-		else:
-			return 0
+	v2 = gui.cast(global.handle("InboxListBox"))
+	v0 = gui.list_box_focused_entry(v2)
+	if v0 > -1:
+		gui.queue_sound(2)
+		v1 = iemail.nth_in_inbox(v0)
+		global.create_handle("MessageToDisplay", 2, v1)
+		gui.overlay_screen("icSPMessagesScreen")
+	else:
+		gui.queue_sound(3)
+	return 0
 	return 0
 
 func s_p_archive_screen() -> Variant:
@@ -2294,33 +1612,17 @@ func s_p_archive_screen__on_email_list_box_select() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 20404
-	while true:
-		if _pc == 20404:
-			v2 = gui.cast(global.handle("ArchiveListBox"))
-			v0 = gui.list_box_focused_entry(v2)
-			if v0 > -1:
-				_pc = 20485
-				continue
-			else:
-				_pc = 20593
-				continue
-		elif _pc == 20485:
-			gui.queue_sound(2)
-			v1 = iemail.nth_in_archive(v0)
-			global.create_handle("MessageToDisplay", 2, v1)
-			iemail.reset_windows()
-			gui.overlay_screen("icSPMessagesScreen")
-			_pc = 20609
-			continue
-		elif _pc == 20593:
-			gui.queue_sound(3)
-			_pc = 20609
-			continue
-		elif _pc == 20609:
-			return 0
-		else:
-			return 0
+	v2 = gui.cast(global.handle("ArchiveListBox"))
+	v0 = gui.list_box_focused_entry(v2)
+	if v0 > -1:
+		gui.queue_sound(2)
+		v1 = iemail.nth_in_archive(v0)
+		global.create_handle("MessageToDisplay", 2, v1)
+		iemail.reset_windows()
+		gui.overlay_screen("icSPMessagesScreen")
+	else:
+		gui.queue_sound(3)
+	return 0
 	return 0
 
 func s_p_messages_screen() -> Variant:
@@ -2372,71 +1674,24 @@ func s_p_messages_screen__on_back_to_main_menu_button() -> Variant:
 
 func force_email_read(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 21438
-	while true:
-		if _pc == 21438:
-			v1 = iemail.find(v0)
-			if _pog_is_null(v1):
-				_pc = 21480
-				continue
-			else:
-				_pc = 21511
-				continue
-		elif _pc == 21480:
-			_pc = 21506
-			continue
-		elif _pc == 21485:
+	v1 = iemail.find(v0)
+	if _pog_is_null(v1):
+		if PogRuntime.TRACE:
 			debug.error("iBaseGUI.ForceEmailRead : Invalid email.")
-			_pc = 21506
-			continue
-		elif _pc == 21506:
-			_pc = 21710
-			continue
-		elif _pc == 21511:
-			if iemail.read(v1):
-				_pc = 21534
-				continue
-			else:
-				_pc = 21565
-				continue
-		elif _pc == 21534:
-			_pc = 21560
-			continue
-		elif _pc == 21539:
-			debug.error("iBaseGUI.ForceEmailRead : Email has already been read.")
-			_pc = 21560
-			continue
-		elif _pc == 21560:
-			_pc = 21710
-			continue
-		elif _pc == 21565:
-			if not _pog_eq(gui.current_screen_classname(), "icSPBaseScreen"):
-				_pc = 21593
-				continue
-			else:
-				_pc = 21624
-				continue
-		elif _pc == 21593:
-			_pc = 21619
-			continue
-		elif _pc == 21598:
-			debug.error("iBaseGUI.ForceEmailRead : Player is not at root player base screen.")
-			_pc = 21619
-			continue
-		elif _pc == 21619:
-			_pc = 21710
-			continue
-		elif _pc == 21624:
-			await s_p_base_screen__on_comms_button()
-			gui.overlay_screen("icSPInboxScreen")
-			global.create_handle("MessageToDisplay", 2, v1)
-			gui.overlay_screen("icSPMessagesScreen")
-			_pc = 21710
-			continue
-		elif _pc == 21710:
-			return 0
+	else:
+		if iemail.read(v1):
+			if PogRuntime.TRACE:
+				debug.error("iBaseGUI.ForceEmailRead : Email has already been read.")
 		else:
-			return 0
+			if not _pog_eq(gui.current_screen_classname(), "icSPBaseScreen"):
+				if PogRuntime.TRACE:
+					debug.error("iBaseGUI.ForceEmailRead : Player is not at root player base screen.")
+			else:
+				await s_p_base_screen__on_comms_button()
+				gui.overlay_screen("icSPInboxScreen")
+				global.create_handle("MessageToDisplay", 2, v1)
+				gui.overlay_screen("icSPMessagesScreen")
+	return 0
 	return 0
 
 func s_p_encyclopaedia_screen() -> Variant:
@@ -2542,83 +1797,30 @@ func s_p_trading_screen__on_trade_button() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 23352
-	while true:
-		if _pc == 23352:
-			v4 = gui.cast(global.handle("TradingScreen_Listbox"))
-			v0 = gui.list_box_selected_index(v4)
-			if v0 > -1:
-				_pc = 23433
-				continue
-			else:
-				_pc = 23716
-				continue
-		elif _pc == 23433:
-			v2 = itrade.nth_trade(v0)
-			if not _pog_is_null(v2):
-				_pc = 23470
-				continue
-			else:
-				_pc = 23695
-				continue
-		elif _pc == 23470:
+	v4 = gui.cast(global.handle("TradingScreen_Listbox"))
+	v0 = gui.list_box_selected_index(v4)
+	if v0 > -1:
+		v2 = itrade.nth_trade(v0)
+		if not _pog_is_null(v2):
 			v3 = itrade.num_offers(v2)
 			v1 = itrade.perform_trade(v2)
 			if not (v1):
-				_pc = 23530
-				continue
+				gui.queue_sound(3)
 			else:
-				_pc = 23551
-				continue
-		elif _pc == 23530:
-			gui.queue_sound(3)
-			_pc = 23565
-			continue
-		elif _pc == 23551:
-			v3 = v3 + -1
-			_pc = 23565
-			continue
-		elif _pc == 23565:
+				v3 = v3 + -1
 			gui.remove_list_box_entries(v4)
 			await local_25276(v4)
 			if _pog_is_null(v3):
-				_pc = 23615
-				continue
-			else:
-				_pc = 23665
-				continue
-		elif _pc == 23615:
-			v0 = v0 + -1
-			if v0 == -1 and itrade.num_trades() > 0:
-				_pc = 23658
-				continue
-			else:
-				_pc = 23665
-				continue
-		elif _pc == 23658:
-			v0 = 0
-			_pc = 23665
-			continue
-		elif _pc == 23665:
+				v0 = v0 + -1
+				if v0 == -1 and itrade.num_trades() > 0:
+					v0 = 0
 			gui.select_list_box_entry(v4, v0)
-			_pc = 23711
-			continue
-		elif _pc == 23695:
-			gui.queue_sound(3)
-			_pc = 23711
-			continue
-		elif _pc == 23711:
-			_pc = 23732
-			continue
-		elif _pc == 23716:
-			gui.queue_sound(3)
-			_pc = 23732
-			continue
-		elif _pc == 23732:
-			await s_p_trading_screen__on_cancel_button()
-			return 0
 		else:
-			return 0
+			gui.queue_sound(3)
+	else:
+		gui.queue_sound(3)
+	await s_p_trading_screen__on_cancel_button()
+	return 0
 	return 0
 
 func s_p_trading_screen__on_back_button() -> Variant:
@@ -2667,53 +1869,45 @@ func local_23974() -> Variant:
 	var v23: Variant = 0
 	var v24: Variant = 0
 	var v25: Variant = 0
-	var _pc: int = 23974
-	while true:
-		if _pc == 23974:
-			v2 = null
-			v8 = global.pog_int("GUI_alignment_offset")
-			v11 = gui.frame_height() - 290
-			v13 = global.pog_int("GUI_scrollbar_width")
-			v18 = global.pog_int("GUI_table_alignmentoffset")
-			v21 = global.pog_int("GUI_inversebutton_height")
-			v22 = 10
-			v23 = 5
-			v24 = 5
-			v2 = await igui.create_grey_box_style_screen(text.field("basemenu_trade", 0), "iBaseGUI.SPTradingScreen_OnBackButton", "iBaseGUI.SPTradingScreen_OnBackToMainMenuButton")
-			v0 = gui.cast(list.head(v2))
-			list.remove_all(v2)
-			v9 = gui.window_canvas_height(v0)
-			v10 = gui.window_canvas_width(v0)
-			v12 = v10 - 2 * global.pog_int("GUI_scrollbar_width")
-			v12 = v12 / 3
-			v1 = gui.create_window(0, 0, v10, v11, v0)
-			v4 = await igui.create_titled_list_box(v1, text.field("basemenu_trade", 0), v12, text.field("trading_faction", 0), v12, text.field("trading_offer", 0), v12, text.field("trading_want", 0))
-			list.add_tail(v2, v4)
-			v19 = v10
-			v20 = v19 - v24 + 2 * v22
-			v20 = v20 / 2
-			v1 = gui.create_window(v22, v11, v24 + v20 * 2, v21, v0)
-			v7 = await igui.create_and_initialise_inverse_button(v1, 0, 0, v20, text.field("trading_trade", 0), "iBaseGUI.SPTradingScreen_OnTradeButton")
-			list.add_tail(v2, v7)
-			v7 = await igui.create_and_initialise_inverse_button(v1, v20 + 5, 0, v20, text.field("gui_cancel", 0), "iBaseGUI.SPTradingScreen_OnCancelButton")
-			list.add_tail(v2, v7)
-			v25 = v11 + v21 + v23
-			v1 = gui.create_window(0, v25, v19, v9 - v25, v0)
-			v14 = global.pog_int("GUI_fancyborder_width")
-			v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 5
-			v16 = gui.window_canvas_width(v1) - v14 + global.pog_int("GUI_fancyborder_width")
-			v17 = gui.window_canvas_height(v1) - v15 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
-			v6 = gui.create_window(v14, v15, v16, v17, v1)
-			gui.create_fancy_border(v6)
-			v5 = await igui.create_and_initialise_text_window(v18, 0, v16 - 2 * v13 + v18, v17, v6, "")
-			gui.create_vertical_scrollbar(v16 - v13, 0, v13, v17, v6, v5, global.pog_float("GUI_scrollbar_buttonratio"), "")
-			list.add_tail(v2, v5)
-			_pc = 25266
-			continue
-		elif _pc == 25266:
-			return
-		else:
-			return 0
+	v2 = null
+	v8 = global.pog_int("GUI_alignment_offset")
+	v11 = gui.frame_height() - 290
+	v13 = global.pog_int("GUI_scrollbar_width")
+	v18 = global.pog_int("GUI_table_alignmentoffset")
+	v21 = global.pog_int("GUI_inversebutton_height")
+	v22 = 10
+	v23 = 5
+	v24 = 5
+	v2 = await igui.create_grey_box_style_screen(text.field("basemenu_trade", 0), "iBaseGUI.SPTradingScreen_OnBackButton", "iBaseGUI.SPTradingScreen_OnBackToMainMenuButton")
+	v0 = gui.cast(list.head(v2))
+	list.remove_all(v2)
+	v9 = gui.window_canvas_height(v0)
+	v10 = gui.window_canvas_width(v0)
+	v12 = v10 - 2 * global.pog_int("GUI_scrollbar_width")
+	v12 = v12 / 3
+	v1 = gui.create_window(0, 0, v10, v11, v0)
+	v4 = await igui.create_titled_list_box(v1, text.field("basemenu_trade", 0), v12, text.field("trading_faction", 0), v12, text.field("trading_offer", 0), v12, text.field("trading_want", 0))
+	list.add_tail(v2, v4)
+	v19 = v10
+	v20 = v19 - v24 + 2 * v22
+	v20 = v20 / 2
+	v1 = gui.create_window(v22, v11, v24 + v20 * 2, v21, v0)
+	v7 = await igui.create_and_initialise_inverse_button(v1, 0, 0, v20, text.field("trading_trade", 0), "iBaseGUI.SPTradingScreen_OnTradeButton")
+	list.add_tail(v2, v7)
+	v7 = await igui.create_and_initialise_inverse_button(v1, v20 + 5, 0, v20, text.field("gui_cancel", 0), "iBaseGUI.SPTradingScreen_OnCancelButton")
+	list.add_tail(v2, v7)
+	v25 = v11 + v21 + v23
+	v1 = gui.create_window(0, v25, v19, v9 - v25, v0)
+	v14 = global.pog_int("GUI_fancyborder_width")
+	v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 5
+	v16 = gui.window_canvas_width(v1) - v14 + global.pog_int("GUI_fancyborder_width")
+	v17 = gui.window_canvas_height(v1) - v15 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v6 = gui.create_window(v14, v15, v16, v17, v1)
+	gui.create_fancy_border(v6)
+	v5 = await igui.create_and_initialise_text_window(v18, 0, v16 - 2 * v13 + v18, v17, v6, "")
+	gui.create_vertical_scrollbar(v16 - v13, 0, v13, v17, v6, v5, global.pog_float("GUI_scrollbar_buttonratio"), "")
+	list.add_tail(v2, v5)
+	return _pog_clone(v2)
 	return 0
 
 func local_25276(v0) -> Variant:
@@ -2721,31 +1915,14 @@ func local_25276(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 25276
-	while true:
-		if _pc == 25276:
-			v1 = null
-			v4 = itrade.num_trades()
-			v3 = 0
-			_pc = 25318
-			continue
-		elif _pc == 25318:
-			if v3 < v4:
-				_pc = 25334
-				continue
-			else:
-				_pc = 25418
-				continue
-		elif _pc == 25334:
-			v2 = itrade.nth_trade(v3)
-			list.add_tail(v1, await local_25428(v0, v2))
-			v3 = v3 + 1
-			_pc = 25318
-			continue
-		elif _pc == 25418:
-			return 0
-		else:
-			return 0
+	v1 = null
+	v4 = itrade.num_trades()
+	v3 = 0
+	while v3 < v4:
+		v2 = itrade.nth_trade(v3)
+		list.add_tail(v1, await local_25428(v0, v2))
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func local_25428(v0, v1) -> Variant:
@@ -2769,73 +1946,43 @@ func local_25428(v0, v1) -> Variant:
 	var v19: Variant = 0
 	var v20: Variant = 0
 	var v21: Variant = 0
-	var _pc: int = 25428
-	while true:
-		if _pc == 25428:
-			v3 = null
-			v4 = gui.window_canvas_width(v0)
-			v5 = global.pog_int("GUI_listbox_entryheight")
-			v6 = 5
-			v7 = global.pog_int("GUI_tab_text_offset")
-			v16 = v4 / 3
-			v17 = 2 * v4 / 3
-			v18 = v4
-			v19 = null
-			v19 = global.string("type_font")
-			v20 = itrade.faction(v1)
-			v21 = null
-			v21 = object.string_property(v1, "generated_mission")
-			v8 = 0
-			v9 = 13
-			v10 = v8 + v9
-			v11 = v16 - v10 + 5
-			v12 = v16 + v7 - 1
-			v13 = v17 - v12 + 5
-			v14 = v17 + v7 + 3
-			v15 = v18 - v14 + 5
-			v2 = gui.create_window(0, 0, v4, v5, 0)
-			if itrade.can_satisfy_trade(v1):
-				_pc = 25858
-				continue
-			else:
-				_pc = 25876
-				continue
-		elif _pc == 25858:
-			v3 = "*"
-			_pc = 25889
-			continue
-		elif _pc == 25876:
-			v3 = ""
-			_pc = 25889
-			continue
-		elif _pc == 25889:
-			await igui.create_and_initialise_list_box_entry_component_window(v8, v9, v5, v2, v19, v3)
-			if _pog_eq(v21, ""):
-				_pc = 25951
-				continue
-			else:
-				_pc = 26015
-				continue
-		elif _pc == 25951:
-			await igui.create_and_initialise_list_box_entry_component_window(v10, v11, v5, v2, v19, ifaction.pog_name(v20))
-			_pc = 26118
-			continue
-		elif _pc == 26015:
-			v21 = string.join(v21, "_mission_name")
-			v21 = text.field(v21, 0)
-			await igui.create_and_initialise_list_box_entry_component_window(v10, v11, v5, v2, v19, v21)
-			_pc = 26118
-			continue
-		elif _pc == 26118:
-			await igui.create_and_initialise_list_box_entry_component_window(v12, v13, v5, v2, v19, itrade.offered(v1))
-			await igui.create_and_initialise_list_box_entry_component_window(v14, v15, v5, v2, v19, itrade.wanted(v1))
-			gui.add_list_box_entry(v0, v2)
-			_pc = 26270
-			continue
-		elif _pc == 26270:
-			return
-		else:
-			return 0
+	v3 = null
+	v4 = gui.window_canvas_width(v0)
+	v5 = global.pog_int("GUI_listbox_entryheight")
+	v6 = 5
+	v7 = global.pog_int("GUI_tab_text_offset")
+	v16 = v4 / 3
+	v17 = 2 * v4 / 3
+	v18 = v4
+	v19 = null
+	v19 = global.string("type_font")
+	v20 = itrade.faction(v1)
+	v21 = null
+	v21 = object.string_property(v1, "generated_mission")
+	v8 = 0
+	v9 = 13
+	v10 = v8 + v9
+	v11 = v16 - v10 + 5
+	v12 = v16 + v7 - 1
+	v13 = v17 - v12 + 5
+	v14 = v17 + v7 + 3
+	v15 = v18 - v14 + 5
+	v2 = gui.create_window(0, 0, v4, v5, 0)
+	if itrade.can_satisfy_trade(v1):
+		v3 = "*"
+	else:
+		v3 = ""
+	await igui.create_and_initialise_list_box_entry_component_window(v8, v9, v5, v2, v19, v3)
+	if _pog_eq(v21, ""):
+		await igui.create_and_initialise_list_box_entry_component_window(v10, v11, v5, v2, v19, ifaction.pog_name(v20))
+	else:
+		v21 = string.join(v21, "_mission_name")
+		v21 = text.field(v21, 0)
+		await igui.create_and_initialise_list_box_entry_component_window(v10, v11, v5, v2, v19, v21)
+	await igui.create_and_initialise_list_box_entry_component_window(v12, v13, v5, v2, v19, itrade.offered(v1))
+	await igui.create_and_initialise_list_box_entry_component_window(v14, v15, v5, v2, v19, itrade.wanted(v1))
+	gui.add_list_box_entry(v0, v2)
+	return v2
 	return 0
 
 func s_p_trading_screen__on_trades_list_box_select() -> Variant:
@@ -2843,55 +1990,23 @@ func s_p_trading_screen__on_trades_list_box_select() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 26293
-	while true:
-		if _pc == 26293:
-			v2 = gui.cast(global.handle("TradingScreen_Listbox"))
-			v3 = gui.cast(global.handle("TradingScreen_Textbox"))
-			v0 = gui.list_box_focused_entry(v2)
-			if v0 == -1:
-				_pc = 26412
-				continue
-			else:
-				_pc = 26433
-				continue
-		elif _pc == 26412:
+	v2 = gui.cast(global.handle("TradingScreen_Listbox"))
+	v3 = gui.cast(global.handle("TradingScreen_Textbox"))
+	v0 = gui.list_box_focused_entry(v2)
+	if v0 == -1:
+		gui.queue_sound(3)
+	else:
+		v1 = itrade.nth_trade(v0)
+		if _pog_is_null(v1):
 			gui.queue_sound(3)
-			_pc = 26622
-			continue
-		elif _pc == 26433:
-			v1 = itrade.nth_trade(v0)
-			if _pog_is_null(v1):
-				_pc = 26470
-				continue
-			else:
-				_pc = 26491
-				continue
-		elif _pc == 26470:
-			gui.queue_sound(3)
-			_pc = 26622
-			continue
-		elif _pc == 26491:
-			if itrade.can_satisfy_trade(v1):
-				_pc = 26514
-				continue
-			else:
-				_pc = 26606
-				continue
-		elif _pc == 26514:
-			gui.queue_sound(2)
-			gui.select_list_box_entry(v2, v0)
-			gui.set_focus(gui.cast(global.handle("TradingScreen_TradeButton")))
-			_pc = 26622
-			continue
-		elif _pc == 26606:
-			gui.queue_sound(3)
-			_pc = 26622
-			continue
-		elif _pc == 26622:
-			return 0
 		else:
-			return 0
+			if itrade.can_satisfy_trade(v1):
+				gui.queue_sound(2)
+				gui.select_list_box_entry(v2, v0)
+				gui.set_focus(gui.cast(global.handle("TradingScreen_TradeButton")))
+			else:
+				gui.queue_sound(3)
+	return 0
 	return 0
 
 func s_p_trading_screen__on_trade_button_left_or_right() -> Variant:
@@ -2913,121 +2028,43 @@ func local_26725(v0, v1) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 26725
-	while true:
-		if _pc == 26725:
-			v2 = 0
-			v5 = 0
-			v8 = null
-			v8 = ""
-			v9 = 0
-			_pc = 26775
-			continue
-		elif _pc == 26775:
-			if 1:
-				_pc = 26781
-				continue
-			else:
-				_pc = 27211
-				continue
-		elif _pc == 26781:
-			v4 = gui.list_box_selected_index(v0)
-			if v4 == -1:
-				_pc = 26818
-				continue
-			else:
-				_pc = 27029
-				continue
-		elif _pc == 26818:
+	v2 = 0
+	v5 = 0
+	v8 = null
+	v8 = ""
+	v9 = 0
+	while 1:
+		v4 = gui.list_box_selected_index(v0)
+		if v4 == -1:
 			if not _pog_is_null(v2):
-				_pc = 26831
-				continue
-			else:
-				_pc = 26858
-				continue
-		elif _pc == 26831:
-			v9 = 1
-			v8 = ""
-			v2 = 0
-			_pc = 26858
-			continue
-		elif _pc == 26858:
+				v9 = 1
+				v8 = ""
+				v2 = 0
 			v7 = gui.list_box_focused_entry(v0)
 			if v7 == -1:
-				_pc = 26895
-				continue
+				if not _pog_is_null(v5):
+					v9 = 1
+					v8 = ""
+					v5 = 0
 			else:
-				_pc = 26940
-				continue
-		elif _pc == 26895:
-			if not _pog_is_null(v5):
-				_pc = 26908
-				continue
-			else:
-				_pc = 26935
-				continue
-		elif _pc == 26908:
-			v9 = 1
-			v8 = ""
-			v5 = 0
-			_pc = 26935
-			continue
-		elif _pc == 26935:
-			_pc = 27024
-			continue
-		elif _pc == 26940:
-			v6 = itrade.nth_trade(v7)
-			if not _pog_eq(v6, v5):
-				_pc = 26980
-				continue
-			else:
-				_pc = 27024
-				continue
-		elif _pc == 26980:
-			v9 = 1
-			v8 = itrade.jaffs_trade_description(v6)
-			v5 = v6
-			_pc = 27024
-			continue
-		elif _pc == 27024:
-			_pc = 27120
-			continue
-		elif _pc == 27029:
+				v6 = itrade.nth_trade(v7)
+				if not _pog_eq(v6, v5):
+					v9 = 1
+					v8 = itrade.jaffs_trade_description(v6)
+					v5 = v6
+		else:
 			v3 = itrade.nth_trade(v4)
 			if not _pog_eq(v3, v2):
-				_pc = 27069
-				continue
-			else:
-				_pc = 27120
-				continue
-		elif _pc == 27069:
-			v9 = 1
-			v8 = itrade.jaffs_trade_advice(v3)
-			v2 = v3
-			v5 = 0
-			_pc = 27120
-			continue
-		elif _pc == 27120:
-			if v9:
-				_pc = 27130
-				continue
-			else:
-				_pc = 27174
-				continue
-		elif _pc == 27130:
+				v9 = 1
+				v8 = itrade.jaffs_trade_advice(v3)
+				v2 = v3
+				v5 = 0
+		if v9:
 			v9 = 0
 			gui.set_text_window_string(v1, v8)
 			v8 = ""
-			_pc = 27174
-			continue
-		elif _pc == 27174:
-			await _pog_wait(0.10000000149011612)
-			_pc = 26775
-			continue
-		elif _pc == 27211:
-			return
-		else:
-			return 0
+		await _pog_wait(0.10000000149011612)
+	return
 	return 0
 
 func s_p_inventory_screen__on_equipment() -> Variant:
@@ -3068,85 +2105,51 @@ func s_p_inventory_screen() -> Variant:
 	var v18: Variant = 0
 	var v19: Variant = 0
 	var v20: Variant = 0
-	var _pc: int = 27351
-	while true:
-		if _pc == 27351:
-			v2 = null
-			v4 = null
-			v15 = 0
-			v16 = global.pog_int("GUI_inversebutton_width")
-			v17 = global.pog_int("GUI_inversebutton_height")
-			v18 = 10
-			v19 = 0
-			v20 = 5
-			v2 = await igui.create_grey_box_style_screen(text.field("basemenu_inventory", 0), "iBaseGUI.SPInventoryScreen_OnBackButton", "iBaseGUI.SPInventoryScreen_OnBackToMainMenuButton")
-			v0 = gui.cast(list.head(v2))
-			list.remove_all(v2)
-			if global.exists("SPInventoryScreen_CargoOnly"):
-				_pc = 27594
-				continue
-			else:
-				_pc = 27620
-				continue
-		elif _pc == 27594:
-			v15 = global.pog_bool("SPInventoryScreen_CargoOnly")
-			_pc = 27620
-			continue
-		elif _pc == 27620:
-			v12 = gui.window_canvas_height(v0)
-			v12 = v12 - global.pog_int("GUI_inversebutton_height")
-			v1 = gui.create_window(0, 0, gui.window_canvas_width(v0), v12, v0)
-			v9 = gui.window_canvas_width(v1) - 2 * global.pog_int("GUI_scrollbar_width")
-			v9 = 2 * v9 / 4
-			v10 = v9 / 2
-			v11 = v10
-			v3 = await igui.create_titled_list_box(v1, text.field("basemenu_inventory", 0), v9, text.field("gui_item", 0), v10, text.field("inventory_quantity", 0), v11, text.field("recycling_value", 0))
-			list.add_head(v2, v3)
-			global.create_handle("InventoryListBox", 2, v3)
-			v1 = gui.create_window(0, v12, gui.window_canvas_width(v0), global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height"), v0)
-			v5 = await igui.create_and_initialise_inverse_button(v1, 0, 0, v16, string.upper_case(text.field("inventory_equipment", 0)), "iBaseGUI.SPInventoryScreen_OnEquipment")
-			list.add_tail(v2, v5)
-			await igui.make_inverse_button_iconic(v5)
-			v6 = await igui.create_and_initialise_inverse_button(v1, v16 + v20, 0, v16, text.field("manifest_ship_cargo", 0), "iBaseGUI.SPInventoryScreen_OnCargo")
-			list.add_tail(v2, v6)
-			await igui.make_inverse_button_iconic(v6)
-			global.create_handle("SPInventoryScreen_Equipment", 2, v5)
-			global.create_handle("SPInventoryScreen_Cargo", 2, v6)
-			global.set_bool("SPInventoryScreen_CargoOnly", not (v15))
-			if v15:
-				_pc = 28400
-				continue
-			else:
-				_pc = 28419
-				continue
-		elif _pc == 28400:
-			await s_p_inventory_screen__on_cargo()
-			_pc = 28433
-			continue
-		elif _pc == 28419:
-			await s_p_inventory_screen__on_equipment()
-			_pc = 28433
-			continue
-		elif _pc == 28433:
-			if global.exists("SPInventoryScreen_SelectedEntry"):
-				_pc = 28458
-				continue
-			else:
-				_pc = 28508
-				continue
-		elif _pc == 28458:
-			v14 = global.pog_int("SPInventoryScreen_SelectedEntry")
-			gui.set_list_box_focused_entry(v3, v14)
-			_pc = 28508
-			continue
-		elif _pc == 28508:
-			gui.set_first_control_focus(v3)
-			await igui.set_cyclic_control_focus_path(v2)
-			gui.set_input_override_functions(v3, "", "", "", "", "iBaseGUI.SPInventoryScreen_OnInventoryListBoxSelect", "iBaseGUI.SPInventoryScreen_OnBackButton", "", "iBaseGUI.SPInventoryScreen_OnInventoryListBoxSelect", "")
-			gui.set_control_focus_cancel_function("iBaseGUI.SPInventoryScreen_OnBackButton")
-			return 0
-		else:
-			return 0
+	v2 = null
+	v4 = null
+	v15 = 0
+	v16 = global.pog_int("GUI_inversebutton_width")
+	v17 = global.pog_int("GUI_inversebutton_height")
+	v18 = 10
+	v19 = 0
+	v20 = 5
+	v2 = await igui.create_grey_box_style_screen(text.field("basemenu_inventory", 0), "iBaseGUI.SPInventoryScreen_OnBackButton", "iBaseGUI.SPInventoryScreen_OnBackToMainMenuButton")
+	v0 = gui.cast(list.head(v2))
+	list.remove_all(v2)
+	if global.exists("SPInventoryScreen_CargoOnly"):
+		v15 = global.pog_bool("SPInventoryScreen_CargoOnly")
+	v12 = gui.window_canvas_height(v0)
+	v12 = v12 - global.pog_int("GUI_inversebutton_height")
+	v1 = gui.create_window(0, 0, gui.window_canvas_width(v0), v12, v0)
+	v9 = gui.window_canvas_width(v1) - 2 * global.pog_int("GUI_scrollbar_width")
+	v9 = 2 * v9 / 4
+	v10 = v9 / 2
+	v11 = v10
+	v3 = await igui.create_titled_list_box(v1, text.field("basemenu_inventory", 0), v9, text.field("gui_item", 0), v10, text.field("inventory_quantity", 0), v11, text.field("recycling_value", 0))
+	list.add_head(v2, v3)
+	global.create_handle("InventoryListBox", 2, v3)
+	v1 = gui.create_window(0, v12, gui.window_canvas_width(v0), global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height"), v0)
+	v5 = await igui.create_and_initialise_inverse_button(v1, 0, 0, v16, string.upper_case(text.field("inventory_equipment", 0)), "iBaseGUI.SPInventoryScreen_OnEquipment")
+	list.add_tail(v2, v5)
+	await igui.make_inverse_button_iconic(v5)
+	v6 = await igui.create_and_initialise_inverse_button(v1, v16 + v20, 0, v16, text.field("manifest_ship_cargo", 0), "iBaseGUI.SPInventoryScreen_OnCargo")
+	list.add_tail(v2, v6)
+	await igui.make_inverse_button_iconic(v6)
+	global.create_handle("SPInventoryScreen_Equipment", 2, v5)
+	global.create_handle("SPInventoryScreen_Cargo", 2, v6)
+	global.set_bool("SPInventoryScreen_CargoOnly", not (v15))
+	if v15:
+		await s_p_inventory_screen__on_cargo()
+	else:
+		await s_p_inventory_screen__on_equipment()
+	if global.exists("SPInventoryScreen_SelectedEntry"):
+		v14 = global.pog_int("SPInventoryScreen_SelectedEntry")
+		gui.set_list_box_focused_entry(v3, v14)
+	gui.set_first_control_focus(v3)
+	await igui.set_cyclic_control_focus_path(v2)
+	gui.set_input_override_functions(v3, "", "", "", "", "iBaseGUI.SPInventoryScreen_OnInventoryListBoxSelect", "iBaseGUI.SPInventoryScreen_OnBackButton", "", "iBaseGUI.SPInventoryScreen_OnInventoryListBoxSelect", "")
+	gui.set_control_focus_cancel_function("iBaseGUI.SPInventoryScreen_OnBackButton")
+	return 0
 	return 0
 
 func s_p_inventory_screen__on_back_button() -> Variant:
@@ -3175,41 +2178,25 @@ func s_p_inventory_screen__on_inventory_list_box_select() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 28813
-	while true:
-		if _pc == 28813:
-			v1 = gui.cast(global.handle("InventoryListBox"))
-			v3 = null
-			v3 = ""
-			v4 = iinventory.number_of_cargo_types()
-			v5 = 0
-			v7 = null
-			v7 = global.list("InventoryScreen_CargoList")
-			v0 = gui.list_box_focused_entry(v1)
-			v8 = icargo.cast(list.get_nth(v7, v0))
-			if _pog_is_null(v8):
-				_pc = 29022
-				continue
-			else:
-				_pc = 29043
-				continue
-		elif _pc == 29022:
-			gui.queue_sound(3)
-			_pc = 29176
-			continue
-		elif _pc == 29043:
-			gui.queue_sound(2)
-			global.create_int("SPInventoryScreen_SelectedEntry", 2, v0)
-			v3 = icargo.encyclopedia_entry(v8)
-			iinventory.reset_windows()
-			global.create_string("encyclopaedia_default_entry", 2, v3)
-			gui.overlay_screen("icSPEncyclopaediaScreen")
-			_pc = 29176
-			continue
-		elif _pc == 29176:
-			return 0
-		else:
-			return 0
+	v1 = gui.cast(global.handle("InventoryListBox"))
+	v3 = null
+	v3 = ""
+	v4 = iinventory.number_of_cargo_types()
+	v5 = 0
+	v7 = null
+	v7 = global.list("InventoryScreen_CargoList")
+	v0 = gui.list_box_focused_entry(v1)
+	v8 = icargo.cast(list.get_nth(v7, v0))
+	if _pog_is_null(v8):
+		gui.queue_sound(3)
+	else:
+		gui.queue_sound(2)
+		global.create_int("SPInventoryScreen_SelectedEntry", 2, v0)
+		v3 = icargo.encyclopedia_entry(v8)
+		iinventory.reset_windows()
+		global.create_string("encyclopaedia_default_entry", 2, v3)
+		gui.overlay_screen("icSPEncyclopaediaScreen")
+	return 0
 	return 0
 
 func local_29193(v0) -> Variant:
@@ -3217,36 +2204,20 @@ func local_29193(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 29193
-	while true:
-		if _pc == 29193:
-			v1 = null
-			v2 = gui.cast(global.handle("SPInventoryScreen_Equipment"))
-			v3 = gui.cast(global.handle("SPInventoryScreen_Cargo"))
-			v4 = gui.cast(global.handle("InventoryListBox"))
-			iinventory.reset_windows()
-			if v0:
-				_pc = 29348
-				continue
-			else:
-				_pc = 29391
-				continue
-		elif _pc == 29348:
-			gui.select_window(v3)
-			gui.deselect_window(v2)
-			_pc = 29429
-			continue
-		elif _pc == 29391:
-			gui.deselect_window(v3)
-			gui.select_window(v2)
-			_pc = 29429
-			continue
-		elif _pc == 29429:
-			iinventory.fill_inventory_list_box(v4, not (v0), v1)
-			global.create_list("InventoryScreen_CargoList", 2, v1)
-			return 0
-		else:
-			return 0
+	v1 = null
+	v2 = gui.cast(global.handle("SPInventoryScreen_Equipment"))
+	v3 = gui.cast(global.handle("SPInventoryScreen_Cargo"))
+	v4 = gui.cast(global.handle("InventoryListBox"))
+	iinventory.reset_windows()
+	if v0:
+		gui.select_window(v3)
+		gui.deselect_window(v2)
+	else:
+		gui.deselect_window(v3)
+		gui.select_window(v2)
+	iinventory.fill_inventory_list_box(v4, not (v0), v1)
+	global.create_list("InventoryScreen_CargoList", 2, v1)
+	return 0
 	return 0
 
 func s_p_cargo_screen() -> Variant:
@@ -3267,79 +2238,48 @@ func s_p_cargo_screen() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 29497
-	while true:
-		if _pc == 29497:
-			v1 = null
-			v6 = null
-			v15 = global.pog_int("GUI_fancybutton_height")
-			v1 = await igui.create_grey_box_style_screen(text.field("loadoutmenu_add_cargo", 0), "iBaseGUI.SPCargoScreen_OnBackButton", "iBaseGUI.SPCargoScreen_OnBackToMainMenuButton")
-			v0 = gui.cast(list.head(v1))
-			list.remove_all(v1)
-			v10 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
-			v10 = 2 * v10 / 4
-			v11 = v10 / 2
-			v12 = v11
-			v9 = gui.window_canvas_height(v0)
-			v9 = v9 - v15 * 2
-			v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), v9, v0)
-			v2 = await igui.create_titled_list_box(v3, text.field("loadoutmenu_add_cargo", 0), v10, text.field("gui_item", 0), v11, text.field("inventory_quantity", 0), v12, text.field("recycling_value", 0))
-			list.add_tail(v1, v2)
-			v16 = v9
-			iinventory.fill_add_cargo_list_box(v2, v6)
-			v13 = icargo.find(iloadout.cargo())
-			if not _pog_is_null(v13):
-				_pc = 30071
-				continue
-			else:
-				_pc = 30212
-				continue
-		elif _pc == 30071:
-			v7 = 0
-			_pc = 30078
-			continue
-		elif _pc == 30078:
-			if v7 < list.item_count(v6):
-				_pc = 30107
-				continue
-			else:
-				_pc = 30212
-				continue
-		elif _pc == 30107:
+	v1 = null
+	v6 = null
+	v15 = global.pog_int("GUI_fancybutton_height")
+	v1 = await igui.create_grey_box_style_screen(text.field("loadoutmenu_add_cargo", 0), "iBaseGUI.SPCargoScreen_OnBackButton", "iBaseGUI.SPCargoScreen_OnBackToMainMenuButton")
+	v0 = gui.cast(list.head(v1))
+	list.remove_all(v1)
+	v10 = gui.window_canvas_width(v0) - 2 * global.pog_int("GUI_scrollbar_width")
+	v10 = 2 * v10 / 4
+	v11 = v10 / 2
+	v12 = v11
+	v9 = gui.window_canvas_height(v0)
+	v9 = v9 - v15 * 2
+	v3 = gui.create_window(0, 0, gui.window_canvas_width(v0), v9, v0)
+	v2 = await igui.create_titled_list_box(v3, text.field("loadoutmenu_add_cargo", 0), v10, text.field("gui_item", 0), v11, text.field("inventory_quantity", 0), v12, text.field("recycling_value", 0))
+	list.add_tail(v1, v2)
+	v16 = v9
+	iinventory.fill_add_cargo_list_box(v2, v6)
+	v13 = icargo.find(iloadout.cargo())
+	if not _pog_is_null(v13):
+		v7 = 0
+		while v7 < list.item_count(v6):
 			v14 = icargo.cast(list.get_nth(v6, v7))
 			if _pog_eq(v14, v13):
-				_pc = 30165
-				continue
-			else:
-				_pc = 30194
-				continue
-		elif _pc == 30165:
-			gui.select_list_box_entry(v2, v7)
-			_pc = 30212
-			continue
-		elif _pc == 30194:
+				gui.select_list_box_entry(v2, v7)
+				break
 			v7 = v7 + 1
-			_pc = 30078
-			continue
-		elif _pc == 30212:
-			global.create_handle("CargoListBox", 2, v2)
-			global.create_list("CargoScreen_CargoList", 2, v6)
-			gui.set_input_override_functions(v2, "", "", "", "", "iBaseGUI.SPCargoScreen_OnCargoListBoxSelect", "iBaseGUI.SPCargoScreen_OnBackButton", "", "iBaseGUI.SPCargoScreen_OnCargoListBoxSelect", "")
-			v5 = await igui.create_and_initialise_fancy_button(v0, v16, text.field("addcargo_removecargo", 0), "iBaseGUI.SPCargoScreen_OnRemoveCargo")
-			list.add_tail(v1, v5)
-			v16 = v16 + v15
-			v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width"), v16, gui.window_canvas_width(v0), v15, v0, global.string("type_font"), "")
-			gui.set_window_text_formatting(v4, 0, 0)
-			gui.set_window_state_colours(v4, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
-			global.create_handle("CargoScreen_TextWindow", 2, v4)
-			await local_31807(v4)
-			v16 = v16 + v15
-			gui.set_first_control_focus(gui.cast(list.head(v1)))
-			await igui.set_cyclic_control_focus_path(v1)
-			gui.set_control_focus_cancel_function("iBaseGUI.SPCargoScreen_OnBackButton")
-			return 0
-		else:
-			return 0
+	global.create_handle("CargoListBox", 2, v2)
+	global.create_list("CargoScreen_CargoList", 2, v6)
+	gui.set_input_override_functions(v2, "", "", "", "", "iBaseGUI.SPCargoScreen_OnCargoListBoxSelect", "iBaseGUI.SPCargoScreen_OnBackButton", "", "iBaseGUI.SPCargoScreen_OnCargoListBoxSelect", "")
+	v5 = await igui.create_and_initialise_fancy_button(v0, v16, text.field("addcargo_removecargo", 0), "iBaseGUI.SPCargoScreen_OnRemoveCargo")
+	list.add_tail(v1, v5)
+	v16 = v16 + v15
+	v4 = await igui.create_and_initialise_static_window(global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width"), v16, gui.window_canvas_width(v0), v15, v0, global.string("type_font"), "")
+	gui.set_window_text_formatting(v4, 0, 0)
+	gui.set_window_state_colours(v4, global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"), global.pog_float("GUI_neutral_red"), global.pog_float("GUI_neutral_green"), global.pog_float("GUI_neutral_blue"))
+	global.create_handle("CargoScreen_TextWindow", 2, v4)
+	await local_31807(v4)
+	v16 = v16 + v15
+	gui.set_first_control_focus(gui.cast(list.head(v1)))
+	await igui.set_cyclic_control_focus_path(v1)
+	gui.set_control_focus_cancel_function("iBaseGUI.SPCargoScreen_OnBackButton")
+	return 0
 	return 0
 
 func s_p_cargo_screen__on_back_button() -> Variant:
@@ -3369,105 +2309,48 @@ func s_p_cargo_screen__on_cargo_list_box_select() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 31070
-	while true:
-		if _pc == 31070:
-			v1 = gui.cast(global.handle("CargoListBox"))
-			v2 = null
-			v2 = global.list("CargoScreen_CargoList")
-			v6 = iinventory.number_of_cargo_types()
-			v7 = 0
-			v10 = 0
-			v0 = gui.list_box_focused_entry(v1)
-			if v0 == -1:
-				_pc = 31221
-				continue
-			else:
-				_pc = 31242
-				continue
-		elif _pc == 31221:
+	v1 = gui.cast(global.handle("CargoListBox"))
+	v2 = null
+	v2 = global.list("CargoScreen_CargoList")
+	v6 = iinventory.number_of_cargo_types()
+	v7 = 0
+	v10 = 0
+	v0 = gui.list_box_focused_entry(v1)
+	if v0 == -1:
+		gui.play_sound(3)
+	else:
+		v3 = icargo.cast(list.get_nth(v2, v0))
+		if _pog_is_null(v3):
 			gui.play_sound(3)
-			_pc = 31569
-			continue
-		elif _pc == 31242:
-			v3 = icargo.cast(list.get_nth(v2, v0))
-			if _pog_is_null(v3):
-				_pc = 31297
-				continue
-			else:
-				_pc = 31318
-				continue
-		elif _pc == 31297:
-			gui.play_sound(3)
-			_pc = 31569
-			continue
-		elif _pc == 31318:
+		else:
 			v4 = object.int_property(v3, "type")
 			if _pog_eq(iloadout.cargo(), v4):
-				_pc = 31373
-				continue
+				gui.play_sound(2)
 			else:
-				_pc = 31394
-				continue
-		elif _pc == 31373:
-			gui.play_sound(2)
-			_pc = 31569
-			continue
-		elif _pc == 31394:
-			if iloadout.cargo() != -1:
-				_pc = 31415
-				continue
-			else:
-				_pc = 31443
-				continue
-		elif _pc == 31415:
-			iinventory.add_without_marking_new(iloadout.cargo(), 1)
-			_pc = 31443
-			continue
-		elif _pc == 31443:
-			iloadout.set_cargo(v4)
-			iinventory.remove(v4, 1)
-			gui.select_list_box_entry(v1, v0)
-			await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
-			gui.queue_sound(2)
-			_pc = 31569
-			continue
-		elif _pc == 31569:
-			return 0
-		else:
-			return 0
+				if iloadout.cargo() != -1:
+					iinventory.add_without_marking_new(iloadout.cargo(), 1)
+				iloadout.set_cargo(v4)
+				iinventory.remove(v4, 1)
+				gui.select_list_box_entry(v1, v0)
+				await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
+				gui.queue_sound(2)
+	return 0
 	return 0
 
 func s_p_cargo_screen__on_remove_cargo() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 31579
-	while true:
-		if _pc == 31579:
-			v0 = gui.cast(global.handle("CargoListBox"))
-			v1 = iloadout.cargo()
-			if v1 == -1:
-				_pc = 31655
-				continue
-			else:
-				_pc = 31676
-				continue
-		elif _pc == 31655:
-			gui.queue_sound(3)
-			_pc = 31804
-			continue
-		elif _pc == 31676:
-			iinventory.add_without_marking_new(iloadout.cargo(), 1)
-			iloadout.set_cargo(-1)
-			gui.select_list_box_entry(v0, -1)
-			await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
-			gui.queue_sound(2)
-			_pc = 31804
-			continue
-		elif _pc == 31804:
-			return 0
-		else:
-			return 0
+	v0 = gui.cast(global.handle("CargoListBox"))
+	v1 = iloadout.cargo()
+	if v1 == -1:
+		gui.queue_sound(3)
+	else:
+		iinventory.add_without_marking_new(iloadout.cargo(), 1)
+		iloadout.set_cargo(-1)
+		gui.select_list_box_entry(v0, -1)
+		await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
+		gui.queue_sound(2)
+	return 0
 	return 0
 
 func local_31807(v0) -> Variant:
@@ -3475,35 +2358,19 @@ func local_31807(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 31807
-	while true:
-		if _pc == 31807:
-			v1 = iloadout.cargo()
-			v2 = null
-			v3 = null
-			v4 = null
-			if v1 == -1:
-				_pc = 31877
-				continue
-			else:
-				_pc = 31910
-				continue
-		elif _pc == 31877:
-			v4 = text.field("add_cargo_none", 0)
-			_pc = 31949
-			continue
-		elif _pc == 31910:
-			v4 = icargo.pog_name(icargo.find(v1))
-			_pc = 31949
-			continue
-		elif _pc == 31949:
-			v3 = text.field("add_cargo_launchwithcargopod", 0)
-			v2 = string.join(v3, v4)
-			v2 = string.upper_case(v2)
-			gui.set_window_title(v0, v2)
-			return 0
-		else:
-			return 0
+	v1 = iloadout.cargo()
+	v2 = null
+	v3 = null
+	v4 = null
+	if v1 == -1:
+		v4 = text.field("add_cargo_none", 0)
+	else:
+		v4 = icargo.pog_name(icargo.find(v1))
+	v3 = text.field("add_cargo_launchwithcargopod", 0)
+	v2 = string.join(v3, v4)
+	v2 = string.upper_case(v2)
+	gui.set_window_title(v0, v2)
+	return 0
 	return 0
 
 func s_p_recycling_screen() -> Variant:
@@ -3590,61 +2457,25 @@ func s_p_recycling_screen__on_recycle_one_button() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 33659
-	while true:
-		if _pc == 33659:
-			v0 = gui.cast(global.handle("RecyclingListBox"))
-			v1 = null
-			v1 = global.list("RecyclingScreen_CargoList")
-			v6 = gui.list_box_selected_index(v0)
-			if v6 != -1:
-				_pc = 33777
-				continue
-			else:
-				_pc = 34028
-				continue
-		elif _pc == 33777:
-			v3 = icargo.cast(list.get_nth(v1, v6))
-			v4 = object.int_property(v3, "type")
-			v5 = iinventory.number_of_cargo_type(v4)
-			if _pog_is_null(v5):
-				_pc = 33886
-				continue
-			else:
-				_pc = 33907
-				continue
-		elif _pc == 33886:
+	v0 = gui.cast(global.handle("RecyclingListBox"))
+	v1 = null
+	v1 = global.list("RecyclingScreen_CargoList")
+	v6 = gui.list_box_selected_index(v0)
+	if v6 != -1:
+		v3 = icargo.cast(list.get_nth(v1, v6))
+		v4 = object.int_property(v3, "type")
+		v5 = iinventory.number_of_cargo_type(v4)
+		if _pog_is_null(v5):
 			gui.queue_sound(3)
-			_pc = 33940
-			continue
-		elif _pc == 33907:
+		else:
 			iinventory.recycle(v4, 1)
 			v5 = v5 - 1
-			_pc = 33940
-			continue
-		elif _pc == 33940:
-			if _pog_is_null(v5):
-				_pc = 33952
-				continue
-			else:
-				_pc = 33976
-				continue
-		elif _pc == 33952:
+		if _pog_is_null(v5):
 			await local_34423(v0, v6)
-			_pc = 33976
-			continue
-		elif _pc == 33976:
-			await local_36173(gui.cast(global.handle("RecyclingScreen_RecycleUnitsWindow")))
-			_pc = 34044
-			continue
-		elif _pc == 34028:
-			gui.queue_sound(3)
-			_pc = 34044
-			continue
-		elif _pc == 34044:
-			return 0
-		else:
-			return 0
+		await local_36173(gui.cast(global.handle("RecyclingScreen_RecycleUnitsWindow")))
+	else:
+		gui.queue_sound(3)
+	return 0
 	return 0
 
 func s_p_recycling_screen__on_recycle_all_button() -> Variant:
@@ -3655,47 +2486,22 @@ func s_p_recycling_screen__on_recycle_all_button() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 34054
-	while true:
-		if _pc == 34054:
-			v0 = gui.cast(global.handle("RecyclingListBox"))
-			v1 = null
-			v1 = global.list("RecyclingScreen_CargoList")
-			v6 = gui.list_box_selected_index(v0)
-			if v6 != -1:
-				_pc = 34172
-				continue
-			else:
-				_pc = 34397
-				continue
-		elif _pc == 34172:
-			v2 = icargo.cast(list.get_nth(v1, v6))
-			v3 = object.int_property(v2, "type")
-			v4 = iinventory.number_of_cargo_type(v3)
-			if _pog_is_null(v4):
-				_pc = 34281
-				continue
-			else:
-				_pc = 34297
-				continue
-		elif _pc == 34281:
+	v0 = gui.cast(global.handle("RecyclingListBox"))
+	v1 = null
+	v1 = global.list("RecyclingScreen_CargoList")
+	v6 = gui.list_box_selected_index(v0)
+	if v6 != -1:
+		v2 = icargo.cast(list.get_nth(v1, v6))
+		v3 = object.int_property(v2, "type")
+		v4 = iinventory.number_of_cargo_type(v3)
+		if _pog_is_null(v4):
 			gui.queue_sound(3)
-			_pc = 34297
-			continue
-		elif _pc == 34297:
-			iinventory.recycle(v3, v4)
-			await local_34423(v0, v6)
-			await local_36173(gui.cast(global.handle("RecyclingScreen_RecycleUnitsWindow")))
-			_pc = 34413
-			continue
-		elif _pc == 34397:
-			gui.queue_sound(3)
-			_pc = 34413
-			continue
-		elif _pc == 34413:
-			return 0
-		else:
-			return 0
+		iinventory.recycle(v3, v4)
+		await local_34423(v0, v6)
+		await local_36173(gui.cast(global.handle("RecyclingScreen_RecycleUnitsWindow")))
+	else:
+		gui.queue_sound(3)
+	return 0
 	return 0
 
 func local_34423(v0, v1) -> Variant:
@@ -3706,74 +2512,32 @@ func local_34423(v0, v1) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 34423
-	while true:
-		if _pc == 34423:
-			v2 = null
-			v2 = global.list("RecyclingScreen_CargoList")
-			v3 = icargo.cast(list.get_nth(v2, v1))
-			v4 = object.int_property(v3, "type")
-			v6 = iinventory.category_containing(v4)
-			v7 = iinventory.number_of_recyclable_cargo_in_category(v6)
-			v8 = iinventory.number_of_recyclable_cargo_in_super_set(iinventory.super_set_containing(v6))
-			gui.remove_list_box_entry(v0, v1)
-			list.remove_nth(v2, v1)
-			if _pog_is_null(v7):
-				_pc = 34684
-				continue
-			else:
-				_pc = 34736
-				continue
-		elif _pc == 34684:
-			gui.remove_list_box_entry(v0, v1 - 1)
-			list.remove_nth(v2, v1 - 1)
-			_pc = 34736
-			continue
-		elif _pc == 34736:
-			if _pog_is_null(v8):
-				_pc = 34748
-				continue
-			else:
-				_pc = 34802
-				continue
-		elif _pc == 34748:
-			gui.remove_list_box_entry(v0, v1 - 2)
-			list.remove_nth(v2, v1 - 2)
-			_pc = 34802
-			continue
-		elif _pc == 34802:
-			global.set_list("RecyclingScreen_CargoList", v2)
-			v5 = list.item_count(v2)
-			if v1 < v5:
-				_pc = 34868
-				continue
-			else:
-				_pc = 34897
-				continue
-		elif _pc == 34868:
-			gui.select_list_box_entry(v0, v1)
-			_pc = 34961
-			continue
-		elif _pc == 34897:
-			if v1 > 0:
-				_pc = 34909
-				continue
-			else:
-				_pc = 34940
-				continue
-		elif _pc == 34909:
+	v2 = null
+	v2 = global.list("RecyclingScreen_CargoList")
+	v3 = icargo.cast(list.get_nth(v2, v1))
+	v4 = object.int_property(v3, "type")
+	v6 = iinventory.category_containing(v4)
+	v7 = iinventory.number_of_recyclable_cargo_in_category(v6)
+	v8 = iinventory.number_of_recyclable_cargo_in_super_set(iinventory.super_set_containing(v6))
+	gui.remove_list_box_entry(v0, v1)
+	list.remove_nth(v2, v1)
+	if _pog_is_null(v7):
+		gui.remove_list_box_entry(v0, v1 - 1)
+		list.remove_nth(v2, v1 - 1)
+	if _pog_is_null(v8):
+		gui.remove_list_box_entry(v0, v1 - 2)
+		list.remove_nth(v2, v1 - 2)
+	global.set_list("RecyclingScreen_CargoList", v2)
+	v5 = list.item_count(v2)
+	if v1 < v5:
+		gui.select_list_box_entry(v0, v1)
+	else:
+		if v1 > 0:
 			gui.select_list_box_entry(v0, v5 - 1)
-			_pc = 34961
-			continue
-		elif _pc == 34940:
-			gui.select_list_box_entry(v0, -1)
-			_pc = 34961
-			continue
-		elif _pc == 34961:
-			await s_p_recycling_screen__on_cancel_button()
-			return 0
 		else:
-			return 0
+			gui.select_list_box_entry(v0, -1)
+	await s_p_recycling_screen__on_cancel_button()
+	return 0
 	return 0
 
 func s_p_recycling_screen__on_recycling_list_box_select() -> Variant:
@@ -3900,31 +2664,15 @@ func s_p_manufacturing_screen() -> Variant:
 func s_p_manufacturing_screen__on_cancel_button() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 37475
-	while true:
-		if _pc == 37475:
-			v0 = gui.cast(global.handle("ManufacturingListBox"))
-			v1 = gui.list_box_selected_index(v0)
-			if v1 == -1:
-				_pc = 37556
-				continue
-			else:
-				_pc = 37577
-				continue
-		elif _pc == 37556:
-			gui.queue_sound(3)
-			_pc = 37620
-			continue
-		elif _pc == 37577:
-			gui.cancel_list_box_selection(v0)
-			gui.set_list_box_focused_entry(v0, v1)
-			_pc = 37620
-			continue
-		elif _pc == 37620:
-			gui.set_focus(v0)
-			return 0
-		else:
-			return 0
+	v0 = gui.cast(global.handle("ManufacturingListBox"))
+	v1 = gui.list_box_selected_index(v0)
+	if v1 == -1:
+		gui.queue_sound(3)
+	else:
+		gui.cancel_list_box_selection(v0)
+		gui.set_list_box_focused_entry(v0, v1)
+	gui.set_focus(v0)
+	return 0
 	return 0
 
 func s_p_manufacturing_screen__on_manufacturing_button() -> Variant:
@@ -3934,60 +2682,27 @@ func s_p_manufacturing_screen__on_manufacturing_button() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 37642
-	while true:
-		if _pc == 37642:
-			v0 = gui.cast(global.handle("ManufacturingListBox"))
-			v1 = null
-			v1 = global.list("ManufacturingScreen_CargoList")
-			v5 = gui.list_box_selected_index(v0)
-			if v5 != -1:
-				_pc = 37760
-				continue
-			else:
-				_pc = 38069
-				continue
-		elif _pc == 37760:
-			v2 = icargo.cast(list.get_nth(v1, v5))
-			v3 = object.int_property(v2, "type")
-			v4 = icargo.manufacture_value(v2)
-			if v4 > iinventory.manufacture_units():
-				_pc = 37881
-				continue
-			else:
-				_pc = 37916
-				continue
-		elif _pc == 37881:
+	v0 = gui.cast(global.handle("ManufacturingListBox"))
+	v1 = null
+	v1 = global.list("ManufacturingScreen_CargoList")
+	v5 = gui.list_box_selected_index(v0)
+	if v5 != -1:
+		v2 = icargo.cast(list.get_nth(v1, v5))
+		v3 = object.int_property(v2, "type")
+		v4 = icargo.manufacture_value(v2)
+		if v4 > iinventory.manufacture_units():
 			gui.queue_sound(3)
 			await s_p_manufacturing_screen__on_cancel_button()
-			_pc = 38064
-			continue
-		elif _pc == 37916:
+		else:
 			iinventory.manufacture(v3, 1)
 			await local_38945(v0)
 			gui.select_list_box_entry(v0, v5)
 			await local_36173(gui.cast(global.handle("ManufacturingScreen_RecycleUnitsWindow")))
 			if v4 > iinventory.manufacture_units():
-				_pc = 38050
-				continue
-			else:
-				_pc = 38064
-				continue
-		elif _pc == 38050:
-			await s_p_manufacturing_screen__on_cancel_button()
-			_pc = 38064
-			continue
-		elif _pc == 38064:
-			_pc = 38085
-			continue
-		elif _pc == 38069:
-			gui.queue_sound(3)
-			_pc = 38085
-			continue
-		elif _pc == 38085:
-			return 0
-		else:
-			return 0
+				await s_p_manufacturing_screen__on_cancel_button()
+	else:
+		gui.queue_sound(3)
+	return 0
 	return 0
 
 func s_p_manufacturing_screen__focus_to_manufacturing() -> Variant:
@@ -4071,75 +2786,40 @@ func local_38945(v0) -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	var _pc: int = 38945
-	while true:
-		if _pc == 38945:
-			v5 = null
-			v7 = null
-			v9 = iinventory.number_of_cargo_types()
-			v11 = global.pog_int("GUI_tab_text_offset")
-			v12 = gui.window_canvas_width(v0)
-			v13 = global.pog_int("GUI_listbox_entryheight")
-			v14 = 5
-			v15 = 10
-			v20 = 0
-			v21 = null
-			v21 = global.string("type_font")
-			v22 = 3 * v12 / 4
-			v23 = v12
-			v16 = v15 + v14 - 4
-			v17 = v22 - v16 + 5
-			v18 = v22 + v11 + 1
-			v19 = v23 - v18 + 5
-			gui.remove_list_box_entries(v0)
-			v6 = 0
-			_pc = 39259
-			continue
-		elif _pc == 39259:
-			if v6 < v9:
-				_pc = 39275
-				continue
-			else:
-				_pc = 39662
-				continue
-		elif _pc == 39275:
-			v10 = icargo.find(v6)
-			if icargo.can_manufacture(v10) and iinventory.got_blueprints(v6):
-				_pc = 39341
-				continue
-			else:
-				_pc = 39644
-				continue
-		elif _pc == 39341:
+	v5 = null
+	v7 = null
+	v9 = iinventory.number_of_cargo_types()
+	v11 = global.pog_int("GUI_tab_text_offset")
+	v12 = gui.window_canvas_width(v0)
+	v13 = global.pog_int("GUI_listbox_entryheight")
+	v14 = 5
+	v15 = 10
+	v20 = 0
+	v21 = null
+	v21 = global.string("type_font")
+	v22 = 3 * v12 / 4
+	v23 = v12
+	v16 = v15 + v14 - 4
+	v17 = v22 - v16 + 5
+	v18 = v22 + v11 + 1
+	v19 = v23 - v18 + 5
+	gui.remove_list_box_entries(v0)
+	v6 = 0
+	while v6 < v9:
+		v10 = icargo.find(v6)
+		if icargo.can_manufacture(v10) and iinventory.got_blueprints(v6):
 			list.add_tail(v5, v10)
 			v7 = icargo.pog_name(v10)
 			v8 = icargo.manufacture_value(v10)
 			v1 = gui.create_window(0, 0, v12, v13, 0)
 			if iinventory.manufacture_units() >= v8:
-				_pc = 39471
-				continue
-			else:
-				_pc = 39517
-				continue
-		elif _pc == 39471:
-			await igui.create_and_initialise_list_box_entry_component_window(v20, v15, v13, v1, v21, "*")
-			_pc = 39517
-			continue
-		elif _pc == 39517:
+				await igui.create_and_initialise_list_box_entry_component_window(v20, v15, v13, v1, v21, "*")
 			await igui.create_and_initialise_list_box_entry_component_window(v16, v17, v13, v1, v21, v7)
 			await igui.create_and_initialise_list_box_entry_component_window(v18, v19, v13, v1, v21, string.from_int(v8))
 			gui.add_list_box_entry(v0, v1)
-			_pc = 39644
-			continue
-		elif _pc == 39644:
-			v6 = v6 + 1
-			_pc = 39259
-			continue
-		elif _pc == 39662:
-			global.create_list("ManufacturingScreen_CargoList", 2, v5)
-			return 0
-		else:
-			return 0
+		v6 = v6 + 1
+	global.create_list("ManufacturingScreen_CargoList", 2, v5)
+	return 0
 	return 0
 
 func s_p_manufacturing_screen__on_manufacturing_list_box_select() -> Variant:
@@ -4320,52 +3000,44 @@ func local_42175() -> Variant:
 	var v22: Variant = 0
 	var v23: Variant = 0
 	var v24: Variant = 0
-	var _pc: int = 42175
-	while true:
-		if _pc == 42175:
-			v5 = 45
-			v6 = 3
-			v7 = 8
-			v8 = 42
-			v9 = global.pog_int("GUI_scrollbar_width")
-			v10 = 4
-			v11 = 2 * global.pog_int("GUI_fancyborder_width") + 13
-			v22 = null
-			v22 = "hangarmenu_manifest"
-			v23 = null
-			v24 = 9
-			v21 = await igui.create_shady_bar_right()
-			v1 = gui.window_canvas_height(v21) - v7 + global.pog_int("GUI_backbutton_rise")
-			v0 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
-			v2 = v1 - v0
-			v4 = v1 - v5
-			v3 = v4 - v6
-			v12 = global.pog_int("GUI_alignment_offset") + v10
-			v13 = v0
-			v14 = global.pog_int("GUI_shader_width") + v10 - v12 * 2
-			v15 = v3 - v13
-			v16 = gui.create_splitter_window(v12, v13, v14, v15, v21, v11, 0)
-			v18 = gui.splitter_window_top_window(v16)
-			v19 = gui.create_static_window(0, 0, gui.window_canvas_width(v18), gui.window_canvas_height(v18), v18)
-			v22 = string.upper_case(text.field(v22, 0))
-			gui.set_window_font(v19, global.string("GUI_subtitle_font"))
-			gui.set_window_title(v19, v22)
-			gui.set_window_text_formatting(v19, 0, 9)
-			gui.set_window_state_colours(v19, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
-			v18 = gui.splitter_window_bottom_window(v16)
-			v17 = await igui.create_and_initialise_text_window(v24, 0, gui.window_canvas_width(v18) - v24 + 2 * v9, gui.window_canvas_height(v18), v18, "")
-			gui.set_window_font(v17, global.string("GUI_detail_font"))
-			gui.set_text_window_string(v17, iloadout.loadout_description())
-			gui.create_vertical_scrollbar(gui.window_canvas_width(v18) - v9, 0, v9, gui.window_canvas_height(v18), v18, v17, global.pog_float("GUI_scrollbar_buttonratio"), "")
-			v13 = v4
-			await local_44051(v21, v13)
-			iloadout.set_manifest_window(v17)
-			_pc = 43389
-			continue
-		elif _pc == 43389:
-			return
-		else:
-			return 0
+	v5 = 45
+	v6 = 3
+	v7 = 8
+	v8 = 42
+	v9 = global.pog_int("GUI_scrollbar_width")
+	v10 = 4
+	v11 = 2 * global.pog_int("GUI_fancyborder_width") + 13
+	v22 = null
+	v22 = "hangarmenu_manifest"
+	v23 = null
+	v24 = 9
+	v21 = await igui.create_shady_bar_right()
+	v1 = gui.window_canvas_height(v21) - v7 + global.pog_int("GUI_backbutton_rise")
+	v0 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
+	v2 = v1 - v0
+	v4 = v1 - v5
+	v3 = v4 - v6
+	v12 = global.pog_int("GUI_alignment_offset") + v10
+	v13 = v0
+	v14 = global.pog_int("GUI_shader_width") + v10 - v12 * 2
+	v15 = v3 - v13
+	v16 = gui.create_splitter_window(v12, v13, v14, v15, v21, v11, 0)
+	v18 = gui.splitter_window_top_window(v16)
+	v19 = gui.create_static_window(0, 0, gui.window_canvas_width(v18), gui.window_canvas_height(v18), v18)
+	v22 = string.upper_case(text.field(v22, 0))
+	gui.set_window_font(v19, global.string("GUI_subtitle_font"))
+	gui.set_window_title(v19, v22)
+	gui.set_window_text_formatting(v19, 0, 9)
+	gui.set_window_state_colours(v19, global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"), global.pog_float("GUI_focused_red"), global.pog_float("GUI_focused_green"), global.pog_float("GUI_focused_blue"))
+	v18 = gui.splitter_window_bottom_window(v16)
+	v17 = await igui.create_and_initialise_text_window(v24, 0, gui.window_canvas_width(v18) - v24 + 2 * v9, gui.window_canvas_height(v18), v18, "")
+	gui.set_window_font(v17, global.string("GUI_detail_font"))
+	gui.set_text_window_string(v17, iloadout.loadout_description())
+	gui.create_vertical_scrollbar(gui.window_canvas_width(v18) - v9, 0, v9, gui.window_canvas_height(v18), v18, v17, global.pog_float("GUI_scrollbar_buttonratio"), "")
+	v13 = v4
+	await local_44051(v21, v13)
+	iloadout.set_manifest_window(v17)
+	return v17
 	return 0
 
 func s_p_customise_screen() -> Variant:
@@ -4507,72 +3179,36 @@ func local_45312() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 45312
-	while true:
-		if _pc == 45312:
-			v3 = null
-			v7 = null
-			v7 = global.list("customiseloadout_indicators")
-			v0 = gui.cast(list.head(v7))
-			list.remove_head(v7)
-			v1 = gui.cast(list.head(v7))
-			list.remove_head(v7)
-			v4 = global.pog_float("GUI_focused_red")
-			v5 = global.pog_float("GUI_focused_green")
-			v6 = global.pog_float("GUI_focused_blue")
-			v2 = iloadout.unused_internal_cargo_slots()
-			v3 = text.field("customise_internalcargospace", 0)
-			gui.set_window_title(v0, v3)
-			v3 = string.from_int(v2)
-			gui.set_window_title(v1, v3)
-			if iloadout.cargo_space_warning():
-				_pc = 45695
-				continue
-			else:
-				_pc = 45828
-				continue
-		elif _pc == 45695:
-			gui.set_window_state_colours(v0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-			gui.set_window_state_colours(v1, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-			_pc = 45956
-			continue
-		elif _pc == 45828:
-			gui.set_window_state_colours(v0, v4, v5, v6, v4, v5, v6, v4, v5, v6)
-			gui.set_window_state_colours(v1, v4, v5, v6, v4, v5, v6, v4, v5, v6)
-			_pc = 45956
-			continue
-		elif _pc == 45956:
-			return 0
-		else:
-			return 0
+	v3 = null
+	v7 = null
+	v7 = global.list("customiseloadout_indicators")
+	v0 = gui.cast(list.head(v7))
+	list.remove_head(v7)
+	v1 = gui.cast(list.head(v7))
+	list.remove_head(v7)
+	v4 = global.pog_float("GUI_focused_red")
+	v5 = global.pog_float("GUI_focused_green")
+	v6 = global.pog_float("GUI_focused_blue")
+	v2 = iloadout.unused_internal_cargo_slots()
+	v3 = text.field("customise_internalcargospace", 0)
+	gui.set_window_title(v0, v3)
+	v3 = string.from_int(v2)
+	gui.set_window_title(v1, v3)
+	if iloadout.cargo_space_warning():
+		gui.set_window_state_colours(v0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+		gui.set_window_state_colours(v1, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+	else:
+		gui.set_window_state_colours(v0, v4, v5, v6, v4, v5, v6, v4, v5, v6)
+		gui.set_window_state_colours(v1, v4, v5, v6, v4, v5, v6, v4, v5, v6)
+	return 0
 	return 0
 
 func local_45973() -> Variant:
-	var _pc: int = 45973
 	while true:
-		if _pc == 45973:
-			_pc = 45978
-			continue
-		elif _pc == 45978:
-			await _pog_frame()
-			if _pog_every(45979, 0.10000000149011612):
-				_pc = 45992
-				continue
-			else:
-				_pc = 46022
-				continue
-		elif _pc == 45992:
-			await local_45312()
-			iloadout.update_customised_loadout_text_box()
-			_pc = 46022
-			continue
-		elif _pc == 46022:
-			_pc = 45978
-			continue
-		elif _pc == 46027:
-			return
-		else:
-			return 0
+		await _pog_wait(0.1)
+		await local_45312()
+		iloadout.update_customised_loadout_text_box()
+	return
 	return 0
 
 func s_p_customise_screen__on_select() -> Variant:
@@ -4582,15 +3218,7 @@ func s_p_customise_screen__on_select() -> Variant:
 	return 0
 
 func s_p_customise_screen__create_options_list_box() -> Variant:
-	var _pc: int = 46063
-	while true:
-		if _pc == 46063:
-			_pc = 46069
-			continue
-		elif _pc == 46069:
-			return
-		else:
-			return 0
+	return 0
 	return 0
 
 func s_p_statistics_screen() -> Variant:
@@ -4627,17 +3255,9 @@ func on_conversation_start() -> Variant:
 
 func local_46444(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 46444
-	while true:
-		if _pc == 46444:
-			v2 = await igui.create_inverse_radio_button(0, 0, 0)
-			gui.set_window_title(v2, v0)
-			list.add_tail(v1, v2)
-			_pc = 46529
-			continue
-		elif _pc == 46529:
-			return
-		else:
-			return 0
+	v2 = await igui.create_inverse_radio_button(0, 0, 0)
+	gui.set_window_title(v2, v0)
+	list.add_tail(v1, v2)
+	return v2
 	return 0
 

@@ -59,485 +59,163 @@ func setup_keys() -> Variant:
 func group() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 87
-	while true:
-		if _pc == 87:
-			v1 = iship.find_player_ship()
-			if _pog_is_null(v1):
-				_pc = 124
-				continue
-			else:
-				_pc = 156
-				continue
-		elif _pc == 124:
-			_pc = 150
-			continue
-		elif _pc == 129:
+	v1 = iship.find_player_ship()
+	if _pog_is_null(v1):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.Group: Can't find player ship. Wingman support not available.\n")
-			_pc = 150
-			continue
-		elif _pc == 150:
-			_pc = 664
-			continue
-		elif _pc == 156:
-			if not (object.property_exists(v1, "wingmen_group")):
-				_pc = 188
-				continue
-			else:
-				_pc = 293
-				continue
-		elif _pc == 188:
-			_pc = 214
-			continue
-		elif _pc == 193:
+		return 0
+	if not (object.property_exists(v1, "wingmen_group")):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.Group: Initialising wingmen & t-fighters group.\n")
-			_pc = 214
-			continue
-		elif _pc == 214:
-			v0 = p_group.create()
-			p_group.add_sim(v0, v1)
-			object.add_handle_property(v1, "wingmen_group", v0)
-			_pc = 653
-			continue
-		elif _pc == 293:
-			v0 = p_group.cast(object.handle_property(v1, "wingmen_group"))
-			if _pog_is_null(v0):
-				_pc = 350
-				continue
-			else:
-				_pc = 450
-				continue
-		elif _pc == 350:
-			_pc = 376
-			continue
-		elif _pc == 355:
-			debug.print_string("iWingmen.Group: ERROR: Wingman group handle is invalid ( probably destroyed by a script). Re-initialising.")
-			_pc = 376
-			continue
-		elif _pc == 376:
+		v0 = p_group.create()
+		p_group.add_sim(v0, v1)
+		object.add_handle_property(v1, "wingmen_group", v0)
+	else:
+		v0 = p_group.cast(object.handle_property(v1, "wingmen_group"))
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.Group: ERROR: Wingman group handle is invalid ( probably destroyed by a script). Re-initialising.")
 			v0 = p_group.create()
 			p_group.add_sim(v0, v1)
 			object.set_handle_property(v1, "wingmen_group", v0)
-			_pc = 450
-			continue
-		elif _pc == 450:
-			if not _pog_eq(sim.group(v1), v0):
-				_pc = 479
-				continue
-			else:
-				_pc = 570
-				continue
-		elif _pc == 479:
-			_pc = 505
-			continue
-		elif _pc == 484:
-			debug.print_string("iWingmen.Group: ERROR: Player is not the leader of the wingman group! Re-Adding. \n")
-			_pc = 505
-			continue
-		elif _pc == 505:
+		if not _pog_eq(sim.group(v1), v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.Group: ERROR: Player is not the leader of the wingman group! Re-Adding. \n")
 			p_group.add_sim(v0, v1)
 			p_group.promote_sim(v0, p_group.sim_count(v0) - 1)
-			_pc = 570
-			continue
-		elif _pc == 570:
-			_pc = 653
-			continue
-		elif _pc == 575:
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.Group: Returning wingmen group containing the player and ")
 			debug.print_int(p_group.sim_count(v0) - 1)
 			debug.print_string(" wingmen.\n")
-			_pc = 653
-			continue
-		elif _pc == 653:
-			_pc = 664
-			continue
-		elif _pc == 664:
-			return
-		else:
-			return 0
+	return v0
 	return 0
 
 func count() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 666
-	while true:
-		if _pc == 666:
-			v0 = list.item_count(await get_detached_t_fighters())
-			v1 = p_group.sim_count(await group())
-			if v0 > 0:
-				_pc = 750
-				continue
-			else:
-				_pc = 843
-				continue
-		elif _pc == 750:
-			_pc = 776
-			continue
-		elif _pc == 755:
+	v0 = list.item_count(await get_detached_t_fighters())
+	v1 = p_group.sim_count(await group())
+	if v0 > 0:
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.Count: Removing ")
-			_pc = 776
-			continue
-		elif _pc == 776:
-			_pc = 800
-			continue
-		elif _pc == 781:
+		if PogRuntime.TRACE:
 			debug.print_int(v0)
-			_pc = 800
-			continue
-		elif _pc == 800:
-			_pc = 826
-			continue
-		elif _pc == 805:
+		if PogRuntime.TRACE:
 			debug.print_string(" Detached TFighters from wingmen count. \n")
-			_pc = 826
-			continue
-		elif _pc == 826:
-			v1 = v1 - v0
-			_pc = 843
-			continue
-		elif _pc == 843:
-			v1 = v1 + -1
-			_pc = 883
-			continue
-		elif _pc == 862:
-			debug.print_string("iWingmen.Count: Count of true wingmen = ")
-			_pc = 883
-			continue
-		elif _pc == 883:
-			_pc = 907
-			continue
-		elif _pc == 888:
-			debug.print_int(v1)
-			_pc = 907
-			continue
-		elif _pc == 907:
-			_pc = 933
-			continue
-		elif _pc == 912:
-			debug.print_string(" \n")
-			_pc = 933
-			continue
-		elif _pc == 933:
-			_pc = 944
-			continue
-		elif _pc == 944:
-			return
-		else:
-			return 0
+		v1 = v1 - v0
+	v1 = v1 + -1
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.Count: Count of true wingmen = ")
+	if PogRuntime.TRACE:
+		debug.print_int(v1)
+	if PogRuntime.TRACE:
+		debug.print_string(" \n")
+	return v1
 	return 0
 
 func add_wingman(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 946
-	while true:
-		if _pc == 946:
-			v1 = await group()
-			if sim.is_dead(v0):
-				_pc = 993
-				continue
-			else:
-				_pc = 1024
-				continue
-		elif _pc == 993:
-			_pc = 1019
-			continue
-		elif _pc == 998:
+	v1 = await group()
+	if sim.is_dead(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.AddWingman: ERROR - Wingman is invalid. Cannot add to group. \n")
-			_pc = 1019
-			continue
-		elif _pc == 1019:
-			_pc = 1601
-			continue
-		elif _pc == 1024:
-			if _pog_is_null(v1):
-				_pc = 1037
-				continue
-			else:
-				_pc = 1068
-				continue
-		elif _pc == 1037:
-			_pc = 1063
-			continue
-		elif _pc == 1042:
-			debug.print_string("iWingmen.AddWingman: ERROR - Wingmen group handle is invalid.\n")
-			_pc = 1063
-			continue
-		elif _pc == 1063:
-			_pc = 1601
-			continue
-		elif _pc == 1068:
-			if _pog_eq(sim.group(v0), v1):
-				_pc = 1097
-				continue
-			else:
-				_pc = 1128
-				continue
-		elif _pc == 1097:
-			_pc = 1123
-			continue
-		elif _pc == 1102:
-			debug.print_string("iWingmen.AddWingman: Wingman is already a member of the wingmen group\n")
-			_pc = 1123
-			continue
-		elif _pc == 1123:
-			_pc = 1601
-			continue
-		elif _pc == 1128:
-			p_group.add_sim(v1, v0)
-			sim.set_cullable(v0, 0)
-			object.add_handle_property(v0, "original_faction", isim.faction(v0))
-			if _pog_eq(object.string_property(v0, "death_script"), ""):
-				_pc = 1254
-				continue
-			else:
-				_pc = 1286
-				continue
-		elif _pc == 1254:
-			object.set_string_property(v0, "death_script", "iWingmen.WingmanDeathScript")
-			_pc = 1286
-			continue
-		elif _pc == 1286:
-			isim.set_faction(v0, isim.faction(iship.find_player_ship()))
-			_pc = 1490
-			continue
-		elif _pc == 1336:
-			debug.print_string("iWingmen.AddWingman: Wingman ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" added. Total wingmen = ")
-			debug.print_string(string.from_int(p_group.sim_count(v1) - 1))
-			debug.print_string("\n")
-			_pc = 1490
-			continue
-		elif _pc == 1490:
-			if not (object.property_exists(v0, "tfighter")):
-				_pc = 1521
-				continue
-			else:
-				_pc = 1601
-				continue
-		elif _pc == 1521:
-			ihud.pog_print(string.join("wingmen_new_wingman", string.join("+ - +", object.string_property(v0, "name"))))
-			_pc = 1601
-			continue
-		elif _pc == 1601:
-			return 0
+	else:
+		if _pog_is_null(v1):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.AddWingman: ERROR - Wingmen group handle is invalid.\n")
 		else:
-			return 0
+			if _pog_eq(sim.group(v0), v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.AddWingman: Wingman is already a member of the wingmen group\n")
+			else:
+				p_group.add_sim(v1, v0)
+				sim.set_cullable(v0, 0)
+				object.add_handle_property(v0, "original_faction", isim.faction(v0))
+				if _pog_eq(object.string_property(v0, "death_script"), ""):
+					object.set_string_property(v0, "death_script", "iWingmen.WingmanDeathScript")
+				isim.set_faction(v0, isim.faction(iship.find_player_ship()))
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.AddWingman: Wingman ")
+					debug.print_string(object.string_property(v0, "name"))
+					debug.print_string(" added. Total wingmen = ")
+					debug.print_string(string.from_int(p_group.sim_count(v1) - 1))
+					debug.print_string("\n")
+				if object.property_exists(v0, "tfighter"):
+					return 0
+				ihud.pog_print(string.join("wingmen_new_wingman", string.join("+ - +", object.string_property(v0, "name"))))
+	return 0
 	return 0
 
 func remove_wingman(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1604
-	while true:
-		if _pc == 1604:
-			v1 = await group()
-			v2 = iship.find_player_ship()
-			if _pog_eq(v0, v2):
-				_pc = 1663
-				continue
-			else:
-				_pc = 1694
-				continue
-		elif _pc == 1663:
-			_pc = 1689
-			continue
-		elif _pc == 1668:
+	v1 = await group()
+	v2 = iship.find_player_ship()
+	if _pog_eq(v0, v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.RemoveWingman: ERROR: Cannot remove player from wingman group\n")
-			_pc = 1689
-			continue
-		elif _pc == 1689:
-			_pc = 1774
-			continue
-		elif _pc == 1694:
-			if object.property_exists(v0, "tfighter"):
-				_pc = 1724
-				continue
-			else:
-				_pc = 1755
-				continue
-		elif _pc == 1724:
-			_pc = 1750
-			continue
-		elif _pc == 1729:
-			debug.print_string("iWingmen.RemoveWingman: ERROR: Cannot remove Turret fighter from wingman group\n")
-			_pc = 1750
-			continue
-		elif _pc == 1750:
-			_pc = 1774
-			continue
-		elif _pc == 1755:
-			await local_1777(v0)
-			_pc = 1774
-			continue
-		elif _pc == 1774:
-			return 0
+	else:
+		if object.property_exists(v0, "tfighter"):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.RemoveWingman: ERROR: Cannot remove Turret fighter from wingman group\n")
 		else:
-			return 0
+			await local_1777(v0)
+	return 0
 	return 0
 
 func local_1777(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 1777
-	while true:
-		if _pc == 1777:
-			v1 = await group()
-			if sim.is_dead(v0):
-				_pc = 1824
-				continue
-			else:
-				_pc = 1855
-				continue
-		elif _pc == 1824:
-			_pc = 1850
-			continue
-		elif _pc == 1829:
+	v1 = await group()
+	if sim.is_dead(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.remove_wingman: ERROR - Wingman is invalid. No need to remove. \n")
-			_pc = 1850
-			continue
-		elif _pc == 1850:
-			_pc = 2895
-			continue
-		elif _pc == 1855:
-			if _pog_is_null(v1):
-				_pc = 1868
-				continue
-			else:
-				_pc = 1899
-				continue
-		elif _pc == 1868:
-			_pc = 1894
-			continue
-		elif _pc == 1873:
-			debug.print_string("iWingmen.remove_wingman: ERROR - Wingmen group handle is invalid.\n")
-			_pc = 1894
-			continue
-		elif _pc == 1894:
-			_pc = 2895
-			continue
-		elif _pc == 1899:
-			if not _pog_eq(sim.group(v0), v1):
-				_pc = 1928
-				continue
-			else:
-				_pc = 2020
-				continue
-		elif _pc == 1928:
-			_pc = 2015
-			continue
-		elif _pc == 1933:
-			debug.print_string("iWingmen.remove_wingman: ERROR: Wingman ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" is not part of the wingman group.\n")
-			_pc = 2015
-			continue
-		elif _pc == 2015:
-			_pc = 2895
-			continue
-		elif _pc == 2020:
-			p_group.remove_sim(v1, v0)
-			sim.set_cullable(v0, 1)
-			if not (object.property_exists(v0, "original_faction")):
-				_pc = 2095
-				continue
-			else:
-				_pc = 2187
-				continue
-		elif _pc == 2095:
-			_pc = 2182
-			continue
-		elif _pc == 2100:
-			debug.print_string("iWingmen.remove_wingman: WARNING - original_faction property doesn't exist for wingman: ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(". Cannot restore original faction.\n")
-			_pc = 2182
-			continue
-		elif _pc == 2182:
-			_pc = 2517
-			continue
-		elif _pc == 2187:
-			if not (object.property_exists(v0, "original_faction")):
-				_pc = 2218
-				continue
-			else:
-				_pc = 2310
-				continue
-		elif _pc == 2218:
-			_pc = 2305
-			continue
-		elif _pc == 2223:
-			debug.print_string("iWingmen.remove_wingman: WARNING - original_faction property handle doesn't exist for wingman: ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(". Cannot restore original faction.\n")
-			_pc = 2305
-			continue
-		elif _pc == 2305:
-			_pc = 2517
-			continue
-		elif _pc == 2310:
-			if _pog_is_null(object.handle_property(v0, "original_faction")):
-				_pc = 2342
-				continue
-			else:
-				_pc = 2434
-				continue
-		elif _pc == 2342:
-			_pc = 2429
-			continue
-		elif _pc == 2347:
-			debug.print_string("iWingmen.remove_wingman: WARNING - original_faction property handle is invalid for wingman: ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(". Cannot restore original faction.\n")
-			_pc = 2429
-			continue
-		elif _pc == 2429:
-			_pc = 2517
-			continue
-		elif _pc == 2434:
-			isim.set_faction(v0, ifaction.cast(object.handle_property(v0, "original_faction")))
-			object.remove_property(v0, "original_faction")
-			_pc = 2517
-			continue
-		elif _pc == 2517:
-			if _pog_eq(object.string_property(v0, "death_script"), "iWingmen.WingmanDeathScript"):
-				_pc = 2555
-				continue
-			else:
-				_pc = 2587
-				continue
-		elif _pc == 2555:
-			object.set_string_property(v0, "death_script", "")
-			_pc = 2587
-			continue
-		elif _pc == 2587:
-			iai.purge_orders(v0)
-			iship.lock_down_weapons(v0)
-			_pc = 2784
-			continue
-		elif _pc == 2630:
-			debug.print_string("iWingmen.remove_wingman: Wingman ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string(" removed. Total wingmen = ")
-			debug.print_string(string.from_int(p_group.sim_count(v1) - 1))
-			debug.print_string("\n")
-			_pc = 2784
-			continue
-		elif _pc == 2784:
-			if not (object.property_exists(v0, "tfighter")):
-				_pc = 2815
-				continue
-			else:
-				_pc = 2895
-				continue
-		elif _pc == 2815:
-			ihud.pog_print(string.join("wingmen_wingman_removed", string.join("+ - +", object.string_property(v0, "name"))))
-			_pc = 2895
-			continue
-		elif _pc == 2895:
-			return 0
+	else:
+		if _pog_is_null(v1):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.remove_wingman: ERROR - Wingmen group handle is invalid.\n")
 		else:
-			return 0
+			if not _pog_eq(sim.group(v0), v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.remove_wingman: ERROR: Wingman ")
+					debug.print_string(object.string_property(v0, "name"))
+					debug.print_string(" is not part of the wingman group.\n")
+			else:
+				p_group.remove_sim(v1, v0)
+				sim.set_cullable(v0, 1)
+				if not (object.property_exists(v0, "original_faction")):
+					if PogRuntime.TRACE:
+						debug.print_string("iWingmen.remove_wingman: WARNING - original_faction property doesn't exist for wingman: ")
+						debug.print_string(object.string_property(v0, "name"))
+						debug.print_string(". Cannot restore original faction.\n")
+				else:
+					if not (object.property_exists(v0, "original_faction")):
+						if PogRuntime.TRACE:
+							debug.print_string("iWingmen.remove_wingman: WARNING - original_faction property handle doesn't exist for wingman: ")
+							debug.print_string(object.string_property(v0, "name"))
+							debug.print_string(". Cannot restore original faction.\n")
+					else:
+						if _pog_is_null(object.handle_property(v0, "original_faction")):
+							if PogRuntime.TRACE:
+								debug.print_string("iWingmen.remove_wingman: WARNING - original_faction property handle is invalid for wingman: ")
+								debug.print_string(object.string_property(v0, "name"))
+								debug.print_string(". Cannot restore original faction.\n")
+						else:
+							isim.set_faction(v0, ifaction.cast(object.handle_property(v0, "original_faction")))
+							object.remove_property(v0, "original_faction")
+				if _pog_eq(object.string_property(v0, "death_script"), "iWingmen.WingmanDeathScript"):
+					object.set_string_property(v0, "death_script", "")
+				iai.purge_orders(v0)
+				iship.lock_down_weapons(v0)
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.remove_wingman: Wingman ")
+					debug.print_string(object.string_property(v0, "name"))
+					debug.print_string(" removed. Total wingmen = ")
+					debug.print_string(string.from_int(p_group.sim_count(v1) - 1))
+					debug.print_string("\n")
+				if object.property_exists(v0, "tfighter"):
+					return 0
+				ihud.pog_print(string.join("wingmen_wingman_removed", string.join("+ - +", object.string_property(v0, "name"))))
+	return 0
 	return 0
 
 func from_group(v0, v1) -> Variant:
@@ -545,110 +223,33 @@ func from_group(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 2898
-	while true:
-		if _pc == 2898:
-			v2 = await group()
-			if _pog_is_null(v2):
-				_pc = 2935
-				continue
-			else:
-				_pc = 2966
-				continue
-		elif _pc == 2935:
-			_pc = 2961
-			continue
-		elif _pc == 2940:
+	v2 = await group()
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.FromGroup: ERROR - Wingmen group handle is invalid.\n")
-			_pc = 2961
-			continue
-		elif _pc == 2961:
-			_pc = 3253
-			continue
-		elif _pc == 2966:
-			if _pog_is_null(v0):
-				_pc = 2979
-				continue
-			else:
-				_pc = 3010
-				continue
-		elif _pc == 2979:
-			_pc = 3005
-			continue
-		elif _pc == 2984:
-			debug.print_string("iWingmen.FromGroup: ERROR - New wingmen group handle is invalid.\n")
-			_pc = 3005
-			continue
-		elif _pc == 3005:
-			_pc = 3253
-			continue
-		elif _pc == 3010:
-			if _pog_eq(v0, v2):
-				_pc = 3026
-				continue
-			else:
-				_pc = 3057
-				continue
-		elif _pc == 3026:
-			_pc = 3052
-			continue
-		elif _pc == 3031:
-			debug.print_string("iWingmen.FromGroup: ERROR - Attempt to add wingmen group to itself (ignoring).\n")
-			_pc = 3052
-			continue
-		elif _pc == 3052:
-			_pc = 3253
-			continue
-		elif _pc == 3057:
-			v5 = p_group.sim_count(v0)
-			if v5 < 1:
-				_pc = 3093
-				continue
-			else:
-				_pc = 3124
-				continue
-		elif _pc == 3093:
-			_pc = 3119
-			continue
-		elif _pc == 3098:
-			debug.print_string("iWingmen.FromGroup: ERROR - No sims in new wingmen group.\n")
-			_pc = 3119
-			continue
-		elif _pc == 3119:
-			_pc = 3253
-			continue
-		elif _pc == 3124:
-			v4 = 0
-			_pc = 3131
-			continue
-		elif _pc == 3131:
-			if v4 < v5:
-				_pc = 3147
-				continue
-			else:
-				_pc = 3221
-				continue
-		elif _pc == 3147:
-			v3 = iship.cast(p_group.leader(v0))
-			await add_wingman(v3)
-			v4 = v4 + 1
-			_pc = 3131
-			continue
-		elif _pc == 3221:
-			if v1 == 1:
-				_pc = 3233
-				continue
-			else:
-				_pc = 3253
-				continue
-		elif _pc == 3233:
-			p_group.destroy(v0, 1)
-			_pc = 3253
-			continue
-		elif _pc == 3253:
-			return 0
+	else:
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.FromGroup: ERROR - New wingmen group handle is invalid.\n")
 		else:
-			return 0
+			if _pog_eq(v0, v2):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.FromGroup: ERROR - Attempt to add wingmen group to itself (ignoring).\n")
+			else:
+				v5 = p_group.sim_count(v0)
+				if v5 < 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iWingmen.FromGroup: ERROR - No sims in new wingmen group.\n")
+				else:
+					v4 = 0
+					while v4 < v5:
+						v3 = iship.cast(p_group.leader(v0))
+						await add_wingman(v3)
+						v4 = v4 + 1
+					if v1 != 1:
+						return 0
+					p_group.destroy(v0, 1)
+	return 0
 	return 0
 
 func purge() -> Variant:
@@ -656,89 +257,28 @@ func purge() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 3256
-	while true:
-		if _pc == 3256:
-			v0 = await group()
-			if _pog_is_null(v0):
-				_pc = 3293
-				continue
-			else:
-				_pc = 3324
-				continue
-		elif _pc == 3293:
-			_pc = 3319
-			continue
-		elif _pc == 3298:
+	v0 = await group()
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.FromGroup: ERROR - Wingmen group handle is invalid.\n")
-			_pc = 3319
-			continue
-		elif _pc == 3319:
-			_pc = 3584
-			continue
-		elif _pc == 3324:
-			v3 = p_group.sim_count(v0) - 1
-			if _pog_is_null(v3):
-				_pc = 3362
-				continue
-			else:
-				_pc = 3393
-				continue
-		elif _pc == 3362:
-			_pc = 3388
-			continue
-		elif _pc == 3367:
-			debug.print_string("iWingmen.FromGroup: No wingmen to purge.\n")
-			_pc = 3388
-			continue
-		elif _pc == 3388:
-			_pc = 3584
-			continue
-		elif _pc == 3393:
-			_pc = 3419
-			continue
-		elif _pc == 3398:
-			debug.print_string("iWingmen.FromGroup: Purging wingmen...\n")
-			_pc = 3419
-			continue
-		elif _pc == 3419:
-			v2 = v3
-			_pc = 3430
-			continue
-		elif _pc == 3430:
-			if v2 > 0:
-				_pc = 3442
-				continue
-			else:
-				_pc = 3584
-				continue
-		elif _pc == 3442:
-			v1 = iship.cast(p_group.nth_sim(v0, v2))
-			if not (object.property_exists(v1, "tfighter")):
-				_pc = 3515
-				continue
-			else:
-				_pc = 3539
-				continue
-		elif _pc == 3515:
-			await remove_wingman(v1)
-			_pc = 3565
-			continue
-		elif _pc == 3539:
-			_pc = 3565
-			continue
-		elif _pc == 3544:
-			debug.print_string("iWingmen.FromGroup: Not purging TFighter.\n")
-			_pc = 3565
-			continue
-		elif _pc == 3565:
-			v2 = v2 + -1
-			_pc = 3430
-			continue
-		elif _pc == 3584:
-			return 0
+	else:
+		v3 = p_group.sim_count(v0) - 1
+		if _pog_is_null(v3):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.FromGroup: No wingmen to purge.\n")
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.FromGroup: Purging wingmen...\n")
+			v2 = v3
+			while v2 > 0:
+				v1 = iship.cast(p_group.nth_sim(v0, v2))
+				if not (object.property_exists(v1, "tfighter")):
+					await remove_wingman(v1)
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iWingmen.FromGroup: Not purging TFighter.\n")
+				v2 = v2 + -1
+	return 0
 	return 0
 
 func purge_to_group() -> Variant:
@@ -747,94 +287,30 @@ func purge_to_group() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 3587
-	while true:
-		if _pc == 3587:
-			v0 = await group()
-			v1 = p_group.create()
-			if _pog_is_null(v0):
-				_pc = 3643
-				continue
-			else:
-				_pc = 3675
-				continue
-		elif _pc == 3643:
-			_pc = 3669
-			continue
-		elif _pc == 3648:
+	v0 = await group()
+	v1 = p_group.create()
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.FromGroup: ERROR - Wingmen group handle is invalid.\n")
-			_pc = 3669
-			continue
-		elif _pc == 3669:
-			_pc = 3970
-			continue
-		elif _pc == 3675:
-			v4 = p_group.sim_count(v0) - 1
-			if _pog_is_null(v4):
-				_pc = 3713
-				continue
-			else:
-				_pc = 3745
-				continue
-		elif _pc == 3713:
-			_pc = 3739
-			continue
-		elif _pc == 3718:
+		return 0
+	v4 = p_group.sim_count(v0) - 1
+	if _pog_is_null(v4):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.FromGroup: No wingmen to purge.\n")
-			_pc = 3739
-			continue
-		elif _pc == 3739:
-			_pc = 3970
-			continue
-		elif _pc == 3745:
-			_pc = 3771
-			continue
-		elif _pc == 3750:
-			debug.print_string("iWingmen.FromGroup: Purging wingmen...\n")
-			_pc = 3771
-			continue
-		elif _pc == 3771:
-			v3 = v4
-			_pc = 3782
-			continue
-		elif _pc == 3782:
-			if v3 > 0:
-				_pc = 3794
-				continue
-			else:
-				_pc = 3960
-				continue
-		elif _pc == 3794:
-			v2 = iship.cast(p_group.nth_sim(v0, v3))
-			if not (object.property_exists(v2, "tfighter")):
-				_pc = 3867
-				continue
-			else:
-				_pc = 3915
-				continue
-		elif _pc == 3867:
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.FromGroup: Purging wingmen...\n")
+	v3 = v4
+	while v3 > 0:
+		v2 = iship.cast(p_group.nth_sim(v0, v3))
+		if not (object.property_exists(v2, "tfighter")):
 			await remove_wingman(v2)
 			p_group.add_sim(v1, v2)
-			_pc = 3941
-			continue
-		elif _pc == 3915:
-			_pc = 3941
-			continue
-		elif _pc == 3920:
-			debug.print_string("iWingmen.FromGroup: Not purging TFighter.\n")
-			_pc = 3941
-			continue
-		elif _pc == 3941:
-			v3 = v3 + -1
-			_pc = 3782
-			continue
-		elif _pc == 3960:
-			_pc = 3970
-			continue
-		elif _pc == 3970:
-			return
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.FromGroup: Not purging TFighter.\n")
+		v3 = v3 + -1
+	return v1
 	return 0
 
 func report_status() -> Variant:
@@ -845,515 +321,181 @@ func report_status() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 3972
-	while true:
-		if _pc == 3972:
-			v0 = iship.find_player_ship()
-			v1 = await group()
-			v5 = null
-			v6 = 0
-			if not (await t_fighters_enabled()):
-				_pc = 4052
-				continue
-			else:
-				_pc = 4057
-				continue
-		elif _pc == 4052:
-			_pc = 4875
-			continue
-		elif _pc == 4057:
-			if _pog_is_null(v0):
-				_pc = 4070
-				continue
-			else:
-				_pc = 4101
-				continue
-		elif _pc == 4070:
-			_pc = 4096
-			continue
-		elif _pc == 4075:
-			debug.print_string("iWingmen.ReportStatus: ERROR - player ship handle is invalid.\n")
-			_pc = 4096
-			continue
-		elif _pc == 4096:
-			_pc = 4875
-			continue
-		elif _pc == 4101:
-			if _pog_is_null(v1):
-				_pc = 4114
-				continue
-			else:
-				_pc = 4145
-				continue
-		elif _pc == 4114:
-			_pc = 4140
-			continue
-		elif _pc == 4119:
-			debug.print_string("iWingmen.ReportStatus: ERROR - Wingman group handle is invalid.\n")
-			_pc = 4140
-			continue
-		elif _pc == 4140:
-			_pc = 4875
-			continue
-		elif _pc == 4145:
-			if p_group.sim_count(v1) < 2:
-				_pc = 4171
-				continue
-			else:
-				_pc = 4218
-				continue
-		elif _pc == 4171:
-			await local_22702()
-			await local_14393(0, "wingmen_status", "wingmen_not_available")
-			_pc = 4875
-			continue
-		elif _pc == 4218:
-			v2 = iship.cast(p_group.nth_sim(v1, 1))
-			v6 = iai.current_order_type(v2)
-			v4 = iai.current_order_target(v2)
-			if not _pog_is_null(v4):
-				_pc = 4317
-				continue
-			else:
-				_pc = 4401
-				continue
-		elif _pc == 4317:
-			if _pog_eq(iship.cast(v4), v0):
-				_pc = 4346
-				continue
-			else:
-				_pc = 4364
-				continue
-		elif _pc == 4346:
-			v5 = "wingmen_you"
-			_pc = 4396
-			continue
-		elif _pc == 4364:
-			v5 = object.string_property(v4, "name")
-			_pc = 4396
-			continue
-		elif _pc == 4396:
-			_pc = 4408
-			continue
-		elif _pc == 4401:
-			v6 = 0
-			_pc = 4408
-			continue
-		elif _pc == 4408:
-			await local_22684()
-			_pc = 4809
-			continue
-		elif _pc == 4427:
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_awaiting_orders")
-			_pc = 4875
-			continue
-		elif _pc == 4478:
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_attacking+ - +", v5))
-			_pc = 4875
-			continue
-		elif _pc == 4548:
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
-			_pc = 4875
-			continue
-		elif _pc == 4618:
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_approaching+ - +", v5))
-			_pc = 4875
-			continue
-		elif _pc == 4688:
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_docking_to+ - +", v5))
-			_pc = 4875
-			continue
-		elif _pc == 4758:
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_retreating")
-			_pc = 4875
-			continue
-		elif _pc == 4809:
-			if not _pog_is_null(v6):
-				_pc = 4822
-				continue
-			else:
-				_pc = 4427
-				continue
-		elif _pc == 4822:
-			if not _pog_is_null(1):
-				_pc = 4830
-				continue
-			else:
-				_pc = 4478
-				continue
-		elif _pc == 4830:
-			if not _pog_is_null(2):
-				_pc = 4839
-				continue
-			else:
-				_pc = 4548
-				continue
-		elif _pc == 4839:
-			if not _pog_is_null(6):
-				_pc = 4848
-				continue
-			else:
-				_pc = 4548
-				continue
-		elif _pc == 4848:
-			if not _pog_is_null(3):
-				_pc = 4857
-				continue
-			else:
-				_pc = 4618
-				continue
-		elif _pc == 4857:
-			if not _pog_is_null(4):
-				_pc = 4866
-				continue
-			else:
-				_pc = 4688
-				continue
-		elif _pc == 4866:
-			if not _pog_is_null(5):
-				_pc = 4875
-				continue
-			else:
-				_pc = 4758
-				continue
-		elif _pc == 4875:
-			return 0
+	v0 = iship.find_player_ship()
+	v1 = await group()
+	v5 = null
+	v6 = 0
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.ReportStatus: ERROR - player ship handle is invalid.\n")
 		else:
-			return 0
+			if _pog_is_null(v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.ReportStatus: ERROR - Wingman group handle is invalid.\n")
+			else:
+				if p_group.sim_count(v1) < 2:
+					await local_22702()
+					await local_14393(0, "wingmen_status", "wingmen_not_available")
+				else:
+					v2 = iship.cast(p_group.nth_sim(v1, 1))
+					v6 = iai.current_order_type(v2)
+					v4 = iai.current_order_target(v2)
+					if not _pog_is_null(v4):
+						if _pog_eq(iship.cast(v4), v0):
+							v5 = "wingmen_you"
+						else:
+							v5 = object.string_property(v4, "name")
+					else:
+						v6 = 0
+					await local_22684()
+					if _pog_is_null(v6):
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_awaiting_orders")
+						return 0
+					if 1 == v6:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_attacking+ - +", v5))
+						return 0
+					if 2 == v6:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
+						return 0
+					if 6 == v6:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
+						return 0
+					if 3 == v6:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_approaching+ - +", v5))
+						return 0
+					if 4 == v6:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_docking_to+ - +", v5))
+						return 0
+					if 5 == v6:
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_retreating")
+						return 0
+	return 0
 	return 0
 
 func defend_player() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 4885
-	while true:
-		if _pc == 4885:
-			v0 = iship.find_player_ship()
-			v1 = await group()
-			if not (await t_fighters_enabled()):
-				_pc = 4947
-				continue
-			else:
-				_pc = 4952
-				continue
-		elif _pc == 4947:
-			_pc = 5249
-			continue
-		elif _pc == 4952:
-			if _pog_is_null(v0):
-				_pc = 4965
-				continue
-			else:
-				_pc = 4996
-				continue
-		elif _pc == 4965:
-			_pc = 4991
-			continue
-		elif _pc == 4970:
-			debug.print_string("iWingmen.DefendPlayer: ERROR - player ship handle is invalid.\n")
-			_pc = 4991
-			continue
-		elif _pc == 4991:
-			_pc = 5249
-			continue
-		elif _pc == 4996:
-			if _pog_is_null(v1):
-				_pc = 5009
-				continue
-			else:
-				_pc = 5040
-				continue
-		elif _pc == 5009:
-			_pc = 5035
-			continue
-		elif _pc == 5014:
-			debug.print_string("iWingmen.DefendPlayer: ERROR - Wingman group handle is invalid.\n")
-			_pc = 5035
-			continue
-		elif _pc == 5035:
-			_pc = 5249
-			continue
-		elif _pc == 5040:
-			if p_group.sim_count(v1) < 2:
-				_pc = 5066
-				continue
-			else:
-				_pc = 5113
-				continue
-		elif _pc == 5066:
-			await local_22702()
-			await local_14393(0, "wingmen_status", "wingmen_not_available")
-			_pc = 5249
-			continue
-		elif _pc == 5113:
-			await local_22081()
-			await local_9658(v1)
-			iai.purge_orders(v1)
-			await escort_ship(v1, v0)
-			await local_22684()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_acknowledged+ - +wingmen_defending_player")
-			_pc = 5249
-			continue
-		elif _pc == 5249:
-			return 0
+	v0 = iship.find_player_ship()
+	v1 = await group()
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.DefendPlayer: ERROR - player ship handle is invalid.\n")
 		else:
-			return 0
+			if _pog_is_null(v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.DefendPlayer: ERROR - Wingman group handle is invalid.\n")
+			else:
+				if p_group.sim_count(v1) < 2:
+					await local_22702()
+					await local_14393(0, "wingmen_status", "wingmen_not_available")
+				else:
+					await local_22081()
+					await local_9658(v1)
+					iai.purge_orders(v1)
+					await escort_ship(v1, v0)
+					await local_22684()
+					await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_acknowledged+ - +wingmen_defending_player")
+	return 0
 	return 0
 
 func attack_target() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 5252
-	while true:
-		if _pc == 5252:
-			v0 = iship.find_player_ship()
-			v1 = await group()
-			if not (await t_fighters_enabled()):
-				_pc = 5314
-				continue
-			else:
-				_pc = 5319
-				continue
-		elif _pc == 5314:
-			_pc = 6086
-			continue
-		elif _pc == 5319:
-			if _pog_is_null(v0):
-				_pc = 5332
-				continue
-			else:
-				_pc = 5363
-				continue
-		elif _pc == 5332:
-			_pc = 5358
-			continue
-		elif _pc == 5337:
-			debug.print_string("iWingmen.Attack: ERROR - player ship handle is invalid.\n")
-			_pc = 5358
-			continue
-		elif _pc == 5358:
-			_pc = 6086
-			continue
-		elif _pc == 5363:
-			if _pog_is_null(v1):
-				_pc = 5376
-				continue
-			else:
-				_pc = 5407
-				continue
-		elif _pc == 5376:
-			_pc = 5402
-			continue
-		elif _pc == 5381:
-			debug.print_string("iWingmen.Attack: ERROR - Wingman group handle is invalid.\n")
-			_pc = 5402
-			continue
-		elif _pc == 5402:
-			_pc = 6086
-			continue
-		elif _pc == 5407:
-			if p_group.sim_count(v1) < 2:
-				_pc = 5433
-				continue
-			else:
-				_pc = 5480
-				continue
-		elif _pc == 5433:
-			await local_22702()
-			await local_14393(0, "wingmen_status", "wingmen_not_available")
-			_pc = 6086
-			continue
-		elif _pc == 5480:
-			v2 = iship.current_target(v0)
-			if _pog_is_null(v2):
-				_pc = 5517
-				continue
-			else:
-				_pc = 5582
-				continue
-		elif _pc == 5517:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_no_target")
-			_pc = 6086
-			continue
-		elif _pc == 5582:
-			if _pog_is_null(isim.type(v2) & 536870144):
-				_pc = 5613
-				continue
-			else:
-				_pc = 5678
-				continue
-		elif _pc == 5613:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
-			_pc = 6086
-			continue
-		elif _pc == 5678:
-			if _pog_eq(sim.group(v2), v1):
-				_pc = 5707
-				continue
-			else:
-				_pc = 5772
-				continue
-		elif _pc == 5707:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_wingman")
-			_pc = 6086
-			continue
-		elif _pc == 5772:
-			if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) > 0.0:
-				_pc = 5834
-				continue
-			else:
-				_pc = 5899
-				continue
-		elif _pc == 5834:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_friendly_target")
-			_pc = 6086
-			continue
-		elif _pc == 5899:
-			await local_21141(v2, "iWingmen.AttackDeathScript")
-			await local_9658(v1)
-			iai.purge_orders(v1)
-			iai.give_attack_order(v1, v2)
-			await local_22684()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", string.join("wingmen_acknowledged+ - +wingmen_attacking+ - +", object.string_property(v2, "name")))
-			_pc = 6086
-			continue
-		elif _pc == 6086:
-			return 0
+	v0 = iship.find_player_ship()
+	v1 = await group()
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.Attack: ERROR - player ship handle is invalid.\n")
 		else:
-			return 0
+			if _pog_is_null(v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.Attack: ERROR - Wingman group handle is invalid.\n")
+			else:
+				if p_group.sim_count(v1) < 2:
+					await local_22702()
+					await local_14393(0, "wingmen_status", "wingmen_not_available")
+				else:
+					v2 = iship.current_target(v0)
+					if _pog_is_null(v2):
+						await local_22702()
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_no_target")
+					else:
+						if _pog_is_null(isim.type(v2) & 536870144):
+							await local_22702()
+							await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
+						else:
+							if _pog_eq(sim.group(v2), v1):
+								await local_22702()
+								await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_wingman")
+							else:
+								if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) > 0.0:
+									await local_22702()
+									await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_friendly_target")
+								else:
+									await local_21141(v2, "iWingmen.AttackDeathScript")
+									await local_9658(v1)
+									iai.purge_orders(v1)
+									iai.give_attack_order(v1, v2)
+									await local_22684()
+									await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", string.join("wingmen_acknowledged+ - +wingmen_attacking+ - +", object.string_property(v2, "name")))
+	return 0
 	return 0
 
 func defend_target() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 6089
-	while true:
-		if _pc == 6089:
-			v0 = iship.find_player_ship()
-			v1 = await group()
-			if not (await t_fighters_enabled()):
-				_pc = 6151
-				continue
-			else:
-				_pc = 6156
-				continue
-		elif _pc == 6151:
-			_pc = 6936
-			continue
-		elif _pc == 6156:
-			if _pog_is_null(v0):
-				_pc = 6169
-				continue
-			else:
-				_pc = 6200
-				continue
-		elif _pc == 6169:
-			_pc = 6195
-			continue
-		elif _pc == 6174:
-			debug.print_string("iWingmen.DefendPlayer: ERROR - player ship handle is invalid.\n")
-			_pc = 6195
-			continue
-		elif _pc == 6195:
-			_pc = 6936
-			continue
-		elif _pc == 6200:
-			if _pog_is_null(v1):
-				_pc = 6213
-				continue
-			else:
-				_pc = 6244
-				continue
-		elif _pc == 6213:
-			_pc = 6239
-			continue
-		elif _pc == 6218:
-			debug.print_string("iWingmen.DefendPlayer: ERROR - Wingman group handle is invalid.\n")
-			_pc = 6239
-			continue
-		elif _pc == 6239:
-			_pc = 6936
-			continue
-		elif _pc == 6244:
-			if p_group.sim_count(v1) < 2:
-				_pc = 6270
-				continue
-			else:
-				_pc = 6317
-				continue
-		elif _pc == 6270:
-			await local_22702()
-			await local_14393(0, "wingmen_status", "wingmen_not_available")
-			_pc = 6936
-			continue
-		elif _pc == 6317:
-			v2 = iship.cast(iship.current_target(v0))
-			if _pog_is_null(v2):
-				_pc = 6367
-				continue
-			else:
-				_pc = 6432
-				continue
-		elif _pc == 6367:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_no_target")
-			_pc = 6936
-			continue
-		elif _pc == 6432:
-			if _pog_eq(sim.group(v2), v1):
-				_pc = 6461
-				continue
-			else:
-				_pc = 6526
-				continue
-		elif _pc == 6461:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_wingman")
-			_pc = 6936
-			continue
-		elif _pc == 6526:
-			if _pog_is_null(isim.type(v2) & 536870144):
-				_pc = 6557
-				continue
-			else:
-				_pc = 6622
-				continue
-		elif _pc == 6557:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
-			_pc = 6936
-			continue
-		elif _pc == 6622:
-			if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) < 0.0:
-				_pc = 6684
-				continue
-			else:
-				_pc = 6749
-				continue
-		elif _pc == 6684:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_enemy_target")
-			_pc = 6936
-			continue
-		elif _pc == 6749:
-			await local_21141(v2, "iWingmen.EscortDeathScript")
-			await local_9658(v1)
-			iai.purge_orders(v1)
-			await escort_ship(v1, v2)
-			await local_22684()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", string.join("wingmen_acknowledged+ - +wingmen_defending+ - +", object.string_property(v2, "name")))
-			_pc = 6936
-			continue
-		elif _pc == 6936:
-			return 0
+	v0 = iship.find_player_ship()
+	v1 = await group()
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.DefendPlayer: ERROR - player ship handle is invalid.\n")
 		else:
-			return 0
+			if _pog_is_null(v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.DefendPlayer: ERROR - Wingman group handle is invalid.\n")
+			else:
+				if p_group.sim_count(v1) < 2:
+					await local_22702()
+					await local_14393(0, "wingmen_status", "wingmen_not_available")
+				else:
+					v2 = iship.cast(iship.current_target(v0))
+					if _pog_is_null(v2):
+						await local_22702()
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_no_target")
+					else:
+						if _pog_eq(sim.group(v2), v1):
+							await local_22702()
+							await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_wingman")
+						else:
+							if _pog_is_null(isim.type(v2) & 536870144):
+								await local_22702()
+								await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
+							else:
+								if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) < 0.0:
+									await local_22702()
+									await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_enemy_target")
+								else:
+									await local_21141(v2, "iWingmen.EscortDeathScript")
+									await local_9658(v1)
+									iai.purge_orders(v1)
+									await escort_ship(v1, v2)
+									await local_22684()
+									await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", string.join("wingmen_acknowledged+ - +wingmen_defending+ - +", object.string_property(v2, "name")))
+	return 0
 	return 0
 
 func dock_to_target() -> Variant:
@@ -1365,331 +507,118 @@ func dock_to_target() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 6939
-	while true:
-		if _pc == 6939:
-			v0 = iship.find_player_ship()
-			v1 = await group()
-			v4 = null
-			if not (await t_fighters_enabled()):
-				_pc = 7012
-				continue
-			else:
-				_pc = 7017
-				continue
-		elif _pc == 7012:
-			_pc = 8709
-			continue
-		elif _pc == 7017:
-			if _pog_is_null(v0):
-				_pc = 7030
-				continue
-			else:
-				_pc = 7061
-				continue
-		elif _pc == 7030:
-			_pc = 7056
-			continue
-		elif _pc == 7035:
-			debug.print_string("iWingmen.DockToTarget: ERROR - player ship handle is invalid.\n")
-			_pc = 7056
-			continue
-		elif _pc == 7056:
-			_pc = 8709
-			continue
-		elif _pc == 7061:
-			if _pog_is_null(v1):
-				_pc = 7074
-				continue
-			else:
-				_pc = 7105
-				continue
-		elif _pc == 7074:
-			_pc = 7100
-			continue
-		elif _pc == 7079:
-			debug.print_string("iWingmen.DockToTarget: ERROR - Wingman group handle is invalid.\n")
-			_pc = 7100
-			continue
-		elif _pc == 7100:
-			_pc = 8709
-			continue
-		elif _pc == 7105:
-			v2 = iship.cast(iship.current_target(v0))
-			if _pog_eq(v2, v0):
-				_pc = 7158
-				continue
-			else:
-				_pc = 7223
-				continue
-		elif _pc == 7158:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
-			_pc = 8709
-			continue
-		elif _pc == 7223:
-			if isim.type(v2) & 0:
-				_pc = 7248
-				continue
-			else:
-				_pc = 7313
-				continue
-		elif _pc == 7248:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
-			_pc = 8709
-			continue
-		elif _pc == 7313:
-			if p_group.sim_count(v1) < 2:
-				_pc = 7339
-				continue
-			else:
-				_pc = 7386
-				continue
-		elif _pc == 7339:
-			await local_22702()
-			await local_14393(0, "wingmen_status", "wingmen_not_available")
-			_pc = 8709
-			continue
-		elif _pc == 7386:
-			v5 = 0
-			v6 = 1
-			_pc = 7400
-			continue
-		elif _pc == 7400:
-			if v6 <= await count():
-				_pc = 7424
-				continue
-			else:
-				_pc = 8130
-				continue
-		elif _pc == 7424:
-			v3 = iship.cast(p_group.nth_sim(v1, v6))
-			if isim.is_docked(v3):
-				_pc = 7489
-				continue
-			else:
-				_pc = 8112
-				continue
-		elif _pc == 7489:
-			if not _pog_is_null(sim.parent(v3)):
-				_pc = 7515
-				continue
-			else:
-				_pc = 7669
-				continue
-		elif _pc == 7515:
-			v5 = 1
-			isim.undock(v3, isim.cast(sim.parent(v3)))
-			_pc = 7598
-			continue
-		elif _pc == 7577:
-			debug.print_string("iWingmen.DockToTarget: ")
-			_pc = 7598
-			continue
-		elif _pc == 7598:
-			_pc = 7643
-			continue
-		elif _pc == 7603:
-			debug.print_string(object.string_property(v3, "name"))
-			_pc = 7643
-			continue
-		elif _pc == 7643:
-			_pc = 7669
-			continue
-		elif _pc == 7648:
-			debug.print_string(" undocking from parent.\n")
-			_pc = 7669
-			continue
-		elif _pc == 7669:
-			v4 = list.from_set(sim.children(v3))
-			if not (list.is_empty(v4)):
-				_pc = 7733
-				continue
-			else:
-				_pc = 8112
-				continue
-		elif _pc == 7733:
-			v7 = list.item_count(v4)
-			_pc = 7884
-			continue
-		elif _pc == 7762:
-			debug.print_string("iWingmen.DockToTarget: Wingman ")
-			debug.print_string(object.string_property(v3, "name"))
-			debug.print_string(" has ")
-			debug.print_int(v7)
-			debug.print_string(" children \n")
-			_pc = 7884
-			continue
-		elif _pc == 7884:
-			v5 = 1
-			_pc = 7897
-			continue
-		elif _pc == 7897:
-			if v7 > 0:
-				_pc = 7909
-				continue
-			else:
-				_pc = 8112
-				continue
-		elif _pc == 7909:
-			isim.undock(v3, isim.cast(list.get_nth(v4, v7 - 1)))
-			_pc = 8093
-			continue
-		elif _pc == 7971:
-			debug.print_string("iWingmen.DockToTarget: Wingman ")
-			debug.print_string(object.string_property(v3, "name"))
-			debug.print_string(" undocking child sim no. ")
-			debug.print_int(v7)
-			debug.print_string("\n")
-			_pc = 8093
-			continue
-		elif _pc == 8093:
-			v7 = v7 + -1
-			_pc = 7897
-			continue
-		elif _pc == 8112:
-			v6 = v6 + 1
-			_pc = 7400
-			continue
-		elif _pc == 8130:
-			if v5 == 1:
-				_pc = 8142
-				continue
-			else:
-				_pc = 8217
-				continue
-		elif _pc == 8142:
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_undocking")
-			await escort_ship(v1, v0)
-			_pc = 8709
-			continue
-		elif _pc == 8217:
-			v2 = iship.cast(iship.current_target(v0))
-			if _pog_is_null(v2):
-				_pc = 8267
-				continue
-			else:
-				_pc = 8332
-				continue
-		elif _pc == 8267:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_no_target")
-			_pc = 8709
-			continue
-		elif _pc == 8332:
-			if _pog_eq(sim.group(v2), v1):
-				_pc = 8361
-				continue
-			else:
-				_pc = 8426
-				continue
-		elif _pc == 8361:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_wingman")
-			_pc = 8709
-			continue
-		elif _pc == 8426:
-			if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) < 0.0:
-				_pc = 8488
-				continue
-			else:
-				_pc = 8553
-				continue
-		elif _pc == 8488:
-			await local_22702()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_enemy_target")
-			_pc = 8709
-			continue
-		elif _pc == 8553:
-			iai.purge_orders(v1)
-			iai.give_dock_order(v1, v2)
-			await local_22081()
-			await local_22684()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", string.join("wingmen_acknowledged+ - +wingmen_docking_to+ - +", object.string_property(v2, "name")))
-			_pc = 8709
-			continue
-		elif _pc == 8709:
-			return 0
+	v0 = iship.find_player_ship()
+	v1 = await group()
+	v4 = null
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.DockToTarget: ERROR - player ship handle is invalid.\n")
 		else:
-			return 0
+			if _pog_is_null(v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.DockToTarget: ERROR - Wingman group handle is invalid.\n")
+			else:
+				v2 = iship.cast(iship.current_target(v0))
+				if _pog_eq(v2, v0):
+					await local_22702()
+					await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
+				else:
+					if isim.type(v2) & 0:
+						await local_22702()
+						await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_invalid")
+					else:
+						if p_group.sim_count(v1) < 2:
+							await local_22702()
+							await local_14393(0, "wingmen_status", "wingmen_not_available")
+						else:
+							v5 = 0
+							v6 = 1
+							while v6 <= await count():
+								v3 = iship.cast(p_group.nth_sim(v1, v6))
+								if isim.is_docked(v3):
+									if not _pog_is_null(sim.parent(v3)):
+										v5 = 1
+										isim.undock(v3, isim.cast(sim.parent(v3)))
+										if PogRuntime.TRACE:
+											debug.print_string("iWingmen.DockToTarget: ")
+										if PogRuntime.TRACE:
+											debug.print_string(object.string_property(v3, "name"))
+										if PogRuntime.TRACE:
+											debug.print_string(" undocking from parent.\n")
+									v4 = list.from_set(sim.children(v3))
+									if not (list.is_empty(v4)):
+										v7 = list.item_count(v4)
+										if PogRuntime.TRACE:
+											debug.print_string("iWingmen.DockToTarget: Wingman ")
+											debug.print_string(object.string_property(v3, "name"))
+											debug.print_string(" has ")
+											debug.print_int(v7)
+											debug.print_string(" children \n")
+										v5 = 1
+										while v7 > 0:
+											isim.undock(v3, isim.cast(list.get_nth(v4, v7 - 1)))
+											if PogRuntime.TRACE:
+												debug.print_string("iWingmen.DockToTarget: Wingman ")
+												debug.print_string(object.string_property(v3, "name"))
+												debug.print_string(" undocking child sim no. ")
+												debug.print_int(v7)
+												debug.print_string("\n")
+											v7 = v7 + -1
+								v6 = v6 + 1
+							if v5 == 1:
+								await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_undocking")
+								await escort_ship(v1, v0)
+							else:
+								v2 = iship.cast(iship.current_target(v0))
+								if _pog_is_null(v2):
+									await local_22702()
+									await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_no_target")
+								else:
+									if _pog_eq(sim.group(v2), v1):
+										await local_22702()
+										await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_target_wingman")
+									else:
+										if ifaction.feeling(ifaction.find("Player"), isim.faction(v2)) < 0.0:
+											await local_22702()
+											await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_cannot_comply_enemy_target")
+										else:
+											iai.purge_orders(v1)
+											iai.give_dock_order(v1, v2)
+											await local_22081()
+											await local_22684()
+											await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", string.join("wingmen_acknowledged+ - +wingmen_docking_to+ - +", object.string_property(v2, "name")))
+	return 0
 	return 0
 
 func pog_halt() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 8719
-	while true:
-		if _pc == 8719:
-			v0 = iship.find_player_ship()
-			v1 = await group()
-			if not (await t_fighters_enabled()):
-				_pc = 8781
-				continue
-			else:
-				_pc = 8786
-				continue
-		elif _pc == 8781:
-			_pc = 9059
-			continue
-		elif _pc == 8786:
-			if _pog_is_null(v0):
-				_pc = 8799
-				continue
-			else:
-				_pc = 8830
-				continue
-		elif _pc == 8799:
-			_pc = 8825
-			continue
-		elif _pc == 8804:
-			debug.print_string("iWingmen.DefendPlayer: ERROR - player ship handle is invalid.\n")
-			_pc = 8825
-			continue
-		elif _pc == 8825:
-			_pc = 9059
-			continue
-		elif _pc == 8830:
-			if _pog_is_null(v1):
-				_pc = 8843
-				continue
-			else:
-				_pc = 8874
-				continue
-		elif _pc == 8843:
-			_pc = 8869
-			continue
-		elif _pc == 8848:
-			debug.print_string("iWingmen.DefendPlayer: ERROR - Wingman group handle is invalid.\n")
-			_pc = 8869
-			continue
-		elif _pc == 8869:
-			_pc = 9059
-			continue
-		elif _pc == 8874:
-			if p_group.sim_count(v1) < 2:
-				_pc = 8900
-				continue
-			else:
-				_pc = 8947
-				continue
-		elif _pc == 8900:
-			await local_22702()
-			await local_14393(0, "wingmen_status", "wingmen_not_available")
-			_pc = 9059
-			continue
-		elif _pc == 8947:
-			await local_22081()
-			await local_9658(v1)
-			iai.purge_orders(v1)
-			await local_22684()
-			await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_acknowledged+ - +wingmen_halting")
-			_pc = 9059
-			continue
-		elif _pc == 9059:
-			return 0
+	v0 = iship.find_player_ship()
+	v1 = await group()
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.DefendPlayer: ERROR - player ship handle is invalid.\n")
 		else:
-			return 0
+			if _pog_is_null(v1):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.DefendPlayer: ERROR - Wingman group handle is invalid.\n")
+			else:
+				if p_group.sim_count(v1) < 2:
+					await local_22702()
+					await local_14393(0, "wingmen_status", "wingmen_not_available")
+				else:
+					await local_22081()
+					await local_9658(v1)
+					iai.purge_orders(v1)
+					await local_22684()
+					await local_14393(p_group.nth_sim(v1, 1), "wingmen_id", "wingmen_acknowledged+ - +wingmen_halting")
+	return 0
 	return 0
 
 func escort_ship(v0, v1) -> Variant:
@@ -1705,309 +634,104 @@ func escort_ship(v0, v1) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 9062
-	while true:
-		if _pc == 9062:
-			v4 = 1
-			v7 = 0.0
-			v8 = 0.0
-			v9 = 0.0
-			v10 = 0.0
-			v11 = object.float_property(v1, "radius")
-			v2 = p_group.sim_count(v0)
-			if _pog_is_null(v2):
-				_pc = 9185
-				continue
-			else:
-				_pc = 9216
-				continue
-		elif _pc == 9185:
-			_pc = 9211
-			continue
-		elif _pc == 9190:
+	v4 = 1
+	v7 = 0.0
+	v8 = 0.0
+	v9 = 0.0
+	v10 = 0.0
+	v11 = object.float_property(v1, "radius")
+	v2 = p_group.sim_count(v0)
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.escort_ship: ERROR: No wingmen to order. EXITING.\n")
-			_pc = 9211
-			continue
-		elif _pc == 9211:
-			_pc = 9655
-			continue
-		elif _pc == 9216:
-			v3 = 1
-			_pc = 9223
-			continue
-		elif _pc == 9223:
-			if v3 < v2:
-				_pc = 9239
-				continue
-			else:
-				_pc = 9357
-				continue
-		elif _pc == 9239:
+	else:
+		v3 = 1
+		while v3 < v2:
 			v13 = iship.cast(p_group.nth_sim(v0, v3))
 			v9 = object.float_property(v13, "radius")
 			if v9 > v10:
-				_pc = 9328
-				continue
-			else:
-				_pc = 9339
-				continue
-		elif _pc == 9328:
-			v10 = v9
-			_pc = 9339
-			continue
-		elif _pc == 9339:
+				v10 = v9
 			v3 = v3 + 1
-			_pc = 9223
-			continue
-		elif _pc == 9357:
-			if v10 < v11:
-				_pc = 9373
-				continue
-			else:
-				_pc = 9389
-				continue
-		elif _pc == 9373:
+		if v10 < v11:
 			v5 = v11
-			_pc = 9400
-			continue
-		elif _pc == 9389:
+		else:
 			v5 = v10
-			_pc = 9400
-			continue
-		elif _pc == 9400:
-			v5 = v5 * 2.0 + 70.0
-			v3 = 1
-			_pc = 9430
-			continue
-		elif _pc == 9430:
-			if v3 < v2:
-				_pc = 9446
-				continue
-			else:
-				_pc = 9655
-				continue
-		elif _pc == 9446:
+		v5 = v5 * 2.0 + 70.0
+		v3 = 1
+		while v3 < v2:
 			if v4 == 1:
-				_pc = 9458
-				continue
+				if v7 < 0.0:
+					v7 = -(v7)
+				v7 = v7 + v5
+				v4 = 0
+				v8 = v8 - v5
 			else:
-				_pc = 9532
-				continue
-		elif _pc == 9458:
-			if v7 < 0.0:
-				_pc = 9474
-				continue
-			else:
-				_pc = 9486
-				continue
-		elif _pc == 9474:
-			v7 = -(v7)
-			_pc = 9486
-			continue
-		elif _pc == 9486:
-			v7 = v7 + v5
-			v4 = 0
-			v8 = v8 - v5
-			_pc = 9551
-			continue
-		elif _pc == 9532:
-			v7 = -(v7)
-			v4 = 1
-			_pc = 9551
-			continue
-		elif _pc == 9551:
+				v7 = -(v7)
+				v4 = 1
 			v13 = iship.cast(p_group.nth_sim(v0, v3))
 			iai.give_escort_order(v13, v1, v7, 0.0, v8, 5000.0)
 			v3 = v3 + 1
-			_pc = 9430
-			continue
-		elif _pc == 9655:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func local_9658(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 9658
-	while true:
-		if _pc == 9658:
-			v3 = 1
-			_pc = 9670
-			continue
-		elif _pc == 9670:
-			if v3 <= await count():
-				_pc = 9694
-				continue
-			else:
-				_pc = 9879
-				continue
-		elif _pc == 9694:
-			v1 = iship.cast(p_group.nth_sim(v0, v3))
-			if isim.is_docked(v1):
-				_pc = 9759
-				continue
-			else:
-				_pc = 9861
-				continue
-		elif _pc == 9759:
+	v3 = 1
+	while v3 <= await count():
+		v1 = iship.cast(p_group.nth_sim(v0, v3))
+		if isim.is_docked(v1):
 			if not _pog_is_null(sim.parent(v1)):
-				_pc = 9785
-				continue
-			else:
-				_pc = 9861
-				continue
-		elif _pc == 9785:
-			isim.undock(v1, isim.cast(sim.parent(v1)))
-			_pc = 9861
-			continue
-		elif _pc == 9840:
-			debug.print_string("iWingmen.DockToTarget: Undocking from parent.\n")
-			_pc = 9861
-			continue
-		elif _pc == 9861:
-			v3 = v3 + 1
-			_pc = 9670
-			continue
-		elif _pc == 9879:
-			return 0
-		else:
-			return 0
+				isim.undock(v1, isim.cast(sim.parent(v1)))
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.DockToTarget: Undocking from parent.\n")
+		v3 = v3 + 1
+	return 0
 	return 0
 
 func add_t_fighters(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 9882
-	while true:
-		if _pc == 9882:
-			v3 = list.item_count(v1)
-			if _pog_is_null(v3):
-				_pc = 9923
-				continue
-			else:
-				_pc = 9954
-				continue
-		elif _pc == 9923:
-			_pc = 9949
-			continue
-		elif _pc == 9928:
+	v3 = list.item_count(v1)
+	if _pog_is_null(v3):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.AddTurretFighters: No turret fighters. EXITING\n")
-			_pc = 9949
-			continue
-		elif _pc == 9949:
-			_pc = 10239
-			continue
-		elif _pc == 9954:
-			if sim.is_hidden(v0):
-				_pc = 9977
-				continue
-			else:
-				_pc = 10032
-				continue
-		elif _pc == 9977:
-			await _pog_wait(0.10000000149011612)
-			if not (sim.is_hidden(v0)):
-				_pc = 10032
-				continue
-			else:
-				_pc = 9977
-				continue
-		elif _pc == 10032:
-			v2 = iship.cast(list.head(v1))
-			if not (await local_14617(v2, v0)):
-				_pc = 10098
-				continue
-			else:
-				_pc = 10129
-				continue
-		elif _pc == 10098:
-			_pc = 10124
-			continue
-		elif _pc == 10103:
-			debug.print_string("iWingmen.AddTfighters: Can't mount first turret fighter. EXITING.\n")
-			_pc = 10124
-			continue
-		elif _pc == 10124:
-			_pc = 10239
-			continue
-		elif _pc == 10129:
-			if v3 == 1:
-				_pc = 10141
-				continue
-			else:
-				_pc = 10146
-				continue
-		elif _pc == 10141:
-			_pc = 10239
-			continue
-		elif _pc == 10146:
-			v2 = iship.cast(list.get_nth(v1, 1))
-			if not (await local_14617(v2, v0)):
-				_pc = 10213
-				continue
-			else:
-				_pc = 10239
-				continue
-		elif _pc == 10213:
-			_pc = 10239
-			continue
-		elif _pc == 10218:
-			debug.print_string("iWingmen.AddTfighters: Can't mount first turret fighter. EXITING.\n")
-			_pc = 10239
-			continue
-		elif _pc == 10239:
-			return 0
+	else:
+		if sim.is_hidden(v0):
+			while true:
+				await _pog_wait(0.10000000149011612)
+				if not (sim.is_hidden(v0)):
+					break
+		v2 = iship.cast(list.head(v1))
+		if not (await local_14617(v2, v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.AddTfighters: Can't mount first turret fighter. EXITING.\n")
 		else:
-			return 0
+			if v3 == 1:
+				pass
+			else:
+				v2 = iship.cast(list.get_nth(v1, 1))
+				if await local_14617(v2, v0):
+					return 0
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.AddTfighters: Can't mount first turret fighter. EXITING.\n")
+	return 0
 	return 0
 
 func t_fighter_attach_detach() -> Variant:
-	var _pc: int = 10242
-	while true:
-		if _pc == 10242:
-			if not (await t_fighters_enabled()):
-				_pc = 10261
-				continue
-			else:
-				_pc = 10266
-				continue
-		elif _pc == 10261:
-			_pc = 10401
-			continue
-		elif _pc == 10266:
-			if _pog_is_null(await t_fighter_count()):
-				_pc = 10286
-				continue
-			else:
-				_pc = 10333
-				continue
-		elif _pc == 10286:
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(await t_fighter_count()):
 			await local_22702()
 			await local_14393(0, "wingmen_tfighters", "wingmen_no_tfighters_available")
-			_pc = 10401
-			continue
-		elif _pc == 10333:
-			if list.item_count(await get_attached_t_fighters()) > 0:
-				_pc = 10368
-				continue
-			else:
-				_pc = 10387
-				continue
-		elif _pc == 10368:
-			await t_fighters_detach()
-			_pc = 10401
-			continue
-		elif _pc == 10387:
-			await t_fighters_attach()
-			_pc = 10401
-			continue
-		elif _pc == 10401:
-			return 0
 		else:
-			return 0
+			if list.item_count(await get_attached_t_fighters()) > 0:
+				await t_fighters_detach()
+			else:
+				await t_fighters_attach()
+	return 0
 	return 0
 
 func get_attached_t_fighters() -> Variant:
@@ -2015,83 +739,23 @@ func get_attached_t_fighters() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 10404
-	while true:
-		if _pc == 10404:
-			v0 = iship.find_player_ship()
-			v1 = null
-			if not (object.property_exists(v0, "name_az")):
-				_pc = 10470
-				continue
-			else:
-				_pc = 10496
-				continue
-		elif _pc == 10470:
-			_pc = 10496
-			continue
-		elif _pc == 10475:
+	v0 = iship.find_player_ship()
+	v1 = null
+	if not (object.property_exists(v0, "name_az")):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetAttachedTfighters: Can't find name_az property on player ship.\n")
-			_pc = 10496
-			continue
-		elif _pc == 10496:
-			v2 = await get_az()
-			if sim.is_alive(v2) and isim.is_docked_to(v2, v0) and object.property_exists(v2, "attached"):
-				_pc = 10588
-				continue
-			else:
-				_pc = 10636
-				continue
-		elif _pc == 10588:
-			if not (sim.is_hidden(v2)):
-				_pc = 10612
-				continue
-			else:
-				_pc = 10636
-				continue
-		elif _pc == 10612:
+	v2 = await get_az()
+	if sim.is_alive(v2) and isim.is_docked_to(v2, v0) and object.property_exists(v2, "attached"):
+		if not (sim.is_hidden(v2)):
 			list.add_tail(v1, v2)
-			_pc = 10636
-			continue
-		elif _pc == 10636:
-			if not (object.property_exists(v0, "name_lori")):
-				_pc = 10667
-				continue
-			else:
-				_pc = 10693
-				continue
-		elif _pc == 10667:
-			_pc = 10693
-			continue
-		elif _pc == 10672:
+	if not (object.property_exists(v0, "name_lori")):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetAttachedTfighters: Can't find name_lori property on player ship.\n")
-			_pc = 10693
-			continue
-		elif _pc == 10693:
-			v3 = await get_lori()
-			if sim.is_alive(v3) and isim.is_docked_to(v3, v0) and object.property_exists(v3, "attached"):
-				_pc = 10785
-				continue
-			else:
-				_pc = 10833
-				continue
-		elif _pc == 10785:
-			if not (sim.is_hidden(v3)):
-				_pc = 10809
-				continue
-			else:
-				_pc = 10833
-				continue
-		elif _pc == 10809:
+	v3 = await get_lori()
+	if sim.is_alive(v3) and isim.is_docked_to(v3, v0) and object.property_exists(v3, "attached"):
+		if not (sim.is_hidden(v3)):
 			list.add_tail(v1, v3)
-			_pc = 10833
-			continue
-		elif _pc == 10833:
-			_pc = 10843
-			continue
-		elif _pc == 10843:
-			return
-		else:
-			return 0
+	return _pog_clone(v1)
 	return 0
 
 func get_detached_t_fighters() -> Variant:
@@ -2100,84 +764,24 @@ func get_detached_t_fighters() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 10853
-	while true:
-		if _pc == 10853:
-			v0 = iship.find_player_ship()
-			v1 = null
-			v2 = await group()
-			if not (object.property_exists(v0, "name_az")):
-				_pc = 10938
-				continue
-			else:
-				_pc = 10964
-				continue
-		elif _pc == 10938:
-			_pc = 10964
-			continue
-		elif _pc == 10943:
+	v0 = iship.find_player_ship()
+	v1 = null
+	v2 = await group()
+	if not (object.property_exists(v0, "name_az")):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetDetachedTfighters: Can't find name_az property on player ship.\n")
-			_pc = 10964
-			continue
-		elif _pc == 10964:
-			v3 = await get_az()
-			if sim.is_alive(v3) and _pog_eq(sim.group(v3), v2):
-				_pc = 11031
-				continue
-			else:
-				_pc = 11079
-				continue
-		elif _pc == 11031:
-			if not (sim.is_hidden(v3)):
-				_pc = 11055
-				continue
-			else:
-				_pc = 11079
-				continue
-		elif _pc == 11055:
+	v3 = await get_az()
+	if sim.is_alive(v3) and _pog_eq(sim.group(v3), v2):
+		if not (sim.is_hidden(v3)):
 			list.add_tail(v1, v3)
-			_pc = 11079
-			continue
-		elif _pc == 11079:
-			if not (object.property_exists(v0, "name_lori")):
-				_pc = 11110
-				continue
-			else:
-				_pc = 11136
-				continue
-		elif _pc == 11110:
-			_pc = 11136
-			continue
-		elif _pc == 11115:
+	if not (object.property_exists(v0, "name_lori")):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetDetachedTfighters: Can't find name_lori property on player ship.\n")
-			_pc = 11136
-			continue
-		elif _pc == 11136:
-			v4 = await get_lori()
-			if sim.is_alive(v4) and _pog_eq(sim.group(v4), v2):
-				_pc = 11203
-				continue
-			else:
-				_pc = 11251
-				continue
-		elif _pc == 11203:
-			if not (sim.is_hidden(v4)):
-				_pc = 11227
-				continue
-			else:
-				_pc = 11251
-				continue
-		elif _pc == 11227:
+	v4 = await get_lori()
+	if sim.is_alive(v4) and _pog_eq(sim.group(v4), v2):
+		if not (sim.is_hidden(v4)):
 			list.add_tail(v1, v4)
-			_pc = 11251
-			continue
-		elif _pc == 11251:
-			_pc = 11261
-			continue
-		elif _pc == 11261:
-			return
-		else:
-			return 0
+	return _pog_clone(v1)
 	return 0
 
 func get_all_t_fighters() -> Variant:
@@ -2186,77 +790,24 @@ func get_all_t_fighters() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 11271
-	while true:
-		if _pc == 11271:
-			v0 = iship.find_player_ship()
-			v1 = null
-			v2 = await group()
-			v3 = await get_az()
-			if sim.is_alive(v3):
-				_pc = 11367
-				continue
-			else:
-				_pc = 11441
-				continue
-		elif _pc == 11367:
-			if not (sim.is_hidden(v3)):
-				_pc = 11391
-				continue
-			else:
-				_pc = 11441
-				continue
-		elif _pc == 11391:
-			_pc = 11417
-			continue
-		elif _pc == 11396:
-			debug.print_string("iWingmen.GetAllTfighters: Az is alive.\n")
-			_pc = 11417
-			continue
-		elif _pc == 11417:
+	v0 = iship.find_player_ship()
+	v1 = null
+	v2 = await group()
+	v3 = await get_az()
+	if sim.is_alive(v3):
+		if not (sim.is_hidden(v3)):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.GetAllTfighters: Az is alive.\n")
 			list.add_tail(v1, v3)
-			_pc = 11441
-			continue
-		elif _pc == 11441:
-			v4 = await get_lori()
-			if sim.is_alive(v4):
-				_pc = 11483
-				continue
-			else:
-				_pc = 11557
-				continue
-		elif _pc == 11483:
-			if not (sim.is_hidden(v4)):
-				_pc = 11507
-				continue
-			else:
-				_pc = 11557
-				continue
-		elif _pc == 11507:
-			_pc = 11533
-			continue
-		elif _pc == 11512:
-			debug.print_string("iWingmen.GetAllTfighters: Lori is alive.\n")
-			_pc = 11533
-			continue
-		elif _pc == 11533:
+	v4 = await get_lori()
+	if sim.is_alive(v4):
+		if not (sim.is_hidden(v4)):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.GetAllTfighters: Lori is alive.\n")
 			list.add_tail(v1, v4)
-			_pc = 11557
-			continue
-		elif _pc == 11557:
-			_pc = 11583
-			continue
-		elif _pc == 11562:
-			debug.print_string("iWingmen.GetAllTfighters: Returning list.\n")
-			_pc = 11583
-			continue
-		elif _pc == 11583:
-			_pc = 11593
-			continue
-		elif _pc == 11593:
-			return
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.GetAllTfighters: Returning list.\n")
+	return _pog_clone(v1)
 	return 0
 
 func t_fighter_attack_target() -> Variant:
@@ -2265,156 +816,57 @@ func t_fighter_attack_target() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 11603
-	while true:
-		if _pc == 11603:
-			v0 = iship.find_player_ship()
-			if not (await t_fighters_enabled()):
-				_pc = 11646
-				continue
-			else:
-				_pc = 11651
-				continue
-		elif _pc == 11646:
-			_pc = 12612
-			continue
-		elif _pc == 11651:
-			if _pog_is_null(await t_fighter_count()):
-				_pc = 11671
-				continue
-			else:
-				_pc = 11718
-				continue
-		elif _pc == 11671:
+	v0 = iship.find_player_ship()
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(await t_fighter_count()):
 			await local_22702()
 			await local_14393(0, "wingmen_tfighters", "wingmen_no_tfighters_available")
-			_pc = 12612
-			continue
-		elif _pc == 11718:
+		else:
 			v2 = await get_live_t_fighter()
 			if list.is_empty(await get_attached_t_fighters()):
-				_pc = 11770
-				continue
+				await local_22702()
+				await local_14393(v2, "wingmen_tfighters", "wingmen_tfighters_not_attached")
 			else:
-				_pc = 11821
-				continue
-		elif _pc == 11770:
-			await local_22702()
-			await local_14393(v2, "wingmen_tfighters", "wingmen_tfighters_not_attached")
-			_pc = 12612
-			continue
-		elif _pc == 11821:
-			v1 = iship.current_target(v0)
-			if _pog_is_null(v1):
-				_pc = 11858
-				continue
-			else:
-				_pc = 11909
-				continue
-		elif _pc == 11858:
-			await local_22702()
-			await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_no_target")
-			_pc = 12612
-			continue
-		elif _pc == 11909:
-			if _pog_eq(sim.group(v1), await group()):
-				_pc = 11946
-				continue
-			else:
-				_pc = 11997
-				continue
-		elif _pc == 11946:
-			await local_22702()
-			await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_target_wingman")
-			_pc = 12612
-			continue
-		elif _pc == 11997:
-			if _pog_is_null(isim.type(v1) & 536870144):
-				_pc = 12028
-				continue
-			else:
-				_pc = 12079
-				continue
-		elif _pc == 12028:
-			await local_22702()
-			await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_target_invalid")
-			_pc = 12612
-			continue
-		elif _pc == 12079:
-			if ifaction.feeling(ifaction.find("Player"), isim.faction(v1)) > 0.0:
-				_pc = 12141
-				continue
-			else:
-				_pc = 12192
-				continue
-		elif _pc == 12141:
-			await local_22702()
-			await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_friendly_target")
-			_pc = 12612
-			continue
-		elif _pc == 12192:
-			v2 = await get_live_t_fighter()
-			await local_22684()
-			await local_14393(v2, "wingmen_tfighters", string.join("wingmen_tfighters_acknowledged+ - +wingmen_attacking+ - +", object.string_property(v1, "name")))
-			v4 = await get_az()
-			if sim.is_alive(v4):
-				_pc = 12338
-				continue
-			else:
-				_pc = 12454
-				continue
-		elif _pc == 12338:
-			if not (sim.is_hidden(v4)):
-				_pc = 12362
-				continue
-			else:
-				_pc = 12454
-				continue
-		elif _pc == 12362:
-			if object.property_exists(v4, "attached"):
-				_pc = 12392
-				continue
-			else:
-				_pc = 12454
-				continue
-		elif _pc == 12392:
-			iai.purge_orders(v4)
-			iship.lock_down_weapons(v4)
-			iship.weapons_use_explicit_target(v4, v1)
-			_pc = 12454
-			continue
-		elif _pc == 12454:
-			v3 = await get_lori()
-			if sim.is_alive(v3):
-				_pc = 12496
-				continue
-			else:
-				_pc = 12612
-				continue
-		elif _pc == 12496:
-			if not (sim.is_hidden(v3)):
-				_pc = 12520
-				continue
-			else:
-				_pc = 12612
-				continue
-		elif _pc == 12520:
-			if object.property_exists(v3, "attached"):
-				_pc = 12550
-				continue
-			else:
-				_pc = 12612
-				continue
-		elif _pc == 12550:
-			iai.purge_orders(v3)
-			iship.lock_down_weapons(v3)
-			iship.weapons_use_explicit_target(v3, v1)
-			_pc = 12612
-			continue
-		elif _pc == 12612:
-			return 0
-		else:
-			return 0
+				v1 = iship.current_target(v0)
+				if _pog_is_null(v1):
+					await local_22702()
+					await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_no_target")
+				else:
+					if _pog_eq(sim.group(v1), await group()):
+						await local_22702()
+						await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_target_wingman")
+					else:
+						if _pog_is_null(isim.type(v1) & 536870144):
+							await local_22702()
+							await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_target_invalid")
+						else:
+							if ifaction.feeling(ifaction.find("Player"), isim.faction(v1)) > 0.0:
+								await local_22702()
+								await local_14393(v2, "wingmen_tfighters", "wingmen_cannot_comply_friendly_target")
+							else:
+								v2 = await get_live_t_fighter()
+								await local_22684()
+								await local_14393(v2, "wingmen_tfighters", string.join("wingmen_tfighters_acknowledged+ - +wingmen_attacking+ - +", object.string_property(v1, "name")))
+								v4 = await get_az()
+								if sim.is_alive(v4):
+									if not (sim.is_hidden(v4)):
+										if object.property_exists(v4, "attached"):
+											iai.purge_orders(v4)
+											iship.lock_down_weapons(v4)
+											iship.weapons_use_explicit_target(v4, v1)
+								v3 = await get_lori()
+								if not (sim.is_alive(v3)):
+									return 0
+								if sim.is_hidden(v3):
+									return 0
+								if not (object.property_exists(v3, "attached")):
+									return 0
+								iai.purge_orders(v3)
+								iship.lock_down_weapons(v3)
+								iship.weapons_use_explicit_target(v3, v1)
+	return 0
 	return 0
 
 func t_fighter_fire_at_will() -> Variant:
@@ -2424,107 +876,40 @@ func t_fighter_fire_at_will() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 12615
-	while true:
-		if _pc == 12615:
-			v0 = iship.find_player_ship()
-			v2 = null
-			if not (await t_fighters_enabled()):
-				_pc = 12669
-				continue
-			else:
-				_pc = 12674
-				continue
-		elif _pc == 12669:
-			_pc = 13196
-			continue
-		elif _pc == 12674:
-			if _pog_is_null(await t_fighter_count()):
-				_pc = 12694
-				continue
-			else:
-				_pc = 12741
-				continue
-		elif _pc == 12694:
+	v0 = iship.find_player_ship()
+	v2 = null
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(await t_fighter_count()):
 			await local_22702()
 			await local_14393(0, "wingmen_tfighters", "wingmen_no_tfighters_available")
-			_pc = 13196
-			continue
-		elif _pc == 12741:
+		else:
 			v3 = await get_live_t_fighter()
 			if list.is_empty(await get_attached_t_fighters()):
-				_pc = 12793
-				continue
+				await local_22702()
+				await local_14393(v3, "wingmen_tfighters", "wingmen_tfighters_not_attached")
 			else:
-				_pc = 12844
-				continue
-		elif _pc == 12793:
-			await local_22702()
-			await local_14393(v3, "wingmen_tfighters", "wingmen_tfighters_not_attached")
-			_pc = 13196
-			continue
-		elif _pc == 12844:
-			await local_22684()
-			await local_14393(v3, "wingmen_tfighters_acknowledged", "wingmen_tfighters_firing_at_will")
-			v4 = await get_az()
-			if sim.is_alive(v4):
-				_pc = 12932
-				continue
-			else:
-				_pc = 13043
-				continue
-		elif _pc == 12932:
-			if not (sim.is_hidden(v4)):
-				_pc = 12956
-				continue
-			else:
-				_pc = 13043
-				continue
-		elif _pc == 12956:
-			if object.property_exists(v4, "attached"):
-				_pc = 12986
-				continue
-			else:
-				_pc = 13043
-				continue
-		elif _pc == 12986:
-			iai.purge_orders(v4)
-			iship.lock_down_weapons(v4)
-			iship.weapon_targets_from_contact_list(v4)
-			_pc = 13043
-			continue
-		elif _pc == 13043:
-			v5 = await get_lori()
-			if sim.is_alive(v5):
-				_pc = 13085
-				continue
-			else:
-				_pc = 13196
-				continue
-		elif _pc == 13085:
-			if not (sim.is_hidden(v5)):
-				_pc = 13109
-				continue
-			else:
-				_pc = 13196
-				continue
-		elif _pc == 13109:
-			if object.property_exists(v5, "attached"):
-				_pc = 13139
-				continue
-			else:
-				_pc = 13196
-				continue
-		elif _pc == 13139:
-			iai.purge_orders(v5)
-			iship.lock_down_weapons(v5)
-			iship.weapon_targets_from_contact_list(v5)
-			_pc = 13196
-			continue
-		elif _pc == 13196:
-			return 0
-		else:
-			return 0
+				await local_22684()
+				await local_14393(v3, "wingmen_tfighters_acknowledged", "wingmen_tfighters_firing_at_will")
+				v4 = await get_az()
+				if sim.is_alive(v4):
+					if not (sim.is_hidden(v4)):
+						if object.property_exists(v4, "attached"):
+							iai.purge_orders(v4)
+							iship.lock_down_weapons(v4)
+							iship.weapon_targets_from_contact_list(v4)
+				v5 = await get_lori()
+				if not (sim.is_alive(v5)):
+					return 0
+				if sim.is_hidden(v5):
+					return 0
+				if not (object.property_exists(v5, "attached")):
+					return 0
+				iai.purge_orders(v5)
+				iship.lock_down_weapons(v5)
+				iship.weapon_targets_from_contact_list(v5)
+	return 0
 	return 0
 
 func t_fighter_cease_fire() -> Variant:
@@ -2533,259 +918,93 @@ func t_fighter_cease_fire() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 13206
-	while true:
-		if _pc == 13206:
-			v0 = iship.find_player_ship()
-			if not (await t_fighters_enabled()):
-				_pc = 13249
-				continue
-			else:
-				_pc = 13254
-				continue
-		elif _pc == 13249:
-			_pc = 13738
-			continue
-		elif _pc == 13254:
-			if _pog_is_null(await t_fighter_count()):
-				_pc = 13274
-				continue
-			else:
-				_pc = 13321
-				continue
-		elif _pc == 13274:
+	v0 = iship.find_player_ship()
+	if not (await t_fighters_enabled()):
+		pass
+	else:
+		if _pog_is_null(await t_fighter_count()):
 			await local_22702()
 			await local_14393(0, "wingmen_tfighters", "wingmen_no_tfighters_available")
-			_pc = 13738
-			continue
-		elif _pc == 13321:
+		else:
 			v2 = await get_live_t_fighter()
 			if list.is_empty(await get_attached_t_fighters()):
-				_pc = 13373
-				continue
+				await local_22702()
+				await local_14393(v2, "wingmen_tfighters", "wingmen_tfighters_not_attached")
 			else:
-				_pc = 13424
-				continue
-		elif _pc == 13373:
-			await local_22702()
-			await local_14393(v2, "wingmen_tfighters", "wingmen_tfighters_not_attached")
-			_pc = 13738
-			continue
-		elif _pc == 13424:
-			await local_22684()
-			await local_14393(v2, "wingmen_tfighters_acknowledged", "wingmen_tfighters_holding_fire")
-			v4 = await get_az()
-			if sim.is_alive(v4):
-				_pc = 13512
-				continue
-			else:
-				_pc = 13604
-				continue
-		elif _pc == 13512:
-			if not (sim.is_hidden(v4)):
-				_pc = 13536
-				continue
-			else:
-				_pc = 13604
-				continue
-		elif _pc == 13536:
-			if object.property_exists(v4, "attached"):
-				_pc = 13566
-				continue
-			else:
-				_pc = 13604
-				continue
-		elif _pc == 13566:
-			iai.purge_orders(v4)
-			iship.lock_down_weapons(v4)
-			_pc = 13604
-			continue
-		elif _pc == 13604:
-			v3 = await get_lori()
-			if sim.is_alive(v3):
-				_pc = 13646
-				continue
-			else:
-				_pc = 13738
-				continue
-		elif _pc == 13646:
-			if not (sim.is_hidden(v3)):
-				_pc = 13670
-				continue
-			else:
-				_pc = 13738
-				continue
-		elif _pc == 13670:
-			if object.property_exists(v3, "attached"):
-				_pc = 13700
-				continue
-			else:
-				_pc = 13738
-				continue
-		elif _pc == 13700:
-			iai.purge_orders(v3)
-			iship.lock_down_weapons(v3)
-			_pc = 13738
-			continue
-		elif _pc == 13738:
-			return 0
-		else:
-			return 0
+				await local_22684()
+				await local_14393(v2, "wingmen_tfighters_acknowledged", "wingmen_tfighters_holding_fire")
+				v4 = await get_az()
+				if sim.is_alive(v4):
+					if not (sim.is_hidden(v4)):
+						if object.property_exists(v4, "attached"):
+							iai.purge_orders(v4)
+							iship.lock_down_weapons(v4)
+				v3 = await get_lori()
+				if not (sim.is_alive(v3)):
+					return 0
+				if sim.is_hidden(v3):
+					return 0
+				if not (object.property_exists(v3, "attached")):
+					return 0
+				iai.purge_orders(v3)
+				iship.lock_down_weapons(v3)
+	return 0
 	return 0
 
 func local_13741(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 13741
+	v2 = null
+	v2 = object.string_property(v0, "name")
 	while true:
-		if _pc == 13741:
-			v2 = null
-			v2 = object.string_property(v0, "name")
-			_pc = 13794
-			continue
-		elif _pc == 13794:
-			await _pog_frame()
-			if _pog_every(13795, 0.10000000149011612):
-				_pc = 13808
-				continue
-			else:
-				_pc = 14378
-				continue
-		elif _pc == 13808:
-			if sim.is_dead(v0):
-				_pc = 13831
-				continue
-			else:
-				_pc = 13904
-				continue
-		elif _pc == 13831:
-			_pc = 13899
-			continue
-		elif _pc == 13836:
-			debug.print_string("iWingmen.remove_tfighter - TFighter ")
-			debug.print_string(v2)
-			debug.print_string(" is dead / hidden. EXITING.\n")
-			_pc = 13899
-			continue
-		elif _pc == 13899:
-			_pc = 14384
-			continue
-		elif _pc == 13904:
-			if sim.is_hidden(v0):
-				_pc = 13927
-				continue
-			else:
-				_pc = 14000
-				continue
-		elif _pc == 13927:
-			_pc = 13995
-			continue
-		elif _pc == 13932:
-			debug.print_string("iWingmen.remove_tfighter - TFighter ")
-			debug.print_string(v2)
-			debug.print_string(" is dead / hidden. EXITING.\n")
-			_pc = 13995
-			continue
-		elif _pc == 13995:
-			_pc = 14384
-			continue
-		elif _pc == 14000:
-			if isim.is_docked_to(v0, v1):
-				_pc = 14028
-				continue
-			else:
-				_pc = 14252
-				continue
-		elif _pc == 14028:
+		await _pog_wait(0.1)
+		if sim.is_dead(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.remove_tfighter - TFighter ")
+				debug.print_string(v2)
+				debug.print_string(" is dead / hidden. EXITING.\n")
+			return
+		if sim.is_hidden(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.remove_tfighter - TFighter ")
+				debug.print_string(v2)
+				debug.print_string(" is dead / hidden. EXITING.\n")
+			return
+		if isim.is_docked_to(v0, v1):
 			isim.set_docking_lock(v0, v1, 1)
 			isim.set_sensor_visibility(v0, 0)
 			await local_1777(v0)
 			object.add_int_property(v0, "attached", 0)
 			ihud.pog_print(string.join("wingmen_tfighters+: +", string.join("wingmen_tfighters_attaching+ - +", v2)))
-			_pc = 14247
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.remove_tfighter - TFighter ")
+				debug.print_string(v2)
+				debug.print_string(" has successfully attached.\n")
+			return
+		if not (iai.current_order_type(v0) != 4 or not _pog_eq(iai.current_order_target(v0), v1)):
 			continue
-		elif _pc == 14184:
-			debug.print_string("iWingmen.remove_tfighter - TFighter ")
-			debug.print_string(v2)
-			debug.print_string(" has successfully attached.\n")
-			_pc = 14247
-			continue
-		elif _pc == 14247:
-			_pc = 14384
-			continue
-		elif _pc == 14252:
-			if iai.current_order_type(v0) != 4 or not _pog_eq(iai.current_order_target(v0), v1):
-				_pc = 14305
-				continue
-			else:
-				_pc = 14378
-				continue
-		elif _pc == 14305:
-			_pc = 14373
-			continue
-		elif _pc == 14310:
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.remove_tfighter - TFighter ")
 			debug.print_string(v2)
 			debug.print_string(" has no dock order / player is not order target. Aborting docking. \n")
-			_pc = 14373
-			continue
-		elif _pc == 14373:
-			_pc = 14384
-			continue
-		elif _pc == 14378:
-			_pc = 13794
-			continue
-		elif _pc == 14383:
-			_pc = 14384
-			continue
-		elif _pc == 14384:
-			return
-		else:
-			return 0
+		return
+	return
 	return 0
 
 func local_14393(v0, v1, v2) -> Variant:
-	var _pc: int = 14393
-	while true:
-		if _pc == 14393:
-			if icomms.is_busy():
-				_pc = 14411
-				continue
-			else:
-				_pc = 14475
-				continue
-		elif _pc == 14411:
-			ihud.pog_print(string.join(v1, string.join("+: +", v2)))
-			_pc = 14504
-			continue
-		elif _pc == 14475:
-			icomms.shout(v0, v1, v2)
-			_pc = 14504
-			continue
-		elif _pc == 14504:
-			return 0
-		else:
-			return 0
+	if icomms.is_busy():
+		ihud.pog_print(string.join(v1, string.join("+: +", v2)))
+	else:
+		icomms.shout(v0, v1, v2)
+	return 0
 	return 0
 
 func local_14507(v0, v1, v2) -> Variant:
-	var _pc: int = 14507
+	icomms.shout(v0, v1, v2)
 	while true:
-		if _pc == 14507:
-			icomms.shout(v0, v1, v2)
-			_pc = 14536
-			continue
-		elif _pc == 14536:
-			await _pog_wait(0.10000000149011612)
-			if not (icomms.is_saying(v0, v1, v2)):
-				_pc = 14601
-				continue
-			else:
-				_pc = 14536
-				continue
-		elif _pc == 14601:
-			return
-		else:
-			return 0
+		await _pog_wait(0.10000000149011612)
+		if not (icomms.is_saying(v0, v1, v2)):
+			break
+	return
 	return 0
 
 func local_14617(v0, v1) -> Variant:
@@ -2794,212 +1013,78 @@ func local_14617(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 14617
-	while true:
-		if _pc == 14617:
-			v2 = null
-			v2 = list.from_set(idockport.dockports_compatible_with(v0, 7, 1))
-			v3 = null
-			v3 = list.from_set(idockport.dockports_of_type(v1, 7, 1))
-			v6 = null
-			if sim.is_dead(v0) or _pog_is_null(v0):
-				_pc = 14772
-				continue
-			else:
-				_pc = 14804
-				continue
-		elif _pc == 14772:
-			_pc = 14798
-			continue
-		elif _pc == 14777:
+	v2 = null
+	v2 = list.from_set(idockport.dockports_compatible_with(v0, 7, 1))
+	v3 = null
+	v3 = list.from_set(idockport.dockports_of_type(v1, 7, 1))
+	v6 = null
+	if sim.is_dead(v0) or _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.MountTFighter: ERROR: Tfighter is null / dead. EXITING\n")
-			_pc = 14798
-			continue
-		elif _pc == 14798:
-			_pc = 15578
-			continue
-		elif _pc == 14804:
-			if isim.is_docked_to(v0, v1):
-				_pc = 14832
-				continue
-			else:
-				_pc = 14864
-				continue
-		elif _pc == 14832:
-			_pc = 14858
-			continue
-		elif _pc == 14837:
+		return 0
+	if isim.is_docked_to(v0, v1):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.MountTFighter: ERROR: Tfighter already docked to the player ship")
-			_pc = 14858
-			continue
-		elif _pc == 14858:
-			_pc = 15578
-			continue
-		elif _pc == 14864:
-			if list.is_empty(v3):
-				_pc = 14887
-				continue
-			else:
-				_pc = 14919
-				continue
-		elif _pc == 14887:
-			_pc = 14913
-			continue
-		elif _pc == 14892:
+		return 0
+	if list.is_empty(v3):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.MountTFighter: ERROR: Player ship has no free tfighter dockports. EXITING\n")
-			_pc = 14913
-			continue
-		elif _pc == 14913:
-			_pc = 15578
-			continue
-		elif _pc == 14919:
-			if list.is_empty(v2):
-				_pc = 14942
-				continue
-			else:
-				_pc = 14974
-				continue
-		elif _pc == 14942:
-			_pc = 14968
-			continue
-		elif _pc == 14947:
+		return 0
+	if list.is_empty(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.AttachTFighter: ERROR: tfighter1 has no free dockports. EXITING\n")
-			_pc = 14968
-			continue
-		elif _pc == 14968:
-			_pc = 15578
-			continue
-		elif _pc == 14974:
-			_pc = 15000
-			continue
-		elif _pc == 14979:
-			debug.print_string("iWingmen.MountTFighter: Attaching T-Fighter\n")
-			_pc = 15000
-			continue
-		elif _pc == 15000:
-			v4 = idockport.cast(subsim.cast(list.head(v2)))
-			v5 = idockport.cast(subsim.cast(list.head(v3)))
-			if not (idockport.dock(v4, v5)):
-				_pc = 15129
-				continue
-			else:
-				_pc = 15161
-				continue
-		elif _pc == 15129:
-			_pc = 15155
-			continue
-		elif _pc == 15134:
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.MountTFighter: Attaching T-Fighter\n")
+	v4 = idockport.cast(subsim.cast(list.head(v2)))
+	v5 = idockport.cast(subsim.cast(list.head(v3)))
+	if not (idockport.dock(v4, v5)):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.MountTFighter: ERROR: Unable to dock tfighter.\n")
-			_pc = 15155
-			continue
-		elif _pc == 15155:
-			_pc = 15578
-			continue
-		elif _pc == 15161:
-			isim.set_sensor_visibility(v0, 0)
-			isim.set_docking_lock(v0, v1, 1)
-			iship.install_a_i_pilot(v0, 999999.0, 9999999.0, 0.800000011920929, "", "", "", "iWingmen.TFighterWarn")
-			object.set_string_property(v0, "death_script", "iWingmen.TFighterDeathScript")
-			object.add_int_property(v0, "tfighter", 1)
-			object.add_bool_property(v0, "no_shockwave", 1)
-			iai.purge_orders(v0)
-			iship.lock_down_weapons(v0)
-			sim.set_cullable(v0, 0)
-			isim.set_faction(v0, ifaction.find("Player"))
-			isim.set_indestructable(v0, 0)
-			object.add_handle_property(v1, object.string_property(v0, "name"), v0)
-			object.add_int_property(v0, "attached", 0)
-			object.add_handle_property(v0, "docking_task", 0)
-			_pc = 15578
-			continue
-		elif _pc == 15578:
-			return
-		else:
-			return 0
+		return 0
+	isim.set_sensor_visibility(v0, 0)
+	isim.set_docking_lock(v0, v1, 1)
+	iship.install_a_i_pilot(v0, 999999.0, 9999999.0, 0.800000011920929, "", "", "", "iWingmen.TFighterWarn")
+	object.set_string_property(v0, "death_script", "iWingmen.TFighterDeathScript")
+	object.add_int_property(v0, "tfighter", 1)
+	object.add_bool_property(v0, "no_shockwave", 1)
+	iai.purge_orders(v0)
+	iship.lock_down_weapons(v0)
+	sim.set_cullable(v0, 0)
+	isim.set_faction(v0, ifaction.find("Player"))
+	isim.set_indestructable(v0, 0)
+	object.add_handle_property(v1, object.string_property(v0, "name"), v0)
+	object.add_int_property(v0, "attached", 0)
+	object.add_handle_property(v0, "docking_task", 0)
+	return 1
 	return 0
 
 func t_fighter_count() -> Variant:
-	var _pc: int = 15601
-	while true:
-		if _pc == 15601:
-			list.item_count(await get_all_t_fighters())
-			_pc = 15633
-			continue
-		elif _pc == 15633:
-			return
-		else:
-			return 0
+	return list.item_count(await get_all_t_fighters())
 	return 0
 
 func get_live_t_fighter() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 15635
-	while true:
-		if _pc == 15635:
-			v0 = null
-			v0 = await get_all_t_fighters()
-			v1 = list.item_count(v0)
-			if _pog_is_null(v1):
-				_pc = 15708
-				continue
-			else:
-				_pc = 15740
-				continue
-		elif _pc == 15708:
-			_pc = 15734
-			continue
-		elif _pc == 15713:
+	v0 = null
+	v0 = await get_all_t_fighters()
+	v1 = list.item_count(v0)
+	if _pog_is_null(v1):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetLiveTfighter: No live tfighters found.\n")
-			_pc = 15734
-			continue
-		elif _pc == 15734:
-			_pc = 15953
-			continue
-		elif _pc == 15740:
-			if v1 == 1:
-				_pc = 15752
-				continue
-			else:
-				_pc = 15794
-				continue
-		elif _pc == 15752:
-			v2 = iship.cast(list.head(v0))
-			_pc = 15846
-			continue
-		elif _pc == 15794:
-			v2 = iship.cast(list.get_nth(v0, math.random_int(0, 1)))
-			_pc = 15846
-			continue
-		elif _pc == 15846:
-			_pc = 15872
-			continue
-		elif _pc == 15851:
-			debug.print_string("iWingmen.GetLiveTfighter: Found turret fighter called ")
-			_pc = 15872
-			continue
-		elif _pc == 15872:
-			_pc = 15917
-			continue
-		elif _pc == 15877:
-			debug.print_string(object.string_property(v2, "name"))
-			_pc = 15917
-			continue
-		elif _pc == 15917:
-			_pc = 15943
-			continue
-		elif _pc == 15922:
-			debug.print_string("\n")
-			_pc = 15943
-			continue
-		elif _pc == 15943:
-			_pc = 15953
-			continue
-		elif _pc == 15953:
-			return
-		else:
-			return 0
+		return 0
+	if v1 == 1:
+		v2 = iship.cast(list.head(v0))
+	else:
+		v2 = iship.cast(list.get_nth(v0, math.random_int(0, 1)))
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.GetLiveTfighter: Found turret fighter called ")
+	if PogRuntime.TRACE:
+		debug.print_string(object.string_property(v2, "name"))
+	if PogRuntime.TRACE:
+		debug.print_string("\n")
+	return v2
 	return 0
 
 func create_test_t_fighters() -> Variant:
@@ -3034,14 +1119,14 @@ func create_test_t_fighters() -> Variant:
 				_pc = 15983
 				continue
 		elif _pc == 16133:
-			if not _pog_is_null(1):
+			if 1 != v0:
 				_pc = 16141
 				continue
 			else:
 				_pc = 15988
 				continue
 		elif _pc == 16141:
-			if not _pog_is_null(2):
+			if 2 != v0:
 				_pc = 16150
 				continue
 			else:
@@ -3059,8 +1144,7 @@ func create_test_t_fighters() -> Variant:
 			_pc = 16200
 			continue
 		elif _pc == 16200:
-			_pc = 16210
-			continue
+			return _pog_clone(v1)
 		elif _pc == 16210:
 			return
 		else:
@@ -3069,45 +1153,16 @@ func create_test_t_fighters() -> Variant:
 
 func local_16220(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 16220
-	while true:
-		if _pc == 16220:
-			v1 = iship.create("ini:/sims/ships/player/turret_fighter_prefitted", v0)
-			sim.set_cullable(v1, 0)
-			if _pog_is_null(v1):
-				_pc = 16289
-				continue
-			else:
-				_pc = 16365
-				continue
-		elif _pc == 16289:
-			_pc = 16315
-			continue
-		elif _pc == 16294:
+	v1 = iship.create("ini:/sims/ships/player/turret_fighter_prefitted", v0)
+	sim.set_cullable(v1, 0)
+	if _pog_is_null(v1):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.CreateTFighter: Unable to create tfighter called ")
-			_pc = 16315
-			continue
-		elif _pc == 16315:
-			_pc = 16339
-			continue
-		elif _pc == 16320:
+		if PogRuntime.TRACE:
 			debug.print_string(v0)
-			_pc = 16339
-			continue
-		elif _pc == 16339:
-			_pc = 16365
-			continue
-		elif _pc == 16344:
+		if PogRuntime.TRACE:
 			debug.print_string("\n")
-			_pc = 16365
-			continue
-		elif _pc == 16365:
-			_pc = 16375
-			continue
-		elif _pc == 16375:
-			return
-		else:
-			return 0
+	return v1
 	return 0
 
 func t_fighters_attach() -> Variant:
@@ -3121,234 +1176,77 @@ func t_fighters_attach() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 16377
-	while true:
-		if _pc == 16377:
-			v4 = null
-			v5 = null
-			v0 = iship.find_player_ship()
-			if _pog_is_null(v0):
-				_pc = 16436
-				continue
-			else:
-				_pc = 16467
-				continue
-		elif _pc == 16436:
-			_pc = 16462
-			continue
-		elif _pc == 16441:
+	v4 = null
+	v5 = null
+	v0 = iship.find_player_ship()
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.TFightersAttach: ERROR: Player ship is invalid. EXITING.\n")
-			_pc = 16462
-			continue
-		elif _pc == 16462:
-			_pc = 17099
-			continue
-		elif _pc == 16467:
-			if _pog_is_null(await t_fighter_count()):
-				_pc = 16487
-				continue
-			else:
-				_pc = 16534
-				continue
-		elif _pc == 16487:
+	else:
+		if _pog_is_null(await t_fighter_count()):
 			await local_22702()
 			await local_14393(0, "wingmen_tfighters", "wingmen_no_tfighters_available")
-			_pc = 17099
-			continue
-		elif _pc == 16534:
+		else:
 			v5 = await get_detached_t_fighters()
 			v6 = list.item_count(v5)
 			v4 = list.from_set(idockport.dockports_compatible_with(v0, 7, 4))
 			if list.item_count(v4) < v6:
-				_pc = 16652
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.TFightersAttach: ERROR: Player general dockports is less than the number of detached turret fighters. EXITING.\n")
 			else:
-				_pc = 16683
-				continue
-		elif _pc == 16652:
-			_pc = 16678
-			continue
-		elif _pc == 16657:
-			debug.print_string("iWingmen.TFightersAttach: ERROR: Player general dockports is less than the number of detached turret fighters. EXITING.\n")
-			_pc = 16678
-			continue
-		elif _pc == 16678:
-			_pc = 17099
-			continue
-		elif _pc == 16683:
-			await local_22684()
-			v8 = _pog_task_cast(object.handle_property(await get_az(), "docking_task"))
-			v9 = _pog_task_cast(object.handle_property(await get_lori(), "docking_task"))
-			if not (_pog_is_running(v8)) and not (_pog_is_running(v9)):
-				_pc = 16845
-				continue
-			else:
-				_pc = 16868
-				continue
-		elif _pc == 16845:
-			await local_19618(0, "_comingback_", 1)
-			_pc = 16868
-			continue
-		elif _pc == 16868:
-			ihud.pog_print(string.join("wingmen_tfighters+: +", "wingmen_tfighters_attaching"))
-			v7 = 0
-			_pc = 16916
-			continue
-		elif _pc == 16916:
-			if v7 < v6:
-				_pc = 16932
-				continue
-			else:
-				_pc = 17099
-				continue
-		elif _pc == 16932:
-			v1 = iship.cast(list.get_nth(v5, v7))
-			if sim.is_alive(v1):
-				_pc = 16997
-				continue
-			else:
-				_pc = 17081
-				continue
-		elif _pc == 16997:
-			if not (sim.is_hidden(v1)):
-				_pc = 17021
-				continue
-			else:
-				_pc = 17081
-				continue
-		elif _pc == 17021:
-			await local_17116(v1, v0, idockport.cast(list.get_nth(v4, v7)))
-			_pc = 17081
-			continue
-		elif _pc == 17081:
-			v7 = v7 + 1
-			_pc = 16916
-			continue
-		elif _pc == 17099:
-			return 0
-		else:
-			return 0
+				await local_22684()
+				v8 = _pog_task_cast(object.handle_property(await get_az(), "docking_task"))
+				v9 = _pog_task_cast(object.handle_property(await get_lori(), "docking_task"))
+				if not (_pog_is_running(v8)) and not (_pog_is_running(v9)):
+					await local_19618(0, "_comingback_", 1)
+				ihud.pog_print(string.join("wingmen_tfighters+: +", "wingmen_tfighters_attaching"))
+				v7 = 0
+				while v7 < v6:
+					v1 = iship.cast(list.get_nth(v5, v7))
+					if sim.is_alive(v1):
+						if not (sim.is_hidden(v1)):
+							await local_17116(v1, v0, idockport.cast(list.get_nth(v4, v7)))
+					v7 = v7 + 1
+	return 0
 	return 0
 
 func local_17116(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 17116
-	while true:
-		if _pc == 17116:
-			v3 = null
-			v3 = list.from_set(idockport.dockports_compatible_with(v0, 7, 4))
-			v5 = _pog_task_cast(object.handle_property(v0, "docking_task"))
-			if _pog_is_null(v0):
-				_pc = 17232
-				continue
-			else:
-				_pc = 17263
-				continue
-		elif _pc == 17232:
-			_pc = 17258
-			continue
-		elif _pc == 17237:
+	v3 = null
+	v3 = list.from_set(idockport.dockports_compatible_with(v0, 7, 4))
+	v5 = _pog_task_cast(object.handle_property(v0, "docking_task"))
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.order_tfighter_attach: ERROR: Tfighter is invalid. EXITING. \n")
-			_pc = 17258
-			continue
-		elif _pc == 17258:
-			_pc = 17721
-			continue
-		elif _pc == 17263:
-			if object.property_exists(v0, "attached"):
-				_pc = 17293
-				continue
-			else:
-				_pc = 17324
-				continue
-		elif _pc == 17293:
-			_pc = 17319
-			continue
-		elif _pc == 17298:
-			debug.print_string("iWingmen.order_tfighter_attach: Tfighter is already attached. EXITING. \n")
-			_pc = 17319
-			continue
-		elif _pc == 17319:
-			_pc = 17721
-			continue
-		elif _pc == 17324:
-			if _pog_is_running(v5):
-				_pc = 17347
-				continue
-			else:
-				_pc = 17378
-				continue
-		elif _pc == 17347:
-			_pc = 17373
-			continue
-		elif _pc == 17352:
-			debug.print_string("iWingmen.order_tfighter_attach: Tfighter is already docking. EXITING. \n")
-			_pc = 17373
-			continue
-		elif _pc == 17373:
-			_pc = 17721
-			continue
-		elif _pc == 17378:
-			if _pog_is_null(list.item_count(v3)):
-				_pc = 17403
-				continue
-			else:
-				_pc = 17434
-				continue
-		elif _pc == 17403:
-			_pc = 17429
-			continue
-		elif _pc == 17408:
-			debug.print_string("iWingmen.order_tfighter_attach: ERROR: No free player general dockport. EXITING\n")
-			_pc = 17429
-			continue
-		elif _pc == 17429:
-			_pc = 17721
-			continue
-		elif _pc == 17434:
-			if list.is_empty(v3):
-				_pc = 17457
-				continue
-			else:
-				_pc = 17488
-				continue
-		elif _pc == 17457:
-			_pc = 17483
-			continue
-		elif _pc == 17462:
-			debug.print_string("iWingmen.order_tfighter_attach: ERROR: tfighter has no free dockports. EXITING\n")
-			_pc = 17483
-			continue
-		elif _pc == 17483:
-			_pc = 17721
-			continue
-		elif _pc == 17488:
-			v4 = idockport.cast(subsim.cast(list.head(v3)))
-			iai.purge_orders(v0)
-			iship.lock_down_weapons(v0)
-			if isim.is_docked(v0):
-				_pc = 17599
-				continue
-			else:
-				_pc = 17618
-				continue
-		elif _pc == 17599:
-			iship.undock_self(v0)
-			_pc = 17618
-			continue
-		elif _pc == 17618:
-			iai.give_dock_order_with_dockport(v4, v2)
-			v5 = _pog_spawn(local_13741.bind(v0, v1))
-			object.set_handle_property(v0, "docking_task", v5)
-			_pog_detach(v5)
-			_pc = 17721
-			continue
-		elif _pc == 17721:
-			return 0
+	else:
+		if object.property_exists(v0, "attached"):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.order_tfighter_attach: Tfighter is already attached. EXITING. \n")
 		else:
-			return 0
+			if _pog_is_running(v5):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.order_tfighter_attach: Tfighter is already docking. EXITING. \n")
+			else:
+				if _pog_is_null(list.item_count(v3)):
+					if PogRuntime.TRACE:
+						debug.print_string("iWingmen.order_tfighter_attach: ERROR: No free player general dockport. EXITING\n")
+				else:
+					if list.is_empty(v3):
+						if PogRuntime.TRACE:
+							debug.print_string("iWingmen.order_tfighter_attach: ERROR: tfighter has no free dockports. EXITING\n")
+					else:
+						v4 = idockport.cast(subsim.cast(list.head(v3)))
+						iai.purge_orders(v0)
+						iship.lock_down_weapons(v0)
+						if isim.is_docked(v0):
+							iship.undock_self(v0)
+						iai.give_dock_order_with_dockport(v4, v2)
+						v5 = _pog_spawn(local_13741.bind(v0, v1))
+						object.set_handle_property(v0, "docking_task", v5)
+						_pog_detach(v5)
+	return 0
 	return 0
 
 func t_fighters_detach() -> Variant:
@@ -3357,229 +1255,75 @@ func t_fighters_detach() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 17731
-	while true:
-		if _pc == 17731:
-			v0 = iship.find_player_ship()
-			v1 = null
-			v4 = 100.0
-			if _pog_is_null(v0):
-				_pc = 17790
-				continue
-			else:
-				_pc = 17821
-				continue
-		elif _pc == 17790:
-			_pc = 17816
-			continue
-		elif _pc == 17795:
+	v0 = iship.find_player_ship()
+	v1 = null
+	v4 = 100.0
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.TFightersDetach: ERROR: Player ship is invalid. EXITING.\n")
-			_pc = 17816
-			continue
-		elif _pc == 17816:
-			_pc = 18148
-			continue
-		elif _pc == 17821:
-			if iship.is_in_l_d_s(v0):
-				_pc = 17844
-				continue
-			else:
-				_pc = 17863
-				continue
-		elif _pc == 17844:
+	else:
+		if iship.is_in_l_d_s(v0):
 			await local_22702()
-			_pc = 18148
-			continue
-		elif _pc == 17863:
+		else:
 			v1 = await get_all_t_fighters()
 			v2 = list.item_count(v1)
 			if _pog_is_null(v2):
-				_pc = 17920
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.TFightersDetach: ERROR: No attached tfighters. EXITING.\n")
 			else:
-				_pc = 17951
-				continue
-		elif _pc == 17920:
-			_pc = 17946
-			continue
-		elif _pc == 17925:
-			debug.print_string("iWingmen.TFightersDetach: ERROR: No attached tfighters. EXITING.\n")
-			_pc = 17946
-			continue
-		elif _pc == 17946:
-			_pc = 18148
-			continue
-		elif _pc == 17951:
-			v3 = 0
-			_pc = 17958
-			continue
-		elif _pc == 17958:
-			if v3 < v2:
-				_pc = 17974
-				continue
-			else:
-				_pc = 18069
-				continue
-		elif _pc == 17974:
-			await local_18158(iship.cast(list.get_nth(v1, v3)), v0, v4)
-			v4 = v4 - 200.0
-			v3 = v3 + 1
-			_pc = 17958
-			continue
-		elif _pc == 18069:
-			await local_19618(0, "_launch_", 2)
-			await local_22684()
-			ihud.pog_print(string.join("wingmen_tfighters+: +", "wingmen_tfighters_detaching"))
-			_pc = 18148
-			continue
-		elif _pc == 18148:
-			return 0
-		else:
-			return 0
+				v3 = 0
+				while v3 < v2:
+					await local_18158(iship.cast(list.get_nth(v1, v3)), v0, v4)
+					v4 = v4 - 200.0
+					v3 = v3 + 1
+				await local_19618(0, "_launch_", 2)
+				await local_22684()
+				ihud.pog_print(string.join("wingmen_tfighters+: +", "wingmen_tfighters_detaching"))
+	return 0
 	return 0
 
 func local_18158(v0, v1, v2) -> Variant:
-	var _pc: int = 18158
-	while true:
-		if _pc == 18158:
-			if object.property_exists(v0, "attached"):
-				_pc = 18188
-				continue
-			else:
-				_pc = 18219
-				continue
-		elif _pc == 18188:
-			object.remove_property(v0, "attached")
-			_pc = 18245
-			continue
-		elif _pc == 18219:
-			_pc = 18245
-			continue
-		elif _pc == 18224:
+	if object.property_exists(v0, "attached"):
+		object.remove_property(v0, "attached")
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.undock_tfighter: Turret Fighter not detached. EXITING.\n")
-			_pc = 18245
-			continue
-		elif _pc == 18245:
-			isim.set_docking_lock(v0, v1, 0)
-			iship.undock_self(v0)
-			iai.purge_orders(v0)
-			iship.lock_down_weapons(v0)
-			iai.give_escort_order(v0, v1, v2, 0.0, 200.0, 5000.0)
-			await add_wingman(v0)
-			isim.set_sensor_visibility(v0, 1)
-			return 0
-		else:
-			return 0
+	isim.set_docking_lock(v0, v1, 0)
+	iship.undock_self(v0)
+	iai.purge_orders(v0)
+	iship.lock_down_weapons(v0)
+	iai.give_escort_order(v0, v1, v2, 0.0, 200.0, 5000.0)
+	await add_wingman(v0)
+	isim.set_sensor_visibility(v0, 1)
+	return 0
 	return 0
 
 func get_az() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 18413
-	while true:
-		if _pc == 18413:
-			v0 = iship.find_player_ship()
-			if _pog_is_null(v0):
-				_pc = 18450
-				continue
-			else:
-				_pc = 18482
-				continue
-		elif _pc == 18450:
-			_pc = 18476
-			continue
-		elif _pc == 18455:
+	v0 = iship.find_player_ship()
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetAz: ERROR: Player ship is invalid. EXITING.\n")
-			_pc = 18476
-			continue
-		elif _pc == 18476:
-			_pc = 18597
-			continue
-		elif _pc == 18482:
-			if object.property_exists(v0, "name_az"):
-				_pc = 18512
-				continue
-			else:
-				_pc = 18559
-				continue
-		elif _pc == 18512:
-			iship.cast(object.handle_property(v0, "name_az"))
-			_pc = 18597
-			continue
-		elif _pc == 18554:
-			_pc = 18591
-			continue
-		elif _pc == 18559:
-			_pc = 18585
-			continue
-		elif _pc == 18564:
-			debug.print_string("iWingmen.GetAz: ERROR: name_az handle property does not exist on the player ship.\n")
-			_pc = 18585
-			continue
-		elif _pc == 18585:
-			_pc = 18597
-			continue
-		elif _pc == 18591:
-			_pc = 18597
-			continue
-		elif _pc == 18597:
-			return
-		else:
-			return 0
+		return 0
+	if object.property_exists(v0, "name_az"):
+		return iship.cast(object.handle_property(v0, "name_az"))
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.GetAz: ERROR: name_az handle property does not exist on the player ship.\n")
+	return 0
 	return 0
 
 func get_lori() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 18599
-	while true:
-		if _pc == 18599:
-			v0 = iship.find_player_ship()
-			if _pog_is_null(v0):
-				_pc = 18636
-				continue
-			else:
-				_pc = 18668
-				continue
-		elif _pc == 18636:
-			_pc = 18662
-			continue
-		elif _pc == 18641:
+	v0 = iship.find_player_ship()
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetLori: ERROR: Player ship is invalid. EXITING.\n")
-			_pc = 18662
-			continue
-		elif _pc == 18662:
-			_pc = 18783
-			continue
-		elif _pc == 18668:
-			if object.property_exists(v0, "name_lori"):
-				_pc = 18698
-				continue
-			else:
-				_pc = 18745
-				continue
-		elif _pc == 18698:
-			iship.cast(object.handle_property(v0, "name_lori"))
-			_pc = 18783
-			continue
-		elif _pc == 18740:
-			_pc = 18777
-			continue
-		elif _pc == 18745:
-			_pc = 18771
-			continue
-		elif _pc == 18750:
-			debug.print_string("iWingmen.GetLori: ERROR: name_lori handle property does not exist on the player ship.\n")
-			_pc = 18771
-			continue
-		elif _pc == 18771:
-			_pc = 18783
-			continue
-		elif _pc == 18777:
-			_pc = 18783
-			continue
-		elif _pc == 18783:
-			return
-		else:
-			return 0
+		return 0
+	if object.property_exists(v0, "name_lori"):
+		return iship.cast(object.handle_property(v0, "name_lori"))
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.GetLori: ERROR: name_lori handle property does not exist on the player ship.\n")
+	return 0
 	return 0
 
 func wingman_death_script() -> Variant:
@@ -3599,121 +1343,55 @@ func t_fighter_death_script() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 18970
-	while true:
-		if _pc == 18970:
-			v1 = null
-			v2 = null
-			isim.set_indestructable(v0, 1)
-			v1 = object.string_property(v0, "name")
-			v4 = iship.find_player_ship()
-			if not (object.property_exists(v4, "player_dying")):
-				_pc = 19101
-				continue
-			else:
-				_pc = 19256
-				continue
-		elif _pc == 19101:
-			if _pog_eq(v1, "name_az"):
-				_pc = 19119
-				continue
-			else:
-				_pc = 19190
-				continue
-		elif _pc == 19119:
+	v1 = null
+	v2 = null
+	isim.set_indestructable(v0, 1)
+	v1 = object.string_property(v0, "name")
+	v4 = iship.find_player_ship()
+	if not (object.property_exists(v4, "player_dying")):
+		if _pog_eq(v1, "name_az"):
 			_pog_spawn(local_14507.bind(v0, _pog_clone(""), _pog_clone("gunbabe_diag_az_is_dead_1")))
 			v3 = await get_lori()
 			v2 = "gunbabe_diag_lori_other_dead_"
-			_pc = 19256
-			continue
-		elif _pc == 19190:
+		else:
 			_pog_spawn(local_14507.bind(v0, _pog_clone(""), _pog_clone("gunbabe_diag_lori_is_dead_1")))
 			v3 = await get_az()
 			v2 = "gunbabe_diag_az_other_dead_"
-			_pc = 19256
-			continue
-		elif _pc == 19256:
-			isim.start_explosion(v0)
-			await _pog_wait(2.0)
-			isim.stop_explosion(v0, 0, 1)
-			ihud.pog_print(string.join("wingmen_tfighters+: +", string.join("wingmen_tfighter_destroyed+ - +", v1)))
-			await _pog_wait(2.0)
-			if object.property_exists(v4, "player_dying") or sim.is_hidden(v3) or sim.is_dead(v3):
-				_pc = 19488
-				continue
-			else:
-				_pc = 19493
-				continue
-		elif _pc == 19488:
-			_pc = 19602
-			continue
-		elif _pc == 19493:
-			_pog_spawn(local_14507.bind(v3, _pog_clone(""), _pog_clone(string.join(v2, string.from_int(math.random_int(1, 2))))))
-			await _pog_wait(5.0)
-			_pc = 19602
-			continue
-		elif _pc == 19602:
-			return
-		else:
-			return 0
+	isim.start_explosion(v0)
+	await _pog_wait(2.0)
+	isim.stop_explosion(v0, 0, 1)
+	ihud.pog_print(string.join("wingmen_tfighters+: +", string.join("wingmen_tfighter_destroyed+ - +", v1)))
+	await _pog_wait(2.0)
+	if object.property_exists(v4, "player_dying") or sim.is_hidden(v3) or sim.is_dead(v3):
+		pass
+	else:
+		_pog_spawn(local_14507.bind(v3, _pog_clone(""), _pog_clone(string.join(v2, string.from_int(math.random_int(1, 2))))))
+		await _pog_wait(5.0)
+	return
 	return 0
 
 func local_19618(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 19618
-	while true:
-		if _pc == 19618:
-			v3 = null
-			v3 = "gunbabe_diag_"
-			v4 = null
-			v5 = null
-			if _pog_is_null(v0) or sim.is_dead(v0):
-				_pc = 19701
-				continue
-			else:
-				_pc = 19720
-				continue
-		elif _pc == 19701:
-			v0 = await get_live_t_fighter()
-			_pc = 19720
-			continue
-		elif _pc == 19720:
-			v4 = object.string_property(v0, "name")
-			if _pog_eq(v4, "name_az"):
-				_pc = 19770
-				continue
-			else:
-				_pc = 19788
-				continue
-		elif _pc == 19770:
-			v5 = "az"
-			_pc = 19801
-			continue
-		elif _pc == 19788:
-			v5 = "lori"
-			_pc = 19801
-			continue
-		elif _pc == 19801:
-			if v2 != 1:
-				_pc = 19813
-				continue
-			else:
-				_pc = 19838
-				continue
-		elif _pc == 19813:
-			v2 = math.random_int(1, v2)
-			_pc = 19838
-			continue
-		elif _pc == 19838:
-			v3 = string.join(v3, v5)
-			v3 = string.join(v3, v1)
-			v3 = string.join(v3, string.from_int(v2))
-			_pog_detach(_pog_spawn(local_14507.bind(v0, _pog_clone(v4), _pog_clone(v3))))
-			return 0
-		else:
-			return 0
+	v3 = null
+	v3 = "gunbabe_diag_"
+	v4 = null
+	v5 = null
+	if _pog_is_null(v0) or sim.is_dead(v0):
+		v0 = await get_live_t_fighter()
+	v4 = object.string_property(v0, "name")
+	if _pog_eq(v4, "name_az"):
+		v5 = "az"
+	else:
+		v5 = "lori"
+	if v2 != 1:
+		v2 = math.random_int(1, v2)
+	v3 = string.join(v3, v5)
+	v3 = string.join(v3, v1)
+	v3 = string.join(v3, string.from_int(v2))
+	_pog_detach(_pog_spawn(local_14507.bind(v0, _pog_clone(v4), _pog_clone(v3))))
+	return 0
 	return 0
 
 func attack_death_script() -> Variant:
@@ -3841,293 +1519,102 @@ func escort_death_script() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 20828
-	while true:
-		if _pc == 20828:
-			v1 = iship.find_player_ship()
-			v3 = await group()
-			v4 = null
-			v4 = object.string_property(v0, "name")
-			isim.kill(v0)
-			await _pog_wait(0.10000000149011612)
-			v2 = iship.cast(p_group.leader(await group()))
-			if sim.is_dead(v2):
-				_pc = 21033
-				continue
-			else:
-				_pc = 21038
-				continue
-		elif _pc == 21033:
-			_pc = 21132
-			continue
-		elif _pc == 21038:
-			iai.purge_orders(v3)
-			await escort_ship(v3, v1)
-			await local_14393(v2, "wingmen_id", string.join("wingmen_defend_destroyed+ - +", v4))
-			_pc = 21132
-			continue
-		elif _pc == 21132:
-			return
-		else:
-			return 0
+	v1 = iship.find_player_ship()
+	v3 = await group()
+	v4 = null
+	v4 = object.string_property(v0, "name")
+	isim.kill(v0)
+	await _pog_wait(0.10000000149011612)
+	v2 = iship.cast(p_group.leader(await group()))
+	if sim.is_dead(v2):
+		pass
+	else:
+		iai.purge_orders(v3)
+		await escort_ship(v3, v1)
+		await local_14393(v2, "wingmen_id", string.join("wingmen_defend_destroyed+ - +", v4))
+	return
 	return 0
 
 func local_21141(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 21141
-	while true:
-		if _pc == 21141:
-			v2 = iship.find_player_ship()
-			v4 = null
-			if sim.is_dead(v0):
-				_pc = 21199
-				continue
-			else:
-				_pc = 21230
-				continue
-		elif _pc == 21199:
-			_pc = 21225
-			continue
-		elif _pc == 21204:
+	v2 = iship.find_player_ship()
+	v4 = null
+	if sim.is_dead(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.update_target_deathscript: ERROR: Target is dead / null.\n")
-			_pc = 21225
-			continue
-		elif _pc == 21225:
-			_pc = 22071
-			continue
-		elif _pc == 21230:
-			if sim.is_dead(v2):
-				_pc = 21253
-				continue
-			else:
-				_pc = 21284
-				continue
-		elif _pc == 21253:
-			_pc = 21279
-			continue
-		elif _pc == 21258:
-			debug.print_string("iWingmen.update_target_deathscript: ERROR: player ship is dead / null.\n")
-			_pc = 21279
-			continue
-		elif _pc == 21279:
-			_pc = 22071
-			continue
-		elif _pc == 21284:
-			if not (object.property_exists(v2, "wingmen_target_handle")):
-				_pc = 21315
-				continue
-			else:
-				_pc = 21380
-				continue
-		elif _pc == 21315:
-			_pc = 21341
-			continue
-		elif _pc == 21320:
-			debug.print_string("iWingmen.update_target_deathscript: No player ship wingmen_target_handle property exists. Adding.\n")
-			_pc = 21341
-			continue
-		elif _pc == 21341:
-			object.add_handle_property(v2, "wingmen_target_handle", 0)
-			v3 = 0
-			_pc = 21424
-			continue
-		elif _pc == 21380:
-			v3 = isim.cast(object.handle_property(v2, "wingmen_target_handle"))
-			_pc = 21424
-			continue
-		elif _pc == 21424:
-			if sim.is_alive(v3):
-				_pc = 21447
-				continue
-			else:
-				_pc = 21746
-				continue
-		elif _pc == 21447:
-			v4 = object.string_property(v3, "death_script")
-			if _pog_eq(v4, "iWingmen.AttackDeathScript") or _pog_eq(v4, "iWingmen.EscortDeathScript"):
-				_pc = 21510
-				continue
-			else:
-				_pc = 21644
-				continue
-		elif _pc == 21510:
-			_pc = 21536
-			continue
-		elif _pc == 21515:
-			debug.print_string("iWingmen.update_target_deathscript: Cleared deathscript from old target called ")
-			_pc = 21536
-			continue
-		elif _pc == 21536:
-			_pc = 21581
-			continue
-		elif _pc == 21541:
-			debug.print_string(object.string_property(v3, "name"))
-			_pc = 21581
-			continue
-		elif _pc == 21581:
-			_pc = 21607
-			continue
-		elif _pc == 21586:
-			debug.print_string("\n")
-			_pc = 21607
-			continue
-		elif _pc == 21607:
-			object.set_string_property(v3, "death_script", "")
-			_pc = 21741
-			continue
-		elif _pc == 21644:
-			_pc = 21670
-			continue
-		elif _pc == 21649:
-			debug.print_string("iWingmen.update_target_deathscript: Old target called ")
-			_pc = 21670
-			continue
-		elif _pc == 21670:
-			_pc = 21715
-			continue
-		elif _pc == 21675:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 21715
-			continue
-		elif _pc == 21715:
-			_pc = 21741
-			continue
-		elif _pc == 21720:
-			debug.print_string("has a custom death script. Not removing.\n")
-			_pc = 21741
-			continue
-		elif _pc == 21741:
-			_pc = 21772
-			continue
-		elif _pc == 21746:
-			_pc = 21772
-			continue
-		elif _pc == 21751:
-			debug.print_string("iWingmen.update_target_deathscript: old target is dead. No need to remove deathscript.\n")
-			_pc = 21772
-			continue
-		elif _pc == 21772:
-			if _pog_eq(object.string_property(v0, "death_script"), ""):
-				_pc = 21810
-				continue
-			else:
-				_pc = 21974
-				continue
-		elif _pc == 21810:
-			_pc = 21836
-			continue
-		elif _pc == 21815:
-			debug.print_string("iWingmen.update_target_deathscript: Adding deathscript to ship called ")
-			_pc = 21836
-			continue
-		elif _pc == 21836:
-			_pc = 21881
-			continue
-		elif _pc == 21841:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 21881
-			continue
-		elif _pc == 21881:
-			_pc = 21907
-			continue
-		elif _pc == 21886:
-			debug.print_string("\n")
-			_pc = 21907
-			continue
-		elif _pc == 21907:
-			object.set_string_property(v0, "death_script", v1)
-			object.set_handle_property(v2, "wingmen_target_handle", v0)
-			_pc = 22071
-			continue
-		elif _pc == 21974:
-			_pc = 22000
-			continue
-		elif _pc == 21979:
-			debug.print_string("iWingmen.update_target_deathscript: Ship called ")
-			_pc = 22000
-			continue
-		elif _pc == 22000:
-			_pc = 22045
-			continue
-		elif _pc == 22005:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 22045
-			continue
-		elif _pc == 22045:
-			_pc = 22071
-			continue
-		elif _pc == 22050:
-			debug.print_string("Already has a death script. Not updating.\n")
-			_pc = 22071
-			continue
-		elif _pc == 22071:
-			return 0
+	else:
+		if sim.is_dead(v2):
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.update_target_deathscript: ERROR: player ship is dead / null.\n")
 		else:
-			return 0
+			if not (object.property_exists(v2, "wingmen_target_handle")):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.update_target_deathscript: No player ship wingmen_target_handle property exists. Adding.\n")
+				object.add_handle_property(v2, "wingmen_target_handle", 0)
+				v3 = 0
+			else:
+				v3 = isim.cast(object.handle_property(v2, "wingmen_target_handle"))
+			if sim.is_alive(v3):
+				v4 = object.string_property(v3, "death_script")
+				if _pog_eq(v4, "iWingmen.AttackDeathScript") or _pog_eq(v4, "iWingmen.EscortDeathScript"):
+					if PogRuntime.TRACE:
+						debug.print_string("iWingmen.update_target_deathscript: Cleared deathscript from old target called ")
+					if PogRuntime.TRACE:
+						debug.print_string(object.string_property(v3, "name"))
+					if PogRuntime.TRACE:
+						debug.print_string("\n")
+					object.set_string_property(v3, "death_script", "")
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iWingmen.update_target_deathscript: Old target called ")
+					if PogRuntime.TRACE:
+						debug.print_string(object.string_property(v0, "name"))
+					if PogRuntime.TRACE:
+						debug.print_string("has a custom death script. Not removing.\n")
+			else:
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.update_target_deathscript: old target is dead. No need to remove deathscript.\n")
+			if _pog_eq(object.string_property(v0, "death_script"), ""):
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.update_target_deathscript: Adding deathscript to ship called ")
+				if PogRuntime.TRACE:
+					debug.print_string(object.string_property(v0, "name"))
+				if PogRuntime.TRACE:
+					debug.print_string("\n")
+				object.set_string_property(v0, "death_script", v1)
+				object.set_handle_property(v2, "wingmen_target_handle", v0)
+			else:
+				if PogRuntime.TRACE:
+					debug.print_string("iWingmen.update_target_deathscript: Ship called ")
+				if PogRuntime.TRACE:
+					debug.print_string(object.string_property(v0, "name"))
+				if PogRuntime.TRACE:
+					debug.print_string("Already has a death script. Not updating.\n")
+	return 0
 	return 0
 
 func local_22081() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 22081
-	while true:
-		if _pc == 22081:
-			v0 = iship.find_player_ship()
-			if not (object.property_exists(v0, "wingmen_target_handle")):
-				_pc = 22136
-				continue
-			else:
-				_pc = 22141
-				continue
-		elif _pc == 22136:
-			_pc = 22375
-			continue
-		elif _pc == 22141:
-			v1 = isim.cast(object.handle_property(v0, "wingmen_target_handle"))
-			if sim.is_alive(v1):
-				_pc = 22208
-				continue
-			else:
-				_pc = 22375
-				continue
-		elif _pc == 22208:
-			if _pog_eq(object.string_property(v1, "death_script"), "iWingmen.AttackDeathScript"):
-				_pc = 22246
-				continue
-			else:
-				_pc = 22375
-				continue
-		elif _pc == 22246:
-			_pc = 22272
-			continue
-		elif _pc == 22251:
+	v0 = iship.find_player_ship()
+	if not (object.property_exists(v0, "wingmen_target_handle")):
+		pass
+	else:
+		v1 = isim.cast(object.handle_property(v0, "wingmen_target_handle"))
+		if not (sim.is_alive(v1)):
+			return 0
+		if not _pog_eq(object.string_property(v1, "death_script"), "iWingmen.AttackDeathScript"):
+			return 0
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.remove_target_deathscript: Cleared target deathscript from old target called ")
-			_pc = 22272
-			continue
-		elif _pc == 22272:
-			_pc = 22317
-			continue
-		elif _pc == 22277:
+		if PogRuntime.TRACE:
 			debug.print_string(object.string_property(v1, "name"))
-			_pc = 22317
-			continue
-		elif _pc == 22317:
-			_pc = 22343
-			continue
-		elif _pc == 22322:
+		if PogRuntime.TRACE:
 			debug.print_string("\n")
-			_pc = 22343
-			continue
-		elif _pc == 22343:
-			object.set_string_property(v1, "death_script", "")
-			_pc = 22375
-			continue
-		elif _pc == 22375:
-			return 0
-		else:
-			return 0
+		object.set_string_property(v1, "death_script", "")
+	return 0
 	return 0
 
 func t_fighter_warn() -> Variant:
@@ -4135,31 +1622,15 @@ func t_fighter_warn() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 22378
-	while true:
-		if _pc == 22378:
-			v1 = iship.find_player_ship()
-			v2 = null
-			v2 = object.string_property(v0, "name")
-			v3 = null
-			if _pog_eq(iship.cast(iship.last_attacker(v0)), v1):
-				_pc = 22498
-				continue
-			else:
-				_pc = 22531
-				continue
-		elif _pc == 22498:
-			await local_19618(v0, "_friendly_fire_", 2)
-			_pc = 22559
-			continue
-		elif _pc == 22531:
-			await local_19618(v0, "_introuble_", 3)
-			_pc = 22559
-			continue
-		elif _pc == 22559:
-			return
-		else:
-			return 0
+	v1 = iship.find_player_ship()
+	v2 = null
+	v2 = object.string_property(v0, "name")
+	v3 = null
+	if _pog_eq(iship.cast(iship.last_attacker(v0)), v1):
+		await local_19618(v0, "_friendly_fire_", 2)
+	else:
+		await local_19618(v0, "_introuble_", 3)
+	return
 	return 0
 
 func t_fighters_enabled() -> Variant:
@@ -4180,8 +1651,7 @@ func t_fighters_enabled() -> Variant:
 				_pc = 22634
 				continue
 		elif _pc == 22628:
-			_pc = 22682
-			continue
+			return 1
 		elif _pc == 22634:
 			if global.exists("g_tfighters_menu_option_enabled"):
 				_pc = 22659
@@ -4190,17 +1660,14 @@ func t_fighters_enabled() -> Variant:
 				_pc = 22670
 				continue
 		elif _pc == 22659:
-			_pc = 22682
-			continue
+			return 1
 		elif _pc == 22665:
 			_pc = 22676
 			continue
 		elif _pc == 22670:
-			_pc = 22682
-			continue
+			return 0
 		elif _pc == 22676:
-			_pc = 22682
-			continue
+			return 0
 		elif _pc == 22682:
 			return
 		else:
@@ -4223,101 +1690,32 @@ func true_wingman_list() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 22720
-	while true:
-		if _pc == 22720:
-			v0 = await group()
-			v4 = null
-			if _pog_is_null(v0):
-				_pc = 22768
-				continue
-			else:
-				_pc = 22804
-				continue
-		elif _pc == 22768:
-			_pc = 22794
-			continue
-		elif _pc == 22773:
+	v0 = await group()
+	v4 = null
+	if _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.TrueWingmanList: ERROR - Wingmen group handle is invalid.\n")
-			_pc = 22794
-			continue
-		elif _pc == 22794:
-			_pc = 23167
-			continue
-		elif _pc == 22804:
-			v3 = p_group.sim_count(v0) - 1
-			if _pog_is_null(v3):
-				_pc = 22842
-				continue
-			else:
-				_pc = 22878
-				continue
-		elif _pc == 22842:
-			_pc = 22868
-			continue
-		elif _pc == 22847:
+		return _pog_clone(v4)
+	v3 = p_group.sim_count(v0) - 1
+	if _pog_is_null(v3):
+		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.TrueWingmanList: No wingmen to list.\n")
-			_pc = 22868
-			continue
-		elif _pc == 22868:
-			_pc = 23167
-			continue
-		elif _pc == 22878:
-			_pc = 22904
-			continue
-		elif _pc == 22883:
-			debug.print_string("iWingmen.TrueWingmanList: Counting wingmen...\n")
-			_pc = 22904
-			continue
-		elif _pc == 22904:
-			v2 = v3
-			_pc = 22916
-			continue
-		elif _pc == 22916:
-			if v2 > 0:
-				_pc = 22928
-				continue
-			else:
-				_pc = 23075
-				continue
-		elif _pc == 22928:
-			v1 = iship.cast(p_group.nth_sim(v0, v2))
-			if not (object.property_exists(v1, "tfighter")):
-				_pc = 23001
-				continue
-			else:
-				_pc = 23030
-				continue
-		elif _pc == 23001:
+		return _pog_clone(v4)
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.TrueWingmanList: Counting wingmen...\n")
+	v2 = v3
+	while v2 > 0:
+		v1 = iship.cast(p_group.nth_sim(v0, v2))
+		if not (object.property_exists(v1, "tfighter")):
 			list.add_head(v4, v1)
-			_pc = 23056
-			continue
-		elif _pc == 23030:
-			_pc = 23056
-			continue
-		elif _pc == 23035:
-			debug.print_string("iWingmen.TrueWingmanList: Not Adding TFighter to the list.\n")
-			_pc = 23056
-			continue
-		elif _pc == 23056:
-			v2 = v2 + -1
-			_pc = 22916
-			continue
-		elif _pc == 23075:
-			_pc = 23157
-			continue
-		elif _pc == 23081:
-			debug.print_string("iWingmen.TrueWingmanList: Returning list of ")
-			debug.print_int(list.item_count(v4))
-			debug.print_string(" True wingmen. \n")
-			_pc = 23157
-			continue
-		elif _pc == 23157:
-			_pc = 23167
-			continue
-		elif _pc == 23167:
-			return
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iWingmen.TrueWingmanList: Not Adding TFighter to the list.\n")
+		v2 = v2 + -1
+	if PogRuntime.TRACE:
+		debug.print_string("iWingmen.TrueWingmanList: Returning list of ")
+		debug.print_int(list.item_count(v4))
+		debug.print_string(" True wingmen. \n")
+	return _pog_clone(v4)
 	return 0
 

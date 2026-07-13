@@ -37,175 +37,78 @@ func local_27(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 27
-	while true:
-		if _pc == 27:
-			if global.exists("gl_Range_creation_no_report"):
-				_pc = 52
-				continue
-			else:
-				_pc = 84
-				continue
-		elif _pc == 52:
-			if global.pog_bool("gl_Range_creation_no_report") == 1:
-				_pc = 79
-				continue
-			else:
-				_pc = 84
-				continue
-		elif _pc == 79:
-			_pc = 108
-			continue
-		elif _pc == 84:
-			_pc = 108
-			continue
-		elif _pc == 89:
-			debug.print_string(v0)
-			_pc = 108
-			continue
-		elif _pc == 108:
+	if global.exists("gl_Range_creation_no_report"):
+		if global.pog_bool("gl_Range_creation_no_report") != 1:
+			if PogRuntime.TRACE:
+				debug.print_string(v0)
 			return 0
-		elif _pc == 182:
-			debug.print_string("SET DUMP:\n")
-			v3 = 0
-			_pc = 211
-			continue
-		elif _pc == 211:
-			if v3 < v2:
-				_pc = 227
-				continue
-			else:
-				_pc = 379
-				continue
-		elif _pc == 227:
+	else:
+		if PogRuntime.TRACE:
+			debug.print_string(v0)
+	return 0
+	v1 = null
+	v1 = list.from_set(v0)
+	v2 = list.item_count(v1)
+	if PogRuntime.TRACE:
+		debug.print_string("SET DUMP:\n")
+		v3 = 0
+		while v3 < v2:
 			debug.print_string("Set Item ")
 			debug.print_string(string.from_int(v3))
 			debug.print_string(" ")
 			debug.print_handle(list.get_nth(v1, v3))
 			debug.print_string("\n")
 			v3 = v3 + 1
-			_pc = 211
-			continue
-		elif _pc == 379:
-			_pc = 380
-			continue
-		elif _pc == 380:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func add_traffic_exception(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 390
-	while true:
-		if _pc == 390:
-			v1 = null
-			_pc = 464
-			continue
-		elif _pc == 411:
-			if _pog_is_null(global.exists("g_filtered_system_habitats")):
-				_pc = 438
-				continue
-			else:
-				_pc = 464
-				continue
-		elif _pc == 438:
+	v1 = null
+	if PogRuntime.TRACE:
+		if _pog_is_null(global.exists("g_filtered_system_habitats")):
 			debug.print_string("iRangeCheck.AddTrafficException: g_filtered_system_habitats does not exist.  assuming traffic is turned off\n")
-			_pc = 696
-			continue
-		elif _pc == 464:
-			v1 = global.pog_set("g_filtered_system_habitats")
-			_pc = 587
-			continue
-		elif _pc == 496:
-			await local_27(" iRangecheck.AddTrafficException - removing the location ")
-			await local_27(imapentity.pog_name(imapentity.cast(v0)))
-			await local_27(" from the filtered system habitats list.\n")
-			_pc = 587
-			continue
-		elif _pc == 587:
-			if p_set.contains(v1, v0):
-				_pc = 615
-				continue
-			else:
-				_pc = 644
-				continue
-		elif _pc == 615:
-			p_set.remove(v1, v0)
-			_pc = 670
-			continue
-		elif _pc == 644:
-			_pc = 670
-			continue
-		elif _pc == 649:
+			return 0
+	v1 = global.pog_set("g_filtered_system_habitats")
+	if PogRuntime.TRACE:
+		await local_27(" iRangecheck.AddTrafficException - removing the location ")
+		await local_27(imapentity.pog_name(imapentity.cast(v0)))
+		await local_27(" from the filtered system habitats list.\n")
+	if p_set.contains(v1, v0):
+		p_set.remove(v1, v0)
+	else:
+		if PogRuntime.TRACE:
 			await local_27("iRangeCheck.AddTrafficexception : Filtered system habitat set does not contain this location 1")
-			_pc = 670
-			continue
-		elif _pc == 670:
-			global.set_set("g_filtered_system_habitats", v1)
-			_pc = 696
-			continue
-		elif _pc == 696:
-			return 0
-		else:
-			return 0
+	global.set_set("g_filtered_system_habitats", v1)
+	return 0
 	return 0
 
 func add_traffic_exceptions_in_area(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 706
+	v2 = null
+	v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
+	await add_traffic_exception(v0)
 	while true:
-		if _pc == 706:
-			v2 = null
-			v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
-			await add_traffic_exception(v0)
-			_pc = 785
-			continue
-		elif _pc == 785:
-			v3 = imapentity.cast(p_set.first_element(v2))
-			await add_traffic_exception(imapentity.cast(v3))
-			p_set.remove(v2, v3)
-			if p_set.is_empty(v2):
-				_pc = 902
-				continue
-			else:
-				_pc = 785
-				continue
-		elif _pc == 902:
-			return 0
-		else:
-			return 0
+		v3 = imapentity.cast(p_set.first_element(v2))
+		await add_traffic_exception(imapentity.cast(v3))
+		p_set.remove(v2, v3)
+		if not (not (p_set.is_empty(v2))):
+			break
+	return 0
 	return 0
 
 func add_out_of_system_traffic_exception(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 912
-	while true:
-		if _pc == 912:
-			v1 = null
-			if _pog_is_null(global.exists("g_out_of_system_exceptions")):
-				_pc = 955
-				continue
-			else:
-				_pc = 1012
-				continue
-		elif _pc == 955:
-			p_set.add(v1, v0)
-			global.create_set("g_out_of_system_exceptions", 2, v1)
-			_pc = 1089
-			continue
-		elif _pc == 1012:
-			v1 = global.pog_set("g_out_of_system_exceptions")
-			p_set.add(v1, v0)
-			global.set_set("g_out_of_system_exceptions", v1)
-			_pc = 1089
-			continue
-		elif _pc == 1089:
-			return 0
-		else:
-			return 0
+	v1 = null
+	if _pog_is_null(global.exists("g_out_of_system_exceptions")):
+		p_set.add(v1, v0)
+		global.create_set("g_out_of_system_exceptions", 2, v1)
+	else:
+		v1 = global.pog_set("g_out_of_system_exceptions")
+		p_set.add(v1, v0)
+		global.set_set("g_out_of_system_exceptions", v1)
+	return 0
 	return 0
 
 func remove_traffic_exception(v0) -> Variant:
@@ -224,28 +127,16 @@ func remove_traffic_exception(v0) -> Variant:
 func remove_traffic_exceptions_in_area(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 1298
+	v2 = null
+	v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
+	await remove_traffic_exception(v0)
 	while true:
-		if _pc == 1298:
-			v2 = null
-			v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
-			await remove_traffic_exception(v0)
-			_pc = 1377
-			continue
-		elif _pc == 1377:
-			v3 = imapentity.cast(p_set.first_element(v2))
-			await remove_traffic_exception(imapentity.cast(v3))
-			p_set.remove(v2, v3)
-			if p_set.is_empty(v2):
-				_pc = 1494
-				continue
-			else:
-				_pc = 1377
-				continue
-		elif _pc == 1494:
-			return 0
-		else:
-			return 0
+		v3 = imapentity.cast(p_set.first_element(v2))
+		await remove_traffic_exception(imapentity.cast(v3))
+		p_set.remove(v2, v3)
+		if not (not (p_set.is_empty(v2))):
+			break
+	return 0
 	return 0
 
 func remove_out_of_system_traffic_exception() -> Variant:
@@ -273,44 +164,21 @@ func purge_traffic_exception() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 1700
-	while true:
-		if _pc == 1700:
-			v1 = null
-			v1 = global.pog_set("g_filtered_system_habitats")
-			v2 = null
-			_pc = 1780
-			continue
-		elif _pc == 1759:
-			await local_27("iRangeCheck.PurgeTrafficException - rebuilding filtered system set, but still without player base....\n")
-			_pc = 1780
-			continue
-		elif _pc == 1780:
-			v1 = v2
-			v1 = ihabitat.filter_orbiting(imapentity.system_habitats())
-			p_set.union(v1, imapentity.system_lagrange_points())
-			v3 = imapentity.find_by_name("Lucrecia's Base")
-			if p_set.contains(v1, v3):
-				_pc = 1914
-				continue
-			else:
-				_pc = 1943
-				continue
-		elif _pc == 1914:
-			p_set.remove(v1, v3)
-			_pc = 1969
-			continue
-		elif _pc == 1943:
-			_pc = 1969
-			continue
-		elif _pc == 1948:
+	v1 = null
+	v1 = global.pog_set("g_filtered_system_habitats")
+	v2 = null
+	if PogRuntime.TRACE:
+		await local_27("iRangeCheck.PurgeTrafficException - rebuilding filtered system set, but still without player base....\n")
+	v1 = v2
+	v1 = ihabitat.filter_orbiting(imapentity.system_habitats())
+	p_set.union(v1, imapentity.system_lagrange_points())
+	v3 = imapentity.find_by_name("Lucrecia's Base")
+	if p_set.contains(v1, v3):
+		p_set.remove(v1, v3)
+	else:
+		if PogRuntime.TRACE:
 			await local_27("iRangeCheck.PurgeTrafficException - cannot find lucrecias base in current system habitat set\n")
-			_pc = 1969
-			continue
-		elif _pc == 1969:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func monitor_range() -> Variant:
@@ -331,96 +199,37 @@ func monitor_range() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 1986
+	v0 = 1
+	v1 = 0
+	v5 = null
+	v6 = null
+	v8 = ifaction.find("Marauders")
+	v9 = null
+	v10 = null
+	v11 = null
+	v12 = null
+	v16 = global.pog_float("g_player_sensor_range")
+	if PogRuntime.TRACE:
+		await local_27("iRangeCheck.MonitorRange - Starting range monitor task.\n")
+	global.set_list("g_active_location_list", v10)
 	while true:
-		if _pc == 1986:
-			v0 = 1
-			v1 = 0
-			v5 = null
-			v6 = null
-			v8 = ifaction.find("Marauders")
-			v9 = null
-			v10 = null
-			v11 = null
-			v12 = null
-			v16 = global.pog_float("g_player_sensor_range")
-			_pc = 2148
+		await _pog_wait(1)
+		if not (v0 and _pog_is_null(global.exists("g_disable_traffic_monitor"))):
 			continue
-		elif _pc == 2127:
-			await local_27("iRangeCheck.MonitorRange - Starting range monitor task.\n")
-			_pc = 2148
-			continue
-		elif _pc == 2148:
-			global.set_list("g_active_location_list", v10)
-			_pc = 2179
-			continue
-		elif _pc == 2179:
-			await _pog_frame()
-			if _pog_every(2180, 1.0):
-				_pc = 2193
-				continue
-			else:
-				_pc = 2634
-				continue
-		elif _pc == 2193:
-			if v0 and _pog_is_null(global.exists("g_disable_traffic_monitor")):
-				_pc = 2226
-				continue
-			else:
-				_pc = 2634
-				continue
-		elif _pc == 2226:
-			v12 = global.pog_set("g_filtered_system_habitats")
-			v7 = iship.find_player_ship()
-			v6 = list.from_set(isim.sims_in_radius_from_set(v12, v7, global.pog_float("g_station_awareness_radius"), 8208))
-			v14 = list.item_count(v6)
-			v15 = 0
-			_pc = 2370
-			continue
-		elif _pc == 2370:
-			if v15 < v14:
-				_pc = 2386
-				continue
-			else:
-				_pc = 2582
-				continue
-		elif _pc == 2386:
+		v12 = global.pog_set("g_filtered_system_habitats")
+		v7 = iship.find_player_ship()
+		v6 = list.from_set(isim.sims_in_radius_from_set(v12, v7, global.pog_float("g_station_awareness_radius"), 8208))
+		v14 = list.item_count(v6)
+		v15 = 0
+		while v15 < v14:
 			v13 = imapentity.cast(list.get_nth(v6, v15))
 			if _pog_eq(isim.faction(isim.cast(v13)), v8) and not (imapentity.is_visible_on_map(v13)) and not (imapentity.is_destroyed(v13)):
-				_pc = 2510
-				continue
-			else:
-				_pc = 2564
-				continue
-		elif _pc == 2510:
-			if sim.distance_between(v7, v13) < 300000.0:
-				_pc = 2544
-				continue
-			else:
-				_pc = 2564
-				continue
-		elif _pc == 2544:
-			imapentity.set_map_visibility(v13, 1)
-			_pc = 2564
-			continue
-		elif _pc == 2564:
+				if sim.distance_between(v7, v13) < 300000.0:
+					imapentity.set_map_visibility(v13, 1)
 			v15 = v15 + 1
-			_pc = 2370
-			continue
-		elif _pc == 2582:
-			global.set_list("g_active_location_list", v6)
-			_pc = 2634
-			continue
-		elif _pc == 2613:
+		global.set_list("g_active_location_list", v6)
+		if PogRuntime.TRACE:
 			await local_27("iRangeCheck.MonitorRange - Sleeping for a bit\n")
-			_pc = 2634
-			continue
-		elif _pc == 2634:
-			_pc = 2179
-			continue
-		elif _pc == 2639:
-			return
-		else:
-			return 0
+	return
 	return 0
 

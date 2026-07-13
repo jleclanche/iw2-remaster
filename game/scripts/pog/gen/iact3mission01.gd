@@ -71,27 +71,11 @@ func _link() -> void:
 	text = api.text
 
 func local_0() -> Variant:
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			_pc = 11
-			continue
-		elif _pc == 11:
-			return
-		else:
-			return 0
+	return _pog_clone("Corporates On The Run")
 	return 0
 
 func local_14() -> Variant:
-	var _pc: int = 14
-	while true:
-		if _pc == 14:
-			_pc = 25
-			continue
-		elif _pc == 25:
-			return
-		else:
-			return 0
+	return _pog_clone("g_act3_corporates_on_run_complete")
 	return 0
 
 func main() -> Variant:
@@ -119,28 +103,12 @@ func local_194() -> Variant:
 	return 0
 
 func local_302() -> Variant:
-	var _pc: int = 302
-	while true:
-		if _pc == 302:
-			if not (await iutilities.skip_mission(await local_0())):
-				_pc = 336
-				continue
-			else:
-				_pc = 398
-				continue
-		elif _pc == 336:
-			await imissiontracker.add_mission(self, 3, 1)
-			_pog_detach(_pog_spawn(mission_handler.bind()))
-			_pc = 428
-			continue
-		elif _pc == 398:
-			global.set_bool(await local_14(), 1)
-			_pc = 428
-			continue
-		elif _pc == 428:
-			return
-		else:
-			return 0
+	if not (await iutilities.skip_mission(await local_0())):
+		await imissiontracker.add_mission(self, 3, 1)
+		_pog_detach(_pog_spawn(mission_handler.bind()))
+	else:
+		global.set_bool(await local_14(), 1)
+	return
 	return 0
 
 func phase_menu() -> Variant:
@@ -151,165 +119,76 @@ func phase_menu() -> Variant:
 func local_447() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 447
-	while true:
-		if _pc == 447:
-			await iconversation.begin()
-			await iconversation.add_response("a3_m01_debug_choose_phase_skip_mission", "a3_m01_debug_chosen_phase_skip_mission")
-			await iconversation.add_response("a3_m01_debug_choose_phase_MP_Start", "a3_m01_debug_chosen_phase_MP_Start")
-			await iconversation.add_response("a3_m01_debug_choose_phase_MP_Meeting", "a3_m01_debug_chosen_phase_MP_Meeting")
-			await iconversation.add_response("a3_m01_debug_choose_phase_MP_Assault", "a3_m01_debug_chosen_phase_MP_Assault")
-			await iconversation.add_response("a3_m01_debug_choose_phase_MP_Defend", "a3_m01_debug_chosen_phase_MP_Defend")
-			await iconversation.add_response("a3_m01_debug_choose_phase_MP_Survive", "a3_m01_debug_chosen_phase_MP_Survive")
-			v1 = await iconversation.ask(0, "utils_particle_employee", "a3_m01_debug_choose_entry_phase")
-			await iconversation.end()
-			v0 = _pog_spawn(mission_handler.bind())
-			if _pog_is_null(v1):
-				_pc = 706
-				continue
-			else:
-				_pc = 741
-				continue
-		elif _pc == 706:
-			global.set_bool(await local_14(), 1)
-			_pc = 787
-			continue
-		elif _pc == 741:
-			state.create(v0, v1 - 2)
-			_pog_detach(v0)
-			_pc = 787
-			continue
-		elif _pc == 787:
-			return
-		else:
-			return 0
+	await iconversation.begin()
+	await iconversation.add_response("a3_m01_debug_choose_phase_skip_mission", "a3_m01_debug_chosen_phase_skip_mission")
+	await iconversation.add_response("a3_m01_debug_choose_phase_MP_Start", "a3_m01_debug_chosen_phase_MP_Start")
+	await iconversation.add_response("a3_m01_debug_choose_phase_MP_Meeting", "a3_m01_debug_chosen_phase_MP_Meeting")
+	await iconversation.add_response("a3_m01_debug_choose_phase_MP_Assault", "a3_m01_debug_chosen_phase_MP_Assault")
+	await iconversation.add_response("a3_m01_debug_choose_phase_MP_Defend", "a3_m01_debug_chosen_phase_MP_Defend")
+	await iconversation.add_response("a3_m01_debug_choose_phase_MP_Survive", "a3_m01_debug_chosen_phase_MP_Survive")
+	v1 = await iconversation.ask(0, "utils_particle_employee", "a3_m01_debug_choose_entry_phase")
+	await iconversation.end()
+	v0 = _pog_spawn(mission_handler.bind())
+	if _pog_is_null(v1):
+		global.set_bool(await local_14(), 1)
+	else:
+		state.create(v0, v1 - 2)
+		_pog_detach(v0)
+	return
 	return 0
 
 func local_789(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19) -> Variant:
-	var _pc: int = 789
 	while true:
-		if _pc == 789:
-			_pc = 794
+		await _pog_wait(0.4)
+		if state.progress(v1) != 100:
 			continue
-		elif _pc == 794:
-			await _pog_frame()
-			if _pog_every(795, 0.4000000059604645):
-				_pc = 808
-				continue
-			else:
-				_pc = 1455
-				continue
-		elif _pc == 808:
-			if state.progress(v1) == 100:
-				_pc = 834
-				continue
-			else:
-				_pc = 1455
-				continue
-		elif _pc == 834:
-			sim.destroy(v2)
-			sim.destroy(v3)
-			sim.destroy(v4)
-			sim.destroy(v5)
-			sim.destroy(v6)
-			sim.destroy(isim.find_by_name_in_system("a3_m01_waypoint_initial_meeting", "map:/geog/badlands/kompira"))
-			group.destroy(v7, 1)
-			group.destroy(v8, 1)
-			group.destroy(v9, 1)
-			group.destroy(v7, 1)
-			group.destroy(v11, 1)
-			group.destroy(v12, 1)
-			group.destroy(v13, 1)
-			group.destroy(v14, 1)
-			group.destroy(v15, 1)
-			group.destroy(v16, 1)
-			group.destroy(v17, 1)
-			group.destroy(v18, 1)
-			group.destroy(v19, 1)
-			global.set_bool("g_skip_locked", 0)
-			_pog_detach(_pog_spawn(local_302.bind()))
-			await local_194()
-			if imapentity.is_destroyed(imapentity.find_by_name_in_system("Najran MAAS Security Station", "map:/geog/badlands/kompira")):
-				_pc = 1338
-				continue
-			else:
-				_pc = 1379
-				continue
-		elif _pc == 1338:
+		sim.destroy(v2)
+		sim.destroy(v3)
+		sim.destroy(v4)
+		sim.destroy(v5)
+		sim.destroy(v6)
+		sim.destroy(isim.find_by_name_in_system("a3_m01_waypoint_initial_meeting", "map:/geog/badlands/kompira"))
+		group.destroy(v7, 1)
+		group.destroy(v8, 1)
+		group.destroy(v9, 1)
+		group.destroy(v7, 1)
+		group.destroy(v11, 1)
+		group.destroy(v12, 1)
+		group.destroy(v13, 1)
+		group.destroy(v14, 1)
+		group.destroy(v15, 1)
+		group.destroy(v16, 1)
+		group.destroy(v17, 1)
+		group.destroy(v18, 1)
+		group.destroy(v19, 1)
+		global.set_bool("g_skip_locked", 0)
+		_pog_detach(_pog_spawn(local_302.bind()))
+		await local_194()
+		if imapentity.is_destroyed(imapentity.find_by_name_in_system("Najran MAAS Security Station", "map:/geog/badlands/kompira")):
 			imapentity.set_destroyed(imapentity.find_by_name_in_system("Najran MAAS Security Station", "map:/geog/badlands/kompira"), 0)
-			_pc = 1379
-			continue
-		elif _pc == 1379:
-			state.destroy(v0)
-			await imissiontracker.remove_mission(v0)
-			await iutilities.remove_mission_restart()
-			_pog_halt(v0)
-			_pc = 1461
-			continue
-		elif _pc == 1455:
-			_pc = 794
-			continue
-		elif _pc == 1460:
-			_pc = 1461
-			continue
-		elif _pc == 1461:
-			return
-		else:
-			return 0
+		state.destroy(v0)
+		await imissiontracker.remove_mission(v0)
+		await iutilities.remove_mission_restart()
+		_pog_halt(v0)
+		return
+	return
 	return 0
 
 func local_1463(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 1463
-	while true:
-		if _pc == 1463:
-			v2 = group.sim_count(v0)
-			if v1:
-				_pc = 1502
-				continue
-			else:
-				_pc = 1598
-				continue
-		elif _pc == 1502:
-			v3 = 0
-			_pc = 1509
-			continue
-		elif _pc == 1509:
-			if v3 < v2:
-				_pc = 1525
-				continue
-			else:
-				_pc = 1593
-				continue
-		elif _pc == 1525:
+	v2 = group.sim_count(v0)
+	if v1:
+		v3 = 0
+		while v3 < v2:
 			iship.lock_down_weapons(iship.cast(group.nth_sim(v0, v3)))
 			v3 = v3 + 1
-			_pc = 1509
-			continue
-		elif _pc == 1593:
-			_pc = 1689
-			continue
-		elif _pc == 1598:
-			v3 = 0
-			_pc = 1605
-			continue
-		elif _pc == 1605:
-			if v3 < v2:
-				_pc = 1621
-				continue
-			else:
-				_pc = 1689
-				continue
-		elif _pc == 1621:
+	else:
+		v3 = 0
+		while v3 < v2:
 			iship.weapon_targets_from_contact_list(iship.cast(group.nth_sim(v0, v3)))
 			v3 = v3 + 1
-			_pc = 1605
-			continue
-		elif _pc == 1689:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func mission_handler() -> Variant:
@@ -790,14 +669,14 @@ func mission_handler() -> Variant:
 				_pc = 6223
 				continue
 		elif _pc == 6352:
-			if not _pog_is_null(2):
+			if 2 != v36:
 				_pc = 6361
 				continue
 			else:
 				_pc = 6260
 				continue
 		elif _pc == 6361:
-			if not _pog_is_null(3):
+			if 3 != v36:
 				_pc = 6370
 				continue
 			else:
@@ -1132,90 +1011,44 @@ func local_8867(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 8867
+	v10 = self
 	while true:
-		if _pc == 8867:
-			v10 = self
-			_pc = 8891
-			continue
-		elif _pc == 8891:
-			v7 = group.sim_count(v2)
-			if v7 < v3 - 1:
-				_pc = 8933
-				continue
-			else:
-				_pc = 9284
-				continue
-		elif _pc == 8933:
+		v7 = group.sim_count(v2)
+		if v7 < v3 - 1:
 			if math.random_int(0, 100) > 97:
-				_pc = 8957
-				continue
-			else:
-				_pc = 9284
-				continue
-		elif _pc == 8957:
-			v8 = v3 - v7
-			v9 = math.random_int(1, v8)
-			v6 = await local_12251(v9)
-			sim.place_near(group.leader(v6), v0, v1)
-			await iescort.goose(v6, 250.0, 8000.0, 1)
-			iai.give_generic_attack_order(v6)
-			iai.give_approach_order_advanced(group.leader(v6), v0, 8000.0, 1000.0, 1)
-			group.add_group(v2, v6)
-			group.flatten(v2)
-			_pc = 9284
-			continue
-		elif _pc == 9210:
-			debug.print_string("Number of enemies in combat now = ")
-			debug.print_int(group.sim_count(v2))
-			debug.print_string("\n")
-			_pc = 9284
-			continue
-		elif _pc == 9284:
-			v7 = group.sim_count(v4)
-			if v7 < v3 - 1:
-				_pc = 9326
-				continue
-			else:
-				_pc = 9677
-				continue
-		elif _pc == 9326:
+				v8 = v3 - v7
+				v9 = math.random_int(1, v8)
+				v6 = await local_12251(v9)
+				sim.place_near(group.leader(v6), v0, v1)
+				await iescort.goose(v6, 250.0, 8000.0, 1)
+				iai.give_generic_attack_order(v6)
+				iai.give_approach_order_advanced(group.leader(v6), v0, 8000.0, 1000.0, 1)
+				group.add_group(v2, v6)
+				group.flatten(v2)
+				if PogRuntime.TRACE:
+					debug.print_string("Number of enemies in combat now = ")
+					debug.print_int(group.sim_count(v2))
+					debug.print_string("\n")
+		v7 = group.sim_count(v4)
+		if v7 < v3 - 1:
 			if math.random_int(0, 100) > 97:
-				_pc = 9350
-				continue
-			else:
-				_pc = 9677
-				continue
-		elif _pc == 9350:
-			v8 = v3 - v7
-			v9 = math.random_int(1, v8)
-			v6 = await local_12473(v9)
-			sim.place_near(group.leader(v6), v0, v1)
-			await iescort.goose(v6, 250.0, 8000.0, 1)
-			iai.give_generic_attack_order(v6)
-			iai.give_approach_order_advanced(group.leader(v6), v0, 8000.0, 1000.0, 1)
-			group.add_group(v4, v6)
-			group.flatten(v4)
-			_pc = 9677
-			continue
-		elif _pc == 9603:
-			debug.print_string("Number of friends in combat now = ")
-			debug.print_int(group.sim_count(v4))
-			debug.print_string("\n")
-			_pc = 9677
-			continue
-		elif _pc == 9677:
-			await _pog_wait(1.0)
-			if not (1):
-				_pc = 9707
-				continue
-			else:
-				_pc = 8891
-				continue
-		elif _pc == 9707:
-			return
-		else:
-			return 0
+				v8 = v3 - v7
+				v9 = math.random_int(1, v8)
+				v6 = await local_12473(v9)
+				sim.place_near(group.leader(v6), v0, v1)
+				await iescort.goose(v6, 250.0, 8000.0, 1)
+				iai.give_generic_attack_order(v6)
+				iai.give_approach_order_advanced(group.leader(v6), v0, 8000.0, 1000.0, 1)
+				group.add_group(v4, v6)
+				group.flatten(v4)
+				if PogRuntime.TRACE:
+					debug.print_string("Number of friends in combat now = ")
+					debug.print_int(group.sim_count(v4))
+					debug.print_string("\n")
+		await _pog_wait(1.0)
+		if not (1):
+			break
+	return
 	return 0
 
 func local_9709() -> Variant:
@@ -1289,87 +1122,43 @@ func local_10506(v0, v1) -> Variant:
 
 func local_10731(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 10731
-	while true:
-		if _pc == 10731:
-			v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
-			await iutilities.make_waypoint_visible(v2, 1, "a3_m01_waypoint_initial_meeting")
-			_pc = 10825
-			continue
-		elif _pc == 10825:
-			return
-		else:
-			return 0
+	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
+	await iutilities.make_waypoint_visible(v2, 1, "a3_m01_waypoint_initial_meeting")
+	return v2
 	return 0
 
 func local_10827(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 10827
-	while true:
-		if _pc == 10827:
-			v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
-			await iutilities.make_waypoint_visible(v2, 1, "a3_m01_waypoint_security_base_approach")
-			_pc = 10921
-			continue
-		elif _pc == 10921:
-			return
-		else:
-			return 0
+	v2 = isim.cast(await iutilities.create_waypoint_relative_to(v0, 0.0, v1, 0.0))
+	await iutilities.make_waypoint_visible(v2, 1, "a3_m01_waypoint_security_base_approach")
+	return v2
 	return 0
 
 func local_10923() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 10923
-	while true:
-		if _pc == 10923:
-			v0 = iship.create("ini:/sims/ships/navy/troop_carrier", "a3_m01_marine_troop_carrier")
-			await ipilotsetup.generic_cargo_pod(v0)
-			isim.set_faction(v0, ifaction.find("League"))
-			object.set_bool_property(v0, "ignore_speed_limit", 1)
-			isim.set_mission_critical(v0, 1)
-			await icutsceneutilities.setup_directed_death(v0, v0, "", "", "", 1)
-			_pc = 11119
-			continue
-		elif _pc == 11119:
-			return
-		else:
-			return 0
+	v0 = iship.create("ini:/sims/ships/navy/troop_carrier", "a3_m01_marine_troop_carrier")
+	await ipilotsetup.generic_cargo_pod(v0)
+	isim.set_faction(v0, ifaction.find("League"))
+	object.set_bool_property(v0, "ignore_speed_limit", 1)
+	isim.set_mission_critical(v0, 1)
+	await icutsceneutilities.setup_directed_death(v0, v0, "", "", "", 1)
+	return v0
 	return 0
 
 func local_11121(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 11121
-	while true:
-		if _pc == 11121:
-			v1 = group.create()
-			v2 = 0
-			_pc = 11152
-			continue
-		elif _pc == 11152:
-			if v2 < v0:
-				_pc = 11168
-				continue
-			else:
-				_pc = 11285
-				continue
-		elif _pc == 11168:
-			v3 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
-			object.set_bool_property(v3, "ignore_speed_limit", 1)
-			group.add_sim(v1, v3)
-			v2 = v2 + 1
-			_pc = 11152
-			continue
-		elif _pc == 11285:
-			await abb_common.set_pilot_no_scripts_group(v1, 2000.0, 2000.0, -50.0)
-			await abb_common.set_faction_group(v1, ifaction.find("League"))
-			_pc = 11368
-			continue
-		elif _pc == 11368:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = 0
+	while v2 < v0:
+		v3 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
+		object.set_bool_property(v3, "ignore_speed_limit", 1)
+		group.add_sim(v1, v3)
+		v2 = v2 + 1
+	await abb_common.set_pilot_no_scripts_group(v1, 2000.0, 2000.0, -50.0)
+	await abb_common.set_faction_group(v1, ifaction.find("League"))
+	return v1
 	return 0
 
 func local_11370(v0) -> Variant:
@@ -1461,8 +1250,7 @@ func local_11370(v0) -> Variant:
 		elif _pc == 11821:
 			await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
 			await abb_common.set_faction_group(v1, ifaction.find("League"))
-			_pc = 11904
-			continue
+			return v1
 		elif _pc == 11904:
 			return
 		elif _pc == 12027:
@@ -1475,105 +1263,45 @@ func local_12029(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 12029
-	while true:
-		if _pc == 12029:
-			v1 = group.create()
-			v2 = 0
-			_pc = 12060
-			continue
-		elif _pc == 12060:
-			if v2 < v0:
-				_pc = 12076
-				continue
-			else:
-				_pc = 12166
-				continue
-		elif _pc == 12076:
-			v3 = iship.create("ini:/sims/ships/corporate/large_corp_interceptor", await ishipcreation.ship_name("MAAS Corporation", -1))
-			group.add_sim(v1, v3)
-			v2 = v2 + 1
-			_pc = 12060
-			continue
-		elif _pc == 12166:
-			await abb_common.set_pilot_no_scripts_group(v1, 2000.0, 2000.0, -50.0)
-			await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
-			_pc = 12249
-			continue
-		elif _pc == 12249:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = 0
+	while v2 < v0:
+		v3 = iship.create("ini:/sims/ships/corporate/large_corp_interceptor", await ishipcreation.ship_name("MAAS Corporation", -1))
+		group.add_sim(v1, v3)
+		v2 = v2 + 1
+	await abb_common.set_pilot_no_scripts_group(v1, 2000.0, 2000.0, -50.0)
+	await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
+	return v1
 	return 0
 
 func local_12251(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 12251
-	while true:
-		if _pc == 12251:
-			v1 = group.create()
-			v2 = 0
-			_pc = 12282
-			continue
-		elif _pc == 12282:
-			if v2 < v0:
-				_pc = 12298
-				continue
-			else:
-				_pc = 12388
-				continue
-		elif _pc == 12298:
-			v3 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MAAS Corporation", -1))
-			group.add_sim(v1, v3)
-			v2 = v2 + 1
-			_pc = 12282
-			continue
-		elif _pc == 12388:
-			await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
-			await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
-			_pc = 12471
-			continue
-		elif _pc == 12471:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = 0
+	while v2 < v0:
+		v3 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MAAS Corporation", -1))
+		group.add_sim(v1, v3)
+		v2 = v2 + 1
+	await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
+	await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
+	return v1
 	return 0
 
 func local_12473(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 12473
-	while true:
-		if _pc == 12473:
-			v1 = group.create()
-			v2 = 0
-			_pc = 12504
-			continue
-		elif _pc == 12504:
-			if v2 < v0:
-				_pc = 12520
-				continue
-			else:
-				_pc = 12610
-				continue
-		elif _pc == 12520:
-			v3 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("Oman", -1))
-			group.add_sim(v1, v3)
-			v2 = v2 + 1
-			_pc = 12504
-			continue
-		elif _pc == 12610:
-			await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
-			await abb_common.set_faction_group(v1, ifaction.find("Oman"))
-			_pc = 12693
-			continue
-		elif _pc == 12693:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = 0
+	while v2 < v0:
+		v3 = iship.create("ini:/sims/ships/independent/oman_cutter", await ishipcreation.ship_name("Oman", -1))
+		group.add_sim(v1, v3)
+		v2 = v2 + 1
+	await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
+	await abb_common.set_faction_group(v1, ifaction.find("Oman"))
+	return v1
 	return 0
 
 func local_12695() -> Variant:
@@ -1581,39 +1309,19 @@ func local_12695() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 12695
-	while true:
-		if _pc == 12695:
-			v0 = group.create()
-			v1 = 10
-			v3 = iship.create("ini:/sims/ships/corporate/corp_cruiser", "a3_m01_ship_name_resolute")
-			group.add_sim(v0, v3)
-			v2 = 0
-			_pc = 12790
-			continue
-		elif _pc == 12790:
-			if v2 < v1:
-				_pc = 12806
-				continue
-			else:
-				_pc = 12923
-				continue
-		elif _pc == 12806:
-			v3 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("League", -1))
-			object.set_bool_property(v3, "ignore_speed_limit", 1)
-			group.add_sim(v0, v3)
-			v2 = v2 + 1
-			_pc = 12790
-			continue
-		elif _pc == 12923:
-			await abb_common.set_pilot_no_scripts_group(v0, 2000.0, 2000.0, -50.0)
-			await abb_common.set_faction_group(v0, ifaction.find("League"))
-			_pc = 13006
-			continue
-		elif _pc == 13006:
-			return
-		else:
-			return 0
+	v0 = group.create()
+	v1 = 10
+	v3 = iship.create("ini:/sims/ships/corporate/corp_cruiser", "a3_m01_ship_name_resolute")
+	group.add_sim(v0, v3)
+	v2 = 0
+	while v2 < v1:
+		v3 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("League", -1))
+		object.set_bool_property(v3, "ignore_speed_limit", 1)
+		group.add_sim(v0, v3)
+		v2 = v2 + 1
+	await abb_common.set_pilot_no_scripts_group(v0, 2000.0, 2000.0, -50.0)
+	await abb_common.set_faction_group(v0, ifaction.find("League"))
+	return v0
 	return 0
 
 func local_13008(v0) -> Variant:
@@ -1670,8 +1378,7 @@ func local_13008(v0) -> Variant:
 		elif _pc == 13289:
 			await abb_common.set_pilot_no_scripts_group(v1, 0.30000001192092896, 1.0, 0.5)
 			await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
-			_pc = 13372
-			continue
+			return v1
 		elif _pc == 13372:
 			return
 		else:
@@ -1684,84 +1391,39 @@ func local_13374(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 13374
-	while true:
-		if _pc == 13374:
-			v3 = ifaction.find("MAAS Corporation")
-			v4 = group.create()
-			v6 = 0
-			_pc = 13431
-			continue
-		elif _pc == 13431:
-			if v6 < v1:
-				_pc = 13447
-				continue
-			else:
-				_pc = 13866
-				continue
-		elif _pc == 13447:
-			v7 = v6 * 1.0 * 360.0 / v1 * 1.0
-			v5 = iship.create("ini:/sims/ships/navy/gunstar_quad_light", "a3_m01_Gunstar")
-			group.add_sim(v4, v5)
-			_pc = 13684
-			continue
-		elif _pc == 13545:
+	v3 = ifaction.find("MAAS Corporation")
+	v4 = group.create()
+	v6 = 0
+	while v6 < v1:
+		v7 = v6 * 1.0 * 360.0 / v1 * 1.0
+		v5 = iship.create("ini:/sims/ships/navy/gunstar_quad_light", "a3_m01_Gunstar")
+		group.add_sim(v4, v5)
+		if PogRuntime.TRACE:
 			debug.print_string("Creating gunstar relative to lpoint : ( ")
 			debug.print_float(v2 * math.pog_cos(v7))
 			debug.print_string(", ")
 			debug.print_float(v2 * math.pog_sin(v7))
 			debug.print_string(")\n")
-			_pc = 13684
-			continue
-		elif _pc == 13684:
-			sim.set_cullable(v5, 0)
-			sim.place_relative_to(v5, v0, v2 * math.pog_cos(v7), v2 * math.pog_sin(v7), 0.0)
-			await ipilotsetup.generic_cargo_pod(v5)
-			iship.set_pilot_skill_level(v5, 0.4000000059604645)
-			isim.set_faction(v5, v3)
-			v6 = v6 + 1
-			_pc = 13431
-			continue
-		elif _pc == 13866:
-			_pc = 13876
-			continue
-		elif _pc == 13876:
-			return
-		else:
-			return 0
+		sim.set_cullable(v5, 0)
+		sim.place_relative_to(v5, v0, v2 * math.pog_cos(v7), v2 * math.pog_sin(v7), 0.0)
+		await ipilotsetup.generic_cargo_pod(v5)
+		iship.set_pilot_skill_level(v5, 0.4000000059604645)
+		isim.set_faction(v5, v3)
+		v6 = v6 + 1
+	return v4
 	return 0
 
 func local_13918(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 13918
-	while true:
-		if _pc == 13918:
-			v2 = group.create()
-			group.flatten(v0)
-			_pc = 13963
-			continue
-		elif _pc == 13963:
-			if v1 > 0:
-				_pc = 13975
-				continue
-			else:
-				_pc = 14063
-				continue
-		elif _pc == 13975:
-			v3 = group.nth_sim(v0, 0)
-			group.remove_nth_sim(v0, 0)
-			group.add_sim(v2, v3)
-			v1 = v1 + -1
-			_pc = 13963
-			continue
-		elif _pc == 14063:
-			_pc = 14073
-			continue
-		elif _pc == 14073:
-			return
-		else:
-			return 0
+	v2 = group.create()
+	group.flatten(v0)
+	while v1 > 0:
+		v3 = group.nth_sim(v0, 0)
+		group.remove_nth_sim(v0, 0)
+		group.add_sim(v2, v3)
+		v1 = v1 + -1
+	return v2
 	return 0
 
 func local_14075() -> Variant:

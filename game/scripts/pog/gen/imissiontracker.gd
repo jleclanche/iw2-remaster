@@ -25,69 +25,25 @@ func local_56() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 56
-	while true:
-		if _pc == 56:
-			v3 = null
-			if not (global.exists("g_mt_mtask_counter")):
-				_pc = 98
-				continue
-			else:
-				_pc = 158
-				continue
-		elif _pc == 98:
-			global.create_string("g_mt_mstring", 2, "active missions: none")
-			_pc = 153
-			continue
-		elif _pc == 132:
+	v3 = null
+	if not (global.exists("g_mt_mtask_counter")):
+		global.create_string("g_mt_mstring", 2, "active missions: none")
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionTracker.UpdateString called before iMissionTracker.Initialise")
-			_pc = 153
-			continue
-		elif _pc == 153:
-			_pc = 485
-			continue
-		elif _pc == 158:
-			v3 = "active missions:"
-			v1 = global.pog_int("g_mt_mtask_counter")
-			v0 = 0
-			_pc = 204
-			continue
-		elif _pc == 204:
-			if v0 < v1:
-				_pc = 220
-				continue
-			else:
-				_pc = 412
-				continue
-		elif _pc == 220:
+	else:
+		v3 = "active missions:"
+		v1 = global.pog_int("g_mt_mtask_counter")
+		v0 = 0
+		while v0 < v1:
 			v2 = _pog_task_cast(global.handle(string.join("g_mt_mtask_handle", string.from_int(v0))))
 			if _pog_is_running(v2):
-				_pc = 315
-				continue
-			else:
-				_pc = 394
-				continue
-		elif _pc == 315:
-			v3 = string.join(v3, global.string(string.join("g_mt_mtask_string", string.from_int(v0))))
-			_pc = 394
-			continue
-		elif _pc == 394:
+				v3 = string.join(v3, global.string(string.join("g_mt_mtask_string", string.from_int(v0))))
 			v0 = v0 + 1
-			_pc = 204
-			continue
-		elif _pc == 412:
-			global.set_string("g_mt_mstring", v3)
-			_pc = 485
-			continue
-		elif _pc == 443:
+		global.set_string("g_mt_mstring", v3)
+		if PogRuntime.TRACE:
 			debug.print_string(v3)
 			debug.print_string("\n")
-			_pc = 485
-			continue
-		elif _pc == 485:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func add_mission(v0, v1, v2) -> Variant:
@@ -109,146 +65,47 @@ func remove_mission(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 857
-	while true:
-		if _pc == 857:
-			if not (global.exists("g_mt_mtask_counter")):
-				_pc = 888
-				continue
-			else:
-				_pc = 948
-				continue
-		elif _pc == 888:
-			global.create_string("g_mt_mstring", 2, "active missions: none")
-			_pc = 943
-			continue
-		elif _pc == 922:
+	if not (global.exists("g_mt_mtask_counter")):
+		global.create_string("g_mt_mstring", 2, "active missions: none")
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionTracker.UpdateString called before iMissionTracker.Initialise")
-			_pc = 943
-			continue
-		elif _pc == 943:
-			_pc = 1172
-			continue
-		elif _pc == 948:
-			v2 = global.pog_int("g_mt_mtask_counter")
-			v1 = 0
-			_pc = 981
-			continue
-		elif _pc == 981:
-			if v1 < v2:
-				_pc = 997
-				continue
-			else:
-				_pc = 1158
-				continue
-		elif _pc == 997:
+	else:
+		v2 = global.pog_int("g_mt_mtask_counter")
+		v1 = 0
+		while v1 < v2:
 			v3 = _pog_task_cast(global.handle(string.join("g_mt_mtask_handle", string.from_int(v1))))
 			if _pog_eq(v3, v0):
-				_pc = 1085
-				continue
-			else:
-				_pc = 1140
-				continue
-		elif _pc == 1085:
-			global.set_handle(string.join("g_mt_mtask_handle", string.from_int(v1)), 0)
-			_pc = 1140
-			continue
-		elif _pc == 1140:
+				global.set_handle(string.join("g_mt_mtask_handle", string.from_int(v1)), 0)
 			v1 = v1 + 1
-			_pc = 981
-			continue
-		elif _pc == 1158:
-			await local_56()
-			_pc = 1172
-			continue
-		elif _pc == 1172:
-			return 0
-		else:
-			return 0
+		await local_56()
+	return 0
 	return 0
 
 func local_1175() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 1175
-	while true:
-		if _pc == 1175:
-			v0 = 0
-			_pc = 1187
-			continue
-		elif _pc == 1187:
-			if 1:
-				_pc = 1193
-				continue
-			else:
-				_pc = 1211
-				continue
-		elif _pc == 1193:
-			v0 = v0 + 1
-			_pc = 1187
-			continue
-		elif _pc == 1211:
-			return
-		else:
-			return 0
+	v0 = 0
+	while 1:
+		v0 = v0 + 1
+	return
 	return 0
 
 func test() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 1213
-	while true:
-		if _pc == 1213:
-			await initialise()
-			v0 = 0
-			_pc = 1239
-			continue
-		elif _pc == 1239:
-			if v0 < 5:
-				_pc = 1252
-				continue
-			else:
-				_pc = 1435
-				continue
-		elif _pc == 1252:
-			v1 = 0
-			_pc = 1259
-			continue
-		elif _pc == 1259:
-			if v1 < 5:
-				_pc = 1272
-				continue
-			else:
-				_pc = 1417
-				continue
-		elif _pc == 1272:
+	await initialise()
+	v0 = 0
+	while v0 < 5:
+		v1 = 0
+		while v1 < 5:
 			v2 = _pog_spawn(local_1175.bind())
 			await add_mission(v2, v0, v1)
 			if math.random(0.0, 4.0) > 2.0:
-				_pc = 1354
-				continue
-			else:
-				_pc = 1399
-				continue
-		elif _pc == 1354:
-			await remove_mission(v2)
-			_pc = 1399
-			continue
-		elif _pc == 1378:
-			debug.print_string("removed recentmost task in iMissionTracker Test\n")
-			_pc = 1399
-			continue
-		elif _pc == 1399:
+				await remove_mission(v2)
+				if PogRuntime.TRACE:
+					debug.print_string("removed recentmost task in iMissionTracker Test\n")
 			v1 = v1 + 1
-			_pc = 1259
-			continue
-		elif _pc == 1417:
-			v0 = v0 + 1
-			_pc = 1239
-			continue
-		elif _pc == 1435:
-			return 0
-		else:
-			return 0
+		v0 = v0 + 1
+	return 0
 	return 0
 

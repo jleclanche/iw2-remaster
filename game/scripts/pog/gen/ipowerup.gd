@@ -31,295 +31,134 @@ func give_everything() -> Variant:
 	return 0
 
 func give_all_ships() -> Variant:
-	var _pc: int = 83
-	while true:
-		if _pc == 83:
-			_pc = 108
-			continue
-		elif _pc == 88:
-			debug.print_string("iPowerUp.GiveAllShips: Adding All Ships\n")
-			_pc = 108
-			continue
-		elif _pc == 108:
-			if iinventory.got_tug() and iinventory.got_fast_attack_ship() and iinventory.got_heavy_corvette():
-				_pc = 155
-				continue
-			else:
-				_pc = 186
-				continue
-		elif _pc == 155:
-			_pc = 180
-			continue
-		elif _pc == 160:
+	if PogRuntime.TRACE:
+		debug.print_string("iPowerUp.GiveAllShips: Adding All Ships\n")
+	if iinventory.got_tug() and iinventory.got_fast_attack_ship() and iinventory.got_heavy_corvette():
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveHeavyCorvette: Already got it.\n")
-			_pc = 180
-			continue
-		elif _pc == 180:
-			_pc = 506
-			continue
-		elif _pc == 186:
-			iinventory.add_tug()
-			iinventory.add_fast_attack_ship()
-			iinventory.add_heavy_corvette()
-			iinventory.add(216, 1)
-			iinventory.add(224, 1)
-			iinventory.add(306, 1)
-			iinventory.add(307, 1)
-			iinventory.add(608, 2)
-			iinventory.add(567, 1)
-			iinventory.add(570, 3)
-			iinventory.add(560, 1)
-			iinventory.add(561, 2)
-			iinventory.add(562, 100)
-			iinventory.add(507, 5)
-			iinventory.add(509, 5)
-			iinventory.add(511, 1)
-			iinventory.add(521, 5)
-			iinventory.add(474, 2)
-			_pc = 506
-			continue
-		elif _pc == 506:
-			return 0
-		else:
-			return 0
+	else:
+		iinventory.add_tug()
+		iinventory.add_fast_attack_ship()
+		iinventory.add_heavy_corvette()
+		iinventory.add(216, 1)
+		iinventory.add(224, 1)
+		iinventory.add(306, 1)
+		iinventory.add(307, 1)
+		iinventory.add(608, 2)
+		iinventory.add(567, 1)
+		iinventory.add(570, 3)
+		iinventory.add(560, 1)
+		iinventory.add(561, 2)
+		iinventory.add(562, 100)
+		iinventory.add(507, 5)
+		iinventory.add(509, 5)
+		iinventory.add(511, 1)
+		iinventory.add(521, 5)
+		iinventory.add(474, 2)
+	return 0
 	return 0
 
 func give_all_cargo() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 509
-	while true:
-		if _pc == 509:
-			v0 = iinventory.number_of_cargo_types()
-			if iinventory.number_of_cargo_type(34) > 90:
-				_pc = 556
-				continue
-			else:
-				_pc = 587
-				continue
-		elif _pc == 556:
-			_pc = 581
-			continue
-		elif _pc == 561:
+	v0 = iinventory.number_of_cargo_types()
+	if iinventory.number_of_cargo_type(34) > 90:
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllCargo: Too many weasels. No more cargo added.")
-			_pc = 581
-			continue
-		elif _pc == 581:
-			_pc = 738
-			continue
-		elif _pc == 587:
-			_pc = 612
-			continue
-		elif _pc == 592:
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllCargo: Adding All Cargo...")
-			_pc = 612
-			continue
-		elif _pc == 612:
-			v2 = 0
-			_pc = 620
-			continue
-		elif _pc == 620:
-			if v2 < v0:
-				_pc = 636
-				continue
-			else:
-				_pc = 712
-				continue
-		elif _pc == 636:
+		v2 = 0
+		while v2 < v0:
 			v1 = icargo.find(v2)
 			if not _pog_is_null(v1):
-				_pc = 673
-				continue
-			else:
-				_pc = 694
-				continue
-		elif _pc == 673:
-			iinventory.add(v2, 100)
-			_pc = 694
-			continue
-		elif _pc == 694:
+				iinventory.add(v2, 100)
 			v2 = v2 + 1
-			_pc = 620
-			continue
-		elif _pc == 712:
-			_pc = 737
-			continue
-		elif _pc == 717:
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllCargo: Done adding cargo.\n")
-			_pc = 737
-			continue
-		elif _pc == 737:
-			_pc = 738
-			continue
-		elif _pc == 738:
-			return 0
-		elif _pc == 765:
-			_pc = 790
-			continue
-		elif _pc == 770:
+	return 0
+	if global.exists("g_powerup_ships"):
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllShips: Destroying Ship powerup global.\n")
-			_pc = 790
-			continue
-		elif _pc == 790:
-			global.destroy("g_powerup_ships")
-			_pc = 893
-			continue
-		elif _pc == 817:
-			if global.exists("g_powerup_cargo"):
-				_pc = 841
-				continue
-			else:
-				_pc = 893
-				continue
-		elif _pc == 841:
-			_pc = 866
-			continue
-		elif _pc == 846:
+		global.destroy("g_powerup_ships")
+	else:
+		if not (global.exists("g_powerup_cargo")):
+			return 0
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllShips: Destroying Cargo powerup global.\n")
-			_pc = 866
-			continue
-		elif _pc == 866:
-			global.destroy("g_powerup_cargo")
-			_pc = 893
-			continue
-		elif _pc == 893:
-			return 0
-		else:
-			return 0
+		global.destroy("g_powerup_cargo")
+	return 0
 	return 0
 
 func give_tug() -> Variant:
-	var _pc: int = 896
-	while true:
-		if _pc == 896:
-			if iinventory.got_tug():
-				_pc = 914
-				continue
-			else:
-				_pc = 945
-				continue
-		elif _pc == 914:
-			_pc = 939
-			continue
-		elif _pc == 919:
+	if iinventory.got_tug():
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveTug: Already got it.\n")
-			_pc = 939
-			continue
-		elif _pc == 939:
-			_pc = 1177
-			continue
-		elif _pc == 945:
-			iinventory.add_tug()
-			iinventory.add(208, 1)
-			iinventory.add(212, 1)
-			iinventory.add(209, 1)
-			iinventory.add(579, 1)
-			iinventory.add(297, 1)
-			iinventory.add(593, 1)
-			iinventory.add(558, 1)
-			iinventory.add(556, 1)
-			iinventory.add(492, 1)
-			iinventory.add(490, 1)
-			iinventory.add(483, 2)
-			iinventory.add(474, 2)
-			_pc = 1177
-			continue
-		elif _pc == 1177:
-			return 0
-		else:
-			return 0
+	else:
+		iinventory.add_tug()
+		iinventory.add(208, 1)
+		iinventory.add(212, 1)
+		iinventory.add(209, 1)
+		iinventory.add(579, 1)
+		iinventory.add(297, 1)
+		iinventory.add(593, 1)
+		iinventory.add(558, 1)
+		iinventory.add(556, 1)
+		iinventory.add(492, 1)
+		iinventory.add(490, 1)
+		iinventory.add(483, 2)
+		iinventory.add(474, 2)
+	return 0
 	return 0
 
 func give_fast_attack_ship() -> Variant:
-	var _pc: int = 1180
-	while true:
-		if _pc == 1180:
-			if iinventory.got_fast_attack_ship():
-				_pc = 1198
-				continue
-			else:
-				_pc = 1229
-				continue
-		elif _pc == 1198:
-			_pc = 1223
-			continue
-		elif _pc == 1203:
+	if iinventory.got_fast_attack_ship():
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveFastAttackShip: Already got it.\n")
-			_pc = 1223
-			continue
-		elif _pc == 1223:
-			_pc = 1519
-			continue
-		elif _pc == 1229:
-			iinventory.add_fast_attack_ship()
-			iinventory.add(216, 1)
-			iinventory.add(213, 1)
-			iinventory.add(306, 1)
-			iinventory.add(307, 1)
-			iinventory.add(590, 2)
-			iinventory.add(558, 1)
-			iinventory.add(563, 1)
-			iinventory.add(560, 1)
-			iinventory.add(561, 2)
-			iinventory.add(562, 100)
-			iinventory.add(488, 2)
-			iinventory.add(496, 1)
-			iinventory.add(500, 2)
-			iinventory.add(521, 1)
-			iinventory.add(474, 2)
-			_pc = 1519
-			continue
-		elif _pc == 1519:
-			return 0
-		else:
-			return 0
+	else:
+		iinventory.add_fast_attack_ship()
+		iinventory.add(216, 1)
+		iinventory.add(213, 1)
+		iinventory.add(306, 1)
+		iinventory.add(307, 1)
+		iinventory.add(590, 2)
+		iinventory.add(558, 1)
+		iinventory.add(563, 1)
+		iinventory.add(560, 1)
+		iinventory.add(561, 2)
+		iinventory.add(562, 100)
+		iinventory.add(488, 2)
+		iinventory.add(496, 1)
+		iinventory.add(500, 2)
+		iinventory.add(521, 1)
+		iinventory.add(474, 2)
+	return 0
 	return 0
 
 func give_heavy_corvette() -> Variant:
-	var _pc: int = 1522
-	while true:
-		if _pc == 1522:
-			if iinventory.got_heavy_corvette():
-				_pc = 1540
-				continue
-			else:
-				_pc = 1571
-				continue
-		elif _pc == 1540:
-			_pc = 1565
-			continue
-		elif _pc == 1545:
+	if iinventory.got_heavy_corvette():
+		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveHeavyCorvette: Already got it.\n")
-			_pc = 1565
-			continue
-		elif _pc == 1565:
-			_pc = 1881
-			continue
-		elif _pc == 1571:
-			iinventory.add_heavy_corvette()
-			iinventory.add(216, 1)
-			iinventory.add(224, 1)
-			iinventory.add(306, 1)
-			iinventory.add(307, 1)
-			iinventory.add(608, 2)
-			iinventory.add(558, 1)
-			iinventory.add(563, 1)
-			iinventory.add(560, 1)
-			iinventory.add(561, 2)
-			iinventory.add(562, 100)
-			iinventory.add(507, 5)
-			iinventory.add(507, 5)
-			iinventory.add(509, 5)
-			iinventory.add(511, 3)
-			iinventory.add(521, 1)
-			iinventory.add(474, 2)
-			_pc = 1881
-			continue
-		elif _pc == 1881:
-			return 0
-		else:
-			return 0
+	else:
+		iinventory.add_heavy_corvette()
+		iinventory.add(216, 1)
+		iinventory.add(224, 1)
+		iinventory.add(306, 1)
+		iinventory.add(307, 1)
+		iinventory.add(608, 2)
+		iinventory.add(558, 1)
+		iinventory.add(563, 1)
+		iinventory.add(560, 1)
+		iinventory.add(561, 2)
+		iinventory.add(562, 100)
+		iinventory.add(507, 5)
+		iinventory.add(507, 5)
+		iinventory.add(509, 5)
+		iinventory.add(511, 3)
+		iinventory.add(521, 1)
+		iinventory.add(474, 2)
+	return 0
 	return 0
 
 func equip_for_player_base_testing() -> Variant:

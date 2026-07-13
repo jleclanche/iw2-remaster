@@ -269,12 +269,32 @@ def _has_call(e) -> bool:
     return False
 
 
+def _keep_discarded(e) -> bool:
+    """Must a discarded value still be emitted as a statement?
+
+    Calls, because discarding a value does not un-call the function that
+    produced it. And string literals, because the verifier counts them: a few
+    debug blocks load a string and then just pop it (the print was compiled
+    out), and dropping the load silently would be indistinguishable from
+    dropping a branch. A bare literal statement is a no-op either way.
+    """
+    if isinstance(e, Str):
+        return True
+    if isinstance(e, Call):
+        return True
+    if isinstance(e, Bin):
+        return _keep_discarded(e.a) or _keep_discarded(e.b)
+    if isinstance(e, Un):
+        return _keep_discarded(e.a)
+    return False
+
+
 def _flush(stack, stmts) -> None:
     """A block ends with values still on its stack. They belong to expressions
     the compiler discarded, but discarding a value does not un-call the function
     that produced it, so anything with a side effect still has to be emitted."""
     for e in stack:
-        if _has_call(e):
+        if _keep_discarded(e):
             stmts.append(Do(e))
     stack.clear()
 
@@ -452,13 +472,31 @@ class Decompiler:
                                 and not self._splits_loop(tgt, t2)):
                             els_end = t2
                     if els_end is not None:
-                        out.append(If(cond,
-                                      self._block(body_lo, b, ctx),
-                                      self._block(tgt, els_end, ctx)))
-                        addr = els_end
-                    else:
-                        out.append(If(cond, self._block(body_lo, tgt, ctx), []))
-                        addr = tgt
+                        then = self._block(body_lo, b, ctx)
+                        tail = list(self._tail_stack)
+                        if not tail:
+                            # the then-part's trailing Goto over the else
+                            # became the if/else itself
+                            self._covered.add(b)
+                            out.append(If(cond, then,
+                                          self._block(tgt, els_end, ctx)))
+                            addr = els_end
+                            continue
+                        # The then-part ends mid-expression: its Goto carries a
+                        # value to the join, so this is not a statement-level
+                        # if/else. If the join is the shared exit, the branch is
+                        # an early `return <value>`; otherwise leave the Goto to
+                        # the plain-if shape below, which structures it honestly
+                        # (inline, epilogue, or an explicit goto -- never a
+                        # silent drop).
+                        epi = self._epilogue(els_end, tail)
+                        if epi is not None:
+                            self._covered.add(b)
+                            out.append(If(cond, then + [epi], []))
+                            addr = tgt
+                            continue
+                    out.append(If(cond, self._block(body_lo, tgt, ctx), []))
+                    addr = tgt
                     continue
 
                 # Last resort before a goto: a switch arm, or an early exit into
@@ -530,7 +568,29 @@ class Decompiler:
         self._tail_stack = stack
         return out
 
+    def _speculate(self, fn):
+        """Run `fn` with a scratch coverage set, merged back only on success.
+
+        `_epilogue` and `_inline` simulate code they may decide not to use. The
+        simulation must not mark anything covered when it fails (that would let
+        `_lost_code` miss genuinely dropped code), and it MUST mark everything
+        covered when it succeeds (the simulated instructions become the emitted
+        `return` / inlined arm, so they are represented in the output).
+        """
+        outer = self._covered
+        self._covered = set()
+        try:
+            r = fn()
+            if r is not None:
+                outer |= self._covered
+            return r
+        finally:
+            self._covered = outer
+
     def _epilogue(self, tgt: int, stack: list[Expr] | None = None) -> Stmt | None:
+        return self._speculate(lambda: self._epilogue_raw(tgt, stack))
+
+    def _epilogue_raw(self, tgt: int, stack: list[Expr] | None = None) -> Stmt | None:
         """If everything from `tgt` to the end of the function is just the
         shared exit -- scope cleanup and a Return -- then a jump to it is a
         plain `return`, not a goto. Most jumps in the game are exactly this.
@@ -550,8 +610,10 @@ class Decompiler:
                 return None
             _, mn, args = self.instrs[i]
             if mn == "Halt":
+                self._covered.add(addr)
                 return Halt()
             if mn == "Return":
+                self._covered.add(addr)
                 return Ret(sim[-1] if sim else None)
             if mn not in allowed:
                 return None
@@ -665,6 +727,17 @@ class Decompiler:
                 _, mn, args = self.instrs[i]
                 nxt = self._next_addr(addr)
                 if mn == "Goto":
+                    if stack:
+                        # The block jumps out with values on its stack -- a
+                        # switch arm carrying its result to the shared exit.
+                        # PcSet would drop them (each arm carries a *different*
+                        # value, so the exit block cannot embed them all); if
+                        # the target is the shared exit, fold it in right here.
+                        epi = self._epilogue(args[0], stack)
+                        if epi is not None:
+                            stmts.append(epi)
+                            done = True
+                            break
                     _flush(stack, stmts)
                     stmts.append(PcSet(args[0]))
                     done = True
@@ -673,8 +746,18 @@ class Decompiler:
                     cond = stack.pop() if stack else Const(0)
                     if mn == "GoTrue":
                         cond = _not(cond)
-                    _flush(stack, stmts)
-                    # cond is the fall-through condition.
+                    # cond is the fall-through condition. The fall-through
+                    # successor is the lexically next block, so pure leftover
+                    # values (a switch's compare ladder keeps the selector on
+                    # the stack between tests) carry across exactly like a
+                    # plain fall-through. Values with side effects ran before
+                    # the branch in the bytecode, so they cannot be deferred
+                    # into one arm -- emit them here instead.
+                    if stack and not any(_has_call(e) for e in stack):
+                        carry = list(stack)
+                        stack.clear()
+                    else:
+                        _flush(stack, stmts)
                     stmts.append(If(cond, [PcSet(nxt)], [PcSet(args[0])]))
                     done = True
                     break
@@ -710,6 +793,9 @@ class Decompiler:
         return Dispatch(lo, blocks)
 
     def _inline(self, tgt: int, stack: list[Expr]) -> list[Stmt] | None:
+        return self._speculate(lambda: self._inline_raw(tgt, stack))
+
+    def _inline_raw(self, tgt: int, stack: list[Expr]) -> list[Stmt] | None:
         """A switch arm, inlined at its jump site.
 
         The compiler lays a switch out as `goto dispatch; <cases>; dispatch:
@@ -734,6 +820,7 @@ class Decompiler:
                     return None
                 _, mn, args = self.instrs[i]
                 if mn in ("Return", "Halt"):
+                    self._covered.add(addr)
                     stmts.append(Ret(sim[-1] if sim else None)
                                  if mn == "Return" else Halt())
                     return stmts
@@ -741,15 +828,46 @@ class Decompiler:
                     epi = self._epilogue(args[0], sim)
                     if epi is None:
                         return None
+                    # the Goto itself became the fall into the shared exit
+                    self._covered.add(addr)
                     stmts.append(epi)
                     return stmts
-                if mn in _JUMPS or mn in ("EndTimeslice", "TimedJump",
-                                          "DebugSkip"):
+                if mn == "DebugSkip":
+                    # A `debug { ... }` block inside the arm (several switch
+                    # defaults print a warning first). Statement-level and
+                    # straight-line, or the arm does not inline.
+                    dbg = self._debug_body(addr, args[0])
+                    if dbg is None:
+                        return None
+                    self._covered.add(addr)
+                    stmts.append(Debug(dbg))
+                    addr = args[0]
+                    continue
+                if mn in _JUMPS or mn in ("EndTimeslice", "TimedJump"):
                     return None          # not straight-line
                 addr = self._step(i, sim, stmts)
             return None
         finally:
             self._inlining.discard(tgt)
+
+    def _debug_body(self, at: int, skip: int) -> list[Stmt] | None:
+        """The body of a DebugSkip at `at`, if it is a straight-line statement
+        block (no jumps, no suspension, net-zero stack). None otherwise."""
+        stmts: list[Stmt] = []
+        sim: list[Expr] = []
+        addr = self._next_addr(at)
+        while addr < skip:
+            i = self.at.get(addr)
+            if i is None:
+                return None
+            mn = self.instrs[i][1]
+            if mn in _JUMPS or mn in ("EndTimeslice", "TimedJump", "DebugSkip",
+                                      "Return", "Halt"):
+                return None
+            addr = self._step(i, sim, stmts)
+        if sim:
+            return None                  # not statement-level after all
+        return stmts
 
     def _splits_loop(self, lo: int, hi: int) -> bool:
         """Would a region ending at `hi` cut a loop that starts inside it?
@@ -785,6 +903,11 @@ class Decompiler:
         if self._next_addr(latch) != exit_at:
             return While(Const(1), self._block(header, exit_at, ctx))
 
+        # From here on every shape ends its body at `latch` exclusive: the latch
+        # instruction itself (the back edge, or the do-while's test-and-jump) is
+        # consumed by the loop structure rather than visited by _block.
+        self._covered.add(latch)
+
         # `every N seconds`: yield each frame, and skip the body until N has
         # elapsed. TimedJump's target is the bottom of the loop, not its exit.
         if mn == "EndTimeslice":
@@ -795,6 +918,7 @@ class Decompiler:
                 skip = ta[0]
                 secs = struct.unpack("<f", struct.pack("<I", ta[2]))[0]
                 if header < skip <= latch:
+                    self._covered.add(nxt)      # the TimedJump is the `every`
                     body = self._block(self._next_addr(nxt), skip, ctx)
                     tail = self._block(skip, latch, ctx)
                     return Every(secs, body + tail)
@@ -824,6 +948,7 @@ class Decompiler:
         bottom test. Body is [header, cond_at); the test is [cond_at, latch]."""
         exit_at = self._next_addr(latch)
         ctx = (exit_at, header, latch)
+        self._covered.add(latch)        # the bottom test became the while cond
         body = self._block(header, cond_at, ctx)
         stmts, stack = self._eval(cond_at, latch)
         cond = stack[-1] if stack else Const(1)
@@ -861,6 +986,7 @@ class Decompiler:
                 cond = stack.pop() if stack else Const(0)
                 if mn == "GoTrue":
                     cond = _not(cond)
+                self._covered.add(addr)     # the exit test became the while cond
                 return cond, stmts, self._next_addr(addr)
             if mn in _JUMPS or mn in ("EndTimeslice", "TimedJump", "DebugSkip"):
                 return None, [], header
@@ -893,13 +1019,13 @@ class Decompiler:
         elif mn == "Pop":
             if stack:
                 e = stack.pop()
-                if _has_call(e):
+                if _keep_discarded(e):
                     out.append(Do(e))
         elif mn == "PopN":
             for _ in range(args[0]):
                 if stack:
                     e = stack.pop()
-                    if _has_call(e):
+                    if _keep_discarded(e):
                         out.append(Do(e))
         elif mn == "Copy":
             if stack:

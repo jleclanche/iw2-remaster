@@ -104,117 +104,40 @@ func junkyard_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 852
+	v0 = 0
+	v1 = 0
+	v2 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
+	v3 = imapentity.find_by_name_in_system("Junkyard", "map:/geog/badlands/hoffers_wake")
 	while true:
-		if _pc == 852:
-			v0 = 0
-			v1 = 0
-			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
-			v3 = imapentity.find_by_name_in_system("Junkyard", "map:/geog/badlands/hoffers_wake")
-			_pc = 939
-			continue
-		elif _pc == 939:
-			await _pog_frame()
-			if _pog_every(940, 1.0):
-				_pc = 953
-				continue
-			else:
-				_pc = 1514
-				continue
-		elif _pc == 953:
-			if global.pog_int("g_current_act") > 0:
-				_pc = 980
-				continue
-			else:
-				_pc = 1025
-				continue
-		elif _pc == 980:
+		await _pog_wait(1)
+		if global.pog_int("g_current_act") > 0:
 			sim.destroy(v4)
 			global.destroy("g_reactor_handle")
-			_pc = 1520
+			return
+		if not _pog_eq(isim.active_world(), "map:/geog/badlands/hoffers_wake"):
 			continue
-		elif _pc == 1025:
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/hoffers_wake"):
-				_pc = 1052
-				continue
-			else:
-				_pc = 1514
-				continue
-		elif _pc == 1052:
-			if await iutilities.player_in_range(v3) and not (v0):
-				_pc = 1082
-				continue
-			else:
-				_pc = 1415
-				continue
-		elif _pc == 1082:
+		if await iutilities.player_in_range(v3) and not (v0):
 			v0 = 1
 			if _pog_is_null(global.pog_bool("g_act0_recovered_reactor")):
-				_pc = 1116
-				continue
+				v4 = sim.create("ini:/sims/stations/reactor", "a0_master_name_reactor")
+				sim.place_relative_to(v4, v3, 500.0, 0.0, 1000.0)
+				isim.set_indestructable(isim.cast(v4), 1)
+				sim.set_cullable(v4, 0)
+				isim.set_standard_sensor_visibility(isim.cast(v4), 1)
+				if not (global.exists("g_reactor_handle")):
+					global.create_handle("g_reactor_handle", 2, v4)
+				else:
+					global.set_handle("g_reactor_handle", v4)
 			else:
-				_pc = 1363
+				if not (global.exists("g_reactor_handle")):
+					global.destroy("g_reactor_handle")
+		else:
+			if not (v0 and not (await iutilities.player_in_range(v3)) or _pog_is_null(sim.cast(v4))):
 				continue
-		elif _pc == 1116:
-			v4 = sim.create("ini:/sims/stations/reactor", "a0_master_name_reactor")
-			sim.place_relative_to(v4, v3, 500.0, 0.0, 1000.0)
-			isim.set_indestructable(isim.cast(v4), 1)
-			sim.set_cullable(v4, 0)
-			isim.set_standard_sensor_visibility(isim.cast(v4), 1)
-			if not (global.exists("g_reactor_handle")):
-				_pc = 1299
-				continue
-			else:
-				_pc = 1332
-				continue
-		elif _pc == 1299:
-			global.create_handle("g_reactor_handle", 2, v4)
-			_pc = 1358
-			continue
-		elif _pc == 1332:
-			global.set_handle("g_reactor_handle", v4)
-			_pc = 1358
-			continue
-		elif _pc == 1358:
-			_pc = 1410
-			continue
-		elif _pc == 1363:
-			if not (global.exists("g_reactor_handle")):
-				_pc = 1389
-				continue
-			else:
-				_pc = 1410
-				continue
-		elif _pc == 1389:
-			global.destroy("g_reactor_handle")
-			_pc = 1410
-			continue
-		elif _pc == 1410:
-			_pc = 1514
-			continue
-		elif _pc == 1415:
-			if v0 and not (await iutilities.player_in_range(v3)) or _pog_is_null(sim.cast(v4)):
-				_pc = 1467
-				continue
-			else:
-				_pc = 1514
-				continue
-		elif _pc == 1467:
 			v0 = 0
 			sim.destroy(v4)
 			global.destroy("g_reactor_handle")
-			_pc = 1514
-			continue
-		elif _pc == 1514:
-			_pc = 939
-			continue
-		elif _pc == 1519:
-			_pc = 1520
-			continue
-		elif _pc == 1520:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_1522() -> Variant:
@@ -930,224 +853,78 @@ func local_4842() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 4842
+	if global.pog_int("g_story_0.20") == 2:
+		state.restore(state.cast(global.handle("g_base_exploration_handler")))
+	if global.pog_int("g_act0_base_online") == 2:
+		state.restore(state.cast(global.handle("g_base_online_exploration_handler")))
 	while true:
-		if _pc == 4842:
-			if global.pog_int("g_story_0.20") == 2:
-				_pc = 4875
-				continue
-			else:
-				_pc = 4922
-				continue
-		elif _pc == 4875:
-			state.restore(state.cast(global.handle("g_base_exploration_handler")))
-			_pc = 4922
-			continue
-		elif _pc == 4922:
-			if global.pog_int("g_act0_base_online") == 2:
-				_pc = 4950
-				continue
-			else:
-				_pc = 4997
-				continue
-		elif _pc == 4950:
-			state.restore(state.cast(global.handle("g_base_online_exploration_handler")))
-			_pc = 4997
-			continue
-		elif _pc == 4997:
-			_pc = 5002
-			continue
-		elif _pc == 5002:
-			await _pog_frame()
-			if _pog_every(5003, 1.0):
-				_pc = 5016
-				continue
-			else:
-				_pc = 5880
-				continue
-		elif _pc == 5016:
-			v4 = iemail.find("html:/text/act_0/act0_master_lucreciamail_1")
-			_pc = 5068
-			continue
-		elif _pc == 5047:
+		await _pog_wait(1)
+		v4 = iemail.find("html:/text/act_0/act0_master_lucreciamail_1")
+		if PogRuntime.TRACE:
 			debug.print_string(" iPrelude.BaseMessageChecker - Checking to see if any new story sequences are needed....\n")
-			_pc = 5068
-			continue
-		elif _pc == 5068:
-			if not ((1 - _pog_is_running(v0))):
-				_pc = 5092
-				continue
-			else:
-				_pc = 5123
-				continue
-		elif _pc == 5092:
-			_pc = 5118
-			continue
-		elif _pc == 5097:
-			debug.print_string("iPrelude.BaseMessageChecker - A story sequence is currently running.\n")
-			_pc = 5118
-			continue
-		elif _pc == 5118:
-			_pc = 5880
-			continue
-		elif _pc == 5123:
-			_pc = 5149
-			continue
-		elif _pc == 5128:
-			debug.print_string("iPrelude.BaseMessageChecker - No story sequences are currnetly runing, checking to see if any are waiting to run\n")
-			_pc = 5149
-			continue
-		elif _pc == 5149:
-			if global.pog_int("g_story_0.20") == 1:
-				_pc = 5176
-				continue
-			else:
-				_pc = 5294
-				continue
-		elif _pc == 5176:
-			global.set_int("g_story_0.20", 2)
-			v0 = _pog_spawn(local_1522.bind())
-			v1 = _pog_spawn(iact0generaltraining.base_exploration_handler.bind())
-			v2 = state.create(v1, 0)
-			global.create_handle("g_base_exploration_handler", 1, v2)
-			_pc = 5880
-			continue
-		elif _pc == 5294:
-			if iemail.read(v4) and _pog_is_null(global.pog_bool("g_act0_lucrecias_mail_conversation")):
-				_pc = 5340
-				continue
-			else:
-				_pc = 5381
-				continue
-		elif _pc == 5340:
-			global.set_bool("g_act0_lucrecias_mail_conversation", 1)
-			_pog_spawn(local_1752.bind())
-			_pc = 5880
-			continue
-		elif _pc == 5381:
-			if global.pog_int("g_story_0.30") == 1:
-				_pc = 5408
-				continue
-			else:
-				_pc = 5455
-				continue
-		elif _pc == 5408:
-			global.set_int("g_story_0.30", 2)
-			v0 = _pog_spawn(local_1690.bind())
-			_pc = 5880
-			continue
-		elif _pc == 5455:
-			if global.pog_int("g_story_0.40") == 1:
-				_pc = 5482
-				continue
-			else:
-				_pc = 5529
-				continue
-		elif _pc == 5482:
-			global.set_int("g_story_0.40", 2)
-			v0 = _pog_spawn(local_1920.bind())
-			_pc = 5880
-			continue
-		elif _pc == 5529:
-			if global.pog_int("g_act0_base_online") == 1 or _pog_is_null(global.pog_bool("g_act0_online_base_complete")) and global.pog_int("g_act0_base_online") == 2 and _pog_is_null(v1):
-				_pc = 5610
-				continue
-			else:
-				_pc = 5780
-				continue
-		elif _pc == 5610:
-			global.set_int("g_act0_base_online", 2)
-			_pc = 5659
-			continue
-		elif _pc == 5638:
-			debug.print_string("iPrelude.BaseMessageChecker : Enabling base buttons.\n")
-			_pc = 5659
-			continue
-		elif _pc == 5659:
-			await ibasegui.set_trade_screen_enabled(1)
-			await ibasegui.set_recycling_screen_enabled(1)
-			await ibasegui.set_manufacturing_screen_enabled(1)
-			v1 = _pog_spawn(iact0generaltraining.base_online_handler.bind())
-			v2 = state.create(v1, 0)
-			global.create_handle("g_base_online_exploration_handler", 1, v2)
-			_pc = 5880
-			continue
-		elif _pc == 5780:
-			if global.pog_int("g_story_0.50") == 1:
-				_pc = 5807
-				continue
-			else:
-				_pc = 5854
-				continue
-		elif _pc == 5807:
-			global.set_int("g_story_0.50", 2)
-			v0 = _pog_spawn(local_2112.bind())
-			_pc = 5880
-			continue
-		elif _pc == 5854:
-			_pc = 5880
-			continue
-		elif _pc == 5859:
-			debug.print_string(" iPrelude.MasterBaseScript - No story sequences are wating to be executed, sleeping for a bit...\n")
-			_pc = 5880
-			continue
-		elif _pc == 5880:
-			_pc = 5002
-			continue
-		elif _pc == 5885:
-			return
+		if not ((1 - _pog_is_running(v0))):
+			if PogRuntime.TRACE:
+				debug.print_string("iPrelude.BaseMessageChecker - A story sequence is currently running.\n")
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iPrelude.BaseMessageChecker - No story sequences are currnetly runing, checking to see if any are waiting to run\n")
+			if global.pog_int("g_story_0.20") == 1:
+				global.set_int("g_story_0.20", 2)
+				v0 = _pog_spawn(local_1522.bind())
+				v1 = _pog_spawn(iact0generaltraining.base_exploration_handler.bind())
+				v2 = state.create(v1, 0)
+				global.create_handle("g_base_exploration_handler", 1, v2)
+			else:
+				if iemail.read(v4) and _pog_is_null(global.pog_bool("g_act0_lucrecias_mail_conversation")):
+					global.set_bool("g_act0_lucrecias_mail_conversation", 1)
+					_pog_spawn(local_1752.bind())
+				else:
+					if global.pog_int("g_story_0.30") == 1:
+						global.set_int("g_story_0.30", 2)
+						v0 = _pog_spawn(local_1690.bind())
+					else:
+						if global.pog_int("g_story_0.40") == 1:
+							global.set_int("g_story_0.40", 2)
+							v0 = _pog_spawn(local_1920.bind())
+						else:
+							if global.pog_int("g_act0_base_online") == 1 or _pog_is_null(global.pog_bool("g_act0_online_base_complete")) and global.pog_int("g_act0_base_online") == 2 and _pog_is_null(v1):
+								global.set_int("g_act0_base_online", 2)
+								if PogRuntime.TRACE:
+									debug.print_string("iPrelude.BaseMessageChecker : Enabling base buttons.\n")
+								await ibasegui.set_trade_screen_enabled(1)
+								await ibasegui.set_recycling_screen_enabled(1)
+								await ibasegui.set_manufacturing_screen_enabled(1)
+								v1 = _pog_spawn(iact0generaltraining.base_online_handler.bind())
+								v2 = state.create(v1, 0)
+								global.create_handle("g_base_online_exploration_handler", 1, v2)
+							else:
+								if global.pog_int("g_story_0.50") == 1:
+									global.set_int("g_story_0.50", 2)
+									v0 = _pog_spawn(local_2112.bind())
+								else:
+									if PogRuntime.TRACE:
+										debug.print_string(" iPrelude.MasterBaseScript - No story sequences are wating to be executed, sleeping for a bit...\n")
+	return
 	return 0
 
 func main() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 5888
-	while true:
-		if _pc == 5888:
-			v0 = 0
-			v1 = iship.find_player_ship()
-			if global.pog_int("g_current_act") < 0:
-				_pc = 5946
-				continue
-			else:
-				_pc = 6029
-				continue
-		elif _pc == 5946:
-			_pc = 5972
-			continue
-		elif _pc == 5951:
+	v0 = 0
+	v1 = iship.find_player_ship()
+	if global.pog_int("g_current_act") < 0:
+		if PogRuntime.TRACE:
 			debug.print_string("iPrelude.Main: Initialising prelude (Act 0)\n")
-			_pc = 5972
-			continue
-		elif _pc == 5972:
-			global.set_int("g_current_act", 0)
-			await local_0()
-			_pog_spawn(master_script.bind())
-			v0 = 1
-			_pc = 6029
-			continue
-		elif _pc == 6029:
-			if v0:
-				_pc = 6039
-				continue
-			else:
-				_pc = 6098
-				continue
-		elif _pc == 6039:
-			await iutilities.create_player("ini:/sims/ships/player/comsec_prefitted", imapentity.find_by_name("Hoffer's Gap"))
-			await istartsystem.hide_map_locations()
-			_pc = 6138
-			continue
-		elif _pc == 6098:
-			await iutilities.create_player("", imapentity.find_by_name("Lucrecia's Base"))
-			_pc = 6138
-			continue
-		elif _pc == 6138:
-			return 0
-		else:
-			return 0
+		global.set_int("g_current_act", 0)
+		await local_0()
+		_pog_spawn(master_script.bind())
+		v0 = 1
+	if v0:
+		await iutilities.create_player("ini:/sims/ships/player/comsec_prefitted", imapentity.find_by_name("Hoffer's Gap"))
+		await istartsystem.hide_map_locations()
+	else:
+		await iutilities.create_player("", imapentity.find_by_name("Lucrecia's Base"))
+	return 0
 	return 0
 
 func base_main() -> Variant:
