@@ -589,9 +589,12 @@ func _s_is_hidden(_t, a: Array) -> Variant:
 # @stub sim.AddSubsim
 # @stub sim.FindSubsimByName
 func _s_noop(_t, _a: Array) -> Variant:
-	# Culling, collision toggles, mass and the avatar channel-expression system
-	# (LZ?+s(1.0) and friends) have no effect on the outcome of a mission; they
-	# are presentation. Bound so the scripts run; see docs/decompile.md.
+	# Culling, collision toggles and mass have no effect on the outcome of a
+	# mission. The avatar channel-expression system (LZ?+s(1.0) and friends)
+	# DOES have a home now -- ship_effects.gd is the channel rig -- but the
+	# script-driven channels are not wired to it yet. AddSubsim matters in
+	# act 3 (it fits the hyperspace tracker the plot turns on). Bound so the
+	# scripts run; see docs/decompile.md and docs/coverage.md.
 	return 0
 
 # @native sim.Group

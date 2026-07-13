@@ -581,8 +581,9 @@ func _m_system_centre(_t, _a: Array) -> Variant:
 # @stub imapentity.SetMapVisibility
 # @stub imapentity.IsVisibleOnMap
 func _m_map_visibility(_t, a: Array) -> Variant:
-	# Recorded on the record, but we have no system map view for it to change:
-	# the HUD contact list shows every station and L-point in range regardless.
+	# Recorded on the record. icHUDStarmap exists now (hud_screens.gd), so the
+	# 56 SetMapVisibility calls have a view to drive -- honoring the flag there
+	# is pending; the HUD contact list still shows everything in range.
 	var s = _sim(a[0])
 	if s == null or s.rec.is_empty():
 		return 1

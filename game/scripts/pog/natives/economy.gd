@@ -1023,9 +1023,9 @@ func _l_strip(_t, a: Array) -> Variant:
 	sys.ldas.clear()
 	return 0
 
-# The customise screen: the one base screen with no POG builder we could run --
-# icSPCustomiseScreen exists, but fitting a device into a named mount point needs
-# the drag-and-drop pylon UI, and these five natives are its event handlers.
+# The customise screen: its POG builder (s_p_customise_screen) exists and is
+# mapped, but fitting a device into a named mount point needs the drag-and-drop
+# pylon UI, and these five natives are its event handlers.
 # @stub iloadout.StartCustomisedLoadout
 # @stub iloadout.EndCustomisedLoadout
 # @stub iloadout.OnCustomiseScreenBack

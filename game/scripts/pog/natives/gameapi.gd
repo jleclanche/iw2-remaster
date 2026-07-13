@@ -698,7 +698,7 @@ func _h_noop(_t, _a: Array) -> Variant:
 	# class name to draw the eye to it during the tutorial; the flash timing is
 	# in flux.ini ([icHUD] flash_delay 6, flash_frequency 3) but which element
 	# each script name maps to was not recovered, so this stays a no-op.
-	# ShowScore raises the score sheet, which we do not populate.
+	# ShowScore raises the multiplayer score sheet -- mp-only.
 	return 0
 
 
