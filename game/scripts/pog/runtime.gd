@@ -34,6 +34,40 @@ var scripts: Dictionary = {}          ## package name -> PogScript instance
 
 var game: Node3D
 
+## task.SuspendAll / ResumeAll.
+##
+## The cutscene machinery depends on this: FinalSetup suspends everything that
+## already exists, spawns the launch cutscene, and resumes at the end. Tasks
+## created *after* the suspend keep running -- that is what lets the cutscene run
+## at all -- and so does the task that called it, or it would freeze itself.
+##
+## A coroutine has no identity in Godot, so each carries a sequence number and
+## the await helpers in PogScript re-assert `current_seq` when they resume:
+## between a resume and the next await, only that coroutine is running.
+var task_seq := 1
+var current_seq := 0        ## 0 is the boot chain
+var suspend_below := -1     ## tasks with seq <= this are frozen
+var suspend_exempt := -1
+
+
+func next_seq() -> int:
+	task_seq += 1
+	return task_seq
+
+
+func suspend_all(caller_seq: int) -> void:
+	suspend_below = task_seq
+	suspend_exempt = caller_seq
+
+
+func resume_all() -> void:
+	suspend_below = -1
+	suspend_exempt = -1
+
+
+func is_suspended(seq: int) -> bool:
+	return suspend_below >= 0 and seq <= suspend_below and seq != suspend_exempt
+
 
 func bind_game(main: Node3D) -> void:
 	game = main

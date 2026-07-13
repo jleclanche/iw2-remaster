@@ -31,6 +31,7 @@ var _tasks: Array[PogTaskHandle] = []
 class PogTaskHandle extends RefCounted:
 	var done := false
 	var halted := false
+	var seq := 0
 
 	func running() -> bool:
 		return not done and not halted
@@ -47,31 +48,50 @@ func _link() -> void:
 	pass
 
 
+## Every await goes through here. `rt.current_seq` identifies the coroutine that
+## is running right now; it must be re-asserted on resume, because in between,
+## other coroutines will have run and overwritten it. And a suspended task stays
+## parked here until it is resumed, which is what task.SuspendAll means.
+func _resume(seq: int) -> void:
+	rt.current_seq = seq
+	while rt.is_suspended(seq):
+		await get_tree().process_frame
+		rt.current_seq = seq
+
+
 ## `task.Sleep(task.Current(), secs)`.
 func _pog_wait(secs: float) -> void:
+	var seq: int = rt.current_seq
 	if secs <= 0.0:
-		await _pog_frame()
-		return
-	await get_tree().create_timer(secs).timeout
+		await get_tree().process_frame
+	else:
+		await get_tree().create_timer(secs).timeout
+	await _resume(seq)
 
 
 ## `EndTimeslice` -- give up the rest of the frame.
 func _pog_frame() -> void:
+	var seq: int = rt.current_seq
 	await get_tree().process_frame
+	await _resume(seq)
 
 
 ## `start f(...)`. A coroutine called without await runs until its first await
 ## and then continues on its own, which is precisely a POG task.
 func _pog_spawn(c: Callable) -> PogTaskHandle:
 	var h := PogTaskHandle.new()
+	h.seq = rt.next_seq()
 	_tasks.append(h)
 	_run(c, h)
 	return h
 
 
 func _run(c: Callable, h: PogTaskHandle) -> void:
+	var caller: int = rt.current_seq
+	rt.current_seq = h.seq
 	await c.call()
 	h.done = true
+	rt.current_seq = caller
 
 
 func _pog_halt(h) -> int:
@@ -98,11 +118,15 @@ func _pog_resume(_h) -> int:
 	return 0
 
 
+## Freeze every task that already exists. The caller keeps running (it is about
+## to spawn the cutscene), and so does anything spawned from here on.
 func _pog_suspend_all() -> int:
+	rt.suspend_all(rt.current_seq)
 	return 0
 
 
 func _pog_resume_all() -> int:
+	rt.resume_all()
 	return 0
 
 

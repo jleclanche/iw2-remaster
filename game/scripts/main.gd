@@ -203,9 +203,13 @@ func skip_cutscene() -> void:
 	if std != null:
 		std.globals["g_cutscene_skip"] = 1
 
-## The campaign, running as ported GDScript. Same sequence the engine drove:
-## istartsystem brings the world up, then iprelude opens Act 0. These are
-## coroutines now, so the ordering is just `await`.
+## The campaign, running as ported GDScript. Same sequence the engine drove.
+##
+## iprelude.Main runs *before* FinalSetup, not after: it is what creates the
+## player's ship (iutilities.CreatePlayer), and FinalSetup immediately reaches
+## for it (iship.FindPlayerShip, sets its death script, checks its hull type).
+## FinalSetup then suspends every task that already exists and runs the launch
+## cutscene alone -- which is how the prelude movie is kept from racing it.
 func _port_boot() -> void:
 	var ss: PogScript = pog_rt.script("istartsystem")
 	if ss == null:
@@ -214,10 +218,10 @@ func _port_boot() -> void:
 	await ss.startup_session()
 	await ss.startup_space()
 	await ss.startup_system()
-	await ss.final_setup()
 	var prelude: PogScript = pog_rt.script("iprelude")
 	if prelude != null:
 		await prelude.main()
+	await ss.final_setup()
 
 func _build_pog() -> void:
 	# The POG virtual machine, running the game's original mission bytecode.
@@ -399,28 +403,49 @@ func _setup_act0_scene() -> void:
 	target_ai = scopo
 	target_idx = -1
 
+# Movies play one at a time. Several scripts can ask for one at once -- the
+# launch cutscene and the mission's own opening both do -- and playing them on
+# top of each other orphaned the first player, so its caller was never told its
+# movie had ended and its script waited forever. They queue instead, and each
+# caller's continuation fires when *its* movie finishes.
+var _movie_queue: Array = []   # [[stem, then], ...]
+
 func _play_movie(stem: String, then: Callable) -> void:
 	var path := _base().path_join("data/movies/%s.ogv" % stem)
 	if not FileAccess.file_exists(path) or _headless():
 		then.call()
 		return
+	_movie_queue.append([stem, then])
+	if movie == null:
+		_next_movie()
+
+func _next_movie() -> void:
+	if _movie_queue.is_empty():
+		_after_movies()
+		return
+	var job: Array = _movie_queue.pop_front()
+	var then: Callable = job[1]
 	movie = VideoStreamPlayer.new()
 	var vs := VideoStreamTheora.new()
-	vs.file = path
+	vs.file = _base().path_join("data/movies/%s.ogv" % str(job[0]))
 	movie.stream = vs
 	movie.expand = true
 	movie.set_anchors_preset(Control.PRESET_FULL_RECT)
-	movie.finished.connect(func() -> void: _end_movie(then))
+	movie.finished.connect(func() -> void: _end_movie(then), CONNECT_ONE_SHOT)
 	hud.get_parent().add_child(movie)
 	movie.play()
-	set_meta("movie_then", then)
 
 func _end_movie(then: Callable) -> void:
 	if movie != null:
 		movie.queue_free()
 		movie = null
 	fire_lock = 0.4  # the skip keypress/click must not fire the PBC
-	then.call()
+	then.call()      # tell *this* movie's caller it is done
+	_next_movie()
+
+## Only once the last movie has played: handing the view back mid-sequence would
+## flash the world between two cinematics.
+func _after_movies() -> void:
 	audio.music("ambient")
 	if uicheck:
 		menu.open()
@@ -433,6 +458,12 @@ func _end_movie(then: Callable) -> void:
 		menu.close()  # straight into flight after a campaign cinematic
 	else:
 		menu.open()   # MOVIES replay returns to the front end
+
+## Skip the movie on screen. Only that one: the rest of the queue still plays,
+## and a script waiting on a later movie must not be told its one has ended.
+func skip_movie() -> void:
+	if movie != null:
+		movie.finished.emit()
 
 func start_in_system(stem: String) -> void:
 	lds_state = 0
@@ -1012,20 +1043,28 @@ func contact_list() -> Array:
 	return list.slice(0, 12)
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Escape means "get me out of whatever is in front of me", in that order:
+	# a movie, then an in-engine cutscene, then (in menu.gd) the pause screen.
+	# Space and Return skip a movie only.
+	var key := -1
+	if event is InputEventKey and event.pressed and not event.echo:
+		key = event.physical_keycode
+
 	if movie != null:  # Game.MovieSkip: Space / Escape / Return
-		if event is InputEventKey and event.pressed and event.physical_keycode \
-				in [KEY_SPACE, KEY_ESCAPE, KEY_ENTER]:
-			movie.finished.emit()
+		if key in [KEY_SPACE, KEY_ESCAPE, KEY_ENTER]:
+			skip_movie()
+			get_viewport().set_input_as_handled()
 		return
-	# An in-engine cutscene is running: Escape skips it, it does not pause.
-	# The scripts have their own abort for this -- icutsceneutilities.HandleAbort
-	# polls the g_cutscene_skip flag and halts the cutscene task -- so setting it
-	# is a real skip rather than us tearing the scene down behind their back.
-	if event is InputEventKey and event.pressed and not event.echo \
-			and event.physical_keycode == KEY_ESCAPE and in_cutscene():
+
+	# A cutscene is staged: Escape skips it rather than pausing. The scripts have
+	# their own abort for this -- icutsceneutilities.HandleAbort polls
+	# g_cutscene_skip and halts the cutscene task -- so this is a real skip, not
+	# us tearing the scene down behind their back.
+	if key == KEY_ESCAPE and in_cutscene():
 		skip_cutscene()
 		get_viewport().set_input_as_handled()
 		return
+
 	if menu != null and menu.visible:
 		return  # the menu handles its own input (it runs while paused)
 	# mouse steers as the joystick yoke (the original's primary control)
