@@ -680,6 +680,16 @@ func simulate(dt: float) -> void:
 		apply_damage((total - HEAT_DAMAGE_THRESHOLD) * HEAT_DAMAGE_RATE, SRC_HEAT)
 
 func _simulate_system(sys: Dictionary, dt: float, overheated: bool) -> float:
+	# The Engineering screen's row 0 switches a subsim off (FUN_10106390 flips
+	# bit 1 of iiShipSystem+0x68). A subsim that is off draws no power, makes no
+	# heat and does nothing -- but a heatsink still radiates, like a destroyed
+	# one, because AddHeatRate sits outside the base Simulate's early-out.
+	if bool(sys.get("off", false)):
+		sys["efficiency"] = 0.0
+		sys["usage"] = 0.0
+		if sys["class"] == "icHeatSink":
+			return -_heatsink_rate(float(sys["heat_loss_rate"]))
+		return 0.0
 	# a full-disruption warhead (icShip::Disrupt) raises the disrupted flag
 	# 0x10 on every subsim: efficiency reads zero until the timer expires.
 	# Heatsinks keep radiating -- their AddHeatRate has no gate (see below).
@@ -1201,6 +1211,15 @@ func _simulate_lda(lda: Dictionary, dt: float) -> void:
 		lda["usage"] = 1.0
 
 # --- read-only views for the HUD -------------------------------------------
+
+func set_system_off(sys: Dictionary, off: bool) -> void:
+	# icHUDEngineering row 0's Enter (0x10106463): flip bit 1 of the subsim's
+	# flags, but ONLY when bit 5 -- "can be switched off" -- is up. The base
+	# ctor (0x1003b9f0) raises bit 5, so every subsim is switchable unless its
+	# own ctor clears it; nothing in the shipped classes does, so the gate
+	# passes for all of them. Recorded here so the gate has one home if a class
+	# turns up that clears it.
+	sys["off"] = off
 
 func disrupt(seconds: float, full: bool) -> void:
 	# icShip::Disrupt via icMissile::CheckForDisruption 0x1006d0b0: raise the

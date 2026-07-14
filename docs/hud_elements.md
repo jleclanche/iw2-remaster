@@ -763,16 +763,100 @@ aggressor shield (`0x1002f900`).
   1, the drawn value wobbles by **+/-0.02** (`0x1011e3b8`) at
   `sin(pi*t)` / `cos(5.0266*t)` / `sin(4.0841*t)`.
 
+### How the keyboard drives the TRI (task #66) — and why holding an arrow did nothing
+
+There are **two** paths out of the arrow keys, and the TRI is on the second one.
+
+**(a) The command path.** `configs/default.ini` binds `[HUD.MenuLeft|Right|Up|
+Down|Select|Cancel]`, and `icHUD` registers them (`FUN_100e1bf0`) as commands
+**0 up, 1 down, 2 left, 3 right, 4 select, 5 cancel**. The four *directions*
+register with flags **`0x103`**; select/cancel with `3`. Those flags are the
+event mask of flux's button dispatcher `FcInputMapper` / `FUN_10075010`:
+
+| bit | event |
+|---|---|
+| `1` | pressed |
+| `2` | released |
+| `4` | held (every frame) |
+| `0x100` | **auto-repeat** |
+
+so `0x103` = press \| release \| **repeat**: after `m_initial_delay` the key
+re-fires every `m_repeat_period` (**0.5 s / 0.08 s**, `flux.ini` and
+`defaults.ini`). Each event reaches the focused element's **slot 13**
+(`0x10105c80`). That function steps the row itself for cmd 0/1, handles Enter
+(cmd 4: row 0 -> `FUN_10106390`, row 4 -> `FUN_101092f0` = RESET TRI) and Cancel
+(cmd 5), and hands **left/right to a per-row dispatch table at `0x10163ec0`** —
+whose **only non-null entry is row 0's**. So on the TRI rows the command path
+does *nothing at all*. That is the bug the report found: our port only had this
+path.
+
+**(b) The held-key path — this is the one that moves the TRI.** `icHUD` latches
+the current menu direction into two fields (`FUN_100de004`):
+
+| field | meaning |
+|---|---|
+| `icHUD+0x1bc` | **a menu direction is down** — set on press (`0x100de040`), cleared on release (`0x100de07f`) |
+| `icHUD+0x1c0` | **which command** it is |
+| `icHUD+0x1b6` | a lock; while set, the held path is ignored |
+
+and the Engineering screen polls them **every frame from its body draw**:
+
+```
+FUN_10107710 @ 0x10107729   if (hud[+0x1bc] && !hud[+0x1b6]
+                                && (hud[+0x1c0] == 2 || hud[+0x1c0] == 3)
+                                && this[+0x54] in {1,2,3})
+                                    FUN_101081a0(cmd, &axis[row-1], &other, &other)
+                            SetTRIPosition(+0xc0, +0xc4, +0xc8)      @ 0x101077d3
+FUN_10108240 @ 0x10108264   the same test for row 5
+```
+
+So it is a **rate, not a step**, applied per frame for as long as the key is
+down, and it goes straight through `SetTRIPosition` — which is why moving the
+bars moves the *ship* and not just the picture.
+
+**THE RATE: `_DAT_10163f14` = 0.35** barycentric units per second
+(`0x101081ab`, `fmul` against `FnTimeWin32::m_game_delta_time_seconds`). The same
+constant drives row 5's reactor throttle.
+
+**`FUN_101081a0(cmd, float* p, float* a, float* b)`** — the axis mover. `d =
+dt * 0.35`, and the two axes that are not `p` absorb it, so the triple always
+sums to 1 without ever being renormalised:
+
+| cmd | | |
+|---|---|---|
+| **2 LEFT** (`0x101081b6`) | `d = min(d, p)` | `p -= d;  a += d/2;  b += d/2` — an **equal** split back |
+| **3 RIGHT** (`0x101081ed`) | `d = min(d, 1 - p)` | `p += d;  a -= d*a/(a+b);  b -= d - d*a/(a+b)` — taken **proportionally** |
+
+The asymmetry (give back equally, take proportionally) is the engine's. Both
+clamps keep the point inside the triangle: `d <= p` cannot drive an axis below 0,
+and `d <= 1 - p = a + b` cannot drive `a` or `b` below 0 either.
+
+Because the latch is a **single** slot, only one direction is ever live: the last
+one pressed wins, and releasing *any* menu direction clears the flag outright
+(`0x100de07f` does not check which command it was).
+
+### The six rows — ALL RESOLVED
+
+| row | what it is |
+|---|---|
+| **0** | **subsim selector.** Left/right cycle the ship's subsim list (`icShip+0x140`) through `FUN_10106390` — the one non-null entry in the row table. Enter (`FUN_10106390(this,4)` @ `0x10106463`) flips **bit 1** of the selected subsim's flags (`iiShipSystem+0x68`), but only when **bit 5** ("can be switched off", set by the base ctor `0x1003b9f0`) is up; enabling calls the subsim's vtable+0x38. Label at **(150, 109)**; `FUN_101069a0` draws left/right chevrons (sprites 8/9) that **light while the key is held** — the same `+0x1bc`/`+0x1c0` test. The four toggle strings are its caption: `_powerpod_enabled/disabled` when the selected sim is the reactor with `has_power_pod` set, else `_general_enabled/disabled` (`FUN_10109190`ff, `0x10109231`). |
+| **1 / 2 / 3** | the TRI axes **DRIVE / OFFENSIVE / DEFENSIVE**. Left/right move them **while held**, as above. |
+| **4** | **RESET TRI** — `FUN_101092f0` -> `SetTRIPosition(1/3,1/3,1/3)`. |
+| **5** | **reactor throttle** — and the row the screen **opens** on (ctor `0x10105a23`). Left/right drag `icReactor`'s **ramp target** (`icReactor+0xa0`, default 1.0, clamped to `[0,1]`) at the **same 0.35/s** (`FUN_10108240` @ `0x10108290`). `icShip+0x2a0` is the reactor (`icShip::Reactor`, `0x1002a40`); `hud_engineering_powerhelp_part1/part2` is this row's help text. It is an analogue row, so it correctly has **no** Enter handler. |
+
+The other strings are not rows at all, which is why the count never worked out:
+`_ship` and `_iff` are the **header** (`FUN_10106580`, drawn off the ship at
+`this+0xa0`), and `_back` is the **Cancel prompt** (`0x101091d4`), not a row —
+Backspace closes the screen through cmd 5.
+
 ### Still UNKNOWN on this screen
 
-- **rows 0 and 5.** Row 0 has an Enter handler (`FUN_10106390(this, 4)`, via the
-  dispatch table at `0x10163ec0`, whose other five entries are null); row 5 has
-  none and is the row the screen opens on. Their labels and y positions in
-  `hud_screens.gd` are ours. The four unused strings
-  (`_general_enabled/disabled`, `_powerpod_enabled/disabled`) are two toggle
-  pairs, so at least one of these rows is a toggle — which one, and what it
-  toggles, is not established.
+- the **y positions** of rows 0 and 5 in `hud_screens.gd` are still ours (the
+  original puts row 0's label at (150, 109); we keep the 35 px row pitch).
+  Row 5's position is not recovered at all.
 - what `0x1011e378` = 70 and `0x1011e37c` = 160 position.
+- `icHUD+0x1b6`, the lock that suppresses the held path, is read but we have not
+  established what sets it.
 
 ## `icHUDStarmap` — a pannable 2D chart, and the data is in `clusters.ini`
 
@@ -901,3 +985,5 @@ Read out of the same table builder (`0x100e6c60` ->
 | 66 | (99, 191) | 32x32 | 16,16 | TRI axis 0 — ship + engine plume |
 | 67 | (132, 191) | 32x32 | 16,16 | TRI axis 1 — ship + two beams |
 | 68 | (165, 191) | 32x32 | 16,16 | TRI axis 2 — ship + deflecting arc |
+
+---

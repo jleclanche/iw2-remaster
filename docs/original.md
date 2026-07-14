@@ -1683,6 +1683,44 @@ zero call sites).
   `ToggleWeaponLinking`'s three events **salvo / chain / no-link** -- so that
   toggle is a fire-MODE switch, not an on/off link.
 
+### The HUD menu has TWO input paths, and the TRI is on the second
+
+This is why holding the arrow keys on the TRI did nothing for us: we only had
+the first path.
+
+1. **Commands.** `[HUD.MenuLeft|Right|Up|Down|Select|Cancel]` are commands 0..5,
+   registered by `icHUD` at `0x100e1bf0`. The four directions carry flags
+   `0x103`; in flux's button dispatcher (`FUN_10075010`) the mask bits are
+   1 press / 2 release / 4 held / **0x100 auto-repeat**, so they repeat after
+   `m_initial_delay` **0.5 s** then every `m_repeat_period` **0.08 s**. The event
+   goes to the focused element's **vtable slot 13**.
+2. **A held-direction latch on `icHUD`**: `+0x1bc` = "a menu direction is down"
+   (`FUN_100de004`, set `0x100de040` / cleared `0x100de07f`), `+0x1c0` = which
+   command, `+0x1b6` a lock. Elements **poll these every frame** to get
+   *continuous*, rate-based control instead of stepped control.
+
+`icHUDEngineering` uses both. Its slot 13 routes left/right through a per-row
+table at `0x10163ec0` **whose only non-null entry is row 0's** -- so on the TRI
+rows the command path is deliberately dead, and the motion comes from the latch,
+polled in the body draw (`0x10107729`, then `SetTRIPosition` at `0x101077d3`).
+
+**The rate is `_DAT_10163f14` = 0.35 units/second** (both for the TRI axes and
+the reactor throttle). `FUN_101081a0` moves one axis and makes the other two
+absorb it, so the triple always sums to 1 with no renormalising -- and the two
+directions are **asymmetric**: LEFT gives the travel back **equally** to the
+other two, RIGHT takes it **proportionally**. Both clamp inside the triangle.
+
+**Rows 0 and 5 -- previously UNKNOWN -- are resolved.** Row 0 is a **subsim
+selector**: left/right cycle the ship's subsim list and Enter switches the
+selected one **off** (`FUN_10106390`, flipping bit 1 of `iiShipSystem+0x68`,
+gated on bit 5 "can be switched off"). Row 5 is the **reactor throttle** (and the
+row the screen opens on): left/right drag `icReactor+0xa0` at the same 0.35/s.
+The row count never added up because `_ship`/`_iff` are the **header** and
+`_back` is the **Cancel prompt** -- neither is a row.
+
+The four `DistributePower` keys are a separate, press-only shortcut (flags `1`:
+no repeat, no hold), so they *snap* the TRI to a corner.
+
 ### `icHUDStarmap`, recovered
 
 Vtable `0x1011e1d8`; slots 12..16 = `0x100fbc20`, `0x100fbc60` (input),

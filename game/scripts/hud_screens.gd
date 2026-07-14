@@ -65,6 +65,10 @@ func _process(d: float) -> void:
 	if hud != null and hud.screen != _last_screen:
 		_last_screen = hud.screen
 		_open_t = 0.0
+		# drop any latched menu direction across an open/close (icHUD clears
+		# +0x1bc on the release it never gets to see while the screen is down)
+		_menu_held = false
+		_menu_down.clear()
 		if hud.screen == "hud_menu_map":
 			_map_open()
 	_open_t += d
@@ -260,63 +264,201 @@ var _tri_slow := [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
 var _tri_fast := [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
 var _tri_mark := Vector2(-1, -1)                 # +0xe8/+0xec, chased at 50 px/s
 
-# Six rows (this+0x54, wrapped 0..5 by FUN_10105c80), opening on row 5.
-# Rows 1/2/3 are the TRI axes and row 4 is RESET TRI -- both PROVEN (FUN_10107710
-# selects this+0xc0/+0xc4/+0xc8 for rows 1/2/3 and puts hud_engineering_resettri,
-# key index 4 of the table at 0x10163e94, at (35, 317)). Rows 0 and 5 are NOT
-# recovered: row 0 has an Enter handler (FUN_10106390(this, 4), through the
-# dispatch table at 0x10163ec0) and row 5 has none. The labels below for those
-# two, and their y positions, are OURS -- they just continue the recovered 35px
-# pitch.
+# --- the six rows, and how the keyboard actually drives them ------------------
+#
+# Six rows (this+0x54, wrapped 0..5 by the menu-input virtual FUN_10105c80),
+# opening on row 5 (ctor 0x10105a23). ALL SIX ARE NOW RECOVERED:
+#
+#   0  SYSTEM SELECTOR   left/right cycle the ship's subsim list, Enter toggles
+#   1  TRI axis DRIVE        \
+#   2  TRI axis OFFENSIVE     >  left/right move the point WHILE HELD
+#   3  TRI axis DEFENSIVE    /
+#   4  RESET TRI         Enter -> SetTRIPosition(1/3, 1/3, 1/3)
+#   5  REACTOR THROTTLE  left/right drag icReactor's ramp target WHILE HELD
+#
+# THE INPUT MODEL. There are TWO separate paths out of the arrow keys, and the
+# TRI is on the second one -- which is why holding an arrow key did nothing here.
+#
+# (a) THE COMMAND PATH. configs/default.ini binds [HUD.MenuLeft|Right|Up|Down|
+#     Select|Cancel] and icHUD registers them (FUN_100e1bf0) as commands
+#     0 = up, 1 = down, 2 = left, 3 = right, 4 = select, 5 = cancel. The four
+#     DIRECTIONS register with flags **0x103**, select/cancel with 3. Those flags
+#     are read by flux's button dispatcher FUN_10075010, whose event mask is
+#         1 = pressed   2 = released   4 = held (every frame)   0x100 = repeat
+#     so 0x103 = press | release | AUTO-REPEAT: after m_initial_delay the key
+#     re-fires every m_repeat_period (flux.ini: initial_delay 0.5, repeat_period
+#     0.08). Each such event reaches the focused element's slot 13 (0x10105c80).
+#     FUN_10105c80 handles cmd 0/1 itself (step the row), cmd 4 (Enter: row 0 ->
+#     FUN_10106390, row 4 -> FUN_101092f0 = RESET TRI) and cmd 5 (close), and
+#     hands LEFT/RIGHT to a PER-ROW dispatch table at 0x10163ec0 -- whose ONLY
+#     non-null entry is row 0's (FUN_10106390). So on the TRI rows the command
+#     path does NOTHING AT ALL. Nothing steps the point.
+#
+# (b) THE HELD-KEY PATH -- this is the one that moves the TRI. icHUD latches the
+#     current menu direction into two fields (FUN_100de004): **+0x1bc = "a menu
+#     direction is down"** (set on press @ 0x100de040, cleared on release @
+#     0x100de07f) and **+0x1c0 = which command**. The Engineering screen then
+#     polls them EVERY FRAME from its own body draw:
+#
+#       FUN_10107710 @ 0x10107729:  if (hud[+0x1bc] && !hud[+0x1b6]
+#                                       && (hud[+0x1c0] == 2 || == 3)
+#                                       && this[+0x54] in {1,2,3})
+#                                       FUN_101081a0(cmd, &axis[row-1], other, other)
+#                                   SetTRIPosition(+0xc0, +0xc4, +0xc8)  @0x101077d3
+#       FUN_10108240 @ 0x10108264:  the same test for row 5, dragging the
+#                                   reactor's ramp target (icReactor+0xa0).
+#
+#     So it is a RATE, not a step, and it is applied per-frame for as long as the
+#     key is down -- exactly what the report expected.
+#
+# THE RATE: _DAT_10163f14 = **0.35** barycentric units per second (0x101081ab
+# `fmul [0x10163f14]` against FnTimeWin32::m_game_delta_time_seconds). The very
+# same constant drives row 5's reactor throttle (ship_systems.REACTOR_THROTTLE_RATE).
+const MENU_RATE := 0.35                 # _DAT_10163f14, units/s while held
+const MENU_DELAY := 0.5                 # flux.ini FcInputMapper::initial_delay
+const MENU_PERIOD := 0.08               # flux.ini FcInputMapper::repeat_period
+
 var eng_row := 5                                # ctor: this+0x54 = 5
 const ENG_ROW0_Y := 177.0                       # OURS (212 - 35)
 const ENG_ROW5_Y := 352.0                       # OURS (317 + 35)
-var eng_iff := true                             # OURS: what row 0 toggles
+var eng_sel := 0                                # row 0's cursor into systems[]
+
+# Our stand-in for icHUD +0x1bc / +0x1c0. hud.gd only forwards key PRESSES, so
+# the held state is polled here; a release of any menu direction clears the latch,
+# which is what 0x100de07f does (it clears the flag whatever the command was).
+const MENU_CMD := {KEY_UP: 0, KEY_DOWN: 1, KEY_LEFT: 2, KEY_RIGHT: 3}
+var _menu_held := false                         # icHUD+0x1bc
+var _menu_cmd := -1                             # icHUD+0x1c0
+var _menu_down: Dictionary = {}                 # previous frame's key states
+var _menu_rpt := 0.0                            # the auto-repeat countdown
+
+func _menu_poll(d: float) -> void:
+	# Latch the held direction (icHUD FUN_100de004) and run the 0.5s/0.08s
+	# auto-repeat that flux's FUN_10075010 gives every 0x103-flagged binding.
+	for key: int in MENU_CMD:
+		var now: bool = Input.is_physical_key_pressed(key)
+		var was: bool = bool(_menu_down.get(key, false))
+		_menu_down[key] = now
+		if now and not was:                     # press -> latch
+			_menu_held = true
+			_menu_cmd = int(MENU_CMD[key])
+			_menu_rpt = MENU_DELAY
+		elif was and not now:                   # release -> drop the latch
+			_menu_held = false
+	if not _menu_held:
+		return
+	# The repeat only matters for the commands slot 13 actually acts on: the row
+	# stepper (0/1) and, on row 0 alone, the selector (2/3). On rows 1/2/3 and 5
+	# the table entry is null and the held-key path below does the work instead.
+	if _menu_cmd > 1 and eng_row != 0:
+		return
+	_menu_rpt -= d
+	if _menu_rpt <= 0.0:
+		_menu_rpt = MENU_PERIOD
+		_eng_cmd(_menu_cmd)
+
+func _eng_hold(d: float) -> void:
+	# FUN_10107710 @ 0x10107729 and FUN_10108240 @ 0x10108264.
+	if not _menu_held or (_menu_cmd != 2 and _menu_cmd != 3):
+		return
+	if eng_row >= 1 and eng_row <= 3:
+		_tri_move(eng_row - 1, _menu_cmd, d)
+	elif eng_row == 5:
+		var s: ShipSystems = _sys()
+		if s != null:
+			s.nudge_reactor_throttle(-1.0 if _menu_cmd == 2 else 1.0, d)
 
 func _eng_key(key: int) -> bool:
-	# FUN_10105c80: menu cmd 0 = up, 1 = down, 2/3 = left/right, 4 = select,
-	# 5 = cancel. Rows 1..3 take left/right into the TRI; row 4 resets it.
+	# The press half of the command path. hud.gd hands us pressed keys only; the
+	# repeat comes from _menu_poll.
 	match key:
-		KEY_UP:
-			eng_row = wrapi(eng_row - 1, 0, 6)
-		KEY_DOWN:
-			eng_row = wrapi(eng_row + 1, 0, 6)
-		KEY_LEFT, KEY_RIGHT:
-			var d: float = (0.04 if key == KEY_RIGHT else -0.04)
-			if eng_row >= 1 and eng_row <= 3:
-				_tri_shift(eng_row - 1, d)
+		KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT:
+			_eng_cmd(int(MENU_CMD[key]))
 		KEY_ENTER, KEY_KP_ENTER:
-			if eng_row == 4:
-				# FUN_101092f0 -> SetTRIPosition(1/3, 1/3, 1/3) @ 0x101092ff
-				_set_tri(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
-			elif eng_row == 0:
-				eng_iff = not eng_iff                    # FUN_10106390(this, 4)
-			elif eng_row == 5:
-				hud.screen = ""
+			_eng_cmd(4)
 		_:
 			return false
 	return true
 
-func _tri_shift(idx: int, amount: float) -> void:
-	# a TRI is a simplex: what one axis gains, the other two give up in
-	# proportion, so the triple always sums to 1 (FUN_101081a0). The result goes
-	# through SetTRIPosition, exactly as the screen does at 0x101077d3 -- which is
-	# what makes the bars move the SHIP and not just the picture.
-	var cur: Array = (tri as Array).duplicate()
-	var want: float = clampf(float(cur[idx]) + amount, 0.0, 1.0)
-	var give: float = want - float(cur[idx])
-	var rest: float = 1.0 - float(cur[idx])
-	if rest <= 0.0001:
+func _eng_cmd(cmd: int) -> void:
+	# FUN_10105c80, verbatim.
+	match cmd:
+		0:
+			eng_row = wrapi(eng_row - 1, 0, 6)  # 0x10105c8b: dec, wrap to 5
+		1:
+			eng_row = wrapi(eng_row + 1, 0, 6)  # 0x10105ca8: inc, wrap to 0
+		2, 3:
+			# the per-row table at 0x10163ec0: row 0 -> FUN_10106390, rest null.
+			# Rows 1/2/3 and 5 deliberately do nothing here -- see _eng_hold.
+			if eng_row == 0:
+				_eng_select(cmd)
+		4:
+			if eng_row == 0:
+				_eng_toggle()                   # FUN_10106390(this, 4)
+			elif eng_row == 4:
+				# FUN_101092f0 -> SetTRIPosition(1/3, 1/3, 1/3) @ 0x101092ff
+				_set_tri(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
+
+func _eng_systems() -> Array:
+	# icShip+0x140, the subsim list FUN_10106390 walks and FUN_10108890 indexes
+	# with the row-0 cursor (this+0x94 -> the selected subsim at this+0x98).
+	var s: ShipSystems = _sys()
+	return s.systems if s != null else []
+
+func _eng_select(cmd: int) -> void:
+	# FUN_10106390 @ 0x101063b0 (cmd 2: dec, wrap to n-1) / 0x101063d6 (cmd 3:
+	# inc, wrap to 0).
+	var n: int = _eng_systems().size()
+	if n == 0:
 		return
-	for i in 3:
-		if i != idx:
-			cur[i] = maxf(0.0, float(cur[i]) - give * float(cur[i]) / rest)
-	cur[idx] = want
-	var total: float = float(cur[0]) + float(cur[1]) + float(cur[2])
-	if total > 0.0:
-		for i in 3:
-			cur[i] = float(cur[i]) / total
-	_set_tri(cur[0], cur[1], cur[2])
+	eng_sel = wrapi(eng_sel + (1 if cmd == 3 else -1), 0, n)
+
+func _eng_toggle() -> void:
+	# FUN_10106390 @ 0x10106463: Enter flips bit 1 of the selected subsim's flags
+	# (iiShipSystem+0x68) -- but only when bit 5 ("can be switched off", set by
+	# the base ctor 0x1003b9f0) is up. A subsim that is off draws no power and
+	# makes no heat: ShipSystems.set_system_off is the gate.
+	var list: Array = _eng_systems()
+	if eng_sel < 0 or eng_sel >= list.size():
+		return
+	var sys: Dictionary = list[eng_sel]
+	if main.sys != null:
+		main.sys.set_system_off(sys, not bool(sys.get("off", false)))
+
+func _tri_move(idx: int, cmd: int, dt: float) -> void:
+	# FUN_101081a0, verbatim. `d` is the frame's travel; the two axes that are
+	# not `idx` absorb it so the triple always sums to 1.
+	#
+	#   LEFT  (cmd 2, 0x101081b6):  d = min(d, p);      p -= d;  a += d/2; b += d/2
+	#                               -- an EQUAL split back to the other two
+	#   RIGHT (cmd 3, 0x101081ed):  d = min(d, 1 - p);  p += d;
+	#                               a -= d*a/(a+b);  b -= d - d*a/(a+b)
+	#                               -- taken PROPORTIONALLY to what they hold
+	#
+	# The asymmetry is the engine's, not ours. Both clamps keep the point inside
+	# the triangle without ever renormalising.
+	var cur: Array = (tri as Array).duplicate()
+	var o1: int = (idx + 1) % 3
+	var o2: int = (idx + 2) % 3
+	var p: float = float(cur[idx])
+	var a: float = float(cur[o1])
+	var b: float = float(cur[o2])
+	var d: float = dt * MENU_RATE
+	if cmd == 2:
+		d = minf(d, p)                          # 0x101081ba: fcom / d = min(d, p)
+		cur[idx] = p - d
+		cur[o1] = a + d * 0.5                   # 0x101081d1: fmul _DAT_10117738
+		cur[o2] = b + d * 0.5
+	else:
+		d = minf(d, 1.0 - p)                    # 0x101081f1: fld 1.0 / fsub p
+		var rest: float = a + b
+		if rest <= 0.0:
+			return                              # already hard against the corner
+		var share: float = d * a / rest         # 0x1010821e: fdivr / fmul
+		cur[idx] = p + d
+		cur[o1] = a - share
+		cur[o2] = b - (d - share)
+	_set_tri(float(cur[0]), float(cur[1]), float(cur[2]))
 
 func _tri_chase(ghost: Array, rate: float, d: float) -> void:
 	# FUN_10108890: the ghost walks toward the live TRI with a total budget of
@@ -335,6 +477,10 @@ func _tri_chase(ghost: Array, rate: float, d: float) -> void:
 				(float(e[i]) / sum) * budget)
 
 func _eng_step(d: float) -> void:
+	# the held-key path runs BEFORE the ghosts, exactly as the body draw does it
+	# (FUN_10105d40 calls the feed 0x10108890, then the TRI 0x10107710)
+	_menu_poll(d)
+	_eng_hold(d)
 	_tri_chase(_tri_slow, TRI_SLOW, d)
 	_tri_chase(_tri_fast, TRI_FAST, d)
 
@@ -412,12 +558,26 @@ func _draw_engineering(fade: float) -> void:
 	draw_string(hud._font_num, o + Vector2(BAR_X, RESET_Y),
 			"RESET TRI", HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size,
 			hot if eng_row == 4 else col)
-	# rows 0 and 5: positions and labels OURS (see the note above)
+	# row 0: the subsim selector. Left/right cycle icShip+0x140 and Enter toggles
+	# the selected sim (FUN_10106390); the original draws its label at (150, 109)
+	# with left/right chevrons that light while the key is held (FUN_101069a0,
+	# sprites 8/9). Our y keeps the 35px row pitch instead.
+	var list: Array = _eng_systems()
+	var lbl := "SYSTEM    NONE"
+	if eng_sel >= 0 and eng_sel < list.size():
+		var sel: Dictionary = list[eng_sel]
+		lbl = "%-14s %s" % [str(sel["name"]).to_upper().substr(0, 14),
+			"DISABLED" if bool(sel.get("off", false)) else "ENABLED"]
 	draw_string(hud._font_num, o + Vector2(BAR_X, ENG_ROW0_Y),
-			"IFF       %s" % ("ENABLED" if eng_iff else "DISABLED"),
+			("< %s >" % lbl) if eng_row == 0 else ("  %s" % lbl),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size,
 			hot if eng_row == 0 else col)
-	draw_string(hud._font_num, o + Vector2(BAR_X, ENG_ROW5_Y), "BACK",
+	# row 5: the reactor throttle -- icReactor's ramp target (+0xa0), dragged by
+	# left/right at the same 0.35/s (FUN_10108240). The screen OPENS on this row.
+	var s5: ShipSystems = _sys()
+	var thr: float = s5.reactor_throttle() if s5 != null else 1.0
+	draw_string(hud._font_num, o + Vector2(BAR_X, ENG_ROW5_Y),
+			"REACTOR   %3d%%" % int(round(thr * 100.0)),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size,
 			hot if eng_row == 5 else col)
 
