@@ -638,3 +638,266 @@ Constant table (all `iwar2.dll`):
 | `0x1011daa0` | 50000 | trail range normally (m) |
 | `0x1011daa4` | 0.7 | point life/alpha at emit |
 | `0x10173f5c` | 0.109375 | life decay/s, derived at `0x100e4b80` |
+
+---
+
+# The two menu screens (second pass): `icHUDEngineering` and `icHUDStarmap`
+
+`docs/original.md` §8e said of the starmap "its layout is not recovered" and of
+the TRI "which corner is which system is unknown". Both are recovered now. The
+route was the usual one — class-name string -> `RegisterClass` -> factory ->
+ctor -> **vtable read out of the PE** -> raw-byte disassembly of the slots
+Ghidra dropped.
+
+## `icHUDEngineering` — the TRI is DRIVE / OFFENSIVE / DEFENSIVE
+
+| | |
+|---|---|
+| registration | node `hud_menu_eng`, caption `hud_menu_engineering` |
+| ctor | `0x101059f0` |
+| **vtable** | **`0x1011e334`** |
+| slot 9 (shared Draw) | `0x100f1400` |
+| slot 11 re-open | `0x10105c10` |
+| slot 13 menu input | `0x10105c80` |
+| slot 14 body draw | `0x10105d40` -> the TRI half is **`0x10107710`** |
+| per-frame feed | **`0x10108890`** |
+
+The five floats an earlier pass reported "parked after the vtable at
+`0x1011e348`" were **vtable slots**, not data. The data starts at `0x1011e378`
+and is the screen's pixel geometry: `70, 160, 35, 281, 275, 198, 155, 192, 66`.
+
+### The axes — proven four independent ways
+
+`iiShipSystem::TRIWeight()` (`0x1003c170`) returns
+`m_tri_weights[ this+0x64 ]`, and `this+0x64` is an **`iiShipSystem::eType`**
+written by each subsim's constructor. The base ctor (`0x1003b9f0`) defaults it
+to **3** — "no TRI" — and only three groups override it:
+
+| eType | classes | ctor |
+|---|---|---|
+| **0 — DRIVE** | `icDrive` / `icThrusters` / `icCapsuleDrive` / `icLDSDrive` | `0x10030da0` / `0x1003c590` / `0x10030750` / `0x10036c50` |
+| **1 — OFFENSIVE** | `iiWeapon` (all weapons) / `icMissileLauncher` | `0x1003c860` / `0x10031450` |
+| **2 — DEFENSIVE** | `icAggressorShield` | `0x1002f290` |
+
+`icPlayerPilot::DistributePower` (`0x100b00d0`) then names them outright — it is
+the handler for the four power keys, and each one calls
+`iiShipSystem::SetTRIPosition(a, b, c)` with a corner:
+
+| `eButtonCommand` | binding (`FcInputMapper::Register`) | call |
+|---|---|---|
+| 0x17 | `icPlayerPilot.PowerToOffensive` | `SetTRIPosition(0, `**`1`**`, 0)` |
+| 0x18 | `icPlayerPilot.PowerToDefensive` | `SetTRIPosition(0, 0, `**`1`**`)` |
+| 0x19 | `icPlayerPilot.PowerToDrive` | `SetTRIPosition(`**`1`**`, 0, 0)` |
+| 0x1a | `icPlayerPilot.BalancePower` | `SetTRIPosition(1/3, 1/3, 1/3)` |
+
+The two agree exactly. And the art agrees twice more: the screen draws its three
+bars with sprites **66 / 67 / 68** in that row order — a ship with an engine
+plume, a ship firing two beams, a ship behind a deflecting arc — and
+`images/hud/tri.png`'s three corner nodes carry **those same three glyphs**:
+
+| tri.png node (quad-local px) | glyph | axis |
+|---|---|---|
+| bottom apex, **(74.5, 119)** | engine plume | **0 DRIVE** |
+| top-left, **(20.5, 19)** | two beams firing | **1 OFFENSIVE** |
+| top-right, **(127.5, 19)** | deflecting arc | **2 DEFENSIVE** |
+
+So it was never POWER / REPAIR / HEAT.
+
+### What the TRI actually does
+
+`iiShipSystem::SetTRIPosition` (`0x1003c070`) converts each axis position into a
+multiplier that every subsim of that type then applies:
+
+```
+x = pos * 3 - 1                                  ; 0x10118490 = 3, 0x101171f0 = 1
+w = 1 + x * 0.5 * (max_tri_weight - 1)   if x > 0   ; 0x10117738 = 0.5
+w = 1 + x * (1 - min_tri_weight)         if x < 0
+```
+
+i.e. **weight = `min_tri_weight` at position 0, exactly 1.0 at 1/3, and
+`max_tri_weight` at 1.** `min_tri_weight` / `max_tri_weight` are static
+`iiShipSystem` INI properties, clamped on load to `[0,1]` and `[1,3]`.
+`TRIWeight()` returns a flat 1.0 for anything that is not the player's ship
+(`IsPlayer` gate), so the TRI is a player-only system.
+
+Consumers: `iiWeapon::Range` / `::RefireDelay` (`0x1000f090` / `0x1000f0a0`),
+`::IsReadyToFire` / `::Fire` (`0x10035120` / `0x100357e0`),
+`icLDSDrive::Simulate` (`0x10037040`), the capsule drive (`0x100305e0`) and the
+aggressor shield (`0x1002f900`).
+
+### Layout and animation (all `0x10107710` / `0x10108890`)
+
+- the screen is authored for **640x480**: the body draw literally tests
+  `cmp eax, 0x280 / cmp ecx, 0x1e0` before drawing its developer-mode rect.
+- **the track**: `tri.png` (texture 3) drawn 1:1 as a quad
+  **(275,192)-(430,347)**, u/v `0 .. 0.60546875` of a 256px texture = **155px**.
+  (`0x1011e388` = 275, `0x1011e394` = 192, `0x1011e390` = 155.)
+- **three bars** at x = **35** (`0x1011e380`), y = **212 / 247 / 282** (35px
+  pitch), length **217**, style 3, icons **66 / 67 / 68** — one per axis, in
+  DRIVE / OFFENSIVE / DEFENSIVE order (`FUN_100ed780`).
+- **row 4** = `hud_engineering_resettri`, at **(35, 317)** (`FUN_100ea900`).
+  The eleven localised strings come from the key table at `0x10163e94`, in this
+  order: `hud_menu_engineering`, `_ship`, `_iff`, `_back`, `_resettri`,
+  `_powerhelp_part1`, `_part2`, `_general_enabled`, `_general_disabled`,
+  `_powerpod_enabled`, `_powerpod_disabled`.
+- **six rows** (`this+0x54`, wrapped 0..5 by `FUN_10105c80`, opening on row 5).
+  Rows **1/2/3 are the three TRI axes** (`FUN_10107710` feeds `this+0xc0` /
+  `+0xc4` / `+0xc8` to `FUN_101081a0` for exactly those rows) and **row 4 is
+  RESET TRI** (`FUN_101092f0` -> `SetTRIPosition(1/3,1/3,1/3)`).
+- **the marker** is sprite **45** (a ragged ring), spun one revolution per 2 s
+  (`rot = frac(t_ms * 0.0005) * 2*PI`), chased toward the barycentre at
+  **50 px/s** (`0x10163f10`). Its final placement is an affine remap of the
+  barycentric solve: `x' = (155 - (x - 275)) * 0.85 + 281`,
+  `y' = (155 - (y - 192)) * 0.9 + 198` (`0x10119b3c` = 0.85, `0x1011951c` = 0.9,
+  `0x1011e384` = 281, `0x1011e38c` = 198). An affine map of a barycentric mix is
+  the barycentric mix of the mapped corners, so interpolating the three node
+  centres directly gives the same point.
+- **three copies of the TRI**, which is where the screen's life comes from
+  (`FUN_10108890`): `+0xc0..0xc8` is the **live** `iiShipSystem::m_tri_position`;
+  `+0xcc..0xd4` is a **slow ghost** chasing it at 0.15/s (`0x10163f08`) and is
+  what the *bars* show; `+0xdc..0xe4` is a **fast ghost** at 0.8/s
+  (`0x10163f0c`) and is what the *marker* is solved from. Each ghost's budget is
+  shared between the three axes in proportion to their errors.
+- **the shimmer**: while an axis's ghost has caught up (`+0xd9/+0xda/+0xdb`, set
+  when `|ghost - live|` is inside +/-0.1) and its value is strictly between 0 and
+  1, the drawn value wobbles by **+/-0.02** (`0x1011e3b8`) at
+  `sin(pi*t)` / `cos(5.0266*t)` / `sin(4.0841*t)`.
+
+### Still UNKNOWN on this screen
+
+- **rows 0 and 5.** Row 0 has an Enter handler (`FUN_10106390(this, 4)`, via the
+  dispatch table at `0x10163ec0`, whose other five entries are null); row 5 has
+  none and is the row the screen opens on. Their labels and y positions in
+  `hud_screens.gd` are ours. The four unused strings
+  (`_general_enabled/disabled`, `_powerpod_enabled/disabled`) are two toggle
+  pairs, so at least one of these rows is a toggle — which one, and what it
+  toggles, is not established.
+- what `0x1011e378` = 70 and `0x1011e37c` = 160 position.
+
+## `icHUDStarmap` — a pannable 2D chart, and the data is in `clusters.ini`
+
+| | |
+|---|---|
+| registration | `FUN_100fb1c0` (node `hud_menu_map`, caption `hud_map_caption`) |
+| factory / ctor | `FUN_100fb200` (size **0x1b8**) / `FUN_100fb260` |
+| **vtable** | **`0x1011e1d8`** |
+| slot 11 re-open | `0x100fba50` |
+| slot 12 | `0x100fbc20` |
+| slot 13 menu input | `0x100fbc60` |
+| slot 14 body draw | **`0x100fbf50`** |
+| slot 15 / 16 | `0x100fbce0` / `0x100fbf40` |
+| cluster renderer | **`0x100ff0a0`** |
+| system renderer | **`0x100fda70`** |
+
+### The state machine (`this+0x74`)
+
+| state | what | input handler |
+|---|---|---|
+| 0 | **CLUSTER VIEW** | `FUN_100fcd60` |
+| 1 | cluster -> system, zooming in | — |
+| 2 | **SYSTEM VIEW** | `FUN_100fce60` |
+| 3 | system -> cluster, zooming out | — |
+| 4 | a drilled-in local view (`this+0x150` is a sim) | `FUN_100fd130` — **not recovered** |
+
+**The two views are not a page flip: they cross-fade through the zoom.** The
+body draw runs the cluster renderer whenever the state is not 2 and the system
+renderer whenever it is not 0; in states 1 and 3 it blends them by where the
+zoom sits between its limits:
+
+```
+f = (zoom - 0.001) / (5.0 - 0.001)          ; 0x1011e1a0, 0x1011e194
+cluster_alpha *= f ;  system_alpha *= (1 - f)
+```
+
+Entering a system (`FUN_100fcd60` case 0 — the UP menu command) sets state 1 and
+**multiplies the zoom target by 0.001**; backing out (`FUN_100fce60` case 1)
+sets state 3 and multiplies it by **1000.0** (`0x1011e198`). So diving into a
+system is one continuous dive down the cluster chart until the system fills the
+screen. Menu commands in the cluster: **0 = enter, 1 = back, 2/3 = prev/next
+system, 5 = close**. The ctor also builds eight on-screen key legends
+(`FUN_100efbb0(widget, key, keycode, colour)`): `hud_menu_cancel` (0x1f, **red**),
+`hud_menu_next` (0x23), `hud_menu_prev` (0x22), `hud_map_zoom_in` (0x24),
+`hud_map_zoom_out` (0x25), `hud_map_select`, `hud_map_select_destination`,
+`hud_map_jump_destination`.
+
+### The projection — `FUN_100ff0a0`
+
+The body draw pushes a matrix whose translation is **(screen_w/2, screen_h/2)**,
+so everything below is drawn about the screen centre. Then, per system:
+
+```
+sx = (sys.map_x - cam_x) * scale
+sy = (sys.map_y - cam_y) * scale
+scale = min(screen_w, screen_h) * 0.45 / zoom      ; FUN_100ff9f0, 0x1011e1a8 = 0.45
+```
+
+`sys.map_x` / `map_y` are `icSolarSystem+0x624` / `+0x628`, and
+**`icCluster::Load` (`0x10044360`) reads them straight out of
+`geog/clusters.ini`'s `map_coords[n]`** via `FcINIFile::NumberedVector`. That
+file *is* the cluster map — 16 systems with hand-placed 2D chart positions, plus
+`label[n]` / `label_coords[n]` for the two cluster names (`badlands_cluster` at
+`(-2,-4)`, `gagarin_cluster` at `(10,-3)`). It is a **flat spatial chart, not
+the jump graph**; the jump links are drawn *on* it.
+
+Selecting a system (`FUN_100fda10`) re-centres the camera on that system's
+`map_coords` and parks the zoom at its maximum, **5.0** — so the chart is
+larger than the screen and you pan it by cycling the selection. The camera then
+eases in at `5 * distance` per second (`0x1011e190`).
+
+### What the cluster view draws
+
+- **jump links**: lines from the table at `this+0x9c` (count `+0x94`, stride
+  0x20), line width **0.5**, fade width **1.5**, colour `DAT_10174fb0` **amber**.
+- **each system**: one sprite, drawn **additively** (`SetBlend(2)`), with its
+  localised name **16px to the right** (`0x101184a0`). The alpha carries the
+  save game:
+
+  | alpha | when |
+  |---|---|
+  | **1.0** | selected, or the system you are in |
+  | **0.7** (`0x101191e8`) | **visited** — the system's name is hashed and looked up in `icSaveGame`'s hash set |
+  | **0.3** (`0x1011c034`) | never visited |
+
+- **the two cluster labels**, at their `label_coords`.
+- mouse picking (`FUN_100ffb50`) takes the nearest system within
+  `sqrt(144) = 12px` (`0x1011e234`).
+- two header glyphs at the fixed pixels **(36,126)** and **(72,126)** — roundel
+  sprite 53 with sprite **36** (zoom-in) or **37** (zoom-out) over the first and
+  sprite **29** over the second, blinking at
+  `alpha = (|frac(t*0.0005) - 0.5| * 1.8 + 0.1)` while a zoom or a pan is still
+  in flight.
+- three text lines at x = **20**; `FUN_100eb270` puts two of them at
+  **y = 60** and **y = 80**.
+
+### What the system view draws — `FUN_100fda70`
+
+Orbits are real circles (`FcGraphicsEngine::DrawCircle`) in amber at line width
+0.5; the plotted **ROUTE** is drawn over them at line width **2.0**; bodies,
+stations and L-points are sprites; there is a **red** (`DAT_10176018`) marker
+sprite. Its zoom is a **double** (`this+0xe8` / `+0xf0`), because the radii are
+in metres.
+
+### Still UNKNOWN on this screen
+
+- the **sprite id for a cluster node** — the draw reads it out of a runtime list
+  at `this+0x90` that is filled elsewhere. We use the roundel, sprite 53.
+- **state 4**, the drilled-in local view (`FUN_100fd130`).
+- the system view's **initial zoom** (set in `FUN_100fd440`, a Ghidra hole). We
+  fit the system to the page instead.
+- `icSaveGame`'s visited-system set is not persisted in the remaster; we keep an
+  in-session set instead, which is the same mechanism with a shorter memory.
+
+## New atlas cells
+
+Read out of the same table builder (`0x100e6c60` ->
+`FUN_100ee6b0(x, y, w, h, origin_x, origin_y, texture)`), all texture 0
+(`images/hud/sprites.png`):
+
+| id | atlas | size | origin | what |
+|---|---|---|---|---|
+| 36 | (198, 125) | 32x32 | 16,16 | starmap zoom-in arrow |
+| 37 | (198, 158) | 32x32 | 16,16 | starmap zoom-out arrow |
+| 45 | (66, 59) | 32x32 | 16,16 | the TRI marker (a ragged ring) |
+| 66 | (99, 191) | 32x32 | 16,16 | TRI axis 0 — ship + engine plume |
+| 67 | (132, 191) | 32x32 | 16,16 | TRI axis 1 — ship + two beams |
+| 68 | (165, 191) | 32x32 | 16,16 | TRI axis 2 — ship + deflecting arc |

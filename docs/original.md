@@ -1581,25 +1581,98 @@ The triangle art is the shipped `images/hud/tri.png` (texture 3), whose track
 occupies (2,2)-(146,139): an inverted triangle with graduations and three corner
 nodes, each carrying a glyph.
 
-`icHUDStarmap`'s caption is `hud_map_caption` = "STELLAR NAVIGATION OVERLAY", and
-`hud.csv` gives it both a **CLUSTER VIEW** and a **SYSTEM VIEW**, plus SELECTED /
-ZOOM IN / ZOOM OUT / JUMP DESTINATION / SELECT DESTINATION / INTERSTELLAR
-L-POINT / LOCAL L-POINT / MISSION WAYPOINTS / ROUTE. So both views exist. The
-geography it draws is real (`data/json/systems/*.json`, `geography.md`); its
-layout is not recovered.
+### The TRI is DRIVE / OFFENSIVE / DEFENSIVE -- we had it wrong
+
+Not POWER / REPAIR / HEAT. Proved four independent ways:
+
+- **`iiShipSystem::eType`** (`+0x64`) is the TRI group: **0 = drive, 1 =
+  offensive, 2 = defensive, 3 = none (the base default, `0x1003b9f0`)**. The
+  only ctors that override it are icDrive/icThrusters/icCapsuleDrive/icLDSDrive
+  -> 0, iiWeapon/icMissileLauncher -> 1, icAggressorShield -> 2.
+  `TRIWeight()` (`0x1003c170`) indexes `m_tri_weights` with it -- and is gated
+  on `IsPlayer`, so **the TRI is a player-only system**; every AI ship runs at a
+  flat weight of 1.
+- **`icPlayerPilot::DistributePower`** (`0x100b00d0`) names the corners:
+  `PowerToOffensive` -> `SetTRIPosition(0,1,0)`, `PowerToDefensive` -> `(0,0,1)`,
+  `PowerToDrive` -> `(1,0,0)`, `BalancePower` -> `(1/3,1/3,1/3)`
+  (`eButtonCommand` 0x17..0x1a).
+- The screen's three bar icons are sprites **66 / 67 / 68**: ship+engine-plume,
+  ship+two-beams, ship+deflecting-arc -- and `tri.png`'s three corner nodes
+  carry those same three glyphs.
+
+**What it does:** `SetTRIPosition` (`0x1003c070`) maps each axis to a weight --
+`min_tri_weight` at 0, **1.0 at 1/3**, `max_tri_weight` at 1, piecewise linear
+(min clamped to [0,1], max to [1,3]). Consumed by `iiWeapon::Range` /
+`RefireDelay` / `IsReadyToFire` / `Fire`, `icLDSDrive::Simulate`, the capsule
+drive and the aggressor shield.
+
+### `icHUDStarmap`, recovered
+
+Vtable `0x1011e1d8`; slots 12..16 = `0x100fbc20`, `0x100fbc60` (input),
+`0x100fbf50` (body), `0x100fbce0`, `0x100fbf40`. Renderers: **`0x100ff0a0`
+cluster**, **`0x100fda70` system**.
+
+- **The cluster view is a flat 2D chart, not the jump graph.** `icCluster::Load`
+  (`0x10044360`) reads `map_coords[n]` from **`geog/clusters.ini`** -- 16 systems
+  with hand-placed chart positions, plus `label[n]`/`label_coords[n]` for the
+  cluster names. *That file is the map*; the jump links are drawn on top of it.
+- **Projection**: screen-centred, `sx = (map_x - cam_x) * scale`,
+  `scale = min(w,h) * 0.45 / zoom` (`FUN_100ff9f0`).
+- **The two views cross-fade through the zoom** -- they are not a page flip.
+  State at `this+0x74`: 0 cluster, 1 diving, 2 system, 3 pulling out. Entering
+  multiplies the zoom target by 0.001, backing out by 1000.
+- Nodes: additive sprite + name at +16px, amber; alpha **1.0** current/selected,
+  **0.7** visited (hashed against `icSaveGame`'s set), **0.3** never visited.
+- **The menu screens are authored at 640x480** (`icHUDEngineering`'s body draw
+  tests for it literally), while the flight HUD is in absolute pixels against the
+  real framebuffer. They are not the same coordinate system.
 
 ---
 
 ## 8f. `icHUDShipStatus` is the top-centre strip
 
 Registered against `iiHUDOverlayElement`; factory `0x100fab00`, ctor
-`0x100fab60`, vtable `0x1011e148`, **Draw = `0x100fabd0`**, which computes
-`x = screen_width * 0.5` and calls `FUN_100fac60(x, 14.0)`. `FUN_100fac60`
-enumerates the ship's component list (`icShip+0x138`) and lays one bar per
-component along a horizontal strip in chartreuse (`DAT_10176038`).
+`0x100fab60`, vtable `0x1011e148`, **Draw = `0x100fabd0`** -> `FUN_100fac60(w *
+0.5, 14, w - 320)`.
 
-So the panel we already draw at top-centre *is* `icHUDShipStatus`: centred, at
-**y = 14**, one bar per subsim.
+It is **one lamp PAIR per mounted subsim on a 6 px pitch -- damage above, power
+below** -- inside a rail at half alpha. The pair is sprite **16** blitted twice
+from the same cell, the second Y-mirrored. Damage colour is the ramp
+`FUN_100e88c0`, **black when hp < 0**; power is blue `DAT_10174190` =
+(0.3, 0.6, 1.0) **scaled by the supply ratio** (`+0x70 / +0x44`), black when
+underpowered. Both flash at 2 Hz by being blitted a *second* time -- which only
+reads because the sprite path is **additive**. (`DAT_10174c60` was never a
+mystery constant: it is `sprite_table[76].w`.)
+
+Our eight labelled DRV/THR/LDS/... bars were an invention and are gone.
+
+### The primitives the whole 2D HUD is built from
+
+- **`FUN_100e9de0(x, y, sprite, flags, rot)`'s fourth argument is a MIRROR
+  MASK**, not a spare: bit0 mirrors the cell in X about the anchor
+  (`0x100e9e0d`), bit1 in Y (`0x100e9e3a`); `FUN_100ea7e0` blits all four. This
+  is how one 9x11 lamp cell makes a *pair*, one chevron caps *both* ends of a
+  rail, and one 85x85 cell makes the *whole* 170x170 menu reticle.
+- **`FUN_100eaf90(x, y, w, thin, cap, rail)` @ `0x100eaf90` -- the RAIL.**
+  Cap sprite at each end (right one mirrored), the rail sprite's narrow column
+  stretched between them, alpha `thin ? 1.0 : 0.5`. **Every "panel" in this HUD
+  is this call -- never a filled rectangle.** Pairs: 76/77 (18 px) and 40/41
+  (32 px).
+- **Fonts**: table at `0x10162c60` = `ocrb_8pt`, `ocrb_10pt`, `ocrb_18pt`,
+  sprites. Text-style alpha at `0x10162cb0`: 0 -> 0.6, 1 -> 1.0, 2 -> 0.75.
+  `FUN_100eb270(font, style, x, y, str, halign, valign)`.
+
+### `icHUDMenuReticle`'s draw, corrected
+
+The centre is sprite 91 blitted **four times, mirrored** (we drew one quadrant,
+so three-quarters of the reticle was simply missing); the quadrants are sprite
+93 x4 rotated. The spin is **a random kick on each keypress that decays to a
+stop** (`0x100f1e73`), not a constant drift. The timeout is **root-node only**,
+under 10 s, `"TIME: %0.1fs"` at (0, +30). Node boxes are `FUN_100ea830`: a rail
+sized to the label (`text_w + 32 * icon - 16`), the label overhanging 8 px into
+each chevron, aligned per direction by `DAT_1011dec8 = [2, 2, 1, 0]`. Alpha is
+driven by **which key is held**. A disabled node (`+0x10 == 0`) is **not drawn at
+all**. The tree is uniformly chartreuse -- the amber-for-screens rule was ours.
 
 ---
 

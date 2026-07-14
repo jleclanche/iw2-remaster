@@ -57,6 +57,15 @@ var _font_num: Font   # OCR-B 8pt -- reticle numerics
 var _font_big: Font   # Handel Gothic 12pt -- warnings
 var num_size := 14
 var big_size := 17
+# FUN_100eb270's first argument is an index into the font table at 0x10162c60
+# (stride 0x14). The four entries are, verbatim:
+#   0 font:/fonts/ocrb_8pt   1 font:/fonts/ocrb_10pt
+#   2 font:/fonts/ocrb_18pt  3 texture:/images/hud/sprites
+# The menu reticle uses 1 for its node labels and 2 for the focused node's name.
+var _font_menu: Font  # OCR-B 10pt -- font 1
+var _font_head: Font  # OCR-B 18pt -- font 2
+var menu_size := 10
+var head_size := 18
 var target_view: TargetView  # live EO-feed render of the target
 var _sprites: Texture2D      # images/hud/sprites.png
 var _reticle_tex: Texture2D  # images/hud/reticle.png
@@ -69,6 +78,7 @@ var _reticle_tex: Texture2D  # images/hud/reticle.png
 # [x, y, w, h, origin_x, origin_y]; all from texture 0 (images/hud/sprites.png).
 const SPR := {
 	3: [51, 0, 16, 16, 7, 7],            # targeted-subsystem marker (MFD)
+	16: [144, 0, 9, 11, 0, 9],           # icHUDShipStatus: ONE status lamp
 	20: [68, 0, 11, 11, 5, 5],           # charge pip
 	21: [0, 26, 32, 32, 16, 16],         # mode icon 1
 	22: [33, 26, 32, 32, 16, 16],        # mode icon 2
@@ -80,6 +90,10 @@ const SPR := {
 	28: [99, 125, 32, 32, 16, 16],       # 0x1C free-flight (capsule + circular arrow)
 	29: [132, 125, 32, 32, 16, 16],      # 0x1D lateral thrust (capsule + side arrows)
 	30: [165, 125, 32, 32, 16, 16],      # capsule drive / jump
+	32: [198, 26, 32, 32, 16, 16],       # 0x20 menu carousel PREV
+	33: [198, 92, 32, 32, 16, 16],       # 0x21 menu carousel NEXT
+	40: [231, 26, 16, 32, 16, 16],       # 0x28 menu node box: the chevron end cap
+	41: [248, 26, 4, 32, 0, 16],         # 0x29 menu node box: its top/bottom rails
 	46: [99, 59, 32, 32, 16, 16],        # MFD class-icon overlay for 47/60
 	47: [99, 92, 32, 32, 16, 16],        # waypoint class icon
 	48: [0, 59, 32, 32, 16, 16],         # MFD class-icon overlay for 49
@@ -102,6 +116,11 @@ const SPR := {
 	87: [166, 224, 32, 32, 16, 16],      # beta   (multiplayer)
 	88: [198, 224, 32, 32, 16, 16],      # flag   (multiplayer)
 	89: [132, 158, 32, 32, 16, 16],      # bomb   (multiplayer)
+	# The two rail primitives. Both are fed to FUN_100eaf90(x, y, w, thin, cap,
+	# rail): the cap is blitted at each end (the right one X-mirrored) and the
+	# rail's narrow column is stretched between them.
+	76: [111, 0, 9, 18, 9, 9],           # 0x4C ship-status strip: end chevron
+	77: [121, 0, 2, 18, 0, 9],           # 0x4D ship-status strip: its two rails
 }
 
 # FUN_100ea2b0's fourth argument is NOT a size (as an earlier pass assumed) --
@@ -138,12 +157,18 @@ func _ready() -> void:
 	_font = load_game_font(base, "handelgothic bt_8pt.fnt")
 	_font_num = load_game_font(base, "ocrb_8pt.fnt")  # tight reticle numerics
 	_font_big = load_game_font(base, "handelgothic bt_12pt.fnt")
+	_font_menu = load_game_font(base, "ocrb_10pt.fnt")
+	_font_head = load_game_font(base, "ocrb_18pt.fnt")
 	if _font is FontFile and (_font as FontFile).fixed_size > 0:
 		FONT_SIZE = (_font as FontFile).fixed_size
 	if _font_num is FontFile and (_font_num as FontFile).fixed_size > 0:
 		num_size = (_font_num as FontFile).fixed_size
 	if _font_big is FontFile and (_font_big as FontFile).fixed_size > 0:
 		big_size = (_font_big as FontFile).fixed_size
+	if _font_menu is FontFile and (_font_menu as FontFile).fixed_size > 0:
+		menu_size = (_font_menu as FontFile).fixed_size
+	if _font_head is FontFile and (_font_head as FontFile).fixed_size > 0:
+		head_size = (_font_head as FontFile).fixed_size
 	target_view = TargetView.new()
 	target_view.main = main
 	add_child(target_view)
@@ -158,12 +183,31 @@ func _ready() -> void:
 	screens = HudScreens.new()
 	screens.hud = self
 	screens.main = main
+	# flux.ini [icHUD] puts the menu elements at 17..21 and the reticle at 11:
+	# an open screen sits ON TOP of the flight HUD, including the MFD effect
+	# layer (z 1) and the comm portrait, which are later children of this node.
+	screens.z_index = 2
 	add_child(screens)
 	_mfd_fx = MfdFx.new()
 	_mfd_fx.hud = self
 	_mfd_fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_mfd_fx.z_index = 1  # composites over the comm portrait, a later child
 	add_child(_mfd_fx)
+	# icHUDShipStatus draws its lamps ADDITIVELY (every sprite path in the HUD
+	# sets FcGraphicsEngine+0x175c = 2 before Begin). For this one element the
+	# blend mode is load-bearing rather than cosmetic: a destroyed subsim's lamp
+	# is drawn in BLACK (FUN_100fac60 @ 0x100faf34) -- which only reads as "off"
+	# under an additive blend -- and a damaged one is drawn TWICE to make it
+	# flash. A CanvasItem's blend mode is a material, not a per-call flag, so the
+	# strip gets its own additive child.
+	_status_fx = StatusLights.new()
+	_status_fx.hud = self
+	_status_fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_status_fx.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var add_mat := CanvasItemMaterial.new()
+	add_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_status_fx.material = add_mat
+	add_child(_status_fx)
 
 static func _load_mask(base: String, file: String) -> Texture2D:
 	# the HUD atlases are white glyphs on black; convert to an alpha mask so
@@ -195,7 +239,7 @@ func log_msg(text: String, color := GREEN) -> void:
 		log_lines.pop_front()
 
 func _process(d: float) -> void:
-	_menu_spin += d * TAU * 0.05  # the four quadrants turn slowly together
+	_menu_spin_step(d)
 	_menu_process(d)
 	if flash_time > 0.0:
 		flash_time -= d
@@ -205,10 +249,15 @@ func _process(d: float) -> void:
 		screens.visible = screen != ""
 	queue_redraw()
 
-func _draw() -> void:
+func hud_up() -> bool:
 	if main == null or main.ship == null:
-		return
+		return false
 	if main.menu != null and main.menu.visible and not main.menu.launched:
+		return false
+	return true
+
+func _draw() -> void:
+	if not hud_up():
 		return
 	var c := _screen() / 2.0
 	var based: bool = main.get("base_root") != null
@@ -227,7 +276,7 @@ func _draw() -> void:
 			_mfd_fx.active = false
 		_draw_mfd()
 	_draw_weapon_panel()
-	_draw_system_status()
+	# icHUDShipStatus lives on the additive _status_fx layer (see _ready)
 	_draw_shield_panel()
 	_draw_orb()
 	_draw_contact_list()
@@ -664,24 +713,54 @@ func _icon_pos(deg: float, radius: float) -> Vector2:
 
 # --- the sprite primitives (FUN_100e9de0 / FUN_100ea2b0) --------------------
 
-func _spr(pos: Vector2, id: int, col: Color, rot := 0.0) -> void:
+func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, flags := 0,
+		ci: CanvasItem = null) -> void:
 	# FUN_100e9de0(x, y, sprite, flags, rotation). The quad spans
 	# [-origin, size - origin] about the anchor and is drawn at NATIVE atlas
 	# size -- the engine never scales these.
+	# The FLAGS argument mirrors the cell about the anchor: bit0 in X
+	# (0x100e9e0d: x0 = +origin_x, x1 = origin_x - w), bit1 in Y (0x100e9e3a).
+	# That is not a detail -- it is how one 9x11 lamp cell makes the ship-status
+	# strip's damage/power PAIR, how one 9x18 chevron caps both ends of a rail,
+	# and how one 85x85 cell makes the whole 170x170 menu reticle.
+	var t: CanvasItem = self if ci == null else ci
 	if _sprites == null or not SPR.has(id):
 		return
 	var s: Array = SPR[id]
-	var w := float(s[2])
-	var h := float(s[3])
+	var sz := Vector2(float(s[2]), float(s[3]))
 	var off := Vector2(-float(s[4]), -float(s[5]))
-	var src := Rect2(float(s[0]), float(s[1]), w, h)
+	var src := Rect2(float(s[0]), float(s[1]), sz.x, sz.y)
 	var c := _dim(col)
-	if is_zero_approx(rot):
-		draw_texture_rect_region(_sprites, Rect2(pos + off, Vector2(w, h)), src, c)
+	var sc := Vector2(-1.0 if (flags & 1) != 0 else 1.0,
+			-1.0 if (flags & 2) != 0 else 1.0)
+	if is_zero_approx(rot) and sc.is_equal_approx(Vector2.ONE):
+		t.draw_texture_rect_region(_sprites, Rect2(pos + off, sz), src, c)
 		return
-	draw_set_transform(pos, rot, Vector2.ONE)
-	draw_texture_rect_region(_sprites, Rect2(off, Vector2(w, h)), src, c)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	t.draw_set_transform(pos, rot, sc)
+	t.draw_texture_rect_region(_sprites, Rect2(off, sz), src, c)
+	t.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+func _hbar(ci: CanvasItem, x: float, y: float, w: float, cap: int, rail: int,
+		col: Color) -> void:
+	# FUN_100eaf90(x, y, width, thin, cap_sprite, rail_sprite) @ 0x100eaf90 --
+	# the engine's horizontal rail. It blits the cap sprite at (x, y) and again
+	# at (x + w, y) with the X-mirror flag, then stretches the rail sprite's
+	# narrow column (a bright row at its top and another at its bottom) into a
+	# quad from x to x + w. Both the ship-status strip (caps 76 / rails 77, 18px
+	# tall) and every menu node box (caps 40 / rails 41, 32px tall) ARE this
+	# call; nothing here is a hand-drawn rectangle.
+	# `thin` picks the alpha: 0 -> 0.5 * master, nonzero -> 1.0 * master. The
+	# caller passes that in the colour's alpha here.
+	x = floor(x)
+	y = floor(y)
+	_spr(Vector2(x, y), cap, col, 0.0, 0, ci)
+	_spr(Vector2(x + w, y), cap, col, 0.0, 1, ci)
+	if _sprites == null or not SPR.has(rail):
+		return
+	var s: Array = SPR[rail]
+	var src := Rect2(float(s[0]), float(s[1]), float(s[2]), float(s[3]))
+	var dst := Rect2(x, y - float(s[5]), w, float(s[3]))
+	ci.draw_texture_rect_region(_sprites, dst, src, _dim(col))
 
 func _icon(pos: Vector2, id: int, flags: int, col: Color, charge := 0.0) -> void:
 	# FUN_100ea2b0 (the roundel + its animation) followed by the charge ring
@@ -1061,6 +1140,26 @@ const MENU := {
 const MENU_DIRS := ["up", "down", "left", "right"]
 const MENU_OFF := {"up": Vector2(0, -MENU_R), "down": Vector2(0, MENU_R),
 	"left": Vector2(-MENU_R, 0), "right": Vector2(MENU_R, 0)}
+# The draw pulls a per-direction alignment code out of the table at 0x1011dec8
+# and hands it to FUN_100ea830 as the box's horizontal alignment:
+#     UP 2   DOWN 2   LEFT 1   RIGHT 0
+# 2 = centred on the anchor, 1 = right-aligned (the box grows left from it),
+# 0 = left-aligned. So the side boxes hang off the reticle outwards.
+const MENU_ALIGN := [2, 2, 1, 0]
+const MENU_BOX_CAP := 40      # sprite 0x28: the node box's chevron end cap
+const MENU_BOX_RAIL := 41     # sprite 0x29: its top and bottom rails
+const MENU_ICON_PREV := 32    # sprite 0x20, on the carousel's UP node
+const MENU_ICON_NEXT := 33    # sprite 0x21, on its DOWN node
+const MENU_ICON_PAD := 32.0   # _DAT_1011848c: an icon widens the box by 32
+const MENU_TEXT_TRIM := 16.0  # _DAT_101184a0: the rail is 16 shorter than the text
+const MENU_TEXT_BACK := 8.0   # _DAT_10117b28: the label starts 8px left of the
+                              # rail, so it overhangs into both chevrons
+const MENU_ICON_STEP := 12.0  # _DAT_10119ec4: rail start -> icon anchor
+const MENU_TIME_Y := 30.0     # 0x41f00000: the timeout sits 30px below centre
+# FUN_100eb270's style argument indexes the alpha table at 0x10162cb0:
+#   style 0 = 0.6   style 1 = 1.0   style 2 = 0.75
+const TEXT_A_DIM := 0.6
+const TEXT_A_LIT := 1.0
 
 var menu_active := false
 var menu_focus := MENU_ROOT
@@ -1071,7 +1170,18 @@ var menu_disabled := {}         # node name -> true; ihud.SetMenuNodeEnabled
 var menu_carousel := {}         # carousel node -> selected index
 var screen := ""                # the open full-screen HUD element, "" for none
 var screens: HudScreens
-var _menu_spin := 0.0
+# The four spinning quadrants are NOT on a constant rotation. FUN_100f1d60
+# @ 0x100f1e73: on the frame a menu key GOES DOWN (latched through this+0x2c)
+# the element rolls a random spin -- rate = sign(rand/32768 - 0.5) * PI
+# (_DAT_10119ae0 = -1, _DAT_10119464 = PI) and a random duration under one
+# second (this+0x28 = rand/32768) -- and then spins down:
+#     t -= game_dt;  angle += rate * t
+# so each keypress kicks the reticle and it settles again. Between kicks it is
+# perfectly still.
+var _menu_spin := 0.0           # this+0x20, the angle
+var _menu_spin_rate := 0.0      # this+0x24
+var _menu_spin_t := 0.0         # this+0x28
+var _menu_spin_latch := false   # this+0x2c
 
 func menu_node_name() -> String:
 	# ihud.CurrentMenuNode (IHUDMenuFocusName, 0x100f5040): the open screen's
@@ -1205,57 +1315,200 @@ func _menu_select() -> void:
 		menu_active = false
 		menu_focus = MENU_ROOT
 
-func _spr_ret(pos: Vector2, id: int, col: Color, rot := 0.0) -> void:
+func _spr_ret(pos: Vector2, id: int, col: Color, rot := 0.0, flags := 0) -> void:
+	# the same blit as _spr, against reticle.png (texture 2)
 	if _reticle_tex == null or not SPR_RET.has(id):
 		return
 	var s: Array = SPR_RET[id]
 	var sz := Vector2(float(s[2]), float(s[3]))
 	var off := Vector2(-float(s[4]), -float(s[5]))
 	var src := Rect2(float(s[0]), float(s[1]), sz.x, sz.y)
-	draw_set_transform(pos, rot, Vector2.ONE)
+	var sc := Vector2(-1.0 if (flags & 1) != 0 else 1.0,
+			-1.0 if (flags & 2) != 0 else 1.0)
+	draw_set_transform(pos, rot, sc)
 	draw_texture_rect_region(_reticle_tex, Rect2(off, sz), src, col)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
+func _menu_key_down() -> int:
+	# icHUD+0x1bc / +0x1c0: which menu input is being HELD, in the input mapper's
+	# slot order (FUN_100e1bf0) -- 0 up, 1 down, 2 left, 3 right, and 4 select,
+	# the same order as the link offsets at +0x14..+0x20. -1 for none.
+	if not menu_active:
+		return -1
+	if Input.is_physical_key_pressed(KEY_UP):
+		return 0
+	if Input.is_physical_key_pressed(KEY_DOWN):
+		return 1
+	if Input.is_physical_key_pressed(KEY_LEFT):
+		return 2
+	if Input.is_physical_key_pressed(KEY_RIGHT):
+		return 3
+	if Input.is_physical_key_pressed(KEY_ENTER) \
+			or Input.is_physical_key_pressed(KEY_KP_ENTER):
+		return 4
+	return -1
+
+func _menu_spin_step(dt: float) -> void:
+	var down: bool = not menu_locked and _menu_key_down() >= 0
+	if down:
+		if not _menu_spin_latch:
+			_menu_spin_latch = true
+			_menu_spin_rate = (1.0 if randf() > 0.5 else -1.0) * PI
+			_menu_spin_t = randf()
+	else:
+		_menu_spin_latch = false
+	if _menu_spin_t > 0.0:
+		_menu_spin_t = maxf(_menu_spin_t - dt, 0.0)
+		_menu_spin += _menu_spin_rate * _menu_spin_t
+
+func _menu_link_nodes(name: String) -> Array:
+	# The four direction links of the focused node, in the engine's order
+	# (+0x14 UP, +0x18 DOWN, +0x1c LEFT, +0x20 RIGHT). A link that is null or
+	# whose node is DISABLED (node+0x10 == 0) is skipped entirely -- 0x100f217d /
+	# 0x100f2187 -- it is not greyed out, it is not there.
+	# Each entry is {} or {label, icon, col}: `icon` is the node's +0x14 sprite
+	# and `col` its +0x18..+0x20 colour (FUN_100efbb0, the node ctor). Every node
+	# in the tree is built green with sprite 0; only the carousel's PREV / NEXT
+	# carry sprites (0x20 / 0x21, still green -- 0x100f2 ctor block at 0x100efe50).
+	var node: Dictionary = MENU.get(name, {})
+	var out: Array = [{}, {}, {}, {}]
+	if str(node.get("kind", "")) == "carousel":
+		out[0] = {"label": "PREV", "icon": MENU_ICON_PREV, "col": GREEN}
+		out[1] = {"label": "NEXT", "icon": MENU_ICON_NEXT, "col": GREEN}
+	for i in 4:
+		if not (out[i] as Dictionary).is_empty():
+			continue
+		var to := _menu_link(name, str(MENU_DIRS[i]))
+		if to == "":
+			continue
+		out[i] = {"label": str(MENU[to].get("label", to)), "icon": 0,
+			"col": GREEN}
+	return out
+
 func _draw_menu_reticle(c: Vector2) -> void:
+	# @element icHUDMenuReticle -- Draw = FUN_100f1d60 @ 0x100f1d60, recovered
+	# from raw bytes (Ghidra skipped it). It gates on icHUD+0x1b4, pushes a
+	# translate to the screen centre, and draws, in order: the centre reticle,
+	# the four spinning quadrants, the focused node's name, the timeout, and the
+	# four link boxes.
 	if not menu_active:
 		return
-	# the centre: one static quadrant (sprite 91) plus four copies of sprite 93
-	# stepped by PI/2 (_DAT_1011a454), spinning together
-	_spr_ret(c, 91, GREEN)
+	var held: int = -1 if menu_locked else _menu_key_down()
+	var links := _menu_link_nodes(menu_focus)
+	# 0x100f1e40 / 0x100f1f9f: the centre reticle drops to HALF alpha while a
+	# direction that HAS a live link is held -- it dims as it hands you off.
+	var moving: bool = held >= 0 and held < 4 \
+			and not (links[held] as Dictionary).is_empty()
+	var a_centre: float = 0.5 if moving else 1.0
+	# 0x100f1ff4: the quadrants sit at HALF alpha and go to FULL only while
+	# SELECT (input 4) is held -- that is the menu's "click".
+	var a_spin: float = 1.0 if held == 4 else 0.5
+	# FUN_100ea7e0(0, 0, 0x5b, 0) @ 0x100ea7e0: sprite 91 blitted FOUR times,
+	# once per mirror-flag pair (0, 1, 3, 2). The 85x85 cell is ONE QUADRANT --
+	# mirrored out it is the whole 170x170 reticle. (The old code drew the cell
+	# once, so three quarters of the reticle were missing.)
+	for f in 4:
+		_spr_ret(c, 91, Color(GREEN.r, GREEN.g, GREEN.b, a_centre), 0.0, f)
+	# four copies of sprite 93 stepped by PI/2 (_DAT_1011a454), turning together
 	for i in 4:
-		_spr_ret(c, 93, GREEN, _menu_spin + PI / 2.0 * i)
+		_spr_ret(c, 93, Color(GREEN.r, GREEN.g, GREEN.b, a_spin),
+				_menu_spin + PI / 2.0 * i)
+	# the focused node's name: font 2 (ocrb_18pt), centred on the reticle in both
+	# axes, style 1 while select is held and style 0 (alpha 0.6) otherwise.
 	var node: Dictionary = MENU.get(menu_focus, {})
 	var head := str(node.get("label", menu_focus))
-	var carousel := str(node.get("kind", "")) == "carousel"
-	if carousel:
+	if str(node.get("kind", "")) == "carousel":
 		var items: Array = node.get("items", [])
 		var i: int = int(menu_carousel.get(menu_focus, 0))
 		if menu_focus == "hud_menu_autopilot" and main.ap_mode != 0:
-			# FUN_100f0420: while the autopilot is engaged the carousel shows
-			# only the DISENGAGE node (hud_menu_autopilot_disengage)
+			# FUN_100f0420: while the autopilot is engaged the carousel shows the
+			# DISENGAGE node (hud_menu_autopilot_disengage, built AMBER with no
+			# icon at 0x100efeb0) instead of the item list.
 			head = "%s: DISENGAGE" % head
 		elif not items.is_empty():
 			head = "%s: %s" % [head, items[i]]
-	_menu_label(c, head, GREEN)
-	if menu_time < 10.0:  # _DAT_101190c0
-		_menu_label(c + Vector2(0, 30), "TIME: %d" % int(ceil(menu_time)), AMBER)
-	if carousel:
-		# the PREV / NEXT nodes (hud_menu_prev / hud_menu_next) hang on the
-		# up / down directions -- FUN_100f0380 steps prev on 0, next on 1
-		_menu_label(c + MENU_OFF["up"], "PREV", GREEN)
-		_menu_label(c + MENU_OFF["down"], "NEXT", GREEN)
-	for dir in MENU_DIRS:
-		var to := _menu_link(menu_focus, dir)
-		if to == "":
+	_menu_text(c, head, _font_head, head_size, GREEN,
+			TEXT_A_LIT if held == 4 else TEXT_A_DIM, 2, 2)
+	# 0x100f209f: the timeout is drawn ONLY on the ROOT node, and only once it
+	# drops below 10 s (_DAT_101190c0). hud_menu_timeout ("TIME: ") with
+	# AppendFormat("%0.1fs", icHUD+0x1b8), font 0 (ocrb_8pt), style 0.
+	if menu_focus == MENU_ROOT and menu_time < 10.0:
+		_menu_text(c + Vector2(0, MENU_TIME_Y),
+				"TIME: %0.1fs" % maxf(menu_time, 0.0), _font_num, num_size,
+				GREEN, TEXT_A_DIM, 2, 0)
+	for i in 4:
+		var link: Dictionary = links[i]
+		if link.is_empty():
 			continue
-		var col := AMBER if str(MENU[to].get("kind", "")) == "screen" else GREEN
-		_menu_label(c + MENU_OFF[dir], str(MENU[to]["label"]), col)
+		_menu_node_box(c + MENU_OFF[MENU_DIRS[i]], str(link["label"]),
+				int(link["icon"]), link["col"], int(MENU_ALIGN[i]), held == i)
 
-func _menu_label(p: Vector2, text: String, col: Color) -> void:
-	var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-			FONT_SIZE).x
-	draw_string(_font, p - Vector2(w / 2.0, -float(FONT_SIZE) / 2.0), text,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, col)
+func _menu_node_box(anchor: Vector2, text: String, icon: int, col: Color,
+		align: int, hi: bool) -> void:
+	# FUN_100ea830 @ 0x100ea830 -> FUN_100ea900 @ 0x100ea900. A menu node is not
+	# a rectangle with a label in it: it is the rail primitive (FUN_100eaf90 with
+	# cap sprite 40 and rail sprite 41 -- 32px tall, 16px chevrons) sized to the
+	# label, with the label drawn straddling it:
+	#     w  = text_width + (32 if icon) - 16
+	#     x  = floor(anchor.x) - 1;  centred / right-aligned / left-aligned by the
+	#          direction's code, then floor -1 again inside FUN_100ea900
+	#     rail(x, y, w);  tx = x - 8
+	#     if icon:  roundel 51 under it WHEN HELD, then the icon at tx + 12,
+	#               both at FULL alpha and in the NODE'S colour; tx += 16 after
+	#     text at tx, vertically centred on y
+	# The rail and the label are at HALF alpha unless this is the direction
+	# currently being held (0x100ea949, 0x100eb2f2): held = 1.0, otherwise 0.5 /
+	# style 0. The text keeps the node's colour on a plain node and reverts to
+	# chartreuse after an icon (0x100eaa5c).
+	var a: float = TEXT_A_LIT if hi else 0.5
+	var tw: float = _font_menu.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT,
+			-1, menu_size).x
+	var w: float = tw + (MENU_ICON_PAD if icon != 0 else 0.0) - MENU_TEXT_TRIM
+	var x: float = floor(anchor.x) - 1.0
+	if align == 2:
+		x -= floor(w * 0.5)
+	elif align == 1:
+		x -= w
+	x = floor(x) - 1.0
+	var y: float = floor(anchor.y)
+	_hbar(self, x, y, w, MENU_BOX_CAP, MENU_BOX_RAIL,
+			Color(col.r, col.g, col.b, a))
+	var tx: float = x - MENU_TEXT_BACK
+	var tcol := col
+	if icon != 0:
+		var ip := Vector2(tx + MENU_ICON_STEP, y)
+		if hi:
+			_spr(ip, 51, Color(col.r, col.g, col.b, 1.0))  # the roundel backing
+		_spr(ip, icon, Color(col.r, col.g, col.b, 1.0))
+		tx = ip.x + MENU_TEXT_TRIM
+		tcol = GREEN
+	if text != "":
+		_menu_text(Vector2(tx, y), text, _font_menu, menu_size, tcol,
+				TEXT_A_LIT if hi else TEXT_A_DIM, 0, 2)
+
+func _menu_text(p: Vector2, text: String, f: Font, size: int, col: Color,
+		a: float, halign: int, valign: int) -> void:
+	# FUN_100eb270(font, style, x, y, str, halign, valign) @ 0x100eb270.
+	# halign 2 centres the string on x, 1 right-aligns it, 0 leaves it.
+	# valign (0x100eb79e) 2 centres it on y (y - h/2 - 1) and 1 bottom-aligns it;
+	# the engine's y is the TOP of the line, so the baseline is y + ascent.
+	if f == null:
+		return
+	var w: float = f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	var asc: float = f.get_ascent(size)
+	var h: float = asc + f.get_descent(size)
+	var x: float = p.x
+	if halign == 2:
+		x -= w * 0.5
+	elif halign == 1:
+		x -= w
+	var y: float = p.y
+	if valign == 2:
+		y -= h * 0.5 + 1.0
+	elif valign == 1:
+		y -= h
+	draw_string(f, Vector2(floor(x), floor(y + asc)), text,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(col.r, col.g, col.b, a))
 
 # --- world-space target marks -----------------------------------------------
 # @element icHUDBrackets
@@ -1582,43 +1835,153 @@ func _draw_weapon_panel() -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 	_ea = 1.0
 
-# --- system status lights (top-center) --------------------------------------
+# --- system status lights (top-centre) --------------------------------------
 # @element icHUDShipStatus
-#   Draw = FUN_100fabd0 -> FUN_100fac60(screen_w * 0.5, 14.0): a horizontal
-#   strip of per-component bars centred on the screen at y = 14, in
-#   chartreuse (DAT_10176038). It enumerates the ship's component list
-#   (icShip+0x138), i.e. one bar per subsim -- which is what this draws.
+#
+# Draw = FUN_100fabd0 @ 0x100fabd0. It reads the screen size off the icHUD
+# (this+0x18, +0x14 / +0x18) and calls
+#
+#     FUN_100fac60(x = screen_w * 0.5, y = 14.0, avail = screen_w - 320)
+#                                    ^0x41600000        ^_DAT_1011e174
+#
+# FUN_100fac60 @ 0x100fac60 IS the element. Verbatim:
+#
+#     n_max = ftol((avail - 2 * SPR[76].w) / 6)   # _DAT_1011cbd0 = 1/6
+#     n     = min(*(int*)(icShip + 0x138), n_max) # the component count
+#     w     = n * 6                               # _DAT_1011a1a0 = 6, the pitch
+#     x     = cx - w * 0.5
+#     colour = chartreuse (DAT_10176038), alpha = master
+#     FUN_100eaf90(x, y, w, 0, 76, 77)            # the rails, at HALF alpha
+#     x -= 1                                      # _DAT_101171f0
+#     for each component:
+#         <colour = the damage ramp>   sprite 16, flags 0   # lamp ABOVE  y
+#         <colour = blue * power>      sprite 16, flags 2   # lamp BELOW  y
+#         x += 6
+#
+# So it is not eight labelled bars for eight groups: it is ONE LAMP PAIR PER
+# MOUNTED SUBSIM, on a 6px pitch, damage over power, exactly as the manual says.
+# The lamp is sprite 16 (a 9x11 round glow, origin 0,9) blitted twice from the
+# same cell, the second one Y-mirrored about the anchor -- so the pair straddles
+# y = 14 and the rails (18px apart) frame it.
+const STATUS_Y := 14.0        # 0x41600000, pushed by the Draw
+const STATUS_PITCH := 6.0     # _DAT_1011a1a0
+const STATUS_MARGIN := 320.0  # _DAT_1011e174: the strip may use screen_w - 320
+const STATUS_CAP := 76        # sprite: the strip's end chevron (9x18)
+const STATUS_RAIL := 77       # sprite: its top and bottom rails
+const STATUS_LAMP := 16       # sprite: one lamp
+const STATUS_BLINK := 0.002   # _DAT_1011dfd0: frac(game_ms * 0.002) > 0.5
+# DAT_10174190/94/98 = (0.3, 0.6, 1.0). The power lamp's colour is that blue
+# SCALED BY the power fraction, so an unpowered lamp is literally black.
+const POWER_COL := Color(0.3, 0.6, 1.0, 1.0)
 
-const SYSTEMS := ["DRV", "THR", "LDS", "CAP", "WEP", "SEN", "EPS", "CPU"]
+class StatusLights extends Control:
+	var hud: Hud
+	func _process(_d: float) -> void:
+		queue_redraw()
+	func _draw() -> void:
+		if hud != null and hud.hud_up():
+			hud.draw_ship_status(self)
 
-func _draw_system_status() -> void:
-	# Each cell is one mounted subsim group: the top bar is its condition, the
-	# bottom its available power. These are the real subsims now (main.sys), not
-	# a curve fitted to the hull -- a drive hit reads on DRV, not on everything.
+var _status_fx: StatusLights
+
+func _power_ratios() -> Array:
+	# The lamps need each subsim's power SATISFACTION, which the engine keeps on
+	# the sim: iiShipSystem::Simulate (0x1003bd53) computes
+	#     drain = (usage * 0.75 + 0.25) * power   # +0x74, +0x44
+	#     got   = icShip::UsePower(drain)
+	#     +0x70 = (got / drain) * power
+	# and the HUD reads +0x70 / +0x44, i.e. got/drain. ship_systems.gd runs the
+	# same distribution but does not keep the ratio, so it is recomputed here,
+	# read-only, in the same mount order off the same stored usage/power -- not
+	# approximated.
+	var out: Array = []
+	var sys: ShipSystems = main.sys
+	var pool := 0.0
+	var has_reactor := false
+	for s: Dictionary in sys.systems:
+		if s["class"] == "icReactor":
+			has_reactor = true
+			if not bool(s["destroyed"]):
+				pool += float(s.get("charge", 0.0))
+	if not has_reactor:
+		pool = ShipSystems.NO_POWERPLANT_POOL
+	for s: Dictionary in sys.systems:
+		var r := 1.0
+		var p := float(s["power"])
+		if p > 0.0 and not bool(s["destroyed"]) and not _disrupted(s):
+			var drain: float = (float(s["usage"]) * ShipSystems.DRAIN_USAGE
+					+ ShipSystems.DRAIN_BASE) * p
+			var got: float = minf(drain, pool)
+			pool -= got
+			r = 0.0 if drain <= 0.0 else clampf(got / drain, 0.0, 1.0)
+		out.append(r)
+	return out
+
+func _disrupted(s: Dictionary) -> bool:
+	# icShip::Disrupt raises subsim flag 0x10; FUN_100fac60 reads that bit FIRST
+	# and randomises BOTH lamps while it is set (amber * rand for the damage
+	# lamp, rand for the power lamp) -- the strip hashes.
+	var sys: ShipSystems = main.sys
+	if sys == null or sys.disrupt_time <= 0.0:
+		return false
+	return sys.disrupt_full or s.has("lda")
+
+func draw_ship_status(ci: CanvasItem) -> void:
+	if main.sys == null or main.sys.systems.is_empty():
+		return
 	var s := _screen()
-	var w := SYSTEMS.size() * 32.0
-	var pos := Vector2(s.x / 2.0 - w / 2.0, 12)
-	var states: Dictionary = main.system_states()
-	var blink := int(Time.get_ticks_msec() / 300.0) % 2 == 0
-	for i in SYSTEMS.size():
-		var x := pos.x + i * 32.0
-		var health: float = states.get(SYSTEMS[i], -1.0)
-		if health < 0.0:
-			# the hull mounts nothing of this kind: an empty socket, not a
-			# healthy one
-			draw_rect(Rect2(x, pos.y, 20, 7), GREEN_DIM, false, 1.0)
-			draw_string(_font, Vector2(x, pos.y + 28), SYSTEMS[i],
-					HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(GREEN_DIM, 0.35))
-			continue
-		var dcol := _health_color(health)
-		if health < 1.0 and blink:
-			dcol = Color(dcol.r, dcol.g, dcol.b, 0.35)
-		draw_rect(Rect2(x, pos.y, 20, 7), dcol)
-		draw_rect(Rect2(x, pos.y + 9, 20.0 * health, 7),
-				Color(0.3, 0.5, 1.0, 0.9))
-		draw_string(_font, Vector2(x, pos.y + 28), SYSTEMS[i],
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 8, GREEN_DIM)
-	draw_rect(Rect2(pos - Vector2(6, 4), Vector2(w + 8, 24)), GREEN_DIM, false, 1.0)
+	var avail: float = s.x - STATUS_MARGIN
+	var n_max: int = int((avail - 2.0 * float(SPR[STATUS_CAP][2])) / STATUS_PITCH)
+	var comps: Array = main.sys.systems
+	var n: int = mini(comps.size(), maxi(n_max, 0))
+	if n <= 0:
+		return
+	var w: float = float(n) * STATUS_PITCH
+	var y := STATUS_Y
+	var x: float = s.x * 0.5 - w * 0.5
+	_hbar(ci, x, y, w, STATUS_CAP, STATUS_RAIL,
+			Color(GREEN.r, GREEN.g, GREEN.b, 0.5))
+	x -= 1.0
+	# the flash: 2 Hz, 50% duty. A damaged subsim's damage lamp and an
+	# under-supplied subsim's power lamp are drawn a SECOND time on the on-phase,
+	# which under the additive blend doubles their brightness.
+	var flash: bool = fposmod(float(Time.get_ticks_msec()) * STATUS_BLINK, 1.0) > 0.5
+	var ratios := _power_ratios()
+	for i in n:
+		var c: Dictionary = comps[i]
+		var dis := _disrupted(c)
+		var hp_max := float(c["hp_max"])
+		var hp := float(c["hp"])
+		var p := Vector2(x, y)
+		# --- the damage lamp (sprite 16 upright: it sits ABOVE the anchor) ----
+		var dcol := Color(0, 0, 0, 1)
+		if dis:
+			var r := randf()
+			dcol = Color(AMBER.r * r, AMBER.g * r, AMBER.b * r, 1.0)
+		elif hp < 0.0:
+			dcol = Color(0, 0, 0, 1)          # flag 0x08: hit points below zero
+		elif hp_max == 0.0:
+			dcol = Color(GREEN.r, GREEN.g, GREEN.b, 1.0)  # cannot be damaged
+		else:
+			var f: float = hp / hp_max
+			dcol = Color(0, 0, 0, 1) if f <= 0.0 else _health_color(f)
+			dcol.a = 1.0
+		_spr(p, STATUS_LAMP, dcol, 0.0, 0, ci)
+		if hp < hp_max and flash:
+			_spr(p, STATUS_LAMP, dcol, 0.0, 0, ci)
+		# --- the power lamp (the same cell, Y-mirrored: BELOW the anchor) -----
+		var v := 1.0
+		if dis:
+			v = randf()
+		elif bool(c["underpowered"]) or bool(c["destroyed"]):
+			v = 0.0                           # flag 0x04: supply <= 0.25
+		elif float(c["power"]) > 0.0:
+			v = float(ratios[i])
+		var pcol := Color(POWER_COL.r * v, POWER_COL.g * v, POWER_COL.b * v, 1.0)
+		_spr(p, STATUS_LAMP, pcol, 0.0, 2, ci)
+		if v < 1.0 and flash:
+			_spr(p, STATUS_LAMP, pcol, 0.0, 2, ci)
+		x += STATUS_PITCH
 
 # --- ORB (top-right) --------------------------------------------------------
 # @element icHUDOrbRadar
