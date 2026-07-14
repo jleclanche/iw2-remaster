@@ -895,24 +895,80 @@ and sets **every material to blend 1 (additive) at alpha `0.99`
 - `tools/iw2/classify_map.py`: kind-7 records now keep their radius (from
   `+0x134`) and carry `icNebula`'s three property defaults.
 
+### What the inside is *supposed* to look like, numerically
+
+Worth writing down, because two rounds of "it looks like a flat orange sheet"
+were argued about on aesthetics and settled on arithmetic.
+
+Sample the real tile (`data/textures/images/sfx/cloud.png`, 256x256 greyscale,
+no alpha): mean 0.315, **p05 0.090, p95 0.886, max 1.0** -- it is high-contrast,
+not a mid-grey. In linear that is p05 **0.009**, p95 **0.76**. At opacity 1 the
+framebuffer is the `(172, 71, 21)` wall plus the layers (`sum(alpha) = 1.0`):
+
+| tile value | framebuffer |
+|---|---|
+| darkest | **(172, 71, 21)** -- the bare wall |
+| mean | (183, 76, 23) |
+| p95 | (221, 94, 30) |
+| brightest | **(234, 99, 33)** |
+
+**So the original spans 172 -> 234 across the screen. It does not wash out.**
+(In practice the top of that range is rare: the three live layers carry
+independent random offsets, so their sum concentrates and the real spread is
+nearer 172 -> 210. Still plainly cloudy.)
+
+That table is also the regression test. If a render of the deep interior does
+not bottom out at `(172, 71, 21)` in the gaps between the billows, something is
+adding light that should not be.
+
+### Two bugs this caught, both ours
+
+**The wall was exactly 2x too bright, and it ate the clouds.** Deep inside, the
+background measured `(234, 99, 33)` -- and a render with the four layers forced
+invisible measured `(234, 99, 33)` *as well*. The layers were contributing one
+level out of 255. The cause was not occlusion and not the layers: it was
+`main.gd::_setup_sky`'s geog backdrop dome, which is **additive**. Fogged, it
+became flat nebula colour -- and then *added* that colour on top of the equally
+fogged sky behind it. Fog + fog = 2x, which lands precisely on `(234, 99, 33)`,
+the brightest value the engine's own maths ever reaches. Everything clipped
+there. `Render` drops the cyclorama at opacity 1 for exactly this reason; we now
+drop it too, and the wall bottoms out at `(172, 71, 21)` as it should.
+
+**The far clip mattered, and not cosmetically.** `Render` hauls the far plane in
+to `end * 1.1` (33 km at full opacity). We had left it at 600 km on the theory
+that the fog would hide anything beyond `depth` anyway. It does not:
+`main.gd` draws bodies as impostors *capped* to 250 km and `star_fx`'s corona is
+emissive, so **the sun burned a hole straight through the murk**. Pulling the
+plane in culls them, which is what the original is doing.
+
 **Deviations, and why.**
 
 - The slot-16 wall and the hardware fog are reproduced *together* by Godot's
   `FOG_MODE_DEPTH` (same colour, same 100 m -> `depth` range, `fog_sky_affect =
-  opacity`, which is precisely the alpha-blended wall over the starfield). We do
-  not haul the camera's far clip in to `end * 1.1`: at full opacity everything
-  past `depth` is 100% fog colour anyway, and leaving `cam.far` alone keeps
-  `main.gd`'s impostor bodies out of trouble.
+  opacity`, which is precisely the alpha-blended wall over the starfield).
+- The geog backdrop dome is dropped as soon as the far plane would cut it
+  (`NEB_SKY_DOME`), not only at opacity 1. The original's cyclorama is a sky
+  pass and cannot be far-clipped; ours is a real mesh parked at a fixed 4.8e5 m,
+  and the incoming far plane slices it into a hard wedge across the sky.
 - **Colour space.** The original does all of this in 8-bit gamma. Fed raw into
-  Godot's linear pipeline, the mid-grey cloud tile lands twice as bright and
-  four additive layers clip the red channel to a featureless orange, and
-  `fog_light_color` -- which the renderer takes as *linear* -- turns the rust
-  `(172, 71, 21)` into a blown-out `(217, 145, 82)`. Both the tile
-  (`source_color`) and the fog/tint colours are therefore linearised. The
-  numbers are the engine's; only the decode is ours.
+  Godot's linear pipeline the cloud tile lands twice as bright, so it is sampled
+  `source_color` and the shader tint is linearised. `fog_light_color`, by
+  contrast, is an `Environment` colour and the renderer linearises it *itself* --
+  linearising it again by hand drops the rust `(172, 71, 21)` to a blood red
+  `(146, 28, 4)`. Decode each exactly once. The numbers are the engine's; only
+  the decode is ours.
+- Glow is switched off inside the volume. The original has no bloom at all, and
+  on a full-screen wall that already sits near the top of the range ours only
+  ever pushed it over.
 - The per-cell random rotation (`cell+0xc`) is dead in the original, so we do
   not generate it.
 - `--nebshot` (in `space_fx.gd`) parks the player beside Lucrecia's Base and
   again out on the rim and writes `data/screenshots/nebula_{inside,rim}.png`.
+
+**Not bugs, checked:** the fog does reach geometry (forced to `end = 500 m`, the
+base renders at exactly `(172, 71, 21)`); Lucrecia's Base looks near-black
+inside the nebula because its near face is ~1 km away, where the engine's linear
+fog contributes ~3%, and it is turned away from the sun with no starfield left
+to bounce anything back.
 
 ---

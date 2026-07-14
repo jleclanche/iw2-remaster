@@ -528,6 +528,10 @@ const NEB_FAR_CELLS := 4.0  # _DAT_101190b4: the layers reach out to 4 cells
 const NEB_FADE_FRAC := 0.5  # _DAT_10117738: distance fade starts at far * 0.5
 const NEB_ALPHA := 0.4  # _DAT_10117558: peak layer alpha = opacity * 0.4
 const NEB_FOG_START := 100.0  # icSolarSystem::Render's fog start, meters
+const NEB_FAR_CLIP := 1.1  # _DAT_10119e94: Render pulls the far plane to end * 1.1
+# main.gd::_setup_sky parks the geog backdrop dome at 4.8e5 m. Ours, not the
+# original's -- so it is ours to get out of the way of the far plane.
+const NEB_SKY_DOME := 5.0e5
 const NEB_SCALE_MIN := 0.1  # 0x3dcccccd \ the per-cell random UV scale
 const NEB_SCALE_MAX := 0.3  # 0x3e99999a /
 # icNebula's ctor defaults, which is what The Effrit runs on. (The only sim that
@@ -549,6 +553,7 @@ var _neb_prev := Vector3.ZERO  # last camera sim position
 var _neb_prev_basis := Basis.IDENTITY
 var _neb_seeded := false
 var _neb_fogged := false  # did WE turn the environment's fog on?
+var _neb_far0 := 0.0  # m_far_clip: the far plane outside the nebula, latched
 
 ## icNebula::Think's ramp, 0x10067990: full opacity inside 0.75 * radius, then
 ## linear to nothing at the rim. A plain sphere test -- there is no falloff
@@ -639,6 +644,10 @@ func _neb_hide() -> void:
 		if m != null and "env_ref" in m and m.env_ref != null:
 			m.env_ref.fog_enabled = false
 			m.env_ref.glow_enabled = true   # normal space keeps its bloom
+		if m != null and "sky_anchor" in m and m.sky_anchor != null:
+			m.sky_anchor.visible = true
+		if m != null and _cam != null and _neb_far0 > 0.0:
+			_cam.far = _neb_far0
 		_neb_fogged = false
 
 func _render_nebula() -> void:
@@ -755,7 +764,39 @@ func _render_nebula() -> void:
 
 	# --- the fog and the wall at `depth`: icSolarSystem::Render 0x1004d150 ----
 	var m := get_parent()
-	if m != null and "env_ref" in m and m.env_ref != null:
+	if m == null:
+		return
+	# m_far_clip -- the far plane OUTSIDE the nebula. It has to be latched, because
+	# it is an input to the fog lerp below AND we are about to overwrite it: feeding
+	# the pulled-in value back into the lerp would wind the fog shut over a few
+	# frames.
+	if _neb_far0 <= 0.0 and _cam.far > 0.0:
+		_neb_far0 = _cam.far
+	var fog_end := opacity * depth + (1.0 - opacity) * _neb_far0
+
+	# Render hauls the far plane in to fog_end * 1.1 (_DAT_10119e94) -- 33 km at
+	# full opacity. That is not cosmetic: it is what CULLS the suns and planets.
+	# We were leaving it at 600 km and trusting the fog to hide them, and it does
+	# not -- main.gd draws bodies as impostors capped to 250 km and star_fx's
+	# corona is emissive, so the sun burned a hole straight through the murk.
+	_cam.far = fog_end * NEB_FAR_CLIP
+
+	# ... and the cyclorama. This is the line that mattered most: main.gd's geog
+	# backdrop dome is ADDITIVE, so once the fog turned it into flat nebula colour
+	# it was ADDING that colour on top of the equally-fogged sky behind it --
+	# fog + fog = exactly 2x, which put the wall at (234, 99, 33), the brightest
+	# value the engine's own maths ever reaches. Everything clipped there and the
+	# cloud layers had nowhere to go.
+	#
+	# Render drops the cyclorama outright at opacity 1. We have to drop it sooner:
+	# the original's is a sky pass and cannot be far-clipped, ours is a real mesh
+	# parked at a fixed 4.8e5 m, so the moment the far plane comes inside that it
+	# gets sliced and leaves a hard wedge across the sky. Dropping it exactly when
+	# the plane would cut it covers the opacity-1 case too (far = 33 km there).
+	if "sky_anchor" in m and m.sky_anchor != null:
+		m.sky_anchor.visible = _cam.far > NEB_SKY_DOME
+
+	if "env_ref" in m and m.env_ref != null:
 		var env: Environment = m.env_ref
 		env.fog_enabled = true
 		env.fog_mode = Environment.FOG_MODE_DEPTH
@@ -766,18 +807,16 @@ func _render_nebula() -> void:
 		env.fog_light_energy = 1.0
 		env.fog_density = 1.0
 		env.fog_depth_begin = NEB_FOG_START
-		env.fog_depth_end = opacity * depth + (1.0 - opacity) * _cam.far
+		env.fog_depth_end = fog_end
 		env.fog_depth_curve = 1.0
 		env.fog_aerial_perspective = 0.0
-		# The original has no bloom at all. Ours runs glow everywhere, and on a
-		# full-screen bright orange it adds another 10..35/255 on top of a wall
-		# that already clips -- which is what turns the murk into a flat sheet.
-		# Inside the nebula, drop it: the cloud layers ARE the light.
+		# The original has no bloom at all, and on a full-screen wall that already
+		# sits near the top of the range ours only ever pushes it over. Inside the
+		# nebula, drop it: the cloud layers ARE the light.
 		env.glow_enabled = opacity <= 0.0
-		# the slot-16 wall is ALPHA-blended with alpha = opacity, and Render
-		# stops adding the starfield and the geog cyclorama outright only once
-		# opacity reaches 1 -- so out on the rim the stars still show through a
-		# part-drawn veil. Veiling the sky by exactly the opacity is both.
+		# the slot-16 wall is ALPHA-blended with alpha = opacity, so the sky is
+		# veiled by exactly the opacity -- out on the rim the stars still show
+		# through, and at 1 it is gone, which is also when Render drops it outright
 		env.fog_sky_affect = opacity
 		_neb_fogged = true
 
