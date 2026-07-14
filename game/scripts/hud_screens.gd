@@ -227,7 +227,32 @@ const TRI_JITTER := 0.02               # _DAT_1011e3b8
 const TRI_JIT_HZ := [PI, 5.02655, 4.08407]   # _DAT_10119464 / _1011e3b4 / _1011e3b0
 
 # iiShipSystem::m_tri_position -- the LIVE setting, the thing the ship reads.
-var tri := [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]     # ctor: 0x3eaaaaab x3
+# It is a CLASS STATIC in the original (0x1015bb94; SetTRIPosition, 0x1003c070,
+# has no `this`), and the screen writes straight into it: the bar input calls
+# SetTRIPosition at 0x101077d3 and RESET TRI calls it at 0x101092ff. So this
+# screen does not own a TRI of its own -- it is a view onto the player's, which
+# lives on ShipSystems (the IsPlayer gate on TRIWeight makes those the same
+# thing). `tri` below is only the fallback for a hull with no fitted systems.
+var _tri_local := [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]   # ctor: 0x3eaaaaab x3
+
+var tri: Array:
+	get:
+		var s: ShipSystems = _sys()
+		return s.tri if s != null else _tri_local
+	set(value):
+		_set_tri(value[0], value[1], value[2])
+
+func _sys() -> ShipSystems:
+	if main != null and main.sys != null:
+		return main.sys as ShipSystems
+	return null
+
+func _set_tri(a: float, b: float, c: float) -> void:
+	var s: ShipSystems = _sys()
+	if s != null:
+		s.set_tri_position(a, b, c)     # -> the live m_tri_weights
+	else:
+		_tri_local = [a, b, c]
 # icHUDEngineering +0xcc and +0xdc: two followers of the live TRI at different
 # rates. The bars are drawn from the slow one, the marker from the fast one --
 # that is where the screen's lag and shimmer come from.
@@ -262,7 +287,8 @@ func _eng_key(key: int) -> bool:
 				_tri_shift(eng_row - 1, d)
 		KEY_ENTER, KEY_KP_ENTER:
 			if eng_row == 4:
-				tri = [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]  # FUN_101092f0
+				# FUN_101092f0 -> SetTRIPosition(1/3, 1/3, 1/3) @ 0x101092ff
+				_set_tri(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
 			elif eng_row == 0:
 				eng_iff = not eng_iff                    # FUN_10106390(this, 4)
 			elif eng_row == 5:
@@ -273,20 +299,24 @@ func _eng_key(key: int) -> bool:
 
 func _tri_shift(idx: int, amount: float) -> void:
 	# a TRI is a simplex: what one axis gains, the other two give up in
-	# proportion, so the triple always sums to 1 (FUN_101081a0)
-	var want: float = clampf(float(tri[idx]) + amount, 0.0, 1.0)
-	var give: float = want - float(tri[idx])
-	var rest: float = 1.0 - float(tri[idx])
+	# proportion, so the triple always sums to 1 (FUN_101081a0). The result goes
+	# through SetTRIPosition, exactly as the screen does at 0x101077d3 -- which is
+	# what makes the bars move the SHIP and not just the picture.
+	var cur: Array = (tri as Array).duplicate()
+	var want: float = clampf(float(cur[idx]) + amount, 0.0, 1.0)
+	var give: float = want - float(cur[idx])
+	var rest: float = 1.0 - float(cur[idx])
 	if rest <= 0.0001:
 		return
 	for i in 3:
 		if i != idx:
-			tri[i] = maxf(0.0, float(tri[i]) - give * float(tri[i]) / rest)
-	tri[idx] = want
-	var total: float = float(tri[0]) + float(tri[1]) + float(tri[2])
+			cur[i] = maxf(0.0, float(cur[i]) - give * float(cur[i]) / rest)
+	cur[idx] = want
+	var total: float = float(cur[0]) + float(cur[1]) + float(cur[2])
 	if total > 0.0:
 		for i in 3:
-			tri[i] = float(tri[i]) / total
+			cur[i] = float(cur[i]) / total
+	_set_tri(cur[0], cur[1], cur[2])
 
 func _tri_chase(ghost: Array, rate: float, d: float) -> void:
 	# FUN_10108890: the ghost walks toward the live TRI with a total budget of
@@ -359,9 +389,14 @@ func _draw_engineering(fade: float) -> void:
 		draw_line(Vector2(nx, o.y + y - 6.0), Vector2(nx, o.y + y + 6.0), c, 1.5)
 		# the original writes no text here at all -- the glyph IS the label, and
 		# it is the same glyph as the tri.png corner it feeds. The readout above
-		# each bar is ours.
+		# each bar is ours, and it now carries the thing that actually matters:
+		# the TRIWeight this axis is handing its subsims (min 0.5 at an empty
+		# corner, 1.0 balanced, max 1.5 at a full one).
+		var s: ShipSystems = _sys()
+		var w: float = float(s.tri_weights[i]) if s != null else 1.0
 		draw_string(hud._font_num, Vector2(bx, o.y + y - 10.0),
-				"%s %d%%" % [TRI_NAME[i], int(round(float(tri[i]) * 100.0))],
+				"%s %d%%  x%.2f" % [TRI_NAME[i],
+					int(round(float(tri[i]) * 100.0)), w],
 				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2, c)
 
 	# the marker: sprite 45, chased toward the barycentre at 50 px/s, spinning

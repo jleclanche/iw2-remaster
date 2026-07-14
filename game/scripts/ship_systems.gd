@@ -107,6 +107,56 @@ const PROG_HYPERSPACE_TRACKER := 2048     # hyperspace_tracker
 const PROG_AGGRESSOR_CONTROL := 4096      # aggressor_shield_control
 const PROG_IMAGING := 8192                # imaging_module
 
+# --- the TRI: iiShipSystem's power triangle (task #60) -------------------------
+# @element TRI
+# Every subsim carries an `iiShipSystem::eType` at +0x64 -- the TRI GROUP it
+# draws from. The base ctor (0x1003b9f0) writes 3 = "no TRI", and EXACTLY four
+# ctors override it (proven by disassembling every `mov [reg+0x64], imm` in
+# iwar2.dll; `iiShipSystem::SetType` @ 0x10001b60 has ZERO call sites, so the
+# type is fixed at construction and nothing can move a subsim between groups):
+#
+#   0 DRIVE      icDrive 0x10030da0 / icThrusters 0x1003c590 /
+#                icCapsuleDrive 0x10030750 / icLDSDrive 0x10036c50 (all `mov 0`)
+#   1 OFFENSIVE  iiWeapon 0x1003c860 (`mov ecx,1` @ 0x1003c868) -- so EVERY
+#                weapon subclass -- and icMissileLauncher 0x10031450 (`mov 1`)
+#   2 DEFENSIVE  icAggressorShield 0x1002f290 (`mov 2`)
+#   3 NONE       everything else, including icPlayerLDA -- see below
+#
+# `iiShipSystem::TRIWeight()` (0x1003c170) is
+#     if (!IsPlayer()) return 1.0            # 0x1003bb80, arg 1
+#     return m_tri_weights[ this->eType ]
+# so the TRI is a PLAYER-ONLY system: every AI ship runs at a flat 1.0.
+const TRI_DRIVE := 0
+const TRI_OFFENSIVE := 1
+const TRI_DEFENSIVE := 2
+const TRI_NONE := 3
+
+# The position, the weights and the two bounds are CLASS STATICS -- one TRI for
+# the whole game (SetTRIPosition, 0x1003c070, takes no `this`). Their values are
+# in .data, and no shipped INI overrides them (`min_tri_weight`/`max_tri_weight`
+# are real property keys -- the strings are at 0x1015bbd8/0x1015bbc8 -- but they
+# appear in none of data/ini/**):
+const TRI_MIN_WEIGHT := 0.5   # iiShipSystem::m_min_tri_weight, .data @ 0x1015bb8c
+const TRI_MAX_WEIGHT := 1.5   # iiShipSystem::m_max_tri_weight, .data @ 0x1015bb90
+# m_tri_position is FOUR floats (0x1015bb94..0x1015bba0), all 1/3. SetTRIPosition
+# writes only the first three but the weight loop runs over all four, so
+# m_tri_weights[3] -- the "no TRI" group -- is permanently w(1/3) = 1.0.
+const TRI_START := [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
+
+# class -> eType. Anything absent is 3.
+const TRI_ETYPE := {
+	"icDrive": TRI_DRIVE, "icThrusters": TRI_DRIVE,
+	"icCapsuleDrive": TRI_DRIVE, "icLDSDrive": TRI_DRIVE,
+	# iiWeapon subclasses: the base ctor sets 1 for all of them
+	"icCannon": TRI_OFFENSIVE, "icTurret": TRI_OFFENSIVE,
+	"icSlugThrower": TRI_OFFENSIVE, "icBeamProjector": TRI_OFFENSIVE,
+	"icMissileLauncher": TRI_OFFENSIVE, "icMagazine": TRI_OFFENSIVE,
+	"icMissileMagazine": TRI_OFFENSIVE,
+	"icCounterMeasureMagazine": TRI_OFFENSIVE,
+	# registered with base iiWeapon, but its own ctor overrides eType to 2
+	"icAggressorShield": TRI_DEFENSIVE,
+}
+
 # The eight HUD status groups map onto the mountpoint `type` bit flags
 # (data/ini/subsims/mountpoints/*.ini) and, for prefitted hulls that name the
 # device directly, onto the device's [Class].
@@ -138,6 +188,7 @@ const MOUNT_GROUP := {
 
 static var _ini_cache: Dictionary = {}
 static var _ships_cache: Array = []
+static var _strings: Dictionary = {}
 
 var hull := 1000.0
 var hull_max := 1000.0
@@ -146,6 +197,13 @@ var systems: Array = []       # every mounted subsim, in INI order
 var ldas: Array = []          # the subset that can deflect (icPlayerLDA/icAILDA)
 var aggressors: Array = []    # the subset that are icAggressorShield
 var programs := 0             # icCPU +0x80, the fitted-program bitmask
+# The TRI (see the constants above). `is_player` is iiShipSystem::IsPlayer
+# (0x1003bb80) -- the gate on TRIWeight, and the reason an AI ship never feels
+# the triangle. The position is the live m_tri_position; the weights are what
+# SetTRIPosition bakes out of it.
+var is_player := false
+var tri: Array = TRI_START.duplicate()
+var tri_weights: Array = [1.0, 1.0, 1.0, 1.0]
 var in_lds := false           # icShip+0x25c state 2: an engaged LDS drive drops
                               # the aggressor shield (0x1002f537)
 var heat := 0.0               # icShip +0x288
@@ -170,6 +228,23 @@ var _has_reactor := false
 
 static func _base() -> String:
 	return ProjectSettings.globalize_path("res://").path_join("..")
+
+## A sim INI's `[Properties] name=` is a LOCALISATION KEY, not a display name --
+## the engine resolves it through text/*.csv (our data/json/strings.json). The
+## weapon keys come out as the names the game actually shows: Cargo_AssaultCannon
+## -> "Gatling Cannon", Cargo_LongRangeCannon -> "Sniper Cannon".
+static func display_name(key: String) -> String:
+	if _strings.is_empty():
+		var f := FileAccess.open(_base().path_join("data/json/strings.json"),
+				FileAccess.READ)
+		if f != null:
+			var j: Variant = JSON.parse_string(f.get_as_text())
+			if j is Dictionary:
+				for k: String in (j as Dictionary):
+					_strings[k.to_lower()] = str((j as Dictionary)[k])
+		_strings["__loaded"] = ""
+	var hit: String = str(_strings.get(key.to_lower(), ""))
+	return hit if not hit.is_empty() else key
 
 static func read_ini(rel: String) -> Dictionary:
 	# "ini:/subsims/systems/player/cpu2" -> data/ini/subsims/systems/player/cpu2.ini
@@ -252,6 +327,8 @@ func _mount(template: String, attach_null: String) -> void:
 		"template": template,
 		"null": attach_null,
 		"group": _group_of(cls, props),
+		# iiShipSystem::eType (+0x64) -- which TRI axis this subsim draws from
+		"etype": int(TRI_ETYPE.get(cls, TRI_NONE)),
 		# iiShipSystem::Load 0x1003bb30: max hit points is a copy of the INI's
 		# hit_points, so a 0 there means the subsim cannot be damaged at all.
 		"hp": float(props.get("hit_points", 0)),
@@ -266,6 +343,13 @@ func _mount(template: String, attach_null: String) -> void:
 		"destroyed": false,
 		"underpowered": false,
 	}
+	# iiGun::SniperZoom (0x1000f0b0) is `mov al, [ecx+0xc5]; ret` -- a plain bool
+	# on the gun, fed by the INI key `sniper_zoom` (string @ 0x1015b884). Exactly
+	# ONE subsim in the shipped data sets it: subsims/systems/player/long_range_pbc
+	# (icSlugThrower, "Cargo_LongRangeCannon" -- the long-range 'Sniper' PBC, and
+	# the powerup sims/power_ups/weapon_pbc_sniper drops that same resource).
+	# icPlayerPilot::GotSniperWeapon (0x100b14d0) is what reads it: see main.gd.
+	sys["sniper_zoom"] = float(props.get("sniper_zoom", 0)) != 0.0
 	if cls == "icReactor":
 		# icReactor::Load 0x1003a260 copies output_power (+0x7c) into the base
 		# output (+0x94) and HeatRate() into the base heat (+0x90). Property map
@@ -438,6 +522,54 @@ func _inflict(sys: Dictionary, amount: float) -> void:
 		return
 	sys["hp"] = float(sys["hp"]) - amount
 
+# --- the TRI ------------------------------------------------------------------
+
+## iiShipSystem::SetTRIPosition (0x1003c070). Static in the original; here it is
+## the player's ShipSystems, which is the same thing (TRIWeight is IsPlayer-gated).
+##
+## The two bounds are clamped on every call -- min to [0,1] (0x1003c076..0x1003c0c9)
+## and max to [1,3] (0x1003c0cf..0x1003c105) -- then each axis is mapped:
+##
+##     x = pos * 3 - 1                       ; 0x10118490 = 3, 0x101171f0 = 1
+##     w = 1 + x * (1 - min_tri_weight)      ; x < 0
+##     w = 1 + x * 0.5 * (max_tri_weight - 1); x > 0   (0x10117738 = 0.5)
+##
+## i.e. weight = min at position 0, exactly 1.0 at 1/3, max at 1 -- piecewise
+## linear with the kink at the balanced point. With the shipped statics that is
+## 0.5 / 1.0 / 1.5.
+##
+## (Quirk, faithfully NOT reproduced: the x == 0 case falls out of the compare
+## chain at 0x1003c141 with st(0) still holding x, so the original would store a
+## weight of ZERO for a perfectly balanced axis. It never bites, because the x87
+## unit evaluates `1/3f * 3 - 1` in 80-bit and lands on +2.98e-8, not 0. We take
+## the continuous limit, 1.0.)
+func set_tri_position(a: float, b: float, c: float) -> void:
+	tri = [a, b, c]
+	var lo := clampf(TRI_MIN_WEIGHT, 0.0, 1.0)
+	var hi := clampf(TRI_MAX_WEIGHT, 1.0, 3.0)
+	for i in 3:
+		var x: float = float(tri[i]) * 3.0 - 1.0
+		if x < 0.0:
+			tri_weights[i] = 1.0 + x * (1.0 - lo)
+		elif x > 0.0:
+			tri_weights[i] = 1.0 + x * 0.5 * (hi - 1.0)
+		else:
+			tri_weights[i] = 1.0
+	# m_tri_weights[3] is baked from the fourth, never-written m_tri_position
+	# slot (a static 1/3) -- so the "no TRI" group is pinned at 1.0.
+	tri_weights[3] = 1.0
+
+## iiShipSystem::TRIWeight (0x1003c170): `if (!IsPlayer()) return 1.0;` then
+## `m_tri_weights[eType]`. Every AI ship runs at a flat 1.0.
+func tri_weight(etype: int) -> float:
+	if not is_player:
+		return 1.0
+	return float(tri_weights[clampi(etype, 0, 3)])
+
+## The weight a given mounted subsim pulls -- TRIWeight() as its owner sees it.
+func system_tri_weight(sys: Dictionary) -> float:
+	return tri_weight(int(sys.get("etype", TRI_NONE)))
+
 func _nearest_system(hit_local: Vector3) -> int:
 	var best := -1
 	var best_d := INF
@@ -458,8 +590,15 @@ func _lda_deflect(lda: Dictionary, dir_local: Vector3) -> bool:
 			return false
 		if float(lda["cost"]) > float(lda["energy"]):
 			return false
-		# TRIWeight() is 1.0 for every non-player ship (iiShipSystem::TRIWeight
-		# 0x1003c170); the player's TRI weights are UNKNOWN, so we use 1.0.
+		# icPlayerLDA DOES call TRIWeight -- twice: on the deflect chance
+		# (0x100acdf0: `w * reliability * efficiency`, then the 0.98 ceiling at
+		# 0x1011c664) and on the recharge (0x100acb71). But its weight is
+		# provably a CONSTANT 1.0: no icPlayerLDA ctor writes eType (+0x64), so
+		# it keeps the base default of 3, and m_tri_weights[3] is baked from the
+		# fourth m_tri_position slot, which SetTRIPosition never writes and .data
+		# pins at 1/3 -> w(1/3) = 1.0. (SetType, 0x10001b60, has zero call sites,
+		# so nothing can move it into a group either.) The shields are NOT on the
+		# defensive axis -- the aggressor shield is the only eType-2 subsim.
 		chance = minf(float(lda["reliability"]) * float(lda["efficiency"]), LDA_MAX_CHANCE)
 	else:
 		# icAILDA 0x1002b940
@@ -659,8 +798,13 @@ func _simulate_aggressor(agg: Dictionary, dt: float) -> void:
 		# per-call form the binary has, exactly as we do for the heat-damage
 		# tick; it is why the device is called an INSTANT shield (the control
 		# program's cargo name is Cargo_InstantShieldControl).
+		#
+		# The TRIWeight is the DEFENSIVE axis (the aggressor is the only eType-2
+		# subsim in the game): at full defensive the bank refills 1.5x as fast,
+		# at zero defensive 0.5x.
 		agg["energy"] = minf(
-			float(agg["energy"]) + float(agg["efficiency"]) * float(agg["power"]),
+			float(agg["energy"]) + system_tri_weight(agg)
+				* float(agg["efficiency"]) * float(agg["power"]),
 			float(agg["capacity"]))
 		agg["usage"] = 0.75
 	else:
@@ -712,11 +856,13 @@ func aggressor_damage_at(agg: Dictionary, speed: float) -> float:
 	#   return ship.hit_points (icShip+0x1b0) * d
 	# So the INI's damage_factor really is "multiples of the ship's hull at the
 	# sweet speed", and the floor means a stationary ram still hurts.
-	# TRIWeight() is 1.0 for every non-player ship (0x1003c170); the player's TRI
-	# weights are UNKNOWN, so we use 1.0 -- the same call the LDA makes.
+	# TRIWeight() is the DEFENSIVE axis, and it goes INSIDE the clamp: the
+	# multiply chain at 0x1003c91d..0x1002f92e is `w * (v/ss) * (v/ss) * factor`
+	# and only then the two `fcom`s against 0.25 / 5.0. So the TRI cannot push the
+	# ram past the 5x ceiling that the speed alone already reaches.
 	var ss := maxf(float(agg["sweet_speed"]), 1e-6)
 	var t := speed / ss
-	var d := clampf(t * t * float(agg["damage_factor"]),
+	var d := clampf(system_tri_weight(agg) * t * t * float(agg["damage_factor"]),
 			AGG_MIN_DAMAGE, AGG_MAX_DAMAGE)
 	return hull_max * d
 
@@ -769,6 +915,15 @@ func aggressor_auto(dir_local: Vector3, hostile: bool) -> bool:
 	if dir_local.length_squared() < 1e-9:
 		return false
 	return aggressor_fire()
+
+func has_cpu() -> bool:
+	# icShip+0x29c. EnableZoom (0x100b0e80) distinguishes a MISSING cpu (event
+	# 0x42 E_NoCPU) from a fitted-but-dead one (0x41 E_CPUOffline) from one that
+	# simply has no imaging module (0x28 E_NoZoomProgram), so we have to as well.
+	for sys in systems:
+		if sys["class"] == "icCPU":
+			return true
+	return false
 
 func cpu_working() -> bool:
 	# iiShipSystem::IsWorking (vtable slot 13): the gates on every program bit.

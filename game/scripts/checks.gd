@@ -556,13 +556,121 @@ func _mechcheck(_delta: float) -> void:
 					% [m.fields.asteroid.live.size()
 						+ m.fields.debris.live.size(), demo_t])
 				_mech_next()
-		21:
+		21:  # --- the TRI (task #60) -------------------------------------------
+			# The recovered numbers, all from iiShipSystem's .data statics:
+			# min_tri_weight 0.5 (0x1015bb8c), max_tri_weight 1.5 (0x1015bb90),
+			# and SetTRIPosition's piecewise map (0x1003c070) -- weight is min at
+			# position 0, exactly 1.0 at 1/3, max at 1.
+			#
+			# The ap-dock phase left us docked, and the drive weight only reaches
+			# the flight model while we are flying -- icShip::Simulate gates its
+			# two TRIWeight multiplies on `ship+0x148 == 0` exactly as our
+			# _player_control gates on `docked_at == ""`. So: cast off first.
+			m.docked_at = ""
+			_tri_check()
+			_mech_next()
+		22:  # the drive axis had a frame to reach ShipFlight through _player_control
+			var wd: float = 1.5
+			var got: float = m.ship.max_accel.z
+			var want: float = m.base_max_accel.z * wd
+			_mech("tri-drive-accel", absf(got - want) < 0.5,
+				"full drive: %.1f m/s^2 (base %.1f x %.2f)"
+					% [got, m.base_max_accel.z, wd])
+			var gotr: float = m.ship.turn_accel.x
+			var wantr: float = m.base_turn_accel.x * wd
+			_mech("tri-drive-torque", absf(gotr - wantr) < 0.5,
+				"full drive: %.1f deg/s^2 (base %.1f x %.2f)"
+					% [gotr, m.base_turn_accel.x, wd])
+			# put the ship back where the rest of the game expects it
+			m.sys.set_tri_position(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
+			_mech_next()
+		23:
 			print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
 				else "%d FAILURES" % _mech_fail))
 			get_tree().quit(0 if _mech_fail == 0 else 1)
 	if demo_t > 300.0:
 		print("MECHCHECK: phase %d timeout" % demo_phase)
 		get_tree().quit(1)
+
+func _tri_check() -> void:
+	var s: ShipSystems = m.sys
+	if s == null:
+		_mech("tri-weights", false, "no fitted systems on the player")
+		return
+	# 1. the weight curve. BalancePower -> (1/3,1/3,1/3) is the 1.0 point;
+	#    PowerToOffensive -> (0,1,0); PowerToDrive -> (1,0,0)
+	#    (icPlayerPilot::DistributePower 0x100b00d0, eButtonCommand 0x17..0x1a).
+	s.set_tri_position(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
+	var bal := [s.tri_weight(0), s.tri_weight(1), s.tri_weight(2)]
+	s.set_tri_position(0.0, 1.0, 0.0)
+	var off := [s.tri_weight(0), s.tri_weight(1), s.tri_weight(2)]
+	var curve_ok: bool = _near(bal[0], 1.0) and _near(bal[1], 1.0) \
+		and _near(bal[2], 1.0) and _near(off[0], 0.5) and _near(off[1], 1.5) \
+		and _near(off[2], 0.5)
+	_mech("tri-weights", curve_ok,
+		"balanced %.2f/%.2f/%.2f, full offensive %.2f/%.2f/%.2f (want 1/1/1 and .5/1.5/.5)"
+			% [bal[0], bal[1], bal[2], off[0], off[1], off[2]])
+	# 2. the eType map: iiWeapon ctor writes 1, icDrive/icThrusters write 0, and
+	#    everything else keeps the base default of 3 (weight pinned at 1.0).
+	var seen := {}
+	for sub: Dictionary in s.systems:
+		seen[str(sub["class"])] = int(sub["etype"])
+	var etype_ok: bool = seen.get("icCannon", -1) == ShipSystems.TRI_OFFENSIVE \
+		and seen.get("icDrive", -1) == ShipSystems.TRI_DRIVE \
+		and seen.get("icThrusters", -1) == ShipSystems.TRI_DRIVE \
+		and seen.get("icCPU", -1) == ShipSystems.TRI_NONE
+	_mech("tri-etype", etype_ok, "cannon=%d drive=%d thrusters=%d cpu=%d"
+		% [seen.get("icCannon", -1), seen.get("icDrive", -1),
+			seen.get("icThrusters", -1), seen.get("icCPU", -1)])
+	# 3. the IsPlayer gate (0x1003bb80): an AI ship's subsims never feel the TRI,
+	#    whatever the triangle says.
+	var ai_sys := ShipSystems.for_ship("sims/ships/player/tug_prefitted.ini")
+	ai_sys.set_tri_position(0.0, 1.0, 0.0)
+	_mech("tri-ai-flat", _near(ai_sys.tri_weight(ShipSystems.TRI_OFFENSIVE), 1.0),
+		"non-player offensive weight = %.2f (want 1.00)"
+			% ai_sys.tri_weight(ShipSystems.TRI_OFFENSIVE))
+	# 4. the OFFENSIVE consumers, end to end -- fire a real bolt and read what
+	#    came out. iiGun::RefireDelay 0x1000f0a0 = refire / w; iiWeapon::Fire
+	#    0x100357e0 = w * damage and w * lifetime (which is w * range).
+	var base_refire: float = m.weapons.refire
+	var base_dmg: float = float(m.weapons.bolt_spec["damage"])
+	var base_life: float = float(m.weapons.bolt_spec["lifetime"])
+	m.weapons.clear()
+	m.weapons.cooldown = 0.0
+	s.set_tri_position(0.0, 1.0, 0.0)          # full offensive: w = 1.5
+	m.weapons.fire()
+	var cd: float = m.weapons.cooldown
+	var spec: Dictionary = {}
+	if not m.weapons.bolts.is_empty():
+		spec = (m.weapons.bolts[0] as Dictionary)["spec"]
+	var dmg: float = float(spec.get("damage", 0.0))
+	var life: float = float(spec.get("lifetime", 0.0))
+	_mech("tri-weapon-refire", _near(cd, base_refire / 1.5, 0.005),
+		"full offensive: %.3f s (base %.3f / 1.5 = %.3f)"
+			% [cd, base_refire, base_refire / 1.5])
+	_mech("tri-weapon-damage", _near(dmg, base_dmg * 1.5, 0.5),
+		"full offensive: %.0f (base %.0f x 1.5)" % [dmg, base_dmg])
+	_mech("tri-weapon-range", _near(life, base_life * 1.5, 0.01),
+		"bolt lifetime %.2f s = range %.0f m (base %.2f s x 1.5)"
+			% [life, life * float(spec.get("speed", 0.0)), base_life])
+	# and the other corner: zero offensive halves the gun
+	m.weapons.clear()
+	m.weapons.cooldown = 0.0
+	s.set_tri_position(1.0, 0.0, 0.0)          # full drive: offensive w = 0.5
+	m.weapons.fire()
+	var cd2: float = m.weapons.cooldown
+	var dmg2: float = 0.0
+	if not m.weapons.bolts.is_empty():
+		dmg2 = float(((m.weapons.bolts[0] as Dictionary)["spec"] as Dictionary)["damage"])
+	_mech("tri-weapon-starved", _near(cd2, base_refire / 0.5, 0.005)
+			and _near(dmg2, base_dmg * 0.5, 0.5),
+		"zero offensive: refire %.3f s (want %.3f), damage %.0f (want %.0f)"
+			% [cd2, base_refire / 0.5, dmg2, base_dmg * 0.5])
+	m.weapons.clear()
+	# leave the TRI at full DRIVE -- phase 22 reads the flight model back
+
+func _near(a: float, b: float, eps := 0.01) -> bool:
+	return absf(a - b) < eps
 
 # a bare AiShip for the turret/beam phases: no INI (sys == null), so damage
 # lands on the raw hull pool and the numbers stay exact

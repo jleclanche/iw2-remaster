@@ -256,16 +256,58 @@ bottom, so a "panel" in this HUD is **two horizontal rails between two chevrons*
 
 ### The text calls
 
-`FUN_100eb270(font, style, x, y, str, halign, valign)` @ `0x100eb270`.
+`FUN_100eb270(font, style, x, y, str, halign, valign)` @ `0x100eb270`. **47 call
+sites** - found by scanning `.text` for `E8` displacements onto it, because
+Ghidra's listing only shows about half.
 
 * `font` indexes the table at `0x10162c60` (stride 0x14), whose four entries are
   **`fonts/ocrb_8pt`, `fonts/ocrb_10pt`, `fonts/ocrb_18pt`, `images/hud/sprites`**.
-  So the HUD's text is OCR-B at three sizes; Handel Gothic is not in this table.
+  Handel Gothic is not in this table: nothing on the flight HUD uses it.
 * `style` indexes the alpha table at `0x10162cb0` (stride 8):
   **style 0 = 0.6, style 1 = 1.0, style 2 = 0.75** (times the master alpha).
-* `halign` 2 centres on x, 1 right-aligns (`0x100eb7c2`).
-* `valign` 2 centres on y (`y - h/2 - 1`, `0x100eb7aa`), 1 bottom-aligns.
-  The y it takes is the TOP of the line; the baseline is added inside.
+* `halign` **0 left, 1 right (`x - w`), 2 centre (`x - w/2`)** (`0x100eb390`).
+* `valign` **0 top, 1 bottom (`y - h`), 2 middle (`y - h/2 - 1`)** (`0x100eb7a2`).
+  The y it takes is the TOP of the line; the baseline is added inside (DrawText
+  adds `FcFont+0x24`, the ascent, at `0x100606f6`).
+
+Font index 0 is a **misnomer in the game's own data**. `fonts/ocrb_8pt.frf`'s
+FHDR names its atlas `"andale mono_7pt.lbm"`, its family `"andale mono"` and its
+point size **7** - and the frf's glyph rects capture **100%** of the ink on
+`andale mono_7pt.ftu` against **62.9%** on `ocrb_8pt.ftu`. Font 0 IS Andale Mono
+7pt; `ocrb_8pt.ftu` is a stale atlas nothing reads. (Which is why the reticle's
+numerics are a different, tighter face than the menu's.)
+
+#### The metric (`FcFont::GetTextSize` @ flux.dll `0x100827a0`)
+
+The pen steps by the glyph's LOGICAL width (`lx1 - lx0`, the frf's first and
+third int32 - `FcGlyph` reads the ten ints in file order, `0x1007fe60`) **plus
+`FcFont::Kern(c, next)`** - and `DrawText` applies the same kern when it renders,
+not just when it measures (`0x10060969`). But **the kern is 0 for every pair in
+every font the HUD uses**:
+
+* `Kern` (`0x100828e0`) consults `m_kerning_pairs` for a normal font and
+  `m_italic_kerning_pairs` only when `FcFont+0x31` (italic) is set;
+* the `FcFont` ctor (`0x100800b0`) registers **236 pairs, every one of them into
+  the ITALIC table** (every call pushes `1`);
+* nothing in `iwar2.dll` imports `SetAdditionalFontKern` or `ForceMonospace`, so
+  the per-font base spacing `+0x34` stays 0.
+
+So the advance is the whole metric, and our BMFonts (built from the same frf
+logical boxes) match the engine glyph for glyph. OCR-B 10pt really does advance
+**15px** per character with only 10px of ink - the HUD's letter-spacing is that
+airy by design.
+
+Two trims are NOT optional, though, and both are visible:
+
+    w = sum(advance)
+        - first.ink_x0                    # 0x10082803
+        - (last.lx1 - last.ink_x1)        # 0x1008286f
+    h = max(-ink_y0) + max(ink_y1)        # 0x10082883: the INK height of THIS
+                                          # string, not the font's line box
+
+and `DrawText` backs the pen up by `first.ink_x0` (`0x1006074d`) so the ink
+starts flush on x. On a three-letter label that is 5px of width - which is 5px of
+node-box rail. `hud.gd` reproduces all of it in `_text_metrics` / `_hud_text`.
 
 `FUN_100ea830` -> `FUN_100ea900` (`0x100ea830` / `0x100ea900`) is "a labelled
 node box": measure the string, build a rail around it, optionally put an icon in
@@ -400,12 +442,24 @@ the quadrants are perfectly still.** Our constant 0.05 rev/s drift was invented.
 * sprite **93** ((0,186) 70x70, origin (0,70)) blitted four times, rotated by
   `angle + i * PI/2` (`_DAT_1011a454`).
 * the focused node's name (`node+8`, a `hud.csv` key resolved through
-  `FcLocalisedText::Field`) in **font 2 = ocrb_18pt**, centred on the reticle in
-  both axes.
+  `FcLocalisedText::Field` @ `0x100f2142`) - **and nothing else**. The call at
+  `0x100f2161` is, argument for argument:
+
+      FUN_100eb270(font 2 = ocrb_18pt, style = (select held) ? 1 : 0,
+                   x = 0, y = 0, name, halign 2, valign 2)
+
+  so it is centred on the reticle in both axes and sits at **alpha 0.6** until
+  you hold select, when it goes to **1.0**. At 18pt (20px per character) a nine
+  letter node name is 180px wide and all but touches the left and right boxes at
+  +/-100 - that is the engine's own geometry, not a bug in ours.
 * the timeout **only on the ROOT node** (`cmp ebx, [icHUD+0x198]` @ `0x100f20a2`)
   and only under 10 s (`_DAT_101190c0`): `hud_menu_timeout` ("TIME: ") plus
-  `AppendFormat("%0.1fs", icHUD+0x1b8)`, font 0 = ocrb_8pt, style 0, at
-  **(0, +30)** (`0x41f00000`). We used to draw it on every node, as an integer.
+  `AppendFormat("%0.1fs", icHUD+0x1b8)`. The call at `0x100f2124`:
+
+      FUN_100eb270(font 0 = Andale Mono 7pt, style 0, x = 0, y = 30 (0x41f00000),
+                   str, halign 2, valign 0)
+
+  We used to draw it on every node, as an integer.
 
 ### A node box IS `FUN_100ea830`
 
@@ -432,9 +486,56 @@ and `FUN_100ea830` / `FUN_100ea900`:
         tx = ix + 16;  colour reverts to chartreuse
     if name: FUN_100eb270(font 1 = ocrb_10pt, held ? 1 : 0, tx, y, name, 0, 2)
 
+(the label call is `0x100eab54`: **font 1, style = held ? 1 : 0, halign 0 LEFT,
+valign 2 MIDDLE** - so the label is dim at 0.6 and lights to 1.0 with its rail,
+which is on the plain 0.5 / 1.0 pair at `0x100ea949`. `text_width` is the engine
+width, trims and all: `FUN_100ea830` measures with `FUN_100ebd70(1, ...)`, the
+same measure `FUN_100eb270` uses.)
+
 The label is drawn **8px left of the rail**, and the rail is **16px shorter than
 the label**, so the text overhangs 8px into each chevron: the box reads
 `<[ LABEL ]>`. That is why it is a rail primitive and not a rectangle.
+
+### A carousel puts its selected item in the LEFT box
+
+`FUN_100f0420` @ `0x100f0420` - the carousel's refresh, run after every step -
+**rewrites the carousel's own direction links**:
+
+    +0x1c (LEFT)  = items[sel]                 the selected command itself
+    +0x14 (UP)    = PREV, or NULL at sel == 0
+    +0x18 (DOWN)  = NEXT, or NULL at the last item  (3 < sel + 1)
+    +0x20 (RIGHT) = untouched - the way back out
+
+and while the autopilot is engaged (`icPlayerPilot+0x308` != 0) it swaps LEFT for
+the DISENGAGE node (`+0x58`) and NULLs both PREV and NEXT. So the item is an
+ordinary **node box on the left**, drawn by the same loop as every other link,
+and the reticle's centre only ever holds the carousel's own name. Walking LEFT
+runs the command (`FUN_100efaf0`, the default direction handler, just follows the
+link). The autopilot's slots `+0x40..+0x4c` are, in order,
+**approach / formate / pursuit / dock**, with sprites **21 / 22 / 23 / 24** in
+**amber** - so the selected item's box carries its mode glyph. Every wingmen and
+T-fighter item goes through `FUN_100efc30`, which is
+`FUN_100efbb0(name, sprite 0, chartreuse)`: plain green, no icon.
+
+### The rest of the reticle's text
+
+The same call, the same style table, but not the same font - checked against all
+47 call sites:
+
+| string | call site | font | style |
+|---|---|---|---|
+| own speed, left of the reticle | `0x100f7076` | 0 (Andale 7pt) | 2 (0.75), halign 1, valign 2 |
+| target `"<hull%> <NAME>"` | `0x100f7f2b` | 0 (Andale 7pt) | 2 |
+| **target range** | `0x100f7ffe` | **1 (ocrb_10pt)** | 2, at `x - 1` |
+| target `"<speed>m/s"` | `0x100f812c` | 0 (Andale 7pt) | 2 |
+| target LDS destination | `0x100f8070` | 0 (Andale 7pt) | 2 |
+| no-target placeholder (`DAT_10174124`) | `0x100f8149` | 1 (ocrb_10pt) | 2 |
+
+**The range is the one line in the reticle that is not in the little Andale
+face** - it is set in OCR-B 10pt, roughly twice the size of the name above it,
+and the block's line steps follow each line's own font (`0x10162c6c` for font 0,
+`0x10162c80` for font 1). We had the whole block in font 0, which is why it read
+flat. All six are style 2 = **alpha 0.75**, not the 0.95/0.7 we were passing.
 
 ### The node colours
 
@@ -455,12 +556,11 @@ is gone. The exceptions are all inside the carousels:
 
 ## What stays UNKNOWN
 
-1. **How a carousel node displays its selected item.** The centre text is the
-   focused node's `+8` name and nothing else; the item nodes exist (with amber
-   mode icons) but the draw never reaches them from the focus node. Whether the
-   engine swaps the focus node's name for the item's, or draws the item node
-   somewhere we have not found, is not settled. `hud.gd` keeps the earlier pass's
-   "AUTOPILOT: APPROACH" composite - it is ours, not the binary's.
+1. ~~How a carousel node displays its selected item.~~ **RESOLVED** - see "a
+   carousel puts its selected item in the LEFT box" above. `FUN_100f0420` writes
+   `items[sel]` into the carousel's own `+0x1c` LEFT link, so the item is drawn
+   by the ordinary node-box loop. The "AUTOPILOT: APPROACH" composite the earlier
+   pass invented is gone; the centre is only ever `Field(node+8)`.
 2. **`hud_menu_cancel`'s place in the tree.** It is built (red, sprite 0x1f) but
    we did not find who links it.
 3. **The subsim flag bits above 0x10.** `+0x68` bits 0/2/3/4 are pinned (see the
@@ -470,5 +570,12 @@ is gone. The exceptions are all inside the carousels:
    `ship_systems.gd`'s `systems` array, which is INI mount order. The engine's
    component list is built by `icShip::OnAttachSubsim` in the same order, but we
    have not proved no other code reorders it.
+5. **The fifth float in each font-table row** (`row+0x10`: 1.0 for ocrb_8pt,
+   -6.0 for ocrb_10pt, -5.0 for ocrb_18pt, 0.0 for the sprite sheet). Nothing
+   reads it - not `FUN_100eb270`, and `0x10162c70` has no xref anywhere in
+   `iwar2.dll`. It looks like a per-font baseline nudge that was never wired up.
+   We do not apply it.
+6. **Whether the reticle's "set speed" second line exists in the original.** The
+   velocity readout at `0x100f7076` is one call; we draw a second line under it.
 
 ---

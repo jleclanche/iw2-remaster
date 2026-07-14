@@ -190,3 +190,82 @@ RemotePilot**. Note it is *not* the F5..F9 order.
 | The mouse is a yoke: X yaws, Y pitches, right button is `RollYawToggleHold`, and the zoom factor divides it | Bound **no** mouse axis to the pilot at all -- the mouse is the director's camera, and flight is stick or numpad | A 2001 game could assume a joystick. The mouse carries the real yoke's two behaviours (the zoom divisor and the roll/yaw swap) so it is the same control, on a different device. |
 | `LateralY` unbound on the keyboard | the same | Neither shipped config binds it. We will not invent a key. |
 | No `RollYawToggleHold` key | Joystick button 2 only | Same reason; it is on the right mouse button instead. |
+
+---
+
+## What the engineering, zoom and weapon keys actually do
+
+All three are implemented now (tasks #60 / #62 / #63). The mechanics are in
+`docs/combat.md`; this is the player-facing half.
+
+### Shift + arrows: the TRI
+
+`icPlayerPilot::DistributePower` (`0x100b00d0`) is a straight
+`iiShipSystem::SetTRIPosition` plus a log line, and the four corners line up with
+the triangle on the engineering screen:
+
+| key | corner | log line |
+|---|---|---|
+| **Shift+Left** | full OFFENSIVE (top-left node) | "TRI: FULL POWER TO WEAPONS" |
+| **Shift+Right** | full DEFENSIVE (top-right node) | "TRI: FULL POWER TO SHIELDS" |
+| **Shift+Down** | full DRIVE (bottom apex) | "TRI: FULL POWER TO ENGINES" |
+| **Shift+Up** | balanced (centre) | "TRI: POWER BALANCED" |
+
+The weight an axis hands its subsims runs **0.5 (empty) -> 1.0 (balanced) -> 1.5
+(full)**, so the swing between corners is real:
+
+- **offensive** -- 1.5x bolt damage, 1.5x range, refire delay divided by 1.5
+  (a 2.25x DPS swing end to end)
+- **drive** -- 1.5x linear *and* angular acceleration, and the LDS spools in 2/3
+  the time
+- **defensive** -- the aggressor shield recharges 1.5x as fast and rams 1.5x as
+  hard. (It is the *only* thing on that axis: the LDA deflection shields are not
+  on the TRI at all -- see `combat.md`.)
+
+The engineering screen (Shift+E, then Left/Right on rows 1-3, Enter on RESET TRI)
+writes the same live value; the bars and the four keys are two views of one
+number. The TRI is **player-only**: every AI ship flies at a flat weight of 1.0.
+
+### Z: the zoom is gated on hardware
+
+`icPlayerPilot::EnableZoom` (`0x100b0e80`) will only engage the zoom if the ship
+has **a working CPU carrying the imaging module** (program bit 8192) **or a
+sniper weapon selected** (the `sniper_zoom` INI flag -- only the long-range
+'Sniper' PBC has it). Otherwise it refuses and says why, on the HUD:
+
+| refusal | when |
+|---|---|
+| `ERROR: IMAGING MODULE NOT INSTALLED` | CPU fitted, no imaging module (**the stock tug**) |
+| `ERROR: COMPUTER OFFLINE` | the CPU is destroyed or unpowered |
+| `ERROR: NO COMPUTER FITTED` | no CPU at all |
+| `WEAPON DAMAGED` | you have the sniper gun, but it is dead |
+
+`icPlayerPilot::Think` re-tests this **every frame**: shoot a zoomed pilot's CPU
+out and the view snaps back on its own. Zooming in ramps to 10x over ~0.45 s;
+zooming out is instantaneous. While zoomed, pitch and yaw are divided by the zoom
+factor (roll is not) -- that is the point of it.
+
+**On the stock tug this means Z does nothing but complain**, which is exactly
+what the original does to a fresh pilot: you *buy* the zoom in IW2. We have not
+ported the cargo/fitting screen, so `main.gd`'s `GRANT_IMAGING_MODULE` (default
+`false`) is the one switch that hands it to you.
+
+### Return / Backspace / `]`: weapon cycling
+
+- **Return** = `NextPrimaryWeapon`. If you are holding a *secondary*, it just
+  drops you back to your primary; if you already hold a primary, it advances to
+  the next one. With **one** primary and nothing to switch to it does nothing --
+  because that is what the engine's loop does (it wraps onto the entry it started
+  from and accepts it).
+- **Backspace** = `NextSecondaryWeapon`, the ring of fitted magazines.
+- **`]`** = `NextWeapon`, which ignores the channel: primaries first, then
+  secondaries.
+
+A weapon **link** is one entry in the cycle, not one per gun -- the tug's two
+PBCs are a single "PBC x2" selection that fires as a pair.
+
+**Sound.** The original plays *nothing at all* here (`icPlayerPilot` contains no
+sound call). We used to play the pause menu's click, which is why it sounded like
+clicking Resume. It now plays the engine's own HUD cues -- `audio/hud/valid_input`
+when the selection really moves, `audio/hud/invalid_input` when there is nowhere
+to move to -- which is the idiom the HUD itself uses everywhere else.

@@ -1472,3 +1472,255 @@ throttled down. The only thing that moves the target is the HUD throttle
 We start the ramp settled rather than at the ctor's 0, because our ships are
 constructed at the moment they enter play rather than at level load; the 20 s
 cold-start transient is the one part of this we do not reproduce.
+
+---
+
+# The TRI, the zoom gate and weapon switching (tasks #60 / #62 / #63)
+
+## The TRI is real, and this is everything it touches
+
+`docs/original.md` §8e and `docs/hud_elements.md` recovered *what the TRI is* --
+DRIVE / OFFENSIVE / DEFENSIVE, an `iiShipSystem::eType` at `+0x64` indexing
+`m_tri_weights`. This is the other half: what the weight *does* once a subsim
+has it.
+
+### The statics, read straight out of `.data`
+
+`m_tri_position`, `m_tri_weights` and the two bounds are **class statics** --
+`SetTRIPosition` (`0x1003c070`) takes no `this` -- so there is exactly one TRI in
+the game, and `TRIWeight`'s `IsPlayer` gate (`0x1003bb80`) is what makes it the
+*player's*.
+
+| static | VA | value |
+|---|---|---|
+| `m_min_tri_weight` | `0x1015bb8c` | **0.5** |
+| `m_max_tri_weight` | `0x1015bb90` | **1.5** |
+| `m_tri_position[4]` | `0x1015bb94` | 1/3, 1/3, 1/3, **1/3** |
+| `m_tri_weights[4]` | `0x1015bba4` | 1, 1, 1, 1 |
+
+`min_tri_weight` / `max_tri_weight` **are** real INI property keys (the strings
+are at `0x1015bbd8` / `0x1015bbc8`) but **no shipped INI sets either**, so the
+compiled-in 0.5 / 1.5 are the values the game runs on. The weight curve is
+therefore **0.5 at an empty corner, 1.0 balanced, 1.5 at a full one**, piecewise
+linear with the kink at 1/3.
+
+`m_tri_position` is **four** floats and `SetTRIPosition` writes only three, but
+its weight loop runs over all four (`cmp ecx, 0x10` at `0x1003c166`) -- so
+`m_tri_weights[3]`, the "no TRI" group, is baked from a static 1/3 and is
+**permanently 1.0**. That is the mechanism behind "eType 3 = none".
+
+**A dead branch worth knowing about.** At `0x1003c141` the `x == 0` case falls
+out of the compare chain with `st(0)` still holding `x`, and stores a weight of
+**zero** for a perfectly balanced axis. It never fires: x87 evaluates
+`1/3f * 3 - 1` in 80-bit and lands on +2.98e-8, not 0. We take the continuous
+limit (1.0) rather than reproduce the bug.
+
+### Who is in which group -- exhaustively
+
+Every `mov dword [reg+0x64], imm` in `iwar2.dll`, disassembled:
+
+| eType | written by | value |
+|---|---|---|
+| 3 NONE | `iiShipSystem` ctor `0x1003b9f0` | `mov 3` |
+| 0 DRIVE | `icCapsuleDrive` `0x10030750`, `icDrive` `0x10030da0`, `icThrusters` `0x1003c590`, `icLDSDrive` `0x10036c50` | `mov 0` / `xor eax` |
+| 1 OFFENSIVE | **`iiWeapon` ctor `0x1003c860`** (`mov ecx, 1` @ `0x1003c868`) -- so *every* weapon subclass -- and `icMissileLauncher` `0x10031450` | `mov 1` |
+| 2 DEFENSIVE | `icAggressorShield` `0x1002f290` | `mov 2` |
+
+`iiShipSystem::SetType` (`0x10001b60`) has **zero call sites**: the type is fixed
+at construction and nothing can move a subsim between groups.
+
+**So `icPlayerLDA` is NOT on the defensive axis.** It calls `TRIWeight` twice --
+on its deflect chance (`0x100acdf0`: `w * reliability * efficiency`, then the
+0.98 ceiling) and on its recharge (`0x100acb71`) -- but no LDA ctor writes
+`+0x64`, so its weight is a **constant 1.0** and both multiplies are dead. The
+shields the TRI's "defensive" corner actually feeds are the **aggressor shield**,
+the one and only eType-2 subsim.
+
+### Every consumer
+
+The complete list, from scanning `.text` for `E8` relative calls to `0x1003c170`
+(21 call sites; Ghidra had dropped four of the enclosing functions):
+
+| what | where | how the weight enters |
+|---|---|---|
+| gun range | `iiGun::Range` `0x1000f090` | `w * range` (`+0xc0`) |
+| gun refire | `iiGun::RefireDelay` `0x1000f0a0` | `refire / w` -- **`fdivr [esi+0xb8]`**, not a multiply |
+| gun ready | `iiGun::IsReadyToFire` `0x10035120` | refuses (result `0xd`) while `w * time_since_shot < refire` -- the same test |
+| bolt damage | `iiWeapon::Fire` `0x100357e0` @ `0x10035bcd` | projectile `+0x1e8` = `w * damage` |
+| bolt reach | `iiWeapon::Fire` @ `0x10035b9c` | projectile **lifetime** `+0x1f0` = `w * lifetime` -- which is how `Range()` stays honest, since range = speed * lifetime |
+| beam damage rate | `0x100305e0` | `beam+0x1e0 = w * beam+0x1e4` |
+| LDS spin-up | `icLDSDrive::Simulate` `0x10037224` | still spooling while `elapsed <= spinup / w` -- the spool time is **divided** |
+| LDS ramp | `icLDSDrive::Simulate` `0x1003746e` | `speed = (w * rate * dt + 1) * speed` -- the exponent's rate is **multiplied** |
+| **engine force** | **`icShip::Simulate` `0x1007105d`** | the linear force vector `*= TRIWeight(ship+0x294)` |
+| **thruster torque** | **`icShip::Simulate` `0x10071088`** | the torque vector `*= TRIWeight(ship+0x290)` |
+| aggressor recharge | `icAggressorShield::Simulate` `0x1002f57d` | `energy += w * efficiency * power` |
+| aggressor ram | `DamageAtSpeed` `0x1002f91d` | `w * (v/sweet)^2 * factor`, **inside** the 0.25..5 clamp |
+| energy banks | `0x1002cc17`, `0x1002cd73`, `0x1002ff59`, `0x10033701` | all the same shape: `bank += w * efficiency * power * dt` |
+| icPlayerLDA | `0x100acb71`, `0x100acdf0` | real calls, but `w` is always 1.0 (above) |
+
+The two `icShip::Simulate` sites are the ones nobody had found, and they are the
+biggest: **the drive corner is your acceleration and your turn rate**. Both are
+gated on `AIPilot(this) == NULL`, so only the player feels them. (The other two
+flags in that condition, `ship+0x270 != 0` and `ship+0x148 == 0`, are UNKNOWN;
+we apply the weight whenever a player hull is fitted.)
+
+At the corners that means: **full offensive = 1.5x damage, 1.5x range, 0.667x
+refire delay -- a 2.25x DPS swing** against full drive's 0.5x. Full drive = 1.5x
+linear and angular acceleration and a 2/3-time LDS spool.
+
+### The four power keys
+
+`icPlayerPilot::DistributePower` (`0x100b00d0`), `eButtonCommand` 0x17..0x1a,
+each a straight `SetTRIPosition` plus an `icLog` event. `configs/default.ini`
+binds them to **SHIFT + the arrow keys**, and the geometry agrees with the
+triangle exactly -- LEFT is the top-left node, RIGHT the top-right, DOWN the
+bottom apex, UP the centre:
+
+| key | command | call | event | log text |
+|---|---|---|---|---|
+| SHIFT+Left | `PowerToOffensive` | `(0, 1, 0)` | 0x43 `hud_tri_offensive` | "TRI: FULL POWER TO WEAPONS" |
+| SHIFT+Right | `PowerToDefensive` | `(0, 0, 1)` | 0x44 `hud_tri_defensive` | "TRI: FULL POWER TO SHIELDS" |
+| SHIFT+Down | `PowerToDrive` | `(1, 0, 0)` | 0x45 `hud_tri_propulsion` | "TRI: FULL POWER TO ENGINES" |
+| SHIFT+Up | `BalancePower` | `(1/3, 1/3, 1/3)` | 0x46 `hud_tri_centre` | "TRI: POWER BALANCED" |
+
+`icPlayerPilot::CreateWorld` calls `SetTRIPosition` at `0x100b33d0`, so a fresh
+world starts balanced. The engineering screen writes the same static: its bar
+input calls `SetTRIPosition` at `0x101077d3`, and RESET TRI at `0x101092ff`.
+
+---
+
+## The view zoom is gated on ship hardware (task #62)
+
+`icPlayerPilot::EnableZoom` (`0x100b0e80`) is the gate, and it grants the zoom
+**two** ways:
+
+```
+cpu = ship->m_cpu (+0x29c)
+if      (cpu == NULL)                 reason = E_NoCPU         (0x42)
+else if (!(cpu->programs & 0x2000))   reason = E_NoZoomProgram (0x28)
+else if (!cpu->IsWorking())           reason = E_CPUOffline    (0x41)
+else                                  GRANTED
+if (!granted) granted = GotSniperWeapon(&reason)
+if (granted) { reason = E_ZoomEnabled (0x26); m_zoom_target = max_zoom_factor }
+if (reason < 0x69) icLog::LogEvent(reason)          // 0x69 = one past the table
+```
+
+`0x2000` = 8192 = the **imaging_module** program bit. So: a working CPU carrying
+the imaging module, **or** a sniper weapon.
+
+`icPlayerPilot::GotSniperWeapon` (`0x100b14d0`) is the second door: the
+**currently selected** weapon must be a working gun with `sniper_zoom` set
+(`iiGun::SniperZoom`, `0x1000f0b0` -- `mov al, [ecx+0xc5]`, fed by the INI key
+`sniper_zoom`, string at `0x1015b884`), and when the selection is an
+`icWeaponLink` it walks the link's members and takes **any** working sniper gun
+in it. A sniper gun that is fitted but dead reports `E_WeaponDamaged` (0x1e).
+
+**Exactly one weapon in the shipped game sets the flag**:
+`subsims/systems/player/long_range_pbc.ini` -- an `icSlugThrower`,
+`Cargo_LongRangeCannon`, the long-range 'Sniper' PBC ("Sniper Cannon" in
+`strings.json`). `sims/power_ups/weapon_pbc_sniper.ini` drops that same resource.
+
+Two behaviours fall out that the remaster did not have:
+
+- **Zoom out is instantaneous.** `0x100b0f20` snaps *both* the target (`+0xa4`)
+  and the live factor (`+0xa0`) to 1.0. Only zooming **in** ramps, at
+  `max_zoom_factor / zoom_time` = 10 / 0.5 = **20 per second** (`Think`,
+  `0x100ae1cd`).
+- **The gate is re-tested every frame.** `icPlayerPilot::Think` (`0x100ad8f0`,
+  test at `0x100ae191`) drops the zoom the moment the hardware that granted it
+  goes away -- shoot the CPU out mid-zoom and the view snaps back and tells you
+  why. The `0x69` sentinel it seeds the reason with is one past the last valid
+  event id (`0x68 E_BlastDamage`), i.e. "nothing to say".
+
+And the zoom's *purpose*: `HandleLinearMessage` (`0x100ae2b0`) divides the yoke
+by the zoom factor -- cases 0 and 1 (pitch, yaw) scale by `1/zoom`, and **roll is
+deliberately left unscaled**. A 10x zoom is a 10x-finer aim.
+
+**What this means on the stock tug: no zoom.** `tug_prefitted.ini` fits no
+`icProgram` at all (`programs == 0`) and none of its seven weapons is a sniper.
+That is not a bug -- it is what the original does to a fresh campaign pilot:
+`icLoadout::LoadComputerPrograms` (`0x10095ea0`) only fits a program the player
+already **owns**, and the campaign gives away just two (stealth, hyperspace
+tracker), never imaging. You *buy* the zoom in IW2. Since the cargo/fitting
+screen is not ported, `main.gd`'s `GRANT_IMAGING_MODULE` (default **false**, i.e.
+faithful) is the one switch that hands it over.
+
+## Weapon switching (task #63)
+
+**Enter is `NextPrimaryWeapon`** -- `configs/default.ini`
+`[icPlayerPilot.NextPrimaryWeapon] = Keyboard, Return` (+ JoyButton4). The
+binding was already right; the behaviour behind it was not.
+
+`icPlayerPilot::CyclePrimaryWeapon` (`0x100b0850`) is four lines:
+
+```
+if (m_primary(+0x84) != -1) {
+    old = m_current(+0x8c);  m_current = m_primary;
+    if (old != m_secondary(+0x88)) {          // NOT already holding a missile
+        GetNextWeapon(channel 1, any = false);
+        m_primary = m_current;
+    }
+}
+```
+
+-- so **when a secondary is selected, Enter does not cycle**: it just comes back
+to the primary you were last on. It only advances when you already hold a primary.
+
+`GetNextWeapon` (`0x100b0590`) walks the mixed weapon/LINK id list from the
+current index, wrapping, and stops at the first entry that matches the fire
+channel (weapon `+0x80` / link `+0x88`; `2` = secondary) and is not an empty
+magazine. If it gets all the way back to where it started, **the selection is
+left exactly where it was**. Two edge cases fall straight out:
+
+- **zero entries**: `if (this+0x90 == 0) { this+0x8c = -1; return; }` -- the
+  index is cleared, nothing else happens.
+- **one entry**: the loop steps off the end, wraps onto itself, accepts itself.
+  The "next" weapon is the one you already have. Nothing changes.
+
+### The sound: the pilot does not make one
+
+**`icPlayerPilot` plays no sound at all.** Nothing in `0x100ad000..0x100b2000`
+touches `FiSound` or `FcSoundStreamManager`, and `IHUDPlayAudioCue`
+(`0x100f5400`) -- the only exported hook by which non-HUD code could raise a cue
+-- has **no callers anywhere**. Weapon switching in the original is silent; the
+feedback is the HUD weapon panel changing.
+
+What we *were* playing, `audio/gui/mechanical_confirm`, is from the **pause
+menu's** family: `icShadyBar::SetTargetWidth` (`0x1010e6d0`) plays
+`sound:/audio/gui/expand` when a menu bar grows and `.../contract` when it
+shrinks. That is why it sounded exactly like clicking Resume. It is gone.
+
+The engine's real HUD cue table is loaded at `0x100e8220` into `0x101740d8`
+(stride 8) and played by `FUN_100ea750(id, volume)`:
+
+| id | sound |
+|---:|---|
+| 0 | `audio/hud/valid_input` |
+| 1 | `audio/hud/invalid_input` |
+| 2 | `audio/hud/target_changed` |
+| 3 | `audio/hud/missile_warning` |
+| 4 | `audio/hud/klaxon` |
+| 5 | `audio/hud/ping` |
+
+and the HUD's own idiom is **cue 0 on an accepted input, cue 1 on a refused one**
+-- `FUN_100efaf0` sets exactly that pair from a single flag. We use those two for
+the weapon cycle (accepted -> `valid_input`, nothing-to-switch-to ->
+`invalid_input`). **That mapping is ours**; the recovered fact is only that the
+pilot itself is silent.
+
+### `icLog`'s event table, recovered
+
+Ids 0x00..0x68, at `0x10167558`, stride 0x10, built at `0x100a89a0`. The ones
+these three tasks needed: `0x1e E_WeaponDamaged`, `0x26 E_ZoomEnabled`,
+`0x27 E_ZoomDisabled`, `0x28 E_NoZoomProgram`, `0x29 E_SalvoFireMode`,
+`0x2a E_ChainFireMode`, `0x2b E_NoWeaponLink`, `0x41 E_CPUOffline`,
+`0x42 E_NoCPU`, `0x43..0x46` the four TRI events, `0x68 E_BlastDamage` (last).
+The display text is in `data/text/log_addendum.csv`.
+
+Note what that makes `ToggleWeaponLinking` (`0x100b0f60`): its three events are
+**0x29 `E_SalvoFireMode` / 0x2a `E_ChainFireMode` / 0x2b `E_NoWeaponLink`** -- so
+the "linking" toggle is really a **salvo/chain fire-mode switch**, and it refuses
+outright (`0x2b`) unless the ship carries the weapon-link hardware
+(`icShip+0x2f8`). Bound to **F**. We have not implemented it.
+
+---

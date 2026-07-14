@@ -239,6 +239,7 @@ func log_msg(text: String, color := GREEN) -> void:
 		log_lines.pop_front()
 
 func _process(d: float) -> void:
+	_menushot_step(d)
 	_menu_spin_step(d)
 	_menu_process(d)
 	if flash_time > 0.0:
@@ -678,20 +679,16 @@ func _draw_reticle(c: Vector2) -> void:
 	draw_arc(c, RET_R + 5.0, -PI / 2.0, -PI / 2.0 + TAU * frac, 64,
 			Color(hull_col.r, hull_col.g, hull_col.b, 0.65), 2.5, true)
 	# own speed, left of the reticle ("+325m/s")
+	# 0x100f7076: font 0, style 2 (alpha 0.75), halign 1 (right-anchored on
+	# -TEXT_X), valign 2 (centred on the reticle's own centre line, y = 0).
 	var vel: float = main.ship.forward_speed()
 	var vel_text: String = ("%s/s" % _fmt_range(absf(vel))) if in_lds \
 		else "%s%dm/s" % ["-" if vel < 0 else "+", absi(int(absf(vel)))]
-	var vw := _font_num.get_string_size(vel_text, HORIZONTAL_ALIGNMENT_LEFT,
-			-1, num_size).x
-	draw_string(_font_num, c + Vector2(-TEXT_X - vw, 4), vel_text,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, num_size, ring)
+	_hud_text(0, 2, c + Vector2(-TEXT_X, 0), vel_text, 1, 2, ring)
 	if main.ship.set_speed > 0.5:
 		var st := "set %d" % int(main.ship.set_speed)
-		var sw2 := _font_num.get_string_size(st, HORIZONTAL_ALIGNMENT_LEFT,
-				-1, num_size).x
-		draw_string(_font_num, c + Vector2(-TEXT_X - sw2, 4 + num_size + 2), st,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, num_size,
-				Color(ring.r, ring.g, ring.b, 0.55))
+		_hud_text(0, 0, c + Vector2(-TEXT_X, float(num_size) + 4.0), st, 1, 2,
+				ring)
 	_draw_target_block(c)
 	# velocity vector marker
 	var v: Vector3 = main.ship.velocity
@@ -799,14 +796,23 @@ func _icon(pos: Vector2, id: int, flags: int, col: Color, charge := 0.0) -> void
 
 func _draw_target_block(c: Vector2) -> void:
 	# FUN_100f7e10: to the right of the reticle at TEXT_X, a vertical segmented
-	# hull bar spanning two text lines, then the lines themselves:
-	#   "<hull%> <NAME>" / "<range>" / "<speed>m/s"
+	# hull bar spanning the block, then three lines --
+	#   "<hull%> <NAME>"   0x100f7f2b  font 0, style 2, halign 0, valign 0
+	#   "<range>"          0x100f7ffe  font 1 (ocrb_10pt!), style 2, x - 1
+	#   "<speed>m/s"       0x100f812c  font 0, style 2
+	# The RANGE is the one line in the whole reticle that is NOT in the little
+	# Andale face -- it is set in OCR-B 10pt, twice the size of the name above
+	# it. We had it in font 0 like the rest, which is why the block read flat.
+	# The lines step by their OWN font's line height (0x10162c6c for font 0,
+	# 0x10162c80 for font 1), and the block is centred on the reticle's centre
+	# line: top = c.y - (lh0 + lh0 + lh1) / 2  (0x100f7e37).
 	var tdist: float = main._target_distance()
 	if tdist == INF:
 		return
 	var col := _target_color()
-	var lh := float(num_size) + 3.0
-	var top := c.y - lh
+	var lh0: float = _font_num.get_height(num_size)
+	var lh1: float = _font_menu.get_height(menu_size)
+	var top: float = floor(c.y - (lh0 + lh0 + lh1) * 0.5)
 	var tname := ""
 	var thull := -1.0
 	if main.target_ai != null and is_instance_valid(main.target_ai):
@@ -815,23 +821,21 @@ func _draw_target_block(c: Vector2) -> void:
 	elif main.target_idx >= 0:
 		tname = str(main.objects[main.target_idx]["name"]).to_upper()
 	if thull >= 0.0:
-		_vbar(Vector2(c.x + TEXT_X, top), lh * 2.0, thull, _health_color(thull))
+		_vbar(Vector2(c.x + TEXT_X, top), lh0 + lh0 + lh1, thull,
+				_health_color(thull))
 	var tx := c.x + TEXT_X + TEXT_GAP
 	var head := tname
 	if thull >= 0.0:
 		head = "%d %s" % [int(round(thull * 100.0)), tname]
-	draw_string(_font_num, Vector2(tx, top + lh - 3.0), head,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, num_size, col)
-	draw_string(_font_num, Vector2(tx, top + lh * 2.0 - 3.0), _fmt_range(tdist),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, num_size, col)
+	_hud_text(0, 2, Vector2(tx, top), head, 0, 0, col)
+	_hud_text(1, 2, Vector2(tx - 1.0, top + lh0), _fmt_range(tdist), 0, 0, col)
 	var tvel := Vector3.ZERO
 	if main.target_ai != null and is_instance_valid(main.target_ai):
 		tvel = main.target_ai.velocity
 	var spd := tvel.length()
 	if spd > 0.0:
-		draw_string(_font_num, Vector2(tx, top + lh * 3.0 - 3.0),
-				"%dm/s" % int(spd), HORIZONTAL_ALIGNMENT_LEFT, -1, num_size,
-				Color(col.r, col.g, col.b, 0.7))
+		_hud_text(0, 2, Vector2(tx, top + lh0 + lh1), "%dm/s" % int(spd), 0, 0,
+				col)
 	_reticle_turn_arrow(c)
 
 func _vbar(pos: Vector2, height: float, frac: float, col: Color,
@@ -1156,10 +1160,8 @@ const MENU_TEXT_BACK := 8.0   # _DAT_10117b28: the label starts 8px left of the
                               # rail, so it overhangs into both chevrons
 const MENU_ICON_STEP := 12.0  # _DAT_10119ec4: rail start -> icon anchor
 const MENU_TIME_Y := 30.0     # 0x41f00000: the timeout sits 30px below centre
-# FUN_100eb270's style argument indexes the alpha table at 0x10162cb0:
-#   style 0 = 0.6   style 1 = 1.0   style 2 = 0.75
-const TEXT_A_DIM := 0.6
-const TEXT_A_LIT := 1.0
+# Every string in the menu goes through _hud_text (FUN_100eb270) -- see the
+# TEXT_ALPHA block for what the font and style arguments mean.
 
 var menu_active := false
 var menu_focus := MENU_ROOT
@@ -1285,6 +1287,12 @@ func _unhandled_input(e: InputEvent) -> void:
 			menu_carousel[menu_focus] = j
 			main.audio.play("audio/hud/valid_input.wav", -8.0)
 		return
+	if str(node.get("kind", "")) == "carousel" and dir == "left":
+		# the carousel's LEFT link IS the selected command (FUN_100f0420 writes
+		# it to +0x1c), so walking left runs it -- FUN_100efaf0, the default
+		# direction handler, just follows the link
+		_menu_select()
+		return
 	var to := _menu_link(menu_focus, dir)
 	if to != "":
 		_menu_open(to)
@@ -1373,8 +1381,40 @@ func _menu_link_nodes(name: String) -> Array:
 	var node: Dictionary = MENU.get(name, {})
 	var out: Array = [{}, {}, {}, {}]
 	if str(node.get("kind", "")) == "carousel":
-		out[0] = {"label": "PREV", "icon": MENU_ICON_PREV, "col": GREEN}
-		out[1] = {"label": "NEXT", "icon": MENU_ICON_NEXT, "col": GREEN}
+		# FUN_100f0420, the carousel's refresh: it rewrites its OWN links every
+		# time the selection moves --
+		#     +0x1c (LEFT)  = items[sel]        the selected command itself
+		#     +0x14 (UP)    = PREV, or NULL at the first item
+		#     +0x18 (DOWN)  = NEXT, or NULL at the last one   (3 < sel + 1)
+		#     +0x20 (RIGHT) = untouched: the way back out
+		# and while the autopilot is engaged (icPlayerPilot+0x308) it swaps LEFT
+		# for the DISENGAGE node (+0x58) and NULLs both PREV and NEXT.
+		# So a carousel's current item is a NODE BOX on the left. It is not part
+		# of the name in the middle of the reticle -- that is only ever
+		# Field(node+8), the node's own hud.csv label (0x100f2134).
+		# The item nodes' own sprite and colour (the ctors at 0x100efe50 for the
+		# autopilot, 0x100f0560 / 0x100f0c40 for the other two):
+		#   PREV / NEXT                  sprite 0x20 / 0x21, chartreuse
+		#   autopilot_disengage          sprite 0 (DAT_1011dd5c), AMBER
+		#   approach/formate/pursuit/dock  sprites 21/22/23/24, AMBER -- the same
+		#     four mode glyphs the reticle's icon ring uses, and the slot order
+		#     +0x40..+0x4c is exactly that
+		#   every wingmen / T-fighter item goes through FUN_100efc30, which is
+		#     FUN_100efbb0(name, sprite 0, chartreuse) -- plain green, no icon
+		var items: Array = node.get("items", [])
+		var sel: int = int(menu_carousel.get(name, 0))
+		var ap: bool = name == "hud_menu_autopilot"
+		if ap and main.ap_mode != 0:
+			out[2] = {"label": "DISENGAGE", "icon": 0, "col": AMBER}
+		else:
+			if sel > 0:
+				out[0] = {"label": "PREV", "icon": MENU_ICON_PREV, "col": GREEN}
+			if sel + 1 < items.size():
+				out[1] = {"label": "NEXT", "icon": MENU_ICON_NEXT, "col": GREEN}
+			if sel >= 0 and sel < items.size():
+				out[2] = {"label": str(items[sel]),
+					"icon": (21 + sel) if ap else 0,
+					"col": AMBER if ap else GREEN}
 	for i in 4:
 		if not (out[i] as Dictionary).is_empty():
 			continue
@@ -1413,29 +1453,25 @@ func _draw_menu_reticle(c: Vector2) -> void:
 	for i in 4:
 		_spr_ret(c, 93, Color(GREEN.r, GREEN.g, GREEN.b, a_spin),
 				_menu_spin + PI / 2.0 * i)
-	# the focused node's name: font 2 (ocrb_18pt), centred on the reticle in both
-	# axes, style 1 while select is held and style 0 (alpha 0.6) otherwise.
+	# The focused node's NAME, and nothing else: Field(node+8) at 0x100f2142, one
+	# string, drawn by the call at 0x100f2161 --
+	#     font 2 (ocrb_18pt), style = (select held) ? 1 : 0, x = 0, y = 0,
+	#     halign 2, valign 2
+	# so it is centred on the reticle in both axes and sits at alpha 0.6 until
+	# you hold select, when it goes to 1.0. (It used to read "AUTOPILOT: DOCK"
+	# on a carousel; the engine never concatenates the item -- see
+	# _menu_link_nodes -- and at 18pt that string ran clear off both sides of
+	# the reticle.)
 	var node: Dictionary = MENU.get(menu_focus, {})
 	var head := str(node.get("label", menu_focus))
-	if str(node.get("kind", "")) == "carousel":
-		var items: Array = node.get("items", [])
-		var i: int = int(menu_carousel.get(menu_focus, 0))
-		if menu_focus == "hud_menu_autopilot" and main.ap_mode != 0:
-			# FUN_100f0420: while the autopilot is engaged the carousel shows the
-			# DISENGAGE node (hud_menu_autopilot_disengage, built AMBER with no
-			# icon at 0x100efeb0) instead of the item list.
-			head = "%s: DISENGAGE" % head
-		elif not items.is_empty():
-			head = "%s: %s" % [head, items[i]]
-	_menu_text(c, head, _font_head, head_size, GREEN,
-			TEXT_A_LIT if held == 4 else TEXT_A_DIM, 2, 2)
+	_hud_text(2, 1 if held == 4 else 0, c, head, 2, 2, GREEN)
 	# 0x100f209f: the timeout is drawn ONLY on the ROOT node, and only once it
 	# drops below 10 s (_DAT_101190c0). hud_menu_timeout ("TIME: ") with
-	# AppendFormat("%0.1fs", icHUD+0x1b8), font 0 (ocrb_8pt), style 0.
+	# AppendFormat("%0.1fs", icHUD+0x1b8) -- the call at 0x100f2124 is
+	# font 0 (Andale Mono 7pt), style 0, x = 0, y = 30, halign 2, valign 0.
 	if menu_focus == MENU_ROOT and menu_time < 10.0:
-		_menu_text(c + Vector2(0, MENU_TIME_Y),
-				"TIME: %0.1fs" % maxf(menu_time, 0.0), _font_num, num_size,
-				GREEN, TEXT_A_DIM, 2, 0)
+		_hud_text(0, 0, c + Vector2(0, MENU_TIME_Y),
+				"TIME: %0.1fs" % maxf(menu_time, 0.0), 2, 0, GREEN)
 	for i in 4:
 		var link: Dictionary = links[i]
 		if link.is_empty():
@@ -1456,13 +1492,18 @@ func _menu_node_box(anchor: Vector2, text: String, icon: int, col: Color,
 	#     if icon:  roundel 51 under it WHEN HELD, then the icon at tx + 12,
 	#               both at FULL alpha and in the NODE'S colour; tx += 16 after
 	#     text at tx, vertically centred on y
-	# The rail and the label are at HALF alpha unless this is the direction
-	# currently being held (0x100ea949, 0x100eb2f2): held = 1.0, otherwise 0.5 /
-	# style 0. The text keeps the node's colour on a plain node and reverts to
-	# chartreuse after an icon (0x100eaa5c).
-	var a: float = TEXT_A_LIT if hi else 0.5
-	var tw: float = _font_menu.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT,
-			-1, menu_size).x
+	# The rail is at HALF alpha unless this is the direction currently being held
+	# (0x100ea949): held = 1.0, otherwise 0.5. The LABEL is the call at
+	# 0x100eab54 -- font 1 (ocrb_10pt), style = held ? 1 : 0, halign 0 (LEFT),
+	# valign 2 -- so it is dim at 0.6 and lights to 1.0 with the box. The text
+	# keeps the node's colour on a plain node and reverts to chartreuse after an
+	# icon (0x100eaa5c).
+	# The width the box is sized to is the ENGINE's text width (0x100ea844 calls
+	# the same measure, FUN_100ebd70(1, ...)), which trims both side bearings --
+	# five pixels narrower than a raw advance sum on a three-letter label, and
+	# the rail is cut to it.
+	var a: float = 1.0 if hi else 0.5
+	var tw: float = _text_w(1, text)
 	var w: float = tw + (MENU_ICON_PAD if icon != 0 else 0.0) - MENU_TEXT_TRIM
 	var x: float = floor(anchor.x) - 1.0
 	if align == 2:
@@ -1483,32 +1524,164 @@ func _menu_node_box(anchor: Vector2, text: String, icon: int, col: Color,
 		tx = ip.x + MENU_TEXT_TRIM
 		tcol = GREEN
 	if text != "":
-		_menu_text(Vector2(tx, y), text, _font_menu, menu_size, tcol,
-				TEXT_A_LIT if hi else TEXT_A_DIM, 0, 2)
+		_hud_text(1, 1 if hi else 0, Vector2(tx, y), text, 0, 2, tcol)
 
-func _menu_text(p: Vector2, text: String, f: Font, size: int, col: Color,
-		a: float, halign: int, valign: int) -> void:
-	# FUN_100eb270(font, style, x, y, str, halign, valign) @ 0x100eb270.
-	# halign 2 centres the string on x, 1 right-aligns it, 0 leaves it.
-	# valign (0x100eb79e) 2 centres it on y (y - h/2 - 1) and 1 bottom-aligns it;
-	# the engine's y is the TOP of the line, so the baseline is y + ascent.
-	if f == null:
+# --- FUN_100eb270: the one call every string on the HUD goes through ---------
+# FUN_100eb270(font, style, x, y, str, halign, valign) @ 0x100eb270 -- 47 call
+# sites, found by scanning .text for calls (Ghidra drops most of them).
+#
+#   font   indexes the table at 0x10162c60, stride 0x14 (0x100eb29d):
+#            0 font:/fonts/ocrb_8pt    1 font:/fonts/ocrb_10pt
+#            2 font:/fonts/ocrb_18pt   3 texture:/images/hud/sprites
+#          Font 0 is a misnomer *in the game's own data*: ocrb_8pt.frf's FHDR
+#          names its atlas "andale mono_7pt.lbm" and its family "andale mono",
+#          at 7pt -- and the frf's glyph rects capture 100% of the ink on
+#          andale mono_7pt.ftu against 62.9% on ocrb_8pt.ftu. Font 0 IS Andale
+#          Mono 7pt; ocrb_8pt.ftu is a stale atlas nothing reads.
+#   style  indexes the alpha table at 0x10162cb0, stride 8 (0x100eb2f2):
+#            0 -> 0.6   1 -> 1.0   2 -> 0.75
+#          multiplied by the element's master alpha (FcGraphicsEngine+0x1790).
+#   halign 0x100eb390 / 0x100eb775:  0 left, 1 right (x - w), 2 centre (x - w/2)
+#   valign 0x100eb7a2:  0 top, 1 bottom (y - h), 2 middle (y - h/2 - 1)
+#          y is the TOP of the line; the baseline is y + the font's ascent
+#          (DrawText adds FcFont+0x24, 0x100606f6).
+const TEXT_ALPHA := [0.6, 1.0, 0.75]
+
+func _hud_font(idx: int) -> Font:
+	if idx == 1:
+		return _font_menu
+	if idx == 2:
+		return _font_head
+	return _font_num
+
+func _hud_font_size(idx: int) -> int:
+	if idx == 1:
+		return menu_size
+	if idx == 2:
+		return head_size
+	return num_size
+
+var _glyph_cache := {}
+
+func _glyph(fi: int, ch: int) -> Array:
+	# [advance, ink_x0, ink_w, ink_y0, ink_h] for one character, straight out of
+	# the loaded bitmap font -- the same five numbers FcGlyph keeps (flux.dll
+	# 0x1007fe60 reads the .frf's ten int32s in file order).
+	var key: int = fi * 65536 + ch
+	if _glyph_cache.has(key):
+		return _glyph_cache[key]
+	var f: Font = _hud_font(fi)
+	var size: int = _hud_font_size(fi)
+	var rec: Array = [0.0, 0.0, 0.0, 0.0, 0.0]
+	if f != null:
+		rec[0] = f.get_char_size(ch, size).x
+		var rids: Array = f.get_rids()
+		if not rids.is_empty():
+			var ts: TextServer = TextServerManager.get_primary_interface()
+			var gi: int = ts.font_get_glyph_index(rids[0], size, ch, 0)
+			var o: Vector2 = ts.font_get_glyph_offset(rids[0], Vector2i(size, 0), gi)
+			var s: Vector2 = ts.font_get_glyph_size(rids[0], Vector2i(size, 0), gi)
+			rec[1] = o.x
+			rec[2] = s.x
+			rec[3] = o.y
+			rec[4] = s.y
+	_glyph_cache[key] = rec
+	return rec
+
+func _text_metrics(fi: int, text: String) -> Vector3:
+	# FcFont::GetTextSize @ flux.dll 0x100827a0. The pen steps by the glyph's
+	# LOGICAL width (lx1 - lx0) plus Kern(c, next) -- and Kern is 0 for every
+	# pair in every font the HUD uses: flux registers its 236 kerning pairs into
+	# the ITALIC table only (FcFont ctor @ 0x100800b0, every call pushes 1), the
+	# HUD's fonts are not italic, and nothing in iwar2 calls
+	# SetAdditionalFontKern. So the advance IS the metric and our BMFonts match.
+	# The reported WIDTH then trims the first glyph's left bearing (0x10082803)
+	# and the last glyph's right bearing (0x1008286f), and the HEIGHT is the INK
+	# height of THIS string (max -ink_y0 + max ink_y1, 0x10082883) -- not the
+	# font's line box. Returns (width, ink height, first left bearing).
+	if text.is_empty():
+		return Vector3.ZERO
+	var w := 0.0
+	var asc := 0.0
+	var desc := 0.0
+	for i in text.length():
+		var g: Array = _glyph(fi, text.unicode_at(i))
+		w += float(g[0])
+		asc = maxf(asc, -float(g[3]))
+		desc = maxf(desc, float(g[3]) + float(g[4]) - 1.0)
+	var first: Array = _glyph(fi, text.unicode_at(0))
+	var last: Array = _glyph(fi, text.unicode_at(text.length() - 1))
+	w -= float(first[1])
+	w -= float(last[0]) - (float(last[1]) + float(last[2]) - 1.0)
+	return Vector3(w, asc + desc, float(first[1]))
+
+func _text_w(fi: int, text: String) -> float:
+	return _text_metrics(fi, text).x
+
+func _hud_text(fi: int, style: int, p: Vector2, text: String, halign: int,
+		valign: int, rgb: Color) -> void:
+	var f: Font = _hud_font(fi)
+	if f == null or text == "":
 		return
-	var w: float = f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-	var asc: float = f.get_ascent(size)
-	var h: float = asc + f.get_descent(size)
+	var m: Vector3 = _text_metrics(fi, text)
 	var x: float = p.x
-	if halign == 2:
-		x -= w * 0.5
-	elif halign == 1:
-		x -= w
+	if halign == 1:
+		x -= m.x
+	elif halign == 2:
+		x -= m.x * 0.5
 	var y: float = p.y
-	if valign == 2:
-		y -= h * 0.5 + 1.0
-	elif valign == 1:
-		y -= h
-	draw_string(f, Vector2(floor(x), floor(y + asc)), text,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(col.r, col.g, col.b, a))
+	if valign == 1:
+		y -= m.y
+	elif valign == 2:
+		y -= m.y * 0.5 + 1.0
+	# DrawText backs the pen up by the first glyph's left bearing so the ink
+	# starts flush on x (0x1006074d); Godot applies that bearing itself, so it
+	# has to come back out here.
+	x -= m.z
+	var a: float = TEXT_ALPHA[clampi(style, 0, 2)] * _ea
+	var size: int = _hud_font_size(fi)
+	draw_string(f, Vector2(floor(x), floor(y) + f.get_ascent(size)), text,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(rgb.r, rgb.g, rgb.b, a))
+
+# --- dev: `-- --menushot` -----------------------------------------------------
+# --hudshot walks the five full-screen elements; nothing screenshotted the arrow
+# menu itself, which is the one HUD element whose fonts we had to guess at. This
+# walks the root, a submenu and a carousel and writes one PNG each, then quits.
+var _mshot_i := -2
+var _mshot_t := 0.0
+const MENU_SHOTS := ["hud_menu_menu", "hud_menu_nav", "hud_menu_comms",
+		"hud_menu_autopilot"]
+
+func _menushot_step(d: float) -> void:
+	if _mshot_i == -2:
+		_mshot_i = -1 if "--menushot" in OS.get_cmdline_user_args() else -3
+		return
+	if _mshot_i == -3:
+		return
+	_mshot_t += d
+	if _mshot_i == -1:
+		if _mshot_t > 1.5:
+			_mshot_i = 0
+			_mshot_t = 0.0
+			menu_active = true
+			menu_focus = MENU_SHOTS[0]
+			menu_time = 8.4  # under 10 s, so the root shows its TIME readout
+		return
+	if _mshot_t < 0.8:
+		return
+	var img := get_viewport().get_texture().get_image()
+	var dir: String = main._base().path_join("build/shots")
+	DirAccess.make_dir_recursive_absolute(dir)
+	img.save_png(dir.path_join("menu_%s.png" % MENU_SHOTS[_mshot_i]))
+	print("MENUSHOT ", MENU_SHOTS[_mshot_i])
+	_mshot_i += 1
+	_mshot_t = 0.0
+	if _mshot_i >= MENU_SHOTS.size():
+		get_tree().quit()
+		return
+	menu_active = true
+	menu_focus = MENU_SHOTS[_mshot_i]
+	menu_time = 8.4
 
 # --- world-space target marks -----------------------------------------------
 # @element icHUDBrackets

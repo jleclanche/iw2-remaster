@@ -95,10 +95,17 @@ var drop_cam_pos := Vector3.ZERO
 var zoomed := false
 # icPlayerPilot: max_zoom_factor = 10, zoom_time = 0.5 (flux.ini). The zoom ramps
 # at max/time per second and DIVIDES the yaw and pitch yoke, which is what makes
-# a zoomed-in shot aimable (icPlayerPilot::HandleLinearMessage, 0x100ae2b0).
+# a zoomed-in shot aimable (icPlayerPilot::HandleLinearMessage, 0x100ae2b0 --
+# cases 0/1/2 scale by 1/zoom, and ROLL is deliberately left unscaled).
 const ZOOM_MAX := 10.0
 const ZOOM_TIME := 0.5
 var zoom_factor := 1.0
+# The TRI's DRIVE axis scales the ship's engine force and thruster torque
+# (icShip::Simulate 0x10070f00, at 0x1007105d / 0x10071088 -- player only, gated
+# on `AIPilot(this) == NULL`). Force x w with a constant mass IS acceleration
+# x w, so we hold the INI's accelerations here and re-derive them each frame.
+var base_max_accel := Vector3(100, 100, 150)
+var base_turn_accel := Vector3(30, 30, 30)
 var free_toggle := false
 var roll_yaw_swap := false  # icPlayerPilot.RollYawToggleHold
 var ap_mode := 0  # 0 off, 1 approach, 2 formate, 3 dock, 4 match velocity
@@ -393,6 +400,8 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 		if rec.get("path", "") == ini_path:
 			ship_stats = rec["properties"]
 			ship.load_stats(ship_stats)
+	base_max_accel = ship.max_accel
+	base_turn_accel = ship.turn_accel
 	_fit_systems(ini_path)
 	weapons.set_muzzles(ship_model)
 	# icWeaponLink: the loadout builds the fire groups when the hull is fitted
@@ -436,6 +445,13 @@ func _fit_systems(ini_path: String) -> void:
 		_select_secondary(-1)
 		return
 	fitted.bind_model(ship_model)
+	# iiShipSystem::TRIWeight (0x1003c170) is gated on IsPlayer: this ship, and
+	# only this ship, feels the TRI. icPlayerPilot::CreateWorld calls
+	# SetTRIPosition at 0x100b33d0, so a fresh world starts balanced.
+	fitted.is_player = true
+	fitted.set_tri_position(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
+	if GRANT_IMAGING_MODULE:
+		fitted.programs |= ShipSystems.PROG_IMAGING
 	sys = fitted
 	# the fitted missile/countermeasure magazines (tug_prefitted.ini: seeker
 	# x5, LDSi x4, decoy x8)
@@ -1115,6 +1131,8 @@ func _spawn_player() -> void:
 			ship_stats = rec["properties"]
 			ship.load_stats(ship_stats)
 			break
+	base_max_accel = ship.max_accel
+	base_turn_accel = ship.turn_accel
 	ship_model = _load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf")
 	ship.add_child(ship_model)
 	# the tug's RCS jets live on its command section
@@ -1129,6 +1147,16 @@ func _spawn_player() -> void:
 	weapons.main = self
 	weapons.refire = 0.7  # subsims/systems/player/pbc.ini refire_delay
 	add_child(weapons)
+	# icLoadout::CreateWeaponLinks (0x10096940) builds the fire groups when the
+	# hull is fitted, and icPlayerPilot cycles THAT list. This boot path fitted the
+	# systems above but never built the list, so the player's weapon cycle was
+	# empty in the actual game -- which is why Enter appeared to do nothing but
+	# make a noise. The tug's list is: the linked PBC pair, the assault cannon and
+	# the quad light PBC (three channel-1 entries).
+	weapons.set_muzzles(ship_model)
+	weapons.build_groups(sys)
+	if not weapons.groups.is_empty():
+		weapon_name = weapons.group_label()
 	missiles = Missiles.new()
 	missiles.main = self
 	add_child(missiles)
@@ -1421,6 +1449,34 @@ func _unhandled_input(event: InputEvent) -> void:
 			and event.physical_keycode <= KEY_9:
 		comms.choose(event.physical_keycode - KEY_1)
 		return
+	# icPlayerPilot::DistributePower 0x100b00d0 -- the four power keys, which
+	# configs/default.ini binds to SHIFT + the arrow keys. The corners the engine
+	# picks agree with the triangle's geometry exactly: LEFT is the top-left node
+	# (offensive), RIGHT the top-right (defensive), DOWN the bottom apex (drive),
+	# UP the centre. Each one is a straight SetTRIPosition + an icLog event, and
+	# the four event strings are in data/text/log_addendum.csv.
+	if event is InputEventKey and event.pressed and not event.echo \
+			and event.shift_pressed and sys != null:
+		var corner: Array = []
+		var msg := ""
+		match event.physical_keycode:
+			KEY_LEFT:    # 0x17 PowerToOffensive  -> event 0x43 hud_tri_offensive
+				corner = [0.0, 1.0, 0.0]
+				msg = "TRI: FULL POWER TO WEAPONS"
+			KEY_RIGHT:   # 0x18 PowerToDefensive  -> event 0x44 hud_tri_defensive
+				corner = [0.0, 0.0, 1.0]
+				msg = "TRI: FULL POWER TO SHIELDS"
+			KEY_DOWN:    # 0x19 PowerToDrive      -> event 0x45 hud_tri_propulsion
+				corner = [1.0, 0.0, 0.0]
+				msg = "TRI: FULL POWER TO ENGINES"
+			KEY_UP:      # 0x1a BalancePower      -> event 0x46 hud_tri_centre
+				corner = [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
+				msg = "TRI: POWER BALANCED"
+		if not corner.is_empty():
+			sys.set_tri_position(corner[0], corner[1], corner[2])
+			hud.log_msg(msg)
+			get_viewport().set_input_as_handled()
+			return
 	# original IW2 bindings (configs/default.ini + keyboard_only.ini)
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
@@ -1432,8 +1488,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				_toggle_lds()
 			KEY_U:  # Undock
 				_undock()
-			KEY_Z:  # ToggleZoom -- _player_control ramps the factor and the FOV
-				zoomed = not zoomed
+			KEY_Z:  # ToggleZoom -- gated on hardware, see _enable_zoom
+				_enable_zoom(not zoomed)
 			KEY_COMMA:  # CycleContactUp
 				_cycle_contact(-1)
 			KEY_PERIOD:  # CycleContactDown
@@ -1453,17 +1509,18 @@ func _unhandled_input(event: InputEvent) -> void:
 					target_ai = last_aggressor
 					target_idx = -1
 					audio.play("audio/hud/target_changed.wav", -10.0)
-			KEY_BACKSPACE:  # icPlayerPilot.NextSecondaryWeapon
+			KEY_BACKSPACE:  # icPlayerPilot.NextSecondaryWeapon (+ Joy3)
 				_cycle_secondary()
-			KEY_ENTER:  # icPlayerPilot.NextPrimaryWeapon: cycle the channel-1
-				# fire groups (icPlayerPilot::GetNextWeapon 0x100b0590 walks the
-				# id list, in which a weapon LINK is one entry standing for all
-				# of its members -- see weapons.gd)
-				_select_secondary(-1)
-				var g: Dictionary = weapons.cycle_group()
-				if not g.is_empty():
-					hud.warn("WEAPON: " + weapons.group_label())
-				audio.play("audio/gui/mechanical_confirm.wav", -10.0)
+			KEY_ENTER, KEY_KP_ENTER:  # icPlayerPilot.NextPrimaryWeapon (+ Joy4)
+				_next_primary_weapon()
+			KEY_BRACKETRIGHT:  # icPlayerPilot.NextWeapon -> CycleWeapon
+				# 0x100b0b70 = GetNextWeapon(channel 1, any=true): the SAME list,
+				# but it ignores the channel and takes the next non-empty entry
+				# of either kind. We keep the two lists apart, so: try the
+				# primaries, and if there is nowhere else to go, fall to the
+				# secondaries.
+				if not _next_primary_weapon(false):
+					_cycle_secondary()
 			KEY_G:  # the aggressor shield. Its Fire (0x1002f6a0) just raises the
 				# active flag; it refuses unless the bank is FULL, then holds
 				# for `duration` seconds while it drains.
@@ -1878,6 +1935,18 @@ func _physics_process(delta: float) -> void:
 	# icMagazine::Simulate 0x10038210: the refire clock is efficiency * dt
 	if missiles != null:
 		missiles._tick_mags(player_mags, delta)
+	# The TRI's DRIVE axis, which is a property of the SHIP and not of the yoke:
+	# icShip::Simulate (0x10070f00) multiplies the engine force by
+	# TRIWeight(ship+0x294) and the thruster force by TRIWeight(ship+0x290) --
+	# both eType-0 subsims, so both carry the same drive weight -- just before
+	# handing them to iiThrusterSim::ComputeForceAndTorque. It is gated on
+	# `AIPilot(this) == NULL`, so only the player feels it. (The two other flags
+	# in that condition, ship+0x270 != 0 and ship+0x148 == 0, are UNKNOWN.)
+	# Force x w at constant mass IS acceleration x w.
+	if sys != null:
+		var wd: float = sys.tri_weight(ShipSystems.TRI_DRIVE)
+		ship.max_accel = base_max_accel * wd
+		ship.turn_accel = base_turn_accel * wd
 	if use_pog:
 		_pog_boot_process()
 		pog_api.director_process(delta)   # cutscene camera, while one is staged
@@ -2086,14 +2155,72 @@ func _select_secondary(idx: int) -> void:
 	secondary_name = "%s %d/%d" % [str(mag["projectile"]).replace("_", " ")
 			.to_upper(), int(mag["ammo"]), int(mag["max_ammo"])]
 
+## icPlayerPilot::CyclePrimaryWeapon 0x100b0850 -- what Enter is really bound to
+## (configs/default.ini [icPlayerPilot.NextPrimaryWeapon] = Keyboard, Return).
+## The engine's is four lines and it has one behaviour we did not have:
+##
+##     if (m_primary(+0x84) != -1) {
+##         old = m_current(+0x8c);  m_current = m_primary;
+##         if (old != m_secondary(+0x88)) {          // NOT already on a missile
+##             GetNextWeapon(channel 1, any=false);  // advance among primaries
+##             m_primary = m_current;
+##         }
+##     }
+##
+## -- so when a SECONDARY is selected, Enter does not cycle anything: it just
+## comes back to the primary you were last on. It only advances when you are
+## already holding a primary.
+##
+## SOUND. The recovered fact is that the engine plays NOTHING here: icPlayerPilot
+## contains no sound call of any kind (nothing in 0x100ad000..0x100b2000 touches
+## FiSound/FcSoundStreamManager), and IHUDPlayAudioCue (0x100f5400), the only
+## exported hook by which non-HUD code could raise a cue, has no callers. What we
+## were playing -- audio/gui/mechanical_confirm -- is from the PAUSE MENU's family
+## (icShadyBar::SetTargetWidth, 0x1010e6d0, plays audio/gui/expand + contract when
+## a menu bar moves), which is why it sounded like clicking Resume. It is gone.
+## The cues below are the engine's own HUD table (loaded at 0x100e8220 into
+## 0x101740d8, played by FUN_100ea750): 0 valid_input, 1 invalid_input,
+## 2 target_changed, 3 missile_warning, 4 klaxon, 5 ping. The HUD's own idiom is
+## cue 0 on an accepted input and cue 1 on a refused one (FUN_100efaf0 sets
+## exactly that pair from one flag) -- so we use those. That mapping is OURS; the
+## original pilot is simply silent.
+func _next_primary_weapon(warn := true) -> bool:
+	if weapons.groups.is_empty():
+		if warn:
+			hud.warn("NO PRIMARY WEAPONS")
+			audio.play("audio/hud/invalid_input.wav", -8.0)
+		return false
+	# holding a secondary? Enter drops straight back to the primary.
+	if secondary_idx >= 0:
+		_select_secondary(-1)
+		weapon_name = weapons.group_label()
+		hud.log_msg("WEAPON: %s" % weapon_name)
+		audio.play("audio/hud/valid_input.wav", -10.0)
+		return true
+	if not weapons.cycle_group():
+		# ONE primary: the engine's loop steps off the end, wraps to the entry it
+		# started on, accepts it, and changes nothing. There is nothing to switch
+		# to, so we say so instead of pretending we switched.
+		if warn:
+			audio.play("audio/hud/invalid_input.wav", -8.0)
+		return false
+	weapon_name = weapons.group_label()
+	hud.log_msg("WEAPON: %s" % weapon_name)
+	audio.play("audio/hud/valid_input.wav", -10.0)
+	return true
+
 func _cycle_secondary() -> void:
-	# icPlayerPilot.NextSecondaryWeapon steps the ring of fitted magazines
+	# icPlayerPilot.NextSecondaryWeapon (Backspace / Joy3) steps the ring of
+	# fitted magazines. Same cue rule as the primary above.
 	if player_mags.is_empty():
 		hud.warn("NO SECONDARY WEAPONS")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
+	if player_mags.size() == 1 and secondary_idx == 0:
+		audio.play("audio/hud/invalid_input.wav", -8.0)
+		return
 	_select_secondary((secondary_idx + 1) % player_mags.size())
-	audio.play("audio/gui/mechanical_confirm.wav", -10.0)
+	audio.play("audio/hud/valid_input.wav", -10.0)
 	hud.log_msg("WEAPON: %s" % secondary_name)
 
 func _fire_secondary() -> void:
@@ -2247,6 +2374,118 @@ func _collisions() -> void:
 func _key(code: int) -> float:
 	return 1.0 if Input.is_physical_key_pressed(code) else 0.0
 
+# --- the view zoom is GATED ON HARDWARE (task #62) -----------------------------
+# @element zoom
+# `icPlayerPilot::EnableZoom` (0x100b0e80) is the whole gate, and it grants the
+# zoom two ways:
+#
+#     cpu = ship->m_cpu (+0x29c)
+#     if      (cpu == NULL)                 reason = E_NoCPU        (0x42)
+#     else if (!(cpu->programs & 0x2000))   reason = E_NoZoomProgram(0x28)
+#     else if (!cpu->IsWorking())           reason = E_CPUOffline   (0x41)
+#     else                                  GRANTED
+#     if (!granted) granted = GotSniperWeapon(&reason)
+#     if (granted) { reason = E_ZoomEnabled (0x26); m_zoom_target = max_zoom_factor }
+#     if (reason < 0x69) icLog::LogEvent(reason)
+#
+# 0x2000 = 8192 = the imaging_module program bit. So: a WORKING CPU carrying the
+# imaging module, OR a sniper weapon -- and the user's hunch was right, it is ship
+# hardware, both ways.
+#
+# `GotSniperWeapon` (0x100b14d0) is the second door: the CURRENTLY SELECTED weapon
+# must be a working gun with `sniper_zoom` set (iiGun::SniperZoom, 0x1000f0b0,
+# gun+0xc5), and if the selection is an icWeaponLink it walks the link's members
+# and takes ANY working sniper gun in it. A sniper gun that is present but dead
+# reports E_WeaponDamaged (0x1e). Only one weapon in the game sets the flag:
+# subsims/systems/player/long_range_pbc.ini, the long-range 'Sniper' PBC.
+#
+# The event ids are icLog's (table at 0x10167558, stride 0x10, built at
+# 0x100a89a0); the refusal TEXT is the game's own, from data/text/log_addendum.csv.
+# THE CONSEQUENCE, stated plainly: the stock tug carries NEITHER. Its CPU has
+# `programs = 0` (tug_prefitted.ini fits no icProgram at all) and none of its
+# seven weapons sets `sniper_zoom`, so the recovered gate REFUSES the zoom
+# outright -- and that is exactly what the original does to a fresh campaign
+# pilot. icLoadout::LoadComputerPrograms (0x10095ea0) only fits a program the
+# player already OWNS as cargo, and the campaign gives away just two of them
+# (stealth, and the hyperspace tracker), never the imaging module. You BUY the
+# zoom in IW2, either as `Cargo_ImagingModule` or as the long-range 'Sniper' PBC.
+#
+# The difference is that the original has a cargo/fitting screen and we have not
+# ported one, so there is currently no way to earn either. Flip this to true to
+# hand the player's CPU an imaging module at fit time. It is a LOADOUT decision,
+# not a mechanic -- the gate above stays exactly as recovered either way -- and
+# it is the only invented byte in this file.
+const GRANT_IMAGING_MODULE := false
+
+const ZOOM_NO_CPU := "ERROR: NO COMPUTER FITTED"          # E_NoCPU 0x42
+const ZOOM_NO_PROGRAM := "ERROR: IMAGING MODULE NOT INSTALLED"  # E_NoZoomProgram 0x28
+const ZOOM_CPU_OFFLINE := "ERROR: COMPUTER OFFLINE"       # E_CPUOffline 0x41
+const ZOOM_WEAPON_DAMAGED := "WEAPON DAMAGED"             # E_WeaponDamaged 0x1e
+const ZOOM_ENABLED := "IMAGING MODULE ACTIVATED"          # E_ZoomEnabled 0x26
+const ZOOM_DISABLED := "IMAGING MODULE DEACTIVATED"       # E_ZoomDisabled 0x27
+
+## icPlayerPilot::GotSniperWeapon 0x100b14d0, as a tri-state:
+##   0 = the selection carries no sniper gun at all
+##   1 = a WORKING sniper gun is selected (the zoom is granted)
+##   2 = a sniper gun is selected but it is dead (reason -> E_WeaponDamaged)
+func _sniper_state() -> int:
+	if sys == null or weapons == null:
+		return 0
+	var g: Dictionary = weapons.current_group()
+	if g.is_empty():
+		return 0
+	var damaged := 0
+	for m: Dictionary in (g["members"] as Array):
+		if not bool(m.get("sniper_zoom", false)):
+			continue
+		# iiShipSystem::IsWorking (vtable slot 13) -- the vf 0x34 that both
+		# EnableZoom and GotSniperWeapon call on the gun.
+		if not bool(m["destroyed"]) and float(m["efficiency"]) > 0.0:
+			return 1           # ANY working sniper gun in the link is enough
+		damaged = 2
+	return damaged
+
+## The refusal reason, or "" when the zoom may engage. Same order as EnableZoom:
+## the CPU path is tested first, GotSniperWeapon second, and a broken sniper gun
+## overwrites whatever the CPU path had to say (its out-param, 0x100b1653).
+func _zoom_allowed() -> String:
+	if sys == null:
+		return ""              # no fitted hull (the bare demo ship): don't gate
+	var sniper := _sniper_state()
+	if sniper == 1:
+		return ""
+	var reason := ""
+	if not sys.has_cpu():
+		reason = ZOOM_NO_CPU
+	elif not sys.has_program(ShipSystems.PROG_IMAGING):
+		reason = ZOOM_NO_PROGRAM
+	elif not sys.cpu_working():
+		reason = ZOOM_CPU_OFFLINE
+	else:
+		return ""              # a working CPU carrying the imaging module
+	if sniper == 2:
+		reason = ZOOM_WEAPON_DAMAGED
+	return reason
+
+## icPlayerPilot::EnableZoom 0x100b0e80.
+func _enable_zoom(on: bool) -> void:
+	if on == zoomed:
+		return                 # `if (param_1 == (1.0 < zoom_factor)) return;`
+	if not on:
+		# 0x100b0f20: the disable path snaps target AND factor to 1.0 -- there is
+		# no ramp out.
+		zoomed = false
+		zoom_factor = 1.0
+		hud.log_msg(ZOOM_DISABLED)
+		return
+	var reason := _zoom_allowed()
+	if not reason.is_empty():
+		hud.warn(reason, 3.0)
+		audio.play("audio/hud/invalid_input.wav", -8.0)
+		return
+	zoomed = true
+	hud.log_msg(ZOOM_ENABLED)
+
 ## The pilot's yoke, as the original wires it.
 ##
 ## Bindings come from the game's OWN configs (`configs/default.ini` for a
@@ -2273,7 +2512,14 @@ func _player_control(delta: float) -> void:
 		+ (_key(KEY_EQUAL) + _key(KEY_KP_ADD)) * dv
 		- (_key(KEY_MINUS) + _key(KEY_KP_SUBTRACT)) * dv,
 		0.0, ship.max_speed.z)
-	# icPlayerPilot::Simulate ramps the zoom at max_zoom_factor / zoom_time
+	# icPlayerPilot::Think (0x100ad8f0, at 0x100ae191) re-tests the zoom gate every
+	# frame and drops the zoom the moment the hardware that granted it goes away.
+	if zoomed and not _zoom_allowed().is_empty():
+		_enable_zoom(false)
+	# Think ramps the zoom at max_zoom_factor / zoom_time toward the target
+	# (0x100ae1cd). Note the asymmetry, straight out of EnableZoom: zooming IN
+	# ramps, but zooming OUT is instantaneous -- 0x100b0f20 snaps BOTH the target
+	# (+0xa4) and the live factor (+0xa0) to 1.0. _enable_zoom does the snap.
 	zoom_factor = move_toward(zoom_factor, ZOOM_MAX if zoomed else 1.0,
 		ZOOM_MAX / ZOOM_TIME * delta)
 	var base_fov: float = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 \
@@ -2556,13 +2802,25 @@ func _autopilot_process(delta: float) -> void:
 				ship.set_speed = 0.0
 
 func _lds_process(delta: float) -> void:
+	# The TRI's DRIVE axis reaches the LDS drive too (icLDSDrive is eType 0), and
+	# icLDSDrive::Simulate (0x10037040) spends it in BOTH halves:
+	#   spin-up  0x10037224:  still spooling while `elapsed <= spinup_time / w`
+	#                         -- the spool time is DIVIDED by the weight
+	#   ramp     0x1003746e:  `speed = (w * rate * dt + 1) * speed` -- an
+	#                         exponential whose rate is MULTIPLIED by the weight
+	# so full drive gets you into LDS in 2/3 the time and accelerates 1.5x harder.
+	var wd := 1.0
+	if sys != null:
+		wd = sys.tri_weight(ShipSystems.TRI_DRIVE)
 	if lds_state == 1:
 		lds_timer += delta
-		if lds_timer >= LDS_SPOOL:
+		if lds_timer >= LDS_SPOOL / maxf(wd, 1e-3):
 			lds_state = 2
 			audio.play_loop(audio.lds_player, "audio/sfx/lds_cruise.wav", -10.0)
 		return
-	lds_speed = minf(lds_speed * pow(LDS_RAMP, delta), LDS_MAX)
+	# our ramp is pow(base, dt); the original's is exp(w * rate * dt), so the
+	# weight belongs in the exponent
+	lds_speed = minf(lds_speed * pow(LDS_RAMP, delta * wd), LDS_MAX)
 	var clear := _lds_clearance()
 	var tdist := _target_distance()
 	if (tdist < lds_speed * 1.5 and tdist < INF) or clear < 0.0:

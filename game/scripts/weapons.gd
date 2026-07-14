@@ -74,19 +74,56 @@ func current_group() -> Dictionary:
 		return {}
 	return groups[clampi(group_idx, 0, groups.size() - 1)]
 
+# --- the TRI's OFFENSIVE axis (task #60) --------------------------------------
+# Every weapon is an iiWeapon, and the iiWeapon ctor (0x1003c860) writes
+# eType = 1, so the whole armament hangs off TRI axis 1. Four consumers, and NOT
+# one of them is the plain multiply you would guess:
+#
+#   iiGun::Range        0x1000f090   w * range          (range +0xc0)
+#   iiGun::RefireDelay  0x1000f0a0   refire / w         (`fdivr [esi+0xb8]`)
+#   iiGun::IsReadyToFire 0x10035120  refuses (result 0xd) while
+#                                    `w * time_since_shot < refire` -- which is
+#                                    exactly the RefireDelay() test above
+#   iiWeapon::Fire      0x100357e0   projectile damage (+0x1e8)   = w * damage
+#                                    projectile lifetime (+0x1f0) = w * lifetime
+#
+# The lifetime scaling is how Range() stays honest: range = speed * lifetime
+# (docs/combat.md), so multiplying the bolt's lifetime by w moves the bolt's
+# reach by exactly the same w the gun advertises. At full offensive that is
+# 1.5x damage, 1.5x reach and a 1/1.5 = 0.667x refire delay -- a 2.25x DPS
+# swing between the two corners.
+func _tri_offensive() -> float:
+	if main != null and main.sys != null:
+		return (main.sys as ShipSystems).tri_weight(ShipSystems.TRI_OFFENSIVE)
+	return 1.0
+
 ## icPlayerPilot::GetNextWeapon 0x100b0590 / CycleWeapon 0x100b0b70 -- wrap round
-## the channel-1 entries.
-func cycle_group() -> Dictionary:
-	if groups.size() > 1:
-		group_idx = (group_idx + 1) % groups.size()
-	return current_group()
+## the channel-1 entries. Returns TRUE when the selection actually moved.
+##
+## The original walks the id list from the current index, wrapping, and stops at
+## the first entry that matches the fire channel and is not an empty magazine;
+## if it gets all the way back to where it started, the selection is simply left
+## where it was. Two edge cases fall straight out of that loop, and they are the
+## two the remaster had wrong:
+##   - ZERO entries: `if (this+0x90 == 0) { this+0x8c = -1; return; }` -- the
+##     index is cleared and nothing else happens.
+##   - ONE entry: the loop steps off the end, wraps to itself, accepts itself.
+##     The "next" weapon is the weapon you already have. Nothing changes.
+## In neither case does the engine make a sound, log an event, or flash the HUD.
+func cycle_group() -> bool:
+	if groups.size() <= 1:
+		return false
+	group_idx = (group_idx + 1) % groups.size()
+	return true
 
 func group_label() -> String:
 	var g := current_group()
 	if g.is_empty():
 		return ""
 	var n: int = (g["members"] as Array).size()
-	var label: String = str(g["name"]).to_upper()
+	# the INI `name=` is a localisation key: Cargo_ParticleBeamCannon is "PBC",
+	# Cargo_AssaultCannon is "Gatling Cannon" (data/json/strings.json)
+	var label: String = ShipSystems.display_name(str(g["name"])).to_upper()
 	return "%s x%d" % [label, n] if bool(g["linked"]) else label
 
 ## The muzzles the selected group fires from: each member's own attach null.
@@ -122,7 +159,15 @@ func fire() -> void:
 	# full-disruption warhead through icShip::Disrupt) blocks fire
 	if main and main.weapon_disrupt_time > 0.0 and main.weapon_disrupt_full:
 		return
-	cooldown = refire
+	# iiGun::RefireDelay 0x1000f0a0 -- the INI delay DIVIDED by the TRI weight
+	var w := _tri_offensive()
+	cooldown = refire / maxf(w, 1e-3)
+	# iiWeapon::Fire 0x100357e0 -- the bolt leaves with w * damage and w * lifetime
+	var spec := bolt_spec
+	if not is_equal_approx(w, 1.0):
+		spec = bolt_spec.duplicate()
+		spec["damage"] = float(bolt_spec["damage"]) * w
+		spec["lifetime"] = float(bolt_spec["lifetime"]) * w
 	# The selected fire group fires as one -- every member on the same frame.
 	# A group whose members' attach nulls are all on the avatar fires from them;
 	# otherwise we fall back to the hull's authored PBC mounts, which is what the
@@ -131,16 +176,16 @@ func fire() -> void:
 	if not mz.is_empty():
 		for n in mz:
 			_spawn_at(ship, (n as Node3D).global_position,
-					-ship.global_transform.basis.z, ship.velocity)
+					-ship.global_transform.basis.z, ship.velocity, spec)
 	elif not muzzle_nodes.is_empty():
 		for n in muzzle_nodes:
 			if is_instance_valid(n):
 				_spawn_at(ship, (n as Node3D).global_position,
-						-ship.global_transform.basis.z, ship.velocity)
+						-ship.global_transform.basis.z, ship.velocity, spec)
 	else:
 		for m in muzzle_fallback:
 			_spawn_at(ship, ship.global_transform * m,
-					-ship.global_transform.basis.z, ship.velocity)
+					-ship.global_transform.basis.z, ship.velocity, spec)
 	if main:
 		main.audio.play("audio/sfx/light_pbc.wav", -8.0)
 

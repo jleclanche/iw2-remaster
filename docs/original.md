@@ -1638,10 +1638,50 @@ Not POWER / REPAIR / HEAT. Proved four independent ways:
   carry those same three glyphs.
 
 **What it does:** `SetTRIPosition` (`0x1003c070`) maps each axis to a weight --
-`min_tri_weight` at 0, **1.0 at 1/3**, `max_tri_weight` at 1, piecewise linear
-(min clamped to [0,1], max to [1,3]). Consumed by `iiWeapon::Range` /
-`RefireDelay` / `IsReadyToFire` / `Fire`, `icLDSDrive::Simulate`, the capsule
-drive and the aggressor shield.
+`min_tri_weight` at 0, **1.0 at 1/3**, `max_tri_weight` at 1, piecewise linear.
+The statics are **class-level, not per-ship** (`SetTRIPosition` is `__cdecl`,
+no `this`; `m_tri_position` at `0x1015bb94` is **four** floats, the fourth never
+written -- that is what pins the "no TRI" weight at 1.0), and the bounds are
+**min 0.5** (`0x1015bb8c`) / **max 1.5** (`0x1015bb90`), with no shipped INI
+overriding either. `eType` is fixed at construction (`SetType 0x10001b60` has
+zero call sites).
+
+**The consumers**, corrected -- the two biggest ones are easy to miss:
+
+- **`icShip::Simulate` (`0x10070f00`) scales the player's engine force and
+  thruster torque by the DRIVE weight** (`0x1007105d` / `0x10071088`). This is
+  the one you feel.
+- `iiWeapon::Range` / `RefireDelay` / `IsReadyToFire` / `Fire`, and the beam's
+  damage-rate scale (`0x100305e0`).
+- `icLDSDrive::Simulate`.
+- The **aggressor shield** -- and *only* the aggressor shield on the defensive
+  corner. The `icPlayerLDA` deflect-chance and recharge calls exist
+  (`0x100acdf0` / `0x100acb71`) but **no LDA ctor writes `eType`**, so an LDA
+  sits in group 3 and its weight is a permanent 1.0.
+- **The capsule drive does NOT consume it at all** (it is eType 0, but no
+  capsule-drive function calls `TRIWeight`).
+
+### The view zoom is gated on hardware, and the pilot is silent
+
+- **Zoom is not free.** `EnableZoom` (`0x100b0e80`) requires either a **working
+  CPU carrying the imaging module** (program bit 8192) **or** a selected,
+  working **`sniper_zoom` weapon** (`iiGun::SniperZoom 0x1000f0b0`; the one
+  shipped INI with it is `long_range_pbc.ini`). `icPlayerPilot::Think` re-tests
+  it every frame and drops the zoom when the condition lapses. Zoom-in ramps at
+  `max_zoom / zoom_time`; **zoom-out is instantaneous**.
+- **`icPlayerPilot` contains no sound call of any kind**, and `IHUDPlayAudioCue`
+  (`0x100f5400`) has no callers -- the engine plays **nothing** when you switch
+  weapons. The HUD's own six cues are the table at `0x101740d8` (valid_input,
+  invalid_input, target_changed, missile_warning, klaxon, ping), played by
+  `FUN_100ea750`; `audio/gui/expand` and `contract` belong to `icShadyBar` --
+  the **pause-menu bars**, which is why our weapon-switch sounded like clicking
+  Resume.
+- **Enter only advances when you are already holding a primary**
+  (`0x100b0b70`): if a secondary is selected it simply returns you to the last
+  primary without cycling.
+- `icLog`'s event table (`0x10167558`, built at `0x100a89a0`) renames
+  `ToggleWeaponLinking`'s three events **salvo / chain / no-link** -- so that
+  toggle is a fire-MODE switch, not an on/off link.
 
 ### `icHUDStarmap`, recovered
 
