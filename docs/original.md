@@ -591,6 +591,30 @@ The original player controls: Space fires the selected weapon, Backspace
 cycles secondaries, I quick-fires the LDSI magazine. Full write-up with the
 per-class property maps: `docs/combat.md` section 10.
 
+## 5c-1. Where a bolt actually comes from, and which way it goes
+
+- **Muzzle**: `iiGun::Fire` (`0x100357e0`) calls `iiWeapon::FindWorldMuzzle`
+  (`0x1003da30`) -- the gun's **attach null on the hull** (`FcSubsim::
+  WorldPosition` / `WorldOrientation`) plus the INI's
+  `fire_position_translation` (`iiWeapon+0x88`), post-rotated by
+  `fire_position_rotation` (`+0x94`). `pbc.ini` says what it is in words: *"the
+  end of the barrel of the gun with respect to the attachment point of the
+  weapon"* = `(0, 10, 4.5)`, and **every** player gun in the shipped data
+  carries that same offset. The spawn is then nudged forward by exactly one
+  bolt radius (`0x10035866`).
+- **Direction**: `iiGun::ComputeFiringSolution` (`0x10035310`) **short-circuits
+  for the player** (`IsPlayer() && pilot+0x9c == 0`) and returns gun-local
+  **+Z** -- no lead, no jitter. `Fire` then rotates it by the muzzle
+  quaternion. **A gun fires down its own barrel, not the hull's nose.** (The
+  `FindAimPoint` lead solution and the skill jitter are the *AI's* path only --
+  see 5d.)
+- **The bolt streak runs FORWARD from the bolt, never behind it**:
+  `icBeamAvatar::Draw` (`0x100bb830`) emits its first vertex pair at the node's
+  own world position and the second displaced along the scaled axis. Our bolt
+  mesh was *centred* on the bolt, so half the 800 m streak hung out behind the
+  muzzle -- invisible from the cockpit, but from any external camera it stabs
+  back through the hull and past the viewer.
+
 ## 5d. Turrets and beams
 
 Turrets: a turret is a gun on a slewing mount. Every gun solves the same

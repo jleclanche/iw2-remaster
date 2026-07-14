@@ -11,6 +11,39 @@ const BOLT_LIFE := 1.6
 const BOLT_LENGTH := 90.0
 const MUZZLES := [Vector3(0, 17.5, -8), Vector3(0, -6, -30)]
 
+# --- where a bolt actually leaves the ship -----------------------------------
+# iiGun::Fire (0x100357e0) does NOT spawn the projectile at the ship's nose. It
+# calls iiWeapon::FindWorldMuzzle (0x1003da30) @ 0x10035807, which takes
+#   * FcSubsim::WorldPosition -- the gun subsim's own place on the hull, i.e.
+#     the attach null the ship INI mounts it at, and
+#   * FcSubsim::WorldOrientation composed with the gun's local aim,
+# and then adds the INI's `fire_position_translation` (iiWeapon +0x88..+0x90)
+# rotated into world -- "the end of the barrel of the gun with respect to the
+# attachment point of the weapon", as pbc.ini itself puts it. EVERY player gun
+# in the shipped data carries the same offset: (0, 10, 4.5) in the mount's LW
+# frame (pbc / light_pbc / heavy_pbc / antimatter_pbc / long_range_pbc /
+# assault_cannon / the beams -- all identical).
+#
+# In our assembled hull the mount null has been collapsed into the fitted gun
+# model that hangs off it, so the gun node already carries the (0, 10) part:
+# the tug's two standard PBCs sit at ship-local (0, 19.75, 0) and
+# (0, -23.5, 0), and their bodies span y 16.8..21.8 / -25.6..-20.6 about that.
+# What is left to add is the barrel run, LW +z 4.5 = 4.5 m along the gun's own
+# forward axis, which lands the muzzle on the barrel line inside the gun.
+const MUZZLE_FORWARD := 4.5
+
+# The bolt's DIRECTION is the gun's own axis, not the hull's. iiGun::
+# ComputeFiringSolution (0x10035310) short-circuits for the player:
+#     if (IsPlayer() && icPlayerPilot::m_p_instance[0x9c] == 0)
+#         { solution = FUN_10009670(0, 0, 1.0); return true; }
+# -- gun-LOCAL +Z, no lead, no jitter (the lead solution built out of
+# FindLocalTarget + FindAimPoint 0x10035170 and the FcRandom::UnitVector jitter
+# below it is the AI's path). iiGun::Fire then rotates that local vector by the
+# muzzle quaternion FindWorldMuzzle handed back (0x1003581a..0x10035877) and
+# fires along the result. So: a fixed gun fires straight down its own barrel.
+# For the tug's PBCs the barrels are hull-aligned and this is the same vector
+# the nose gives; for a canted mount (and for every turret) it is not.
+
 # sims/weapons/pbc_bolt.ini -- the standard PBC bolt (subsims .../player/pbc)
 const PBC_BOLT := {"damage": 160.0, "penetration": 50.0, "half_time": 0.35,
 	"speed": 6000.0, "lifetime": 1.6, "bypass_shields": false}
@@ -47,16 +80,37 @@ var group_idx := 0          # icPlayerPilot +0x8c, over the channel-1 entries
 var _null_nodes: Dictionary = {}   # attach-null name (lower) -> Node3D
 
 func set_muzzles(model: Node3D) -> void:
-	# fire from the avatar's actual weapon nulls (pbc mounts / hardpoints)
+	# Fire from the avatar's actual guns.
+	#
+	# This used to skip every MeshInstance3D, on the theory that the mounts were
+	# bare nulls -- and on the tug it therefore found NOTHING, silently fell back
+	# to the hardcoded MUZZLES constants, and put both bolts near the hull origin
+	# instead of in the cannons. The assembled hull has no separate mount nulls
+	# left: setup_prefitted.gltf carries the fitted guns themselves
+	# (`...\Pbc_cannons\RTO\LOD0_RTO_StandardPBC_T_lwo`), each one sitting at the
+	# null the ship INI mounted it at. The gun node IS the subsim transform that
+	# FindWorldMuzzle reads, so that is what we take -- mesh or not.
+	#
+	# The weapon latch (same `Pbc_cannons` path, so it matches "pbc" too) and the
+	# bolt avatar are not guns.
 	muzzle_nodes.clear()
 	_null_nodes.clear()
 	for n in model.find_children("*", "Node3D", true, false):
-		_null_nodes[str(n.name).to_lower()] = n
 		var nm := str(n.name).to_lower()
+		_null_nodes[nm] = n
 		if ("pbc" in nm or "hardpoint" in nm) and "bolt" not in nm \
-				and not (n is MeshInstance3D):
+				and "latch" not in nm:
 			muzzle_nodes.append(n)
 	muzzle_nodes = muzzle_nodes.slice(0, 2)
+
+## The world point a bolt leaves `gun` from, and the direction it leaves along:
+## iiWeapon::FindWorldMuzzle (0x1003da30) + the player's gun-local (0,0,1)
+## firing solution (iiGun::ComputeFiringSolution 0x10035310). See the notes on
+## MUZZLE_FORWARD above.
+static func muzzle_of(gun: Node3D) -> Array:
+	var b := gun.global_transform.basis.orthonormalized()
+	var dir: Vector3 = -b.z              # the barrel's own axis
+	return [gun.global_position + dir * MUZZLE_FORWARD, dir]
 
 ## Build the cycle from the fitted weapons. Channel 1 only: the secondaries
 ## (beams, magazines) are missiles.gd's list.
@@ -172,17 +226,18 @@ func fire() -> void:
 	# A group whose members' attach nulls are all on the avatar fires from them;
 	# otherwise we fall back to the hull's authored PBC mounts, which is what the
 	# tug's linked pair resolves to anyway.
+	# Each gun fires from its own barrel end, down its own axis (muzzle_of).
 	var mz: Array = _group_muzzles()
+	if mz.is_empty():
+		mz = muzzle_nodes.filter(func(n: Node3D) -> bool:
+				return is_instance_valid(n))
 	if not mz.is_empty():
 		for n in mz:
-			_spawn_at(ship, (n as Node3D).global_position,
-					-ship.global_transform.basis.z, ship.velocity, spec)
-	elif not muzzle_nodes.is_empty():
-		for n in muzzle_nodes:
-			if is_instance_valid(n):
-				_spawn_at(ship, (n as Node3D).global_position,
-						-ship.global_transform.basis.z, ship.velocity, spec)
+			var m: Array = PbcWeapons.muzzle_of(n as Node3D)
+			_spawn_at(ship, m[0], m[1], ship.velocity, spec)
 	else:
+		# no gun on the avatar at all: the hull's authored mounts, still fired
+		# along the hull's forward because that is all a bare point can give us
 		for m in muzzle_fallback:
 			_spawn_at(ship, ship.global_transform * m,
 					-ship.global_transform.basis.z, ship.velocity, spec)

@@ -77,6 +77,23 @@ const MUZZLE_DECAY := 5.0
 # (0x100bb830) makes an axial billboard: half-width = scale.x (so the bolt is
 # 8 m wide), running scale.z along local +Z, blend 1 = pure additive
 # (sPolygonState @ 0x10168230).
+#
+# The streak is NOT centred on the bolt: icBeamAvatar::Draw takes the node's
+# own world position (FindWorldPosition writes FiSceneNode +0x74; the draw does
+# `lea ebx, [edi+0x74]` @ 0x100bb881 and then emits its first vertex pair at
+# `ebx +/- side` @ 0x100bb87e..0x100bbc93) and the SECOND vertex pair at that
+# same point displaced by the scaled axis (0x100bbce3). One end of the quad is
+# the node, the other is node + axis * scale.z -- the same z 0..1 quad as the
+# antimatter spikes (_beam_quad_mesh, 0x100bbc6c..0x100bbd7e). And iiGun::Fire
+# (0x100357e0) orients the bolt sim with the quaternion that carries gun-local
+# +Z onto the fire direction (FUN_10035c00 on the (0,0,1) of FUN_10009670 @
+# 0x1003584e), so local +Z IS the direction of travel: the 800 m lance runs
+# from the bolt FORWARD, and never one metre behind it.
+#
+# We had it centred, which hung 400 m of additive streak out BEHIND every
+# muzzle. In the cockpit that half is behind your head and invisible; in any
+# external camera it stabs back through the hull and past the camera, so every
+# shot appeared to start at a fixed point on the screen instead of at the guns.
 const BOLT_WIDTH := 4.0
 const BOLT_LENGTH := 800.0
 const BOLT_TEXTURE := "images/sfx/pbc_standard"
@@ -642,20 +659,26 @@ static func bolt_mesh(base: String) -> Mesh:
 	# half-width scale.x, turned about the beam axis to face the camera.
 	# Crossed quads are our static stand-in for that turn -- same footprint,
 	# never edge-on. u runs along the length, v across the width.
+	#
+	# The quad runs from the bolt's own position ALONG the flight direction for
+	# scale.z = 800 m; nothing is drawn behind the bolt (see the note on
+	# BOLT_LENGTH). PbcWeapons._spawn_at gives the node a Basis.looking_at(dir),
+	# and Godot's forward is -Z, so "along the flight direction" is local -Z:
+	# the mesh spans z = 0 (the muzzle end) to z = -BOLT_LENGTH (the tip).
 	var tex := ParticleFx.texture(base, BOLT_TEXTURE)
 	var mat := ParticleFx.additive_material(tex)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var half := BOLT_LENGTH * 0.5
+	var tip := Vector3(0, 0, -BOLT_LENGTH)
 	for axis in 2:
 		# half-width = scale.x = 4 (the original quad spans pos +/- side*4)
 		var w := Vector3(BOLT_WIDTH, 0, 0) if axis == 0 \
 				else Vector3(0, BOLT_WIDTH, 0)
 		var corners := [
-			[-w - Vector3(0, 0, half), Vector2(0, 0)],
-			[w - Vector3(0, 0, half), Vector2(0, 1)],
-			[w + Vector3(0, 0, half), Vector2(1, 1)],
-			[-w + Vector3(0, 0, half), Vector2(1, 0)],
+			[-w, Vector2(0, 0)],
+			[w, Vector2(0, 1)],
+			[w + tip, Vector2(1, 1)],
+			[-w + tip, Vector2(1, 0)],
 		]
 		for idx in [0, 1, 2, 0, 2, 3]:
 			st.set_uv(corners[idx][1])

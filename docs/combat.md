@@ -937,7 +937,9 @@ Property map (`0x10034c20`): `horizontal_fire_arc +0xac`,
   vertical_fire_arc/2` (degrees x 57.2958 `0x10119924`; a negative atan gets
   +pi `0x10119464`, so a target behind always fails).
 - **ComputeFiringSolution** (`0x10035310`): player guns with auto-aim off
-  (`pilot+0x9c == 0`) fire straight ahead, always true. Otherwise:
+  (`pilot+0x9c == 0`) return the constant `FUN_10009670(0, 0, 1)` and nothing
+  else -- the solution is **gun-local +Z**, i.e. straight down that gun's own
+  barrel (not the hull's nose, and with no lead), always true. Otherwise:
   `FindLocalTarget` (`0x1003d7d0`) -> range gate (`+0xc0`) -> **the AI miss
   model**: unless `no_jitter`, for a target of radius >= 40 m (`0x1011849c`),
   roll `FcRandom::Int(0, 4 - pilot_skill)`; on > 0 push the aim point
@@ -950,6 +952,47 @@ Property map (`0x10034c20`): `horizontal_fire_arc +0xac`,
   `+0x1dc` = strong-root id, position = world muzzle + solution direction x
   `bullet_length * +0x20c`, velocity = ship velocity + solution x solved
   speed, orientation = the solution direction.
+
+### 11.1a Where a bolt actually leaves the ship
+
+`Fire` never touches the hull's transform. Everything is the **gun's**:
+
+- **`iiWeapon::FindWorldMuzzle`** (`0x1003da30`, called from `Fire` at
+  `0x10035807`) returns the muzzle's world position and orientation:
+  `FcSubsim::WorldPosition` / `WorldOrientation` -- the gun subsim sits at the
+  attach null the ship INI mounted it at -- composed with the gun's own local
+  aim (vtable `+0x68`, the turret gimbal), then displaced by the INI's
+  `fire_position_translation` (`iiWeapon +0x88..+0x90`) rotated into world and
+  post-rotated by `fire_position_rotation` (`+0x94..+0x9c`).
+  `pbc.ini` says what that offset is for: *"the end of the barrel of the gun
+  with respect to the attachment point of the weapon"*. Every player gun in the
+  shipped data carries the same one: `(0, 10, 4.5)` / `(0, -90, 0)` -- pbc,
+  light_pbc, heavy_pbc, antimatter_pbc, long_range_pbc, assault_cannon and the
+  beams are all identical.
+- The solution direction (gun-local, see 11.1) is rotated by that muzzle
+  quaternion (`0x1003581a..0x10035877`), so the bolt flies down the barrel.
+- The bolt is nudged clear of its own hull by exactly its collision radius:
+  `pos = muzzle + dir * (sim+0x20c * sim+0x200)` (`0x10035866`), and that same
+  product `+0x20c * +0x200` is exactly what the bullet hands `FiSim::SetRadius`
+  when it is built (`icBullet`, `0x10062c70`) -- so the offset is one bolt
+  radius, no more.
+
+**The bolt's own avatar is anchored at the bolt, ahead of it.**
+`avatars/standard_pbc_bolt/setup.lws` is one `icBeamAvatar` scaled
+`(4, 1, 800)`. `icBeamAvatar::Draw` (`0x100bb830`) emits its first vertex pair
+at the node's **own world position** (`FindWorldPosition` -> `FiSceneNode
++0x74`; `lea ebx, [edi+0x74]` @ `0x100bb881`, first `AddVertex` from `ebx` @
+`0x100bb87e..0x100bbc93`) and its second pair at that point displaced by the
+scaled axis (`0x100bbce3`) -- the same `z` 0..1 quad the antimatter spikes use.
+`Fire` orients the bolt sim so gun-local +Z lands on the fire direction, so the
+800 m lance runs **from the bolt forward** and never one metre behind it.
+
+We had drawn it *centred* on the bolt. That hung 400 m of additive streak out
+behind every muzzle: invisible from the cockpit (it is behind your head), but in
+any external camera it stabbed back through the hull and past the camera, so
+every shot looked like it started at a fixed point on the screen rather than at
+the guns. `ExplosionFx.bolt_mesh` now runs 0 -> -800 on local z (Godot's forward
+is -Z), which is also what `turrets.gd`'s beam quad already did.
 
 ### 11.2 icTurret -- the slewing mount
 
