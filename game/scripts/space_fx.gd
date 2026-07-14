@@ -81,6 +81,8 @@ func _process(delta: float) -> void:
 	_pos += _vel * delta
 	_render_grid()
 	_update_aggressor(delta)
+	_render_nebula()
+	_nebshot(delta)
 
 
 # --- icAggressorAvatar -------------------------------------------------------
@@ -476,3 +478,353 @@ func _ct_alpha(p: Dictionary, tail: float) -> float:
 	var depth: float = (p["pos"] as Vector3).length()
 	var dz: float = clampf(1.0 - depth / CT_RANGE, 0.0, 1.0)
 	return clampf(tail * float(p["life"]) * dz, 0.0, 1.0)
+
+
+# --- inside the nebula ------------------------------------------------------
+# @element icNebula
+# @element icCloudAvatar
+#
+# icNebula (registered 0x10067450, ctor 0x10067660, 0x200 bytes) is a real
+# geography SIM with a position and a radius -- the player flies INSIDE it. Map
+# kind 7; icSolarSystem::ParseNebulaInfo (0x1004e4f0) takes its radius from the
+# record's +0x134 (like a belt, NOT the +0x138 the bodies use). The whole game
+# ships exactly one: The Effrit, Hoffer's Wake, r = 2.5e8 m, with Lucrecia's
+# Base 750 m from its centre. Its property map (0x100674f0) is three fields --
+# depth (+0x1e0), colour (+0x1e4), texture_url (+0x1f0) -- and the map record
+# carries none of them, so The Effrit runs on the ctor's defaults.
+#
+# icNebula::Think (0x10067870) asks 0x10067990 for the opacity ramp each tick,
+# and on the 0 -> non-0 edge calls icSolarSystem::EnterNebula (0x1004eaa0), then
+# icSolarSystem::SetNebulaOpacity (0x1004eaf0) every tick after. That opacity
+# drives icSolarSystem::Render (0x1004d150), which
+#   * turns hardware fog ON, coloured `colour`, from 100 m out to
+#     lerp(far_clip -> depth, opacity), and pulls the far clip in to end * 1.1;
+#   * STOPS adding the starfield and the geog cyclorama once opacity hits 1;
+#   * adds the icCloudAvatar singleton (DAT_10171638, made at 0x100c27e0) with
+#     its +0x16c set to the opacity.
+#
+# icCloudAvatar is what you actually see. Draw @ 0x100c2bf0 (vtable slot 17,
+# dropped by Ghidra -- raw-disassembled) walks a 4-CELL RING of screen-filling
+# billboards at z = phase + (3-j) * cell, cell = depth * 0.25. Each cell carries
+# a random UV offset and a random UV scale; as you fly, `phase` slides by the
+# camera's forward displacement and the cell that falls off the front or the back
+# is recycled with fresh randoms. All four layers share one UV scroll and one
+# roll angle, both driven by the camera's own rotation and translation
+# (0x100c3150 / 0x100c3700). Blend 2 = SRCALPHA-ONE (additive), ZWrite off, fog
+# off, texture texture:/images/sfx/cloud, tinted by the nebula colour.
+# Draw @ 0x100c2a40 (slot 16) is the other half: one untextured, alpha-blended,
+# Z-WRITING quad of the flat nebula colour at z = depth -- the wall that hides
+# everything past the visibility distance. We fold that into Godot's depth fog
+# (same colour, same 100 m .. depth range, sky included), which also stands in
+# for the hardware fog the original switches on alongside it.
+#
+# (The per-cell random rotation the ctor also rolls, +0xc of each cell, is never
+# read by either Draw. It is dead in the original; we do not generate it.)
+
+const NEB_INNER := 0.75  # _DAT_10117d8c: opacity is 1 inside 0.75 * radius
+const NEB_CELLS := 4  # the ring in icCloudAvatar's ctor, +0xdc, stride 0x10
+const NEB_CELL_FRAC := 0.25  # _DAT_101191ec: cell size = depth * 0.25
+const NEB_FAR_CELLS := 4.0  # _DAT_101190b4: the layers reach out to 4 cells
+const NEB_FADE_FRAC := 0.5  # _DAT_10117738: distance fade starts at far * 0.5
+const NEB_ALPHA := 0.4  # _DAT_10117558: peak layer alpha = opacity * 0.4
+const NEB_FOG_START := 100.0  # icSolarSystem::Render's fog start, meters
+const NEB_SCALE_MIN := 0.1  # 0x3dcccccd \ the per-cell random UV scale
+const NEB_SCALE_MAX := 0.3  # 0x3e99999a /
+# icNebula's ctor defaults, which is what The Effrit runs on. (The only sim that
+# overrides them is the multiplayer fog_cloud_10000k.ini: r = 1e7, depth = 1e4,
+# colour = (0.1, 0.55, 0.44), texture images/sfx/alien_cloud.)
+const NEB_DEPTH := 30000.0  # 0x46ea6000
+const NEB_COLOUR := Color(0.6745098, 0.2784314, 0.0823529)  # +0x1e4
+const NEB_TEXTURE := "images/sfx/cloud"  # +0x1f0
+
+var _neb: Dictionary = {}  # the resolved map record; {} = no nebula here
+var _neb_stem := ""  # the system the record was resolved for
+var _neb_quads: Array[MeshInstance3D] = []
+var _neb_cells: Array = []  # [{uv: Vector2, scale: float}, ...], NEB_CELLS long
+var _neb_idx := 0  # icCloudAvatar+0x11c: which cell is the far one
+var _neb_phase := 0.0  # +0x120: how far into the front cell we are, meters
+var _neb_uv := Vector2.ZERO  # +0x130/+0x134: the shared UV scroll
+var _neb_angle := 0.0  # +0x138: the shared roll
+var _neb_prev := Vector3.ZERO  # last camera sim position
+var _neb_prev_basis := Basis.IDENTITY
+var _neb_seeded := false
+var _neb_fogged := false  # did WE turn the environment's fog on?
+
+## icNebula::Think's ramp, 0x10067990: full opacity inside 0.75 * radius, then
+## linear to nothing at the rim. A plain sphere test -- there is no falloff
+## outside and no density model, the volume is uniform.
+static func nebula_opacity(dist: float, radius: float) -> float:
+	if radius <= 0.0 or dist >= radius:
+		return 0.0
+	var inner := radius * NEB_INNER
+	if dist <= inner:
+		return 1.0
+	return 1.0 - (dist - inner) / (radius - inner)
+
+func _neb_resolve() -> void:
+	var m := get_parent()
+	if m == null or not ("objects" in m) or not ("system_stem" in m):
+		return
+	var stem: String = m.system_stem
+	if stem == _neb_stem:
+		return
+	_neb_stem = stem
+	_neb = {}
+	for o in m.objects:
+		if str(o.get("category", "")) == "nebula" \
+				and float(o.get("radius", 0.0)) > 0.0:
+			_neb = o
+			break
+	_neb_seeded = false
+
+func _neb_build() -> void:
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var url := str(_neb.get("texture_url", NEB_TEXTURE))
+	var tex: Texture2D = ParticleFx.texture(base, url)
+	var quad := QuadMesh.new()
+	quad.size = Vector2(2.0, 2.0)  # verts at +/-1; the transform does the sizing
+	for i in NEB_CELLS:
+		var sh := Shader.new()
+		sh.code = NEB_SHADER
+		var mat := ShaderMaterial.new()
+		mat.shader = sh
+		mat.set_shader_parameter("tex", tex)
+		var mi := MeshInstance3D.new()
+		mi.mesh = quad
+		mi.material_override = mat
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.visible = false
+		add_child(mi)
+		_neb_quads.append(mi)
+
+# the four corners the original hands FcBillBoard::Add are uv_c +/- uv_a +/- uv_b
+# (0x100c2f26 .. 0x100c2fc9): a rotated, scaled square in texture space centred
+# on the scroll position. images/sfx/cloud is greyscale with no alpha channel, so
+# under SRCALPHA-ONE the dark half of the tile simply adds nothing.
+#
+# `source_color` and the linearised tint matter here. The original adds the layers
+# in 8-bit gamma space, where a mid-grey tile is 0.31 of full; sampled raw into
+# Godot's linear pipeline the same tile lands at 0.31 LINEAR -- twice as bright --
+# and four layers of it clip the red channel flat, which is exactly the "featureless
+# orange" the effect must not be. Decoded, the cloud structure survives.
+const NEB_SHADER := """
+shader_type spatial;
+render_mode unshaded, blend_add, cull_disabled, depth_draw_never,
+	shadows_disabled, fog_disabled;
+uniform sampler2D tex : source_color, filter_linear_mipmap, repeat_enable;
+uniform vec2 uv_c = vec2(0.0);
+uniform vec2 uv_a = vec2(1.0, 0.0);
+uniform vec2 uv_b = vec2(0.0, 1.0);
+uniform vec3 tint = vec3(1.0);
+uniform float amount = 0.0;
+void fragment() {
+	vec2 n = (UV - 0.5) * 2.0;
+	vec3 c = texture(tex, uv_c + uv_a * n.x + uv_b * n.y).rgb;
+	ALBEDO = c * tint;
+	ALPHA = amount;
+}
+"""
+
+func _neb_recycle(i: int) -> void:
+	_neb_cells[i] = {
+		"uv": Vector2(randf(), randf()),
+		"scale": randf_range(NEB_SCALE_MIN, NEB_SCALE_MAX),
+	}
+
+func _neb_hide() -> void:
+	for mi in _neb_quads:
+		mi.visible = false
+	if _neb_fogged:
+		var m := get_parent()
+		if m != null and "env_ref" in m and m.env_ref != null:
+			m.env_ref.fog_enabled = false
+		_neb_fogged = false
+
+func _render_nebula() -> void:
+	_neb_resolve()
+	if _neb_quads.is_empty() and not _neb.is_empty():
+		_neb_build()
+	if _neb.is_empty() or _cam == null or _hidden:
+		_neb_hide()
+		return
+
+	var centre := Vector3(_neb["x"], _neb["y"], _neb["z"])
+	var radius := float(_neb["radius"])
+	# the camera's own sim position. The ship sits at the world origin (main's
+	# _fold_motion keeps it there), so the camera's offset from the origin is its
+	# offset from `_pos`. Taking the delta in SIM space is what survives a fold.
+	var eye: Vector3 = _pos + _cam.global_position
+	var opacity := nebula_opacity(eye.distance_to(centre), radius)
+	if opacity <= 0.0:
+		_neb_hide()
+		_neb_seeded = false
+		return
+
+	var depth := float(_neb.get("depth", NEB_DEPTH))
+	var col_a: Array = _neb.get("nebula_colour", [])
+	var tint := NEB_COLOUR
+	if col_a.size() >= 3:
+		tint = Color(col_a[0], col_a[1], col_a[2])
+	var cell := depth * NEB_CELL_FRAC
+	var basis := _cam.global_transform.basis
+
+	if not _neb_seeded:
+		_neb_cells.resize(NEB_CELLS)
+		for i in NEB_CELLS:
+			_neb_recycle(i)
+		_neb_idx = 0
+		_neb_phase = 0.0
+		_neb_uv = Vector2(randf(), randf())
+		_neb_angle = randf_range(0.0, TAU)
+		_neb_prev = eye
+		_neb_prev_basis = basis
+		_neb_seeded = true
+
+	# --- the scroll: icCloudAvatar 0x100c3150 + 0x100c3700 -------------------
+	var d := eye - _neb_prev
+	_neb_prev = eye
+	var fwd := -basis.z
+	# the camera's rotation since the last frame, expressed in the old frame: the
+	# roll goes into the shared UV angle, the yaw and pitch straight into the UV
+	# scroll -- in RADIANS, so a radian of turn slides the tiles by a full period
+	var rel := _neb_prev_basis.transposed() * basis
+	_neb_prev_basis = basis
+	var nf := rel * Vector3(0.0, 0.0, -1.0)  # the new forward, in the old frame
+	var nu := rel * Vector3(0.0, 1.0, 0.0)  # the new up, in the old frame
+	_neb_angle += atan2(nu.x, nu.y)
+	var ca := cos(_neb_angle)
+	var sa := sin(_neb_angle)
+	var ax := Vector2(ca, sa)
+	var ay := Vector2(-sa, ca)
+	_neb_uv += ax * atan2(nf.x, -nf.z) - ay * atan2(nf.y, -nf.z)
+	# ... and the translation: sideways slides the tiles, forward slides `phase`
+	_neb_uv += ax * (d.dot(basis.x) / cell) - ay * (d.dot(basis.y) / cell)
+	_neb_uv = Vector2(fposmod(_neb_uv.x, 1.0), fposmod(_neb_uv.y, 1.0))
+
+	_neb_phase -= d.dot(fwd)
+	if _neb_phase < 0.0:
+		# flown forward out of the front cell: step the ring back, and the cell
+		# that just wrapped round to the far end gets a fresh random tile
+		_neb_idx = _neb_idx - 1 if _neb_idx > 0 else NEB_CELLS - 1
+		_neb_recycle(_neb_idx)
+		_neb_phase = fposmod(_neb_phase, cell)
+	elif _neb_phase > cell:
+		_neb_recycle(_neb_idx)
+		_neb_phase = fposmod(_neb_phase, cell)
+		_neb_idx = (_neb_idx + 1) % NEB_CELLS
+
+	# --- the four layers ----------------------------------------------------
+	var far := cell * NEB_FAR_CELLS
+	var fade := far * NEB_FADE_FRAC
+	var vp := _cam.get_viewport().get_visible_rect().size
+	var aspect: float = maxf(1.0, vp.x / maxf(vp.y, 1.0))
+	# the original's billboards are exactly screen-filling at their depth:
+	# FcBillBoard::Add is handed w = z * gfx+0x108, the projection half-angle
+	var half_at_1 := tan(deg_to_rad(_cam.fov) * 0.5) * aspect * 1.05
+	var eye_w := _cam.global_position
+	for j in NEB_CELLS:
+		var mi: MeshInstance3D = _neb_quads[j]
+		var z: float = _neb_phase + float(NEB_CELLS - 1 - j) * cell
+		var a := opacity * NEB_ALPHA
+		if z > far:
+			a = 0.0
+		if z > fade:
+			a *= 1.0 - (z - fade) / fade
+		if z < cell:
+			a *= clampf(z / cell, 0.0, 1.0)
+		a = clampf(a, 0.0, 1.0)
+		if a <= 0.002:
+			mi.visible = false
+			continue
+		var c: Dictionary = _neb_cells[(_neb_idx + j) % NEB_CELLS]
+		var half: float = z * half_at_1
+		# the UV half-extent is world_half * cell_scale / cell_size, so a tile has
+		# a fixed size in METERS: it magnifies as its layer sweeps past you
+		var s: float = half * float(c["scale"]) / cell
+		var mat: ShaderMaterial = mi.material_override
+		mat.set_shader_parameter("uv_c", _neb_uv + (c["uv"] as Vector2))
+		mat.set_shader_parameter("uv_a", ax * s)
+		mat.set_shader_parameter("uv_b", ay * s)
+		var lin := tint.srgb_to_linear()
+		mat.set_shader_parameter("tint", Vector3(lin.r, lin.g, lin.b))
+		mat.set_shader_parameter("amount", a)
+		mi.global_transform = Transform3D(
+			basis.scaled(Vector3(half, half, 1.0)), eye_w + fwd * z)
+		mi.visible = true
+
+	# --- the fog and the wall at `depth`: icSolarSystem::Render 0x1004d150 ----
+	var m := get_parent()
+	if m != null and "env_ref" in m and m.env_ref != null:
+		var env: Environment = m.env_ref
+		env.fog_enabled = true
+		env.fog_mode = Environment.FOG_MODE_DEPTH
+		# the renderer takes fog_light_color as a LINEAR colour; the engine's
+		# (0.674, 0.278, 0.082) is an 8-bit gamma colour (172, 71, 21), and
+		# handing it over raw paints a blown-out orange instead of the rust the
+		# cloud layers are supposed to sit on top of
+		env.fog_light_color = tint.srgb_to_linear()
+		env.fog_light_energy = 1.0
+		env.fog_density = 1.0
+		env.fog_depth_begin = NEB_FOG_START
+		env.fog_depth_end = opacity * depth + (1.0 - opacity) * _cam.far
+		env.fog_depth_curve = 1.0
+		env.fog_aerial_perspective = 0.0
+		# the slot-16 wall is ALPHA-blended with alpha = opacity, and Render
+		# stops adding the starfield and the geog cyclorama outright only once
+		# opacity reaches 1 -- so out on the rim the stars still show through a
+		# part-drawn veil. Veiling the sky by exactly the opacity is both.
+		env.fog_sky_affect = opacity
+		_neb_fogged = true
+
+
+# --- --nebshot: park inside The Effrit and photograph it ---------------------
+# The nebula is the one effect you cannot see from any default spawn, so it gets
+# its own capture mode. Writes data/screenshots/nebula_*.png and quits.
+var _ns_t := 0.0
+var _ns_shot := 0
+
+func _nebshot(delta: float) -> void:
+	if not ("--nebshot" in OS.get_cmdline_user_args()):
+		return
+	var m := get_parent()
+	if m == null or _cam == null or _neb.is_empty():
+		return
+	_ns_t += delta
+	if _ns_shot == 0 and _ns_t > 0.5:
+		# beside Lucrecia's Base, which sits 750 m from the middle of The Effrit
+		for o in m.objects:
+			if str(o["name"]) == "Lucrecia's Base":
+				m.px = float(o["x"]) + 5000.0
+				m.py = float(o["y"]) + 700.0
+				m.pz = float(o["z"]) + 2600.0
+		m.ship.velocity = Vector3.ZERO
+		m.ship.set_speed = 0.0
+		m.menu.visible = false
+		m.cam_mode = 2
+		m._apply_view()
+		m._stream_objects()
+		_ns_shot = 1
+		_ns_t = 0.0
+	elif _ns_shot == 1 and _ns_t > 1.5:
+		_ns_save("nebula_inside")
+		_ns_shot = 2
+		_ns_t = 0.0
+	elif _ns_shot == 2 and _ns_t > 0.2:
+		# ... and again out on the rim, where the ramp is only half wound up
+		var r: float = float(_neb["radius"])
+		m.px = float(_neb["x"])
+		m.py = float(_neb["y"])
+		m.pz = float(_neb["z"]) + r * (NEB_INNER + 0.25 * 0.5)
+		m._stream_objects()
+		_ns_shot = 3
+		_ns_t = 0.0
+	elif _ns_shot == 3 and _ns_t > 1.0:
+		_ns_save("nebula_rim")
+		print("NEBSHOT done")
+		get_tree().quit()
+
+func _ns_save(pname: String) -> void:
+	var img := get_viewport().get_texture().get_image()
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	img.save_png(base.path_join("data/screenshots/%s.png" % pname))
+	print("NEBSHOT shot: ", pname)

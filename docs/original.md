@@ -820,6 +820,45 @@ that matrix. A `behaviour == "attack"` string is not a substitute.
 
 ## 7. Rendering
 
+### Nebulae: a volume you fly INSIDE, not a backdrop
+
+There is **one** nebula in the game: **The Effrit**, in Hoffer's Wake, radius
+**2.5e8 m**, with **Lucrecia's Base 750 m from its centre** -- the whole of
+Act 0 is flown inside it. Map kind 7; `icSolarSystem::ParseNebulaInfo`
+(`0x1004e4f0`) reads its radius from the record's **`+0x134`, like a belt** --
+*not* the `+0x138` bodies use, which is why our extractor was zeroing it.
+
+`icNebula` (ctor `0x10067660`, property map `0x100674f0`) has three properties
+the map format cannot carry, so The Effrit runs on the ctor defaults:
+`depth = 30000 m` (the visibility distance inside), `colour = (172, 71, 21)`,
+`texture:/images/sfx/cloud`.
+
+`icNebula::Think` (`0x10067870`) is the whole sim: opacity **1** inside
+`0.75 x radius`, falling linearly to 0 at the rim; on the edge it calls
+`Enter/LeaveNebula`, and every tick inside it calls `SetNebulaOpacity`. **It
+does nothing else** -- no sensor fog, no damage, no LDS inhibition, no density
+model. The opacity is purely a *rendering* term, and `icSolarSystem::Render`
+(`0x1004d150`) spends it three ways: hardware **fog** in the nebula colour from
+100 m to `lerp(far_clip -> depth, o)` (far clip pulled to `end * 1.1`); **the
+starfield and the geog cyclorama stop being added to the scene graph at all
+once `o` reaches 1**; and the **`icCloudAvatar`** singleton is switched on.
+
+**`icCloudAvatar`** (ctor `0x100c27e0`, both draws raw-disassembled) is what
+"cloudy all around you" actually is: a **ring of 4 screen-filling additive
+billboards** at `z = phase + (3-j) * cell`, `cell = depth * 0.25`, each with a
+random UV offset and a random UV scale in `[0.1, 0.3]`; alpha `o * 0.4`, faded
+out past `depth/2` and in below `depth/4`; blend 2, no Z-write, fog off. `phase`
+slides with the camera's forward motion and a cell that falls off the end is
+recycled with a fresh random tile; the UVs also scroll with camera yaw/pitch and
+roll. **There is no world-space cloud field at all -- it is screen-space
+parallax off the camera delta.** Its other draw (`0x100c2a40`) is what makes it
+opaque: one untextured, alpha-blended, **Z-writing** flat quad of the nebula
+colour at `z = depth`.
+
+`icNebulaAvatar` (`0x100cb520`) is *only* the distant backdrop model from
+`geog/*.lws` -- one `url` property, every material forced additive at alpha
+0.99. That part we already had right.
+
 ### The geography: every render property of a body is in its `.map` record
 
 Full write-up, with the disassembly, in **`geography.md`**. The short version --

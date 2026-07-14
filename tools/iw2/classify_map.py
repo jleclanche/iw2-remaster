@@ -171,8 +171,20 @@ def classify_system(sys_: dict, textures: dict[str, list[str]],
             o["radius"] = 0.0
 
         elif kind == 7:
+            # icSolarSystem::ParseNebulaInfo (iwar2 @ 0x1004e4f0) reads the
+            # nebula's radius from +0x134 -- our `info_f` -- exactly like a
+            # belt, NOT from the +0x138 the bodies use.  We used to zero it,
+            # which is why the one nebula in the game (The Effrit, 2.5e8 m,
+            # Hoffer's Wake) had no volume to be inside of.
             o["category"] = "nebula"
-            o["radius"] = 0.0
+            o["radius"] = o["info_f"]
+            # icNebula's ctor (0x10067660) defaults; the map record carries no
+            # properties, and only the multiplayer fog_cloud_10000k.ini sim
+            # overrides them.  depth = in-nebula visibility (fog end, m);
+            # colour = fog + cloud tint; texture_url = the cloud sprite.
+            o["depth"] = 30000.0             # 0x46ea6000
+            o["nebula_colour"] = [0.6745098, 0.2784314, 0.0823529]
+            o["texture_url"] = "images/sfx/cloud"
 
         else:
             o["category"] = "body"

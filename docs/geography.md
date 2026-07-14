@@ -54,10 +54,50 @@ body last put there -- which is how `Junkyard` came to have a "radius" of
 | 4 | `icAsteroidBelt` | `ParseAsteroidBeltInfo` @ `0x1004e6b0` | belt radius is the **f32 at `+0x134`**, not `+0x138` |
 | 5 | `icSun` | `ParseSunInfo` @ `0x1004e5a0` | |
 | 6 | (gunstar) | `ParseGunstarInfo` @ `0x1004e730` -- **empty** | and `Load` **skips `AddSim` for kind 6**: these records are inert |
-| 7 | `icNebula` | `ParseNebulaInfo` | one record in the whole game |
+| 7 | `icNebula` | `ParseNebulaInfo` @ `0x1004e4f0` | nebula radius is the **f32 at `+0x134`**, like a belt -- one record in the whole game |
 
 Counts across the shipped maps: 608 bodies, 756 stations, 76 L-points, 30 suns,
 21 belts, 11 gunstars, 1 nebula.
+
+### The nebula record (kind 7) -- The Effrit
+
+`ParseNebulaInfo` is three lines, and the first is the one that matters:
+
+```c
+FiSim::SetRadius((FiSim *)nebula, *(float *)(entity + 0x134));   // NOT +0x138
+```
+
+It then allocates a plain `icGeography` (`0x10066610`, `0x1e8` bytes) of the same
+radius and attaches it as a child at the origin -- a bare collision/geography
+proxy, no avatar.
+
+We used to zero this radius, which is why the one nebula in the game had no
+volume for the player to be inside of. It is now read:
+
+| | |
+|---|---|
+| name | **The Effrit** |
+| system | Hoffer's Wake (`hoffers_wake`, record 36) |
+| position | `(7.2765e8, 0, 1.2603e9)` m, system-centric |
+| radius | **2.5e8 m** (`info_f`) |
+| parent | record 1 |
+
+**Lucrecia's Base sits 750 m from its centre** -- the campaign's home base is
+buried at the very heart of it, so the whole of Act 0 is flown inside a nebula.
+That is what the player means by "cloudy all around you".
+
+The record carries no other fields. `icNebula`'s three properties -- `depth`,
+`colour`, `texture_url` (property map `0x100674f0`) -- have no home in the map
+format, so The Effrit runs on the class constructor's defaults (`0x10067660`):
+`depth = 30000` m, `colour = (0.6745, 0.2784, 0.0824)` = `(172, 71, 21)`,
+`texture_url = texture:/images/sfx/cloud`. The only sim that ever overrides them
+is the multiplayer template `sims/multiplayer/fog_cloud_10000k.ini`
+(`radius = 1e7`, `depth = 1e4`, `colour = (0.1, 0.55, 0.44)`, texture
+`images/sfx/alien_cloud`), which is how the deathmatch fog arenas are built.
+
+`classify_map.py` now emits `radius`, plus `depth` / `nebula_colour` /
+`texture_url` carrying those defaults. **What a nebula looks like from inside is
+in `effects.md`** (`icCloudAvatar`).
 
 ---
 

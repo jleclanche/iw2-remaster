@@ -146,7 +146,7 @@ extends RefCounted
 # (icShockwaveAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icStarfieldAvatar -- covered-elsewhere: main.gd _starfield_material shader dome
 # (icSunAvatar is really built: its @element marker is in star_fx.gd)
-# @element-stub icNebulaAvatar -- covered-elsewhere: main.gd _setup_sky loads the per-system nebula backdrop model additively
+# @element-stub icNebulaAvatar -- covered-elsewhere: this class is ONLY the distant backdrop model (0x100cb590 forces every material additive at alpha 0.99), which main.gd _setup_sky draws. The INSIDE of a nebula is icCloudAvatar -- see space_fx.gd
 # (icBeamAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icCockpitAvatar -- covered-elsewhere: main.gd cockpit dressing shown in the F1 view
 # @element-stub icWaypointAvatar -- covered-elsewhere: space_fx.gd draws the waypoint marker (icHUDWaypointIcon is @element there)
@@ -156,7 +156,7 @@ extends RefCounted
 # (icCapsuleEffectNode is really built: its @element marker is in capsule_fx.gd / main.gd)
 # (icCapsuleEntryBlankAvatar is really built: its @element marker is in capsule_fx.gd / main.gd)
 # (icCapsuleSpaceAvatar is really built: its @element marker is in capsule_fx.gd / main.gd)
-# @element-stub icCloudAvatar -- GENUINE GAP: in-system dust-cloud sprite volumes (sensor cover the act 2 scripts use)
+# (icCloudAvatar is really built: its @element marker is in space_fx.gd -- the 4-cell scrolling cloud ring you see from inside a nebula)
 # @element-stub icElectricEffectAvatar -- GENUINE GAP: electric-arc emitter (disruptor / damage arcing)
 # @element-stub icGasBallAvatar -- GENUINE GAP: gas-ball avatar (cosmetic; exact use not yet traced in the campaign)
 # (icLDAAvatar is really built: its @element marker is in explosion_fx.gd)
@@ -257,7 +257,7 @@ extends RefCounted
 # @element-stub icStation -- covered-elsewhere: main.gd stations (models, factions, docking)
 # @element-stub icSun -- covered-elsewhere: star_fx.gd builds the original's three-part sun
 # @element-stub icLagrangePointWaypoint -- covered-elsewhere: main.gd L-points, jump gating + space_fx.gd funnel
-# @element-stub icNebula -- covered-elsewhere: nebula geography records; the visual is main.gd's per-system sky backdrop
+# (icNebula is really built: its @element marker is in space_fx.gd -- a sim with a radius you fly INSIDE, not a backdrop)
 # (icAsteroidBelt is really built: its @element marker is in fields.gd)
 # (icFieldSphere is really built: its @element marker is in fields.gd)
 # (icFieldSim is really built: its @element marker is in fields.gd)

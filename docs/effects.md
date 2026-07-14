@@ -733,3 +733,186 @@ Structurally recovered, not fully decoded:
 - `tools/ghidra/disasm.py`: the raw-disassembly tool.
 
 ---
+
+## 7. Inside a nebula: `icNebula` + `icCloudAvatar`
+
+The ledger had `icNebula` and `icNebulaAvatar` both down as "covered elsewhere:
+the per-system sky backdrop". That was wrong, and it is why the Effrit did not
+render. **`icNebulaAvatar` is only the distant backdrop model**; a nebula is a
+*volume*, and what you see from inside it is a different class the ledger did
+not know existed -- **`icCloudAvatar`**.
+
+### `icNebula`, the sim
+
+| | |
+|---|---|
+| registered | `0x10067450` (`FcRegistry::RegisterClass`, name `icNebula`, parent `icGeography`) |
+| factory / ctor | `0x10067480` -> `0x10067660`, `0x200` bytes |
+| property map | `0x100674f0` |
+| vtable | `0x1011ae48` |
+| map kind | 7; `icSolarSystem::ParseNebulaInfo` @ `0x1004e4f0` |
+
+Three properties, and the map record carries none of them, so the game's one
+nebula runs entirely on the constructor's defaults:
+
+| property | offset | type | default (`0x10067660`) |
+|---|---|---|---|
+| `depth` | `+0x1e0` | float | **30000.0** (`0x46ea6000`) -- visibility inside, meters |
+| `colour` | `+0x1e4` | FcColour | **(0.6745, 0.2784, 0.0824)** = `(172, 71, 21)` |
+| `texture_url` | `+0x1f0` | FcString | **`texture:/images/sfx/cloud`** |
+
+plus `radius`, which comes from the map record's `+0x134` (see `geography.md`).
+`+0x1f4` is the "am I inside" latch, `+0x1f8` the sim's own avatar.
+
+**`icNebula::Think`** (vtable slot 13, `0x10067870`) is the whole simulation:
+
+```
+Think(dt):                                              ; 0x10067870
+    if solar_system(+0x12c) != FcWorld::m_p_active_world: return
+    o = Opacity()                                       ; 0x10067990
+    inside = (o > 0)
+    if inside != was_inside(+0x1f4):
+        inside ? EnterNebula()   ; 0x10067ae0 -> icSolarSystem::EnterNebula 0x1004eaa0
+               : LeaveNebula()   ; 0x10067b20 -> icSolarSystem::LeaveNebula  0x1004eb40
+        was_inside = inside
+    if inside: icSolarSystem::SetNebulaOpacity(o)       ; 0x1004eaf0, clamps 0..1
+
+Opacity():                                              ; 0x10067990
+    d = |player - centre|                               ; plain sphere test
+    if d >  radius:              return 0
+    if d <= radius * 0.75:       return 1               ; _DAT_10117d8c = 0.75
+    return 1 - (d - 0.75r) / (0.25r)                    ; linear rim ramp
+```
+
+That is *all* it does. **A nebula does not fog sensors, does not damage, does
+not inhibit LDS, and has no density model** -- the volume is uniform, and the
+only thing the opacity feeds is the renderer. (The one thing it does to the
+*game*: `icAIServices::InnerMarkerRadius` special-cases it to `radius * 0.9`
+and `OuterMarkerRadius` to its plain radius -- already in `original.md` s4a.)
+
+### What the opacity does: `icSolarSystem::Render` @ `0x1004d150`
+
+```c
+if (opacity(+0x5fc) <= 0) { gfx.FogEnabled = false; far = m_far_clip; }
+else {
+    far = opacity * depth(+0x5f8) + (1 - opacity) * m_far_clip;
+    gfx.FogParameters = { colour.rgb, start = 100.0f, end = far };   // gfx+0x1794
+    gfx.FogEnabled = true;                                           // gfx+0x17ac
+    far *= 1.1f;                                                     // _DAT_10119e94
+}
+gfx.NearClip = 0.1f;  gfx.FarClip = far;
+...
+if (opacity < 1) { scene.Add(starfield); scene.Add(cyclorama); }   // <-- BOTH DROPPED AT 1
+if (opacity > 0) { cloud->opacity(+0x16c) = opacity; scene.Add(cloud); }
+```
+
+So: hardware fog in the nebula colour from **100 m** to the visibility depth,
+the far clip hauled in to `end * 1.1`, **the starfield and the geog backdrop
+stop being drawn at all once you are past `0.75 * radius`**, and the
+`icCloudAvatar` singleton (`DAT_10171638`, built at `0x100c27e0`) gets switched
+on with the opacity.
+
+### `icCloudAvatar`, what you actually see
+
+Registered `0x100c2740` (name string `0x10161a78`), ctor `0x100c27e0`, `0x170`
+bytes, vtable `0x1011cddc`. **Ghidra dropped both of its draws**; they were
+raw-disassembled.
+
+Layout: `+0xbc` colour, `+0xc8` texture url, `+0xcc` `depth`, **`+0xd0` = cell
+size = `depth * 0.25`** (`_DAT_101191ec`), `+0xd4` = cell `* 0.9`, `+0xd8` the
+loaded texture, **`+0xdc` a ring of 4 cells, stride `0x10`**, `+0x11c` the front
+cell index, `+0x120` the scroll phase, `+0x124/+0x128` the lateral scroll,
+`+0x130/+0x134/+0x138` the shared UV + roll, `+0x13c` the previous camera basis
+(3x3), `+0x160` the previous camera position, `+0x16c` the opacity.
+
+Each cell is four floats, rolled in the ctor and again on every recycle:
+
+| | |
+|---|---|
+| `+0x0`, `+0x4` | random UV offset, `rand(0, 1)` each |
+| `+0x8` | random UV scale, **`rand(0.1, 0.3)`** (`0x3dcccccd` .. `0x3e99999a`) |
+| `+0xc` | random angle, `rand(0, 2*pi)` -- **generated and never read; dead** |
+
+**Draw @ `0x100c2bf0`** (slot 17), the cloud layers:
+
+```
+z_j   = phase + (3 - j) * cell,   j = 0..3        ; 4 screen-filling billboards
+far   = cell * 4.0                               ; _DAT_101190b4 -- exactly `depth`
+fade  = far  * 0.5                               ; _DAT_10117738
+a     = opacity * 0.4                            ; _DAT_10117558
+if z > far:   a  = 0
+if z > fade:  a *= 1 - (z - fade) / fade         ; far fade
+if z < cell:  a *= clamp(z / cell, 0, 1)         ; near fade-in as a layer arrives
+gfx.SetAlpha(clamp(a, 0, 1))                     ; * GlobalAlpha
+gfx.SetBlend(2)      = SRCALPHA-ONE (additive)   ; gfx+0x175c
+gfx.SetZTest(2)      = normal depth test         ; gfx+0x1760
+gfx.SetZWrite(false)                             ; gfx+0x1764
+gfx.SetTextureImage(cloud)                       ; gfx+0x1768
+gfx.FogEnabled = false                           ; the clouds are not fogged
+FcBillBoard::Add(eye + fwd * (near + z), w = z * gfx[0x108], uv[8])
+  uv corners = uv_scroll + cell.uv  +/- A * s  +/- B * s
+    A = (cos angle, sin angle),  B = (-sin angle, cos angle)
+    s = (z * gfx[0x108]) / cell * cell.scale     ; tile has a fixed size in METERS
+```
+
+`w = z * gfx[0x108]` is the projection half-angle, so **every layer exactly
+fills the screen at its own depth**; only the UVs differ. The cells are a ring
+buffer: `phase` slides by the camera's forward displacement, and when it falls
+out of `[0, cell)` the index steps and the cell that wrapped round is handed a
+fresh random tile -- so flying forwards is an endless supply of new cloud.
+
+The shared scroll and roll (`0x100c3150` + `0x100c3700`) come from the camera's
+own motion: the roll of the camera basis since the last frame goes into `angle`;
+the yaw and the pitch go **straight into the UV offset in radians** (a radian of
+turn slides the tiles by a full period); the camera's sideways translation
+divided by the cell size slides them too. There is no world-space cloud field --
+it is all screen-space parallax off the camera delta.
+
+**Draw @ `0x100c2a40`** (slot 16) is the other half, and the reason the nebula
+is opaque: **one untextured, ALPHA-blended (`SetBlend(3)`), Z-WRITING
+(`SetZWrite(true)`) billboard of the flat nebula colour at `z = depth`**, alpha
+= opacity. That is the wall that hides everything past the visibility distance
+-- and, with the starfield and cyclorama dropped at opacity 1, it is why the
+inside of a nebula is a solid coloured murk rather than clouds over stars.
+
+### `icNebulaAvatar` is not this
+
+`icNebulaAvatar` (registered `0x100cb4e0` region, ctor `0x100cb520`,
+`OnPropertiesChanged` `0x100cb590`, Build `0x100cb660`, Render `0x100cb680`) has
+exactly one property, `url`, loads that model, forces `GlobalTextureQuality(1)`,
+and sets **every material to blend 1 (additive) at alpha `0.99`
+(`0x3f7d70a4`)**. It is the distant backdrop model out of `geog/*.lws`, and
+`icSolarSystem::SetCycloramaRenderPosition` (`0x1004e740`) exempts it and
+`icStarfieldAvatar` from being forced into render pass 3 -- they are the sky.
+`main.gd::_setup_sky` already builds it, and that part was correct all along.
+
+### What we built from this
+
+- `space_fx.gd`: `# @element icNebula` + `# @element icCloudAvatar`. The
+  opacity ramp (`SpaceFx.nebula_opacity`), the 4-cell ring with the real cell
+  size / scroll / recycle / random tiles, the four screen-filling additive
+  billboards with the real alpha ramps, and the fog.
+- `tools/iw2/classify_map.py`: kind-7 records now keep their radius (from
+  `+0x134`) and carry `icNebula`'s three property defaults.
+
+**Deviations, and why.**
+
+- The slot-16 wall and the hardware fog are reproduced *together* by Godot's
+  `FOG_MODE_DEPTH` (same colour, same 100 m -> `depth` range, `fog_sky_affect =
+  opacity`, which is precisely the alpha-blended wall over the starfield). We do
+  not haul the camera's far clip in to `end * 1.1`: at full opacity everything
+  past `depth` is 100% fog colour anyway, and leaving `cam.far` alone keeps
+  `main.gd`'s impostor bodies out of trouble.
+- **Colour space.** The original does all of this in 8-bit gamma. Fed raw into
+  Godot's linear pipeline, the mid-grey cloud tile lands twice as bright and
+  four additive layers clip the red channel to a featureless orange, and
+  `fog_light_color` -- which the renderer takes as *linear* -- turns the rust
+  `(172, 71, 21)` into a blown-out `(217, 145, 82)`. Both the tile
+  (`source_color`) and the fog/tint colours are therefore linearised. The
+  numbers are the engine's; only the decode is ours.
+- The per-cell random rotation (`cell+0xc`) is dead in the original, so we do
+  not generate it.
+- `--nebshot` (in `space_fx.gd`) parks the player beside Lucrecia's Base and
+  again out on the rim and writes `data/screenshots/nebula_{inside,rim}.png`.
+
+---
