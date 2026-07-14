@@ -638,6 +638,7 @@ func _neb_hide() -> void:
 		var m := get_parent()
 		if m != null and "env_ref" in m and m.env_ref != null:
 			m.env_ref.fog_enabled = false
+			m.env_ref.glow_enabled = true   # normal space keeps its bloom
 		_neb_fogged = false
 
 func _render_nebula() -> void:
@@ -758,17 +759,21 @@ func _render_nebula() -> void:
 		var env: Environment = m.env_ref
 		env.fog_enabled = true
 		env.fog_mode = Environment.FOG_MODE_DEPTH
-		# the renderer takes fog_light_color as a LINEAR colour; the engine's
-		# (0.674, 0.278, 0.082) is an 8-bit gamma colour (172, 71, 21), and
-		# handing it over raw paints a blown-out orange instead of the rust the
-		# cloud layers are supposed to sit on top of
-		env.fog_light_color = tint.srgb_to_linear()
+		# Environment colours are sRGB and the renderer linearises them itself:
+		# hand the engine's (172, 71, 21) over as it is. (Linearising it here as
+		# well double-decodes it and the wall comes out a blood red, (146,28,4).)
+		env.fog_light_color = tint
 		env.fog_light_energy = 1.0
 		env.fog_density = 1.0
 		env.fog_depth_begin = NEB_FOG_START
 		env.fog_depth_end = opacity * depth + (1.0 - opacity) * _cam.far
 		env.fog_depth_curve = 1.0
 		env.fog_aerial_perspective = 0.0
+		# The original has no bloom at all. Ours runs glow everywhere, and on a
+		# full-screen bright orange it adds another 10..35/255 on top of a wall
+		# that already clips -- which is what turns the murk into a flat sheet.
+		# Inside the nebula, drop it: the cloud layers ARE the light.
+		env.glow_enabled = opacity <= 0.0
 		# the slot-16 wall is ALPHA-blended with alpha = opacity, and Render
 		# stops adding the starfield and the geog cyclorama outright only once
 		# opacity reaches 1 -- so out on the rim the stars still show through a
