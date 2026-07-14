@@ -20,7 +20,9 @@ var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
-	if m.newgamecheck:
+	if m.basecheck:
+		_basecheck(delta)
+	elif m.newgamecheck:
 		_newgamecheck(delta)
 	elif m.campcheck:
 		_campcheck(delta)
@@ -268,6 +270,281 @@ func _uicheck(_delta: float) -> void:
 			elif _mc_shot >= 3:
 				print("UICHECK done, docked=", m.docked_at)
 				get_tree().quit()
+
+# --- Lucrecia's Base ----------------------------------------------------------
+#
+# Drives the whole go-home system and asserts on it: the contact-list gate (not
+# found -> not on the list), the found-base flag, the AUTOSKIP from >200 km with
+# a dock order, the docking cutscene, the interior, the diorama the manager picks
+# per screen, and the 30-second cut to the next room. Everything it checks comes
+# out of ibacktobase.pog and [icSPPlayerBaseScreen] in the shipped defaults.ini;
+# see base_interior.gd.
+
+var _base_fail := 0
+var _base_shot := 0
+var _door_shot := false
+var _room := 0
+var _pending := false
+var _hull0 := 0.0
+
+func _bc(name: String, ok: bool, note := "") -> void:
+	if not ok:
+		_base_fail += 1
+	print("BASECHECK %-34s %s%s" % [name, "PASS" if ok else "FAIL",
+		"" if note.is_empty() else "  (%s)" % note])
+
+func _base_rec() -> Dictionary:
+	return m.base_iface.base_rec()
+
+func _basecheck(_delta: float) -> void:
+	var bi: BaseInterior = m.base_iface
+	match demo_phase:
+		0:
+			if demo_t < 0.5:
+				return
+			m.menu.launched = true
+			m.menu.close()
+			# Fly home in the tug -- the ship you get AT Lucrecia's Base and the
+			# one back-to-base is used in from act 1 on. (The bare act-0 command
+			# section has an EMPTY heatsink mount-point socket -- comsec.ini
+			# template[3] is filled from inventory in the real game -- so parked
+			# under power it overheats; that is a fitting limitation in
+			# ship_systems, not the docking path, and it is out of this task's
+			# scope. The tug is prefitted and has its heatsink.)
+			m._fit_player("sims/ships/player/tug.ini",
+				"data/avatars/avatars/tug_hull/setup_prefitted.gltf")
+			_hull0 = m.hull
+			# 1. the contact-list gate. Fresh act 0: g_act0_found_base is 0, so
+			#    iBackToBase is disabled and the base is off sensors.
+			_bc("act 0: base not yet found", not bi.found())
+			_bc("act 0: base off the contact list",
+				not _contact_has_base(), "sensor_hidden")
+			_bc("base system is Hoffer's Wake",
+				bi.base_system() == "hoffers_wake", bi.base_system())
+			# 2. find it (what iact0mission10 does on completion), and park 400 km
+			#    out -- past the 200 km split -- so the base is inside sensor
+			#    range of the contact list and the AUTOSKIP is the path in.
+			m.pog_rt.std.globals["g_act0_found_base"] = 1
+			bi.apply_visibility()
+			var rec := _base_rec()
+			m.px = float(rec["x"]) + 4.0e5
+			m.py = float(rec["y"])
+			m.pz = float(rec["z"])
+			m.ship.global_position = Vector3.ZERO
+			m.ship.velocity = Vector3.ZERO
+			_bc("found: base now on the contact list", _contact_has_base())
+			# 3. order a dock on the base. The detector should confirm for 10 s
+			#    and then skip us home.
+			for i in m.objects.size():
+				if str(m.objects[i]["name"]) == BaseInterior.BASE_NAME:
+					m.target_idx = i
+					m.target_ai = null
+			m._set_autopilot(3)
+			_bc("dock order on the base at 400 km",
+				bi._dock_ordered() and bi.base_pos().length() > BaseInterior.NEAR_RANGE)
+			demo_phase = 1
+			demo_t = 0.0
+		1:
+			# the autopilot would fly us in; freeze it so the range stays > 200 km
+			# and only the detector can act
+			m.ship.velocity = Vector3.ZERO
+			m.ship.set_speed = 0.0
+			# the detector polls every 2.1 s, then counts down 10 s of sanity
+			# checks before it fires
+			if bi.cut == 0 and demo_t < BaseInterior.POLL \
+					+ float(BaseInterior.CONFIRM_SECONDS) + 3.0:
+				return
+			if bi.cut == 0:
+				_bc("autoskip armed", false,
+					"detector never confirmed (blocked=%s)" % bi._blocked())
+				demo_phase = 4
+				return
+			if bi.cut == 1:
+				_bc("AUTOSKIP fired", true,
+					"%.0f m from base" % bi.base_pos().length())
+				_bc("autoskip standoff = PlaceRelativeTo(3000,2000,15000)",
+					absf(bi.base_pos().length()
+						- BaseInterior.SKIP_STANDOFF.length()) < 1500.0,
+					"%.0f m" % bi.base_pos().length())
+				demo_phase = 2
+				demo_t = 0.0
+		2:
+			# let the cutscene run: fly-by -> approach -> framing -> interior
+			if not m._headless() and _base_shot == 0 and bi.cut == 1 \
+					and demo_t > 2.0:
+				_shot("base_autoskip")
+				_base_shot = 1
+			if not m._headless() and _base_shot == 1 and bi.cut == 2 \
+					and demo_t > 1.0:
+				_shot("base_approach")
+				_base_shot = 2
+			# the doors: catch the frame they are part-open (channel 0.3..0.9)
+			if not m._headless() and not _door_shot and bi.cut == 2 \
+					and bi._door > 0.3 and bi._door < 0.95:
+				_shot("base_doors_opening")
+				_door_shot = true
+			# `inside` is set the moment the cutscene ends, but the SHUTDOWN
+			# movie (YoungCalShutdown in act 0) plays before the interior comes
+			# up -- `open` is the interior itself
+			if bi.open:
+				_bc("docking cutscene -> inside the base", true)
+				_bc("docked_at set", m.docked_at == BaseInterior.BASE_NAME)
+				# The cutscene flies the ship THROUGH the hull and parks it in
+				# the bay: DockingCutscene calls sim.SetCollision(player, 0).
+				# Without that we rammed the station at 300 m/s and blew up.
+				_bc("survived the dock (no hull collision)",
+					m.hull >= _hull0 - 0.5,
+					"hull %.0f -> %.0f" % [_hull0, m.hull])
+				# the bay doors are an avatar channel, not an animation we play:
+				# sim.AvatarSetChannel(base, "door", 1) opens them, and the
+				# cutscene shuts them again once the ship is inside
+				_bc("bay doors driven by the `door` channel",
+					not bi._door_nodes.is_empty() and bi._door_want == 0.0,
+					"%d door nulls, channel now %.2f"
+						% [bi._door_nodes.size(), bi._door])
+				_bc("diorama 0 (MAIN BAY) up", bi.diorama == 0, bi.room_name())
+				# gui.SetScreen("icSPPlayerBaseScreen") -> the overlay manager
+				# raises its hosted menu, icSPBaseScreen, on top of itself
+				# (iwar2 @ 0x10024cca), and ibasegui.SPBaseScreen builds it.
+				var cur := str(m.pog_rt.native(
+					"gui.currentscreenclassname", []))
+				_bc("base menu raised (icSPBaseScreen)",
+					cur == "icSPBaseScreen", cur)
+				demo_phase = 3
+				demo_t = 0.0
+		3:
+			if demo_t < 1.5:
+				return
+			if not m._headless() and _base_shot < 3:
+				_shot("base_interior")
+				_base_shot = 3
+			var bui: PogUi = m.pog_rt.ui
+			var sui: BaseScreens = bui.screen_ui
+			_bc("base menu has controls",
+				bui.visible_screen() != null
+					and not bui.visible_screen().windows.is_empty(),
+				"windows=%d drawn=%s size=%s" % [
+					bui.visible_screen().windows.size()
+						if bui.visible_screen() != null else -1,
+					"no renderer" if sui == null else str(sui.visible),
+					"-" if sui == null else str(sui.size)])
+			# 4. the screens the manager hosts, and the diorama each one picks.
+			#    With g_show_dioramas clear -- the whole campaign -- the loader
+			#    only ever loads diorama 0 (iwar2 @ 0x10024b95), so the interior
+			#    is the MAIN BAY and nothing else. iactthree sets the global at
+			#    the very end of act 3, and only then do the other four rooms
+			#    exist.
+			bi.next_diorama()
+			_bc("campaign: no other rooms (g_show_dioramas clear)",
+				bi.diorama == 0, bi.room_name())
+			m.pog_rt.std.globals["g_show_dioramas"] = 1
+			var want := {"icSPHangarScreen": 3, "icSPInboxScreen": 1,
+				"icSPComputerTradingScreen": 2, "icSPStatisticsScreen": 4}
+			var ok := true
+			for scr in want:
+				m.pog_rt.native("gui.setscreen", ["icSPPlayerBaseScreen"])
+				m.pog_rt.native("gui.overlayscreen", [scr])
+				bi.set_diorama(bi._screen_diorama())
+				if bi.diorama != int(want[scr]):
+					ok = false
+					print("   ", scr, " -> diorama ", bi.diorama,
+						", expected ", want[scr])
+			_bc("screen -> diorama map (ctor 0x100243b7)", ok)
+			if not m._headless() and _base_shot < 4:
+				_shot("base_diorama_%d" % bi.diorama)
+				_base_shot = 4
+			# 5. the 30-second cut to the next room
+			m.pog_rt.native("gui.setscreen", ["icSPPlayerBaseScreen"])
+			var was := bi.diorama
+			bi._dio_t = 0.001
+			bi._interior_process(0.01)
+			_bc("diorama_delay cuts to the next room", bi.diorama != was,
+				"%d -> %d" % [was, bi.diorama])
+			_bc("fritz flash after the cut",
+				bi.fritz_alpha() > 0.0 and bi.fritz_alpha() <= 1.0,
+				"alpha %.2f" % bi.fritz_alpha())
+			# 6. the light channels. g_base_lights_on is 0 from
+			#    iStartSystem.StartupNewGame and is only set when Clay brings the
+			#    base's power up (iPrelude.BaseOnlineHandler, "ok the systems are
+			#    online") -- so a fresh act 0 base runs on EMERGENCY lighting,
+			#    and the manager switches baselights_emergency on and
+			#    baselights_normal off (iwar2 @ 0x10024d35).
+			_bc("emergency lighting before the base is online",
+				not bi._gflag(BaseInterior.LIGHTS_GLOBAL))
+			m.pog_rt.std.globals["g_base_lights_on"] = 1
+			bi.diorama = -1
+			bi.set_diorama(0)
+			_room = 0
+			demo_phase = 5
+			demo_t = 0.0
+		5:  # a tour of the five rooms, one screenshot each (one per frame, or
+			# the viewport hands back the same texture five times)
+			if demo_t < 0.7:
+				return
+			if not m._headless():
+				_shot("base_room_%d_%s" % [_room,
+					bi.room_name().to_lower().replace(" ", "_")])
+			_room += 1
+			if _room >= BaseInterior.DIORAMAS.size():
+				_bc("all five dioramas load and render", true)
+				_room = 0
+				demo_phase = 6
+				demo_t = 0.0
+				return
+			bi.next_diorama()
+			_bc("room %d = %s" % [bi.diorama, bi.room_name()],
+				bi.diorama == _room
+					and bi.room_name() == str(
+						BaseInterior.DIORAMAS[_room]["name"]))
+			demo_t = 0.0
+		6:  # the screens the base menu leads to: the hangar (choose your ship),
+			# the inbox (email) and the manifest (cargo) -- each on its own
+			# diorama, each built by the original ibasegui code
+			if demo_t < 0.7:
+				return
+			var tour: Array = ["icSPHangarScreen", "icSPInboxScreen",
+				"icSPManifestScreen"]
+			if _pending:
+				# raised last pass, so it is on screen now
+				if not m._headless():
+					_shot("base_screen_%s" % str(tour[_room]).to_snake_case())
+				_pending = false
+				_room += 1
+				demo_t = 0.0
+				return
+			if _room >= tour.size():
+				demo_phase = 4
+				demo_t = 0.0
+				return
+			var want_scr: String = str(tour[_room])
+			m.pog_rt.native("gui.setscreen", ["icSPPlayerBaseScreen"])
+			m.pog_rt.native("gui.overlayscreen", [want_scr])
+			bi._interior_process(0.01)
+			var raised: bool = str(m.pog_rt.native(
+				"gui.currentscreenclassname", [])) == want_scr
+			_bc("%s on the %s diorama" % [want_scr, bi.room_name()],
+				raised and bi.diorama
+					== int(BaseInterior.SCREEN_DIORAMA[want_scr]))
+			_pending = true
+			demo_t = 0.0
+		4:
+			print("BASECHECK: ", "PASS" if _base_fail == 0 else "FAIL",
+				" -- ", _base_fail, " failure(s)")
+			get_tree().quit(0 if _base_fail == 0 else 1)
+
+func _contact_has_base() -> bool:
+	for e in m.contact_list():
+		if str(e.get("name", "")) == BaseInterior.BASE_NAME:
+			return true
+	return false
+
+func _screen_stack() -> Array:
+	var out: Array = []
+	for s in m.pog_ui.screens:
+		out.append(s.name)
+		for o in s.over:
+			out.append(o.name)
+	return out
 
 # --- capsule jump -------------------------------------------------------------
 

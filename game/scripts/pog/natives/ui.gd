@@ -212,10 +212,26 @@ class PogWindow extends RefCounted:
 	var selected := false
 	var highlight := true
 	var screen: PogScreen = null
-	## The three state colours the scripts set and read back.
+	## The three state colours the scripts set and read back. These are the
+	## control's TEXT colours, one per state: igui.CreateInverseButton sets all
+	## three to black and gives the control a *filled* amber bar to sit on, which
+	## only reads as black-on-amber (igui.pog:270).
 	var neutral := Color(1, 1, 1)
 	var focused_col := Color(1, 1, 1)
 	var selected_col := Color(1, 1, 1)
+	## The control's SKIN: `gui.SetWindowStateTextures(win, texture, 36 ints)`.
+	## Every control in the game is a THREE-SLICE horizontal strip -- a left cap
+	## drawn at its natural width, a body stretched across the middle, a right cap
+	## -- and it has one such strip per state. The 36 ints are
+	## (left|body|right) x (l,t,r,b) x (neutral|focused|selected), in atlas
+	## pixels. igui.pog holds every number as a POG global (SetGUIGlobals), so
+	## this is the original skin, not a reproduction of it.
+	var tex_url := ""                  ## "texture:/images/gui/gui"
+	## state -> [left, body, right] Rect2 in atlas pixels. Empty = no skin.
+	var art: Dictionary = {}
+	var font_url := ""                 ## gui.SetWindowFont
+	var text_align := 0                ## gui.SetWindowTextFormatting arg 1
+	var text_offset := 0               ## ...arg 2: the text's x inset, in px
 	## Focus ring, as the scripts wire it (SetWindowNextFocus/PreviousFocus).
 	var next_focus: PogWindow = null
 	var prev_focus: PogWindow = null
@@ -638,12 +654,15 @@ func _frame_width(_t, _a: Array) -> Variant:
 func _frame_height(_t, _a: Array) -> Variant:
 	return _frame().y
 
+## The GUI's frame. The front end is authored in a FIXED 640x480 canvas -- every
+## number in igui.SetGUIGlobals is in those pixels, and igui.CreateWideShadyBar
+## computes its width as the literal `640 - 2 * GUI_alignment_offset`
+## (igui.pog:392). So FrameWidth/FrameHeight are that canvas, and base_screens.gd
+## scales the whole canvas to whatever window we are actually in.
+const GUI_CANVAS := Vector2i(640, 480)
+
 func _frame() -> Vector2i:
-	if game != null and game.is_inside_tree():
-		return Vector2i(game.get_viewport().get_visible_rect().size)
-	return Vector2i(
-			int(ProjectSettings.get_setting("display/window/size/viewport_width", 1280)),
-			int(ProjectSettings.get_setting("display/window/size/viewport_height", 720)))
+	return GUI_CANVAS
 
 # @native gui.SetWindowTitle
 func _set_title(_t, a: Array) -> Variant:
@@ -698,7 +717,17 @@ func _focused_window(_t, _a: Array) -> Variant:
 
 # @native gui.TopWindow
 func _top_window(_t, _a: Array) -> Variant:
-	return top_window
+	# `FcWindowManager::TopWindow()` is the current screen's TOP-LEVEL window --
+	# the root everything else hangs under -- not "the last window made". The
+	# scripts use it as the parent of a screen's root container:
+	# igui.CreateShadyBar makes the menu's column with
+	# `gui.CreateWindow(13, 0, 240, FrameHeight(), gui.TopWindow())` and then
+	# ArrangeWindowsVertically *reparents the buttons into that column*. Handing
+	# back the last-created window (which by then is the last button) made the
+	# column a child of a button that was about to become its child -- a cycle,
+	# and any walk up the parent chain hung. Here a top-level window is simply one
+	# with no parent, so the screen root is null.
+	return null
 
 # @native gui.SetWindowNextFocus
 func _set_next_focus(_t, a: Array) -> Variant:
@@ -1161,16 +1190,73 @@ func scroller_done(win: PogWindow) -> void:
 func _gui_noop(_t, _a: Array) -> Variant:
 	return 0
 
+
+## `gui.SetWindowStateTextures(window, texture, 36 ints)` -- the control's skin.
+## The engine's own widget art: a three-slice strip (left cap / stretched body /
+## right cap) per state, cut out of a shared atlas. The numbers all come from
+## igui.SetGUIGlobals, so nothing here is chosen by us: e.g. the base menu's
+## fancy button is 226x32 with its neutral art at atlas (0,36)-(39,68), its
+## focused art at (40,36)-(80,68) and its selected art at (81,36)-(120,68)
+## (igui.pog:129+). base_screens.gd blits exactly these rects.
+# @native gui.SetWindowStateTextures
+func _set_state_textures(_t, a: Array) -> Variant:
+	var win := _win(a[0])
+	if win == null or a.size() < 38:
+		return 0
+	win.tex_url = PogStd._s(a[1])
+	var states := ["neutral", "focused", "selected"]
+	var slices := ["left", "body", "right"]
+	var i := 2
+	for s in states:
+		var strip: Array = []
+		for _sl in slices:
+			var l := float(a[i])
+			var t := float(a[i + 1])
+			var r := float(a[i + 2])
+			var b := float(a[i + 3])
+			strip.append(Rect2(l, t, maxf(r - l, 0.0), maxf(b - t, 0.0)))
+			i += 4
+		win.art[s] = strip
+	dirty = true
+	return 0
+
+
+## The width of the "shady bar" -- the translucent column the menus sit on
+## (igui.CreateShadyBar: GUI_shader_width = 240 px, GUI_shader_opacity = 0.8).
+var shady_width := 0
+var shady_width_rhs := 0
+
+# @native gui.SetShadyBarWidth
+func _set_shady_width(_t, a: Array) -> Variant:
+	shady_width = int(a[0])
+	return 0
+
+# @native gui.SetRHSShadyBarWidth
+func _set_shady_width_rhs(_t, a: Array) -> Variant:
+	shady_width_rhs = int(a[0])
+	return 0
+
 # @native gui.SetWindowFont
 # @native gui.SetDefaultFont
 # @native gui.SetWindowTextFormatting
 # @native gui.SetBackgroundImage
 func _gui_style(_t, a: Array) -> Variant:
-	# The scripts pick a font per control and an image behind the screen. We do
-	# not load the original bitmap fonts, but the *choice* is recorded and the
-	# renderer sizes text from it -- a title font is bigger than a detail font.
+	# gui.SetDefaultFont(url) / gui.SetWindowFont(window, url) /
+	# gui.SetWindowTextFormatting(window, align, x_offset). The fonts are the
+	# game's own bitmap fonts and we load them: GUI_title_font is
+	# "font:/fonts/square721 bdex bt_8pt", which is data/fonts/*.fnt.
 	if a.size() == 1:
 		default_font = PogStd._s(a[0])
+		return 0
+	var win := _win(a[0])
+	if win == null:
+		return 0
+	if a.size() == 2:
+		win.font_url = PogStd._s(a[1])
+	elif a.size() >= 3:
+		win.text_align = int(a[1])
+		win.text_offset = int(a[2])
+	dirty = true
 	return 0
 
 
@@ -1572,10 +1658,10 @@ const _BINDINGS := {
 	"gui.setwindowtextformatting": "_gui_style",
 	"gui.setbackgroundimage": "_gui_style",
 
-	"gui.setwindowstatetextures": "_gui_noop",
+	"gui.setwindowstatetextures": "_set_state_textures",
+	"gui.setshadybarwidth": "_set_shady_width",
+	"gui.setrhsshadybarwidth": "_set_shady_width_rhs",
 	"gui.setwindowstateicons": "_gui_noop",
-	"gui.setshadybarwidth": "_gui_noop",
-	"gui.setrhsshadybarwidth": "_gui_noop",
 	"gui.playbackgroundmovie": "_gui_noop",
 	"gui.stopbackgroundmovie": "_gui_noop", "gui.stopallmovies": "_gui_noop",
 	"gui.settextwindowresource": "_gui_noop",

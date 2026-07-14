@@ -211,8 +211,11 @@ var weapon_disrupt_time := 0.0
 var weapon_disrupt_full := false
 
 var clock_start := 0  # ms tick when we last left port (the HUD clock)
-var base_root: Node3D  # hangar interior while docked at a base
+var base_root: Node3D  # hangar interior while docked at an ordinary base
 const BASE_BAY := Vector3(0, -110, -527)  # tug parking bay (glTF coords)
+# Lucrecia's Base: the home base. Contact-list rules, the go-home dock, the
+# docking cutscene, the AUTOSKIP and the interior all live in base_interior.gd.
+var base_iface: BaseInterior
 
 var motioncheck := false
 var jumpcheck := false
@@ -221,6 +224,7 @@ var mechcheck := false
 var campcheck := false
 var newgamecheck := false
 var geogcheck := false
+var basecheck := false   # Lucrecia's Base: dock -> interior -> screens
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
@@ -231,10 +235,11 @@ func _ready() -> void:
 	campcheck = "--campcheck" in OS.get_cmdline_user_args()
 	newgamecheck = "--newgamecheck" in OS.get_cmdline_user_args()
 	geogcheck = "--geogcheck" in OS.get_cmdline_user_args()
+	basecheck = "--basecheck" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
-			or newgamecheck:
+			or newgamecheck or basecheck:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()
@@ -249,6 +254,9 @@ func _ready() -> void:
 	mission.main = self
 	add_child(mission)
 	_build_pog()
+	base_iface = BaseInterior.new()
+	base_iface.main = self
+	add_child(base_iface)
 	_build_environment()
 	_spawn_player()
 	# the two iiSimField singletons, made once per game like the original's
@@ -1008,6 +1016,11 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 	jump_sel = 0
 	_setup_sky(stem)
 	_spawn_traffic()
+	# iBackToBase.Initialise: the base is on sensors -- and so in the contact
+	# list -- in exactly one system, and only once the act's found-base flag is
+	# set. See base_interior.gd.
+	if base_iface != null:
+		base_iface.apply_visibility()
 	print("SYSTEM: ", system_name, " (", objects.size(), " objects)")
 
 func _planet_texture(stem: String) -> ImageTexture:
@@ -1458,6 +1471,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
+	# The base's docking cutscene is skippable the same way. In the original it
+	# is a cutscene like any other -- ibacktobase runs it inside
+	# icutsceneutilities.HandleAbort, which polls g_cutscene_skip and halts the
+	# task -- and the abort still leaves you docked, because the detector places
+	# the ship inside the base *after* HandleAbort returns.
+	if key == KEY_ESCAPE and base_iface != null and base_iface.cut > 0:
+		base_iface.skip_cutscene()
+		get_viewport().set_input_as_handled()
+		return
+
 	if menu != null and menu.visible:
 		return  # the menu handles its own input (it runs while paused)
 	# The mouse stands in for the joystick yoke -- the original binds no mouse
@@ -1709,6 +1732,19 @@ func _try_dock() -> void:
 		hud.warn("NO DOCKPORT IN RANGE")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
+	# Lucrecia's Base is not an ordinary dock. It has no dockport of its own that
+	# the player can use -- iBackToBase.Detector bolts a "bodge dockport" onto
+	# the PLAYER's ship inside 200 km so that a dock order is even possible --
+	# and the dock itself is a cutscene that ends inside the base. The whole
+	# procedure is base_interior.gd; here we only hand it over.
+	# (iStartSystem's own dock watcher, local_207, is NOT gated on the found-base
+	# flag: it raises the interior whenever the player is docked to the base, by
+	# any route. Only the cutscene and the autoskip are iBackToBase's.)
+	if base_iface != null and str(near["name"]) == BaseInterior.BASE_NAME \
+			and base_iface.dockable():
+		_set_autopilot(0)
+		base_iface.enter()
+		return
 	docked_at = near["name"]
 	ship.velocity = Vector3.ZERO
 	ship.set_speed = 0.0
@@ -1763,12 +1799,30 @@ func _leave_base() -> void:
 func _undock() -> void:
 	if docked_at == "":
 		return
+	if base_iface != null and base_iface.inside:
+		# iStartSystem's launch cutscene: the startup movie, then out of the tube
+		docked_at = ""
+		audio.play("audio/sfx/undock.wav", -4.0)
+		base_iface.leave()
+		return
 	docked_at = ""
 	_leave_base()
 	audio.play("audio/sfx/undock.wav", -4.0)
 	ship.velocity = -ship.global_transform.basis.z * 50.0
 	clock_start = Time.get_ticks_msec()
 	hud.log_msg("UNDOCKED")
+
+## Point the ship's nose at a direction in folded world space, instantly. The
+## cutscenes do this with sim.PointAt / sim.PointAway, which snap the sim's
+## orientation rather than flying it round.
+func _point_ship_at(dir: Vector3) -> void:
+	if dir.length_squared() < 1.0e-6:
+		return
+	var up := Vector3.UP
+	if absf(dir.normalized().dot(up)) > 0.999:
+		up = Vector3.RIGHT
+	ship.global_transform = Transform3D(Basis.IDENTITY,
+		ship.global_position).looking_at(ship.global_position + dir, up)
 
 # --- capsule jump ----------------------------------------------------------
 
@@ -2013,23 +2067,40 @@ func _physics_process(delta: float) -> void:
 		# case 7 releases it
 		ship.input_rotate = Vector3.ZERO
 		ship.input_thrust = Vector3.ZERO
+	elif base_iface != null and base_iface.cut > 0:
+		# the base's own docking cutscene flies the ship; the player does not
+		ship.input_rotate = Vector3.ZERO
+		ship.input_thrust = Vector3.ZERO
 	elif docked_at == "" and not menu.visible and movie == null:
 		_player_control(delta)
 		if ap_mode > 0:
 			_autopilot_process(delta)
+	# iBackToBase's Detector, and the interior's diorama montage
+	if base_iface != null:
+		base_iface.process(delta)
 	if lds_state > 0:
 		_lds_process(delta)
 	if jump_state > 0:
 		_jump_process(delta)
 	# LDS cruise / capsule runs own the velocity vector: the flight
 	# computer's per-axis speed caps must not clip them back to drive speeds
-	ship.drive_override = lds_state == 2 or jump_state >= 2
+	# the base's docking cutscene flies the ship on rails, like the scripts'
+	# sim.SetVelocityLocalToSim: the flight model must not brake it back
+	ship.drive_override = lds_state == 2 or jump_state >= 2 \
+		or (base_iface != null and base_iface.cut > 0)
 	if docked_at != "":
 		ship.velocity = Vector3.ZERO
 		ship.set_speed = 0.0
 		ship.input_thrust = Vector3.ZERO
 		ship.input_rotate = Vector3.ZERO
-	if sys != null:
+	# Docked, the ship's systems are off: the engine parks the sim and stops
+	# simulating it (icShip::Simulate early-outs while the ship is on a dock
+	# port). Leaving them running cooked the hull -- the bare command section has
+	# a powerplant but no heatsink, so its heat integrates straight up to the
+	# damage threshold and kills you while you sit in the hangar. The docking
+	# cutscene is the same: the ship is not under power.
+	if sys != null and docked_at == "" \
+			and (base_iface == null or base_iface.cut == 0):
 		# icSun::Think 0x1006ab90 / icPlanet::Think 0x10068380: every body in
 		# the active system radiates onto the PLAYER's external heat store
 		for o in objects:
@@ -2392,6 +2463,15 @@ func _model_radius(model: Node3D, fallback: float) -> float:
 
 func _collisions() -> void:
 	if docked_at != "" or jump_state >= 2:
+		return
+	# The base's docking cutscene flies the ship THROUGH the station's hull and
+	# parks it inside the bay, so the ship must not collide with anything while
+	# it runs. That is not a fudge: iBackToBase.DockingCutscene calls
+	# `sim.SetCollision(player, 0)` the moment it takes the ship (pogsrc/
+	# ibacktobase.pog, at the dolly setup) and the detector calls it again before
+	# it places the ship inside the base. Without it you fly into the hull at
+	# 300 m/s -- which is exactly what happened.
+	if base_iface != null and base_iface.cut > 0:
 		return
 	for a in ai_ships:
 		if _aggressor_ram(a):
@@ -2975,6 +3055,10 @@ func _chase_camera(delta: float) -> void:
 	var target := ship.global_transform
 	if jump_state == 4:
 		_capsule_camera(delta, target)
+		return
+	# inside Lucrecia's Base the camera is the diorama's own, out of the scene
+	if base_iface != null and base_iface.inside:
+		base_iface.place_camera()
 		return
 	if base_root != null:
 		# in the hangar: gantry viewpoint with a gentle sway

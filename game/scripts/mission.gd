@@ -57,6 +57,24 @@ func _advance() -> void:
 				n["at"], n.get("route", []))
 	if s.has("mark_kills"):
 		_kill_mark = main.kill_count
+	# Set a POG global. The base's whole "have you found it yet" gate is one:
+	# iBackToBase.Initialise reads g_act0_found_base / g_act1_found_base, and
+	# until the act's flag is set there is no contact-list entry, no go-home
+	# dock and no autoskip (base_interior.gd).
+	if s.has("pog_set"):
+		var g: Dictionary = s["pog_set"]
+		for k in g:
+			main.pog_rt.std.globals[str(k)] = g[k]
+		if main.base_iface != null:
+			main.base_iface.apply_visibility()
+	# isim.SetStandardSensorVisibility(base, 1): iact0mission10 / iact1mission01
+	# put the base on sensors for the leg that leads you to it, BEFORE the
+	# found-base flag is set -- that is how you can fly to a base you have not
+	# officially found.
+	if s.has("reveal_base"):
+		if main.base_iface != null:
+			main.base_iface.revealed = bool(s["reveal_base"])
+			main.base_iface.apply_visibility()
 	if s.has("obj_add"):
 		var text := str(main.comms.strings.get(s["obj_add"], s["obj_add"]))
 		objectives[s.get("id", s["obj_add"])] = {"text": text, "done": false}
@@ -264,10 +282,13 @@ static func act0_m10() -> Array:
 			"until_near": 3.0e5, "clear_wp": true},
 		{"obj_done": "effrit", "say": "a0_m10_dialogue_clay_were_here",
 			"until_comms": true},
-		# waypoint chain through the Effrit to Lucrecia's Base
+		# waypoint chain through the Effrit to Lucrecia's Base. Clay marks the
+		# route AND puts the base on your sensors (iact0mission10:
+		# isim.SetStandardSensorVisibility(base, 1) at mission progress 1) --
+		# it is on the contact list from here, but it is not yet "found".
 		{"obj_add": "a0_m10_objectives_follow_waypoints", "id": "base",
 			"prompt": "a0_m10_prompt_follow_waypoints"},
-		{"say": "a0_m10_dialogue_clay_im_bringing"},
+		{"say": "a0_m10_dialogue_clay_im_bringing", "reveal_base": true},
 		{"waypoint": "Lucrecia's Base", "offset": Vector3(5.0e4, 6000, 4.0e4),
 			"wp_name": "Marked Asteroid 1", "until_near": 4000.0, "clear_wp": true},
 		{"say": "a0_m10_dialogue_clay_progress1"},
@@ -278,7 +299,13 @@ static func act0_m10() -> Array:
 			"wp_name": "Marked Asteroid 3", "until_near": 2500.0, "clear_wp": true},
 		{"say": "a0_m10_dialogue_clay_there_it", "until_comms": true},
 		{"until_docked": "lucrecia"},
-		{"obj_done": "base"},
+		# iact0mission10 (port line 653): the mission ends with
+		#   global.SetBool("g_act0_found_base", 1)
+		#   gui.SetScreen("icSPPlayerBaseScreen"); igame.PlayMovie("/movies/PBDiscovery")
+		# From this moment the base is on the contact list for good, the go-home
+		# dock works, and iBackToBase's detector is armed.
+		{"obj_done": "base", "pog_set": {"g_act0_found_base": 1},
+			"movie": "pbdiscovery"},
 		# the HUD tour, docked at Lucrecia's
 		{"say": "a0_m10_dialogue_clay_first_hud", "until_comms": true},
 		{"say": "a0_m10_dialogue_clay_top_right", "until_comms": true},

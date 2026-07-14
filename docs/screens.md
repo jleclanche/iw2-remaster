@@ -259,3 +259,114 @@ presentation stub, so the begin/finish-editing callbacks never fire — the
 original's own Increment/Decrement handlers are the wired path); the credits play
 no music and no movie backdrop. (The add-cargo screen's inability to pre-select
 the currently-fitted pod on entry is fixed: the builder now scans a real list.)
+
+## For original.md
+
+### Lucrecia's Base — the home base (task #70)
+
+Everything below is recovered from `data/pogsrc/ibacktobase.pog`, the base
+overlay-manager `icSPPlayerBaseScreen` in `bin/release/iwar2.dll`, and the
+shipped `defaults.ini`. Implemented in `game/scripts/base_interior.gd`
+(`BaseInterior`), wired through `main.gd`, drawn by `base_screens.gd`, driven
+headlessly by `checks.gd --basecheck` (20 assertions, ALL PASS).
+
+**1. Contact-list presence and "finding it first."** The base is one entity,
+`"Lucrecia's Base"`, present in three systems' JSON (hoffers_wake, santa_romera,
+formhault). `iBackToBase.Initialise` (ibacktobase.pog:160) hides it on sensors
+in all three and shows it only in `g_player_base_system`
+(`isim.SetSensorVisibility`), and only once the act's found-base flag is set:
+act 0 gates on `g_act0_found_base`, act 1 on `g_act1_found_base`, act 2+ is
+always known. The flags are set at the end of the mission that walks you to the
+base — `iact0mission10` (port line 653: `SetBool("g_act0_found_base",1)` +
+`/movies/PBDiscovery`) and `iact1mission01` (port 749: `g_act1_found_base` +
+`/movies/PB_Beauty`). Before the flag, the leading mission still puts the base
+on sensors with `isim.SetStandardSensorVisibility(base,1)` so you can fly to it —
+that is `mission.gd`'s `reveal_base` step.
+
+**It moves.** `iStartSystem.MovePlayerBase(from,to)` (istartsystem.pog:1332)
+rewrites `g_player_base_system`, hides the record in the old system and shows the
+one in the new (`igame.MovePlayerBase` + `imapentity.SetHidden`). Itinerary,
+from the ported acts: Hoffer's Wake (istartsystem.pog:494 initial) → Santa
+Romera (iacttwo.gd:6557) → Formhault (iactthree.gd:239) → Santa Romera
+(iactthree.gd:3508 finale).
+
+**2/3. The go-home dock and its cutscene** are `iBackToBase.Detector`
+(ibacktobase.pog:4), a 2.1 s poll. There is no ordinary dockport: inside 200 km
+the detector bolts a `system_refuel_port` "bodge dockport" onto the *player's*
+ship so a dock order is even possible. Inside 20 km with a dock order on the
+base it runs `DockingCutscene`; the ship is placed at base-local (0,0,2900),
+`sim.SetCollision(player,0)`, given a 300 m/s run to a waypoint at base-local
+(0,0,1800) inside the bay, with the bay `door` avatar channel driven 0→1 and
+`base_doors_sound` alongside. The final framing shot's offsets are per hull
+(command_section (-1.1,0,14) … heavy_corvette (-1.1,0,60), switched on
+`isim.Type`). Ends: `EnableBlackout(1)`, place the ship inside the base,
+`gui.SetScreen("icSPPlayerBaseScreen")`, play the shutdown movie
+(`YoungCalShutdown` act 0, else `OldCalShutdown`). Skippable via
+`icutsceneutilities.HandleAbort`/`g_cutscene_skip` — the abort still leaves you
+docked because the ship is placed *after* HandleAbort returns.
+
+**4. The interior is `icSPPlayerBaseScreen`, an `iiGUIOverlayManager`** (iwar2
+`FcRegistry::RegisterClass` @ 0x10023710, ctor @ 0x10024000), NOT a screen. Its
+ctor loads five 3D "diorama" scenes and builds a hash map of hosted screen →
+diorama index (0x100243b7..0x100249f6), then per frame renders one diorama
+behind the GUI and raises `icSPBaseScreen` — the base menu, built by
+`ibasegui.SPBaseScreen` — over it with `FcGame::AddOverlayScreen` @ 0x10024cca
+(this *settles* the inference in original.md §8a that "nothing else can put
+icSPBaseScreen on the stack"). Config is `[icSPPlayerBaseScreen]` in the shipped
+`defaults.ini`:
+
+| diorama | url | localised name (`csv:/text/dioramas`) | scene |
+|---|---|---|---|
+| 0 | `main_bay_url = lws:/avatars/base/setup` | MAIN BAY | setup |
+| 1 | `office_interior_url = …/setup_cal` | CONTROL ROOM | setup_cal |
+| 2 | `jafs_url = …/setup_jafs` | LOADING DOCK | setup_jafs |
+| 3 | `smith_url = …/setup_smith` | WORKSHOP | setup_smith |
+| 4 | `gunbabes_url = …/setup_gb` | CREW LOUNGE | setup_gb |
+
+Also: `fritz_delay = 0.5` (a camera-change flash, 0x10025459), `diorama_delay =
+30` (idle cut to the next room, 0x10024eaa), `lights_global = g_base_lights_on`
+(picks `baselights_normal` vs `baselights_emergency`, 0x10024d35), `dioramas_global
+= g_show_dioramas`. With `g_show_dioramas` clear — the whole campaign — the loader
+only ever loads diorama 0 (0x10024b95), so the interior is the MAIN BAY; the other
+four rooms are a post-campaign reward (`g_show_dioramas` is set only at the end of
+act 3, iactthree.gd:3524). `g_base_lights_on` is 0 until `iPrelude.BaseOnlineHandler`
+("ok the systems are online") powers the base up, so a fresh act-0 base runs on
+emergency lighting. The diorama's own camera is taken from the LightWave scene
+(`avatars/base/Setup*.lws`): its frame-0 world transform and `ZoomFactor` as an
+h-FOV. The clickable room name that cuts to the next diorama (0x10025500) is a
+control of the manager, not of any screen.
+
+**5. Email, cargo, choosing your ship** are all hosted screens of this manager —
+`icSPInboxScreen` (email, diorama 1), `icSPManifestScreen`/`icSPInventoryScreen`
+(cargo, dioramas 3/2), `icSPHangarScreen` (choose your ship, diorama 3),
+`icSPComputerTradingScreen` (diorama 2). Already built by the ported `ibasegui`,
+now reached from the base menu and each swinging the camera to its own diorama.
+
+**6. The AUTOSKIP** (ibacktobase `local_3520`) is the >200 km branch: with a dock
+order, LDS not inhibited, director idle and `g_ibacktobase_level <= 0`, after a
+10 s sanity countdown it `FadeOut`s, teleports the ship to the base
+(`PlaceNear(10000)` then `PlaceRelativeTo(3000,2000,15000)`), opens the landing
+channel, gives it 400 m/s and `FadeIn`s on a 5 s dolly fly-by, then hands to
+`DockingCutscene`. **It is a cut + teleport + one beauty shot — not time
+compression and not an auto-LDS.** `g_ibacktobase_level` is an inhibit counter
+(`Inhibit`/`Allow` ± 1); missions raise it to lock the player at the base.
+
+### The base-screen widget skin — recovered, not styled (task redirect)
+
+The base screens' *look* is also the original's, and it is **data**, not code:
+`igui.SetGUIGlobals` (igui.pog:4) holds the entire skin as POG globals and
+`igui.CreateFancyButton`/`CreateInverseButton`/… hand it to
+`gui.SetWindowStateTextures` / `SetWindowStateColours` / `SetWindowFont` /
+`SetWindowTextFormatting`. Every control is a **three-slice horizontal strip**
+(left cap at natural width / body column stretched / right cap) cut from one
+256×256 atlas (`GUI_texture_request = texture:/images/gui/gui` →
+`data/textures/images/gui/gui.png`), with a *different* strip per state
+(neutral/focused/selected), e.g. the base menu's fancy button is 226×32 with
+neutral art at (0,36)-(39,68), focused (40,36)-(80,68), selected (81,36)-(120,68).
+`SetWindowStateColours` is the per-state text colour (GUI_neutral (0.6,0.451,0),
+GUI_focused (1,0.749,0), GUI_selected (1,0.859,0.278)); the inverse buttons set
+it black over a filled bar. The front end is authored in a fixed 640×480 canvas
+(igui.pog:392 uses the literal 640). `natives/ui.gd` now records
+`SetWindowStateTextures`/`SetShadyBarWidth`/the fonts and formatting;
+`base_screens.gd` blits the named rects and scales the 640×480 canvas to the
+window. The previous hand-picked amber rectangles are gone.

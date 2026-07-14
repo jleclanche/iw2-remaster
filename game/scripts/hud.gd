@@ -261,6 +261,12 @@ func hud_up() -> bool:
 		return false
 	if main.menu != null and main.menu.visible and not main.menu.launched:
 		return false
+	# Inside Lucrecia's Base there is no flight HUD: the base is not the flight
+	# screen with a menu on it, it is icSPPlayerBaseScreen -- a different screen
+	# on the game's screen stack, showing a diorama with the base menu over it.
+	var bi: BaseInterior = main.base_iface
+	if bi != null and bi.open:
+		return false
 	return true
 
 func _draw() -> void:
