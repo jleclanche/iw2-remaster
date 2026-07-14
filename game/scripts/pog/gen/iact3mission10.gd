@@ -154,7 +154,7 @@ func local_790(v0, v1, v2) -> Variant:
 			v4 = 0
 			v5 = sim.cast(p_set.first_element(sim.children(v0)))
 			v6 = iship.find_player_ship()
-			v7 = null
+			v7 = []
 			v7 = list.from_set(sim.children(v0))
 			v9 = list.tail(v7)
 			iai.give_approach_order_advanced(v0, v1, 0.0, 0.0, 0)
@@ -459,12 +459,12 @@ func local_3052(v0, v1, v2, v3) -> Variant:
 			v4 = 1
 			v5 = 0
 			v6 = 0
-			v7 = null
+			v7 = []
 			v8 = imapentity.find_by_name("Remek L-Point")
 			v11 = imapentity.find_by_name("Lucrecia's Base")
 			v12 = iship.create("ini:/sims/ships/utility/snrv", "name_jafs")
 			v13 = iship.cast(sim.find_by_name("a3_m10_name_zero"))
-			v15 = null
+			v15 = []
 			isim.set_indestructable(v12, 1)
 			isim.set_mission_critical(v12, 1)
 			isim.set_faction(v12, ifaction.find("Player"))
@@ -1081,7 +1081,7 @@ func local_12403(v0, v1, v2) -> Variant:
 func local_13835(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = isim.non_planetary_in_radius(isim.cast(v0), 30000.0)
 	await istation.add_reactive_exception(ihabitat.cast(v0))
 	await irangecheck.add_traffic_exception(imapentity.cast(v0))
@@ -1099,7 +1099,7 @@ func local_14105(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(idockport.dockports_of_type(isim.cast(v0), 0, 4))
 	v2 = list.item_count(v1)
 	v3 = 0
@@ -1206,7 +1206,7 @@ func local_16318(v0, v1, v2) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v3 = iship.cast(object.handle_property(v2, "jafs_handle"))
-	v5 = null
+	v5 = []
 	idirector.begin()
 	idirector.set_focus(v3)
 	idirector.set_secondary_focus(v1)

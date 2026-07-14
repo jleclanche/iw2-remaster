@@ -130,6 +130,49 @@ begin/end (they suspend the 64-instruction preemption check), not debug
 markers. `0x45` (`DebugSkip`) is how `debug` statements cost nothing in
 release: the engine takes the jump unless `FcDeveloperMode` is on.
 
+### `NewObject` (`0x3a`) and the OIMP fixups
+
+The fourth thing the interpreter settled, and the one that had been silently
+wrong the longest. `FcScriptTask::Execute` (`flux.dll @ 0x1003b190`), case
+`0x3a`:
+
+```c
+eVar5 = **(eType **)(this + 0x2c);          /* the operand, then pc += 4 */
+*(eType **)(this + 0x2c) = *(eType **)(this + 0x2c) + 1;
+...
+pFVar16 = FiScriptObject::Create(eVar5);    /* flux.dll @ 0x1003a960 */
+**(undefined4 **)(this + 0x38) = pFVar16;   /* pushed; nothing is popped */
+```
+
+`FiScriptObject::Create` is a three-way switch on that enum: **1 ->
+`FcScriptString`, 2 -> `FcScriptList`, 3 -> `FcScriptSet`** (anything else
+returns a null pointer). So `NewObject` pushes a *live, empty* object -- and
+`list l;` in POG source is exactly `NewObject FcScriptList; Store slot`.
+
+The trap is the operand. It reads **0 in every shipped package**, because like
+`Call` it is a *link-time fixup slot*, not data. The `OIMP` chunks carry the
+type name and the list of sites to patch, and the loader
+(`flux.dll @ 0x1003482c`) resolves the name through
+`FiScriptObject::TypeFromName` (`flux.dll @ 0x1003aa30`) and writes the eType
+straight into the code stream:
+
+```c
+pFVar15 = FiScriptObject::TypeFromName(&local_ac);   /* "FcScriptList" -> 2 */
+...
+*(FcPackage **)(fixup_site + *(int *)(local_68 + 0x3c)) = pFVar15;
+```
+
+The `OIMP` layout mirrors `FIMP`: NUL-terminated type name, `u32be` count, then
+`count` `u32be` offsets -- each pointing at the operand slot, i.e. the
+`NewObject` offset + 1. Across the 114 retail packages there are 1095
+`NewObject` sites and exactly 1095 OIMP fixups (546 `FcScriptString`, 379
+`FcScriptList`, 170 `FcScriptSet`), so the correspondence is total.
+
+Taking the operand at face value -- "type 0, always" -- is how both the
+decompiler and the VM ended up creating *nothing*, which is invisible until a
+script hands a fresh list to a native and expects it back full. See
+`docs/pog.md`.
+
 ## Method note
 
 Optimized 2001-era C++ decompiles to dense pointer arithmetic; do not

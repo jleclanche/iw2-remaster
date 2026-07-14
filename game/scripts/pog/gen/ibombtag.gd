@@ -71,8 +71,8 @@ func server_on_update_scores() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v0 = null
-	v5 = null
+	v0 = []
+	v5 = []
 	v7 = group.cast(global.handle("g_bots_handle"))
 	v1 = 0
 	while v1 < group.sim_count(v7):
@@ -269,7 +269,7 @@ func server_player_leave() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = ""
 	v2 = sim.cast(global.handle("g_bomb"))
 	if _pog_eq(sim.parent(v2), v0):
 		sim.detach_child(v0, v2)
@@ -302,10 +302,10 @@ func player_death() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v1 = iship.cast(iship.last_attacker(iship.cast(v0)))
-	v3 = null
-	v5 = null
-	v6 = null
-	v7 = null
+	v3 = ""
+	v5 = ""
+	v6 = ""
+	v7 = ""
 	v7 = object.string_property(v0, "name")
 	await local_1028(iship.cast(v0))
 	await imputils.spawn_killed_player_power_ups(v0)
@@ -349,7 +349,7 @@ func server_player_enter() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
+	v2 = ""
 	if _pog_is_null(imultiplay.server_player_died_count(v0)):
 		v5 = 1
 	else:
@@ -382,8 +382,8 @@ func local_3632(v0, v1, v2) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = null
-	v7 = null
+	v5 = []
+	v7 = []
 	v9 = group.cast(global.handle("mp_respawn_group"))
 	while true:
 		await _pog_wait(2)
@@ -453,11 +453,11 @@ func local_4299() -> Variant:
 	v3 = 0
 	v4 = 0
 	v10 = sim.cast(global.handle("g_arena_centre"))
-	v14 = null
+	v14 = []
 	v15 = ifaction.find("AntiPlayer")
 	v20 = math.random(5.0, 8.0)
 	v23 = global.pog_float("g_arena_radius")
-	v25 = null
+	v25 = ""
 	v1 = 0
 	v25 = text.field("sn_police_21", 0)
 	while true:
@@ -570,9 +570,9 @@ func server_main() -> Variant:
 	var v23: Variant = 0
 	var v24: Variant = 0
 	var v25: Variant = 0
-	v10 = null
-	v11 = null
-	v18 = null
+	v10 = ""
+	v11 = ""
+	v18 = []
 	imultiplay.set_game_type("BT")
 	imultiplay.server_set_sort_mode(0)
 	text.add("csv:/text/multiplayer/ideathmatch")
@@ -677,9 +677,9 @@ func local_8035(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v4 = null
-	v5 = null
-	v7 = null
+	v4 = ""
+	v5 = ""
+	v7 = []
 	v8 = group.cast(global.handle("mp_respawn_group"))
 	await _pog_wait(v0)
 	v6 = iship.find_player_ship()
@@ -756,12 +756,12 @@ func bot_death() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "name")
 	v2 = iship.cast(iship.last_attacker(iship.cast(v0)))
-	v3 = null
-	v4 = null
-	v5 = null
+	v3 = ""
+	v4 = ""
+	v5 = ""
 	await local_1028(iship.cast(v0))
 	if PogRuntime.TRACE:
 		if object.property_exists(v2, "is_bot"):
@@ -824,7 +824,7 @@ func client_taunt_return() -> Variant:
 
 func client_default_taunt1() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(0)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -832,7 +832,7 @@ func client_default_taunt1() -> Variant:
 
 func client_default_taunt2() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(1)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -840,7 +840,7 @@ func client_default_taunt2() -> Variant:
 
 func client_default_taunt3() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(2)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -848,7 +848,7 @@ func client_default_taunt3() -> Variant:
 
 func client_default_taunt4() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(3)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -952,7 +952,7 @@ func client_on_user_message() -> Variant:
 	while true:
 		if _pc == 11971:
 			v5 = sim.find_by_name(text.field("mp_bomb_name", 0))
-			v6 = null
+			v6 = []
 			_pc = 12067
 			continue
 		elif _pc == 12033:
@@ -1157,9 +1157,9 @@ func client_main() -> Variant:
 	var v20: Variant = 0
 	var v21: Variant = 0
 	var v22: Variant = 0
-	v12 = null
-	v13 = null
-	v14 = null
+	v12 = ""
+	v13 = ""
+	v14 = []
 	text.add("csv:/text/multiplayer/ideathmatch")
 	text.add("csv:/text/multiplayer/ibombtag")
 	text.add("csv:/text/ship_names")

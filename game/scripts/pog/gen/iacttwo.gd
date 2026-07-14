@@ -1611,8 +1611,8 @@ func local_18968() -> Variant:
 	var _pc: int = 18968
 	while true:
 		if _pc == 18968:
-			v0 = null
-			v1 = null
+			v0 = []
+			v1 = []
 			v4 = iship.find_player_ship()
 			v5 = imapentity.find_by_name("Eureka System Administration")
 			v7 = 0
@@ -2992,7 +2992,7 @@ func kompira_story_script() -> Variant:
 			v1 = state.find(v0)
 			v3 = 0
 			v4 = iship.find_player_ship()
-			v5 = null
+			v5 = []
 			v7 = 0
 			v8 = 0
 			v9 = 0
@@ -5696,7 +5696,7 @@ func hoffer_creation_handler() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = global.string("g_player_base_system")
 	v2 = imapentity.find_by_name_in_system("Lucrecia's Base", v1)
 	v3 = v2
@@ -6022,9 +6022,9 @@ func local_50472() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v0 = iship.find_player_ship()
-	v1 = null
+	v1 = ""
 	v1 = isim.active_world()
-	v2 = null
+	v2 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.Act2SystemMonitor: starting task up.\n")
 	while true:

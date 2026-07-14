@@ -264,7 +264,7 @@ func local_2357(v0, v1, v2) -> Variant:
 	v3 = 0
 	v4 = 0
 	v5 = 0
-	v6 = null
+	v6 = []
 	v10 = imapentity.find_by_name("Lucrecia's Base")
 	v13 = object.float_property(imapentity.find_by_name("The Effrit"), "radius")
 	v16 = await icutsceneutilities.get_kill_group()

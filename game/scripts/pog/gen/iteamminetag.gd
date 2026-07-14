@@ -160,8 +160,8 @@ func server_on_update_scores() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v0 = null
-	v5 = null
+	v0 = []
+	v5 = []
 	imultiplay.add_bot_end_game_info("DUMMYSCORE", "", global.pog_int("ATeamOre"), global.pog_int("BTeamOre"), 0)
 	v7 = group.cast(global.handle("g_bots_a_handle"))
 	v1 = 0
@@ -219,7 +219,7 @@ func server_on_user_message() -> Variant:
 	var _pc: int = 2021
 	while true:
 		if _pc == 2021:
-			v5 = null
+			v5 = ""
 			v6 = group.cast(global.handle("mp_respawn_group"))
 			v13 = ifaction.find(text.field("mp_flag_team_b", 0))
 			v14 = ifaction.find(text.field("mp_flag_team_a", 0))
@@ -454,7 +454,7 @@ func server_on_user_message() -> Variant:
 func server_player_leave() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "name")
 	v1 = string.join(v1, "+ : +")
 	v1 = string.join(v1, "mp_frag_player_left")
@@ -501,10 +501,10 @@ func player_death() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
-	v3 = null
-	v4 = null
-	v5 = null
+	v1 = ""
+	v3 = ""
+	v4 = ""
+	v5 = ""
 	v5 = object.string_property(v0, "name")
 	v6 = iship.cast(iship.last_attacker(iship.cast(v0)))
 	v8 = isim.faction(isim.cast(v0))
@@ -576,11 +576,11 @@ func server_player_enter() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v1 = null
+	v1 = ""
 	v6 = group.cast(global.handle("g_tag_group"))
 	v8 = group.cast(global.handle("mp_respawn_group"))
-	v9 = null
-	v10 = null
+	v9 = ""
+	v10 = ""
 	if _pog_is_null(imultiplay.server_player_died_count(v0)):
 		v4 = 1
 	else:
@@ -632,8 +632,8 @@ func local_6685(v0, v1, v2) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = null
-	v8 = null
+	v5 = []
+	v8 = []
 	v9 = group.cast(global.handle("mp_respawn_group"))
 	while true:
 		await _pog_wait(2)
@@ -718,8 +718,8 @@ func server_main() -> Variant:
 	var v29: Variant = 0
 	var v30: Variant = 0
 	var v31: Variant = 0
-	v10 = null
-	v11 = null
+	v10 = ""
+	v11 = ""
 	v18 = group.create()
 	imultiplay.set_game_type("TMT")
 	imultiplay.server_set_sort_mode(0)
@@ -819,7 +819,7 @@ func local_9718(v0, v1, v2, v3, v4, v5) -> Variant:
 
 func local_9997(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v2 = ifaction.pog_name(isim.faction(iship.find_player_ship()))
 	if _pog_eq(v1, v2):
 		gui.set_window_state_colours(v0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0)
@@ -875,20 +875,20 @@ func local_10219() -> Variant:
 	var v43: Variant = 0
 	var v44: Variant = 0
 	var v45: Variant = 0
-	v7 = null
-	v8 = null
-	v12 = null
-	v13 = null
-	v18 = null
-	v19 = null
+	v7 = ""
+	v8 = ""
+	v12 = ""
+	v13 = ""
+	v18 = []
+	v19 = ""
 	v19 = global.string("type_font")
-	v20 = null
-	v21 = null
-	v22 = null
-	v23 = null
-	v24 = null
-	v25 = null
-	v26 = null
+	v20 = []
+	v21 = []
+	v22 = []
+	v23 = []
+	v24 = []
+	v25 = []
+	v26 = []
 	v32 = 200
 	v33 = 100
 	v34 = 60
@@ -897,8 +897,8 @@ func local_10219() -> Variant:
 	v37 = 10
 	v38 = 5
 	v39 = 150
-	v42 = null
-	v43 = null
+	v42 = ""
+	v43 = ""
 	gui.stop_all_movies()
 	if imultiplay.is_game_ended():
 		idirector.begin()
@@ -1033,8 +1033,8 @@ func local_13199() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
-	v3 = null
+	v2 = ""
+	v3 = ""
 	v6 = group.cast(global.handle("mp_respawn_group"))
 	v4 = iship.find_player_ship()
 	if not _pog_is_null(v4):
@@ -1137,12 +1137,12 @@ func bot_death() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "name")
 	v2 = iship.cast(iship.last_attacker(iship.cast(v0)))
-	v3 = null
-	v4 = null
-	v5 = null
+	v3 = ""
+	v4 = ""
+	v5 = ""
 	await local_839(iship.cast(v0))
 	await local_108(v2)
 	if PogRuntime.TRACE:
@@ -1194,7 +1194,7 @@ func client_taunt_return() -> Variant:
 
 func client_default_taunt1() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(0)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1202,7 +1202,7 @@ func client_default_taunt1() -> Variant:
 
 func client_default_taunt2() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(1)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1210,7 +1210,7 @@ func client_default_taunt2() -> Variant:
 
 func client_default_taunt3() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(2)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1218,7 +1218,7 @@ func client_default_taunt3() -> Variant:
 
 func client_default_taunt4() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(3)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1302,7 +1302,7 @@ func client_on_user_message() -> Variant:
 			v5 = iship.find_player_ship()
 			v7 = ifaction.find(text.field("mp_flag_team_b", 0))
 			v8 = ifaction.find(text.field("mp_flag_team_a", 0))
-			v9 = null
+			v9 = ""
 			_pc = 19563
 			continue
 		elif _pc == 17224:
@@ -1661,7 +1661,7 @@ func local_19702(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
+	v2 = ""
 	v2 = string.join("Drone Spawn", string.from_int(v1))
 	v4 = sim.find_by_name(v2)
 	if _pog_is_null(v4):
@@ -1704,7 +1704,7 @@ func local_20418(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v2 = null
+	v2 = []
 	v4 = group.create()
 	v10 = 0
 	v6 = 0
@@ -1818,9 +1818,9 @@ func client_main() -> Variant:
 	var v22: Variant = 0
 	var v23: Variant = 0
 	var v24: Variant = 0
-	v14 = null
-	v15 = null
-	v16 = null
+	v14 = ""
+	v15 = ""
+	v16 = []
 	v20 = group.create()
 	text.add("csv:/text/multiplayer/iCaptureTheFlag")
 	text.add("csv:/text/multiplayer/iDeathMatch")

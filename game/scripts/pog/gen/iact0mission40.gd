@@ -130,7 +130,7 @@ func wolfgang_dialogue_handler(v0, v1) -> Variant:
 			v2 = 0
 			v3 = 0
 			v4 = 0
-			v5 = null
+			v5 = []
 			v7 = iship.find_player_ship()
 			_pc = 565
 			continue

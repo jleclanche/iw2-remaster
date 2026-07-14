@@ -120,9 +120,9 @@ func local_326() -> Variant:
 		await stub()
 	return
 	v4 = 0
-	v5 = null
-	v6 = null
-	v9 = null
+	v5 = ""
+	v6 = ""
+	v9 = []
 	v12 = ifaction.find("Marauders")
 	while true:
 		await _pog_wait(1)
@@ -451,7 +451,7 @@ func local_4069(v0, v1, v2, v3, v4) -> Variant:
 	v10 = 0
 	v11 = 0
 	v12 = 0
-	v13 = null
+	v13 = []
 	v13 = imapentity.system_lagrange_points()
 	v14 = await iutilities.create_waypoint_relative_to(v1, 1000.0, 500.0, 500.0)
 	while true:

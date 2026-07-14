@@ -817,7 +817,7 @@ func local_6980(v0, v1) -> Variant:
 	v15 = await iwingmen.group()
 	v19 = group.create()
 	v20 = ifaction.find("Marauders")
-	v21 = null
+	v21 = []
 	v23 = 0
 	v24 = 0
 	v25 = 0
@@ -1038,7 +1038,7 @@ func local_11400(v0) -> Variant:
 	v3 = 0
 	v4 = isim.cast(imapentity.find_by_name("Blackeye L-point"))
 	v6 = await iwingmen.group()
-	v8 = null
+	v8 = []
 	v1 = iship.create("ini:/sims/ships/navy/old_destroyer", await ishipcreation.ship_name("Marauders", 39))
 	sim.set_cullable(v1, 0)
 	isim.set_faction(v1, v2)

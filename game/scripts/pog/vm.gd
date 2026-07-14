@@ -107,6 +107,10 @@ class PogPackage:
 	##   {"native": Callable} or {"pkg": PogPackage, "entry": int}
 	var links: Dictionary = {}
 	var raw_imports: Dictionary = {}   ## offset(int) -> "pkg.Func"
+	## NewObject offset -> the type it constructs. The operand is a link-time
+	## fixup (zero in the file); the OIMP chunk names the type. See
+	## tools/iw2/pogexport.py.
+	var objects: Dictionary = {}
 
 
 class PogTask:
@@ -187,6 +191,7 @@ func load_package(name: String) -> PogPackage:
 	p.strings = PackedStringArray(d.get("strings", []))
 	p.exports = d.get("exports", {})
 	p.raw_imports = d.get("imports", {})
+	p.objects = d.get("objects", {})
 	p.code = Marshalls.base64_to_raw(d.get("code", ""))
 	packages[key] = p
 	_link(p)
@@ -475,8 +480,15 @@ func _execute(t: PogTask, deadline: int) -> void:
 			OP_TO_BOOL:
 				s[-1] = 1 if _truthy(s[-1]) else 0
 			OP_NEW_OBJECT:
-				t.pc += 4          # only type 0 (a bare object slot) is ever used
-				s.push_back(null)
+				# FcScriptTask::Execute (flux @ 0x1003b190) case 0x3a pushes
+				# FiScriptObject::Create(type) -- a *live* empty object, which
+				# the natives handed it then fill in place. The operand is a
+				# link-time fixup and reads 0 here, so the type comes from the
+				# OIMP table instead. A POG list and a POG set are both an
+				# Array (natives/std.gd), a POG string is a String.
+				var kind: String = t.pkg.objects.get(str(t.pc - 1), "FcScriptList")
+				t.pc += 4
+				s.push_back("" if kind == "FcScriptString" else [])
 			OP_MARK_OBJECT, OP_DELETE_MARKED:
 				pass               # engine-side object-scope GC; Godot refcounts
 			OP_STORE_OBJECT:

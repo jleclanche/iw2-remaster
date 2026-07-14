@@ -52,8 +52,8 @@ func ship_name(v0, v1) -> Variant:
 	var v6: Variant = 0
 	v2 = inifile.cast(global.handle("g_ship_names_ini"))
 	v4 = inifile.pog_int(v2, v0, "NumberOfEntries", -1)
-	v5 = null
-	v6 = null
+	v5 = ""
+	v6 = ""
 	if v4 == -1:
 		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation.ShipName: ERROR! Unable to read the number of entries of category '")
@@ -160,7 +160,7 @@ func create_megapod_cargo(v0, v1, v2) -> Variant:
 	while true:
 		if _pc == 1726:
 			v3 = group.create()
-			v6 = null
+			v6 = ""
 			object.set_int_property(v7, "number_small_pods", v1)
 			object.set_int_property(v7, "type_cargo", v2)
 			v8 = 0
@@ -12297,8 +12297,8 @@ func create_character_group(v0, v1, v2, v3, v4) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	v6 = group.create()
-	v7 = null
-	v8 = null
+	v7 = ""
+	v8 = ""
 	v10 = 1
 	v11 = 0
 	v12 = 0
@@ -12347,7 +12347,7 @@ func local_21809(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = null
+	v2 = ""
 	v2 = "ini:/sims/ships/utility/megapod_open_rotated"
 	v4 = math.random_int(4, 8)
 	v5 = 0
@@ -12388,10 +12388,10 @@ func create_supply_cargo(v0, v1) -> Variant:
 			v5 = 0
 			v6 = 0
 			v8 = 1
-			v11 = null
-			v12 = null
-			v14 = null
-			v15 = null
+			v11 = []
+			v12 = []
+			v14 = ""
+			v15 = ""
 			v2 = object.add_int_property(v0, "cargo_origin", v1)
 			if _pog_is_null(v2):
 				_pc = 22362
@@ -12580,9 +12580,9 @@ func create_trade_cargo(v0, v1) -> Variant:
 	v6 = 0
 	v7 = 5
 	v8 = 1
-	v11 = null
-	v12 = null
-	v15 = null
+	v11 = []
+	v12 = []
+	v15 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iShipCreation: Creating Trade cargo of type ")
 		debug.print_string(v1)
@@ -12648,15 +12648,15 @@ func create_haulage_cargo(v0, v1) -> Variant:
 	var _pc: int = 24532
 	while true:
 		if _pc == 24532:
-			v3 = null
+			v3 = ""
 			v3 = await iutilities.from_location_enum(v1)
 			v7 = 0
 			v8 = 0
 			v10 = 1
-			v13 = null
-			v14 = null
-			v16 = null
-			v18 = null
+			v13 = []
+			v14 = []
+			v16 = ""
+			v18 = ""
 			_pc = 24707
 			continue
 		elif _pc == 24644:
@@ -12820,10 +12820,10 @@ func return_supply_cargo() -> Variant:
 			v5 = 0
 			v6 = 0
 			v8 = 1
-			v11 = null
-			v12 = null
-			v14 = null
-			v15 = null
+			v11 = []
+			v12 = []
+			v14 = ""
+			v15 = ""
 			v2 = object.add_int_property(v0, "cargo_origin", v1)
 			if _pog_is_null(v2):
 				_pc = 25883
@@ -12995,9 +12995,9 @@ func return_trade_cargo() -> Variant:
 	v6 = 0
 	v7 = 5
 	v8 = 1
-	v11 = null
-	v12 = null
-	v15 = null
+	v11 = []
+	v12 = []
+	v15 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iShipCreation: Creating Trade cargo of type ")
 		debug.print_string(v1)
@@ -13066,15 +13066,15 @@ func return_haulage_cargo(v0, v1) -> Variant:
 	var _pc: int = 28016
 	while true:
 		if _pc == 28016:
-			v3 = null
+			v3 = ""
 			v3 = await iutilities.from_location_enum(v1)
 			v7 = 0
 			v8 = 0
 			v10 = 1
-			v13 = null
-			v14 = null
-			v16 = null
-			v18 = null
+			v13 = []
+			v14 = []
+			v16 = ""
+			v18 = ""
 			_pc = 28191
 			continue
 		elif _pc == 28128:
@@ -13204,8 +13204,8 @@ func get_traffic(v0, v1, v2) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	v4 = group.create()
-	v5 = null
-	v6 = null
+	v5 = ""
+	v6 = ""
 	v8 = 1
 	v9 = 0
 	v10 = 0

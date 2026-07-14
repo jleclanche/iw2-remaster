@@ -116,7 +116,7 @@ func local_624(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(isim.sims_in_radius(isim.cast(v0), 100000.0, 8192))
 	v3 = list.item_count(v1)
 	if PogRuntime.TRACE:
@@ -145,7 +145,7 @@ func gangster_war_generator() -> Variant:
 	var _pc: int = 903
 	while true:
 		if _pc == 903:
-			v4 = null
+			v4 = []
 			v5 = global.pog_float("g_player_sensor_range")
 			v9 = self
 			await _pog_wait(math.random(0.10000000149011612, 0.8999999761581421))
@@ -421,7 +421,7 @@ func local_3175() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = ifaction.all()
 	v1 = ifaction.find("Player")
 	v2 = list.item_count(v0)
@@ -760,7 +760,7 @@ func local_5391() -> Variant:
 
 func local_5468(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = null
+	v3 = ""
 	v3 = string.join("stock_", v0)
 	v3 = string.join(v3, "_")
 	v3 = string.join(v3, string.from_int(v2))
@@ -790,9 +790,9 @@ func local_5708(v0) -> Variant:
 	v2 = 0
 	v5 = group.create()
 	v6 = group.create()
-	v7 = null
+	v7 = ""
 	v12 = math.random_int(1, 4)
-	v13 = null
+	v13 = ""
 	v13 = await local_5391()
 	v9 = math.random_int(0, 3)
 	v5 = await local_2783(v0)

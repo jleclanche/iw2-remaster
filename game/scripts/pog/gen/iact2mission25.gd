@@ -676,7 +676,7 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			v14 = 5000.0
 			v15 = 30000.0
 			v17 = 0
-			v18 = null
+			v18 = ""
 			if group.sim_count(v2) < v3:
 				_pc = 10735
 				continue
@@ -1728,7 +1728,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 	await ibacktobase.allow()
 	group.destroy(v5, 0)
 	return
-	v2 = null
+	v2 = []
 	v2 = isim.sims_in_radius(v0, v1, 536838144)
 	v4 = iship.find_player_ship()
 	v5 = isim.faction(v0)

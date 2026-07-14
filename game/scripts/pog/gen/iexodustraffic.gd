@@ -95,14 +95,14 @@ func exodus_traffic_generator() -> Variant:
 		if _pc == 32:
 			v0 = global.pog_float("g_player_sensor_range")
 			v1 = iship.find_player_ship()
-			v5 = null
-			v16 = null
+			v5 = []
+			v16 = []
 			v20 = imapentity.find_by_name_in_system("Formhault System Administration Centre", "map:/geog/gagarin/formhault")
 			v21 = await local_0()
-			v22 = null
-			v23 = null
+			v22 = []
+			v23 = []
 			v24 = 0
-			v25 = null
+			v25 = ""
 			v29 = 25
 			v30 = 999
 			v31 = 5000
@@ -662,8 +662,8 @@ func create_fomalhaut_refugees(v0) -> Variant:
 	while true:
 		if _pc == 2921:
 			v1 = group.create()
-			v5 = null
-			v6 = null
+			v5 = []
+			v6 = []
 			_pc = 2993
 			continue
 		elif _pc == 2972:
@@ -790,8 +790,8 @@ func disable_all_traffic_in_system(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
-	v4 = null
+	v3 = []
+	v4 = []
 	v3 = imapentity.system_habitats_in_system(v0)
 	v4 = list.from_set(v3)
 	v1 = 0
@@ -822,7 +822,7 @@ func create_magic_cube_relative_to(v0, v1, v2, v3) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	v4 = null
+	v4 = []
 	v10 = 750000.0
 	v14 = 5
 	v15 = 0
@@ -1649,11 +1649,11 @@ func local_9230(v0, v1) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	v2 = group.sim_count(v0)
-	v4 = null
+	v4 = ""
 	v7 = iship.find_player_ship()
-	v9 = null
-	v10 = null
-	v11 = null
+	v9 = []
+	v10 = []
+	v11 = []
 	v14 = imapentity.find_by_name_in_system("Formhault System Administration Centre", "map:/geog/gagarin/formhault")
 	v4 = isim.world_name(isim.cast(group.leader(v0)))
 	v5 = await local_8094(v4)
@@ -1990,8 +1990,8 @@ func local_11658(v0, v1) -> Variant:
 func local_12945(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
-	v2 = null
+	v1 = []
+	v2 = ""
 	if not (ilagrangepoint.interstellar(v0)):
 		return _pog_clone(v1)
 	v2 = isim.world_name(v0)
@@ -2084,7 +2084,7 @@ func local_14564(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
+	v4 = []
 	v2 = sim.distance_between_centres(v0, v1) / 9.0
 	v5 = isim.cast(await iutilities.create_waypoint_at(v0))
 	v3 = 0.0
@@ -2120,9 +2120,9 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 		if _pc == 14890:
 			v3 = iship.find_player_ship()
 			v5 = group.sim_count(v0)
-			v6 = null
-			v7 = null
-			v8 = null
+			v6 = []
+			v7 = []
+			v8 = []
 			v9 = 0
 			v15 = ifaction.find("Police")
 			v16 = ifaction.find("Navy")
@@ -2491,9 +2491,9 @@ func police_retreat_orders(v0, v1) -> Variant:
 			v9 = iship.find_player_ship()
 			v10 = iship.cast(group.leader(v0))
 			v14 = group.sim_count(v0)
-			v16 = null
-			v17 = null
-			v18 = null
+			v16 = []
+			v17 = []
+			v18 = []
 			v13 = state.find(self)
 			if _pog_is_null(v13):
 				_pc = 17351
@@ -3414,7 +3414,7 @@ func local_20008(v0, v1) -> Variant:
 
 func local_22555(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = imapentity.system_lagrange_points_in_system(isim.world_name(v0))
 	p_set.remove(v1, v0)
 	if not (ilagrangepoint.interstellar(v0)):

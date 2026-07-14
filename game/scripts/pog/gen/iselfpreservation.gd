@@ -52,11 +52,11 @@ func surrender() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = null
+	v4 = []
 	v4 = imapentity.system_habitats()
-	v5 = null
-	v8 = null
-	v10 = null
+	v5 = []
+	v8 = ""
+	v10 = []
 	v10 = list.from_set(sim.children(v0))
 	iai.purge_orders(v0)
 	v7 = await local_0()

@@ -45,7 +45,7 @@ func _link() -> void:
 func local_0(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
+	v3 = ""
 	v4 = 0
 	while true:
 		v3 = inifile.numbered_string(v0, v1, v2, v4, "moo")
@@ -67,8 +67,8 @@ func create_bot_ships(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v13: Variant = 0
 	v6 = group.create()
 	v8 = inifile.create(v0)
-	v9 = null
-	v10 = null
+	v9 = ""
+	v10 = ""
 	v11 = 0
 	if _pog_is_null(v8):
 		if PogRuntime.TRACE:
@@ -170,7 +170,7 @@ func local_2018(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v2 = isim.cast(v1)
-	v4 = null
+	v4 = []
 	while true:
 		v3 = isim.cast(p_set.first_element(v0))
 		if ifaction.feeling(isim.faction(v1), isim.faction(v3)) <= 0.0 and not (object.property_exists(v3, "poo")):
@@ -189,7 +189,7 @@ func local_2303(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = list.from_set(v0)
 	v4 = list.item_count(v2)
 	v5 = 0
@@ -209,7 +209,7 @@ func local_2705(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.sort_by_int_property(v0, "frag_count")
 	v2 = list.item_count(v1)
 	if v2 > 2:
@@ -233,9 +233,9 @@ func local_3030(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = isim.ships_in_radius(isim.cast(v1), v2)
-	v4 = null
+	v4 = []
 	p_set.remove(v3, v0)
 	v3 = await local_2018(v3, v0)
 	v4 = await local_2303(v3, v0)
@@ -263,7 +263,7 @@ func local_3530(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = list.from_set(isim.sims_in_radius(isim.cast(v0), v1, 1073741824))
 	v5 = list.item_count(v3)
 	if _pog_is_null(v5):
@@ -346,7 +346,7 @@ func local_4772(v0) -> Variant:
 	v2 = 0
 	v3 = sim.cast(global.handle("g_arena_centre"))
 	v4 = global.pog_float("g_arena_radius")
-	v7 = null
+	v7 = ""
 	if ifaction.find(text.field("mp_flag_team_a", 0)):
 		v5 = isim.cast(sim.find_by_name(text.field("mp_flag_a_flag_name", 0)))
 		v6 = isim.cast(sim.find_by_name(text.field("mp_flag_b_flag_name", 0)))
@@ -409,9 +409,9 @@ func local_6162(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = isim.ships_in_radius(isim.cast(v1), v2)
-	v4 = null
+	v4 = []
 	p_set.remove(v3, v0)
 	v4 = await local_2303(v3, v0)
 	v6 = list.item_count(v4)

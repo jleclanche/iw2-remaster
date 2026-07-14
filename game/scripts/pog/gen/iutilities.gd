@@ -62,8 +62,8 @@ func clean_inactive_map_entities() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v0 = null
-	v1 = null
+	v0 = []
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
 	v8 = p_set.item_count(v1)
 	while true:
@@ -97,7 +97,7 @@ func clean_inactive_map_entities() -> Variant:
 func filter_on_friendly_habitats(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = list.from_set(v0)
 	if p_set.is_empty(v0):
 		if PogRuntime.TRACE:
@@ -123,8 +123,8 @@ func filter_on_friendly_sims() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
-	v5 = null
+	v4 = []
+	v5 = []
 	v5 = list.from_set(v0)
 	v3 = list.item_count(v5)
 	v2 = 0
@@ -618,7 +618,7 @@ func find_number_of_i_n_i_entries(v0, v1, v2) -> Variant:
 func get_cargo_name_from_i_n_i(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v1 = inifile.create(v0)
 	if _pog_is_null(v1):
 		if PogRuntime.TRACE:
@@ -635,7 +635,7 @@ func pick_random_location_of_type() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(imapentity.system_habitats())
 	v2 = 0
 	while v2 < list.item_count(v1):
@@ -825,9 +825,9 @@ func get_surface_locations_from_orbital() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
-	v3 = null
-	v4 = null
+	v2 = []
+	v3 = []
+	v4 = []
 	v2 = imapentity.system_habitats()
 	v1 = imapentity.parent(imapentity.cast(v0))
 	if PogRuntime.TRACE:
@@ -1966,7 +1966,7 @@ func capsule_jump_player(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	v1 = iship.find_player_ship()
-	v2 = null
+	v2 = ""
 	v2 = isim.world_name(v0)
 	isim.capsule_jump(isim.cast(v1), v0)
 	while true:
@@ -2040,7 +2040,7 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v6 = null
+	v6 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iUtilities.CapsuleJumpGroup: Waiting ")
 		debug.print_float(v2)
@@ -2118,7 +2118,7 @@ func list_from_compound_group(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = null
+	v1 = []
 	v5 = group.group_count(v0)
 	v3 = group.sim_count(v0)
 	v4 = 0
@@ -2194,7 +2194,7 @@ func create_player(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v2 = iship.find_player_ship()
-	v3 = null
+	v3 = ""
 	v3 = global.string("g_player_ship_name")
 	if PogRuntime.TRACE:
 		if _pog_is_null(v1):
@@ -2234,7 +2234,7 @@ func convert_seconds_to_time(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
+	v3 = ""
 	v1 = await local_24642(v0)
 	v3 = string.join(string.from_int(v1), ":")
 	v2 = await local_24657(v1, v0)

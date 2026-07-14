@@ -241,7 +241,7 @@ func mission_handler() -> Variant:
 	v48 = 0
 	v49 = 1
 	v50 = state.find(self)
-	v52 = null
+	v52 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iAct1Mission07.MissionHandler: STARTED\n")
 	await imissiontracker.add_mission(self, 1, 7)
@@ -811,9 +811,9 @@ func local_13984(v0, v1, v2, v3, v4) -> Variant:
 	var _pc: int = 13984
 	while true:
 		if _pc == 13984:
-			v5 = null
-			v6 = null
-			v7 = null
+			v5 = ""
+			v6 = ""
+			v7 = ""
 			v8 = object.int_property(v0, "armed_gunstar_count")
 			isim.set_docking_lock(v1, v2, 1)
 			_pc = 14269

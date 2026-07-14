@@ -50,8 +50,8 @@ func detector() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v2 = null
-	v6 = null
+	v2 = ""
+	v6 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iBackToBase.Detector started searching.\n")
 	while true:

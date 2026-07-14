@@ -422,7 +422,7 @@ func local_6393(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v7 = ifaction.find("Marauders")
-	v8 = null
+	v8 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iAct2Mission24.monitor_player: STARTED\n")
 	while true:
@@ -497,9 +497,9 @@ func local_7811(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = list.from_set(v0)
-	v3 = null
+	v3 = []
 	v5 = 0
 	while v5 < list.item_count(v2):
 		v4 = isim.cast(list.get_nth(v2, v5))
@@ -1004,7 +1004,7 @@ func local_17863(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	v3 = group.create()
 	v6 = 0
-	v7 = null
+	v7 = ""
 	v8 = ifaction.find("Marauders")
 	v5 = 1
 	while v5 <= v1:
@@ -1051,7 +1051,7 @@ func local_18583(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v11: Variant = 0
 	v6 = group.create()
 	v9 = 0
-	v10 = null
+	v10 = ""
 	v11 = ifaction.find("Marauders")
 	v8 = 1
 	while v8 <= v2:
@@ -1075,7 +1075,7 @@ func local_18896(v0, v1, v2, v3) -> Variant:
 	var v10: Variant = 0
 	v4 = group.create()
 	v7 = 0
-	v8 = null
+	v8 = ""
 	v9 = ifaction.find("Independent")
 	v6 = 1
 	while v6 <= v1:

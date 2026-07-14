@@ -33,7 +33,7 @@ func valid_ship_count() -> Variant:
 func valid_ship_display_name(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v1 = inifile.create(imultiplay.server_ship_list_item(v0))
 	v2 = string.upper_case(inifile.string(v1, "Properties", "name", ""))
 	inifile.destroy(v1)
@@ -82,9 +82,9 @@ func local_592(v0, v1, v2, v3) -> Variant:
 	v14 = 13
 	v21 = global.pog_int("GUI_listbox_entryheight")
 	v22 = 5
-	v23 = null
+	v23 = ""
 	v23 = global.string("type_font")
-	v24 = null
+	v24 = ""
 	v24 = global.string("type_font")
 	v4 = gui.create_window(0, 0, v10, global.pog_int("GUI_listbox_entryheight"), 0)
 	v16 = v14
@@ -124,8 +124,8 @@ func multiplay_score_screen() -> Variant:
 	var v20: Variant = 0
 	var v21: Variant = 0
 	var v22: Variant = 0
-	v1 = null
-	v2 = null
+	v1 = []
+	v2 = []
 	v4 = 135
 	v5 = 63
 	v6 = 220
@@ -137,9 +137,9 @@ func multiplay_score_screen() -> Variant:
 	v14 = 200
 	v15 = 100
 	v16 = 100
-	v17 = null
-	v18 = null
-	v20 = null
+	v17 = ""
+	v18 = ""
+	v20 = ""
 	gui.stop_all_movies()
 	if imultiplay.is_game_ended():
 		idirector.begin()

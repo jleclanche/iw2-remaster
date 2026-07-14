@@ -135,8 +135,8 @@ func server_on_update_scores() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v0 = null
-	v5 = null
+	v0 = []
+	v5 = []
 	v7 = group.cast(global.handle("g_bots_handle"))
 	v1 = 0
 	while v1 < group.sim_count(v7):
@@ -318,7 +318,7 @@ func server_on_user_message() -> Variant:
 func server_player_leave() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "name")
 	v1 = string.join(v1, "+ : +")
 	v1 = string.join(v1, "mp_frag_player_left")
@@ -375,10 +375,10 @@ func player_death() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
-	v3 = null
-	v4 = null
-	v5 = null
+	v1 = ""
+	v3 = ""
+	v4 = ""
+	v5 = ""
 	v5 = object.string_property(v0, "name")
 	v6 = iship.cast(iship.last_attacker(iship.cast(v0)))
 	await local_2206(v0)
@@ -409,7 +409,7 @@ func server_player_enter() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v2 = null
+	v2 = ""
 	v7 = group.cast(global.handle("g_tag_group"))
 	if _pog_is_null(imultiplay.server_player_died_count(v0)):
 		v5 = 1
@@ -450,8 +450,8 @@ func local_4231(v0, v1, v2) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = null
-	v8 = null
+	v5 = []
+	v8 = []
 	v9 = group.cast(global.handle("mp_respawn_group"))
 	while true:
 		await _pog_wait(2)
@@ -517,9 +517,9 @@ func server_main() -> Variant:
 	var v25: Variant = 0
 	var v26: Variant = 0
 	var v27: Variant = 0
-	v10 = null
-	v11 = null
-	v18 = null
+	v10 = ""
+	v11 = ""
+	v18 = []
 	imultiplay.set_game_type("MT")
 	imultiplay.server_set_sort_mode(0)
 	text.add("csv:/text/multiplayer/iDeathMatch")
@@ -648,17 +648,17 @@ func local_6862() -> Variant:
 	var v37: Variant = 0
 	var v38: Variant = 0
 	var v39: Variant = 0
-	v7 = null
-	v11 = null
-	v12 = null
-	v17 = null
-	v18 = null
+	v7 = ""
+	v11 = ""
+	v12 = ""
+	v17 = []
+	v18 = ""
 	v18 = global.string("type_font")
-	v19 = null
-	v20 = null
-	v21 = null
-	v22 = null
-	v23 = null
+	v19 = []
+	v20 = []
+	v21 = []
+	v22 = []
+	v23 = []
 	v28 = 200
 	v29 = 100
 	v30 = 90
@@ -666,9 +666,9 @@ func local_6862() -> Variant:
 	v32 = 60
 	v33 = 10
 	v34 = 5
-	v37 = null
-	v38 = null
-	v39 = null
+	v37 = ""
+	v38 = ""
+	v39 = ""
 	gui.stop_all_movies()
 	if imultiplay.is_game_ended():
 		idirector.begin()
@@ -767,8 +767,8 @@ func local_8773(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v3 = null
-	v4 = null
+	v3 = ""
+	v4 = ""
 	v6 = group.cast(global.handle("mp_respawn_group"))
 	await _pog_wait(v0)
 	v5 = iship.find_player_ship()
@@ -838,12 +838,12 @@ func bot_death() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "name")
 	v2 = iship.cast(iship.last_attacker(iship.cast(v0)))
-	v3 = null
-	v4 = null
-	v5 = null
+	v3 = ""
+	v4 = ""
+	v5 = ""
 	await local_438(iship.cast(v0))
 	await local_108(v2)
 	if PogRuntime.TRACE:
@@ -895,7 +895,7 @@ func client_taunt_return() -> Variant:
 
 func client_default_taunt1() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(0)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -903,7 +903,7 @@ func client_default_taunt1() -> Variant:
 
 func client_default_taunt2() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(1)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -911,7 +911,7 @@ func client_default_taunt2() -> Variant:
 
 func client_default_taunt3() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(2)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -919,7 +919,7 @@ func client_default_taunt3() -> Variant:
 
 func client_default_taunt4() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(3)
 	imultiplay.client_broadcast_team_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1293,7 +1293,7 @@ func local_14338(v0, v1) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v2 = null
+	v2 = []
 	v4 = group.create()
 	v6 = 0
 	while v6 < group.group_count(v0):
@@ -1323,7 +1323,7 @@ func local_14917() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = null
+	v1 = []
 	while true:
 		await _pog_wait(1)
 		v0 = group.cast(global.handle("g_tag_group"))
@@ -1375,10 +1375,10 @@ func client_main() -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	v14 = null
-	v15 = null
-	v16 = null
-	v19 = null
+	v14 = ""
+	v15 = ""
+	v16 = []
+	v19 = []
 	text.add("csv:/text/multiplayer/iDeathMatch")
 	text.add("csv:/text/multiplayer/iMineTag")
 	text.add("csv:/text/ship_names")

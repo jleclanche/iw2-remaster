@@ -896,7 +896,7 @@ func local_11432(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = list.from_set(isim.sims_in_cylinder(isim.cast(v0), 5000.0, 55000.0, 536838144))
 	v3 = list.item_count(v2)
 	v4 = 0
@@ -1274,7 +1274,7 @@ func local_14775(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(idockport.dockports_of_type(v0, 0, 4))
 	v2 = list.item_count(v1)
 	v3 = 0

@@ -869,7 +869,7 @@ func local_8845(v0, v1) -> Variant:
 func local_9066(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
+	v3 = ""
 	v3 = string.join("a2_m04_shipname_", v1)
 	v2 = 0
 	while v2 < group.sim_count(v0):

@@ -138,7 +138,7 @@ func league_dialogue_monitor(v0, v1, v2) -> Variant:
 			v3 = 0
 			v4 = 0
 			v5 = 0
-			v8 = null
+			v8 = []
 			v9 = iship.cast(group.leader(v0))
 			v12 = ifaction.find("Player")
 			v13 = ifaction.find("League")
@@ -426,7 +426,7 @@ func local_3713(v0, v1, v2) -> Variant:
 		if _pc == 3713:
 			v3 = 0
 			v4 = 0
-			v7 = null
+			v7 = []
 			v8 = iship.cast(sim.find_by_name("a1_m09_name_droid"))
 			v9 = iship.cast(group.leader(v0))
 			v10 = iship.find_player_ship()
@@ -652,7 +652,7 @@ func local_5875(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(sim.children(v0))
 	v2 = list.item_count(v1)
 	v3 = 0
@@ -667,7 +667,7 @@ func local_6100(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(idockport.dockports_of_type(v0, 0, 4))
 	v2 = list.item_count(v1)
 	v3 = 0

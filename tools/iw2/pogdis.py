@@ -20,6 +20,11 @@ slot byte-offsets); MarkObject/DeleteMarkedObjects scope temporary object
 handles; LoadString pushes STAB[i]; DebugSkip jumps past ``debug``
 statements when debugging is off.
 
+NewObject pushes a fresh script object; its operand is *not* data but a
+link-time fixup slot, zero on disk.  The OIMP chunks name the type
+(FcScriptString / FcScriptList / FcScriptSet) and list the sites the linker
+patches, so ``obj_sites[NewObject offset]`` is the type it constructs.
+
 Usage:
     python -m tools.iw2.pogdis <package-name|pkg-path> [-o out.txt]
     python -m tools.iw2.pogdis --all [out_dir]      # every retail package
@@ -120,7 +125,7 @@ def parse_pkg(data: bytes) -> dict:
     assert data[:4] == b"FORM" and data[8:12] == b"PKG ", "not a PKG form"
     off = 12
     pkg: dict = {"name": "?", "exports": {}, "strings": [],
-                 "call_sites": {}, "code": b""}
+                 "call_sites": {}, "obj_sites": {}, "code": b""}
     cur = None
     while off + 8 <= len(data):
         tag = data[off:off + 4]
@@ -135,6 +140,17 @@ def parse_pkg(data: bytes) -> dict:
             (count,) = struct.unpack_from(">I", body, p)
             for site in struct.unpack_from(f">{count}I", body, p + 4):
                 pkg["call_sites"][site] = f"{cur}.{name}"
+        elif tag == b"OIMP":
+            # Object-type import: the *type* a NewObject creates. On disk the
+            # NewObject operand is a zero placeholder; the linker patches each
+            # listed site with FiScriptObject::TypeFromName(name) -- see
+            # flux.dll @ 0x1003482c, which writes the eType straight into the
+            # code stream. The listed offsets are the operand slots, i.e. the
+            # NewObject offset + 1, so key them by the instruction.
+            name, p = _nulstr(body)
+            (count,) = struct.unpack_from(">I", body, p)
+            for site in struct.unpack_from(f">{count}I", body, p + 4):
+                pkg["obj_sites"][site - 1] = name
         elif tag == b"FEXP":
             name, p = _nulstr(body)
             (entry,) = struct.unpack_from(">I", body, p)
@@ -215,6 +231,9 @@ def disassemble(pkg: dict) -> str:
             # <= interval, skip to target; else stamp local[slot] and fall in.
             secs = struct.unpack("<f", struct.pack("<I", args[2]))[0]
             txt = f"TimedJump L{args[0]} slot={args[1]} every={secs:g}s"
+        elif mn == "NewObject":
+            # the operand is a link-time fixup slot, not data: 0 on disk
+            txt = "NewObject %s" % pkg["obj_sites"].get(off, "?unlinked?")
         elif mn == "LoadString":
             idx = args[0]
             s = pkg["strings"][idx] if idx < len(pkg["strings"]) else "?"

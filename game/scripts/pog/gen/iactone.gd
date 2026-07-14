@@ -1630,7 +1630,7 @@ func haven_station_introduction() -> Variant:
 			v2 = iship.find_player_ship()
 			v4 = 0
 			v5 = 0
-			v6 = null
+			v6 = []
 			v10 = 1
 			v11 = await icutsceneutilities.get_kill_group()
 			global.create_bool("g_act1_haven_station_visited", 2, 0)
@@ -3639,7 +3639,7 @@ func local_35213(v0) -> Variant:
 	var _pc: int = 35213
 	while true:
 		if _pc == 35213:
-			v1 = null
+			v1 = ""
 			_pc = 35311
 			continue
 		elif _pc == 35234:
@@ -3702,7 +3702,7 @@ func local_35371(v0) -> Variant:
 	var _pc: int = 35371
 	while true:
 		if _pc == 35371:
-			v1 = null
+			v1 = ""
 			_pc = 35469
 			continue
 		elif _pc == 35392:

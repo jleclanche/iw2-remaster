@@ -166,34 +166,41 @@ WEP; defensive = LDA/countermeasures; general = the rest). Ship upgrades, CPU
 programs, missile magazines, pylon hardpoints and the fire-mode row need the
 mount model and are omitted.
 
-## The porter's NewObject hole (root cause found, shimmed, needs a real fix)
+## The porter's NewObject hole (FIXED -- both shims retired)
 
-The POG opcode **NewObject** creates a live (typically list) object; the
-decompiler renders it `null` (tools/iw2/pogdec.py:1034 `NewObject ->
-stack.append(Null())`) and the port therefore declares every list local as
-null. Two shipped patterns break on that:
+The POG opcode **NewObject** creates a live object of one of POG's three heap
+types, and the operand that says which is a *link-time fixup* that reads 0 on
+disk (the OIMP chunk names the type; `flux.dll @ 0x1003482c` patches the code
+stream). Both the decompiler and the VM read that 0 literally and pushed `null`,
+so every list local in a ported script was nothing at all. Two shipped patterns
+break on that:
 
 1. `iinventory.Fill*ListBox(listbox, parallel_list)` fills a parallel list of
-   icCargo handles the script then stores in a global and indexes by row.
-   With a null local the handles went nowhere and every row select died.
-   **Shim** (natives/economy.gd `_fill`): each Fill* caller in the shipped
-   ibasegui stores that list under one fixed global name
-   (`InventoryScreen_CargoList` / `CargoScreen_CargoList` /
-   `RecyclingScreen_CargoList`), so when the script hands us null we plant the
-   list under that name ourselves; the `global.CreateList` that follows
-   creates-only-if-absent. This also fixed row selection on the inventory and
-   recycling screens.
+   icCargo handles the script then stores in a global and indexes by row. With a
+   null local the handles went nowhere and every row select died.
 2. `igui.CreateGreyBoxStyleScreen` returns its widgets in a list and
-   SPTradingScreen pulls them back out with `list.Head`. **Shim**
-   (natives/ui.gd `_repair_trading`): after the builder runs, if the
-   `TradingScreen_*` globals are null, re-store the four handles found on the
-   screen (listbox, the two inverse buttons after it, the text window), re-wire
-   the exact input-override functions the shipped bytecode passes, and re-run
-   the row filler (`ibasegui.local_25276`) against the real listbox.
+   SPTradingScreen pulls them back out with `list.Head` -- so the trading
+   screen's four handles were all null.
 
-The real fix is pogport emitting a typed empty object for NewObject and a
-regeneration pass — that belongs to the porter's owner (reported); both shims
-detect a fixed port and stand down.
+Both were shimmed (`natives/economy.gd _fill` planted the list under the global
+name the script was about to use; `natives/ui.gd _repair_trading` rewired the
+trading screen by hand). **Both shims are now gone.** `pogdis` reads the OIMP
+tables into `obj_sites`, `pogdec` emits a `New(kind)` node, `pogport` renders a
+fresh `[]` (list and set alike) or `""` (string), and the VM does the same from
+`data/pog/*.json` -- so on both hosts the script's own list is a real, live list
+and the natives fill it in place. See `docs/pog.md` and `docs/decompile.md`.
+pogverify is unchanged by the fix (2878/2878, MISSING 0, INVENTED 0).
+
+The fix exposed two latent bugs, both behind the null lists (the loops that walk
+them had never executed):
+
+* `gui.RepositionWindow` is `(window, parent, x, y)` -- it *reparents* as well as
+  moves; `natives/ui.gd` was reading `(window, x, y, flag)`. The shipped
+  bytecode settles it: `igui.ArrangeWindowsVertically` (igui entry 17714) passes
+  a running vertical offset as the last argument.
+* `iloadout.StartCustomisedLoadout` reached its `PogUi` through `vm.ui`, which
+  only `PogRuntime` has, so under the VM (the default host) the customise screen
+  came up with no rows. It now finds the PogUi through the natives it registered.
 
 Related engine-property seeds (same "engine object arrives with its property
 map" idea): icCargo exposes `type` (read back by SPCargoScreen's row select)
@@ -235,10 +242,20 @@ Lucrecia's Base"; its 6 headless save_png errors are pre-existing — identical
 count with the changes stashed); portcheck 114/114; apicov: iloadout 24→29
 implemented (100%), overall 646→653 functions, stubs 183→176.
 
+Re-verified after the NewObject fix and the removal of both shims, with a
+throwaway harness (`tmp_screen_check.gd`, deleted after the run) that drives the
+screens on **both hosts** -- the ported GDScript and the original bytecode --
+and asserts on the PogUi model: 26/26 PASS, zero script errors. Trading: the
+four widgets come back out of the returned list, the offer row is in the list
+box, the script wires its own input overrides, and a trade performed off the
+selected row moved the hold 10 -> 7. Inventory: the parallel list is the
+script's own live list, its handles line up 1:1 with the rows, and row 0 indexes
+back to a real icCargo. Loadout, add-cargo (parallel list live), customise (4
+category rows) and hangar all build. Identical results on the VM and the port.
+
 Known small divergences, all noted in code: the puzzle's edit boxes step with
 Left/Right only (no direct typing; `gui.SetEditBoxOverrides` remains a
 presentation stub, so the begin/finish-editing callbacks never fire — the
-original's own Increment/Decrement handlers are the wired path); the add-cargo
-screen cannot pre-select the currently-fitted pod on entry (the builder scans
-its local null list before our global shim exists — fixed for real by the
-porter's NewObject fix); the credits play no music and no movie backdrop.
+original's own Increment/Decrement handlers are the wired path); the credits play
+no music and no movie backdrop. (The add-cargo screen's inability to pre-select
+the currently-fitted pod on entry is fixed: the builder now scans a real list.)

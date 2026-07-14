@@ -119,7 +119,7 @@ func local_509(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(sim.children(v0))
 	v2 = list.item_count(v1)
 	v3 = 0
@@ -183,7 +183,7 @@ func league_dialogue_monitor(v0, v1) -> Variant:
 	while true:
 		if _pc == 1266:
 			v2 = 0
-			v5 = null
+			v5 = []
 			v7 = iship.cast(group.leader(v0))
 			v10 = ifaction.find("Player")
 			v11 = ifaction.find("League")

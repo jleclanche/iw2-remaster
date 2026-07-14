@@ -170,7 +170,7 @@ func local_1472(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(sim.children(v0))
 	v3 = list.item_count(v1)
 	v4 = 0
@@ -186,7 +186,7 @@ func local_1694(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(idockport.dockports_of_type(v0, 0, 4))
 	v2 = list.item_count(v1)
 	v3 = 0
@@ -234,7 +234,7 @@ func mission_handler() -> Variant:
 			v15 = ifaction.find("Player")
 			v16 = ifaction.find("Marauders")
 			v17 = ifaction.find("Underworld")
-			v20 = null
+			v20 = []
 			v24 = self
 			_pc = 2140
 			continue

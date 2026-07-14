@@ -46,7 +46,7 @@ func local_27(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string(v0)
 	return 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(v0)
 	v2 = list.item_count(v1)
 	if PogRuntime.TRACE:
@@ -64,7 +64,7 @@ func local_27(v0) -> Variant:
 
 func add_traffic_exception(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = []
 	if PogRuntime.TRACE:
 		if _pog_is_null(global.exists("g_filtered_system_habitats")):
 			debug.print_string("iRangeCheck.AddTrafficException: g_filtered_system_habitats does not exist.  assuming traffic is turned off\n")
@@ -86,7 +86,7 @@ func add_traffic_exception(v0) -> Variant:
 func add_traffic_exceptions_in_area(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
 	await add_traffic_exception(v0)
 	while true:
@@ -100,7 +100,7 @@ func add_traffic_exceptions_in_area(v0, v1) -> Variant:
 
 func add_out_of_system_traffic_exception(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = []
 	if _pog_is_null(global.exists("g_out_of_system_exceptions")):
 		p_set.add(v1, v0)
 		global.create_set("g_out_of_system_exceptions", 2, v1)
@@ -113,7 +113,7 @@ func add_out_of_system_traffic_exception(v0) -> Variant:
 
 func remove_traffic_exception(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
 	if PogRuntime.TRACE:
 		await local_27(" iRangecheck.RemoveTrafficException - Adding the location ")
@@ -127,7 +127,7 @@ func remove_traffic_exception(v0) -> Variant:
 func remove_traffic_exceptions_in_area(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
 	await remove_traffic_exception(v0)
 	while true:
@@ -143,8 +143,8 @@ func remove_out_of_system_traffic_exception() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
-	v2 = null
+	v1 = []
+	v2 = []
 	if global.exists("g_out_of_system_exceptions") != 1:
 		return 0
 	v1 = global.pog_set("g_out_of_system_exceptions")
@@ -164,9 +164,9 @@ func purge_traffic_exception() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
-	v2 = null
+	v2 = []
 	if PogRuntime.TRACE:
 		await local_27("iRangeCheck.PurgeTrafficException - rebuilding filtered system set, but still without player base....\n")
 	v1 = v2
@@ -201,13 +201,13 @@ func monitor_range() -> Variant:
 	var v16: Variant = 0
 	v0 = 1
 	v1 = 0
-	v5 = null
-	v6 = null
+	v5 = ""
+	v6 = []
 	v8 = ifaction.find("Marauders")
-	v9 = null
-	v10 = null
-	v11 = null
-	v12 = null
+	v9 = ""
+	v10 = []
+	v11 = []
+	v12 = []
 	v16 = global.pog_float("g_player_sensor_range")
 	if PogRuntime.TRACE:
 		await local_27("iRangeCheck.MonitorRange - Starting range monitor task.\n")

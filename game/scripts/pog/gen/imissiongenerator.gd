@@ -232,7 +232,7 @@ func objective_stub(v0, v1) -> Variant:
 func local_2088(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = null
+	v4 = ""
 	v3 = object.int_property(v0, string.join("objective_state", v1))
 	object.set_int_property(v0, string.join("objective_state", v1), v2)
 	v4 = string.join(object.string_property(v0, "objective_stub"), string.join("_objectives", v1))
@@ -585,7 +585,7 @@ func fail_precludes() -> Variant:
 		debug.print_string("\n")
 	await local_29765(v2, "failure_mission_value", "failure_mission_counter", v1)
 	return 0
-	v5 = null
+	v5 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Full-on failure test")
 		debug.print_string("\n")
@@ -619,7 +619,7 @@ func fail_precludes() -> Variant:
 func local_8034(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(imapentity.system_habitats())
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Picking location of desired type")
@@ -655,8 +655,8 @@ func local_9726(v0, v1) -> Variant:
 	while true:
 		if _pc == 9726:
 			v2 = 0
-			v6 = null
-			v7 = null
+			v6 = ""
+			v7 = []
 			v7 = list.from_set(imapentity.system_habitats())
 			_pc = 9844
 			continue
@@ -863,7 +863,7 @@ func local_9726(v0, v1) -> Variant:
 func local_11861(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
+	v3 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator.IncreaseStringNumber in ")
 	if PogRuntime.TRACE:
@@ -1347,9 +1347,9 @@ func local_17063(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = list.from_set(isim.ships_in_radius(v0, v1))
-	v3 = null
+	v3 = []
 	v5 = list.item_count(v2)
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Checking for new cargo")
@@ -1371,7 +1371,7 @@ func local_17425(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = null
+	v3 = []
 	v4 = iship.find_player_ship()
 	v5 = 0
 	v8 = object.int_property(v0, "number_of_cargo_types")
@@ -1462,13 +1462,13 @@ func local_18659(v0) -> Variant:
 		debug.print_string("\n")
 	_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v0, _pog_clone("Random"))))
 	return 0
-	v2 = null
-	v3 = null
-	v4 = null
+	v2 = []
+	v3 = []
+	v4 = []
 	v7 = iship.find_player_ship()
 	v12 = object.int_property(v0, "cargo_quantity_required")
-	v14 = null
-	v15 = null
+	v14 = ""
+	v15 = ""
 	v16 = inifile.cast(object.handle_property(v0, "generated_mission_ini_handle"))
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator.patronh: starting patron task\n")
@@ -1557,7 +1557,7 @@ func local_21103(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v5 = null
+	v5 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Waiting for player piracy against owners.")
 		debug.print_string("\n")
@@ -1590,7 +1590,7 @@ func local_21611(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "objective_stub")
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator:TestForCompletion will be looking for mission by the name of ")
@@ -1698,7 +1698,7 @@ func local_23260(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v1 = null
+	v1 = []
 	v5 = iship.find_player_ship()
 	v3 = 0
 	if PogRuntime.TRACE:
@@ -1753,13 +1753,13 @@ func local_23260(v0) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator.ResolveDelivery: Cargo safely delivered to Patron.\n")
 	return 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "success_debrief_comm_type")
-	v2 = null
+	v2 = ""
 	v2 = object.string_property(v0, "success_debrief_comm_reference")
-	v3 = null
+	v3 = ""
 	v3 = object.string_property(v0, "success_payment_type")
-	v4 = null
+	v4 = ""
 	v4 = object.string_property(v0, "success_payment_method")
 	v5 = object.int_property(v0, "success_payment_quantity")
 	v6 = object.int_property(v0, "success_pirate_modifier")
@@ -1848,7 +1848,7 @@ func new_mission_task() -> Variant:
 	var _pc: int = 26103
 	while true:
 		if _pc == 26103:
-			v13 = null
+			v13 = ""
 			v12 = self
 			_pc = 26206
 			continue
@@ -2294,7 +2294,7 @@ func new_mission_task() -> Variant:
 
 func local_29122(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: returning mission property.")
 		debug.print_string("\n")
@@ -2335,7 +2335,7 @@ func local_29653(v0, v1, v2) -> Variant:
 func local_29765(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v5 = null
+	v5 = ""
 	if PogRuntime.TRACE:
 		if _pog_is_null(object.property_exists(v0, v2)):
 			debug.error(string.join("iMissionGenerator: missing counter variable ", v2))
@@ -2357,7 +2357,7 @@ func local_29765(v0, v1, v2, v3) -> Variant:
 func local_30142(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v5 = null
+	v5 = ""
 	if PogRuntime.TRACE:
 		if _pog_is_null(object.property_exists(v0, v2)):
 			debug.error(string.join("iMissionGenerator missing counter variable ", v2))
@@ -2374,7 +2374,7 @@ func local_30142(v0, v1, v2, v3) -> Variant:
 func local_30426(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v5 = null
+	v5 = ""
 	if PogRuntime.TRACE:
 		if _pog_is_null(object.property_exists(v0, v2)):
 			debug.error(string.join("iMissionGenerator missing counter variable ", v2))
@@ -2392,7 +2392,7 @@ func local_30712(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v5 = null
+	v5 = ""
 	if PogRuntime.TRACE:
 		if _pog_is_null(object.property_exists(v0, v2)):
 			debug.error(string.join("iMissionGenerator missing counter variable ", v2))
@@ -2406,8 +2406,8 @@ func local_30712(v0, v1, v2, v3) -> Variant:
 	return 0
 	v1 = inifile.cast(object.handle_property(v0, "generated_mission_ini_handle"))
 	v2 = await iutilities.find_number_of_i_n_i_entries(v1, "Target", "required_cargo")
-	v5 = null
-	v6 = null
+	v5 = ""
+	v6 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Add cargo properties - old function")
 		debug.print_string("\n")
@@ -2509,7 +2509,7 @@ func success_add_mission(v0, v1) -> Variant:
 		debug.print_string("\n")
 	await local_29765(v2, "success_mission_value", "success_mission_counter", v1)
 	return 0
-	v3 = null
+	v3 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Do stuff upon mission failure")
 		debug.print_string("\n")
@@ -2536,8 +2536,8 @@ func local_33646(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v6 = null
-	v8 = null
+	v6 = ""
+	v8 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Generated mission complete - set everything accordingly")
 		debug.print_string("\n")
@@ -2610,7 +2610,7 @@ func local_35147(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "objective_stub")
 	v3 = itrade.num_trades() - 1
 	while v3 >= 0:
@@ -2655,7 +2655,7 @@ func local_35480(v0) -> Variant:
 
 func base_jafs_checker() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = global.string("gl_genmission_jafs")
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator.BaseJafsChecker - message key is '")
@@ -2679,9 +2679,9 @@ func monkey_about(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = global.pog_set("g_filtered_system_habitats")
-	v3 = null
+	v3 = []
 	v3 = sim.children(v0)
 	v5 = v1
 	v6 = 800.0
@@ -2724,7 +2724,7 @@ func local_36870(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v7 = null
+	v7 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator.StickOnCargo: trying to add physical cargo pods\n")
 	if idockport.count(v1, 3, 1) < 4:
@@ -2760,7 +2760,7 @@ func local_37426(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = v0
 	v3 = itrade.num_trades() - 1
 	while v3 >= 0:

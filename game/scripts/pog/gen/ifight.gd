@@ -59,13 +59,13 @@ func gangster_call_for_backup() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	v4 = global.pog_float("g_player_sensor_range")
-	v5 = null
+	v5 = []
 	v5 = imapentity.system_habitats()
-	v6 = null
+	v6 = []
 	v7 = 1
 	v9 = await ishipcreation.get_traffic(9, v7, math.random_int(1, 5))
 	v10 = iship.cast(group.nth_sim(v9, 0))
-	v12 = null
+	v12 = ""
 	if global.exists("g_running_gangster_call_for_backup"):
 		group.destroy(v9, 1)
 	else:
@@ -138,14 +138,14 @@ func police_call_for_backup() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	v4 = global.pog_float("g_player_sensor_range")
-	v5 = null
+	v5 = []
 	v5 = imapentity.system_habitats()
-	v6 = null
+	v6 = []
 	v7 = 14
 	v8 = inifile.cast(global.handle("g_shipping_ini"))
 	v10 = await ishipcreation.get_traffic(9, v7, math.random_int(1, 5))
 	v11 = iship.cast(group.nth_sim(v10, 0))
-	v13 = null
+	v13 = ""
 	if global.exists("g_running_police_call_for_backup"):
 		group.destroy(v10, 1)
 	else:
@@ -218,14 +218,14 @@ func military_call_for_backup() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	v4 = global.pog_float("g_player_sensor_range")
-	v5 = null
+	v5 = []
 	v5 = imapentity.system_habitats()
-	v6 = null
+	v6 = []
 	v7 = 3
 	v8 = inifile.cast(global.handle("g_shipping_ini"))
 	v10 = await ishipcreation.get_traffic(9, v7, math.random_int(3, 5))
 	v11 = iship.cast(group.nth_sim(v10, 0))
-	v13 = null
+	v13 = ""
 	if global.exists("g_running_military_call_for_backup"):
 		group.destroy(v10, 1)
 	else:

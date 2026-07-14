@@ -647,7 +647,7 @@ func local_9234(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v1 = group.create()
-	v2 = null
+	v2 = []
 	v2 = imapentity.system_lagrange_points()
 	v4 = imapentity.waypoint_for_entity(ilagrangepoint.nearest(v2, v0))
 	v3 = iship.create("ini:/sims/ships/corporate/corp_cruiser", "a3_m08_name_command_vessel")
@@ -677,14 +677,14 @@ func local_9534(v0, v1, v2) -> Variant:
 	var v16: Variant = 0
 	v3 = group.cast(global.handle("g_escape_vessels"))
 	v4 = group.nth_group(v3, 0)
-	v6 = null
+	v6 = ""
 	v7 = iship.cast(group.leader(v3))
 	v8 = imapentity.cast(v0)
 	v9 = imapentity.find_by_name_in_system("Vedas L-Point", "map:/geog/gagarin/osprey")
 	v11 = iship.find_player_ship()
 	v12 = 0
 	v13 = 0
-	v14 = null
+	v14 = []
 	v10 = await iutilities.create_waypoint_relative_to(v9, 0.0, 0.0, -500.0)
 	await iutilities.make_waypoint_visible(v10, 1, "a1_m05_waypoint_meeting")
 	while true:
@@ -938,7 +938,7 @@ func local_13524() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v0 = isim.find_by_name_in_system("a3_m08_name_hostage", "map:/geog/gagarin/new_bavaria")
-	v1 = null
+	v1 = []
 	v1 = list.from_set(isim.sims_in_radius(v0, 200000.0, 1073709056))
 	v3 = sim.cast(iship.find_player_ship())
 	v4 = list.item_count(v1)
@@ -1243,7 +1243,7 @@ func local_21174(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(sim.children(v0))
 	while true:
 		await _pog_wait(1)

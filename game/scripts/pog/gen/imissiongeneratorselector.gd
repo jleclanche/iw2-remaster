@@ -18,7 +18,7 @@ func _link() -> void:
 
 func local_0(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	v3 = null
+	v3 = ""
 	v3 = inifile.numbered_string(v0, v1, "mission", v2, "INVALID")
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGeneratorSelector.ini_for_mission - STARTED\n")
@@ -52,8 +52,8 @@ func select() -> Variant:
 	while true:
 		if _pc == 306:
 			v0 = inifile.create("INI:/mission_directory")
-			v2 = null
-			v3 = null
+			v2 = ""
+			v3 = ""
 			v3 = string.join("GeneratedMissionListAct", string.from_int(global.pog_int("g_current_act")))
 			v4 = global.pog_int("g_generated_number_of_missions")
 			_pc = 469

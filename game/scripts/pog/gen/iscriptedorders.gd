@@ -79,7 +79,7 @@ func local_230(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v2 = group.sim_count(v0)
 	v3 = 0
 	while v3 < v2:
@@ -96,10 +96,10 @@ func lagrange_handler(v0, v1) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	v2 = iship.cast(group.leader(v0))
-	v3 = null
+	v3 = []
 	v3 = imapentity.system_lagrange_points()
 	v4 = 1
-	v5 = null
+	v5 = []
 	v7 = group.sim_count(v0)
 	if PogRuntime.TRACE:
 		debug.print_string("iScriptedOrders.Lagrangeh: Stating lagrange handler\n")
@@ -221,7 +221,7 @@ func local_2476(v0, v1) -> Variant:
 	sim.avatar_add_channel(v0, "door", 0.0)
 	group.destroy(v3, 0)
 	return 0
-	v3 = null
+	v3 = []
 	v3 = list.from_set(sim.children(v0))
 	v5 = list.item_count(v3)
 	v6 = 0
@@ -251,7 +251,7 @@ func local_3398(v0, v1, v2, v3) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = null
+	v4 = []
 	v7 = group.sim_count(v0)
 	while true:
 		if PogRuntime.TRACE:
@@ -367,7 +367,7 @@ func local_5758(v0, v1, v2, v3) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v4 = null
+	v4 = []
 	v8 = group.sim_count(v0)
 	while true:
 		if PogRuntime.TRACE:
@@ -448,7 +448,7 @@ func local_7217(v0, v1, v2) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	v5 = iship.cast(group.leader(v0))
-	v6 = null
+	v6 = []
 	v6 = sim.children(v5)
 	v7 = group.create()
 	v8 = 0
@@ -542,8 +542,8 @@ func local_7217(v0, v1, v2) -> Variant:
 	await iformation.line_ahead(v0, 30.0, 0)
 	_pog_resume(v2)
 	return
-	v2 = null
-	v3 = null
+	v2 = []
+	v3 = []
 	if PogRuntime.TRACE:
 		debug.print_string(" iScriptedOrders.Haulage : Location picked for haualage destinations is not orbital !\n")
 	v1 = ibody.cast(imapentity.parent(v0))
@@ -622,12 +622,12 @@ func haulage(v0, v1) -> Variant:
 		if _pc == 10011:
 			v3 = 1
 			v7 = 0
-			v11 = null
-			v12 = null
-			v17 = null
+			v11 = []
+			v12 = ""
+			v17 = []
 			v17 = imapentity.system_habitats()
-			v18 = null
-			v19 = null
+			v18 = []
+			v19 = []
 			v19 = global.pog_set("g_filtered_system_habitats")
 			v20 = iship.cast(group.leader(v0))
 			_pc = 10195
@@ -2628,9 +2628,9 @@ func trade(v0) -> Variant:
 	var _pc: int = 18708
 	while true:
 		if _pc == 18708:
-			v5 = null
+			v5 = []
 			v5 = global.pog_set("g_filtered_system_habitats")
-			v6 = null
+			v6 = []
 			v7 = ihabitat.nearest(v5, group.leader(v0))
 			v9 = iship.cast(group.leader(v0))
 			if not (v9):
@@ -2881,7 +2881,7 @@ func tanker(v0) -> Variant:
 	while true:
 		if _pc == 20505:
 			v3 = group.sim_count(v0)
-			v4 = null
+			v4 = []
 			v4 = global.pog_set("g_filtered_system_habitats")
 			v5 = ihabitat.nearest(v4, group.leader(v0))
 			v7 = iship.cast(group.leader(v0))
@@ -3110,13 +3110,13 @@ func supply(v0) -> Variant:
 	while true:
 		if _pc == 22008:
 			v7 = object.int_property(group.leader(v0), "cargo_origin")
-			v8 = null
+			v8 = ""
 			v8 = imapentity.system_name()
-			v9 = null
-			v10 = null
-			v11 = null
+			v9 = ""
+			v10 = ""
+			v11 = []
 			v11 = global.pog_set("g_filtered_system_habitats")
-			v12 = null
+			v12 = []
 			v13 = ihabitat.nearest(v11, group.leader(v0))
 			v14 = iship.cast(group.leader(v0))
 			if not (v14):
@@ -3579,7 +3579,7 @@ func local_patrol(v0) -> Variant:
 	v2 = 8
 	v3 = group.sim_count(v0)
 	v5 = group.create()
-	v8 = null
+	v8 = []
 	v8 = global.pog_set("g_filtered_system_habitats")
 	v9 = ihabitat.nearest(v8, group.leader(v0))
 	v11 = iship.cast(group.leader(v0))
@@ -3712,9 +3712,9 @@ func system_patrol(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	v2 = group.sim_count(v0)
-	v3 = null
+	v3 = []
 	v3 = global.pog_set("g_filtered_system_habitats")
-	v4 = null
+	v4 = []
 	v5 = ihabitat.nearest(v3, group.leader(v0))
 	v7 = iship.cast(group.leader(v0))
 	v8 = iship.find_player_ship()
@@ -3818,9 +3818,9 @@ func freelance_mine(v0) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	v3 = group.sim_count(v0)
-	v4 = null
+	v4 = []
 	v4 = global.pog_set("g_filtered_system_habitats")
-	v5 = null
+	v5 = []
 	v6 = ihabitat.nearest(v4, group.leader(v0))
 	v8 = iship.cast(group.leader(v0))
 	v9 = iship.find_player_ship()
@@ -3902,9 +3902,9 @@ func factory_mine() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	v3 = group.sim_count(v0)
-	v4 = null
+	v4 = []
 	v4 = global.pog_set("g_filtered_system_habitats")
-	v5 = null
+	v5 = []
 	v6 = ihabitat.nearest(v4, group.leader(v0))
 	v8 = iship.cast(group.leader(v0))
 	v9 = iai.inner_marker_radius(v6, isim.cast(group.leader(v0)))
@@ -3994,7 +3994,7 @@ func local_34424(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = ifaction.all()
 	v1 = 0
 	while v1 < list.item_count(v2):
@@ -4021,11 +4021,11 @@ func scout() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	v3 = group.sim_count(v0)
-	v5 = null
+	v5 = []
 	v5 = ifaction.all()
-	v6 = null
+	v6 = []
 	v6 = global.pog_set("g_filtered_system_habitats")
-	v7 = null
+	v7 = []
 	v8 = iship.cast(group.leader(v0))
 	v9 = isim.faction(v8)
 	v13 = ihabitat.nearest(v6, v8)
@@ -4105,9 +4105,9 @@ func official_visitor(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	v3 = group.sim_count(v0)
-	v4 = null
+	v4 = []
 	v4 = global.pog_set("g_filtered_system_habitats")
-	v5 = null
+	v5 = []
 	v6 = ihabitat.nearest(v4, group.leader(v0))
 	v9 = iship.cast(group.leader(v0))
 	if not (v9):
@@ -4195,10 +4195,10 @@ func local_38184(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = global.pog_set("g_filtered_system_habitats")
 	v3 = ihabitat.nearest(v2, v0)
-	v4 = null
+	v4 = []
 	v4 = list.from_set(isim.sims_in_radius(v3, 2000.0, 536838144))
 	v5 = 0
 	while v5 < list.item_count(v4):
@@ -4220,9 +4220,9 @@ func piracy(v0) -> Variant:
 	var v9: Variant = 0
 	v1 = 0
 	v3 = group.sim_count(v0)
-	v5 = null
+	v5 = []
 	v5 = global.pog_set("g_filtered_system_habitats")
-	v6 = null
+	v6 = []
 	v9 = iship.cast(group.leader(v0))
 	if not (v9):
 		if PogRuntime.TRACE:
@@ -4321,13 +4321,13 @@ func hot_rodder(v0) -> Variant:
 	v1 = 0
 	v2 = 0
 	v4 = group.sim_count(v0)
-	v5 = null
+	v5 = []
 	v5 = global.pog_set("g_filtered_system_habitats")
-	v6 = null
+	v6 = []
 	v7 = ihabitat.nearest(v5, group.leader(v0))
 	v9 = iship.find_player_ship()
 	v10 = iship.cast(group.leader(v0))
-	v11 = null
+	v11 = ""
 	if not (v10):
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.hotrodder: Invalid Lead hotrodder!\n")
@@ -4442,7 +4442,7 @@ func cabbie(v0) -> Variant:
 			v2 = 0
 			v3 = group.total_sim_count(v0)
 			v4 = iship.cast(group.leader(v0))
-			v5 = null
+			v5 = []
 			_pc = 42590
 			continue
 		elif _pc == 42506:
@@ -4727,7 +4727,7 @@ func cabbie(v0) -> Variant:
 func local_44422(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(idockport.dockports_of_type(v0, 8, 1))
 	v2 = list.item_count(v1)
 	if not _pog_is_null(v2):
@@ -4753,11 +4753,11 @@ func speed_trap(v0) -> Variant:
 			v1 = 0
 			v2 = 0
 			v4 = group.sim_count(v0)
-			v5 = null
+			v5 = []
 			v5 = global.pog_set("g_filtered_system_habitats")
-			v6 = null
+			v6 = []
 			v7 = ihabitat.nearest(v5, group.leader(v0))
-			v8 = null
+			v8 = []
 			v8 = list.from_set(isim.sims_in_radius(v7, 2000.0, 536838144))
 			v11 = iship.cast(group.leader(v0))
 			if not (v11):
@@ -5030,7 +5030,7 @@ func flitter(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	v1 = group.sim_count(v0)
-	v2 = null
+	v2 = []
 	v2 = global.pog_set("g_filtered_system_habitats")
 	v3 = ihabitat.nearest(v2, group.leader(v0))
 	v4 = v3
@@ -5096,11 +5096,11 @@ func recovery(v0, v1) -> Variant:
 	var v8: Variant = 0
 	v2 = 0
 	v4 = group.sim_count(v0)
-	v5 = null
+	v5 = []
 	v5 = global.pog_set("g_filtered_system_habitats")
 	v6 = ihabitat.nearest(v5, group.leader(v0))
 	v7 = iship.cast(group.leader(v0))
-	v8 = null
+	v8 = []
 	if not (v7):
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.recovery: Invalid Lead hotrodder!\n")
@@ -5162,10 +5162,10 @@ func wander(v0) -> Variant:
 	while true:
 		if _pc == 48786:
 			v3 = group.sim_count(v0)
-			v4 = null
+			v4 = ""
 			v4 = imapentity.system_name()
-			v5 = null
-			v6 = null
+			v5 = ""
+			v6 = []
 			v6 = global.pog_set("g_filtered_system_habitats")
 			v7 = ihabitat.nearest(v6, group.leader(v0))
 			v8 = iship.cast(group.leader(v0))
@@ -5398,7 +5398,7 @@ func loiter(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
 	v2 = ihabitat.nearest(v1, group.leader(v0))
 	v3 = v2
@@ -5464,7 +5464,7 @@ func local_51864(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = list.from_set(isim.ships_in_radius(v0, v1))
 	v3 = ifaction.allegiance(isim.faction(v0))
 	v6 = list.item_count(v2)
@@ -5487,7 +5487,7 @@ func aggressive_loiter(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
 	v2 = ihabitat.nearest(v1, group.leader(v0))
 	v3 = v2
@@ -5582,11 +5582,11 @@ func police_raid(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
-	v2 = null
+	v2 = []
 	v2 = ihabitat.filter_on_allegiance(v1, 14)
-	v3 = null
+	v3 = []
 	v3 = list.from_set(global.pog_set("g_filtered_system_habitats"))
 	v4 = ihabitat.nearest(v1, group.leader(v0))
 	v5 = ihabitat.cast(p_set.first_element(v2))
@@ -5666,7 +5666,7 @@ func unpredictable(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
 	v2 = ihabitat.nearest(v1, group.leader(v0))
 	v3 = v2
@@ -5732,7 +5732,7 @@ func maneuvre(v0) -> Variant:
 	var _pc: int = 56771
 	while true:
 		if _pc == 56771:
-			v1 = null
+			v1 = []
 			v1 = global.pog_set("g_filtered_system_habitats")
 			v2 = ihabitat.nearest(v1, group.leader(v0))
 			v3 = v2
@@ -5941,7 +5941,7 @@ func naughty(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
 	v2 = ihabitat.nearest(v1, group.leader(v0))
 	v3 = v2
@@ -6042,7 +6042,7 @@ func station_assault(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.pog_set("g_filtered_system_habitats")
 	v2 = ihabitat.nearest(v1, group.leader(v0))
 	v3 = iship.find_player_ship()
@@ -6076,9 +6076,9 @@ func travel_to(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = global.pog_set("g_filtered_system_habitats")
-	v3 = null
+	v3 = []
 	v3 = sim.children(v0)
 	v4 = ihabitat.nearest(v2, v0)
 	v5 = v1
@@ -6121,9 +6121,9 @@ func travel_between(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = global.pog_set("g_filtered_system_habitats")
-	v3 = null
+	v3 = []
 	v3 = sim.children(v0)
 	v4 = ihabitat.nearest(v2, v0)
 	v5 = v1
@@ -6172,9 +6172,9 @@ func monkey_about(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = global.pog_set("g_filtered_system_habitats")
-	v3 = null
+	v3 = []
 	v3 = sim.children(v0)
 	v5 = v1
 	if PogRuntime.TRACE:
@@ -6222,8 +6222,8 @@ func create_new_orders() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
-	v4 = null
+	v3 = ""
+	v4 = ""
 	v2 = iship.cast(group.leader(v0))
 	v3 = object.string_property(v2, "scenario_type")
 	v4 = object.string_property(v2, "vessel_class")

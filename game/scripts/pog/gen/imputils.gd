@@ -174,7 +174,7 @@ func local_2855(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	v1 = group.cast(global.handle("mp_respawn_group"))
-	v7 = null
+	v7 = []
 	if _pog_eq(isim.faction(isim.cast(v0)), ifaction.find(text.field("mp_flag_team_a", 0))):
 		v2 = group.nth_group(v1, 1)
 	else:
@@ -210,7 +210,7 @@ func weapon_ammo_power_up(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v2 = iship.find_player_ship()
-	v4 = null
+	v4 = ""
 	imultiplay.add_powerup_weapon(iship.cast(v1), isim.cast(v0))
 	if not (imultiplay.is_client() and _pog_eq(v1, v2)):
 		return 0
@@ -226,7 +226,7 @@ func speed_power_up(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v2 = object.float_property(v0, "power_up_factor")
-	v3 = null
+	v3 = ""
 	v4 = iship.find_player_ship()
 	imultiplay.change_max_speed(iship.cast(v1), v2)
 	if not (imultiplay.is_client() and _pog_eq(v1, v4)):
@@ -246,7 +246,7 @@ func speed_power_down(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v2 = -1.0 * object.float_property(v0, "power_up_factor")
-	v3 = null
+	v3 = ""
 	v4 = iship.find_player_ship()
 	imultiplay.change_max_speed(iship.cast(v1), v2)
 	if not (imultiplay.is_client() and _pog_eq(v1, v4)):
@@ -265,7 +265,7 @@ func health_power_up(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v2 = object.float_property(v0, "power_up_factor")
-	v3 = null
+	v3 = ""
 	v4 = iship.find_player_ship()
 	imultiplay.add_health(iship.cast(v1), v2)
 	if not (imultiplay.is_client() and _pog_eq(v1, v4)):
@@ -287,7 +287,7 @@ func local_4680(v0) -> Variant:
 	var _pc: int = 4680
 	while true:
 		if _pc == 4680:
-			v2 = null
+			v2 = []
 			_pc = 4696
 			continue
 		elif _pc == 4696:
@@ -478,7 +478,7 @@ func spawn_killed_player_power_ups(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v1 = iship.cast(v0)
-	v3 = null
+	v3 = []
 	if _pog_is_null(v1):
 		return 0
 	v3 = imultiplay.remove_powerup_weapons(v1, 1)
@@ -509,7 +509,7 @@ func client_taunt_return(v0) -> Variant:
 func client_send_debug_info() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = null
+	v0 = ""
 	if not (global.exists("mp_utils_last_taunt")):
 		return 0
 	v1 = iship.current_target(iship.find_player_ship())
@@ -534,7 +534,7 @@ func server_do_debug(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v3 = null
+	v3 = ""
 	if _pog_eq(v2, "position"):
 		v3 = "pos:"
 		v3 = string.join(v3, string.from_float(imultiplay.debug_sim_position_x(v1)))
@@ -661,7 +661,7 @@ func find_system_centre() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = list.sort_by_string_property(list.from_set(imapentity.system_bodies()), "name")
 	v1 = imapentity.cast(list.head(v0))
 	v4 = 0
@@ -688,7 +688,7 @@ func spawn_player(v0, v1) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v6 = null
+	v6 = []
 	v8 = 0
 	v9 = 0
 	if _pog_eq(isim.faction(isim.cast(v0)), ifaction.find(text.field("mp_flag_team_b", 0))):
@@ -747,7 +747,7 @@ func check_frag_limit() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v0 = null
+	v0 = []
 	v4 = 0
 	v5 = 0
 	v6 = 0
@@ -838,10 +838,10 @@ func make_death_message(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
-	v3 = null
-	v4 = null
-	v5 = null
+	v2 = ""
+	v3 = ""
+	v4 = ""
+	v5 = ""
 	v2 = object.string_property(v0, "name")
 	v3 = object.string_property(v1, "name")
 	if _pog_eq(v0, v1):

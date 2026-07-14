@@ -76,6 +76,42 @@ class Null(Expr):
         return "null"
 
 
+class New(Expr):
+    """NewObject: a *fresh* script object of one of POG's three object types.
+
+    flux.dll @ 0x1003b190 (FcScriptTask::Execute), case 0x3a:
+
+        eVar5 = *pc++;                       // the linked eType
+        pFVar16 = FiScriptObject::Create(eVar5);
+        *++sp = pFVar16;                     // pushed, nothing popped
+
+    and FiScriptObject::Create (flux.dll @ 0x1003a960) switches on that enum:
+    1 -> FcScriptString, 2 -> FcScriptList, 3 -> FcScriptSet (anything else is
+    a null pointer). The operand is a link-time fixup, zero in the file; the
+    OIMP chunk names the type -- see pogdis.parse_pkg.
+
+    Rendering this `null` -- which is what we used to do -- destroys every list
+    the scripts build. `list l;` compiles to `NewObject FcScriptList; Store`,
+    and the natives that take a list (iinventory.FillInventoryListBox,
+    igui.CreateGreyBoxStyleScreen) *fill the object the script handed them*.
+    With `null` in the local there is nothing to fill, so the script's parallel
+    handle list comes out empty and every row index misses.
+    """
+
+    KINDS = {"FcScriptString": "string", "FcScriptList": "list",
+             "FcScriptSet": "set"}
+
+    def __init__(self, kind: str):
+        self.kind = kind             # "FcScriptList" / "FcScriptSet" / ...
+
+    @property
+    def what(self) -> str:
+        return self.KINDS.get(self.kind, "object")
+
+    def __str__(self):
+        return "new %s" % self.what
+
+
 class Var(Expr):
     def __init__(self, n, name=None):
         self.n = n
@@ -1031,7 +1067,7 @@ class Decompiler:
             if stack:
                 stack.append(stack[-1])
         elif mn == "NewObject":
-            stack.append(Null())
+            stack.append(New(p["obj_sites"].get(off, "FcScriptList")))
         elif mn in ("MarkObject", "DeleteMarkedObjects", "BeginAtomic",
                     "EndAtomic"):
             pass                       # engine-side object scoping / atomicity
@@ -1222,7 +1258,18 @@ def _gx(e) -> str:
         return ("not %s" % _gx(e.a)) if e.op == "!" else "%s%s" % (e.op, _gx(e.a))
     if isinstance(e, Null):
         return "null"
+    if isinstance(e, New):
+        return _gd_new(e)
     return str(e)
+
+
+def _gd_new(e: New) -> str:
+    """A fresh POG object, as GDScript. A POG list and a POG set are both a
+    plain Array here (scripts/pog/natives/std.gd implements list.* and set.*
+    over Array), and a POG string is a String."""
+    if e.kind == "FcScriptString":
+        return '""'
+    return "[]"
 
 
 # --- driver ----------------------------------------------------------------

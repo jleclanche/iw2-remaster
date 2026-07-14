@@ -25,7 +25,7 @@ func local_56() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
+	v3 = ""
 	if not (global.exists("g_mt_mtask_counter")):
 		global.create_string("g_mt_mstring", 2, "active missions: none")
 		if PogRuntime.TRACE:

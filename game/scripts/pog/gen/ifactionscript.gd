@@ -69,7 +69,7 @@ func initialise() -> Variant:
 	var v53: Variant = 0
 	var v54: Variant = 0
 	var v55: Variant = 0
-	v55 = null
+	v55 = []
 	v0 = ifaction.create("Independent", "IND", 1)
 	v2 = v0
 	list.add_tail(v55, v0)

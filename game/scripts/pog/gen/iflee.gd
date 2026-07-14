@@ -58,14 +58,14 @@ func gangster_run_for_help() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v4 = null
+	v4 = []
 	v4 = imapentity.system_habitats()
-	v5 = null
+	v5 = []
 	v6 = 11
 	v7 = inifile.cast(global.handle("g_shipping_ini"))
 	v9 = await ishipcreation.get_traffic(9, v6, math.random_int(1, 5))
 	v10 = iship.cast(group.nth_sim(v9, 0))
-	v12 = null
+	v12 = ""
 	if object.property_exists(v0, "fleeing"):
 		group.destroy(v9, 1)
 	else:
@@ -139,15 +139,15 @@ func civilian_run_for_help() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	v4 = 1
-	v5 = null
+	v5 = []
 	v5 = imapentity.system_habitats()
-	v6 = null
+	v6 = []
 	v7 = 14
 	v8 = inifile.cast(global.handle("g_shipping_ini"))
 	v10 = iship.find_player_ship()
 	v13 = await ishipcreation.get_traffic(9, v7, math.random_int(2, 5))
 	v14 = iship.cast(group.nth_sim(v13, 0))
-	v15 = null
+	v15 = ""
 	if object.property_exists(v0, "fleeing"):
 		group.destroy(v13, 1)
 	else:

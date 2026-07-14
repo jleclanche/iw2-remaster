@@ -5,12 +5,18 @@ compiler emits `Call 0 0 argc` and the engine's loader patches operands 0
 and 1 from the FIMP call-site tables (and rewrites the opcode to the
 native variant when the import turns out to be a DLL package).
 
+The same is true of `NewObject`: its operand is a fixup slot, zero on disk,
+and the loader patches it with the object *type* named by the OIMP chunk
+(FiScriptObject::TypeFromName -- flux.dll @ 0x1003482c). So the sites go out
+here too, or every list the scripts build is a fresh nothing.
+
 We do that resolution here, at extraction, rather than in the game: each
 call site is written out as a plain "pkg.Func" name, so the runtime never
 has to touch the IFF container or the patch tables.
 
 Output (data/pog/, gitignored like every other extracted asset):
-    <name>.json     strings, exports, call-site -> name, base64 code
+    <name>.json     strings, exports, call-site -> name, NewObject site ->
+                    type, base64 code
     manifest.json   package list + which imports are native (no bytecode)
 
 Usage:
@@ -53,11 +59,16 @@ def main() -> None:
                     imports[str(off)] = target
                     imported.add(target.split(".", 1)[0].lower())
 
+        # NewObject offset -> "FcScriptList" / "FcScriptSet" / "FcScriptString"
+        objects = {str(off): kind for off, kind in
+                   sorted(pkg["obj_sites"].items())}
+
         (OUT / f"{stem}.json").write_text(json.dumps({
             "name": pkg["name"],
             "strings": pkg["strings"],
             "exports": pkg["exports"],
             "imports": imports,
+            "objects": objects,
             "code": base64.b64encode(pkg["code"]).decode("ascii"),
         }), encoding="utf-8")
 

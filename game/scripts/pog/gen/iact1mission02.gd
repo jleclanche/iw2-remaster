@@ -117,7 +117,7 @@ func local_530() -> Variant:
 func local_572(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = sim.children(v0)
 	while not (p_set.is_empty(v1)):
 		v2 = sim.cast(p_set.first_element(v1))
@@ -143,7 +143,7 @@ func local_812(v0, v1, v2) -> Variant:
 	while true:
 		if _pc == 812:
 			v3 = 0
-			v6 = null
+			v6 = []
 			v9 = iship.cast(group.leader(v1))
 			v11 = ifaction.find("Player")
 			v12 = ifaction.find("Stepson")

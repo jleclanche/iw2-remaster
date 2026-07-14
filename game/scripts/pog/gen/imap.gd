@@ -34,35 +34,35 @@ func _link() -> void:
 
 func get_author(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = inifile.string(v0, "Info", "author", "None")
 	return _pog_clone(v1)
 	return 0
 
 func get_description(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = inifile.string(v0, "Info", "description", "None")
 	return _pog_clone(v1)
 	return 0
 
 func get_date(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = inifile.string(v0, "Info", "date", "None")
 	return _pog_clone(v1)
 	return 0
 
 func pog_get_name(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = inifile.string(v0, "Info", "mapname", "None")
 	return _pog_clone(v1)
 	return 0
 
 func get_map(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = inifile.string(v0, "General", "map", "None")
 	return _pog_clone(v1)
 	return 0
@@ -84,7 +84,7 @@ func local_459(v0, v1, v2, v3) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	v4 = inifile.create(v1)
-	v5 = null
+	v5 = ""
 	v5 = inifile.string(v4, "Class", "name", "none")
 	v7 = inifile.numbered_float(v0, "Geography", "geog_x", v3, 0.0)
 	v8 = inifile.numbered_float(v0, "Geography", "geog_y", v3, 0.0)
@@ -204,11 +204,11 @@ func pog_load(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v2 = null
-	v3 = null
-	v4 = null
-	v5 = null
-	v6 = null
+	v2 = ""
+	v3 = ""
+	v4 = ""
+	v5 = ""
+	v6 = ""
 	v10 = inifile.create(v0)
 	if _pog_is_null(v10):
 		debug.error("Unable to load map ini")

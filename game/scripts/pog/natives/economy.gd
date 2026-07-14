@@ -580,24 +580,15 @@ func _held(filter: Callable) -> Array:
 
 ## Add the rows to the list box and the handles to the script's parallel list.
 ##
-## The parallel list is the trap: in the original VM a list-typed local is a
-## live list object from the moment the frame is set up, so the script can pass
-## it in empty and read the handles back out of its *global* copy afterwards
-## (`iinventory.FillInventoryListBox(v4, !v0, v1); global.CreateList(..., v1)`).
-## The port declares those locals as null, so the handles would go nowhere and
-## every row select would come back null. Each Fill* caller in the shipped
-## ibasegui stores the same list under one fixed global name, so when the script
-## hands us null we plant the list under that name ourselves; the CreateList
-## that follows creates-only-if-absent and keeps it, and the screen's back
-## button destroys it.
-func _fill(a: Array, list_at: int, rows: Array, with_value: bool,
-		global_name: String = "") -> void:
+## The parallel list arrives from the script and we fill it *in place*, which is
+## exactly what the original native did: the script's list-typed local is a live
+## FcScriptList from the NewObject at the top of the frame (flux @ 0x1003b190,
+## case 0x3a), it is passed in empty, and the handles we append to it are the
+## handles the script then indexes by row number. Nothing to plant and nothing
+## to guess: the caller owns the list, we only fill it.
+func _fill(a: Array, list_at: int, rows: Array, with_value: bool) -> void:
 	var lb = a[0] if a.size() > 0 else null
 	var parallel = a[list_at] if a.size() > list_at else null
-	if not (parallel is Array) and not global_name.is_empty() \
-			and vm != null and vm.get("std") != null:
-		parallel = []
-		vm.std.globals[global_name] = parallel
 	if lb is PogUi.PogWindow:
 		lb.entries.clear()
 		lb.focused_entry = -1
@@ -632,7 +623,7 @@ func _i_fill_inventory(_t, a: Array) -> Variant:
 	var equipment := PogVM._truthy(a[1]) if a.size() > 1 else false
 	var rows := _held(func(c: PogCargo) -> bool:
 		return (not c.ship_system.is_empty()) == equipment)
-	_fill(a, 2, rows, false, "InventoryScreen_CargoList")
+	_fill(a, 2, rows, false)
 	return 0
 
 # @element icSPAddCargoScreen
@@ -640,15 +631,13 @@ func _i_fill_inventory(_t, a: Array) -> Variant:
 func _i_fill_add_cargo(_t, a: Array) -> Variant:
 	# The loadout screen's "add cargo" list: everything in the hold that is not
 	# already fitted, so the player can put it in the pods.
-	_fill(a, 1, _held(func(c: PogCargo) -> bool: return true), true,
-			"CargoScreen_CargoList")
+	_fill(a, 1, _held(func(c: PogCargo) -> bool: return true), true)
 	return 0
 
 # @native iinventory.FillRecyclingListBox
 func _i_fill_recycling(_t, a: Array) -> Variant:
 	# Only what can actually be broken down, priced at what it would pay.
-	_fill(a, 1, _held(func(c: PogCargo) -> bool: return c.can_recycle), true,
-			"RecyclingScreen_CargoList")
+	_fill(a, 1, _held(func(c: PogCargo) -> bool: return c.can_recycle), true)
 	return 0
 
 # @native iinventory.ResetWindows
@@ -1124,8 +1113,17 @@ const CUST_INSTRUCTION_KEYS := [
 var cust: Dictionary = {}
 
 
+## The customisation list box is ours to make, so we need the PogUi the host is
+## using. PogRuntime names it; PogVM does not (it only knows the natives that
+## registered against it), so reach it through one of them -- otherwise the
+## screen builds under the port and comes up empty under the bytecode.
 func _cust_ui() -> PogUi:
-	return vm.ui if (vm != null and vm.get("ui") != null) else null
+	if vm == null:
+		return null
+	if vm.get("ui") != null:
+		return vm.ui
+	var c: Callable = vm.natives.get("gui.pushscreen", Callable())
+	return (c.get_object() if c.is_valid() else null) as PogUi
 
 
 func _cust_sys() -> ShipSystems:

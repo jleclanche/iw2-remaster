@@ -132,7 +132,7 @@ func local_716(v0, v1) -> Variant:
 	while true:
 		if _pc == 716:
 			v2 = 0
-			v5 = null
+			v5 = []
 			v6 = iship.cast(group.leader(v0))
 			v8 = ifaction.find("Player")
 			v9 = ifaction.find("Independent")
@@ -388,7 +388,7 @@ func local_2479(v0, v1, v2) -> Variant:
 	var v7: Variant = 0
 	v5 = group.create()
 	v6 = await iwingmen.group()
-	v7 = null
+	v7 = []
 	v7 = await iwingmen.true_wingman_list()
 	if PogRuntime.TRACE:
 		debug.print_string("Mission 2-07: Attack handler started\n")
@@ -492,7 +492,7 @@ func local_4012(v0, v1, v2) -> Variant:
 	while true:
 		if _pc == 4012:
 			v3 = 0
-			v6 = null
+			v6 = []
 			v8 = iship.cast(group.leader(v0))
 			v9 = iship.cast(group.nth_sim(v0, 1))
 			v11 = ifaction.find("Player")

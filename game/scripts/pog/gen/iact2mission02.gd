@@ -1524,7 +1524,7 @@ func local_17508(v0) -> Variant:
 func local_17812(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = sim.children(v0)
 	if not _pog_is_null(p_set.item_count(v1)):
 		v2 = iship.cast(p_set.first_element(v1))
@@ -1773,7 +1773,7 @@ func local_19678(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(sim.children(v0))
 	v2 = list.item_count(v1)
 	v3 = 0

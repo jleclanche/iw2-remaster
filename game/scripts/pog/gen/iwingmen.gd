@@ -323,7 +323,7 @@ func report_status() -> Variant:
 	var v6: Variant = 0
 	v0 = iship.find_player_ship()
 	v1 = await group()
-	v5 = null
+	v5 = ""
 	v6 = 0
 	if not (await t_fighters_enabled()):
 		pass
@@ -509,7 +509,7 @@ func dock_to_target() -> Variant:
 	var v7: Variant = 0
 	v0 = iship.find_player_ship()
 	v1 = await group()
-	v4 = null
+	v4 = []
 	if not (await t_fighters_enabled()):
 		pass
 	else:
@@ -740,7 +740,7 @@ func get_attached_t_fighters() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v0 = iship.find_player_ship()
-	v1 = null
+	v1 = []
 	if not (object.property_exists(v0, "name_az")):
 		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.GetAttachedTfighters: Can't find name_az property on player ship.\n")
@@ -765,7 +765,7 @@ func get_detached_t_fighters() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v0 = iship.find_player_ship()
-	v1 = null
+	v1 = []
 	v2 = await group()
 	if not (object.property_exists(v0, "name_az")):
 		if PogRuntime.TRACE:
@@ -791,7 +791,7 @@ func get_all_t_fighters() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v0 = iship.find_player_ship()
-	v1 = null
+	v1 = []
 	v2 = await group()
 	v3 = await get_az()
 	if sim.is_alive(v3):
@@ -877,7 +877,7 @@ func t_fighter_fire_at_will() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v0 = iship.find_player_ship()
-	v2 = null
+	v2 = []
 	if not (await t_fighters_enabled()):
 		pass
 	else:
@@ -953,7 +953,7 @@ func t_fighter_cease_fire() -> Variant:
 
 func local_13741(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v2 = object.string_property(v0, "name")
 	while true:
 		await _pog_wait(0.1)
@@ -1013,11 +1013,11 @@ func local_14617(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = list.from_set(idockport.dockports_compatible_with(v0, 7, 1))
-	v3 = null
+	v3 = []
 	v3 = list.from_set(idockport.dockports_of_type(v1, 7, 1))
-	v6 = null
+	v6 = ""
 	if sim.is_dead(v0) or _pog_is_null(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.MountTFighter: ERROR: Tfighter is null / dead. EXITING\n")
@@ -1067,7 +1067,7 @@ func get_live_t_fighter() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = await get_all_t_fighters()
 	v1 = list.item_count(v0)
 	if _pog_is_null(v1):
@@ -1093,7 +1093,7 @@ func create_test_t_fighters() -> Variant:
 	var _pc: int = 15962
 	while true:
 		if _pc == 15962:
-			v1 = null
+			v1 = []
 			_pc = 16120
 			continue
 		elif _pc == 15983:
@@ -1176,8 +1176,8 @@ func t_fighters_attach() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v4 = null
-	v5 = null
+	v4 = []
+	v5 = []
 	v0 = iship.find_player_ship()
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
@@ -1214,7 +1214,7 @@ func local_17116(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = list.from_set(idockport.dockports_compatible_with(v0, 7, 4))
 	v5 = _pog_task_cast(object.handle_property(v0, "docking_task"))
 	if _pog_is_null(v0):
@@ -1256,7 +1256,7 @@ func t_fighters_detach() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v0 = iship.find_player_ship()
-	v1 = null
+	v1 = []
 	v4 = 100.0
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
@@ -1329,7 +1329,7 @@ func get_lori() -> Variant:
 func wingman_death_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "name")
 	isim.kill(v0)
 	ihud.pog_print(string.join("wingmen_id+: +", string.join("wingmen_wingman_destroyed+ - +", v1)))
@@ -1343,8 +1343,8 @@ func t_fighter_death_script() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = null
-	v2 = null
+	v1 = ""
+	v2 = ""
 	isim.set_indestructable(v0, 1)
 	v1 = object.string_property(v0, "name")
 	v4 = iship.find_player_ship()
@@ -1374,10 +1374,10 @@ func local_19618(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
+	v3 = ""
 	v3 = "gunbabe_diag_"
-	v4 = null
-	v5 = null
+	v4 = ""
+	v5 = ""
 	if _pog_is_null(v0) or sim.is_dead(v0):
 		v0 = await get_live_t_fighter()
 	v4 = object.string_property(v0, "name")
@@ -1411,7 +1411,7 @@ func attack_death_script() -> Variant:
 			v3 = await get_lori()
 			v5 = await group()
 			v6 = iship.last_attacker(v0)
-			v7 = null
+			v7 = ""
 			isim.kill(v0)
 			await _pog_wait(0.10000000149011612)
 			if not _pog_is_null(v6):
@@ -1521,7 +1521,7 @@ func escort_death_script() -> Variant:
 	var v4: Variant = 0
 	v1 = iship.find_player_ship()
 	v3 = await group()
-	v4 = null
+	v4 = ""
 	v4 = object.string_property(v0, "name")
 	isim.kill(v0)
 	await _pog_wait(0.10000000149011612)
@@ -1540,7 +1540,7 @@ func local_21141(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v2 = iship.find_player_ship()
-	v4 = null
+	v4 = ""
 	if sim.is_dead(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.update_target_deathscript: ERROR: Target is dead / null.\n")
@@ -1623,9 +1623,9 @@ func t_fighter_warn() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v1 = iship.find_player_ship()
-	v2 = null
+	v2 = ""
 	v2 = object.string_property(v0, "name")
-	v3 = null
+	v3 = ""
 	if _pog_eq(iship.cast(iship.last_attacker(v0)), v1):
 		await local_19618(v0, "_friendly_fire_", 2)
 	else:
@@ -1691,7 +1691,7 @@ func true_wingman_list() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v0 = await group()
-	v4 = null
+	v4 = []
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iWingmen.TrueWingmanList: ERROR - Wingmen group handle is invalid.\n")

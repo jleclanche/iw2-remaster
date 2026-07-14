@@ -103,7 +103,7 @@ func explosives() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
+	v1 = []
 	v3 = await iutilities.create_waypoint_at(v0)
 	if object.property_exists(v0, "explosive_damage"):
 		v6 = object.float_property(v0, "explosive_damage")
@@ -210,7 +210,7 @@ func local_2700(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = list.from_set(sim.children(v0))
 	v4 = list.item_count(v3)
 	isim.start_explosion(isim.cast(v0))
@@ -239,7 +239,7 @@ func local_3270(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = list.from_set(sim.children(v0))
 	v4 = list.item_count(v3)
 	isim.start_explosion(isim.cast(v0))
@@ -268,8 +268,8 @@ func player_death_script(v0) -> Variant:
 	var v11: Variant = 0
 	v1 = 0
 	v5 = 0
-	v9 = null
-	v10 = null
+	v9 = ""
+	v10 = ""
 	if not _pog_is_null(object.property_exists(v0, "player_dying")):
 		return
 	input.suspend_bindings()
@@ -389,7 +389,7 @@ func mega_pod_death() -> Variant:
 	var v12: Variant = 0
 	v1 = 0
 	v2 = 0
-	v3 = null
+	v3 = ""
 	v5 = ifaction.find("Marauders")
 	v8 = math.random_int(0, 10)
 	v9 = math.random_int(0, 1)
@@ -444,7 +444,7 @@ func critical_ship_death(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v1 = iship.find_player_ship()
-	v2 = null
+	v2 = ""
 	v2 = sim.pog_name(v0)
 	v3 = isim.last_attacker(v0)
 	idirector.begin()
@@ -526,7 +526,7 @@ func critical_group_death() -> Variant:
 	var v7: Variant = 0
 	v1 = iship.find_player_ship()
 	v2 = isim.last_attacker(v0)
-	v4 = null
+	v4 = ""
 	v4 = sim.pog_name(v0)
 	v6 = 0
 	v7 = 1

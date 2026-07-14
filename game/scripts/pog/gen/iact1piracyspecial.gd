@@ -456,7 +456,7 @@ func cargo_hint_handler(v0) -> Variant:
 			v2 = 0
 			v3 = 0
 			v5 = iship.find_player_ship()
-			v6 = null
+			v6 = []
 			v10 = 0
 			v11 = 0
 			_pc = 2738
@@ -734,7 +734,7 @@ func cargo_hint_handler(v0) -> Variant:
 
 func local_4157(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(sim.children(v0))
 	_pog_detach(_pog_spawn(iutilities.jettison_cargo.bind(_pog_clone(v1), v0)))
 	global.set_int("g_jafs_comment", 1)
@@ -751,11 +751,11 @@ func hitpointmonitortask(v0) -> Variant:
 	var _pc: int = 4283
 	while true:
 		if _pc == 4283:
-			v1 = null
+			v1 = []
 			v2 = object.float_property(v0, "hit_points")
 			v4 = 0
 			v5 = 0
-			v6 = null
+			v6 = ""
 			v6 = string.join("iActOne.hitpointmonitor - ships hitpoints are - ", string.from_float(v2))
 			_pc = 4426
 			continue
@@ -1003,7 +1003,7 @@ func local_6052(v0) -> Variant:
 	while true:
 		if _pc == 6052:
 			v4 = 9
-			v6 = null
+			v6 = ""
 			v2 = 0
 			_pc = 6083
 			continue

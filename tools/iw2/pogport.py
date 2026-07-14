@@ -40,9 +40,9 @@ import re
 from pathlib import Path
 
 from .pogdec import (Break, Call, Const, Continue, Debug, Decompiler, Dispatch,
-                     DoWhile, Every, Expr, Func, Goto, Halt, If, Null, PcSet,
-                     Ret, Str, Un, Var, While, Assign, Bin, Do, Yield,
-                     argc_census, _snake)
+                     DoWhile, Every, Expr, Func, Goto, Halt, If, New, Null,
+                     PcSet, Ret, Str, Un, Var, While, Assign, Bin, Do, Yield,
+                     argc_census, _gd_new, _snake)
 from .pogdis import parse_pkg
 from .resources import ResourceFS
 
@@ -184,6 +184,11 @@ class Port:
             return "%s(%s)" % (e.op, self.x(e.a))
         if isinstance(e, Null):
             return "null"
+        if isinstance(e, New):
+            # NewObject. A fresh Array (list/set) or String, *per evaluation* --
+            # the whole point is that the object is new and that the natives
+            # handed it can fill it in place.
+            return _gd_new(e)
         return str(e)
 
     def _zero_test(self, e: Bin) -> str | None:

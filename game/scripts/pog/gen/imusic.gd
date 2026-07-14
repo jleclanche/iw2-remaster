@@ -40,7 +40,7 @@ func local_52(v0, v1) -> Variant:
 	var _pc: int = 52
 	while true:
 		if _pc == 52:
-			v2 = null
+			v2 = ""
 			_pc = 537
 			continue
 		elif _pc == 73:
@@ -428,7 +428,7 @@ func local_1561(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.list("g_active_location_list")
 	v2 = iship.find_player_ship()
 	v3 = isim.faction(v2)
@@ -453,7 +453,7 @@ func local_1866(v0, v1) -> Variant:
 		if _pc == 1866:
 			v2 = math.random(0.0, 1.0)
 			v3 = v0
-			v4 = null
+			v4 = []
 			v4 = list.from_set(isim.player_hostiles_in_radius(200000.0, 536842240))
 			_pc = 2227
 			continue
@@ -608,7 +608,7 @@ func local_2347(v0) -> Variant:
 	var _pc: int = 2347
 	while true:
 		if _pc == 2347:
-			v1 = null
+			v1 = []
 			v1 = global.list("g_active_location_list")
 			v6 = list.item_count(v1)
 			v5 = 0
@@ -804,9 +804,9 @@ func monitor() -> Variant:
 	var _pc: int = 2919
 	while true:
 		if _pc == 2919:
-			v4 = null
-			v5 = null
-			v6 = null
+			v4 = ""
+			v5 = ""
+			v6 = ""
 			v11 = 0
 			v13 = 0
 			_pc = 2976
@@ -1190,7 +1190,7 @@ func monitor() -> Variant:
 
 func initialise() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	global.create_int("g_music_suite", 2, 0)
 	global.create_int("g_music_mood", 2, 1)
 	global.create_string("g_music_current", 2, v0)
@@ -1231,7 +1231,7 @@ func local_5167(v0) -> Variant:
 	var _pc: int = 5167
 	while true:
 		if _pc == 5167:
-			v1 = null
+			v1 = ""
 			if stream.is_playing(1):
 				_pc = 5202
 				continue

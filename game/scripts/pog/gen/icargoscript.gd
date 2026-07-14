@@ -27,7 +27,7 @@ func local_0() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
+	v3 = ""
 	v1 = itrade.num_trades()
 	if PogRuntime.TRACE:
 		debug.print_string("iCargoScript.NeededType: number of trades is ")

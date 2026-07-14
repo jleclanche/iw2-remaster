@@ -229,13 +229,13 @@ func mission_handler() -> Variant:
 			v17 = ifaction.find("Independent")
 			v21 = group.create()
 			v22 = group.create()
-			v29 = null
+			v29 = []
 			v35 = 0
 			v36 = 500.0
 			v37 = 500.0
 			v38 = -250.0
 			v39 = 0
-			v40 = null
+			v40 = ""
 			v41 = 1
 			v42 = 0
 			v43 = 1
@@ -1614,7 +1614,7 @@ func local_13800(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
+	v3 = []
 	v5 = math.random_int(1, 4)
 	if PogRuntime.TRACE:
 		debug.print_string("iAct2_Mission01 - Survivor task started. Using ship: ")

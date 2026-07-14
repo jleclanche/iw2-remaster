@@ -579,9 +579,9 @@ func event3_50__here_come_the_aliens() -> Variant:
 			v11 = group.create()
 			v12 = group.create()
 			v13 = ifaction.find("Aliens")
-			v20 = null
-			v21 = null
-			v22 = null
+			v20 = []
+			v21 = []
+			v22 = []
 			_pc = 7449
 			continue
 		elif _pc == 7428:

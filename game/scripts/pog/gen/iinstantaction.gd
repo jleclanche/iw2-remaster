@@ -242,7 +242,7 @@ func local_2995(v0) -> Variant:
 	var _pc: int = 2995
 	while true:
 		if _pc == 2995:
-			v2 = null
+			v2 = ""
 			_pc = 3868
 			continue
 		elif _pc == 3016:
@@ -625,7 +625,7 @@ func local_6023(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(idockport.dockports_of_type(v0, 0, 4))
 	v2 = list.item_count(v1)
 	v3 = 0
@@ -640,9 +640,9 @@ func local_6207(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(sim.children(v0))
-	v2 = null
+	v2 = []
 	v3 = list.item_count(v1)
 	v4 = 0
 	while v4 < v3:
@@ -671,7 +671,7 @@ func local_6569(v0, v1) -> Variant:
 	v2 = await iutilities.create_waypoint_near(v0, 7000.0)
 	v5 = ifaction.find("Player")
 	v6 = iship.create("ini:/sims/ships/utility/supply_ship", "instant_action_text_supply")
-	v7 = null
+	v7 = []
 	v8 = 0
 	isim.set_faction(v6, v5)
 	await ipilotsetup.generic_cargo_pod(v6)
@@ -735,7 +735,7 @@ func local_8083(v0, v1) -> Variant:
 	var v5: Variant = 0
 	v2 = 0
 	v3 = group.sim_count(v0)
-	v5 = null
+	v5 = []
 	v5 = list.from_set(isim.player_hostiles_in_radius(v1, 536838144))
 	v2 = list.item_count(v5)
 	return v2
@@ -785,9 +785,9 @@ func local_8219(v0) -> Variant:
 			v17 = 6
 			v18 = 9
 			v19 = 6
-			v21 = null
+			v21 = ""
 			v21 = text.field("instant_action_new_ship", 0)
-			v22 = null
+			v22 = ""
 			await _pog_wait(0.30000001192092896)
 			v23 = await local_0(v0)
 			await _pog_wait(10.0)
@@ -1320,8 +1320,8 @@ func local_11591() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v4 = null
-	v8 = null
+	v4 = []
+	v8 = ""
 	if not (global.exists("g_tfighters_menu_option_enabled")):
 		global.create_bool("g_tfighters_menu_option_enabled", 2, 1)
 	text.add("csv:/text/act_1/act1_master_addendum2")
@@ -1406,7 +1406,7 @@ func instant_action_ship_choice_screen() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = []
 	v4 = 0
 	v5 = 0
 	v6 = 0
@@ -1449,7 +1449,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 	v1 = gui.cast(global.handle("shiptype_tug"))
 	v2 = gui.cast(global.handle("shiptype_fastattackship"))
 	v3 = gui.cast(global.handle("shiptype_heavycorvette"))
-	v4 = null
+	v4 = ""
 	if _pog_eq(gui.focused_window(), v1):
 		v4 = "ini:/sims/ships/player/tug_prefitted"
 	else:

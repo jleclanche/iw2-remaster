@@ -34,7 +34,7 @@ func warn_vessel() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v5 = null
+	v5 = ""
 	if object.i_d_modulus(v0, 2) == 1:
 		v5 = "_male_1"
 	else:

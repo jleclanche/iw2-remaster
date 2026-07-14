@@ -168,8 +168,62 @@ skin (`igui.CreateFancyButton` splices a 38-argument nine-patch atlas onto every
 control) -- the rows, their order and the POG function behind each are faithful;
 the amber-on-black is ours, to match `menu.gd`.
 
-The trade screen is the one you would expect to be script-driven and is not:
-`icSPComputerTradingScreen` has no POG builder, and was laid out in C++.
+The trading screen is script-driven too (`iBaseGUI.SPTradingScreen`), and it is
+the one that proves the object model below: it builds itself out of a POG *list*
+of widgets.
+
+## `NewObject`: POG's three object types, and the fixup that hides them
+
+POG has three heap types -- `FcScriptString`, `FcScriptList`, `FcScriptSet` --
+and one opcode that makes them: `NewObject` (`0x3a`). It pushes a **live, empty**
+object; `FcScriptTask::Execute` (`flux.dll @ 0x1003b190`) calls
+`FiScriptObject::Create(type)` (`flux.dll @ 0x1003a960`), which switches on the
+enum: 1 -> string, 2 -> list, 3 -> set. A declaration `list l;` is compiled to
+`NewObject FcScriptList; Store slot`, at the top of the frame.
+
+The operand reads **0 in every shipped package** because it is a link-time fixup,
+not data: the `OIMP` chunks name the type and list the sites, and the loader
+(`flux.dll @ 0x1003482c`) patches each one with
+`FiScriptObject::TypeFromName(name)`. Both the decompiler and the VM used to take
+that 0 at face value and push `null`. That is invisible in 90% of the code and
+fatal in the rest, because **a native that is handed a POG list fills the caller's
+list in place**:
+
+```
+v1 = NewObject FcScriptList          # the script's own list
+iinventory.FillInventoryListBox(listbox, equipment, v1)
+...
+v8 = icargo.Cast(list.GetNth(v1, gui.ListBoxFocusedEntry(listbox)))
+```
+
+The native fills *both* the list box and `v1`, and the two orders must agree --
+that is how a row number becomes a cargo handle (`docs/original.md` 8a). The
+returned-widget pattern is the same idea outward: `igui.CreateGreyBoxStyleScreen`
+returns a list and `SPTradingScreen` pulls its four widgets back out with
+`list.Head`. With `null` in the local, nothing is filled and nothing comes back.
+
+Now: `pogdis.parse_pkg` reads OIMP into `obj_sites` (keyed by the `NewObject`
+offset), `pogdec` emits a `New(kind)` node, `pogport` renders it as a fresh
+`[]` (list *and* set -- `natives/std.gd` implements both over `Array`) or `""`
+(string), `pogexport` writes the sites into `data/pog/*.json`, and the VM reads
+them. Both hosts now build a real object, so the two shims that stood in for it
+(`natives/economy.gd` planting the parallel list under its known global name, and
+`natives/ui.gd` rewiring the trading screen by hand) are **gone**.
+
+pogverify is unchanged by the fix: 2878/2878 functions agree, MISSING 0,
+INVENTED 0, 217 dispatch. A `New` is not a call and not a string, so it adds
+nothing the differential test counts -- what it changes is what the code *does*.
+
+Two things the fix exposed, both latent behind the null lists:
+
+* `gui.RepositionWindow` is `(window, parent, x, y)` -- it reparents as well as
+  moves. `igui.ArrangeWindowsVertically` (igui entry 17714) walks a list and
+  passes a *running* offset as the last argument, and `igui.CreateMenu` passes
+  the shady bar it just made as the second. Those loops walk a list, so they had
+  never run.
+* `iloadout.StartCustomisedLoadout` builds its list box through `vm.ui`, which
+  only `PogRuntime` has -- under the VM the customise screen came up without its
+  rows. It now finds the `PogUi` through the natives it registered.
 
 ## Extraction steps this depends on
 

@@ -70,7 +70,7 @@ func disable_station_reactive_report() -> Variant:
 func disable_reactive_in_area(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
 	while true:
 		v3 = imapentity.cast(p_set.first_element(v2))
@@ -84,7 +84,7 @@ func disable_reactive_in_area(v0, v1) -> Variant:
 func enable_reactive_in_area(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = isim.non_planetary_in_radius(isim.cast(v0), v1)
 	while true:
 		v3 = imapentity.cast(p_set.first_element(v2))
@@ -166,7 +166,7 @@ func local_837(v0, v1) -> Variant:
 	var _pc: int = 837
 	while true:
 		if _pc == 837:
-			v2 = null
+			v2 = ""
 			if ihabitat.allegiance(v0) == 53:
 				_pc = 879
 				continue
@@ -299,7 +299,7 @@ func local_1627(v0, v1, v2) -> Variant:
 	var _pc: int = 1627
 	while true:
 		if _pc == 1627:
-			v4 = null
+			v4 = []
 			if not (object.property_exists(v1, "enemy_list")):
 				_pc = 1674
 				continue
@@ -769,7 +769,7 @@ func local_5500(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	v1 = object.float_property(v0, "radius")
-	v2 = null
+	v2 = []
 	v2 = list.from_set(isim.sims_in_radius(isim.cast(v0), v1 + 50000.0, 536838144))
 	v3 = isim.faction(isim.cast(v0))
 	v4 = ifaction.find("Police")
@@ -821,9 +821,9 @@ func local_6298(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v1 = null
-	v2 = null
-	v3 = null
+	v1 = []
+	v2 = []
+	v3 = []
 	while true:
 		await _pog_wait(1)
 		v2 = object.list_property(v0, "enemy_list")
@@ -881,8 +881,8 @@ func check_station_reaction() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v0 = null
-	v1 = null
+	v0 = []
+	v1 = []
 	v4 = ifaction.find("Marauders")
 	v5 = ifaction.find("Independent")
 	while true:
@@ -947,9 +947,9 @@ func station_reactive() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v3 = null
-	v5 = null
-	v6 = null
+	v3 = []
+	v5 = ""
+	v6 = ""
 	if _pog_is_null(global.exists("g_active_location_list")):
 		pass
 	else:

@@ -49,7 +49,7 @@ func initialise_mission_generator() -> Variant:
 func add_g_m_enum(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v1 = global.pog_int("gl_missgen_number_available")
 	if PogRuntime.TRACE:
 		debug.print_string("iGMTracker.AddGMEnum: adding an enum mission ")
@@ -91,7 +91,7 @@ func g_m_tracker() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v2 = null
+	v2 = ""
 	v3 = -1
 	v8 = 0
 	input.bind_key("iGMTracker.RunGMission", "ScriptKeys.StartGMission")
@@ -158,7 +158,7 @@ func stepover_mission() -> Variant:
 	var v7: Variant = 0
 	global.set_int("gl_missgen_index", global.pog_int("gl_missgen_index") + 1)
 	return 0
-	v2 = null
+	v2 = ""
 	input.bind_key("iGMTracker.RunGMission", "ScriptKeys.StartGMission")
 	v7 = state.find(self)
 	if not _pog_is_null(v7):

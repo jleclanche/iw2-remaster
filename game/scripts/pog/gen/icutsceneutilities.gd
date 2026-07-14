@@ -48,7 +48,7 @@ func local_0() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = list.from_set(isim.player_hostiles_in_radius(300000.0, 536850432))
 	v1 = list.item_count(v0)
 	v2 = 0
@@ -84,13 +84,13 @@ func handle_abort(v0) -> Variant:
 	v1 = self
 	v2 = 0
 	v3 = await get_kill_group()
-	v4 = null
-	v5 = null
+	v4 = []
+	v5 = ""
 	v6 = iship.find_player_ship()
 	v8 = await iwingmen.group()
 	v9 = await iwingmen.get_lori()
 	v10 = await iwingmen.get_az()
-	v11 = null
+	v11 = []
 	if object.property_exists(iship.find_player_ship(), "player_dying"):
 		return v2
 	if not (global.exists("g_cutscene_skip")):
@@ -551,9 +551,9 @@ func local_6581(v0, v1) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v7 = null
-	v8 = null
-	v9 = null
+	v7 = ""
+	v8 = ""
+	v9 = ""
 	if v1:
 		if group.sim_count(v3) > 1:
 			if PogRuntime.TRACE:
@@ -600,8 +600,8 @@ func get_things_called(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
-	v4 = null
+	v3 = []
+	v4 = []
 	p_set.union(v3, v0)
 	while true:
 		v2 = isim.cast(p_set.first_element(v3))
@@ -621,9 +621,9 @@ func find_station_module() -> Variant:
 	var _pc: int = 7585
 	while true:
 		if _pc == 7585:
-			v2 = null
+			v2 = []
 			v2 = await get_station_modules(v0)
-			v3 = null
+			v3 = []
 			_pc = 8043
 			continue
 		elif _pc == 7643:

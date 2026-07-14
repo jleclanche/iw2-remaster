@@ -149,7 +149,7 @@ func local_722(v0) -> Variant:
 	while true:
 		if _pc == 722:
 			v1 = 0
-			v4 = null
+			v4 = []
 			v5 = iship.cast(group.leader(v0))
 			v7 = ifaction.find("Player")
 			v8 = ifaction.find("League")
@@ -287,7 +287,7 @@ func local_1655(v0, v1) -> Variant:
 	while true:
 		if _pc == 1655:
 			v2 = 0
-			v5 = null
+			v5 = []
 			v7 = ifaction.find("Player")
 			v8 = ifaction.find("Junkers")
 			v9 = ifaction.find("MAAS Corporation")
@@ -564,7 +564,7 @@ func local_5113(v0, v1) -> Variant:
 	v6 = iship.find_player_ship()
 	v8 = imapentity.find_by_name("Gabriel Defense Station")
 	v9 = ifaction.find("Player")
-	v10 = null
+	v10 = []
 	v12 = 0
 	v13 = 0
 	igame.enable_blackout(1)

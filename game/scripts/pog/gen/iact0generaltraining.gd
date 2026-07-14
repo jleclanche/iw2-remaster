@@ -28,7 +28,7 @@ func base_exploration_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
+	v0 = ""
 	v3 = state.find(self)
 	v4 = 0
 	if PogRuntime.TRACE:
@@ -151,7 +151,7 @@ func base_online_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
+	v0 = ""
 	v1 = 0
 	v3 = 0
 	v4 = state.find(self)

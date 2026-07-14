@@ -100,7 +100,7 @@ func local_207() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	while true:
 		await _pog_wait(2)
 		v0 = iship.find_player_ship()
@@ -129,7 +129,7 @@ func local_486() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v10 = null
+	v10 = ""
 	await _pog_wait(1.0)
 	v10 = "/movies/OldCalStartup"
 	if global.exists("g_current_act"):
@@ -185,7 +185,7 @@ func local_1487(v0, v1) -> Variant:
 	var _pc: int = 1487
 	while true:
 		if _pc == 1487:
-			v9 = null
+			v9 = []
 			v11 = 0
 			v12 = await icutsceneutilities.get_kill_group()
 			idirector.begin()
@@ -344,7 +344,7 @@ func local_3258(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(v0)
 	v2 = list.item_count(v1)
 	v3 = 0
@@ -368,9 +368,9 @@ func local_3425() -> Variant:
 	v2 = imapentity.find_by_name("Formhault Jump Accelerator")
 	v3 = imapentity.find_by_name("Liberty L-Point")
 	v4 = imapentity.find_by_name("Jump Accelerator")
-	v5 = null
-	v6 = null
-	v7 = null
+	v5 = []
+	v6 = []
+	v7 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.create_filtered_habitat_set: Creating set...\n")
 	v6 = imapentity.system_habitats()
@@ -410,7 +410,7 @@ func local_4240() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v3 = null
+	v3 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.create_station_regions: Initialising traffic control regions...\n")
 	v3 = await local_3425()
@@ -499,7 +499,7 @@ func local_5396() -> Variant:
 
 func local_5678() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = []
 	global.create_bool("g_cutscene_skip", 2, 0)
 	global.create_handle("g_cutscene_kill_group", 2, 0)
 	global.create_handle("g_ship_names_ini", 1, inifile.create("ini:/ship_names"))
@@ -577,7 +577,7 @@ func local_7005() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
+	v3 = []
 	v4 = iship.find_player_ship()
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.finish_loadout: Checking turret fighters, cargo etc...\n")
@@ -623,10 +623,10 @@ func local_7610() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v0 = null
-	v1 = null
-	v2 = null
-	v6 = null
+	v0 = []
+	v1 = []
+	v2 = []
+	v6 = []
 	v7 = 0
 	v8 = iship.find_player_ship()
 	v12 = 0
@@ -676,7 +676,7 @@ func local_7610() -> Variant:
 
 func local_8720() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	if not _pog_is_null(iship.find_player_ship()):
 		return 0
 	v0 = config.get_string("system", "Test", "ship")
@@ -770,8 +770,8 @@ func hide_map_locations() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = null
-	v2 = null
+	v0 = []
+	v2 = ""
 	v3 = 1
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSytem.hide_map_locations: Starting location hiding.....\n")
@@ -1125,9 +1125,9 @@ func startup_system() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
-	v1 = null
-	v2 = null
+	v0 = []
+	v1 = ""
+	v2 = ""
 	if igame.game_type() == 2:
 		return 0
 	if PogRuntime.TRACE:

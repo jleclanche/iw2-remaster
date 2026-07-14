@@ -198,7 +198,7 @@ func local_1528(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = list.from_set(sim.children(v0))
 	v3 = list.item_count(v2)
 	isim.set_faction(v0, v1)

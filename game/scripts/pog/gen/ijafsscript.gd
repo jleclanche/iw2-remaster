@@ -1080,7 +1080,7 @@ func local_6544(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v3 = 13.100000381469727
 	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
 	sim.add_subsim(v0, v2)
@@ -1172,8 +1172,8 @@ func local_8690() -> Variant:
 	v1 = iship.find_player_ship()
 	v3 = await get_tag_group()
 	v4 = ifaction.find("Player")
-	v7 = null
-	v8 = null
+	v7 = ""
+	v8 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iJafsScript.SummonJafs: STARTED\n")
 	await flag_jafs_active()
@@ -1498,8 +1498,8 @@ func tag_pods_in_f_o_v() -> Variant:
 	v1 = await get_tag_group()
 	v4 = 45.0
 	v5 = 10000.0
-	v8 = null
-	v9 = null
+	v8 = []
+	v9 = []
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.TagPodsInFOV(): Can't find player ship - EXITING.\n")
@@ -1671,7 +1671,7 @@ func local_15683(v0, v1) -> Variant:
 	v2 = iship.find_player_ship()
 	v3 = await get_tag_group()
 	v4 = group.nth_group(v3, 0)
-	v5 = null
+	v5 = ""
 	if sim.is_dead(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.jafs_runs_away: Jafs is dead - EXITING")
@@ -1822,7 +1822,7 @@ func local_17890(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
+	v4 = ""
 	if not (isim.attacked(v0)):
 		return 0
 	v3 = object.int_property(v0, "attacked_count")
@@ -1847,7 +1847,7 @@ func local_18284(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	v5 = math.random_int(1, v2)
-	v6 = null
+	v6 = ""
 	v6 = string.join(v1, string.from_int(v5))
 	await local_18414(v0, v6, v3, v4)
 	return 0
@@ -1975,8 +1975,8 @@ func auto_tag_valuable_pods() -> Variant:
 	v1 = await get_tag_group()
 	v4 = 45.0
 	v5 = 20000.0
-	v8 = null
-	v9 = null
+	v8 = []
+	v9 = []
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.AutoTagValuablePods(): Can't find player ship - EXITING.\n")

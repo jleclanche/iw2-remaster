@@ -2234,7 +2234,7 @@ func terminate() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v1 = 0
 	while v1 < global.pog_int("g_parking_slots"):
 		v2 = string.join(imapentity.pog_name(v0), string.join(" Unload Slot ", string.from_int(v1)))
@@ -2270,10 +2270,10 @@ func monitor_traffic() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	v0 = 1
-	v1 = null
-	v9 = null
-	v10 = null
-	v11 = null
+	v1 = []
+	v9 = []
+	v10 = ""
+	v11 = []
 	v12 = iship.find_player_ship()
 	global.set_list("g_active_location_list", v11)
 	while true:

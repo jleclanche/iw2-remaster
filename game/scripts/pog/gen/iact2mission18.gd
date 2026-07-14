@@ -938,7 +938,7 @@ func local_14627(v0, v1, v2, v3, v4) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v7 = null
+	v7 = []
 	v9 = ifaction.find("Marauders")
 	while true:
 		if sim.is_dead(v0):

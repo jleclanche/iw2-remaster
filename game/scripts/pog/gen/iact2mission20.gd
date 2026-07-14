@@ -172,7 +172,7 @@ func local_1393(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v3 = null
+	v3 = []
 	v3 = list.from_set(isim.sims_in_radius(isim.cast(group.leader(v0)), 9000.0, 536838144))
 	v4 = list.item_count(v3)
 	iship.disrupt_l_d_s_drive(iship.cast(group.leader(v0)), v2)

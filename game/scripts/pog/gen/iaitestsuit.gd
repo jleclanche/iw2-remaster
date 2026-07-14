@@ -75,10 +75,10 @@ func main() -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	v1 = imapentity.find_by_name("Touchdown")
-	v4 = null
+	v4 = []
 	v9 = object.float_property(v1, "radius")
 	v10 = 10000000.0
-	v13 = null
+	v13 = ""
 	v14 = inifile.create("ini:/iAITestShips")
 	v13 = inifile.string(v14, "Player", "ship", "ini:/sims/ships/player/fast_attack_prefitted")
 	v0 = iship.create(v13, "Player Ship")
@@ -225,7 +225,7 @@ func local_3584(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	v3 = group.create()
-	v5 = null
+	v5 = ""
 	v6 = await iutilities.find_number_of_i_n_i_entries(v0, "TestShips", "ship")
 	v7 = 0
 	while v7 < v1:
@@ -486,7 +486,7 @@ func local_6286() -> Variant:
 	var _pc: int = 6286
 	while true:
 		if _pc == 6286:
-			v2 = null
+			v2 = []
 			v6 = global.handle("g_object1_handle")
 			v7 = global.handle("g_object2_handle")
 			v5 = await local_6076()

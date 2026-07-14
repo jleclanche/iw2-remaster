@@ -111,7 +111,7 @@ func on_session_refresh() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v0 = gui.cast(global.handle("mp_network_session_list_box"))
 	v1 = gui.cast(global.handle("mp_network_refresh_button"))
 	if not (imultiplay.server_browser_update_complete()):
@@ -161,7 +161,7 @@ func add_server_entry_call_back() -> Variant:
 	v14 = 20
 	v17 = 23
 	v18 = global.pog_int("GUI_listbox_entryheight")
-	v20 = null
+	v20 = ""
 	v20 = global.string("type_font")
 	v21 = string.to_int(v3)
 	if not _pog_eq(v21, imultiplay.protocol_version()) and not (v5):
@@ -211,10 +211,10 @@ func network_l_a_n_screen() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v0 = null
-	v1 = null
-	v7 = null
-	v10 = null
+	v0 = []
+	v1 = []
+	v7 = ""
+	v10 = ""
 	global.destroy("NetworkSessionContinue")
 	global.create_bool("NetworkSessionContinue", 2, 0)
 	imultiplay.network_reset()
@@ -273,7 +273,7 @@ func local_2660(v0) -> Variant:
 	var v24: Variant = 0
 	var v25: Variant = 0
 	var v26: Variant = 0
-	v3 = null
+	v3 = []
 	v8 = global.pog_int("GUI_alignment_offset")
 	v11 = gui.frame_height() - 290
 	v13 = global.pog_int("GUI_scrollbar_width")
@@ -282,8 +282,8 @@ func local_2660(v0) -> Variant:
 	v21 = global.pog_int("GUI_inversebutton_height")
 	v22 = 10
 	v23 = 5
-	v25 = null
-	v26 = null
+	v25 = ""
+	v26 = ""
 	if v0:
 		v26 = text.field("mp_lan_game", 0)
 	else:
@@ -337,10 +337,10 @@ func local_4058(v0, v1) -> Variant:
 	var v12: Variant = 0
 	v2 = -1
 	v3 = -1
-	v6 = null
-	v7 = null
-	v9 = null
-	v10 = null
+	v6 = ""
+	v7 = ""
+	v9 = ""
+	v10 = ""
 	v12 = igame.system_time()
 	global.set_bool("NetworkSessionContinue", 1)
 	while global.pog_bool("NetworkSessionContinue") == 1:
@@ -382,9 +382,9 @@ func show_ship(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
-	v3 = null
-	v4 = null
+	v2 = ""
+	v3 = ""
+	v4 = ""
 	if _pog_eq(v0, ""):
 		return 0
 	v4 = global.string("MoviePlaying")
@@ -429,25 +429,25 @@ func local_5146(v0) -> Variant:
 	var v27: Variant = 0
 	v1 = gui.cast(global.handle("MapListBoxHandle"))
 	v2 = gui.cast(global.handle("GameSelectionListBoxHandle"))
-	v3 = null
+	v3 = ""
 	v3 = global.string("GUI_subtitle_font")
 	v4 = global.pog_int("GUI_inversebutton_height")
 	v5 = 3
 	v6 = global.pog_int("GUI_inversebutton_width")
 	v9 = global.pog_int("GUI_scrollbar_width")
-	v11 = null
+	v11 = []
 	v12 = 0
 	v13 = 0
 	v14 = 1
-	v15 = null
-	v16 = null
-	v17 = null
-	v18 = null
+	v15 = ""
+	v16 = ""
+	v17 = ""
+	v18 = ""
 	v20 = 19
 	v21 = 21
-	v23 = null
-	v24 = null
-	v26 = null
+	v23 = []
+	v24 = ""
+	v26 = ""
 	v26 = ""
 	v23 = global.list("NetworkServerOptionsPackages")
 	v27 = gui.list_box_focused_entry(v2)
@@ -509,9 +509,9 @@ func on_ship_selection() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = global.list("multiplayer_options_ship_list")
-	v2 = null
+	v2 = ""
 	v3 = gui.focused_window()
 	v1 = 0
 	while v1 < await imultiplaygui.valid_ship_count():
@@ -528,8 +528,8 @@ func on_player_options_back_button() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v3 = null
+	v1 = []
+	v3 = ""
 	v0 = gui.cast(global.handle("multiplayer_options_name_box"))
 	v1 = global.list("multiplayer_options_ship_list")
 	v3 = gui.edit_box_value(v0)
@@ -568,10 +568,10 @@ func player_options() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v4 = null
-	v5 = null
+	v4 = []
+	v5 = []
 	v10 = 9
-	v11 = null
+	v11 = ""
 	v12 = await imultiplaygui.valid_ship_count()
 	imultiplay.client_options_load()
 	v11 = imultiplay.client_options_name()
@@ -638,18 +638,18 @@ func local_8762() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v2 = null
-	v3 = null
-	v5 = null
-	v6 = null
+	v2 = []
+	v3 = []
+	v5 = ""
+	v6 = ""
 	v8 = -1
 	v9 = -1
-	v10 = null
-	v11 = null
-	v12 = null
-	v13 = null
-	v15 = null
-	v16 = null
+	v10 = ""
+	v11 = ""
+	v12 = ""
+	v13 = ""
+	v15 = ""
+	v16 = ""
 	v2 = global.list("NetworkServerOptionsPackages")
 	v3 = global.list("NetworkServerOptionsMaps")
 	v4 = 0
@@ -724,7 +724,7 @@ func on_server_screen_back_to_main_menu_button() -> Variant:
 func on_server_screen_o_k() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = await local_8762()
 	gui.play_sound(2)
 	imultiplay.server_app_spawn(v0)
@@ -762,13 +762,13 @@ func network_server_screen() -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	v7 = null
-	v8 = null
-	v9 = null
+	v7 = []
+	v8 = []
+	v9 = []
 	v15 = 9
-	v16 = null
-	v17 = null
-	v18 = null
+	v16 = ""
+	v17 = ""
+	v18 = ""
 	v19 = 10
 	v20 = global.pog_int("GUI_inversebutton_height") + global.pog_int("GUI_fancybutton_height") + v19
 	v21 = 4
@@ -915,8 +915,8 @@ func network_server_screen_advanced() -> Variant:
 	var v15: Variant = 0
 	var v16: Variant = 0
 	var v17: Variant = 0
-	v1 = null
-	v7 = null
+	v1 = []
+	v7 = ""
 	v13 = 20
 	v14 = 13
 	v15 = 7
@@ -1199,20 +1199,20 @@ func local_17494(v0, v1) -> Variant:
 	var v24: Variant = 0
 	var v25: Variant = 0
 	var v26: Variant = 0
-	v4 = null
+	v4 = ""
 	v4 = global.string("GUI_subtitle_font")
 	v5 = global.pog_int("GUI_inversebutton_height")
 	v6 = 3
 	v7 = global.pog_int("GUI_inversebutton_width")
 	v11 = global.pog_int("GUI_scrollbar_width")
-	v14 = null
+	v14 = []
 	v15 = 0
 	v16 = 0
-	v17 = null
-	v18 = null
-	v19 = null
-	v20 = null
-	v21 = null
+	v17 = ""
+	v18 = ""
+	v19 = ""
+	v20 = ""
+	v21 = ""
 	v23 = 19
 	v24 = 21
 	v26 = -1
@@ -1296,20 +1296,20 @@ func local_19161(v0, v1, v2) -> Variant:
 	var v24: Variant = 0
 	var v25: Variant = 0
 	var v26: Variant = 0
-	v5 = null
+	v5 = ""
 	v5 = global.string("GUI_subtitle_font")
 	v6 = global.pog_int("GUI_inversebutton_height")
 	v7 = 3
 	v8 = global.pog_int("GUI_inversebutton_width")
 	v11 = global.pog_int("GUI_scrollbar_width")
-	v15 = null
+	v15 = []
 	v16 = 0
 	v17 = 0
 	v18 = 1
-	v19 = null
-	v20 = null
-	v21 = null
-	v22 = null
+	v19 = ""
+	v20 = ""
+	v21 = ""
+	v22 = ""
 	v24 = 19
 	v25 = 21
 	v10 = imultiplay.get_server_map_list(v0)
@@ -1386,8 +1386,8 @@ func network_screen() -> Variant:
 	var _pc: int = 20634
 	while true:
 		if _pc == 20634:
-			v6 = null
-			v9 = null
+			v6 = []
+			v9 = ""
 			v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
 			await igui.set_g_u_i_globals()
 			gui.set_default_font(global.string("GUI_title_font"))
@@ -1538,9 +1538,9 @@ func c_d_key_screen() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v3 = null
+	v3 = []
 	v8 = 9
-	v9 = null
+	v9 = ""
 	v9 = igame.c_d_key()
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
@@ -1600,9 +1600,9 @@ func c_d_key_screen__on_edit_box_finish() -> Variant:
 	var v3: Variant = 0
 	v0 = gui.cast(global.handle("multiplayer_cdkey_static"))
 	v1 = gui.cast(global.handle("multiplayer_cdkey_editbox"))
-	v2 = null
+	v2 = ""
 	v2 = gui.edit_box_value(v1)
-	v3 = null
+	v3 = ""
 	if imultiplay.server_browser_validate_key(v2):
 		igame.set_c_d_key(v2)
 		gui.queue_sound(2)
@@ -1656,7 +1656,7 @@ func rejection_screen() -> Variant:
 	var v25: Variant = 0
 	var v26: Variant = 0
 	var v27: Variant = 0
-	v4 = null
+	v4 = []
 	v7 = global.pog_int("GUI_alignment_offset")
 	v10 = gui.frame_height() - 400
 	v12 = global.pog_int("GUI_scrollbar_width")
@@ -1665,7 +1665,7 @@ func rejection_screen() -> Variant:
 	v20 = global.pog_int("GUI_inversebutton_height")
 	v21 = 10
 	v22 = 5
-	v27 = null
+	v27 = ""
 	await igui.set_g_u_i_globals()
 	v1 = await igui.create_wide_shady_bar()
 	await igui.add_back_buttons(v1, "iNetworkGUI.RejectedOnBackButton", "iNetworkGUI.RejectedOnBackToMainMenuButton")

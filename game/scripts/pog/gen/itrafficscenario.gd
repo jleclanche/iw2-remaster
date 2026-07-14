@@ -124,7 +124,7 @@ func local_876(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v2 = null
+	v2 = []
 	v6 = group.sim_count(v0)
 	v8 = 0
 	while v8 < v6:
@@ -148,7 +148,7 @@ func local_876(v0) -> Variant:
 func local_1259(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = []
 	v3 = 0
 	while v3 < v1:
 		v2 = isim.sims_in_cone(isim.cast(v0), 375.0, 800.0, 2000.0, 536838144)
@@ -206,12 +206,12 @@ func haulage_in(v0) -> Variant:
 	var _pc: int = 1590
 	while true:
 		if _pc == 1590:
-			v6 = null
-			v9 = null
+			v6 = ""
+			v9 = ""
 			v14 = 0
 			v22 = global.pog_float("g_player_sensor_range")
-			v26 = null
-			v27 = null
+			v26 = []
+			v27 = []
 			v29 = 0
 			v33 = 0
 			if global.pog_int("g_total_haulage_running") >= 7:
@@ -1187,11 +1187,11 @@ func haulage_out(v0) -> Variant:
 	var v30: Variant = 0
 	var v31: Variant = 0
 	var v32: Variant = 0
-	v7 = null
+	v7 = ""
 	v13 = 0
 	v21 = global.pog_float("g_player_sensor_range")
-	v25 = null
-	v26 = null
+	v25 = []
+	v26 = []
 	v28 = 0
 	v32 = 0
 	if global.pog_int("g_total_haulage_running") >= 7:
@@ -1370,11 +1370,11 @@ func supply(v0) -> Variant:
 	var _pc: int = 8760
 	while true:
 		if _pc == 8760:
-			v7 = null
+			v7 = ""
 			v14 = 0
 			v22 = global.pog_float("g_player_sensor_range")
-			v27 = null
-			v28 = null
+			v27 = []
+			v28 = []
 			v30 = 0
 			v31 = 0
 			v32 = 0
@@ -2311,11 +2311,11 @@ func trade(v0) -> Variant:
 	var _pc: int = 12124
 	while true:
 		if _pc == 12124:
-			v7 = null
+			v7 = ""
 			v14 = 0
 			v22 = global.pog_float("g_player_sensor_range")
-			v26 = null
-			v28 = null
+			v26 = []
+			v28 = ""
 			v30 = 0
 			if global.pog_int("g_total_trade_running") >= 7:
 				_pc = 12230
@@ -2719,7 +2719,7 @@ func security(v0) -> Variant:
 	var _pc: int = 14260
 	while true:
 		if _pc == 14260:
-			v2 = null
+			v2 = []
 			v3 = 0
 			v8 = global.pog_float("g_player_sensor_range")
 			v11 = iship.find_player_ship()
@@ -3369,7 +3369,7 @@ func tanker(v0) -> Variant:
 	var _pc: int = 18491
 	while true:
 		if _pc == 18491:
-			v4 = null
+			v4 = []
 			v8 = 0
 			v6 = ihabitat.cast(v0)
 			if _pog_is_null(v6):
@@ -3578,7 +3578,7 @@ func official(v0) -> Variant:
 	var _pc: int = 19492
 	while true:
 		if _pc == 19492:
-			v2 = null
+			v2 = []
 			v3 = 0
 			v8 = global.pog_float("g_player_sensor_range")
 			v14 = 1
@@ -3587,7 +3587,7 @@ func official(v0) -> Variant:
 			v17 = 0
 			v18 = 0
 			v19 = 0
-			v22 = null
+			v22 = ""
 			v23 = 0
 			v24 = 0
 			v25 = 0
@@ -4922,7 +4922,7 @@ func maintenance(v0) -> Variant:
 	var _pc: int = 25334
 	while true:
 		if _pc == 25334:
-			v2 = null
+			v2 = []
 			v3 = 0
 			v8 = global.pog_float("g_player_sensor_range")
 			v16 = 0
@@ -5327,7 +5327,7 @@ func mining(v0) -> Variant:
 	var _pc: int = 28004
 	while true:
 		if _pc == 28004:
-			v2 = null
+			v2 = []
 			v3 = 0
 			v8 = global.pog_float("g_player_sensor_range")
 			v14 = 0
@@ -5721,7 +5721,7 @@ func underworld(v0) -> Variant:
 		if _pc == 29677:
 			v5 = ihabitat.cast(v0)
 			v6 = ilagrangepoint.cast(v0)
-			v7 = null
+			v7 = []
 			v8 = math.random_int(1, 3)
 			v11 = global.pog_float("g_player_sensor_range")
 			v13 = 0
@@ -6227,7 +6227,7 @@ func oddball(v0) -> Variant:
 		if _pc == 33430:
 			v5 = ihabitat.cast(v0)
 			v6 = ilagrangepoint.cast(v0)
-			v7 = null
+			v7 = []
 			v10 = global.pog_float("g_player_sensor_range")
 			v13 = 0
 			_pc = 33615
@@ -6494,7 +6494,7 @@ func civilian(v0) -> Variant:
 		if _pc == 35350:
 			v5 = ihabitat.cast(v0)
 			v6 = ilagrangepoint.cast(v0)
-			v7 = null
+			v7 = []
 			v10 = global.pog_float("g_player_sensor_range")
 			v13 = 0
 			_pc = 35535
@@ -6769,7 +6769,7 @@ func local_37397(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = ifaction.all()
 	v2 = list.item_count(v1)
 	v3 = 0
@@ -6801,7 +6801,7 @@ func hostile(v0) -> Variant:
 		if _pc == 37620:
 			v5 = ihabitat.cast(v0)
 			v6 = ilagrangepoint.cast(v0)
-			v7 = null
+			v7 = []
 			v12 = global.pog_float("g_player_sensor_range")
 			v15 = 0
 			_pc = 37805

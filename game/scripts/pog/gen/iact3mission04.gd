@@ -210,8 +210,8 @@ func mission_handler() -> Variant:
 	var v45: Variant = 0
 	v0 = iship.find_player_ship()
 	v36 = state.find(self)
-	v38 = null
-	v39 = null
+	v38 = []
+	v39 = []
 	if not (v36):
 		if PogRuntime.TRACE:
 			debug.print_string("Act3 Mission 04 - State Initialised./n")
@@ -945,7 +945,7 @@ func local_16871(v0, v1, v2, v3, v4) -> Variant:
 func local_17823(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = []
 	v2 = subsim.create("ini:/subsims/dockports/cargo_port")
 	sim.add_subsim(v0, v2)
 	subsim.place(v2, 0.0, 60.0, 822.0)
@@ -1122,7 +1122,7 @@ func local_22431(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = sim.children(v0)
 	v2 = iship.find_player_ship()
 	await _pog_wait(10.0)

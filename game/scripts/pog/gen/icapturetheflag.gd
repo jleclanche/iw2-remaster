@@ -131,7 +131,7 @@ func capture_the_flag_screen() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v5 = null
+	v5 = []
 	gui.set_background_image("texture:/images/backgrounds/multiplay_ctf_background", 0)
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_menu_button("iCaptureTheFlag.OnSelectRedTeam", "Join Red Team", v5)
@@ -188,7 +188,7 @@ func score_screen_quit_button() -> Variant:
 
 func local_2411(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = null
+	v2 = ""
 	v2 = ifaction.pog_name(isim.faction(iship.find_player_ship()))
 	if _pog_eq(v1, v2):
 		gui.set_window_state_colours(v0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0)
@@ -240,18 +240,18 @@ func local_2633() -> Variant:
 	var v39: Variant = 0
 	var v40: Variant = 0
 	var v41: Variant = 0
-	v7 = null
-	v11 = null
-	v12 = null
-	v17 = null
-	v18 = null
+	v7 = ""
+	v11 = ""
+	v12 = ""
+	v17 = []
+	v18 = ""
 	v18 = global.string("type_font")
-	v19 = null
-	v20 = null
-	v21 = null
-	v22 = null
-	v23 = null
-	v24 = null
+	v19 = []
+	v20 = []
+	v21 = []
+	v22 = []
+	v23 = []
+	v24 = []
 	v30 = 200
 	v31 = 100
 	v32 = 60
@@ -259,9 +259,9 @@ func local_2633() -> Variant:
 	v34 = 60
 	v35 = 10
 	v36 = 5
-	v39 = null
-	v40 = null
-	v41 = null
+	v39 = ""
+	v40 = ""
+	v41 = ""
 	gui.stop_all_movies()
 	if imultiplay.is_game_ended():
 		idirector.begin()
@@ -349,11 +349,11 @@ func local_4773() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v4 = null
-	v5 = null
-	v10 = null
+	v4 = []
+	v5 = []
+	v10 = []
 	v12 = gui.frame_height()
-	v15 = null
+	v15 = []
 	v11 = gui.frame_width() - 220
 	v16 = await igui.create_wide_shady_bar()
 	v14 = gui.create_list_box(0, 100, 200, 150, v16, 0, 0)
@@ -415,7 +415,7 @@ func local_5806(v0) -> Variant:
 	v6 = isim.cast(global.handle("mp_beta_flag"))
 	v7 = 0
 	v8 = 0
-	v9 = null
+	v9 = ""
 	if _pog_eq(sim.parent(v5), v0):
 		sim.detach_child(v0, v5)
 		v7 = 1
@@ -453,7 +453,7 @@ func server_on_user_message() -> Variant:
 	var _pc: int = 6414
 	while true:
 		if _pc == 6414:
-			v4 = null
+			v4 = ""
 			_pc = 7586
 			continue
 		elif _pc == 6435:
@@ -591,7 +591,7 @@ func server_on_user_message() -> Variant:
 func server_player_leave() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = object.string_property(v0, "name")
 	v1 = string.join(v1, "+ : +")
 	v1 = string.join(v1, "mp_frag_player_left")
@@ -611,8 +611,8 @@ func server_player_enter() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v2 = null
-	v3 = null
+	v2 = ""
+	v3 = ""
 	v6 = group.cast(global.handle("mp_respawn_group"))
 	if _pog_is_null(imultiplay.server_player_died_count(v0)):
 		v9 = 1
@@ -679,10 +679,10 @@ func player_death() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
-	v3 = null
-	v4 = null
-	v5 = null
+	v1 = ""
+	v3 = ""
+	v4 = ""
+	v5 = ""
 	v5 = object.string_property(v0, "name")
 	v6 = isim.cast(global.handle("mp_alpha_flag"))
 	v7 = isim.cast(global.handle("mp_beta_flag"))
@@ -718,8 +718,8 @@ func local_9688(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v5 = null
-	v8 = null
+	v5 = []
+	v8 = []
 	v9 = ifaction.find(text.field("mp_flag_team_a", 0))
 	v10 = ifaction.find(text.field("mp_flag_team_b", 0))
 	while true:
@@ -763,7 +763,7 @@ func local_10181(v0) -> Variant:
 	v8 = isim.cast(global.handle("mp_beta_base"))
 	v11 = ifaction.find(text.field("mp_flag_team_a", 0))
 	v12 = ifaction.find(text.field("mp_flag_team_b", 0))
-	v13 = null
+	v13 = []
 	if global.pog_bool("BetaFlagIsCaptured") == 1:
 		if not (sim.parent(v4)):
 			if _pog_is_null(v0):
@@ -837,7 +837,7 @@ func local_11710(v0) -> Variant:
 	v8 = isim.cast(global.handle("mp_beta_base"))
 	v11 = ifaction.find(text.field("mp_flag_team_a", 0))
 	v12 = ifaction.find(text.field("mp_flag_team_b", 0))
-	v13 = null
+	v13 = []
 	if global.pog_bool("AlphaFlagIsCaptured") == 1:
 		if not (sim.parent(v3)):
 			if _pog_is_null(v0):
@@ -921,15 +921,15 @@ func local_13239() -> Variant:
 	var v28: Variant = 0
 	var v29: Variant = 0
 	var v30: Variant = 0
-	v13 = null
+	v13 = ""
 	v17 = 0
-	v18 = null
+	v18 = ""
 	v20 = 0.0
 	v21 = 0.0
 	v22 = 1
 	v23 = 1
-	v24 = null
-	v25 = null
+	v24 = []
+	v25 = []
 	v27 = 0.0
 	v29 = 0
 	v30 = 0
@@ -986,8 +986,8 @@ func server_on_update_scores() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v0 = null
-	v5 = null
+	v0 = []
+	v5 = []
 	v7 = group.cast(global.handle("g_bots_a_handle"))
 	v1 = 0
 	while v1 < group.sim_count(v7):
@@ -1083,10 +1083,10 @@ func server_main() -> Variant:
 	var v35: Variant = 0
 	var v36: Variant = 0
 	var v37: Variant = 0
-	v11 = null
-	v12 = null
-	v17 = null
-	v18 = null
+	v11 = ""
+	v12 = ""
+	v17 = []
+	v18 = []
 	imultiplay.set_game_type("CTF")
 	imultiplay.server_set_sort_mode(1)
 	global.create_int("ATeamCaptures", 2, 0)
@@ -1242,8 +1242,8 @@ func local_19242() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v2 = null
-	v3 = null
+	v2 = ""
+	v3 = ""
 	v6 = group.cast(global.handle("mp_respawn_group"))
 	v4 = iship.find_player_ship()
 	if not _pog_is_null(v4):
@@ -1355,8 +1355,8 @@ func bot_death() -> Variant:
 	v4 = ifaction.find(text.field("mp_flag_team_a", 0))
 	v5 = ifaction.find(text.field("mp_flag_team_b", 0))
 	v7 = math.random_int(1, 4)
-	v8 = null
-	v9 = null
+	v8 = ""
+	v9 = ""
 	v9 = string.join(v9, string.from_int(v7))
 	v8 = await imputils.make_death_message(v1, v0)
 	v10 = _pog_spawn(local_8907.bind(v0, _pog_clone(v8)))
@@ -1412,7 +1412,7 @@ func client_on_user_message() -> Variant:
 	while true:
 		if _pc == 22205:
 			v5 = ifaction.find(text.field("mp_flag_team_b", 0))
-			v6 = null
+			v6 = ""
 			_pc = 23978
 			continue
 		elif _pc == 22267:
@@ -1619,7 +1619,7 @@ func client_on_user_message() -> Variant:
 
 func client_default_taunt1() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(0)
 	imultiplay.client_broadcast_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1627,7 +1627,7 @@ func client_default_taunt1() -> Variant:
 
 func client_default_taunt2() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(1)
 	imultiplay.client_broadcast_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1635,7 +1635,7 @@ func client_default_taunt2() -> Variant:
 
 func client_default_taunt3() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(2)
 	imultiplay.client_broadcast_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1643,7 +1643,7 @@ func client_default_taunt3() -> Variant:
 
 func client_default_taunt4() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = imultiplay.client_options_default_taunt(3)
 	imultiplay.client_broadcast_message(iship.find_player_ship(), v0, 1)
 	return 0
@@ -1805,9 +1805,9 @@ func client_main() -> Variant:
 	var v28: Variant = 0
 	var v29: Variant = 0
 	var v30: Variant = 0
-	v12 = null
-	v13 = null
-	v14 = null
+	v12 = ""
+	v13 = ""
+	v14 = []
 	imultiplay.client_set_team_game(1)
 	imultiplay.client_options_load()
 	ihud.set_menu_node_enabled("hud_menu_eng", 0)

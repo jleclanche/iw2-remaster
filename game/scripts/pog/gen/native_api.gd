@@ -1303,6 +1303,8 @@ class PkgIship extends RefCounted:
 		return rt.native("iship.hashyperspacetracker", [a0])
 	func heal(a0) -> Variant:
 		return rt.native("iship.heal", [a0])
+	func hyper_space_tracker_contact() -> Variant:
+		return rt.native("iship.hyperspacetrackercontact", [])
 	func hyper_space_tracker_target() -> Variant:
 		return rt.native("iship.hyperspacetrackertarget", [])
 	func install_a_i_pilot(a0, a1, a2, a3, a4, a5, a6, a7) -> Variant:

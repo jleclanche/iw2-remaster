@@ -827,8 +827,8 @@ func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v7 = null
-	v8 = null
+	v7 = ""
+	v8 = ""
 	if PogRuntime.TRACE:
 		if not (v4 & 1024):
 			debug.print_string("watching sim '")

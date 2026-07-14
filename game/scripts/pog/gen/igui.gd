@@ -444,7 +444,7 @@ func add_back_buttons(v0, v1, v2) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v8 = null
+	v8 = []
 	v3 = gui.window_canvas_height(v0)
 	v6 = global.pog_int("GUI_backbutton_left")
 	v7 = v3 - global.pog_int("GUI_backbutton_rise")
@@ -508,7 +508,7 @@ func create_grey_box_style_screen(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = null
+	v4 = []
 	v10 = gui.top_window()
 	v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
 	v7 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v6 + 10
@@ -536,7 +536,7 @@ func create_h_t_m_l_grey_box_style_screen(v0, v1, v2, v3, v4) -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v6 = null
+	v6 = []
 	v12 = gui.top_window()
 	v8 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
 	v9 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v8 + 10
@@ -789,7 +789,7 @@ func start_window_flashing(v0) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	v1 = 14
-	v3 = null
+	v3 = ""
 	v3 = string.join("_", string.from_int(object.int_property(v0, "id")))
 	v4 = gui.window_neutral_red(v0)
 	v5 = gui.window_neutral_green(v0)
@@ -827,7 +827,7 @@ func stop_window_flashing(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = string.join("_", string.from_int(object.int_property(v0, "id")))
 	v2 = global.pog_float(string.join("neutral_red", v1))
 	v3 = global.pog_float(string.join("neutral_green", v1))

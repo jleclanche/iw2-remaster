@@ -1710,11 +1710,11 @@ func local_12821() -> Variant:
 	sim.pog_preload("ini:/sims/ships/marauder/marauder_cutter_weak")
 	return 0
 	v8 = 1
-	v9 = null
+	v9 = ""
 	v9 = "a2_m05_dialogue_cal_first_choice"
-	v10 = null
+	v10 = ""
 	v10 = "a2_m05_dialogue_cal_subsequent_choices"
-	v11 = null
+	v11 = ""
 	v11 = v9
 	v4 = await icargoscript.cheap_cargo_generator()
 	v5 = await icargoscript.cheap_cargo_generator()
@@ -2074,7 +2074,7 @@ func local_19143(v0, v1) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	v4 = ifaction.find("Marauders")
-	v5 = null
+	v5 = []
 	v7 = group.sim_count(v0)
 	while true:
 		await _pog_wait(v1)

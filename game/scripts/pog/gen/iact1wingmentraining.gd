@@ -227,7 +227,7 @@ func local_2775(v0, v1, v2) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	v3 = iship.cast(group.nth_sim(v0, 3))
-	v4 = null
+	v4 = []
 	v4 = await iwingmen.get_all_t_fighters()
 	v5 = group.nth_group(v0, 0)
 	v6 = 90
@@ -389,7 +389,7 @@ func main_task() -> Variant:
 	var v6: Variant = 0
 	v0 = 0
 	v3 = iship.find_player_ship()
-	v5 = null
+	v5 = []
 	v6 = state.find(self)
 	if global.exists("g_started_wingmen_training") and _pog_is_null(v6):
 		pass

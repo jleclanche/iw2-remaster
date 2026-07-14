@@ -66,7 +66,7 @@ func s_p_main_p_d_a_screen() -> Variant:
 	var _pc: int = 0
 	while true:
 		if _pc == 0:
-			v10 = null
+			v10 = []
 			v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
 			text.add("csv:/text/gui")
 			text.add("csv:/text/gui_addendum")
@@ -159,9 +159,9 @@ func s_p_main_p_d_a_screen() -> Variant:
 func s_p_main_p_d_a_screen__on_start() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = config.get_string("system", "Test", "package")
-	v1 = null
+	v1 = ""
 	v1 = config.get_string("system", "Test", "system")
 	gui.play_sound(2)
 	if _pog_eq(v0, ""):
@@ -242,7 +242,7 @@ func s_p_demo_main_screen() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v6 = null
+	v6 = []
 	gui.register_sound("sound:/audio/gui/minor", 1)
 	gui.register_sound("sound:/audio/gui/confirm", 2)
 	gui.register_sound("sound:/audio/gui/error", 3)
@@ -276,7 +276,7 @@ func s_p_demo_main_screen() -> Variant:
 
 func s_p_demo_main_screen__on_training() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "iDemoTraining"
 	gui.play_sound(2)
 	if PogRuntime.TRACE:
@@ -290,7 +290,7 @@ func s_p_demo_main_screen__on_training() -> Variant:
 
 func s_p_demo_main_screen__on_start() -> Variant:
 	var v0: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "iDemoMission"
 	gui.play_sound(2)
 	if PogRuntime.TRACE:
@@ -330,7 +330,7 @@ func p_d_a_confirm_screen() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v4 = null
+	v4 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "iPDAGUI.PDAConfirmScreen_OnCancel", "iPDAGUI.PDAConfirmScreen_OnCancel")
@@ -373,7 +373,7 @@ func flight_confirm_screen() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v4 = null
+	v4 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "iPDAGUI.FlightConfirmScreen_OnCancel", "iPDAGUI.FlightConfirmScreen_OnCancel")
@@ -425,7 +425,7 @@ func s_p_base_p_d_a_screen() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v6 = null
+	v6 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_menu_button("iPDAGUI.SPBasePDAScreen_OnResume", text.field("pda_resume", 0), v6)
 	v1 = await igui.create_menu_button("iPDAGUI.SPBasePDAScreen_OnSave", text.field("pda_save_game", 0), v6)
@@ -471,7 +471,7 @@ func s_p_flight_p_d_a_screen() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v7 = null
+	v7 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	if igame.game_type() == 3 and imultiplay.client_is_team_game():
 		if _pog_eq(isim.faction(iship.find_player_ship()), ifaction.find(text.field("mp_flag_team_a", 0))):
@@ -516,7 +516,7 @@ func s_p_flight_p_d_a_screen__on_select_team() -> Variant:
 	var v2: Variant = 0
 	v0 = iship.find_player_ship()
 	v1 = isim.faction(v0)
-	v2 = null
+	v2 = ""
 	if _pog_eq(v1, ifaction.find(text.field("mp_flag_team_a", 0))):
 		v2 = text.field("mp_flag_team_b", 0)
 	else:
@@ -534,8 +534,8 @@ func s_p_p_d_a_save_screen() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
-	v5 = null
+	v4 = []
+	v5 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_wide_shady_bar()
 	await igui.add_back_buttons(v0, "iPDAGUI.SPPDALoadScreen_OnBackButton", "iPDAGUI.SPPDALoadScreen_OnBackButton")
@@ -563,8 +563,8 @@ func s_p_p_d_a_save_screen__set_default_name() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
-	v1 = null
+	v0 = ""
+	v1 = []
 	v1 = global.list("saved_game_buttons")
 	v3 = list.item_count(v1)
 	v4 = 0
@@ -588,8 +588,8 @@ func s_p_p_d_a_save_screen__on_save() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
-	v1 = null
+	v0 = ""
+	v1 = []
 	v1 = global.list("saved_game_buttons")
 	v3 = list.item_count(v1)
 	gui.play_sound(2)
@@ -631,7 +631,7 @@ func local_8548(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
+	v2 = ""
 	v3 = igame.number_of_saved_game_slots()
 	v4 = 0
 	while v4 < v3:
@@ -676,8 +676,8 @@ func s_p_p_d_a_load_screen() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v4 = null
-	v5 = null
+	v4 = []
+	v5 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_wide_shady_bar()
 	await igui.add_back_buttons(v0, "iPDAGUI.SPPDALoadScreen_OnBackButton", "iPDAGUI.SPPDALoadScreen_OnBackButton")
@@ -721,8 +721,8 @@ func s_p_p_d_a_load_screen__on_load() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
-	v1 = null
+	v0 = ""
+	v1 = []
 	v1 = global.list("saved_game_buttons")
 	v3 = list.item_count(v1)
 	gui.play_sound(2)
@@ -746,7 +746,7 @@ func local_11058(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v2 = igame.number_of_saved_game_slots()
-	v4 = null
+	v4 = ""
 	v3 = 0
 	while v3 < v2:
 		v4 = igame.name_of_save_in_slot(v3)
@@ -769,10 +769,10 @@ func s_p_p_d_a_options_screen() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v6 = null
+	v6 = []
 	v9 = global.pog_int("GUI_fancybutton_height")
-	v10 = null
-	v11 = null
+	v10 = ""
+	v11 = ""
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "iPDAGUI.SPPDAOptionsScreen_OnBackButton", "iPDAGUI.SPPDAOptionsScreen_OnBackToMainMenuButton")
@@ -843,8 +843,8 @@ func s_p_p_d_a_graphics_screen() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
-	v6 = null
+	v1 = []
+	v6 = ""
 	v7 = global.pog_int("GUI_fancybutton_height")
 	v6 = text.field("pda_options", 0)
 	v6 = string.upper_case(v6)
@@ -920,8 +920,8 @@ func s_p_p_d_a_sound_screen() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = null
-	v4 = null
+	v1 = []
+	v4 = ""
 	v5 = global.pog_int("GUI_fancybutton_height")
 	v4 = text.field("pda_options", 0)
 	v4 = string.upper_case(v4)
@@ -969,7 +969,7 @@ func s_p_p_d_a_controls_screen() -> Variant:
 	var v17: Variant = 0
 	var v18: Variant = 0
 	var v19: Variant = 0
-	v1 = null
+	v1 = []
 	v6 = 0
 	v7 = 210
 	v8 = 50
@@ -982,7 +982,7 @@ func s_p_p_d_a_controls_screen() -> Variant:
 	v15 = 210
 	v16 = 238
 	v17 = 230
-	v18 = null
+	v18 = ""
 	v19 = global.pog_int("GUI_fancybutton_height")
 	v18 = text.field("pda_options", 0)
 	v18 = string.upper_case(v18)
@@ -1115,13 +1115,13 @@ func s_p_p_d_a_device_screen() -> Variant:
 	var v18: Variant = 0
 	var v19: Variant = 0
 	var v20: Variant = 0
-	v2 = null
+	v2 = []
 	v6 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 	v9 = 20
 	v12 = 4
 	v13 = 2 * global.pog_int("GUI_fancyborder_width") + 13
 	v14 = global.pog_int("GUI_alignment_offset") + v12
-	v16 = null
+	v16 = ""
 	if global.exists("update_task"):
 		v20 = _pog_task_cast(global.handle("update_task"))
 		_pog_halt(v20)
@@ -1240,7 +1240,7 @@ func local_19067(v0) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	v1 = null
+	v1 = []
 	v11 = global.pog_int("GUI_scrollbar_width")
 	v4 = gui.cast(global.handle("SPPDADeviceScreen_ResolutionListBox"))
 	gui.delete_window(v4)
@@ -1283,11 +1283,11 @@ func local_20019() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = global.list("SPPDADeviceScreen_DeviceList")
-	v1 = null
+	v1 = []
 	v1 = global.list("SPPDADeviceScreen_ResolutionButtons")
-	v2 = null
+	v2 = []
 	v3 = gui.cast(global.handle("SPPDADeviceScreen_ResolutionListBox"))
 	v4 = gui.cast(global.handle("SPPDADeviceScreen_ApplyButton"))
 	v2 = v0
@@ -1303,7 +1303,7 @@ func local_20333() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.list("SPPDADeviceScreen_DeviceList")
 	v2 = -1
 	v0 = 0
@@ -1321,7 +1321,7 @@ func local_20538() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v0 = 0
-	v2 = null
+	v2 = []
 	v2 = global.list("SPPDADeviceScreen_ResolutionButtons")
 	while not (list.is_empty(v2)):
 		v1 = gui.cast(list.head(v2))
@@ -1354,10 +1354,10 @@ func movies_screen() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	v9 = null
+	v9 = []
 	v12 = global.pog_int("GUI_fancybutton_height")
-	v13 = null
-	v14 = null
+	v13 = ""
+	v14 = ""
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "iPDAGUI.MoviesScreen_OnBackButton", "iPDAGUI.MoviesScreen_OnBackButton")
@@ -1462,7 +1462,7 @@ func local_22453(v0, v1) -> Variant:
 	var v6: Variant = 0
 	v2 = input.num_input_schemes()
 	v4 = 15
-	v5 = null
+	v5 = ""
 	v6 = input.current_input_scheme()
 	v3 = 0
 	while v3 < v2:
@@ -1484,8 +1484,8 @@ func control_screen() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = null
-	v5 = null
+	v4 = []
+	v5 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_wide_shady_bar()
 	await igui.add_back_buttons(v0, "iPDAGUI.ControlScreen_OnBackButton", "iPDAGUI.ControlScreen_OnBackButtonToMainMenu")
@@ -1507,9 +1507,9 @@ func control_screen__on_select_scheme() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = global.list("control_style_buttons")
-	v3 = null
+	v3 = ""
 	v4 = input.current_input_scheme()
 	v2 = 0
 	while v2 < list.item_count(v0):
@@ -1545,7 +1545,7 @@ func local_23590() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iPDAGUI.SetupMods: Initialising mods...\n")
 	imod.scan_directory()
@@ -1582,7 +1582,7 @@ func local_23590() -> Variant:
 
 func local_24153(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = null
+	v1 = ""
 	if _pog_eq(global.string("g_pda_current_mod"), v0):
 		return 0
 	global.set_string("g_pda_current_mod", v0)
@@ -1596,7 +1596,7 @@ func local_24335(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v7 = null
+	v7 = ""
 	v7 = global.string("GUI_subtitle_font")
 	v8 = gui.create_splitter_window(v1, v2, v3, v4, v0, v5, 0)
 	v9 = gui.splitter_window_top_window(v8)
@@ -1674,11 +1674,11 @@ func mod_screen() -> Variant:
 	v4 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
 	v5 = global.pog_int("GUI_shader_width") + v1 - 2 * v1 + v0
 	v7 = 2 * global.pog_int("GUI_fancyborder_width") + 13
-	v15 = null
-	v16 = null
-	v18 = null
-	v22 = null
-	v23 = null
+	v15 = []
+	v16 = []
+	v18 = []
+	v22 = ""
+	v23 = ""
 	await local_23590()
 	v21 = imod.count()
 	gui.set_default_font(global.string("GUI_title_font"))
@@ -1746,7 +1746,7 @@ func mod_screen__on_mod_select() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = null
+	v2 = ""
 	v3 = gui.focused_window()
 	if PogRuntime.TRACE:
 		debug.print_string("iPDAGUI.ModScreen_OnModSelect: Checking to see which button we are...\n")
@@ -1778,8 +1778,8 @@ func mod_screen__on_mission_select() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = null
-	v3 = null
+	v0 = []
+	v3 = ""
 	v4 = gui.focused_window()
 	if PogRuntime.TRACE:
 		debug.print_string("iPDAGUI.OnMissionSelect: Checking to see which button we are...\n")
@@ -1801,7 +1801,7 @@ func mod_screen__on_mission_play() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	v0 = global.pog_int("g_pda_selected_mission")
-	v1 = null
+	v1 = ""
 	if PogRuntime.TRACE:
 		debug.print_string("iPDAGUI.OnMissionPlay: Checking to see mission is selected, if any...\n")
 	if v0 < 0 or v0 >= imod.count():
@@ -1838,7 +1838,7 @@ func instant_action_ship_choice_screen() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = []
 	v4 = 0
 	v5 = 0
 	v6 = 0
@@ -1881,7 +1881,7 @@ func instant_action_ship_choice_screen__on_ship_select() -> Variant:
 	v1 = gui.cast(global.handle("shiptype_tug"))
 	v2 = gui.cast(global.handle("shiptype_fastattackship"))
 	v3 = gui.cast(global.handle("shiptype_heavycorvette"))
-	v4 = null
+	v4 = ""
 	if _pog_eq(gui.focused_window(), v1):
 		v4 = "ini:/sims/ships/player/tug_prefitted"
 	else:
@@ -1928,8 +1928,8 @@ func restart_screen() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = null
-	v4 = null
+	v3 = []
+	v4 = ""
 	v5 = global.pog_int("GUI_fancybutton_width") * 2
 	v6 = global.pog_int("GUI_fancybutton_height")
 	v7 = gui.frame_width() / 2
@@ -1965,7 +1965,7 @@ func local_31597() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v0 = 0
-	v1 = null
+	v1 = ""
 	v2 = sim.cast(global.handle("restart_screen_player_ship"))
 	v3 = sim.cast(global.handle("restart_screen_point_of_death"))
 	sim.place_at(v2, v3)

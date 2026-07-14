@@ -154,7 +154,7 @@ func local_1340(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v2 = null
+	v2 = []
 	if sim.is_dead(v0):
 		return 0
 	if object.float_property(v0, "hit_points") < 1.0:
@@ -217,7 +217,7 @@ func local_2081(v0, v1, v2) -> Variant:
 	v6 = 0
 	v7 = 0
 	v11 = group.create()
-	v12 = null
+	v12 = []
 	v13 = iship.find_player_ship()
 	v14 = object.float_property(v0, "max_hit_points")
 	v16 = 1000.0
@@ -384,7 +384,7 @@ func local_4401(v0, v1, v2) -> Variant:
 	while true:
 		if _pc == 4401:
 			v3 = 0
-			v6 = null
+			v6 = []
 			v7 = iship.cast(group.leader(v0))
 			v9 = group.cast(global.handle("g_player_group"))
 			v10 = ifaction.find("Player")

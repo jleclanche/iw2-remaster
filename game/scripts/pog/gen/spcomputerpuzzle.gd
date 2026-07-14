@@ -31,7 +31,7 @@ func _link() -> void:
 func local_0(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v8 = null
+	v8 = ""
 	v8 = "88"
 	if v2 == 4:
 		v8 = "8888"
@@ -74,11 +74,11 @@ func local_851() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v5 = null
-	v6 = null
-	v7 = null
-	v8 = null
-	v9 = null
+	v5 = ""
+	v6 = ""
+	v7 = ""
+	v8 = ""
+	v9 = ""
 	v0 = gui.cast(global.handle("g_time_hr_txt"))
 	v1 = gui.cast(global.handle("g_time_min_txt"))
 	v2 = gui.cast(global.handle("g_date_day_txt"))
@@ -171,11 +171,11 @@ func local_2378() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v5 = null
-	v6 = null
-	v7 = null
-	v8 = null
-	v9 = null
+	v5 = ""
+	v6 = ""
+	v7 = ""
+	v8 = ""
+	v9 = ""
 	v0 = gui.cast(global.handle("g_time_hr_txt"))
 	v1 = gui.cast(global.handle("g_time_min_txt"))
 	v2 = gui.cast(global.handle("g_date_day_txt"))
@@ -236,8 +236,8 @@ func main() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v6 = null
-	v7 = null
+	v6 = []
+	v7 = []
 	v8 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 	v9 = global.pog_int("GUI_inversebutton_width")
 	v10 = global.pog_int("GUI_inversebutton_height")
@@ -320,7 +320,7 @@ func on_increment() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = ""
 	v0 = gui.focused_window()
 	v1 = gui.edit_box_value(v0)
 	v2 = string.to_int(v1)
@@ -336,7 +336,7 @@ func on_decrement() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = ""
 	v0 = gui.focused_window()
 	v1 = gui.edit_box_value(v0)
 	v2 = string.to_int(v1)
@@ -528,7 +528,7 @@ func local_8358() -> Variant:
 	v5 = 0
 	v7 = 0.05000000074505806
 	v9 = 64
-	v11 = null
+	v11 = ""
 	v12 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_fancyborder_width") + global.pog_int("GUI_inversebutton_textoffset")
 	if global.pog_int("g_time_hr") == 17 and global.pog_int("g_time_min") == 24 and global.pog_int("g_date_day") == 4 and global.pog_int("g_date_month") == 3 and global.pog_int("g_date_year") == 2331:
 		v14 = 1

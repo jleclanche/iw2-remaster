@@ -325,7 +325,7 @@ func local_2999(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v2 = iship.create("ini:/sims/ships/independent/tug_armed", "a2_m10_third_man")
 	await ipilotsetup.generic_military(v2)
 	sim.set_cullable(v2, 0)

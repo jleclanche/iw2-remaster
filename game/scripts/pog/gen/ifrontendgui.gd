@@ -51,10 +51,10 @@ func wrong_disk_screen() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v3 = null
+	v3 = []
 	v6 = gui.frame_width() / 2
 	v7 = gui.frame_height() / 2
-	v10 = null
+	v10 = ""
 	text.add("csv:/text/gui")
 	text.add("csv:/text/gui_addendum")
 	text.add("csv:/text/gui_addendum_2")
@@ -118,7 +118,7 @@ func local_1187(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v3 = null
+	v3 = ""
 	v4 = global.pog_int("GUI_main_title_height")
 	v2 = gui.create_static_window(0, v0, gui.frame_width(), v4, gui.top_window())
 	v3 = text.field(v1, 0)
@@ -134,7 +134,7 @@ func local_1624() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v2 = config.count_number("system", "icGame", "movies")
 	gui.pop_screen()
 	gui.overlay_screen("icSPMainPDAScreen")

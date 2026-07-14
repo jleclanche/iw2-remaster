@@ -60,7 +60,7 @@ func local_249() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_hangar_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -73,7 +73,7 @@ func local_362() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_trade_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -86,7 +86,7 @@ func local_475() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_inventory_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -99,7 +99,7 @@ func local_588() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_recycling_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -112,7 +112,7 @@ func local_701() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_manufacturing_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -125,7 +125,7 @@ func local_814() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_comms_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -138,7 +138,7 @@ func local_927() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_encyclopaedia_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -151,7 +151,7 @@ func local_1040() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_statistics_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -164,7 +164,7 @@ func local_1153() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_triangulation_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -177,7 +177,7 @@ func local_1266() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = null
+	v0 = ""
 	v0 = "g_customised_loadout_disabled"
 	v2 = 0
 	v1 = global.exists(v0)
@@ -355,7 +355,7 @@ func start_new_mail_notification(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v1 = 14
-	v3 = null
+	v3 = ""
 	v3 = string.join("_", string.from_int(object.int_property(v0, "id")))
 	v2 = _pog_spawn(new_mail_notification.bind(v0))
 	_pog_detach(v2)
@@ -366,7 +366,7 @@ func start_new_mail_notification(v0) -> Variant:
 func stop_new_mail_notification(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v1 = null
+	v1 = ""
 	v1 = string.join("_", string.from_int(object.int_property(v0, "id")))
 	v2 = _pog_task_cast(global.handle(string.join("NewMailNotificationTask", v1)))
 	_pog_halt(v2)
@@ -388,7 +388,7 @@ func s_p_base_screen() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	v9 = 0
-	v11 = null
+	v11 = []
 	await local_5932()
 	text.add("csv:/text/gui")
 	text.add("csv:/text/gui_addendum")
@@ -752,9 +752,9 @@ func local_6973() -> Variant:
 	v4 = global.pog_int("GUI_scrollbar_width")
 	v5 = 4
 	v6 = 2 * global.pog_int("GUI_fancyborder_width") + 13
-	v17 = null
+	v17 = ""
 	v17 = "hangarmenu_manifest"
-	v18 = null
+	v18 = []
 	v19 = 9
 	v16 = await igui.create_shady_bar_right()
 	v1 = gui.window_canvas_height(v16) - v2 + global.pog_int("GUI_backbutton_rise")
@@ -815,10 +815,10 @@ func s_p_hangar_screen() -> Variant:
 	var v18: Variant = 0
 	var v19: Variant = 0
 	var v20: Variant = 0
-	v5 = null
-	v18 = null
-	v19 = null
-	v20 = null
+	v5 = []
+	v18 = ""
+	v19 = ""
+	v20 = ""
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
 	await local_6973()
@@ -938,9 +938,9 @@ func s_p_loadout_screen() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	v1 = null
-	v2 = null
-	v5 = null
+	v1 = []
+	v2 = []
+	v5 = []
 	v6 = global.pog_int("GUI_fancybutton_height")
 	v7 = 20
 	gui.set_default_font(global.string("GUI_title_font"))
@@ -1007,9 +1007,9 @@ func s_p_loadout_screen__on_loadout() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v2 = -1
-	v5 = null
+	v5 = []
 	v5 = global.list("LoadoutButtons")
-	v6 = null
+	v6 = []
 	v6 = global.list("FighterButtons")
 	v8 = gui.focused_window()
 	gui.set_radio_button_checked(v8, 1)
@@ -1060,7 +1060,7 @@ func s_p_loadout_screen__on_fighter() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	v4 = iloadout.turret_fighters_in_loadout()
-	v5 = null
+	v5 = []
 	v5 = global.list("FighterButtons")
 	v6 = gui.focused_window()
 	gui.set_radio_button_checked(v6, 1)
@@ -1230,7 +1230,7 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 		if _pc == 15522:
 			v6 = iinventory.number_of_cargo_type(474)
 			v7 = iloadout.turret_fighters_in_loadout()
-			v9 = null
+			v9 = ""
 			v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 			v6 = v6 + v7
 			if v6 > 2:
@@ -1330,9 +1330,9 @@ func local_16088(v0, v1, v2, v3) -> Variant:
 	v9 = global.pog_int("GUI_scrollbar_width")
 	v10 = global.pog_int("GUI_fancybutton_width")
 	v11 = global.pog_int("GUI_fancyborder_width")
-	v14 = null
+	v14 = []
 	v15 = 9
-	v16 = null
+	v16 = ""
 	if not _pog_is_null(string.length(v2)):
 		v17 = 1
 	else:
@@ -1383,7 +1383,7 @@ func s_p_comms_main_menu_screen() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v3 = null
+	v3 = []
 	gui.set_default_font(global.string("GUI_title_font"))
 	v0 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v0, "iBaseGUI.SPCommsMainMenuScreen_OnBackButton", "iBaseGUI.SPCommsMainMenuScreen_OnBackToMainMenuButton")
@@ -1438,10 +1438,10 @@ func local_17725(v0, v1) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	v3 = null
-	v4 = null
-	v5 = null
-	v9 = null
+	v3 = ""
+	v4 = ""
+	v5 = ""
+	v9 = []
 	v10 = 10
 	v11 = 75
 	v12 = 30
@@ -1492,9 +1492,9 @@ func local_18391(v0, v1) -> Variant:
 	v10 = 13
 	v15 = global.pog_int("GUI_listbox_entryheight")
 	v16 = 5
-	v17 = null
+	v17 = ""
 	v17 = global.string("type_font")
-	v18 = null
+	v18 = ""
 	v18 = global.string("type_font")
 	v2 = gui.create_window(0, 0, v7, v15, 0)
 	v12 = v10
@@ -1518,7 +1518,7 @@ func s_p_inbox_screen() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPInboxScreen_OnBackButton", "iBaseGUI.SPInboxScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	list.remove_head(v1)
@@ -1579,7 +1579,7 @@ func s_p_archive_screen() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPArchiveScreen_OnBackButton", "iBaseGUI.SPArchiveScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	list.remove_head(v1)
@@ -1632,7 +1632,7 @@ func s_p_messages_screen() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v1 = null
+	v1 = []
 	v5 = iemail.cast(global.handle("MessageToDisplay"))
 	global.set_bool("ReadingMessage", 1)
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_communications", 0), "iBaseGUI.SPMessagesScreen_OnBackButton", "iBaseGUI.SPMessagesScreen_OnBackToMainMenuButton")
@@ -1704,11 +1704,11 @@ func s_p_encyclopaedia_screen() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v1 = null
+	v1 = []
 	v5 = global.pog_int("BaseGUI_senderwidth")
 	v6 = global.pog_int("GUI_fancybutton_height")
-	v7 = null
-	v8 = null
+	v7 = ""
+	v8 = ""
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_encyclopedia", 0), "iBaseGUI.SPEncyclopaediaScreen_OnBackButton", "iBaseGUI.SPEncyclopaediaScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	v7 = global.string("encyclopaedia_default_entry")
@@ -1748,7 +1748,7 @@ func s_p_trading_screen() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v0 = null
+	v0 = []
 	v0 = await local_23974()
 	v1 = gui.cast(list.head(v0))
 	list.remove_head(v0)
@@ -1869,7 +1869,7 @@ func local_23974() -> Variant:
 	var v23: Variant = 0
 	var v24: Variant = 0
 	var v25: Variant = 0
-	v2 = null
+	v2 = []
 	v8 = global.pog_int("GUI_alignment_offset")
 	v11 = gui.frame_height() - 290
 	v13 = global.pog_int("GUI_scrollbar_width")
@@ -1915,7 +1915,7 @@ func local_25276(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = null
+	v1 = []
 	v4 = itrade.num_trades()
 	v3 = 0
 	while v3 < v4:
@@ -1946,7 +1946,7 @@ func local_25428(v0, v1) -> Variant:
 	var v19: Variant = 0
 	var v20: Variant = 0
 	var v21: Variant = 0
-	v3 = null
+	v3 = ""
 	v4 = gui.window_canvas_width(v0)
 	v5 = global.pog_int("GUI_listbox_entryheight")
 	v6 = 5
@@ -1954,10 +1954,10 @@ func local_25428(v0, v1) -> Variant:
 	v16 = v4 / 3
 	v17 = 2 * v4 / 3
 	v18 = v4
-	v19 = null
+	v19 = ""
 	v19 = global.string("type_font")
 	v20 = itrade.faction(v1)
-	v21 = null
+	v21 = ""
 	v21 = object.string_property(v1, "generated_mission")
 	v8 = 0
 	v9 = 13
@@ -2030,7 +2030,7 @@ func local_26725(v0, v1) -> Variant:
 	var v9: Variant = 0
 	v2 = 0
 	v5 = 0
-	v8 = null
+	v8 = ""
 	v8 = ""
 	v9 = 0
 	while 1:
@@ -2105,8 +2105,8 @@ func s_p_inventory_screen() -> Variant:
 	var v18: Variant = 0
 	var v19: Variant = 0
 	var v20: Variant = 0
-	v2 = null
-	v4 = null
+	v2 = []
+	v4 = []
 	v15 = 0
 	v16 = global.pog_int("GUI_inversebutton_width")
 	v17 = global.pog_int("GUI_inversebutton_height")
@@ -2179,11 +2179,11 @@ func s_p_inventory_screen__on_inventory_list_box_select() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v1 = gui.cast(global.handle("InventoryListBox"))
-	v3 = null
+	v3 = ""
 	v3 = ""
 	v4 = iinventory.number_of_cargo_types()
 	v5 = 0
-	v7 = null
+	v7 = []
 	v7 = global.list("InventoryScreen_CargoList")
 	v0 = gui.list_box_focused_entry(v1)
 	v8 = icargo.cast(list.get_nth(v7, v0))
@@ -2204,7 +2204,7 @@ func local_29193(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v1 = null
+	v1 = []
 	v2 = gui.cast(global.handle("SPInventoryScreen_Equipment"))
 	v3 = gui.cast(global.handle("SPInventoryScreen_Cargo"))
 	v4 = gui.cast(global.handle("InventoryListBox"))
@@ -2238,8 +2238,8 @@ func s_p_cargo_screen() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v1 = null
-	v6 = null
+	v1 = []
+	v6 = []
 	v15 = global.pog_int("GUI_fancybutton_height")
 	v1 = await igui.create_grey_box_style_screen(text.field("loadoutmenu_add_cargo", 0), "iBaseGUI.SPCargoScreen_OnBackButton", "iBaseGUI.SPCargoScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
@@ -2310,7 +2310,7 @@ func s_p_cargo_screen__on_cargo_list_box_select() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	v1 = gui.cast(global.handle("CargoListBox"))
-	v2 = null
+	v2 = []
 	v2 = global.list("CargoScreen_CargoList")
 	v6 = iinventory.number_of_cargo_types()
 	v7 = 0
@@ -2359,9 +2359,9 @@ func local_31807(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v1 = iloadout.cargo()
-	v2 = null
-	v3 = null
-	v4 = null
+	v2 = ""
+	v3 = ""
+	v4 = ""
 	if v1 == -1:
 		v4 = text.field("add_cargo_none", 0)
 	else:
@@ -2387,8 +2387,8 @@ func s_p_recycling_screen() -> Variant:
 	var v10: Variant = 0
 	var v11: Variant = 0
 	var v12: Variant = 0
-	v1 = null
-	v5 = null
+	v1 = []
+	v5 = []
 	v12 = global.pog_int("GUI_fancybutton_height")
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_recycling", 0), "iBaseGUI.SPRecyclingScreen_OnBackButton", "iBaseGUI.SPRecyclingScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
@@ -2458,7 +2458,7 @@ func s_p_recycling_screen__on_recycle_one_button() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	v0 = gui.cast(global.handle("RecyclingListBox"))
-	v1 = null
+	v1 = []
 	v1 = global.list("RecyclingScreen_CargoList")
 	v6 = gui.list_box_selected_index(v0)
 	if v6 != -1:
@@ -2487,7 +2487,7 @@ func s_p_recycling_screen__on_recycle_all_button() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	v0 = gui.cast(global.handle("RecyclingListBox"))
-	v1 = null
+	v1 = []
 	v1 = global.list("RecyclingScreen_CargoList")
 	v6 = gui.list_box_selected_index(v0)
 	if v6 != -1:
@@ -2512,7 +2512,7 @@ func local_34423(v0, v1) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v2 = null
+	v2 = []
 	v2 = global.list("RecyclingScreen_CargoList")
 	v3 = icargo.cast(list.get_nth(v2, v1))
 	v4 = object.int_property(v3, "type")
@@ -2545,7 +2545,7 @@ func s_p_recycling_screen__on_recycling_list_box_select() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = global.list("RecyclingScreen_CargoList")
 	v3 = gui.cast(global.handle("RecyclingListBox"))
 	v0 = gui.list_box_focused_entry(v3)
@@ -2574,7 +2574,7 @@ func local_35323(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v4 = null
+	v4 = []
 	v5 = global.pog_int("GUI_inversebutton_width") - 6
 	v6 = global.pog_int("GUI_inversebutton_height")
 	v7 = 10
@@ -2615,7 +2615,7 @@ func local_36173(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v1 = iinventory.manufacture_units()
-	v2 = null
+	v2 = ""
 	v2 = text.field("manufacturing_units", 0)
 	v2 = string.join(v2, string.from_int(v1))
 	v2 = string.upper_case(v2)
@@ -2633,7 +2633,7 @@ func s_p_manufacturing_screen() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v1 = null
+	v1 = []
 	v8 = global.pog_int("GUI_fancybutton_height")
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_manufacturing", 0), "iBaseGUI.SPManufacturingScreen_OnBackButton", "iBaseGUI.SPManufacturingScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
@@ -2683,7 +2683,7 @@ func s_p_manufacturing_screen__on_manufacturing_button() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v0 = gui.cast(global.handle("ManufacturingListBox"))
-	v1 = null
+	v1 = []
 	v1 = global.list("ManufacturingScreen_CargoList")
 	v5 = gui.list_box_selected_index(v0)
 	if v5 != -1:
@@ -2744,7 +2744,7 @@ func local_38446(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v3 = null
+	v3 = []
 	v4 = global.pog_int("GUI_inversebutton_width")
 	v5 = global.pog_int("GUI_inversebutton_height")
 	v6 = 10
@@ -2786,8 +2786,8 @@ func local_38945(v0) -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	v5 = null
-	v7 = null
+	v5 = []
+	v7 = ""
 	v9 = iinventory.number_of_cargo_types()
 	v11 = global.pog_int("GUI_tab_text_offset")
 	v12 = gui.window_canvas_width(v0)
@@ -2795,7 +2795,7 @@ func local_38945(v0) -> Variant:
 	v14 = 5
 	v15 = 10
 	v20 = 0
-	v21 = null
+	v21 = ""
 	v21 = global.string("type_font")
 	v22 = 3 * v12 / 4
 	v23 = v12
@@ -2848,7 +2848,7 @@ func s_p_ship_type_screen() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v1 = null
+	v1 = []
 	v4 = 0
 	v5 = 0
 	v6 = 0
@@ -3007,9 +3007,9 @@ func local_42175() -> Variant:
 	v9 = global.pog_int("GUI_scrollbar_width")
 	v10 = 4
 	v11 = 2 * global.pog_int("GUI_fancyborder_width") + 13
-	v22 = null
+	v22 = ""
 	v22 = "hangarmenu_manifest"
-	v23 = null
+	v23 = []
 	v24 = 9
 	v21 = await igui.create_shady_bar_right()
 	v1 = gui.window_canvas_height(v21) - v7 + global.pog_int("GUI_backbutton_rise")
@@ -3099,8 +3099,8 @@ func local_44051(v0, v1) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v4 = null
-	v9 = null
+	v4 = ""
+	v9 = []
 	v10 = 9
 	v4 = global.string("type_font")
 	v5 = global.pog_int("GUI_fancyborder_alignmentoffset") + global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_width")
@@ -3148,7 +3148,7 @@ func local_44605(v0) -> Variant:
 	v9 = global.pog_int("GUI_scrollbar_width")
 	v10 = 4
 	v11 = 2 * global.pog_int("GUI_fancyborder_width") + 13
-	v22 = null
+	v22 = []
 	v2 = gui.window_canvas_height(v0) - v8 + global.pog_int("GUI_backbutton_rise")
 	v1 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
 	v3 = v2 - v1
@@ -3179,8 +3179,8 @@ func local_45312() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v3 = null
-	v7 = null
+	v3 = ""
+	v7 = []
 	v7 = global.list("customiseloadout_indicators")
 	v0 = gui.cast(list.head(v7))
 	list.remove_head(v7)
@@ -3226,8 +3226,8 @@ func s_p_statistics_screen() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
-	v3 = null
+	v1 = []
+	v3 = ""
 	v1 = await igui.create_grey_box_style_screen(text.field("basemenu_statistics", 0), "iBaseGUI.SPStatisticsScreen_OnBackButton", "iBaseGUI.SPStatisticsScreen_OnBackToMainMenuButton")
 	v0 = gui.cast(list.head(v1))
 	v2 = await igui.create_titled_text_box(v0, text.field("basemenu_statistics", 0), 0, "", 0, "", "")

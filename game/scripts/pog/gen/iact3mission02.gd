@@ -503,7 +503,7 @@ func local_7531(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v1 = null
+	v1 = []
 	v1 = list.from_set(isim.sims_in_radius(isim.cast(v0), 500000.0, 8192))
 	v2 = list.item_count(v1)
 	v3 = 0
