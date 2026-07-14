@@ -1659,31 +1659,50 @@ func _nearest(category: String, range_limit := INF) -> Dictionary:
 	return best
 
 func _nearest_inhibitor() -> Dictionary:
-	# nearest LDS-inhibition source (stations 25 km, bodies scale with
-	# their radius — masses inhibit LDS, iRegion.CreateLDSI)
-	var best := {}
-	var bestc := INF
-	for o in objects:
-		var inhibit := 0.0
-		match o["category"]:
-			"station":
-				inhibit = LDSI_RADIUS
-			"body":
-				# drop out just above the rendered surface — LDSI proper is
-				# station/script territory in IW2, not blanket planet zones
-				inhibit = maxf(LDSI_RADIUS, o["radius"] * 1.2)
-			_:
-				continue
-		var cen := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
-		var cl := cen.length() - inhibit
-		if cl < bestc:
-			bestc = cl
-			best = {"center": cen, "r": inhibit, "clear": cl}
-	return best
+	# LDS INHIBITION is REGION-based, not a property of stations or bodies. A
+	# ship is inhibited only while inside an icLDSIRegion sphere the scripts
+	# author with iRegion.CreateLDSI. In the binary every ship carries an
+	# inhibit counter at iiThrusterSim+0x251: icLDSIRegion::OnSimEnter
+	# (iwar2 @ 0x10048680) -> EnterLDSInhibitRegion (0x1007e450) bumps it,
+	# LeaveLDSInhibitRegion (0x1007e4a0) drops it, IsLDSInhibited (0x100023c0)
+	# reads it, and icLDSDrive::Simulate (0x10037040) breaks the ship out of LDS
+	# while it is non-zero. Stations and bodies carry NO intrinsic LDSI shell --
+	# standing clear of a mass is AVOIDANCE, a separate break-off distance
+	# (see _lds_avoidance). pog_ents already tracks these regions; ask it.
+	if pog_ents == null:
+		return {}
+	var b := pog_ents.nearest_ldsi(Vector3(px, py, pz))
+	if b.is_empty():
+		return {}
+	return {"center": Vector3(b["center"]) - Vector3(px, py, pz),
+		"r": float(b["r"]), "clear": float(b["clear"])}
 
 func _lds_clearance() -> float:
+	# Clearance from LDS INHIBITION (the region boundary), +inf when no region.
 	var b := _nearest_inhibitor()
 	return INF if b.is_empty() else float(b["clear"])
+
+func _lds_avoidance() -> float:
+	# LDS AVOIDANCE -- NOT inhibition, NOT the fence, NOT the roundel: the mass
+	# break-off distance that keeps the drive from flying you into a planet or
+	# station. Modelled on icAIServices::InnerMarkerRadius (iwar2 @ 0x100560d0):
+	# a body/star stands off at 1.5x its radius (m_heat_radius_multiplier 0.5 +
+	# 1.0, 0x1011af58), everything else at its own radius, plus ~200 m of clear
+	# space (0x10119470). Returns the signed clearance to the nearest shell.
+	var best := INF
+	for o in objects:
+		var mult := 1.0
+		match o["category"]:
+			"body", "star":
+				mult = 1.5
+			"station", "gunstar":
+				mult = 1.0
+			_:
+				continue
+		var margin := float(o["radius"]) * mult + 200.0
+		var cl := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length() - margin
+		best = minf(best, cl)
+	return best
 
 func inhibit_charge() -> float:
 	# 1 deep inside an inhibition zone, discharging to 0 at its boundary
@@ -2947,13 +2966,18 @@ func _lds_process(delta: float) -> void:
 	# our ramp is pow(base, dt); the original's is exp(w * rate * dt), so the
 	# weight belongs in the exponent
 	lds_speed = minf(lds_speed * pow(LDS_RAMP, delta * wd), LDS_MAX)
-	var clear := _lds_clearance()
+	var clear := _lds_clearance()     # LDS inhibition (icLDSIRegion), region-based
+	var avoid := _lds_avoidance()     # mass break-off (avoidance), distinct from above
 	var tdist := _target_distance()
-	if (tdist < lds_speed * 1.5 and tdist < INF) or clear < 0.0:
+	# brake as we close on the target, or on a nearby mass (avoidance)
+	if tdist < lds_speed * 1.5 and tdist < INF:
 		lds_speed = maxf(tdist * 1.5, LDS_BASE)
+	if avoid < lds_speed * 1.5 and avoid < INF:
+		lds_speed = maxf(avoid * 1.5, LDS_BASE)
 	lds_speed = minf(lds_speed, LDS_MAX)
 	ship.velocity = -ship.global_transform.basis.z * lds_speed
-	if clear < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
+	# drop out: inhibited (inside a region), flown into a mass, or arrived
+	if clear < 0.0 or avoid < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
 		_drop_out_of_lds()
 
 func _drop_out_of_lds() -> void:

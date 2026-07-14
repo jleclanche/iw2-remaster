@@ -271,6 +271,28 @@ func lds_inhibited(p: Vector3) -> bool:
 	return false
 
 
+## The nearest scripted LDS-inhibition region to a world-frame point, for the
+## HUD roundel and the LDSi fence. Returns the region's world-frame centre, its
+## radius, and the signed clearance (negative inside the sphere); {} when no
+## live inhibitor exists. icLDSIRegion is a centre+radius sphere (iwar2 @
+## 0x10048870); only kind=="ldsi" regions -- the iRegion.CreateLDSI zones -- are
+## LDS inhibitors. (icTrafficControlRegion::OnSimEnter @ 0x1004f3e0 also calls
+## EnterLDSInhibitRegion, so approach lanes inhibit too in the original; the
+## remaster still models "traffic" as a speed cap only -- see docs/lds.md.)
+func nearest_ldsi(p: Vector3) -> Dictionary:
+	var best := {}
+	var bestc := INF
+	for r in regions:
+		if r.kind != "ldsi" or r.dead or r.centre == null or not r.centre.alive():
+			continue
+		var c: Vector3 = r.centre.abs_pos()
+		var clear: float = c.distance_to(p) - r.radius
+		if clear < bestc:
+			bestc = clear
+			best = {"center": c, "r": r.radius, "clear": clear}
+	return best
+
+
 # ---------------------------------------------------------------- subsim
 # subsim.Create("ini:/subsims/dockports/universal_port") then Place/Orientate:
 # the scripts bolt equipment onto a sim they just built. The INI gives the
