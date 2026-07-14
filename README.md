@@ -60,14 +60,24 @@ $env:IW2_GAME_DIR = "C:\...\Independence War 2"   # if not the GOG default
    navigable, **LDS travel with real drive constants + LDSI dropout**,
    targeting HUD. Run: `godot --path game`; automated flight test:
    `godot --path game -- --demo`
-3. ✅ The game runs its own content: all 114 POG packages ported to
-   GDScript and verified against their bytecode (`pogverify`), campaign
-   Act 0 end-to-end, docking, PBC + the full missile system, subsim
-   damage/heat model, mission checkpoints, the original HUD (target MFD,
-   TRI, starmap, hat-menu) — every constant extracted from the binaries
-   (`docs/original.md` is the evidence log; `featurecov`/`apicov` measure
-   what is honestly built vs stubbed)
-4. Next (`featurecov --todo` is the authoritative list): turrets and beam
-   weapons, capsule-space jump tunnel, asteroid/debris fields, act 3
-   aliens, remaining base screens (trading, puzzle, customise), Acts 1-3
-   mission authoring
+3. ✅ The game runs its own content, and the systems under it are the
+   original's. All 114 POG packages ported to GDScript and **provably
+   agreeing with their bytecode** (`pogverify`: 2878/2878, nothing
+   invented). Combat: subsim damage, heat, missiles/mines/countermeasures,
+   turrets and beams. Flight: LDS, autopilots, **capsule space** (a real
+   mini-world, not a fade). World: asteroid/debris fields, act-3 aliens
+   and infection. UI: the original HUD (target MFD, reticle, TRI, starmap,
+   hat-menu) and the POG-driven base screens (trading, loadout, customise,
+   the triangulation puzzle). Every constant is extracted from the
+   binaries — `docs/original.md` is the evidence log, and
+   `featurecov`/`apicov` measure what is honestly built vs stubbed rather
+   than asserting it in prose.
+
+   Coverage: **666/829 natives (98% of call sites, 0 unbound)**,
+   **70/384 engine classes built with 8 genuine gaps left**, gameplay
+   assertions `--mechcheck` 20/20 · `--campcheck` · `--jumpcheck`.
+4. Next: Acts 1–3 mission authoring (the bytecode is the source — use
+   `pogsummary`), then the remaster proper. `featurecov --todo` is the
+   authoritative list of what the engine has that we do not: the
+   turret-fighter hull, remote missile, slug thrower, and five cosmetic
+   avatars.
