@@ -139,7 +139,7 @@ extends RefCounted
 # iwar2.dll -- world avatars (base FiSceneNode / FcSceneNode /
 # FcParticleEmitterNode)
 # ---------------------------------------------------------------------------
-# @element-stub icFlameConeAvatar -- covered-elsewhere: ship_effects.gd additive cone meshes on the channel rig
+# (icFlameConeAvatar is really built: its @element marker is in ship_effects.gd -- a 6-facet plasma-textured cone, TIME-scrolled axial UV at 0.5/s (Prepare 0x100bd5f0), SRCALPHA/ONE additive, channel-driven intensity (Draw 0x100bd630). See docs/thrusters.md)
 # (icMovieAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icPlanetAvatar -- covered-elsewhere: main.gd planet spheres, ring + atmosphere materials
 # @element-stub icPlanetsAvatar -- covered-elsewhere: main.gd _spawn_impostor (distant-planet impostors)

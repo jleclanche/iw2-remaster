@@ -3,7 +3,40 @@ extends Node
 # The original's channel-driven effect rig (FcChannelGeneratorNode +
 # icFlameConeAvatar). Ship state feeds named channels; avatar nodes tagged
 # <anim channel=...> interpolate between their two exported poses by the
-# channel value, and flame-cone nodes get an additive cone mesh.
+# channel value, and flame-cone nodes get a scrolling, textured additive cone.
+#
+# icFlameConeAvatar RECOVERED from iwar2.dll (Ghidra dropped its whole vtable
+# cluster; raw-disassembled at the addresses below):
+#   ctor        FUN_100bd350 @ 0x100bd350  (object size 0xdc)
+#   Prepare     vtable[14]   @ 0x100bd5f0  -- scrolls a UV phase every frame
+#   Draw        vtable[16]   @ 0x100bd630  -- builds/emits the cone
+#   SetChannel  vtable[6]    @ 0x100bd5b0  -- parses the "channel" property
+#   ring gens   0x100bd220 (cos) / 0x100bd260 (sin) / 0x100bd2a0 (axial)
+#   registry    FUN_100bcf80 @ 0x100bcf80  -> RegisterClass(props @0x101713e0)
+# Property map (FUN_100bd030 @ 0x100bd030): three authored properties --
+#   "channel" (string, +0xd0)  -- an FcChannelExpression, parsed in SetChannel
+#   "splay"   (float,  +0xbc, default 0.5)   -- ring radius scale
+#   "tint"    (FcColour,+0xc0, default (1,1,0)) -- emitted colour
+# What it DRAWS (0x100bd630): a 6-facet cone (cos/sin tables step pi/3, 7 verts
+# with wrap) textured with texture:/images/sfx/plasma (bound once in the ctor
+# @0x100bd3d3 into a shared sPolygonState @0x10171310, blend field = 2 =
+# SRCALPHA/ONE alpha-weighted additive, z-write off). Colour = the "tint"
+# property (FcColour copy @0x100bd67b). Ring radius = cos/sin * splay (+0xbc,
+# fmul @0x100bd78c/0x100bd7a0). The channel value v = |Evaluate(channel)|
+# (@0x100bd63e); if |v| < 1e-6 the Draw early-outs (invisible at idle).
+# THE ANIMATION: Prepare (0x100bd5f0) advances a phase at +0xcc every frame:
+#   phase -= game_delta * 0.5 (const @0x1011cbc4); wrap +1.0 when it passes 0.
+# The Draw feeds that phase as the axial texture coordinate (+0x1788 <-[ebx+0xcc]
+# @0x100bd711) so the turbulent plasma SCROLLS along the cone at 0.5/sec -- that
+# scroll over the cloudy plasma noise is what makes the original read as "fire",
+# and it moves at a HELD throttle. Per-vertex alpha grades v*globalalpha*0.6 at
+# one ring (@0x100bd6ff/0x100bd705, const 0.6 @0x101192c4) to 1.0 at the other
+# (@0x100bd7c6), so the flame brightens/fills as the channel rises. (The tail
+# @0x100bd7ea, gated by 0x10173b74, sums the flame's screen coverage into a
+# global bloom/glare accumulator at +0x37c -- not geometry; not reproduced.)
+# The old stand-in was a flat untextured CylinderMesh at constant alpha with NO
+# texture and NO scroll -- hence "flat and constant". Rebuilt below on the real
+# behaviour: real plasma texture, TIME-scrolled V, channel-driven intensity.
 #
 # Channel strings are EXPRESSIONS in the original's little language
 # (seen across avatars/*.lws):
@@ -16,6 +49,7 @@ extends Node
 
 var ship: ShipFlight
 var anim_nodes: Array = []   # {node, channel, p0..s1}
+var flame_cones: Array = []  # {mat: ShaderMaterial, channel: String}
 var exprs: Dictionary = {}   # channel string -> {terms: Array, value: float}
 var fire_pulse := 0.0        # set by weapons fire events
 # sim.AvatarAddChannel / AvatarSetChannel / AvatarRemoveChannel (sim.dll) --
@@ -30,6 +64,15 @@ var script_channels: Dictionary = {}
 var _lz_smooth := 0.0
 var _burn_smooth := 0.0
 var _term_re: RegEx
+
+# --flameshot: a self-contained capture mode (this script only) that forces the
+# player tug to full burn and photographs the thrusters from an external camera
+# across several frames, so the SCROLL animation is visible frame-to-frame.
+var _flameshot := false
+var _shot_cam: Camera3D
+var _shot_t := 0.0
+var _shot_n := 0
+var _shot_settle := 0.0
 
 static func attach(to_ship: ShipFlight, model: Node3D) -> ShipEffects:
 	var fx := ShipEffects.new()
@@ -136,8 +179,50 @@ func _v3(a: Array) -> Vector3:
 func _quat(a: Array) -> Quaternion:
 	return Quaternion(a[0], a[1], a[2], a[3]).normalized()
 
+# texture:/images/sfx/plasma, bound in the ctor @0x100bd3d3. A cloudy grey
+# noise sheet (no alpha) -- density rides in the luminance, per the engine's
+# "particle textures carry no alpha" convention (particle_fx.gd @0x1004ffd0).
+const FLAME_TEX := "images/sfx/plasma"
+
+# blend field of the shared sPolygonState @0x10171314 = 2 -> SRCALPHA/ONE with
+# z-write off: alpha-weighted additive (Godot blend_add + alpha == SRCALPHA/ONE).
+# Prepare @0x100bd5f0 scrolls the axial texture coord at 0.5/sec over TIME so the
+# turbulent noise flows down the cone; intensity gates the whole thing on the
+# channel value (Draw early-outs when |v| < 1e-6). The grade term is the Draw's
+# per-ring alpha ramp (0.6 @0x101192c4 at one ring, 1.0 at the other).
+const FLAME_SHADER := """
+shader_type spatial;
+render_mode blend_add, depth_draw_never, cull_disabled, unshaded, shadows_disabled, fog_disabled;
+uniform sampler2D plasma : source_color, filter_linear_mipmap, repeat_enable;
+uniform vec3 tint = vec3(1.0, 1.0, 0.0);
+uniform float intensity = 0.0;      // |channel value|, 0..1
+uniform float scroll_rate = 0.5;    // iwar2 const @0x1011cbc4
+void fragment() {
+	// V runs the cone axis: 0 at the nozzle, 1 at the tip. Scroll it over TIME
+	// (Prepare @0x100bd5f0) so the plasma noise flows outward every frame.
+	float v = UV.y - TIME * scroll_rate;
+	// two decorrelated octaves of the noise so the turbulence churns instead of
+	// sliding as one rigid sheet -- reads as licking flame
+	float a = texture(plasma, vec2(UV.x, v)).r;
+	float b = texture(plasma, vec2(UV.x * 1.7 + 0.3, v * 2.3 - TIME * scroll_rate)).r;
+	// a modest translucent body plus a strong churning-noise term, so the plume
+	// flickers and licks (rather than sitting as a solid cone) as the two octaves
+	// scroll past each other -- this is the motion the original got from scrolling
+	// the plasma noise, and what the old flat-alpha stand-in was missing
+	float density = (0.35 + 1.15 * a) * (0.45 + 1.0 * b);
+	// bright/full at the nozzle, thinning toward the tip (Draw alpha ramp)
+	float grade = mix(1.0, 0.4, UV.y);
+	// fade the leading tip so the cone dissolves rather than ending in a hard cap
+	float tip = smoothstep(1.0, 0.4, UV.y);
+	// hot cores flare toward white where the noise peaks
+	ALBEDO = tint * (1.0 + 2.0 * a * a);
+	ALPHA = clamp(density * grade * tip * intensity, 0.0, 1.0);
+}
+"""
+
 func _add_flame_cone(node: Node3D, ex: Dictionary) -> void:
-	var tint := Color(1.0, 0.7, 0.2)
+	# tint default (1,1,0) = FcColour ctor defaults DAT_101713d0..d8
+	var tint := Color(1.0, 1.0, 0.0)
 	var t := str(ex.get("iw2_tint", ""))
 	var floats: Array = []
 	for part in t.trim_prefix("(").trim_suffix(")").split(","):
@@ -145,29 +230,112 @@ func _add_flame_cone(node: Node3D, ex: Dictionary) -> void:
 			floats.append(float(part.strip_edges()))
 	if floats.size() >= 3:
 		tint = Color(floats[0], floats[1], floats[2])
-	var splay := float(ex.get("iw2_splay", 1.0))
+	# splay default 0.5 = DAT_1011cbc0 (ctor @0x100bd350); scales the ring radius
+	var splay := float(ex.get("iw2_splay", 0.5))
+	# 6-facet cone: cos/sin tables step pi/3 over 7 verts (gens @0x100bd220/60).
+	# Wide at the nozzle (radius = splay), tapering to a near-point tip. The
+	# parent <anim channel=flame> null's z-scale keys (-10..-40 in the tug LWS)
+	# stretch this unit cone to full length, and its (4.5, 2.5) x/y scale gives
+	# the elliptical mouth -- that machinery stays untouched.
 	var mesh := CylinderMesh.new()
-	mesh.top_radius = 0.5 * splay  # base of the cone at the nozzle
-	mesh.bottom_radius = 0.02
+	mesh.top_radius = splay
+	mesh.bottom_radius = maxf(0.02, splay * 0.05)
 	mesh.height = 1.0
-	mesh.radial_segments = 12
+	mesh.radial_segments = 6
+	mesh.rings = 8            # axial subdivisions so the V scroll interpolates smoothly
 	mesh.cap_top = false
 	mesh.cap_bottom = false
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	mat.albedo_color = Color(tint.r, tint.g, tint.b, 0.55)
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var tex: Texture2D = ParticleFx.texture(base, FLAME_TEX)
+	var sh := Shader.new()
+	sh.code = FLAME_SHADER
+	var mat := ShaderMaterial.new()
+	mat.shader = sh
+	mat.set_shader_parameter("plasma", tex)
+	mat.set_shader_parameter("tint", Vector3(tint.r, tint.g, tint.b))
+	mat.set_shader_parameter("intensity", 0.0)
 	mesh.material = mat
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
+	# never culled: the plume is always drawn, and it can outrun the frustum cull
+	mi.extra_cull_margin = 16384.0
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# cone along the parent's local -Z (LW-authored +Z, flipped by our
-	# coordinate convention); the <anim> null's negative z scale keys then
-	# stretch it backward out of the nozzle
+	# coordinate convention); wide nozzle end (+Y after the tilt) at the null
+	# origin, tapering back out of the nozzle
 	mi.rotation_degrees = Vector3(90, 0, 0)
 	mi.position = Vector3(0, 0, -0.5)
 	node.add_child(mi)
+	flame_cones.append({"mat": mat, "node": node,
+		"channel": str(ex.get("iw2_channel", "flame"))})
+
+func _ready() -> void:
+	# only the player tug (NPCs also carry a ShipEffects rig and would race us)
+	_flameshot = "--flameshot" in OS.get_cmdline_user_args() \
+		and ship != null and ship.name == "Player"
+	if _flameshot:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		# force the drive on so the flame/burn channels sit at full, and pre-warm
+		# the smoothers so the plume is at full length immediately
+		if ship != null:
+			ship.drive_override = true
+		_lz_smooth = 1.0
+		_burn_smooth = 1.0
+		# an external chase camera on the MAIN viewport (the front-end SubViewport
+		# path renders a frozen world; the main window renders live like the check
+		# harness). We make it current every frame to win over the game camera.
+		_shot_cam = Camera3D.new()
+		_shot_cam.far = 200000.0
+		_shot_cam.fov = 55.0
+		get_tree().root.add_child.call_deferred(_shot_cam)
+
+func _flameshot_tick(delta: float) -> void:
+	if ship == null or _shot_cam == null or not is_instance_valid(_shot_cam) \
+			or not _shot_cam.is_inside_tree():
+		return
+	ship.drive_override = true          # hold full burn every frame
+	# the cockpit view (cam_mode 0) hides ship_model -- force it visible so our
+	# external camera can see the hull + plumes
+	var mn := ship.get_parent()
+	if mn != null:
+		var sm = mn.get("ship_model")
+		if sm != null and is_instance_valid(sm):
+			(sm as Node3D).visible = true
+	# aim at the actual engine-cone centroid (world), framed from the side
+	var c := Vector3.ZERO
+	var nn := 0
+	for fc in flame_cones:
+		var n: Node3D = fc["node"]
+		if is_instance_valid(n) and n.is_inside_tree():
+			c += n.global_position
+			nn += 1
+	if nn == 0:
+		return
+	c /= float(nn)
+	var xf := ship.global_transform
+	# rear-quarter hero view: engines are at the ship's tail; stand off to one
+	# side, behind and above, so the full plumes read against clear space
+	var eye := c + Vector3(58.0, 30.0, 92.0)
+	_shot_cam.global_position = eye
+	_shot_cam.look_at(c + Vector3(0.0, -4.0, -6.0), Vector3.UP)
+	_shot_cam.current = true            # override the game camera every frame
+	_shot_settle += delta
+	if _shot_settle < 1.0:
+		return
+	_shot_t += delta
+	if _shot_t < 0.15:
+		return
+	_shot_t = 0.0
+	var img := get_viewport().get_texture().get_image()
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var dir := base.path_join("data/screenshots")
+	DirAccess.make_dir_recursive_absolute(dir)
+	img.save_png(dir.path_join("flameshot_%d.png" % _shot_n))
+	print("FLAMESHOT: saved frame ", _shot_n, " ship=", xf.origin)
+	_shot_n += 1
+	if _shot_n >= 8:
+		print("FLAMESHOT: done")
+		get_tree().quit()
 
 func _physics_process(delta: float) -> void:
 	if ship == null:
@@ -203,12 +371,30 @@ func _physics_process(delta: float) -> void:
 		"boom": _burn_smooth,
 		"flap": maxf(_lz_smooth, _burn_smooth),
 	}
+	if _flameshot:
+		# main resets ship.drive_override each frame, so pin the derived channels
+		# to full for the capture (full plume length + intensity)
+		named = {"flame": 1.0, "core": 1.0, "boom": 1.0, "flap": 1.0}
 	for ch in exprs:
 		var e: Dictionary = exprs[ch]
 		var best := 0.0
 		for term in e["terms"]:
 			best = maxf(best, _eval_term(term, raw, delta))
 		e["value"] = best
+	# drive each flame cone's own channel (flame/core) into its shader. The
+	# Draw uses v = |Evaluate(channel)| (0x100bd63e) to gate + grade the plume.
+	for fc in flame_cones:
+		var ch: String = fc["channel"]
+		var v: float
+		if named.has(ch):
+			v = named[ch]
+		elif exprs.has(ch):
+			v = exprs[ch]["value"]
+		else:
+			v = 0.0
+		(fc["mat"] as ShaderMaterial).set_shader_parameter("intensity", clampf(v, 0.0, 1.0))
+	if _flameshot:
+		_flameshot_tick(delta)
 	for entry in anim_nodes:
 		var n: Node3D = entry["node"]
 		if not is_instance_valid(n):
