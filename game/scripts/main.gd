@@ -63,6 +63,7 @@ var hud: Hud
 var menu: Menu
 var weapons: PbcWeapons
 var missiles: Missiles
+var fields: Fields  # the ambient asteroid/debris field singletons (fields.gd)
 var audio: AudioManager
 var sun: DirectionalLight3D
 var space_fx: SpaceFx
@@ -240,6 +241,12 @@ func _ready() -> void:
 	_build_pog()
 	_build_environment()
 	_spawn_player()
+	# the two iiSimField singletons, made once per game like the original's
+	# "Loading asteroids" / "Loading debris" load stages; the belt records and
+	# the scripts' icFieldSphere regions switch them on (docs/fields.md)
+	fields = Fields.new()
+	fields.main = self
+	add_child(fields)
 	_load_system(START_SYSTEM, START_NAME)
 	hud = Hud.new()
 	hud.main = self
@@ -848,6 +855,8 @@ func _clear_system() -> void:
 	target_idx = -1
 	target_ai = null
 	docked_at = ""
+	if fields != null:
+		fields.clear_system()
 
 func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 	_clear_system()
@@ -880,6 +889,20 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 			"node": null,
 		}
 		objects.append(rec)
+		# a kind-4 belt record is a field ZONE, not a body: ParseAsteroidBeltInfo
+		# (iwar2 @ 0x1004e6b0) reads the ring radius from the record's +0x134
+		# (our JSON `info_f`), the width from +0x138 (our `radius`), and centres
+		# the annulus on the PARENT geography's position. Inside it, the ambient
+		# asteroid field runs (fields.gd).
+		if cat == "belt" and fields != null:
+			var par_i := int(o.get("parent", 0))
+			var objs: Array = sys["objects"]
+			var ppos: Array = [0.0, 0.0, 0.0]
+			if par_i >= 0 and par_i < objs.size():
+				ppos = objs[par_i].get("pos", ppos)
+			fields.add_belt(float(o.get("info_f", 0.0)), rec["radius"],
+				float(ppos[0]), float(ppos[1]), -float(ppos[2]),
+				_record_basis(rec))
 		# icPlanet::CreateAvatar only builds an avatar for 1 < IeBodyType < 5,
 		# so most map bodies (and the system centre) are invisible markers.
 		if rec["renders"] and (cat == "body" or cat == "star"):
@@ -1213,7 +1236,10 @@ func kill_ai(ai: AiShip) -> void:
 	# shared by bolt hits (on_bolt_hit) and warheads (missiles.gd)
 	if ai == null or not is_instance_valid(ai):
 		return
-	ExplosionFx.boom(self, ai.global_position, 70.0)
+	# icAlienSwarm::OnExplode 0x1002c4b0 replaces the stock death with its own
+	# alien_explosion shockwave (alien.gd plays it) -- no generic boom on top
+	if not (ai is AlienShip):
+		ExplosionFx.boom(self, ai.global_position, 70.0)
 	kill_count += 1
 	hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
 	ai_ships.erase(ai)
@@ -1865,6 +1891,7 @@ func _physics_process(delta: float) -> void:
 	_fold_motion()
 	_stream_objects()
 	_collisions()
+	fields.tick(delta)
 	_update_grid()
 	_update_ldsi_fence()
 	_chase_camera(delta)

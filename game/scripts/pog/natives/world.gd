@@ -16,6 +16,8 @@ extends RefCounted
 ## just says "put this here", so PogSim hides it: every native works in absolute
 ## metres and abs_pos()/set_abs_pos() do the conversion per object kind.
 
+const _ALIEN_SHIP := preload("res://scripts/alien.gd")
+
 var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var game: Node3D = null                ## main.gd, when running in-game
 var factions: PogFactions = null       ## for the hostility lookup
@@ -23,6 +25,15 @@ var std: PogStd = null                 ## for the localised name tables
 var sims: Dictionary = {}              ## name -> PogSim
 var ship_db: Dictionary = {}           ## "sims/ships/x.ini" -> ships.json record
 var _preloaded: Dictionary = {}
+var _player_infection_fx: Node3D = null
+## iship.HyperSpaceTrackerContact / HyperSpaceTrackerTarget (iship.dll @
+## 0x10002f70 / 0x10003080): the player CPU's +0x9c / +0xa0 -- the last ship
+## the tracker followed through a capsule jump, and where it went. Set by
+## icCapsuleSpace's jump intake when the player has program 0x800 and the
+## jumper is the player's current contact-list target (iwar2 @ 0x10040530
+## region; it also logs event 0x67 and raises sim flag 0x40 on the jumper).
+var tracker_contact: PogSim = null
+var tracker_target: PogSim = null
 
 
 ## A POG object handle. Wraps the three things the game calls a "sim":
@@ -47,6 +58,22 @@ class PogSim extends RefCounted:
 	var parent: PogSim = null
 	var group = null                   ## PogFactions.PogGroup
 	var docking_lock: PogSim = null    ## isim.SetDockingLock: the only legal berth
+	## sim.AddSubsim (sim.dll @ 0x10004e90): subsims fitted onto a LIVE sim.
+	var fitted: Array = []             ## of PogEntities.PogSubsim
+	## icCPU +0x80, the fitted-program bitmask (icCPU property map @
+	## 0x100308a0: "programs" -> +0x80). An icProgram subsim carries its bit
+	## in program_id (property map @ 0x10031e80: +0x40); the hyperspace
+	## tracker's is 2048 = 0x800 (subsims/systems/player/programs/
+	## hyperspace_tracker.ini).
+	var programs: int = 0
+	## isim.AlienInfectionEffect: the visual's on/off state. In the engine it
+	## IS the presence of the sfx/infection node on the avatar
+	## (IsAlienEffectOn @ 0x1007ee70); mirrored here so scripts can flip it
+	## on sims that have no node (headless, or a map record).
+	var infection_on := false
+	## isim.SetAlienInfectionDamage fallback store for node-less sims
+	## (iiThrusterSim +0x258); node-backed sims keep it on the ship itself.
+	var infection_damage := 0.0
 
 	func alive() -> bool:
 		if dead:
@@ -183,6 +210,18 @@ func register(v) -> void:
 func bind_game(main: Node3D) -> void:
 	game = main
 	_load_ship_db()
+	# the player's infection DoT ticks inside main.sys.simulate(); the death
+	# it can cause has no other observer (main only checks its hull at damage
+	# sites, and ship_systems.gd cannot reach _kill_player)
+	main.get_tree().process_frame.connect(_infection_frame)
+
+
+func _infection_frame() -> void:
+	if game == null or game.sys == null:
+		return
+	if game.sys.infection_damage > 0.0 and game.sys.killed \
+			and game.has_method("_kill_player"):
+		game._kill_player()
 
 
 ## POG works in game coordinates; our world negates Z (the system JSON importer
@@ -329,7 +368,12 @@ func _create_ship(ini: String, name: String) -> PogSim:
 
 	var rec: Dictionary = ship_db.get(ini_key(ini), {})
 	var props: Dictionary = rec.get("properties", {})
-	var ai := AiShip.new()
+	# @element icAlienSwarm -- act 3's aliens are their own icShip subclass
+	# (registered @ 0x1002c080); alien.gd carries the recovered overrides
+	# (preloaded: the global class cache only learns new class_names in the
+	# editor, and headless runs never see it)
+	var is_alien := String(rec.get("class", "")) == "icAlienSwarm"
+	var ai: AiShip = _ALIEN_SHIP.new() if is_alien else AiShip.new()
 	ai.main = game
 	ai.sim_key = name
 	ai.display_name = display_name_of(name)
@@ -339,14 +383,32 @@ func _create_ship(ini: String, name: String) -> PogSim:
 	var mdl: Node3D = game._load_gltf(ai.avatar_path)
 	if mdl != null:
 		ai.add_child(mdl)
-		ShipEffects.attach(ai, mdl)
+		if not is_alien:
+			# the alien avatar's channels (pain1..3/damage) are alien state,
+			# not flight state; AlienShip drives them itself
+			ShipEffects.attach(ai, mdl)
 	ai.position = Vector3.ZERO
 	game.add_child(ai)
 	game.ai_ships.append(ai)
+	if is_alien:
+		ai.init_alien(mdl)
 	s.node = ai
 	sims[name] = s
 	return s
 
+
+## The three icFieldSphere region templates (data/ini/sims/regions/*.ini):
+## a sphere that switches the ambient asteroid/debris field singletons on
+## while the player is inside it (icFieldSphere::Think, iwar2 @ 0x100667b0;
+## contains flags at +0x1e0/+0x1e1, property map @ 0x100664e0). The scripts
+## drop one on a habitat -- istartsystem.FinalSetup puts ini:/sims/regions/
+## debris on Lucrecia's Base, which IS the Junkyard's ambient junk.
+## [contains_asteroids, contains_debris, radius]
+const _FIELD_SPHERES := {
+	"sims/regions/asteroid": [true, false, 10000.0],
+	"sims/regions/asteroid25k": [true, false, 25000.0],
+	"sims/regions/debris": [false, true, 10000.0],
+}
 
 ## Spawn a non-ship sim: it becomes a record in main.objects, which is how the
 ## game models stations, props and beacons.
@@ -364,6 +426,17 @@ func _create_object(ini: String, name: String) -> PogSim:
 		"radius": 100.0, "avatar": "", "jumps": [], "colors": [],
 		"node": null, "prop_collide": true,
 	}
+	var stem := ini.trim_prefix("ini:/").trim_suffix(".ini")
+	if _FIELD_SPHERES.has(stem):
+		# an icFieldSphere is pure geography: no avatar, no hull, nothing on
+		# sensors -- fields.gd reads these records every frame and PlaceAt
+		# moves them, so the sphere follows wherever the script puts it
+		var fs: Array = _FIELD_SPHERES[stem]
+		rec["category"] = "field_sphere"
+		rec["prop_collide"] = false
+		rec["field_asteroids"] = fs[0]
+		rec["field_debris"] = fs[1]
+		rec["radius"] = fs[2]
 	game.objects.append(rec)
 	s.rec = rec
 	sims[name] = s
@@ -586,16 +659,93 @@ func _s_is_hidden(_t, a: Array) -> Variant:
 # @stub sim.AvatarAddChannel
 # @stub sim.AvatarSetChannel
 # @stub sim.AvatarRemoveChannel
-# @stub sim.AddSubsim
-# @stub sim.FindSubsimByName
 func _s_noop(_t, _a: Array) -> Variant:
 	# Culling, collision toggles and mass have no effect on the outcome of a
 	# mission. The avatar channel-expression system (LZ?+s(1.0) and friends)
 	# DOES have a home now -- ship_effects.gd is the channel rig -- but the
-	# script-driven channels are not wired to it yet. AddSubsim matters in
-	# act 3 (it fits the hyperspace tracker the plot turns on). Bound so the
-	# scripts run; see docs/decompile.md and docs/coverage.md.
+	# script-driven channels are not wired to it yet. See docs/decompile.md
+	# and docs/coverage.md.
 	return 0
+
+# @native sim.AddSubsim
+func _s_add_subsim(_t, a: Array) -> Variant:
+	# sim.dll @ 0x10004e90: both handles must resolve (FiSim + FcSubsim
+	# derived) or the native returns false; a subsim that already has an
+	# owner is FiSim::RemoveSubsim'd from it first; then FiSim::AddSubsim
+	# (flux @ 0x100bc420) appends it, points it at its new sim and fires
+	# OnAttachSubsim. Returns true unconditionally after that.
+	var s := _as_sim(a[0])
+	var ss = a[1] if a.size() > 1 else null
+	if s == null or ss == null or not (ss is PogEntities.PogSubsim):
+		return 0
+	if ss.owner is PogSim and ss.owner != s:
+		(ss.owner as PogSim).fitted.erase(ss)
+	ss.owner = s
+	if not s.fitted.has(ss):
+		s.fitted.append(ss)
+	var ini: Dictionary = ShipSystems.read_ini(String(ss.ini))
+	var props: Dictionary = ini["props"]
+	match String(ini["class"]):
+		"icProgram":
+			# a fitted program ORs its program_id into the CPU's mask
+			# (icCPU "programs" @ +0x80, map @ 0x100308a0; icProgram
+			# program_id @ +0x40, map @ 0x10031e80). 2048 = the hyperspace
+			# tracker (hyperspace_tracker.ini).
+			s.programs |= int(props.get("program_id", 0))
+		"icCannon":
+			# act 3 fits antimatter PBCs onto live ships (iactthree.gd 1805 /
+			# 3205, iact3mission10.gd 738). The cannon's projectile INI is
+			# what makes the shot antimatter_based -- the only damage an
+			# icAlienSwarm accepts (ApplyWeaponDamage @ 0x1002c2c0 calls the
+			# projectile's IsAntimatterBasedWeapon, vtable +0xdc).
+			var spec := _bolt_spec_for(String(props.get("projectile_template", "")),
+					float(props.get("refire_delay", 0.5)))
+			if not spec.is_empty():
+				if s.is_player and game != null and game.weapons != null:
+					game.weapons.bolt_spec = spec
+					game.weapons.refire = float(spec["refire"])
+				elif s.node is AiShip:
+					(s.node as AiShip).bolt_spec = spec
+	return 1
+
+## Build a PbcWeapons spec dict from a projectile INI (sims/weapons/*.ini).
+func _bolt_spec_for(projectile: String, refire: float) -> Dictionary:
+	if projectile.is_empty():
+		return {}
+	var ini: Dictionary = ShipSystems.read_ini(projectile)
+	var p: Dictionary = ini["props"]
+	if p.is_empty():
+		return {}
+	return {
+		"damage": float(p.get("damage", 160.0)),
+		"penetration": float(p.get("penetration", 50.0)),
+		"half_time": float(p.get("half_time", 0.35)),
+		"speed": float(p.get("speed", 6000.0)),
+		"lifetime": float(p.get("lifetime", 1.6)),
+		"bypass_shields": int(p.get("bypass_shields", 0)) != 0,
+		"antimatter_based": int(p.get("antimatter_based", 0)) != 0,
+		"refire": refire,
+	}
+
+# @native sim.FindSubsimByName
+func _s_find_subsim(_t, a: Array) -> Variant:
+	# sim.dll @ 0x10004fe0: FiSim::Subsim(name) -- first fitted subsim whose
+	# name matches, else null. We only track the runtime-fitted list; the
+	# authored loadout lives in ShipSystems and has no POG handles.
+	var s := _as_sim(a[0])
+	var name := PogStd._s(a[1]) if a.size() > 1 else ""
+	if s == null:
+		return null
+	for ss in s.fitted:
+		if String(ss.name) == name:
+			return ss
+		# subsim.Create only knows the display name once the subsim db is
+		# bound; the INI's own name property is the same string the engine
+		# matches (FcSubsim name)
+		if String(ShipSystems.read_ini(String(ss.ini))["props"] \
+				.get("name", "")) == name:
+			return ss
+	return null
 
 # @native sim.Group
 func _s_group(_t, a: Array) -> Variant:
@@ -899,6 +1049,15 @@ func _i_capsule_jump(_t, a: Array) -> Variant:
 			game.audio.play("audio/sfx/capsule_jump.wav", -4.0)
 			game.hud.visible = false
 	else:
+		# the hyperspace tracker (icCapsuleSpace's jump intake, iwar2 @
+		# 0x10040530 region): if the player has program 0x800 and the jumper
+		# is the player's CURRENT TARGET, record who jumped and where. The
+		# scripts pass the destination as a sim (AI jumps) -- that sim id is
+		# exactly what the engine stores at CPU +0xa0.
+		if player_has_tracker() and s.node != null and is_instance_valid(s.node) \
+				and game.target_ai == s.node:
+			tracker_contact = s
+			tracker_target = _as_sim(a[1]) if a.size() > 1 else null
 		_s_destroy(_t, [s])
 	return 0
 
@@ -953,19 +1112,85 @@ func docking_allowed(s: PogSim, to: PogSim) -> bool:
 
 
 # @stub isim.StopExplosion
-# @stub isim.AlienInfectionEffect
-# @stub isim.IsAlienInfectionEffectOn
-# @stub isim.SetAlienInfectionDamage
 # @stub isim.WeaponTargetsFromContactList
 # @stub isim.IsRespawning
 func _i_noop(_t, _a: Array) -> Variant:
-	# The alien infection is the Act 3 visual: a spreading crust on an infected
-	# hull, with a damage-over-time behind it. Both halves need an avatar shader
-	# we have not built, and StopExplosion cancels a staged explosion that
-	# iiSim::StartExplosion never staged (ours is instantaneous, see
-	# docs/original.md "The explosion sequence"). WeaponTargetsFromContactList and
-	# IsRespawning are turret-targeting and multiplayer respawn.
+	# StopExplosion cancels a staged explosion that iiSim::StartExplosion
+	# never staged (ours is instantaneous, see docs/original.md "The explosion
+	# sequence"). WeaponTargetsFromContactList and IsRespawning are
+	# turret-targeting and multiplayer respawn.
 	return 0
+
+# @element icAlienSwarm (the infection natives)
+# @native isim.AlienInfectionEffect
+func _i_infection_effect(_t, a: Array) -> Variant:
+	# iiThrusterSim::AlienInfectionEffect @ 0x1007ed80: on = create the
+	# ini:/sfx/infection node (icElectricEffectAvatar running
+	# icDisruptorDynamics over the hull's edges), feed it the sim's models
+	# and radius (FUN_100c3ce0 -> intake 0x100c5430), scale it by
+	# max(1, radius/15), eternal emitter (SetTime 0); off = destroy the node.
+	var s := _as_sim(a[0])
+	if s == null:
+		return 0
+	var on: bool = PogVM._truthy(a[1]) if a.size() > 1 else false
+	if on == s.infection_on and game != null:
+		return 0  # both branches no-op when already in that state (0x1007ed80)
+	s.infection_on = on
+	var host := _infection_host(s)
+	if host == null or game == null:
+		return 0
+	if on:
+		if host is AiShip and (host as AiShip).infection_fx != null:
+			return 0
+		var scale := maxf(1.0, s.radius() / 15.0)
+		var fx := ParticleFx.spawn_on_model(host, game._base(), "infection",
+				host, s.radius(), scale)
+		if host is AiShip:
+			(host as AiShip).infection_fx = fx
+		elif s.is_player:
+			_player_infection_fx = fx
+	else:
+		var fx2: Node3D = (host as AiShip).infection_fx if host is AiShip \
+				else _player_infection_fx
+		if fx2 != null and is_instance_valid(fx2):
+			fx2.queue_free()
+		if host is AiShip:
+			(host as AiShip).infection_fx = null
+		elif s.is_player:
+			_player_infection_fx = null
+	return 0
+
+# @native isim.IsAlienInfectionEffectOn
+func _i_is_infection_on(_t, a: Array) -> Variant:
+	# IsAlienEffectOn @ 0x1007ee70: purely "is the effect node attached" --
+	# independent of the damage value.
+	var s := _as_sim(a[0])
+	return 1 if (s != null and s.infection_on) else 0
+
+# @native isim.SetAlienInfectionDamage
+func _i_set_infection_damage(_t, a: Array) -> Variant:
+	# SetAlienInfectionDamage @ 0x1007ed70: iiThrusterSim +0x258, hull points
+	# per second. iiThrusterSim::Simulate (0x1007e200) applies it every tick
+	# as ApplyDamage(dt * damage, source 5, self) -- ship_systems.gd and
+	# ai_ship.gd carry that tick.
+	var s := _as_sim(a[0])
+	if s == null:
+		return 0
+	var dmg := float(a[1]) if a.size() > 1 else 0.0
+	s.infection_damage = dmg
+	if s.is_player and game != null and game.sys != null:
+		game.sys.infection_damage = dmg
+	elif s.node is AiShip and is_instance_valid(s.node):
+		(s.node as AiShip).infection_damage = dmg
+	return 0
+
+## The node the infection crawl attaches to (and whose meshes it crawls).
+func _infection_host(s: PogSim) -> Node3D:
+	if s.is_player:
+		return game.ship if game != null else null
+	if s.node != null and is_instance_valid(s.node):
+		return s.node
+	return null
 
 
 # ---------------------------------------------------------------- iship
@@ -1145,15 +1370,47 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 # @stub iship.PercentageThrusterEmission
 # @stub iship.RecalculateMOIFromMass
 # @stub iship.IsLDSScrambled
-# @stub iship.HasHyperSpaceTracker
-# @stub iship.HyperSpaceTrackerTarget
 # @stub iship.CreateTurretFighters
 func _sh_noop(_t, _a: Array) -> Variant:
 	# Turret targeting modes (a ship's turrets either track its own target or pick
 	# their own off the contact list) need the turret subsims we do not simulate;
-	# the hyperspace tracker is the Act 3 plot device that follows a capsule jump;
 	# BrightnessOf and PercentageThrusterEmission are avatar channel expressions.
 	return 0
+
+## Does the PLAYER have the tracker program? Two routes to "fitted": the
+## runtime sim.AddSubsim path (programs mask), and owning Cargo_
+## HyperspaceTracker (type 312, icargoscript.gd:5055) -- the original fits it
+## on the loadout CPU-programs screen (icLoadout::LoadComputerPrograms @
+## 0x10095ea0 ORs program_id into the CPU mask); we have no such screen, so
+## possession counts as fitted (deliberate divergence, docs/act3.md).
+func player_has_tracker() -> bool:
+	if (player_sim().programs & 0x800) != 0:
+		return true
+	if vm != null and "econ" in vm and vm.econ != null:
+		return vm.econ.player_inv().quantity(312) > 0
+	return false
+
+# @native iship.HasHyperSpaceTracker
+func _sh_has_tracker(_t, a: Array) -> Variant:
+	# iship.dll @ 0x10002f70: resolve the handle, must be an icShip, then
+	# test bit 0x800 in its CPU's program mask (ship +0x29c -> icCPU +0x80).
+	var s := _as_sim(a[0])
+	if s == null:
+		return 0
+	if (s.programs & 0x800) != 0:
+		return 1
+	return 1 if (s.is_player and player_has_tracker()) else 0
+
+# @native iship.HyperSpaceTrackerTarget
+func _sh_tracker_target(_t, _a: Array) -> Variant:
+	# iship.dll @ 0x10003080: no arguments -- always the PLAYER ship's CPU,
+	# +0xa0: the DESTINATION of the last tracked jump.
+	return tracker_target
+
+# @native iship.HyperSpaceTrackerContact
+func _sh_tracker_contact(_t, _a: Array) -> Variant:
+	# iship.dll @ 0x10003020: CPU +0x9c, the ship that made the tracked jump.
+	return tracker_contact
 
 
 const _BINDINGS := {
@@ -1180,7 +1437,8 @@ const _BINDINGS := {
 	"sim.setcullable": "_s_noop", "sim.setcollision": "_s_noop",
 	"sim.setmass": "_s_noop", "sim.avataraddchannel": "_s_noop",
 	"sim.avatarsetchannel": "_s_noop", "sim.avatarremovechannel": "_s_noop",
-	"sim.addsubsim": "_s_noop", "sim.findsubsimbyname": "_s_noop",
+	"sim.addsubsim": "_s_add_subsim",
+	"sim.findsubsimbyname": "_s_find_subsim",
 	"sim.group": "_s_group", "sim.parent": "_s_parent",
 	"sim.children": "_s_children", "sim.attachchild": "_s_attach_child",
 	"sim.addchildrelativeto": "_s_attach_child",
@@ -1214,9 +1472,9 @@ const _BINDINGS := {
 	"isim.iscapsulejumping": "_i_is_jumping",
 	"isim.startexplosion": "_i_explode", "isim.stopexplosion": "_i_noop",
 	"isim.createexplosion": "_i_explode",
-	"isim.alieninfectioneffect": "_i_noop",
-	"isim.isalieninfectioneffecton": "_i_noop",
-	"isim.setalieninfectiondamage": "_i_noop",
+	"isim.alieninfectioneffect": "_i_infection_effect",
+	"isim.isalieninfectioneffecton": "_i_is_infection_on",
+	"isim.setalieninfectiondamage": "_i_set_infection_damage",
 	"isim.weapontargetsfromcontactlist": "_i_noop",
 	"isim.isrespawning": "_i_noop",
 	"isim.simsinradiusfromset": "_i_sims_in_radius_from_set",
@@ -1253,8 +1511,9 @@ const _BINDINGS := {
 	"iship.percentagethrusteremission": "_sh_noop",
 	"iship.recalculatemoifrommass": "_sh_noop",
 	"iship.isldsscrambled": "_sh_noop",
-	"iship.hashyperspacetracker": "_sh_noop",
-	"iship.hyperspacetrackertarget": "_sh_noop",
+	"iship.hashyperspacetracker": "_sh_has_tracker",
+	"iship.hyperspacetrackertarget": "_sh_tracker_target",
+	"iship.hyperspacetrackercontact": "_sh_tracker_contact",
 	"iship.createturretfighters": "_sh_noop",
 	"iship.createplayership": "_sh_create_player_ship",
 

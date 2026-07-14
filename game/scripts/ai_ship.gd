@@ -46,6 +46,25 @@ var disrupt_full := false     # full_disruption: everything, else shields only
 var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
 var ini_path := ""    # the authored ship INI (turrets.gd reads the record's
 					  # setup scene for the turret mount nulls)
+# @element icAlienSwarm (the infection half, on the victims)
+# iiThrusterSim +0x258: the act 3 alien infection, hull points per second,
+# applied by Simulate (0x1007e200) as ApplyDamage(dt * damage, source 5).
+# Proxied onto ShipSystems when a subsim model is fitted, exactly like hull.
+var _infection_damage := 0.0
+var infection_damage: float:
+	get:
+		return sys.infection_damage if sys != null else _infection_damage
+	set(value):
+		if sys != null:
+			sys.infection_damage = value
+		else:
+			_infection_damage = value
+var infection_fx: Node3D = null  # the sfx/infection crawl; presence IS the
+								 # "effect on" state (IsAlienEffectOn 0x1007ee70)
+# A cannon fitted at runtime by sim.AddSubsim (act 3's nps_antimatter_pbc):
+# when set, _attack fires this projectile instead of main.spawn_bolt's
+# standard PBC bolt. Spec dict as PbcWeapons uses, plus "refire".
+var bolt_spec: Dictionary = {}
 
 func setup(props: Dictionary) -> void:
 	load_stats(props)
@@ -126,6 +145,19 @@ func _physics_process(delta: float) -> void:
 		disrupt_full = false
 	if sys != null:
 		sys.simulate(delta)
+		# ShipSystems ticks the infection inside simulate(); a ship the
+		# infection killed still has to explode (main owns the death path).
+		if sys.killed and sys.infection_damage > 0.0 \
+				and main != null and main.has_method("kill_ai"):
+			main.kill_ai(self)
+			return
+	elif _infection_damage > 0.0:
+		# no subsim model fitted (every POG-created ship): the raw hull pool,
+		# same rule -- iiThrusterSim::Simulate 0x1007e200, dt * damage.
+		if damage(_infection_damage * delta) and main != null \
+				and main.has_method("kill_ai"):
+			main.kill_ai(self)
+			return
 	match behavior:
 		"attack":
 			_attack(delta)
@@ -169,5 +201,12 @@ func _attack(delta: float) -> void:
 	if disrupt_time > 0.0 and disrupt_full:
 		return
 	if dist < weapon_range and angle < 0.06 and fire_cooldown <= 0.0:
-		fire_cooldown = 0.5
-		main.spawn_bolt(self, -global_transform.basis.z)
+		if bolt_spec.is_empty():
+			fire_cooldown = 0.5
+			main.spawn_bolt(self, -global_transform.basis.z)
+		else:
+			# a runtime-fitted cannon (sim.AddSubsim): its own projectile INI
+			# and refire_delay -- act 3's antimatter PBCs
+			fire_cooldown = float(bolt_spec.get("refire", 0.5))
+			main.weapons.spawn(self, -global_transform.basis.z, bolt_spec)
+			main.audio.play("audio/sfx/light_pbc.wav", -8.0)

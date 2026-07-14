@@ -594,6 +594,53 @@ the firing ship by `sqrt(damage_rate) * 5` per second. The beam visual grows
 to full length in 0.75 s and shortens to the hit point. Addresses and the
 constants table: `docs/combat.md` sections 11-12.
 
+## 5e. Asteroid and debris fields are ambient
+
+Rocks are conjured, not placed: two global `iiSimField` singletons
+(`icAsteroidField`, 100 rocks, ctor `0x1003f8c0`; `icDebrisField`, 50,
+`0x10046c00`) teleport a fixed pool of `icFieldSim` rocks around the player
+(`iiSimField::Think 0x10049570`) -- spawn on a shell 100 x rock radius out
+(into a 0.4-rad cone ahead when moving > 500 m/s, `0x1004a430`), cull at
+1.1 x that, flush everything above 100 x max_radius (40/20 km/s).
+`icAsteroidBelt` map records (annulus on the parent body, ring radius =
+`+0x134`, width = `+0x138`, `ParseAsteroidBeltInfo 0x1004e6b0`) and
+script-dropped `icFieldSphere` regions merely switch the singletons on;
+every shipped belt has width == radius, an enormous degenerate annulus --
+which is why Hoffer's Gap sits in ambient rocks and Alexander L-Point does
+not. Rocks: 5000 hp bare hull, no collisions against anything moving
+> 10 km/s (`0x100648d0`), and a killed rock silently respawns from the pool
+(`0x100648b0`). Implemented in `fields.gd`; live cap 150 rocks (the
+original's own budget). Full write-up: `docs/fields.md`.
+
+## 5f. Act 3's aliens
+
+- **Damage-gated, not tough**: `icAlienSwarm::ApplyWeaponDamage`
+  (`0x1002c2c0`) asks the projectile `IsAntimatterBasedWeapon()` (iiSim
+  vtable `+0xdc`, `0x10001520`) and returns 0.0 damage for everything else
+  -- but every hit still flinches the swarm at `0.7 x max speed` away from
+  the impact and fires a random `pain1/2/3` avatar channel.
+- **The swarm visual is a Lorenz attractor**: every icAlienSwarmDynamics
+  particle integrates sigma=10, rho=28, beta=8/3 at 0.05 scale with a
+  point-mirrored twin, drawn as tumbling cornflake plates. Particles never
+  die.
+- **The infection is a particle crawl plus a flat DoT**: `ini:/sfx/infection`
+  (icDisruptorDynamics, follow_edge=1) crawls the hull's long edges;
+  `iiThrusterSim::Simulate` (`0x1007e200`) applies `dt x damage` (source 5)
+  to the bare hull every tick. The visual and the damage are independent.
+- **The alien death replaces the standard explosion**: one alien_explosion
+  shockwave at 4 x the swarm radius, seeded with the swarm's velocity
+  (`OnExplode 0x1002c4b0`).
+- **The hyperspace tracker is a CPU program bit**: `program_id=2048` on an
+  icProgram subsim, ORed into `icCPU+0x80`; `HasHyperSpaceTracker` is
+  `programs & 0x800`, and the tracked contact/destination are written into
+  the player CPU (`+0x9c/+0xa0`) by capsule space when the player's CURRENT
+  TARGET jumps.
+- **Original bugs**: icAlienSwarmDraw computes a per-particle gradient colour
+  and throws it away (and no shipped INI instantiates the class);
+  icDisruptorDynamics never initialises `prob_jump`; the script-side
+  `ini:/sims/ships/aliens/alienswarm` INI does not exist in the shipped
+  data. Full write-up: `docs/act3.md`.
+
 ---
 
 ## 6. Factions

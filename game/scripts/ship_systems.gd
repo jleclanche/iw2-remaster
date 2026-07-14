@@ -50,10 +50,12 @@ const PLANET_HEAT_MULTIPLIER := 10000.0 # icPlanet::m_heat_multiplier 0x1011af54
 const SUN_HEAT_FACTOR := 10.0          # 0x101190c0, the sun's extra term
 
 # eDamageSource, from icBullet::OnCollision (setne on bypass_shields) and
-# icShip::SimulateSystems (heat passes 3)
+# icShip::SimulateSystems (heat passes 3). Source 5 is the alien infection:
+# iiThrusterSim::Simulate 0x1007e200 calls ApplyDamage(dt * damage, 5, self).
 const SRC_WEAPON := 0
 const SRC_BYPASS := 1
 const SRC_HEAT := 3
+const SRC_INFECTION := 5
 
 # The eight HUD status groups map onto the mountpoint `type` bit flags
 # (data/ini/subsims/mountpoints/*.ini) and, for prefitted hulls that name the
@@ -94,6 +96,13 @@ var invulnerable := false
 var killed := false
 var disrupt_time := 0.0       # icShip::Disrupt -- subsim disrupted flag 0x10,
 var disrupt_full := false     # shields-only (LDA) vs full_disruption warheads
+# @element icAlienSwarm (the infection half)
+# The act 3 alien infection lives on the SHIP, not a subsim: iiThrusterSim
+# +0x258, set by isim.SetAlienInfectionDamage (0x1007ed70), read back by
+# AlienInfectionDamage (0x1007ee60). The visual (the sfx/infection crawl) is a
+# separate flag: IsAlienEffectOn (0x1007ee70) only tests whether the effect
+# node is attached, so damage can tick with the visual off and vice versa.
+var infection_damage := 0.0   # hull points per second, continuous
 var rng := RandomNumberGenerator.new()
 var _repair_pool := 0.0
 var _power_pool := 0.0
@@ -374,6 +383,13 @@ func simulate(dt: float) -> void:
 	# icShip 0x10075f80 (the subsim tick) + iiShipSystem::Simulate 0x1003bbd0.
 	if killed or dt <= 0.0:
 		return
+	# iiThrusterSim::Simulate 0x1007e200: the infection ticks FIRST, before the
+	# rest of the sim -- ApplyDamage(dt * infection_damage, source 5, self).
+	# Raw hull path: no armour, no subsim criticals, exactly like collisions.
+	if infection_damage > 0.0:
+		apply_damage(infection_damage * dt, SRC_INFECTION)
+		if killed:
+			return
 	disrupt_time = maxf(0.0, disrupt_time - dt)
 	if disrupt_time <= 0.0:
 		disrupt_full = false

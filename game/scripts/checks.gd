@@ -16,6 +16,7 @@ var _mech_home := Vector3.ZERO
 var _mech_gs: AiShip = null      # turret platform (gunstar.ini)
 var _mech_drone: AiShip = null   # turret / beam target
 var _mech_beam: Dictionary = {}  # the beam mount under test
+var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
@@ -493,7 +494,69 @@ func _mechcheck(_delta: float) -> void:
 					% [float(_mech_beam["energy"]),
 						str(_mech_beam["firing"]), demo_t])
 				_mech_next()
-		18:
+		18:  # iiSimField: drop a synthetic icFieldSphere on the player and let
+			# both singletons populate. Stationary, so the spawn path is the
+			# uniform [0.1, 1.0] x (100 x rock radius) shell (FUN_1004a030
+			# @ 0x1004a030 with _DAT_101184b0 = 0.1, _DAT_10119fa0 = 100).
+			m.ship.velocity = Vector3.ZERO
+			m.ship.set_speed = 0.0
+			_mech_field = {"name": "__fieldtest", "category": "field_sphere",
+				"x": m.px, "y": m.py, "z": m.pz, "radius": 10000.0,
+				"field_asteroids": true, "field_debris": true,
+				"avatar": "", "jumps": [], "colors": [], "node": null}
+			m.objects.append(_mech_field)
+			_mech_next()
+		19:
+			if demo_t < 0.4:  # a few ticks: build the pools, spawn the lot
+				return
+			var ast: Array = m.fields.asteroid.live
+			var deb: Array = m.fields.debris.live
+			# count = the whole authored pool: live + pooled == count, always
+			# (fields/asteroid.ini count=100, fields/debris.ini count=50; the
+			# per-frame spawn budget is `count` too, Think @ 0x10049570)
+			_mech("field-count", ast.size() == 100 and deb.size() == 50,
+				"asteroids=%d debris=%d" % [ast.size(), deb.size()])
+			var shell_ok := true
+			var kin_ok := true
+			var worst := ""
+			for rk in ast:
+				var r: float = rk["radius"]
+				var d: float = (rk["node"] as Node3D).position.length()
+				if d < 0.1 * 100.0 * r - 100.0 or d > 100.0 * r + 100.0:
+					shell_ok = false
+					worst = "d=%.0f r=%.0f" % [d, r]
+				# spin in [min_rot, max_rot] deg/s, speed in [min_speed,
+				# max_speed] m/s (FUN_10049d70 @ 0x10049d70 + fields inis)
+				var w: float = rad_to_deg(float(rk["rate"]))
+				var v: float = (rk["vel"] as Vector3).length()
+				if w < 5.0 - 0.01 or w > 60.0 + 0.01 \
+						or v < 2.0 - 0.01 or v > 75.0 + 0.01:
+					kin_ok = false
+					worst = "spin=%.1f v=%.1f" % [w, v]
+			for rk in deb:
+				if (rk["vel"] as Vector3).length() > 0.001:  # max_speed = 0
+					kin_ok = false
+					worst = "debris moving"
+			_mech("field-shell", shell_ok and not ast.is_empty(),
+				worst if not shell_ok else "all in [0.1, 1.0] x 100r")
+			_mech("field-kinematics", kin_ok, worst if not kin_ok
+				else "spin 5..60 deg/s, speed 2..75, debris still")
+			# deactivate + teleport: every rock must strand outside the
+			# 1.1 x 100r cull shell (Think @ 0x10049570, _DAT_10119e94)
+			m.objects.erase(_mech_field)
+			m.py += 1.0e8
+			_mech_next()
+		20:
+			if m.fields.asteroid.live.is_empty() \
+					and m.fields.debris.live.is_empty():
+				_mech("field-cull", true, "%.2f s" % demo_t)
+				_mech_next()
+			elif demo_t > 5.0:
+				_mech("field-cull", false, "%d still live after %.0f s"
+					% [m.fields.asteroid.live.size()
+						+ m.fields.debris.live.size(), demo_t])
+				_mech_next()
+		21:
 			print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
 				else "%d FAILURES" % _mech_fail))
 			get_tree().quit(0 if _mech_fail == 0 else 1)

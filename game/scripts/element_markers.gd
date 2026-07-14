@@ -127,13 +127,13 @@ extends RefCounted
 # @element-stub icDebugScreenShip -- debug-only: ship inspector debug screen
 # @element-stub icDebugScreenBounds -- debug-only: bounds inspector debug screen
 # @element-stub icFFEffects -- engine-internal: force-feedback effect table; joystick FF is not reproduced (Godot Input.start_joy_vibration would be the hook)
-# @element-stub icAlienSwarmDraw -- GENUINE GAP: act 3 alien swarm particle draw (with icAlienSwarmDynamics/icAlienSwarmAvatar/icAlienSwarm)
-# @element-stub icAlienSwarmDynamics -- GENUINE GAP: act 3 alien swarm particle dynamics
+# @element-stub icAlienSwarmDraw -- dead-in-original: no shipped INI instantiates it (the swarm uses icCornflakeDraw); its per-particle gradient colour is computed then discarded -- an original bug
+# (icAlienSwarmDynamics is really built: its @element marker is in particle_fx.gd -- Lorenz attractors)
 # (icCapsuleSpace is really built: its @element marker is in capsule_fx.gd / main.gd)
 # (icCreditScreen is really built: its @element marker is in base_screens.gd (html credits roll, 50 px/s @ 0x10117be8))
-# @element-stub icDisruptorDynamics -- GENUINE GAP: sensor-disruptor strike visual; the disruption mechanic itself is main.gd disrupt()
+# (icDisruptorDynamics is really built: its @element marker is in particle_fx.gd -- the infection edge-crawl)
 # (icScroller is really built: its @element marker is in base_screens.gd (the credits scroller))
-# @element-stub icTeleportDynamics -- GENUINE GAP: act 3 alien teleport particle visual
+# (icTeleportDynamics is really built: its @element marker is in particle_fx.gd)
 
 # ---------------------------------------------------------------------------
 # iwar2.dll -- world avatars (base FiSceneNode / FcSceneNode /
@@ -151,8 +151,8 @@ extends RefCounted
 # @element-stub icCockpitAvatar -- covered-elsewhere: main.gd cockpit dressing shown in the F1 view
 # @element-stub icWaypointAvatar -- covered-elsewhere: space_fx.gd draws the waypoint marker (icHUDWaypointIcon is @element there)
 # @element-stub icAggressorAvatar -- GENUINE GAP: aggressor-shield visual (player device, with icAggressorShield)
-# @element-stub icAlienSwarmAvatar -- GENUINE GAP: act 3 alien swarm emitter node
-# @element-stub icAsteroidAvatar -- GENUINE GAP: tumbling-rock avatar for the ambient fields (script-built debris sims DO render via natives/world.gd models)
+# (icAlienSwarmAvatar is really built: its @element marker is in alien.gd / particle_fx.gd)
+# (icAsteroidAvatar is really built: its @element marker is in fields.gd)
 # (icCapsuleEffectNode is really built: its @element marker is in capsule_fx.gd / main.gd)
 # (icCapsuleEntryBlankAvatar is really built: its @element marker is in capsule_fx.gd / main.gd)
 # (icCapsuleSpaceAvatar is really built: its @element marker is in capsule_fx.gd / main.gd)
@@ -223,7 +223,7 @@ extends RefCounted
 # (icRocket is really built: its @element marker is in missiles.gd)
 # @element-stub icPowerUp -- mp-only: deathmatch pickup (imultiplay.AddPowerupWeapon and friends)
 # @element-stub icPowerUpBomb -- mp-only: deathmatch bomb pickup
-# @element-stub icAlienSwarm -- GENUINE GAP: the act 3 alien swarm ship
+# (icAlienSwarm is really built: its @element markers are in alien.gd and ship_systems.gd)
 
 # ---------------------------------------------------------------------------
 # iwar2.dll -- cameras (base iiCamera)
@@ -258,11 +258,11 @@ extends RefCounted
 # @element-stub icSun -- covered-elsewhere: star_fx.gd builds the original's three-part sun
 # @element-stub icLagrangePointWaypoint -- covered-elsewhere: main.gd L-points, jump gating + space_fx.gd funnel
 # @element-stub icNebula -- covered-elsewhere: nebula geography records; the visual is main.gd's per-system sky backdrop
-# @element-stub icAsteroidBelt -- GENUINE GAP: belt geography spawning ambient rocks (records load, nothing is spawned from them)
-# @element-stub icFieldSphere -- GENUINE GAP: spherical field volume for ambient asteroid/debris fields
-# @element-stub icFieldSim -- GENUINE GAP: the per-rock sim the fields manage
-# @element-stub icAsteroidField -- GENUINE GAP: ambient asteroid field around the ship
-# @element-stub icDebrisField -- GENUINE GAP: ambient debris field (the Junkyard's authored sims DO render; the ambient filler does not)
+# (icAsteroidBelt is really built: its @element marker is in fields.gd)
+# (icFieldSphere is really built: its @element marker is in fields.gd)
+# (icFieldSim is really built: its @element marker is in fields.gd)
+# (icAsteroidField is really built: its @element marker is in fields.gd)
+# (icDebrisField is really built: its @element marker is in fields.gd)
 # @element-stub icSolarSystem -- covered-elsewhere: main.gd _load_system builds the system from its record
 # (icCapsuleSpaceSystem is really built: its @element marker is in capsule_fx.gd / main.gd)
 # @element-stub icLDSIRegion -- covered-elsewhere: main.gd LDSI fence + iregion natives (natives/world.gd)

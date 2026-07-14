@@ -3,6 +3,12 @@ extends Node3D
 
 # @element icCapsuleSpaceAvatar
 # @element icCapsuleSpaceSystem
+# @element icCapsuleSpace
+# @element icCapsuleEntryBlankAvatar
+# @element icCapsuleEffectNode
+# (the manager is main.gd's jump_state machine; the entry blank and its
+#  flicker envelope -- FUN_100bef90's keys, _flash_flicker -- live in main.gd
+#  states 3/5; this node is the tunnel itself)
 #
 # Capsule space: the mini-world the ship flies through between systems.
 # icCapsuleSpaceSystem (ctor iwar2 @ 0x100480b0) is a real icSolarSystem
