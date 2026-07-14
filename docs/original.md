@@ -1777,6 +1777,36 @@ Our eight labelled DRV/THR/LDS/... bars were an invention and are gone.
   sprites. Text-style alpha at `0x10162cb0`: 0 -> 0.6, 1 -> 1.0, 2 -> 0.75.
   `FUN_100eb270(font, style, x, y, str, halign, valign)`.
 
+### The HUD's letter spacing is a font-TABLE field, not a font property
+
+The single most misleading thing in the HUD. Each row of the font table
+(`0x10162c60`, stride 0x14: name, `FcFont*`, char_width, line_height,
+**spacing**) carries a spacing delta in its **5th field**: **+1** for font 0,
+**-6** for font 1, **-5** for font 2. The loader `FUN_100e8220` measures `'M'`,
+adds the field to build the row's fixed `char_width`, and **stores the field
+straight into `FcFont::m_additional_kern`** (`FcFont+0x34`, at `0x100e82b4`) --
+an **inlined store**. It never calls the exported `SetAdditionalFontKern`, which
+is why grepping for that setter finds nothing and why two passes wrote the field
+off as dead. `FcFont::Kern` (`flux.dll 0x100828e0`) then returns it for every
+pair of every HUD face. **OCR-B 10pt's cell is 9 px, not 15** -- our arrow menu
+was 66% too wide, and the game's own bezel sprites are authored for the 9 px
+cell.
+
+The spacing lives on the **three FcFont instances in that table**, so it applies
+to HUD text and nothing else: the MFD panels, the contacts list and the
+stellar-map labels draw the same faces at spacing 0. (Confirmed against a
+reference screenshot: the map's star labels measure the raw 5 px `ocrb_8pt`
+cell while the HUD's own font-0 text uses 6 px.)
+
+The rest of the layout: `DrawText` (`flux 0x100609c0`) sets
+`baseline = y + ascent`, backs the pen up by the first glyph's `ix0`, and
+advances `pen += (lx1 - lx0) + Kern`. **The ink rect is EXCLUSIVE** (`AddGlyph`
+`0x10081d60` spans `ix1-ix0` x `iy1-iy0`, no `+1`), and **FHDR's 4th int is the
+ASCENT**, not the line height (`FontHeight = ascent + descent`). **Font 0 is a
+fixed-cell face** that never touches `FcFont::DrawText` at all: `FUN_100eb270`
+forks on the index and gives it a private blitter stepping `char_width` per
+character, spaces included, with no bearing trim.
+
 ### `icHUDMenuReticle`'s draw, corrected
 
 The centre is sprite 91 blitted **four times, mirrored** (we drew one quadrant,

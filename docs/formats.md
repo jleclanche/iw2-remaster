@@ -128,15 +128,35 @@ INIs (`FcLoopSoundNode`) multiply volume by `volume_channel`.
 (u16be nverts, indices, s16be surface), `SRFS` names. Fan-triangulate.
 
 ## Fonts `.frf` (`fonts.py`)
-IFF `FORM FONT`. `FHDR` (70B): u32be first_char, last_char, first
-again, line_height, descent, tex_w, tex_h, glyph_count, point_size,
-then two NUL-strings at offset 38: atlas name (`*.lbm` → the FTU/FTC
-texture) and family name. Per-char `GLYP`: u8 present flag; if set,
-10×s32be: logical box (x0,y0,x1,y1; y relative to baseline, up
-negative; x1 = advance), ink box (x0,y0,x1,y1), atlas x, atlas y.
-Emit as BMFont (`base = line_height − descent`); GOG's `ocrb_8pt.frf`
-actually references the Andale Mono atlas. Note: font `.frf` ≠ `.ffe`
-(joystick force-feedback effects, no gameplay content).
+IFF `FORM FONT`. Field names are the engine's — `FcFont`'s loader reads
+them in this order (flux.dll `0x10083084`+), so don't guess them from
+the layout. `FHDR`: 9×u32be — first_char, last_char, **default_char**
+(*not* first again: `GetGlyph` falls back to it, `0x10081b50`),
+**ascent**, descent, tex_w, tex_h, glyph_count, point_size — then
+**bold** and **italic** as bool8 (bytes 36, 37), then two NUL-strings
+at offset 38: atlas name (`*.lbm` → the FTU/FTC texture) and family
+name. Per-char `GLYP`: u8 present flag; if set, 10×s32be read by
+`FcGlyph` (`0x1007fe60`): logical box (x0,y0,x1,y1; y relative to
+baseline, up negative), ink box (x0,y0,x1,y1), atlas x, atlas y.
+
+The **advance is the logical WIDTH `lx1 − lx0`**, not the right edge
+`lx1` (they coincide only because `lx0` is 0 for all but a couple of
+glyphs), and the **ink box is EXCLUSIVE**: the engine blits a
+`(ix1 − ix0) × (iy1 − iy0)` rect 1:1 from `(tx, ty)` to
+`pen + ix0, baseline + iy0` (`DrawText` `0x100609c0`, UVs built in
+`AddGlyph` `0x10081d60`) — there is no `+1`. As BMFont:
+
+    lineHeight = ascent + descent   # FcFont::FontHeight, 0x10015240
+    base       = ascent             # baseline = y + FcFont+0x24
+    xadvance   = lx1 - lx0          # + FcFont::Kern, see docs/hud.md
+    xoffset    = ix0 ; yoffset = ascent + iy0
+    width      = ix1 - ix0 ; height = iy1 - iy0
+
+`m_additional_kern` (the HUD's per-face letter spacing) is *not* in the
+frf — see `docs/hud.md`. GOG's `ocrb_8pt.frf` names the Andale Mono
+family and atlas in its own FHDR: the file name lies, the FHDR does
+not. Note: font `.frf` ≠ `.ffe` (joystick force-feedback effects, no
+gameplay content).
 
 ## POG VM bytecode (`pogdis.py`)
 The CODE chunk (u32be size prefix, then bytecode) is a stack-machine

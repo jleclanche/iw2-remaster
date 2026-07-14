@@ -277,37 +277,75 @@ point size **7** - and the frf's glyph rects capture **100%** of the ink on
 7pt; `ocrb_8pt.ftu` is a stale atlas nothing reads. (Which is why the reticle's
 numerics are a different, tighter face than the menu's.)
 
-#### The metric (`FcFont::GetTextSize` @ flux.dll `0x100827a0`)
+#### The letter spacing (`m_additional_kern`) - task #65
 
-The pen steps by the glyph's LOGICAL width (`lx1 - lx0`, the frf's first and
-third int32 - `FcGlyph` reads the ten ints in file order, `0x1007fe60`) **plus
-`FcFont::Kern(c, next)`** - and `DrawText` applies the same kern when it renders,
-not just when it measures (`0x10060969`). But **the kern is 0 for every pair in
-every font the HUD uses**:
+**The 5th field of each font-table entry is the face's LETTER SPACING**, and it
+is the whole of the HUD's kerning:
 
-* `Kern` (`0x100828e0`) consults `m_kerning_pairs` for a normal font and
-  `m_italic_kerning_pairs` only when `FcFont+0x31` (italic) is set;
-* the `FcFont` ctor (`0x100800b0`) registers **236 pairs, every one of them into
-  the ITALIC table** (every call pushes `1`);
-* nothing in `iwar2.dll` imports `SetAdditionalFontKern` or `ForceMonospace`, so
-  the per-font base spacing `+0x34` stays 0.
+| idx | font | `+0x10` | `'M'` cell | HUD cell |
+|-----|------|--------:|-----------:|---------:|
+| 0 | `ocrb_8pt` (Andale Mono 7pt) | **+1** | 5 | **6** |
+| 1 | `ocrb_10pt` | **-6** | 15 | **9** |
+| 2 | `ocrb_18pt` | **-5** | 20 | **15** |
 
-So the advance is the whole metric, and our BMFonts (built from the same frf
-logical boxes) match the engine glyph for glyph. OCR-B 10pt really does advance
-**15px** per character with only 10px of ink - the HUD's letter-spacing is that
-airy by design.
+The HUD's loader (`FUN_100e8220` @ `0x100e8220`) measures `'M'`, adds that field
+to get the entry's `char_width`, and stamps the field **straight into
+`FcFont::m_additional_kern` (`FcFont+0x34`)**:
 
-Two trims are NOT optional, though, and both are visible:
+    100e8271  call GetGlyph(font, 'M')
+    100e827c  sub  edx, edi              ; M.lx1 - M.lx0
+    100e8290  fadd dword ptr [esi+0xc]   ; + the entry's spacing
+    100e8293  fstp dword ptr [esi+4]     ; -> entry.char_width
+    100e82a9  fld  dword ptr [esi+0xc]
+    100e82ac  call ftol
+    100e82b4  mov  dword ptr [edi+0x34], eax   ; font.m_additional_kern
 
-    w = sum(advance)
+`FcFont::Kern` (`0x100828e0`) then returns **exactly `m_additional_kern`** for
+every pair of every HUD face: the 236 pairs the `FcFont` ctor registers
+(`0x100800b0`) all pass `italic=true` and land in the ITALIC table, which no HUD
+face reads, and the non-italic table is never populated by any DLL. So the pen
+just steps `(lx1 - lx0) + spacing`.
+
+> We got this wrong twice by grepping for a *call* to `SetAdditionalFontKern`
+> (`0x10068000`) and finding none. **iwar2 never calls it - it inlines the store.**
+> That is what made the arrow menu's OCR-B 10pt advance 15px per character
+> instead of 9, i.e. two thirds too wide, which is the whole of task #65.
+
+It lives on the three FcFont **instances in this table**, not in the `.frf`, so
+it applies to HUD text and nothing else. The MFD panels, the contacts list and
+the stellar-map labels draw the same faces with spacing 0 - in the original, the
+map's star labels measure a **5px** cell for `ocrb_8pt`, its raw cell, not the
+6px cell the HUD uses. `tools/iw2/fonts.py` therefore emits the raw `.frf`
+metrics and `hud.gd` applies the spacing (`HUD_KERN`) on the HUD path only.
+
+#### The metric
+
+The two fonts measure through **different code**, both via `FUN_100ebd70`
+(`0x100ebd70`):
+
+**Font 0 never looks at a glyph.** It is a fixed-cell face - the blitter
+(`0x100eb689`) steps `entry.char_width` for *every* character, spaces included,
+and drops each glyph at `pen + ink_x0` with no bearing trim:
+
+    w = len(str) * char_width      # 0x100ebd7e
+    h = ascent + descent           # 0x100ebd8d (the entry's line height)
+
+**Fonts 1 and 2** go to `FcFont::GetTextSize` (`0x100827a0`), whose pen steps the
+glyph's LOGICAL width (`lx1 - lx0`, the frf's first and third int32 - `FcGlyph`
+reads the ten ints in file order, `0x1007fe60`) plus `Kern(c, next)`; the last
+glyph's "next" is the NUL terminator, for which `Kern` returns 0 (`0x100828e4`).
+`DrawText` applies the same kern when it renders, not just when it measures
+(`0x10060969`). Two trims are NOT optional, and both are visible:
+
+    w = sum(lx1 - lx0) + (n-1) * spacing
         - first.ink_x0                    # 0x10082803
         - (last.lx1 - last.ink_x1)        # 0x1008286f
     h = max(-ink_y0) + max(ink_y1)        # 0x10082883: the INK height of THIS
                                           # string, not the font's line box
 
 and `DrawText` backs the pen up by `first.ink_x0` (`0x1006074d`) so the ink
-starts flush on x. On a three-letter label that is 5px of width - which is 5px of
-node-box rail. `hud.gd` reproduces all of it in `_text_metrics` / `_hud_text`.
+starts flush on x - the font-0 blitter does not. `hud.gd` reproduces all of it in
+`_text_metrics` / `_hud_text`.
 
 `FUN_100ea830` -> `FUN_100ea900` (`0x100ea830` / `0x100ea900`) is "a labelled
 node box": measure the string, build a rail around it, optionally put an icon in
@@ -570,11 +608,13 @@ is gone. The exceptions are all inside the carousels:
    `ship_systems.gd`'s `systems` array, which is INI mount order. The engine's
    component list is built by `icShip::OnAttachSubsim` in the same order, but we
    have not proved no other code reorders it.
-5. **The fifth float in each font-table row** (`row+0x10`: 1.0 for ocrb_8pt,
-   -6.0 for ocrb_10pt, -5.0 for ocrb_18pt, 0.0 for the sprite sheet). Nothing
-   reads it - not `FUN_100eb270`, and `0x10162c70` has no xref anywhere in
-   `iwar2.dll`. It looks like a per-font baseline nudge that was never wired up.
-   We do not apply it.
+5. ~~**The fifth float in each font-table row**~~ - **RESOLVED (task #65)**. It is
+   the face's **letter spacing**, and it is the reason the arrow menu's text was
+   two thirds too wide. `FUN_100e8220` (`0x100e8220`) reads it at `[esi+0xc]`
+   while walking the table with a computed pointer - which is exactly why the
+   xref search on `0x10162c70` came up empty - and stores it into
+   `FcFont::m_additional_kern` (`0x100e82b4`). See "The letter spacing" above.
+   **Moral: a data address with no xref is not unread; it may be walked.**
 6. **Whether the reticle's "set speed" second line exists in the original.** The
    velocity readout at `0x100f7076` is one call; we draw a second line under it.
 

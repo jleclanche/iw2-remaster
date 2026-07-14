@@ -169,6 +169,8 @@ func _ready() -> void:
 		menu_size = (_font_menu as FontFile).fixed_size
 	if _font_head is FontFile and (_font_head as FontFile).fixed_size > 0:
 		head_size = (_font_head as FontFile).fixed_size
+	_hud_faces = [_spaced(_font_num, HUD_KERN[0]), _spaced(_font_menu, HUD_KERN[1]),
+			_spaced(_font_head, HUD_KERN[2])]
 	target_view = TargetView.new()
 	target_view.main = main
 	add_child(target_view)
@@ -1547,12 +1549,56 @@ func _menu_node_box(anchor: Vector2, text: String, icon: int, col: Color,
 #          (DrawText adds FcFont+0x24, 0x100606f6).
 const TEXT_ALPHA := [0.6, 1.0, 0.75]
 
+# --- the HUD's letter spacing ------------------------------------------------
+# The 5th field of each font-table entry (0x10162c60 +0x10: +1, -6, -5) is the
+# face's LETTER SPACING, and the HUD's loader stamps it straight into
+# FcFont::m_additional_kern (FcFont +0x34) -- iwar2.dll FUN_100e8220:
+#
+#   100e8271  call GetGlyph(font, 'M')
+#   100e827c  sub  edx, edi              ; M.lx1 - M.lx0
+#   100e8290  fadd dword ptr [esi+0xc]   ; + the entry's spacing
+#   100e8293  fstp dword ptr [esi+4]     ; -> entry.char_width  (font 0's cell)
+#   100e82a9  fld  dword ptr [esi+0xc]
+#   100e82ac  call ftol
+#   100e82b4  mov  dword ptr [edi+0x34], eax   ; font.m_additional_kern
+#
+# FcFont::Kern (flux.dll 0x100828e0) then returns exactly m_additional_kern for
+# every pair of every HUD face: the 236 kerning pairs the FcFont ctor registers
+# (0x100800b0) ALL pass italic=true, so they land in the italic table, which no
+# HUD face reads -- the non-italic table is never populated by any DLL. So the
+# pen simply steps (lx1 - lx0) + spacing per glyph. OCR-B 10pt's 15px cell
+# becomes 9px: the arrow menu's labels are two thirds the width we drew them.
+#
+# This lives on the three FcFont *instances* in the HUD's table, not in the
+# .frf, so it applies to HUD text (FUN_100eb270) and nothing else -- the MFD
+# panels, the contacts list and the stellar-map labels draw the same faces with
+# spacing 0. (Ground truth: in the original, the map's star labels measure a
+# 5px cell for ocrb_8pt -- its raw cell -- not the 6px cell the HUD uses.)
+const HUD_KERN := [1, -6, -5]
+
+# Faces for the HUD path: the same bitmaps, spaced. Drawing only -- _glyph()
+# stays on the raw faces so the metrics below can follow the engine exactly.
+var _hud_faces: Array[Font] = []
+
+static func _spaced(f: Font, kern: int) -> Font:
+	if f == null or kern == 0:
+		return f
+	var fv := FontVariation.new()
+	fv.base_font = f
+	fv.set_spacing(TextServer.SPACING_GLYPH, kern)
+	return fv
+
 func _hud_font(idx: int) -> Font:
 	if idx == 1:
 		return _font_menu
 	if idx == 2:
 		return _font_head
 	return _font_num
+
+func _hud_draw_font(idx: int) -> Font:
+	if _hud_faces.size() == 3:
+		return _hud_faces[clampi(idx, 0, 2)]
+	return _hud_font(idx)
 
 func _hud_font_size(idx: int) -> int:
 	if idx == 1:
@@ -1589,30 +1635,47 @@ func _glyph(fi: int, ch: int) -> Array:
 	return rec
 
 func _text_metrics(fi: int, text: String) -> Vector3:
-	# FcFont::GetTextSize @ flux.dll 0x100827a0. The pen steps by the glyph's
-	# LOGICAL width (lx1 - lx0) plus Kern(c, next) -- and Kern is 0 for every
-	# pair in every font the HUD uses: flux registers its 236 kerning pairs into
-	# the ITALIC table only (FcFont ctor @ 0x100800b0, every call pushes 1), the
-	# HUD's fonts are not italic, and nothing in iwar2 calls
-	# SetAdditionalFontKern. So the advance IS the metric and our BMFonts match.
-	# The reported WIDTH then trims the first glyph's left bearing (0x10082803)
-	# and the last glyph's right bearing (0x1008286f), and the HEIGHT is the INK
-	# height of THIS string (max -ink_y0 + max ink_y1, 0x10082883) -- not the
-	# font's line box. Returns (width, ink height, first left bearing).
+	# The HUD measures through FUN_100ebd70 @ 0x100ebd70, which forks on the font:
+	#
+	# Font 0 never looks at a glyph. It is a fixed-cell face: width is simply
+	# len * the table's char_width (0x100ebd7e) and height is the table's line
+	# height (0x100ebd8d) -- char_width being 'M's logical width plus the face's
+	# spacing (0x100e8290), line height being ascent + descent (0x100e8296).
+	# No bearing trim, because the font-0 blitter (0x100eb689) walks a fixed cell.
+	#
+	# Fonts 1 and 2 go to FcFont::GetTextSize @ flux.dll 0x100827a0: the pen steps
+	# the glyph's LOGICAL width (lx1 - lx0, 0x100827e5) plus Kern(c, next), which
+	# for a HUD face is its spacing (see HUD_KERN) -- and the last glyph's "next"
+	# is the NUL terminator, for which Kern returns 0 (0x100828e4). The reported
+	# WIDTH then trims the first glyph's left bearing (0x10082803) and the last
+	# glyph's right bearing (0x1008286f), and the HEIGHT is the INK height of THIS
+	# string (max -ink_y0 + max ink_y1, 0x10082883), not the font's line box.
+	#
+	# Returns (width, height, first left bearing).
 	if text.is_empty():
 		return Vector3.ZERO
+	var kern: int = HUD_KERN[clampi(fi, 0, 2)]
+	if fi == 0:
+		var f0: Font = _hud_font(0)
+		var cell: float = float(_glyph(0, 77)[0]) + float(kern)  # 'M'
+		var h0: float = 0.0
+		if f0 != null:
+			h0 = f0.get_height(_hud_font_size(0))
+		return Vector3(float(text.length()) * cell, h0, 0.0)
 	var w := 0.0
 	var asc := 0.0
 	var desc := 0.0
 	for i in text.length():
 		var g: Array = _glyph(fi, text.unicode_at(i))
 		w += float(g[0])
+		if i < text.length() - 1:
+			w += float(kern)
 		asc = maxf(asc, -float(g[3]))
-		desc = maxf(desc, float(g[3]) + float(g[4]) - 1.0)
+		desc = maxf(desc, float(g[3]) + float(g[4]))
 	var first: Array = _glyph(fi, text.unicode_at(0))
 	var last: Array = _glyph(fi, text.unicode_at(text.length() - 1))
 	w -= float(first[1])
-	w -= float(last[0]) - (float(last[1]) + float(last[2]) - 1.0)
+	w -= float(last[0]) - (float(last[1]) + float(last[2]))
 	return Vector3(w, asc + desc, float(first[1]))
 
 func _text_w(fi: int, text: String) -> float:
@@ -1620,7 +1683,9 @@ func _text_w(fi: int, text: String) -> float:
 
 func _hud_text(fi: int, style: int, p: Vector2, text: String, halign: int,
 		valign: int, rgb: Color) -> void:
-	var f: Font = _hud_font(fi)
+	# The face carries the HUD's letter spacing (HUD_KERN), so Godot's own pen
+	# reproduces the engine's: (lx1 - lx0) + spacing per glyph.
+	var f: Font = _hud_draw_font(fi)
 	if f == null or text == "":
 		return
 	var m: Vector3 = _text_metrics(fi, text)
@@ -1634,9 +1699,11 @@ func _hud_text(fi: int, style: int, p: Vector2, text: String, halign: int,
 		y -= m.y
 	elif valign == 2:
 		y -= m.y * 0.5 + 1.0
-	# DrawText backs the pen up by the first glyph's left bearing so the ink
-	# starts flush on x (0x1006074d); Godot applies that bearing itself, so it
-	# has to come back out here.
+	# For fonts 1 and 2, DrawText backs the pen up by the first glyph's left
+	# bearing so the ink starts flush on x (0x1006074d); Godot applies that
+	# bearing itself, so it has to come back out here. Font 0's blitter does not
+	# back up -- it drops each glyph at pen + ink_x0 on a fixed cell (0x100eb59d)
+	# -- and _text_metrics reports no bearing for it, so this is a no-op there.
 	x -= m.z
 	var a: float = TEXT_ALPHA[clampi(style, 0, 2)] * _ea
 	var size: int = _hud_font_size(fi)
