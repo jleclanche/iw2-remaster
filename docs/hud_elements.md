@@ -987,3 +987,223 @@ Read out of the same table builder (`0x100e6c60` ->
 | 68 | (165, 191) | 32x32 | 16,16 | TRI axis 2 — ship + deflecting arc |
 
 ---
+
+---
+
+## icHUDStarmap — the zoom, fully recovered
+
+Vtable `0x1011e1d8`, ctor `0x100fb260`, size `0x1b8`, dtor `0x100fb8b0`.
+Renderers `0x100ff0a0` (cluster) and `0x100fda70` (system); body draw `0x100fbf50`;
+menu input `0x100fbc60`.
+
+Two corrections to what was written here before, both load-bearing:
+
+1. **`FUN_100fd440` is not the zoom initialiser, and Ghidra did not drop it.** It is
+   in `data/decomp/iwar2.dll.c` and it is the **control-legend refresh** (below).
+2. **There are two zooms, and they are different physical quantities.** That is the bug.
+
+### The two zooms
+
+| | field | type | meaning |
+|---|---|---|---|
+| cluster | `+0xa0` / target `+0xa4` | f32 | dimensionless divisor over `clusters.ini` chart units |
+| system | `+0xe8` / target `+0xf0` | **f64** | **a radius in METRES** |
+
+Both feed one projection — `scale = min(w, h) * 0.45 / zoom` (`FUN_100ff9f0` f32 /
+`FUN_100ff9b0` f64, `_DAT_1011e1a8` = 0.45, a *double*) — with cameras at `+0xa8`
+(vec3 f32) and `+0xf8` (vec3 f64), and the resulting scale cached at `+0xb4` / `+0x110`.
+
+- The **cluster zoom is pinned at 5.0** (`DAT_1011e194`) and never moves except during a
+  transition. The cluster chart therefore has exactly one scale, forever. At 640x480 that
+  is 43.2 px per chart unit, and `clusters.ini`'s 16 `map_coords` span 20 x 12 units =
+  **864 x 518 px, deliberately larger than the screen**. You are meant to pan around it;
+  that is why the mouse edge-scroll exists at all.
+- The **system zoom is a distance in metres**, and it is *derived, never typed in*
+  (`FUN_100fd670` @ `0x100fd670`, `*(double*)(this+0xf0) = fVar10 * _DAT_1011e220`):
+
+```
+zoom = max(extent, 1000.0) * 1.2          _DAT_1011e228 = 1000, _DAT_1011e220 = 1.2
+```
+
+  `extent` follows **the selection** (`+0xc8`) and the **focus** (`+0x130`):
+
+| condition | extent |
+|---|---|
+| focus is the system root | the whole system's radius (`+0xe4`, cached by `FUN_100fffa0`) |
+| focus **is** the selection and it has map-visible children | its nearest child's orbit radius (`FUN_100fff10`) |
+| otherwise | max( subtree radius of the selection (`FUN_100ffe70`), dist(selection, focus) ) |
+
+Because `scale = min(w,h)*0.45/(1.2*extent)`, **the outermost member of whatever you
+framed always lands at exactly `0.375 * min(w, h)` px from centre.** That is the entire
+framing rule of the system view.
+
+### The zoom input: there is no manual zoom. "Zoom" is a hierarchy walk.
+
+Nothing in the element writes either zoom target except the two transitions,
+`FUN_100fda10` and `FUN_100fd670`. `hud.csv`'s `hud_map_zoom_in` / `hud_map_zoom_out` are
+**not** a held rate and **not** a step — they are the *labels of menu commands 0 and 1*,
+registered by the ctor into eight legend items:
+
+| field | string | icon |
+|---|---|---|
+| `+0x54` | `hud_menu_cancel` | 31, red |
+| `+0x58` | `hud_menu_next` | 35 |
+| `+0x5c` | `hud_menu_prev` | 34 |
+| `+0x60` | **`hud_map_zoom_in`** | 36 |
+| `+0x64` | **`hud_map_zoom_out`** | 37 |
+| `+0x68` | `hud_map_select` | - |
+| `+0x6c` | `hud_map_jump_destination` | - |
+| `+0x70` | `hud_map_select_destination` | - |
+
+`FUN_100fd2b0` / `FUN_100fd440` / `FUN_100fd5a0` / `FUN_100fd380` are four legend
+refreshes that load these into the panel at `+0x20` (slots `+0x14` = cmd0, `+0x18` = cmd1,
+`+0x1c` = cmd2, `+0x20` = cmd3, `+0x24` = cmd4):
+
+- `FUN_100fd2b0` cluster: cmd0 = ZOOM IN, cmd1 = **none** (you cannot zoom out of the cluster)
+- `FUN_100fd440` system: cmd0 = ZOOM IN, or JUMP DESTINATION when the selection is a
+  usable L-point (`FUN_10100d20`); cmd1 = ZOOM OUT
+- `FUN_100fd5a0` state 4: cmd0 = none, cmd1 = CANCEL
+- `FUN_100fd380` transitions: all cleared, no legend while zooming
+
+So the commands are:
+
+- **cmd 0 ZOOM IN** — cluster: dive into the selected system. System: **descend the
+  geography tree** into the selection (`FUN_100fce60` case 0 sets `+0x130` = selection and
+  rebuilds the child list), which re-frames, i.e. zooms in.
+- **cmd 1 ZOOM OUT** — system: **ascend to the parent** (via `+0x1da`), which re-frames
+  out. At the root, and only once the zoom has settled, it leaves for the cluster instead.
+- **cmd 2 / 3** prev / next in the current list. Each move calls `FUN_100fd670`, so moving
+  the selection re-frames — this is what "zooming" feels like in play.
+- **cmd 4** `icPlayerContactList::SetUserNavTarget` on the selection.
+- **cmd 5** close.
+
+The two glyphs at (36,126) / (72,126) are **indicators, not buttons**: sprite 53 backs
+both; while a zoom runs the first blinks sprite 36 (zoom > target) or 37 (zoom <= target),
+and while the *system* camera is still moving the second blinks sprite 29.
+Blink alpha = `(|frac(t * 0.0005) - 0.5| * 1.8 + 0.1) * master`.
+
+`configs/default.ini` carries no starmap zoom binding — these are menu commands, not
+bindable actions. We map cmd0/cmd1 to Up/Down, and accept `+`/`-` as aliases.
+
+### The transitions: a continuous dive, 1000x each way
+
+`_DAT_1011e198` = 1000.0 (f64), `_DAT_1011e1a0` = 0.001 (f32).
+
+- **Dive** (`FUN_100fcd60` case 0): `FUN_100fc9e0` sets the system up and parks its zoom
+  **1000x out** of its target (`*(double*)(this+0xe8) = 1000.0 * *(double*)(this+0xf0)`),
+  snapping the system camera; then state = 1 and `cluster_target *= 0.001`. Both views zoom
+  in together. **Ends when the CLUSTER zoom arrives.**
+- **Pull out** (`FUN_100fce60` case 1): `FUN_100fc970` rebuilds the cluster and parks its
+  zoom at **0.001x** its target (`*(float*)(this+0xa0) = 0.001 * *(float*)(this+0xa4)`),
+  snapping the cluster camera; then state = 3 and `system_target *= 1000.0`.
+  **Ends when the SYSTEM zoom arrives.**
+
+In both cases the transition ends when the *outgoing* view's zoom has finished its 1000x
+move. The **cross-fade is driven by the CLUSTER zoom in both directions**:
+
+```
+f = (cluster_zoom - 0.001) / (5.0 - 0.001)
+cluster_alpha *= f        system_alpha *= (1 - f)
+```
+
+### The ease and the camera
+
+Same law in both views, different floor (renderer heads):
+
+```
+zoom = move_toward(zoom, target, ((zoom - FLOOR) * 5.0 + FLOOR) * dt)
+```
+
+FLOOR = 0.001 cluster (`_DAT_1011e1a0`), 1000.0 system (`_DAT_1011e228`); rate 5.0
+(`_DAT_1011e190` / `_DAT_1011e188`). The cluster clamps its zoom up to the floor first;
+the system does **not**.
+
+The camera chases at `5 * dist / s` and **snaps when the remainder is under 1.5 px of
+world** (`_DAT_1011e1b0` = 1.5, divided by the scale). `FUN_100ffd30` (f32) /
+`FUN_100ffc30` (f64) edge-scroll the camera *target* while the cursor is within 3 px
+(`_DAT_10118490`) of a screen edge, at 0.75 (`_DAT_1011e1d4`) screen-widths per second in
+world units — disabled during states 1 and 3.
+
+### State 4: the jump-destination list
+
+Entered from the system view with cmd 0 when `FUN_10100d20` passes: the selection is an
+`icLagrangePointWaypoint`, has waypoints (`+0x1f8`), `IsKnown()`, and is in the player's
+system. `FUN_100fca90` sets state 4, parks the L-point in `+0x150`, and builds a list at
+`+0x148` (count `+0x140`, stride 8) of every waypoint for which
+`icLagrangePointWaypoint::IsKnown()` is true, each paired with its **original index**.
+`+0x14c` is the cursor. `FUN_100fd130`: cmd 2/3 walk it, cmd 1 returns to state 2, and
+**cmd 4 commits** — it writes the chosen waypoint's original index into the L-point's
+`+0x204` (arming that L-point for that destination) and calls `SetUserNavTarget`. That is
+how an interstellar jump is plotted.
+
+### The cluster node sprite: recovered
+
+`FUN_10100650` (the cluster rebuild) counts how many jump links touch each system and
+writes the sprite id into the runtime list at `+0x90` (`0x10100989`:
+`(-(uint)(2 < n) & 0xfffffffe) + 0x39`):
+
+```
+id = (links > 2) ? 55 : 57
+```
+
+`FUN_100ff0a0` reads it back per system (`mov ecx,[esi+0x90]` / `mov ebx,[ecx+edx*4]` @
+`0x100ff427` — Ghidra dropped the index and rendered it as `[0]`). **55 is a large disc, 57
+a small one: hub systems are drawn bigger.** It was never the roundel (53).
+
+Node/label alpha: 1.0 selected or moused-over, 0.7 visited (`_DAT_101191e8`), 0.3 never
+visited (`_DAT_1011c034`); label style index 2 / 1 / 0. Jump links are lines at width 0.5 /
+fade 1.5 with a **per-end alpha** (1.0 if that end is visited, else 0.3, `FUN_10100650`).
+Mouse pick: nearest system within `sqrt(144)` = 12 px (`FUN_100ffb50`).
+
+### The system view: what it actually plots
+
+`FUN_100fda70` walks `icGeography` (flattened by id into `+0xd4`) and for every entity with
+`IsVisibleOnMap()` projects the **real system coordinates, in metres, on the X/Z plane**
+(`entity+0x48` = X f64, `entity+0x58` = Z f64):
+
+```
+p     = (entity.xz - cam) * scale
+orbit = (entity.xz - parent.xz) * scale        <- the orbit vector, in PIXELS
+```
+
+- **Orbit circles** about each body's *parent*, radius `|orbit|` — `DrawCircle`, width 0.5,
+  only when `|orbit| > 15` px (`_DAT_1011e1c8`), alpha ramping 0 to 1 across 15..25 px
+  (`_DAT_1011e1cc`), and only while `|orbit| <= 12 * half-diagonal` (`_DAT_1011e1d0`); past
+  that the orbit is drawn as a plain line instead.
+- **L-point stubs** (`icGeography` type 5) toward the partner geography at `entity+0x20c`,
+  clipped to `2.1 * half-diagonal` (`_DAT_1011e230`), alpha 0.3.
+- **The bodies**, one `FUN_100ff6b0` each — and this is where the system view's whole look
+  comes from. Everything hangs off the **orbit length in pixels**:
+
+```
+glyph alpha : 0 below 27 px, ramp 27..50, 1 above   (_DAT_1011e1b8 / _DAT_1011e1bc)
+label alpha : 0 below 35 px, ramp 35..60, 1 above   (_DAT_1011e1c0 / _DAT_1011e1c4)
+```
+
+  both forced to 1.0 when the entity is the selection, the focus, or moused-over (and
+  sprite 51 is stamped over the glyph as well). **A body whose orbit is under 27 px is
+  simply not drawn** — only what you have framed is visible, and descending is how you
+  reveal the rest. This, not a zoom slider, is the system view's level-of-detail.
+- **The player**, sprite 66 (the little ship), only when the player is actually in the
+  system being viewed (`0x100fec52`, `push 0x42`).
+
+The body glyph id is `FUN_100e86d0(entity)`:
+
+```
+type 1  -> 54 (star)      type 5 -> 60 (L-point)      [table 0x1011db64]
+type 2  -> station subtype table 0x1011dbe4
+type 14 -> 58 / 59 / 61 by the byte at entity+0x1e4
+```
+
+Sprite cells (from the table builder at `0x100e7783`..`0x100e7859`): **54** = (33,125)
+spoked disc (a star), **55** = (0,125) large plain disc, **56** = (0,158) ringed planet,
+**57** = (33,158) small plain disc — all 32x32, origin 16,16.
+
+**NOT RECOVERED:** how `icGeography`'s `+0x194` / `+0x1e4` / `+0x218` map onto the fields
+our system JSON carries, so the exact per-body glyph is still open. We use 54 for a star
+and 60 for an L-point (both pinned above) and fall back to the plain discs 55 / 57 for
+bodies and stations. Also **NOT RECOVERED:** `icGeography::IsVisibleOnMap` — our JSON has
+no such flag, so we show everything. And the comparator of the `qsort` in `FUN_100fd670`
+(`LAB_100fd920`) that orders the child list.
+
+---

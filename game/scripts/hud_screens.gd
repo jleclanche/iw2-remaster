@@ -142,12 +142,22 @@ func _draw() -> void:
 # images/hud/sprites.png.
 const SPR2 := {
 	29: [132, 125, 32, 32, 16, 16],   # starmap header glyph (second slot)
-	36: [198, 125, 32, 32, 16, 16],   # zoom-in arrow    (starmap, 0x24)
-	37: [198, 158, 32, 32, 16, 16],   # zoom-out arrow   (starmap, 0x25)
+	31: [165, 26, 32, 32, 16, 16],    # legend: CANCEL   (id 0x1f)
+	34: [33, 92, 32, 32, 16, 16],     # legend: PREV     (id 0x22)
+	35: [66, 92, 32, 32, 16, 16],     # legend: NEXT     (id 0x23)
+	36: [198, 125, 32, 32, 16, 16],   # legend/indicator: ZOOM IN  (id 0x24)
+	37: [198, 158, 32, 32, 16, 16],   # legend/indicator: ZOOM OUT (id 0x25)
 	45: [66, 59, 32, 32, 16, 16],     # the TRI marker (a ragged ring)
-	53: [198, 59, 32, 32, 16, 16],    # roundel: ring + disc
-	60: [231, 226, 24, 24, 12, 12],   # L-point icon
-	66: [99, 191, 32, 32, 16, 16],    # TRI axis 0 -- ship + engine plume
+	53: [198, 59, 32, 32, 16, 16],    # roundel: ring + disc (header glyph backing)
+	# the four discs at atlas (0,125)/(33,125)/(0,158)/(33,158). Read out of the
+	# table builder at 0x100e7783..0x100e7859 (`mov edi, 0x101741b0 + id*0x24`)
+	# and eyeballed on the sheet:
+	54: [33, 125, 32, 32, 16, 16],    # spoked disc  -- a STAR (type table [1] = 54)
+	55: [0, 125, 32, 32, 16, 16],     # large plain disc
+	56: [0, 158, 32, 32, 16, 16],     # ringed planet
+	57: [33, 158, 32, 32, 16, 16],    # small plain disc
+	60: [231, 226, 24, 24, 12, 12],   # L-point icon (type table [5] = 60)
+	66: [99, 191, 32, 32, 16, 16],    # ship glyph: TRI axis 0, and the map's YOU-ARE-HERE
 	67: [132, 191, 32, 32, 16, 16],   # TRI axis 1 -- ship + two beams firing
 	68: [165, 191, 32, 32, 16, 16],   # TRI axis 2 -- ship + deflecting arc
 }
@@ -612,72 +622,264 @@ func _draw_engineering(fade: float) -> void:
 #   slot 11 0x100fba50  (re-open)          slot 13 0x100fbc60  (menu input)
 #   slot 12 0x100fbc20                     slot 14 0x100fbf50  (body draw)
 #   slot 15 0x100fbce0                     slot 16 0x100fbf40
+# dtor 0x100fb8b0. Renderers: FUN_100ff0a0 (cluster), FUN_100fda70 (system).
 #
+# ============================================================================
+# THERE ARE **TWO** ZOOMS, AND THEY ARE DIFFERENT QUANTITIES.
+# ============================================================================
+# This is the thing the previous pass got wrong. The element carries two
+# completely independent zoom/camera pairs:
+#
+#   CLUSTER    zoom  this+0xa0  float    target this+0xa4   camera this+0xa8 (vec3 f32)
+#   SYSTEM     zoom  this+0xe8  DOUBLE   target this+0xf0   camera this+0xf8 (vec3 f64)
+#
+# Both feed the SAME projection --
+#     scale = min(screen_w, screen_h) * 0.45 / zoom
+# (FUN_100ff9f0 float / FUN_100ff9b0 double, _DAT_1011e1a8 = 0.45) -- but
+#
+#   * the CLUSTER zoom is a dimensionless divisor over clusters.ini chart units.
+#     It is pinned at **5.0** (DAT_1011e194) and never moves except during a
+#     transition. The cluster chart therefore has ONE fixed scale, forever.
+#
+#   * the SYSTEM zoom is a **distance in METRES** -- the radius of the region
+#     being framed. Its floor is 1000 m (_DAT_1011e228) and its value is
+#     DERIVED, never typed in:
+#
+#         zoom = max(extent, 1000) * 1.2        (_DAT_1011e220 = 1.2)
+#
+#     (FUN_100fd670 @ 0x100fd670, the line `*(double*)(this+0xf0) =
+#     fVar10 * _DAT_1011e220`). `extent` comes from what you have SELECTED:
+#       - focus is the system root   -> the whole system's radius (this+0xe4,
+#                                       cached by FUN_100fffa0)
+#       - focus IS the selection and it has map-visible children
+#                                    -> its NEAREST child's orbit radius
+#                                       (FUN_100fff10)
+#       - otherwise                  -> max( radius of the selection's own
+#                                       subtree (FUN_100ffe70), distance from
+#                                       the selection to the focus )
+#     Because scale = min(w,h)*0.45/(1.2*extent), the outermost member of what
+#     you framed always lands at exactly **0.375 * min(w,h)** px from centre.
+#     That is the whole framing rule, and it is why the system view "zooms"
+#     when you move the selection: it re-frames on it.
+#
+# NOTE for the record: FUN_100fd440 is NOT the zoom initialiser the old comment
+# here claimed, and Ghidra did not drop it. It is the CONTROL LEGEND refresh --
+# it swaps which of the eight legend items at this+0x54..0x70 are shown in the
+# panel at this+0x20. See the legend section below.
+#
+# ============================================================================
 # THE STATE MACHINE (this+0x74), from the body draw 0x100fbf50 and the input
 # dispatcher 0x100fbc60:
-#   0  CLUSTER VIEW   input FUN_100fcd60
-#   1  cluster -> system transition (zooming in)
-#   2  SYSTEM VIEW    input FUN_100fce60
-#   3  system -> cluster transition (zooming out)
-#   4  a drilled-in local view    input FUN_100fd130  (NOT recovered)
-# The two views are drawn by two renderers and CROSS-FADE through the zoom:
-# FUN_100ff0a0 (cluster) runs whenever state != 2, FUN_100fda70 (system)
-# whenever state != 0, and in states 1/3 the zoom's position between its limits
-# is the blend: f = (zoom - 0.001) / (5.0 - 0.001)  (_DAT_1011e1a0 / DAT_1011e194);
-# cluster alpha *= f, system alpha *= (1 - f). "Zoom in" DIVIDES the zoom value.
-# So entering a system is one continuous dive down the cluster map until the
-# system fills the screen -- not a page flip. FUN_100fcd60 case 0 sets state 1
-# and multiplies the zoom TARGET by 0.001; FUN_100fce60 case 1 sets state 3 and
-# multiplies it by 1000.0 (_DAT_1011e198).
+#   0  CLUSTER VIEW               input FUN_100fcd60
+#   1  cluster -> system (diving)
+#   2  SYSTEM VIEW                input FUN_100fce60
+#   3  system -> cluster (pulling out)
+#   4  JUMP-DESTINATION LIST      input FUN_100fd130     <- RECOVERED, see below
 #
-# THE CLUSTER VIEW IS A REAL 2D CHART, and the data ships with the game.
-# FUN_100ff0a0 projects each system as
-#     sx = (sys.map_x - cam.x) * scale
-#     sy = (sys.map_y - cam.y) * scale
-# in a frame the body draw has already translated to the SCREEN CENTRE
-# (FcGraphicsEngine::Push + a matrix whose translation is (w/2, h/2)), with
-#     scale = min(screen_w, screen_h) * 0.45 / zoom       (FUN_100ff9f0,
-#                                                          _DAT_1011e1a8 = 0.45)
-# `sys.map_x/map_y` are icSolarSystem+0x624/+0x628, and icCluster::Load
-# (0x10044360) reads them straight out of **geog/clusters.ini `map_coords[n]`**
-# -- 16 systems with hand-placed chart positions, plus `label[n]` /
-# `label_coords[n]` for the two cluster names. That file is the cluster map.
-# Selecting a system re-centres the camera on it and parks the zoom at its
-# maximum, 5.0 (FUN_100fda10).
+# THE TRANSITIONS are a continuous dive, and each one moves the OUTGOING view's
+# zoom by a factor of 1000 (_DAT_1011e198 = 1000.0, _DAT_1011e1a0 = 0.001):
 #
-# Per system: a sprite (additive, SetBlend 2) and its localised name 16px to the
-# right, in amber (DAT_10174fb0), with the alpha carrying the save game:
-#   1.0  selected, or the system you are in
-#   0.7  visited before (_DAT_101191e8) -- the name is looked up in
-#        icSaveGame's hash set
-#   0.3  never visited (_DAT_1011c034)
-# Jump links are drawn as lines (width 0.5, fade width 1.5) from the link table
-# at this+0x9c. Mouse picking takes the nearest system within sqrt(144) = 12px
-# (FUN_100ffb50 / _DAT_1011e234).
+#   DIVE  (FUN_100fcd60 case 0):  FUN_100fc9e0 sets the system up, then
+#         state = 1;  cluster_target *= 0.001
+#         and FUN_100fc9e0 itself parks the system zoom 1000x OUT of its target
+#         (`*(double*)(this+0xe8) = 1000.0 * *(double*)(this+0xf0)`) and snaps
+#         the system camera. So BOTH views zoom in together.
+#         Ends when the CLUSTER zoom arrives -> state 2.
 #
-# NOT RECOVERED: the sprite id for a cluster node (the draw reads it out of a
-# runtime list at this+0x90); we use the roundel, sprite 53. State 4. The system
-# view's initial zoom -- FUN_100fda70 keeps it as a double and its start value
-# is set in FUN_100fd440, which Ghidra dropped; we fit the system to the page.
-const MAP_SCALE_K := 0.45     # _DAT_1011e1a8
-const MAP_ZOOM_MAX := 5.0     # DAT_1011e194  -- the cluster view sits here
-const MAP_ZOOM_MIN := 0.001   # _DAT_1011e1a0
-const MAP_ZOOM_RATE := 5.0    # _DAT_1011e190
-const MAP_PAN_RATE := 5.0     # _DAT_1011e190 again (camera chase)
-const MAP_A_VISITED := 0.7    # _DAT_101191e8
-const MAP_A_UNSEEN := 0.3     # _DAT_1011c034
-const MAP_LABEL_DX := 16.0    # _DAT_101184a0
+#   PULL OUT (FUN_100fce60 case 1): FUN_100fc970 rebuilds the cluster, then
+#         state = 3;  system_target *= 1000.0
+#         and FUN_100fc970 parks the cluster zoom at 0.001x its target
+#         (`*(float*)(this+0xa0) = 0.001 * *(float*)(this+0xa4)`) and snaps the
+#         cluster camera.
+#         Ends when the SYSTEM zoom arrives -> state 0.
+#
+# THE CROSS-FADE (0x100fbf50) is driven by the CLUSTER zoom in BOTH directions:
+#     f = (cluster_zoom - 0.001) / (5.0 - 0.001)
+#     cluster_alpha *= f ;  system_alpha *= (1 - f)
+# FUN_100ff0a0 runs whenever state != 2, FUN_100fda70 whenever state != 0.
+#
+# THE EASE (head of each renderer), same law, different floor:
+#     zoom = move_toward(zoom, target, ((zoom - FLOOR) * 5.0 + FLOOR) * dt)
+# FLOOR = 0.001 for the cluster (_DAT_1011e1a0), 1000.0 for the system
+# (_DAT_1011e228); rate 5.0 (_DAT_1011e190 / _DAT_1011e188). The cluster
+# clamps its zoom up to the floor first; the system does not.
+# The camera chases at 5 * dist / s and SNAPS when the remainder is under
+# 1.5 px worth of world (_DAT_1011e1b0 = 1.5, divided by the scale).
+#
+# ============================================================================
+# THE ZOOM INPUT: THERE IS NO MANUAL ZOOM. "ZOOM" IS A HIERARCHY WALK.
+# ============================================================================
+# Nothing anywhere in the element writes the zoom targets except the two
+# transitions and FUN_100fd670/FUN_100fda10. hud.csv's ZOOM IN / ZOOM OUT are
+# not a continuous rate and not a step -- they are the LABELS of menu commands
+# 0 and 1, registered in the ctor (0x100fb260) into the legend list:
+#
+#   this+0x54  hud_menu_cancel            icon 0x1f (31), red
+#   this+0x58  hud_menu_next              icon 0x23 (35)
+#   this+0x5c  hud_menu_prev              icon 0x22 (34)
+#   this+0x60  hud_map_zoom_in            icon 0x24 (36)     <- cmd 0
+#   this+0x64  hud_map_zoom_out           icon 0x25 (37)     <- cmd 1
+#   this+0x68  hud_map_select             no icon            <- cmd 4
+#   this+0x6c  hud_map_jump_destination   no icon
+#   this+0x70  hud_map_select_destination no icon
+#
+# and FUN_100fd440 / FUN_100fd2b0 / FUN_100fd380 / FUN_100fd5a0 are the four
+# legend refreshes -- they load those items into the five command slots of the
+# panel at this+0x20 (+0x14 = cmd0, +0x18 = cmd1, +0x1c = cmd2, +0x20 = cmd3,
+# +0x24 = cmd4):
+#   FUN_100fd2b0  cluster view : cmd0 = ZOOM IN, cmd1 = none, prev/next
+#   FUN_100fd440  system view  : cmd0 = ZOOM IN (or JUMP DESTINATION when the
+#                                selection is a usable L-point), cmd1 = ZOOM OUT
+#   FUN_100fd5a0  state 4      : cmd0 = none, cmd1 = CANCEL, prev/next
+#   FUN_100fd380  transitions  : all cleared (no legend while zooming)
+#
+# So the commands mean:
+#   cmd 0  ZOOM IN   cluster: dive into the selected system.
+#                    system : DESCEND the geography tree into the selection
+#                             (FUN_100fce60 case 0 sets this+0x130 = selection
+#                             and rebuilds the child list) -- which re-frames,
+#                             i.e. zooms in. If the selection is a known L-point
+#                             with jump waypoints (FUN_10100d20) it opens the
+#                             jump-destination list instead (state 4).
+#   cmd 1  ZOOM OUT  system : ASCEND to the parent (this+0x130 = parent, via
+#                             this+0x1da) -- which re-frames out. At the ROOT,
+#                             and only once the zoom has settled, it leaves for
+#                             the cluster view instead.
+#                    state4 : back to the system view.
+#   cmd 2 / cmd 3    prev / next in the current list.
+#   cmd 4  SELECT    icPlayerContactList::SetUserNavTarget on the selection.
+#   cmd 5  CANCEL    close the screen.
+#
+# The two glyphs at (36,126) and (72,126) are INDICATORS, not buttons: sprite 53
+# backs both; while a zoom is running the first blinks sprite 36 (zoom > target,
+# i.e. scale rising) or 37 (zoom <= target); while the SYSTEM camera is still
+# moving the second blinks sprite 29.
+# blink alpha = (|frac(t * 0.0005) - 0.5| * 1.8 + 0.1) * master.
+#
+# ============================================================================
+# STATE 4 -- THE JUMP-DESTINATION LIST (FUN_100fca90 in, FUN_100fd130 while in)
+# ============================================================================
+# Entered from the system view with cmd 0 when FUN_10100d20 passes: the
+# selection is an icLagrangePointWaypoint, has waypoints (+0x1f8), IsKnown(),
+# and is in the player's system. FUN_100fca90 then sets state 4, parks the
+# L-point in this+0x150, and builds a list at this+0x148 (count 0x140, stride 8)
+# of every one of its waypoints for which icLagrangePointWaypoint::IsKnown() is
+# true, each paired with its ORIGINAL index. this+0x14c is the cursor.
+# FUN_100fd130: cmd 2/3 walk the list, cmd 1 returns to state 2, and cmd 4
+# COMMITS -- it writes the chosen waypoint's original index into the L-point's
+# +0x204 (i.e. arms that L-point for that destination) and then calls
+# SetUserNavTarget on it. That is how you plot an interstellar jump.
+#
+# ============================================================================
+# THE CLUSTER VIEW
+# ============================================================================
+# The chart ships with the game: icCluster::Load (0x10044360) reads
+# geog/clusters.ini `map_coords[n]` into icSolarSystem+0x624/+0x628, plus
+# label[n] / label_coords[n]. FUN_100ff0a0 plots
+#     s = (sys.map_xy - cam) * scale        scale = min(w,h) * 0.45 / 5.0
+#
+# NODE SPRITE -- RECOVERED. FUN_10100650 (the cluster rebuild) counts how many
+# jump links touch each system and writes the sprite id into the runtime list at
+# this+0x90:
+#     id = (links > 2) ? 55 : 57            (0x10100989: `(-(uint)(2 < n) &
+#                                            0xfffffffe) + 0x39`)
+# and FUN_100ff0a0 reads it back per system (`mov ecx,[esi+0x90] / mov ebx,
+# [ecx+edx*4]` @ 0x100ff427 -- Ghidra dropped the index and made it [0]).
+# 55 is a large disc, 57 a small one: hub systems are drawn bigger. It was
+# never the roundel (53) we used.
+#
+# Node/label alpha carries the save game: 1.0 selected or moused-over, 0.7
+# visited (_DAT_101191e8), 0.3 never visited (_DAT_1011c034); the label style
+# index is 2 / 1 / 0 respectively, and in the original the style-2 label is
+# amber while 0 and 1 are green. Jump links are lines at width 0.5 / fade 1.5
+# with a PER-END alpha (1.0 if that end is visited, else 0.3 -- FUN_10100650).
+# Mouse pick: nearest system within sqrt(144) = 12 px (FUN_100ffb50).
+#
+# ============================================================================
+# THE SYSTEM VIEW (FUN_100fda70) -- what it actually plots
+# ============================================================================
+# It walks icGeography, flattened by id into this+0xd4, and for every entity
+# with IsVisibleOnMap() it projects the REAL SYSTEM COORDINATES, in metres, on
+# the X/Z plane (entity+0x48 = X double, entity+0x58 = Z double):
+#     p      = (entity.xz - cam) * scale
+#     orbit  = (entity.xz - parent.xz) * scale     <- the orbit vector, in px
+# It draws, in this order:
+#   * for each body, an ORBIT CIRCLE about its PARENT of radius |orbit| --
+#     FcGraphicsEngine::DrawCircle, width 0.5, only when |orbit| > 15 px
+#     (_DAT_1011e1c8), alpha ramping 0 -> 1 across 15..25 px (_DAT_1011e1cc),
+#     and only while the circle is not absurdly bigger than the screen
+#     (|orbit| <= 12 * half-diagonal, _DAT_1011e1d0); past that the orbit is
+#     drawn as a plain line instead.
+#   * for each L-POINT (icGeography type 5), a STUB LINE toward its partner
+#     geography (entity+0x20c), clipped to 2.1 * half-diagonal
+#     (_DAT_1011e230), alpha 0.3.
+#   * the BODIES themselves, one FUN_100ff6b0 each. That is where the fade
+#     lives, and it is the reason the original's system view looks so clean:
+#         glyph alpha : 0 below 27 px of orbit, ramp 27..50, 1 above
+#                       (_DAT_1011e1b8 / _DAT_1011e1bc)
+#         label alpha : 0 below 35 px of orbit, ramp 35..60, 1 above
+#                       (_DAT_1011e1c0 / _DAT_1011e1c4)
+#     -- both forced to 1.0 when the entity is the selection, the focus, or
+#     moused-over, in which case sprite 51 is stamped over the glyph as well.
+#     A body whose orbit is under 27 px simply is not drawn: only what you have
+#     framed is visible, and descending is how you reveal the rest.
+#   * the PLAYER, sprite 66 (the little ship), but only when the player is
+#     actually in the system being viewed (0x100fec52 `push 0x42`).
+#
+# The body glyph id itself is FUN_100e86d0(entity):
+#     type 1  -> 54 (star)        type 5  -> 60 (L-point)   [table 0x1011db64]
+#     type 2  -> station subtype table 0x1011dbe4
+#     type 14 -> 58 / 59 / 61 by the byte at entity+0x1e4
+# NOT RECOVERED: how icGeography's +0x194 / +0x1e4 / +0x218 map onto the fields
+# our system JSON actually carries. We use 54 for a star and 60 for an L-point
+# (both pinned above) and fall back to the plain discs 55 / 57 for bodies and
+# stations. Also NOT RECOVERED: icGeography::IsVisibleOnMap -- our JSON has no
+# such flag, so we show everything.
+const MAP_SCALE_K := 0.45      # _DAT_1011e1a8 (double)
+const CLU_ZOOM := 5.0          # DAT_1011e194  -- the cluster's one fixed zoom
+const CLU_FLOOR := 0.001       # _DAT_1011e1a0
+const SYS_FLOOR := 1000.0      # _DAT_1011e228 -- metres
+const ZOOM_RATE := 5.0         # _DAT_1011e190 / _DAT_1011e188
+const DIVE := 1000.0           # _DAT_1011e198
+const SYS_FIT := 1.2           # _DAT_1011e220
+const CAM_SNAP_PX := 1.5       # _DAT_1011e1b0
+const PICK_R := 12.0           # sqrt(_DAT_1011e234 = 144)
+const ORBIT_ON := 15.0         # _DAT_1011e1c8
+const ORBIT_FULL := 25.0       # _DAT_1011e1cc
+const ORBIT_MAX_K := 12.0      # _DAT_1011e1d0
+const GLYPH_ON := 27.0         # _DAT_1011e1b8
+const GLYPH_FULL := 50.0       # _DAT_1011e1bc
+const LABEL_ON := 35.0         # _DAT_1011e1c0
+const LABEL_FULL := 60.0       # _DAT_1011e1c4
+const LP_STUB_K := 2.1         # _DAT_1011e230
+const MAP_A_VISITED := 0.7     # _DAT_101191e8
+const MAP_A_UNSEEN := 0.3      # _DAT_1011c034
+const MAP_LABEL_DX := 16.0     # _DAT_101184a0
 
-var map_state := 0            # this+0x74
-var map_sel := 0              # this+0x78
-var _map_zoom := MAP_ZOOM_MAX          # this+0xa0
-var _map_zoom_to := MAP_ZOOM_MAX       # this+0xa4
-var _map_cam := Vector2.ZERO           # this+0xa8/+0xac
-var _map_cam_to := Vector2.ZERO        # this+0xb8/+0xbc
-var _map_visited: Dictionary = {}      # stands in for icSaveGame's hash set
+var map_state := 0                      # this+0x74
+var map_sel := 0                        # this+0x78  (cluster selection)
+var _clu_zoom := CLU_ZOOM               # this+0xa0
+var _clu_zoom_to := CLU_ZOOM            # this+0xa4
+var _clu_cam := Vector2.ZERO            # this+0xa8
+var _clu_cam_to := Vector2.ZERO         # this+0xb8
+var _map_visited: Dictionary = {}       # stands in for icSaveGame's hash set
 var _cluster_cache: Array = []
 var _cluster_labels: Array = []
-var _sys_sel := 0
+
+# the system view. _geo is icGeography flattened by index, exactly as our
+# system JSON already stores it (index / parent / pos in metres).
+var _sys_zoom := SYS_FLOOR              # this+0xe8   METRES
+var _sys_zoom_to := SYS_FLOOR           # this+0xf0
+var _sys_cam := Vector2.ZERO            # this+0xf8   METRES (x, z)
+var _sys_cam_to := Vector2.ZERO         # this+0x118
+var _geo: Array = []                    # this+0xd4
+var _geo_stem := ""                     # this+0xc4
+var _focus := 0                         # this+0x130  (index into _geo)
+var _kids: Array = []                   # this+0x13c  (indices, children of _focus)
+var _sel := 0                           # this+0xc8   (cursor into _kids)
+var _lps: Array = []                    # this+0x148  (state 4: jump destinations)
+var _lp_sel := 0                        # this+0x14c
+var _lp_of := -1                        # this+0x150
 
 func _cluster() -> Array:
 	# geog/clusters.ini: system[n] + map_coords[n], and label[n] +
@@ -729,7 +931,126 @@ func _cluster() -> Array:
 		if lpos.has(i):
 			_cluster_labels.append({"text": str(lab[i]).replace("_", " ").to_upper(),
 					"pos": lpos[i]})
+	# the node sprite: FUN_10100650 counts the jump links touching each system
+	# and picks 55 (>2 links) or 57.
+	for s: Dictionary in _cluster_cache:
+		var n := 0
+		for o: Dictionary in _cluster_cache:
+			if o["stem"] == s["stem"]:
+				continue
+			if str(s["stem"]) in o["links"] or str(o["stem"]) in s["links"]:
+				n += 1
+		s["spr"] = 55 if n > 2 else 57
 	return _cluster_cache
+
+# --- the geography tree (icGeography, flattened by id at this+0xd4) -----------
+
+func _load_geo(stem: String) -> void:
+	if _geo_stem == stem and not _geo.is_empty():
+		return
+	_geo_stem = stem
+	_geo = []
+	var sys: Variant = main._load_json("data/json/systems/%s.json" % stem)
+	if sys == null:
+		return
+	for o: Dictionary in sys["objects"]:
+		var p: Array = o["pos"]
+		# the engine plots entity+0x48 (X) against entity+0x58 (Z), raw, in
+		# metres. main.gd negates Z for Godot's handedness; the map does not.
+		_geo.append({
+			"i": int(o["index"]), "parent": int(o.get("parent", 0)),
+			"name": str(o["name"]), "cat": str(o.get("category", "body")),
+			"pos": Vector2(float(p[0]), float(p[2])),
+			# an L-point's partner geography (icGeography+0x20c)
+			"partner": int(o.get("info", -1)),
+			"jumps": o.get("jumps_to_stems", []),
+		})
+
+func _kids_of(i: int) -> Array:
+	var out: Array = []
+	for g: Dictionary in _geo:
+		if int(g["parent"]) == i and int(g["i"]) != i:
+			out.append(int(g["i"]))
+	return out
+
+func _is_descendant(i: int, of: int) -> bool:
+	# FUN_100ffe20
+	var g := i
+	var guard := 0
+	while g != of and guard < 64:
+		var p: int = int(_geo[g]["parent"])
+		if p == g or g == 0:
+			return false
+		g = p
+		guard += 1
+	return g == of
+
+func _subtree_radius(i: int) -> float:
+	# FUN_100ffe70: the furthest descendant of i, from i.
+	var c: Vector2 = _geo[i]["pos"]
+	var r := 0.0
+	for g: Dictionary in _geo:
+		var j: int = int(g["i"])
+		if j == i or not _is_descendant(j, i):
+			continue
+		r = maxf(r, (Vector2(g["pos"]) - c).length())
+	return r
+
+func _min_child_radius(i: int) -> float:
+	# FUN_100fff10: the nearest direct child of i, from i.
+	var c: Vector2 = _geo[i]["pos"]
+	var r := 0.0
+	for j: int in _kids_of(i):
+		var d: float = (Vector2(_geo[j]["pos"]) - c).length()
+		if r == 0.0 or d < r:
+			r = d
+	return r
+
+# --- FUN_100fd670: re-frame the system view on the current selection ----------
+func _refresh_system() -> void:
+	if _geo.is_empty() or _kids.is_empty():
+		return
+	_sel = clampi(_sel, 0, _kids.size() - 1)
+	var s: int = _kids[_sel]
+	_sys_cam_to = _geo[s]["pos"]
+	var ext := 0.0
+	if _focus == 0:
+		ext = _subtree_radius(0)                       # this+0xe4
+	elif _focus == s and not _kids_of(s).is_empty():
+		ext = _min_child_radius(_focus)
+	else:
+		ext = maxf(_subtree_radius(s),
+				(Vector2(_geo[s]["pos"]) - Vector2(_geo[_focus]["pos"])).length())
+	_sys_zoom_to = maxf(ext, SYS_FLOOR) * SYS_FIT
+
+# --- FUN_100fda10: re-frame the cluster view on the selected system -----------
+func _refresh_cluster() -> void:
+	var c := _cluster()
+	if c.is_empty():
+		return
+	map_sel = clampi(map_sel, 0, c.size() - 1)
+	_clu_cam_to = c[map_sel]["pos"]
+	_clu_zoom_to = CLU_ZOOM
+
+# --- FUN_100fc9e0: set up the system view (called on the dive) ----------------
+func _enter_system(stem: String) -> void:
+	map_state = 2
+	_load_geo(stem)
+	_focus = 0
+	_kids = _kids_of(0)
+	_sel = 0
+	_refresh_system()
+	# the system starts 1000x zoomed OUT of its target and eases in
+	_sys_zoom = DIVE * _sys_zoom_to
+	_sys_cam = _sys_cam_to
+
+# --- FUN_100fc970: rebuild the cluster view (called on the pull-out) ----------
+func _leave_system() -> void:
+	map_state = 0
+	_refresh_cluster()
+	# the cluster starts 1000x zoomed IN of its target and eases out
+	_clu_zoom = CLU_FLOOR * _clu_zoom_to
+	_clu_cam = _clu_cam_to
 
 func _map_open() -> void:
 	var c := _cluster()
@@ -738,65 +1059,174 @@ func _map_open() -> void:
 			if str(c[i]["stem"]) == main.system_stem:
 				map_sel = i
 		_map_visited[main.system_stem] = true
-		var cp: Vector2 = c[map_sel]["pos"]
-		_map_cam = cp
-		_map_cam_to = cp
 	map_state = 0
-	_map_zoom = MAP_ZOOM_MAX
-	_map_zoom_to = MAP_ZOOM_MAX
+	_clu_zoom = CLU_ZOOM
+	_refresh_cluster()
+	_clu_cam = _clu_cam_to
+
+func _clu_scale() -> float:
+	var s := get_viewport_rect().size
+	return minf(s.x, s.y) * MAP_SCALE_K / maxf(_clu_zoom, CLU_FLOOR)
+
+func _sys_scale() -> float:
+	var s := get_viewport_rect().size
+	return minf(s.x, s.y) * MAP_SCALE_K / maxf(_sys_zoom, 1e-6)
+
+func _chase(cam: Vector2, to: Vector2, scale: float, d: float) -> Vector2:
+	# the camera half of both renderer heads: snap inside 1.5 px of world, else
+	# step 5 * dist * dt toward the target (and snap if that overshoots).
+	var dv := to - cam
+	var dist := dv.length()
+	if dist < CAM_SNAP_PX / maxf(scale, 1e-12):
+		return to
+	var step := ZOOM_RATE * dist * d
+	if dist < step:
+		return to
+	return cam + dv / dist * step
+
+func _edge_pan(scale: float, d: float) -> Vector2:
+	# FUN_100ffd30 (cluster, f32) / FUN_100ffc30 (system, f64): the camera TARGET
+	# edge-scrolls while the cursor is within 3 px (_DAT_10118490) of a screen
+	# edge, at 0.75 (_DAT_1011e1d4) screen-widths per second in world units.
+	# This is not a nicety: the cluster chart is authored LARGER than the view
+	# (20 x 12 units at 0.45*min(w,h)/5 px per unit), so panning is how you
+	# reach the rest of it.
+	if Input.mouse_mode != Input.MOUSE_MODE_VISIBLE:
+		return Vector2.ZERO
+	var vp := get_viewport_rect().size
+	var m := get_viewport().get_mouse_position()
+	if m.x < 0.0 or m.y < 0.0 or m.x > vp.x or m.y > vp.y:
+		return Vector2.ZERO
+	var step: float = 0.75 * d * vp.x / maxf(scale, 1e-12)
+	var v := Vector2.ZERO
+	if m.x < 3.0:
+		v.x -= step
+	if m.x > vp.x - 3.0:
+		v.x += step
+	if m.y < 3.0:
+		v.y -= step
+	if m.y > vp.y - 3.0:
+		v.y += step
+	return v
 
 func _map_step(d: float) -> void:
-	# FUN_100ff0a0's head: the zoom eases toward its target at a rate
-	# proportional to how far out it already is, and the camera chases at
-	# 5 * dist per second. Both are clamped at the minimum zoom.
-	_map_zoom = maxf(_map_zoom, MAP_ZOOM_MIN)
-	var rate: float = ((_map_zoom - MAP_ZOOM_MIN) * MAP_ZOOM_RATE
-			+ MAP_ZOOM_MIN) * d
-	_map_zoom = move_toward(_map_zoom, _map_zoom_to, rate)
-	_map_cam = _map_cam.move_toward(_map_cam_to,
-			maxf(_map_cam.distance_to(_map_cam_to), 0.0) * MAP_PAN_RATE * d)
-	# the transitions settle when the zoom has arrived (0x100fbf50)
-	if map_state == 1 and absf(_map_zoom - _map_zoom_to) < 1e-6:
+	# FUN_100ff0a0 head: the cluster clamps up to its floor, then eases.
+	_clu_zoom = maxf(_clu_zoom, CLU_FLOOR)
+	_clu_zoom = move_toward(_clu_zoom, _clu_zoom_to,
+			((_clu_zoom - CLU_FLOOR) * ZOOM_RATE + CLU_FLOOR) * d)
+	var cs := _clu_scale()
+	_clu_cam = _chase(_clu_cam, _clu_cam_to, cs, d)
+	# FUN_100fda70 head: same law, floor 1000 m, and NO clamp.
+	_sys_zoom = move_toward(_sys_zoom, _sys_zoom_to,
+			((_sys_zoom - SYS_FLOOR) * ZOOM_RATE + SYS_FLOOR) * d)
+	var ss := _sys_scale()
+	_sys_cam = _chase(_sys_cam, _sys_cam_to, ss, d)
+	# the edge-scroll pan, on the live view only (both renderers gate it on
+	# state != 1 and state != 3 -- no panning mid-dive)
+	if map_state == 0:
+		_clu_cam_to += _edge_pan(cs, d)
+	elif map_state == 2 or map_state == 4:
+		_sys_cam_to += _edge_pan(ss, d)
+	# 0x100fbf50: the dive ends when the CLUSTER zoom arrives, the pull-out when
+	# the SYSTEM zoom arrives -- in both cases, when the OUTGOING view is done.
+	if map_state == 1 and is_equal_approx(_clu_zoom, _clu_zoom_to):
 		map_state = 2
-	elif map_state == 3 and absf(_map_zoom - _map_zoom_to) < 1e-6:
+	elif map_state == 3 and is_equal_approx(_sys_zoom, _sys_zoom_to):
 		map_state = 0
 
-func _map_scale() -> float:
-	var s := get_viewport_rect().size
-	return minf(s.x, s.y) * MAP_SCALE_K / maxf(_map_zoom, MAP_ZOOM_MIN)
-
-func _map_key(key: int) -> bool:
+# --- the six menu commands (vtable slot 13 -> FUN_100fbc60) -------------------
+func _map_cmd(cmd: int) -> void:
 	var c := _cluster()
 	if c.is_empty():
-		return false
+		return
+	match map_state:
+		0:      # FUN_100fcd60
+			match cmd:
+				0:      # ZOOM IN: dive into the selected system
+					var stem := str(c[map_sel]["stem"])
+					_map_visited[stem] = true
+					_enter_system(stem)
+					map_state = 1
+					_clu_zoom_to = _clu_zoom_to * CLU_FLOOR
+				2:
+					map_sel = wrapi(map_sel - 1, 0, c.size())
+					_refresh_cluster()
+				3:
+					map_sel = wrapi(map_sel + 1, 0, c.size())
+					_refresh_cluster()
+		2:      # FUN_100fce60
+			if _kids.is_empty():
+				return
+			var s: int = _kids[_sel]
+			match cmd:
+				0:      # ZOOM IN
+					if _can_jump(s):
+						_open_jump_list(s)          # FUN_100fca90 -> state 4
+					elif not _kids_of(s).is_empty():
+						_focus = s                  # descend
+						_kids = _kids_of(_focus)
+						_sel = 0
+						_refresh_system()
+				1:      # ZOOM OUT
+					if _focus == 0:
+						# only leaves once the zoom has settled (FUN_100fce60)
+						if is_equal_approx(_sys_zoom, _sys_zoom_to):
+							_leave_system()
+							map_state = 3
+							_sys_zoom_to = _sys_zoom_to * DIVE
+					else:
+						var was := _focus
+						_focus = int(_geo[_focus]["parent"])
+						_kids = _kids_of(_focus)
+						_sel = maxi(0, _kids.find(was))
+						_refresh_system()
+				2:
+					_sel = wrapi(_sel - 1, 0, _kids.size())
+					_refresh_system()
+				3:
+					_sel = wrapi(_sel + 1, 0, _kids.size())
+					_refresh_system()
+		4:      # FUN_100fd130
+			match cmd:
+				1:
+					map_state = 2
+				2:
+					if not _lps.is_empty():
+						_lp_sel = wrapi(_lp_sel - 1, 0, _lps.size())
+				3:
+					if not _lps.is_empty():
+						_lp_sel = wrapi(_lp_sel + 1, 0, _lps.size())
+
+func _can_jump(i: int) -> bool:
+	# FUN_10100d20: an L-point that has known jump waypoints.
+	var g: Dictionary = _geo[i]
+	return str(g["cat"]) == "lpoint" and not Array(g["jumps"]).is_empty()
+
+func _open_jump_list(i: int) -> void:
+	# FUN_100fca90
+	map_state = 4
+	_lp_of = i
+	_lps = []
+	for dest: String in _geo[i]["jumps"]:
+		_lps.append(str(dest))
+	_lp_sel = 0
+
+func _map_key(key: int) -> bool:
+	# the HUD menu's command keys. ZOOM IN / ZOOM OUT are commands 0 and 1 --
+	# there is no held-rate and no step; see the header. We also accept +/- for
+	# them because that is what they are called (our binding, not the original's;
+	# configs/default.ini carries no starmap zoom binding).
 	match key:
-		KEY_UP:            # menu cmd 0: dive into the selected system
-			if map_state == 0:
-				map_state = 1
-				_map_zoom_to = _map_zoom * MAP_ZOOM_MIN
-				_map_visited[str(c[map_sel]["stem"])] = true
-		KEY_DOWN:          # menu cmd 1: back out to the cluster
-			if map_state == 2:
-				map_state = 3
-				_map_zoom_to = MAP_ZOOM_MAX
-		KEY_LEFT:          # menu cmd 2
-			if map_state == 0:
-				map_sel = wrapi(map_sel - 1, 0, c.size())
-				_map_cam_to = c[map_sel]["pos"]
-				_map_zoom_to = MAP_ZOOM_MAX       # FUN_100fda10
-			else:
-				_sys_sel = maxi(0, _sys_sel - 1)
-		KEY_RIGHT:         # menu cmd 3
-			if map_state == 0:
-				map_sel = wrapi(map_sel + 1, 0, c.size())
-				_map_cam_to = c[map_sel]["pos"]
-				_map_zoom_to = MAP_ZOOM_MAX
-			else:
-				_sys_sel += 1
-		KEY_EQUAL, KEY_KP_ADD:          # hud_map_zoom_in  (key 0x24)
-			_map_zoom_to = maxf(MAP_ZOOM_MIN, _map_zoom_to * 0.5)
-		KEY_MINUS, KEY_KP_SUBTRACT:     # hud_map_zoom_out (key 0x25)
-			_map_zoom_to = minf(MAP_ZOOM_MAX, _map_zoom_to * 2.0)
+		KEY_UP, KEY_EQUAL, KEY_KP_ADD:
+			_map_cmd(0)
+		KEY_DOWN, KEY_MINUS, KEY_KP_SUBTRACT:
+			_map_cmd(1)
+		KEY_LEFT:
+			_map_cmd(2)
+		KEY_RIGHT:
+			_map_cmd(3)
+		KEY_ENTER, KEY_KP_ENTER:
+			_map_cmd(4)
 		_:
 			return false
 	return true
@@ -809,12 +1239,12 @@ func _draw_starmap(fade: float) -> void:
 	var size := get_viewport_rect().size
 	var centre := (size * 0.5).floor()
 
-	# the cross-fade (0x100fbf50)
+	# the cross-fade (0x100fbf50) -- driven by the CLUSTER zoom in both
+	# directions, because that is the one the engine reads.
 	var a_cluster := 0.0 if map_state == 2 else 1.0
 	var a_system := 0.0 if map_state == 0 else 1.0
 	if map_state == 1 or map_state == 3:
-		var f: float = clampf((_map_zoom - MAP_ZOOM_MIN)
-				/ (MAP_ZOOM_MAX - MAP_ZOOM_MIN), 0.0, 1.0)
+		var f: float = clampf((_clu_zoom - CLU_FLOOR) / (CLU_ZOOM - CLU_FLOOR), 0.0, 1.0)
 		a_cluster *= f
 		a_system *= 1.0 - f
 	a_cluster *= fade
@@ -825,52 +1255,85 @@ func _draw_starmap(fade: float) -> void:
 	if a_cluster > 0.0:
 		_draw_map_cluster(centre, c, a_cluster)
 
-	# the two header glyphs, absolute (36,126) and (72,126), drawn after the
-	# projection is popped. They blink while a zoom or a pan is still running:
-	# alpha = (|frac(t * 0.0005) - 0.5| * 1.8 + 0.1) * master.
+	# the two header indicators, absolute (36,126) and (72,126), drawn after the
+	# projection is popped: sprite 53 backs both, then the live one blinks over.
 	var t: float = Time.get_ticks_msec()
 	var blink: float = (absf(fposmod(t * 0.0005, 1.0) - 0.5) * 1.8 + 0.1) * fade
-	var dim := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
-	_spr(Vector2(36, 126), 53, Color(dim.r, dim.g, dim.b, fade * 0.5))
-	_spr(Vector2(72, 126), 53, Color(dim.r, dim.g, dim.b, fade * 0.5))
-	if absf(_map_zoom - _map_zoom_to) > 1e-6:
-		# sprite 36 while zooming in, 37 while zooming out
-		var s: int = 36 if _map_zoom > _map_zoom_to else 37
-		_spr(Vector2(36, 126), s, Color(dim.r, dim.g, dim.b, blink))
-	if _map_cam.distance_to(_map_cam_to) > 1e-6:
-		_spr(Vector2(72, 126), 29, Color(dim.r, dim.g, dim.b, blink))
+	var dim := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade * 0.5)
+	_spr(Vector2(36, 126), 53, dim)
+	_spr(Vector2(72, 126), 53, dim)
+	var bc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, blink)
+	if not is_equal_approx(_sys_zoom, _sys_zoom_to) \
+			or not is_equal_approx(_clu_zoom, _clu_zoom_to):
+		# 36 while the scale is rising (zoom > target), 37 while it is falling
+		_spr(Vector2(36, 126), 36 if _sys_zoom > _sys_zoom_to else 37, bc)
+	if _sys_cam.distance_to(_sys_cam_to) > 0.0:
+		_spr(Vector2(72, 126), 29, bc)
 
-	# the three text lines. FUN_100eb270 puts two of them at x = 20, y = 60 and
-	# y = 80; the third is drawn from the same block (Ghidra lost its call) and
-	# we continue the 20px pitch at y = 40.
+	# the three text lines (FUN_100eb270 puts two at x = 20, y = 60 / 80).
+	var tc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
+	var ac := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, fade)
 	var sel := str(c[map_sel]["stem"]).replace("_", " ").to_upper()
-	var l0 := "CLUSTER VIEW" if map_state == 0 else \
-			"SYSTEM VIEW: %s" % str(main.system_name).to_upper()
+	var l0 := "CLUSTER VIEW"
 	var l1 := "SELECTED: %s" % sel
 	var l2 := ""
-	if map_state == 0:
-		l2 = "JUMP DESTINATION: %s" % sel
-	else:
-		var objs := _map_objects()
-		if not objs.is_empty():
-			_sys_sel = wrapi(_sys_sel, 0, objs.size())
-			l2 = "SELECTED: %s" % str(objs[_sys_sel]["name"]).to_upper()
-	var tc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
+	if map_state != 0:
+		l0 = "SYSTEM VIEW: %s" % _geo_name(0)
+		l1 = "SELECTED: %s" % _geo_name(_focus)
+		if not _kids.is_empty():
+			l2 = "SELECTED: %s" % _geo_name(_kids[clampi(_sel, 0, _kids.size() - 1)])
+	if map_state == 4:
+		l2 = "JUMP DESTINATION: %s" % (str(_lps[_lp_sel]).replace("_", " ").to_upper()
+				if not _lps.is_empty() else "NONE")
 	draw_string(hud._font_num, Vector2(20, 60), l0,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, tc)
 	draw_string(hud._font_num, Vector2(20, 80), l1,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, tc)
 	draw_string(hud._font_num, Vector2(20, 100), l2,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, Hud.AMBER * Color(1, 1, 1, fade))
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, ac)
+	_draw_map_legend(fade)
+
+func _geo_name(i: int) -> String:
+	if i < 0 or i >= _geo.size():
+		return ""
+	return str(_geo[i]["name"]).to_upper()
+
+# --- the control legend (FUN_100fd2b0 / FUN_100fd440 / FUN_100fd5a0) ----------
+func _draw_map_legend(fade: float) -> void:
+	if map_state == 1 or map_state == 3:
+		return                                  # FUN_100fd380 clears it
+	var items: Array = []                       # [sprite, text, red]
+	match map_state:
+		0:
+			items = [[36, "ZOOM IN", false], [34, "PREV", false], [35, "NEXT", false]]
+		2:
+			var zin := [36, "ZOOM IN", false]
+			if not _kids.is_empty() and _can_jump(_kids[_sel]):
+				zin = [36, "JUMP DESTINATION", false]
+			items = [zin, [37, "ZOOM OUT", false],
+					[34, "PREV", false], [35, "NEXT", false]]
+		4:
+			items = [[31, "CANCEL", true], [34, "PREV", false], [35, "NEXT", false]]
+	var size := get_viewport_rect().size
+	var x := 24.0
+	var y: float = size.y - 28.0
+	for it: Array in items:
+		var col: Color = Color(1, 0.25, 0.25, fade) if bool(it[2]) \
+				else Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
+		_spr(Vector2(x + 10.0, y), int(it[0]), col)
+		draw_string(hud._font_num, Vector2(x + 26.0, y + 5.0), str(it[1]),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, col)
+		x += 34.0 + hud._font_num.get_string_size(str(it[1]),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size).x
 
 func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
-	var scale := _map_scale()
+	var scale := _clu_scale()
 	var pos: Dictionary = {}
 	for s: Dictionary in c:
-		var sp: Vector2 = s["pos"]
-		pos[str(s["stem"])] = centre + (sp - _map_cam) * scale
-	# the jump links, amber, 0.5px (FcGraphicsEngine::SetLineWidth(0.5))
-	var link_col := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, alpha * 0.5)
+		pos[str(s["stem"])] = centre + (Vector2(s["pos"]) - _clu_cam) * scale
+	# the jump links: width 0.5, with a per-END alpha -- 1.0 if that end has been
+	# visited, else 0.3 (FUN_10100650). Godot has no per-vertex alpha on
+	# draw_line, so we draw each half at its own end's alpha.
 	var drawn: Dictionary = {}
 	for s: Dictionary in c:
 		var a := str(s["stem"])
@@ -882,103 +1345,129 @@ func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
 			if drawn.has(k):
 				continue
 			drawn[k] = true
-			draw_line(pos[a], pos[b], link_col, 1.0, true)
-	# the nodes
+			var pa: Vector2 = pos[a]
+			var pb: Vector2 = pos[b]
+			var mid := (pa + pb) * 0.5
+			var aa: float = 1.0 if _map_visited.has(a) else MAP_A_UNSEEN
+			var ab: float = 1.0 if _map_visited.has(b) else MAP_A_UNSEEN
+			draw_line(pa, mid, Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b,
+					aa * alpha * 0.6), 1.0, true)
+			draw_line(mid, pb, Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b,
+					ab * alpha * 0.6), 1.0, true)
+	# the nodes: sprite 55 for a hub (>2 links), 57 otherwise
 	for i in c.size():
 		var stem := str(c[i]["stem"])
 		var p: Vector2 = pos[stem]
 		var here: bool = stem == main.system_stem
 		var a := MAP_A_UNSEEN
-		if i == map_sel or here:
+		var style := 0
+		if i == map_sel:
 			a = 1.0
-		elif _map_visited.has(stem):
+			style = 2
+		elif _map_visited.has(stem) or here:
 			a = MAP_A_VISITED
-		var col := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, a * alpha)
-		_spr(p, 53, col)
-		if here:
-			draw_arc(p, 14.0, 0, TAU, 24, col, 1.0, true)
+			style = 1
+		var node := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, a * alpha)
+		_spr(p, int(c[i]["spr"]), node)
+		# style 2 (the selection) is amber, 0 and 1 are green
+		var lc: Color = node if style == 2 else \
+				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, a * alpha)
 		draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
 				stem.replace("_", " ").to_upper(), HORIZONTAL_ALIGNMENT_LEFT,
-				-1, hud.num_size, col)
+				-1, hud.num_size, lc)
 	# the cluster labels (clusters.ini label[n] / label_coords[n])
 	for l: Dictionary in _cluster_labels:
-		var lp: Vector2 = l["pos"]
-		var p := centre + (lp - _map_cam) * scale
+		var p := centre + (Vector2(l["pos"]) - _clu_cam) * scale
 		draw_string(hud._font, p, str(l["text"]), HORIZONTAL_ALIGNMENT_LEFT,
 				-1, hud.FONT_SIZE,
 				Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, 0.35 * alpha))
 
-func _map_objects() -> Array:
-	# imapentity.SetMapVisibility: the scripts hide and reveal entities on THIS
-	# view (56 call sites -- stations you have not found, wrecks the plot has
-	# not pointed you at). It scopes the map only: a hidden station still shows
-	# on sensors and in the contact list, which is the whole point of hiding it.
-	var out: Array = []
-	for o: Dictionary in main.objects:
-		if not bool(o.get("map_visible", true)):
-			continue
-		var cat := str(o["category"])
-		if cat in ["star", "lpoint", "station", "planet", "body", "moon"]:
-			out.append(o)
-	return out
-
 func _draw_map_system(centre: Vector2, alpha: float) -> void:
-	# FUN_100fda70: the star sits at the origin, every body's orbit is a circle
-	# (FcGraphicsEngine::DrawCircle) in amber at 0.5px, the route is drawn over
-	# it at 2px, and the bodies are sprites. The zoom is a double here because
-	# the radii are in metres. Its start value is not recovered -- we fit the
-	# system to the page.
-	var objs := _map_objects()
-	if objs.is_empty():
+	if _geo.is_empty():
 		return
-	_sys_sel = wrapi(_sys_sel, 0, objs.size())
+	var scale := _sys_scale()
 	var size := get_viewport_rect().size
-	var far := 1.0
-	for o: Dictionary in objs:
-		far = maxf(far, Vector2(float(o["x"]), float(o["z"])).length())
-	var scale: float = minf(size.x, size.y) * MAP_SCALE_K / (far * 1.15)
+	var half_diag: float = (size * 0.5).length()
 	var amber := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, alpha)
+	var sel_i: int = _kids[_sel] if not _kids.is_empty() and _sel < _kids.size() else -1
 
-	# orbits
-	for o: Dictionary in objs:
-		var r: float = Vector2(float(o["x"]), float(o["z"])).length() * scale
-		if r > 4.0 and str(o["category"]) != "lpoint":
-			draw_arc(centre, r, 0, TAU, 96,
-					Color(amber.r, amber.g, amber.b, alpha * 0.25), 1.0, true)
-	# the plotted route: our jump links out of this system, drawn from the star
-	# to each L-point at 2px (FUN_100fda70 raises the line width for these)
-	for o: Dictionary in objs:
-		if str(o["category"]) != "lpoint":
+	# pass 1: the orbit circles, about each body's PARENT
+	for g: Dictionary in _geo:
+		var i: int = int(g["i"])
+		var par: int = int(g["parent"])
+		if i == par or str(g["cat"]) == "lpoint":
 			continue
-		var p := centre + Vector2(float(o["x"]), float(o["z"])) * scale
-		draw_line(centre, p, Color(amber.r, amber.g, amber.b, alpha * 0.4),
-				2.0, true)
-	# the bodies
-	for i in objs.size():
-		var o: Dictionary = objs[i]
-		var p := centre + Vector2(float(o["x"]), float(o["z"])) * scale
-		var cat := str(o["category"])
+		var pc: Vector2 = centre + (Vector2(_geo[par]["pos"]) - _sys_cam) * scale
+		var r: float = (Vector2(g["pos"]) - Vector2(_geo[par]["pos"])).length() * scale
+		if r <= ORBIT_ON:
+			continue
+		var oa: float = clampf((r - ORBIT_ON) / (ORBIT_FULL - ORBIT_ON), 0.0, 1.0)
+		if r > ORBIT_MAX_K * half_diag:
+			continue
+		draw_arc(pc, r, 0, TAU, maxi(24, mini(192, int(r * 0.5))),
+				Color(amber.r, amber.g, amber.b, alpha * oa * 0.5), 1.0, true)
+
+	# pass 2: the L-point stubs, toward the partner geography (entity+0x20c),
+	# clipped to 2.1 * half-diagonal, alpha 0.3
+	for g: Dictionary in _geo:
+		if str(g["cat"]) != "lpoint":
+			continue
+		var pt: int = int(g["partner"])
+		if pt < 0 or pt >= _geo.size():
+			continue
+		var p: Vector2 = centre + (Vector2(g["pos"]) - _sys_cam) * scale
+		var q: Vector2 = centre + (Vector2(_geo[pt]["pos"]) - _sys_cam) * scale
+		var dv := q - p
+		var lim := LP_STUB_K * half_diag
+		if dv.length() > lim:
+			dv = dv.normalized() * lim
+		draw_line(p, p + dv,
+				Color(amber.r, amber.g, amber.b, alpha * MAP_A_UNSEEN), 1.0, true)
+
+	# pass 3: the bodies (FUN_100ff6b0). Everything hangs off the ORBIT length in
+	# pixels: under 27 px the glyph is not drawn at all, under 35 px no label.
+	for g: Dictionary in _geo:
+		var i: int = int(g["i"])
+		var par: int = int(g["parent"])
+		var p: Vector2 = centre + (Vector2(g["pos"]) - _sys_cam) * scale
+		var r: float = 0.0 if i == par else \
+				(Vector2(g["pos"]) - Vector2(_geo[par]["pos"])).length() * scale
+		var hot: bool = i == sel_i or i == _focus
+		var ga: float = 1.0 if hot else \
+				clampf((r - GLYPH_ON) / (GLYPH_FULL - GLYPH_ON), 0.0, 1.0)
+		var la: float = 1.0 if hot else \
+				clampf((r - LABEL_ON) / (LABEL_FULL - LABEL_ON), 0.0, 1.0)
+		if ga <= 0.0 and la <= 0.0:
+			continue
+		var cat := str(g["cat"])
+		var id := 55                     # plain disc -- see the header, NOT RECOVERED
 		var col := amber
-		var id := 53
 		match cat:
 			"star":
+				id = 54                  # 0x1011db64[1] = 54
 				col = Color(Hud.GOLD.r, Hud.GOLD.g, Hud.GOLD.b, alpha)
 			"lpoint":
-				id = 60
+				id = 60                  # 0x1011db64[5] = 60
 				col = Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, alpha)
 			"station":
+				id = 57
 				col = Color(Hud.BLUE.r, Hud.BLUE.g, Hud.BLUE.b, alpha)
-		if i == _sys_sel:
-			col = Color(Hud.RED.r, Hud.RED.g, Hud.RED.b, alpha)
-			draw_arc(p, 16.0, 0, TAU, 24, col, 1.5, true)
-		_spr(p, id, col)
-		draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
-				str(o["name"]).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
-				hud.num_size, col)
-	# the player
-	var pp := centre + Vector2(main.px, main.pz) * scale
-	draw_arc(pp, 6.0, 0, TAU, 16,
-			Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, alpha), 1.4, true)
+		if hot:
+			col = Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, alpha)
+		if ga > 0.0:
+			_spr(p, id, Color(col.r, col.g, col.b, col.a * ga))
+			if hot:
+				draw_arc(p, 14.0, 0, TAU, 24,
+						Color(col.r, col.g, col.b, alpha), 1.0, true)
+		if la > 0.0:
+			draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
+					str(g["name"]).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
+					hud.num_size, Color(col.r, col.g, col.b, col.a * la))
+
+	# the player, sprite 66 -- only when the player is in the system being viewed
+	if _geo_stem == main.system_stem:
+		var pp := centre + (Vector2(main.px, -main.pz) - _sys_cam) * scale
+		_spr(pp, 66, Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, alpha))
 
 # --- icHUDLog / icHUDObjectives / icHUDScore ---------------------------------
 # @element icHUDLog
@@ -1050,6 +1539,9 @@ func _hudshot_step(d: float) -> void:
 		return
 	if _shot_i == -3 or hud == null:
 		return
+	if _shot_i == -4:
+		_hudshot_zoom(d)
+		return
 	_shot_t += d
 	if _shot_i == -1:
 		if _shot_t > 1.0:
@@ -1067,6 +1559,53 @@ func _hudshot_step(d: float) -> void:
 	_shot_i += 1
 	_shot_t = 0.0
 	if _shot_i >= SHOT_SCREENS.size():
+		if "--mapzoom" in OS.get_cmdline_user_args():
+			_shot_i = -4
+			_zoom_i = 0
+			hud.screen = "hud_menu_map"
+			_map_open()
+			return
 		get_tree().quit()
 		return
 	hud.screen = SHOT_SCREENS[_shot_i]
+
+# `-- --hudshot --mapzoom` additionally walks the starmap through the dive, the
+# system view and two levels of descent, snapping each -- so the zoom can be
+# LOOKED AT rather than asserted. Each step is (label, command, settle seconds).
+var _zoom_i := 0
+const ZOOM_STEPS := [
+	["00_cluster", -1, 0.6],     # the cluster view, at rest
+	["01_diving", 0, 0.25],      # cmd 0: mid-dive
+	["02_diving_late", -1, 0.35],
+	["03_system", -1, 2.0],      # settled in the system view
+	["04_descend1", 0, 2.0],     # cmd 0: descend one level (ZOOM IN)
+	["05_next", 3, 2.0],         # cmd 3: move the selection -- re-frames
+	["06_descend2", 0, 2.0],     # cmd 0: descend again
+	["07_ascend", 1, 2.0],       # cmd 1: back up (ZOOM OUT)
+	["08_pullout", 1, 0.4],      # cmd 1 at the root: mid pull-out
+	["09_cluster_back", -1, 2.0],
+]
+
+func _hudshot_zoom(d: float) -> void:
+	_shot_t += d
+	var step: Array = ZOOM_STEPS[_zoom_i]
+	if _zoom_i == 0 and _shot_t < 0.05:
+		return
+	if _shot_t < float(step[2]):
+		return
+	var img := get_viewport().get_texture().get_image()
+	var dir: String = main._base().path_join("build/shots")
+	DirAccess.make_dir_recursive_absolute(dir)
+	img.save_png(dir.path_join("map_%s.png" % str(step[0])))
+	print("MAPZOOM ", step[0], "  state=", map_state,
+			"  clu_zoom=%.4f/%.4f" % [_clu_zoom, _clu_zoom_to],
+			"  sys_zoom=%.0f/%.0f m" % [_sys_zoom, _sys_zoom_to],
+			"  focus=", _geo_name(_focus))
+	_zoom_i += 1
+	_shot_t = 0.0
+	if _zoom_i >= ZOOM_STEPS.size():
+		get_tree().quit()
+		return
+	var cmd: int = int(ZOOM_STEPS[_zoom_i][1])
+	if cmd >= 0:
+		_map_cmd(cmd)

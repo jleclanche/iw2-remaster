@@ -1758,10 +1758,37 @@ cluster**, **`0x100fda70` system**.
 - **Projection**: screen-centred, `sx = (map_x - cam_x) * scale`,
   `scale = min(w,h) * 0.45 / zoom` (`FUN_100ff9f0`).
 - **The two views cross-fade through the zoom** -- they are not a page flip.
-  State at `this+0x74`: 0 cluster, 1 diving, 2 system, 3 pulling out. Entering
-  multiplies the zoom target by 0.001, backing out by 1000.
+  State at `this+0x74`: 0 cluster, 1 diving, 2 system, 3 pulling out,
+  **4 = the jump-destination list** (entered from the system view when the
+  selection is an `icLagrangePointWaypoint` with waypoints, `FUN_10100d20`;
+  committing writes the chosen waypoint into the L-point's `+0x204` and calls
+  `SetUserNavTarget` -- this is the game's interstellar route-plotting UI).
+  Entering the system multiplies the zoom target by 0.001, backing out by 1000.
+- **THERE ARE TWO ZOOMS, AND THEY ARE DIFFERENT PHYSICAL QUANTITIES.** The
+  cluster's (`+0xa0`/`+0xa4`, f32) is a dimensionless divisor **pinned at 5.0
+  forever**. The system's (`+0xe8`/`+0xf0`, **f64**) is **a radius in METRES**.
+  Both feed `scale = min(w,h) * 0.45 / zoom`.
+- **There is no manual zoom.** Nothing writes either zoom target except the
+  transitions. The system zoom is **derived, never typed in**
+  (`FUN_100fd670`): `zoom = max(extent, 1000 m) * 1.2`, where `extent` follows
+  the selection -- so the outermost member of whatever you framed always lands
+  at exactly `0.375 * min(w,h)` px from centre. `hud.csv`'s **ZOOM IN / ZOOM
+  OUT are the labels of menu commands 0 and 1**, and they **walk the geography
+  hierarchy** (descend into the selected body, ascend to its parent). Not a
+  rate, not a step -- which is why `configs/default.ini` has no starmap zoom
+  binding at all.
+- The system view plots real system coordinates in metres on the X/Z plane,
+  with orbit circles about each body's **parent**, and its LOD is
+  orbit-radius-driven (`FUN_100ff6b0`): an orbit under **27 px** is not drawn,
+  under **35 px** gets no label.
 - Nodes: additive sprite + name at +16px, amber; alpha **1.0** current/selected,
   **0.7** visited (hashed against `icSaveGame`'s set), **0.3** never visited.
+  The cluster node sprite is chosen by **link count** (`FUN_10100650`): **55**
+  (large disc) if a system has more than 2 jump links, else **57** (small) --
+  hubs are drawn bigger.
+- (`FUN_100fd440`, which an earlier pass recorded as a dropped-by-Ghidra zoom
+  initialiser, is nothing of the kind: it is the **control-legend refresh**,
+  and it is present in the decompile.)
 - **The menu screens are authored at 640x480** (`icHUDEngineering`'s body draw
   tests for it literally), while the flight HUD is in absolute pixels against the
   real framebuffer. They are not the same coordinate system.
