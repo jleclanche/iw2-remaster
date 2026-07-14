@@ -21,6 +21,22 @@ const FOV_INTERNAL := 63.0  # flux.ini icInternalCamera field_of_view 1.1 rad
 const FOV_EXTERNAL := 68.75  # flux.ini cameras field_of_view 1.2 rad
 const DOCK_RANGE := 4000.0
 const JUMP_RANGE := 3.0e4  # must be this close to an L-point to capsule jump
+
+# icCapsuleSpace jump choreography (evidence log: docs/capsule.md)
+const CAPSULE_FLASH := 1.5        # player entry-blank hold, _DAT_1011a268
+                                  # (icCapsuleEntryBlankAvatar, FUN_100bf870)
+const CAPSULE_TIME_MIN := 8.0     # tunnel time roll, _DAT_10117b28
+const CAPSULE_TIME_MAX := 12.0    # _DAT_10119ec4 (PerformJumps @ 0x10040cc0)
+const CAPSULE_SHIP_SPEED := 500.0  # SendShipDownTunnel @ 0x10043740
+const CAPSULE_EXIT_MIN := 500.0   # flux.ini [icCapsuleSpace] min_exit_speed
+const CAPSULE_EXIT_MAX := 2000.0  # flux.ini [icCapsuleSpace] max_exit_speed
+const CAPSULE_EXIT_RUN := 3000.0  # DoCapsuleJump @ 0x10042730: v=sqrt(2*a*3000)
+const CAPSULE_ACCEL_SCALE := 0.64  # player accel scaled 0.8^2 (_DAT_1011959c)
+const CAPSULE_CUT_TIME := 1.0     # flux.ini [icDirector] min_cut_time
+const CAPSULE_CAM_RANGE := 4.0    # camera 24 Update @ 0x100dc160: radius * 4
+                                  # (0x101190b4)
+const CAPSULE_CAM_FOV := 40.1     # FUN_100dc080: half-angle 0.35 rad
+                                  # (_DAT_1011d378), 2*0.35 rad = 40.1 deg
 const SHIP_HIT_RADIUS := 60.0
 
 # planets.ini [Planets]: the renderer's own config, read by icPlanetProperties
@@ -125,11 +141,25 @@ var target_ai: AiShip = null
 var lds_state := 0
 var lds_timer := 0.0
 var lds_speed := 0.0
-var jump_state := 0  # 0 idle, 1 spool, 2 accel run, 3 capsule space
+# The capsule jump. States 1-2 approximate the queue/charge + acceleration
+# run the original's autopilot flies (icAITarget::GetNewCapsuleJumpStage @
+# 0x1005c5af, stages approach/queue/charge/accelerate at AverageJumpSpeed =
+# (100 + 2500) / 2, 0x1015d224/28); states 3-5 are icCapsuleSpace's own sJump
+# machine (PerformJumps @ 0x10040cc0 cases 4/5/6: entry blank flash ->
+# capsule space -> DoCapsuleJump teleport under the exit flash).
+var jump_state := 0  # 0 idle, 1 spool, 2 accel run, 3 entry flash,
+                     # 4 capsule space, 5 exit flash
 var jump_timer := 0.0
+var jump_duration := 0.0  # tunnel time, rolled rand[8,12] s on entry
 var jump_dest := ""
 var jump_sel := 0
 var jump_fade: ColorRect
+var capsule: CapsuleFx
+var last_entry: Dictionary = {}  # the L-point _load_system arrived at
+var _flick := PackedFloat32Array()  # entry/exit blank flicker keys
+var _cap_cut_t := 0.0  # capsule camera: time to next cut
+var _cap_cam_dir := Vector3.RIGHT  # current random viewpoint (ship-local)
+var _cap_prev_bg := 0  # Environment background mode to restore
 # The hull is owned by the subsim model when one is fitted; these stay as plain
 # properties so the HUD and the ported scripts (which set game.hull on load and
 # on respawn) keep working against a single number.
@@ -563,6 +593,8 @@ func skip_movie() -> void:
 
 func start_in_system(stem: String) -> void:
 	lds_state = 0
+	if hud != null:
+		_jump_abort()
 	jump_state = 0
 	_load_system(stem, START_NAME if stem == START_SYSTEM else "")
 	ship.velocity = Vector3.ZERO
@@ -726,6 +758,9 @@ func _build_grid() -> void:
 	# velocity vector, decoded from iwar2.dll FUN_100f5550 (see docs/hud.md)
 	space_fx = SpaceFx.new()
 	add_child(space_fx)
+	# capsule space (the between-systems tunnel), inert until a jump enters it
+	capsule = CapsuleFx.new()
+	add_child(capsule)
 	# LDSI boundary fence: vertical pillars marking the inhibition limit
 	ldsi_mat = StandardMaterial3D.new()
 	ldsi_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -767,8 +802,11 @@ func _update_ldsi_fence() -> void:
 	ldsi_mesh.surface_end()
 
 func _update_grid() -> void:
+	# no HUD underlay inside capsule space: the capsule system renders only
+	# its own scene graph (icCapsuleSpaceSystem::Render @ 0x100481e0), and
+	# the director is in cinematic mode for the whole effect
 	space_fx.update_grid(cam, Vector3(px, py, pz), ship.velocity,
-		lds_state == 2, docked_at != "")
+		lds_state == 2, docked_at != "" or jump_state >= 3)
 
 func _starfield_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
@@ -860,6 +898,7 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 				break
 	if entry.is_empty() and not objects.is_empty():
 		entry = objects[0]
+	last_entry = entry  # the capsule exit takes this L-point's orientation
 	px = entry["x"] + 2500.0
 	py = entry["y"] + 300.0
 	pz = entry["z"] + 3000.0
@@ -1234,7 +1273,7 @@ func contact_list() -> Array:
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
 		var show := false
 		match o["category"]:
-			"station":
+			"station", "gunstar":
 				show = d < 5.0e5
 			"lpoint":
 				show = d < 1.0e7
@@ -1623,31 +1662,148 @@ func _try_jump() -> void:
 func _jump_process(delta: float) -> void:
 	jump_timer += delta
 	match jump_state:
-		1:  # spool
+		1:  # spool -- the drive charging in the queue (icAITarget stage 3,
+			# GetNewCapsuleJumpStage @ 0x1005c5af waits on icCapsuleDrive)
 			if jump_timer >= 3.0:
 				jump_state = 2
 				jump_timer = 0.0
 				hud.warn("ACCELERATION RUN", 2.0)
-		2:  # acceleration run â€” iAI.IsCapsuleJumpAccelerating
+		2:  # acceleration run -- iAI.IsCapsuleJumpAccelerating (stage 4
+			# flies at AverageJumpSpeed = (100+2500)/2 @ 0x1000b000;
+			# TryToJump @ 0x1006ad40 gates entry on axis speed 100..2500,
+			# statics 0x1015d224/0x1015d228)
 			ship.velocity += -ship.global_transform.basis.z * 2500.0 * delta
-			jump_fade.color.a = clampf(jump_timer / 3.0 - 0.6, 0.0, 1.0) * 2.5
 			if jump_timer >= 3.0:
+				# icCapsuleSpace::FullEffect @ 0x10042ea0: attach the effect
+				# node and start the entry blank (icCapsuleEntryBlankAvatar
+				# state 1 @ 0x100c0170: sound_url + force feedback + flash)
 				jump_state = 3
 				jump_timer = 0.0
-				jump_fade.color.a = 1.0
-				audio.play_loop(audio.lds_player,
-					"audio/sfx/inside_capsule_space.wav", -6.0)
-		3:  # capsule space, then exit at destination
-			jump_fade.color.a = clampf(2.0 - jump_timer, 0.0, 1.0)
-			if jump_timer >= 2.0:
-				var from := system_stem
-				audio.lds_player.stop()
-				_load_system(jump_dest, "", from)
-				ship.velocity = -ship.global_transform.basis.z * 1000.0
+				_flash_roll()
+				audio.play("audio/sfx/capsule_jump.wav", -4.0)  # capsule_entry.ini
+				hud.visible = false  # the director goes cinematic (Cue 0xf)
+		3:  # entry blank: white-out held 1.5 s for the player
+			# (_DAT_1011a268, FUN_100bf870), flickering at the effect-node
+			# channel envelope (FUN_100bef90: keys 0.1 apart, rand[0.7,1])
+			jump_fade.color.a = clampf(jump_timer * 4.0, 0.0, 1.0) \
+				* _flash_flicker(jump_timer / CAPSULE_FLASH)
+			if jump_timer >= CAPSULE_FLASH:
+				_capsule_enter()
+		4:  # capsule space (PerformJumps case 5): fly the tunnel out
+			jump_fade.color.a = maxf(0.0, jump_fade.color.a - delta * 2.0)
+			if jump_timer >= jump_duration:
+				_capsule_exit()
+		5:  # exit blank (case 6): the teleport already happened under full
+			# white; the flash recedes as the ship flies off the L-point
+			# (FUN_100beea0's proximity falloff), then camera + HUD restore
+			# (case 7: icDirector::ChangeMode(0))
+			jump_fade.color.a = clampf(1.0 - jump_timer / CAPSULE_FLASH,
+				0.0, 1.0) * _flash_flicker(jump_timer / CAPSULE_FLASH)
+			if jump_timer >= CAPSULE_FLASH:
 				jump_state = 0
 				jump_fade.color.a = 0.0
-				audio.play("audio/sfx/lds_rampdown.wav", -4.0)
+				hud.visible = true
+				cam.fov = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 \
+					else FOV_EXTERNAL
 				hud.warn("ARRIVED: %s" % system_name.to_upper(), 4.0)
+
+## Roll the blank-avatar flicker envelope: keys every tenth of the flash,
+## values rand[0.7, 1.0] (FUN_100bef90 @ 0x100bef90; the 0.7 floor is
+## _DAT_101191e8, the key spacing 0.1 is _DAT_101184b0).
+func _flash_roll() -> void:
+	_flick.resize(11)
+	for i in 11:
+		_flick[i] = randf_range(0.7, 1.0)
+
+func _flash_flicker(t: float) -> float:
+	var x := clampf(t, 0.0, 1.0) * 10.0
+	var i := int(floor(x))
+	return lerpf(_flick[i], _flick[mini(i + 1, 10)], x - i)
+
+## Swap the world for capsule space. PerformJumps @ 0x10040cc0 case 4 -> 5:
+## the ship is moved into icCluster's icCapsuleSpaceSystem (+0x2c) by
+## SendShipDownTunnel @ 0x10043740 (velocity (0,0,500), identity orientation,
+## so the tunnel axis is the ship's forward), the tunnel loop sound starts
+## (blank avatar state 2: sound_tunnel_url), and the countdown is rolled at
+## rand[8, 12] s (constants 0x10117b28 / 0x10119ec4).
+func _capsule_enter() -> void:
+	jump_state = 4
+	jump_timer = 0.0
+	jump_duration = randf_range(CAPSULE_TIME_MIN, CAPSULE_TIME_MAX)
+	var fwd := -ship.global_transform.basis.z
+	ship.velocity = fwd * CAPSULE_SHIP_SPEED
+	ship.set_speed = CAPSULE_SHIP_SPEED
+	capsule.enter(cam, ship.global_transform.basis)
+	# capsule space is its own world: its scene graph holds only the tunnel
+	# avatar and the cockpit (icCapsuleSpaceSystem::Render @ 0x100481e0) --
+	# no sky, no sun, no system objects
+	sun.visible = false
+	if sky_anchor != null:
+		sky_anchor.visible = false
+	for o in objects:
+		if o["node"] != null:
+			o["node"].visible = false
+	for a in ai_ships:
+		a.visible = false
+	_cap_prev_bg = env_ref.background_mode
+	env_ref.background_mode = Environment.BG_COLOR
+	env_ref.background_color = Color.BLACK
+	audio.play_loop(audio.lds_player,
+		"audio/sfx/inside_capsule_space.wav", -6.0)  # capsule_tunnel.ini
+	_cap_cut_t = 0.0  # cut to a capsule-camera viewpoint immediately
+
+func _capsule_world_restore() -> void:
+	env_ref.background_mode = _cap_prev_bg
+	sun.visible = true
+	if sky_anchor != null:
+		sky_anchor.visible = true
+	for o in objects:
+		if o["node"] != null:
+			o["node"].visible = true
+	for a in ai_ships:
+		a.visible = true
+
+## Leave capsule space: DoCapsuleJump @ 0x10042730. Teleport to the arrival
+## L-point, take ITS orientation (FiSim::SetOrientation with the LP record's
+## quaternion) and leave along its +Z jump axis at sqrt(2 * accel * 3000)
+## (the player's accel scaled by 0.8^2, _DAT_1011959c), clamped to flux.ini
+## [icCapsuleSpace] min/max_exit_speed 500..2000. The exit blank flash
+## (case 6) covers the arrival.
+func _capsule_exit() -> void:
+	jump_state = 5
+	jump_timer = 0.0
+	_flash_roll()
+	jump_fade.color.a = 1.0
+	_apply_view()  # hand the cockpit/hull dressing back to the F-key camera
+	audio.lds_player.stop()
+	audio.play("audio/sfx/capsule_jump.wav", -4.0)  # exit blank sound_url
+	capsule.exit()
+	_capsule_world_restore()
+	var from := system_stem
+	_load_system(jump_dest, "", from)
+	var b := ship.global_transform.basis
+	if not last_entry.is_empty():
+		b = _record_basis(last_entry)
+		ship.global_transform.basis = b
+	var v := sqrt(2.0 * ship.max_accel.z * CAPSULE_ACCEL_SCALE
+		* CAPSULE_EXIT_RUN)
+	if SHIP_HIT_RADIUS / maxf(v, 1.0) >= 2.5:  # big-hull cap @ 0x10042730
+		v = SHIP_HIT_RADIUS / 2.5
+	v = clampf(v, CAPSULE_EXIT_MIN, CAPSULE_EXIT_MAX)
+	ship.velocity = (b * Vector3.FORWARD) * v
+	ship.set_speed = minf(v, ship.max_speed.z)
+
+## Abort the capsule sequence (a scripted system change mid-jump): put the
+## world, HUD and fade back the way icCapsuleSpace::DetachEffect would.
+func _jump_abort() -> void:
+	if jump_state >= 3:
+		capsule.exit()
+		_capsule_world_restore()
+		_apply_view()
+		audio.lds_player.stop()
+	jump_fade.color.a = 0.0
+	hud.visible = true
+	jump_state = 0
 
 func _physics_process(delta: float) -> void:
 	fire_lock = maxf(0.0, fire_lock - delta)
@@ -1670,6 +1826,12 @@ func _physics_process(delta: float) -> void:
 		# the yoke off you and flies you out of the tube), so the player does
 		# not. Without this you sit in the cockpit flying around while a
 		# cutscene you cannot see runs to completion behind you.
+		ship.input_rotate = Vector3.ZERO
+		ship.input_thrust = Vector3.ZERO
+	elif jump_state >= 3:
+		# icCapsuleSpace::MakeEffect @ 0x10042f80 zeroes the player yoke and
+		# takes the control lock (+0x31c) for the whole effect; PerformJumps
+		# case 7 releases it
 		ship.input_rotate = Vector3.ZERO
 		ship.input_thrust = Vector3.ZERO
 	elif docked_at == "" and not menu.visible and movie == null:
@@ -1938,7 +2100,8 @@ func _collisions() -> void:
 	for o in objects:
 		if o["node"] == null:
 			continue
-		if o["category"] == "station" or o.get("prop_collide", false):
+		if o["category"] == "station" or o["category"] == "gunstar" \
+				or o.get("prop_collide", false):
 			var base := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
 			var spheres: Array = o.get("coll_spheres", [])
 			if spheres.is_empty():
@@ -2045,7 +2208,7 @@ func _contacts_full() -> Array:
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
 		var show := false
 		match o["category"]:
-			"station":
+			"station", "gunstar":
 				show = d < 5.0e5
 			"lpoint":
 				show = d < 1.0e7
@@ -2337,7 +2500,7 @@ func _stream_objects() -> void:
 				var draw_r := minf(r * k, IMPOSTOR_DIST * 0.4)
 				o["node"].position = Vector3(dx, dy, dz) * k
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
-			"station", "prop":
+			"station", "prop", "gunstar":
 				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
 					# POG can create a sim that carries no avatar (a pure logic
 					# marker); there is nothing to stream in for those.
@@ -2379,6 +2542,9 @@ func _stream_objects() -> void:
 
 func _chase_camera(delta: float) -> void:
 	var target := ship.global_transform
+	if jump_state == 4:
+		_capsule_camera(delta, target)
+		return
 	if base_root != null:
 		# in the hangar: gantry viewpoint with a gentle sway
 		var a := Time.get_ticks_msec() / 1000.0 * 0.11
@@ -2427,6 +2593,46 @@ func _chase_camera(delta: float) -> void:
 		"drop":  # fixed in space, tracking the ship
 			cam.global_transform = Transform3D(Basis.IDENTITY,
 				drop_cam_pos).looking_at(target.origin, Vector3.UP)
+
+## The capsule-space camera. icDirector event 0x10 ("in capsule space",
+## cued every frame by PerformJumps case 5 via FUN_100426f0) selects camera
+## 24 (response table @ 0x1011d498: ev 0x10 -> cams (24,24,24), priority 8,
+## re-cuttable). Camera 24 (ctor FUN_100dc080 @ 0x100dc080, Update @
+## 0x100dc160) frames the ship from a random direction in the SHIP's frame,
+## components ([0.8,1], [-1,1], [-1,1]) normalized -- biased to the ship's
+## +X side -- at 4 x the focus radius (0x101190b4), with FOV 2 * 0.35 rad
+## (_DAT_1011d378). Cuts are limited by flux.ini [icDirector]
+## min_cut_time = 1. The final second cues event 0x11 -> camera 3,
+## cam_internal_no_hud (name table @ 0x101621e0): back inside the cockpit
+## for the exit flash.
+func _capsule_camera(delta: float, target: Transform3D) -> void:
+	if jump_timer >= jump_duration - 1.0:
+		# cam_internal_no_hud: back inside the cockpit, HUD stays dark
+		if cockpit != null:
+			cockpit.visible = true
+		if ship_model != null:
+			ship_model.visible = false
+		cam.fov = FOV_INTERNAL
+		cam.global_transform = target.translated_local(eye)
+		return
+	# external shot: show the hull, drop the cockpit dressing
+	if cockpit != null:
+		cockpit.visible = false
+	if ship_model != null:
+		ship_model.visible = true
+	_cap_cut_t -= delta
+	if _cap_cut_t <= 0.0:
+		_cap_cut_t = CAPSULE_CUT_TIME
+		_cap_cam_dir = Vector3(randf_range(0.8, 1.0),
+			randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
+	cam.fov = CAPSULE_CAM_FOV
+	var r := _model_bounds_radius(ship_model)
+	if r <= 0.0:
+		r = SHIP_HIT_RADIUS
+	var pos := target.origin + target.basis * (_cap_cam_dir
+		* r * CAPSULE_CAM_RANGE)
+	cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+		target.origin, target.basis.y)
 
 func _fmt_dist(d: float) -> String:
 	if d < 1e4:

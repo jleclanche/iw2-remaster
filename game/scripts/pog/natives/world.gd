@@ -882,15 +882,22 @@ func _i_undock(_t, a: Array) -> Variant:
 # @native isim.CapsuleJumpStaggered
 # @native isim.CapsuleJumpCustom
 func _i_capsule_jump(_t, a: Array) -> Variant:
-	# The scripts jump a ship to another system by name. For the player that is
-	# the real capsule-jump sequence; an AI ship just leaves.
+	# The scripts jump a ship to another system by name. For the player that
+	# rides the real sequence from the entry blank onward (the script has
+	# already staged the queue and the acceleration run itself); an AI ship
+	# just leaves.
 	var s := _as_sim(a[0])
 	if s == null or game == null:
 		return 0
 	var dest := PogStd._s(a[1]) if a.size() > 1 else ""
 	if s.is_player:
 		if not dest.is_empty():
-			game.start_in_system(dest.to_lower().replace(" ", "_"))
+			game.jump_dest = dest.to_lower().replace(" ", "_")
+			game.jump_state = 3
+			game.jump_timer = 0.0
+			game._flash_roll()
+			game.audio.play("audio/sfx/capsule_jump.wav", -4.0)
+			game.hud.visible = false
 	else:
 		_s_destroy(_t, [s])
 	return 0

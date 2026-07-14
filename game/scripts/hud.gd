@@ -1621,7 +1621,7 @@ func _orb_contacts() -> Array:
 		var d := rel.length()
 		var ok := false
 		match o["category"]:
-			"station":
+			"station", "gunstar":
 				ok = d < 5.0e5
 			"lpoint":
 				ok = d < 1.0e7

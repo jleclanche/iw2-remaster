@@ -378,6 +378,30 @@ press of F1. (`cam_internal_no_hud` exists, at index 3 of the `eCamera` name tab
 at `0x101621e0`, but sits only in the developers' `DevCycleAllCameras` group,
 which ships bound to nothing.)
 
+## 4c. Capsule space is a real place
+
+- icCapsuleSpace (`0x1003ffb0`) is the jump **manager**;
+  icCapsuleSpaceSystem (`0x100480b0`) is a real icSolarSystem mini-world
+  containing only the tunnel avatar + cockpit; the ship is moved into it
+  for rand[8, 12] s (`0x10040cc0` case 4 -- NOT distance-based), flying at
+  500 m/s (`0x10043740`), then teleported out by DoCapsuleJump
+  (`0x10042730`) with the dest L-point's orientation and exit speed
+  `clamp(sqrt(2·a·3000), 500, 2000)` (flux `[icCapsuleSpace]`).
+- icCapsuleSpaceAvatar (`0x100c1be0`) = 99 rings of 32 radius-random-walked
+  points, 1000 m apart, outer [960, 1000] / inner [600, 640] alternating,
+  streaming at 7000 m/s, respawning 36 km behind; passes: capsule_tunnel
+  (1.0, 0.52, 0.01), capsule_tunnel2 x1.07 (0.83, 0.10, 0.01), capsule_beam
+  ribbons white / (1, 1, 0.5); flares (1.0, 0.47, 0.03); a per-frame
+  flicker light (0.9, 0.43, 0.0).
+- icCapsuleEntryBlankAvatar (`0x100be480`) = the white-out: lens-flare
+  blank + capsule_entry/capsule_tunnel sounds + force feedback, flash_time
+  0.5, player hold 1.5 s (`_DAT_1011a268`); it owns the clip-plane trick
+  via icCapsuleEffectNode (`0x100bfc40`).
+- Camera: Director event 0x10 -> dedicated camera 24 (random ship-frame
+  viewpoint, +X biased, 4 x radius, FOV 0.7 rad, cuts >= min_cut_time);
+  event 0x11 (last 1 s) -> cam_internal_no_hud. Full write-up:
+  `docs/capsule.md`.
+
 ---
 
 ## 5. Ships and sims

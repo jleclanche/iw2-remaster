@@ -129,7 +129,7 @@ extends RefCounted
 # @element-stub icFFEffects -- engine-internal: force-feedback effect table; joystick FF is not reproduced (Godot Input.start_joy_vibration would be the hook)
 # @element-stub icAlienSwarmDraw -- GENUINE GAP: act 3 alien swarm particle draw (with icAlienSwarmDynamics/icAlienSwarmAvatar/icAlienSwarm)
 # @element-stub icAlienSwarmDynamics -- GENUINE GAP: act 3 alien swarm particle dynamics
-# @element-stub icCapsuleSpace -- GENUINE GAP: capsule-space interior world; main.gd currently white-fades through every jump (jump_state 3)
+# (icCapsuleSpace is really built: its @element marker is in capsule_fx.gd / main.gd)
 # (icCreditScreen is really built: its @element marker is in base_screens.gd (html credits roll, 50 px/s @ 0x10117be8))
 # @element-stub icDisruptorDynamics -- GENUINE GAP: sensor-disruptor strike visual; the disruption mechanic itself is main.gd disrupt()
 # (icScroller is really built: its @element marker is in base_screens.gd (the credits scroller))
@@ -153,9 +153,9 @@ extends RefCounted
 # @element-stub icAggressorAvatar -- GENUINE GAP: aggressor-shield visual (player device, with icAggressorShield)
 # @element-stub icAlienSwarmAvatar -- GENUINE GAP: act 3 alien swarm emitter node
 # @element-stub icAsteroidAvatar -- GENUINE GAP: tumbling-rock avatar for the ambient fields (script-built debris sims DO render via natives/world.gd models)
-# @element-stub icCapsuleEffectNode -- GENUINE GAP: capsule-jump entry/exit effect node
-# @element-stub icCapsuleEntryBlankAvatar -- GENUINE GAP: the blanking avatar over capsule entry
-# @element-stub icCapsuleSpaceAvatar -- GENUINE GAP: the capsule-space tunnel visual
+# (icCapsuleEffectNode is really built: its @element marker is in capsule_fx.gd / main.gd)
+# (icCapsuleEntryBlankAvatar is really built: its @element marker is in capsule_fx.gd / main.gd)
+# (icCapsuleSpaceAvatar is really built: its @element marker is in capsule_fx.gd / main.gd)
 # @element-stub icCloudAvatar -- GENUINE GAP: in-system dust-cloud sprite volumes (sensor cover the act 2 scripts use)
 # @element-stub icElectricEffectAvatar -- GENUINE GAP: electric-arc emitter (disruptor / damage arcing)
 # @element-stub icGasBallAvatar -- GENUINE GAP: gas-ball avatar (cosmetic; exact use not yet traced in the campaign)
@@ -264,7 +264,7 @@ extends RefCounted
 # @element-stub icAsteroidField -- GENUINE GAP: ambient asteroid field around the ship
 # @element-stub icDebrisField -- GENUINE GAP: ambient debris field (the Junkyard's authored sims DO render; the ambient filler does not)
 # @element-stub icSolarSystem -- covered-elsewhere: main.gd _load_system builds the system from its record
-# @element-stub icCapsuleSpaceSystem -- GENUINE GAP: the capsule-space "system" flown between jumps (with icCapsuleSpace)
+# (icCapsuleSpaceSystem is really built: its @element marker is in capsule_fx.gd / main.gd)
 # @element-stub icLDSIRegion -- covered-elsewhere: main.gd LDSI fence + iregion natives (natives/world.gd)
 # @element-stub icTrafficControlRegion -- covered-elsewhere: main.gd _spawn_traffic + iregion natives
 # @element-stub icGame -- covered-elsewhere: main.gd is the game loop; igame natives (natives/gameapi.gd)
