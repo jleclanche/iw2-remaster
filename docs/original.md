@@ -643,6 +643,43 @@ not. Rocks: 5000 hp bare hull, no collisions against anything moving
 (`0x100648b0`). Implemented in `fields.gd`; live cap 150 rocks (the
 original's own budget). Full write-up: `docs/fields.md`.
 
+### The ambient dust: `icTeleportDynamics`, and the engine's floating origin
+
+The near-field motes are **`icTeleportDynamics`** (`Spawn 0x100c8c80`, `Update
+0x100c91f0`, `EmitPos 0x100c94b0` -- all three Ghidra holes). The name is about
+the **viewpoint** teleporting, not the particles.
+
+- **The motes are world-fixed, and that is where the parallax comes from.**
+  Coordinates are stored *relative to the viewpoint*, and Update's first act is
+  `pos += FcWorld::GraphicsDeltaFocus()`. **`FcWorld` is a floating-origin
+  world**: `SetGraphicsFocus` (flux `0x1004f100`) stores `world+0x78 =
+  old_focus - new_focus`, i.e. minus the viewpoint's movement this frame. Adding
+  that to a viewpoint-relative coordinate every frame is exactly the fold that
+  holds a mote still in the world while the shell re-centres on the camera --
+  the same trick as our `px/py/pz` + `shift_world`. (Corroborated by the spawn
+  cone, which is built about `-normalize(delta_focus)` = the direction of
+  travel; both readings agree only under this sign.)
+- **The near cull is 5 m, and that is the cockpit rule.** Update keeps a mote iff
+  `25.0 <= |pos|^2 <= R^2` (`0x100c9323`, `_DAT_1011cf68 = 5.0`), *before* the
+  draw -- so a mote you fly into dies the frame it comes within 5 m. There is no
+  separate near pass and no depth trick: the cockpit hangs off the camera and the
+  engine simply refuses to keep a mote that close.
+- **The shell radius is a pixel, not a distance**: `R = 0.5 * max(screen_w,
+  screen_h) * draw->Size()`, i.e. **the distance at which a mote covers one
+  pixel** -- resolution-dependent by design. At 1920x1080: 1254 m (kibble),
+  2715 m (cornflakes). **`FcGraphicsEngine` measures apparent size in pixels,
+  not angles** (`PixelRadius` flux `0x10014150`).
+- Emission is gated on **accumulated movement >= sqrt(10) m** (a parked ship
+  grows no dust); moving more than R in one frame flushes everything, then
+  refills fully if the jump was <= 2 km; a view swing > pi/2 rad/s bursts 40% of
+  the cap; motes carry **no velocity of their own**; and `kibble/dynamics.ini`
+  omits `angular_velocity`, so **asteroid kibble does not tumble at all**.
+- **The `40.0` in `icDebrisField`'s ctor was never an emitter box** -- it is
+  `SetScale(40,40,40)` on the particle node, which `icCornflakeDraw` reads back
+  and multiplies by 0.075: debris cornflakes are **3 m hull plates**. Reading
+  that poke as a 40 m box is what made our motes camera-locked and let them sit
+  inside the cockpit.
+
 ## 5g. The player's devices
 
 - **The aggressor "shield" is not a shield -- it is a RAM.** It registers with

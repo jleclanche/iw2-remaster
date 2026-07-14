@@ -64,21 +64,51 @@ const NOISE_AMP_CAP := 2.0    # 0x10119ec8
 
 # @element icTeleportDynamics
 # The kibble / cornflake_field ambient dust (iwar2.dll ctor @ 0x100c8870,
-# Spawn @ 0x100c8c80, Update @ 0x100c91f0). "Teleport" is about the CAMERA
-# teleporting, not the particles: the field is a shell of world-fixed motes
-# around the viewpoint (radius = max(viewport dimension) x draw radius x 0.5)
-# that spawn ahead of travel (cone 0.2 when speed >= 1 m/s), spin at a random
-# rate in [0, angular_velocity] (deg/s in the INI, 0x10119930 converts), and
-# are culled outside the shell or closer than 5 m (0x1011cf68). A frame that
-# moves further than the shell radius flushes every particle; jumps <= 2000 m
-# (0x1011cfb4: 4e6 = 2000^2) refill the whole field at once, bigger jumps
-# (LDS, capsule) leave it to regrow at the birth rate.
-const TP_MOVE_STEP2 := 10.0   # 0x101190c0: spawn every sqrt(10) m of travel
-const TP_NEAR := 5.0          # 0x1011cf68: cull inside this
+# Spawn @ 0x100c8c80, Update @ 0x100c91f0). "Teleport" is about the VIEWPOINT
+# teleporting, not the particles. The motes are WORLD-FIXED specks in a shell
+# that re-centres on the viewpoint every frame -- that, and nothing else, is
+# what makes them parallax.
+#
+# Update @ 0x100c91f0, per mote, per frame:
+#     pos += FcWorld::GraphicsDeltaFocus()          (world+0x78)
+#     angle += dt * spin
+#     die if |pos|^2 > R^2  or  |pos|^2 < 5^2
+# and GraphicsDeltaFocus is `previous focus - current focus`
+# (FcWorld::SetGraphicsFocus, flux @ 0x1004f100, writes +0x78 = old - new). The
+# motes' coordinates are stored RELATIVE TO THE VIEWPOINT, so adding that delta
+# every frame is exactly the fold that holds them still in the world while the
+# viewpoint moves through them. We store scene coordinates instead and let
+# main._fold_motion's shift_world() apply the identical fold (it runs every
+# frame, and its offset IS -GraphicsDeltaFocus).
+#
+# The 5 m near cull (0x1011cf68) is the whole anti-cockpit rule: it is not a
+# render pass or a near-plane trick, the mote is simply killed once the
+# viewpoint gets within 5 m of it. Nothing is ever drawn closer than that.
+const TP_MOVE_STEP2 := 10.0   # 0x101190c0: emit nothing until sqrt(10) m travelled
+const TP_NEAR := 5.0          # 0x1011cf68: cull inside this -- the cockpit rule
 const TP_JUMP2 := 4.0e6       # 0x1011cfb4: flush-without-refill beyond 2 km
 const TP_SWING := PI / 2.0    # 0x1011a454: camera swing rate for a burst...
 const TP_SWING_FRAC := 0.4    # 0x10117558: ...that emits 40% of the cap
 const TP_CONE := 0.2          # 0x3e4ccccd @ 0x100c9589: spawn cone ahead
+const TP_NEAR_FRAC := 0.1     # 0x101184b0: idle shell reaches in to 0.1 R
+
+# The shell radius (Spawn @ 0x100c8ce2..0x100c8d0f):
+#
+#     R = 0.5 (0x10117738) x max(viewport width, height) x draw->Size()
+#
+# Size() is vtable slot +0x24 of the draw class:
+#   * FcParticleDrawModel (flux @ 0x10068070) returns its +0x34, which
+#     OnPropertiesChanged (flux @ 0x100520c0) sets to `scale x MAX model
+#     radius` -- so kibble is 0.4 x the kibble0N bounds radius;
+#   * icCornflakeDraw (iwar2 @ 0x100bc440) returns the CONSTANT at
+#     0x1011cb8c = 2.828427, regardless of the emitter.
+#
+# Invert FcGraphicsEngine::PixelRadius (flux @ 0x10014150: pixels =
+# max(w,h) x radius / distance) and R is precisely the distance at which a mote
+# of radius Size()/2 covers ONE PIXEL. The shell reaches exactly as far as a
+# mote is still visible, and it is resolution-dependent by design.
+const TP_PIXEL := 0.5
+const TP_CORNFLAKE_SIZE := 2.828427
 
 # cornflakes.png / cornflake_masks.png are a 4x4 atlas of torn hull plates.
 const CORNFLAKE_CELLS := 4
@@ -98,6 +128,8 @@ const CORNFLAKE_SIZE := 0.075
 static var _systems: Dictionary = {}
 static var _textures: Dictionary = {}
 static var _meshes: Dictionary = {}
+static var _model_meshes: Dictionary = {}  # model url -> Mesh
+static var _model_radii: Dictionary = {}   # model url -> bounds radius (FcModel+0x3c)
 
 var sys: Dictionary = {}
 var emitter_scale := 1.0
@@ -114,10 +146,14 @@ var _live: Array = []    # {life, pos, vel, roll, spin, cell, axis}
 var _edges: Array = []   # icDisruptorDynamics: {pos, dir, seglen} in our space
 var _edge_cursor := 0    # +0x90
 var _noise := PackedFloat32Array()  # the 128-float [-1,1] table @ 0x101716fc
-var _tp_accum := Vector3.ZERO       # icTeleportDynamics +0x40: movement owed
-var _tp_prev_fwd := Vector3.ZERO    # +0x4c: last camera forward
+var _tp_accum := Vector3.ZERO       # icTeleportDynamics +0x40: movement since the last emission
+var _tp_prev_fwd := Vector3.ZERO    # +0x4c: last viewpoint forward
+var _tp_prev_cam := Vector3.ZERO    # our stand-in for FcWorld's graphics focus
+var _tp_seen := false               # ... which needs one frame to become a delta
+var _tp_rate := 0.0                 # +0x3c: the current centre-weighted birth rate
+var _tp_left := 0.0                 # +0x30: particles left before it is re-rolled
 var _mm: MultiMeshInstance3D
-var _models: Array = []  # FcParticleDrawModel: one child per live particle
+var _models: Array = []  # FcParticleDrawModel: one MultiMeshInstance3D per model url
 # icCornflakeDraw's four random tumble axes (FUN_100bc480 @ 0x100bc480)
 var _flake_axes: Array = []
 var _sun_dir := Vector3(0, 0, -1)
@@ -309,6 +345,8 @@ static func release_cache() -> void:
 	_systems.clear()
 	_textures.clear()
 	_meshes.clear()
+	_model_meshes.clear()
+	_model_radii.clear()
 
 # --- the original's RNG -----------------------------------------------------
 
@@ -318,6 +356,18 @@ static func centre_weighted(a: float, b: float) -> float:
 	var u := randf()
 	var w := 2.0 * u * u if u < 0.5 else 1.0 - 2.0 * (1.0 - u) * (1.0 - u)
 	return a + (b - a) * w
+
+# FnRandom::ConeVector (flux @ 0x10048200): +Z turned by two UNIFORM angles in
+# [-a, a] (plain uniform, NOT the centre-weighted curve above -- the decompile
+# lerps a single rand() across the range), then expressed in the frame whose +Z
+# is `axis` (the caller builds that frame with cross products @ 0x100c95ef).
+static func cone_vector(axis: Vector3, a: float) -> Vector3:
+	var v := Basis.from_euler(Vector3(randf_range(-a, a), randf_range(-a, a), 0.0)) \
+			* Vector3(0.0, 0.0, 1.0)
+	var up := Vector3.UP if absf(axis.y) < 0.99 else Vector3.RIGHT
+	var x := up.cross(axis).normalized()
+	var y := axis.cross(x)
+	return x * v.x + y * v.y + axis * v.z
 
 # --- playback ---------------------------------------------------------------
 
@@ -393,8 +443,14 @@ func _build_edges() -> void:
 
 func _ready() -> void:
 	var draw_class: String = sys["draw_class"]
+	if sys["dyn_class"] == DYN_TELEPORT:
+		# the motes are world-fixed, so they must survive the floating origin:
+		# main._fold_motion() re-anchors every "worldfx" node each frame, and its
+		# offset is the engine's GraphicsDeltaFocus with the sign flipped
+		add_to_group("worldfx")
 	if draw_class == DRAW_MODEL:
-		return  # per-particle glTF instances, built lazily in _spawn_one
+		_build_model_batches()
+		return
 	var tex: Texture2D = null
 	if draw_class == DRAW_CORNFLAKE:
 		tex = _cornflake_texture()
@@ -503,6 +559,7 @@ func _spawn_one() -> void:
 		# (0x100bc783 / 0x100bc7a3): cell = index & 15, tumble axis = index & 3
 		"cell": _spawned % (CORNFLAKE_CELLS * CORNFLAKE_CELLS),
 		"axis": _spawned % 4,
+		"sn": _spawned,
 		"model": null,
 	})
 	_spawned += 1
@@ -536,6 +593,7 @@ func _spawn_alien() -> void:
 		"roll": 0.0,
 		"spin": 0.0,
 		"cell": _spawned % (CORNFLAKE_CELLS * CORNFLAKE_CELLS),
+		"sn": _spawned,
 		"model": null,
 	})
 	_spawned += 1
@@ -603,7 +661,7 @@ func _spawn_disruptor_triple() -> void:
 			"life": life, "life_max": life, "edge": _edge_cursor, "role": role,
 			"pos": pos, "vel": vel, "roll": 0.0, "spin": 0.0,
 			"cell": _spawned % (CORNFLAKE_CELLS * CORNFLAKE_CELLS),
-			"axis": _spawned % 4, "model": null,
+			"axis": _spawned % 4, "sn": _spawned, "model": null,
 		})
 		_spawned += 1
 
@@ -675,24 +733,43 @@ func _respawn_triple(a: Dictionary, b: Dictionary, c: Dictionary) -> void:
 				+ (e["dir"] as Vector3) * (float(e["seglen"]) * 0.333 * float(role + 1))
 		role += 1
 
-# icTeleportDynamics::Update (0x100c91f0) + Spawn (0x100c8c80). Runs in the
-# folded scene space where the player IS the focus, so the world movement the
-# engine reads from GraphicsDeltaFocus arrives here through shift_world().
+# The shell radius R -- see TP_PIXEL above. Resolution-dependent, by design.
+func _tp_shell_radius() -> float:
+	var vp := get_viewport().get_visible_rect().size
+	return TP_PIXEL * maxf(vp.x, vp.y) * _tp_draw_size()
+
+
+# draw->Size(), vtable slot +0x24.
+func _tp_draw_size() -> float:
+	if sys["draw_class"] == DRAW_CORNFLAKE:
+		return TP_CORNFLAKE_SIZE  # iwar2 @ 0x100bc440: a hardcoded constant
+	if sys["draw_class"] == DRAW_MODEL:
+		# flux @ 0x100520c0: scale x the LARGEST of the models' radii
+		var rad := 0.0
+		for u in sys["models"]:
+			rad = maxf(rad, ParticleFx.model_radius(str(sys["base"]), str(u)))
+		return float(sys["model_scale"]) * rad
+	return float(sys["scale_death"])
+
+
+# icTeleportDynamics::Update (0x100c91f0) + Spawn (0x100c8c80).
+#
+# The motes hold SCENE positions, which main._fold_motion() re-anchors for us
+# every frame (shift_world), so they are world-fixed and the viewpoint moves
+# THROUGH them -- that is the parallax. All that is left of Update here is the
+# spin and the two culls.
 func _update_teleport(delta: float) -> void:
 	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
-	if cam == null or delta <= 0.0:
+	# Spawn's first act is to reject a zero frame (0x100c8ca2, eps 1e-6)
+	if cam == null or absf(delta) < 1.0e-6:
 		return
-	# field radius: max viewport dimension x the draw's radius x 0.5. The
-	# draw's Radius slot returns its scale (FcParticleDrawModel) or
-	# scale_on_death; icCornflakeDraw's is UNKNOWN (docs/act3.md).
-	var vp := get_viewport().get_visible_rect().size
-	var draw_r: float = sys["model_scale"] if sys["draw_class"] == DRAW_MODEL \
-			else sys["scale_death"]
-	var r := maxf(vp.x, vp.y) * draw_r * 0.5
-	var cam_pos := cam.global_position
-	# cull + spin
-	var i := _live.size() - 1
+	var r := _tp_shell_radius()
 	var r2 := r * r
+	var cam_pos := cam.global_position
+	# --- Update: spin, then cull outside the shell OR inside 5 m. The near cull
+	# runs BEFORE the draw, so a mote the viewpoint is flying into never gets
+	# rendered inside the cockpit -- it is dead the frame it comes within 5 m.
+	var i := _live.size() - 1
 	while i >= 0:
 		var p: Dictionary = _live[i]
 		p["roll"] = float(p["roll"]) + float(p["spin"]) * delta
@@ -700,59 +777,80 @@ func _update_teleport(delta: float) -> void:
 		if d2 > r2 or d2 < TP_NEAR * TP_NEAR:
 			_live.remove_at(i)
 		i -= 1
-	# spawn: driven by accumulated world movement (shift_world feeds _tp_accum)
-	var jump2 := _tp_accum.length_squared()
-	var burst := 0
-	if jump2 > r2:
+	# --- Spawn. `move` is the viewpoint's displacement this frame; the engine
+	# reads its negation out of FcWorld::GraphicsDeltaFocus (world+0x78).
+	# shift_world() keeps _tp_prev_cam in the same folded frame as cam_pos, so
+	# this difference is the true world displacement however the origin moved.
+	if not _tp_seen:
+		_tp_seen = true
+		_tp_prev_cam = cam_pos
+		_tp_prev_fwd = -cam.global_transform.basis.z
+		return
+	var move := cam_pos - _tp_prev_cam
+	_tp_prev_cam = cam_pos
+	# +0x40 (0x100c8d6b): emission is gated on ACCUMULATED movement. Nothing at
+	# all is emitted until the viewpoint has travelled sqrt(10) = 3.16 m, so a
+	# parked ship never grows dust -- the field is fed by flying through it.
+	_tp_accum += move
+	if _tp_accum.length_squared() < TP_MOVE_STEP2:
+		return
+	_tp_accum = Vector3.ZERO
+	# +0x30/+0x3c (0x100c8e34): one centre-weighted birth rate, re-rolled every
+	# `rate` particles
+	if _tp_left <= 0.0:
+		_tp_rate = ParticleFx.centre_weighted(float(sys["min_rate"]),
+				float(sys["max_rate"]))
+		_tp_left = _tp_rate
+		_accum = 0.0
+	var cap: int = int(sys["max_particles"])
+	var move2 := move.length_squared()
+	var count := 0.0
+	if move2 > r2:
+		# the viewpoint crossed the entire shell in one frame (0x100c8e9b): the
+		# old motes are all stale, so flush them
 		_live.clear()
-		_tp_accum = Vector3.ZERO
-		if jump2 > TP_JUMP2:
-			return  # a capsule/LDS jump: the field regrows at the birth rate
-		burst = int(sys["max_particles"])
-	elif _tp_accum.length_squared() >= TP_MOVE_STEP2:
+		if move2 >= TP_JUMP2:
+			return  # beyond 2 km -- an LDS/capsule jump: let it regrow at the rate
+		count = float(cap)  # a short hop: refill the whole shell in one tick
+	else:
+		# a fast pan exposes frustum the shell has never filled, so the engine
+		# bursts 40% of the cap when the view swings faster than 90 deg/s
 		var fwd := -cam.global_transform.basis.z
 		var swing := acos(clampf(fwd.dot(_tp_prev_fwd), -1.0, 1.0)) / delta
 		_tp_prev_fwd = fwd
-		if swing > TP_SWING:
-			burst = int(float(sys["max_particles"]) * TP_SWING_FRAC)
-		else:
-			_accum += ParticleFx.centre_weighted(sys["min_rate"], sys["max_rate"]) \
-					* delta
-			burst = int(_accum)
-			_accum -= float(burst)
-		var speed := _tp_accum.length() / maxf(delta, 1e-4)
-		var dir := _tp_accum.normalized()
-		_tp_accum = Vector3.ZERO
-		var cap: int = sys["max_particles"]
-		for k in mini(burst, cap - _live.size()):
-			_spawn_teleport(cam_pos, dir, speed, r)
-		return
-	var cap2: int = sys["max_particles"]
-	for k in mini(burst, cap2 - _live.size()):
-		_spawn_teleport(cam_pos, -cam.global_transform.basis.z, 0.0, r)
+		count = float(cap) * TP_SWING_FRAC if swing > TP_SWING \
+				else _tp_rate * delta
+	var speed := move.length() / delta
+	var dir := move.normalized()
+	_accum += count
+	while _accum >= 1.0 and _live.size() < cap:
+		_accum -= 1.0
+		_tp_left -= 1.0
+		_spawn_teleport(cam_pos, dir, speed, r)
 
-# SpawnPos (FUN_100c94b0): ahead of travel inside cone 0.2 when moving at
-# >= 1 m/s; a uniform shell when drifting; radius uniform in [0.1 r, r] when
-# still (0x101184b0). Spin uniform in [0, angular_velocity] (deg/s).
+
+# The emit position (FUN_100c94b0), relative to the viewpoint:
+#   * under 1 m/s: FnRandom::UnitVector, distance uniform in [0.1 R, R]
+#     (0x101184b0) -- an isotropic shell you can drift inside of;
+#   * at speed: FnRandom::ConeVector(0.2 rad) about the direction of TRAVEL --
+#     the engine negates the delta-focus to get it (0x100c95a5/95b6/95ce) --
+#     at distance exactly R. Dust is only ever laid down in front of you.
+# Spin is uniform in [0, angular_velocity] (0x100c9094..0x100c90f1); kibble's
+# dynamics.ini declares no angular_velocity, so asteroid kibble does not tumble
+# at all (the ctor leaves +0x28 zero) and only cornflakes (250 deg/s) do.
 func _spawn_teleport(cam_pos: Vector3, dir: Vector3, speed: float, r: float) -> void:
-	var pos: Vector3
-	if speed >= 1.0:
-		var cone := TP_CONE
-		var off := Vector3(ParticleFx.centre_weighted(-cone, cone),
-				ParticleFx.centre_weighted(-cone, cone), 1.0).normalized()
-		# travel direction is -delta-focus: the engine spawns AHEAD of travel
-		pos = cam_pos + Basis.looking_at(-dir, Vector3.UP) * (off * -r)
-	elif speed >= 1e-6:
-		pos = cam_pos + _random_unit() * r
+	var rel: Vector3
+	if speed < 1.0:
+		rel = _random_unit() * lerpf(r * TP_NEAR_FRAC, r, randf())
 	else:
-		pos = cam_pos + _random_unit() * (r * lerpf(0.1, 1.0, randf()))
+		rel = ParticleFx.cone_vector(dir, TP_CONE) * r
 	var av: float = sys["spin"]
 	_live.append({
-		"life": INF, "pos": pos, "vel": Vector3.ZERO,
+		"life": INF, "pos": cam_pos + rel, "vel": Vector3.ZERO,
 		"roll": randf() * TAU,
 		"spin": deg_to_rad(av * randf()),
 		"cell": _spawned % (CORNFLAKE_CELLS * CORNFLAKE_CELLS),
-		"axis": _spawned % 4, "model": null,
+		"axis": _spawned % 4, "sn": _spawned, "model": null,
 	})
 	_spawned += 1
 
@@ -917,46 +1015,94 @@ func _draw_alien(_cb: Basis) -> void:
 						1.0 / CORNFLAKE_CELLS, 0.0))
 	_mm.multimesh.visible_instance_count = n * 2
 
-func _draw_models() -> void:
+# FcParticleDrawModel keeps ONE PARTICLE LIST PER MODEL (the vector-of-vectors
+# at icTeleportDynamics+0x5c, walked per list by the draw dispatcher @
+# 0x100c8950), so batch by model exactly the same way: mote n belongs to model
+# n % models. One MultiMesh each -- 300 kibble chunks are far too many to be
+# individual nodes, and the old per-particle glTF instances also leaked on every
+# teleport cull (nothing freed them).
+func _build_model_batches() -> void:
 	var urls: Array = sys["models"]
-	if urls.is_empty():
-		return
-	for p in _live:
-		if p["model"] == null:
-			var url := str(urls[randi() % urls.size()])
-			var m := _load_model(url)
-			if m != null:
-				add_child(m)
-				m.scale = Vector3.ONE * (sys["model_scale"] * emitter_scale)
-				p["model"] = m
-		var m2 = p["model"]
-		if m2 != null and is_instance_valid(m2):
-			var n: Node3D = m2
-			var world: Vector3 = p["pos"]
-			if sys["fixed"] and sys["dyn_class"] != DYN_TELEPORT:
-				world += global_position
-			n.global_position = world
-			n.basis = Basis.from_euler(Vector3(p["roll"], p["roll"] * 0.7, 0.0)) \
-					.scaled(Vector3.ONE * (sys["model_scale"] * emitter_scale))
+	var base: String = sys["base"]
+	var cap: int = maxi(int(sys["max_particles"]), 1)
+	for u in urls:
+		var mesh: Mesh = ParticleFx.model_mesh(base, str(u))
+		if mesh == null:
+			continue
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = mesh
+		mm.instance_count = cap
+		mm.visible_instance_count = 0
+		var mi := MultiMeshInstance3D.new()
+		mi.multimesh = mm
+		mi.custom_aabb = AABB(Vector3.ONE * -5000.0, Vector3.ONE * 10000.0)
+		add_child(mi)
+		_models.append(mi)
 
-# "model:/models/kibble01" -> data/gltf/models/kibble01.gltf
-func _load_model(url: String) -> Node3D:
-	var rel := "data/gltf/" + url.trim_prefix("model:/") + ".gltf"
-	if _meshes.has(rel):
-		var proto = _meshes[rel]
-		return null if proto == null else (proto as Node3D).duplicate()
-	var path: String = str(sys["base"]).path_join(rel)
-	if not FileAccess.file_exists(path):
-		_meshes[rel] = null
-		return null
-	var doc := GLTFDocument.new()
-	var state := GLTFState.new()
-	if doc.append_from_file(path, state) != OK:
-		_meshes[rel] = null
-		return null
-	var node := doc.generate_scene(state)
-	_meshes[rel] = node
-	return null if node == null else (node as Node3D).duplicate()
+
+func _draw_models() -> void:
+	if _models.is_empty():
+		return
+	var n := _models.size()
+	var counts: Array = []
+	counts.resize(n)
+	counts.fill(0)
+	var scale: float = float(sys["model_scale"]) * emitter_scale
+	var org := global_position
+	var world_space: bool = (not sys["fixed"]) or sys["dyn_class"] == DYN_TELEPORT
+	for p in _live:
+		var b: int = int(p.get("sn", 0)) % n
+		var mm: MultiMesh = (_models[b] as MultiMeshInstance3D).multimesh
+		var k: int = counts[b]
+		if k >= mm.instance_count:
+			continue
+		var roll: float = p["roll"]
+		var basis := Basis.from_euler(Vector3(roll, roll * 0.7, 0.0)) \
+				.scaled(Vector3.ONE * scale)
+		var at: Vector3 = p["pos"]
+		if not world_space:
+			at += org
+		mm.set_instance_transform(k, Transform3D(basis, at - org))
+		counts[b] = k + 1
+	for b in n:
+		(_models[b] as MultiMeshInstance3D).multimesh.visible_instance_count = counts[b]
+
+
+# "model:/models/kibble01" -> data/gltf/models/kibble01.gltf. Caches the mesh and
+# the model's bounds radius -- FcModel+0x3c, which FcParticleDrawModel folds into
+# its Size() (flux @ 0x100520c0: size = scale x max model radius).
+static func model_mesh(base: String, url: String) -> Mesh:
+	if _model_meshes.has(url):
+		return _model_meshes[url]
+	var mesh: Mesh = null
+	var path: String = base.path_join("data/gltf/" + url.trim_prefix("model:/") + ".gltf")
+	if FileAccess.file_exists(path):
+		var doc := GLTFDocument.new()
+		var state := GLTFState.new()
+		if doc.append_from_file(path, state) == OK:
+			var node := doc.generate_scene(state)
+			if node != null:
+				for mi in node.find_children("*", "MeshInstance3D", true, false):
+					mesh = (mi as MeshInstance3D).mesh
+					break
+				node.queue_free()
+	_model_meshes[url] = mesh
+	var rad := 0.0
+	if mesh != null:
+		var ab: AABB = mesh.get_aabb()
+		for k in 8:
+			var c := ab.position + Vector3(
+					ab.size.x * float(k & 1), ab.size.y * float((k >> 1) & 1),
+					ab.size.z * float((k >> 2) & 1))
+			rad = maxf(rad, c.length())
+	_model_radii[url] = rad
+	return mesh
+
+
+static func model_radius(base: String, url: String) -> float:
+	ParticleFx.model_mesh(base, url)
+	return float(_model_radii.get(url, 0.0))
 
 static func _random_unit() -> Vector3:
 	# FnRandom::UnitVector
@@ -979,13 +1125,14 @@ func _light_dir() -> Vector3:
 # left behind in world space (fixed_particles = 0) hold absolute positions
 func shift_world(offset: Vector3) -> void:
 	if sys.get("dyn_class", "") == DYN_TELEPORT:
-		# icTeleportDynamics keeps its motes world-fixed by adding the
-		# graphics delta-focus every tick (Update @ 0x100c91f0) and feeds the
-		# same movement into its spawn logic (+0x40 accumulator) -- the fold
-		# offset IS our delta focus
-		_tp_accum += offset
+		# icTeleportDynamics::Update's `pos += GraphicsDeltaFocus` IS this fold
+		# (flux @ 0x1004f100 sets +0x78 = old focus - new focus, so the engine's
+		# delta-focus is exactly -offset). Carry _tp_prev_cam along with it, so
+		# that next frame's `cam_pos - _tp_prev_cam` still measures the
+		# viewpoint's REAL movement and not the origin's.
+		_tp_prev_cam -= offset
 		for p in _live:
-			p["pos"] -= offset
+			p["pos"] = (p["pos"] as Vector3) - offset
 		return
 	if sys.get("fixed", true):
 		return

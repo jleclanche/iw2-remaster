@@ -176,24 +176,152 @@ singleton per its flags. The Junkyard's ambient junk is exactly this:
 Romera. Act 0's Hoffer's Gap gets no script sphere -- its ambient rocks come
 from the belt above, and the *authored* junk sims are separate props.
 
-## 6. The particle field (kibble)
+## 6. The particle field: `icTeleportDynamics` (the ambient dust)
 
 While a field is active, its `particle_field` node hangs off the solar system
 (`AddParticleField @ 0x1004e7c0` / `RemoveParticleField @ 0x1004e8b0`).
 Asteroids: `sfx/kibble/node` -- `FcParticleEmitterNode` +
 **`icTeleportDynamics`** (ctor `0x100c8870`; `min/max_birth_rate` 20-40,
-`max_particles` 300, `angular_velocity` 250 deg/s stored /57.2958 =
-`_DAT_10119924`) + `FcParticleDrawModel` (kibble01..04 at scale 0.4). Debris:
-`sfx/cornflake_field/node` -- same dynamics, 200 particles, `icCornflakeDraw`
-hull plates.
+`max_particles` 300, no `angular_velocity` at all) + `FcParticleDrawModel`
+(kibble01..04 at scale 0.4). Debris: `sfx/cornflake_field/node` -- same
+dynamics, 200 particles, `angular_velocity` 250 deg/s, `icCornflakeDraw` hull
+plates.
 
-**Not recovered:** `icTeleportDynamics::Simulate` (the actual teleport rule)
-and the emitter volume. `icDebrisField`'s ctor pokes 40.0 into the node's
-`+0x5c/+0x60/+0x64` (`FUN_10046c00`), which we read as a 40 m scale/extent;
-our implementation wraps the motes through a 40 m half-extent box around the
-camera and marks that as reconstruction, not extraction. Our debris motes
-also reuse the kibble chunk models -- the cornflake sprite renderer lives in
-`particle_fx.gd` and is not reachable from a MultiMesh (stand-in, flagged).
+This section was previously all inference and it was **wrong in both of the
+ways the player noticed**. The real class, raw-disassembled (Ghidra dropped
+both methods): **`Spawn @ 0x100c8c80`**, **`Update @ 0x100c91f0`**, emit
+position helper **`@ 0x100c94b0`**.
+
+### 6.1 The motes are world-fixed. That is the parallax.
+
+Particle coordinates are stored **relative to the viewpoint**, and `Update`
+begins by adding the world's graphics delta-focus to every one of them:
+
+```
+pos   += FcWorld::GraphicsDeltaFocus()      ; world+0x78,  0x100c92d6..0x100c92f4
+angle += dt * spin                          ; +0x28 += dt * +0x2c
+```
+
+and `FcWorld::SetGraphicsFocus` (flux `@ 0x1004f100`) sets
+
+```
+world+0x78 = previous_focus - current_focus         (both doubles, stored f32)
+```
+
+so the delta-focus is **minus the viewpoint's movement this frame**. Adding it
+to a viewpoint-relative coordinate every frame is exactly the fold that holds a
+mote **still in the world** while the shell re-centres on the camera. They are
+not attached to the camera; you fly through them and they stream past. (Our old
+"40 m box wrapped around the camera" was a reconstruction and it is the reason
+they did not move when the player moved.)
+
+Corroboration from the emit path, which resolves the sign independently: the
+spawn cone is built about **`-normalize(delta_focus)`** (the three `fchs` at
+`0x100c95a5/0x100c95b6/0x100c95ce`) = **+direction of travel**. Dust is only
+ever laid down in front of you. Under the opposite sign convention both the
+fold and the cone would be backwards; under this one, both are right.
+
+### 6.2 The near cull is 5 m. That is the cockpit rule.
+
+The rest of `Update` is one keep-test per mote (`0x100c9323..0x100c9337`):
+
+```
+keep iff   near^2 <= |pos|^2 <= R^2      near = _DAT_1011cf68 = 5.0
+```
+
+Anything **closer than 5 metres to the viewpoint is killed**, in `Update`,
+**before the draw**. There is no separate near pass and no depth trick: the
+cockpit hangs off the camera, and the original simply refuses to keep a mote
+you have got that close to. A mote you fly into is dead the frame it comes
+within 5 m, so it is never drawn inside the cockpit. That is the number; we use
+it, not a fudge.
+
+### 6.3 The shell radius R is a pixel, not a distance
+
+`Spawn` recomputes R every frame (`0x100c8ce2..0x100c8d0f`):
+
+```
+R = 0.5 (_DAT_10117738) * max(screen_w, screen_h) * draw->Size()
+      screen_w/h = FcGraphicsEngine +0x13c / +0x140
+      Size()     = vtable slot +0x24 of the draw object (emitter+0x18)
+```
+
+| draw class | `Size()` | value |
+|---|---|---|
+| `FcParticleDrawModel` | flux `@ 0x10068070` returns `+0x34`, which `OnPropertiesChanged` (flux `@ 0x100520c0`) sets to `scale * MAX model radius` | kibble: 0.4 x the kibble0N bounds radius (~1.31 m for our glTF) |
+| `icCornflakeDraw` | iwar2 `@ 0x100bc440`: `fld [0x1011cb8c]; ret` -- a **hardcoded constant** | **2.828427** |
+
+Invert `FcGraphicsEngine::PixelRadius` (flux `@ 0x10014150`, `pixels =
+max(w,h) * radius / distance`) and **R is precisely the distance at which a mote
+of radius `Size()/2` covers one pixel**. The shell reaches exactly as far as a
+mote is still visible, and it is *resolution-dependent by design*. At 1920x1080
+that is **R = 1254 m for kibble and 2715 m for cornflakes** (measured, harness
+below) -- not the 40 m we had guessed, which is why 200 motes used to be packed
+into the cockpit instead of spread over a couple of kilometres.
+
+### 6.4 The rest of Spawn, verbatim
+
+Runs only when the dynamics is enabled (`+0x2c`) and `|dt| >= 1e-6`. `d` =
+delta-focus, `v = d/dt`, `speed = |v|`:
+
+1. **Movement gate** (`+0x40`, `0x100c8d6b..0x100c8dc1`): accumulate `d`; if
+   `|accum|^2 < 10.0` (`_DAT_101190c0`) **return, emitting nothing**. So dust is
+   only laid down once the viewpoint has travelled `sqrt(10) = 3.16 m` since the
+   last emission -- **a parked ship grows no dust at all**; the field is fed by
+   flying through it. Then the accumulator is reset to zero.
+2. **Birth rate** (`0x100c8e34`): when the countdown `+0x30` reaches 0, roll
+   `FnRandom::CentreWeighted(min_birth_rate, max_birth_rate)` into both `+0x3c`
+   (the rate) and `+0x30` (a countdown of that many particles), and zero the
+   fractional accumulator `+0x38`.
+3. **Flush** (`0x100c8e9b`): if the viewpoint moved further than the shell in
+   one frame (`|d|^2 > R^2`), every mote is stale -- **drop them all**. Then:
+   - `|d|^2 >= 4.0e6` (`_DAT_1011cfb4`, i.e. **> 2 km**: an LDS/capsule jump) ->
+     return, and let the field regrow at the birth rate;
+   - otherwise (a short hop) -> spawn count = `max_particles`: the whole shell
+     refills in one tick.
+   (Our old note guessed "refills instantly for jumps under 2 km". That half was
+   right, by luck.)
+4. **Swing burst** (`0x100c8f37..0x100c8f77`): otherwise, take the viewpoint's
+   forward vector (`FcGraphicsEngine+0xf8`), `rate = acos(dot(fwd, prev_fwd))/dt`
+   against the previous frame's; if it exceeds **PI/2 rad/s** (`_DAT_1011a454`,
+   90 deg/s) the spawn count is **0.4 x max_particles** (`_DAT_10117558`) -- a
+   fast pan swings in frustum the shell has never filled, so it bursts. Else the
+   count is the ordinary `birth_rate * dt`.
+5. **Emit** while the fractional accumulator `>= 1`, decrementing it and the
+   birth-rate countdown. Position (`@ 0x100c94b0`), relative to the viewpoint:
+   - `speed < 1.0` m/s -> `FnRandom::UnitVector()`, distance **uniform in
+     `[0.1 R, R]`** (`_DAT_101184b0` = 0.1) -- an isotropic shell you can drift
+     around inside;
+   - otherwise -> `FnRandom::ConeVector(0.2 rad)` (`0x3e4ccccd`) about the
+     direction of travel, at distance **exactly R**.
+
+   Spin is **uniform in `[0, angular_velocity]`** (`0x100c9094..0x100c90f1`),
+   initial roll `rand * 2*PI` (`_DAT_10119f94`), and the particle's **own
+   velocity is set to zero** (`0x100c911e`): a mote never moves under its own
+   power, it only holds still while the world slides past. Since `kibble/
+   dynamics.ini` declares no `angular_velocity`, **asteroid kibble does not
+   tumble at all** (the ctor leaves `+0x28` zero); only cornflakes (250 deg/s)
+   do.
+
+The particle lists at `+0x5c` are a vector-of-vectors, **one list per draw
+model** (walked per list by the draw dispatcher `@ 0x100c8950`); the per-list
+cap `+0x68` is `(pool_block_size / 52) >> 4` and the list count is
+`ceil(max_particles / cap)` (`0x100c8ac0`). That is allocator bucketing only --
+the total is `max_particles`.
+
+### 6.5 The 40.0 is a node SCALE, not an emitter box
+
+`icDebrisField`'s ctor ends (`0x10046c80..0x10046c92`) with
+`node->+0x5c/+0x60/+0x64 = 40.0`, and `FiSceneNode::SetScale` (flux
+`@ 0x1004dd80`) writes **exactly those three offsets** -- it is
+`SetScale(40,40,40)` on the emitter node, not a 40 m emission volume.
+`FcParticleEmitterNode::Prepare` (flux `@ 0xe1e20`) pushes the node's world
+scale into the emitter (`FiParticleEmitter::SetTransform`, `+0x30..+0x38`), and
+`icCornflakeDraw` reads it straight back (`0x100bc6cd`: `[draw+0x14]->[+0x38]`)
+and multiplies by **0.075** (`_DAT_1011cb98`) -- so the debris field's
+cornflakes are **3.0 m hull plates** (halved to 1.5 m half-extents at
+`0x100bc76b`). `icAsteroidField`'s ctor (`0x1003f8c0`) pokes nothing, so the
+kibble node keeps scale 1 and its chunk models draw at their authored 0.4.
 
 ## 7. What we implemented (`game/scripts/fields.gd`)
 
@@ -222,8 +350,24 @@ also reuse the kibble chunk models -- the cornflake sprite renderer lives in
   apply the bolt's aged damage to the rock's 5000 hp bare hull, and a dead
   rock explodes (`ExplosionFx.boom`) and returns to the pool, as per the
   `0x100648b0` override.
-- Kibble: MultiMesh motes with the authored counts (300/200), tumble rate
-  (250 deg/s) and model scale (0.4), teleport-wrapped in the 40 m box.
+- Dust: `fields.gd` only **attaches and detaches** the `particle_field` node
+  (`AddParticleField` / `RemoveParticleField`), spawning a `ParticleFx` for
+  `ini:/sfx/kibble/node` or `ini:/sfx/cornflake_field/node` on the activation
+  edge, with the debris node scaled by **40** (the `SetScale` its ctor does).
+  `icTeleportDynamics` itself lives in `particle_fx.gd` and runs section 6
+  verbatim: world-fixed motes in scene coordinates (re-anchored by
+  `main._fold_motion`'s `shift_world`, which is precisely the engine's
+  `pos += GraphicsDeltaFocus`), the resolution-derived shell R, the 5 m near
+  cull, the sqrt(10) m movement gate, the 2 km flush rule, the 90 deg/s swing
+  burst, the 0.2 rad forward cone, spin uniform in `[0, angular_velocity]`.
+  Cornflakes now draw as the real tumbling lit 3 m hull plates (the previous
+  code drew kibble chunks as a stand-in for them). Kibble draws through one
+  MultiMesh per model -- which is also how the engine buckets them.
+
+  **This replaces the old 40 m camera-locked wrap box, which was the bug**: it
+  was reconstruction, not extraction, and it got both halves wrong. Motes were
+  glued to the camera (no parallax) and packed within 40 m of the eye (inside
+  the cockpit). Both symptoms in task #64 come from that one guess.
 
 **Live-rock cap: `count` per field = 100 asteroids + 50 debris = 150 rocks
 maximum**, ever, exactly the original's budget (live + pooled = count). Rocks
@@ -236,12 +380,29 @@ recovered numbers -- `field-count` (100/50), `field-shell` (all spawns inside
 debris motionless), `field-cull` (deactivate + teleport reaps every rock).
 20/20 ALL PASS; `--campcheck`, `--jumpcheck`, headless boot all clean.
 
+The dust was verified with a throwaway headless harness that drives
+`_update_teleport` through main's every-frame origin fold, at 1920x1080:
+
+```
+system=cornflake_field max_particles=200 spin=250.0 draw=icCornflakeDraw scale=40.0
+shell radius R = 2715.3 m
+flew 500 m in 120 frames; 64 motes seen, 6 live at peak
+  max drift of a mote's WORLD position     : 0.0068 m     <- world-anchored
+  max drift of a mote's CAMERA-REL position: 325.0 m      <- parallax
+  flew STRAIGHT AT a mote: culled at 5.47 m               <- the cockpit rule
+system=kibble max_particles=300 spin=0.0 draw=FcParticleDrawModel scale=1.0
+shell radius R = 1253.9 m
+  max drift of a mote's WORLD position     : 0.0021 m
+  max drift of a mote's CAMERA-REL position: 408.3 m
+  flew STRAIGHT AT a mote: culled at 6.54 m
+```
+
+(The centimetre of world drift is float32 round-off over 120 folds at km range;
+the engine stores these coordinates in float32 and folds them the same way.)
+
 ## UNKNOWNs
 
-- The spawn cone's fore/aft sign (one unresolved negation; we spawn ahead).
 - `max_clump_size` (+0x40): registered, never read by recovered code.
-- `icTeleportDynamics::Simulate` (kibble teleport rule) and the kibble
-  emitter volume; 40 m box is inferred from the icDebrisField ctor pokes.
 - Which world position block (+0x38 vs +0x60) is camera vs player reference
   in the zone/cull tests; we use the player for both.
 - Whether field rocks entered the original's contact list (the
@@ -249,3 +410,16 @@ debris motionless), `field-cull` (deactivate + teleport reaps every rock).
 - `FiSim::Radius()` for a template: we take the avatar bounds sphere (the
   authored width/height/length match the LOD0 AABB); the engine's exact
   derivation (hull vs avatar vs dims) was not chased.
+- The `icCornflakeDraw::Size()` constant is 2.828427 (= 2 sqrt 2) and the plate
+  it actually draws is 3.0 m (0.075 x scale 40). Why the shell radius uses a
+  hardcoded near-miss of the real plate size rather than reading the emitter is
+  UNKNOWN -- but both numbers are extracted, not guessed.
+- `FcModel`'s radius (+0x3c), which `FcParticleDrawModel::Size()` multiplies by
+  `scale`: we take the glTF bounds-sphere radius. The engine's exact derivation
+  was not chased (same caveat as `FiSim::Radius()` above).
+
+RESOLVED since the last pass: the spawn cone's fore/aft sign (it is AHEAD --
+`Spawn` negates the delta-focus at `0x100c95a5`, and the delta-focus is itself
+`old - new`, so the cone opens along the direction of travel), and
+`icTeleportDynamics`'s update rule and emitter volume (section 6 -- there is no
+emitter volume; the 40.0 was a node scale).

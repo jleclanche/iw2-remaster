@@ -119,8 +119,7 @@ class Field extends RefCounted:
 	var built := false          # pool is created on first activation
 	var active := false         # activation refcount as a per-frame bool
 	var tpl_radius: Dictionary = {}   # template path -> bounds radius
-	var dust: MultiMeshInstance3D = null
-	var dust_axes: Array = []
+	var dust: ParticleFx = null       # the attached particle_field node
 	func _init(s: Dictionary) -> void:
 		spec = s
 
@@ -257,7 +256,8 @@ func _field_tick(f: Field, on: bool, vel: Vector3, delta: float) -> void:
 	while budget > 0 and not f.pool.is_empty():
 		_spawn(f, vel, speed)
 		budget -= 1
-	_dust_tick(f, delta)
+	# the dust ticks itself: it is a scene node hanging off the solar system
+	# (AddParticleField), not something the field drives
 	_collide(f, speed)
 	_bolts(f, delta)
 
@@ -414,89 +414,45 @@ func _segment_hits(a: Vector3, b: Vector3, c: Vector3, r: float) -> bool:
 	return (a + ab * t).distance_squared_to(c) < r * r
 
 
-# --- the particle field (kibble dust) ----------------------------------------
+# --- the particle field (kibble / cornflake dust) -----------------------------
 
-# While a field is active the original attaches its particle_field scene node
-# to the solar system (ini:/sfx/kibble/node for asteroids, cornflake_field for
-# debris; icSolarSystem::AddParticleField @ 0x1004e7c0). The dynamics class is
-# icTeleportDynamics (@ 0x100c8870: min/max_birth_rate +0x1c/+0x20,
-# max_particles +0x24, angular_velocity +0x28 stored /57.2958): particles that
-# never die and get re-seeded around the camera. Its Simulate was not
-# decompiled, so the wrap rule below (re-enter the opposite face of a box
-# around the camera) is our reconstruction, marked as such; the counts and the
-# tumble rate are the authored numbers. Box half-extent 40 m is inferred from
-# icDebrisField's ctor poking 40.0 into the node (+0x5c/+0x60/+0x64,
-# FUN_10046c00 @ 0x10046c00) -- NOT confirmed for the asteroid kibble.
-const DUST_HALF := 40.0
-
-func _make_dust(f: Field) -> void:
-	# ParticleFx.system reads data/ini/sfx/<name>/{node,emitter,dynamics,draw}
-	var sys: Dictionary = ParticleFx.system(main._base(),
-		str(f.spec["particle_field"]))
-	var count: int = int(sys.get("max_particles", 0))
-	if count <= 0:
-		return
-	var mesh: Mesh = null
-	var scale: float = float(sys.get("model_scale", 1.0))
-	var models: Array = sys.get("models", [])
-	# icCornflakeDraw (debris) draws hull-plate sprites; that renderer lives in
-	# particle_fx.gd and is not reachable for a MultiMesh, so BOTH fields use
-	# the kibble chunk models here. Stand-in, noted in docs/fields.md.
-	if models.is_empty():
-		models = ["model:/models/kibble01"]
-		scale = 0.4
-	var stem := str(models[0]).get_file()
-	var proto: Node3D = main._load_gltf("data/gltf/models/%s.gltf" % stem)
-	if proto != null:
-		for mi in proto.find_children("*", "MeshInstance3D", true, false):
-			mesh = (mi as MeshInstance3D).mesh
-			break
-		proto.queue_free()
-	if mesh == null:
-		return
-	var mm := MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = mesh
-	mm.instance_count = count
-	f.dust = MultiMeshInstance3D.new()
-	f.dust.multimesh = mm
-	f.dust.visible = false
-	add_child(f.dust)
-	f.dust_axes = []
-	for i in count:
-		f.dust_axes.append(_unit_vector())
-		mm.set_instance_transform(i, Transform3D(
-			Basis(Quaternion(_unit_vector(), randf() * TAU)).scaled(Vector3.ONE * scale),
-			Vector3(randf_range(-DUST_HALF, DUST_HALF),
-				randf_range(-DUST_HALF, DUST_HALF),
-				randf_range(-DUST_HALF, DUST_HALF))))
-	f.set_meta("dust_spin", deg_to_rad(float(sys.get("spin", 0.0))))
-
+# While a field is active the original hangs its particle_field scene node off
+# the solar system (icSolarSystem::AddParticleField @ 0x1004e7c0 /
+# RemoveParticleField @ 0x1004e8b0): ini:/sfx/kibble/node for asteroids,
+# ini:/sfx/cornflake_field/node for debris. Attaching and detaching that node is
+# ALL this file does -- the dust itself is icTeleportDynamics, and it lives in
+# particle_fx.gd (Spawn @ 0x100c8c80, Update @ 0x100c91f0).
+#
+# The two things worth repeating here, because they were the two bugs:
+#   * the motes are WORLD-FIXED. Update adds FcWorld::GraphicsDeltaFocus to
+#     every mote every frame, which holds it still in the world while the shell
+#     re-centres on the viewpoint. They are not attached to the camera and they
+#     stream past you as you fly. (Our old 40 m camera-locked wrap box was a
+#     reconstruction, and it was wrong on both counts.)
+#   * they are culled inside 5 m of the viewpoint (0x1011cf68), which is what
+#     keeps them out of the cockpit. There is no separate near pass: the
+#     original just kills any mote you get that close to.
+#
+# The 40.0 that icDebrisField's ctor pokes into the node (0x10046c00) is a
+# SetScale, not an emitter box -- FiSceneNode::SetScale writes exactly
+# +0x5c/+0x60/+0x64 (flux @ 0x1004dd80). icCornflakeDraw reads that scale back
+# off the emitter and multiplies it by 0.075 (0x100bc6cd..0x100bc6df), so the
+# debris field's cornflakes are 3 m hull plates. icAsteroidField's ctor
+# (0x1003f8c0) pokes nothing, so the kibble node keeps scale 1 and its chunk
+# models draw at their authored 0.4.
+const DEBRIS_NODE_SCALE := 40.0
 
 func _show_dust(f: Field, on: bool) -> void:
-	if on and f.dust == null:
-		_make_dust(f)
-	if f.dust != null:
-		f.dust.visible = on
-
-
-func _dust_tick(f: Field, delta: float) -> void:
-	if f.dust == null or not f.dust.visible or main.cam == null:
+	var have: bool = f.dust != null and is_instance_valid(f.dust)
+	if on == have:
 		return
-	var mm := f.dust.multimesh
-	var centre: Vector3 = main.cam.global_position
-	var spin: float = float(f.get_meta("dust_spin", 0.0)) * delta
-	for i in mm.instance_count:
-		var xf := mm.get_instance_transform(i)
-		var p := xf.origin - centre
-		# wrap into the box: a mote that falls off one face re-enters opposite
-		p.x = wrapf(p.x, -DUST_HALF, DUST_HALF)
-		p.y = wrapf(p.y, -DUST_HALF, DUST_HALF)
-		p.z = wrapf(p.z, -DUST_HALF, DUST_HALF)
-		xf.origin = centre + p
-		if spin != 0.0:
-			xf.basis = xf.basis.rotated(f.dust_axes[i], spin)
-		mm.set_instance_transform(i, xf)
+	if not on:
+		if have:
+			f.dust.queue_free()
+		f.dust = null
+		return
+	f.dust = ParticleFx.spawn(self, main._base(), str(f.spec["particle_field"]),
+		Transform3D.IDENTITY, DEBRIS_NODE_SCALE if f == debris else 1.0)
 
 
 # --- randoms -----------------------------------------------------------------

@@ -271,6 +271,17 @@ ignored:
   keys** -- copy-paste from the base class; nothing reads them.
 - **`icTeleportDynamics`** (`0x100c86d0`, 4 props): `min/max_birth_rate`,
   `max_particles`, `angular_velocity`. Used by `kibble`, `cornflake_field`.
+  **Fully recovered -- see docs/fields.md section 6** (`Spawn @ 0x100c8c80`,
+  `Update @ 0x100c91f0`, both raw-disassembled; Ghidra dropped them). In one
+  line: a shell of **world-fixed** motes that re-centres on the viewpoint every
+  frame (`pos += FcWorld::GraphicsDeltaFocus`), radius `0.5 x max(screen w,h) x
+  draw->Size()` = the distance at which a mote is one pixel, **culled inside
+  5 m** (`0x1011cf68`) and outside the shell, emitted only after the viewpoint
+  has moved sqrt(10) m, inside a 0.2 rad cone about the direction of travel.
+  The motes carry **no velocity of their own** -- they hold still and you fly
+  through them. `angular_velocity` is a spin rate rolled **uniform in
+  `[0, angular_velocity]`**; `kibble/dynamics.ini` omits it, so asteroid kibble
+  does not tumble at all.
 - **`icAlienSwarmDynamics`** (`0x100b9fe0`, 10 props): adds `min/max_death_age`,
   a single `speed`, and an int `time`.
 
@@ -299,11 +310,20 @@ quantity.
 **`FcParticleDrawModel`** (`0x10051db0`): `model_urls[]` (string array, `0x18`)
 and `scale` (float, `0x24`). Used by `kibble` and `asteroid_impact`; the models
 are `model:/models/kibble01..04`, which we already extract to
-`data/gltf/models/`.
+`data/gltf/models/`. `OnPropertiesChanged` (`flux @ 0x100520c0`) also caches a
+derived **`Size()` at `+0x34` = `scale x MAX(model radius)`** over the loaded
+models (each `FcModel`'s radius is its `+0x3c`), returned by vtable slot `+0x24`
+(`flux @ 0x10068070`). Particles are kept in **one list per model** and drawn
+per list, which is why we batch them one MultiMesh per model.
 
 **`icCornflakeDraw`** (`iwar2.dll @ 0x100bc340`): **no properties at all** --
 its property map is the base map, which is why `cornflakes/draw.ini` has an
-empty `[Properties]` block. It hardcodes two textures,
+empty `[Properties]` block. Its `Size()` (vtable `+0x24`, `@ 0x100bc440`) is a
+bare `fld [0x1011cb8c]; ret` -- the **constant 2.828427**, ignoring the emitter.
+The plate it actually draws is sized off the **emitter's world scale** instead
+(`0x100bc6cd`: `[draw+0x14]->[+0x38] x 0.075`), so the debris field's
+`SetScale(40)` (icDebrisField ctor `@ 0x10046c00`) makes its cornflakes **3.0 m**
+across. It hardcodes two textures,
 `texture:/images/sfx/cornflakes` and `texture:/images/sfx/cornflake_masks`
 (strings at `0x1016178c` / `0x101617ac`). Both are 128x128 and are a **4x4
 atlas of sixteen torn hull-plate silhouettes**: the first sheet is the lit
