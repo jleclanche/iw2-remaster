@@ -1971,8 +1971,28 @@ sweeping target-designator lines, the counter-scrolling UCP barcode, the
 noise-table comms static with its 3 s scan band; `iiHUDMenuElement`'s shared
 frame `FUN_100f1920` and the 0.5 s scanline open-flash; the ring sprite drawn
 1:1 with **no scaling**, `_DAT_1011e038=63` being a layout radius only) is in
-`docs/hud_elements.md` and `docs/hud.md`, all with addresses. Resolutions of
-former entries here:
+`docs/hud_elements.md` and `docs/hud.md`, all with addresses.
+
+- **The MFD mode is a class-icon lookup, not a "is it a ship" test.**
+  `FUN_10102930` -> `FUN_10102e30` uses mode 2 (the 3D EO render) **only** when
+  `FUN_100e86d0(sim) == 0` -- a category-2 ship of ship-type 0. Every sim with a
+  non-zero class glyph -- a waypoint (cat 4), an L-point (cat 5), a
+  **station/base (cat 0xe)**, a typed ship -- is redirected to **mode 3
+  NAVIGATION LOCK**, drawn with its class glyph and **no 3D render**. Captions:
+  `hud_target_target_mode` = "TARGET LOCK", `hud_target_waypoint_mode` =
+  "NAVIGATION LOCK", second line "WAYPOINT". So a locked base is a navigation
+  lock with an icon, never a video render.
+- **Palette check (a divergence report):** in the shipped `iwar2.dll` the
+  reticle ring is green `DAT_10176038` **unconditionally** (`0x100f6352`), nav
+  contacts are green and a neutral base is gold (`FUN_100e8530`); amber
+  `DAT_10174fb0` is confined to the MFD text, the weapon/shield bars and the
+  reticle gauge icons; and the magenta/purple `DAT_10174180` is initialised but
+  **never read anywhere in the image**. A reference showing an amber ring with a
+  purple nav crosshair therefore does not match the shipped DLL -- it is either a
+  different build/mod or a recolour path not present in this binary. **UNRESOLVED
+  pending the reference's provenance.**
+
+Resolutions of former entries here:
 
 - **The three reticle gauges** live at `icHUD+0xe8` (not icPlayerPilot),
   writer `FUN_100e07f0`: thermometer 0x3E = total heat x 0.75 / threshold

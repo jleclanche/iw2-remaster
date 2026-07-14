@@ -324,6 +324,19 @@ size, the caption, the icon/model and the overlay effect. Mode select is
 | 4 | cargo pod, category 0xc (`FUN_10102a40`) | `hud_target_ucp_scan_mode` = **"UCP SCAN"** | 128x176 | pod + contents + **barcode bands** (`FUN_10101f00`) |
 | 5 | comms (`FUN_10102fd0`) | `hud_target_comm_channel_open` | 128x176 | portrait + **static + scan band** (`FUN_10102490`) |
 
+**Mode 2 is NOT "is it a ship".** `FUN_10102930` sends cat 4 -> mode 3 and cat
+0xc -> mode 4; **everything else goes to `FUN_10102e30`, which stays mode 2 only
+when `FUN_100e86d0(sim) == 0`** and otherwise redirects to mode 3. `FUN_100e86d0`
+@ `0x100e86d0` returns the class glyph by category (`DAT_1011db64 = [0,54,0,47,47,
+60,0,0,0,0,0,58,...]`), by ship-type for cat 2 (`DAT_1011dbe4 = [0,54,55,57,56,
+58,56,0]`), or 58/59/61 for cat 0xe stations. So the 3D EO render (mode 2) is used
+**only for a category-2 ship of ship-type 0**; a **station/base (cat 0xe)**, an
+L-point, a waypoint or a typed ship all draw as **mode 3 NAVIGATION LOCK** with a
+class icon and line 2 = "WAYPOINT". This is why a targeted base shows the nav
+icon, not a render — the remaster had been forcing mode 2 for any non-lpoint/
+waypoint. See `docs/hud.md` "NAVIGATION LOCK vs TARGET LOCK" for the full trace,
+the caption strings and the palette (nav = green `DAT_10176038`, not purple).
+
 Shared behaviour (the master Draw):
 
 - **Block sizes**: `FUN_10103e00` restores 128x176 (`DAT_1011e238/23c`);

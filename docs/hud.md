@@ -619,3 +619,122 @@ is gone. The exceptions are all inside the carousels:
    velocity readout at `0x100f7076` is one call; we draw a second line under it.
 
 ---
+
+# NAVIGATION LOCK vs TARGET LOCK, and the flight-HUD palette (nav-lock pass)
+
+A side-by-side pass on the flight HUD. Task: a base set as the nav / BASE-RETURN
+target was drawing "TARGET LOCK" with a 3D EO render, where the original shows
+"NAVIGATION LOCK" with a class icon and no render, plus questions about colour,
+the shield-panel position and the weapon panel. Everything below is out of
+`iwar2.dll` (image base `0x10000000`), verified against a windowed screenshot
+(`--hudnavshot`, `build/shots/hud_navlock.png`).
+
+## The MFD mode is chosen by the CLASS-ICON lookup, not "is it a ship"
+
+Mode select is `FUN_10102930` @ `0x10102930` (in the decomp). It keys off the
+target sim's category (`sim+0x194`):
+
+- `== 4` (waypoint) -> `FUN_10102f70` = **mode 3** (NAVIGATION LOCK)
+- `== 0xc` (cargo pod) -> `FUN_10102a40` = **mode 4** (UCP SCAN)
+- **else** -> `FUN_10102e30` = the mode-2 handler, **which is not unconditional**.
+
+`FUN_10102e30` @ `0x10102e30` first calls `FUN_100e86d0(sim)`; **if that returns a
+non-zero class-icon sprite it redirects to `FUN_10102f70` (mode 3)** and only
+stays mode 2 (the 3D EO render) when the lookup returns 0.
+
+`FUN_100e86d0` @ `0x100e86d0` (in the decomp):
+
+    cat = sim+0x194
+    if cat == 2:    return DAT_1011dbe4[ sim+0x218 ]      # ship-type table
+    if cat != 0xe:  return DAT_1011db64[ cat ]            # category table
+    # cat == 0xe (icStation): 0x3a/0x3b by sub-type +0x1e4, 0x3d in [0x14..0x19]
+
+Both tables read out of the PE (`tools/ghidra/readconst.py`):
+
+    DAT_1011db64 (category): [0, 54, 0, 47, 47, 60, 0,0,0,0, 0, 58, 0,0,0,0]
+    DAT_1011dbe4 (ship-type): [0, 54, 55, 57, 56, 58, 56, 0]
+
+So the **only** targets that get the 3D render (mode 2, icon 0) are a bare
+category-2 ship of ship-type 0. Waypoints (cat 4 -> 47), L-points (cat 5 -> 60),
+category-0xb objects (-> 58), **stations/bases (cat 0xe -> 58/59/61)** and
+typed ships (types 1-6 -> 54..58) all return a non-zero glyph and therefore draw
+as **mode 3 NAVIGATION LOCK with a class icon and no EO feed.**
+
+That is the fix: **a targeted base is a station (cat 0xe), so it is a NAVIGATION
+LOCK, not a TARGET LOCK.** The remaster was routing everything that was not an
+lpoint/waypoint to mode 2. `hud.gd::_draw_mfd` now routes `station`/`gunstar`/
+`base` (as well as `lpoint`/`waypoint`) to mode 3, with the class icon from
+`_nav_class_icon` (lpoint 60, waypoint 47, station 58).
+
+### The captions are literal
+
+Loaded once by `FUN_100e8470(0x12, 0x10163bd0, &DAT_10176330)` from the 18-key
+table at `0x10163bd0`; resolved through `data/text/hud.csv`:
+
+| key | text |
+|---|---|
+| `hud_target_target_mode` (mode 2) | **"TARGET LOCK"** |
+| `hud_target_waypoint_mode` (mode 3) | **"NAVIGATION LOCK"** |
+| `hud_target_waypoint_details` (mode 3 line 2) | **"WAYPOINT"** |
+| `hud_target_no_target` / `hud_target_ucp_scan_mode` | "NO TARGET" / "UCP SCAN" |
+
+Line 2 is `hud_target_waypoint_details` = "WAYPOINT" for **every** mode-3 lock —
+so a base reads "LUCRECIA'S BASE / WAYPOINT", exactly the reference.
+
+## Colour: the flight HUD is GREEN chrome + amber accents, NOT amber + purple
+
+The side-by-side description called the reticle/lock/orb chrome "amber" and the
+nav elements "purple". **The shipped `iwar2.dll` does neither.** Recovered:
+
+- **Reticle ring** = `DAT_10176038` **green** (0.5,1.0,0). `FUN_100f6340` @
+  `0x100f6352` sets the active colour to `DAT_10176038` and blits ring sprite 90
+  under it (`0x100f635f`), unconditionally — there is no per-lock recolour of the
+  ring.
+- **Nav / waypoint contact colour** = `DAT_10176038` **green**. `FUN_100e8530` @
+  `0x100e8530` (the one place a contact's colour is chosen): unidentified -> gold
+  `DAT_10174f60`; **category 4 or 5 -> green `DAT_10176038`** (lines with
+  `param_2[0x65]==4||==5`); `+0x199` -> light blue `DAT_10174190`; else the IFF
+  table `DAT_10174f70` (0/1 red, **2 neutral gold**, 3/4 blue). A base is IFF 2 ->
+  **gold**, not purple.
+- **The magenta/purple** `DAT_10174180` (0.9,0.1,1.0) **is initialised
+  (`0x100e6...`) but never read anywhere in the image** — no draw site reinterprets
+  it. There is no purple nav crosshair in this binary.
+- **Amber `DAT_10174fb0`** (1.0,0.592,0) is used, deliberately and narrowly, for:
+  the MFD's two text lines; the weapon charge rows (`FUN_101053e0`); the shield
+  rows; and the reticle's status/gauge icons — the four autopilot mode glyphs
+  (`FUN_100f93c0(...,&DAT_10174fb0,0xb)` @ `0x100f7... 187938`), the
+  system-down icon (`187978`), the thermometer/lightning/bulb gauges
+  (`188006`) and the incoming-missile pip. The LDS/capsule/team icons and the
+  contacts orb are green (`188022`..`188048`, `&DAT_10176038`).
+
+So the remaster's palette already matches `iwar2.dll`: green chrome, amber
+sub-gauges, gold/green/red/blue contacts. **We did not recolour the ring amber or
+add a purple crosshair — that would contradict the binary and the PRIME RULE.**
+If the reference the divergence list was drawn from shows amber/purple, it is a
+different build/mod from `build/bin/iwar2.dll`; that stays for the human to
+reconcile. The one thing that *was* missing — the centred **nav class glyph**
+(47/60) an in-reticle waypoint/L-point lock draws at the target position
+(`FUN_100f6340` @ `0x100f64ec`, cat 4/5 branch, in the contact colour) — is now
+drawn (`_target_nav_icon`).
+
+## Shield panel position: under the ORB
+
+`flux.ini [icHUD]` draw order is `... OrbRadar(7), Shields(8), Clock(9) ...`, all
+right-anchored, so the stack top-to-bottom on the right is **ORB -> SHIELD STATUS
+-> CLOCK**. The remaster anchored the shields at the screen margin (on top of the
+ORB). `hud.gd` now threads a right-hand cursor `_rhs_y`: `_draw_orb` seeds it at
+the ORB's bottom, `_draw_shield_panel` draws there and advances it, and the clock
+lands under the shields. With no `icPlayerLDA` fitted the shields block is
+height 0 and the clock falls straight under the ORB (matches `FUN_100e2540(this,
+112, 0)`).
+
+## Weapon panel: one row per GROUP
+
+`icHUDWeapons` heads the block with the selected weapon **group's** own localised
+name and draws one row per `iiWeapon` member. A linked "QUAD LIGHT PBC" is ONE
+group -> ONE row. The remaster was splitting `main.weapon_name` on `"/"` to draw a
+two-row "L-PBC / R-PBC" pair — invented. `hud.gd` now always draws the single
+group row (`rows := 1`). The group NAME comes from `weapons.group_label()`
+(main.gd owns the fit); the "L-PBC / R-PBC" string is only a pre-fit placeholder.
+
+---

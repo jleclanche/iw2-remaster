@@ -242,6 +242,7 @@ func log_msg(text: String, color := GREEN) -> void:
 
 func _process(d: float) -> void:
 	_menushot_step(d)
+	_navshot_step(d)
 	_menu_spin_step(d)
 	_menu_process(d)
 	if flash_time > 0.0:
@@ -289,9 +290,14 @@ func _draw() -> void:
 			_mfd_fx.active = false
 		_draw_mfd()
 	_draw_weapon_panel()
-	# icHUDShipStatus lives on the additive _status_fx layer (see _ready)
-	_draw_shield_panel()
+	# icHUDShipStatus lives on the additive _status_fx layer (see _ready).
+	# The right-hand block stack is, top to bottom, icHUDOrbRadar (7),
+	# icHUDShields (8) and icHUDClock (9) in flux.ini [icHUD] draw order, so the
+	# SHIELD STATUS panel sits directly under the contacts ORB and the clock under
+	# that. _draw_orb seeds _rhs_y; the shields and clock stack off it.
 	_draw_orb()
+	_draw_shield_panel()
+	_draw_clock(_rhs_y)
 	_draw_contact_list()
 	_draw_log(c)
 	_draw_console()
@@ -873,6 +879,16 @@ func _reticle_turn_arrow(c: Vector2) -> void:
 	# FUN_100f6340 switches to the off-reticle indicator once the target sits
 	# further than RET_R + RET_SLOP from the centre.
 	if not behind and p.distance_to(c) < RET_R + RET_SLOP:
+		# In-reticle marker (FUN_100f6340 @ 0x100f64ec): for a NAVIGATION lock
+		# (target category 4 waypoint / 5 L-point) the master draws the class
+		# glyph -- sprite 47 (waypoint) or 60 (L-point) -- AT the target's screen
+		# position, in the contact colour, filling the ring when the nav point is
+		# dead ahead. A base/station lock shows its class glyph the same way. This
+		# is the "crosshair in the ring" of a nav lock; ships instead get the
+		# FUN_100f76a0 lead/box marker, which our bracket pass already draws.
+		var nav := _target_nav_icon()
+		if nav != 0:
+			_spr(p, nav, col)
 		return
 	var local: Vector3 = cam.global_transform.affine_inverse() * world
 	var dir2 := Vector2(local.x, -local.y)
@@ -888,6 +904,22 @@ func _target_color() -> Color:
 		var t: Dictionary = main.objects[main.target_idx]
 		return GREEN if t["category"] == "lpoint" else YELLOW
 	return YELLOW
+
+func _target_nav_icon() -> int:
+	# The in-reticle class glyph for the current target if it is a NAVIGATION
+	# lock (mode-3 category), else 0. Same table as the MFD's class icon
+	# (FUN_100e86d0): waypoint 47, L-point 60, station/base 58.
+	# Only categories 4 (waypoint) and 5 (L-point) are drawn as the centred class
+	# glyph by the reticle master (0x100f64ec). A station lock uses FUN_100f76a0's
+	# box marker instead, whose atlas cell we have not verified, so we leave a
+	# station to the corner-bracket pass rather than invent a centred glyph.
+	if main.target_ai != null and is_instance_valid(main.target_ai):
+		return 0
+	if main.target_idx >= 0:
+		var cat := str(main.objects[main.target_idx]["category"])
+		if cat == "lpoint" or cat == "waypoint":
+			return _nav_class_icon(cat)
+	return 0
 
 # @element icHUDReticle
 #
@@ -1760,6 +1792,62 @@ func _menushot_step(d: float) -> void:
 	menu_focus = MENU_SHOTS[_mshot_i]
 	menu_time = 8.4
 
+# --- dev: `-- --hudnavshot` ---------------------------------------------------
+# Verifies the NAVIGATION-LOCK flight HUD: spawns beside Lucrecia's Base (the
+# menu's "Lucrecia's Base (Nebula)" entry -> start_in_system with the base as the
+# arrival entity), targets the base, faces it, writes one windowed PNG and quits.
+# Run WITHOUT --headless so the viewport actually renders.
+var _navshot_i := -2
+var _navshot_t := 0.0
+
+func _navshot_step(d: float) -> void:
+	if _navshot_i == -2:
+		_navshot_i = 0 if "--hudnavshot" in OS.get_cmdline_user_args() else -3
+		return
+	if _navshot_i == -3:
+		return
+	_navshot_t += d
+	match _navshot_i:
+		0:
+			if _navshot_t < 0.4:
+				return
+			# leave the front end and arrive beside the base
+			main.menu.launched = true
+			main.menu.visible = false
+			main.start_in_system("hoffers_wake", "Lucrecia's Base")
+			# target the base and point the nose at it so the nav lock sits in
+			# the reticle
+			main.ship.global_position = Vector3.ZERO
+			main.ship.velocity = Vector3.ZERO
+			for i in main.objects.size():
+				if str(main.objects[i]["name"]) == "Lucrecia's Base":
+					main.target_idx = i
+					var o: Dictionary = main.objects[i]
+					var to := Vector3(o["x"] - main.px, o["y"] - main.py,
+							o["z"] - main.pz).normalized()
+					main.ship.global_transform = Transform3D(Basis.IDENTITY,
+							Vector3.ZERO).looking_at(to * 1000.0, Vector3.UP)
+					break
+			main.cam_mode = 1
+			main._apply_view()
+			_navshot_i = 1
+			_navshot_t = 0.0
+		1:
+			if _navshot_t < 1.2:
+				return
+			var img := get_viewport().get_texture().get_image()
+			var dir: String = main._base().path_join("build/shots")
+			DirAccess.make_dir_recursive_absolute(dir)
+			img.save_png(dir.path_join("hud_navlock.png"))
+			print("HUDNAVSHOT hud_navlock.png  target=",
+					main.objects[main.target_idx]["name"] if main.target_idx >= 0
+					else "<none>")
+			_navshot_i = 2
+			_navshot_t = 0.0
+		2:
+			if _navshot_t > 0.2:
+				get_tree().quit()
+
 # --- world-space target marks -----------------------------------------------
 # @element icHUDBrackets
 #   Draw = FUN_100e37f0. Corner brackets on the projected bounding box, the
@@ -1912,7 +2000,18 @@ func _draw_mfd() -> void:
 		tname = str(t["name"])
 		ttype = str(t.get("type", ""))
 		match tcat:
-			"lpoint", "waypoint":
+			# The engine's mode select (FUN_10102930 -> FUN_10102e30) does NOT key
+			# on "is this a ship". It routes to mode 3 (NAVIGATION LOCK, class
+			# icon, no video feed) for any sim whose class-icon lookup
+			# FUN_100e86d0 (0x100e86d0) returns non-zero: category 4 waypoint (47),
+			# category 5 L-point (60), category 0xb (58) and, via the icStation
+			# branch, category 0xe stations (58/59/61). Only a sim that returns
+			# icon 0 -- a bare category-2 ship of ship-type 0 -- falls through to
+			# mode 2 and gets the 3D EO render. A base you have targeted (or set as
+			# BASE RETURN) is a station, so it is a NAVIGATION LOCK with a nav
+			# icon, NOT a model render. That is the bug the user saw: we were
+			# forcing mode 2 for everything that was not an lpoint/waypoint.
+			"lpoint", "waypoint", "station", "gunstar", "base":
 				mode = 3
 			"cargo":
 				mode = 4
@@ -1931,13 +2030,20 @@ func _draw_mfd() -> void:
 			# L-point), then its overlay (0x2f/0x3c -> 0x2e), then roundel 0x33
 			_panel(r.position, r.size, "NAVIGATION LOCK")
 			target_view.enabled = false
-			var icon := 60 if tcat == "lpoint" else 47
+			# The class icon (FUN_100e86d0): L-point 60, waypoint 47, station /
+			# gunstar 58. The short-mode class-icon draw in the master (icHUD-
+			# TargetMFD, "height == 48" branch) puts the glyph at (16,32), then an
+			# overlay (only for the 47/60 waypoint-family glyphs -> sprite 0x2e =
+			# 46), then roundel 0x33 = 51 on top -- all in the contact's colour.
+			var icon := _nav_class_icon(tcat)
 			var icol := _contact_color(false, tcat)
 			var ip := r.position + Vector2(16, 32)
 			_spr(ip, icon, icol)
-			_spr(ip, 46, icol)
+			if icon == 47 or icon == 60:
+				_spr(ip, 46, icol)
 			_spr(ip, 51, icol)
-			# line 2 is hud_target_waypoint_details = "WAYPOINT" for both
+			# line 2 is hud_target_waypoint_details = "WAYPOINT" for every mode-3
+			# lock, whether the target is a waypoint, an L-point or a base.
 			_mfd_text(r, tname.to_upper(), "WAYPOINT", 32.0)
 		_:
 			var caption := "UCP SCAN" if mode == 4 else "TARGET LOCK"
@@ -1971,6 +2077,20 @@ func _draw_mfd() -> void:
 			_mfd_text(r, tname.to_upper(), ttype.to_upper(),
 					32.0 if mode == 2 else 0.0)
 	_ea = 1.0
+
+func _nav_class_icon(cat: String) -> int:
+	# FUN_100e86d0 @ 0x100e86d0, the MFD/short-block class-icon lookup, keyed by
+	# the sim's category (+0x194). Category table DAT_1011db64: 4/waypoint -> 47,
+	# 5/L-point -> 60, 0xb -> 58; the icStation branch (category 0xe) returns
+	# 58/59/61 by station sub-type, of which the common value is 58. Our string
+	# categories map onto those cases.
+	match cat:
+		"lpoint":
+			return 60
+		"station", "gunstar", "base":
+			return 58
+		_:
+			return 47
 
 func _mfd_fallback_cube(feed: Rect2) -> void:
 	# no avatar for this contact: our placeholder wireframe box (not from the
@@ -2056,7 +2176,14 @@ func _draw_weapon_panel() -> void:
 	# Each row is a lightning sprite at x=16, a 14-segment charge bar at x=36
 	# (length 74), and a "%d%%" readout. Header is the weapon's own name.
 	_ea = _flash_a("icHUDWeapons")
-	var rows: int = 2 if "/" in str(main.weapon_name) else 1
+	# icHUDWeapons draws one row per iiWeapon in the SELECTED GROUP, headed by the
+	# group's own localised name uppercased. A "QUAD LIGHT PBC" is ONE linked
+	# group -> ONE row, not one row per barrel and not a left/right pair. We used
+	# to split main.weapon_name on "/" and draw two rows ("L-PBC" / "R-PBC"),
+	# which is invented -- the original shows the single group name. The group's
+	# real name comes from weapons.group_label(); main.weapon_name's "L-PBC /
+	# R-PBC" is only a pre-fit placeholder (see the note in the final report).
+	var rows := 1
 	# One extra row for the selected secondary (missile magazine). The engine's
 	# element shows the SELECTED GROUP's weapons one per row; the ammo-count
 	# readout text is ours (the magazine row's exact layout was not recovered).
@@ -2260,8 +2387,13 @@ func _orb_contacts() -> Array:
 			_contact_color(a.behavior == "attack", "traffic"), a == main.target_ai])
 	return out
 
+# The next free Y on the right-hand block stack. icHUDOrbRadar seeds it; the
+# shields panel and the clock advance down from it, so they never overlap the
+# ORB (they used to: the shields were anchored at MARGIN, on top of it).
+var _rhs_y := 0.0
+
 func _draw_orb() -> void:
-	# right-hand block stack: ORB, then the clock beneath it
+	# right-hand block stack: ORB, then SHIELD STATUS, then the clock beneath
 	_ea = _flash_a("icHUDOrbRadar")
 	var size := Vector2(PANEL_W, 128.0)
 	var pos := Vector2(_right_x(size.x), MARGIN)
@@ -2309,7 +2441,7 @@ func _draw_orb() -> void:
 		else:
 			draw_circle(tip, 2.6, _dim(col))
 	_ea = 1.0  # the clock is its own element (icHUDClock); it never flashes
-	_draw_clock(_advance(pos.y, size.y))
+	_rhs_y = _advance(pos.y, size.y)  # next block (shields) stacks here
 
 func _draw_clock(y: float) -> void:
 	# icHUDClock (FUN_100e40f0): centiseconds since leaving port, formatted
@@ -2360,10 +2492,14 @@ func _draw_shield_panel() -> void:
 		return
 	var rows: Array = main.sys.shield_rows()
 	if rows.is_empty():
-		return   # height 0: the panel vanishes
+		return   # height 0: the panel vanishes (FUN_100e2540(this,112,0))
 	_ea = _flash_a("icHUDShields")
 	var size := Vector2(PANEL_W, ROW_PITCH * rows.size() + HDR_H)
-	var pos := Vector2(_right_x(PANEL_W), MARGIN)
+	# right-anchored, DIRECTLY UNDER the ORB (the flux.ini stack order is
+	# OrbRadar -> Shields -> Clock). _rhs_y is the ORB's bottom, seeded by
+	# _draw_orb; we advance it so the clock lands under the shields.
+	var pos := Vector2(_right_x(PANEL_W), _rhs_y)
+	_rhs_y = _advance(pos.y, size.y)
 	_panel(pos, size, "SHIELD STATUS")
 	var flash: bool = fposmod(float(Time.get_ticks_msec()) * 0.001, 1.0) < 0.5
 	for i in rows.size():
