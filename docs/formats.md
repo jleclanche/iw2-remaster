@@ -112,6 +112,31 @@ refers to that order (lights don't count). Null names carry semantics:
 - Coordinates: LW left-handed +Z-forward → glTF: negate Z on positions,
   flip winding, quat = Ry(−H)·Rx(−P)·Rz(B).
 
+### Setup scenes: a sim's attach nulls (`extract_sims.py`)
+A sim INI names **two** LWS scenes and they do different jobs. `[Avatar]` is
+what gets drawn. **`[SetupScene]` is the mount table**: its plain nulls are the
+hardpoints the INI's `[Subsims] null[i]` keys refer to, and the avatar is never
+searched for those names. `FiSim::Load` (`flux.dll 0x100bbc00`) loads the setup
+scene into an `FcScene` and, per subsim, calls `FiSim::PlaceSubsimAtNull`
+(`0x100bcb10`) → `FcScene::FindElement` (`0x1002bfb0`, depth-first name match),
+taking the null's **frame-0 local** transform (no parent chain) into
+`FcSubsim::SetPosition`/`SetOrientation`.
+
+- Only plain nulls can ever match: `LoadObject` nodes are keyed by their `.lwo`
+  path, and a tagged null keeps its angle brackets in the name `FindElement`
+  compares (`<scene name=...>` etc.), so neither can equal a bare INI name.
+- No `null[i]`, or one naming a null the scene has not got → `SetPosition` is
+  never called and the subsim keeps `FcSubsim`'s ctor defaults (`0x100c2190`):
+  **the hull origin, identity orientation.** This is common and deliberate
+  (7 of the tug's 23 subsims). Do not "fix" it.
+- A `[SetupScene]` that fails to load aborts `FiSim::Load` entirely — the sim
+  does not load. Three shipped sims name a setup scene that isn't in the
+  resources at all.
+- `extract_sims.py` reproduces the lookup and stores the result per mount in
+  `ships.json`/`stations.json` as `attach_pos` + `attach_hpb` (raw LW axes;
+  negate Z for the engine), absent exactly when the original leaves the subsim
+  at the origin. See `docs/combat.md` §5.1.
+
 ## Channel expression language (`ship_effects.gd`)
 Channel strings on `<anim>`/sound nodes are expressions:
 `NAME[?|#][+|-]mods`, space-separated terms combined with max().

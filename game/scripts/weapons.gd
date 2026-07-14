@@ -24,12 +24,25 @@ const MUZZLES := [Vector3(0, 17.5, -8), Vector3(0, -6, -30)]
 # frame (pbc / light_pbc / heavy_pbc / antimatter_pbc / long_range_pbc /
 # assault_cannon / the beams -- all identical).
 #
-# In our assembled hull the mount null has been collapsed into the fitted gun
-# model that hangs off it, so the gun node already carries the (0, 10) part:
-# the tug's two standard PBCs sit at ship-local (0, 19.75, 0) and
-# (0, -23.5, 0), and their bodies span y 16.8..21.8 / -25.6..-20.6 about that.
-# What is left to add is the barrel run, LW +z 4.5 = 4.5 m along the gun's own
-# forward axis, which lands the muzzle on the barrel line inside the gun.
+# We do NOT compute that composition. We fire from the fitted gun MODEL instead:
+# the tug's two standard PBCs are drawn at ship-local (0, 19.75, 0) and
+# (0, -23.5, 0), their bodies spanning y 16.8..21.8 / -25.6..-20.6 about that,
+# and we add the barrel run -- 4.5 m along the gun's own forward axis -- to land
+# the muzzle on the barrel line. See set_muzzles().
+#
+# WHY, given ship_systems.gd now has the real attach nulls (bug #68): because
+# the null is NOT the muzzle, and the rest of the composition does not yet add
+# up. The tug's upper `pbc` mounts at setup-scene null `upper_pbc_prefitted`,
+# ship-local (0, 19.400, -9.100) -- but the gun MODEL is drawn 9.1 m aft of it,
+# at (0, 19.75, 0). Feeding that null through the formula above with pbc.ini's
+# (0,10,4.5)/(0,-90,0) and our LWS hpb->basis convention puts the muzzle at
+# (0, 14.90, -19.10): 4.85 m BELOW the drawn gun body and 14.6 m ahead of it.
+# Bolts would visibly leave empty space. So either the hpb convention for
+# `fire_position_rotation` (a rotation triple in the weapon's own frame) is not
+# the scene-node one, or the guns baked into the tug's avatar are not where the
+# engine's subsim-mounted gun avatars (pbc.ini has its own [Avatar],
+# avatars/standard_pbc/setup_effects) actually sit. UNRESOLVED -- and until it
+# is, the model-based muzzle is the one that demonstrably lands on the barrels.
 const MUZZLE_FORWARD := 4.5
 
 # The bolt's DIRECTION is the gun's own axis, not the hull's. iiGun::
@@ -83,13 +96,20 @@ func set_muzzles(model: Node3D) -> void:
 	# Fire from the avatar's actual guns.
 	#
 	# This used to skip every MeshInstance3D, on the theory that the mounts were
-	# bare nulls -- and on the tug it therefore found NOTHING, silently fell back
-	# to the hardcoded MUZZLES constants, and put both bolts near the hull origin
-	# instead of in the cannons. The assembled hull has no separate mount nulls
-	# left: setup_prefitted.gltf carries the fitted guns themselves
-	# (`...\Pbc_cannons\RTO\LOD0_RTO_StandardPBC_T_lwo`), each one sitting at the
-	# null the ship INI mounted it at. The gun node IS the subsim transform that
-	# FindWorldMuzzle reads, so that is what we take -- mesh or not.
+	# bare nulls on the avatar -- and on the tug it therefore found NOTHING,
+	# silently fell back to the hardcoded MUZZLES constants, and put both bolts
+	# near the hull origin instead of in the cannons.
+	#
+	# The avatar was never going to have them. A ship ini's `null[i]` names a
+	# node of its [SetupScene] (sims/ships/common_setups/tug.lws), which is a
+	# DIFFERENT scene from its [Avatar]; FiSim::Load (flux.dll 0x100bbc00) loads
+	# both and only ever searches the setup scene for mount names. That is bug
+	# #68, and ship_systems.gd now resolves those nulls properly.
+	#
+	# It does not make the muzzle fall out, though -- see MUZZLE_FORWARD. So we
+	# still take the fitted gun models: setup_prefitted.gltf carries the guns
+	# themselves (`...\Pbc_cannons\RTO\LOD0_RTO_StandardPBC_T_lwo`), and firing
+	# from them is what demonstrably puts the bolts down the barrels.
 	#
 	# The weapon latch (same `Pbc_cannons` path, so it matches "pbc" too) and the
 	# bolt avatar are not guns.
@@ -181,6 +201,15 @@ func group_label() -> String:
 	return "%s x%d" % [label, n] if bool(g["linked"]) else label
 
 ## The muzzles the selected group fires from: each member's own attach null.
+##
+## In practice this always returns []: `_null_nodes` is keyed by AVATAR node
+## name, and no avatar carries a node named after a ship ini's `null[i]` -- the
+## mount names live in the [SetupScene], not the avatar (bug #68; see
+## set_muzzles). So fire() always falls through to `muzzle_nodes`, the fitted
+## gun models, which is what we want it to do until the muzzle composition in
+## MUZZLE_FORWARD is settled. Kept, not deleted: this is the shape the proper
+## per-member lookup takes once the muzzle offset is understood, and it already
+## does the right thing for any hull whose avatar DOES name its mounts.
 func _group_muzzles() -> Array:
 	var g := current_group()
 	if g.is_empty():

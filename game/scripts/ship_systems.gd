@@ -194,6 +194,7 @@ var hull := 1000.0
 var hull_max := 1000.0
 var armour := 50.0
 var systems: Array = []       # every mounted subsim, in INI order
+var null_pos: Dictionary = {} # this hull's [SetupScene] attach nulls: name -> ship-local pos
 var ldas: Array = []          # the subset that can deflect (icPlayerLDA/icAILDA)
 var aggressors: Array = []    # the subset that are icAggressorShield
 var programs := 0             # icCPU +0x80, the fitted-program bitmask
@@ -313,9 +314,30 @@ static func for_ship(ini_path: String) -> ShipSystems:
 	# `min_brightness`. `brightness` (+0x1b8) is the network-replicated value and
 	# is unreachable on the local path; see brightness() below.
 	s.min_brightness = float(props.get("min_brightness", 0))
-	for mount in (rec.get("subsims", []) as Array):
-		s._mount(str(mount.get("template", "")), str(mount.get("attach_null", "")))
+	var mounts: Array = rec.get("subsims", [])
+	# Where each of this hull's attach nulls is, before anything is mounted: the
+	# fitting screen (economy.gd `_cust_fit`) re-mounts a device onto the null
+	# name it inherits from the device it replaces, so the map has to outlive the
+	# mount that introduced it.
+	for mount: Dictionary in mounts:
+		var key := _null_name(mount)
+		if not key.is_empty() and mount.get("attach_pos") != null:
+			s.null_pos[key] = _attach_pos(mount)
+	for mount: Dictionary in mounts:
+		s._mount(str(mount.get("template", "")), _null_name(mount))
 	return s
+
+## The ini's `null[i]` for a mount. A mount without one carries a JSON null
+## here, not a missing key, so `.get(k, "")` would hand back `<null>`.
+static func _null_name(mount: Dictionary) -> String:
+	var an: Variant = mount.get("attach_null")
+	return str(an).to_lower() if an != null else ""
+
+## Where a subsim mounted at this null sits on the hull, in ship-local Godot
+## axes. LWS -> Godot negates Z, as the model exporter does (gltf_builder.py).
+static func _attach_pos(mount: Dictionary) -> Vector3:
+	var a: Array = mount["attach_pos"]
+	return Vector3(float(a[0]), float(a[1]), -float(a[2]))
 
 func _mount(template: String, attach_null: String) -> void:
 	var ini := read_ini(template)
@@ -337,7 +359,21 @@ func _mount(template: String, attach_null: String) -> void:
 		"heat_rate": float(props.get("heat_rate", 0)),
 		"repair_rate": float(props.get("repair_rate", 0)),
 		"min_eff": float(props.get("minimum_efficiency", 0)),
-		"pos": Vector3.ZERO,
+		# Where this subsim sits on the hull -- what picks the subsim nearest an
+		# impact, and what iiWeapon::FindWorldMuzzle fires from.
+		#
+		# FiSim::PlaceSubsimAtNull (flux.dll 0x100bcb10) places each subsim at the
+		# null named by the ini's `null[i]`, looked up in the scene named by
+		# [SetupScene] -- NOT in the avatar. It takes that null's frame-0 local
+		# transform and hands it to FcSubsim::SetPosition/SetOrientation.
+		# tools/iw2/extract_sims.py does the same lookup at extract time and writes
+		# the result to ships.json as `attach_pos`; null_pos is that, per hull.
+		#
+		# A mount with no `null[i]` (7 of the tug's 23) never reaches SetPosition
+		# and so keeps FcSubsim's ctor defaults (flux.dll 0x100c2190 zeroes
+		# +0x20..0x28): the hull origin. ZERO here is the original's behaviour, not
+		# a failed lookup.
+		"pos": null_pos.get(attach_null, Vector3.ZERO),
 		"efficiency": 1.0,
 		"usage": 0.0,
 		"destroyed": false,
@@ -427,21 +463,20 @@ func _group_of(cls: String, props: Dictionary) -> String:
 			return MOUNT_GROUP[t]
 	return ""
 
-func bind_model(model: Node3D) -> void:
-	# The engine mounts each subsim at the null named in the ship INI; that
-	# position is what picks the subsim nearest an impact. Nulls we cannot find
-	# stay at the hull origin, which is what an unnamed mount gets anyway.
-	if model == null:
-		return
-	var nulls: Dictionary = {}
-	for n in model.find_children("*", "Node3D", true, false):
-		nulls[str(n.name).to_lower()] = n
-	for sys in systems:
-		var key: String = str(sys["null"]).to_lower()
-		if key.is_empty() or not nulls.has(key):
-			continue
-		var node: Node3D = nulls[key]
-		sys["pos"] = model.global_transform.affine_inverse() * node.global_position
+## Hand the built hull model over. Deliberately does nothing to subsim
+## positions: those are already set, from the ini's [SetupScene] nulls, by
+## _mount() -- see _attach_pos.
+##
+## This used to scan the *avatar* for nodes named after the ini's `null[i]`
+## keys. It found nothing -- on any hull -- and so left every subsim at the hull
+## origin, which made apply_weapon_damage() distribute criticals as if the whole
+## ship were stacked at its centre (bug #68). Those names were never in the
+## avatar to begin with: FiSim::Load (flux.dll 0x100bbc00) loads [SetupScene]
+## and [Avatar] as two separate scenes, and only ever searches the *setup scene*
+## for mount names (PlaceSubsimAtNull 0x100bcb10). The avatar only draws the
+## ship. Kept because main.gd / ai_ship.gd hand us the model here.
+func bind_model(_model: Node3D) -> void:
+	pass
 
 # --- the damage chain ------------------------------------------------------
 

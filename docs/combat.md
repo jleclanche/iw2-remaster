@@ -193,9 +193,9 @@ N = max(2, int(subsim_count * criticals_per_impact))
 Then a loop of N iterations:
 
 - **the first** scans every subsim for the one whose mount position
-  (`iiShipSystem+0x20..0x28`, the TRI position, i.e. the model null it is
-  attached to) is nearest the impact point transformed into ship-local space,
-  and damages it at weight **1.0**;
+  (`FcSubsim+0x20..0x28`) is nearest the impact point transformed into
+  ship-local space, and damages it at weight **1.0** -- see 5.1 for where that
+  position comes from;
 - **each of the rest** picks a uniformly random subsim and damages it at weight
   **0.4** (`0x3ecccccd` at `0x1007427b`).
 
@@ -234,6 +234,66 @@ if (max_hit_points != 0 && !suppress) {
 It does not clamp and it does not destroy. **A subsim with `hit_points=0` in its
 INI cannot be damaged at all** -- which is exactly what the empty mountpoint
 templates (`subsims/mountpoints/*.ini`) are.
+
+### 5.1 Where a subsim sits on the hull: the attach null
+
+The nearest-subsim scan above is only as good as `FcSubsim+0x20..0x28`, so this
+is worth stating precisely. **The mount names in a ship INI do not refer to the
+avatar.** They name nodes of a *separate* scene.
+
+`FiSim::Load` (`flux.dll 0x100bbc00`) reads two scene references from the ship
+INI and treats them quite differently:
+
+- `[SetupScene] name=` -- loaded into a local `FcScene` (`FcScene::Load`). If it
+  fails to load, `FiSim::Load` returns false and the sim does not load at all.
+- `[Avatar] name=` -- loaded by `FcAvatarLoader` and handed to `AttachAvatar`.
+  **Never searched for mount names.** It only draws the ship.
+
+Then, for each `[Subsims] template[i]`, it reads the sibling key `null[i]` and
+calls
+
+```
+FiSim::PlaceSubsimAtNull(subsim, setup_scene, name)      flux.dll 0x100bcb10
+
+  if (subsim && name.length())
+    if (sNull *n = FcScene::FindElement(setup_scene, name))    0x1002bfb0
+      n->track.GetFrame(0.0, &pos, &quat, &scale)
+      subsim->SetPosition(pos)
+      subsim->SetOrientation(quat)
+```
+
+`FcScene::FindElement` / `FindElementRecursive` (`0x1002e140`) is a depth-first
+search of the scene's root list comparing node names for equality. `GetFrame(0.0)`
+is the null's **local** frame-0 transform -- `PlaceSubsimAtNull` never walks the
+parent chain. (In the shipped data every null a ship INI names is a scene root,
+so this never bites; `tools/iw2/extract_sims.py` counts the exceptions and finds
+none among ships.)
+
+So for the tug, `sims/ships/player/tug_prefitted.ini` names 16 nulls
+(`upper_pbc_prefitted`, `drive`, `lds`, `sensors`, `crew`, ...) and every one of
+them is a node of `sims/ships/common_setups/tug.lws` -- not of
+`avatars/tug_hull/setup_prefitted.lws`, which has none of them.
+
+**A subsim with no `null[i]` is genuinely at the hull origin.** With no name,
+`SetPosition` is never reached and the subsim keeps `FcSubsim`'s constructor
+defaults (`0x100c2190`: `+0x20..0x28 = 0`, `+0x2c = 1.0f`) -- position zero,
+identity orientation. Seven of the tug's 23 subsims are like this (powerplant,
+heatsink, accumulators, manoeuvre thrusters, passive sensors, autorepair, CPU) and
+sitting at the centre of the hull is correct for them, not a lookup failure.
+
+`extract_sims.py` performs the same lookup at extract time and writes the result
+into `ships.json` / `stations.json` as `attach_pos` (+ `attach_hpb`), absent
+exactly when the original would leave the subsim at the origin. Across all sims:
+**1443 mounts placed, 601 deliberately unnamed, 12 named-but-absent.** All 12 of
+those are shipped-data faults, not extraction faults:
+
+- `sims/ships/navy/comsec.ini`, `sims/stations/custom/gunstar.ini` and
+  `sims/multiplayer/test.ini` name a `[SetupScene]` that **is not in the shipped
+  resources at all** -- so `FcScene::Load` fails and `FiSim::Load` bails; these
+  sims never loaded in the original either.
+- `sims/stations/militaryoutpost.ini` mounts its two dockports on `dock_port01` /
+  `dock_port02`, but its scene only contains `dock_arm_dock01` / `dock_arm_dock02`.
+  Those two dockports sat at the station origin in the original.
 
 ---
 
@@ -588,6 +648,23 @@ Not recovered. **Do not fill these in with plausible values.**
   (and how `field_hold_time` gates it) is only half read. We implement the hood
   test and skip the second one, so our LDAs are slightly more permissive than
   the original's.
+- **The muzzle composition.** `iiWeapon::FindWorldMuzzle` (`iwar2.dll 0x1003da30`)
+  builds the muzzle as `FcSubsim::WorldPosition + M(q) * fire_position_translation`
+  (the translation is `iiWeapon+0x88..0x90`, gated on the flag at `+0xa0`), with
+  `q = fire_position_rotation * FcSubsim::WorldOrientation`. Both halves are now
+  in hand -- the subsim transform from the attach null (5.1), and the INI's
+  `fire_position_translation=(0,10,4.5)` / `fire_position_rotation=(0,-90,0)`,
+  identical for every player gun -- but composing them with our LWS `hpb`->basis
+  convention puts the tug's upper-PBC muzzle at ship-local `(0, 14.90, -19.10)`,
+  which is 4.85 m *below* the drawn gun body (it spans y 16.8..21.8) and 14.6 m
+  ahead of it. Something is still wrong: either `fire_position_rotation` is a
+  rotation triple in the weapon's own frame with a different convention from a
+  scene node's `hpb`, or the guns baked into the tug's avatar are not where the
+  engine's subsim-mounted gun avatars (`pbc.ini` has its own `[Avatar]`,
+  `avatars/standard_pbc/setup_effects`) actually sit -- note the avatar draws the
+  upper PBC at `(0, 19.75, 0)` while its attach null is at `(0, 19.400, -9.100)`,
+  9.1 m apart. Until this is settled `weapons.gd` fires from the fitted gun
+  models, which demonstrably lands the bolts on the barrels.
 - **`DoFinalExplosion` (`0x1007c990`)** -- what the explosion actually spawns.
 - **The `eDamageSource` enum** beyond 0 (weapon), 1 (shield-bypassing weapon)
   and 3 (heat). There is a log-event table at `DAT_1011bf14` indexed by it.

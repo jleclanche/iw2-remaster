@@ -591,6 +591,33 @@ The original player controls: Space fires the selected weapon, Backspace
 cycles secondaries, I quick-fires the LDSI magazine. Full write-up with the
 per-class property maps: `docs/combat.md` section 10.
 
+## 5c-0. A ship names TWO scenes, and the mounts are in the other one
+
+**Every subsim is mounted at a named null of the ship INI's `[SetupScene]`, not
+of its `[Avatar]`.** `FiSim::Load` (`flux.dll 0x100bbc00`) loads the two
+separately and only ever searches the **setup scene** for the `[Subsims]
+null[i]` names -- `FiSim::PlaceSubsimAtNull` (`0x100bcb10`) ->
+`FcScene::FindElement` (`0x1002bfb0`), taking the null's **frame-0 local**
+transform into `FcSubsim::SetPosition`/`SetOrientation`. **The avatar only draws
+the ship.** (This is why the tug's 16 mount names appear nowhere in
+`tug_hull/setup_prefitted.lws` or in the assembled model: they are nodes of
+`sims/ships/common_setups/tug.lws`.)
+
+That position is what the damage model distributes criticals from
+(`icShip::ApplyWeaponDamage 0x10073cf0` picks the subsim nearest the impact) and
+where a gun's bolts start (`iiWeapon::FindWorldMuzzle 0x1003da30`).
+
+A subsim whose INI gives it **no** `null[i]` genuinely sits at the hull origin:
+`PlaceSubsimAtNull` skips it and it keeps `FcSubsim`'s ctor defaults. Seven of
+the tug's 23 subsims are in that state **by design** -- that is not a lookup
+failure.
+
+Shipped-data faults, recorded so nobody "fixes" them: three sims
+(`ships/navy/comsec`, `stations/custom/gunstar`, `multiplayer/test`) name a
+`[SetupScene]` that is not in the resources at all, so `FiSim::Load` bails and
+they never loaded in the original; and `militaryoutpost.ini` mounts its
+dockports on `dock_port01/02` when its scene only has `dock_arm_dock01/02`.
+
 ## 5c-1. Where a bolt actually comes from, and which way it goes
 
 - **Muzzle**: `iiGun::Fire` (`0x100357e0`) calls `iiWeapon::FindWorldMuzzle`
