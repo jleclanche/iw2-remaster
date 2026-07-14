@@ -28,15 +28,80 @@ var muzzle_nodes: Array = []  # weapon-mount nulls found on the avatar
 var muzzle_fallback: Array = MUZZLES  # per-hull mounts (setup-scene nulls)
 var _mesh: Mesh
 
+# --- icWeaponLink: the primary fire groups -----------------------------------
+# @element icWeaponLink
+# ShipSystems.weapon_groups() is the recovered grouping (icLoadout::
+# CreateWeaponLinks 0x10096940 -> RemoveSingleInstancesOfWeapon -> DoLinkWeapons;
+# see ship_systems.gd for the addresses). This is the firing half: the selected
+# group is ONE entry in the player's cycle, and pulling the trigger fires every
+# member of it on the same frame -- which is exactly what iiWeapon::
+# AttemptToActivateWeapon 0x1003ccb0 does when it compares the selected id
+# against the weapon's LINK id instead of the weapon's own.
+#
+# On the tug this comes out as the game always presented it: the two `pbc`
+# subsims of tug_prefitted.ini carry the same INI name, so they are the one
+# link the hull has, and they fire as a pair. The assault cannon, the quad light
+# PBC and the mining laser are singles and cycle on their own.
+var groups: Array = []      # [{name, class, link_type, channel, members, linked}]
+var group_idx := 0          # icPlayerPilot +0x8c, over the channel-1 entries
+var _null_nodes: Dictionary = {}   # attach-null name (lower) -> Node3D
+
 func set_muzzles(model: Node3D) -> void:
 	# fire from the avatar's actual weapon nulls (pbc mounts / hardpoints)
 	muzzle_nodes.clear()
+	_null_nodes.clear()
 	for n in model.find_children("*", "Node3D", true, false):
+		_null_nodes[str(n.name).to_lower()] = n
 		var nm := str(n.name).to_lower()
 		if ("pbc" in nm or "hardpoint" in nm) and "bolt" not in nm \
 				and not (n is MeshInstance3D):
 			muzzle_nodes.append(n)
 	muzzle_nodes = muzzle_nodes.slice(0, 2)
+
+## Build the cycle from the fitted weapons. Channel 1 only: the secondaries
+## (beams, magazines) are missiles.gd's list.
+func build_groups(sys: ShipSystems) -> void:
+	groups.clear()
+	group_idx = 0
+	if sys == null:
+		return
+	for g: Dictionary in sys.weapon_groups():
+		if int(g["channel"]) == 1:
+			groups.append(g)
+
+func current_group() -> Dictionary:
+	if groups.is_empty():
+		return {}
+	return groups[clampi(group_idx, 0, groups.size() - 1)]
+
+## icPlayerPilot::GetNextWeapon 0x100b0590 / CycleWeapon 0x100b0b70 -- wrap round
+## the channel-1 entries.
+func cycle_group() -> Dictionary:
+	if groups.size() > 1:
+		group_idx = (group_idx + 1) % groups.size()
+	return current_group()
+
+func group_label() -> String:
+	var g := current_group()
+	if g.is_empty():
+		return ""
+	var n: int = (g["members"] as Array).size()
+	var label: String = str(g["name"]).to_upper()
+	return "%s x%d" % [label, n] if bool(g["linked"]) else label
+
+## The muzzles the selected group fires from: each member's own attach null.
+func _group_muzzles() -> Array:
+	var g := current_group()
+	if g.is_empty():
+		return []
+	var out: Array = []
+	for m: Dictionary in (g["members"] as Array):
+		if bool(m["destroyed"]) or float(m["efficiency"]) <= 0.0:
+			continue
+		var key: String = str(m["null"]).to_lower()
+		if _null_nodes.has(key) and is_instance_valid(_null_nodes[key]):
+			out.append(_null_nodes[key])
+	return out
 
 # the bolt's own avatar (avatars/standard_pbc_bolt/setup.lws) is an
 # icBeamAvatar streak textured with images/sfx/pbc_standard, not a box
@@ -58,7 +123,16 @@ func fire() -> void:
 	if main and main.weapon_disrupt_time > 0.0 and main.weapon_disrupt_full:
 		return
 	cooldown = refire
-	if not muzzle_nodes.is_empty():
+	# The selected fire group fires as one -- every member on the same frame.
+	# A group whose members' attach nulls are all on the avatar fires from them;
+	# otherwise we fall back to the hull's authored PBC mounts, which is what the
+	# tug's linked pair resolves to anyway.
+	var mz: Array = _group_muzzles()
+	if not mz.is_empty():
+		for n in mz:
+			_spawn_at(ship, (n as Node3D).global_position,
+					-ship.global_transform.basis.z, ship.velocity)
+	elif not muzzle_nodes.is_empty():
 		for n in muzzle_nodes:
 			if is_instance_valid(n):
 				_spawn_at(ship, (n as Node3D).global_position,

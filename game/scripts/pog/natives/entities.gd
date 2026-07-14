@@ -578,12 +578,14 @@ func _m_system_centre(_t, _a: Array) -> Variant:
 	var stars := _entities_of("star")
 	return stars[0] if not stars.is_empty() else null
 
-# @stub imapentity.SetMapVisibility
-# @stub imapentity.IsVisibleOnMap
+# @native imapentity.SetMapVisibility
+# @native imapentity.IsVisibleOnMap
 func _m_map_visibility(_t, a: Array) -> Variant:
-	# Recorded on the record. icHUDStarmap exists now (hud_screens.gd), so the
-	# 56 SetMapVisibility calls have a view to drive -- honoring the flag there
-	# is pending; the HUD contact list still shows everything in range.
+	# The flag lives on the record and icHUDStarmap's system view honours it
+	# (hud_screens.gd _draw_system): the 56 SetMapVisibility calls are how the
+	# missions hide stations, wrecks and beacons from the map until the plot
+	# reveals them. Map-scoped only -- a hidden entity still appears on sensors
+	# and in the contact list, which is what makes hiding it on the map useful.
 	var s = _sim(a[0])
 	if s == null or s.rec.is_empty():
 		return 1

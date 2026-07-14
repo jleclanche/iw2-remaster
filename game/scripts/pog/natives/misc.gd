@@ -660,3 +660,136 @@ const _BINDINGS := {
 	"imultiplay.serverappterminate": "_mp",
 	"imultiplay.clientisteamgame": "_mp",
 }
+
+
+# ---------------------------------------------------------------- input
+# @native input.KeyCombinations
+## "Which key is <action> bound to?" -- the act-0 tutorial's prompts want the
+## answer, and there are 12 calls, all in iact0mission10.
+##
+## RECOVERED, end to end:
+##
+##   input.dll @ 0x100011f0 registers the native; @ 0x10001210 it takes exactly
+##   ONE string (the engine action name, e.g. "icPlayerPilot.AutopilotDock") and
+##   returns ONE string, straight out of FcInputMapper::KeyString.
+##
+##   FcInputMapper::KeyString (flux.dll @ 0x1006ade0) looks the action up in the
+##   binding table, returns the id "key_text_undefined" when it is unbound, and
+##   otherwise walks up to FOUR bindings, joining them with the literal "+, +".
+##
+##   FcInputMapper::FormKeyString (flux.dll @ 0x1006ab00) builds each binding as
+##   a '+'-delimited token string:
+##       "[ " + [modifier ids...] + device id + " " + key id + "+ ]"
+##   with the modifier bits (flux.dll .rdata): 0x08 ctrl, 0x04 alt, 0x02 shift,
+##   0x80/0x40/0x20/0x10 shift1..4; and the device bits 0x10000 keyboard,
+##   0x20000 mouse, 0x40000 joystick.
+##
+##   FcLocalisedText::Field (flux.dll @ 0x10028d80) is what turns that into
+##   English: it SPLITS THE STRING ON '+', lowercases each token, looks it up in
+##   the localised text table, substitutes the value if it is there and emits the
+##   token literally if it is not. That is why "+, +" comes out as ", " and why
+##   the whole thing is a chain of ids rather than words.
+##
+## So: "[ +device_text_keyboard+ +key_text_f8+ ]" -> "[ Keyboard F8 ]".
+##
+## The bindings themselves are the shipped keymaps, which live in the INSTALL
+## (configs/default.ini and configs/keyboard_only.ini -- they are not mirrored
+## into data/ini). Format per docs/original.md 4b: a section per action, one
+## line per binding, "Device, Control[, inverse][, SHIFT|ALT]".
+##
+## UNKNOWN: "key_text_undefined" (flux.dll @ 0x101447b4), the id returned for an
+## unbound action, is ABSENT from the shipped text CSVs -- so the original would
+## print the literal string. We print nothing instead; a bare id in a tutorial
+## prompt is a shipped bug, not a behaviour worth reproducing.
+const KEYMAP_INI := "configs/default.ini"
+
+static var _keymap: Dictionary = {}      # action (lower) -> Array of binding rows
+static var _strings: Dictionary = {}     # lowercased id -> localised text
+
+static func _load_keymap(game_dir: String) -> void:
+	if not _keymap.is_empty():
+		return
+	var f := FileAccess.open(game_dir.path_join(KEYMAP_INI), FileAccess.READ)
+	if f == null:
+		return
+	var section := ""
+	while not f.eof_reached():
+		var line := f.get_line().strip_edges()
+		if line.is_empty() or line.begins_with(";"):
+			continue
+		if line.begins_with("[") and line.ends_with("]"):
+			section = line.substr(1, line.length() - 2).strip_edges().to_lower()
+			if not _keymap.has(section):
+				_keymap[section] = []
+			continue
+		if section.is_empty():
+			continue
+		var parts: Array = []
+		for p in line.split(","):
+			parts.append(str(p).strip_edges())
+		(_keymap[section] as Array).append(parts)
+
+static func _load_strings(base: String) -> void:
+	if not _strings.is_empty():
+		return
+	var f := FileAccess.open(base.path_join("data/json/strings.json"), FileAccess.READ)
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if parsed is Dictionary:
+		# the engine lowercases every token before it looks it up
+		# (FcInputMapper::LoadLocalisedTextKeyTable, flux @ 0x10070260, calls
+		# FcString::MakeLowerCase on each id), so we key on the lowercase form
+		for k: String in (parsed as Dictionary):
+			_strings[k.to_lower()] = str((parsed as Dictionary)[k])
+
+static func _key_text(id: String) -> String:
+	# FcLocalisedText::Field: a token that is not an id is emitted literally
+	return str(_strings.get(id.to_lower(), id))
+
+## One binding row -> "[ SHIFT - Keyboard M ]"
+static func _form_key_string(row: Array) -> String:
+	if row.size() < 2:
+		return ""
+	var device := str(row[0])
+	var control := str(row[1])
+	var mods: Array = []
+	for i in range(2, row.size()):
+		var m := str(row[i]).to_upper()
+		match m:
+			"SHIFT": mods.append(_key_text("modifier_text_shift"))
+			"ALT":   mods.append(_key_text("modifier_text_alt"))
+			"CTRL":  mods.append(_key_text("modifier_text_ctrl"))
+			"INVERSE": pass   # an axis flag, not a modifier
+	var dev_id := ""
+	var dl := device.to_lower()
+	if dl.begins_with("keyboard"):
+		dev_id = _key_text("device_text_keyboard")
+	elif dl.begins_with("mouse"):
+		dev_id = _key_text("device_text_mouse")
+	elif dl.begins_with("joystick"):
+		dev_id = _key_text("device_text_joystick")
+	else:
+		dev_id = device
+	var key := _key_text("key_text_" + control)
+	var out := "[ "
+	for m in mods:
+		out += "%s - " % m
+	out += "%s %s ]" % [dev_id, key]
+	return out
+
+## The native. `action` is the engine action name; the result is one string.
+static func key_combinations(base: String, game_dir: String, action: String) -> String:
+	_load_keymap(game_dir)
+	_load_strings(base)
+	var rows: Array = _keymap.get(action.strip_edges().to_lower(), [])
+	var parts: Array = []
+	for row: Array in rows:
+		var s := _form_key_string(row)
+		if not s.is_empty():
+			parts.append(s)
+		if parts.size() >= 4:   # FcInputMapper::KeyString walks at most four
+			break
+	# the "+, +" separator localises to ", " (the ',' token is not a text id, so
+	# FcLocalisedText::Field emits it literally between the two spaces)
+	return ", ".join(PackedStringArray(parts))

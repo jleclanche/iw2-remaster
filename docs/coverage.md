@@ -53,22 +53,29 @@ they are presentation."
 | function | calls | audit |
 |---|---:|---|
 | SetCullable | 342 | accurate: culling is Godot's problem |
-| AvatarSetChannel | 78 | **STALE**: "no equivalent" is no longer true -- ship_effects.gd IS the channel-expression rig. Routing these to `ShipEffects.exprs` would animate script-driven ships in cutscenes. Still cosmetic, but the reason is out of date |
-| AvatarAddChannel | 58 | same as AvatarSetChannel |
+| AvatarSetChannel | 78 | **IMPLEMENTED** (task #51/53): routed to ship_effects.gd, which is the channel rig. The script's named channels are injected into the same raw-input table the avatar's `<anim>` expressions read, so a script value simply wins over the ship-state value while it is set |
+| AvatarAddChannel | 58 | **IMPLEMENTED**, with AvatarSetChannel |
 | SetCollision | 52 | mostly cutscene staging; ships colliding during a staged cutscene would be visible. Worth a runtime check, not clearly a gap |
 | AddSubsim | 50 | **QUESTIONABLE**: "presentation" is too sweeping -- scripts add *working* subsims (act 3 fits the hyperspace tracker this way). Interacts with the iship.HasHyperSpaceTracker stub below |
 | FindSubsimByName | 24 | same concern as AddSubsim |
 | SetMass | 14 | accurate: handling tweaks, cosmetic |
-| AvatarRemoveChannel | 5 | see AvatarSetChannel |
+| AvatarRemoveChannel | 5 | **IMPLEMENTED**, with AvatarSetChannel |
+
+`sim.Create` on an `ini:/sims/weapons/*` path is also no longer a plain object:
+it routes through missiles.gd (`_create_weapon` in natives/world.gd), so
+iact2mission05's scripted LDSi burst -- create, PlaceAt on the Marauder group's
+leader, Kill -- actually detonates and scrambles their LDS drives, and
+iact2mission08 / iactthree's planted mines are real mines.
 
 ### imapentity -- 2 stubs, 57 call sites -- reason STALE
 
 Marker reason (entities.gd): "we have no system map view for it to change".
-**That was true when written and is false now**: icHUDStarmap is `@element`
-in hud_screens.gd (cluster + system views). SetMapVisibility (56 calls, 8
-packages) is how missions hide/reveal stations on that map; while the stub
-records `map_visible` on the record, nothing reads it. If the starmap draws
-station-level detail, honour the flag; flag for the hud_screens owner.
+**IMPLEMENTED** (task #53). icHUDStarmap is `@element` in hud_screens.gd, and
+its system view now honours the flag: `_draw_system` skips records whose
+`map_visible` is false. The 56 SetMapVisibility calls are how the missions hide
+stations, wrecks and beacons from the map until the plot reveals them. Map-scoped
+only -- a hidden entity still shows on sensors and in the contact list, which is
+exactly what makes hiding it on the map useful.
 
 ### isim -- 6 stubs, 45 call sites -- mixed
 
@@ -102,7 +109,7 @@ the lobby, GotEarnedMovie/GotPlayDisk have no disc to check. All accurate.
 | WeaponTargetsFromContactList | 15 | turret targeting -- part of the icTurret GENUINE GAP (SP combat vs gunstars) |
 | WeaponsUseExplicitTarget | 4 | with the above |
 | LastFireTarget | 3 | with the above |
-| BrightnessOf | 2 | cosmetic channel expression, accurate |
+| BrightnessOf | 2 | `icShip::Brightness` (0x10075420) is now recovered and implemented (ship_systems.gd); this stub can be bound to it |
 | PercentageThrusterEmission | 2 | cosmetic, accurate |
 | HyperSpaceTrackerTarget | 2 | **GENUINE GAP** (SP): the act 3 plot device -- following a ship through a capsule jump. With sim.AddSubsim stubbed too, the whole tracker chain is inert; the act 3 scripts should be traced to see how hard they lean on it |
 | HasHyperSpaceTracker | 1 | with the above |
@@ -127,12 +134,24 @@ ideathscript.PlayerDeathScript + the restart screen) and is already ported.
 Full write-up in docs/pog.md; verified by the `--campcheck` checkpoint
 assertion in checks.gd.
 
-### input -- 1 stub, 12 calls -- GENUINE GAP (SP, cosmetic-but-annoying)
+### input -- 1 stub, 12 calls -- RECOVERED (task #53)
 
-KeyCombinations: training prompts splice "press <key>" into their text; the
-stub returns "" so tutorial prompts come out without the key name. Reason is
-honest about why (original keymap not recovered, remaster bindings differ).
-A remaster-binding lookup table would fix the prompts.
+KeyCombinations is fully recovered: `input.dll @ 0x10001210` takes one action
+name and returns one string from `FcInputMapper::KeyString` (flux @ 0x1006ade0)
+via `FormKeyString` (flux @ 0x1006ab00) and `FcLocalisedText::Field`
+(flux @ 0x10028d80) -- see docs/combat.md. The resolver is implemented as
+`PogMisc.key_combinations()` in natives/misc.gd and reads the shipped keymap
+(the install's `configs/default.ini`) plus `data/json/strings.json`; it returns
+e.g. `[ Keyboard F8 ]` / `[ SHIFT - Keyboard M ]`.
+
+The marker itself lives in natives/ui.gd (a different owner) and still needs its
+one-line rebind onto `PogMisc.key_combinations`.
+
+**Second half of the same bug, now fixed:** `ihud.SetPrompt` takes a SECOND
+argument -- the key string -- and gameapi.gd's `_h_set_prompt` was discarding it.
+All 12 KeyCombinations call sites (all in iact0mission10) pass their result
+straight into it. It now carries through to `mission.prompt_keys`, which hud.gd
+already draws.
 
 ### ihabitat -- 4 stubs, 9 calls -- 1 pragmatic + 3 GENUINE GAP
 
@@ -184,9 +203,10 @@ IsCapsuleJumpAccelerating: our AI ships have no jump spool-up phase.
 4. **iloadout customise five** -- ship customisation screen interaction.
 5. **iship.HasHyperSpaceTracker / HyperSpaceTrackerTarget (+ sim.AddSubsim)**
    -- act 3 plot device.
-6. **input.KeyCombinations** -- tutorial prompts lose their key names.
+6. ~~**input.KeyCombinations**~~ -- RECOVERED and implemented (task #53); the
+   marker rebind is pending in natives/ui.gd.
 7. **ihud.FlashElement** -- tutorial HUD highlight.
-8. **imapentity.SetMapVisibility** -- starmap now exists; honour the flag.
+8. ~~**imapentity.SetMapVisibility**~~ -- IMPLEMENTED (task #53).
 
 ## Marker-hygiene flags (for the owners of the natives files -- not edited here)
 
@@ -232,8 +252,12 @@ category. The headline gaps, grouped:
   avatars.
 * **Turrets / armed stations** (3): icTurret, icTurretShip, icSlugThrower.
 * **Beam weapons** (2): icBeamProjector, icBeam.
-* **Player devices** (4): icAggressorShield (+avatar), icWeaponLink,
-  icProgram (software subsims).
+* ~~**Player devices** (4)~~: **BUILT** (task #51). icAggressorShield (+avatar),
+  icWeaponLink and icProgram are all recovered and implemented -- see
+  docs/combat.md. The aggressor shield turned out to be an `iiWeapon`-derived
+  RAM, not a shield; a weapon link is an automatic fire group built by the
+  loadout from same-named weapons; and all ten program bits and what they gate
+  are enumerated.
 * **Act 3 aliens** (6): icAlienSwarm + avatar/draw/dynamics,
   icTeleportDynamics (+ the isim.AlienInfection stubs).
 * **Capsule space** (5): the jump interior (currently a white fade).
@@ -242,7 +266,10 @@ category. The headline gaps, grouped:
 * **Screens** (8): base trading, add-cargo, computer puzzle/menu/comms,
   custom GUI screen (instant action), credits (+icScroller),
   the NotYetImplemented apology screen.
-* **HUD** (2): icHUDShields, icHUDContrails.
+* ~~**HUD** (2)~~: **BUILT** (task #51). icHUDShields (Draw 0x100fa540 -- the
+  class it filters on is icPlayerLDA, the long-open DAT_10167e5c) and
+  icHUDContrails (Update 0x100e4c80 / Draw 0x100e4e60, both raw-disassembled).
+  See docs/hud_elements.md.
 * **Cosmetic effects** (5): icLDAAvatar, icDisruptorDynamics,
   icElectricEffectAvatar, icGasBallAvatar, icSignAvatar, plus flux's
   FcParticleDrawLensFlare.

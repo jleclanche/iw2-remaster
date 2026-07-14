@@ -80,6 +80,71 @@ func _init() -> void:
 func _process(delta: float) -> void:
 	_pos += _vel * delta
 	_render_grid()
+	_update_aggressor(delta)
+
+
+# --- icAggressorAvatar -------------------------------------------------------
+# @element icAggressorAvatar
+# The aggressor shield's avatar (lws:/avatars/aggressor_shield/setup, named by
+# both shipped aggressor INIs). Registered at 0x100b9050, ctor 0x100b9280,
+# Prepare 0x100b9460, Draw 0x100b94e0.
+#
+# It is the SAME cone fan icLDAAvatar draws: Draw's only geometry call is
+# FUN_100c9f40 @ 0x100b95e1 -- the 16-triangle apex-at-+Z fan already
+# transcribed in explosion_fx.gd. What differs is the dressing:
+#   * texture:/images/sfx/aggressor  (ctor, 0x101615b8)
+#   * additive, the same blend-2 polygon state
+#   * rim radius = node +0xbc, ctor default 0.1 (0x3dcccccd @ 0x100b9280)
+#   * the texture's v scrolls at 1 unit/s off the node's own clock (+0xc0,
+#     accumulated from m_game_delta_time_seconds in Prepare; the 1.0 is
+#     0x1011c824), with v1 = v0 + 1 -- so it crawls forward over the cone
+#   * it is up exactly while the shield's "fire" channel is 1 -- which
+#     icAggressorShield::Simulate sets from the active flag (0x1002f44f)
+#
+# UNKNOWN: the world scale. The cone is built at unit size and the LWS node's
+# own transform scales it; we have not parsed avatars/aggressor_shield/setup, so
+# the shell is sized to the player's collision radius instead. Everything else
+# above is recovered.
+const AGG_RIM := 0.1        # icAggressorAvatar +0xbc
+const AGG_SCROLL := 1.0     # 0x1011c824, v units per second
+const AGG_APEX := 4.0       # the fan's apex, as icLDAAvatar (0x1011cfbc)
+const AGG_SHELL_R := 95.0   # our stand-in scale: the player collision radius
+
+var _agg_mi: MeshInstance3D
+var _agg_mat: StandardMaterial3D
+var _agg_clock := 0.0
+
+func _ensure_aggressor(base: String) -> void:
+	if _agg_mi != null:
+		return
+	var tex := ParticleFx.texture(base, "images/sfx/aggressor")
+	_agg_mat = ExplosionFx._blend2_material(tex)
+	_agg_mat.vertex_color_use_as_albedo = true
+	_agg_mi = MeshInstance3D.new()
+	_agg_mi.mesh = ExplosionFx.lda_cone_mesh()
+	_agg_mi.mesh.surface_set_material(0, _agg_mat)
+	_agg_mi.visible = false
+	add_child(_agg_mi)
+
+## Called each frame by main: `up` is ShipSystems.aggressor_active().
+func set_aggressor(base: String, up: bool, xform: Transform3D) -> void:
+	_ensure_aggressor(base)
+	_agg_mi.visible = up
+	if not up:
+		_agg_clock = 0.0
+		return
+	# the cone points dead ahead, down the ship's local +Z -- the axis the
+	# shield's coverage cone is measured about (0x1002f810)
+	_agg_mi.global_transform = xform
+	var rim: float = maxf(AGG_RIM, 1e-3) * AGG_SHELL_R / AGG_RIM
+	_agg_mi.scale = Vector3(rim, rim, AGG_APEX * AGG_SHELL_R * 0.25)
+
+func _update_aggressor(delta: float) -> void:
+	if _agg_mi == null or not _agg_mi.visible:
+		return
+	_agg_clock += delta
+	# v scrolls forward at 1 unit/s (Draw: v0 = +0xc4 - clock, v1 = v0 + 1)
+	_agg_mat.uv1_offset.y = -_agg_clock * AGG_SCROLL
 
 static func _line_material() -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
@@ -229,3 +294,185 @@ func _render_grid() -> void:
 	arrays[Mesh.ARRAY_VERTEX] = _gv
 	arrays[Mesh.ARRAY_COLOR] = _gc
 	_grid_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
+
+
+# --- icHUDContrails ----------------------------------------------------------
+# @element icHUDContrails
+# Update = FUN_100e4c80, Draw = FUN_100e4e60 (vtable 0x1011daa8 slots 10 and 9;
+# Ghidra dropped both, recovered from raw bytes). An iiHUDUnderlayElement: it is
+# drawn in the world, under the 2D HUD, like the reference grid.
+#
+# The 0x1708 object decodes exactly: 8 trails of 16 points, 44 bytes a point.
+#
+#   WHO GETS ONE (FUN_100e5390): a contact that is a ship, is moving faster than
+#   50 m/s (_DAT_1011da98), and is within 50 km (_DAT_1011daa0) -- raised to
+#   150 km (_DAT_1011da9c) while that ship's own LDS drive is engaged. Eight at
+#   most; the player's own ship always gets the first slot.
+#
+#   EMISSION (FUN_100e5440): one global countdown, reloaded to 0.4 s
+#   (_DAT_1011da8c). It is NOT distance-based -- every trail drops a point at the
+#   same instant, 2.5 times a second. The ring holds 16, so a trail spans exactly
+#   16 * 0.4 = 6.4 s.
+#
+#   FADE: a point's life starts at 0.7 (_DAT_1011daa4) and decays by 0.109375/s
+#   -- a constant the engine DERIVES at 0x100e4b80 as 0.7 / (0.4 * 16), i.e. it
+#   reaches zero exactly as the ring wraps. life is used as BOTH the alpha and
+#   the line width. When a trail stops qualifying it gets a 2 s grace fade
+#   (_DAT_1011da94) before its slot is freed.
+#
+#   THE PLAYER'S IS A LADDER (FUN_100e5520): two rails offset +/- halfspan along
+#   the sim's local X axis AT THE MOMENT EACH POINT WAS EMITTED, plus a rung
+#   across every point. halfspan = icShip::width (+0x208, the ship INI's `width`)
+#   * 0.5, scaled in over a 0.35 s splay ramp (_DAT_1011da90) each time the
+#   element is shown -- so the trail opens out from the centreline. The rails are
+#   SKIPPED on points whose LDS flag is set (the flag is head & 1 while the drive
+#   is engaged), which makes them come out dashed under LDS; the rungs always
+#   draw. Everyone ELSE gets a single centre line (FUN_100e59d0).
+#
+#   DEPTH: the shared line batch is set up with z0=0, z1=50000, alpha and width
+#   both = 1 - depth/50000 -- a linear fade to nothing at the eligibility range.
+const CT_TRAILS := 8            # the 8 slots in the 0x1708 object
+const CT_POINTS := 16           # ring length
+const CT_EMIT := 0.4            # _DAT_1011da8c, seconds between points
+const CT_LIFE := 0.7            # _DAT_1011daa4, a point's life/alpha at emit
+const CT_DECAY := 0.109375      # DAT_10173f5c = 0.7 / (0.4 * 16), @ 0x100e4b80
+const CT_SPLAY := 0.35          # _DAT_1011da90, the ladder's open-out ramp
+const CT_GRACE := 2.0           # _DAT_1011da94, fade-out once it stops qualifying
+const CT_MIN_SPEED := 50.0      # _DAT_1011da98, m/s
+const CT_RANGE := 50000.0       # _DAT_1011daa0
+const CT_RANGE_LDS := 150000.0  # _DAT_1011da9c
+
+var _ct_mi: MeshInstance3D
+var _ct_mesh: ArrayMesh
+var _ct_trails: Dictionary = {}   # ship -> {points: Array, grace: float}
+var _ct_emit := 0.0
+var _ct_ramp := 0.0
+
+func _ensure_contrails() -> void:
+	if _ct_mi != null:
+		return
+	_ct_mesh = ArrayMesh.new()
+	_ct_mi = MeshInstance3D.new()
+	_ct_mi.mesh = _ct_mesh
+	_ct_mi.material_override = _line_material()
+	_ct_mi.custom_aabb = AABB(Vector3.ONE * -1.0e9, Vector3.ONE * 2.0e9)
+	add_child(_ct_mi)
+
+## `ships` is [{node, width, lds}], nearest first; `hidden` blanks the element.
+func update_contrails(delta: float, ships: Array, hidden: bool) -> void:
+	_ensure_contrails()
+	if hidden:
+		_ct_mi.visible = false
+		_ct_ramp = 0.0
+		_ct_trails.clear()
+		return
+	_ct_mi.visible = true
+	# the splay ramp restarts whenever the element is (re)shown
+	_ct_ramp = minf(_ct_ramp + delta, CT_SPLAY)
+
+	# --- who qualifies -------------------------------------------------------
+	var live: Dictionary = {}
+	for s: Dictionary in ships:
+		if live.size() >= CT_TRAILS:
+			break
+		var node = s["node"]
+		if node == null or not is_instance_valid(node):
+			continue
+		var vel: Vector3 = s.get("vel", Vector3.ZERO)
+		if vel.length() <= CT_MIN_SPEED:
+			continue
+		var reach: float = CT_RANGE_LDS if bool(s.get("lds", false)) else CT_RANGE
+		if (node as Node3D).global_position.length() > reach:
+			continue
+		live[node] = s
+
+	# --- emit ----------------------------------------------------------------
+	_ct_emit -= delta
+	var emit := _ct_emit <= 0.0
+	if emit:
+		_ct_emit = CT_EMIT
+	for node: Node3D in live:
+		var s: Dictionary = live[node]
+		if not _ct_trails.has(node):
+			_ct_trails[node] = {"points": [], "grace": 0.0}
+		var tr: Dictionary = _ct_trails[node]
+		tr["grace"] = 0.0
+		if emit:
+			(tr["points"] as Array).append({
+				"pos": node.global_position,
+				# the sim's local X at the instant of emission: the wingtip axis
+				"right": node.global_transform.basis.x,
+				"lds": bool(s.get("lds", false)) \
+					and (tr["points"] as Array).size() % 2 == 1,
+				"life": CT_LIFE,
+				"width": float(s.get("width", 0.0)),
+				"player": bool(s.get("player", false)),
+				"col": Color(s.get("col", Color(0.6, 0.9, 0.6))),
+			})
+			while (tr["points"] as Array).size() > CT_POINTS:
+				(tr["points"] as Array).pop_front()
+
+	# --- age, grace, reap ----------------------------------------------------
+	for node in _ct_trails.keys():
+		var tr: Dictionary = _ct_trails[node]
+		if not live.has(node):
+			tr["grace"] = float(tr["grace"]) + delta
+			if float(tr["grace"]) >= CT_GRACE or not is_instance_valid(node):
+				_ct_trails.erase(node)
+				continue
+		for p: Dictionary in (tr["points"] as Array):
+			p["life"] = maxf(0.0, float(p["life"]) - delta * CT_DECAY)
+	_render_contrails()
+
+func _render_contrails() -> void:
+	_ct_mesh.clear_surfaces()
+	var v := PackedVector3Array()
+	var col := PackedColorArray()
+	for node in _ct_trails:
+		var tr: Dictionary = _ct_trails[node]
+		var pts: Array = tr["points"]
+		if pts.size() < 2:
+			continue
+		# the grace fade multiplies every alpha in the trail
+		var tail: float = 1.0 - float(tr["grace"]) / CT_GRACE
+		for i in range(pts.size() - 1):
+			var p: Dictionary = pts[i]
+			var q: Dictionary = pts[i + 1]
+			var ap := _ct_alpha(p, tail)
+			var aq := _ct_alpha(q, tail)
+			if ap <= 0.0 and aq <= 0.0:
+				continue
+			var cp := Color(p["col"], ap)
+			var cq := Color(q["col"], aq)
+			if not bool(p["player"]):
+				# everyone else: one centre line (FUN_100e59d0)
+				v.append(p["pos"]); col.append(cp)
+				v.append(q["pos"]); col.append(cq)
+				continue
+			# the player: a ladder (FUN_100e5520)
+			var hs: float = float(p["width"]) * 0.5 * (_ct_ramp / CT_SPLAY)
+			var op: Vector3 = (p["right"] as Vector3) * hs
+			var oq: Vector3 = (q["right"] as Vector3) * hs
+			if not bool(p["lds"]):
+				# the rails, skipped on an LDS-flagged point -> dashed under LDS
+				v.append(p["pos"] - op); col.append(cp)
+				v.append(q["pos"] - oq); col.append(cq)
+				v.append(p["pos"] + op); col.append(cp)
+				v.append(q["pos"] + oq); col.append(cq)
+			# the rung is always drawn, both ends at the newer point's alpha
+			v.append(q["pos"] - oq); col.append(cq)
+			v.append(q["pos"] + oq); col.append(cq)
+	if v.is_empty():
+		return
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = v
+	arr[Mesh.ARRAY_COLOR] = col
+	_ct_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arr)
+
+func _ct_alpha(p: Dictionary, tail: float) -> float:
+	# alpha = grace_fade * point.life, then the depth fade: 1 - depth/50000,
+	# which the engine applies through the shared line batch
+	var depth: float = (p["pos"] as Vector3).length()
+	var dz: float = clampf(1.0 - depth / CT_RANGE, 0.0, 1.0)
+	return clampf(tail * float(p["life"]) * dz, 0.0, 1.0)

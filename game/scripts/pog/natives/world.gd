@@ -60,6 +60,9 @@ class PogSim extends RefCounted:
 	var docking_lock: PogSim = null    ## isim.SetDockingLock: the only legal berth
 	## sim.AddSubsim (sim.dll @ 0x10004e90): subsims fitted onto a LIVE sim.
 	var fitted: Array = []             ## of PogEntities.PogSubsim
+	## sim.Create on an ini:/sims/weapons/* path: the missiles.gd record behind
+	## this sim, so isim.Kill can detonate it (see _create_weapon).
+	var weapon: Dictionary = {}
 	## icCPU +0x80, the fitted-program bitmask (icCPU property map @
 	## 0x100308a0: "programs" -> +0x80). An icProgram subsim carries its bit
 	## in program_id (property map @ 0x10031e80: +0x40); the hyperspace
@@ -443,6 +446,32 @@ func _create_object(ini: String, name: String) -> PogSim:
 	return s
 
 
+## sim.Create on a weapon INI: live ordnance, dropped into the world by hand.
+## Three scripts do it -- iact2mission05 makes an `ini:/sims/weapons/ldsi_missile`,
+## PlaceAt's it on the Marauder group's leader and isim.Kill's it (the scripted
+## LDSI burst that drops the group out of LDS); iact2mission08 and iactthree plant
+## proximity / antimatter mines the same way. missiles.gd already owns all three
+## (Missiles.SPECS), including the LDSI's ScrambleLDSDrives field, so this only
+## has to wrap one of its records in a PogSim: node = the missile's node, so
+## PlaceAt / abs_pos / IsAlive all work off the same field they use for a ship,
+## and Kill detonates instead of quietly deleting.
+func _create_weapon(ini: String, name: String) -> PogSim:
+	var s := PogSim.new()
+	s.world = self
+	s.name = name
+	s.ini = ini
+	sims[name] = s
+	var stem := ini.trim_prefix("ini:/").trim_suffix(".ini").get_file()
+	if game == null or game.missiles == null or not Missiles.SPECS.has(stem):
+		return s
+	var spec: Dictionary = Missiles.SPECS[stem]
+	# no shooter and no target: it is inert ordnance until the script kills it
+	var rec: Dictionary = game.missiles.spawn_missile(null, spec,
+			game.missiles.global_position, Vector3.FORWARD, Vector3.ZERO, null)
+	s.node = rec["node"]
+	s.weapon = rec
+	return s
+
 # ---------------------------------------------------------------- sim
 # @native sim.Create
 func _s_create(_t, a: Array) -> Variant:
@@ -450,6 +479,8 @@ func _s_create(_t, a: Array) -> Variant:
 	var name := PogStd._s(a[1]) if a.size() > 1 else ini.get_file()
 	if "/ships/" in ini:
 		return _create_ship(ini, name)
+	if "/weapons/" in ini:
+		return _create_weapon(ini, name)
 	return _create_object(ini, name)
 
 # @native sim.Preload
@@ -479,6 +510,12 @@ func _s_destroy(_t, a: Array) -> Variant:
 		return 0
 	s.dead = true
 	sims.erase(s.name)
+	if not s.weapon.is_empty() and game != null and game.missiles != null:
+		# script-planted ordnance goes off rather than vanishing; missiles.gd
+		# reaps the record itself once the node is gone
+		game.missiles.detonate(s.weapon)
+		s.weapon = {}
+		return 0
 	if s.node != null and is_instance_valid(s.node) and game != null:
 		game.ai_ships.erase(s.node)
 		s.node.queue_free()
@@ -656,15 +693,50 @@ func _s_is_hidden(_t, a: Array) -> Variant:
 # @stub sim.SetCullable
 # @stub sim.SetCollision
 # @stub sim.SetMass
-# @stub sim.AvatarAddChannel
-# @stub sim.AvatarSetChannel
-# @stub sim.AvatarRemoveChannel
 func _s_noop(_t, _a: Array) -> Variant:
 	# Culling, collision toggles and mass have no effect on the outcome of a
-	# mission. The avatar channel-expression system (LZ?+s(1.0) and friends)
-	# DOES have a home now -- ship_effects.gd is the channel rig -- but the
-	# script-driven channels are not wired to it yet. See docs/decompile.md
-	# and docs/coverage.md.
+	# mission. See docs/coverage.md.
+	return 0
+
+
+# --- avatar channels --------------------------------------------------------
+# FiSceneNode::SetChannelValue on a sim's avatar root. ship_effects.gd is the
+# channel rig: its <anim> nodes interpolate between two poses by the value of
+# the channel expression they were authored with, and those expressions read
+# named inputs (lz, fire, burn, ...). These three natives write those inputs
+# from the script, which is how the cutscene ships light their drives, how the
+# League corvettes switch their livery on and off ("league_on"/"league_off")
+# and how the asteroids swap to their damaged pose ("iasteroid_pre_damage").
+
+func _fx_of(a) -> ShipEffects:
+	var s := _as_sim(a)
+	if s == null or s.node == null or not is_instance_valid(s.node):
+		return null
+	if s.node is ShipFlight:
+		return (s.node as ShipFlight).fx
+	return null
+
+# @native sim.AvatarAddChannel
+func _s_avatar_add_channel(_t, a: Array) -> Variant:
+	var fx := _fx_of(a[0])
+	if fx != null and a.size() > 1:
+		fx.script_channels[PogStd._s(a[1]).to_lower()] = \
+			float(a[2]) if a.size() > 2 else 0.0
+	return 0
+
+# @native sim.AvatarSetChannel
+func _s_avatar_set_channel(_t, a: Array) -> Variant:
+	var fx := _fx_of(a[0])
+	if fx != null and a.size() > 2:
+		fx.script_channels[PogStd._s(a[1]).to_lower()] = float(a[2])
+	return 0
+
+# @native sim.AvatarRemoveChannel
+func _s_avatar_remove_channel(_t, a: Array) -> Variant:
+	# the channel goes back to whatever the ship's own state drives it to
+	var fx := _fx_of(a[0])
+	if fx != null and a.size() > 1:
+		fx.script_channels.erase(PogStd._s(a[1]).to_lower())
 	return 0
 
 # @native sim.AddSubsim
@@ -1435,8 +1507,10 @@ const _BINDINGS := {
 	"sim.speed": "_s_speed",
 	"sim.sethidden": "_s_set_hidden", "sim.ishidden": "_s_is_hidden",
 	"sim.setcullable": "_s_noop", "sim.setcollision": "_s_noop",
-	"sim.setmass": "_s_noop", "sim.avataraddchannel": "_s_noop",
-	"sim.avatarsetchannel": "_s_noop", "sim.avatarremovechannel": "_s_noop",
+	"sim.setmass": "_s_noop",
+	"sim.avataraddchannel": "_s_avatar_add_channel",
+	"sim.avatarsetchannel": "_s_avatar_set_channel",
+	"sim.avatarremovechannel": "_s_avatar_remove_channel",
 	"sim.addsubsim": "_s_add_subsim",
 	"sim.findsubsimbyname": "_s_find_subsim",
 	"sim.group": "_s_group", "sim.parent": "_s_parent",

@@ -157,6 +157,19 @@ The slots (full table, with the atlas cells, in `docs/original.md` §8c):
   (`ship+0x2a0` is the first `icReactor` subsim; `+0x7c / +0x98`, red below
   0.25); bulb = **`icShip::Brightness()`** (`0x10075420`, the ship's
   visible/EM signature, red above 0.75).
+  **Both are now drawn** (`hud.gd`), and both names were misleading:
+  * The lightning gauge stores **nothing**. `icReactor::Simulate` (`0x1003a2a0`)
+    writes `+0x98` = the *rated* output and `+0x7c` = `efficiency * output *
+    ramp`, so the ratio is `efficiency * ramp` -- it settles at the reactor's
+    efficiency (1.0 when healthy) and only falls when the reactor is damaged,
+    overheated, or throttled down by the player. The HUD feed defaults it to
+    **1.0**, not 0, when no reactor is fitted.
+  * The bulb gauge is **not** "idle brightness lerped by ThrusterRatio plus LDS
+    and weapon-capacitor terms". `icShip::ThrusterRatio` (`0x10075600`) is a
+    **stub returning 0.0**, so that lerp is dead; the real terms are
+    `min_brightness` scaled by reactor output, plus heat, the sensor disruptor,
+    the active sensor, and the CPU's stealth program. Full formula in
+    `docs/combat.md`.
 - **202.5** at r=110 — sprites 0x56, 0x57 (multiplayer team markers)
 - **225** at r=110 — sprites 0x58, 0x59 (multiplayer flag / bomb)
 
@@ -520,3 +533,108 @@ to the code:
 | icHUDContrails | its Draw was not reversed; the trail geometry would be a guess |
 | icHUDDebug | the developer overlay; deliberately not built |
 | icHUDEditBoxElement | no campaign script ever calls `ihud.GiveEditBoxControl` |
+
+## icHUDShields and icHUDContrails (task #51)
+
+The last two HUD elements. Both are now built.
+
+### icHUDShields -- Draw `0x100fa540`
+
+Registered `0x100fa350` (base `iiHUDBlockElement`), factory `0x100fa390`
+(`operator_new(0x60)`), ctor `0x100fa470`, vtable `0x1011e114`, Draw at slot 9.
+
+**The component class it filters on -- `DAT_10167e5c`, the open question in the
+old notes -- is `icPlayerLDA`** (registered `0x100ac7a0`). So the shields panel is
+the **LDA panel**, and it caps at **two rows** (`cmp esi,2` @ `0x100fa596`).
+`icAILDA` is a sibling under `iiLDA`, not a subclass, so an AI shield never
+appears here.
+
+* Block: right-anchored (ctor passes 1 to the block base), **112** wide
+  (`_DAT_1011e10c`), **16** px header (`DAT_1011d970`) + **32** px per row
+  (`_DAT_1011e110`). With **no** LDA fitted the block height is set to **0** and
+  the panel disappears entirely.
+* Header: `hud_shield_status` = "SHIELD STATUS".
+* Fill fraction = `icPlayerLDA +0xa4 / +0x94` (charge / capacity, verified as
+  floats at `0x100fa9ca`). Bar: 14 segments, length `112 - 38 = 74`.
+* Lightning sprite (69) at `x = 112 - 16 = 96`; status word at `x = 112 - 36 = 76`.
+* Status word, working row: **"OFFLINE"** below `min_energy * capacity`
+  (`min_energy` is the class static **0.2** @ `0x101607e0`, i.e. flux.ini
+  `[icPlayerLDA] min_energy`); **"TRACKING"** when charged *and* `icPlayerLDA
+  +0xa0` is non-zero; nothing when charged and +0xa0 is zero.
+* Broken row: **flashes at 2 Hz** (`frac(t_ms * 0.001)` vs 0.5 -- `0x10119458` /
+  `0x10117738`) and reads **"DESTROYED"** (sprite 31) or **"OFFLINE"** (sprites
+  63/65), selected by the subsim's flag bits at +0x68.
+* Row order: the two LDAs' forward axes sorted by **Y ascending** (`0x100fa75f`)
+  -- the down-facing one first. Every shipped hull mounts them at
+  `upper_lda`/`lower_lda` (or `shield_upper`/`shield_lower`) nulls, so we sort on
+  the mount-null Y, which gives the same order.
+
+**UNKNOWN:** what writes `icPlayerLDA +0xa0` (the "TRACKING" gate), and the
+meanings of the +0x68 bits beyond "bit0 -> DESTROYED". We draw the
+charged-and-+0xa0-zero case (bar, no word) rather than invent the gate.
+
+### icHUDContrails -- Update `0x100e4c80`, Draw `0x100e4e60`
+
+Registered `0x100e4ad0` (base `iiHUDUnderlayElement` -- it draws in the *world*,
+under the 2D HUD, like the reference grid), factory `0x100e4b10`
+(`operator_new(0x1708)`), ctor `0x100e4ba0`, vtable `0x1011daa8`. **Ghidra dropped
+both Update and Draw**; recovered from raw bytes.
+
+The 0x1708 decodes exactly: **8 trails x 16 points x 44 bytes**, plus a 0x28-byte
+header (`0x28 + 8 * 0x2dc = 0x1708`).
+
+* **Who gets one** (`FUN_100e5390`): a contact that is a ship, is moving faster
+  than **50 m/s** (`_DAT_1011da98`), and is within **50 km** (`_DAT_1011daa0`) --
+  raised to **150 km** (`_DAT_1011da9c`) while that ship's own LDS drive is
+  engaged. Eight at most. The player's own ship always takes the first slot
+  (`icHUD+0x104`).
+* **Emission** (`FUN_100e5440`): ONE global countdown, reloaded to **0.4 s**
+  (`_DAT_1011da8c`). It is **not** distance-based -- every trail drops a point at
+  the same instant, 2.5 times a second. The 16-point ring therefore spans exactly
+  `16 * 0.4 = 6.4 s`.
+* **Fade**: a point's life starts at **0.7** (`_DAT_1011daa4`) and decays at
+  **0.109375/s** -- a constant the engine *derives* at `0x100e4b80` as
+  `0.7 / (0.4 * 16)`, so it reaches zero exactly as the ring wraps. `life` is used
+  as **both the alpha and the line width**.
+* **Disappearance**: when a trail stops qualifying it gets a **2 s** grace fade
+  (`_DAT_1011da94`) -- every alpha scaled by `1 - timer/2` -- before its slot is
+  freed. If it re-qualifies the fade cancels.
+* **The player's trail is a LADDER** (`FUN_100e5520`): two rails offset by
+  `+/- halfspan` along the **sim's local X axis at the moment each point was
+  emitted**, plus a **rung** across every point. `halfspan = icShip::width
+  (+0x208, the ship INI's `width`) * 0.5`, scaled in over a **0.35 s** splay ramp
+  (`_DAT_1011da90`) each time the element is shown -- so the trail opens out from
+  the centreline. The **rails are skipped** on points whose LDS flag is set (the
+  flag is `head & 1` while the drive is engaged), which makes them come out
+  **dashed** under LDS; the rungs always draw.
+* **Everyone else gets a single centre line** (`FUN_100e59d0`).
+* **Depth**: the shared line batch is set up with `z0=0, z1=50000` and both alpha
+  and width `= 1 - depth/50000` -- a linear fade to nothing exactly at the
+  eligibility range.
+* The element also draws a small **2D wingtip marker** (sprite 5) at each trailed
+  contact's projected screen position, and at both of the player's projected
+  wingtips.
+
+Neither class has any INI properties: both `RegisterClass` calls pass the base
+`iiHUDElement` property map, and there is no `[icHUDShields]` or
+`[icHUDContrails]` section in `flux.ini` / `defaults.ini`. Draw order in
+`flux.ini [icHUD]` is unchanged: Contrails `elements[4]`, Shields `elements[8]`.
+
+Constant table (all `iwar2.dll`):
+
+| addr | value | meaning |
+|---|---:|---|
+| `0x1011e10c` | 112 | shields block width |
+| `0x1011e110` | 32 | shields row pitch |
+| `0x1011d970` | 16 | header height |
+| `0x1011e140` | 38 | `112 - 38 = 74` = bar length |
+| `0x101607e0` | 0.2 | `icPlayerLDA::min_energy` |
+| `0x10119458` | 0.001 | ms->s for the 2 Hz broken-row flash |
+| `0x1011da8c` | 0.4 | contrail emit interval (s) |
+| `0x1011da90` | 0.35 | contrail splay-open ramp (s) |
+| `0x1011da94` | 2.0 | contrail grace fade-out (s) |
+| `0x1011da98` | 50 | minimum speed to leave a trail (m/s) |
+| `0x1011da9c` | 150000 | trail range under LDS (m) |
+| `0x1011daa0` | 50000 | trail range normally (m) |
+| `0x1011daa4` | 0.7 | point life/alpha at emit |
+| `0x10173f5c` | 0.109375 | life decay/s, derived at `0x100e4b80` |

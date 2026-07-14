@@ -405,68 +405,7 @@ func _enter(name: String, stack: Array[PogScreen]) -> PogScreen:
 			_build_not_yet_implemented(scr)
 	if not builder.is_empty():
 		dispatch(builder)
-	if name == "icSPComputerTradingScreen":
-		_repair_trading(scr)
 	return scr
-
-
-## The trading screen builds itself through a POG *list*: iBaseGUI's helper
-## returns [listbox, trade, cancel, textwindow] and SPTradingScreen pulls its
-## widgets back out with list.Head. The original VM's NewObject opcode made
-## that list a live object; the porter renders NewObject as null (pogdec.py's
-## `Null()`), so on the ported runtime every one of those pulls comes back
-## null, the four TradingScreen_* handles the script stores are null, and the
-## row fill runs against a null listbox. Until the porter grows a typed
-## NewObject, put back exactly what the shipped bytecode wired: the same four
-## handles, the same input-override functions (ibasegui.pog SPTradingScreen),
-## the same first focus, and one re-run of the row filler (local_25276) with
-## the real listbox.
-func _repair_trading(scr: PogScreen) -> void:
-	if vm == null or not vm.has_method("script") or vm.get("std") == null:
-		return
-	if _win(vm.std.globals.get("TradingScreen_Listbox")) != null:
-		return                            # the port has been fixed; nothing to do
-	var lb: PogWindow = null
-	var lb_at := -1
-	for i in scr.windows.size():
-		if scr.windows[i].kind == "listbox":
-			lb = scr.windows[i]
-			lb_at = i
-			break
-	if lb == null:
-		return
-	var buttons: Array = []
-	var text_win: PogWindow = null
-	for i in range(lb_at + 1, scr.windows.size()):
-		var w := scr.windows[i]
-		if w.kind == "button" and buttons.size() < 2:
-			buttons.append(w)
-		elif w.kind == "text" and text_win == null:
-			text_win = w
-	vm.std.globals["TradingScreen_Listbox"] = lb
-	vm.std.globals["TradingScreen_Textbox"] = text_win
-	# Same nine slots the script passes to gui.SetInputOverrideFunctions.
-	lb.overrides[IN_SELECT] = "iBaseGUI.SPTradingScreen_OnTradesListBoxSelect"
-	lb.overrides[IN_CANCEL] = "iBaseGUI.SPTradingScreen_OnBackButton"
-	lb.overrides[IN_MOUSE_UP] = "iBaseGUI.SPTradingScreen_OnTradesListBoxSelect"
-	if buttons.size() == 2:
-		var trade: PogWindow = buttons[0]
-		var cancl: PogWindow = buttons[1]
-		vm.std.globals["TradingScreen_TradeButton"] = trade
-		vm.std.globals["TradingScreen_CancelButton"] = cancl
-		trade.overrides[IN_LEFT] = "iBaseGUI.SPTradingScreen_OnTradeButtonLeftOrRight"
-		trade.overrides[IN_RIGHT] = "iBaseGUI.SPTradingScreen_OnTradeButtonLeftOrRight"
-		trade.overrides[IN_CANCEL] = "iBaseGUI.SPTradingScreen_OnCancelButton"
-		cancl.overrides[IN_LEFT] = "iBaseGUI.SPTradingScreen_OnCancelButtonLeftOrRight"
-		cancl.overrides[IN_RIGHT] = "iBaseGUI.SPTradingScreen_OnCancelButtonLeftOrRight"
-		cancl.overrides[IN_CANCEL] = "iBaseGUI.SPTradingScreen_OnCancelButton"
-	if lb.entries.is_empty():
-		var s = vm.script("ibasegui")
-		if s != null and s.has_method("local_25276"):
-			s.local_25276(lb)             # runs to completion; no real suspension
-	focused = lb
-	scr.focus = lb
-	dirty = true
 
 
 ## A POG global out of the std store (the ported scripts' side of `global.*`).
@@ -649,11 +588,26 @@ func _delete_window(_t, a: Array) -> Variant:
 
 # @native gui.RepositionWindow
 func _reposition(_t, a: Array) -> Variant:
-	# (window, x, y, flag). The flag is a relayout hint we have no use for.
+	# (window, parent, x, y) -- it *reparents* as well as moves. The shipped
+	# bytecode is unambiguous: igui.ArrangeWindowsVertically (igui.pog entry
+	# 17714) walks a list and calls RepositionWindow(w, v1, v2, running) where
+	# `running` accumulates each window's canvas height, so the last argument is
+	# y and the second is the container -- igui.CreateMenu passes the shady bar
+	# it just made, igui.CreateWindowListInFancyBorder the window it just made.
+	# We never saw this before the porter's NewObject fix: the list those loops
+	# walk was null, so they ran zero times.
 	var win := _win(a[0])
-	if win != null:
-		win.x = int(a[1])
-		win.y = int(a[2])
+	if win == null:
+		return 0
+	var parent := _win(a[1]) if a.size() > 1 else null
+	if parent != null and parent != win.parent:
+		if win.parent != null:
+			win.parent.children.erase(win)
+		win.parent = parent
+		parent.children.append(win)
+	if a.size() > 3:
+		win.x = int(a[2])
+		win.y = int(a[3])
 	return 0
 
 # @native gui.SetWindowClientArea
@@ -1441,13 +1395,17 @@ func _select_scheme(_t, a: Array) -> Variant:
 	input_scheme = clampi(int(a[0]), 0, INPUT_SCHEMES.size() - 1)
 	return 0
 
-# @stub input.KeyCombinations
-func _key_combinations(_t, _a: Array) -> Variant:
+# @native input.KeyCombinations
+func _key_combinations(_t, a: Array) -> Variant:
 	# "which key is icPlayerPilot.CycleContactUp bound to" -- the prompts splice
-	# the answer into their text. The original keymap is an engine-side table we
-	# have not recovered, and the remaster's bindings are not the original's, so
-	# there is no honest answer: the prompts come out without the key name.
-	return ""
+	# the answer into their text. The keymap is not engine-side after all: the
+	# game ships it (configs/default.ini), and FcInputMapper::KeyString
+	# (flux 0x1006ade0) -> FormKeyString (0x1006ab00) -> FcLocalisedText::Field
+	# (0x10028d80) is what renders "[ Keyboard F8 ]" / "[ SHIFT - Keyboard M ]".
+	if game == null:
+		return ""
+	return PogMisc.key_combinations(game._base(), AudioManager.GAME_DIR,
+		PogStd._s(a[0]))
 
 
 ## Run whatever POG function is bound to a named action.

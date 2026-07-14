@@ -395,6 +395,9 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 			ship.load_stats(ship_stats)
 	_fit_systems(ini_path)
 	weapons.set_muzzles(ship_model)
+	# icWeaponLink: the loadout builds the fire groups when the hull is fitted
+	# (icLoadout::CreateWeaponLinks 0x10096940), so this is the same moment
+	weapons.build_groups(sys)
 	if "comsec" in ini_path:
 		# single light PBC on the nose hardpoint (comsec.ini + comsec.lws:
 		# nose_hardpoint at LW (1.625,-1.5,10.625); light_pbc.ini refire 0.8)
@@ -814,6 +817,31 @@ func _update_grid() -> void:
 	# the director is in cinematic mode for the whole effect
 	space_fx.update_grid(cam, Vector3(px, py, pz), ship.velocity,
 		lds_state == 2, docked_at != "" or jump_state >= 3)
+	# @element icAggressorAvatar -- up exactly while the shield's "fire" channel
+	# is 1 (icAggressorShield::Simulate 0x1002f44f)
+	if sys != null and ship != null:
+		space_fx.set_aggressor(_base(), sys.aggressor_active(),
+			ship.global_transform)
+	_update_contrails()
+
+# @element icHUDContrails
+## The trail feed: the player's own ship always takes the first of the eight
+## slots (icHUD+0x104), then the contacts. `width` is icShip::width (+0x208), the
+## ship INI's `width` -- it is the wingspan the player's ladder is drawn to.
+func _update_contrails() -> void:
+	var ships: Array = []
+	if ship != null:
+		ships.append({"node": ship, "vel": ship.velocity, "player": true,
+			"width": float(ship_stats.get("width", 80)),
+			"lds": lds_state == 2, "col": Hud.AMBER})
+	for a in ai_ships:
+		if not is_instance_valid(a):
+			continue
+		ships.append({"node": a, "vel": a.velocity, "player": false,
+			"width": 0.0, "lds": false,
+			"col": Hud.RED if a.behavior == "attack" else Hud.GREEN})
+	space_fx.update_contrails(get_physics_process_delta_time(), ships,
+		docked_at != "" or jump_state >= 3)
 
 func _starfield_material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
@@ -1427,9 +1455,19 @@ func _unhandled_input(event: InputEvent) -> void:
 					audio.play("audio/hud/target_changed.wav", -10.0)
 			KEY_BACKSPACE:  # icPlayerPilot.NextSecondaryWeapon
 				_cycle_secondary()
-			KEY_ENTER:  # icPlayerPilot.NextPrimaryWeapon (back to the PBCs)
+			KEY_ENTER:  # icPlayerPilot.NextPrimaryWeapon: cycle the channel-1
+				# fire groups (icPlayerPilot::GetNextWeapon 0x100b0590 walks the
+				# id list, in which a weapon LINK is one entry standing for all
+				# of its members -- see weapons.gd)
 				_select_secondary(-1)
+				var g: Dictionary = weapons.cycle_group()
+				if not g.is_empty():
+					hud.warn("WEAPON: " + weapons.group_label())
 				audio.play("audio/gui/mechanical_confirm.wav", -10.0)
+			KEY_G:  # the aggressor shield. Its Fire (0x1002f6a0) just raises the
+				# active flag; it refuses unless the bank is FULL, then holds
+				# for `duration` seconds while it drains.
+				_fire_aggressor()
 			KEY_I:  # icPlayerPilot.LDSIQuickFire: the LDSi magazine fires on
 				# its own trigger, bypassing weapon selection (the dedicated
 				# LDSI path in AttemptToActivateWeapon 0x1003ccb0 via
@@ -1887,6 +1925,9 @@ func _physics_process(delta: float) -> void:
 					var d := Vector3(px - o["x"], py - o["y"],
 							pz - o["z"]).length() - r
 					sys.add_body_heat(d, r, cat == "star", delta)
+		# icAggressorShield::Simulate 0x1002f52a drops the shield the moment the
+		# LDS drive reaches state 2 (engaged) -- icShip+0x25c, the icLDSDrive.
+		sys.in_lds = lds_state == 2
 		sys.simulate(delta)
 	_fold_motion()
 	_stream_objects()
@@ -1922,6 +1963,63 @@ func ship_heat() -> float:
 	if sys == null:
 		return 0.0
 	return sys.heat_fraction()
+
+func _fire_aggressor() -> void:
+	if sys == null:
+		return
+	if sys.aggressors.is_empty():
+		hud.warn("NO AGGRESSOR SHIELD FITTED")
+		return
+	if sys.aggressor_fire():
+		# the aggressor_shield sound INI is an FcThreePartSoundNode keyed on the
+		# same "fire" channel Simulate drives (attack aggressor_start, sustain
+		# aggressor_loop, decay aggressor_end)
+		audio.play("audio/sfx/aggressor_start.wav", -6.0)
+		hud.warn("AGGRESSOR SHIELD UP")
+	else:
+		audio.play("audio/gui/mechanical_deny.wav", -10.0)
+
+
+# @element icAggressorShield
+## The ram. iiSim::OnCollision (0x10078ab0, the shared collision handler at
+## 0x1009971c) asks BOTH colliding ships for an icAggressorShield subsim before
+## it computes ordinary collision damage; if one of them has a live shield whose
+## cone covers the other, that shield handles the collision and the normal damage
+## never happens. This is the player's half of it: the AI's aggressors are not
+## fitted by any shipped non-player hull.
+##
+## The program-driven auto-fire comes first (bit 0x1000, aggressor_shield_control):
+## with it fitted, the shield fires itself at anything hostile you are about to
+## hit. Without it you hold the trigger yourself.
+func _aggressor_ram(a: AiShip) -> bool:
+	if sys == null or sys.aggressors.is_empty() or not is_instance_valid(a):
+		return false
+	var d := a.global_position - ship.global_position
+	var dist := d.length()
+	if dist >= 95.0 or dist < 0.1:
+		return false
+	# the direction to the victim, in the player's local frame
+	var dir_local: Vector3 = ship.global_transform.basis.inverse() * (d / dist)
+	sys.aggressor_auto(dir_local, _is_hostile(a))
+	var hit: Dictionary = sys.aggressor_hit(dir_local, ship.velocity.length())
+	if not bool(hit["handled"]):
+		return false
+	if a.damage(float(hit["damage"])):
+		kill_ai(a)
+	# the shield's own ship takes damage * self_damage_factor, source 4
+	damage_player(float(hit["self_damage"]), "AGGRESSOR RAM")
+	hud.warn("AGGRESSOR SHIELD - %s" % str(a.display_name).to_upper())
+	audio.play("audio/sfx/collision.wav", -3.0)
+	# push the wreck clear so the same frame does not re-trigger
+	var n := d / dist
+	ship.global_position = a.global_position - n * 95.0
+	return true
+
+func _is_hostile(a: AiShip) -> bool:
+	# icShip::IsFriendly is what 0x1002f74a tests; the contact list (_contacts)
+	# already uses `behavior == "attack"` as the remaster's hostility test, so
+	# the auto-fire uses the same one.
+	return a.behavior == "attack"
 
 func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 		what: String) -> void:
@@ -2123,6 +2221,8 @@ func _collisions() -> void:
 	if docked_at != "" or jump_state >= 2:
 		return
 	for a in ai_ships:
+		if _aggressor_ram(a):
+			continue
 		_collide_sphere(a.global_position, 95.0, a.velocity, str(a.display_name))
 	for o in objects:
 		if o["node"] == null:

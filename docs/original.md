@@ -98,6 +98,37 @@ base, `+0x2c` PC, `+0x30` stack base, `+0x38` SP, `+0x3c` locals base.
 `Store` does **not** pop -- assignment is an expression, so the compiler emits a
 trailing `Pop` when it was a statement.
 
+### The object model: three heap types, and a fixup chunk nobody reads
+
+- **POG has exactly three heap types** (`FiScriptObject::eType`): 1
+  `FcScriptString`, 2 `FcScriptList` (a deque), 3 `FcScriptSet` (a 17-bucket
+  hash table). `FiScriptObject::Create` `flux.dll @ 0x1003a960`;
+  `TypeFromName` `@ 0x1003aa30`.
+- **`NewObject` (0x3a) pushes a fresh one and pops nothing**
+  (`FcScriptTask::Execute` `@ 0x1003b190`, case 0x3a). A POG local declaration
+  (`list l;`) compiles to `NewObject <type>; Store` at the top of the frame --
+  which is *why* a script can hand an "empty" list to a native and read it back
+  full: **the object exists before the call**. That is the whole basis of the
+  parallel-handle-list pattern in section 8a.
+- **The `NewObject` operand is a link-time fixup, zero on disk.** The **`OIMP`**
+  chunk (name, `u32be` count, `count` `u32be` sites; each site = the operand
+  slot = `NewObject` offset + 1) is to object types what `FIMP` is to imported
+  calls; the linker (`@ 0x1003482c`) writes the resolved eType into the code
+  stream at load. 1095 sites across the retail packages -- 546 string, 379
+  list, 170 set. **Read the shipped bytecode without the OIMP tables and every
+  `NewObject` reads `0`, and you will conclude the operand is unused.** We did,
+  for months: lists ported as `null`.
+- **`StoreObject` (0x3d) is not `Store`.** It calls the *destination* object's
+  first virtual (`AssignObject`) with the value on top of the stack -- copying
+  contents into the existing object rather than rebinding the slot. (`0x3f`
+  `EqualObjects` is vtable+4 `IsEqual`; `0x40` `CloneObject` is vtable+8
+  `Copy`.) The shipped compiler only emits it where a plain rebind is
+  equivalent, so this is recorded, not relied upon.
+- **`gui.RepositionWindow(window, parent, x, y)` reparents as well as moves**
+  (from the shipped bytecode: `igui.ArrangeWindowsVertically` passes a running
+  vertical offset as the *last* argument, `igui.CreateMenu` passes the shady bar
+  it just created as the *second*).
+
 ---
 
 ## 3. Game startup
@@ -611,6 +642,50 @@ not. Rocks: 5000 hp bare hull, no collisions against anything moving
 > 10 km/s (`0x100648d0`), and a killed rock silently respawns from the pool
 (`0x100648b0`). Implemented in `fields.gd`; live cap 150 rocks (the
 original's own budget). Full write-up: `docs/fields.md`.
+
+## 5g. The player's devices
+
+- **The aggressor "shield" is not a shield -- it is a RAM.** It registers with
+  base **`iiWeapon`** (`0x1002efa0`), and `Fire` (`0x1002f6a0`) is a single
+  instruction (`active = 1`). It refuses unless the bank is *completely* full
+  (`0x1002f5c0`), drains over `duration`, and drops the instant the LDS drive
+  engages. Damage (`0x1002f900`) is
+  `clamp((speed/sweet_speed)^2 * damage_factor, 0.25, 5.0) * your own hull
+  hit_points`, dealt to whatever is inside the coverage cone dead ahead
+  (source 5), with `damage * self_damage_factor` back to you (source 4) -- and
+  the collision is reported *handled*, which suppresses the ordinary collision
+  damage. **Its recharge has no `dt`**: the compiler clobbers the dt argument
+  slot at `0x1002f579`, so it recharges per *frame* (icPlayerLDA at
+  `0x100acb7e` does the same multiplies *and* the dt -- the aggressor has no
+  such instruction). `icAggressorAvatar` (`0x100b94e0`) draws the same cone fan
+  as `icLDAAvatar`, aggressor-textured, v scrolling at 1/s.
+- **A weapon link is an automatic fire group, never player-built.**
+  `icLoadout::CreateWeaponLinks` (`0x10096940`) buckets `iiWeapon` subsims **by
+  INI name**, excludes `icCounterMeasureMagazine` first, drops buckets of fewer
+  than 2, and makes one link per bucket (`0x10096e40`). Selecting the link
+  fires *every member* (`AttemptToActivateWeapon 0x1003ccb0` matches the
+  selected id against the **link's** id). The tug's two `pbc` subsims are its
+  one link. UNKNOWN: nothing but the accessor reads the linking-mode toggle at
+  `icShip+0x2f4`, and the `weapon_link` hardware INI **does not ship**.
+- **Software is a bitmask on the CPU.** `icProgram`'s only property is
+  `program_id` (`+0x40`), ORed into `icCPU+0x80` when fitted
+  (`icLoadout::LoadComputerPrograms 0x10095ea0`, gated on owning the cargo and
+  the CPU's `memory_slots`). Ten bits: 4 match-velocity, 32 engine management,
+  64 military tracking (aim error 4 -> 1), 128 occlusion, 256 repair, 512
+  self-defence, 1024 stealth, 2048 hyperspace tracker, 4096 aggressor control,
+  8192 imaging. The campaign only ever *gives* two (stealth, tracker); the rest
+  are bought. Dead in the shipped build:
+  `military_tracking_accuracy_multiplier` is never read, and
+  `Cargo_Autopilots`' INI does not exist.
+- **`DAT_10167e5c` -- the long-open HUD question -- is `icPlayerLDA`.**
+  `icHUDShields` draws the LDA state, capped at 2 rows. `icHUDContrails` is 8
+  trails x 16 points, 0.4 s emission: the player gets a *ladder* (wingtip rails
+  plus rungs, dashed under LDS), everyone else a centre line.
+- **Two corrections to earlier notes.** `icShip::ThrusterRatio` is a **stub
+  returning 0.0**, so the "lerped up by ThrusterRatio" term in
+  `icShip::Brightness` is dead code; and the reactor's "stored charge" stores
+  nothing -- `+0x7c` is instantaneous output and `+0x98` the rated output, so
+  the lightning gauge settles at efficiency. Addresses: `docs/combat.md`.
 
 ## 5f. Act 3's aliens
 

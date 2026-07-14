@@ -325,6 +325,14 @@ func _draw_system(body: Rect2) -> void:
 	for o: Dictionary in main.objects:
 		far = maxf(far, Vector2(float(o["x"]), float(o["z"])).length())
 	for o: Dictionary in main.objects:
+		# imapentity.SetMapVisibility: the scripts hide and reveal entities on
+		# THIS view (56 call sites -- stations that have not been discovered
+		# yet, wrecks the plot has not pointed you at). The flag is recorded on
+		# the record by natives/entities.gd; this is the read side. It scopes
+		# the map only: a hidden station still shows on sensors and in the
+		# contact list, which is exactly the point of hiding it here.
+		if not bool(o.get("map_visible", true)):
+			continue
 		var v := Vector2(float(o["x"]), float(o["z"]))
 		var d: float = v.length()
 		var p := c

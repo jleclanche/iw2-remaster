@@ -15,7 +15,9 @@ var music_a: AudioStreamPlayer
 var music_b: AudioStreamPlayer
 var music_current: AudioStreamPlayer
 var current_mood := ""
+var current_track := ""       # a one-off stream (the credits' badlands), not a mood
 var base_path := ""
+var _mood_before_track := ""
 var _engine_hot := false
 
 func _ready() -> void:
@@ -99,16 +101,49 @@ func set_thruster_level(level: float) -> void:
 	thruster_player.volume_db = linear_to_db(clampf(level, 0.0, 1.0) * 0.4 + 0.001)
 
 func music(mood: String) -> void:
-	if mood == current_mood:
+	if mood == current_mood and current_track.is_empty():
 		return
 	current_mood = mood
-	var path := GAME_DIR.path_join("streams/audio/music").path_join("a1_%s.mp3" % mood)
+	current_track = ""
+	_crossfade("a1_%s.mp3" % mood, true)
+
+# --- one-off tracks ---------------------------------------------------------
+# The mood pairs above are the dynamic score. A handful of screens instead name
+# ONE stream outright: icCreditScreen (iwar2.dll @ 0x10016180) streams
+# "sound:/audio/music/badlands" -- a track with no a1_/a2_/a4_ act prefix and no
+# mood sibling, so music() cannot reach it. play_track() names the file
+# directly and remembers the mood it interrupted; restore_music() fades that
+# mood back in when the screen pops.
+
+func play_track(stem: String, loop := true) -> void:
+	if current_track == stem:
+		return
+	if current_track.is_empty():
+		_mood_before_track = current_mood
+	current_track = stem
+	current_mood = ""
+	_crossfade("%s.mp3" % stem, loop)
+
+func restore_music() -> void:
+	if current_track.is_empty():
+		return
+	current_track = ""
+	var mood := _mood_before_track
+	_mood_before_track = ""
+	current_mood = ""     # force the crossfade even back to the same mood
+	if not mood.is_empty():
+		music(mood)
+	else:
+		music_current.stop()
+
+func _crossfade(file: String, loop: bool) -> void:
+	var path := GAME_DIR.path_join("streams/audio/music").path_join(file)
 	if not FileAccess.file_exists(path):
 		return
 	var f := FileAccess.open(path, FileAccess.READ)
 	var stream := AudioStreamMP3.new()
 	stream.data = f.get_buffer(f.get_length())
-	stream.loop = true
+	stream.loop = loop
 	var next := music_b if music_current == music_a else music_a
 	next.stream = stream
 	next.volume_db = -18.0

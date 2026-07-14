@@ -150,7 +150,7 @@ extends RefCounted
 # (icBeamAvatar is really built: its @element marker is in explosion_fx.gd)
 # @element-stub icCockpitAvatar -- covered-elsewhere: main.gd cockpit dressing shown in the F1 view
 # @element-stub icWaypointAvatar -- covered-elsewhere: space_fx.gd draws the waypoint marker (icHUDWaypointIcon is @element there)
-# @element-stub icAggressorAvatar -- GENUINE GAP: aggressor-shield visual (player device, with icAggressorShield)
+# (icAggressorAvatar is really built: its @element marker is in space_fx.gd)
 # (icAlienSwarmAvatar is really built: its @element marker is in alien.gd / particle_fx.gd)
 # (icAsteroidAvatar is really built: its @element marker is in fields.gd)
 # (icCapsuleEffectNode is really built: its @element marker is in capsule_fx.gd / main.gd)
@@ -190,8 +190,8 @@ extends RefCounted
 # @element-stub icPlayerLDA -- covered-elsewhere: ship_systems.gd LDA deflection (m_min_energy, max chance)
 # @element-stub icAIPilot -- covered-elsewhere: ai_ship.gd flies the same flight model with patrol/attack behaviours
 # @element-stub icPlayerPilot -- covered-elsewhere: main.gd _player_control is the recovered yoke (docs/controls.md)
-# @element-stub icWeaponLink -- GENUINE GAP: fire-group linking of mounted weapons; weapons.gd fires a fixed PBC pair only
-# @element-stub icProgram -- GENUINE GAP: software subsims (stealth_program, aggressor_shield_control, imaging_module, ... in data/ini/subsims/systems/player/programs); the autopilot programs' effects exist as main.gd autopilots, the rest do nothing
+# (icWeaponLink is really built: its @element marker is in ship_systems.gd)
+# (icProgram is really built: its @element marker is in ship_systems.gd)
 
 # ---------------------------------------------------------------------------
 # iwar2.dll -- weapons and ordnance (base iiWeapon / iiGun / iiProjectile /
@@ -209,7 +209,7 @@ extends RefCounted
 # (icSlugThrower stays a stub: its @element-stub marker is in turrets.gd)
 # (icTurret is really built: its @element marker is in turrets.gd, with iiGun/icBeamProjector/icBeam)
 # (icTurretShip stays a stub: its @element-stub marker is in turrets.gd)
-# @element-stub icAggressorShield -- GENUINE GAP: the player's aggressor-shield device
+# (icAggressorShield is really built: its @element marker is in ship_systems.gd (it is a RAM, not a shield -- base iiWeapon))
 # (icMagazine is really built: its @element marker is in missiles.gd)
 # (icMissileMagazine is really built: its @element marker is in missiles.gd)
 # (icCounterMeasureMagazine is really built: its @element marker is in missiles.gd)
@@ -276,8 +276,8 @@ extends RefCounted
 # iwar2.dll -- HUD elements not implemented in hud.gd (their bare @element-stub
 # markers live there; the classification is here)
 # ---------------------------------------------------------------------------
-# @element-stub icHUDShields -- GENUINE GAP: the shield-arc HUD readout (main.gd shield_bars() exists; nothing draws it)
-# @element-stub icHUDContrails -- GENUINE GAP: HUD motion-streak contrails (cosmetic)
+# (icHUDShields is really built: its @element marker is in hud.gd)
+# (icHUDContrails is really built: its @element marker is in space_fx.gd)
 # @element-stub icHUDDebug -- debug-only: HUD debug readout
 # @element-stub icHUDScore -- mp-only: deathmatch score HUD element
 # @element-stub icHUDEditBoxElement -- mp-only: the HUD chat/taunt entry box (imultiplay.ClientOpenHUDTauntBox)

@@ -620,6 +620,13 @@ func _h_set_prompt(_t, a: Array) -> Variant:
 	var key := PogStd._s(a[0])
 	game.mission.prompt = game.comms.strings.get(key, key) \
 			if game.comms != null else key
+	# ihud.SetPrompt takes a SECOND argument and we were dropping it: every one
+	# of the tutorial's 12 input.KeyCombinations calls is passed straight in here
+	# (iact0mission10: SetPrompt("a0_m10_prompt_disengage",
+	# input.KeyCombinations("icPlayerPilot.AutopilotOff"))). The prompt text has
+	# no %s -- the key string is a separate field the HUD shows beside it, which
+	# is what mission.prompt_keys already is.
+	game.mission.prompt_keys = PogStd._s(a[1]) if a.size() > 1 else ""
 	return 0
 
 # @native ihud.Print

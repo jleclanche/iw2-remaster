@@ -1239,3 +1239,236 @@ Not recovered. **Do not fill these in with plausible values.**
   type 4).
 
 ---
+
+## Player devices (task #51)
+
+### icAggressorShield (+ icAggressorAvatar)
+
+Not a shield in the LDA sense at all: it is registered with base **`iiWeapon`**
+(`iwar2 @ 0x1002efa0`, `operator_new(0xcc)`, ctor `0x1002f290`), and it is a
+**ram**. You charge it, fire it, and whatever you hit head-on takes a multiple of
+*your own hull* in damage while you take a fraction of that back.
+
+Fitted at the type-2048 mountpoint (`subsims/mountpoints/aggressor_shield.ini`),
+which the tug carries as an *empty socket*; `heavy_corvette_prefitted.ini` and
+`fast_attack_prefitted.ini` come with `subsims/systems/player/aggressor` fitted.
+Two devices ship: `aggressor.ini` (Cargo_AggressorShieldUpgrade) and
+`military_aggressors.ini` (Cargo_MilitaryAggressorShields).
+
+Property map `0x1002f040`:
+
+| INI key | field | aggressor | military |
+|---|---|---:|---:|
+| `duration` | +0xac | 3.0 | 5.0 |
+| `capacity` | +0xb0 | 1000 | 1500 |
+| `coverage` | +0xb4 | 90 | 140 |
+| `sweet_speed` | +0xb8 | 800 | 1200 |
+| `damage_factor` | +0xbc | 1.0 | 1.5 |
+| `self_damage_factor` | +0xc0 | 0.1 | 0.05 |
+
+Runtime: `energy` +0xc4, `active` +0xc8. Class statics: `min_damage_factor`
+**0.25** (`0x1015b214`), `max_damage_factor` **5.0** (`0x1015b210`), and
+`penetration_armour_factor` **0.7** (`0x1015b20c`) -- which is registered in the
+property map and **never read anywhere in iwar2.dll**: UNKNOWN what it scaled.
+The ctor's `sweet_speed` default is 2000.0 (both shipped INIs override it).
+
+The methods:
+
+* **Fire** (vtable slot 28, `0x1002f6a0`) is one instruction -- `mov byte
+  [ecx+0xc8], 1`. That is the whole of it.
+* **IsReadyToFire** (slot 22, `0x1002f5c0`) refuses while it is already up
+  (result 0xd) and refuses unless the bank is **completely full** --
+  `abs(energy - capacity) < 1e-6` (`0x101178fc`), else result 4. There is no
+  partial discharge. (The `Mode() == 2` branch at `0x1002f5e5` is the AI's: an
+  AI-piloted aggressor only fires while its `icAITarget` is `IsAvoiding`.)
+* **Simulate** (slot 19, `0x1002f410`) sets the avatar's **`"fire"` channel**
+  (`0x1015b22c`) to the active flag, then:
+  * active: `energy -= dt * capacity / duration`, so the bank empties over
+    exactly `duration` seconds; it drops at empty, and it drops the instant the
+    **LDS drive engages** (`0x1002f52a`: `icShip+0x25c`, the `icLDSDrive`, state
+    `+0x84 == 2`).
+  * idle: `energy += TRIWeight() * efficiency * power`, clamped to `capacity`.
+    **There is no `dt` in that expression.** At `0x1002f579` the compiler reuses
+    the now-dead `dt` argument slot as scratch for the efficiency, so the
+    multiply chain at `0x1002f582` picks up efficiency and power and nothing
+    else. `icPlayerLDA::Simulate` does the identical three multiplies at
+    `0x100acb7e` **and then an `fmul [esp+0x14]` for dt** -- the aggressor simply
+    has no such instruction. It recharges per *frame*. This is presumably why the
+    thing is called an *instant* shield (the control program's cargo name is
+    `Cargo_InstantShieldControl`). We keep the per-call form, exactly as we
+    already do for the heat-damage tick.
+* **DamageAtSpeed** (`0x1002f900`) is the curve:
+
+      d = clamp((speed / sweet_speed)^2 * damage_factor * TRIWeight(), 0.25, 5.0)
+      damage = ship.hit_points (icShip+0x1b0) * d
+
+  Quadratic, and floored -- so even a stationary ram lands 0.25 of your hull. The
+  INI's comment ("in multiples of ship's hit points") is exact.
+* **OnCollision** (`0x1002f6b0`) has two halves.
+  * *Auto-fire* (`0x1002f6b7`-`0x1002f77e`): gated on the CPU being fitted, being
+    **working**, and carrying **program bit 0x1000** (`test ch, 0x10` @
+    `0x1002f6fd` -- the aggressor-shield control program). It then fires the
+    shield at anything about to hit you that is not friendly
+    (`icShip::IsFriendly`) and is not one of the excluded sim types 7/8/9/12/31
+    (`0x1002f721`).
+  * *Effect* (`0x1002f792`): the other ship must lie inside the coverage cone
+    dead ahead -- `dot(normalize(other.pos - ship.pos), ship.forward) >=
+    cos(coverage * pi/360)`, the same half-arc idiom as the LDA hood
+    (`0x101195a0` = pi/360). Inside it: the victim takes
+    `DamageAtSpeed(abs(ship.velocity))` on the raw hull path (**source 5**,
+    `0x1002f8b0`), the shield's own ship takes that **same number** times
+    `self_damage_factor` (**source 4**, `0x1002f8d0` -- `fld [esp+0x24]; fmul
+    [esi+0xc0]`), and the collision is reported **handled**, which is what makes
+    `iiSim::OnCollision` skip the ordinary collision damage for both ships.
+
+**icAggressorAvatar** (registered `0x100b9050`, ctor `0x100b9280`, Prepare
+`0x100b9460`, Draw `0x100b94e0`) is the **same cone fan as `icLDAAvatar`** --
+Draw's only geometry call is `FUN_100c9f40` @ `0x100b95e1`. It is textured
+`texture:/images/sfx/aggressor` (`0x101615b8`), additive, rim radius +0xbc (ctor
+default 0.1), and its texture's `v` scrolls at **1 unit/s** (`0x1011c824`) off the
+node's own clock (+0xc0, accumulated in Prepare). UNKNOWN: the LWS node's world
+scale -- we size the shell to the player's collision radius instead.
+
+### icWeaponLink
+
+A weapon link is a **fire group**, and the player never builds one -- the loadout
+does it automatically whenever a hull carries **more than one of the same weapon**.
+
+`icLoadout::CreateWeaponLinks` (`0x10096940`) walks the ship's subsims, keeps the
+`iiWeapon`-derived ones and buckets them **by the INI `name=`** (FcObject +0xc):
+
+| class | bucket | eLinkType | eFireChannel |
+|---|---|---:|---:|
+| `icCounterMeasureMagazine` | **excluded outright** (tested first, `0x10096a4c`, because it derives from icMagazine) | -- | -- |
+| `icCannon` (base `iiGun`), `icSlugThrower` | A | 0 | 1 |
+| `icBeamProjector` | B | 1 | 2 |
+| `icMagazine` | C | 2 | 2 |
+
+`icLoadout::RemoveSingleInstancesOfWeapon` (`0x10096cd0`) then throws away every
+bucket with fewer than two members -- one gun is not a group.
+`icLoadout::DoLinkWeapons` (`0x10096e40`) makes one `icWeaponLink`
+(`operator_new(0xa0)`, vtable `0x10119e40`) per surviving bucket: fire channel at
++0x88 = `(linktype != 0) + 1`, eLinkType at +0x90, the member array at
++0x7c/+0x80/+0x84, and `FiSim::AddSubsim`s the link onto the ship as a subsim of
+its own. The link's property map is `iiShipSystem`'s -- it has **no INI
+properties**.
+
+What the link *does* is in `iiWeapon::AttemptToActivateWeapon` (`0x1003ccb0`): a
+player-mode weapon fires only when the pilot's selected object id (the id at
+`pilot+0x98[pilot+0x8c]`) matches -- and the id it matches against is the weapon's
+own (`0x1003cd3e`) when it has no link, but **the link's** (`0x1003cd4b` /
+`0x1003cd5c`) when it has one. So one entry in the cycle selects the whole group
+and every member fires on the same trigger. `icPlayerPilot::GetNextWeapon`
+(`0x100b0590`) cycles that id list, which holds bare weapons *and* links side by
+side, filtered by fire channel.
+
+On `tug_prefitted.ini` this comes out as the game always presented it: the two
+`pbc` subsims share an INI name, so they are the hull's **one** link (type 0,
+channel 1, two members) and fire as a pair; the assault cannon, quad light PBC,
+mining laser and the magazines are singles. The decoy magazine
+(icCounterMeasureMagazine) is correctly excluded.
+
+**Two things are UNKNOWN and stay that way.** `icShip::WeaponLinkingMode` (+0x2f4)
+/ `WeaponLinkingHardware` (+0x2f8) and `icPlayerPilot::ToggleWeaponLinking`
+(`0x100b0f60`, log events 0x29/0x2a/0x2b) are a *separate* player toggle gated on
+`Cargo_WeaponLinkHardware` being fitted -- but **nothing in iwar2.dll reads +0x2f4
+other than the accessor**, so what the toggle switches was not recovered; and the
+hardware's template, `ini:/subsims/systems/player/subsystems/weapon_link` (cargo
+type 555, `icargoscript.gd:5477`), **does not ship** -- the file is absent from
+the game's data, exactly like `Cargo_Autopilots`' missing `autopilot_program`.
+
+### icProgram -- the software subsims
+
+`icProgram` (registered `0x10031d30`, base `FcSubsim`, `operator_new(0x44)`) has
+**exactly one property**: `program_id` at +0x40 (map `0x10031e80`). Everything
+else in the ten shipped INIs (`subsims/systems/player/programs/*.ini`, all
+identical but for `name` and `program_id`) belongs to the `FcSubsim` parent map.
+
+`icLoadout::LoadComputerPrograms` (`0x10095ea0`) is the fitting rule, and it is
+not what you would guess: the loadout INI's `[Priority] program=` list is a
+**priority order**, not a fit list. For each entry in order, while the CPU's
+`memory_slots` (+0x7c) budget lasts, the program is fitted **only if the player
+actually owns the cargo** (`icInventory::NumberOfCargoType` @ `0x100a59b0`); its
+`program_id` is then OR-ed into the mask (`or ebp, esi` @ `0x1009609c`), which is
+written through the icCPU property map's `programs` key to **icCPU +0x80**.
+`icShip::HasProgram` (`0x10002a70`) is the accessor.
+
+| program | bit | what the bit gates in the engine |
+|---|---:|---|
+| `autopilot_matchvel` | 4 | Case 4 of the autopilot switch. Without it `EngageAutopilotMatchVelocity` (`0x100aff10`) is never called -- the pilot just logs a refusal. Formate/Approach/Dock are ungated. |
+| `engine_manage_program` | 32 | `icReactor::Simulate` (`0x1003a2a0`, test @ `0x1003a3e4`): final power output *= `cpu.engine_management_power_multiplier` (+0x84). No heat cost, no CPU-working check. |
+| `mil_tracking_program` | 64 | `iiGun::ComputeFiringSolution` (`0x10035310`, test @ `0x100354b6`): the gunnery aim-error ceiling drops from **4** to **1**. (`military_tracking_accuracy_multiplier` at icCPU+0x88 is **never read** -- a dead INI key.) |
+| `occlusion_program` | 128 | `icSensor`'s detection sweep (`FUN_1003ae90`, test @ `0x1003b3b4`): detect-brightness *= cpu+0x90, detect-range *= cpu+0x8c. |
+| `repair_control_program` | 256 | `icAutorepair::Simulate` (`0x1002c7a0`, test @ `0x1002c7dc`): repair output *= `repair_output_multiplier` (+0x94). |
+| `self_defense_program` | 512 | `icPlayerPilot::RemoteLink` (`0x100b1110`): the ship you leave behind when you remote-link gets an `icAIPilot` instead of sitting inert. Fires nowhere else. |
+| `stealth_program` | 1024 | `icShip::Brightness` (`0x10075420`): `b -= cpu.stealth_brightness_modifier` (+0x98). Demands a working CPU. |
+| `hyperspace_tracker` | 2048 | `icCapsuleSpace::RegisterJump` (already in act3.md) **plus**, newly found, `icPlayerContactList::PostProcess` (`0x100aada0`): the current target is *retained* in the contact list when it drops off sensors instead of being dropped. |
+| `aggressor_shield_control` | 4096 | The aggressor auto-fire above (`0x1002f6fd`). |
+| `imaging_module` | 8192 | `icPlayerPilot::Think` (`0x100ad8f0`, test @ `0x100ae191`) and `EnableZoom` (`0x100b0e80`): **zoom without a sniper weapon fitted**. |
+
+Bits 0x1 / 0x2 / 0x8 / 0x10 are used by no shipped INI and tested nowhere.
+
+**What single player actually fits.** Fitting is never scripted. The campaign
+*gives* the player exactly **two** programs: `Cargo_StealthProgram` (194) at
+`iact1mission08.gd:287`, on one dialogue branch, and `Cargo_HyperspaceTracker`
+(312) at `iact2mission05.gd:110` / `iacttwo.gd:538`. Everything else must be
+bought as cargo. (`Cargo_MatchVelocityAutopilot` is added only by
+`igivepursuit.gd`, whose one export has **no caller** in any ported package --
+dead in the shipped game.) All four loadouts list all ten programs and differ only
+in their priority order.
+
+## icShip::Brightness and the reactor gauge (task #53)
+
+Both are in `ship_systems.gd`; both correct things the docs previously had wrong.
+
+**`icShip::Brightness()` (`0x10075420`, vtable slot +0xc8)** is the ship's 0..1
+EM/visual signature -- the number the whole stealth system runs on, because
+`icSensor`'s scan (`FUN_1003ae90`) scores a contact as
+`efficiency * Brightness * (1 - dist/range)`.
+
+    b  = min_brightness                       (icShip +0x2fc, ship INI min_brightness)
+    b *= reactor.charge / reactor.max_charge  (+0x7c / +0x98; 1.0 if no reactor)
+    b  = (m_brightness - b) * ThrusterRatio() + b        <-- DEAD, see below
+    b += (heat + heat_external) * 0.4 / heat_damage_threshold   (0.4 @ 0x10117558)
+    b += sensor_disruptor.brightness_mod       when ON (+0x7c; negative, -0.15)
+    b += active_sensor.efficiency * active_sensor.brightness_mod  (+0x78 * +0x80)
+    b -= cpu.stealth_brightness_modifier       when CPU working AND program 0x400
+    b *= 0.1                                   when docked at an icStation (0x101184b0)
+    return clamp(b, 0, 1)
+
+Two corrections:
+
+* **`ThrusterRatio()` is a stub.** `icShip::ThrusterRatio` (`0x10075600`) is seven
+  bytes -- `fld dword [0x10117178]; ret` -- and `0x10117178` is `0.0`. The lerp at
+  `0x10075499` therefore collapses to `b`, and the ship INI's `brightness`
+  (icShip +0x1b8) is **never reached** on the local path; only `min_brightness` is.
+  (+0x1b8 is the network-replicated value, returned early for proxies.)
+* The terms are **not** "heat / LDS / weapon capacitor". The four subsims icShip
+  caches are `icCPU` (+0x29c), `icReactor` (+0x2a0), `icActiveSensor` (+0x2a4) and
+  `icSensorDisruptor` (+0x2a8), and those are what Brightness reads. Consequently
+  `cold_thrusters.ini`'s `brightness_mod = -0.1` looks **dead** -- its class is
+  `icThrusters` (+0x290), which Brightness never touches.
+
+**The reactor gauge is a misnomer.** `icReactor::Simulate` (`0x1003a2a0`) stores
+nothing and drains nothing:
+
+    ramp(+0x9c) chases ramp_target(+0xa0) at 1/ramp_up_time per second
+    out   = base_output(+0x94)  [* pod_power_factor when a pod is fitted and on]
+    +0x98 = out                              <- the gauge's DENOMINATOR (rated output)
+    +0x7c = efficiency * out * ramp          <- the gauge's NUMERATOR  (this frame's output)
+    +0x7c *= cpu.engine_management_power_multiplier   when program bit 0x20
+    icShip::AddPower(+0x7c)
+
+So the gauge reads `efficiency * ramp`, its **equilibrium is `efficiency`** (1.0
+for a healthy, cool, powered reactor -- verified in a harness), and it goes red
+below 0.25 (`0x101191ec`) only when the reactor is damaged, overheated, or
+throttled down. The only thing that moves the target is the HUD throttle
+(`FUN_10108240`), which drags +0xa0 at **0.35/s** (`_DAT_10163f14`). Property map
+`0x10039f40`: `output_power` +0x7c, `has_power_pod` +0x80, `pod_power_factor`
++0x84, `pod_heat_factor` +0x88, `ramp_up_time` +0x8c (ctor default **20.0**; only
+`powerplant_multiplayer.ini` overrides it, to 2.0). The HUD feed
+(`FUN_100e07f0`) defaults the gauge to **1.0**, not 0, when no reactor is fitted.
+
+We start the ramp settled rather than at the ctor's 0, because our ships are
+constructed at the moment they enter play rather than at level load; the 20 s
+cold-start transient is the one part of this we do not reproduce.

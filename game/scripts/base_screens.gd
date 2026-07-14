@@ -38,6 +38,8 @@ var _focus: Array[PogUi.PogWindow] = []
 var _fi := 0
 ## Row rects, for the mouse. [[Rect2, PogWindow, entry_index], ...]
 var _hit: Array = []
+## Whether the credit screen (and its badlands stream) is currently up.
+var _credits_playing := false
 
 
 func _ready() -> void:
@@ -67,8 +69,27 @@ func _process(delta: float) -> void:
 		ui.dirty = false
 		_rebuild(scr)
 		queue_redraw()
+	_credits_music(scr)
 	if visible and scr != null:
 		_advance_scrollers(scr, delta)
+
+
+## icCreditScreen's own soundtrack. The screen's ctor (iwar2.dll @ 0x10016180)
+## streams `sound:/audio/music/badlands` -- the one music cue in the game with no
+## act prefix and no mood sibling, so it cannot come out of audio_manager's a1_
+## mood pair. Start it when the credit screen comes up, put the mood score back
+## when it pops (which it does itself, on the scroll running out or MovieSkip).
+func _credits_music(scr: PogUi.PogScreen) -> void:
+	var on_credits: bool = scr != null and scr.name == "icCreditScreen"
+	if on_credits == _credits_playing:
+		return
+	_credits_playing = on_credits
+	if main == null or main.audio == null:
+		return
+	if on_credits:
+		main.audio.play_track("badlands")
+	else:
+		main.audio.restore_music()
 
 
 ## icScroller: the credits crawl. Advance at the engine's 50 px/s and pop the

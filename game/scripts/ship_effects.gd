@@ -18,6 +18,15 @@ var ship: ShipFlight
 var anim_nodes: Array = []   # {node, channel, p0..s1}
 var exprs: Dictionary = {}   # channel string -> {terms: Array, value: float}
 var fire_pulse := 0.0        # set by weapons fire events
+# sim.AvatarAddChannel / AvatarSetChannel / AvatarRemoveChannel (sim.dll) --
+# FiSceneNode::SetChannelValue on the avatar root. The scripts drive cutscene
+# ships through the SAME named inputs the expressions above read: 79 SetChannel
+# calls set "lz" (a raw thruster input the generator also writes), and
+# AddChannel/RemoveChannel bracket script-OWNED names the generator never
+# writes ("league_off", "iasteroid_pre_damage", "fire"). Both cases land in one
+# table because both are looked up the same way -- a script value simply wins
+# over the ship-state value for as long as it is set.
+var script_channels: Dictionary = {}
 var _lz_smooth := 0.0
 var _burn_smooth := 0.0
 var _term_re: RegEx
@@ -180,6 +189,10 @@ func _physics_process(delta: float) -> void:
 		"rr": ship.input_rotate.z,
 		"burn": burn, "fire": fire_pulse, "dock": 0.0,
 	}
+	# a script-set channel overrides the ship-state input of the same name and
+	# supplies the ones the ship has no state for
+	for k: String in script_channels:
+		raw[k] = script_channels[k]
 	# tug channels.ini: smoothed lz/burn -> flame/core/boom/flap
 	_lz_smooth += (clampf(absf(raw["lz"]), 0.0, 1.0) - _lz_smooth) \
 		* minf(delta / 0.75, 1.0)

@@ -675,6 +675,18 @@ func _contact_damage(rec: Dictionary, t: Node3D, at: Vector3) -> void:
 	_disrupt_check(rec, t)
 
 # icMissile::OnExplode 0x1006d1a0.
+## Set off a live record where it stands, and hand it back so the caller can see
+## it has gone off. sim.Create on a weapon INI followed by isim.Kill is how the
+## scripts fire ordnance by hand: iact2mission05 creates an ldsi_missile, PlaceAt
+## it on the Marauder group's leader and kills it, which is what drops the whole
+## group out of LDS. natives/world.gd routes that Kill here.
+func detonate(rec: Dictionary) -> void:
+	var node = rec.get("node")
+	if node == null or not is_instance_valid(node):
+		return
+	_explode(rec, (node as Node3D).global_position)
+
+
 func _explode(rec: Dictionary, at: Vector3) -> void:
 	if int(rec["state"]) == ST_EXPLODED:
 		return

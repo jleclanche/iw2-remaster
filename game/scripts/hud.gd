@@ -228,6 +228,7 @@ func _draw() -> void:
 		_draw_mfd()
 	_draw_weapon_panel()
 	_draw_system_status()
+	_draw_shield_panel()
 	_draw_orb()
 	_draw_contact_list()
 	_draw_log(c)
@@ -419,8 +420,12 @@ func _draw_prompt(c: Vector2) -> void:
 	if main.mission == null or str(main.mission.prompt) == "":
 		return
 	var text: String = "+ " + str(main.mission.prompt)
-	if str(main.mission.prompt_keys) != "":
-		text += "  [ %s ]" % main.mission.prompt_keys
+	var keys: String = str(main.mission.prompt_keys)
+	if keys != "":
+		# input.KeyCombinations already returns the brackets (FcInputMapper::
+		# FormKeyString wraps every binding in "[ " ... " ]"); a hand-authored
+		# mission `keys` field does not.
+		text += "  %s" % keys if keys.begins_with("[") else "  [ %s ]" % keys
 	var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
 			FONT_SIZE).x
 	var at := Vector2(c.x - w / 2.0, c.y + 148)
@@ -907,21 +912,30 @@ func _draw_status_icons(c: Vector2) -> void:
 	#  0x3E thermometer: (ship+0x288 + ship+0x28c) * 0.75 /
 	#       icShip::m_heat_damage_threshold, clamped 0..1; RED when >= 0.75,
 	#       i.e. exactly when total heat reaches the damage threshold.
-	#  0x3F lightning:   reactor charge -- ship+0x2a0 is the first icReactor
+	#  0x3F lightning:   the "reactor charge" -- ship+0x2a0 is the first icReactor
 	#       subsim (icShip::OnAttachSubsim, class DAT_10165d40); value =
-	#       reactor+0x7c / reactor+0x98, RED when < 0.25. Our sim mounts no
-	#       reactor with a stored-charge model, so this gauge has no honest
-	#       source and stays undrawn.
+	#       reactor+0x7c / reactor+0x98, RED when < 0.25 (0x101191ec), and it
+	#       DEFAULTS TO 1.0 when no reactor is fitted. The name is a misnomer:
+	#       icReactor::Simulate (0x1003a2a0) writes +0x98 = the rated output and
+	#       +0x7c = efficiency * output * ramp, so the ratio is `efficiency *
+	#       ramp` -- nothing is stored and nothing drains. See ship_systems.gd.
 	#  0x40 bulb:        icShip::Brightness() (0x10075420) -- the ship's
-	#       visible/EM signature (idle brightness scaled by reactor output,
-	#       lerped up by ThrusterRatio, plus heat, LDS and weapon-capacitor
-	#       terms), RED when > 0.75. Not modelled in our sim; undrawn.
+	#       visible/EM signature, RED when > 0.75 (0x10117d8c). NOT the old
+	#       "idle x reactor, lerped by ThrusterRatio, plus LDS and weapon
+	#       capacitor" reading: ThrusterRatio() is a STUB returning 0.0
+	#       (0x10075600), and the real terms are heat, the sensor disruptor, the
+	#       active sensor and the CPU's stealth program. See ship_systems.gd.
 	# The icon appears whenever the value CHANGES, holds GAUGE_HOLD seconds
 	# after it settles, and shows the value as a charge ring: amber + flags 9
 	# normally, red + flags 13 when flagged.
 	# main.ship_heat() returns heat/threshold * 0.8, so the gauge value is
 	# ship_heat() * (0.75/0.8) and the flag trips at ship_heat() >= 0.8.
 	_gauge(c, 0, 0x3E, 180.0, main.ship_heat() * 0.9375, main.ship_heat() >= 0.8)
+	if main.sys != null:
+		var rc: float = main.sys.reactor_charge()
+		_gauge(c, 1, 0x3F, 157.5, rc, rc < ShipSystems.REACTOR_RED)
+		var br: float = main.sys.brightness()
+		_gauge(c, 2, 0x40, 135.0, br, br > ShipSystems.BRIGHT_RED)
 
 	# --- slot 10: incoming missile, r = 110, +67.5 ----------------------------
 	# The pilot's incoming feed (0x100b0fc0): pilot+0x6c is the alarm flag,
@@ -1704,14 +1718,70 @@ func _ellipse(c: Vector2, radii: Vector2, col: Color) -> void:
 		pts.append(c + Vector2(cos(a) * radii.x, sin(a) * radii.y))
 	draw_polyline(pts, col, 1.0, true)
 
+# --- shields (right, above the contact list) ---------------------------------
+# @element icHUDShields
+#   Draw = FUN_100fa540, vtable 0x1011e114 slot 9. Right-anchored (the ctor at
+#   0x100fa470 passes 1 to the block base), 112 wide, 16px header + 32px per row,
+#   header hud_shield_status = "SHIELD STATUS". With NO shields fitted the block
+#   is set to height 0 and the panel disappears entirely (FUN_100e2540(this,112,0)).
+#
+#   The class it filters the component list on -- DAT_10167e5c, the open question
+#   in the old notes -- is **icPlayerLDA** (registered @ 0x100ac7a0). So this is
+#   the LDA panel, and it CAPS AT TWO ROWS (cmp esi,2 @ 0x100fa596). icAILDA is a
+#   sibling under iiLDA rather than a subclass, so an AI shield never shows here.
+#
+#   Per row: a lightning sprite (69) at x = 112-16 = 96, a 14-segment charge bar
+#   at x=2 of length 74, and a status word at x = 112-36 = 76.
+#     * working, charge >= min_energy * capacity : bar, no word (see below)
+#     * working, charge <  min_energy * capacity : "OFFLINE"
+#     * broken                                   : the row FLASHES at 2 Hz
+#       (frac(t) vs 0.5, 0x10119458 / 0x10117738) and reads "DESTROYED" (sprite
+#       31) or "OFFLINE" (sprites 63/65), by the subsim's flag bits at +0x68.
+#   UNKNOWN: the original also prints "TRACKING" when charged AND icPlayerLDA
+#   +0xa0 is non-zero. What writes +0xa0 was not traced, so we draw the
+#   charged-and-+0xa0-zero case -- bar, no word -- rather than invent the gate.
+const SHIELD_FLASH_HZ := 2.0   # 0.001 ms->s @ 0x10119458, vs 0.5 @ 0x10117738
+
+func _draw_shield_panel() -> void:
+	if main.sys == null:
+		return
+	var rows: Array = main.sys.shield_rows()
+	if rows.is_empty():
+		return   # height 0: the panel vanishes
+	_ea = _flash_a("icHUDShields")
+	var size := Vector2(PANEL_W, ROW_PITCH * rows.size() + HDR_H)
+	var pos := Vector2(_right_x(PANEL_W), MARGIN)
+	_panel(pos, size, "SHIELD STATUS")
+	var flash: bool = fposmod(float(Time.get_ticks_msec()) * 0.001, 1.0) < 0.5
+	for i in rows.size():
+		var row: Dictionary = rows[i]
+		var ry := pos.y + HDR_H + i * ROW_PITCH
+		var broken: bool = not bool(row["working"])
+		if broken and not flash:
+			continue
+		var col := RED if broken else AMBER
+		# the lightning sprite, at x = PANEL_W - 16
+		var lp := Vector2(pos.x + PANEL_W - 16, ry + 16)
+		draw_colored_polygon(PackedVector2Array([
+			lp + Vector2(3, -8), lp + Vector2(-4, 1), lp + Vector2(-1, 1),
+			lp + Vector2(-3, 8), lp + Vector2(4, -1), lp + Vector2(1, -1)]),
+			_dim(col))
+		if not broken:
+			_bar(Vector2(pos.x + 2, ry + 10), float(row["frac"]), AMBER)
+		var word := ""
+		if bool(row["destroyed"]):
+			word = "DESTROYED"
+		elif broken or bool(row["offline"]):
+			word = "OFFLINE"
+		if not word.is_empty():
+			draw_string(_font, Vector2(pos.x + PANEL_W - 36, ry + 17), word,
+					HORIZONTAL_ALIGNMENT_RIGHT, -1, FONT_SIZE - 4, _dim(col))
+	_ea = 1.0
+
+
 # --- contact list (lower-right) ---------------------------------------------
 # @element icHUDContactList
 #   Draw = FUN_100e4440. Six rows, 16px pitch, sorted by range ascending.
-# @element-stub icHUDShields
-#   112 x (32 * bars + 16), right-anchored, header hud_shield_status. NOT
-#   drawn: the component class its draw filters on (DAT_10167e5c) was never
-#   resolved, and our sim mounts no shield components, so there is nothing
-#   truthful to put in the panel.
 
 const CL_ROWS := 6        # the list shows six rows and scrolls (FUN_100e4440)
 const CL_ROW_H := 16.0    # DAT_1011d970

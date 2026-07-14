@@ -408,7 +408,7 @@ func _add_lda(base: String, _av: Dictionary) -> void:
 	var mat := ExplosionFx._blend2_material(tex)
 	mat.vertex_color_use_as_albedo = true  # the rim fades to alpha 0
 	var mi := MeshInstance3D.new()
-	mi.mesh = _lda_cone_mesh()
+	mi.mesh = lda_cone_mesh()
 	mi.mesh.surface_set_material(0, mat)
 	add_child(mi)
 	_ldas.append({"node": mi, "mat": mat})
@@ -416,7 +416,9 @@ func _add_lda(base: String, _av: Dictionary) -> void:
 # The cone fan (FUN_100c9f40 @ 0x100c9f40): 16 triangles, apex at local
 # +Z (scaled to 4 by the node transform), rim on the z=0 circle. Apex UV
 # u=0.5, rim u alternates 0/1 per triangle; the v offset scrolls with age.
-func _lda_cone_mesh() -> ArrayMesh:
+# icAggressorAvatar's Draw (0x100b94e0) calls the SAME helper, which is why this
+# is shared with space_fx.gd rather than private to the LDA.
+static func lda_cone_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
 	var uvs := PackedVector2Array()
 	var cols := PackedColorArray()
