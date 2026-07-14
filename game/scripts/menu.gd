@@ -21,8 +21,12 @@ const CHARACTERS := [
 
 # the sixteen real systems of the two clusters (the *_dm maps are
 # multiplayer arenas)
+# [stem, label] or [stem, label, entity to arrive beside]. Lucrecia's Base sits
+# in Hoffer's Wake, inside the nebula -- the campaign's home base.
 const SYSTEMS := [
-	["hoffers_wake", "Hoffer's Wake"], ["coyote", "Coyote"],
+	["hoffers_wake", "Hoffer's Wake"],
+	["hoffers_wake", "Lucrecia's Base (Nebula)", "Lucrecia's Base"],
+	["coyote", "Coyote"],
 	["dante", "Dante"], ["kompira", "Kompira"], ["ishime", "Ishime"],
 	["batatas", "Batatas"], ["dagda", "Dagda"], ["drake", "Drake"],
 	["eureka", "Eureka"], ["firefrost", "Firefrost"],
@@ -212,7 +216,7 @@ func _items() -> Array:
 		out.append(["< BACK", true])
 		return out
 	if launched:
-		return [["RESUME", true], ["SAVE GAME", false],
+		return [["RESUME", true], ["NEW GAME", true], ["SAVE GAME", false],
 			["SELECT SYSTEM", true], ["QUIT", true]]
 	return [["START NEW GAME", true], ["LOAD GAME", false],
 		["INSTANT ACTION", true], ["EXTRAS", true],
@@ -231,20 +235,26 @@ func _activate() -> void:
 			sel = 0
 			return
 		main.audio.play("audio/gui/confirm.wav", -6.0)
-		main.start_in_system(SYSTEMS[sel][0])
+		var pick: Array = SYSTEMS[sel]
+		main.start_in_system(str(pick[0]),
+			str(pick[2]) if pick.size() > 2 else "")
 		launched = true
 		close()
 		return
 	if launched:
 		match sel:
-			0:
+			0:  # RESUME
 				main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
 				close()
-			2:
+			1:  # NEW GAME -- restart the campaign from the top
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+				close()
+				main.restart_campaign()
+			3:  # SELECT SYSTEM
 				main.audio.play("audio/gui/expand.wav", -8.0)
 				mode = "systems"
 				sel = 0
-			3:
+			4:  # QUIT
 				get_tree().quit()
 		return
 	match sel:

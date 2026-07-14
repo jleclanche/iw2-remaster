@@ -266,6 +266,10 @@ func _ready() -> void:
 	cl.add_child(jump_fade)
 	menu = Menu.new()
 	menu.main = self
+	# above everything: the HUD's menu elements carry z 2 so they cover the
+	# flight HUD (flux.ini puts them at 17..21, the reticle at 11), and the
+	# pause screen has to cover them in turn.
+	menu.z_index = 10
 	cl.add_child(menu)
 	# MFD comm-portrait video sits inside the HUD's targeting panel
 	comms.portrait.position = Vector2(18, 52)
@@ -276,6 +280,12 @@ func _ready() -> void:
 	add_child(cl)
 	if (use_pog or use_port) and "--pogplay" in OS.get_cmdline_user_args():
 		# Straight into the campaign, no front end.
+		menu.visible = false
+		start_campaign()
+	elif _restarting:
+		# NEW GAME from the pause menu: the scene was reloaded to get a clean
+		# slate, so pick the campaign straight back up.
+		_restarting = false
 		menu.visible = false
 		start_campaign()
 
@@ -458,6 +468,18 @@ func _fit_systems(ini_path: String) -> void:
 	player_mags = Missiles.mags_for(sys)
 	_select_secondary(-1)
 
+## NEW GAME while a game is already running. The POG runtime, its tasks, the
+## mission runner and every native module's state are built once at boot, so
+## simply calling start_campaign() again would stack a second campaign on top of
+## the first. Reloading the scene is the only honest clean slate; `_restarting`
+## survives it because a static outlives the node.
+static var _restarting := false
+
+func restart_campaign() -> void:
+	_restarting = true
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
 func start_campaign() -> void:
 	# The pause menu needs to know a game is running, or Escape has nothing to
 	# return to. --pogplay boots straight past the front end, so set it here
@@ -617,12 +639,17 @@ func skip_movie() -> void:
 	if movie != null:
 		movie.finished.emit()
 
-func start_in_system(stem: String) -> void:
+func start_in_system(stem: String, at := "") -> void:
+	# `at` names an entity to arrive beside (the system JSON's own name, e.g.
+	# "Lucrecia's Base"); empty means the system's default entry point.
 	lds_state = 0
 	if hud != null:
 		_jump_abort()
 	jump_state = 0
-	_load_system(stem, START_NAME if stem == START_SYSTEM else "")
+	var entry: String = at
+	if entry.is_empty() and stem == START_SYSTEM:
+		entry = START_NAME
+	_load_system(stem, entry)
 	ship.velocity = Vector3.ZERO
 	ship.set_speed = 0.0
 	ap_mode = 0

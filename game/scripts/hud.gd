@@ -249,7 +249,11 @@ func _process(d: float) -> void:
 		if flash_time <= 0.0:
 			flash_name = ""
 	if screens != null:
-		screens.visible = screen != ""
+		# The pause screen is a frontend GUI: it sits above the whole flight HUD,
+		# menu elements included. Without this the starmap keeps drawing straight
+		# through it.
+		var paused: bool = main != null and main.menu != null and main.menu.visible
+		screens.visible = screen != "" and not paused
 	queue_redraw()
 
 func hud_up() -> bool:
