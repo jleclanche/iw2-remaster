@@ -219,6 +219,7 @@ var jumpcheck := false
 var uicheck := false
 var mechcheck := false
 var campcheck := false
+var newgamecheck := false
 var geogcheck := false
 
 func _ready() -> void:
@@ -228,10 +229,12 @@ func _ready() -> void:
 	uicheck = "--uicheck" in OS.get_cmdline_user_args()
 	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
 	campcheck = "--campcheck" in OS.get_cmdline_user_args()
+	newgamecheck = "--newgamecheck" in OS.get_cmdline_user_args()
 	geogcheck = "--geogcheck" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
-	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck:
+	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
+			or newgamecheck:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()
@@ -476,6 +479,12 @@ func _fit_systems(ini_path: String) -> void:
 static var _restarting := false
 
 func restart_campaign() -> void:
+	# Halt the POG tasks BEFORE the scene goes: a task parked on process_frame
+	# outlives the reload, resumes against a node that is no longer in the tree,
+	# and reaches for a null SceneTree. (That is the freeze: iprelude's master
+	# script awaiting a frame that now belongs to a dead scene.)
+	if pog_rt != null:
+		pog_rt.halt()
 	_restarting = true
 	get_tree().paused = false
 	get_tree().reload_current_scene()
@@ -1954,6 +1963,12 @@ func _jump_abort() -> void:
 	jump_state = 0
 
 func _physics_process(delta: float) -> void:
+	# reload_current_scene() does not stop the outgoing scene immediately: this
+	# node keeps ticking for a frame after it has left the tree, and everything
+	# that reaches for get_tree() or a global transform then fails. NEW GAME is
+	# the only thing that does this.
+	if not is_inside_tree():
+		return
 	fire_lock = maxf(0.0, fire_lock - delta)
 	disrupt_time = maxf(0.0, disrupt_time - delta)
 	weapon_disrupt_time = maxf(0.0, weapon_disrupt_time - delta)
@@ -1981,6 +1996,10 @@ func _physics_process(delta: float) -> void:
 		pog_rt.gameapi.director_process(delta)
 	if demo:
 		checks.step(delta)
+		# a check may have torn the scene down mid-frame (NEW GAME); the rest of
+		# this tick would then run against a node that has left the tree
+		if not is_inside_tree():
+			return
 	elif in_cutscene():
 		# The scripts fly the ship during a cutscene (the launch sequence takes
 		# the yoke off you and flies you out of the tube), so the player does

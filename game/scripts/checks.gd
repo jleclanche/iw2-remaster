@@ -20,7 +20,9 @@ var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
-	if m.campcheck:
+	if m.newgamecheck:
+		_newgamecheck(delta)
+	elif m.campcheck:
 		_campcheck(delta)
 	elif m.uicheck:
 		_uicheck(delta)
@@ -108,6 +110,47 @@ func _geogcheck(_delta: float) -> void:
 	demo_t = 0.0
 
 # --- campaign smoke test ----------------------------------------------------
+
+## NEW GAME restarts the campaign by reloading the scene, so this check has to
+## survive the reload: a static outlives the node, exactly like main._restarting.
+## The bug it guards against: POG tasks parked on `process_frame` outlive the old
+## scene, resume against a node that has left the tree, and reach for a null
+## SceneTree -- which froze the game on the first NEW GAME.
+static var _ng_stage := 0
+
+func _newgamecheck(_delta: float) -> void:
+	match _ng_stage:
+		0:
+			if demo_t > 1.0:
+				m.comms.fast = true
+				m.start_campaign()
+				print("NEWGAMECHECK: campaign up, steps=", m.mission.steps.size())
+				_ng_stage = 1
+		1:
+			# let the boot chain get properly under way (iprelude's master script
+			# is the one that was parked on a frame when the scene went away)
+			if demo_t > 4.0:
+				print("NEWGAMECHECK: restarting")
+				_ng_stage = 2
+				m.restart_campaign()
+		2:
+			# a fresh scene: main._ready saw _restarting and started the campaign.
+			# Under --port the campaign IS the POG runtime, so mission.steps is
+			# legitimately empty; what must be true either way is that we have a
+			# live world -- a player ship with systems, in a loaded system, and a
+			# POG runtime that is running rather than halted.
+			if demo_t > 4.0:
+				var live_pog: bool = m.pog_rt != null and not m.pog_rt.halted
+				var ok: bool = m.ship != null and m.sys != null \
+					and m.objects.size() > 0 and live_pog
+				print("NEWGAMECHECK: %s — campaign restarted, objects=%d, pog=%s"
+					% ["PASS" if ok else "FAIL", m.objects.size(), live_pog])
+				_ng_stage = 0
+				get_tree().quit(0 if ok else 1)
+	if demo_t > 40.0:
+		print("NEWGAMECHECK: TIMEOUT stage ", _ng_stage)
+		_ng_stage = 0
+		get_tree().quit(1)
 
 func _campcheck(_delta: float) -> void:
 	# mission starts, dialogue flows, waypoint objective spawns + completes

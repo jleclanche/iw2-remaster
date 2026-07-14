@@ -65,6 +65,17 @@ func resume_all() -> void:
 	suspend_exempt = -1
 
 
+## Suspension freezes a task; HALT ends the world. There was no way to stop a
+## task at all -- POG never needed one, because the process exited. We do: NEW
+## GAME tears the scene down, and a task parked on `process_frame` would
+## otherwise resume against a node that is no longer in the tree and reach for
+## a null SceneTree. Halted tasks park on a signal that is never emitted and
+## die with the scene.
+var halted := false
+
+func halt() -> void:
+	halted = true
+
 func is_suspended(seq: int) -> bool:
 	return suspend_below >= 0 and seq <= suspend_below and seq != suspend_exempt
 

@@ -48,19 +48,41 @@ func _link() -> void:
 	pass
 
 
+## Never emitted. A halted task parks on it and is collected with the scene --
+## see `_dead()`.
+signal _halt
+
+
+## True once this task's world has gone away: the runtime was halted (NEW GAME)
+## or the script has been pulled out of the tree. A coroutine cannot be killed
+## from outside in GDScript, so every await point checks this and parks forever
+## rather than resuming into a freed SceneTree.
+func _dead() -> bool:
+	return rt == null or rt.halted or not is_inside_tree()
+
+
 ## Every await goes through here. `rt.current_seq` identifies the coroutine that
 ## is running right now; it must be re-asserted on resume, because in between,
 ## other coroutines will have run and overwritten it. And a suspended task stays
 ## parked here until it is resumed, which is what task.SuspendAll means.
 func _resume(seq: int) -> void:
+	if _dead():
+		await _halt
+		return
 	rt.current_seq = seq
 	while rt.is_suspended(seq):
 		await get_tree().process_frame
+		if _dead():
+			await _halt
+			return
 		rt.current_seq = seq
 
 
 ## `task.Sleep(task.Current(), secs)`.
 func _pog_wait(secs: float) -> void:
+	if _dead():
+		await _halt
+		return
 	var seq: int = rt.current_seq
 	if secs <= 0.0:
 		await get_tree().process_frame
@@ -71,6 +93,9 @@ func _pog_wait(secs: float) -> void:
 
 ## `EndTimeslice` -- give up the rest of the frame.
 func _pog_frame() -> void:
+	if _dead():
+		await _halt
+		return
 	var seq: int = rt.current_seq
 	await get_tree().process_frame
 	await _resume(seq)
