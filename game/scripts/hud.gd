@@ -533,6 +533,7 @@ const BLOCK_GAP := 3.0
 const HDR_H := 16.0
 const MFD_SIZE := Vector2(128, 176)   # DAT_1011e238 / DAT_1011e23c
 const PANEL_W := 112.0                # DAT_1011e10c (shields), DAT_1011e2f8 (weapons)
+const ORB_W := 128.0                  # DAT_1011df88: the ORB block is wider than the rest
 const ROW_PITCH := 32.0               # DAT_1011e110 / DAT_1011e2fc
 const BAR_LEN := 74.0                 # PANEL_W - DAT_1011e140 (38)
 const BAR_SEGS := 14                  # floor(74 / 5); bar style 1 has a 5px pitch
@@ -599,20 +600,85 @@ func _right_x(w: float) -> float:
 func _advance(y: float, h: float) -> float:
 	return y + h + 2.0 * BORDER + BLOCK_GAP
 
-func _panel(pos: Vector2, size: Vector2, title: String) -> void:
-	# glossy chrome: dark glass body with a subtle top sheen, bright header.
+# iiHUDBlockElement's frame -- FUN_100e2620 @ 0x100e2620, the ONE shared block
+# chrome that every panel Draw calls before its content (verified by raw-disasm:
+# MFD @ 0x101017ad, Weapons @ 0x101047b2, Shields @ 0x100fa622, ContactList @
+# 0x100e4481, OrbRadar via FUN_100f4520, Clock @ 0x100e40f9). A block is NOT a
+# plain rectangle and NOT a 1px outline: it is a rectangle with ONE 16px CHAMFERED
+# corner -- the corner that faces the screen interior -- plus a translucent fill,
+# a soft outward glow, a bright chamfered edge outline, a faint 16px grid, and (for
+# the top-anchored blocks) a header band. FUN_100e2620 draws, in order:
+#   * fill    Begin(3) alpha-blend: the chamfered pentagon at colour GREEN *
+#             _DAT_1011b354 (0.15), per-vertex alpha 0.5;
+#   * glow    same Begin(3): a _DAT_1011d96c (4) px ring around the pentagon whose
+#             alpha fades 0.5 -> 0 outward;
+#   * outline Begin(2) additive: the pentagon edge in GREEN, alpha _DAT_101184b0
+#             (0.1) -- the crisp line that turns the chamfered corner;
+#   * grid    Begin(1) additive: vertical lines at x = 16*i and horizontal at
+#             y = 16*i (DAT_1011d970 = 16), GREEN alpha _DAT_1011d9cc (0.04);
+#   * header  FUN_100e3360(0,0,W,16) additive: a GREEN band, alpha _DAT_101191ec
+#             (0.25), drawn only for modes 0/1 when H > 16.
+# The chamfered corner is chosen by the element's anchor mode (icHUDElement+0x20,
+# the FUN_100e2470 ctor arg): 0 (left column: MFD/Weapons) -> BOTTOM-RIGHT;
+# 1 (right column: Orb/Shields/Clock) -> BOTTOM-LEFT; 3 (bottom: ContactList) ->
+# TOP-LEFT. Godot's _draw is normal-blend, so the outline/header/grid alphas here
+# are raised from the recovered ADDITIVE values to reproduce the additive-over-
+# near-black brightness the engine gets.
+const FRAME_FILL := 0.15       # _DAT_1011b354: fill/glow colour = GREEN * 0.15
+const FRAME_GLOW := 4.0        # _DAT_1011d96c: the outward glow-ring width
+
+func _frame_pts(w: float, h: float, mode: int) -> PackedVector2Array:
+	# the 5 pentagon corners (block-local), chamfer = HDR_H on the interior corner
+	var ch := minf(HDR_H, minf(w, h))
+	match mode:
+		1:   # right column: chamfer BOTTOM-LEFT
+			return PackedVector2Array([Vector2(w, 0), Vector2(w, h),
+					Vector2(ch, h), Vector2(0, h - ch), Vector2(0, 0)])
+		3:   # bottom: chamfer TOP-LEFT
+			return PackedVector2Array([Vector2(w, h), Vector2(w, 0),
+					Vector2(ch, 0), Vector2(0, ch), Vector2(0, h)])
+		_:   # left column: chamfer BOTTOM-RIGHT
+			return PackedVector2Array([Vector2(0, 0), Vector2(0, h),
+					Vector2(w - ch, h), Vector2(w, h - ch), Vector2(w, 0)])
+
+func _frame(pos: Vector2, size: Vector2, mode: int) -> void:
 	# _ea carries the MFD's one-second fade-in and FlashElement's 0.3 dim.
-	draw_rect(Rect2(pos + Vector2(0, HDR_H), size - Vector2(0, HDR_H)),
-			_dim(Color(0.0, 0.05, 0.0, 0.62)))
-	draw_rect(Rect2(pos + Vector2(1, HDR_H + 1), Vector2(size.x - 2, 10)),
-			_dim(Color(0.5, 1.0, 0.6, 0.05)))
-	draw_rect(Rect2(pos, Vector2(size.x, HDR_H)), _dim(GREEN_PANEL))
-	draw_rect(Rect2(pos, Vector2(size.x, 5)), _dim(Color(0.7, 1.0, 0.75, 0.25)))
-	draw_string(_font, pos + Vector2(3, 12), title,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(Color(0, 0, 0, 0.9)))
-	draw_rect(Rect2(pos, size), _dim(GREEN_DIM), false, 1.0)
-	draw_rect(Rect2(pos - Vector2(1, 1), size + Vector2(2, 2)),
-			_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.12)), false, 1.0)
+	var w := size.x
+	var h := size.y
+	var pts := PackedVector2Array()
+	for p in _frame_pts(w, h, mode):
+		pts.append(pos + p)
+	# fill: GREEN*0.15 at alpha 0.5 (FUN_100e2620 Begin(3))
+	var fill := _dim(Color(GREEN.r * FRAME_FILL, GREEN.g * FRAME_FILL,
+			GREEN.b * FRAME_FILL, 0.5))
+	draw_colored_polygon(pts, fill)
+	# faint 16px grid (Begin(1), GREEN alpha 0.04 additive -> 0.06 here)
+	var gcol := _dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.06))
+	var gx := pos.x + HDR_H
+	while gx < pos.x + w - 1.0:
+		draw_line(Vector2(gx, pos.y + HDR_H), Vector2(gx, pos.y + h - 1.0), gcol, 1.0)
+		gx += HDR_H
+	var gy := pos.y + HDR_H
+	while gy < pos.y + h - 1.0:
+		draw_line(Vector2(pos.x + 1.0, gy), Vector2(pos.x + w - 1.0, gy), gcol, 1.0)
+		gy += HDR_H
+	# the chamfered edge: a soft glow ring under a crisp bright outline
+	var closed := pts.duplicate()
+	closed.append(pts[0])
+	draw_polyline(closed, _dim(Color(GREEN.r * FRAME_FILL, GREEN.g * FRAME_FILL,
+			GREEN.b * FRAME_FILL, 0.55)), FRAME_GLOW, true)
+	draw_polyline(closed, _dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.5)), 1.3, true)
+
+func _panel(pos: Vector2, size: Vector2, title: String, mode := 0) -> void:
+	_frame(pos, size, mode)
+	# the header band (FUN_100e3360 @ (0,0,W,16), GREEN alpha 0.25 additive), only
+	# for top-anchored blocks (modes 0/1) taller than the 16px header row; the
+	# caption text is knocked out dark against it.
+	if mode != 3 and size.y > HDR_H:
+		draw_rect(Rect2(pos, Vector2(size.x, HDR_H)),
+				_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.32)))
+		draw_string(_font, pos + Vector2(4, 12), title,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(Color(0, 0, 0, 0.9)))
 
 func _bar(pos: Vector2, frac: float, col: Color, segs := BAR_SEGS) -> void:
 	# FUN_100ebde0 with bar style 1: segs blocks on a BAR_PITCH grid, and the
@@ -2506,18 +2572,17 @@ var _rhs_y := 0.0
 func _draw_orb() -> void:
 	# right-hand block stack: ORB, then SHIELD STATUS, then the clock beneath
 	_ea = _flash_a("icHUDOrbRadar")
-	var size := Vector2(PANEL_W, 128.0)
+	# icHUDOrbRadar is 128 wide x 144 tall (ctor FUN_100e2540(this, DAT_1011df88 =
+	# 128, DAT_1011d970 + 128 = 144) @ 0x100e2620 caller), right-anchored (anchor
+	# mode 1 -> chamfer bottom-left). It is WIDER than the 112-wide shields/clock
+	# stacked below it; all three share the right screen margin.
+	var size := Vector2(ORB_W, 144.0)
 	var pos := Vector2(_right_x(size.x), MARGIN)
 	var contacts := _orb_contacts()
 	var n := contacts.size()
-	_panel(pos, size, "%d %s" % [n, "CONTACT" if n == 1 else "CONTACTS"])
-	# graph-paper backdrop, like the original's ORB panel
-	for gx in range(int(pos.x) + 8, int(pos.x + size.x) - 4, 12):
-		draw_line(Vector2(gx, pos.y + 20), Vector2(gx, pos.y + size.y - 4),
-				Color(GREEN.r, GREEN.g, GREEN.b, 0.07), 1.0)
-	for gy in range(int(pos.y) + 24, int(pos.y + size.y) - 4, 12):
-		draw_line(Vector2(pos.x + 4, gy), Vector2(pos.x + size.x - 4, gy),
-				Color(GREEN.r, GREEN.g, GREEN.b, 0.07), 1.0)
+	# the block frame already lays in the faint 16px graph-paper grid behind the
+	# sphere (FUN_100e2620 Begin(1)); no separate backdrop needed.
+	_panel(pos, size, "%d %s" % [n, "CONTACT" if n == 1 else "CONTACTS"], 1)
 	var c := pos + Vector2(size.x / 2.0, HDR_H + (size.y - HDR_H) / 2.0)
 	var r := 40.0
 	# wireframe sphere: bright ring + equator/meridian, and the axis pole
@@ -2563,8 +2628,15 @@ func _draw_clock(y: float) -> void:
 			(cs % 6000) / 100, cs % 100]
 	var w := _font_num.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
 			num_size).x
-	var x := _right_x(PANEL_W) + PANEL_W - 2.0 - w
-	draw_string(_font_num, Vector2(x, y + 12), text, HORIZONTAL_ALIGNMENT_LEFT,
+	# icHUDClock is itself a block (FUN_100e40f0 calls the frame @ 0x100e40f9): its
+	# ctor sizes the block to the time string plus padding, right-anchored (anchor
+	# mode 1 -> chamfer bottom-left). Too short for a header band.
+	var right := _right_x(PANEL_W) + PANEL_W
+	var box := Vector2(w + 12.0, float(num_size) + 6.0)
+	var bpos := Vector2(right - box.x, y)
+	_frame(bpos, box, 1)
+	var x := right - 4.0 - w
+	draw_string(_font_num, Vector2(x, y + num_size), text, HORIZONTAL_ALIGNMENT_LEFT,
 			-1, num_size, GREEN)
 
 func _ellipse(c: Vector2, radii: Vector2, col: Color) -> void:
@@ -2611,7 +2683,7 @@ func _draw_shield_panel() -> void:
 	# _draw_orb; we advance it so the clock lands under the shields.
 	var pos := Vector2(_right_x(PANEL_W), _rhs_y)
 	_rhs_y = _advance(pos.y, size.y)
-	_panel(pos, size, "SHIELD STATUS")
+	_panel(pos, size, "SHIELD STATUS", 1)  # right column -> chamfer bottom-left
 	var flash: bool = fposmod(float(Time.get_ticks_msec()) * 0.001, 1.0) < 0.5
 	for i in rows.size():
 		var row: Dictionary = rows[i]
@@ -2688,9 +2760,10 @@ func _draw_contact_list() -> void:
 	var h := 8.0 + rows.size() * CL_ROW_H
 	var w := 320.0
 	var pos := Vector2(_right_x(w), s.y - h - MARGIN - 2.0 * BORDER)
-	draw_rect(Rect2(pos, Vector2(w, h)), _dim(Color(0.0, 0.05, 0.0, 0.55)))
-	draw_rect(Rect2(pos, Vector2(w, h)),
-			_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.25)), false, 1.0)
+	# the same block frame as every other panel, anchor mode 3 (bottom-right block
+	# -> chamfered TOP-LEFT corner). No header band in mode 3: the contact list has
+	# no caption, its first row sits just below the 16px chamfer.
+	_frame(pos, Vector2(w, h), 3)
 	# scrollbar, only once the list overflows (alpha 0.3, _DAT_1011c034)
 	if all.size() > CL_ROWS:
 		var frac := float(CL_ROWS) / float(all.size())

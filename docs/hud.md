@@ -254,6 +254,71 @@ bottom, so a "panel" in this HUD is **two horizontal rails between two chevrons*
     ship-status strip : cap 76 (9x18, origin 9,9)   rail 77 (2x18, origin 0,9)
     menu node box     : cap 40 (16x32, origin 16,16) rail 41 (4x32, origin 0,16)
 
+### `FUN_100e2620(this)` @ `0x100e2620` - the BLOCK FRAME (panel chrome)
+
+This is the one that was missing, and the one the user kept flagging: **every**
+flight-HUD panel draws its border here, and it is neither a filled rectangle nor
+a 1-px outline. A block is a rectangle with **one 16-px chamfered corner** - the
+corner that faces the screen interior - plus a translucent fill, a soft outward
+glow, a bright chamfered edge outline, a faint 16-px grid, and (for top-anchored
+blocks) a header band. It is a vector shape; there are **no dedicated corner
+sprites** (the corner cells 40/41/76/77 belong to the rail primitive above, not
+to panels).
+
+Confirmed callers (all raw-disassembled - Ghidra dropped most of these draws):
+
+    icHUDTargetMFD   Draw 0x10101730   call 0x100e2620 @ 0x101017ad
+    icHUDWeapons     Draw 0x101046e0   call 0x100e2620 @ 0x101047b2
+    icHUDShields     Draw 0x100fa540   call 0x100e2620 @ 0x100fa622
+    icHUDContactList Draw 0x100e4440   call 0x100e2620 @ 0x100e4481
+    icHUDOrbRadar    Draw 0x100f4520   call 0x100e2620 @ 0x100f4532
+    icHUDClock       Draw 0x100e40f0   call 0x100e2620 @ 0x100e40f9
+
+(icHUDShipStatus is the exception: it is the top-centre RAIL strip, not a block,
+and draws no frame.)
+
+What the function draws, in order (all colour = chartreuse `DAT_10176038`):
+
+    fill     Begin(3) alpha-blend : the chamfered pentagon, colour GREEN *
+             _DAT_1011b354 (0.15), per-vertex alpha 0.5  -> a dark translucent
+             green backing you can see the world through
+    glow     same Begin(3)        : a _DAT_1011d96c (4) px ring around the
+             pentagon, alpha 0.5 at the edge -> 0 outward
+    outline  Begin(2) ADDITIVE    : the pentagon edge, alpha _DAT_101184b0 (0.1)
+             - the crisp line that turns the chamfered corner
+    grid     Begin(1) ADDITIVE    : vertical lines at x = 16*i, horizontal at
+             y = 16*i (DAT_1011d970 = 16), alpha _DAT_1011d9cc (0.04)
+    header   FUN_100e3360(0,0,W,16) ADDITIVE : a filled band, alpha _DAT_101191ec
+             (0.25), only for modes 0/1 and only when H > 16 (0x10101792 branch)
+
+The chamfered corner is selected by the element's **anchor mode** (icHUDElement +
+0x20, the argument to the base ctor `FUN_100e2470(this, mode)`):
+
+    mode 0  left column   MFD, Weapons            -> chamfer BOTTOM-RIGHT
+    mode 1  right column  Orb, Shields, Clock     -> chamfer BOTTOM-LEFT
+    mode 3  bottom        ContactList             -> chamfer TOP-LEFT
+
+The 5 outline points (block-local, chamfer CH = 16) reduce to:
+
+    mode 0 : (0,0) (0,H) (W-CH,H) (W,H-CH) (W,0)
+    mode 1 : (W,0) (W,H) (CH,H) (0,H-CH) (0,0)
+    mode 3 : (W,H) (W,0) (CH,0) (0,CH) (0,H)
+
+Block dimensions (ctor `FUN_100e2540(this, W, H)`):
+
+    MFD      W = DAT_1011e238 (128), H = DAT_1011e23c (176) / DAT_1011e240 (48 short)
+    Orb      W = DAT_1011df88 (128), H = 16 + 128 = 144   (WIDER than the rest)
+    Weapons  W = DAT_1011e2f8 (112), H = 16 + 32*rows
+    Shields  W = DAT_1011e10c (112), H = 16 + 32*rows  (0 rows -> H 0, panel gone)
+    Clock    W = timestring width + pad, H = timestring height + pad
+
+Ours (`hud.gd`): `_frame(pos, size, mode)` draws the pentagon + glow + grid +
+outline; `_panel(pos, size, title, mode)` adds the header band + caption. Because
+Godot's `_draw` is normal-blend, the additive outline/grid/header alphas are
+raised a little (outline 0.1 -> 0.5, header 0.25 -> 0.32, grid 0.04 -> 0.06) to
+reproduce the additive-over-near-black brightness the engine gets - the geometry
+(the chamfer) is exact.
+
 ### The text calls
 
 `FUN_100eb270(font, style, x, y, str, halign, valign)` @ `0x100eb270`. **47 call

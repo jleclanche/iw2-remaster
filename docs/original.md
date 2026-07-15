@@ -1887,9 +1887,24 @@ Our eight labelled DRV/THR/LDS/... bars were an invention and are gone.
   rail, and one 85x85 cell makes the *whole* 170x170 menu reticle.
 - **`FUN_100eaf90(x, y, w, thin, cap, rail)` @ `0x100eaf90` -- the RAIL.**
   Cap sprite at each end (right one mirrored), the rail sprite's narrow column
-  stretched between them, alpha `thin ? 1.0 : 0.5`. **Every "panel" in this HUD
-  is this call -- never a filled rectangle.** Pairs: 76/77 (18 px) and 40/41
-  (32 px).
+  stretched between them, alpha `thin ? 1.0 : 0.5`. This is the **top-centre
+  ship-status strip** and the menu node boxes -- NOT the framed panels (an
+  earlier note wrongly said every panel was a rail). Pairs: 76/77, 40/41.
+- **`FUN_100e2620` @ `0x100e2620` -- the BLOCK FRAME**, the chrome every framed
+  HUD panel actually uses (`iiHUDBlockElement`). A block is a rectangle with
+  **ONE 16-px chamfered corner -- the one facing the screen interior** -- plus
+  a translucent fill (green x 0.15, `_DAT_1011b354`), a 4-px outward glow
+  fading 0.5 -> 0, an additive outline (`_DAT_101184b0`), a faint 16-px grid
+  (`DAT_1011d970`), and, for top-anchored blocks, a header band
+  (`FUN_100e3360`). **No dedicated corner sprites -- it is vector geometry.**
+  Which corner is chamfered is the element's anchor mode (`icHUDElement+0x20`):
+  mode 0 (MFD, Weapons) bottom-right, mode 1 (Orb, Shields, Clock) bottom-left,
+  mode 3 (ContactList) top-left. Callers (each raw-disassembled):
+  `icHUDTargetMFD 0x101017ad`, `icHUDWeapons 0x101047b2`,
+  `icHUDShields 0x100fa622`, `icHUDContactList 0x100e4481`,
+  `icHUDOrbRadar 0x100f4532` (whose block is **128 px** wide, `DAT_1011df88`,
+  not 112), `icHUDClock 0x100e40f9`. The fill is genuinely translucent, so a
+  bright nebula bleeds through a panel -- faithful, not a bug.
 - **Fonts**: table at `0x10162c60` = `ocrb_8pt`, `ocrb_10pt`, `ocrb_18pt`,
   sprites. Text-style alpha at `0x10162cb0`: 0 -> 0.6, 1 -> 1.0, 2 -> 0.75.
   `FUN_100eb270(font, style, x, y, str, halign, valign)`.
