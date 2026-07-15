@@ -11,6 +11,38 @@ const AMBER_DIM := Color(1.0, 0.72, 0.1, 0.45)
 const AMBER_GLOW := Color(1.0, 0.88, 0.35, 1.0)
 const AMBER_TEXT := Color(1.0, 0.81, 0.0, 0.95)  # dossier #ffcf00
 
+# The front-end GUI amber palette, recovered from igui.SetGUIGlobals
+# (data/pogsrc/igui.pog:35-46). These are the exact colours the original
+# front end tints its controls -- and its prison bust hologram -- with.
+const GUI_NEUTRAL := Color(0.600, 0.451, 0.0)   # igui.pog:35-37
+const GUI_FOCUSED := Color(1.0, 0.749, 0.0)     # igui.pog:38-40 -- the holo amber
+const GUI_SELECTED := Color(1.0, 0.859, 0.278)  # igui.pog:41-43 -- bright sweep
+const GUI_FADED := Color(0.5, 0.3745, 0.0)      # igui.pog:44-46 -- dim grid
+
+# Prison-bust HOLOGRAM parameters. The bust is the amber twin of Clay's red
+# comm hologram: it is drawn by the engine's comms head system (icComms +
+# icHUDTargetMFD in iwar2.dll) as an unshaded, self-lit, translucent amber head
+# with a scrolling scanline overlay, a full-panel grid, and a bright sweep band.
+# Recovered constants (iwar2.dll):
+#   HOLO_AMBER = icComms tint FcColour[0], ctor 0x1007f720 (iwar2.dll.c:105107-109)
+#                = 0x3f800000,0x3f3fbe77,0 = (1.0, 0.749, 0.0)  (== GUI_FOCUSED)
+#   HOLO_SWEEP = sweep-flash colour DAT_10174fb0, FUN_100e6750 0x100e6750
+#                (iwar2.dll.c:195396-398) = 0x3f800000,0x3f178d50,0 = (1.0,0.592,0.0)
+#   panel/scanline texture = texture:/images/hud/ucp (icHUDTargetMFD ctor 0x10101530,
+#                iwar2.dll.c:195533), scrolled in V over time (iwar2.dll.c:195797-804)
+#   panel shader alpha = 0.990 (iwar2.dll.c:195545)
+# The sweep motion is time-driven, wrapped 0..1 (iwar2.dll.c:195961-967); the
+# original description has it sweeping UP. Grid cell size, scanline spacing and
+# the sweep/scanline scroll RATES are .rdata floats the decomp left un-inlined
+# (UNKNOWN); the values below are reconstructed to match the original's look.
+const HOLO_AMBER := Color(1.0, 0.749, 0.0)      # icComms tint (verified)
+const HOLO_SWEEP := Color(1.0, 0.592, 0.0)      # sweep flash (verified)
+const HOLO_GRID_CELL := 26.0                    # px, reconstructed (baked in panel tex)
+const HOLO_SCAN_STEP := 3.0                     # px between scanlines, reconstructed
+const HOLO_SWEEP_SPEED := 0.28                  # panel-heights/sec up, reconstructed
+const HOLO_SWEEP_FRAC := 0.14                   # sweep band height / panel, reconstructed
+const HOLO_SCAN_SPEED := 34.0                   # px/sec scanline drift, reconstructed
+
 # prison characters with an exported head anchor + dossier
 const CHARACTERS := [
 	["smith", "data/gltf/avatars/smith/smith_anchor.gltf"],
@@ -50,6 +82,15 @@ var _bust_t := 0.0
 var dossier_lines: Array = []  # {text, bold}
 var _scroll := 0.0
 var _char := ""
+var _force_char := ""  # --bustshot pins a specific character
+# --bustshot: windowed capture harness. Opens the menu on a fixed character and
+# writes two PNGs a fraction of a second apart (to prove the sweep is moving),
+# then quits. Not part of the shipped game.
+var _shot := false
+var _shot_phase := 0
+var _shot_t := 0.0
+var _shot_chars := ["az", "lori", "smith", "jaffs"]
+var _shot_idx := 0
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -68,18 +109,14 @@ func _ready() -> void:
 	cam.position = Vector3(0, -0.02, 1.05)
 	cam.fov = 26.0
 	bust_view.add_child(cam)
-	var key := OmniLight3D.new()
-	key.position = Vector3(-0.5, 0.25, 0.8)
-	key.omni_range = 3.0
-	key.light_energy = 1.1
-	bust_view.add_child(key)
-	var rim := OmniLight3D.new()
-	rim.position = Vector3(0.7, 0.1, -0.4)
-	rim.omni_range = 2.5
-	rim.light_energy = 0.5
-	rim.light_color = Color(0.9, 0.75, 0.5)
-	bust_view.add_child(rim)
+	# No lights: the bust is a self-lit amber HOLOGRAM (see _holo_bust). The
+	# previous hand-placed key/rim lights were the wrong model -- they flat-lit
+	# the head grey-green and their warm rim threw the "gold triangle" specular.
 	_setup_cursor()
+	if "--bustshot" in OS.get_cmdline_user_args():
+		_shot = true
+		_force_char = _shot_chars[0]
+		open.call_deferred()
 
 func _setup_cursor() -> void:
 	# the original's cursor: the arrow tinted HUD-amber over a glossy glow
@@ -113,6 +150,11 @@ func _setup_cursor() -> void:
 
 func _pick_character() -> void:
 	var pick: Array = CHARACTERS[randi() % CHARACTERS.size()]
+	if _force_char != "":
+		for c in CHARACTERS:
+			if c[0] == _force_char:
+				pick = c
+				break
 	if _char == pick[0]:
 		return
 	_char = pick[0]
@@ -122,9 +164,50 @@ func _pick_character() -> void:
 	bust_node = main._load_gltf(str(pick[1]))
 	if bust_node != null:
 		bust_node.scale = Vector3.ONE * 1.686
+		_holo_bust(bust_node)
 		bust_view.add_child(bust_node)
 	_load_dossier(_char)
 	_scroll = 0.0
+
+# Re-skin the bust as an amber HOLOGRAM. The original prison dossier bust is not
+# a naturalistically-lit solid head -- it is a translucent, self-lit amber
+# hologram (the amber twin of Clay's real-time RED comm hologram in comms.gd,
+# which is built the same way from icBeamAvatar scanline planes over an unshaded
+# head). Rendering it UNSHADED is also what makes the RT head read correctly:
+#  * these RT avatar heads (az/clay/smith) are hollow FRONT SHELLS -- the Body
+#    surface has zero rear-facing polygons -- so lit opaquely and turned to a
+#    hard profile the open back of the skull shows. Amber + translucent hides it.
+#  * lit opaquely with a warm rim light the cheek threw a saturated gold specular
+#    triangle by the mouth (the "gold triangle": it is in NO texture -- a
+#    lighting artifact, not geometry). UNSHADED has no specular, so it is gone.
+# Tint is GUI_FOCUSED amber (igui.pog:38-40).
+func _holo_bust(node: Node3D) -> void:
+	for mi in node.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		if m.mesh == null:
+			continue
+		for si in m.mesh.get_surface_count():
+			var src := m.mesh.surface_get_material(si) as BaseMaterial3D
+			var mat := StandardMaterial3D.new()
+			# UNSHADED so the head self-glows and throws no specular (that is
+			# what banishes the "gold triangle"). OPAQUE with depth writing on so
+			# surfaces occlude correctly -- the RT heads carry internal "Black"
+			# backing cards (e.g. Lori prim0, a flat card at z=-0.02); without
+			# depth those floated to the front as a solid gold blob over the
+			# face. The holographic translucency is applied later, in 2D, when
+			# the whole viewport is composited (see _draw).
+			mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			mat.cull_mode = BaseMaterial3D.CULL_BACK
+			# Tint the SOURCE colour to amber, preserving its own value: white
+			# (textured skin/hair/eyes) -> amber; black (mouth/eyebrow/backing
+			# cards) -> black, so they read as dark features, not gold. The
+			# texture, where present, still modulates it so features/hair read.
+			var base := src.albedo_color if src != null else Color.WHITE
+			mat.albedo_color = Color(base.r * HOLO_AMBER.r,
+				base.g * HOLO_AMBER.g, base.b * HOLO_AMBER.b, 1.0)
+			if src != null and src.albedo_texture != null:
+				mat.albedo_texture = src.albedo_texture
+			m.set_surface_override_material(si, mat)
 
 func _load_dossier(who: String) -> void:
 	# html/prison/<who>.html, stripped to amber text; <b> heads stay bright
@@ -321,10 +404,49 @@ func _process(delta: float) -> void:
 		return
 	_bust_t += delta
 	if bust_node != null:
-		# slow turn around the profile pose, like the front end
-		bust_node.rotation.y = deg_to_rad(-62.0) + sin(_bust_t * 0.23) * 0.35
+		# slow turn around a 3/4-profile pose, like the front end. -62 turned it
+		# to near-full profile, which exposed the RT head's open back-of-skull;
+		# the original sits at a gentle 3/4 (~40 deg) and sways a little.
+		bust_node.rotation.y = deg_to_rad(-40.0) + sin(_bust_t * 0.23) * 0.22
 	_scroll += delta * 14.0
 	queue_redraw()
+	if _shot:
+		_bustshot_step(delta)
+
+func _bustshot_step(delta: float) -> void:
+	# for each character: settle, grab frame A, wait ~1/8 s, grab frame B (so the
+	# sweep's motion is provable), then move to the next character; quit at the end
+	_shot_t += delta
+	var dir: String = main._base().path_join("data/screenshots")
+	DirAccess.make_dir_recursive_absolute(dir)
+	var who: String = _shot_chars[_shot_idx]
+	if _force_char != who:
+		_force_char = who
+		_pick_character()
+	match _shot_phase:
+		0:
+			if _shot_t > 0.6:
+				_grab(dir.path_join("bustshot_%s_a.png" % who))
+				_shot_phase = 1
+				_shot_t = 0.0
+		1:
+			if _shot_t > 0.14:
+				_grab(dir.path_join("bustshot_%s_b.png" % who))
+				_shot_phase = 2
+				_shot_t = 0.0
+		2:
+			if _shot_t > 0.1:
+				_shot_idx += 1
+				if _shot_idx >= _shot_chars.size():
+					get_tree().quit()
+				else:
+					_shot_phase = 0
+					_shot_t = 0.0
+
+func _grab(path: String) -> void:
+	var img := get_viewport().get_texture().get_image()
+	img.save_png(path)
+	print("BUSTSHOT wrote ", path, " ", img.get_size())
 
 func _stadium(r: Rect2, col: Color, width: float, glow: bool) -> void:
 	# the original's capsule button outline
@@ -371,9 +493,52 @@ func _circuit_strip(w: float, h: float) -> void:
 		draw_line(Vector2(0, gy), Vector2(w, gy), Color(1, 0.72, 0.1, 0.025), 1.0)
 	draw_line(Vector2(w, 0), Vector2(w, h), AMBER_DIM, 1.5, true)
 
+func _holo_grid(rect: Rect2) -> void:
+	# the front end's fine amber GRID (grid dim = GUI_FADED, igui.pog:44-46). The
+	# engine bakes the grid into its panel texture, so the cell size here is
+	# reconstructed (HOLO_GRID_CELL). It covers the whole screen.
+	var g := Color(GUI_FADED.r, GUI_FADED.g, GUI_FADED.b, 0.16)
+	var x := rect.position.x
+	while x <= rect.end.x:
+		draw_line(Vector2(x, rect.position.y), Vector2(x, rect.end.y), g, 1.0)
+		x += HOLO_GRID_CELL
+	var y := rect.position.y
+	while y <= rect.end.y:
+		draw_line(Vector2(rect.position.x, y), Vector2(rect.end.x, y), g, 1.0)
+		y += HOLO_GRID_CELL
+
+func _holo_overlay(panel: Rect2) -> void:
+	# horizontal SCANLINES scrolling slowly over the model (icHUDTargetMFD scrolls
+	# the panel/scanline texture in V, iwar2.dll.c:195797-804; texture images/hud/
+	# ucp). Reconstructed spacing/rate.
+	var drift := fmod(_bust_t * HOLO_SCAN_SPEED, HOLO_SCAN_STEP)
+	var sc := Color(HOLO_AMBER.r, HOLO_AMBER.g, HOLO_AMBER.b, 0.10)
+	var y := panel.position.y + drift
+	while y < panel.end.y:
+		draw_line(Vector2(panel.position.x, y), Vector2(panel.end.x, y), sc, 1.0)
+		y += HOLO_SCAN_STEP
+	# the bright SWEEP band, moving UP the panel and wrapping (time-driven wrap,
+	# iwar2.dll.c:195961-967; colour = sweep flash HOLO_SWEEP, iwar2.dll.c:
+	# 195396-398). Drawn as a soft triangular-alpha band.
+	var band_h := panel.size.y * HOLO_SWEEP_FRAC
+	var frac := fmod(_bust_t * HOLO_SWEEP_SPEED, 1.0)
+	var cy := panel.end.y - frac * (panel.size.y + band_h) + band_h * 0.5
+	var steps := 16
+	for i in steps:
+		var t := float(i) / float(steps - 1)          # 0..1 across the band
+		var yy := cy - band_h * 0.5 + t * band_h
+		if yy < panel.position.y or yy > panel.end.y:
+			continue
+		var a := 1.0 - absf(t - 0.5) * 2.0            # bright centre, soft edges
+		draw_line(Vector2(panel.position.x, yy), Vector2(panel.end.x, yy),
+				Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, a * 0.5),
+				band_h / float(steps) + 1.0)
+
 func _draw() -> void:
 	var s := get_viewport_rect().size
 	draw_rect(Rect2(Vector2.ZERO, s), Color(0.0, 0.0, 0.0, 1.0))
+	# the amber holo GRID covers the whole screen, behind everything
+	_holo_grid(Rect2(Vector2.ZERO, s))
 	var strip_w := clampf(s.x * 0.21, 260, 340)
 	_circuit_strip(strip_w, s.y)
 	# capsule buttons
@@ -395,12 +560,18 @@ func _draw() -> void:
 				col if enabled else Color(col.r, col.g, col.b, 0.35))
 		_item_rects.append(r.grow(4))
 		y += bh + gap
-	# 3D bust, right of center
+	# 3D bust, right of center -- rendered as an amber hologram
 	if mode != "systems":
 		var bust_size := minf(s.y * 0.62, 560.0)
 		var bust_pos := Vector2(s.x * 0.40, -bust_size * 0.04)
-		draw_texture_rect(bust_view.get_texture(),
-				Rect2(bust_pos, Vector2(bust_size, bust_size)), false)
+		var panel := Rect2(bust_pos, Vector2(bust_size, bust_size))
+		# a faint amber volume seats the head over the grid
+		draw_rect(panel, Color(HOLO_AMBER.r, HOLO_AMBER.g, HOLO_AMBER.b, 0.04),
+				true)
+		# the head, composited translucently so it reads as a hologram volume
+		draw_texture_rect(bust_view.get_texture(), panel, false,
+				Color(1.0, 1.0, 1.0, 0.86))
+		_holo_overlay(panel)  # scanlines + upward sweep, over the head
 		# scrolling dossier under the bust
 		var dx := s.x * 0.47
 		var dy0 := s.y * 0.55

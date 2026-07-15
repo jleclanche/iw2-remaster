@@ -1211,6 +1211,28 @@ bullet.
 `lateral_ratio = (-0.15,-0.2,-0.2)`, `focal_length = 100`.
 External cameras: `field_of_view = 1.2` rad (68.75 deg).
 
+### The prison-dossier bust IS Clay's comm hologram, in amber
+
+The rotating character head in the front-end/pause prison dossier and Clay's
+in-flight comm portrait are the **same engine system**: `icComms` (ctor
+`0x1007f720`; `CreateHeads 0x1007fcc0` loads the per-speaker head `.lws`;
+`RenderPortrait 0x100810e0` spins and draws it) composited by `icHUDTargetMFD`
+(`FUN_10101f00`/`FUN_10102490`). The `html_prison/` page is only the scrolling
+text backdrop.
+
+- **The amber is the GUI "focused" amber, exactly**: `icComms` display-mode-0
+  tint = `(1.0, 0.749, 0.0)` (`0x1007f720`, `.c:105107`), bit-identical to
+  `igui.SetGUIGlobals`' `GUI_focused` (`igui.pog:38-40`). (Display-mode 1 is the
+  lime comm colour `(0.5, 1, 0)`.) The **sweep-flash** is a separate warmer amber
+  `(1.0, 0.592, 0.0)` (`DAT_10174fb0`).
+- **The head models are hollow FRONT SHELLS** -- `az_anchor`'s `Body` is 72
+  front-facing triangles, no rear geometry, so the bust is only ever shown at a
+  shallow 3/4 turn and translucent (which is why turning it further shows a
+  "missing skull"). `tf_az_anchor` is the *helmeted cockpit* variant, not the
+  dossier head. A warm rim light on the head throws a specular the shell has no
+  texel for -- the "gold triangle"; the hologram is unshaded, so it does not
+  occur. UNKNOWN (un-inlined `.rdata` floats): grid cell size, scan/sweep rates.
+
 ---
 
 ## 8. Data and text

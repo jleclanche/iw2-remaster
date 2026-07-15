@@ -972,3 +972,82 @@ fog contributes ~3%, and it is turned away from the sun with no starfield left
 to bounce anything back.
 
 ---
+
+## The prison dossier bust — an amber hologram (task #74)
+
+The front end / pause PDA shows a slowly-turning 3D prison-character head beside
+its scrolling dossier (`html/prison/*.html`). In the original it is an **amber
+hologram**, the twin of Clay's real-time **red** comm hologram (`comms.gd`):
+both are drawn by the engine's comms head system — **`icComms` + the
+`icHUDTargetMFD` compositor, all in `iwar2.dll`** (the `html_prison` screen is
+only the text backdrop; the 3D head is `icComms::RenderPortrait`).
+
+Our first pass rendered the head as an opaque, naturalistically-lit solid and
+turned it to a hard profile. That produced three "bugs" that were all one
+mistake — *not rendering it as the hologram*:
+
+- **The "gold triangle" by the mouth** (opaque build) was a specular highlight
+  thrown by the warm rim light on the cheek. It is in **no texture** — a scan of
+  all three `az_anchor_*.png` finds zero gold texels — so it is a lighting
+  artifact, not geometry and not a morph. Rendering the head **unshaded**
+  (holograms are self-lit, no lights) removes all specular, so it is gone.
+- **Untextured surfaces must keep their own dark colour.** The RT heads carry
+  small untextured surfaces — `Black` (eyebrow/mouth lines and, on Lori, a flat
+  *backing card* at `z=-0.02`, `lori_anchor` prim0) and jaffs' `MouthInner` —
+  all with `baseColorFactor` black. Tinting *every* surface flat amber turned
+  those into solid **gold blobs** (worst on Lori, where the backing card, drawn
+  with depth-write off, floated over the whole face). Fix: tint by
+  `sourceColour × amber` (black → black) and render the head **opaque with depth
+  writing on**, so the face occludes the backing card. The holographic
+  translucency is applied afterwards in 2D, when the viewport is composited.
+- **The "missing back of the skull"** is not missing: these real-time avatar
+  heads (`az`, `clay`, `smith` …) are hollow **front shells** — the `Body`
+  surface of `az_anchor` has **zero** rear-facing triangles. Lit opaquely and
+  turned to `-62°` (near profile) the open back shows. The original sits at a
+  gentle **3/4 (~40°)** and is **translucent**, so the open back never reads.
+- **"Malformed / flat grey-green"** was just the opaque lighting; the amber
+  tint + unshaded self-glow restores the intended look.
+
+**The model was already correct.** The bust loads `avatars/az/az_anchor.gltf`
+(bare head, slicked-back hair). The sibling `tf_az_anchor.gltf` is a **different
+model** — it adds a helmet, headphone rubber and a green `HUDVisor` (the
+in-cockpit flight-suit variant), so it is *wrong* for the dossier. Neutral pose
+is morph weights all `0` (the menu never touches the blend shapes). No extractor
+change was needed — `export_gltf.py` extracts the mesh and its 5 DELT morphs
+faithfully.
+
+**Recovered hologram constants** (`iwar2.dll`, cited at point of use in
+`menu.gd`):
+
+| thing | value | source |
+|---|---|---|
+| amber tint | `(1.0, 0.749, 0.0)` | `icComms` ctor `0x1007f720`, `FcColour[0]` (`iwar2.dll.c:105107-109`) — `0x3f800000,0x3f3fbe77,0`. Identical to `GUI_focused` (`igui.pog:38-40`). |
+| sweep-flash colour | `(1.0, 0.592, 0.0)` | `DAT_10174fb0`, `FUN_100e6750 0x100e6750` (`iwar2.dll.c:195396-398`) — `0x3f800000,0x3f178d50,0` |
+| scanline/panel texture | `texture:/images/hud/ucp` | `icHUDTargetMFD` ctor `0x10101530` (`iwar2.dll.c:195533`), scrolled in V over time (`:195797-804`) |
+| panel shader alpha | `0.990` | `iwar2.dll.c:195545` (`0x3f7d70a4`) |
+| sweep motion | time-driven, wrapped `0..1` | `iwar2.dll.c:195961-967` |
+| rotation | `cos(t·speed)·amp` around base | `icComms::RenderPortrait` `0x100810e0` (`iwar2.dll.c:106525-535`) |
+
+**UNKNOWN** (un-inlined `.rdata`/`.data` the decomp left as `DAT_1011xxxx` /
+unnamed FcString tables): the grid cell size (the grid is *baked into* the
+`icHUDTargetMFD` panel texture, not drawn as a pixel loop), the scanline spacing,
+and the sweep / scanline / rotation **rates and amplitude**. Also UNKNOWN: the
+literal `m_speaker_scene_urls` / backdrop strings (which head `.lws` per speaker)
+— only the loader (`FcAvatarLoader::Load`, `icComms::CreateHeads 0x1007fcc0`) and
+its indexing are visible. These would need a raw `.data`/`.rdata` dump at those
+addresses. Our grid/scanline/sweep spacings and rates are **reconstructed** to
+match the original's look and are named constants at the top of `menu.gd`.
+
+**Implementation** (`menu.gd`): `_holo_bust()` re-skins every bust surface with
+an unshaded, **opaque**, `sourceColour × amber`-tinted `StandardMaterial3D`
+(source texture kept, so features/hair still read; no specular; depth on so the
+head occludes itself). `_holo_grid()` draws the fine amber grid across the
+**whole screen**; the head is then drawn translucently (`draw_texture_rect`
+modulate α = 0.86) over a faint amber volume, and `_holo_overlay()` draws the
+scrolling scanlines + the soft, bright **upward** sweep band over it. Verify with
+`--bustshot` (windowed): it opens the menu on each prison character in turn and
+writes `data/screenshots/bustshot_<who>_{a,b}.png` 0.14 s apart — the sweep band
+rises ~18-23 px between the two frames. All four heads (az, lori, smith, jaffs)
+render whole and correctly.
+
+---
