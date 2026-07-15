@@ -2764,11 +2764,13 @@ func _draw_contact_list() -> void:
 	# -> chamfered TOP-LEFT corner). No header band in mode 3: the contact list has
 	# no caption, its first row sits just below the 16px chamfer.
 	_frame(pos, Vector2(w, h), 3)
-	# scrollbar, only once the list overflows (alpha 0.3, _DAT_1011c034)
+	# scrollbar, only once the list overflows (alpha 0.3, _DAT_1011c034). It runs
+	# down the left edge, which in mode 3 is where the 16px chamfer cuts the
+	# top-left corner -- so the track starts below the chamfer, not at pos.y.
 	if all.size() > CL_ROWS:
 		var frac := float(CL_ROWS) / float(all.size())
-		var track := h - 4.0
-		var top := pos.y + 2.0 + track * (float(off) / float(all.size()))
+		var track := h - 2.0 - HDR_H
+		var top := pos.y + HDR_H + track * (float(off) / float(all.size()))
 		draw_rect(Rect2(pos.x + 2.0, top, 4.0, track * frac),
 				_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.3)))
 	var y := pos.y + CL_ROW_H
