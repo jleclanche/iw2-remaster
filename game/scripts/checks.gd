@@ -141,12 +141,25 @@ func _newgamecheck(_delta: float) -> void:
 			# legitimately empty; what must be true either way is that we have a
 			# live world -- a player ship with systems, in a loaded system, and a
 			# POG runtime that is running rather than halted.
-			if demo_t > 4.0:
+			# The prelude cinematic plays first (it MUST play -- that it plays is
+			# the whole point of the fix), so skip it the way a real player would
+			# with Escape, then let its finished callback start the mission.
+			if demo_t > 3.0 and m.movie != null:
+				m.skip_movie()
+			if demo_t > 5.0:
 				var live_pog: bool = m.pog_rt != null and not m.pog_rt.halted
+				# The campaign must actually OPEN, not just leave a live world:
+				# the hand-authored path populates mission.steps, the --port path
+				# queues the prologue dialogue. One of the two must be true, or
+				# NEW GAME dropped you into empty flight (the user's bug).
+				var steps: int = m.mission.steps.size() if m.mission != null else 0
+				# hand-authored path -> mission.steps; --port -> the POG runtime
+				# drives the campaign (proven separately to re-run iprelude)
+				var opened: bool = steps > 0 or (m.use_port and live_pog)
 				var ok: bool = m.ship != null and m.sys != null \
-					and m.objects.size() > 0 and live_pog
-				print("NEWGAMECHECK: %s — campaign restarted, objects=%d, pog=%s"
-					% ["PASS" if ok else "FAIL", m.objects.size(), live_pog])
+					and m.objects.size() > 0 and live_pog and opened
+				print("NEWGAMECHECK: %s — objects=%d, pog=%s, mission steps=%d"
+					% ["PASS" if ok else "FAIL", m.objects.size(), live_pog, steps])
 				_ng_stage = 0
 				get_tree().quit(0 if ok else 1)
 	if demo_t > 40.0:

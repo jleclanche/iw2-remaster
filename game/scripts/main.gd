@@ -295,10 +295,16 @@ func _ready() -> void:
 		start_campaign()
 	elif _restarting:
 		# NEW GAME from the pause menu: the scene was reloaded to get a clean
-		# slate, so pick the campaign straight back up.
+		# slate, so pick the campaign straight back up -- but DEFERRED, one idle
+		# past _ready. The front-end START NEW GAME works because it calls
+		# start_campaign from a menu callback, on a live frame; calling it inline
+		# here, mid-_ready of a freshly reloaded scene, starts the prelude movie
+		# before the scene has rendered a frame and the VideoStreamPlayer never
+		# plays, so its finished callback -- which is what starts the mission --
+		# never fires. That is "NEW GAME drops me into empty flight".
 		_restarting = false
 		menu.visible = false
-		start_campaign()
+		start_campaign.call_deferred()
 
 ## Walk istartsystem's boot stages, each one starting only after the previous
 ## has run to completion. The engine drove these from C++; we drive them from

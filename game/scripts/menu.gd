@@ -177,7 +177,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if visible:
 		handle(event)
-		get_viewport().set_input_as_handled()
+		# During a NEW GAME the scene reloads out from under us; a queued input
+		# event can still reach this node the frame it leaves the tree, when
+		# get_viewport() is null.
+		if is_inside_tree():
+			get_viewport().set_input_as_handled()
 	elif event is InputEventKey and event.pressed and not event.echo \
 			and event.physical_keycode == KEY_ESCAPE:
 		open()  # Escape = PDA / pause
