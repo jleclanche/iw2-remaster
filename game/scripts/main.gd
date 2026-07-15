@@ -223,6 +223,7 @@ var uicheck := false
 var mechcheck := false
 var campcheck := false
 var newgamecheck := false
+var newgametest := false
 var geogcheck := false
 var basecheck := false   # Lucrecia's Base: dock -> interior -> screens
 
@@ -234,12 +235,13 @@ func _ready() -> void:
 	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
 	campcheck = "--campcheck" in OS.get_cmdline_user_args()
 	newgamecheck = "--newgamecheck" in OS.get_cmdline_user_args()
+	newgametest = "--newgametest" in OS.get_cmdline_user_args()
 	geogcheck = "--geogcheck" in OS.get_cmdline_user_args()
 	basecheck = "--basecheck" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
-			or newgamecheck or basecheck:
+			or newgamecheck or basecheck or newgametest:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()

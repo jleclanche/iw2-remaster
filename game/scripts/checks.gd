@@ -20,7 +20,9 @@ var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
-	if m.basecheck:
+	if m.newgametest:
+		_newgametest(delta)
+	elif m.basecheck:
 		_basecheck(delta)
 	elif m.newgamecheck:
 		_newgamecheck(delta)
@@ -119,6 +121,47 @@ func _geogcheck(_delta: float) -> void:
 ## scene, resume against a node that has left the tree, and reach for a null
 ## SceneTree -- which froze the game on the first NEW GAME.
 static var _ng_stage := 0
+
+## The REAL front-end path: let the PDA menu come up, then drive its own
+## START NEW GAME button (close() + start_campaign, from input handling) --
+## exactly what the player does. Distinct from _newgamecheck, which calls
+## start_campaign directly and so cannot see an input-timing bug.
+var _ngt_stage := 0
+
+func _newgametest(_delta: float) -> void:
+	match _ngt_stage:
+		0:
+			if demo_t > 1.5:
+				# NOT fast: we are testing whether the real opening dialogue
+				# actually plays and the mission advances past its first
+				# `until_comms` step -- fast mode auto-completes it and hides
+				# any hang.
+				m.menu.sel = 0
+				m.menu._activate()   # START NEW GAME, the button's own code
+				print("NEWGAMETEST: pressed START NEW GAME, movie=%s"
+					% [m.movie != null])
+				_ngt_stage = 1
+		1:
+			if demo_t > 3.5 and m.movie != null:
+				m.skip_movie()
+			if demo_t > 12.0:
+				if not m._headless():
+					_shot("newgametest")
+				var steps: int = m.mission.steps.size() if m.mission != null else 0
+				# the real signal the OPENING played: the mission loaded AND is
+				# speaking / has a subtitle up (Clay's opening line), not merely
+				# that a world exists.
+				var spoke: bool = m.comms != null and (m.comms.speaking() \
+					or m.comms.subtitle != "")
+				var ok: bool = (steps > 0 or (m.use_port \
+					and m.pog_rt != null and not m.pog_rt.halted)) and spoke
+				print("NEWGAMETEST: %s — steps=%d, opening dialogue up=%s"
+					% ["PASS" if ok else "FAIL", steps, spoke])
+				_ngt_stage = 0
+				get_tree().quit(0 if ok else 1)
+	if demo_t > 40.0:
+		print("NEWGAMETEST: TIMEOUT stage ", _ngt_stage)
+		get_tree().quit(1)
 
 func _newgamecheck(_delta: float) -> void:
 	match _ng_stage:
