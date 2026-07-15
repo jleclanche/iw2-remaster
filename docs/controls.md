@@ -142,6 +142,35 @@ So **F1 is the "turn the cockpit off" key** -- it was never a separate option.
 FOVs (`flux.ini` / `defaults.ini`, radians): internal 1.1, tactical 1.2, arcade
 1.2, external 1.25, drop 1.1, chase 1.2.
 
+### Pressing a camera key again -- and why F4 "resets"
+
+`OnMessage`'s cycle always hands the chosen camera to `icDirector::ChangeCamera`
+(`0x100d7350`), **even when it is the camera you are already on**. `ChangeCamera`
+guards against that with a same-id branch at `0x100d7358`:
+
+```
+0x100d7358  cmp [esi+0x2b0], edi    ; already on this camera?
+0x100d735e  jne commit
+0x100d7360  cmp edi, 0xb            ; SAME id -- is it cam_drop (0xb)?
+0x100d7363  jne return              ; SAME and != 0xb  -> no-op
+                                    ; SAME and == 0xb  -> fall through, re-commit
+0x100d739c  mov [esi+0x2b8], 2      ; CameraChanged = 2  (force re-frame)
+```
+
+So re-pressing a camera key is a **no-op for every camera except the drop camera
+(`0xb`)**, which alone re-commits and raises `CameraChanged = 2`, making the drop
+camera re-establish its default framing from the ship's transform. In practice
+only **F4** ever lands back on itself -- its group has one member -- so **F4 is
+the one key whose repeat press does something: it re-drops the camera** (a
+recentre). F1/F2/F3 always step to a *different* camera in their group, so every
+one of their presses is already a real change and never hits the no-op path.
+
+The remaster mirrors this in `main._set_camera`: a repeat F4 re-anchors
+`drop_cam_pos` behind the ship instead of leaving the frozen drop camera where it
+was. (`configs/default.ini` binds F1..F4 to
+`icDirector.InternalCamera/TacticalCamera/ExternalCamera/DropCamera`; there is no
+per-camera recentre tunable -- the reset is code-driven.)
+
 ---
 
 ## Everything else, verbatim from `default.ini`

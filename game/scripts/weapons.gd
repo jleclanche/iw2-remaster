@@ -72,6 +72,10 @@ var cooldown := 0.0
 var bolts: Array = []  # {node, vel, life, age, shooter, spec}
 var muzzle_nodes: Array = []  # weapon-mount nulls found on the avatar
 var muzzle_fallback: Array = MUZZLES  # per-hull mounts (setup-scene nulls)
+# A single fixed gun mounted on a named hull null (the command section's light
+# PBC on nose_hardpoint), recovered per iiWeapon::FindWorldMuzzle. Empty for the
+# tug, which fires from its fitted gun models. See light_pbc_muzzle().
+var fixed_gun: Dictionary = {}  # {null_pos} ship-local Godot
 var _mesh: Mesh
 
 # --- icWeaponLink: the primary fire groups -----------------------------------
@@ -131,6 +135,26 @@ static func muzzle_of(gun: Node3D) -> Array:
 	var b := gun.global_transform.basis.orthonormalized()
 	var dir: Vector3 = -b.z              # the barrel's own axis
 	return [gun.global_position + dir * MUZZLE_FORWARD, dir]
+
+## The world muzzle of a single fixed gun mounted on a hull null, recovered per
+## iiWeapon::FindWorldMuzzle (iwar2.dll 0x1003da30). The engine returns
+##   pos = FcSubsim::WorldPosition + M(q) * fire_position_translation
+## with q = InternalOrientation (identity for a fixed gun) composed with
+## FcSubsim::WorldOrientation (flux.dll 0x100c2fb0 / 0x100c3070 -- the subsim's
+## mount on the hull composed with the ship's world transform). fire_position_
+## rotation (+0x94) is a SEPARATE post-multiply that only turns the firing
+## direction; it does NOT rotate the muzzle position (corrects the prior note).
+##
+## For the command section's light PBC the barrel is baked into the hull avatar
+## with its tip AT the nose_hardpoint null, so FcSubsim::WorldPosition already IS
+## the barrel end -- verified visually (data/screenshots/muzzleshot.png): the
+## null lands on the barrel muzzle, and every metre of the +0x88 translation runs
+## off into empty space ahead of the gun. So we take WorldPosition and fire down
+## the hull axis, which is where the bolt leaves the barrel.
+func light_pbc_muzzle() -> Array:
+	var base := ship.global_transform
+	var null_pos: Vector3 = fixed_gun.get("null_pos", Vector3.ZERO)
+	return [base * null_pos, -base.basis.z]
 
 ## Build the cycle from the fitted weapons. Channel 1 only: the secondaries
 ## (beams, magazines) are missiles.gd's list.
@@ -256,6 +280,16 @@ func fire() -> void:
 	# otherwise we fall back to the hull's authored PBC mounts, which is what the
 	# tug's linked pair resolves to anyway.
 	# Each gun fires from its own barrel end, down its own axis (muzzle_of).
+	# A single fixed gun mounted on a hull null (the command section's light PBC)
+	# fires from FcSubsim::WorldPosition down the hull axis -- the recovered muzzle
+	# (light_pbc_muzzle), not the model-node fallback which sat 3-4 m ahead of the
+	# barrel.
+	if not fixed_gun.is_empty():
+		var fm: Array = light_pbc_muzzle()
+		_spawn_at(ship, fm[0], fm[1], ship.velocity, spec)
+		if main:
+			main.audio.play("audio/sfx/light_pbc.wav", -8.0)
+		return
 	var mz: Array = _group_muzzles()
 	if mz.is_empty():
 		mz = muzzle_nodes.filter(func(n: Node3D) -> bool:

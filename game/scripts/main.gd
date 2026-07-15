@@ -441,7 +441,14 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 		# nose_hardpoint at LW (1.625,-1.5,10.625); light_pbc.ini refire 0.8)
 		weapons.refire = 0.8
 		weapons.bolt_spec = PbcWeapons.LIGHT_PBC_BOLT
-		weapons.muzzle_fallback = [Vector3(1.625, -1.5, -14.0)]
+		# The light PBC is a single fixed gun on nose_hardpoint. Its muzzle is the
+		# subsim's FcSubsim::WorldPosition (the barrel tip is baked there), fired
+		# down the hull axis -- see weapons.light_pbc_muzzle / fixed_gun. The old
+		# fallback spawned bolts 3-4 m ahead of the barrel; both point at the null.
+		var np: Vector3 = sys.null_pos.get("nose_hardpoint", Vector3.ZERO) \
+			if sys != null else Vector3(1.625, -1.5, -10.62505)
+		weapons.muzzle_fallback = [np]
+		weapons.fixed_gun = {"null_pos": np}
 		weapon_name = "LIGHT PBC"
 		eye = Vector3(-1.125, 0.425, -12.975)  # comsec.lws crew null
 	else:
@@ -450,6 +457,7 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 		weapons.refire = 0.7
 		weapons.bolt_spec = PbcWeapons.PBC_BOLT
 		weapons.muzzle_fallback = PbcWeapons.MUZZLES
+		weapons.fixed_gun = {}  # the tug fires from its fitted gun models
 		weapon_name = "L-PBC / R-PBC"
 		eye = Vector3(-1.19, -13.85, -40.05)  # tug.lws crew null
 	_apply_view()
@@ -1243,16 +1251,33 @@ func _apply_view() -> void:
 	if ship_model != null:
 		ship_model.visible = not (cam_mode == 0 and cam_view <= 1)
 
-## icDirector::OnMessage's camera-key rule: outside the group, jump to its first
-## camera; inside it, step to the next one.
+## icDirector::OnMessage's camera-key rule (0x100d6920): outside the group, jump
+## to its first camera; inside it, step to the next one, wrapping. The step is
+## handed to icDirector::ChangeCamera (0x100d7350), which has a special same-id
+## branch at 0x100d7358: re-selecting the camera you are already on is a no-op for
+## every camera EXCEPT the drop camera (id 0xb) -- for that one it re-commits and
+## raises CameraChanged=2 (0x100d739c), so the drop camera re-establishes its
+## default framing. In our groups only the drop group has a single member, so it
+## is the only key whose repeat press lands back on itself: that repeat RE-DROPS
+## the camera at the ship's current default vantage instead of doing nothing. The
+## multi-member groups (F1/F2/F3) always step to a different camera, so each of
+## their presses is already a real change.
 func _set_camera(group: int) -> void:
-	if group == cam_mode:
+	var reselect := group == cam_mode
+	if reselect:
 		cam_view = (cam_view + 1) % CAM_GROUPS[group].size()
 	else:
 		cam_mode = group
 		cam_view = 0
 	if cam_name() == "drop":
-		drop_cam_pos = cam.global_position
+		# first entry drops the camera where the previous view was; a repeat F4
+		# (reselect, single-member group) is the ChangeCamera 0xb reset -- re-drop
+		# behind the ship at the default drop-back vantage
+		if reselect:
+			drop_cam_pos = ship.global_position \
+				+ ship.global_transform.basis * Vector3(0, 20, 130)
+		else:
+			drop_cam_pos = cam.global_position
 	zoomed = false
 	zoom_factor = 1.0
 	cam.fov = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 else FOV_EXTERNAL

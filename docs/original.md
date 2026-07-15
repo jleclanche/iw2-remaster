@@ -621,14 +621,19 @@ dockports on `dock_port01/02` when its scene only has `dock_arm_dock01/02`.
 ## 5c-1. Where a bolt actually comes from, and which way it goes
 
 - **Muzzle**: `iiGun::Fire` (`0x100357e0`) calls `iiWeapon::FindWorldMuzzle`
-  (`0x1003da30`) -- the gun's **attach null on the hull** (`FcSubsim::
-  WorldPosition` / `WorldOrientation`) plus the INI's
-  `fire_position_translation` (`iiWeapon+0x88`), post-rotated by
-  `fire_position_rotation` (`+0x94`). `pbc.ini` says what it is in words: *"the
-  end of the barrel of the gun with respect to the attachment point of the
-  weapon"* = `(0, 10, 4.5)`, and **every** player gun in the shipped data
-  carries that same offset. The spawn is then nudged forward by exactly one
-  bolt radius (`0x10035866`).
+  (`0x1003da30`): `pos = FcSubsim::WorldPosition + M(InternalOrientation (x)
+  WorldOrientation) * fire_position_translation(+0x88)`. `InternalOrientation`
+  (vtable +0x68) is **identity** for the base weapon (`0x10004790`), so the
+  translation is rotated by the gun's world orientation alone.
+  **`fire_position_rotation` (+0x94) affects only the firing DIRECTION, not the
+  muzzle position** -- the earlier note that it rotated the position was wrong.
+  `pbc.ini` calls the translation *"the end of the barrel with respect to the
+  attachment point of the weapon"* = `(0, 10, 4.5)`, and every player gun
+  carries it -- but note it is authored for the **stand-alone gun avatar**;
+  where a hull mesh bakes the barrel tip *at* the attach null (the command
+  section's `nose_hardpoint`), `WorldPosition` already IS the barrel end.
+  `FcSubsim::WorldPosition`/`WorldOrientation` = `flux.dll 0x100c2fb0` /
+  `0x100c3070`. The spawn is nudged forward by one bolt radius (`0x10035866`).
 - **Direction**: `iiGun::ComputeFiringSolution` (`0x10035310`) **short-circuits
   for the player** (`IsPlayer() && pilot+0x9c == 0`) and returns gun-local
   **+Z** -- no lead, no jitter. `Fire` then rotates it by the muzzle

@@ -1844,3 +1844,58 @@ outright (`0x2b`) unless the ship carries the weapon-link hardware
 (`icShip+0x2f8`). Bound to **F**. We have not implemented it.
 
 ---
+
+## Where a bolt leaves the gun -- `iiWeapon::FindWorldMuzzle`
+
+`iiWeapon::FindWorldMuzzle` (`iwar2.dll @ 0x1003da30`) returns the world muzzle
+**position** and firing **orientation** of a weapon. The recovered composition,
+verified term by term against the disassembly:
+
+```
+pos    = FcSubsim::WorldPosition + M(q) * fire_position_translation   ; +0x88
+q      = InternalOrientation (vtable+0x68) (X) FcSubsim::WorldOrientation
+orient = q (X) E(fire_position_rotation)                              ; +0x94
+```
+
+with `(X)` the scalar-first Hamilton product, `M(q)` the quaternion rotation
+matrix, and everything gated by the `UseFirePositionTransformation` byte at
+`+0xa0`. Key facts, and a correction to the earlier note:
+
+* `FcSubsim::WorldPosition` / `WorldOrientation` (`flux.dll @ 0x100c2fb0` /
+  `0x100c3070`) are the subsim's mount on the hull -- the `[SetupScene]` attach
+  null placed by `FiSim::PlaceSubsimAtNull` -- composed with the ship's world
+  transform. For the command section's light PBC that null is `nose_hardpoint`.
+* The muzzle **position** translation `+0x88` is rotated by `q =
+  InternalOrientation (X) WorldOrientation`. `InternalOrientation` is the virtual
+  at `vtable+0x68`; the `iiWeapon` base (`0x10004790`) returns **identity**, in
+  which case the translation is rotated purely by the hull orientation.
+* `fire_position_rotation` (`+0x94`, an HPB Euler stored in radians; built into a
+  quaternion by `FUN_1003e0b0`) is a **separate post-multiply that only turns the
+  firing direction**. It does **not** rotate the muzzle position -- the earlier
+  note's `q = fire_position_rotation * WorldOrientation` conflated the two.
+
+### The command section's light PBC (the fix)
+
+`comsec_prefitted.ini` mounts `subsims/systems/player/light_pbc` (class
+`icCannon`) at `nose_hardpoint`, ship-local Godot **(1.625, -1.5, -10.625)**
+(`data/json/ships.json` `attach_pos`, LW Z negated). Its INI carries
+`fire_position_translation=(0,10,4.5)` / `fire_position_rotation=(0,-90,0)`
+(`data/json/subsims.json`).
+
+Naively feeding `(0,10,4.5)` through the formula puts the muzzle ~10 m off the
+mount -- up, forward, or aft depending on the frame -- none of which lands on the
+gun. The reason is asset-side: in the shipped avatar the light PBC's **barrel is
+baked into the hull mesh with its tip AT the `nose_hardpoint` null**, so
+`FcSubsim::WorldPosition` already *is* the barrel end. The `+0x88` translation was
+authored for the stand-alone gun avatar (`avatars/light_pbc/setup_effects`), which
+we do not attach separately. Verified visually
+(`data/screenshots/muzzleshot.png`): the null sits exactly on the barrel muzzle,
+and every metre of the translation runs off into empty space ahead of the gun.
+
+So `weapons.gd` fires the command section's light PBC from
+`FcSubsim::WorldPosition` (the `nose_hardpoint` world position) down the hull
+axis (`weapons.light_pbc_muzzle`, wired via `weapons.fixed_gun`). This replaces
+the old fallback that spawned the bolt at ship-local `(1.625, -1.5, -14.0)` --
+3-4 m **ahead** of the barrel, which is the "bolts originate well ahead of the
+actual gun" the player reported. The tug is unaffected: it clears `fixed_gun` and
+still fires from its fitted gun models.
