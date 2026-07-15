@@ -707,15 +707,81 @@ nav elements "purple". **The shipped `iwar2.dll` does neither.** Recovered:
   (`188006`) and the incoming-missile pip. The LDS/capsule/team icons and the
   contacts orb are green (`188022`..`188048`, `&DAT_10176038`).
 
-So the remaster's palette already matches `iwar2.dll`: green chrome, amber
-sub-gauges, gold/green/red/blue contacts. **We did not recolour the ring amber or
-add a purple crosshair — that would contradict the binary and the PRIME RULE.**
-If the reference the divergence list was drawn from shows amber/purple, it is a
-different build/mod from `build/bin/iwar2.dll`; that stays for the human to
-reconcile. The one thing that *was* missing — the centred **nav class glyph**
-(47/60) an in-reticle waypoint/L-point lock draws at the target position
-(`FUN_100f6340` @ `0x100f64ec`, cat 4/5 branch, in the contact colour) — is now
-drawn (`_target_nav_icon`).
+So the outer ring is green, unconditionally. The coloured mark the divergence
+list called a "purple X" is a **separate element drawn over the ring** — the
+INNER reticle target marker — and its colour is the target's **allegiance**
+(blue for a friendly "don't shoot", red hostile, gold neutral, green nav), not a
+fixed purple. That element was genuinely missing from the remaster; it is
+recovered and implemented below. (The magenta `DAT_10174180` really is never
+read; the friendly blue is `DAT_101740b8`.)
+
+## The inner reticle — the allegiance-coloured target marker
+
+A SECOND marker, drawn on and over the green outer ring, centred on the reticle,
+in the **target's own colour**. Recovered in full from three functions Ghidra
+kept (`FUN_100f76a0` / `FUN_100f7920` / `FUN_100f7b10`), dispatched by the reticle
+master `FUN_100f6340`:
+
+- The master sets the active colour to the **target contact's colour**
+  (`icHUD+0x120`, at `0x100f647c`: `pFVar3+0x1778 = *(iVar5+0x120)`) *before*
+  drawing the marker, so the marker inherits it.
+- **In-reticle** (target within `(_DAT_1011e038 + _DAT_101190c0)` = 63+10 px of
+  centre): `FUN_100f76a0` @ `0x100f76a0`. Sprite by target category
+  (`param_1[3]`), all from **reticle.png** (texture 2), drawn NATIVE:
+  * cat 4/5 (waypoint / L-point) -> **sprite 94**, blitted **4-mirror**
+    (`FUN_100ea7e0`, flags 0/1/3/2) into a symmetric marker;
+  * a moving target (`param_1[10] != 0 || *(sim+0x20) < 3`) -> **sprite 93**,
+    four copies **spun** about the centre (angle on `reticle+0x20`);
+  * else (static ship / station) -> **sprite 92**, 4-mirror — the **X-in-ring**.
+- **Off-reticle**: `FUN_100f7920` (an edge chevron, sprite 35, rotated to the
+  bearing) + `FUN_100f7b10` (the class glyph pulled to the ring edge: 47/60 for
+  cat 4/5, 44/45 otherwise).
+
+The sprite cells were read out of the table builder (`0x100e7f00`ff, verified
+against the known 90/91/93):
+
+| sprite | reticle.png cell | origin | role |
+|---|---|---|---|
+| 92 | (186, 0, 70, 70) | (70, 0) | static in-reticle marker (the X) |
+| 93 | (0, 186, 70, 70) | (0, 70) | moving-target marker (spun) |
+| 94 | (186, 80, 70, 70) | (70, 0) | waypoint / L-point in-reticle marker |
+
+### The allegiance -> colour map (`FUN_100e8530` @ `0x100e8530`)
+
+The marker colour is the contact colour, and `FUN_100e8530` is the single place
+that colour is chosen (the ORB and contact list copy it too). Full recovered map:
+
+| target state | colour | DAT |
+|---|---|---|
+| unidentified | gold | `DAT_10174f60` (1.0,0.8,0) |
+| category 4/5 (waypoint / L-point) | green | `DAT_10176038` (0.5,1,0) |
+| `sim+0x199` set | light blue | `DAT_10174190` (0.3,0.6,1) |
+| IFF 0/1 (hostile) | red | `DAT_10176018` (1.0,0.07,0) |
+| IFF 2 (neutral, the default) | gold | `DAT_10174f60` |
+| **IFF 3/4 (friendly)** | **blue** | **`DAT_101740b8` (0.1,0.1,1)** |
+
+So the "blue X for friendlies" the user described is IFF 3/4 -> `DAT_101740b8`.
+
+### What we implemented
+
+`hud.gd::_reticle_marker` draws the inner marker centred on the reticle whenever a
+target is in-reticle, 4-mirror, in `_target_color()` (which now returns the
+allegiance colour: hostile red, non-hostile ship friendly blue, nav green,
+station/neutral gold). Sprite 92 for ships/stations, 94 for waypoint/L-point.
+Verified with `--hudnavshot`: `build/shots/hud_hostile.png` (red X),
+`hud_friendly.png` (blue X), `hud_navlock.png` (gold X, base) — each marker a
+distinct colour over the same green ring.
+
+**Limits / UNKNOWN.** (1) Our sim carries a category and a hostile flag
+(`behavior == "attack"`) but no per-contact **IFF feeling**, so friendly-vs-neutral
+cannot be told apart from data: we follow the codebase's existing convention
+(non-hostile ship -> friendly blue, station/object -> neutral gold). A genuine
+neutral trader would read blue here where the engine would read gold; a
+main-side IFF/feeling hook would fix that (see the report). (2) The moving-target
+**sprite-93 spin** (select condition `param_1[10]` / `*(sim+0x20) < 3`) is not
+mapped to our data, so we draw the static 92 for all ships. (3) No **cyan**
+appears in `FUN_100e8530`; if the game ever shows a cyan/other marker it is a
+mission script overriding a specific contact's colour, not this path.
 
 ## Shield panel position: under the ORB
 
@@ -735,6 +801,11 @@ name and draws one row per `iiWeapon` member. A linked "QUAD LIGHT PBC" is ONE
 group -> ONE row. The remaster was splitting `main.weapon_name` on `"/"` to draw a
 two-row "L-PBC / R-PBC" pair — invented. `hud.gd` now always draws the single
 group row (`rows := 1`). The group NAME comes from `weapons.group_label()`
-(main.gd owns the fit); the "L-PBC / R-PBC" string is only a pre-fit placeholder.
+(main.gd owns the fit).
+
+**Non-issue:** the "QUAD LIGHT PBC" the reference showed is simply a **different
+ship's loadout** (weapons are customised at base and differ per hull), not a HUD
+bug. Our single-row panel is correct; whatever the fitted group's `group_label()`
+returns is the right caption. No change needed beyond the single-row fix.
 
 ---

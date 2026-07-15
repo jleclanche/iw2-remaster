@@ -29,7 +29,8 @@ const AMBER := Color(1.0, 0.592, 0.0, 0.95)        # DAT_10174fb0 - reticle icon
 const GOLD := Color(1.0, 0.8, 0.0, 0.95)           # DAT_10174f60 - healthy end of ramp
 const ORANGE := Color(0.9, 0.43, 0.0, 0.95)        # DAT_101715e8
 const RED := Color(1.0, 0.07, 0.0, 0.95)           # DAT_10176018 - hostile / alert
-const BLUE := Color(0.3, 0.6, 1.0, 0.95)           # DAT_10174190 - friendly / traffic
+const BLUE := Color(0.3, 0.6, 1.0, 0.95)           # DAT_10174190 - traffic / +0x199 contact
+const FRIENDLY := Color(0.1, 0.1, 1.0, 0.95)       # DAT_101740b8 - IFF 3/4 friendly (blue X)
 const PALE := Color(0.9, 0.95, 1.0, 0.95)          # DAT_10174010 - cargo / inert
 const LDS_COL := Color(0.5, 1.0, 0.0, 0.95)
 
@@ -139,7 +140,9 @@ const ICON_RING := 8
 const SPR_RET := {
 	90: [0, 0, 170, 170, 84, 84],     # the reticle ring
 	91: [85, 0, 85, 85, 0, 85],       # menu reticle: the static backing quadrant
-	93: [0, 186, 70, 70, 0, 70],      # menu reticle: the spinning quadrant
+	92: [186, 0, 70, 70, 70, 0],      # INNER reticle: static target marker (the X)
+	93: [0, 186, 70, 70, 0, 70],      # menu reticle / moving-target: spinning quadrant
+	94: [186, 80, 70, 70, 70, 0],     # INNER reticle: waypoint / L-point marker
 }
 
 static func load_game_font(base: String, fnt: String) -> Font:
@@ -879,13 +882,13 @@ func _reticle_turn_arrow(c: Vector2) -> void:
 	# FUN_100f6340 switches to the off-reticle indicator once the target sits
 	# further than RET_R + RET_SLOP from the centre.
 	if not behind and p.distance_to(c) < RET_R + RET_SLOP:
-		# In-reticle marker (FUN_100f6340 @ 0x100f64ec): for a NAVIGATION lock
-		# (target category 4 waypoint / 5 L-point) the master draws the class
-		# glyph -- sprite 47 (waypoint) or 60 (L-point) -- AT the target's screen
-		# position, in the contact colour, filling the ring when the nav point is
-		# dead ahead. A base/station lock shows its class glyph the same way. This
-		# is the "crosshair in the ring" of a nav lock; ships instead get the
-		# FUN_100f76a0 lead/box marker, which our bracket pass already draws.
+		# In-reticle: the master draws TWO things (FUN_100f6340, in-reticle branch
+		# at 0x100f647c). First the inner target marker centred on the reticle
+		# (FUN_100f76a0), in the target's allegiance colour -- the blue/red/gold/
+		# green X. Then, for a NAVIGATION lock (category 4 waypoint / 5 L-point)
+		# only, the class glyph -- sprite 47 / 60 -- AT the target's screen offset
+		# (local_2c, local_28), also in the contact colour.
+		_reticle_marker(c)
 		var nav := _target_nav_icon()
 		if nav != 0:
 			_spr(p, nav, col)
@@ -897,13 +900,64 @@ func _reticle_turn_arrow(c: Vector2) -> void:
 	dir2 = dir2.normalized()
 	_tri(c + dir2 * (RET_R - 18.0), dir2.angle(), col, 7.0)
 
+# The one place the flight HUD picks a target's colour, mirroring FUN_100e8530
+# @ 0x100e8530 -- the engine's single contact-colour chooser, whose result the
+# reticle reads from icHUD+0x120 for BOTH the inner target marker and the target
+# text block, and which the ORB and contact list copy too. Full recovered mapping
+# (each RGB is the palette DAT it names):
+#   unidentified                       -> gold   DAT_10174f60 (1.0,0.8,0)
+#   category 4/5 (waypoint / L-point)  -> green  DAT_10176038 (0.5,1,0)
+#   sim+0x199 set                      -> l.blue DAT_10174190 (0.3,0.6,1)
+#   IFF 0/1 (hostile)                  -> red    DAT_10176018 (1.0,0.07,0)
+#   IFF 2   (neutral, the default)     -> gold   DAT_10174f60
+#   IFF 3/4 (friendly)                 -> blue   DAT_101740b8 (0.1,0.1,1)
+# Our sim carries a category and a hostile flag (behavior == "attack") but no IFF
+# feeling, so we follow the codebase's existing hostile/non-hostile split:
+# non-hostile ships read as friendly blue (the "don't shoot" X), stations and
+# other objects as neutral gold, nav points green. A hook exposing the target's
+# real IFF/feeling from main would let a genuinely neutral trader read gold; see
+# the report.
 func _target_color() -> Color:
 	if main.target_ai != null and is_instance_valid(main.target_ai):
-		return RED if main.target_ai.behavior == "attack" else BLUE
+		return RED if main.target_ai.behavior == "attack" else FRIENDLY
 	if main.target_idx >= 0:
-		var t: Dictionary = main.objects[main.target_idx]
-		return GREEN if t["category"] == "lpoint" else YELLOW
-	return YELLOW
+		var cat := str(main.objects[main.target_idx]["category"])
+		if cat == "lpoint" or cat == "waypoint":
+			return GREEN
+		return GOLD
+	return GOLD
+
+func _reticle_marker(c: Vector2) -> void:
+	# The INNER reticle -- a SEPARATE element from the green outer ring, drawn over
+	# it and centred on the reticle, in the target's allegiance colour. It is the
+	# blue "don't shoot" X for a friendly, red for a hostile, gold for a neutral,
+	# green for a nav point. Recovered from FUN_100f76a0 @ 0x100f76a0 (the
+	# in-reticle target marker), which the reticle master FUN_100f6340 calls with
+	# the active colour already set to the contact colour (icHUD+0x120, at
+	# 0x100f647c). Sprites, all from reticle.png (texture 2), all drawn NATIVE:
+	#   * category 4/5 (waypoint / L-point) -> sprite 94, blitted 4-mirror
+	#     (FUN_100ea7e0, flags 0/1/3/2) into a symmetric marker;
+	#   * a moving target -> sprite 93, four copies spun about the centre;
+	#   * else (static ship / station) -> sprite 92, 4-mirror -- the X.
+	# We draw 92/94 (static + nav); the 93 spin is a moving-target refinement whose
+	# select condition (param_1[10] / *(sim+0x20) < 3) we could not map to our data.
+	if main._target_distance() == INF:
+		return
+	var id := 92
+	if main.target_idx >= 0:
+		var cat := str(main.objects[main.target_idx]["category"])
+		if cat == "lpoint" or cat == "waypoint":
+			id = 94
+	var col := _target_color()
+	if _reticle_tex != null:
+		for f in [0, 1, 3, 2]:   # FUN_100ea7e0's four mirror-flag pairs
+			_spr_ret(c, id, col, 0.0, f)
+	else:
+		# vector fallback: the X-in-ring the sprite draws
+		var r := 22.0
+		for a in [PI * 0.25, PI * 0.75]:
+			var d := Vector2(cos(a), sin(a)) * r
+			draw_line(c - d, c + d, col, 1.6, true)
 
 func _target_nav_icon() -> int:
 	# The in-reticle class glyph for the current target if it is a NAVIGATION
@@ -1793,12 +1847,39 @@ func _menushot_step(d: float) -> void:
 	menu_time = 8.4
 
 # --- dev: `-- --hudnavshot` ---------------------------------------------------
-# Verifies the NAVIGATION-LOCK flight HUD: spawns beside Lucrecia's Base (the
+# Verifies the allegiance-coloured flight HUD. Spawns beside Lucrecia's Base (the
 # menu's "Lucrecia's Base (Nebula)" entry -> start_in_system with the base as the
-# arrival entity), targets the base, faces it, writes one windowed PNG and quits.
-# Run WITHOUT --headless so the viewport actually renders.
+# arrival entity), then captures three windowed PNGs of the inner reticle marker:
+#   hud_navlock  -- the base: NAVIGATION LOCK, gold neutral marker, no EO render
+#   hud_hostile  -- a Marauder (behavior "attack"): RED inner marker
+#   hud_friendly -- a non-hostile ship: BLUE "don't shoot" inner marker
+# so the marker's colour can be seen tracking the target's allegiance, distinct
+# from the green outer ring. Run WITHOUT --headless so the viewport renders.
 var _navshot_i := -2
 var _navshot_t := 0.0
+var _navshot_ship: Object = null
+
+func _navshot_view() -> void:
+	# internal view (cam_mode 0, cam_view 0): _apply_view hides the ship hull, so
+	# the reticle centre is over open space
+	main.ship.global_position = Vector3.ZERO
+	main.ship.velocity = Vector3.ZERO
+	main.cam_mode = 0
+	main.cam_view = 0
+	main._apply_view()
+
+func _navshot_face(target: Vector3) -> void:
+	# point the nose at `target` so a fixed world object sits in the reticle
+	main.ship.global_transform = Transform3D(Basis.IDENTITY, Vector3.ZERO) \
+			.looking_at(target.normalized() * 1000.0, Vector3.UP)
+	_navshot_view()
+
+func _navshot_save(name: String) -> void:
+	var img := get_viewport().get_texture().get_image()
+	var dir: String = main._base().path_join("build/shots")
+	DirAccess.make_dir_recursive_absolute(dir)
+	img.save_png(dir.path_join("%s.png" % name))
+	print("HUDNAVSHOT ", name)
 
 func _navshot_step(d: float) -> void:
 	if _navshot_i == -2:
@@ -1811,42 +1892,72 @@ func _navshot_step(d: float) -> void:
 		0:
 			if _navshot_t < 0.4:
 				return
-			# leave the front end and arrive beside the base
 			main.menu.launched = true
 			main.menu.visible = false
 			main.start_in_system("hoffers_wake", "Lucrecia's Base")
-			# target the base and point the nose at it so the nav lock sits in
-			# the reticle
-			main.ship.global_position = Vector3.ZERO
-			main.ship.velocity = Vector3.ZERO
 			for i in main.objects.size():
 				if str(main.objects[i]["name"]) == "Lucrecia's Base":
 					main.target_idx = i
 					var o: Dictionary = main.objects[i]
-					var to := Vector3(o["x"] - main.px, o["y"] - main.py,
-							o["z"] - main.pz).normalized()
-					main.ship.global_transform = Transform3D(Basis.IDENTITY,
-							Vector3.ZERO).looking_at(to * 1000.0, Vector3.UP)
+					_navshot_face(Vector3(o["x"] - main.px, o["y"] - main.py,
+							o["z"] - main.pz))
 					break
-			main.cam_mode = 1
-			main._apply_view()
 			_navshot_i = 1
 			_navshot_t = 0.0
 		1:
 			if _navshot_t < 1.2:
 				return
-			var img := get_viewport().get_texture().get_image()
-			var dir: String = main._base().path_join("build/shots")
-			DirAccess.make_dir_recursive_absolute(dir)
-			img.save_png(dir.path_join("hud_navlock.png"))
-			print("HUDNAVSHOT hud_navlock.png  target=",
-					main.objects[main.target_idx]["name"] if main.target_idx >= 0
-					else "<none>")
+			_navshot_save("hud_navlock")
+			# hostile: a Marauder dead ahead, RED marker
+			main.target_idx = -1
+			_navshot_ship = main.spawn_hostile(Vector3(0, 0, -2500))
+			main.target_ai = _navshot_ship
+			warning_text = ""   # clear the spawn's "HOSTILE CONTACT" warn
+			warning_until = 0.0
 			_navshot_i = 2
 			_navshot_t = 0.0
 		2:
+			# pin the target dead ahead each frame so it cannot drift off centre
+			_navshot_pin()
+			if _navshot_t < 0.6:
+				return
+			_navshot_save("hud_hostile")
+			# friendly: same hull, behavior flipped to non-hostile -> BLUE marker
+			if _navshot_ship != null:
+				(_navshot_ship as Node).queue_free()
+				main.ai_ships.erase(_navshot_ship)
+			_navshot_ship = main.spawn_hostile(Vector3(0, 0, -2500))
+			(_navshot_ship as Object).set("behavior", "patrol")
+			main.target_ai = _navshot_ship
+			warning_text = ""
+			warning_until = 0.0
+			_navshot_i = 3
+			_navshot_t = 0.0
+		3:
+			_navshot_pin()
+			if _navshot_t < 0.6:
+				return
+			_navshot_save("hud_friendly")
+			_navshot_i = 4
+			_navshot_t = 0.0
+		4:
 			if _navshot_t > 0.2:
 				get_tree().quit()
+
+func _navshot_pin() -> void:
+	# hold the player facing straight ahead in the internal view and drop the
+	# target ship exactly on the reticle centre (project the screen centre out to
+	# 2500 m), so the in-reticle marker is framed dead centre and its allegiance
+	# colour is unmistakable against the green ring
+	if _navshot_ship == null:
+		return
+	main.ship.global_transform = Transform3D(Basis.IDENTITY, Vector3.ZERO)
+	_navshot_view()
+	var cam: Camera3D = main.cam
+	var p: Vector3 = cam.project_position(
+			get_viewport().get_visible_rect().size * 0.5, 2500.0)
+	(_navshot_ship as Node3D).global_position = p
+	(_navshot_ship as Object).set("velocity", Vector3.ZERO)
 
 # --- world-space target marks -----------------------------------------------
 # @element icHUDBrackets

@@ -1992,6 +1992,24 @@ frame `FUN_100f1920` and the 0.5 s scanline open-flash; the ring sprite drawn
   different build/mod or a recolour path not present in this binary. **UNRESOLVED
   pending the reference's provenance.**
 
+- **The inner reticle is a SEPARATE, allegiance-coloured marker over the green
+  ring.** The outer ring (sprite 90) is always green; the reticle master
+  `FUN_100f6340` then sets the active colour to the target contact's colour
+  (`icHUD+0x120`, `0x100f647c`) and draws the in-reticle marker in it:
+  `FUN_100f76a0` = sprite **92** (static X, ships/stations, 4-mirrored), **94**
+  (waypoint/L-point), or **93** (moving target, spun); the off-reticle variant
+  (`FUN_100f7920`+`FUN_100f7b10`) is an edge chevron (sprite 35) plus the class
+  glyph pulled to the ring. The colour is the single contact-colour chooser
+  `FUN_100e8530` (which the ORB and contact list also use): **unidentified ->
+  gold** `DAT_10174f60`; **waypoint/L-point -> green** `DAT_10176038`;
+  **`sim+0x199` -> light blue** `DAT_10174190`; **IFF 0/1 hostile -> red**
+  `DAT_10176018`; **IFF 2 neutral -> gold**; **IFF 3/4 friendly -> blue**
+  `DAT_101740b8` (0.1, 0.1, 1) -- the "don't shoot" X. Magenta `DAT_10174180` is
+  never read; there is no cyan in this path (a cyan contact is a mission script
+  overriding that contact's colour). This resolves the earlier palette
+  "divergence": our ring was correctly green all along; the amber/purple in the
+  reference is this inner marker, coloured by allegiance.
+
 Resolutions of former entries here:
 
 - **The three reticle gauges** live at `icHUD+0xe8` (not icPlayerPilot),

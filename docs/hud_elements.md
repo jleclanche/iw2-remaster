@@ -177,6 +177,23 @@ Each icon can carry a charge ring: `FUN_100f8da0` lights `floor(charge * 24)` pi
 (sprite 20) on a circle of radius 18, clockwise from twelve, and fades the next one by
 the remainder (skipped below 0.05).
 
+### The inner reticle — the allegiance-coloured target marker
+
+Separate from the green outer ring (sprite 90), the reticle master draws a second
+marker centred on the reticle, in the **target's contact colour** (`icHUD+0x120`,
+set at `0x100f647c` from `FUN_100e8530`). **In-reticle** (`FUN_100f76a0`): sprite
+**92** static X (ship/station, 4-mirror via `FUN_100ea7e0`), **94** for a waypoint/
+L-point, or **93** spun for a moving target. **Off-reticle** (`FUN_100f7920` +
+`FUN_100f7b10`): an edge chevron (sprite 35) plus the class glyph at the ring edge.
+All from reticle.png; cells recovered from the table builder (`0x100e7f00`ff):
+**92 = (186,0,70,70) org (70,0)**, **94 = (186,80,70,70) org (70,0)** (93 =
+(0,186,70,70) as SPR_RET already had). The colour is the full `FUN_100e8530` map:
+hostile red `DAT_10176018`, neutral gold `DAT_10174f60`, friendly blue
+`DAT_101740b8` (0.1,0.1,1), nav green `DAT_10176038`, unidentified gold — so the
+X reads blue on a friendly, red on a hostile. Implemented in `hud.gd::
+_reticle_marker`; see `docs/hud.md` "The inner reticle". The magenta
+`DAT_10174180` is initialised but never read.
+
 ### The target text block — `FUN_100f7e10`
 
 At x = 82 to the right of centre: a **vertical segmented bar** showing the target's
