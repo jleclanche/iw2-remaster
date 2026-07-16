@@ -547,6 +547,43 @@ func start_campaign() -> void:
 	_play_movie("prelude", func() -> void:
 		mission.start(Mission.act0()))
 
+# The 5-level IFF the HUD colours contacts by: the TARGET faction's feeling
+# toward the player, quantized at the icFactions boundaries -- extracted from
+# iwar2.dll (statics m_hate_dislike -0.6 / m_dislike_neutral -0.2 /
+# m_neutral_like +0.2 / m_like_love +0.6 @ 0x1015becc-d8, ctor 0x47820).
+# Levels: 0 hate, 1 dislike (both draw red), 2 neutral (gold), 3 like,
+# 4 love (both blue). Unknown factions (plain traffic spawned outside POG)
+# read neutral, like the engine's default feeling of 0.
+func iff_level(fac: String) -> int:
+	if fac.is_empty():
+		return 2
+	var w: PogWorld = null
+	if pog_rt != null and pog_rt.world != null \
+			and not pog_rt.world.factions.factions.is_empty():
+		w = pog_rt.world
+	elif pog_world != null:
+		w = pog_world
+	if w == null or w.factions == null:
+		return 2
+	var pf: String = w.player_sim().faction
+	if pf.is_empty():
+		return 2
+	if fac == pf:
+		return 4
+	var fa = w.factions._as_faction(fac)
+	if fa == null:
+		return 2
+	var f: float = fa.feeling_toward(pf)
+	if f < -0.6:
+		return 0
+	elif f < -0.2:
+		return 1
+	elif f < 0.2:
+		return 2
+	elif f < 0.6:
+		return 3
+	return 4
+
 func _spawn_npc(dname: String, fac: String, typ: String, avatar: String,
 		pos: Vector3, wps: Array) -> AiShip:
 	var ai := AiShip.new()

@@ -699,16 +699,22 @@ func _bar(pos: Vector2, frac: float, col: Color, segs := BAR_SEGS) -> void:
 		else:
 			draw_rect(r, _dim(Color(col.r, col.g, col.b, 0.15)))
 
-func _contact_color(hostile: bool, category: String) -> Color:
+func _contact_color(hostile: bool, category: String, faction := "") -> Color:
 	# FUN_100e8530, the one place the engine picks a contact's colour -- the
 	# brackets, the contact list and the orb all just copy what it wrote.
-	# Waypoints and L-points are chartreuse; everything else goes through an IFF
-	# table where hostile is red, the default (neutral) is gold and friendly is
-	# blue. We have no friendly flag yet, so non-hostiles read gold.
+	# Waypoints and L-points are chartreuse; everything else goes through the
+	# IFF table: level 0/1 red, 2 gold, 3/4 blue, where the level is the
+	# contact faction's feeling toward the player quantized at the icFactions
+	# boundaries -0.6/-0.2/+0.2/+0.6 (extracted; main.iff_level).
 	if hostile:
 		return RED
 	if category == "lpoint" or category == "waypoint":
 		return GREEN
+	match main.iff_level(faction):
+		0, 1:
+			return RED
+		3, 4:
+			return FRIENDLY
 	return GOLD
 
 func _health_color(frac: float) -> Color:
@@ -981,15 +987,15 @@ func _reticle_turn_arrow(c: Vector2) -> void:
 #   IFF 0/1 (hostile)                  -> red    DAT_10176018 (1.0,0.07,0)
 #   IFF 2   (neutral, the default)     -> gold   DAT_10174f60
 #   IFF 3/4 (friendly)                 -> blue   DAT_101740b8 (0.1,0.1,1)
-# Our sim carries a category and a hostile flag (behavior == "attack") but no IFF
-# feeling, so we follow the codebase's existing hostile/non-hostile split:
-# non-hostile ships read as friendly blue (the "don't shoot" X), stations and
-# other objects as neutral gold, nav points green. A hook exposing the target's
-# real IFF/feeling from main would let a genuinely neutral trader read gold; see
-# the report.
+# The IFF feeling is wired through now: main.iff_level quantizes the target
+# faction's feeling toward the player at the extracted icFactions boundaries
+# (-0.6/-0.2/+0.2/+0.6), so a genuinely neutral trader reads gold while a
+# stepson wingman reads blue. An attacker is red regardless (the engine's
+# hostile override).
 func _target_color() -> Color:
 	if main.target_ai != null and is_instance_valid(main.target_ai):
-		return RED if main.target_ai.behavior == "attack" else FRIENDLY
+		return _contact_color(main.target_ai.behavior == "attack", "traffic",
+				str(main.target_ai.faction))
 	if main.target_idx >= 0:
 		var cat := str(main.objects[main.target_idx]["category"])
 		if cat == "lpoint" or cat == "waypoint":
@@ -2094,7 +2100,8 @@ func _draw_target_marks() -> void:
 		var p := cam.unproject_position(a.global_position)
 		if not screen.has_point(p):
 			continue
-		var col := _contact_color(a.behavior == "attack", "traffic")
+		var col := _contact_color(a.behavior == "attack", "traffic",
+				str(a.faction))
 		_corner_bracket(_bbox_of(a.global_position, 30.0),
 				Color(col.r, col.g, col.b, 0.7))
 	_draw_target_bracket()
@@ -2565,7 +2572,8 @@ func _orb_contacts() -> Array:
 				i == main.target_idx])
 	for a in main.ai_ships:
 		out.append([a.global_position,
-			_contact_color(a.behavior == "attack", "traffic"), a == main.target_ai])
+			_contact_color(a.behavior == "attack", "traffic",
+				str(a.faction)), a == main.target_ai])
 	return out
 
 # The next free Y on the right-hand block stack. icHUDOrbRadar seeds it; the
@@ -2779,7 +2787,8 @@ func _draw_contact_list() -> void:
 				_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.3)))
 	var y := pos.y + CL_ROW_H
 	for entry in rows:
-		var col := _contact_color(entry["hostile"], str(entry.get("category", "")))
+		var col := _contact_color(entry["hostile"], str(entry.get("category", "")),
+				str(entry.get("faction", "")))
 		if not entry["targeted"]:
 			col = Color(col.r, col.g, col.b, 0.75)
 		var nm := str(entry["name"]).to_upper()
