@@ -105,9 +105,12 @@ var main: Node3D
 var mode := "main"  # main | systems
 var sel := 0
 var launched := false
-var _font: Font        # Handel Gothic 12pt — the original GUI face
+# The front end's fancy buttons use GUI_title_font = square721 bdex bt_8pt
+# (igui.pog CreateFancyButton -> SetWindowFont, igui.pog:31/245); handelgothic
+# bt_12pt DOES ship (fonts/handelgothic bt_12pt.frf in resource.zip) but it is
+# the base GUI's "largenumber" font (ibasegui.pog:6), not the menu face.
 var _font_small: Font  # Handel Gothic 8pt — dossier body
-var _font_title: Font  # Square721 BdEx — version line
+var _font_title: Font  # Square721 BdEx 8pt — fancy buttons, titles, version
 var item_size := 13
 var _item_rects: Array = []
 var bust_movie: VideoStreamPlayer
@@ -142,9 +145,10 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = false
-	_font = Hud.load_game_font(main._base(), "handelgothic bt_12pt.fnt")
 	_font_small = Hud.load_game_font(main._base(), "handelgothic bt_8pt.fnt")
 	_font_title = Hud.load_game_font(main._base(), "square721 bdex bt_8pt.fnt")
+	if _font_title is FontFile and (_font_title as FontFile).fixed_size > 0:
+		item_size = (_font_title as FontFile).fixed_size
 	var add_mat := CanvasItemMaterial.new()
 	add_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	# The left menu bar is the engine's icShadyBar (Render 0x10e7d0; statics
@@ -798,13 +802,14 @@ func _draw_top() -> void:
 		var r := Rect2(Vector2(28, y), Vector2(bw, bh))
 		_stadium(r, col, 1.6 if i == sel else 1.2, i == sel)
 		var label: String = items[i][0]
-		_top.draw_string(_font, r.position + Vector2(16, bh - 7), label,
+		_top.draw_string(_font_title, r.position + Vector2(16, bh - 7), label,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, item_size,
 				col if enabled else Color(col.r, col.g, col.b, 0.35))
 		_item_rects.append(r.grow(4))
 		y += bh + gap
 	# version line, bottom right, like "Edge of Chaos F14.6"
 	var ver := "Edge of Chaos R1.0"
-	var vw := _font.get_string_size(ver, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
-	_top.draw_string(_font, Vector2(s.x - vw - 14, s.y - 10), ver,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 13, AMBER_TEXT)
+	var vw := _font_title.get_string_size(ver, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			item_size).x
+	_top.draw_string(_font_title, Vector2(s.x - vw - 14, s.y - 10), ver,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, item_size, AMBER_TEXT)

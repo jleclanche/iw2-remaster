@@ -874,3 +874,25 @@ bug. Our single-row panel is correct; whatever the fitted group's `group_label()
 returns is the right caption. No change needed beyond the single-row fix.
 
 ---
+
+## Reticle collisions + the warning font (task #67)
+
+- **The own-speed readout's right anchor is −100, not −82**: the reticle
+  master's `FUN_100eb270` call @ `0x100f7076` passes
+  `-(_DAT_1011e034 + _DAT_101190b0)` = −(80+20). Our −82 borrowed the target
+  block's `TEXT_X` (a different anchor, 80+2, right side). Fixed (`SPEED_X`).
+- **The menu replaces the reticle readouts.** The menu reticle's LEFT box
+  right-aligns on exactly the same −100 anchor the speed text right-aligns on,
+  so the engine can never display both; and the pills' boxes cross the r=110
+  status-icon ring. While `menu_active` we now suppress the speed/set-speed
+  readouts and the status-icon ring — this kills both reported collisions
+  (velocity vs NAV pill, CMD pill vs capsule icon). Inference from the shared
+  anchor, not a decompiled branch — flagged as such.
+- **Warnings draw in OCR-B 18pt.** The reticle warning flasher is our
+  reconstruction (no hud.csv key); the HUD's text system can only draw the
+  font table at `0x10162c60` = ocrb_8pt / ocrb_10pt / ocrb_18pt (+ sprites).
+  `handelgothic bt_12pt` DOES ship (`fonts/handelgothic bt_12pt.frf`) — the
+  old "fabricated font" concern is dead — but it is the base GUI's
+  "largenumber" font (`ibasegui.pog:6`), never a HUD face. The front-end
+  fancy buttons, meanwhile, use `GUI_title_font` = square721 bdex bt_8pt
+  (`igui.pog:31/245`); menu.gd now does too.

@@ -44,6 +44,12 @@ const ICON_R_MODE := 150.0 # ICON_BASE + _DAT_1011e044 (70): the 4 mode icons
 const ICON_PIPS := 24      # _DAT_1011e0bc  charge pips ringing an icon
 const ICON_PIP_R := 18.0   # _DAT_101190bc  pip ring radius
 const TEXT_X := 82.0       # ICON_BASE + _DAT_10119ec8 (2): target block / hull bar
+# The own-speed readout's right anchor: -(_DAT_1011e034 + _DAT_101190b0) =
+# -(80 + 20) = -100 (reticle master, FUN_100eb270 call @ 0x100f7076 -- NOT the
+# target block's TEXT_X). This is the SAME anchor the menu reticle's left box
+# right-aligns on, so the two can never show together: the menu replaces the
+# reticle readouts (and the status-icon ring the pills would cross).
+const SPEED_X := 100.0
 const TEXT_GAP := 9.0      # _DAT_101190b8  bar -> text gap
 # _DAT_1011b344: inside this range of a targeted L-point the reticle names its
 # destination beside the capsule-drive icon.
@@ -55,7 +61,12 @@ const HEALTH_LO := 0.25    # _DAT_101191ec
 var FONT_SIZE := 13
 var _font: Font       # Handel Gothic 8pt -- panel text, like the original
 var _font_num: Font   # OCR-B 8pt -- reticle numerics
-var _font_big: Font   # Handel Gothic 12pt -- warnings
+# The reticle-area warning flasher is our reconstruction (no hud.csv key), so
+# it uses the biggest font the HUD's own text system can draw: the font table
+# at 0x10162c60 holds ONLY ocrb_8pt / ocrb_10pt / ocrb_18pt (+ sprites) --
+# handelgothic 12pt ships (fonts/handelgothic bt_12pt.frf) but it is the base
+# GUI's "largenumber" font (ibasegui.pog:6), never a HUD face.
+var _font_big: Font   # OCR-B 18pt -- warnings
 var num_size := 14
 var big_size := 17
 # FUN_100eb270's first argument is an index into the font table at 0x10162c60
@@ -159,7 +170,7 @@ func _ready() -> void:
 	var base: String = main._base()
 	_font = load_game_font(base, "handelgothic bt_8pt.fnt")
 	_font_num = load_game_font(base, "ocrb_8pt.fnt")  # tight reticle numerics
-	_font_big = load_game_font(base, "handelgothic bt_12pt.fnt")
+	_font_big = load_game_font(base, "ocrb_18pt.fnt")
 	_font_menu = load_game_font(base, "ocrb_10pt.fnt")
 	_font_head = load_game_font(base, "ocrb_18pt.fnt")
 	if _font is FontFile and (_font as FontFile).fixed_size > 0:
@@ -777,15 +788,18 @@ func _draw_reticle(c: Vector2) -> void:
 			Color(hull_col.r, hull_col.g, hull_col.b, 0.65), 2.5, true)
 	# own speed, left of the reticle ("+325m/s")
 	# 0x100f7076: font 0, style 2 (alpha 0.75), halign 1 (right-anchored on
-	# -TEXT_X), valign 2 (centred on the reticle's own centre line, y = 0).
-	var vel: float = main.ship.forward_speed()
-	var vel_text: String = ("%s/s" % _fmt_range(absf(vel))) if in_lds \
-		else "%s%dm/s" % ["-" if vel < 0 else "+", absi(int(absf(vel)))]
-	_hud_text(0, 2, c + Vector2(-TEXT_X, 0), vel_text, 1, 2, ring)
-	if main.ship.set_speed > 0.5:
-		var st := "set %d" % int(main.ship.set_speed)
-		_hud_text(0, 0, c + Vector2(-TEXT_X, float(num_size) + 4.0), st, 1, 2,
-				ring)
+	# -SPEED_X = -100), valign 2 (centred on the reticle's own centre line,
+	# y = 0). Suppressed while the HUD menu is open: the menu's left box
+	# right-aligns on the SAME -100 anchor, so the engine can never show both.
+	if not menu_active:
+		var vel: float = main.ship.forward_speed()
+		var vel_text: String = ("%s/s" % _fmt_range(absf(vel))) if in_lds \
+			else "%s%dm/s" % ["-" if vel < 0 else "+", absi(int(absf(vel)))]
+		_hud_text(0, 2, c + Vector2(-SPEED_X, 0), vel_text, 1, 2, ring)
+		if main.ship.set_speed > 0.5:
+			var st := "set %d" % int(main.ship.set_speed)
+			_hud_text(0, 0, c + Vector2(-SPEED_X, float(num_size) + 4.0), st,
+					1, 2, ring)
 	_draw_target_block(c)
 	# velocity vector marker
 	var v: Vector3 = main.ship.velocity
@@ -797,7 +811,11 @@ func _draw_reticle(c: Vector2) -> void:
 			draw_arc(p, 6.0, 0, TAU, 16, ring, 1.4, true)
 			draw_line(p + Vector2(-12, 0), p + Vector2(-6, 0), ring, 1.4)
 			draw_line(p + Vector2(6, 0), p + Vector2(12, 0), ring, 1.4)
-	_draw_status_icons(c)
+	# the status-icon ring (r=110) sits inside the menu pills' reach (anchors at
+	# +-100, boxes growing outward), so it yields to the open menu like the
+	# speed readout does -- the CMD pill no longer crosses the capsule icon
+	if not menu_active:
+		_draw_status_icons(c)
 
 func _icon_pos(deg: float, radius: float) -> Vector2:
 	# FUN_100f93c0: x = floor(sin(a) * r), y = floor(-cos(a) * r) -- angles run
