@@ -20,7 +20,9 @@ var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
-	if m.commshot:
+	if m.muzzleshot:
+		_muzzleshot(delta)
+	elif m.commshot:
 		_commshot(delta)
 	elif m.newgametest:
 		_newgametest(delta)
@@ -48,6 +50,47 @@ func step(delta: float) -> void:
 func _shot(name: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(m._base().path_join("data/screenshots/%s.png" % name))
+
+# --- command-section muzzle: fire and photograph from the side ---------------
+
+func _muzzleshot(_delta: float) -> void:
+	match demo_phase:
+		0:
+			if demo_t > 0.6:
+				m._fit_player("sims/ships/player/comsec.ini",
+					"data/avatars/avatars/command_section/setup.gltf")
+				print("MUZZLESHOT: fitted comsec, weapon=", m.weapon_name)
+				demo_phase = 1
+				demo_t = 0.0
+		1:
+			# drop camera abeam the ship: barrel and bolt side-on in frame
+			m.cam_mode = 3
+			m.cam_view = 0
+			m.drop_cam_pos = m.ship.global_position + Vector3(-25, 2, -8)
+			m._apply_view()
+			if demo_t > 0.4:
+				m.weapons.fire()
+				for b in m.weapons.bolts:
+					print("MUZZLESHOT: bolt spawned at ship-local ",
+							m.ship.to_local(b["node"].global_position))
+				demo_phase = 2
+				demo_t = 0.0
+		2:
+			if demo_t > 0.001:
+				_shot("muzzleshot_side")
+				demo_phase = 3
+				demo_t = 0.0
+		3:
+			# and from above
+			m.drop_cam_pos = m.ship.global_position + Vector3(0, 25, -8)
+			if demo_t > 0.3:
+				m.weapons.fire()
+				demo_phase = 4
+				demo_t = 0.0
+		4:
+			if demo_t > 0.001:
+				_shot("muzzleshot_top")
+				get_tree().quit()
 
 # --- comm portraits: one screenshot per speaker rig --------------------------
 

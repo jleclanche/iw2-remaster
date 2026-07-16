@@ -660,16 +660,19 @@ static func bolt_mesh(base: String) -> Mesh:
 	# Crossed quads are our static stand-in for that turn -- same footprint,
 	# never edge-on. u runs along the length, v across the width.
 	#
-	# The quad runs from the bolt's own position ALONG the flight direction for
-	# scale.z = 800 m; nothing is drawn behind the bolt (see the note on
-	# BOLT_LENGTH). PbcWeapons._spawn_at gives the node a Basis.looking_at(dir),
-	# and Godot's forward is -Z, so "along the flight direction" is local -Z:
-	# the mesh spans z = 0 (the muzzle end) to z = -BOLT_LENGTH (the tip).
+	# The streak TRAILS the bolt: the node origin is the bolt's head (the world
+	# position the hit tests use) and the quad extends BACKWARD from it -- a
+	# UNIT length here (z = 0 .. +1, +Z is backward for a looking_at basis),
+	# stretched per-frame by node.scale.z to min(distance flown, BOLT_LENGTH).
+	# That pins the tail at the muzzle for the first 800 m, which is what the
+	# original reads as: bolts STREAM OUT of the barrel. (The old mesh spanned
+	# 800 m AHEAD of the head, so a rod materialised in front of the ship the
+	# instant you fired -- the reported "fires way ahead of the muzzle".)
 	var tex := ParticleFx.texture(base, BOLT_TEXTURE)
 	var mat := ParticleFx.additive_material(tex)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var tip := Vector3(0, 0, -BOLT_LENGTH)
+	var tip := Vector3(0, 0, 1.0)
 	for axis in 2:
 		# half-width = scale.x = 4 (the original quad spans pos +/- side*4)
 		var w := Vector3(BOLT_WIDTH, 0, 0) if axis == 0 \

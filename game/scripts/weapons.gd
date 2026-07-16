@@ -321,13 +321,27 @@ func _spawn_at(shooter: Node3D, pos: Vector3, dir: Vector3, base_vel: Vector3,
 	var node := MeshInstance3D.new()
 	node.mesh = _bolt_mesh()
 	get_parent().add_child(node)
+	var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.99 else Vector3.RIGHT
+	var aim := Basis.looking_at(dir, up)
 	node.global_position = pos
-	node.global_transform.basis = Basis.looking_at(dir, Vector3.UP)
+	# the streak mesh is unit-length and trails BEHIND the head; it stretches
+	# to min(distance flown, BOLT_LENGTH) each tick so the tail stays pinned to
+	# the muzzle as the bolt leaves the barrel (see ExplosionFx.bolt_mesh)
+	node.global_transform.basis = aim * Basis.from_scale(Vector3(1, 1, 0.5))
+	# the bolt carries its own glow light: avatars/light_pbc_bolt/setup.lws
+	# parents a point light (252,128,16), intensity 1.0, falloff range 300 m,
+	# to the bolt root -- passing fire lights up nearby hulls
+	var gl := OmniLight3D.new()
+	gl.light_color = Color(0.988, 0.502, 0.063)
+	gl.light_energy = 1.0
+	gl.omni_range = 300.0
+	gl.shadow_enabled = false
+	node.add_child(gl)
 	if main:
 		ExplosionFx.muzzle_flash(main, pos)
 	bolts.append({"node": node, "vel": base_vel + dir * float(spec["speed"]),
-			"life": float(spec["lifetime"]), "age": 0.0,
-			"shooter": shooter, "spec": spec})
+			"life": float(spec["lifetime"]), "age": 0.0, "spawn": pos,
+			"aim": aim, "shooter": shooter, "spec": spec})
 
 func _physics_process(delta: float) -> void:
 	cooldown = maxf(0.0, cooldown - delta)
@@ -346,6 +360,13 @@ func _physics_process(delta: float) -> void:
 			var move: Vector3 = bolt["vel"] * delta
 			var from: Vector3 = node.global_position
 			node.global_position = from + move
+			# stretch the trailing streak: tail pinned at the muzzle until the
+			# bolt is BOLT_LENGTH out, then a constant-length tracer
+			var flown: float = (node.global_position
+					- bolt.get("spawn", from)).length()
+			node.global_transform.basis = (bolt["aim"] as Basis) \
+					* Basis.from_scale(Vector3(1, 1,
+					clampf(flown, 0.5, ExplosionFx.BOLT_LENGTH)))
 			for t in targets:
 				if t == bolt["shooter"] or not is_instance_valid(t):
 					continue

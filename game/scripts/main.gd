@@ -227,6 +227,7 @@ var newgametest := false
 var geogcheck := false
 var basecheck := false   # Lucrecia's Base: dock -> interior -> screens
 var commshot := false    # screenshot every comm-portrait rig
+var muzzleshot := false  # fire the comsec light PBC and photograph it
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
@@ -240,10 +241,11 @@ func _ready() -> void:
 	geogcheck = "--geogcheck" in OS.get_cmdline_user_args()
 	basecheck = "--basecheck" in OS.get_cmdline_user_args()
 	commshot = "--commshot" in OS.get_cmdline_user_args()
+	muzzleshot = "--muzzleshot" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
-			or newgamecheck or basecheck or newgametest or commshot:
+			or newgamecheck or basecheck or newgametest or commshot or muzzleshot:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()

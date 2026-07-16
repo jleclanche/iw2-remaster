@@ -1899,3 +1899,17 @@ the old fallback that spawned the bolt at ship-local `(1.625, -1.5, -14.0)` --
 3-4 m **ahead** of the barrel, which is the "bolts originate well ahead of the
 actual gun" the player reported. The tug is unaffected: it clears `fixed_gun` and
 still fires from its fitted gun models.
+
+## The bolt streak trails the head (task #81, "fires ahead of the muzzle")
+
+The command section's muzzle POSITION was right (the light PBC null at LW
+(1.625, -1.5, 10.625) sits exactly at the drawn barrel tip -- verified with
+`--muzzleshot`, which freezes a bolt at spawn and photographs it side-on).
+What was wrong was the STREAK: `bolt_mesh` spanned from the bolt's head 800 m
+*forward* (misread of the icBeamAvatar span), so a rod materialised ahead of
+the ship the instant you fired. The beam now trails BEHIND the head, its
+length clamped to the distance flown (tail pinned at the muzzle until
+BOLT_LENGTH out) -- bolts visibly stream out of the barrel. Also restored
+from `avatars/light_pbc_bolt/setup.lws`: every bolt carries its own point
+light, colour (252,128,16), intensity 1.0, falloff range 300 m -- passing
+fire lights up nearby hulls like the original.
