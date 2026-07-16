@@ -431,14 +431,18 @@ func _draw_comm_panel() -> void:
 	var p: Control = main.comms.portrait
 	p.scale = Vector2.ONE * ((body.size.x - 2.0) / p.size.x)
 	p.position = body.position + Vector2(1, 1)
-	var has_video: bool = main.comms.video != null and main.comms.video.is_playing()
+	# every portrait is now the live 3D head (comm portraits were never FMV --
+	# see comms.gd; the movies are the prison dossiers), so the interference
+	# always uses the 3D-feed mix and the caption keys off the head being live
+	var has_feed: bool = main.comms.head_rect != null \
+			and main.comms.head_rect.visible
 	if _mfd_fx != null:
 		_mfd_fx.active = true
 		_mfd_fx.body = body
-		_mfd_fx.video = has_video
+		_mfd_fx.video = false
 		_mfd_fx.ea = _ea
 	var who := str(main.comms.speaker).to_upper()
-	_mfd_text(r, who, "RECEIVING VIDEO" if has_video else "NO VIDEO FEED", 0.0)
+	_mfd_text(r, who, "RECEIVING VIDEO" if has_feed else "NO VIDEO FEED", 0.0)
 	_ea = 1.0
 
 func _draw_subtitles() -> void:

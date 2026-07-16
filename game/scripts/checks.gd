@@ -20,7 +20,9 @@ var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
-	if m.newgametest:
+	if m.commshot:
+		_commshot(delta)
+	elif m.newgametest:
 		_newgametest(delta)
 	elif m.basecheck:
 		_basecheck(delta)
@@ -46,6 +48,30 @@ func step(delta: float) -> void:
 func _shot(name: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(m._base().path_join("data/screenshots/%s.png" % name))
+
+# --- comm portraits: one screenshot per speaker rig --------------------------
+
+var _comm_idx := 0
+const COMM_SPEAKERS := ["clay", "az", "cal", "jafs", "lori", "maas", "smith",
+	"young_cal"]
+
+func _commshot(_delta: float) -> void:
+	# free flight; queue a fake line from each speaker in turn so the comm MFD
+	# opens with their live head, and photograph it mid-sway
+	if _comm_idx >= COMM_SPEAKERS.size():
+		get_tree().quit()
+		return
+	var who: String = COMM_SPEAKERS[_comm_idx]
+	if m.comms.current.is_empty() and m.comms.queue.is_empty():
+		m.comms.queue.append({"key": "commshot_%s" % who, "speaker": who,
+			"text": "COMM PORTRAIT RIG CHECK: %s" % who.to_upper()})
+		demo_t = 0.0
+	elif demo_t > 1.6:
+		_shot("commshot_%s" % who)
+		m.comms.current = {}
+		m.comms.subtitle = ""
+		_comm_idx += 1
+		demo_t = 0.0
 
 # --- geography: are the bodies the right size, and do they look right? -------
 

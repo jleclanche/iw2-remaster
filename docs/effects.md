@@ -1116,3 +1116,30 @@ the whole-line pop, so we keep it, flagged as reconstruction). `menu.gd` uses
 all extracted values scaled by screen height against the 1024×768 reference.
 
 ---
+
+## Comm portraits — every speaker is a real-time head (task #77)
+
+The in-flight comm portraits were half-vibed: Clay rendered live but everyone
+else played their **prison-dossier movie** — wrong system. iwar2.dll's string
+table loads `lws:/avatars/<who>/<who>_anim01` for **eight speakers** (az, cal,
+clay, jafs, lori, maas, smith, young_cal): every comm portrait is a real-time
+head. The anim01 scenes (extracted verbatim from resource.zip) share a shape —
+head anchor at origin, ambient white 0.25, camera on the z axis (LightWave
+`ZoomFactor` → hfov = 2·atan(1/zf)), a white point key light — plus a coloured
+**"HeadupGlow"**: steady warm-white for az/jafs/lori, and for cal / smith /
+maas / young_cal a **flickering** cockpit-readout wash (shared 60-frame 25 fps
+envelope, per-speaker colour/amplitude: cool blue on the Cals, **red on
+Smith**, **green on Maas** — Maas' scene has no white light at all, just the
+green). Clay alone has the steady red lamp, the 19-key 300-frame motion loop
+(which also **drifts the head back** from frame 151 — previously dropped), and
+a wider lens (zf 3.2 vs 6.667). On top, `icComms::RenderPortrait` (0x100810e0)
+sways every head: yaw = −0.2 rad (`DAT_101184ac`) × cos(t × 0.6π
+(`DAT_1011c3e8`)), second axis coupled at 0.25× (`DAT_101191ec`).
+
+`comms.gd` now builds the portrait viewport per speaker from a RIGS table of
+the extracted scenes; the movies are gone from comms entirely. The HUD's
+comm-MFD interference always uses the 3D-feed mix now (there is no FMV feed).
+Verify with `--commshot`: writes `data/screenshots/commshot_<who>.png` for all
+eight rigs. UNKNOWN: the per-state anim-speed factor (icComms+0x148) scaling
+the sway clock, and old_cal/minor NPCs have no scene (blank channel, like the
+original's "no video feed").
