@@ -1067,17 +1067,30 @@ characters (`az, ocal, ycal, jaffs, lori, smith`, registration order =
 (`FUN_10017850`).
 
 `menu.gd` now plays `data/movies/<who>.ogv` (the existing Bink→Theora
-extraction) in a `VideoStreamPlayer` sized to the original's screen proportion
-(400/480 ≈ 0.833 of screen height, square), **blend-mode ADD** so the black
-frame background is transparent and the page's amber grid reads through the
-dark regions, exactly as the original composites it. The scanline + sweep
-overlay and the scrolling dossier draw in a layer *above* the movie. The sweep
-band was also corrected against an original screenshot: a **narrow bright bar
+extraction) in a `VideoStreamPlayer`, **blend-mode ADD** so the black frame
+background is transparent and the page's amber grid reads through the dark
+regions, exactly as the original composites it. The scanline + sweep overlay
+and the scrolling dossier draw in a layer *above* the movie. The sweep band
+was also corrected against an original screenshot: a **narrow bright bar
 (~5.5 % of the panel) inside a soft warm halo ~3× as tall** — the old 14 %
 triangular smear was far too wide. Enabled characters are read from
 `user://pog_system.cfg [icGUIMovie]` (written by our `iactone.gd` port),
 falling back to the Act One five on a fresh profile. The whole SubViewport /
 lights / re-skin-shader rig is gone. `--bustshot` now captures all six
-characters; all six render as their pre-rendered selves.
+characters (`--bustwait=N` delays the grab to inspect the dossier scroll).
+
+**Panel size and dossier layout** (measured against a let's-play video of the
+original front end at 1024×768): the GUI draws the movie window at its
+**native 400×400 pixels** in a fixed-pixel layout — 400/768 ≈ **0.521 of the
+screen height**, top edge ~9 % down, head in the upper half. (The first cut
+wrongly assumed 400/480 = 0.833 — at 640×480 it would be, but fixed-pixel
+windows shrink relative to larger screens, and the reference ran 1024×768.)
+The dossier is a **tall column below the movie** (left edge ~5 % inside the
+panel's, wrap width ~93 % of the panel), running to the bottom of the screen;
+lines scroll upward and **fade out over the ~19 %-of-panel gap under the
+movie's bottom edge** as they slide beneath the window, then the document
+re-enters from the bottom. Dossier HTML is reflowed like a browser would:
+raw newlines fold to spaces, only `<p>`/`<br>` break lines — the source files
+hard-wrap their paragraphs, which previously produced ragged columns.
 
 ---

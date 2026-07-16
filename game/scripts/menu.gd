@@ -103,6 +103,7 @@ var _shot := false
 var _shot_phase := 0
 var _shot_t := 0.0
 var _shot_chars := ["az", "ocal", "ycal", "jaffs", "lori", "smith"]
+var _shot_wait := 0.6
 var _shot_idx := 0
 
 func _ready() -> void:
@@ -135,6 +136,12 @@ func _ready() -> void:
 	_setup_cursor()
 	if "--bustshot" in OS.get_cmdline_user_args():
 		_shot = true
+		for a in OS.get_cmdline_user_args():
+			# --bustwait=N: settle N seconds before the first grab (lets the
+			# dossier scroll into the fade band); implies az only
+			if a.begins_with("--bustwait="):
+				_shot_wait = maxf(float(a.get_slice("=", 1)), 0.1)
+				_shot_chars = ["az"]
 		_force_char = _shot_chars[0]
 		open.call_deferred()
 
@@ -210,7 +217,12 @@ func _load_dossier(who: String) -> void:
 		return
 	var raw := FileAccess.get_file_as_string(path)
 	var body := raw.get_slice("<BODY>", 1) if "<BODY>" in raw else raw
-	body = body.replace("\r\n", "\n").replace("<p>", "\n\n").replace("<P>", "\n\n")
+	# HTML: raw newlines are just whitespace; only <p>/<br> break lines. The
+	# source files hard-wrap their paragraphs, so folding \n to spaces first is
+	# what lets each paragraph reflow to the column width like the original.
+	body = body.replace("\r\n", "\n").replace("\r", "\n")
+	body = body.replace("\n", " ").replace("\t", " ")
+	body = body.replace("<p>", "\n\n").replace("<P>", "\n\n")
 	body = body.replace("<br>", "\n").replace("<BR>", "\n")
 	body = body.replace("&nbsp;", " ")
 	var re := RegEx.new()
@@ -227,13 +239,15 @@ func _load_dossier(who: String) -> void:
 			continue
 		var bold := "" in line
 		line = line.replace("", "")
-		# wrap to the dossier column width
+		# wrap to the dossier column width -- in the reference the column is
+		# ~93% of the movie panel's width (which is 0.521 x screen height)
+		var wrap_w := get_viewport_rect().size.y * 0.521 * 0.93
 		var words := line.split(" ")
 		var cur := ""
 		for w in words:
 			var trial := (cur + " " + w).strip_edges()
 			if _font_small.get_string_size(trial, HORIZONTAL_ALIGNMENT_LEFT,
-					-1, 12).x > 380:
+					-1, 12).x > wrap_w:
 				dossier_lines.append({"text": cur, "bold": bold})
 				cur = w
 			else:
@@ -402,14 +416,17 @@ func _process(delta: float) -> void:
 		_bustshot_step(delta)
 
 func _layout_movie() -> void:
-	# The movie is square (400x400 source); the original shows it at ~83% of the
-	# 480px screen height (400/480). Keep that ratio, centred in the open area
-	# right of the menu strip.
+	# The movie is square (400x400 source) and the original GUI draws it at its
+	# NATIVE pixel size in a fixed-pixel window layout: on the reference video's
+	# 1024x768 screen that is 400/768 = 0.521 of the screen height, with the
+	# window's top edge ~9% down and the head sitting in the UPPER half of the
+	# screen (dossier column below). Fixed-pixel windows don't scale to modern
+	# resolutions, so we keep the 1024x768 proportions.
 	var s := get_viewport_rect().size
 	var strip_w := clampf(s.x * 0.21, 260, 340)
-	var side := s.y * 0.833
-	_panel = Rect2(Vector2(strip_w + (s.x - strip_w - side) / 2.0,
-			(s.y - side) / 2.0), Vector2(side, side))
+	var side := s.y * 0.521
+	_panel = Rect2(Vector2(strip_w + (s.x - strip_w - side) / 2.0, s.y * 0.09),
+			Vector2(side, side))
 	bust_movie.position = _panel.position
 	bust_movie.size = _panel.size
 	bust_movie.visible = mode != "systems"
@@ -426,7 +443,7 @@ func _bustshot_step(delta: float) -> void:
 		_pick_character()
 	match _shot_phase:
 		0:
-			if _shot_t > 0.6:
+			if _shot_t > _shot_wait:
 				_grab(dir.path_join("bustshot_%s_a.png" % who))
 				_shot_phase = 1
 				_shot_t = 0.0
@@ -551,24 +568,34 @@ func _draw_overlay() -> void:
 	var s := get_viewport_rect().size
 	var strip_w := clampf(s.x * 0.21, 260, 340)
 	_holo_overlay(Rect2(strip_w, 0.0, s.x - strip_w, s.y))
-	var dx := _panel.position.x + _panel.size.x * 0.16
-	var dy0 := _panel.position.y + _panel.size.y * 0.84
+	# The dossier is a tall column BELOW the movie window (left edge just inside
+	# the panel's), running to the bottom of the screen. Lines scroll upward and
+	# FADE OUT as they slide under the movie's bottom edge -- in the reference
+	# the fade band is the ~19%-of-panel gap between the movie and the first
+	# fully-bright line. Positions measured from the reference video (1024x768).
+	if dossier_lines.is_empty():
+		return
+	var dx := _panel.position.x + _panel.size.x * 0.05
 	var line_h := 17.0
-	var visible_rows := int((_panel.end.y - 8.0 - dy0) / line_h)
-	if not dossier_lines.is_empty():
-		var total := dossier_lines.size()
-		var first := int(_scroll / line_h)
-		for row in visible_rows:
-			var idx := first + row
-			if idx >= total:
-				break
-			var entry: Dictionary = dossier_lines[idx]
-			var ypos := dy0 + row * line_h - fmod(_scroll, line_h)
-			var col2 := AMBER_GLOW if entry["bold"] else AMBER_TEXT
-			_overlay.draw_string(_font_small, Vector2(dx, ypos),
-					str(entry["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, col2)
-		if first >= total:
-			_scroll = -float(visible_rows) * line_h  # wrap from below
+	var fade_top := _panel.end.y               # movie bottom: alpha 0 here
+	var fade_h := _panel.size.y * 0.19         # fully bright below this band
+	var start_y := fade_top + fade_h           # first line starts fully bright
+	var y_bottom := s.y - 12.0
+	var total := dossier_lines.size()
+	for idx in total:
+		var ypos := start_y + idx * line_h - _scroll
+		if ypos < fade_top or ypos > y_bottom:
+			continue
+		var entry: Dictionary = dossier_lines[idx]
+		var a := clampf((ypos - fade_top) / fade_h, 0.0, 1.0)
+		var col2: Color = AMBER_GLOW if entry["bold"] else AMBER_TEXT
+		_overlay.draw_string(_font_small, Vector2(dx, ypos), str(entry["text"]),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 12,
+				Color(col2.r, col2.g, col2.b, col2.a * a))
+	# once the last line has faded out under the movie, re-enter from the
+	# bottom of the screen
+	if start_y + total * line_h - _scroll < fade_top:
+		_scroll = -(y_bottom - start_y)
 
 func _draw() -> void:
 	var s := get_viewport_rect().size
