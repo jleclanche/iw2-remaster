@@ -1694,9 +1694,12 @@ func _unhandled_input(event: InputEvent) -> void:
 				_try_jump()
 			KEY_K:
 				_cycle_route()
-			KEY_H:  # dev: spawn hostile
-				spawn_hostile(ship.global_position +
-					-ship.global_transform.basis.z * 3000.0 + Vector3(400, 200, 0))
+			KEY_H:  # dev: spawn hostile (demo/check builds only -- a stray H
+				# in the campaign summoned a marauder out of nowhere)
+				if demo:
+					spawn_hostile(ship.global_position +
+						-ship.global_transform.basis.z * 3000.0
+						+ Vector3(400, 200, 0))
 
 func _target_pos() -> Vector3:
 	if target_ai != null and is_instance_valid(target_ai):

@@ -1913,3 +1913,24 @@ BOLT_LENGTH out) -- bolts visibly stream out of the barrel. Also restored
 from `avatars/light_pbc_bolt/setup.lws`: every bolt carries its own point
 light, colour (252,128,16), intensity 1.0, falloff range 300 m -- passing
 fire lights up nearby hulls like the original.
+
+## The dogfight is a maneuver cycle (task #79)
+
+Our attack AI flew straight at the player and throttled down at 1200 m --
+"super weird" in a real fight. The original (`icAIAttackAgent`, iwar2.dll)
+picks a MANEUVER and re-rolls it every 60 s (`m_maximum_target_kill_time`),
+never repeating the previous pick:
+
+| maneuver | goal | speed |
+|---|---|---|
+| STRAFE | target + fwd x lerp(2.0,2.5)*halfrange (cap 10 km) + a lateral ring offset 3x the target's radius; the pass side FLIPS when the goal is reached (weaving gun passes) | lerp(0.1,0.2) x dist |
+| TAILBITE | target - fwd x lerp(0.9,1.1)*halfrange (cap 10 km) | 0.2 x dist |
+| GUNPLATFORM | hold lerp(0.9,1.1)*halfrange, cap 3 km (capital hulls 0x1b/0x1c/0x1d always) | 50 |
+| FACING | hold lerp(0.9,1.1)*halfrange + 1000, cap 3 km, nose-on | radius x 0.05 |
+
+halfrange = min gun range / 2, clamped [3000, 20000] (`MinHalfWeaponsRange`).
+Guns fire whenever the lead point bears, independent of the maneuver. The
+full pick weighs group sizes and agility (`CalculateStanding`); we keep the
+engine's own four-way random fallback (Think's do/while at 0x50280). ALSO:
+the dev H-key (spawn hostile) is now demo-build-only -- a stray H in the
+campaign summoned the reported mystery marauder.
