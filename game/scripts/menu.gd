@@ -50,7 +50,7 @@ const HOLO_SWEEP := Color(1.0, 0.592, 0.0)      # sweep flash (verified)
 const HOLO_GRID_CELL := 30.0                    # px, reconstructed (baked in panel tex)
 const HOLO_SCAN_STEP := 3.0                     # px between scanlines, reconstructed
 const HOLO_SWEEP_SPEED := 0.28                  # panel-heights/sec up, reconstructed
-const HOLO_SWEEP_FRAC := 0.055                  # band height / panel, measured from ref
+const HOLO_SWEEP_FRAC := 0.02                   # core bar height / panel, from ref
 const HOLO_SCAN_SPEED := 34.0                   # px/sec scanline drift, reconstructed
 
 # The six prison characters, in icGUIMovie property-registration order
@@ -538,26 +538,33 @@ func _holo_overlay(panel: Rect2) -> void:
 		y += HOLO_SCAN_STEP
 	# the bright SWEEP band, moving UP the panel and wrapping (time-driven wrap,
 	# iwar2.dll.c:195961-967; colour = sweep flash HOLO_SWEEP, iwar2.dll.c:
-	# 195396-398). In the original it is a NARROW bright bar (~5.5% of the panel,
-	# measured from reference) inside a soft warm halo about three times as tall,
-	# not one wide smear.
+	# 195396-398). In the reference it is a THIN hard bar -- ~2% of the panel,
+	# with a hot centre line -- inside a dim warm halo ~4.5x as tall. Nothing
+	# like a wide smear: the bar reads as a single scan line passing over the
+	# page.
 	var band_h := panel.size.y * HOLO_SWEEP_FRAC
+	var halo_h := band_h * 4.5
 	var frac := fmod(_bust_t * HOLO_SWEEP_SPEED, 1.0)
-	var cy := panel.end.y - frac * (panel.size.y + band_h * 3.0) + band_h * 1.5
-	for pass_i in 2:
-		var h := band_h * (3.0 if pass_i == 0 else 1.0)
-		var peak := 0.16 if pass_i == 0 else 0.55
-		var steps := 12
-		for i in steps:
-			var t := float(i) / float(steps - 1)          # 0..1 across the band
-			var yy := cy - h * 0.5 + t * h
-			if yy < panel.position.y or yy > panel.end.y:
-				continue
-			var a := 1.0 - absf(t - 0.5) * 2.0            # bright centre, soft edges
-			_overlay.draw_line(Vector2(panel.position.x, yy),
-					Vector2(panel.end.x, yy),
-					Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, a * peak),
-					h / float(steps) + 1.0)
+	var cy := panel.end.y - frac * (panel.size.y + halo_h) + halo_h * 0.5
+	var steps := 10
+	for i in steps:
+		var t := float(i) / float(steps - 1)              # 0..1 across the halo
+		var yy := cy - halo_h * 0.5 + t * halo_h
+		if yy < panel.position.y or yy > panel.end.y:
+			continue
+		var a := 1.0 - absf(t - 0.5) * 2.0                # soft triangular falloff
+		_overlay.draw_line(Vector2(panel.position.x, yy),
+				Vector2(panel.end.x, yy),
+				Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, a * 0.16),
+				halo_h / float(steps) + 1.0)
+	var top := clampf(cy - band_h * 0.5, panel.position.y, panel.end.y)
+	var bot := clampf(cy + band_h * 0.5, panel.position.y, panel.end.y)
+	if bot > top:
+		_overlay.draw_rect(Rect2(panel.position.x, top, panel.size.x, bot - top),
+				Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, 0.70))
+		if cy > panel.position.y and cy < panel.end.y:
+			_overlay.draw_line(Vector2(panel.position.x, cy),
+					Vector2(panel.end.x, cy), Color(1.0, 0.85, 0.30, 0.80), 2.0)
 
 func _draw_overlay() -> void:
 	# the layer ABOVE the movie: scanlines + sweep across the open area, and the
