@@ -1,10 +1,11 @@
 class_name Menu
 extends Control
 # The original front end: amber capsule buttons down a circuit-board strip
-# on the left (images/gui/gui atlas, igui.CreateFancyButton), a real-time
-# 3D bust of one of the prison characters on the right, and their scrolling
-# prison dossier (html/prison/*.html) beneath. Labels from text/gui.csv
-# (pda_* keys). Esc in flight brings it back as a pause menu.
+# on the left (images/gui/gui atlas, igui.CreateFancyButton), a PRE-RENDERED
+# prison-character bust movie on the right (movies/<who>.bik -- NOT real-time
+# 3D; see the icGUIMovie recovery below), and their scrolling prison dossier
+# (html/prison/*.html) beneath. Labels from text/gui.csv (pda_* keys). Esc in
+# flight brings it back as a pause menu.
 
 const AMBER := Color(1.0, 0.72, 0.1, 0.95)
 const AMBER_DIM := Color(1.0, 0.72, 0.1, 0.45)
@@ -19,77 +20,47 @@ const GUI_FOCUSED := Color(1.0, 0.749, 0.0)     # igui.pog:38-40 -- the holo amb
 const GUI_SELECTED := Color(1.0, 0.859, 0.278)  # igui.pog:41-43 -- bright sweep
 const GUI_FADED := Color(0.5, 0.3745, 0.0)      # igui.pog:44-46 -- dim grid
 
-# Prison-bust HOLOGRAM parameters. The bust is the amber twin of Clay's red
-# comm hologram: it is drawn by the engine's comms head system (icComms +
-# icHUDTargetMFD in iwar2.dll) as an unshaded, self-lit, translucent amber head
-# with a scrolling scanline overlay, a full-panel grid, and a bright sweep band.
-# Recovered constants (iwar2.dll):
+# The prison bust is NOT real-time 3D. icGUIMovie (iwar2.dll FUN_100169c0,
+# registered as a GUI screen movie) pairs "\movies\" + <who> with
+# "html:\html\prison\" + <who> (iwar2.dll.c:25002/25022/25333-25337): the bust
+# is a PRE-RENDERED 400x400 Bink movie per character -- head, shoulders,
+# lighting and the slow rotation are all baked into the video. Six characters
+# are registered as icGUIMovie config properties in this order (FUN_10016a60,
+# iwar2.dll.c:25089-25123): az, ocal, ycal, jaffs, lori, smith; all default
+# OFF, and iActOne.MasterScript enables az/ocal/jaffs/lori/smith at campaign
+# start (our port: pog/gen/iactone.gd:2089-2108 -> user://pog_system.cfg
+# [icGUIMovie]). The picker starts at a RANDOM index and then CYCLES in order
+# on every screen open (FUN_10017850, iwar2.dll.c:25503-25527).
+#
+# The movie frames are black-backed; the GUI composites them over its amber
+# grid page so the grid reads through the dark regions (additive blend), with
+# the scanline/sweep overlay drawn ON TOP of the movie:
 #   HOLO_AMBER = icComms tint FcColour[0], ctor 0x1007f720 (iwar2.dll.c:105107-109)
 #                = 0x3f800000,0x3f3fbe77,0 = (1.0, 0.749, 0.0)  (== GUI_FOCUSED)
 #   HOLO_SWEEP = sweep-flash colour DAT_10174fb0, FUN_100e6750 0x100e6750
 #                (iwar2.dll.c:195396-398) = 0x3f800000,0x3f178d50,0 = (1.0,0.592,0.0)
-#   panel/scanline texture = texture:/images/hud/ucp (icHUDTargetMFD ctor 0x10101530,
-#                iwar2.dll.c:195533), scrolled in V over time (iwar2.dll.c:195797-804)
-#   panel shader alpha = 0.990 (iwar2.dll.c:195545)
-# The sweep motion is time-driven, wrapped 0..1 (iwar2.dll.c:195961-967); the
-# original description has it sweeping UP. Grid cell size, scanline spacing and
-# the sweep/scanline scroll RATES are .rdata floats the decomp left un-inlined
-# (UNKNOWN); the values below are reconstructed to match the original's look.
+# The sweep motion is time-driven, wrapped 0..1 (iwar2.dll.c:195961-967),
+# sweeping UP. Grid cell size, scanline spacing and the sweep band height /
+# scroll rates are .rdata floats the decomp left un-inlined (UNKNOWN); cell,
+# spacing and band height below are measured from an original screenshot
+# (band ~40px of a ~725px panel ≈ 0.055, a narrow bright bar with a soft warm
+# halo -- not a wide smear), the rates reconstructed to match its motion.
 const HOLO_AMBER := Color(1.0, 0.749, 0.0)      # icComms tint (verified)
 const HOLO_SWEEP := Color(1.0, 0.592, 0.0)      # sweep flash (verified)
 const HOLO_GRID_CELL := 30.0                    # px, reconstructed (baked in panel tex)
 const HOLO_SCAN_STEP := 3.0                     # px between scanlines, reconstructed
 const HOLO_SWEEP_SPEED := 0.28                  # panel-heights/sec up, reconstructed
-const HOLO_SWEEP_FRAC := 0.14                   # sweep band height / panel, reconstructed
+const HOLO_SWEEP_FRAC := 0.055                  # band height / panel, measured from ref
 const HOLO_SCAN_SPEED := 34.0                   # px/sec scanline drift, reconstructed
 
-# The bust is the character's REAL textured 3D head -- actual skin tone, hair,
-# eyes, lips -- warmly LIT for form, NOT recoloured. The amber in this front end
-# lives only in the GRID and the scanline/sweep OVERLAYS (drawn in 2D over the
-# head), never on the head itself. Warm KEY_LIGHT + weaker WARM_FILL give the face
-# 3D depth while keeping skin skin-coloured; because we no longer multiply the
-# texture by saturated amber (which zeroed blue and turned the shadow side green),
-# the shadow side is simply darker skin. Specular is disabled so no "gold triangle"
-# artifact appears. Semi-transparency is applied in 2D at composite time (see
-# _draw) so depth stays correct and the amber grid shows faintly through the head.
-const KEY_LIGHT := Color(1.0, 0.83, 0.62)       # warm key (high R:G to beat olive)
-const WARM_FILL := Color(1.0, 0.78, 0.55)       # warmer fill (lifts shadow side)
-
-# The bust is the character's REAL textured head, LIT by the warm key/fill/ambient
-# rig above (this is a normal -- not unshaded -- spatial shader, so the engine
-# lights it and the geometry gets 3D form). It keeps the true skin/hair/eye
-# colours, with ONE correction: these low-poly RT head textures bake COOL casts
-# into shadowed/scalp regions -- olive-green on some, cyan/teal on others. Skin,
-# hair, lips and eyes are all RED-dominant, so we simply clamp green and blue to
-# never exceed red: warm pixels are untouched, only the anomalous cool pixels get
-# pulled back to warm/neutral (never green, never cyan). SPECULAR=0 kills the old
-# "gold triangle". albedo_col folds in the source material colour so the internal
-# "Black" backing cards stay black (occluded), not default-white.
-const _BUST_SHADER_CODE := """
-shader_type spatial;
-render_mode cull_back;
-uniform sampler2D tex : source_color, hint_default_white;
-uniform vec3 albedo_col = vec3(1.0);
-void fragment() {
-	vec3 c = texture(tex, UV).rgb * albedo_col;
-	// red-dominant skin: green/blue may not exceed red, so no cool (green/cyan)
-	// cast can survive, but natural warm skin/hair/lips pass through unchanged.
-	c.g = min(c.g, c.r);
-	c.b = min(c.b, c.r);
-	ALBEDO = c;
-	ROUGHNESS = 1.0;
-	METALLIC = 0.0;
-	SPECULAR = 0.0;
-}
-"""
-
-# prison characters with an exported head anchor + dossier
-const CHARACTERS := [
-	["smith", "data/gltf/avatars/smith/smith_anchor.gltf"],
-	["az", "data/gltf/avatars/az/az_anchor.gltf"],
-	["jaffs", "data/gltf/avatars/jaffs/jafs_flappymouth.gltf"],
-	["lori", "data/gltf/avatars/lori/lori_anchor.gltf"],
-]
+# The six prison characters, in icGUIMovie property-registration order
+# (FUN_10016a60, iwar2.dll.c:25089-25123) -- this is the CYCLE order. Each has
+# a movie (data/movies/<who>.ogv, transcoded from movies/<who>.bik) and a
+# dossier (data/html/prison/<who>.html).
+const MOVIE_CHARS := ["az", "ocal", "ycal", "jaffs", "lori", "smith"]
+# What iActOne.MasterScript switches on (ycal stays off in Act One); used as
+# the fallback when no pog_system.cfg exists yet (fresh profile, front end).
+const ACT_ONE_CHARS := ["az", "ocal", "jaffs", "lori", "smith"]
 
 # the sixteen real systems of the two clusters (the *_dm maps are
 # multiplayer arenas)
@@ -116,9 +87,10 @@ var _font_small: Font  # Handel Gothic 8pt — dossier body
 var _font_title: Font  # Square721 BdEx — version line
 var item_size := 13
 var _item_rects: Array = []
-var bust_view: SubViewport
-var bust_node: Node3D
-var _bust_shader: Shader
+var bust_movie: VideoStreamPlayer
+var _overlay: Control       # scanline/sweep/dossier layer, drawn OVER the movie
+var _panel := Rect2()       # the square movie panel, laid out each frame
+var _movie_idx := -1        # -1 = "pick a random start", then cycle (FUN_10017850)
 var _bust_t := 0.0
 var dossier_lines: Array = []  # {text, bold}
 var _scroll := 0.0
@@ -130,7 +102,7 @@ var _force_char := ""  # --bustshot pins a specific character
 var _shot := false
 var _shot_phase := 0
 var _shot_t := 0.0
-var _shot_chars := ["az", "lori", "smith", "jaffs"]
+var _shot_chars := ["az", "ocal", "ycal", "jaffs", "lori", "smith"]
 var _shot_idx := 0
 
 func _ready() -> void:
@@ -140,46 +112,26 @@ func _ready() -> void:
 	_font = Hud.load_game_font(main._base(), "handelgothic bt_12pt.fnt")
 	_font_small = Hud.load_game_font(main._base(), "handelgothic bt_8pt.fnt")
 	_font_title = Hud.load_game_font(main._base(), "square721 bdex bt_8pt.fnt")
-	bust_view = SubViewport.new()
-	bust_view.size = Vector2i(512, 512)
-	bust_view.own_world_3d = true
-	bust_view.transparent_bg = true
-	bust_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
-	add_child(bust_view)
-	var cam := Camera3D.new()
-	cam.position = Vector3(0, -0.02, 1.05)
-	cam.fov = 26.0
-	bust_view.add_child(cam)
-	# Warm lighting for the REAL textured head (see _holo_bust). These low-poly RT
-	# heads bake OLIVE/green tones into their shadowed texture regions, so a hard
-	# one-sided key reveals a green shadow side. We defeat that by lighting mostly
-	# from the FRONT with a strong warm FILL and a warm AMBIENT wash, so shadowed
-	# skin is lifted warm (olive -> warm skin) rather than left dark/green -- while
-	# still keeping enough key/fill imbalance for 3D form. Specular is disabled on
-	# the material so no warm rim throws the old "gold triangle" artifact.
-	var key := DirectionalLight3D.new()
-	key.light_color = KEY_LIGHT
-	key.light_energy = 1.30
-	bust_view.add_child(key)
-	key.position = Vector3(0.3, 0.45, 1.0)   # slightly upper-right, mostly FRONTAL
-	key.look_at(Vector3.ZERO)
-	var fill := DirectionalLight3D.new()
-	fill.light_color = WARM_FILL
-	fill.light_energy = 0.9                   # strong warm fill from front-left
-	bust_view.add_child(fill)
-	fill.position = Vector3(-0.5, 0.2, 0.95)
-	fill.look_at(Vector3.ZERO)
-	# warm ambient wash: uniformly lifts + warms the shadows so shadowed skin reads
-	# warm (olive -> skin), never green. AMBIENT_SOURCE_COLOR is independent of the
-	# (transparent) background, so the viewport's transparent_bg is preserved and
-	# the grid still shows through the head.
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.0, 0.0, 0.0, 0.0)
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(1.0, 0.74, 0.50)
-	env.ambient_light_energy = 0.70
-	cam.environment = env
+	# The bust movie. Drawn ADDITIVELY so its black background is transparent and
+	# the page's amber grid (parent _draw, i.e. below children) reads through the
+	# dark regions of the head, exactly as the original composites it. The
+	# scanline/sweep/dossier overlay is a second child ABOVE the movie.
+	bust_movie = VideoStreamPlayer.new()
+	bust_movie.expand = true
+	bust_movie.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var add_mat := CanvasItemMaterial.new()
+	add_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	bust_movie.material = add_mat
+	# icGUIMovie keeps the movie running while the screen is up: restart on end
+	bust_movie.finished.connect(func() -> void:
+		if visible:
+			bust_movie.play())
+	add_child(bust_movie)
+	_overlay = Control.new()
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_overlay.draw.connect(_draw_overlay)
+	add_child(_overlay)
 	_setup_cursor()
 	if "--bustshot" in OS.get_cmdline_user_args():
 		_shot = true
@@ -216,51 +168,38 @@ func _setup_cursor() -> void:
 				canvas.set_pixel(x, y, Color(c.r, c.g, c.b, 1.0))
 	Input.set_custom_mouse_cursor(ImageTexture.create_from_image(canvas))
 
+# The characters currently switched on in the icGUIMovie config section --
+# written by our port of iActOne.MasterScript (pog/gen/iactone.gd:2089-2108)
+# through the POG config store (pog/natives/ui.gd _cfg_*), which lives at
+# user://pog_system.cfg.
+func _enabled_chars() -> Array:
+	var cfg := ConfigFile.new()
+	cfg.load("user://pog_system.cfg")  # a missing file is just an empty store
+	var out: Array = []
+	for who in MOVIE_CHARS:
+		if int(cfg.get_value("icGUIMovie", str(who), 0)) == 1:
+			out.append(who)
+	return out if not out.is_empty() else ACT_ONE_CHARS.duplicate()
+
 func _pick_character() -> void:
-	var pick: Array = CHARACTERS[randi() % CHARACTERS.size()]
+	# random start, then cycle in registration order on each open (FUN_10017850)
+	var chars := _enabled_chars()
+	var who: String
 	if _force_char != "":
-		for c in CHARACTERS:
-			if c[0] == _force_char:
-				pick = c
-				break
-	if _char == pick[0]:
-		return
-	_char = pick[0]
-	if bust_node != null:
-		bust_node.queue_free()
-		bust_node = null
-	bust_node = main._load_gltf(str(pick[1]))
-	if bust_node != null:
-		bust_node.scale = Vector3.ONE * 1.686
-		_holo_bust(bust_node)
-		bust_view.add_child(bust_node)
+		who = _force_char
+	else:
+		if _movie_idx < 0:
+			_movie_idx = randi() % chars.size()
+		else:
+			_movie_idx = (_movie_idx + 1) % chars.size()
+		who = str(chars[_movie_idx])
+	_char = who
+	var vs := VideoStreamTheora.new()
+	vs.file = main._base().path_join("data/movies/%s.ogv" % who)
+	bust_movie.stream = vs
+	bust_movie.play()
 	_load_dossier(_char)
 	_scroll = 0.0
-
-# Give the bust a warmly-LIT material that shows its OWN texture -- real skin tone,
-# hair, eyes, lips (see _BUST_SHADER_CODE). We do NOT recolour it: the amber lives
-# only in the 2D grid + scanline/sweep overlays (see _draw), not on the head. The
-# shader is lit by the warm key/fill/ambient rig for 3D form, keeps the true
-# colours, and only clamps the baked green shadow cast. Holographic translucency is
-# applied in 2D at composite time (see _draw), so the amber grid reads faintly
-# through the head.
-func _holo_bust(node: Node3D) -> void:
-	if _bust_shader == null:
-		_bust_shader = Shader.new()
-		_bust_shader.code = _BUST_SHADER_CODE
-	for mi in node.find_children("*", "MeshInstance3D", true, false):
-		var m := mi as MeshInstance3D
-		if m.mesh == null:
-			continue
-		for si in m.mesh.get_surface_count():
-			var src := m.mesh.surface_get_material(si) as BaseMaterial3D
-			var mat := ShaderMaterial.new()
-			mat.shader = _bust_shader
-			var col: Color = src.albedo_color if src != null else Color.WHITE
-			mat.set_shader_parameter("albedo_col", Vector3(col.r, col.g, col.b))
-			if src != null and src.albedo_texture != null:
-				mat.set_shader_parameter("tex", src.albedo_texture)
-			m.set_surface_override_material(si, mat)
 
 func _load_dossier(who: String) -> void:
 	# html/prison/<who>.html, stripped to amber text; <b> heads stay bright
@@ -327,7 +266,6 @@ func open() -> void:
 	mode = "main"
 	sel = 0
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	bust_view.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_pick_character()
 	if launched:
 		# pause the simulation like the original; UI/audio stay live
@@ -339,7 +277,7 @@ func open() -> void:
 
 func close() -> void:
 	visible = false
-	bust_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	bust_movie.stop()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	get_tree().paused = false
 	for p in [main.audio.engine_player, main.audio.thruster_player,
@@ -456,15 +394,25 @@ func _process(delta: float) -> void:
 	if not visible:
 		return
 	_bust_t += delta
-	if bust_node != null:
-		# slow turn around a 3/4-profile pose, like the front end. -62 turned it
-		# to near-full profile, which exposed the RT head's open back-of-skull;
-		# the original sits at a gentle 3/4 (~40 deg) and sways a little.
-		bust_node.rotation.y = deg_to_rad(-40.0) + sin(_bust_t * 0.23) * 0.22
 	_scroll += delta * 14.0
+	_layout_movie()
 	queue_redraw()
+	_overlay.queue_redraw()
 	if _shot:
 		_bustshot_step(delta)
+
+func _layout_movie() -> void:
+	# The movie is square (400x400 source); the original shows it at ~83% of the
+	# 480px screen height (400/480). Keep that ratio, centred in the open area
+	# right of the menu strip.
+	var s := get_viewport_rect().size
+	var strip_w := clampf(s.x * 0.21, 260, 340)
+	var side := s.y * 0.833
+	_panel = Rect2(Vector2(strip_w + (s.x - strip_w - side) / 2.0,
+			(s.y - side) / 2.0), Vector2(side, side))
+	bust_movie.position = _panel.position
+	bust_movie.size = _panel.size
+	bust_movie.visible = mode != "systems"
 
 func _bustshot_step(delta: float) -> void:
 	# for each character: settle, grab frame A, wait ~1/8 s, grab frame B (so the
@@ -561,31 +509,66 @@ func _holo_grid(rect: Rect2) -> void:
 		y += HOLO_GRID_CELL
 
 func _holo_overlay(panel: Rect2) -> void:
-	# horizontal SCANLINES scrolling slowly over the model (icHUDTargetMFD scrolls
-	# the panel/scanline texture in V, iwar2.dll.c:195797-804; texture images/hud/
-	# ucp). Reconstructed spacing/rate.
+	# Drawn on _overlay, ABOVE the movie. Horizontal SCANLINES scrolling slowly
+	# (icHUDTargetMFD scrolls the panel/scanline texture in V, iwar2.dll.c:
+	# 195797-804; texture images/hud/ucp). Reconstructed spacing/rate.
 	var drift := fmod(_bust_t * HOLO_SCAN_SPEED, HOLO_SCAN_STEP)
 	var sc := Color(HOLO_AMBER.r, HOLO_AMBER.g, HOLO_AMBER.b, 0.10)
 	var y := panel.position.y + drift
 	while y < panel.end.y:
-		draw_line(Vector2(panel.position.x, y), Vector2(panel.end.x, y), sc, 1.0)
+		_overlay.draw_line(Vector2(panel.position.x, y),
+				Vector2(panel.end.x, y), sc, 1.0)
 		y += HOLO_SCAN_STEP
 	# the bright SWEEP band, moving UP the panel and wrapping (time-driven wrap,
 	# iwar2.dll.c:195961-967; colour = sweep flash HOLO_SWEEP, iwar2.dll.c:
-	# 195396-398). Drawn as a soft triangular-alpha band.
+	# 195396-398). In the original it is a NARROW bright bar (~5.5% of the panel,
+	# measured from reference) inside a soft warm halo about three times as tall,
+	# not one wide smear.
 	var band_h := panel.size.y * HOLO_SWEEP_FRAC
 	var frac := fmod(_bust_t * HOLO_SWEEP_SPEED, 1.0)
-	var cy := panel.end.y - frac * (panel.size.y + band_h) + band_h * 0.5
-	var steps := 16
-	for i in steps:
-		var t := float(i) / float(steps - 1)          # 0..1 across the band
-		var yy := cy - band_h * 0.5 + t * band_h
-		if yy < panel.position.y or yy > panel.end.y:
-			continue
-		var a := 1.0 - absf(t - 0.5) * 2.0            # bright centre, soft edges
-		draw_line(Vector2(panel.position.x, yy), Vector2(panel.end.x, yy),
-				Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, a * 0.5),
-				band_h / float(steps) + 1.0)
+	var cy := panel.end.y - frac * (panel.size.y + band_h * 3.0) + band_h * 1.5
+	for pass_i in 2:
+		var h := band_h * (3.0 if pass_i == 0 else 1.0)
+		var peak := 0.16 if pass_i == 0 else 0.55
+		var steps := 12
+		for i in steps:
+			var t := float(i) / float(steps - 1)          # 0..1 across the band
+			var yy := cy - h * 0.5 + t * h
+			if yy < panel.position.y or yy > panel.end.y:
+				continue
+			var a := 1.0 - absf(t - 0.5) * 2.0            # bright centre, soft edges
+			_overlay.draw_line(Vector2(panel.position.x, yy),
+					Vector2(panel.end.x, yy),
+					Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, a * peak),
+					h / float(steps) + 1.0)
+
+func _draw_overlay() -> void:
+	# the layer ABOVE the movie: scanlines + sweep across the open area, and the
+	# scrolling dossier in the panel's lower-left (the original draws the HTML
+	# into the movie window's TextView; position measured from reference).
+	if not visible or mode == "systems":
+		return
+	var s := get_viewport_rect().size
+	var strip_w := clampf(s.x * 0.21, 260, 340)
+	_holo_overlay(Rect2(strip_w, 0.0, s.x - strip_w, s.y))
+	var dx := _panel.position.x + _panel.size.x * 0.16
+	var dy0 := _panel.position.y + _panel.size.y * 0.84
+	var line_h := 17.0
+	var visible_rows := int((_panel.end.y - 8.0 - dy0) / line_h)
+	if not dossier_lines.is_empty():
+		var total := dossier_lines.size()
+		var first := int(_scroll / line_h)
+		for row in visible_rows:
+			var idx := first + row
+			if idx >= total:
+				break
+			var entry: Dictionary = dossier_lines[idx]
+			var ypos := dy0 + row * line_h - fmod(_scroll, line_h)
+			var col2 := AMBER_GLOW if entry["bold"] else AMBER_TEXT
+			_overlay.draw_string(_font_small, Vector2(dx, ypos),
+					str(entry["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, col2)
+		if first >= total:
+			_scroll = -float(visible_rows) * line_h  # wrap from below
 
 func _draw() -> void:
 	var s := get_viewport_rect().size
@@ -615,40 +598,9 @@ func _draw() -> void:
 				col if enabled else Color(col.r, col.g, col.b, 0.35))
 		_item_rects.append(r.grow(4))
 		y += bh + gap
-	# 3D bust, right of center -- rendered as an amber hologram
-	if mode != "systems":
-		var bust_size := minf(s.y * 0.62, 560.0)
-		var bust_pos := Vector2(s.x * 0.40, -bust_size * 0.04)
-		var panel := Rect2(bust_pos, Vector2(bust_size, bust_size))
-		# NO box: the head floats directly in the grid. Composited SEMI-transparent
-		# so the full-screen grid reads faintly THROUGH the amber head (a hologram
-		# volume, not an opaque cutout). Depth was resolved in the opaque 3D pass,
-		# so this 2D blend cannot double the hollow-shell back faces.
-		draw_texture_rect(bust_view.get_texture(), panel, false,
-				Color(1.0, 1.0, 1.0, 0.66))
-		# scanlines + upward sweep span the open area (from the menu-column divider
-		# to the screen edges) rather than a rectangle around the head, so they
-		# never draw a panel frame / bottom band around it.
-		_holo_overlay(Rect2(strip_w, 0.0, s.x - strip_w, s.y))
-		# scrolling dossier under the bust
-		var dx := s.x * 0.47
-		var dy0 := s.y * 0.55
-		var line_h := 17.0
-		var visible_rows := int((s.y - 30.0 - dy0) / line_h)
-		if not dossier_lines.is_empty():
-			var total := dossier_lines.size()
-			var first := int(_scroll / line_h)
-			for row in visible_rows:
-				var idx := first + row
-				if idx >= total:
-					break
-				var entry: Dictionary = dossier_lines[idx]
-				var ypos := dy0 + row * line_h - fmod(_scroll, line_h)
-				var col2 := AMBER_GLOW if entry["bold"] else AMBER_TEXT
-				draw_string(_font_small, Vector2(dx, ypos), str(entry["text"]),
-						HORIZONTAL_ALIGNMENT_LEFT, -1, 12, col2)
-			if first >= total:
-				_scroll = -float(visible_rows) * line_h  # wrap from below
+	# The bust movie itself is the VideoStreamPlayer child (drawn additively
+	# above this canvas item, so the grid shows through its dark regions); the
+	# scanline/sweep/dossier layer is the _overlay child above the movie.
 	# version line, bottom right, like "Edge of Chaos F14.6"
 	var ver := "Edge of Chaos R1.0"
 	var vw := _font.get_string_size(ver, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x

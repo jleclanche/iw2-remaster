@@ -1051,3 +1051,33 @@ rises ~18-23 px between the two frames. All four heads (az, lori, smith, jaffs)
 render whole and correctly.
 
 ---
+
+## The prison dossier bust, round 2 — it is a PRE-RENDERED MOVIE (task #75)
+
+Everything above about rendering the bust as a real-time head — hologram-amber
+or naturally lit — chased the wrong system. Playtesting kept showing a face with
+far more texture detail (eyebrows, lipstick, ear geometry) plus **shoulders**
+that no `*_anchor` head model has. The `icGUIMovie` recovery
+(`docs/original.md`, "The prison-dossier bust is a PRE-RENDERED MOVIE") settled
+it: the original pairs `movies/<who>.bik` (400×400 pre-rendered Bink: head,
+shoulders, lighting and rotation baked in) with `html/prison/<who>.html`, six
+characters (`az, ocal, ycal, jaffs, lori, smith`, registration order =
+**cycle** order), enabled per character via `[icGUIMovie]` config bools
+(Act One turns on all but `ycal`), **random start then cycle** per screen open
+(`FUN_10017850`).
+
+`menu.gd` now plays `data/movies/<who>.ogv` (the existing Bink→Theora
+extraction) in a `VideoStreamPlayer` sized to the original's screen proportion
+(400/480 ≈ 0.833 of screen height, square), **blend-mode ADD** so the black
+frame background is transparent and the page's amber grid reads through the
+dark regions, exactly as the original composites it. The scanline + sweep
+overlay and the scrolling dossier draw in a layer *above* the movie. The sweep
+band was also corrected against an original screenshot: a **narrow bright bar
+(~5.5 % of the panel) inside a soft warm halo ~3× as tall** — the old 14 %
+triangular smear was far too wide. Enabled characters are read from
+`user://pog_system.cfg [icGUIMovie]` (written by our `iactone.gd` port),
+falling back to the Act One five on a fresh profile. The whole SubViewport /
+lights / re-skin-shader rig is gone. `--bustshot` now captures all six
+characters; all six render as their pre-rendered selves.
+
+---

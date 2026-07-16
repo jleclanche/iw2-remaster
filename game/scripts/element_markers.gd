@@ -270,7 +270,7 @@ extends RefCounted
 # @element-stub icGame -- covered-elsewhere: main.gd is the game loop; igame natives (natives/gameapi.gd)
 # @element-stub icServer -- mp-only: the network server object
 # @element-stub icServerApp -- mp-only: the dedicated-server app shell
-# @element-stub icGUIMovie -- covered-elsewhere: main.gd movie playback; the scripts only touch this class as a config key
+# @element icGUIMovie -- menu.gd: the prison-dossier bust screen; pairs movies/<who>.bik with html/prison/<who>.html, random start + cycle (FUN_10017850); character set from [icGUIMovie] config bools
 
 # ---------------------------------------------------------------------------
 # iwar2.dll -- HUD elements not implemented in hud.gd (their bare @element-stub

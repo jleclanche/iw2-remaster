@@ -1211,27 +1211,38 @@ bullet.
 `lateral_ratio = (-0.15,-0.2,-0.2)`, `focal_length = 100`.
 External cameras: `field_of_view = 1.2` rad (68.75 deg).
 
-### The prison-dossier bust IS Clay's comm hologram, in amber
+### The prison-dossier bust is a PRE-RENDERED MOVIE (icGUIMovie) — NOT a real-time head
 
-The rotating character head in the front-end/pause prison dossier and Clay's
-in-flight comm portrait are the **same engine system**: `icComms` (ctor
-`0x1007f720`; `CreateHeads 0x1007fcc0` loads the per-speaker head `.lws`;
-`RenderPortrait 0x100810e0` spins and draws it) composited by `icHUDTargetMFD`
-(`FUN_10101f00`/`FUN_10102490`). The `html_prison/` page is only the scrolling
-text backdrop.
+**Supersedes the earlier "the bust IS Clay's comm hologram" conclusion.** That
+identification was wrong: `icComms`/`RenderPortrait` is only the in-flight comm
+portrait system. The front-end/pause prison-dossier bust is **`icGUIMovie`**
+(registered `FUN_100169c0`, `iwar2.dll.c:25037-25056`; a subclass of `icMovie`),
+which pairs `"\movies\" + <who>` with `"html:\html\prison\" + <who>`
+(`iwar2.dll.c:25002/25022`, list built at `:25333-25337`): **each character bust
+is a pre-rendered 400x400 Bink movie** (`movies/az.bik` etc. — head, shoulders,
+studio lighting and the slow rotation all baked in), with the scrolling dossier
+HTML drawn into the movie window's TextView.
 
-- **The amber is the GUI "focused" amber, exactly**: `icComms` display-mode-0
-  tint = `(1.0, 0.749, 0.0)` (`0x1007f720`, `.c:105107`), bit-identical to
-  `igui.SetGUIGlobals`' `GUI_focused` (`igui.pog:38-40`). (Display-mode 1 is the
-  lime comm colour `(0.5, 1, 0)`.) The **sweep-flash** is a separate warmer amber
-  `(1.0, 0.592, 0.0)` (`DAT_10174fb0`).
-- **The head models are hollow FRONT SHELLS** -- `az_anchor`'s `Body` is 72
-  front-facing triangles, no rear geometry, so the bust is only ever shown at a
-  shallow 3/4 turn and translucent (which is why turning it further shows a
-  "missing skull"). `tf_az_anchor` is the *helmeted cockpit* variant, not the
-  dossier head. A warm rim light on the head throws a specular the shell has no
-  texel for -- the "gold triangle"; the hologram is unshaded, so it does not
-  occur. UNKNOWN (un-inlined `.rdata` floats): grid cell size, scan/sweep rates.
+- **Six characters**, registered as `icGUIMovie` config-bool properties in this
+  order (`FUN_10016a60`, `iwar2.dll.c:25089-25123`): `az, ocal, ycal, jaffs,
+  lori, smith`. All default OFF; `iActOne.MasterScript` switches on
+  `az/ocal/jaffs/lori/smith` (`config.SetBool("system","icGUIMovie",...)`,
+  our port `pog/gen/iactone.gd:2089-2108`). All six movies and all six
+  `html/prison/<who>.html` dossiers ship.
+- **Random start, then cycle**: `FUN_10017850` (`iwar2.dll.c:25503-25527`) seeds
+  `FcRandom` with `SystemCycles()` for the first pick, then advances by one
+  (wrapping) on every subsequent screen open.
+- The movie frames are black-backed; the GUI composites them over its amber
+  grid page (grid reads through the dark regions — additive blend), with the
+  scanline/sweep overlay on top. The comm-hologram colour recovery
+  (`icComms` amber `(1.0,0.749,0.0)` = `GUI_focused`; sweep flash
+  `(1.0,0.592,0.0)` `DAT_10174fb0`) still stands — for **comm portraits**.
+- The `avatars/<who>/<who>_anim01.lws` scenes referenced by `iwar2.dll`
+  (`lws:/avatars/az/az_anim01` …) are the **in-flight comm heads**, not the
+  dossier: `Az_Anim01.lws` loads only `Az_Anchor.lwo` (the 285-vert front-shell
+  head) with a white point light at −0.425 m (int 1.0, falloff 1 m), a faint
+  `HeadupGlow` (255,255,204 @ 0.3) and ambient white 0.25, camera at
+  (0, 0.0788, −1.115) pitch 6.6°, zoom 6.667.
 
 ---
 
