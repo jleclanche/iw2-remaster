@@ -1143,3 +1143,20 @@ Verify with `--commshot`: writes `data/screenshots/commshot_<who>.png` for all
 eight rigs. UNKNOWN: the per-state anim-speed factor (icComms+0x148) scaling
 the sway clock, and old_cal/minor NPCs have no scene (blank channel, like the
 original's "no video feed").
+
+## Suns are flare glows, never discs (task #82)
+
+Hoffer's Wake really has TWO suns in the map: **Alpha, a red giant with
+radius 1.751e11 m** (class 11, sun_red) at the system centre, and **Beta**
+(class 2, sun_blue, r 1.81e8) 3e12 m out. From the Act 0 junkyard the red
+giant's true angular size is **65 degrees** -- and our angular-correct
+impostor dutifully drew it that way, which is the "massive red sun" report.
+The original can never show that: its far plane (600 km) cannot contain a
+sun at map distances, so the disc is always culled, and what the player sees
+is the icSun's **FcLensFlareNode glow** -- whose world-space branch scales
+the flare quad BY DISTANCE (`FcLensFlareNode::Render`, flux 0xe6100:
+`size = base * dist`), i.e. **constant apparent size**. Both suns therefore
+read as small glows (the reference screenshot's two orange flares = Alpha +
+Beta). main.gd now draws stars at a constant apparent half-angle
+(STAR_FLARE_DEG = 1.6 deg, reconstructed from reference footage; the
+per-variant FcLensFlareNode size tables remain unextracted).

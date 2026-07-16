@@ -9,6 +9,7 @@ const START_NAME := "Alexander L-Point"
 const STREAM_IN := 4.0e5
 const STREAM_OUT := 5.0e5
 const IMPOSTOR_DIST := 2.5e5  # bodies/stars drawn at capped range, scaled down
+const STAR_FLARE_DEG := 1.6   # suns draw as constant-apparent-size flare glows
 const LDSI_RADIUS := 2.5e4
 
 const LDS_MAX := 3.0e10
@@ -3101,12 +3102,25 @@ func _stream_objects() -> void:
 				# the record's own FiSim radius. No floor, no clamp: the map
 				# says what size the body is.
 				var r: float = o["radius"]
-				if o["category"] == "star":
-					sun.look_at_from_position(Vector3.ZERO,
-						Vector3(-dx, -dy, -dz).normalized())
 				var k := minf(IMPOSTOR_DIST / dist, 1.0)
 				# never fill the screen: cap apparent radius vs draw distance
 				var draw_r := minf(r * k, IMPOSTOR_DIST * 0.4)
+				if o["category"] == "star":
+					sun.look_at_from_position(Vector3.ZERO,
+						Vector3(-dx, -dy, -dz).normalized())
+					# A sun is NEVER seen as a disc at its true angular size: the
+					# far plane (600 km) cannot contain a sun at map distances
+					# (1e11..1e13 m), so the engine always culls the disc -- what
+					# the player sees is the icSun's FcLensFlareNode glow, whose
+					# world-space branch scales its quad BY DISTANCE
+					# (FcLensFlareNode::Render, flux 0xe6100: size = base * dist):
+					# a CONSTANT-APPARENT-SIZE flare. Without this cap, Hoffer's
+					# Wake Alpha (a red giant -- radius 1.751e11 m, the map really
+					# says that) fills 65 degrees of sky from the Act 0 junkyard.
+					# The flare's apparent half-angle is reconstructed from
+					# reference footage (~1.6 deg); the per-variant flare size
+					# tables are not extracted yet.
+					draw_r = IMPOSTOR_DIST * tan(deg_to_rad(STAR_FLARE_DEG))
 				o["node"].position = Vector3(dx, dy, dz) * k
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
 			"station", "prop", "gunstar":
