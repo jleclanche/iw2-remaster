@@ -112,6 +112,15 @@ var item_size := 13
 var _item_rects: Array = []
 var bust_movie: VideoStreamPlayer
 var _overlay: Control       # scanline/sweep/dossier layer, drawn OVER the movie
+var _top: Control           # buttons + version, normal blend, above everything
+var _bar: Control           # icShadyBar black fill (clipped)
+var _bar_fx: Control        # icShadyBar detail/flybys/edges, additive (clipped)
+var _tex_detail: Texture2D  # images/gui/bar_detail  (icShadyBar::Create)
+var _tex_flybys: Texture2D  # images/gui/text_flybys (icShadyBar::Create)
+var _tex_glow: Texture2D    # images/gui/cursor_glow (icShadyBar::Create)
+var _flybys: Array = []     # 8 slots (the engine's fixed array), h <= 0 = free
+var _flyby_timer := 0.0
+var _glow_pts: Array = []   # ring of the last 10 mouse positions
 var _panel := Rect2()       # the square movie panel, laid out each frame
 var _movie_idx := -1        # -1 = "pick a random start", then cycle (FUN_10017850)
 var _bust_t := 0.0
@@ -136,6 +145,31 @@ func _ready() -> void:
 	_font = Hud.load_game_font(main._base(), "handelgothic bt_12pt.fnt")
 	_font_small = Hud.load_game_font(main._base(), "handelgothic bt_8pt.fnt")
 	_font_title = Hud.load_game_font(main._base(), "square721 bdex bt_8pt.fnt")
+	var add_mat := CanvasItemMaterial.new()
+	add_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	# The left menu bar is the engine's icShadyBar (Render 0x10e7d0; statics
+	# dumped from the DLL export table): a BLACK bar at m_bar_alpha 0.8 with,
+	# drawn ADDITIVELY on top: two drifting layers of the images/gui/bar_detail
+	# weave (m_detail_alpha 0.1), amber edge gradients (m_edge_width 8 px,
+	# m_edge_alpha 0.2), and up to 8 "text flyby" glyph strips falling down the
+	# bar (images/gui/text_flybys). Split into a normal-blend fill child and an
+	# additive fx child, both clipped to the bar.
+	_tex_detail = _gui_tex("bar_detail.png")
+	_tex_flybys = _gui_tex("text_flybys.png")
+	_tex_glow = _gui_tex("cursor_glow.png")
+	for i in 8:
+		_flybys.append({"h": 0.0})
+	_bar = Control.new()
+	_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bar.clip_contents = true
+	_bar.draw.connect(_draw_bar)
+	add_child(_bar)
+	_bar_fx = Control.new()
+	_bar_fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bar_fx.clip_contents = true
+	_bar_fx.material = add_mat
+	_bar_fx.draw.connect(_draw_bar_fx)
+	add_child(_bar_fx)
 	# The bust movie. Drawn ADDITIVELY so its black background is transparent and
 	# the page's amber grid (parent _draw, i.e. below children) reads through the
 	# dark regions of the head, exactly as the original composites it. The
@@ -143,8 +177,6 @@ func _ready() -> void:
 	bust_movie = VideoStreamPlayer.new()
 	bust_movie.expand = true
 	bust_movie.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var add_mat := CanvasItemMaterial.new()
-	add_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	bust_movie.material = add_mat
 	# icGUIMovie keeps the movie running while the screen is up: restart on end
 	bust_movie.finished.connect(func() -> void:
@@ -159,6 +191,12 @@ func _ready() -> void:
 	_overlay.material = add_mat
 	_overlay.draw.connect(_draw_overlay)
 	add_child(_overlay)
+	# buttons + version render normal-blend above the effect layers
+	_top = Control.new()
+	_top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_top.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_top.draw.connect(_draw_top)
+	add_child(_top)
 	_setup_cursor()
 	if "--bustshot" in OS.get_cmdline_user_args():
 		_shot = true
@@ -443,8 +481,18 @@ func _process(delta: float) -> void:
 	if not dossier_lines.is_empty() \
 			and _scroll > dossier_lines.size() * 17.0 + _panel.size.y * 0.19:
 		_pick_character()
+	_tick_flybys(delta)
+	# icShadyBar keeps a ring of the last 10 mouse positions for the cursor
+	# glow trail (Render 0x10e7d0, sampled once per frame)
+	_glow_pts.push_front({"pos": get_viewport().get_mouse_position(),
+			"hot": Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)})
+	if _glow_pts.size() > 10:
+		_glow_pts.resize(10)
 	queue_redraw()
+	_bar.queue_redraw()
+	_bar_fx.queue_redraw()
 	_overlay.queue_redraw()
+	_top.queue_redraw()
 	if _shot:
 		_bustshot_step(delta)
 
@@ -456,13 +504,17 @@ func _layout_movie() -> void:
 	# screen (dossier column below). Fixed-pixel windows don't scale to modern
 	# resolutions, so we keep the 1024x768 proportions.
 	var s := get_viewport_rect().size
-	var strip_w := clampf(s.x * 0.21, 260, 340)
+	var strip_w := _strip_w()
 	var side := s.y * 0.521
 	_panel = Rect2(Vector2(strip_w + (s.x - strip_w - side) / 2.0, s.y * 0.09),
 			Vector2(side, side))
 	bust_movie.position = _panel.position
 	bust_movie.size = _panel.size
 	bust_movie.visible = mode != "systems"
+	_bar.position = Vector2.ZERO
+	_bar.size = Vector2(strip_w, s.y)
+	_bar_fx.position = Vector2.ZERO
+	_bar_fx.size = Vector2(strip_w, s.y)
 
 func _bustshot_step(delta: float) -> void:
 	# for each character: settle, grab frame A, wait ~1/8 s, grab frame B (so the
@@ -500,49 +552,139 @@ func _grab(path: String) -> void:
 	print("BUSTSHOT wrote ", path, " ", img.get_size())
 
 func _stadium(r: Rect2, col: Color, width: float, glow: bool) -> void:
-	# the original's capsule button outline
+	# the original's capsule button outline (drawn on the _top layer, above
+	# the bar and the page effects)
 	var rad := r.size.y / 2.0
 	var lc := Vector2(r.position.x + rad, r.position.y + rad)
 	var rc := Vector2(r.end.x - rad, r.position.y + rad)
-	draw_rect(Rect2(r.position + Vector2(rad, 0),
+	_top.draw_rect(Rect2(r.position + Vector2(rad, 0),
 			Vector2(r.size.x - rad * 2, r.size.y)), Color(0.07, 0.05, 0.0, 0.85))
-	draw_circle(lc, rad, Color(0.07, 0.05, 0.0, 0.85))
-	draw_circle(rc, rad, Color(0.07, 0.05, 0.0, 0.85))
+	_top.draw_circle(lc, rad, Color(0.07, 0.05, 0.0, 0.85))
+	_top.draw_circle(rc, rad, Color(0.07, 0.05, 0.0, 0.85))
 	if glow:
-		draw_arc(lc, rad + 2, PI / 2, PI * 1.5, 16,
+		_top.draw_arc(lc, rad + 2, PI / 2, PI * 1.5, 16,
 				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-		draw_arc(rc, rad + 2, -PI / 2, PI / 2, 16,
+		_top.draw_arc(rc, rad + 2, -PI / 2, PI / 2, 16,
 				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-		draw_line(Vector2(lc.x, r.position.y - 2), Vector2(rc.x, r.position.y - 2),
+		_top.draw_line(Vector2(lc.x, r.position.y - 2), Vector2(rc.x, r.position.y - 2),
 				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-		draw_line(Vector2(lc.x, r.end.y + 2), Vector2(rc.x, r.end.y + 2),
+		_top.draw_line(Vector2(lc.x, r.end.y + 2), Vector2(rc.x, r.end.y + 2),
 				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-	draw_arc(lc, rad, PI / 2, PI * 1.5, 16, col, width, true)
-	draw_arc(rc, rad, -PI / 2, PI / 2, 16, col, width, true)
-	draw_line(Vector2(lc.x, r.position.y), Vector2(rc.x, r.position.y),
+	_top.draw_arc(lc, rad, PI / 2, PI * 1.5, 16, col, width, true)
+	_top.draw_arc(rc, rad, -PI / 2, PI / 2, 16, col, width, true)
+	_top.draw_line(Vector2(lc.x, r.position.y), Vector2(rc.x, r.position.y),
 			col, width, true)
-	draw_line(Vector2(lc.x, r.end.y), Vector2(rc.x, r.end.y), col, width, true)
+	_top.draw_line(Vector2(lc.x, r.end.y), Vector2(rc.x, r.end.y), col, width, true)
 
-func _circuit_strip(w: float, h: float) -> void:
-	# faint amber circuit-board traces down the left strip
-	draw_rect(Rect2(0, 0, w, h), Color(0.03, 0.025, 0.0, 0.92))
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 42
-	var trace := Color(1.0, 0.72, 0.1, 0.06)
-	var trace2 := Color(1.0, 0.72, 0.1, 0.12)
-	for i in 26:
-		var x := rng.randf_range(4, w - 4)
-		var y0 := rng.randf_range(0, h)
-		var len := rng.randf_range(40, 300)
-		draw_line(Vector2(x, y0), Vector2(x, minf(y0 + len, h)),
-				trace2 if i % 3 == 0 else trace, 1.0)
-		if i % 2 == 0:
-			var x2 := clampf(x + rng.randf_range(-40, 40), 4, w - 4)
-			draw_line(Vector2(x, y0), Vector2(x2, y0), trace, 1.0)
-			draw_rect(Rect2(x2 - 1.5, y0 - 1.5, 3, 3), trace2)
-	for gy in range(0, int(h), 48):
-		draw_line(Vector2(0, gy), Vector2(w, gy), Color(1, 0.72, 0.1, 0.025), 1.0)
-	draw_line(Vector2(w, 0), Vector2(w, h), AMBER_DIM, 1.5, true)
+func _gui_tex(name: String) -> Texture2D:
+	var img := Image.load_from_file(main._base().path_join(
+			"data/textures/images/gui/" + name))
+	if img == null:
+		return null
+	return ImageTexture.create_from_image(img)
+
+func _strip_w() -> float:
+	# GUI_shader_width = 240 native px (igui.pog:7), fixed-pixel scaled
+	return get_viewport_rect().size.y * 240.0 / REF_H
+
+func _draw_bar() -> void:
+	# icShadyBar bar fill: BLACK (m_bar_colour statics zero, FUN_1010df20) at
+	# m_bar_alpha 0.8 -- the same value igui.pog calls GUI_shader_opacity
+	if not visible:
+		return
+	_bar.draw_rect(Rect2(Vector2.ZERO, _bar.size), Color(0, 0, 0, 0.8))
+
+func _tick_flybys(delta: float) -> void:
+	# icShadyBar::Render flyby spawner: 8 slots; a strip enters from the TOP
+	# (y starts at 1 - height) and slides DOWN at 25..90 px/s
+	# (m_min/max_flyby_speed); height = 13 (m_flyby_ch) x rand(3..30)
+	# (0x1010e200/0x1010e230); x random inside the edges, snapped to the 16-px
+	# glyph column (m_flyby_cw); the next spawn comes 0..6 s later
+	# (m_min/max_flyby_time)
+	var h := get_viewport_rect().size.y
+	for f in _flybys:
+		if f["h"] > 0.0:
+			f["y"] += f["speed"] * delta
+			if f["y"] > h:
+				f["h"] = 0.0
+	_flyby_timer -= delta
+	if _flyby_timer > 0.0:
+		return
+	_flyby_timer = randf_range(0.0, 6.0)
+	for i in _flybys.size():
+		var f: Dictionary = _flybys[i]
+		if f["h"] <= 0.0:
+			f["h"] = 13.0 * randf_range(3.0, 30.0)
+			f["speed"] = randf_range(25.0, 90.0)
+			f["x"] = floorf(randf_range(8.0, maxf(8.0, _strip_w() - 24.0))
+					/ 16.0) * 16.0
+			f["y"] = 1.0 - f["h"]
+			f["slot"] = i
+			break
+
+func _draw_bar_fx() -> void:
+	# the additive passes of icShadyBar::Render, clipped to the bar
+	if not visible:
+		return
+	var w := _bar_fx.size.x
+	var h := _bar_fx.size.y
+	var amber := GUI_FOCUSED                     # m_detail/glow colour (1,0.749,0)
+	# two drifting layers of the 128px bar_detail weave, m_detail_alpha 0.1;
+	# u drifts +, v drifts - at (t_ms x 0.001)/20 texture/s (DAT_1011803c /
+	# DAT_1011e848 / m_u/v_scroll_rate) = 6.4 px/s. The second layer is the
+	# same texture at DOUBLE scale (the original also mirrors it in u; the
+	# weave is symmetric, so the mirror is skipped).
+	var dcol := Color(amber.r, amber.g, amber.b, 0.1)
+	var drift := fmod(_bust_t * 6.4, 128.0)
+	if _tex_detail != null:
+		_bar_fx.draw_texture_rect(_tex_detail,
+				Rect2(Vector2(drift - 128.0, -drift), Vector2(w + 256, h + 256)),
+				true, dcol)
+		_bar_fx.draw_set_transform(Vector2.ZERO, 0.0, Vector2(2, 2))
+		_bar_fx.draw_texture_rect(_tex_detail,
+				Rect2(Vector2(drift * 0.5 - 128.0, -drift * 0.5),
+					Vector2(w * 0.5 + 256, h * 0.5 + 256)), true, dcol)
+		_bar_fx.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	# text flybys: a 16-px glyph column of text_flybys, v anchored to SCREEN
+	# space (v = y/128, DAT_1011ccb8 = 1/128 -- the glyphs stay put and the
+	# strip is a sliding reveal window), alpha ramping 0 (top) -> 0.2
+	# (DAT_101184ac) at the strip's bottom edge; the glyph column flickers
+	# with the strip's position ((int(y + h) + slot) & 7)
+	if _tex_flybys != null:
+		for f in _flybys:
+			if f["h"] <= 0.0:
+				continue
+			var fy: float = f["y"]
+			var fh: float = f["h"]
+			var col_i: int = (int(fy + fh) + int(f["slot"])) & 7
+			var y_end := minf(fy + fh, h)
+			var row_y := maxf(fy, 0.0)
+			while row_y < y_end:
+				var rh := minf(13.0, y_end - row_y)
+				var a := clampf((row_y + rh - fy) / fh, 0.0, 1.0) * 0.2
+				var fcol := Color(amber.r, amber.g, amber.b, a)
+				var v := fposmod(row_y, 128.0)
+				var piece := minf(rh, 128.0 - v)
+				_bar_fx.draw_texture_rect_region(_tex_flybys,
+						Rect2(f["x"], row_y, 16.0, piece),
+						Rect2(col_i * 16.0, v, 16.0, piece), fcol)
+				if piece < rh:
+					_bar_fx.draw_texture_rect_region(_tex_flybys,
+							Rect2(f["x"], row_y + piece, 16.0, rh - piece),
+							Rect2(col_i * 16.0, 0.0, 16.0, rh - piece), fcol)
+				row_y += rh
+	# edge gradients: m_edge_width 8 px at m_edge_alpha 0.2, brightest AT the
+	# edge, fading inward; drawn on both vertical edges
+	var e0 := Color(amber.r, amber.g, amber.b, 0.0)
+	var e1 := Color(amber.r, amber.g, amber.b, 0.2)
+	_bar_fx.draw_polygon(
+			PackedVector2Array([Vector2(0, 0), Vector2(8, 0),
+				Vector2(8, h), Vector2(0, h)]),
+			PackedColorArray([e1, e0, e0, e1]))
+	_bar_fx.draw_polygon(
+			PackedVector2Array([Vector2(w - 8, 0), Vector2(w, 0),
+				Vector2(w, h), Vector2(w - 8, h)]),
+			PackedColorArray([e0, e1, e1, e0]))
 
 func _holo_grid(rect: Rect2) -> void:
 	# the page's amber GRID: the engine's 16-native-px graph-paper grid, the
@@ -589,8 +731,21 @@ func _draw_overlay() -> void:
 	if not visible or mode == "systems":
 		return
 	var s := get_viewport_rect().size
-	var strip_w := clampf(s.x * 0.21, 260, 340)
-	_holo_overlay(Rect2(strip_w, 0.0, s.x - strip_w, s.y))
+	# the page effects span the WHOLE screen, bar included (in the reference
+	# the sweep crosses the menu bar too)
+	_holo_overlay(Rect2(0.0, 0.0, s.x, s.y))
+	# cursor glow trail (icShadyBar::Render, glow pass): images/gui/cursor_glow
+	# at DOUBLE its texture size on the last 10 mouse positions, m_glow_alpha
+	# 0.1 falling off 0.1 per sample (DAT_1011d0cc), doubled while the button
+	# is held. Only the in-game bars render with glow=true; the front end
+	# passes false.
+	if launched and _tex_glow != null:
+		var gs: Vector2 = _tex_glow.get_size() * 2.0
+		for i in _glow_pts.size():
+			var g: Dictionary = _glow_pts[i]
+			var ga: float = 0.1 * (1.0 - i * 0.1) * (2.0 if g["hot"] else 1.0)
+			_overlay.draw_texture_rect(_tex_glow, Rect2(g["pos"] - gs / 2.0, gs),
+					false, Color(GUI_FOCUSED.r, GUI_FOCUSED.g, GUI_FOCUSED.b, ga))
 	# The dossier is a tall column BELOW the movie window (left edge just inside
 	# the panel's), running to the bottom of the screen. Lines scroll upward and
 	# FADE OUT as they slide under the movie's bottom edge -- in the reference
@@ -617,14 +772,18 @@ func _draw_overlay() -> void:
 				Color(col2.r, col2.g, col2.b, col2.a * a))
 
 func _draw() -> void:
+	# the page floor: black + the fullscreen amber grid. Everything else lives
+	# on the child layers: _bar/_bar_fx (icShadyBar), the bust movie (additive),
+	# _overlay (sweep/scanlines/dossier/glow, additive), _top (buttons/version).
 	var s := get_viewport_rect().size
 	draw_rect(Rect2(Vector2.ZERO, s), Color(0.0, 0.0, 0.0, 1.0))
-	var strip_w := clampf(s.x * 0.21, 260, 340)
-	_circuit_strip(strip_w, s.y)
-	# ONE uniform amber GRID over the whole screen, edge to edge, behind the menu
-	# column AND the head. Drawn after the circuit strip so it reads at the same
-	# brightness on the left as it does in open space -- no second, denser grid.
 	_holo_grid(Rect2(Vector2.ZERO, s))
+
+func _draw_top() -> void:
+	if not visible:
+		return
+	var s := get_viewport_rect().size
+	var strip_w := _strip_w()
 	# capsule buttons
 	_item_rects.clear()
 	var items := _items()
@@ -639,16 +798,13 @@ func _draw() -> void:
 		var r := Rect2(Vector2(28, y), Vector2(bw, bh))
 		_stadium(r, col, 1.6 if i == sel else 1.2, i == sel)
 		var label: String = items[i][0]
-		draw_string(_font, r.position + Vector2(16, bh - 7), label,
+		_top.draw_string(_font, r.position + Vector2(16, bh - 7), label,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, item_size,
 				col if enabled else Color(col.r, col.g, col.b, 0.35))
 		_item_rects.append(r.grow(4))
 		y += bh + gap
-	# The bust movie itself is the VideoStreamPlayer child (drawn additively
-	# above this canvas item, so the grid shows through its dark regions); the
-	# scanline/sweep/dossier layer is the _overlay child above the movie.
 	# version line, bottom right, like "Edge of Chaos F14.6"
 	var ver := "Edge of Chaos R1.0"
 	var vw := _font.get_string_size(ver, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
-	draw_string(_font, Vector2(s.x - vw - 14, s.y - 10), ver,
+	_top.draw_string(_font, Vector2(s.x - vw - 14, s.y - 10), ver,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 13, AMBER_TEXT)
