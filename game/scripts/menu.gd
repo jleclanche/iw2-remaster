@@ -37,11 +37,40 @@ const GUI_FADED := Color(0.5, 0.3745, 0.0)      # igui.pog:44-46 -- dim grid
 # (UNKNOWN); the values below are reconstructed to match the original's look.
 const HOLO_AMBER := Color(1.0, 0.749, 0.0)      # icComms tint (verified)
 const HOLO_SWEEP := Color(1.0, 0.592, 0.0)      # sweep flash (verified)
-const HOLO_GRID_CELL := 26.0                    # px, reconstructed (baked in panel tex)
+const HOLO_GRID_CELL := 30.0                    # px, reconstructed (baked in panel tex)
 const HOLO_SCAN_STEP := 3.0                     # px between scanlines, reconstructed
 const HOLO_SWEEP_SPEED := 0.28                  # panel-heights/sec up, reconstructed
 const HOLO_SWEEP_FRAC := 0.14                   # sweep band height / panel, reconstructed
 const HOLO_SCAN_SPEED := 34.0                   # px/sec scanline drift, reconstructed
+
+# Amber hologram shader for the bust. The head must read as a LIT, modeled 3D
+# face -- eye sockets, nose, cheek, jaw -- but tinted a SINGLE amber hue with only
+# VALUE (brightness) varying, so it can never go green. We build a scalar value
+# `v` from the texture luminance AND a soft key-light N.L term (view-space) so the
+# 3D form shades it (dark recesses -> bright highlights), then paint ALBEDO =
+# amber * v. Because ALBEDO is a scalar times amber it is ALWAYS amber, never
+# green. render_mode unshaded so the engine adds no second light/specular on top;
+# our own N.L is the only shaping and it is folded into `v`. cull_back drops the
+# hollow-shell rear faces (no doubled ghost). Semi-transparency is applied in 2D
+# at composite time (see _draw) so depth stays correct and the grid shows through.
+const _BUST_SHADER_CODE := """
+shader_type spatial;
+render_mode unshaded, cull_back;
+uniform sampler2D tex : source_color, hint_default_white;
+uniform vec3 amber = vec3(1.0, 0.749, 0.0);
+void fragment() {
+	vec3 t = texture(tex, UV).rgb;
+	float lum = dot(t, vec3(0.299, 0.587, 0.114));
+	// soft key light, upper-right-front in view space; N.L shapes the form as the
+	// head turns. Ambient term keeps the shadow side from crushing to pure floor.
+	vec3 L = normalize(vec3(0.45, 0.35, 0.80));
+	float ndl = clamp(dot(normalize(NORMAL), L), 0.0, 1.0);
+	float lit = 0.30 + 0.85 * ndl;                 // ambient + directional
+	float v = clamp(lum * 1.35, 0.0, 1.0) * lit;   // brighten texture, then shade
+	v = clamp(v, 0.06, 1.0);                        // tiny floor: recesses stay dark
+	ALBEDO = amber * v;
+}
+"""
 
 # prison characters with an exported head anchor + dossier
 const CHARACTERS := [
@@ -78,6 +107,7 @@ var item_size := 13
 var _item_rects: Array = []
 var bust_view: SubViewport
 var bust_node: Node3D
+var _bust_shader: Shader
 var _bust_t := 0.0
 var dossier_lines: Array = []  # {text, bold}
 var _scroll := 0.0
@@ -180,33 +210,33 @@ func _pick_character() -> void:
 #  * lit opaquely with a warm rim light the cheek threw a saturated gold specular
 #    triangle by the mouth (the "gold triangle": it is in NO texture -- a
 #    lighting artifact, not geometry). UNSHADED has no specular, so it is gone.
-# Tint is GUI_FOCUSED amber (igui.pog:38-40).
+# Tint is GUI_FOCUSED amber (igui.pog:38-40), applied by _BUST_SHADER_CODE as a
+# single uniform hue over a luminance value ramp so the head reads as ONE warm
+# amber all the way around -- no green/dark shadow side as it rotates.
 func _holo_bust(node: Node3D) -> void:
+	if _bust_shader == null:
+		_bust_shader = Shader.new()
+		_bust_shader.code = _BUST_SHADER_CODE
 	for mi in node.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		if m.mesh == null:
 			continue
 		for si in m.mesh.get_surface_count():
 			var src := m.mesh.surface_get_material(si) as BaseMaterial3D
-			var mat := StandardMaterial3D.new()
-			# UNSHADED so the head self-glows and throws no specular (that is
-			# what banishes the "gold triangle"). OPAQUE with depth writing on so
-			# surfaces occlude correctly -- the RT heads carry internal "Black"
-			# backing cards (e.g. Lori prim0, a flat card at z=-0.02); without
-			# depth those floated to the front as a solid gold blob over the
-			# face. The holographic translucency is applied later, in 2D, when
-			# the whole viewport is composited (see _draw).
-			mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-			mat.cull_mode = BaseMaterial3D.CULL_BACK
-			# Tint the SOURCE colour to amber, preserving its own value: white
-			# (textured skin/hair/eyes) -> amber; black (mouth/eyebrow/backing
-			# cards) -> black, so they read as dark features, not gold. The
-			# texture, where present, still modulates it so features/hair read.
-			var base := src.albedo_color if src != null else Color.WHITE
-			mat.albedo_color = Color(base.r * HOLO_AMBER.r,
-				base.g * HOLO_AMBER.g, base.b * HOLO_AMBER.b, 1.0)
+			# UNSHADED (render_mode in the shader) so the head self-glows and
+			# throws no specular (banishes the "gold triangle"). OPAQUE with depth
+			# writing on so surfaces occlude correctly -- the RT heads carry
+			# internal "Black" backing cards (e.g. Lori prim0, a flat card at
+			# z=-0.02); without depth those floated to the front. The shader paints
+			# the SAME amber everywhere from the texture's luminance, so a dark or
+			# olive texel can no longer bleed GREEN through on the shadow-facing
+			# cheek. Holographic translucency is applied later in 2D (see _draw).
+			var mat := ShaderMaterial.new()
+			mat.shader = _bust_shader
+			mat.set_shader_parameter("amber",
+				Vector3(HOLO_AMBER.r, HOLO_AMBER.g, HOLO_AMBER.b))
 			if src != null and src.albedo_texture != null:
-				mat.albedo_texture = src.albedo_texture
+				mat.set_shader_parameter("tex", src.albedo_texture)
 			m.set_surface_override_material(si, mat)
 
 func _load_dossier(who: String) -> void:
@@ -497,7 +527,7 @@ func _holo_grid(rect: Rect2) -> void:
 	# the front end's fine amber GRID (grid dim = GUI_FADED, igui.pog:44-46). The
 	# engine bakes the grid into its panel texture, so the cell size here is
 	# reconstructed (HOLO_GRID_CELL). It covers the whole screen.
-	var g := Color(GUI_FADED.r, GUI_FADED.g, GUI_FADED.b, 0.16)
+	var g := Color(GUI_FADED.r, GUI_FADED.g, GUI_FADED.b, 0.24)
 	var x := rect.position.x
 	while x <= rect.end.x:
 		draw_line(Vector2(x, rect.position.y), Vector2(x, rect.end.y), g, 1.0)
@@ -537,10 +567,12 @@ func _holo_overlay(panel: Rect2) -> void:
 func _draw() -> void:
 	var s := get_viewport_rect().size
 	draw_rect(Rect2(Vector2.ZERO, s), Color(0.0, 0.0, 0.0, 1.0))
-	# the amber holo GRID covers the whole screen, behind everything
-	_holo_grid(Rect2(Vector2.ZERO, s))
 	var strip_w := clampf(s.x * 0.21, 260, 340)
 	_circuit_strip(strip_w, s.y)
+	# ONE uniform amber GRID over the whole screen, edge to edge, behind the menu
+	# column AND the head. Drawn after the circuit strip so it reads at the same
+	# brightness on the left as it does in open space -- no second, denser grid.
+	_holo_grid(Rect2(Vector2.ZERO, s))
 	# capsule buttons
 	_item_rects.clear()
 	var items := _items()
@@ -565,13 +597,16 @@ func _draw() -> void:
 		var bust_size := minf(s.y * 0.62, 560.0)
 		var bust_pos := Vector2(s.x * 0.40, -bust_size * 0.04)
 		var panel := Rect2(bust_pos, Vector2(bust_size, bust_size))
-		# a faint amber volume seats the head over the grid
-		draw_rect(panel, Color(HOLO_AMBER.r, HOLO_AMBER.g, HOLO_AMBER.b, 0.04),
-				true)
-		# the head, composited translucently so it reads as a hologram volume
+		# NO box: the head floats directly in the grid. Composited SEMI-transparent
+		# so the full-screen grid reads faintly THROUGH the amber head (a hologram
+		# volume, not an opaque cutout). Depth was resolved in the opaque 3D pass,
+		# so this 2D blend cannot double the hollow-shell back faces.
 		draw_texture_rect(bust_view.get_texture(), panel, false,
-				Color(1.0, 1.0, 1.0, 0.86))
-		_holo_overlay(panel)  # scanlines + upward sweep, over the head
+				Color(1.0, 1.0, 1.0, 0.66))
+		# scanlines + upward sweep span the open area (from the menu-column divider
+		# to the screen edges) rather than a rectangle around the head, so they
+		# never draw a panel frame / bottom band around it.
+		_holo_overlay(Rect2(strip_w, 0.0, s.x - strip_w, s.y))
 		# scrolling dossier under the bust
 		var dx := s.x * 0.47
 		var dy0 := s.y * 0.55
