@@ -43,32 +43,43 @@ const HOLO_SWEEP_SPEED := 0.28                  # panel-heights/sec up, reconstr
 const HOLO_SWEEP_FRAC := 0.14                   # sweep band height / panel, reconstructed
 const HOLO_SCAN_SPEED := 34.0                   # px/sec scanline drift, reconstructed
 
-# Amber hologram shader for the bust. The head must read as a LIT, modeled 3D
-# face -- eye sockets, nose, cheek, jaw -- but tinted a SINGLE amber hue with only
-# VALUE (brightness) varying, so it can never go green. We build a scalar value
-# `v` from the texture luminance AND a soft key-light N.L term (view-space) so the
-# 3D form shades it (dark recesses -> bright highlights), then paint ALBEDO =
-# amber * v. Because ALBEDO is a scalar times amber it is ALWAYS amber, never
-# green. render_mode unshaded so the engine adds no second light/specular on top;
-# our own N.L is the only shaping and it is folded into `v`. cull_back drops the
-# hollow-shell rear faces (no doubled ghost). Semi-transparency is applied in 2D
-# at composite time (see _draw) so depth stays correct and the grid shows through.
+# The bust is the character's REAL textured 3D head -- actual skin tone, hair,
+# eyes, lips -- warmly LIT for form, NOT recoloured. The amber in this front end
+# lives only in the GRID and the scanline/sweep OVERLAYS (drawn in 2D over the
+# head), never on the head itself. Warm KEY_LIGHT + weaker WARM_FILL give the face
+# 3D depth while keeping skin skin-coloured; because we no longer multiply the
+# texture by saturated amber (which zeroed blue and turned the shadow side green),
+# the shadow side is simply darker skin. Specular is disabled so no "gold triangle"
+# artifact appears. Semi-transparency is applied in 2D at composite time (see
+# _draw) so depth stays correct and the amber grid shows faintly through the head.
+const KEY_LIGHT := Color(1.0, 0.83, 0.62)       # warm key (high R:G to beat olive)
+const WARM_FILL := Color(1.0, 0.78, 0.55)       # warmer fill (lifts shadow side)
+
+# The bust is the character's REAL textured head, LIT by the warm key/fill/ambient
+# rig above (this is a normal -- not unshaded -- spatial shader, so the engine
+# lights it and the geometry gets 3D form). It keeps the true skin/hair/eye
+# colours, with ONE correction: these low-poly RT head textures bake COOL casts
+# into shadowed/scalp regions -- olive-green on some, cyan/teal on others. Skin,
+# hair, lips and eyes are all RED-dominant, so we simply clamp green and blue to
+# never exceed red: warm pixels are untouched, only the anomalous cool pixels get
+# pulled back to warm/neutral (never green, never cyan). SPECULAR=0 kills the old
+# "gold triangle". albedo_col folds in the source material colour so the internal
+# "Black" backing cards stay black (occluded), not default-white.
 const _BUST_SHADER_CODE := """
 shader_type spatial;
-render_mode unshaded, cull_back;
+render_mode cull_back;
 uniform sampler2D tex : source_color, hint_default_white;
-uniform vec3 amber = vec3(1.0, 0.749, 0.0);
+uniform vec3 albedo_col = vec3(1.0);
 void fragment() {
-	vec3 t = texture(tex, UV).rgb;
-	float lum = dot(t, vec3(0.299, 0.587, 0.114));
-	// soft key light, upper-right-front in view space; N.L shapes the form as the
-	// head turns. Ambient term keeps the shadow side from crushing to pure floor.
-	vec3 L = normalize(vec3(0.45, 0.35, 0.80));
-	float ndl = clamp(dot(normalize(NORMAL), L), 0.0, 1.0);
-	float lit = 0.30 + 0.85 * ndl;                 // ambient + directional
-	float v = clamp(lum * 1.35, 0.0, 1.0) * lit;   // brighten texture, then shade
-	v = clamp(v, 0.06, 1.0);                        // tiny floor: recesses stay dark
-	ALBEDO = amber * v;
+	vec3 c = texture(tex, UV).rgb * albedo_col;
+	// red-dominant skin: green/blue may not exceed red, so no cool (green/cyan)
+	// cast can survive, but natural warm skin/hair/lips pass through unchanged.
+	c.g = min(c.g, c.r);
+	c.b = min(c.b, c.r);
+	ALBEDO = c;
+	ROUGHNESS = 1.0;
+	METALLIC = 0.0;
+	SPECULAR = 0.0;
 }
 """
 
@@ -139,9 +150,36 @@ func _ready() -> void:
 	cam.position = Vector3(0, -0.02, 1.05)
 	cam.fov = 26.0
 	bust_view.add_child(cam)
-	# No lights: the bust is a self-lit amber HOLOGRAM (see _holo_bust). The
-	# previous hand-placed key/rim lights were the wrong model -- they flat-lit
-	# the head grey-green and their warm rim threw the "gold triangle" specular.
+	# Warm lighting for the REAL textured head (see _holo_bust). These low-poly RT
+	# heads bake OLIVE/green tones into their shadowed texture regions, so a hard
+	# one-sided key reveals a green shadow side. We defeat that by lighting mostly
+	# from the FRONT with a strong warm FILL and a warm AMBIENT wash, so shadowed
+	# skin is lifted warm (olive -> warm skin) rather than left dark/green -- while
+	# still keeping enough key/fill imbalance for 3D form. Specular is disabled on
+	# the material so no warm rim throws the old "gold triangle" artifact.
+	var key := DirectionalLight3D.new()
+	key.light_color = KEY_LIGHT
+	key.light_energy = 1.30
+	bust_view.add_child(key)
+	key.position = Vector3(0.3, 0.45, 1.0)   # slightly upper-right, mostly FRONTAL
+	key.look_at(Vector3.ZERO)
+	var fill := DirectionalLight3D.new()
+	fill.light_color = WARM_FILL
+	fill.light_energy = 0.9                   # strong warm fill from front-left
+	bust_view.add_child(fill)
+	fill.position = Vector3(-0.5, 0.2, 0.95)
+	fill.look_at(Vector3.ZERO)
+	# warm ambient wash: uniformly lifts + warms the shadows so shadowed skin reads
+	# warm (olive -> skin), never green. AMBIENT_SOURCE_COLOR is independent of the
+	# (transparent) background, so the viewport's transparent_bg is preserved and
+	# the grid still shows through the head.
+	var env := Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color(0.0, 0.0, 0.0, 0.0)
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(1.0, 0.74, 0.50)
+	env.ambient_light_energy = 0.70
+	cam.environment = env
 	_setup_cursor()
 	if "--bustshot" in OS.get_cmdline_user_args():
 		_shot = true
@@ -199,20 +237,13 @@ func _pick_character() -> void:
 	_load_dossier(_char)
 	_scroll = 0.0
 
-# Re-skin the bust as an amber HOLOGRAM. The original prison dossier bust is not
-# a naturalistically-lit solid head -- it is a translucent, self-lit amber
-# hologram (the amber twin of Clay's real-time RED comm hologram in comms.gd,
-# which is built the same way from icBeamAvatar scanline planes over an unshaded
-# head). Rendering it UNSHADED is also what makes the RT head read correctly:
-#  * these RT avatar heads (az/clay/smith) are hollow FRONT SHELLS -- the Body
-#    surface has zero rear-facing polygons -- so lit opaquely and turned to a
-#    hard profile the open back of the skull shows. Amber + translucent hides it.
-#  * lit opaquely with a warm rim light the cheek threw a saturated gold specular
-#    triangle by the mouth (the "gold triangle": it is in NO texture -- a
-#    lighting artifact, not geometry). UNSHADED has no specular, so it is gone.
-# Tint is GUI_FOCUSED amber (igui.pog:38-40), applied by _BUST_SHADER_CODE as a
-# single uniform hue over a luminance value ramp so the head reads as ONE warm
-# amber all the way around -- no green/dark shadow side as it rotates.
+# Give the bust a warmly-LIT material that shows its OWN texture -- real skin tone,
+# hair, eyes, lips (see _BUST_SHADER_CODE). We do NOT recolour it: the amber lives
+# only in the 2D grid + scanline/sweep overlays (see _draw), not on the head. The
+# shader is lit by the warm key/fill/ambient rig for 3D form, keeps the true
+# colours, and only clamps the baked green shadow cast. Holographic translucency is
+# applied in 2D at composite time (see _draw), so the amber grid reads faintly
+# through the head.
 func _holo_bust(node: Node3D) -> void:
 	if _bust_shader == null:
 		_bust_shader = Shader.new()
@@ -223,18 +254,10 @@ func _holo_bust(node: Node3D) -> void:
 			continue
 		for si in m.mesh.get_surface_count():
 			var src := m.mesh.surface_get_material(si) as BaseMaterial3D
-			# UNSHADED (render_mode in the shader) so the head self-glows and
-			# throws no specular (banishes the "gold triangle"). OPAQUE with depth
-			# writing on so surfaces occlude correctly -- the RT heads carry
-			# internal "Black" backing cards (e.g. Lori prim0, a flat card at
-			# z=-0.02); without depth those floated to the front. The shader paints
-			# the SAME amber everywhere from the texture's luminance, so a dark or
-			# olive texel can no longer bleed GREEN through on the shadow-facing
-			# cheek. Holographic translucency is applied later in 2D (see _draw).
 			var mat := ShaderMaterial.new()
 			mat.shader = _bust_shader
-			mat.set_shader_parameter("amber",
-				Vector3(HOLO_AMBER.r, HOLO_AMBER.g, HOLO_AMBER.b))
+			var col: Color = src.albedo_color if src != null else Color.WHITE
+			mat.set_shader_parameter("albedo_col", Vector3(col.r, col.g, col.b))
 			if src != null and src.albedo_texture != null:
 				mat.set_shader_parameter("tex", src.albedo_texture)
 			m.set_surface_override_material(si, mat)
