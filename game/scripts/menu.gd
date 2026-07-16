@@ -34,23 +34,46 @@ const GUI_FADED := Color(0.5, 0.3745, 0.0)      # igui.pog:44-46 -- dim grid
 #
 # The movie frames are black-backed; the GUI composites them over its amber
 # grid page so the grid reads through the dark regions (additive blend), with
-# the scanline/sweep overlay drawn ON TOP of the movie:
+# the sweep overlay drawn ON TOP of the movie. The page geometry is EXTRACTED
+# from the DLL images (raw .rdata floats dumped and reinterpreted, same trick
+# as the HUD palette):
 #   HOLO_AMBER = icComms tint FcColour[0], ctor 0x1007f720 (iwar2.dll.c:105107-109)
 #                = 0x3f800000,0x3f3fbe77,0 = (1.0, 0.749, 0.0)  (== GUI_FOCUSED)
-#   HOLO_SWEEP = sweep-flash colour DAT_10174fb0, FUN_100e6750 0x100e6750
-#                (iwar2.dll.c:195396-398) = 0x3f800000,0x3f178d50,0 = (1.0,0.592,0.0)
-# The sweep motion is time-driven, wrapped 0..1 (iwar2.dll.c:195961-967),
-# sweeping UP. Grid cell size, scanline spacing and the sweep band height /
-# scroll rates are .rdata floats the decomp left un-inlined (UNKNOWN); cell,
-# spacing and band height below are measured from an original screenshot
-# (band ~40px of a ~725px panel ≈ 0.055, a narrow bright bar with a soft warm
-# halo -- not a wide smear), the rates reconstructed to match its motion.
+#   HOLO_SWEEP = comm "speaking" flash DAT_10174fb0 (static init FUN_100e6750)
+#                = (1.0, 0.592, 0.0) -- the blink colour, NOT the sweep bar
+#   GRID_CELL_PX = DAT_1011d970 = 16.0 -- the same 16-px graph-paper grid every
+#                HUD block frame draws (FUN_100e2620); fixed native pixels
+#   SWEEP_BAND_PX = DAT_101190b4 = 4.0 -- the sweep is a HARD 4-px additive
+#                quad, colour chrome x DAT_1011c034 (0.30), NO halo, NO texture
+#                (comm-MFD sweep renderer FUN_10102490 @ 0x10102490 -- the only
+#                sweep renderer recovered; the page one is assumed identical)
+#   SWEEP_PERIOD = 3.0 s -- y = frac(time_ms * DAT_10118498 (1/3000)) * travel,
+#                a top-to-bottom sawtooth (moves DOWN and wraps; the "reflect"
+#                branch compares against 0.0 so it never bounces)
+#   SCROLL_PX_S = DAT_10117d40 = 18.0 -- dossier scroll px/s (icMovie::Tick
+#                0x17e90); when the text has scrolled fully off, the screen
+#                ADVANCES to the next character (vtable+0x3c)
+#   movie window = 400x400 native px at y=0, x centred between the menu bar's
+#                right edge and the screen's right edge (icMovie::MovieView
+#                0x18140, raw-disassembled); dossier = movie rect inset 24 px,
+#                from movie-bottom+2 to the screen bottom (TextView 0x18220),
+#                font:/fonts/handelgothic bt_8pt (FUN_100184b0)
+# The GUI is fixed-pixel; we scale by screen height against the 1024x768
+# reference (REF_H). Still RECONSTRUCTED (no binary source found): the fine
+# scanlines (possibly a video artifact in our references -- the "ucp" texture
+# once cited as the scanline pattern is actually the MFD barcode ribbon) and
+# the text fade-out under the movie (FcGraphicsEngine::DrawText hard-scissors
+# glyphs at the clip rect; the fade matches the reference video, source
+# unlocated).
 const HOLO_AMBER := Color(1.0, 0.749, 0.0)      # icComms tint (verified)
-const HOLO_SWEEP := Color(1.0, 0.592, 0.0)      # sweep flash (verified)
-const HOLO_GRID_CELL := 30.0                    # px, reconstructed (baked in panel tex)
+const HOLO_SWEEP := Color(1.0, 0.592, 0.0)      # comm speaking flash (verified)
+const REF_H := 768.0                            # fixed-pixel GUI reference screen
+const GRID_CELL_PX := 16.0                      # native px (extracted)
+const SWEEP_BAND_PX := 4.0                      # native px (extracted)
+const SWEEP_PERIOD := 3.0                       # s per top-to-bottom pass (extracted)
+const SWEEP_ALPHA := 0.30                       # chrome x 0.30, additive (extracted)
+const SCROLL_PX_S := 18.0                       # dossier px/s at native res (extracted)
 const HOLO_SCAN_STEP := 3.0                     # px between scanlines, reconstructed
-const HOLO_SWEEP_SPEED := 0.28                  # panel-heights/sec up, reconstructed
-const HOLO_SWEEP_FRAC := 0.02                   # core bar height / panel, from ref
 const HOLO_SCAN_SPEED := 34.0                   # px/sec scanline drift, reconstructed
 
 # The six prison characters, in icGUIMovie property-registration order
@@ -131,6 +154,9 @@ func _ready() -> void:
 	_overlay = Control.new()
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# the original draws its page decorations additively (blend state 2 in
+	# FUN_10102490), so the sweep BRIGHTENS the face as it passes over it
+	_overlay.material = add_mat
 	_overlay.draw.connect(_draw_overlay)
 	add_child(_overlay)
 	_setup_cursor()
@@ -408,8 +434,15 @@ func _process(delta: float) -> void:
 	if not visible:
 		return
 	_bust_t += delta
-	_scroll += delta * 14.0
+	# dossier scroll: 18 px/s at native res (DAT_10117d40, icMovie::Tick),
+	# scaled with the fixed-pixel page
+	_scroll += delta * SCROLL_PX_S * get_viewport_rect().size.y / REF_H
 	_layout_movie()
+	# when the dossier has scrolled fully off, the original advances to the
+	# NEXT character (icMovie::Tick 0x17e90 -> vtable+0x3c)
+	if not dossier_lines.is_empty() \
+			and _scroll > dossier_lines.size() * 17.0 + _panel.size.y * 0.19:
+		_pick_character()
 	queue_redraw()
 	_overlay.queue_redraw()
 	if _shot:
@@ -512,18 +545,20 @@ func _circuit_strip(w: float, h: float) -> void:
 	draw_line(Vector2(w, 0), Vector2(w, h), AMBER_DIM, 1.5, true)
 
 func _holo_grid(rect: Rect2) -> void:
-	# the front end's fine amber GRID (grid dim = GUI_FADED, igui.pog:44-46). The
-	# engine bakes the grid into its panel texture, so the cell size here is
-	# reconstructed (HOLO_GRID_CELL). It covers the whole screen.
+	# the page's amber GRID: the engine's 16-native-px graph-paper grid, the
+	# same one every HUD block frame draws (DAT_1011d970 = 16.0, FUN_100e2620),
+	# scaled by screen height against the 1024x768 reference. Grid colour dim =
+	# GUI_FADED (igui.pog:44-46); the alpha is reconstructed.
+	var cell := rect.end.y * GRID_CELL_PX / REF_H
 	var g := Color(GUI_FADED.r, GUI_FADED.g, GUI_FADED.b, 0.24)
 	var x := rect.position.x
 	while x <= rect.end.x:
 		draw_line(Vector2(x, rect.position.y), Vector2(x, rect.end.y), g, 1.0)
-		x += HOLO_GRID_CELL
+		x += cell
 	var y := rect.position.y
 	while y <= rect.end.y:
 		draw_line(Vector2(rect.position.x, y), Vector2(rect.end.x, y), g, 1.0)
-		y += HOLO_GRID_CELL
+		y += cell
 
 func _holo_overlay(panel: Rect2) -> void:
 	# Drawn on _overlay, ABOVE the movie. Horizontal SCANLINES scrolling slowly
@@ -536,35 +571,16 @@ func _holo_overlay(panel: Rect2) -> void:
 		_overlay.draw_line(Vector2(panel.position.x, y),
 				Vector2(panel.end.x, y), sc, 1.0)
 		y += HOLO_SCAN_STEP
-	# the bright SWEEP band, moving UP the panel and wrapping (time-driven wrap,
-	# iwar2.dll.c:195961-967; colour = sweep flash HOLO_SWEEP, iwar2.dll.c:
-	# 195396-398). In the reference it is a THIN hard bar -- ~2% of the panel,
-	# with a hot centre line -- inside a dim warm halo ~4.5x as tall. Nothing
-	# like a wide smear: the bar reads as a single scan line passing over the
-	# page.
-	var band_h := panel.size.y * HOLO_SWEEP_FRAC
-	var halo_h := band_h * 4.5
-	var frac := fmod(_bust_t * HOLO_SWEEP_SPEED, 1.0)
-	var cy := panel.end.y - frac * (panel.size.y + halo_h) + halo_h * 0.5
-	var steps := 10
-	for i in steps:
-		var t := float(i) / float(steps - 1)              # 0..1 across the halo
-		var yy := cy - halo_h * 0.5 + t * halo_h
-		if yy < panel.position.y or yy > panel.end.y:
-			continue
-		var a := 1.0 - absf(t - 0.5) * 2.0                # soft triangular falloff
-		_overlay.draw_line(Vector2(panel.position.x, yy),
-				Vector2(panel.end.x, yy),
-				Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, a * 0.16),
-				halo_h / float(steps) + 1.0)
-	var top := clampf(cy - band_h * 0.5, panel.position.y, panel.end.y)
-	var bot := clampf(cy + band_h * 0.5, panel.position.y, panel.end.y)
-	if bot > top:
-		_overlay.draw_rect(Rect2(panel.position.x, top, panel.size.x, bot - top),
-				Color(HOLO_SWEEP.r, HOLO_SWEEP.g, HOLO_SWEEP.b, 0.70))
-		if cy > panel.position.y and cy < panel.end.y:
-			_overlay.draw_line(Vector2(panel.position.x, cy),
-					Vector2(panel.end.x, cy), Color(1.0, 0.85, 0.30, 0.80), 2.0)
+	# the SWEEP: extracted from the comm-MFD sweep renderer (FUN_10102490) --
+	# a HARD 4-native-px additive quad in the page chrome at 0.30 alpha, no
+	# halo, no hot line, no texture, sweeping DOWN the page as a 3.0 s sawtooth
+	# (the soft glow around it in video references is encoder bloom, not
+	# geometry). The overlay canvas item is additive, like the original blend.
+	var band_h := get_viewport_rect().size.y * SWEEP_BAND_PX / REF_H
+	var frac := fmod(_bust_t / SWEEP_PERIOD, 1.0)
+	var y0 := panel.position.y + frac * (panel.size.y - band_h)
+	_overlay.draw_rect(Rect2(panel.position.x, y0, panel.size.x, band_h),
+			Color(HOLO_AMBER.r, HOLO_AMBER.g, HOLO_AMBER.b, SWEEP_ALPHA))
 
 func _draw_overlay() -> void:
 	# the layer ABOVE the movie: scanlines + sweep across the open area, and the
@@ -599,10 +615,6 @@ func _draw_overlay() -> void:
 		_overlay.draw_string(_font_small, Vector2(dx, ypos), str(entry["text"]),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 12,
 				Color(col2.r, col2.g, col2.b, col2.a * a))
-	# once the last line has faded out under the movie, re-enter from the
-	# bottom of the screen
-	if start_y + total * line_h - _scroll < fade_top:
-		_scroll = -(y_bottom - start_y)
 
 func _draw() -> void:
 	var s := get_viewport_rect().size

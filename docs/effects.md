@@ -1093,4 +1093,26 @@ re-enters from the bottom. Dossier HTML is reflowed like a browser would:
 raw newlines fold to spaces, only `<p>`/`<br>` break lines — the source files
 hard-wrap their paragraphs, which previously produced ragged columns.
 
+**Round 3 — the page geometry EXTRACTED from the binaries** (raw `.rdata`
+floats dumped from the DLL images and reinterpreted, same trick as the HUD
+palette; renderers read via decomp + `disasm.py` where Ghidra dropped them):
+
+| thing | value | source |
+|---|---|---|
+| movie window | **400×400 native px at y=0**, x centred between the menu bar's right edge and the screen's right edge, clamped to fit | `icMovie::MovieView` 0x18140 (raw-disassembled; the 400s are immediates, `DAT_10117d90` = 400.0) |
+| dossier text rect | movie rect **inset 24 px** each side, from **movie-bottom+2** to the screen bottom | `icMovie::TextView` 0x18220 |
+| dossier font | `font:/fonts/handelgothic bt_8pt` | `FUN_100184b0` (the dossier is a real `FcTextWindow`) |
+| dossier scroll | **18.0 px/s** (`DAT_10117d40`); **on completion the screen advances to the next character** (vtable+0x3c) | `icMovie::Tick` 0x17e90 |
+| grid | **16.0 native px** cell (`DAT_1011d970`) — the same graph-paper grid every HUD block frame draws | `FUN_100e2620` |
+| sweep bar | **hard 4.0 px** quad (`DAT_101190b4`), colour **chrome × 0.30** (`DAT_1011c034`), additive, **no halo, no texture** | comm-MFD sweep renderer `FUN_10102490` (the only sweep renderer recovered; the page one assumed identical) |
+| sweep motion | **downward sawtooth, 3.0 s period** — `y = frac(time_ms × DAT_10118498 (1/3000)) × travel`; the "reflect" compares against 0.0 so it never bounces | `FUN_10102490` |
+| "ucp" texture | **a barcode ribbon** (256×32, digits over bars) scrolled along the MFD frame — NOT a scanline pattern (corrects the old note) | `images/hud/ucp` + `FUN_10101f00` block |
+
+Still reconstructed, with no binary source found: the **fine scanlines**
+(possibly a video artifact in the references) and the **text fade-out** under
+the movie (`FcGraphicsEngine::DrawText` 0x609c0 hard-scissors glyphs with UV
+interpolation — no alpha ramp; the fade matches the reference video and hides
+the whole-line pop, so we keep it, flagged as reconstruction). `menu.gd` uses
+all extracted values scaled by screen height against the 1024×768 reference.
+
 ---
