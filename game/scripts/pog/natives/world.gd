@@ -1341,8 +1341,50 @@ func _sh_heal(_t, a: Array) -> Variant:
 	return 0
 
 # @native iship.HasFired
-func _sh_has_fired(_t, _a: Array) -> Variant:
+# icShip::HasFired (0x10074fe0): read-and-CLEAR the has-fired flag stamped by
+# the weapon fire path (SetLastFireTarget 0x10075000). istation.pog's station
+# protection loop keys entirely off this + LastFireTarget below -- with the
+# old stub returning 0 the whole shipped reactive system was blind.
+func _sh_has_fired(_t, a: Array) -> Variant:
+	var s := _as_sim(a[0])
+	if s == null:
+		return 0
+	if s.is_player:
+		var v: bool = game != null and game.player_has_fired
+		if game != null:
+			game.player_has_fired = false
+		return 1 if v else 0
+	if s.node is AiShip:
+		var n := s.node as AiShip
+		var v2 := n.has_fired
+		n.has_fired = false
+		return 1 if v2 else 0
 	return 0
+
+# @native iship.LastFireTarget
+# icShip::LastFireTarget (0x10074fc0), non-clearing read of the target the
+# ship last engaged with its guns.
+func _sh_last_fire_target(_t, a: Array) -> Variant:
+	var s := _as_sim(a[0])
+	if s == null:
+		return null
+	var node: Node3D = null
+	if s.is_player:
+		node = game.player_last_fire_target if game != null else null
+	elif s.node is AiShip:
+		node = (s.node as AiShip).last_fire_target
+	if node == null or not is_instance_valid(node):
+		return null
+	return sim_for_node(node)
+
+## The PogSim wrapping an already-live world node, if any.
+func sim_for_node(node: Node3D) -> PogSim:
+	if game != null and node == game.ship:
+		return player_sim()
+	for s: PogSim in sims.values():
+		if s.node == node:
+			return s
+	return null
 
 # @native iship.Dock
 func _sh_dock(_t, a: Array) -> Variant:
@@ -1443,7 +1485,6 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 # @stub iship.IsAIDisabled
 # @stub iship.WeaponsUseExplicitTarget
 # @stub iship.WeaponTargetsFromContactList
-# @stub iship.LastFireTarget
 # @stub iship.BrightnessOf
 # @stub iship.PercentageThrusterEmission
 # @stub iship.RecalculateMOIFromMass
@@ -1585,7 +1626,7 @@ const _BINDINGS := {
 	"iship.isaidisabled": "_sh_noop",
 	"iship.weaponsuseexplicittarget": "_sh_noop",
 	"iship.weapontargetsfromcontactlist": "_sh_noop",
-	"iship.lastfiretarget": "_sh_noop", "iship.dock": "_sh_dock",
+	"iship.lastfiretarget": "_sh_last_fire_target", "iship.dock": "_sh_dock",
 	"iship.undock": "_sh_undock", "iship.undockself": "_sh_undock",
 	"iship.brightnessof": "_sh_noop",
 	"iship.percentagethrusteremission": "_sh_noop",

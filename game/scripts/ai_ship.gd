@@ -66,11 +66,49 @@ var infection_fx: Node3D = null  # the sfx/infection crawl; presence IS the
 # standard PBC bolt. Spec dict as PbcWeapons uses, plus "refire".
 var bolt_spec: Dictionary = {}
 
+# --- icShip aggression bookkeeping (extracted, docs/combat.md) ---------------
+#   +0x1a0 last aggressor / +0x19d was-attacked (iiSim::SetLastAggressor
+#          0x10079640: recorded by every ApplyDamage/ApplyWeaponDamage, never
+#          decays -- consumed by readers)
+#   +0x2e0 max_player_shots_before_aggression (ini property, default 4) and
+#          +0x2e4 the counter; "pissed" = counter > tolerance
+#          (icShip::IsPissedWithPlayer 0x10002be0)
+#   +0x2e8/+0x2ec last fire target + has-fired flag (SetLastFireTarget
+#          0x10075000, set by the weapon fire path with the gun's engaged
+#          target; the getters are read-and-optionally-clear) -- these feed
+#          the POG reactive systems (istation.pog's station protection,
+#          igangsterincidentgen.pog), which we RUN
+var last_aggressor: Node3D = null
+var was_attacked := false
+var player_shots := 0
+var shot_tolerance := 4       # max_player_shots_before_aggression
+var has_fired := false
+var last_fire_target: Node3D = null
+var escort_of: Node3D = null  # iai.GiveEscortOrder's escortee (FcGroup stand-in)
+var explicit_hostile := false # icPlayerContactList::SetSimAsHostile (0x100059c0)
+
+func set_last_aggressor(who: Node3D) -> void:
+	# iiSim::SetLastAggressor refuses self-recording
+	if who == null or who == self:
+		return
+	last_aggressor = who
+	was_attacked = true
+
+func pissed_with_player() -> bool:
+	return player_shots > shot_tolerance
+
+func record_fire(at: Node3D) -> void:
+	# icShip::SetLastFireTarget: the flag AND the target, set together
+	has_fired = true
+	if at != null:
+		last_fire_target = at
+
 func setup(props: Dictionary) -> void:
 	load_stats(props)
 	hull_max = float(props.get("hit_points", 1000))
 	hull = hull_max
 	radius = float(props.get("radius", 60.0))
+	shot_tolerance = int(props.get("max_player_shots_before_aggression", 4))
 
 func setup_ini(path: String, model: Node3D = null) -> void:
 	# the authored hull: hit_points, armour and the full subsim list
@@ -79,6 +117,9 @@ func setup_ini(path: String, model: Node3D = null) -> void:
 	if not rec.is_empty():
 		radius = float((rec.get("properties", {}) as Dictionary)
 				.get("radius", radius))
+	if not rec.is_empty():
+		shot_tolerance = int((rec.get("properties", {}) as Dictionary)
+				.get("max_player_shots_before_aggression", shot_tolerance))
 	var fitted := ShipSystems.for_ship(path)
 	if fitted.hull_max <= 0.0:
 		return

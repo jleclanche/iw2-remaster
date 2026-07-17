@@ -1934,3 +1934,41 @@ full pick weighs group sizes and agility (`CalculateStanding`); we keep the
 engine's own four-way random fallback (Think's do/while at 0x50280). ALSO:
 the dev H-key (spawn hostile) is now demo-build-only -- a stray H in the
 campaign summoned the reported mystery marauder.
+
+## The attack-response system (icShip / icAIPilot / icAIEscortAgent)
+
+Extracted whole; the port runs the same split the original had:
+
+- iiSim::SetLastAggressor (0x10079640): every ApplyDamage/ApplyWeaponDamage
+  above the 1e-6 epsilon records the attacker at +0x1a0 (+0x19d
+  was-attacked); refuses self; never decays -- readers consume it.
+- icShip::CheckForReactives (0x10073ac0): PLAYER shots on a non-hostile
+  ship count at +0x2e4 against the ini's
+  max_player_shots_before_aggression (+0x2e0, default 4). Past the
+  tolerance: SetLastAggressor(player) + CheckReaction + the ship is
+  inserted into icPlayerContactList's reactives (SetSimAsHostile 0x100059c0)
+  -- the red contact, a TargetNearestHostile candidate. A player kill of a
+  friendly does the same (icShip::ApplyWeaponDamage 0x10073cf0 tail).
+  icShip::IsPissedWithPlayer (0x10002be0) = counter > tolerance.
+- icShip::CheckReaction (0x10075860) -> icAIPilot::OnAttack (0x10055130):
+  reacts only to the player; gate = feeling <= neutral OR pissed; then
+  fight/flee by threat ratios (pilot +0x218/+0x21c) -- which DEFAULT to
+  1000.0 (ctor 0x10054130) and are never set by any shipped script or ini,
+  so the stock outcome is the IGNORE branch. The ship itself does not open
+  fire; the shooting comes from the two layers below. OnDamage (0x10055430,
+  the "wimpy flee") is likewise dormant at its 0.0 default threshold.
+- icAIEscortAgent::GroupAttacker (0x100530b0) -> ExplicitAttack
+  (0x10052ed0): an escort polls its GROUP (no radius) for a member holding
+  a hostile last-aggressor and attacks that aggressor, consuming the
+  member's record. Port: AiShip.escort_of, set by iai.GiveEscortOrder.
+- The POG reactive layer -- istation.pog's station-protection loop and
+  igangsterincidentgen.pog -- polls iship.HasFired / iship.LastFireTarget
+  (icShip +0x2ec/+0x2e8, SetLastFireTarget 0x10075000, stamped by the
+  weapon fire path with the gun's engaged target; getters read-and-
+  optionally-clear). Those two natives were STUBS returning 0, which is
+  why the whole shipped response system (warnings, police launches, enemy
+  lists) never fired. They are real now.
+- Faction feeling: icFaction::SetFeeling/AdjustFeeling (0x10047180/
+  0x100473a0) have NO C++ callers -- feeling changes are POG-only, which
+  our factions natives already implement. No police/bounty/lawful-zone
+  system exists in C++ at all.

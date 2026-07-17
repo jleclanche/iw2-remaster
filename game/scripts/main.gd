@@ -115,6 +115,11 @@ var zoom_factor := 1.0
 var base_max_accel := Vector3(100, 100, 150)
 var base_turn_accel := Vector3(30, 30, 30)
 var free_toggle := false
+var aim_assist := true  # icPlayerPilot+0x9c, hud_menu_toggle_aim_assist
+# icShip +0x2ec/+0x2e8 on the PLAYER ship: has-fired flag + last fire target
+# (SetLastFireTarget 0x10075000); read-and-clear by iship.HasFired
+var player_has_fired := false
+var player_last_fire_target: Node3D = null
 var roll_yaw_swap := false  # icPlayerPilot.RollYawToggleHold
 var ap_mode := 0  # 0 off, 1 approach, 2 formate, 3 dock, 4 match velocity
 var _ap_dock_retry := 0.0  # dock autopilot: re-try the gate once a second
@@ -1021,7 +1026,7 @@ func _update_contrails() -> void:
 			continue
 		ships.append({"node": a, "vel": a.velocity, "player": false,
 			"width": 0.0, "lds": false,
-			"col": Hud.RED if a.behavior == "attack" else Hud.GREEN})
+			"col": Hud.RED if _is_hostile(a) else Hud.GREEN})
 	space_fx.update_contrails(get_physics_process_delta_time(), ships,
 		docked_at != "" or jump_state >= 3)
 
@@ -1472,6 +1477,10 @@ func spawn_hostile(at: Vector3) -> AiShip:
 func spawn_bolt(shooter: Node3D, dir: Vector3) -> void:
 	# NPC cannons: nps_pbc.ini fires the same sims/weapons/pbc_bolt, and its
 	# effects rig carries the same audio/sfx/pbc FcSoundNode as the player gun
+	if shooter is AiShip:
+		# SetLastFireTarget: an attacking AI's engaged target is the player
+		(shooter as AiShip).record_fire(
+				ship if (shooter as AiShip).behavior == "attack" else null)
 	weapons.spawn(shooter, dir, PbcWeapons.PBC_BOLT)
 	audio.play("audio/sfx/pbc.wav", -8.0)
 
@@ -1497,7 +1506,31 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
 	ExplosionFx.play(self, "hull_impact",
 			Transform3D(Basis.looking_at(-out), pos), 1.0)
 	var ai := target as AiShip
-	if ai != null and ai.hit_by_bolt(spec, age, pos)["killed"]:
+	if ai == null:
+		return
+	# iiSim::ApplyWeaponDamage records the attacker (SetLastAggressor
+	# 0x10079640); icShip::CheckForReactives (0x10073ac0) additionally counts
+	# PLAYER shots on a non-hostile ship and only reacts past the ini's
+	# max_player_shots_before_aggression (default 4) -- the original's
+	# "forgive the first few shots" rule
+	if shooter is AiShip:
+		ai.set_last_aggressor(shooter)
+	elif shooter == ship:
+		if not _is_hostile(ai):
+			ai.player_shots += 1
+			if ai.pissed_with_player():
+				ai.set_last_aggressor(ship)
+				_check_reaction(ai)
+		else:
+			ai.set_last_aggressor(ship)
+	var killed: bool = ai.hit_by_bolt(spec, age, pos)["killed"]
+	if killed:
+		# a player kill of a friendly marks the aggression even in death
+		# (icShip::ApplyWeaponDamage 0x10073cf0 tail) -- the group/escort
+		# check below still sees the wreck's aggressor this frame
+		if shooter == ship:
+			ai.set_last_aggressor(ship)
+			_propagate_group_attack(ai)
 		kill_ai(ai)
 
 func kill_ai(ai: AiShip) -> void:
@@ -1585,7 +1618,7 @@ func contact_list() -> Array:
 							else "STATN"))})
 		else:
 			var a: AiShip = e["ai"]
-			var hostile: bool = a.behavior == "attack"
+			var hostile: bool = _is_hostile(a)
 			if e["unknown"]:
 				list.append({"name": "UNKNOWN", "dist": e["dist"],
 						"hostile": false, "unknown": true,
@@ -2481,8 +2514,43 @@ func _aggressor_ram(a: AiShip) -> bool:
 func _is_hostile(a: AiShip) -> bool:
 	# icShip::IsFriendly is what 0x1002f74a tests; the contact list (_contacts)
 	# already uses `behavior == "attack"` as the remaster's hostility test, so
-	# the auto-fire uses the same one.
-	return a.behavior == "attack"
+	# the auto-fire uses the same one. A ship the player has provoked past its
+	# shot tolerance is an EXPLICIT hostile contact
+	# (icPlayerContactList::SetSimAsHostile via CheckForReactives 0x10073ac0).
+	return a.behavior == "attack" or a.explicit_hostile
+
+func _check_reaction(ai: AiShip) -> void:
+	# icShip::CheckReaction (0x10075860) -> icAIPilot::OnAttack (0x10055130).
+	# OnAttack only reacts to the PLAYER, gated on feeling toward the player
+	# being neutral-or-worse OR the ship already pissed. The fight/flee threat
+	# ratios then default to 1000.0 (icAIPilot ctor 0x10054130) and NO shipped
+	# script or ini changes them, so the stock outcome is the IGNORE branch --
+	# the ship is marked as an explicit hostile contact (CheckForReactives'
+	# reactives insert: the red contact + TargetNearestHostile candidate)
+	# without itself opening fire. The shooting comes from its ESCORTS
+	# (icAIEscortAgent, below) and from the POG station-protection/incident
+	# scripts (istation.pog, igangsterincidentgen.pog), which we run.
+	if iff_level(str(ai.faction)) <= 2 or ai.pissed_with_player():
+		ai.explicit_hostile = true
+		hud.log_msg("%s: HOSTILE" % str(ai.display_name).to_upper(), Hud.RED)
+	_propagate_group_attack(ai)
+
+func _propagate_group_attack(victim: AiShip) -> void:
+	# icAIEscortAgent::GroupAttacker (0x100530b0) -> ExplicitAttack
+	# (0x10052ed0): an escort polls its group for a member holding a hostile
+	# last-aggressor and turns to attack that aggressor -- no radius check,
+	# the logical group only. Our aggressor on this path is always the player.
+	var dispatched := false
+	for a: AiShip in ai_ships:
+		if a == victim or not is_instance_valid(a):
+			continue
+		if a.escort_of == victim and a.behavior != "attack":
+			a.behavior = "attack"
+			a.set_last_aggressor(ship)
+			dispatched = true
+	if dispatched:
+		# GroupAttacker consumes the member's aggressor once dispatched
+		victim.last_aggressor = null
 
 func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 		what: String) -> void:
@@ -2711,6 +2779,106 @@ func _model_bounds_radius(model: Node3D) -> float:
 		first = false
 	return 0.0 if first else merged.size.length() * 0.5
 
+# --- station collision hulls -------------------------------------------------
+# The original's REAL collision geometry: every station ini names a
+# CollisionHull (collision_hull:/collisionhulls/*, a low-poly triangle mesh;
+# tools/iw2/lwo.py converts them to data/json/collisionhulls/*.json, and
+# stations.json carries each ini's reference). 40 of 41 station records have
+# one. The per-mesh sphere blobs below remain only as the fallback -- on
+# sprawling open frames like Hoffer's Gap they were solid in the wrong places.
+const HULL_LAYER := 1 << 5   # a private physics layer; nothing else uses physics
+
+var _hull_avatar_index := {}   # "avatars/x/setup.gltf" -> hull json path
+var _probe_shape: SphereShape3D
+
+func _hull_index() -> Dictionary:
+	if not _hull_avatar_index.is_empty():
+		return _hull_avatar_index
+	var f := FileAccess.open(_base().path_join("data/json/stations.json"),
+			FileAccess.READ)
+	if f == null:
+		_hull_avatar_index["<none>"] = ""
+		return _hull_avatar_index
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if parsed is Array:
+		for rec: Dictionary in parsed:
+			var av := str(rec.get("avatar", "")).trim_prefix("lws:/").to_lower()
+			var ch := str(rec.get("collision_hull", "")) \
+					.trim_prefix("collision_hull:/").to_lower()
+			if av.is_empty() or ch.is_empty():
+				continue
+			_hull_avatar_index[av + ".gltf"] = "data/json/" + ch + ".json"
+	return _hull_avatar_index
+
+func _attach_collision_hull(o: Dictionary, model: Node3D) -> bool:
+	var hull_path: String = _hull_index().get(str(o.get("avatar", "")).to_lower(), "")
+	if hull_path.is_empty():
+		return false
+	var f := FileAccess.open(_base().path_join(hull_path), FileAccess.READ)
+	if f == null:
+		return false
+	var h: Variant = JSON.parse_string(f.get_as_text())
+	if not (h is Dictionary):
+		return false
+	var pts: Array = h.get("points", [])
+	var tris: Array = h.get("triangles", [])
+	if pts.is_empty() or tris.is_empty():
+		return false
+	var faces := PackedVector3Array()
+	faces.resize(tris.size() * 3)
+	var n := 0
+	for t: Array in tris:
+		for idx in t:
+			var p: Array = pts[int(idx)]
+			# LW -> Godot: negate Z, the model exporter's convention
+			faces[n] = Vector3(float(p[0]), float(p[1]), -float(p[2]))
+			n += 1
+	var shape := ConcavePolygonShape3D.new()
+	shape.set_faces(faces)
+	var body := StaticBody3D.new()
+	body.collision_layer = HULL_LAYER
+	body.collision_mask = 0
+	var cs := CollisionShape3D.new()
+	cs.shape = shape
+	body.add_child(cs)
+	model.add_child(body)
+	o["hull"] = true
+	return true
+
+func _collide_hull(o: Dictionary) -> void:
+	# swept-sphere test of the player against the station's hull trimesh,
+	# answered with the same bounce/damage response as _collide_sphere
+	if _probe_shape == null:
+		_probe_shape = SphereShape3D.new()
+		_probe_shape.radius = 20.0   # the player hull's rough half-width
+	var node: Node3D = o["node"]
+	# cheap reject: outside the record's own bounding radius + margin
+	var r := maxf(float(o.get("radius", 0.0)), 500.0)
+	if ship.global_position.distance_squared_to(node.global_position) \
+			> (r + 4000.0) * (r + 4000.0):
+		return
+	var params := PhysicsShapeQueryParameters3D.new()
+	params.shape = _probe_shape
+	params.transform = Transform3D(Basis(), ship.global_position)
+	params.collision_mask = HULL_LAYER
+	var hit: Dictionary = get_world_3d().direct_space_state.get_rest_info(params)
+	if hit.is_empty():
+		return
+	var point: Vector3 = hit["point"]
+	var n: Vector3 = hit["normal"]
+	# orient the normal off the surface toward the ship
+	if n.dot(ship.global_position - point) < 0.0:
+		n = -n
+	var rel: float = ship.velocity.dot(n)
+	if rel < 0.0:
+		ship.velocity -= n * rel * 1.6  # bounce off
+		damage_player(clampf(-rel * 0.4, 4.0, 250.0),
+			"COLLISION - " + str(o["name"]).to_upper())
+		audio.play("audio/sfx/collision.wav", -3.0)
+		audio.play("audio/sfx/ship_clatter.wav", -8.0)
+	# push out of the surface
+	ship.global_position = point + n * (_probe_shape.radius + 0.5)
+
 func _model_coll_spheres(model: Node3D) -> Array:
 	# one collision sphere per major mesh chunk (model-local), so sprawling
 	# structures like Hoffer's Gap are solid where their geometry actually
@@ -2759,6 +2927,10 @@ func _collisions() -> void:
 			continue
 		if o["category"] == "station" or o["category"] == "gunstar" \
 				or o.get("prop_collide", false):
+			if o.get("hull", false):
+				# the ini's real CollisionHull trimesh
+				_collide_hull(o)
+				continue
 			var base := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
 			var spheres: Array = o.get("coll_spheres", [])
 			if spheres.is_empty():
@@ -3077,7 +3249,7 @@ func _target_nearest_enemy() -> void:
 	var best: AiShip = null
 	var bestd := INF
 	for a in ai_ships:
-		if a.behavior == "attack" and a.global_position.length() < bestd:
+		if _is_hostile(a) and a.global_position.length() < bestd:
 			bestd = a.global_position.length()
 			best = a
 	if best != null:
@@ -3090,7 +3262,7 @@ func _target_nearest_enemy() -> void:
 func _cycle_enemy() -> void:
 	var enemies: Array = []
 	for a in ai_ships:
-		if a.behavior == "attack":
+		if _is_hostile(a):
 			enemies.append(a)
 	if enemies.is_empty():
 		audio.play("audio/hud/invalid_input.wav", -10.0)
@@ -3140,17 +3312,15 @@ func _set_autopilot(mode: int) -> void:
 	var names := ["OFF", "APPROACH", "FORMATE", "DOCK", "MATCH VELOCITY"]
 	hud.log_msg("AUTOPILOT: %s" % names[mode])
 
-## Hand the throttle back. The autopilot writes set_speed every tick, so on
-## release it is whatever the autopilot last wanted -- not what the ship is
-## actually doing. Leaving it there means the throttle wheel appears dead: the
-## ship jumps to the stale demand the moment you nudge it, or sits at a demand it
-## has already reached. Handing it back at the current speed makes the wheel pick
-## up exactly where the autopilot left off. Every path that drops the autopilot
-## goes through here.
+## icPlayerPilot::DisengageAutopilot (0x100b0010) ends by calling
+## ResetThrottle (0x100b1450): the demanded throttle (+0x54) goes to ZERO --
+## dropping the autopilot leaves the ship braking to a stop until you touch
+## the throttle, exactly like the original. (An earlier pass handed the
+## wheel back at the current speed instead; that was invented.) Every path
+## that drops the autopilot goes through here.
 func _disengage_autopilot() -> void:
 	ap_mode = 0
-	ship.set_speed = clampf(maxf(ship.forward_speed(), 0.0),
-		0.0, ship.max_speed.z)
+	ship.set_speed = 0.0
 	ship.input_thrust = Vector3.ZERO
 	ship.input_rotate = Vector3.ZERO
 
@@ -3387,7 +3557,10 @@ func _stream_objects() -> void:
 						continue
 					o["node"] = model
 					add_child(model)
-					o["coll_spheres"] = _model_coll_spheres(model)
+					# prefer the ini's real CollisionHull trimesh; sphere
+					# blobs only when no hull ships for this avatar
+					if not _attach_collision_hull(o, model):
+						o["coll_spheres"] = _model_coll_spheres(model)
 					# A station's map record carries no radius -- the byte at
 					# +0x138 belongs to its parent body (docs/geography.md), so
 					# the decoder zeroes it. The engine gets a station's

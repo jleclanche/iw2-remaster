@@ -233,6 +233,10 @@ func _ai_escort(_t, a: Array) -> Variant:
 	o.target = world._as_sim(a[1]) if a.size() > 1 else null
 	o.complete = false
 	s.node.behavior = "patrol"
+	# the escort GROUP link icAIEscortAgent::GroupAttacker polls: an escort
+	# attacks whoever registered as its escortee's hostile last-aggressor
+	if s.node is AiShip and o.target != null and o.target.node != null:
+		(s.node as AiShip).escort_of = o.target.node
 	return 0
 
 # @native iai.GiveFleeOrder
