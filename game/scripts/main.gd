@@ -74,6 +74,7 @@ var missiles: Missiles
 var fields: Fields  # the ambient asteroid/debris field singletons (fields.gd)
 var audio: AudioManager
 var sun: DirectionalLight3D
+var fill_sun: DirectionalLight3D  # the geog scene's <fill> DISTANT light
 var space_fx: SpaceFx
 var ldsi_mesh: ImmediateMesh
 var ldsi_mat: StandardMaterial3D
@@ -238,6 +239,7 @@ var basecheck := false   # Lucrecia's Base: dock -> interior -> screens
 var commshot := false    # screenshot every comm-portrait rig
 var muzzleshot := false  # fire the comsec light PBC and photograph it
 var contactcheck := false  # spawn into each menu system, print contact_list()
+var srgbprobe := false     # render known-value quads, verify colour pipeline
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
@@ -253,11 +255,12 @@ func _ready() -> void:
 	commshot = "--commshot" in OS.get_cmdline_user_args()
 	muzzleshot = "--muzzleshot" in OS.get_cmdline_user_args()
 	contactcheck = "--contactcheck" in OS.get_cmdline_user_args()
+	srgbprobe = "--srgbprobe" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
 			or newgamecheck or basecheck or newgametest or commshot or muzzleshot \
-			or contactcheck:
+			or contactcheck or srgbprobe:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()
@@ -767,6 +770,11 @@ func _load_gltf(rel: String) -> Node3D:
 		_gltf_cache[rel] = null
 		return null
 	var node := doc.generate_scene(state)
+	# NOTE: no colour-space fixup is needed here. --srgbprobe settles it: a
+	# 128-grey runtime ImageTexture under an unshaded material captures back
+	# as 128 (and a source_color-hinted sampler matches, while a raw sampler
+	# differs) -- Godot's Forward+ DOES apply the sRGB decode to runtime
+	# textures, so unlit texels already round-trip byte-exact like D3D7's.
 	_gltf_cache[rel] = node
 	return _instance_gltf(node.duplicate())
 
@@ -779,19 +787,28 @@ func _instance_gltf(node: Node3D) -> Node3D:
 	return node
 
 func _build_environment() -> void:
+	# The original lights a system with exactly the geog LWS's two DISTANT
+	# lights, <star> and <fill> (FcScene's LWS parser registers LightColor /
+	# LgtIntensity / LightType and friends but NOT AmbientColor/AmbIntensity,
+	# so the scene's ambient row is ignored). There is no ambient term and no
+	# sky contribution: faces away from both lights are black. Our old rig
+	# added a 0.7 grey ambient and flattened <fill> into it -- that was the
+	# "washed out" look on unlit hulls.
 	sun = DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-20, 60, 0)
 	sun.light_energy = 1.4
 	add_child(sun)
+	fill_sun = DirectionalLight3D.new()
+	fill_sun.light_energy = 0.0
+	add_child(fill_sun)
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
 	sky.sky_material = _starfield_material()
 	e.sky = sky
-	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	e.ambient_light_color = Color(0.12, 0.13, 0.17)
-	e.ambient_light_energy = 0.7
+	e.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
+	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	e.glow_enabled = true
 	env.environment = e
 	env_ref = e
@@ -844,10 +861,18 @@ func _setup_sky(stem: String) -> void:
 						n["color"][2] / 255.0)
 				match str(n.get("name", "")):
 					"<star>":
+						# a LightWave DISTANT light: colour x LgtIntensity,
+						# aimed by the scene's heading/pitch
 						sun.light_color = col
-						sun.light_energy = float(n.get("intensity", 1.0)) * 0.9
+						sun.light_energy = float(n.get("intensity", 1.0))
+						_aim_distant_light(sun, n)
 					"<fill>":
-						env_ref.ambient_light_color = col * 0.35
+						# the second DISTANT light -- directional, NOT ambient;
+						# in every badlands scene it faces away from <star>, so
+						# double-shadowed faces stay black like the original
+						fill_sun.light_color = col
+						fill_sun.light_energy = float(n.get("intensity", 1.0))
+						_aim_distant_light(fill_sun, n)
 					_:
 						if int(n.get("light_type", 0)) == 1 \
 								and n.get("lens_flare", false) and n.has("pos"):
@@ -856,6 +881,18 @@ func _setup_sky(stem: String) -> void:
 								n["pos"][2]) + sys_parent
 							if p.length() > 100.0:
 								_add_sky_flare(p, col)
+
+func _aim_distant_light(light: DirectionalLight3D, n: Dictionary) -> void:
+	# LightWave: a light with H=P=0 shines along +Z; heading rotates about +Y,
+	# pitch about +X (positive pitch tips the beam down). LW +Z maps to our -Z.
+	var hpb: Array = n.get("hpb", [0.0, 0.0, 0.0])
+	var h := deg_to_rad(float(hpb[0]))
+	var p := deg_to_rad(float(hpb[1]))
+	var dir_lw := Vector3(sin(h) * cos(p), -sin(p), cos(h) * cos(p))
+	var dir := Vector3(dir_lw.x, dir_lw.y, -dir_lw.z)
+	# DirectionalLight3D shines along its local -Z
+	light.global_transform.basis = Basis.looking_at(dir,
+		Vector3.RIGHT if absf(dir.y) > 0.99 else Vector3.UP)
 
 func _parse_tuple(t: String, fallback: Vector3) -> Vector3:
 	var parts := t.trim_prefix("(").trim_suffix(")").split(",")
@@ -1670,8 +1707,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				_enable_zoom(not zoomed)
 			KEY_COMMA:  # CycleContactUp
 				_cycle_contact(-1)
+				_arm_key_repeat(KEY_COMMA)
 			KEY_PERIOD:  # CycleContactDown
 				_cycle_contact(1)
+				_arm_key_repeat(KEY_PERIOD)
 			KEY_HOME:
 				_target_contact_index(0)
 			KEY_END:
@@ -2165,6 +2204,36 @@ func _jump_abort() -> void:
 	hud.visible = true
 	jump_state = 0
 
+# FcInputMapper auto-repeats every held mapped button: after m_initial_delay
+# (0.5 s, flux.dll @ 0x101445e8) the binding re-fires every m_repeat_period
+# (0.1 s, @ 0x101445e4) -- FUN_100e6a80's state machine, state 3 arms the
+# initial delay, state 1 counts down and re-arms with the period. We drive it
+# off Input polling rather than Godot's OS-rate echo events.
+const KEY_REPEAT_DELAY := 0.5   # FcInputMapper::m_initial_delay
+const KEY_REPEAT_PERIOD := 0.1  # FcInputMapper::m_repeat_period
+var _repeat_key := -1
+var _repeat_t := 0.0
+
+func _arm_key_repeat(key: int) -> void:
+	_repeat_key = key
+	_repeat_t = KEY_REPEAT_DELAY
+
+func _tick_key_repeat(delta: float) -> void:
+	if _repeat_key < 0:
+		return
+	if not Input.is_physical_key_pressed(_repeat_key) \
+			or (menu != null and menu.visible) or docked_at != "":
+		_repeat_key = -1
+		return
+	_repeat_t -= delta
+	while _repeat_t <= 0.0:
+		_repeat_t += KEY_REPEAT_PERIOD
+		match _repeat_key:
+			KEY_COMMA:
+				_cycle_contact(-1)
+			KEY_PERIOD:
+				_cycle_contact(1)
+
 func _physics_process(delta: float) -> void:
 	# reload_current_scene() does not stop the outgoing scene immediately: this
 	# node keeps ticking for a frame after it has left the tree, and everything
@@ -2172,6 +2241,7 @@ func _physics_process(delta: float) -> void:
 	# the only thing that does this.
 	if not is_inside_tree():
 		return
+	_tick_key_repeat(delta)
 	fire_lock = maxf(0.0, fire_lock - delta)
 	disrupt_time = maxf(0.0, disrupt_time - delta)
 	weapon_disrupt_time = maxf(0.0, weapon_disrupt_time - delta)

@@ -23,6 +23,8 @@ func step(delta: float) -> void:
 	demo_t += delta
 	if m.contactcheck:
 		_contactcheck(delta)
+	elif m.srgbprobe:
+		_srgbprobe(delta)
 	elif m.muzzleshot:
 		_muzzleshot(delta)
 	elif m.commshot:
@@ -78,6 +80,91 @@ func _contactcheck(_delta: float) -> void:
 				float(e["dist"]), str(e["name"]),
 				"  [unidentified]" if e.get("unknown", false) else ""])
 	_cc_i += 1
+
+# --- colour-pipeline probe ----------------------------------------------------
+# Four unshaded quads parented to the camera: a 128-grey runtime ImageTexture,
+# two albedo_color controls, and the freighter glTF's first texture. If the
+# texture quads match the srgb_to_linear(0.502)=0.2158 control, runtime
+# textures are decoded correctly; matching the 0.502 control means the sRGB
+# decode is missing (washed out).
+
+var _sp_built := false
+
+func _sp_quad(cam: Camera3D, x: float, mat: StandardMaterial3D) -> void:
+	var q := MeshInstance3D.new()
+	q.mesh = QuadMesh.new()
+	(q.mesh as QuadMesh).size = Vector2(0.3, 1.2)
+	q.position = Vector3(x, 0, -2.0)
+	q.material_override = mat
+	cam.add_child(q)
+
+func _sp_unshaded() -> StandardMaterial3D:
+	var mt := StandardMaterial3D.new()
+	mt.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return mt
+
+func _srgbprobe(_delta: float) -> void:
+	if not _sp_built and demo_t > 0.6:
+		_sp_built = true
+		m.hud.visible = false
+		var cam: Camera3D = get_viewport().get_camera_3d()
+		var img := Image.create(8, 8, false, Image.FORMAT_RGB8)
+		img.fill(Color8(128, 128, 128))
+		var m_tex := _sp_unshaded()
+		m_tex.albedo_texture = ImageTexture.create_from_image(img)
+		_sp_quad(cam, -1.0, m_tex)
+		var m_lo := _sp_unshaded()
+		m_lo.albedo_color = Color(0.2158, 0.2158, 0.2158)
+		_sp_quad(cam, -0.6, m_lo)
+		var m_hi := _sp_unshaded()
+		m_hi.albedo_color = Color(0.502, 0.502, 0.502)
+		_sp_quad(cam, -0.2, m_hi)
+		var gl: Node3D = m._load_gltf("data/avatars/avatars/freighter/setup.gltf")
+		var m_g := _sp_unshaded()
+		if gl != null:
+			for mi in gl.find_children("*", "MeshInstance3D", true, false):
+				var mat := (mi as MeshInstance3D).mesh.surface_get_material(0)
+				if mat is StandardMaterial3D \
+						and (mat as StandardMaterial3D).albedo_texture != null:
+					m_g.albedo_texture = (mat as StandardMaterial3D).albedo_texture
+					break
+			gl.queue_free()
+		_sp_quad(cam, 0.2, m_g)
+		# the discriminator: identical shaders except the sampler hint. If the
+		# hinted quad differs from the raw one, the sRGB decode IS applied to
+		# runtime ImageTextures and the pipeline is already correct.
+		var img2 := Image.create(8, 8, false, Image.FORMAT_RGB8)
+		img2.fill(Color8(128, 128, 128))
+		var t2 := ImageTexture.create_from_image(img2)
+		for probe in [["src", "uniform sampler2D t : source_color;", 0.6],
+				["raw", "uniform sampler2D t;", 1.0]]:
+			var sh := Shader.new()
+			sh.code = "shader_type spatial;\nrender_mode unshaded;\n" \
+				+ str(probe[1]) \
+				+ "\nvoid fragment() { ALBEDO = texture(t, UV).rgb; }"
+			var sm := ShaderMaterial.new()
+			sm.shader = sh
+			sm.set_shader_parameter("t", t2)
+			var q := MeshInstance3D.new()
+			q.mesh = QuadMesh.new()
+			(q.mesh as QuadMesh).size = Vector2(0.3, 1.2)
+			q.position = Vector3(float(probe[2]), 0, -2.0)
+			q.material_override = sm
+			cam.add_child(q)
+		return
+	if _sp_built and demo_t > 1.6:
+		var shot := get_viewport().get_texture().get_image()
+		var w := shot.get_width()
+		var h := shot.get_height()
+		# camera half-width at z=2 with hfov 63 deg = 2*tan(31.5) = 1.2255
+		for probe in [["tex128", -1.0], ["lin.2158", -0.6],
+				["lin.502", -0.2], ["gltf", 0.2],
+				["sh-src", 0.6], ["sh-raw", 1.0]]:
+			var px := int(w * (0.5 + float(probe[1]) / (2.0 * 1.2255)))
+			var c := shot.get_pixel(px, h / 2)
+			print("SRGBPROBE %-9s = %d %d %d" % [probe[0],
+					int(c.r * 255.0), int(c.g * 255.0), int(c.b * 255.0)])
+		m.get_tree().quit()
 
 # --- command-section muzzle: fire and photograph from the side ---------------
 

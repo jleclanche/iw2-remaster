@@ -1182,3 +1182,32 @@ per-variant FcLensFlareNode size tables remain unextracted).
 - **The flux.ini fields of view are HORIZONTAL** (1.1 rad internal / 1.2 rad
   external): binding them to Godot's vertical axis made the cockpit read far
   wider than the original. The camera is KEEP_WIDTH now.
+
+---
+
+## The system light rig ("textures look pretty washed out")
+
+The wash was lighting, not colour space. Two findings:
+
+- **The colour pipeline is already correct.** `--srgbprobe` renders a 128-grey
+  runtime ImageTexture next to linear albedo controls and a pair of shader
+  quads differing only in the `source_color` sampler hint: the hinted quad
+  captures back 128 (round-trip exact) and the raw one differs — Godot's
+  Forward+ applies the sRGB decode to runtime textures. Do NOT
+  `srgb_to_linear()` anything at load; that double-darkens (measured).
+- **The original has NO ambient light.** A system is lit by the geog LWS's two
+  DISTANT lights only — `<star>` (Hoffer's Wake: 255,204,128 × 1.5, heading
+  180) and `<fill>` (92,172,34 × 0.75, heading 0, i.e. opposite). FcScene's
+  LWS parser registers LightColor/LgtIntensity/LightType/LightFalloff/…
+  but NOT `AmbientColor`/`AmbIntensity`, so the scene's ambient row
+  (255,255,255 × 0.25) is dead data. Faces away from both lights are black.
+  Our rig had a 0.7 grey ambient plus `<fill>` flattened into ambient — that
+  was the tan unlit asteroid in the report. Now: `sun` + `fill_sun`
+  DirectionalLight3Ds aimed from the LWS heading/pitch
+  (`main._aim_distant_light`; LW H=P=0 shines along +Z, LW +Z = our −Z),
+  ambient and sky reflections disabled.
+
+Also extracted while here: **FcInputMapper auto-repeats every held button**
+after `m_initial_delay` = 0.5 s (flux @ 0x101445e8) at `m_repeat_period` =
+0.1 s (@ 0x101445e4) — FUN_100e6a80's state machine. Wired to CycleContactUp/
+Down (comma/period) via `main._tick_key_repeat`.
