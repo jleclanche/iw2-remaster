@@ -61,6 +61,7 @@ const RING_WIDTH := (RING_MAX - RING_MIN) / MAX_RINGS
 
 var ship: ShipFlight
 var ship_model: Node3D
+var player_ship_ini := ""  # sims/ships/player/*.ini path of the fitted hull
 var cockpit: Node3D
 var comms: Comms
 var mission: Mission
@@ -428,6 +429,7 @@ func _exit_tree() -> void:
 func _fit_player(ini_path: String, avatar: String) -> void:
 	# swap the player's hull: the campaign opens in the bare command
 	# section; the tug comes later at Lucrecia's Base
+	player_ship_ini = ini_path
 	if ship_model != null:
 		ship_model.queue_free()
 	if ship.fx != null:
@@ -1796,9 +1798,15 @@ func _lds_avoidance() -> float:
 	# break-off distance that keeps the drive from flying you into a planet or
 	# station. Modelled on icAIServices::InnerMarkerRadius (iwar2 @ 0x100560d0):
 	# a body/star stands off at 1.5x its radius (m_heat_radius_multiplier 0.5 +
-	# 1.0, 0x1011af58), everything else at its own radius, plus ~200 m of clear
-	# space (0x10119470). Returns the signed clearance to the nearest shell.
+	# 1.0, 0x1011af58), everything else at its own bounds radius, plus ~200 m of
+	# clear space (0x10119470). Returns the signed clearance to the nearest
+	# shell the ship is CLOSING on. Only closing masses count: the marker is a
+	# break-off for flying INTO a mass, not a cage -- the drive itself has no
+	# mass gate at all (docs/lds.md), so a ship inside a gas giant's shell (any
+	# L-point is) engages fine and flies out; only pointing INTO the mass drops
+	# it out at the marker.
 	var best := INF
+	var vel: Vector3 = ship.velocity
 	for o in objects:
 		var mult := 1.0
 		match o["category"]:
@@ -1808,9 +1816,11 @@ func _lds_avoidance() -> float:
 				mult = 1.0
 			_:
 				continue
+		var rel := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
+		if vel.dot(rel) <= 0.0:
+			continue
 		var margin := float(o["radius"]) * mult + 200.0
-		var cl := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length() - margin
-		best = minf(best, cl)
+		best = minf(best, rel.length() - margin)
 	return best
 
 func inhibit_charge() -> float:

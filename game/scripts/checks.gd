@@ -8,6 +8,7 @@ var m: Node3D  # main
 
 var demo_t := 0.0
 var demo_phase := 0
+var _demo_logged := 0.0
 var _mc_shot := 0
 var _mech_fail := 0
 var _mech_t0 := 0.0
@@ -1172,6 +1173,23 @@ func _motioncheck(_delta: float) -> void:
 
 # --- scripted demo: LDS across the system, then a combat encounter ---------------
 
+## Whether the straight run to `rel` stays clear of every body/star break-off
+## shell (icAIServices::InnerMarkerRadius: 1.5x radius + 200 m). A shell we are
+## already inside only blocks if the run takes us DEEPER than we are now.
+func _lds_corridor_clear(rel: Vector3) -> bool:
+	for o in m.objects:
+		if not (o["category"] in ["body", "star"]):
+			continue
+		var margin := float(o["radius"]) * 1.5 + 200.0
+		if margin <= 300.0:
+			continue
+		var c := Vector3(o["x"] - m.px, o["y"] - m.py, o["z"] - m.pz)
+		var t := clampf(c.dot(rel) / maxf(rel.length_squared(), 1.0), 0.0, 1.0)
+		var closest := (rel * t - c).length()
+		if closest < margin and closest < c.length() * 0.98:
+			return false
+	return true
+
 func _demo(_delta: float) -> void:
 	if demo_t > 500.0:
 		print("DEMO: TIMEOUT")
@@ -1186,11 +1204,19 @@ func _demo(_delta: float) -> void:
 					var o: Dictionary = m.objects[i]
 					if o["category"] != "station":
 						continue
-					var d := Vector3(o["x"] - m.px, o["y"] - m.py,
-						o["z"] - m.pz).length()
-					if d > 0.5 * 1.496e11 and d < bestd:
+					var rel := Vector3(o["x"] - m.px, o["y"] - m.py,
+						o["z"] - m.pz)
+					var d := rel.length()
+					# a pilot would not point the drive through a gas giant:
+					# skip destinations whose bearing closes on a mass shell
+					if d > 0.5 * 1.496e11 and d < bestd \
+							and _lds_corridor_clear(rel):
 						bestd = d
 						m.target_idx = i
+				if bestd == INF:
+					print("DEMO: no destination with a clear corridor")
+					get_tree().quit(1)
+					return
 				print("DEMO: destination ", m.objects[m.target_idx]["name"])
 				demo_phase = 1
 		1:
@@ -1202,6 +1228,22 @@ func _demo(_delta: float) -> void:
 				demo_phase = 2
 		2:
 			m._face_target()
+			if demo_t - _demo_logged >= 30.0:
+				_demo_logged = demo_t
+				var worst := ""
+				var worst_cl := INF
+				for o in m.objects:
+					if not (o["category"] in ["body", "star", "station", "gunstar"]):
+						continue
+					var mult: float = 1.5 if o["category"] in ["body", "star"] else 1.0
+					var cl: float = Vector3(o["x"] - m.px, o["y"] - m.py,
+						o["z"] - m.pz).length() - float(o["radius"]) * mult - 200.0
+					if cl < worst_cl:
+						worst_cl = cl
+						worst = "%s %s r=%.0f" % [o["name"], o["category"], o["radius"]]
+				print("DEMO: t=%.0fs lds=%d dist=%s speed=%.0f avoid=%.0f (%s)"
+					% [demo_t, m.lds_state, m._fmt_dist(m._target_distance()),
+						m.ship.velocity.length(), m._lds_avoidance(), worst])
 			if m.lds_state == 0 and m._target_distance() > 1.0e6 \
 					and m._lds_clearance() > 0.0 and demo_t < 400.0:
 				m._toggle_lds()  # LDSI dropout en route: re-engage

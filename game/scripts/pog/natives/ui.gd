@@ -953,6 +953,65 @@ func _tw_set_string(_t, a: Array) -> Variant:
 		dirty = true
 	return 0
 
+# @native gui.SetTextWindowResource
+func _tw_set_resource(_t, a: Array) -> Variant:
+	# SetTextWindowResource(window, "html:/text/act_0/act0_master_lucreciamail_1")
+	# -- the engine points the text window at an HTML resource page: this is how
+	# the comms screen shows a mail's body and the encyclopedia its topics. The
+	# pages live extracted under data/ (tools/iw2/html_text.py).
+	var win := _win(a[0])
+	if win != null:
+		win.text = _resource_text(PogStd._s(a[1]))
+		dirty = true
+	return 0
+
+
+## "html:" + resource path, extension implied, either slash. Empty when the
+## page is missing (a URL the scripts build for content that never shipped).
+func _resource_text(url: String) -> String:
+	if url.is_empty():
+		return ""
+	var path := url.replace("\\", "/").trim_prefix("html:").trim_prefix("/")
+	if not path.ends_with(".html"):
+		path += ".html"
+	if game == null or not game.has_method("_base"):
+		return ""
+	var full := String(game._base()).path_join("data").path_join(path)
+	if not FileAccess.file_exists(full):
+		return ""
+	return html_to_text(FileAccess.get_file_as_string(full))
+
+
+## Word-era page HTML -> the plain paragraphs the text window draws. Raw
+## newlines are only whitespace (the sources hard-wrap); <p> and <br> are the
+## real structure, and folding the rest lets each paragraph reflow to the
+## window's width, which is what the original's HTML renderer did too.
+static func html_to_text(raw: String) -> String:
+	var body := raw
+	var re_body := RegEx.create_from_string("(?is)<body[^>]*>(.*?)</body>")
+	var mb := re_body.search(raw)
+	if mb != null:
+		body = mb.get_string(1)
+	body = body.replace("\r\n", "\n").replace("\r", "\n")
+	body = body.replace("\n", " ").replace("\t", " ")
+	body = RegEx.create_from_string("(?i)<p[^>]*>").sub(body, "\n\n", true)
+	body = RegEx.create_from_string("(?i)<br[^>]*>").sub(body, "\n", true)
+	body = RegEx.create_from_string("(?is)<style.*?</style>").sub(body, "", true)
+	body = RegEx.create_from_string("(?s)<!--.*?-->").sub(body, "", true)
+	body = RegEx.create_from_string("<[^>]*>").sub(body, "", true)
+	body = body.replace("&nbsp;", " ").replace("&amp;", "&")
+	body = body.replace("&lt;", "<").replace("&gt;", ">")
+	body = body.replace("&quot;", "\"").replace("&#39;", "'")
+	body = RegEx.create_from_string("  +").sub(body, " ", true)
+	var out: Array[String] = []
+	for para in body.split("\n"):
+		out.append(String(para).strip_edges())
+	var text := "\n".join(out)
+	# collapse runs of blank lines left by empty paragraphs
+	while "\n\n\n" in text:
+		text = text.replace("\n\n\n", "\n\n")
+	return text.strip_edges()
+
 # @native gui.SplitterWindowTopWindow
 func _split_top(_t, a: Array) -> Variant:
 	var win := _win(a[0])
@@ -1183,7 +1242,6 @@ func scroller_done(win: PogWindow) -> void:
 # @stub gui.PlayBackgroundMovie
 # @stub gui.StopBackgroundMovie
 # @stub gui.StopAllMovies
-# @stub gui.SetTextWindowResource
 # @stub gui.TextWindowBack
 # @stub gui.SetEditBoxOverrides
 # @stub gui.SetEditBoxCursorToEnd
@@ -1664,7 +1722,7 @@ const _BINDINGS := {
 	"gui.setwindowstateicons": "_gui_noop",
 	"gui.playbackgroundmovie": "_gui_noop",
 	"gui.stopbackgroundmovie": "_gui_noop", "gui.stopallmovies": "_gui_noop",
-	"gui.settextwindowresource": "_gui_noop",
+	"gui.settextwindowresource": "_tw_set_resource",
 	"gui.textwindowback": "_gui_noop", "gui.seteditboxoverrides": "_gui_noop",
 	"gui.seteditboxcursortoend": "_gui_noop",
 

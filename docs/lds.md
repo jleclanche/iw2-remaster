@@ -81,6 +81,13 @@ km out.
   `_lds_process` to brake/drop the drive near a mass. It is kept out of the fence
   and the roundel. Near a planet you still cannot LDS straight in, but that is
   avoidance, not an inhibition fence.
+- Avoidance counts only masses the ship is **closing on**. The marker is a
+  break-off for flying INTO a mass, not a cage: the drive has no mass gate on
+  engage at all, and every L-point sits inside its planet's 1.5x-radius shell
+  (Alexander's is 132,000 km deep), so treating "inside the shell" as a dropout
+  wedged the drive into a spool/breakout loop the moment bodies got their real
+  radii. Pointing into the mass still breaks you out at the marker; pointing
+  out of the well ramps clean.
 - `entities.gd::nearest_ldsi(p)` (new) is the region query helper.
 
 ## For original.md

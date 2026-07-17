@@ -185,6 +185,7 @@ var _dio_root: Node3D = null
 ## The class name of the screen the manager last saw (this+0x540).
 var _last_screen := ""
 var _hidden: Array = []      ## world nodes we hid while inside
+var _saved_env: Dictionary = {}  ## the environment we overrode while inside
 
 
 func _pog_globals() -> Dictionary:
@@ -765,8 +766,12 @@ func _load_diorama(i: int) -> void:
 	main.add_child(_dio_root)
 	_dio_root.position = Vector3.ZERO
 	# the light channels: g_base_lights_on picks the normal bank, and its
-	# absence the emergency one (0x10024d35)
+	# absence the emergency one (0x10024d35). The other switch channels are the
+	# five player hulls parked in the main bay: the manager shows the one the
+	# player owns and hides the rest (the same per-hull switch DOCK_FRAMING uses).
 	var normal := _gflag(LIGHTS_GLOBAL)
+	var hull := _player_hull()
+	var bank: Node3D = null   # the ACTIVE baselights switch, if the scene has one
 	for n in _dio_root.find_children("*", "Node3D", true, false):
 		if not n.has_meta("extras"):
 			continue
@@ -775,8 +780,14 @@ func _load_diorama(i: int) -> void:
 		if str(ex.get("iw2_kind", "")) == "switch":
 			if ch == LIGHT_NORMAL:
 				(n as Node3D).visible = normal
+				if normal:
+					bank = n
 			elif ch == LIGHT_EMERGENCY:
 				(n as Node3D).visible = not normal
+				if not normal:
+					bank = n
+			elif ch in DOCK_FRAMING:
+				(n as Node3D).visible = ch == hull
 	# The five scenes are authored at wildly different scales -- the main bay is
 	# 3 km across, Smith's bench is 5 m -- and the converted lights carry their
 	# LightWave intensity but no falloff (LightWave's default light has none, so
@@ -798,16 +809,49 @@ func _load_diorama(i: int) -> void:
 		if ex.has("iw2_color"):
 			var c: Array = ex["iw2_color"]
 			col = Color(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0)
-		var l := OmniLight3D.new()
-		l.light_color = col
-		# LightWave sums its lights; a room with a dozen 1.0 lamps in it would
-		# blow out at full strength here, so the authored intensity is shared out
-		# across the lights the scene actually has.
-		l.light_energy = power * 0.5
-		l.omni_range = span * 0.6
-		l.omni_attenuation = 1.2
-		n.add_child(l)
+		if int(ex.get("iw2_light_type", 1)) == 0:
+			# a LightWave DISTANT light: a directional flood, not a lamp. The
+			# main bay's whole emergency look is two of these (red key + fill).
+			var dl := DirectionalLight3D.new()
+			dl.light_color = col
+			dl.light_energy = power
+			n.add_child(dl)
+		else:
+			var l := OmniLight3D.new()
+			l.light_color = col
+			# LightWave sums its lights; a room with a dozen 1.0 lamps in it
+			# would blow out at full strength here, so the authored intensity is
+			# shared out across the lights the scene actually has.
+			l.light_energy = power * 0.5
+			l.omni_range = span * 0.6
+			l.omni_attenuation = 1.2
+			n.add_child(l)
 		lights += 1
+	var bank_dark: bool = bank != null \
+		and bank.find_children("*", "Light3D", true, false).is_empty()
+	if lights == 0 or bank_dark:
+		# every lamp in the active bank is a lens flare (the powered main bay:
+		# searchlights and trough lights, all intensity 0) -- the original's
+		# renderer had LW's scene ambient to fall back on; give the room a soft
+		# neutral key so it reads at all
+		var key := DirectionalLight3D.new()
+		key.light_color = Color(0.9, 0.92, 1.0)
+		key.light_energy = 0.55
+		key.rotation_degrees = Vector3(-40.0, 30.0, 0.0)
+		_dio_root.add_child(key)
+
+
+## Which of the main bay's five hull switches is the player's current ship.
+## The original switches on isim.Type(player); our equivalent identity is the
+## fitted hull's sim INI (main.player_ship_ini).
+func _player_hull() -> String:
+	var ini: String = main.player_ship_ini.get_file()
+	for ch in DOCK_FRAMING:
+		if ini.begins_with(str(ch)):
+			return str(ch)
+	if ini.begins_with("comsec") or ini.begins_with("escape_tug"):
+		return "command_section"
+	return "command_section" if ini.is_empty() else "tug"
 
 
 ## The diagonal of everything the scene draws, in its own units.
@@ -851,6 +895,19 @@ func place_camera() -> void:
 ## the way out.
 func _hide_world() -> void:
 	_hidden.clear()
+	# The interior is lit by the diorama's own lamps alone: the system's sky
+	# ambient (Hoffer's Wake's green nebula fill) has no business inside the
+	# asteroid, and the starfield behind the walls reads as holes.
+	if main.env_ref != null and _saved_env.is_empty():
+		_saved_env = {
+			"bg": main.env_ref.background_mode,
+			"col": main.env_ref.ambient_light_color,
+			"energy": main.env_ref.ambient_light_energy,
+		}
+		main.env_ref.background_mode = Environment.BG_COLOR
+		main.env_ref.background_color = Color.BLACK
+		main.env_ref.ambient_light_color = Color(0.06, 0.06, 0.07)
+		main.env_ref.ambient_light_energy = 1.0
 	for n in [main.ship_model, main.cockpit, main.sky_anchor, main.space_fx,
 			main.sun]:
 		if n != null and is_instance_valid(n) and n is Node3D \
@@ -869,6 +926,11 @@ func _hide_world() -> void:
 
 
 func _show_world() -> void:
+	if main.env_ref != null and not _saved_env.is_empty():
+		main.env_ref.background_mode = _saved_env["bg"]
+		main.env_ref.ambient_light_color = _saved_env["col"]
+		main.env_ref.ambient_light_energy = _saved_env["energy"]
+		_saved_env.clear()
 	for n in _hidden:
 		if n != null and is_instance_valid(n):
 			(n as Node3D).visible = true
