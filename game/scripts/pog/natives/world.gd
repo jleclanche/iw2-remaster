@@ -1150,6 +1150,12 @@ func _i_set_sensor_visibility(_t, a: Array) -> Variant:
 	s.sensor_visible = vis
 	if not s.rec.is_empty():
 		s.rec["sensor_hidden"] = not vis
+		# An explicitly sensor-visible sim lists at ANY range as a nav contact
+		# and is always identified (icSensor gate @ 0x1003ae90: a set
+		# visibility byte survives the efficiency*range cut with flags 0x82,
+		# and FUN_1003a8e0 skips the "unknown" flag) -- that is how the found
+		# Lucrecia's Base and mission markers stay on the list.
+		s.rec["sensor_forced"] = vis
 	elif s.node != null and is_instance_valid(s.node) \
 			and "sensor_hidden" in s.node:
 		s.node.sensor_hidden = not vis

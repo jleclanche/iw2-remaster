@@ -270,6 +270,9 @@ func apply_visibility() -> void:
 		return
 	var here: bool = (enabled or revealed) and main.system_stem == base_system()
 	rec["sensor_hidden"] = not here
+	# SetSensorVisibility(base, 1) makes it an explicitly-visible sim: on the
+	# contact list at any range, always identified (never the UNKNOWN row)
+	rec["sensor_forced"] = here
 	if rec.get("node", null) != null and is_instance_valid(rec["node"]):
 		# imapentity.SetHidden: the base is not drawn in the systems it is not in
 		(rec["node"] as Node3D).visible = here

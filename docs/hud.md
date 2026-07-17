@@ -896,3 +896,66 @@ returns is the right caption. No change needed beyond the single-row fix.
   "largenumber" font (`ibasegui.pog:6`), never a HUD face. The front-end
   fancy buttons, meanwhile, use `GUI_title_font` = square721 bdex bt_8pt
   (`igui.pog:31/245`); menu.gd now does too.
+
+---
+
+## The contact list is a sensor, not a radius (reported: "no contact list at all" after a debug-menu spawn)
+
+Our list was gated by two invented radii (stations < 500 km, L-points <
+10,000 km) — nothing else ever listed, so a debug-menu spawn showed one row or
+none. The real pipeline, fully recovered:
+
+**Feed:** `icPlayerContactList::Update` (`0xaad20`) defers to the icSensor
+ship-system when fitted. Two implementations exist behind
+`icPlayerPilot::ShowAllContacts` (`0x53e0`, pilot`+0x318`, an input-toggled
+debug mode, default OFF):
+
+- **ShowAllContacts ON** (`FUN_1003ab00 → FUN_1003ac00`): every sim of the
+  ACTIVE system (`icCluster+0x28`) is a contact regardless of visibility;
+  sensor-visible sims of the INACTIVE systems (`icCluster+0x18` array) too —
+  those render "O/SYS" (`hud_outsystem_range_5`) in the range column.
+- **Default** (vtable `+0x54` = `0x1003b330` → per-sim gate `FUN_1003ae90`):
+  scans only the player's world, plus the sensor-override set (sims
+  `ForceFullSensorVisibility`'d, e.g. from other systems → O/SYS rows).
+
+**The default gate, in order** (`0x1003ae90`):
+1. byte `+0x19b` set, or `eSensorType` (`iiSim+0x190`) 0/1 → never listed.
+2. Sensor-invisible sims (`iiSim+0x198` = `SetSensorVisibility`, the ambush
+   switch) are rejected — except **stations** (type 3: listed anyway unless
+   geography-hidden, `SetHidden` sim-flag 2 — the unfound base) and **L-point
+   waypoints** (`+0x194` type 5: within a **100 km** box/sphere,
+   `DAT_10119d18` = 1e5 / `DAT_10119d14` = 1e10).
+3. Defaults: ships sensor-VISIBLE (`iiThrusterSim` ctor), stations and ALL
+   geography INVISIBLE (`icGeography` ctor) — so **planets/suns/nebulae/belts
+   never list** unless a script turns them on; record 0 (system centre) is
+   forced invisible by the map loader.
+4. Sensor type 4 geography that survives (script-visible, or L-points in the
+   box) → unconditional nav contact, flags 0x82, any range.
+5. Ships/stations beyond `efficiency × range` → dropped unless explicitly
+   visible (those become nav contacts at any range — the found Lucrecia's
+   Base). Inside **10 km** (`DAT_1015bb2c`) detection is unconditional; beyond,
+   `efficiency × Brightness() × (1 − dist/range) ≥ sensed_brightness` decides
+   (Brightness < ε scores +∞). passive0_sensors.ini (comsec fit): range
+   **80 km**, identification_range **20 km**, sensed_brightness **0.1**;
+   boosters multiply via subsim `+0x8c/+0x90`.
+6. `FUN_1003a8e0` sets contact **flag 8** ("unidentified") for sims whose
+   visibility byte is CLEAR beyond identification_range(+booster). Ships
+   default visible → never flag-8; the separate icShip identify counter
+   (`+0x2e0 < +0x2e4`, stripped in `Add` @ `0xac1c0`) is 0<0=done unless a
+   mission sets it (not modelled).
+7. `PostProcess` (`0xaada0`) force-adds the current nav target and qsorts by
+   range (`CompareByRange`). No row-count cap; the HUD shows 6 with the
+   scrollbar. An empty list still draws the block frame (`0x100e4440`).
+
+**Row rendering** (`FUN_100e8530` @ `0x100e8530`): flag 8 → gold
+`DAT_10174f60`, name `hud_unknown_contact` "UNKNOWN", faction/type columns
+blank. Feeling→flag table `DAT_10119c94` = [4,4,2,1,1], sensor-type→flag
+`DAT_10119ca8` = [0, 0x20, 0x10, 0x10, 0x80].
+
+**Ported** (`main._contacts_full`, shared by the list, the ORB and the
+on-screen marks): stations/gunstars < 80 km (UNKNOWN beyond 20 km), L-points
+< 100 km, ships any-visibility-honouring with the brightness score
+(`ship_systems.brightness()`), `sensor_forced` records (POG
+SetSensorVisibility(1), the found base) list at any range identified, current
+target force-kept, sort by range, no cap. `--contactcheck` walks the debug
+menu's sixteen systems and prints each list.

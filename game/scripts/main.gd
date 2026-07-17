@@ -237,6 +237,7 @@ var geogcheck := false
 var basecheck := false   # Lucrecia's Base: dock -> interior -> screens
 var commshot := false    # screenshot every comm-portrait rig
 var muzzleshot := false  # fire the comsec light PBC and photograph it
+var contactcheck := false  # spawn into each menu system, print contact_list()
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
@@ -251,10 +252,12 @@ func _ready() -> void:
 	basecheck = "--basecheck" in OS.get_cmdline_user_args()
 	commshot = "--commshot" in OS.get_cmdline_user_args()
 	muzzleshot = "--muzzleshot" in OS.get_cmdline_user_args()
+	contactcheck = "--contactcheck" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
-			or newgamecheck or basecheck or newgametest or commshot or muzzleshot:
+			or newgamecheck or basecheck or newgametest or commshot or muzzleshot \
+			or contactcheck:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()
@@ -1501,39 +1504,47 @@ func _station_faction(sname: String) -> String:
 	return "INDPT"
 
 func contact_list() -> Array:
-	# original columns: faction / type / range / name (manual, HUD section)
+	# original columns: faction / type / range / name (manual, HUD section).
+	# The rows are _contacts_full()'s admissions; a contact beyond
+	# identification_range that is not explicitly sensor-visible is the gold
+	# "UNKNOWN" row with blank faction and type columns (FUN_1003a8e0 sets
+	# contact flag 8, FUN_100e8530 @ 0x100e8530 renders it: colour
+	# DAT_10174f60 gold, name = hud_unknown_contact, both 5-char columns empty).
 	var list: Array = []
-	for i in objects.size():
-		var o: Dictionary = objects[i]
-		# isim.SetSensorVisibility(sim, false): the scripts hide a sim from
-		# sensors to stage an ambush, so it must not reach the contact list.
-		if o.get("sensor_hidden", false):
-			continue
-		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
-		var show := false
-		match o["category"]:
-			"station", "gunstar":
-				show = d < 5.0e5
-			"lpoint":
-				show = d < 1.0e7
-		if show:
-			list.append({"name": o["name"], "dist": d, "hostile": false,
-					"targeted": i == target_idx, "category": o["category"],
-					"faction": str(o.get("faction", "NAV" if o["category"] == "lpoint"
-						else _station_faction(str(o["name"])))),
-					"type": str(o.get("type", "LAGPT" if o["category"] == "lpoint"
-						else "STATN"))})
-	for a in ai_ships:
-		if not _sensor_visible(a):
-			continue
-		var hostile: bool = a.behavior == "attack"
-		list.append({"name": _contact_name(a), "dist": a.global_position.length(),
-				"hostile": hostile, "targeted": a == target_ai,
-				"category": "traffic",
-				"faction": "OUTLW" if hostile else a.faction,
-				"type": "FIGHT" if hostile else a.ctype})
-	list.sort_custom(func(x, y): return x["dist"] < y["dist"])
-	return list.slice(0, 12)
+	for e in _contacts_full():
+		if e["kind"] == "obj":
+			var o: Dictionary = objects[e["idx"]]
+			if e["unknown"]:
+				list.append({"name": "UNKNOWN", "dist": e["dist"],
+						"hostile": false, "unknown": true,
+						"targeted": e["idx"] == target_idx,
+						"category": o["category"], "faction": "", "type": ""})
+			else:
+				list.append({"name": o["name"], "dist": e["dist"],
+						"hostile": false, "unknown": false,
+						"targeted": e["idx"] == target_idx,
+						"category": o["category"],
+						"faction": str(o.get("faction",
+							"NAV" if o["category"] == "lpoint"
+							else _station_faction(str(o["name"])))),
+						"type": str(o.get("type",
+							"LAGPT" if o["category"] == "lpoint"
+							else "STATN"))})
+		else:
+			var a: AiShip = e["ai"]
+			var hostile: bool = a.behavior == "attack"
+			if e["unknown"]:
+				list.append({"name": "UNKNOWN", "dist": e["dist"],
+						"hostile": false, "unknown": true,
+						"targeted": a == target_ai,
+						"category": "traffic", "faction": "", "type": ""})
+			else:
+				list.append({"name": _contact_name(a), "dist": e["dist"],
+						"hostile": hostile, "unknown": false,
+						"targeted": a == target_ai, "category": "traffic",
+						"faction": "OUTLW" if hostile else a.faction,
+						"type": "FIGHT" if hostile else a.ctype})
+	return list
 
 ## iiSim::VisibleToSensor (iwar2 @ 0x100013b0) gates a sim's place in the contact
 ## list. The scripts clear it with isim.SetSensorVisibility to stage an ambush --
@@ -2834,25 +2845,71 @@ func _player_control(delta: float) -> void:
 
 # --- targeting (original contact-list semantics) ----------------------------
 
+## The sensor model: icSensor's default update (iwar2 @ 0x1003b330; per-sim gate
+## FUN_1003ae90 @ 0x1003ae90) feeding icPlayerContactList. ShowAllContacts
+## (icPlayerPilot+0x318, an input-toggled debug mode that lists every sim in the
+## cluster) is OFF, as shipped. The gate, in order:
+##  - a sim whose sensor-visibility byte (iiSim+0x198, SetSensorVisibility) is
+##    CLEAR is rejected outright -- the scripted ambush -- with two exceptions:
+##      stations (eSensorType 3) pass unless geography-hidden (SetHidden flag 2,
+##      the undiscovered Lucrecia's Base), and L-point waypoints (type 5) pass
+##    within 100 km (DAT_10119d18 box / DAT_10119d14 = (1e5)^2 sphere);
+##  - ships default sensor-VISIBLE (iiThrusterSim ctor sets +0x198=1); stations
+##    and all other geography default INVISIBLE (icGeography ctor) -- so
+##    planets, suns, nebulae and belts never list unless a script turns them on;
+##  - beyond efficiency*range (passive0_sensors.ini: 80 km) anything not
+##    explicitly sensor-visible is dropped; explicitly visible sims (the found
+##    base, mission markers) list at ANY range as nav contacts (flags 0x82);
+##  - within 10 km (DAT_1015bb2c) detection is unconditional; beyond it the
+##    score efficiency * Brightness() * (1 - dist/range) must reach
+##    sensed_brightness (0.1) -- ship_systems.brightness() is that Brightness();
+##    a Brightness under epsilon scores +inf (geography, cold ships);
+##  - the player's current target is force-added regardless
+##    (icPlayerContactList::PostProcess), and the list sorts by range
+##    (CompareByRange). "unknown" = beyond identification_range (20 km) and not
+##    explicitly visible (contact flag 8, FUN_1003a8e0).
+const SENSOR_RANGE := 80000.0        # passive0_sensors.ini range
+const SENSOR_ID_RANGE := 20000.0     # passive0_sensors.ini identification_range
+const SENSOR_MIN_BRIGHT := 0.1       # passive0_sensors.ini sensed_brightness
+const SENSOR_CLOSE := 10000.0        # DAT_1015bb2c: always-detected bubble
+const LPOINT_LIST_RANGE := 100000.0  # DAT_10119d18: L-point listing radius
+
 func _contacts_full() -> Array:
 	var list: Array = []
 	for i in objects.size():
 		var o: Dictionary = objects[i]
-		# isim.SetSensorVisibility(sim, false): the scripts hide a sim from
-		# sensors to stage an ambush, so it must not reach the contact list.
+		# SetSensorVisibility(sim, false) / hidden geography: never listed
 		if o.get("sensor_hidden", false):
 			continue
 		var d := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz).length()
-		var show := false
-		match o["category"]:
-			"station", "gunstar":
-				show = d < 5.0e5
-			"lpoint":
-				show = d < 1.0e7
+		var forced: bool = o.get("sensor_forced", false)
+		var show := forced or i == target_idx
+		if not show:
+			match o["category"]:
+				"station", "gunstar":
+					show = d < SENSOR_RANGE
+				"lpoint":
+					show = d < LPOINT_LIST_RANGE
 		if show:
-			list.append({"kind": "obj", "idx": i, "dist": d})
+			list.append({"kind": "obj", "idx": i, "dist": d,
+					"unknown": not forced and d > SENSOR_ID_RANGE
+						and o["category"] != "lpoint"})
 	for a in ai_ships:
-		list.append({"kind": "ai", "ai": a, "dist": a.global_position.length()})
+		if not _sensor_visible(a):
+			continue
+		var d: float = a.global_position.length()
+		if d > SENSOR_CLOSE and a != target_ai:
+			var sig := 1.0
+			if a.sys != null:
+				sig = a.sys.brightness()
+			if sig >= 1e-6 and sig * (1.0 - d / SENSOR_RANGE) < SENSOR_MIN_BRIGHT:
+				continue
+		# ships stay identified: flag 8 is only set for sims whose visibility
+		# byte is clear (FUN_1003a8e0 tests param_5 first), and ships default
+		# visible. The separate icShip identify counter (+0x2e0 < +0x2e4,
+		# stripped in icPlayerContactList::Add) is 0 < 0 = complete unless a
+		# mission sets it -- not modelled.
+		list.append({"kind": "ai", "ai": a, "dist": d, "unknown": false})
 	list.sort_custom(func(x, y): return x["dist"] < y["dist"])
 	return list
 

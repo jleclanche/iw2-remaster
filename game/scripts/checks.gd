@@ -21,7 +21,9 @@ var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
-	if m.muzzleshot:
+	if m.contactcheck:
+		_contactcheck(delta)
+	elif m.muzzleshot:
 		_muzzleshot(delta)
 	elif m.commshot:
 		_commshot(delta)
@@ -51,6 +53,31 @@ func step(delta: float) -> void:
 func _shot(name: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(m._base().path_join("data/screenshots/%s.png" % name))
+
+# --- contact list after a debug-menu system spawn -----------------------------
+
+var _cc_i := 0
+
+func _contactcheck(_delta: float) -> void:
+	# reproduce the SELECT SYSTEM path exactly: main.start_in_system per entry
+	if demo_t < 0.5:
+		return
+	demo_t = 0.0
+	var systems: Array = m.menu.SYSTEMS
+	if _cc_i >= systems.size():
+		print("CONTACTCHECK done")
+		m.get_tree().quit()
+		return
+	var pick: Array = systems[_cc_i]
+	m.start_in_system(str(pick[0]), str(pick[2]) if pick.size() > 2 else "")
+	var list: Array = m.contact_list()
+	print("CONTACTS %-28s n=%d  entry=%s" % [str(pick[1]), list.size(),
+			str(m.last_entry.get("name", "?"))])
+	for e in list:
+		print("   %-5s %-5s %10.0f  %-14s%s" % [str(e["faction"]), str(e["type"]),
+				float(e["dist"]), str(e["name"]),
+				"  [unidentified]" if e.get("unknown", false) else ""])
+	_cc_i += 1
 
 # --- command-section muzzle: fire and photograph from the side ---------------
 

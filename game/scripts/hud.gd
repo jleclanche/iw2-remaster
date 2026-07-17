@@ -2096,32 +2096,37 @@ func _draw_target_marks() -> void:
 	var cam: Camera3D = main.cam
 	var screen := Rect2(Vector2.ZERO, _screen())
 	# every on-screen contact gets a mark: a glyph for navigation points, corner
-	# brackets for anything solid
-	for i in main.objects.size():
-		var o: Dictionary = main.objects[i]
-		if o.get("sensor_hidden", false) or i == main.target_idx:
-			continue
-		var w := Vector3(o["x"] - main.px, o["y"] - main.py, o["z"] - main.pz)
-		if cam.is_position_behind(w):
-			continue
-		var p := cam.unproject_position(w)
-		if not screen.has_point(p):
-			continue
-		var col := _contact_color(false, str(o["category"]))
-		if o["category"] == "lpoint":
-			_diamond(p, 7.0, col)
+	# brackets for anything solid. "Contact" is the sensor's word -- the marks
+	# draw the same icPlayerContactList the list panel does.
+	for e in main._contacts_full():
+		if e["kind"] == "obj":
+			var i: int = e["idx"]
+			if i == main.target_idx:
+				continue
+			var o: Dictionary = main.objects[i]
+			var w := Vector3(o["x"] - main.px, o["y"] - main.py, o["z"] - main.pz)
+			if cam.is_position_behind(w):
+				continue
+			var p := cam.unproject_position(w)
+			if not screen.has_point(p):
+				continue
+			var col := Color(1.0, 0.8, 0.0, 0.95) if e["unknown"] \
+				else _contact_color(false, str(o["category"]))
+			if o["category"] == "lpoint":
+				_diamond(p, 7.0, col)
+			else:
+				_corner_bracket(_bbox_of(w, 60.0), Color(col.r, col.g, col.b, 0.7))
 		else:
-			_corner_bracket(_bbox_of(w, 60.0), Color(col.r, col.g, col.b, 0.7))
-	for a in main.ai_ships:
-		if a == main.target_ai or cam.is_position_behind(a.global_position):
-			continue
-		var p := cam.unproject_position(a.global_position)
-		if not screen.has_point(p):
-			continue
-		var col := _contact_color(a.behavior == "attack", "traffic",
-				str(a.faction))
-		_corner_bracket(_bbox_of(a.global_position, 30.0),
-				Color(col.r, col.g, col.b, 0.7))
+			var a: AiShip = e["ai"]
+			if a == main.target_ai or cam.is_position_behind(a.global_position):
+				continue
+			var p := cam.unproject_position(a.global_position)
+			if not screen.has_point(p):
+				continue
+			var col := _contact_color(a.behavior == "attack", "traffic",
+					str(a.faction))
+			_corner_bracket(_bbox_of(a.global_position, 30.0),
+					Color(col.r, col.g, col.b, 0.7))
 	_draw_target_bracket()
 
 func _draw_target_bracket() -> void:
@@ -2574,24 +2579,22 @@ func draw_ship_status(ci: CanvasItem) -> void:
 #   game time in centiseconds, chartreuse.
 
 func _orb_contacts() -> Array:
+	# the ORB draws exactly what the contact list holds (both copy
+	# icPlayerContactList), so it shares _contacts_full()'s sensor admissions
 	var out: Array = []
-	for i in main.objects.size():
-		var o: Dictionary = main.objects[i]
-		var rel := Vector3(o["x"] - main.px, o["y"] - main.py, o["z"] - main.pz)
-		var d := rel.length()
-		var ok := false
-		match o["category"]:
-			"station", "gunstar":
-				ok = d < 5.0e5
-			"lpoint":
-				ok = d < 1.0e7
-		if ok:
-			out.append([rel, _contact_color(false, o["category"]),
-				i == main.target_idx])
-	for a in main.ai_ships:
-		out.append([a.global_position,
-			_contact_color(a.behavior == "attack", "traffic",
-				str(a.faction)), a == main.target_ai])
+	for e in main._contacts_full():
+		if e["kind"] == "obj":
+			var o: Dictionary = main.objects[e["idx"]]
+			var rel := Vector3(o["x"] - main.px, o["y"] - main.py,
+					o["z"] - main.pz)
+			var col := Color(1.0, 0.8, 0.0, 0.95) if e["unknown"] \
+				else _contact_color(false, str(o["category"]))
+			out.append([rel, col, e["idx"] == main.target_idx])
+		else:
+			var a: AiShip = e["ai"]
+			out.append([a.global_position,
+				_contact_color(a.behavior == "attack", "traffic",
+					str(a.faction)), a == main.target_ai])
 	return out
 
 # The next free Y on the right-hand block stack. icHUDOrbRadar seeds it; the
@@ -2774,9 +2777,15 @@ func _draw_contact_list() -> void:
 	# its name scrolls rather than being truncated.
 	var s := _screen()
 	var all: Array = main.contact_list()
-	if all.is_empty():
-		return
 	_ea = _flash_a("icHUDContactList")
+	if all.is_empty():
+		# nothing on sensors: the block frame still draws (icHUDContactList's
+		# Render @ 0x100e4440 frames first and only then walks the rows)
+		var h0 := 8.0 + CL_ROW_H
+		_frame(Vector2(_right_x(320.0), s.y - h0 - MARGIN - 2.0 * BORDER),
+				Vector2(320.0, h0), 3)
+		_ea = 1.0
+		return
 	var sel := -1
 	for i in all.size():
 		if all[i]["targeted"]:
@@ -2807,6 +2816,10 @@ func _draw_contact_list() -> void:
 	for entry in rows:
 		var col := _contact_color(entry["hostile"], str(entry.get("category", "")),
 				str(entry.get("faction", "")))
+		if entry.get("unknown", false):
+			# unidentified contact: gold, before any allegiance colouring
+			# (FUN_100e8530 tests contact flag 8 first -> DAT_10174f60)
+			col = Color(1.0, 0.8, 0.0, 0.95)
 		if not entry["targeted"]:
 			col = Color(col.r, col.g, col.b, 0.75)
 		var nm := str(entry["name"]).to_upper()
