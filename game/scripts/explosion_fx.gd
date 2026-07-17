@@ -654,7 +654,7 @@ static func muzzle_flash(parent: Node3D, at: Vector3) -> void:
 	tw.tween_property(l, "light_energy", 0.0, 1.0 / MUZZLE_DECAY)
 	tw.tween_callback(l.queue_free)
 
-static func bolt_mesh(base: String) -> Mesh:
+static func bolt_mesh(base: String, texture := BOLT_TEXTURE) -> Mesh:
 	# icBeamAvatar (draw @ 0x100bb830) is an axial billboard: a single quad,
 	# half-width scale.x, turned about the beam axis to face the camera.
 	# Crossed quads are our static stand-in for that turn -- same footprint,
@@ -668,7 +668,7 @@ static func bolt_mesh(base: String) -> Mesh:
 	# original reads as: bolts STREAM OUT of the barrel. (The old mesh spanned
 	# 800 m AHEAD of the head, so a rod materialised in front of the ship the
 	# instant you fired -- the reported "fires way ahead of the muzzle".)
-	var tex := ParticleFx.texture(base, BOLT_TEXTURE)
+	var tex := ParticleFx.texture(base, texture)
 	var mat := ParticleFx.additive_material(tex)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)

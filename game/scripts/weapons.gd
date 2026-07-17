@@ -57,12 +57,20 @@ const MUZZLE_FORWARD := 4.5
 # For the tug's PBCs the barrels are hull-aligned and this is the same vector
 # the nose gives; for a canted mount (and for every turret) it is not.
 
-# sims/weapons/pbc_bolt.ini -- the standard PBC bolt (subsims .../player/pbc)
+# sims/weapons/pbc_bolt.ini -- the standard PBC bolt (subsims .../player/pbc).
+# Every PBC bolt avatar is the same icBeamAvatar (4, 1, 800): half-width 4 m,
+# only the streak TEXTURE differs per class, and the ini `length` key caps the
+# trailing streak (standard 800 m, light 400 m). The fire SOUND is the weapon's
+# own FcSoundNode ini (audio/sfx/pbc.ini vs light_pbc.ini), play_channel=fire.
 const PBC_BOLT := {"damage": 160.0, "penetration": 50.0, "half_time": 0.35,
-	"speed": 6000.0, "lifetime": 1.6, "bypass_shields": false}
+	"speed": 6000.0, "lifetime": 1.6, "bypass_shields": false,
+	"length": 800.0, "texture": "images/sfx/pbc_standard",
+	"wav": "audio/sfx/pbc.wav"}
 # sims/weapons/light_pbc_bolt.ini -- what a *light* PBC actually fires
 const LIGHT_PBC_BOLT := {"damage": 130.0, "penetration": 35.0, "half_time": 0.3,
-	"speed": 4500.0, "lifetime": 1.5, "bypass_shields": false}
+	"speed": 4500.0, "lifetime": 1.5, "bypass_shields": false,
+	"length": 400.0, "texture": "images/sfx/pbc_light",
+	"wav": "audio/sfx/light_pbc.wav"}
 
 var ship: ShipFlight  # player, for fire()
 var main: Node3D
@@ -76,7 +84,7 @@ var muzzle_fallback: Array = MUZZLES  # per-hull mounts (setup-scene nulls)
 # PBC on nose_hardpoint), recovered per iiWeapon::FindWorldMuzzle. Empty for the
 # tug, which fires from its fitted gun models. See light_pbc_muzzle().
 var fixed_gun: Dictionary = {}  # {null_pos} ship-local Godot
-var _mesh: Mesh
+var _meshes: Dictionary = {}  # streak texture path -> Mesh
 
 # --- icWeaponLink: the primary fire groups -----------------------------------
 # @element icWeaponLink
@@ -247,12 +255,14 @@ func _group_muzzles() -> Array:
 			out.append(_null_nodes[key])
 	return out
 
-# the bolt's own avatar (avatars/standard_pbc_bolt/setup.lws) is an
-# icBeamAvatar streak textured with images/sfx/pbc_standard, not a box
-func _bolt_mesh() -> Mesh:
-	if _mesh == null and main:
-		_mesh = ExplosionFx.bolt_mesh(main._base())
-	return _mesh
+# the bolt's own avatar (avatars/<class>_pbc_bolt/setup.lws) is an
+# icBeamAvatar streak; the class picks the texture (pbc_standard / pbc_light /
+# pbc_heavy), the geometry is shared
+func _bolt_mesh(spec: Dictionary) -> Mesh:
+	var tex := str(spec.get("texture", ExplosionFx.BOLT_TEXTURE))
+	if not _meshes.has(tex) and main:
+		_meshes[tex] = ExplosionFx.bolt_mesh(main._base(), tex)
+	return _meshes.get(tex)
 
 func fire() -> void:
 	if cooldown > 0.0:
@@ -288,7 +298,7 @@ func fire() -> void:
 		var fm: Array = light_pbc_muzzle()
 		_spawn_at(ship, fm[0], fm[1], ship.velocity, spec)
 		if main:
-			main.audio.play("audio/sfx/light_pbc.wav", -8.0)
+			main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 		return
 	var mz: Array = _group_muzzles()
 	if mz.is_empty():
@@ -305,7 +315,7 @@ func fire() -> void:
 			_spawn_at(ship, ship.global_transform * m,
 					-ship.global_transform.basis.z, ship.velocity, spec)
 	if main:
-		main.audio.play("audio/sfx/light_pbc.wav", -8.0)
+		main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 
 func spawn(shooter: Node3D, dir: Vector3, spec: Dictionary = {}) -> void:
 	var vel: Vector3 = shooter.velocity if "velocity" in shooter else Vector3.ZERO
@@ -319,7 +329,7 @@ func _spawn_at(shooter: Node3D, pos: Vector3, dir: Vector3, base_vel: Vector3,
 	if shooter is ShipFlight and (shooter as ShipFlight).fx != null:
 		(shooter as ShipFlight).fx.fire_pulse = 1.0
 	var node := MeshInstance3D.new()
-	node.mesh = _bolt_mesh()
+	node.mesh = _bolt_mesh(spec)
 	get_parent().add_child(node)
 	var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.99 else Vector3.RIGHT
 	var aim := Basis.looking_at(dir, up)
@@ -364,9 +374,11 @@ func _physics_process(delta: float) -> void:
 			# bolt is BOLT_LENGTH out, then a constant-length tracer
 			var flown: float = (node.global_position
 					- bolt.get("spawn", from)).length()
+			# the streak cap is the bolt ini's `length` (light PBC 400 m)
 			node.global_transform.basis = (bolt["aim"] as Basis) \
-					* Basis.from_scale(Vector3(1, 1,
-					clampf(flown, 0.5, ExplosionFx.BOLT_LENGTH)))
+					* Basis.from_scale(Vector3(1, 1, clampf(flown, 0.5,
+					float((bolt["spec"] as Dictionary).get("length",
+						ExplosionFx.BOLT_LENGTH)))))
 			for t in targets:
 				if t == bolt["shooter"] or not is_instance_valid(t):
 					continue

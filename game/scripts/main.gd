@@ -1470,9 +1470,10 @@ func spawn_hostile(at: Vector3) -> AiShip:
 	return ai
 
 func spawn_bolt(shooter: Node3D, dir: Vector3) -> void:
-	# NPC cannons: nps_pbc.ini fires the same sims/weapons/pbc_bolt
+	# NPC cannons: nps_pbc.ini fires the same sims/weapons/pbc_bolt, and its
+	# effects rig carries the same audio/sfx/pbc FcSoundNode as the player gun
 	weapons.spawn(shooter, dir, PbcWeapons.PBC_BOLT)
-	audio.play("audio/sfx/light_pbc.wav", -8.0)
+	audio.play("audio/sfx/pbc.wav", -8.0)
 
 func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
 		bolt: Dictionary = {}) -> void:
@@ -1734,6 +1735,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				_target_nearest_enemy()
 			KEY_T:  # TargetNearestShipToDirection
 				_target_nearest_to_direction()
+			KEY_Y:  # icPlayerPilot.SubTarget (configs/default.ini: Keyboard, Y)
+				_cycle_subtarget()
 			KEY_E:  # CycleEnemy
 				_cycle_enemy()
 			KEY_Q:  # TargetLastAggressor
@@ -1798,6 +1801,46 @@ func _unhandled_input(event: InputEvent) -> void:
 					spawn_hostile(ship.global_position +
 						-ship.global_transform.basis.z * 3000.0
 						+ Vector3(400, 200, 0))
+
+# --- subtargeting (icPlayerPilot.SubTarget -> icShip::CycleSubTarget) --------
+# 0x10063a80 steps a cursor through the target ship's subsim list; one step
+# past the last subsim clears it. The HUD redirects the target readout to the
+# subtargeted component and marks it in-world (FUN_100f8360, sprite 3).
+var subtarget_i := -1
+var _subtarget_of: Object = null
+
+func _cycle_subtarget() -> void:
+	if target_ai == null or not is_instance_valid(target_ai) \
+			or target_ai.sys == null:
+		return
+	if _subtarget_of != target_ai:
+		_subtarget_of = target_ai
+		subtarget_i = -1
+	var n: int = target_ai.sys.systems.size()
+	if n == 0:
+		return
+	subtarget_i += 1
+	if subtarget_i >= n:
+		subtarget_i = -1
+	audio.play("audio/hud/target_changed.wav", -12.0)
+
+func subtarget_sys() -> Dictionary:
+	# the subtargeted subsim record, or {} when none is active
+	if subtarget_i < 0 or target_ai == null or not is_instance_valid(target_ai) \
+			or _subtarget_of != target_ai or target_ai.sys == null:
+		return {}
+	var arr: Array = target_ai.sys.systems
+	return arr[subtarget_i] if subtarget_i < arr.size() else {}
+
+func subtarget_world_pos() -> Vector3:
+	var s := subtarget_sys()
+	if s.is_empty():
+		return Vector3.INF
+	# a mount without an attach null sits at the hull origin -- the original's
+	# behaviour (FcSubsim ctor zeroes the position), not a failed lookup
+	var local: Vector3 = target_ai.sys.null_pos.get(str(s.get("null", "")),
+			Vector3.ZERO)
+	return target_ai.global_transform * local
 
 func _target_pos() -> Vector3:
 	if target_ai != null and is_instance_valid(target_ai):
