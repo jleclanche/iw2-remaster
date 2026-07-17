@@ -1284,3 +1284,16 @@ saturation. `--sunshot` photographs each sun from the spawn point.
   starburst the reference shows inside Alpha's glow skirt.
 - All sun/flare constants remain exactly as extracted; nothing is tuned to
   screenshots.
+
+### The flare depth is VIEW depth, not distance (the real red-pop fix)
+
+`FcLensFlareNode::Render`'s size term (`fVar25`, FUN_1004ca50) is row 2 of
+the derived view transform applied to the node position — the camera-forward
+component. Sizing by euclidean distance (our first port) kept the quad
+full-size at any view angle until the 90-degree plane clipped it in ONE
+frame — the "camera suddenly turns red" pop (reproduced by a 10-degree yaw
+sweep: redness 57 -> −10 between yaw 80 and 90). With view depth the quad
+narrows by cos(theta), the bright zone slides off around ~65-75 degrees and
+falls to zero continuously (sweep now monotonic: 125 -> 1 over 70 degrees,
+no jump). FlareQuad (flare_quad.gd) owns this math for the sun flares AND
+the geog sky flares; StarFx just writes the per-frame intensity envelopes.

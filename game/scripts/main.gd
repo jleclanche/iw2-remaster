@@ -926,14 +926,10 @@ func _add_sky_flare(dir_lw: Vector3, n: Dictionary, col: Color) -> void:
 	var tex := StarFx.style_texture(style, _base())
 	if tex == null or intensity <= 0.0:
 		return
-	var mi := StarFx.flare_quad(tex)
-	var q := mi.mesh as QuadMesh
-	(q.material as StandardMaterial3D).albedo_color = \
-		Color(col.r * col.r, col.g * col.g, col.b * col.b)
+	var mi := FlareQuad.create(tex)
+	mi.intensity = intensity
+	mi.tint = Color(col.r * col.r, col.g * col.g, col.b * col.b)
 	mi.position = dir * 4.5e5
-	# constant apparent size; the anchor sits at the origin and the camera
-	# never strays far enough (tens of km vs 4.5e5) to matter, so scale once
-	mi.scale = Vector3.ONE * (StarFx.INTENSITY_SCALE * intensity * 4.5e5)
 	sky_anchor.add_child(mi)
 
 func _make_additive(node: Node3D) -> void:

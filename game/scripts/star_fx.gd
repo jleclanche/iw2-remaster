@@ -35,9 +35,9 @@ const INTENSITY_SCALE := 15.0       # FcLensFlareNode::m_intensity_scale
 const STREAK_WIDTH_RATIO := 0.166667  # m_anamorphic_streak_width_ratio
 
 var d_radii := INF   # main._stream_objects feeds true distance / sun radius
-var _glow: MeshInstance3D
-var _star: MeshInstance3D
-var _streak: MeshInstance3D
+var _glow: FlareQuad
+var _star: FlareQuad
+var _streak: FlareQuad
 var _glow_col: Color
 var _star_col: Color
 var _has_streak := false
@@ -96,37 +96,13 @@ func setup(rec: Dictionary, base: String) -> void:
 	# also the flag-2 condition -- sun_texture IS the class band
 	_has_streak = str(rec.get("sun_texture", "")) == "sun_blue"
 
-	_glow = flare_quad(_atlas[0])
-	_star = flare_quad(_atlas[2])
-	_streak = flare_quad(_atlas[0])
+	_glow = FlareQuad.create(_atlas[0])
+	_star = FlareQuad.create(_atlas[2])
+	_streak = FlareQuad.create(_atlas[0])
+	_streak.width_ratio = STREAK_WIDTH_RATIO
 	add_child(_glow)
 	add_child(_star)
 	add_child(_streak)
-
-
-static func flare_quad(tex: Texture2D) -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	var quad := QuadMesh.new()
-	quad.size = Vector2(2.0, 2.0)  # unit half-extent; per-frame scale sizes it
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
-	mat.disable_receive_shadows = true
-	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
-	mat.billboard_keep_scale = true
-	mat.albedo_texture = tex
-	quad.material = mat
-	mi.mesh = quad
-	# Billboarding happens in the shader, but Godot culls on the node-space
-	# AABB -- for a flat quad that is a paper-thin slab, so the (huge,
-	# camera-rotated) flare vanished with a hard pop at a view angle. Give the
-	# instance a unit CUBE bound instead: scaled by the per-frame size it
-	# covers every possible billboard orientation.
-	mi.custom_aabb = AABB(Vector3(-1, -1, -1), Vector3(2, 2, 2))
-	return mi
 
 
 static func _glow_intensity(d: float) -> float:
@@ -148,34 +124,22 @@ static func _glow_intensity(d: float) -> float:
 
 
 func _process(_delta: float) -> void:
-	if _glow == null or not is_inside_tree():
+	# icSun::UpdateAvatar's per-frame envelopes; FlareQuad does the sizing
+	# (15 x intensity x view depth, flux Render @ 0xe6100)
+	if _glow == null:
 		return
-	var cam := get_viewport().get_camera_3d()
-	if cam == null:
-		return
-	# the flare quad's world half-extent is 15 x intensity x view depth --
-	# a constant APPARENT size however far the node is drawn
-	var depth := (global_position - cam.global_position).length()
 	var gi := StarFx._glow_intensity(d_radii)
 	var star_a := clampf(d_radii * 0.008, 0.0, 1.0)
 	var si := 0.05 * (1.0 - clampf(d_radii * 2e-5, 0.0, 1.0))
 
-	_glow.visible = gi > 1e-6
-	if _glow.visible:
-		_glow.scale = Vector3.ONE * (INTENSITY_SCALE * gi * depth)
-		(_glow.mesh as QuadMesh).material.albedo_color = _glow_col
-	_star.visible = si > 1e-6 and star_a > 1e-3
-	if _star.visible:
-		_star.scale = Vector3.ONE * (INTENSITY_SCALE * si * depth)
-		(_star.mesh as QuadMesh).material.albedo_color = Color(
-			_star_col.r * star_a, _star_col.g * star_a, _star_col.b * star_a)
-	_streak.visible = _has_streak and _star.visible
-	if _streak.visible:
-		var half := INTENSITY_SCALE * si * depth
-		_streak.scale = Vector3(half, half * STREAK_WIDTH_RATIO, half)
-		# the anamorphic streak is pure blue x the flare alpha (0, 0, a)
-		(_streak.mesh as QuadMesh).material.albedo_color = \
-			Color(0.0, 0.0, star_a)
+	_glow.intensity = gi
+	_glow.tint = _glow_col
+	_star.intensity = si if star_a > 1e-3 else 0.0
+	_star.tint = Color(
+		_star_col.r * star_a, _star_col.g * star_a, _star_col.b * star_a)
+	# the anamorphic streak is pure blue x the flare alpha (0, 0, a)
+	_streak.intensity = _star.intensity if _has_streak else 0.0
+	_streak.tint = Color(0.0, 0.0, star_a)
 
 
 # The Draw4x4 primitive: an 8-triangle fan, centre UV (1, 1), corners at

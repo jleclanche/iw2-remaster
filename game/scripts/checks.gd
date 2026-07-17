@@ -181,22 +181,24 @@ func _sunshot(_delta: float) -> void:
 	for o in m.objects:
 		if o["category"] == "star":
 			stars.append(o)
-	if _ss_i >= stars.size():
+	if _ss_i >= 36:
 		print("SUNSHOT done")
 		m.get_tree().quit()
 		return
-	var rec: Dictionary = stars[_ss_i]
+	var rec: Dictionary = stars[0]
+	var yaw := float(_ss_i * 10)
 	if not _ss_aimed:
 		# stay AT the junkyard spawn; just point the ship at the sun
 		var to := Vector3(float(rec["x"]) - m.px, float(rec["y"]) - m.py,
 			float(rec["z"]) - m.pz).normalized()
 		m.ship.global_transform = Transform3D(Basis.IDENTITY, Vector3.ZERO) 			.looking_at(to * 1000.0, Vector3.UP)
+		m.ship.rotate_y(deg_to_rad(yaw))
 		m.cam_mode = 0
 		m._apply_view()
 		m.hud.visible = false
 		_ss_aimed = true
 		return
-	_shot("sunshot_%d_%s" % [_ss_i, str(rec["name"]).to_snake_case()])
+	_shot("sweep_yaw%03d" % int(yaw))
 	_ss_i += 1
 	_ss_aimed = false
 
