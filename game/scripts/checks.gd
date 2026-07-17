@@ -23,6 +23,8 @@ func step(delta: float) -> void:
 	demo_t += delta
 	if m.contactcheck:
 		_contactcheck(delta)
+	elif m.sunshot:
+		_sunshot(delta)
 	elif m.srgbprobe:
 		_srgbprobe(delta)
 	elif m.muzzleshot:
@@ -165,6 +167,38 @@ func _srgbprobe(_delta: float) -> void:
 			print("SRGBPROBE %-9s = %d %d %d" % [probe[0],
 					int(c.r * 255.0), int(c.g * 255.0), int(c.b * 255.0)])
 		m.get_tree().quit()
+
+# --- suns from the player's actual position (flare model eyeball) ------------
+
+var _ss_i := 0
+var _ss_aimed := false
+
+func _sunshot(_delta: float) -> void:
+	if demo_t < 1.2:
+		return
+	demo_t = 0.6
+	var stars: Array = []
+	for o in m.objects:
+		if o["category"] == "star":
+			stars.append(o)
+	if _ss_i >= stars.size():
+		print("SUNSHOT done")
+		m.get_tree().quit()
+		return
+	var rec: Dictionary = stars[_ss_i]
+	if not _ss_aimed:
+		# stay AT the junkyard spawn; just point the ship at the sun
+		var to := Vector3(float(rec["x"]) - m.px, float(rec["y"]) - m.py,
+			float(rec["z"]) - m.pz).normalized()
+		m.ship.global_transform = Transform3D(Basis.IDENTITY, Vector3.ZERO) 			.looking_at(to * 1000.0, Vector3.UP)
+		m.cam_mode = 0
+		m._apply_view()
+		m.hud.visible = false
+		_ss_aimed = true
+		return
+	_shot("sunshot_%d_%s" % [_ss_i, str(rec["name"]).to_snake_case()])
+	_ss_i += 1
+	_ss_aimed = false
 
 # --- command-section muzzle: fire and photograph from the side ---------------
 

@@ -9,7 +9,6 @@ const START_NAME := "Alexander L-Point"
 const STREAM_IN := 4.0e5
 const STREAM_OUT := 5.0e5
 const IMPOSTOR_DIST := 2.5e5  # bodies/stars drawn at capped range, scaled down
-const STAR_FLARE_DEG := 1.6   # suns draw as constant-apparent-size flare glows
 const LDSI_RADIUS := 2.5e4
 
 const LDS_MAX := 3.0e10
@@ -240,6 +239,7 @@ var commshot := false    # screenshot every comm-portrait rig
 var muzzleshot := false  # fire the comsec light PBC and photograph it
 var contactcheck := false  # spawn into each menu system, print contact_list()
 var srgbprobe := false     # render known-value quads, verify colour pipeline
+var sunshot := false       # photograph each sun from the spawn point
 
 func _ready() -> void:
 	demo = "--demo" in OS.get_cmdline_user_args()
@@ -256,11 +256,12 @@ func _ready() -> void:
 	muzzleshot = "--muzzleshot" in OS.get_cmdline_user_args()
 	contactcheck = "--contactcheck" in OS.get_cmdline_user_args()
 	srgbprobe = "--srgbprobe" in OS.get_cmdline_user_args()
+	sunshot = "--sunshot" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
 			or newgamecheck or basecheck or newgametest or commshot or muzzleshot \
-			or contactcheck or srgbprobe:
+			or contactcheck or srgbprobe or sunshot:
 		demo = true
 	if demo:
 		checks = CheckRunner.new()
@@ -809,7 +810,10 @@ func _build_environment() -> void:
 	e.sky = sky
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
 	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
-	e.glow_enabled = true
+	# the original has no post-processing at all -- D3D7 scanned the frame out
+	# raw. Godot's glow bloom smeared the (already screen-dominating) sun
+	# flare quads into full-screen saturation.
+	e.glow_enabled = false
 	env.environment = e
 	env_ref = e
 	add_child(env)
@@ -3289,19 +3293,25 @@ func _stream_objects() -> void:
 				if o["category"] == "star":
 					sun.look_at_from_position(Vector3.ZERO,
 						Vector3(-dx, -dy, -dz).normalized())
-					# A sun is NEVER seen as a disc at its true angular size: the
-					# far plane (600 km) cannot contain a sun at map distances
-					# (1e11..1e13 m), so the engine always culls the disc -- what
-					# the player sees is the icSun's FcLensFlareNode glow, whose
-					# world-space branch scales its quad BY DISTANCE
-					# (FcLensFlareNode::Render, flux 0xe6100: size = base * dist):
-					# a CONSTANT-APPARENT-SIZE flare. Without this cap, Hoffer's
-					# Wake Alpha (a red giant -- radius 1.751e11 m, the map really
-					# says that) fills 65 degrees of sky from the Act 0 junkyard.
-					# The flare's apparent half-angle is reconstructed from
-					# reference footage (~1.6 deg); the per-variant flare size
-					# tables are not extracted yet.
-					draw_r = IMPOSTOR_DIST * tan(deg_to_rad(STAR_FLARE_DEG))
+					# A sun is NEVER seen as a disc: the far plane (600 km)
+					# cannot contain one at map distances (1e11..1e13 m). What
+					# the player sees is icSun's pair of FcLensFlareNodes, and
+					# StarFx sizes those itself (15 x intensity x depth, the
+					# constant-apparent-size branch of flux 0xe6100) from the
+					# distance in SUN RADII -- fed here with the engine's own
+					# approximate magnitude (max + 0.34375*mid + 0.25*min,
+					# iwar2 @ 0x1006b8xx via DAT_101191f0/DAT_101191ec).
+					var ax := absf(dx)
+					var ay := absf(dy)
+					var az := absf(dz)
+					var mx := maxf(ax, maxf(ay, az))
+					var mn := minf(ax, minf(ay, az))
+					var md := ax + ay + az - mx - mn
+					(o["node"] as StarFx).d_radii = \
+						(mx + 0.34375 * md + 0.25 * mn) / maxf(r, 1.0)
+					o["node"].position = Vector3(dx, dy, dz) * k
+					o["node"].scale = Vector3.ONE
+					continue
 				o["node"].position = Vector3(dx, dy, dz) * k
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
 				var fg: Node3D = o["node"].get_node_or_null("FarGlow")

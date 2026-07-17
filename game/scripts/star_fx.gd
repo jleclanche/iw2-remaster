@@ -5,57 +5,62 @@ extends Node3D
 #
 # icSun::CreateAvatar (iwar2.dll @ 0x1006a960) attaches THREE things to an
 # icSun sim:
-#   1. an icSunAvatar scene node (ctor FUN_100d2910 @ 0x100d2910) -- a shader
-#      whose single texture layer is chosen by the sun's class:
-#          class < 3 -> icPlanetProperties+0x20 = images/planets/sun_blue
-#          class < 7 -> icPlanetProperties+0x18 = images/planets/sun_yellow
-#          else      -> icPlanetProperties+0x1c = images/planets/sun_red
-#      scaled to FiSim::Radius() on all three axes, with a bounding radius of
-#      radius * 1.4 (_DAT_1011a440).
-#   2. a lens flare at the sun's position (FcLensFlareNode, mode 0),
-#   3. a second lens flare (mode 2) whose variant is 3 for class <= 2 and 1
-#      otherwise.
+#   1. an icSunAvatar scene node (ctor FUN_100d2910 @ 0x100d2910) -- the
+#      plasma surface, radius-sized. At map distances (1e11..1e13 m) it sits
+#      far beyond the 600 km far plane and is never seen; we do not build it.
+#   2. an FcLensFlareNode, style 0 (the soft glow quadrant of
+#      images/sfx/lens_flares), colour icSun::PickColour(class);
+#   3. a second FcLensFlareNode, style 2 (the 4-point star quadrant), flags
+#      1 | (class <= 2 ? 2 : 0) -- flag 2 turns on the blue anamorphic
+#      streak, so only class <= 2 (sun_blue) stars get it.
 #
-# The draw (vtable 0x1011d1fc slots 14/16 -> 0x100d2b30 / 0x100d2b80; Ghidra
-# bails on both, recovered by raw disassembly -- docs/effects.md section 6):
-#   - the DISC is one of the three planets.ini planet_models[] LOD spheres
-#     (icPlanetProperties+0x28), rendered with the class texture as the
-#     global shader;
-#   - the CORONA is TWO FcBillBoard::Draw4x4 quads (flux.dll @ 0x1004c420) at
-#     the sun's position, both sized radius * 1.3 (_DAT_1011d250) with the
-#     second layer 5% bigger (1.05 @ 0x100d2d40), additive (Draw4x4 forces
-#     eBlend=1 = ONE/ONE), each coloured by its OWN icSun::PickColour draw
-#     (this+0xc0 / this+0xcc from the ctor).
-#   - the roll TRACKS THE CAMERA: roll = -atan2(sunY . cam_up, sunY . cam_right)
-#     (0x100d2c22..0x100d2cf1), so rolling your ship rotates the halo -- that
-#     is the "the halo moves" the original shows.  On top of that a phase
-#     accumulator (this+0xe0, Prepare @ 0x100d2b30) advances at 0.010472 rad/s
-#     (= 0.6 deg/s, double @ 0x1011d248); layer 1 draws at roll + phase and
-#     layer 2 at roll - phase, so the layers counter-rotate at 1.2 deg/s.
-#   - Draw4x4 draws the quad as an 8-triangle fan whose CENTRE has UV (1, 1)
-#     and whose corners have UV (0.008, 0.008): sun_halo.png is one quadrant,
-#     mirrored 4x, spikes meeting at the centre.
+# FcLensFlareNode::Render (flux.dll @ 0xe6100), constant-apparent-size branch:
+#   world half-extent = m_intensity_scale (15, @ 0x100ee4a8) x envelope x
+#   view depth -- i.e. apparent half-size = 15 x intensity, independent of
+#   range. Vertex colour = (r^2, g^2, b^2) x alpha (+0xe0). The anamorphic
+#   streak is a second quad, full length along camera-right, 1/6 as tall
+#   (m_anamorphic_streak_width_ratio @ 0x100ee4a0), pure blue (0, 0, alpha),
+#   textured with the style-0 glow.
+#
+# icSun's per-frame envelope writer (iwar2 @ 0x1006b8xx, the function before
+# CreateAvatar): d = approximate player distance in SUN RADII
+# (max + 0.34375*mid + 0.25*min of the |axis| deltas, DAT_101191f0/DAT_101191ec):
+#   glow intensity:  d<5 -> 1; 5..25 -> 1 -> 0.5 (x0.025/radius);
+#                    25..75 -> 0.5 -> 0.15 (x0.007); 75..125 -> 0.15 -> 0
+#                    (x0.003); 0 beyond 125 radii.
+#   star alpha    :  clamp(d * 0.008, 0..1)   (fades IN, full at 125 radii)
+#   star intensity:  0.05 * (1 - clamp(d * 2e-5, 0..1))  (gone at 50k radii)
 
-const HALO_BOUND := 1.4    # _DAT_1011a440: icSunAvatar bounding radius multiplier
-const HALO_SCALE := 1.3    # _DAT_1011d250: drawn corona quad half-extent, x radius
-const HALO_LAYER2 := 1.05  # 0x100d2d40: second layer is 5% bigger
-const PHASE_RATE := 0.010472  # double @ 0x1011d248: rad/s, layers at +/- phase
-const FLARE_BOOST := 2.2   # reconstructed: the flare glow vs the corona's 1.3x
+const INTENSITY_SCALE := 15.0       # FcLensFlareNode::m_intensity_scale
+const STREAK_WIDTH_RATIO := 0.166667  # m_anamorphic_streak_width_ratio
 
-var _body: MeshInstance3D
-var _halo_a: MeshInstance3D
-var _halo_b: MeshInstance3D
-var _phase := 0.0
+var d_radii := INF   # main._stream_objects feeds true distance / sun radius
+var _glow: MeshInstance3D
+var _star: MeshInstance3D
+var _streak: MeshInstance3D
+var _glow_col: Color
+var _star_col: Color
+var _has_streak := false
+
+static var _atlas_glow: ImageTexture
+static var _atlas_star: ImageTexture
 
 
-static func _tex(stem: String, base: String) -> ImageTexture:
-	var path := base.path_join("data/textures/images/planets/%s.png" % stem)
-	if not FileAccess.file_exists(path):
-		return null
-	var img := Image.load_from_file(path)
+static func _load_atlas(base: String) -> void:
+	if _atlas_glow != null:
+		return
+	var img := Image.load_from_file(
+		base.path_join("data/textures/images/sfx/lens_flares.png"))
 	if img == null:
-		return null
-	return ImageTexture.create_from_image(img)
+		return
+	var w := img.get_width() / 2
+	var h := img.get_height() / 2
+	# FcLensFlareNode::m_tex_coords (@ 0x100ee420): style 0 = top-left
+	# quadrant, style 2 = bottom-left quadrant
+	_atlas_glow = ImageTexture.create_from_image(
+		img.get_region(Rect2i(0, 0, w, h)))
+	_atlas_star = ImageTexture.create_from_image(
+		img.get_region(Rect2i(0, h, w, h)))
 
 
 static func _pick_colour(pair: Array, seed_value: int) -> Color:
@@ -72,103 +77,103 @@ static func _pick_colour(pair: Array, seed_value: int) -> Color:
 
 # @element icSunAvatar
 func setup(rec: Dictionary, base: String) -> void:
-	var stem := str(rec.get("sun_texture", "sun_yellow"))
+	StarFx._load_atlas(base)
 	var pair: Array = rec.get("sun_colours", [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]])
 	var h := absi(str(rec.get("name", "")).hash())
-	# the ctor calls PickColour TWICE (0x100d2903/0x100d2907): each corona
-	# layer gets an independent draw from the class colour pair
+	# CreateAvatar calls PickColour once per flare: independent draws
 	var col_a := _pick_colour(pair, h)
 	var col_b := _pick_colour(pair, h / 1000)
+	# the render squares the colour components (FcColour at 0xe6100)
+	_glow_col = Color(col_a.r * col_a.r, col_a.g * col_a.g, col_a.b * col_a.b)
+	_star_col = Color(col_b.r * col_b.r, col_b.g * col_b.g, col_b.b * col_b.b)
+	# class < 3 renders the sun_blue surface (FUN_100d2910), and class <= 2 is
+	# also the flag-2 condition -- sun_texture IS the class band
+	_has_streak = str(rec.get("sun_texture", "")) == "sun_blue"
 
-	# The disc: the original renders a planet_models[] LOD sphere with the
-	# class's plasma texture -- but at map distances a sun's TRUE angular size
-	# is sub-pixel (Beta: 0.01 deg), and the star is drawn at the flare cap
-	# (main.STAR_FLARE_DEG), standing in for the FcLensFlareNode glow the
-	# player actually sees. At that size the noise texture read as a flat
-	# "snowball"/"donut", so the disc renders as a small HOT CORE in the
-	# picked class colour (lerped toward white, like a flare core) at 0.35x;
-	# the plasma texture would only ever matter inside 250 km of a
-	# photosphere, which no map allows.
-	var sphere := SphereMesh.new()
-	sphere.radius = 0.35
-	sphere.height = 0.7
-	sphere.radial_segments = 24
-	sphere.rings = 12
+	_glow = _flare_quad(_atlas_glow)
+	_star = _flare_quad(_atlas_star)
+	_streak = _flare_quad(_atlas_glow)
+	add_child(_glow)
+	add_child(_star)
+	add_child(_streak)
+
+
+func _flare_quad(tex: Texture2D) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var quad := QuadMesh.new()
+	quad.size = Vector2(2.0, 2.0)  # unit half-extent; per-frame scale sizes it
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	var core := col_a.lerp(Color.WHITE, 0.7)
-	mat.albedo_color = core
-	mat.emission_enabled = true
-	mat.emission = core
-	mat.emission_energy_multiplier = 6.0
-	sphere.material = mat
-	_body = MeshInstance3D.new()
-	_body.mesh = sphere
-	add_child(_body)
-
-	# the corona: two counter-rotating Draw4x4 layers, oriented on the CPU
-	# each frame (the roll must track the camera; BILLBOARD_ENABLED would
-	# overwrite the basis and lose it)
-	var tex := _tex("sun_halo", base)
-	_halo_a = _make_halo(tex, col_a)
-	_halo_b = _make_halo(tex, col_b)
-	add_child(_halo_a)
-	add_child(_halo_b)
-
-
-func _make_halo(tex: Texture2D, colour: Color) -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	mi.mesh = StarFx.quadrant_fan_mesh()
-	var hm := StandardMaterial3D.new()
-	hm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	hm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	hm.cull_mode = BaseMaterial3D.CULL_DISABLED
-	hm.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
-	hm.disable_receive_shadows = true
-	hm.albedo_texture = tex
-	hm.albedo_color = colour
-	mi.mesh.surface_set_material(0, hm)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	mat.disable_receive_shadows = true
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mat.billboard_keep_scale = true
+	mat.albedo_texture = tex
+	quad.material = mat
+	mi.mesh = quad
+	# the glow quad can be x15 the node's draw distance: kill frustum pop-out
+	mi.extra_cull_margin = 16384.0
 	return mi
 
 
-func _process(delta: float) -> void:
-	# icSunAvatar Prepare (0x100d2b30): phase += dt * 0.010472
-	_phase += delta * PHASE_RATE
-	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
-	if cam == null or _halo_a == null:
+static func _glow_intensity(d: float) -> float:
+	# iwar2 @ 0x1006b8xx piecewise, d in sun radii (DAT_101183f0=5,
+	# DAT_101190b0=20, DAT_1011a1c0=50, slopes 0.025/0.007/0.003,
+	# knots 0.5 @ DAT_10117738 and 0.15 @ DAT_1011b354)
+	if d < 5.0:
+		return 1.0
+	var t := d - 5.0
+	if t < 20.0:
+		return 0.5 + (20.0 - t) * 0.025
+	t -= 20.0
+	if t < 50.0:
+		return 0.15 + (50.0 - t) * 0.007
+	t -= 50.0
+	if t < 50.0:
+		return (50.0 - t) * 0.003
+	return 0.0
+
+
+func _process(_delta: float) -> void:
+	if _glow == null or not is_inside_tree():
 		return
-	var cb := cam.global_transform.basis
-	# roll = -atan2(sunY . cam_up, sunY . cam_right)  (0x100d2c22..0x100d2cf1)
-	var sun_y := global_transform.basis.y.normalized()
-	var roll := -atan2(sun_y.dot(cb.y), sun_y.dot(cb.x))
-	# main scales this node to the star's (draw) radius; setting the halos'
-	# GLOBAL basis bypasses that, so fold it back in
-	var radius := global_transform.basis.get_scale().x
-	# FLARE_BOOST widens the corona from the icSunAvatar's own 1.3x to the
-	# lens-flare glow the player actually sees at range (the FcLensFlareNode
-	# atlas is not extracted yet; the spiky sun_halo quadrant is its stand-in)
-	_orient(_halo_a, cb, roll + _phase, HALO_SCALE * FLARE_BOOST * radius)
-	_orient(_halo_b, cb, roll - _phase,
-			HALO_SCALE * HALO_LAYER2 * FLARE_BOOST * radius)
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	# the flare quad's world half-extent is 15 x intensity x view depth --
+	# a constant APPARENT size however far the node is drawn
+	var depth := (global_position - cam.global_position).length()
+	var gi := StarFx._glow_intensity(d_radii)
+	var star_a := clampf(d_radii * 0.008, 0.0, 1.0)
+	var si := 0.05 * (1.0 - clampf(d_radii * 2e-5, 0.0, 1.0))
 
-
-func _orient(halo: MeshInstance3D, cb: Basis, roll: float, size: float) -> void:
-	# FcBillBoard::Draw4x4 (flux.dll @ 0x1004c420): the quad's axes are the
-	# camera right/up rotated by the roll --
-	#   right' = right*cos - up*sin ;  up' = up*cos + right*sin
-	var c := cos(roll)
-	var s := sin(roll)
-	var right := cb.x * c - cb.y * s
-	var up := cb.y * c + cb.x * s
-	halo.global_transform.basis = Basis(right * size, up * size, cb.z * size)
+	_glow.visible = gi > 1e-6
+	if _glow.visible:
+		_glow.scale = Vector3.ONE * (INTENSITY_SCALE * gi * depth)
+		(_glow.mesh as QuadMesh).material.albedo_color = _glow_col
+	_star.visible = si > 1e-6 and star_a > 1e-3
+	if _star.visible:
+		_star.scale = Vector3.ONE * (INTENSITY_SCALE * si * depth)
+		(_star.mesh as QuadMesh).material.albedo_color = Color(
+			_star_col.r * star_a, _star_col.g * star_a, _star_col.b * star_a)
+	_streak.visible = _has_streak and _star.visible
+	if _streak.visible:
+		var half := INTENSITY_SCALE * si * depth
+		_streak.scale = Vector3(half, half * STREAK_WIDTH_RATIO, half)
+		# the anamorphic streak is pure blue x the flare alpha (0, 0, a)
+		(_streak.mesh as QuadMesh).material.albedo_color = \
+			Color(0.0, 0.0, star_a)
 
 
 # The Draw4x4 primitive: an 8-triangle fan, centre UV (1, 1), corners at
 # (0.008, 0.008) and edge midpoints at the texture's other two corners --
 # one texture quadrant mirrored into all four.
 # icShockwaveAvatar draws through the very same routine, so ExplosionFx
-# shares this mesh.
+# shares this mesh. (icSunAvatar's corona also draws with it, but that node
+# sits beyond the far plane at any map range and is never built here.)
 static func quadrant_fan_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
 	var uvs := PackedVector2Array()

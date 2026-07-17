@@ -1211,3 +1211,55 @@ Also extracted while here: **FcInputMapper auto-repeats every held button**
 after `m_initial_delay` = 0.5 s (flux @ 0x101445e8) at `m_repeat_period` =
 0.1 s (@ 0x101445e4) — FUN_100e6a80's state machine. Wired to CycleContactUp/
 Down (comma/period) via `main._tick_key_repeat`.
+
+---
+
+## Sun flares: the real FcLensFlareNode model (replaces the 1.6° reconstruction)
+
+The 2×2 atlas `images/sfx/lens_flares` (m_texture_url) holds four styles
+(`m_tex_coords` @ 0x100ee420): 0 = soft glow (TL), 1 = sharp glow (TR),
+2 = 4-point star (BL), 3 = 6-point star (BR). The flare content is a tiny
+point in its cell: ≥50% brightness spans 6% of the cell, ≥10% spans 14% —
+the quad is mostly empty.
+
+`FcLensFlareNode::Render` (flux @ 0xe6100, verified in asm):
+- constant-apparent-size branch: world half-extent = `m_intensity_scale`
+  (**15**, @ 0x100ee4a8) × envelope × view depth → apparent half-angle =
+  atan(15 × intensity), range-independent. Vertex colour = (r², g², b²) × alpha
+  (+0xe0). Styles pick the atlas cell.
+- flag 2 adds the **anamorphic streak**: a second quad, full length along
+  camera-right, width × `m_anamorphic_streak_width_ratio` (**1/6**), pure
+  blue `(0, 0, alpha)`, textured with the style-0 glow.
+- flag 8 (planets): size = nominal_distance(radius) × intensity instead;
+  point-drawn beyond `m_point_detail` (2000) × that, culled beyond
+  `m_cull_detail` (3000) ×.
+
+`icSun::CreateAvatar` (@ 0x6a960): flare A = style 0, flare B = style 2
+(child of A), colours from `PickColour(class)`; flags B = 1 | (class ≤ 2 ? 2 : 0)
+— only class ≤ 2 (the `sun_blue` band) gets the streak.
+
+`icSun::UpdateAvatar` (@ 0x6a4b0) each frame:
+- **parks the avatar at camera + sun_direction × 20 m** (DAT_101190b0) — that
+  is how a flare at 1e12 m beats the 600 km far plane;
+- d = approximate distance in SUN RADII (max + 0.34375·mid + 0.25·min,
+  DAT_101191f0/DAT_101191ec of the |axis| deltas);
+- glow intensity piecewise: d<5 → 1; 5..25 → 1→0.5; 25..75 → 0.5→0.15;
+  75..125 → 0.15→0; 0 beyond (knots DAT_101183f0=5, DAT_101190b0=20,
+  DAT_1011a1c0=50; slopes 0.025/0.007/0.003);
+- star flare: alpha = clamp(d × 0.008, 0..1) (fades IN with distance),
+  intensity = 0.05 × (1 − clamp(d × 2e-5, 0..1)) (gone at 50k radii).
+
+Scale sanity: the geog LWS sky flares use FlareIntensity 0.008–0.012 →
+visible star ≈ 0.14 × 2·atan(15 × 0.01) ≈ 2° — matches their in-game look.
+The junkyard (Alexander L-Point) is **6.9 radii** from Alpha (my earlier
+2.74e11 m note measured the wrong entity): glow intensity 0.95 — facing the
+red giant legitimately floods the view; the reference tutorial shot faces
+~60° away and shows only the skirt. Beta at 11,048 radii: no glow, star
+flare I=0.039 + blue streak.
+
+Ported in star_fx.gd (glow + star + streak quads, real atlas crops,
+d_radii fed by main._stream_objects with the engine's approximate
+magnitude). Removed: the 1.6° STAR_FLARE_DEG cap, the corona stand-in, the
+hot-core sphere. Also **glow_enabled = false** — the original has no
+post-processing, and Godot's bloom smeared the flare quads into full-screen
+saturation. `--sunshot` photographs each sun from the spawn point.
