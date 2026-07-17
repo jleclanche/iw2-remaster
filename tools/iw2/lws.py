@@ -150,8 +150,45 @@ def parse_lws(text: str) -> list[dict]:
                 pass
         elif ln.startswith("LightType") and cur is not None:
             cur["light_type"] = int(ln.split()[1])
+        # NOTE: keep the specific LensFlare* keys ahead of the bare "LensFlare"
+        # prefix test. The engine's mapping (FcAvatarLoader::MakeLight, flux @
+        # 0xdc3f0): FlareIntensity is the flare node's intensity ENVELOPE
+        # (LgtIntensity only drives the light), style comes from
+        # LensFlareOptions bit 2 + FlareStarFilter (<=4 -> 4-point star,
+        # >4 -> 6-point) or bit 3 (sharp glow), streak from bit 6, and
+        # LensFlareFade bit 1 -> world-sized (nominal distance), bit 2 ->
+        # world-scaled.
+        elif ln.startswith("LensFlareFade") and cur is not None:
+            cur["flare_fade"] = int(ln.split()[1])
+        elif ln.startswith("LensFlareOptions") and cur is not None:
+            cur["flare_options"] = int(ln.split()[1])
         elif ln.startswith("LensFlare") and cur is not None:
             cur["lens_flare"] = True
+        elif ln.startswith("FlareIntensity") and cur is not None:
+            arg = ln[len("FlareIntensity"):].strip()
+            if arg.startswith("("):
+                keys, used = _parse_envelope(lines, i)
+                if keys:
+                    cur["flare_intensity_envelope"] = keys
+                    cur["flare_intensity"] = keys[0][1]
+                i += used
+            else:
+                cur["flare_intensity"] = float(arg)
+        elif ln.startswith("FlareDissolve") and cur is not None:
+            arg = ln[len("FlareDissolve"):].strip()
+            if arg.startswith("("):
+                keys, used = _parse_envelope(lines, i)
+                if keys:
+                    cur["flare_dissolve"] = keys[0][1]
+                i += used
+            else:
+                cur["flare_dissolve"] = float(arg)
+        elif ln.startswith("FlareStarFilter") and cur is not None:
+            cur["flare_star_filter"] = int(ln.split()[1])
+        elif ln.startswith("FlareRingColor") and cur is not None:
+            cur["flare_ring_color"] = [int(v) for v in ln.split()[1:4]]
+        elif ln.startswith("FlareRingSize") and cur is not None:
+            cur["flare_ring_size"] = float(ln.split()[1])
         elif (ln.startswith("ObjectMotion") or ln.startswith("LightMotion")) \
                 and cur is not None:
             nchan = int(lines[i + 1].strip())

@@ -884,7 +884,7 @@ func _setup_sky(stem: String) -> void:
 							var p := Vector3(-n["pos"][0], -n["pos"][1],
 								n["pos"][2]) + sys_parent
 							if p.length() > 100.0:
-								_add_sky_flare(p, col)
+								_add_sky_flare(p, n, col)
 
 func _aim_distant_light(light: DirectionalLight3D, n: Dictionary) -> void:
 	# LightWave: a light with H=P=0 shines along +Z; heading rotates about +Y,
@@ -904,21 +904,36 @@ func _parse_tuple(t: String, fallback: Vector3) -> Vector3:
 		return Vector3(float(parts[0]), float(parts[1]), float(parts[2]))
 	return fallback
 
-func _add_sky_flare(dir_lw: Vector3, col: Color) -> void:
+func _add_sky_flare(dir_lw: Vector3, n: Dictionary, col: Color) -> void:
+	# A geog scene light with LensFlare becomes an FcLensFlareNode
+	# (FcAvatarLoader::MakeLight, flux @ 0xdc3f0):
+	#  - the flare's intensity envelope is FlareIntensity (LgtIntensity only
+	#    drives the light itself);
+	#  - style: LensFlareOptions bit 2 -> FlareStarFilter <= 4 ? 4-point star
+	#    : 6-point star; else bit 3 -> sharp glow; else soft glow. The
+	#    badlands lights are all options 7 / filter 2 -> the 4-point star;
+	#  - the blue anamorphic streak needs options bit 6 (none set it);
+	#  - Render (0xe6100): apparent half-angle = atan(m_intensity_scale(15) x
+	#    intensity), vertex colour = LightColor squared.
 	var dir := Vector3(dir_lw.x, dir_lw.y, -dir_lw.z).normalized()
-	var mesh := SphereMesh.new()
-	mesh.radius = 1600.0
-	mesh.height = 3200.0
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = col
-	mat.emission_enabled = true
-	mat.emission = col
-	mat.emission_energy_multiplier = 3.0
-	mesh.material = mat
-	var mi := MeshInstance3D.new()
-	mi.mesh = mesh
+	var intensity := float(n.get("flare_intensity", 0.01))
+	var opts := int(n.get("flare_options", 7))
+	var style := 0
+	if opts & 4:
+		style = 2 + (1 if int(n.get("flare_star_filter", 2)) > 4 else 0)
+	elif opts & 8:
+		style = 1
+	var tex := StarFx.style_texture(style, _base())
+	if tex == null or intensity <= 0.0:
+		return
+	var mi := StarFx.flare_quad(tex)
+	var q := mi.mesh as QuadMesh
+	(q.material as StandardMaterial3D).albedo_color = \
+		Color(col.r * col.r, col.g * col.g, col.b * col.b)
 	mi.position = dir * 4.5e5
+	# constant apparent size; the anchor sits at the origin and the camera
+	# never strays far enough (tens of km vs 4.5e5) to matter, so scale once
+	mi.scale = Vector3.ONE * (StarFx.INTENSITY_SCALE * intensity * 4.5e5)
 	sky_anchor.add_child(mi)
 
 func _make_additive(node: Node3D) -> void:

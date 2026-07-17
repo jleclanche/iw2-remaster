@@ -42,12 +42,14 @@ var _glow_col: Color
 var _star_col: Color
 var _has_streak := false
 
-static var _atlas_glow: ImageTexture
-static var _atlas_star: ImageTexture
+# FcLensFlareNode::m_tex_coords (@ 0x100ee420) styles, one atlas quadrant
+# each: 0 = soft glow (TL), 1 = sharp glow (TR), 2 = 4-point star (BL),
+# 3 = 6-point star (BR)
+static var _atlas: Array = []
 
 
 static func _load_atlas(base: String) -> void:
-	if _atlas_glow != null:
+	if not _atlas.is_empty():
 		return
 	var img := Image.load_from_file(
 		base.path_join("data/textures/images/sfx/lens_flares.png"))
@@ -55,12 +57,16 @@ static func _load_atlas(base: String) -> void:
 		return
 	var w := img.get_width() / 2
 	var h := img.get_height() / 2
-	# FcLensFlareNode::m_tex_coords (@ 0x100ee420): style 0 = top-left
-	# quadrant, style 2 = bottom-left quadrant
-	_atlas_glow = ImageTexture.create_from_image(
-		img.get_region(Rect2i(0, 0, w, h)))
-	_atlas_star = ImageTexture.create_from_image(
-		img.get_region(Rect2i(0, h, w, h)))
+	for r in [Rect2i(0, 0, w, h), Rect2i(w, 0, w, h),
+			Rect2i(0, h, w, h), Rect2i(w, h, w, h)]:
+		_atlas.append(ImageTexture.create_from_image(img.get_region(r)))
+
+
+static func style_texture(style: int, base: String) -> Texture2D:
+	_load_atlas(base)
+	if _atlas.is_empty():
+		return null
+	return _atlas[clampi(style, 0, 3)]
 
 
 static func _pick_colour(pair: Array, seed_value: int) -> Color:
@@ -90,15 +96,15 @@ func setup(rec: Dictionary, base: String) -> void:
 	# also the flag-2 condition -- sun_texture IS the class band
 	_has_streak = str(rec.get("sun_texture", "")) == "sun_blue"
 
-	_glow = _flare_quad(_atlas_glow)
-	_star = _flare_quad(_atlas_star)
-	_streak = _flare_quad(_atlas_glow)
+	_glow = flare_quad(_atlas[0])
+	_star = flare_quad(_atlas[2])
+	_streak = flare_quad(_atlas[0])
 	add_child(_glow)
 	add_child(_star)
 	add_child(_streak)
 
 
-func _flare_quad(tex: Texture2D) -> MeshInstance3D:
+static func flare_quad(tex: Texture2D) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	var quad := QuadMesh.new()
 	quad.size = Vector2(2.0, 2.0)  # unit half-extent; per-frame scale sizes it
@@ -114,8 +120,12 @@ func _flare_quad(tex: Texture2D) -> MeshInstance3D:
 	mat.albedo_texture = tex
 	quad.material = mat
 	mi.mesh = quad
-	# the glow quad can be x15 the node's draw distance: kill frustum pop-out
-	mi.extra_cull_margin = 16384.0
+	# Billboarding happens in the shader, but Godot culls on the node-space
+	# AABB -- for a flat quad that is a paper-thin slab, so the (huge,
+	# camera-rotated) flare vanished with a hard pop at a view angle. Give the
+	# instance a unit CUBE bound instead: scaled by the per-frame size it
+	# covers every possible billboard orientation.
+	mi.custom_aabb = AABB(Vector3(-1, -1, -1), Vector3(2, 2, 2))
 	return mi
 
 

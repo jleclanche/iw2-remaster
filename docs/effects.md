@@ -1263,3 +1263,24 @@ magnitude). Removed: the 1.6° STAR_FLARE_DEG cap, the corona stand-in, the
 hot-core sphere. Also **glow_enabled = false** — the original has no
 post-processing, and Godot's bloom smeared the flare quads into full-screen
 saturation. `--sunshot` photographs each sun from the spawn point.
+
+### Sky flares are lens flares too (and the hard red pop)
+
+- The jarring "sky suddenly turns red" while rolling was ours, not the
+  model's: Godot culls billboards on the node-space AABB, and a flat quad is
+  a paper-thin slab -- the shader-rotated flare vanished past a hard view
+  angle. Flare quads now carry a unit-cube `custom_aabb`.
+- The geog scene lights with `LensFlare` are FcLensFlareNodes
+  (`FcAvatarLoader::MakeLight` @ flux 0xdc3f0): intensity envelope =
+  **FlareIntensity** (LgtIntensity only drives the light), style =
+  options bit 2 -> FlareStarFilter <= 4 ? 4-point : 6-point star, bit 3 ->
+  sharp glow, else soft glow; streak = bit 6; LensFlareFade bit 1 ->
+  world-sized via FlareNominalDistance, bit 2 -> world-scaled. All badlands
+  sky lights: options 7, filter 2, fade 4, FlareIntensity 0.004..0.018 --
+  4-point stars, visible extent ~1..3 deg. lws.py now extracts the Flare*
+  keys (594 scenes reconverted, 0 failures) and `_add_sky_flare` renders
+  the real thing instead of an emissive sphere. This includes each system's
+  own-sun direction light (e.g. "HoffersWake", green, I=0.008) -- the bright
+  starburst the reference shows inside Alpha's glow skirt.
+- All sun/flare constants remain exactly as extracted; nothing is tuned to
+  screenshots.
