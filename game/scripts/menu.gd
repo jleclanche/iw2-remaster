@@ -788,28 +788,45 @@ func _draw_top() -> void:
 		return
 	var s := get_viewport_rect().size
 	var strip_w := _strip_w()
+	# The GUI is fixed-pixel at the 1024x768 reference; the bar width already
+	# scales with height (_strip_w), so the button metrics and the FONT must
+	# scale by the same factor or small windows overflow the capsules.
+	var sc := s.y / REF_H
+	var fs := maxi(roundi(item_size * sc), 8)
 	# capsule buttons
 	_item_rects.clear()
 	var items := _items()
-	var bh := 24.0
-	var gap := clampf((s.y - 90.0) / items.size() - bh, 8.0, 34.0)
-	var y := 42.0
-	var bw := strip_w - 52.0
+	var bh := 24.0 * sc
+	var gap := clampf((s.y - 90.0 * sc) / items.size() - bh, 8.0 * sc, 34.0 * sc)
+	var y := 42.0 * sc
+	var bw := strip_w - 52.0 * sc
+	# one shared size fitted to the WIDEST label, so the column stays uniform
+	var max_w := bw - 32.0 * sc
+	var widest := 0.0
+	for it in items:
+		widest = maxf(widest, _font_title.get_string_size(str(it[0]),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x)
+	while fs > 8 and widest > max_w:
+		fs -= 1
+		widest = 0.0
+		for it in items:
+			widest = maxf(widest, _font_title.get_string_size(str(it[0]),
+					HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x)
 	for i in items.size():
 		var enabled: bool = items[i][1]
 		var col := AMBER_GLOW if i == sel else (AMBER if enabled else
 			Color(AMBER.r, AMBER.g, AMBER.b, 0.22))
-		var r := Rect2(Vector2(28, y), Vector2(bw, bh))
+		var r := Rect2(Vector2(28.0 * sc, y), Vector2(bw, bh))
 		_stadium(r, col, 1.6 if i == sel else 1.2, i == sel)
 		var label: String = items[i][0]
-		_top.draw_string(_font_title, r.position + Vector2(16, bh - 7), label,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, item_size,
+		_top.draw_string(_font_title, r.position + Vector2(16.0 * sc, bh - 7.0 * sc),
+				label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs,
 				col if enabled else Color(col.r, col.g, col.b, 0.35))
 		_item_rects.append(r.grow(4))
 		y += bh + gap
 	# version line, bottom right, like "Edge of Chaos F14.6"
 	var ver := "Edge of Chaos R1.0"
 	var vw := _font_title.get_string_size(ver, HORIZONTAL_ALIGNMENT_LEFT, -1,
-			item_size).x
-	_top.draw_string(_font_title, Vector2(s.x - vw - 14, s.y - 10), ver,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, item_size, AMBER_TEXT)
+			fs).x
+	_top.draw_string(_font_title, Vector2(s.x - vw - 14.0 * sc, s.y - 10.0 * sc),
+			ver, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, AMBER_TEXT)
