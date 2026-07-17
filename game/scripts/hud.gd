@@ -89,7 +89,10 @@ var _reticle_tex: Texture2D  # images/hud/reticle.png
 # come out of the code. Only the ids the HUD actually references are listed.
 # [x, y, w, h, origin_x, origin_y]; all from texture 0 (images/hud/sprites.png).
 const SPR := {
-	3: [51, 0, 16, 16, 7, 7],            # targeted-subsystem marker (MFD)
+	1: [0, 0, 16, 16, 16, 16],           # target box corner, SETTLED (icHUDBrackets)
+	3: [51, 0, 16, 16, 7, 7],            # targeted-subsystem marker (MFD + world)
+	4: [43, 17, 8, 8, 8, 8],             # target box corner, acquiring/contact
+	19: [34, 0, 16, 16, 13, 8],          # set-speed needle on the dial's left arc
 	16: [144, 0, 9, 11, 0, 9],           # icHUDShipStatus: ONE status lamp
 	20: [68, 0, 11, 11, 5, 5],           # charge pip
 	21: [0, 26, 32, 32, 16, 16],         # mode icon 1
@@ -102,8 +105,16 @@ const SPR := {
 	28: [99, 125, 32, 32, 16, 16],       # 0x1C free-flight (capsule + circular arrow)
 	29: [132, 125, 32, 32, 16, 16],      # 0x1D lateral thrust (capsule + side arrows)
 	30: [165, 125, 32, 32, 16, 16],      # capsule drive / jump
-	32: [198, 26, 32, 32, 16, 16],       # 0x20 menu carousel PREV
-	33: [198, 92, 32, 32, 16, 16],       # 0x21 menu carousel NEXT
+	# 32..35 double as the CONVERGING AIM TRIANGLES (FUN_100ea400): four
+	# tick-marked triangles placed left/right/above/below the firing solution
+	32: [198, 26, 32, 32, 16, 16],       # 0x20 menu carousel PREV / aim tri
+	33: [198, 92, 32, 32, 16, 16],       # 0x21 menu carousel NEXT / aim tri
+	34: [33, 92, 32, 32, 16, 16],        # aim triangle
+	35: [66, 92, 32, 32, 16, 16],        # aim triangle + off-screen bearing arrow
+	38: [10, 17, 7, 8, 3, 1],            # critical-contact chevron, drawn BELOW
+	39: [18, 17, 7, 8, 3, 7],            # critical-contact chevron, drawn ABOVE
+	44: [33, 59, 32, 32, 16, 16],        # edge-clamped target glyph (3+ systems)
+	45: [66, 59, 32, 32, 16, 16],        # edge-clamped target glyph (small ship)
 	40: [231, 26, 16, 32, 16, 16],       # 0x28 menu node box: the chevron end cap
 	41: [248, 26, 4, 32, 0, 16],         # 0x29 menu node box: its top/bottom rails
 	46: [99, 59, 32, 32, 16, 16],        # MFD class-icon overlay for 47/60
@@ -780,12 +791,11 @@ func _draw_reticle(c: Vector2) -> void:
 			draw_line(c + dir * inner, c + dir * 72.5, ring, 1.4, true)
 		draw_line(c + Vector2(-5, 0), c + Vector2(5, 0), ring, 1.0, true)
 		draw_line(c + Vector2(0, -5), c + Vector2(0, 5), ring, 1.0, true)
-	# own hull, as the filled arc the original sweeps behind the ring
-	# (FUN_100f73d0, alpha 0.65 from _DAT_10119b40)
-	var frac: float = clampf(main.hull / main.hull_max, 0.0, 1.0)
-	var hull_col := _health_color(frac)
-	draw_arc(c, RET_R + 5.0, -PI / 2.0, -PI / 2.0 + TAU * frac, 64,
-			Color(hull_col.r, hull_col.g, hull_col.b, 0.65), 2.5, true)
+	# hull: the BOTTOM-RIGHT quadrant wedge; speed: the LEFT half wedge + the
+	# set-speed needle (FUN_100f73d0 / FUN_100f6c80, fully extracted below)
+	_draw_hull_wedge(c)
+	if not in_lds:
+		_draw_speed_wedge(c)
 	# own speed, left of the reticle ("+325m/s")
 	# 0x100f7076: font 0, style 2 (alpha 0.75), halign 1 (right-anchored on
 	# -SPEED_X = -100), valign 2 (centred on the reticle's own centre line,
@@ -796,10 +806,6 @@ func _draw_reticle(c: Vector2) -> void:
 		var vel_text: String = ("%s/s" % _fmt_range(absf(vel))) if in_lds \
 			else "%s%dm/s" % ["-" if vel < 0 else "+", absi(int(absf(vel)))]
 		_hud_text(0, 2, c + Vector2(-SPEED_X, 0), vel_text, 1, 2, ring)
-		if main.ship.set_speed > 0.5:
-			var st := "set %d" % int(main.ship.set_speed)
-			_hud_text(0, 0, c + Vector2(-SPEED_X, float(num_size) + 4.0), st,
-					1, 2, ring)
 	_draw_target_block(c)
 	# velocity vector marker
 	var v: Vector3 = main.ship.velocity
@@ -811,6 +817,9 @@ func _draw_reticle(c: Vector2) -> void:
 			draw_arc(p, 6.0, 0, TAU, 16, ring, 1.4, true)
 			draw_line(p + Vector2(-12, 0), p + Vector2(-6, 0), ring, 1.4)
 			draw_line(p + Vector2(6, 0), p + Vector2(12, 0), ring, 1.4)
+	# the converging aim triangles ride the firing solution, over everything
+	if not in_lds:
+		_draw_aim_group()
 	# the status-icon ring (r=110) sits inside the menu pills' reach (anchors at
 	# +-100, boxes growing outward), so it yields to the open menu like the
 	# speed readout does -- the CMD pill no longer crosses the capsule icon
@@ -822,6 +831,90 @@ func _icon_pos(deg: float, radius: float) -> Vector2:
 	# clockwise from twelve o'clock.
 	var a := deg_to_rad(deg)
 	return Vector2(floor(sin(a) * radius), floor(-cos(a) * radius))
+
+# --- the dial's two gauge wedges (extracted whole) ---------------------------
+# Both clip the same 85x85 arc-art record of reticle.png, built at 0x100e8054
+# by the sprite ctor: region (171,171)..(256,256), i.e. u0=v0=171/256, u1=v1=1.
+const GAUGE_U0 := 0.66796875
+const GAUGE_V0 := 0.66796875
+const GAUGE_EXT := 85.5     # wedge extent: record w + the engine's 0.5 px bias
+
+func _draw_hull_wedge(c: Vector2) -> void:
+	# FUN_100f73d0 @ 0x100f73d0: the hull gauge is a filled pie wedge sweeping
+	# the BOTTOM-RIGHT quadrant, 6 o'clock (hull 0) to 3 o'clock (hull 1).
+	# angle = v * pi/2 (_DAT_1011a454), minus pi/4 (_DAT_1011e09c) past half --
+	# tan() of that is the intercept along the quadrant's bottom/right edge.
+	# Colour = the health ramp (FUN_100e88c0), alpha 0.65 (_DAT_10119b40).
+	if _reticle_tex == null:
+		return
+	var v: float = clampf(main.hull / main.hull_max, 0.0, 1.0)
+	var t: float = tan(v * PI / 2.0 - (PI / 4.0 if v > 0.5 else 0.0))
+	var col := _health_color(v)
+	col = _dim(Color(col.r, col.g, col.b, 0.65))
+	var e := GAUGE_EXT
+	var pts := PackedVector2Array([c, c + Vector2(0, e),
+			c + Vector2((t if v <= 0.5 else 1.0) * e, e)])
+	var uvs := PackedVector2Array([Vector2(1, 1), Vector2(1, GAUGE_V0),
+			Vector2((GAUGE_U0 - 1.0) * t + 1.0 if v <= 0.5 else GAUGE_U0,
+				GAUGE_V0)])
+	var cols := PackedColorArray([col, col, col])
+	draw_polygon(pts, cols, uvs, _reticle_tex)
+	if v > 0.5:
+		# second triangle: bottom-right corner up the right edge to 3 o'clock
+		pts = PackedVector2Array([c, c + Vector2(e, e),
+				c + Vector2(e, (1.0 - t) * e)])
+		uvs = PackedVector2Array([Vector2(1, 1), Vector2(GAUGE_U0, GAUGE_V0),
+				Vector2(GAUGE_U0, (1.0 - GAUGE_V0) * t + GAUGE_V0)])
+		draw_polygon(pts, cols, uvs, _reticle_tex)
+
+func _draw_speed_wedge(c: Vector2) -> void:
+	# FUN_100f6c80 @ 0x100f6c80: forward speed / reference speed (icShip+0x1ec,
+	# our max_speed.z), clamped to +-1 (_DAT_10119ae0 / _DAT_101171f0). The
+	# wedge fans from the centre to the LEFT edge (x = -(85-0.5)), its tip
+	# riding the edge by tan(v * pi/4) (_DAT_1011e09c) -- up for forward, down
+	# for reverse, so full range sweeps the left half 10:30..7:30. Colour
+	# white (DAT_10174fb0), alpha = |v| * 0.4 (_DAT_10117558) + 0.30
+	# (_DAT_1011c034); blinks red (FcColour(1,0,0)) at the 1.4 s period
+	# (_DAT_1011e048 / _DAT_10119458) while the raw ratio is out of range.
+	if _reticle_tex == null or main.ship == null:
+		return
+	var ref: float = maxf(main.ship.max_speed.z, 1.0)
+	var raw: float = main.ship.forward_speed() / ref
+	var in_range := raw >= -1.001 and raw <= 1.001   # _DAT_1011e0a8/a4
+	var v := clampf(raw, -1.0, 1.0)
+	var t := tan(v * PI / 4.0)
+	var col := Color(1, 1, 1)
+	if not in_range and fposmod(
+			Time.get_ticks_msec() * 0.001 / 1.4, 1.0) > 0.5:
+		col = Color(1, 0, 0)
+	col = _dim(Color(col.r, col.g, col.b, absf(v) * 0.4 + 0.30))
+	var e := GAUGE_EXT - 1.0   # 0.5 - 85 on both axes
+	var pts := PackedVector2Array([c, c + Vector2(-e, 0),
+			c + Vector2(-e, -e * t)])
+	var uvs := PackedVector2Array([Vector2(1, 1), Vector2(GAUGE_U0, 1),
+			Vector2(GAUGE_U0, (GAUGE_V0 - 1.0) * absf(t) + 1.0)])
+	draw_polygon(pts, PackedColorArray([col, col, col]), uvs, _reticle_tex)
+	_draw_set_speed_needle(c, ref)
+
+func _draw_set_speed_needle(c: Vector2, ref: float) -> void:
+	# The tail of FUN_100f6c80 (0x100f70xx): sprite 19 at (-80, 0)
+	# (-_DAT_1011e034), rotated about the dial centre by the DEMANDED speed
+	# fraction x pi/4 (_DAT_1011e0a0) -- the mark on the speed scale the
+	# throttle is holding. While a manual thrust input overrides the hold
+	# (pilot state +0x14 above 1e-6, _DAT_101178fc) the needle pegs to the
+	# input's sign in RED; the engine's autopilot-program branch (chartreuse,
+	# icShip+0x25c state 1) has no equivalent in our port yet.
+	var thrust: float = main.ship.input_thrust.z
+	var frac: float
+	var col := Color(1, 1, 1)
+	if absf(thrust) >= 1e-6:
+		frac = signf(thrust)
+		col = Color(1, 0, 0)
+	else:
+		frac = clampf(main.ship.set_speed / ref, -1.0, 1.0)
+	# positive fraction rotates the 9-o'clock anchor UP, matching the wedge
+	var rot := frac * PI / 4.0
+	_spr(c + Vector2(-ICON_BASE, 0).rotated(rot), 19, col, rot)
 
 # --- the sprite primitives (FUN_100e9de0 / FUN_100ea2b0) --------------------
 
@@ -930,7 +1023,15 @@ func _draw_target_block(c: Vector2) -> void:
 	var top: float = floor(c.y - (lh0 + lh0 + lh1) * 0.5)
 	var tname := ""
 	var thull := -1.0
-	if main.target_ai != null and is_instance_valid(main.target_ai):
+	# an active subtarget redirects the whole readout to the component
+	# (FUN_100f6340 @ 188183: the reticle's target ptr becomes the subsim)
+	var sub: Dictionary = main.subtarget_sys()
+	if not sub.is_empty():
+		tname = str(sub.get("name", "")).to_upper()
+		var hm := float(sub.get("hp_max", 0.0))
+		if hm > 0.0:
+			thull = clampf(float(sub.get("hp", 0.0)) / hm, 0.0, 1.0)
+	elif main.target_ai != null and is_instance_valid(main.target_ai):
 		tname = str(main.target_ai.display_name).to_upper()
 		thull = clampf(main.target_ai.hull / main.target_ai.hull_max, 0.0, 1.0)
 	elif main.target_idx >= 0:
@@ -987,12 +1088,21 @@ func _reticle_turn_arrow(c: Vector2) -> void:
 		if nav != 0:
 			_spr(p, nav, col)
 		return
+	# Off-reticle: FUN_100f7920 rotates ONE arrow sprite (35) by the bearing
+	# fpatan(-screenY, screenX) and parks it at radius _DAT_1011e038 -
+	# _DAT_101190c0 = 53 px from the centre. (The bearing flips when the
+	# target is behind the camera, which the local-space vector below already
+	# encodes.) The sprite's rest orientation is taken to point along +x --
+	# the one unverifiable bit, the atlas cell's own heading.
 	var local: Vector3 = cam.global_transform.affine_inverse() * world
 	var dir2 := Vector2(local.x, -local.y)
 	if dir2.length() < 0.001:
 		return
 	dir2 = dir2.normalized()
-	_tri(c + dir2 * (RET_R - 18.0), dir2.angle(), col, 7.0)
+	if _sprites != null:
+		_spr(c + dir2 * (RET_R - RET_SLOP), 35, col, dir2.angle())
+	else:
+		_tri(c + dir2 * (RET_R - RET_SLOP), dir2.angle(), col, 7.0)
 
 # The one place the flight HUD picks a target's colour, mirroring FUN_100e8530
 # @ 0x100e8530 -- the engine's single contact-colour chooser, whose result the
@@ -2069,16 +2179,25 @@ const BRK_MIN := 2.0        # _DAT_10119ec8: bbox smaller than this collapses
 var _brk_target := ""       # who the acquire animation is currently playing for
 var _brk_t := 0.0
 
-func _corner_bracket(bb: Rect2, col: Color, arm := 6.0, width := 1.4) -> void:
-	# icHUDBrackets draws four corner sprites at the target's projected bounding
-	# box, the same sprite mirrored into each corner.
-	for sx in [0, 1]:
-		for sy in [0, 1]:
-			var p := bb.position + Vector2(bb.size.x * sx, bb.size.y * sy)
-			var dx := arm if sx == 0 else -arm
-			var dy := arm if sy == 0 else -arm
-			draw_line(p, p + Vector2(dx, 0), col, width, true)
-			draw_line(p, p + Vector2(0, dy), col, width, true)
+func _corner_bracket(bb: Rect2, col: Color, sprite := 4) -> void:
+	# icHUDBrackets (FUN_100e37f0 @ 0x100e37f0): four copies of ONE corner
+	# cell mirrored into the corners of the target's projected bounding box
+	# (FUN_100e9de0 flip flags 0/2/1/3). Sprite 4 (8x8, anchor 8,8) is the
+	# contact / acquiring corner; sprite 1 (16x16) is the settled selection.
+	# The cell's quad spans [-origin, 0], so unflipped it sits outside the
+	# top-left corner and each mirror lands outside its own corner.
+	if _sprites == null:
+		# vector fallback when the extracted atlas is missing
+		for sx in [0, 1]:
+			for sy in [0, 1]:
+				var p := bb.position + Vector2(bb.size.x * sx, bb.size.y * sy)
+				draw_line(p, p + Vector2(6.0 if sx == 0 else -6.0, 0), col, 1.4, true)
+				draw_line(p, p + Vector2(0, 6.0 if sy == 0 else -6.0), col, 1.4, true)
+		return
+	_spr(bb.position, sprite, col, 0.0, 0)
+	_spr(Vector2(bb.position.x, bb.end.y), sprite, col, 0.0, 2)
+	_spr(Vector2(bb.end.x, bb.position.y), sprite, col, 0.0, 1)
+	_spr(bb.end, sprite, col, 0.0, 3)
 
 func _bbox_of(world: Vector3, radius: float) -> Rect2:
 	# project a contact to a screen-space box, with the engine's minimum-size
@@ -2112,8 +2231,12 @@ func _draw_target_marks() -> void:
 				continue
 			var col := Color(1.0, 0.8, 0.0, 0.95) if e["unknown"] \
 				else _contact_color(false, str(o["category"]))
+			# contact type picks the mark (FUN_100e37f0): category 4 waypoint
+			# -> sprite 47, 5 L-point -> sprite 60, else corner brackets
 			if o["category"] == "lpoint":
-				_diamond(p, 7.0, col)
+				_spr(p, 60, col)
+			elif o["category"] == "waypoint":
+				_spr(p, 47, col)
 			else:
 				_corner_bracket(_bbox_of(w, 60.0), Color(col.r, col.g, col.b, 0.7))
 		else:
@@ -2160,20 +2283,77 @@ func _draw_target_bracket() -> void:
 		return
 	var col := _target_color()
 	if is_nav:
-		_diamond(p, 10.0, col)
+		_spr(p, 60, col)
 		return
 	var bb := _bbox_of(world, radius)
-	_corner_bracket(bb, col, 8.0, 1.6)
 	var t: float = _brk_t / BRK_ACQUIRE
+	# during the acquire animation the inner corners use the small sprite 4
+	# (0x100e37f0:177883 -- settled switches to the 16px sprite 1) and an
+	# OUTER box slams in from BRK_SLAM px out, alpha ramping up with t
+	# (offset (1-t)*70, alpha 1.0*t*master -- DAT_1011d9e0/_DAT_1011d9d8)
+	_corner_bracket(bb, col, 4 if t < 1.0 else 1)
 	if t < 1.0:
 		var d := (1.0 - t) * BRK_SLAM
-		_corner_bracket(bb.grow(d), Color(col.r, col.g, col.b, t), 8.0, 1.6)
-	# lead indicator for moving targets
-	if main.target_ai != null and is_instance_valid(main.target_ai):
-		var tvel: Vector3 = main.target_ai.velocity - main.ship.velocity
-		var lead: Vector3 = world + tvel * (world.length() / 6000.0)
-		if not cam.is_position_behind(lead):
-			_diamond(cam.unproject_position(lead), 8.0, col)
+		_corner_bracket(bb.grow(d), Color(col.r, col.g, col.b, col.a * t), 4)
+	_draw_subtarget_mark()
+
+func _draw_subtarget_mark() -> void:
+	# FUN_100f6340 @ 188230 -> FUN_100f8360: when a subsystem is subtargeted,
+	# ONE sprite-3 glyph at the component's projected position (offset half a
+	# cell, _DAT_10117738 = 0.5). The bracket still frames the whole ship.
+	var world: Vector3 = main.subtarget_world_pos()
+	if world == Vector3.INF:
+		return
+	var cam: Camera3D = main.cam
+	if cam.is_position_behind(world):
+		return
+	_spr(cam.unproject_position(world).floor(), 3, _target_color())
+
+# The converging aim triangles: FUN_100f6340's tail (0x100f68xx) computes the
+# firing solution via FUN_100f8ef0 (FindLocalTarget/FindAimPoint on the
+# selected gun) and calls FUN_100ea400(x, y, spin, size, back):
+#   * suppressed beyond gun range (d^2 > _DAT_1011c64c = 50 km squared)
+#   * NO solution: size 30, the whole 4-triangle group spinning about the
+#     lead point, one revolution per 3 s (frac(ms * _DAT_10118498) * 2pi,
+#     _DAT_10119f94)
+#   * IN the fire arc: size 20, spin FROZEN at 0 -- the iconic "lock"
+#   * FUN_100ea400 places sprites 35/34/33/32 at (x-s, y), (x+s, y),
+#     (x, y-s), (x, y+s) (the back flag swaps the left/right pair)
+const AIM_RANGE_SQ := 2.5e9      # _DAT_1011c64c
+const AIM_SPIN_PERIOD := 3.0     # _DAT_10118498 = 1/3000 per game-time ms
+# player light/standard PBC ini: horizontal_fire_arc=60 -- a 30-degree
+# half-angle cone about the gun axis (iiGun::IsInFireArc)
+const AIM_ARC_COS := 0.8660254   # cos(30 deg)
+
+func _draw_aim_group() -> void:
+	if main.target_ai == null or not is_instance_valid(main.target_ai) \
+			or main.ship == null or menu_active:
+		return
+	var tpos: Vector3 = main.target_ai.global_position
+	var rel: Vector3 = tpos - main.ship.global_position
+	if rel.length_squared() > AIM_RANGE_SQ:
+		return
+	# iiGun::FindAimPoint: the bolt inherits the shooter's velocity, so the
+	# lead solves on the RELATIVE velocity at the bolt's own speed
+	var bolt_speed: float = float(main.weapons.bolt_spec.get("speed", 6000.0))
+	var tvel: Vector3 = main.target_ai.velocity - main.ship.velocity
+	var lead: Vector3 = tpos + tvel * (rel.length() / bolt_speed)
+	var cam: Camera3D = main.cam
+	var behind := cam.is_position_behind(lead)
+	if behind:
+		return   # the off-screen bearing arrow covers this case
+	var p := cam.unproject_position(lead)
+	var fwd: Vector3 = -main.ship.global_transform.basis.z
+	var in_arc := fwd.dot((lead - main.ship.global_position).normalized()) \
+			>= AIM_ARC_COS
+	var size := 20.0 if in_arc else 30.0
+	var spin := 0.0 if in_arc else fposmod(
+			Time.get_ticks_msec() / (AIM_SPIN_PERIOD * 1000.0), 1.0) * TAU
+	var col := GREEN
+	# front layout: left 35, right 34, top 33, bottom 32 (0x100ea55a)
+	for q in [[Vector2(-size, 0), 35], [Vector2(size, 0), 34],
+			[Vector2(0, -size), 33], [Vector2(0, size), 32]]:
+		_spr(p + (q[0] as Vector2).rotated(spin), q[1], col, spin)
 
 func _diamond(p: Vector2, r: float, col: Color) -> void:
 	draw_polyline(PackedVector2Array([p + Vector2(0, -r), p + Vector2(r, 0),

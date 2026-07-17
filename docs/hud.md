@@ -959,3 +959,73 @@ on-screen marks): stations/gunstars < 80 km (UNKNOWN beyond 20 km), L-points
 SetSensorVisibility(1), the found base) list at any range identified, current
 target force-kept, sort by range, no cap. `--contactcheck` walks the debug
 menu's sixteen systems and prints each list.
+
+## The flight dial's gauges (icHUDReticle, extracted exactly)
+
+Both gauge wedges clip a dedicated 85x85 arc-art sprite record of
+reticle.png -- region (171,171)..(256,256), built by the sprite ctor at
+0x100e8054 (the same FUN_100ee6b0 records the whole atlas table uses; the
+table itself is BSS at 0x101741b0, so tools/iw2/hud_sprites.py recovers all
+97 entries by walking the initializer's disassembly at 0x100e6c60).
+
+- HULL (FUN_100f73d0 @ 0x100f73d0): a filled pie fan sweeping the
+  BOTTOM-RIGHT quadrant, 6 o'clock at hull 0 to 3 o'clock at hull 1.
+  angle = v * pi/2 (_DAT_1011a454) minus pi/4 (_DAT_1011e09c) past half;
+  tan(angle) is the intercept along the quadrant's bottom then right edge
+  (one triangle below half, two above). Colour = the health ramp
+  (FUN_100e88c0), alpha 0.65 (_DAT_10119b40).
+- SPEED (FUN_100f6c80 @ 0x100f6c80): forward speed over the reference speed
+  (icShip+0x1ec = our max_speed.z), clamped to +-1; a fan from the centre to
+  the LEFT edge whose tip rides the edge by tan(v * pi/4) -- the left half,
+  10:30 (full ahead) to 7:30 (full reverse). White, alpha = |v| * 0.4
+  (_DAT_10117558) + 0.30 (_DAT_1011c034); blinks red at the 1.4 s period
+  (_DAT_1011e048) while the raw ratio is outside +-1.001 (_DAT_1011e0a4/a8).
+- SET-SPEED NEEDLE (FUN_100f6c80 tail): sprite 19 at (-80, 0)
+  (-_DAT_1011e034) rotated about the centre by demand-fraction * pi/4
+  (_DAT_1011e0a0) -- the throttle's held speed marked on the same scale.
+  A live manual thrust input (pilot +0x14 over 1e-6, _DAT_101178fc) pegs it
+  to the input's sign in red; the autopilot-program branch tints it
+  chartreuse (DAT_10176038) -- not yet modelled in our port.
+- Input side: icPlayerPilot registers Throttle (absolute axis) and
+  ThrottleDelta (nudge keys) (iwar2.dll.c:145087); ResetThrottle (:147258) zeroes
+  pilot+0x54 and sets the +0x5c hold flag. Our ship.set_speed/assist IS this
+  mechanic.
+
+## Target marks, the aim triangles and subtargeting (extracted exactly)
+
+- CONTACT / SELECTION BOXES (icHUDBrackets, FUN_100e37f0 @ 0x100e37f0):
+  four copies of ONE corner cell mirrored into the projected bounding box's
+  corners (flip flags 0/2/1/3). Contacts and the acquire animation use the
+  8x8 sprite 4; the settled selection switches to the 16x16 sprite 1
+  (177883). Below _DAT_10119ec8 = 2 px the box collapses to its midpoint.
+  Acquire: an outer box slams in from _DAT_1011d9e0 = 70 px over
+  DAT_1011d9dc = 0.35 s, alpha ramping 0 -> 1 (_DAT_1011d9d8). Colours are
+  the per-contact IFF colours. Category 4 (waypoint) draws sprite 47,
+  5 (L-point) sprite 60, the docking flag sprite 49. Mission-critical
+  contacts additionally get an above/below chevron (sprites 38/39 at
+  +-17 px, _DAT_1011da18) -- not yet ported (no critical flag in our
+  contact records).
+- CONVERGING AIM TRIANGLES (FUN_100ea400 @ 0x100ea400, called from the
+  reticle master's tail): four triangle sprites 35/34/33/32 at
+  (x-s, y)/(x+s, y)/(x, y-s)/(x, y+s) around the firing solution
+  (FUN_100f8ef0: FindLocalTarget/FindAimPoint on the selected gun; the bolt
+  inherits shooter velocity so the lead solves on relative velocity).
+  Beyond 50 km (_DAT_1011c64c = 50000^2) nothing draws. With no solution
+  the group spins about the point, one revolution per 3 s
+  (frac(ms * _DAT_10118498) * 2pi) at size 30; IN the fire arc it freezes
+  at spin 0 and tightens to size 20 -- the lock. Fire arc from the gun ini:
+  horizontal/vertical_fire_arc=60 (player light/standard PBC) -> 30 degree
+  half-angle.
+- OFF-SCREEN BEARING (FUN_100f7920): ONE arrow sprite (35) rotated by
+  fpatan(-screenY, screenX), parked at _DAT_1011e038 - _DAT_101190c0 =
+  53 px from the centre; the in-reticle test radius is 63 + 10.
+- SUBTARGETING: icPlayerPilot.SubTarget (configs/default.ini: Keyboard, Y)
+  -> icShip::CycleSubTarget 0x10063a80 steps the target's subsim list, one
+  past the end clears. The HUD redirects the whole target readout to the
+  component (reticle master @ 188183) and FUN_100f8360 marks it in-world
+  with sprite 3 at the component's projected position.
+- The "virtual rail" (icHUDContrails) was already fully ported in
+  space_fx.gd -- today's independent re-extraction of FUN_100e5280/5390/
+  5440/5520 agrees with every constant there (50 m/s, 50/150 km, 0.4 s
+  cadence, 0.7 alpha, 16-point ring, ladder for the player, centre line for
+  others, LDS dashing).
