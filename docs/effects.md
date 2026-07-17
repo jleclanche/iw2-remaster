@@ -1297,3 +1297,30 @@ narrows by cos(theta), the bright zone slides off around ~65-75 degrees and
 falls to zero continuously (sweep now monotonic: 125 -> 1 over 70 degrees,
 no jump). FlareQuad (flare_quad.gd) owns this math for the sun flares AND
 the geog sky flares; StarFx just writes the per-frame intensity envelopes.
+
+## RCS thruster jets (command section)
+
+The command section's setup.lws carries the full thruster rig, no code
+extraction needed beyond what the channel system already recovered:
+
+- 12 `<anim channel=...>` jet nulls under `ComSecThruster_Null`, scale keyed
+  1e-4 -> 1, each channel an OR of signed control terms with the 0.1 s jet
+  envelope, e.g. `RR?+j(0.1) RY?-j(0.1) LX?+j(0.1)` (fires on roll-right OR
+  yaw-left OR strafe-right). Four aft clusters at (+/-8.2, +/-1.6, -24) at
+  45-degree bank, two aft verticals at (0, +/-3, -25.5), six nose jets at
+  (+/-2.65, +/-0.75, -3.4) and (+/-3.5, 0, -3.4).
+- Each jet null carries a `<node class=icBeamAvatar texture=jet_short>`
+  child, scale (0.5, 1, 2.5): the icBeamAvatar axial-billboard quad
+  (Draw @ 0x100bb830, the exact primitive explosion_fx.gd already extracts
+  for the antimatter spikes), additive, images/sfx/jet_short, z 0..1 along
+  the node's LW +Z, half-width |x scale|. The puff comes from the parent
+  anim null scaling with the channel value.
+- Port: assemble_avatar.py now exports the node `texture`/`repeat` (and
+  Flare*) attrs; ship_effects.gd `_add_jet_beam`/`_update_jet_beams` builds
+  the quads and re-orients them per frame. Verified with --flameshot
+  (RCS channels forced to 1): 10/12 jets visible (the other two are pure
+  negative-sign channels), pale jet_short spikes at the nacelle corners.
+- Still UNKNOWN: the cs_eng engine glow lights (EngineFlare/EngineGlow,
+  FlareIntensity 0.15/0.3, LensFlareFade 6 = world-size + world-scale
+  flags) need the flag-8/0x10 branch of FcLensFlareNode::Render before the
+  drive glow can be ported faithfully.

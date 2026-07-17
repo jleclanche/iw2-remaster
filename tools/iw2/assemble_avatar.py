@@ -113,7 +113,9 @@ class Assembler:
                 extras = {"iw2_kind": n["kind"]}
                 for attr in ("channel", "class", "template", "tint", "splay",
                              "name", "color", "intensity", "light_type",
-                             "lens_flare"):
+                             "lens_flare", "texture", "repeat",
+                             "flare_intensity", "flare_options", "flare_fade",
+                             "flare_star_filter"):
                     if attr in n:
                         extras["iw2_" + attr] = n[attr]
                 # <anim channel=X> nulls are POSE INTERPOLATORS driven by a

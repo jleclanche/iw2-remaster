@@ -50,6 +50,7 @@ extends Node
 var ship: ShipFlight
 var anim_nodes: Array = []   # {node, channel, p0..s1}
 var flame_cones: Array = []  # {mat: ShaderMaterial, channel: String}
+var _jet_beams: Array = []   # {node: Node3D (icBeamAvatar), mi: MeshInstance3D}
 var exprs: Dictionary = {}   # channel string -> {terms: Array, value: float}
 var fire_pulse := 0.0        # set by weapons fire events
 # sim.AvatarAddChannel / AvatarSetChannel / AvatarRemoveChannel (sim.dll) --
@@ -133,6 +134,8 @@ func _scan(model: Node3D) -> void:
 				exprs[ch] = {"terms": _parse_expr(ch), "value": 0.0}
 		if str(ex.get("iw2_class", "")) == "icFlameConeAvatar":
 			_add_flame_cone(n as Node3D, ex)
+		if str(ex.get("iw2_class", "")) == "icBeamAvatar":
+			_add_jet_beam(n as Node3D, ex)
 
 func _parse_expr(expr: String) -> Array:
 	var terms: Array = []
@@ -269,6 +272,78 @@ func _add_flame_cone(node: Node3D, ex: Dictionary) -> void:
 	flame_cones.append({"mat": mat, "node": node,
 		"channel": str(ex.get("iw2_channel", "flame"))})
 
+# The RCS jet visuals. In the setup LWS each <anim channel="RR?+j(0.1) ...">
+# jet null (scale keys 1e-4 -> 1, driven by the channel rig above) carries a
+# <node class=icBeamAvatar texture=jet_short> child, e.g. scale (0.5, 1, 2.5):
+# a single axial-billboard quad (icBeamAvatar::Draw @ 0x100bb830, the same
+# primitive explosion_fx.gd extracts) textured with images/sfx/jet_short,
+# running z 0..1 along the node's LW +Z (our -Z), half-width = |x scale|.
+# The jet puffs because the PARENT anim null scales 0 -> 1 with the channel
+# value; the beam itself just follows its node's world basis every frame.
+func _add_jet_beam(node: Node3D, ex: Dictionary) -> void:
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var tex := str(ex.get("iw2_texture", "jet_short")).to_lower()
+	var mi := MeshInstance3D.new()
+	mi.mesh = _beam_quad_mesh()
+	mi.mesh.surface_set_material(0, ParticleFx.additive_material(
+			ParticleFx.texture(base, "images/sfx/" + tex)))
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.extra_cull_margin = 64.0
+	mi.visible = false
+	add_child(mi)
+	_jet_beams.append({"node": node, "mi": mi})
+
+# unit beam quad: z 0..1 along the beam, x -1..1 across; u along the length,
+# v across the width (icBeamAvatar mesh gen @ 0x100bbc6c..0x100bbd7e)
+func _beam_quad_mesh() -> ArrayMesh:
+	var verts := PackedVector3Array([
+		Vector3(-1, 0, 0), Vector3(-1, 0, 1), Vector3(1, 0, 0),
+		Vector3(1, 0, 0), Vector3(-1, 0, 1), Vector3(1, 0, 1),
+	])
+	var uvs := PackedVector2Array([
+		Vector2(0, 0), Vector2(1, 0), Vector2(0, 1),
+		Vector2(0, 1), Vector2(1, 0), Vector2(1, 1),
+	])
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = verts
+	arr[Mesh.ARRAY_TEX_UV] = uvs
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	return mesh
+
+func _update_jet_beams() -> void:
+	if _jet_beams.is_empty():
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	for jb in _jet_beams:
+		var n: Node3D = jb["node"]
+		var mi: MeshInstance3D = jb["mi"]
+		if not is_instance_valid(n) or not n.is_inside_tree():
+			mi.visible = false
+			continue
+		var b := n.global_transform.basis
+		# the node's basis carries the authored scale x the anim null's 0..1
+		var w := b.x.length()
+		var jlen := b.z.length()
+		if w < 0.005:
+			mi.visible = false
+			continue
+		# axial billboard (0x100bba92..0x100bbb38): the quad turns about its
+		# own beam axis to face the camera
+		var dir := (-b.z).normalized()
+		var to_cam := (cam.global_position - n.global_position).normalized()
+		var side := dir.cross(to_cam)
+		if side.length() < 0.001:
+			mi.visible = false
+			continue
+		side = side.normalized()
+		mi.visible = true
+		mi.global_transform = Transform3D(
+				Basis(side * w, side.cross(dir), dir * jlen), n.global_position)
+
 func _ready() -> void:
 	# only the player tug (NPCs also carry a ShipEffects rig and would race us)
 	_flameshot = "--flameshot" in OS.get_cmdline_user_args() \
@@ -281,6 +356,9 @@ func _ready() -> void:
 			ship.drive_override = true
 		_lz_smooth = 1.0
 		_burn_smooth = 1.0
+		# force the RCS channels too, so the jet beams show in the captures
+		for ch in ["rp", "ry", "rr", "lx", "ly"]:
+			script_channels[ch] = 1.0
 		# an external chase camera on the MAIN viewport (the front-end SubViewport
 		# path renders a frozen world; the main window renders live like the check
 		# harness). We make it current every frame to win over the game camera.
@@ -331,7 +409,12 @@ func _flameshot_tick(delta: float) -> void:
 	var dir := base.path_join("data/screenshots")
 	DirAccess.make_dir_recursive_absolute(dir)
 	img.save_png(dir.path_join("flameshot_%d.png" % _shot_n))
-	print("FLAMESHOT: saved frame ", _shot_n, " ship=", xf.origin)
+	var jets_on := 0
+	for jb in _jet_beams:
+		if (jb["mi"] as MeshInstance3D).visible:
+			jets_on += 1
+	print("FLAMESHOT: saved frame ", _shot_n, " ship=", xf.origin,
+			" jets=", jets_on, "/", _jet_beams.size())
 	_shot_n += 1
 	if _shot_n >= 8:
 		print("FLAMESHOT: done")
@@ -410,3 +493,4 @@ func _physics_process(delta: float) -> void:
 		var b := Basis(q).scaled_local(
 			(entry["s0"] as Vector3).lerp(entry["s1"], t))
 		n.transform = Transform3D(b, (entry["p0"] as Vector3).lerp(entry["p1"], t))
+	_update_jet_beams()
