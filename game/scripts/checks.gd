@@ -654,6 +654,14 @@ func _basecheck(_delta: float) -> void:
 			_pending = true
 			demo_t = 0.0
 		4:
+			# the inbox's mail bodies: iemail.SendEmail's html:/text/... URLs must
+			# resolve to the extracted pages (tools/iw2/html_text.py) -- this was
+			# silently empty until the text/act_*/**.html tree was extracted
+			var will: String = m.pog_rt.ui._resource_text(
+				"html:/text/act_0/act0_master_lucreciamail_1")
+			_bc("Lucrecia's mail body resolves (html:/text/...)",
+				will.contains("Last Will and Testament"),
+				"%d chars" % will.length())
 			print("BASECHECK: ", "PASS" if _base_fail == 0 else "FAIL",
 				" -- ", _base_fail, " failure(s)")
 			get_tree().quit(0 if _base_fail == 0 else 1)
@@ -1190,6 +1198,52 @@ func _lds_corridor_clear(rel: Vector3) -> bool:
 			return false
 	return true
 
+## Where the demo pilot points the nose: straight at the target, unless the
+## direct route grazes a mass's LDS break-off shell (the same margins as
+## main._lds_avoidance: body/star 1.5x radius, station its bounds, +200 m).
+## Then aim abeam of the first blocker -- past the point on its shell nearest
+## the route, with sea room -- the way a player steers around a gas giant on a
+## long LDS leg. Without this the demo re-engages pointed into the mass and
+## the drive cycles: spool up, break off, spool up.
+func _demo_aim() -> Vector3:
+	var t: Vector3 = m._target_pos()
+	if t == Vector3.INF:
+		return t
+	var tn := t.normalized()
+	var tlen := t.length()
+	var block_rel := Vector3.INF
+	var block_margin := 0.0
+	var best_along := INF
+	for o in m.objects:
+		var mult := 1.0
+		match o["category"]:
+			"body", "star":
+				mult = 1.5
+			"station", "gunstar":
+				mult = 1.0
+			_:
+				continue
+		var rel := Vector3(o["x"] - m.px, o["y"] - m.py, o["z"] - m.pz)
+		var along := rel.dot(tn)
+		if along <= 0.0 or along >= tlen - 1.0:
+			continue    # behind us, or beyond the destination
+		var margin := float(o["radius"]) * mult + 200.0
+		var off_route := (rel - tn * along).length()
+		if (off_route < margin * 1.2 or rel.length() < margin * 1.05) \
+				and along < best_along:
+			best_along = along
+			block_rel = rel
+			block_margin = margin
+	if block_rel == Vector3.INF:
+		return t
+	# tangent point: abeam the blocker, perpendicular to the route
+	var perp := tn * block_rel.dot(tn) - block_rel  # blocker -> nearest route point
+	if perp.length() < 1.0:                          # dead centre: pick a side
+		perp = tn.cross(Vector3.UP)
+		if perp.length() < 0.5:
+			perp = tn.cross(Vector3.RIGHT)
+	return block_rel + perp.normalized() * block_margin * 1.5
+
 func _demo(_delta: float) -> void:
 	if demo_t > 500.0:
 		print("DEMO: TIMEOUT")
@@ -1220,14 +1274,19 @@ func _demo(_delta: float) -> void:
 				print("DEMO: destination ", m.objects[m.target_idx]["name"])
 				demo_phase = 1
 		1:
-			m._face_target()
-			var dir: Vector3 = m._target_pos().normalized()
-			if (-m.ship.global_transform.basis.z).angle_to(dir) < 0.05:
+			var aim1: Vector3 = _demo_aim()
+			m._face_dir(aim1)
+			if (-m.ship.global_transform.basis.z).angle_to(aim1.normalized()) < 0.05:
 				m._toggle_lds()
 				_mech_v0 = Vector3(m.px, m.py, m.pz)
 				demo_phase = 2
 		2:
-			m._face_target()
+			var aim2: Vector3 = _demo_aim()
+			m._face_dir(aim2)
+			if m.lds_state == 0:
+				# dropout auto-deceleration zeroed the set speed; drive on so the
+				# assist swings the velocity onto the detour heading
+				m.ship.set_speed = m.ship.max_speed.z
 			if demo_t - _demo_logged >= 30.0:
 				_demo_logged = demo_t
 				var worst := ""
@@ -1245,8 +1304,10 @@ func _demo(_delta: float) -> void:
 					% [demo_t, m.lds_state, m._fmt_dist(m._target_distance()),
 						m.ship.velocity.length(), m._lds_avoidance(), worst])
 			if m.lds_state == 0 and m._target_distance() > 1.0e6 \
-					and m._lds_clearance() > 0.0 and demo_t < 400.0:
-				m._toggle_lds()  # LDSI dropout en route: re-engage
+					and m._lds_clearance() > 0.0 and m._lds_avoidance() > 0.0 \
+					and (-m.ship.global_transform.basis.z).angle_to(aim2.normalized()) < 0.05 \
+					and demo_t < 400.0:
+				m._toggle_lds()  # dropout en route: re-engage once clear + aligned
 			if m.lds_state == 0 and m._target_distance() <= 1.0e6:
 				print("DEMO: arrived, remaining=",
 					m._fmt_dist(m._target_distance()),

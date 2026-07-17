@@ -3340,6 +3340,9 @@ func _face_target() -> void:
 	var p := _target_pos()
 	if p == Vector3.INF:
 		return
+	_face_dir(p)
+
+func _face_dir(p: Vector3) -> void:
 	var local := p * ship.global_transform.basis
 	var pitch := atan2(local.y, -local.z)
 	var yaw := atan2(-local.x, -local.z)

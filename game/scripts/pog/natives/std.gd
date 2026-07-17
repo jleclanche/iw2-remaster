@@ -392,15 +392,57 @@ func _load_csv(path: String) -> void:
 	var f := FileAccess.open(full, FileAccess.READ)
 	if f == null:
 		return
+	# NOT get_csv_line(): the shipped tables' comment lines carry stray quotes
+	# (gui.csv:74, '..e.g. ""an offer"" not ""they offer"".",') and a strict CSV
+	# reader opens a quoted field there and swallows the next ~280 LINES into it
+	# -- every key from line 74 to the next stray quote never loaded. The
+	# engine's own reader (FcLocalisedText) is line-based: one record per line,
+	# ';' comments, fields split on ',', a field may be quoted with "" escapes
+	# and can never span lines. Parse exactly that.
 	while not f.eof_reached():
-		var row := f.get_csv_line()
-		# The tables are commented with a leading ';' -- skip those, and the
-		# blank separator rows between sections.
-		if row.size() > 0 and not row[0].is_empty() and not row[0].begins_with(";"):
-			# FcLocalisedText hashes its keys lower-case, so the table is
-			# case-insensitive and every lookup must go through the same fold.
-			text_tables[row[0].to_lower()] = Array(row).slice(1)
+		var line := f.get_line()
+		if line.is_empty() or line.begins_with(";"):
+			continue
+		var row := _split_csv_line(line)
+		# FcLocalisedText hashes its keys lower-case, so the table is
+		# case-insensitive and every lookup must go through the same fold.
+		if row.size() > 0 and not String(row[0]).is_empty():
+			text_tables[String(row[0]).to_lower()] = row.slice(1)
 	f.close()
+
+
+static func _split_csv_line(line: String) -> Array:
+	var out: Array = []
+	var n := line.length()
+	var i := 0
+	while true:
+		var field := ""
+		if i < n and line[i] == '"':
+			i += 1
+			while i < n:
+				if line[i] == '"' and i + 1 < n and line[i + 1] == '"':
+					field += '"'
+					i += 2
+				elif line[i] == '"':
+					i += 1
+					break
+				else:
+					field += line[i]
+					i += 1
+			while i < n and line[i] != ',':
+				i += 1    # junk between the closing quote and the comma
+		else:
+			while i < n and line[i] != ',':
+				field += line[i]
+				i += 1
+		out.append(field)
+		if i >= n:
+			break
+		i += 1    # the comma
+		if i >= n:
+			out.append("")    # trailing comma: one last empty field
+			break
+	return out
 
 
 # ---------------------------------------------------------------- math
