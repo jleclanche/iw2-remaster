@@ -110,6 +110,7 @@ var base_turn_accel := Vector3(30, 30, 30)
 var free_toggle := false
 var roll_yaw_swap := false  # icPlayerPilot.RollYawToggleHold
 var ap_mode := 0  # 0 off, 1 approach, 2 formate, 3 dock, 4 match velocity
+var _ap_dock_retry := 0.0  # dock autopilot: re-try the gate once a second
 var _bounds_cache: Dictionary = {}
 var last_aggressor: AiShip = null
 var kill_count := 0  # hostiles destroyed (missions watch this)
@@ -3012,10 +3013,20 @@ func _autopilot_process(delta: float) -> void:
 			ship.set_speed = clampf(tvel.length() + hold, 0.0, ship.max_speed.z)
 		3:  # dock: approach then hard-dock
 			if lds_state == 0:
-				ship.set_speed = clampf((dist - marker) / 6.0, 0.0, ship.max_speed.z)
-			if dist < DOCK_RANGE * 0.8:
-				_set_autopilot(0)
+				# aim INSIDE the dock gate, not at the approach marker: for big
+				# stations the marker sphere lies OUTSIDE DOCK_RANGE, so braking
+				# onto it parked the ship just out of reach with the autopilot
+				# still engaged -- the reported "autopilot stuck still" freeze.
+				# icAIDockAgent flies the port corridor all the way in; we bore
+				# in to half the gate range and let the dock take us.
+				ship.set_speed = clampf((dist - DOCK_RANGE * 0.5) / 6.0,
+						0.0, ship.max_speed.z)
+			_ap_dock_retry -= delta
+			if dist < DOCK_RANGE * 0.8 and _ap_dock_retry <= 0.0:
+				_ap_dock_retry = 1.0
 				_try_dock()
+				if docked_at != "" or (base_iface != null and base_iface.inside):
+					_set_autopilot(0)
 		4:  # match velocity
 			var tv := Vector3.ZERO
 			if target_ai != null and is_instance_valid(target_ai):
