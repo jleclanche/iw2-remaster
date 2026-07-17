@@ -56,7 +56,13 @@ var _gc: PackedColorArray
 # while everything around it flows. So it is rebuilt every *rendered* frame, from
 # the last known state, with the position carried forward by the velocity.
 var _cam: Camera3D
-var _pos := Vector3.ZERO
+# the TRUE position is held as three 64-bit floats, NOT a Vector3: at map
+# coordinates (1e12 m from the system centre) a Vector3's 32-bit components
+# quantise to ~1e5 m, and fmod-ing that against a 1000 m cell is pure noise --
+# the lattice anchor wandered (the reported "streaks slide upward").
+var _px := 0.0
+var _py := 0.0
+var _pz := 0.0
 var _vel := Vector3.ZERO
 var _lds := false
 var _hidden := true
@@ -78,7 +84,9 @@ func _init() -> void:
 
 
 func _process(delta: float) -> void:
-	_pos += _vel * delta
+	_px += _vel.x * delta
+	_py += _vel.y * delta
+	_pz += _vel.z * delta
 	_render_grid()
 	_update_aggressor(delta)
 	_render_nebula()
@@ -249,10 +257,12 @@ static func grid_cell(speed: float) -> float:
 ## Called from the simulation tick. Only records the state; the mesh itself is
 ## rebuilt on every rendered frame in _process, or the streaks step at 60 Hz
 ## while the world around them flows.
-func update_grid(cam: Camera3D, pos: Vector3, vel: Vector3, lds: bool,
-		hidden: bool) -> void:
+func update_grid(cam: Camera3D, px: float, py: float, pz: float, vel: Vector3,
+		lds: bool, hidden: bool) -> void:
 	_cam = cam
-	_pos = pos
+	_px = px
+	_py = py
+	_pz = pz
 	_vel = vel
 	_lds = lds
 	_hidden = hidden
@@ -269,10 +279,12 @@ func _render_grid() -> void:
 	var far := GRID_FADE_SPAN * cell
 	# the lattice is anchored to absolute world coordinates and slides through
 	# the ship: the fmod pins it to a world grid, not to the ship
+	# 64-bit anchor math, and fposmod so the wrap has no sign flip at the
+	# coordinate origin
 	var start := Vector3(
-		-GRID_SPAN * cell - fmod(_pos.x, cell),
-		-GRID_SPAN * cell - fmod(_pos.y, cell),
-		-GRID_SPAN * cell - fmod(_pos.z, cell))
+		-GRID_SPAN * cell - fposmod(_px, cell),
+		-GRID_SPAN * cell - fposmod(_py, cell),
+		-GRID_SPAN * cell - fposmod(_pz, cell))
 	var rgb := GRID_COLOR_LDS if _lds else GRID_COLOR
 	var eye := _cam.global_transform.origin
 	var fwd := -_cam.global_transform.basis.z
@@ -663,7 +675,7 @@ func _render_nebula() -> void:
 	# the camera's own sim position. The ship sits at the world origin (main's
 	# _fold_motion keeps it there), so the camera's offset from the origin is its
 	# offset from `_pos`. Taking the delta in SIM space is what survives a fold.
-	var eye: Vector3 = _pos + _cam.global_position
+	var eye: Vector3 = Vector3(_px, _py, _pz) + _cam.global_position
 	var opacity := nebula_opacity(eye.distance_to(centre), radius)
 	if opacity <= 0.0:
 		_neb_hide()

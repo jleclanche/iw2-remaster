@@ -18,8 +18,14 @@ const LDS_SPOOL := 3.0
 const LDS_BASE := 2000.0
 const LDS_DROPOUT_SPEED := 1000.0  # icLDSDrive::BreakShipOutOfLDS (decompiled)
 
-const FOV_INTERNAL := 63.0  # flux.ini icInternalCamera field_of_view 1.1 rad
-const FOV_EXTERNAL := 68.75  # flux.ini cameras field_of_view 1.2 rad
+# flux.ini fields of view: icInternalCamera 1.1 rad (63.0), external cameras
+# 1.2 rad (68.75). These are the era's D3D HORIZONTAL fovs -- treating them as
+# Godot's default vertical fov made the cockpit read far wider than the
+# original (the reported "camera angle wildly different"); the camera is
+# KEEP_WIDTH so these constants bind the horizontal axis, and widescreen crops
+# vertically like the period widescreen patches did.
+const FOV_INTERNAL := 63.0
+const FOV_EXTERNAL := 68.75
 const DOCK_RANGE := 4000.0
 const JUMP_RANGE := 3.0e4  # must be this close to an L-point to capsule jump
 
@@ -934,7 +940,7 @@ func _update_grid() -> void:
 	# no HUD underlay inside capsule space: the capsule system renders only
 	# its own scene graph (icCapsuleSpaceSystem::Render @ 0x100481e0), and
 	# the director is in cinematic mode for the whole effect
-	space_fx.update_grid(cam, Vector3(px, py, pz), ship.velocity,
+	space_fx.update_grid(cam, px, py, pz, ship.velocity,
 		lds_state == 2, docked_at != "" or jump_state >= 3)
 	# @element icAggressorAvatar -- up exactly while the shield's "fire" channel
 	# is 1 (icAggressorShield::Simulate 0x1002f44f)
@@ -1155,6 +1161,29 @@ func _spawn_impostor(rec: Dictionary) -> void:
 		node.add_child(atmo)
 	for i in int(rec["ring_count"]):
 		node.add_child(_spawn_ring(rec, i))
+	# The far glow: at range, the original shows a body as a bright star-like
+	# flare (its FcLensFlareNode -- the reference's "Griffon" glow at 371
+	# million km), which is both how you navigate and why a planet feels like
+	# a real object growing as you approach. A tinted additive sun_halo
+	# billboard, shown only while the true angular size is below the glow's.
+	var glow := MeshInstance3D.new()
+	glow.name = "FarGlow"
+	var gq := QuadMesh.new()
+	gq.size = Vector2(2, 2)
+	var gm := StandardMaterial3D.new()
+	gm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	gm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	gm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	gm.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	gm.disable_receive_shadows = true
+	gm.albedo_texture = _planet_texture("sun_halo")
+	var gtint := _surface_tint(rec, 0).lerp(Color.WHITE, 0.65)
+	gm.albedo_color = Color(gtint.r, gtint.g, gtint.b, 0.9)
+	gq.material = gm
+	glow.mesh = gq
+	glow.visible = false
+	node.add_child(glow)
 	add_child(node)
 	rec["node"] = node
 
@@ -1270,6 +1299,7 @@ func _spawn_player() -> void:
 	add_child(missiles)
 	cam = Camera3D.new()
 	cam.far = 6.0e5
+	cam.keep_aspect = Camera3D.KEEP_WIDTH  # the fov constants are horizontal
 	cam.fov = FOV_INTERNAL  # starts in the F1 internal view
 	add_child(cam)
 	cam.make_current()
@@ -3137,6 +3167,14 @@ func _stream_objects() -> void:
 					draw_r = IMPOSTOR_DIST * tan(deg_to_rad(STAR_FLARE_DEG))
 				o["node"].position = Vector3(dx, dy, dz) * k
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
+				var fg: Node3D = o["node"].get_node_or_null("FarGlow")
+				if fg != null:
+					# the far flare: a fixed apparent size (~0.55 deg half-angle),
+					# shown while the body's true disc is smaller than it
+					var min_r := IMPOSTOR_DIST * 0.0096
+					fg.visible = draw_r < min_r
+					if fg.visible:
+						fg.scale = Vector3.ONE * (min_r / maxf(draw_r, 1.0))
 			"station", "prop", "gunstar":
 				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
 					# POG can create a sim that carries no avatar (a pure logic

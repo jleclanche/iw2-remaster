@@ -1160,3 +1160,25 @@ read as small glows (the reference screenshot's two orange flares = Alpha +
 Beta). main.gd now draws stars at a constant apparent half-angle
 (STAR_FLARE_DEG = 1.6 deg, reconstructed from reference footage; the
 per-variant FcLensFlareNode size tables remain unextracted).
+
+## Round 2 on the sky: grid precision, flare glows, far-planet glows, FOV
+
+- **The "streaks slide upward" bug was 32-bit truncation**: the reference
+  grid's anchor is `fmod(true_position, cell)`, but the position was passed
+  as a Vector3 -- 32-bit components quantise to ~1e5 m at map coordinates
+  (1e12 m), so the anchor wandered. The grid now takes the three 64-bit
+  floats and uses fposmod (no sign flip at the origin).
+- **Stars render flare-style**: the icSunAvatar's plasma-textured disc is
+  only ever visible inside 250 km of a photosphere (never); at the flare cap
+  the noise texture read as a "snowball"/"donut". The disc is now a small
+  hot core (class colour lerped 0.7 to white) and the corona layers draw at
+  2.2x (FLARE_BOOST, reconstructed) standing in for the unextracted
+  FcLensFlareNode atlas.
+- **Far bodies get their glow**: the original shows a distant planet as a
+  bright star-like flare (the reference's Griffon at 371 million km) -- that
+  is how you navigate, and why bodies feel "real" as you approach. Body
+  impostors now carry a FarGlow billboard (sun_halo, tinted toward white),
+  shown while the true disc is smaller than ~0.55 deg half-angle.
+- **The flux.ini fields of view are HORIZONTAL** (1.1 rad internal / 1.2 rad
+  external): binding them to Godot's vertical axis made the cockpit read far
+  wider than the original. The camera is KEEP_WIDTH now.

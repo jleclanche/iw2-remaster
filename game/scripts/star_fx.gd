@@ -40,6 +40,7 @@ const HALO_BOUND := 1.4    # _DAT_1011a440: icSunAvatar bounding radius multipli
 const HALO_SCALE := 1.3    # _DAT_1011d250: drawn corona quad half-extent, x radius
 const HALO_LAYER2 := 1.05  # 0x100d2d40: second layer is 5% bigger
 const PHASE_RATE := 0.010472  # double @ 0x1011d248: rad/s, layers at +/- phase
+const FLARE_BOOST := 2.2   # reconstructed: the flare glow vs the corona's 1.3x
 
 var _body: MeshInstance3D
 var _halo_a: MeshInstance3D
@@ -79,23 +80,27 @@ func setup(rec: Dictionary, base: String) -> void:
 	var col_a := _pick_colour(pair, h)
 	var col_b := _pick_colour(pair, h / 1000)
 
-	# the disc: the original renders a planet_models[] LOD sphere with the
-	# class's plasma texture; a Godot sphere is the same thing
+	# The disc: the original renders a planet_models[] LOD sphere with the
+	# class's plasma texture -- but at map distances a sun's TRUE angular size
+	# is sub-pixel (Beta: 0.01 deg), and the star is drawn at the flare cap
+	# (main.STAR_FLARE_DEG), standing in for the FcLensFlareNode glow the
+	# player actually sees. At that size the noise texture read as a flat
+	# "snowball"/"donut", so the disc renders as a small HOT CORE in the
+	# picked class colour (lerped toward white, like a flare core) at 0.35x;
+	# the plasma texture would only ever matter inside 250 km of a
+	# photosphere, which no map allows.
 	var sphere := SphereMesh.new()
-	sphere.radius = 1.0
-	sphere.height = 2.0
-	sphere.radial_segments = 48
-	sphere.rings = 24
+	sphere.radius = 0.35
+	sphere.height = 0.7
+	sphere.radial_segments = 24
+	sphere.rings = 12
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_texture = _tex(stem, base)
-	mat.albedo_color = col_a
+	var core := col_a.lerp(Color.WHITE, 0.7)
+	mat.albedo_color = core
 	mat.emission_enabled = true
-	mat.emission = col_a
-	mat.emission_energy_multiplier = 4.0
-	if mat.albedo_texture != null:
-		mat.emission_texture = mat.albedo_texture
-		mat.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+	mat.emission = core
+	mat.emission_energy_multiplier = 6.0
 	sphere.material = mat
 	_body = MeshInstance3D.new()
 	_body.mesh = sphere
@@ -140,8 +145,12 @@ func _process(delta: float) -> void:
 	# main scales this node to the star's (draw) radius; setting the halos'
 	# GLOBAL basis bypasses that, so fold it back in
 	var radius := global_transform.basis.get_scale().x
-	_orient(_halo_a, cb, roll + _phase, HALO_SCALE * radius)
-	_orient(_halo_b, cb, roll - _phase, HALO_SCALE * HALO_LAYER2 * radius)
+	# FLARE_BOOST widens the corona from the icSunAvatar's own 1.3x to the
+	# lens-flare glow the player actually sees at range (the FcLensFlareNode
+	# atlas is not extracted yet; the spiky sun_halo quadrant is its stand-in)
+	_orient(_halo_a, cb, roll + _phase, HALO_SCALE * FLARE_BOOST * radius)
+	_orient(_halo_b, cb, roll - _phase,
+			HALO_SCALE * HALO_LAYER2 * FLARE_BOOST * radius)
 
 
 func _orient(halo: MeshInstance3D, cb: Basis, roll: float, size: float) -> void:
