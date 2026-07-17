@@ -51,6 +51,7 @@ var ship: ShipFlight
 var anim_nodes: Array = []   # {node, channel, p0..s1}
 var flame_cones: Array = []  # {mat: ShaderMaterial, channel: String}
 var _jet_beams: Array = []   # {node: Node3D (icBeamAvatar), mi: MeshInstance3D}
+var _engine_flares: Array = []  # {node, quad: FlareQuad, intensity, col}
 var exprs: Dictionary = {}   # channel string -> {terms: Array, value: float}
 var fire_pulse := 0.0        # set by weapons fire events
 # sim.AvatarAddChannel / AvatarSetChannel / AvatarRemoveChannel (sim.dll) --
@@ -136,6 +137,9 @@ func _scan(model: Node3D) -> void:
 			_add_flame_cone(n as Node3D, ex)
 		if str(ex.get("iw2_class", "")) == "icBeamAvatar":
 			_add_jet_beam(n as Node3D, ex)
+		if bool(ex.get("iw2_lens_flare", false)) \
+				and ex.has("iw2_flare_intensity"):
+			_add_engine_flare(n as Node3D, ex)
 
 func _parse_expr(expr: String) -> Array:
 	var terms: Array = []
@@ -311,6 +315,56 @@ func _beam_quad_mesh() -> ArrayMesh:
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 	return mesh
+
+# The engine GLOW: the cs_eng scene's two <light lens_flare> nodes
+# (EngineFlare 242,196,53 FlareIntensity 0.15 options 15 filter 5 -> the
+# 6-point star; EngineGlow FlareIntensity 0.3 options 3 -> the soft glow),
+# both LensFlareFade 6 = flags 8|0x10 of FcLensFlareNode::Render
+# (flux.dll.c:215184-215232): fixed WORLD size, and -- the key -- the
+# envelope is MULTIPLIED by the node's world scale (FindWorldScale, +0xac),
+# with the vertex alpha additionally x (2 x scale) below scale 0.5. The
+# parent <anim channel="lz?+s(1.0)"> null scales 0 -> 1 with smoothed
+# forward thrust, so the glow breathes with the drive. Style from
+# LensFlareOptions bit2 + FlareStarFilter, as FcAvatarLoader::MakeLight maps.
+func _add_engine_flare(node: Node3D, ex: Dictionary) -> void:
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var options := int(ex.get("iw2_flare_options", 0))
+	var filt := int(ex.get("iw2_flare_star_filter", 0))
+	var style := 0
+	if options & 4:
+		style = 2 if filt <= 4 else 3
+	elif options & 8:
+		style = 1
+	var tex := StarFx.style_texture(style, base)
+	if tex == null:
+		return
+	var q := FlareQuad.create(tex)
+	q.world_size = true
+	add_child(q)
+	var col: Array = ex.get("iw2_color", [255, 255, 255])
+	_engine_flares.append({
+		"node": node, "quad": q,
+		"intensity": float(ex.get("iw2_flare_intensity", 0.0)),
+		# the render squares the colour (FcColour path at 215274-215282)
+		"col": Color(pow(float(col[0]) / 255.0, 2.0),
+				pow(float(col[1]) / 255.0, 2.0),
+				pow(float(col[2]) / 255.0, 2.0)),
+	})
+
+func _update_engine_flares() -> void:
+	for ef in _engine_flares:
+		var n: Node3D = ef["node"]
+		var q: FlareQuad = ef["quad"]
+		if not is_instance_valid(n) or not n.is_inside_tree():
+			q.intensity = 0.0
+			continue
+		# the channel value IS the node's world scale (flag 0x10)
+		var ch := n.global_transform.basis.x.length()
+		q.global_position = n.global_position
+		q.intensity = float(ef["intensity"]) * ch
+		var a := minf(2.0 * ch, 1.0)   # alpha x 2*scale below 0.5
+		var c: Color = ef["col"]
+		q.tint = Color(c.r * a, c.g * a, c.b * a)
 
 func _update_jet_beams() -> void:
 	if _jet_beams.is_empty():
@@ -494,3 +548,4 @@ func _physics_process(delta: float) -> void:
 			(entry["s0"] as Vector3).lerp(entry["s1"], t))
 		n.transform = Transform3D(b, (entry["p0"] as Vector3).lerp(entry["p1"], t))
 	_update_jet_beams()
+	_update_engine_flares()

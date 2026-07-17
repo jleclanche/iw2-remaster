@@ -20,6 +20,11 @@ extends MeshInstance3D
 var intensity := 0.0
 var tint := Color.WHITE
 var width_ratio := 1.0
+# LensFlareFade bit1 -> Render's flag-8 branch (215202..): the quad is a
+# fixed WORLD size -- half-extent = m_intensity_scale x intensity, with NO
+# view-depth term (the engine also folds in the FOV factor x
+# FlareNominalDistance; both are 1 for the ship-engine rigs).
+var world_size := false
 
 
 static func create(tex: Texture2D) -> FlareQuad:
@@ -58,6 +63,7 @@ func _process(_delta: float) -> void:
 		visible = false
 		return
 	visible = true
-	var half := StarFx.INTENSITY_SCALE * intensity * depth
+	var half := StarFx.INTENSITY_SCALE * intensity \
+			* (1.0 if world_size else depth)
 	scale = Vector3(half, half * width_ratio, half)
 	(mesh as QuadMesh).material.albedo_color = tint

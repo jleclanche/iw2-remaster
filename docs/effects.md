@@ -1324,3 +1324,17 @@ extraction needed beyond what the channel system already recovered:
   FlareIntensity 0.15/0.3, LensFlareFade 6 = world-size + world-scale
   flags) need the flag-8/0x10 branch of FcLensFlareNode::Render before the
   drive glow can be ported faithfully.
+
+### The engine glow (Render's flag-8/0x10 branch, now extracted)
+
+FcLensFlareNode::Render (flux.dll.c:215184-215232): LensFlareFade bit2 ->
+flag 0x10 multiplies the intensity envelope by the node's WORLD SCALE
+(FindWorldScale, +0xac; vertex alpha additionally x 2*scale below 0.5) --
+which is exactly how the cs_eng <anim channel="lz?+s(1.0)"> null drives the
+command section's engine glow with smoothed thrust. Fade bit1 -> flag 8:
+fixed WORLD size (no view-depth term; envelope x FOV factor x
+FlareNominalDistance, both 1 here), with point-LOD/cull at m_point_detail
+2000 / m_cull_detail 3000. FlareQuad.world_size + ship_effects
+_add_engine_flare port it: EngineFlare (0.15, options 15/filter 5 = 6-point
+star) + EngineGlow (0.3, options 3 = soft glow), colour (242,196,53)
+squared, tracking the anim null's scale each frame.
