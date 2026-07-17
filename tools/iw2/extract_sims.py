@@ -89,11 +89,12 @@ def _scene_nulls(fs: ResourceFS, ref: str, cache: dict) -> dict[str, dict]:
 
 
 def load_strings(fs: ResourceFS) -> dict[str, str]:
+    from .pogdata import _clean_csv  # same repairs the runtime tables get
     table: dict[str, str] = {}
     for path in fs.list("text/", ".csv"):
-        text = fs.read_text(path)
+        text = _clean_csv(fs.read_text(path), path)
         for row in csv.reader(io.StringIO(text)):
-            if len(row) >= 2 and row[0].strip():
+            if len(row) >= 2 and row[0].strip() and not row[0].startswith(";"):
                 table.setdefault(row[0].strip(), row[1].strip())
     return table
 

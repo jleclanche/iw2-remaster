@@ -28,6 +28,9 @@ fonts.main()
 print("=== html (screen UI text, Latin-1 -> UTF-8) ===")
 from . import html_text
 html_text.main()
+print("=== POG runtime data (INI tree + CSV tables) ===")
+from . import pogdata
+pogdata.main()
 print("=== mission packages ===")
 from . import campaign, pkg
 pkg.main()
