@@ -92,6 +92,18 @@ const SPR := {
 	1: [0, 0, 16, 16, 16, 16],           # target box corner, SETTLED (icHUDBrackets)
 	3: [51, 0, 16, 16, 7, 7],            # targeted-subsystem marker (MFD + world)
 	4: [43, 17, 8, 8, 8, 8],             # target box corner, acquiring/contact
+	# 7..15: the segmented-bar blocks (FUN_100ebde0's style table @ 0x10162e00:
+	# style s = [fill sprite, cap sprite, step-1]; 0=(8,7,3) 1=(10,9,5)
+	# 2=(12,11,6) 3=(14,13,7)) and the vertical hull-bar block (FUN_100ebfc0)
+	7: [0, 17, 4, 8, 0, 4],              # bar style 0 cap
+	8: [5, 17, 4, 8, 0, 4],              # bar style 0 fill
+	9: [93, 0, 8, 16, 0, 8],             # bar style 1 cap
+	10: [102, 0, 8, 16, 0, 8],           # bar style 1 fill
+	11: [124, 0, 9, 18, 0, 9],           # bar style 2 cap
+	12: [134, 0, 9, 18, 0, 9],           # bar style 2 fill
+	13: [231, 125, 16, 32, 0, 16],       # bar style 3 cap
+	14: [231, 92, 10, 32, 0, 16],        # bar style 3 fill
+	15: [102, 17, 8, 6, 0, 3],           # vertical hull-bar block (4 px pitch)
 	19: [34, 0, 16, 16, 13, 8],          # set-speed needle on the dial's left arc
 	16: [144, 0, 9, 11, 0, 9],           # icHUDShipStatus: ONE status lamp
 	20: [68, 0, 11, 11, 5, 5],           # charge pip
@@ -134,7 +146,9 @@ const SPR := {
 	62: [0, 191, 32, 32, 16, 16],        # thermometer
 	63: [33, 191, 32, 32, 16, 16],       # lightning bolt
 	64: [198, 191, 32, 32, 16, 16],      # light bulb
+	69: [0, 224, 32, 32, 16, 16],        # icHUDWeapons: the gun-row icon
 	78: [99, 224, 32, 32, 16, 16],       # missile
+	79: [33, 224, 32, 32, 16, 16],       # icHUDWeapons: secondary-row icon
 	86: [132, 224, 32, 32, 16, 16],      # alpha  (multiplayer)
 	87: [166, 224, 32, 32, 16, 16],      # beta   (multiplayer)
 	88: [198, 224, 32, 32, 16, 16],      # flag   (multiplayer)
@@ -713,19 +727,29 @@ func _panel(pos: Vector2, size: Vector2, title: String, mode := 0) -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(Color(0, 0, 0, 0.9)))
 
 func _bar(pos: Vector2, frac: float, col: Color, segs := BAR_SEGS) -> void:
-	# FUN_100ebde0 with bar style 1: segs blocks on a BAR_PITCH grid, and the
-	# segment straddling the fill boundary fades by the remainder rather than
-	# snapping on. The weapon/shield bars pass length 74 (14 segments); the
-	# target MFD's hull bars pass length 2*16-3 = 29 (5 segments).
+	# FUN_100ebde0, bar style 1: SPRITE blocks (fill sprite 10, 8x16, on the
+	# 5 px pitch from the style table @ 0x10162e08). Full segments draw at
+	# full alpha, then ONE more at alpha = the fractional remainder
+	# (181906-181911) -- and that is ALL: the engine never draws the unlit
+	# tail (our dim background blocks were invented). Fallback rects only
+	# when the atlas is missing.
 	var f := clampf(frac, 0.0, 1.0)
-	var lit := f * segs
-	for i in segs:
-		var r := Rect2(pos + Vector2(i * BAR_PITCH, 0), Vector2(BAR_PITCH - 1.0, 8))
-		var a := clampf(lit - float(i), 0.0, 1.0)
-		if a > 0.0:
-			draw_rect(r, _dim(Color(col.r, col.g, col.b, col.a * maxf(a, 0.35))))
+	var lit := int(floor(f * segs))
+	var rem := f * segs - float(lit)
+	var p := Vector2(pos.x, pos.y + 4.0)   # sprite anchor is the block midline
+	for i in mini(lit, segs):
+		if _sprites != null:
+			_spr(p + Vector2(i * BAR_PITCH, 0), 10, col)
 		else:
-			draw_rect(r, _dim(Color(col.r, col.g, col.b, 0.15)))
+			draw_rect(Rect2(pos + Vector2(i * BAR_PITCH, 0),
+					Vector2(BAR_PITCH - 1.0, 8)), _dim(col))
+	if rem > 0.0 and lit < segs:
+		var pc := Color(col.r, col.g, col.b, col.a * rem)
+		if _sprites != null:
+			_spr(p + Vector2(lit * BAR_PITCH, 0), 10, pc)
+		else:
+			draw_rect(Rect2(pos + Vector2(lit * BAR_PITCH, 0),
+					Vector2(BAR_PITCH - 1.0, 8)), _dim(pc))
 
 func _contact_color(hostile: bool, category: String, faction := "") -> Color:
 	# FUN_100e8530, the one place the engine picks a contact's colour -- the
@@ -855,6 +879,10 @@ func _draw_hull_wedge(c: Vector2) -> void:
 		return
 	var v: float = clampf(main.hull / main.hull_max, 0.0, 1.0)
 	var t: float = tan(v * PI / 2.0 - (PI / 4.0 if v > 0.5 else 0.0))
+	# a zero-sweep wedge is a degenerate triangle Godot's triangulator
+	# rejects (the engine's raw triangle list just drew nothing)
+	if v <= 0.001:
+		return
 	var col := _health_color(v)
 	col = _dim(Color(col.r, col.g, col.b, 0.65))
 	var e := GAUGE_EXT
@@ -865,7 +893,7 @@ func _draw_hull_wedge(c: Vector2) -> void:
 				GAUGE_V0)])
 	var cols := PackedColorArray([col, col, col])
 	draw_polygon(pts, cols, uvs, _reticle_tex)
-	if v > 0.5:
+	if v > 0.5 and t > 0.001:
 		# second triangle: bottom-right corner up the right edge to 3 o'clock
 		pts = PackedVector2Array([c, c + Vector2(e, e),
 				c + Vector2(e, (1.0 - t) * e)])
@@ -889,6 +917,10 @@ func _draw_speed_wedge(c: Vector2) -> void:
 	var in_range := raw >= -1.001 and raw <= 1.001   # _DAT_1011e0a8/a4
 	var v := clampf(raw, -1.0, 1.0)
 	var t := tan(v * PI / 4.0)
+	# zero-sweep = degenerate triangle; Godot's triangulator rejects it
+	if absf(t) <= 0.001:
+		_draw_set_speed_needle(c, ref)
+		return
 	var col := Color(1, 1, 1)
 	if not in_range and fposmod(
 			Time.get_ticks_msec() * 0.001 / 1.4, 1.0) > 0.5:
@@ -1060,17 +1092,28 @@ func _draw_target_block(c: Vector2) -> void:
 				col)
 	_reticle_turn_arrow(c)
 
-func _vbar(pos: Vector2, height: float, frac: float, col: Color,
-		segments := 8) -> void:
-	# the original's bars are stacks of lit/unlit blocks, filling upward
-	var seg_h := height / segments
-	for i in segments:
-		var r := Rect2(pos + Vector2(0, height - (i + 1) * seg_h),
-				Vector2(5.0, seg_h - 1.0))
-		if float(i) / segments < frac:
-			draw_rect(r, col)
+func _vbar(pos: Vector2, height: float, frac: float, col: Color) -> void:
+	# FUN_100ebfc0 @ 0x100ebfc0, the target hull bar: sprite-15 blocks
+	# (8x6, anchor mid-left) stacked BOTTOM-UP on the 4 px pitch
+	# (_DAT_101190b4), floor(height/4) segments; full blocks at full alpha,
+	# then one at alpha = the fractional remainder. No unlit tail.
+	var segs := maxi(int(floor(height / 4.0)), 1)
+	var f := clampf(frac, 0.0, 1.0)
+	var lit := int(floor(f * segs))
+	var rem := f * segs - float(lit)
+	var y := pos.y + height
+	for i in mini(lit, segs):
+		if _sprites != null:
+			_spr(Vector2(pos.x, y), 15, col)
 		else:
-			draw_rect(r, Color(col.r, col.g, col.b, 0.15))
+			draw_rect(Rect2(pos.x, y - 3.0, 5.0, 5.0), _dim(col))
+		y -= 4.0
+	if rem > 0.0 and lit < segs:
+		var pc := Color(col.r, col.g, col.b, col.a * rem)
+		if _sprites != null:
+			_spr(Vector2(pos.x, y), 15, pc)
+		else:
+			draw_rect(Rect2(pos.x, y - 3.0, 5.0, 5.0), _dim(pc))
 
 func _reticle_turn_arrow(c: Vector2) -> void:
 	# when the target is outside the reticle, an arrow inside the ring shows
@@ -2604,19 +2647,25 @@ func _draw_weapon_panel() -> void:
 	var charge: float = 1.0
 	if main.weapons != null:
 		charge = 1.0 - main.weapons.cooldown / main.weapons.refire
+	# the row, verbatim from the icHUDWeapons draw (iwar2.dll.c ~197340+):
+	# colour DAT_10174fb0 (amber); the gun ICON is sprite 69 at
+	# (16, y + _DAT_101184a0 = 16); the charge bar is FUN_100ebde0(36,
+	# y + 10, 112 - 38 = 74, frac, style 1) -- the same call _bar ports.
+	# (Our old hand-drawn lightning polygon was invented.)
 	for i in rows:
 		var ry := pos.y + HDR_H + i * ROW_PITCH
-		var lp := Vector2(pos.x + 16, ry + 16)
-		draw_colored_polygon(PackedVector2Array([
-			lp + Vector2(3, -8), lp + Vector2(-4, 1), lp + Vector2(-1, 1),
-			lp + Vector2(-3, 8), lp + Vector2(4, -1), lp + Vector2(1, -1)]),
-			_dim(AMBER))
+		if _sprites != null:
+			_spr(Vector2(pos.x + 16, ry + 16), 69, AMBER)
 		_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
 		draw_string(_font, Vector2(pos.x + 36, ry + 28), "%d%%" % int(charge * 100),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 	if sec_row > 0:
+		# the missile row's icon is sprite 78 (the secondary rows at x=11 in
+		# the same draw); the ammo text layout stays ours
 		var ry := pos.y + HDR_H + rows * ROW_PITCH
-		draw_string(_font, Vector2(pos.x + 16, ry + 20), sec,
+		if _sprites != null:
+			_spr(Vector2(pos.x + 16, ry + 16), 78, AMBER)
+		draw_string(_font, Vector2(pos.x + 36, ry + 20), sec,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 	_ea = 1.0
 

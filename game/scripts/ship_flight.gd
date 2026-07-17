@@ -87,10 +87,16 @@ func _integrate_translation(delta: float) -> void:
 		v_local.z += -input_thrust.z * max_accel.z * delta
 	elif assist:
 		v_local.z = move_toward(v_local.z, -set_speed, max_accel.z * delta)
-	if assist:
-		v_local.x = clampf(v_local.x, -max_speed.x, max_speed.x)
-		v_local.y = clampf(v_local.y, -max_speed.y, max_speed.y)
-		v_local.z = clampf(v_local.z, -max_speed.z, max_speed.z)
+	# NO velocity clamp -- and that is extracted, not a choice.
+	# iiThrusterSim::MaxSpeed (0x1007e2a0, the ini `speed` vector) has exactly
+	# three consumers in iwar2.dll: the AI target-velocity scaling
+	# (icAITarget::ComputeTargetVelocity 0x1005a098), the avatar speed-fraction
+	# channel (clamped 0..1 for effects), and the throttle range. Nothing caps
+	# the ship's actual velocity: the throttle SETTING is bounded by the rated
+	# speed, but held thrust accelerates past it (Newtonian), and releasing it
+	# lets the assist trim back down to the set speed. The dial's own
+	# over-range blink (|speed/rated| > 1.001, FUN_100f6c80) exists precisely
+	# because overspeed happens. (An earlier pass clamped here; invented.)
 	velocity = b * v_local
 	global_position += velocity * delta
 
