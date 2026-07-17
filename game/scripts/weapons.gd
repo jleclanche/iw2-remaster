@@ -264,6 +264,34 @@ func _bolt_mesh(spec: Dictionary) -> Mesh:
 		_meshes[tex] = ExplosionFx.bolt_mesh(main._base(), tex)
 	return _meshes.get(tex)
 
+# iiGun::ComputeFiringSolution (0x10035310) + the reticle's FUN_100f8ef0:
+# FindLocalTarget gives the target in gun space, FindAimPoint leads it at the
+# bolt's own speed (the bolt inherits shooter velocity, so the lead solves on
+# RELATIVE velocity), IsInFireArc tests the gun's ini fire arcs. The player's
+# bolts fire straight down the barrel ONLY when icPlayerPilot+0x9c (aim
+# assist) is off; with it on and a locked solution, the fired bolt takes the
+# assisted direction.
+func firing_solution(target: Node3D) -> Dictionary:
+	var out := {"lead": Vector3.INF, "in_range": false, "locked": false}
+	if target == null or not is_instance_valid(target) or ship == null:
+		return out
+	var rel: Vector3 = target.global_position - ship.global_position
+	var d := rel.length()
+	var bolt_speed := float(bolt_spec.get("speed", 6000.0))
+	var tvel: Vector3 = (target.velocity if "velocity" in target
+			else Vector3.ZERO) - ship.velocity
+	var lead: Vector3 = target.global_position + tvel * (d / bolt_speed)
+	out["lead"] = lead
+	# iiWeapon::Range (vtbl+0x60) for a bullet = speed x lifetime
+	var rng := bolt_speed * float(bolt_spec.get("lifetime", 1.6))
+	out["in_range"] = d <= rng
+	if out["in_range"] and main != null and main.aim_assist:
+		var fwd: Vector3 = -ship.global_transform.basis.z
+		var dir := (lead - ship.global_position).normalized()
+		# 30-degree half-angle from the ini's horizontal/vertical_fire_arc=60
+		out["locked"] = fwd.dot(dir) >= 0.8660254
+	return out
+
 func fire() -> void:
 	if cooldown > 0.0:
 		return
@@ -294,9 +322,26 @@ func fire() -> void:
 	# fires from FcSubsim::WorldPosition down the hull axis -- the recovered muzzle
 	# (light_pbc_muzzle), not the model-node fallback which sat 3-4 m ahead of the
 	# barrel.
+	# icShip::SetLastFireTarget (0x10075000): the weapon fire path stamps the
+	# has-fired flag and the gun's engaged target -- what the POG reactive
+	# systems (istation.pog's protection loop) poll via iship.HasFired /
+	# LastFireTarget
+	if main != null:
+		main.player_has_fired = true
+		if main.target_ai != null and is_instance_valid(main.target_ai):
+			main.player_last_fire_target = main.target_ai
+	# With aim assist on and a LOCKED solution the bolts take the assisted
+	# direction (ComputeFiringSolution's player branch, gated on +0x9c).
+	var assist_lead := Vector3.INF
+	if main != null and main.aim_assist and main.target_ai != null \
+			and is_instance_valid(main.target_ai):
+		var sol := firing_solution(main.target_ai)
+		if sol["locked"]:
+			assist_lead = sol["lead"]
 	if not fixed_gun.is_empty():
 		var fm: Array = light_pbc_muzzle()
-		_spawn_at(ship, fm[0], fm[1], ship.velocity, spec)
+		_spawn_at(ship, fm[0], _aim_dir(fm[0], fm[1], assist_lead),
+				ship.velocity, spec)
 		if main:
 			main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 		return
@@ -307,15 +352,25 @@ func fire() -> void:
 	if not mz.is_empty():
 		for n in mz:
 			var m: Array = PbcWeapons.muzzle_of(n as Node3D)
-			_spawn_at(ship, m[0], m[1], ship.velocity, spec)
+			_spawn_at(ship, m[0], _aim_dir(m[0], m[1], assist_lead),
+					ship.velocity, spec)
 	else:
 		# no gun on the avatar at all: the hull's authored mounts, still fired
 		# along the hull's forward because that is all a bare point can give us
 		for m in muzzle_fallback:
-			_spawn_at(ship, ship.global_transform * m,
-					-ship.global_transform.basis.z, ship.velocity, spec)
+			var p: Vector3 = ship.global_transform * m
+			_spawn_at(ship, p,
+					_aim_dir(p, -ship.global_transform.basis.z, assist_lead),
+					ship.velocity, spec)
 	if main:
 		main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
+
+static func _aim_dir(muzzle: Vector3, barrel: Vector3, lead: Vector3) -> Vector3:
+	# barrel line normally; the assisted lead direction when locked
+	if lead == Vector3.INF:
+		return barrel
+	var d := lead - muzzle
+	return d.normalized() if d.length_squared() > 1.0 else barrel
 
 func spawn(shooter: Node3D, dir: Vector3, spec: Dictionary = {}) -> void:
 	var vel: Vector3 = shooter.velocity if "velocity" in shooter else Vector3.ZERO

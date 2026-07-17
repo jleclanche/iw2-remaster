@@ -172,6 +172,12 @@ static func load_game_font(base: String, fnt: String) -> Font:
 	if FileAccess.file_exists(path):
 		var f := FontFile.new()
 		if f.load_bitmap_font(path) == OK:
+			# bitmap fonts default to FIXED_SIZE_SCALE_DISABLE: every draw
+			# renders at fixed_size no matter what size is requested, which is
+			# why fitting a smaller size never changed anything on screen.
+			# ENABLED scales the bitmaps; HUD text keeps asking for the fixed
+			# size (scale 1.0) so only deliberate re-sizes (the menu) change.
+			f.fixed_size_scale_mode = TextServer.FIXED_SIZE_SCALE_ENABLED
 			return f
 	return ThemeDB.fallback_font
 
@@ -1122,7 +1128,7 @@ func _reticle_turn_arrow(c: Vector2) -> void:
 # hostile override).
 func _target_color() -> Color:
 	if main.target_ai != null and is_instance_valid(main.target_ai):
-		return _contact_color(main.target_ai.behavior == "attack", "traffic",
+		return _contact_color(main._is_hostile(main.target_ai), "traffic",
 				str(main.target_ai.faction))
 	if main.target_idx >= 0:
 		var cat := str(main.objects[main.target_idx]["category"])
@@ -1611,11 +1617,15 @@ func _menu_select() -> void:
 		"hud_menu_zoom":
 			main.zoomed = not main.zoomed
 		"hud_menu_aim_assist":
-			main.free_toggle = not main.free_toggle
+			# toggles icPlayerPilot+0x9c -- the gate on BOTH the triangle
+			# lock display and the assisted firing solution (FUN_100f8ef0
+			# @ 189953, iiGun::ComputeFiringSolution's player branch)
+			main.aim_assist = not main.aim_assist
 		"hud_menu_autopilot":
 			if main.ap_mode != 0:
-				# while engaged the node shows DISENGAGE (FUN_100f0420)
-				main.ap_mode = 0
+				# while engaged the node shows DISENGAGE (FUN_100f0420);
+				# disengaging resets the throttle (ResetThrottle @ 0x100b1450)
+				main._disengage_autopilot()
 			else:
 				var i: int = int(menu_carousel.get(menu_focus, 0))
 				# APPROACH/FORMATE/PURSUIT/DOCK: engine modes 2/1/4/3, which
@@ -2246,7 +2256,7 @@ func _draw_target_marks() -> void:
 			var p := cam.unproject_position(a.global_position)
 			if not screen.has_point(p):
 				continue
-			var col := _contact_color(a.behavior == "attack", "traffic",
+			var col := _contact_color(main._is_hostile(a), "traffic",
 					str(a.faction))
 			_corner_bracket(_bbox_of(a.global_position, 30.0),
 					Color(col.r, col.g, col.b, 0.7))
@@ -2310,20 +2320,28 @@ func _draw_subtarget_mark() -> void:
 	_spr(cam.unproject_position(world).floor(), 3, _target_color())
 
 # The converging aim triangles: FUN_100f6340's tail (0x100f68xx) computes the
-# firing solution via FUN_100f8ef0 (FindLocalTarget/FindAimPoint on the
-# selected gun) and calls FUN_100ea400(x, y, spin, size, back):
-#   * suppressed beyond gun range (d^2 > _DAT_1011c64c = 50 km squared)
-#   * NO solution: size 30, the whole 4-triangle group spinning about the
-#     lead point, one revolution per 3 s (frac(ms * _DAT_10118498) * 2pi,
-#     _DAT_10119f94)
-#   * IN the fire arc: size 20, spin FROZEN at 0 -- the iconic "lock"
-#   * FUN_100ea400 places sprites 35/34/33/32 at (x-s, y), (x+s, y),
-#     (x, y-s), (x, y+s) (the back flag swaps the left/right pair)
-const AIM_RANGE_SQ := 2.5e9      # _DAT_1011c64c
-const AIM_SPIN_PERIOD := 3.0     # _DAT_10118498 = 1/3000 per game-time ms
-# player light/standard PBC ini: horizontal_fire_arc=60 -- a 30-degree
-# half-angle cone about the gun axis (iiGun::IsInFireArc)
-const AIM_ARC_COS := 0.8660254   # cos(30 deg)
+# firing solution via FUN_100f8ef0 @ 0x100f8ef0 (FindLocalTarget /
+# FindAimPoint / FindWorldMuzzle on the selected gun) and calls
+# FUN_100ea400(x, y, spin, size, out_of_range):
+#   * nothing at all beyond 50 km (_DAT_1011c64c, the early return)
+#   * param_4 = IN WEAPON RANGE (target dist <= iiWeapon::Range, vtbl+0x60
+#     = bolt speed x lifetime). OUT of range flips the triangle pairs so
+#     they point OUTWARD (0x100ea55a's else layout); in range they point
+#     inward, converging on the solution.
+#   * param_3 = LOCK: in range AND icPlayerPilot+0x9c (the TOGGLE AIM
+#     ASSIST menu node) AND iiGun::IsInFireArc(gun +0xac/+0xb0 -- the ini's
+#     60-degree fire arcs). Locked: size 20, spin FROZEN -- and the fired
+#     bolts actually take the assisted solution (ComputeFiringSolution's
+#     player branch is only straight-down-the-barrel when +0x9c is OFF).
+#   * unlocked: size 30, the group spinning once per 3 s
+#     (frac(ms * _DAT_10118498) * 2pi, _DAT_10119f94)
+# Colour: the engine leaves the CONTACT colour bound from the reticle body,
+# so the triangles read in the target's IFF colour.
+const AIM_DRAW_RANGE_SQ := 2.5e9   # _DAT_1011c64c
+const AIM_SPIN_PERIOD := 3.0       # _DAT_10118498 = 1/3000 per game-time ms
+# player light/standard PBC ini: horizontal/vertical_fire_arc=60 -- a
+# 30-degree half-angle cone about the gun axis (iiGun::IsInFireArc)
+const AIM_ARC_COS := 0.8660254     # cos(30 deg)
 
 func _draw_aim_group() -> void:
 	if main.target_ai == null or not is_instance_valid(main.target_ai) \
@@ -2331,28 +2349,27 @@ func _draw_aim_group() -> void:
 		return
 	var tpos: Vector3 = main.target_ai.global_position
 	var rel: Vector3 = tpos - main.ship.global_position
-	if rel.length_squared() > AIM_RANGE_SQ:
+	if rel.length_squared() > AIM_DRAW_RANGE_SQ:
 		return
-	# iiGun::FindAimPoint: the bolt inherits the shooter's velocity, so the
-	# lead solves on the RELATIVE velocity at the bolt's own speed
-	var bolt_speed: float = float(main.weapons.bolt_spec.get("speed", 6000.0))
-	var tvel: Vector3 = main.target_ai.velocity - main.ship.velocity
-	var lead: Vector3 = tpos + tvel * (rel.length() / bolt_speed)
+	var sol: Dictionary = main.weapons.firing_solution(main.target_ai)
+	var lead: Vector3 = sol["lead"]
 	var cam: Camera3D = main.cam
-	var behind := cam.is_position_behind(lead)
-	if behind:
+	if cam.is_position_behind(lead):
 		return   # the off-screen bearing arrow covers this case
 	var p := cam.unproject_position(lead)
-	var fwd: Vector3 = -main.ship.global_transform.basis.z
-	var in_arc := fwd.dot((lead - main.ship.global_position).normalized()) \
-			>= AIM_ARC_COS
-	var size := 20.0 if in_arc else 30.0
-	var spin := 0.0 if in_arc else fposmod(
+	var locked: bool = sol["locked"]
+	var in_range: bool = sol["in_range"]
+	var size := 20.0 if locked else 30.0
+	var spin := 0.0 if locked else fposmod(
 			Time.get_ticks_msec() / (AIM_SPIN_PERIOD * 1000.0), 1.0) * TAU
-	var col := GREEN
-	# front layout: left 35, right 34, top 33, bottom 32 (0x100ea55a)
-	for q in [[Vector2(-size, 0), 35], [Vector2(size, 0), 34],
-			[Vector2(0, -size), 33], [Vector2(0, size), 32]]:
+	var col := _target_color()
+	# in range: left 35, right 34, top 33, bottom 32 (converging); out of
+	# range the pairs swap -- the same art pointing outward (0x100ea58c)
+	var lay: Array = [[Vector2(-size, 0), 35], [Vector2(size, 0), 34],
+			[Vector2(0, -size), 33], [Vector2(0, size), 32]] if in_range \
+		else [[Vector2(-size, 0), 34], [Vector2(size, 0), 35],
+			[Vector2(0, -size), 32], [Vector2(0, size), 33]]
+	for q in lay:
 		_spr(p + (q[0] as Vector2).rotated(spin), q[1], col, spin)
 
 func _diamond(p: Vector2, r: float, col: Color) -> void:

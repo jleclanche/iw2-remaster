@@ -792,7 +792,12 @@ func _draw_top() -> void:
 	# scales with height (_strip_w), so the button metrics and the FONT must
 	# scale by the same factor or small windows overflow the capsules.
 	var sc := s.y / REF_H
-	var fs := maxi(roundi(item_size * sc), 8)
+	# item_size is the font's fixed_size (8) -- its NATIVE bitmap size, at
+	# which "START NEW GAME" is already 167 px wide. The old floor of 8 was
+	# therefore "never shrink", which is exactly the reported overflow; with
+	# fixed_size_scale_mode enabled (load_game_font) smaller sizes now render
+	# smaller, so the fit loop below can actually work.
+	var fs := maxi(roundi(item_size * sc), 3)
 	# capsule buttons
 	_item_rects.clear()
 	var items := _items()
@@ -806,7 +811,7 @@ func _draw_top() -> void:
 	for it in items:
 		widest = maxf(widest, _font_title.get_string_size(str(it[0]),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x)
-	while fs > 8 and widest > max_w:
+	while fs > 3 and widest > max_w:
 		fs -= 1
 		widest = 0.0
 		for it in items:

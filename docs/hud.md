@@ -1029,3 +1029,18 @@ table itself is BSS at 0x101741b0, so tools/iw2/hud_sprites.py recovers all
   5440/5520 agrees with every constant there (50 m/s, 50/150 km, 0.4 s
   cadence, 0.7 alpha, 16-point ring, ladder for the player, centre line for
   others, LDS dashing).
+
+### Aim triangles, corrected (second pass)
+
+FUN_100f8ef0's outputs decode as: param_4 = IN WEAPON RANGE (dist <=
+iiWeapon::Range, vtbl+0x60 = bolt speed x lifetime -- NOT the 50 km draw
+cutoff, which is a separate early return); param_3 = LOCK, true only when
+in range AND icPlayerPilot+0x9c AND iiGun::IsInFireArc(gun +0xac/+0xb0).
++0x9c is the "TOGGLE AIM ASSIST" HUD menu node (s_hud_menu_toggle_aim_assist
+@ 0x10162a2c) -- the SAME flag gates iiGun::ComputeFiringSolution's player
+branch, so with assist on and a lock the fired bolts take the assisted
+direction; straight-down-the-barrel is only the +0x9c==0 path. The
+FUN_100ea400 layout flag is the in-range bit: in range the four triangles
+point INWARD (left 35/right 34/top 33/bottom 32), out of range the pairs
+swap and they point OUTWARD. Colour is whatever contact colour the reticle
+body left bound -- the target's IFF colour, not HUD chrome.
