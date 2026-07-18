@@ -392,6 +392,17 @@ func _mount(template: String, attach_null: String) -> void:
 		# icSlugThrower, refire 0.12) is NOT a reskinned PBC (refire 0.7).
 		sys["refire"] = float(props.get("refire_delay", 0.7))
 		sys["projectile"] = str(props.get("projectile_template", ""))
+	if cls == "icCannon":
+		# icCannon = iiGun + an energy store (property map 0x1002c960):
+		# capacity +0xd0, shot_energy_cost +0xd4, and the store itself at
+		# +0xd8. BOTH the ctor (0x1002cad0) and the fit-time clone
+		# (0x1002cb90) zero +0xd8: a freshly fitted cannon starts EMPTY and
+		# charges from ship power (_simulate_cannon). This is the sustained-
+		# fire limiter: pbc.ini can burst at refire 0.7 s but only recharges
+		# power=100/s against a 130/shot cost -- one shot per 1.3 s sustained.
+		sys["capacity"] = float(props.get("capacity", 0))
+		sys["shot_cost"] = float(props.get("shot_energy_cost", 0))
+		sys["energy"] = 0.0
 	if cls == "icSlugThrower":
 		# icSlugThrower ammo counter (+0xd4): IsReadyToFire (0x10032750)
 		# returns 8 (no ammo) once it hits zero. -1 = not ammo-limited.
@@ -697,6 +708,14 @@ func simulate(dt: float) -> void:
 	var overheated := (heat + heat_external) >= HEAT_DAMAGE_THRESHOLD
 	for sys in systems:
 		heat_rate += _simulate_system(sys, dt, overheated)
+		# the gun classes' own Simulate tails run AFTER the base efficiency
+		# pass, even on a destroyed subsim (the early-out is INSIDE
+		# iiShipSystem::Simulate; the derived code carries on)
+		if sys["class"] == "icCannon":
+			_simulate_cannon(sys, dt)
+		elif sys["class"] == "icSlugThrower":
+			# icSlugThrower::Simulate 0x10032730: SetUsage(1.0), always
+			sys["usage"] = 1.0
 	if disrupt_time <= 0.0:
 		# a disrupted LDA neither recharges nor deflects while the timer runs
 		for lda in ldas:
@@ -1236,6 +1255,37 @@ func weapon_groups() -> Array:
 			"members": [sys], "linked": false,
 		})
 	return out
+
+func _simulate_cannon(sys: Dictionary, dt: float) -> void:
+	# icCannon::Simulate -- 0x1002cbd0 in the shipped DLL, recovered by
+	# disassembly (the decomp text skips 0x1002cbd0..0x1002ccd2). After
+	# iiGun::Simulate (0x10035030, the refire clock):
+	#   if energy (+0xd8) < capacity (+0xd0):
+	#       power > 0:  energy += TRIWeight() * efficiency (+0x78)
+	#                             * power (+0x44) * dt        ; 0x1002cc07..2e
+	#       power <= 0: energy += shot_energy_cost * dt,
+	#                   floored UP at one shot's worth         ; 0x1002cc36..67
+	#       energy = min(energy, capacity)                     ; 0x1002cc69..7c
+	#       SetUsage(1.0)      ; charging draws full power     ; 0x1002cc82
+	#   else:
+	#       SetUsage(0.0)      ; full store idles              ; 0x1002ccba
+	# TRIWeight (0x1003c170) is 1.0 for every non-player system, so at full
+	# offensive the player's store refills 1.5x as fast -- the same w that
+	# shortens the refire delay.
+	var cap := float(sys.get("capacity", 0.0))
+	var energy := float(sys.get("energy", 0.0))
+	if energy < cap:
+		var power := float(sys["power"])
+		if power > 0.0:
+			energy += system_tri_weight(sys) * float(sys["efficiency"]) \
+					* power * dt
+		else:
+			var cost := float(sys.get("shot_cost", 0.0))
+			energy = maxf(energy + cost * dt, cost)
+		sys["energy"] = minf(energy, cap)
+		sys["usage"] = 1.0
+	else:
+		sys["usage"] = 0.0
 
 func _simulate_lda(lda: Dictionary, dt: float) -> void:
 	if bool(lda["destroyed"]):

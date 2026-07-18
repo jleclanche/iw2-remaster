@@ -78,6 +78,7 @@ func _fireprobe(_delta: float) -> void:
 						float(s2["efficiency"]),
 						str(s2.get("off", false)), str(s2["destroyed"])])
 	m.weapons.cooldown = 0.0
+	_charge_guns()
 	var before: int = m.weapons.bolts.size()
 	m.weapons.fire()
 	var w: PbcWeapons = m.weapons
@@ -257,6 +258,7 @@ func _muzzleshot(_delta: float) -> void:
 			m.drop_cam_pos = m.ship.global_position + Vector3(-25, 2, -8)
 			m._apply_view()
 			if demo_t > 0.4:
+				_charge_guns()
 				m.weapons.fire()
 				for b in m.weapons.bolts:
 					print("MUZZLESHOT: bolt spawned at ship-local ",
@@ -272,6 +274,7 @@ func _muzzleshot(_delta: float) -> void:
 			# and from above
 			m.drop_cam_pos = m.ship.global_position + Vector3(0, 25, -8)
 			if demo_t > 0.3:
+				_charge_guns()
 				m.weapons.fire()
 				demo_phase = 4
 				demo_t = 0.0
@@ -1591,6 +1594,7 @@ func _tri_check() -> void:
 	var base_life: float = float(m.weapons.bolt_spec["lifetime"])
 	m.weapons.clear()
 	m.weapons.cooldown = 0.0
+	_charge_guns()
 	s.set_tri_position(0.0, 1.0, 0.0)          # full offensive: w = 1.5
 	m.weapons.fire()
 	var cd: float = m.weapons.cooldown
@@ -1610,6 +1614,7 @@ func _tri_check() -> void:
 	# and the other corner: zero offensive halves the gun
 	m.weapons.clear()
 	m.weapons.cooldown = 0.0
+	_charge_guns()
 	s.set_tri_position(1.0, 0.0, 0.0)          # full drive: offensive w = 0.5
 	m.weapons.fire()
 	var cd2: float = m.weapons.cooldown
@@ -1625,6 +1630,18 @@ func _tri_check() -> void:
 
 func _near(a: float, b: float, eps := 0.01) -> bool:
 	return absf(a - b) < eps
+
+## icCannon fits charge from EMPTY (ctor 0x1002cad0 / clone 0x1002cb90 zero
+## the store +0xd8, then icCannon::Simulate 0x1002cbd0 refills it at
+## TRIWeight * efficiency * power per second). Checks that fire immediately
+## top the stores up first -- test setup, like zeroing the cooldown, not a
+## change to the extracted law.
+func _charge_guns() -> void:
+	if m.sys == null:
+		return
+	for sub: Dictionary in m.sys.systems:
+		if sub["class"] == "icCannon":
+			sub["energy"] = float(sub.get("capacity", 0.0))
 
 # a bare AiShip for the turret/beam phases: no INI (sys == null), so damage
 # lands on the raw hull pool and the numbers stay exact

@@ -340,10 +340,22 @@ func fire() -> void:
 			and int(m.get("ammo", -1)) != 0)
 	if not members.is_empty() and live.is_empty():
 		return  # dead, dark or dry: icSlugThrower::IsReadyToFire result 8
+	# icCannon::IsReadyToFire (0x1002cce0): after iiGun's refire test, a
+	# cannon with INI power > 0 refuses (result 4) while its energy store
+	# (+0xd8) holds less than shot_energy_cost (+0xd4). The store is per gun,
+	# charged by icCannon::Simulate (0x1002cbd0, ship_systems.gd
+	# _simulate_cannon) -- THE sustained-fire limiter: light_pbc.ini bursts at
+	# refire 0.8 s but recharges 60/s against an 80/shot cost. A starved gun
+	# sits the volley out while a charged linked partner still fires.
+	var ready: Array = live.filter(func(m: Dictionary) -> bool:
+			return not (float(m.get("power", 0.0)) > 0.0
+			and float(m.get("energy", 0.0)) < float(m.get("shot_cost", 0.0))))
+	if not live.is_empty() and ready.is_empty():
+		return  # every live gun is waiting on its store: no shot, no clock
 	var base_refire := refire
 	var base_spec := bolt_spec
-	if not live.is_empty():
-		var m0: Dictionary = live[0]
+	if not ready.is_empty():
+		var m0: Dictionary = ready[0]
 		base_refire = float(m0.get("refire", refire))
 		base_spec = BOLT_BY_PROJECTILE.get(
 				str(m0.get("projectile", "")).get_file(), bolt_spec)
@@ -385,27 +397,38 @@ func fire() -> void:
 		var fm: Array = light_pbc_muzzle()
 		_spawn_at(ship, fm[0], _aim_dir(fm[0], fm[1], assist_lead),
 				ship.velocity, spec)
+		# icCannon::Fire 0x1002cd20: energy -= shot_energy_cost, first thing
+		if not ready.is_empty() \
+				and float((ready[0] as Dictionary).get("shot_cost", 0.0)) > 0.0:
+			var fmem: Dictionary = ready[0]
+			fmem["energy"] = float(fmem.get("energy", 0.0)) \
+					- float(fmem["shot_cost"])
 		if main:
 			main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 		return
 	var fired := 0
-	if not live.is_empty() and not bool(g.get("linked", false)):
+	if not ready.is_empty() and not bool(g.get("linked", false)):
 		# a SINGLE (the gatling, sharing the lower PBC's mount) fires one bolt
 		# from its own mount point -- FcSubsim::WorldPosition, which
 		# iiWeapon::FindWorldMuzzle (0x1003da30) starts from -- not from both
 		# fitted PBC gun models, which is what the fallback list would do
-		var mp: Vector3 = live[0].get("pos", Vector3.ZERO)
+		var mp: Vector3 = ready[0].get("pos", Vector3.ZERO)
 		var wp: Vector3 = ship.global_transform * mp
 		_spawn_at(ship, wp, _aim_dir(wp, -ship.global_transform.basis.z,
 				assist_lead), ship.velocity, spec)
 		fired = 1
 	else:
+		# only the guns whose stores can pay fire this volley (a linked pair
+		# with one starved member puts out ONE bolt, per the per-gun gate)
+		var limit: int = ready.size() if not ready.is_empty() else (1 << 30)
 		var mz: Array = _group_muzzles()
 		if mz.is_empty():
 			mz = muzzle_nodes.filter(func(n: Node3D) -> bool:
 					return is_instance_valid(n))
 		if not mz.is_empty():
 			for n in mz:
+				if fired >= limit:
+					break
 				var m: Array = PbcWeapons.muzzle_of(n as Node3D)
 				_spawn_at(ship, m[0], _aim_dir(m[0], m[1], assist_lead),
 						ship.velocity, spec)
@@ -415,16 +438,22 @@ func fire() -> void:
 			# fired along the hull's forward because that is all a bare point
 			# can give us
 			for m in muzzle_fallback:
+				if fired >= limit:
+					break
 				var p: Vector3 = ship.global_transform * m
 				_spawn_at(ship, p,
 						_aim_dir(p, -ship.global_transform.basis.z, assist_lead),
 						ship.velocity, spec)
 				fired += 1
-	# icSlugThrower: spend the rounds (+0xd4 decrements per shot)
-	for i in mini(fired, live.size()):
-		var mem: Dictionary = live[i]
+	# per fired gun: icSlugThrower::Fire (0x100327f0) spends a round (+0xd4);
+	# icCannon::Fire (0x1002cd20) draws shot_energy_cost from the store (+0xd8)
+	for i in mini(fired, ready.size()):
+		var mem: Dictionary = ready[i]
 		if int(mem.get("ammo", -1)) > 0:
 			mem["ammo"] = int(mem["ammo"]) - 1
+		if float(mem.get("shot_cost", 0.0)) > 0.0:
+			mem["energy"] = float(mem.get("energy", 0.0)) \
+					- float(mem["shot_cost"])
 	if main:
 		main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 
@@ -487,8 +516,23 @@ func _spawn_at(shooter: Node3D, pos: Vector3, dir: Vector3, base_vel: Vector3,
 			"life": float(spec["lifetime"]), "age": 0.0, "spawn": pos,
 			"aim": aim, "shooter": shooter, "spec": spec})
 
+## iiGun::Simulate (0x10035030): the refire clock (+0xc8) advances at
+## `efficiency (+0x78) * dt`, not raw dt -- a damaged, underpowered or
+## overheat-throttled gun recovers between shots more slowly. Efficiency is
+## the per-subsim product iiShipSystem::Simulate (0x1003bbd0) computes; the
+## first live member of the selected group stands in for the group's clock.
+func _gun_efficiency() -> float:
+	var g := current_group()
+	if g.is_empty():
+		return 1.0
+	for m: Dictionary in (g["members"] as Array):
+		if not bool(m.get("destroyed", false)) \
+				and float(m.get("efficiency", 1.0)) > 0.0:
+			return float(m.get("efficiency", 1.0))
+	return 1.0
+
 func _physics_process(delta: float) -> void:
-	cooldown = maxf(0.0, cooldown - delta)
+	cooldown = maxf(0.0, cooldown - delta * _gun_efficiency())
 	var targets: Array = []
 	if main:
 		targets = main.ai_ships.duplicate()
