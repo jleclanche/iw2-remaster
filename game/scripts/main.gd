@@ -2441,7 +2441,10 @@ func _try_dock() -> void:
 			and base_iface.dockable():
 		_set_autopilot(0)
 		_deliver_towed_pod()
-		base_iface.enter()
+		# NOT an instant entry: every route into the base runs the
+		# DockingCutscene fly-in first (Escape skips to the end of it), then
+		# the shutdown movie, then the interior
+		base_iface.begin_dock()
 		return
 	docked_at = near["name"]
 	ship.velocity = Vector3.ZERO

@@ -71,6 +71,13 @@ func _process(delta: float) -> void:
 	if want != visible:
 		visible = want
 		ui.dirty = true
+		# these screens are mouse-driven; flight keeps the cursor captured.
+		# Release it while any POG screen is up, take it back when the last
+		# one drops (unless the pause menu owns it).
+		if want:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		elif main == null or main.menu == null or not main.menu.visible:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if ui.dirty:
 		ui.dirty = false
 		_rebuild(scr)

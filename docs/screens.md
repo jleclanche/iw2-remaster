@@ -297,13 +297,27 @@ ship so a dock order is even possible. Inside 20 km with a dock order on the
 base it runs `DockingCutscene`; the ship is placed at base-local (0,0,2900),
 `sim.SetCollision(player,0)`, given a 300 m/s run to a waypoint at base-local
 (0,0,1800) inside the bay, with the bay `door` avatar channel driven 0→1 and
-`base_doors_sound` alongside. The final framing shot's offsets are per hull
+`base_doors_sound` alongside. The doors (four `OuterDoor` leaves +
+`<anim channel=door>` nulls) sit at avatar-local z +2010.5 -- the base's LWS
++Z face -- and (0,0,2900) is out along that same axis, so the run-in goes
+THROUGH the doors; the record's map orientation is identity, so the world
+axis matches. The camera is a dolly parked at player-relative
+(r, -r/2, -2.5r) with `SetDollyCamera` + `SetFocus(player)` (our drop
+camera). The final framing shot's offsets are per hull
 (command_section (-1.1,0,14) … heavy_corvette (-1.1,0,60), switched on
 `isim.Type`). Ends: `EnableBlackout(1)`, place the ship inside the base,
 `gui.SetScreen("icSPPlayerBaseScreen")`, play the shutdown movie
 (`YoungCalShutdown` act 0, else `OldCalShutdown`). Skippable via
 `icutsceneutilities.HandleAbort`/`g_cutscene_skip` — the abort still leaves you
 docked because the ship is placed *after* HandleAbort returns.
+
+**There is no instant entry.** `local_6393` wraps the same `DockingCutscene`
+for the short-range dock, so EVERY route into the base is fly-in cutscene →
+blackout → shutdown movie → interior: two cinematics, the first skippable.
+Our dock key calls `base_interior.begin_dock()` (the cutscene), never
+`enter()` directly. The base/PDA screens are mouse-driven: base_screens.gd
+releases the captured flight cursor while any POG screen is up and takes it
+back when the last one drops.
 
 **4. The interior is `icSPPlayerBaseScreen`, an `iiGUIOverlayManager`** (iwar2
 `FcRegistry::RegisterClass` @ 0x10023710, ctor @ 0x10024000), NOT a screen. Its

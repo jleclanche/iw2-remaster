@@ -426,7 +426,14 @@ func _place_for_approach() -> void:
 	main.ship.velocity = Vector3.ZERO
 	main.ship.set_speed = 0.0
 	_set_door(true)
-	main.cam_mode = 2
+	# the dolly: PlaceRelativeToInside(dolly, player, r, -r/2, -2.5r) +
+	# SetDollyCamera + SetFocus(player) -- a camera parked off the ship's
+	# flank that watches the run through the doors. Our drop camera is that
+	# rig: fixed in space, tracking the ship.
+	var r: float = main.ship.radius
+	main.drop_cam_pos = main.ship.global_position \
+		+ main.ship.global_transform.basis * Vector3(r, -r * 0.5, 2.5 * r)
+	main.cam_mode = 3
 	main.cam_view = 0
 	main._apply_view()
 
@@ -435,6 +442,23 @@ func _base_basis(rec: Dictionary) -> Basis:
 	if main.has_method("_record_basis"):
 		return main._record_basis(rec)
 	return Basis.IDENTITY
+
+
+## The dock key inside DOCK_RANGE. The original has NO instant entry: every
+## route into the base runs iBackToBase.DockingCutscene (ibacktobase.pog:411)
+## -- the dolly fly-in through the door on the base's +Z side, doors opening
+## ahead of the ship -- and only then the blackout, the shutdown movie and
+## the interior. local_6393 wraps exactly this for the short-range dock.
+func begin_dock() -> void:
+	if inside or cut > 0:
+		return
+	# iship.DisruptLDSDrive(player, 1) at the cutscene top
+	main.disrupt_time = DOCK_LDS_DISRUPT
+	_confirm = -1.0
+	_confirm_skip = false
+	_place_for_approach()
+	cut = 2
+	_cut_t = 0.0
 
 
 ## Escape. The original's cutscenes all run inside
