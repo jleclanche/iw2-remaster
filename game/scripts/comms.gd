@@ -116,6 +116,13 @@ var _glow_flicker := false
 var strings: Dictionary = {}
 var fast := false  # checks: skip VO playback, minimal gaps
 var _gap := 0.0
+# the teleprinter (icComms::Print / UpdateTeleprinter @ 0x10081c80/0x10081de0):
+# characters revealed so far, at a rate the engine derives from the VO --
+# per-char delay = voice length / char count, so the reveal lands exactly as
+# the line ends; without a voice it falls back to a fixed default rate
+var _reveal := 0.0
+var _reveal_rate := TELEPRINT_CPS
+const TELEPRINT_CPS := 30.0  # m_default_character_delay stand-in (unvoiced)
 var _head_t := 0.0
 var _head_mesh: MeshInstance3D          # blend-shaped face (DELT morphs)
 var _spectrum: AudioEffectSpectrumAnalyzerInstance
@@ -135,13 +142,17 @@ func _ready() -> void:
 	voice.volume_db = -2.0
 	voice.bus = "Voice"
 	add_child(voice)
+	# SQUARE, like the original: RenderPortrait's viewport is the square MFD
+	# block body (128x128) and every anim01 camera renders CustomSize 256 256 --
+	# the heads are authored to fill a square frame. Our old 256x186 viewport in
+	# a 204x148 portrait letterboxed the head small inside the body.
 	portrait = Control.new()
 	portrait.visible = false
-	portrait.custom_minimum_size = Vector2(204, 148)
-	portrait.size = Vector2(204, 148)
+	portrait.custom_minimum_size = Vector2(148, 148)
+	portrait.size = Vector2(148, 148)
 	portrait.clip_contents = true
 	head_view = SubViewport.new()
-	head_view.size = Vector2i(256, 186)
+	head_view.size = Vector2i(256, 256)
 	head_view.own_world_3d = true
 	head_view.transparent_bg = false
 	head_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
@@ -215,29 +226,47 @@ func _build_head_view(rig_key: String) -> void:
 				break
 	if rig_key != "clay":
 		return
-	# Clay only: the icBeamAvatar scanline planes behind him (clay_back,
-	# additive, scrolling)
-	var beam_path: String = main._base().path_join(
-		"data/textures/images/sfx/clay_back.png")
-	if FileAccess.file_exists(beam_path):
+	# Clay only: THREE icBeamAvatar planes verbatim from clay_anim01.lws --
+	# the dense red data wall behind him. Two clay_back walls (repeat=20,
+	# speed=-2.0) above and below, plus a clay_back2 plane (repeat=5,
+	# speed=-0.5) off to the side. Entries: texture, LWS pos, LWS h/p/b,
+	# LWS scale, repeat, speed. LW -> Godot: pos z negates, rotation
+	# Ry(-H)*Rx(-P)*Rz(B) (the same conversion _pose_head uses).
+	for beam: Array in [
+		["clay_back", Vector3(0.0, 0.34, 0.2), Vector3(90.0, 90.0, 0.0),
+			Vector3(0.5901, 0.843, 0.843), 20.0, -2.0],
+		["clay_back", Vector3(0.0, -0.34, 0.2), Vector3(90.0, -90.0, 180.0),
+			Vector3(0.5901, 0.843, 0.843), 20.0, -2.0],
+		["clay_back2", Vector3(-0.2875, 0.0, 0.1645), Vector3(90.0, 0.0, 180.0),
+			Vector3(0.4215, 0.843, 1.0959), 5.0, -0.5],
+	]:
+		var beam_path: String = main._base().path_join(
+			"data/textures/images/sfx/%s.png" % beam[0])
+		if not FileAccess.file_exists(beam_path):
+			continue
 		var img := Image.load_from_file(beam_path)
 		var tex := ImageTexture.create_from_image(img)
-		for side in [-1.0, 1.0]:
-			var mat := StandardMaterial3D.new()
-			mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-			mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-			mat.albedo_texture = tex
-			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-			mat.uv1_scale = Vector3(20, 1, 1)
-			var mesh := QuadMesh.new()
-			mesh.size = Vector2(1.2, 0.85)
-			mesh.material = mat
-			var mi := MeshInstance3D.new()
-			mi.mesh = mesh
-			mi.position = Vector3(0.34 * side, 0, -0.2)
-			head_view.add_child(mi)
-			beam_mats.append(mat)
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		mat.albedo_texture = tex
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mat.uv1_scale = Vector3(float(beam[4]), 1.0, 1.0)
+		var mesh := QuadMesh.new()
+		mesh.size = Vector2(1.0, 1.0)
+		mesh.material = mat
+		var mi := MeshInstance3D.new()
+		mi.mesh = mesh
+		var p: Vector3 = beam[1]
+		mi.position = Vector3(p.x, p.y, -p.z)
+		var hpb: Vector3 = beam[2]
+		mi.quaternion = Quaternion(Vector3.UP, deg_to_rad(-hpb.x)) \
+			* Quaternion(Vector3.RIGHT, deg_to_rad(-hpb.y)) \
+			* Quaternion(Vector3.BACK, deg_to_rad(hpb.z))
+		mi.scale = beam[3]
+		head_view.add_child(mi)
+		beam_mats.append([mat, float(beam[5])])
 
 func say_key(key: String, who := "") -> void:
 	# "a1_m01_dialogue_smith_calm_down" -> speaker smith, text from strings;
@@ -299,12 +328,20 @@ func _start(entry: Dictionary) -> void:
 	print("COMMS: [", speaker, "] ", subtitle.left(40))
 	var ogg: String = main._base().path_join(
 		"data/audio/speech/%s.ogg" % entry["key"])
+	_reveal = 0.0
+	_reveal_rate = TELEPRINT_CPS
 	if fast:
 		_gap = 0.05
+		_reveal = subtitle.length()
 	elif FileAccess.file_exists(ogg):
 		voice.stream = AudioStreamOggVorbis.load_from_file(ogg)
 		voice.play()
 		_gap = 0.6
+		# VO-synced teleprinter: per-char delay = length / chars (icComms
+		# tick @ 105765), so the last character lands with the line's end
+		var vlen := voice.stream.get_length()
+		if vlen > 0.2:
+			_reveal_rate = float(subtitle.length()) / vlen
 	else:
 		_gap = maxf(2.0, subtitle.length() * 0.05)  # unvoiced: read time
 	# every speaker with an anim01 scene renders as a live 3D head; speakers
@@ -385,7 +422,14 @@ func _tick_glow(t: float) -> void:
 	var lv := lerpf(float(a[1]), float(b[1]), (frame - float(a[0])) / span)
 	_glow_light.light_energy = 2.2 * _glow_amp * lv
 
+## The teleprinter's revealed slice of the current subtitle (the HUD draws
+## this, never the whole line at once).
+func subtitle_shown() -> String:
+	return subtitle.left(int(_reveal))
+
 func _physics_process(delta: float) -> void:
+	if not current.is_empty():
+		_reveal = minf(_reveal + _reveal_rate * delta, float(subtitle.length()))
 	var live := portrait.visible and head_rect.visible
 	head_view.render_target_update_mode = SubViewport.UPDATE_ALWAYS if live \
 		else SubViewport.UPDATE_DISABLED
@@ -394,10 +438,10 @@ func _physics_process(delta: float) -> void:
 		_pose_head(_head_t)
 		_tick_glow(_head_t)
 		_lip_sync(delta)
-		for i in beam_mats.size():
-			var m: StandardMaterial3D = beam_mats[i]
-			m.uv1_offset.x = fposmod(m.uv1_offset.x
-				+ (2.0 if i == 0 else -2.0) * delta / 20.0, 1.0)
+		for bm: Array in beam_mats:
+			# icBeamAvatar scrolls its texture along U at `speed` tiles/s
+			var m: StandardMaterial3D = bm[0]
+			m.uv1_offset.x = fposmod(m.uv1_offset.x + float(bm[1]) * delta, 1.0)
 	if current.is_empty():
 		if not queue.is_empty():
 			_start(queue.pop_front())
