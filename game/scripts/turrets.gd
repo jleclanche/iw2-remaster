@@ -326,6 +326,10 @@ func _physics_process(delta: float) -> void:
 		if bool(b.get("ship", false)) and not is_instance_valid(b["owner"]):
 			_free_battery(b)
 			batteries.remove_at(i)
+		elif b["owner"] is AiShip and (b["owner"] as AiShip).dying:
+			# a killed sim persists through OnExplode's dramatic sequence,
+			# but its weapons died with the crew
+			pass
 		else:
 			_step_battery(b, delta)
 		i -= 1

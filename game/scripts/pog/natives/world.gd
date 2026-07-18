@@ -1082,7 +1082,14 @@ func _i_explode(_t, a: Array) -> Variant:
 	var pos: Vector3 = s.node.global_position \
 			if (s.node != null and is_instance_valid(s.node)) \
 			else s.abs_pos() - player_pos()
-	ExplosionFx.boom(game, pos, 70.0)
+	# The real StartExplosion (0x1007c950) sets the explosion timer to
+	# FLT_MAX -- a continuous crackle until StopExplosion fires
+	# DoFinalExplosion. We collapse both natives to the final blast at the
+	# sim's radius; the open-ended crawl is not modelled for scripted sims.
+	var r := 60.0
+	if s.node != null and is_instance_valid(s.node) and "radius" in s.node:
+		r = float(s.node.radius)
+	DeathSequence.final_explosion(game, Basis.IDENTITY, pos, r, Vector3.ZERO)
 	return 0
 
 # @native isim.Dock

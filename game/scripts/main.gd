@@ -1534,22 +1534,89 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
 		kill_ai(ai)
 
 func kill_ai(ai: AiShip) -> void:
-	# iiSim::OnKilled 0x10079b80 -> the death explosion + score/removal;
+	# iiSim::OnKilled 0x10079b80 -> OnExplode (0x10079db0) -> removal;
 	# shared by bolt hits (on_bolt_hit) and warheads (missiles.gd)
-	if ai == null or not is_instance_valid(ai):
+	if ai == null or not is_instance_valid(ai) or ai.dying:
 		return
-	# icAlienSwarm::OnExplode 0x1002c4b0 replaces the stock death with its own
-	# alien_explosion shockwave (alien.gd plays it) -- no generic boom on top
-	if not (ai is AlienShip):
-		ExplosionFx.boom(self, ai.global_position, 70.0)
 	kill_count += 1
 	hud.warn("%s DESTROYED" % str(ai.display_name).to_upper())
+	# icAlienSwarm::OnExplode 0x1002c4b0 replaces the stock death with its own
+	# alien_explosion shockwave (alien.gd plays it) -- no generic death on top
+	if ai is AlienShip:
+		_finish_kill(ai)
+	else:
+		ai.dying = true
+		ai.behavior = "dying"
+		var done := DeathSequence.explode(self, ai, ai.explosion_size,
+				ai.radius, ai.half_dims, ai.velocity, _finish_kill.bind(ai))
+		if not done:
+			# the dramatic path: dead hands on the stick -- the hulk keeps its
+			# velocity and tumbles until the reactor goes
+			ai.assist = false
+			ai.angular_velocity = DeathSequence.tumble(ai.velocity)
+	if not _hostiles_alive():
+		audio.music("ambient")
+
+func _finish_kill(ai: AiShip) -> void:
+	if ai == null or not is_instance_valid(ai):
+		return
 	ai_ships.erase(ai)
 	if target_ai == ai:
 		target_ai = null
 	ai.queue_free()
-	if not _hostiles_alive():
-		audio.music("ambient")
+
+# --- reactor shockwaves ------------------------------------------------------
+# icShockwave (property map FUN_10077290: initial_damage_rate +0x1d8,
+# front_depth +0x1dc, final_radius +0x1e0, lifetime +0x1e4), template
+# ini:/sims/explosions/reactor_explosion -- lifetime 2.0, front_depth 0.1
+# ("front thickness as % of radius"), initial_damage_rate 2000 "damage per
+# second inflicted ... at time=0". DoFinalExplosion (death_sequence.gd)
+# registers one per big death; ships caught in the expanding front burn.
+var _shockwaves: Array = []
+
+func register_shockwave(pos: Vector3, vel: Vector3, final_r: float,
+		rate: float) -> void:
+	_shockwaves.append({"pos": pos, "vel": vel, "r": final_r, "rate": rate,
+			"t": 0.0, "warned": false})
+
+func _update_shockwaves(delta: float) -> void:
+	for i in range(_shockwaves.size() - 1, -1, -1):
+		var sw: Dictionary = _shockwaves[i]
+		sw["t"] = float(sw["t"]) + delta
+		var t: float = sw["t"]
+		if t >= DeathSequence.SHOCKWAVE_LIFETIME:
+			_shockwaves.remove_at(i)
+			continue
+		sw["pos"] = (sw["pos"] as Vector3) + (sw["vel"] as Vector3) * delta
+		var frac := t / DeathSequence.SHOCKWAVE_LIFETIME
+		var front: float = float(sw["r"]) * frac
+		if front <= 0.0:
+			continue
+		var inner := front * (1.0 - DeathSequence.SHOCKWAVE_FRONT_DEPTH)
+		# the ini documents only the t=0 rate; the fade to 0 over the
+		# lifetime is eyeballed (linear, like the avatar's alpha)
+		var dmg: float = float(sw["rate"]) * (1.0 - frac) * delta
+		if dmg <= 0.0:
+			continue
+		var c: Vector3 = sw["pos"]
+		var pd := ship.global_position.distance_to(c)
+		if pd >= inner and pd <= front:
+			if sys != null:
+				sys.apply_damage(dmg)
+			else:
+				hull = maxf(hull - dmg, 0.0)
+			if not bool(sw["warned"]):
+				sw["warned"] = true
+				hud.warn("SHOCKWAVE  HULL %d%%" % int(100.0 * hull / hull_max))
+			if hull <= 0.0:
+				_kill_player()
+		for a in ai_ships.duplicate():
+			var as_ship := a as AiShip
+			if as_ship == null or as_ship.dying:
+				continue
+			var d: float = as_ship.global_position.distance_to(c)
+			if d >= inner and d <= front and as_ship.damage(dmg):
+				kill_ai(as_ship)
 
 func _hostiles_alive() -> bool:
 	for a in ai_ships:
@@ -2341,6 +2408,8 @@ func _physics_process(delta: float) -> void:
 	# icMagazine::Simulate 0x10038210: the refire clock is efficiency * dt
 	if missiles != null:
 		missiles._tick_mags(player_mags, delta)
+	if not _shockwaves.is_empty():
+		_update_shockwaves(delta)
 	# The TRI's DRIVE axis, which is a property of the SHIP and not of the yoke:
 	# icShip::Simulate (0x10070f00) multiplies the engine force by
 	# TRIWeight(ship+0x294) and the thruster force by TRIWeight(ship+0x290) --
@@ -2757,7 +2826,12 @@ func _system_label(name: String) -> String:
 	return s.to_upper()
 
 func _kill_player() -> void:
-	ExplosionFx.boom(self, ship.global_position, 60.0)
+	# The respawn-in-place flow can't ride out the 30 s dramatic sequence, so
+	# the player death goes straight to DoFinalExplosion at the ship's real
+	# radius (the timed crawl is an AI/asteroid-only spectacle for now).
+	DeathSequence.final_explosion(self, ship.global_transform.basis,
+			ship.global_position, float(ship_stats.get("radius", 60.0)),
+			ship.velocity)
 	hud.warn("SHIP DESTROYED - resetting", 5.0)
 	if sys != null:
 		for s in sys.systems:
@@ -3491,6 +3565,8 @@ func _fold_motion() -> void:
 		fx.shift_world(p)
 	for a in ai_ships:
 		a.global_position -= p
+	for sw in _shockwaves:
+		sw["pos"] = (sw["pos"] as Vector3) - p
 
 func _stream_objects() -> void:
 	# the original funnels only the nearest L-point

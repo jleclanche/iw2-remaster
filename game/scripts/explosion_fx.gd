@@ -103,6 +103,9 @@ static var _movies: Dictionary = {}
 
 var _t := 0.0
 var _life := 1.0
+# DoFinalExplosion / OnExplode SetVelocity: death effects inherit the dying
+# sim's velocity (death_sequence.gd sets this)
+var drift := Vector3.ZERO
 var _size := 1.0
 var _fps := 30.0
 var _variant: Dictionary = {}
@@ -212,27 +215,9 @@ static func play(main: Node3D, key: String, xform: Transform3D,
 	fx._build(main, xform)
 	return fx
 
-# main.gd's ship-kill hook. iiSim::DoFinalExplosion (@0x1007c990): a dying sim
-# spawns FOUR icExplosion puffs, each of radius R*lerp(0.3, 0.6, rand) and
-# scattered by a random unit vector * R*0.4, plus one reactor_explosion
-# shockwave. Each puff picks explosion vs small_explosion from its OWN radius
-# against 150 m (@0x1011a81c) -- which is why a fighter (R ~ 60-70 m, so puffs
-# of 20-40 m) never shows the big `explosion`: you need R > ~250 m for that.
-static func boom(main: Node3D, pos: Vector3, size: float) -> void:
-	var tbl := table(main._base())
-	var death: Dictionary = tbl.get("engine", {}).get("death", {})
-	var threshold: float = float(tbl.get("engine", {}).get(
-			"small_explosion_threshold", 150.0))
-	var lo: float = float(death.get("puff_radius_min", 0.3))
-	var hi: float = float(death.get("puff_radius_max", 0.6))
-	var scatter: float = float(death.get("puff_scatter", 0.4))
-	for i in int(death.get("puffs", 4)):
-		var radius: float = size * lerpf(lo, hi, randf())
-		var at: Vector3 = pos + _unit_vector() * size * scatter
-		var key := "explosion" if radius >= threshold else "small_explosion"
-		play(main, key, Transform3D(Basis.IDENTITY, at), radius)
-	# the reactor shockwave that accompanies every death
-	play(main, "reactor_explosion", Transform3D(Basis.IDENTITY, pos), size)
+# The ship-death explosion system lives in death_sequence.gd (iiSim::OnExplode
+# size branch, the dramatic sub-explosion crawl, DoFinalExplosion). The old
+# boom() here fed every death a fixed size through the final blast only.
 
 static func _unit_vector() -> Vector3:
 	# FnRandom::UnitVector
@@ -611,6 +596,8 @@ func _has_live_particles() -> bool:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if drift != Vector3.ZERO:
+		global_position += drift * delta
 	var frame := _t * _fps
 
 	for l in _lights:

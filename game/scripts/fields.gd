@@ -335,9 +335,35 @@ func _spawn(f: Field, vel: Vector3, speed: float) -> void:
 
 func _recycle(f: Field, idx: int) -> void:
 	var rk: Dictionary = f.live[idx]
-	(rk["node"] as Node3D).visible = false
+	var node := rk["node"] as Node3D
+	node.visible = false
+	rk["dying"] = false
+	# a world flush can pool a rock mid-death -- the pooled node must not
+	# keep a live DeathSequence crackling on it
+	for c in node.get_children():
+		if c is DeathSequence:
+			c.queue_free()
 	f.live.remove_at(idx)
 	f.pool.append(rk)
+
+
+# iiSim::OnExplode (death_sequence.gd): field rocks run the STANDARD
+# size-branch death -- icFieldSim overrides only Destroy (0x100648b0), which
+# returns the sim to the field's pool (FUN_100498f0) instead of destroying
+# it. A big rock therefore burns and crackles like a hulk before the final
+# blast. Our rocks are random uniform scales of 4 templates, so the spawn
+# radius doubles as the iiSim size (+0x20) stand-in; the surface-point
+# ellipsoid uses the same 0.66 lumpy-rock factor as the collision sphere.
+func _kill_rock(f: Field, rk: Dictionary) -> void:
+	rk["dying"] = true
+	var node := rk["node"] as Node3D
+	var r := float(rk["radius"])
+	var finish := func() -> void:
+		var i := f.live.find(rk)
+		if i >= 0:
+			_recycle(f, i)
+	DeathSequence.explode(main, node, r, r, Vector3.ONE * r * 0.66,
+			rk["vel"] as Vector3, finish)
 
 
 func _flush(f: Field) -> void:
@@ -397,11 +423,13 @@ func _bolts(f: Field, delta: float) -> void:
 			var dmg: float = float(spec.get("damage", 160.0)) \
 				/ ShipSystems.age_factor(float(bolt.get("age", 0.0)),
 					float(spec.get("half_time", 0.35)))
+			if rk.get("dying", false):
+				bolt["life"] = 0.0
+				break
 			rk["hp"] = float(rk["hp"]) - dmg
 			bolt["life"] = 0.0
 			if float(rk["hp"]) <= 0.0:
-				ExplosionFx.boom(main, c, float(rk["radius"]) * 0.4)
-				_recycle(f, i)
+				_kill_rock(f, rk)
 			break
 
 

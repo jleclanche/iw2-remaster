@@ -1012,7 +1012,7 @@ func _mechcheck(_delta: float) -> void:
 			else:
 				# the recovered blast is flat 280 (seeker, disable_attenuation):
 				# hull must step by exact multiples of it
-				if is_instance_valid(m.target_ai) \
+				if is_instance_valid(m.target_ai) and not m.target_ai.dying \
 						and m.target_ai.hull < float(_mech_v0.x):
 					var drop: float = float(_mech_v0.x) - m.target_ai.hull
 					if absf(fmod(drop, 280.0)) > 0.5 \

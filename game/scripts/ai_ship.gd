@@ -41,6 +41,13 @@ var fire_cooldown := 0.0
 var bolt_speed := 6000.0
 var weapon_range := 2500.0
 var radius := 60.0    # iiSim radius (+0x1c), the ship INI's radius= key
+# iiSim size (+0x20): half the bounding diagonal -- CalculateRadius
+# (0x1007ccf0) = sqrt((w^2+h^2+l^2) * 0.25) from the INI dimensions. Drives
+# the OnExplode dramatic-explosion branch (death_sequence.gd). 10.0 is the
+# engine's generic-explosion default scale (FUN_10064500 +0x1d8).
+var explosion_size := 10.0
+var half_dims := Vector3(10, 10, 10)  # INI width/height/length * 0.5
+var dying := false    # OnExplode dramatic sequence running; ignore new kills
 var disrupt_time := 0.0       # icShip::Disrupt via icMissile::CheckForDisruption
 var disrupt_full := false     # full_disruption: everything, else shields only
 var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
@@ -109,6 +116,19 @@ func setup(props: Dictionary) -> void:
 	hull = hull_max
 	radius = float(props.get("radius", 60.0))
 	shot_tolerance = int(props.get("max_player_shots_before_aggression", 4))
+	_load_dims(props)
+
+func _load_dims(props: Dictionary) -> void:
+	var w := float(props.get("width", 0.0))
+	var h := float(props.get("height", 0.0))
+	var l := float(props.get("length", 0.0))
+	if w > 0.0 or h > 0.0 or l > 0.0:
+		half_dims = Vector3(w, h, l) * 0.5
+		explosion_size = half_dims.length()  # CalculateRadius 0x1007ccf0
+	else:
+		# no dimensions in the record: the radius is the only size we have
+		half_dims = Vector3.ONE * radius * 0.5
+		explosion_size = radius
 
 func setup_ini(path: String, model: Node3D = null) -> void:
 	# the authored hull: hit_points, armour and the full subsim list
@@ -120,6 +140,7 @@ func setup_ini(path: String, model: Node3D = null) -> void:
 	if not rec.is_empty():
 		shot_tolerance = int((rec.get("properties", {}) as Dictionary)
 				.get("max_player_shots_before_aggression", shot_tolerance))
+		_load_dims(rec.get("properties", {}) as Dictionary)
 	var fitted := ShipSystems.for_ship(path)
 	if fitted.hull_max <= 0.0:
 		return
@@ -200,6 +221,12 @@ func _physics_process(delta: float) -> void:
 			main.kill_ai(self)
 			return
 	match behavior:
+		"dying":
+			# OnExplode's dramatic sequence: dead hands on the controls, the
+			# hulk keeps its velocity and the random tumble until the final
+			# blast (death_sequence.gd frees it)
+			input_rotate = Vector3.ZERO
+			input_thrust = Vector3.ZERO
 		"attack":
 			_attack(delta)
 		_:

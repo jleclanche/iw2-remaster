@@ -1338,3 +1338,41 @@ FlareNominalDistance, both 1 here), with point-LOD/cull at m_point_detail
 _add_engine_flare port it: EngineFlare (0.15, options 15/filter 5 = 6-point
 star) + EngineGlow (0.3, options 3 = soft glow), colour (242,196,53)
 squared, tracking the anim null's scale each frame.
+
+### The ship-death explosion system (iiSim, now extracted)
+
+The death chain is iiSim::OnKilled -> OnExplode (0x10079db0), and it BRANCHES
+ON SHIP SIZE (+0x20 = half the bounding diagonal, CalculateRadius 0x1007ccf0
+= sqrt((w^2+h^2+l^2) * 0.25) from the INI dimensions):
+
+- size < m_min_radius_for_dramatic_explosion (25.0 @ 0x1011befc): ONE inert
+  explosion sim (FUN_10064500) scaled to the size, inheriting the sim's
+  velocity. Fighters pop in a single flash.
+- size >= 25: the DRAMATIC sequence. Explosion timer = size *
+  m_explosion_length_scale (1/30 @ 0x1011bf00), capped at 30 s (0x10119c18);
+  the hulk gets a random tumble (SetAngularVelocity, per-axis rand[-1,1]
+  mixed with velocity * 0.001 @ 0x1011803c) and keeps flying. While the
+  timer runs (Simulate 0x100792b0), sub-explosions crawl over the hull every
+  rand-lerp(0.2, 0.8) s (0x1011bf04/08), each sized size * rand-lerp(0.01,
+  0.12) (0x1011bf0c/10) at a random FindSurfacePoint (ported as a random
+  point on the half-dims ellipsoid). At timer 0: DoFinalExplosion
+  (0x1007c990) -- 4 debris puffs of radius R*rand-lerp(0.3, 0.6)
+  (R = ini radius, +0x1c), scattered R*0.4 (0x10117558) in the sim's frame,
+  all inheriting the sim's velocity, plus (unless ini no_shockwave) one
+  ini:/sims/explosions/reactor_explosion with final_radius forced to R*4.0
+  (0x101190b4) and initial_damage_rate scaled by clamp(R /
+  m_mean_radius_of_reactor_explosion_sim (200.0 @ 0x1015d964), 0.25, 4.0).
+  icShockwave property map (FUN_10077290): initial_damage_rate +0x1d8,
+  front_depth +0x1dc, final_radius +0x1e0, lifetime +0x1e4. The template ini
+  documents lifetime 2.0, front_depth 0.1, initial_damage_rate 2000.
+- Port: death_sequence.gd (the whole chain), main.gd kill_ai/_finish_kill/
+  register_shockwave/_update_shockwaves (damage front; the fade to zero over
+  the lifetime is EYEBALLED linear -- the ini gives only the t=0 rate),
+  ExplosionFx.drift (SetVelocity on death effects). Field asteroids run the
+  same path: icFieldSim overrides only Destroy (0x100648b0) to return the
+  rock to the field pool (FUN_100498f0) -- fields.gd _kill_rock. A dying
+  ship's turrets stop (turrets.gd skips dying owners); the old fixed-size
+  ExplosionFx.boom(70) is gone.
+- UNKNOWN: the exact per-axis component mixing of the tumble (stack-slot
+  reuse in the disasm); the damage-decay curve of the shockwave front;
+  DetachAndFlingChild (no detachable subsim children in our AI hulls).
