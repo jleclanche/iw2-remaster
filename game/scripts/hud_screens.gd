@@ -826,15 +826,36 @@ func _draw_engineering(fade: float) -> void:
 #   * the PLAYER, sprite 66 (the little ship), but only when the player is
 #     actually in the system being viewed (0x100fec52 `push 0x42`).
 #
-# The body glyph id itself is FUN_100e86d0(entity):
-#     type 1  -> 54 (star)        type 5  -> 60 (L-point)   [table 0x1011db64]
-#     type 2  -> station subtype table 0x1011dbe4
-#     type 14 -> 58 / 59 / 61 by the byte at entity+0x1e4
-# NOT RECOVERED: how icGeography's +0x194 / +0x1e4 / +0x218 map onto the fields
-# our system JSON actually carries. We use 54 for a star and 60 for an L-point
-# (both pinned above) and fall back to the plain discs 55 / 57 for bodies and
-# stations. Also NOT RECOVERED: icGeography::IsVisibleOnMap -- our JSON has no
-# such flag, so we show everything.
+# The body glyph id itself is FUN_100e86d0(sim) -- and the param is an iiSim,
+# keyed on iiSim::eType (+0x194, SetType @ 0x10001350), NOT an icGeography
+# type. The class ctors pin the enum: icSun ctor @ 0x1006a360 writes 1,
+# icPlanet @ 0x10067bc0 writes 2, icLagrangePointWaypoint @ 0x1000a940 writes
+# 5, icStation @ 0x100685a0 writes 14, and the iiSim base ctor @ 0x10077e70
+# leaves 4. So (tables read from iwar2.dll .rdata):
+#     type 1  icSun    -> 54            [DAT_1011db64[1]]
+#     type 5  L-point  -> 60            [DAT_1011db64[5]]
+#     type 4  generic  -> 47            [DAT_1011db64[4]]
+#     type 2  icPlanet -> DAT_1011dbe4[icPlanet::BodyType], table
+#             [0, 54, 55, 57, 56, 58, 56] -- BodyType is +0x218, loaded from
+#             PSG record byte 0x134 (icPlanet::Load @ 0x1067eb0) = our JSON
+#             body_type (observed values 2/3/4/6 -> 55/57/56/56).
+#     type 14 icStation -> by icStation::Scene (+0x1e4, SetScene @ 0x100106c0,
+#             = our JSON scene): 20..25 and 30 (the named settlement
+#             habitats) -> 61, 26 (asteroid-built stations) -> 58, else 59.
+# The COLOURS (static inits FUN_100e6750 / FUN_100e68d0 / .data):
+#     bodies + labels   DAT_10174fb0 = (1.0, 0.592, 0.0)  amber-orange
+#     plotted route     DAT_10176018 = (1.0, 0.07, 0.0)   red-orange
+#     orbits/stub lines DAT_10176038 = (0.5, 1.0, 0.0)    green
+# THE ROUTE (FUN_10100a-ish builder at 0x100fda70's head, list this+0x154):
+# take the player pilot's nav target; if iiSim::IsGeographyBased, walk
+# icCluster::GetLPointRoute hop by hop from the player to it and collect every
+# L-point waypoint on the way plus the target itself. FUN_100ff6b0 draws any
+# plotted entity (position-matched via FUN_10100bc0) in the route red, and the
+# player marker 66 is drawn in the same red. Our port: cross-system targets
+# cannot exist (only the loaded system's objects are targetable), so the
+# route reduces to the nav target itself -- the same walk, one hop.
+# Still NOT RECOVERED: icGeography::IsVisibleOnMap -- our JSON has no such
+# flag, so we show everything.
 const MAP_SCALE_K := 0.45      # _DAT_1011e1a8 (double)
 const CLU_ZOOM := 5.0          # DAT_1011e194  -- the cluster's one fixed zoom
 const CLU_FLOOR := 0.001       # _DAT_1011e1a0
@@ -855,6 +876,10 @@ const LP_STUB_K := 2.1         # _DAT_1011e230
 const MAP_A_VISITED := 0.7     # _DAT_101191e8
 const MAP_A_UNSEEN := 0.3      # _DAT_1011c034
 const MAP_LABEL_DX := 16.0     # _DAT_101184a0
+const MAP_BODY := Color(1.0, 0.592, 0.0)    # DAT_10174fb0 (init FUN_100e6750)
+const MAP_ROUTE := Color(1.0, 0.07, 0.0)    # DAT_10176018 (init FUN_100e68d0)
+const MAP_LINE := Color(0.5, 1.0, 0.0)      # DAT_10176038 -- orbit/stub green
+const PLANET_GLYPHS := [0, 54, 55, 57, 56, 58, 56]  # DAT_1011dbe4[IeBodyType]
 
 var map_state := 0                      # this+0x74
 var map_sel := 0                        # this+0x78  (cluster selection)
@@ -964,7 +989,29 @@ func _load_geo(stem: String) -> void:
 			# an L-point's partner geography (icGeography+0x20c)
 			"partner": int(o.get("info", -1)),
 			"jumps": o.get("jumps_to_stems", []),
+			# the glyph keys: icPlanet::BodyType and icStation::Scene
+			"body_type": int(o.get("body_type", 0)),
+			"scene": int(o.get("scene", 0)),
 		})
+
+## FUN_100e86d0 -- the body glyph, keyed on iiSim::eType. See the header for
+## the ctor-pinned type ids and the two .rdata tables.
+func _glyph_id(g: Dictionary) -> int:
+	match str(g["cat"]):
+		"star":
+			return 54                            # DAT_1011db64[1]
+		"lpoint":
+			return 60                            # DAT_1011db64[5]
+		"station", "gunstar":
+			var sc: int = int(g.get("scene", 0))
+			if (sc >= 20 and sc <= 25) or sc == 30:
+				return 61                        # named settlement habitats
+			return 58 if sc == 26 else 59        # asteroid-built / standard
+		"body":
+			var bt: int = int(g.get("body_type", 0))
+			if bt > 0 and bt < PLANET_GLYPHS.size() and int(PLANET_GLYPHS[bt]) != 0:
+				return int(PLANET_GLYPHS[bt])
+	return 47                                    # iiSim ctor default, type 4
 
 func _kids_of(i: int) -> Array:
 	var out: Array = []
@@ -1186,6 +1233,8 @@ func _map_cmd(cmd: int) -> void:
 				3:
 					_sel = wrapi(_sel + 1, 0, _kids.size())
 					_refresh_system()
+				4:      # SELECT -> SetUserNavTarget on the selection
+					_map_select(s)
 		4:      # FUN_100fd130
 			match cmd:
 				1:
@@ -1196,11 +1245,47 @@ func _map_cmd(cmd: int) -> void:
 				3:
 					if not _lps.is_empty():
 						_lp_sel = wrapi(_lp_sel + 1, 0, _lps.size())
+				4:      # COMMIT (case 4 @ 0x100fd130): arm the L-point with the
+					# chosen waypoint (its +0x204 <- the original index; ours is
+					# the live route cursor the J key reads) and SetUserNavTarget
+					# on the L-point. The view stays in the list, as the original
+					# does.
+					if not _lps.is_empty() and _lp_of >= 0:
+						main.jump_sel = _lp_sel
+						_map_select(_lp_of)
 
 func _can_jump(i: int) -> bool:
 	# FUN_10100d20: an L-point that has known jump waypoints.
 	var g: Dictionary = _geo[i]
 	return str(g["cat"]) == "lpoint" and not Array(g["jumps"]).is_empty()
+
+## cmd 4 SELECT -- icPlayerContactList::SetUserNavTarget @ 0x100abf00: the
+## selection becomes the player's nav target (added to the contact list if it
+## was not on it). Only sims exist to target, so it can only land in the
+## system the player is actually in -- the original's FindInstance +
+## IsDerivedFrom(iiSim) gate does the same thing for a foreign-system pick.
+func _map_select(i: int) -> void:
+	if _geo_stem != main.system_stem:
+		return
+	var want := str(_geo[i]["name"])
+	for oi in main.objects.size():
+		if str(main.objects[oi]["name"]) == want:
+			main.target_idx = oi
+			main.target_ai = null
+			main.audio.play("audio/hud/target_changed.wav", -10.0)
+			return
+
+## The nav-target geo index for the route highlight (the this+0x154 list;
+## see the header -- one hop, because only the loaded system is targetable).
+func _route_geo() -> int:
+	if _geo_stem != main.system_stem or main.target_idx < 0 \
+			or main.target_idx >= main.objects.size():
+		return -1
+	var want := str(main.objects[main.target_idx]["name"])
+	for g: Dictionary in _geo:
+		if str(g["name"]) == want:
+			return int(g["i"])
+	return -1
 
 func _open_jump_list(i: int) -> void:
 	# FUN_100fca90
@@ -1388,10 +1473,11 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 	var scale := _sys_scale()
 	var size := get_viewport_rect().size
 	var half_diag: float = (size * 0.5).length()
-	var amber := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, alpha)
 	var sel_i: int = _kids[_sel] if not _kids.is_empty() and _sel < _kids.size() else -1
+	var route_i := _route_geo()
 
-	# pass 1: the orbit circles, about each body's PARENT
+	# pass 1: the orbit circles, about each body's PARENT -- drawn in the
+	# engine's line green (DAT_10176038), not the body amber
 	for g: Dictionary in _geo:
 		var i: int = int(g["i"])
 		var par: int = int(g["parent"])
@@ -1405,7 +1491,8 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		if r > ORBIT_MAX_K * half_diag:
 			continue
 		draw_arc(pc, r, 0, TAU, maxi(24, mini(192, int(r * 0.5))),
-				Color(amber.r, amber.g, amber.b, alpha * oa * 0.5), 1.0, true)
+				Color(MAP_LINE.r, MAP_LINE.g, MAP_LINE.b, alpha * oa * 0.5),
+				1.0, true)
 
 	# pass 2: the L-point stubs, toward the partner geography (entity+0x20c),
 	# clipped to 2.1 * half-diagonal, alpha 0.3
@@ -1422,10 +1509,13 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		if dv.length() > lim:
 			dv = dv.normalized() * lim
 		draw_line(p, p + dv,
-				Color(amber.r, amber.g, amber.b, alpha * MAP_A_UNSEEN), 1.0, true)
+				Color(MAP_LINE.r, MAP_LINE.g, MAP_LINE.b, alpha * MAP_A_UNSEEN),
+				1.0, true)
 
 	# pass 3: the bodies (FUN_100ff6b0). Everything hangs off the ORBIT length in
 	# pixels: under 27 px the glyph is not drawn at all, under 35 px no label.
+	# Glyph and label share one colour: the body amber (DAT_10174fb0), or the
+	# route red (DAT_10176018) when the entity is on the plotted route.
 	for g: Dictionary in _geo:
 		var i: int = int(g["i"])
 		var par: int = int(g["parent"])
@@ -1439,35 +1529,24 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 				clampf((r - LABEL_ON) / (LABEL_FULL - LABEL_ON), 0.0, 1.0)
 		if ga <= 0.0 and la <= 0.0:
 			continue
-		var cat := str(g["cat"])
-		var id := 55                     # plain disc -- see the header, NOT RECOVERED
-		var col := amber
-		match cat:
-			"star":
-				id = 54                  # 0x1011db64[1] = 54
-				col = Color(Hud.GOLD.r, Hud.GOLD.g, Hud.GOLD.b, alpha)
-			"lpoint":
-				id = 60                  # 0x1011db64[5] = 60
-				col = Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, alpha)
-			"station":
-				id = 57
-				col = Color(Hud.BLUE.r, Hud.BLUE.g, Hud.BLUE.b, alpha)
-		if hot:
-			col = Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, alpha)
+		var base: Color = MAP_ROUTE if i == route_i else MAP_BODY
+		var col := Color(base.r, base.g, base.b, alpha)
 		if ga > 0.0:
-			_spr(p, id, Color(col.r, col.g, col.b, col.a * ga))
+			_spr(p, _glyph_id(g), Color(col.r, col.g, col.b, col.a * ga))
 			if hot:
-				draw_arc(p, 14.0, 0, TAU, 24,
-						Color(col.r, col.g, col.b, alpha), 1.0, true)
+				# the selection stamp: sprite 51 over the glyph (FUN_100ff6b0's
+				# second FUN_100e9de0 call, id 51)
+				_spr(p, 51, col)
 		if la > 0.0:
 			draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
 					str(g["name"]).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
 					hud.num_size, Color(col.r, col.g, col.b, col.a * la))
 
-	# the player, sprite 66 -- only when the player is in the system being viewed
+	# the player, sprite 66 -- only when the player is in the system being
+	# viewed, and in the route red (0x100fda70 sets DAT_10176018 before it)
 	if _geo_stem == main.system_stem:
 		var pp := centre + (Vector2(main.px, -main.pz) - _sys_cam) * scale
-		_spr(pp, 66, Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, alpha))
+		_spr(pp, 66, Color(MAP_ROUTE.r, MAP_ROUTE.g, MAP_ROUTE.b, alpha))
 
 # --- icHUDLog / icHUDObjectives / icHUDScore ---------------------------------
 # @element icHUDLog
