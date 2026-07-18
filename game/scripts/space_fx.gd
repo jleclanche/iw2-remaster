@@ -718,6 +718,9 @@ func _neb_hide() -> void:
 		if m != null and "env_ref" in m and m.env_ref != null:
 			m.env_ref.fog_enabled = false
 			m.env_ref.glow_enabled = true   # normal space keeps its bloom
+			# open space has NO ambient term (main_world._build_environment)
+			m.env_ref.ambient_light_source = \
+					Environment.AMBIENT_SOURCE_DISABLED
 		if m != null and "sky_anchor" in m and m.sky_anchor != null:
 			m.sky_anchor.visible = true
 		if m != null and _cam != null and _neb_far0 > 0.0:
@@ -892,6 +895,15 @@ func _render_nebula() -> void:
 		# veiled by exactly the opacity -- out on the rim the stars still show
 		# through, and at 1 it is gone, which is also when Render drops it outright
 		env.fog_sky_affect = opacity
+		# icCloudAvatar's layers are ADDITIVE and screen-filling: deep inside
+		# the murk they bathe every surface in the nebula colour. Godot's
+		# depth-fog cannot reach a surface metres away (the fog lerp runs over
+		# kilometres), which left Lucrecia's Base -- parked 750 m from The
+		# Effrit's centre -- pitch black at docking range. The ambient term
+		# stands in for that additive bath, scaled by how deep in we are.
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		env.ambient_light_color = tint
+		env.ambient_light_energy = opacity
 		_neb_fogged = true
 
 

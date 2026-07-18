@@ -120,6 +120,67 @@ func _parse_tuple(t: String, fallback: Vector3) -> Vector3:
 		return Vector3(float(parts[0]), float(parts[1]), float(parts[2]))
 	return fallback
 
+## An avatar's own authored lights, from its LWS setup scene. The gltf export
+## has no light writer (no KHR_lights_punctual), so a station's key light --
+## the player base's white DISTANT lamp in scenes/avatars/player_base/
+## setup.json, part of why its docking mouth reads lit in the original --
+## never reached the streamed model. Recover them from the scene json.
+## A DISTANT light is global in Godot, so each one is fenced to its own
+## model through a visual-layer cull mask (bit 11).
+func _attach_avatar_lights(o: Dictionary, model: Node3D) -> void:
+	var stem := str(o.get("avatar", "")).get_basename()
+	if stem.is_empty():
+		return
+	var f := FileAccess.open(
+			_base().path_join("data/json/scenes/" + stem + ".json"),
+			FileAccess.READ)
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if not (parsed is Dictionary):
+		return
+	var mask := 1 << 10
+	var lit := false
+	for n: Dictionary in (parsed as Dictionary).get("nodes", []):
+		if str(n.get("kind", "")) != "light":
+			continue
+		var power := float(n.get("intensity", 0.0))
+		if power <= 0.0 or bool(n.get("lens_flare", false)):
+			continue
+		var col := Color.WHITE
+		if n.has("color"):
+			col = Color(n["color"][0] / 255.0, n["color"][1] / 255.0,
+					n["color"][2] / 255.0)
+		if int(n.get("light_type", 1)) == 0:
+			# DISTANT: aimed by heading/pitch in the avatar's own frame (the
+			# same LW convention as _aim_distant_light, but LOCAL, so the
+			# light turns with the model)
+			var hpb: Array = n.get("hpb", [0.0, 0.0, 0.0])
+			var h := deg_to_rad(float(hpb[0]))
+			var p := deg_to_rad(float(hpb[1]))
+			var dir := Vector3(sin(h) * cos(p), -sin(p), -cos(h) * cos(p))
+			var dl := DirectionalLight3D.new()
+			dl.light_color = col
+			dl.light_energy = power
+			dl.light_cull_mask = mask
+			dl.transform = Transform3D(Basis.looking_at(dir,
+					Vector3.RIGHT if absf(dir.y) > 0.99 else Vector3.UP),
+					Vector3.ZERO)
+			model.add_child(dl)
+			lit = true
+		elif n.has("pos"):
+			var l := OmniLight3D.new()
+			l.light_color = col
+			l.light_energy = power
+			l.omni_range = maxf(_model_bounds_radius(model) * 0.6, 100.0)
+			l.light_cull_mask = mask
+			l.position = Vector3(n["pos"][0], n["pos"][1], -n["pos"][2])
+			model.add_child(l)
+			lit = true
+	if lit:
+		for mi in model.find_children("*", "MeshInstance3D", true, false):
+			(mi as MeshInstance3D).layers |= mask
+
 func _add_sky_flare(dir_lw: Vector3, n: Dictionary, col: Color) -> void:
 	# A geog scene light with LensFlare becomes an FcLensFlareNode
 	# (FcAvatarLoader::MakeLight, flux @ 0xdc3f0):
@@ -652,6 +713,7 @@ func _stream_objects() -> void:
 					# blobs only when no hull ships for this avatar
 					if not _attach_collision_hull(o, model):
 						o["coll_spheres"] = _model_coll_spheres(model)
+					_attach_avatar_lights(o, model)
 					# A station's map record carries no radius -- the byte at
 					# +0x138 belongs to its parent body (docs/geography.md), so
 					# the decoder zeroes it. The engine gets a station's
