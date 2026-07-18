@@ -44,6 +44,9 @@ func _set_camera(group: int) -> void:
 			drop_cam_pos = cam.global_position
 	zoomed = false
 	zoom_factor = 1.0
+	# icDirector::ChangeCamera commits the new camera through its Reset
+	# (icChaseCamera's @ 0x100d4bf0): the follow state re-seeds, no carry-over
+	chase_snap = true
 	cam.fov = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 else FOV_EXTERNAL
 	audio.play("audio/gui/camera_change.wav", -10.0)
 	_apply_view()
@@ -82,22 +85,13 @@ func _chase_camera(delta: float) -> void:
 				+ target.basis * (Vector3(0, 0.21, 0.98) * 4.0 * r)
 			cam.global_transform = Transform3D(target.basis, pos)
 		"tactical":  # icChaseCamera: initial_range 4
-			var want := target.translated_local(Vector3(0, 0.24, 0.97) * 4.0 * r)
+			var want_off := target.basis * (Vector3(0, 0.24, 0.97) * 4.0 * r)
 			var focus := target.origin + target.basis * Vector3(0, 0.075 * r,
 				-0.375 * r)
-			if lds_state == 2 or jump_state >= 2:
-				cam.global_transform = want.looking_at(focus, target.basis.y)
-			else:
-				cam.global_transform = cam.global_transform.interpolate_with(
-					want, 1.0 - exp(-8.0 * delta))
-				cam.global_transform = cam.global_transform.looking_at(
-					focus, target.basis.y)
+			_chase_follow(target, want_off, focus, delta)
 		"inverse_tactical":  # over the nose, looking back at the ship
-			var want := target.translated_local(Vector3(0, 0.15, -0.99) * 4.0 * r)
-			cam.global_transform = cam.global_transform.interpolate_with(
-				want, 1.0 - exp(-8.0 * delta))
-			cam.global_transform = cam.global_transform.looking_at(
-				target.origin, target.basis.y)
+			var want_off := target.basis * (Vector3(0, 0.15, -0.99) * 4.0 * r)
+			_chase_follow(target, want_off, target.origin, delta)
 		"external":  # slow orbit around the ship; icExternalCamera initial_zoom 3
 			var a := Time.get_ticks_msec() / 1000.0 * 0.15
 			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 3.0 * r
@@ -153,6 +147,31 @@ func _capsule_camera(delta: float, target: Transform3D) -> void:
 		* r * CAPSULE_CAM_RANGE)
 	cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
 		target.origin, target.basis.y)
+
+## icChaseCamera::Update @ 0x100d4cb0 (raw disasm; constants and state in
+## main_state.gd). The original smooths the camera's OFFSET from the focus and
+## its up-quaternion -- never the absolute position -- so eye = focus + offset
+## rides the ship at any speed. There is no LDS/jump special case in the
+## original: the offset law is what keeps the camera glued during LDS, and the
+## per-frame world fold cancels out of the relative state by construction
+## (the original rebases its committed absolute eye via FUN_100d4790 instead).
+## The aim is exact every frame; only position and up ease with
+## k = clamp01(speed * max_range * dt / range) @ 0x100d4eac.
+func _chase_follow(target: Transform3D, want_off: Vector3, focus: Vector3,
+		delta: float) -> void:
+	var k := clampf(CHASE_SPEED * CHASE_MAX_RANGE * delta / CHASE_RANGE,
+		0.0, 1.0)
+	var ship_q := target.basis.get_rotation_quaternion()
+	if chase_snap:  # camera Reset @ 0x100d4bf0: state re-seeded on selection
+		chase_offset = want_off
+		chase_quat = ship_q
+		chase_snap = false
+	chase_offset = chase_offset.lerp(want_off, k)
+	chase_quat = chase_quat.slerp(ship_q, k).normalized()
+	var pos := target.origin + chase_offset
+	cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+		focus, chase_quat * Vector3.UP)
+
 
 func _face_target() -> void:
 	# demo autopilot: steer via the flight model, like a real pilot would

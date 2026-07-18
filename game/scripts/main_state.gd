@@ -108,6 +108,24 @@ var cam_mode := 0  # group: 0 internal (F1), 1 tactical, 2 external, 3 drop
 var cam_view := 0  # index within the group
 var cockpit_frame := true  # derived: the internal group's cockpit dressing
 var drop_cam_pos := Vector3.ZERO
+# icChaseCamera::Update (0x100d4cb0, raw disasm -- Ghidra dropped the body;
+# vtable @ 0x1011d3c4, iwar2.dll): the SMOOTHED STATE is the camera's offset
+# from the focus (this+0x6c..0x74) and its up-quaternion (this+0x78) -- never
+# the absolute position. Eye = focus + offset every frame, so the chase camera
+# can never be outrun (LDS included: the original has NO speed special case),
+# and world folds rebase the committed eye through vtable slot 12 ->
+# FUN_100d4790. Per-frame blend (0x100d4eac..0x100d4ef6):
+#   k = clamp01(speed * max_range * dt / range)
+# then the offset lerps by k and the up-quat slerps by k (0x100d4f72 slerp,
+# 0x1002e980 normalise); the AIM is exact every frame (the commit @ 0x100d4620
+# builds the view from eye->look directly, only the up vector eases). speed =
+# 1, max_range = 10, initial_range = 4: defaults.ini/flux.ini [icChaseCamera].
+const CHASE_SPEED := 1.0
+const CHASE_MAX_RANGE := 10.0
+const CHASE_RANGE := 4.0
+var chase_offset := Vector3.ZERO
+var chase_quat := Quaternion.IDENTITY
+var chase_snap := true  # camera Reset @ 0x100d4bf0 re-seeds offset + quat
 var zoomed := false
 # icPlayerPilot: max_zoom_factor = 10, zoom_time = 0.5 (flux.ini). The zoom ramps
 # at max/time per second and DIVIDES the yaw and pitch yoke, which is what makes
