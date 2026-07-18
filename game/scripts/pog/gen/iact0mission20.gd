@@ -1007,7 +1007,7 @@ func local_11649(v0, v1) -> Variant:
 			_pc = 12341
 			continue
 		elif _pc == 12341:
-			if v2 and sim.distance_between(v6, v0) < 700.0 or v4:
+			if v2 and (sim.distance_between(v6, v0) < 700.0 or v4):
 				_pc = 12387
 				continue
 			else:

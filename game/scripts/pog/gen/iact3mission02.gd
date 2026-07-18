@@ -196,7 +196,7 @@ func local_1327(v0, v1, v2, v3, v4) -> Variant:
 					_pog_resume(v0)
 					_pog_resume(v1)
 					v8 = 0
-		if sim.distance_between(v7, v5) < 6000.0 or sim.distance_between(v7, v6) < 6000.0 or _pog_is_null(group.total_sim_count(v2)) and not (v9):
+		if (sim.distance_between(v7, v5) < 6000.0 or sim.distance_between(v7, v6) < 6000.0 or _pog_is_null(group.total_sim_count(v2))) and not (v9):
 			v9 = 1
 			await iconversation.one_liner(v5, "", "a3_m02_dialogue_corporate_alert_intruder")
 			iai.give_attack_order(v2, v7)
@@ -699,7 +699,7 @@ func local_10216(v0, v1) -> Variant:
 	iai.give_attack_order(v3, v2)
 	while true:
 		await _pog_wait(5)
-		if group.total_sim_count(v2) < 3 or group.total_sim_count(v3) < 3 and not (v14):
+		if (group.total_sim_count(v2) < 3 or group.total_sim_count(v3) < 3) and not (v14):
 			v14 = 1
 			await iconversation.one_liner(0, "name_hoffer", "a3_m02_dialogue_hoffer_o_my_god")
 			v4 = await local_9581()

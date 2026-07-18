@@ -1395,7 +1395,7 @@ func local_13374(v0, v1, v2) -> Variant:
 	v4 = group.create()
 	v6 = 0
 	while v6 < v1:
-		v7 = v6 * 1.0 * 360.0 / v1 * 1.0
+		v7 = v6 * 1.0 * (360.0 / (v1 * 1.0))
 		v5 = iship.create("ini:/sims/ships/navy/gunstar_quad_light", "a3_m01_Gunstar")
 		group.add_sim(v4, v5)
 		if PogRuntime.TRACE:

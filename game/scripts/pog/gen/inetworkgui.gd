@@ -313,11 +313,11 @@ func local_2660(v0) -> Variant:
 	v2 = gui.create_window(0, v24, v10, v9 - v24, v1)
 	v14 = global.pog_int("GUI_fancyborder_width")
 	v15 = global.pog_int("GUI_fancyborder_alignmentoffset") + 5
-	v16 = gui.window_canvas_width(v2) - v14 + global.pog_int("GUI_fancyborder_width")
-	v17 = gui.window_canvas_height(v2) - v15 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v16 = gui.window_canvas_width(v2) - (v14 + global.pog_int("GUI_fancyborder_width"))
+	v17 = gui.window_canvas_height(v2) - (v15 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset"))
 	v6 = gui.create_window(v14, v15, v16, v17, v2)
 	gui.create_fancy_border(v6)
-	v5 = await igui.create_and_initialise_text_window(v18, 0, v16 - 2 * v13 + v18, v17, v6, "")
+	v5 = await igui.create_and_initialise_text_window(v18, 0, v16 - (2 * v13 + v18), v17, v6, "")
 	list.add_tail(v3, v5)
 	global.create_handle("mp_network_text_box", 2, v5)
 	return _pog_clone(v3)
@@ -456,7 +456,7 @@ func local_5146(v0) -> Variant:
 	v8 = imultiplay.get_server_map_list(v26)
 	v15 = imultiplay.client_options_server_map()
 	gui.remove_list_box_entries(v1)
-	v6 = v6 - v9 + 4
+	v6 = v6 - (v9 + 4)
 	v22 = v20
 	v7 = 0
 	while v7 < v8:
@@ -788,7 +788,7 @@ func network_server_screen() -> Variant:
 	await igui.add_back_buttons(v0, "iNetworkGUI.OnServerScreenBackButton", "iNetworkGUI.OnServerScreenBackToMainMenuButton")
 	await igui.add_title(v0, text.field("mp_options_host_session", 0))
 	v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + v19
-	v3 = gui.window_canvas_height(v0) - 8 + global.pog_int("GUI_backbutton_rise")
+	v3 = gui.window_canvas_height(v0) - (8 + global.pog_int("GUI_backbutton_rise"))
 	v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
 	v3 = v3 - global.pog_int("GUI_fancybutton_height")
 	v13 = await igui.create_and_initialise_fancy_button(v0, v3, text.field("mp_server_start", 0), "iNetworkGUI.OnServerScreenOK")
@@ -830,13 +830,13 @@ func network_server_screen() -> Variant:
 	global.create_handle("NetworkServerOptionsName", 2, v11)
 	list.add_head(v7, v11)
 	v2 = global.pog_int("GUI_alignment_offset") + v21
-	v4 = global.pog_int("GUI_shader_width") + v21 - v2 * 2
-	v5 = v3 - v6 + v19 / 2
+	v4 = global.pog_int("GUI_shader_width") + (v21 - v2 * 2)
+	v5 = (v3 - (v6 + v19)) / 2
 	v23 = gui.create_splitter_window(v2, v6 + v5, v4, v5, v0, v22, 0)
 	await local_19161(imultiplay.client_options_server_package(), v23, v7)
 	v2 = global.pog_int("GUI_alignment_offset") + v21
-	v4 = global.pog_int("GUI_shader_width") + v21 - v2 * 2
-	v5 = v3 - v6 + v19 / 2
+	v4 = global.pog_int("GUI_shader_width") + (v21 - v2 * 2)
+	v5 = (v3 - (v6 + v19)) / 2
 	v23 = gui.create_splitter_window(v2, v6, v4, v5, v0, v22, 0)
 	await local_17494(v23, v7)
 	gui.set_first_control_focus(gui.cast(list.head(v7)))
@@ -935,8 +935,8 @@ func network_server_screen_advanced() -> Variant:
 	v8 = imultiplay.client_options_server_a_i_bots()
 	v9 = imultiplay.client_options_server_a_i_bots_skill()
 	v10 = imultiplay.client_options_server_a_i_bots_count()
-	v11 = gui.window_canvas_width(v2) / 2 + v14 - v15
-	v17 = gui.window_canvas_width(v2) - v11 + v14
+	v11 = gui.window_canvas_width(v2) / 2 + (v14 - v15)
+	v17 = gui.window_canvas_width(v2) - (v11 + v14)
 	global.create_int("NetworkServerAdvancedFocusedEntry", 2, -1)
 	v3 = await local_14325("mp_server_advanced_ai_count", v2)
 	v4 = gui.create_edit_box(v11, 0, v17, v13, v3, 0, string.from_int(v10), 1)
@@ -1222,9 +1222,9 @@ func local_17494(v0, v1) -> Variant:
 	v3 = await igui.create_and_initialise_static_window(0, 0, gui.window_canvas_width(v2), gui.window_canvas_height(v2), v2, v4, text.field("mp_server_game_type", 0))
 	gui.set_window_text_formatting(v3, 0, 9)
 	v2 = gui.splitter_window_bottom_window(v0)
-	if v10 * v5 + v6 > gui.window_canvas_height(v2):
+	if v10 * (v5 + v6) > gui.window_canvas_height(v2):
 		v9 = 1
-		v7 = v7 - v11 + 4
+		v7 = v7 - (v11 + 4)
 	else:
 		v9 = 0
 	v12 = gui.create_list_box(0, 0, v7, gui.window_canvas_height(v2), v2, 1, 0)
@@ -1318,7 +1318,7 @@ func local_19161(v0, v1, v2) -> Variant:
 	v4 = await igui.create_and_initialise_static_window(0, 0, gui.window_canvas_width(v3), gui.window_canvas_height(v3), v3, v5, text.field("mp_server_map", 0))
 	gui.set_window_text_formatting(v4, 0, 9)
 	v3 = gui.splitter_window_bottom_window(v1)
-	v8 = v8 - v11 + 4
+	v8 = v8 - (v11 + 4)
 	v12 = gui.create_list_box(0, 0, v8, gui.window_canvas_height(v3), v3, 1, 0)
 	global.create_handle("MapListBoxHandle", 2, v12)
 	list.add_head(v2, v12)
@@ -1676,11 +1676,11 @@ func rejection_screen() -> Variant:
 	v25 = gui.create_window(0, v23 - 100, v9, 100, v1)
 	v13 = global.pog_int("GUI_fancyborder_width")
 	v14 = global.pog_int("GUI_fancyborder_alignmentoffset") + 5
-	v15 = gui.window_canvas_width(v25) - v13 + global.pog_int("GUI_fancyborder_width")
-	v16 = gui.window_canvas_height(v25) - v14 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v15 = gui.window_canvas_width(v25) - (v13 + global.pog_int("GUI_fancyborder_width"))
+	v16 = gui.window_canvas_height(v25) - (v14 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset"))
 	v24 = gui.create_window(v13, v14, v15, v16, v25)
 	gui.create_fancy_border(v24)
-	v26 = await igui.create_and_initialise_text_window(v17, 0, v15 - 2 * v12 + v17, v16, v24, "")
+	v26 = await igui.create_and_initialise_text_window(v17, 0, v15 - (2 * v12 + v17), v16, v24, "")
 	gui.set_text_window_string(v26, v0)
 	gui.set_control_focus_cancel_function("iNetworkGUI.RejectedOnBackToMainMenuButton")
 	return 0

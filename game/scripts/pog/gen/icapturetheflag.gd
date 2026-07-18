@@ -945,7 +945,7 @@ func local_13239() -> Variant:
 		if v14 > 0:
 			if _pog_is_null(v27):
 				v27 = igame.system_time() * 0.0010000000474974513
-			v28 = imultiplay.time_limit() - igame.system_time() * 0.0010000000474974513 - v27
+			v28 = imultiplay.time_limit() - (igame.system_time() * 0.0010000000474974513 - v27)
 			if v28 <= 120 and not (v29):
 				v29 = 1
 				imultiplay.server_broadcast_message(0, "mp_time_limit_two_minutes", 3)

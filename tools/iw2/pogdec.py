@@ -127,9 +127,24 @@ class Bin(Expr):
         self.prec = prec
 
     def __str__(self):
-        def side(e):
-            return "(%s)" % e if e.prec < self.prec else str(e)
-        return "%s %s %s" % (side(self.a), self.op, side(self.b))
+        def side(e, right):
+            if e.prec < self.prec:
+                return "(%s)" % e
+            # Left-associative operators: an equal-precedence subtree on the
+            # RIGHT needs parentheses or the reading regroups it.
+            # `a - (b + c)` printed bare is `a - b + c` == `(a - b) + c`, a
+            # different number -- igui.CreateGreyBoxStyleScreen's box height
+            # (`FrameHeight() - (rise + offset + 10)`) came out 104 px too
+            # tall this way and every grey-box screen ran off the bottom of
+            # the frame. Same for `/` and `%`, and for a `/` or `%` under the
+            # right side of `*` (integer division does not commute past it).
+            if right and e.prec == self.prec and (
+                    self.op in ("-", "/", "%")
+                    or (self.op == "*" and isinstance(e, Bin)
+                        and e.op in ("/", "%"))):
+                return "(%s)" % e
+            return str(e)
+        return "%s %s %s" % (side(self.a, False), self.op, side(self.b, True))
 
 
 class Un(Expr):

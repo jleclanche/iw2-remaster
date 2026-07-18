@@ -1133,7 +1133,7 @@ func s_p_p_d_a_device_screen() -> Variant:
 	v16 = string.upper_case(v16)
 	await igui.add_title(v0, v16)
 	v7 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + v9
-	v8 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v9
+	v8 = gui.frame_height() - (global.pog_int("GUI_backbutton_rise") + v9)
 	v2 = ioptions.create_graphics_device_option_buttons()
 	v18 = 0
 	while v18 < list.item_count(v2):
@@ -1151,7 +1151,7 @@ func s_p_p_d_a_device_screen() -> Variant:
 	v1 = await igui.create_and_initialise_fancy_button(v0, v3, string.upper_case(text.field("options_apply", 0)), "iPDAGUI.SPPDADeviceScreen_OnApply")
 	v8 = v3 - v9
 	global.create_handle("SPPDADeviceScreen_ApplyButton", 2, v1)
-	v17 = global.pog_int("GUI_shader_width") + v12 - v14 * 2
+	v17 = global.pog_int("GUI_shader_width") + (v12 - v14 * 2)
 	v10 = gui.create_splitter_window(global.pog_int("GUI_alignment_offset") + v12, v7, v17, v8 - v7, v0, v13, 0)
 	v11 = gui.splitter_window_top_window(v10)
 	v16 = text.field("options_resolution", 0)
@@ -1250,12 +1250,12 @@ func local_19067(v0) -> Variant:
 	v2 = gui.cast(global.handle("SPPDADeviceScreen_Splitter"))
 	v5 = gui.splitter_window_bottom_window(v2)
 	v8 = gui.window_canvas_height(v5)
-	v9 = ioptions.number_of_resolution_options(v0) * global.pog_int("GUI_inversebutton_height") + 3
+	v9 = ioptions.number_of_resolution_options(v0) * (global.pog_int("GUI_inversebutton_height") + 3)
 	if v9 > v8:
 		v14 = 1
 	v10 = gui.window_canvas_width(v5)
 	if v14:
-		v10 = v10 - v11 + 4
+		v10 = v10 - (v11 + 4)
 	v4 = gui.create_list_box(0, 0, v10, gui.window_canvas_height(v5), v5, 1, 0)
 	gui.disable_highlight(v4)
 	global.create_handle("SPPDADeviceScreen_ResolutionListBox", 2, v4)
@@ -1612,7 +1612,7 @@ func local_24581(v0, v1) -> Variant:
 	v2 = global.pog_int("GUI_inversebutton_height")
 	v3 = 3
 	v4 = gui.splitter_window_bottom_window(v0)
-	return v1 * v2 + v3 > gui.window_canvas_height(v4)
+	return v1 * (v2 + v3) > gui.window_canvas_height(v4)
 	return 0
 
 func local_24687(v0, v1, v2) -> Variant:
@@ -1626,7 +1626,7 @@ func local_24687(v0, v1, v2) -> Variant:
 	v7 = await local_24581(v0, v1)
 	v5 = gui.splitter_window_bottom_window(v0)
 	if v7:
-		v3 = v3 - v4 + 4
+		v3 = v3 - (v4 + 4)
 	v6 = gui.create_list_box(0, 0, v3, gui.window_canvas_height(v5), v5, 1, v2)
 	if v7:
 		gui.create_vertical_scrollbar(gui.window_canvas_width(v5) - v4, 0, v4, gui.window_canvas_height(v5), v5, v6, global.pog_float("GUI_scrollbar_buttonratio"), "")
@@ -1672,7 +1672,7 @@ func mod_screen() -> Variant:
 	v2 = global.pog_int("GUI_fancybutton_height")
 	v3 = v0 + v1
 	v4 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
-	v5 = global.pog_int("GUI_shader_width") + v1 - 2 * v1 + v0
+	v5 = global.pog_int("GUI_shader_width") + (v1 - 2 * (v1 + v0))
 	v7 = 2 * global.pog_int("GUI_fancyborder_width") + 13
 	v15 = []
 	v16 = []
@@ -1685,7 +1685,7 @@ func mod_screen() -> Variant:
 	v10 = await igui.create_shady_bar()
 	await igui.add_back_buttons(v10, "iPDAGUI.ModScreen_OnBackButton", "iPDAGUI.ModScreen_OnBackButton")
 	await igui.add_title(v10, text.field("pda_extras", 0))
-	v9 = gui.window_canvas_height(v10) - v4 + v2 + 5 * v1 + global.pog_int("GUI_backbutton_rise")
+	v9 = gui.window_canvas_height(v10) - (v4 + v2 + 5 * v1 + global.pog_int("GUI_backbutton_rise"))
 	v6 = v9 / 2 - v1
 	v8 = v4
 	v11 = await local_24335(v10, v3, v8, v5, v6, v7, "pda_installed_mods")

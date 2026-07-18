@@ -605,7 +605,7 @@ func local_5601(v0, v1, v2, v3) -> Variant:
 		await _pog_wait(2)
 		if state.progress(v3) != 100:
 			v6 = v6 + 2
-			if v6 >= 60 or _pog_is_null(group.sim_count(v5)) and not (v4):
+			if (v6 >= 60 or _pog_is_null(group.sim_count(v5))) and not (v4):
 				if _pog_is_null(group.sim_count(v5)):
 					iobjectives.set_state("a2_m08_objectives_clear", 1)
 				else:

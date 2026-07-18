@@ -948,7 +948,7 @@ func local_6608(v0, v1, v2) -> Variant:
 	v3 = group.create()
 	v5 = 0
 	while v5 < v1:
-		v6 = v5 * 1.0 * 360.0 / v1 * 1.0
+		v6 = v5 * 1.0 * (360.0 / (v1 * 1.0))
 		if _pog_is_null(v5):
 			v4 = iship.create("ini:/sims/custom/act2_mission24/antenna", "a3_m03_commsat")
 		else:
@@ -1022,7 +1022,7 @@ func local_7724(v0, v1, v2) -> Variant:
 	v5 = iship.create("ini:/sims/ships/utility/megapod", "")
 	v6 = 0
 	while v6 < v1:
-		v7 = v6 * 1.0 * 360.0 / v1 * 1.0
+		v7 = v6 * 1.0 * (360.0 / (v1 * 1.0))
 		v4 = isim.cast(sim.create("ini:/sims/nav/waypoint", "waypoint"))
 		isim.set_sensor_visibility(v4, 0)
 		group.add_sim(v3, v4)

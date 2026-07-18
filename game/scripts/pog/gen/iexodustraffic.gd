@@ -438,8 +438,8 @@ func exodus_traffic_generator() -> Variant:
 				_pc = 1833
 				continue
 		elif _pc == 1775:
-			v14 = v31 - v30 / 6
-			v12 = 3 + v10 - 999 / v14
+			v14 = (v31 - v30) / 6
+			v12 = 3 + (v10 - 999) / v14
 			v11 = 5000
 			_pc = 1909
 			continue
@@ -455,8 +455,8 @@ func exodus_traffic_generator() -> Variant:
 			_pc = 1856
 			continue
 		elif _pc == 1856:
-			v14 = v32 - v31 / 5
-			v12 = 8 + v10 - 5000 / v14
+			v14 = (v32 - v31) / 5
+			v12 = 8 + (v10 - 5000) / v14
 			v11 = 10000
 			_pc = 1909
 			continue

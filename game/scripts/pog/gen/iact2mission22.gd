@@ -472,7 +472,7 @@ func local_4069(v0, v1, v2, v3, v4) -> Variant:
 			await iformation.cross(v18, 40.0, 1)
 			iai.give_approach_order(group.leader(v18), v14)
 		if v5 and await iutilities.player_in_range(v1):
-			if iai.is_order_complete(group.leader(v18)) or sim.distance_between(group.leader(v18), v14) < 800.0 and not (v6):
+			if (iai.is_order_complete(group.leader(v18)) or sim.distance_between(group.leader(v18), v14) < 800.0) and not (v6):
 				v6 = 1
 				v15 = await local_3249(v1, v3)
 				v7 = 1
@@ -701,7 +701,7 @@ func local_7141(v0, v1, v2, v3) -> Variant:
 			v10 = await local_5926(v2)
 			iship.has_fired(v0)
 		if v4:
-			if await local_3797(v10, v0) or iship.has_fired(v0) and not (v6):
+			if (await local_3797(v10, v0) or iship.has_fired(v0)) and not (v6):
 				v6 = 1
 				await iconversation.one_liner(group.leader(group.nth_group(v10, 0)), "", "a2_m22_dialogue_marauders_intruder")
 				iai.give_attack_order(v10, v0)
@@ -786,7 +786,7 @@ func mission_handler() -> Variant:
 	_pog_spawn(local_8009.bind(v3, v4, v5))
 	while true:
 		await _pog_wait(1)
-		if state.progress(v7) == 1 or state.progress(v7) == 2 and not (v1):
+		if (state.progress(v7) == 1 or state.progress(v7) == 2) and not (v1):
 			await local_55(v7)
 			if _pog_is_null(object.property_exists(v7, "done_hinter")):
 				object.add_bool_property(v7, "done_hinter", 1)

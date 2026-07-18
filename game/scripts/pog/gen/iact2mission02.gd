@@ -228,7 +228,7 @@ func local_2324(v0, v1) -> Variant:
 	var v2: Variant = 0
 	while true:
 		await _pog_wait(1)
-		v2 = v1 - igame.game_time() - v0
+		v2 = v1 - (igame.game_time() - v0)
 		if v2 <= 0:
 			global.create_bool("g_times_up", 1, 1)
 			return

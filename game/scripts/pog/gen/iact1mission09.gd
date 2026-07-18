@@ -448,7 +448,7 @@ func local_3713(v0, v1, v2) -> Variant:
 				_pc = 4716
 				continue
 		elif _pc == 3889:
-			if sim.distance_between(v10, v9) <= 5000.0 and state.progress(v2) == 2 or state.progress(v2) == 4:
+			if sim.distance_between(v10, v9) <= 5000.0 and (state.progress(v2) == 2 or state.progress(v2) == 4):
 				_pc = 3967
 				continue
 			else:
@@ -573,7 +573,7 @@ func local_3713(v0, v1, v2) -> Variant:
 				_pc = 4567
 				continue
 		elif _pc == 4716:
-			if state.progress(v2) == 4 and iship.has_fired(v10) or not (isim.is_docked_to(v8, v10)) and sim.distance_between(v8, v1) < 6000.0 and not (v4):
+			if state.progress(v2) == 4 and (iship.has_fired(v10) or not (isim.is_docked_to(v8, v10)) and sim.distance_between(v8, v1) < 6000.0) and not (v4):
 				_pc = 4823
 				continue
 			else:

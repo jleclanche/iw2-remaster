@@ -177,7 +177,8 @@ class Port:
                     s = "_pog_eq(%s, %s)" % (self.x(e.a), self.x(e.b))
                     return s if e.op == "==" else "not " + s
             op = {"&&": "and", "||": "or"}.get(e.op, e.op)
-            return "%s %s %s" % (self.x(e.a), op, self.x(e.b))
+            return "%s %s %s" % (self._operand(e, e.a), op,
+                                 self._operand(e, e.b))
         if isinstance(e, Un):
             if e.op == "!":
                 return "not (%s)" % self.x(e.a)
@@ -190,6 +191,27 @@ class Port:
             # handed it can fill it in place.
             return _gd_new(e)
         return str(e)
+
+    def _operand(self, parent: Bin, child: Expr) -> str:
+        """A Bin operand, parenthesised whenever the reading could regroup.
+
+        This emitter used to add no parentheses at all, trusting the AST's
+        shape to survive re-parsing -- it does not. `FrameHeight() - (rise +
+        offset + 10)` came out as `FrameHeight() - rise + offset + 10`, which
+        is 104 px taller, and every grey-box screen ran off the bottom of the
+        frame. GDScript's precedence table also is not POG's (POG gives `&`,
+        `|` and `^` a single level), so the safe rule is: parenthesise every
+        bound subtree at equal-or-lower precedence, except a same-operator
+        associative chain.
+        """
+        s = self.x(child)
+        if not isinstance(child, Bin):
+            return s
+        if child.prec > parent.prec:
+            return s
+        if child.op == parent.op and parent.op in ("+", "*", "&&", "||"):
+            return s
+        return "(%s)" % s
 
     def _zero_test(self, e: Bin) -> str | None:
         other = None

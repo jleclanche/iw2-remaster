@@ -488,7 +488,7 @@ func cargo_hint_handler(v0) -> Variant:
 				continue
 		elif _pc == 2875:
 			v6 = isim.sims_in_radius(isim.cast(v8), 30000.0, 2048)
-			if await local_2402() or _pog_is_null(p_set.item_count(v6)) and not (v2):
+			if (await local_2402() or _pog_is_null(p_set.item_count(v6))) and not (v2):
 				_pc = 2968
 				continue
 			else:

@@ -171,7 +171,7 @@ func local_1041(v0, v1, v2, v3) -> Variant:
 	iobjectives.set_state("a0_m35_objectives_fly_to", 1)
 	while true:
 		await _pog_wait(1)
-		if not (iai.is_order_complete(v7) or sim.distance_between(v7, v2) < 800.0 and not (v5)):
+		if not ((iai.is_order_complete(v7) or sim.distance_between(v7, v2) < 800.0) and not (v5)):
 			continue
 		v5 = 1
 		await iconversation.begin()

@@ -408,7 +408,7 @@ func local_4401(v0, v1, v2) -> Variant:
 				_pc = 5727
 				continue
 		elif _pc == 4622:
-			if sim.distance_between(v8, v7) <= 7000.0 and _pog_is_null(state.progress(v2)) or state.progress(v2) == 1:
+			if sim.distance_between(v8, v7) <= 7000.0 and (_pog_is_null(state.progress(v2)) or state.progress(v2) == 1):
 				_pc = 4698
 				continue
 			else:

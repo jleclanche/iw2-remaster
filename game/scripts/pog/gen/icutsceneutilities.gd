@@ -296,7 +296,7 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 	var _pc: int = 3468
 	while true:
 		if _pc == 3468:
-			v9 = v4 - v3 / v5 - 1.0
+			v9 = (v4 - v3) / (v5 - 1.0)
 			v15 = await get_kill_group()
 			v16 = group.create()
 			v6 = 0
@@ -437,7 +437,7 @@ func orbit_sim() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v9 = 16.0 * math.pog_abs(v8 - v7) / 360.0
+	v9 = 16.0 * (math.pog_abs(v8 - v7) / 360.0)
 	v10 = await build_circular_path(v3, v5, v6, v7, v8, v9)
 	sim.place_at(v2, group.nth_sim(v10, 0))
 	await watch(v0, v1)

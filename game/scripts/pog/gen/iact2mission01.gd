@@ -387,7 +387,7 @@ func mission_handler() -> Variant:
 			_pc = 3423
 			continue
 		elif _pc == 3423:
-			await local_11794(v22, v33 - group.sim_count(v21) - group.sim_count(v22), v10)
+			await local_11794(v22, v33 - (group.sim_count(v21) - group.sim_count(v22)), v10)
 			_pc = 3757
 			continue
 		elif _pc == 3495:
@@ -398,7 +398,7 @@ func mission_handler() -> Variant:
 			_pc = 3521
 			continue
 		elif _pc == 3521:
-			await local_11794(v22, v33 - group.sim_count(v21) - group.sim_count(v22), v2)
+			await local_11794(v22, v33 - (group.sim_count(v21) - group.sim_count(v22)), v2)
 			_pc = 3757
 			continue
 		elif _pc == 3593:
@@ -409,7 +409,7 @@ func mission_handler() -> Variant:
 			_pc = 3619
 			continue
 		elif _pc == 3619:
-			await local_11794(v22, v33 - group.sim_count(v21) - group.sim_count(v22), v11)
+			await local_11794(v22, v33 - (group.sim_count(v21) - group.sim_count(v22)), v11)
 			_pc = 3757
 			continue
 		elif _pc == 3691:

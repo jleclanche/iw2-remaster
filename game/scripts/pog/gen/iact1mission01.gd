@@ -512,7 +512,7 @@ func local_7459(v0, v1, v2) -> Variant:
 		if not (v8):
 			continue
 		v6 = v6 + 5
-		if iai.is_order_complete(v4) or v6 > 10 and state.progress(v2) != 5 and not (v12):
+		if (iai.is_order_complete(v4) or v6 > 10) and state.progress(v2) != 5 and not (v12):
 			if not (sim.is_dead(v4)):
 				if sim.distance_between(v1, v5) > 5000.0:
 					await iconversation.say(v4, "", "a1_m01_dialogue_police_we_warned_you")

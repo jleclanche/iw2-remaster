@@ -816,7 +816,7 @@ func check_time_limit() -> Variant:
 			continue
 		if _pog_is_null(v3):
 			v3 = igame.system_time() * 0.0010000000474974513
-		v4 = imultiplay.time_limit() - igame.system_time() * 0.0010000000474974513 - v3
+		v4 = imultiplay.time_limit() - (igame.system_time() * 0.0010000000474974513 - v3)
 		if v4 <= 120 and not (v0):
 			v0 = 1
 			imultiplay.server_broadcast_message(0, "mp_time_limit_two_minutes", 3)

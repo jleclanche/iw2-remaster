@@ -4268,7 +4268,7 @@ func piracy(v0) -> Variant:
 				debug.print_string("iScriptedOrders.Piracy: Checking vessel ")
 				debug.print_string(object.string_property(v9, "name"))
 				debug.print_string(" for its order status\n")
-			if iai.is_order_complete(v9) or sim.distance_between(v9, v7) < 300.0 and _pog_is_null(v1):
+			if (iai.is_order_complete(v9) or sim.distance_between(v9, v7) < 300.0) and _pog_is_null(v1):
 				iai.give_attack_order(v9, v7)
 				while true:
 					v4 = await local_38184(v9, "cargo")
@@ -4378,7 +4378,7 @@ func hot_rodder(v0) -> Variant:
 				v2 = 1
 				icomms.shout(v10, "", string.join("stock_hotrodder_nice_ship", v11))
 				await _pog_wait(3.0)
-			if iai.is_order_complete(v10) or sim.distance_between(v9, v10) <= 1500.0 and _pog_is_null(v1):
+			if (iai.is_order_complete(v10) or sim.distance_between(v9, v10) <= 1500.0) and _pog_is_null(v1):
 				v1 = 1
 				icomms.shout(v10, "", string.join("stock_hotrodder_ready", v11))
 				await _pog_wait(4.0)

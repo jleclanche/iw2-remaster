@@ -290,7 +290,7 @@ func local_3664(v0, v1, v2) -> Variant:
 	ihud.set_prompt("a0_m10_prompt_use_approach", input.key_combinations("icPlayerPilot.AutopilotApproach"))
 	while true:
 		await _pog_wait(1)
-		if iai.current_order_type(v0) == 3 or iai.current_order_type(v0) == 2 and iship.is_in_l_d_s(v0) and not (v3):
+		if (iai.current_order_type(v0) == 3 or iai.current_order_type(v0) == 2) and iship.is_in_l_d_s(v0) and not (v3):
 			v3 = 1
 			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_there_weve")
 		if sim.distance_between(v0, v4) > 25000.0 and not (global.exists("g_training_disabled")):

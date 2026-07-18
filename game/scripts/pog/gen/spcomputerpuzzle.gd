@@ -548,7 +548,7 @@ func local_8358() -> Variant:
 		v10 = v10 * 2
 	v8 = 0
 	while v8 < v10:
-		v11 = await local_6091(v13 + v8 % v9)
+		v11 = await local_6091((v13 + v8) % v9)
 		v11 = string.upper_case(v11)
 		gui.set_window_title(v6, v11)
 		await _pog_wait(v7)

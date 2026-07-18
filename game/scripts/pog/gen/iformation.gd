@@ -452,7 +452,7 @@ func outrider(v0, v1, v2) -> Variant:
 		pass
 	else:
 		v10 = group.nth_sim(v0, 0)
-		v4 = v3 - 1 / 2
+		v4 = (v3 - 1) / 2
 		v8 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
 		while true:
 			v5 = v5 + 1
@@ -774,7 +774,7 @@ func random_sphere(v0, v1, v2) -> Variant:
 	while true:
 		v3 = v3 + 1
 		v10 = math.random(0.0, 1.0)
-		v10 = 1.0 - v10 * v10 * v1
+		v10 = (1.0 - v10 * v10) * v1
 		v12 = group.nth_sim(v0, v3)
 		if v2:
 			sim.place_near(v12, v11, v10)

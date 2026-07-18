@@ -1676,7 +1676,7 @@ func local_14420(v0) -> Variant:
 	v3 = 200.0
 	v4 = 5.0
 	v5 = 0.10000000149011612
-	v6 = v5 * v3 - v2 / v4
+	v6 = v5 * ((v3 - v2) / v4)
 	v7 = v2
 	while v7 < v3:
 		object.set_float_property(v0, "radius", v7)
@@ -2158,7 +2158,7 @@ func place_defences_ships() -> Variant:
 				_pc = 19889
 				continue
 		elif _pc == 19735:
-			v3 = await iutilities.create_waypoint_relative_to(v12, v11 * math.pog_sin(v10), v11 * math.pog_cos(v10), v11 - 10000.0 * math.pog_sin(v10 * 2.0))
+			v3 = await iutilities.create_waypoint_relative_to(v12, v11 * math.pog_sin(v10), v11 * math.pog_cos(v10), (v11 - 10000.0) * math.pog_sin(v10 * 2.0))
 			group.add_sim(v4, v3)
 			v10 = v10 + 40.0
 			_pc = 19719
@@ -2353,7 +2353,7 @@ func update_defences_alive(v0, v1, v2, v3) -> Variant:
 	v3 = group.create()
 	v5 = 0
 	while v5 < v1:
-		v6 = v5 * 1.0 * 360.0 / v1 * 1.0
+		v6 = v5 * 1.0 * (360.0 / (v1 * 1.0))
 		v4 = iship.create("ini:/sims/ships/navy/gunstar", await ishipcreation.ship_name("Military", 4))
 		group.add_sim(v3, v4)
 		if PogRuntime.TRACE:

@@ -1183,7 +1183,7 @@ func mission_handler() -> Variant:
 		elif _pc == 9276:
 			iai.give_approach_order(group.leader(v5), v18)
 			v42 = sim.distance_between(isim.cast(group.leader(v5)), v18)
-			v43 = math.random(v42, v42 * v25 / v25 + 1.0)
+			v43 = math.random(v42, v42 * (v25 / (v25 + 1.0)))
 			if v43 < v32 * 3.0:
 				_pc = 9441
 				continue

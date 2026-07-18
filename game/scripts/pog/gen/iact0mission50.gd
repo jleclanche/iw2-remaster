@@ -312,7 +312,7 @@ func local_2357(v0, v1, v2) -> Variant:
 				v14 = v15
 			v19 = v19 + 1
 		v7 = iship.brightness_of(v0, v14, 8000.0, 0)
-		if not (v7 > 0.1899999976158142 or v4 and not (v3)):
+		if not ((v7 > 0.1899999976158142 or v4) and not (v3)):
 			continue
 		if v4:
 			v18 = v18 + 1

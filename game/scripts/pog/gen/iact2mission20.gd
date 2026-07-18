@@ -219,7 +219,7 @@ func local_1928(v0, v1, v2) -> Variant:
 			v9 = iship.cast(group.nth_sim(v3, 2))
 			v10 = 0
 			v11 = v1 / v2
-			v12 = v11 * v2 - 1.0
+			v12 = v11 * (v2 - 1.0)
 			_pc = 2194
 			continue
 		elif _pc == 2194:
@@ -578,7 +578,7 @@ func local_4163(v0, v1, v2) -> Variant:
 			v6 = 1
 			v19 = v19 + 1
 		if v4:
-			if iai.is_order_complete(v11) or sim.distance_between(v16, v11) > 250000.0 and not (v7):
+			if (iai.is_order_complete(v11) or sim.distance_between(v16, v11) > 250000.0) and not (v7):
 				if sim.distance_between(v16, v11) > 250000.0:
 					sim.place_near(v11, v13, 400.0)
 					sim.point_at(v11, v13)
@@ -587,7 +587,7 @@ func local_4163(v0, v1, v2) -> Variant:
 				v7 = 1
 				v19 = v19 + 1
 		if v5:
-			if iai.is_order_complete(v12) or sim.distance_between(v16, v12) > 250000.0 and not (v8):
+			if (iai.is_order_complete(v12) or sim.distance_between(v16, v12) > 250000.0) and not (v8):
 				if sim.distance_between(v16, v12) > 250000.0:
 					sim.place_near(v12, v14, 400.0)
 					sim.point_at(v12, v14)

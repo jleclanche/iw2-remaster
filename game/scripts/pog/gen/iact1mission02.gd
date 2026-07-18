@@ -299,7 +299,7 @@ func local_812(v0, v1, v2) -> Variant:
 				_pc = 3188
 				continue
 		elif _pc == 2042:
-			if sim.distance_between(v10, v9) <= 6000.0 and state.progress(v2) == 2 or state.progress(v2) == 1:
+			if sim.distance_between(v10, v9) <= 6000.0 and (state.progress(v2) == 2 or state.progress(v2) == 1):
 				_pc = 2119
 				continue
 			else:

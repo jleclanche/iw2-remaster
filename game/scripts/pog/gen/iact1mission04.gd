@@ -520,7 +520,7 @@ func local_3982(v0) -> Variant:
 			await iescort.line_abreast(v4, 70.0, 8000.0, 1)
 			_pog_spawn(local_2529.bind(v4, v0))
 		else:
-			if not (await iutilities.player_in_range(v7)) or _pog_is_null(sim.cast(v6)) and v1 == 1:
+			if (not (await iutilities.player_in_range(v7)) or _pog_is_null(sim.cast(v6))) and v1 == 1:
 				v1 = 0
 				v2 = 0
 				group.destroy(v4, 1)
@@ -758,7 +758,7 @@ func local_7766(v0, v1, v2, v3, v4, v5) -> Variant:
 					isim.set_faction(v4, v11)
 					iai.give_attack_order(v2, v10)
 					iai.give_attack_order(v3, v10)
-		if sim.distance_between(v10, v1) > 3000.0 or iship.has_fired(v10) and state.progress(v5) >= 6 and iai.is_order_complete(v4):
+		if (sim.distance_between(v10, v1) > 3000.0 or iship.has_fired(v10)) and state.progress(v5) >= 6 and iai.is_order_complete(v4):
 			if not (v7):
 				if PogRuntime.TRACE:
 					debug.print_string("Act 1 Mission 04 - Player detected ( Not docked ).\n")
@@ -774,7 +774,7 @@ func local_7766(v0, v1, v2, v3, v4, v5) -> Variant:
 			await _pog_wait(4.0)
 			_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v4, _pog_clone("caption_failed_ship_destroyed"))))
 			return
-		if not (iai.is_order_complete(v9) or sim.distance_between(v10, v9) < 800.0 and not (v6)):
+		if not ((iai.is_order_complete(v9) or sim.distance_between(v10, v9) < 800.0) and not (v6)):
 			continue
 		if state.progress(v5) >= 4:
 			v6 = 1
@@ -1021,7 +1021,7 @@ func mission_handler() -> Variant:
 		iobjectives.add("a1_m04_objective_obtain")
 	while true:
 		await _pog_wait(2)
-		if state.progress(v6) == 2 or state.progress(v6) == 3 and not (v0):
+		if (state.progress(v6) == 2 or state.progress(v6) == 3) and not (v0):
 			v0 = 1
 			isim.set_sensor_visibility(isim.cast(imapentity.find_by_name("Junkyard")), 1)
 			_pog_spawn(local_3982.bind(v6))

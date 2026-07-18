@@ -133,7 +133,7 @@ func main() -> Variant:
 	v5 = 0
 	while v5 < 30:
 		v11 = math.random(0.0, 1.0)
-		v11 = 1.0 - v11 * v11 * v12
+		v11 = (1.0 - v11 * v11) * v12
 		v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
 		sim.place_near(v3, v2, v11)
 		sim.set_cullable(v3, 0)
@@ -142,7 +142,7 @@ func main() -> Variant:
 	v5 = 0
 	while v5 < 30:
 		v11 = math.random(0.0, 1.0)
-		v11 = 1.0 - v11 * v11 * v12
+		v11 = (1.0 - v11 * v11) * v12
 		v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
 		sim.place_near(v3, v2, v11)
 		sim.set_cullable(v3, 0)
@@ -151,7 +151,7 @@ func main() -> Variant:
 	v5 = 0
 	while v5 < 30:
 		v11 = math.random(0.0, 1.0)
-		v11 = 1.0 - v11 * v11 * v12
+		v11 = (1.0 - v11 * v11) * v12
 		v3 = iship.create("ini:/sims/ships/utility/freightpod", string.from_int(v5 + 1))
 		sim.place_near(v3, v2, v11)
 		sim.set_cullable(v3, 0)

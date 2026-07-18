@@ -88,11 +88,11 @@ func local_592(v0, v1, v2, v3) -> Variant:
 	v24 = global.string("type_font")
 	v4 = gui.create_window(0, 0, v10, global.pog_int("GUI_listbox_entryheight"), 0)
 	v16 = v14
-	v15 = v11 - v16 + 5
-	v18 = v11 + v9 - 2
-	v17 = v12 - v18 + 5
-	v20 = v12 + v9 - 2
-	v19 = v13 - v20 + 5
+	v15 = v11 - (v16 + 5)
+	v18 = v11 + (v9 - 2)
+	v17 = v12 - (v18 + 5)
+	v20 = v12 + (v9 - 2)
+	v19 = v13 - (v20 + 5)
 	v6 = await local_313(v16, v15, v21, v4, v23, v0)
 	v7 = await local_313(v18, v17, v21, v4, v24, string.from_int(v1))
 	v8 = await local_313(v20, v19, v21, v4, v24, string.from_int(v2))

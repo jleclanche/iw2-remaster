@@ -813,7 +813,7 @@ func local_9873() -> Variant:
 			_pc = 10382
 			continue
 		elif _pc == 10382:
-			v30 = imultiplay.time_limit() - igame.system_time() * 0.0010000000474974513 - v29
+			v30 = imultiplay.time_limit() - (igame.system_time() * 0.0010000000474974513 - v29)
 			if v30 <= 120 and not (v31):
 				_pc = 10450
 				continue

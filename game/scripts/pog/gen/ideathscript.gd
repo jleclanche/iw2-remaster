@@ -127,7 +127,7 @@ func explosives() -> Variant:
 	while v4 < v5:
 		v2 = sim.cast(list.get_nth(v1, v4))
 		v8 = sim.distance_between(v2, v3)
-		v9 = v6 * v7 - v8 / v7
+		v9 = v6 * ((v7 - v8) / v7)
 		await local_82(v2, v9)
 		v4 = v4 + 1
 	sim.destroy(v3)
@@ -449,7 +449,7 @@ func critical_ship_death(v0) -> Variant:
 	v3 = isim.last_attacker(v0)
 	idirector.begin()
 	idirector.set_focus(v0)
-	if not _pog_is_null(v3) or sim.is_alive(v3) and not _pog_eq(v0, v3):
+	if (not _pog_is_null(v3) or sim.is_alive(v3)) and not _pog_eq(v0, v3):
 		idirector.set_secondary_focus(v3)
 		idirector.set_camera(13)
 	else:

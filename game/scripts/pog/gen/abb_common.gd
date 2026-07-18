@@ -424,7 +424,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3028
 			continue
 		elif _pc == 3028:
-			return 4096 | v9 & v8 - 4
+			return 4096 | (v9 & (v8 - 4))
 		elif _pc == 3051:
 			if v6 & 8192 and not _pog_eq(v14, v19):
 				_pc = 3077
@@ -440,7 +440,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3103
 			continue
 		elif _pc == 3103:
-			return 8192 | v9 & v8 - 4
+			return 8192 | (v9 & (v8 - 4))
 		elif _pc == 3126:
 			v19 = await recursive_sim_count(v11)
 			if v6 & 4096 and _pog_is_null(v19):
@@ -457,7 +457,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3198
 			continue
 		elif _pc == 3198:
-			return 4096 | v9 & v8 - 3
+			return 4096 | (v9 & (v8 - 3))
 		elif _pc == 3221:
 			if v6 & 8192 and not _pog_eq(v15, v19):
 				_pc = 3247
@@ -473,7 +473,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3273
 			continue
 		elif _pc == 3273:
-			return 8192 | v9 & v8 - 3
+			return 8192 | (v9 & (v8 - 3))
 		elif _pc == 3296:
 			v19 = await recursive_sim_count(v12)
 			if v6 & 4096 and _pog_is_null(v19):
@@ -490,7 +490,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3368
 			continue
 		elif _pc == 3368:
-			return 4096 | v9 & v8 - 2
+			return 4096 | (v9 & (v8 - 2))
 		elif _pc == 3391:
 			if v6 & 8192 and not _pog_eq(v16, v19):
 				_pc = 3417
@@ -506,7 +506,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3443
 			continue
 		elif _pc == 3443:
-			return 8192 | v9 & v8 - 2
+			return 8192 | (v9 & (v8 - 2))
 		elif _pc == 3466:
 			v19 = await recursive_sim_count(v13)
 			if v6 & 4096 and _pog_is_null(v19):
@@ -523,7 +523,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3538
 			continue
 		elif _pc == 3538:
-			return 4096 | v9 & v8 - 1
+			return 4096 | (v9 & (v8 - 1))
 		elif _pc == 3560:
 			if v6 & 8192 and not _pog_eq(v17, v19):
 				_pc = 3586
@@ -539,7 +539,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3612
 			continue
 		elif _pc == 3612:
-			return 8192 | v9 & v8 - 1
+			return 8192 | (v9 & (v8 - 1))
 		elif _pc == 3634:
 			_pc = 3679
 			continue
@@ -596,7 +596,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3759
 			continue
 		elif _pc == 3759:
-			return 16384 | v9 & v8 - 4
+			return 16384 | (v9 & (v8 - 4))
 		elif _pc == 3782:
 			if not (await iutilities.near_to_group(v1, v11, v3, 1)):
 				_pc = 3817
@@ -612,7 +612,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3843
 			continue
 		elif _pc == 3843:
-			return 16384 | v9 & v8 - 3
+			return 16384 | (v9 & (v8 - 3))
 		elif _pc == 3866:
 			if not (await iutilities.near_to_group(v1, v12, v3, 1)):
 				_pc = 3901
@@ -628,7 +628,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 3927
 			continue
 		elif _pc == 3927:
-			return 16384 | v9 & v8 - 2
+			return 16384 | (v9 & (v8 - 2))
 		elif _pc == 3950:
 			if not (await iutilities.near_to_group(v1, v13, v3, 1)):
 				_pc = 3985
@@ -644,7 +644,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4011
 			continue
 		elif _pc == 4011:
-			return 16384 | v9 & v8 - 1
+			return 16384 | (v9 & (v8 - 1))
 		elif _pc == 4033:
 			_pc = 4078
 			continue
@@ -701,7 +701,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4160
 			continue
 		elif _pc == 4160:
-			return 32768 | v9 & v8 - 4
+			return 32768 | (v9 & (v8 - 4))
 		elif _pc == 4185:
 			if not (await iutilities.far_from_group(v1, v11, v3, 1)):
 				_pc = 4220
@@ -717,7 +717,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4246
 			continue
 		elif _pc == 4246:
-			return 32768 | v9 & v8 - 3
+			return 32768 | (v9 & (v8 - 3))
 		elif _pc == 4271:
 			if not (await iutilities.far_from_group(v1, v12, v3, 1)):
 				_pc = 4306
@@ -733,7 +733,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4332
 			continue
 		elif _pc == 4332:
-			return 32768 | v9 & v8 - 2
+			return 32768 | (v9 & (v8 - 2))
 		elif _pc == 4357:
 			if not (await iutilities.far_from_group(v1, v13, v3, 1)):
 				_pc = 4392
@@ -749,7 +749,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			_pc = 4418
 			continue
 		elif _pc == 4418:
-			return 32768 | v9 & v8 - 1
+			return 32768 | (v9 & (v8 - 1))
 		elif _pc == 4442:
 			_pc = 4487
 			continue

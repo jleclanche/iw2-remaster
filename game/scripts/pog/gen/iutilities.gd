@@ -2285,11 +2285,11 @@ func group_set_faction(v0, v1) -> Variant:
 func local_25418(v0) -> Variant:
 	if v0 < 0.5:
 		return 2.0 * v0 * v0
-	return 1.0 - 2.0 * 1.0 - v0 * 1.0 - v0
+	return 1.0 - 2.0 * (1.0 - v0) * (1.0 - v0)
 	return 0
 
 func local_25513(v0, v1, v2) -> Variant:
-	return v0 * v2 + v1 * 1.0 - v2
+	return v0 * v2 + v1 * (1.0 - v2)
 	return 0
 
 func random_centre_weighted(v0, v1) -> Variant:

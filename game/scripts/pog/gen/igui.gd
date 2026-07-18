@@ -425,7 +425,7 @@ func create_shady_bar_right() -> Variant:
 	v1 = global.pog_int("GUI_alignment_offset")
 	v2 = global.pog_int("GUI_shader_width")
 	gui.set_r_h_s_shady_bar_width(v2)
-	return gui.create_window(v0 - v1 + v2, 0, v2, gui.frame_height(), gui.top_window())
+	return gui.create_window(v0 - (v1 + v2), 0, v2, gui.frame_height(), gui.top_window())
 	return 0
 
 func create_wide_shady_bar() -> Variant:
@@ -511,7 +511,7 @@ func create_grey_box_style_screen(v0, v1, v2) -> Variant:
 	v4 = []
 	v10 = gui.top_window()
 	v6 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
-	v7 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v6 + 10
+	v7 = gui.frame_height() - (global.pog_int("GUI_backbutton_rise") + v6 + 10)
 	v8 = global.pog_int("GUI_alignment_offset")
 	v9 = 640 - 2 * v8
 	gui.set_shady_bar_width(v9)
@@ -522,7 +522,7 @@ func create_grey_box_style_screen(v0, v1, v2) -> Variant:
 	list.add_tail(v4, v5)
 	v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), 0, gui.frame_width() - global.pog_int("GUI_alignment_offset"), v6 - 1, v10)
 	await add_title(v5, v0)
-	v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), v6 + v7, gui.frame_width() - global.pog_int("GUI_alignment_offset"), gui.frame_height() - v6 + v7, v10)
+	v5 = gui.create_window(global.pog_int("GUI_alignment_offset"), v6 + v7, gui.frame_width() - global.pog_int("GUI_alignment_offset"), gui.frame_height() - (v6 + v7), v10)
 	list.append(v4, await add_back_buttons(v5, v1, v2))
 	return _pog_clone(v4)
 	return 0
@@ -539,7 +539,7 @@ func create_h_t_m_l_grey_box_style_screen(v0, v1, v2, v3, v4) -> Variant:
 	v6 = []
 	v12 = gui.top_window()
 	v8 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height")
-	v9 = gui.frame_height() - global.pog_int("GUI_backbutton_rise") + v8 + 10
+	v9 = gui.frame_height() - (global.pog_int("GUI_backbutton_rise") + v8 + 10)
 	v10 = global.pog_int("GUI_alignment_offset")
 	v11 = 640 - 2 * v10
 	gui.set_shady_bar_width(v11)
@@ -550,7 +550,7 @@ func create_h_t_m_l_grey_box_style_screen(v0, v1, v2, v3, v4) -> Variant:
 	list.add_tail(v6, v7)
 	v7 = await create_and_initialise_text_window(global.pog_int("GUI_alignment_offset"), 0, v1, v2, v12, "")
 	gui.set_text_window_string(v7, v0)
-	v7 = gui.create_window(global.pog_int("GUI_alignment_offset"), v8 + v9, gui.frame_width() - global.pog_int("GUI_alignment_offset"), gui.frame_height() - v8 + v9, v12)
+	v7 = gui.create_window(global.pog_int("GUI_alignment_offset"), v8 + v9, gui.frame_width() - global.pog_int("GUI_alignment_offset"), gui.frame_height() - (v8 + v9), v12)
 	list.append(v6, await add_back_buttons(v7, v3, v4))
 	return _pog_clone(v6)
 	return 0
@@ -644,8 +644,8 @@ func create_titled_list_box(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 		await create_and_initialise_tab_style_static(v0, v2 + v4, v9 + 5, v6, v7)
 	v12 = global.pog_int("GUI_fancyborder_width")
 	v13 = v9 + 5 + global.pog_int("GUI_tab_height") + global.pog_int("GUI_fancyborder_alignmentoffset") + 5
-	v14 = gui.window_canvas_width(v0) - v12 + global.pog_int("GUI_fancyborder_width")
-	v15 = gui.window_canvas_height(v0) - v13 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v14 = gui.window_canvas_width(v0) - (v12 + global.pog_int("GUI_fancyborder_width"))
+	v15 = gui.window_canvas_height(v0) - (v13 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset"))
 	v11 = gui.create_window(v12, v13, v14, v15, v0)
 	gui.create_fancy_border(v11)
 	v18 = gui.create_list_box(0, 0, v14 - 2 * v17, v15, v11, 1, 0)
@@ -708,11 +708,11 @@ func create_titled_text_box(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 		await create_and_initialise_tab_style_static(v0, v2, v8 + 5, v4, v5)
 	v11 = global.pog_int("GUI_fancyborder_width")
 	v12 = v8 + 5 + global.pog_int("GUI_tab_height") + global.pog_int("GUI_fancyborder_alignmentoffset") + 5
-	v13 = gui.window_canvas_width(v0) - v11 + global.pog_int("GUI_fancyborder_width")
-	v14 = gui.window_canvas_height(v0) - v12 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v13 = gui.window_canvas_width(v0) - (v11 + global.pog_int("GUI_fancyborder_width"))
+	v14 = gui.window_canvas_height(v0) - (v12 + 10 + global.pog_int("GUI_fancyborder_alignmentoffset"))
 	v10 = gui.create_window(v11, v12, v13, v14, v0)
 	gui.create_fancy_border(v10)
-	v18 = await create_and_initialise_text_window(v17, 0, v13 - 2 * v16 + v17, v14, v10, v6)
+	v18 = await create_and_initialise_text_window(v17, 0, v13 - (2 * v16 + v17), v14, v10, v6)
 	gui.create_vertical_scrollbar(v13 - v16, 0, v16, v14, v10, v18, global.pog_float("GUI_scrollbar_buttonratio"), "")
 	return v18
 	return 0

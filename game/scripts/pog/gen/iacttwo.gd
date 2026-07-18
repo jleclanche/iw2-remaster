@@ -3308,7 +3308,7 @@ func kompira_story_script() -> Variant:
 			_pc = 27291
 			continue
 		elif _pc == 28853:
-			if _pog_eq(sim.group(iship.current_target(v4)), v6) and iai.current_order_type(v4) == 2 or iai.current_order_type(v4) == 3:
+			if _pog_eq(sim.group(iship.current_target(v4)), v6) and (iai.current_order_type(v4) == 2 or iai.current_order_type(v4) == 3):
 				_pc = 28939
 				continue
 			else:
