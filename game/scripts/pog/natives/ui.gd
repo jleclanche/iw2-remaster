@@ -531,6 +531,17 @@ func _remove_last_overlay(_t, _a: Array) -> Variant:
 # @native gui.PopScreensTo
 func _pop_screens_to(_t, a: Array) -> Variant:
 	var name := PogStd._s(a[0])
+	# icSPMasterScreen is the C++ FRONT END, which sits under everything in
+	# the original's stack but never on ours. Unwinding to it -- the QUIT
+	# confirm's OnOK (ipdagui FlightConfirmScreen_OnOK: PopScreensTo +
+	# PopScreen) -- means "leave the session for the main menu".
+	if name == "icSPMasterScreen":
+		screens.clear()
+		focused = null
+		dirty = true
+		if game != null and game.has_method("quit_to_menu"):
+			game.quit_to_menu()
+		return 0
 	for i in range(screens.size() - 1, -1, -1):
 		if screens[i].name == name:
 			screens.resize(i + 1)
@@ -959,7 +970,16 @@ func _slider_set_value(_t, a: Array) -> Variant:
 func _tw_set_string(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win != null:
-		win.text = PogStd._s(a[1])
+		var s := PogStd._s(a[1])
+		# the engine's text window renders HTML whether it came from a
+		# resource or a string: the statistics screen BUILDS its page as an
+		# html string ("<html><body><p>Kills: ...") and hands it here. Without
+		# the conversion the tags drew literally and every <p> collapsed onto
+		# one line.
+		if s.findn("<html") != -1 or s.findn("<p") != -1 \
+				or s.findn("<br") != -1:
+			s = html_to_text(s)
+		win.text = s
 		dirty = true
 	return 0
 
@@ -1108,13 +1128,24 @@ func _create_textwindow(_t, a: Array) -> Variant:
 
 # @native gui.CreateSplitterWindow
 func _create_splitter(_t, a: Array) -> Variant:
+	# CreateSplitterWindow(x, y, w, h, parent, split, flags): the splitter
+	# divides its rect into a TOP pane `split` px tall and a BOTTOM pane with
+	# the rest, and the panes are real windows -- the loadout screen sizes
+	# the MANIFEST title off WindowCanvasWidth/Height of the top pane and
+	# hangs the manifest text in the bottom. Bare zero-sized panes collapsed
+	# all of it to (0,0 0x0) and spilled the fit list over the menu.
 	var win := _new_window("splitter", a, 0)
+	var split: int = int(a[5]) if a.size() > 5 else 0
 	win.top = PogWindow.new()
 	win.bottom = PogWindow.new()
-	win.top.overrides.resize(9)
-	win.bottom.overrides.resize(9)
-	win.top.screen = win.screen
-	win.bottom.screen = win.screen
+	for pane: PogWindow in [win.top, win.bottom]:
+		pane.overrides.resize(9)
+		pane.screen = win.screen
+		pane.parent = win
+		pane.w = win.w
+	win.top.h = clampi(split, 0, win.h)
+	win.bottom.y = win.top.h
+	win.bottom.h = maxi(win.h - win.top.h, 0)
 	return win
 
 

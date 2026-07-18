@@ -637,7 +637,9 @@ func enter() -> void:
 	var g := _pog_globals()
 	var act := int(g.get("g_current_act", 0))
 	var stem := "youngcalshutdown" if act == 0 else "oldcalshutdown"
-	main.audio.music("ambient")
+	# no mood override here: the base's interior music is base_ambient_1/2,
+	# started by the base menu's OWN builder (ibasegui SPBaseScreen ->
+	# stream.Play) once the screen raises
 	main._play_movie(stem, func() -> void: _open_interior())
 
 
@@ -699,6 +701,9 @@ func _launch() -> void:
 	main.cam_mode = 0
 	main.cam_view = 0
 	main._apply_view()
+	# the base_ambient track ends with the visit; the flight mood it
+	# interrupted fades back in
+	main.audio.restore_music()
 	main.clock_start = Time.get_ticks_msec()
 	main.hud.log_msg("LAUNCHED")
 
@@ -935,8 +940,10 @@ func _hide_world() -> void:
 		main.env_ref.background_color = Color.BLACK
 		main.env_ref.ambient_light_color = Color(0.06, 0.06, 0.07)
 		main.env_ref.ambient_light_energy = 1.0
+	# main.fields too: the base sits inside the nebula belt, and the ambient
+	# rock field around the player otherwise pokes through the diorama walls
 	for n in [main.ship_model, main.cockpit, main.sky_anchor, main.space_fx,
-			main.sun]:
+			main.sun, main.fields]:
 		if n != null and is_instance_valid(n) and n is Node3D \
 				and (n as Node3D).visible:
 			(n as Node3D).visible = false

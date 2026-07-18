@@ -367,9 +367,10 @@ func _mod_enable(_t, a: Array) -> Variant:
 # Play(channel, url, a, b) / Stop(channel, b) / IsPlayingURL(channel, url): a
 # handful of audio channels the scripts drive directly for ambience (the base
 # hum, the alien loop). The channel bookkeeping is exact, and a channel plays for
-# real when its url resolves to one of the extracted wavs. The music proper is
-# not in this path: it is MP3 in the GOG install and AudioManager crossfades it
-# by mood, so a music url here is tracked but silent.
+# real when its url resolves to one of the extracted wavs. A MUSIC url is one of
+# the GOG MP3 streams and goes to the AudioManager's one-off track player --
+# the base menu's own builder starts base_ambient_1/2 this way (ibasegui
+# SPBaseScreen, 50/50 random), which is the base's real interior music.
 
 # @native stream.Play
 func _stream_play(_t, a: Array) -> Variant:
@@ -378,6 +379,9 @@ func _stream_play(_t, a: Array) -> Variant:
 	channels[ch] = url
 	if game == null or game.audio == null:
 		return 0
+	if "/music/" in url.replace("\\", "/"):
+		game.audio.play_track(url.get_file())
+		return 0
 	var rel := PogUi.sound_path(url)
 	if FileAccess.file_exists(game.audio.base_path.path_join(rel)):
 		game.audio.play(rel)
@@ -385,7 +389,11 @@ func _stream_play(_t, a: Array) -> Variant:
 
 # @native stream.Stop
 func _stream_stop(_t, a: Array) -> Variant:
+	var url: String = channels.get(int(a[0]), "")
 	channels.erase(int(a[0]))
+	if game != null and game.audio != null \
+			and "/music/" in url.replace("\\", "/"):
+		game.audio.restore_music()
 	return 0
 
 # @native stream.IsPlaying

@@ -85,12 +85,21 @@ func _create(_t, a: Array) -> Variant:
 # @native global.Bool
 # @native global.Int
 # @native global.Float
-# @native global.String
 # @native global.Handle
 # @native global.List
 # @native global.Set
 func _glob_get(_t, a: Array) -> Variant:
 	return globals.get(_s(a[0]), 0)
+
+# @native global.String
+## A MISSING string global reads "" (the engine's store is typed), not the
+## numeric 0. The encyclopedia's default-entry fallback
+## (`if (global.String("encyclopaedia_default_entry") == "")`, ibasegui)
+## is dead without this: 0 != "" and the text window loads resource "0",
+## which is why the screen came up empty.
+func _glob_get_string(_t, a: Array) -> Variant:
+	var v: Variant = globals.get(_s(a[0]), "")
+	return v if v is String else _s(v)
 
 # @native global.SetBool
 # @native global.SetInt
@@ -720,7 +729,7 @@ const _BINDINGS := {
 	"global.createhandle": "_create", "global.createlist": "_create",
 	"global.createset": "_create",
 	"global.bool": "_glob_get", "global.int": "_glob_get",
-	"global.float": "_glob_get", "global.string": "_glob_get",
+	"global.float": "_glob_get", "global.string": "_glob_get_string",
 	"global.handle": "_glob_get", "global.list": "_glob_get",
 	"global.setbool": "_glob_set", "global.setint": "_glob_set",
 	"global.setfloat": "_glob_set", "global.setstring": "_glob_set",

@@ -560,7 +560,12 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 	if not w.title.is_empty():
 		# gui.SetWindowTextFormatting's x inset (GUI_fancybutton_textoffset = 22)
 		var tx := float(w.text_offset)
-		var ty := r.position.y + (r.size.y + float(fs)) * 0.5 - 1.0
+		# FcWindow centres the font's CELL (BMFont lineHeight) in the window
+		# and the baseline sits `base` px into it -- Godot's bitmap loader
+		# maps those to ascent/descent. The old (h + pt)/2 - 1 guess sat the
+		# text ~1.5 px high of the engine's line.
+		var ty := r.position.y + (r.size.y - f.get_height(fs)) * 0.5 \
+			+ f.get_ascent(fs)
 		draw_string(f, Vector2(r.position.x + tx, ty), _label(w.title),
 			HORIZONTAL_ALIGNMENT_LEFT, r.size.x - tx, fs, col)
 	if not w.text.is_empty():
@@ -581,6 +586,9 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 		draw_string(f, Vector2(r.position.x, y + float(fs)), _label(w.title),
 			HORIZONTAL_ALIGNMENT_LEFT, r.size.x, fs, AMBER_DIM)
 		y += LIST_ENTRY_H + 2.0
+	# rows centre the font cell like every other window (see _draw_window)
+	var row_base: float = (LIST_ENTRY_H - f.get_height(fs)) * 0.5 \
+		+ f.get_ascent(fs)
 	for i in w.entries.size():
 		if y > r.end.y:
 			break
@@ -597,7 +605,7 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 				col = ew.focused_col if here else ew.neutral
 		elif here:
 			draw_rect(er, Color(1.0, 0.749, 0.0, 0.25))
-		draw_string(f, Vector2(er.position.x + 2.0, y + float(fs)),
+		draw_string(f, Vector2(er.position.x + 2.0, y + row_base),
 			_entry_text(e), HORIZONTAL_ALIGNMENT_LEFT, er.size.x - 4.0, fs, col)
 		_hit.append([er, w, i])
 		y += LIST_ENTRY_H
