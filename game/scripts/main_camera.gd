@@ -1,0 +1,168 @@
+# Main layer: the icDirector camera rig (F1-F4, chase, capsule). Part of main.gd's extends chain -- see
+# main_state.gd for the scheme. Same node, same class.
+extends "main_targeting.gd"
+
+func cam_name() -> String:
+	return CAM_GROUPS[cam_mode][cam_view]
+
+func _apply_view() -> void:
+	# only the cockpit view carries the cockpit dressing; every camera that is
+	# not inside the ship shows the hull
+	cockpit_frame = cam_mode == 0 and cam_view == 0
+	if cockpit != null:
+		cockpit.visible = cockpit_frame
+	if ship_model != null:
+		ship_model.visible = not (cam_mode == 0 and cam_view <= 1)
+
+## icDirector::OnMessage's camera-key rule (0x100d6920): outside the group, jump
+## to its first camera; inside it, step to the next one, wrapping. The step is
+## handed to icDirector::ChangeCamera (0x100d7350), which has a special same-id
+## branch at 0x100d7358: re-selecting the camera you are already on is a no-op for
+## every camera EXCEPT the drop camera (id 0xb) -- for that one it re-commits and
+## raises CameraChanged=2 (0x100d739c), so the drop camera re-establishes its
+## default framing. In our groups only the drop group has a single member, so it
+## is the only key whose repeat press lands back on itself: that repeat RE-DROPS
+## the camera at the ship's current default vantage instead of doing nothing. The
+## multi-member groups (F1/F2/F3) always step to a different camera, so each of
+## their presses is already a real change.
+func _set_camera(group: int) -> void:
+	var reselect := group == cam_mode
+	if reselect:
+		cam_view = (cam_view + 1) % CAM_GROUPS[group].size()
+	else:
+		cam_mode = group
+		cam_view = 0
+	if cam_name() == "drop":
+		# first entry drops the camera where the previous view was; a repeat F4
+		# (reselect, single-member group) is the ChangeCamera 0xb reset -- re-drop
+		# behind the ship at the default drop-back vantage
+		if reselect:
+			drop_cam_pos = ship.global_position \
+				+ ship.global_transform.basis * Vector3(0, 20, 130)
+		else:
+			drop_cam_pos = cam.global_position
+	zoomed = false
+	zoom_factor = 1.0
+	cam.fov = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 else FOV_EXTERNAL
+	audio.play("audio/gui/camera_change.wav", -10.0)
+	_apply_view()
+
+func _chase_camera(delta: float) -> void:
+	var target := ship.global_transform
+	if jump_state == 4:
+		_capsule_camera(delta, target)
+		return
+	# inside Lucrecia's Base the camera is the diorama's own, out of the scene
+	if base_iface != null and base_iface.inside:
+		base_iface.place_camera()
+		return
+	if base_root != null:
+		# in the hangar: gantry viewpoint with a gentle sway
+		var a := Time.get_ticks_msec() / 1000.0 * 0.11
+		var pos := target.origin + Vector3(-150.0 + sin(a) * 35.0, 70.0,
+			-180.0 + cos(a * 0.7) * 25.0)
+		cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+			target.origin + Vector3(0, 0, 0), Vector3.UP)
+		return
+	# the target the "look at the target" cameras (inverse tactical, target
+	# external) frame; without one they fall back to their forward-looking twin
+	var tp := _target_pos()
+	# every external camera range in the original is authored in SHIP RADII
+	# (defaults.ini: [icArcadeCamera] range = 4, [icChaseCamera]/[icDollyCamera]
+	# initial_range = 4, [icExternalCamera] initial_zoom = 3), against
+	# iiSim::CalculateRadius (0x1007ccf0). Fixed-metre offsets framed the
+	# turret fighter fine and put the camera INSIDE the tug's silhouette.
+	var r := ship.radius
+	match cam_name():
+		"cockpit", "no_cockpit":  # rigid at the pilot's eye (the crew null)
+			cam.global_transform = target.translated_local(eye)
+		"arcade":  # icArcadeCamera: hull-following, range 4 (defaults.ini)
+			var pos := target.origin \
+				+ target.basis * (Vector3(0, 0.21, 0.98) * 4.0 * r)
+			cam.global_transform = Transform3D(target.basis, pos)
+		"tactical":  # icChaseCamera: initial_range 4
+			var want := target.translated_local(Vector3(0, 0.24, 0.97) * 4.0 * r)
+			var focus := target.origin + target.basis * Vector3(0, 0.075 * r,
+				-0.375 * r)
+			if lds_state == 2 or jump_state >= 2:
+				cam.global_transform = want.looking_at(focus, target.basis.y)
+			else:
+				cam.global_transform = cam.global_transform.interpolate_with(
+					want, 1.0 - exp(-8.0 * delta))
+				cam.global_transform = cam.global_transform.looking_at(
+					focus, target.basis.y)
+		"inverse_tactical":  # over the nose, looking back at the ship
+			var want := target.translated_local(Vector3(0, 0.15, -0.99) * 4.0 * r)
+			cam.global_transform = cam.global_transform.interpolate_with(
+				want, 1.0 - exp(-8.0 * delta))
+			cam.global_transform = cam.global_transform.looking_at(
+				target.origin, target.basis.y)
+		"external":  # slow orbit around the ship; icExternalCamera initial_zoom 3
+			var a := Time.get_ticks_msec() / 1000.0 * 0.15
+			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 3.0 * r
+			cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+				target.origin, Vector3.UP)
+		"target_external":  # orbit the ship, but framed on the current target
+			var a := Time.get_ticks_msec() / 1000.0 * 0.15
+			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 3.0 * r
+			var look: Vector3 = target.origin + (-target.basis.z * 1000.0 \
+				if tp == Vector3.INF else (tp - target.origin).normalized() * 1000.0)
+			cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+				look, Vector3.UP)
+		"drop":  # fixed in space, tracking the ship
+			cam.global_transform = Transform3D(Basis.IDENTITY,
+				drop_cam_pos).looking_at(target.origin, Vector3.UP)
+
+## The capsule-space camera. icDirector event 0x10 ("in capsule space",
+## cued every frame by PerformJumps case 5 via FUN_100426f0) selects camera
+## 24 (response table @ 0x1011d498: ev 0x10 -> cams (24,24,24), priority 8,
+## re-cuttable). Camera 24 (ctor FUN_100dc080 @ 0x100dc080, Update @
+## 0x100dc160) frames the ship from a random direction in the SHIP's frame,
+## components ([0.8,1], [-1,1], [-1,1]) normalized -- biased to the ship's
+## +X side -- at 4 x the focus radius (0x101190b4), with FOV 2 * 0.35 rad
+## (_DAT_1011d378). Cuts are limited by flux.ini [icDirector]
+## min_cut_time = 1. The final second cues event 0x11 -> camera 3,
+## cam_internal_no_hud (name table @ 0x101621e0): back inside the cockpit
+## for the exit flash.
+func _capsule_camera(delta: float, target: Transform3D) -> void:
+	if jump_timer >= jump_duration - 1.0:
+		# cam_internal_no_hud: back inside the cockpit, HUD stays dark
+		if cockpit != null:
+			cockpit.visible = true
+		if ship_model != null:
+			ship_model.visible = false
+		cam.fov = FOV_INTERNAL
+		cam.global_transform = target.translated_local(eye)
+		return
+	# external shot: show the hull, drop the cockpit dressing
+	if cockpit != null:
+		cockpit.visible = false
+	if ship_model != null:
+		ship_model.visible = true
+	_cap_cut_t -= delta
+	if _cap_cut_t <= 0.0:
+		_cap_cut_t = CAPSULE_CUT_TIME
+		_cap_cam_dir = Vector3(randf_range(0.8, 1.0),
+			randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
+	cam.fov = CAPSULE_CAM_FOV
+	var r := _model_bounds_radius(ship_model)
+	if r <= 0.0:
+		r = SHIP_HIT_RADIUS
+	var pos := target.origin + target.basis * (_cap_cam_dir
+		* r * CAPSULE_CAM_RANGE)
+	cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
+		target.origin, target.basis.y)
+
+func _face_target() -> void:
+	# demo autopilot: steer via the flight model, like a real pilot would
+	var p := _target_pos()
+	if p == Vector3.INF:
+		return
+	_face_dir(p)
+
+func _face_dir(p: Vector3) -> void:
+	var local := p * ship.global_transform.basis
+	var pitch := atan2(local.y, -local.z)
+	var yaw := atan2(-local.x, -local.z)
+	ship.input_rotate.x = clampf(pitch * 2.0, -1.0, 1.0)
+	ship.input_rotate.y = clampf(yaw * 2.0, -1.0, 1.0)
