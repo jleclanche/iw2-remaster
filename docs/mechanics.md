@@ -98,3 +98,37 @@ Every game data format is now decoded and extracted:
 - FRAM weight-track playback for character morphs (base interiors)
 - Original mission `.pkg` logic via ZeroPipeline's disassembly (story
   campaign — deprioritized per project goals)
+
+## Docking, towing and mass (extracted)
+
+The join: icDockPort::OnDock (0x1002e540) calls FiSim::AttachChild on the two
+port OWNERS -- a rigid parent/child attachment, not a merged body. Which one
+is the parent is docking_priority (iiSim +0x1c0, ini `docking_priority`):
+the HIGHER priority sim is the parent (station 200-1000 > tug 85 > pod 11).
+FiSim::OnAttachChild then does the physics: AddMass(child mass @ +0x18) and
+AddMomentOfInertia(child inertia at its attach offset), recursing up the
+parent chain; FiSim::SetMass stores 1/mass at +0xa0 and FiSim::Integrate
+(0x100bfc20) multiplies accumulated force by it -- accel = force / total
+mass. FiSim::UpdateChild rewrites every child's transform from the parent
+each tick (the rigid ride).
+
+Mass is NOT authored for ships: iiThrusterSim::Load (0x1007ddf0) computes
+  mass = width * height * length * m_density      (m_density = 0.001 @ 0x1011c168)
+and thrust FORCE = mass * the ini acceleration vector (+0x224/228/22c), so
+the ini `acceleration` is exactly the undocked acceleration and a docked
+pair accelerates at accel * m_own / (m_own + m_partner). icInertSim::Load
+does the same, except ini `immobile=1` forces SetMass(0) = INFINITE mass
+(inverse 0): you can dock to it but never move it. Any ini `mass=` on these
+classes is overwritten by Load (why the stock ships never author one).
+Numbers: tug 80x70x120 -> 672, cargo pod 50^3 -> 125 (tow at 84% thrust),
+command section 20x7x30 -> 4.2 (tow at 3% -- barely moves a pod).
+Box inertia uses 1/12 (0x1011ae44) and deg->rad 0.0174533 (0x10119930).
+
+Port: ship_flight.gd mass/tow_mass/mass_scale() and tow_torque_scale;
+main.gd _try_tow_dock/_update_tow/_release_tow (the DOCK autopilot on a
+targeted lower-priority sim tows it; U releases). Approximations, marked in
+code: port-null mating is not modelled (the partner keeps its capture-moment
+offset), the inertia sum is a scalar box+parallel-axis stand-in for the
+tensor, and TryToDock's capture kinematics constants were not resolved (a
+20 m/s relative-velocity gate is eyeballed). mechcheck: tow-dock, tow-ride,
+tow-release.

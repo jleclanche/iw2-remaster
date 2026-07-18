@@ -1563,6 +1563,8 @@ func kill_ai(ai: AiShip) -> void:
 func _finish_kill(ai: AiShip) -> void:
 	if ai == null or not is_instance_valid(ai):
 		return
+	if towed == ai:
+		_release_tow(false)
 	ai_ships.erase(ai)
 	if target_ai == ai:
 		target_ai = null
@@ -2075,9 +2077,95 @@ func _toggle_lds() -> void:
 		hud.warn("LDS INHIBITED")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 
+# --- towing ------------------------------------------------------------------
+# icDockPort::OnDock (0x1002e540): docking rigidly attaches the LOWER
+# docking_priority sim as a CHILD of the higher (both +0x1c0, compared at
+# 43203). FiSim::OnAttachChild adds the child's mass and inertia to the
+# parent (AddMass walks the parent chain), FiSim::UpdateChild rewrites the
+# child's transform from the parent every tick, and Integrate divides the
+# thruster force by the combined mass -- so a docked pod is towed, and how
+# well depends on your hull's mass (= w*h*l*0.001, iiThrusterSim::Load)
+# against the pod's. The tug (672) barely feels a pod (125); the command
+# section (4.2) can hardly budge one. Port-null mating is not modelled: the
+# partner keeps its capture-moment offset. The torque side is a scalar
+# stand-in for the inertia tensor sum (box I = m*(w^2+h^2+l^2)/12 plus the
+# parallel-axis m*d^2 term).
+var towed: AiShip = null
+var towed_rel := Transform3D()
+var towed_prev_behavior := "patrol"
+
+func _try_tow_dock() -> bool:
+	var prio := int(ship_stats.get("docking_priority", 85))
+	var best: AiShip = null
+	var best_d := DOCK_RANGE
+	for a in ai_ships:
+		var ai := a as AiShip
+		if ai == null or ai.dying or ai.behavior == "towed":
+			continue
+		# icDockPort::TryToDock also gates on approach kinematics; its capture
+		# constants (_DAT_10119468 alignment/distance thresholds) were not
+		# resolved to values -- 20 m/s relative is eyeballed
+		if (ai.velocity - ship.velocity).length() > 20.0:
+			continue
+		var d: float = ship.global_position.distance_to(ai.global_position) \
+				- ai.radius
+		if d < best_d:
+			best = ai
+			best_d = d
+	if best == null:
+		return false
+	if best.docking_priority >= prio:
+		# the higher-priority sim is the parent: docking to it anchors US.
+		# Our station dock (velocity zeroed) already models that; a
+		# higher-priority ship berth is not supported here.
+		return false
+	towed = best
+	towed_prev_behavior = best.behavior
+	best.behavior = "towed"
+	towed_rel = ship.global_transform.affine_inverse() * best.global_transform
+	ship.tow_mass = best.mass
+	# scalar inertia stand-in: I = m*(w^2+h^2+l^2)/12, + m*d^2 for the child
+	var pd := Vector3(float(ship_stats.get("width", 80)),
+			float(ship_stats.get("height", 70)),
+			float(ship_stats.get("length", 120)))
+	var i_own: float = ship.mass * pd.length_squared() / 12.0
+	var cd := best.half_dims * 2.0
+	var d2 := ship.global_position.distance_squared_to(best.global_position)
+	var i_child: float = best.mass * cd.length_squared() / 12.0 + best.mass * d2
+	ship.tow_torque_scale = i_own / maxf(i_own + i_child, 0.001) \
+			if i_own > 0.0 else 0.0
+	audio.play("audio/sfx/dock.wav", -4.0)
+	hud.log_msg("DOCKED: %s  (MASS %d + %d)"
+			% [str(best.display_name).to_upper(), int(ship.mass), int(best.mass)])
+	return true
+
+func _update_tow() -> void:
+	if towed == null:
+		return
+	if not is_instance_valid(towed) or towed.dying:
+		_release_tow(false)
+		return
+	# FiSim::UpdateChild: the child rides the parent's frame rigidly
+	towed.global_transform = ship.global_transform * towed_rel
+	towed.velocity = ship.velocity
+
+func _release_tow(nudge: bool) -> void:
+	if towed != null and is_instance_valid(towed):
+		towed.behavior = towed_prev_behavior
+		towed.velocity = ship.velocity
+		if nudge:
+			hud.log_msg("UNDOCKED: %s" % str(towed.display_name).to_upper())
+	towed = null
+	ship.tow_mass = 0.0
+	ship.tow_torque_scale = 1.0
+
 func _try_dock() -> void:
 	var near := _nearest("station")
 	if near.get("dist", INF) > DOCK_RANGE:
+		# no station berth: a lower-priority sim (a cargo pod) in reach
+		# becomes our docked child instead -- the tow
+		if _try_tow_dock():
+			return
 		hud.warn("NO DOCKPORT IN RANGE")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
@@ -2146,6 +2234,12 @@ func _leave_base() -> void:
 	_apply_view()
 
 func _undock() -> void:
+	if towed != null:
+		# iiSim::Undock: the lower-priority half frees the mate; our child
+		# is released with the pair's current velocity
+		audio.play("audio/sfx/undock.wav", -4.0)
+		_release_tow(true)
+		return
 	if docked_at == "":
 		return
 	if base_iface != null and base_iface.inside:
@@ -2413,6 +2507,7 @@ func _physics_process(delta: float) -> void:
 		missiles._tick_mags(player_mags, delta)
 	if not _shockwaves.is_empty():
 		_update_shockwaves(delta)
+	_update_tow()
 	# The TRI's DRIVE axis, which is a property of the SHIP and not of the yoke:
 	# icShip::Simulate (0x10070f00) multiplies the engine force by
 	# TRIWeight(ship+0x294) and the thruster force by TRIWeight(ship+0x290) --
@@ -3497,7 +3592,8 @@ func _autopilot_process(delta: float) -> void:
 			if dist < DOCK_RANGE * 0.8 and _ap_dock_retry <= 0.0:
 				_ap_dock_retry = 1.0
 				_try_dock()
-				if docked_at != "" or (base_iface != null and base_iface.inside):
+				if docked_at != "" or towed != null \
+						or (base_iface != null and base_iface.inside):
 					_set_autopilot(0)
 		4:  # match velocity
 			var tv := Vector3.ZERO

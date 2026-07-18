@@ -48,6 +48,7 @@ var radius := 60.0    # iiSim radius (+0x1c), the ship INI's radius= key
 var explosion_size := 10.0
 var half_dims := Vector3(10, 10, 10)  # INI width/height/length * 0.5
 var dying := false    # OnExplode dramatic sequence running; ignore new kills
+var docking_priority := 50  # iiSim +0x1c0; the HIGHER sim is the dock parent
 var disrupt_time := 0.0       # icShip::Disrupt via icMissile::CheckForDisruption
 var disrupt_full := false     # full_disruption: everything, else shields only
 var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
@@ -116,6 +117,7 @@ func setup(props: Dictionary) -> void:
 	hull = hull_max
 	radius = float(props.get("radius", 60.0))
 	shot_tolerance = int(props.get("max_player_shots_before_aggression", 4))
+	docking_priority = int(props.get("docking_priority", docking_priority))
 	_load_dims(props)
 
 func _load_dims(props: Dictionary) -> void:
@@ -125,10 +127,12 @@ func _load_dims(props: Dictionary) -> void:
 	if w > 0.0 or h > 0.0 or l > 0.0:
 		half_dims = Vector3(w, h, l) * 0.5
 		explosion_size = half_dims.length()  # CalculateRadius 0x1007ccf0
+		mass = w * h * l * 0.001             # iiThrusterSim::Load, m_density
 	else:
 		# no dimensions in the record: the radius is the only size we have
 		half_dims = Vector3.ONE * radius * 0.5
 		explosion_size = radius
+		mass = radius * radius * radius * 0.001
 
 func setup_ini(path: String, model: Node3D = null) -> void:
 	# the authored hull: hit_points, armour and the full subsim list
@@ -140,6 +144,8 @@ func setup_ini(path: String, model: Node3D = null) -> void:
 	if not rec.is_empty():
 		shot_tolerance = int((rec.get("properties", {}) as Dictionary)
 				.get("max_player_shots_before_aggression", shot_tolerance))
+		docking_priority = int((rec.get("properties", {}) as Dictionary)
+				.get("docking_priority", docking_priority))
 		_load_dims(rec.get("properties", {}) as Dictionary)
 	var fitted := ShipSystems.for_ship(path)
 	if fitted.hull_max <= 0.0:
@@ -221,6 +227,11 @@ func _physics_process(delta: float) -> void:
 			main.kill_ai(self)
 			return
 	match behavior:
+		"towed":
+			# a docked child rides its parent rigidly (FiSim::UpdateChild
+			# rewrites the child's transform from the parent every tick);
+			# main._update_tow does the rewrite, we must not integrate
+			return
 		"dying":
 			# OnExplode's dramatic sequence: dead hands on the controls, the
 			# hulk keeps its velocity and the random tumble until the final

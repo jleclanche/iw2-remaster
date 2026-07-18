@@ -1188,7 +1188,42 @@ func _mechcheck(_delta: float) -> void:
 			# put the ship back where the rest of the game expects it
 			m.sys.set_tri_position(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
 			_mech_next()
-		23:
+		23:  # --- towing (icDockPort::OnDock -> AttachChild mass coupling) ----
+			# the tug is 80x70x120 -> mass 672 (iiThrusterSim::Load, w*h*l*
+			# m_density 0.001); a cargo pod is 50^3 -> 125; a docked pair
+			# accelerates at mass/(mass+partner) of the rated figure
+			var pod := _mech_spawn("Tow Pod", 1000.0,
+					m.ship.global_position - m.ship.global_transform.basis.z * 300.0)
+			pod.setup_ini("sims/ships/utility/cargo_pod.ini", null)
+			pod.docking_priority = 11
+			pod.mass = 125.0   # setup_ini reloads dims; pin the authored value
+			pod.velocity = m.ship.velocity
+			var mass_ok: bool = absf(m.ship.mass - 672.0) < 1.0
+			var did: bool = m._try_tow_dock()
+			var scale_ok: bool = absf(m.ship.mass_scale() - 672.0 / 797.0) < 0.01
+			_mech("tow-dock", did and mass_ok and scale_ok,
+				"tug %.0f + pod %.0f -> accel x %.3f"
+					% [m.ship.mass, pod.mass, m.ship.mass_scale()])
+			_mech_v0 = pod.global_position
+			_mech_next()
+		24:
+			var pod2: AiShip = m.towed
+			if pod2 == null:
+				_mech("tow-ride", false, "tow released early")
+			else:
+				# the child must ride the parent's frame rigidly
+				var rel: float = ((pod2.global_position - m.ship.global_position)
+						.length())
+				_mech("tow-ride", absf(rel - 300.0) < 5.0 and pod2.behavior == "towed",
+					"pod holds %.0f m off the parent" % rel)
+			m._release_tow(false)
+			_mech("tow-release", m.towed == null
+					and absf(m.ship.mass_scale() - 1.0) < 0.001,
+				"accel scale back to %.3f" % m.ship.mass_scale())
+			if pod2 != null:
+				m.kill_ai(pod2)
+			_mech_next()
+		25:
 			print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
 				else "%d FAILURES" % _mech_fail))
 			get_tree().quit(0 if _mech_fail == 0 else 1)
