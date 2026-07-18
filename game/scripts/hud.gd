@@ -313,6 +313,11 @@ func hud_up() -> bool:
 	var bi: BaseInterior = main.base_iface
 	if bi != null and bi.open:
 		return false
+	# Director's mode: a staged cutscene runs on the director's own cameras
+	# (the dolly, the two-shots -- the no-HUD half of icDirector's name table)
+	# with the flight HUD dark. This covers the base docking fly-in too.
+	if main.in_cutscene():
+		return false
 	return true
 
 func _draw() -> void:

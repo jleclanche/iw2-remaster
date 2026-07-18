@@ -196,13 +196,22 @@ func _current() -> PogUi.PogWindow:
 # Up/Down walk the focus ring; inside a list box they walk its rows first and
 # only leave it at the ends, which is what FcListBox::OnControlFocusUp does.
 
-func _unhandled_input(e: InputEvent) -> void:
+## Mouse, in _gui_input: this control is MOUSE_FILTER_STOP, so the viewport
+## consumes its mouse events in the GUI phase -- they NEVER reach
+## _unhandled_input (where they used to be "handled": clicking any POG screen
+## was dead while the keyboard worked).
+func _gui_input(e: InputEvent) -> void:
 	if not visible or ui == null:
 		return
 	if e is InputEventMouseButton and e.pressed \
 			and e.button_index == MOUSE_BUTTON_LEFT:
+		# full-rect control at the origin: local coords == viewport coords
 		_click(e.position)
-		get_viewport().set_input_as_handled()
+		accept_event()
+
+
+func _unhandled_input(e: InputEvent) -> void:
+	if not visible or ui == null:
 		return
 	if not (e is InputEventKey and e.pressed):
 		return

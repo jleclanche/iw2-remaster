@@ -394,6 +394,11 @@ func _pog_boot_process() -> void:
 ## Is an in-engine cutscene staged right now? idirector.Begin()/End() bracket
 ## one, and the launch sequence at the start of the campaign is one.
 func in_cutscene() -> bool:
+	# the base's docking/autoskip cutscene is a director sequence like any
+	# other: menu Escape must not open the pause menu over it, the HUD goes
+	# dark, and the yoke is the script's
+	if base_iface != null and base_iface.cut > 0:
+		return true
 	if use_port and pog_rt != null and pog_rt.gameapi != null:
 		return pog_rt.gameapi.director_busy
 	if use_pog and pog_api != null:
@@ -402,6 +407,9 @@ func in_cutscene() -> bool:
 
 ## Ask the running cutscene to abort, the way the scripts themselves do.
 func skip_cutscene() -> void:
+	if base_iface != null and base_iface.cut > 0:
+		base_iface.skip_cutscene()
+		return
 	var std: PogStd = pog_rt.std if use_port else pog_std
 	if std != null:
 		std.globals["g_cutscene_skip"] = 1
