@@ -239,7 +239,29 @@ func _ready() -> void:
 	_mfd_fx.hud = self
 	_mfd_fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_mfd_fx.z_index = 1  # composites over the comm portrait, a later child
+	# the interference static and scan band are Begin(1)/Begin(5) draws with
+	# FcGraphicsEngine+0x175c = 2: ADDITIVE over the portrait. In normal blend
+	# the same strengths read as heavy dark bars eating the face.
+	var mfd_mat := CanvasItemMaterial.new()
+	mfd_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_mfd_fx.material = mfd_mat
 	add_child(_mfd_fx)
+	# FUN_100eb270 (text) and every sprite/bar/outline path set eBlend = 2
+	# (additive) before Begin -- the style table at 0x10162cb0 carries only the
+	# alpha, and the additive blend over the dark scene IS the original's text
+	# "glow". The alpha family (eBlend 3) exists for exactly two draws: the
+	# block frame FILL (FUN_100e2620's Begin(3)) and the comm MFD's video
+	# backing. So the HUD canvas itself goes additive, and those two draws are
+	# queued onto _fill_fx, a normal-blend underlay rendered beneath it.
+	var hud_mat := CanvasItemMaterial.new()
+	hud_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = hud_mat
+	_fill_fx = FillLayer.new()
+	_fill_fx.hud = self
+	_fill_fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fill_fx.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_fill_fx.z_index = -1
+	add_child(_fill_fx)
 	# icHUDShipStatus draws its lamps ADDITIVELY (every sprite path in the HUD
 	# sets FcGraphicsEngine+0x175c = 2 before Begin). For this one element the
 	# blend mode is load-bearing rather than cosmetic: a destroyed subsim's lamp
@@ -357,8 +379,6 @@ func _draw() -> void:
 	_draw_choices(c)
 	_draw_objectives()
 
-const SUBTITLE_COL := Color(1.0, 0.93, 0.55, 1.0)  # pale yellow, original
-
 func _mfd_rect() -> Rect2:
 	# modes 0/1/3 shrink the block to 128x48 (FUN_10103d80 passes DAT_1011e240);
 	# modes 2/4/5 restore the full 128x176 (FUN_10103e00)
@@ -454,6 +474,33 @@ class MfdFx extends Control:
 
 var _mfd_fx: MfdFx
 
+# The two alpha-blended (eBlend 3) draw families in the whole HUD -- the block
+# frame fill and the comm MFD's video backing -- land here, on a normal-blend
+# underlay beneath the additive canvas (z_index -1). Hud._draw queues them in
+# paint order; the parent's _draw always runs before its children's, so the
+# queue is filled before it is consumed.
+class FillLayer extends Control:
+	var hud: Hud
+
+	func _process(_d: float) -> void:
+		queue_redraw()
+
+	func _draw() -> void:
+		if hud == null:
+			return
+		for f: Array in hud.fills:
+			if f[0] is Rect2:
+				draw_rect(f[0], f[1])
+			elif f[0] is PackedVector2Array:
+				draw_colored_polygon(f[0], f[1])
+			else:  # [Font, pos, text, size, color]: a knocked-out caption
+				draw_string(f[0], f[1], f[2], HORIZONTAL_ALIGNMENT_LEFT, -1,
+						f[3], f[4])
+		hud.fills.clear()
+
+var _fill_fx: FillLayer
+var fills: Array = []  # [[Rect2 | PackedVector2Array, Color], ...]
+
 func _draw_comm_panel() -> void:
 	# @element icHUDTargetMFD (mode 5, FUN_10102fd0 / FUN_10102490)
 	# The comm channel takes over the target MFD block: caption becomes
@@ -473,10 +520,13 @@ func _draw_comm_panel() -> void:
 	_panel(r.position, r.size, "COMM CHANNEL OPEN")
 	var body := Rect2(r.position + Vector2(0, HDR_H),
 			Vector2(r.size.x, 128.0))  # y 16..144 (16 * _DAT_10117b28 = 8)
-	draw_rect(body, _dim(Color(0, 0, 0, 1)))
-	# comms.gd builds the portrait at a fixed 204x148; scale it into the block
+	# the video backing is one of the HUD's two ALPHA draws (mode-5 branch of
+	# FUN_10103060): it goes to the normal-blend underlay, where black is black
+	fills.append([body, _dim(Color(0, 0, 0, 1))])
+	# the portrait renders square (RenderPortrait's viewport IS the square block
+	# body; the LWS cameras are CustomSize 256 256); fill the body with it
 	var p: Control = main.comms.portrait
-	p.scale = Vector2.ONE * ((body.size.x - 2.0) / p.size.x)
+	p.scale = (body.size - Vector2(2.0, 2.0)) / p.size
 	p.position = body.position + Vector2(1, 1)
 	# every portrait is now the live 3D head (comm portraits were never FMV --
 	# see comms.gd; the movies are the prison dossiers), so the interference
@@ -493,32 +543,33 @@ func _draw_comm_panel() -> void:
 	_ea = 1.0
 
 func _draw_subtitles() -> void:
-	# in-flight dialogue subtitles at the top of the HUD (manual, comms):
-	# pale yellow with a dark drop, like the original
+	# @element icComms (the teleprinter, NOT icHUDMessage): RenderText @
+	# 0x10080c70 draws the dialogue at the very top, LEFT-aligned at the
+	# flux.ini text rect (just right of the comm MFD), DrawText align 0, one
+	# configured colour, no shadow pass. Print/UpdateTeleprinter (0x10081c80 /
+	# 0x10081de0) reveal it character by character in step with the voice-over
+	# and word-wrap only at the text area's own near-full-screen width -- a
+	# normal sentence is a single line.
 	if main.comms == null or str(main.comms.subtitle) == "":
 		return
-	var s := _screen()
 	var who := str(main.comms.speaker).capitalize()
-	var text: String = "%s: %s" % [who, main.comms.subtitle]
-	var max_w := s.x * 0.62
-	var words := text.split(" ")
+	var text: String = "%s: %s" % [who, main.comms.subtitle_shown()]
+	if text.ends_with(": "):
+		return  # nothing revealed yet this frame
+	var left := _left_x() + MFD_SIZE.x + 18.0
+	var max_w := _screen().x - left - 320.0
 	var lines: Array = [""]
-	for w in words:
-		var trial: String = (lines[-1] + " " + w).strip_edges()
-		if _font.get_string_size(trial, HORIZONTAL_ALIGNMENT_LEFT, -1,
-				FONT_SIZE + 1).x > max_w:
+	for w in text.split(" "):
+		var trial: String = (String(lines[-1]) + " " + w).strip_edges()
+		if String(lines[-1]) != "" and _font.get_string_size(trial,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1).x > max_w:
 			lines.append(w)
 		else:
 			lines[-1] = trial
-	var y := 64.0  # below the system-status lights
+	var y := MARGIN + 18.0
 	for ln in lines:
-		var w2 := _font.get_string_size(ln, HORIZONTAL_ALIGNMENT_LEFT, -1,
-				FONT_SIZE + 1).x
-		var at := Vector2(s.x / 2.0 - w2 / 2.0, y)
-		draw_string(_font, at + Vector2(1, 1), ln,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, Color(0, 0, 0, 0.8))
-		draw_string(_font, at, ln,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, SUBTITLE_COL)
+		draw_string(_font, Vector2(left, y), ln,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE + 1, _dim(GREEN))
 		y += FONT_SIZE + 7
 
 func _draw_choices(c: Vector2) -> void:
@@ -531,8 +582,6 @@ func _draw_choices(c: Vector2) -> void:
 			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 1, GREEN_DIM)
 	for i in opts.size():
 		var text := "%d. %s" % [i + 1, str(opts[i]["text"])]
-		draw_string(_font, Vector2(c.x - 199, y + 1), text,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, Color(0, 0, 0, 0.8))
 		draw_string(_font, Vector2(c.x - 200, y), text,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, YELLOW)
 		y += 17.0
@@ -551,8 +600,6 @@ func _draw_prompt(c: Vector2) -> void:
 	var w := _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
 			FONT_SIZE).x
 	var at := Vector2(c.x - w / 2.0, c.y + 148)
-	draw_string(_font, at + Vector2(1, 1), text,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, Color(0, 0, 0, 0.8))
 	draw_string(_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE,
 			GREEN)
 
@@ -699,10 +746,11 @@ func _frame(pos: Vector2, size: Vector2, mode: int) -> void:
 	var pts := PackedVector2Array()
 	for p in _frame_pts(w, h, mode):
 		pts.append(pos + p)
-	# fill: GREEN*0.15 at alpha 0.5 (FUN_100e2620 Begin(3))
+	# fill: GREEN*0.15 at alpha 0.5 (FUN_100e2620 Begin(3)) -- the HUD's one
+	# alpha-blended pass, so it renders on the normal-blend underlay
 	var fill := _dim(Color(GREEN.r * FRAME_FILL, GREEN.g * FRAME_FILL,
 			GREEN.b * FRAME_FILL, 0.5))
-	draw_colored_polygon(pts, fill)
+	fills.append([pts, fill])
 	# faint 16px grid (Begin(1), GREEN alpha 0.04 additive -> 0.06 here)
 	var gcol := _dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.06))
 	var gx := pos.x + HDR_H
@@ -726,10 +774,12 @@ func _panel(pos: Vector2, size: Vector2, title: String, mode := 0) -> void:
 	# for top-anchored blocks (modes 0/1) taller than the 16px header row; the
 	# caption text is knocked out dark against it.
 	if mode != 3 and size.y > HDR_H:
-		draw_rect(Rect2(pos, Vector2(size.x, HDR_H)),
-				_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.32)))
-		draw_string(_font, pos + Vector2(4, 12), title,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(Color(0, 0, 0, 0.9)))
+		# a dark knocked-out caption cannot exist in a pure additive pass, so
+		# the band and its caption render together on the underlay
+		fills.append([Rect2(pos, Vector2(size.x, HDR_H)),
+				_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.32))])
+		fills.append([_font, pos + Vector2(4, 12), title, FONT_SIZE - 2,
+				_dim(Color(0, 0, 0, 0.9))])
 
 func _bar(pos: Vector2, frac: float, col: Color, segs := BAR_SEGS) -> void:
 	# FUN_100ebde0, bar style 1: SPRITE blocks (fill sprite 10, 8x16, on the
@@ -1083,10 +1133,16 @@ func _draw_target_block(c: Vector2) -> void:
 		_vbar(Vector2(c.x + TEXT_X, top), lh0 + lh0 + lh1, thull,
 				_health_color(thull))
 	var tx := c.x + TEXT_X + TEXT_GAP
-	var head := tname
+	# FUN_100f7e10 writes the hull lead-in while the DAMAGE-RAMP colour from
+	# FUN_100e88c0 is still active (green at full hull, gold by 75%, red at
+	# 25%), THEN sets the active colour to the contact colour (0x100f7f2b) for
+	# the name -- and never changes it again, so range and speed share it.
+	var nx := tx
 	if thull >= 0.0:
-		head = "%d %s" % [int(round(thull * 100.0)), tname]
-	_hud_text(0, 2, Vector2(tx, top), head, 0, 0, col)
+		var pct := "%d " % int(round(thull * 100.0))
+		_hud_text(0, 2, Vector2(tx, top), pct, 0, 0, _health_color(thull))
+		nx = tx + _text_w(0, pct)
+	_hud_text(0, 2, Vector2(nx, top), tname, 0, 0, col)
 	_hud_text(1, 2, Vector2(tx - 1.0, top + lh0), _fmt_range(tdist), 0, 0, col)
 	var tvel := Vector3.ZERO
 	if main.target_ai != null and is_instance_valid(main.target_ai):
@@ -3101,7 +3157,11 @@ func _draw_contact_list() -> void:
 			col = Color(1.0, 0.8, 0.0, 0.95)
 		if not entry["targeted"]:
 			col = Color(col.r, col.g, col.b, 0.75)
-		var nm := str(entry["name"]).to_upper()
+		# a POG-created sim's name is a LOCALISATION KEY (sim.Create("...",
+		# "a0_m10_name_abandoned")); the engine resolves names through
+		# FcLocalisedText::Field at display time, and an unresolved key renders
+		# as itself -- resolve here so "Abandoned Hulk" never leaks raw
+		var nm := ShipSystems.display_name(str(entry["name"])).to_upper()
 		var cut := " "
 		if nm.length() > 12:
 			nm = nm.left(12)
