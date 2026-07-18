@@ -938,15 +938,44 @@ selection rings; `LDSIQuickFire` I fires the LDSI magazine directly;
 | `0x101191f0` | 0.34375 | octagonal-norm mid coefficient |
 | `0x101191ec` | 0.25 | octagonal-norm min coefficient |
 
+### 10.9b Missile guidance (extracted structure)
+
+`icMissile::Simulate` (`0x1006c550`) state 3/4 does NOT thrust along the
+nose: it hands `iiThrusterSim::ComputeForceAndTorque` a **desired velocity**
+(missile `+0x37c` = the embedded `icAITarget`'s `+0xdc`) and a desired
+attitude (`+0x3a0`), and the thruster sim converges the missile's velocity
+vector toward it under the per-axis INI `acceleration` (380,380,380 on the
+seeker) -- full lateral thrust, no point-first-then-burn. The brain
+(`icAITarget::Think 0x59a5e`, gated by the missile's order flags
+`0xc000008` set in `SetTarget 0x1006d6c0`) builds that velocity from the
+bearing to the target (`ComputeTargetVector 0x58708`: unit direction +
+range into `+0xb0`/`+0xc8`) and `ComputeTargetVelocity` (`0x5a098`) folds
+the **target's own velocity** in (`+0xbc`): close along the bearing while
+matching the target's motion -- a constant-bearing intercept.
+`ComputeAngularControl` (`0x5e32c`) aligns the nose to the same vector at
+the authored angular rates. missiles.gd `_steer` flies exactly this shape.
+
+**In-flight sound.** Every missile avatar's `Setup.lws` carries a sound
+null on the **`lz` channel** -- the same channel that lights the exhaust --
+so the scream starts when the motor does: seeker/harrower/deadshot play
+`missile_scream` (pitch 1.0, min_range 100), disruptor/gnat/pulsar
+`missile_scream02`, hammer `rocket_scream` (sustain `missile_scream03` at
+pitch 0.7; its `attack_url` "ignite" is absent from the shipped resource),
+blizzard/am_remote `missile_scream03` at pitch 1.2 (min_range 180), the
+LDSI missiles one-shot `ldsi_engage`, and mines are silent. The counter
+avatar loops `cm_loop` (`FcLoopSoundNode`, no channel -- whole life,
+min_range 250). missiles.gd `FLIGHT_SOUNDS`.
+
 ### 10.10 Missile unknowns
 
 Not recovered. **Do not fill these in with plausible values.**
 
-- **The `icAITarget::Think` intercept law.** The missile flies the same AI
-  brain NPC ships use; its exact steering (lead law, roll policy) was not
-  extracted. The remaster flies turn-rate-limited lead pursuit at full
-  thrust through the same INI limits -- the flight-model shape is right, the
-  steering law is an approximation.
+- **`icAITarget` fine control.** The guidance STRUCTURE above is extracted;
+  the fine mixing in `ComputeLateralControl` (`0x5b3f4` -- damping bands,
+  avoidance blending, LDS branches) and the roll policy in
+  `ComputeAngularControl` are ship-AI machinery whose missile-relevant
+  residue was not fully pinned; the remaster's `_steer` is the extracted
+  shape without those refinements.
 - **`icShockwave`** -- the antimatter and LDSI explosion carrier. Radius and
   the INI it is built from are recovered; its damage application is not.
 - **The LDSI missile's in-LDS fuse.** `icLDSIMissile::Think` (`0x1006b830`)

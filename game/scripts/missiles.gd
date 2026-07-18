@@ -46,6 +46,35 @@ const FIRING_TOLERANCE := 15.0    # squared_radius_firing_tolerance (used linear
 								  # icMagazine::ComputeFiringSolution 0x10038660)
 const CFS_MAX_LEAD := 30.0        # max ballistic lead time, 0x10119c18
 
+# --- in-flight sound, from the avatar scenes -------------------------------
+# Each missile's Setup.lws carries an FcThreePartSoundNode null on the same
+# `lz` channel that lights the exhaust (ini:/audio/sfx/*): the loop starts
+# when the motor does. Extracted per avatar from resource.zip:
+#   seeker / harrower / deadshot ................ missile_scream   (1.0, 100 m)
+#   disruptor / rocket (gnat) / pulsar .......... missile_scream02 (1.0, 100 m)
+#   hammer (rocket_scream) ...................... missile_scream03 (0.7, 180 m)
+#     (its attack_url "sound:/audio/sfx/ignite" does not EXIST in the shipped
+#      resource -- the original degrades to the sustain loop too)
+#   blizzard / am_remote ........................ missile_scream03 (1.2, 180 m)
+#   ldsi_large / ldsi_small (FcSoundNode) ....... ldsi_engage, ONE-SHOT (50 m)
+#   mines (ldsi_mine / proximity_mine) .......... silent
+#   counter (FcLoopSoundNode, no channel) ....... cm_loop, loops for life (250 m)
+# min_range is "full volume within" -- Godot's unit_size. pitch_bend maps to
+# pitch_scale.
+const FLIGHT_SOUNDS := {
+	"seeker": {"wav": "missile_scream", "pitch": 1.0, "range": 100.0},
+	"harrower": {"wav": "missile_scream", "pitch": 1.0, "range": 100.0},
+	"deadshot": {"wav": "missile_scream", "pitch": 1.0, "range": 100.0},
+	"disruptor": {"wav": "missile_scream02", "pitch": 1.0, "range": 100.0},
+	"rocket": {"wav": "missile_scream02", "pitch": 1.0, "range": 100.0},
+	"pulsar": {"wav": "missile_scream02", "pitch": 1.0, "range": 100.0},
+	"hammer": {"wav": "missile_scream03", "pitch": 0.7, "range": 180.0},
+	"blizzard": {"wav": "missile_scream03", "pitch": 1.2, "range": 180.0},
+	"am_remote": {"wav": "missile_scream03", "pitch": 1.2, "range": 180.0},
+	"ldsi_large": {"wav": "ldsi_engage", "pitch": 1.0, "range": 50.0,
+		"once": true},
+}
+
 # icMissile::eState (+0x29c). 1..6 as constructed/assigned in the DLL.
 const ST_EJECT := 1     # coasting until arm_time
 const ST_SEEK := 2      # thrust ahead, FindTarget every ACTIVE_SEEK_UPDATE
@@ -291,6 +320,17 @@ func _spawn_cm(owner: Node3D, spec: Dictionary, vel: Vector3) -> void:
 	glow.light_energy = 6.0
 	glow.omni_range = 200.0
 	node.add_child(glow)
+	# the counter avatar's FcLoopSoundNode (ini:/audio/sfx/countermeasure):
+	# cm_loop, no trigger channel -- it loops for the CM's whole life
+	if main != null and main.audio != null:
+		var stream: AudioStreamWAV = main.audio._load_wav("audio/sfx/cm_loop.wav")
+		if stream != null:
+			stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+			var sp := AudioStreamPlayer3D.new()
+			sp.stream = stream
+			sp.unit_size = 250.0  # min_range=250
+			node.add_child(sp)
+			sp.play()
 	cms.append({"node": node, "vel": vel, "age": 0.0, "spec": spec,
 		"owner": owner, "engaged": false,
 		"engage_time": float(spec.get("engage_time", 5.0)),
@@ -520,6 +560,14 @@ func _step_missile(rec: Dictionary, delta: float) -> bool:
 		if not _step_guidance(rec, node, spec, delta):
 			return true  # detonated by TargetInRange
 
+	# the lz channel lights the motor: the avatar's flight-scream sound node
+	# rides the same channel as the exhaust (see FLIGHT_SOUNDS)
+	var burning: bool = (rec["cls"] == "icRocket" and age >= ROCKET_IGNITION) \
+			or (rec["cls"] != "icRocket" and int(rec["state"]) >= ST_SEEK)
+	if burning and not bool(rec.get("burning", false)):
+		rec["burning"] = true
+		_start_flight_sound(rec, node, spec)
+
 	node.global_position = from + (rec["vel"] as Vector3) * delta
 	_update_trail(rec, node, delta)
 
@@ -552,9 +600,10 @@ func _step_missile(rec: Dictionary, delta: float) -> bool:
 	return false
 
 # icMissile::Think 0x1006c350 + Simulate 0x1006c550. The missile is an
-# iiThrusterSim flown by its embedded icAITarget brain (+0x2a0); we fly the
-# same shape -- turn-rate-limited pursuit at full thrust. The exact
-# icAITarget::Think intercept law was not extracted (see docs/combat.md).
+# iiThrusterSim flown by its embedded icAITarget brain (+0x2a0) -- Think
+# runs icAITarget::Think (0x59a5e) in states 3/4, and Simulate feeds the
+# brain's desired velocity/attitude to ComputeForceAndTorque. The steering
+# law lives in _steer below.
 func _step_guidance(rec: Dictionary, node: Node3D, spec: Dictionary,
 		delta: float) -> bool:
 	var state := int(rec["state"])
@@ -633,6 +682,27 @@ func _step_guidance(rec: Dictionary, node: Node3D, spec: Dictionary,
 			pass  # coast inert until lifetime
 	return true
 
+func _start_flight_sound(rec: Dictionary, node: Node3D,
+		spec: Dictionary) -> void:
+	if main == null or main.audio == null:
+		return
+	var fs: Dictionary = FLIGHT_SOUNDS.get(str(spec.get("model", "")), {})
+	if fs.is_empty():
+		return
+	var stream: AudioStreamWAV = main.audio._load_wav(
+			"audio/sfx/%s.wav" % str(fs["wav"]))
+	if stream == null:
+		return
+	stream.loop_mode = AudioStreamWAV.LOOP_DISABLED \
+			if bool(fs.get("once", false)) else AudioStreamWAV.LOOP_FORWARD
+	var p := AudioStreamPlayer3D.new()
+	p.stream = stream
+	p.pitch_scale = float(fs["pitch"])
+	p.unit_size = float(fs["range"])
+	node.add_child(p)
+	p.play()
+
+
 func _thrust_forward(rec: Dictionary, node: Node3D, spec: Dictionary,
 		delta: float) -> void:
 	var want: Vector3 = -node.global_transform.basis.z * float(spec.get("speed", 2800.0))
@@ -641,23 +711,38 @@ func _thrust_forward(rec: Dictionary, node: Node3D, spec: Dictionary,
 
 func _steer(rec: Dictionary, node: Node3D, spec: Dictionary, chase: Node3D,
 		delta: float) -> void:
-	# lead pursuit toward the intercept, nose slewed at the INI yaw_rate
+	# icMissile::Simulate (0x1006c550) state 3 hands iiThrusterSim::
+	# ComputeForceAndTorque a DESIRED VELOCITY (missile+0x37c, the embedded
+	# icAITarget's +0xdc) and a desired attitude (+0x3a0): the missile steers
+	# its VELOCITY VECTOR with the full per-axis thruster acceleration
+	# (380,380,380 on the seeker) -- it never has to point at the target
+	# before it can pull toward it. The brain builds that velocity from the
+	# bearing to the target (icAITarget::ComputeTargetVector 0x58708: unit
+	# direction and range into +0xb0/+0xc8) at maximum speed, and
+	# ComputeTargetVelocity (0x5a098) folds the TARGET'S OWN velocity in
+	# (+0xbc) -- close along the bearing while matching the target's motion,
+	# i.e. a constant-bearing intercept. ComputeAngularControl (0x5e32c)
+	# separately aligns the nose to the same vector at the authored angular
+	# rates. (The exact control mixing in ComputeLateralControl 0x5b3f4 --
+	# damping bands, avoidance, formation offsets -- is ship-AI machinery a
+	# missile's order flags 0xc000008 never enable.)
 	var speed := float(spec.get("speed", 2800.0))
+	var accel := float(spec.get("accel", 300.0))
 	var to: Vector3 = chase.global_position - node.global_position
-	var tof: float = to.length() / maxf(speed, 1.0)
-	var aim: Vector3 = to + (_ship_vel(chase) - (rec["vel"] as Vector3)) \
-			* minf(tof, 5.0)
 	var fwd: Vector3 = -node.global_transform.basis.z
-	var want := aim.normalized() if aim.length() > 1e-3 else fwd
+	var dir := to.normalized() if to.length_squared() > 1e-6 else fwd
+	var want_vel: Vector3 = dir * speed + _ship_vel(chase)
+	rec["vel"] = (rec["vel"] as Vector3).move_toward(want_vel, accel * delta)
+	# nose alignment at the INI yaw/pitch rate (the drawn attitude and the
+	# exhaust direction; the thrusters above do the actual steering)
 	var max_turn := deg_to_rad(float(spec.get("yaw_rate", 120.0))) * delta
-	var angle := fwd.angle_to(want)
+	var angle := fwd.angle_to(dir)
 	if angle > 1e-4:
-		var axis := fwd.cross(want)
+		var axis := fwd.cross(dir)
 		if axis.length_squared() < 1e-9:
 			axis = node.global_transform.basis.y
 		node.global_transform.basis = Basis(axis.normalized(),
 				minf(angle, max_turn)) * node.global_transform.basis
-	_thrust_forward(rec, node, spec, delta)
 
 # --- warheads ---------------------------------------------------------------
 func _impact(rec: Dictionary, t: Node3D, at: Vector3) -> void:
