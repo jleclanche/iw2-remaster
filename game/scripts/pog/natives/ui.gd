@@ -250,10 +250,17 @@ class PogWindow extends RefCounted:
 	## offsets (negative y = scrolled off above, EntryHoveredOver @ 0x88740);
 	## we keep the row index the view starts at instead.
 	var scroll_top := 0
-	## kind == "scrollbar": the list box this bar scrolls.
+	## kind == "scrollbar": the list box (or text window) this bar scrolls.
 	var scroll_target: PogWindow = null
 	## A CreateFancyBorder window: drawn as the border outline.
 	var is_border := false
+	## Text window as an HTML page (icTextWindow renders HTML: the mails and
+	## the encyclopedia are authored pages with <a href> cross-links).
+	var page_url := ""                 ## the html: url currently shown
+	var page: Array = []               ## parsed blocks (parse_html_page)
+	var history: Array = []            ## visited urls; gui.TextWindowBack pops
+	var links: Array = []              ## renderer-filled: hrefs by hit index
+	var page_h := 0.0                  ## renderer-measured page height, px
 	## Edit box / slider / radio / checkbox.
 	var value: Variant = ""
 	var max_chars := 0
@@ -1024,7 +1031,11 @@ func _tw_set_string(_t, a: Array) -> Variant:
 		# one line.
 		if s.findn("<html") != -1 or s.findn("<p") != -1 \
 				or s.findn("<br") != -1:
+			win.page = parse_html_page(s)
 			s = html_to_text(s)
+		else:
+			win.page = []
+		win.page_url = ""
 		win.text = s
 		dirty = true
 	return 0
@@ -1034,17 +1045,57 @@ func _tw_set_resource(_t, a: Array) -> Variant:
 	# SetTextWindowResource(window, "html:/text/act_0/act0_master_lucreciamail_1")
 	# -- the engine points the text window at an HTML resource page: this is how
 	# the comms screen shows a mail's body and the encyclopedia its topics. The
-	# pages live extracted under data/ (tools/iw2/html_text.py).
+	# pages live extracted under data/ (tools/iw2/html_text.py). Setting a new
+	# resource starts a fresh visited-page stack.
 	var win := _win(a[0])
 	if win != null:
-		win.text = _resource_text(PogStd._s(a[1]))
-		dirty = true
+		win.history.clear()
+		_tw_load(win, PogStd._s(a[1]))
 	return 0
+
+
+## Load an html: page into a text window: parsed blocks for the renderer, the
+## plain text as fallback, scroll to the top.
+func _tw_load(win: PogWindow, url: String) -> void:
+	win.page_url = url
+	var raw := _resource_raw(url)
+	win.page = parse_html_page(raw)
+	win.text = html_to_text(raw)
+	win.scroll = 0.0
+	dirty = true
+
+
+## Follow a page link. hrefs are relative to the current page's directory
+## (index.html links "ships/corvettes/Dreadnaught_Corvette"), and the engine's
+## icTextWindow keeps the visited stack that TextWindowBack pops.
+func text_window_follow(win: PogWindow, href: String) -> void:
+	if win == null or href.is_empty():
+		return
+	var target := href
+	if not target.begins_with("html:"):
+		var dir := win.page_url.replace("\\", "/").trim_prefix("html:") \
+				.get_base_dir()
+		target = "html:" + dir.path_join(href).simplify_path()
+	if not win.page_url.is_empty():
+		win.history.append(win.page_url)
+	_tw_load(win, target)
+
+
+# @native gui.TextWindowBack
+func _tw_back(_t, a: Array) -> Variant:
+	# Pops one visited page and reports whether it navigated: the
+	# encyclopedia's Back button only leaves the screen when this returns 0
+	# (ibasegui SPEncyclopaediaScreen_OnBackButton).
+	var win := _win(a[0])
+	if win == null or win.history.is_empty():
+		return 0
+	_tw_load(win, String(win.history.pop_back()))
+	return 1
 
 
 ## "html:" + resource path, extension implied, either slash. Empty when the
 ## page is missing (a URL the scripts build for content that never shipped).
-func _resource_text(url: String) -> String:
+func _resource_raw(url: String) -> String:
 	if url.is_empty():
 		return ""
 	var path := url.replace("\\", "/").trim_prefix("html:").trim_prefix("/")
@@ -1055,7 +1106,93 @@ func _resource_text(url: String) -> String:
 	var full := String(game._base()).path_join("data").path_join(path)
 	if not FileAccess.file_exists(full):
 		return ""
-	return html_to_text(FileAccess.get_file_as_string(full))
+	return FileAccess.get_file_as_string(full)
+
+
+func _resource_text(url: String) -> String:
+	return html_to_text(_resource_raw(url))
+
+
+# --- the HTML page model ----------------------------------------------------
+# icTextWindow renders its HTML itself. parse_html_page turns a page into
+# renderable blocks -- {kind:"rule"} or {kind:"para", spans:[{t, link, b}]},
+# with {br:true} spans for forced line breaks -- and base_screens.gd lays the
+# spans out, underlines the links and hit-tests them.
+
+static var _re_ws := RegEx.create_from_string("\\s+")
+static var _re_href := RegEx.create_from_string("(?i)href\\s*=\\s*\"?([^\"\\s>]+)")
+
+static func parse_html_page(raw: String) -> Array:
+	var body := raw
+	var mb := RegEx.create_from_string("(?is)<body[^>]*>(.*?)</body>").search(raw)
+	if mb != null:
+		body = mb.get_string(1)
+	body = body.replace("\r", " ").replace("\n", " ").replace("\t", " ")
+	var st := {"cur": "", "link": "", "bold": false,
+			"spans": [], "blocks": []}
+	var i := 0
+	var n := body.length()
+	while i < n:
+		var lt := body.find("<", i)
+		if lt == -1:
+			st.cur += _entities(body.substr(i))
+			break
+		if lt > i:
+			st.cur += _entities(body.substr(i, lt - i))
+		var gt := body.find(">", lt)
+		if gt == -1:
+			break
+		var tag := body.substr(lt + 1, gt - lt - 1).strip_edges()
+		i = gt + 1
+		var tl := tag.to_lower()
+		if tl == "p" or tl.begins_with("p ") or tl == "/p":
+			_hp_flush_para(st)
+		elif tl == "br" or tl.begins_with("br ") or tl.begins_with("br/"):
+			_hp_flush_span(st)
+			st.spans.append({"br": true})
+		elif tl == "hr" or tl.begins_with("hr "):
+			_hp_flush_para(st)
+			st.blocks.append({"kind": "rule"})
+		elif tl == "a" or tl.begins_with("a "):
+			_hp_flush_span(st)
+			var m := _re_href.search(tag)
+			st.link = m.get_string(1) if m != null else ""
+		elif tl == "/a":
+			_hp_flush_span(st)
+			st.link = ""
+		elif tl == "b" or tl == "strong":
+			_hp_flush_span(st)
+			st.bold = true
+		elif tl == "/b" or tl == "/strong":
+			_hp_flush_span(st)
+			st.bold = false
+		# every other tag is presentation we do not model; dropped
+	_hp_flush_para(st)
+	return st.blocks
+
+static func _entities(s: String) -> String:
+	return s.replace("&nbsp;", " ").replace("&amp;", "&") \
+		.replace("&lt;", "<").replace("&gt;", ">") \
+		.replace("&quot;", "\"").replace("&#39;", "'")
+
+static func _hp_flush_span(st: Dictionary) -> void:
+	var t := _re_ws.sub(String(st.cur), " ", true)
+	if not t.is_empty():
+		st.spans.append({"t": t, "link": st.link, "b": st.bold})
+	st.cur = ""
+
+static func _hp_flush_para(st: Dictionary) -> void:
+	_hp_flush_span(st)
+	var spans: Array = st.spans
+	while not spans.is_empty() and not bool(spans[0].get("br", false)) \
+			and String(spans[0].get("t", "")).strip_edges().is_empty():
+		spans.pop_front()
+	while not spans.is_empty() and not bool(spans[-1].get("br", false)) \
+			and String(spans[-1].get("t", "")).strip_edges().is_empty():
+		spans.pop_back()
+	if not spans.is_empty():
+		st.blocks.append({"kind": "para", "spans": spans.duplicate()})
+	spans.clear()
 
 
 ## Word-era page HTML -> the plain paragraphs the text window draws. Raw
@@ -1852,7 +1989,7 @@ const _BINDINGS := {
 	"gui.playbackgroundmovie": "_gui_noop",
 	"gui.stopbackgroundmovie": "_gui_noop", "gui.stopallmovies": "_gui_noop",
 	"gui.settextwindowresource": "_tw_set_resource",
-	"gui.textwindowback": "_gui_noop", "gui.seteditboxoverrides": "_gui_noop",
+	"gui.textwindowback": "_tw_back", "gui.seteditboxoverrides": "_gui_noop",
 	"gui.seteditboxcursortoend": "_gui_noop",
 
 	"ioptions.registerbool": "_opt_bool", "ioptions.registerint": "_opt_int",

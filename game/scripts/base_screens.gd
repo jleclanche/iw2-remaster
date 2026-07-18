@@ -220,14 +220,15 @@ func _gui_input(e: InputEvent) -> void:
 				/ _scale()
 		var scr: PogUi.PogScreen = ui.visible_screen()
 		if scr != null:
+			var down: bool = e.button_index == MOUSE_BUTTON_WHEEL_DOWN
 			for w in scr.windows:
-				if w.kind == "listbox" and not w.entries.is_empty() \
-						and _rect_of(w).has_point(p):
-					var vis := _rows_in_view(w, _rect_of(w).size.y, w.scroll_top)
-					w.scroll_top = clampi(w.scroll_top
-						+ (3 if e.button_index == MOUSE_BUTTON_WHEEL_DOWN else -3),
-						0, maxi(0, w.entries.size() - vis))
-					queue_redraw()
+				if not _rect_of(w).has_point(p):
+					continue
+				if w.kind == "listbox" and not w.entries.is_empty():
+					_scroll_to(w, w.scroll_top + (3 if down else -3))
+					break
+				if not w.page.is_empty() and w.page_h > 0.0:
+					_scroll_to(w, w.scroll + (36.0 if down else -36.0))
 					break
 		accept_event()
 		return
@@ -323,6 +324,12 @@ func _click(screen_p: Vector2) -> void:
 		var at: int = h[2]
 		if win.kind == "scrollbar":
 			_scrollbar_click(win, r, p)
+			return
+		if at <= LINK_HIT:
+			# a page link: follow it (the engine's icTextWindow navigation)
+			_beep(false)
+			ui.text_window_follow(win, String(win.links[LINK_HIT - at]))
+			queue_redraw()
 			return
 		var i := _focus.find(win)
 		if i < 0:
@@ -673,7 +680,9 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 			var tx := float(w.text_offset)
 			draw_string(f, Vector2(r.position.x + tx, ty), _label(w.title),
 				HORIZONTAL_ALIGNMENT_LEFT, r.size.x - tx, fs, col)
-	if not w.text.is_empty():
+	if not w.page.is_empty():
+		_draw_text_page(w, r, f, fs)
+	elif not w.text.is_empty():
 		# a window too narrow to wrap in is one the scripts sized for something
 		# else (a marker, a rule); wrapping in it puts one letter per line
 		var wrap: float = r.size.x - 8.0
@@ -767,23 +776,42 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 		y += eh
 
 
-## The vertical scrollbar wired to a list box (gui.CreateVerticalScrollbar):
-## a track with a proportional thumb; clicking above/below the thumb pages the
-## target, the wheel over the list scrolls it. The original's arrow-button art
-## (GUI_scrollbar_buttonratio ends of the bar) is chrome, drawn when the
-## screens get their real art.
+## The vertical scrollbar wired to a list box or a text window
+## (gui.CreateVerticalScrollbar): a track with a proportional thumb; clicking
+## above/below the thumb pages the target, the wheel over the target scrolls
+## it. The original's arrow-button art (GUI_scrollbar_buttonratio ends of the
+## bar) is chrome, drawn when the screens get their real art.
+##
+## [content, view, pos] in whatever unit the target scrolls in: rows for a
+## list box, pixels for a text page.
+func _scroll_state(t: PogUi.PogWindow) -> Array:
+	if t.kind == "listbox":
+		return [float(t.entries.size()),
+			float(_rows_in_view(t, _rect_of(t).size.y, t.scroll_top)),
+			float(t.scroll_top)]
+	return [t.page_h, _rect_of(t).size.y, t.scroll]
+
+
+func _scroll_to(t: PogUi.PogWindow, pos: float) -> void:
+	if t.kind == "listbox":
+		var vis := _rows_in_view(t, _rect_of(t).size.y, t.scroll_top)
+		t.scroll_top = clampi(int(pos), 0, maxi(0, t.entries.size() - vis))
+	else:
+		t.scroll = clampf(pos, 0.0, maxf(0.0, t.page_h - _rect_of(t).size.y))
+	queue_redraw()
+
+
 func _draw_scrollbar(w: PogUi.PogWindow, r: Rect2) -> void:
 	var t: PogUi.PogWindow = w.scroll_target
-	if t == null or t.entries.is_empty():
+	if t == null:
 		return
-	var total := t.entries.size()
-	var vis := _rows_in_view(t, _rect_of(t).size.y, t.scroll_top)
-	if total <= vis and t.scroll_top == 0:
+	var s := _scroll_state(t)
+	if s[0] <= 0.0 or (s[0] <= s[1] and s[2] <= 0.0):
 		return                            # everything fits: no bar
 	draw_rect(r, Color(1.0, 0.72, 0.1, 0.10))
-	var frac_h := clampf(float(vis) / float(total), 0.05, 1.0)
-	var span := maxi(total - vis, 1)
-	var frac_y := clampf(float(t.scroll_top) / float(span), 0.0, 1.0)
+	var frac_h: float = clampf(s[1] / s[0], 0.05, 1.0)
+	var span: float = maxf(s[0] - s[1], 1.0)
+	var frac_y: float = clampf(s[2] / span, 0.0, 1.0)
 	var th := r.size.y * frac_h
 	var ty := r.position.y + (r.size.y - th) * frac_y
 	draw_rect(Rect2(r.position.x + 1.0, ty, r.size.x - 2.0, th), AMBER_DIM)
@@ -792,22 +820,77 @@ func _draw_scrollbar(w: PogUi.PogWindow, r: Rect2) -> void:
 
 func _scrollbar_click(w: PogUi.PogWindow, r: Rect2, p: Vector2) -> void:
 	var t: PogUi.PogWindow = w.scroll_target
-	if t == null or t.entries.is_empty():
+	if t == null:
 		return
-	var total := t.entries.size()
-	var vis := _rows_in_view(t, _rect_of(t).size.y, t.scroll_top)
-	var span := maxi(total - vis, 1)
-	var frac_y := clampf(float(t.scroll_top) / float(span), 0.0, 1.0)
-	var th := r.size.y * clampf(float(vis) / float(total), 0.05, 1.0)
-	var ty := r.position.y + (r.size.y - th) * frac_y
-	var dir := 0
+	var s := _scroll_state(t)
+	if s[0] <= 0.0:
+		return
+	var span: float = maxf(s[0] - s[1], 1.0)
+	var th := r.size.y * clampf(s[1] / s[0], 0.05, 1.0)
+	var ty := r.position.y + (r.size.y - th) * clampf(s[2] / span, 0.0, 1.0)
 	if p.y < ty:
-		dir = -vis
+		_scroll_to(t, s[2] - s[1])
 	elif p.y > ty + th:
-		dir = vis
-	t.scroll_top = clampi(t.scroll_top + dir, 0, maxi(0, total - vis))
+		_scroll_to(t, s[2] + s[1])
 	_beep(false)
-	queue_redraw()
+
+
+## Hit codes at or below this in a _hit row's `at` slot are page-link indices
+## (LINK_HIT - index into the window's links array).
+const LINK_HIT := -1000
+
+
+## An icTextWindow HTML page: word-wrapped spans, bold headings, underlined
+## <a href> links (hit-tested), <hr> rules. The engine rendered these pages
+## itself; the layout constants (paragraph gap, rule inset) are visual
+## stand-ins, the structure is the page's own.
+func _draw_text_page(w: PogUi.PogWindow, r: Rect2, f: Font, fs: int) -> void:
+	var lh := f.get_height(fs) + 2.0
+	var pad := 4.0
+	var x0 := r.position.x + pad
+	var wide := r.size.x - pad * 2.0
+	var sw := f.get_string_size(" ", HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+	w.scroll = clampf(w.scroll, 0.0, maxf(0.0, w.page_h - r.size.y))
+	var y := r.position.y + f.get_ascent(fs) + 2.0 - w.scroll
+	var top := r.position.y + f.get_ascent(fs) * 0.5
+	w.links.clear()
+	for block in w.page:
+		if String(block.get("kind", "")) == "rule":
+			var ly := y - f.get_ascent(fs) * 0.4
+			if ly > top and ly < r.end.y:
+				draw_line(Vector2(x0, ly), Vector2(x0 + wide, ly), AMBER_DIM)
+			y += lh
+			continue
+		var x := x0
+		for span: Dictionary in block.get("spans", []):
+			if bool(span.get("br", false)):
+				x = x0
+				y += lh
+				continue
+			var link := String(span.get("link", ""))
+			var col := AMBER_GLOW if not link.is_empty() \
+				else (AMBER_GLOW if bool(span.get("b", false)) else AMBER)
+			for word in String(span.get("t", "")).split(" "):
+				if word.is_empty():
+					continue
+				var ww := f.get_string_size(word,
+					HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+				if x > x0 and x + ww > x0 + wide:
+					x = x0
+					y += lh
+				if y > top and y < r.end.y:
+					draw_string(f, Vector2(x, y), word,
+						HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
+					if not link.is_empty():
+						draw_line(Vector2(x, y + 2.0),
+							Vector2(x + ww, y + 2.0), col)
+						_hit.append([Rect2(x, y - f.get_ascent(fs), ww, lh),
+							w, LINK_HIT - w.links.size()])
+						w.links.append(link)
+				x += ww + sw
+		y += lh * 1.6                     # the paragraph gap
+	# measured page height, for the scrollbar and the wheel
+	w.page_h = (y + w.scroll) - (r.position.y + f.get_ascent(fs) + 2.0)
 
 
 func _draw_scroller(w: PogUi.PogWindow, r: Rect2) -> void:
