@@ -69,10 +69,11 @@ func _process(_delta: float) -> void:
 	visible = true
 	var span := depth
 	if world_size:
-		# gfx+0x108: tan of the horizontal half-fov (Godot's fov is vertical)
-		var vp := get_viewport().get_visible_rect().size
-		var aspect: float = vp.x / maxf(vp.y, 1.0)
-		span = tan(deg_to_rad(cam.fov) * 0.5) * aspect
+		# gfx+0x108: tan of the horizontal half-fov. Our cameras are
+		# KEEP_WIDTH with the fov property binding the horizontal axis
+		# (main_state.gd FOV_INTERNAL = 63 deg = flux.ini's 1.1 rad), so
+		# cam.fov IS the horizontal angle -- no aspect term.
+		span = tan(deg_to_rad(cam.fov) * 0.5)
 	var half := StarFx.INTENSITY_SCALE * intensity * span
 	scale = Vector3(half, half * width_ratio, half)
 	(mesh as QuadMesh).material.albedo_color = tint

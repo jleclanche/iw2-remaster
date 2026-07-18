@@ -483,14 +483,18 @@ func _physics_process(delta: float) -> void:
 	if ship == null:
 		return
 	# raw ship-state inputs for the channel language
-	var v_local: Vector3 = ship.velocity * ship.global_transform.basis
+	# icShip::ApplyThrusterBurns: "burn" (@ 0x1015d610) is the FORWARD YOKE --
+	# a held input, not a speed. The old assist stand-in (a speed fraction)
+	# pinned the drive glow at full while merely CRUISING at set speed, which
+	# smeared the stern with a permanent washed-out blob. Under assist the
+	# actually-applied forward force reaches the rig through "lz" already,
+	# and at constant velocity there is no force and no glow -- like the
+	# original.
 	var burn := 0.0
 	if ship.drive_override:
 		burn = 1.0
 	elif absf(ship.input_thrust.z) > 0.05:
 		burn = absf(ship.input_thrust.z)
-	elif ship.assist:
-		burn = clampf((ship.set_speed + v_local.z) / 80.0, 0.0, 1.0)
 	fire_pulse = maxf(0.0, fire_pulse - delta * 4.0)
 	# icShip::ApplyThrusterBurns @ 0x100758a0 writes the raw channels on the
 	# avatar root each tick: "lx"/"ly"/"lz" (strings @ 0x1015d5fc/0x1015d600/
