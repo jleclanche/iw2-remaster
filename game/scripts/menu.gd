@@ -339,6 +339,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	# the menu owns its input: it must keep working while the tree is paused
 	if main.movie != null or main.demo:
 		return
+	# While one of the original GUI screens is overlaid (SAVE/LOAD GAME raise
+	# icSPPDASaveScreen/icSPPDALoadScreen), that screen owns the input --
+	# exactly as the original PDA menu sat inert under its overlays. Its own
+	# back button / Escape path pops it and control returns here.
+	if visible and _pog_screen_up():
+		return
 	# ...except during a cutscene, where Escape means "skip", not "pause". The
 	# menu sits deeper in the tree than main, so without this it would swallow
 	# the key before main ever saw it.
@@ -378,6 +384,41 @@ func close() -> void:
 			main.audio.lds_player]:
 		p.stream_paused = false
 	main.fire_lock = 0.3  # the confirming click must not fire the PBC
+
+## Is one of the original GUI screens overlaid above us right now?
+func _pog_screen_up() -> bool:
+	var rt: PogRuntime = main.pog_rt
+	return rt != null and rt.ui != null and rt.ui.visible_screen() != null
+
+## Raise one of the original GUI screens through the ported runtime -- the same
+## gui.OverlayScreen the POG menus themselves call. False when the runtime is
+## not up (the caller keeps its stand-in behaviour).
+func _pog_overlay(screen: String) -> bool:
+	var rt: PogRuntime = main.pog_rt
+	if rt == null or rt.ui == null or rt.std == null:
+		return false
+	if not rt.std.globals.has("GUI_shader_width"):
+		# The PDA screens assume the front end's bootstrap already ran: the
+		# original SPMainPDAScreen prologue loads the gui text tables, runs
+		# igui.SetGUIGlobals and registers the gui sounds before any PDA
+		# screen exists (ipdagui.pog:11-27). menu.gd IS our stand-in for that
+		# screen, so run the same prologue once, first overlay raised.
+		for csvfile in ["csv:/text/gui", "csv:/text/gui_addendum",
+				"csv:/text/gui_addendum_2", "csv:/text/gui_addendum_3",
+				"csv:/text/gui_addendum_4", "csv:/text/gui_addendum_5",
+				"csv:/text/objectives"]:
+			rt.native("text.add", [csvfile])
+		var snds := ["minor", "confirm", "error", "loadout",
+			"mechanical_confirm", "add_program", "remove_program",
+			"add_upgrade", "remove_upgrade"]
+		for i in snds.size():
+			rt.native("gui.registersound",
+					["sound:/audio/gui/" + str(snds[i]), i + 1])
+		var s: PogScript = rt.script("igui")
+		if s != null:
+			s.set_g_u_i_globals()
+	rt.native("gui.overlayscreen", [screen])
+	return true
 
 func _items() -> Array:
 	# [label, enabled]; labels are the original pda_* strings
@@ -489,12 +530,24 @@ func _activate() -> void:
 			launched = true
 			close()
 		"SAVE GAME":
-			# one-keystroke save into the next free slot (or slot 1 when full)
+			# The original's SAVE GAME raises the slot screen:
+			# SPBasePDAScreen_OnSave -> gui.PlaySound(2) +
+			# gui.OverlayScreen("icSPPDASaveScreen") (ipdagui.pog:352-356;
+			# builder SPPDASaveScreen, ipdagui.pog:435). (The in-flight PDA of
+			# the original had no SAVE item at all -- SPFlightPDAScreen,
+			# ipdagui.pog:376-395, offers only LOAD -- saving went through the
+			# base PDA; our pause menu keeps its SAVE item and raises the same
+			# screen.)
+			if _pog_overlay("icSPPDASaveScreen"):
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+				return
+			# no ported GUI runtime: one-keystroke save into the next free
+			# slot (or slot 1 when full)
 			var slot := 1
 			var used := {}
 			for s in main.save_slots():
 				used[int((s as Array)[0])] = true
-			for i in range(1, 8):
+			for i in range(1, PogGameApi.SAVE_SLOTS):
 				if not used.has(i):
 					slot = i
 					break
@@ -507,6 +560,15 @@ func _activate() -> void:
 			else:
 				main.audio.play("audio/hud/invalid_input.wav", -10.0)
 		"LOAD GAME":
+			# Every original menu's LOAD GAME is the same overlay,
+			# gui.OverlayScreen("icSPPDALoadScreen"): the front end
+			# (SPMainPDAScreen_OnLoad, ipdagui.pog:124-128), the base PDA
+			# (SPBasePDAScreen_OnLoad, :358-362) and the flight PDA
+			# (SPFlightPDAScreen_OnLoad, :402-406). Builder SPPDALoadScreen,
+			# ipdagui.pog:553.
+			if _pog_overlay("icSPPDALoadScreen"):
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+				return
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "loads"
 			sel = 0

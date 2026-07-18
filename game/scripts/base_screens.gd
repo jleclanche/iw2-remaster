@@ -145,8 +145,13 @@ func _rows(scr: PogUi.PogScreen) -> Array:
 	for w in scr.windows:
 		if absorbed.has(w):
 			continue
+		# `not w.art.is_empty()`: the inversebutton-style rows of the save/load
+		# screens carry their amber bar art on a bare static PARENT window --
+		# SetWindowStateTextures targets v4, the row plate, while the edit box /
+		# button rides inside it (ipdagui.pog:505-512 / 539-547) -- so a window
+		# whose only content is its skin still draws.
 		if w.kind == "listbox" or w.kind == "scrollbar" or w.is_border \
-				or w.focusable() \
+				or w.focusable() or not w.art.is_empty() \
 				or not w.title.is_empty() or not w.text.is_empty():
 			out.append(w)
 	return out
@@ -248,6 +253,34 @@ func _unhandled_input(e: InputEvent) -> void:
 	if not (e is InputEventKey and e.pressed):
 		return
 	var key: int = e.keycode
+	# An edit box in edit mode owns the keyboard (FcWindow::LockFocus, taken by
+	# FcEditBox::OnControlFocusSelect @ flux 0x7c4b0): characters go into the
+	# text -- including W/A/S/D, which navigate everywhere else -- Enter commits,
+	# Escape cancels the edit (not the screen), and Up/Down commit before the
+	# focus moves on (OnControlFocusUp/Down @ 0x7c570/0x7c5b0).
+	var cur := _current()
+	if cur != null and cur.kind == "editbox" and cur.editing:
+		match key:
+			KEY_ESCAPE:
+				_beep(false)
+				ui.cancel()          # the edit's own cancel path
+			KEY_ENTER, KEY_KP_ENTER:
+				_activate(cur)       # commit (the save screen's OnSave)
+			KEY_UP, KEY_DOWN:
+				ui.eb_commit(cur)
+				_step(-1 if key == KEY_UP else 1)
+			KEY_BACKSPACE:
+				var s := PogStd._s(cur.value)
+				cur.value = s.left(maxi(s.length() - 1, 0))
+				queue_redraw()
+			_:
+				var ch := char(e.unicode) if e.unicode >= 32 else ""
+				if not ch.is_empty() and (cur.max_chars <= 0
+						or PogStd._s(cur.value).length() < cur.max_chars):
+					cur.value = PogStd._s(cur.value) + ch
+					queue_redraw()
+		get_viewport().set_input_as_handled()
+		return
 	match key:
 		KEY_UP, KEY_W:
 			_step(-1)
@@ -565,6 +598,12 @@ func _rect_of(w: PogUi.PogWindow) -> Rect2:
 func _state_of(w: PogUi.PogWindow) -> String:
 	if w == _current():
 		return "focused"
+	# A row plate lights up with the control riding inside it: the save/load
+	# rows keep their state art on the parent static window while the focus
+	# sits on the child edit box / button (ipdagui.pog:505-512).
+	for c in w.children:
+		if c == _current():
+			return "focused"
 	if w.selected:
 		return "selected"
 	return "neutral"
@@ -659,9 +698,23 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 	var fs := _font_px(f)
 	var col := _text_colour(w)
 	var skinned: bool = w.art.has(st)
-	if not skinned and col == Color(0, 0, 0):
+	# The inversebutton controls are DELIBERATELY black text: their amber bar
+	# comes from the parent row plate's art, so black-on-amber reads exactly as
+	# igui.CreateInverseButton intends (igui.pog:270; the save/load rows set
+	# all three text colours to black, ipdagui.pog:511/546). Only a black
+	# window with no skin anywhere is "never coloured".
+	var parent_skinned: bool = w.parent != null and not w.parent.art.is_empty()
+	if not skinned and not parent_skinned and col == Color(0, 0, 0):
 		col = AMBER   # a static window the scripts never coloured
-	if not w.title.is_empty():
+	var title_text := w.title
+	if w.kind == "editbox":
+		# An edit box draws its VALUE. The caret sits at the end of the text --
+		# where SetEditBoxCursorToEnd left it (flux @ 0x78c10) -- and blinks
+		# while the box is being typed into.
+		title_text = PogStd._s(w.value)
+		if w.editing and int(Time.get_ticks_msec() / 400) % 2 == 0:
+			title_text += "_"
+	if not title_text.is_empty():
 		# FcWindow centres the font's CELL (BMFont lineHeight) in the window
 		# and the baseline sits `base` px into it -- Godot's bitmap loader
 		# maps those to ascent/descent. The old (h + pt)/2 - 1 guess sat the
@@ -672,13 +725,13 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 			# SetTextFormatting flag TRUE: the avatar centres the title in
 			# the window (draw @ 0x1010be74 region uses (right-left)/2);
 			# the comms count digit sits centred on its number plate this way
-			draw_string(f, Vector2(r.position.x, ty), _label(w.title),
+			draw_string(f, Vector2(r.position.x, ty), _label(title_text),
 				HORIZONTAL_ALIGNMENT_CENTER, r.size.x, fs, col)
 		else:
 			# flag FALSE: left-aligned at the x inset
 			# (GUI_fancybutton_textoffset = 22 and friends)
 			var tx := float(w.text_offset)
-			draw_string(f, Vector2(r.position.x + tx, ty), _label(w.title),
+			draw_string(f, Vector2(r.position.x + tx, ty), _label(title_text),
 				HORIZONTAL_ALIGNMENT_LEFT, r.size.x - tx, fs, col)
 	if not w.page.is_empty():
 		_draw_text_page(w, r, f, fs)

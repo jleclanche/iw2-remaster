@@ -781,9 +781,19 @@ func _g_play_movie(t, a: Array) -> Variant:
 
 # @native igame.GameTime
 # @native igame.SystemTime
-# @native igame.RealTime
 func _g_time(_t, _a: Array) -> Variant:
 	return vm.time
+
+# @native igame.RealTime
+func _g_real_time(_t, _a: Array) -> Variant:
+	# Wall-clock time, not sim time: FnTimeWin32::ReadRealTime (flux @ 0x18fd0)
+	# reads GetLocalTime's h/m/s + d/m/y. The save screen's default slot name
+	# appends it ("ACT 0  22:24:24 18/07/2026" -- SPPDASaveScreen_SetDefaultName,
+	# ipdagui.pog:468-472). The "HH:MM:SS DD/MM/YYYY" arrangement matches the
+	# retail screen; the formatter itself is not in the recovered decomp.
+	var d := Time.get_datetime_dict_from_system()
+	return "%02d:%02d:%02d %02d/%02d/%04d" \
+			% [d.hour, d.minute, d.second, d.day, d.month, d.year]
 
 # @native igame.EnableBlackout
 func _g_blackout(_t, a: Array) -> Variant:
@@ -818,7 +828,13 @@ func _std() -> PogStd:
 # why the engine's Create* natives take a persistence flag. So we serialise
 # those, plus where the player is and what they are flying.
 
-const SAVE_SLOTS := 8
+# 14, the engine's slot count: icSaveGame::LoadGame's name scan runs
+# `while (uVar4 < 0xe)` (iwar2 @ 0xb6c80, iwar2.dll.c:151466), and the retail
+# save screen shows exactly 14 slot rows. Slot 0 doubles as our autosave
+# (igame.SaveAutosave arrives here with no slot argument); the original kept
+# the autosave in a separate file (icSaveGame::LoadAutosave @ 0xb6d70) -- a
+# known divergence, not worth a second on-disk format.
+const SAVE_SLOTS := 14
 
 func _slot_path(n: int) -> String:
 	return "user://save_%d.json" % n
@@ -855,7 +871,18 @@ func _g_save(_t, a: Array) -> Variant:
 
 # @native igame.LoadGame
 func _g_load(_t, a: Array) -> Variant:
-	var slot := int(a[0]) if a.size() > 0 else 0
+	# The POG load screen passes the save's NAME, not a slot: SPPDALoadScreen_
+	# OnLoad reads the row's window title into igame.LoadGame (ipdagui.pog:
+	# 605-610). icSaveGame::LoadGame(FcString&) (iwar2 @ 0xb6c80) resolves it:
+	# the localised savegame_autosave label loads the autosave, anything else
+	# scans the slots for a matching NameOfSaveInSlot. Ints still load by slot.
+	var slot := 0
+	if a.size() > 0 and a[0] is String and not String(a[0]).is_valid_int():
+		slot = _slot_of_name(String(a[0]))
+		if slot < 0:
+			return 0
+	else:
+		slot = int(a[0]) if a.size() > 0 else 0
 	var std := _std()
 	if game == null or std == null:
 		return 0
@@ -889,7 +916,34 @@ func _g_load(_t, a: Array) -> Variant:
 	if game.mission != null:
 		game.mission.objectives = d.get("objectives", {})
 	game.restore_extras(d)
+	# In the engine the load ends with the flight screen replacing the whole
+	# GUI stack (the reloaded session comes up on icSpaceFlightScreen); the POG
+	# load screen has just cleared and re-pushed the PDA stack under us
+	# (SPPDALoadScreen_OnLoad, ipdagui.pog:606-608), so drop it -- and our
+	# stand-in pause menu -- the same way.
+	if "pog_rt" in game and game.pog_rt != null and game.pog_rt.ui != null:
+		game.pog_rt.ui._clear_screens(null, [])
+	if "menu" in game and game.menu != null and game.menu.visible:
+		game.menu.launched = true
+		game.menu.close()
 	return 1
+
+## The name -> slot resolution of icSaveGame::LoadGame (iwar2 @ 0xb6c80): the
+## savegame_autosave label is the autosave (our slot 0), anything else is the
+## first slot whose stored name matches.
+func _slot_of_name(name: String) -> int:
+	var auto_label := ""
+	if "pog_rt" in game and game.pog_rt != null and game.pog_rt.std != null:
+		auto_label = game.pog_rt.std.field("savegame_autosave")
+	if (auto_label.is_empty() or auto_label == "savegame_autosave") \
+			and _std() != null:
+		auto_label = _std().field("savegame_autosave")
+	if not auto_label.is_empty() and name == auto_label:
+		return 0
+	for i in SAVE_SLOTS:
+		if PogStd._s(_g_slot_name(null, [i])) == name:
+			return i
+	return -1
 
 # @native igame.NumberOfSavedGameSlots
 func _g_slots(_t, _a: Array) -> Variant:
@@ -1166,7 +1220,7 @@ const _BINDINGS := {
 	"igame.playmovie": "_g_play_movie",
 	"igame.playmovielooped": "_g_play_movie",
 	"igame.gametime": "_g_time", "igame.systemtime": "_g_time",
-	"igame.realtime": "_g_time",
+	"igame.realtime": "_g_real_time",
 	"igame.nextact": "_g_next_act", "igame.enableblackout": "_g_blackout",
 	"igame.createfog": "_g_noop", "igame.destroyfog": "_g_noop",
 	"igame.gametype": "_g_game_type",

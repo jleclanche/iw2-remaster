@@ -832,7 +832,7 @@ func _basecheck(_delta: float) -> void:
 				demo_t = 0.0
 				return
 			if _room >= tour.size():
-				demo_phase = 4
+				demo_phase = 7
 				demo_t = 0.0
 				return
 			var want_scr: String = str(tour[_room])
@@ -845,6 +845,84 @@ func _basecheck(_delta: float) -> void:
 				raised and bi.diorama
 					== int(BaseInterior.SCREEN_DIORAMA[want_scr]))
 			_pending = true
+			demo_t = 0.0
+		7:  # the SAVE GAME slot screen, raised the way SPBasePDAScreen_OnSave
+			# does: gui.OverlayScreen("icSPPDASaveScreen") (ipdagui.pog:352-356;
+			# builder SPPDASaveScreen, ipdagui.pog:435)
+			if demo_t < 0.7:
+				return
+			if not _pending:
+				m.pog_rt.native("gui.setscreen", ["icSPPlayerBaseScreen"])
+				m.pog_rt.native("gui.overlayscreen", ["icSPPDASaveScreen"])
+				_pending = true
+				demo_t = 0.0
+				return
+			var bui7: PogUi = m.pog_rt.ui
+			if not m._headless():
+				_shot("pda_save_screen")
+			var sscr: PogUi.PogScreen = bui7.visible_screen()
+			var boxes := 0
+			if sscr != null:
+				for w in sscr.windows:
+					if w.kind == "editbox":
+						boxes += 1
+			_bc("save screen: an edit box per slot (14, iwar2 @ 0xb6c80)",
+				sscr != null and sscr.name == "icSPPDASaveScreen"
+					and boxes == PogGameApi.SAVE_SLOTS,
+				"editboxes=%d" % boxes)
+			# Select on the focused slot starts an edit and runs the begin
+			# override, SPPDASaveScreen_SetDefaultName, which proposes
+			# "ACT n  <realtime>" (ipdagui.pog:459-479, FcEditBox @ 0x7c4b0)
+			var sui7: BaseScreens = bui7.screen_ui
+			var box: PogUi.PogWindow = sui7._current() if sui7 != null else null
+			var before := ""
+			if box != null and box.kind == "editbox":
+				before = PogStd._s(box.value)
+				bui7.activate(box)
+			_bc("save screen: edit proposes the default name",
+				box != null and box.editing
+					and PogStd._s(box.value).begins_with("ACT "),
+				"-" if box == null else PogStd._s(box.value))
+			# Escape while editing restores the pre-edit text and leaves the
+			# screen up (FcEditBox::OnControlFocusCancel @ 0x7c530)
+			if box != null and box.editing:
+				bui7.cancel()
+			_bc("save screen: edit cancel restores the slot text",
+				box != null and not box.editing
+					and PogStd._s(box.value) == before
+					and bui7.visible_screen() == sscr,
+				"-" if box == null else PogStd._s(box.value))
+			bui7.dispatch("iPDAGUI.SPPDASaveScreen_OnBackButton")
+			_pending = false
+			demo_phase = 8
+			demo_t = 0.0
+		8:  # the LOAD GAME screen: a row per occupied slot (local_11058,
+			# ipdagui.pog:618-630), each loading BY NAME (SPPDALoadScreen_OnLoad
+			# -> igame.LoadGame(title), ipdagui.pog:605-610)
+			if demo_t < 0.7:
+				return
+			if not _pending:
+				m.pog_rt.native("gui.overlayscreen", ["icSPPDALoadScreen"])
+				_pending = true
+				demo_t = 0.0
+				return
+			var bui8: PogUi = m.pog_rt.ui
+			if not m._headless():
+				_shot("pda_load_screen")
+			var lscr: PogUi.PogScreen = bui8.visible_screen()
+			var rows := 0
+			if lscr != null:
+				for w in lscr.windows:
+					if w.kind == "button" \
+							and w.on_press == "iPDAGUI.SPPDALoadScreen_OnLoad":
+						rows += 1
+			_bc("load screen: a row per occupied save",
+				lscr != null and lscr.name == "icSPPDALoadScreen"
+					and rows == m.save_slots().size(),
+				"rows=%d saves=%d" % [rows, m.save_slots().size()])
+			bui8.dispatch("iPDAGUI.SPPDALoadScreen_OnBackButton")
+			_pending = false
+			demo_phase = 4
 			demo_t = 0.0
 		4:
 			# the inbox's mail bodies: iemail.SendEmail's html:/text/... URLs must

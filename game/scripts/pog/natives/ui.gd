@@ -272,6 +272,16 @@ class PogWindow extends RefCounted:
 	var value: Variant = ""
 	var max_chars := 0
 	var checked := false
+	## Edit box editing state: FcEditBox's "being typed into" flag (this[0x91])
+	## and the pre-edit text it stashes at +0x10c so Escape can put it back
+	## (OnControlFocusSelect @ flux 0x7c4b0 / OnControlFocusCancel @ 0x7c530).
+	var editing := false
+	var edit_saved := ""
+	## gui.SetEditBoxOverrides' three POG functions -- begin-edit, cancel,
+	## commit -- stored by FcEditBox::SetOverrides at +0x100/+0x104/+0x108
+	## (flux @ 0x78bd0). The save screen wires SetDefaultName / "" / OnSave
+	## (ipdagui.pog:508).
+	var eb_overrides := PackedStringArray()
 	## Splitter.
 	var top: PogWindow = null
 	var bottom: PogWindow = null
@@ -1350,8 +1360,12 @@ func _create_listbox(_t, a: Array) -> Variant:
 
 # @native gui.CreateEditBox
 func _create_editbox(_t, a: Array) -> Variant:
+	# CreateEditBox(x, y, w, h, parent, multiline, text, flag): arg 6 is the
+	# box's initial text -- the save screen seeds each slot row with its saved
+	# name or the localised "[Empty]" through it (ipdagui.pog:507).
 	var win := _new_window("editbox", a, 0)
-	win.value = ""
+	win.value = PogStd._s(a[6]) if a.size() > 6 else ""
+	win.eb_overrides.resize(3)
 	return win
 
 # @native gui.CreateSliderControl
@@ -1416,10 +1430,25 @@ func _set_cancel_fn(_t, a: Array) -> Variant:
 		scr.cancel_fn = PogStd._s(a[0])
 	return 0
 
+# @native gui.SetEditBoxOverrides
+func _eb_set_overrides(_t, a: Array) -> Variant:
+	# FcEditBox::SetOverrides(begin, cancel, commit) (flux @ 0x78bd0): three POG
+	# functions, run on the Select that starts editing, on Escape while editing,
+	# and on the Select that commits (FcEditBox::OnControlFocusSelect @ 0x7c4b0,
+	# OnControlFocusCancel @ 0x7c530).
+	var win := _win(a[0])
+	if win == null:
+		return 0
+	win.eb_overrides.resize(3)
+	for i in 3:
+		win.eb_overrides[i] = PogStd._s(a[i + 1]) if a.size() > i + 1 else ""
+	return 0
+
 # @native gui.CancelFocusLock
 func _cancel_focus_lock(_t, _a: Array) -> Variant:
 	# An edit box holds the focus while it is being typed into; this releases it.
 	if focused != null and focused.kind == "editbox":
+		focused.editing = false
 		focused = null
 		dirty = true
 	return 0
@@ -1451,6 +1480,8 @@ func _fire(win: PogWindow, slot: int) -> Variant:
 func activate(win: PogWindow) -> Variant:
 	if win == null or not win.enabled:
 		return 0
+	if win.kind == "editbox":
+		return _eb_select(win)
 	if win.kind == "listbox":
 		win.selected_index = win.focused_entry
 	if win.kind == "radio":
@@ -1466,12 +1497,51 @@ func activate(win: PogWindow) -> Variant:
 	return dispatch(fn) if not fn.is_empty() else 0
 
 
+## Select on an edit box, FcEditBox::OnControlFocusSelect (flux @ 0x7c4b0).
+## Not editing yet: stash the text, run the begin override (the save screen's
+## SetDefaultName proposes "ACT n  <time>"), lock the focus for typing, cursor
+## to the end. Already editing: run the commit override (OnSave) and end the
+## edit (CancelEditing).
+func _eb_select(win: PogWindow) -> Variant:
+	dirty = true
+	if win.editing:
+		return eb_commit(win)
+	win.edit_saved = PogStd._s(win.value)
+	var out: Variant = 0
+	if not win.eb_overrides[0].is_empty():
+		out = dispatch(win.eb_overrides[0])
+	win.editing = true
+	return out
+
+
+## The committing half of the edit, shared with the focus moves: FcEditBox's
+## OnControlFocusUp/Down (flux @ 0x7c570/0x7c5b0) run the commit override and
+## CancelEditing before letting the focus leave the box.
+func eb_commit(win: PogWindow) -> Variant:
+	win.editing = false
+	dirty = true
+	if not win.eb_overrides[2].is_empty():
+		return dispatch(win.eb_overrides[2])
+	return 0
+
+
 ## Escape. FcWindow::OnControlFocusCancel ends at the window manager's global
 ## cancel function, which is the one the screen's builder registered. In the
 ## engine that function is a single global slot, so a windowless C++ overlay
 ## (icPopUpCommsScreen) leaves the previous screen's cancel in force -- which is
 ## what the fall-through below reproduces.
 func cancel() -> Variant:
+	# An edit box being typed into eats the cancel first: run its cancel
+	# override, put the pre-edit text back and stop editing, leaving the screen
+	# up (FcEditBox::OnControlFocusCancel @ flux 0x7c530).
+	if focused != null and focused.kind == "editbox" and focused.editing:
+		var win := focused
+		win.value = win.edit_saved
+		win.editing = false
+		dirty = true
+		if not win.eb_overrides[1].is_empty():
+			return dispatch(win.eb_overrides[1])
+		return 0
 	for scr in _view_order():
 		if not scr.cancel_fn.is_empty():
 			return dispatch(scr.cancel_fn)
@@ -1522,8 +1592,9 @@ func scroller_done(win: PogWindow) -> void:
 # @stub gui.StopBackgroundMovie
 # @stub gui.StopAllMovies
 # @stub gui.TextWindowBack
-# @stub gui.SetEditBoxOverrides
-# @stub gui.SetEditBoxCursorToEnd
+# @stub gui.SetEditBoxCursorToEnd -- our caret always sits at the end of the
+#   text (base_screens draws it there), which is exactly where SetCursorToEnd
+#   (flux @ 0x78c10, SetCursorFromPoint(100000,100000)) put it.
 func _gui_noop(_t, _a: Array) -> Variant:
 	return 0
 
@@ -2024,7 +2095,8 @@ const _BINDINGS := {
 	"gui.playbackgroundmovie": "_gui_noop",
 	"gui.stopbackgroundmovie": "_gui_noop", "gui.stopallmovies": "_gui_noop",
 	"gui.settextwindowresource": "_tw_set_resource",
-	"gui.textwindowback": "_tw_back", "gui.seteditboxoverrides": "_gui_noop",
+	"gui.textwindowback": "_tw_back",
+	"gui.seteditboxoverrides": "_eb_set_overrides",
 	"gui.seteditboxcursortoend": "_gui_noop",
 
 	"ioptions.registerbool": "_opt_bool", "ioptions.registerint": "_opt_int",
