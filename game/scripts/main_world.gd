@@ -356,9 +356,15 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 	if entry.is_empty() and not objects.is_empty():
 		entry = objects[0]
 	last_entry = entry  # the capsule exit takes this L-point's orientation
-	px = entry["x"] + 2500.0
-	py = entry["y"] + 300.0
-	pz = entry["z"] + 3000.0
+	# the stock offset (~3.9 km) is fine beside an L-point, but Lucrecia's
+	# Base's hull alone spans 4.7 km -- a debug spawn there starts you on
+	# (or in) the structure, so back off to a 10 km standoff
+	var off := Vector3(2500.0, 300.0, 3000.0)
+	if str(entry.get("name", "")) == BaseInterior.BASE_NAME:
+		off = Vector3(6000.0, 2000.0, 7750.0)  # |off| ~= 10 km
+	px = entry["x"] + off.x
+	py = entry["y"] + off.y
+	pz = entry["z"] + off.z
 	jump_sel = 0
 	_setup_sky(stem)
 	_spawn_traffic()
