@@ -460,6 +460,16 @@ func _physics_process(delta: float) -> void:
 		# LDS drive reaches state 2 (engaged) -- icShip+0x25c, the icLDSDrive.
 		sys.in_lds = lds_state == 2
 		sys.simulate(delta)
+	# sim.SetCollision(player, x), DERIVED from state each frame rather than
+	# set/reset in the dock handlers: a set-only flag stuck OFF whenever a
+	# path cleared docked_at without running _launch() (undocking out of a
+	# LOADED docked save did exactly that), and the player flew straight
+	# through the base hull. Off during any movie, the dock cutscene and the
+	# interior -- the same window the original brackets with SetCollision 0/1
+	# (istartsystem.pog:72..86).
+	player_collision = movie == null and docked_at == "" \
+			and (base_iface == null \
+			or (not base_iface.inside and base_iface.cut == 0))
 	_fold_motion()
 	_stream_objects()
 	_collisions()

@@ -253,7 +253,16 @@ func _autopilot_process(delta: float) -> void:
 				ship.set_speed = clampf((dist - DOCK_RANGE * 0.5) / 6.0,
 						0.0, ship.max_speed.z)
 			_ap_dock_retry -= delta
-			if dist < DOCK_RANGE * 0.8 and _ap_dock_retry <= 0.0:
+			# Lucrecia's Base: the dock detector hands over OUTSIDE the hull
+			# (its cutscene teleports to the bay-axis staging point at
+			# base-local 2900, ibacktobase.pog:502). Boring on to DOCK_RANGE
+			# reached the trigger point only after grinding through the hull
+			# trimesh -- the "F8 flies me through the base" report.
+			var gate := DOCK_RANGE * 0.8
+			if target_idx >= 0 and target_idx < objects.size() \
+					and str(objects[target_idx]["name"]) == BaseInterior.BASE_NAME:
+				gate = 6000.0
+			if dist < gate and _ap_dock_retry <= 0.0:
 				_ap_dock_retry = 1.0
 				_try_dock()
 				if docked_at != "" or towed != null \

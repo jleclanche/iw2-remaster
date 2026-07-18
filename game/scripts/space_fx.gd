@@ -686,10 +686,16 @@ func _neb_build() -> void:
 # Godot's linear pipeline the same tile lands at 0.31 LINEAR -- twice as bright --
 # and four layers of it clip the red channel flat, which is exactly the "featureless
 # orange" the effect must not be. Decoded, the cloud structure survives.
+#
+# depth_test_disabled: the original draws these through FcBillBoard as a
+# sorted additive pass with the Z buffer left alone -- the layers add over
+# whatever geometry is in frame, which is the orange bath that covers
+# Lucrecia's Base at docking range (with the test on, the base occluded
+# every layer and sat greyscale-dark inside its own nebula).
 const NEB_SHADER := """
 shader_type spatial;
 render_mode unshaded, blend_add, cull_disabled, depth_draw_never,
-	shadows_disabled, fog_disabled;
+	depth_test_disabled, shadows_disabled, fog_disabled;
 uniform sampler2D tex : source_color, filter_linear_mipmap, repeat_enable;
 uniform vec2 uv_c = vec2(0.0);
 uniform vec2 uv_a = vec2(1.0, 0.0);
