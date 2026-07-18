@@ -365,13 +365,16 @@ func _update_engine_flares() -> void:
 		if not is_instance_valid(n) or not n.is_inside_tree():
 			q.intensity = 0.0
 			continue
-		# the channel value IS the node's world scale (flag 0x10)
-		var ch := n.global_transform.basis.x.length()
+		# Render reads the node's world Z SCALE specifically (+0xac,
+		# FindWorldScale @ flux.dll.c:213949) -- the axis the anim null's
+		# length keys ride -- as the flag-0x10 modulator
+		var ch := n.global_transform.basis.z.length()
 		q.global_position = n.global_position
 		q.intensity = float(ef["intensity"]) * ch
-		var a := minf(2.0 * ch, 1.0)   # alpha x 2*scale below 0.5
+		var a := minf(2.0 * ch, 1.0)   # local_58: x 2*scale below 0.5
 		var c: Color = ef["col"]
 		q.tint = Color(c.r * a, c.g * a, c.b * a)
+		q.core_level = a  # the white centre rides local_58
 
 func _update_jet_beams() -> void:
 	if _jet_beams.is_empty():

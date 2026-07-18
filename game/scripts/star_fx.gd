@@ -100,6 +100,8 @@ func setup(rec: Dictionary, base: String) -> void:
 	_star = FlareQuad.create(_atlas[2])
 	_streak = FlareQuad.create(_atlas[0])
 	_streak.width_ratio = STREAK_WIDTH_RATIO
+	# the streak is Render's SUB-quad, not a flare node: no white centre
+	_streak.core_level = -1.0
 	add_child(_glow)
 	add_child(_star)
 	add_child(_streak)

@@ -1325,19 +1325,37 @@ extraction needed beyond what the channel system already recovered:
   flags) need the flag-8/0x10 branch of FcLensFlareNode::Render before the
   drive glow can be ported faithfully.
 
-### The engine glow (Render's flag-8/0x10 branch, now extracted)
+### The engine glow (FcLensFlareNode, definitive spec)
 
-FcLensFlareNode::Render (flux.dll.c:215184-215232): LensFlareFade bit2 ->
-flag 0x10 multiplies the intensity envelope by the node's WORLD SCALE
-(FindWorldScale, +0xac; vertex alpha additionally x 2*scale below 0.5) --
-which is exactly how the cs_eng <anim channel="lz?+s(1.0)"> null drives the
-command section's engine glow with smoothed thrust. Fade bit1 -> flag 8:
-fixed WORLD size (no view-depth term; envelope x FOV factor x
-FlareNominalDistance, both 1 here), with point-LOD/cull at m_point_detail
-2000 / m_cull_detail 3000. FlareQuad.world_size + ship_effects
-_add_engine_flare port it: EngineFlare (0.15, options 15/filter 5 = 6-point
-star) + EngineGlow (0.3, options 3 = soft glow), colour (242,196,53)
-squared, tracking the anim null's scale each frame.
+FcLensFlareNode::Render (flux @ 0xe6100, flux.dll.c:215125-215525) --
+every constant below read live from flux.dll .rdata:
+
+- World-sized branch (flag 8, LensFlareFade bit1): half-extent =
+  m_intensity_scale (15.0 @ 0x100ee4a8) x gfx+0x108 x FlareNominalDistance
+  (+0xe4, 10.0 on every ship engine light) x FlareIntensity envelope x
+  world Z SCALE (+0xac -- the anim null's length axis; flag 0x10). Vertex
+  colour = (r^2, g^2, b^2) x local_58, where local_58 = 1.0 dropping as
+  2 x scale below scale 0.5. gfx+0x108 = tan(horizontal half-fov), PROVEN
+  by OutsideViewFrustrum (|X| <= d * gfx+0x108, 93217) and cot(fov/2) as
+  the projection x-scale.
+- WHITE CENTRE (flags bit0, set on every flare node): while local_58 >
+  0.25 a second quad draws on top -- pure white, 0.3 x size
+  (m_white_centre_size_ratio @ 0x100ee4a4), brightness
+  (local_58 - 0.25) x 1.3333 (0x100ee564). This is the incandescent core.
+- Blend: m_polygon_state eBlend 1 = pure ONE/ONE additive (alpha folded
+  into RGB), depth test ON, depth write OFF; the atlas quadrant MODULATEs
+  the vertex colour (m_tex_coords @ 0x100ee420, stride 0x20/style).
+- Point-LOD: apparent half-size < 1/3000 (m_cull_detail) -> culled;
+  1/2000..1/3000 (m_point_detail) -> one untextured additive point.
+- Dead data: FlareRingColor/Size and FlareRandStreakInt/Dens/Sharp are
+  parsed into sLight but MakeLight (0x100dc3f0) copies none of them --
+  cut feature. FlareDissolve likewise never reaches the node. The
+  directional fade (flag 4) applies only to LWS light TYPE 3, which no
+  engine light uses. PostRender (0x100e6cb0) is the 8-element screen
+  ghost chain -- unported.
+
+Ported in flare_quad.gd (white centre, Z-scale, ONE/ONE invariant, cull)
++ ship_effects.gd _add_engine_flare/_update_engine_flares.
 
 ### The ship-death explosion system (iiSim, now extracted)
 
