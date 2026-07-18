@@ -77,9 +77,15 @@ func _create(_t, a: Array) -> Variant:
 	# Storing the second put a 1, 2 or 14 into every global in the game --
 	# harmless for the bools by luck, fatal for the handles, whose Cast then
 	# failed and whose screens silently did nothing.
-	var name := _s(a[0])
-	if not globals.has(name):
-		globals[name] = a[2] if a.size() > 2 else 0
+	#
+	# Re-creating an existing name SHADOWS it in the original (globals are
+	# scoped by the persistence flag -- arg 2 -- and a narrower-scope create
+	# stacks over a wider one; that is why every screen Create/Destroys its
+	# handles in pairs, and why SPShipTypeScreen can re-create the hangar's
+	# "HangarManifestWindow" and have local_8118 update ITS copy). Our store is
+	# flat, so the closest read-equivalent of top-of-stack is overwrite --
+	# keep-first left every re-created handle pointing at a dead window.
+	globals[_s(a[0])] = a[2] if a.size() > 2 else 0
 	return 0
 
 # @native global.Bool

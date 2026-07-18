@@ -871,6 +871,27 @@ func _t_jaffs_advice(_t, a: Array) -> Variant:
 
 
 # ---------------------------------------------------------------- iloadout
+# icLoadout's ship-template table (ctor @ 0x84210): m_template_ini[5] =
+# ini:/sims/ships/player/{comsec, tug, fast_attack, heavy_corvette,
+# storm_petrel}, indexed by the same 0..4 the scripts pass SetShip. The
+# engine's CalculatePresetLoadout (@ 0x93d90) loads that template and fits its
+# mount points out of the player's inventory; we have no per-mount fit model,
+# so the launch fits the game's own *_prefitted variant of the template
+# instead -- the identical stand-in _fit_systems already applies to the tug.
+const SHIP_TEMPLATE_INI := [
+	"sims/ships/player/comsec.ini",
+	"sims/ships/player/tug.ini",
+	"sims/ships/player/fast_attack_prefitted.ini",
+	"sims/ships/player/heavy_corvette_prefitted.ini",
+	"sims/ships/player/storm_petrel_prefitted.ini",
+]
+
+## The hull ini the current loadout selection launches with.
+func ship_ini() -> String:
+	if loadout.ship >= 0 and loadout.ship < SHIP_TEMPLATE_INI.size():
+		return SHIP_TEMPLATE_INI[loadout.ship]
+	return ""
+
 # @native iloadout.SetShip
 func _l_set_ship(_t, a: Array) -> Variant:
 	var which := int(a[0])
@@ -933,11 +954,12 @@ func _l_good_to_go(_t, _a: Array) -> Variant:
 	# icLoadout::GoodToGo (iwar2 @ 0x85030): spaceworthy means the fitted
 	# loadout carries at least one of each of FIVE system classes -- icHeatSink,
 	# icDrive, icThrusters, icSensor, icLDSDrive (bits 1|2|4|8|0x10 == 0x1f).
-	# Our loadout model has no per-mount fitting yet, so the approximation is
-	# hull-owned + cargo-fits; the five-class test needs the fit model first.
-	if not player_inv().ships.has(loadout.ship):
-		return 0
-	return 0 if loadout.cargo_warning else 1
+	# We fit the game's own preset templates, and every shipped player template
+	# carries all five classes, so with presets the test reduces to "the
+	# selected hull is owned". The cargo-space warning is NOT part of GoodToGo
+	# -- folding it in refused launch the moment the debug GiveEverything
+	# overstuffed the hold.
+	return 1 if player_inv().ships.has(loadout.ship) else 0
 
 # @native iloadout.UnusedInternalCargoSlots
 func _l_unused_slots(_t, _a: Array) -> Variant:
@@ -1015,37 +1037,86 @@ func _l_loadout_name(_t, a: Array) -> Variant:
 
 # @native iloadout.LoadoutDescription
 func _l_loadout_description(_t, _a: Array) -> Variant:
-	# What the manifest window shows: the hull, and what is bolted to it. The
-	# subsim list is real (ship_systems.gd builds it from the ship INI's
-	# [Subsims]), so this is the ship's actual fit, not a description of one.
-	var lines: Array[String] = []
+	# icLoadout::LoadoutDescription (iwar2 @ 0x85390): an HTML page describing
+	# the LOADOUT's own subsim array -- the SELECTED template's fit (filled by
+	# CalculatePresetLoadout), not the flying ship's -- one localised section
+	# head per kind: customise_propulsion / _offensive / _defensive / _general
+	# (+ ship upgrades / armaments / turret fighter / cargo when non-empty),
+	# with GenerateSystemDescription (@ 0x987f0) sorting each subsim by engine
+	# class. Rendered as plain text here; the class->section sort below is
+	# checked against the original's own comsec manifest (fuel cell, heat-sink,
+	# thrusters, drive, LDS, accumulators = PROPULSION; quad light PBC =
+	# OFFENSIVE; defense LDA = DEFENSIVE; sensors, CPU, autorepair = GENERAL).
+	var ini := ship_ini()
+	var fitted: ShipSystems = null
+	if game != null and "player_ship_ini" in game and ini == game.player_ship_ini \
+			and game.get("sys") != null:
+		fitted = game.sys                 # describing the hull we are flying
+	elif not ini.is_empty():
+		if ini == "sims/ships/player/tug.ini":
+			ini = "sims/ships/player/tug_prefitted.ini"  # _fit_systems's remap
+		fitted = ShipSystems.for_ship(ini)
 	var name: String = SHIP_NAMES[loadout.ship] \
 			if loadout.ship >= 0 and loadout.ship < SHIP_NAMES.size() else "?"
-	lines.append(name.to_upper())
-	var sys = game.sys if (game != null and "sys" in game) else null
-	if sys == null:
+	var lines: Array[String] = [name.to_upper(), ""]
+	if fitted == null or fitted.hull_max <= 0.0:
 		lines.append("No ship fitted.")
 		return "\n".join(lines)
-	lines.append("Hull %d/%d   Armour %d"
-			% [roundi(sys.hull), roundi(sys.hull_max), roundi(sys.armour)])
-	lines.append("")
-	# In the HUD's own order: DRV THR LDS CAP WEP SEN EPS CPU.
-	for g in ShipSystems.GROUPS:
-		for s in sys.systems:
-			if String(s.get("group", "")) != g:
-				continue
-			var hp: float = float(s.get("hp_max", 0))
-			if hp <= 0.0:
-				continue                  # an empty mount point, not a device
-			lines.append("%-4s %-26s %3d%%"
-					% [g, String(s.get("name", "")),
-					roundi(100.0 * float(s.get("hp", 0)) / hp)])
+	var sections := {}
+	for s in fitted.systems:
+		if float(s.get("hp_max", 0)) <= 0.0:
+			continue                      # an empty mount socket, not a device
+		var sec := _manifest_section(s)
+		if not sections.has(sec):
+			sections[sec] = []
+		sections[sec].append(
+				ShipSystems.display_name(String(s.get("name", ""))))
+	for pair in [["PROPULSION", "customise_propulsion"],
+			["OFFENSIVE", "customise_offensive"],
+			["DEFENSIVE", "customise_defensive"],
+			["GENERAL", "customise_general"],
+			["ARMAMENTS", "customise_armaments"]]:
+		var items: Array = sections.get(pair[0], [])
+		if items.is_empty():
+			continue
+		lines.append(_text_or(pair[1], pair[0]))
+		for dn in items:
+			lines.append("  " + str(dn))
+		lines.append("")
 	var slots: int = int(_l_unused_slots(null, []))
-	lines.append("")
-	lines.append("Cargo: %d of %d slots free" % [slots, _cargo_slots()])
+	lines.append(_text_or("manifest_ship_cargo", "SHIP CARGO"))
+	lines.append("  %d of %d slots free" % [slots, _cargo_slots()])
 	if loadout.turret_fighters > 0:
-		lines.append("Turret fighters: %d" % loadout.turret_fighters)
+		lines.append(_text_or("customise_turretfighter", "TURRET FIGHTER"))
+		lines.append("  %d fitted" % loadout.turret_fighters)
 	return "\n".join(lines)
+
+
+## GenerateSystemDescription's class sort, in our terms. The engine walks a
+## chain of IsDerivedFrom tests against the FcClass registry; we test the
+## recovered class/group tags instead.
+func _manifest_section(s: Dictionary) -> String:
+	var cls := String(s.get("class", ""))
+	if cls in ["icPlayerLDA", "icAILDA", "icAggressorShield"]:
+		return "DEFENSIVE"
+	if cls in ["icMissileMagazine", "icCounterMeasureMagazine", "icMagazine"]:
+		return "ARMAMENTS"
+	match String(s.get("group", "")):
+		"DRV", "THR", "LDS", "CAP", "EPS":
+			return "PROPULSION"
+		"WEP":
+			return "OFFENSIVE"
+		"SEN", "CPU":
+			return "GENERAL"
+	if cls == "icHeatSink":
+		return "PROPULSION"
+	return "GENERAL"                      # autorepair and the unclassified rest
+
+
+## A text field when the tables carry it, our fallback label when not.
+func _text_or(key: String, fallback: String) -> String:
+	var t := _text(key)
+	return fallback if t == key else t.to_upper()
 
 # @native iloadout.SetManifestWindow
 func _l_set_manifest_window(_t, a: Array) -> Variant:

@@ -672,6 +672,10 @@ func leave() -> void:
 	open = false
 	diorama = -1
 	_last_screen = ""
+	# every route out (the U undock and the hangar's LAUNCH -> icSpaceFlight-
+	# Screen) leaves the dock; the U path has already cleared this, the LAUNCH
+	# path has not
+	main.docked_at = ""
 	_show_world()
 	_free_diorama()
 	if main.pog_rt != null:
@@ -685,6 +689,12 @@ func leave() -> void:
 ## local_486's exit: sim.PlaceRelativeTo(player, base, 12000, 0, -1000),
 ## sim.PointAway(player, base), SetVelocityLocalToSim(0, 0, 500).
 func _launch() -> void:
+	# icLoadout builds the player's ship from the hangar selection when you
+	# launch (CalculatePresetLoadout @ 0x93d90 loads m_template_ini[ship]).
+	# The base screens run on the ported runtime, so its loadout is the one
+	# the hangar's SHIP screen wrote.
+	if main.pog_rt != null and main.pog_rt.econ != null:
+		main.fit_player_by_path(main.pog_rt.econ.ship_ini())
 	var rec := base_rec()
 	if rec.is_empty():
 		return

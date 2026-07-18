@@ -497,7 +497,16 @@ func _build_not_yet_implemented(scr: PogScreen) -> void:
 func _set_screen(_t, a: Array) -> Variant:
 	screens.clear()
 	focused = null
-	_enter(PogStd._s(a[0]), screens)
+	var name := PogStd._s(a[0])
+	_enter(name, screens)
+	# icSpaceFlightScreen is the C++ flight screen (no POG builder). Inside the
+	# base it IS the launch: the hangar's LAUNCH button ends with
+	# SetScreen("icSpaceFlightScreen") and the engine's screen change is what
+	# tears the base UI down and runs istartsystem's launch cutscene. Deferred:
+	# leave() clears the screen stack we are standing in.
+	if name == "icSpaceFlightScreen" and game != null \
+			and game.get("base_iface") != null and game.base_iface.inside:
+		game.base_iface.leave.call_deferred()
 	return 0
 
 # @native gui.PushScreen
@@ -950,10 +959,27 @@ func _eb_set_max(_t, a: Array) -> Variant:
 
 # @native gui.SetRadioButtonChecked
 func _rb_set(_t, a: Array) -> Variant:
+	# FcRadioButton::SetChecked (flux @ 0x89240): ONLY the false->true edge does
+	# anything -- it Selects this window and walks the parent's child list,
+	# Deselecting every other FcRadioButton it finds. There is no direct
+	# uncheck; a radio only clears when a sibling takes the group. A parentless
+	# radio hangs off the screen's root window, so its group is the screen's
+	# other parentless radios.
 	var win := _win(a[0])
-	if win != null:
-		win.checked = PogVM._truthy(a[1])
-		dirty = true
+	if win == null or not PogVM._truthy(a[1]) or win.checked:
+		return 0
+	win.checked = true
+	var siblings: Array = []
+	if win.parent != null:
+		siblings = win.parent.children
+	elif win.screen != null:
+		for w in win.screen.windows:
+			if w.parent == null:
+				siblings.append(w)
+	for s in siblings:
+		if s != win and (s as PogWindow).kind == "radio":
+			(s as PogWindow).checked = false
+	dirty = true
 	return 0
 
 # @native gui.RadioButtonValue

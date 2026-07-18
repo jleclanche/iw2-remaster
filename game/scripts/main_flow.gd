@@ -316,17 +316,23 @@ func save_extras() -> Dictionary:
 		"ai": ai,
 	}
 
+## Fit a player hull by its ini path alone, resolving the avatar out of
+## ships.json. Used by the save restore and by the base launch (the hangar's
+## SHIP selection names a hull; icLoadout's launch builds the ship from it).
+func fit_player_by_path(want: String) -> void:
+	if want.is_empty() or want == player_ship_ini:
+		return
+	var stats: Array = _load_json("data/json/ships.json")
+	for rec in stats:
+		if rec.get("path", "") == want:
+			# record avatar is an lws:/ ref; _fit_player wants the gltf
+			_fit_player(want, "data/avatars/avatars/"
+					+ str(rec.get("avatar", "lws:/avatars/tug_hull/setup_prefitted"))
+					.trim_prefix("lws:/avatars/") + ".gltf")
+			return
+
 func restore_extras(d: Dictionary) -> void:
-	var want := str(d.get("ship_ini", ""))
-	if want != "" and want != player_ship_ini:
-		var stats: Array = _load_json("data/json/ships.json")
-		for rec in stats:
-			if rec.get("path", "") == want:
-				# record avatar is an lws:/ ref; _fit_player wants the gltf
-				_fit_player(want, "data/avatars/avatars/"
-						+ str(rec.get("avatar", "lws:/avatars/tug_hull/setup_prefitted"))
-						.trim_prefix("lws:/avatars/") + ".gltf")
-				break
+	fit_player_by_path(str(d.get("ship_ini", "")))
 	var v: Array = d.get("vel", [0, 0, 0])
 	ship.velocity = Vector3(v[0], v[1], v[2])
 	ship.set_speed = float(d.get("set_speed", 0.0))
