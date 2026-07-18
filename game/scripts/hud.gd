@@ -2838,14 +2838,36 @@ func _draw_weapon_panel() -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 		_ea = 1.0
 		return
+	# What the bar SHOWS: the row draw (FUN_10104d50 0x10104d50) asks the
+	# weapon GetHUDInfo(bool &, uint &) -- vtable +0x64 -- and branches on the
+	# bool:
+	#   icCannon::GetHUDInfo   0x1002cb60 (vtable 0x10119248+0x64, recovered
+	#     from the shipped DLL; absent from the decomp text):
+	#     true, ftol(energy(+0xd8) * 100.0 [DAT_101192c0] / capacity(+0xd0))
+	#     -> the gun row FUN_101053e0 0x101053e0 draws the 14-segment bar with
+	#     value * 0.01 (_DAT_1011a70c) and prints it "%d%%". The bar is the
+	#     CAPACITOR, not the refire clock (which we showed before the store
+	#     was recovered).
+	#   icSlugThrower::GetHUDInfo 0x10032290: false, rounds (+0xd4) -> the
+	#     ammo row (FUN_10105550 case 0x4f): icon + round count, NO bar.
+	#   icMagazine::GetHUDInfo  0x1000fd10: false, ammo (+0xb0) -> count
+	#     (our secondary row above already shows ammo text).
 	var charge: float = 1.0
+	var gun_ammo := -1
 	if main.weapons != null:
 		var cg: Dictionary = main.weapons.current_group()
-		var rf := float(main.weapons.refire)
+		var m0: Dictionary = {}
 		if not cg.is_empty():
-			var m0: Dictionary = (cg["members"] as Array)[0]
-			rf = float(m0.get("refire", rf))
-		charge = 1.0 - main.weapons.cooldown / maxf(rf, 1e-3)
+			m0 = (cg["members"] as Array)[0]
+			gun_ammo = int(m0.get("ammo", -1))
+		var cap := float(m0.get("capacity", 0.0))
+		if cap > 0.0:
+			charge = clampf(float(m0.get("energy", 0.0)) / cap, 0.0, 1.0)
+		else:
+			# no recovered store on this gun (no capacity key / no fitted
+			# groups): the old refire-readiness fill stays as the fallback
+			var rf := float(m0.get("refire", main.weapons.refire))
+			charge = 1.0 - main.weapons.cooldown / maxf(rf, 1e-3)
 	# the row, verbatim from the icHUDWeapons draw (iwar2.dll.c ~197340+):
 	# colour DAT_10174fb0 (amber); the gun ICON is sprite 69 at
 	# (16, y + _DAT_101184a0 = 16); the charge bar is FUN_100ebde0(36,
@@ -2853,18 +2875,13 @@ func _draw_weapon_panel() -> void:
 	# (Our old hand-drawn lightning polygon was invented.)
 	if _sprites != null:
 		_spr(Vector2(pos.x + 16, ry + 16), 69, AMBER)
-	_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
 	var readout := "%d%%" % int(charge * 100)
-	if main.weapons != null:
-		var cg2: Dictionary = main.weapons.current_group()
-		if not cg2.is_empty():
-			# an ammo-limited gun (the gatling) reads out its icSlugThrower
-			# round count instead -- OUR readout; the original's ammo-gun row
-			# layout was not recovered
-			var ammo := int(((cg2["members"] as Array)[0] as Dictionary)
-					.get("ammo", -1))
-			if ammo >= 0:
-				readout = str(ammo)
+	if gun_ammo >= 0:
+		# an ammo gun (the gatling): round count, and per the recovered ammo
+		# row there is no percentage bar under it
+		readout = str(gun_ammo)
+	else:
+		_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
 	draw_string(_font, Vector2(pos.x + 36, ry + 28), readout,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 	_ea = 1.0
