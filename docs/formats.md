@@ -58,9 +58,17 @@ IFF `FORM PSO ` / `PSO2`. Metadata big-endian, vertex/index payload
 little-endian.
 - `OHDR`: 3×u32be + NUL-strings — texture names; `.LBM` stems match the
   extracted PNG stems.
-- `SHDR` per surface: NUL-str name, 5×f32be (RGB + 2 coefficients), two
-  texture slots { u32be 1-based texture index, u32be mode (0x21/0x24),
-  u32be pad }, optional envmap string, tail u32be n_verts + u32be n_uv.
+- `SHDR` per surface (decoded against `ReadPSOGeometry` @ flux.dll.c:99003):
+  NUL-str name (may carry a `<glow channel=X>` scene command — the ONLY
+  real emissive mechanism), f32be×3 RGB + f32be opacity (surface RGB is
+  FORCED WHITE at load when slot 0 is textured, 99181), then THREE texture
+  slots { f32be param, u32be 1-based texture index, u32be mode }, envmap
+  string (rendered as a camera-space reflection layer, MODULATE2X), tail
+  u32be n_verts + u32be n_uv. Slot 0 = base (param = layer brightness),
+  slot 1 = lightmap (multipass hardware draws it SRCALPHA/ONE additive —
+  how the white-on-black masks glow), slot 2 = detail. `mode` is SAMPLER
+  ADDRESSING (SetTextureMode @ 98806: low nibble 3/4 = CLAMP else WRAP,
+  bit 0x20 filter) — NOT a blend mode.
 - `VERT`: f32le, stride 24 + 8×n_uv (position, normal, UVs).
 - `INDX`: 2-byte prefix (unreliable); triangle count = (size−2)/6,
   3×u16le each.

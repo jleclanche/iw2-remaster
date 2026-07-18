@@ -86,13 +86,15 @@ class GltfBuilder:
             mat["pbrMetallicRoughness"]["baseColorTexture"] = {"index": tex, "texCoord": 0}
             mat["pbrMetallicRoughness"]["baseColorFactor"] = [1, 1, 1, 1]
         if texture2_uri:
-            # A GLOW layer: the SHDR's second texture slot when it names a
-            # DIFFERENT texture than the base, in additive mode 0x24 -- a
-            # self-illumination mask on TEXCOORD_1 (white lozenges on black
-            # for the tug's engine recesses, window strips on stations...),
-            # tinted by the surface colour. Slots repeating the base texture
-            # are a second render pass (env blend), not a glow -- the caller
-            # filters those out.
+            # The SHDR's second slot is a LIGHTMAP layer; on period hardware
+            # it lands in a MULTIPASS SRCALPHA/ONE additive pass whenever the
+            # texture stages are exhausted, so the clamp-addressed
+            # white-on-black masks (stern engine lozenges, window strips)
+            # read as ADDITIVE light in the original. Emitting those as
+            # emissive-on-TEXCOORD_1 tinted by the surface colour reproduces
+            # that; the caller passes texture2_uri only for mask-like slots
+            # (distinct texture, CLAMP addressing) -- wrap-addressed slots
+            # repeating the base are true modulate lightmaps, not lights.
             mat["emissiveFactor"] = \
                 list(surface.color) if any(surface.color) else [1, 1, 1]
             mat["emissiveTexture"] = {
@@ -141,8 +143,11 @@ class GltfBuilder:
                     self._view(struct.pack(f"<{len(s.uvs2)}f", *s.uvs2), 34962), 5126, nv, "VEC2")
             ia = self._accessor(self._view(struct.pack(f"<{len(idx)}H", *idx), 34963),
                                 5123, len(idx), "SCALAR")
+            # mask-like second slot: a DISTINCT texture with CLAMP addressing
+            # (low nibble 3/4 of the mode word, SetTextureMode @ 98806);
+            # tiling (WRAP) lightmaps and base-repeating slots are excluded
             glow2 = (s.texture2 and s.texture2 != s.texture
-                     and getattr(s, "tex2_mode", 0) == 0x24)
+                     and (getattr(s, "tex2_mode", 0) & 0xf) in (3, 4))
             uri2 = resolve_texture2(s) if resolve_texture2 and glow2 else None
             prims.append({"attributes": attrs, "indices": ia,
                           "material": self.material(s, resolve_texture(s), uri2)})

@@ -42,10 +42,14 @@ class Surface:
     texture: str | None  # OHDR texture name for UV0 slot
     texture2: str | None  # second layer (lightmap), UV1
     envmap: str | None
-    # the second slot's blend mode word. A GLOW layer is a second slot whose
-    # texture DIFFERS from the base and whose mode is 0x24 (additive): the
-    # tug's stern lozenge masks, station window strips. Slots that repeat the
-    # base texture are a second render pass (env blend), not a glow.
+    # the second slot's texture-mode word: a SAMPLER ADDRESSING bitfield
+    # (SetTextureMode @ flux.dll.c:98806 -- low nibble 3/4 = CLAMP, else
+    # WRAP; bit 0x20 = filter flag). NOT a blend mode. Slot 1 renders as a
+    # lightmap layer (cLayer(2) in CreateRenderSurface @ 99963); on period
+    # hardware surfaces that exhaust the texture stages fall back to
+    # multipass, where later layers draw SRCALPHA/ONE additive -- which is
+    # how the clamp-addressed white-on-black masks (the tug's stern
+    # lozenges) read as glowing in the original.
     tex2_mode: int = 0
     positions: list = field(default_factory=list)  # flat [x,y,z,...]
     normals: list = field(default_factory=list)
