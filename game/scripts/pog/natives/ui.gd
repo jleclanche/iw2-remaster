@@ -654,15 +654,25 @@ func _frame_width(_t, _a: Array) -> Variant:
 func _frame_height(_t, _a: Array) -> Variant:
 	return _frame().y
 
-## The GUI's frame. The front end is authored in a FIXED 640x480 canvas -- every
-## number in igui.SetGUIGlobals is in those pixels, and igui.CreateWideShadyBar
-## computes its width as the literal `640 - 2 * GUI_alignment_offset`
-## (igui.pog:392). So FrameWidth/FrameHeight are that canvas, and base_screens.gd
-## scales the whole canvas to whatever window we are actually in.
-const GUI_CANVAS := Vector2i(640, 480)
+## The GUI's frame. The engine renders windows in NATIVE pixels --
+## FcWindowManager::Render (flux 0x10097000) sets SetPixelCamera /
+## SetViewportToWindow, no scaling anywhere -- and the scripts anchor to the
+## LIVE frame: igui.CreateShadyBar's column is gui.FrameHeight() tall,
+## ibasegui positions windows from `gui.FrameHeight() - 290`, while WIDTHS
+## are authored against the nominal 640 (igui.pog:392). An earlier port
+## assumption made this a fixed 640x480 canvas, which squashed every screen
+## to 480 "pixels" tall and scaled them to mush. FrameWidth/FrameHeight are
+## the real window in ORIGINAL-pixel units: the viewport divided by the
+## port's fixed-pixel scale (viewport height / 768 -- the same 1024x768
+## reference convention menu.gd renders the front end with).
+const REF_H := 768.0
 
 func _frame() -> Vector2i:
-	return GUI_CANVAS
+	if game != null and game.is_inside_tree():
+		var vp: Vector2 = game.get_viewport().get_visible_rect().size
+		if vp.y > 0.0:
+			return Vector2i((vp * (REF_H / vp.y)).round())
+	return Vector2i(1024, 768)
 
 # @native gui.SetWindowTitle
 func _set_title(_t, a: Array) -> Variant:

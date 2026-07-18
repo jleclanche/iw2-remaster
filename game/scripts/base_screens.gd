@@ -208,6 +208,15 @@ func _gui_input(e: InputEvent) -> void:
 		# full-rect control at the origin: local coords == viewport coords
 		_click(e.position)
 		accept_event()
+		return
+	# HOVER: FcWindowManager::Tick (flux 0x10096d80) re-focuses the window
+	# under the cursor whenever the mouse MOVES (GetWindowContaining +
+	# SetFocus) -- focus-follows-mouse is the engine's hover effect, and the
+	# focused state art/colour is what lights up. Arrow keys still move the
+	# same focus; the next mouse move takes it back. Silent, like the engine
+	# (BeepOnGainFocus ships unset).
+	if e is InputEventMouseMotion:
+		_hover(e.position)
 
 
 func _unhandled_input(e: InputEvent) -> void:
@@ -311,6 +320,28 @@ func _click(screen_p: Vector2) -> void:
 	_beep(true)
 
 
+## Focus follows the mouse (see _gui_input). Only redraws on a change.
+func _hover(screen_p: Vector2) -> void:
+	var p := (screen_p - _origin()) / _scale()
+	for h in _hit:
+		var r: Rect2 = h[0]
+		if not r.has_point(p):
+			continue
+		var win: PogUi.PogWindow = h[1]
+		var at: int = h[2]
+		var i := _focus.find(win)
+		if i < 0:
+			return
+		if _fi == i and (at < 0 or win.focused_entry == at):
+			return
+		_fi = i
+		if at >= 0:
+			win.focused_entry = at
+		_sync()
+		queue_redraw()
+		return
+
+
 func _beep(bad: bool) -> void:
 	if main != null and main.audio != null:
 		main.audio.play("audio/hud/%s_input.wav"
@@ -357,7 +388,13 @@ func _base() -> BaseInterior:
 # computes its width from the literal `640 - 2 * GUI_alignment_offset`
 # (igui.pog:392) -- so we lay it out in those pixels and scale to the window.
 
-const CANVAS := Vector2(640.0, 480.0)
+# The engine renders the GUI in NATIVE pixels (FcWindowManager::Render,
+# SetPixelCamera -- no scaling, no letterbox), anchored top-left, and the
+# scripts take live gui.FrameWidth/FrameHeight for their layout. We draw in
+# those original pixels scaled by viewport_height / 768 -- the same
+# fixed-pixel 1024x768 reference the front end (menu.gd) uses, so the base
+# screens and the pause menu render at the SAME size and sharpness.
+const REF_H := 768.0
 ## GUI_shader_opacity = 0.8: the translucent column (GUI_shader_width = 240 px)
 ## that every menu sits on. igui.CreateShadyBar.
 const SHADER_OPACITY := 0.8
@@ -409,13 +446,14 @@ func _font_px(f: Font) -> int:
 	return 10
 
 
-## GUI canvas -> screen.
+## Original GUI pixels -> screen.
 func _scale() -> float:
-	return maxf(minf(size.x / CANVAS.x, size.y / CANVAS.y), 0.01)
+	return maxf(size.y / REF_H, 0.01)
 
 
+## Top-left anchored, like the engine's pixel camera. No letterboxing.
 func _origin() -> Vector2:
-	return (size - CANVAS * _scale()) * 0.5
+	return Vector2.ZERO
 
 
 ## A window's rect in GUI canvas pixels. Positions are relative to the parent the
@@ -506,8 +544,12 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 		_draw_scroller(w, r)
 		return
 	var st := _state_of(w)
-	if w.art.has(st):
-		_blit(r, w.art[st])
+	# a control skinned for some states but not this one keeps its neutral
+	# art (vanishing on hover is not a state)
+	var strip: Array = w.art.get(st, w.art.get("neutral", []))
+	if not strip.is_empty():
+		_blit(r, strip)
+	if w.focusable():
 		_hit.append([r, w, -1])
 	var f := _font_for(w.font_url, _font)
 	var fs := _font_px(f)
@@ -549,8 +591,9 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 		if e is PogUi.PogWindow:
 			var ew: PogUi.PogWindow = e
 			var st := "focused" if here else "neutral"
-			if ew.art.has(st):
-				_blit(er, ew.art[st])
+			var strip: Array = ew.art.get(st, ew.art.get("neutral", []))
+			if not strip.is_empty():
+				_blit(er, strip)
 				col = ew.focused_col if here else ew.neutral
 		elif here:
 			draw_rect(er, Color(1.0, 0.749, 0.0, 0.25))
@@ -562,9 +605,10 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 
 func _draw_scroller(w: PogUi.PogWindow, r: Rect2) -> void:
 	# the credits scroller (natives/ui.gd _build_credit_screen) is created with
-	# no rect -- it is the whole screen -- so an empty one takes the canvas
+	# no rect -- it is the whole screen -- so an empty one takes the frame
 	if r.size.x < 8.0 or r.size.y < 8.0:
-		r = Rect2(20.0, 20.0, CANVAS.x - 40.0, CANVAS.y - 40.0)
+		var fr := size / _scale()
+		r = Rect2(20.0, 20.0, fr.x - 40.0, fr.y - 40.0)
 	var lh := _scroll_line_h()
 	var lines := w.text.split("\n")
 	var y := r.end.y + lh - w.scroll
@@ -600,8 +644,8 @@ func _draw_interior_furniture(bi: BaseInterior) -> void:
 		var f := _font_for("font:/fonts/square721 bdex bt_8pt", _font)
 		var fs := _font_px(f)
 		# GUI_backbutton_left = 27, GUI_backbutton_rise = 70: the manager draws
-		# the room name in the back button's corner of the canvas.
-		var gp := Vector2(27.0, CANVAS.y - 70.0 + float(fs) + 22.0)
+		# the room name in the back button's corner, risen off the FRAME bottom
+		var gp := Vector2(27.0, size.y / sc - 70.0 + float(fs) + 22.0)
 		var p := o + gp * sc
 		var wide := f.get_string_size(room, HORIZONTAL_ALIGNMENT_LEFT,
 			-1, fs).x * sc

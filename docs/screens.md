@@ -379,8 +379,27 @@ The base screens' *look* is also the original's, and it is **data**, not code:
 neutral art at (0,36)-(39,68), focused (40,36)-(80,68), selected (81,36)-(120,68).
 `SetWindowStateColours` is the per-state text colour (GUI_neutral (0.6,0.451,0),
 GUI_focused (1,0.749,0), GUI_selected (1,0.859,0.278)); the inverse buttons set
-it black over a filled bar. The front end is authored in a fixed 640×480 canvas
-(igui.pog:392 uses the literal 640). `natives/ui.gd` now records
+it black over a filled bar. `natives/ui.gd` now records
 `SetWindowStateTextures`/`SetShadyBarWidth`/the fonts and formatting;
-`base_screens.gd` blits the named rects and scales the 640×480 canvas to the
-window. The previous hand-picked amber rectangles are gone.
+`base_screens.gd` blits the named rects. The previous hand-picked amber
+rectangles are gone.
+
+**Layout space.** The engine renders windows in NATIVE pixels --
+`FcWindowManager::Render` (flux 0x10097000) sets `SetPixelCamera` /
+`SetViewportToWindow`, no scaling, top-left anchored -- and the scripts
+anchor to the LIVE frame: `igui.CreateShadyBar`'s column is
+`gui.FrameHeight()` tall, ibasegui positions from `FrameHeight() - 290`;
+only nominal WIDTHS use the literal 640 (igui.pog:392). An earlier port
+treated the whole thing as a fixed 640×480 canvas scaled-and-centred, which
+squashed every screen and blurred the art. `gui.FrameWidth/FrameHeight` now
+return the real window in original-pixel units (viewport / (height/768) --
+the same fixed-pixel 1024×768 reference as menu.gd) and `base_screens.gd`
+draws top-left anchored at that scale, so the base screens match the pause
+menu's size and sharpness.
+
+**Hover.** `FcWindowManager::Tick` (flux 0x10096d80) re-focuses the window
+under the cursor whenever the mouse moves (`GetWindowContaining` →
+`SetFocus`, clearing focus over nothing): focus-follows-mouse IS the hover
+effect -- the focused-state strip and text colour light up. Arrow keys move
+the same focus; the next mouse move takes it back. The engine is silent on
+focus gain (`BeepOnGainFocus` ships unset). `base_screens.gd` `_hover`.
