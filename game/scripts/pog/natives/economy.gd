@@ -1560,6 +1560,14 @@ func _cust_fit(idx: int, type: int) -> void:
 			"underpowered": false,
 		})
 	_recheck_cargo_space()
+	# The fire groups hold REFERENCES to the member dicts _mount built; a refit
+	# replaces the dict, so without a rebuild fire() keeps reading the removed
+	# gun -- whose energy store (icCannon +0xd8) is no longer simulated. The
+	# original rebuilds the links whenever the loadout changes hands
+	# (icLoadout::CreateWeaponLinks 0x10096940, the same call _fit_player
+	# mirrors); do the same the moment the fit commits.
+	if game != null and "weapons" in game and game.weapons != null:
+		game.weapons.build_groups(_cust_sys())
 	if manifest_window is PogUi.PogWindow:
 		manifest_window.text = PogStd._s(_l_loadout_description(null, []))
 	_ui_dirty()
