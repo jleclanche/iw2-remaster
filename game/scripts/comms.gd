@@ -226,19 +226,20 @@ func _build_head_view(rig_key: String) -> void:
 				break
 	if rig_key != "clay":
 		return
-	# Clay only: THREE icBeamAvatar planes verbatim from clay_anim01.lws --
-	# the dense red data wall behind him. Two clay_back walls (repeat=20,
-	# speed=-2.0) above and below, plus a clay_back2 plane (repeat=5,
-	# speed=-0.5) off to the side. Entries: texture, LWS pos, LWS h/p/b,
-	# LWS scale, repeat, speed. LW -> Godot: pos z negates, rotation
-	# Ry(-H)*Rx(-P)*Rz(B) (the same conversion _pose_head uses).
+	# Clay only: THREE icBeamAvatar planes from clay_anim01.lws -- the dense
+	# red data wall behind him. Two clay_back walls (repeat=20, speed=-2.0)
+	# above and below centre, plus a clay_back2 plane (repeat=5, speed=-0.5)
+	# off to the left. An icBeamAvatar's intrinsic quad is a light-shaft
+	# plane the authored H90/P90 turns to face the scene camera, so the walls
+	# read as FRONTAL upright glyph columns (the reference shows no edge-on
+	# perspective); positions/scales verbatim, on a +-1 quad, z negated.
 	for beam: Array in [
-		["clay_back", Vector3(0.0, 0.34, 0.2), Vector3(90.0, 90.0, 0.0),
-			Vector3(0.5901, 0.843, 0.843), 20.0, -2.0],
-		["clay_back", Vector3(0.0, -0.34, 0.2), Vector3(90.0, -90.0, 180.0),
-			Vector3(0.5901, 0.843, 0.843), 20.0, -2.0],
-		["clay_back2", Vector3(-0.2875, 0.0, 0.1645), Vector3(90.0, 0.0, 180.0),
-			Vector3(0.4215, 0.843, 1.0959), 5.0, -0.5],
+		["clay_back", Vector3(0.0, 0.34, -0.2),
+			Vector3(0.5901, 0.843, 1.0), 20.0, -2.0],
+		["clay_back", Vector3(0.0, -0.34, -0.2),
+			Vector3(0.5901, 0.843, 1.0), 20.0, -2.0],
+		["clay_back2", Vector3(-0.2875, 0.0, -0.1645),
+			Vector3(0.4215, 0.843, 1.0), 5.0, -0.5],
 	]:
 		var beam_path: String = main._base().path_join(
 			"data/textures/images/sfx/%s.png" % beam[0])
@@ -252,21 +253,16 @@ func _build_head_view(rig_key: String) -> void:
 		mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 		mat.albedo_texture = tex
 		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		mat.uv1_scale = Vector3(float(beam[4]), 1.0, 1.0)
+		mat.uv1_scale = Vector3(float(beam[3]), 1.0, 1.0)
 		var mesh := QuadMesh.new()
-		mesh.size = Vector2(1.0, 1.0)
+		mesh.size = Vector2(2.0, 2.0)  # +-1, scaled by the node
 		mesh.material = mat
 		var mi := MeshInstance3D.new()
 		mi.mesh = mesh
-		var p: Vector3 = beam[1]
-		mi.position = Vector3(p.x, p.y, -p.z)
-		var hpb: Vector3 = beam[2]
-		mi.quaternion = Quaternion(Vector3.UP, deg_to_rad(-hpb.x)) \
-			* Quaternion(Vector3.RIGHT, deg_to_rad(-hpb.y)) \
-			* Quaternion(Vector3.BACK, deg_to_rad(hpb.z))
-		mi.scale = beam[3]
+		mi.position = beam[1]
+		mi.scale = beam[2]
 		head_view.add_child(mi)
-		beam_mats.append([mat, float(beam[5])])
+		beam_mats.append([mat, float(beam[4])])
 
 func say_key(key: String, who := "") -> void:
 	# "a1_m01_dialogue_smith_calm_down" -> speaker smith, text from strings;
