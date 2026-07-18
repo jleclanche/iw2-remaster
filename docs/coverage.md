@@ -1,12 +1,46 @@
-# Coverage audit: the 184 API stubs and the element inventory
+# Coverage: apicov, featurecov, and the stub audit
+
+Two regenerable measurements, one dated audit. Never quote a number here
+without re-running the tool — the raw data is cheap.
+
+## Running the tools
+
+From repo root, with the full Python path (bare `python` is a broken
+Microsoft Store stub on this machine):
+
+    set PY=C:\Users\jerom\AppData\Local\Programs\Python\Python312\python.exe
+    %PY% -m tools.iw2.apicov --coverage       # native-API coverage headline
+    %PY% -m tools.iw2.apicov --stubs          # every stub, per package, by call count
+    %PY% -m tools.iw2.featurecov              # registered engine classes, per binary
+    %PY% -m tools.iw2.featurecov --todo       # the GENUINE single-player gaps only
+
+`apicov` measures the native-API side: which of the engine's POG natives the
+runtime implements, weighted by real campaign call sites (we RUN the original
+bytecode — see docs/pog.md). `featurecov` measures the class side, reading
+the ledger in `game/scripts/element_markers.gd`.
+
+## Headline numbers (2026-07-18)
+
+- **apicov: 673/829 natives implemented — 98% of 72,345 campaign call
+  sites.** 156 stubs remain, **131 of them mp-only** (imultiplay + friends,
+  correctly out of scope).
+- featurecov: 384 registered classes (257 iwar2.dll, 127 flux.dll);
+  8 genuine SP gaps left.
+- All 114 POG packages ported and loading (portcheck); all 48 act-mission
+  scripts ported.
+
+**The current done/missing/stand-in picture and the ranked work queue live in
+`docs/parity.md`** (parity audit, commit 0876a3a) **and on the GitHub
+tracker: `jleclanche/iw2-remaster` issues #1–#14 — #14 is the meta roadmap.**
+File new findings as issues there.
+
+---
+
+# The stub audit (snapshot: 2026-07-13, then 184 stubs)
 
 Audited 2026-07-13 (task #44); iscore checkpoints implemented (task #47).
-Raw data is regenerable, not prose:
-
-    python -m tools.iw2.apicov --stubs        # every stub, per package, by call count
-    python -m tools.iw2.apicov --coverage     # 645/829 implemented, 184 stubbed
-    python -m tools.iw2.featurecov            # 384 registered classes, per binary
-    python -m tools.iw2.featurecov --todo     # the GENUINE single-player gaps only
+Counts below are from that date — several sections are annotated with what
+has since been IMPLEMENTED/RECOVERED; re-run apicov for today's truth.
 
 The class-side classification lives in `game/scripts/element_markers.gd`
 (the ledger featurecov reads). This file is the *native-API* side: what each
