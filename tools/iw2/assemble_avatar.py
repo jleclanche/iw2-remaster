@@ -134,7 +134,8 @@ class Assembler:
                     pso = parse_pso(self.fs.read_bytes(pso_path))
                     mesh = self.b.mesh_from_pso(
                         pso_path, pso,
-                        lambda s: self.texture_uri(scene_dir, s.texture))
+                        lambda s: self.texture_uri(scene_dir, s.texture),
+                        lambda s: self.texture_uri(scene_dir, s.texture2))
                 else:
                     self.missing_psos.append(pso_path)
             extras = None

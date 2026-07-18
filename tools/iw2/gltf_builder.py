@@ -71,7 +71,8 @@ class GltfBuilder:
             self._image_ids[uri] = len(self.doc["textures"]) - 1
         return self._image_ids[uri]
 
-    def material(self, surface, texture_uri: str | None) -> int:
+    def material(self, surface, texture_uri: str | None,
+                 texture2_uri: str | None = None) -> int:
         mat = {
             "name": surface.name,
             "pbrMetallicRoughness": {
@@ -84,7 +85,20 @@ class GltfBuilder:
             tex = self.image(texture_uri)
             mat["pbrMetallicRoughness"]["baseColorTexture"] = {"index": tex, "texCoord": 0}
             mat["pbrMetallicRoughness"]["baseColorFactor"] = [1, 1, 1, 1]
-        if surface.texture2:
+        if texture2_uri:
+            # A GLOW layer: the SHDR's second texture slot when it names a
+            # DIFFERENT texture than the base, in additive mode 0x24 -- a
+            # self-illumination mask on TEXCOORD_1 (white lozenges on black
+            # for the tug's engine recesses, window strips on stations...),
+            # tinted by the surface colour. Slots repeating the base texture
+            # are a second render pass (env blend), not a glow -- the caller
+            # filters those out.
+            mat["emissiveFactor"] = \
+                list(surface.color) if any(surface.color) else [1, 1, 1]
+            mat["emissiveTexture"] = {
+                "index": self.image(texture2_uri),
+                "texCoord": 1 if surface.uvs2 else 0}
+        elif surface.texture2:
             mat["extras"]["lightmap"] = surface.texture2
         if surface.envmap:
             mat["extras"]["envmap"] = surface.envmap
@@ -95,7 +109,8 @@ class GltfBuilder:
         self.doc["materials"].append(mat)
         return len(self.doc["materials"]) - 1
 
-    def mesh_from_pso(self, key: str, pso, resolve_texture) -> int | None:
+    def mesh_from_pso(self, key: str, pso, resolve_texture,
+                      resolve_texture2=None) -> int | None:
         """Add a mesh (once per key); resolve_texture(surface) -> uri or None."""
         if key in self._mesh_ids:
             return self._mesh_ids[key]
@@ -126,8 +141,11 @@ class GltfBuilder:
                     self._view(struct.pack(f"<{len(s.uvs2)}f", *s.uvs2), 34962), 5126, nv, "VEC2")
             ia = self._accessor(self._view(struct.pack(f"<{len(idx)}H", *idx), 34963),
                                 5123, len(idx), "SCALAR")
+            glow2 = (s.texture2 and s.texture2 != s.texture
+                     and getattr(s, "tex2_mode", 0) == 0x24)
+            uri2 = resolve_texture2(s) if resolve_texture2 and glow2 else None
             prims.append({"attributes": attrs, "indices": ia,
-                          "material": self.material(s, resolve_texture(s))})
+                          "material": self.material(s, resolve_texture(s), uri2)})
         if not prims:
             return None
         self.doc["meshes"].append({"primitives": prims, "name": key})

@@ -42,6 +42,11 @@ class Surface:
     texture: str | None  # OHDR texture name for UV0 slot
     texture2: str | None  # second layer (lightmap), UV1
     envmap: str | None
+    # the second slot's blend mode word. A GLOW layer is a second slot whose
+    # texture DIFFERS from the base and whose mode is 0x24 (additive): the
+    # tug's stern lozenge masks, station window strips. Slots that repeat the
+    # base texture are a second render pass (env blend), not a glow.
+    tex2_mode: int = 0
     positions: list = field(default_factory=list)  # flat [x,y,z,...]
     normals: list = field(default_factory=list)
     uvs: list = field(default_factory=list)  # first channel only, flat [u,v,...]
@@ -77,8 +82,14 @@ def _parse_shdr(body: bytes, textures: list[str]) -> tuple:
         (i,) = struct.unpack_from(">I", body, o)
         return textures[i - 1] if 1 <= i <= len(textures) else None
 
+    def mode_at(o):
+        if o + 8 > len(body) - 8:
+            return 0
+        return struct.unpack_from(">I", body, o + 4)[0]
+
     texture = tex_at(off)
     texture2 = tex_at(off + 12)
+    tex2_mode = mode_at(off + 12)
     # optional envmap: longest printable ascii run in the remainder
     envmap = None
     mid = body[off + 24: len(body) - 8]
@@ -94,7 +105,7 @@ def _parse_shdr(body: bytes, textures: list[str]) -> tuple:
         best = bytes(run)
     if len(best) >= 5 and (b"." in best):
         envmap = best.decode("latin-1")
-    return name, color, coeffs, texture, texture2, envmap, nv, nuv
+    return name, color, coeffs, texture, texture2, envmap, nv, nuv, tex2_mode
 
 
 def parse_pso(data: bytes) -> Pso:
@@ -115,8 +126,10 @@ def parse_pso(data: bytes) -> Pso:
                 s, p = _zstr(body, p)
                 pso.textures.append(s)
         elif tag == b"SHDR":
-            name, color, coeffs, tex, tex2, env, nv, nuv = _parse_shdr(body, pso.textures)
-            pending = Surface(name, tuple(color), tuple(coeffs), tex, tex2, env)
+            name, color, coeffs, tex, tex2, env, nv, nuv, t2m = \
+                _parse_shdr(body, pso.textures)
+            pending = Surface(name, tuple(color), tuple(coeffs), tex, tex2, env,
+                              tex2_mode=t2m)
             pending._nv, pending._nuv = nv, nuv  # type: ignore[attr-defined]
         elif tag == b"VERT" and pending is not None:
             nv, nuv = pending._nv, pending._nuv  # type: ignore[attr-defined]
