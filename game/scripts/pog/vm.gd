@@ -594,6 +594,11 @@ static func _vals_equal(a: Variant, b: Variant) -> bool:
 static func _truthy(v: Variant) -> bool:
 	if v == null:
 		return false
+	# a GDScript bool is neither int nor float: without this branch every
+	# computed `not x` a ported script handed to a native read as TRUE -- the
+	# inventory's Equipment/Cargo tabs filled the identical list both ways
+	if v is bool:
+		return v
 	if v is int:
 		return v != 0
 	if v is float:
