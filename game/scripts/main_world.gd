@@ -508,8 +508,14 @@ func _annulus_mesh(inner: float, outer: float) -> ArrayMesh:
 	return mesh
 
 func _spawn_beacon(rec: Dictionary) -> Node3D:
-	# icHUDLagrangeIcon: the blue/red wireframe double funnel (docs/hud.md)
-	var node := SpaceFx.make_lagrange_icon(_lpoint_axis(rec))
+	# icHUDLagrangeIcon: the blue/red wireframe double funnel (docs/hud.md).
+	# A mission waypoint record (imapentity.WaypointForEntity / mission.gd)
+	# is an icHUDWaypointIcon instead: the wireframe cube (@ 0x10104380).
+	var node: Node3D
+	if rec.get("waypoint", false):
+		node = SpaceFx.make_waypoint_icon()
+	else:
+		node = SpaceFx.make_lagrange_icon(_lpoint_axis(rec))
 	add_child(node)
 	return node
 
@@ -669,6 +675,9 @@ func _stream_objects() -> void:
 					o["node"].position = Vector3(dx, dy, dz)
 					# _nearest always stamps "dist", so has("name") is the
 					# only reliable "did it find one" test
-					var lit: bool = near_lp.has("name") \
-						and near_lp["name"] == o["name"]
-					SpaceFx.update_lagrange_icon(o["node"], cam, lit)
+					if o.get("waypoint", false):
+						SpaceFx.update_waypoint_icon(o["node"], cam)
+					else:
+						var lit: bool = near_lp.has("name") \
+							and near_lp["name"] == o["name"]
+						SpaceFx.update_lagrange_icon(o["node"], cam, lit)

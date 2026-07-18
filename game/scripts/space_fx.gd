@@ -215,6 +215,57 @@ static func make_lagrange_icon(axis: Vector3) -> MeshInstance3D:
 	mi.basis = Basis(x, z.cross(x).normalized(), z)
 	return mi
 
+
+# A mission waypoint is NOT an L-point funnel: icHUDWaypointIcon's ctor
+# (iwar2 @ 0x10104040 -> mesh builder @ 0x10104380) builds a WIREFRAME CUBE --
+# eight vertices at ((i,j,k) - 0.5) x scale for i,j,k in {0,1}, and these
+# twelve edge index pairs, verbatim from the builder's index buffer. The edge
+# length (_DAT_1011e2b4) and the element's colour are data-section values not
+# in the decompiled text: the funnel's visual scale and the HUD colour stand
+# in for them.
+const WP_EDGES: Array = [[0, 1], [1, 5], [5, 4], [4, 0], [2, 3], [3, 7],
+	[7, 6], [6, 2], [0, 2], [1, 3], [5, 7], [4, 6]]
+const WP_HALF := 375.0          # stand-in: the funnel's waist radius
+
+static func make_waypoint_icon() -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = ImmediateMesh.new()
+	mi.material_override = _line_material()
+	return mi
+
+static func update_waypoint_icon(mi: MeshInstance3D, cam: Camera3D) -> void:
+	# same cutoff and per-endpoint depth fade as the funnel: both are
+	# iiHUDUnderlayElements and share the fade helper (FUN_100e8b30)
+	var mesh := mi.mesh as ImmediateMesh
+	mesh.clear_surfaces()
+	if cam == null:
+		return
+	var xf := mi.global_transform
+	var eye := cam.global_transform.origin
+	var fwd := -cam.global_transform.basis.z
+	var dist := fwd.dot(xf.origin - eye)
+	if dist > LP_DRAW_DIST:
+		return
+	var far: float = dist + WP_HALF * 2.0
+	if far <= 0.0:
+		return
+	var corners: Array[Vector3] = []
+	for i in 2:
+		for j in 2:
+			for k in 2:
+				corners.append(
+					Vector3(i - 0.5, j - 0.5, k - 0.5) * 2.0 * WP_HALF)
+	mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	for edge: Array in WP_EDGES:
+		for e in 2:
+			var p: Vector3 = corners[edge[e]]
+			var t: float = clampf(1.0 - fwd.dot(xf * p - eye) / far, 0.0, 1.0)
+			var col := GRID_COLOR
+			col.a = LP_ALPHA_FAR + (LP_ALPHA_NEAR - LP_ALPHA_FAR) * t
+			mesh.surface_set_color(col)
+			mesh.surface_add_vertex(p)
+	mesh.surface_end()
+
 static func update_lagrange_icon(mi: MeshInstance3D, cam: Camera3D,
 		active: bool) -> void:
 	var mesh := mi.mesh as ImmediateMesh
