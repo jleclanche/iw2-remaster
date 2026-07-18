@@ -39,13 +39,15 @@ extends Node
 # behaviour: real plasma texture, TIME-scrolled V, channel-driven intensity.
 #
 # Channel strings are EXPRESSIONS in the original's little language
-# (seen across avatars/*.lws):
-#   "LZ?+s(1.0)"              positive fore thrust, smoothed over 1 s
-#   "RP?+j(0.1) LY?+j(0.1)"   RCS jet: pitch-up OR thrust-up, 0.1 s puff
+# (FcChannelEvaluator::Parse @ flux 0x100dd3e0, evaluate FUN_100ddae0):
+#   "LZ?+s(1.0)"              positive fore thrust, rate-limited at 1.0/s
+#   "RP?+j(0.1) LY?+j(0.1)"   RCS jet: pitch-up / thrust-up, 0.1 s puff
 #   "fire?o(5.0)"             one-shot pulse on fire event, fast decay
-# Terms are separated by spaces and combined with max(). Raw inputs:
-# LZ/LX/LY (thrusters), RP/RY/RR (rotation demands), burn, fire, dock.
-# The tug's channels.ini also derives: flame/core/boom/flap from lz/burn.
+# Space-separated terms combine by ARITHMETIC MEAN, then clamp [0,1]
+# (flux.dll.c:207726-207737); s(t) is a LINEAR rate limit, and a bare
+# name (no '?') is identity. Raw inputs: LZ/LX/LY (thrusters), RP/RY/RR
+# (rotation demands), burn (BINARY forward yoke), fire, dock, v.
+# avatars/tug_hull/channels.ini derives flame/core/boom/flap from these.
 
 var ship: ShipFlight
 var anim_nodes: Array = []   # {node, channel, p0..s1}
@@ -159,15 +161,19 @@ func _parse_expr(expr: String) -> Array:
 
 func _eval_term(term: Dictionary, raw: Dictionary, delta: float) -> float:
 	var v: float = raw.get(term["input"], 0.0)
+	# operators after '?': '+' positive part, '-' negative part, 'a' abs;
+	# a BARE name is identity/passthrough (PTR_LAB_100ee050), not abs
 	match term["sign"]:
 		"+": v = maxf(v, 0.0)
 		"-": v = maxf(-v, 0.0)
-		_: v = absf(v)
+		"a": v = absf(v)
 	for mod in term["mods"]:
 		var tau: float = mod[1]
 		match mod[0]:
-			"s":  # first-order smooth
-				term["state"] += (v - term["state"]) * minf(delta / maxf(tau, 0.01), 1.0)
+			"s":  # LINEAR rate limit at tau units/s (FUN_100ddae0
+				# @ flux.dll.c:207738-207751), NOT an exponential smooth:
+				# move toward the target by at most delta * tau per frame
+				term["state"] = move_toward(float(term["state"]), v, delta * tau)
 				v = term["state"]
 			"j":  # jet: instant attack, tau-second decay
 				term["state"] = maxf(v, term["state"] - delta / maxf(tau, 0.01))
@@ -203,27 +209,22 @@ render_mode blend_add, depth_draw_never, cull_disabled, unshaded, shadows_disabl
 uniform sampler2D plasma : source_color, filter_linear_mipmap, repeat_enable;
 uniform vec3 tint = vec3(1.0, 1.0, 0.0);
 uniform float intensity = 0.0;      // |channel value|, 0..1
-uniform float scroll_rate = 0.5;    // iwar2 const @0x1011cbc4
+uniform float scroll_rate = 0.5;    // iwar2 @ 0x1011cbc4 = 0.5/s (verified)
 void fragment() {
-	// V runs the cone axis: 0 at the nozzle, 1 at the tip. Scroll it over TIME
-	// (Prepare @0x100bd5f0) so the plasma noise flows outward every frame.
+	// V runs the cone axis: 0 at the nozzle, 1 at the tip. ONE plasma sheet
+	// scrolled along the axis at 0.5/s (Prepare @0x100bd5f0 integrates the
+	// phase; Draw feeds it into the axial coord). The original has no second
+	// octave and no white-hot albedo boost -- the colour is a FLAT tint copy
+	// (@0x100bd67b); all the motion is the single sliding sheet.
 	float v = UV.y - TIME * scroll_rate;
-	// two decorrelated octaves of the noise so the turbulence churns instead of
-	// sliding as one rigid sheet -- reads as licking flame
-	float a = texture(plasma, vec2(UV.x, v)).r;
-	float b = texture(plasma, vec2(UV.x * 1.7 + 0.3, v * 2.3 - TIME * scroll_rate)).r;
-	// a modest translucent body plus a strong churning-noise term, so the plume
-	// flickers and licks (rather than sitting as a solid cone) as the two octaves
-	// scroll past each other -- this is the motion the original got from scrolling
-	// the plasma noise, and what the old flat-alpha stand-in was missing
-	float density = (0.35 + 1.15 * a) * (0.45 + 1.0 * b);
-	// bright/full at the nozzle, thinning toward the tip (Draw alpha ramp)
-	float grade = mix(1.0, 0.4, UV.y);
-	// fade the leading tip so the cone dissolves rather than ending in a hard cap
-	float tip = smoothstep(1.0, 0.4, UV.y);
-	// hot cores flare toward white where the noise peaks
-	ALBEDO = tint * (1.0 + 2.0 * a * a);
-	ALPHA = clamp(density * grade * tip * intensity, 0.0, 1.0);
+	float density = texture(plasma, vec2(UV.x, v)).r;
+	// Draw's per-ring alpha ramp: the nozzle ring at 1.0, the far ring at
+	// 0.6 x channel value (0x101192c4 = 0.6, verified in .data). The channel
+	// does NOT fade the whole cone -- visibility is the |v| < 1e-6 early-out
+	// (the parent anim null's z-scale carries the length).
+	float grade = mix(1.0, 0.6 * intensity, UV.y);
+	ALBEDO = tint;
+	ALPHA = intensity < 1e-6 ? 0.0 : clamp(density * grade, 0.0, 1.0);
 }
 """
 
@@ -237,7 +238,8 @@ func _add_flame_cone(node: Node3D, ex: Dictionary) -> void:
 			floats.append(float(part.strip_edges()))
 	if floats.size() >= 3:
 		tint = Color(floats[0], floats[1], floats[2])
-	# splay default 0.5 = DAT_1011cbc0 (ctor @0x100bd350); scales the ring radius
+	# splay default 0.5 = DAT_1011cbc0 (ctor @0x100bd350, value read from
+	# iwar2.dll .data); scales the ring radius
 	var splay := float(ex.get("iw2_splay", 0.5))
 	# 6-facet cone: cos/sin tables step pi/3 over 7 verts (gens @0x100bd220/60).
 	# Wide at the nozzle (radius = splay), tapering to a near-point tip. The
@@ -483,18 +485,14 @@ func _physics_process(delta: float) -> void:
 	if ship == null:
 		return
 	# raw ship-state inputs for the channel language
-	# icShip::ApplyThrusterBurns: "burn" (@ 0x1015d610) is the FORWARD YOKE --
-	# a held input, not a speed. The old assist stand-in (a speed fraction)
-	# pinned the drive glow at full while merely CRUISING at set speed, which
-	# smeared the stern with a permanent washed-out blob. Under assist the
-	# actually-applied forward force reaches the rig through "lz" already,
-	# and at constant velocity there is no force and no glow -- like the
-	# original.
+	# icShip::ApplyThrusterBurns @ iwar2.dll.c:97623-97631: "burn" is BINARY
+	# -- 1.0 while the forward yoke demand (+0x2cc) is positive, else 0.0,
+	# written for PLAYER ships only. Not analog, not a speed: burn_smooth's
+	# 1.0/s rate limit is what shapes the attack; at constant velocity there
+	# is no demand and no glow.
 	var burn := 0.0
-	if ship.drive_override:
+	if ship.drive_override or ship.input_thrust.z > 0.05:
 		burn = 1.0
-	elif absf(ship.input_thrust.z) > 0.05:
-		burn = absf(ship.input_thrust.z)
 	fire_pulse = maxf(0.0, fire_pulse - delta * 4.0)
 	# icShip::ApplyThrusterBurns @ 0x100758a0 writes the raw channels on the
 	# avatar root each tick: "lx"/"ly"/"lz" (strings @ 0x1015d5fc/0x1015d600/
@@ -515,16 +513,21 @@ func _physics_process(delta: float) -> void:
 	# supplies the ones the ship has no state for
 	for k: String in script_channels:
 		raw[k] = script_channels[k]
-	# tug channels.ini: lz_smooth = "lz?+s(0.75)" -- POSITIVE forward burn
-	# only (retro/braking thrust must not light the main flame), 0.75 s smooth
-	_lz_smooth += (clampf(maxf(raw["lz"], 0.0), 0.0, 1.0) - _lz_smooth) \
-		* minf(delta / 0.75, 1.0)
-	_burn_smooth += (burn - _burn_smooth) * minf(delta / 1.0, 1.0)
+	# avatars/tug_hull/channels.ini, verbatim:
+	#   lz_smooth = "lz?+s(0.75)"    burn_smooth = "burn?+s(1.0)"
+	#   boom = core = "burn_smooth"  flame = flap = "lz_smooth burn_smooth"
+	# s(t) is a LINEAR rate limit at t units/s (FUN_100ddae0 @ flux.dll.c:
+	# 207738-207751), not an exponential smooth, and space-separated terms
+	# combine by ARITHMETIC MEAN then clamp [0,1] (207726-207737) -- NOT max.
+	_lz_smooth = move_toward(_lz_smooth,
+		clampf(maxf(raw["lz"], 0.0), 0.0, 1.0), delta * 0.75)
+	_burn_smooth = move_toward(_burn_smooth, burn, delta * 1.0)
+	var mixed := clampf((_lz_smooth + _burn_smooth) * 0.5, 0.0, 1.0)
 	var named := {
-		"flame": maxf(_lz_smooth, _burn_smooth),
+		"flame": mixed,
 		"core": _burn_smooth,
 		"boom": _burn_smooth,
-		"flap": maxf(_lz_smooth, _burn_smooth),
+		"flap": mixed,
 	}
 	if _flameshot:
 		# main resets ship.drive_override each frame, so pin the derived channels
@@ -532,10 +535,13 @@ func _physics_process(delta: float) -> void:
 		named = {"flame": 1.0, "core": 1.0, "boom": 1.0, "flap": 1.0}
 	for ch in exprs:
 		var e: Dictionary = exprs[ch]
-		var best := 0.0
+		# terms combine by MEAN then clamp to [0,1] (FUN_100ddae0
+		# @ flux.dll.c:207726-207737) -- the engine never takes a max
+		var total := 0.0
 		for term in e["terms"]:
-			best = maxf(best, _eval_term(term, raw, delta))
-		e["value"] = best
+			total += _eval_term(term, raw, delta)
+		e["value"] = clampf(total / maxf(float(e["terms"].size()), 1.0),
+			0.0, 1.0)
 	# drive each flame cone's own channel (flame/core) into its shader. The
 	# Draw uses v = |Evaluate(channel)| (0x100bd63e) to gate + grade the plume.
 	for fc in flame_cones:
@@ -561,6 +567,9 @@ func _physics_process(delta: float) -> void:
 			t = exprs[entry["channel"]]["value"]
 		else:
 			t = 0.0
+		# every generator output is clamped [0,1] inside the evaluator
+		# before it drives geometry (flux.dll.c:207730-207737)
+		t = clampf(t, 0.0, 1.0)
 		var q: Quaternion = (entry["q0"] as Quaternion).slerp(entry["q1"], t)
 		var b := Basis(q).scaled_local(
 			(entry["s0"] as Vector3).lerp(entry["s1"], t))
