@@ -853,6 +853,16 @@ func _g_load(_t, a: Array) -> Variant:
 	if d == null:
 		return 0
 	std.globals = d.get("globals", {})
+	# A campaign save always carries g_current_act (istartsystem.StartupNewGame
+	# creates it before anything can save), so a snapshot without it is a
+	# free-flight/debug session -- whose boot convention is act -1 (main._ready).
+	if not std.globals.has("g_current_act"):
+		std.globals["g_current_act"] = -1
+	# The VM and the ported runtime keep separate global stores by design, and
+	# base_interior reads the ported one first -- the same reason main's debug
+	# boot seeds both. The restored story state must land in both stores too.
+	if "pog_rt" in game and game.pog_rt != null and game.pog_rt.std != null:
+		game.pog_rt.std.globals.merge(std.globals.duplicate(), true)
 	for k in d.get("states", {}):
 		var s: PogStd.PogState = std._state_create(null, [k])
 		s.progress = int(d["states"][k])
