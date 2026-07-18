@@ -744,16 +744,23 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 		var row_base: float = (eh - f.get_height(fs)) * 0.5 + f.get_ascent(fs)
 		var er := Rect2(r.position.x, y, r.size.x, eh)
 		var here: bool = w == _current() and i == w.focused_entry
+		# FcListBox renders the SELECTED entry with its own state art whether or
+		# not the box has focus (neutral/focused/selected are three different
+		# strips, docs/screens.md) -- the recycling screen depends on it: its
+		# select handler stores selected_index, clears focused_entry and moves
+		# focus to the button, and the row must stay lit.
+		var sel: bool = i == w.selected_index
 		var col := AMBER_GLOW if here else AMBER
 		if e is PogUi.PogWindow:
 			var ew: PogUi.PogWindow = e
-			var st := "focused" if here else "neutral"
+			var st := "focused" if here else ("selected" if sel else "neutral")
 			var strip: Array = ew.art.get(st, ew.art.get("neutral", []))
 			if not strip.is_empty():
 				_blit(er, strip)
-				col = ew.focused_col if here else ew.neutral
-		elif here:
-			draw_rect(er, Color(1.0, 0.749, 0.0, 0.25))
+				col = ew.focused_col if here \
+						else (ew.selected_col if sel else ew.neutral)
+		elif here or sel:
+			draw_rect(er, Color(1.0, 0.749, 0.0, 0.25 if here else 0.15))
 		if e is PogUi.PogWindow and (e as PogUi.PogWindow).title.is_empty() \
 				and not (e as PogUi.PogWindow).children.is_empty():
 			# A component row: the columns are child static windows placed at

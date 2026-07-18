@@ -43,10 +43,6 @@ const SHIP_NAMES := [
 	"Storm Petrel",
 ]
 
-## Hold capacity per hull. The originals came out of the mount-point tables in
-## the ship INIs; without those we scale off hull size, which is what the
-## cargo-space warning actually needs to be monotonic in.
-const SHIP_CARGO_SLOTS := [4, 24, 8, 16, 12]
 
 var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var world: PogWorld
@@ -963,7 +959,14 @@ func _l_good_to_go(_t, _a: Array) -> Variant:
 
 # @native iloadout.UnusedInternalCargoSlots
 func _l_unused_slots(_t, _a: Array) -> Variant:
-	return maxi(0, _cargo_slots() - player_inv().total_items())
+	# icLoadout keeps this as its own counter (+0xf0, getter @ 0x1000c670):
+	# CalculatePresetLoadout seeds it from the hull's cargo_space and the
+	# loadout calculation itself spends it as it fits hold-occupying subsims.
+	# It is NOT "capacity minus everything in the station inventory" -- that
+	# read "0 of 24 slots free" as soon as GiveEverything stocked the hold.
+	# Our preset fits do not model internal-slot consumers yet (stand-in:
+	# nothing spent), so the count sits at capacity.
+	return _cargo_slots()
 
 # @native iloadout.CargoSpaceWarning
 func _l_cargo_warning(_t, _a: Array) -> Variant:
@@ -1001,12 +1004,21 @@ func _turret_fighter_type() -> int:
 
 
 func _cargo_slots() -> int:
-	var i := loadout.ship
-	return SHIP_CARGO_SLOTS[i] if i >= 0 and i < SHIP_CARGO_SLOTS.size() else 0
+	# CalculatePresetLoadout @ 0x10093d90 seeds UnusedInternalCargoSlots from
+	# the hull template's [Properties] cargo_space ("The number of internal
+	# cargo slots" per the INI comment): comsec 0, tug 1, fast attack 2,
+	# heavy corvette 3.
+	var ini := ship_ini()
+	if ini.is_empty():
+		return 0
+	var props: Dictionary = ShipSystems.ship_record(ini).get("properties", {})
+	return int(props.get("cargo_space", 0))
 
 
 func _recheck_cargo_space() -> void:
-	loadout.cargo_warning = player_inv().total_items() > _cargo_slots()
+	# icLoadout::CargoSpaceWarning flags the LOADOUT overflowing the hull's
+	# own hold (unused slots driven negative), not a full station inventory
+	loadout.cargo_warning = int(_l_unused_slots(null, [])) < 0
 
 
 ## iloadout::eLoadout, read straight out of the loadout screen. ibasegui builds
@@ -1086,6 +1098,12 @@ func _l_loadout_description(_t, _a: Array) -> Variant:
 	var slots: int = int(_l_unused_slots(null, []))
 	lines.append(_text_or("manifest_ship_cargo", "SHIP CARGO"))
 	lines.append("  %d of %d slots free" % [slots, _cargo_slots()])
+	# "+ cargo when non-empty": the external pod SetCargo mounts (this is what
+	# the ADD CARGO screen writes -- without this line it looked like a no-op)
+	var pod: PogCargo = cargo_types.get(loadout.cargo)
+	if loadout.cargo != 0 and pod != null:
+		lines.append(_text_or("customise_cargo", "CARGO"))
+		lines.append("  " + _text(pod.name))
 	if loadout.turret_fighters > 0:
 		lines.append(_text_or("customise_turretfighter", "TURRET FIGHTER"))
 		lines.append("  %d fitted" % loadout.turret_fighters)

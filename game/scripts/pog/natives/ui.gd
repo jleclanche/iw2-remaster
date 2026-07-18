@@ -193,6 +193,13 @@ class PogScreen extends RefCounted:
 	## Engine-built screens (credits, the apology screen) have no POG cancel
 	## function; Escape just pops them, the way FcGame::PopScreen did.
 	var pop_on_cancel := false
+	## The shady-bar widths THIS screen's builder set (-1 = it never did). In
+	## retail each icShadyBar is a control owned by its screen and dies with
+	## it; our single global width has to be restored from the screens that
+	## remain whenever one pops, or a grey-box overlay's 614 sticks and the
+	## 240-wide menu column under it loses its backdrop.
+	var shady_width := -1
+	var shady_width_rhs := -1
 
 
 ## A window, button, list box, edit box, slider or checkbox. One class, because
@@ -546,6 +553,7 @@ func _pop_screen(_t, _a: Array) -> Variant:
 	elif screens.size() > 1:
 		# the screen below comes back with its own overlays intact
 		screens.pop_back()
+	_restore_shady()
 	focused = null
 	dirty = true
 	return 0
@@ -555,6 +563,7 @@ func _remove_last_overlay(_t, _a: Array) -> Variant:
 	var cur := _cur()
 	if cur != null and not cur.over.is_empty():
 		cur.over.pop_back()
+	_restore_shady()
 	focused = null
 	dirty = true
 	return 0
@@ -577,6 +586,7 @@ func _pop_screens_to(_t, a: Array) -> Variant:
 		if screens[i].name == name:
 			screens.resize(i + 1)
 			break
+	_restore_shady()
 	focused = null
 	dirty = true
 	return 0
@@ -591,6 +601,7 @@ func _remove_overlays_after(_t, a: Array) -> Variant:
 		for i in range(cur.over.size() - 1, -1, -1):
 			if cur.over[i].name == name:
 				cur.over.resize(i + 1)
+				_restore_shady()
 				focused = null
 				dirty = true
 				return 0
@@ -599,6 +610,7 @@ func _remove_overlays_after(_t, a: Array) -> Variant:
 		if screens[i].name == name:
 			screens.resize(i + 1)
 			break
+	_restore_shady()
 	focused = null
 	dirty = true
 	return 0
@@ -606,6 +618,7 @@ func _remove_overlays_after(_t, a: Array) -> Variant:
 # @native gui.ClearAllScreens
 func _clear_screens(_t, _a: Array) -> Variant:
 	screens.clear()
+	_restore_shady()
 	focused = null
 	dirty = true
 	return 0
@@ -1553,12 +1566,34 @@ var shady_width_rhs := 0
 # @native gui.SetShadyBarWidth
 func _set_shady_width(_t, a: Array) -> Variant:
 	shady_width = int(a[0])
+	var scr := top_screen()
+	if scr != null:
+		scr.shady_width = shady_width
 	return 0
 
 # @native gui.SetRHSShadyBarWidth
 func _set_shady_width_rhs(_t, a: Array) -> Variant:
 	shady_width_rhs = int(a[0])
+	var scr := top_screen()
+	if scr != null:
+		scr.shady_width_rhs = shady_width_rhs
 	return 0
+
+## Re-derive the global widths from the screens still standing, most recently
+## raised wins -- the per-screen half of the icShadyBar ownership note above.
+func _restore_shady() -> void:
+	shady_width = 0
+	shady_width_rhs = 0
+	var cur := _cur()
+	if cur == null:
+		return
+	var chain: Array = [cur]
+	chain.append_array(cur.over)
+	for scr: PogScreen in chain:
+		if scr.shady_width >= 0:
+			shady_width = scr.shady_width
+		if scr.shady_width_rhs >= 0:
+			shady_width_rhs = scr.shady_width_rhs
 
 # @native gui.SetWindowFont
 # @native gui.SetDefaultFont
