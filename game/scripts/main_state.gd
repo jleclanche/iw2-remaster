@@ -86,7 +86,8 @@ var space_fx: SpaceFx
 var ldsi_mesh: ImmediateMesh
 var ldsi_mat: StandardMaterial3D
 var sky_anchor: Node3D
-var sky_mat: ShaderMaterial
+var backdrop_shader: Shader  # gamma-space-filtered additive cyclorama
+var starfield_shader: Shader  # icStarfieldAvatar pixel points
 var env_ref: Environment
 # icDirector's camera GROUPS, built in its constructor (iwar2 @ 0x100d5e20) and
 # cycled by icDirector::OnMessage (0x100d6920): pressing a camera key when you

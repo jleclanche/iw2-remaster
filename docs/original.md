@@ -864,6 +864,52 @@ colour at `z = depth`.
 `geog/*.lws` -- one `url` property, every material forced additive at alpha
 0.99. That part we already had right.
 
+### The sky pipeline is GAMMA-space end to end -- and it matters visibly
+
+D3D7 has no linear-light pipeline: textures are sampled, bilinear-FILTERED
+and additively BLENDED as their stored gamma bytes, and the frame scans out
+raw. Two measurable consequences (original-game screenshot vs the decoded
+`models/hoffers_wake_nebula_*.ftc/.ftu`, 256x256 per cube face):
+
+- **Empty-sky pixels equal the backdrop texture's dark texels
+  byte-for-byte** -- (8,44,7) in Hoffer's Wake. Black clear + additive
+  cyclorama at alpha 0.99, no ambient/pedestal of any kind.
+- **Filtering in gamma space is what makes the low-res cyclorama look
+  smooth.** Godot sRGB-decodes BEFORE the bilinear filter, so texel ramps
+  are interpolated in linear light; between a dark and a bright texel the
+  dark half of the ramp perceptually collapses and the 256^2 faces show
+  hard ~1-texel stair-steps. Sampling the texture raw and applying the
+  sRGB decode AFTER filtering (main_world.gd `_make_additive`) restores
+  the original's D3D7 ramp exactly (the final linear->sRGB scanout
+  cancels the decode).
+
+### icStarfieldAvatar: single-pixel points, fixed intensities, no twinkle
+
+Properties (map @ `FUN_100d07d0`): `bright_star_count`, `dim_star_count`,
+`high_quality`, `tint`, `seed` (ctor default 314159276 @ `0x10161ea4`).
+`OnPropertiesChanged` (`0xd0d80`): clamps counts, **zeroes
+`m_dim_star_count` unless `high_quality`** (a static bool defaulting to
+FALSE that nothing else in iwar2.dll sets -- the shipped game renders
+bright stars only), then `srand(m_seed)`, `GenerateIntensities`
+(`0xd1ab0`: 16 floats `rand()/32767`), `GenerateStars` (`0xd1af0`:
+`FnRandom::UnitVector()` directions; dim stars bucketed into a lat/long
+grid of point-list primitives culled per frame by view cone).
+
+`Render` (`0xd1000`): bright stars project to the viewport and draw as
+**single-pixel point-list vertices** through `SetPixelCamera`, additive
+(blend 2), colour `m_tint`, per-star intensity
+`(1 - m_min_bright_star_intensity) * rand16[i & 15] +
+m_min_bright_star_intensity` with `m_min_bright_star_intensity = 0.4`
+(@ `0x1011d1e0`, exported static). Intensities and directions are
+generated once per property change -- **no per-frame twinkle**. A star
+whose screen motion since the previous frame exceeds ~2 px is drawn as a
+LINE between the two projected positions instead (the classic rotation
+streaks; intensity scaled by a 0x640-entry 1/length table at
+`0x10171f98`), and the dim-star layer fades by the average streak factor:
+at rest it runs at `(1 - 0.15 @ 0x1011b354) * m_max_dim_star_intensity`
+with `m_max_dim_star_intensity = 0.65` (@ `0x1011d1e4`). The rotation
+streaks are not ported yet.
+
 ### The geography: every render property of a body is in its `.map` record
 
 Full write-up, with the disassembly, in **`geography.md`**. The short version --

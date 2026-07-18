@@ -20,10 +20,12 @@ func _build_environment() -> void:
 	add_child(fill_sun)
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
-	e.background_mode = Environment.BG_SKY
-	var sky := Sky.new()
-	sky.sky_material = _starfield_material()
-	e.sky = sky
+	# D3D7 clears to black and the sky is drawn objects only: icStarfieldAvatar
+	# points + the icNebulaAvatar cyclorama. An original-game screenshot's
+	# empty-sky pixels equal the backdrop texture's dark texels byte-for-byte
+	# ((8,44,7) in Hoffer's Wake), so there is NO ambient pedestal of any kind.
+	e.background_mode = Environment.BG_COLOR
+	e.background_color = Color.BLACK
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
 	e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	# the original has no post-processing at all -- D3D7 scanned the frame out
@@ -68,12 +70,8 @@ func _setup_sky(stem: String) -> void:
 						# scales the additive backdrop painted OVER stations
 						var r := _model_bounds_radius(neb)
 						neb.scale = Vector3.ONE * (4.8e5 / maxf(r, 1.0))
-				elif cls == "icStarfieldAvatar" and sky_mat != null:
-					var tint := _parse_tuple(str(n.get("tint", "")), Vector3.ONE)
-					sky_mat.set_shader_parameter("star_tint", tint)
-					sky_mat.set_shader_parameter("density",
-						clampf(float(n.get("bright_star_count", 2000)) / 2000.0,
-							0.3, 3.0))
+				elif cls == "icStarfieldAvatar":
+					_add_starfield(n)
 			"light":
 				var col := Color.WHITE
 				if n.has("color"):
@@ -154,17 +152,51 @@ func _add_sky_flare(dir_lw: Vector3, n: Dictionary, col: Color) -> void:
 	sky_anchor.add_child(mi)
 
 func _make_additive(node: Node3D) -> void:
+	# icNebulaAvatar (0x100cb520) forces every backdrop material additive at
+	# alpha 0.99, and D3D7 both FILTERS and BLENDS in the stored gamma bytes.
+	# Godot sRGB-decodes BEFORE the bilinear filter (--srgbprobe: texel
+	# centres round-trip byte-exact, but interpolated samples land in linear
+	# space), which perceptually collapses the dark end of every texel ramp
+	# into hard ~1-texel stair-steps on the 256^2 cyclorama faces. So sample
+	# the texture RAW (no source_color: hardware filters the gamma bytes like
+	# D3D7 did) and apply the sRGB decode AFTER filtering; the framebuffer's
+	# final linear->sRGB scanout then restores the gamma-space lerp exactly.
 	for mi in node.find_children("*", "MeshInstance3D", true, false):
 		var m: MeshInstance3D = mi
 		for i in m.get_surface_override_material_count():
 			var mat := m.mesh.surface_get_material(i)
 			if mat is StandardMaterial3D:
-				var sm: StandardMaterial3D = mat.duplicate()
-				sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-				sm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-				sm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-				sm.cull_mode = BaseMaterial3D.CULL_DISABLED
-				m.set_surface_override_material(i, sm)
+				var std: StandardMaterial3D = mat
+				if std.albedo_texture != null:
+					var sm := ShaderMaterial.new()
+					sm.shader = _additive_backdrop_shader()
+					sm.set_shader_parameter("albedo_tex", std.albedo_texture)
+					m.set_surface_override_material(i, sm)
+				else:
+					var dup: StandardMaterial3D = std.duplicate()
+					dup.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+					dup.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+					dup.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+					dup.cull_mode = BaseMaterial3D.CULL_DISABLED
+					m.set_surface_override_material(i, dup)
+
+func _additive_backdrop_shader() -> Shader:
+	if backdrop_shader != null:
+		return backdrop_shader
+	backdrop_shader = Shader.new()
+	backdrop_shader.code = """
+shader_type spatial;
+render_mode unshaded, blend_add, cull_disabled;
+uniform sampler2D albedo_tex : filter_linear, repeat_enable;
+void fragment() {
+	// gamma-space bilinear result, then icNebulaAvatar's forced alpha 0.99
+	vec3 g = texture(albedo_tex, UV).rgb * 0.99;
+	// exact sRGB->linear so the swapchain's linear->sRGB restores g
+	ALBEDO = mix(g / 12.92, pow((g + vec3(0.055)) / 1.055, vec3(2.4)),
+		step(vec3(0.04045), g));
+}
+"""
+	return backdrop_shader
 
 func _build_grid() -> void:
 	# icHUDReferenceGrid: a 9x9x9 lattice of streaks pointing back along the
@@ -249,28 +281,76 @@ func _update_contrails() -> void:
 	space_fx.update_contrails(get_physics_process_delta_time(), ships,
 		docked_at != "" or jump_state >= 3)
 
-func _starfield_material() -> ShaderMaterial:
-	var m := ShaderMaterial.new()
-	var sh := Shader.new()
-	sh.code = """
-shader_type sky;
-uniform vec3 star_tint = vec3(0.9, 0.93, 1.0);
-uniform float density = 1.0;
-float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
-void sky() {
-	vec3 d = EYEDIR;
-	vec3 cell = floor(d * 220.0);
-	float h = hash(cell);
-	float star = step(1.0 - 0.003 * density, h);
-	vec3 center = (cell + 0.5) / 220.0;
-	float falloff = smoothstep(0.0035, 0.0005, distance(normalize(center), d));
-	float tw = 0.6 + 0.4 * hash(cell + 1.0);
-	COLOR = vec3(0.004, 0.005, 0.01) + star * falloff * tw * star_tint;
+# icStarfieldAvatar (iwar2 @ 0xd1000 Render, 0xd0d80 OnPropertiesChanged):
+# bright stars are SINGLE-PIXEL additive points through SetPixelCamera, one
+# per m_bright_star_count, colour m_tint x intensity, intensity =
+# (1 - m_min_bright_star_intensity) * rand16[i & 15]
+#   + m_min_bright_star_intensity        (min 0.4 @ 0x1011d1e0)
+# with the 16 rand() intensities and the star directions generated ONCE per
+# property change from srand(m_seed) -- no per-frame twinkle. Dim stars only
+# exist when the scene sets high_quality (static default false; 0xd0d80
+# zeroes m_dim_star_count otherwise); at rest their layer runs at
+# (1 - 0.15 @ 0x1011b354) * m_max_dim_star_intensity (0.65 @ 0x1011d1e4).
+# Rotation streaks (points stretch into lines) are NOT ported yet.
+func _add_starfield(n: Dictionary) -> void:
+	var bright := int(n.get("bright_star_count", 0))
+	var dim := int(n.get("dim_star_count", 0)) \
+			if bool(n.get("high_quality", false)) else 0
+	if bright + dim <= 0:
+		return
+	var tint := _parse_tuple(str(n.get("tint", "")), Vector3.ONE)
+	var rng := RandomNumberGenerator.new()
+	# ctor default seed 314159276 (@ 0x10161ea4); the LCG stream itself is
+	# msvcrt rand(), which we do not reproduce -- positions are cosmetic.
+	rng.seed = int(n.get("seed", 314159276))
+	var levels: Array[float] = []
+	for i in 16:
+		levels.append(0.4 + (1.0 - 0.4) * rng.randf())
+	var pts := PackedVector3Array()
+	var cols := PackedColorArray()
+	for i in bright + dim:
+		# uniform direction on the sphere, pushed out by the same camera-
+		# anchored sky radius the cyclorama dome uses
+		var z := rng.randf_range(-1.0, 1.0)
+		var phi := rng.randf_range(0.0, TAU)
+		var r := sqrt(maxf(0.0, 1.0 - z * z))
+		pts.append(Vector3(r * cos(phi), r * sin(phi), z) * 4.7e5)
+		var lum := levels[i & 15] if i < bright else (1.0 - 0.15) * 0.65
+		cols.append(Color(tint.x * lum, tint.y * lum, tint.z * lum))
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = pts
+	arrays[Mesh.ARRAY_COLOR] = cols
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_POINTS, arrays)
+	var mat := ShaderMaterial.new()
+	mat.shader = _starfield_shader()
+	mesh.surface_set_material(0, mat)
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	# the points span the whole sky sphere; never frustum-cull the instance
+	mi.custom_aabb = AABB(Vector3.ONE * -4.8e5, Vector3.ONE * 9.6e5)
+	sky_anchor.add_child(mi)
+
+func _starfield_shader() -> Shader:
+	if starfield_shader != null:
+		return starfield_shader
+	starfield_shader = Shader.new()
+	starfield_shader.code = """
+shader_type spatial;
+render_mode unshaded, blend_add;
+void vertex() {
+	POINT_SIZE = 1.0;
+}
+void fragment() {
+	// vertex colour is the original's gamma-space star value; decode it so
+	// the swapchain's linear->sRGB scanout restores it, like the cyclorama
+	vec3 g = COLOR.rgb;
+	ALBEDO = mix(g / 12.92, pow((g + vec3(0.055)) / 1.055, vec3(2.4)),
+		step(vec3(0.04045), g));
 }
 """
-	m.shader = sh
-	sky_mat = m
-	return m
+	return starfield_shader
 
 # --- system loading -------------------------------------------------------
 
