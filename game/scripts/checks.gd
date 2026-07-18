@@ -940,6 +940,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_tow_ride",
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
+	&"_ms_save_reload",
 	&"_ms_finish",
 ]
 
@@ -1400,6 +1401,42 @@ func _ms_pod_spill_assert(_delta: float) -> void:
 	elif demo_t > 20.0:
 		_mech("pod-spill", false, "no pods %d s after the kill" % int(demo_t))
 		_mech_next()
+
+func _ms_save_reload(_delta: float) -> void:
+	# the igame.SaveGame/LoadGame roundtrip with the world extras: hull,
+	# throttle, kills, magazines and the live-ship snapshot all survive.
+	# Runs LAST: load_game re-enters the system and resets the mech world.
+	var mark := _mech_spawn("Roundtrip Contact", 777.0,
+			m.ship.global_position + Vector3(4000, 0, 0))
+	mark.sim_key = "mech_roundtrip"
+	mark.explicit_hostile = true
+	m.ship.set_speed = 123.0
+	m.kill_count = 42
+	m.hull = m.hull_max * 0.5
+	var saved: bool = m.save_game(7, "mechtest")
+	m.hull = m.hull_max
+	m.kill_count = 0
+	m.ship.set_speed = 0.0
+	_mech_reap(mark)
+	var loaded: bool = m.load_game(7)
+	var back: AiShip = null
+	for a in m.ai_ships:
+		if is_instance_valid(a) and String(a.sim_key) == "mech_roundtrip":
+			back = a
+	var ok: bool = saved and loaded \
+			and absf(m.hull - m.hull_max * 0.5) < 0.5 \
+			and m.kill_count == 42 \
+			and absf(m.ship.set_speed - 123.0) < 0.01 \
+			and back != null and back.explicit_hostile \
+			and absf(back.hull - 777.0) < 0.5
+	_mech("save-reload", ok,
+		"hull %.0f/%.0f kills %d set_speed %.0f contact %s"
+			% [m.hull, m.hull_max, m.kill_count, m.ship.set_speed,
+			"restored" if back != null else "LOST"])
+	if back != null:
+		_mech_reap(back)
+	DirAccess.remove_absolute("user://save_7.json")
+	_mech_next()
 
 func _ms_finish(_delta: float) -> void:
 	Engine.time_scale = 1.0

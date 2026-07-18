@@ -579,6 +579,147 @@ func debug_start(ini: String, system_stem := "hoffers_wake", at := "") -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 
+# --- save/reload -------------------------------------------------------------
+# igame.SaveGame/LoadGame (natives/gameapi.gd) own the file format; these
+# helpers gather and restore the WORLD state the story-level snapshot
+# (globals + states + objectives) does not cover. Deliberately NOT saved:
+# live POG task continuations (a bytecode coroutine parked mid-mission
+# cannot be serialised; the states/globals it wrote are, and the reactive
+# scripts re-arm from those), in-flight ordnance, effects, and field rocks
+# (regenerated procedurally).
+
+func save_extras() -> Dictionary:
+	var systems: Array = []
+	if sys != null:
+		for s2: Dictionary in sys.systems:
+			systems.append({"n": s2["name"], "hp": s2["hp"]})
+	var mags: Array = []
+	for m2: Dictionary in player_mags:
+		mags.append({"stem": m2["stem"], "ammo": m2["ammo"]})
+	var ai: Array = []
+	for a in ai_ships:
+		var s3 := a as AiShip
+		if s3 == null or not is_instance_valid(s3) or s3.dying:
+			continue
+		ai.append({
+			"key": s3.sim_key, "name": s3.display_name, "ini": s3.ini_path,
+			"avatar": s3.avatar_path, "faction": s3.faction,
+			"ctype": s3.ctype, "behavior": s3.behavior, "hull": s3.hull,
+			"pos": [s3.position.x, s3.position.y, s3.position.z],
+			"vel": [s3.velocity.x, s3.velocity.y, s3.velocity.z],
+			"hostile": s3.explicit_hostile, "pods": s3.carried_pods,
+			"cargo": int(pog_std._bag(pog_world._wrap_ship(s3))
+					.get("cargo", 0)) if pog_world != null else 0,
+		})
+	var inv := {}
+	if pog_econ != null:
+		for k in pog_econ.player_inv().counts:
+			inv[str(k)] = pog_econ.player_inv().counts[k]
+	return {
+		"ship_ini": player_ship_ini,
+		"vel": [ship.velocity.x, ship.velocity.y, ship.velocity.z],
+		"set_speed": ship.set_speed,
+		"docked_at": docked_at,
+		"kill_count": kill_count,
+		"aim_assist": aim_assist,
+		"systems": systems,
+		"mags": mags,
+		"inventory": inv,
+		"ai": ai,
+	}
+
+func restore_extras(d: Dictionary) -> void:
+	var want := str(d.get("ship_ini", ""))
+	if want != "" and want != player_ship_ini:
+		var stats: Array = _load_json("data/json/ships.json")
+		for rec in stats:
+			if rec.get("path", "") == want:
+				# record avatar is an lws:/ ref; _fit_player wants the gltf
+				_fit_player(want, "data/avatars/avatars/"
+						+ str(rec.get("avatar", "lws:/avatars/tug_hull/setup_prefitted"))
+						.trim_prefix("lws:/avatars/") + ".gltf")
+				break
+	var v: Array = d.get("vel", [0, 0, 0])
+	ship.velocity = Vector3(v[0], v[1], v[2])
+	ship.set_speed = float(d.get("set_speed", 0.0))
+	docked_at = str(d.get("docked_at", ""))
+	kill_count = int(d.get("kill_count", kill_count))
+	aim_assist = bool(d.get("aim_assist", aim_assist))
+	if sys != null:
+		for saved in d.get("systems", []):
+			for s2: Dictionary in sys.systems:
+				if s2["name"] == saved["n"]:
+					s2["hp"] = float(saved["hp"])
+					break
+	for saved in d.get("mags", []):
+		for m2: Dictionary in player_mags:
+			if m2["stem"] == saved["stem"]:
+				m2["ammo"] = int(saved["ammo"])
+				break
+	if pog_econ != null:
+		var inv: Dictionary = d.get("inventory", {})
+		pog_econ.player_inv().counts.clear()
+		for k in inv:
+			pog_econ.player_inv().counts[int(k)] = int(inv[k])
+	# the world's live ships: replace whatever the system load spawned
+	for a in ai_ships.duplicate():
+		if is_instance_valid(a):
+			(a as Node).queue_free()
+	ai_ships.clear()
+	target_ai = null
+	for saved in d.get("ai", []):
+		var rec2: Dictionary = saved
+		var ai := AiShip.new()
+		ai.main = self
+		ai.sim_key = str(rec2.get("key", ""))
+		ai.display_name = str(rec2.get("name", "Contact"))
+		ai.faction = str(rec2.get("faction", "INDPT"))
+		ai.ctype = str(rec2.get("ctype", "TRANS"))
+		ai.avatar_path = str(rec2.get("avatar", ""))
+		if ai.avatar_path != "":
+			var mdl := _load_gltf(ai.avatar_path)
+			if mdl != null:
+				ai.add_child(mdl)
+				ShipEffects.attach(ai, mdl)
+				if str(rec2.get("ini", "")) != "":
+					ai.setup_ini(str(rec2["ini"]), mdl)
+		elif str(rec2.get("ini", "")) != "":
+			ai.setup_ini(str(rec2["ini"]), null)
+		ai.behavior = str(rec2.get("behavior", "patrol"))
+		ai.hull = float(rec2.get("hull", ai.hull_max))
+		ai.explicit_hostile = bool(rec2.get("hostile", false))
+		ai.carried_pods = int(rec2.get("pods", 0))
+		var p2: Array = rec2.get("pos", [0, 0, 0])
+		var v2: Array = rec2.get("vel", [0, 0, 0])
+		add_child(ai)
+		ai.position = Vector3(p2[0], p2[1], p2[2])
+		ai.velocity = Vector3(v2[0], v2[1], v2[2])
+		ai_ships.append(ai)
+		var cargo := int(rec2.get("cargo", 0))
+		if cargo != 0 and pog_world != null:
+			pog_std._bag(pog_world._wrap_ship(ai))["cargo"] = cargo
+
+func save_game(slot: int, label := "") -> bool:
+	if pog_api == null:
+		return false
+	return int(pog_api._g_save(null, [slot, label])) == 1
+
+func load_game(slot: int) -> bool:
+	if pog_api == null:
+		return false
+	return int(pog_api._g_load(null, [slot])) == 1
+
+func save_slots() -> Array:
+	# [[slot, name], ...] for every occupied slot
+	var out: Array = []
+	if pog_api == null:
+		return out
+	for i in pog_api.SAVE_SLOTS:
+		var n := str(pog_api._g_slot_name(null, [i]))
+		if n != "":
+			out.append([i, n])
+	return out
+
 func restart_campaign() -> void:
 	# Halt the POG tasks BEFORE the scene goes: a task parked on process_frame
 	# outlives the reload, resumes against a node that is no longer in the tree,
@@ -3793,7 +3934,7 @@ func _fold_motion() -> void:
 	for a in ai_ships:
 		# a docked child (a pod racked on the Jafs) rides its parent's
 		# transform; shifting it too would double-fold it
-		if not ((a as Node).get_parent() is AiShip):
+		if is_instance_valid(a) and not ((a as Node).get_parent() is AiShip):
 			a.global_position -= p
 	for sw in _shockwaves:
 		sw["pos"] = (sw["pos"] as Vector3) - p

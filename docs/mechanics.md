@@ -147,3 +147,20 @@ heat elsewhere is the authored source/heatsink equilibrium (tug 128,
 comsec 96, storm petrel 133, turret fighter 0 -- all of 500) and every hull
 fires normally at Alexander L-Point. weapons.gd now prints WEAPONS
 HEAT-LOCKED (our line, not the original's) when the gate refuses.
+
+## Saving and reloading
+
+igame.SaveGame/LoadGame (natives/gameapi.gd, user://save_N.json, 8 slots)
+now snapshot the WORLD as well as the story. Persisted: POG globals +
+states + mission objectives (the campaign's whole script memory -- the
+reactive layers re-arm from these), system + player position, the fitted
+hull (ship_ini; load refits via _fit_player), hull and per-subsim hp,
+velocity/set-speed/docked-at, magazines, the player inventory, kill count,
+aim assist, and a snapshot of every live AI ship (ini, position, velocity,
+behavior, hull, hostility, racked pods, pod cargo). NOT persisted, by
+design: live POG task continuations (a bytecode coroutine parked
+mid-mission cannot be serialised), in-flight ordnance and effects, field
+rocks (procedural), escort links, and a mid-death dramatic sequence
+(a dying ship saves as already gone). The pause menu's SAVE GAME writes
+the next free slot; LOAD GAME (both menus) lists occupied slots.
+mechcheck: save-reload.

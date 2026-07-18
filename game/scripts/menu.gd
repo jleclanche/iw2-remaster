@@ -399,10 +399,18 @@ func _items() -> Array:
 			out.append([s[1].to_upper(), true])
 		out.append(["< BACK", true])
 		return out
+	if mode == "loads":
+		var out: Array = []
+		for s in main.save_slots():
+			out.append([str((s as Array)[1]).to_upper(), true])
+		out.append(["< BACK", true])
+		return out
 	if launched:
-		return [["RESUME", true], ["NEW GAME", true], ["SAVE GAME", false],
+		return [["RESUME", true], ["NEW GAME", true], ["SAVE GAME", true],
+			["LOAD GAME", not main.save_slots().is_empty()],
 			["SELECT SYSTEM", true], ["DEBUG START", true], ["QUIT", true]]
-	return [["START NEW GAME", true], ["LOAD GAME", false],
+	return [["START NEW GAME", true],
+		["LOAD GAME", not main.save_slots().is_empty()],
 		["INSTANT ACTION", true], ["EXTRAS", true],
 		["DEBUG START", true],
 		["MULTIPLAYER", false], ["OPTIONS", false],
@@ -451,6 +459,18 @@ func _activate() -> void:
 		main.debug_start(_debug_ship, str(where[0]),
 				str(where[2]) if where.size() > 2 else "")
 		return
+	if mode == "loads":
+		if sel == items.size() - 1:
+			main.audio.play("audio/gui/contract.wav", -8.0)
+			mode = "main"
+			sel = 0
+			return
+		main.audio.play("audio/gui/confirm.wav", -6.0)
+		var slots: Array = main.save_slots()
+		if sel < slots.size() and main.load_game(int((slots[sel] as Array)[0])):
+			launched = true
+			close()
+		return
 	# both top menus dispatch by LABEL: inserting an item cannot silently
 	# renumber its neighbours (which bit us twice)
 	match str(items[sel][0]):
@@ -470,6 +490,28 @@ func _activate() -> void:
 			main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
 			launched = true
 			close()
+		"SAVE GAME":
+			# one-keystroke save into the next free slot (or slot 1 when full)
+			var slot := 1
+			var used := {}
+			for s in main.save_slots():
+				used[int((s as Array)[0])] = true
+			for i in range(1, 8):
+				if not used.has(i):
+					slot = i
+					break
+			var label := "%s - %s" % [main.system_name,
+					Time.get_datetime_string_from_system(false, true)]
+			if main.save_game(slot, label):
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+				main.hud.log_msg("GAME SAVED: SLOT %d" % slot)
+				close()
+			else:
+				main.audio.play("audio/hud/invalid_input.wav", -10.0)
+		"LOAD GAME":
+			main.audio.play("audio/gui/expand.wav", -8.0)
+			mode = "loads"
+			sel = 0
 		"SELECT SYSTEM", "EXTRAS":
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "systems"
@@ -505,7 +547,7 @@ func handle(event: InputEvent) -> void:
 				if mode == "debug_where":
 					mode = "ships"
 					sel = 0
-				elif mode == "systems" or mode == "ships":
+				elif mode in ["systems", "ships", "loads"]:
 					mode = "main"
 					sel = 0
 				elif launched:

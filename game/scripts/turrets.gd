@@ -322,11 +322,19 @@ func _physics_process(delta: float) -> void:
 	var i := batteries.size() - 1
 	while i >= 0:
 		var b: Dictionary = batteries[i]
-		# a freed AiShip compares == null in Godot 4; test validity directly
-		if bool(b.get("ship", false)) and not is_instance_valid(b["owner"]):
+		# a freed AiShip compares == null in Godot 4; test validity directly.
+		# `is` on a freed instance ERRORS, so every owner probe below has to
+		# go through is_instance_valid first (a save reload frees ships
+		# without the kill path, leaving freed owners in un-flagged batteries)
+		if typeof(b["owner"]) == TYPE_OBJECT \
+				and not is_instance_valid(b["owner"]):
+			# a freed owner still holds TYPE_OBJECT (freed == null compares
+			# true, but typed assignment from it errors); an authored station
+			# battery's owner is a real null and steps on
 			_free_battery(b)
 			batteries.remove_at(i)
-		elif b["owner"] is AiShip and (b["owner"] as AiShip).dying:
+		elif is_instance_valid(b["owner"]) and b["owner"] is AiShip \
+				and (b["owner"] as AiShip).dying:
 			# a killed sim persists through OnExplode's dramatic sequence,
 			# but its weapons died with the crew
 			pass

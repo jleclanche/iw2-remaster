@@ -822,7 +822,7 @@ func _g_save(_t, a: Array) -> Variant:
 	var f := FileAccess.open(_slot_path(slot), FileAccess.WRITE)
 	if f == null:
 		return 0
-	f.store_string(JSON.stringify({
+	var payload := {
 		"name": PogStd._s(a[1]) if a.size() > 1 else "Save %d" % slot,
 		"system": game.system_stem,
 		"pos": [game.px, game.py, game.pz],
@@ -830,7 +830,11 @@ func _g_save(_t, a: Array) -> Variant:
 		"globals": std.globals,
 		"states": states,
 		"objectives": game.mission.objectives if game.mission != null else {},
-	}))
+	}
+	# the world snapshot the story state does not cover: hull fit, subsim
+	# damage, magazines, inventory, live ships (main.save_extras)
+	payload.merge(game.save_extras())
+	f.store_string(JSON.stringify(payload))
 	f.close()
 	_saved = true
 	return 1
@@ -860,6 +864,7 @@ func _g_load(_t, a: Array) -> Variant:
 	game.hull = float(d.get("hull", game.hull_max))
 	if game.mission != null:
 		game.mission.objectives = d.get("objectives", {})
+	game.restore_extras(d)
 	return 1
 
 # @native igame.NumberOfSavedGameSlots
