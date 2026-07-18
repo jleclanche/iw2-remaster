@@ -185,6 +185,11 @@ def parse_lws(text: str) -> list[dict]:
                 cur["flare_dissolve"] = float(arg)
         elif ln.startswith("FlareStarFilter") and cur is not None:
             cur["flare_star_filter"] = int(ln.split()[1])
+        elif ln.startswith("FlareNominalDistance") and cur is not None:
+            # FcLensFlareNode +0xe4: the flag-8 (world-sized) branch multiplies
+            # the flare envelope by this and the camera's half-angle factor
+            # (Render @ flux 0xe6100, line 215206)
+            cur["flare_nominal"] = float(ln.split()[1])
         elif ln.startswith("FlareRingColor") and cur is not None:
             cur["flare_ring_color"] = [int(v) for v in ln.split()[1:4]]
         elif ln.startswith("FlareRingSize") and cur is not None:

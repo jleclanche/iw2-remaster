@@ -20,10 +20,14 @@ extends MeshInstance3D
 var intensity := 0.0
 var tint := Color.WHITE
 var width_ratio := 1.0
-# LensFlareFade bit1 -> Render's flag-8 branch (215202..): the quad is a
-# fixed WORLD size -- half-extent = m_intensity_scale x intensity, with NO
-# view-depth term (the engine also folds in the FOV factor x
-# FlareNominalDistance; both are 1 for the ship-engine rigs).
+# LensFlareFade bit1 -> Render's flag-8 branch (flux.dll.c:215202-215206):
+# the quad is a fixed WORLD size --
+#     half-extent = m_intensity_scale x gfx+0x108 x intensity
+# with NO view-depth term. gfx+0x108 is the camera's half-angle factor
+# (tan of the horizontal half-fov -- the same factor FcBillBoard::Add uses
+# for screen-filling quads), so the glow's world size tracks camera zoom
+# and its apparent size at FlareNominalDistance stays put. The caller folds
+# FlareNominalDistance (node +0xe4) into `intensity`.
 var world_size := false
 
 
@@ -63,7 +67,12 @@ func _process(_delta: float) -> void:
 		visible = false
 		return
 	visible = true
-	var half := StarFx.INTENSITY_SCALE * intensity \
-			* (1.0 if world_size else depth)
+	var span := depth
+	if world_size:
+		# gfx+0x108: tan of the horizontal half-fov (Godot's fov is vertical)
+		var vp := get_viewport().get_visible_rect().size
+		var aspect: float = vp.x / maxf(vp.y, 1.0)
+		span = tan(deg_to_rad(cam.fov) * 0.5) * aspect
+	var half := StarFx.INTENSITY_SCALE * intensity * span
 	scale = Vector3(half, half * width_ratio, half)
 	(mesh as QuadMesh).material.albedo_color = tint

@@ -344,7 +344,12 @@ func _add_engine_flare(node: Node3D, ex: Dictionary) -> void:
 	var col: Array = ex.get("iw2_color", [255, 255, 255])
 	_engine_flares.append({
 		"node": node, "quad": q,
-		"intensity": float(ex.get("iw2_flare_intensity", 0.0)),
+		# Render's flag-8 size: envelope x FlareNominalDistance x the camera
+		# half-angle factor (gfx+0x108) -- x15 and x world-scale downstream.
+		# The tug's engine lights carry FlareNominalDistance 10; dropping it
+		# was why the glow rendered a tenth of its real size.
+		"intensity": float(ex.get("iw2_flare_intensity", 0.0)) \
+			* float(ex.get("iw2_flare_nominal", 1.0)),
 		# the render squares the colour (FcColour path at 215274-215282)
 		"col": Color(pow(float(col[0]) / 255.0, 2.0),
 				pow(float(col[1]) / 255.0, 2.0),
