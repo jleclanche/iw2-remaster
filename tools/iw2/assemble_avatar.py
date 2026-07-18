@@ -125,18 +125,29 @@ class Assembler:
                     extras["iw2_pose0"] = _pose(n["keys"][0])
                     extras["iw2_pose1"] = _pose(n["keys"][-1])
             # detail_switch transforms are authoring-time offsets (LOD variants
-            # laid out side by side); the engine treats them as identity
+            # laid out side by side, e.g. the tug's three at x -75/0/+75 once
+            # the pivot folds in); the engine treats them as identity
             if n["kind"] == "detail_switch":
                 nid = self.b.node(str(name), gparent, mesh, None, None, None, extras)
             else:
+                # FcScene::ParsePivotPoint (flux 0x1002c340) folds -pivot into
+                # the object's MOTION TRACK (FcMotionTrack::Offset): the whole
+                # node -- children included -- shifts by -pivot in parent
+                # space. NOT the LightWave rule (geometry-only): the tug's
+                # engine-boom nulls are children of the pivoted hull and ride
+                # the shift, which is what attaches the four legs to the hull.
+                pos = n.get("pos")
+                pivot = n.get("pivot")
+                if pivot and any(pivot):
+                    p = pos if pos is not None else [0.0, 0.0, 0.0]
+                    pos = [p[0] - pivot[0], p[1] - pivot[1], p[2] - pivot[2]]
+                    if n.get("keys"):
+                        for k in n["keys"]:
+                            k["pos"] = [k["pos"][0] - pivot[0],
+                                        k["pos"][1] - pivot[1],
+                                        k["pos"][2] - pivot[2]]
                 nid = self.b.node(str(name), gparent, mesh,
-                                  n.get("pos"), n.get("hpb"), n.get("scale"), extras)
-            # LW pivot: geometry rotates about pivot -> offset children/mesh
-            pivot = n.get("pivot")
-            if pivot and any(pivot) and mesh is not None:
-                self.b.doc["nodes"][nid].pop("mesh")
-                self.b.node(f"{name}_pivot", nid, mesh,
-                            [-pivot[0], -pivot[1], -pivot[2]])
+                                  pos, n.get("hpb"), n.get("scale"), extras)
             gltf_ids[n["index"]] = nid
             if n.get("keys") and n["kind"] != "anim":
                 self.b.add_animation_channels(nid, n["keys"])

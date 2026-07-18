@@ -111,6 +111,13 @@ refers to that order (lights don't count). Null names carry semantics:
   quaternion conversion or spinners collapse.
 - Coordinates: LW left-handed +Z-forward → glTF: negate Z on positions,
   flip winding, quat = Ry(−H)·Rx(−P)·Rz(B).
+- **`PivotPoint` shifts the whole node, children included.** flux's
+  `FcScene::ParsePivotPoint` (0x1002c340) applies `-pivot` to the object's
+  MOTION TRACK (`FcMotionTrack::Offset`) — not LightWave's geometry-only
+  pivot. A child of a pivoted object rides the shift: the tug's four
+  engine-boom nulls parent to the hull (pivot `0 -1.5 -54.5`) and land
+  ~54 m forward of where LW semantics would put them, attached to the
+  forward hull. Mis-porting this as mesh-only detached every leg.
 
 ### Setup scenes: a sim's attach nulls (`extract_sims.py`)
 A sim INI names **two** LWS scenes and they do different jobs. `[Avatar]` is
