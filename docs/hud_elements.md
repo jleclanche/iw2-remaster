@@ -181,10 +181,18 @@ the remainder (skipped below 0.05).
 
 Separate from the green outer ring (sprite 90), the reticle master draws a second
 marker centred on the reticle, in the **target's contact colour** (`icHUD+0x120`,
-set at `0x100f647c` from `FUN_100e8530`). **In-reticle** (`FUN_100f76a0`): sprite
-**92** static X (ship/station, 4-mirror via `FUN_100ea7e0`), **94** for a waypoint/
-L-point, or **93** spun for a moving target. **Off-reticle** (`FUN_100f7920` +
-`FUN_100f7b10`): an edge chevron (sprite 35) plus the class glyph at the ring edge.
+set at `0x100f647c` from `FUN_100e8530`). **In-reticle** (`FUN_100f76a0`),
+CORRECTED third pass — the select keys off the contact-list entry's IFF
+**feeling** (`entry+0x20`, the same index `FUN_100e8530` colours by) and the
+unidentified flag (contact+0x28), NOT "moving vs static":
+sprite **94** (a plain X) for a waypoint/L-point; sprite **93** — the **toothed
+cog ring**, four copies at `angle + i*pi/2`, the angle integrating
+`-clamp(dot(LOS, v_player - v_target) * 2e-4, -1, 1) * pi/2` rad/s
+(`_DAT_1011e0ac` @ `0x1011e0ac`; a range-rate spinner) — for **hostile, neutral
+or unidentified**; sprite **92** (ring + X, 4-mirror via `FUN_100ea7e0`) only
+for a **friendly** (feeling 3/4) — the "don't shoot" X. **Off-reticle**
+(`FUN_100f7920` + `FUN_100f7b10`): an edge chevron (sprite 35) plus the class
+glyph at the ring edge.
 All from reticle.png; cells recovered from the table builder (`0x100e7f00`ff):
 **92 = (186,0,70,70) org (70,0)**, **94 = (186,80,70,70) org (70,0)** (93 =
 (0,186,70,70) as SPR_RET already had). The colour is the full `FUN_100e8530` map:
@@ -250,6 +258,20 @@ Untargeted, on-screen contacts:
 
 The bbox is floored, and if it is narrower than **2px** (`_DAT_10119ec8`) both edges
 collapse to the centre. There is no distance-based scaling beyond the projection itself.
+
+**Where the bbox comes from** (the icHUD update `FUN_100e09e0`, box code at
+`0x100e0eb2..0x100e1230`): the contact's screen box (contact `+0x4c..+0x58`, the
+target's copy at `icHUD+0x150..0x15c`) is the min/max over the **viewport
+projection of the 8 corners of the sim's ORIENTED bounding box** — half extents
+= the sim dims (`sim+0x1d8/+0x1dc/+0x1e0`) × 0.5 (`_DAT_10117738`) along the
+sim's basis rows (`+0xec` / `+0xf8` / `+0x104`), each corner
+`TransformToViewport`'d. So the brackets wrap the WHOLE projected object — a
+station fills them; nothing about them is a fixed pixel size. (An `icInertSim`
+instead projects its scalar radius `sim+0x1c` × 0.7 (`_DAT_101191e8`) into a
+square; cat 4/5 boxes collapse to the projected point.) Ported as
+`hud.gd::_bbox_project` / `_bbox_of_ship` / `_bbox_of_obj`; the old port passed
+an invented fixed radius (30/60 m), which pinned the brackets to the target's
+centre.
 
 The **current target** gets the same four-corner treatment with sprite 1, and on
 acquisition plays a **slam-in**: an extra bracket (sprite 2) offset outward by

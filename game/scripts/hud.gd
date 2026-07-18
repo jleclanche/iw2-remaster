@@ -1239,37 +1239,83 @@ func _target_color() -> Color:
 		return GOLD
 	return GOLD
 
+var _marker_spin := 0.0  # icHUDReticle+0x20, the sprite-93 ring's angle
+
 func _reticle_marker(c: Vector2) -> void:
 	# The INNER reticle -- a SEPARATE element from the green outer ring, drawn over
-	# it and centred on the reticle, in the target's allegiance colour. It is the
-	# blue "don't shoot" X for a friendly, red for a hostile, gold for a neutral,
-	# green for a nav point. Recovered from FUN_100f76a0 @ 0x100f76a0 (the
-	# in-reticle target marker), which the reticle master FUN_100f6340 calls with
-	# the active colour already set to the contact colour (icHUD+0x120, at
-	# 0x100f647c). Sprites, all from reticle.png (texture 2), all drawn NATIVE:
+	# it and centred on the reticle, in the target's allegiance colour. Recovered
+	# from FUN_100f76a0 @ 0x100f76a0 (the in-reticle target marker), which the
+	# reticle master FUN_100f6340 calls with the active colour already set to the
+	# contact colour (icHUD+0x120, at 0x100f647c). The sprite select, re-read
+	# (an earlier pass misread the middle branch as "moving target"):
 	#   * category 4/5 (waypoint / L-point) -> sprite 94, blitted 4-mirror
-	#     (FUN_100ea7e0, flags 0/1/3/2) into a symmetric marker;
-	#   * a moving target -> sprite 93, four copies spun about the centre;
-	#   * else (static ship / station) -> sprite 92, 4-mirror -- the X.
-	# We draw 92/94 (static + nav); the 93 spin is a moving-target refinement whose
-	# select condition (param_1[10] / *(sim+0x20) < 3) we could not map to our data.
+	#     (FUN_100ea7e0, flags 0/1/3/2);
+	#   * unidentified (contact+0x28) OR IFF feeling < 3 (entry+0x20, the SAME
+	#     index FUN_100e8530 colours by: 0/1 hostile, 2 neutral) -> sprite 93,
+	#     FOUR COPIES at angle + i*pi/2 (_DAT_1011a454) -- the TOOTHED RING.
+	#     The angle integrates -clamp(closing * 0.0002, -1, 1) * pi/2 rad/s
+	#     (_DAT_1011e0ac = 2e-4 @ 0x1011e0ac; saturates at 5 km/s), with
+	#     closing = dot(normalized LOS, v_player - v_target) (contact rel pos
+	#     normalized at 0x100f76a0, velocities sim+0x70): the cog ring is a
+	#     range-rate spinner, still on a station you pace;
+	#   * else (FRIENDLY, feeling 3/4) -> sprite 92, 4-mirror -- the ring-and-X
+	#     "don't shoot" marker. The X is the friendly marker, nothing else.
 	if main._target_distance() == INF:
 		return
-	var id := 92
-	if main.target_idx >= 0:
+	var id := 93
+	if main.target_ai != null and is_instance_valid(main.target_ai):
+		if not main._is_hostile(main.target_ai) \
+				and main.iff_level(str(main.target_ai.faction)) >= 3:
+			id = 92
+	elif main.target_idx >= 0:
 		var cat := str(main.objects[main.target_idx]["category"])
 		if cat == "lpoint" or cat == "waypoint":
 			id = 94
+		# a station/object contact is IFF 2 neutral (FUN_100e8530's default)
+		# -> the toothed ring, id 93
 	var col := _target_color()
+	if id == 93:
+		# the range-rate spin (FUN_100f76a0, the closing-speed integrator)
+		var tvel := Vector3.ZERO
+		var tpos: Vector3
+		if main.target_ai != null and is_instance_valid(main.target_ai):
+			tpos = main.target_ai.global_position
+			tvel = main.target_ai.velocity
+		else:
+			var t: Dictionary = main.objects[main.target_idx]
+			tpos = Vector3(t["x"] - main.px, t["y"] - main.py, t["z"] - main.pz)
+		var los: Vector3 = tpos - main.ship.global_position
+		if los.length() > 1e-6:   # _DAT_101178fc
+			var closing: float = los.normalized().dot(
+					main.ship.velocity - tvel) * 0.0002
+			_marker_spin -= clampf(closing, -1.0, 1.0) \
+					* get_process_delta_time() * (PI / 2.0)
+		if _reticle_tex != null:
+			for i in 4:
+				_spr_ret(c, 93, col, _marker_spin + i * (PI / 2.0), 0)
+		else:
+			# vector fallback: four toothed quarter-arcs just inside the ring
+			for i in 4:
+				var base: float = _marker_spin + i * (PI / 2.0)
+				draw_arc(c, 65.0, base + 0.1, base + PI / 2.0 - 0.1, 24, col,
+						1.6, true)
+				for t in 5:
+					var a: float = base + 0.25 + t * 0.25
+					var d := Vector2(cos(a), sin(a))
+					draw_line(c + d * 58.0, c + d * 65.0, col, 1.6, true)
+		return
 	if _reticle_tex != null:
 		for f in [0, 1, 3, 2]:   # FUN_100ea7e0's four mirror-flag pairs
 			_spr_ret(c, id, col, 0.0, f)
 	else:
-		# vector fallback: the X-in-ring the sprite draws
-		var r := 22.0
+		# vector fallback: the X (94), inside a ring for the friendly marker (92);
+		# both cells' diagonals run the full 70 px from the centre
+		var r := 65.0
 		for a in [PI * 0.25, PI * 0.75]:
 			var d := Vector2(cos(a), sin(a)) * r
 			draw_line(c - d, c + d, col, 1.6, true)
+		if id == 92:
+			draw_arc(c, 65.0, 0, TAU, 48, col, 1.6, true)
 
 func _target_nav_icon() -> int:
 	# The in-reticle class glyph for the current target if it is a NAVIGATION
@@ -2173,9 +2219,11 @@ func _menushot_step(d: float) -> void:
 # Verifies the allegiance-coloured flight HUD. Spawns beside Lucrecia's Base (the
 # menu's "Lucrecia's Base (Nebula)" entry -> start_in_system with the base as the
 # arrival entity), then captures three windowed PNGs of the inner reticle marker:
-#   hud_navlock  -- the base: NAVIGATION LOCK, gold neutral marker, no EO render
-#   hud_hostile  -- a Marauder (behavior "attack"): RED inner marker
-#   hud_friendly -- a non-hostile ship: BLUE "don't shoot" inner marker
+#   hud_navlock  -- the base: NAVIGATION LOCK, gold toothed ring, no EO render
+#   hud_hostile  -- a Marauder (behavior "attack"): RED toothed ring
+#   hud_friendly -- a non-hostile ship; its marker follows its faction's IFF
+#                   feeling (neutral marauder -> gold toothed ring; a genuinely
+#                   friendly faction would show the blue sprite-92 X)
 # so the marker's colour can be seen tracking the target's allegiance, distinct
 # from the green outer ring. Run WITHOUT --headless so the viewport renders.
 var _navshot_i := -2
@@ -2317,17 +2365,80 @@ func _corner_bracket(bb: Rect2, col: Color, sprite := 4) -> void:
 	_spr(Vector2(bb.end.x, bb.position.y), sprite, col, 0.0, 1)
 	_spr(bb.end, sprite, col, 0.0, 3)
 
-func _bbox_of(world: Vector3, radius: float) -> Rect2:
-	# project a contact to a screen-space box, with the engine's minimum-size
-	# collapse when it is too small to bracket
+var _hud_aabb_cache: Dictionary = {}   # node instance id -> merged local AABB
+
+func _node_local_aabb(node: Node3D) -> AABB:
+	# merged model-space AABB of an instanced avatar -- the remaster's stand-in
+	# for the sim dims the INI loader stores at sim+0x1d8..0x1e0 (the engine
+	# derives them from the same model)
+	var key := node.get_instance_id()
+	if not _hud_aabb_cache.has(key):
+		var merged := AABB()
+		var first := true
+		var inv := node.global_transform.affine_inverse()
+		for mi in node.find_children("*", "MeshInstance3D", true, false):
+			var tb: AABB = (inv * (mi as Node3D).global_transform) \
+					* (mi as MeshInstance3D).get_aabb()
+			merged = tb if first else merged.merge(tb)
+			first = false
+		_hud_aabb_cache[key] = merged
+	return _hud_aabb_cache[key]
+
+func _bbox_project(xf: Transform3D, local: AABB) -> Rect2:
+	# The contact bbox law (icHUD update FUN_100e09e0 @ 0x100e0eb2..0x100e1230):
+	# the screen box is the min/max over the VIEWPORT PROJECTION of the 8
+	# corners of the sim's ORIENTED bounding box -- half extents = the sim dims
+	# (+0x1d8/+0x1dc/+0x1e0) * 0.5 (_DAT_10117738) along the sim's basis rows
+	# (+0xec / +0xf8 / +0x104), each corner TransformToViewport'd and min/max'd.
+	# So the brackets wrap the WHOLE projected object -- a station fills them.
+	# FUN_100e37f0 then floors all four edges and collapses either axis to its
+	# floored midpoint when it is under 2 px (_DAT_10119ec8 / _DAT_10117738).
 	var cam: Camera3D = main.cam
-	var p := cam.unproject_position(world)
-	var edge := cam.unproject_position(
-			world + cam.global_transform.basis.x * radius)
-	var half := maxf(absf(edge.x - p.x), 3.0)
-	if half * 2.0 < BRK_MIN:
+	var x0 := INF
+	var y0 := INF
+	var x1 := -INF
+	var y1 := -INF
+	for i in 8:
+		var w: Vector3 = xf * local.get_endpoint(i)
+		if cam.is_position_behind(w):
+			continue   # deviation: Godot cannot unproject behind the near plane
+		var p := cam.unproject_position(w)
+		x0 = minf(x0, p.x)
+		y0 = minf(y0, p.y)
+		x1 = maxf(x1, p.x)
+		y1 = maxf(y1, p.y)
+	if x0 > x1:
+		var p := cam.unproject_position(xf.origin)
 		return Rect2(p.floor(), Vector2.ZERO)
-	return Rect2((p - Vector2(half, half)).floor(), Vector2(half, half) * 2.0)
+	x0 = floor(x0)
+	y0 = floor(y0)
+	x1 = floor(x1)
+	y1 = floor(y1)
+	if x1 - x0 < BRK_MIN:
+		x0 = floor((x0 + x1) * 0.5)
+		x1 = x0
+	if y1 - y0 < BRK_MIN:
+		y0 = floor((y0 + y1) * 0.5)
+		y1 = y0
+	return Rect2(x0, y0, x1 - x0, y1 - y0)
+
+func _bbox_of_ship(a: AiShip) -> Rect2:
+	# a ship's OBB is its INI dims * 0.5 in its own frame -- exactly the
+	# half_dims the loader keeps (sim+0x1d8..0x1e0 are the same INI values)
+	return _bbox_project(a.global_transform,
+			AABB(-a.half_dims, a.half_dims * 2.0))
+
+func _bbox_of_obj(o: Dictionary, world: Vector3) -> Rect2:
+	var node: Node3D = o["node"]
+	if node != null and is_instance_valid(node) and node.is_inside_tree():
+		var bb := _node_local_aabb(node)
+		if bb.size.length() > 0.0:
+			return _bbox_project(node.global_transform, bb)
+	# no avatar in the tree: an axis-aligned cube of the record's authored
+	# radius (FiSim::SetRadius) around the position stands in
+	var r: float = maxf(float(o.get("radius", 0.0)), 1.0)
+	return _bbox_project(Transform3D(Basis.IDENTITY, world),
+			AABB(Vector3(-r, -r, -r), Vector3(r, r, r) * 2.0))
 
 func _draw_target_marks() -> void:
 	var cam: Camera3D = main.cam
@@ -2356,7 +2467,7 @@ func _draw_target_marks() -> void:
 			elif o["category"] == "waypoint":
 				_spr(p, 47, col)
 			else:
-				_corner_bracket(_bbox_of(w, 60.0), Color(col.r, col.g, col.b, 0.7))
+				_corner_bracket(_bbox_of_obj(o, w), Color(col.r, col.g, col.b, 0.7))
 		else:
 			var a: AiShip = e["ai"]
 			if a == main.target_ai or cam.is_position_behind(a.global_position):
@@ -2366,13 +2477,12 @@ func _draw_target_marks() -> void:
 				continue
 			var col := _contact_color(main._is_hostile(a), "traffic",
 					str(a.faction))
-			_corner_bracket(_bbox_of(a.global_position, 30.0),
+			_corner_bracket(_bbox_of_ship(a),
 					Color(col.r, col.g, col.b, 0.7))
 	_draw_target_bracket()
 
 func _draw_target_bracket() -> void:
 	var world: Vector3
-	var radius := 30.0
 	var is_nav := false
 	var key := ""
 	if main.target_ai != null and is_instance_valid(main.target_ai):
@@ -2381,7 +2491,6 @@ func _draw_target_bracket() -> void:
 	elif main.target_idx >= 0:
 		var t: Dictionary = main.objects[main.target_idx]
 		world = Vector3(t["x"] - main.px, t["y"] - main.py, t["z"] - main.pz)
-		radius = 60.0
 		is_nav = t["category"] == "lpoint"
 		key = "o%d" % main.target_idx
 	else:
@@ -2403,7 +2512,11 @@ func _draw_target_bracket() -> void:
 	if is_nav:
 		_spr(p, 60, col)
 		return
-	var bb := _bbox_of(world, radius)
+	var bb: Rect2
+	if main.target_ai != null and is_instance_valid(main.target_ai):
+		bb = _bbox_of_ship(main.target_ai)
+	else:
+		bb = _bbox_of_obj(main.objects[main.target_idx], world)
 	var t: float = _brk_t / BRK_ACQUIRE
 	# during the acquire animation the inner corners use the small sprite 4
 	# (0x100e37f0:177883 -- settled switches to the 16px sprite 1) and an

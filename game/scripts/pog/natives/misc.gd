@@ -698,7 +698,10 @@ const _BINDINGS := {
 ##   token literally if it is not. That is why "+, +" comes out as ", " and why
 ##   the whole thing is a chain of ids rather than words.
 ##
-## So: "[ +device_text_keyboard+ +key_text_f8+ ]" -> "[ Keyboard F8 ]".
+## So: "[ +device_text_keyboard+ +key_text_f8+ ]" -> "[ Keyboard F8 ]", and
+## "[ +device_text_joystick+ +object_text_joybutton6+ ]" -> "[ Joystick
+## Button 6 ]" -- non-keyboard controls use the object_text_* id table, not
+## key_text_* (LoadLocalisedTextKeyTable @ 0x10070260).
 ##
 ## The bindings themselves are the shipped keymaps, which live in the INSTALL
 ## (configs/default.ini and configs/keyboard_only.ini -- they are not mirrored
@@ -769,17 +772,27 @@ static func _form_key_string(row: Array) -> String:
 			"ALT":   mods.append(_key_text("modifier_text_alt"))
 			"CTRL":  mods.append(_key_text("modifier_text_ctrl"))
 			"INVERSE": pass   # an axis flag, not a modifier
+	# FcInputMapper::FormKeyString (flux.dll @ 0x1006ab00) resolves a KEYBOARD
+	# scancode through the key_text_* table (this+0x3c) but a mouse / joystick
+	# control through the OBJECT name table (this+0x30), which
+	# LoadLocalisedTextKeyTable (flux.dll @ 0x10070260) fills with object_text_*
+	# ids (object_text_MouseButton1.., object_text_JoyButton1.., the axes and
+	# POV hats). That is why "JoyButton6" is "object_text_joybutton6" =
+	# "Button 6" in the shipped tables and key_text_joybutton6 does not exist.
 	var dev_id := ""
+	var key_prefix := "key_text_"
 	var dl := device.to_lower()
 	if dl.begins_with("keyboard"):
 		dev_id = _key_text("device_text_keyboard")
 	elif dl.begins_with("mouse"):
 		dev_id = _key_text("device_text_mouse")
+		key_prefix = "object_text_"
 	elif dl.begins_with("joystick"):
 		dev_id = _key_text("device_text_joystick")
+		key_prefix = "object_text_"
 	else:
 		dev_id = device
-	var key := _key_text("key_text_" + control)
+	var key := _key_text(key_prefix + control)
 	var out := "[ "
 	for m in mods:
 		out += "%s - " % m

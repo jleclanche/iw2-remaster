@@ -792,12 +792,22 @@ master `FUN_100f6340`:
   drawing the marker, so the marker inherits it.
 - **In-reticle** (target within `(_DAT_1011e038 + _DAT_101190c0)` = 63+10 px of
   centre): `FUN_100f76a0` @ `0x100f76a0`. Sprite by target category
-  (`param_1[3]`), all from **reticle.png** (texture 2), drawn NATIVE:
+  (`param_1[3]`), all from **reticle.png** (texture 2), drawn NATIVE.
+  CORRECTED (third pass — the earlier "moving target" reading of the middle
+  branch was wrong; `*param_1 + 0x20` is the contact-list ENTRY's IFF feeling,
+  the same index `FUN_100e8530` colours by, and `param_1[10]` is the
+  unidentified flag, contact+0x28):
   * cat 4/5 (waypoint / L-point) -> **sprite 94**, blitted **4-mirror**
-    (`FUN_100ea7e0`, flags 0/1/3/2) into a symmetric marker;
-  * a moving target (`param_1[10] != 0 || *(sim+0x20) < 3`) -> **sprite 93**,
-    four copies **spun** about the centre (angle on `reticle+0x20`);
-  * else (static ship / station) -> **sprite 92**, 4-mirror — the **X-in-ring**.
+    (`FUN_100ea7e0`, flags 0/1/3/2) — a plain X, no ring;
+  * unidentified OR **feeling < 3** (hostile 0/1 or neutral 2) ->
+    **sprite 93**, FOUR COPIES at `angle + i*pi/2` (`_DAT_1011a454`) — the
+    **TOOTHED (cog) RING**. The angle (`reticle+0x20`) integrates
+    `-clamp(closing * 0.0002, -1, 1) * pi/2` rad/s (`_DAT_1011e0ac` = 2e-4 @
+    `0x1011e0ac`, saturating at 5 km/s), with `closing = dot(normalized LOS
+    (entry rel-pos +4..+0xc), v_player - v_target)` (velocities `sim+0x70`):
+    a **range-rate spinner**, still on a target you pace;
+  * else (**FRIENDLY**, feeling 3/4) -> **sprite 92**, 4-mirror — the
+    ring-and-**X** "don't shoot" marker. The X marks friendlies ONLY.
 - **Off-reticle**: `FUN_100f7920` (an edge chevron, sprite 35, rotated to the
   bearing) + `FUN_100f7b10` (the class glyph pulled to the ring edge: 47/60 for
   cat 4/5, 44/45 otherwise).
@@ -829,24 +839,22 @@ So the "blue X for friendlies" the user described is IFF 3/4 -> `DAT_101740b8`.
 
 ### What we implemented
 
-`hud.gd::_reticle_marker` draws the inner marker centred on the reticle whenever a
-target is in-reticle, 4-mirror, in `_target_color()` (which now returns the
-allegiance colour: hostile red, non-hostile ship friendly blue, nav green,
-station/neutral gold). Sprite 92 for ships/stations, 94 for waypoint/L-point.
-Verified with `--hudnavshot`: `build/shots/hud_hostile.png` (red X),
-`hud_friendly.png` (blue X), `hud_navlock.png` (gold X, base) — each marker a
-distinct colour over the same green ring.
+`hud.gd::_reticle_marker` draws the inner marker centred on the reticle whenever
+a target is in-reticle, in `_target_color()`. Third pass (the reticle-fix
+commit): sprite select is now the recovered feeling law — 94 for
+waypoint/L-point, **93 (the toothed ring) for hostile / neutral / unknown**
+(spun by the closing-rate integrator above, state `hud.gd::_marker_spin`), 92
+(the ring-and-X) **only for friendlies** (`iff_level(faction) >= 3` and not
+hostile). The earlier build drew 92 for every ship and station — which put an
+invented X over neutral stations; the original shows the cog ring there.
 
-**Limits / UNKNOWN.** (1) Our sim carries a category and a hostile flag
-(`behavior == "attack"`) but no per-contact **IFF feeling**, so friendly-vs-neutral
-cannot be told apart from data: we follow the codebase's existing convention
-(non-hostile ship -> friendly blue, station/object -> neutral gold). A genuine
-neutral trader would read blue here where the engine would read gold; a
-main-side IFF/feeling hook would fix that (see the report). (2) The moving-target
-**sprite-93 spin** (select condition `param_1[10]` / `*(sim+0x20) < 3`) is not
-mapped to our data, so we draw the static 92 for all ships. (3) No **cyan**
-appears in `FUN_100e8530`; if the game ever shows a cyan/other marker it is a
-mission script overriding a specific contact's colour, not this path.
+**Limits / UNKNOWN.** (1) `main.iff_level` quantizes the target faction's
+feeling at the extracted icFactions boundaries, so friendly-vs-neutral is now
+data-driven; a contact the sensor has not identified should also spin the 93
+ring, which falls out because unidentified contacts are stations beyond ident
+range -> neutral -> 93. (2) No **cyan** appears in `FUN_100e8530`; if the game
+ever shows a cyan/other marker it is a mission script overriding a specific
+contact's colour, not this path.
 
 ## Shield panel position: under the ORB
 
