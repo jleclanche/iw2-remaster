@@ -941,6 +941,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
 	&"_ms_save_reload",
+	&"_ms_debug_base",
 	&"_ms_finish",
 ]
 
@@ -1436,6 +1437,22 @@ func _ms_save_reload(_delta: float) -> void:
 	if back != null:
 		_mech_reap(back)
 	DirAccess.remove_absolute("user://save_7.json")
+	_mech_next()
+
+func _ms_debug_base(_delta: float) -> void:
+	# the DEBUG START gate: with g_current_act = -1 in BOTH globals stores
+	# (the VM's and the ported runtime's -- base_interior reads pog_rt's
+	# first, and main's debug boot must seed both), Lucrecia's Base comes up
+	# on sensors, forced-identified and dockable in hoffers_wake.
+	m.pog_std.globals["g_current_act"] = -1
+	if m.pog_rt != null and m.pog_rt.std != null:
+		m.pog_rt.std.globals["g_current_act"] = -1
+	m.base_iface.apply_visibility()
+	var rec: Dictionary = m.base_iface.base_rec()
+	_mech("debug-base",
+		m.base_iface.found() and m.base_iface.dockable()
+			and not rec.is_empty() and bool(rec.get("sensor_forced", false)),
+		"found=%s dockable=%s" % [m.base_iface.found(), m.base_iface.dockable()])
 	_mech_next()
 
 func _ms_finish(_delta: float) -> void:

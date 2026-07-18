@@ -296,8 +296,15 @@ func _ready() -> void:
 		debug_all_weapons = true
 		# no act is running in a debug start: -1 is what
 		# iJafsScript.JafsFunctionalityAvailable reads as "free flight, Jafs
-		# enabled" (it then creates g_jafs_menu_option_enabled itself)
+		# enabled" (it then creates g_jafs_menu_option_enabled itself).
+		# BaseInterior.found() also passes on -1 (only acts 0/1 need the
+		# found-base flags), which puts Lucrecia's Base on sensors and makes
+		# it dockable. The VM path and the ported runtime keep separate
+		# globals by design -- and base_interior reads pog_rt's first -- so
+		# seed BOTH.
 		pog_std.globals["g_current_act"] = -1
+		if pog_rt != null and pog_rt.std != null:
+			pog_rt.std.globals["g_current_act"] = -1
 		# the commodity table normally comes up with the act; a debug start
 		# runs the original initialiser itself so pods have cargo to carry
 		pog.start("icargoscript", "Initialise")
