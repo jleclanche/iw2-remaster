@@ -21,7 +21,9 @@ var _mech_field: Dictionary = {} # synthetic icFieldSphere for the fields phase
 
 func step(delta: float) -> void:
 	demo_t += delta
-	if m.contactcheck:
+	if m.fireprobe:
+		_fireprobe(delta)
+	elif m.contactcheck:
 		_contactcheck(delta)
 	elif m.sunshot:
 		_sunshot(delta)
@@ -43,7 +45,7 @@ func step(delta: float) -> void:
 		_uicheck(delta)
 	elif m.jumpcheck:
 		_jumpcheck(delta)
-	elif m.mechcheck:
+	elif m.mechcheck or m.mechslow:
 		_mechcheck(delta)
 		if m.ap_mode > 0 and m.docked_at == "":
 			m._autopilot_process(delta)
@@ -53,6 +55,40 @@ func step(delta: float) -> void:
 		_geogcheck(delta)
 	else:
 		_demo(delta)
+
+# --- fireprobe: does the primary actually fire on this boot? ------------------
+var _fp_done := false
+
+var _fp_next := 1.0
+
+func _fireprobe(_delta: float) -> void:
+	if demo_t >= _fp_next and _fp_next < 9.5 and m.sys != null:
+		_fp_next += 1.0
+		print("FIREPROBE t=%.0f heat=%.0f ext=%.0f" % [demo_t, m.sys.heat,
+				m.sys.heat_external])
+	if demo_t < 10.0 or _fp_done:
+		return
+	_fp_done = true
+	if m.sys != null:
+		# the heat ledger: who is producing and who is sinking, right now
+		for s2: Dictionary in m.sys.systems:
+			if float(s2["heat_rate"]) != 0.0:
+				print("FIREPROBE ledger %-28s hr=%+.0f eff=%.2f off=%s dead=%s"
+						% [str(s2["name"]), float(s2["heat_rate"]),
+						float(s2["efficiency"]),
+						str(s2.get("off", false)), str(s2["destroyed"])])
+	m.weapons.cooldown = 0.0
+	var before: int = m.weapons.bolts.size()
+	m.weapons.fire()
+	var w: PbcWeapons = m.weapons
+	print("FIREPROBE ship=%s groups=%d group_idx=%d muzzles=%d fixed=%s " %
+			[m.player_ship_ini, w.groups.size(), w.group_idx,
+			w.muzzle_nodes.size(), str(not w.fixed_gun.is_empty())]
+			+ "secondary=%d heat=%.0f/%.0f bolts %d -> %d" %
+			[m.secondary_idx,
+			(m.sys.heat + m.sys.heat_external) if m.sys != null else -1.0,
+			ShipSystems.HEAT_DAMAGE_THRESHOLD, before, w.bolts.size()])
+	get_tree().quit()
 
 func _shot(name: String) -> void:
 	var img := get_viewport().get_texture().get_image()
@@ -874,362 +910,502 @@ func _mech_next() -> void:
 	demo_phase += 1
 	demo_t = 0.0
 
-func _mechcheck(_delta: float) -> void:
-	match demo_phase:
-		0:  # move 1 Gm off-plane, clear of all masses, then full throttle
-			_mech_home = Vector3(m.px, m.py, m.pz)
-			m.py += 1.0e9
-			m.target_idx = -1
-			m.target_ai = null
-			m.ship.set_speed = m.ship.max_speed.z
-			_mech_t0 = demo_t
-			_mech_next()
-		1:  # tug reaches 850 m/s in 850/150 = 5.67 s (INI constants)
-			if m.ship.forward_speed() >= m.ship.max_speed.z - 10.0:
-				var t := demo_t
-				_mech("accel-to-850", t > 4.5 and t < 7.5, "%.2f s" % t)
-				m.ship.set_speed = 0.0
-				_mech_next()
-			elif demo_t > 15.0:
-				_mech("accel-to-850", false,
-					"timeout, v=%.0f" % m.ship.forward_speed())
-				_mech_next()
-		2:  # flight computer brakes back to zero
-			if m.ship.velocity.length() < 5.0:
-				_mech("brake-to-zero", true, "%.2f s" % demo_t)
-				m.ship.input_thrust.x = 1.0
-				_mech_next()
-			elif demo_t > 15.0:
-				_mech("brake-to-zero", false, "v=%.0f" % m.ship.velocity.length())
-				_mech_next()
-		3:  # lateral thruster pushes sideways
-			if demo_t > 2.0:
-				var lat := absf((m.ship.velocity * m.ship.global_transform.basis).x)
-				_mech("lateral-thrust", lat > 30.0, "%.0f m/s" % lat)
-				m.ship.input_thrust.x = 0.0
-				_mech_next()
-		4:  # assist trims lateral drift back out
-			if demo_t > 4.0:
-				var lat := absf((m.ship.velocity * m.ship.global_transform.basis).x)
-				_mech("assist-trim", lat < 5.0, "%.1f m/s" % lat)
-				m.ship.assist = false
-				m.ship.input_thrust.z = 1.0
-				_mech_next()
-		5:  # free flight: thrust then coast, velocity must persist
-			if demo_t > 1.5:
-				m.ship.input_thrust.z = 0.0
-				_mech_v0 = m.ship.velocity
-				_mech_next()
-		6:
-			if demo_t > 3.0:
-				var dv: float = (m.ship.velocity - _mech_v0).length()
-				_mech("free-flight-drift", dv < 1.0 and _mech_v0.length() > 50.0,
-					"v=%.0f dv=%.2f" % [_mech_v0.length(), dv])
-				m.ship.assist = true
-				_mech_next()
-		7:  # LDS: must exceed drive speeds by orders of magnitude
-			if m.ship.velocity.length() < 5.0:
-				_mech_v0 = Vector3(m.px, m.py, m.pz)
-				m._toggle_lds()
-				_mech("lds-engage", m.lds_state == 1, "state=%d" % m.lds_state)
-				_mech_next()
-			elif demo_t > 15.0:
-				_mech("lds-engage", false, "never stopped")
-				_mech_next()
-		8:
-			if demo_t > 15.0:
-				var spd: float = m.ship.velocity.length()
-				var traveled := (Vector3(m.px, m.py, m.pz) - _mech_v0).length()
-				_mech("lds-speed", m.lds_state == 2 and spd > 1.0e6,
-					"v=" + m._fmt_dist(spd) + "/s")
-				_mech("lds-travel", traveled > 1.0e8, m._fmt_dist(traveled))
-				m._toggle_lds()
-				_mech_next()
-		9:  # LDS drop: back to conventional speeds under assist
-			if demo_t > 3.0:
-				var spd: float = m.ship.velocity.length()
-				_mech("lds-disengage",
-					m.lds_state == 0 and spd <= m.ship.max_speed.z * 1.2,
-					"v=%.0f" % spd)
-				# return to the start cluster for autopilot + dock tests
-				m.px = _mech_home.x
-				m.py = _mech_home.y
-				m.pz = _mech_home.z
-				m.ship.velocity = Vector3.ZERO
-				var near: Dictionary = m._nearest("station")
-				for i in m.objects.size():
-					if m.objects[i] == near:
-						m.target_idx = i
-						m.target_ai = null
-				m._set_autopilot(1)
-				_mech_next()
-		10:  # autopilot approach: arrive ON the marker sphere and stop
-			# The break-off is not a constant. icPlayerPilot::EngageAutopilotApproach
-			# hands the player's own icAIPilot a DefaultApproach order whose radius
-			# is icAIServices::InnerMarkerRadius(ship, target) -- so it is derived
-			# from what you are approaching, and a station, a fighter and a planet
-			# all break off at different ranges. Assert that: the ship must stop on
-			# the target's marker sphere, not inside some fixed radius.
-			if m.ap_mode == 0 and demo_t > 1.0:
-				var d: float = m._target_distance()
-				var mk: float = m._target_marker()
-				var slop: float = maxf(PogWorld.completion_tolerance(mk), 20.0) + 100.0
-				_mech("ap-approach", mk > 0.0 and absf(d - mk) <= slop,
-					"dist=%.0f m, marker=%.0f m, after %.0f s" % [d, mk, demo_t])
-				m._set_autopilot(3)
-				_mech_next()
-			elif demo_t > 200.0:
-				_mech("ap-approach", false,
-					"timeout dist=%s" % m._fmt_dist(m._target_distance()))
-				m._set_autopilot(3)
-				_mech_next()
-		11:  # autopilot dock
-			if m.docked_at != "":
-				_mech("ap-dock", true, m.docked_at)
-				m._undock()
-				_mech_next()
-			elif demo_t > 90.0:
-				_mech("ap-dock", false, "timeout")
-				_mech_next()
-		12:  # a seeker missile tracks and kills: 500 hp / 280 flat blast = 2 hits
-			var ai: AiShip = m.spawn_hostile(m.ship.global_position
-					- m.ship.global_transform.basis.z * 3000.0)
-			ai.hull = 500.0
-			ai.behavior = "idle"
-			m.target_ai = ai
-			m._cycle_secondary()
-			_mech_v0 = Vector3(ai.hull, 0.0, 0.0)
-			_mech_next()
-		13:
-			if m.target_ai == null or not is_instance_valid(m.target_ai):
-				_mech("missile-kill", true, "%.0f s" % demo_t)
-				_mech_next()
-			elif demo_t > 60.0:
-				_mech("missile-kill", false, "hull=%.0f after %.0f s"
-					% [m.target_ai.hull, demo_t])
-				m.kill_ai(m.target_ai)
-				_mech_next()
-			else:
-				# the recovered blast is flat 280 (seeker, disable_attenuation):
-				# hull must step by exact multiples of it
-				if is_instance_valid(m.target_ai) and not m.target_ai.dying \
-						and m.target_ai.hull < float(_mech_v0.x):
-					var drop: float = float(_mech_v0.x) - m.target_ai.hull
-					if absf(fmod(drop, 280.0)) > 0.5 \
-							and absf(fmod(drop, 280.0) - 280.0) > 0.5:
-						_mech("missile-damage", false, "step=%.1f" % drop)
-					_mech_v0.x = m.target_ai.hull
-				m._fire_secondary()
-		14:  # icTurret: a gunstar's nps_turret_pbc fires pbc_bolt on the
-			# recovered fire cycle (refire_delay 0.6 through clock += eff*dt,
-			# iiGun::Simulate 0x10035030 / IsReadyToFire 0x10035120)
-			_mech_gs = _mech_spawn("Gunstar", 6000.0,
-					m.ship.global_position - m.ship.global_transform.basis.z * 6000.0)
-			_mech_gs.setup_ini("sims/ships/navy/gunstar.ini", null)
-			# a small drone: radius < 40 m skips the iiGun jitter roll
-			# (0x1011849c), so every solution passes the 1-degree fire arc
-			# and the cadence is the bare refire clock. Offset off the mount
-			# plane: the gunstar's turret nulls put min_elevation=0 exactly
-			# on the equator, so a coplanar target sits on the limit.
-			_mech_drone = _mech_spawn("Drone", 100000.0, _mech_gs.global_position
-					+ Vector3(-600.0, 0.0, -2000.0))
-			_mech_drone.radius = 20.0
-			Turrets.instance.arm_ship(_mech_gs, _mech_drone)
-			_mech_next()
-		15:
-			var shots := _mech_turret_shots()
-			if shots.size() >= 4:
-				var battery: Dictionary = _mech_battery(_mech_gs)
-				var gun: Dictionary = battery["guns"][0]
-				var bolt: Dictionary = gun["bolt"]
-				_mech("turret-bolt", absf(float(bolt["damage"]) - 160.0) < 0.01
-					and absf(float(bolt["penetration"]) - 50.0) < 0.01
-					and absf(float(bolt["speed"]) - 6000.0) < 0.01,
-					"pbc_bolt %d/%d @ %d m/s" % [int(bolt["damage"]),
-						int(bolt["penetration"]), int(bolt["speed"])])
-				var lo := 1.0e9
-				var hi := 0.0
-				for i in range(1, shots.size()):
-					var dt_i := float(shots[i]) - float(shots[i - 1])
-					lo = minf(lo, dt_i)
-					hi = maxf(hi, dt_i)
-				# refire_delay 0.6 (nps_turret_pbc.ini), quantised to the
-				# physics tick
-				_mech("turret-refire", lo > 0.55 and hi < 0.75,
-					"interval %.3f..%.3f s" % [lo, hi])
-				m.kill_ai(_mech_gs)
-				_mech_next()
-			elif demo_t > 30.0:
-				_mech("turret-refire", false, "%d shots in %.0f s"
-					% [_mech_turret_shots().size(), demo_t])
-				m.kill_ai(_mech_gs)
-				_mech_next()
-		16:  # icBeamProjector/icBeam: nps_beam_weapon charges to capacity
-			# (1800 at ai_charge_per_second 300), then burns at
-			# beam_power_drain 500/s while applying damage_rate 1000/s --
-			# the burst is exactly capacity/drain * damage_rate = 3600
-			m.weapons.clear()  # no stale turret bolts against the drone
-			var ship := _mech_spawn("Beamship", 5000.0,
-					m.ship.global_position + m.ship.global_transform.basis.x * 6000.0)
-			_mech_drone.global_position = ship.global_position \
-					- ship.global_transform.basis.z * 1500.0
-			_mech_drone.velocity = Vector3.ZERO
-			_mech_drone.radius = 20.0
-			_mech_beam = Turrets._make_beam(
-					"ini:/subsims/systems/nonplayer/nps_beam_weapon", {},
-					Vector3.ZERO, Basis.IDENTITY)
-			Turrets.instance.batteries.append({"owner": ship, "rec": {},
-				"guns": [], "beams": [_mech_beam], "armed": true,
-				"locked": _mech_drone})
-			_mech_v0 = Vector3(_mech_drone.hull, 0.0, 0.0)
-			_mech_next()
-		17:
-			var burst := float(_mech_beam["burst_damage"])
-			if burst > 0.0 and not bool(_mech_beam["firing"]):
-				_mech("beam-burst", absf(burst - 3600.0) < 50.0,
-					"%.0f damage (capacity 1800 / drain 500 * rate 1000)" % burst)
-				var took := float(_mech_v0.x) - _mech_drone.hull
-				_mech("beam-damage", absf(took - burst) < 1.0,
-					"hull -%.0f (src=1: no LDA, bare hull here)" % took)
-				m.kill_ai(_mech_drone)
-				_mech_next()
-			elif demo_t > 30.0:
-				_mech("beam-burst", false, "energy=%.0f firing=%s after %.0f s"
-					% [float(_mech_beam["energy"]),
-						str(_mech_beam["firing"]), demo_t])
-				_mech_next()
-		18:  # iiSimField: drop a synthetic icFieldSphere on the player and let
-			# both singletons populate. Stationary, so the spawn path is the
-			# uniform [0.1, 1.0] x (100 x rock radius) shell (FUN_1004a030
-			# @ 0x1004a030 with _DAT_101184b0 = 0.1, _DAT_10119fa0 = 100).
-			m.ship.velocity = Vector3.ZERO
-			m.ship.set_speed = 0.0
-			_mech_field = {"name": "__fieldtest", "category": "field_sphere",
-				"x": m.px, "y": m.py, "z": m.pz, "radius": 10000.0,
-				"field_asteroids": true, "field_debris": true,
-				"avatar": "", "jumps": [], "colors": [], "node": null}
-			m.objects.append(_mech_field)
-			_mech_next()
-		19:
-			if demo_t < 0.4:  # a few ticks: build the pools, spawn the lot
-				return
-			var ast: Array = m.fields.asteroid.live
-			var deb: Array = m.fields.debris.live
-			# count = the whole authored pool: live + pooled == count, always
-			# (fields/asteroid.ini count=100, fields/debris.ini count=50; the
-			# per-frame spawn budget is `count` too, Think @ 0x10049570)
-			_mech("field-count", ast.size() == 100 and deb.size() == 50,
-				"asteroids=%d debris=%d" % [ast.size(), deb.size()])
-			var shell_ok := true
-			var kin_ok := true
-			var worst := ""
-			for rk in ast:
-				var r: float = rk["radius"]
-				var d: float = (rk["node"] as Node3D).position.length()
-				if d < 0.1 * 100.0 * r - 100.0 or d > 100.0 * r + 100.0:
-					shell_ok = false
-					worst = "d=%.0f r=%.0f" % [d, r]
-				# spin in [min_rot, max_rot] deg/s, speed in [min_speed,
-				# max_speed] m/s (FUN_10049d70 @ 0x10049d70 + fields inis)
-				var w: float = rad_to_deg(float(rk["rate"]))
-				var v: float = (rk["vel"] as Vector3).length()
-				if w < 5.0 - 0.01 or w > 60.0 + 0.01 \
-						or v < 2.0 - 0.01 or v > 75.0 + 0.01:
-					kin_ok = false
-					worst = "spin=%.1f v=%.1f" % [w, v]
-			for rk in deb:
-				if (rk["vel"] as Vector3).length() > 0.001:  # max_speed = 0
-					kin_ok = false
-					worst = "debris moving"
-			_mech("field-shell", shell_ok and not ast.is_empty(),
-				worst if not shell_ok else "all in [0.1, 1.0] x 100r")
-			_mech("field-kinematics", kin_ok, worst if not kin_ok
-				else "spin 5..60 deg/s, speed 2..75, debris still")
-			# deactivate + teleport: every rock must strand outside the
-			# 1.1 x 100r cull shell (Think @ 0x10049570, _DAT_10119e94)
-			m.objects.erase(_mech_field)
-			m.py += 1.0e8
-			_mech_next()
-		20:
-			if m.fields.asteroid.live.is_empty() \
-					and m.fields.debris.live.is_empty():
-				_mech("field-cull", true, "%.2f s" % demo_t)
-				_mech_next()
-			elif demo_t > 5.0:
-				_mech("field-cull", false, "%d still live after %.0f s"
-					% [m.fields.asteroid.live.size()
-						+ m.fields.debris.live.size(), demo_t])
-				_mech_next()
-		21:  # --- the TRI (task #60) -------------------------------------------
-			# The recovered numbers, all from iiShipSystem's .data statics:
-			# min_tri_weight 0.5 (0x1015bb8c), max_tri_weight 1.5 (0x1015bb90),
-			# and SetTRIPosition's piecewise map (0x1003c070) -- weight is min at
-			# position 0, exactly 1.0 at 1/3, max at 1.
-			#
-			# The ap-dock phase left us docked, and the drive weight only reaches
-			# the flight model while we are flying -- icShip::Simulate gates its
-			# two TRIWeight multiplies on `ship+0x148 == 0` exactly as our
-			# _player_control gates on `docked_at == ""`. So: cast off first.
-			m.docked_at = ""
-			_tri_check()
-			_mech_next()
-		22:  # the drive axis had a frame to reach ShipFlight through _player_control
-			var wd: float = 1.5
-			var got: float = m.ship.max_accel.z
-			var want: float = m.base_max_accel.z * wd
-			_mech("tri-drive-accel", absf(got - want) < 0.5,
-				"full drive: %.1f m/s^2 (base %.1f x %.2f)"
-					% [got, m.base_max_accel.z, wd])
-			var gotr: float = m.ship.turn_accel.x
-			var wantr: float = m.base_turn_accel.x * wd
-			_mech("tri-drive-torque", absf(gotr - wantr) < 0.5,
-				"full drive: %.1f deg/s^2 (base %.1f x %.2f)"
-					% [gotr, m.base_turn_accel.x, wd])
-			# put the ship back where the rest of the game expects it
-			m.sys.set_tri_position(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
-			_mech_next()
-		23:  # --- towing (icDockPort::OnDock -> AttachChild mass coupling) ----
-			# the tug is 80x70x120 -> mass 672 (iiThrusterSim::Load, w*h*l*
-			# m_density 0.001); a cargo pod is 50^3 -> 125; a docked pair
-			# accelerates at mass/(mass+partner) of the rated figure
-			var pod := _mech_spawn("Tow Pod", 1000.0,
-					m.ship.global_position - m.ship.global_transform.basis.z * 300.0)
-			pod.setup_ini("sims/ships/utility/cargo_pod.ini", null)
-			pod.docking_priority = 11
-			pod.mass = 125.0   # setup_ini reloads dims; pin the authored value
-			pod.velocity = m.ship.velocity
-			var mass_ok: bool = absf(m.ship.mass - 672.0) < 1.0
-			var did: bool = m._try_tow_dock()
-			var scale_ok: bool = absf(m.ship.mass_scale() - 672.0 / 797.0) < 0.01
-			_mech("tow-dock", did and mass_ok and scale_ok,
-				"tug %.0f + pod %.0f -> accel x %.3f"
-					% [m.ship.mass, pod.mass, m.ship.mass_scale()])
-			_mech_v0 = pod.global_position
-			_mech_next()
-		24:
-			var pod2: AiShip = m.towed
-			if pod2 == null:
-				_mech("tow-ride", false, "tow released early")
-			else:
-				# the child must ride the parent's frame rigidly
-				var rel: float = ((pod2.global_position - m.ship.global_position)
-						.length())
-				_mech("tow-ride", absf(rel - 300.0) < 5.0 and pod2.behavior == "towed",
-					"pod holds %.0f m off the parent" % rel)
-			m._release_tow(false)
-			_mech("tow-release", m.towed == null
-					and absf(m.ship.mass_scale() - 1.0) < 0.001,
-				"accel scale back to %.3f" % m.ship.mass_scale())
-			if pod2 != null:
-				m.kill_ai(pod2)
-			_mech_next()
-		25:
-			print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
-				else "%d FAILURES" % _mech_fail))
-			get_tree().quit(0 if _mech_fail == 0 else 1)
+# The mechcheck steps, in run order. demo_phase indexes this table, so a new
+# step is one method plus one line here -- nothing renumbers.
+var _mech_steps: Array[StringName] = [
+	&"_ms_setup",
+	&"_ms_accel",
+	&"_ms_brake",
+	&"_ms_lateral",
+	&"_ms_assist_trim",
+	&"_ms_coast_start",
+	&"_ms_free_drift",
+	&"_ms_lds_engage",
+	&"_ms_lds_speed",
+	&"_ms_lds_drop",
+	&"_ms_ap_approach",
+	&"_ms_ap_dock",
+	&"_ms_missile_spawn",
+	&"_ms_missile_track",
+	&"_ms_turret_spawn",
+	&"_ms_turret_refire",
+	&"_ms_beam_spawn",
+	&"_ms_beam_burst",
+	&"_ms_field_spawn",
+	&"_ms_field_assert",
+	&"_ms_field_cull",
+	&"_ms_tri_weights",
+	&"_ms_tri_drive",
+	&"_ms_tow_dock",
+	&"_ms_tow_ride",
+	&"_ms_pod_spill",
+	&"_ms_pod_spill_assert",
+	&"_ms_finish",
+]
+
+# Steps that take minutes of REAL flight (the autopilot convergence tests).
+# --mechcheck skips them and runs the rest at 4x engine time (assertions all
+# measure demo_t, which is game time, so they hold); --mechslow is the full
+# suite at real time -- run it rarely, when the autopilot itself changed.
+const MECH_SLOW_STEPS: Array[StringName] = [&"_ms_ap_approach", &"_ms_ap_dock"]
+const MECH_FAST_TIME_SCALE := 4.0
+
+func _mechcheck(delta: float) -> void:
+	if not m.mechslow and _mech_steps[demo_phase] in MECH_SLOW_STEPS:
+		print("MECHCHECK skip: %s (--mechslow runs it)"
+				% _mech_steps[demo_phase])
+		_mech_next()
+		return
+	call(_mech_steps[demo_phase], delta)
 	if demo_t > 300.0:
 		print("MECHCHECK: phase %d timeout" % demo_phase)
 		get_tree().quit(1)
+
+func _ms_setup(_delta: float) -> void:
+	# move 1 Gm off-plane, clear of all masses, then full throttle
+	if not m.mechslow:
+		Engine.time_scale = MECH_FAST_TIME_SCALE
+	_mech_home = Vector3(m.px, m.py, m.pz)
+	m.py += 1.0e9
+	m.target_idx = -1
+	m.target_ai = null
+	m.ship.set_speed = m.ship.max_speed.z
+	_mech_t0 = demo_t
+	_mech_next()
+
+func _ms_accel(_delta: float) -> void:
+	# tug reaches 850 m/s in 850/150 = 5.67 s (INI constants)
+	if m.ship.forward_speed() >= m.ship.max_speed.z - 10.0:
+		var t := demo_t
+		_mech("accel-to-850", t > 4.5 and t < 7.5, "%.2f s" % t)
+		m.ship.set_speed = 0.0
+		_mech_next()
+	elif demo_t > 15.0:
+		_mech("accel-to-850", false,
+			"timeout, v=%.0f" % m.ship.forward_speed())
+		_mech_next()
+
+func _ms_brake(_delta: float) -> void:
+	# flight computer brakes back to zero
+	if m.ship.velocity.length() < 5.0:
+		_mech("brake-to-zero", true, "%.2f s" % demo_t)
+		m.ship.input_thrust.x = 1.0
+		_mech_next()
+	elif demo_t > 15.0:
+		_mech("brake-to-zero", false, "v=%.0f" % m.ship.velocity.length())
+		_mech_next()
+
+func _ms_lateral(_delta: float) -> void:
+	# lateral thruster pushes sideways
+	if demo_t > 2.0:
+		var lat := absf((m.ship.velocity * m.ship.global_transform.basis).x)
+		_mech("lateral-thrust", lat > 30.0, "%.0f m/s" % lat)
+		m.ship.input_thrust.x = 0.0
+		_mech_next()
+
+func _ms_assist_trim(_delta: float) -> void:
+	# assist trims lateral drift back out
+	if demo_t > 4.0:
+		var lat := absf((m.ship.velocity * m.ship.global_transform.basis).x)
+		_mech("assist-trim", lat < 5.0, "%.1f m/s" % lat)
+		m.ship.assist = false
+		m.ship.input_thrust.z = 1.0
+		_mech_next()
+
+func _ms_coast_start(_delta: float) -> void:
+	# free flight: thrust then coast, velocity must persist
+	if demo_t > 1.5:
+		m.ship.input_thrust.z = 0.0
+		_mech_v0 = m.ship.velocity
+		_mech_next()
+
+func _ms_free_drift(_delta: float) -> void:
+	if demo_t > 3.0:
+		var dv: float = (m.ship.velocity - _mech_v0).length()
+		_mech("free-flight-drift", dv < 1.0 and _mech_v0.length() > 50.0,
+			"v=%.0f dv=%.2f" % [_mech_v0.length(), dv])
+		m.ship.assist = true
+		_mech_next()
+
+func _ms_lds_engage(_delta: float) -> void:
+	# LDS: must exceed drive speeds by orders of magnitude
+	if m.ship.velocity.length() < 5.0:
+		_mech_v0 = Vector3(m.px, m.py, m.pz)
+		m._toggle_lds()
+		_mech("lds-engage", m.lds_state == 1, "state=%d" % m.lds_state)
+		_mech_next()
+	elif demo_t > 15.0:
+		_mech("lds-engage", false, "never stopped")
+		_mech_next()
+
+func _ms_lds_speed(_delta: float) -> void:
+	if demo_t > 15.0:
+		var spd: float = m.ship.velocity.length()
+		var traveled := (Vector3(m.px, m.py, m.pz) - _mech_v0).length()
+		_mech("lds-speed", m.lds_state == 2 and spd > 1.0e6,
+			"v=" + m._fmt_dist(spd) + "/s")
+		_mech("lds-travel", traveled > 1.0e8, m._fmt_dist(traveled))
+		m._toggle_lds()
+		_mech_next()
+
+func _ms_lds_drop(_delta: float) -> void:
+	# LDS drop: back to conventional speeds under assist
+	if demo_t > 3.0:
+		var spd: float = m.ship.velocity.length()
+		_mech("lds-disengage",
+			m.lds_state == 0 and spd <= m.ship.max_speed.z * 1.2,
+			"v=%.0f" % spd)
+		# return to the start cluster for autopilot + dock tests
+		m.px = _mech_home.x
+		m.py = _mech_home.y
+		m.pz = _mech_home.z
+		m.ship.velocity = Vector3.ZERO
+		var near: Dictionary = m._nearest("station")
+		for i in m.objects.size():
+			if m.objects[i] == near:
+				m.target_idx = i
+				m.target_ai = null
+		m._set_autopilot(1)
+		_mech_next()
+
+func _ms_ap_approach(_delta: float) -> void:
+	# autopilot approach: arrive ON the marker sphere and stop
+	# The break-off is not a constant. icPlayerPilot::EngageAutopilotApproach
+	# hands the player's own icAIPilot a DefaultApproach order whose radius
+	# is icAIServices::InnerMarkerRadius(ship, target) -- so it is derived
+	# from what you are approaching, and a station, a fighter and a planet
+	# all break off at different ranges. Assert that: the ship must stop on
+	# the target's marker sphere, not inside some fixed radius.
+	if m.ap_mode == 0 and demo_t > 1.0:
+		var d: float = m._target_distance()
+		var mk: float = m._target_marker()
+		var slop: float = maxf(PogWorld.completion_tolerance(mk), 20.0) + 100.0
+		_mech("ap-approach", mk > 0.0 and absf(d - mk) <= slop,
+			"dist=%.0f m, marker=%.0f m, after %.0f s" % [d, mk, demo_t])
+		m._set_autopilot(3)
+		_mech_next()
+	elif demo_t > 200.0:
+		_mech("ap-approach", false,
+			"timeout dist=%s" % m._fmt_dist(m._target_distance()))
+		m._set_autopilot(3)
+		_mech_next()
+
+func _ms_ap_dock(_delta: float) -> void:
+	# autopilot dock
+	if m.docked_at != "":
+		_mech("ap-dock", true, m.docked_at)
+		m._undock()
+		_mech_next()
+	elif demo_t > 90.0:
+		_mech("ap-dock", false, "timeout")
+		_mech_next()
+
+func _ms_missile_spawn(_delta: float) -> void:
+	# a seeker missile tracks and kills: 500 hp / 280 flat blast = 2 hits
+	var ai: AiShip = m.spawn_hostile(m.ship.global_position
+			- m.ship.global_transform.basis.z * 3000.0)
+	ai.hull = 500.0
+	ai.behavior = "idle"
+	m.target_ai = ai
+	m._cycle_secondary()
+	_mech_v0 = Vector3(ai.hull, 0.0, 0.0)
+	_mech_next()
+
+func _ms_missile_track(_delta: float) -> void:
+	if m.target_ai == null or not is_instance_valid(m.target_ai):
+		_mech("missile-kill", true, "%.0f s" % demo_t)
+		_mech_next()
+	elif demo_t > 60.0:
+		_mech("missile-kill", false, "hull=%.0f after %.0f s"
+			% [m.target_ai.hull, demo_t])
+		_mech_reap(m.target_ai)
+		_mech_next()
+	else:
+		# the recovered blast is flat 280 (seeker, disable_attenuation):
+		# hull must step by exact multiples of it
+		if is_instance_valid(m.target_ai) and not m.target_ai.dying \
+				and m.target_ai.hull < float(_mech_v0.x):
+			var drop: float = float(_mech_v0.x) - m.target_ai.hull
+			if absf(fmod(drop, 280.0)) > 0.5 \
+					and absf(fmod(drop, 280.0) - 280.0) > 0.5:
+				_mech("missile-damage", false, "step=%.1f" % drop)
+			_mech_v0.x = m.target_ai.hull
+		m._fire_secondary()
+
+func _ms_turret_spawn(_delta: float) -> void:
+	# icTurret: a gunstar's nps_turret_pbc fires pbc_bolt on the
+	# recovered fire cycle (refire_delay 0.6 through clock += eff*dt,
+	# iiGun::Simulate 0x10035030 / IsReadyToFire 0x10035120)
+	_mech_gs = _mech_spawn("Gunstar", 6000.0,
+			m.ship.global_position - m.ship.global_transform.basis.z * 6000.0)
+	_mech_gs.setup_ini("sims/ships/navy/gunstar.ini", null)
+	# a small drone: radius < 40 m skips the iiGun jitter roll
+	# (0x1011849c), so every solution passes the 1-degree fire arc
+	# and the cadence is the bare refire clock. Offset off the mount
+	# plane: the gunstar's turret nulls put min_elevation=0 exactly
+	# on the equator, so a coplanar target sits on the limit.
+	_mech_drone = _mech_spawn("Drone", 100000.0, _mech_gs.global_position
+			+ Vector3(-600.0, 0.0, -2000.0))
+	_mech_drone.radius = 20.0
+	Turrets.instance.arm_ship(_mech_gs, _mech_drone)
+	_mech_next()
+
+func _ms_turret_refire(_delta: float) -> void:
+	var shots := _mech_turret_shots()
+	if shots.size() >= 4:
+		var battery: Dictionary = _mech_battery(_mech_gs)
+		var gun: Dictionary = battery["guns"][0]
+		var bolt: Dictionary = gun["bolt"]
+		_mech("turret-bolt", absf(float(bolt["damage"]) - 160.0) < 0.01
+			and absf(float(bolt["penetration"]) - 50.0) < 0.01
+			and absf(float(bolt["speed"]) - 6000.0) < 0.01,
+			"pbc_bolt %d/%d @ %d m/s" % [int(bolt["damage"]),
+				int(bolt["penetration"]), int(bolt["speed"])])
+		var lo := 1.0e9
+		var hi := 0.0
+		for i in range(1, shots.size()):
+			var dt_i := float(shots[i]) - float(shots[i - 1])
+			lo = minf(lo, dt_i)
+			hi = maxf(hi, dt_i)
+		# refire_delay 0.6 (nps_turret_pbc.ini), quantised to the
+		# physics tick
+		_mech("turret-refire", lo > 0.55 and hi < 0.75,
+			"interval %.3f..%.3f s" % [lo, hi])
+		_mech_reap(_mech_gs)
+		_mech_next()
+	elif demo_t > 30.0:
+		_mech("turret-refire", false, "%d shots in %.0f s"
+			% [_mech_turret_shots().size(), demo_t])
+		_mech_reap(_mech_gs)
+		_mech_next()
+
+func _ms_beam_spawn(_delta: float) -> void:
+	# icBeamProjector/icBeam: nps_beam_weapon charges to capacity
+	# (1800 at ai_charge_per_second 300), then burns at
+	# beam_power_drain 500/s while applying damage_rate 1000/s --
+	# the burst is exactly capacity/drain * damage_rate = 3600
+	m.weapons.clear()  # no stale turret bolts against the drone
+	var ship := _mech_spawn("Beamship", 5000.0,
+			m.ship.global_position + m.ship.global_transform.basis.x * 6000.0)
+	_mech_drone.global_position = ship.global_position \
+			- ship.global_transform.basis.z * 1500.0
+	_mech_drone.velocity = Vector3.ZERO
+	_mech_drone.radius = 20.0
+	_mech_beam = Turrets._make_beam(
+			"ini:/subsims/systems/nonplayer/nps_beam_weapon", {},
+			Vector3.ZERO, Basis.IDENTITY)
+	Turrets.instance.batteries.append({"owner": ship, "rec": {},
+		"guns": [], "beams": [_mech_beam], "armed": true,
+		"locked": _mech_drone})
+	_mech_v0 = Vector3(_mech_drone.hull, 0.0, 0.0)
+	_mech_next()
+
+func _ms_beam_burst(_delta: float) -> void:
+	var burst := float(_mech_beam["burst_damage"])
+	if burst > 0.0 and not bool(_mech_beam["firing"]):
+		# the +-50 was one 60 Hz tick of damage-rate quantisation; the frame
+		# step (and so the overshoot) scales with the fast suite's time scale
+		_mech("beam-burst", absf(burst - 3600.0) < 50.0 * Engine.time_scale,
+			"%.0f damage (capacity 1800 / drain 500 * rate 1000)" % burst)
+		var took := float(_mech_v0.x) - _mech_drone.hull
+		_mech("beam-damage", absf(took - burst) < 1.0,
+			"hull -%.0f (src=1: no LDA, bare hull here)" % took)
+		_mech_reap(_mech_drone)
+		_mech_next()
+	elif demo_t > 30.0:
+		_mech("beam-burst", false, "energy=%.0f firing=%s after %.0f s"
+			% [float(_mech_beam["energy"]),
+				str(_mech_beam["firing"]), demo_t])
+		_mech_next()
+
+func _ms_field_spawn(_delta: float) -> void:
+	# iiSimField: drop a synthetic icFieldSphere on the player and let
+	# both singletons populate. Stationary, so the spawn path is the
+	# uniform [0.1, 1.0] x (100 x rock radius) shell (FUN_1004a030
+	# @ 0x1004a030 with _DAT_101184b0 = 0.1, _DAT_10119fa0 = 100).
+	m.ship.velocity = Vector3.ZERO
+	m.ship.set_speed = 0.0
+	_mech_field = {"name": "__fieldtest", "category": "field_sphere",
+		"x": m.px, "y": m.py, "z": m.pz, "radius": 10000.0,
+		"field_asteroids": true, "field_debris": true,
+		"avatar": "", "jumps": [], "colors": [], "node": null}
+	m.objects.append(_mech_field)
+	_mech_next()
+
+func _ms_field_assert(_delta: float) -> void:
+	if demo_t < 0.4:  # a few ticks: build the pools, spawn the lot
+		return
+	var ast: Array = m.fields.asteroid.live
+	var deb: Array = m.fields.debris.live
+	# count = the whole authored pool: live + pooled == count, always
+	# (fields/asteroid.ini count=100, fields/debris.ini count=50; the
+	# per-frame spawn budget is `count` too, Think @ 0x10049570)
+	_mech("field-count", ast.size() == 100 and deb.size() == 50,
+		"asteroids=%d debris=%d" % [ast.size(), deb.size()])
+	var shell_ok := true
+	var kin_ok := true
+	var worst := ""
+	for rk in ast:
+		var r: float = rk["radius"]
+		var d: float = (rk["node"] as Node3D).position.length()
+		if d < 0.1 * 100.0 * r - 100.0 or d > 100.0 * r + 100.0:
+			shell_ok = false
+			worst = "d=%.0f r=%.0f" % [d, r]
+		# spin in [min_rot, max_rot] deg/s, speed in [min_speed,
+		# max_speed] m/s (FUN_10049d70 @ 0x10049d70 + fields inis)
+		var w: float = rad_to_deg(float(rk["rate"]))
+		var v: float = (rk["vel"] as Vector3).length()
+		if w < 5.0 - 0.01 or w > 60.0 + 0.01 \
+				or v < 2.0 - 0.01 or v > 75.0 + 0.01:
+			kin_ok = false
+			worst = "spin=%.1f v=%.1f" % [w, v]
+	for rk in deb:
+		if (rk["vel"] as Vector3).length() > 0.001:  # max_speed = 0
+			kin_ok = false
+			worst = "debris moving"
+	_mech("field-shell", shell_ok and not ast.is_empty(),
+		worst if not shell_ok else "all in [0.1, 1.0] x 100r")
+	_mech("field-kinematics", kin_ok, worst if not kin_ok
+		else "spin 5..60 deg/s, speed 2..75, debris still")
+	# deactivate + teleport: every rock must strand outside the
+	# 1.1 x 100r cull shell (Think @ 0x10049570, _DAT_10119e94)
+	m.objects.erase(_mech_field)
+	m.py += 1.0e8
+	_mech_next()
+
+func _ms_field_cull(_delta: float) -> void:
+	if m.fields.asteroid.live.is_empty() \
+			and m.fields.debris.live.is_empty():
+		_mech("field-cull", true, "%.2f s" % demo_t)
+		_mech_next()
+	elif demo_t > 5.0:
+		_mech("field-cull", false, "%d still live after %.0f s"
+			% [m.fields.asteroid.live.size()
+				+ m.fields.debris.live.size(), demo_t])
+		_mech_next()
+
+func _ms_tri_weights(_delta: float) -> void:
+	# --- the TRI (task #60) -------------------------------------------
+	# The recovered numbers, all from iiShipSystem's .data statics:
+	# min_tri_weight 0.5 (0x1015bb8c), max_tri_weight 1.5 (0x1015bb90),
+	# and SetTRIPosition's piecewise map (0x1003c070) -- weight is min at
+	# position 0, exactly 1.0 at 1/3, max at 1.
+	#
+	# The ap-dock phase left us docked, and the drive weight only reaches
+	# the flight model while we are flying -- icShip::Simulate gates its
+	# two TRIWeight multiplies on `ship+0x148 == 0` exactly as our
+	# _player_control gates on `docked_at == ""`. So: cast off first.
+	m.docked_at = ""
+	_tri_check()
+	_mech_next()
+
+func _ms_tri_drive(_delta: float) -> void:
+	# the drive axis had a frame to reach ShipFlight through _player_control
+	var wd: float = 1.5
+	var got: float = m.ship.max_accel.z
+	var want: float = m.base_max_accel.z * wd
+	_mech("tri-drive-accel", absf(got - want) < 0.5,
+		"full drive: %.1f m/s^2 (base %.1f x %.2f)"
+			% [got, m.base_max_accel.z, wd])
+	var gotr: float = m.ship.turn_accel.x
+	var wantr: float = m.base_turn_accel.x * wd
+	_mech("tri-drive-torque", absf(gotr - wantr) < 0.5,
+		"full drive: %.1f deg/s^2 (base %.1f x %.2f)"
+			% [gotr, m.base_turn_accel.x, wd])
+	# put the ship back where the rest of the game expects it
+	m.sys.set_tri_position(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
+	_mech_next()
+
+func _ms_tow_dock(_delta: float) -> void:
+	# --- towing (icDockPort::OnDock -> AttachChild mass coupling) ----
+	# the tug is 80x70x120 -> mass 672 (iiThrusterSim::Load, w*h*l*
+	# m_density 0.001); a cargo pod is 50^3 -> 125; a docked pair
+	# accelerates at mass/(mass+partner) of the rated figure
+	var pod := _mech_spawn("Tow Pod", 1000.0,
+			m.ship.global_position - m.ship.global_transform.basis.z * 300.0)
+	pod.setup_ini("sims/ships/utility/cargo_pod.ini", null)
+	pod.docking_priority = 11
+	pod.mass = 125.0   # setup_ini reloads dims; pin the authored value
+	pod.velocity = m.ship.velocity
+	var mass_ok: bool = absf(m.ship.mass - 672.0) < 1.0
+	var did: bool = m._try_tow_dock()
+	var scale_ok: bool = absf(m.ship.mass_scale() - 672.0 / 797.0) < 0.01
+	_mech("tow-dock", did and mass_ok and scale_ok,
+		"tug %.0f + pod %.0f -> accel x %.3f"
+			% [m.ship.mass, pod.mass, m.ship.mass_scale()])
+	_mech_v0 = pod.global_position
+	_mech_next()
+
+func _ms_tow_ride(_delta: float) -> void:
+	var pod2: AiShip = m.towed
+	if pod2 == null:
+		_mech("tow-ride", false, "tow released early")
+	else:
+		# the child must ride the parent's frame rigidly
+		var rel: float = ((pod2.global_position - m.ship.global_position)
+				.length())
+		_mech("tow-ride", absf(rel - 300.0) < 5.0 and pod2.behavior == "towed",
+			"pod holds %.0f m off the parent" % rel)
+	m._release_tow(false)
+	_mech("tow-release", m.towed == null
+			and absf(m.ship.mass_scale() - 1.0) < 0.001,
+		"accel scale back to %.3f" % m.ship.mass_scale())
+	if pod2 != null:
+		_mech_reap(pod2)
+	_mech_next()
+
+## kill_ai now runs OnExplode's timed dramatic sequence for anything over
+## size 25 -- minutes of pyrotechnics the harness must not sit through.
+## Reap = kill and skip straight to the removal.
+func _mech_reap(ai: AiShip) -> void:
+	m.kill_ai(ai)
+	if is_instance_valid(ai) and ai.dying:
+		for c in ai.get_children():
+			if c is DeathSequence:
+				c.queue_free()
+		m._finish_kill(ai)
+
+var _spill_before := 0
+
+func _ms_pod_spill(_delta: float) -> void:
+	# a dying hauler spills its racked pods (DetachAndFlingChild -> free
+	# cargo-pod sims with a "cargo" property, main._spill_pods)
+	var frt := _mech_spawn("Doomed Freighter", 100.0,
+			m.ship.global_position - m.ship.global_transform.basis.z * 5000.0)
+	frt.setup_ini("sims/ships/utility/freighter.ini", null)
+	frt.ctype = "Freighter"
+	frt.carried_pods = 2
+	# the commodity table normally comes up with the act; register one type
+	# so the spill has something to stamp (icargo.Create's argument order)
+	if m.pog_econ.cargo_types.is_empty():
+		m.pog_econ._c_create(null,
+				[900, "Cargo_Test", 1, 5, 0, 0, 0, 0, "", "", 0])
+	_spill_before = m.ai_ships.size()
+	_mech_reap(frt)   # the spill happens in _finish_kill either way
+	_mech_next()
+
+func _ms_pod_spill_assert(_delta: float) -> void:
+	var pods: Array = []
+	for a in m.ai_ships:
+		if is_instance_valid(a) and String(a.ctype) == "CargoPod":
+			pods.append(a)
+	if pods.size() >= 2:
+		var s = m.pog_world._wrap_ship(pods[0])
+		var cargo := int(m.pog_std._bag(s).get("cargo", -1))
+		_mech("pod-spill", cargo > 0, "%d pods, first cargo id %d"
+				% [pods.size(), cargo])
+		for p in pods:
+			_mech_reap(p)
+		_mech_next()
+	elif demo_t > 20.0:
+		_mech("pod-spill", false, "no pods %d s after the kill" % int(demo_t))
+		_mech_next()
+
+func _ms_finish(_delta: float) -> void:
+	Engine.time_scale = 1.0
+	print("MECHCHECK done: %s" % ("ALL PASS" if _mech_fail == 0
+		else "%d FAILURES" % _mech_fail))
+	get_tree().quit(0 if _mech_fail == 0 else 1)
 
 func _tri_check() -> void:
 	var s: ShipSystems = m.sys
