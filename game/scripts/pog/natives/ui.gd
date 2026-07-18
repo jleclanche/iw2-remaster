@@ -252,6 +252,8 @@ class PogWindow extends RefCounted:
 	var scroll_top := 0
 	## kind == "scrollbar": the list box this bar scrolls.
 	var scroll_target: PogWindow = null
+	## A CreateFancyBorder window: drawn as the border outline.
+	var is_border := false
 	## Edit box / slider / radio / checkbox.
 	var value: Variant = ""
 	var max_chars := 0
@@ -1158,6 +1160,7 @@ func _create_fancy_border(_t, a: Array) -> Variant:
 	var inner = a[0] if a.size() > 0 else null
 	var win := PogWindow.new()
 	win.kind = "window"
+	win.is_border = true
 	if inner is PogWindow:
 		var iw: PogWindow = inner
 		win.x = iw.x - 7

@@ -53,6 +53,8 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	z_index = 10
 	visible = false
+	# the shady bar's weave tiles and scrolls: sampling outside [0,1] must wrap
+	texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	if main != null:
 		_font = Hud.load_game_font(main._base(), "handelgothic bt_12pt.fnt")
 		_font_small = Hud.load_game_font(main._base(), "handelgothic bt_8pt.fnt")
@@ -82,8 +84,8 @@ func _process(delta: float) -> void:
 		ui.dirty = false
 		_rebuild(scr)
 		queue_redraw()
-	elif bi != null and bi.fritz_alpha() > 0.0:
-		queue_redraw()   # the fritz flash fades, so it has to be re-drawn
+	elif visible:
+		queue_redraw()   # the shady bar's weave scrolls and the fritz fades
 	_credits_music(scr)
 	if visible and scr != null:
 		_advance_scrollers(scr, delta)
@@ -143,7 +145,8 @@ func _rows(scr: PogUi.PogScreen) -> Array:
 	for w in scr.windows:
 		if absorbed.has(w):
 			continue
-		if w.kind == "listbox" or w.kind == "scrollbar" or w.focusable() \
+		if w.kind == "listbox" or w.kind == "scrollbar" or w.is_border \
+				or w.focusable() \
 				or not w.title.is_empty() or not w.text.is_empty():
 			out.append(w)
 	return out
@@ -424,7 +427,68 @@ const SHADER_OPACITY := 0.8
 const LIST_ENTRY_H := 10.0
 
 var _atlas: Texture2D
+var _detail: Texture2D
 var _skin_fonts: Dictionary = {}
+
+## icShadyBar m_detail_colour / m_glow_colour: (1, 0.749, 0) -- static init
+## @ 0x1010df80 (0x3f800000, 0x3f3fbfc0, 0). m_bar_colour is black (@ 0x1010df20).
+const SHADY_AMBER := Color(1.0, 0.749, 0.0)
+
+
+## icShadyBar::Render (iwar2 @ 0x1010e7d0), extracted structure:
+##  1. a solid quad in m_bar_colour (black) at m_bar_alpha x the bar's fade;
+##  2. edge strips m_edge_width wide at each side, m_detail_colour fading
+##     inward to zero alpha;
+##  3. the bar_detail weave (texture:/images/gui/bar_detail, loaded by
+##     icShadyBar::Create @ 0x1010e380) TILED at its native texel size,
+##     coloured m_detail_colour, drawn TWICE with the second layer at a
+##     different tiling scale, both scrolling with app time (u = t/m_u_scroll_
+##     rate...) -- two drifting layers are the moire shimmer.
+## The exact alpha/edge/rate floats are data-section values not present in
+## the decompiled text; those numbers below are tuned stand-ins.
+func _draw_shady(r: Rect2) -> void:
+	draw_rect(r, Color(0.0, 0.0, 0.0, SHADER_OPACITY))
+	var tex := _detail_tex()
+	if tex != null:
+		var t := Time.get_ticks_msec() / 1000.0
+		for layer: Array in [[Vector2(3.1, 1.7), 0.10, 1.0],
+				[Vector2(-2.3, 2.9), 0.07, 1.31]]:
+			var off: Vector2 = (layer[0] as Vector2) * t
+			var a: float = layer[1]
+			var scale: float = layer[2]
+			draw_texture_rect_region(tex, r, Rect2(off, r.size / scale),
+				Color(SHADY_AMBER.r, SHADY_AMBER.g, SHADY_AMBER.b, a))
+	# the inward edge fades
+	const EDGE_W := 8.0
+	const EDGE_A := 0.30
+	var lit := Color(SHADY_AMBER.r, SHADY_AMBER.g, SHADY_AMBER.b, EDGE_A)
+	var out := Color(SHADY_AMBER.r, SHADY_AMBER.g, SHADY_AMBER.b, 0.0)
+	for side in 2:
+		var x0 := r.position.x if side == 0 else r.end.x
+		var x1 := x0 + (EDGE_W if side == 0 else -EDGE_W)
+		draw_polygon(PackedVector2Array([
+				Vector2(x0, r.position.y), Vector2(x1, r.position.y),
+				Vector2(x1, r.end.y), Vector2(x0, r.end.y)]),
+			PackedColorArray([lit, out, out, lit]))
+
+
+func _detail_tex() -> Texture2D:
+	if _detail != null:
+		return _detail
+	var img := Image.load_from_file(main._base().path_join(
+			"data/textures/images/gui/bar_detail.png"))
+	if img == null:
+		return null
+	# greyscale weave on black, blitted additively by the engine: alpha from
+	# luminance, like the widget atlas
+	img.convert(Image.FORMAT_RGBA8)
+	for y in img.get_height():
+		for x in img.get_width():
+			var c := img.get_pixel(x, y)
+			c.a = maxf(c.r, maxf(c.g, c.b))
+			img.set_pixel(x, y, c)
+	_detail = ImageTexture.create_from_image(img)
+	return _detail
 
 
 ## The widget atlas. The art is drawn on black and the engine blitted it over the
@@ -541,14 +605,16 @@ func _draw() -> void:
 	if scr != null:
 		var sc := _scale()
 		draw_set_transform(_origin(), 0.0, Vector2(sc, sc))
-		# 1. the shady bar -- a plain window as wide as gui.SetShadyBarWidth said,
-		#    filled at GUI_shader_opacity. That is the whole panel: no border, no
-		#    outline, no corner art. The menu is a dark column over the diorama.
+		# 1. the shady bars -- the translucent columns the menus sit on, as wide
+		#    as gui.SetShadyBarWidth / SetRHSShadyBarWidth said, drawn with
+		#    icShadyBar's extracted recipe (fill + weave + edges).
 		for w in scr.windows:
 			if w.kind == "window" and w.art.is_empty() and w.title.is_empty() \
-					and w.text.is_empty() and ui.shady_width > 0 \
-					and absi(w.w - ui.shady_width) <= 1:
-				draw_rect(_rect_of(w), Color(0.0, 0.0, 0.0, SHADER_OPACITY))
+					and w.text.is_empty() and not w.is_border \
+					and ((ui.shady_width > 0 and absi(w.w - ui.shady_width) <= 1)
+						or (ui.shady_width_rhs > 0
+							and absi(w.w - ui.shady_width_rhs) <= 1)):
+				_draw_shady(_rect_of(w))
 		# 2. the controls, each in its own art
 		for w in _rows(scr):
 			_draw_window(w)
@@ -559,6 +625,12 @@ func _draw() -> void:
 
 func _draw_window(w: PogUi.PogWindow) -> void:
 	var r := _rect_of(w)
+	if w.is_border:
+		# FcBorder: the amber outline box around list areas and button stacks.
+		# The avatar's real art (rounded caps out of the atlas) is not yet
+		# extracted; a 1 px outline in the GUI amber stands in.
+		draw_rect(r, AMBER_DIM, false, 1.0)
+		return
 	if w.kind == "listbox":
 		_draw_listbox(w, r)
 		return
