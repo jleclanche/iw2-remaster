@@ -491,11 +491,8 @@ class FillLayer extends Control:
 		for f: Array in hud.fills:
 			if f[0] is Rect2:
 				draw_rect(f[0], f[1])
-			elif f[0] is PackedVector2Array:
+			else:
 				draw_colored_polygon(f[0], f[1])
-			else:  # [Font, pos, text, size, color]: a knocked-out caption
-				draw_string(f[0], f[1], f[2], HORIZONTAL_ALIGNMENT_LEFT, -1,
-						f[3], f[4])
 		hud.fills.clear()
 
 var _fill_fx: FillLayer
@@ -774,12 +771,13 @@ func _panel(pos: Vector2, size: Vector2, title: String, mode := 0) -> void:
 	# for top-anchored blocks (modes 0/1) taller than the 16px header row; the
 	# caption text is knocked out dark against it.
 	if mode != 3 and size.y > HDR_H:
-		# a dark knocked-out caption cannot exist in a pure additive pass, so
-		# the band and its caption render together on the underlay
-		fills.append([Rect2(pos, Vector2(size.x, HDR_H)),
-				_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.32))])
-		fills.append([_font, pos + Vector2(4, 12), title, FONT_SIZE - 2,
-				_dim(Color(0, 0, 0, 0.9))])
+		# the band is ADDITIVE green at 0.25 (_DAT_101191ec) with the caption
+		# drawn BRIGHT over it -- the reference shows glowing glyphs on a dim
+		# band; the old bright-band/dark-knockout look was inverted
+		draw_rect(Rect2(pos, Vector2(size.x, HDR_H)),
+				_dim(Color(GREEN.r, GREEN.g, GREEN.b, 0.25)))
+		draw_string(_font, pos + Vector2(4, 12), title,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(GREEN))
 
 func _bar(pos: Vector2, frac: float, col: Color, segs := BAR_SEGS) -> void:
 	# FUN_100ebde0, bar style 1: SPRITE blocks (fill sprite 10, 8x16, on the
@@ -3004,7 +3002,17 @@ func _draw_clock(y: float) -> void:
 	var bpos := Vector2(right - box.x, y)
 	_frame(bpos, box, 1)
 	var x := right - 4.0 - w
-	draw_string(_font_num, Vector2(x, y + num_size), text, HORIZONTAL_ALIGNMENT_LEFT,
+	# centre the string's INK in the block. The old baseline at y + num_size
+	# assumed ascent == font size; the bitmap face's inflated ascent rode the
+	# digits a few px high (the long-standing "clock text sits high").
+	var asc := 0.0
+	var desc := 0.0
+	for i in text.length():
+		var g: Array = _glyph(0, text.unicode_at(i))
+		asc = maxf(asc, -float(g[3]))
+		desc = maxf(desc, float(g[3]) + float(g[4]))
+	var base_y := y + floorf((box.y - (asc + desc)) * 0.5) + asc
+	draw_string(_font_num, Vector2(x, base_y), text, HORIZONTAL_ALIGNMENT_LEFT,
 			-1, num_size, GREEN)
 
 func _ellipse(c: Vector2, radii: Vector2, col: Color) -> void:
