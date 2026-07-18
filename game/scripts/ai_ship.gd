@@ -40,7 +40,9 @@ var wp := 0
 var fire_cooldown := 0.0
 var bolt_speed := 6000.0
 var weapon_range := 2500.0
-var radius := 60.0    # iiSim radius (+0x1c), the ship INI's radius= key
+# `radius` (iiSim +0x1c, the ship INI's radius= key) now lives on ShipFlight
+# (the external cameras need it for the player too); _load_dims overwrites the
+# inherited default with the authored value
 # iiSim size (+0x20): half the bounding diagonal -- CalculateRadius
 # (0x1007ccf0) = sqrt((w^2+h^2+l^2) * 0.25) from the INI dimensions. Drives
 # the OnExplode dramatic-explosion branch (death_sequence.gd). 10.0 is the

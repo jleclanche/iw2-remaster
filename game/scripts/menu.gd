@@ -453,9 +453,7 @@ func _activate() -> void:
 			return
 		main.audio.play("audio/gui/confirm.wav", -6.0)
 		var where: Array = SYSTEMS[sel]
-		# the scene reloads with the chosen hull at the chosen spot. Mind that
-		# Lucrecia's Base is inside the red giant's heat envelope: weapons are
-		# heat-locked there, exactly like the original's sanctuary.
+		# the scene reloads with the chosen hull at the chosen spot
 		main.debug_start(_debug_ship, str(where[0]),
 				str(where[2]) if where.size() > 2 else "")
 		return

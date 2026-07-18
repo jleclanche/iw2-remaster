@@ -31,6 +31,10 @@ var mass := 0.0
 # your acceleration by mass/(mass+partner), an immobile partner kills it.
 var tow_mass := 0.0            # docked child's mass; INF = immobile partner
 var tow_torque_scale := 1.0    # I_own / (I_own + I_child + m d^2), set by main
+# iiSim::CalculateRadius (0x1007ccf0): sqrt((w^2 + h^2 + l^2) * 0.25) -- the
+# engine's sim radius. The external cameras are authored in RADII (defaults.ini
+# [icArcadeCamera] range = 4, [icChaseCamera] initial_range = 4, ...).
+var radius := 80.0             # tug default
 
 # --- state ---
 var velocity := Vector3.ZERO                 # world m/s
@@ -52,8 +56,12 @@ func load_stats(props: Dictionary) -> void:
 	var a: Array = props.get("acceleration", [100, 100, 150])
 	max_speed = Vector3(s[0], s[1], s[2])
 	max_accel = Vector3(a[0], a[1], a[2])
-	mass = float(props.get("width", 0.0)) * float(props.get("height", 0.0)) \
-			* float(props.get("length", 0.0)) * 0.001  # m_density
+	var w := float(props.get("width", 0.0))
+	var h := float(props.get("height", 0.0))
+	var l := float(props.get("length", 0.0))
+	mass = w * h * l * 0.001  # m_density
+	if w > 0.0 or h > 0.0 or l > 0.0:
+		radius = sqrt((w * w + h * h + l * l) * 0.25)  # CalculateRadius
 	turn_rate = Vector3(props.get("pitch_rate", 60), props.get("yaw_rate", 60),
 			props.get("roll_rate", 60))
 	turn_accel = Vector3(props.get("pitch_accel", 30), props.get("yaw_accel", 30),

@@ -142,6 +142,15 @@ So **F1 is the "turn the cockpit off" key** -- it was never a separate option.
 FOVs (`flux.ini` / `defaults.ini`, radians): internal 1.1, tactical 1.2, arcade
 1.2, external 1.25, drop 1.1, chase 1.2.
 
+**Every external camera range is authored in SHIP RADII**, against
+`iiSim::CalculateRadius` (`0x1007ccf0`, sqrt((w²+h²+l²)·0.25)):
+`[icArcadeCamera] range = 4`, `[icChaseCamera]`/`[icDollyCamera]`
+`initial_range = 4` (min 2, max 10), `[icExternalCamera]` `initial_zoom = 3`
+(zoom 1..150). The tug (radius 80.2 m) frames at 320 m where the turret
+fighter (12.9 m) frames at 52 m. `_chase_camera` scales its offsets by
+`ship.radius` accordingly -- fixed-metre offsets put the camera inside the
+tug's silhouette.
+
 ### Pressing a camera key again -- and why F4 "resets"
 
 `OnMessage`'s cycle always hands the chosen camera to `icDirector::ChangeCamera`

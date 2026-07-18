@@ -8,6 +8,10 @@ const START_SYSTEM := "hoffers_wake"
 const START_NAME := "Alexander L-Point"
 const STREAM_IN := 4.0e5
 const STREAM_OUT := 5.0e5
+# FcWorld's think/simulate cull distance: icSolarSystem's ctor (0x1004b180)
+# sets the interesting range to 2 * far_clip (flux.ini [icSolarSystem]
+# far_clip = 200000). Sims beyond it are frozen -- no Think, no Simulate.
+const SIM_INTERESTING_RANGE := 2.0 * 2.0e5
 const IMPOSTOR_DIST := 2.5e5  # bodies/stars drawn at capped range, scaled down
 const LDSI_RADIUS := 2.5e4
 
@@ -337,11 +341,15 @@ func _ready() -> void:
 	if (use_pog or use_port) and "--pogplay" in OS.get_cmdline_user_args():
 		# Straight into the campaign, no front end.
 		menu.visible = false
+		# every entry into flight that bypasses menu.close() must eat the
+		# cursor itself, or mouse steering hits the screen edge
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		start_campaign()
 	elif _debug_request != "":
 		_debug_request = ""
 		menu.visible = false
 		menu.launched = true
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		hud.log_msg("DEBUG START: %s" % player_ship_ini.get_file().get_basename()
 				.to_upper())
 	elif _restarting:
@@ -557,13 +565,12 @@ static var _restarting := false
 # with every weapon type loaded, front end skipped. The request rides statics
 # across the scene reload exactly like _restarting.
 #
-# NB Lucrecia's Base is a legitimate but WEAPONS-DEAD start: the map's sun
-# record gives Hoffer's Wake Alpha (the red giant) radius 1.7508e11 m
-# (ParseSunInfo 0x1004e5a0 SetRadius's it verbatim), and icSun::Think
-# (0x1006ab90) heats the player at t^2 * 10000 (0x1011af54) * 10 (0x101190c0)
-# within radius * 0.5 (0x1011af58) of the surface -- the whole inner nebula.
-# External heat pegs at the 500 threshold and iiWeapon's heat gate refuses to
-# fire. That is the sanctuary: nothing can shoot near the base.
+# NB an earlier reading concluded Lucrecia's Base was a designed "heat
+# sanctuary" (sun radius 1.75e11 m x icSun::Think would peg external heat).
+# WRONG: FcWorld::CullSims (flux 0x100c61d0) only Thinks sims within the
+# world's interesting range -- icSolarSystem's ctor (0x1004b180) sets it to
+# 2 * far_clip = 400 km -- so the sun sim is frozen everywhere a player can
+# be and its heat never runs. See _physics_process's body-heat gate.
 static var _debug_request := ""   # a player ship ini path; "" = off
 static var _debug_system := "hoffers_wake"
 static var _debug_at := ""        # arrive-beside entity; "" = system default
@@ -592,7 +599,10 @@ func save_extras() -> Dictionary:
 	var systems: Array = []
 	if sys != null:
 		for s2: Dictionary in sys.systems:
-			systems.append({"n": s2["name"], "hp": s2["hp"]})
+			var row := {"n": s2["name"], "hp": s2["hp"]}
+			if s2.has("ammo"):  # the gatling's icSlugThrower round counter
+				row["ammo"] = s2["ammo"]
+			systems.append(row)
 	var mags: Array = []
 	for m2: Dictionary in player_mags:
 		mags.append({"stem": m2["stem"], "ammo": m2["ammo"]})
@@ -650,6 +660,8 @@ func restore_extras(d: Dictionary) -> void:
 			for s2: Dictionary in sys.systems:
 				if s2["name"] == saved["n"]:
 					s2["hp"] = float(saved["hp"])
+					if saved.has("ammo") and s2.has("ammo"):
+						s2["ammo"] = int(saved["ammo"])
 					break
 	for saved in d.get("mags", []):
 		for m2: Dictionary in player_mags:
@@ -914,6 +926,7 @@ func _after_movies() -> void:
 	elif demo:
 		menu.visible = false
 		menu.launched = true
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		cam_mode = 1
 		_apply_view()
 	elif menu.launched:
@@ -2848,15 +2861,24 @@ func _physics_process(delta: float) -> void:
 	if sys != null and docked_at == "" \
 			and (base_iface == null or base_iface.cut == 0):
 		# icSun::Think 0x1006ab90 / icPlanet::Think 0x10068380: every body in
-		# the active system radiates onto the PLAYER's external heat store
+		# the active system radiates onto the PLAYER's external heat store.
+		# BUT a sim only Thinks while FcWorld::CullSims (flux 0x100c61d0) deems
+		# it interesting: centre within the world's interesting range, which
+		# icSolarSystem's ctor (0x1004b180) sets to 2 * far_clip
+		# ([icSolarSystem] far_clip = 200000 -> 400 km). No map body's centre
+		# is ever that close (you would be inside it), so in the shipped game
+		# this heat NEVER fires -- the formula is real but dormant. Keep the
+		# gate literal instead of deleting the code.
 		for o in objects:
 			var cat: String = o["category"]
 			if cat == "star" or cat == "body":
 				var r: float = o["radius"]
 				if r > 0.0:
-					var d := Vector3(px - o["x"], py - o["y"],
-							pz - o["z"]).length() - r
-					sys.add_body_heat(d, r, cat == "star", delta)
+					var d_centre := Vector3(px - o["x"], py - o["y"],
+							pz - o["z"]).length()
+					if d_centre < SIM_INTERESTING_RANGE:
+						sys.add_body_heat(d_centre - r, r, cat == "star",
+								delta)
 		# icAggressorShield::Simulate 0x1002f52a drops the shield the moment the
 		# LDS drive reaches state 2 (engaged) -- icShip+0x25c, the icLDSDrive.
 		sys.in_lds = lds_state == 2
@@ -4057,36 +4079,44 @@ func _chase_camera(delta: float) -> void:
 	# the target the "look at the target" cameras (inverse tactical, target
 	# external) frame; without one they fall back to their forward-looking twin
 	var tp := _target_pos()
+	# every external camera range in the original is authored in SHIP RADII
+	# (defaults.ini: [icArcadeCamera] range = 4, [icChaseCamera]/[icDollyCamera]
+	# initial_range = 4, [icExternalCamera] initial_zoom = 3), against
+	# iiSim::CalculateRadius (0x1007ccf0). Fixed-metre offsets framed the
+	# turret fighter fine and put the camera INSIDE the tug's silhouette.
+	var r := ship.radius
 	match cam_name():
 		"cockpit", "no_cockpit":  # rigid at the pilot's eye (the crew null)
 			cam.global_transform = target.translated_local(eye)
 		"arcade":  # icArcadeCamera: hull-following, range 4 (defaults.ini)
-			var pos := target.origin + target.basis * Vector3(0, 12, 55)
+			var pos := target.origin \
+				+ target.basis * (Vector3(0, 0.21, 0.98) * 4.0 * r)
 			cam.global_transform = Transform3D(target.basis, pos)
-		"tactical":
-			var want := target.translated_local(Vector3(0, 32, 130))
+		"tactical":  # icChaseCamera: initial_range 4
+			var want := target.translated_local(Vector3(0, 0.24, 0.97) * 4.0 * r)
+			var focus := target.origin + target.basis * Vector3(0, 0.075 * r,
+				-0.375 * r)
 			if lds_state == 2 or jump_state >= 2:
-				cam.global_transform = want.looking_at(
-					target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
+				cam.global_transform = want.looking_at(focus, target.basis.y)
 			else:
 				cam.global_transform = cam.global_transform.interpolate_with(
 					want, 1.0 - exp(-8.0 * delta))
 				cam.global_transform = cam.global_transform.looking_at(
-					target.origin + target.basis * Vector3(0, 6, -30), target.basis.y)
+					focus, target.basis.y)
 		"inverse_tactical":  # over the nose, looking back at the ship
-			var want := target.translated_local(Vector3(0, 20, -130))
+			var want := target.translated_local(Vector3(0, 0.15, -0.99) * 4.0 * r)
 			cam.global_transform = cam.global_transform.interpolate_with(
 				want, 1.0 - exp(-8.0 * delta))
 			cam.global_transform = cam.global_transform.looking_at(
 				target.origin, target.basis.y)
-		"external":  # slow orbit around the ship
+		"external":  # slow orbit around the ship; icExternalCamera initial_zoom 3
 			var a := Time.get_ticks_msec() / 1000.0 * 0.15
-			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 180.0
+			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 3.0 * r
 			cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
 				target.origin, Vector3.UP)
 		"target_external":  # orbit the ship, but framed on the current target
 			var a := Time.get_ticks_msec() / 1000.0 * 0.15
-			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 180.0
+			var pos := target.origin + Vector3(cos(a), 0.25, sin(a)) * 3.0 * r
 			var look: Vector3 = target.origin + (-target.basis.z * 1000.0 \
 				if tp == Vector3.INF else (tp - target.origin).normalized() * 1000.0)
 			cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(

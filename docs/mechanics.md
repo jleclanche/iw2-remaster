@@ -133,20 +133,27 @@ tensor, and TryToDock's capture kinematics constants were not resolved (a
 20 m/s relative-velocity gate is eyeballed). mechcheck: tow-dock, tow-ride,
 tow-release.
 
-## The heat "sanctuary" at Lucrecia's Base (verified, not a bug)
+## Sun/planet proximity heat is DORMANT in the shipped game
 
-The map gives Hoffer's Wake Alpha -- the red giant -- radius 1.7508e11 m, and
-ParseSunInfo (0x1004e5a0) hands that straight to FiSim::SetRadius.
-icSun::Think (0x1006ab90) heats the player at t^2 * m_heat_multiplier
-(10000 @ 0x1011af54) * 10 (0x101190c0) inside radius * 0.5 (0x1011af58) of
-the surface -- which covers the entire inner nebula including Lucrecia's
-Base. External heat pegs at heat_damage_threshold (500) there, the HUD gauge
-(scale 0.8 @ 0x10163efc) reads past full, and iiWeapon's heat gate
-(0x1003cc00) refuses to fire: nothing can shoot near the base. Idle internal
-heat elsewhere is the authored source/heatsink equilibrium (tug 128,
-comsec 96, storm petrel 133, turret fighter 0 -- all of 500) and every hull
-fires normally at Alexander L-Point. weapons.gd now prints WEAPONS
-HEAT-LOCKED (our line, not the original's) when the gate refuses.
+icSun::Think (0x1006ab90) / icPlanet::Think (0x10068380) heat the player at
+t^2 * m_heat_multiplier (10000 @ 0x1011af54, x10 for suns @ 0x101190c0)
+inside radius * 0.5 (0x1011af58) of the surface, and the map really does
+give Hoffer's Wake Alpha radius 1.7508e11 m (ParseSunInfo 0x1004e5a0 hands
+it straight to FiSim::SetRadius) -- read in isolation that covers the whole
+inner system and would peg external heat at Lucrecia's Base. But Think never
+runs there: FcWorld::Tick (flux 0x100c4bb0) only Thinks/Simulates sims that
+survive FcWorld::CullSims (0x100c61d0), which keeps a sim awake only while
+its CENTRE is within the world's interesting range. icSolarSystem's ctor
+(0x1004b180) sets that range to 2 * far_clip, and flux.ini [icSolarSystem]
+far_clip = 200000: 400 km. No map body's centre can be within 400 km of the
+player (that is inside the body), so proximity heat is authored-but-
+unreachable code. Our port keeps the formula behind the same literal gate
+(main.gd SIM_INTERESTING_RANGE). An earlier pass mis-read this as a designed
+"heat sanctuary" around the base -- if a heat-lock near a star ever shows up
+again, the culprit is the cull gate, not the heat model. Idle internal heat
+is the authored source/heatsink equilibrium (tug 128, comsec 96, storm
+petrel 133, turret fighter 0 -- all of 500); weapons.gd prints WEAPONS
+HEAT-LOCKED (our line, not the original's) when the internal gate refuses.
 
 ## Saving and reloading
 
