@@ -687,15 +687,14 @@ func _neb_build() -> void:
 # and four layers of it clip the red channel flat, which is exactly the "featureless
 # orange" the effect must not be. Decoded, the cloud structure survives.
 #
-# depth_test_disabled: the original draws these through FcBillBoard as a
-# sorted additive pass with the Z buffer left alone -- the layers add over
-# whatever geometry is in frame, which is the orange bath that covers
-# Lucrecia's Base at docking range (with the test on, the base occluded
-# every layer and sat greyscale-dark inside its own nebula).
+# The layers ARE depth-tested (only ZWrite is off): the original's renders
+# show near geometry as dark silhouette against the blazing fogged sky --
+# structure occludes the murk. We tried depth_test_disabled to "bathe" the
+# base in orange and it washed the whole frame flat; wrong reading.
 const NEB_SHADER := """
 shader_type spatial;
 render_mode unshaded, blend_add, cull_disabled, depth_draw_never,
-	depth_test_disabled, shadows_disabled, fog_disabled;
+	shadows_disabled, fog_disabled;
 uniform sampler2D tex : source_color, filter_linear_mipmap, repeat_enable;
 uniform vec2 uv_c = vec2(0.0);
 uniform vec2 uv_a = vec2(1.0, 0.0);
