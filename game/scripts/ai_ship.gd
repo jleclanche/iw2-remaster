@@ -1,4 +1,4 @@
-﻿class_name AiShip
+class_name AiShip
 extends ShipFlight
 # AI pilot on top of the same flight model the player uses.
 # Behaviors: "patrol" (cruise between waypoints), "attack" (pursue the

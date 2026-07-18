@@ -37,6 +37,9 @@ extends RefCounted
 # exists and ui.gd SCREEN_BUILDERS maps the class to it); PogUi (natives/
 # ui.gd) holds the widget tree and base_screens.gd draws it and feeds input.
 # ---------------------------------------------------------------------------
+# the stub table below is one greppable annotation per line by design;
+# keep each on a single line
+# gdlint: disable=max-line-length
 # @element-stub icSPBaseScreen -- covered-elsewhere: gen/ibasegui.gd s_p_base_screen + ui.gd SCREEN_BUILDERS + base_screens.gd
 # @element-stub icSPHangarScreen -- covered-elsewhere: gen/ibasegui.gd s_p_hangar_screen + ui.gd + base_screens.gd
 # @element-stub icSPLoadoutScreen -- covered-elsewhere: gen/ibasegui.gd s_p_loadout_screen + ui.gd + base_screens.gd
