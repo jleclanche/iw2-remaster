@@ -403,3 +403,57 @@ under the cursor whenever the mouse moves (`GetWindowContaining` →
 effect -- the focused-state strip and text colour light up. Arrow keys move
 the same focus; the next mouse move takes it back. The engine is silent on
 focus gain (`BeepOnGainFocus` ships unset). `base_screens.gd` `_hover`.
+
+**The hangar's inventory listings are hierarchical.** The
+`iinventory.Fill*ListBox` natives (iwar2: FillInventoryListBox @ 0xa3820,
+FillAddCargoListBox @ 0xa3cc0, FillRecyclingListBox @ 0xa41d0) emit a
+superset header row, then per category a category header row, then that
+category's item rows -- and push a 0 into the script's parallel cargo list at
+every header index. The scripts are written against exactly that: their row
+selects beep on `icargo.Cast == null` (a header was clicked), and the
+recycling screen peels emptied header rows as `v1-1` / `v1-2`.
+
+Row geometry is the engine's own, pre-built per cargo type by
+`icInventory::UpdateInventoryWindow` (@ 0xa5250) and
+`UpdateCategoryInventoryWindow` (@ 0xa5540): item rows 550x10 with static
+cells at x32 w20 (the `*` new-cargo marker), x52 w218 (name), x296 w111
+(quantity) and x436 w109 (recycle value); category headers one cell at x12
+w533 with a 20 px text inset; superset headers the same but 18 tall and
+upper-cased. The 550 px row lines up under the ITEM / QUANTITY / RECYCLE
+VALUE tabs because the grey-box screen's canvas is fixed off the literal 640
+(igui.CreateGreyBoxStyleScreen), not the live frame width.
+
+**What the recycling screen lists** is `icInventory::IsInRecycleScreen`
+(@ 0xa4190): held, significant, recyclable, `recycle_value != 0`, and NOT a
+fittable system -- so zero-value blueprints and equipment never appear.
+`RecyclableCargo` (@ 0xa5960, behind the Number-Of-Recyclable natives that
+drive header removal) applies the same predicate.
+
+**Text formatting.** `gui.SetWindowTextFormatting(win, flag, inset)` lands in
+`icCustomisableWindowAvatar::SetTextFormatting` (@ 0x10c320): flag TRUE
+centres the title in the window, FALSE left-aligns it at the inset. The
+avatar's constructor defaults the flag to TRUE, which is why every igui
+helper that wants left-aligned text sets it explicitly -- and why the comms
+screen's "YOU HAVE **n** NEW MESSAGES" digit (12pt handelgothic on its
+three-slice number plate, SPCommsMainMenuScreen) sits centred.
+
+**CreateFancyBorder returns a real window.** `FcBorder::AttachToWindow`
+(flux @ 0x77950) makes the border the wrapped window's rect grown by the
+border width (7) on every side, parented alongside it -- and the scripts
+measure it: SPHangarScreen stacks its SHIP / LOADOUT readouts at
+`WindowCanvasHeight(border)` below the button box. Porting it as a 0x0
+window collapsed the hangar layout.
+
+**Spaceworthy** is `icLoadout::GoodToGo` (@ 0x85030): the fitted loadout
+must carry at least one of each of icHeatSink, icDrive, icThrusters,
+icSensor and icLDSDrive (mask 0x1f). Our loadout model has no per-mount
+fitting yet, so economy.gd approximates with hull-owned + cargo-fits.
+
+**Debug-session stock** comes from the developers' own test tools, run on
+both runtimes at boot: `iTradeTest.GiveEverything` (itradetest.pog -- 20 of
+every cargo type and the full ~150-trade authored board) plus the command
+section grant the prelude performs and `iPowerUp.GiveAllShips`
+(ipowerup.pog). Nothing invented; satisfiable trades show the leading `*`
+exactly as SPTradingScreen draws it, and the description box under the list
+is filled by the screen's 0.1 s monitor task from
+`itrade.JaffsTradeDescription/Advice`.

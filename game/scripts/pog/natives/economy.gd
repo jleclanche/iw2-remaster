@@ -426,11 +426,14 @@ func _i_recyclable_in_superset(_t, a: Array) -> Variant:
 
 
 func _count_recyclable(index: int, superset: bool) -> int:
+	# icInventory::RecyclableCargo (@ 0xa5960), same predicate as
+	# IsInRecycleScreen: recyclable AND worth something AND not fittable.
 	var inv := player_inv()
 	var n := 0
 	for type in inv.counts:
 		var c := _cargo(int(type))
-		if c == null or not c.can_recycle:
+		if c == null or not c.can_recycle or c.recycle_value == 0 \
+				or not c.ship_system.is_empty():
 			continue
 		var holder: int = _superset_of(int(type)) if superset else _category_of(int(type))
 		if holder == index:
@@ -586,6 +589,44 @@ func _held(filter: Callable) -> Array:
 ## case 0x3a), it is passed in empty, and the handles we append to it are the
 ## handles the script then indexes by row number. Nothing to plant and nothing
 ## to guess: the caller owns the list, we only fill it.
+##
+## The listing is HIERARCHICAL (icInventory::FillInventoryListBox @ 0xa3820):
+## a superset header row, then per category a category header row, then that
+## category's item rows -- and the parallel list gets a 0 at every header
+## index, which is what the scripts' `icargo.Cast == null -> beep` branches
+## and the header-removal arithmetic in the recycling screen (rows v1-1/v1-2)
+## are written against.
+##
+## Row geometry is the engine's, from icInventory::UpdateInventoryWindow
+## (@ 0xa5250) and UpdateCategoryInventoryWindow (@ 0xa5540): item rows are
+## 0x226 = 550 wide, 10 tall, with static components at x 32 (w 20, the "new"
+## marker), x 52 (w 218, name), x 296 (w 111, quantity) and x 436 (w 109,
+## recycle value); category headers are one component at x 12 (w 533) with a
+## 20 px text offset, supersets the same but 18 tall and upper-cased.
+const ROW_W := 550
+const ROW_H := 10
+
+func _row_window(h: int) -> PogUi.PogWindow:
+	var w := PogUi.PogWindow.new()
+	w.kind = "window"
+	w.w = ROW_W
+	w.h = h
+	return w
+
+
+func _row_cell(row: PogUi.PogWindow, x: int, wd: int, text: String) -> void:
+	var c := PogUi.PogWindow.new()
+	c.kind = "static"
+	c.x = x
+	c.w = wd
+	c.h = row.h
+	c.title = text
+	# CreateInventoryWindowComponent passes SetTextFormatting(false, offset)
+	# -- left-aligned (the offsets are baked into our x already)
+	c.text_align = 0
+	row.children.append(c)
+
+
 func _fill(a: Array, list_at: int, rows: Array, with_value: bool) -> void:
 	var lb = a[0] if a.size() > 0 else null
 	var parallel = a[list_at] if a.size() > list_at else null
@@ -595,17 +636,43 @@ func _fill(a: Array, list_at: int, rows: Array, with_value: bool) -> void:
 		lb.selected_index = -1
 	if parallel is Array:
 		(parallel as Array).clear()
+	var inv := player_inv()
+	# Types are declared grouped by category and categories by superset, so
+	# walking the rows in declaration order visits each set contiguously --
+	# a header is emitted whenever the set changes.
+	var last_ss := -2
+	var last_cat := -2
 	for r in rows:
 		var c: PogCargo = r[0]
 		var qty: int = r[1]
+		var ss := _superset_of(c.type)
+		var cat := _category_of(c.type)
 		if lb is PogUi.PogWindow:
-			var row := "%-28s %4d" % [_text(c.name), qty]
+			if ss != last_ss and supersets.has(ss):
+				var sh := _row_window(18)
+				_row_cell(sh, 12, 533, _text(supersets[ss].name).to_upper())
+				lb.entries.append(sh)
+				if parallel is Array:
+					(parallel as Array).append(0)
+			if cat != last_cat and categories.has(cat):
+				var ch := _row_window(ROW_H)
+				_row_cell(ch, 32, 513, _text(categories[cat].name))
+				lb.entries.append(ch)
+				if parallel is Array:
+					(parallel as Array).append(0)
+			var row := _row_window(ROW_H)
+			if inv.fresh.has(c.type):
+				_row_cell(row, 32, 20, "*")
+			_row_cell(row, 52, 218, _text(c.name))
+			_row_cell(row, 296, 111, str(qty))
 			if with_value:
-				row += "  %6d" % (c.recycle_value * qty)
+				_row_cell(row, 436, 109, str(c.recycle_value * qty))
 			lb.entries.append(row)
+		last_ss = ss
+		last_cat = cat
 		if parallel is Array:
 			(parallel as Array).append(c)
-	if lb is PogUi.PogWindow and not rows.is_empty():
+	if lb is PogUi.PogWindow and not lb.entries.is_empty():
 		lb.focused_entry = 0
 	_ui_dirty()
 
@@ -636,8 +703,12 @@ func _i_fill_add_cargo(_t, a: Array) -> Variant:
 
 # @native iinventory.FillRecyclingListBox
 func _i_fill_recycling(_t, a: Array) -> Variant:
-	# Only what can actually be broken down, priced at what it would pay.
-	_fill(a, 1, _held(func(c: PogCargo) -> bool: return c.can_recycle), true)
+	# icInventory::IsInRecycleScreen (@ 0xa4190): held, significant,
+	# recyclable, WORTH something (recycle_value != 0) and NOT a fittable
+	# system -- so zero-value blueprints and equipment never list here.
+	_fill(a, 1, _held(func(c: PogCargo) -> bool:
+		return c.can_recycle and c.recycle_value != 0 \
+			and c.ship_system.is_empty()), true)
 	return 0
 
 # @native iinventory.ResetWindows
@@ -859,8 +930,11 @@ func _l_active(_t, _a: Array) -> Variant:
 
 # @native iloadout.GoodToGo
 func _l_good_to_go(_t, _a: Array) -> Variant:
-	# What the launch button asks: is there a hull, is it fitted, does the cargo
-	# fit in it.
+	# icLoadout::GoodToGo (iwar2 @ 0x85030): spaceworthy means the fitted
+	# loadout carries at least one of each of FIVE system classes -- icHeatSink,
+	# icDrive, icThrusters, icSensor, icLDSDrive (bits 1|2|4|8|0x10 == 0x1f).
+	# Our loadout model has no per-mount fitting yet, so the approximation is
+	# hull-owned + cargo-fits; the five-class test needs the fit model first.
 	if not player_inv().ships.has(loadout.ship):
 		return 0
 	return 0 if loadout.cargo_warning else 1

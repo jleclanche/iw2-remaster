@@ -230,7 +230,14 @@ class PogWindow extends RefCounted:
 	## state -> [left, body, right] Rect2 in atlas pixels. Empty = no skin.
 	var art: Dictionary = {}
 	var font_url := ""                 ## gui.SetWindowFont
-	var text_align := 0                ## gui.SetWindowTextFormatting arg 1
+	## gui.SetWindowTextFormatting arg 1: TRUE = centre the title in the
+	## window, FALSE = left-aligned at the arg-2 inset. That is exactly what
+	## icCustomisableWindowAvatar's text draw does with the flag it stored
+	## (SetTextFormatting @ 0x10c320; the draw branches on it @ 0x1010be74
+	## region: centred uses (right-left)/2, else the +0x18c offset). The
+	## avatar's CTOR defaults the flag to 1 (@ 0x1010c...:201110), which is
+	## why igui helpers that want left text always set it explicitly.
+	var text_align := 1
 	var text_offset := 0               ## ...arg 2: the text's x inset, in px
 	## Focus ring, as the scripts wire it (SetWindowNextFocus/PreviousFocus).
 	var next_focus: PogWindow = null
@@ -852,9 +859,14 @@ func _lb_add(_t, a: Array) -> Variant:
 
 # @native gui.RemoveListBoxEntry
 func _lb_remove(_t, a: Array) -> Variant:
+	# The second argument is a ROW INDEX: ibasegui's recycling screen calls
+	# RemoveListBoxEntry(box, v1) with the selected row number, then peels the
+	# category/superset header rows above it as v1-1 / v1-2.
 	var win := _win(a[0])
 	if win != null:
-		win.entries.erase(a[1])
+		var i := int(a[1]) if not (a[1] is PogWindow) else win.entries.find(a[1])
+		if i >= 0 and i < win.entries.size():
+			win.entries.remove_at(i)
 		win.selected_index = mini(win.selected_index, win.entries.size() - 1)
 		win.focused_entry = mini(win.focused_entry, win.entries.size() - 1)
 		dirty = true
@@ -1093,6 +1105,37 @@ static func sound_path(url: String) -> String:
 # @native gui.CreateVerticalScrollbar
 func _create_window(_t, a: Array) -> Variant:
 	return _new_window("window", a, 0)
+
+# @native gui.CreateFancyBorder
+func _create_fancy_border(_t, a: Array) -> Variant:
+	# CreateFancyBorder(window): FcBorder::AttachToWindow (flux @ 0x77950)
+	# makes the border ITS OWN WINDOW -- the wrapped window's rect grown by the
+	# border width (FcBorder ctor passes 7) on every side, parented to the
+	# wrapped window's parent. Scripts measure it: SPHangarScreen positions the
+	# SHIP/LOADOUT readouts at WindowCanvasHeight(border) below the button box.
+	var inner = a[0] if a.size() > 0 else null
+	var win := PogWindow.new()
+	win.kind = "window"
+	if inner is PogWindow:
+		var iw: PogWindow = inner
+		win.x = iw.x - 7
+		win.y = iw.y - 7
+		win.w = iw.w + 14
+		win.h = iw.h + 14
+		if iw.parent != null:
+			win.parent = iw.parent
+			iw.parent.children.append(win)
+	win.neutral = default_colour
+	win.focused_col = default_colour
+	win.selected_col = default_colour
+	win.overrides.resize(9)
+	var scr := top_screen()
+	if scr != null:
+		win.screen = scr
+		scr.windows.append(win)
+	dirty = true
+	_ensure_renderer()
+	return win
 
 # @native gui.CreateButton
 # @native gui.CreateBackButton
@@ -1733,7 +1776,7 @@ const _BINDINGS := {
 
 	"gui.createwindow": "_create_window",
 	"gui.createstaticwindow": "_create_window",
-	"gui.createfancyborder": "_create_window",
+	"gui.createfancyborder": "_create_fancy_border",
 	"gui.createverticalscrollbar": "_create_window",
 	"gui.createbutton": "_create_button",
 	"gui.createbackbutton": "_create_button",

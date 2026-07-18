@@ -558,16 +558,24 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 	if not skinned and col == Color(0, 0, 0):
 		col = AMBER   # a static window the scripts never coloured
 	if not w.title.is_empty():
-		# gui.SetWindowTextFormatting's x inset (GUI_fancybutton_textoffset = 22)
-		var tx := float(w.text_offset)
 		# FcWindow centres the font's CELL (BMFont lineHeight) in the window
 		# and the baseline sits `base` px into it -- Godot's bitmap loader
 		# maps those to ascent/descent. The old (h + pt)/2 - 1 guess sat the
 		# text ~1.5 px high of the engine's line.
 		var ty := r.position.y + (r.size.y - f.get_height(fs)) * 0.5 \
 			+ f.get_ascent(fs)
-		draw_string(f, Vector2(r.position.x + tx, ty), _label(w.title),
-			HORIZONTAL_ALIGNMENT_LEFT, r.size.x - tx, fs, col)
+		if w.text_align != 0:
+			# SetTextFormatting flag TRUE: the avatar centres the title in
+			# the window (draw @ 0x1010be74 region uses (right-left)/2);
+			# the comms count digit sits centred on its number plate this way
+			draw_string(f, Vector2(r.position.x, ty), _label(w.title),
+				HORIZONTAL_ALIGNMENT_CENTER, r.size.x, fs, col)
+		else:
+			# flag FALSE: left-aligned at the x inset
+			# (GUI_fancybutton_textoffset = 22 and friends)
+			var tx := float(w.text_offset)
+			draw_string(f, Vector2(r.position.x + tx, ty), _label(w.title),
+				HORIZONTAL_ALIGNMENT_LEFT, r.size.x - tx, fs, col)
 	if not w.text.is_empty():
 		# a window too narrow to wrap in is one the scripts sized for something
 		# else (a marker, a rule); wrapping in it puts one letter per line
@@ -586,14 +594,19 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 		draw_string(f, Vector2(r.position.x, y + float(fs)), _label(w.title),
 			HORIZONTAL_ALIGNMENT_LEFT, r.size.x, fs, AMBER_DIM)
 		y += LIST_ENTRY_H + 2.0
-	# rows centre the font cell like every other window (see _draw_window)
-	var row_base: float = (LIST_ENTRY_H - f.get_height(fs)) * 0.5 \
-		+ f.get_ascent(fs)
 	for i in w.entries.size():
 		if y > r.end.y:
 			break
-		var er := Rect2(r.position.x, y, r.size.x, LIST_ENTRY_H)
 		var e: Variant = w.entries[i]
+		# a component row carries its own height (the 18-tall superset headers
+		# of icInventory::UpdateCategoryInventoryWindow); plain entries get the
+		# GUI_listbox_entryheight default
+		var eh := LIST_ENTRY_H
+		if e is PogUi.PogWindow and (e as PogUi.PogWindow).h > 0:
+			eh = float((e as PogUi.PogWindow).h)
+		# rows centre the font cell like every other window (see _draw_window)
+		var row_base: float = (eh - f.get_height(fs)) * 0.5 + f.get_ascent(fs)
+		var er := Rect2(r.position.x, y, r.size.x, eh)
 		var here: bool = w == _current() and i == w.focused_entry
 		var col := AMBER_GLOW if here else AMBER
 		if e is PogUi.PogWindow:
@@ -605,10 +618,26 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 				col = ew.focused_col if here else ew.neutral
 		elif here:
 			draw_rect(er, Color(1.0, 0.749, 0.0, 0.25))
-		draw_string(f, Vector2(er.position.x + 2.0, y + row_base),
-			_entry_text(e), HORIZONTAL_ALIGNMENT_LEFT, er.size.x - 4.0, fs, col)
+		if e is PogUi.PogWindow and (e as PogUi.PogWindow).title.is_empty() \
+				and not (e as PogUi.PogWindow).children.is_empty():
+			# A component row: the columns are child static windows placed at
+			# real x/width inside the row (igui.CreateAndInitialiseListBox-
+			# EntryComponentWindow) -- draw each at its own offset so the
+			# columns line up under the header tabs.
+			for c in (e as PogUi.PogWindow).children:
+				var cw: PogUi.PogWindow = c
+				var t := _label(cw.title)
+				if t.is_empty():
+					continue
+				draw_string(f, Vector2(er.position.x + float(cw.x) + 2.0,
+					y + row_base), t, HORIZONTAL_ALIGNMENT_LEFT,
+					maxf(float(cw.w) - 2.0, 8.0), fs, col)
+		else:
+			draw_string(f, Vector2(er.position.x + 2.0, y + row_base),
+				_entry_text(e), HORIZONTAL_ALIGNMENT_LEFT, er.size.x - 4.0,
+				fs, col)
 		_hit.append([er, w, i])
-		y += LIST_ENTRY_H
+		y += eh
 
 
 func _draw_scroller(w: PogUi.PogWindow, r: Rect2) -> void:

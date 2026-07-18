@@ -603,59 +603,33 @@ func debug_start(ini: String, system_stem := "hoffers_wake", at := "") -> void:
 	get_tree().reload_current_scene()
 
 ## Debug start: something to look at in the base's Inventory / Recycling /
-## Manifest / Add Cargo / Trading screens -- a spread of the icargoscript
-## commodity table in the hold, and a few standing trade offers (in the
-## campaign those come from the mission generator and the habitat scripts).
-## The base screens run on the PORTED runtime's natives while the world/jafs
-## code runs on the VM's, and the two keep separate state BY DESIGN -- so the
-## ported icargoscript initialiser runs too and both economies get the pile.
+## Manifest / Add Cargo / Trading screens. The developers left their own tool
+## for exactly this -- iTradeTest.GiveEverything (itradetest.pog): 20 of every
+## cargo type and the full authored trade board. Running it grants the
+## original data, nothing invented. The base screens run on the PORTED
+## runtime's natives while the world/jafs code runs on the VM's, and the two
+## keep separate state BY DESIGN -- so it runs on both.
 func _debug_seed_economy() -> void:
 	if pog_rt != null and pog_rt.econ != null \
 			and pog_rt.econ.cargo_types.is_empty():
 		var cs = pog_rt.script("icargoscript")
 		if cs != null:
 			cs.call("initialise")
-	_seed_one_economy(pog_econ)
+	if pog != null:
+		pog.start("itradetest", "GiveEverything")
+		pog.start("ipowerup", "GiveAllShips")
+	if pog_econ != null:
+		# the hull the campaign grants in the prelude (iprelude.pog:238)
+		pog_econ._i_add_command(null, [])
 	if pog_rt != null:
-		_seed_one_economy(pog_rt.econ)
-
-func _seed_one_economy(econ) -> void:
-	if econ == null or econ.cargo_types.is_empty():
-		return
-	var inv = econ.player_inv()
-	var ids: Array = econ.cargo_types.keys()
-	ids.sort()
-	# a mix for both inventory tabs: EQUIPMENT (fittable, carries a
-	# ship-system template) and plain CARGO
-	var eq := 0
-	var cg := 0
-	for id in ids:
-		var c = econ.cargo_types[id]
-		if String(c.name).is_empty():
-			continue
-		var fittable: bool = not String(c.ship_system).is_empty()
-		if fittable and eq < 15:
-			inv.add(int(id), 1 + (eq % 3))
-			eq += 1
-		elif not fittable and cg < 15:
-			inv.add(int(id), 1 + (cg % 5) * 3)
-			cg += 1
-		if eq >= 15 and cg >= 15:
-			break
-	if eq + cg < 2:
-		return
-	# three standing offers: "bring me N of X for M of Y", repeatable
-	var picks: Array = []
-	for id in ids:
-		var c = econ.cargo_types[id]
-		if not String(c.name).is_empty() and int(c.value) > 0:
-			picks.append(int(id))
-		if picks.size() >= 6:
-			break
-	for i in mini(3, picks.size() / 2):
-		var tr = econ._make_trade([null, picks[i * 2], 2,
-				picks[i * 2 + 1], 3, 5], PogEconomy.CLASS_TYPE)
-		econ._t_offer(null, [tr])
+		var tt = pog_rt.script("itradetest")
+		if tt != null:
+			tt.call("give_everything")
+		if pog_rt.econ != null:
+			pog_rt.econ._i_add_command(null, [])
+		var pu = pog_rt.script("ipowerup")
+		if pu != null:
+			pu.call("give_all_ships")
 
 ## QUIT confirmed (ipdagui FlightConfirmScreen_OnOK unwinds the screen stack
 ## to icSPMasterScreen -- the C++ front end): leave the session for the main
