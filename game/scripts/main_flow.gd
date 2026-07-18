@@ -430,8 +430,8 @@ func restart_campaign() -> void:
 
 func start_campaign() -> void:
 	# The pause menu needs to know a game is running, or Escape has nothing to
-	# return to. --pogplay boots straight past the front end, so set it here
-	# rather than in the menu item that usually would.
+	# return to. The pause menu's NEW GAME path reaches here via a scene reload
+	# with no menu item involved, so set it here rather than in the front end.
 	if menu != null:
 		menu.launched = true
 	start_in_system(START_SYSTEM)

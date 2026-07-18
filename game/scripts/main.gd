@@ -99,17 +99,17 @@ func _ready() -> void:
 	cl.process_mode = Node.PROCESS_MODE_ALWAYS
 	audio.process_mode = Node.PROCESS_MODE_ALWAYS  # GUI sounds while paused
 	add_child(cl)
-	if (use_pog or use_port) and "--pogplay" in OS.get_cmdline_user_args():
-		# Straight into the campaign, no front end.
-		menu.visible = false
-		# every entry into flight that bypasses menu.close() must eat the
-		# cursor itself, or mouse steering hits the screen edge
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		start_campaign()
-	elif _debug_request != "":
+	# There used to be a --pogplay branch here that skipped the front end and
+	# started the campaign directly. It checked BEFORE the statics -- and the
+	# command line outlives every reload_current_scene -- so under --pogplay
+	# any in-session reload (DEBUG START, pause-menu NEW GAME) restarted the
+	# campaign instead. The front end works; the flag is gone.
+	if _debug_request != "":
 		_debug_request = ""
 		menu.visible = false
 		menu.launched = true
+		# every entry into flight that bypasses menu.close() must eat the
+		# cursor itself, or mouse steering hits the screen edge
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		hud.log_msg("DEBUG START: %s" % player_ship_ini.get_file().get_basename()
 				.to_upper())

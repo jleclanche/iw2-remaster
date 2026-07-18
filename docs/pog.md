@@ -42,10 +42,12 @@ godot --headless --path game --script res://scripts/pog/portcheck.gd
     2661/2878 ported as structured code (92.5%)
     217 fall back to the basic-block dispatch form (irreducible, but exact)
 
-Run it:
+Run it (START NEW GAME on the front end boots the campaign; the old
+`--pogplay` skip-the-menu flag is gone -- it hijacked every in-session scene
+reload, turning DEBUG START into a fresh campaign):
 
 ```powershell
-godot --path game -- --port --pogplay --pogtrace
+godot --path game -- --port --pogtrace
 ```
 
 `--pogtrace` is worth knowing about: `DebugSkip` (opcode 0x45) made `debug`
