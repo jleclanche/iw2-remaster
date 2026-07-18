@@ -457,3 +457,56 @@ section grant the prelude performs and `iPowerUp.GiveAllShips`
 exactly as SPTradingScreen draws it, and the description box under the list
 is filled by the screen's 0.1 s monitor task from
 `itrade.JaffsTradeDescription/Advice`.
+
+## Session addenda (2026-07-18)
+
+**The decompiler was regrouping arithmetic.** pogdec built the right AST but
+its printer only parenthesised lower-precedence children, so an equal-
+precedence subtree on the right of `-`, `/` or `%` re-read regrouped:
+`FrameHeight() - (rise + offset + 10)` printed -- and, since pogport's
+emitter added no parentheses at all, EXECUTED -- as
+`FrameHeight() - rise + offset + 10`. Every grey-box screen was 104 px too
+tall (the recycling/inventory "overflows down", buttons pushed off-frame),
+and the comms message-count block sat at y 460 instead of the authored
+480 - (70 + 50) = 360. Both printers are fixed and all 114 packages
+regenerated (148 expressions changed). Any extraction note that quoted the
+old regrouped arithmetic is superseded by the regenerated gen/*.gd.
+
+**icShadyBar::Render** (@ 0x1010e7d0): black fill at the bar alpha, inward
+edge fades, and the `bar_detail` weave tiled at native texel size in
+m_detail_colour = (1, 0.749, 0) (static init @ 0x1010df80), two layers
+scrolling at different rates. Detail/edge alphas and scroll rates are
+data-section floats not present in the decomp text -- stand-ins, marked.
+
+**FcListBox scrolling**: entries are laid at scroll-adjusted offsets and
+clipped by the canvas (EntryHoveredOver @ flux 0x88740 hit-tests entries
+whose stored y went negative). Ported as scroll_top + clipped drawing +
+a real gui.CreateVerticalScrollbar control.
+
+**FcRadioButton::SetChecked** (flux @ 0x89240): only the false->true edge
+acts -- Select this window, Deselect every sibling FcRadioButton under the
+same parent. There is no direct uncheck.
+
+**global.Create\*** on an existing name SHADOWS it (globals are scoped by
+the persistence flag); the flat store's read-equivalent is overwrite.
+
+**icHUDWaypointIcon** (@ 0x10104040/0x10104380) is a wireframe CUBE (8
+corners, 12 edges), not the L-point funnel.
+
+**Collision damage** (the handler above iiSim::OnCollision @ 0x10078ab0):
+one number, ((|dv_a|/sweet)^2 m_a + (|dv_b|/sweet)^2 m_b) x factor, applied
+to BOTH ships, source 4; flux.ini collision_damage_sweet_speed = 600,
+collision_damage_factor = 3.5.
+
+**icTextWindow renders HTML**: pages with <a href> cross-links resolved
+against the page directory, and a visited-page stack that
+gui.TextWindowBack pops (returning whether it navigated -- what the
+encyclopedia's Back button branches on).
+
+**icLoadout ship templates** (ctor @ 0x84210): m_template_ini[5] = comsec /
+tug / fast_attack / heavy_corvette / storm_petrel, indexed by SetShip's
+0..4; CalculatePresetLoadout (@ 0x93d90) fits the template's mounts from
+inventory (we fit the *_prefitted records instead). LoadoutDescription
+(@ 0x85390) is an HTML page grouped under customise_propulsion /
+_offensive / _defensive / _general (+ upgrades / armaments / turret
+fighter / cargo).
