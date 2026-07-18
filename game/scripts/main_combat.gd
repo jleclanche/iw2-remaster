@@ -280,6 +280,37 @@ func _propagate_group_attack(victim: AiShip) -> void:
 		# GroupAttacker consumes the member's aggressor once dispatched
 		victim.last_aggressor = null
 
+## Player against another SHIP. The extracted law (the collide handler above
+## iiSim::OnCollision @ 0x10078ab0): BOTH parties take the SAME damage --
+## ((|dv_a|/sweet)^2 m_a + (|dv_b|/sweet)^2 m_b) x factor, source 4 -- and
+## both feel the response. The old path damaged only the player and left the
+## other hull untouched at full speed. The 1.6 bounce stands in for the
+## engine's contact solve; the partner's share of it comes from momentum
+## against its own mass.
+func _collide_ai(a: AiShip) -> void:
+	if a == null or not is_instance_valid(a) or a.dying:
+		return
+	var d := ship.global_position - a.global_position
+	var dist := d.length()
+	if dist >= 95.0 or dist < 0.1:
+		return
+	var n := d / dist
+	var rel: float = (ship.velocity - a.velocity).dot(n)
+	if rel < 0.0:
+		var m_p := maxf(ship.mass, 1.0)
+		var m_a := maxf(a.mass, 1.0)
+		var dv_p := -rel * 1.6
+		var dv_a := dv_p * m_p / m_a
+		ship.velocity -= n * rel * 1.6
+		a.velocity += n * rel * 1.6 * (m_p / m_a)
+		var dmg := _collision_damage(dv_p, m_p, dv_a, m_a)
+		damage_player(dmg, "COLLISION - " + str(a.display_name).to_upper())
+		if a.damage(dmg):
+			kill_ai(a)
+		audio.play("audio/sfx/collision.wav", -3.0)
+		audio.play("audio/sfx/ship_clatter.wav", -8.0)
+	ship.global_position = a.global_position + n * 95.0
+
 func _collisions() -> void:
 	if docked_at != "" or jump_state >= 2:
 		return
@@ -295,7 +326,7 @@ func _collisions() -> void:
 	for a in ai_ships:
 		if _aggressor_ram(a):
 			continue
-		_collide_sphere(a.global_position, 95.0, a.velocity, str(a.display_name))
+		_collide_ai(a)
 	for o in objects:
 		if o["node"] == null:
 			continue

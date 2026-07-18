@@ -2,8 +2,25 @@
 # main_state.gd for the scheme. Same node, same class.
 extends "main_flight.gd"
 
+# The collision damage law (iwar2, the collide handler directly above
+# iiSim::OnCollision @ 0x10078ab0): each party's velocity CHANGE from the
+# response is normalised by collision_damage_sweet_speed, and ONE damage
+# number -- (|dv_a|/sweet)^2 * mass_a + (|dv_b|/sweet)^2 * mass_b, times
+# collision_damage_factor -- is applied to BOTH ships as source-4 damage.
+# The constants are the game's own: flux.ini/defaults.ini
+# collision_damage_sweet_speed = 600, collision_damage_factor = 3.5.
+const COLLISION_SWEET := 600.0
+const COLLISION_FACTOR := 3.5
+
+func _collision_damage(dv_a: float, m_a: float, dv_b: float, m_b: float) -> float:
+	var na := dv_a / COLLISION_SWEET
+	var nb := dv_b / COLLISION_SWEET
+	return (na * na * m_a + nb * nb * m_b) * COLLISION_FACTOR
+
 func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 		what: String) -> void:
+	# the player against a MASSLESS-partner obstacle (stations, props, field
+	# rocks): the partner contributes no dv term and takes no damage
 	var d := ship.global_position - center
 	var dist := d.length()
 	if dist >= radius or dist < 0.1:
@@ -11,9 +28,9 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 	var n := d / dist
 	var rel: float = (ship.velocity - vel).dot(n)
 	if rel < 0.0:
-		ship.velocity -= n * rel * 1.6  # bounce off
-		damage_player(clampf(-rel * 0.4, 4.0, 250.0),
-			"COLLISION - " + what.to_upper())
+		ship.velocity -= n * rel * 1.6  # bounce off (response stand-in)
+		damage_player(_collision_damage(-rel * 1.6, maxf(ship.mass, 1.0),
+				0.0, 0.0), "COLLISION - " + what.to_upper())
 		audio.play("audio/sfx/collision.wav", -3.0)
 		audio.play("audio/sfx/ship_clatter.wav", -8.0)
 	ship.global_position = center + n * radius
