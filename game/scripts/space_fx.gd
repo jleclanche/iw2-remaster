@@ -606,6 +606,10 @@ const NEB_FAR_CLIP := 1.1  # _DAT_10119e94: Render pulls the far plane to end * 
 # main.gd::_setup_sky parks the geog backdrop dome at 4.8e5 m. Ours, not the
 # original's -- so it is ours to get out of the way of the far plane.
 const NEB_SKY_DOME := 5.0e5
+# where the stand-in cyclorama wall sits, as a fraction of the far plane: just
+# inside it. Port geometry, not an extracted constant -- the wall is fully
+# fogged anywhere past fog_end, so its exact depth changes nothing on screen.
+const NEB_SKY_Z := 0.98
 const NEB_SCALE_MIN := 0.1  # 0x3dcccccd \ the per-cell random UV scale
 const NEB_SCALE_MAX := 0.3  # 0x3e99999a /
 # icNebula's ctor defaults, which is what The Effrit runs on. (The only sim that
@@ -618,6 +622,7 @@ const NEB_TEXTURE := "images/sfx/cloud"  # +0x1f0
 var _neb: Dictionary = {}  # the resolved map record; {} = no nebula here
 var _neb_stem := ""  # the system the record was resolved for
 var _neb_quads: Array[MeshInstance3D] = []
+var _neb_sky: MeshInstance3D = null  # the stand-in cyclorama wall (see below)
 var _neb_cells: Array = []  # [{uv: Vector2, scale: float}, ...], NEB_CELLS long
 var _neb_idx := 0  # icCloudAvatar+0x11c: which cell is the far one
 var _neb_phase := 0.0  # +0x120: how far into the front cell we are, meters
@@ -675,6 +680,16 @@ func _neb_build() -> void:
 		mi.visible = false
 		add_child(mi)
 		_neb_quads.append(mi)
+	var sky_sh := Shader.new()
+	sky_sh.code = NEB_SKY_SHADER
+	var sky_mat := ShaderMaterial.new()
+	sky_mat.shader = sky_sh
+	_neb_sky = MeshInstance3D.new()
+	_neb_sky.mesh = quad
+	_neb_sky.material_override = sky_mat
+	_neb_sky.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_neb_sky.visible = false
+	add_child(_neb_sky)
 
 # the four corners the original hands FcBillBoard::Add are uv_c +/- uv_a +/- uv_b
 # (0x100c2f26 .. 0x100c2fc9): a rotated, scaled square in texture space centred
@@ -709,6 +724,22 @@ void fragment() {
 }
 """
 
+# The stand-in cyclorama: a flat additive wall of the fog colour, depth-tested
+# so near geometry keeps its dark silhouette, fog_disabled because it IS the
+# fogged cyclorama -- the original's backdrop past fog_end resolves to exactly
+# the fog colour (dx7graph 0x1000eeb0 fogs mesh fragments to D3DRS_FOGCOLOR).
+const NEB_SKY_SHADER := """
+shader_type spatial;
+render_mode unshaded, blend_add, cull_disabled, depth_draw_never,
+	shadows_disabled, fog_disabled;
+uniform vec3 tint = vec3(1.0);
+uniform float amount = 0.0;
+void fragment() {
+	ALBEDO = tint;
+	ALPHA = amount;
+}
+"""
+
 func _neb_recycle(i: int) -> void:
 	_neb_cells[i] = {
 		"uv": Vector2(randf(), randf()),
@@ -718,6 +749,8 @@ func _neb_recycle(i: int) -> void:
 func _neb_hide() -> void:
 	for mi in _neb_quads:
 		mi.visible = false
+	if _neb_sky != null:
+		_neb_sky.visible = false
 	if _neb_fogged:
 		var m := get_parent()
 		if m != null and "env_ref" in m and m.env_ref != null:
@@ -860,20 +893,44 @@ func _render_nebula() -> void:
 	# corona is emissive, so the sun burned a hole straight through the murk.
 	_cam.far = fog_end * NEB_FAR_CLIP
 
-	# ... and the cyclorama. This is the line that mattered most: main.gd's geog
-	# backdrop dome is ADDITIVE, so once the fog turned it into flat nebula colour
-	# it was ADDING that colour on top of the equally-fogged sky behind it --
-	# fog + fog = exactly 2x, which put the wall at (234, 99, 33), the brightest
-	# value the engine's own maths ever reaches. Everything clipped there and the
-	# cloud layers had nowhere to go.
+	# ... and the cyclorama. Render 0x1004d150 only stops adding the geog
+	# cyclorama (this+0x5c8) and the planet backdrop (DAT_10171e04) when the
+	# opacity reaches 1.0 -- at EVERY opacity below that the backdrop is still in
+	# the scene graph, hardware-fogged. The mesh fog path (dx7graph 0x1000eeb0)
+	# fogs fragments to D3DRS_FOGCOLOR -- it even divides the fog colour by the
+	# pass count for multipass materials precisely because each ADDITIVE pass
+	# lands a full fog colour's worth -- so the additive cyclorama, wholly past
+	# fog_end, adds exactly 1x fog colour over the faded stars, and the slot-16
+	# wall (alpha = opacity) then veils the pair of them:
+	#     sky = op * fog + (1 - op) * (stars' + fog) = fog + (1 - op) * stars'
+	# The in-murk sky floor is a FULL 1x fog colour at every opacity; the blazing
+	# highlights are the cloud layers stacking on top of that. Without the
+	# cyclorama term ours floored at op * fog -- the dim olive transition band.
 	#
-	# Render drops the cyclorama outright at opacity 1. We have to drop it sooner:
-	# the original's is a sky pass and cannot be far-clipped, ours is a real mesh
-	# parked at a fixed 4.8e5 m, so the moment the far plane comes inside that it
-	# gets sliced and leaves a hard wedge across the sky. Dropping it exactly when
-	# the plane would cut it covers the opacity-1 case too (far = 33 km there).
+	# Ours is a real mesh parked at a fixed 4.8e5 m, so once the far plane comes
+	# inside that it would get sliced and leave a hard wedge across the sky; past
+	# that point we swap it for a stand-in: a screen-filling additive wall of the
+	# fog colour (the fogged backdrop resolves to exactly that -- 0x1000eeb0) at
+	# alpha = 1 - opacity, the slot-16 veil folded in. It fades to nothing at
+	# opacity 1, which is Render dropping the cyclorama outright, and the swap at
+	# the dome boundary is seamless because the dome is already fully fogged
+	# there (dome > fog_end whenever far <= NEB_SKY_DOME).
 	if "sky_anchor" in m and m.sky_anchor != null:
 		m.sky_anchor.visible = _cam.far > NEB_SKY_DOME
+	if _neb_sky != null:
+		var wall_a := 1.0 - opacity if _cam.far <= NEB_SKY_DOME else 0.0
+		if wall_a <= 0.002:
+			_neb_sky.visible = false
+		else:
+			var wz := _cam.far * NEB_SKY_Z
+			var wh := wz * half_at_1
+			var wlin := tint.srgb_to_linear()
+			var wmat: ShaderMaterial = _neb_sky.material_override
+			wmat.set_shader_parameter("tint", Vector3(wlin.r, wlin.g, wlin.b))
+			wmat.set_shader_parameter("amount", wall_a)
+			_neb_sky.global_transform = Transform3D(
+				basis.scaled(Vector3(wh, wh, 1.0)), eye_w + fwd * wz)
+			_neb_sky.visible = true
 
 	if "env_ref" in m and m.env_ref != null:
 		var env: Environment = m.env_ref
