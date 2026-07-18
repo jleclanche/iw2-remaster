@@ -1,4 +1,5 @@
-# Main layer: player damage, the LDS drive, towing and docking. Part of main.gd's extends chain -- see
+# Main layer: player damage, the LDS drive, towing and docking.
+# Part of main.gd's extends chain -- see
 # main_state.gd for the scheme. Same node, same class.
 extends "main_camera.gd"
 

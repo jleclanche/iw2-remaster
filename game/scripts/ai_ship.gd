@@ -58,7 +58,7 @@ var disrupt_time := 0.0       # icShip::Disrupt via icMissile::CheckForDisruptio
 var disrupt_full := false     # full_disruption: everything, else shields only
 var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
 var ini_path := ""    # the authored ship INI (turrets.gd reads the record's
-					  # setup scene for the turret mount nulls)
+					# setup scene for the turret mount nulls)
 # @element icAlienSwarm (the infection half, on the victims)
 # iiThrusterSim +0x258: the act 3 alien infection, hull points per second,
 # applied by Simulate (0x1007e200) as ApplyDamage(dt * damage, source 5).
@@ -73,7 +73,7 @@ var infection_damage: float:
 		else:
 			_infection_damage = value
 var infection_fx: Node3D = null  # the sfx/infection crawl; presence IS the
-								 # "effect on" state (IsAlienEffectOn 0x1007ee70)
+								# "effect on" state (IsAlienEffectOn 0x1007ee70)
 # A cannon fitted at runtime by sim.AddSubsim (act 3's nps_antimatter_pbc):
 # when set, _attack fires this projectile instead of main.spawn_bolt's
 # standard PBC bolt. Spec dict as PbcWeapons uses, plus "refire".

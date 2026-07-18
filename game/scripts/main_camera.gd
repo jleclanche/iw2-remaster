@@ -1,4 +1,5 @@
-# Main layer: the icDirector camera rig (F1-F4, chase, capsule). Part of main.gd's extends chain -- see
+# Main layer: the icDirector camera rig (F1-F4, chase, capsule).
+# Part of main.gd's extends chain -- see
 # main_state.gd for the scheme. Same node, same class.
 extends "main_targeting.gd"
 

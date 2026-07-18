@@ -1,4 +1,5 @@
-# Main layer: targeting, contacts, sensors, autopilot switches. Part of main.gd's extends chain -- see
+# Main layer: targeting, contacts, sensors, autopilot switches.
+# Part of main.gd's extends chain -- see
 # main_state.gd for the scheme. Same node, same class.
 extends "main_state.gd"
 

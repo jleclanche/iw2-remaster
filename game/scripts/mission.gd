@@ -323,6 +323,10 @@ static func _beat(lines: Array) -> Array:
 		out.append({"say": l[1], "who": l[0], "until_comms": true})
 	return out
 
+# The dialogue keys below are the game's own localisation ids, one per line so
+# they stay greppable against the text tables -- some are longer than any
+# sensible code line.
+# gdlint: disable=max-line-length
 static func act0_beat_fuel_rods() -> Array:  # story 0.20
 	return _beat([
 		["young_cal", "a0_master_dialogue_young_cal_its_very_dark_in_here_clay"],

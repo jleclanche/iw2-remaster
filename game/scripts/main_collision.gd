@@ -1,4 +1,5 @@
-# Main layer: collision spheres and the stations' CollisionHull trimeshes. Part of main.gd's extends chain -- see
+# Main layer: collision spheres and the stations' CollisionHull trimeshes.
+# Part of main.gd's extends chain -- see
 # main_state.gd for the scheme. Same node, same class.
 extends "main_flight.gd"
 

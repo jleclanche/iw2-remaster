@@ -29,7 +29,7 @@ const MIN_DISRUPTOR_TIME := 2.0   # m_min_disruptor_time       0x1011b610
 const MAX_DISRUPTOR_TIME := 30.0  # m_max_disruptor_time       0x1011b614
 const DESTROYER_RADIUS := 300.0   # m_destroyer_radius         0x1011b618
 const LAUNCH_GRACE := 4.0         # icMissile::CanCollideWith  0x101190b4:
-								  # no collision with the launcher for 4 s
+								# no collision with the launcher for 4 s
 const MINE_DROP_FACTOR := 5.0     # icMine::Think 0x1006bbb0 hysteresis 0x1011b4dc
 const LDSI_FUSE_RANGE := 500.0    # icLDSIMissile::Think 0x1006b830, 0x10119fcc
 const ROCKET_IGNITION := 0.6      # icRocket::Simulate 0x1006fde0, 0x1011bb94
@@ -43,7 +43,7 @@ const LAUNCH_LIKELIHOOD := 0.005  # missile_launch_likelihood_per_ammo_fraction
 # flux.ini [icMagazine] (compiled default 0.1 at 0x1015ba00):
 const ROCKET_LIKELIHOOD := 0.1    # rocket_launch_likelihood_per_ammo_fraction
 const FIRING_TOLERANCE := 15.0    # squared_radius_firing_tolerance (used linearly,
-								  # icMagazine::ComputeFiringSolution 0x10038660)
+								# icMagazine::ComputeFiringSolution 0x10038660)
 const CFS_MAX_LEAD := 30.0        # max ballistic lead time, 0x10119c18
 
 # --- in-flight sound, from the avatar scenes -------------------------------
@@ -682,7 +682,7 @@ func _step_guidance(rec: Dictionary, node: Node3D, spec: Dictionary,
 			pass  # coast inert until lifetime
 	return true
 
-func _start_flight_sound(rec: Dictionary, node: Node3D,
+func _start_flight_sound(_rec: Dictionary, node: Node3D,
 		spec: Dictionary) -> void:
 	if main == null or main.audio == null:
 		return

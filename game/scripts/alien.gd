@@ -128,7 +128,7 @@ func hit_by_bolt(spec: Dictionary, age: float, at: Vector3) -> Dictionary:
 		_death_explosion()
 	return out
 
-func hit_by_warhead(dmg: float, pen: float, at: Vector3) -> Dictionary:
+func hit_by_warhead(_dmg: float, _pen: float, at: Vector3) -> Dictionary:
 	# same gate: icMissile::IsAntimatterBasedWeapon @ 0x1000f7d0 reads the
 	# missile INI's antimatter_based, and no shipped warhead sets it -- only
 	# antimatter_bolt and antimatter_beam do.

@@ -1,4 +1,5 @@
-# Main layer: bolts, kills, shockwaves, secondary weapons, the zoom gate. Part of main.gd's extends chain -- see
+# Main layer: bolts, kills, shockwaves, secondary weapons, the zoom gate.
+# Part of main.gd's extends chain -- see
 # main_state.gd for the scheme. Same node, same class.
 extends "main_world.gd"
 
