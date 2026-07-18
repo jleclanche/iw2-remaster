@@ -68,12 +68,26 @@ static func speaker_stem(s: String) -> String:
 # ---------------------------------------------------------------- icomms
 # @native icomms.BeginConversation
 # @native iconversation.Begin
+## RETURNS WHETHER THE CHANNEL WAS ACQUIRED -- icComms::exBeginConversation
+## @ 0x1007ff10: false if a conversation is already up (the +0x14 flag), else it
+## claims the channel, stops whatever phrase is playing, and returns TRUE.
+## iConversation.Begin (iconversation.pog) spins on that answer:
+##   if not BeginConversation(): repeat until it succeeds
+## so a native that always answers "busy" parks the caller forever -- which is
+## exactly what a returned 0 did to iAct0Mission10's opening Clay line.
 func _c_begin(_t, _a: Array) -> Variant:
+	if in_conversation:
+		return 0
 	in_conversation = true
 	responses.clear()
 	chosen_code = 0
 	_asked = false
-	return 0
+	# exBeginConversation's StopPhrase: claiming the channel cuts off any line
+	# still playing on it
+	if game != null and game.comms != null:
+		game.comms.current = {}
+		game.comms.subtitle = ""
+	return 1
 
 # @native icomms.Say
 # @native icomms.Shout

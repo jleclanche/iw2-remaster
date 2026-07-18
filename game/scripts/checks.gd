@@ -410,8 +410,13 @@ func _newgametest(_delta: float) -> void:
 				# that a world exists.
 				var spoke: bool = m.comms != null and (m.comms.speaking() \
 					or m.comms.subtitle != "")
-				var ok: bool = (steps > 0 or (m.use_port \
-					and m.pog_rt != null and not m.pog_rt.halted)) and spoke
+				# the campaign runs one of three ways: hand-authored steps,
+				# the ported GDScript runtime (--port), or the bytecode VM
+				# (--pog). Crediting only --port made a working --pog boot
+				# read as FAIL.
+				var driven: bool = (m.use_port or m.use_pog) \
+					and m.pog_rt != null and not m.pog_rt.halted
+				var ok: bool = (steps > 0 or driven) and spoke
 				print("NEWGAMETEST: %s — steps=%d, opening dialogue up=%s"
 					% ["PASS" if ok else "FAIL", steps, spoke])
 				_ngt_stage = 0
@@ -455,7 +460,8 @@ func _newgamecheck(_delta: float) -> void:
 				var steps: int = m.mission.steps.size() if m.mission != null else 0
 				# hand-authored path -> mission.steps; --port -> the POG runtime
 				# drives the campaign (proven separately to re-run iprelude)
-				var opened: bool = steps > 0 or (m.use_port and live_pog)
+				var opened: bool = steps > 0 \
+					or ((m.use_port or m.use_pog) and live_pog)
 				var ok: bool = m.ship != null and m.sys != null \
 					and m.objects.size() > 0 and live_pog and opened
 				print("NEWGAMECHECK: %s — objects=%d, pog=%s, mission steps=%d"
