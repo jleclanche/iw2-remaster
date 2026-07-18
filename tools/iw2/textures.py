@@ -22,10 +22,17 @@ def main(out_dir: str = "data/textures") -> None:
     out = Path(out_dir)
     ok = 0
     failed: list[tuple[str, str]] = []
-    ftu = fs.list("", ".ftu")
-    have_ftu = {p[:-4] for p in ftu}
-    # many textures ship in both formats; prefer lossless .ftu over DXT .ftc
-    paths = ftu + [p for p in fs.list("", ".ftc") if p[:-4] not in have_ftu]
+    # The engine NEVER loads .ftu: the dx7graph texture resource registrar
+    # (FUN_10010690 @ 0x10010690, dx7graph.dll, image base 0x10000000) registers
+    # the "texture" type with the extension list "ftc;iff;lbm" (string @
+    # 0x1001b700). The .ftu files are authoring leftovers, and at least
+    # images/hud/sprites.ftu has a baked-in (0,2,5) background pedestal the
+    # shipped .ftc does not -- on the HUD's additive canvas (eBlend 2) that
+    # pedestal washed a faint quad behind every sprite blit. So prefer the
+    # .ftc the game actually decoded; keep .ftu only where no .ftc exists.
+    ftc = fs.list("", ".ftc")
+    have_ftc = {p[:-4] for p in ftc}
+    paths = ftc + [p for p in fs.list("", ".ftu") if p[:-4] not in have_ftc]
     for path in paths:
         try:
             img = Image.open(io.BytesIO(fs.read_bytes(path)))

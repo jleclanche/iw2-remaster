@@ -54,6 +54,22 @@ See `docs/original.md` §8c; the cells the HUD uses are in `hud.gd`'s `SPR`/`SPR
 Textures (pointer list at `0x10162c9c`): 0 = `images/hud/sprites`, 1 = `.../lcd`,
 2 = `.../reticle`, 3 = `.../tri`.
 
+**Texture SOURCE: the engine only ever loads `.ftc`.** The dx7graph texture
+resource registrar (`FUN_10010690` @ `0x10010690`, dx7graph.dll) registers the
+"texture" type with extension list **`"ftc;iff;lbm"`** (string @ `0x1001b700`)
+— `.ftu` is not in it; the `.ftu` files are authoring leftovers. This matters:
+`images/hud/sprites.ftu` has a baked-in **(0,2,5) background pedestal** across
+the whole atlas (the shipped `.ftc` is pure black), and on the HUD's additive
+eBlend-2 canvas that pedestal washed a faint quad behind every sprite blit —
+the "faint square around the aim triangles" report. `tools/iw2/textures.py`
+now prefers `.ftc` (the engine's file) and `data/textures/images/hud/sprites.png`
+is regenerated from it. The other HUD atlases (`reticle`/`lcd`/`tri`/`ucp`)
+have no pedestal in either format. (Checked while at it: the contact corner
+boxes in `FUN_100e37f0` DO draw for every on-screen contact, not just the
+selected target — sprite 4 for contacts, sprite 1 for the target — and the aim
+triangles `FUN_100ea400` carry no box of their own; the square was never
+geometry, only the pedestal.)
+
 Note the decompiler prints small integer sprite ids as denormal floats — `1.26117e-43`
 is the float whose *bit pattern* is 90, i.e. sprite **90**.
 
