@@ -89,6 +89,17 @@ const ACT_ONE_CHARS := ["az", "ocal", "jaffs", "lori", "smith"]
 # multiplayer arenas)
 # [stem, label] or [stem, label, entity to arrive beside]. Lucrecia's Base sits
 # in Hoffer's Wake, inside the nebula -- the campaign's home base.
+# The debug start's flyable hulls: every player ship with an assembled
+# avatar, prefitted variants so the systems and weapon groups come fitted.
+const SHIPS := [
+	["sims/ships/player/tug_prefitted.ini", "Tug (Full Loadout)"],
+	["sims/ships/player/comsec_prefitted.ini", "Command Section"],
+	["sims/ships/player/fast_attack_prefitted.ini", "Fast Attack Ship"],
+	["sims/ships/player/heavy_corvette_prefitted.ini", "Heavy Corvette"],
+	["sims/ships/player/storm_petrel_prefitted.ini", "Storm Petrel"],
+	["sims/ships/player/turret_fighter_prefitted.ini", "Turret Fighter"],
+]
+
 const SYSTEMS := [
 	["hoffers_wake", "Hoffer's Wake"],
 	["hoffers_wake", "Lucrecia's Base (Nebula)", "Lucrecia's Base"],
@@ -375,11 +386,18 @@ func _items() -> Array:
 			out.append([s[1].to_upper(), true])
 		out.append(["< BACK", true])
 		return out
+	if mode == "ships":
+		var out: Array = []
+		for s in SHIPS:
+			out.append([s[1].to_upper(), true])
+		out.append(["< BACK", true])
+		return out
 	if launched:
 		return [["RESUME", true], ["NEW GAME", true], ["SAVE GAME", false],
-			["SELECT SYSTEM", true], ["QUIT", true]]
+			["SELECT SYSTEM", true], ["DEBUG START", true], ["QUIT", true]]
 	return [["START NEW GAME", true], ["LOAD GAME", false],
 		["INSTANT ACTION", true], ["EXTRAS", true],
+		["DEBUG START", true],
 		["MULTIPLAYER", false], ["OPTIONS", false],
 		["MOVIES", true], ["CREDITS", false], ["QUIT", true]]
 
@@ -401,6 +419,16 @@ func _activate() -> void:
 		launched = true
 		close()
 		return
+	if mode == "ships":
+		if sel == items.size() - 1:
+			main.audio.play("audio/gui/contract.wav", -8.0)
+			mode = "main"
+			sel = 0
+			return
+		main.audio.play("audio/gui/confirm.wav", -6.0)
+		# the scene reloads with the chosen hull beside Lucrecia's Base
+		main.debug_start(str((SHIPS[sel] as Array)[0]))
+		return
 	if launched:
 		match sel:
 			0:  # RESUME
@@ -414,7 +442,11 @@ func _activate() -> void:
 				main.audio.play("audio/gui/expand.wav", -8.0)
 				mode = "systems"
 				sel = 0
-			4:  # QUIT
+			4:  # DEBUG START: ship picker
+				main.audio.play("audio/gui/expand.wav", -8.0)
+				mode = "ships"
+				sel = 0
+			5:  # QUIT
 				get_tree().quit()
 		return
 	match sel:
@@ -431,11 +463,15 @@ func _activate() -> void:
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "systems"
 			sel = 0
-		6:  # MOVIES: replay the intro
+		4:  # DEBUG START: ship picker
+			main.audio.play("audio/gui/expand.wav", -8.0)
+			mode = "ships"
+			sel = 0
+		7:  # MOVIES: replay the intro
 			main.audio.play("audio/gui/confirm.wav", -6.0)
 			visible = false
 			main._play_movie("intro", func() -> void: pass)
-		8:
+		9:
 			get_tree().quit()
 
 func handle(event: InputEvent) -> void:
@@ -455,7 +491,7 @@ func handle(event: InputEvent) -> void:
 				# Escape backs out of a screen. It never quits the game: that
 				# is what the QUIT item is for, and losing a campaign to a
 				# stray keypress is not a feature.
-				if mode == "systems":
+				if mode == "systems" or mode == "ships":
 					mode = "main"
 					sel = 0
 				elif launched:

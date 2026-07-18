@@ -264,6 +264,12 @@ func _ready() -> void:
 	sunshot = "--sunshot" in OS.get_cmdline_user_args()
 	use_pog = "--pog" in OS.get_cmdline_user_args()
 	use_port = "--port" in OS.get_cmdline_user_args()
+	for arg in OS.get_cmdline_user_args():
+		# the menu's DEBUG START, reachable from the command line:
+		# --debugship=heavy_corvette_prefitted
+		if str(arg).begins_with("--debugship="):
+			_debug_request = "sims/ships/player/%s.ini" \
+					% str(arg).get_slice("=", 1)
 	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
 			or newgamecheck or basecheck or newgametest or commshot or muzzleshot \
 			or contactcheck or srgbprobe or sunshot:
@@ -284,6 +290,9 @@ func _ready() -> void:
 	base_iface = BaseInterior.new()
 	base_iface.main = self
 	add_child(base_iface)
+	if _debug_request != "":
+		player_ship_ini = _debug_request
+		debug_all_weapons = true
 	_build_environment()
 	_spawn_player()
 	# the two iiSimField singletons, made once per game like the original's
@@ -292,7 +301,11 @@ func _ready() -> void:
 	fields = Fields.new()
 	fields.main = self
 	add_child(fields)
-	_load_system(START_SYSTEM, START_NAME)
+	if _debug_request != "":
+		# the debug start begins on the base's doorstep, traffic in reach
+		_load_system("hoffers_wake", "Lucrecia's Base")
+	else:
+		_load_system(START_SYSTEM, START_NAME)
 	hud = Hud.new()
 	hud.main = self
 	var cl := CanvasLayer.new()
@@ -320,6 +333,12 @@ func _ready() -> void:
 		# Straight into the campaign, no front end.
 		menu.visible = false
 		start_campaign()
+	elif _debug_request != "":
+		_debug_request = ""
+		menu.visible = false
+		menu.launched = true
+		hud.log_msg("DEBUG START: %s" % player_ship_ini.get_file().get_basename()
+				.to_upper())
 	elif _restarting:
 		# NEW GAME from the pause menu: the scene was reloaded to get a clean
 		# slate, so pick the campaign straight back up -- but DEFERRED, one idle
@@ -527,6 +546,21 @@ func _fit_systems(ini_path: String) -> void:
 ## the first. Reloading the scene is the only honest clean slate; `_restarting`
 ## survives it because a static outlives the node.
 static var _restarting := false
+
+# --- debug start -------------------------------------------------------------
+# The menu's DEBUG START: pick any player hull, spawn beside Lucrecia's Base
+# with every weapon type loaded, front end skipped. The request rides a static
+# across the scene reload exactly like _restarting.
+static var _debug_request := ""   # a player ship ini path; "" = off
+var debug_all_weapons := false
+
+func debug_start(ini: String) -> void:
+	if pog_rt != null:
+		pog_rt.halt()
+	_debug_request = ini
+	_restarting = false
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 func restart_campaign() -> void:
 	# Halt the POG tasks BEFORE the scene goes: a task parked on process_frame
@@ -1327,23 +1361,36 @@ func _record_basis(rec: Dictionary) -> Basis:
 func _spawn_player() -> void:
 	ship = ShipFlight.new()
 	ship.name = "Player"
+	# the boot hull: the debug start preloads player_ship_ini; otherwise the
+	# commissioned tug (the campaign swaps hulls later via _fit_player)
+	var want_ini := player_ship_ini if player_ship_ini != "" \
+			else "sims/ships/player/tug.ini"
+	var avatar := "lws:/avatars/tug_hull/setup_prefitted"
 	var stats: Array = _load_json("data/json/ships.json")
 	for rec in stats:
-		if rec.get("path", "") == "sims/ships/player/tug.ini":
+		if rec.get("path", "") == want_ini:
 			ship_stats = rec["properties"]
 			ship.load_stats(ship_stats)
+			avatar = str(rec.get("avatar", avatar))
 			break
 	base_max_accel = ship.max_accel
 	base_turn_accel = ship.turn_accel
-	ship_model = _load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf")
+	ship_model = _load_gltf("data/avatars/avatars/"
+			+ avatar.trim_prefix("lws:/avatars/") + ".gltf")
+	if ship_model == null:
+		# a hull without an assembled avatar still has to fly
+		ship_model = _load_gltf("data/avatars/avatars/tug_hull/setup_prefitted.gltf")
 	ship.add_child(ship_model)
-	# the tug's RCS jets live on its command section
-	var cs := _load_gltf("data/avatars/avatars/command_section/setup.gltf")
-	if cs != null:
-		ShipEffects.graft_jets(ship_model, cs)
+	if "tug_hull/" in avatar:
+		# the tug's RCS jets live on its command section
+		var cs := _load_gltf("data/avatars/avatars/command_section/setup.gltf")
+		if cs != null:
+			ShipEffects.graft_jets(ship_model, cs)
 	ShipEffects.attach(ship, ship_model)
 	add_child(ship)
-	_fit_systems("sims/ships/player/tug.ini")
+	_fit_systems(want_ini)
+	if debug_all_weapons:
+		player_mags = Missiles.mags_all()
 	weapons = PbcWeapons.new()
 	weapons.ship = ship
 	weapons.main = self

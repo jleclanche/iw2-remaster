@@ -200,6 +200,23 @@ static func mags_for(sys: ShipSystems) -> Array:
 			"rocket": bool(m.get("rocket", false)), "sys": s})
 	return out
 
+## The debug start's loadout: one full magazine of every player weapon type,
+## no fitted subsim behind them (the empty "sys" reads efficiency 1.0).
+static func mags_all() -> Array:
+	var out: Array = []
+	for stem in ["seeker_missile_magazine", "deadshot_missile_magazine",
+			"harrower_missile_magazine", "ldsi_missile_magazine",
+			"decoy_magazine", "flare_magazine", "gnat_rocket_pod"]:
+		var m: Dictionary = MAG_SPECS[stem]
+		out.append({"stem": stem, "spec": SPECS[m["projectile"]],
+			"projectile": String(m["projectile"]),
+			"launch_speed": float(m["launch_speed"]),
+			"ammo": int(m["max_ammo"]), "max_ammo": int(m["max_ammo"]),
+			"refire_delay": float(m["refire_delay"]), "clock": 0.0,
+			"cm": bool(m.get("cm", false)), "ldsi": bool(m.get("ldsi", false)),
+			"rocket": bool(m.get("rocket", false)), "sys": {}})
+	return out
+
 static func mag_ready(mag: Dictionary) -> bool:
 	var s: Dictionary = mag["sys"]
 	if bool(s.get("destroyed", false)):
