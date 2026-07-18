@@ -77,16 +77,24 @@ def _parse_envelope(lines: list[str], i: int) -> tuple[list[list[float]], int]:
 
 
 def parse_scene(text: str) -> dict:
-    """Full scene: timing metadata plus the node list."""
+    """Full scene: timing metadata, the scene camera, plus the node list.
+
+    The key set mirrors what the ENGINE's own LWS parser registers (the
+    FcString cluster at flux.dll 0x101439d4..0x10143bb8) -- everything else
+    in a scene file (ShowObject, ShadowOptions, AmbientColor, Resolution,
+    Metamorph, GlowEffect...) is LightWave editor/render state the game
+    never reads, and is deliberately ignored here.
+    """
     scene: dict = {"fps": 30.0, "first_frame": 1, "last_frame": 60}
-    for ln in text.splitlines():
+    lines = text.splitlines()
+    for i, ln in enumerate(lines):
         s = ln.strip()
         if s.startswith("FramesPerSecond"):
             try:
                 scene["fps"] = float(s.split()[1])
             except (ValueError, IndexError):
                 pass
-        elif s.startswith("FirstFrame"):
+        elif s.startswith("FirstFrame") and not s.startswith("FirstFrameEnd"):
             try:
                 scene["first_frame"] = int(s.split()[1])
             except (ValueError, IndexError):
@@ -94,6 +102,26 @@ def parse_scene(text: str) -> dict:
         elif s.startswith("LastFrame"):
             try:
                 scene["last_frame"] = int(s.split()[1])
+            except (ValueError, IndexError):
+                pass
+        # the scene camera: CameraMotion + ZoomFactor (+ TargetObject when the
+        # camera tracks a node). The engine reads all three; the comm-portrait
+        # rigs render through exactly this camera.
+        elif s.startswith("CameraMotion"):
+            try:
+                vals = [float(v) for v in lines[i + 3].split()]
+                if len(vals) >= 9:
+                    scene["camera"] = {"pos": vals[0:3], "hpb": vals[3:6]}
+            except (ValueError, IndexError):
+                pass
+        elif s.startswith("TargetObject"):
+            try:
+                scene.setdefault("camera", {})["target"] = int(s.split()[1])
+            except (ValueError, IndexError):
+                pass
+        elif s.startswith("ZoomFactor"):
+            try:
+                scene.setdefault("camera", {})["zoom"] = float(s.split()[1])
             except (ValueError, IndexError):
                 pass
     scene["nodes"] = parse_lws(text)
@@ -194,6 +222,39 @@ def parse_lws(text: str) -> list[dict]:
             cur["flare_ring_color"] = [int(v) for v in ln.split()[1:4]]
         elif ln.startswith("FlareRingSize") and cur is not None:
             cur["flare_ring_size"] = float(ln.split()[1])
+        elif ln.startswith("FlareDistortFactor") and cur is not None:
+            cur["flare_distort"] = float(ln.split()[1])
+        elif ln.startswith("FlareRandStreakInt") and cur is not None:
+            cur["flare_streak_int"] = float(ln.split()[1])
+        elif ln.startswith("FlareRandStreakDens") and cur is not None:
+            cur["flare_streak_dens"] = float(ln.split()[1])
+        elif ln.startswith("FlareRandStreakSharp") and cur is not None:
+            cur["flare_streak_sharp"] = float(ln.split()[1])
+        elif ln.startswith("LightFalloff") and cur is not None:
+            cur["falloff"] = float(ln.split()[1])
+        elif ln.startswith("ConeAngle") and cur is not None:
+            cur["cone_angle"] = float(ln.split()[1])
+        elif ln.startswith("EdgeAngle") and cur is not None:
+            cur["edge_angle"] = float(ln.split()[1])
+        elif ln.startswith("ObjDissolve") and cur is not None:
+            arg = ln[len("ObjDissolve"):].strip()
+            if arg.startswith("("):
+                keys, used = _parse_envelope(lines, i)
+                if keys:
+                    cur["dissolve"] = keys[0][1]
+                i += used
+            else:
+                try:
+                    cur["dissolve"] = float(arg)
+                except ValueError:
+                    pass
+        elif ln.startswith("EndBehavior") and cur is not None:
+            # follows a motion or envelope key block: 0 reset, 1 stop
+            # (hold last), 2 repeat -- the loop law for blinkers and anims
+            try:
+                cur["end_behavior"] = int(ln.split()[1])
+            except (ValueError, IndexError):
+                pass
         elif (ln.startswith("ObjectMotion") or ln.startswith("LightMotion")) \
                 and cur is not None:
             nchan = int(lines[i + 1].strip())
