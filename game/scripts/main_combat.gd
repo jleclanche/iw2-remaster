@@ -313,7 +313,11 @@ func _collide_ai(a: AiShip) -> void:
 	ship.global_position = a.global_position + n * 95.0
 
 func _collisions() -> void:
-	if docked_at != "" or jump_state >= 2:
+	# player_collision: leave() clears docked_at BEFORE the startup movie, but
+	# the ship is still parked inside the base hull until _launch() places it
+	# -- the original keeps sim collision off across that stretch
+	# (istartsystem.pog:72..86)
+	if docked_at != "" or jump_state >= 2 or not player_collision:
 		return
 	# The base's docking cutscene flies the ship THROUGH the station's hull and
 	# parks it inside the bay, so the ship must not collide with anything while

@@ -214,6 +214,12 @@ var hull_max: float:
 			sys.hull_max = value
 var sys: ShipSystems  # the player's subsims, armour and hull (docs/combat.md)
 var docked_at := ""
+## The player half of sim.SetCollision. The dock detector turns it off when it
+## takes the ship (ibacktobase.pog DockingCutscene) and the launch cutscene
+## only turns it back on AFTER the ship is placed 12 km out
+## (istartsystem.pog:72 SetCollision 0 ... :86 SetCollision 1) -- the whole
+## docked stretch in between has the ship parked INSIDE the base hull.
+var player_collision := true
 var ship_stats: Dictionary = {}
 var weapon_name := "L-PBC / R-PBC"  # HUD weapon-panel title
 var eye := Vector3(-1.19, -13.85, -40.05)  # pilot eye: tug.lws crew null

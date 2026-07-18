@@ -338,6 +338,9 @@ func restore_extras(d: Dictionary) -> void:
 	ship.velocity = Vector3(v[0], v[1], v[2])
 	ship.set_speed = float(d.get("set_speed", 0.0))
 	docked_at = str(d.get("docked_at", ""))
+	# the SetCollision flag is session state, not save state: a flying save
+	# loaded from inside the base menus must not inherit collision-off
+	player_collision = docked_at == ""
 	kill_count = int(d.get("kill_count", kill_count))
 	aim_assist = bool(d.get("aim_assist", aim_assist))
 	if sys != null:

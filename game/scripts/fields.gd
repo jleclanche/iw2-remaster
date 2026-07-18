@@ -380,8 +380,11 @@ func _flush(f: Field) -> void:
 # field pool (icFieldSim override @ 0x100648b0 calls the field's RemoveSim,
 # FUN_100498f0, which pools it) and respawns elsewhere.
 func _collide(f: Field, speed: float) -> void:
-	if main.docked_at != "" or main.jump_state >= 2:
-		return  # same guard as main._collisions
+	if main.docked_at != "" or main.jump_state >= 2 \
+			or not main.player_collision:
+		return  # same guard as main._collisions, sim.SetCollision included:
+		# the undock movie plays with the ship still parked inside the base
+		# and docked_at already cleared (istartsystem.pog:72..86)
 	if speed > COLLIDE_SPEED_MAX:
 		return  # icFieldSim::CanCollide @ 0x100648d0
 	for rk in f.live:

@@ -371,6 +371,8 @@ func _begin_cutscene(_bp: Vector3) -> void:
 	main.ship.set_speed = 0.0
 	# iship.DisruptLDSDrive(player, 120) on the autoskip, (player, 1) on the
 	# short dock -- either way the drive is locked out for the cutscene.
+	# sim.SetCollision(player, 0) at the cutscene top (ibacktobase.pog)
+	main.player_collision = false
 	main.disrupt_time = SKIP_LDS_DISRUPT if _confirm_skip else DOCK_LDS_DISRUPT
 	if _confirm_skip:
 		_autoskip_jump()
@@ -621,6 +623,10 @@ func enter() -> void:
 	#   igame.EnableBlackout(1); sim.SetCollision(player, 0);
 	#   sim.SetVelocity(player, 0,0,0);
 	#   sim.PlaceRelativeToInside(player, base, 0, 0, 1800); sim.PointAt(player, base)
+	# sim.SetCollision(player, 0): stays off until the launch cutscene has
+	# placed the ship back outside (istartsystem.pog:86) -- the park position
+	# below is INSIDE the hull trimesh
+	main.player_collision = false
 	var rec := base_rec()
 	if not rec.is_empty():
 		var b := _base_basis(rec)
@@ -708,6 +714,9 @@ func _launch() -> void:
 	main._point_ship_at(-base_pos())
 	main.ship.velocity = -main.ship.global_transform.basis.z * 500.0
 	main.ship.set_speed = 500.0
+	# sim.SetCollision(player, 1) -- only now, with the ship 12 km out
+	# (istartsystem.pog:86)
+	main.player_collision = true
 	main.cam_mode = 0
 	main.cam_view = 0
 	main._apply_view()
