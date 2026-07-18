@@ -487,9 +487,17 @@ func _physics_process(delta: float) -> void:
 	elif ship.assist:
 		burn = clampf((ship.set_speed + v_local.z) / 80.0, 0.0, 1.0)
 	fire_pulse = maxf(0.0, fire_pulse - delta * 4.0)
+	# icShip::ApplyThrusterBurns @ 0x100758a0 writes the raw channels on the
+	# avatar root each tick: "lx"/"ly"/"lz" (strings @ 0x1015d5fc/0x1015d600/
+	# 0x1015d2b0) = APPLIED force / max force per axis -- ship.thrust_frac
+	# mirrors that law, assist trim included, so the engine glow follows the
+	# throttle, not just held stick input. "ry"/"rp"/"rr" (@ 0x1015d604/08/0c)
+	# = applied torque / max torque; input_rotate stands in (same 0..1 shape).
+	# It also writes "burn" (@ 0x1015d610) = forward yoke > 0 and "v"
+	# (@ 0x1015d618) = speed fraction; our burn below approximates the former.
 	var raw := {
-		"lz": ship.input_thrust.z, "lx": ship.input_thrust.x,
-		"ly": ship.input_thrust.y,
+		"lz": ship.thrust_frac.z, "lx": ship.thrust_frac.x,
+		"ly": ship.thrust_frac.y,
 		"rp": ship.input_rotate.x, "ry": ship.input_rotate.y,
 		"rr": ship.input_rotate.z,
 		"burn": burn, "fire": fire_pulse, "dock": 0.0,
@@ -498,8 +506,9 @@ func _physics_process(delta: float) -> void:
 	# supplies the ones the ship has no state for
 	for k: String in script_channels:
 		raw[k] = script_channels[k]
-	# tug channels.ini: smoothed lz/burn -> flame/core/boom/flap
-	_lz_smooth += (clampf(absf(raw["lz"]), 0.0, 1.0) - _lz_smooth) \
+	# tug channels.ini: lz_smooth = "lz?+s(0.75)" -- POSITIVE forward burn
+	# only (retro/braking thrust must not light the main flame), 0.75 s smooth
+	_lz_smooth += (clampf(maxf(raw["lz"], 0.0), 0.0, 1.0) - _lz_smooth) \
 		* minf(delta / 0.75, 1.0)
 	_burn_smooth += (burn - _burn_smooth) * minf(delta / 1.0, 1.0)
 	var named := {

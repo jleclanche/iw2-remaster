@@ -236,6 +236,7 @@ func _physics_process(delta: float) -> void:
 			# a docked child rides its parent rigidly (FiSim::UpdateChild
 			# rewrites the child's transform from the parent every tick);
 			# main._update_tow does the rewrite, we must not integrate
+			thrust_frac = Vector3.ZERO  # no burn of its own -> engines dark
 			return
 		"dying":
 			# OnExplode's dramatic sequence: dead hands on the controls, the

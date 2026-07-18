@@ -16,7 +16,7 @@ import sys
 from pathlib import Path, PurePosixPath
 
 from .gltf_builder import GltfBuilder, hpb_to_quat
-from .lws import parse_lws
+from .lws import parse_scene
 from .pso import parse_pso
 from .resources import ResourceFS
 
@@ -28,6 +28,33 @@ def _pose(key: dict) -> dict:
         "quat": hpb_to_quat(*key["hpb"]),
         "scale": [s if abs(s) > 1e-4 else 1e-4 for s in key["scale"]],
     }
+
+
+def _key_at(keys: list[dict], frame: float) -> dict:
+    """A motion track's pose at `frame` (linear between keys, clamped).
+
+    The engine plays a scene inside [FirstFrame, LastFrame]
+    (FcScene::ParseFirstFrame, flux @ 0x1002c3c0, stored at +0x40), so a
+    keyed node's REST pose is its track value at FirstFrame -- not the
+    frame-0 value. Setup scenes exploit exactly that: the command section
+    hides its cs_eng engine-glow pods by keying scale 0 at frame 0 -> 1 at
+    frame 1 under FirstFrame 1, so they rest VISIBLE in the play range.
+    """
+    if frame <= keys[0]["frame"]:
+        return keys[0]
+    for a, b in zip(keys, keys[1:]):
+        if frame <= b["frame"]:
+            t = (frame - a["frame"]) / (b["frame"] - a["frame"])
+            return {
+                "frame": frame,
+                "pos": [a["pos"][i] + (b["pos"][i] - a["pos"][i]) * t
+                        for i in range(3)],
+                "hpb": [a["hpb"][i] + (b["hpb"][i] - a["hpb"][i]) * t
+                        for i in range(3)],
+                "scale": [a["scale"][i] + (b["scale"][i] - a["scale"][i]) * t
+                          for i in range(3)],
+            }
+    return keys[-1]
 
 
 class Assembler:
@@ -60,7 +87,9 @@ class Assembler:
 
     def add_scene(self, scene_path: str, parent: int | None) -> None:
         scene_dir = str(PurePosixPath(scene_path).parent)
-        nodes = parse_lws(self.fs.read_text(scene_path))
+        scene = parse_scene(self.fs.read_text(scene_path))
+        nodes = scene["nodes"]
+        first_frame = float(scene["first_frame"])
 
         # keep highest-detail LOD group; drop nodes parented under other groups
         lod_groups = {n["index"]: n for n in nodes if n["kind"] == "detail_switch"}
@@ -137,6 +166,8 @@ class Assembler:
                 # engine-boom nulls are children of the pivoted hull and ride
                 # the shift, which is what attaches the four legs to the hull.
                 pos = n.get("pos")
+                hpb = n.get("hpb")
+                scale = n.get("scale")
                 pivot = n.get("pivot")
                 if pivot and any(pivot):
                     p = pos if pos is not None else [0.0, 0.0, 0.0]
@@ -146,8 +177,14 @@ class Assembler:
                             k["pos"] = [k["pos"][0] - pivot[0],
                                         k["pos"][1] - pivot[1],
                                         k["pos"][2] - pivot[2]]
+                # keyed nodes rest at the FirstFrame pose (see _key_at) --
+                # except <anim> nulls, whose keys are the channel-rig poses
+                # and whose rest IS pose0 (channel value 0)
+                if n.get("keys") and n["kind"] != "anim":
+                    k = _key_at(n["keys"], first_frame)
+                    pos, hpb, scale = k["pos"], k["hpb"], k["scale"]
                 nid = self.b.node(str(name), gparent, mesh,
-                                  pos, n.get("hpb"), n.get("scale"), extras)
+                                  pos, hpb, scale, extras)
             gltf_ids[n["index"]] = nid
             if n.get("keys") and n["kind"] != "anim":
                 self.b.add_animation_channels(nid, n["keys"])

@@ -46,6 +46,15 @@ var assist := true
 var drive_override := false                  # LDS/capsule drive owns velocity:
                                              # skip assist trim and speed caps
 var fx: Node = null                          # ShipEffects channel rig
+# icShip::ApplyThrusterBurns (iwar2.dll @ 0x100758a0) writes the avatar
+# channels "lx"/"ly"/"lz" (name strings @ 0x1015d5fc/0x1015d600/0x1015d2b0)
+# every tick as APPLIED thruster force / max force per axis (+0x224..0x22c =
+# mass * authored accel) -- the force the flight computer commanded, so the
+# assist's own trim burns light the drives, not just held stick input.
+# Recorded by _integrate_translation in the original's sign convention
+# (+z = forward burn, LW axes); ShipEffects feeds it to the authored channel
+# expressions ("lz?+s(1.0)" = the command section's engine glow).
+var thrust_frac := Vector3.ZERO
 
 # --- per-frame inputs, set by the pilot controller ---
 var input_rotate := Vector3.ZERO             # desired pitch/yaw/roll -1..1
@@ -104,24 +113,43 @@ func _integrate_translation(delta: float) -> void:
 	# thruster input toward the set-speed vector (set_speed along the nose,
 	# zero laterally); assist never fights a held thruster.
 	if drive_override:
+		# LDS: the drive holds a full positive forward yoke (the "burn" flag
+		# @ 0x100758a0 reads yoke z at +0x2cc > 0), so the drives blaze
+		thrust_frac = Vector3(0.0, 0.0, 1.0)
 		global_position += velocity * delta
 		return
 	var b := global_transform.basis
 	var v_local := velocity * b  # world->local
 	# a docked partner's mass divides the same thruster force
 	var acc := max_accel * mass_scale()
+	# the channel fractions (see thrust_frac): commanded accel / max accel.
+	# A held thruster is the input itself; the assist trim step is
+	# |dv| <= acc*delta, so its fraction is dv/(acc*delta), full while
+	# chasing the set speed and fading out as the ship settles on it.
+	var frac := Vector3.ZERO
 	if absf(input_thrust.x) > 0.05:
 		v_local.x += input_thrust.x * acc.x * delta
+		frac.x = input_thrust.x
 	elif assist:
-		v_local.x = move_toward(v_local.x, 0.0, acc.x * delta)
+		var dvx := move_toward(v_local.x, 0.0, acc.x * delta) - v_local.x
+		v_local.x += dvx
+		frac.x = dvx / maxf(acc.x * delta, 1e-9)
 	if absf(input_thrust.y) > 0.05:
 		v_local.y += input_thrust.y * acc.y * delta
+		frac.y = input_thrust.y
 	elif assist:
-		v_local.y = move_toward(v_local.y, 0.0, acc.y * delta)
+		var dvy := move_toward(v_local.y, 0.0, acc.y * delta) - v_local.y
+		v_local.y += dvy
+		frac.y = dvy / maxf(acc.y * delta, 1e-9)
 	if absf(input_thrust.z) > 0.05:
 		v_local.z += -input_thrust.z * acc.z * delta
+		frac.z = input_thrust.z
 	elif assist:
-		v_local.z = move_toward(v_local.z, -set_speed, acc.z * delta)
+		var dvz := move_toward(v_local.z, -set_speed, acc.z * delta) - v_local.z
+		v_local.z += dvz
+		# our local -z is forward; the channel convention is +z = forward
+		frac.z = -dvz / maxf(acc.z * delta, 1e-9)
+	thrust_frac = frac
 	# NO velocity clamp -- and that is extracted, not a choice.
 	# iiThrusterSim::MaxSpeed (0x1007e2a0, the ini `speed` vector) has exactly
 	# three consumers in iwar2.dll: the AI target-velocity scaling
