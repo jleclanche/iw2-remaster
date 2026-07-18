@@ -71,6 +71,25 @@ const LIGHT_PBC_BOLT := {"damage": 130.0, "penetration": 35.0, "half_time": 0.3,
 	"speed": 4500.0, "lifetime": 1.5, "bypass_shields": false,
 	"length": 400.0, "texture": "images/sfx/pbc_light",
 	"wav": "audio/sfx/light_pbc.wav"}
+# sims/weapons/assault_cannon_bolt.ini -- the gatling's icBullet ("Assault
+# cannon burst"). Its avatar is FIVE icBeamAvatar streaks (texture pbc_gatling,
+# half-width 2.5) scattered off-axis with staggered lengths 650-800: one shot
+# draws a tracer cluster, not a single fat bolt.
+const ASSAULT_BOLT := {"damage": 160.0, "penetration": 52.0, "half_time": 0.35,
+	"speed": 6000.0, "lifetime": 2.0, "bypass_shields": false,
+	"length": 800.0, "texture": "images/sfx/pbc_gatling",
+	"wav": "audio/sfx/gatling.wav",
+	"burst": [Vector3(-1.6, 2.175, 0), Vector3(2.725, 1.625, 0),
+		Vector3(-2.75, -0.875, 0), Vector3(1.25, -1.925, 0), Vector3.ZERO],
+	"burst_lengths": [650.0, 700.0, 675.0, 750.0, 800.0]}
+# the selected group's own ballistics, keyed by the gun INI's
+# projectile_template stem (iiGun::Load)
+const BOLT_BY_PROJECTILE := {
+	"pbc_bolt": PBC_BOLT,
+	"light_pbc_bolt": LIGHT_PBC_BOLT,
+	"assault_cannon_bolt": ASSAULT_BOLT,
+	"nps_assault_cannon_bolt": ASSAULT_BOLT,
+}
 
 var ship: ShipFlight  # player, for fire()
 var main: Node3D
@@ -296,8 +315,9 @@ func fire() -> void:
 	if cooldown > 0.0:
 		return
 	# iiWeapon::Simulate 0x1003cc00 sets flag 0x200 and refuses to fire while
-	# the ship's TotalHeat is at or past heat_damage_threshold. (Near the red
-	# giant -- Lucrecia's sanctuary -- external heat alone pegs the store.)
+	# the ship's TotalHeat is at or past heat_damage_threshold. (In practice
+	# only internal heat can get there: sun/planet proximity heat is dormant
+	# in the shipped game -- see main.gd's body-heat gate.)
 	if main and main.sys != null and main.sys.heat + main.sys.heat_external \
 			>= ShipSystems.HEAT_DAMAGE_THRESHOLD:
 		# the warning line is ours; the original surfaces this only through
@@ -308,15 +328,34 @@ func fire() -> void:
 	# full-disruption warhead through icShip::Disrupt) blocks fire
 	if main and main.weapon_disrupt_time > 0.0 and main.weapon_disrupt_full:
 		return
+	# The SELECTED group's own gun subsims carry the ballistics (iiGun::Load):
+	# PBC refire 0.7 s, light PBC 0.8 s, the gatling 0.12 s with a 200-round
+	# icSlugThrower ammo counter. The class-level refire/bolt_spec stay as the
+	# fallback for hulls without recovered groups.
+	var g := current_group()
+	var members: Array = g.get("members", []) if not g.is_empty() else []
+	var live: Array = members.filter(func(m: Dictionary) -> bool:
+			return not bool(m.get("destroyed", false)) \
+			and float(m.get("efficiency", 1.0)) > 0.0 \
+			and int(m.get("ammo", -1)) != 0)
+	if not members.is_empty() and live.is_empty():
+		return  # dead, dark or dry: icSlugThrower::IsReadyToFire result 8
+	var base_refire := refire
+	var base_spec := bolt_spec
+	if not live.is_empty():
+		var m0: Dictionary = live[0]
+		base_refire = float(m0.get("refire", refire))
+		base_spec = BOLT_BY_PROJECTILE.get(
+				str(m0.get("projectile", "")).get_file(), bolt_spec)
 	# iiGun::RefireDelay 0x1000f0a0 -- the INI delay DIVIDED by the TRI weight
 	var w := _tri_offensive()
-	cooldown = refire / maxf(w, 1e-3)
+	cooldown = base_refire / maxf(w, 1e-3)
 	# iiWeapon::Fire 0x100357e0 -- the bolt leaves with w * damage and w * lifetime
-	var spec := bolt_spec
+	var spec := base_spec
 	if not is_equal_approx(w, 1.0):
-		spec = bolt_spec.duplicate()
-		spec["damage"] = float(bolt_spec["damage"]) * w
-		spec["lifetime"] = float(bolt_spec["lifetime"]) * w
+		spec = base_spec.duplicate()
+		spec["damage"] = float(base_spec["damage"]) * w
+		spec["lifetime"] = float(base_spec["lifetime"]) * w
 	# The selected fire group fires as one -- every member on the same frame.
 	# A group whose members' attach nulls are all on the avatar fires from them;
 	# otherwise we fall back to the hull's authored PBC mounts, which is what the
@@ -349,23 +388,43 @@ func fire() -> void:
 		if main:
 			main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 		return
-	var mz: Array = _group_muzzles()
-	if mz.is_empty():
-		mz = muzzle_nodes.filter(func(n: Node3D) -> bool:
-				return is_instance_valid(n))
-	if not mz.is_empty():
-		for n in mz:
-			var m: Array = PbcWeapons.muzzle_of(n as Node3D)
-			_spawn_at(ship, m[0], _aim_dir(m[0], m[1], assist_lead),
-					ship.velocity, spec)
+	var fired := 0
+	if not live.is_empty() and not bool(g.get("linked", false)):
+		# a SINGLE (the gatling, sharing the lower PBC's mount) fires one bolt
+		# from its own mount point -- FcSubsim::WorldPosition, which
+		# iiWeapon::FindWorldMuzzle (0x1003da30) starts from -- not from both
+		# fitted PBC gun models, which is what the fallback list would do
+		var mp: Vector3 = live[0].get("pos", Vector3.ZERO)
+		var wp: Vector3 = ship.global_transform * mp
+		_spawn_at(ship, wp, _aim_dir(wp, -ship.global_transform.basis.z,
+				assist_lead), ship.velocity, spec)
+		fired = 1
 	else:
-		# no gun on the avatar at all: the hull's authored mounts, still fired
-		# along the hull's forward because that is all a bare point can give us
-		for m in muzzle_fallback:
-			var p: Vector3 = ship.global_transform * m
-			_spawn_at(ship, p,
-					_aim_dir(p, -ship.global_transform.basis.z, assist_lead),
-					ship.velocity, spec)
+		var mz: Array = _group_muzzles()
+		if mz.is_empty():
+			mz = muzzle_nodes.filter(func(n: Node3D) -> bool:
+					return is_instance_valid(n))
+		if not mz.is_empty():
+			for n in mz:
+				var m: Array = PbcWeapons.muzzle_of(n as Node3D)
+				_spawn_at(ship, m[0], _aim_dir(m[0], m[1], assist_lead),
+						ship.velocity, spec)
+				fired += 1
+		else:
+			# no gun on the avatar at all: the hull's authored mounts, still
+			# fired along the hull's forward because that is all a bare point
+			# can give us
+			for m in muzzle_fallback:
+				var p: Vector3 = ship.global_transform * m
+				_spawn_at(ship, p,
+						_aim_dir(p, -ship.global_transform.basis.z, assist_lead),
+						ship.velocity, spec)
+				fired += 1
+	# icSlugThrower: spend the rounds (+0xd4 decrements per shot)
+	for i in mini(fired, live.size()):
+		var mem: Dictionary = live[i]
+		if int(mem.get("ammo", -1)) > 0:
+			mem["ammo"] = int(mem["ammo"]) - 1
 	if main:
 		main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 
@@ -387,8 +446,24 @@ func _spawn_at(shooter: Node3D, pos: Vector3, dir: Vector3, base_vel: Vector3,
 		spec = bolt_spec
 	if shooter is ShipFlight and (shooter as ShipFlight).fx != null:
 		(shooter as ShipFlight).fx.fire_pulse = 1.0
-	var node := MeshInstance3D.new()
-	node.mesh = _bolt_mesh(spec)
+	var node: Node3D
+	var burst: Array = spec.get("burst", [])
+	if burst.is_empty():
+		var mi := MeshInstance3D.new()
+		mi.mesh = _bolt_mesh(spec)
+		node = mi
+	else:
+		# the gatling burst: five streaks around the muzzle line, each with
+		# its own authored length cap (avatars/assault_cannon_bolt/setup.lws)
+		node = Node3D.new()
+		var lens: Array = spec.get("burst_lengths", [])
+		for bi in burst.size():
+			var mi := MeshInstance3D.new()
+			mi.mesh = _bolt_mesh(spec)
+			mi.position = burst[bi]
+			if bi < lens.size():
+				mi.scale = Vector3(1, 1, float(lens[bi]) / float(spec["length"]))
+			node.add_child(mi)
 	get_parent().add_child(node)
 	var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.99 else Vector3.RIGHT
 	var aim := Basis.looking_at(dir, up)
@@ -423,7 +498,7 @@ func _physics_process(delta: float) -> void:
 		var bolt: Dictionary = bolts[i]
 		bolt["life"] -= delta
 		bolt["age"] = float(bolt["age"]) + delta
-		var node: MeshInstance3D = bolt["node"]
+		var node: Node3D = bolt["node"]
 		var dead: bool = bolt["life"] <= 0.0 or not is_instance_valid(node)
 		if not dead:
 			var move: Vector3 = bolt["vel"] * delta
@@ -467,13 +542,13 @@ func _segment_sphere(a: Vector3, b: Vector3, c: Vector3, r: float) -> bool:
 
 func clear() -> void:
 	for bolt in bolts:
-		var node: MeshInstance3D = bolt["node"]
+		var node: Node3D = bolt["node"]
 		if is_instance_valid(node):
 			node.queue_free()
 	bolts.clear()
 
 func shift_world(offset: Vector3) -> void:
 	for bolt in bolts:
-		var node: MeshInstance3D = bolt["node"]
+		var node: Node3D = bolt["node"]
 		if is_instance_valid(node):
 			node.global_position -= offset

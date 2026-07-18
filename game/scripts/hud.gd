@@ -2640,39 +2640,61 @@ func _draw_weapon_panel() -> void:
 	# which is invented -- the original shows the single group name. The group's
 	# real name comes from weapons.group_label(); main.weapon_name's "L-PBC /
 	# R-PBC" is only a pre-fit placeholder (see the note in the final report).
-	var rows := 1
-	# One extra row for the selected secondary (missile magazine). The engine's
-	# element shows the SELECTED GROUP's weapons one per row; the ammo-count
-	# readout text is ours (the magazine row's exact layout was not recovered).
-	var sec := str(main.secondary_name)
-	var sec_row: int = 1 if sec != "NONE" else 0
+	# The panel shows the pilot's CURRENT selection (+0x8c). Selecting a
+	# secondary REPLACES the gun group here -- header and row become the
+	# magazine's. (We used to keep the gun header and stack an extra missile
+	# row below it; that stack was invented.)
+	var on_secondary: bool = int(main.secondary_idx) >= 0 \
+			and int(main.secondary_idx) < (main.player_mags as Array).size()
+	var title := str(main.weapon_name)
+	var sec_ammo := ""
+	if on_secondary:
+		var mag: Dictionary = (main.player_mags as Array)[main.secondary_idx]
+		title = str(mag["projectile"]).replace("_", " ")
+		sec_ammo = "%d/%d" % [int(mag["ammo"]), int(mag["max_ammo"])]
 	# the MFD above may be in a short mode; the stack advance uses its height
 	var pos := Vector2(_left_x(), _advance(MARGIN, _mfd_rect().size.y))
-	var size := Vector2(PANEL_W, ROW_PITCH * (rows + sec_row) + HDR_H)
-	_panel(pos, size, str(main.weapon_name).to_upper())
+	var size := Vector2(PANEL_W, ROW_PITCH + HDR_H)
+	_panel(pos, size, title.to_upper())
+	var ry := pos.y + HDR_H
+	if on_secondary:
+		# the missile row's icon is sprite 78 (the secondary rows at x=11 in
+		# the same draw); the ammo text layout stays ours
+		if _sprites != null:
+			_spr(Vector2(pos.x + 16, ry + 16), 78, AMBER)
+		draw_string(_font, Vector2(pos.x + 36, ry + 20), sec_ammo,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+		_ea = 1.0
+		return
 	var charge: float = 1.0
 	if main.weapons != null:
-		charge = 1.0 - main.weapons.cooldown / main.weapons.refire
+		var cg: Dictionary = main.weapons.current_group()
+		var rf := float(main.weapons.refire)
+		if not cg.is_empty():
+			var m0: Dictionary = (cg["members"] as Array)[0]
+			rf = float(m0.get("refire", rf))
+		charge = 1.0 - main.weapons.cooldown / maxf(rf, 1e-3)
 	# the row, verbatim from the icHUDWeapons draw (iwar2.dll.c ~197340+):
 	# colour DAT_10174fb0 (amber); the gun ICON is sprite 69 at
 	# (16, y + _DAT_101184a0 = 16); the charge bar is FUN_100ebde0(36,
 	# y + 10, 112 - 38 = 74, frac, style 1) -- the same call _bar ports.
 	# (Our old hand-drawn lightning polygon was invented.)
-	for i in rows:
-		var ry := pos.y + HDR_H + i * ROW_PITCH
-		if _sprites != null:
-			_spr(Vector2(pos.x + 16, ry + 16), 69, AMBER)
-		_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
-		draw_string(_font, Vector2(pos.x + 36, ry + 28), "%d%%" % int(charge * 100),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
-	if sec_row > 0:
-		# the missile row's icon is sprite 78 (the secondary rows at x=11 in
-		# the same draw); the ammo text layout stays ours
-		var ry := pos.y + HDR_H + rows * ROW_PITCH
-		if _sprites != null:
-			_spr(Vector2(pos.x + 16, ry + 16), 78, AMBER)
-		draw_string(_font, Vector2(pos.x + 36, ry + 20), sec,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+	if _sprites != null:
+		_spr(Vector2(pos.x + 16, ry + 16), 69, AMBER)
+	_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
+	var readout := "%d%%" % int(charge * 100)
+	if main.weapons != null:
+		var cg2: Dictionary = main.weapons.current_group()
+		if not cg2.is_empty():
+			# an ammo-limited gun (the gatling) reads out its icSlugThrower
+			# round count instead -- OUR readout; the original's ammo-gun row
+			# layout was not recovered
+			var ammo := int(((cg2["members"] as Array)[0] as Dictionary)
+					.get("ammo", -1))
+			if ammo >= 0:
+				readout = str(ammo)
+	draw_string(_font, Vector2(pos.x + 36, ry + 28), readout,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 	_ea = 1.0
 
 # --- system status lights (top-centre) --------------------------------------

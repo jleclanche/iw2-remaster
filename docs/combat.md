@@ -1488,6 +1488,28 @@ channel 1, two members) and fire as a pair; the assault cannon, quad light PBC,
 mining laser and the magazines are singles. The decoy magazine
 (icCounterMeasureMagazine) is correctly excluded.
 
+**Each gun carries its own ballistics** (`iiGun::Load`): the selected group's
+refire, projectile and ammo are the SUBSIM's, not global. The gatling
+(`assault_cannon.ini`, `icSlugThrower`, mounted on `lower_pbc_prefitted`) is
+refire **0.12 s** with a **200-round** counter (+0xd4;
+`icSlugThrower::IsReadyToFire 0x10032750` returns 8 -- no ammo -- at zero),
+firing `assault_cannon_bolt` (icBullet: damage 160, penetration 52, speed
+6000, lifetime 2). Its avatar is FIVE icBeamAvatar streaks (`pbc_gatling`,
+half-width 2.5, staggered lengths 650-800) -- a tracer cluster per shot, and
+`audio/sfx/gatling.wav` for the report. weapons.gd resolves the selected
+group's stats per shot (`BOLT_BY_PROJECTILE`), spends the rounds, and a
+single fires ONE bolt from its own mount (`FindWorldMuzzle` starts at
+`FcSubsim::WorldPosition`) instead of doubling up from both PBC gun models.
+The round count persists through saves. The `assault_cannon_ring.ini`
+(icCannon, energy ring, capacity 1000 / cost 80) is NOT modelled yet --
+nothing in the shipped loadouts fits it on a player hull.
+
+**The HUD weapon panel shows the pilot's CURRENT selection** (+0x8c): picking
+a secondary (missile magazine) *replaces* the gun group in the panel --
+header and row become the magazine's name and count -- and Enter drops back
+to the last primary without cycling (`CyclePrimaryWeapon 0x100b0850`). The
+old extra missile row under the gun header was invented.
+
 **Two things are UNKNOWN and stay that way.** `icShip::WeaponLinkingMode` (+0x2f4)
 / `WeaponLinkingHardware` (+0x2f8) and `icPlayerPilot::ToggleWeaponLinking`
 (`0x100b0f60`, log events 0x29/0x2a/0x2b) are a *separate* player toggle gated on

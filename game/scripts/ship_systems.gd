@@ -386,6 +386,18 @@ func _mount(template: String, attach_null: String) -> void:
 	# the powerup sims/power_ups/weapon_pbc_sniper drops that same resource).
 	# icPlayerPilot::GotSniperWeapon (0x100b14d0) is what reads it: see main.gd.
 	sys["sniper_zoom"] = float(props.get("sniper_zoom", 0)) != 0.0
+	if cls == "icCannon" or cls == "icSlugThrower":
+		# iiGun::Load: each gun carries its own ballistics -- refire (+0xb8)
+		# and the projectile template. The gatling (assault_cannon.ini,
+		# icSlugThrower, refire 0.12) is NOT a reskinned PBC (refire 0.7).
+		sys["refire"] = float(props.get("refire_delay", 0.7))
+		sys["projectile"] = str(props.get("projectile_template", ""))
+	if cls == "icSlugThrower":
+		# icSlugThrower ammo counter (+0xd4): IsReadyToFire (0x10032750)
+		# returns 8 (no ammo) once it hits zero. -1 = not ammo-limited.
+		sys["ammo"] = int(float(props.get("ammo_count",
+				props.get("max_ammo_count", -1))))
+		sys["ammo_max"] = int(float(props.get("max_ammo_count", -1)))
 	if cls == "icReactor":
 		# icReactor::Load 0x1003a260 copies output_power (+0x7c) into the base
 		# output (+0x94) and HeatRate() into the base heat (+0x90). Property map
