@@ -74,11 +74,30 @@ this+0x64 = 100.0 * max_radius        ; fmul [0x10119fa0]
    **returned to the pool** (`FUN_100498f0 @ 0x100498f0`). This loop runs
    whether or not the field is active -- leaving a zone strands the rocks and
    the shell test reaps them.
-2. **Flush at speed.** If the field is active (`+0x60` refcount > 0) and the
-   player's speed exceeds `+0x64` = **100 x max_radius** (asteroids 40 km/s,
-   debris 20 km/s), every live sim is pooled and the spawn below runs with
-   speed treated as 0 -- the field re-teleports around you rather than
-   switching off.
+2. **Flush at shell-per-frame displacement.** If the field is active (`+0x60`
+   refcount > 0), Think squares `+0x64` = **100 x max_radius** against the
+   **per-frame focus displacement** `FcWorld+0x50..0x58` -- the same delta
+   vector it divides by `m_game_delta_time_seconds` immediately below to get
+   the cone speed. It is a DISPLACEMENT test, not a velocity test (an earlier
+   reading of this step as "speed > 40 km/s" is what made our LDS cruise
+   teleport-respawn the whole field around the player every frame -- the
+   reported asteroid-swarm-in-LDS bug). Only when the player crosses the
+   entire spawn shell in a single tick (asteroids 40 km/frame, debris
+   20 km/frame) is every live sim pooled, and the spawn below runs with speed
+   treated as 0 -- the field re-teleports rather than switching off.
+
+   **Why the original shows no rocks during LDS cruise:** there is no LDS
+   gate anywhere in the field system (no `icLDSDrive` coupling; the zone
+   Thinks `@ 0x100667b0` / `@ 0x10064cf0` test position only, and
+   `icClient::Tick @ 0x100b39c0` runs the field Thinks unconditionally). The
+   suppression is emergent ordering: the Thinks run BEFORE `FcClient::Tick`
+   integrates the world, so the speed-0 respawn places rocks about the LAST
+   tick's focus (`world+0x38`, read pre-integration). At shell-per-frame
+   speeds the respawned shell is already a full frame's travel astern of the
+   render position, strands outside the 1.1x cull, and is reaped -- unseen --
+   on the next tick. The remaster reproduces the ordering (spawn origin =
+   `px/py/pz - vel * delta`, `fields.gd _field_tick` step 3) rather than
+   hard-hiding the field in LDS.
 3. **Spawn** (`FUN_10049fe0 @ 0x10049fe0` -> `FUN_1004a030 @ 0x1004a030`),
    budget = `count` per frame, so an empty field fills in one tick:
    - stationary (speed < 1e-6): random unit vector, distance uniform in
@@ -336,11 +355,13 @@ kibble node keeps scale 1 and its chunk models draw at their authored 0.4.
   (`pog/natives/world.gd`), so `PlaceAt` moves them and `sim.Destroy` kills
   them for free.
 - The Think loop verbatim: 1.1 x 100r cube+sphere cull, 100 x max_radius
-  flush, per-frame spawn budget = `count`, stationary shell `[0.1, 1.0] x
-  100r`, moving cone PI -> 0.4 rad over 1..500 m/s, spin/velocity rolls as
-  recovered. Rock positions are stored ABSOLUTE (three GDScript doubles) and
-  re-folded against `px/py/pz` every tick, because the original's rocks are
-  world-fixed and a script teleport must strand them into the cull shell.
+  PER-FRAME-displacement flush (spawning about the last tick's focus, section
+  3 step 2 -- the emergent no-rocks-in-LDS behaviour), per-frame spawn budget
+  = `count`, stationary shell `[0.1, 1.0] x 100r`, moving cone PI -> 0.4 rad
+  over 1..500 m/s, spin/velocity rolls as recovered. Rock positions are
+  stored ABSOLUTE (three GDScript doubles) and re-folded against `px/py/pz`
+  every tick, because the original's rocks are world-fixed and a script
+  teleport must strand them into the cull shell.
 - Collision: live rocks near the player push it via `main._collide_sphere`
   (sphere at 0.66 x bounds radius, same convention as prop avatars), gated by
   the recovered 10 km/s `CanCollide` cutoff and by the same docked/jump guard

@@ -53,11 +53,20 @@ const NEAR_FRACTION := 0.1
 const CONE_MIN := 0.4
 const CONE_RAMP := 1.0 / 499.0
 # Field flush: the iiSimField init (dropped by Ghidra, raw disasm @ 0x10049400)
-# ends with `this+0x64 = _DAT_10119fa0 * max_radius`; Think flushes every live
-# rock when the player moves faster than that (0x10049570). So the asteroid
-# field dumps at 100 x 400 = 40 km/s, the debris field at 100 x 200 = 20 km/s.
+# ends with `this+0x64 = _DAT_10119fa0 * max_radius`; Think (0x10049570)
+# squares that against the PER-FRAME focus displacement |FcWorld+0x50..0x58|
+# (the same delta it divides by dt just below to get the cone speed) -- a
+# DISPLACEMENT, not a velocity. The field only dumps when the player crosses
+# the whole spawn shell in one tick: asteroids 40 km/frame, debris 20 km/frame.
 # (What Think does next is spawn them all again through the speed-0 path --
-# the field re-teleports around you, it does not switch off.)
+# the field re-teleports around you, it does not switch off. But it teleports
+# around the LAST tick's focus: icClient::Tick @ 0x100b39c0 runs the field
+# Thinks BEFORE FcClient::Tick integrates the world, so at shell-per-frame
+# speeds the respawned rocks are already a full frame's travel astern at
+# render time and strand off the 1.1x cull unseen. That emergent stranding --
+# not an LDS gate, none exists: there is no icLDSDrive/field coupling
+# anywhere, and the zone Thinks @ 0x100667b0 / 0x10064cf0 test position only
+# -- is why the original shows no field rocks during LDS cruise.)
 #
 # Rock collision cutoff: icFieldSim::CanCollide override @ 0x100648d0 refuses
 # any collision when the other sim's speed (alpha-max-beta-min approximation,
@@ -244,17 +253,30 @@ func _field_tick(f: Field, on: bool, vel: Vector3, delta: float) -> void:
 		i -= 1
 	if not f.active:
 		return
-	# 2. flush at field speed (this + spawn-at-speed-0 re-teleports the field)
+	# 2. flush when the focus crossed the whole spawn shell in ONE tick
+	# (0x10049570 squares this+0x64 = 100 x max_radius against the per-frame
+	# focus displacement FcWorld+0x50, NOT against a velocity -- comparing the
+	# speed here was the LDS asteroid-swarm bug); the spawn-at-speed-0 path
+	# then re-teleports the field
 	var speed := vel.length()
-	if speed > SPAWN_PER_RADIUS * float(f.spec["max_radius"]):
+	if speed * delta > SPAWN_PER_RADIUS * float(f.spec["max_radius"]):
 		while not f.live.is_empty():
 			_recycle(f, f.live.size() - 1)
 		speed = 0.0
-	# 3. spawn from the pool (Think passes `count` as the per-frame budget,
-	# so an empty field fills completely in one tick)
+	# 3. spawn from the pool (Think passes `count` as the per-frame budget, so
+	# an empty field fills completely in one tick). The original places rocks
+	# about the PRE-integration focus (world+0x38 as of the last tick -- the
+	# field Thinks run before FcClient::Tick moves the world, icClient::Tick @
+	# 0x100b39c0); our tick runs after _fold_motion, so that origin is one
+	# frame of travel behind px/py/pz. At shell-per-frame speeds this strands
+	# the respawned shell astern of the camera, which is exactly how the
+	# original shows nothing during LDS cruise.
+	var ox: float = main.px - vel.x * delta
+	var oy: float = main.py - vel.y * delta
+	var oz: float = main.pz - vel.z * delta
 	var budget: int = int(f.spec["count"])
 	while budget > 0 and not f.pool.is_empty():
-		_spawn(f, vel, speed)
+		_spawn(f, vel, speed, ox, oy, oz)
 		budget -= 1
 	# the dust ticks itself: it is a scene node hanging off the solar system
 	# (AddParticleField), not something the field drives
@@ -292,7 +314,10 @@ func _build_pool(f: Field) -> void:
 
 
 # FUN_1004a030 @ 0x1004a030 (place) + FUN_10049d70 @ 0x10049d70 (kinematics).
-func _spawn(f: Field, vel: Vector3, speed: float) -> void:
+# The spawn origin (ox/oy/oz) is the last tick's focus, not the current
+# player position -- see the ordering note in _field_tick step 3.
+func _spawn(f: Field, vel: Vector3, speed: float,
+		ox: float, oy: float, oz: float) -> void:
 	var rk: Dictionary = f.pool.pop_back()
 	var spawn_r: float = SPAWN_PER_RADIUS * float(rk["radius"])
 	var dir: Vector3
@@ -308,9 +333,9 @@ func _spawn(f: Field, vel: Vector3, speed: float) -> void:
 		# reading under which a traversed field refreshes (docs/fields.md).
 		var t := clampf((speed - 1.0) * CONE_RAMP, 0.0, 1.0)
 		dir = _cone_vector(vel / speed, t * CONE_MIN + (1.0 - t) * PI)
-	rk["ax"] = main.px + dir.x * dist
-	rk["ay"] = main.py + dir.y * dist
-	rk["az"] = main.pz + dir.z * dist
+	rk["ax"] = ox + dir.x * dist
+	rk["ay"] = oy + dir.y * dist
+	rk["az"] = oz + dir.z * dist
 	# rock kinematics: random orientation; spin scaled down for big rocks
 	var size_span: float = float(f.spec["max_radius"]) - float(f.spec["min_radius"])
 	var size_frac := 0.0
@@ -328,7 +353,10 @@ func _spawn(f: Field, vel: Vector3, speed: float) -> void:
 	rk["hp"] = float(f.spec["hit_points"])
 	var node: Node3D = rk["node"]
 	node.basis = Basis(Quaternion(_unit_vector(), randf() * TAU))
-	node.position = dir * dist
+	# fold against the CURRENT player position: a rock placed about the stale
+	# focus at shell-per-frame speeds must render astern, not around the ship
+	node.position = Vector3(float(rk["ax"]) - main.px,
+		float(rk["ay"]) - main.py, float(rk["az"]) - main.pz)
 	node.visible = true
 	f.live.append(rk)
 
