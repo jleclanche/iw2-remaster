@@ -143,7 +143,7 @@ func _rows(scr: PogUi.PogScreen) -> Array:
 	for w in scr.windows:
 		if absorbed.has(w):
 			continue
-		if w.kind == "listbox" or w.focusable() \
+		if w.kind == "listbox" or w.kind == "scrollbar" or w.focusable() \
 				or not w.title.is_empty() or not w.text.is_empty():
 			out.append(w)
 	return out
@@ -207,6 +207,25 @@ func _gui_input(e: InputEvent) -> void:
 			and e.button_index == MOUSE_BUTTON_LEFT:
 		# full-rect control at the origin: local coords == viewport coords
 		_click(e.position)
+		accept_event()
+		return
+	# the wheel scrolls the list box under the cursor (our pointing device's
+	# reach at the scrollbar; the original had only the bar itself)
+	if e is InputEventMouseButton and e.pressed and e.button_index in \
+			[MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		var p: Vector2 = ((e as InputEventMouseButton).position - _origin()) \
+				/ _scale()
+		var scr: PogUi.PogScreen = ui.visible_screen()
+		if scr != null:
+			for w in scr.windows:
+				if w.kind == "listbox" and not w.entries.is_empty() \
+						and _rect_of(w).has_point(p):
+					var vis := _rows_in_view(w, _rect_of(w).size.y, w.scroll_top)
+					w.scroll_top = clampi(w.scroll_top
+						+ (3 if e.button_index == MOUSE_BUTTON_WHEEL_DOWN else -3),
+						0, maxi(0, w.entries.size() - vis))
+					queue_redraw()
+					break
 		accept_event()
 		return
 	# HOVER: FcWindowManager::Tick (flux 0x10096d80) re-focuses the window
@@ -299,6 +318,9 @@ func _click(screen_p: Vector2) -> void:
 			continue
 		var win: PogUi.PogWindow = h[1]
 		var at: int = h[2]
+		if win.kind == "scrollbar":
+			_scrollbar_click(win, r, p)
+			return
 		var i := _focus.find(win)
 		if i < 0:
 			return
@@ -540,6 +562,9 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 	if w.kind == "listbox":
 		_draw_listbox(w, r)
 		return
+	if w.kind == "scrollbar":
+		_draw_scrollbar(w, r)
+		return
 	if w.kind == "scroller":
 		_draw_scroller(w, r)
 		return
@@ -586,24 +611,54 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 			_plain(w.text), HORIZONTAL_ALIGNMENT_LEFT, wrap, fs, -1, col)
 
 
+## A row's height: a component row carries its own (the 18-tall superset
+## headers of icInventory::UpdateCategoryInventoryWindow); plain entries get
+## the GUI_listbox_entryheight default.
+func _entry_h(e: Variant) -> float:
+	if e is PogUi.PogWindow and (e as PogUi.PogWindow).h > 0:
+		return float((e as PogUi.PogWindow).h)
+	return LIST_ENTRY_H
+
+
+## Rows that fit the box from a given first row. FcListBox lays entry windows
+## at scroll-adjusted offsets and the canvas clips them; we count instead.
+func _rows_in_view(w: PogUi.PogWindow, view_h: float, from: int) -> int:
+	var y := 0.0
+	var n := 0
+	for i in range(from, w.entries.size()):
+		y += _entry_h(w.entries[i])
+		if y > view_h:
+			break
+		n += 1
+	return maxi(n, 1)
+
+
 func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 	var f := _font_for(w.font_url, _font_small)
 	var fs := _font_px(f)
 	var y := r.position.y
+	var view_h := r.size.y
 	if not w.title.is_empty():
 		draw_string(f, Vector2(r.position.x, y + float(fs)), _label(w.title),
 			HORIZONTAL_ALIGNMENT_LEFT, r.size.x, fs, AMBER_DIM)
 		y += LIST_ENTRY_H + 2.0
-	for i in w.entries.size():
-		if y > r.end.y:
-			break
+		view_h -= LIST_ENTRY_H + 2.0
+	# keep the focused row in view while the list HAS the focus (keyboard
+	# navigation); the wheel and the bar move the view freely otherwise
+	w.scroll_top = clampi(w.scroll_top, 0, maxi(0, w.entries.size() - 1))
+	if w == _current() and w.focused_entry >= 0:
+		if w.focused_entry < w.scroll_top:
+			w.scroll_top = w.focused_entry
+		else:
+			while w.focused_entry >= w.scroll_top \
+					+ _rows_in_view(w, view_h, w.scroll_top) \
+					and w.scroll_top < w.entries.size() - 1:
+				w.scroll_top += 1
+	for i in range(w.scroll_top, w.entries.size()):
 		var e: Variant = w.entries[i]
-		# a component row carries its own height (the 18-tall superset headers
-		# of icInventory::UpdateCategoryInventoryWindow); plain entries get the
-		# GUI_listbox_entryheight default
-		var eh := LIST_ENTRY_H
-		if e is PogUi.PogWindow and (e as PogUi.PogWindow).h > 0:
-			eh = float((e as PogUi.PogWindow).h)
+		var eh := _entry_h(e)
+		if y + eh > r.end.y + 0.5:
+			break
 		# rows centre the font cell like every other window (see _draw_window)
 		var row_base: float = (eh - f.get_height(fs)) * 0.5 + f.get_ascent(fs)
 		var er := Rect2(r.position.x, y, r.size.x, eh)
@@ -638,6 +693,49 @@ func _draw_listbox(w: PogUi.PogWindow, r: Rect2) -> void:
 				fs, col)
 		_hit.append([er, w, i])
 		y += eh
+
+
+## The vertical scrollbar wired to a list box (gui.CreateVerticalScrollbar):
+## a track with a proportional thumb; clicking above/below the thumb pages the
+## target, the wheel over the list scrolls it. The original's arrow-button art
+## (GUI_scrollbar_buttonratio ends of the bar) is chrome, drawn when the
+## screens get their real art.
+func _draw_scrollbar(w: PogUi.PogWindow, r: Rect2) -> void:
+	var t: PogUi.PogWindow = w.scroll_target
+	if t == null or t.entries.is_empty():
+		return
+	var total := t.entries.size()
+	var vis := _rows_in_view(t, _rect_of(t).size.y, t.scroll_top)
+	if total <= vis and t.scroll_top == 0:
+		return                            # everything fits: no bar
+	draw_rect(r, Color(1.0, 0.72, 0.1, 0.10))
+	var frac_h := clampf(float(vis) / float(total), 0.05, 1.0)
+	var span := maxi(total - vis, 1)
+	var frac_y := clampf(float(t.scroll_top) / float(span), 0.0, 1.0)
+	var th := r.size.y * frac_h
+	var ty := r.position.y + (r.size.y - th) * frac_y
+	draw_rect(Rect2(r.position.x + 1.0, ty, r.size.x - 2.0, th), AMBER_DIM)
+	_hit.append([r, w, -1])
+
+
+func _scrollbar_click(w: PogUi.PogWindow, r: Rect2, p: Vector2) -> void:
+	var t: PogUi.PogWindow = w.scroll_target
+	if t == null or t.entries.is_empty():
+		return
+	var total := t.entries.size()
+	var vis := _rows_in_view(t, _rect_of(t).size.y, t.scroll_top)
+	var span := maxi(total - vis, 1)
+	var frac_y := clampf(float(t.scroll_top) / float(span), 0.0, 1.0)
+	var th := r.size.y * clampf(float(vis) / float(total), 0.05, 1.0)
+	var ty := r.position.y + (r.size.y - th) * frac_y
+	var dir := 0
+	if p.y < ty:
+		dir = -vis
+	elif p.y > ty + th:
+		dir = vis
+	t.scroll_top = clampi(t.scroll_top + dir, 0, maxi(0, total - vis))
+	_beep(false)
+	queue_redraw()
 
 
 func _draw_scroller(w: PogUi.PogWindow, r: Rect2) -> void:

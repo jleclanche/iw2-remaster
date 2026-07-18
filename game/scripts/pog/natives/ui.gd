@@ -246,6 +246,12 @@ class PogWindow extends RefCounted:
 	var entries: Array = []
 	var focused_entry := -1            ## an int index; FcListBox::FocusedEntry is
 	var selected_index := -1           ## `return *(int *)(this + 0xdc)`
+	## First visible row. FcListBox lays entry windows at scroll-adjusted
+	## offsets (negative y = scrolled off above, EntryHoveredOver @ 0x88740);
+	## we keep the row index the view starts at instead.
+	var scroll_top := 0
+	## kind == "scrollbar": the list box this bar scrolls.
+	var scroll_target: PogWindow = null
 	## Edit box / slider / radio / checkbox.
 	var value: Variant = ""
 	var max_chars := 0
@@ -1127,10 +1133,20 @@ static func sound_path(url: String) -> String:
 
 # @native gui.CreateWindow
 # @native gui.CreateStaticWindow
-# @native gui.CreateFancyBorder
-# @native gui.CreateVerticalScrollbar
 func _create_window(_t, a: Array) -> Variant:
 	return _new_window("window", a, 0)
+
+# @native gui.CreateVerticalScrollbar
+func _create_scrollbar(_t, a: Array) -> Variant:
+	# CreateVerticalScrollbar(x, y, w, h, parent, listbox, buttonratio, fn):
+	# the bar is its own control wired to the list box it scrolls -- FcListBox
+	# lays its entry windows at scroll-adjusted offsets (EntryHoveredOver
+	# @ 0x88740 hit-tests entries whose stored y has gone negative), and the
+	# bar drives that offset. Ours records the target and base_screens.gd draws
+	# the track/thumb and pages the target's scroll_top.
+	var win := _new_window("scrollbar", a, 0)
+	win.scroll_target = _win(a[5]) if a.size() > 5 else null
+	return win
 
 # @native gui.CreateFancyBorder
 func _create_fancy_border(_t, a: Array) -> Variant:
@@ -1803,7 +1819,7 @@ const _BINDINGS := {
 	"gui.createwindow": "_create_window",
 	"gui.createstaticwindow": "_create_window",
 	"gui.createfancyborder": "_create_fancy_border",
-	"gui.createverticalscrollbar": "_create_window",
+	"gui.createverticalscrollbar": "_create_scrollbar",
 	"gui.createbutton": "_create_button",
 	"gui.createbackbutton": "_create_button",
 	"gui.createradiobutton": "_create_radio",
