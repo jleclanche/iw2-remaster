@@ -494,18 +494,34 @@ func _setup_act0_scene() -> void:
 	for o in objects:
 		match str(o["name"]):
 			"Hoffer's Gap":
-				# spawn 8 km out with the Gap dead ahead, like the original
-				px = o["x"]
-				py = o["y"]
-				pz = o["z"] + 8000.0
+				# iutilities.CreatePlayer (iprelude.gd:923 -> iutilities.gd:2209):
+				# sim.PlaceRelativeTo(player, gap, 7000, 10000, -19000) -- the
+				# offset in the GAP'S OWN frame, 22.6 km out -- then
+				# sim.PointAt(player, gap). Original sim offsets map to ours as
+				# b * (x, y, -z), the convention base_interior.gd's verified
+				# autoskip standoff uses.
+				var b := _record_basis(o)
+				var off: Vector3 = b * Vector3(7000.0, 10000.0, 19000.0)
+				px = o["x"] + off.x
+				py = o["y"] + off.y
+				pz = o["z"] + off.z
+				if ship != null:
+					var to := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
+					ship.global_transform.basis = Basis.looking_at(
+						to.normalized(), Vector3.UP)
 				o["prop_collide"] = true
 			"Hoffer's Gap Entertainment Complex", \
 			"Hoffer's Gap Independent Trading Post":
 				# dockable sub-locations of the same physical structure —
 				# don't render more copies of the rocks
 				o["avatar"] = ""
+	# sim.PlaceRelativeTo(hulk, player, 3000, 4000, 5000) -- in the PLAYER'S
+	# frame (the player now faces the Gap), 7071 m out
+	var hoff := Vector3(3000.0, 4000.0, -5000.0)
+	if ship != null:
+		hoff = ship.global_transform.basis * hoff
 	objects.append({"name": "Abandoned Hulk", "category": "station",
-		"x": px + 3000.0, "y": py + 4000.0, "z": pz - 5000.0, "radius": 120.0,
+		"x": px + hoff.x, "y": py + hoff.y, "z": pz + hoff.z, "radius": 120.0,
 		"avatar": "avatars/reactor/setup.gltf",
 		"faction": "", "type": "UTIL",
 		"jumps": [], "colors": [], "node": null, "prop_collide": true})

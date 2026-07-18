@@ -357,14 +357,23 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 		entry = objects[0]
 	last_entry = entry  # the capsule exit takes this L-point's orientation
 	# the stock offset (~3.9 km) is fine beside an L-point, but Lucrecia's
-	# Base's hull alone spans 4.7 km -- a debug spawn there starts you on
-	# (or in) the structure, so back off to a 10 km standoff
+	# Base's hull alone spans 4.7 km -- a debug spawn there starts you on (or
+	# in) the structure. There is no authored debug spawn, so reuse the game's
+	# OWN base standoff: ibacktobase's autoskip arrival, PlaceRelativeTo
+	# (3000, 2000, 15000) in the base's frame pointing at it
+	# (base_interior.gd SKIP_STANDOFF).
 	var off := Vector3(2500.0, 300.0, 3000.0)
-	if str(entry.get("name", "")) == BaseInterior.BASE_NAME:
-		off = Vector3(6000.0, 2000.0, 7750.0)  # |off| ~= 10 km
+	var at_base: bool = str(entry.get("name", "")) == BaseInterior.BASE_NAME
+	if at_base:
+		off = _record_basis(entry) * Vector3(BaseInterior.SKIP_STANDOFF.x,
+				BaseInterior.SKIP_STANDOFF.y, -BaseInterior.SKIP_STANDOFF.z)
 	px = entry["x"] + off.x
 	py = entry["y"] + off.y
 	pz = entry["z"] + off.z
+	if at_base and ship != null:
+		var to := Vector3(entry["x"] - px, entry["y"] - py, entry["z"] - pz)
+		ship.global_transform.basis = Basis.looking_at(to.normalized(),
+				Vector3.UP)
 	jump_sel = 0
 	_setup_sky(stem)
 	_spawn_traffic()
