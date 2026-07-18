@@ -526,11 +526,53 @@ func _physics_process(delta: float) -> void:
 				main.on_bolt_hit(t, at, bolt["shooter"], bolt)
 				dead = true
 				break
+			if not dead and main != null:
+				var st := _bolt_vs_stations(from, node.global_position)
+				if not st.is_empty():
+					main.on_bolt_hit(st["target"], st["at"], bolt["shooter"],
+							bolt)
+					dead = true
 		if dead:
 			if is_instance_valid(node):
 				node.queue_free()
 			bolts.remove_at(i)
 		i -= 1
+
+## Stations (and collidable props) stop fire exactly like they stop ships --
+## icBullet's OnCollision is the same iiSim collide path the player hull rides.
+## The ini CollisionHull trimesh answers through the physics world where one
+## shipped (main_collision.gd HULL_LAYER); the sphere fallback covers the rest.
+func _bolt_vs_stations(from: Vector3, to: Vector3) -> Dictionary:
+	var world: World3D = main.get_world_3d()
+	if world == null:
+		# the one frame the outgoing scene still ticks after a reload
+		return {}
+	var q := PhysicsRayQueryParameters3D.create(from, to, main.HULL_LAYER)
+	var hit: Dictionary = world.direct_space_state.intersect_ray(q)
+	if not hit.is_empty():
+		# the StaticBody3D sits directly under the streamed station model
+		var st := (hit["collider"] as Node).get_parent() as Node3D
+		if st != null:
+			return {"target": st, "at": hit["position"]}
+	for o in main.objects:
+		if o["node"] == null or o.get("hull", false):
+			continue
+		if not (o["category"] == "station" or o["category"] == "gunstar"
+				or o.get("prop_collide", false)):
+			continue
+		var sn: Node3D = o["node"]
+		var spheres: Array = o.get("coll_spheres", [])
+		if spheres.is_empty():
+			if _segment_sphere(from, to, sn.global_position,
+					float(o["radius"])):
+				return {"target": sn,
+					"at": _closest_point(from, to, sn.global_position)}
+		else:
+			for s in spheres:
+				var c: Vector3 = sn.global_position + (s["c"] as Vector3)
+				if _segment_sphere(from, to, c, float(s["r"])):
+					return {"target": sn, "at": _closest_point(from, to, c)}
+	return {}
 
 func _closest_point(a: Vector3, b: Vector3, c: Vector3) -> Vector3:
 	var ab := b - a

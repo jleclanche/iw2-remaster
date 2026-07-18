@@ -728,6 +728,21 @@ func _step_beam(b: Dictionary, m: Dictionary, base: Transform3D, armed: bool,
 			continue
 		hit_dist = along
 		hit = v
+	# a station wall is a nearer contact like any other: the beam shortens to
+	# it and whatever was behind it takes nothing (same OnCollision
+	# closest-contact rule; the wall itself takes no damage here)
+	# get_world_3d() is null for the one frame the outgoing scene still ticks
+	# after a reload
+	if main != null and main.get_world_3d() != null:
+		var wq := PhysicsRayQueryParameters3D.create(from,
+				from + dir * hit_dist, main.HULL_LAYER)
+		var wall: Dictionary = main.get_world_3d() \
+				.direct_space_state.intersect_ray(wq)
+		if not wall.is_empty():
+			var wall_d: float = from.distance_to(wall["position"])
+			if wall_d < hit_dist:
+				hit_dist = wall_d
+				hit = null
 	if hit != null:
 		m["ramp"] = hit_dist / maxf(float(m["length"]), 1.0)
 		var at := from + dir * hit_dist
