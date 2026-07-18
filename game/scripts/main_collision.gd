@@ -87,11 +87,20 @@ func _attach_collision_hull(o: Dictionary, model: Node3D) -> bool:
 	for t: Array in tris:
 		for idx in t:
 			var p: Array = pts[int(idx)]
-			# LW -> Godot: negate Z, the model exporter's convention
-			faces[n] = Vector3(float(p[0]), float(p[1]), -float(p[2]))
+			# the JSON is ALREADY in the glTF/engine frame: tools/iw2/lwo.py
+			# negates Z at export. Negating again here mirrored every hull
+			# (Lucrecia's Base collision sat 5 km behind the visible base;
+			# Hoffer's Gap was hollow where its walls are and solid where
+			# they are not -- fly in, never fly out).
+			faces[n] = Vector3(float(p[0]), float(p[1]), float(p[2]))
 			n += 1
 	var shape := ConcavePolygonShape3D.new()
 	shape.set_faces(faces)
+	# solid from BOTH sides. One-sided walls depend on triangle winding --
+	# which the export's handedness flip inverts -- and quietly wave through
+	# any ship that ends up inside; the probe orients the response normal
+	# toward the ship anyway, so two-sided costs nothing.
+	shape.backface_collision = true
 	var body := StaticBody3D.new()
 	body.collision_layer = HULL_LAYER
 	body.collision_mask = 0
@@ -114,11 +123,15 @@ func _collide_hull(o: Dictionary) -> void:
 	if ship.global_position.distance_squared_to(node.global_position) \
 			> (r + 4000.0) * (r + 4000.0):
 		return
+	# null for the one frame the outgoing scene still ticks after a reload
+	var world := get_world_3d()
+	if world == null:
+		return
 	var params := PhysicsShapeQueryParameters3D.new()
 	params.shape = _probe_shape
 	params.transform = Transform3D(Basis(), ship.global_position)
 	params.collision_mask = HULL_LAYER
-	var hit: Dictionary = get_world_3d().direct_space_state.get_rest_info(params)
+	var hit: Dictionary = world.direct_space_state.get_rest_info(params)
 	if hit.is_empty():
 		return
 	var point: Vector3 = hit["point"]
