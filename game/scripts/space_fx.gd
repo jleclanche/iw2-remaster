@@ -362,6 +362,17 @@ var _ct_trails: Dictionary = {}   # ship -> {points: Array, grace: float}
 var _ct_emit := 0.0
 var _ct_ramp := 0.0
 
+# The age/decay pass (FUN_100e5280) also SUBTRACTS THE WORLD DELTA from every
+# stored point each frame -- the original's camera-relative world moves the
+# same way main._fold_motion recentres ours. Without this the stored points
+# ride the fold: the player's ladder glues itself to the ship and swims with
+# every burn, and other ships' lines end up hundreds of metres from the ship
+# that emitted them. (This was the "buggy rails".)
+func shift_world(offset: Vector3) -> void:
+	for node in _ct_trails:
+		for p: Dictionary in (_ct_trails[node]["points"] as Array):
+			p["pos"] = (p["pos"] as Vector3) - offset
+
 func _ensure_contrails() -> void:
 	if _ct_mi != null:
 		return

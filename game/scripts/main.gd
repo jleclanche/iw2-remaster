@@ -1024,9 +1024,12 @@ func _update_contrails() -> void:
 	for a in ai_ships:
 		if not is_instance_valid(a):
 			continue
+		# per-contact IFF colour (the point's [7..9] floats read the colour
+		# FUN_100e8530 wrote at ship +0x1c) -- the same table as the brackets
 		ships.append({"node": a, "vel": a.velocity, "player": false,
 			"width": 0.0, "lds": false,
-			"col": Hud.RED if _is_hostile(a) else Hud.GREEN})
+			"col": hud._contact_color(_is_hostile(a), "traffic",
+					str(a.faction))})
 	space_fx.update_contrails(get_physics_process_delta_time(), ships,
 		docked_at != "" or jump_state >= 3)
 
@@ -3567,6 +3570,7 @@ func _fold_motion() -> void:
 		a.global_position -= p
 	for sw in _shockwaves:
 		sw["pos"] = (sw["pos"] as Vector3) - p
+	space_fx.shift_world(p)  # the stored contrail points (FUN_100e5280)
 
 func _stream_objects() -> void:
 	# the original funnels only the nearest L-point
