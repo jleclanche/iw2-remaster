@@ -245,35 +245,32 @@ var muzzleshot := false  # fire the comsec light PBC and photograph it
 var contactcheck := false  # spawn into each menu system, print contact_list()
 var srgbprobe := false     # render known-value quads, verify colour pipeline
 var sunshot := false       # photograph each sun from the spawn point
+var fireprobe := false     # fire the primary once and report the weapon state
+var mechslow := false      # the full mech suite at real time (the slow
+                           # autopilot steps included); --mechcheck is the
+                           # time-scaled everyday variant
 
 func _ready() -> void:
-	demo = "--demo" in OS.get_cmdline_user_args()
-	motioncheck = "--motioncheck" in OS.get_cmdline_user_args()
-	jumpcheck = "--jumpcheck" in OS.get_cmdline_user_args()
-	uicheck = "--uicheck" in OS.get_cmdline_user_args()
-	mechcheck = "--mechcheck" in OS.get_cmdline_user_args()
-	campcheck = "--campcheck" in OS.get_cmdline_user_args()
-	newgamecheck = "--newgamecheck" in OS.get_cmdline_user_args()
-	newgametest = "--newgametest" in OS.get_cmdline_user_args()
-	geogcheck = "--geogcheck" in OS.get_cmdline_user_args()
-	basecheck = "--basecheck" in OS.get_cmdline_user_args()
-	commshot = "--commshot" in OS.get_cmdline_user_args()
-	muzzleshot = "--muzzleshot" in OS.get_cmdline_user_args()
-	contactcheck = "--contactcheck" in OS.get_cmdline_user_args()
-	srgbprobe = "--srgbprobe" in OS.get_cmdline_user_args()
-	sunshot = "--sunshot" in OS.get_cmdline_user_args()
-	use_pog = "--pog" in OS.get_cmdline_user_args()
-	use_port = "--port" in OS.get_cmdline_user_args()
-	for arg in OS.get_cmdline_user_args():
+	# every harness flag is a member var named after its --flag; a new probe
+	# is one string here plus its `var` declaration
+	var args := OS.get_cmdline_user_args()
+	demo = "--demo" in args
+	for f: String in ["motioncheck", "jumpcheck", "uicheck", "mechcheck",
+			"mechslow", "campcheck", "newgamecheck", "newgametest",
+			"geogcheck", "basecheck", "commshot", "muzzleshot",
+			"contactcheck", "srgbprobe", "sunshot", "fireprobe"]:
+		var on: bool = ("--" + f) in args
+		set(f, on)
+		if on:
+			demo = true
+	use_pog = "--pog" in args
+	use_port = "--port" in args
+	for arg in args:
 		# the menu's DEBUG START, reachable from the command line:
 		# --debugship=heavy_corvette_prefitted
 		if str(arg).begins_with("--debugship="):
 			_debug_request = "sims/ships/player/%s.ini" \
 					% str(arg).get_slice("=", 1)
-	if motioncheck or jumpcheck or uicheck or mechcheck or campcheck or geogcheck \
-			or newgamecheck or basecheck or newgametest or commshot or muzzleshot \
-			or contactcheck or srgbprobe or sunshot:
-		demo = true
 	if demo:
 		checks = CheckRunner.new()
 		checks.m = self
@@ -293,6 +290,13 @@ func _ready() -> void:
 	if _debug_request != "":
 		player_ship_ini = _debug_request
 		debug_all_weapons = true
+		# no act is running in a debug start: -1 is what
+		# iJafsScript.JafsFunctionalityAvailable reads as "free flight, Jafs
+		# enabled" (it then creates g_jafs_menu_option_enabled itself)
+		pog_std.globals["g_current_act"] = -1
+		# the commodity table normally comes up with the act; a debug start
+		# runs the original initialiser itself so pods have cargo to carry
+		pog.start("icargoscript", "Initialise")
 	_build_environment()
 	_spawn_player()
 	# the two iiSimField singletons, made once per game like the original's
@@ -302,8 +306,9 @@ func _ready() -> void:
 	fields.main = self
 	add_child(fields)
 	if _debug_request != "":
-		# the debug start begins on the base's doorstep, traffic in reach
-		_load_system("hoffers_wake", "Lucrecia's Base")
+		_load_system(_debug_system,
+				_debug_at if _debug_at != "" \
+				else (START_NAME if _debug_system == START_SYSTEM else ""))
 	else:
 		_load_system(START_SYSTEM, START_NAME)
 	hud = Hud.new()
@@ -548,16 +553,28 @@ func _fit_systems(ini_path: String) -> void:
 static var _restarting := false
 
 # --- debug start -------------------------------------------------------------
-# The menu's DEBUG START: pick any player hull, spawn beside Lucrecia's Base
-# with every weapon type loaded, front end skipped. The request rides a static
+# The menu's DEBUG START: pick any player hull and a start location, spawn
+# with every weapon type loaded, front end skipped. The request rides statics
 # across the scene reload exactly like _restarting.
+#
+# NB Lucrecia's Base is a legitimate but WEAPONS-DEAD start: the map's sun
+# record gives Hoffer's Wake Alpha (the red giant) radius 1.7508e11 m
+# (ParseSunInfo 0x1004e5a0 SetRadius's it verbatim), and icSun::Think
+# (0x1006ab90) heats the player at t^2 * 10000 (0x1011af54) * 10 (0x101190c0)
+# within radius * 0.5 (0x1011af58) of the surface -- the whole inner nebula.
+# External heat pegs at the 500 threshold and iiWeapon's heat gate refuses to
+# fire. That is the sanctuary: nothing can shoot near the base.
 static var _debug_request := ""   # a player ship ini path; "" = off
+static var _debug_system := "hoffers_wake"
+static var _debug_at := ""        # arrive-beside entity; "" = system default
 var debug_all_weapons := false
 
-func debug_start(ini: String) -> void:
+func debug_start(ini: String, system_stem := "hoffers_wake", at := "") -> void:
 	if pog_rt != null:
 		pog_rt.halt()
 	_debug_request = ini
+	_debug_system = system_stem
+	_debug_at = at
 	_restarting = false
 	get_tree().paused = false
 	get_tree().reload_current_scene()
@@ -1491,6 +1508,11 @@ func _spawn_traffic() -> void:
 		var fmodel := _load_gltf(ai.avatar_path)
 		ai.add_child(fmodel)
 		ShipEffects.attach(ai, fmodel)
+		# the authored hauler: real hull/armour/dims (and the dramatic death
+		# its 133 m size buys); its clamps carry pods that spill on death
+		ai.setup_ini("sims/ships/utility/freighter.ini", fmodel)
+		ai.ctype = "Freighter"
+		ai.carried_pods = 2 + (randi() % 3)
 		ai.position = Vector3(local[0]) + Vector3(1500 + i * 900, i * 400, -2000)
 		for w in local:
 			ai.waypoints.append(Vector3(w))
@@ -1612,10 +1634,40 @@ func _finish_kill(ai: AiShip) -> void:
 		return
 	if towed == ai:
 		_release_tow(false)
+	if ai.carried_pods > 0:
+		_spill_pods(ai)
 	ai_ships.erase(ai)
 	if target_ai == ai:
 		target_ai = null
 	ai.queue_free()
+
+# iiSim::DetachAndFlingChild (0x1007be50): DoFinalExplosion detaches every
+# surviving child subsim and flings it -- for a freighter (nine cargo clamps,
+# sims/ships/utility/freighter.ini [Subsims]) the children are its racked
+# cargo pods, so a dying hauler spills them as free sims. Pod CONTENT in the
+# original comes from iCargoScript's location-weighted generators
+# (FindCargoForLocation / CheapCargoGenerator...); the uniform pick over the
+# registered commodity table here is a stand-in for that weighting.
+var _pod_seq := 0
+
+func _spill_pods(ai: AiShip) -> void:
+	if pog_world == null:
+		return
+	for i in ai.carried_pods:
+		_pod_seq += 1
+		var s = pog_world._create_ship("ini:/sims/ships/utility/cargo_pod",
+				"spilled_pod_%d" % _pod_seq)
+		if s == null or s.node == null:
+			return
+		var dir := ExplosionFx._unit_vector()
+		(s.node as Node3D).global_position = ai.global_position \
+				+ dir * maxf(ai.radius * 0.5, 30.0)
+		# flung like the debris: radius * 0.4 (0x10117558), riding the wreck's
+		# velocity
+		(s.node as Node3D).velocity = ai.velocity + dir * ai.radius * 0.4
+		if pog_econ != null and not pog_econ.cargo_types.is_empty():
+			var ids: Array = pog_econ.cargo_types.keys()
+			pog_std._bag(s)["cargo"] = ids[randi() % ids.size()]
 
 # --- reactor shockwaves ------------------------------------------------------
 # icShockwave (property map FUN_10077290: initial_damage_rate +0x1d8,
@@ -2227,6 +2279,7 @@ func _try_dock() -> void:
 	if base_iface != null and str(near["name"]) == BaseInterior.BASE_NAME \
 			and base_iface.dockable():
 		_set_autopilot(0)
+		_deliver_towed_pod()
 		base_iface.enter()
 		return
 	docked_at = near["name"]
@@ -2235,8 +2288,36 @@ func _try_dock() -> void:
 	audio.play("audio/sfx/dock.wav", -4.0)
 	audio.music("ambient")
 	hud.log_msg("DOCKED: %s" % str(near["name"]).to_upper())
-	if "base" in docked_at.to_lower():
+	# only THE base raises the hangar interior (the old substring test also
+	# matched every "...Base" station in the map)
+	if docked_at == BaseInterior.BASE_NAME:
+		_deliver_towed_pod()
 		_enter_base()
+
+## Docking at LUCRECIA'S BASE with a pod in tow unloads it into the player's
+## stockpile -- the same iinventory.Add + read of the pod's "cargo" property
+## that iJafsScript.CollectPods performs when the Jafs unloads there. Only the
+## base: hauling a pod to some corporate station credits you nothing (their
+## clamps are not your loading dock), and the tow simply stays attached.
+func _deliver_towed_pod() -> void:
+	if towed == null or not is_instance_valid(towed) or pog_world == null:
+		return
+	var pod := towed
+	_release_tow(false)
+	var s = pog_world._wrap_ship(pod)
+	var cargo := int(pog_std._bag(s).get("cargo", 0))
+	if cargo != 0 and pog_econ != null:
+		pog_econ.player_inv().add(cargo, 1)
+		var label := "CARGO"
+		var c = pog_econ.cargo_types.get(cargo)
+		if c != null:
+			label = str(pog_econ._text(c.name))
+		hud.log_msg("CARGO UNLOADED: %s" % label.to_upper())
+	# the pod itself stays with the station
+	s.dead = true
+	pog_world.sims.erase(s.name)
+	ai_ships.erase(pod)
+	pod.queue_free()
 
 func _enter_base() -> void:
 	# the original's drydock hangar interior (avatars/base), placed so the
@@ -3710,7 +3791,10 @@ func _fold_motion() -> void:
 	for fx in get_tree().get_nodes_in_group("worldfx"):
 		fx.shift_world(p)
 	for a in ai_ships:
-		a.global_position -= p
+		# a docked child (a pod racked on the Jafs) rides its parent's
+		# transform; shifting it too would double-fold it
+		if not ((a as Node).get_parent() is AiShip):
+			a.global_position -= p
 	for sw in _shockwaves:
 		sw["pos"] = (sw["pos"] as Vector3) - p
 	space_fx.shift_world(p)  # the stored contrail points (FUN_100e5280)

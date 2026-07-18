@@ -42,6 +42,10 @@ class PogOrder extends RefCounted:
 	## which is where the order completes -- so a station and a planet break off
 	## at wildly different ranges. 0 until the order is given.
 	var marker := 0.0
+	## GiveDockOrderWithDockport's port: when the approach completes the mover
+	## MATES it (icAIDockAgent's endgame -- TryToDock -> OnDock); a plain
+	## approach leaves this null and just arrives.
+	var dockport = null            ## PogEntities.PogSubsim
 
 
 func register(v, w: PogWorld) -> void:
@@ -181,7 +185,15 @@ func _ai_approach(_t, a: Array) -> Variant:
 	if o == null:
 		return 0
 	o.kind = "approach"
-	o.target = world._as_sim(a[1]) if a.size() > 1 else null
+	o.dockport = null
+	var tgt = a[1] if a.size() > 1 else null
+	if tgt is PogEntities.PogSubsim:
+		# GiveDockOrderWithDockport hands the PORT, not its owner: fly to the
+		# owner, and mate that port on arrival (_ai_is_complete)
+		o.dockport = tgt
+		o.target = tgt.owner
+	else:
+		o.target = world._as_sim(tgt)
 	o.complete = false
 	# icAIServices::DefaultApproach (iwar2 @ 0x10056330) builds the order's cData
 	# with radius = InnerMarkerRadius(ship, target). The ship flies to that
@@ -297,6 +309,26 @@ func _ai_is_complete(_t, a: Array) -> Variant:
 					o.complete = true
 					s.node.waypoints.clear()
 					s.node.set_speed = 0.0
+					if o.dockport != null:
+						# the dock order's endgame: TryToDock -> OnDock. The
+						# mover berths on the ordered port and rides its host
+						# as an attached child (FiSim::AttachChild), which is
+						# what the Jafs loading loop polls via isim.IsDocked.
+						o.dockport.docked = s
+						s.docked_to = o.target
+						var host = o.target.node
+						if host != null and is_instance_valid(host) \
+								and s.node.get_parent() != host:
+							var xf: Transform3D = s.node.global_transform
+							s.node.get_parent().remove_child(s.node)
+							host.add_child(s.node)
+							s.node.global_transform = xf
+							s.node.global_position = host.global_position \
+									+ host.global_transform.basis.y \
+									* (o.target.radius() + s.radius())
+						if s.node is AiShip:
+							(s.node as AiShip).behavior = "towed"
+						s.node.velocity = Vector3.ZERO
 				else:
 					_steer_to_marker(s, o)   # the target may be moving
 		"attack":

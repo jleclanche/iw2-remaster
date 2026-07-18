@@ -58,6 +58,10 @@ class PogSim extends RefCounted:
 	var parent: PogSim = null
 	var group = null                   ## PogFactions.PogGroup
 	var docking_lock: PogSim = null    ## isim.SetDockingLock: the only legal berth
+	## iiSim::IsDockedTo state for NON-player sims: who this sim is berthed on
+	## (set by idockport.Dock and by a completed dock order). The player's dock
+	## state stays game.docked_at.
+	var docked_to: PogSim = null
 	## sim.AddSubsim (sim.dll @ 0x10004e90): subsims fitted onto a LIVE sim.
 	var fitted: Array = []             ## of PogEntities.PogSubsim
 	## sim.Create on an ini:/sims/weapons/* path: the missiles.gd record behind
@@ -952,12 +956,23 @@ func _i_sims_in_radius(_t, a: Array) -> Variant:
 	if centre == null or game == null:
 		return []
 	var r := float(a[1])
+	# the third argument is an IeSimType bitmask (ijafsscript passes 2048 =
+	# T_CargoPod to find loose pods); 0 = no filter. Some aliases put other
+	# things at a[2] (SimsInRadiusOfFaction: the faction) -- ints only.
+	var mask := 0
+	if a.size() > 2 and (a[2] is int or a[2] is float):
+		mask = int(a[2])
 	var origin := centre.abs_pos()
 	var out: Array = []
 	for ai in game.ai_ships:
-		if is_instance_valid(ai) \
-				and (player_pos() + ai.position).distance_to(origin) <= r:
-			out.append(_wrap_ship(ai))
+		if not is_instance_valid(ai):
+			continue
+		if (player_pos() + ai.position).distance_to(origin) > r:
+			continue
+		var w := _wrap_ship(ai)
+		if mask != 0 and (sim_type_of(w) & mask) == 0:
+			continue
+		out.append(w)
 	return out
 
 # @native isim.SimsInRadiusFromSet
@@ -994,7 +1009,8 @@ func _i_sims_in_cone(_t, a: Array) -> Variant:
 	var lim := cos(deg_to_rad(float(a[2]) if a.size() > 2 else 45.0))
 	var origin := centre.abs_pos()
 	var out: Array = []
-	for s in _i_sims_in_radius(_t, a):
+	# NB a[2] here is the cone half-angle, NOT the radius query's type mask
+	for s in _i_sims_in_radius(_t, [a[0], a[1]]):
 		var to: Vector3 = s.abs_pos() - origin
 		if to.length_squared() > 0.001 and fwd.dot(to.normalized()) >= lim:
 			out.append(s)
@@ -1038,38 +1054,78 @@ func _i_attacked(_t, _a: Array) -> Variant:
 func _i_world(_t, _a: Array) -> Variant:
 	return game.system_name if game != null else ""
 
-## The engine's IeSimType is a bit flag, and the scripts compare against the raw
-## number (isim.Type(s) == 131072). The ship INIs name the same thing in words
-## ("T_CommandSection"), so map between them here.
+## The engine's IeSimType, EXTRACTED: iiSim::Type (0x10078df0) returns the
+## ordinal of the name in the m_type_names table (.data 0x1015d8e4..0x1015d960,
+## 32 entries T_None..T_PowerUp), and the script-facing flag is
+## 1 << (ordinal - 1) with T_None = 0 -- confirmed twice over by the bytecode
+## comparisons: T_CommandSection ordinal 18 -> 131072, T_CargoPod ordinal 12
+## -> 2048 (what ijafsscript's pod scans test).
 const SIM_TYPE := {
-	"T_CommandSection": 1 << 17,   # 131072, the hull the campaign opens in
-	"T_Fighter": 1 << 0,
-	"T_Corvette": 1 << 1,
-	"T_Freighter": 1 << 2,
-	"T_Transport": 1 << 3,
-	"T_Station": 1 << 4,
-	"T_Alien": 1 << 5,
-	"T_Utility": 1 << 6,
-	"T_Tug": 1 << 7,
+	"T_None": 0,
+	"T_Star": 1 << 0,
+	"T_Planet": 1 << 1,
+	"T_Nebula": 1 << 2,
+	"T_Waypoint": 1 << 3,
+	"T_LagrangePoint": 1 << 4,
+	"T_Probe": 1 << 5,
+	"T_Weapon": 1 << 6,
+	"T_Missile": 1 << 7,
+	"T_Mine": 1 << 8,
+	"T_Dolly": 1 << 9,
+	"T_Asteroid": 1 << 10,
+	"T_CargoPod": 1 << 11,        # 2048
+	"T_Gunstar": 1 << 12,
+	"T_Station": 1 << 13,
+	"T_BioBomber": 1 << 14,
+	"T_Drone": 1 << 15,
+	"T_Waldo": 1 << 16,
+	"T_CommandSection": 1 << 17,  # 131072
+	"T_Utility": 1 << 18,
+	"T_Passenger": 1 << 19,
+	"T_Fighter": 1 << 20,
+	"T_Tug": 1 << 21,
+	"T_Patcom": 1 << 22,
+	"T_Interceptor": 1 << 23,
+	"T_Corvette": 1 << 24,
+	"T_Freighter": 1 << 25,
+	"T_Destroyer": 1 << 26,
+	"T_Cruiser": 1 << 27,
+	"T_Carrier": 1 << 28,
+	"T_Alien": 1 << 29,
+	"T_PowerUp": 1 << 30,
 }
+
+func sim_type_of(s: PogSim) -> int:
+	if s == null:
+		return 0
+	if s.node != null and is_instance_valid(s.node) and "ctype" in s.node:
+		var t := int(SIM_TYPE.get("T_" + String(s.node.ctype), 0))
+		if t != 0:
+			return t
+	# no node or an untyped one: the ini record's authored type
+	if not s.ini.is_empty():
+		var rec: Dictionary = ship_db.get(PogWorld.ini_key(s.ini), {})
+		return int(SIM_TYPE.get(str((rec.get("properties", {}) as Dictionary)
+				.get("type", "")), 0))
+	return 0
 
 # @native isim.Type
 func _i_type(_t, a: Array) -> Variant:
-	# NB only T_CommandSection is confirmed against the bytecode (131072); the
-	# rest of the flags are placeholders until we read the enum out of the
-	# engine. Returning an int either way keeps the scripts' comparisons legal.
-	var s := _as_sim(a[0])
-	if s == null or s.node == null or not is_instance_valid(s.node):
-		return 0
-	if not ("ctype" in s.node):
-		return 0
-	return int(SIM_TYPE.get("T_" + String(s.node.ctype), 0))
+	return sim_type_of(_as_sim(a[0]))
 
 # @native isim.IsDocked
 # @native isim.IsDockedTo
 # @native isim.IsDockedToStructure
-func _i_is_docked(_t, _a: Array) -> Variant:
-	return 1 if (game != null and game.docked_at != "") else 0
+func _i_is_docked(_t, a: Array) -> Variant:
+	# per-SIM, not per-player: the Jafs loading loop polls is_docked(pod) to
+	# see a pod berth on the Jafs (the old player-only answer never resolved)
+	var s := _as_sim(a[0] if a.size() > 0 else null)
+	if s == null or s.is_player:
+		return 1 if (game != null and game.docked_at != "") else 0
+	var to := _as_sim(a[1]) if a.size() > 1 else null
+	if to != null:
+		return 1 if s.docked_to == to else 0
+	return 1 if s.docked_to != null else 0
 
 # @native isim.StartExplosion
 # @native isim.CreateExplosion

@@ -188,17 +188,19 @@ static func mags_for(sys: ShipSystems) -> Array:
 		return out
 	for s in sys.systems:
 		var stem := str(s.get("template", "")).get_file().get_basename()
-		if not MAG_SPECS.has(stem):
-			continue
-		var m: Dictionary = MAG_SPECS[stem]
-		out.append({"stem": stem, "spec": SPECS[m["projectile"]],
-			"projectile": String(m["projectile"]),
-			"launch_speed": float(m["launch_speed"]),
-			"ammo": int(m["max_ammo"]), "max_ammo": int(m["max_ammo"]),
-			"refire_delay": float(m["refire_delay"]), "clock": 0.0,
-			"cm": bool(m.get("cm", false)), "ldsi": bool(m.get("ldsi", false)),
-			"rocket": bool(m.get("rocket", false)), "sys": s})
+		if MAG_SPECS.has(stem):
+			out.append(_mag_record(stem, s))
 	return out
+
+static func _mag_record(stem: String, sys_ref: Dictionary) -> Dictionary:
+	var m: Dictionary = MAG_SPECS[stem]
+	return {"stem": stem, "spec": SPECS[m["projectile"]],
+		"projectile": String(m["projectile"]),
+		"launch_speed": float(m["launch_speed"]),
+		"ammo": int(m["max_ammo"]), "max_ammo": int(m["max_ammo"]),
+		"refire_delay": float(m["refire_delay"]), "clock": 0.0,
+		"cm": bool(m.get("cm", false)), "ldsi": bool(m.get("ldsi", false)),
+		"rocket": bool(m.get("rocket", false)), "sys": sys_ref}
 
 ## The debug start's loadout: one full magazine of every player weapon type,
 ## no fitted subsim behind them (the empty "sys" reads efficiency 1.0).
@@ -207,14 +209,7 @@ static func mags_all() -> Array:
 	for stem in ["seeker_missile_magazine", "deadshot_missile_magazine",
 			"harrower_missile_magazine", "ldsi_missile_magazine",
 			"decoy_magazine", "flare_magazine", "gnat_rocket_pod"]:
-		var m: Dictionary = MAG_SPECS[stem]
-		out.append({"stem": stem, "spec": SPECS[m["projectile"]],
-			"projectile": String(m["projectile"]),
-			"launch_speed": float(m["launch_speed"]),
-			"ammo": int(m["max_ammo"]), "max_ammo": int(m["max_ammo"]),
-			"refire_delay": float(m["refire_delay"]), "clock": 0.0,
-			"cm": bool(m.get("cm", false)), "ldsi": bool(m.get("ldsi", false)),
-			"rocket": bool(m.get("rocket", false)), "sys": {}})
+		out.append(_mag_record(stem, {}))
 	return out
 
 static func mag_ready(mag: Dictionary) -> bool:

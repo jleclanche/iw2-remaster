@@ -1674,6 +1674,13 @@ func _menu_select() -> void:
 				# APPROACH/FORMATE/PURSUIT/DOCK: engine modes 2/1/4/3, which
 				# in main.ap_mode's numbering are 1/2/4/3
 				main.ap_mode = [1, 2, 4, 3][i]
+		"hud_menu_call_jafs":
+			# the menu item runs ijafsscript.CallJafs -- the POG loop that
+			# summons the SNRV, auto-tags the valuable pods if none are
+			# tagged, collects them and flies them home (the script gates
+			# itself on jafs availability/active flags)
+			if main.pog != null:
+				main.pog.start("ijafsscript", "CallJafs")
 	if kind in ["cmd", "toggle", "carousel"]:
 		menu_active = false
 		menu_focus = MENU_ROOT
@@ -2220,10 +2227,9 @@ func _navshot_pin() -> void:
 # @element icHUDBrackets
 #   Draw = FUN_100e37f0. Corner brackets on the projected bounding box, the
 #   target's slam-in, and the waypoint / L-point / unidentified marks.
-# @element-stub icHUDContrails
-#   flux.ini lists it between Brackets and the TargetMFD; it streaks the
-#   velocity trails of nearby contacts. Not built -- its Draw was not reversed
-#   and inventing the trail geometry would be a guess.
+# (icHUDContrails -- the velocity trails flux.ini lists between Brackets and
+#  the TargetMFD -- is BUILT: Update/Draw FUN_100e4c80/FUN_100e4e60 were
+#  recovered from raw bytes and live in space_fx.gd, @element marker there.)
 
 const BRK_ACQUIRE := 0.35   # DAT_1011d9dc: target-acquire animation length
 const BRK_SLAM := 70.0      # DAT_1011d9e0: how far outside the bracket starts

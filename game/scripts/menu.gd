@@ -113,6 +113,7 @@ const SYSTEMS := [
 ]
 
 var main: Node3D
+var _debug_ship := ""  # ship picked in the DEBUG START flow, awaiting a place
 var mode := "main"  # main | systems
 var sel := 0
 var launched := false
@@ -392,6 +393,12 @@ func _items() -> Array:
 			out.append([s[1].to_upper(), true])
 		out.append(["< BACK", true])
 		return out
+	if mode == "debug_where":
+		var out: Array = []
+		for s in SYSTEMS:
+			out.append([s[1].to_upper(), true])
+		out.append(["< BACK", true])
+		return out
 	if launched:
 		return [["RESUME", true], ["NEW GAME", true], ["SAVE GAME", false],
 			["SELECT SYSTEM", true], ["DEBUG START", true], ["QUIT", true]]
@@ -425,53 +432,57 @@ func _activate() -> void:
 			mode = "main"
 			sel = 0
 			return
+		main.audio.play("audio/gui/expand.wav", -8.0)
+		_debug_ship = str((SHIPS[sel] as Array)[0])
+		mode = "debug_where"
+		sel = 0
+		return
+	if mode == "debug_where":
+		if sel == items.size() - 1:
+			main.audio.play("audio/gui/contract.wav", -8.0)
+			mode = "ships"
+			sel = 0
+			return
 		main.audio.play("audio/gui/confirm.wav", -6.0)
-		# the scene reloads with the chosen hull beside Lucrecia's Base
-		main.debug_start(str((SHIPS[sel] as Array)[0]))
+		var where: Array = SYSTEMS[sel]
+		# the scene reloads with the chosen hull at the chosen spot. Mind that
+		# Lucrecia's Base is inside the red giant's heat envelope: weapons are
+		# heat-locked there, exactly like the original's sanctuary.
+		main.debug_start(_debug_ship, str(where[0]),
+				str(where[2]) if where.size() > 2 else "")
 		return
-	if launched:
-		match sel:
-			0:  # RESUME
-				main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
-				close()
-			1:  # NEW GAME -- restart the campaign from the top
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-				close()
-				main.restart_campaign()
-			3:  # SELECT SYSTEM
-				main.audio.play("audio/gui/expand.wav", -8.0)
-				mode = "systems"
-				sel = 0
-			4:  # DEBUG START: ship picker
-				main.audio.play("audio/gui/expand.wav", -8.0)
-				mode = "ships"
-				sel = 0
-			5:  # QUIT
-				get_tree().quit()
-		return
-	match sel:
-		0:  # START NEW GAME
+	# both top menus dispatch by LABEL: inserting an item cannot silently
+	# renumber its neighbours (which bit us twice)
+	match str(items[sel][0]):
+		"RESUME":
+			main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
+			close()
+		"NEW GAME":  # restart the campaign from the top
+			main.audio.play("audio/gui/confirm.wav", -6.0)
+			close()
+			main.restart_campaign()
+		"START NEW GAME":
 			main.audio.play("audio/gui/confirm.wav", -6.0)
 			launched = true
 			close()
 			main.start_campaign()
-		2:  # INSTANT ACTION: free flight in the commissioned tug
+		"INSTANT ACTION":  # free flight in the commissioned tug
 			main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
 			launched = true
 			close()
-		3:  # EXTRAS: system select
+		"SELECT SYSTEM", "EXTRAS":
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "systems"
 			sel = 0
-		4:  # DEBUG START: ship picker
+		"DEBUG START":  # ship picker, then a start location
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "ships"
 			sel = 0
-		7:  # MOVIES: replay the intro
+		"MOVIES":  # replay the intro
 			main.audio.play("audio/gui/confirm.wav", -6.0)
 			visible = false
 			main._play_movie("intro", func() -> void: pass)
-		9:
+		"QUIT":
 			get_tree().quit()
 
 func handle(event: InputEvent) -> void:
@@ -491,7 +502,10 @@ func handle(event: InputEvent) -> void:
 				# Escape backs out of a screen. It never quits the game: that
 				# is what the QUIT item is for, and losing a campaign to a
 				# stray keypress is not a feature.
-				if mode == "systems" or mode == "ships":
+				if mode == "debug_where":
+					mode = "ships"
+					sel = 0
+				elif mode == "systems" or mode == "ships":
 					mode = "main"
 					sel = 0
 				elif launched:

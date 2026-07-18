@@ -295,3 +295,40 @@ count `+0x50` (Credit `@ 0x100a1380`), pod piracy count `+0x78` and value
 (`iwar2.dll @ 0x100a1c60`: sims in the player's `wingmen_group` resolve to
 score id 0), which never triggers for these natives because the wrapper always
 passes the player ship's own id.
+
+## The cargo loop (Jafs), now live end to end
+
+ijafsscript's bytecode always contained the whole loop -- CallJafs ->
+SummonJafs (spawns the SNRV, auto-tags the most valuable pods), the
+irreducible loading loop (approach each pod, dock it to one of twelve
+script-built cargo clamps), jafs_goes_home (dock cutscene at Lucrecia's
+Base), CollectPods (reads each pod's "cargo" int property ->
+iinventory.Add + iscore.AddPiracy + g_piracy_rating). It ran blind against
+five native gaps, now fixed:
+
+1. HUD wiring: hud_menu_call_jafs now starts ijafsscript.CallJafs
+   (hud.gd _menu_select). The script gates itself on availability; with no
+   act running (g_current_act == -1, the debug start seeds it) it
+   self-enables, exactly as authored.
+2. isim.Type / SimsInRadius: the full IeSimType enum is EXTRACTED --
+   iiSim::Type (0x10078df0) indexes m_type_names (.data 0x1015d8e4..
+   0x1015d960, 32 names T_None..T_PowerUp) and the script-facing flag is
+   1 << (ordinal-1): T_CargoPod 2048, T_CommandSection 131072, both
+   confirmed by bytecode comparisons. SimsInRadius now honours its type
+   mask (with care: SimsInCone/OfFaction put other things at a[2]).
+3. isim.IsDocked(sim[, to]) answers for the ARGUMENT (PogSim.docked_to),
+   not the player; the Jafs loading loop polls it per pod.
+4. iai.GiveDockOrderWithDockport carries the port; on approach completion
+   the mover MATES it (icAIDockAgent's endgame): port.docked, docked_to,
+   and the pod node reparents under the host to ride it rigidly
+   (FiSim::AttachChild). main._fold_motion skips child-parented sims.
+5. Ambient pods: a dying freighter spills its racked pods
+   (DetachAndFlingChild -> main._spill_pods; traffic freighters now carry
+   2-4 and fit the authored freighter.ini). Pod content: uniform pick over
+   the registered commodity table -- a STAND-IN for iCargoScript's
+   location-weighted generators (marked); the debug start runs
+   icargoscript.Initialise so the table exists outside the campaign.
+
+The player can also haul a pod personally: tow it (see Docking, towing and
+mass) to LUCRECIA'S BASE and dock -- _deliver_towed_pod does the same
+iinventory.Add read CollectPods would. Other stations credit nothing.

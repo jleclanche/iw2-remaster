@@ -174,7 +174,7 @@ extends RefCounted
 # @element-stub icCPU -- covered-elsewhere: ship_systems.gd CPU group
 # @element-stub icCapacitor -- covered-elsewhere: ship_systems.gd capacitor pool
 # @element-stub icCrew -- covered-elsewhere: a subsim in ship_systems.gd's generic INI-driven damage model (nps_crew.ini); no crew-specific behaviour was recovered
-# @element-stub icDockPort -- covered-elsewhere: idockport natives (natives/entities.gd) + main.gd docking
+# @element-stub icDockPort -- covered-elsewhere: idockport natives (natives/entities.gd) + main.gd docking/towing (_try_tow_dock mass coupling)
 # @element-stub icDrive -- covered-elsewhere: ship_systems.gd DRV group + ship_flight.gd
 # @element-stub icEPS -- covered-elsewhere: ship_systems.gd EPS group
 # @element-stub icHeatSink -- covered-elsewhere: ship_systems.gd heat model (HEATSINK_MIN_RAMP)
@@ -249,8 +249,8 @@ extends RefCounted
 # @element-stub iiThrusterSim -- engine-internal: abstract base; ship_flight.gd is the flight model
 # @element-stub icInertSim -- covered-elsewhere: plain sims via natives/world.gd sim.Create
 # @element-stub icDolly -- covered-elsewhere: gameapi.gd PogDolly
-# @element-stub icExplosion -- covered-elsewhere: explosion_fx.gd composite effects + isim.StartExplosion native
-# @element-stub icShockwave -- covered-elsewhere: explosion_fx.gd shockwaves
+# @element-stub icExplosion -- covered-elsewhere: death_sequence.gd (OnExplode size branch, sub-explosion crawl, DoFinalExplosion) + explosion_fx.gd composite effects
+# @element-stub icShockwave -- covered-elsewhere: death_sequence.gd final blast + main.gd _update_shockwaves damage front + explosion_fx.gd avatar
 # @element-stub icTimedWaypoint -- covered-elsewhere: mission.gd waypoint steps + natives/world.gd waypoints
 # @element-stub icGeography -- covered-elsewhere: the authored map records (data/json/systems) main.gd loads
 # @element-stub icPlanet -- covered-elsewhere: main.gd planets (spheres, rings, atmosphere, impostors)

@@ -296,9 +296,13 @@ func fire() -> void:
 	if cooldown > 0.0:
 		return
 	# iiWeapon::Simulate 0x1003cc00 sets flag 0x200 and refuses to fire while
-	# the ship's TotalHeat is at or past heat_damage_threshold
+	# the ship's TotalHeat is at or past heat_damage_threshold. (Near the red
+	# giant -- Lucrecia's sanctuary -- external heat alone pegs the store.)
 	if main and main.sys != null and main.sys.heat + main.sys.heat_external \
 			>= ShipSystems.HEAT_DAMAGE_THRESHOLD:
+		# the warning line is ours; the original surfaces this only through
+		# the heat gauge and the weapon's refusal
+		main.hud.warn("WEAPONS HEAT-LOCKED")
 		return
 	# iiWeapon::IsReadyToFire 0x1003cb80: the disrupted flag (0x10, set by a
 	# full-disruption warhead through icShip::Disrupt) blocks fire

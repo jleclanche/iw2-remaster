@@ -132,3 +132,18 @@ offset), the inertia sum is a scalar box+parallel-axis stand-in for the
 tensor, and TryToDock's capture kinematics constants were not resolved (a
 20 m/s relative-velocity gate is eyeballed). mechcheck: tow-dock, tow-ride,
 tow-release.
+
+## The heat "sanctuary" at Lucrecia's Base (verified, not a bug)
+
+The map gives Hoffer's Wake Alpha -- the red giant -- radius 1.7508e11 m, and
+ParseSunInfo (0x1004e5a0) hands that straight to FiSim::SetRadius.
+icSun::Think (0x1006ab90) heats the player at t^2 * m_heat_multiplier
+(10000 @ 0x1011af54) * 10 (0x101190c0) inside radius * 0.5 (0x1011af58) of
+the surface -- which covers the entire inner nebula including Lucrecia's
+Base. External heat pegs at heat_damage_threshold (500) there, the HUD gauge
+(scale 0.8 @ 0x10163efc) reads past full, and iiWeapon's heat gate
+(0x1003cc00) refuses to fire: nothing can shoot near the base. Idle internal
+heat elsewhere is the authored source/heatsink equilibrium (tug 128,
+comsec 96, storm petrel 133, turret fighter 0 -- all of 500) and every hull
+fires normally at Alexander L-Point. weapons.gd now prints WEAPONS
+HEAT-LOCKED (our line, not the original's) when the gate refuses.

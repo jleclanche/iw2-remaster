@@ -49,6 +49,9 @@ var explosion_size := 10.0
 var half_dims := Vector3(10, 10, 10)  # INI width/height/length * 0.5
 var dying := false    # OnExplode dramatic sequence running; ignore new kills
 var docking_priority := 50  # iiSim +0x1c0; the HIGHER sim is the dock parent
+var carried_pods := 0       # cargo pods racked on this hull's cargo clamps;
+                            # DoFinalExplosion's DetachAndFlingChild spills
+                            # them as free sims (main._spill_pods)
 var disrupt_time := 0.0       # icShip::Disrupt via icMissile::CheckForDisruption
 var disrupt_full := false     # full_disruption: everything, else shields only
 var sys: ShipSystems  # subsims, armour and hull, from the ship's INI
