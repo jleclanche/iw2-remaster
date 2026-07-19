@@ -517,14 +517,69 @@ func _add_debug_items() -> void:
 		w.h = last.h
 	rt.ui.dirty = true
 
-## Our debug pickers are drawn by this file, not by the POG screen, so the PDA
-## comes down while one is up and goes back up on the way out. Without that the
-## capsule list drew straight over a menu that was still standing.
+## The debug pickers ride the REAL screen stack now: PogUi.debug_screen
+## composes an overlay from the original igui grey-box blocks, so the PDA
+## stays up underneath and Escape/Back pop back to it like any original
+## overlay. The ad-hoc list modes below survive only as the fallback for a
+## front end running without the ported GUI.
 func _enter_mode(m: String) -> void:
 	main.audio.play("audio/gui/expand.wav", -8.0)
-	_drop_pda()
-	mode = m
-	sel = 0
+	if not _has_pog_gui() or not _pda_up:
+		mode = m
+		sel = 0
+		return
+	var rt: PogRuntime = main.pog_rt
+	# short titles: the fancy bordered static clips long ones
+	if m == "systems":
+		rt.ui.debug_screen("SYSTEM", _system_rows(), _pick_system)
+	elif m == "ships":
+		var rows: Array = []
+		for s: Array in SHIPS:
+			rows.append(str(s[1]).to_upper())
+		rt.ui.debug_screen("HULL", rows, _pick_ship)
+
+
+func _system_rows() -> Array:
+	var rows: Array = []
+	for s: Array in SYSTEMS:
+		rows.append(str(s[1]).to_upper())
+	return rows
+
+
+func _pick_system(i: int) -> void:
+	if i < 0 or i >= SYSTEMS.size():
+		return
+	main.audio.play("audio/gui/confirm.wav", -6.0)
+	var pick: Array = SYSTEMS[i]
+	main.start_in_system(str(pick[0]),
+			str(pick[2]) if pick.size() > 2 else "")
+	# flight replaces the WHOLE stack (PDA + this picker), the way the
+	# engine's StartNewGame ends on icSpaceFlightScreen -- close() alone only
+	# pops one screen
+	main.pog_rt.ui._clear_screens(null, [])
+	_pda_up = false
+	launched = true
+	close()
+
+
+func _pick_ship(i: int) -> void:
+	if i < 0 or i >= SHIPS.size():
+		return
+	main.audio.play("audio/gui/expand.wav", -8.0)
+	_debug_ship = str((SHIPS[i] as Array)[0])
+	# the second question overlays the first: Escape walks back one step at a
+	# time, hull picker under the where picker, PDA under both
+	main.pog_rt.ui.debug_screen("WHERE", _system_rows(), _pick_debug_where)
+
+
+func _pick_debug_where(i: int) -> void:
+	if i < 0 or i >= SYSTEMS.size():
+		return
+	main.audio.play("audio/gui/confirm.wav", -6.0)
+	var where: Array = SYSTEMS[i]
+	# the scene reloads with the chosen hull at the chosen spot
+	main.debug_start(_debug_ship, str(where[0]),
+			str(where[2]) if where.size() > 2 else "")
 
 func _leave_mode() -> void:
 	mode = "main"

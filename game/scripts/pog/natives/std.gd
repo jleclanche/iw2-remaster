@@ -542,12 +542,26 @@ func _str_format(_t, a: Array) -> Variant:
 # object.* property bag, which is why they live in this file.
 
 # @native list.AddTail
-# @native list.Append
 func _list_add_tail(_t, a: Array) -> Variant:
 	var l = a[0]
 	if l is Array:
 		l.append(a[1])
 	return 0
+
+# @native list.Append
+func _list_append(_t, a: Array) -> Variant:
+	# List.h: "Append list_two onto the end of list_one" -- CONCATENATION,
+	# not AddTail. Aliasing it to AddTail nested list_two as one element, and
+	# every caller that indexes the combined list flat misread it --
+	# igui.CreateGreyBoxStyleScreen returns [content] + AddBackButtons'
+	# [back, back-to-main] through exactly this.
+	var l = a[0]
+	if l is Array:
+		if a.size() > 1 and a[1] is Array:
+			(l as Array).append_array(a[1] as Array)
+		elif a.size() > 1:
+			(l as Array).append(a[1])
+	return l
 
 # @native list.AddHead
 func _list_add_head(_t, a: Array) -> Variant:
@@ -821,7 +835,7 @@ const _BINDINGS := {
 	"string.trimleft": "_str_trim_left", "string.trimright": "_str_trim_right",
 	"string.formatstrstr": "_str_format",
 
-	"list.addtail": "_list_add_tail", "list.append": "_list_add_tail",
+	"list.addtail": "_list_add_tail", "list.append": "_list_append",
 	"list.addhead": "_list_add_head", "list.itemcount": "_list_count",
 	"list.isempty": "_list_is_empty", "list.getnth": "_list_nth",
 	"list.setnth": "_list_set_nth", "list.head": "_list_head",

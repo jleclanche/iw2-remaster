@@ -514,6 +514,12 @@ func _pog_global_string(name: String) -> String:
 	return ""
 
 
+func _pog_global_int(name: String) -> int:
+	if vm != null and vm.get("std") != null:
+		return int(vm.std.globals.get(name, 0))
+	return 0
+
+
 # @element icCustomGUIScreen
 # @element icCreditScreen
 ## icCreditScreen (iwar2 ctor @ 0x10016180) is C++: an icScroller over the
@@ -567,6 +573,54 @@ func _build_not_yet_implemented(scr: PogScreen) -> void:
 	var back := _new_window("button", [], 0)
 	back.title = "BACK"
 	back.engine_action = "pop_screen"
+
+
+## A remaster-only DEBUG screen on the REAL stack. The original front end has
+## no system/hull picker, so there is no POG builder to run -- but the widget
+## layer does not care who built a screen. This one follows the PDA screens'
+## own recipe (SPPDAOptionsScreen / the save-slot screens, ipdagui.pog:632..):
+## shady bar, Back rows, fancy-bordered title, and one parentless inverse
+## button per row arranged inside a fancy border -- every piece the original
+## igui bytecode. It rides the normal overlay stack, so Escape, hover focus
+## and click routing are inherited rather than reimplemented. The title
+## carries a DEBUG tag deliberately: by the layering discipline an original
+## screen comes from bytecode, and a hand-built one must not masquerade as
+## one. `on_pick` gets the picked row index.
+func debug_screen(title: String, rows: Array, on_pick: Callable) -> PogScreen:
+	var cur := _cur()
+	var scr := _enter("icDebugPickerScreen",
+			screens if cur == null else cur.over)
+	scr.pop_on_cancel = true
+	if vm == null or not vm.has_method("script"):
+		return scr
+	var igui = vm.script("igui")
+	if igui == null:
+		return scr
+	# every gui.* native is synchronous, so the igui coroutines complete in
+	# one call (same reason _enter's dispatch works)
+	_gui_style(null, [_pog_global_string("GUI_title_font")])
+	var bar: Variant = igui.create_shady_bar()
+	var backs: Variant = igui.add_back_buttons(bar, "", "")
+	if backs is Array:
+		for b in (backs as Array):
+			# no POG function to name: the engine action the apology
+			# screen's Back row uses
+			if b is PogWindow:
+				(b as PogWindow).engine_action = "pop_screen"
+	igui.add_title(bar, "DEBUG - " + title)
+	var buttons: Array = []
+	for i in rows.size():
+		var w: Variant = igui.create_and_initialise_parentless_inverse_button(
+				"", str(rows[i]), buttons)
+		if w is PogWindow:
+			(w as PogWindow).on_press_cb = on_pick.bind(i)
+	igui.create_window_list_in_fancy_border(bar, buttons,
+			_pog_global_int("GUI_alignment_offset")
+				+ _pog_global_int("GUI_fancyborder_alignmentoffset"),
+			_pog_global_int("GUI_title_yoffset")
+				+ _pog_global_int("GUI_fancybutton_height") + 20)
+	dirty = true
+	return scr
 
 
 # @native gui.SetScreen
@@ -1537,9 +1591,13 @@ func _fire(win: PogWindow, slot: int) -> Variant:
 func activate(win: PogWindow) -> Variant:
 	if win == null or not win.enabled:
 		return 0
-	# a remaster-added control runs GDScript; it has no POG function to name
+	# a remaster-added control runs GDScript; it has no POG function to name.
+	# A remaster-added LIST BOX still gets the engine's select bookkeeping
+	# first, so the callable can read selected_index like a POG handler would.
 	if win.on_press_cb.is_valid():
 		dirty = true
+		if win.kind == "listbox":
+			win.selected_index = win.focused_entry
 		win.on_press_cb.call()
 		return 0
 	if win.kind == "editbox":

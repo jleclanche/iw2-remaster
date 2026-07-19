@@ -1049,6 +1049,15 @@ func _g_start_new_game(_t, a: Array) -> Variant:
 		return 0
 	if not stem.is_empty():
 		game.start_in_system(stem)
+	# The engine ends StartNewGame on icSpaceFlightScreen: FLIGHT replaces the
+	# whole GUI stack, exactly as the load path above. Without this the ship-
+	# choice screen and the PDA under it stayed standing over the cockpit
+	# (Instant Action's launch left the menu up).
+	if "pog_rt" in game and game.pog_rt != null and game.pog_rt.ui != null:
+		game.pog_rt.ui._clear_screens(null, [])
+	if "menu" in game and game.menu != null and game.menu.visible:
+		game.menu.launched = true
+		game.menu.close()
 	if not pkg.is_empty() and vm.has_method("script"):
 		var s = vm.script(pkg.to_lower())
 		if s != null and s.has_method("main"):

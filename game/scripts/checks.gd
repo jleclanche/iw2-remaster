@@ -452,24 +452,26 @@ func _newgametest(_delta: float) -> void:
 				# a broken START NEW GAME slipped through: nothing here touched
 				# the control the player actually clicks.
 				m.menu.open()
-				# The debug pickers are OURS and are drawn by menu.gd, so the
-				# original's menu has to come DOWN while one is up or the two
-				# draw on top of each other. gui.PopScreen refuses to pop the
-				# last screen (ui.gd:580), which is why the PDA is raised as an
-				# overlay on icPDAOverlayManager -- assert the take-down and the
-				# rebuild, because neither is visible to any other check.
+				# The debug pickers ride the REAL stack now (PogUi.debug_screen
+				# composes them from the PDA screens' own igui recipe):
+				# entering one OVERLAYS icDebugPickerScreen on the
+				# still-standing PDA, and Back/Escape pops straight back to it.
 				m.menu._enter_mode("ships")
-				var down: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
-				print("NEWGAMETEST: %s — PDA drops for a debug picker (%s)"
-					% ["PASS" if down == null else "FAIL",
-						"none" if down == null else down.name])
-				if down != null:
+				var over: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+				var picker_up: bool = over != null \
+						and over.name == "icDebugPickerScreen"
+				print("NEWGAMETEST: %s — debug picker overlays the PDA (%s)"
+					% ["PASS" if picker_up else "FAIL",
+						"none" if over == null else over.name])
+				if not picker_up:
 					get_tree().quit(1)
 					return
-				m.menu._leave_mode()
+				m.pog_rt.native("gui.popscreen", [])
 				var back: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
-				print("NEWGAMETEST: %s — PDA comes back (%s)"
-					% ["PASS" if back != null else "FAIL",
+				var pda_back: bool = back != null \
+						and back.name == "icSPMainPDAScreen"
+				print("NEWGAMETEST: %s — the PDA was still under it (%s)"
+					% ["PASS" if pda_back else "FAIL",
 						"none" if back == null else back.name])
 				# INSTANT ACTION goes through igui.OverlayCustomScreen, which is
 				# a POG function, not a native: it sets g_custom_gui_screen and
@@ -1240,6 +1242,29 @@ func _basecheck(_delta: float) -> void:
 						and not pscr.windows.is_empty(),
 					"windows=%d" % (pscr.windows.size() if pscr != null else -1))
 				m.pog_rt.native("gui.popscreen", [])
+			# The remaster-only debug picker: PogUi.debug_screen composes an
+			# overlay out of the PDA screens' own igui recipe (no POG builder
+			# exists for it) -- one inverse button per row inside the fancy
+			# border -- and a row click must land in the GDScript callable.
+			var picked: Array = []
+			var dscr: PogUi.PogScreen = m.pog_rt.ui.debug_screen(
+				"CHECK", ["ROW A", "ROW B", "ROW C"],
+				func(i: int) -> void: picked.append(i))
+			var dbtn: PogUi.PogWindow = null
+			var drows := 0
+			for dw: PogUi.PogWindow in dscr.windows:
+				if dw.on_press_cb.is_valid():
+					drows += 1
+					if dw.title == "ROW B":
+						dbtn = dw
+			if dbtn != null:
+				m.pog_rt.ui.activate(dbtn)
+			_bc("debug picker: PDA-recipe overlay + row pick",
+				dscr.pop_on_cancel and drows == 3 and picked == [1]
+					and dscr.windows.size() > 6,
+				"windows=%d rows=%d picked=%s"
+					% [dscr.windows.size(), drows, str(picked)])
+			m.pog_rt.native("gui.popscreen", [])
 			print("BASECHECK: ", "PASS" if _base_fail == 0 else "FAIL",
 				" -- ", _base_fail, " failure(s)")
 			get_tree().quit(0 if _base_fail == 0 else 1)
