@@ -383,7 +383,13 @@ func _create_ship(ini: String, name: String) -> PogSim:
 	var ai: AiShip = _ALIEN_SHIP.new() if is_alien else AiShip.new()
 	ai.main = game
 	ai.sim_key = name
-	ai.display_name = display_name_of(name)
+	# Deferred, not display_name_of(name) here: the table naming this sim may not
+	# be loaded yet (see AiShip.name_key).
+	if name.is_empty():
+		ai.display_name = "Undefined"  # the literal at 0x1015c244
+	else:
+		ai.name_std = std
+		ai.name_key = name
 	ai.ctype = String(props.get("type", "TRANS")).trim_prefix("T_")
 	ai.avatar_path = avatar_path(String(rec.get("avatar", "")))
 	ai.setup(props if not props.is_empty() else {"hit_points": 600})

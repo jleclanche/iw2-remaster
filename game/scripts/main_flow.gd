@@ -291,7 +291,8 @@ func save_extras() -> Dictionary:
 		if s3 == null or not is_instance_valid(s3) or s3.dying:
 			continue
 		ai.append({
-			"key": s3.sim_key, "name": s3.display_name, "ini": s3.ini_path,
+			"key": s3.sim_key, "name": s3.display_name,
+			"name_key": s3.name_key, "ini": s3.ini_path,
 			"avatar": s3.avatar_path, "faction": s3.faction,
 			"ctype": s3.ctype, "behavior": s3.behavior, "hull": s3.hull,
 			"pos": [s3.position.x, s3.position.y, s3.position.z],
@@ -372,7 +373,13 @@ func restore_extras(d: Dictionary) -> void:
 		var ai := AiShip.new()
 		ai.main = self
 		ai.sim_key = str(rec2.get("key", ""))
+		# Literal first, then the key -- assigning display_name clears name_key.
+		# Saves written before name_key existed restore the literal alone.
 		ai.display_name = str(rec2.get("name", "Contact"))
+		var nkey := str(rec2.get("name_key", ""))
+		if not nkey.is_empty():
+			ai.name_std = pog_std
+			ai.name_key = nkey
 		ai.faction = str(rec2.get("faction", "INDPT"))
 		ai.ctype = str(rec2.get("ctype", "TRANS"))
 		ai.avatar_path = str(rec2.get("avatar", ""))

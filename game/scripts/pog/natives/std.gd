@@ -23,6 +23,12 @@ var states: Dictionary = {}
 ## text.* -- loaded CSV string tables, keyed by row.
 var text_tables: Dictionary = {}
 var _loaded_csv: Array[String] = []
+## Bumped whenever the loaded set of tables changes. FcLocalisedText::Field runs
+## at DISPLAY time, so anything that memoises a resolved name must re-resolve
+## once a table is added or removed -- the scripts routinely create a sim before
+## loading the table that names it (iact0mission10.gd:622 creates
+## `a0_m10_name_abandoned`, :627 loads the CSV holding it).
+var text_gen := 0
 
 
 class PogState extends RefCounted:
@@ -352,11 +358,13 @@ func _text_add(_t, a: Array) -> Variant:
 		return 0
 	_loaded_csv.append(path)
 	_load_csv(path)
+	text_gen += 1
 	return 0
 
 # @native text.Remove
 func _text_remove(_t, a: Array) -> Variant:
 	_loaded_csv.erase(_s(a[0]))
+	text_gen += 1
 	return 0
 
 # @native text.Field

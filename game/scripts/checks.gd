@@ -1028,6 +1028,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_tow_ride",
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
+	&"_ms_lazy_name",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
 	&"_ms_finish",
@@ -1490,6 +1491,27 @@ func _ms_pod_spill_assert(_delta: float) -> void:
 	elif demo_t > 20.0:
 		_mech("pod-spill", false, "no pods %d s after the kill" % int(demo_t))
 		_mech_next()
+
+func _ms_lazy_name(_delta: float) -> void:
+	# FcLocalisedText::Field runs at DISPLAY time, so a sim created BEFORE the
+	# table that names it must still come up named once the table lands. This is
+	# the real ordering out of iact0mission10.gd: :622 creates the sim,
+	# :627 loads the CSV holding its key.
+	const TABLE := "csv:/text/act_0/act0_mission10_addendum3"
+	const KEY := "a0_m10_name_abandoned"
+	var std := PogStd.new()
+	var ai := AiShip.new()
+	ai.name_std = std
+	ai.name_key = KEY
+	# unresolved: the engine renders the key itself, and must NOT memoise it
+	var before := String(ai.display_name)
+	std._text_add(null, [TABLE])
+	var after := String(ai.display_name)
+	ai.free()
+	_mech("lazy-name", before == KEY and after == "Abandoned Hulk",
+		"before table %s, after %s (want the key, then \"Abandoned Hulk\")"
+			% [before, after])
+	_mech_next()
 
 func _ms_save_reload(_delta: float) -> void:
 	# the igame.SaveGame/LoadGame roundtrip with the world extras: hull,

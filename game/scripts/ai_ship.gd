@@ -9,7 +9,34 @@ var behavior := "patrol"
 # it through FcLocalisedText::Field for display (icAIPilot::ResolveName). The
 # scripts look ships up by the key; the HUD shows the resolved text.
 var sim_key := ""
-var display_name := ""  # node names mangle punctuation; HUD uses this
+## The localisation key behind `display_name`, when this sim has one. Resolution
+## is LAZY because FcLocalisedText::Field runs at display time in the engine, not
+## at spawn: a mission routinely creates a sim before loading the table that
+## names it, and resolving eagerly froze the raw key into the label forever
+## (`A0_M10_NAME_ABANDONED` in the HUD instead of "Abandoned Hulk").
+var name_key := ""
+var name_std: PogStd = null  ## table owner that resolves name_key
+var _name_cache := ""
+var _name_gen := -1
+# node names mangle punctuation; HUD uses this
+var display_name: String:
+	get:
+		if name_key.is_empty() or name_std == null:
+			return _name_cache
+		if not _name_cache.is_empty() and _name_gen == name_std.text_gen:
+			return _name_cache
+		var resolved := name_std.field(name_key, 0)
+		_name_gen = name_std.text_gen
+		# A key with no loaded table resolves to ITSELF (std.gd:399). That is the
+		# engine's render, so return it -- but do not memoise it, or a table
+		# loaded later could never take effect.
+		_name_cache = "" if resolved == name_key else resolved
+		return resolved
+	set(value):
+		# An explicit literal wins over the key: callers that name a ship
+		# directly ("Marauder Cutter") are not going through the tables.
+		_name_cache = value
+		name_key = ""
 var faction := "INDPT"  # text/faction_names.csv abbreviations
 var ctype := "TRANS"    # text/hud.csv hud_type_* abbreviations
 var avatar_path := ""   # for the MFD's EO-feed render
