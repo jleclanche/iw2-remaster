@@ -130,11 +130,10 @@ var _overlay: Control       # scanline/sweep/dossier layer, drawn OVER the movie
 var _top: Control           # buttons + version, normal blend, above everything
 var _bar: Control           # icShadyBar black fill (clipped)
 var _bar_fx: Control        # icShadyBar detail/flybys/edges, additive (clipped)
-var _tex_detail: Texture2D  # images/gui/bar_detail  (icShadyBar::Create)
-var _tex_flybys: Texture2D  # images/gui/text_flybys (icShadyBar::Create)
 var _tex_glow: Texture2D    # images/gui/cursor_glow (icShadyBar::Create)
-var _flybys: Array = []     # 8 slots (the engine's fixed array), h <= 0 = free
-var _flyby_timer := 0.0
+## icShadyBar itself. The base and PDA screens raise the same control, so the
+## recipe lives in shady_bar.gd and both renderers share it.
+var _shady := ShadyBar.new()
 var _glow_pts: Array = []   # ring of the last 10 mouse positions
 var _panel := Rect2()       # the square movie panel, laid out each frame
 var _movie_idx := -1        # -1 = "pick a random start", then cycle (FUN_10017850)
@@ -170,11 +169,8 @@ func _ready() -> void:
 	# m_edge_alpha 0.2), and up to 8 "text flyby" glyph strips falling down the
 	# bar (images/gui/text_flybys). Split into a normal-blend fill child and an
 	# additive fx child, both clipped to the bar.
-	_tex_detail = _gui_tex("bar_detail.png")
-	_tex_flybys = _gui_tex("text_flybys.png")
+	_shady.load_textures(main._base())
 	_tex_glow = _gui_tex("cursor_glow.png")
-	for i in 8:
-		_flybys.append({"h": 0.0})
 	_bar = Control.new()
 	_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_bar.clip_contents = true
@@ -683,7 +679,7 @@ func _process(delta: float) -> void:
 	if not dossier_lines.is_empty() \
 			and _scroll > dossier_lines.size() * 17.0 + _panel.size.y * 0.19:
 		_pick_character()
-	_tick_flybys(delta)
+	_shady.tick(delta, _strip_w(), get_viewport_rect().size.y)
 	# icShadyBar keeps a ring of the last 10 mouse positions for the cursor
 	# glow trail (Render 0x10e7d0, sampled once per frame)
 	_glow_pts.push_front({"pos": get_viewport().get_mouse_position(),
@@ -790,103 +786,14 @@ func _strip_w() -> float:
 	return get_viewport_rect().size.y * 240.0 / REF_H
 
 func _draw_bar() -> void:
-	# icShadyBar bar fill: BLACK (m_bar_colour statics zero, FUN_1010df20) at
-	# m_bar_alpha 0.8 -- the same value igui.pog calls GUI_shader_opacity
 	if not visible:
 		return
-	_bar.draw_rect(Rect2(Vector2.ZERO, _bar.size), Color(0, 0, 0, 0.8))
-
-func _tick_flybys(delta: float) -> void:
-	# icShadyBar::Render flyby spawner: 8 slots; a strip enters from the TOP
-	# (y starts at 1 - height) and slides DOWN at 25..90 px/s
-	# (m_min/max_flyby_speed); height = 13 (m_flyby_ch) x rand(3..30)
-	# (0x1010e200/0x1010e230); x random inside the edges, snapped to the 16-px
-	# glyph column (m_flyby_cw); the next spawn comes 0..6 s later
-	# (m_min/max_flyby_time)
-	var h := get_viewport_rect().size.y
-	for f in _flybys:
-		if f["h"] > 0.0:
-			f["y"] += f["speed"] * delta
-			if f["y"] > h:
-				f["h"] = 0.0
-	_flyby_timer -= delta
-	if _flyby_timer > 0.0:
-		return
-	_flyby_timer = randf_range(0.0, 6.0)
-	for i in _flybys.size():
-		var f: Dictionary = _flybys[i]
-		if f["h"] <= 0.0:
-			f["h"] = 13.0 * randf_range(3.0, 30.0)
-			f["speed"] = randf_range(25.0, 90.0)
-			f["x"] = floorf(randf_range(8.0, maxf(8.0, _strip_w() - 24.0))
-					/ 16.0) * 16.0
-			f["y"] = 1.0 - f["h"]
-			f["slot"] = i
-			break
+	_shady.draw_fill(_bar, Rect2(Vector2.ZERO, _bar.size))
 
 func _draw_bar_fx() -> void:
-	# the additive passes of icShadyBar::Render, clipped to the bar
 	if not visible:
 		return
-	var w := _bar_fx.size.x
-	var h := _bar_fx.size.y
-	var amber := GUI_FOCUSED                     # m_detail/glow colour (1,0.749,0)
-	# two drifting layers of the 128px bar_detail weave, m_detail_alpha 0.1;
-	# u drifts +, v drifts - at (t_ms x 0.001)/20 texture/s (DAT_1011803c /
-	# DAT_1011e848 / m_u/v_scroll_rate) = 6.4 px/s. The second layer is the
-	# same texture at DOUBLE scale (the original also mirrors it in u; the
-	# weave is symmetric, so the mirror is skipped).
-	var dcol := Color(amber.r, amber.g, amber.b, 0.1)
-	var drift := fmod(_bust_t * 6.4, 128.0)
-	if _tex_detail != null:
-		_bar_fx.draw_texture_rect(_tex_detail,
-				Rect2(Vector2(drift - 128.0, -drift), Vector2(w + 256, h + 256)),
-				true, dcol)
-		_bar_fx.draw_set_transform(Vector2.ZERO, 0.0, Vector2(2, 2))
-		_bar_fx.draw_texture_rect(_tex_detail,
-				Rect2(Vector2(drift * 0.5 - 128.0, -drift * 0.5),
-					Vector2(w * 0.5 + 256, h * 0.5 + 256)), true, dcol)
-		_bar_fx.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	# text flybys: a 16-px glyph column of text_flybys, v anchored to SCREEN
-	# space (v = y/128, DAT_1011ccb8 = 1/128 -- the glyphs stay put and the
-	# strip is a sliding reveal window), alpha ramping 0 (top) -> 0.2
-	# (DAT_101184ac) at the strip's bottom edge; the glyph column flickers
-	# with the strip's position ((int(y + h) + slot) & 7)
-	if _tex_flybys != null:
-		for f in _flybys:
-			if f["h"] <= 0.0:
-				continue
-			var fy: float = f["y"]
-			var fh: float = f["h"]
-			var col_i: int = (int(fy + fh) + int(f["slot"])) & 7
-			var y_end := minf(fy + fh, h)
-			var row_y := maxf(fy, 0.0)
-			while row_y < y_end:
-				var rh := minf(13.0, y_end - row_y)
-				var a := clampf((row_y + rh - fy) / fh, 0.0, 1.0) * 0.2
-				var fcol := Color(amber.r, amber.g, amber.b, a)
-				var v := fposmod(row_y, 128.0)
-				var piece := minf(rh, 128.0 - v)
-				_bar_fx.draw_texture_rect_region(_tex_flybys,
-						Rect2(f["x"], row_y, 16.0, piece),
-						Rect2(col_i * 16.0, v, 16.0, piece), fcol)
-				if piece < rh:
-					_bar_fx.draw_texture_rect_region(_tex_flybys,
-							Rect2(f["x"], row_y + piece, 16.0, rh - piece),
-							Rect2(col_i * 16.0, 0.0, 16.0, rh - piece), fcol)
-				row_y += rh
-	# edge gradients: m_edge_width 8 px at m_edge_alpha 0.2, brightest AT the
-	# edge, fading inward; drawn on both vertical edges
-	var e0 := Color(amber.r, amber.g, amber.b, 0.0)
-	var e1 := Color(amber.r, amber.g, amber.b, 0.2)
-	_bar_fx.draw_polygon(
-			PackedVector2Array([Vector2(0, 0), Vector2(8, 0),
-				Vector2(8, h), Vector2(0, h)]),
-			PackedColorArray([e1, e0, e0, e1]))
-	_bar_fx.draw_polygon(
-			PackedVector2Array([Vector2(w - 8, 0), Vector2(w, 0),
-				Vector2(w, h), Vector2(w - 8, h)]),
-			PackedColorArray([e0, e1, e1, e0]))
+	_shady.draw_fx(_bar_fx, Rect2(Vector2.ZERO, _bar_fx.size))
 
 func _holo_grid(rect: Rect2) -> void:
 	# the page's amber GRID: the engine's 16-native-px graph-paper grid, the

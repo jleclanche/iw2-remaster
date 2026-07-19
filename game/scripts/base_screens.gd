@@ -58,6 +58,19 @@ func _ready() -> void:
 	if main != null:
 		_font = Hud.load_game_font(main._base(), "handelgothic bt_12pt.fnt")
 		_font_small = Hud.load_game_font(main._base(), "handelgothic bt_8pt.fnt")
+		_shady.load_textures(main._base())
+	# icShadyBar's weave, flybys and edge gradients are additive passes
+	# (blend state 2). A child composites above this canvas, which is the draw
+	# order the engine has: fill first, then everything that brightens it.
+	_fx = Control.new()
+	_fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fx.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_fx.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	var add_mat := CanvasItemMaterial.new()
+	add_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_fx.material = add_mat
+	_fx.draw.connect(_draw_shady_fx)
+	add_child(_fx)
 
 
 const SCROLL_SPEED := 50.0   ## px/s -- icCreditScreen's constant @ 0x10117be8
@@ -80,12 +93,19 @@ func _process(delta: float) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		elif main == null or main.menu == null or not main.menu.visible:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if visible:
+		# the flyby strips slide whether or not anything else changed
+		_shady.tick(delta, _scale() * 240.0, size.y)
 	if ui.dirty:
 		ui.dirty = false
 		_rebuild(scr)
 		queue_redraw()
 	elif visible:
 		queue_redraw()   # the shady bar's weave scrolls and the fritz fades
+	if _fx != null:
+		_fx.visible = visible
+		if visible:
+			_fx.queue_redraw()
 	_credits_music(scr)
 	if visible and scr != null:
 		_advance_scrollers(scr, delta)
@@ -468,68 +488,37 @@ const LIST_ENTRY_H := 10.0
 
 var _atlas: Texture2D
 var _alphamap: Texture2D
-var _detail: Texture2D
+## icShadyBar, shared with the front end -- see shady_bar.gd.
+var _shady := ShadyBar.new()
+## The bars laid out this frame, replayed by the additive _fx child.
+var _shady_rects: Array = []
+var _fx: Control
 var _skin_fonts: Dictionary = {}
 
-## icShadyBar m_detail_colour / m_glow_colour: (1, 0.749, 0) -- static init
-## @ 0x1010df80 (0x3f800000, 0x3f3fbfc0, 0). m_bar_colour is black (@ 0x1010df20).
-const SHADY_AMBER := Color(1.0, 0.749, 0.0)
 
 
-## icShadyBar::Render (iwar2 @ 0x1010e7d0), extracted structure:
-##  1. a solid quad in m_bar_colour (black) at m_bar_alpha x the bar's fade;
-##  2. edge strips m_edge_width wide at each side, m_detail_colour fading
-##     inward to zero alpha;
-##  3. the bar_detail weave (texture:/images/gui/bar_detail, loaded by
-##     icShadyBar::Create @ 0x1010e380) TILED at its native texel size,
-##     coloured m_detail_colour, drawn TWICE with the second layer at a
-##     different tiling scale, both scrolling with app time (u = t/m_u_scroll_
-##     rate...) -- two drifting layers are the moire shimmer.
-## The exact alpha/edge/rate floats are data-section values not present in
-## the decompiled text; those numbers below are tuned stand-ins.
+## icShadyBar, drawn by the shared renderer (shady_bar.gd) instead of the
+## reduced copy this file used to carry -- whose own comment conceded its
+## alphas, edge width and scroll rates were tuned stand-ins. The front end
+## raises the SAME control through igui.CreateMenu, so there is one recipe.
+##
+## Only the black fill lands here: steps 2-4 are additive and go on _fx, which
+## is a child so it composites above this canvas. Rects are collected rather
+## than drawn straight through because _fx repeats the parent's fixed-pixel
+## transform.
 func _draw_shady(r: Rect2) -> void:
-	draw_rect(r, Color(0.0, 0.0, 0.0, SHADER_OPACITY))
-	var tex := _detail_tex()
-	if tex != null:
-		var t := Time.get_ticks_msec() / 1000.0
-		for layer: Array in [[Vector2(3.1, 1.7), 0.10, 1.0],
-				[Vector2(-2.3, 2.9), 0.07, 1.31]]:
-			var off: Vector2 = (layer[0] as Vector2) * t
-			var a: float = layer[1]
-			var scale: float = layer[2]
-			draw_texture_rect_region(tex, r, Rect2(off, r.size / scale),
-				Color(SHADY_AMBER.r, SHADY_AMBER.g, SHADY_AMBER.b, a))
-	# the inward edge fades
-	const EDGE_W := 8.0
-	const EDGE_A := 0.30
-	var lit := Color(SHADY_AMBER.r, SHADY_AMBER.g, SHADY_AMBER.b, EDGE_A)
-	var out := Color(SHADY_AMBER.r, SHADY_AMBER.g, SHADY_AMBER.b, 0.0)
-	for side in 2:
-		var x0 := r.position.x if side == 0 else r.end.x
-		var x1 := x0 + (EDGE_W if side == 0 else -EDGE_W)
-		draw_polygon(PackedVector2Array([
-				Vector2(x0, r.position.y), Vector2(x1, r.position.y),
-				Vector2(x1, r.end.y), Vector2(x0, r.end.y)]),
-			PackedColorArray([lit, out, out, lit]))
+	_shady_rects.append(r)
+	_shady.draw_fill(self, r)
 
 
-func _detail_tex() -> Texture2D:
-	if _detail != null:
-		return _detail
-	var img := Image.load_from_file(main._base().path_join(
-			"data/textures/images/gui/bar_detail.png"))
-	if img == null:
-		return null
-	# greyscale weave on black, blitted additively by the engine: alpha from
-	# luminance, like the widget atlas
-	img.convert(Image.FORMAT_RGBA8)
-	for y in img.get_height():
-		for x in img.get_width():
-			var c := img.get_pixel(x, y)
-			c.a = maxf(c.r, maxf(c.g, c.b))
-			img.set_pixel(x, y, c)
-	_detail = ImageTexture.create_from_image(img)
-	return _detail
+func _draw_shady_fx() -> void:
+	if _shady_rects.is_empty():
+		return
+	var sc := _scale()
+	_fx.draw_set_transform(_origin(), 0.0, Vector2(sc, sc))
+	for r: Rect2 in _shady_rects:
+		_shady.draw_fx(_fx, r)
+	_fx.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
 ## The widget atlas. The art is drawn on black and the engine blitted it over the
@@ -695,6 +684,10 @@ func _draw() -> void:
 	var bi := _base()
 	_hit.clear()
 	_room_hit = Rect2()
+	# The bars are re-collected every frame for the additive _fx child. Leaving
+	# stale entries here stacks another additive pass per frame and whites the
+	# column out within a second -- and survives a screen change.
+	_shady_rects.clear()
 	if scr != null:
 		var sc := _scale()
 		draw_set_transform(_origin(), 0.0, Vector2(sc, sc))

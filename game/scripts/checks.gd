@@ -95,6 +95,45 @@ func _shot(name: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(m._base().path_join("data/screenshots/%s.png" % name))
 
+
+## icShadyBar is a TRANSLUCENT column: black fill at m_bar_alpha 0.8 with additive
+## passes that only ever add m_detail_alpha 0.1 and m_edge_alpha 0.2 on top. So a
+## base screen's bar must stay dark, and the interior behind it must read through.
+##
+## This exists because the additive passes are accumulated into a per-frame rect
+## list, and every way that list can go wrong -- not cleared, appended twice, kept
+## across a screen change -- looks identical: the column saturates to solid amber
+## and eats the screen. Every check in the suite still passed while it did, because
+## nothing here had ever looked at a PIXEL. Renderer-only regressions need a
+## renderer-level assertion, so this samples the real thing.
+## Judged on the MEDIAN of a patch, not on any single sample: the bar carries
+## amber text, which is legitimately bright, so "no pixel is bright" is not the
+## property. "Most of the column is dark" is, and it does not depend on picking
+## an x that happens to miss the text.
+func _bc_shady_sane(screen: String) -> void:
+	var img := get_viewport().get_texture().get_image()
+	var w := img.get_width()
+	var h := img.get_height()
+	# a patch inside the left bar, which every base screen has: past the edge
+	# gradient (m_edge_width 8 native px) and well short of the 240 px column
+	var lum: Array[float] = []
+	for xi in 12:
+		var x := int(w * (0.02 + 0.01 * xi))
+		for yi in 20:
+			var y := int(h * (0.1 + 0.04 * yi))
+			if x >= w or y >= h:
+				continue
+			var c := img.get_pixel(x, y)
+			lum.append(minf(c.r, c.g))   # amber saturates BOTH channels
+	if lum.is_empty():
+		return
+	lum.sort()
+	var med: float = lum[lum.size() / 2]
+	# 0.8 black over the interior plus at most ~0.3 of additive amber; a runaway
+	# column sits at 1.0 across the whole patch.
+	_bc("%s: shady bar stays translucent" % screen, med < 0.5,
+		"median amber %.2f over %d samples" % [med, lum.size()])
+
 # --- contact list after a debug-menu system spawn -----------------------------
 
 var _cc_i := 0
@@ -830,6 +869,7 @@ func _basecheck(_delta: float) -> void:
 				# raised last pass, so it is on screen now
 				if not m._headless():
 					_shot("base_screen_%s" % str(tour[_room]).to_snake_case())
+					_bc_shady_sane(str(tour[_room]))
 				_pending = false
 				_room += 1
 				demo_t = 0.0
