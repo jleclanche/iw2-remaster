@@ -684,6 +684,10 @@ func _fold_motion() -> void:
 	space_fx.shift_world(p)  # the stored contrail points (FUN_100e5280)
 
 func _stream_objects() -> void:
+	# a scripted object is often created before the table that names it loads
+	# (PogWorld.refresh_object_names); no-op unless a table landed since
+	if pog_world != null:
+		pog_world.refresh_object_names()
 	# the original funnels only the nearest L-point
 	# (icPlayerContactList::NearestLagrangePoint feeds icHUDLagrangeIcon)
 	var near_lp: Dictionary = _nearest("lpoint", SpaceFx.LP_DRAW_DIST)

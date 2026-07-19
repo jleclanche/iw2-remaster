@@ -22,6 +22,17 @@ var vm   ## the host: PogRuntime for the ported scripts, PogVM for the oracle
 var game: Node3D = null                ## main.gd, when running in-game
 var factions: PogFactions = null       ## for the hostility lookup
 var std: PogStd = null                 ## for the localised name tables
+
+## Which icSim subclasses fly (get a pilot and a flight model) and which are
+## live ordnance. Everything else -- icStation, icInertSim, icPowerUp,
+## icFieldSim, icShockwave -- is a world record, not a ship.
+const _SHIP_CLASSES: Array[String] = [
+	"icShip", "icTurretShip", "icAlienSwarm", "icCargoPod",
+]
+const _WEAPON_CLASSES: Array[String] = [
+	"icBullet", "icSimTrackingMissile", "icBeam", "icRemoteMissile",
+	"icCounterMeasure", "icRocket", "icLDSIMissile", "icMine",
+]
 var sims: Dictionary = {}              ## name -> PogSim
 var ship_db: Dictionary = {}           ## "sims/ships/x.ini" -> ships.json record
 var _preloaded: Dictionary = {}
@@ -263,11 +274,20 @@ func set_player_pos(p: Vector3) -> void:
 			ai.position -= delta
 
 
+## The three extracted sim tables share one schema (path/class/avatar/properties)
+## and together cover every ini the scripts can name. Indexing only ships.json
+## left 88 of the 179 inis the POG tree creates unresolvable -- including every
+## station, so `ini:/sims/stations/reactor` came up with no record and no avatar.
+const _SIM_DBS: Array[String] = [
+	"data/json/ships.json", "data/json/stations.json", "data/json/sims_other.json",
+]
+
 func _load_ship_db() -> void:
 	if not ship_db.is_empty() or game == null:
 		return
-	for rec in game._load_json("data/json/ships.json"):
-		ship_db[String(rec.get("path", ""))] = rec
+	for db in _SIM_DBS:
+		for rec in game._load_json(db):
+			ship_db[String(rec.get("path", ""))] = rec
 
 
 ## "ini:/sims/ships/utility/flitter" -> "sims/ships/utility/flitter.ini"
@@ -280,6 +300,15 @@ static func ini_key(p: String) -> String:
 static func avatar_path(a: String) -> String:
 	var s := a.trim_prefix("lws:").trim_prefix("/")
 	return "data/avatars/%s.gltf" % s
+
+
+## The object-record form of the same thing: main.objects stores the avatar
+## RELATIVE to data/avatars/ (main_world._stream_objects prepends it), lower-cased
+## the way the extraction writes the tree.
+static func object_avatar(a: String) -> String:
+	if a.is_empty():
+		return ""
+	return "%s.gltf" % a.trim_prefix("lws:").trim_prefix("/").to_lower()
 
 
 func _as_sim(v: Variant) -> PogSim:
@@ -349,6 +378,22 @@ func _wrap_ship(ai: Node3D) -> PogSim:
 	s.faction = String(ai.faction)
 	sims[key] = s
 	return s
+
+
+var _names_gen := -1
+
+## An object record's "name" is a RESOLVED string, not a key -- half the game
+## compares it against literals ("Lucrecia's Base", BaseInterior.BASE_NAME), so
+## it cannot become lazy the way AiShip.display_name did. Instead re-resolve the
+## records whenever a table lands, which is the same invalidation, batched.
+func refresh_object_names() -> void:
+	if std == null or game == null or std.text_gen == _names_gen:
+		return
+	_names_gen = std.text_gen
+	for o: Dictionary in game.objects:
+		var key := String(o.get("key", ""))
+		if not key.is_empty():
+			o["name"] = display_name_of(key)
 
 
 ## icAIPilot::ResolveName (iwar2 @ 0x10055540): a sim's NAME is a localisation
@@ -433,10 +478,18 @@ func _create_object(ini: String, name: String) -> PogSim:
 	if game == null:
 		sims[name] = s
 		return s
+	# The record's own avatar and radius: without these the object streamed in as
+	# nothing at all (main_world._stream_objects skips an empty avatar), which is
+	# why a scripted station was on sensors with no geometry.
+	_load_ship_db()
+	var db: Dictionary = ship_db.get(ini_key(ini), {})
+	var dprops: Dictionary = db.get("properties", {})
 	var rec: Dictionary = {
 		"name": display_name_of(name), "key": name, "category": "prop",
 		"x": 0.0, "y": 0.0, "z": 0.0,
-		"radius": 100.0, "avatar": "", "jumps": [], "colors": [],
+		"radius": float(dprops.get("radius", 100.0)),
+		"avatar": object_avatar(String(db.get("avatar", ""))),
+		"jumps": [], "colors": [],
 		"node": null, "prop_collide": true,
 	}
 	var stem := ini.trim_prefix("ini:/").trim_suffix(".ini")
@@ -487,6 +540,20 @@ func _create_weapon(ini: String, name: String) -> PogSim:
 func _s_create(_t, a: Array) -> Variant:
 	var ini := PogStd._s(a[0])
 	var name := PogStd._s(a[1]) if a.size() > 1 else ini.get_file()
+	# The sim's CLASS decides what it is, not where its ini happens to sit. The
+	# path substring disagrees with the class on 51 inis: 47 real ships live
+	# outside /sims/ships/ (sims/stations/custom/asteroid_mine is an icShip) and
+	# came up as avatar-less prop records, and 4 icInertSim markers under
+	# /sims/ships/ were being given a pilot they never had.
+	_load_ship_db()
+	var cls := String(ship_db.get(ini_key(ini), {}).get("class", ""))
+	if not cls.is_empty():
+		if cls in _SHIP_CLASSES:
+			return _create_ship(ini, name)
+		if cls in _WEAPON_CLASSES:
+			return _create_weapon(ini, name)
+		return _create_object(ini, name)
+	# ini in no table: fall back to the path, which is all we ever had
 	if "/ships/" in ini:
 		return _create_ship(ini, name)
 	if "/weapons/" in ini:

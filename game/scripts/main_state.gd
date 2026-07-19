@@ -342,6 +342,10 @@ func _load_gltf(rel: String) -> Node3D:
 	var doc := GLTFDocument.new()
 	var state := GLTFState.new()
 	if doc.append_from_file(_base().path_join(rel), state) != OK:
+		# cached so one bad path does not re-hit the disk every frame, but it
+		# MUST be loud: every caller treats null as "skip and carry on", so a
+		# missing avatar used to be a sim that silently rendered nothing
+		push_error("glTF load failed: %s" % rel)
 		_gltf_cache[rel] = null
 		return null
 	var node := doc.generate_scene(state)
