@@ -39,7 +39,8 @@ import collections
 import re
 from pathlib import Path
 
-from .pogdec import (Break, Call, Const, Continue, Debug, Decompiler, Dispatch,
+from .pogdec import (Break, Call, Case, Const, Continue, Debug, Decompiler,
+                     Dispatch,
                      DoWhile, Every, Expr, Func, Goto, Halt, If, New, Null,
                      PcSet, Ret, Str, Un, Var, While, Assign, Bin, Do, Yield,
                      argc_census, _gd_new, _snake)
@@ -348,6 +349,13 @@ class Port:
             if s.els:
                 out += [i + "else:"] + self.body(s.els, d + 1)
             return out
+        if isinstance(s, Case):
+            out = ["%smatch %s:" % (i, self.x(s.sel))]
+            for vals, body in s.arms:
+                out += ["%s%s:" % (_ind(d + 1),
+                                   ", ".join(self.x(v) for v in vals))]
+                out += self.body(body, d + 2)
+            return out
         return [i + "pass"]
 
     def func(self, f: Func, nlocals: int) -> list[str]:
@@ -395,6 +403,10 @@ def _locals_used(f: Func) -> int:
                 walk(s.body)
             elif isinstance(s, (Every, Debug)):
                 walk(s.body)
+            elif isinstance(s, Case):
+                walk_e(s.sel)
+                for _vals, body in s.arms:
+                    walk(body)
             elif isinstance(s, Dispatch):
                 for _addr, body in s.blocks:
                     walk(body)

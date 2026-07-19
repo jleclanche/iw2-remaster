@@ -221,6 +221,20 @@ class Every(Stmt):
         self.secs, self.body = secs, body
 
 
+class Case(Stmt):
+    """`switch (sel) { case v : ... break; }`.
+
+    Authentic spelling from the POG SDK samples
+    (iAct1_Mission07_Showdown.pog:1595): `switch ( e )`, `case N :`, and a
+    `break;` ending each arm -- which is exactly the `Goto exit` the compiler
+    emits at the end of every case body.
+    """
+
+    def __init__(self, sel, arms):
+        self.sel = sel
+        self.arms = arms          # [([value Expr], [Stmt])], in source order
+
+
 class Goto(Stmt):
     def __init__(self, target):
         self.target = target
@@ -357,6 +371,8 @@ def _has_goto(stmts) -> bool:
         if isinstance(s, If) and (_has_goto(s.then) or _has_goto(s.els)):
             return True
         if isinstance(s, (While, DoWhile, Every, Debug)) and _has_goto(s.body):
+            return True
+        if isinstance(s, Case) and any(_has_goto(b) for _, b in s.arms):
             return True
     return False
 
@@ -595,11 +611,16 @@ class Decompiler:
                         self._tail_stack = stack
                         return out
                     if tgt > addr:
-                        # An unconditional forward jump inside the region simply
-                        # moves the cursor: whatever it skipped is reachable only
-                        # through other jumps (this is how a switch skips over
-                        # its case bodies to reach the dispatch), and those get
-                        # inlined at their jump sites.
+                        # This is how a switch skips over its case bodies to
+                        # reach the dispatch, so try to read it back as one.
+                        sw = self._switch(tgt, self._next_addr(addr), hi, ctx)
+                        if sw is not None:
+                            out.append(sw[0])
+                            addr = sw[1]
+                            continue
+                        # Otherwise the jump simply moves the cursor: whatever
+                        # it skipped is reachable only through other jumps, and
+                        # those get inlined at their jump sites.
                         addr = tgt
                         continue
                     inlined = self._inline(tgt, stack)
@@ -960,6 +981,90 @@ class Decompiler:
                 return True
         return False
 
+    _CONSTS = ("LoadZero", "LoadOne", "LoadImmediate")
+
+    def _switch(self, disp: int, body_lo: int, hi: int,
+                ctx: tuple | None) -> tuple[Stmt, int] | None:
+        """The compiler's switch, or None if this is not one.
+
+            <preamble> Goto DISPATCH
+            CASE_a: <body> Goto EXIT
+            CASE_b: <body> Goto EXIT
+            DISPATCH: <selector> (Copy <const> Equal GoTrue CASE)+
+            EXIT:
+
+        Every case body sits BEFORE the dispatch, so each arm is a *backward*
+        branch -- which is why `_find_loops` sees these and correctly refuses
+        them as jump tables, and why they used to reach the goto fallback.
+        The selector stays on the stack under each body (it is pushed before
+        the branch is taken), so both the arms and the fall-through arrive at
+        EXIT with the same stack: nothing needs popping here.
+        """
+        # Parse the chain first, without simulating: a rejected shape must not
+        # leave anything marked covered, or `_lost_code` would stop noticing.
+        c = self.at[disp]
+        while c < len(self.instrs) and self.instrs[c][1] != "Copy":
+            off, mn, _ = self.instrs[c]
+            if off >= hi or mn in _JUMPS:
+                return None
+            c += 1
+        if c >= len(self.instrs) or c == self.at[disp]:
+            return None            # no chain, or no selector to switch on
+
+        arms: list[tuple[Expr, int]] = []
+        k = c
+        while k + 3 < len(self.instrs):
+            m0, m1, m2, m3 = (self.instrs[k + n][1] for n in range(4))
+            if m0 != "Copy" or m2 != "Equal" or m3 != "GoTrue":
+                break
+            if not any(m1.startswith(p) for p in self._CONSTS):
+                break
+            if m1.startswith("LoadImmediate"):
+                a1 = self.instrs[k + 1][2]
+                if not a1:
+                    break
+                val = Const(a1[0])
+            else:
+                val = Const(0) if m1 == "LoadZero" else Const(1)
+            arms.append((val, self.instrs[k + 3][2][0]))
+            k += 4
+        if len(arms) < 2:
+            return None            # one arm is an `if`, and already shapes
+
+        exit_at = self.instrs[k][0] if k < len(self.instrs) else self.end
+        tgts = [t for _, t in arms]
+        if len(set(tgts)) != len(tgts):
+            return None
+        if not all(body_lo <= t < disp for t in tgts):
+            return None
+        if not body_lo <= exit_at <= hi:
+            return None
+
+        # Shape confirmed. Simulate the selector; it must be a pure expression.
+        sel: list[Expr] = []
+        side: list[Stmt] = []
+        for i in range(self.at[disp], c):
+            self._step(i, sel, side)
+        if len(sel) != 1 or side:
+            return None
+
+        for n in range(c, k):
+            self._covered.add(self.instrs[n][0])
+
+        by_tgt = {}
+        for val, t in arms:
+            by_tgt.setdefault(t, []).append(val)
+        order = sorted(by_tgt)
+        out_arms = []
+        for idx, t in enumerate(order):
+            end = order[idx + 1] if idx + 1 < len(order) else disp
+            b = self._last_before(end)
+            if b is not None and b >= t and self._target(b) == exit_at:
+                self._covered.add(b)        # the arm's `break`
+                end = b
+            out_arms.append((by_tgt[t], self._block(t, end, ctx)))
+        return Case(sel[0], out_arms), exit_at
+
     def _jump_stmt(self, tgt: int, ctx) -> Stmt | None:
         """Out of the current loop is a break; to its head or its latch (the
         back edge at the bottom) is a continue."""
@@ -1221,6 +1326,12 @@ class PogBackend:
             if s.els:
                 out += [i + "} else {"] + self.body(s.els, d + 1)
             return out + [i + "}"]
+        if isinstance(s, Case):
+            out = ["%sswitch ( %s )" % (i, s.sel), i + "{"]
+            for vals, body in s.arms:
+                out += ["%s\tcase %s :" % (i, v) for v in vals]
+                out += self.body(body, d + 2) + ["%s\t\tbreak;" % i, ""]
+            return out + [i + "}"]
         return [i + "; // ?"]
 
 
@@ -1276,6 +1387,15 @@ class GdBackend:
             out = ["%sif %s:" % (i, _gx(s.cond))] + self.body(s.then, d + 1)
             if s.els:
                 out += [i + "else:"] + self.body(s.els, d + 1)
+            return out
+        if isinstance(s, Case):
+            # `match` needs no break: GDScript arms do not fall through, which
+            # is what the bytecode's `Goto exit` per arm already means.
+            out = ["%smatch %s:" % (i, _gx(s.sel))]
+            for vals, body in s.arms:
+                out += ["%s%s:" % (_ind(d + 1),
+                                   ", ".join(_gx(v) for v in vals))]
+                out += self.body(body, d + 2)
             return out
         return [i + "pass"]
 
