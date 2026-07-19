@@ -696,3 +696,6 @@ func _spawn_player() -> void:
 	if cockpit != null:
 		cam.add_child(cockpit)
 	_apply_view()
+	var tail := CameraTail.new()
+	tail.main = self
+	add_child(tail)

@@ -476,6 +476,12 @@ func _physics_process(delta: float) -> void:
 	fields.tick(delta)
 	_update_grid()
 	_update_ldsi_fence()
+
+
+## Placed by CameraTail, not from _physics_process above: the camera has to be
+## positioned after the ship integrates, or it renders a tick behind the hull.
+## See camera_tail.gd.
+func late_physics(delta: float) -> void:
 	_chase_camera(delta)
 	if sky_anchor != null:
 		sky_anchor.global_position = cam.global_position
