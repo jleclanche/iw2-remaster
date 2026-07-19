@@ -1023,11 +1023,41 @@ func _g_move_player_base(_t, a: Array) -> Variant:
 # @stub igame.ServerAddress
 # @stub igame.JoinNetworkGame
 # @stub igame.JoinNetworkGameFromLobby
-# The disc checks: there is no disc, and nothing is locked behind one.
-# @stub igame.GotEarnedMovie
-# @stub igame.GotPlayDisk
 func _g_noop(_t, _a: Array) -> Variant:
 	return 0
+
+
+## The multiplayer session's name. There is no session, and the scripts test
+## that by STRING: SPMainPDAScreen's first branch is
+## `igame.SessionName() != "" || imultiplay.NetworkIsLobbySession()`
+## (ipdagui.pog:29). Returning the int 0 from a call the script compares against
+## "" made that test true, so the front end took the multiplayer path and
+## SPMainPDAScreen_OnMultiplayer pushed icMPMasterScreen -- which has no ported
+## builder -- instead of ever creating a menu button.
+# @native igame.SessionName
+# @native igame.ServerAddress
+# @native igame.CDKey
+func _g_empty(_t, _a: Array) -> Variant:
+	return ""
+
+
+## The disc checks. There is no disc: the remaster runs off an installed copy,
+## so every asset the original would have asked the player to swap for is
+## already there, and both of these are unconditionally TRUE.
+##
+## These were @stub returning 0, i.e. "disc absent" -- the opposite of the
+## comment that sat above them. That is not cosmetic: the front end is gated on
+## it. ifrontendgui.MainMenuScreen pushes icWrongDiskScreen, and only
+## WrongDiskScreen_OnRetry -- which returns early unless GotPlayDisk is true --
+## creates `WrongDiskScreen_LocalisedTextEnabled` (ifrontendgui.pog:10-18).
+## SPMainPDAScreen tests exactly that global before building START NEW GAME,
+## LOAD GAME, INSTANT ACTION and EXTRAS (ipdagui.pog:11, the `v11` branch at
+## case 525), so with these false the original main menu comes up holding only
+## MULTIPLAYER, OPTIONS, CREDITS and QUIT.
+# @native igame.GotEarnedMovie
+# @native igame.GotPlayDisk
+func _g_got_disk(_t, _a: Array) -> Variant:
+	return 1
 
 
 # ---------------------------------------------------------------- inifile
@@ -1226,15 +1256,15 @@ const _BINDINGS := {
 	"igame.gametype": "_g_game_type",
 	"igame.setgametype": "_g_set_game_type",
 	"igame.startnewgame": "_g_start_new_game",
-	"igame.sessionname": "_g_noop",
-	"igame.setsessionname": "_g_noop", "igame.gotearnedmovie": "_g_noop",
-	"igame.gotplaydisk": "_g_noop",
+	"igame.sessionname": "_g_empty",
+	"igame.setsessionname": "_g_noop", "igame.gotearnedmovie": "_g_got_disk",
+	"igame.gotplaydisk": "_g_got_disk",
 	"igame.moveplayerbase": "_g_move_player_base",
 	"igame.savegame": "_g_save", "igame.saveautosave": "_g_save",
 	"igame.autosavesaved": "_g_autosaved", "igame.loadgame": "_g_load",
 	"igame.numberofsavedgameslots": "_g_slots",
 	"igame.nameofsaveinslot": "_g_slot_name",
-	"igame.ismultiplayeronly": "_g_noop", "igame.cdkey": "_g_noop",
+	"igame.ismultiplayeronly": "_g_noop", "igame.cdkey": "_g_empty",
 	"igame.setcdkey": "_g_noop", "igame.serveraddress": "_g_noop",
 	"igame.joinnetworkgame": "_g_noop",
 	"igame.joinnetworkgamefromlobby": "_g_noop",

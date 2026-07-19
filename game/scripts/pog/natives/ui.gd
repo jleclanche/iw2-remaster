@@ -298,6 +298,12 @@ class PogWindow extends RefCounted:
 	var bottom: PogWindow = null
 	## The POG functions this control runs.
 	var on_press := ""                 ## SetButtonFunctionPog
+	## A control the REMASTER added, whose handler is GDScript rather than a POG
+	## function. The original front end has no debug ship/system picker, so ours
+	## cannot name an ipdagui function to dispatch -- but it should still be a
+	## real control on the real screen rather than a second menu drawn beside it.
+	## Set this instead of on_press; PogUi.dispatch_window prefers it.
+	var on_press_cb: Callable = Callable()
 	var on_select := ""                ## SetListBoxSelectFunction
 	var overrides: PackedStringArray = PackedStringArray()  ## the nine slots
 	## Engine-built controls have engine actions instead of POG functions.
@@ -1498,6 +1504,11 @@ func _fire(win: PogWindow, slot: int) -> Variant:
 ## override runs that, and a plain button runs its button function.
 func activate(win: PogWindow) -> Variant:
 	if win == null or not win.enabled:
+		return 0
+	# a remaster-added control runs GDScript; it has no POG function to name
+	if win.on_press_cb.is_valid():
+		dirty = true
+		win.on_press_cb.call()
 		return 0
 	if win.kind == "editbox":
 		return _eb_select(win)

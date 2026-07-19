@@ -134,6 +134,11 @@ var _tex_glow: Texture2D    # images/gui/cursor_glow (icShadyBar::Create)
 ## icShadyBar itself. The base and PDA screens raise the same control, so the
 ## recipe lives in shady_bar.gd and both renderers share it.
 var _shady := ShadyBar.new()
+## Whether the original PDA screen is currently on the POG stack. The debug
+## pickers (SELECT SYSTEM / DEBUG START) are OURS, not the original's, so they
+## still draw as this file's own capsule list -- the PDA comes down while one
+## of those is up.
+var _pda_up := false
 var _glow_pts: Array = []   # ring of the last 10 mouse positions
 var _panel := Rect2()       # the square movie panel, laid out each frame
 var _movie_idx := -1        # -1 = "pick a random start", then cycle (FUN_10017850)
@@ -363,6 +368,7 @@ func open() -> void:
 	sel = 0
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_pick_character()
+	_build_pda()
 	if launched:
 		# pause the simulation like the original; UI/audio stay live
 		# (the CanvasLayer and AudioManager are PROCESS_MODE_ALWAYS)
@@ -373,6 +379,7 @@ func open() -> void:
 
 func close() -> void:
 	visible = false
+	_drop_pda()
 	bust_movie.stop()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	get_tree().paused = false
@@ -390,33 +397,130 @@ func _pog_screen_up() -> bool:
 ## gui.OverlayScreen the POG menus themselves call. False when the runtime is
 ## not up (the caller keeps its stand-in behaviour).
 func _pog_overlay(screen: String, push := false) -> bool:
+	if not _pog_boot():
+		return false
+	# Most of the front end's items overlay; CREDITS pushes
+	# (SPMainPDAScreen_OnCredits, ipdagui.pog:152-156).
+	main.pog_rt.native("gui.pushscreen" if push else "gui.overlayscreen",
+			[screen])
+	return true
+
+## The front end's bootstrap, run once. The original does this inside
+## SPMainPDAScreen's own prologue -- the gui text tables, igui.SetGUIGlobals and
+## the nine gui.RegisterSound calls, before any control exists
+## (ipdagui.pog:11-27) -- and every PDA screen assumes it has happened.
+func _pog_boot() -> bool:
 	var rt: PogRuntime = main.pog_rt
 	if rt == null or rt.ui == null or rt.std == null:
 		return false
-	if not rt.std.globals.has("GUI_shader_width"):
-		# The PDA screens assume the front end's bootstrap already ran: the
-		# original SPMainPDAScreen prologue loads the gui text tables, runs
-		# igui.SetGUIGlobals and registers the gui sounds before any PDA
-		# screen exists (ipdagui.pog:11-27). menu.gd IS our stand-in for that
-		# screen, so run the same prologue once, first overlay raised.
-		for csvfile in ["csv:/text/gui", "csv:/text/gui_addendum",
-				"csv:/text/gui_addendum_2", "csv:/text/gui_addendum_3",
-				"csv:/text/gui_addendum_4", "csv:/text/gui_addendum_5",
-				"csv:/text/objectives"]:
-			rt.native("text.add", [csvfile])
-		var snds := ["minor", "confirm", "error", "loadout",
-			"mechanical_confirm", "add_program", "remove_program",
-			"add_upgrade", "remove_upgrade"]
-		for i in snds.size():
-			rt.native("gui.registersound",
-					["sound:/audio/gui/" + str(snds[i]), i + 1])
-		var s: PogScript = rt.script("igui")
-		if s != null:
-			s.set_g_u_i_globals()
-	# Most of the front end's items overlay; CREDITS pushes
-	# (SPMainPDAScreen_OnCredits, ipdagui.pog:152-156).
-	rt.native("gui.pushscreen" if push else "gui.overlayscreen", [screen])
+	if rt.std.globals.has("GUI_shader_width"):
+		return true
+	for csvfile in ["csv:/text/gui", "csv:/text/gui_addendum",
+			"csv:/text/gui_addendum_2", "csv:/text/gui_addendum_3",
+			"csv:/text/gui_addendum_4", "csv:/text/gui_addendum_5",
+			"csv:/text/objectives"]:
+		rt.native("text.add", [csvfile])
+	var snds := ["minor", "confirm", "error", "loadout",
+		"mechanical_confirm", "add_program", "remove_program",
+		"add_upgrade", "remove_upgrade"]
+	for i in snds.size():
+		rt.native("gui.registersound",
+				["sound:/audio/gui/" + str(snds[i]), i + 1])
+	var s: PogScript = rt.script("igui")
+	if s != null:
+		s.set_g_u_i_globals()
+	# What WrongDiskScreen_OnRetry creates once the play disk is present
+	# (ifrontendgui.pog:14-16). It gates START NEW GAME / LOAD GAME /
+	# INSTANT ACTION / EXTRAS in SPMainPDAScreen (ipdagui.pog:11, case 525), and
+	# our copy is installed, so the disk is always there -- see
+	# igame.GotPlayDisk.
+	rt.native("global.createbool", ["WrongDiskScreen_LocalisedTextEnabled",
+			14, 1])
 	return true
+
+## The menu itself, built by the ORIGINAL builder rather than transcribed here.
+## icSPMainPDAScreen out of the front end, icSPFlightPDAScreen once a game is
+## running -- which is the split the original has, and it is not the same menu:
+## the flight PDA offers only RESUME / LOAD / SELECT TEAM / QUIT
+## (SPFlightPDAScreen, ipdagui.pog:376-395).
+##
+## local_1624 raises the main one with gui.OverlayScreen after popping the
+## wrong-disk screen (ifrontendgui.pog:1624). BaseScreens draws whatever is on
+## the stack, so from here the buttons, their labels, their layout and their
+## focus ring are all the original's.
+func _build_pda() -> bool:
+	if not _pog_boot():
+		return false
+	main.pog_rt.native("gui.overlayscreen",
+			["icSPFlightPDAScreen" if launched else "icSPMainPDAScreen"])
+	_pda_up = true
+	_add_debug_items()
+	return true
+
+## OUR items, which the original front end has no equivalent of. They are built
+## through the same igui.CreateFancyButton the real entries use and appended to
+## the same screen, so they carry the original's art and join its focus ring --
+## they just run GDScript instead of naming an ipdagui function, which is what
+## PogWindow.on_press_cb is for.
+##
+## Kept deliberately at the BOTTOM, after QUIT, so nothing of the original's own
+## ordering shifts: this is an addition to the menu, not an edit of it.
+func _add_debug_items() -> void:
+	var rt: PogRuntime = main.pog_rt
+	var igui: PogScript = rt.script("igui")
+	if igui == null:
+		return
+	var items: Array = [
+		["SELECT SYSTEM", func() -> void: _enter_mode("systems")],
+		["DEBUG START", func() -> void: _enter_mode("ships")],
+	]
+	var made: Array = []
+	for it: Array in items:
+		var win = igui.create_fancy_button(0, 0, null)
+		if not (win is PogUi.PogWindow):
+			return
+		var w: PogUi.PogWindow = win
+		w.title = str(it[0])
+		w.on_press_cb = it[1] as Callable
+		made.append(w)
+	# Continue the column igui.ArrangeWindowsVertically laid out, rather than
+	# recomputing it: take the pitch from the original's own last two entries and
+	# inherit their PARENT, because window coordinates are parent-relative
+	# (base_screens.gd:623) and these ride the same shady bar the rest do.
+	var prior: Array = []
+	for w in rt.ui.visible_screen().windows:
+		if w.kind == "button" and not made.has(w):
+			prior.append(w)
+	if prior.size() < 2:
+		return
+	var last: PogUi.PogWindow = prior[-1]
+	var pitch: int = maxi(last.y - (prior[-2] as PogUi.PogWindow).y, last.h + 4)
+	for i in made.size():
+		var w: PogUi.PogWindow = made[i]
+		w.parent = last.parent
+		if last.parent != null:
+			last.parent.children.append(w)
+		w.x = last.x
+		w.y = last.y + pitch * (i + 1)
+		w.w = last.w
+		w.h = last.h
+	rt.ui.dirty = true
+
+## Our debug pickers are drawn by this file, not by the POG screen, so the PDA
+## comes down while one is up and goes back up on the way out.
+func _enter_mode(m: String) -> void:
+	main.audio.play("audio/gui/expand.wav", -8.0)
+	_drop_pda()
+	mode = m
+	sel = 0
+
+func _drop_pda() -> void:
+	if not _pda_up:
+		return
+	_pda_up = false
+	var rt: PogRuntime = main.pog_rt
+	if rt != null and rt.ui != null:
+		rt.native("gui.popscreen", [])
 
 func _items() -> Array:
 	# [label, enabled]; labels are the original pda_* strings
@@ -905,6 +1009,12 @@ func _draw_top() -> void:
 	var fs := maxi(roundi(item_size * sc), 3)
 	# capsule buttons
 	_item_rects.clear()
+	# ...but not while the ORIGINAL menu is up: SPMainPDAScreen built the real
+	# controls and BaseScreens is drawing them, in the original's own art. These
+	# capsules are this file's stand-in, kept only for the debug pickers below.
+	if _pda_up:
+		_draw_version(s, sc, fs)
+		return
 	var items := _items()
 	var bh := 24.0 * sc
 	var gap := clampf((s.y - 90.0 * sc) / items.size() - bh, 8.0 * sc, 34.0 * sc)
@@ -934,7 +1044,10 @@ func _draw_top() -> void:
 				col if enabled else Color(col.r, col.g, col.b, 0.35))
 		_item_rects.append(r.grow(4))
 		y += bh + gap
-	# version line, bottom right, like "Edge of Chaos F14.6"
+	_draw_version(s, sc, fs)
+
+## The build stamp, bottom right, like the original's "Edge of Chaos F14.6".
+func _draw_version(s: Vector2, sc: float, fs: int) -> void:
 	var ver := "Edge of Chaos R1.0"
 	var vw := _font_title.get_string_size(ver, HORIZONTAL_ALIGNMENT_LEFT, -1,
 			fs).x
