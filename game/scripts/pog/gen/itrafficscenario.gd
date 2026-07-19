@@ -2716,645 +2716,207 @@ func security(v0) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	var _pc: int = 14260
-	while true:
-		if _pc == 14260:
-			v2 = []
-			v3 = 0
-			v8 = global.pog_float("g_player_sensor_range")
-			v11 = iship.find_player_ship()
-			v15 = 0
-			_pc = 14423
-			continue
-		elif _pc == 14340:
-			debug.print_string(string.join(" iTrafficScenario - Created security Scenario for - ", object.string_property(v0, "name")))
-			debug.print_string(" \n")
-			_pc = 14423
-			continue
-		elif _pc == 14423:
-			v1 = ihabitat.cast(v0)
-			if _pog_is_null(v1):
-				_pc = 14460
-				continue
-			else:
-				_pc = 14731
-				continue
-		elif _pc == 14460:
-			v5 = ilagrangepoint.cast(v0)
-			_pc = 14510
-			continue
-		elif _pc == 14489:
+	v2 = []
+	v3 = 0
+	v8 = global.pog_float("g_player_sensor_range")
+	v11 = iship.find_player_ship()
+	v15 = 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join(" iTrafficScenario - Created security Scenario for - ", object.string_property(v0, "name")))
+		debug.print_string(" \n")
+	v1 = ihabitat.cast(v0)
+	if _pog_is_null(v1):
+		v5 = ilagrangepoint.cast(v0)
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Security  - location is an l-point, finding a location to generate ships \n")
-			_pc = 14510
-			continue
-		elif _pc == 14510:
-			v2 = global.pog_set("g_filtered_system_habitats")
-			v3 = 1
-			if ilagrangepoint.interstellar(v5) == 1:
-				_pc = 14569
-				continue
-			else:
-				_pc = 14676
-				continue
-		elif _pc == 14569:
-			v1 = ihabitat.cast(ihabitat.random(v2))
-			_pc = 14632
-			continue
-		elif _pc == 14611:
-			debug.print_string("iTrafficScenario.Security: finding a random habitat....\n")
-			_pc = 14632
-			continue
-		elif _pc == 14632:
-			if not _pog_is_null(v1):
-				_pc = 14645
-				continue
-			else:
-				_pc = 14569
-				continue
-		elif _pc == 14645:
-			_pc = 14671
-			continue
-		elif _pc == 14650:
-			debug.print_string("iTrafficScenario.Security - l point in interstellar\n")
-			_pc = 14671
-			continue
-		elif _pc == 14671:
-			_pc = 14731
-			continue
-		elif _pc == 14676:
+		v2 = global.pog_set("g_filtered_system_habitats")
+		v3 = 1
+		if ilagrangepoint.interstellar(v5) == 1:
+			while true:
+				v1 = ihabitat.cast(ihabitat.random(v2))
+				if PogRuntime.TRACE:
+					debug.print_string("iTrafficScenario.Security: finding a random habitat....\n")
+				if not (_pog_is_null(v1)):
+					break
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Security - l point in interstellar\n")
+		else:
 			v1 = ihabitat.nearest(v2, v5)
-			_pc = 14731
-			continue
-		elif _pc == 14710:
-			debug.print_string("iTrafficScenario.Security - l point is local \n")
-			_pc = 14731
-			continue
-		elif _pc == 14731:
-			v12 = ihabitat.type(v1)
-			v13 = ihabitat.allegiance(v1)
-			if _pog_is_null(v3):
-				_pc = 14791
-				continue
-			else:
-				_pc = 14818
-				continue
-		elif _pc == 14791:
-			v4 = math.random_int(1, 5)
-			_pc = 14840
-			continue
-		elif _pc == 14818:
-			v4 = math.random_int(1, 3)
-			_pc = 14840
-			continue
-		elif _pc == 14840:
-			_pc = 18432
-			continue
-		elif _pc == 14845:
-			_pc = 14871
-			continue
-		elif _pc == 14850:
-			debug.print_string(" iTrafficScenario.Security - creating system patrol Scenario  \n")
-			_pc = 14871
-			continue
-		elif _pc == 14871:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Security - l point is local \n")
+	v12 = ihabitat.type(v1)
+	v13 = ihabitat.allegiance(v1)
+	if _pog_is_null(v3):
+		v4 = math.random_int(1, 5)
+	else:
+		v4 = math.random_int(1, 3)
+	match v4:
+		1:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - creating system patrol Scenario  \n")
 			v6 = math.random_int(0, await local_363(v1))
 			if _pog_is_null(v6):
-				_pc = 14921
-				continue
-			else:
-				_pc = 14928
-				continue
-		elif _pc == 14921:
-			v6 = 1
-			_pc = 14928
-			continue
-		elif _pc == 14928:
+				v6 = 1
 			v7 = await ishipcreation.get_traffic(6, v13, v6)
 			if not _pog_is_null(v5):
-				_pc = 14972
-				continue
+				v15 = await local_0(group.nth_sim(v7, 0), v5)
 			else:
-				_pc = 15020
-				continue
-		elif _pc == 14972:
-			v15 = await local_0(group.nth_sim(v7, 0), v5)
-			_pc = 15063
-			continue
-		elif _pc == 15020:
-			v15 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 15063
-			continue
-		elif _pc == 15063:
-			_pc = 15145
-			continue
-		elif _pc == 15068:
-			debug.print_string(string.join("iTrafficScenario.Security - Placing lead system patrol ship at distance of ", string.from_float(v9)))
-			debug.print_string("\n")
-			_pc = 15145
-			continue
-		elif _pc == 15145:
+				v15 = await local_0(group.nth_sim(v7, 0), v0)
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.Security - Placing lead system patrol ship at distance of ", string.from_float(v9)))
+				debug.print_string("\n")
 			if v6 > 1:
-				_pc = 15157
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string(" iTrafficScenario.Security  - placing additional system patrol ships in formation \n ")
+				if v15:
+					await local_1259(v5, 30)
+					await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
+					await iformation.goose(v7, math.random(10.0, 30.0), 0)
+				else:
+					await iformation.goose(v7, math.random(10.0, 30.0), 1)
 			else:
-				_pc = 15357
-				continue
-		elif _pc == 15157:
-			_pc = 15183
-			continue
-		elif _pc == 15162:
-			debug.print_string(" iTrafficScenario.Security  - placing additional system patrol ships in formation \n ")
-			_pc = 15183
-			continue
-		elif _pc == 15183:
-			if v15:
-				_pc = 15193
-				continue
-			else:
-				_pc = 15309
-				continue
-		elif _pc == 15193:
-			await local_1259(v5, 30)
-			await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
-			await iformation.goose(v7, math.random(10.0, 30.0), 0)
-			_pc = 15352
-			continue
-		elif _pc == 15309:
-			await iformation.goose(v7, math.random(10.0, 30.0), 1)
-			_pc = 15352
-			continue
-		elif _pc == 15352:
-			_pc = 15438
-			continue
-		elif _pc == 15357:
-			if v15:
-				_pc = 15367
-				continue
-			else:
-				_pc = 15438
-				continue
-		elif _pc == 15367:
-			await local_1259(v5, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
-			_pc = 15438
-			continue
-		elif _pc == 15438:
-			_pc = 15562
-			continue
-		elif _pc == 15443:
-			debug.print_string(" iTrafficScenario.Security - finished placing ships for security system patrol \n")
-			debug.print_string("iTrafficScenario.Security- Assigning system patrol orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 15562
-			continue
-		elif _pc == 15562:
+				if v15:
+					await local_1259(v5, 30)
+					isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - finished placing ships for security system patrol \n")
+				debug.print_string("iTrafficScenario.Security- Assigning system patrol orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.system_patrol.bind(v7))
 			_pog_detach(v14)
-			_pc = 18481
-			continue
-		elif _pc == 15610:
-			_pc = 15636
-			continue
-		elif _pc == 15615:
-			debug.print_string(" iTrafficScenario.Security - creating  a security mission Scenario \n ")
-			_pc = 15636
-			continue
-		elif _pc == 15636:
+		2:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - creating  a security mission Scenario \n ")
 			v6 = math.random_int(0, await local_363(v1))
 			if _pog_is_null(v6):
-				_pc = 15686
-				continue
-			else:
-				_pc = 15693
-				continue
-		elif _pc == 15686:
-			v6 = 1
-			_pc = 15693
-			continue
-		elif _pc == 15693:
+				v6 = 1
 			v7 = await ishipcreation.get_traffic(9, v13, v6)
 			if not _pog_is_null(v5):
-				_pc = 15737
-				continue
+				v15 = await local_0(group.nth_sim(v7, 0), v5)
 			else:
-				_pc = 15785
-				continue
-		elif _pc == 15737:
-			v15 = await local_0(group.nth_sim(v7, 0), v5)
-			_pc = 15828
-			continue
-		elif _pc == 15785:
-			v15 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 15828
-			continue
-		elif _pc == 15828:
-			_pc = 15910
-			continue
-		elif _pc == 15833:
-			debug.print_string(string.join("iTrafficScenario.Security - Placing lead security mission ship at distance of ", string.from_float(v9)))
-			debug.print_string("\n")
-			_pc = 15910
-			continue
-		elif _pc == 15910:
+				v15 = await local_0(group.nth_sim(v7, 0), v0)
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.Security - Placing lead security mission ship at distance of ", string.from_float(v9)))
+				debug.print_string("\n")
 			if v6 > 1:
-				_pc = 15922
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string(" iTrafficScenario.Security  - placing additional security mission ships in formation \n ")
+				if v15:
+					await local_1259(v5, 30)
+					await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
+					await iformation.goose(v7, math.random(10.0, 30.0), 0)
+				else:
+					await iformation.goose(v7, math.random(10.0, 30.0), 1)
 			else:
-				_pc = 16122
-				continue
-		elif _pc == 15922:
-			_pc = 15948
-			continue
-		elif _pc == 15927:
-			debug.print_string(" iTrafficScenario.Security  - placing additional security mission ships in formation \n ")
-			_pc = 15948
-			continue
-		elif _pc == 15948:
-			if v15:
-				_pc = 15958
-				continue
-			else:
-				_pc = 16074
-				continue
-		elif _pc == 15958:
-			await local_1259(v5, 30)
-			await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
-			await iformation.goose(v7, math.random(10.0, 30.0), 0)
-			_pc = 16117
-			continue
-		elif _pc == 16074:
-			await iformation.goose(v7, math.random(10.0, 30.0), 1)
-			_pc = 16117
-			continue
-		elif _pc == 16117:
-			_pc = 16203
-			continue
-		elif _pc == 16122:
-			if v15:
-				_pc = 16132
-				continue
-			else:
-				_pc = 16203
-				continue
-		elif _pc == 16132:
-			await local_1259(v5, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
-			_pc = 16203
-			continue
-		elif _pc == 16203:
-			_pc = 16229
-			continue
-		elif _pc == 16208:
-			debug.print_string(" iTrafficScenario.Security - finished placing ships for security mission \n")
-			_pc = 16229
-			continue
-		elif _pc == 16229:
-			_pc = 16332
-			continue
-		elif _pc == 16234:
-			debug.print_string("iTrafficScenario.Security - Assigning official visitor orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 16332
-			continue
-		elif _pc == 16332:
+				if v15:
+					await local_1259(v5, 30)
+					isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - finished placing ships for security mission \n")
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Security - Assigning official visitor orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.official_visitor.bind(v7))
 			_pog_detach(v14)
-			_pc = 18481
-			continue
-		elif _pc == 16380:
-			_pc = 16406
-			continue
-		elif _pc == 16385:
-			debug.print_string(" iTrafficScenario.Security - creating  secure courier Scenario \n")
-			_pc = 16406
-			continue
-		elif _pc == 16406:
+		3:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - creating  secure courier Scenario \n")
 			v6 = 1
 			v7 = await ishipcreation.get_traffic(4, v13, v6)
 			if not _pog_is_null(v5):
-				_pc = 16457
-				continue
+				v15 = await local_0(group.nth_sim(v7, 0), v5)
 			else:
-				_pc = 16505
-				continue
-		elif _pc == 16457:
-			v15 = await local_0(group.nth_sim(v7, 0), v5)
-			_pc = 16548
-			continue
-		elif _pc == 16505:
-			v15 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 16548
-			continue
-		elif _pc == 16548:
+				v15 = await local_0(group.nth_sim(v7, 0), v0)
 			if v15:
-				_pc = 16558
-				continue
-			else:
-				_pc = 16629
-				continue
-		elif _pc == 16558:
-			await local_1259(v5, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
-			_pc = 16629
-			continue
-		elif _pc == 16629:
-			_pc = 16711
-			continue
-		elif _pc == 16634:
-			debug.print_string(string.join("iTrafficScenario.Security - Placing lead security mission ship at distance of ", string.from_float(v9)))
-			debug.print_string("\n")
-			_pc = 16711
-			continue
-		elif _pc == 16711:
-			_pc = 16737
-			continue
-		elif _pc == 16716:
-			debug.print_string(" ITrafficScenario.Security - Installing Cargo for security courier mission  \n")
-			_pc = 16737
-			continue
-		elif _pc == 16737:
+				await local_1259(v5, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.Security - Placing lead security mission ship at distance of ", string.from_float(v9)))
+				debug.print_string("\n")
+			if PogRuntime.TRACE:
+				debug.print_string(" ITrafficScenario.Security - Installing Cargo for security courier mission  \n")
 			await ishipcreation.create_supply_cargo(iship.cast(group.nth_sim(v7, 0)), -2)
-			_pc = 16811
-			continue
-		elif _pc == 16790:
-			debug.print_string("iTrafficScenario.Security - giving supply order for security courier \n")
-			_pc = 16811
-			continue
-		elif _pc == 16811:
-			_pc = 16914
-			continue
-		elif _pc == 16816:
-			debug.print_string("iTrafficScenario.Security - Assigning supply orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 16914
-			continue
-		elif _pc == 16914:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Security - giving supply order for security courier \n")
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Security - Assigning supply orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.supply.bind(v7))
 			_pog_detach(v14)
-			_pc = 16983
-			continue
-		elif _pc == 16962:
-			debug.print_string("iTrafficScenario.Security - Finished security courier  scenario generation \n")
-			_pc = 16983
-			continue
-		elif _pc == 16983:
-			_pc = 18481
-			continue
-		elif _pc == 16988:
-			_pc = 17014
-			continue
-		elif _pc == 16993:
-			debug.print_string(" iTrafficScenario.Security - creating local patrol scenario \n ")
-			_pc = 17014
-			continue
-		elif _pc == 17014:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Security - Finished security courier  scenario generation \n")
+		4:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - creating local patrol scenario \n ")
 			v6 = math.random_int(0, await local_363(v1))
 			if _pog_is_null(v6):
-				_pc = 17064
-				continue
-			else:
-				_pc = 17071
-				continue
-		elif _pc == 17064:
-			v6 = 1
-			_pc = 17071
-			continue
-		elif _pc == 17071:
+				v6 = 1
 			v7 = await ishipcreation.get_traffic(5, v13, v6)
 			if not _pog_is_null(v5):
-				_pc = 17115
-				continue
+				v15 = await local_0(group.nth_sim(v7, 0), v5)
 			else:
-				_pc = 17163
-				continue
-		elif _pc == 17115:
-			v15 = await local_0(group.nth_sim(v7, 0), v5)
-			_pc = 17206
-			continue
-		elif _pc == 17163:
-			v15 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 17206
-			continue
-		elif _pc == 17206:
-			_pc = 17288
-			continue
-		elif _pc == 17211:
-			debug.print_string(string.join("iTrafficScenario.Security - Placing lead local patrol ship at distance of ", string.from_float(v9)))
-			debug.print_string("\n")
-			_pc = 17288
-			continue
-		elif _pc == 17288:
+				v15 = await local_0(group.nth_sim(v7, 0), v0)
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.Security - Placing lead local patrol ship at distance of ", string.from_float(v9)))
+				debug.print_string("\n")
 			if v6 > 1:
-				_pc = 17300
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string(" iTrafficScenario.Security  - placing additional local patrol ships in formation \n ")
+				if v15:
+					await local_1259(v5, 30)
+					await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
+					await iformation.goose(v7, math.random(10.0, 30.0), 0)
+				else:
+					await iformation.goose(v7, math.random(10.0, 30.0), 1)
 			else:
-				_pc = 17500
-				continue
-		elif _pc == 17300:
-			_pc = 17326
-			continue
-		elif _pc == 17305:
-			debug.print_string(" iTrafficScenario.Security  - placing additional local patrol ships in formation \n ")
-			_pc = 17326
-			continue
-		elif _pc == 17326:
-			if v15:
-				_pc = 17336
-				continue
-			else:
-				_pc = 17452
-				continue
-		elif _pc == 17336:
-			await local_1259(v5, 30)
-			await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
-			await iformation.goose(v7, math.random(10.0, 30.0), 0)
-			_pc = 17495
-			continue
-		elif _pc == 17452:
-			await iformation.goose(v7, math.random(10.0, 30.0), 1)
-			_pc = 17495
-			continue
-		elif _pc == 17495:
-			_pc = 17581
-			continue
-		elif _pc == 17500:
-			if v15:
-				_pc = 17510
-				continue
-			else:
-				_pc = 17581
-				continue
-		elif _pc == 17510:
-			await local_1259(v5, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
-			_pc = 17581
-			continue
-		elif _pc == 17581:
-			_pc = 17684
-			continue
-		elif _pc == 17586:
-			debug.print_string("iTrafficScenario.Security- Assigning local patrol orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 17684
-			continue
-		elif _pc == 17684:
+				if v15:
+					await local_1259(v5, 30)
+					isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Security- Assigning local patrol orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.local_patrol.bind(v7))
 			_pog_detach(v14)
-			_pc = 17753
-			continue
-		elif _pc == 17732:
-			debug.print_string(" iTrafficScenario.Security - finished placing ships for security local patrol \n")
-			_pc = 17753
-			continue
-		elif _pc == 17753:
-			_pc = 18481
-			continue
-		elif _pc == 17758:
-			_pc = 17784
-			continue
-		elif _pc == 17763:
-			debug.print_string(" iTrafficScenario.Security - creating  security standby Scenario \n ")
-			_pc = 17784
-			continue
-		elif _pc == 17784:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - finished placing ships for security local patrol \n")
+		5:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - creating  security standby Scenario \n ")
 			if sim.distance_between(v11, imapentity.waypoint_for_entity(v0)) < v8:
-				_pc = 17831
-				continue
+				v6 = math.random_int(0, await local_363(v1))
+				if _pog_is_null(v6):
+					v6 = 1
+				v7 = await ishipcreation.get_traffic(5, v13, v6)
+				v9 = math.random(10.0, 1000.0)
+				sim.place_near(group.nth_sim(v7, 0), imapentity.waypoint_for_entity(v0), v9)
+				if PogRuntime.TRACE:
+					debug.print_string(string.join("iTrafficScenario.Security - Placing lead security standby ship at distance of ", string.from_float(v9)))
+					debug.print_string("\n")
+				if v6 > 1:
+					if PogRuntime.TRACE:
+						debug.print_string(" iTrafficScenario.Security  - placing additional security standby ships in formation \n ")
+					await iformation.line_abreast(v7, math.random(10.0, 30.0), 1)
+				if PogRuntime.TRACE:
+					debug.print_string("iTrafficScenario.Security - Assigning loiter orders to list, lead by ship called -  ")
+					debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+					debug.print_string("\n")
+				v14 = _pog_spawn(iscriptedorders.loiter.bind(v7))
+				if PogRuntime.TRACE:
+					debug.print_string("iTrafficScenario.Security - returned from iScriptedOrders.Loiter \n")
+				_pog_detach(v14)
+				if PogRuntime.TRACE:
+					debug.print_string("iTrafficScenario.Security - returned from assiging loiter orders to security standby ships \n")
 			else:
-				_pc = 18370
-				continue
-		elif _pc == 17831:
-			v6 = math.random_int(0, await local_363(v1))
-			if _pog_is_null(v6):
-				_pc = 17881
-				continue
-			else:
-				_pc = 17888
-				continue
-		elif _pc == 17881:
-			v6 = 1
-			_pc = 17888
-			continue
-		elif _pc == 17888:
-			v7 = await ishipcreation.get_traffic(5, v13, v6)
-			v9 = math.random(10.0, 1000.0)
-			sim.place_near(group.nth_sim(v7, 0), imapentity.waypoint_for_entity(v0), v9)
-			_pc = 18086
-			continue
-		elif _pc == 18009:
-			debug.print_string(string.join("iTrafficScenario.Security - Placing lead security standby ship at distance of ", string.from_float(v9)))
-			debug.print_string("\n")
-			_pc = 18086
-			continue
-		elif _pc == 18086:
-			if v6 > 1:
-				_pc = 18098
-				continue
-			else:
-				_pc = 18167
-				continue
-		elif _pc == 18098:
-			_pc = 18124
-			continue
-		elif _pc == 18103:
-			debug.print_string(" iTrafficScenario.Security  - placing additional security standby ships in formation \n ")
-			_pc = 18124
-			continue
-		elif _pc == 18124:
-			await iformation.line_abreast(v7, math.random(10.0, 30.0), 1)
-			_pc = 18167
-			continue
-		elif _pc == 18167:
-			_pc = 18270
-			continue
-		elif _pc == 18172:
-			debug.print_string("iTrafficScenario.Security - Assigning loiter orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 18270
-			continue
-		elif _pc == 18270:
-			v14 = _pog_spawn(iscriptedorders.loiter.bind(v7))
-			_pc = 18320
-			continue
-		elif _pc == 18299:
-			debug.print_string("iTrafficScenario.Security - returned from iScriptedOrders.Loiter \n")
-			_pc = 18320
-			continue
-		elif _pc == 18320:
-			_pog_detach(v14)
-			_pc = 18365
-			continue
-		elif _pc == 18344:
-			debug.print_string("iTrafficScenario.Security - returned from assiging loiter orders to security standby ships \n")
-			_pc = 18365
-			continue
-		elif _pc == 18365:
-			_pc = 18396
-			continue
-		elif _pc == 18370:
-			_pc = 18396
-			continue
-		elif _pc == 18375:
-			debug.print_string(" iTrafficSceanrio.Security - player is too close to station to place security standby ships. \n")
-			_pc = 18396
-			continue
-		elif _pc == 18396:
-			_pc = 18422
-			continue
-		elif _pc == 18401:
-			debug.print_string(" iTrafficScenario.Security - finished placing ships for security strandby \n")
-			_pc = 18422
-			continue
-		elif _pc == 18422:
-			_pc = 18481
-			continue
-		elif _pc == 18427:
-			_pc = 18481
-			continue
-		elif _pc == 18432:
-			if 1 != v4:
-				_pc = 18445
-				continue
-			else:
-				_pc = 14845
-				continue
-		elif _pc == 18445:
-			if 2 != v4:
-				_pc = 18454
-				continue
-			else:
-				_pc = 15610
-				continue
-		elif _pc == 18454:
-			if 3 != v4:
-				_pc = 18463
-				continue
-			else:
-				_pc = 16380
-				continue
-		elif _pc == 18463:
-			if 4 != v4:
-				_pc = 18472
-				continue
-			else:
-				_pc = 16988
-				continue
-		elif _pc == 18472:
-			if 5 != v4:
-				_pc = 18481
-				continue
-			else:
-				_pc = 17758
-				continue
-		elif _pc == 18481:
+				if PogRuntime.TRACE:
+					debug.print_string(" iTrafficSceanrio.Security - player is too close to station to place security standby ships. \n")
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Security - finished placing ships for security strandby \n")
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func tanker(v0) -> Variant:
@@ -3366,177 +2928,56 @@ func tanker(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 18491
-	while true:
-		if _pc == 18491:
-			v4 = []
-			v8 = 0
-			v6 = ihabitat.cast(v0)
-			if _pog_is_null(v6):
-				_pc = 18551
-				continue
-			else:
-				_pc = 18727
-				continue
-		elif _pc == 18551:
-			v5 = ilagrangepoint.cast(v0)
-			if _pog_is_null(v5):
-				_pc = 18588
-				continue
-			else:
-				_pc = 18614
-				continue
-		elif _pc == 18588:
-			_pc = 18614
-			continue
-		elif _pc == 18593:
-			debug.error("iTrafficScenario.Tanker : location hadle passed is neither a habitat or an l-point !")
-			_pc = 18614
-			continue
-		elif _pc == 18614:
-			_pc = 18640
-			continue
-		elif _pc == 18619:
+	v4 = []
+	v8 = 0
+	v6 = ihabitat.cast(v0)
+	if _pog_is_null(v6):
+		v5 = ilagrangepoint.cast(v0)
+		if _pog_is_null(v5):
+			if PogRuntime.TRACE:
+				debug.error("iTrafficScenario.Tanker : location hadle passed is neither a habitat or an l-point !")
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Tanker  - location is an l-point, finding a location to generate ships \n")
-			_pc = 18640
-			continue
-		elif _pc == 18640:
-			v4 = global.pog_set("g_filtered_system_habitats")
-			_pc = 18693
-			continue
-		elif _pc == 18672:
+		v4 = global.pog_set("g_filtered_system_habitats")
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Tanker L-point is local \n")
-			_pc = 18693
-			continue
-		elif _pc == 18693:
-			v6 = ihabitat.nearest(v4, v5)
-			_pc = 18753
-			continue
-		elif _pc == 18727:
-			_pc = 18753
-			continue
-		elif _pc == 18732:
+		v6 = ihabitat.nearest(v4, v5)
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string(" ITrafficScenario.Tanker - location is not an L-Point \n")
-			_pc = 18753
-			continue
-		elif _pc == 18753:
-			v2 = ihabitat.allegiance(v6)
-			v1 = math.random_int(1, await local_363(v6))
-			_pc = 18933
-			continue
-		elif _pc == 18820:
+	v2 = ihabitat.allegiance(v6)
+	v1 = math.random_int(1, await local_363(v6))
+	match math.random_int(1, 3):
+		1:
 			v3 = await ishipcreation.get_traffic(19, v2, v1)
-			_pc = 18975
-			continue
-		elif _pc == 18856:
+		2:
 			v3 = await ishipcreation.get_traffic(20, v2, v1)
-			_pc = 18975
-			continue
-		elif _pc == 18892:
+		3:
 			v3 = await ishipcreation.get_traffic(18, v2, v1)
-			_pc = 18975
-			continue
-		elif _pc == 18928:
-			_pc = 18975
-			continue
-		elif _pc == 18933:
-			math.random_int(1, 3)
-			if 1 != math.random_int(1, 3):
-				_pc = 18957
-				continue
-			else:
-				_pc = 18820
-				continue
-		elif _pc == 18957:
-			if not _pog_is_null(2):
-				_pc = 18966
-				continue
-			else:
-				_pc = 18856
-				continue
-		elif _pc == 18966:
-			if not _pog_is_null(3):
-				_pc = 18975
-				continue
-			else:
-				_pc = 18892
-				continue
-		elif _pc == 18975:
-			if not _pog_is_null(v5):
-				_pc = 18988
-				continue
-			else:
-				_pc = 19036
-				continue
-		elif _pc == 18988:
-			v8 = await local_0(group.nth_sim(v3, 0), v5)
-			_pc = 19079
-			continue
-		elif _pc == 19036:
-			v8 = await local_0(group.nth_sim(v3, 0), v0)
-			_pc = 19079
-			continue
-		elif _pc == 19079:
-			if v1 > 1:
-				_pc = 19091
-				continue
-			else:
-				_pc = 19255
-				continue
-		elif _pc == 19091:
-			_pc = 19117
-			continue
-		elif _pc == 19096:
+	if not _pog_is_null(v5):
+		v8 = await local_0(group.nth_sim(v3, 0), v5)
+	else:
+		v8 = await local_0(group.nth_sim(v3, 0), v0)
+	if v1 > 1:
+		if PogRuntime.TRACE:
 			debug.print_string(" iTrafficScenario.Tanker - Placing  additional tankers in formation \n")
-			_pc = 19117
-			continue
-		elif _pc == 19117:
-			if v8:
-				_pc = 19127
-				continue
-			else:
-				_pc = 19225
-				continue
-		elif _pc == 19127:
+		if v8:
 			await local_1259(v5, 30)
 			await iutilities.capsule_jump_group(v3, v5, math.random(1.0, 2.0))
 			await iformation.line_ahead(v3, 70.0, 0)
-			_pc = 19250
-			continue
-		elif _pc == 19225:
+		else:
 			await iformation.line_ahead(v3, 70.0, 1)
-			_pc = 19250
-			continue
-		elif _pc == 19250:
-			_pc = 19336
-			continue
-		elif _pc == 19255:
-			if v8:
-				_pc = 19265
-				continue
-			else:
-				_pc = 19336
-				continue
-		elif _pc == 19265:
+	else:
+		if v8:
 			await local_1259(v5, 30)
 			isim.capsule_jump_staggered(isim.cast(group.leader(v3)), v5)
-			_pc = 19336
-			continue
-		elif _pc == 19336:
-			_pc = 19439
-			continue
-		elif _pc == 19341:
-			debug.print_string("iTrafficScenario.Tanker - Assigning tanker orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v3, 0), "name"))
-			debug.print_string("\n")
-			_pc = 19439
-			continue
-		elif _pc == 19439:
-			v7 = _pog_spawn(iscriptedorders.tanker.bind(v3))
-			_pog_detach(v7)
-			return 0
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iTrafficScenario.Tanker - Assigning tanker orders to list, lead by ship called -  ")
+		debug.print_string(object.string_property(group.nth_sim(v3, 0), "name"))
+		debug.print_string("\n")
+	v7 = _pog_spawn(iscriptedorders.tanker.bind(v3))
+	_pog_detach(v7)
+	return 0
 	return 0
 
 func official(v0) -> Variant:
@@ -4919,389 +4360,131 @@ func maintenance(v0) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 25334
-	while true:
-		if _pc == 25334:
-			v2 = []
-			v3 = 0
-			v8 = global.pog_float("g_player_sensor_range")
-			v16 = 0
-			_pc = 25478
-			continue
-		elif _pc == 25395:
-			debug.print_string(string.join(" iTrafficScenario - Created Maintenance Scenario for - ", object.string_property(v0, "name")))
-			debug.print_string(" \n")
-			_pc = 25478
-			continue
-		elif _pc == 25478:
-			v1 = ihabitat.cast(v0)
-			if _pog_is_null(v1):
-				_pc = 25515
-				continue
-			else:
-				_pc = 25667
-				continue
-		elif _pc == 25515:
-			v5 = ilagrangepoint.cast(v0)
-			_pc = 25565
-			continue
-		elif _pc == 25544:
+	v2 = []
+	v3 = 0
+	v8 = global.pog_float("g_player_sensor_range")
+	v16 = 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join(" iTrafficScenario - Created Maintenance Scenario for - ", object.string_property(v0, "name")))
+		debug.print_string(" \n")
+	v1 = ihabitat.cast(v0)
+	if _pog_is_null(v1):
+		v5 = ilagrangepoint.cast(v0)
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Maintenance  - location is an l-point, finding a location to generate ships \n")
-			_pc = 25565
-			continue
-		elif _pc == 25565:
-			v2 = global.pog_set("g_filtered_system_habitats")
-			v3 = 1
-			v1 = ihabitat.nearest(v2, imapentity.waypoint_for_entity(v5))
-			_pc = 25667
-			continue
-		elif _pc == 25646:
+		v2 = global.pog_set("g_filtered_system_habitats")
+		v3 = 1
+		v1 = ihabitat.nearest(v2, imapentity.waypoint_for_entity(v5))
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Maintenance - l point is local \n")
-			_pc = 25667
-			continue
-		elif _pc == 25667:
-			v12 = ihabitat.type(v1)
-			v13 = ihabitat.allegiance(v1)
-			if not (v3):
-				_pc = 25726
-				continue
-			else:
-				_pc = 25753
-				continue
-		elif _pc == 25726:
-			v4 = math.random_int(1, 4)
-			_pc = 25760
-			continue
-		elif _pc == 25753:
-			v4 = 1
-			_pc = 25760
-			continue
-		elif _pc == 25760:
-			_pc = 27954
-			continue
-		elif _pc == 25765:
-			_pc = 25791
-			continue
-		elif _pc == 25770:
-			debug.print_string(" iTrafficScenario.Maintenance - creating recovery \n")
-			_pc = 25791
-			continue
-		elif _pc == 25791:
+	v12 = ihabitat.type(v1)
+	v13 = ihabitat.allegiance(v1)
+	if not (v3):
+		v4 = math.random_int(1, 4)
+	else:
+		v4 = 1
+	match v4:
+		1:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Maintenance - creating recovery \n")
 			v6 = 1
 			v7 = await ishipcreation.get_traffic(23, v13, v6)
 			v16 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 25921
-			continue
-		elif _pc == 25877:
-			debug.print_string("iTrafficScenario.Maintenance - Giving orders to recovery ship \n")
-			debug.print_string("iTrafficScenario.Maintenance - creating Hulk to recover \n ")
-			_pc = 25921
-			continue
-		elif _pc == 25921:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Maintenance - Giving orders to recovery ship \n")
+				debug.print_string("iTrafficScenario.Maintenance - creating Hulk to recover \n ")
 			v15 = await ishipcreation.get_traffic(21, v13, 1)
-			_pc = 25974
-			continue
-		elif _pc == 25953:
-			debug.print_string("iTrafficScenario.Maintenance - placing Hulk to recover \n ")
-			_pc = 25974
-			continue
-		elif _pc == 25974:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Maintenance - placing Hulk to recover \n ")
 			v16 = await local_0(group.leader(v15), v1)
-			_pc = 26119
-			continue
-		elif _pc == 26021:
-			debug.print_string("iTrafficScenario.Maintenance - Assigning recovery orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 26119
-			continue
-		elif _pc == 26119:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Maintenance - Assigning recovery orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.recovery.bind(v7, iship.cast(group.nth_sim(v15, 0))))
 			_pog_detach(v14)
-			_pc = 27994
-			continue
-		elif _pc == 26199:
-			_pc = 26225
-			continue
-		elif _pc == 26204:
-			debug.print_string(" iTrafficScenario.Maintenance - inspection \n ")
-			_pc = 26225
-			continue
-		elif _pc == 26225:
+		2:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Maintenance - inspection \n ")
 			v6 = 1
 			v7 = await ishipcreation.get_traffic(21, v13, v6)
 			if not _pog_is_null(v5):
-				_pc = 26276
-				continue
+				v16 = await local_0(group.nth_sim(v7, 0), v5)
 			else:
-				_pc = 26324
-				continue
-		elif _pc == 26276:
-			v16 = await local_0(group.nth_sim(v7, 0), v5)
-			_pc = 26367
-			continue
-		elif _pc == 26324:
-			v16 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 26367
-			continue
-		elif _pc == 26367:
+				v16 = await local_0(group.nth_sim(v7, 0), v0)
 			if v16:
-				_pc = 26377
-				continue
-			else:
-				_pc = 26448
-				continue
-		elif _pc == 26377:
-			await local_1259(v5, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
-			_pc = 26448
-			continue
-		elif _pc == 26448:
-			_pc = 26551
-			continue
-		elif _pc == 26453:
-			debug.print_string("iTrafficScenario.Maintenance - Assigning inspection orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 26551
-			continue
-		elif _pc == 26551:
+				await local_1259(v5, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Maintenance - Assigning inspection orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.inspection.bind(v7))
 			_pog_detach(v14)
-			_pc = 27994
-			continue
-		elif _pc == 26599:
-			_pc = 26625
-			continue
-		elif _pc == 26604:
-			debug.print_string(" iTrafficScenario.Maintenance - creating  construction ships \n")
-			_pc = 26625
-			continue
-		elif _pc == 26625:
+		3:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Maintenance - creating  construction ships \n")
 			v6 = math.random_int(0, await local_363(v1))
 			if _pog_is_null(v6):
-				_pc = 26675
-				continue
-			else:
-				_pc = 26682
-				continue
-		elif _pc == 26675:
-			v6 = 1
-			_pc = 26682
-			continue
-		elif _pc == 26682:
+				v6 = 1
 			v7 = await ishipcreation.get_traffic(21, v13, v6)
 			if not _pog_is_null(v5):
-				_pc = 26726
-				continue
+				v16 = await local_0(group.nth_sim(v7, 0), v5)
 			else:
-				_pc = 26774
-				continue
-		elif _pc == 26726:
-			v16 = await local_0(group.nth_sim(v7, 0), v5)
-			_pc = 26817
-			continue
-		elif _pc == 26774:
-			v16 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 26817
-			continue
-		elif _pc == 26817:
+				v16 = await local_0(group.nth_sim(v7, 0), v0)
 			if v6 > 1:
-				_pc = 26829
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string(" iTrafficScenario.Maintenance - placing additional construction ships in formation \n ")
+				if v16:
+					await local_1259(v5, 30)
+					await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
+					await iformation.random_sphere(v7, math.random(10.0, 30.0), 0)
+				else:
+					await iformation.random_sphere(v7, math.random(10.0, 30.0), 1)
 			else:
-				_pc = 27029
-				continue
-		elif _pc == 26829:
-			_pc = 26855
-			continue
-		elif _pc == 26834:
-			debug.print_string(" iTrafficScenario.Maintenance - placing additional construction ships in formation \n ")
-			_pc = 26855
-			continue
-		elif _pc == 26855:
-			if v16:
-				_pc = 26865
-				continue
-			else:
-				_pc = 26981
-				continue
-		elif _pc == 26865:
-			await local_1259(v5, 30)
-			await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
-			await iformation.random_sphere(v7, math.random(10.0, 30.0), 0)
-			_pc = 27024
-			continue
-		elif _pc == 26981:
-			await iformation.random_sphere(v7, math.random(10.0, 30.0), 1)
-			_pc = 27024
-			continue
-		elif _pc == 27024:
-			_pc = 27110
-			continue
-		elif _pc == 27029:
-			if v16:
-				_pc = 27039
-				continue
-			else:
-				_pc = 27110
-				continue
-		elif _pc == 27039:
-			await local_1259(v5, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
-			_pc = 27110
-			continue
-		elif _pc == 27110:
-			_pc = 27213
-			continue
-		elif _pc == 27115:
-			debug.print_string("iTrafficScenario.Maintenance - Assigning Station construction orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 27213
-			continue
-		elif _pc == 27213:
+				if v16:
+					await local_1259(v5, 30)
+					isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Maintenance - Assigning Station construction orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.station_construction.bind(v7))
 			_pog_detach(v14)
-			_pc = 27994
-			continue
-		elif _pc == 27261:
-			_pc = 27287
-			continue
-		elif _pc == 27266:
-			debug.print_string(" iTrafficScenario.Maintenance - creating station repair ships. \n ")
-			_pc = 27287
-			continue
-		elif _pc == 27287:
+		4:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Maintenance - creating station repair ships. \n ")
 			v6 = math.random_int(0, await local_363(v1))
 			if _pog_is_null(v6):
-				_pc = 27337
-				continue
-			else:
-				_pc = 27344
-				continue
-		elif _pc == 27337:
-			v6 = 1
-			_pc = 27344
-			continue
-		elif _pc == 27344:
+				v6 = 1
 			v7 = await ishipcreation.get_traffic(22, v13, v6)
 			if not _pog_is_null(v5):
-				_pc = 27388
-				continue
+				v16 = await local_0(group.nth_sim(v7, 0), v5)
 			else:
-				_pc = 27436
-				continue
-		elif _pc == 27388:
-			v16 = await local_0(group.nth_sim(v7, 0), v5)
-			_pc = 27479
-			continue
-		elif _pc == 27436:
-			v16 = await local_0(group.nth_sim(v7, 0), v0)
-			_pc = 27479
-			continue
-		elif _pc == 27479:
+				v16 = await local_0(group.nth_sim(v7, 0), v0)
 			if v6 > 1:
-				_pc = 27491
-				continue
+				if PogRuntime.TRACE:
+					debug.print_string(" iTrafficScenario.Maintaiance  - placing additional station reapair ships in formation \n ")
+				if v16:
+					await local_1259(v5, 30)
+					await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
+					await iformation.goose(v7, math.random(10.0, 30.0), 0)
+				else:
+					await iformation.goose(v7, math.random(10.0, 30.0), 1)
 			else:
-				_pc = 27691
-				continue
-		elif _pc == 27491:
-			_pc = 27517
-			continue
-		elif _pc == 27496:
-			debug.print_string(" iTrafficScenario.Maintaiance  - placing additional station reapair ships in formation \n ")
-			_pc = 27517
-			continue
-		elif _pc == 27517:
-			if v16:
-				_pc = 27527
-				continue
-			else:
-				_pc = 27643
-				continue
-		elif _pc == 27527:
-			await local_1259(v5, 30)
-			await iutilities.capsule_jump_group(v7, v5, math.random(1.0, 2.0))
-			await iformation.goose(v7, math.random(10.0, 30.0), 0)
-			_pc = 27686
-			continue
-		elif _pc == 27643:
-			await iformation.goose(v7, math.random(10.0, 30.0), 1)
-			_pc = 27686
-			continue
-		elif _pc == 27686:
-			_pc = 27772
-			continue
-		elif _pc == 27691:
-			if v16:
-				_pc = 27701
-				continue
-			else:
-				_pc = 27772
-				continue
-		elif _pc == 27701:
-			await local_1259(v5, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
-			_pc = 27772
-			continue
-		elif _pc == 27772:
-			_pc = 27875
-			continue
-		elif _pc == 27777:
-			debug.print_string("iTrafficScenario.Maintenance - Assigning reapair orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
-			debug.print_string("\n")
-			_pc = 27875
-			continue
-		elif _pc == 27875:
+				if v16:
+					await local_1259(v5, 30)
+					isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Maintenance - Assigning reapair orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.station_repair.bind(v7))
 			_pog_detach(v14)
-			_pc = 27944
-			continue
-		elif _pc == 27923:
-			debug.print_string(" iTrafficScenario.Maintaiance - finished placing ships station reapir local patrol \n")
-			_pc = 27944
-			continue
-		elif _pc == 27944:
-			_pc = 27994
-			continue
-		elif _pc == 27949:
-			_pc = 27994
-			continue
-		elif _pc == 27954:
-			if 1 != v4:
-				_pc = 27967
-				continue
-			else:
-				_pc = 25765
-				continue
-		elif _pc == 27967:
-			if 2 != v4:
-				_pc = 27976
-				continue
-			else:
-				_pc = 26199
-				continue
-		elif _pc == 27976:
-			if 3 != v4:
-				_pc = 27985
-				continue
-			else:
-				_pc = 26599
-				continue
-		elif _pc == 27985:
-			if 4 != v4:
-				_pc = 27994
-				continue
-			else:
-				_pc = 27261
-				continue
-		elif _pc == 27994:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.Maintaiance - finished placing ships station reapir local patrol \n")
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func mining(v0) -> Variant:
@@ -6222,257 +5405,88 @@ func oddball(v0) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 33430
-	while true:
-		if _pc == 33430:
-			v5 = ihabitat.cast(v0)
-			v6 = ilagrangepoint.cast(v0)
-			v7 = []
-			v10 = global.pog_float("g_player_sensor_range")
-			v13 = 0
-			_pc = 33615
-			continue
-		elif _pc == 33532:
-			debug.print_string(string.join(" iTrafficScenario - Created Oddball Scenario for - ", object.string_property(v0, "name")))
-			debug.print_string(" \n")
-			_pc = 33615
-			continue
-		elif _pc == 33615:
-			v7 = global.pog_set("g_filtered_system_habitats")
-			v1 = iship.find_player_ship()
-			v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v11 = math.random(v10, v10 + v9)
-			if _pog_is_null(v5):
-				_pc = 33751
-				continue
-			else:
-				_pc = 33806
-				continue
-		elif _pc == 33751:
-			_pc = 33777
-			continue
-		elif _pc == 33756:
+	v5 = ihabitat.cast(v0)
+	v6 = ilagrangepoint.cast(v0)
+	v7 = []
+	v10 = global.pog_float("g_player_sensor_range")
+	v13 = 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join(" iTrafficScenario - Created Oddball Scenario for - ", object.string_property(v0, "name")))
+		debug.print_string(" \n")
+	v7 = global.pog_set("g_filtered_system_habitats")
+	v1 = iship.find_player_ship()
+	v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
+	v11 = math.random(v10, v10 + v9)
+	if _pog_is_null(v5):
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Oddball: L-point is local \n")
-			_pc = 33777
-			continue
-		elif _pc == 33777:
-			v5 = ihabitat.nearest(v7, v6)
-			_pc = 33806
-			continue
-		elif _pc == 33806:
-			v8 = math.random_int(1, 4)
-			_pc = 35300
-			continue
-		elif _pc == 33833:
+		v5 = ihabitat.nearest(v7, v6)
+	v8 = math.random_int(1, 4)
+	match v8:
+		1:
 			v2 = await ishipcreation.get_traffic(14, 1, 1)
 			if not _pog_is_null(v6):
-				_pc = 33869
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 33917
-				continue
-		elif _pc == 33869:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 33960
-			continue
-		elif _pc == 33917:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 33960
-			continue
-		elif _pc == 33960:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 33970
-				continue
-			else:
-				_pc = 34041
-				continue
-		elif _pc == 33970:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 34041
-			continue
-		elif _pc == 34041:
-			_pc = 34144
-			continue
-		elif _pc == 34046:
-			debug.print_string("iTrafficScenario.Oddball - Assigning pilgrimage orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 34144
-			continue
-		elif _pc == 34144:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Oddball - Assigning pilgrimage orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.pilgrimage.bind(v2))
 			_pog_detach(v12)
-			_pc = 35340
-			continue
-		elif _pc == 34192:
+		2:
 			v2 = await ishipcreation.get_traffic(21, 1, 1)
 			if not _pog_is_null(v6):
-				_pc = 34228
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 34276
-				continue
-		elif _pc == 34228:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 34319
-			continue
-		elif _pc == 34276:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 34319
-			continue
-		elif _pc == 34319:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 34329
-				continue
-			else:
-				_pc = 34400
-				continue
-		elif _pc == 34329:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 34400
-			continue
-		elif _pc == 34400:
-			_pc = 34503
-			continue
-		elif _pc == 34405:
-			debug.print_string("iTrafficScenario.oddball - Assigning unpredicatable orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 34503
-			continue
-		elif _pc == 34503:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.oddball - Assigning unpredicatable orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.unpredictable.bind(v2))
 			_pog_detach(v12)
-			_pc = 35340
-			continue
-		elif _pc == 34551:
+		3:
 			v2 = await ishipcreation.get_traffic(21, 1, 1)
 			if not _pog_is_null(v6):
-				_pc = 34587
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 34635
-				continue
-		elif _pc == 34587:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 34678
-			continue
-		elif _pc == 34635:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 34678
-			continue
-		elif _pc == 34678:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 34688
-				continue
-			else:
-				_pc = 34759
-				continue
-		elif _pc == 34688:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 34759
-			continue
-		elif _pc == 34759:
-			_pc = 34862
-			continue
-		elif _pc == 34764:
-			debug.print_string("iTrafficScenario.Oddball - Assigning loiter orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 34862
-			continue
-		elif _pc == 34862:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Oddball - Assigning loiter orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.loiter.bind(v2))
 			_pog_detach(v12)
-			_pc = 35340
-			continue
-		elif _pc == 34910:
+		4:
 			v2 = await ishipcreation.get_traffic(21, 1, 1)
 			if not _pog_is_null(v6):
-				_pc = 34946
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 34994
-				continue
-		elif _pc == 34946:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 35037
-			continue
-		elif _pc == 34994:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 35037
-			continue
-		elif _pc == 35037:
-			_pc = 35063
-			continue
-		elif _pc == 35042:
-			debug.print_string("iTrafficScenario.Oddball - giving this cheesemaker cheesy orderd\n")
-			_pc = 35063
-			continue
-		elif _pc == 35063:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Oddball - giving this cheesemaker cheesy orderd\n")
 			if v13:
-				_pc = 35073
-				continue
-			else:
-				_pc = 35144
-				continue
-		elif _pc == 35073:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 35144
-			continue
-		elif _pc == 35144:
-			_pc = 35247
-			continue
-		elif _pc == 35149:
-			debug.print_string("iTrafficScenario.oddball - Assigning loiter orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 35247
-			continue
-		elif _pc == 35247:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.oddball - Assigning loiter orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.loiter.bind(v2))
 			_pog_detach(v12)
-			_pc = 35340
-			continue
-		elif _pc == 35295:
-			_pc = 35340
-			continue
-		elif _pc == 35300:
-			if 1 != v8:
-				_pc = 35313
-				continue
-			else:
-				_pc = 33833
-				continue
-		elif _pc == 35313:
-			if 2 != v8:
-				_pc = 35322
-				continue
-			else:
-				_pc = 34192
-				continue
-		elif _pc == 35322:
-			if 3 != v8:
-				_pc = 35331
-				continue
-			else:
-				_pc = 34551
-				continue
-		elif _pc == 35331:
-			if 4 != v8:
-				_pc = 35340
-				continue
-			else:
-				_pc = 34910
-				continue
-		elif _pc == 35340:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func civilian(v0) -> Variant:
@@ -6489,280 +5503,94 @@ func civilian(v0) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 35350
-	while true:
-		if _pc == 35350:
-			v5 = ihabitat.cast(v0)
-			v6 = ilagrangepoint.cast(v0)
-			v7 = []
-			v10 = global.pog_float("g_player_sensor_range")
-			v13 = 0
-			_pc = 35535
-			continue
-		elif _pc == 35452:
-			debug.print_string(string.join(" iTrafficScenario: Created Civilain Scenario for - ", object.string_property(v0, "name")))
-			debug.print_string(" \n")
-			_pc = 35535
-			continue
-		elif _pc == 35535:
-			v7 = global.pog_set("g_filtered_system_habitats")
-			v1 = iship.find_player_ship()
-			v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v11 = math.random(v10, v10 + v9)
-			if _pog_is_null(v5):
-				_pc = 35671
-				continue
-			else:
-				_pc = 35726
-				continue
-		elif _pc == 35671:
-			_pc = 35697
-			continue
-		elif _pc == 35676:
+	v5 = ihabitat.cast(v0)
+	v6 = ilagrangepoint.cast(v0)
+	v7 = []
+	v10 = global.pog_float("g_player_sensor_range")
+	v13 = 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join(" iTrafficScenario: Created Civilain Scenario for - ", object.string_property(v0, "name")))
+		debug.print_string(" \n")
+	v7 = global.pog_set("g_filtered_system_habitats")
+	v1 = iship.find_player_ship()
+	v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
+	v11 = math.random(v10, v10 + v9)
+	if _pog_is_null(v5):
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Civilian: L-point is local \n")
-			_pc = 35697
-			continue
-		elif _pc == 35697:
-			v5 = ihabitat.nearest(v7, v6)
-			_pc = 35726
-			continue
-		elif _pc == 35726:
-			v8 = math.random_int(1, 3)
-			if math.random_int(0, 100) == 22:
-				_pc = 35772
-				continue
-			else:
-				_pc = 35780
-				continue
-		elif _pc == 35772:
-			v8 = 4
-			_pc = 35780
-			continue
-		elif _pc == 35780:
-			_pc = 37347
-			continue
-		elif _pc == 35785:
+		v5 = ihabitat.nearest(v7, v6)
+	v8 = math.random_int(1, 3)
+	if math.random_int(0, 100) == 22:
+		v8 = 4
+	match v8:
+		1:
 			v2 = await ishipcreation.get_traffic(25, 1, 1)
 			if not _pog_is_null(v6):
-				_pc = 35821
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 35869
-				continue
-		elif _pc == 35821:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 35912
-			continue
-		elif _pc == 35869:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 35912
-			continue
-		elif _pc == 35912:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 35922
-				continue
-			else:
-				_pc = 35993
-				continue
-		elif _pc == 35922:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 35993
-			continue
-		elif _pc == 35993:
-			_pc = 36096
-			continue
-		elif _pc == 35998:
-			debug.print_string("iTrafficScenario.Civilian - Assigning  Cabbie orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 36096
-			continue
-		elif _pc == 36096:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Civilian - Assigning  Cabbie orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.cabbie.bind(v2))
 			_pog_detach(v12)
-			_pc = 37387
-			continue
-		elif _pc == 36144:
+		2:
 			v2 = await ishipcreation.get_traffic(22, 1, 1)
 			if not _pog_is_null(v6):
-				_pc = 36180
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 36228
-				continue
-		elif _pc == 36180:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 36271
-			continue
-		elif _pc == 36228:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 36271
-			continue
-		elif _pc == 36271:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 36281
-				continue
-			else:
-				_pc = 36352
-				continue
-		elif _pc == 36281:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 36352
-			continue
-		elif _pc == 36352:
-			_pc = 36455
-			continue
-		elif _pc == 36357:
-			debug.print_string("iTrafficScenario.Civilian - Assigning Local Wander orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 36455
-			continue
-		elif _pc == 36455:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Civilian - Assigning Local Wander orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.local_wander.bind(v2))
 			_pog_detach(v12)
-			_pc = 37387
-			continue
-		elif _pc == 36503:
+		3:
 			v2 = await ishipcreation.get_traffic(25, 1, 1)
 			if not _pog_is_null(v6):
-				_pc = 36539
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 36587
-				continue
-		elif _pc == 36539:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 36630
-			continue
-		elif _pc == 36587:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 36630
-			continue
-		elif _pc == 36630:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			object.add_bool_property(group.leader(v2), "taxi", 1)
 			if v13:
-				_pc = 36680
-				continue
-			else:
-				_pc = 36751
-				continue
-		elif _pc == 36680:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 36751
-			continue
-		elif _pc == 36751:
-			_pc = 36854
-			continue
-		elif _pc == 36756:
-			debug.print_string("iTrafficScenario.Civilian - Assigning tourist orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 36854
-			continue
-		elif _pc == 36854:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Civilian - Assigning tourist orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.tourist.bind(v2))
 			_pog_detach(v12)
-			_pc = 37387
-			continue
-		elif _pc == 36902:
+		4:
 			if _pog_is_null(global.exists("g_hot_rodder_running")):
-				_pc = 36929
-				continue
+				global.create_bool("g_hot_rodder_running", 1, 1)
+				v2 = await ishipcreation.get_traffic(6, 1, 1)
+				if not _pog_is_null(v6):
+					v13 = await local_0(group.nth_sim(v2, 0), v6)
+				else:
+					v13 = await local_0(group.nth_sim(v2, 0), v0)
+				if v13:
+					await local_1259(v6, 30)
+					isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+				if PogRuntime.TRACE:
+					debug.print_string("iTrafficScenario.Civilian - Assigning hotrodder orders to list, lead by ship called -  ")
+					debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+					debug.print_string("\n")
+				v12 = _pog_spawn(iscriptedorders.hot_rodder.bind(v2))
+				_pog_detach(v12)
 			else:
-				_pc = 37311
-				continue
-		elif _pc == 36929:
-			global.create_bool("g_hot_rodder_running", 1, 1)
-			v2 = await ishipcreation.get_traffic(6, 1, 1)
-			if not _pog_is_null(v6):
-				_pc = 36988
-				continue
-			else:
-				_pc = 37036
-				continue
-		elif _pc == 36988:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 37079
-			continue
-		elif _pc == 37036:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 37079
-			continue
-		elif _pc == 37079:
-			if v13:
-				_pc = 37089
-				continue
-			else:
-				_pc = 37160
-				continue
-		elif _pc == 37089:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 37160
-			continue
-		elif _pc == 37160:
-			_pc = 37263
-			continue
-		elif _pc == 37165:
-			debug.print_string("iTrafficScenario.Civilian - Assigning hotrodder orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 37263
-			continue
-		elif _pc == 37263:
-			v12 = _pog_spawn(iscriptedorders.hot_rodder.bind(v2))
-			_pog_detach(v12)
-			_pc = 37337
-			continue
-		elif _pc == 37311:
-			_pc = 37337
-			continue
-		elif _pc == 37316:
-			debug.print_string("iTrafficScenario.Civilian - Skipping hotrodder one already running\n")
-			_pc = 37337
-			continue
-		elif _pc == 37337:
-			_pc = 37387
-			continue
-		elif _pc == 37342:
-			_pc = 37387
-			continue
-		elif _pc == 37347:
-			if 1 != v8:
-				_pc = 37360
-				continue
-			else:
-				_pc = 35785
-				continue
-		elif _pc == 37360:
-			if 2 != v8:
-				_pc = 37369
-				continue
-			else:
-				_pc = 36144
-				continue
-		elif _pc == 37369:
-			if 3 != v8:
-				_pc = 37378
-				continue
-			else:
-				_pc = 36503
-				continue
-		elif _pc == 37378:
-			if 4 != v8:
-				_pc = 37387
-				continue
-			else:
-				_pc = 36902
-				continue
-		elif _pc == 37387:
+				if PogRuntime.TRACE:
+					debug.print_string("iTrafficScenario.Civilian - Skipping hotrodder one already running\n")
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func local_37397(v0) -> Variant:
@@ -6796,260 +5624,84 @@ func hostile(v0) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	var _pc: int = 37620
-	while true:
-		if _pc == 37620:
-			v5 = ihabitat.cast(v0)
-			v6 = ilagrangepoint.cast(v0)
-			v7 = []
-			v12 = global.pog_float("g_player_sensor_range")
-			v15 = 0
-			_pc = 37805
-			continue
-		elif _pc == 37722:
-			debug.print_string(string.join(" iTrafficScenario - Created Hostile Scenario for - ", object.string_property(v0, "name")))
-			debug.print_string(" \n")
-			_pc = 37805
-			continue
-		elif _pc == 37805:
-			v7 = global.pog_set("g_filtered_system_habitats")
-			v1 = iship.find_player_ship()
-			v11 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v13 = math.random(v12, v12 + v11)
-			if _pog_is_null(v5):
-				_pc = 37941
-				continue
-			else:
-				_pc = 38018
-				continue
-		elif _pc == 37941:
-			_pc = 37967
-			continue
-		elif _pc == 37946:
+	v5 = ihabitat.cast(v0)
+	v6 = ilagrangepoint.cast(v0)
+	v7 = []
+	v12 = global.pog_float("g_player_sensor_range")
+	v15 = 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join(" iTrafficScenario - Created Hostile Scenario for - ", object.string_property(v0, "name")))
+		debug.print_string(" \n")
+	v7 = global.pog_set("g_filtered_system_habitats")
+	v1 = iship.find_player_ship()
+	v11 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
+	v13 = math.random(v12, v12 + v11)
+	if _pog_is_null(v5):
+		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Hostile: L-point is local \n")
-			_pc = 37967
-			continue
-		elif _pc == 37967:
-			v5 = ihabitat.nearest(v7, v6)
-			v9 = math.random_int(1, 3)
-			_pc = 38018
-			continue
-		elif _pc == 38018:
-			_pc = 39496
-			continue
-		elif _pc == 38023:
+		v5 = ihabitat.nearest(v7, v6)
+		v9 = math.random_int(1, 3)
+	match math.random_int(0, 1):
+		0:
 			v3 = ihabitat.type(v5)
 			v4 = ifaction.allegiance(await local_37397(ifaction.find(await iutilities.from_allegiance_enum(ihabitat.allegiance(v5)))))
 			v10 = ihabitat.population(v5)
 			v10 = v10 / 200
 			v9 = math.random_int(v10 - 3, v10 + 3)
 			if v9 > 5:
-				_pc = 38212
-				continue
-			else:
-				_pc = 38220
-				continue
-		elif _pc == 38212:
-			v9 = 5
-			_pc = 38220
-			continue
-		elif _pc == 38220:
-			_pc = 38279
-			continue
-		elif _pc == 38225:
-			debug.print_string(string.join("iTrafficScenario.Hostile: Chosen to create Hostile shipping : ", string.from_int(v9)))
-			_pc = 38279
-			continue
-		elif _pc == 38279:
+				v9 = 5
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.Hostile: Chosen to create Hostile shipping : ", string.from_int(v9)))
 			v2 = await ishipcreation.get_traffic(9, v4, v9)
 			if not _pog_is_null(v6):
-				_pc = 38323
-				continue
+				v15 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 38371
-				continue
-		elif _pc == 38323:
-			v15 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 38414
-			continue
-		elif _pc == 38371:
-			v15 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 38414
-			continue
-		elif _pc == 38414:
+				v15 = await local_0(group.nth_sim(v2, 0), v0)
 			v8 = math.random_int(1, 3)
 			if v15:
-				_pc = 38446
-				continue
+				await local_1259(v6, 30)
+				await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
+				match v8:
+					1:
+						await iformation.wedge(v2, math.random(1.0, 30.0), 0)
+					2:
+						await iformation.goose(v2, math.random(1.0, 30.0), 0)
+					3:
+						await iformation.claw(v2, math.random(1.0, 30.0), 0)
 			else:
-				_pc = 38704
-				continue
-		elif _pc == 38446:
-			await local_1259(v6, 30)
-			await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
-			_pc = 38668
-			continue
-		elif _pc == 38519:
-			await iformation.wedge(v2, math.random(1.0, 30.0), 0)
-			_pc = 38699
-			continue
-		elif _pc == 38567:
-			await iformation.goose(v2, math.random(1.0, 30.0), 0)
-			_pc = 38699
-			continue
-		elif _pc == 38615:
-			await iformation.claw(v2, math.random(1.0, 30.0), 0)
-			_pc = 38699
-			continue
-		elif _pc == 38663:
-			_pc = 38699
-			continue
-		elif _pc == 38668:
-			if 1 != v8:
-				_pc = 38681
-				continue
-			else:
-				_pc = 38519
-				continue
-		elif _pc == 38681:
-			if 2 != v8:
-				_pc = 38690
-				continue
-			else:
-				_pc = 38567
-				continue
-		elif _pc == 38690:
-			if 3 != v8:
-				_pc = 38699
-				continue
-			else:
-				_pc = 38615
-				continue
-		elif _pc == 38699:
-			_pc = 38889
-			continue
-		elif _pc == 38704:
-			_pc = 38858
-			continue
-		elif _pc == 38709:
-			await iformation.wedge(v2, math.random(1.0, 30.0), 1)
-			_pc = 38889
-			continue
-		elif _pc == 38757:
-			await iformation.goose(v2, math.random(1.0, 30.0), 1)
-			_pc = 38889
-			continue
-		elif _pc == 38805:
-			await iformation.claw(v2, math.random(1.0, 30.0), 1)
-			_pc = 38889
-			continue
-		elif _pc == 38853:
-			_pc = 38889
-			continue
-		elif _pc == 38858:
-			if 1 != v8:
-				_pc = 38871
-				continue
-			else:
-				_pc = 38709
-				continue
-		elif _pc == 38871:
-			if 2 != v8:
-				_pc = 38880
-				continue
-			else:
-				_pc = 38757
-				continue
-		elif _pc == 38880:
-			if 3 != v8:
-				_pc = 38889
-				continue
-			else:
-				_pc = 38805
-				continue
-		elif _pc == 38889:
-			_pc = 38992
-			continue
-		elif _pc == 38894:
-			debug.print_string("iTrafficScenario.Hostile - Assigning station assault orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 38992
-			continue
-		elif _pc == 38992:
+				match v8:
+					1:
+						await iformation.wedge(v2, math.random(1.0, 30.0), 1)
+					2:
+						await iformation.goose(v2, math.random(1.0, 30.0), 1)
+					3:
+						await iformation.claw(v2, math.random(1.0, 30.0), 1)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Hostile - Assigning station assault orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.station_assault.bind(v2))
 			_pog_detach(v14)
-			_pc = 39527
-			continue
-		elif _pc == 39040:
+		1:
 			v2 = await ishipcreation.get_traffic(6, 1, v9)
 			if not _pog_is_null(v6):
-				_pc = 39080
-				continue
+				v15 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 39128
-				continue
-		elif _pc == 39080:
-			v15 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 39171
-			continue
-		elif _pc == 39128:
-			v15 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 39171
-			continue
-		elif _pc == 39171:
+				v15 = await local_0(group.nth_sim(v2, 0), v0)
 			if v15:
-				_pc = 39181
-				continue
+				await local_1259(v6, 30)
+				await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
+				await iformation.random_sphere(v2, math.random(10.0, 30.0), 0)
 			else:
-				_pc = 39297
-				continue
-		elif _pc == 39181:
-			await local_1259(v6, 30)
-			await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
-			await iformation.random_sphere(v2, math.random(10.0, 30.0), 0)
-			_pc = 39340
-			continue
-		elif _pc == 39297:
-			await iformation.random_sphere(v2, math.random(10.0, 30.0), 1)
-			_pc = 39340
-			continue
-		elif _pc == 39340:
-			_pc = 39443
-			continue
-		elif _pc == 39345:
-			debug.print_string("iTrafficScenario.underworld - Assigning agressive loiter orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 39443
-			continue
-		elif _pc == 39443:
+				await iformation.random_sphere(v2, math.random(10.0, 30.0), 1)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.underworld - Assigning agressive loiter orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v14 = _pog_spawn(iscriptedorders.aggressive_loiter.bind(v2))
 			_pog_detach(v14)
-			_pc = 39527
-			continue
-		elif _pc == 39491:
-			_pc = 39527
-			continue
-		elif _pc == 39496:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 39519
-				continue
-			else:
-				_pc = 38023
-				continue
-		elif _pc == 39519:
-			if not _pog_is_null(1):
-				_pc = 39527
-				continue
-			else:
-				_pc = 39040
-				continue
-		elif _pc == 39527:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func scum(v0) -> Variant:
@@ -7066,255 +5718,91 @@ func scum(v0) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 39537
-	while true:
-		if _pc == 39537:
-			v5 = ihabitat.cast(v0)
-			v6 = ilagrangepoint.cast(v0)
-			v10 = global.pog_float("g_player_sensor_range")
-			v13 = 0
-			_pc = 39711
-			continue
-		elif _pc == 39628:
-			debug.print_string(string.join("iTrafficScenario: Created Scum Scenario for ", object.string_property(v0, "name")))
-			debug.print_string(" \n")
-			_pc = 39711
-			continue
-		elif _pc == 39711:
-			if _pog_is_null(v5):
-				_pc = 39724
-				continue
-			else:
-				_pc = 39811
-				continue
-		elif _pc == 39724:
-			if ilagrangepoint.interstellar(v6) == 1:
-				_pc = 39749
-				continue
-			else:
-				_pc = 39780
-				continue
-		elif _pc == 39749:
-			_pc = 39775
-			continue
-		elif _pc == 39754:
-			debug.print_string("iTraffcScenario.Scum: L-point is interstellar \n")
-			_pc = 39775
-			continue
-		elif _pc == 39775:
-			_pc = 39806
-			continue
-		elif _pc == 39780:
-			_pc = 39806
-			continue
-		elif _pc == 39785:
-			debug.print_string("iTrafficScenario.Scum: L-point is local \n")
-			_pc = 39806
-			continue
-		elif _pc == 39806:
-			_pc = 39835
-			continue
-		elif _pc == 39811:
-			v3 = ihabitat.type(v5)
-			_pc = 39835
-			continue
-		elif _pc == 39835:
-			v4 = 1
-			v1 = iship.find_player_ship()
-			v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
-			v11 = math.random(v10, v10 + v9)
-			v7 = math.random_int(0, 2)
-			_pc = 41500
-			continue
-		elif _pc == 39965:
+	v5 = ihabitat.cast(v0)
+	v6 = ilagrangepoint.cast(v0)
+	v10 = global.pog_float("g_player_sensor_range")
+	v13 = 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join("iTrafficScenario: Created Scum Scenario for ", object.string_property(v0, "name")))
+		debug.print_string(" \n")
+	if _pog_is_null(v5):
+		if ilagrangepoint.interstellar(v6) == 1:
+			if PogRuntime.TRACE:
+				debug.print_string("iTraffcScenario.Scum: L-point is interstellar \n")
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Scum: L-point is local \n")
+	else:
+		v3 = ihabitat.type(v5)
+	v4 = 1
+	v1 = iship.find_player_ship()
+	v9 = sim.distance_between(v1, imapentity.waypoint_for_entity(v0))
+	v11 = math.random(v10, v10 + v9)
+	v7 = math.random_int(0, 2)
+	match v7:
+		0:
 			v8 = math.random_int(1, 4)
-			_pc = 40069
-			continue
-		elif _pc == 39992:
-			debug.print_string(string.join("iTrafficScenario.Scum: Chosen to create Scavanger Scum : ", string.from_int(v8)))
-			debug.print_string("\n")
-			_pc = 40069
-			continue
-		elif _pc == 40069:
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.Scum: Chosen to create Scavanger Scum : ", string.from_int(v8)))
+				debug.print_string("\n")
 			v2 = await ishipcreation.get_traffic(21, v4, v8)
 			if not _pog_is_null(v6):
-				_pc = 40113
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 40161
-				continue
-		elif _pc == 40113:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 40204
-			continue
-		elif _pc == 40161:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 40204
-			continue
-		elif _pc == 40204:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 40214
-				continue
+				await local_1259(v6, 30)
+				await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
+				await iformation.random_sphere(v2, math.random(20.0, 40.0), 0)
 			else:
-				_pc = 40330
-				continue
-		elif _pc == 40214:
-			await local_1259(v6, 30)
-			await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
-			await iformation.random_sphere(v2, math.random(20.0, 40.0), 0)
-			_pc = 40373
-			continue
-		elif _pc == 40330:
-			await iformation.random_sphere(v2, math.random(20.0, 40.0), 1)
-			_pc = 40373
-			continue
-		elif _pc == 40373:
-			_pc = 40476
-			continue
-		elif _pc == 40378:
-			debug.print_string("iTrafficScenario.Scum - Assigning scavanger orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 40476
-			continue
-		elif _pc == 40476:
+				await iformation.random_sphere(v2, math.random(20.0, 40.0), 1)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Scum - Assigning scavanger orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.scavanger.bind(v2))
 			_pog_detach(v12)
-			_pc = 41530
-			continue
-		elif _pc == 40524:
-			_pc = 40573
-			continue
-		elif _pc == 40529:
-			debug.print_string("iTrafficScenario.Scum: Chosen to create KnackardVessel ( tramp steamer )Scum")
-			debug.print_string("\n")
-			_pc = 40573
-			continue
-		elif _pc == 40573:
+		1:
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Scum: Chosen to create KnackardVessel ( tramp steamer )Scum")
+				debug.print_string("\n")
 			v2 = await ishipcreation.get_traffic(21, v4, 1)
 			if not _pog_is_null(v6):
-				_pc = 40613
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 40661
-				continue
-		elif _pc == 40613:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 40704
-			continue
-		elif _pc == 40661:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 40704
-			continue
-		elif _pc == 40704:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 40714
-				continue
-			else:
-				_pc = 40785
-				continue
-		elif _pc == 40714:
-			await local_1259(v6, 30)
-			isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
-			_pc = 40785
-			continue
-		elif _pc == 40785:
-			_pc = 40888
-			continue
-		elif _pc == 40790:
-			debug.print_string("iTrafficScenario.Scum - Assigning loiter orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 40888
-			continue
-		elif _pc == 40888:
+				await local_1259(v6, 30)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Scum - Assigning loiter orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.loiter.bind(v2))
 			_pog_detach(v12)
-			_pc = 41530
-			continue
-		elif _pc == 40936:
+		2:
 			v8 = math.random_int(1, 4)
-			_pc = 41040
-			continue
-		elif _pc == 40963:
-			debug.print_string(string.join("iTrafficScenario.Scum: Chosen to create Gypsy Scum : ", string.from_int(v8)))
-			debug.print_string("\n")
-			_pc = 41040
-			continue
-		elif _pc == 41040:
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iTrafficScenario.Scum: Chosen to create Gypsy Scum : ", string.from_int(v8)))
+				debug.print_string("\n")
 			v2 = await ishipcreation.get_traffic(21, v4, v8)
 			if not _pog_is_null(v6):
-				_pc = 41084
-				continue
+				v13 = await local_0(group.nth_sim(v2, 0), v6)
 			else:
-				_pc = 41132
-				continue
-		elif _pc == 41084:
-			v13 = await local_0(group.nth_sim(v2, 0), v6)
-			_pc = 41175
-			continue
-		elif _pc == 41132:
-			v13 = await local_0(group.nth_sim(v2, 0), v0)
-			_pc = 41175
-			continue
-		elif _pc == 41175:
+				v13 = await local_0(group.nth_sim(v2, 0), v0)
 			if v13:
-				_pc = 41185
-				continue
+				await local_1259(v6, 30)
+				await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
+				await iformation.line_abreast(v2, math.random(20.0, 40.0), 0)
 			else:
-				_pc = 41301
-				continue
-		elif _pc == 41185:
-			await local_1259(v6, 30)
-			await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
-			await iformation.line_abreast(v2, math.random(20.0, 40.0), 0)
-			_pc = 41344
-			continue
-		elif _pc == 41301:
-			await iformation.line_abreast(v2, math.random(1.0, 40.0), 1)
-			_pc = 41344
-			continue
-		elif _pc == 41344:
-			_pc = 41447
-			continue
-		elif _pc == 41349:
-			debug.print_string("iTrafficScenario.Scum - Assigning  Wander  orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
-			debug.print_string("\n")
-			_pc = 41447
-			continue
-		elif _pc == 41447:
+				await iformation.line_abreast(v2, math.random(1.0, 40.0), 1)
+			if PogRuntime.TRACE:
+				debug.print_string("iTrafficScenario.Scum - Assigning  Wander  orders to list, lead by ship called -  ")
+				debug.print_string(object.string_property(group.nth_sim(v2, 0), "name"))
+				debug.print_string("\n")
 			v12 = _pog_spawn(iscriptedorders.wander.bind(v2))
 			_pog_detach(v12)
-			_pc = 41530
-			continue
-		elif _pc == 41495:
-			_pc = 41530
-			continue
-		elif _pc == 41500:
-			if not _pog_is_null(v7):
-				_pc = 41513
-				continue
-			else:
-				_pc = 39965
-				continue
-		elif _pc == 41513:
-			if 1 != v7:
-				_pc = 41521
-				continue
-			else:
-				_pc = 40524
-				continue
-		elif _pc == 41521:
-			if 2 != v7:
-				_pc = 41530
-				continue
-			else:
-				_pc = 40936
-				continue
-		elif _pc == 41530:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 

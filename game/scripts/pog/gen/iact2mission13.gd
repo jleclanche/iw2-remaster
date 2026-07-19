@@ -1363,34 +1363,26 @@ func local_15992(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 15992
-	while true:
-		if _pc == 15992:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(object.handle_property(v0, "jet_handle"))
-			v4 = iship.cast(object.handle_property(v0, "jing_handle"))
-			v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
-			idirector.set_focus(v3)
-			idirector.set_secondary_focus(v2)
-			await iconversation.begin()
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a1", "a2_m13_dialogue_diplomacy_cal_a1")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a2", "a2_m13_dialogue_diplomacy_cal_a2")
-			await iconversation.add_response("a2_m13_text_diplomacy_cal_a3", "a2_m13_dialogue_diplomacy_cal_a3")
-			v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_jet_ok_we_will_talk")
-			_pc = 16658
-			continue
-		elif _pc == 16317:
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(object.handle_property(v0, "jet_handle"))
+	v4 = iship.cast(object.handle_property(v0, "jing_handle"))
+	v5 = iship.cast(object.handle_property(v0, "hewitt_handle"))
+	idirector.set_focus(v3)
+	idirector.set_secondary_focus(v2)
+	await iconversation.begin()
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1", "a2_m13_dialogue_diplomacy_cal_a1")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2", "a2_m13_dialogue_diplomacy_cal_a2")
+	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3", "a2_m13_dialogue_diplomacy_cal_a3")
+	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_jet_ok_we_will_talk")
+	match v1:
+		1:
 			idirector.set_focus(v3)
 			idirector.set_secondary_focus(v2)
 			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1")
 			await local_16734(v0)
-			_pc = 16689
-			continue
-		elif _pc == 16407:
+		2:
 			await local_17599(v0)
-			_pc = 16689
-			continue
-		elif _pc == 16431:
+		3:
 			idirector.set_focus(v3)
 			idirector.set_secondary_focus(v2)
 			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3")
@@ -1401,39 +1393,10 @@ func local_15992(v0) -> Variant:
 			idirector.set_secondary_focus(v2)
 			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a3")
 			await local_18105(v0)
-			_pc = 16689
-			continue
-		elif _pc == 16653:
-			_pc = 16689
-			continue
-		elif _pc == 16658:
-			if 1 != v1:
-				_pc = 16671
-				continue
-			else:
-				_pc = 16317
-				continue
-		elif _pc == 16671:
-			if 2 != v1:
-				_pc = 16680
-				continue
-			else:
-				_pc = 16407
-				continue
-		elif _pc == 16680:
-			if 3 != v1:
-				_pc = 16689
-				continue
-			else:
-				_pc = 16431
-				continue
-		elif _pc == 16689:
-			await iconversation.end()
-			idirector.end()
-			await icutsceneutilities.disable_player_autopilot()
-			return 0
-		else:
-			return 0
+	await iconversation.end()
+	idirector.end()
+	await icutsceneutilities.disable_player_autopilot()
+	return 0
 	return 0
 
 func local_16734(v0) -> Variant:
@@ -1454,33 +1417,32 @@ func local_16734(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b2", "a2_m13_dialogue_diplomacy_cal_a1_b2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b3", "a2_m13_dialogue_diplomacy_cal_a1_b3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1")
-	if 1 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1")
-		await local_18859(v0)
-		return 0
-	if 2 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b2")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b2")
-		state.set_progress(v0, 8)
-		return 0
-	if 3 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b3")
-		idirector.set_focus(v6)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b3")
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b3")
-		state.set_progress(v0, 8)
-		return 0
+	match v1:
+		1:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1")
+			await local_18859(v0)
+		2:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b2")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b2")
+			state.set_progress(v0, 8)
+		3:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b3")
+			idirector.set_focus(v6)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b3")
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b3")
+			state.set_progress(v0, 8)
+			return 0
 	return 0
 	return 0
 
@@ -1529,30 +1491,29 @@ func local_18105(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2", "a2_m13_dialogue_diplomacy_cal_a3_b2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b3", "a2_m13_dialogue_diplomacy_cal_a3_b3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3")
-	if 1 == v1:
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b1")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1")
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b1")
-		await local_21569(v0)
-		return 0
-	if 2 == v1:
-		await local_22133(v0)
-		return 0
-	if 3 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
-		state.set_progress(v0, 6)
-		return 0
+	match v1:
+		1:
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b1")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1")
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b1")
+			await local_21569(v0)
+		2:
+			await local_22133(v0)
+		3:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
+			state.set_progress(v0, 6)
+			return 0
 	return 0
 	return 0
 
@@ -1572,42 +1533,41 @@ func local_18859(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1")
-	if 1 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c1")
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v3)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c1")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
-		await local_20702(v0)
-		return 0
-	if 2 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c2")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c2")
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v4)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c2")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_2_a1_b1_c2")
-		await local_20702(v0)
-		return 0
-	if 3 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v3)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3")
-		await local_19875(v0)
-		return 0
+	match v1:
+		1:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c1")
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v3)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c1")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
+			await local_20702(v0)
+		2:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c2")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c2")
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v4)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c2")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_2_a1_b1_c2")
+			await local_20702(v0)
+		3:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v3)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3")
+			await local_19875(v0)
+			return 0
 	return 0
 	return 0
 
@@ -1629,31 +1589,30 @@ func local_19875(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d2", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a1_b1_c3_d3", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a1_b1_c3")
-	if 1 == v1:
-		await iconversation.say(0, "name_cal", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d1")
-		state.set_progress(v0, 8)
-		return 0
-	if 2 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3_d2")
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v3)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c3_d2")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
-		await local_20702(v0)
-		return 0
-	if 3 == v1:
-		idirector.set_focus(v6)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b1_c3_d3")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3_d3")
-		state.set_progress(v0, 8)
-		return 0
+	match v1:
+		1:
+			await iconversation.say(0, "name_cal", "a2_m13_dialogue_diplomacy_cal_a1_b1_c3_d1")
+			state.set_progress(v0, 8)
+		2:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a1_b1_c3_d2")
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v3)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a1_b1_c3_d2")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1")
+			await local_20702(v0)
+		3:
+			idirector.set_focus(v6)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a1_b1_c3_d3")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a1_b1_c3_d3")
+			state.set_progress(v0, 8)
+			return 0
 	return 0
 	return 0
 
@@ -1675,33 +1634,32 @@ func local_20702(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c2", "a2_m13_dialogue_diplomacy_cal_a2_b1_c2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a2_b1_c3", "a2_m13_dialogue_diplomacy_cal_a2_b1_c3")
 	v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a2_b1")
-	if 1 == v1:
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v6)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c1")
-		idirector.set_focus(v6)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a2_b1_c1")
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v5)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c1")
-		state.set_progress(v0, 8)
-		return 0
-	if 2 == v1:
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c2")
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v4)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a2_b1_c2")
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c2")
-		state.set_progress(v0, 6)
-		return 0
-	if 3 == v1:
-		state.set_progress(v0, 8)
-		return 0
+	match v1:
+		1:
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v6)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c1")
+			idirector.set_focus(v6)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_chang", "a2_m13_dialogue_diplomacy_chang_a2_b1_c1")
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v5)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c1")
+			state.set_progress(v0, 8)
+		2:
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a2_b1_c2")
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v4)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a2_b1_c2")
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a2_b1_c2")
+			state.set_progress(v0, 6)
+		3:
+			state.set_progress(v0, 8)
+			return 0
 	return 0
 	return 0
 
@@ -1720,21 +1678,21 @@ func local_21569(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c1", "a2_m13_dialogue_diplomacy_cal_a3_b1_c1")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b1_c2", "a2_m13_dialogue_diplomacy_cal_a3_b1_c2")
 	v1 = await iconversation.ask(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_2_a3_b1")
-	if 1 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
-		idirector.set_focus(v5)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
-		state.set_progress(v0, 6)
-		return 0
-	if 2 == v1:
-		idirector.set_focus(v4)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1_c2")
-		state.set_progress(v0, 8)
-		return 0
+	match v1:
+		1:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b3")
+			idirector.set_focus(v5)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_james", "a2_m13_dialogue_diplomacy_james_a3_b3")
+			state.set_progress(v0, 6)
+		2:
+			idirector.set_focus(v4)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jing", "a2_m13_dialogue_diplomacy_jing_a3_b1_c2")
+			state.set_progress(v0, 8)
+			return 0
 	return 0
 	return 0
 
@@ -1754,30 +1712,29 @@ func local_22133(v0) -> Variant:
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c2", "a2_m13_dialogue_diplomacy_cal_a3_b2_c2")
 	await iconversation.add_response("a2_m13_text_diplomacy_cal_a3_b2_c3", "a2_m13_dialogue_diplomacy_cal_a3_b2_c3")
 	v1 = await iconversation.ask(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2")
-	if 1 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c1")
-		idirector.set_focus(v2)
-		idirector.set_secondary_focus(v3)
-		await iconversation.say(0, "Cal", "a2_m13_dialogue_diplomacy_cal_2_a3_b2_c1")
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a3_b2_c1")
-		state.set_progress(v0, 6)
-		return 0
-	if 2 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c2")
-		state.set_progress(v0, 8)
-		return 0
-	if 3 == v1:
-		idirector.set_focus(v3)
-		idirector.set_secondary_focus(v2)
-		await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c3")
-		state.set_progress(v0, 8)
-		return 0
+	match v1:
+		1:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c1")
+			idirector.set_focus(v2)
+			idirector.set_secondary_focus(v3)
+			await iconversation.say(0, "Cal", "a2_m13_dialogue_diplomacy_cal_2_a3_b2_c1")
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_2_a3_b2_c1")
+			state.set_progress(v0, 6)
+		2:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c2")
+			state.set_progress(v0, 8)
+		3:
+			idirector.set_focus(v3)
+			idirector.set_secondary_focus(v2)
+			await iconversation.say(0, "a2_m13_character_jet", "a2_m13_dialogue_diplomacy_jet_a3_b2_c3")
+			state.set_progress(v0, 8)
+			return 0
 	return 0
 	return 0
 

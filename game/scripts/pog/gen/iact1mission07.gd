@@ -808,113 +808,43 @@ func local_13984(v0, v1, v2, v3, v4) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 13984
-	while true:
-		if _pc == 13984:
-			v5 = ""
-			v6 = ""
-			v7 = ""
-			v8 = object.int_property(v0, "armed_gunstar_count")
-			isim.set_docking_lock(v1, v2, 1)
-			_pc = 14269
-			continue
-		elif _pc == 14083:
+	v5 = ""
+	v6 = ""
+	v7 = ""
+	v8 = object.int_property(v0, "armed_gunstar_count")
+	isim.set_docking_lock(v1, v2, 1)
+	match v8:
+		0:
 			v5 = "a1_m07_dialogue_smith_boarding_1"
 			v6 = "a1_m07_dialogue_smith_armed_1"
-			_pc = 14326
-			continue
-		elif _pc == 14114:
+		1:
 			v5 = "a1_m07_dialogue_smith_boarding_2"
 			v6 = "a1_m07_dialogue_smith_armed_2"
-			_pc = 14326
-			continue
-		elif _pc == 14145:
+		2:
 			v5 = "a1_m07_dialogue_smith_boarding_3"
 			v6 = "a1_m07_dialogue_smith_armed_3"
-			_pc = 14326
-			continue
-		elif _pc == 14176:
+		3:
 			v5 = "a1_m07_dialogue_smith_boarding_4"
 			v6 = "a1_m07_dialogue_smith_armed_4"
-			_pc = 14326
-			continue
-		elif _pc == 14207:
+		4:
 			v5 = "a1_m07_dialogue_smith_boarding_5"
 			v6 = "a1_m07_dialogue_smith_armed_5"
-			_pc = 14326
-			continue
-		elif _pc == 14238:
+		5:
 			v5 = "a1_m07_dialogue_smith_boarding_6"
 			v6 = "a1_m07_dialogue_smith_armed_6"
-			_pc = 14326
-			continue
-		elif _pc == 14269:
-			if not _pog_is_null(v8):
-				_pc = 14282
-				continue
-			else:
-				_pc = 14083
-				continue
-		elif _pc == 14282:
-			if 1 != v8:
-				_pc = 14290
-				continue
-			else:
-				_pc = 14114
-				continue
-		elif _pc == 14290:
-			if 2 != v8:
-				_pc = 14299
-				continue
-			else:
-				_pc = 14145
-				continue
-		elif _pc == 14299:
-			if 3 != v8:
-				_pc = 14308
-				continue
-			else:
-				_pc = 14176
-				continue
-		elif _pc == 14308:
-			if 4 != v8:
-				_pc = 14317
-				continue
-			else:
-				_pc = 14207
-				continue
-		elif _pc == 14317:
-			if 5 != v8:
-				_pc = 14326
-				continue
-			else:
-				_pc = 14238
-				continue
-		elif _pc == 14326:
-			await iconversation.one_liner(0, "name_smith", v5)
-			await _pog_wait(10.0)
-			isim.set_faction(v2, v4)
-			isim.set_faction(v2, v4)
-			iship.weapon_targets_from_contact_list(v2)
-			v8 = v8 + 1
-			await local_13806(v0, object.string_property(v2, "name"), 1)
-			object.set_int_property(v0, "armed_gunstar_count", v8)
-			await iconversation.one_liner(0, "name_smith", v6)
-			if v8 == 6:
-				_pc = 14582
-				continue
-			else:
-				_pc = 14610
-				continue
-		elif _pc == 14582:
-			await iconversation.one_liner(0, "name_cal", "a1_m07_dialogue_cal_well_done_thats_all_of_them")
-			_pc = 14610
-			continue
-		elif _pc == 14610:
-			isim.set_docking_lock(v1, v2, 0)
-			return 0
-		else:
-			return 0
+	await iconversation.one_liner(0, "name_smith", v5)
+	await _pog_wait(10.0)
+	isim.set_faction(v2, v4)
+	isim.set_faction(v2, v4)
+	iship.weapon_targets_from_contact_list(v2)
+	v8 = v8 + 1
+	await local_13806(v0, object.string_property(v2, "name"), 1)
+	object.set_int_property(v0, "armed_gunstar_count", v8)
+	await iconversation.one_liner(0, "name_smith", v6)
+	if v8 == 6:
+		await iconversation.one_liner(0, "name_cal", "a1_m07_dialogue_cal_well_done_thats_all_of_them")
+	isim.set_docking_lock(v1, v2, 0)
+	return 0
 	return 0
 
 func local_14659(v0, v1, v2, v3) -> Variant:
@@ -1315,240 +1245,115 @@ func local_23018(v0, v1, v2) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	var _pc: int = 23018
+	v3 = iship.find_player_ship()
+	v5 = await icutsceneutilities.get_kill_group()
+	v14 = 0
+	idirector.begin()
+	igame.enable_blackout(0)
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	group.add_sim(v5, v0)
+	group.add_sim(v5, v1)
+	v6 = await local_18662(v2)
+	group.add_group(v5, v6)
+	group.add_sim(v5, v2)
+	group.add_sim(v5, v1)
+	v4 = iship.create("ini:/sims/custom/act1_mission07/fighter", "a1_m07_ship_marauder_bomber")
+	object.set_bool_property(v4, "ignore_speed_limit", 1)
+	await ipilotsetup.generic_cargo_pod(v4)
+	group.add_sim(v5, v4)
+	sim.place_relative_to(v4, group.leader(v6), 0.0, 0.0, 0.0)
+	sim.point_at(v4, group.nth_sim(v6, 1))
+	idirector.set_camera(11)
+	idirector.set_focus(v4)
+	sim.set_velocity_local_to_sim(v4, 0.0, 0.0, 700.0)
+	v11 = _pog_spawn(iscriptedorders.follow_route.bind(v4, v6, 0.30000001192092896, 0.10000000149011612, 0, 0, 1))
+	await imusic.play("sound:/audio/music/a4_action", 1, 1)
+	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+	await _pog_wait(4.0)
+	_pog_spawn(local_22984.bind(v2))
 	while true:
-		if _pc == 23018:
-			v3 = iship.find_player_ship()
-			v5 = await icutsceneutilities.get_kill_group()
-			v14 = 0
-			idirector.begin()
-			igame.enable_blackout(0)
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			group.add_sim(v5, v0)
-			group.add_sim(v5, v1)
-			v6 = await local_18662(v2)
-			group.add_group(v5, v6)
-			group.add_sim(v5, v2)
-			group.add_sim(v5, v1)
-			v4 = iship.create("ini:/sims/custom/act1_mission07/fighter", "a1_m07_ship_marauder_bomber")
-			object.set_bool_property(v4, "ignore_speed_limit", 1)
-			await ipilotsetup.generic_cargo_pod(v4)
-			group.add_sim(v5, v4)
-			sim.place_relative_to(v4, group.leader(v6), 0.0, 0.0, 0.0)
-			sim.point_at(v4, group.nth_sim(v6, 1))
-			idirector.set_camera(11)
-			idirector.set_focus(v4)
-			sim.set_velocity_local_to_sim(v4, 0.0, 0.0, 700.0)
-			v11 = _pog_spawn(iscriptedorders.follow_route.bind(v4, v6, 0.30000001192092896, 0.10000000149011612, 0, 0, 1))
-			await imusic.play("sound:/audio/music/a4_action", 1, 1)
-			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-			await _pog_wait(4.0)
-			_pog_spawn(local_22984.bind(v2))
-			_pc = 23691
-			continue
-		elif _pc == 23691:
-			await _pog_frame()
-			if _pog_every(23692, 0.10000000149011612):
-				_pc = 23705
-				continue
-			else:
-				_pc = 23798
-				continue
-		elif _pc == 23705:
-			if sim.is_dead(v4):
-				_pc = 23728
-				continue
-			else:
-				_pc = 23759
-				continue
-		elif _pc == 23728:
-			_pc = 23754
-			continue
-		elif _pc == 23733:
-			debug.print_string("iAct1Mission07.bombing_run_task: Bomber destroyed. Boming run task completed.\n ")
-			_pc = 23754
-			continue
-		elif _pc == 23754:
-			_pc = 25698
-			continue
-		elif _pc == 23759:
-			if sim.distance_between(v4, v0) < 300.0:
-				_pc = 23793
-				continue
-			else:
-				_pc = 23798
-				continue
-		elif _pc == 23793:
-			_pc = 24048
-			continue
-		elif _pc == 23798:
-			if _pog_every(23798, 4.0):
-				_pc = 23811
-				continue
-			else:
-				_pc = 24043
-				continue
-		elif _pc == 23811:
-			_pc = 23979
-			continue
-		elif _pc == 23816:
-			idirector.set_camera(10)
-			idirector.set_focus(v4)
-			_pc = 24010
-			continue
-		elif _pc == 23856:
-			idirector.set_camera(4)
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v1)
-			_pc = 24010
-			continue
-		elif _pc == 23915:
-			idirector.set_camera(13)
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v1)
-			_pc = 24010
-			continue
-		elif _pc == 23974:
-			_pc = 24010
-			continue
-		elif _pc == 23979:
-			if 1 != v14:
-				_pc = 23992
-				continue
-			else:
-				_pc = 23816
-				continue
-		elif _pc == 23992:
-			if 2 != v14:
-				_pc = 24001
-				continue
-			else:
-				_pc = 23856
-				continue
-		elif _pc == 24001:
-			if 3 != v14:
-				_pc = 24010
-				continue
-			else:
-				_pc = 23915
-				continue
-		elif _pc == 24010:
-			v14 = v14 + 1
-			if v14 == 4:
-				_pc = 24036
-				continue
-			else:
-				_pc = 24043
-				continue
-		elif _pc == 24036:
-			v14 = 1
-			_pc = 24043
-			continue
-		elif _pc == 24043:
-			_pc = 23691
-			continue
-		elif _pc == 24048:
-			_pc = 24076
-			continue
-		elif _pc == 24055:
-			debug.print_string("iAct1Mission07.cutscene: Target reached. Bombing.\n ")
-			_pc = 24076
-			continue
-		elif _pc == 24076:
-			idirector.set_camera(13)
-			idirector.set_focus(v4)
-			idirector.set_secondary_focus(v1)
-			await _pog_wait(3.0)
-			sim.place_at(sim.create("ini:/sims/explosions/harmless_antimatter_explosion", "explosion"), v1)
-			isim.start_explosion(v2)
-			await _pog_wait(4.0)
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			v10 = idirector.create_dolly()
-			idirector.set_dolly_camera(v10)
-			group.add_sim(v5, v10)
-			sim.place_relative_to(v4, v0, -8000.0, -6000.0, -8000.0)
-			sim.point_away(v4, v0)
-			sim.place_relative_to(v10, v4, 2.0, 10.0, 1000.0)
-			iship.set_free_without_pilot(v4, 1)
-			sim.set_velocity_local_to_sim(v4, 0.0, 0.0, 200.0)
-			sim.set_angular_velocity(v4, 0.0, 0.0, 0.0, 70.0)
-			idirector.set_focus(v0)
-			await imusic.play("sound:/audio/music/a4_tension", 1, 1)
-			idirector.fade_in(0.0, 0.0, 0.0, 0.0)
-			icomms.shout(0, "name_clay", "a2_m25_dialogue_clay_you_messed_up_bigtime")
-			await _pog_wait(3.0)
-			isim.set_indestructable(v2, 0)
-			sim.place_relative_to(v0, v2, 0.0, 0.0, 0.0)
-			isim.set_indestructable(v0, 1)
-			object.add_bool_property(v2, "no_shockwave", 1)
-			isim.stop_explosion(v2, 0, 1)
-			await _pog_wait(0.25)
-			v9 = isim.cast(sim.create("ini:/sims/ships/utility/asteroid_m", ""))
-			isim.set_indestructable(v9, 1)
-			sim.place_at(v9, v0)
-			sim.set_collision(v9, 0)
-			sim.point_at(v9, v10)
-			iship.set_free_without_pilot(iship.cast(v9), 1)
-			sim.set_velocity_local_to_sim(v9, 0.0, 0.0, 3000.0)
-			sim.set_angular_velocity_euler(v9, math.random(-120.0, 120.0), math.random(-120.0, 120.0), math.random(-120.0, 120.0))
-			group.add_sim(v5, v9)
-			v13 = 0
-			_pc = 25163
-			continue
-		elif _pc == 25163:
-			if v13 < 40:
-				_pc = 25176
-				continue
-			else:
-				_pc = 25509
-				continue
-		elif _pc == 25176:
-			v8 = isim.cast(sim.create("ini:/sims/ships/utility/asteroid_m", ""))
-			isim.set_indestructable(v8, 1)
-			sim.place_near(v8, v0, 2000.0)
-			sim.point_away(v8, v0)
-			iship.set_free_without_pilot(iship.cast(v8), 1)
-			sim.set_velocity_local_to_sim(v8, 0.0, 0.0, math.random(1000.0, 1200.0))
-			sim.set_angular_velocity_euler(v8, math.random(-120.0, 120.0), math.random(-120.0, 120.0), math.random(-120.0, 120.0))
-			group.add_sim(v5, v8)
-			v13 = v13 + 1
-			_pc = 25163
-			continue
-		elif _pc == 25509:
-			v13 = 0
-			_pc = 25516
-			continue
-		elif _pc == 25516:
-			if v13 < 60:
-				_pc = 25529
-				continue
-			else:
-				_pc = 25618
-				continue
-		elif _pc == 25529:
-			if sim.distance_between(v10, v9) < 50.0:
-				_pc = 25563
-				continue
-			else:
-				_pc = 25568
-				continue
-		elif _pc == 25563:
-			_pc = 25618
-			continue
-		elif _pc == 25568:
-			await _pog_wait(0.10000000149011612)
-			v13 = v13 + 1
-			_pc = 25516
-			continue
-		elif _pc == 25618:
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			await _pog_wait(2.0)
-			idirector.end()
-			_pc = 25698
-			continue
-		elif _pc == 25698:
+		await _pog_wait(0.1)
+		if sim.is_dead(v4):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct1Mission07.bombing_run_task: Bomber destroyed. Boming run task completed.\n ")
 			return
-		else:
-			return 0
+		if sim.distance_between(v4, v0) < 300.0:
+			break
+		match v14:
+			1:
+				idirector.set_camera(10)
+				idirector.set_focus(v4)
+			2:
+				idirector.set_camera(4)
+				idirector.set_focus(v4)
+				idirector.set_secondary_focus(v1)
+			3:
+				idirector.set_camera(13)
+				idirector.set_focus(v4)
+				idirector.set_secondary_focus(v1)
+		v14 = v14 + 1
+		if v14 != 4:
+			continue
+		v14 = 1
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission07.cutscene: Target reached. Bombing.\n ")
+	idirector.set_camera(13)
+	idirector.set_focus(v4)
+	idirector.set_secondary_focus(v1)
+	await _pog_wait(3.0)
+	sim.place_at(sim.create("ini:/sims/explosions/harmless_antimatter_explosion", "explosion"), v1)
+	isim.start_explosion(v2)
+	await _pog_wait(4.0)
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	v10 = idirector.create_dolly()
+	idirector.set_dolly_camera(v10)
+	group.add_sim(v5, v10)
+	sim.place_relative_to(v4, v0, -8000.0, -6000.0, -8000.0)
+	sim.point_away(v4, v0)
+	sim.place_relative_to(v10, v4, 2.0, 10.0, 1000.0)
+	iship.set_free_without_pilot(v4, 1)
+	sim.set_velocity_local_to_sim(v4, 0.0, 0.0, 200.0)
+	sim.set_angular_velocity(v4, 0.0, 0.0, 0.0, 70.0)
+	idirector.set_focus(v0)
+	await imusic.play("sound:/audio/music/a4_tension", 1, 1)
+	idirector.fade_in(0.0, 0.0, 0.0, 0.0)
+	icomms.shout(0, "name_clay", "a2_m25_dialogue_clay_you_messed_up_bigtime")
+	await _pog_wait(3.0)
+	isim.set_indestructable(v2, 0)
+	sim.place_relative_to(v0, v2, 0.0, 0.0, 0.0)
+	isim.set_indestructable(v0, 1)
+	object.add_bool_property(v2, "no_shockwave", 1)
+	isim.stop_explosion(v2, 0, 1)
+	await _pog_wait(0.25)
+	v9 = isim.cast(sim.create("ini:/sims/ships/utility/asteroid_m", ""))
+	isim.set_indestructable(v9, 1)
+	sim.place_at(v9, v0)
+	sim.set_collision(v9, 0)
+	sim.point_at(v9, v10)
+	iship.set_free_without_pilot(iship.cast(v9), 1)
+	sim.set_velocity_local_to_sim(v9, 0.0, 0.0, 3000.0)
+	sim.set_angular_velocity_euler(v9, math.random(-120.0, 120.0), math.random(-120.0, 120.0), math.random(-120.0, 120.0))
+	group.add_sim(v5, v9)
+	v13 = 0
+	while v13 < 40:
+		v8 = isim.cast(sim.create("ini:/sims/ships/utility/asteroid_m", ""))
+		isim.set_indestructable(v8, 1)
+		sim.place_near(v8, v0, 2000.0)
+		sim.point_away(v8, v0)
+		iship.set_free_without_pilot(iship.cast(v8), 1)
+		sim.set_velocity_local_to_sim(v8, 0.0, 0.0, math.random(1000.0, 1200.0))
+		sim.set_angular_velocity_euler(v8, math.random(-120.0, 120.0), math.random(-120.0, 120.0), math.random(-120.0, 120.0))
+		group.add_sim(v5, v8)
+		v13 = v13 + 1
+	v13 = 0
+	while v13 < 60:
+		if sim.distance_between(v10, v9) < 50.0:
+			break
+		await _pog_wait(0.10000000149011612)
+		v13 = v13 + 1
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	await _pog_wait(2.0)
+	idirector.end()
+	return
 	return 0
 

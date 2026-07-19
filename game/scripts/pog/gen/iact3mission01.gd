@@ -1165,98 +1165,25 @@ func local_11370(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 11370
-	while true:
-		if _pc == 11370:
-			v1 = group.create()
-			v2 = 0
-			_pc = 11401
-			continue
-		elif _pc == 11401:
-			if v2 < v0:
-				_pc = 11417
-				continue
-			else:
-				_pc = 11821
-				continue
-		elif _pc == 11417:
-			_pc = 11719
-			continue
-		elif _pc == 11422:
-			v3 = iship.create("ini:/sims/ships/independent/armoured_tug", await ishipcreation.ship_name("League", -1))
-			_pc = 11779
-			continue
-		elif _pc == 11475:
-			v3 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
-			_pc = 11779
-			continue
-		elif _pc == 11528:
-			v3 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("League", -1))
-			_pc = 11779
-			continue
-		elif _pc == 11581:
-			v3 = iship.create("ini:/sims/ships/independent/puffin_armed", await ishipcreation.ship_name("League", -1))
-			_pc = 11779
-			continue
-		elif _pc == 11634:
-			v3 = iship.create("ini:/sims/ships/navy/heavy_corvette_mk2", await ishipcreation.ship_name("League", -1))
-			_pc = 11779
-			continue
-		elif _pc == 11687:
-			object.set_bool_property(v3, "ignore_speed_limit", 1)
-			_pc = 11779
-			continue
-		elif _pc == 11719:
-			math.random_int(1, 5)
-			if 1 != math.random_int(1, 5):
-				_pc = 11743
-				continue
-			else:
-				_pc = 11422
-				continue
-		elif _pc == 11743:
-			if not _pog_is_null(2):
-				_pc = 11752
-				continue
-			else:
-				_pc = 11475
-				continue
-		elif _pc == 11752:
-			if not _pog_is_null(3):
-				_pc = 11761
-				continue
-			else:
-				_pc = 11528
-				continue
-		elif _pc == 11761:
-			if not _pog_is_null(4):
-				_pc = 11770
-				continue
-			else:
-				_pc = 11581
-				continue
-		elif _pc == 11770:
-			if not _pog_is_null(5):
-				_pc = 11779
-				continue
-			else:
-				_pc = 11634
-				continue
-		elif _pc == 11779:
-			group.add_sim(v1, v3)
-			v2 = v2 + 1
-			_pc = 11401
-			continue
-		elif _pc == 11821:
-			await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
-			await abb_common.set_faction_group(v1, ifaction.find("League"))
-			return v1
-		elif _pc == 11904:
-			return
-		elif _pc == 12027:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = 0
+	while v2 < v0:
+		match math.random_int(1, 5):
+			1:
+				v3 = iship.create("ini:/sims/ships/independent/armoured_tug", await ishipcreation.ship_name("League", -1))
+			2:
+				v3 = iship.create("ini:/sims/ships/independent/cutter", await ishipcreation.ship_name("League", -1))
+			3:
+				v3 = iship.create("ini:/sims/ships/independent/tug_armed", await ishipcreation.ship_name("League", -1))
+			4:
+				v3 = iship.create("ini:/sims/ships/independent/puffin_armed", await ishipcreation.ship_name("League", -1))
+			5:
+				v3 = iship.create("ini:/sims/ships/navy/heavy_corvette_mk2", await ishipcreation.ship_name("League", -1))
+		group.add_sim(v1, v3)
+		v2 = v2 + 1
+	await abb_common.set_pilot_no_scripts_group(v1, 0.20000000298023224, 5.0, 0.20000000298023224)
+	await abb_common.set_faction_group(v1, ifaction.find("League"))
+	return v1
 	return 0
 
 func local_12029(v0) -> Variant:
@@ -1328,61 +1255,21 @@ func local_13008(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 13008
-	while true:
-		if _pc == 13008:
-			v1 = group.create()
-			v2 = 0
-			_pc = 13039
-			continue
-		elif _pc == 13039:
-			if v2 < v0:
-				_pc = 13055
-				continue
-			else:
-				_pc = 13289
-				continue
-		elif _pc == 13055:
-			_pc = 13187
-			continue
-		elif _pc == 13060:
-			v3 = iship.create("ini:/sims/ships/utility/truck_greyhound", await ishipcreation.ship_name("General", -1))
-			_pc = 13220
-			continue
-		elif _pc == 13113:
-			v3 = iship.create("ini:/sims/ships/utility/freighter", await ishipcreation.ship_name("General", -1))
-			await ishipcreation.create_supply_cargo(v3, -2)
-			_pc = 13220
-			continue
-		elif _pc == 13187:
-			math.random_int(1, 2)
-			if 1 != math.random_int(1, 2):
-				_pc = 13211
-				continue
-			else:
-				_pc = 13060
-				continue
-		elif _pc == 13211:
-			if not _pog_is_null(2):
-				_pc = 13220
-				continue
-			else:
-				_pc = 13113
-				continue
-		elif _pc == 13220:
-			object.set_bool_property(v3, "ignore_speed_limit", 1)
-			group.add_sim(v1, v3)
-			v2 = v2 + 1
-			_pc = 13039
-			continue
-		elif _pc == 13289:
-			await abb_common.set_pilot_no_scripts_group(v1, 0.30000001192092896, 1.0, 0.5)
-			await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
-			return v1
-		elif _pc == 13372:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = 0
+	while v2 < v0:
+		match math.random_int(1, 2):
+			1:
+				v3 = iship.create("ini:/sims/ships/utility/truck_greyhound", await ishipcreation.ship_name("General", -1))
+			2:
+				v3 = iship.create("ini:/sims/ships/utility/freighter", await ishipcreation.ship_name("General", -1))
+				await ishipcreation.create_supply_cargo(v3, -2)
+		object.set_bool_property(v3, "ignore_speed_limit", 1)
+		group.add_sim(v1, v3)
+		v2 = v2 + 1
+	await abb_common.set_pilot_no_scripts_group(v1, 0.30000001192092896, 1.0, 0.5)
+	await abb_common.set_faction_group(v1, ifaction.find("MAAS Corporation"))
+	return v1
 	return 0
 
 func local_13374(v0, v1, v2) -> Variant:

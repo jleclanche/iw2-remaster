@@ -2045,85 +2045,69 @@ func local_10476(v0) -> Variant:
 		debug.print_string(" - scenario ")
 		debug.print_int(v1)
 		debug.print_string(" \n")
-	if _pog_is_null(v1):
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_some_traffic : NO SCENARIO RETURNED FOR ")
-			await local_27(imapentity.pog_name(v0))
-			await local_27("\n")
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageIn Scenario.\n")
-		await itrafficscenario.haulage_in(v0)
-		return 0
-	if 1 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageIn Scenario.\n")
-		await itrafficscenario.haulage_in(v0)
-		return 0
-	if 2 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageOut Scenario\n")
-		await itrafficscenario.haulage_out(v0)
-		return 0
-	if 3 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Supply Scenario\n")
-		await itrafficscenario.supply(v0)
-		return 0
-	if 4 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Trade Scenario \n")
-		await itrafficscenario.trade(v0)
-		return 0
-	if 5 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Security Scenario\n")
-		await itrafficscenario.security(v0)
-		return 0
-	if 6 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Tanker Scenario\n")
-		await itrafficscenario.tanker(v0)
-		return 0
-	if 7 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Official scenario\n")
-		await itrafficscenario.official(v0)
-		return 0
-	if 8 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Underworld Scenario\n")
-		await itrafficscenario.underworld(v0)
-		return 0
-	if 9 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Maintenance Scenario\n")
-		await itrafficscenario.maintenance(v0)
-		return 0
-	if 10 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Mining sceanareo\n")
-		await itrafficscenario.mining(v0)
-		return 0
-	if 11 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Oddball Scenario\n")
-		await itrafficscenario.oddball(v0)
-		return 0
-	if 12 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Civilian scenario\n")
-		await itrafficscenario.civilian(v0)
-		return 0
-	if 13 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Hostile Scenario\n")
-		await itrafficscenario.hostile(v0)
-		return 0
-	if 14 == v1:
-		if PogRuntime.TRACE:
-			await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Scum Scenario\n")
-		await itrafficscenario.scum(v0)
-		return 0
+	match v1:
+		0:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_some_traffic : NO SCENARIO RETURNED FOR ")
+				await local_27(imapentity.pog_name(v0))
+				await local_27("\n")
+		1:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageIn Scenario.\n")
+			await itrafficscenario.haulage_in(v0)
+		2:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageOut Scenario\n")
+			await itrafficscenario.haulage_out(v0)
+		3:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Supply Scenario\n")
+			await itrafficscenario.supply(v0)
+		4:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Trade Scenario \n")
+			await itrafficscenario.trade(v0)
+		5:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Security Scenario\n")
+			await itrafficscenario.security(v0)
+		6:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Tanker Scenario\n")
+			await itrafficscenario.tanker(v0)
+		7:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Official scenario\n")
+			await itrafficscenario.official(v0)
+		8:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Underworld Scenario\n")
+			await itrafficscenario.underworld(v0)
+		9:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Maintenance Scenario\n")
+			await itrafficscenario.maintenance(v0)
+		10:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Mining sceanareo\n")
+			await itrafficscenario.mining(v0)
+		11:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Oddball Scenario\n")
+			await itrafficscenario.oddball(v0)
+		12:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Civilian scenario\n")
+			await itrafficscenario.civilian(v0)
+		13:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Hostile Scenario\n")
+			await itrafficscenario.hostile(v0)
+		14:
+			if PogRuntime.TRACE:
+				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Scum Scenario\n")
+			await itrafficscenario.scum(v0)
+			return 0
 	return 0
 	return 0
 

@@ -462,187 +462,41 @@ func s_p_base_screen() -> Variant:
 
 func local_5932() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 5932
-	while true:
-		if _pc == 5932:
-			v0 = 0
-			_pc = 6109
-			continue
-		elif _pc == 5949:
+	v0 = 0
+	match iloadout.ship():
+		0:
 			if not (iinventory.got_command_section()):
-				_pc = 5968
-				continue
-			else:
-				_pc = 5975
-				continue
-		elif _pc == 5968:
-			v0 = 1
-			_pc = 5975
-			continue
-		elif _pc == 5975:
-			_pc = 6165
-			continue
-		elif _pc == 5980:
+				v0 = 1
+		4:
 			if not (iinventory.got_storm_petrel()):
-				_pc = 5999
-				continue
-			else:
-				_pc = 6006
-				continue
-		elif _pc == 5999:
-			v0 = 1
-			_pc = 6006
-			continue
-		elif _pc == 6006:
-			_pc = 6165
-			continue
-		elif _pc == 6011:
+				v0 = 1
+		1:
 			if not (iinventory.got_tug()):
-				_pc = 6030
-				continue
-			else:
-				_pc = 6037
-				continue
-		elif _pc == 6030:
-			v0 = 1
-			_pc = 6037
-			continue
-		elif _pc == 6037:
-			_pc = 6165
-			continue
-		elif _pc == 6042:
+				v0 = 1
+		2:
 			if not (iinventory.got_fast_attack_ship()):
-				_pc = 6061
-				continue
-			else:
-				_pc = 6068
-				continue
-		elif _pc == 6061:
-			v0 = 1
-			_pc = 6068
-			continue
-		elif _pc == 6068:
-			_pc = 6165
-			continue
-		elif _pc == 6073:
+				v0 = 1
+		3:
 			if not (iinventory.got_heavy_corvette()):
-				_pc = 6092
-				continue
-			else:
-				_pc = 6099
-				continue
-		elif _pc == 6092:
-			v0 = 1
-			_pc = 6099
-			continue
-		elif _pc == 6099:
-			_pc = 6165
-			continue
-		elif _pc == 6104:
-			_pc = 6165
-			continue
-		elif _pc == 6109:
-			iloadout.ship()
-			if not _pog_is_null(iloadout.ship()):
-				_pc = 6130
-				continue
-			else:
-				_pc = 5949
-				continue
-		elif _pc == 6130:
-			if not _pog_is_null(4):
-				_pc = 6139
-				continue
-			else:
-				_pc = 5980
-				continue
-		elif _pc == 6139:
-			if not _pog_is_null(1):
-				_pc = 6147
-				continue
-			else:
-				_pc = 6011
-				continue
-		elif _pc == 6147:
-			if not _pog_is_null(2):
-				_pc = 6156
-				continue
-			else:
-				_pc = 6042
-				continue
-		elif _pc == 6156:
-			if not _pog_is_null(3):
-				_pc = 6165
-				continue
-			else:
-				_pc = 6073
-				continue
-		elif _pc == 6165:
-			if v0:
-				_pc = 6175
-				continue
-			else:
-				_pc = 6363
-				continue
-		elif _pc == 6175:
-			if iinventory.got_heavy_corvette():
-				_pc = 6193
-				continue
-			else:
-				_pc = 6214
-				continue
-		elif _pc == 6193:
-			iloadout.set_ship(3)
-			_pc = 6363
-			continue
-		elif _pc == 6214:
-			if iinventory.got_fast_attack_ship():
-				_pc = 6232
-				continue
-			else:
-				_pc = 6253
-				continue
-		elif _pc == 6232:
+				v0 = 1
+	if not (v0):
+		return 0
+	if iinventory.got_heavy_corvette():
+		iloadout.set_ship(3)
+	else:
+		if iinventory.got_fast_attack_ship():
 			iloadout.set_ship(2)
-			_pc = 6363
-			continue
-		elif _pc == 6253:
-			if iinventory.got_tug():
-				_pc = 6271
-				continue
-			else:
-				_pc = 6291
-				continue
-		elif _pc == 6271:
-			iloadout.set_ship(1)
-			_pc = 6363
-			continue
-		elif _pc == 6291:
-			if iinventory.got_storm_petrel():
-				_pc = 6309
-				continue
-			else:
-				_pc = 6330
-				continue
-		elif _pc == 6309:
-			iloadout.set_ship(4)
-			_pc = 6363
-			continue
-		elif _pc == 6330:
-			if iinventory.got_command_section():
-				_pc = 6348
-				continue
-			else:
-				_pc = 6363
-				continue
-		elif _pc == 6348:
-			iloadout.set_ship(0)
-			_pc = 6363
-			continue
-		elif _pc == 6363:
-			return 0
 		else:
-			return 0
+			if iinventory.got_tug():
+				iloadout.set_ship(1)
+			else:
+				if iinventory.got_storm_petrel():
+					iloadout.set_ship(4)
+				else:
+					if not (iinventory.got_command_section()):
+						return 0
+					iloadout.set_ship(0)
+	return 0
 	return 0
 
 func s_p_base_screen__on_hangar_button() -> Variant:
@@ -1225,90 +1079,30 @@ func local_15522(v0, v1, v2, v3) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 15522
-	while true:
-		if _pc == 15522:
-			v6 = iinventory.number_of_cargo_type(474)
-			v7 = iloadout.turret_fighters_in_loadout()
-			v9 = ""
-			v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
-			v6 = v6 + v7
-			if v6 > 2:
-				_pc = 15655
-				continue
-			else:
-				_pc = 15663
-				continue
-		elif _pc == 15655:
-			v6 = 2
-			_pc = 15663
-			continue
-		elif _pc == 15663:
-			list.remove_all(v3)
-			v8 = 0
-			_pc = 15689
-			continue
-		elif _pc == 15689:
-			if v8 <= v6:
-				_pc = 15705
-				continue
-			else:
-				_pc = 16008
-				continue
-		elif _pc == 15705:
-			_pc = 15814
-			continue
-		elif _pc == 15710:
-			v9 = text.field("turret_fighters_zero", 0)
-			_pc = 15844
-			continue
-		elif _pc == 15743:
-			v9 = text.field("turret_fighters_one", 0)
-			_pc = 15844
-			continue
-		elif _pc == 15776:
-			v9 = text.field("turret_fighters_two", 0)
-			_pc = 15844
-			continue
-		elif _pc == 15809:
-			_pc = 15844
-			continue
-		elif _pc == 15814:
-			if not _pog_is_null(v8):
-				_pc = 15827
-				continue
-			else:
-				_pc = 15710
-				continue
-		elif _pc == 15827:
-			if 1 != v8:
-				_pc = 15835
-				continue
-			else:
-				_pc = 15743
-				continue
-		elif _pc == 15835:
-			if 2 != v8:
-				_pc = 15844
-				continue
-			else:
-				_pc = 15776
-				continue
-		elif _pc == 15844:
-			v5 = await local_46444(v9, v2)
-			await igui.make_inverse_button_iconic(v5)
-			gui.set_input_override_functions(v5, "", "", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "")
-			list.add_tail(v3, v5)
-			v8 = v8 + 1
-			_pc = 15689
-			continue
-		elif _pc == 16008:
-			v4 = await igui.create_window_list_in_splitter(v0, v3, v10, v1, text.field("manifest_ship_tfighters", 0))
-			return v4
-		elif _pc == 16079:
-			return
-		else:
-			return 0
+	v6 = iinventory.number_of_cargo_type(474)
+	v7 = iloadout.turret_fighters_in_loadout()
+	v9 = ""
+	v10 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v6 = v6 + v7
+	if v6 > 2:
+		v6 = 2
+	list.remove_all(v3)
+	v8 = 0
+	while v8 <= v6:
+		match v8:
+			0:
+				v9 = text.field("turret_fighters_zero", 0)
+			1:
+				v9 = text.field("turret_fighters_one", 0)
+			2:
+				v9 = text.field("turret_fighters_two", 0)
+		v5 = await local_46444(v9, v2)
+		await igui.make_inverse_button_iconic(v5)
+		gui.set_input_override_functions(v5, "", "", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "", "", "iBaseGUI.SPLoadoutScreen_OnFighter", "")
+		list.add_tail(v3, v5)
+		v8 = v8 + 1
+	v4 = await igui.create_window_list_in_splitter(v0, v3, v10, v1, text.field("manifest_ship_tfighters", 0))
+	return v4
 	return 0
 
 func local_16088(v0, v1, v2, v3) -> Variant:

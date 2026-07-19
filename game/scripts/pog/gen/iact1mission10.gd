@@ -145,96 +145,38 @@ func local_722(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 722
+	v1 = 0
+	v4 = []
+	v5 = iship.cast(group.leader(v0))
+	v7 = ifaction.find("Player")
+	v8 = ifaction.find("League")
 	while true:
-		if _pc == 722:
-			v1 = 0
-			v4 = []
-			v5 = iship.cast(group.leader(v0))
-			v7 = ifaction.find("Player")
-			v8 = ifaction.find("League")
-			_pc = 838
+		await _pog_wait(3)
+		v6 = iship.find_player_ship()
+		if not (sim.cast(v5) and _pog_is_null(v1)):
 			continue
-		elif _pc == 838:
-			await _pog_frame()
-			if _pog_every(839, 3.0):
-				_pc = 852
-				continue
-			else:
-				_pc = 1238
-				continue
-		elif _pc == 852:
-			v6 = iship.find_player_ship()
-			if sim.cast(v5) and _pog_is_null(v1):
-				_pc = 903
-				continue
-			else:
-				_pc = 1238
-				continue
-		elif _pc == 903:
-			if sim.distance_between(v6, v5) <= 700.0 and _pog_is_null(global.pog_int("g_mission_state_a1m10")):
-				_pc = 960
-				continue
-			else:
-				_pc = 1238
-				continue
-		elif _pc == 960:
-			v1 = 1
-			await iconversation.begin()
-			await iconversation.add_response("a1_m04_text_player_c1_option_1_yes", "a1_m04_dialogue_player_c1_option_1_yes")
-			await iconversation.add_response("a1_m04_text_player_c1_option_2_no", "a1_m04_dialogue_player_c1_option_2_no")
-			v2 = await iconversation.ask(v5, "", "a1_m04_dialogue_stepson_c1_ah_cal")
-			_pc = 1216
+		if not (sim.distance_between(v6, v5) <= 700.0 and _pog_is_null(global.pog_int("g_mission_state_a1m10"))):
 			continue
-		elif _pc == 1077:
-			await iconversation.say(v5, "", "a1_m04_dialogue_stepson_c1_response_1_we_thought_we_were")
-			await iconversation.end()
-			await _pog_wait(5.0)
-			_pc = 1238
-			continue
-		elif _pc == 1160:
-			await iconversation.say(v5, "", "a1_m04_dialogue_stepson_c1_response_2_go_away")
-			await iconversation.end()
-			_pc = 1238
-			continue
-		elif _pc == 1211:
-			_pc = 1238
-			continue
-		elif _pc == 1216:
-			if 1 != v2:
-				_pc = 1229
+		v1 = 1
+		await iconversation.begin()
+		await iconversation.add_response("a1_m04_text_player_c1_option_1_yes", "a1_m04_dialogue_player_c1_option_1_yes")
+		await iconversation.add_response("a1_m04_text_player_c1_option_2_no", "a1_m04_dialogue_player_c1_option_2_no")
+		v2 = await iconversation.ask(v5, "", "a1_m04_dialogue_stepson_c1_ah_cal")
+		match v2:
+			1:
+				await iconversation.say(v5, "", "a1_m04_dialogue_stepson_c1_response_1_we_thought_we_were")
+				await iconversation.end()
+				await _pog_wait(5.0)
+			2:
+				await iconversation.say(v5, "", "a1_m04_dialogue_stepson_c1_response_2_go_away")
+				await iconversation.end()
 				continue
-			else:
-				_pc = 1077
-				continue
-		elif _pc == 1229:
-			if 2 != v2:
-				_pc = 1238
-				continue
-			else:
-				_pc = 1160
-				continue
-		elif _pc == 1238:
-			_pc = 838
-			continue
-		elif _pc == 1243:
-			return
-		elif _pc == 1289:
-			await _pog_frame()
-			if _pog_every(1290, 3.0):
-				_pc = 1303
-				continue
-			else:
-				_pc = 1568
-				continue
-		elif _pc == 1303:
-			if await iutilities.player_in_range(v0) and _pog_is_null(v1):
-				_pc = 1334
-				continue
-			else:
-				_pc = 1509
-				continue
-		elif _pc == 1334:
+	return
+	v1 = 0
+	v4 = iship.find_player_ship()
+	while true:
+		await _pog_wait(3)
+		if await iutilities.player_in_range(v0) and _pog_is_null(v1):
 			v1 = 1
 			v3 = await local_522()
 			v5 = iship.cast(group.leader(v3))
@@ -242,27 +184,12 @@ func local_722(v0) -> Variant:
 			sim.point_at(v5, v4)
 			await iformation.line_abreast(v3, 70.0, 1)
 			_pog_spawn(local_722.bind(v3))
-			_pc = 1568
-			continue
-		elif _pc == 1509:
-			if not (await iutilities.player_in_range(v0)) and v1 == 1:
-				_pc = 1541
+		else:
+			if not (not (await iutilities.player_in_range(v0)) and v1 == 1):
 				continue
-			else:
-				_pc = 1568
-				continue
-		elif _pc == 1541:
 			v1 = 0
 			group.destroy(v3, 1)
-			_pc = 1568
-			continue
-		elif _pc == 1568:
-			_pc = 1289
-			continue
-		elif _pc == 1573:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_1576(v0) -> Variant:
@@ -283,87 +210,38 @@ func local_1655(v0, v1) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 1655
+	v2 = 0
+	v5 = []
+	v7 = ifaction.find("Player")
+	v8 = ifaction.find("Junkers")
+	v9 = ifaction.find("MAAS Corporation")
 	while true:
-		if _pc == 1655:
-			v2 = 0
-			v5 = []
-			v7 = ifaction.find("Player")
-			v8 = ifaction.find("Junkers")
-			v9 = ifaction.find("MAAS Corporation")
-			_pc = 1759
+		await _pog_wait(3)
+		v6 = iship.find_player_ship()
+		if not (isim.is_docked_to_structure(isim.cast(v6), isim.cast(v0)) and _pog_is_null(v2)):
 			continue
-		elif _pc == 1759:
-			await _pog_frame()
-			if _pog_every(1760, 3.0):
-				_pc = 1773
-				continue
-			else:
-				_pc = 2222
-				continue
-		elif _pc == 1773:
-			v6 = iship.find_player_ship()
-			if isim.is_docked_to_structure(isim.cast(v6), isim.cast(v0)) and _pog_is_null(v2):
-				_pc = 1854
-				continue
-			else:
-				_pc = 2222
-				continue
-		elif _pc == 1854:
-			if _pog_is_null(state.progress(v1)):
-				_pc = 1879
-				continue
-			else:
-				_pc = 2222
-				continue
-		elif _pc == 1879:
-			iobjectives.set_state("a1_m10_objectives_find", 1)
-			v2 = 1
-			await iconversation.begin()
-			await iconversation.add_response("a1_m10_text_player_c1_option_1_greet_im_cal", "a1_m10_dialogue_player_c1_option_1_greet_im_cal")
-			await iconversation.add_response("a1_m10_text_player_c1_option_2_threaten_im_cal", "a1_m10_dialogue_player_c1_option_2_threaten_im_cal")
-			v3 = await iconversation.ask(v0, "", "a1_m10_dialogue_mad_bill_c1_who_are_you")
-			_pc = 2200
+		if not _pog_is_null(state.progress(v1)):
 			continue
-		elif _pc == 2018:
-			await iconversation.say(v0, "", "a1_m10_dialogue_mad_bill_c1_response_1_ahh_clay")
-			await iconversation.end()
-			v2 = 0
-			state.set_progress(v1, 2)
-			iobjectives.add("a1_m10_objectives_invest")
-			_pc = 2222
-			continue
-		elif _pc == 2118:
-			await iconversation.say(v0, "", "a1_m10_dialogue_mad_bill_c1_response_2_really_and_what")
-			await iconversation.end()
-			v2 = 0
-			iship.undock_self(v6)
-			_pc = 2222
-			continue
-		elif _pc == 2195:
-			_pc = 2222
-			continue
-		elif _pc == 2200:
-			if 1 != v3:
-				_pc = 2213
+		iobjectives.set_state("a1_m10_objectives_find", 1)
+		v2 = 1
+		await iconversation.begin()
+		await iconversation.add_response("a1_m10_text_player_c1_option_1_greet_im_cal", "a1_m10_dialogue_player_c1_option_1_greet_im_cal")
+		await iconversation.add_response("a1_m10_text_player_c1_option_2_threaten_im_cal", "a1_m10_dialogue_player_c1_option_2_threaten_im_cal")
+		v3 = await iconversation.ask(v0, "", "a1_m10_dialogue_mad_bill_c1_who_are_you")
+		match v3:
+			1:
+				await iconversation.say(v0, "", "a1_m10_dialogue_mad_bill_c1_response_1_ahh_clay")
+				await iconversation.end()
+				v2 = 0
+				state.set_progress(v1, 2)
+				iobjectives.add("a1_m10_objectives_invest")
+			2:
+				await iconversation.say(v0, "", "a1_m10_dialogue_mad_bill_c1_response_2_really_and_what")
+				await iconversation.end()
+				v2 = 0
+				iship.undock_self(v6)
 				continue
-			else:
-				_pc = 2018
-				continue
-		elif _pc == 2213:
-			if 2 != v3:
-				_pc = 2222
-				continue
-			else:
-				_pc = 2118
-				continue
-		elif _pc == 2222:
-			_pc = 1759
-			continue
-		elif _pc == 2227:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_2237(v0) -> Variant:
@@ -679,118 +557,49 @@ func local_7725(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 7725
-	while true:
-		if _pc == 7725:
-			v1 = imapentity.find_by_name("Hoffer's Gap Entertainment Complex")
-			v3 = 0
-			if _pog_is_null(v1):
-				_pc = 7776
-				continue
-			else:
-				_pc = 7802
-				continue
-		elif _pc == 7776:
-			_pc = 7802
-			continue
-		elif _pc == 7781:
+	v1 = imapentity.find_by_name("Hoffer's Gap Entertainment Complex")
+	v3 = 0
+	if _pog_is_null(v1):
+		if PogRuntime.TRACE:
 			debug.error("Unable to find hoffers gap entertainment")
-			_pc = 7802
+	while true:
+		await _pog_wait(6)
+		v2 = iship.find_player_ship()
+		if not (isim.is_docked_to_structure(isim.cast(v2), isim.cast(v1)) and _pog_is_null(v3)):
 			continue
-		elif _pc == 7802:
-			_pc = 7807
+		if state.progress(v0) != 2:
 			continue
-		elif _pc == 7807:
-			await _pog_frame()
-			if _pog_every(7808, 6.0):
-				_pc = 7821
+		iobjectives.set_state("a1_m10_objectives_invest", 1)
+		v3 = 1
+		await iconversation.begin()
+		await iconversation.add_response("a1_m10_text_player_c2_option_1_im_cal_device", "a1_m10_dialogue_player_c2_option_1_im_cal_device")
+		await iconversation.add_response("a1_m10_text_player_c2_option_2_no_need_to_be_rude", "a1_m10_dialogue_player_c2_option_2_no_need_to_be_rude")
+		v5 = await iconversation.ask(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_who_are_you")
+		match v5:
+			1:
+				await iconversation.say(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_response_1_you_must_mean")
+				await iconversation.say(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_response_1_here_ya_go")
+				await iconversation.end()
+				v3 = 0
+				state.set_progress(v0, 3)
+				global.set_bool("g_act1_puzzle_active", 1)
+				while true:
+					await _pog_wait(5.0)
+					if not (isim.is_docked_to_structure(isim.cast(v2), isim.cast(v1))):
+						break
+				await iconversation.one_liner(0, "name_smith", "a1_m10_dialogue_smith_hey_cal")
+				isim.set_sensor_visibility(isim.cast(v1), 0)
+				await ibasegui.set_triangulation_screen_enabled(1)
+				iobjectives.add("a1_m10_objectives_calculate")
+				await iconversation.end()
+				return
+			2:
+				await iconversation.say(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_response_2_really_bugger_off")
+				await iconversation.end()
+				isim.undock(isim.cast(v2), isim.cast(v1))
+				v3 = 0
 				continue
-			else:
-				_pc = 8532
-				continue
-		elif _pc == 7821:
-			v2 = iship.find_player_ship()
-			if isim.is_docked_to_structure(isim.cast(v2), isim.cast(v1)) and _pog_is_null(v3):
-				_pc = 7902
-				continue
-			else:
-				_pc = 8532
-				continue
-		elif _pc == 7902:
-			if state.progress(v0) == 2:
-				_pc = 7928
-				continue
-			else:
-				_pc = 8532
-				continue
-		elif _pc == 7928:
-			iobjectives.set_state("a1_m10_objectives_invest", 1)
-			v3 = 1
-			await iconversation.begin()
-			await iconversation.add_response("a1_m10_text_player_c2_option_1_im_cal_device", "a1_m10_dialogue_player_c2_option_1_im_cal_device")
-			await iconversation.add_response("a1_m10_text_player_c2_option_2_no_need_to_be_rude", "a1_m10_dialogue_player_c2_option_2_no_need_to_be_rude")
-			v5 = await iconversation.ask(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_who_are_you")
-			_pc = 8510
-			continue
-		elif _pc == 8067:
-			await iconversation.say(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_response_1_you_must_mean")
-			await iconversation.say(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_response_1_here_ya_go")
-			await iconversation.end()
-			v3 = 0
-			state.set_progress(v0, 3)
-			global.set_bool("g_act1_puzzle_active", 1)
-			_pc = 8195
-			continue
-		elif _pc == 8195:
-			await _pog_wait(5.0)
-			if not (isim.is_docked_to_structure(isim.cast(v2), isim.cast(v1))):
-				_pc = 8281
-				continue
-			else:
-				_pc = 8195
-				continue
-		elif _pc == 8281:
-			await iconversation.one_liner(0, "name_smith", "a1_m10_dialogue_smith_hey_cal")
-			isim.set_sensor_visibility(isim.cast(v1), 0)
-			await ibasegui.set_triangulation_screen_enabled(1)
-			iobjectives.add("a1_m10_objectives_calculate")
-			await iconversation.end()
-			_pc = 8538
-			continue
-		elif _pc == 8397:
-			await iconversation.say(v1, "", "a1_m10_dialogue_malcomb_tezler_c2_response_2_really_bugger_off")
-			await iconversation.end()
-			isim.undock(isim.cast(v2), isim.cast(v1))
-			v3 = 0
-			_pc = 8532
-			continue
-		elif _pc == 8505:
-			_pc = 8532
-			continue
-		elif _pc == 8510:
-			if 1 != v5:
-				_pc = 8523
-				continue
-			else:
-				_pc = 8067
-				continue
-		elif _pc == 8523:
-			if 2 != v5:
-				_pc = 8532
-				continue
-			else:
-				_pc = 8397
-				continue
-		elif _pc == 8532:
-			_pc = 7807
-			continue
-		elif _pc == 8537:
-			_pc = 8538
-			continue
-		elif _pc == 8538:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func mission_handler() -> Variant:

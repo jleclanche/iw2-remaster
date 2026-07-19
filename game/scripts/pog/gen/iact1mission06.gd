@@ -435,21 +435,18 @@ func local_5736(v0, v1, v2, v3, v4, v5) -> Variant:
 	return 0
 
 func local_6541(v0) -> Variant:
-	if 1 == v0:
-		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_one")
-		return 0
-	if 2 == v0:
-		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_two")
-		return 0
-	if 3 == v0:
-		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_half_done")
-		return 0
-	if 4 == v0:
-		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_two_more")
-		return 0
-	if 5 == v0:
-		await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_one_to_go")
-		return 0
+	match v0:
+		1:
+			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_one")
+		2:
+			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_two")
+		3:
+			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_half_done")
+		4:
+			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_two_more")
+		5:
+			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_one_to_go")
+			return 0
 	return 0
 	return 0
 

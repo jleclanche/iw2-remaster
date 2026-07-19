@@ -284,171 +284,41 @@ func health_power_up(v0, v1) -> Variant:
 func local_4680(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 4680
-	while true:
-		if _pc == 4680:
-			v2 = []
-			_pc = 4696
+	v2 = []
+	while 1:
+		v2 = isim.sims_in_radius(v0, 10.0, 1073741824)
+		if not (p_set.is_empty(v2)):
 			continue
-		elif _pc == 4696:
-			if 1:
-				_pc = 4702
-				continue
-			else:
-				_pc = 5628
-				continue
-		elif _pc == 4702:
-			v2 = isim.sims_in_radius(v0, 10.0, 1073741824)
-			if p_set.is_empty(v2):
-				_pc = 4761
-				continue
-			else:
-				_pc = 5623
-				continue
-		elif _pc == 4761:
-			_pc = 5272
-			continue
-		elif _pc == 4767:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_proximity_minelayer", ""))
-			_pc = 5377
-			continue
-		elif _pc == 4817:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_seeker_minelayer", ""))
-			_pc = 5377
-			continue
-		elif _pc == 4867:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_neutron", ""))
-			_pc = 5377
-			continue
-		elif _pc == 4917:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_assault_cannon", ""))
-			_pc = 5377
-			continue
-		elif _pc == 4967:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_sniper", ""))
-			_pc = 5377
-			continue
-		elif _pc == 5017:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_mining_laser", ""))
-			_pc = 5377
-			continue
-		elif _pc == 5067:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_deadshot_missile", ""))
-			_pc = 5377
-			continue
-		elif _pc == 5117:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_antimatter_beam", ""))
-			_pc = 5377
-			continue
-		elif _pc == 5167:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/health_60pc", ""))
-			_pc = 5377
-			continue
-		elif _pc == 5217:
-			v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_hammer_rocket", ""))
-			_pc = 5377
-			continue
-		elif _pc == 5267:
-			_pc = 5377
-			continue
-		elif _pc == 5272:
-			math.random_int(1, 10)
-			if 1 != math.random_int(1, 10):
-				_pc = 5296
-				continue
-			else:
-				_pc = 4767
-				continue
-		elif _pc == 5296:
-			if not _pog_is_null(2):
-				_pc = 5305
-				continue
-			else:
-				_pc = 4817
-				continue
-		elif _pc == 5305:
-			if not _pog_is_null(3):
-				_pc = 5314
-				continue
-			else:
-				_pc = 4867
-				continue
-		elif _pc == 5314:
-			if not _pog_is_null(4):
-				_pc = 5323
-				continue
-			else:
-				_pc = 4917
-				continue
-		elif _pc == 5323:
-			if not _pog_is_null(5):
-				_pc = 5332
-				continue
-			else:
-				_pc = 4967
-				continue
-		elif _pc == 5332:
-			if not _pog_is_null(6):
-				_pc = 5341
-				continue
-			else:
-				_pc = 5017
-				continue
-		elif _pc == 5341:
-			if not _pog_is_null(7):
-				_pc = 5350
-				continue
-			else:
-				_pc = 5067
-				continue
-		elif _pc == 5350:
-			if not _pog_is_null(8):
-				_pc = 5359
-				continue
-			else:
-				_pc = 5117
-				continue
-		elif _pc == 5359:
-			if not _pog_is_null(9):
-				_pc = 5368
-				continue
-			else:
-				_pc = 5167
-				continue
-		elif _pc == 5368:
-			if not _pog_is_null(10):
-				_pc = 5377
-				continue
-			else:
-				_pc = 5217
-				continue
-		elif _pc == 5377:
-			if not _pog_is_null(v1):
-				_pc = 5390
-				continue
-			else:
-				_pc = 5572
-				continue
-		elif _pc == 5390:
+		match math.random_int(1, 10):
+			1:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_proximity_minelayer", ""))
+			2:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_seeker_minelayer", ""))
+			3:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_neutron", ""))
+			4:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_assault_cannon", ""))
+			5:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_sniper", ""))
+			6:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_mining_laser", ""))
+			7:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_deadshot_missile", ""))
+			8:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_antimatter_beam", ""))
+			9:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/health_60pc", ""))
+			10:
+				v1 = isim.cast(sim.create("ini:/sims/power_ups/weapon_hammer_rocket", ""))
+		if not _pog_is_null(v1):
 			isim.set_faction(v1, ifaction.find("PowerUp"))
 			sim.copy_orientation(v1, v0)
 			sim.place_at(v1, v0)
 			imultiplay.set_transmit_flag(v1, 1)
 			isim.set_mission_critical(v1, 1)
 			object.set_float_property(v1, "life_time", 100.0 + math.random(1.0, 20.0))
-			_pc = 5572
-			continue
-		elif _pc == 5572:
-			await _pog_wait(math.random(20.0, 40.0))
-			_pc = 5623
-			continue
-		elif _pc == 5623:
-			_pc = 4696
-			continue
-		elif _pc == 5628:
-			return
-		else:
-			return 0
+		await _pog_wait(math.random(20.0, 40.0))
+	return
 	return 0
 
 func weapon_power_up_generator_task(v0) -> Variant:

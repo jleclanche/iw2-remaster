@@ -216,239 +216,81 @@ func server_on_user_message() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	var _pc: int = 2021
-	while true:
-		if _pc == 2021:
-			v5 = ""
-			v6 = group.cast(global.handle("mp_respawn_group"))
-			v13 = ifaction.find(text.field("mp_flag_team_b", 0))
-			v14 = ifaction.find(text.field("mp_flag_team_a", 0))
-			_pc = 3781
-			continue
-		elif _pc == 2161:
+	v5 = ""
+	v6 = group.cast(global.handle("mp_respawn_group"))
+	v13 = ifaction.find(text.field("mp_flag_team_b", 0))
+	v14 = ifaction.find(text.field("mp_flag_team_a", 0))
+	match v0:
+		1:
 			v11 = ifaction.find(v3)
 			isim.set_faction(isim.cast(v1), v11)
 			imultiplay.server_set_player_team(v1, v3)
 			await imputils.spawn_player(v1, v6)
 			if _pog_eq(v3, text.field("mp_flag_team_b", 0)):
-				_pc = 2303
-				continue
+				v5 = "mp_flag_joined_team_b"
 			else:
-				_pc = 2321
-				continue
-		elif _pc == 2303:
-			v5 = "mp_flag_joined_team_b"
-			_pc = 2334
-			continue
-		elif _pc == 2321:
-			v5 = "mp_flag_joined_team_a"
-			_pc = 2334
-			continue
-		elif _pc == 2334:
+				v5 = "mp_flag_joined_team_a"
 			imultiplay.server_send_user_message(1, v1, 0, v3)
 			imultiplay.server_broadcast_message(v1, v5, 3)
 			if imultiplay.use_a_i_bots() and imultiplay.a_i_bots_count() > 0:
-				_pc = 2420
-				continue
-			else:
-				_pc = 3002
-				continue
-		elif _pc == 2420:
-			if _pog_eq(v3, text.field("mp_flag_team_a", 0)):
-				_pc = 2453
-				continue
-			else:
-				_pc = 2577
-				continue
-		elif _pc == 2453:
-			v9 = group.cast(global.handle("g_bots_a_handle"))
-			v8 = group.cast(global.handle("g_bots_b_handle"))
-			v10 = ifaction.find(text.field("mp_flag_team_b", 0))
-			_pc = 2696
-			continue
-		elif _pc == 2577:
-			v9 = group.cast(global.handle("g_bots_b_handle"))
-			v8 = group.cast(global.handle("g_bots_a_handle"))
-			v10 = ifaction.find(text.field("mp_flag_team_a", 0))
-			_pc = 2696
-			continue
-		elif _pc == 2696:
-			v7 = isim.cast(group.nth_sim(v9, 0))
-			group.remove_sim(v9, v7)
-			group.add_sim(v8, v7)
-			isim.set_faction(v7, v10)
-			v12 = object.int_property(v7, "bot_index")
-			v12 = v12 + imultiplay.a_i_bots_count() / 2
-			object.set_int_property(v7, "bot_index", v12)
-			await imputils.spawn_player(v7, group.cast(global.handle("mp_respawn_group")))
-			imultiplay.server_send_user_message(1, v7, 0, ifaction.pog_name(isim.faction(v7)))
-			_pc = 3002
-			continue
-		elif _pc == 3002:
+				if _pog_eq(v3, text.field("mp_flag_team_a", 0)):
+					v9 = group.cast(global.handle("g_bots_a_handle"))
+					v8 = group.cast(global.handle("g_bots_b_handle"))
+					v10 = ifaction.find(text.field("mp_flag_team_b", 0))
+				else:
+					v9 = group.cast(global.handle("g_bots_b_handle"))
+					v8 = group.cast(global.handle("g_bots_a_handle"))
+					v10 = ifaction.find(text.field("mp_flag_team_a", 0))
+				v7 = isim.cast(group.nth_sim(v9, 0))
+				group.remove_sim(v9, v7)
+				group.add_sim(v8, v7)
+				isim.set_faction(v7, v10)
+				v12 = object.int_property(v7, "bot_index")
+				v12 = v12 + imultiplay.a_i_bots_count() / 2
+				object.set_int_property(v7, "bot_index", v12)
+				await imputils.spawn_player(v7, group.cast(global.handle("mp_respawn_group")))
+				imultiplay.server_send_user_message(1, v7, 0, ifaction.pog_name(isim.faction(v7)))
 			await local_5447(v1)
-			_pc = 3865
-			continue
-		elif _pc == 3026:
+			return 0
+		15:
 			v4 = iship.cast(v1)
 			iship.undock_self(v4)
 			imultiplay.server_send_user_message(15, v4, 0, "")
-			_pc = 3865
-			continue
-		elif _pc == 3103:
+			return 0
+		16:
 			imultiplay.send_scores(v1)
-			_pc = 3865
-			continue
-		elif _pc == 3127:
+			return 0
+		99:
 			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-			_pc = 3865
-			continue
-		elif _pc == 3187:
+			return 0
+		40:
 			v2 = sim.find_by_name(v3)
 			if not (object.property_exists(v2, "mp_tagged_by")):
-				_pc = 3242
-				continue
-			else:
-				_pc = 3414
-				continue
-		elif _pc == 3242:
-			await local_674(iship.cast(v1))
-			if _pog_eq(isim.faction(isim.cast(v1)), v14):
-				_pc = 3316
-				continue
-			else:
-				_pc = 3352
-				continue
-		elif _pc == 3316:
-			imultiplay.server_send_user_message(41, v1, v2, v3)
-			_pc = 3383
-			continue
-		elif _pc == 3352:
-			imultiplay.server_send_user_message(42, v1, v2, v3)
-			_pc = 3383
-			continue
-		elif _pc == 3383:
-			object.add_handle_property(v2, "mp_tagged_by", v1)
-			_pc = 3414
-			continue
-		elif _pc == 3414:
-			_pc = 3865
-			continue
-		elif _pc == 3419:
+				await local_674(iship.cast(v1))
+				if _pog_eq(isim.faction(isim.cast(v1)), v14):
+					imultiplay.server_send_user_message(41, v1, v2, v3)
+				else:
+					imultiplay.server_send_user_message(42, v1, v2, v3)
+				object.add_handle_property(v2, "mp_tagged_by", v1)
+			return 0
+		202:
 			if not (object.property_exists(v2, "mp_remote_linked")):
-				_pc = 3450
-				continue
-			else:
-				_pc = 3515
-				continue
-		elif _pc == 3450:
-			object.add_handle_property(v2, "mp_remote_linked", v1)
-			imultiplay.server_send_user_message(202, v1, v2, "")
-			_pc = 3515
-			continue
-		elif _pc == 3515:
-			_pc = 3865
-			continue
-		elif _pc == 3520:
+				object.add_handle_property(v2, "mp_remote_linked", v1)
+				imultiplay.server_send_user_message(202, v1, v2, "")
+			return 0
+		203:
 			if object.property_exists(v2, "mp_remote_linked"):
-				_pc = 3550
-				continue
-			else:
-				_pc = 3642
-				continue
-		elif _pc == 3550:
-			object.remove_property(v2, "mp_remote_linked")
-			imultiplay.sever_remote_link_to(iship.cast(v2))
-			imultiplay.server_send_user_message(203, v1, v2, "")
-			_pc = 3642
-			continue
-		elif _pc == 3642:
-			_pc = 3865
-			continue
-		elif _pc == 3647:
+				object.remove_property(v2, "mp_remote_linked")
+				imultiplay.sever_remote_link_to(iship.cast(v2))
+				imultiplay.server_send_user_message(203, v1, v2, "")
+			return 0
+		204:
 			if _pog_is_null(v2):
-				_pc = 3660
-				continue
-			else:
-				_pc = 3684
-				continue
-		elif _pc == 3660:
-			v2 = sim.find_by_name(v3)
-			_pc = 3684
-			continue
-		elif _pc == 3684:
+				v2 = sim.find_by_name(v3)
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			imultiplay.server_send_user_message(204, v1, v2, v3)
-			_pc = 3865
-			continue
-		elif _pc == 3771:
-			_pc = 3865
-			continue
-		elif _pc == 3776:
-			_pc = 3865
-			continue
-		elif _pc == 3781:
-			if 1 != v0:
-				_pc = 3794
-				continue
-			else:
-				_pc = 2161
-				continue
-		elif _pc == 3794:
-			if 15 != v0:
-				_pc = 3803
-				continue
-			else:
-				_pc = 3026
-				continue
-		elif _pc == 3803:
-			if 16 != v0:
-				_pc = 3812
-				continue
-			else:
-				_pc = 3103
-				continue
-		elif _pc == 3812:
-			if 99 != v0:
-				_pc = 3821
-				continue
-			else:
-				_pc = 3127
-				continue
-		elif _pc == 3821:
-			if 40 != v0:
-				_pc = 3830
-				continue
-			else:
-				_pc = 3187
-				continue
-		elif _pc == 3830:
-			if 202 != v0:
-				_pc = 3840
-				continue
-			else:
-				_pc = 3419
-				continue
-		elif _pc == 3840:
-			if 203 != v0:
-				_pc = 3850
-				continue
-			else:
-				_pc = 3520
-				continue
-		elif _pc == 3850:
-			if 204 != v0:
-				_pc = 3860
-				continue
-			else:
-				_pc = 3647
-				continue
-		elif _pc == 3860:
-			_pc = 3771
-			continue
-		elif _pc == 3865:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func server_player_leave() -> Variant:
@@ -1295,366 +1137,119 @@ func client_on_user_message() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 17079
-	while true:
-		if _pc == 17079:
-			v4 = iship.cast(v1)
-			v5 = iship.find_player_ship()
-			v7 = ifaction.find(text.field("mp_flag_team_b", 0))
-			v8 = ifaction.find(text.field("mp_flag_team_a", 0))
-			v9 = ""
-			_pc = 19563
-			continue
-		elif _pc == 17224:
+	v4 = iship.cast(v1)
+	v5 = iship.find_player_ship()
+	v7 = ifaction.find(text.field("mp_flag_team_b", 0))
+	v8 = ifaction.find(text.field("mp_flag_team_a", 0))
+	v9 = ""
+	match v0:
+		1:
 			v6 = ifaction.find(v3)
 			isim.set_faction(isim.cast(v1), v6)
 			if _pog_eq(v3, text.field("mp_flag_team_b", 0)):
-				_pc = 17318
-				continue
+				v9 = text.field("mp_flag_joined_team_b", 0)
+				object.add_bool_property(v1, "mp_on_team_beta", 1)
+				object.remove_property(v1, "mp_on_team_alpha")
 			else:
-				_pc = 17404
-				continue
-		elif _pc == 17318:
-			v9 = text.field("mp_flag_joined_team_b", 0)
-			object.add_bool_property(v1, "mp_on_team_beta", 1)
-			object.remove_property(v1, "mp_on_team_alpha")
-			_pc = 17485
-			continue
-		elif _pc == 17404:
-			v9 = text.field("mp_flag_joined_team_a", 0)
-			object.add_bool_property(v1, "mp_on_team_alpha", 1)
-			object.remove_property(v1, "mp_on_team_beta")
-			_pc = 17485
-			continue
-		elif _pc == 17485:
+				v9 = text.field("mp_flag_joined_team_a", 0)
+				object.add_bool_property(v1, "mp_on_team_alpha", 1)
+				object.remove_property(v1, "mp_on_team_beta")
 			v10 = _pog_spawn(local_17046.bind(v1, _pog_clone(v9)))
 			_pog_detach(v10)
-			_pc = 19692
-			continue
-		elif _pc == 17539:
+			return 0
+		15:
 			if not _pog_eq(v4, iship.find_player_ship()):
-				_pc = 17563
-				continue
-			else:
-				_pc = 17606
-				continue
-		elif _pc == 17563:
-			v4 = iship.cast(v1)
-			iship.undock_self(v4)
-			_pc = 17606
-			continue
-		elif _pc == 17606:
-			_pc = 19692
-			continue
-		elif _pc == 17611:
+				v4 = iship.cast(v1)
+				iship.undock_self(v4)
+			return 0
+		41:
 			v2 = sim.find_by_name(v3)
 			isim.set_faction(isim.cast(v2), v8)
 			if _pog_eq(v4, v5):
-				_pc = 17688
-				continue
-			else:
-				_pc = 17704
-				continue
-		elif _pc == 17688:
-			gui.play_sound(2)
-			_pc = 17704
-			continue
-		elif _pc == 17704:
+				gui.play_sound(2)
 			if _pog_eq(isim.faction(v4), isim.faction(v5)):
-				_pc = 17746
-				continue
+				sim.avatar_set_channel(v2, "alpha", 1.0)
+				sim.avatar_set_channel(v2, "beta", 0.0)
 			else:
-				_pc = 17813
-				continue
-		elif _pc == 17746:
-			sim.avatar_set_channel(v2, "alpha", 1.0)
-			sim.avatar_set_channel(v2, "beta", 0.0)
-			_pc = 17875
-			continue
-		elif _pc == 17813:
-			sim.avatar_set_channel(v2, "alpha", 0.0)
-			sim.avatar_set_channel(v2, "beta", 1.0)
-			_pc = 17875
-			continue
-		elif _pc == 17875:
+				sim.avatar_set_channel(v2, "alpha", 0.0)
+				sim.avatar_set_channel(v2, "beta", 1.0)
 			object.add_bool_property(v2, "mp_is_tagged", 1)
-			_pc = 19692
-			continue
-		elif _pc == 17907:
+			return 0
+		42:
 			v2 = sim.find_by_name(v3)
 			isim.set_faction(isim.cast(v2), v7)
 			if _pog_eq(v4, v5):
-				_pc = 17984
-				continue
-			else:
-				_pc = 18000
-				continue
-		elif _pc == 17984:
-			gui.play_sound(2)
-			_pc = 18000
-			continue
-		elif _pc == 18000:
+				gui.play_sound(2)
 			if _pog_eq(isim.faction(v4), isim.faction(v5)):
-				_pc = 18042
-				continue
+				sim.avatar_set_channel(v2, "alpha", 1.0)
+				sim.avatar_set_channel(v2, "beta", 0.0)
 			else:
-				_pc = 18109
-				continue
-		elif _pc == 18042:
-			sim.avatar_set_channel(v2, "alpha", 1.0)
-			sim.avatar_set_channel(v2, "beta", 0.0)
-			_pc = 18171
-			continue
-		elif _pc == 18109:
-			sim.avatar_set_channel(v2, "alpha", 0.0)
-			sim.avatar_set_channel(v2, "beta", 1.0)
-			_pc = 18171
-			continue
-		elif _pc == 18171:
+				sim.avatar_set_channel(v2, "alpha", 0.0)
+				sim.avatar_set_channel(v2, "beta", 1.0)
 			object.add_bool_property(v2, "mp_is_tagged", 1)
-			_pc = 19692
-			continue
-		elif _pc == 18203:
+			return 0
+		43:
 			v2 = sim.find_by_name(v3)
 			object.remove_property(v2, "mp_is_tagged")
 			isim.set_faction(isim.cast(v2), ifaction.find("NINEX Wetware"))
 			sim.avatar_set_channel(v2, "alpha", 0.0)
 			sim.avatar_set_channel(v2, "beta", 0.0)
-			_pc = 19692
-			continue
-		elif _pc == 18372:
+			return 0
+		45:
 			if _pog_eq(v4, iship.find_player_ship()):
-				_pc = 18396
-				continue
-			else:
-				_pc = 18561
-				continue
-		elif _pc == 18396:
-			v2 = sim.find_by_name(v3)
-			isim.set_faction(isim.cast(v2), ifaction.find("Player"))
-			object.add_bool_property(v2, "mp_is_tagged", 1)
-			sim.avatar_add_channel(v2, "alpha", 1.0)
-			sim.avatar_add_channel(v2, "beta", 0.0)
-			_pc = 18561
-			continue
-		elif _pc == 18561:
-			_pc = 19692
-			continue
-		elif _pc == 18566:
+				v2 = sim.find_by_name(v3)
+				isim.set_faction(isim.cast(v2), ifaction.find("Player"))
+				object.add_bool_property(v2, "mp_is_tagged", 1)
+				sim.avatar_add_channel(v2, "alpha", 1.0)
+				sim.avatar_add_channel(v2, "beta", 0.0)
+			return 0
+		46:
 			if _pog_eq(v4, iship.find_player_ship()):
-				_pc = 18590
-				continue
-			else:
-				_pc = 18819
-				continue
-		elif _pc == 18590:
-			v2 = sim.find_by_name(v3)
-			if _pog_eq(isim.faction(iship.find_player_ship()), v7):
-				_pc = 18651
-				continue
-			else:
-				_pc = 18693
-				continue
-		elif _pc == 18651:
-			isim.set_faction(isim.cast(v2), v8)
-			_pc = 18730
-			continue
-		elif _pc == 18693:
-			isim.set_faction(isim.cast(v2), v7)
-			_pc = 18730
-			continue
-		elif _pc == 18730:
-			object.add_bool_property(v2, "mp_is_tagged", 1)
-			sim.avatar_add_channel(v2, "alpha", 0.0)
-			sim.avatar_add_channel(v2, "beta", 1.0)
-			_pc = 18819
-			continue
-		elif _pc == 18819:
-			_pc = 19692
-			continue
-		elif _pc == 18824:
+				v2 = sim.find_by_name(v3)
+				if _pog_eq(isim.faction(iship.find_player_ship()), v7):
+					isim.set_faction(isim.cast(v2), v8)
+				else:
+					isim.set_faction(isim.cast(v2), v7)
+				object.add_bool_property(v2, "mp_is_tagged", 1)
+				sim.avatar_add_channel(v2, "alpha", 0.0)
+				sim.avatar_add_channel(v2, "beta", 1.0)
+			return 0
+		47:
 			if _pog_eq(v4, iship.find_player_ship()):
-				_pc = 18848
-				continue
-			else:
-				_pc = 19012
-				continue
-		elif _pc == 18848:
-			v2 = sim.find_by_name(v3)
-			isim.set_faction(isim.cast(v2), ifaction.find("NINEX Wetware"))
-			object.remove_property(v2, "mp_is_tagged")
-			sim.avatar_add_channel(v2, "alpha", 0.0)
-			sim.avatar_add_channel(v2, "beta", 0.0)
-			_pc = 19012
-			continue
-		elif _pc == 19012:
-			_pc = 19692
-			continue
-		elif _pc == 19017:
+				v2 = sim.find_by_name(v3)
+				isim.set_faction(isim.cast(v2), ifaction.find("NINEX Wetware"))
+				object.remove_property(v2, "mp_is_tagged")
+				sim.avatar_add_channel(v2, "alpha", 0.0)
+				sim.avatar_add_channel(v2, "beta", 0.0)
+			return 0
+		48:
 			await iremotepilot.enable_remote_connection(iship.cast(v1), 0)
-			_pc = 19692
-			continue
-		elif _pc == 19055:
+			return 0
+		50:
 			v2 = sim.find_by_name(v3)
 			if _pog_eq(isim.faction(v5), isim.faction(isim.cast(v2))):
-				_pc = 19134
-				continue
+				sim.avatar_set_channel(v2, "alpha", 1.0)
+				sim.avatar_set_channel(v2, "beta", 0.0)
 			else:
-				_pc = 19201
-				continue
-		elif _pc == 19134:
-			sim.avatar_set_channel(v2, "alpha", 1.0)
-			sim.avatar_set_channel(v2, "beta", 0.0)
-			_pc = 19263
-			continue
-		elif _pc == 19201:
-			sim.avatar_set_channel(v2, "alpha", 0.0)
-			sim.avatar_set_channel(v2, "beta", 1.0)
-			_pc = 19263
-			continue
-		elif _pc == 19263:
-			_pc = 19692
-			continue
-		elif _pc == 19268:
+				sim.avatar_set_channel(v2, "alpha", 0.0)
+				sim.avatar_set_channel(v2, "beta", 1.0)
+			return 0
+		202:
 			if _pog_eq(v5, iship.cast(v1)):
-				_pc = 19297
-				continue
-			else:
-				_pc = 19377
-				continue
-		elif _pc == 19297:
-			v4 = iship.cast(v2)
-			imultiplay.remote_link_to(v4)
-			isim.set_faction(v4, isim.faction(v5))
-			_pc = 19377
-			continue
-		elif _pc == 19377:
-			_pc = 19692
-			continue
-		elif _pc == 19382:
+				v4 = iship.cast(v2)
+				imultiplay.remote_link_to(v4)
+				isim.set_faction(v4, isim.faction(v5))
+			return 0
+		203:
 			if not _pog_eq(v5, iship.cast(v1)):
-				_pc = 19411
-				continue
-			else:
-				_pc = 19493
-				continue
-		elif _pc == 19411:
-			v4 = iship.cast(v2)
-			imultiplay.sever_remote_link_to(v4)
-			isim.set_faction(v4, ifaction.find("Neutral"))
-			_pc = 19493
-			continue
-		elif _pc == 19493:
-			_pc = 19692
-			continue
-		elif _pc == 19498:
+				v4 = iship.cast(v2)
+				imultiplay.sever_remote_link_to(v4)
+				isim.set_faction(v4, ifaction.find("Neutral"))
+			return 0
+		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
-			_pc = 19692
-			continue
-		elif _pc == 19553:
-			_pc = 19692
-			continue
-		elif _pc == 19558:
-			_pc = 19692
-			continue
-		elif _pc == 19563:
-			if 1 != v0:
-				_pc = 19576
-				continue
-			else:
-				_pc = 17224
-				continue
-		elif _pc == 19576:
-			if 15 != v0:
-				_pc = 19585
-				continue
-			else:
-				_pc = 17539
-				continue
-		elif _pc == 19585:
-			if 41 != v0:
-				_pc = 19594
-				continue
-			else:
-				_pc = 17611
-				continue
-		elif _pc == 19594:
-			if 42 != v0:
-				_pc = 19603
-				continue
-			else:
-				_pc = 17907
-				continue
-		elif _pc == 19603:
-			if 43 != v0:
-				_pc = 19612
-				continue
-			else:
-				_pc = 18203
-				continue
-		elif _pc == 19612:
-			if 45 != v0:
-				_pc = 19621
-				continue
-			else:
-				_pc = 18372
-				continue
-		elif _pc == 19621:
-			if 46 != v0:
-				_pc = 19630
-				continue
-			else:
-				_pc = 18566
-				continue
-		elif _pc == 19630:
-			if 47 != v0:
-				_pc = 19639
-				continue
-			else:
-				_pc = 18824
-				continue
-		elif _pc == 19639:
-			if 48 != v0:
-				_pc = 19648
-				continue
-			else:
-				_pc = 19017
-				continue
-		elif _pc == 19648:
-			if 50 != v0:
-				_pc = 19657
-				continue
-			else:
-				_pc = 19055
-				continue
-		elif _pc == 19657:
-			if 202 != v0:
-				_pc = 19667
-				continue
-			else:
-				_pc = 19268
-				continue
-		elif _pc == 19667:
-			if 203 != v0:
-				_pc = 19677
-				continue
-			else:
-				_pc = 19382
-				continue
-		elif _pc == 19677:
-			if 204 != v0:
-				_pc = 19687
-				continue
-			else:
-				_pc = 19498
-				continue
-		elif _pc == 19687:
-			_pc = 19553
-			continue
-		elif _pc == 19692:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func local_19702(v0, v1) -> Variant:

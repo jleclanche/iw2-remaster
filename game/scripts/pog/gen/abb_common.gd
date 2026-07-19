@@ -183,50 +183,17 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 	var v18: Variant = 0
 	var v19: Variant = 0
 	var v20: Variant = 0
-	var _pc: int = 1957
-	while true:
-		if _pc == 1957:
-			v8 = await local_6108(4, group.group_count(v2))
-			v18 = 1
-			_pc = 2059
-			continue
-		elif _pc == 2013:
-			if _pog_is_null(group.group_count(v2)):
-				_pc = 2038
-				continue
-			else:
-				_pc = 2059
-				continue
-		elif _pc == 2038:
+	v8 = await local_6108(4, group.group_count(v2))
+	v18 = 1
+	if PogRuntime.TRACE:
+		if _pog_is_null(group.group_count(v2)):
 			debug.print_string("ABB_Common.WatchSimsAndGroupCombat ERROR! combat group contains no subgroups\n")
-			_pc = 2059
-			continue
-		elif _pc == 2059:
-			if v6 & 2048:
-				_pc = 2073
-				continue
-			else:
-				_pc = 2086
-				continue
-		elif _pc == 2073:
-			v9 = 3
-			_pc = 2093
-			continue
-		elif _pc == 2086:
-			v9 = 0
-			_pc = 2093
-			continue
-		elif _pc == 2093:
-			_pc = 2664
-			continue
-		elif _pc == 2098:
-			if not (v6 & 1024):
-				_pc = 2113
-				continue
-			else:
-				_pc = 2664
-				continue
-		elif _pc == 2113:
+	if v6 & 2048:
+		v9 = 3
+	else:
+		v9 = 0
+	if PogRuntime.TRACE:
+		if not (v6 & 1024):
 			debug.print_string("watching sim '")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("' relative to sim '")
@@ -235,592 +202,136 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			debug.print_int(v8)
 			debug.print_string(" additional groups, with options: ")
 			if v6 & 256:
-				_pc = 2310
-				continue
-			else:
-				_pc = 2331
-				continue
-		elif _pc == 2310:
-			debug.print_string("LSYS ")
-			_pc = 2331
-			continue
-		elif _pc == 2331:
+				debug.print_string("LSYS ")
 			if v6 & 512:
-				_pc = 2345
-				continue
-			else:
-				_pc = 2366
-				continue
-		elif _pc == 2345:
-			debug.print_string("ESYS ")
-			_pc = 2366
-			continue
-		elif _pc == 2366:
+				debug.print_string("ESYS ")
 			if v6 & 16:
-				_pc = 2379
-				continue
-			else:
-				_pc = 2400
-				continue
-		elif _pc == 2379:
-			debug.print_string("ECLO ")
-			_pc = 2400
-			continue
-		elif _pc == 2400:
+				debug.print_string("ECLO ")
 			if v6 & 64:
-				_pc = 2413
-				continue
-			else:
-				_pc = 2434
-				continue
-		elif _pc == 2413:
-			debug.print_string("ELON ")
-			_pc = 2434
-			continue
-		elif _pc == 2434:
+				debug.print_string("ELON ")
 			if v6 & 32:
-				_pc = 2447
-				continue
-			else:
-				_pc = 2468
-				continue
-		elif _pc == 2447:
-			debug.print_string("LCLO ")
-			_pc = 2468
-			continue
-		elif _pc == 2468:
+				debug.print_string("LCLO ")
 			if v6 & 128:
-				_pc = 2482
-				continue
-			else:
-				_pc = 2503
-				continue
-		elif _pc == 2482:
-			debug.print_string("LLON ")
-			_pc = 2503
-			continue
-		elif _pc == 2503:
+				debug.print_string("LLON ")
 			if v6 & 4096:
-				_pc = 2517
-				continue
-			else:
-				_pc = 2538
-				continue
-		elif _pc == 2517:
-			debug.print_string("SGDE ")
-			_pc = 2538
-			continue
-		elif _pc == 2538:
+				debug.print_string("SGDE ")
 			if v6 & 8192:
-				_pc = 2552
-				continue
-			else:
-				_pc = 2573
-				continue
-		elif _pc == 2552:
-			debug.print_string("SGSD ")
-			_pc = 2573
-			continue
-		elif _pc == 2573:
+				debug.print_string("SGSD ")
 			if v6 & 16384:
-				_pc = 2587
-				continue
-			else:
-				_pc = 2608
-				continue
-		elif _pc == 2587:
-			debug.print_string("SGA-LCLO ")
-			_pc = 2608
-			continue
-		elif _pc == 2608:
+				debug.print_string("SGA-LCLO ")
 			if v6 & 1024:
-				_pc = 2622
-				continue
-			else:
-				_pc = 2643
-				continue
-		elif _pc == 2622:
-			debug.print_string("Don't Wait ")
-			_pc = 2643
-			continue
-		elif _pc == 2643:
+				debug.print_string("Don't Wait ")
 			debug.print_string("\n")
-			_pc = 2664
-			continue
-		elif _pc == 2664:
-			_pc = 2897
-			continue
-		elif _pc == 2669:
+	match v8:
+		4:
 			v10 = group.nth_group(v2, v8 - 4)
 			v14 = await recursive_sim_count(v10)
-			_pc = 2725
-			continue
-		elif _pc == 2725:
+		3:
 			v11 = group.nth_group(v2, v8 - 3)
 			v15 = await recursive_sim_count(v11)
-			_pc = 2781
-			continue
-		elif _pc == 2781:
+		2:
 			v12 = group.nth_group(v2, v8 - 2)
 			v16 = await recursive_sim_count(v12)
-			_pc = 2837
-			continue
-		elif _pc == 2837:
+		1:
 			v13 = group.nth_group(v2, v8 - 1)
 			v17 = await recursive_sim_count(v13)
-			_pc = 2937
-			continue
-		elif _pc == 2897:
-			if 4 != v8:
-				_pc = 2911
-				continue
-			else:
-				_pc = 2669
-				continue
-		elif _pc == 2911:
-			if 3 != v8:
-				_pc = 2920
-				continue
-			else:
-				_pc = 2725
-				continue
-		elif _pc == 2920:
-			if 2 != v8:
-				_pc = 2929
-				continue
-			else:
-				_pc = 2781
-				continue
-		elif _pc == 2929:
-			if 1 != v8:
-				_pc = 2937
-				continue
-			else:
-				_pc = 2837
-				continue
-		elif _pc == 2937:
-			if v6 & 12288:
-				_pc = 2951
-				continue
-			else:
-				_pc = 3679
-				continue
-		elif _pc == 2951:
-			_pc = 3639
-			continue
-		elif _pc == 2956:
-			v19 = await recursive_sim_count(v10)
-			if v6 & 4096 and _pog_is_null(v19):
-				_pc = 3002
-				continue
-			else:
-				_pc = 3051
-				continue
-		elif _pc == 3002:
-			_pc = 3028
-			continue
-		elif _pc == 3007:
-			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-			_pc = 3028
-			continue
-		elif _pc == 3028:
-			return 4096 | (v9 & (v8 - 4))
-		elif _pc == 3051:
-			if v6 & 8192 and not _pog_eq(v14, v19):
-				_pc = 3077
-				continue
-			else:
-				_pc = 3126
-				continue
-		elif _pc == 3077:
-			_pc = 3103
-			continue
-		elif _pc == 3082:
-			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-			_pc = 3103
-			continue
-		elif _pc == 3103:
-			return 8192 | (v9 & (v8 - 4))
-		elif _pc == 3126:
-			v19 = await recursive_sim_count(v11)
-			if v6 & 4096 and _pog_is_null(v19):
-				_pc = 3172
-				continue
-			else:
-				_pc = 3221
-				continue
-		elif _pc == 3172:
-			_pc = 3198
-			continue
-		elif _pc == 3177:
-			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-			_pc = 3198
-			continue
-		elif _pc == 3198:
-			return 4096 | (v9 & (v8 - 3))
-		elif _pc == 3221:
-			if v6 & 8192 and not _pog_eq(v15, v19):
-				_pc = 3247
-				continue
-			else:
-				_pc = 3296
-				continue
-		elif _pc == 3247:
-			_pc = 3273
-			continue
-		elif _pc == 3252:
-			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-			_pc = 3273
-			continue
-		elif _pc == 3273:
-			return 8192 | (v9 & (v8 - 3))
-		elif _pc == 3296:
-			v19 = await recursive_sim_count(v12)
-			if v6 & 4096 and _pog_is_null(v19):
-				_pc = 3342
-				continue
-			else:
-				_pc = 3391
-				continue
-		elif _pc == 3342:
-			_pc = 3368
-			continue
-		elif _pc == 3347:
-			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-			_pc = 3368
-			continue
-		elif _pc == 3368:
-			return 4096 | (v9 & (v8 - 2))
-		elif _pc == 3391:
-			if v6 & 8192 and not _pog_eq(v16, v19):
-				_pc = 3417
-				continue
-			else:
-				_pc = 3466
-				continue
-		elif _pc == 3417:
-			_pc = 3443
-			continue
-		elif _pc == 3422:
-			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-			_pc = 3443
-			continue
-		elif _pc == 3443:
-			return 8192 | (v9 & (v8 - 2))
-		elif _pc == 3466:
-			v19 = await recursive_sim_count(v13)
-			if v6 & 4096 and _pog_is_null(v19):
-				_pc = 3512
-				continue
-			else:
-				_pc = 3560
-				continue
-		elif _pc == 3512:
-			_pc = 3538
-			continue
-		elif _pc == 3517:
-			debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
-			_pc = 3538
-			continue
-		elif _pc == 3538:
-			return 4096 | (v9 & (v8 - 1))
-		elif _pc == 3560:
-			if v6 & 8192 and not _pog_eq(v17, v19):
-				_pc = 3586
-				continue
-			else:
-				_pc = 3634
-				continue
-		elif _pc == 3586:
-			_pc = 3612
-			continue
-		elif _pc == 3591:
-			debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
-			_pc = 3612
-			continue
-		elif _pc == 3612:
-			return 8192 | (v9 & (v8 - 1))
-		elif _pc == 3634:
-			_pc = 3679
-			continue
-		elif _pc == 3639:
-			if 4 != v8:
-				_pc = 3653
-				continue
-			else:
-				_pc = 2956
-				continue
-		elif _pc == 3653:
-			if 3 != v8:
-				_pc = 3662
-				continue
-			else:
-				_pc = 3126
-				continue
-		elif _pc == 3662:
-			if 2 != v8:
-				_pc = 3671
-				continue
-			else:
-				_pc = 3296
-				continue
-		elif _pc == 3671:
-			if 1 != v8:
-				_pc = 3679
-				continue
-			else:
-				_pc = 3466
-				continue
-		elif _pc == 3679:
-			if v6 & 16384:
-				_pc = 3693
-				continue
-			else:
-				_pc = 4078
-				continue
-		elif _pc == 3693:
-			_pc = 4038
-			continue
-		elif _pc == 3698:
-			if not (await iutilities.near_to_group(v1, v10, v3, 1)):
-				_pc = 3733
-				continue
-			else:
-				_pc = 3782
-				continue
-		elif _pc == 3733:
-			_pc = 3759
-			continue
-		elif _pc == 3738:
-			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-			_pc = 3759
-			continue
-		elif _pc == 3759:
-			return 16384 | (v9 & (v8 - 4))
-		elif _pc == 3782:
-			if not (await iutilities.near_to_group(v1, v11, v3, 1)):
-				_pc = 3817
-				continue
-			else:
-				_pc = 3866
-				continue
-		elif _pc == 3817:
-			_pc = 3843
-			continue
-		elif _pc == 3822:
-			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-			_pc = 3843
-			continue
-		elif _pc == 3843:
-			return 16384 | (v9 & (v8 - 3))
-		elif _pc == 3866:
-			if not (await iutilities.near_to_group(v1, v12, v3, 1)):
-				_pc = 3901
-				continue
-			else:
-				_pc = 3950
-				continue
-		elif _pc == 3901:
-			_pc = 3927
-			continue
-		elif _pc == 3906:
-			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-			_pc = 3927
-			continue
-		elif _pc == 3927:
-			return 16384 | (v9 & (v8 - 2))
-		elif _pc == 3950:
-			if not (await iutilities.near_to_group(v1, v13, v3, 1)):
-				_pc = 3985
-				continue
-			else:
-				_pc = 4033
-				continue
-		elif _pc == 3985:
-			_pc = 4011
-			continue
-		elif _pc == 3990:
-			debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
-			_pc = 4011
-			continue
-		elif _pc == 4011:
-			return 16384 | (v9 & (v8 - 1))
-		elif _pc == 4033:
-			_pc = 4078
-			continue
-		elif _pc == 4038:
-			if 4 != v8:
-				_pc = 4052
-				continue
-			else:
-				_pc = 3698
-				continue
-		elif _pc == 4052:
-			if 3 != v8:
-				_pc = 4061
-				continue
-			else:
-				_pc = 3782
-				continue
-		elif _pc == 4061:
-			if 2 != v8:
-				_pc = 4070
-				continue
-			else:
-				_pc = 3866
-				continue
-		elif _pc == 4070:
-			if 1 != v8:
-				_pc = 4078
-				continue
-			else:
-				_pc = 3950
-				continue
-		elif _pc == 4078:
-			if v6 & 32768:
-				_pc = 4094
-				continue
-			else:
-				_pc = 4487
-				continue
-		elif _pc == 4094:
-			_pc = 4447
-			continue
-		elif _pc == 4099:
-			if not (await iutilities.far_from_group(v1, v10, v3, 1)):
-				_pc = 4134
-				continue
-			else:
-				_pc = 4185
-				continue
-		elif _pc == 4134:
-			_pc = 4160
-			continue
-		elif _pc == 4139:
-			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-			_pc = 4160
-			continue
-		elif _pc == 4160:
-			return 32768 | (v9 & (v8 - 4))
-		elif _pc == 4185:
-			if not (await iutilities.far_from_group(v1, v11, v3, 1)):
-				_pc = 4220
-				continue
-			else:
-				_pc = 4271
-				continue
-		elif _pc == 4220:
-			_pc = 4246
-			continue
-		elif _pc == 4225:
-			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-			_pc = 4246
-			continue
-		elif _pc == 4246:
-			return 32768 | (v9 & (v8 - 3))
-		elif _pc == 4271:
-			if not (await iutilities.far_from_group(v1, v12, v3, 1)):
-				_pc = 4306
-				continue
-			else:
-				_pc = 4357
-				continue
-		elif _pc == 4306:
-			_pc = 4332
-			continue
-		elif _pc == 4311:
-			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-			_pc = 4332
-			continue
-		elif _pc == 4332:
-			return 32768 | (v9 & (v8 - 2))
-		elif _pc == 4357:
-			if not (await iutilities.far_from_group(v1, v13, v3, 1)):
-				_pc = 4392
-				continue
-			else:
-				_pc = 4442
-				continue
-		elif _pc == 4392:
-			_pc = 4418
-			continue
-		elif _pc == 4397:
-			debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
-			_pc = 4418
-			continue
-		elif _pc == 4418:
-			return 32768 | (v9 & (v8 - 1))
-		elif _pc == 4442:
-			_pc = 4487
-			continue
-		elif _pc == 4447:
-			if 4 != v8:
-				_pc = 4461
-				continue
-			else:
-				_pc = 4099
-				continue
-		elif _pc == 4461:
-			if 3 != v8:
-				_pc = 4470
-				continue
-			else:
-				_pc = 4185
-				continue
-		elif _pc == 4470:
-			if 2 != v8:
-				_pc = 4479
-				continue
-			else:
-				_pc = 4271
-				continue
-		elif _pc == 4479:
-			if 1 != v8:
-				_pc = 4487
-				continue
-			else:
-				_pc = 4357
-				continue
-		elif _pc == 4487:
-			if v6 & 65536:
-				_pc = 4503
-				continue
-			else:
-				_pc = 4536
-				continue
-		elif _pc == 4503:
+	while true:
+		if v6 & 12288:
+			match v8:
+				4:
+					v19 = await recursive_sim_count(v10)
+					if v6 & 4096 and _pog_is_null(v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+						return 4096 | (v9 & (v8 - 4))
+					if v6 & 8192 and not _pog_eq(v14, v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+						return 8192 | (v9 & (v8 - 4))
+				3:
+					v19 = await recursive_sim_count(v11)
+					if v6 & 4096 and _pog_is_null(v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+						return 4096 | (v9 & (v8 - 3))
+					if v6 & 8192 and not _pog_eq(v15, v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+						return 8192 | (v9 & (v8 - 3))
+				2:
+					v19 = await recursive_sim_count(v12)
+					if v6 & 4096 and _pog_is_null(v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+						return 4096 | (v9 & (v8 - 2))
+					if v6 & 8192 and not _pog_eq(v16, v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+						return 8192 | (v9 & (v8 - 2))
+				1:
+					v19 = await recursive_sim_count(v13)
+					if v6 & 4096 and _pog_is_null(v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Destroyed\n")
+						return 4096 | (v9 & (v8 - 1))
+					if v6 & 8192 and not _pog_eq(v17, v19):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
+						return 8192 | (v9 & (v8 - 1))
+		if v6 & 16384:
+			match v8:
+				4:
+					if not (await iutilities.near_to_group(v1, v10, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+						return 16384 | (v9 & (v8 - 4))
+				3:
+					if not (await iutilities.near_to_group(v1, v11, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+						return 16384 | (v9 & (v8 - 3))
+				2:
+					if not (await iutilities.near_to_group(v1, v12, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+						return 16384 | (v9 & (v8 - 2))
+				1:
+					if not (await iutilities.near_to_group(v1, v13, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
+						return 16384 | (v9 & (v8 - 1))
+		if v6 & 32768:
+			match v8:
+				4:
+					if not (await iutilities.far_from_group(v1, v10, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+						return 32768 | (v9 & (v8 - 4))
+				3:
+					if not (await iutilities.far_from_group(v1, v11, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+						return 32768 | (v9 & (v8 - 3))
+				2:
+					if not (await iutilities.far_from_group(v1, v12, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+						return 32768 | (v9 & (v8 - 2))
+				1:
+					if not (await iutilities.far_from_group(v1, v13, v3, 1)):
+						if PogRuntime.TRACE:
+							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
+						return 32768 | (v9 & (v8 - 1))
+		if v6 & 65536:
 			if (1 - _pog_is_running(v5)):
-				_pc = 4526
-				continue
-			else:
-				_pc = 4536
-				continue
-		elif _pc == 4526:
-			return 65536
-		elif _pc == 4536:
-			v20 = await watch_sims_movement(v0, v1, v3, v4, v6 | 1024, 0.0)
-			if v20 != 1024:
-				_pc = 4603
-				continue
-			else:
-				_pc = 4613
-				continue
-		elif _pc == 4603:
+				return 65536
+		v20 = await watch_sims_movement(v0, v1, v3, v4, v6 | 1024, 0.0)
+		if v20 != 1024:
 			return v20
-		elif _pc == 4613:
-			await _pog_wait(v7)
-			if not (1):
-				_pc = 4651
-				continue
-			else:
-				_pc = 2937
-				continue
-		elif _pc == 4651:
-			return v20
-		elif _pc == 4661:
-			return
-		else:
-			return 0
+		await _pog_wait(v7)
+		if not (1):
+			break
+	return v20
 	return 0
 
 func watch_sims_movement(v0, v1, v2, v3, v4, v5) -> Variant:

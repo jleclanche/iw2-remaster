@@ -608,265 +608,99 @@ func local_9777(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 9777
-	while true:
-		if _pc == 9777:
-			v1 = group.create()
-			v2 = ifaction.find("The Oman")
+	v1 = group.create()
+	v2 = ifaction.find("The Oman")
+	v4 = 0
+	v5 = 0
+	while v5 < 16:
+		if v5 != 2 and v5 != 5 and v5 != 10 and v5 != 15:
+			while not (v4):
+				v11 = math.random_int(0, 4)
+				if _pog_is_null(v11) and v6 < 2:
+					v4 = 1
+				if v11 == 1 and v7 < 2:
+					v4 = 1
+				if v11 == 2 and v9 < 3:
+					v4 = 1
+				if v11 == 3 and v8 < 2:
+					v4 = 1
+				if not (v11 == 4 and v10 < 3):
+					continue
+				v4 = 1
 			v4 = 0
-			v5 = 0
-			_pc = 9841
-			continue
-		elif _pc == 9841:
-			if v5 < 16:
-				_pc = 9854
-				continue
-			else:
-				_pc = 12138
-				continue
-		elif _pc == 9854:
-			if v5 != 2 and v5 != 5 and v5 != 10 and v5 != 15:
-				_pc = 9894
-				continue
-			else:
-				_pc = 11140
-				continue
-		elif _pc == 9894:
-			if not (v4):
-				_pc = 9905
-				continue
-			else:
-				_pc = 10075
-				continue
-		elif _pc == 9905:
-			v11 = math.random_int(0, 4)
-			if _pog_is_null(v11) and v6 < 2:
-				_pc = 9948
-				continue
-			else:
-				_pc = 9955
-				continue
-		elif _pc == 9948:
-			v4 = 1
-			_pc = 9955
-			continue
-		elif _pc == 9955:
-			if v11 == 1 and v7 < 2:
-				_pc = 9976
-				continue
-			else:
-				_pc = 9983
-				continue
-		elif _pc == 9976:
-			v4 = 1
-			_pc = 9983
-			continue
-		elif _pc == 9983:
-			if v11 == 2 and v9 < 3:
-				_pc = 10005
-				continue
-			else:
-				_pc = 10012
-				continue
-		elif _pc == 10005:
-			v4 = 1
-			_pc = 10012
-			continue
-		elif _pc == 10012:
-			if v11 == 3 and v8 < 2:
-				_pc = 10034
-				continue
-			else:
-				_pc = 10041
-				continue
-		elif _pc == 10034:
-			v4 = 1
-			_pc = 10041
-			continue
-		elif _pc == 10041:
-			if v11 == 4 and v10 < 3:
-				_pc = 10063
-				continue
-			else:
-				_pc = 10070
-				continue
-		elif _pc == 10063:
-			v4 = 1
-			_pc = 10070
-			continue
-		elif _pc == 10070:
-			_pc = 9894
-			continue
-		elif _pc == 10075:
-			v4 = 0
-			_pc = 11087
-			continue
-		elif _pc == 10087:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "cargo", 27)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			group.add_sim(v1, v3)
-			isim.set_indestructable(v3, 1)
-			v6 = v6 + 1
-			_pc = 11135
-			continue
-		elif _pc == 10286:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "cargo", 35)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			group.add_sim(v1, v3)
-			isim.set_indestructable(v3, 1)
-			v7 = v7 + 1
-			_pc = 11135
-			continue
-		elif _pc == 10485:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "cargo", 45)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			group.add_sim(v1, v3)
-			isim.set_indestructable(v3, 1)
-			v9 = v9 + 1
-			_pc = 11135
-			continue
-		elif _pc == 10684:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "cargo", 42)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			group.add_sim(v1, v3)
-			isim.set_indestructable(v3, 1)
-			v8 = v8 + 1
-			_pc = 11135
-			continue
-		elif _pc == 10883:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "cargo", 34)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			group.add_sim(v1, v3)
-			isim.set_indestructable(v3, 1)
-			v10 = v10 + 1
-			_pc = 11135
-			continue
-		elif _pc == 11082:
-			_pc = 11135
-			continue
-		elif _pc == 11087:
-			if not _pog_is_null(v11):
-				_pc = 11100
-				continue
-			else:
-				_pc = 10087
-				continue
-		elif _pc == 11100:
-			if 1 != v11:
-				_pc = 11108
-				continue
-			else:
-				_pc = 10286
-				continue
-		elif _pc == 11108:
-			if 2 != v11:
-				_pc = 11117
-				continue
-			else:
-				_pc = 10485
-				continue
-		elif _pc == 11117:
-			if 3 != v11:
-				_pc = 11126
-				continue
-			else:
-				_pc = 10684
-				continue
-		elif _pc == 11126:
-			if 4 != v11:
-				_pc = 11135
-				continue
-			else:
-				_pc = 10883
-				continue
-		elif _pc == 11135:
-			_pc = 12120
-			continue
-		elif _pc == 11140:
-			if v5 == 2:
-				_pc = 11153
-				continue
-			else:
-				_pc = 11385
-				continue
-		elif _pc == 11153:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "done", 1)
-			object.add_int_property(v3, "cargo", 34)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			isim.set_faction(v3, v2)
-			isim.set_indestructable(v3, 1)
-			group.add_sim(v1, v3)
-			_pc = 11385
-			continue
-		elif _pc == 11385:
-			if v5 == 5:
-				_pc = 11398
-				continue
-			else:
-				_pc = 11630
-				continue
-		elif _pc == 11398:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "done", 1)
-			object.add_int_property(v3, "cargo", 42)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			isim.set_faction(v3, v2)
-			isim.set_indestructable(v3, 1)
-			group.add_sim(v1, v3)
-			_pc = 11630
-			continue
-		elif _pc == 11630:
-			if v5 == 10:
-				_pc = 11643
-				continue
-			else:
-				_pc = 11875
-				continue
-		elif _pc == 11643:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "done", 1)
-			object.add_int_property(v3, "cargo", 35)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			isim.set_faction(v3, v2)
-			isim.set_indestructable(v3, 1)
-			group.add_sim(v1, v3)
-			_pc = 11875
-			continue
-		elif _pc == 11875:
-			if v5 == 15:
-				_pc = 11888
-				continue
-			else:
-				_pc = 12120
-				continue
-		elif _pc == 11888:
-			v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
-			object.add_int_property(v3, "done", 1)
-			object.add_int_property(v3, "cargo", 27)
-			object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
-			isim.set_faction(v3, v2)
-			isim.set_indestructable(v3, 1)
-			group.add_sim(v1, v3)
-			_pc = 12120
-			continue
-		elif _pc == 12120:
-			v5 = v5 + 1
-			_pc = 9841
-			continue
-		elif _pc == 12138:
-			sim.place_relative_to(group.leader(v1), v0, 360.0, 0.0, -1000.0)
-			await iformation.wall(v1, 150.0, 1)
-			return v1
-		elif _pc == 12225:
-			return
+			match v11:
+				0:
+					v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+					object.add_int_property(v3, "cargo", 27)
+					object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+					group.add_sim(v1, v3)
+					isim.set_indestructable(v3, 1)
+					v6 = v6 + 1
+				1:
+					v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+					object.add_int_property(v3, "cargo", 35)
+					object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+					group.add_sim(v1, v3)
+					isim.set_indestructable(v3, 1)
+					v7 = v7 + 1
+				2:
+					v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+					object.add_int_property(v3, "cargo", 45)
+					object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+					group.add_sim(v1, v3)
+					isim.set_indestructable(v3, 1)
+					v9 = v9 + 1
+				3:
+					v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+					object.add_int_property(v3, "cargo", 42)
+					object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+					group.add_sim(v1, v3)
+					isim.set_indestructable(v3, 1)
+					v8 = v8 + 1
+				4:
+					v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+					object.add_int_property(v3, "cargo", 34)
+					object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+					group.add_sim(v1, v3)
+					isim.set_indestructable(v3, 1)
+					v10 = v10 + 1
 		else:
-			return 0
+			if v5 == 2:
+				v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+				object.add_int_property(v3, "done", 1)
+				object.add_int_property(v3, "cargo", 34)
+				object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+				isim.set_faction(v3, v2)
+				isim.set_indestructable(v3, 1)
+				group.add_sim(v1, v3)
+			if v5 == 5:
+				v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+				object.add_int_property(v3, "done", 1)
+				object.add_int_property(v3, "cargo", 42)
+				object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+				isim.set_faction(v3, v2)
+				isim.set_indestructable(v3, 1)
+				group.add_sim(v1, v3)
+			if v5 == 10:
+				v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+				object.add_int_property(v3, "done", 1)
+				object.add_int_property(v3, "cargo", 35)
+				object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+				isim.set_faction(v3, v2)
+				isim.set_indestructable(v3, 1)
+				group.add_sim(v1, v3)
+			if v5 == 15:
+				v3 = iship.create("ini:/sims/ships/utility/freightpod", "")
+				object.add_int_property(v3, "done", 1)
+				object.add_int_property(v3, "cargo", 27)
+				object.set_string_property(v3, "name", icargo.pog_name(icargo.find(object.int_property(v3, "cargo"))))
+				isim.set_faction(v3, v2)
+				isim.set_indestructable(v3, 1)
+				group.add_sim(v1, v3)
+		v5 = v5 + 1
+	sim.place_relative_to(group.leader(v1), v0, 360.0, 0.0, -1000.0)
+	await iformation.wall(v1, 150.0, 1)
+	return v1
 	return 0
 
 func local_12227(v0, v1) -> Variant:
@@ -925,512 +759,122 @@ func local_13498(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 13498
 	while true:
-		if _pc == 13498:
-			_pc = 13508
-			continue
-		elif _pc == 13508:
-			await _pog_frame()
-			if _pog_every(13509, 0.5):
-				_pc = 13522
-				continue
-			else:
-				_pc = 15496
-				continue
-		elif _pc == 13522:
-			v4 = 0
-			v5 = 0
-			_pc = 13536
-			continue
-		elif _pc == 13536:
-			if v5 < 16:
-				_pc = 13549
-				continue
-			else:
-				_pc = 15437
-				continue
-		elif _pc == 13549:
+		await _pog_wait(0.5)
+		v4 = 0
+		v5 = 0
+		while v5 < 16:
 			v3 = group.nth_sim(v0, v5)
 			if not (object.property_exists(v3, "done")):
-				_pc = 13609
-				continue
+				if iship.attacked(iship.cast(v3)):
+					if _pog_eq(iship.last_attacker(iship.cast(v3)), v1):
+						await local_12780(v3)
+				match v5:
+					0:
+						if object.int_property(v3, "cargo") != 45:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					1:
+						if object.int_property(v3, "cargo") != 35:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					2:
+						if object.int_property(v3, "cargo") != 34:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					3:
+						if object.int_property(v3, "cargo") != 42:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					4:
+						if object.int_property(v3, "cargo") != 34:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					5:
+						if object.int_property(v3, "cargo") != 42:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					6:
+						if object.int_property(v3, "cargo") != 27:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					7:
+						if object.int_property(v3, "cargo") != 45:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					8:
+						if object.int_property(v3, "cargo") != 27:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					9:
+						if object.int_property(v3, "cargo") != 45:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					10:
+						if object.int_property(v3, "cargo") != 35:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					11:
+						if object.int_property(v3, "cargo") != 34:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					12:
+						if object.int_property(v3, "cargo") != 35:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					13:
+						if object.int_property(v3, "cargo") != 34:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					14:
+						if object.int_property(v3, "cargo") != 42:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
+					15:
+						if object.int_property(v3, "cargo") != 27:
+							await local_12227(v3, 0)
+						else:
+							await local_12227(v3, 1)
+							v4 = v4 + 1
 			else:
-				_pc = 15406
-				continue
-		elif _pc == 13609:
-			if iship.attacked(iship.cast(v3)):
-				_pc = 13645
-				continue
-			else:
-				_pc = 13708
-				continue
-		elif _pc == 13645:
-			if _pog_eq(iship.last_attacker(iship.cast(v3)), v1):
-				_pc = 13689
-				continue
-			else:
-				_pc = 13708
-				continue
-		elif _pc == 13689:
-			await local_12780(v3)
-			_pc = 13708
-			continue
-		elif _pc == 13708:
-			_pc = 15254
-			continue
-		elif _pc == 13713:
-			if object.int_property(v3, "cargo") != 45:
-				_pc = 13746
-				continue
-			else:
-				_pc = 13771
-				continue
-		elif _pc == 13746:
-			await local_12227(v3, 0)
-			_pc = 13804
-			continue
-		elif _pc == 13771:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 13804
-			continue
-		elif _pc == 13804:
-			_pc = 15401
-			continue
-		elif _pc == 13809:
-			if object.int_property(v3, "cargo") != 35:
-				_pc = 13842
-				continue
-			else:
-				_pc = 13867
-				continue
-		elif _pc == 13842:
-			await local_12227(v3, 0)
-			_pc = 13900
-			continue
-		elif _pc == 13867:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 13900
-			continue
-		elif _pc == 13900:
-			_pc = 15401
-			continue
-		elif _pc == 13905:
-			if object.int_property(v3, "cargo") != 34:
-				_pc = 13938
-				continue
-			else:
-				_pc = 13963
-				continue
-		elif _pc == 13938:
-			await local_12227(v3, 0)
-			_pc = 13996
-			continue
-		elif _pc == 13963:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 13996
-			continue
-		elif _pc == 13996:
-			_pc = 15401
-			continue
-		elif _pc == 14001:
-			if object.int_property(v3, "cargo") != 42:
-				_pc = 14034
-				continue
-			else:
-				_pc = 14059
-				continue
-		elif _pc == 14034:
-			await local_12227(v3, 0)
-			_pc = 14092
-			continue
-		elif _pc == 14059:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14092
-			continue
-		elif _pc == 14092:
-			_pc = 15401
-			continue
-		elif _pc == 14097:
-			if object.int_property(v3, "cargo") != 34:
-				_pc = 14130
-				continue
-			else:
-				_pc = 14155
-				continue
-		elif _pc == 14130:
-			await local_12227(v3, 0)
-			_pc = 14188
-			continue
-		elif _pc == 14155:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14188
-			continue
-		elif _pc == 14188:
-			_pc = 15401
-			continue
-		elif _pc == 14193:
-			if object.int_property(v3, "cargo") != 42:
-				_pc = 14226
-				continue
-			else:
-				_pc = 14251
-				continue
-		elif _pc == 14226:
-			await local_12227(v3, 0)
-			_pc = 14284
-			continue
-		elif _pc == 14251:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14284
-			continue
-		elif _pc == 14284:
-			_pc = 15401
-			continue
-		elif _pc == 14289:
-			if object.int_property(v3, "cargo") != 27:
-				_pc = 14322
-				continue
-			else:
-				_pc = 14347
-				continue
-		elif _pc == 14322:
-			await local_12227(v3, 0)
-			_pc = 14380
-			continue
-		elif _pc == 14347:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14380
-			continue
-		elif _pc == 14380:
-			_pc = 15401
-			continue
-		elif _pc == 14385:
-			if object.int_property(v3, "cargo") != 45:
-				_pc = 14418
-				continue
-			else:
-				_pc = 14443
-				continue
-		elif _pc == 14418:
-			await local_12227(v3, 0)
-			_pc = 14476
-			continue
-		elif _pc == 14443:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14476
-			continue
-		elif _pc == 14476:
-			_pc = 15401
-			continue
-		elif _pc == 14481:
-			if object.int_property(v3, "cargo") != 27:
-				_pc = 14514
-				continue
-			else:
-				_pc = 14539
-				continue
-		elif _pc == 14514:
-			await local_12227(v3, 0)
-			_pc = 14572
-			continue
-		elif _pc == 14539:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14572
-			continue
-		elif _pc == 14572:
-			_pc = 15401
-			continue
-		elif _pc == 14577:
-			if object.int_property(v3, "cargo") != 45:
-				_pc = 14610
-				continue
-			else:
-				_pc = 14635
-				continue
-		elif _pc == 14610:
-			await local_12227(v3, 0)
-			_pc = 14668
-			continue
-		elif _pc == 14635:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14668
-			continue
-		elif _pc == 14668:
-			_pc = 15401
-			continue
-		elif _pc == 14673:
-			if object.int_property(v3, "cargo") != 35:
-				_pc = 14706
-				continue
-			else:
-				_pc = 14731
-				continue
-		elif _pc == 14706:
-			await local_12227(v3, 0)
-			_pc = 14764
-			continue
-		elif _pc == 14731:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14764
-			continue
-		elif _pc == 14764:
-			_pc = 15401
-			continue
-		elif _pc == 14769:
-			if object.int_property(v3, "cargo") != 34:
-				_pc = 14802
-				continue
-			else:
-				_pc = 14827
-				continue
-		elif _pc == 14802:
-			await local_12227(v3, 0)
-			_pc = 14860
-			continue
-		elif _pc == 14827:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14860
-			continue
-		elif _pc == 14860:
-			_pc = 15401
-			continue
-		elif _pc == 14865:
-			if object.int_property(v3, "cargo") != 35:
-				_pc = 14898
-				continue
-			else:
-				_pc = 14923
-				continue
-		elif _pc == 14898:
-			await local_12227(v3, 0)
-			_pc = 14956
-			continue
-		elif _pc == 14923:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 14956
-			continue
-		elif _pc == 14956:
-			_pc = 15401
-			continue
-		elif _pc == 14961:
-			if object.int_property(v3, "cargo") != 34:
-				_pc = 14994
-				continue
-			else:
-				_pc = 15019
-				continue
-		elif _pc == 14994:
-			await local_12227(v3, 0)
-			_pc = 15052
-			continue
-		elif _pc == 15019:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 15052
-			continue
-		elif _pc == 15052:
-			_pc = 15401
-			continue
-		elif _pc == 15057:
-			if object.int_property(v3, "cargo") != 42:
-				_pc = 15090
-				continue
-			else:
-				_pc = 15115
-				continue
-		elif _pc == 15090:
-			await local_12227(v3, 0)
-			_pc = 15148
-			continue
-		elif _pc == 15115:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 15148
-			continue
-		elif _pc == 15148:
-			_pc = 15401
-			continue
-		elif _pc == 15153:
-			if object.int_property(v3, "cargo") != 27:
-				_pc = 15186
-				continue
-			else:
-				_pc = 15211
-				continue
-		elif _pc == 15186:
-			await local_12227(v3, 0)
-			_pc = 15244
-			continue
-		elif _pc == 15211:
-			await local_12227(v3, 1)
-			v4 = v4 + 1
-			_pc = 15244
-			continue
-		elif _pc == 15244:
-			_pc = 15401
-			continue
-		elif _pc == 15249:
-			_pc = 15401
-			continue
-		elif _pc == 15254:
-			if not _pog_is_null(v5):
-				_pc = 15267
-				continue
-			else:
-				_pc = 13713
-				continue
-		elif _pc == 15267:
-			if 1 != v5:
-				_pc = 15275
-				continue
-			else:
-				_pc = 13809
-				continue
-		elif _pc == 15275:
-			if 2 != v5:
-				_pc = 15284
-				continue
-			else:
-				_pc = 13905
-				continue
-		elif _pc == 15284:
-			if 3 != v5:
-				_pc = 15293
-				continue
-			else:
-				_pc = 14001
-				continue
-		elif _pc == 15293:
-			if 4 != v5:
-				_pc = 15302
-				continue
-			else:
-				_pc = 14097
-				continue
-		elif _pc == 15302:
-			if 5 != v5:
-				_pc = 15311
-				continue
-			else:
-				_pc = 14193
-				continue
-		elif _pc == 15311:
-			if 6 != v5:
-				_pc = 15320
-				continue
-			else:
-				_pc = 14289
-				continue
-		elif _pc == 15320:
-			if 7 != v5:
-				_pc = 15329
-				continue
-			else:
-				_pc = 14385
-				continue
-		elif _pc == 15329:
-			if 8 != v5:
-				_pc = 15338
-				continue
-			else:
-				_pc = 14481
-				continue
-		elif _pc == 15338:
-			if 9 != v5:
-				_pc = 15347
-				continue
-			else:
-				_pc = 14577
-				continue
-		elif _pc == 15347:
-			if 10 != v5:
-				_pc = 15356
-				continue
-			else:
-				_pc = 14673
-				continue
-		elif _pc == 15356:
-			if 11 != v5:
-				_pc = 15365
-				continue
-			else:
-				_pc = 14769
-				continue
-		elif _pc == 15365:
-			if 12 != v5:
-				_pc = 15374
-				continue
-			else:
-				_pc = 14865
-				continue
-		elif _pc == 15374:
-			if 13 != v5:
-				_pc = 15383
-				continue
-			else:
-				_pc = 14961
-				continue
-		elif _pc == 15383:
-			if 14 != v5:
-				_pc = 15392
-				continue
-			else:
-				_pc = 15057
-				continue
-		elif _pc == 15392:
-			if 15 != v5:
-				_pc = 15401
-				continue
-			else:
-				_pc = 15153
-				continue
-		elif _pc == 15401:
-			_pc = 15419
-			continue
-		elif _pc == 15406:
-			v4 = v4 + 1
-			_pc = 15419
-			continue
-		elif _pc == 15419:
+				v4 = v4 + 1
 			v5 = v5 + 1
-			_pc = 13536
+		if v4 != 16:
 			continue
-		elif _pc == 15437:
-			if v4 == 16:
-				_pc = 15450
-				continue
-			else:
-				_pc = 15496
-				continue
-		elif _pc == 15450:
-			group.destroy(v0, 1)
-			state.set_progress(v2, 7)
-			_pc = 15502
-			continue
-		elif _pc == 15496:
-			_pc = 13508
-			continue
-		elif _pc == 15501:
-			_pc = 15502
-			continue
-		elif _pc == 15502:
-			return
-		else:
-			return 0
+		group.destroy(v0, 1)
+		state.set_progress(v2, 7)
+		return
+	return
 	return 0
 
 func local_15504(v0, v1, v2) -> Variant:
@@ -1540,219 +984,68 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 18052
 	while true:
-		if _pc == 18052:
-			_pc = 18057
-			continue
-		elif _pc == 18057:
-			await _pog_wait(1.0)
-			if sim.distance_between(v0, v1) > 400000.0:
-				_pc = 18123
-				continue
-			else:
-				_pc = 18128
-				continue
-		elif _pc == 18123:
-			_pc = 19473
-			continue
-		elif _pc == 18128:
-			if sim.distance_between(v0, v1) <= 8000.0:
-				_pc = 18162
-				continue
-			else:
-				_pc = 18057
-				continue
-		elif _pc == 18162:
-			await iconversation.begin()
-			if _pog_is_null(object.int_property(v4, "courage")):
-				_pc = 18208
-				continue
-			else:
-				_pc = 18236
-				continue
-		elif _pc == 18208:
-			icomms.add_response_with_code("a2_m02_text_player_c1_option_1_courage", "a2_m02_dialogue_player_c1_option_1_courage", 1)
-			_pc = 18236
-			continue
-		elif _pc == 18236:
-			if _pog_is_null(object.int_property(v4, "cunning")):
-				_pc = 18268
-				continue
-			else:
-				_pc = 18297
-				continue
-		elif _pc == 18268:
-			icomms.add_response_with_code("a2_m02_text_player_c1_option_2_cunning", "a2_m02_dialogue_player_c1_option_2_cunning", 2)
-			_pc = 18297
-			continue
-		elif _pc == 18297:
-			if _pog_is_null(object.int_property(v4, "wisdom")):
-				_pc = 18329
-				continue
-			else:
-				_pc = 18358
-				continue
-		elif _pc == 18329:
-			icomms.add_response_with_code("a2_m02_text_player_c1_option_4_wisdom", "a2_m02_dialogue_player_c1_option_4_wisdom", 3)
-			_pc = 18358
-			continue
-		elif _pc == 18358:
-			v7 = await iconversation.ask(v2, "", "a2_m02_dialogue_escort_c1_which_would")
-			_pc = 19428
-			continue
-		elif _pc == 18400:
+		await _pog_wait(1.0)
+		if sim.distance_between(v0, v1) > 400000.0:
+			return
+		if not (sim.distance_between(v0, v1) > 8000.0):
+			break
+	await iconversation.begin()
+	if _pog_is_null(object.int_property(v4, "courage")):
+		icomms.add_response_with_code("a2_m02_text_player_c1_option_1_courage", "a2_m02_dialogue_player_c1_option_1_courage", 1)
+	if _pog_is_null(object.int_property(v4, "cunning")):
+		icomms.add_response_with_code("a2_m02_text_player_c1_option_2_cunning", "a2_m02_dialogue_player_c1_option_2_cunning", 2)
+	if _pog_is_null(object.int_property(v4, "wisdom")):
+		icomms.add_response_with_code("a2_m02_text_player_c1_option_4_wisdom", "a2_m02_dialogue_player_c1_option_4_wisdom", 3)
+	v7 = await iconversation.ask(v2, "", "a2_m02_dialogue_escort_c1_which_would")
+	match v7:
+		1:
 			if object.int_property(v4, "courage") == 1:
-				_pc = 18432
-				continue
-			else:
-				_pc = 18458
-				continue
-		elif _pc == 18432:
-			state.set_progress(v4, 5)
-			_pc = 19459
-			continue
-		elif _pc == 18458:
+				state.set_progress(v4, 5)
 			v5 = await local_17812(v3)
 			if _pog_is_null(v5):
-				_pc = 18495
-				continue
+				state.set_progress(v4, 5)
+				await iconversation.end()
 			else:
-				_pc = 18540
-				continue
-		elif _pc == 18495:
-			state.set_progress(v4, 5)
-			await iconversation.end()
-			_pc = 19459
-			continue
-		elif _pc == 18535:
-			_pc = 18736
-			continue
-		elif _pc == 18540:
-			v6 = await iutilities.create_waypoint_relative_to(v1, 7000.0, 0.0, 0.0)
-			await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_courage_grn")
-			state.set_progress(v4, 4)
-			iobjectives.add("a2_m02_objectives_fly_courage")
-			_pog_detach(_pog_spawn(local_2490.bind(v6, v5, v4)))
-			await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_courage")
-			await iconversation.end()
-			_pc = 18736
-			continue
-		elif _pc == 18736:
-			_pc = 19459
-			continue
-		elif _pc == 18741:
+				v6 = await iutilities.create_waypoint_relative_to(v1, 7000.0, 0.0, 0.0)
+				await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_courage_grn")
+				state.set_progress(v4, 4)
+				iobjectives.add("a2_m02_objectives_fly_courage")
+				_pog_detach(_pog_spawn(local_2490.bind(v6, v5, v4)))
+				await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_courage")
+				await iconversation.end()
+		2:
 			if object.int_property(v4, "cunning") == 1:
-				_pc = 18773
-				continue
-			else:
-				_pc = 18799
-				continue
-		elif _pc == 18773:
-			state.set_progress(v4, 5)
-			_pc = 19459
-			continue
-		elif _pc == 18799:
+				state.set_progress(v4, 5)
 			v5 = await local_17812(v3)
 			if _pog_is_null(v5):
-				_pc = 18836
-				continue
+				state.set_progress(v4, 5)
+				await iconversation.end()
 			else:
-				_pc = 18881
-				continue
-		elif _pc == 18836:
-			state.set_progress(v4, 5)
-			await iconversation.end()
-			_pc = 19459
-			continue
-		elif _pc == 18876:
-			_pc = 19077
-			continue
-		elif _pc == 18881:
-			v6 = await iutilities.create_waypoint_relative_to(v1, -7000.0, 0.0, 0.0)
-			await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_cunning_grn")
-			state.set_progress(v4, 4)
-			iobjectives.add("a2_m02_objectives_fly_cunning")
-			_pog_detach(_pog_spawn(local_7854.bind(v6, v5, v4)))
-			await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_cunning")
-			await iconversation.end()
-			_pc = 19077
-			continue
-		elif _pc == 19077:
-			_pc = 19459
-			continue
-		elif _pc == 19082:
+				v6 = await iutilities.create_waypoint_relative_to(v1, -7000.0, 0.0, 0.0)
+				await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_cunning_grn")
+				state.set_progress(v4, 4)
+				iobjectives.add("a2_m02_objectives_fly_cunning")
+				_pog_detach(_pog_spawn(local_7854.bind(v6, v5, v4)))
+				await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_cunning")
+				await iconversation.end()
+		3:
 			if object.int_property(v4, "wisdom") == 1:
-				_pc = 19114
-				continue
-			else:
-				_pc = 19140
-				continue
-		elif _pc == 19114:
-			state.set_progress(v4, 5)
-			_pc = 19459
-			continue
-		elif _pc == 19140:
+				state.set_progress(v4, 5)
 			v5 = await local_17812(v3)
 			if _pog_is_null(v5):
-				_pc = 19177
-				continue
+				state.set_progress(v4, 5)
+				await iconversation.end()
 			else:
-				_pc = 19222
-				continue
-		elif _pc == 19177:
-			state.set_progress(v4, 5)
-			await iconversation.end()
-			_pc = 19459
-			continue
-		elif _pc == 19217:
-			_pc = 19418
-			continue
-		elif _pc == 19222:
-			v6 = await iutilities.create_waypoint_relative_to(v1, 0.0, 0.0, -7000.0)
-			await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_wisdom_grn")
-			state.set_progress(v4, 4)
-			iobjectives.add("a2_m02_objectives_fly_wisdom")
-			_pog_detach(_pog_spawn(local_15504.bind(v6, v5, v4)))
-			await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_wisdom")
-			await iconversation.end()
-			_pc = 19418
-			continue
-		elif _pc == 19418:
-			_pc = 19459
-			continue
-		elif _pc == 19423:
-			_pc = 19459
-			continue
-		elif _pc == 19428:
-			if 1 != v7:
-				_pc = 19441
-				continue
-			else:
-				_pc = 18400
-				continue
-		elif _pc == 19441:
-			if 2 != v7:
-				_pc = 19450
-				continue
-			else:
-				_pc = 18741
-				continue
-		elif _pc == 19450:
-			if 3 != v7:
-				_pc = 19459
-				continue
-			else:
-				_pc = 19082
-				continue
-		elif _pc == 19459:
-			await iconversation.end()
-			_pc = 19473
-			continue
-		elif _pc == 19473:
-			return v7
-		else:
-			return 0
+				v6 = await iutilities.create_waypoint_relative_to(v1, 0.0, 0.0, -7000.0)
+				await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_wisdom_grn")
+				state.set_progress(v4, 4)
+				iobjectives.add("a2_m02_objectives_fly_wisdom")
+				_pog_detach(_pog_spawn(local_15504.bind(v6, v5, v4)))
+				await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_wisdom")
+				await iconversation.end()
+	await iconversation.end()
+	return
 	return 0
 
 func local_19475() -> Variant:

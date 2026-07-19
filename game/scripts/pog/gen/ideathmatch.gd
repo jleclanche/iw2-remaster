@@ -148,21 +148,22 @@ func server_on_user_message() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	if 15 == v0:
-		v4 = iship.cast(v1)
-		iship.undock_self(v4)
-		imultiplay.server_send_user_message(15, v4, 0, "")
-		return 0
-	if 16 == v0:
-		imultiplay.send_scores(v1)
-		return 0
-	if 99 == v0:
-		await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-		return 0
-	if 204 == v0:
-		isim.dock(isim.cast(v1), isim.cast(v2))
-		imultiplay.server_send_user_message(204, v1, v2, v3)
-		return 0
+	match v0:
+		15:
+			v4 = iship.cast(v1)
+			iship.undock_self(v4)
+			imultiplay.server_send_user_message(15, v4, 0, "")
+			return 0
+		16:
+			imultiplay.send_scores(v1)
+			return 0
+		99:
+			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
+			return 0
+		204:
+			isim.dock(isim.cast(v1), isim.cast(v2))
+			imultiplay.server_send_user_message(204, v1, v2, v3)
+			return 0
 	return 0
 	return 0
 
@@ -647,57 +648,16 @@ func client_on_user_message() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 7834
-	while true:
-		if _pc == 7834:
-			_pc = 7981
-			continue
-		elif _pc == 7844:
+	match v0:
+		15:
 			if not _pog_eq(v4, iship.find_player_ship()):
-				_pc = 7868
-				continue
-			else:
-				_pc = 7911
-				continue
-		elif _pc == 7868:
-			v4 = iship.cast(v1)
-			iship.undock_self(v4)
-			_pc = 7911
-			continue
-		elif _pc == 7911:
-			_pc = 8010
-			continue
-		elif _pc == 7916:
+				v4 = iship.cast(v1)
+				iship.undock_self(v4)
+			return 0
+		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
-			_pc = 8010
-			continue
-		elif _pc == 7971:
-			_pc = 8010
-			continue
-		elif _pc == 7976:
-			_pc = 8010
-			continue
-		elif _pc == 7981:
-			if 15 != v0:
-				_pc = 7995
-				continue
-			else:
-				_pc = 7844
-				continue
-		elif _pc == 7995:
-			if 204 != v0:
-				_pc = 8005
-				continue
-			else:
-				_pc = 7916
-				continue
-		elif _pc == 8005:
-			_pc = 7971
-			continue
-		elif _pc == 8010:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func client_exit() -> Variant:

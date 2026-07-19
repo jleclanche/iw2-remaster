@@ -139,27 +139,22 @@ func local_2625() -> Variant:
 	v0 = await iconversation.ask(0, "particle_employee", "which section of game dialogue would you like to test?")
 	await iconversation.end()
 	await iconversation.one_liner(0, "particle_employee", "Don't forget, you can repeat a line with shift+f")
-	if 1 == v0:
-		await actzerocsvs.main()
-		return v0
-	if 2 == v0:
-		await actonecsvs.main()
-		return v0
-	if 3 == v0:
-		await acttwocsvs.main()
-		return v0
-	if 4 == v0:
-		await actthreecsvs.main()
-		return v0
-	if 5 == v0:
-		await misccsvs.main()
-		return v0
-	if 6 == v0:
-		await send_all_emails()
-		await iconversation.one_liner(0, "particle_employee", "Entering player base to read emails...")
-		gui.set_screen("icSPPlayerBaseScreen")
-		return v0
-	return v0
+	match v0:
+		1:
+			await actzerocsvs.main()
+		2:
+			await actonecsvs.main()
+		3:
+			await acttwocsvs.main()
+		4:
+			await actthreecsvs.main()
+		5:
+			await misccsvs.main()
+		6:
+			await send_all_emails()
+			await iconversation.one_liner(0, "particle_employee", "Entering player base to read emails...")
+			gui.set_screen("icSPPlayerBaseScreen")
+	return
 	return 0
 
 func main() -> Variant:

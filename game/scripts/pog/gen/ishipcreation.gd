@@ -97,30 +97,24 @@ func ship_name(v0, v1) -> Variant:
 
 func local_924(v0, v1, v2) -> Variant:
 	sim.set_collision(v1, 0)
-	if _pog_is_null(v2):
-		sim.add_child_relative_to(v0, v1, -30.0, -30.0, 50.0)
-		return 0
-	if 1 == v2:
-		sim.add_child_relative_to(v0, v1, 30.0, 30.0, 50.0)
-		return 0
-	if 2 == v2:
-		sim.add_child_relative_to(v0, v1, -30.0, 30.0, 50.0)
-		return 0
-	if 3 == v2:
-		sim.add_child_relative_to(v0, v1, 30.0, -30.0, 50.0)
-		return 0
-	if 4 == v2:
-		sim.add_child_relative_to(v0, v1, -30.0, -30.0, 0.0)
-		return 0
-	if 5 == v2:
-		sim.add_child_relative_to(v0, v1, 30.0, 30.0, 0.0)
-		return 0
-	if 6 == v2:
-		sim.add_child_relative_to(v0, v1, -30.0, 30.0, 0.0)
-		return 0
-	if 7 == v2:
-		sim.add_child_relative_to(v0, v1, 30.0, -30.0, 0.0)
-		return 0
+	match v2:
+		0:
+			sim.add_child_relative_to(v0, v1, -30.0, -30.0, 50.0)
+		1:
+			sim.add_child_relative_to(v0, v1, 30.0, 30.0, 50.0)
+		2:
+			sim.add_child_relative_to(v0, v1, -30.0, 30.0, 50.0)
+		3:
+			sim.add_child_relative_to(v0, v1, 30.0, -30.0, 50.0)
+		4:
+			sim.add_child_relative_to(v0, v1, -30.0, -30.0, 0.0)
+		5:
+			sim.add_child_relative_to(v0, v1, 30.0, 30.0, 0.0)
+		6:
+			sim.add_child_relative_to(v0, v1, -30.0, 30.0, 0.0)
+		7:
+			sim.add_child_relative_to(v0, v1, 30.0, -30.0, 0.0)
+			return 0
 	return 0
 	return 0
 
@@ -12382,183 +12376,65 @@ func create_supply_cargo(v0, v1) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 22244
-	while true:
-		if _pc == 22244:
-			v5 = 0
-			v6 = 0
-			v8 = 1
-			v11 = []
-			v12 = []
-			v14 = ""
-			v15 = ""
-			v2 = object.add_int_property(v0, "cargo_origin", v1)
-			if _pog_is_null(v2):
-				_pc = 22362
-				continue
-			else:
-				_pc = 22388
-				continue
-		elif _pc == 22362:
-			_pc = 22388
-			continue
-		elif _pc == 22367:
+	v5 = 0
+	v6 = 0
+	v8 = 1
+	v11 = []
+	v12 = []
+	v14 = ""
+	v15 = ""
+	v2 = object.add_int_property(v0, "cargo_origin", v1)
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-			_pc = 22388
-			continue
-		elif _pc == 22388:
-			if object.property_exists(v0, "mega_freighter") == 1:
-				_pc = 22420
-				continue
-			else:
-				_pc = 22449
-				continue
-		elif _pc == 22420:
-			await local_21809(v0, v1)
-			_pc = 23496
-			continue
-		elif _pc == 22449:
-			v7 = idockport.count(v0, 3, 1)
-			v9 = await iutilities.random_centre_weighted(1.0, v7)
-			_pc = 22705
-			continue
-		elif _pc == 22512:
+	if object.property_exists(v0, "mega_freighter") == 1:
+		await local_21809(v0, v1)
+	else:
+		v7 = idockport.count(v0, 3, 1)
+		v9 = await iutilities.random_centre_weighted(1.0, v7)
+		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation: Filling vessel with supply cargo of (")
 			debug.print_string(string.from_int(v9))
 			debug.print_string(string.join("/", string.from_int(v7)))
 			debug.print_string(") pod(s) for vessel ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("\n")
-			_pc = 22705
-			continue
-		elif _pc == 22705:
-			v3 = 0
-			_pc = 22712
-			continue
-		elif _pc == 22712:
-			if v3 < v9:
-				_pc = 22728
-				continue
-			else:
-				_pc = 23496
-				continue
-		elif _pc == 22728:
-			_pc = 22792
-			continue
-		elif _pc == 22733:
-			v14 = "ini:/sims/ships/utility/cargo_pod"
-			_pc = 22833
-			continue
-		elif _pc == 22751:
-			v14 = "ini:/sims/ships/utility/freightpod"
-			_pc = 22833
-			continue
-		elif _pc == 22769:
-			v14 = "ini:/sims/ships/utility/containerpod"
-			_pc = 22833
-			continue
-		elif _pc == 22787:
-			_pc = 22833
-			continue
-		elif _pc == 22792:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 22816
-				continue
-			else:
-				_pc = 22733
-				continue
-		elif _pc == 22816:
-			if not _pog_is_null(1):
-				_pc = 22824
-				continue
-			else:
-				_pc = 22751
-				continue
-		elif _pc == 22824:
-			if not _pog_is_null(2):
-				_pc = 22833
-				continue
-			else:
-				_pc = 22769
-				continue
-		elif _pc == 22833:
+		v3 = 0
+		while v3 < v9:
+			match math.random_int(0, 2):
+				0:
+					v14 = "ini:/sims/ships/utility/cargo_pod"
+				1:
+					v14 = "ini:/sims/ships/utility/freightpod"
+				2:
+					v14 = "ini:/sims/ships/utility/containerpod"
 			v16 = iship.create(v14, "")
 			object.add_int_property(v16, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			if _pog_is_null(v16):
-				_pc = 22934
-				continue
-			else:
-				_pc = 22981
-				continue
-		elif _pc == 22934:
-			_pc = 22981
-			continue
-		elif _pc == 22939:
-			debug.print_string("iShipCreation.CreateSupplyCargo: Critical error: no cargo pod create with template ")
-			debug.print_string(v14)
-			_pc = 22981
-			continue
-		elif _pc == 22981:
+				if PogRuntime.TRACE:
+					debug.print_string("iShipCreation.CreateSupplyCargo: Critical error: no cargo pod create with template ")
+					debug.print_string(v14)
 			list.add_tail(v11, v16)
 			if v1 == -2:
-				_pc = 23018
-				continue
+				v13 = await icargoscript.military_supply_cargo_generator()
 			else:
-				_pc = 23042
-				continue
-		elif _pc == 23018:
-			v13 = await icargoscript.military_supply_cargo_generator()
-			_pc = 23116
-			continue
-		elif _pc == 23042:
-			if v1 == -1:
-				_pc = 23055
-				continue
-			else:
-				_pc = 23079
-				continue
-		elif _pc == 23055:
-			v13 = await icargoscript.supply_cargo_generator()
-			_pc = 23116
-			continue
-		elif _pc == 23079:
-			v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
-			_pc = 23116
-			continue
-		elif _pc == 23116:
+				if v1 == -1:
+					v13 = await icargoscript.supply_cargo_generator()
+				else:
+					v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
 			if v13 == 482 or v13 == 471 or v13 == 472 or v13 == 549 or v13 == 230 or v13 == 514 or v13 == 530 or v13 == 531:
-				_pc = 23200
-				continue
-			else:
-				_pc = 23232
-				continue
-		elif _pc == 23200:
-			object.set_string_property(v16, "death_script", "iDeathScript.Antimatter")
-			_pc = 23232
-			continue
-		elif _pc == 23232:
+				object.set_string_property(v16, "death_script", "iDeathScript.Antimatter")
 			object.set_int_property(v16, "cargo", v13)
 			v15 = icargo.pog_name(icargo.find(v13))
 			await iutilities.rename_sim(v16, v15)
 			iship.dock(v16, v0)
-			_pc = 23478
-			continue
-		elif _pc == 23355:
-			debug.print_string("iShipCreation: Creating POD cargo : ")
-			debug.print_string(v15)
-			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
-			debug.print_string("\n")
-			_pc = 23478
-			continue
-		elif _pc == 23478:
+			if PogRuntime.TRACE:
+				debug.print_string("iShipCreation: Creating POD cargo : ")
+				debug.print_string(v15)
+				debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
+				debug.print_string("\n")
 			v3 = v3 + 1
-			_pc = 22712
-			continue
-		elif _pc == 23496:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func create_trade_cargo(v0, v1) -> Variant:
@@ -12645,155 +12521,62 @@ func create_haulage_cargo(v0, v1) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	var _pc: int = 24532
-	while true:
-		if _pc == 24532:
-			v3 = ""
-			v3 = await iutilities.from_location_enum(v1)
-			v7 = 0
-			v8 = 0
-			v10 = 1
-			v13 = []
-			v14 = []
-			v16 = ""
-			v18 = ""
-			_pc = 24707
-			continue
-		elif _pc == 24644:
-			debug.print_string("iShipCreation: Creating Haulage cargo for location ")
-			debug.print_string(v3)
-			debug.print_string("\n")
-			_pc = 24707
-			continue
-		elif _pc == 24707:
-			if object.property_exists(v0, "mega_freighter") == 1:
-				_pc = 24739
-				continue
-			else:
-				_pc = 24765
-				continue
-		elif _pc == 24739:
-			await local_21809(v0, 2)
-			_pc = 25727
-			continue
-		elif _pc == 24765:
-			v9 = idockport.count(v0, 3, 1)
-			_pc = 24936
-			continue
-		elif _pc == 24797:
+	v3 = ""
+	v3 = await iutilities.from_location_enum(v1)
+	v7 = 0
+	v8 = 0
+	v10 = 1
+	v13 = []
+	v14 = []
+	v16 = ""
+	v18 = ""
+	if PogRuntime.TRACE:
+		debug.print_string("iShipCreation: Creating Haulage cargo for location ")
+		debug.print_string(v3)
+		debug.print_string("\n")
+	if object.property_exists(v0, "mega_freighter") == 1:
+		await local_21809(v0, 2)
+	else:
+		v9 = idockport.count(v0, 3, 1)
+		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation: Vessel ")
 			debug.print_string(object.string_property(v0, "name"))
 			debug.print_string("has this many ports: ")
 			debug.print_string(string.from_int(v9))
 			debug.print_string("\n")
-			_pc = 24936
-			continue
-		elif _pc == 24936:
-			v11 = await iutilities.random_centre_weighted(1.0, v9)
-			v6 = v1
-			v2 = object.add_int_property(v0, "cargo_origin", v6)
-			if _pog_is_null(v2):
-				_pc = 25026
-				continue
-			else:
-				_pc = 25052
-				continue
-		elif _pc == 25026:
-			_pc = 25052
-			continue
-		elif _pc == 25031:
-			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-			_pc = 25052
-			continue
-		elif _pc == 25052:
-			object.set_int_property(v0, "cargo_origin", v6)
-			v5 = 0
-			_pc = 25090
-			continue
-		elif _pc == 25090:
-			if v5 < v11:
-				_pc = 25106
-				continue
-			else:
-				_pc = 25727
-				continue
-		elif _pc == 25106:
-			_pc = 25170
-			continue
-		elif _pc == 25111:
-			v16 = "ini:/sims/ships/utility/cargo_pod"
-			_pc = 25211
-			continue
-		elif _pc == 25129:
-			v16 = "ini:/sims/ships/utility/freightpod"
-			_pc = 25211
-			continue
-		elif _pc == 25147:
-			v16 = "ini:/sims/ships/utility/containerpod"
-			_pc = 25211
-			continue
-		elif _pc == 25165:
-			_pc = 25211
-			continue
-		elif _pc == 25170:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 25194
-				continue
-			else:
-				_pc = 25111
-				continue
-		elif _pc == 25194:
-			if not _pog_is_null(1):
-				_pc = 25202
-				continue
-			else:
-				_pc = 25129
-				continue
-		elif _pc == 25202:
-			if not _pog_is_null(2):
-				_pc = 25211
-				continue
-			else:
-				_pc = 25147
-				continue
-		elif _pc == 25211:
+		v11 = await iutilities.random_centre_weighted(1.0, v9)
+		v6 = v1
+		v2 = object.add_int_property(v0, "cargo_origin", v6)
+		if _pog_is_null(v2):
+			if PogRuntime.TRACE:
+				debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
+		object.set_int_property(v0, "cargo_origin", v6)
+		v5 = 0
+		while v5 < v11:
+			match math.random_int(0, 2):
+				0:
+					v16 = "ini:/sims/ships/utility/cargo_pod"
+				1:
+					v16 = "ini:/sims/ships/utility/freightpod"
+				2:
+					v16 = "ini:/sims/ships/utility/containerpod"
 			v15 = iship.create(v16, "name_cargo_pod")
 			object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
 			list.add_tail(v13, v15)
 			v17 = await icargoscript.find_cargo_for_location(v1)
 			if v17 == 482 or v17 == 471 or v17 == 472 or v17 == 549 or v17 == 230 or v17 == 514 or v17 == 530 or v17 == 531:
-				_pc = 25431
-				continue
-			else:
-				_pc = 25463
-				continue
-		elif _pc == 25431:
-			object.set_string_property(v15, "death_script", "iDeathScript.Antimatter")
-			_pc = 25463
-			continue
-		elif _pc == 25463:
+				object.set_string_property(v15, "death_script", "iDeathScript.Antimatter")
 			object.set_int_property(v15, "cargo", v17)
 			v18 = icargo.pog_name(icargo.find(v17))
 			await iutilities.rename_sim(v15, v18)
 			iship.dock(v15, v0)
-			_pc = 25709
-			continue
-		elif _pc == 25586:
-			debug.print_string("iShipCreation: Creating POD cargo : ")
-			debug.print_string(v18)
-			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
-			debug.print_string("\n")
-			_pc = 25709
-			continue
-		elif _pc == 25709:
+			if PogRuntime.TRACE:
+				debug.print_string("iShipCreation: Creating POD cargo : ")
+				debug.print_string(v18)
+				debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
+				debug.print_string("\n")
 			v5 = v5 + 1
-			_pc = 25090
-			continue
-		elif _pc == 25727:
-			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func return_supply_cargo() -> Variant:
@@ -12814,164 +12597,58 @@ func return_supply_cargo() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 25765
-	while true:
-		if _pc == 25765:
-			v5 = 0
-			v6 = 0
-			v8 = 1
-			v11 = []
-			v12 = []
-			v14 = ""
-			v15 = ""
-			v2 = object.add_int_property(v0, "cargo_origin", v1)
-			if _pog_is_null(v2):
-				_pc = 25883
-				continue
-			else:
-				_pc = 25909
-				continue
-		elif _pc == 25883:
-			_pc = 25909
-			continue
-		elif _pc == 25888:
+	v5 = 0
+	v6 = 0
+	v8 = 1
+	v11 = []
+	v12 = []
+	v14 = ""
+	v15 = ""
+	v2 = object.add_int_property(v0, "cargo_origin", v1)
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-			_pc = 25909
-			continue
-		elif _pc == 25909:
-			_pc = 25937
-			continue
-		elif _pc == 25914:
-			debug.print_string("iShipCreation: Creating Supply cargo \n ")
-			_pc = 25937
-			continue
-		elif _pc == 25937:
-			v7 = idockport.count(v0, 3, 1)
-			_pc = 26108
-			continue
-		elif _pc == 25969:
-			debug.print_string("iShipCreation: Vessel ")
-			debug.print_string(object.string_property(v0, "name"))
-			debug.print_string("has this many ports: ")
-			debug.print_string(string.from_int(v7))
-			debug.print_string("\n")
-			_pc = 26108
-			continue
-		elif _pc == 26108:
-			v9 = await iutilities.random_centre_weighted(1.0, v7)
-			v3 = 0
-			_pc = 26146
-			continue
-		elif _pc == 26146:
-			if v3 < v9:
-				_pc = 26162
-				continue
-			else:
-				_pc = 26846
-				continue
-		elif _pc == 26162:
-			_pc = 26226
-			continue
-		elif _pc == 26167:
-			v14 = "ini:/sims/ships/utility/cargo_pod"
-			_pc = 26267
-			continue
-		elif _pc == 26185:
-			v14 = "ini:/sims/ships/utility/freightpod"
-			_pc = 26267
-			continue
-		elif _pc == 26203:
-			v14 = "ini:/sims/ships/utility/containerpod"
-			_pc = 26267
-			continue
-		elif _pc == 26221:
-			_pc = 26267
-			continue
-		elif _pc == 26226:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 26250
-				continue
-			else:
-				_pc = 26167
-				continue
-		elif _pc == 26250:
-			if not _pog_is_null(1):
-				_pc = 26258
-				continue
-			else:
-				_pc = 26185
-				continue
-		elif _pc == 26258:
-			if not _pog_is_null(2):
-				_pc = 26267
-				continue
-			else:
-				_pc = 26203
-				continue
-		elif _pc == 26267:
-			v16 = iship.create(v14, "name_cargo_pod")
-			object.add_int_property(v16, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
-			list.add_tail(v11, v16)
-			if v1 == -2:
-				_pc = 26392
-				continue
-			else:
-				_pc = 26416
-				continue
-		elif _pc == 26392:
+	if PogRuntime.TRACE:
+		debug.print_string("iShipCreation: Creating Supply cargo \n ")
+	v7 = idockport.count(v0, 3, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iShipCreation: Vessel ")
+		debug.print_string(object.string_property(v0, "name"))
+		debug.print_string("has this many ports: ")
+		debug.print_string(string.from_int(v7))
+		debug.print_string("\n")
+	v9 = await iutilities.random_centre_weighted(1.0, v7)
+	v3 = 0
+	while v3 < v9:
+		match math.random_int(0, 2):
+			0:
+				v14 = "ini:/sims/ships/utility/cargo_pod"
+			1:
+				v14 = "ini:/sims/ships/utility/freightpod"
+			2:
+				v14 = "ini:/sims/ships/utility/containerpod"
+		v16 = iship.create(v14, "name_cargo_pod")
+		object.add_int_property(v16, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
+		list.add_tail(v11, v16)
+		if v1 == -2:
 			v13 = await icargoscript.military_supply_cargo_generator()
-			_pc = 26490
-			continue
-		elif _pc == 26416:
+		else:
 			if v1 == -1:
-				_pc = 26429
-				continue
+				v13 = await icargoscript.supply_cargo_generator()
 			else:
-				_pc = 26453
-				continue
-		elif _pc == 26429:
-			v13 = await icargoscript.supply_cargo_generator()
-			_pc = 26490
-			continue
-		elif _pc == 26453:
-			v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
-			_pc = 26490
-			continue
-		elif _pc == 26490:
-			if v13 == 482 or v13 == 471 or v13 == 472 or v13 == 549 or v13 == 230 or v13 == 514 or v13 == 530 or v13 == 531:
-				_pc = 26574
-				continue
-			else:
-				_pc = 26606
-				continue
-		elif _pc == 26574:
+				v13 = await icargoscript.find_cargo_for_location(ihabitat.cast_int_to_habitat_type(v1))
+		if v13 == 482 or v13 == 471 or v13 == 472 or v13 == 549 or v13 == 230 or v13 == 514 or v13 == 530 or v13 == 531:
 			object.set_string_property(v16, "death_script", "iDeathScript.Antimatter")
-			_pc = 26606
-			continue
-		elif _pc == 26606:
-			object.set_int_property(v16, "cargo", v13)
-			v15 = icargo.pog_name(icargo.find(v13))
-			await iutilities.rename_sim(v16, v15)
-			_pc = 26828
-			continue
-		elif _pc == 26705:
+		object.set_int_property(v16, "cargo", v13)
+		v15 = icargo.pog_name(icargo.find(v13))
+		await iutilities.rename_sim(v16, v15)
+		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation: Creating POD cargo : ")
 			debug.print_string(v15)
 			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
 			debug.print_string("\n")
-			_pc = 26828
-			continue
-		elif _pc == 26828:
-			v3 = v3 + 1
-			_pc = 26146
-			continue
-		elif _pc == 26846:
-			return _pog_clone(v11)
-		elif _pc == 26856:
-			return
-		else:
-			return 0
+		v3 = v3 + 1
+	return _pog_clone(v11)
 	return 0
 
 func return_trade_cargo() -> Variant:
@@ -13063,133 +12740,51 @@ func return_haulage_cargo(v0, v1) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	var _pc: int = 28016
-	while true:
-		if _pc == 28016:
-			v3 = ""
-			v3 = await iutilities.from_location_enum(v1)
-			v7 = 0
-			v8 = 0
-			v10 = 1
-			v13 = []
-			v14 = []
-			v16 = ""
-			v18 = ""
-			_pc = 28191
-			continue
-		elif _pc == 28128:
-			debug.print_string("iShipCreation: Creating Haulage cargo for location ")
-			debug.print_string(v3)
-			debug.print_string("\n")
-			_pc = 28191
-			continue
-		elif _pc == 28191:
-			v9 = idockport.count(v0, 3, 1)
-			v11 = await iutilities.random_centre_weighted(1.0, v9)
-			v6 = v1
-			v2 = object.add_int_property(v0, "cargo_origin", v6)
-			if _pog_is_null(v2):
-				_pc = 28308
-				continue
-			else:
-				_pc = 28334
-				continue
-		elif _pc == 28308:
-			_pc = 28334
-			continue
-		elif _pc == 28313:
+	v3 = ""
+	v3 = await iutilities.from_location_enum(v1)
+	v7 = 0
+	v8 = 0
+	v10 = 1
+	v13 = []
+	v14 = []
+	v16 = ""
+	v18 = ""
+	if PogRuntime.TRACE:
+		debug.print_string("iShipCreation: Creating Haulage cargo for location ")
+		debug.print_string(v3)
+		debug.print_string("\n")
+	v9 = idockport.count(v0, 3, 1)
+	v11 = await iutilities.random_centre_weighted(1.0, v9)
+	v6 = v1
+	v2 = object.add_int_property(v0, "cargo_origin", v6)
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation: Unable to add cargo_origin property to vessel\n")
-			_pc = 28334
-			continue
-		elif _pc == 28334:
-			v5 = 0
-			_pc = 28341
-			continue
-		elif _pc == 28341:
-			if v5 < v11:
-				_pc = 28357
-				continue
-			else:
-				_pc = 28954
-				continue
-		elif _pc == 28357:
-			_pc = 28421
-			continue
-		elif _pc == 28362:
-			v16 = "ini:/sims/ships/utility/cargo_pod"
-			_pc = 28462
-			continue
-		elif _pc == 28380:
-			v16 = "ini:/sims/ships/utility/freightpod"
-			_pc = 28462
-			continue
-		elif _pc == 28398:
-			v16 = "ini:/sims/ships/utility/containerpod"
-			_pc = 28462
-			continue
-		elif _pc == 28416:
-			_pc = 28462
-			continue
-		elif _pc == 28421:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 28445
-				continue
-			else:
-				_pc = 28362
-				continue
-		elif _pc == 28445:
-			if not _pog_is_null(1):
-				_pc = 28453
-				continue
-			else:
-				_pc = 28380
-				continue
-		elif _pc == 28453:
-			if not _pog_is_null(2):
-				_pc = 28462
-				continue
-			else:
-				_pc = 28398
-				continue
-		elif _pc == 28462:
-			v15 = iship.create(v16, "name_cargo_pod")
-			object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
-			list.add_tail(v13, v15)
-			v17 = await icargoscript.find_cargo_for_location(v1)
-			if v17 == 482 or v17 == 471 or v17 == 472 or v17 == 549 or v17 == 230 or v17 == 514 or v17 == 530 or v17 == 531:
-				_pc = 28682
-				continue
-			else:
-				_pc = 28714
-				continue
-		elif _pc == 28682:
+	v5 = 0
+	while v5 < v11:
+		match math.random_int(0, 2):
+			0:
+				v16 = "ini:/sims/ships/utility/cargo_pod"
+			1:
+				v16 = "ini:/sims/ships/utility/freightpod"
+			2:
+				v16 = "ini:/sims/ships/utility/containerpod"
+		v15 = iship.create(v16, "name_cargo_pod")
+		object.add_int_property(v15, "cargo_faction", ifaction.allegiance(isim.faction(v0)))
+		list.add_tail(v13, v15)
+		v17 = await icargoscript.find_cargo_for_location(v1)
+		if v17 == 482 or v17 == 471 or v17 == 472 or v17 == 549 or v17 == 230 or v17 == 514 or v17 == 530 or v17 == 531:
 			object.set_string_property(v15, "death_script", "iDeathScript.Antimatter")
-			_pc = 28714
-			continue
-		elif _pc == 28714:
-			object.set_int_property(v15, "cargo", v17)
-			v18 = icargo.pog_name(icargo.find(v17))
-			await iutilities.rename_sim(v15, v18)
-			_pc = 28936
-			continue
-		elif _pc == 28813:
+		object.set_int_property(v15, "cargo", v17)
+		v18 = icargo.pog_name(icargo.find(v17))
+		await iutilities.rename_sim(v15, v18)
+		if PogRuntime.TRACE:
 			debug.print_string("iShipCreation: Creating POD cargo : ")
 			debug.print_string(v18)
 			debug.print_string(string.join(" for ship ", object.string_property(v0, "name")))
 			debug.print_string("\n")
-			_pc = 28936
-			continue
-		elif _pc == 28936:
-			v5 = v5 + 1
-			_pc = 28341
-			continue
-		elif _pc == 28954:
-			return _pog_clone(v13)
-		elif _pc == 28964:
-			return
-		else:
-			return 0
+		v5 = v5 + 1
+	return _pog_clone(v13)
 	return 0
 
 func get_traffic(v0, v1, v2) -> Variant:
@@ -13249,48 +12844,49 @@ func put_ships_in_formation() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	if _pog_is_null(v1):
-		await iformation.wedge(v0, v2, v3)
-		return 1
-	if 2 == v1:
-		await iformation.line_abreast(v0, v2, v3)
-		return 1
-	if 3 == v1:
-		await iformation.line_ahead(v0, v2, v3)
-		return 1
-	if 4 == v1:
-		await iformation.parade(v0, v2, v3)
-		return 1
-	if 5 == v1:
-		await iformation.skirmish_line(v0, v2, v3)
-		return 1
-	if 6 == v1:
-		await iformation.v(v0, v2, v3)
-		return 1
-	if 7 == v1:
-		await iformation.cross(v0, v2, v3)
-		return 1
-	if 8 == v1:
-		await iformation.loose(v0, v2, v3)
-		return 1
-	if 9 == v1:
-		await iformation.impi(v0, v2, v3)
-		return 1
-	if 10 == v1:
-		await iformation.outrider(v0, v2, v3)
-		return 1
-	if 1 == v1:
-		await iformation.goose(v0, v2, v3)
-		return 1
-	if 11 == v1:
-		await iformation.line_astern(v0, v2, v3)
-		return 1
-	if 12 == v1:
-		await iformation.box(v0, v2, v3)
-		return 1
-	if 13 == v1:
-		await iformation.claw(v0, v2, v3)
-		return 1
+	match v1:
+		0:
+			await iformation.wedge(v0, v2, v3)
+			return 1
+		2:
+			await iformation.line_abreast(v0, v2, v3)
+			return 1
+		3:
+			await iformation.line_ahead(v0, v2, v3)
+			return 1
+		4:
+			await iformation.parade(v0, v2, v3)
+			return 1
+		5:
+			await iformation.skirmish_line(v0, v2, v3)
+			return 1
+		6:
+			await iformation.v(v0, v2, v3)
+			return 1
+		7:
+			await iformation.cross(v0, v2, v3)
+			return 1
+		8:
+			await iformation.loose(v0, v2, v3)
+			return 1
+		9:
+			await iformation.impi(v0, v2, v3)
+			return 1
+		10:
+			await iformation.outrider(v0, v2, v3)
+			return 1
+		1:
+			await iformation.goose(v0, v2, v3)
+			return 1
+		11:
+			await iformation.line_astern(v0, v2, v3)
+			return 1
+		12:
+			await iformation.box(v0, v2, v3)
+			return 1
+		13:
+			await iformation.claw(v0, v2, v3)
+			return 1
 	return 0
 	return 0
 

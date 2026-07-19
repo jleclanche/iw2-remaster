@@ -394,98 +394,39 @@ func local_5250(v0) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 5250
+	v1 = group.cast(global.handle("g_escape_vessels"))
+	v2 = group.nth_group(v1, 0)
+	group.flatten(v2)
+	v6 = group.sim_count(v2)
+	v8 = v6
+	iai.purge_orders(v2)
 	while true:
-		if _pc == 5250:
-			v1 = group.cast(global.handle("g_escape_vessels"))
-			v2 = group.nth_group(v1, 0)
-			group.flatten(v2)
-			v6 = group.sim_count(v2)
-			v8 = v6
-			iai.purge_orders(v2)
-			_pc = 5392
-			continue
-		elif _pc == 5392:
-			await _pog_wait(math.random(2.0, 5.0))
-			if v8 >= 2:
-				_pc = 5455
-				continue
-			else:
-				_pc = 5499
-				continue
-		elif _pc == 5455:
+		await _pog_wait(math.random(2.0, 5.0))
+		if v8 >= 2:
 			v5 = math.random_int(1, 2)
 			v8 = v8 - v5
-			_pc = 5527
-			continue
-		elif _pc == 5499:
+		else:
 			v5 = v8
 			v8 = v8 - v5
-			_pc = 5527
-			continue
-		elif _pc == 5527:
-			v3 = group.create()
-			v9 = 1
-			_pc = 5553
-			continue
-		elif _pc == 5553:
-			if v9 < v5 + 1:
-				_pc = 5571
-				continue
-			else:
-				_pc = 5642
-				continue
-		elif _pc == 5571:
+		v3 = group.create()
+		v9 = 1
+		while v9 < v5 + 1:
 			v4 = group.nth_sim(v2, v9)
 			group.add_sim(v3, v4)
 			v9 = v9 + 1
-			_pc = 5553
-			continue
-		elif _pc == 5642:
-			await iformation.random_sphere(v3, math.random(10.0, 60.0), 0)
-			_pc = 5785
-			continue
-		elif _pc == 5690:
-			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v3, _pog_clone("Donauworth L-Point"))))
-			_pc = 5816
-			continue
-		elif _pc == 5735:
-			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v3, _pog_clone("Pepin L-Point"))))
-			_pc = 5816
-			continue
-		elif _pc == 5780:
-			_pc = 5816
-			continue
-		elif _pc == 5785:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 5808
-				continue
-			else:
-				_pc = 5690
-				continue
-		elif _pc == 5808:
-			if not _pog_is_null(1):
-				_pc = 5816
-				continue
-			else:
-				_pc = 5735
-				continue
-		elif _pc == 5816:
-			if v8 <= 0:
-				_pc = 5828
-				continue
-			else:
-				_pc = 5392
-				continue
-		elif _pc == 5828:
-			_pog_detach(_pog_spawn(local_4840.bind(group.nth_sim(v1, 0), _pog_clone("Pepin L-Point"), v0)))
-			await iconversation.one_liner(0, "name_clay", "a3_m08_dialogue_clay_i_reckon_weve")
-			iobjectives.add("a3_m08_objectives_save")
-			_pog_detach(_pog_spawn(local_4395.bind(v0)))
-			return
-		else:
-			return 0
+		await iformation.random_sphere(v3, math.random(10.0, 60.0), 0)
+		match math.random_int(0, 1):
+			0:
+				_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v3, _pog_clone("Donauworth L-Point"))))
+			1:
+				_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v3, _pog_clone("Pepin L-Point"))))
+		if not (v8 > 0):
+			break
+	_pog_detach(_pog_spawn(local_4840.bind(group.nth_sim(v1, 0), _pog_clone("Pepin L-Point"), v0)))
+	await iconversation.one_liner(0, "name_clay", "a3_m08_dialogue_clay_i_reckon_weve")
+	iobjectives.add("a3_m08_objectives_save")
+	_pog_detach(_pog_spawn(local_4395.bind(v0)))
+	return
 	return 0
 
 func local_5970() -> Variant:
@@ -741,78 +682,26 @@ func local_10945(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 10945
-	while true:
-		if _pc == 10945:
-			v1 = group.create()
-			v3 = 8
-			v4 = 0
-			_pc = 10984
-			continue
-		elif _pc == 10984:
-			if v4 < v3:
-				_pc = 11000
-				continue
-			else:
-				_pc = 11204
-				continue
-		elif _pc == 11000:
-			_pc = 11121
-			continue
-		elif _pc == 11005:
-			v2 = sim.create("ini:/sims/inert/debris1", "a3_m08_name_debris")
-			_pc = 11162
-			continue
-		elif _pc == 11042:
-			v2 = sim.create("ini:/sims/inert/debris2", "a3_m08_name_debris")
-			_pc = 11162
-			continue
-		elif _pc == 11079:
-			v2 = sim.create("ini:/sims/inert/debris3", "a3_m08_name_debris")
-			_pc = 11162
-			continue
-		elif _pc == 11116:
-			_pc = 11162
-			continue
-		elif _pc == 11121:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 11145
-				continue
-			else:
-				_pc = 11005
-				continue
-		elif _pc == 11145:
-			if not _pog_is_null(1):
-				_pc = 11153
-				continue
-			else:
-				_pc = 11042
-				continue
-		elif _pc == 11153:
-			if not _pog_is_null(2):
-				_pc = 11162
-				continue
-			else:
-				_pc = 11079
-				continue
-		elif _pc == 11162:
-			group.add_sim(v1, v2)
-			v4 = v4 + 1
-			_pc = 10984
-			continue
-		elif _pc == 11204:
-			v2 = iship.create("ini:/sims/ships/utility/puffin", "a3_m08_name_flambe")
-			isim.set_mission_critical(isim.cast(v2), 1)
-			group.add_sim(v1, v2)
-			sim.place_relative_to(group.leader(v1), v0, 1300.0, 1000.0, -1000.0)
-			await iformation.random_sphere(v1, 500.0, 1)
-			await iformation.jiggle(v1, 100.0, 10.0)
-			return v1
-		elif _pc == 11409:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v3 = 8
+	v4 = 0
+	while v4 < v3:
+		match math.random_int(0, 2):
+			0:
+				v2 = sim.create("ini:/sims/inert/debris1", "a3_m08_name_debris")
+			1:
+				v2 = sim.create("ini:/sims/inert/debris2", "a3_m08_name_debris")
+			2:
+				v2 = sim.create("ini:/sims/inert/debris3", "a3_m08_name_debris")
+		group.add_sim(v1, v2)
+		v4 = v4 + 1
+	v2 = iship.create("ini:/sims/ships/utility/puffin", "a3_m08_name_flambe")
+	isim.set_mission_critical(isim.cast(v2), 1)
+	group.add_sim(v1, v2)
+	sim.place_relative_to(group.leader(v1), v0, 1300.0, 1000.0, -1000.0)
+	await iformation.random_sphere(v1, 500.0, 1)
+	await iformation.jiggle(v1, 100.0, 10.0)
+	return v1
 	return 0
 
 func local_11411(v0) -> Variant:

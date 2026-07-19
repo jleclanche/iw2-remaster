@@ -666,182 +666,62 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	var _pc: int = 10588
-	while true:
-		if _pc == 10588:
-			v10 = ifaction.find("Marauders")
-			v11 = ifaction.find("League")
-			v12 = 5000.0
-			v13 = 20000.0
-			v14 = 5000.0
-			v15 = 30000.0
-			v17 = 0
-			v18 = ""
-			if group.sim_count(v2) < v3:
-				_pc = 10735
-				continue
-			else:
-				_pc = 12115
-				continue
-		elif _pc == 10735:
-			_pc = 10762
-			continue
-		elif _pc == 10741:
+	v10 = ifaction.find("Marauders")
+	v11 = ifaction.find("League")
+	v12 = 5000.0
+	v13 = 20000.0
+	v14 = 5000.0
+	v15 = 30000.0
+	v17 = 0
+	v18 = ""
+	if group.sim_count(v2) < v3:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission26.add_more_ships: Adding Marauder ship, ship type = ")
-			_pc = 10762
-			continue
-		elif _pc == 10762:
-			v16 = math.random_int(1, 4)
-			_pc = 10965
-			continue
-		elif _pc == 10789:
-			_pc = 10815
-			continue
-		elif _pc == 10794:
-			debug.print_string("Cutter")
-			_pc = 10815
-			continue
-		elif _pc == 10815:
-			v18 = "ini:/sims/ships/marauder/marauder_cutter"
-			_pc = 11005
-			continue
-		elif _pc == 10833:
-			_pc = 10859
-			continue
-		elif _pc == 10838:
-			debug.print_string("Fast Attack")
-			_pc = 10859
-			continue
-		elif _pc == 10859:
-			v18 = "ini:/sims/ships/marauder/marauder_cutter_weak"
-			_pc = 11005
-			continue
-		elif _pc == 10877:
-			_pc = 10903
-			continue
-		elif _pc == 10882:
-			debug.print_string("Fighter")
-			_pc = 10903
-			continue
-		elif _pc == 10903:
-			v18 = "ini:/sims/ships/marauder/fighter"
-			_pc = 11005
-			continue
-		elif _pc == 10921:
-			_pc = 10947
-			continue
-		elif _pc == 10926:
-			debug.print_string("Interceptor")
-			_pc = 10947
-			continue
-		elif _pc == 10947:
-			v18 = "ini:/sims/ships/marauder/fighter"
-			_pc = 11005
-			continue
-		elif _pc == 10965:
-			if 1 != v16:
-				_pc = 10978
-				continue
-			else:
-				_pc = 10789
-				continue
-		elif _pc == 10978:
-			if 2 != v16:
-				_pc = 10987
-				continue
-			else:
-				_pc = 10833
-				continue
-		elif _pc == 10987:
-			if 3 != v16:
-				_pc = 10996
-				continue
-			else:
-				_pc = 10877
-				continue
-		elif _pc == 10996:
-			if 4 != v16:
-				_pc = 11005
-				continue
-			else:
-				_pc = 10921
-				continue
-		elif _pc == 11005:
-			_pc = 11031
-			continue
-		elif _pc == 11010:
+		v16 = math.random_int(1, 4)
+		match v16:
+			1:
+				if PogRuntime.TRACE:
+					debug.print_string("Cutter")
+				v18 = "ini:/sims/ships/marauder/marauder_cutter"
+			2:
+				if PogRuntime.TRACE:
+					debug.print_string("Fast Attack")
+				v18 = "ini:/sims/ships/marauder/marauder_cutter_weak"
+			3:
+				if PogRuntime.TRACE:
+					debug.print_string("Fighter")
+				v18 = "ini:/sims/ships/marauder/fighter"
+			4:
+				if PogRuntime.TRACE:
+					debug.print_string("Interceptor")
+				v18 = "ini:/sims/ships/marauder/fighter"
+		if PogRuntime.TRACE:
 			debug.print_string(", wingmen = ")
-			_pc = 11031
-			continue
-		elif _pc == 11031:
-			_pc = 11055
-			continue
-		elif _pc == 11036:
+		if PogRuntime.TRACE:
 			debug.print_int(v17)
-			_pc = 11055
-			continue
-		elif _pc == 11055:
-			_pc = 11081
-			continue
-		elif _pc == 11060:
+		if PogRuntime.TRACE:
 			debug.print_string("\n")
-			_pc = 11081
-			continue
-		elif _pc == 11081:
-			v6 = iship.create(v18, await ishipcreation.ship_name("Marauders", -1))
-			await ipilotsetup.marauder(v6)
-			isim.set_faction(v6, v10)
-			group.add_sim(v2, v6)
-			sim.set_cullable(v6, 0)
-			v17 = math.random_int(0, 2)
-			if sim.distance_between(v1, v0) > v13:
-				_pc = 11272
-				continue
-			else:
-				_pc = 11330
-				continue
-		elif _pc == 11272:
+		v6 = iship.create(v18, await ishipcreation.ship_name("Marauders", -1))
+		await ipilotsetup.marauder(v6)
+		isim.set_faction(v6, v10)
+		group.add_sim(v2, v6)
+		sim.set_cullable(v6, 0)
+		v17 = math.random_int(0, 2)
+		if sim.distance_between(v1, v0) > v13:
 			sim.place_near(v6, v0, v14)
 			iai.give_attack_order(v6, v4)
-			_pc = 11441
-			continue
-		elif _pc == 11330:
+		else:
 			sim.place_near(v6, v0, v15)
 			sim.point_at(v6, v0)
 			sim.set_velocity(v6, 0.0, 0.0, 1000.0)
 			iai.give_approach_order(v6, v0)
-			_pc = 11441
-			continue
-		elif _pc == 11441:
-			if math.random_int(0, 9) == 1:
-				_pc = 11464
-				continue
-			else:
-				_pc = 11493
-				continue
-		elif _pc == 11464:
+		if math.random_int(0, 9) == 1:
 			iai.give_attack_order(v6, v1)
-			_pc = 11527
-			continue
-		elif _pc == 11493:
+		else:
 			_pog_spawn(local_13482.bind(v6, v0, v12, v4))
-			_pc = 11527
-			continue
-		elif _pc == 11527:
-			if v17 > 0:
-				_pc = 11539
-				continue
-			else:
-				_pc = 12115
-				continue
-		elif _pc == 11539:
-			_pc = 11565
-			continue
-		elif _pc == 11544:
-			debug.print_string("iAct2Mission26.add_more_ships: Adding Marauder Wingman-1\n")
-			_pc = 11565
-			continue
-		elif _pc == 11565:
+		if v17 > 0:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission26.add_more_ships: Adding Marauder Wingman-1\n")
 			v7 = iship.create(v18, await ishipcreation.ship_name("Marauders", -1))
 			await ipilotsetup.marauder(v7)
 			isim.set_faction(v7, v10)
@@ -851,217 +731,84 @@ func local_10588(v0, v1, v2, v3, v4, v5) -> Variant:
 			iai.give_escort_order(v7, v6, -75.0, -75.0, 0.0, 1500.0)
 			_pog_spawn(local_13840.bind(v7, v6, v0, v12, v4))
 			if v17 > 1:
-				_pc = 11833
-				continue
-			else:
-				_pc = 12115
-				continue
-		elif _pc == 11833:
-			_pc = 11859
-			continue
-		elif _pc == 11838:
-			debug.print_string("iAct2Mission26.add_more_ships: Adding Marauder Wingman-2\n")
-			_pc = 11859
-			continue
-		elif _pc == 11859:
-			v8 = iship.create(v18, await ishipcreation.ship_name("Marauders", -1))
-			await ipilotsetup.marauder(v8)
-			isim.set_faction(v8, v10)
-			group.add_sim(v2, v8)
-			sim.set_cullable(v8, 0)
-			sim.place_relative_to(v8, v6, 75.0, -75.0, 0.0)
-			iai.give_escort_order(v8, v6, 75.0, -75.0, 0.0, 1500.0)
-			_pog_spawn(local_13840.bind(v8, v6, v0, v12, v4))
-			_pc = 12115
-			continue
-		elif _pc == 12115:
-			if group.sim_count(v4) < v5:
-				_pc = 12144
-				continue
-			else:
-				_pc = 13472
-				continue
-		elif _pc == 12144:
-			_pc = 12171
-			continue
-		elif _pc == 12150:
-			debug.print_string("iAct2Mission26.add_more_ships: Adding League ship, ship type = ")
-			_pc = 12171
-			continue
-		elif _pc == 12171:
-			v16 = math.random_int(1, 4)
-			_pc = 12374
-			continue
-		elif _pc == 12198:
-			_pc = 12224
-			continue
-		elif _pc == 12203:
-			debug.print_string("Heavy Corvette")
-			_pc = 12224
-			continue
-		elif _pc == 12224:
+				if PogRuntime.TRACE:
+					debug.print_string("iAct2Mission26.add_more_ships: Adding Marauder Wingman-2\n")
+				v8 = iship.create(v18, await ishipcreation.ship_name("Marauders", -1))
+				await ipilotsetup.marauder(v8)
+				isim.set_faction(v8, v10)
+				group.add_sim(v2, v8)
+				sim.set_cullable(v8, 0)
+				sim.place_relative_to(v8, v6, 75.0, -75.0, 0.0)
+				iai.give_escort_order(v8, v6, 75.0, -75.0, 0.0, 1500.0)
+				_pog_spawn(local_13840.bind(v8, v6, v0, v12, v4))
+	if group.sim_count(v4) >= v5:
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission26.add_more_ships: Adding League ship, ship type = ")
+	v16 = math.random_int(1, 4)
+	match v16:
+		1:
+			if PogRuntime.TRACE:
+				debug.print_string("Heavy Corvette")
 			v18 = "ini:/sims/ships/navy/heavy_corvette_mk2"
-			_pc = 12414
-			continue
-		elif _pc == 12242:
-			_pc = 12268
-			continue
-		elif _pc == 12247:
-			debug.print_string("Patcom")
-			_pc = 12268
-			continue
-		elif _pc == 12268:
+		2:
+			if PogRuntime.TRACE:
+				debug.print_string("Patcom")
 			v18 = "ini:/sims/ships/navy/patcom"
-			_pc = 12414
-			continue
-		elif _pc == 12286:
-			_pc = 12312
-			continue
-		elif _pc == 12291:
-			debug.print_string("Tug")
-			_pc = 12312
-			continue
-		elif _pc == 12312:
+		3:
+			if PogRuntime.TRACE:
+				debug.print_string("Tug")
 			v18 = "ini:/sims/ships/independent/tug_armed"
-			_pc = 12414
-			continue
-		elif _pc == 12330:
-			_pc = 12356
-			continue
-		elif _pc == 12335:
-			debug.print_string("Old corvette")
-			_pc = 12356
-			continue
-		elif _pc == 12356:
+		4:
+			if PogRuntime.TRACE:
+				debug.print_string("Old corvette")
 			v18 = "ini:/sims/ships/navy/old_corvette"
-			_pc = 12414
-			continue
-		elif _pc == 12374:
-			if 1 != v16:
-				_pc = 12387
-				continue
-			else:
-				_pc = 12198
-				continue
-		elif _pc == 12387:
-			if 2 != v16:
-				_pc = 12396
-				continue
-			else:
-				_pc = 12242
-				continue
-		elif _pc == 12396:
-			if 3 != v16:
-				_pc = 12405
-				continue
-			else:
-				_pc = 12286
-				continue
-		elif _pc == 12405:
-			if 4 != v16:
-				_pc = 12414
-				continue
-			else:
-				_pc = 12330
-				continue
-		elif _pc == 12414:
-			_pc = 12440
-			continue
-		elif _pc == 12419:
-			debug.print_string(", wingmen = ")
-			_pc = 12440
-			continue
-		elif _pc == 12440:
-			_pc = 12464
-			continue
-		elif _pc == 12445:
-			debug.print_int(v17)
-			_pc = 12464
-			continue
-		elif _pc == 12464:
-			_pc = 12490
-			continue
-		elif _pc == 12469:
-			debug.print_string("\n")
-			_pc = 12490
-			continue
-		elif _pc == 12490:
-			v6 = iship.create(v18, await ishipcreation.ship_name("League", -1))
-			await ipilotsetup.marauder(v6)
-			isim.set_faction(v6, v11)
-			group.add_sim(v4, v6)
-			sim.set_cullable(v6, 0)
-			v17 = math.random_int(0, 2)
-			if sim.distance_between(v1, v0) > v13:
-				_pc = 12681
-				continue
-			else:
-				_pc = 12739
-				continue
-		elif _pc == 12681:
-			sim.place_near(v6, v0, v14)
-			iai.give_attack_order(v6, v2)
-			_pc = 12850
-			continue
-		elif _pc == 12739:
-			sim.place_near(v6, v0, v15)
-			sim.point_at(v6, v0)
-			sim.set_velocity(v6, 0.0, 0.0, 1000.0)
-			iai.give_approach_order(v6, v0)
-			_pc = 12850
-			continue
-		elif _pc == 12850:
-			_pog_spawn(local_13482.bind(v6, v0, v12, v2))
-			if v17 > 0:
-				_pc = 12896
-				continue
-			else:
-				_pc = 13472
-				continue
-		elif _pc == 12896:
-			_pc = 12922
-			continue
-		elif _pc == 12901:
-			debug.print_string("iAct2Mission26.add_more_ships: Adding league Wingman-1\n")
-			_pc = 12922
-			continue
-		elif _pc == 12922:
-			v7 = iship.create(v18, await ishipcreation.ship_name("League", -1))
-			await ipilotsetup.marauder(v7)
-			isim.set_faction(v7, v11)
-			group.add_sim(v4, v7)
-			sim.place_relative_to(v7, v6, -75.0, -75.0, 0.0)
-			iai.give_escort_order(v7, v6, -75.0, -75.0, 0.0, 1500.0)
-			sim.set_cullable(v7, 0)
-			_pog_spawn(local_13840.bind(v7, v6, v0, v12, v2))
-			if v17 > 1:
-				_pc = 13190
-				continue
-			else:
-				_pc = 13472
-				continue
-		elif _pc == 13190:
-			_pc = 13216
-			continue
-		elif _pc == 13195:
-			debug.print_string("iAct2Mission26.add_more_ships: Adding league Wingman-2\n")
-			_pc = 13216
-			continue
-		elif _pc == 13216:
-			v8 = iship.create(v18, await ishipcreation.ship_name("League", -1))
-			await ipilotsetup.marauder(v8)
-			isim.set_faction(v8, v11)
-			group.add_sim(v4, v8)
-			sim.set_cullable(v8, 0)
-			sim.place_relative_to(v8, v6, 75.0, -75.0, 0.0)
-			iai.give_escort_order(v8, v6, 75.0, -75.0, 0.0, 1500.0)
-			_pog_spawn(local_13840.bind(v8, v6, v0, v12, v2))
-			_pc = 13472
-			continue
-		elif _pc == 13472:
-			return 0
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string(", wingmen = ")
+	if PogRuntime.TRACE:
+		debug.print_int(v17)
+	if PogRuntime.TRACE:
+		debug.print_string("\n")
+	v6 = iship.create(v18, await ishipcreation.ship_name("League", -1))
+	await ipilotsetup.marauder(v6)
+	isim.set_faction(v6, v11)
+	group.add_sim(v4, v6)
+	sim.set_cullable(v6, 0)
+	v17 = math.random_int(0, 2)
+	if sim.distance_between(v1, v0) > v13:
+		sim.place_near(v6, v0, v14)
+		iai.give_attack_order(v6, v2)
+	else:
+		sim.place_near(v6, v0, v15)
+		sim.point_at(v6, v0)
+		sim.set_velocity(v6, 0.0, 0.0, 1000.0)
+		iai.give_approach_order(v6, v0)
+	_pog_spawn(local_13482.bind(v6, v0, v12, v2))
+	if v17 <= 0:
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission26.add_more_ships: Adding league Wingman-1\n")
+	v7 = iship.create(v18, await ishipcreation.ship_name("League", -1))
+	await ipilotsetup.marauder(v7)
+	isim.set_faction(v7, v11)
+	group.add_sim(v4, v7)
+	sim.place_relative_to(v7, v6, -75.0, -75.0, 0.0)
+	iai.give_escort_order(v7, v6, -75.0, -75.0, 0.0, 1500.0)
+	sim.set_cullable(v7, 0)
+	_pog_spawn(local_13840.bind(v7, v6, v0, v12, v2))
+	if v17 <= 1:
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission26.add_more_ships: Adding league Wingman-2\n")
+	v8 = iship.create(v18, await ishipcreation.ship_name("League", -1))
+	await ipilotsetup.marauder(v8)
+	isim.set_faction(v8, v11)
+	group.add_sim(v4, v8)
+	sim.set_cullable(v8, 0)
+	sim.place_relative_to(v8, v6, 75.0, -75.0, 0.0)
+	iai.give_escort_order(v8, v6, 75.0, -75.0, 0.0, 1500.0)
+	_pog_spawn(local_13840.bind(v8, v6, v0, v12, v2))
+	return 0
 	return 0
 
 func local_13482(v0, v1, v2, v3) -> Variant:

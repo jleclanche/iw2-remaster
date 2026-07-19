@@ -1692,108 +1692,52 @@ func local_14623(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 14623
-	while true:
-		if _pc == 14623:
-			v2 = self
-			v6 = ifaction.find("Aliens")
-			v7 = 800000000
-			v3 = iship.create(await ishipcreation.get_ship(1, 2), await ishipcreation.ship_name("General", -1))
-			isim.set_faction(v3, v6)
-			sim.set_cullable(v3, 0)
-			v4 = iship.create("ini:/sims/ships/aliens/alien", "name_alien")
-			sim.set_cullable(v4, 0)
-			object.set_float_property(v4, "radius", 0.10000000149011612)
-			isim.set_faction(v4, v6)
-			await ipilotsetup.generic_cargo_pod(v4)
-			v5 = iship.create("ini:/sims/ships/aliens/alien", "name_alien")
-			sim.set_cullable(v5, 0)
-			object.set_float_property(v5, "radius", 0.10000000149011612)
-			isim.set_faction(v5, v6)
-			await ipilotsetup.generic_cargo_pod(v5)
-			isim.capsule_jump(v3, v0)
-			isim.set_alien_infection_damage(v3, 10.0)
-			isim.alien_infection_effect(v3, 1)
-			await _pog_wait(2.0)
-			iship.set_free_without_pilot(v3, 1)
-			sim.set_angular_velocity_euler(v3, math.random(-50.0, 50.0), math.random(-50.0, 50.0), math.random(-50.0, 50.0))
-			await _pog_wait(2.0)
-			if sim.is_alive(v3):
-				_pc = 15294
-				continue
-			else:
-				_pc = 15592
-				continue
-		elif _pc == 15294:
-			sim.place_at(v4, v3)
-			sim.attach_child(v3, v4)
-			sim.detach_child(v3, v4)
-			_pog_spawn(local_14420.bind(v4))
-			_pog_detach(_pog_spawn(local_2165.bind(v4, v1)))
-			await _pog_wait(math.random(1.0, 5.0))
-			sim.place_at(v5, v3)
-			sim.attach_child(v3, v5)
-			sim.detach_child(v3, v5)
-			_pog_spawn(local_14420.bind(v5))
-			_pog_detach(_pog_spawn(local_2165.bind(v5, v1)))
-			_pc = 15592
-			continue
-		elif _pc == 15592:
-			_pc = 15750
-			continue
-		elif _pc == 15597:
+	v2 = self
+	v6 = ifaction.find("Aliens")
+	v7 = 800000000
+	v3 = iship.create(await ishipcreation.get_ship(1, 2), await ishipcreation.ship_name("General", -1))
+	isim.set_faction(v3, v6)
+	sim.set_cullable(v3, 0)
+	v4 = iship.create("ini:/sims/ships/aliens/alien", "name_alien")
+	sim.set_cullable(v4, 0)
+	object.set_float_property(v4, "radius", 0.10000000149011612)
+	isim.set_faction(v4, v6)
+	await ipilotsetup.generic_cargo_pod(v4)
+	v5 = iship.create("ini:/sims/ships/aliens/alien", "name_alien")
+	sim.set_cullable(v5, 0)
+	object.set_float_property(v5, "radius", 0.10000000149011612)
+	isim.set_faction(v5, v6)
+	await ipilotsetup.generic_cargo_pod(v5)
+	isim.capsule_jump(v3, v0)
+	isim.set_alien_infection_damage(v3, 10.0)
+	isim.alien_infection_effect(v3, 1)
+	await _pog_wait(2.0)
+	iship.set_free_without_pilot(v3, 1)
+	sim.set_angular_velocity_euler(v3, math.random(-50.0, 50.0), math.random(-50.0, 50.0), math.random(-50.0, 50.0))
+	await _pog_wait(2.0)
+	if sim.is_alive(v3):
+		sim.place_at(v4, v3)
+		sim.attach_child(v3, v4)
+		sim.detach_child(v3, v4)
+		_pog_spawn(local_14420.bind(v4))
+		_pog_detach(_pog_spawn(local_2165.bind(v4, v1)))
+		await _pog_wait(math.random(1.0, 5.0))
+		sim.place_at(v5, v3)
+		sim.attach_child(v3, v5)
+		sim.detach_child(v3, v5)
+		_pog_spawn(local_14420.bind(v5))
+		_pog_detach(_pog_spawn(local_2165.bind(v5, v1)))
+	match math.random_int(0, 3):
+		0:
 			await iconversation.one_liner(v3, "", "a3_master_dialogue_infected_male_scream")
-			_pc = 15800
-			continue
-		elif _pc == 15634:
+		1:
 			await iconversation.one_liner(v3, "", "a3_master_dialogue_infected_female_scream")
-			_pc = 15800
-			continue
-		elif _pc == 15671:
+		2:
 			await iconversation.one_liner(v3, "", "a3_master_dialogue_infected_female_begging")
-			_pc = 15800
-			continue
-		elif _pc == 15708:
+		3:
 			await iconversation.one_liner(v3, "", "a3_master_dialogue_infected_male_no_you_bastards")
-			_pc = 15800
-			continue
-		elif _pc == 15745:
-			_pc = 15800
-			continue
-		elif _pc == 15750:
-			math.random_int(0, 3)
-			if not _pog_is_null(math.random_int(0, 3)):
-				_pc = 15774
-				continue
-			else:
-				_pc = 15597
-				continue
-		elif _pc == 15774:
-			if not _pog_is_null(1):
-				_pc = 15782
-				continue
-			else:
-				_pc = 15634
-				continue
-		elif _pc == 15782:
-			if not _pog_is_null(2):
-				_pc = 15791
-				continue
-			else:
-				_pc = 15671
-				continue
-		elif _pc == 15791:
-			if not _pog_is_null(3):
-				_pc = 15800
-				continue
-			else:
-				_pc = 15708
-				continue
-		elif _pc == 15800:
-			iship.set_free_without_pilot(v3, 0)
-			return 0
-		else:
-			return 0
+	iship.set_free_without_pilot(v3, 0)
+	return 0
 	return 0
 
 func local_15823(v0) -> Variant:
@@ -1873,69 +1817,26 @@ func local_16340(v0) -> Variant:
 
 func local_17110(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 17110
-	while true:
-		if _pc == 17110:
-			v1 = iship.find_player_ship()
-			await _pog_wait(15.0)
-			if sim.distance_between(v1, v0) < 70000.0:
-				_pc = 17200
-				continue
-			else:
-				_pc = 17570
-				continue
-		elif _pc == 17200:
-			await iconversation.begin()
-			await iconversation.say(v0, "", "a3_master_dialogue_defender_1_hey_cal")
-			await iconversation.say(0, "name_cal", "a3_master_dialogue_cal_thanks")
-			await iconversation.add_response("a3_master_text_cal_it_will_work", "a3_master_dialogue_cal_it_will_work")
-			await iconversation.add_response("a3_master_text_cal_no_but_we_can_save", "a3_master_dialogue_cal_no_but_we_can_save")
-			await iconversation.add_response("a3_master_text_cal_we_are_toast", "a3_master_dialogue_cal_we_are_toast")
-			_pc = 17499
-			continue
-		elif _pc == 17360:
+	v1 = iship.find_player_ship()
+	await _pog_wait(15.0)
+	if sim.distance_between(v1, v0) >= 70000.0:
+		return
+	await iconversation.begin()
+	await iconversation.say(v0, "", "a3_master_dialogue_defender_1_hey_cal")
+	await iconversation.say(0, "name_cal", "a3_master_dialogue_cal_thanks")
+	await iconversation.add_response("a3_master_text_cal_it_will_work", "a3_master_dialogue_cal_it_will_work")
+	await iconversation.add_response("a3_master_text_cal_no_but_we_can_save", "a3_master_dialogue_cal_no_but_we_can_save")
+	await iconversation.add_response("a3_master_text_cal_we_are_toast", "a3_master_dialogue_cal_we_are_toast")
+	match await iconversation.ask(v0, "", "a3_master_dialogue_defender_1_is_this_going_to_work"):
+		1:
 			await iconversation.say(v0, "", "a3_master_dialogue_defender_1_yeah_youre_right")
-			_pc = 17556
-			continue
-		elif _pc == 17397:
+		2:
 			await iconversation.say(v0, "", "a3_master_dialogue_defender_1_i_think_id_rather_live")
-			_pc = 17556
-			continue
-		elif _pc == 17434:
+		3:
 			await iconversation.say(v0, "", "a3_master_dialogue_defender_1_christ_cal_cheer_me_up")
 			await iconversation.say(0, "name_cal", "a3_master_dialogue_cal_no_choice")
-			_pc = 17556
-			continue
-		elif _pc == 17499:
-			await iconversation.ask(v0, "", "a3_master_dialogue_defender_1_is_this_going_to_work")
-			if 1 != await iconversation.ask(v0, "", "a3_master_dialogue_defender_1_is_this_going_to_work"):
-				_pc = 17538
-				continue
-			else:
-				_pc = 17360
-				continue
-		elif _pc == 17538:
-			if not _pog_is_null(2):
-				_pc = 17547
-				continue
-			else:
-				_pc = 17397
-				continue
-		elif _pc == 17547:
-			if not _pog_is_null(3):
-				_pc = 17556
-				continue
-			else:
-				_pc = 17434
-				continue
-		elif _pc == 17556:
-			await iconversation.end()
-			_pc = 17570
-			continue
-		elif _pc == 17570:
-			return
-		else:
-			return 0
+	await iconversation.end()
+	return
 	return 0
 
 func place_defences_gunstars() -> Variant:
@@ -2802,652 +2703,213 @@ func master_script() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 29120
-	while true:
-		if _pc == 29120:
-			v0 = self
-			v3 = state.find(v0)
-			if not (v3):
-				_pc = 29179
-				continue
-			else:
-				_pc = 29204
-				continue
-		elif _pc == 29179:
-			v3 = state.create(v0, 0)
-			_pc = 29204
-			continue
-		elif _pc == 29204:
-			if await iutilities.skip_act("Act Three: The Edge of Chaos", 3):
-				_pc = 29231
-				continue
-			else:
-				_pc = 29298
-				continue
-		elif _pc == 29231:
-			await local_26261()
-			state.destroy(self)
-			await iutilities.release_error("THE END!")
-			_pc = 32631
-			continue
-		elif _pc == 29298:
-			_pc = 29324
-			continue
-		elif _pc == 29303:
+	v0 = self
+	v3 = state.find(v0)
+	if not (v3):
+		v3 = state.create(v0, 0)
+	if await iutilities.skip_act("Act Three: The Edge of Chaos", 3):
+		await local_26261()
+		state.destroy(self)
+		await iutilities.release_error("THE END!")
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("iChapterOne.PiracyRatingTracker - Commencing Act Two Chapter Script.\n")
-			_pc = 29324
-			continue
-		elif _pc == 29324:
-			_pc = 32435
-			continue
-		elif _pc == 29329:
-			await local_27540()
-			await iutilities.send_story_element("g_story_3.10", 3, 1)
-			await iutilities.send_story_element("g_story_3.20", 3, 1)
-			v1 = _pog_spawn(coyote_security.bind())
-			await iact3mission01.main()
-			state.set_progress(v3, 1)
-			_pc = 29444
-			continue
-		elif _pc == 29444:
-			_pc = 29470
-			continue
-		elif _pc == 29449:
-			debug.print_string("iActThree.MasterScript : waiting for player to complete act 3 mission 01, sleeping\n")
-			_pc = 29470
-			continue
-		elif _pc == 29470:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_corporates_on_run_complete")):
-				_pc = 29529
-				continue
-			else:
-				_pc = 29444
-				continue
-		elif _pc == 29529:
-			await iutilities.send_story_element("g_story_3.30", 3, 2)
-			state.set_progress(v3, 2)
-			_pc = 29575
-			continue
-		elif _pc == 29575:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 29602
-				continue
-			else:
-				_pc = 29687
-				continue
-		elif _pc == 29602:
-			_pc = 29628
-			continue
-		elif _pc == 29607:
-			debug.print_string("iActThree.MasterScript : waiting for the player to receive story sequence S3.30, sleeping\n")
-			_pc = 29628
-			continue
-		elif _pc == 29628:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_player_aware_of_corporates")):
-				_pc = 29687
-				continue
-			else:
-				_pc = 29602
-				continue
-		elif _pc == 29687:
-			iemail.send_email("a1_master_stepsons_mail_sender", "a2_master_story2.290_mail_subject", "html:/text/act_3/War_mail_2", 1)
-			await iact3mission02.main()
-			state.set_progress(v3, 3)
-			_pc = 29756
-			continue
-		elif _pc == 29756:
-			_pc = 29782
-			continue
-		elif _pc == 29761:
-			debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 02, sleeping \n")
-			_pc = 29782
-			continue
-		elif _pc == 29782:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_clash_of_titans_complete")):
-				_pc = 29841
-				continue
-			else:
-				_pc = 29756
-				continue
-		elif _pc == 29841:
-			await iutilities.send_story_element("g_story_3.50", 3, 3)
-			global.set_bool("g_act3_corporates_left_coyote", 1)
-			await local_28499()
-			state.set_progress(v3, 4)
-			_pc = 29923
-			continue
-		elif _pc == 29923:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 29950
-				continue
-			else:
-				_pc = 30035
-				continue
-		elif _pc == 29950:
-			_pc = 29976
-			continue
-		elif _pc == 29955:
-			debug.print_string("iActThree.MasterScript : waiting to find out that the corporates have left Coyote, sleeping\n")
-			_pc = 29976
-			continue
-		elif _pc == 29976:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_corporates_left_coyote")):
-				_pc = 30035
-				continue
-			else:
-				_pc = 29950
-				continue
-		elif _pc == 30035:
-			await iact3mission03.main()
-			state.set_progress(v3, 5)
-			_pc = 30070
-			continue
-		elif _pc == 30070:
-			_pc = 30096
-			continue
-		elif _pc == 30075:
-			debug.print_string("iActThree.MasterScript - waiting for player to finish act 03 mission 03 - scavenger, sleeping\n")
-			_pc = 30096
-			continue
-		elif _pc == 30096:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_scavenger_mission_complete")):
-				_pc = 30155
-				continue
-			else:
-				_pc = 30070
-				continue
-		elif _pc == 30155:
-			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 607, 1, 44, 3, 2))
-			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 250, 1, 59, 2, 1))
-			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 575, 1, 56, 1, 3))
-			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 554, 1, 55, 1, 4))
-			await iact3mission04.main()
-			state.set_progress(v3, 6)
-			_pc = 30415
-			continue
-		elif _pc == 30415:
-			_pc = 30441
-			continue
-		elif _pc == 30420:
-			debug.print_string("iActThree.MasterScript : waiting for the player to complete act 03 mision 04 - capture the accelerator, sleeping\n ")
-			_pc = 30441
-			continue
-		elif _pc == 30441:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_capture_accelerator_complete")):
-				_pc = 30500
-				continue
-			else:
-				_pc = 30415
-				continue
-		elif _pc == 30500:
-			await iutilities.send_story_element("g_story_3.70", 3, 0)
-			await iutilities.send_story_element("g_story_3.75", 3, 0)
-			state.set_progress(v3, 7)
-			_pc = 30569
-			continue
-		elif _pc == 30569:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 30596
-				continue
-			else:
-				_pc = 30693
-				continue
-		elif _pc == 30596:
-			_pc = 30622
-			continue
-		elif _pc == 30601:
-			debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.75 - player base moved, sleeping ")
-			_pc = 30622
-			continue
-		elif _pc == 30622:
-			await _pog_wait(1.0)
-			if iemail.read(iemail.find("html:/text/act_3/act3_master_hoffermail_3_75")):
-				_pc = 30693
-				continue
-			else:
-				_pc = 30596
-				continue
-		elif _pc == 30693:
-			await local_1729()
-			state.set_progress(v3, 8)
-			_pc = 30728
-			continue
-		elif _pc == 30728:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 30755
-				continue
-			else:
-				_pc = 30840
-				continue
-		elif _pc == 30755:
-			_pc = 30781
-			continue
-		elif _pc == 30760:
-			debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.70, sleeping ")
-			_pc = 30781
-			continue
-		elif _pc == 30781:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_badlands_captiualted")):
-				_pc = 30840
-				continue
-			else:
-				_pc = 30755
-				continue
-		elif _pc == 30840:
-			await iutilities.send_story_element("g_story_3.80", 3, 5)
-			await iact3mission05.main()
-			state.set_progress(v3, 9)
-			_pc = 30900
-			continue
-		elif _pc == 30900:
-			_pc = 30926
-			continue
-		elif _pc == 30905:
-			debug.print_string("iActThree.MasterScript : Waiting for the player to finish act 03 mission 05 - deep cover, sleeping\n")
-			_pc = 30926
-			continue
-		elif _pc == 30926:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_deep_cover_completed")):
-				_pc = 30985
-				continue
-			else:
-				_pc = 30900
-				continue
-		elif _pc == 30985:
-			await iutilities.send_story_element("g_story_3.90", 3, 6)
-			await iact3mission06.main()
-			state.set_progress(v3, 10)
-			_pc = 31045
-			continue
-		elif _pc == 31045:
-			_pc = 31071
-			continue
-		elif _pc == 31050:
-			debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 06 - smokescreen, sleeping \n")
-			_pc = 31071
-			continue
-		elif _pc == 31071:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_smokescreen_mission_complete")):
-				_pc = 31130
-				continue
-			else:
-				_pc = 31045
-				continue
-		elif _pc == 31130:
-			await iutilities.send_story_element("g_story_3.100", 3, 8)
-			await iutilities.send_story_element("g_story_3.110", 3, 8)
-			await iact3mission08.main()
-			state.set_progress(v3, 13)
-			_pc = 31215
-			continue
-		elif _pc == 31215:
-			_pc = 31241
-			continue
-		elif _pc == 31220:
-			debug.print_string("iActThree.MasterScript : waiting for plater to finish act 03 mission 08 - rescue hoffer, sleeping")
-			_pc = 31241
-			continue
-		elif _pc == 31241:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_rescue_hoffer_complete")):
-				_pc = 31300
-				continue
-			else:
-				_pc = 31215
-				continue
-		elif _pc == 31300:
-			global.create_bool("g_disable_traffic_monitor", 1, 1)
-			await ifactionscript.set_neutral_factions()
-			_pc = 31337
-			continue
-		elif _pc == 31337:
-			_pog_spawn(iexodustraffic.exodus_traffic_generator.bind())
-			await iutilities.send_story_element("g_story_3.140", 3, 9)
-			state.set_progress(v3, 15)
-			_pc = 31397
-			continue
-		elif _pc == 31397:
-			_pc = 31423
-			continue
-		elif _pc == 31402:
-			debug.print_string("iActThree.MasterScript - progress marker 14\n")
-			_pc = 31423
-			continue
-		elif _pc == 31423:
-			await iact3mission09.main()
-			state.set_progress(v3, 16)
-			_pc = 31458
-			continue
-		elif _pc == 31458:
-			_pc = 31484
-			continue
-		elif _pc == 31463:
-			debug.print_string("iActThree.MasterScript - progress marker 15\n")
-			_pc = 31484
-			continue
-		elif _pc == 31484:
-			_pc = 31510
-			continue
-		elif _pc == 31489:
-			debug.print_string("iActThree.MasterScript - waitinig for player to finish act 03 mission 09 - antimatter cordon, sleeping\n")
-			_pc = 31510
-			continue
-		elif _pc == 31510:
-			await _pog_wait(2.0)
-			if not _pog_is_null(global.pog_bool("g_act3_antimatter_cordon_complete")):
-				_pc = 31569
-				continue
-			else:
-				_pc = 31484
-				continue
-		elif _pc == 31569:
-			await local_5572()
-			state.set_progress(v3, 17)
-			_pc = 31604
-			continue
-		elif _pc == 31604:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 31631
-				continue
-			else:
-				_pc = 31645
-				continue
-		elif _pc == 31631:
-			_pog_spawn(event3_40__preparing_the_defences.bind())
-			_pc = 31645
-			continue
-		elif _pc == 31645:
-			state.set_progress(v3, 18)
-			_pc = 31666
-			continue
-		elif _pc == 31666:
-			_pc = 31692
-			continue
-		elif _pc == 31671:
-			debug.print_string("iActThree.MasterScript - progress marker 15b\n")
-			_pc = 31692
-			continue
-		elif _pc == 31692:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 31719
-				continue
-			else:
-				_pc = 31810
-				continue
-		elif _pc == 31719:
-			_pc = 31745
-			continue
-		elif _pc == 31724:
-			debug.print_string("iAct3.MasterScript - Waiting for the player to get the antimatter weapons from smith - Story 3.145 - sleeping.\n")
-			_pc = 31745
-			continue
-		elif _pc == 31745:
-			await _pog_wait(1.0)
-			if global.pog_int("g_story_3.145") == 2:
-				_pc = 31805
-				continue
-			else:
-				_pc = 31719
-				continue
-		elif _pc == 31805:
-			_pc = 31888
-			continue
-		elif _pc == 31810:
-			if not (sim.add_subsim(iship.find_player_ship(), subsim.create("ini:/subsims/systems/player/antimatter_pbc"))):
-				_pc = 31862
-				continue
-			else:
-				_pc = 31888
-				continue
-		elif _pc == 31862:
-			_pc = 31888
-			continue
-		elif _pc == 31867:
-			debug.error("Unable to add antimatter weapons\n")
-			_pc = 31888
-			continue
-		elif _pc == 31888:
-			iloadout.remove_turret_fighters()
-			global.create_int("g_num_hidden_turret_fighters", 2, iinventory.number_of_cargo_type(474))
-			iinventory.remove(474, iinventory.number_of_cargo_type(474))
-			v2 = iinventory.number_of_cargo_type(171)
-			iinventory.remove(171, v2)
-			state.set_progress(v3, 19)
-			_pc = 32039
-			continue
-		elif _pc == 32039:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 32066
-				continue
-			else:
-				_pc = 32080
-				continue
-		elif _pc == 32066:
-			_pog_spawn(event3_50__here_come_the_aliens.bind())
-			_pc = 32080
-			continue
-		elif _pc == 32080:
-			state.set_progress(v3, 20)
-			_pc = 32101
-			continue
-		elif _pc == 32101:
-			_pc = 32127
-			continue
-		elif _pc == 32106:
-			debug.print_string("iActThree.MasterScript - progress marker 15c\n")
-			_pc = 32127
-			continue
-		elif _pc == 32127:
-			if global.pog_bool("g_skip_to_specific") != 1:
-				_pc = 32154
-				continue
-			else:
-				_pc = 32238
-				continue
-		elif _pc == 32154:
-			_pc = 32180
-			continue
-		elif _pc == 32159:
-			debug.print_string("iAct3.MasterScript - Waiting for the last of the refugees to escape - sleeping.\n")
-			_pc = 32180
-			continue
-		elif _pc == 32180:
-			await _pog_wait(1.0)
-			if global.pog_bool("g_act3_ready_for_mission_ten"):
-				_pc = 32238
-				continue
-			else:
-				_pc = 32154
-				continue
-		elif _pc == 32238:
-			await iact3mission10.main()
-			state.set_progress(v3, 21)
-			_pc = 32273
-			continue
-		elif _pc == 32273:
-			_pc = 32299
-			continue
-		elif _pc == 32278:
-			debug.print_string("iActThree.MasterScript - progress marker 16\n")
-			_pc = 32299
-			continue
-		elif _pc == 32299:
-			_pc = 32325
-			continue
-		elif _pc == 32304:
-			debug.print_string("iActThree.MasterScript ; waiting for player to finish the last mission, sleeping\n")
-			_pc = 32325
-			continue
-		elif _pc == 32325:
-			await _pog_wait(10.0)
-			if not _pog_is_null(global.pog_bool("g_act3_the_end_complete")):
-				_pc = 32384
-				continue
-			else:
-				_pc = 32299
-				continue
-		elif _pc == 32384:
-			state.destroy(self)
-			await final_choice()
-			_pc = 32631
-			continue
-		elif _pc == 32430:
-			_pc = 32631
-			continue
-		elif _pc == 32435:
-			state.progress(v3)
-			if not _pog_is_null(state.progress(v3)):
-				_pc = 32461
-				continue
-			else:
-				_pc = 29329
-				continue
-		elif _pc == 32461:
-			if not _pog_is_null(1):
-				_pc = 32469
-				continue
-			else:
-				_pc = 29444
-				continue
-		elif _pc == 32469:
-			if not _pog_is_null(2):
-				_pc = 32478
-				continue
-			else:
-				_pc = 29575
-				continue
-		elif _pc == 32478:
-			if not _pog_is_null(3):
-				_pc = 32487
-				continue
-			else:
-				_pc = 29756
-				continue
-		elif _pc == 32487:
-			if not _pog_is_null(4):
-				_pc = 32496
-				continue
-			else:
-				_pc = 29923
-				continue
-		elif _pc == 32496:
-			if not _pog_is_null(5):
-				_pc = 32505
-				continue
-			else:
-				_pc = 30070
-				continue
-		elif _pc == 32505:
-			if not _pog_is_null(6):
-				_pc = 32514
-				continue
-			else:
-				_pc = 30415
-				continue
-		elif _pc == 32514:
-			if not _pog_is_null(7):
-				_pc = 32523
-				continue
-			else:
-				_pc = 30569
-				continue
-		elif _pc == 32523:
-			if not _pog_is_null(8):
-				_pc = 32532
-				continue
-			else:
-				_pc = 30728
-				continue
-		elif _pc == 32532:
-			if not _pog_is_null(9):
-				_pc = 32541
-				continue
-			else:
-				_pc = 30900
-				continue
-		elif _pc == 32541:
-			if not _pog_is_null(10):
-				_pc = 32550
-				continue
-			else:
-				_pc = 31045
-				continue
-		elif _pc == 32550:
-			if not _pog_is_null(13):
-				_pc = 32559
-				continue
-			else:
-				_pc = 31215
-				continue
-		elif _pc == 32559:
-			if not _pog_is_null(14):
-				_pc = 32568
-				continue
-			else:
-				_pc = 31337
-				continue
-		elif _pc == 32568:
-			if not _pog_is_null(15):
-				_pc = 32577
-				continue
-			else:
-				_pc = 31397
-				continue
-		elif _pc == 32577:
-			if not _pog_is_null(16):
-				_pc = 32586
-				continue
-			else:
-				_pc = 31458
-				continue
-		elif _pc == 32586:
-			if not _pog_is_null(17):
-				_pc = 32595
-				continue
-			else:
-				_pc = 31604
-				continue
-		elif _pc == 32595:
-			if not _pog_is_null(18):
-				_pc = 32604
-				continue
-			else:
-				_pc = 31666
-				continue
-		elif _pc == 32604:
-			if not _pog_is_null(19):
-				_pc = 32613
-				continue
-			else:
-				_pc = 32039
-				continue
-		elif _pc == 32613:
-			if not _pog_is_null(20):
-				_pc = 32622
-				continue
-			else:
-				_pc = 32101
-				continue
-		elif _pc == 32622:
-			if not _pog_is_null(21):
-				_pc = 32631
-				continue
-			else:
-				_pc = 32273
-				continue
-		elif _pc == 32631:
-			return
-		else:
-			return 0
+		match state.progress(v3):
+			0:
+				await local_27540()
+				await iutilities.send_story_element("g_story_3.10", 3, 1)
+				await iutilities.send_story_element("g_story_3.20", 3, 1)
+				v1 = _pog_spawn(coyote_security.bind())
+				await iact3mission01.main()
+				state.set_progress(v3, 1)
+			1:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : waiting for player to complete act 3 mission 01, sleeping\n")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_corporates_on_run_complete"))):
+						break
+				await iutilities.send_story_element("g_story_3.30", 3, 2)
+				state.set_progress(v3, 2)
+			2:
+				if global.pog_bool("g_skip_to_specific") != 1:
+					while true:
+						if PogRuntime.TRACE:
+							debug.print_string("iActThree.MasterScript : waiting for the player to receive story sequence S3.30, sleeping\n")
+						await _pog_wait(2.0)
+						if not (_pog_is_null(global.pog_bool("g_act3_player_aware_of_corporates"))):
+							break
+				iemail.send_email("a1_master_stepsons_mail_sender", "a2_master_story2.290_mail_subject", "html:/text/act_3/War_mail_2", 1)
+				await iact3mission02.main()
+				state.set_progress(v3, 3)
+			3:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 02, sleeping \n")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_clash_of_titans_complete"))):
+						break
+				await iutilities.send_story_element("g_story_3.50", 3, 3)
+				global.set_bool("g_act3_corporates_left_coyote", 1)
+				await local_28499()
+				state.set_progress(v3, 4)
+			4:
+				if global.pog_bool("g_skip_to_specific") != 1:
+					while true:
+						if PogRuntime.TRACE:
+							debug.print_string("iActThree.MasterScript : waiting to find out that the corporates have left Coyote, sleeping\n")
+						await _pog_wait(2.0)
+						if not (_pog_is_null(global.pog_bool("g_act3_corporates_left_coyote"))):
+							break
+				await iact3mission03.main()
+				state.set_progress(v3, 5)
+			5:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript - waiting for player to finish act 03 mission 03 - scavenger, sleeping\n")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_scavenger_mission_complete"))):
+						break
+				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 607, 1, 44, 3, 2))
+				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 250, 1, 59, 2, 1))
+				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 575, 1, 56, 1, 3))
+				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 554, 1, 55, 1, 4))
+				await iact3mission04.main()
+				state.set_progress(v3, 6)
+			6:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : waiting for the player to complete act 03 mision 04 - capture the accelerator, sleeping\n ")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_capture_accelerator_complete"))):
+						break
+				await iutilities.send_story_element("g_story_3.70", 3, 0)
+				await iutilities.send_story_element("g_story_3.75", 3, 0)
+				state.set_progress(v3, 7)
+			7:
+				if global.pog_bool("g_skip_to_specific") != 1:
+					while true:
+						if PogRuntime.TRACE:
+							debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.75 - player base moved, sleeping ")
+						await _pog_wait(1.0)
+						if not (not (iemail.read(iemail.find("html:/text/act_3/act3_master_hoffermail_3_75")))):
+							break
+				await local_1729()
+				state.set_progress(v3, 8)
+			8:
+				if global.pog_bool("g_skip_to_specific") != 1:
+					while true:
+						if PogRuntime.TRACE:
+							debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.70, sleeping ")
+						await _pog_wait(2.0)
+						if not (_pog_is_null(global.pog_bool("g_act3_badlands_captiualted"))):
+							break
+				await iutilities.send_story_element("g_story_3.80", 3, 5)
+				await iact3mission05.main()
+				state.set_progress(v3, 9)
+			9:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : Waiting for the player to finish act 03 mission 05 - deep cover, sleeping\n")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_deep_cover_completed"))):
+						break
+				await iutilities.send_story_element("g_story_3.90", 3, 6)
+				await iact3mission06.main()
+				state.set_progress(v3, 10)
+			10:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 06 - smokescreen, sleeping \n")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_smokescreen_mission_complete"))):
+						break
+				await iutilities.send_story_element("g_story_3.100", 3, 8)
+				await iutilities.send_story_element("g_story_3.110", 3, 8)
+				await iact3mission08.main()
+				state.set_progress(v3, 13)
+			13:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : waiting for plater to finish act 03 mission 08 - rescue hoffer, sleeping")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_rescue_hoffer_complete"))):
+						break
+				global.create_bool("g_disable_traffic_monitor", 1, 1)
+				await ifactionscript.set_neutral_factions()
+			14:
+				_pog_spawn(iexodustraffic.exodus_traffic_generator.bind())
+				await iutilities.send_story_element("g_story_3.140", 3, 9)
+				state.set_progress(v3, 15)
+			15:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript - progress marker 14\n")
+				await iact3mission09.main()
+				state.set_progress(v3, 16)
+			16:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript - progress marker 15\n")
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript - waitinig for player to finish act 03 mission 09 - antimatter cordon, sleeping\n")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_antimatter_cordon_complete"))):
+						break
+				await local_5572()
+				state.set_progress(v3, 17)
+			17:
+				if global.pog_bool("g_skip_to_specific") != 1:
+					_pog_spawn(event3_40__preparing_the_defences.bind())
+				state.set_progress(v3, 18)
+			18:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript - progress marker 15b\n")
+				if global.pog_bool("g_skip_to_specific") != 1:
+					while true:
+						if PogRuntime.TRACE:
+							debug.print_string("iAct3.MasterScript - Waiting for the player to get the antimatter weapons from smith - Story 3.145 - sleeping.\n")
+						await _pog_wait(1.0)
+						if not (global.pog_int("g_story_3.145") != 2):
+							break
+				else:
+					if not (sim.add_subsim(iship.find_player_ship(), subsim.create("ini:/subsims/systems/player/antimatter_pbc"))):
+						if PogRuntime.TRACE:
+							debug.error("Unable to add antimatter weapons\n")
+				iloadout.remove_turret_fighters()
+				global.create_int("g_num_hidden_turret_fighters", 2, iinventory.number_of_cargo_type(474))
+				iinventory.remove(474, iinventory.number_of_cargo_type(474))
+				v2 = iinventory.number_of_cargo_type(171)
+				iinventory.remove(171, v2)
+				state.set_progress(v3, 19)
+			19:
+				if global.pog_bool("g_skip_to_specific") != 1:
+					_pog_spawn(event3_50__here_come_the_aliens.bind())
+				state.set_progress(v3, 20)
+			20:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript - progress marker 15c\n")
+				if global.pog_bool("g_skip_to_specific") != 1:
+					while true:
+						if PogRuntime.TRACE:
+							debug.print_string("iAct3.MasterScript - Waiting for the last of the refugees to escape - sleeping.\n")
+						await _pog_wait(1.0)
+						if not (not (global.pog_bool("g_act3_ready_for_mission_ten"))):
+							break
+				await iact3mission10.main()
+				state.set_progress(v3, 21)
+			21:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript - progress marker 16\n")
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript ; waiting for player to finish the last mission, sleeping\n")
+					await _pog_wait(10.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_the_end_complete"))):
+						break
+				state.destroy(self)
+				await final_choice()
+				return
+	return
 	return 0
 
 func final_choice() -> Variant:

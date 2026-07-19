@@ -792,144 +792,35 @@ func local_14140(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 14140
+	v4 = 0
 	while true:
-		if _pc == 14140:
-			v4 = 0
-			_pc = 14157
-			continue
-		elif _pc == 14157:
-			await _pog_frame()
-			if _pog_every(14158, 1.0):
-				_pc = 14171
-				continue
-			else:
-				_pc = 14619
-				continue
-		elif _pc == 14171:
-			if sim.is_dead(v0):
-				_pc = 14194
-				continue
-			else:
-				_pc = 14199
-				continue
-		elif _pc == 14194:
-			_pc = 14625
-			continue
-		elif _pc == 14199:
-			if iship.attacked(v0):
-				_pc = 14222
-				continue
-			else:
-				_pc = 14619
-				continue
-		elif _pc == 14222:
-			v3 = math.random_int(0, 2)
-			if _pog_eq(iship.last_attacker(v0), v2):
-				_pc = 14275
-				continue
-			else:
-				_pc = 14431
-				continue
-		elif _pc == 14275:
-			_pc = 14396
-			continue
-		elif _pc == 14280:
-			icomms.shout(v0, "", "a2_m18_dialogue_freighter_what_the_hell_do_you_think_youre_doing")
-			_pc = 14426
-			continue
-		elif _pc == 14317:
-			icomms.shout(v0, "", "a2_m18_dialogue_freighter_are_you_crazy_cease_fire")
-			_pc = 14426
-			continue
-		elif _pc == 14354:
-			icomms.shout(v0, "", "a2_m18_dialogue_freighter_dont_shoot_us_you_idiot")
-			_pc = 14426
-			continue
-		elif _pc == 14391:
-			_pc = 14426
-			continue
-		elif _pc == 14396:
-			if not _pog_is_null(v3):
-				_pc = 14409
-				continue
-			else:
-				_pc = 14280
-				continue
-		elif _pc == 14409:
-			if 1 != v3:
-				_pc = 14417
-				continue
-			else:
-				_pc = 14317
-				continue
-		elif _pc == 14417:
-			if 2 != v3:
-				_pc = 14426
-				continue
-			else:
-				_pc = 14354
-				continue
-		elif _pc == 14426:
-			_pc = 14619
-			continue
-		elif _pc == 14431:
-			v4 = v4 + 1
-			if _pog_eq(v4, v1):
-				_pc = 14460
-				continue
-			else:
-				_pc = 14619
-				continue
-		elif _pc == 14460:
-			_pc = 14589
-			continue
-		elif _pc == 14473:
-			icomms.shout(v0, "", "a2_m18_dialogue_freighter_help_were_under_attack")
-			_pc = 14619
-			continue
-		elif _pc == 14510:
-			icomms.shout(v0, "", "a2_m18_dialogue_freighter_were_being_fired_upon")
-			_pc = 14619
-			continue
-		elif _pc == 14547:
-			icomms.shout(v0, "", "a2_m18_dialogue_freighter_enemy_ships_are_attacking")
-			_pc = 14619
-			continue
-		elif _pc == 14584:
-			_pc = 14619
-			continue
-		elif _pc == 14589:
-			if not _pog_is_null(v3):
-				_pc = 14602
-				continue
-			else:
-				_pc = 14473
-				continue
-		elif _pc == 14602:
-			if 1 != v3:
-				_pc = 14610
-				continue
-			else:
-				_pc = 14510
-				continue
-		elif _pc == 14610:
-			if 2 != v3:
-				_pc = 14619
-				continue
-			else:
-				_pc = 14547
-				continue
-		elif _pc == 14619:
-			_pc = 14157
-			continue
-		elif _pc == 14624:
-			_pc = 14625
-			continue
-		elif _pc == 14625:
+		await _pog_wait(1)
+		if sim.is_dead(v0):
 			return
+		if not (iship.attacked(v0)):
+			continue
+		v3 = math.random_int(0, 2)
+		if _pog_eq(iship.last_attacker(v0), v2):
+			match v3:
+				0:
+					icomms.shout(v0, "", "a2_m18_dialogue_freighter_what_the_hell_do_you_think_youre_doing")
+				1:
+					icomms.shout(v0, "", "a2_m18_dialogue_freighter_are_you_crazy_cease_fire")
+				2:
+					icomms.shout(v0, "", "a2_m18_dialogue_freighter_dont_shoot_us_you_idiot")
 		else:
-			return 0
+			v4 = v4 + 1
+			if not _pog_eq(v4, v1):
+				continue
+			match v3:
+				0:
+					icomms.shout(v0, "", "a2_m18_dialogue_freighter_help_were_under_attack")
+				1:
+					icomms.shout(v0, "", "a2_m18_dialogue_freighter_were_being_fired_upon")
+				2:
+					icomms.shout(v0, "", "a2_m18_dialogue_freighter_enemy_ships_are_attacking")
+					continue
+	return
 	return 0
 
 func local_14627(v0, v1, v2, v3, v4) -> Variant:

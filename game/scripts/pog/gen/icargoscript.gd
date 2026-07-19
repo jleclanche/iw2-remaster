@@ -82,14 +82,15 @@ func local_813() -> Variant:
 func local_865() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 15)):
-		return 410
-	if 1 == math.random_int(0, 15):
-		return 411
-	if 2 == math.random_int(0, 15):
-		return 412
-	if 3 == math.random_int(0, 15):
-		return await local_0()
+	match math.random_int(0, 15):
+		0:
+			return 410
+		1:
+			return 411
+		2:
+			return 412
+		3:
+			return await local_0()
 	return 413
 	return 0
 
@@ -136,16 +137,17 @@ func local_1030() -> Variant:
 func local_1310() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 4)):
-		return 416
-	if 1 == math.random_int(0, 4):
-		return 418
-	if 2 == math.random_int(0, 4):
-		return 417
-	if 3 == math.random_int(0, 4):
-		return 419
-	if 4 == math.random_int(0, 4):
-		return 420
+	match math.random_int(0, 4):
+		0:
+			return 416
+		1:
+			return 418
+		2:
+			return 417
+		3:
+			return 419
+		4:
+			return 420
 	return 0
 	return 0
 
@@ -168,12 +170,13 @@ func local_1469() -> Variant:
 func local_1616() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 400
-	if 1 == math.random_int(0, 25):
-		return 398
-	if 2 == math.random_int(0, 25):
-		return 399
+	match math.random_int(0, 25):
+		0:
+			return 400
+		1:
+			return 398
+		2:
+			return 399
 	return 403
 	return 0
 
@@ -248,12 +251,13 @@ func local_2077() -> Variant:
 func local_2268() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 400
-	if 1 == math.random_int(0, 25):
-		return 398
-	if 2 == math.random_int(0, 25):
-		return 399
+	match math.random_int(0, 25):
+		0:
+			return 400
+		1:
+			return 398
+		2:
+			return 399
 	return 406
 	return 0
 
@@ -314,38 +318,40 @@ func local_2581() -> Variant:
 func local_2808() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 7)):
-		return 447
-	if 1 == math.random_int(0, 7):
-		return 445
-	if 2 == math.random_int(0, 7):
-		return 449
-	if 3 == math.random_int(0, 7):
-		return 450
-	if 4 == math.random_int(0, 7):
-		return 451
-	if 5 == math.random_int(0, 7):
-		return 452
-	if 6 == math.random_int(0, 7):
-		return 453
-	if 7 == math.random_int(0, 7):
-		return 2
+	match math.random_int(0, 7):
+		0:
+			return 447
+		1:
+			return 445
+		2:
+			return 449
+		3:
+			return 450
+		4:
+			return 451
+		5:
+			return 452
+		6:
+			return 453
+		7:
+			return 2
 	return 0
 	return 0
 
 func local_3017() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 4)):
-		return 421
-	if 1 == math.random_int(0, 4):
-		return 422
-	if 2 == math.random_int(0, 4):
-		return 423
-	if 3 == math.random_int(0, 4):
-		return 424
-	if 4 == math.random_int(0, 4):
-		return 425
+	match math.random_int(0, 4):
+		0:
+			return 421
+		1:
+			return 422
+		2:
+			return 423
+		3:
+			return 424
+		4:
+			return 425
 	return 0
 	return 0
 
@@ -390,12 +396,13 @@ func local_3422() -> Variant:
 func local_3688() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 15)):
-		return 431
-	if 1 == math.random_int(0, 15):
-		return 430
-	if 2 == math.random_int(0, 15):
-		return 432
+	match math.random_int(0, 15):
+		0:
+			return 431
+		1:
+			return 430
+		2:
+			return 432
 	return 444
 	return 0
 
@@ -464,12 +471,13 @@ func local_4035() -> Variant:
 func local_4305() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 8)):
-		return 407
-	if 1 == math.random_int(0, 8):
-		return 454
-	if 2 == math.random_int(0, 8):
-		return 455
+	match math.random_int(0, 8):
+		0:
+			return 407
+		1:
+			return 454
+		2:
+			return 455
 	return 409
 	return 0
 
@@ -974,86 +982,88 @@ func local_4833() -> Variant:
 func local_7438() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 7)):
-		return 18
-	if 1 == math.random_int(0, 7):
-		return 19
-	if 2 == math.random_int(0, 7):
-		return 20
-	if 3 == math.random_int(0, 7):
-		return 21
-	if 4 == math.random_int(0, 7):
-		return 22
-	if 5 == math.random_int(0, 7):
-		return 23
-	if 6 == math.random_int(0, 7):
-		return 24
-	if 7 == math.random_int(0, 7):
-		return 25
+	match math.random_int(0, 7):
+		0:
+			return 18
+		1:
+			return 19
+		2:
+			return 20
+		3:
+			return 21
+		4:
+			return 22
+		5:
+			return 23
+		6:
+			return 24
+		7:
+			return 25
 	return 0
 	return 0
 
 func local_7640() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 28)):
-		return 52
-	if 1 == math.random_int(0, 28):
-		return 53
-	if 2 == math.random_int(0, 28):
-		return 54
-	if 3 == math.random_int(0, 28):
-		return 55
-	if 4 == math.random_int(0, 28):
-		return 56
-	if 5 == math.random_int(0, 28):
-		return 57
-	if 6 == math.random_int(0, 28):
-		return 58
-	if 7 == math.random_int(0, 28):
-		return 59
-	if 8 == math.random_int(0, 28):
-		return 60
-	if 9 == math.random_int(0, 28):
-		return 61
-	if 10 == math.random_int(0, 28):
-		return 62
-	if 11 == math.random_int(0, 28):
-		return 63
-	if 12 == math.random_int(0, 28):
-		return 64
-	if 13 == math.random_int(0, 28):
-		return 65
-	if 14 == math.random_int(0, 28):
-		return 66
-	if 15 == math.random_int(0, 28):
-		return 67
-	if 16 == math.random_int(0, 28):
-		return 68
-	if 17 == math.random_int(0, 28):
-		return 38
-	if 18 == math.random_int(0, 28):
-		return 44
-	if 19 == math.random_int(0, 28):
-		return 29
-	if 20 == math.random_int(0, 28):
-		return 30
-	if 21 == math.random_int(0, 28):
-		return 88
-	if 22 == math.random_int(0, 28):
-		return 89
-	if 23 == math.random_int(0, 28):
-		return 90
-	if 24 == math.random_int(0, 28):
-		return 91
-	if 25 == math.random_int(0, 28):
-		return 275
-	if 26 == math.random_int(0, 28):
-		return 40
-	if 27 == math.random_int(0, 28):
-		return 279
-	if 28 == math.random_int(0, 28):
-		return 281
+	match math.random_int(0, 28):
+		0:
+			return 52
+		1:
+			return 53
+		2:
+			return 54
+		3:
+			return 55
+		4:
+			return 56
+		5:
+			return 57
+		6:
+			return 58
+		7:
+			return 59
+		8:
+			return 60
+		9:
+			return 61
+		10:
+			return 62
+		11:
+			return 63
+		12:
+			return 64
+		13:
+			return 65
+		14:
+			return 66
+		15:
+			return 67
+		16:
+			return 68
+		17:
+			return 38
+		18:
+			return 44
+		19:
+			return 29
+		20:
+			return 30
+		21:
+			return 88
+		22:
+			return 89
+		23:
+			return 90
+		24:
+			return 91
+		25:
+			return 275
+		26:
+			return 40
+		27:
+			return 279
+		28:
+			return 281
 	return 0
 	return 0
 
@@ -1708,78 +1718,80 @@ func local_12410() -> Variant:
 func local_12587() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 13)):
-		return 374
-	if 1 == math.random_int(0, 13):
-		return 375
-	if 2 == math.random_int(0, 13):
-		return 376
-	if 3 == math.random_int(0, 13):
-		return 377
-	if 4 == math.random_int(0, 13):
-		return 378
-	if 5 == math.random_int(0, 13):
-		return 379
-	if 6 == math.random_int(0, 13):
-		return 380
-	if 7 == math.random_int(0, 13):
-		return 381
-	if 8 == math.random_int(0, 13):
-		return 382
-	if 9 == math.random_int(0, 13):
-		return 459
-	if 10 == math.random_int(0, 13):
-		return 460
-	if 11 == math.random_int(0, 13):
-		return 461
-	if 12 == math.random_int(0, 13):
-		return 427
-	if 13 == math.random_int(0, 13):
-		return 428
+	match math.random_int(0, 13):
+		0:
+			return 374
+		1:
+			return 375
+		2:
+			return 376
+		3:
+			return 377
+		4:
+			return 378
+		5:
+			return 379
+		6:
+			return 380
+		7:
+			return 381
+		8:
+			return 382
+		9:
+			return 459
+		10:
+			return 460
+		11:
+			return 461
+		12:
+			return 427
+		13:
+			return 428
 	return 0
 	return 0
 
 func local_12899() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 18)):
-		return 105
-	if 1 == math.random_int(0, 18):
-		return 133
-	if 2 == math.random_int(0, 18):
-		return 139
-	if 3 == math.random_int(0, 18):
-		return 140
-	if 4 == math.random_int(0, 18):
-		return 141
-	if 5 == math.random_int(0, 18):
-		return 259
-	if 6 == math.random_int(0, 18):
-		return 142
-	if 7 == math.random_int(0, 18):
-		return 143
-	if 8 == math.random_int(0, 18):
-		return 144
-	if 9 == math.random_int(0, 18):
-		return 145
-	if 10 == math.random_int(0, 18):
-		return 146
-	if 11 == math.random_int(0, 18):
-		return 147
-	if 12 == math.random_int(0, 18):
-		return 148
-	if 13 == math.random_int(0, 18):
-		return 149
-	if 14 == math.random_int(0, 18):
-		return 150
-	if 15 == math.random_int(0, 18):
-		return 151
-	if 16 == math.random_int(0, 18):
-		return 151
-	if 17 == math.random_int(0, 18):
-		return 152
-	if 18 == math.random_int(0, 18):
-		return 153
+	match math.random_int(0, 18):
+		0:
+			return 105
+		1:
+			return 133
+		2:
+			return 139
+		3:
+			return 140
+		4:
+			return 141
+		5:
+			return 259
+		6:
+			return 142
+		7:
+			return 143
+		8:
+			return 144
+		9:
+			return 145
+		10:
+			return 146
+		11:
+			return 147
+		12:
+			return 148
+		13:
+			return 149
+		14:
+			return 150
+		15:
+			return 151
+		16:
+			return 151
+		17:
+			return 152
+		18:
+			return 153
 	return 0
 	return 0
 
@@ -1834,14 +1846,15 @@ func local_13511() -> Variant:
 func local_13727() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 6)):
-		return 413
-	if 1 == math.random_int(0, 6):
-		return 20
-	if 2 == math.random_int(0, 6):
-		return 19
-	if 3 == math.random_int(0, 6):
-		return 386
+	match math.random_int(0, 6):
+		0:
+			return 413
+		1:
+			return 20
+		2:
+			return 19
+		3:
+			return 386
 	return 242
 	return 0
 
@@ -1894,98 +1907,101 @@ func local_13880() -> Variant:
 func local_14299() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 397
-	if 1 == math.random_int(0, 25):
-		return 398
-	if 2 == math.random_int(0, 25):
-		return 399
-	if 3 == math.random_int(0, 25):
-		return 400
-	if 4 == math.random_int(0, 25):
-		return 401
-	if 5 == math.random_int(0, 25):
-		return 402
-	if 6 == math.random_int(0, 25):
-		return 404
-	if 7 == math.random_int(0, 25):
-		return 405
-	if 8 == math.random_int(0, 25):
-		return 406
+	match math.random_int(0, 25):
+		0:
+			return 397
+		1:
+			return 398
+		2:
+			return 399
+		3:
+			return 400
+		4:
+			return 401
+		5:
+			return 402
+		6:
+			return 404
+		7:
+			return 405
+		8:
+			return 406
 	return 403
 	return 0
 
 func local_14539() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 13)):
-		return 265
-	if 1 == math.random_int(0, 13):
-		return 266
-	if 2 == math.random_int(0, 13):
-		return 267
-	if 3 == math.random_int(0, 13):
-		return 268
-	if 4 == math.random_int(0, 13):
-		return 269
-	if 5 == math.random_int(0, 13):
-		return 270
-	if 6 == math.random_int(0, 13):
-		return 288
-	if 7 == math.random_int(0, 13):
-		return 289
-	if 8 == math.random_int(0, 13):
-		return 290
-	if 9 == math.random_int(0, 13):
-		return 291
-	if 10 == math.random_int(0, 13):
-		return 243
-	if 11 == math.random_int(0, 13):
-		return 244
-	if 12 == math.random_int(0, 13):
-		return 252
-	if 13 == math.random_int(0, 13):
-		return 253
+	match math.random_int(0, 13):
+		0:
+			return 265
+		1:
+			return 266
+		2:
+			return 267
+		3:
+			return 268
+		4:
+			return 269
+		5:
+			return 270
+		6:
+			return 288
+		7:
+			return 289
+		8:
+			return 290
+		9:
+			return 291
+		10:
+			return 243
+		11:
+			return 244
+		12:
+			return 252
+		13:
+			return 253
 	return 0
 	return 0
 
 func local_14851() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 16)):
-		return 265
-	if 1 == math.random_int(0, 16):
-		return 266
-	if 2 == math.random_int(0, 16):
-		return 267
-	if 3 == math.random_int(0, 16):
-		return 268
-	if 4 == math.random_int(0, 16):
-		return 269
-	if 5 == math.random_int(0, 16):
-		return 270
-	if 6 == math.random_int(0, 16):
-		return 288
-	if 7 == math.random_int(0, 16):
-		return 289
-	if 8 == math.random_int(0, 16):
-		return 290
-	if 9 == math.random_int(0, 16):
-		return 291
-	if 10 == math.random_int(0, 16):
-		return 243
-	if 11 == math.random_int(0, 16):
-		return 244
-	if 12 == math.random_int(0, 16):
-		return 252
-	if 13 == math.random_int(0, 16):
-		return 253
-	if 14 == math.random_int(0, 16):
-		return 68
-	if 15 == math.random_int(0, 16):
-		return 64
-	if 16 == math.random_int(0, 16):
-		return 63
+	match math.random_int(0, 16):
+		0:
+			return 265
+		1:
+			return 266
+		2:
+			return 267
+		3:
+			return 268
+		4:
+			return 269
+		5:
+			return 270
+		6:
+			return 288
+		7:
+			return 289
+		8:
+			return 290
+		9:
+			return 291
+		10:
+			return 243
+		11:
+			return 244
+		12:
+			return 252
+		13:
+			return 253
+		14:
+			return 68
+		15:
+			return 64
+		16:
+			return 63
 	return 0
 	return 0
 
@@ -2120,100 +2136,106 @@ func local_15211() -> Variant:
 func local_16289() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 8)):
-		return 547
-	if 1 == math.random_int(0, 8):
-		return 548
-	if 2 == math.random_int(0, 8):
-		return 549
-	if 3 == math.random_int(0, 8):
-		return 550
-	if 4 == math.random_int(0, 8):
-		return 551
-	if 5 == math.random_int(0, 8):
-		return 552
-	if 6 == math.random_int(0, 8):
-		return 265
-	if 7 == math.random_int(0, 8):
-		return 266
-	if 8 == math.random_int(0, 8):
-		return 267
+	match math.random_int(0, 8):
+		0:
+			return 547
+		1:
+			return 548
+		2:
+			return 549
+		3:
+			return 550
+		4:
+			return 551
+		5:
+			return 552
+		6:
+			return 265
+		7:
+			return 266
+		8:
+			return 267
 	return 0
 	return 0
 
 func local_16516() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if 1 == math.random_int(0, 13):
-		return 53
-	if 2 == math.random_int(0, 13):
-		return 54
-	if 3 == math.random_int(0, 13):
-		return 55
-	if 4 == math.random_int(0, 13):
-		return 56
-	if 5 == math.random_int(0, 13):
-		return 57
-	if 6 == math.random_int(0, 13):
-		return 58
-	if 7 == math.random_int(0, 13):
-		return 59
-	if 8 == math.random_int(0, 13):
-		return 60
-	if 9 == math.random_int(0, 13):
-		return 61
-	if 10 == math.random_int(0, 13):
-		return 62
-	if 11 == math.random_int(0, 13):
-		return 63
-	if 12 == math.random_int(0, 13):
-		return 64
-	if 13 == math.random_int(0, 13):
-		return 243
+	match math.random_int(0, 13):
+		1:
+			return 53
+		2:
+			return 54
+		3:
+			return 55
+		4:
+			return 56
+		5:
+			return 57
+		6:
+			return 58
+		7:
+			return 59
+		8:
+			return 60
+		9:
+			return 61
+		10:
+			return 62
+		11:
+			return 63
+		12:
+			return 64
+		13:
+			return 243
 	return 0
 	return 0
 
 func local_16800() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 2)):
-		return 316
-	if 1 == math.random_int(0, 2):
-		return 7
-	if 2 == math.random_int(0, 2):
-		return 4
+	match math.random_int(0, 2):
+		0:
+			return 316
+		1:
+			return 7
+		2:
+			return 4
 	return 0
 	return 0
 
 func local_16923() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 2)):
-		return 316
-	if 1 == math.random_int(0, 2):
-		return 7
-	if 2 == math.random_int(0, 2):
-		return 4
+	match math.random_int(0, 2):
+		0:
+			return 316
+		1:
+			return 7
+		2:
+			return 4
 	return 0
 	return 0
 
 func local_17046() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_17152() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
@@ -2406,12 +2428,13 @@ func local_17258() -> Variant:
 func local_18331() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 2)):
-		return 2
-	if 1 == math.random_int(0, 2):
-		return 7
-	if 2 == math.random_int(0, 2):
-		return 4
+	match math.random_int(0, 2):
+		0:
+			return 2
+		1:
+			return 7
+		2:
+			return 4
 	return 0
 	return 0
 
@@ -2576,92 +2599,97 @@ func local_19552() -> Variant:
 func local_19561() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 315
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 4
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 6
+	match math.random_int(0, 5):
+		0:
+			return 315
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 429
+		5:
+			return 6
 	return 0
 	return 0
 
 func local_19733() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 315
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 4
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 6
+	match math.random_int(0, 5):
+		0:
+			return 315
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 429
+		5:
+			return 6
 	return 0
 	return 0
 
 func local_19905() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 15)):
-		return 315
-	if 1 == math.random_int(0, 15):
-		return 7
-	if 2 == math.random_int(0, 15):
-		return 3
-	if 3 == math.random_int(0, 15):
-		return 4
-	if 4 == math.random_int(0, 15):
-		return 429
-	if 5 == math.random_int(0, 15):
-		return 6
-	if 6 == math.random_int(0, 15):
-		return 398
-	if 7 == math.random_int(0, 15):
-		return 399
+	match math.random_int(0, 15):
+		0:
+			return 315
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 429
+		5:
+			return 6
+		6:
+			return 398
+		7:
+			return 399
 	return 403
 	return 0
 
 func local_20124() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 4)):
-		return 7
-	if 1 == math.random_int(0, 4):
-		return 3
-	if 2 == math.random_int(0, 4):
-		return 4
-	if 3 == math.random_int(0, 4):
-		return 429
-	if 4 == math.random_int(0, 4):
-		return 6
+	match math.random_int(0, 4):
+		0:
+			return 7
+		1:
+			return 3
+		2:
+			return 4
+		3:
+			return 429
+		4:
+			return 6
 	return 0
 	return 0
 
 func local_20279() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 492
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 486
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 492
+		4:
+			return 429
+		5:
+			return 486
 	return 0
 	return 0
 
@@ -3170,14 +3198,15 @@ func local_21609() -> Variant:
 func local_24723() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 3)):
-		return 426
-	if 1 == math.random_int(0, 3):
-		return 427
-	if 2 == math.random_int(0, 3):
-		return 428
-	if 3 == math.random_int(0, 3):
-		return 429
+	match math.random_int(0, 3):
+		0:
+			return 426
+		1:
+			return 427
+		2:
+			return 428
+		3:
+			return 429
 	return 0
 	return 0
 
@@ -3190,10 +3219,11 @@ func local_24865() -> Variant:
 func local_24915() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 7
-	if 1 == math.random_int(0, 1):
-		return 315
+	match math.random_int(0, 1):
+		0:
+			return 7
+		1:
+			return 315
 	return 0
 	return 0
 
@@ -3328,178 +3358,188 @@ func local_25021() -> Variant:
 func local_25939() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 4
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 6
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 429
+		5:
+			return 6
 	return 0
 	return 0
 
 func local_26111() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 4
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 6
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 429
+		5:
+			return 6
 	return 0
 	return 0
 
 func local_26283() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 4
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 6
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 429
+		5:
+			return 6
 	return 0
 	return 0
 
 func local_26455() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 492
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 486
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 3
+		3:
+			return 492
+		4:
+			return 429
+		5:
+			return 486
 	return 0
 	return 0
 
 func local_26629() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 545
-	if 3 == math.random_int(0, 5):
-		return 492
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 486
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 545
+		3:
+			return 492
+		4:
+			return 429
+		5:
+			return 486
 	return 0
 	return 0
 
 func local_26804() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 545
-	if 3 == math.random_int(0, 5):
-		return 492
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 486
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 545
+		3:
+			return 492
+		4:
+			return 429
+		5:
+			return 486
 	return 0
 	return 0
 
 func local_26979() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 545
-	if 3 == math.random_int(0, 5):
-		return 492
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 486
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 545
+		3:
+			return 492
+		4:
+			return 429
+		5:
+			return 486
 	return 0
 	return 0
 
 func local_27154() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 426
-	if 1 == math.random_int(0, 5):
-		return 7
-	if 2 == math.random_int(0, 5):
-		return 545
-	if 3 == math.random_int(0, 5):
-		return 492
-	if 4 == math.random_int(0, 5):
-		return 429
-	if 5 == math.random_int(0, 5):
-		return 486
+	match math.random_int(0, 5):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 545
+		3:
+			return 492
+		4:
+			return 429
+		5:
+			return 486
 	return 0
 	return 0
 
 func local_27329() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 3)):
-		return 426
-	if 1 == math.random_int(0, 3):
-		return 427
-	if 2 == math.random_int(0, 3):
-		return 428
-	if 3 == math.random_int(0, 3):
-		return 429
+	match math.random_int(0, 3):
+		0:
+			return 426
+		1:
+			return 427
+		2:
+			return 428
+		3:
+			return 429
 	return 0
 	return 0
 
 func local_27471() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 6)):
-		return 426
-	if 1 == math.random_int(0, 6):
-		return 7
-	if 2 == math.random_int(0, 6):
-		return 545
-	if 3 == math.random_int(0, 6):
-		return 540
-	if 4 == math.random_int(0, 6):
-		return 429
-	if 5 == math.random_int(0, 6):
-		return 542
-	if 6 == math.random_int(0, 6):
-		return 546
+	match math.random_int(0, 6):
+		0:
+			return 426
+		1:
+			return 7
+		2:
+			return 545
+		3:
+			return 540
+		4:
+			return 429
+		5:
+			return 542
+		6:
+			return 546
 	return 0
 	return 0
 
@@ -3512,42 +3552,43 @@ func local_27663() -> Variant:
 func local_27715() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 17)):
-		return 426
-	if 1 == math.random_int(0, 17):
-		return 427
-	if 2 == math.random_int(0, 17):
-		return 428
-	if 3 == math.random_int(0, 17):
-		return 429
-	if 4 == math.random_int(0, 17):
-		return 482
-	if 5 == math.random_int(0, 17):
-		return 536
-	if 6 == math.random_int(0, 17):
-		return 537
-	if 7 == math.random_int(0, 17):
-		return 538
-	if 8 == math.random_int(0, 17):
-		return 539
-	if 9 == math.random_int(0, 17):
-		return 488
-	if 10 == math.random_int(0, 17):
-		return 486
-	if 11 == math.random_int(0, 17):
-		return 492
-	if 12 == math.random_int(0, 17):
-		return 494
-	if 13 == math.random_int(0, 17):
-		return 490
-	if 14 == math.random_int(0, 17):
-		return 505
-	if 15 == math.random_int(0, 17):
-		return 549
-	if 16 == math.random_int(0, 17):
-		return 550
-	if 17 == math.random_int(0, 17):
-		return 551
+	match math.random_int(0, 17):
+		0:
+			return 426
+		1:
+			return 427
+		2:
+			return 428
+		3:
+			return 429
+		4:
+			return 482
+		5:
+			return 536
+		6:
+			return 537
+		7:
+			return 538
+		8:
+			return 539
+		9:
+			return 488
+		10:
+			return 486
+		11:
+			return 492
+		12:
+			return 494
+		13:
+			return 490
+		14:
+			return 505
+		15:
+			return 549
+		16:
+			return 550
+		17:
+			return 551
 	return 0
 	return 0
 
@@ -3870,98 +3911,108 @@ func local_30145() -> Variant:
 func local_30419() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_30525() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_30631() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_30737() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_30843() -> Variant:
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_30907() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_31013() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_31119() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_31225() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
 func local_31331() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 1)):
-		return 316
-	if 1 == math.random_int(0, 1):
-		return 7
+	match math.random_int(0, 1):
+		0:
+			return 316
+		1:
+			return 7
 	return 0
 	return 0
 
@@ -4034,64 +4085,65 @@ func local_31437() -> Variant:
 func local_31882() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 28)):
-		return 41
-	if 1 == math.random_int(0, 28):
-		return 42
-	if 2 == math.random_int(0, 28):
-		return 43
-	if 3 == math.random_int(0, 28):
-		return 45
-	if 4 == math.random_int(0, 28):
-		return 46
-	if 5 == math.random_int(0, 28):
-		return 47
-	if 6 == math.random_int(0, 28):
-		return 48
-	if 7 == math.random_int(0, 28):
-		return 9
-	if 8 == math.random_int(0, 28):
-		return 10
-	if 9 == math.random_int(0, 28):
-		return 78
-	if 10 == math.random_int(0, 28):
-		return 79
-	if 11 == math.random_int(0, 28):
-		return 80
-	if 12 == math.random_int(0, 28):
-		return 81
-	if 13 == math.random_int(0, 28):
-		return 85
-	if 14 == math.random_int(0, 28):
-		return 93
-	if 15 == math.random_int(0, 28):
-		return 94
-	if 16 == math.random_int(0, 28):
-		return 95
-	if 17 == math.random_int(0, 28):
-		return 27
-	if 18 == math.random_int(0, 28):
-		return 28
-	if 19 == math.random_int(0, 28):
-		return 31
-	if 20 == math.random_int(0, 28):
-		return 32
-	if 21 == math.random_int(0, 28):
-		return 33
-	if 22 == math.random_int(0, 28):
-		return 34
-	if 23 == math.random_int(0, 28):
-		return 35
-	if 24 == math.random_int(0, 28):
-		return 36
-	if 25 == math.random_int(0, 28):
-		return 39
-	if 26 == math.random_int(0, 28):
-		return 43
-	if 27 == math.random_int(0, 28):
-		return 48
-	if 28 == math.random_int(0, 28):
-		return 49
+	match math.random_int(0, 28):
+		0:
+			return 41
+		1:
+			return 42
+		2:
+			return 43
+		3:
+			return 45
+		4:
+			return 46
+		5:
+			return 47
+		6:
+			return 48
+		7:
+			return 9
+		8:
+			return 10
+		9:
+			return 78
+		10:
+			return 79
+		11:
+			return 80
+		12:
+			return 81
+		13:
+			return 85
+		14:
+			return 93
+		15:
+			return 94
+		16:
+			return 95
+		17:
+			return 27
+		18:
+			return 28
+		19:
+			return 31
+		20:
+			return 32
+		21:
+			return 33
+		22:
+			return 34
+		23:
+			return 35
+		24:
+			return 36
+		25:
+			return 39
+		26:
+			return 43
+		27:
+			return 48
+		28:
+			return 49
 	return 0
 	return 0
 
@@ -4174,186 +4226,191 @@ func local_32976() -> Variant:
 func local_33027() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 8)):
-		return 536
-	if 1 == math.random_int(0, 8):
-		return 537
-	if 2 == math.random_int(0, 8):
-		return 538
-	if 3 == math.random_int(0, 8):
-		return 539
-	if 4 == math.random_int(0, 8):
-		return 488
-	if 5 == math.random_int(0, 8):
-		return 486
-	if 6 == math.random_int(0, 8):
-		return 492
-	if 7 == math.random_int(0, 8):
-		return 494
-	if 8 == math.random_int(0, 8):
-		return 490
+	match math.random_int(0, 8):
+		0:
+			return 536
+		1:
+			return 537
+		2:
+			return 538
+		3:
+			return 539
+		4:
+			return 488
+		5:
+			return 486
+		6:
+			return 492
+		7:
+			return 494
+		8:
+			return 490
 	return 0
 	return 0
 
 func local_33254() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 8)):
-		return 536
-	if 1 == math.random_int(0, 8):
-		return 537
-	if 2 == math.random_int(0, 8):
-		return 538
-	if 3 == math.random_int(0, 8):
-		return 539
-	if 4 == math.random_int(0, 8):
-		return 488
-	if 5 == math.random_int(0, 8):
-		return 486
-	if 6 == math.random_int(0, 8):
-		return 492
-	if 7 == math.random_int(0, 8):
-		return 494
-	if 8 == math.random_int(0, 8):
-		return 490
+	match math.random_int(0, 8):
+		0:
+			return 536
+		1:
+			return 537
+		2:
+			return 538
+		3:
+			return 539
+		4:
+			return 488
+		5:
+			return 486
+		6:
+			return 492
+		7:
+			return 494
+		8:
+			return 490
 	return 0
 	return 0
 
 func local_33481() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 8)):
-		return 536
-	if 1 == math.random_int(0, 8):
-		return 537
-	if 2 == math.random_int(0, 8):
-		return 538
-	if 3 == math.random_int(0, 8):
-		return 539
-	if 4 == math.random_int(0, 8):
-		return 488
-	if 5 == math.random_int(0, 8):
-		return 486
-	if 6 == math.random_int(0, 8):
-		return 492
-	if 7 == math.random_int(0, 8):
-		return 494
-	if 8 == math.random_int(0, 8):
-		return 490
+	match math.random_int(0, 8):
+		0:
+			return 536
+		1:
+			return 537
+		2:
+			return 538
+		3:
+			return 539
+		4:
+			return 488
+		5:
+			return 486
+		6:
+			return 492
+		7:
+			return 494
+		8:
+			return 490
 	return 0
 	return 0
 
 func local_33708() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 30)):
-		return 536
-	if 1 == math.random_int(0, 30):
-		return 537
-	if 2 == math.random_int(0, 30):
-		return 538
-	if 3 == math.random_int(0, 30):
-		return 539
-	if 4 == math.random_int(0, 30):
-		return 488
-	if 5 == math.random_int(0, 30):
-		return 486
-	if 6 == math.random_int(0, 30):
-		return 492
-	if 7 == math.random_int(0, 30):
-		return 494
-	if 8 == math.random_int(0, 30):
-		return 490
-	if 9 == math.random_int(0, 30):
-		return 207
-	if 10 == math.random_int(0, 30):
-		return 236
-	if 11 == math.random_int(0, 30):
-		return 236
-	if 12 == math.random_int(0, 30):
-		return 237
-	if 13 == math.random_int(0, 30):
-		return 238
-	if 14 == math.random_int(0, 30):
-		return 239
-	if 15 == math.random_int(0, 30):
-		return 240
-	if 16 == math.random_int(0, 30):
-		return 241
-	if 17 == math.random_int(0, 30):
-		return 242
-	if 18 == math.random_int(0, 30):
-		return 383
-	if 19 == math.random_int(0, 30):
-		return 384
-	if 20 == math.random_int(0, 30):
-		return 385
-	if 21 == math.random_int(0, 30):
-		return 386
-	if 22 == math.random_int(0, 30):
-		return 430
-	if 23 == math.random_int(0, 30):
-		return 431
-	if 24 == math.random_int(0, 30):
-		return 540
-	if 25 == math.random_int(0, 30):
-		return 541
-	if 26 == math.random_int(0, 30):
-		return 542
-	if 27 == math.random_int(0, 30):
-		return 543
-	if 28 == math.random_int(0, 30):
-		return 544
-	if 29 == math.random_int(0, 30):
-		return 545
-	if 30 == math.random_int(0, 30):
-		return 546
+	match math.random_int(0, 30):
+		0:
+			return 536
+		1:
+			return 537
+		2:
+			return 538
+		3:
+			return 539
+		4:
+			return 488
+		5:
+			return 486
+		6:
+			return 492
+		7:
+			return 494
+		8:
+			return 490
+		9:
+			return 207
+		10:
+			return 236
+		11:
+			return 236
+		12:
+			return 237
+		13:
+			return 238
+		14:
+			return 239
+		15:
+			return 240
+		16:
+			return 241
+		17:
+			return 242
+		18:
+			return 383
+		19:
+			return 384
+		20:
+			return 385
+		21:
+			return 386
+		22:
+			return 430
+		23:
+			return 431
+		24:
+			return 540
+		25:
+			return 541
+		26:
+			return 542
+		27:
+			return 543
+		28:
+			return 544
+		29:
+			return 545
+		30:
+			return 546
 	return 0
 	return 0
 
 func local_34309() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 19)):
-		return 119
-	if 1 == math.random_int(0, 19):
-		return 120
-	if 2 == math.random_int(0, 19):
-		return 121
-	if 3 == math.random_int(0, 19):
-		return 122
-	if 4 == math.random_int(0, 19):
-		return 123
-	if 5 == math.random_int(0, 19):
-		return 124
-	if 6 == math.random_int(0, 19):
-		return 125
-	if 7 == math.random_int(0, 19):
-		return 126
-	if 8 == math.random_int(0, 19):
-		return 127
-	if 9 == math.random_int(0, 19):
-		return 128
-	if 10 == math.random_int(0, 19):
-		return 129
-	if 11 == math.random_int(0, 19):
-		return 130
-	if 12 == math.random_int(0, 19):
-		return 131
-	if 13 == math.random_int(0, 19):
-		return 132
-	if 14 == math.random_int(0, 19):
-		return 133
-	if 15 == math.random_int(0, 19):
-		return 134
-	if 16 == math.random_int(0, 19):
-		return 135
-	if 17 == math.random_int(0, 19):
-		return 136
-	if 18 == math.random_int(0, 19):
-		return 137
-	if 19 == math.random_int(0, 19):
-		return 138
+	match math.random_int(0, 19):
+		0:
+			return 119
+		1:
+			return 120
+		2:
+			return 121
+		3:
+			return 122
+		4:
+			return 123
+		5:
+			return 124
+		6:
+			return 125
+		7:
+			return 126
+		8:
+			return 127
+		9:
+			return 128
+		10:
+			return 129
+		11:
+			return 130
+		12:
+			return 131
+		13:
+			return 132
+		14:
+			return 133
+		15:
+			return 134
+		16:
+			return 135
+		17:
+			return 136
+		18:
+			return 137
+		19:
+			return 138
 	return 0
 	return 0
 
@@ -4754,52 +4811,53 @@ func local_36911() -> Variant:
 func local_37053() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 22)):
-		return 547
-	if 1 == math.random_int(0, 22):
-		return 548
-	if 2 == math.random_int(0, 22):
-		return 549
-	if 3 == math.random_int(0, 22):
-		return 550
-	if 4 == math.random_int(0, 22):
-		return 551
-	if 5 == math.random_int(0, 22):
-		return 552
-	if 6 == math.random_int(0, 22):
-		return 122
-	if 7 == math.random_int(0, 22):
-		return 123
-	if 8 == math.random_int(0, 22):
-		return 124
-	if 9 == math.random_int(0, 22):
-		return 125
-	if 10 == math.random_int(0, 22):
-		return 126
-	if 11 == math.random_int(0, 22):
-		return 127
-	if 12 == math.random_int(0, 22):
-		return 128
-	if 13 == math.random_int(0, 22):
-		return 129
-	if 14 == math.random_int(0, 22):
-		return 130
-	if 15 == math.random_int(0, 22):
-		return 131
-	if 16 == math.random_int(0, 22):
-		return 132
-	if 17 == math.random_int(0, 22):
-		return 133
-	if 18 == math.random_int(0, 22):
-		return 69
-	if 19 == math.random_int(0, 22):
-		return 65
-	if 20 == math.random_int(0, 22):
-		return 66
-	if 21 == math.random_int(0, 22):
-		return 265
-	if 22 == math.random_int(0, 22):
-		return 266
+	match math.random_int(0, 22):
+		0:
+			return 547
+		1:
+			return 548
+		2:
+			return 549
+		3:
+			return 550
+		4:
+			return 551
+		5:
+			return 552
+		6:
+			return 122
+		7:
+			return 123
+		8:
+			return 124
+		9:
+			return 125
+		10:
+			return 126
+		11:
+			return 127
+		12:
+			return 128
+		13:
+			return 129
+		14:
+			return 130
+		15:
+			return 131
+		16:
+			return 132
+		17:
+			return 133
+		18:
+			return 69
+		19:
+			return 65
+		20:
+			return 66
+		21:
+			return 265
+		22:
+			return 266
 	return 0
 	return 0
 
@@ -4812,108 +4870,113 @@ func local_37509() -> Variant:
 func local_37560() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 1
-	if 1 == math.random_int(0, 5):
-		return 2
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 4
-	if 4 == math.random_int(0, 5):
-		return 6
-	if 5 == math.random_int(0, 5):
-		return 429
+	match math.random_int(0, 5):
+		0:
+			return 1
+		1:
+			return 2
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 6
+		5:
+			return 429
 	return 0
 	return 0
 
 func local_37730() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 3)):
-		return 426
-	if 1 == math.random_int(0, 3):
-		return 2
-	if 2 == math.random_int(0, 3):
-		return 427
-	if 3 == math.random_int(0, 3):
-		return 429
+	match math.random_int(0, 3):
+		0:
+			return 426
+		1:
+			return 2
+		2:
+			return 427
+		3:
+			return 429
 	return 0
 	return 0
 
 func local_37871() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 12)):
-		return 1
-	if 1 == math.random_int(0, 12):
-		return 2
-	if 2 == math.random_int(0, 12):
-		return 3
-	if 3 == math.random_int(0, 12):
-		return 4
-	if 4 == math.random_int(0, 12):
-		return 6
-	if 5 == math.random_int(0, 12):
-		return 429
-	if 6 == math.random_int(0, 12):
-		return 427
-	if 7 == math.random_int(0, 12):
-		return 545
-	if 8 == math.random_int(0, 12):
-		return 541
-	if 9 == math.random_int(0, 12):
-		return 426
-	if 10 == math.random_int(0, 12):
-		return 137
-	if 11 == math.random_int(0, 12):
-		return 129
-	if 12 == math.random_int(0, 12):
-		return 87
+	match math.random_int(0, 12):
+		0:
+			return 1
+		1:
+			return 2
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 6
+		5:
+			return 429
+		6:
+			return 427
+		7:
+			return 545
+		8:
+			return 541
+		9:
+			return 426
+		10:
+			return 137
+		11:
+			return 129
+		12:
+			return 87
 	return 0
 	return 0
 
 func local_38159() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 9)):
-		return 1
-	if 1 == math.random_int(0, 9):
-		return 2
-	if 2 == math.random_int(0, 9):
-		return 3
-	if 3 == math.random_int(0, 9):
-		return 4
-	if 4 == math.random_int(0, 9):
-		return 6
-	if 5 == math.random_int(0, 9):
-		return 429
-	if 6 == math.random_int(0, 9):
-		return 82
-	if 7 == math.random_int(0, 9):
-		return 125
-	if 8 == math.random_int(0, 9):
-		return 151
-	if 9 == math.random_int(0, 9):
-		return 322
+	match math.random_int(0, 9):
+		0:
+			return 1
+		1:
+			return 2
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 6
+		5:
+			return 429
+		6:
+			return 82
+		7:
+			return 125
+		8:
+			return 151
+		9:
+			return 322
 	return 0
 	return 0
 
 func local_38395() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 1
-	if 1 == math.random_int(0, 5):
-		return 2
-	if 2 == math.random_int(0, 5):
-		return 3
-	if 3 == math.random_int(0, 5):
-		return 4
-	if 4 == math.random_int(0, 5):
-		return 6
-	if 5 == math.random_int(0, 5):
-		return 429
+	match math.random_int(0, 5):
+		0:
+			return 1
+		1:
+			return 2
+		2:
+			return 3
+		3:
+			return 4
+		4:
+			return 6
+		5:
+			return 429
 	return 0
 	return 0
 
@@ -5684,350 +5747,351 @@ func initialise() -> Variant:
 
 func find_cargo_for_location(v0) -> Variant:
 	var v1: Variant = 0
-	if _pog_is_null(v0):
-		return 0
-	if 1 == v0:
-		v1 = await local_813()
-		return v1
-	if 2 == v0:
-		v1 = await local_865()
-		return v1
-	if 3 == v0:
-		v1 = await local_1030()
-		return v1
-	if 4 == v0:
-		v1 = await local_1310()
-		return v1
-	if 5 == v0:
-		v1 = await local_1469()
-		return v1
-	if 6 == v0:
-		v1 = await local_1616()
-		return v1
-	if 7 == v0:
-		v1 = await local_1754()
-		return v1
-	if 8 == v0:
-		v1 = await local_2077()
-		return v1
-	if 9 == v0:
-		v1 = await local_2268()
-		return v1
-	if 10 == v0:
-		v1 = await local_2406()
-		return v1
-	if 11 == v0:
-		v1 = await local_2581()
-		return v1
-	if 12 == v0:
-		v1 = await local_2808()
-		return v1
-	if 13 == v0:
-		v1 = await local_3017()
-		return v1
-	if 14 == v0:
-		v1 = await local_865()
-		return v1
-	if 15 == v0:
-		v1 = await local_3422()
-		return v1
-	if 16 == v0:
-		v1 = await local_3688()
-		return v1
-	if 17 == v0:
-		v1 = await local_3826()
-		return v1
-	if 18 == v0:
-		v1 = await local_4035()
-		return v1
-	if 19 == v0:
-		v1 = await local_4305()
-		return v1
-	if 20 == v0:
-		v1 = await local_4443()
-		return v1
-	if 21 == v0:
-		v1 = await local_4548()
-		return v1
-	if 22 == v0:
-		v1 = await local_4833()
-		return v1
-	if 23 == v0:
-		v1 = await local_7438()
-		return v1
-	if 24 == v0:
-		v1 = await local_7640()
-		return v1
-	if 25 == v0:
-		v1 = await local_8181()
-		return v1
-	if 26 == v0:
-		v1 = await local_8922()
-		return v1
-	if 27 == v0:
-		v1 = await local_9454()
-		return v1
-	if 28 == v0:
-		v1 = await local_10483()
-		return v1
-	if 29 == v0:
-		v1 = await local_11250()
-		return v1
-	if 30 == v0:
-		v1 = await local_11962()
-		return v1
-	if 31 == v0:
-		v1 = await local_12410()
-		return v1
-	if 32 == v0:
-		v1 = await local_12587()
-		return v1
-	if 33 == v0:
-		v1 = await local_12899()
-		return v1
-	if 34 == v0:
-		v1 = await local_13295()
-		return v1
-	if 35 == v0:
-		v1 = await local_13511()
-		return v1
-	if 36 == v0:
-		v1 = await local_13727()
-		return v1
-	if 37 == v0:
-		v1 = await local_13880()
-		return v1
-	if 38 == v0:
-		v1 = await local_14299()
-		return v1
-	if 39 == v0:
-		v1 = await local_14539()
-		return v1
-	if 40 == v0:
-		v1 = await local_14851()
-		return v1
-	if 41 == v0:
-		v1 = await local_15211()
-		return v1
-	if 42 == v0:
-		v1 = await local_16289()
-		return v1
-	if 43 == v0:
-		v1 = await local_16516()
-		return v1
-	if 44 == v0:
-		v1 = await local_16800()
-		return v1
-	if 45 == v0:
-		v1 = await local_16923()
-		return v1
-	if 46 == v0:
-		v1 = await local_17046()
-		return v1
-	if 47 == v0:
-		v1 = await local_17152()
-		return v1
-	if 48 == v0:
-		v1 = await local_17258()
-		return v1
-	if 49 == v0:
-		v1 = await local_18331()
-		return v1
-	if 50 == v0:
-		v1 = await local_18453()
-		return v1
-	if 51 == v0:
-		v1 = await local_18705()
-		return v1
-	if 52 == v0:
-		v1 = await local_19106()
-		return v1
-	if 53 == v0:
-		v1 = await local_19358()
-		return v1
-	if 54 == v0:
-		v1 = await local_19501()
-		return v1
-	if 55 == v0:
-		v1 = await local_19552()
-		return v1
-	if 56 == v0:
-		v1 = await local_19561()
-		return v1
-	if 57 == v0:
-		v1 = await local_19733()
-		return v1
-	if 58 == v0:
-		v1 = await local_19905()
-		return v1
-	if 59 == v0:
-		v1 = await local_20124()
-		return v1
-	if 60 == v0:
-		v1 = await local_20279()
-		return v1
-	if 61 == v0:
-		v1 = await local_20453()
-		return v1
-	if 62 == v0:
-		v1 = await local_21589()
-		return v1
-	if 63 == v0:
-		v1 = await local_21609()
-		return v1
-	if 64 == v0:
-		v1 = await local_24723()
-		return v1
-	if 65 == v0:
-		v1 = await local_24865()
-		return v1
-	if 66 == v0:
-		v1 = await local_24915()
-		return v1
-	if 67 == v0:
-		v1 = await local_25021()
-		return v1
-	if 68 == v0:
-		v1 = await local_25939()
-		return v1
-	if 69 == v0:
-		v1 = await local_26111()
-		return v1
-	if 70 == v0:
-		v1 = await local_26283()
-		return v1
-	if 71 == v0:
-		v1 = await local_26455()
-		return v1
-	if 72 == v0:
-		v1 = await local_26629()
-		return v1
-	if 73 == v0:
-		v1 = await local_26804()
-		return v1
-	if 74 == v0:
-		v1 = await local_26979()
-		return v1
-	if 75 == v0:
-		v1 = await local_27154()
-		return v1
-	if 76 == v0:
-		v1 = await local_27329()
-		return v1
-	if 78 == v0:
-		v1 = await local_27471()
-		return v1
-	if 79 == v0:
-		v1 = await local_27663()
-		return v1
-	if 80 == v0:
-		v1 = await local_27715()
-		return v1
-	if 81 == v0:
-		v1 = await local_28095()
-		return v1
-	if 82 == v0:
-		v1 = await local_29094()
-		return v1
-	if 84 == v0:
-		v1 = await local_29146()
-		return v1
-	if 85 == v0:
-		v1 = await local_30145()
-		return v1
-	if 86 == v0:
-		v1 = await local_30419()
-		return v1
-	if 87 == v0:
-		v1 = await local_30525()
-		return v1
-	if 88 == v0:
-		v1 = await local_30631()
-		return v1
-	if 89 == v0:
-		v1 = await local_30737()
-		return v1
-	if 90 == v0:
-		v1 = await local_30843()
-		return v1
-	if 91 == v0:
-		v1 = await local_30907()
-		return v1
-	if 92 == v0:
-		v1 = await local_31013()
-		return v1
-	if 93 == v0:
-		v1 = await local_31119()
-		return v1
-	if 94 == v0:
-		v1 = await local_31225()
-		return v1
-	if 95 == v0:
-		v1 = await local_31331()
-		return v1
-	if 96 == v0:
-		v1 = await local_31437()
-		return v1
-	if 97 == v0:
-		v1 = await local_31882()
-		return v1
-	if 98 == v0:
-		v1 = await local_32420()
-		return v1
-	if 99 == v0:
-		v1 = await local_32967()
-		return v1
-	if 100 == v0:
-		v1 = await local_32976()
-		return v1
-	if 101 == v0:
-		v1 = await local_33027()
-		return v1
-	if 102 == v0:
-		v1 = await local_33254()
-		return v1
-	if 103 == v0:
-		v1 = await local_33481()
-		return v1
-	if 104 == v0:
-		v1 = await local_33708()
-		return v1
-	if 105 == v0:
-		v1 = await local_34309()
-		return v1
-	if 106 == v0:
-		v1 = await local_34714()
-		return v1
-	if 107 == v0:
-		v1 = await local_34765()
-		return v1
-	if 108 == v0:
-		v1 = await local_35838()
-		return v1
-	if 109 == v0:
-		v1 = await local_36911()
-		return v1
-	if 110 == v0:
-		v1 = await local_37053()
-		return v1
-	if 111 == v0:
-		v1 = await local_37509()
-		return v1
-	if 112 == v0:
-		v1 = await local_37560()
-		return v1
-	if 113 == v0:
-		v1 = await local_37730()
-		return v1
-	if 114 == v0:
-		v1 = await local_37871()
-		return v1
-	if 119 == v0:
-		v1 = await local_38159()
-		return v1
-	if 120 == v0:
-		v1 = await local_38395()
-		return v1
+	match v0:
+		0:
+			return 0
+		1:
+			v1 = await local_813()
+			return v1
+		2:
+			v1 = await local_865()
+			return v1
+		3:
+			v1 = await local_1030()
+			return v1
+		4:
+			v1 = await local_1310()
+			return v1
+		5:
+			v1 = await local_1469()
+			return v1
+		6:
+			v1 = await local_1616()
+			return v1
+		7:
+			v1 = await local_1754()
+			return v1
+		8:
+			v1 = await local_2077()
+			return v1
+		9:
+			v1 = await local_2268()
+			return v1
+		10:
+			v1 = await local_2406()
+			return v1
+		11:
+			v1 = await local_2581()
+			return v1
+		12:
+			v1 = await local_2808()
+			return v1
+		13:
+			v1 = await local_3017()
+			return v1
+		14:
+			v1 = await local_865()
+			return v1
+		15:
+			v1 = await local_3422()
+			return v1
+		16:
+			v1 = await local_3688()
+			return v1
+		17:
+			v1 = await local_3826()
+			return v1
+		18:
+			v1 = await local_4035()
+			return v1
+		19:
+			v1 = await local_4305()
+			return v1
+		20:
+			v1 = await local_4443()
+			return v1
+		21:
+			v1 = await local_4548()
+			return v1
+		22:
+			v1 = await local_4833()
+			return v1
+		23:
+			v1 = await local_7438()
+			return v1
+		24:
+			v1 = await local_7640()
+			return v1
+		25:
+			v1 = await local_8181()
+			return v1
+		26:
+			v1 = await local_8922()
+			return v1
+		27:
+			v1 = await local_9454()
+			return v1
+		28:
+			v1 = await local_10483()
+			return v1
+		29:
+			v1 = await local_11250()
+			return v1
+		30:
+			v1 = await local_11962()
+			return v1
+		31:
+			v1 = await local_12410()
+			return v1
+		32:
+			v1 = await local_12587()
+			return v1
+		33:
+			v1 = await local_12899()
+			return v1
+		34:
+			v1 = await local_13295()
+			return v1
+		35:
+			v1 = await local_13511()
+			return v1
+		36:
+			v1 = await local_13727()
+			return v1
+		37:
+			v1 = await local_13880()
+			return v1
+		38:
+			v1 = await local_14299()
+			return v1
+		39:
+			v1 = await local_14539()
+			return v1
+		40:
+			v1 = await local_14851()
+			return v1
+		41:
+			v1 = await local_15211()
+			return v1
+		42:
+			v1 = await local_16289()
+			return v1
+		43:
+			v1 = await local_16516()
+			return v1
+		44:
+			v1 = await local_16800()
+			return v1
+		45:
+			v1 = await local_16923()
+			return v1
+		46:
+			v1 = await local_17046()
+			return v1
+		47:
+			v1 = await local_17152()
+			return v1
+		48:
+			v1 = await local_17258()
+			return v1
+		49:
+			v1 = await local_18331()
+			return v1
+		50:
+			v1 = await local_18453()
+			return v1
+		51:
+			v1 = await local_18705()
+			return v1
+		52:
+			v1 = await local_19106()
+			return v1
+		53:
+			v1 = await local_19358()
+			return v1
+		54:
+			v1 = await local_19501()
+			return v1
+		55:
+			v1 = await local_19552()
+			return v1
+		56:
+			v1 = await local_19561()
+			return v1
+		57:
+			v1 = await local_19733()
+			return v1
+		58:
+			v1 = await local_19905()
+			return v1
+		59:
+			v1 = await local_20124()
+			return v1
+		60:
+			v1 = await local_20279()
+			return v1
+		61:
+			v1 = await local_20453()
+			return v1
+		62:
+			v1 = await local_21589()
+			return v1
+		63:
+			v1 = await local_21609()
+			return v1
+		64:
+			v1 = await local_24723()
+			return v1
+		65:
+			v1 = await local_24865()
+			return v1
+		66:
+			v1 = await local_24915()
+			return v1
+		67:
+			v1 = await local_25021()
+			return v1
+		68:
+			v1 = await local_25939()
+			return v1
+		69:
+			v1 = await local_26111()
+			return v1
+		70:
+			v1 = await local_26283()
+			return v1
+		71:
+			v1 = await local_26455()
+			return v1
+		72:
+			v1 = await local_26629()
+			return v1
+		73:
+			v1 = await local_26804()
+			return v1
+		74:
+			v1 = await local_26979()
+			return v1
+		75:
+			v1 = await local_27154()
+			return v1
+		76:
+			v1 = await local_27329()
+			return v1
+		78:
+			v1 = await local_27471()
+			return v1
+		79:
+			v1 = await local_27663()
+			return v1
+		80:
+			v1 = await local_27715()
+			return v1
+		81:
+			v1 = await local_28095()
+			return v1
+		82:
+			v1 = await local_29094()
+			return v1
+		84:
+			v1 = await local_29146()
+			return v1
+		85:
+			v1 = await local_30145()
+			return v1
+		86:
+			v1 = await local_30419()
+			return v1
+		87:
+			v1 = await local_30525()
+			return v1
+		88:
+			v1 = await local_30631()
+			return v1
+		89:
+			v1 = await local_30737()
+			return v1
+		90:
+			v1 = await local_30843()
+			return v1
+		91:
+			v1 = await local_30907()
+			return v1
+		92:
+			v1 = await local_31013()
+			return v1
+		93:
+			v1 = await local_31119()
+			return v1
+		94:
+			v1 = await local_31225()
+			return v1
+		95:
+			v1 = await local_31331()
+			return v1
+		96:
+			v1 = await local_31437()
+			return v1
+		97:
+			v1 = await local_31882()
+			return v1
+		98:
+			v1 = await local_32420()
+			return v1
+		99:
+			v1 = await local_32967()
+			return v1
+		100:
+			v1 = await local_32976()
+			return v1
+		101:
+			v1 = await local_33027()
+			return v1
+		102:
+			v1 = await local_33254()
+			return v1
+		103:
+			v1 = await local_33481()
+			return v1
+		104:
+			v1 = await local_33708()
+			return v1
+		105:
+			v1 = await local_34309()
+			return v1
+		106:
+			v1 = await local_34714()
+			return v1
+		107:
+			v1 = await local_34765()
+			return v1
+		108:
+			v1 = await local_35838()
+			return v1
+		109:
+			v1 = await local_36911()
+			return v1
+		110:
+			v1 = await local_37053()
+			return v1
+		111:
+			v1 = await local_37509()
+			return v1
+		112:
+			v1 = await local_37560()
+			return v1
+		113:
+			v1 = await local_37730()
+			return v1
+		114:
+			v1 = await local_37871()
+			return v1
+		119:
+			v1 = await local_38159()
+			return v1
+		120:
+			v1 = await local_38395()
+			return v1
 	return 0
 	return 0
 
@@ -7806,392 +7870,394 @@ func medium_cargo_generator() -> Variant:
 func high_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 146)):
-		return 553
-	if 1 == math.random_int(0, 146):
-		return 362
-	if 3 == math.random_int(0, 146):
-		return 470
-	if 4 == math.random_int(0, 146):
-		return 472
-	if 5 == math.random_int(0, 146):
-		return 122
-	if 6 == math.random_int(0, 146):
-		return 37
-	if 7 == math.random_int(0, 146):
-		return 192
-	if 8 == math.random_int(0, 146):
-		return 462
-	if 9 == math.random_int(0, 146):
-		return 63
-	if 10 == math.random_int(0, 146):
-		return 259
-	if 11 == math.random_int(0, 146):
-		return 456
-	if 12 == math.random_int(0, 146):
-		return 39
-	if 13 == math.random_int(0, 146):
-		return 548
-	if 14 == math.random_int(0, 146):
-		return 110
-	if 15 == math.random_int(0, 146):
-		return 119
-	if 16 == math.random_int(0, 146):
-		return 52
-	if 17 == math.random_int(0, 146):
-		return 53
-	if 18 == math.random_int(0, 146):
-		return 54
-	if 19 == math.random_int(0, 146):
-		return 55
-	if 20 == math.random_int(0, 146):
-		return 56
-	if 21 == math.random_int(0, 146):
-		return 57
-	if 22 == math.random_int(0, 146):
-		return 58
-	if 23 == math.random_int(0, 146):
-		return 59
-	if 24 == math.random_int(0, 146):
-		return 60
-	if 25 == math.random_int(0, 146):
-		return 159
-	if 26 == math.random_int(0, 146):
-		return 365
-	if 27 == math.random_int(0, 146):
-		return 154
-	if 28 == math.random_int(0, 146):
-		return 252
-	if 29 == math.random_int(0, 146):
-		return 286
-	if 30 == math.random_int(0, 146):
-		return 29
-	if 31 == math.random_int(0, 146):
-		return 373
-	if 32 == math.random_int(0, 146):
-		return 30
-	if 33 == math.random_int(0, 146):
-		return 581
-	if 34 == math.random_int(0, 146):
-		return 441
-	if 35 == math.random_int(0, 146):
-		return 31
-	if 36 == math.random_int(0, 146):
-		return 160
-	if 37 == math.random_int(0, 146):
-		return 389
-	if 38 == math.random_int(0, 146):
-		return 260
-	if 39 == math.random_int(0, 146):
-		return 490
-	if 40 == math.random_int(0, 146):
-		return 32
-	if 41 == math.random_int(0, 146):
-		return 366
-	if 42 == math.random_int(0, 146):
-		return 386
-	if 434 == math.random_int(0, 146):
-		return 330
-	if 44 == math.random_int(0, 146):
-		return 143
-	if 45 == math.random_int(0, 146):
-		return 313
-	if 46 == math.random_int(0, 146):
-		return 393
-	if 47 == math.random_int(0, 146):
-		return 370
-	if 48 == math.random_int(0, 146):
-		return 237
-	if 49 == math.random_int(0, 146):
-		return 237
-	if 50 == math.random_int(0, 146):
-		return 238
-	if 51 == math.random_int(0, 146):
-		return 239
-	if 52 == math.random_int(0, 146):
-		return 536
-	if 53 == math.random_int(0, 146):
-		return 33
-	if 54 == math.random_int(0, 146):
-		return 546
-	if 55 == math.random_int(0, 146):
-		return 162
-	if 56 == math.random_int(0, 146):
-		return 116
-	if 57 == math.random_int(0, 146):
-		return 280
-	if 58 == math.random_int(0, 146):
-		return 314
-	if 59 == math.random_int(0, 146):
-		return 152
-	if 60 == math.random_int(0, 146):
-		return 107
-	if 62 == math.random_int(0, 146):
-		return 582
-	if 63 == math.random_int(0, 146):
-		return 558
-	if 64 == math.random_int(0, 146):
-		return 337
-	if 65 == math.random_int(0, 146):
-		return 124
-	if 66 == math.random_int(0, 146):
-		return 354
-	if 67 == math.random_int(0, 146):
-		return 583
-	if 68 == math.random_int(0, 146):
-		return 49
-	if 69 == math.random_int(0, 146):
-		return 444
-	if 70 == math.random_int(0, 146):
-		return 113
-	if 71 == math.random_int(0, 146):
-		return 114
-	if 72 == math.random_int(0, 146):
-		return 381
-	if 73 == math.random_int(0, 146):
-		return 368
-	if 74 == math.random_int(0, 146):
-		return 101
-	if 75 == math.random_int(0, 146):
-		return 89
-	if 76 == math.random_int(0, 146):
-		return 351
-	if 77 == math.random_int(0, 146):
-		return 338
-	if 78 == math.random_int(0, 146):
-		return 117
-	if 79 == math.random_int(0, 146):
-		return 283
-	if 80 == math.random_int(0, 146):
-		return 481
-	if 81 == math.random_int(0, 146):
-		return 480
-	if 82 == math.random_int(0, 146):
-		return 359
-	if 83 == math.random_int(0, 146):
-		return 469
-	if 84 == math.random_int(0, 146):
-		return 141
-	if 85 == math.random_int(0, 146):
-		return 62
-	if 86 == math.random_int(0, 146):
-		return 134
-	if 87 == math.random_int(0, 146):
-		return 35
-	if 88 == math.random_int(0, 146):
-		return 36
-	if 89 == math.random_int(0, 146):
-		return 579
-	if 90 == math.random_int(0, 146):
-		return 358
-	if 91 == math.random_int(0, 146):
-		return 482
-	if 92 == math.random_int(0, 146):
-		return 473
-	if 93 == math.random_int(0, 146):
-		return 236
-	if 94 == math.random_int(0, 146):
-		return 355
-	if 95 == math.random_int(0, 146):
-		return 120
-	if 96 == math.random_int(0, 146):
-		return 540
-	if 97 == math.random_int(0, 146):
-		return 273
-	if 98 == math.random_int(0, 146):
-		return 284
-	if 99 == math.random_int(0, 146):
-		return 285
-	if 100 == math.random_int(0, 146):
-		return 287
-	if 101 == math.random_int(0, 146):
-		return 550
-	if 102 == math.random_int(0, 146):
-		return 65
-	if 103 == math.random_int(0, 146):
-		return 66
-	if 104 == math.random_int(0, 146):
-		return 443
-	if 105 == math.random_int(0, 146):
-		return 344
-	if 106 == math.random_int(0, 146):
-		return 349
-	if 107 == math.random_int(0, 146):
-		return 118
-	if 108 == math.random_int(0, 146):
-		return 402
-	if 109 == math.random_int(0, 146):
-		return 374
-	if 110 == math.random_int(0, 146):
-		return 571
-	if 111 == math.random_int(0, 146):
-		return 279
-	if 112 == math.random_int(0, 146):
-		return 375
-	if 113 == math.random_int(0, 146):
-		return 479
-	if 114 == math.random_int(0, 146):
-		return 468
-	if 115 == math.random_int(0, 146):
-		return 236
-	if 116 == math.random_int(0, 146):
-		return 236
-	if 117 == math.random_int(0, 146):
-		return 376
-	if 118 == math.random_int(0, 146):
-		return 128
-	if 119 == math.random_int(0, 146):
-		return 372
-	if 120 == math.random_int(0, 146):
-		return 394
-	if 121 == math.random_int(0, 146):
-		return 395
-	if 122 == math.random_int(0, 146):
-		return 149
-	if 123 == math.random_int(0, 146):
-		return 268
-	if 124 == math.random_int(0, 146):
-		return 269
-	if 125 == math.random_int(0, 146):
-		return 282
-	if 126 == math.random_int(0, 146):
-		return 275
-	if 127 == math.random_int(0, 146):
-		return 150
-	if 128 == math.random_int(0, 146):
-		return 405
-	if 129 == math.random_int(0, 146):
-		return 378
-	if 130 == math.random_int(0, 146):
-		return 345
-	if 131 == math.random_int(0, 146):
-		return 137
-	if 132 == math.random_int(0, 146):
-		return 112
-	if 133 == math.random_int(0, 146):
-		return 276
-	if 134 == math.random_int(0, 146):
-		return 156
-	if 135 == math.random_int(0, 146):
-		return 108
-	if 136 == math.random_int(0, 146):
-		return 163
-	if 137 == math.random_int(0, 146):
-		return 294
-	if 138 == math.random_int(0, 146):
-		return 115
-	if 139 == math.random_int(0, 146):
-		return 241
-	if 140 == math.random_int(0, 146):
-		return 242
-	if 141 == math.random_int(0, 146):
-		return 404
-	if 142 == math.random_int(0, 146):
-		return 352
-	if 143 == math.random_int(0, 146):
-		return 133
-	if 144 == math.random_int(0, 146):
-		return 377
-	if 145 == math.random_int(0, 146):
-		return 379
-	if 146 == math.random_int(0, 146):
-		return 90
+	match math.random_int(0, 146):
+		0:
+			return 553
+		1:
+			return 362
+		3:
+			return 470
+		4:
+			return 472
+		5:
+			return 122
+		6:
+			return 37
+		7:
+			return 192
+		8:
+			return 462
+		9:
+			return 63
+		10:
+			return 259
+		11:
+			return 456
+		12:
+			return 39
+		13:
+			return 548
+		14:
+			return 110
+		15:
+			return 119
+		16:
+			return 52
+		17:
+			return 53
+		18:
+			return 54
+		19:
+			return 55
+		20:
+			return 56
+		21:
+			return 57
+		22:
+			return 58
+		23:
+			return 59
+		24:
+			return 60
+		25:
+			return 159
+		26:
+			return 365
+		27:
+			return 154
+		28:
+			return 252
+		29:
+			return 286
+		30:
+			return 29
+		31:
+			return 373
+		32:
+			return 30
+		33:
+			return 581
+		34:
+			return 441
+		35:
+			return 31
+		36:
+			return 160
+		37:
+			return 389
+		38:
+			return 260
+		39:
+			return 490
+		40:
+			return 32
+		41:
+			return 366
+		42:
+			return 386
+		434:
+			return 330
+		44:
+			return 143
+		45:
+			return 313
+		46:
+			return 393
+		47:
+			return 370
+		48:
+			return 237
+		49:
+			return 237
+		50:
+			return 238
+		51:
+			return 239
+		52:
+			return 536
+		53:
+			return 33
+		54:
+			return 546
+		55:
+			return 162
+		56:
+			return 116
+		57:
+			return 280
+		58:
+			return 314
+		59:
+			return 152
+		60:
+			return 107
+		62:
+			return 582
+		63:
+			return 558
+		64:
+			return 337
+		65:
+			return 124
+		66:
+			return 354
+		67:
+			return 583
+		68:
+			return 49
+		69:
+			return 444
+		70:
+			return 113
+		71:
+			return 114
+		72:
+			return 381
+		73:
+			return 368
+		74:
+			return 101
+		75:
+			return 89
+		76:
+			return 351
+		77:
+			return 338
+		78:
+			return 117
+		79:
+			return 283
+		80:
+			return 481
+		81:
+			return 480
+		82:
+			return 359
+		83:
+			return 469
+		84:
+			return 141
+		85:
+			return 62
+		86:
+			return 134
+		87:
+			return 35
+		88:
+			return 36
+		89:
+			return 579
+		90:
+			return 358
+		91:
+			return 482
+		92:
+			return 473
+		93:
+			return 236
+		94:
+			return 355
+		95:
+			return 120
+		96:
+			return 540
+		97:
+			return 273
+		98:
+			return 284
+		99:
+			return 285
+		100:
+			return 287
+		101:
+			return 550
+		102:
+			return 65
+		103:
+			return 66
+		104:
+			return 443
+		105:
+			return 344
+		106:
+			return 349
+		107:
+			return 118
+		108:
+			return 402
+		109:
+			return 374
+		110:
+			return 571
+		111:
+			return 279
+		112:
+			return 375
+		113:
+			return 479
+		114:
+			return 468
+		115:
+			return 236
+		116:
+			return 236
+		117:
+			return 376
+		118:
+			return 128
+		119:
+			return 372
+		120:
+			return 394
+		121:
+			return 395
+		122:
+			return 149
+		123:
+			return 268
+		124:
+			return 269
+		125:
+			return 282
+		126:
+			return 275
+		127:
+			return 150
+		128:
+			return 405
+		129:
+			return 378
+		130:
+			return 345
+		131:
+			return 137
+		132:
+			return 112
+		133:
+			return 276
+		134:
+			return 156
+		135:
+			return 108
+		136:
+			return 163
+		137:
+			return 294
+		138:
+			return 115
+		139:
+			return 241
+		140:
+			return 242
+		141:
+			return 404
+		142:
+			return 352
+		143:
+			return 133
+		144:
+			return 377
+		145:
+			return 379
+		146:
+			return 90
 	return 0
 	return 0
 
 func very_high_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 44)):
-		return 333
-	if 1 == math.random_int(0, 44):
-		return 106
-	if 2 == math.random_int(0, 44):
-		return 476
-	if 3 == math.random_int(0, 44):
-		return 353
-	if 4 == math.random_int(0, 44):
-		return 277
-	if 5 == math.random_int(0, 44):
-		return 547
-	if 6 == math.random_int(0, 44):
-		return 467
-	if 7 == math.random_int(0, 44):
-		return 477
-	if 8 == math.random_int(0, 44):
-		return 348
-	if 9 == math.random_int(0, 44):
-		return 139
-	if 10 == math.random_int(0, 44):
-		return 560
-	if 11 == math.random_int(0, 44):
-		return 69
-	if 12 == math.random_int(0, 44):
-		return 272
-	if 13 == math.random_int(0, 44):
-		return 430
-	if 14 == math.random_int(0, 44):
-		return 142
-	if 15 == math.random_int(0, 44):
-		return 478
-	if 16 == math.random_int(0, 44):
-		return 551
-	if 17 == math.random_int(0, 44):
-		return 236
-	if 18 == math.random_int(0, 44):
-		return 153
-	if 19 == math.random_int(0, 44):
-		return 265
-	if 20 == math.random_int(0, 44):
-		return 267
-	if 21 == math.random_int(0, 44):
-		return 281
-	if 22 == math.random_int(0, 44):
-		return 549
-	if 23 == math.random_int(0, 44):
-		return 431
-	if 24 == math.random_int(0, 44):
-		return 270
-	if 25 == math.random_int(0, 44):
-		return 346
-	if 26 == math.random_int(0, 44):
-		return 347
-	if 27 == math.random_int(0, 44):
-		return 505
-	if 28 == math.random_int(0, 44):
-		return 432
-	if 29 == math.random_int(0, 44):
-		return 144
-	if 30 == math.random_int(0, 44):
-		return 271
-	if 31 == math.random_int(0, 44):
-		return 243
-	if 32 == math.random_int(0, 44):
-		return 278
-	if 33 == math.random_int(0, 44):
-		return 207
-	if 34 == math.random_int(0, 44):
-		return 109
-	if 35 == math.random_int(0, 44):
-		return 135
-	if 36 == math.random_int(0, 44):
-		return 140
-	if 37 == math.random_int(0, 44):
-		return 111
-	if 38 == math.random_int(0, 44):
-		return 266
-	if 39 == math.random_int(0, 44):
-		return 552
-	if 40 == math.random_int(0, 44):
-		return 401
-	if 41 == math.random_int(0, 44):
-		return 334
-	if 42 == math.random_int(0, 44):
-		return 136
-	if 43 == math.random_int(0, 44):
-		return 471
-	if 44 == math.random_int(0, 44):
-		return 442
+	match math.random_int(0, 44):
+		0:
+			return 333
+		1:
+			return 106
+		2:
+			return 476
+		3:
+			return 353
+		4:
+			return 277
+		5:
+			return 547
+		6:
+			return 467
+		7:
+			return 477
+		8:
+			return 348
+		9:
+			return 139
+		10:
+			return 560
+		11:
+			return 69
+		12:
+			return 272
+		13:
+			return 430
+		14:
+			return 142
+		15:
+			return 478
+		16:
+			return 551
+		17:
+			return 236
+		18:
+			return 153
+		19:
+			return 265
+		20:
+			return 267
+		21:
+			return 281
+		22:
+			return 549
+		23:
+			return 431
+		24:
+			return 270
+		25:
+			return 346
+		26:
+			return 347
+		27:
+			return 505
+		28:
+			return 432
+		29:
+			return 144
+		30:
+			return 271
+		31:
+			return 243
+		32:
+			return 278
+		33:
+			return 207
+		34:
+			return 109
+		35:
+			return 135
+		36:
+			return 140
+		37:
+			return 111
+		38:
+			return 266
+		39:
+			return 552
+		40:
+			return 401
+		41:
+			return 334
+		42:
+			return 136
+		43:
+			return 471
+		44:
+			return 442
 	return 0
 	return 0
 
@@ -8406,56 +8472,57 @@ func supply_cargo_generator() -> Variant:
 func military_supply_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await local_0()
-	if _pog_is_null(math.random_int(0, 24)):
-		return 482
-	if 1 == math.random_int(0, 24):
-		return 536
-	if 2 == math.random_int(0, 24):
-		return 537
-	if 3 == math.random_int(0, 24):
-		return 538
-	if 4 == math.random_int(0, 24):
-		return 539
-	if 5 == math.random_int(0, 24):
-		return 488
-	if 6 == math.random_int(0, 24):
-		return 486
-	if 7 == math.random_int(0, 24):
-		return 492
-	if 8 == math.random_int(0, 24):
-		return 494
-	if 9 == math.random_int(0, 24):
-		return 490
-	if 10 == math.random_int(0, 24):
-		return 505
-	if 11 == math.random_int(0, 24):
-		return 540
-	if 12 == math.random_int(0, 24):
-		return 541
-	if 13 == math.random_int(0, 24):
-		return 542
-	if 14 == math.random_int(0, 24):
-		return 543
-	if 15 == math.random_int(0, 24):
-		return 544
-	if 16 == math.random_int(0, 24):
-		return 545
-	if 17 == math.random_int(0, 24):
-		return 546
-	if 18 == math.random_int(0, 24):
-		return 553
-	if 19 == math.random_int(0, 24):
-		return 581
-	if 20 == math.random_int(0, 24):
-		return 582
-	if 21 == math.random_int(0, 24):
-		return 583
-	if 22 == math.random_int(0, 24):
-		return 18
-	if 23 == math.random_int(0, 24):
-		return 19
-	if 24 == math.random_int(0, 24):
-		return 20
+	match math.random_int(0, 24):
+		0:
+			return 482
+		1:
+			return 536
+		2:
+			return 537
+		3:
+			return 538
+		4:
+			return 539
+		5:
+			return 488
+		6:
+			return 486
+		7:
+			return 492
+		8:
+			return 494
+		9:
+			return 490
+		10:
+			return 505
+		11:
+			return 540
+		12:
+			return 541
+		13:
+			return 542
+		14:
+			return 543
+		15:
+			return 544
+		16:
+			return 545
+		17:
+			return 546
+		18:
+			return 553
+		19:
+			return 581
+		20:
+			return 582
+		21:
+			return 583
+		22:
+			return 18
+		23:
+			return 19
+		24:
+			return 20
 	return 0
 	return 0
 

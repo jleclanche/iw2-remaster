@@ -154,75 +154,23 @@ func score_death_script() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 2343
-	while true:
-		if _pc == 2343:
-			v1 = ifaction.find("Player")
-			v2 = isim.faction(isim.cast(v0))
-			v3 = object.int_property(v0, "class")
-			v4 = object.int_property(v0, "score")
-			if not _pog_eq(v2, v1):
-				_pc = 2487
-				continue
-			else:
-				_pc = 2724
-				continue
-		elif _pc == 2487:
-			_pc = 2685
-			continue
-		elif _pc == 2492:
-			global.set_int("g_num_easy_in_world", global.pog_int("g_num_easy_in_world") - 1)
-			_pc = 2724
-			continue
-		elif _pc == 2539:
-			global.set_int("g_num_med_in_world", global.pog_int("g_num_med_in_world") - 1)
-			_pc = 2724
-			continue
-		elif _pc == 2586:
-			global.set_int("g_num_hard_in_world", global.pog_int("g_num_hard_in_world") - 1)
-			_pc = 2724
-			continue
-		elif _pc == 2633:
-			global.set_int("g_num_vhard_in_world", global.pog_int("g_num_vhard_in_world") - 1)
-			_pc = 2724
-			continue
-		elif _pc == 2680:
-			_pc = 2724
-			continue
-		elif _pc == 2685:
-			if not _pog_is_null(v3):
-				_pc = 2698
-				continue
-			else:
-				_pc = 2492
-				continue
-		elif _pc == 2698:
-			if 1 != v3:
-				_pc = 2706
-				continue
-			else:
-				_pc = 2539
-				continue
-		elif _pc == 2706:
-			if 2 != v3:
-				_pc = 2715
-				continue
-			else:
-				_pc = 2586
-				continue
-		elif _pc == 2715:
-			if 3 != v3:
-				_pc = 2724
-				continue
-			else:
-				_pc = 2633
-				continue
-		elif _pc == 2724:
-			isim.kill(isim.cast(v0))
-			ihud.set_prompt(string.from_int(v4), "")
-			return v3
-		else:
-			return 0
+	v1 = ifaction.find("Player")
+	v2 = isim.faction(isim.cast(v0))
+	v3 = object.int_property(v0, "class")
+	v4 = object.int_property(v0, "score")
+	if not _pog_eq(v2, v1):
+		match v3:
+			0:
+				global.set_int("g_num_easy_in_world", global.pog_int("g_num_easy_in_world") - 1)
+			1:
+				global.set_int("g_num_med_in_world", global.pog_int("g_num_med_in_world") - 1)
+			2:
+				global.set_int("g_num_hard_in_world", global.pog_int("g_num_hard_in_world") - 1)
+			3:
+				global.set_int("g_num_vhard_in_world", global.pog_int("g_num_vhard_in_world") - 1)
+	isim.kill(isim.cast(v0))
+	ihud.set_prompt(string.from_int(v4), "")
+	return
 	return 0
 
 func local_2798(v0, v1, v2) -> Variant:
@@ -239,279 +187,68 @@ func local_2798(v0, v1, v2) -> Variant:
 func local_2995(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var _pc: int = 2995
-	while true:
-		if _pc == 2995:
-			v2 = ""
-			_pc = 3868
-			continue
-		elif _pc == 3016:
-			_pc = 3130
-			continue
-		elif _pc == 3021:
-			v1 = await local_2798("ini:/sims/ships/independent/f-fighter", 200, 0)
-			_pc = 3171
-			continue
-		elif _pc == 3056:
-			v1 = await local_2798("ini:/sims/ships/navy/fighter", 200, 0)
-			_pc = 3171
-			continue
-		elif _pc == 3091:
-			v1 = await local_2798("ini:/sims/ships/independent/tug_armed_weak", 100, 0)
-			_pc = 3171
-			continue
-		elif _pc == 3125:
-			_pc = 3171
-			continue
-		elif _pc == 3130:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 3154
-				continue
-			else:
-				_pc = 3021
-				continue
-		elif _pc == 3154:
-			if not _pog_is_null(1):
-				_pc = 3162
-				continue
-			else:
-				_pc = 3056
-				continue
-		elif _pc == 3162:
-			if not _pog_is_null(2):
-				_pc = 3171
-				continue
-			else:
-				_pc = 3091
-				continue
-		elif _pc == 3171:
+	v2 = ""
+	match v0:
+		0:
+			match math.random_int(0, 2):
+				0:
+					v1 = await local_2798("ini:/sims/ships/independent/f-fighter", 200, 0)
+				1:
+					v1 = await local_2798("ini:/sims/ships/navy/fighter", 200, 0)
+				2:
+					v1 = await local_2798("ini:/sims/ships/independent/tug_armed_weak", 100, 0)
 			return v1
-		elif _pc == 3181:
-			_pc = 3330
-			continue
-		elif _pc == 3186:
-			v1 = await local_2798("ini:/sims/ships/cops/fighter", 200, 1)
-			_pc = 3380
-			continue
-		elif _pc == 3221:
-			v1 = await local_2798("ini:/sims/ships/corporate/interceptor", 250, 1)
-			_pc = 3380
-			continue
-		elif _pc == 3256:
-			v1 = await local_2798("ini:/sims/ships/independent/tug_armed", 100, 1)
-			_pc = 3380
-			continue
-		elif _pc == 3290:
-			v1 = await local_2798("ini:/sims/ships/navy/patcom", 150, 1)
-			_pc = 3380
-			continue
-		elif _pc == 3325:
-			_pc = 3380
-			continue
-		elif _pc == 3330:
-			math.random_int(0, 3)
-			if not _pog_is_null(math.random_int(0, 3)):
-				_pc = 3354
-				continue
-			else:
-				_pc = 3186
-				continue
-		elif _pc == 3354:
-			if not _pog_is_null(1):
-				_pc = 3362
-				continue
-			else:
-				_pc = 3221
-				continue
-		elif _pc == 3362:
-			if not _pog_is_null(2):
-				_pc = 3371
-				continue
-			else:
-				_pc = 3256
-				continue
-		elif _pc == 3371:
-			if not _pog_is_null(3):
-				_pc = 3380
-				continue
-			else:
-				_pc = 3290
-				continue
-		elif _pc == 3380:
+		1:
+			match math.random_int(0, 3):
+				0:
+					v1 = await local_2798("ini:/sims/ships/cops/fighter", 200, 1)
+				1:
+					v1 = await local_2798("ini:/sims/ships/corporate/interceptor", 250, 1)
+				2:
+					v1 = await local_2798("ini:/sims/ships/independent/tug_armed", 100, 1)
+				3:
+					v1 = await local_2798("ini:/sims/ships/navy/patcom", 150, 1)
 			return v1
-		elif _pc == 3390:
-			_pc = 3508
-			continue
-		elif _pc == 3395:
-			v1 = await local_2798("ini:/sims/ships/cops/interceptor", 250, 2)
-			_pc = 3549
-			continue
-		elif _pc == 3431:
-			v1 = await local_2798("ini:/sims/ships/corporate/large_corp_interceptor", 400, 2)
-			_pc = 3549
-			continue
-		elif _pc == 3467:
-			v1 = await local_2798("ini:/sims/ships/marauder/marauder_cutter", 400, 2)
-			_pc = 3549
-			continue
-		elif _pc == 3503:
-			_pc = 3549
-			continue
-		elif _pc == 3508:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 3532
-				continue
-			else:
-				_pc = 3395
-				continue
-		elif _pc == 3532:
-			if not _pog_is_null(1):
-				_pc = 3540
-				continue
-			else:
-				_pc = 3431
-				continue
-		elif _pc == 3540:
-			if not _pog_is_null(2):
-				_pc = 3549
-				continue
-			else:
-				_pc = 3467
-				continue
-		elif _pc == 3549:
+		2:
+			match math.random_int(0, 2):
+				0:
+					v1 = await local_2798("ini:/sims/ships/cops/interceptor", 250, 2)
+				1:
+					v1 = await local_2798("ini:/sims/ships/corporate/large_corp_interceptor", 400, 2)
+				2:
+					v1 = await local_2798("ini:/sims/ships/marauder/marauder_cutter", 400, 2)
 			return v1
-		elif _pc == 3559:
-			_pc = 3785
-			continue
-		elif _pc == 3564:
-			v1 = await local_2798("ini:/sims/ships/corporate/corp_cruiser_turrets", 1200, 3)
-			_pc = 3853
-			continue
-		elif _pc == 3600:
-			v1 = await local_2798("ini:/sims/ships/navy/heavy_destroyer_turret", 1000, 3)
-			_pc = 3853
-			continue
-		elif _pc == 3636:
-			v1 = await local_2798("ini:/sims/ships/navy/old_destroyer", 900, 3)
-			_pc = 3853
-			continue
-		elif _pc == 3672:
-			v1 = await local_2798("ini:/sims/ships/navy/capital_carrier", 1500, 3)
-			_pc = 3853
-			continue
-		elif _pc == 3708:
-			v1 = await local_2798("ini:/sims/ships/navy/heavy_cruiser", 1200, 3)
-			_pc = 3853
-			continue
-		elif _pc == 3744:
-			v1 = await local_2798("ini:/sims/ships/navy/capital_carrier_multibay", 1500, 3)
-			_pc = 3853
-			continue
-		elif _pc == 3780:
-			_pc = 3853
-			continue
-		elif _pc == 3785:
-			math.random_int(0, 4)
-			if not _pog_is_null(math.random_int(0, 4)):
-				_pc = 3809
-				continue
-			else:
-				_pc = 3564
-				continue
-		elif _pc == 3809:
-			if not _pog_is_null(1):
-				_pc = 3817
-				continue
-			else:
-				_pc = 3600
-				continue
-		elif _pc == 3817:
-			if not _pog_is_null(2):
-				_pc = 3826
-				continue
-			else:
-				_pc = 3636
-				continue
-		elif _pc == 3826:
-			if not _pog_is_null(3):
-				_pc = 3835
-				continue
-			else:
-				_pc = 3672
-				continue
-		elif _pc == 3835:
-			if not _pog_is_null(4):
-				_pc = 3844
-				continue
-			else:
-				_pc = 3708
-				continue
-		elif _pc == 3844:
-			if not _pog_is_null(5):
-				_pc = 3853
-				continue
-			else:
-				_pc = 3744
-				continue
-		elif _pc == 3853:
+		3:
+			match math.random_int(0, 4):
+				0:
+					v1 = await local_2798("ini:/sims/ships/corporate/corp_cruiser_turrets", 1200, 3)
+				1:
+					v1 = await local_2798("ini:/sims/ships/navy/heavy_destroyer_turret", 1000, 3)
+				2:
+					v1 = await local_2798("ini:/sims/ships/navy/old_destroyer", 900, 3)
+				3:
+					v1 = await local_2798("ini:/sims/ships/navy/capital_carrier", 1500, 3)
+				4:
+					v1 = await local_2798("ini:/sims/ships/navy/heavy_cruiser", 1200, 3)
+				5:
+					v1 = await local_2798("ini:/sims/ships/navy/capital_carrier_multibay", 1500, 3)
 			return v1
-		elif _pc == 3863:
-			_pc = 3907
-			continue
-		elif _pc == 3868:
-			if not _pog_is_null(v0):
-				_pc = 3881
-				continue
-			else:
-				_pc = 3016
-				continue
-		elif _pc == 3881:
-			if 1 != v0:
-				_pc = 3889
-				continue
-			else:
-				_pc = 3181
-				continue
-		elif _pc == 3889:
-			if 2 != v0:
-				_pc = 3898
-				continue
-			else:
-				_pc = 3390
-				continue
-		elif _pc == 3898:
-			if 3 != v0:
-				_pc = 3907
-				continue
-			else:
-				_pc = 3559
-				continue
-		elif _pc == 3907:
-			return 0
-		elif _pc == 3913:
-			return
-		else:
-			return 0
+	return 0
 	return 0
 
 func local_3922(v0) -> Variant:
-	if _pog_is_null(math.random_int(0, 4)):
-		await iformation.goose(v0, 40.0, 0)
-		return 0
-	if 1 == math.random_int(0, 4):
-		await iformation.claw(v0, 40.0, 0)
-		return 0
-	if 2 == math.random_int(0, 4):
-		await iformation.cross(v0, 40.0, 0)
-		return 0
-	if 3 == math.random_int(0, 4):
-		await iformation.v(v0, 40.0, 0)
-		return 0
-	if 4 == math.random_int(0, 4):
-		await iformation.outrider(v0, 40.0, 0)
-		return 0
+	match math.random_int(0, 4):
+		0:
+			await iformation.goose(v0, 40.0, 0)
+		1:
+			await iformation.claw(v0, 40.0, 0)
+		2:
+			await iformation.cross(v0, 40.0, 0)
+		3:
+			await iformation.v(v0, 40.0, 0)
+		4:
+			await iformation.outrider(v0, 40.0, 0)
+			return 0
 	return 0
 	return 0
 
@@ -765,51 +502,37 @@ func local_8219(v0) -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	var _pc: int = 8219
+	v1 = group.create()
+	v2 = await iwingmen.group()
+	v3 = iship.find_player_ship()
+	v6 = 4
+	v7 = 8
+	v8 = 15
+	v9 = 144
+	v10 = 16
+	v11 = 400
+	v12 = 0
+	v13 = 0
+	v14 = 0
+	v15 = 1
+	v16 = 3
+	v17 = 6
+	v18 = 9
+	v19 = 6
+	v21 = ""
+	v21 = text.field("instant_action_new_ship", 0)
+	v22 = ""
+	await _pog_wait(0.30000001192092896)
+	v23 = await local_0(v0)
+	await _pog_wait(10.0)
+	await local_5718(v0, v15)
+	await _pog_wait(1.0)
+	await local_4493(v0, v1, v2, 1, 0, 0, 0)
+	await _pog_wait(1.0)
 	while true:
-		if _pc == 8219:
-			v1 = group.create()
-			v2 = await iwingmen.group()
-			v3 = iship.find_player_ship()
-			v6 = 4
-			v7 = 8
-			v8 = 15
-			v9 = 144
-			v10 = 16
-			v11 = 400
-			v12 = 0
-			v13 = 0
-			v14 = 0
-			v15 = 1
-			v16 = 3
-			v17 = 6
-			v18 = 9
-			v19 = 6
-			v21 = ""
-			v21 = text.field("instant_action_new_ship", 0)
-			v22 = ""
-			await _pog_wait(0.30000001192092896)
-			v23 = await local_0(v0)
-			await _pog_wait(10.0)
-			await local_5718(v0, v15)
-			await _pog_wait(1.0)
-			await local_4493(v0, v1, v2, 1, 0, 0, 0)
-			await _pog_wait(1.0)
-			_pc = 8655
-			continue
-		elif _pc == 8655:
-			await _pog_frame()
-			if _pog_every(8656, 1.0):
-				_pc = 8669
-				continue
-			else:
-				_pc = 9358
-				continue
-		elif _pc == 8669:
-			v5 = iscore.total()
-			_pc = 8974
-			continue
-		elif _pc == 8693:
+		await _pog_wait(1)
+		v5 = iscore.total()
+		if PogRuntime.TRACE:
 			debug.print_string("iInstantAction.wave: ")
 			debug.print_int(v12)
 			debug.print_string(" easy: ")
@@ -821,493 +544,120 @@ func local_8219(v0) -> Variant:
 			debug.print_string(" vhard: ")
 			debug.print_int(global.pog_int("g_num_vhard_in_world"))
 			debug.print_string(" \n")
-			_pc = 8974
-			continue
-		elif _pc == 8974:
-			if v5 >= v11:
-				_pc = 8990
-				continue
-			else:
-				_pc = 9125
-				continue
-		elif _pc == 8990:
+		if v5 >= v11:
 			v10 = v10 + 1
 			if v10 > v8:
-				_pc = 9019
-				continue
+				v11 = v5 + 1000
 			else:
-				_pc = 9039
-				continue
-		elif _pc == 9019:
-			v11 = v5 + 1000
-			_pc = 9125
-			continue
-		elif _pc == 9039:
-			if v10 > v7:
-				_pc = 9055
-				continue
-			else:
-				_pc = 9075
-				continue
-		elif _pc == 9055:
-			v11 = v5 + 500
-			_pc = 9125
-			continue
-		elif _pc == 9075:
-			if v10 > v6:
-				_pc = 9091
-				continue
-			else:
-				_pc = 9111
-				continue
-		elif _pc == 9091:
-			v11 = v5 + 200
-			_pc = 9125
-			continue
-		elif _pc == 9111:
-			v11 = v5 + 100
-			_pc = 9125
-			continue
-		elif _pc == 9125:
-			if not _pog_is_null(v14):
-				_pc = 9137
-				continue
-			else:
-				_pc = 9244
-				continue
-		elif _pc == 9137:
+				if v10 > v7:
+					v11 = v5 + 500
+				else:
+					if v10 > v6:
+						v11 = v5 + 200
+					else:
+						v11 = v5 + 100
+		if not _pog_is_null(v14):
 			v20 = await local_8083(v1, 25000)
 			if v20 <= 1:
-				_pc = 9176
-				continue
-			else:
-				_pc = 9244
-				continue
-		elif _pc == 9176:
-			v14 = 0
-			if (1 - _pog_is_running(v4)) == 1:
-				_pc = 9208
-				continue
-			else:
-				_pc = 9244
-				continue
-		elif _pc == 9208:
-			v4 = _pog_spawn(local_6569.bind(v0, v2))
-			v19 = 0
-			_pc = 9244
-			continue
-		elif _pc == 9244:
-			if (1 - _pog_is_running(v4)) != 1 and v19 <= 41:
-				_pc = 9278
-				continue
-			else:
-				_pc = 9316
-				continue
-		elif _pc == 9278:
+				v14 = 0
+				if (1 - _pog_is_running(v4)) == 1:
+					v4 = _pog_spawn(local_6569.bind(v0, v2))
+					v19 = 0
+		if (1 - _pog_is_running(v4)) != 1 and v19 <= 41:
 			if _pog_is_null(await local_7997()):
-				_pc = 9298
-				continue
-			else:
-				_pc = 9311
-				continue
-		elif _pc == 9298:
-			v19 = v19 + 1
-			_pc = 9311
-			continue
-		elif _pc == 9311:
-			_pc = 9358
-			continue
-		elif _pc == 9316:
+				v19 = v19 + 1
+		else:
 			if (1 - _pog_is_running(v4)) == 1 and v19 < 41:
-				_pc = 9350
-				continue
-			else:
-				_pc = 9358
-				continue
-		elif _pc == 9350:
-			v19 = 41
-			_pc = 9358
-			continue
-		elif _pc == 9358:
-			if _pog_every(9358, 5.0):
-				_pc = 9371
-				continue
-			else:
-				_pc = 11487
-				continue
-		elif _pc == 9371:
-			v20 = await local_8083(v1, 25000)
-			await local_5718(v0, v15)
-			_pc = 9488
-			continue
-		elif _pc == 9427:
+				v19 = 41
+		v20 = await local_8083(v1, 25000)
+		await local_5718(v0, v15)
+		if PogRuntime.TRACE:
 			debug.print_string("iInstantAction.enemies_in_range: ")
 			debug.print_int(v20)
 			debug.print_string(" \n")
-			_pc = 9488
-			continue
-		elif _pc == 9488:
-			if v19 > 40 and _pog_is_null(v20):
-				_pc = 9509
-				continue
-			else:
-				_pc = 10710
-				continue
-		elif _pc == 9509:
+		if v19 > 40 and _pog_is_null(v20):
 			await _pog_wait(math.random_int(6, 9))
-			_pc = 10420
-			continue
-		elif _pc == 9559:
-			await local_4493(v0, v1, v2, 2, 0, 0, 0)
-			_pc = 10603
-			continue
-		elif _pc == 9598:
-			await local_4493(v0, v1, v2, 3, 0, 0, 0)
-			_pc = 10603
-			continue
-		elif _pc == 9637:
-			await local_4493(v0, v1, v2, 0, 2, 0, 0)
-			_pc = 10603
-			continue
-		elif _pc == 9676:
-			await local_4493(v0, v1, v2, 0, 3, 0, 0)
-			v14 = 1
-			v15 = 2
-			_pc = 10603
-			continue
-		elif _pc == 9730:
-			await local_4493(v0, v1, v2, 1, 4, 0, 0)
-			_pc = 10603
-			continue
-		elif _pc == 9769:
-			await local_4493(v0, v1, v2, 1, 0, 2, 0)
-			_pc = 10603
-			continue
-		elif _pc == 9808:
-			await local_4493(v0, v1, v2, 0, 0, 4, 0)
-			v14 = 1
-			v15 = 3
-			_pc = 10603
-			continue
-		elif _pc == 9862:
-			await local_4493(v0, v1, v2, 1, 0, 0, 1)
-			_pc = 10603
-			continue
-		elif _pc == 9900:
-			await local_4493(v0, v1, v2, 3, 0, 0, 0)
-			_pc = 10603
-			continue
-		elif _pc == 9939:
-			await local_4493(v0, v1, v2, 3, 0, 0, 1)
-			v14 = 1
-			v15 = 4
-			_pc = 10603
-			continue
-		elif _pc == 9993:
-			await local_4493(v0, v1, v2, 3, 2, 2, 0)
-			_pc = 10603
-			continue
-		elif _pc == 10034:
-			await local_4493(v0, v1, v2, 2, 0, 3, 1)
-			_pc = 10603
-			continue
-		elif _pc == 10074:
-			await local_4493(v0, v1, v2, 0, 4, 4, 0)
-			v14 = 1
-			_pc = 10603
-			continue
-		elif _pc == 10121:
-			await local_4493(v0, v1, v2, 3, 0, 0, 0)
-			_pc = 10603
-			continue
-		elif _pc == 10160:
-			await local_4493(v0, v1, v2, 0, 4, 0, 0)
-			_pc = 10603
-			continue
-		elif _pc == 10199:
-			await local_4493(v0, v1, v2, 4, 0, 4, 0)
-			v14 = 1
-			_pc = 10603
-			continue
-		elif _pc == 10246:
-			await local_4493(v0, v1, v2, 4, 4, 0, 1)
-			_pc = 10603
-			continue
-		elif _pc == 10286:
-			await local_4493(v0, v1, v2, 0, 6, 0, 1)
-			_pc = 10603
-			continue
-		elif _pc == 10325:
-			await local_4493(v0, v1, v2, 4, 4, 0, 2)
-			v14 = 1
-			_pc = 10603
-			continue
-		elif _pc == 10373:
-			await local_4493(v0, v1, v2, 4, 4, 2, 2)
-			_pc = 10603
-			continue
-		elif _pc == 10415:
-			_pc = 10603
-			continue
-		elif _pc == 10420:
-			if not _pog_is_null(v12):
-				_pc = 10433
-				continue
-			else:
-				_pc = 9559
-				continue
-		elif _pc == 10433:
-			if 1 != v12:
-				_pc = 10441
-				continue
-			else:
-				_pc = 9598
-				continue
-		elif _pc == 10441:
-			if 2 != v12:
-				_pc = 10450
-				continue
-			else:
-				_pc = 9637
-				continue
-		elif _pc == 10450:
-			if 3 != v12:
-				_pc = 10459
-				continue
-			else:
-				_pc = 9676
-				continue
-		elif _pc == 10459:
-			if 4 != v12:
-				_pc = 10468
-				continue
-			else:
-				_pc = 9730
-				continue
-		elif _pc == 10468:
-			if 5 != v12:
-				_pc = 10477
-				continue
-			else:
-				_pc = 9769
-				continue
-		elif _pc == 10477:
-			if 6 != v12:
-				_pc = 10486
-				continue
-			else:
-				_pc = 9808
-				continue
-		elif _pc == 10486:
-			if 7 != v12:
-				_pc = 10495
-				continue
-			else:
-				_pc = 9862
-				continue
-		elif _pc == 10495:
-			if 8 != v12:
-				_pc = 10504
-				continue
-			else:
-				_pc = 9900
-				continue
-		elif _pc == 10504:
-			if 9 != v12:
-				_pc = 10513
-				continue
-			else:
-				_pc = 9939
-				continue
-		elif _pc == 10513:
-			if 10 != v12:
-				_pc = 10522
-				continue
-			else:
-				_pc = 9993
-				continue
-		elif _pc == 10522:
-			if 11 != v12:
-				_pc = 10531
-				continue
-			else:
-				_pc = 10034
-				continue
-		elif _pc == 10531:
-			if 12 != v12:
-				_pc = 10540
-				continue
-			else:
-				_pc = 10074
-				continue
-		elif _pc == 10540:
-			if 13 != v12:
-				_pc = 10549
-				continue
-			else:
-				_pc = 10121
-				continue
-		elif _pc == 10549:
-			if 14 != v12:
-				_pc = 10558
-				continue
-			else:
-				_pc = 10160
-				continue
-		elif _pc == 10558:
-			if 15 != v12:
-				_pc = 10567
-				continue
-			else:
-				_pc = 10199
-				continue
-		elif _pc == 10567:
-			if 16 != v12:
-				_pc = 10576
-				continue
-			else:
-				_pc = 10246
-				continue
-		elif _pc == 10576:
-			if 17 != v12:
-				_pc = 10585
-				continue
-			else:
-				_pc = 10286
-				continue
-		elif _pc == 10585:
-			if 18 != v12:
-				_pc = 10594
-				continue
-			else:
-				_pc = 10325
-				continue
-		elif _pc == 10594:
-			if 19 != v12:
-				_pc = 10603
-				continue
-			else:
-				_pc = 10373
-				continue
-		elif _pc == 10603:
+			match v12:
+				0:
+					await local_4493(v0, v1, v2, 2, 0, 0, 0)
+				1:
+					await local_4493(v0, v1, v2, 3, 0, 0, 0)
+				2:
+					await local_4493(v0, v1, v2, 0, 2, 0, 0)
+				3:
+					await local_4493(v0, v1, v2, 0, 3, 0, 0)
+					v14 = 1
+					v15 = 2
+				4:
+					await local_4493(v0, v1, v2, 1, 4, 0, 0)
+				5:
+					await local_4493(v0, v1, v2, 1, 0, 2, 0)
+				6:
+					await local_4493(v0, v1, v2, 0, 0, 4, 0)
+					v14 = 1
+					v15 = 3
+				7:
+					await local_4493(v0, v1, v2, 1, 0, 0, 1)
+				8:
+					await local_4493(v0, v1, v2, 3, 0, 0, 0)
+				9:
+					await local_4493(v0, v1, v2, 3, 0, 0, 1)
+					v14 = 1
+					v15 = 4
+				10:
+					await local_4493(v0, v1, v2, 3, 2, 2, 0)
+				11:
+					await local_4493(v0, v1, v2, 2, 0, 3, 1)
+				12:
+					await local_4493(v0, v1, v2, 0, 4, 4, 0)
+					v14 = 1
+				13:
+					await local_4493(v0, v1, v2, 3, 0, 0, 0)
+				14:
+					await local_4493(v0, v1, v2, 0, 4, 0, 0)
+				15:
+					await local_4493(v0, v1, v2, 4, 0, 4, 0)
+					v14 = 1
+				16:
+					await local_4493(v0, v1, v2, 4, 4, 0, 1)
+				17:
+					await local_4493(v0, v1, v2, 0, 6, 0, 1)
+				18:
+					await local_4493(v0, v1, v2, 4, 4, 0, 2)
+					v14 = 1
+				19:
+					await local_4493(v0, v1, v2, 4, 4, 2, 2)
 			v12 = v12 + 1
 			if v12 >= 20:
-				_pc = 10629
-				continue
-			else:
-				_pc = 10637
-				continue
-		elif _pc == 10629:
-			v12 = 12
-			_pc = 10637
-			continue
-		elif _pc == 10637:
+				v12 = 12
 			v13 = v13 + 1
 			ihud.set_prompt(string.join("instant_action_text_new+ +", string.from_int(v13)), "")
-			_pc = 10710
-			continue
-		elif _pc == 10710:
-			if not (config.get_bool("system", "InstantAction", "tug")) and v12 > v16:
-				_pc = 10760
-				continue
-			else:
-				_pc = 10969
-				continue
-		elif _pc == 10760:
+		if not (config.get_bool("system", "InstantAction", "tug")) and v12 > v16:
 			if config.exists("system", "InstantAction", "tug"):
-				_pc = 10797
-				continue
+				config.set_bool("system", "InstantAction", "tug", 1)
 			else:
-				_pc = 10836
-				continue
-		elif _pc == 10797:
-			config.set_bool("system", "InstantAction", "tug", 1)
-			_pc = 10870
-			continue
-		elif _pc == 10836:
-			config.create_bool("system", "InstantAction", "tug", 1)
-			_pc = 10870
-			continue
-		elif _pc == 10870:
+				config.create_bool("system", "InstantAction", "tug", 1)
 			v22 = string.join(v21, text.field("ship_type_tug", 0))
 			v22 = string.upper_case(v22)
 			ihud.set_prompt("", v22)
-			_pc = 10969
-			continue
-		elif _pc == 10969:
-			if not (config.get_bool("system", "InstantAction", "fast_attack_ship")) and v12 > v17:
-				_pc = 11019
-				continue
-			else:
-				_pc = 11228
-				continue
-		elif _pc == 11019:
+		if not (config.get_bool("system", "InstantAction", "fast_attack_ship")) and v12 > v17:
 			if config.exists("system", "InstantAction", "fast_attack_ship"):
-				_pc = 11056
-				continue
+				config.set_bool("system", "InstantAction", "fast_attack_ship", 1)
 			else:
-				_pc = 11095
-				continue
-		elif _pc == 11056:
-			config.set_bool("system", "InstantAction", "fast_attack_ship", 1)
-			_pc = 11129
-			continue
-		elif _pc == 11095:
-			config.create_bool("system", "InstantAction", "fast_attack_ship", 1)
-			_pc = 11129
-			continue
-		elif _pc == 11129:
+				config.create_bool("system", "InstantAction", "fast_attack_ship", 1)
 			v22 = string.join(v21, text.field("ship_type_fast_attack_ship", 0))
 			v22 = string.upper_case(v22)
 			ihud.set_prompt("", v22)
-			_pc = 11228
-			continue
-		elif _pc == 11228:
-			if not (config.get_bool("system", "InstantAction", "heavy_corvette")) and v12 > v18:
-				_pc = 11278
-				continue
-			else:
-				_pc = 11487
-				continue
-		elif _pc == 11278:
+		if not (config.get_bool("system", "InstantAction", "heavy_corvette")) and v12 > v18:
 			if config.exists("system", "InstantAction", "heavy_corvette"):
-				_pc = 11315
-				continue
+				config.set_bool("system", "InstantAction", "heavy_corvette", 1)
 			else:
-				_pc = 11354
-				continue
-		elif _pc == 11315:
-			config.set_bool("system", "InstantAction", "heavy_corvette", 1)
-			_pc = 11388
-			continue
-		elif _pc == 11354:
-			config.create_bool("system", "InstantAction", "heavy_corvette", 1)
-			_pc = 11388
-			continue
-		elif _pc == 11388:
+				config.create_bool("system", "InstantAction", "heavy_corvette", 1)
 			v22 = string.join(v21, text.field("ship_type_heavy_corvette", 0))
 			v22 = string.upper_case(v22)
 			ihud.set_prompt("", v22)
-			_pc = 11487
-			continue
-		elif _pc == 11487:
-			if _pog_every(11487, 10.0):
-				_pc = 11500
-				continue
-			else:
-				_pc = 11568
-				continue
-		elif _pc == 11500:
-			ihud.set_prompt(string.join("instant_action_text_current+ +", string.from_int(iscore.total())), "")
-			_pc = 11568
-			continue
-		elif _pc == 11568:
-			_pc = 8655
-			continue
-		elif _pc == 11573:
-			return
-		else:
-			return 0
+		ihud.set_prompt(string.join("instant_action_text_current+ +", string.from_int(iscore.total())), "")
+	return
 	return 0
 
 func local_11591() -> Variant:

@@ -267,113 +267,55 @@ func local_4249() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 4249
+	v1 = inifile.create("ini:/iAITestShips")
+	v4 = 2000.0
+	v5 = 3000.0
 	while true:
-		if _pc == 4249:
-			v1 = inifile.create("ini:/iAITestShips")
-			v4 = 2000.0
-			v5 = 3000.0
-			_pc = 4307
+		await _pog_wait(0.5)
+		if _pog_is_null(global.pog_int("g_setup_state")):
 			continue
-		elif _pc == 4307:
-			await _pog_frame()
-			if _pog_every(4308, 0.5):
-				_pc = 4321
-				continue
-			else:
-				_pc = 5566
-				continue
-		elif _pc == 4321:
-			if not _pog_is_null(global.pog_int("g_setup_state")):
-				_pc = 4347
-				continue
-			else:
-				_pc = 5566
-				continue
-		elif _pc == 4347:
-			v0 = iship.find_player_ship()
-			await local_3083(v2)
-			await local_3083(v3)
-			_pc = 5498
-			continue
-		elif _pc == 4410:
-			v2 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 0, "none"), "Bert")
-			sim.set_cullable(sim.cast(v2), 0)
-			v3 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 1, "none"), "Wilf")
-			sim.set_cullable(sim.cast(v3), 0)
-			global.set_handle("g_object1_handle", v2)
-			global.set_handle("g_object2_handle", v3)
-			await local_3961(v2, 1)
-			await local_3961(v3, 0)
-			await local_3374(v2)
-			await local_3374(v3)
-			await local_3182(v2, v0, -(v4), 0.0, v5)
-			await local_3182(v3, v0, v4, 0.0, v5)
-			_pc = 5543
-			continue
-		elif _pc == 4818:
-			v2 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 0, "none"), "Bert")
-			sim.set_cullable(sim.cast(v2), 0)
-			v3 = await local_3584(v1, global.pog_int("g_amt_grp_1"), "Group 1 ")
-			global.set_handle("g_object1_handle", v2)
-			global.set_handle("g_object2_handle", v3)
-			await local_3961(v2, 1)
-			await local_3961(v3, 0)
-			await local_3374(v2)
-			await local_3374(v3)
-			await local_3182(v2, v0, -(v4), 0.0, v5)
-			await local_3182(v3, v0, v4, 0.0, v5)
-			_pc = 5543
-			continue
-		elif _pc == 5179:
-			v2 = await local_3584(v1, global.pog_int("g_amt_grp_1"), "Group 1 ")
-			v3 = await local_3584(v1, global.pog_int("g_amt_grp_2"), "Group 2 ")
-			global.set_handle("g_object1_handle", v2)
-			global.set_handle("g_object2_handle", v3)
-			await local_3961(v2, 1)
-			await local_3961(v3, 0)
-			await local_3374(v2)
-			await local_3374(v3)
-			await local_3182(v2, v0, -(v4), 0.0, v5)
-			await local_3182(v3, v0, v4, 0.0, v5)
-			_pc = 5543
-			continue
-		elif _pc == 5493:
-			_pc = 5543
-			continue
-		elif _pc == 5498:
-			global.pog_int("g_setup_state")
-			if 1 != global.pog_int("g_setup_state"):
-				_pc = 5525
-				continue
-			else:
-				_pc = 4410
-				continue
-		elif _pc == 5525:
-			if not _pog_is_null(2):
-				_pc = 5534
-				continue
-			else:
-				_pc = 4818
-				continue
-		elif _pc == 5534:
-			if not _pog_is_null(3):
-				_pc = 5543
-				continue
-			else:
-				_pc = 5179
-				continue
-		elif _pc == 5543:
-			global.set_int("g_setup_state", 0)
-			_pc = 5566
-			continue
-		elif _pc == 5566:
-			_pc = 4307
-			continue
-		elif _pc == 5571:
-			return
-		else:
-			return 0
+		v0 = iship.find_player_ship()
+		await local_3083(v2)
+		await local_3083(v3)
+		match global.pog_int("g_setup_state"):
+			1:
+				v2 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 0, "none"), "Bert")
+				sim.set_cullable(sim.cast(v2), 0)
+				v3 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 1, "none"), "Wilf")
+				sim.set_cullable(sim.cast(v3), 0)
+				global.set_handle("g_object1_handle", v2)
+				global.set_handle("g_object2_handle", v3)
+				await local_3961(v2, 1)
+				await local_3961(v3, 0)
+				await local_3374(v2)
+				await local_3374(v3)
+				await local_3182(v2, v0, -(v4), 0.0, v5)
+				await local_3182(v3, v0, v4, 0.0, v5)
+			2:
+				v2 = iship.create(inifile.numbered_string(v1, "TestShips", "ship", 0, "none"), "Bert")
+				sim.set_cullable(sim.cast(v2), 0)
+				v3 = await local_3584(v1, global.pog_int("g_amt_grp_1"), "Group 1 ")
+				global.set_handle("g_object1_handle", v2)
+				global.set_handle("g_object2_handle", v3)
+				await local_3961(v2, 1)
+				await local_3961(v3, 0)
+				await local_3374(v2)
+				await local_3374(v3)
+				await local_3182(v2, v0, -(v4), 0.0, v5)
+				await local_3182(v3, v0, v4, 0.0, v5)
+			3:
+				v2 = await local_3584(v1, global.pog_int("g_amt_grp_1"), "Group 1 ")
+				v3 = await local_3584(v1, global.pog_int("g_amt_grp_2"), "Group 2 ")
+				global.set_handle("g_object1_handle", v2)
+				global.set_handle("g_object2_handle", v3)
+				await local_3961(v2, 1)
+				await local_3961(v3, 0)
+				await local_3374(v2)
+				await local_3374(v3)
+				await local_3182(v2, v0, -(v4), 0.0, v5)
+				await local_3182(v3, v0, v4, 0.0, v5)
+		global.set_int("g_setup_state", 0)
+	return
 	return 0
 
 func local_5574(v0, v1) -> Variant:
@@ -466,10 +408,11 @@ func local_6076() -> Variant:
 	await iconversation.add_response("Object 2", "")
 	v0 = await iconversation.ask(0, "Martyn", "Select Object to Manipulate:")
 	await iconversation.end()
-	if 1 == v0:
-		return global.handle("g_object1_handle")
-	if 2 == v0:
-		return global.handle("g_object2_handle")
+	match v0:
+		1:
+			return global.handle("g_object1_handle")
+		2:
+			return global.handle("g_object2_handle")
 	return 0
 	return 0
 

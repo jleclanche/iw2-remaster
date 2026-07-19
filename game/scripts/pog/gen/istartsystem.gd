@@ -182,156 +182,82 @@ func local_1487(v0, v1) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	var _pc: int = 1487
+	v9 = []
+	v11 = 0
+	v12 = await icutsceneutilities.get_kill_group()
+	idirector.begin()
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	iai.purge_orders(v0)
+	await icutsceneutilities.enable_player_autopilot()
+	sim.set_velocity(v0, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+	v2 = iship.create("ini:/sims/custom/launch_cutscene/launchtube", "launchtube")
+	group.add_sim(v12, v2)
+	sim.place_relative_to(v2, v1, 1000000.0, 1000000.0, 1000000.0)
+	sim.set_cullable(v2, 0)
+	isim.set_indestructable(v2, 1)
+	v3 = await iutilities.create_waypoint_at(v0)
+	group.add_sim(v12, v3)
+	sim.place_relative_to_inside(v0, v2, 0.0, 0.0, 800.0)
+	sim.place_relative_to(v3, v2, 0.0, 0.0, 20000.0)
+	v4 = idirector.create_dolly()
+	group.add_sim(v12, v4)
+	if object.property_exists(v0, "cutscene_with_cargo_pod"):
+		idirector.set_camera(3)
+	else:
+		match isim.type(v0):
+			131072:
+				v13 = -34.0
+				v14 = 6.0
+			8388608:
+				v13 = -45.0
+				v14 = 10.0
+			2097152:
+				v13 = -110.0
+				v14 = 20.0
+			4194304:
+				v13 = -75.0
+				v14 = 20.0
+			16777216:
+				v13 = -115.0
+				v14 = 20.0
+		idirector.set_dolly_camera(v4)
+		idirector.set_focus(v0)
+		sim.place_relative_to_inside(v4, v0, 0.0, v14, v13)
+	igame.enable_blackout(0)
+	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+	await _pog_wait(1.0)
+	iship.set_free_without_pilot(v0, 1)
+	sim.avatar_add_channel(v2, "engine_startup", 1.0)
+	sim.avatar_add_channel(v0, "lz", 1.0)
+	await _pog_wait(3.0)
+	iai.give_approach_order_advanced(v0, v3, 500.0, 500.0, 0)
+	iship.set_free_without_pilot(v0, 0)
+	await _pog_wait(3.0)
+	idirector.set_camera(3)
 	while true:
-		if _pc == 1487:
-			v9 = []
-			v11 = 0
-			v12 = await icutsceneutilities.get_kill_group()
-			idirector.begin()
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			iai.purge_orders(v0)
-			await icutsceneutilities.enable_player_autopilot()
-			sim.set_velocity(v0, 0.0, 0.0, 0.0)
-			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-			v2 = iship.create("ini:/sims/custom/launch_cutscene/launchtube", "launchtube")
-			group.add_sim(v12, v2)
-			sim.place_relative_to(v2, v1, 1000000.0, 1000000.0, 1000000.0)
-			sim.set_cullable(v2, 0)
-			isim.set_indestructable(v2, 1)
-			v3 = await iutilities.create_waypoint_at(v0)
-			group.add_sim(v12, v3)
-			sim.place_relative_to_inside(v0, v2, 0.0, 0.0, 800.0)
-			sim.place_relative_to(v3, v2, 0.0, 0.0, 20000.0)
-			v4 = idirector.create_dolly()
-			group.add_sim(v12, v4)
-			if object.property_exists(v0, "cutscene_with_cargo_pod"):
-				_pc = 2014
-				continue
-			else:
-				_pc = 2035
-				continue
-		elif _pc == 2014:
-			idirector.set_camera(3)
-			_pc = 2335
-			continue
-		elif _pc == 2035:
-			_pc = 2180
-			continue
-		elif _pc == 2040:
-			v13 = -34.0
-			v14 = 6.0
-			_pc = 2258
-			continue
-		elif _pc == 2067:
-			v13 = -45.0
-			v14 = 10.0
-			_pc = 2258
-			continue
-		elif _pc == 2094:
-			v13 = -110.0
-			v14 = 20.0
-			_pc = 2258
-			continue
-		elif _pc == 2121:
-			v13 = -75.0
-			v14 = 20.0
-			_pc = 2258
-			continue
-		elif _pc == 2148:
-			v13 = -115.0
-			v14 = 20.0
-			_pc = 2258
-			continue
-		elif _pc == 2175:
-			_pc = 2258
-			continue
-		elif _pc == 2180:
-			isim.type(v0)
-			if 131072 != isim.type(v0):
-				_pc = 2210
-				continue
-			else:
-				_pc = 2040
-				continue
-		elif _pc == 2210:
-			if not _pog_is_null(8388608):
-				_pc = 2222
-				continue
-			else:
-				_pc = 2067
-				continue
-		elif _pc == 2222:
-			if not _pog_is_null(2097152):
-				_pc = 2234
-				continue
-			else:
-				_pc = 2094
-				continue
-		elif _pc == 2234:
-			if not _pog_is_null(4194304):
-				_pc = 2246
-				continue
-			else:
-				_pc = 2121
-				continue
-		elif _pc == 2246:
-			if not _pog_is_null(16777216):
-				_pc = 2258
-				continue
-			else:
-				_pc = 2148
-				continue
-		elif _pc == 2258:
-			idirector.set_dolly_camera(v4)
-			idirector.set_focus(v0)
-			sim.place_relative_to_inside(v4, v0, 0.0, v14, v13)
-			_pc = 2335
-			continue
-		elif _pc == 2335:
-			igame.enable_blackout(0)
-			idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-			await _pog_wait(1.0)
-			iship.set_free_without_pilot(v0, 1)
-			sim.avatar_add_channel(v2, "engine_startup", 1.0)
-			sim.avatar_add_channel(v0, "lz", 1.0)
-			await _pog_wait(3.0)
-			iai.give_approach_order_advanced(v0, v3, 500.0, 500.0, 0)
-			iship.set_free_without_pilot(v0, 0)
-			await _pog_wait(3.0)
-			idirector.set_camera(3)
-			_pc = 2633
-			continue
-		elif _pc == 2633:
-			await _pog_wait(0.10000000149011612)
-			if sim.distance_between(v0, v2) >= 2300.0:
-				_pc = 2699
-				continue
-			else:
-				_pc = 2633
-				continue
-		elif _pc == 2699:
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			sim.destroy(v2)
-			sim.place_relative_to_inside(v0, v1, 6000.0, 0.0, -1000.0)
-			sim.point_away(v0, v1)
-			iai.purge_orders(v0)
-			iship.set_free_without_pilot(v0, 1)
-			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-			sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
-			sim.place_relative_to(v4, v0, 100.0, -60.0, 1000.0)
-			sim.avatar_set_channel(v0, "lz", 1.0)
-			idirector.set_dolly_camera(v4)
-			idirector.set_focus(v0)
-			idirector.fade_in(0.0, 0.0, 0.0, 0.0)
-			await _pog_wait(5.0)
-			sim.avatar_set_channel(v0, "lz", 0.0)
-			idirector.end()
-			iship.set_free_without_pilot(v0, 0)
-			await icutsceneutilities.disable_player_autopilot()
-			return
-		else:
-			return 0
+		await _pog_wait(0.10000000149011612)
+		if not (sim.distance_between(v0, v2) < 2300.0):
+			break
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	sim.destroy(v2)
+	sim.place_relative_to_inside(v0, v1, 6000.0, 0.0, -1000.0)
+	sim.point_away(v0, v1)
+	iai.purge_orders(v0)
+	iship.set_free_without_pilot(v0, 1)
+	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+	sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
+	sim.place_relative_to(v4, v0, 100.0, -60.0, 1000.0)
+	sim.avatar_set_channel(v0, "lz", 1.0)
+	idirector.set_dolly_camera(v4)
+	idirector.set_focus(v0)
+	idirector.fade_in(0.0, 0.0, 0.0, 0.0)
+	await _pog_wait(5.0)
+	sim.avatar_set_channel(v0, "lz", 0.0)
+	idirector.end()
+	iship.set_free_without_pilot(v0, 0)
+	await icutsceneutilities.disable_player_autopilot()
+	return
 	return 0
 
 func critical_mission_fail(v0, v1) -> Variant:
@@ -730,38 +656,39 @@ func local_9002() -> Variant:
 	return 0
 
 func local_9700(v0) -> Variant:
-	if 1 == v0:
-		return _pog_clone("map:/geog/badlands/hoffers_wake")
-	if 2 == v0:
-		return _pog_clone("map:/geog/badlands/coyote")
-	if 3 == v0:
-		return _pog_clone("map:/geog/badlands/kompira")
-	if 4 == v0:
-		return _pog_clone("map:/geog/badlands/eureka")
-	if 5 == v0:
-		return _pog_clone("map:/geog/badlands/firefrost")
-	if 6 == v0:
-		return _pog_clone("map:/geog/badlands/dagda")
-	if 7 == v0:
-		return _pog_clone("map:/geog/badlands/mwari")
-	if 8 == v0:
-		return _pog_clone("map:/geog/badlands/santa_romera")
-	if 9 == v0:
-		return _pog_clone("map:/geog/badlands/dante")
-	if 10 == v0:
-		return _pog_clone("map:/geog/gagarin/formhault")
-	if 11 == v0:
-		return _pog_clone("map:/geog/gagarin/batatas")
-	if 12 == v0:
-		return _pog_clone("map:/geog/gagarin/owens_star")
-	if 13 == v0:
-		return _pog_clone("map:/geog/gagarin/osprey")
-	if 14 == v0:
-		return _pog_clone("map:/geog/gagarin/new_bavaria")
-	if 15 == v0:
-		return _pog_clone("map:/geog/gagarin/drake")
-	if 16 == v0:
-		return _pog_clone("map:/geog/gagarin/ishime")
+	match v0:
+		1:
+			return _pog_clone("map:/geog/badlands/hoffers_wake")
+		2:
+			return _pog_clone("map:/geog/badlands/coyote")
+		3:
+			return _pog_clone("map:/geog/badlands/kompira")
+		4:
+			return _pog_clone("map:/geog/badlands/eureka")
+		5:
+			return _pog_clone("map:/geog/badlands/firefrost")
+		6:
+			return _pog_clone("map:/geog/badlands/dagda")
+		7:
+			return _pog_clone("map:/geog/badlands/mwari")
+		8:
+			return _pog_clone("map:/geog/badlands/santa_romera")
+		9:
+			return _pog_clone("map:/geog/badlands/dante")
+		10:
+			return _pog_clone("map:/geog/gagarin/formhault")
+		11:
+			return _pog_clone("map:/geog/gagarin/batatas")
+		12:
+			return _pog_clone("map:/geog/gagarin/owens_star")
+		13:
+			return _pog_clone("map:/geog/gagarin/osprey")
+		14:
+			return _pog_clone("map:/geog/gagarin/new_bavaria")
+		15:
+			return _pog_clone("map:/geog/gagarin/drake")
+		16:
+			return _pog_clone("map:/geog/gagarin/ishime")
 	return _pog_clone("")
 	return 0
 
@@ -898,213 +825,60 @@ func final_setup() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 12454
-	while true:
-		if _pc == 12454:
-			v2 = 1
-			v3 = 1
-			_pc = 12499
-			continue
-		elif _pc == 12478:
-			debug.print_string("iStartSystem.FinalSetup: Making Performing last minute pre-flight checks...\n")
-			_pc = 12499
-			continue
-		elif _pc == 12499:
-			await local_8720()
-			await local_12002()
-			await local_7005()
-			if _pog_is_null(igame.game_type()):
-				_pc = 12561
-				continue
-			else:
-				_pc = 13011
-				continue
-		elif _pc == 12561:
-			if _pog_is_null(global.pog_int("g_current_act")):
-				_pc = 12588
-				continue
-			else:
-				_pc = 12647
-				continue
-		elif _pc == 12588:
+	v2 = 1
+	v3 = 1
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.FinalSetup: Making Performing last minute pre-flight checks...\n")
+	await local_8720()
+	await local_12002()
+	await local_7005()
+	if _pog_is_null(igame.game_type()):
+		if _pog_is_null(global.pog_int("g_current_act")):
 			if global.exists("g_act0_found_base"):
-				_pc = 12613
-				continue
-			else:
-				_pc = 12647
-				continue
-		elif _pc == 12613:
-			if _pog_is_null(global.pog_bool("g_act0_found_base")):
-				_pc = 12640
-				continue
-			else:
-				_pc = 12647
-				continue
-		elif _pc == 12640:
-			v2 = 0
-			_pc = 12647
-			continue
-		elif _pc == 12647:
-			if _pog_eq(global.string("g_player_base_system"), "map:/geog/badlands/santa_romera"):
-				_pc = 12680
-				continue
-			else:
-				_pc = 12803
-				continue
-		elif _pc == 12680:
-			_pc = 12706
-			continue
-		elif _pc == 12685:
-			debug.print_string("iStartSystem.FinalSetup: Creating Junkyard debris field for Lucrecia's Base in Santa Romera\n")
-			_pc = 12706
-			continue
-		elif _pc == 12706:
+				if _pog_is_null(global.pog_bool("g_act0_found_base")):
+					v2 = 0
+		if _pog_eq(global.string("g_player_base_system"), "map:/geog/badlands/santa_romera"):
+			if PogRuntime.TRACE:
+				debug.print_string("iStartSystem.FinalSetup: Creating Junkyard debris field for Lucrecia's Base in Santa Romera\n")
 			v4 = sim.create("ini:/sims/regions/debris", "")
 			sim.set_cullable(v4, 0)
 			sim.place_at(v4, imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera"))
-			_pc = 12803
-			continue
-		elif _pc == 12803:
-			if global.pog_bool("g_act3_ready_for_mission_ten") == 1:
-				_pc = 12830
-				continue
-			else:
-				_pc = 12940
-				continue
-		elif _pc == 12830:
+		if global.pog_bool("g_act3_ready_for_mission_ten") == 1:
 			v5 = sim.create("ini:/sims/regions/alien_cloud_10000k", "alien_cloud")
 			isim.set_sensor_visibility(isim.cast(v5), 0)
 			sim.place_at(v5, imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault"))
-			_pc = 12940
-			continue
-		elif _pc == 12940:
-			if v2:
-				_pc = 12950
-				continue
-			else:
-				_pc = 12996
-				continue
-		elif _pc == 12950:
+		if v2:
 			_pog_suspend_all()
 			_pog_detach(_pog_spawn(local_486.bind()))
-			_pc = 13011
-			continue
-		elif _pc == 12996:
+		else:
 			igame.enable_blackout(0)
-			_pc = 13011
-			continue
-		elif _pc == 13011:
-			v1 = iship.find_player_ship()
-			object.set_string_property(v1, "death_script", "iDeathScript.PlayerDeathScript")
-			object.add_bool_property(v1, "no_explode_fling_child", 1)
-			_pc = 13298
-			continue
-		elif _pc == 13094:
+	v1 = iship.find_player_ship()
+	object.set_string_property(v1, "death_script", "iDeathScript.PlayerDeathScript")
+	object.add_bool_property(v1, "no_explode_fling_child", 1)
+	match isim.type(v1):
+		131072:
 			object.set_string_property(v1, "name", "sn_player_ship_command")
-			_pc = 13376
-			continue
-		elif _pc == 13131:
+		8388608:
 			object.set_string_property(v1, "name", "sn_player_ship_storm_petrel")
-			_pc = 13376
-			continue
-		elif _pc == 13168:
+		2097152:
 			object.set_string_property(v1, "name", global.string("g_player_ship_name"))
-			_pc = 13376
-			continue
-		elif _pc == 13219:
+		4194304:
 			object.set_string_property(v1, "name", "sn_player_ship_fast_attack")
-			_pc = 13376
-			continue
-		elif _pc == 13256:
+		16777216:
 			object.set_string_property(v1, "name", "sn_player_ship_heavy_corvette")
-			_pc = 13376
-			continue
-		elif _pc == 13293:
-			_pc = 13376
-			continue
-		elif _pc == 13298:
-			isim.type(v1)
-			if 131072 != isim.type(v1):
-				_pc = 13328
-				continue
-			else:
-				_pc = 13094
-				continue
-		elif _pc == 13328:
-			if not _pog_is_null(8388608):
-				_pc = 13340
-				continue
-			else:
-				_pc = 13131
-				continue
-		elif _pc == 13340:
-			if not _pog_is_null(2097152):
-				_pc = 13352
-				continue
-			else:
-				_pc = 13168
-				continue
-		elif _pc == 13352:
-			if not _pog_is_null(4194304):
-				_pc = 13364
-				continue
-			else:
-				_pc = 13219
-				continue
-		elif _pc == 13364:
-			if not _pog_is_null(16777216):
-				_pc = 13376
-				continue
-			else:
-				_pc = 13256
-				continue
-		elif _pc == 13376:
-			if _pog_is_null(global.pog_int("g_current_act")):
-				_pc = 13403
-				continue
-			else:
-				_pc = 13439
-				continue
-		elif _pc == 13403:
-			sim.avatar_add_channel(v1, "young_cal", 1.0)
-			_pc = 13470
-			continue
-		elif _pc == 13439:
-			sim.avatar_add_channel(v1, "adult_cal", 1.0)
-			_pc = 13470
-			continue
-		elif _pc == 13470:
-			_pog_detach(_pog_spawn(local_207.bind()))
-			if global.exists("g_act3_capture_accelerator_complete"):
-				_pc = 13522
-				continue
-			else:
-				_pc = 13765
-				continue
-		elif _pc == 13522:
-			if global.pog_bool("g_act3_capture_accelerator_complete") == 1:
-				_pc = 13549
-				continue
-			else:
-				_pc = 13765
-				continue
-		elif _pc == 13549:
+	if _pog_is_null(global.pog_int("g_current_act")):
+		sim.avatar_add_channel(v1, "young_cal", 1.0)
+	else:
+		sim.avatar_add_channel(v1, "adult_cal", 1.0)
+	_pog_detach(_pog_spawn(local_207.bind()))
+	if global.exists("g_act3_capture_accelerator_complete"):
+		if global.pog_bool("g_act3_capture_accelerator_complete") == 1:
 			isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Super Freighter Service Depot", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
 			isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
 			isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault")), ifaction.find("League"))
-			_pc = 13765
-			continue
-		elif _pc == 13765:
-			_pc = 13791
-			continue
-		elif _pc == 13770:
-			debug.print_string("iStartSystem.FinalSetup: Completed\n")
-			_pc = 13791
-			continue
-		elif _pc == 13791:
-			return 0
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iStartSystem.FinalSetup: Completed\n")
+	return 0
 	return 0
 
 func shutdown_space() -> Variant:

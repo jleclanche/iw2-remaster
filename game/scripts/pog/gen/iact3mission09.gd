@@ -300,161 +300,61 @@ func local_3628(v0, v1, v2, v3) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 3628
+	v4 = await iwingmen.group()
+	v6 = iship.cast(group.leader(v4))
+	v7 = 0
+	v8 = 0
+	v9 = 1
+	v11 = v1 / 2.0
 	while true:
-		if _pc == 3628:
-			v4 = await iwingmen.group()
-			v6 = iship.cast(group.leader(v4))
-			v7 = 0
-			v8 = 0
-			v9 = 1
-			v11 = v1 / 2.0
-			_pc = 3732
-			continue
-		elif _pc == 3732:
-			await _pog_frame()
-			if _pog_every(3733, 0.5):
-				_pc = 3746
-				continue
-			else:
-				_pc = 4657
-				continue
-		elif _pc == 3746:
-			if sim.distance_between(v2, v0) <= v11 and not (v7):
-				_pc = 3787
-				continue
-			else:
-				_pc = 4374
-				continue
-		elif _pc == 3787:
+		await _pog_wait(0.5)
+		if sim.distance_between(v2, v0) <= v11 and not (v7):
 			if _pog_is_null(v8):
-				_pc = 3799
-				continue
+				v8 = 1
+				iai.purge_orders(v2)
+				iship.disrupt_l_d_s_drive(v2, 40.0)
+				iship.disrupt(v2, 4000000.0, 1)
+				iship.disrupt_l_d_s_drive(v6, 40.0)
+				_pog_spawn(local_1503.bind(v2, v3))
+				await _pog_wait(30.0)
+				state.set_progress(v3, 2)
 			else:
-				_pc = 3982
-				continue
-		elif _pc == 3799:
-			v8 = 1
-			iai.purge_orders(v2)
-			iship.disrupt_l_d_s_drive(v2, 40.0)
-			iship.disrupt(v2, 4000000.0, 1)
-			iship.disrupt_l_d_s_drive(v6, 40.0)
-			_pog_spawn(local_1503.bind(v2, v3))
-			await _pog_wait(30.0)
-			state.set_progress(v3, 2)
-			_pc = 4374
-			continue
-		elif _pc == 3982:
-			if state.progress(v3) == 2:
-				_pc = 4008
-				continue
-			else:
-				_pc = 4374
-				continue
-		elif _pc == 4008:
-			v7 = 1
-			v10 = v10 + 1
-			if v9:
-				_pc = 4038
-				continue
-			else:
-				_pc = 4078
-				continue
-		elif _pc == 4038:
-			v9 = 0
-			await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
-			_pc = 4241
-			continue
-		elif _pc == 4078:
-			_pc = 4210
-			continue
-		elif _pc == 4083:
-			await iconversation.begin()
-			await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
-			await iconversation.end()
-			_pc = 4241
-			continue
-		elif _pc == 4144:
-			await iconversation.begin()
-			await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_another_wave")
-			await iconversation.end()
-			_pc = 4241
-			continue
-		elif _pc == 4205:
-			_pc = 4241
-			continue
-		elif _pc == 4210:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 4233
-				continue
-			else:
-				_pc = 4083
-				continue
-		elif _pc == 4233:
-			if not _pog_is_null(1):
-				_pc = 4241
-				continue
-			else:
-				_pc = 4144
-				continue
-		elif _pc == 4241:
-			v5 = await local_413()
-			await local_1089(v4, 30)
-			sim.place_near(group.leader(v5), v6, 30000.0)
-			await iformation.cross(v5, 100.0, 1)
-			iai.give_attack_order(v5, v4)
-			_pc = 4374
-			continue
-		elif _pc == 4374:
-			if sim.distance_between(v6, v2) > 500000.0:
-				_pc = 4408
-				continue
-			else:
-				_pc = 4427
-				continue
-		elif _pc == 4408:
+				if state.progress(v3) == 2:
+					v7 = 1
+					v10 = v10 + 1
+					if v9:
+						v9 = 0
+						await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
+					else:
+						match math.random_int(0, 1):
+							0:
+								await iconversation.begin()
+								await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_incoming")
+								await iconversation.end()
+							1:
+								await iconversation.begin()
+								await iconversation.say(0, "name_clay", "a3_m09_dialogue_clay_another_wave")
+								await iconversation.end()
+					v5 = await local_413()
+					await local_1089(v4, 30)
+					sim.place_near(group.leader(v5), v6, 30000.0)
+					await iformation.cross(v5, 100.0, 1)
+					iai.give_attack_order(v5, v4)
+		if sim.distance_between(v6, v2) > 500000.0:
 			isim.kill(v2)
-			_pc = 4427
+		if not (v7 and _pog_is_null(group.sim_count(v5))):
 			continue
-		elif _pc == 4427:
-			if v7 and _pog_is_null(group.sim_count(v5)):
-				_pc = 4458
-				continue
-			else:
-				_pc = 4657
-				continue
-		elif _pc == 4458:
-			if v10 >= 4:
-				_pc = 4471
-				continue
-			else:
-				_pc = 4618
-				continue
-		elif _pc == 4471:
+		if v10 >= 4:
 			state.set_progress(v3, 3)
 			await iconversation.begin()
 			await iconversation.say(v2, "", "a3_m09_dialogue_antimatter_were_back_online")
 			await iconversation.end()
 			iship.cancel_disrupt(v2)
 			_pog_detach(_pog_spawn(local_3185.bind(v0, v2, v3)))
-			_pc = 4663
-			continue
-		elif _pc == 4618:
-			v7 = 0
-			await _pog_wait(8.0)
-			_pc = 4657
-			continue
-		elif _pc == 4657:
-			_pc = 3732
-			continue
-		elif _pc == 4662:
-			_pc = 4663
-			continue
-		elif _pc == 4663:
 			return
-		else:
-			return 0
+		v7 = 0
+		await _pog_wait(8.0)
+	return
 	return 0
 
 func local_4665(v0) -> Variant:

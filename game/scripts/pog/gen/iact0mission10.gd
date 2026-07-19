@@ -322,97 +322,30 @@ func local_4839(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 4839
-	while true:
-		if _pc == 4839:
-			v2 = group.create()
-			_pc = 4947
-			continue
-		elif _pc == 4868:
+	v2 = group.create()
+	match math.random_int(0, 1):
+		0:
 			v3 = sim.create("ini:/sims/ships/utility/asteroid_l", "sn_generic_asteroid")
-			_pc = 4978
-			continue
-		elif _pc == 4905:
+		1:
 			v3 = sim.create("ini:/sims/ships/utility/asteroid_m", "sn_generic_asteroid")
-			_pc = 4978
-			continue
-		elif _pc == 4942:
-			_pc = 4978
-			continue
-		elif _pc == 4947:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 4970
-				continue
-			else:
-				_pc = 4868
-				continue
-		elif _pc == 4970:
-			if not _pog_is_null(1):
-				_pc = 4978
-				continue
-			else:
-				_pc = 4905
-				continue
-		elif _pc == 4978:
-			sim.place_at(v3, v0)
-			sim.set_orientation_euler(v3, math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(0.0, 360.0))
-			isim.set_sensor_visibility(isim.cast(v3), 0)
-			group.add_sim(v2, v3)
-			v4 = 0
-			_pc = 5154
-			continue
-		elif _pc == 5154:
-			if v4 < v1:
-				_pc = 5170
-				continue
-			else:
-				_pc = 5606
-				continue
-		elif _pc == 5170:
-			_pc = 5254
-			continue
-		elif _pc == 5175:
-			v3 = sim.create("ini:/sims/ships/utility/asteroid_l", "sn_generic_asteroid")
-			_pc = 5285
-			continue
-		elif _pc == 5212:
-			v3 = sim.create("ini:/sims/ships/utility/asteroid_m", "sn_generic_asteroid")
-			_pc = 5285
-			continue
-		elif _pc == 5249:
-			_pc = 5285
-			continue
-		elif _pc == 5254:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 5277
-				continue
-			else:
-				_pc = 5175
-				continue
-		elif _pc == 5277:
-			if not _pog_is_null(1):
-				_pc = 5285
-				continue
-			else:
-				_pc = 5212
-				continue
-		elif _pc == 5285:
-			sim.place_near(v3, v0, math.random(700.0, 2000.0))
-			sim.set_orientation_euler(v3, math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(0.0, 360.0))
-			sim.set_angular_velocity(v3, math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(5.0, 20.0))
-			isim.set_sensor_visibility(isim.cast(v3), 0)
-			group.add_sim(v2, v3)
-			v4 = v4 + 1
-			_pc = 5154
-			continue
-		elif _pc == 5606:
-			return v2
-		elif _pc == 5616:
-			return
-		else:
-			return 0
+	sim.place_at(v3, v0)
+	sim.set_orientation_euler(v3, math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(0.0, 360.0))
+	isim.set_sensor_visibility(isim.cast(v3), 0)
+	group.add_sim(v2, v3)
+	v4 = 0
+	while v4 < v1:
+		match math.random_int(0, 1):
+			0:
+				v3 = sim.create("ini:/sims/ships/utility/asteroid_l", "sn_generic_asteroid")
+			1:
+				v3 = sim.create("ini:/sims/ships/utility/asteroid_m", "sn_generic_asteroid")
+		sim.place_near(v3, v0, math.random(700.0, 2000.0))
+		sim.set_orientation_euler(v3, math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(0.0, 360.0))
+		sim.set_angular_velocity(v3, math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(0.0, 360.0), math.random(5.0, 20.0))
+		isim.set_sensor_visibility(isim.cast(v3), 0)
+		group.add_sim(v2, v3)
+		v4 = v4 + 1
+	return v2
 	return 0
 
 func local_5618(v0, v1, v2, v3) -> Variant:
@@ -422,80 +355,36 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 5618
+	v5 = 0
+	v6 = 0.20000000298023224
+	v7 = imapentity.find_by_name("The Effrit")
+	iobjectives.add("a0_m10_objectives_fly_to_effrit")
+	ihud.set_prompt("a0_m10_prompt_select_effrit", input.key_combinations("HUD.Starmap"))
 	while true:
-		if _pc == 5618:
-			v5 = 0
-			v6 = 0.20000000298023224
-			v7 = imapentity.find_by_name("The Effrit")
-			iobjectives.add("a0_m10_objectives_fly_to_effrit")
-			ihud.set_prompt("a0_m10_prompt_select_effrit", input.key_combinations("HUD.Starmap"))
-			_pc = 5729
+		await _pog_wait(1.0)
+		if not (not _pog_eq(object.string_property(iship.current_target(v0), "name"), object.string_property(v7, "name"))):
+			break
+	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_right_lets")
+	ihud.set_prompt("a0_m10_prompt_fly_to_effrit", input.key_combinations("icPlayerPilot.AutopilotApproach"))
+	while true:
+		await _pog_wait(1)
+		if sim.distance_between(v0, v7) >= 25000.0:
 			continue
-		elif _pc == 5729:
-			await _pog_wait(1.0)
-			if _pog_eq(object.string_property(iship.current_target(v0), "name"), object.string_property(v7, "name")):
-				_pc = 5832
-				continue
-			else:
-				_pc = 5729
-				continue
-		elif _pc == 5832:
-			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_right_lets")
-			ihud.set_prompt("a0_m10_prompt_fly_to_effrit", input.key_combinations("icPlayerPilot.AutopilotApproach"))
-			_pc = 5906
-			continue
-		elif _pc == 5906:
-			await _pog_frame()
-			if _pog_every(5907, 1.0):
-				_pc = 5920
-				continue
-			else:
-				_pc = 6060
-				continue
-		elif _pc == 5920:
-			if sim.distance_between(v0, v7) < 25000.0:
-				_pc = 5954
-				continue
-			else:
-				_pc = 6060
-				continue
-		elif _pc == 5954:
-			v7 = await iutilities.create_waypoint_at(v0)
-			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_were_here")
-			ihud.set_prompt("", "")
-			iobjectives.set_state("a0_m10_objectives_fly_to_effrit", 1)
-			_pc = 6065
-			continue
-		elif _pc == 6060:
-			_pc = 5906
-			continue
-		elif _pc == 6065:
-			v4 = v4 + 1
-			v8 = await local_4608(v7, v2, 0.10000000149011612)
-			iobjectives.add("a0_m10_objectives_follow_waypoints")
-			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_im_bringing")
-			ihud.set_prompt("a0_m10_prompt_follow_waypoints", input.key_combinations("icPlayerPilot.AutopilotApproach"))
-			await iutilities.make_waypoint_visible(v8, 1, string.join("a0_m10_name_other_waypoint+ +", string.from_int(v4)))
-			v9 = await local_4839(v8, 3)
-			_pc = 6294
-			continue
-		elif _pc == 6294:
-			await _pog_frame()
-			if _pog_every(6295, 1.0):
-				_pc = 6308
-				continue
-			else:
-				_pc = 6996
-				continue
-		elif _pc == 6308:
-			if v5:
-				_pc = 6318
-				continue
-			else:
-				_pc = 6530
-				continue
-		elif _pc == 6318:
+		v7 = await iutilities.create_waypoint_at(v0)
+		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_were_here")
+		ihud.set_prompt("", "")
+		iobjectives.set_state("a0_m10_objectives_fly_to_effrit", 1)
+		break
+	v4 = v4 + 1
+	v8 = await local_4608(v7, v2, 0.10000000149011612)
+	iobjectives.add("a0_m10_objectives_follow_waypoints")
+	await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_im_bringing")
+	ihud.set_prompt("a0_m10_prompt_follow_waypoints", input.key_combinations("icPlayerPilot.AutopilotApproach"))
+	await iutilities.make_waypoint_visible(v8, 1, string.join("a0_m10_name_other_waypoint+ +", string.from_int(v4)))
+	v9 = await local_4839(v8, 3)
+	while true:
+		await _pog_wait(1)
+		if v5:
 			isim.set_sensor_visibility(isim.cast(v1), 0)
 			iobjectives.set_state("a0_m10_objectives_follow_waypoints", 1)
 			ihud.set_prompt("", "")
@@ -504,99 +393,29 @@ func local_5618(v0, v1, v2, v3) -> Variant:
 			global.destroy("g_next_waypoint")
 			group.destroy(v9, 0)
 			sim.destroy(v8)
-			_pc = 7002
-			continue
-		elif _pc == 6525:
-			_pc = 6996
-			continue
-		elif _pc == 6530:
-			if sim.distance_between(v8, v0) < iai.inner_marker_radius(isim.cast(v8), v0) + 500.0:
-				_pc = 6601
+			return
+		else:
+			if sim.distance_between(v8, v0) >= iai.inner_marker_radius(isim.cast(v8), v0) + 500.0:
 				continue
-			else:
-				_pc = 6996
-				continue
-		elif _pc == 6601:
 			v4 = v4 + 1
 			sim.destroy(v8)
 			if v4 <= 3:
-				_pc = 6646
-				continue
+				v8 = await local_4608(v7, v2, v6)
+				v9 = await local_4839(v8, 3 + v4 * 2)
+				await iutilities.make_waypoint_visible(v8, 1, string.join("a0_m10_name_other_waypoint+ +", string.from_int(v4)))
+				match math.random_int(0, 3):
+					0:
+						await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress1")
+					1:
+						await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress2")
+					2:
+						await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress3")
+					3:
+						await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress4")
+				v6 = v6 + 0.30000001192092896
 			else:
-				_pc = 6989
-				continue
-		elif _pc == 6646:
-			v8 = await local_4608(v7, v2, v6)
-			v9 = await local_4839(v8, 3 + v4 * 2)
-			await iutilities.make_waypoint_visible(v8, 1, string.join("a0_m10_name_other_waypoint+ +", string.from_int(v4)))
-			_pc = 6917
-			continue
-		elif _pc == 6780:
-			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress1")
-			_pc = 6967
-			continue
-		elif _pc == 6813:
-			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress2")
-			_pc = 6967
-			continue
-		elif _pc == 6846:
-			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress3")
-			_pc = 6967
-			continue
-		elif _pc == 6879:
-			await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_progress4")
-			_pc = 6967
-			continue
-		elif _pc == 6912:
-			_pc = 6967
-			continue
-		elif _pc == 6917:
-			math.random_int(0, 3)
-			if not _pog_is_null(math.random_int(0, 3)):
-				_pc = 6941
-				continue
-			else:
-				_pc = 6780
-				continue
-		elif _pc == 6941:
-			if not _pog_is_null(1):
-				_pc = 6949
-				continue
-			else:
-				_pc = 6813
-				continue
-		elif _pc == 6949:
-			if not _pog_is_null(2):
-				_pc = 6958
-				continue
-			else:
-				_pc = 6846
-				continue
-		elif _pc == 6958:
-			if not _pog_is_null(3):
-				_pc = 6967
-				continue
-			else:
-				_pc = 6879
-				continue
-		elif _pc == 6967:
-			v6 = v6 + 0.30000001192092896
-			_pc = 6996
-			continue
-		elif _pc == 6989:
-			v5 = 1
-			_pc = 6996
-			continue
-		elif _pc == 6996:
-			_pc = 6294
-			continue
-		elif _pc == 7001:
-			_pc = 7002
-			continue
-		elif _pc == 7002:
-			return
-		else:
-			return 0
+				v5 = 1
+	return
 	return 0
 
 func mission_handler() -> Variant:

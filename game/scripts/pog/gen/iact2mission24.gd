@@ -1929,364 +1929,120 @@ func local_37318(v0, v1) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var _pc: int = 37318
-	while true:
-		if _pc == 37318:
-			v2 = iship.find_player_ship()
-			v3 = group.create()
-			v4 = 0
-			v6 = isim.cast(imapentity.find_by_name_in_system("Cicero", "map:/geog/badlands/dante"))
-			v7 = isim.cast(imapentity.find_by_name_in_system("Ortega", "map:/geog/badlands/dante"))
-			v8 = isim.cast(imapentity.find_by_name_in_system("Ortega Lambda", "map:/geog/badlands/dante"))
-			v9 = isim.cast(imapentity.find_by_name_in_system("Valia", "map:/geog/badlands/dante"))
-			v10 = isim.cast(imapentity.find_by_name_in_system("Valia Epsilon", "map:/geog/badlands/dante"))
-			v11 = isim.cast(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"))
-			v12 = isim.cast(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"))
-			v13 = isim.cast(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"))
-			group.add_group(v1, v3)
-			_pc = 38009
-			continue
-		elif _pc == 37750:
-			if not (v7):
-				_pc = 37761
-				continue
-			else:
-				_pc = 37787
-				continue
-		elif _pc == 37761:
+	v2 = iship.find_player_ship()
+	v3 = group.create()
+	v4 = 0
+	v6 = isim.cast(imapentity.find_by_name_in_system("Cicero", "map:/geog/badlands/dante"))
+	v7 = isim.cast(imapentity.find_by_name_in_system("Ortega", "map:/geog/badlands/dante"))
+	v8 = isim.cast(imapentity.find_by_name_in_system("Ortega Lambda", "map:/geog/badlands/dante"))
+	v9 = isim.cast(imapentity.find_by_name_in_system("Valia", "map:/geog/badlands/dante"))
+	v10 = isim.cast(imapentity.find_by_name_in_system("Valia Epsilon", "map:/geog/badlands/dante"))
+	v11 = isim.cast(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"))
+	v12 = isim.cast(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"))
+	v13 = isim.cast(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"))
+	group.add_group(v1, v3)
+	if PogRuntime.TRACE:
+		if not (v7):
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find ortega - EXITING\n")
-			_pc = 39687
-			continue
-		elif _pc == 37787:
-			if not (v8):
-				_pc = 37798
-				continue
-			else:
-				_pc = 37824
-				continue
-		elif _pc == 37798:
+			return
+		if not (v8):
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find Ortega Lambda - EXITING\n")
-			_pc = 39687
-			continue
-		elif _pc == 37824:
-			if not (v9):
-				_pc = 37835
-				continue
-			else:
-				_pc = 37861
-				continue
-		elif _pc == 37835:
+			return
+		if not (v9):
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find Valia - EXITING\n")
-			_pc = 39687
-			continue
-		elif _pc == 37861:
-			if not (v10):
-				_pc = 37872
-				continue
-			else:
-				_pc = 37898
-				continue
-		elif _pc == 37872:
+			return
+		if not (v10):
 			debug.print_string("iAct2Mission24.monitor_relays: Cannot find Valia Epsilon - EXITING\n")
-			_pc = 39687
-			continue
-		elif _pc == 37898:
-			if not (v11):
-				_pc = 37909
-				continue
-			else:
-				_pc = 37935
-				continue
-		elif _pc == 37909:
+			return
+		if not (v11):
 			debug.print_string("iAct2Mission24.monitor_relays: Can't find Marauder HQ - EXITING\n")
-			_pc = 39687
-			continue
-		elif _pc == 37935:
-			if not (v12):
-				_pc = 37946
-				continue
-			else:
-				_pc = 37972
-				continue
-		elif _pc == 37946:
+			return
+		if not (v12):
 			debug.print_string("iAct2Mission24.monitor_relays: Marauder Shipyard is invalid - EXITING\n")
-			_pc = 39687
-			continue
-		elif _pc == 37972:
-			if not (v13):
-				_pc = 37983
-				continue
-			else:
-				_pc = 38009
-				continue
-		elif _pc == 37983:
+			return
+		if not (v13):
 			debug.print_string("iAct2Mission24.monitor_relays: Marauder Cargo yard is invalid- EXITING\n")
-			_pc = 39687
-			continue
-		elif _pc == 38009:
-			if await local_22529(v0, "visited_all_bases") == 1:
-				_pc = 38041
-				continue
-			else:
-				_pc = 38072
-				continue
-		elif _pc == 38041:
-			_pc = 38067
-			continue
-		elif _pc == 38046:
+			return
+	if await local_22529(v0, "visited_all_bases") == 1:
+		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.monitor_relays: All bases have been found. No need to create relays. Exiting.\n")
-			_pc = 38067
-			continue
-		elif _pc == 38067:
-			_pc = 39687
-			continue
-		elif _pc == 38072:
-			if _pog_is_null(await local_22529(v0, "visited_hq")):
-				_pc = 38104
-				continue
-			else:
-				_pc = 38237
-				continue
-		elif _pc == 38104:
-			_pc = 38130
-			continue
-		elif _pc == 38109:
-			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder hq.\n")
-			_pc = 38130
-			continue
-		elif _pc == 38130:
+	else:
+		if _pog_is_null(await local_22529(v0, "visited_hq")):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder hq.\n")
 			v5 = isim.cast(await iutilities.create_waypoint_at(v11))
 			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-			_pc = 38237
-			continue
-		elif _pc == 38237:
-			if _pog_is_null(await local_22529(v0, "visited_cargo")):
-				_pc = 38269
-				continue
-			else:
-				_pc = 38402
-				continue
-		elif _pc == 38269:
-			_pc = 38295
-			continue
-		elif _pc == 38274:
-			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder cargo yard.\n")
-			_pc = 38295
-			continue
-		elif _pc == 38295:
+		if _pog_is_null(await local_22529(v0, "visited_cargo")):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder cargo yard.\n")
 			v5 = isim.cast(await iutilities.create_waypoint_at(v13))
 			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-			_pc = 38402
-			continue
-		elif _pc == 38402:
-			if _pog_is_null(await local_22529(v0, "visited_shipyard")):
-				_pc = 38434
-				continue
-			else:
-				_pc = 38567
-				continue
-		elif _pc == 38434:
-			_pc = 38460
-			continue
-		elif _pc == 38439:
-			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder shipyard.\n")
-			_pc = 38460
-			continue
-		elif _pc == 38460:
+		if _pog_is_null(await local_22529(v0, "visited_shipyard")):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder shipyard.\n")
 			v5 = isim.cast(await iutilities.create_waypoint_at(v12))
 			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-			_pc = 38567
-			continue
-		elif _pc == 38567:
-			if _pog_is_null(await local_22529(v0, "found_relay_1")):
-				_pc = 38599
-				continue
-			else:
-				_pc = 38775
-				continue
-		elif _pc == 38599:
-			_pc = 38625
-			continue
-		elif _pc == 38604:
-			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 1.\n")
-			_pc = 38625
-			continue
-		elif _pc == 38625:
+		if _pog_is_null(await local_22529(v0, "found_relay_1")):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 1.\n")
 			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
 			object.add_bool_property(v5, "relay", 1)
 			sim.place_between(v5, v6, v7, 0.009999999776482582)
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-			_pc = 38775
-			continue
-		elif _pc == 38775:
-			if _pog_is_null(await local_22529(v0, "found_relay_2")):
-				_pc = 38807
-				continue
-			else:
-				_pc = 38983
-				continue
-		elif _pc == 38807:
-			_pc = 38833
-			continue
-		elif _pc == 38812:
-			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 2.\n")
-			_pc = 38833
-			continue
-		elif _pc == 38833:
+		if _pog_is_null(await local_22529(v0, "found_relay_2")):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 2.\n")
 			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
 			object.add_bool_property(v5, "relay", 1)
 			sim.place_between(v5, v8, v7, 0.009999999776482582)
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-			_pc = 38983
-			continue
-		elif _pc == 38983:
-			if _pog_is_null(object.bool_property(v0, "found_relay_3")):
-				_pc = 39015
-				continue
-			else:
-				_pc = 39191
-				continue
-		elif _pc == 39015:
-			_pc = 39041
-			continue
-		elif _pc == 39020:
-			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 3.\n")
-			_pc = 39041
-			continue
-		elif _pc == 39041:
+		if _pog_is_null(object.bool_property(v0, "found_relay_3")):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 3.\n")
 			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
 			object.add_bool_property(v5, "relay", 1)
 			sim.place_between(v5, v10, v9, 0.009999999776482582)
 			isim.set_sensor_visibility(v5, 1)
 			group.add_sim(v3, v5)
-			_pc = 39191
-			continue
-		elif _pc == 39191:
-			_pc = 39196
-			continue
-		elif _pc == 39196:
-			await _pog_frame()
-			if _pog_every(39197, 1.0):
-				_pc = 39210
-				continue
-			else:
-				_pc = 39346
-				continue
-		elif _pc == 39210:
-			if await local_22529(v0, "visited_all_bases") == 1:
-				_pc = 39242
-				continue
-			else:
-				_pc = 39293
-				continue
-		elif _pc == 39242:
-			_pc = 39268
-			continue
-		elif _pc == 39247:
-			debug.print_string("iAct2Mission24.monitor_relays: All bases found. Destroying remaining relay waypoints and quitting.\n")
-			_pc = 39268
-			continue
-		elif _pc == 39268:
-			group.destroy(v3, 1)
-			_pc = 39687
-			continue
-		elif _pc == 39293:
-			v5 = await iutilities.near_to_group(v2, v3, 80000.0, 0)
-			if not _pog_is_null(v5):
-				_pc = 39341
-				continue
-			else:
-				_pc = 39346
-				continue
-		elif _pc == 39341:
-			_pc = 39351
-			continue
-		elif _pc == 39346:
-			_pc = 39196
-			continue
-		elif _pc == 39351:
+		while true:
+			while true:
+				await _pog_wait(1)
+				if await local_22529(v0, "visited_all_bases") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iAct2Mission24.monitor_relays: All bases found. Destroying remaining relay waypoints and quitting.\n")
+					group.destroy(v3, 1)
+					return
+				v5 = await iutilities.near_to_group(v2, v3, 80000.0, 0)
+				if _pog_is_null(v5):
+					continue
+				break
 			group.remove_sim(v3, v5)
 			if object.property_exists(v5, "relay"):
-				_pc = 39406
-				continue
+				v4 = v4 + 1
+				match v4:
+					1:
+						await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_one")
+					2:
+						await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_two")
+					3:
+						await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_three")
+				sim.destroy(v5)
 			else:
-				_pc = 39592
-				continue
-		elif _pc == 39406:
-			v4 = v4 + 1
-			_pc = 39537
-			continue
-		elif _pc == 39424:
-			await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_one")
-			_pc = 39568
-			continue
-		elif _pc == 39460:
-			await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_two")
-			_pc = 39568
-			continue
-		elif _pc == 39496:
-			await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_three")
-			_pc = 39568
-			continue
-		elif _pc == 39532:
-			_pc = 39568
-			continue
-		elif _pc == 39537:
-			if 1 != v4:
-				_pc = 39550
-				continue
-			else:
-				_pc = 39424
-				continue
-		elif _pc == 39550:
-			if 2 != v4:
-				_pc = 39559
-				continue
-			else:
-				_pc = 39460
-				continue
-		elif _pc == 39559:
-			if 3 != v4:
-				_pc = 39568
-				continue
-			else:
-				_pc = 39496
-				continue
-		elif _pc == 39568:
-			sim.destroy(v5)
-			_pc = 39636
-			continue
-		elif _pc == 39592:
-			group.remove_sim(v3, v5)
-			isim.set_sensor_visibility(v5, 0)
-			_pc = 39636
-			continue
-		elif _pc == 39636:
-			if group.sim_count(v3) <= 0:
-				_pc = 39661
-				continue
-			else:
-				_pc = 39191
-				continue
-		elif _pc == 39661:
-			_pc = 39687
-			continue
-		elif _pc == 39666:
+				group.remove_sim(v3, v5)
+				isim.set_sensor_visibility(v5, 0)
+			if not (group.sim_count(v3) > 0):
+				break
+		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.monitor_relays: All relay waypoints found. Quitting.\n")
-			_pc = 39687
-			continue
-		elif _pc == 39687:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_39689(v0, v1, v2) -> Variant:

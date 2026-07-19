@@ -113,49 +113,18 @@ func local_310() -> Variant:
 
 func local_454(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 454
-	while true:
-		if _pc == 454:
-			_pc = 709
-			continue
-		elif _pc == 464:
+	match math.random_int(0, 1):
+		0:
 			v1 = iship.create("ini:/sims/ships/independent/tug_armed_weak", await ishipcreation.ship_name("General", -1))
 			isim.set_faction(v1, v0)
 			await ipilotsetup.generic_aggressive(v1)
 			iship.set_pilot_skill_level(v1, 0.30000001192092896)
-			_pc = 740
-			continue
-		elif _pc == 584:
+		1:
 			v1 = iship.create("ini:/sims/ships/independent/puffin_armed", await ishipcreation.ship_name("General", -1))
 			isim.set_faction(v1, v0)
 			await ipilotsetup.generic_aggressive(v1)
 			iship.set_pilot_skill_level(v1, 0.30000001192092896)
-			_pc = 740
-			continue
-		elif _pc == 704:
-			_pc = 740
-			continue
-		elif _pc == 709:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 732
-				continue
-			else:
-				_pc = 464
-				continue
-		elif _pc == 732:
-			if not _pog_is_null(1):
-				_pc = 740
-				continue
-			else:
-				_pc = 584
-				continue
-		elif _pc == 740:
-			return v1
-		elif _pc == 750:
-			return
-		else:
-			return 0
+	return v1
 	return 0
 
 func local_752(v0, v1) -> Variant:

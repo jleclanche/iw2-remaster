@@ -268,327 +268,124 @@ func local_2869(v0, v1, v2, v3) -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	var _pc: int = 2869
+	v4 = 0
+	v5 = 0
+	v6 = 0
+	v7 = 0
+	v8 = await local_1121()
+	v9 = await local_1560()
+	v10 = group.create()
+	v11 = await local_1972(5)
+	v12 = iship.cast(group.leader(v9))
+	v14 = group.sim_count(v8)
+	group.add_group(v10, v8)
+	group.add_group(v10, v9)
+	global.create_handle("g_storage_group", 2, v10)
+	sim.place_near(group.leader(v8), v0, 100000.0)
+	await iformation.line_ahead(v8, 50.0, 1)
+	await iescort.in_formation_goose(v9, v8, 3, 0.0, 250.0, 900.0, 200.0, 10000.0, 1)
+	_pog_spawn(local_2347.bind(v8, v2, v1))
 	while true:
-		if _pc == 2869:
-			v4 = 0
-			v5 = 0
-			v6 = 0
-			v7 = 0
-			v8 = await local_1121()
-			v9 = await local_1560()
-			v10 = group.create()
-			v11 = await local_1972(5)
-			v12 = iship.cast(group.leader(v9))
-			v14 = group.sim_count(v8)
-			group.add_group(v10, v8)
-			group.add_group(v10, v9)
-			global.create_handle("g_storage_group", 2, v10)
-			sim.place_near(group.leader(v8), v0, 100000.0)
-			await iformation.line_ahead(v8, 50.0, 1)
-			await iescort.in_formation_goose(v9, v8, 3, 0.0, 250.0, 900.0, 200.0, 10000.0, 1)
-			_pog_spawn(local_2347.bind(v8, v2, v1))
-			_pc = 3265
-			continue
-		elif _pc == 3265:
-			await _pog_wait(1.0)
-			if sim.distance_between(v0, v12) <= 30000.0:
-				_pc = 3331
-				continue
-			else:
-				_pc = 3265
-				continue
-		elif _pc == 3331:
-			if state.progress(v3) == 100:
-				_pc = 3357
-				continue
-			else:
-				_pc = 3362
-				continue
-		elif _pc == 3357:
-			_pc = 5599
-			continue
-		elif _pc == 3362:
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_good_to")
-			iobjectives.add("a2_m08_objectives_cover")
-			sim.place_near(group.leader(v11), v0, 19000.0)
-			await iescort.claw(v11, 50.0, 8000.0, 1)
-			iai.give_attack_order(v11, v8)
-			iai.give_attack_order(v9, v11)
-			_pc = 3540
-			continue
-		elif _pc == 3540:
-			await _pog_frame()
-			if _pog_every(3541, 2.0):
-				_pc = 3554
-				continue
-			else:
-				_pc = 5593
-				continue
-		elif _pc == 3554:
+		await _pog_wait(1.0)
+		if not (sim.distance_between(v0, v12) > 30000.0):
+			break
+	if state.progress(v3) == 100:
+		pass
+	else:
+		await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_good_to")
+		iobjectives.add("a2_m08_objectives_cover")
+		sim.place_near(group.leader(v11), v0, 19000.0)
+		await iescort.claw(v11, 50.0, 8000.0, 1)
+		iai.give_attack_order(v11, v8)
+		iai.give_attack_order(v9, v11)
+		while true:
+			await _pog_wait(2)
 			if state.progress(v3) != 100:
-				_pc = 3580
-				continue
+				if group.sim_count(v8) < v14 and not _pog_is_null(group.sim_count(v8)):
+					v14 = v14 + -1
+					if not (v7):
+						v7 = 1
+						await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_vessel_down")
+					else:
+						if _pog_is_null(math.random_int(0, 1)):
+							await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_vessel_down")
+						else:
+							await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_and_another")
+				if _pog_is_null(group.sim_count(v8)) and not (v5):
+					v5 = 1
+					await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_all_indenture")
+					iobjectives.set_state("a2_m08_objectives_cover", 2)
+				else:
+					if _pog_is_null(await local_2190(v8, "map:/geog/badlands/dagda")) and not (v4):
+						v4 = 1
+						await local_2760(v8, v2)
+						await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_pull_out")
+						if not (v5):
+							iobjectives.set_state("a2_m08_objectives_cover", 1)
+						iobjectives.add("a2_m08_objectives_leave")
+						await iescort.goose(v9, 40.0, 8000.0, 1)
+						iai.give_approach_order(group.leader(v9), v2)
+						iai.force_l_p_route(iship.cast(group.leader(v9)), ilagrangepoint.cast(v1), ilagrangepoint.cast(v2))
+					else:
+						if group.sim_count(v11) and not (v6):
+							v6 = 1
+							v11 = await local_1972(6)
+							sim.place_near(group.leader(v11), v0, 19000.0)
+							await iescort.claw(v11, 50.0, 8000.0, 1)
+							iai.give_attack_order(v11, v8)
+				if v4 and _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
+					state.set_progress(v3, 3)
+					if _pog_is_null(group.sim_count(v8)):
+						await iconversation.one_liner(0, "name_clay", "a2_m08_dialogue_clay_damn_guess")
+						iobjectives.set_state("a2_m08_objectives_leave", 1)
+					else:
+						v13 = group.sim_count(v9)
+						if not _pog_eq(await local_2190(v9, "map:/geog/badlands/mwari"), v13):
+							v15 = 0
+							while v15 < v13:
+								sim.set_cullable(group.nth_sim(v9, v15), 1)
+								if not _pog_eq(isim.world_name(isim.cast(group.nth_sim(v9, v15))), "map:/geog/badlands/mwari"):
+									isim.capsule_jump(isim.cast(group.nth_sim(v9, v15)), isim.cast(v2))
+								v15 = v15 + 1
+						iobjectives.set_state("a2_m08_objectives_leave", 1)
+						await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_thank")
+						match group.sim_count(v8):
+							1:
+								await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_1")
+								iinventory.add(561, 10)
+							2:
+								await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_2")
+								iinventory.add(561, 10)
+								iinventory.add(112, 10)
+							3:
+								await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_3")
+								iinventory.add(561, 10)
+								iinventory.add(112, 10)
+								iinventory.add(142, 2)
+							4:
+								await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_all")
+								iinventory.add(561, 10)
+								iinventory.add(112, 10)
+								iinventory.add(142, 2)
+								iinventory.add(567, 1)
+						await iformation.line_ahead(v8, 50.0, 0)
+						await iescort.in_formation_goose(v9, v8, 3, 0.0, 250.0, 900.0, 200.0, 10000.0, 0)
+						v14 = group.sim_count(v8)
+						v15 = 0
+						while v15 < v14:
+							sim.set_cullable(group.nth_sim(v8, v15), 1)
+							v15 = v15 + 1
+						iai.give_approach_order(group.leader(v8), imapentity.find_by_name_in_system("Fort Hope", "map:/geog/badlands/mwari"))
+						await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_i_hope")
+					state.set_progress(v3, 8)
+					return
 			else:
-				_pc = 5509
-				continue
-		elif _pc == 3580:
-			if group.sim_count(v8) < v14 and not _pog_is_null(group.sim_count(v8)):
-				_pc = 3630
-				continue
-			else:
-				_pc = 3790
-				continue
-		elif _pc == 3630:
-			v14 = v14 + -1
-			if not (v7):
-				_pc = 3655
-				continue
-			else:
-				_pc = 3699
-				continue
-		elif _pc == 3655:
-			v7 = 1
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_vessel_down")
-			_pc = 3790
-			continue
-		elif _pc == 3699:
-			if _pog_is_null(math.random_int(0, 1)):
-				_pc = 3721
-				continue
-			else:
-				_pc = 3758
-				continue
-		elif _pc == 3721:
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_vessel_down")
-			_pc = 3790
-			continue
-		elif _pc == 3758:
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_and_another")
-			_pc = 3790
-			continue
-		elif _pc == 3790:
-			if _pog_is_null(group.sim_count(v8)) and not (v5):
-				_pc = 3822
-				continue
-			else:
-				_pc = 3889
-				continue
-		elif _pc == 3822:
-			v5 = 1
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_all_indenture")
-			iobjectives.set_state("a2_m08_objectives_cover", 2)
-			_pc = 4352
-			continue
-		elif _pc == 3889:
-			if _pog_is_null(await local_2190(v8, "map:/geog/badlands/dagda")) and not (v4):
-				_pc = 3928
-				continue
-			else:
-				_pc = 4198
-				continue
-		elif _pc == 3928:
-			v4 = 1
-			await local_2760(v8, v2)
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_pull_out")
-			if not (v5):
-				_pc = 4002
-				continue
-			else:
-				_pc = 4024
-				continue
-		elif _pc == 4002:
-			iobjectives.set_state("a2_m08_objectives_cover", 1)
-			_pc = 4024
-			continue
-		elif _pc == 4024:
-			iobjectives.add("a2_m08_objectives_leave")
-			await iescort.goose(v9, 40.0, 8000.0, 1)
-			iai.give_approach_order(group.leader(v9), v2)
-			iai.force_l_p_route(iship.cast(group.leader(v9)), ilagrangepoint.cast(v1), ilagrangepoint.cast(v2))
-			_pc = 4352
-			continue
-		elif _pc == 4198:
-			if group.sim_count(v11) and not (v6):
-				_pc = 4228
-				continue
-			else:
-				_pc = 4352
-				continue
-		elif _pc == 4228:
-			v6 = 1
-			v11 = await local_1972(6)
-			sim.place_near(group.leader(v11), v0, 19000.0)
-			await iescort.claw(v11, 50.0, 8000.0, 1)
-			iai.give_attack_order(v11, v8)
-			_pc = 4352
-			continue
-		elif _pc == 4352:
-			if v4 and _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
-				_pc = 4385
-				continue
-			else:
-				_pc = 5504
-				continue
-		elif _pc == 4385:
-			state.set_progress(v3, 3)
-			if _pog_is_null(group.sim_count(v8)):
-				_pc = 4431
-				continue
-			else:
-				_pc = 4486
-				continue
-		elif _pc == 4431:
-			await iconversation.one_liner(0, "name_clay", "a2_m08_dialogue_clay_damn_guess")
-			iobjectives.set_state("a2_m08_objectives_leave", 1)
-			_pc = 5478
-			continue
-		elif _pc == 4486:
-			v13 = group.sim_count(v9)
-			if not _pog_eq(await local_2190(v9, "map:/geog/badlands/mwari"), v13):
-				_pc = 4546
-				continue
-			else:
-				_pc = 4757
-				continue
-		elif _pc == 4546:
-			v15 = 0
-			_pc = 4553
-			continue
-		elif _pc == 4553:
-			if v15 < v13:
-				_pc = 4569
-				continue
-			else:
-				_pc = 4757
-				continue
-		elif _pc == 4569:
-			sim.set_cullable(group.nth_sim(v9, v15), 1)
-			if not _pog_eq(isim.world_name(isim.cast(group.nth_sim(v9, v15))), "map:/geog/badlands/mwari"):
-				_pc = 4671
-				continue
-			else:
-				_pc = 4739
-				continue
-		elif _pc == 4671:
-			isim.capsule_jump(isim.cast(group.nth_sim(v9, v15)), isim.cast(v2))
-			_pc = 4739
-			continue
-		elif _pc == 4739:
-			v15 = v15 + 1
-			_pc = 4553
-			continue
-		elif _pc == 4757:
-			iobjectives.set_state("a2_m08_objectives_leave", 1)
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_thank")
-			_pc = 5155
-			continue
-		elif _pc == 4816:
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_1")
-			iinventory.add(561, 10)
-			_pc = 5208
-			continue
-		elif _pc == 4872:
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_2")
-			iinventory.add(561, 10)
-			iinventory.add(112, 10)
-			_pc = 5208
-			continue
-		elif _pc == 4946:
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_3")
-			iinventory.add(561, 10)
-			iinventory.add(112, 10)
-			iinventory.add(142, 2)
-			_pc = 5208
-			continue
-		elif _pc == 5039:
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_all")
-			iinventory.add(561, 10)
-			iinventory.add(112, 10)
-			iinventory.add(142, 2)
-			iinventory.add(567, 1)
-			_pc = 5208
-			continue
-		elif _pc == 5150:
-			_pc = 5208
-			continue
-		elif _pc == 5155:
-			group.sim_count(v8)
-			if 1 != group.sim_count(v8):
-				_pc = 5181
-				continue
-			else:
-				_pc = 4816
-				continue
-		elif _pc == 5181:
-			if not _pog_is_null(2):
-				_pc = 5190
-				continue
-			else:
-				_pc = 4872
-				continue
-		elif _pc == 5190:
-			if not _pog_is_null(3):
-				_pc = 5199
-				continue
-			else:
-				_pc = 4946
-				continue
-		elif _pc == 5199:
-			if not _pog_is_null(4):
-				_pc = 5208
-				continue
-			else:
-				_pc = 5039
-				continue
-		elif _pc == 5208:
-			await iformation.line_ahead(v8, 50.0, 0)
-			await iescort.in_formation_goose(v9, v8, 3, 0.0, 250.0, 900.0, 200.0, 10000.0, 0)
-			v14 = group.sim_count(v8)
-			v15 = 0
-			_pc = 5316
-			continue
-		elif _pc == 5316:
-			if v15 < v14:
-				_pc = 5332
-				continue
-			else:
-				_pc = 5388
-				continue
-		elif _pc == 5332:
-			sim.set_cullable(group.nth_sim(v8, v15), 1)
-			v15 = v15 + 1
-			_pc = 5316
-			continue
-		elif _pc == 5388:
-			iai.give_approach_order(group.leader(v8), imapentity.find_by_name_in_system("Fort Hope", "map:/geog/badlands/mwari"))
-			await iconversation.one_liner(v12, "a2_master_name_jarvis", "a2_m08_dialogue_jarvis_i_hope")
-			_pc = 5478
-			continue
-		elif _pc == 5478:
-			state.set_progress(v3, 8)
-			_pc = 5599
-			continue
-		elif _pc == 5504:
-			_pc = 5593
-			continue
-		elif _pc == 5509:
-			group.destroy(v8, 1)
-			group.destroy(v9, 1)
-			group.destroy(v11, 1)
-			sim.destroy(v12)
-			_pc = 5599
-			continue
-		elif _pc == 5593:
-			_pc = 3540
-			continue
-		elif _pc == 5598:
-			_pc = 5599
-			continue
-		elif _pc == 5599:
-			return
-		else:
-			return 0
+				group.destroy(v8, 1)
+				group.destroy(v9, 1)
+				group.destroy(v11, 1)
+				sim.destroy(v12)
+				return
+	return
 	return 0
 
 func local_5601(v0, v1, v2, v3) -> Variant:

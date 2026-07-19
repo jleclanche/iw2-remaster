@@ -293,29 +293,15 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	var _pc: int = 3468
-	while true:
-		if _pc == 3468:
-			v9 = (v4 - v3) / (v5 - 1.0)
-			v15 = await get_kill_group()
-			v16 = group.create()
-			v6 = 0
-			_pc = 3548
-			continue
-		elif _pc == 3548:
-			if v6 < v5:
-				_pc = 3564
-				continue
-			else:
-				_pc = 4095
-				continue
-		elif _pc == 3564:
-			v8 = v3 + v6 * v9
-			v10 = v2 * math.pog_cos(v8)
-			v11 = v2 * math.pog_sin(v8)
-			_pc = 3847
-			continue
-		elif _pc == 3653:
+	v9 = (v4 - v3) / (v5 - 1.0)
+	v15 = await get_kill_group()
+	v16 = group.create()
+	v6 = 0
+	while v6 < v5:
+		v8 = v3 + v6 * v9
+		v10 = v2 * math.pog_cos(v8)
+		v11 = v2 * math.pog_sin(v8)
+		if PogRuntime.TRACE:
 			debug.print_string("Creating waypoint at radius ")
 			debug.print_float(v2)
 			debug.print_string(" Meters, with cos ")
@@ -325,66 +311,24 @@ func build_circular_path(v0, v1, v2, v3, v4, v5) -> Variant:
 			debug.print_string(" , ")
 			debug.print_float(v11)
 			debug.print_string(")\n")
-			_pc = 3847
-			continue
-		elif _pc == 3847:
-			_pc = 3971
-			continue
-		elif _pc == 3852:
-			v12 = 0.0
-			v13 = v10
-			v14 = v11
-			_pc = 4001
-			continue
-		elif _pc == 3890:
-			v12 = v11
-			v13 = 0.0
-			v14 = v10
-			_pc = 4001
-			continue
-		elif _pc == 3928:
-			v12 = v10
-			v13 = v11
-			v14 = 0.0
-			_pc = 4001
-			continue
-		elif _pc == 3966:
-			_pc = 4001
-			continue
-		elif _pc == 3971:
-			if not _pog_is_null(v1):
-				_pc = 3984
-				continue
-			else:
-				_pc = 3852
-				continue
-		elif _pc == 3984:
-			if 1 != v1:
-				_pc = 3992
-				continue
-			else:
-				_pc = 3890
-				continue
-		elif _pc == 3992:
-			if 2 != v1:
-				_pc = 4001
-				continue
-			else:
-				_pc = 3928
-				continue
-		elif _pc == 4001:
-			v7 = isim.cast(await iutilities.create_waypoint_relative_to(v0, v12, v13, v14))
-			group.add_sim(v16, v7)
-			v6 = v6 + 1
-			_pc = 3548
-			continue
-		elif _pc == 4095:
-			group.add_group(v15, v16)
-			return v16
-		elif _pc == 4129:
-			return
-		else:
-			return 0
+		match v1:
+			0:
+				v12 = 0.0
+				v13 = v10
+				v14 = v11
+			1:
+				v12 = v11
+				v13 = 0.0
+				v14 = v10
+			2:
+				v12 = v10
+				v13 = v11
+				v14 = 0.0
+		v7 = isim.cast(await iutilities.create_waypoint_relative_to(v0, v12, v13, v14))
+		group.add_sim(v16, v7)
+		v6 = v6 + 1
+	group.add_group(v15, v16)
+	return v16
 	return 0
 
 func get_kill_group() -> Variant:
@@ -618,121 +562,29 @@ func find_station_module() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	var _pc: int = 7585
-	while true:
-		if _pc == 7585:
-			v2 = []
-			v2 = await get_station_modules(v0)
-			v3 = []
-			_pc = 8043
-			continue
-		elif _pc == 7643:
+	v2 = []
+	v2 = await get_station_modules(v0)
+	v3 = []
+	match v1:
+		0:
 			p_set.union(v3, await get_things_called(v2, "Comms"))
-			_pc = 8109
-			continue
-		elif _pc == 7693:
+		1:
 			p_set.union(v3, await get_things_called(v2, "Large Engineering Module"))
 			p_set.union(v3, await get_things_called(v2, "Small Engineering Module"))
-			_pc = 8109
-			continue
-		elif _pc == 7788:
+		2:
 			p_set.union(v3, await get_things_called(v2, "Docking Arm"))
-			_pc = 8109
-			continue
-		elif _pc == 7838:
+		3:
 			p_set.union(v3, await get_things_called(v2, "Pod Spewer"))
-			_pc = 8109
-			continue
-		elif _pc == 7888:
+		4:
 			p_set.union(v3, await get_things_called(v2, "Large Habitat"))
-			_pc = 8109
-			continue
-		elif _pc == 7938:
+		5:
 			p_set.union(v3, await get_things_called(v2, "Police Interceptor"))
-			_pc = 8109
-			continue
-		elif _pc == 7988:
+		6:
 			p_set.union(v3, await get_things_called(v2, "Processing Plant"))
-			_pc = 8109
-			continue
-		elif _pc == 8038:
-			_pc = 8109
-			continue
-		elif _pc == 8043:
-			if not _pog_is_null(v1):
-				_pc = 8056
-				continue
-			else:
-				_pc = 7643
-				continue
-		elif _pc == 8056:
-			if 1 != v1:
-				_pc = 8064
-				continue
-			else:
-				_pc = 7693
-				continue
-		elif _pc == 8064:
-			if 2 != v1:
-				_pc = 8073
-				continue
-			else:
-				_pc = 7788
-				continue
-		elif _pc == 8073:
-			if 3 != v1:
-				_pc = 8082
-				continue
-			else:
-				_pc = 7838
-				continue
-		elif _pc == 8082:
-			if 4 != v1:
-				_pc = 8091
-				continue
-			else:
-				_pc = 7888
-				continue
-		elif _pc == 8091:
-			if 5 != v1:
-				_pc = 8100
-				continue
-			else:
-				_pc = 7938
-				continue
-		elif _pc == 8100:
-			if 6 != v1:
-				_pc = 8109
-				continue
-			else:
-				_pc = 7988
-				continue
-		elif _pc == 8109:
-			if p_set.is_empty(v3):
-				_pc = 8132
-				continue
-			else:
-				_pc = 8169
-				continue
-		elif _pc == 8132:
-			_pc = 8158
-			continue
-		elif _pc == 8137:
+	if p_set.is_empty(v3):
+		if PogRuntime.TRACE:
 			debug.print_string("iUtilities.FindStationModule failed to find a module of the requested type.  this may be due to (a) localisation or (b) a change to the way stations are constructed!\n")
-			_pc = 8158
-			continue
-		elif _pc == 8158:
-			return 0
-		elif _pc == 8164:
-			_pc = 8205
-			continue
-		elif _pc == 8169:
-			return isim.cast(p_set.first_element(v3))
-		elif _pc == 8205:
-			return 0
-		elif _pc == 8211:
-			return
-		else:
-			return 0
+		return 0
+	return isim.cast(p_set.first_element(v3))
 	return 0
 

@@ -136,468 +136,471 @@ func filter_on_friendly_sims() -> Variant:
 	return 0
 
 func from_location_enum(v0) -> Variant:
-	if _pog_is_null(v0):
-		if PogRuntime.TRACE:
-			debug.error("LocationEnum: Warning - location passed has an invalid usage type!")
-		return _pog_clone("Invalid!")
-	if 1 == v0:
-		return _pog_clone("Disused")
-	if 2 == v0:
-		return _pog_clone("WaterMine")
-	if 3 == v0:
-		return _pog_clone("OrganicsMine")
-	if 4 == v0:
-		return _pog_clone("InorganicsMine")
-	if 5 == v0:
-		return _pog_clone("BiomassMine")
-	if 6 == v0:
-		return _pog_clone("CommonMetalsMine")
-	if 7 == v0:
-		return _pog_clone("RareMetalsMine")
-	if 8 == v0:
-		return _pog_clone("ExoticMetalsMine")
-	if 9 == v0:
-		return _pog_clone("RadioactivesMine")
-	if 10 == v0:
-		return _pog_clone("FusionableGasesMine")
-	if 53 == v0:
-		return _pog_clone("NeutroniumMine")
-	if 11 == v0:
-		return _pog_clone("WaterProcessingPlant")
-	if 12 == v0:
-		return _pog_clone("OrganicsProcessingPlant")
-	if 13 == v0:
-		return _pog_clone("InorganicsProcessingPlant")
-	if 14 == v0:
-		return _pog_clone("BiomassProcessingPlant")
-	if 15 == v0:
-		return _pog_clone("CommonMetalsProcessingPlant")
-	if 16 == v0:
-		return _pog_clone("RareMetalsProcessingPlant")
-	if 17 == v0:
-		return _pog_clone("ExoticMetalsProcessingPlant")
-	if 18 == v0:
-		return _pog_clone("RadioactivesProcessingPlant")
-	if 19 == v0:
-		return _pog_clone("FusionableGasesProcessingPlant")
-	if 20 == v0:
-		return _pog_clone("NeutroniumProcessingPlant")
-	if 22 == v0:
-		return _pog_clone("HeavyManufacturingPlant")
-	if 23 == v0:
-		return _pog_clone("BiologicalManufacturingPlant")
-	if 24 == v0:
-		return _pog_clone("WetwareManufacturingPlant")
-	if 25 == v0:
-		return _pog_clone("HiTechManufacturingPlant")
-	if 26 == v0:
-		return _pog_clone("ElectronicsManufacturingPlant")
-	if 27 == v0:
-		return _pog_clone("WeaponsManufacturingPlant")
-	if 28 == v0:
-		return _pog_clone("PharmaceuticalsManufacturingPlant")
-	if 29 == v0:
-		return _pog_clone("PlasticsManufacturingPlant")
-	if 30 == v0:
-		return _pog_clone("FusionReactorsManufacturingPlant")
-	if 31 == v0:
-		return _pog_clone("EnergyCellsManufacturingPlant")
-	if 32 == v0:
-		return _pog_clone("StationFabricationManufacturingPlant")
-	if 33 == v0:
-		return _pog_clone("LuxuriesManufacturingPlant")
-	if 39 == v0:
-		return _pog_clone("ResearchAndDevelopmentLab")
-	if 40 == v0:
-		return _pog_clone("ResearchStation")
-	if 42 == v0:
-		return _pog_clone("BlackBudgetResearchStation")
-	if 43 == v0:
-		return _pog_clone("SensitiveResearchStation")
-	if 96 == v0:
-		return _pog_clone("University")
-	if 110 == v0:
-		return _pog_clone("MadScientistLab")
-	if 34 == v0:
-		return _pog_clone("TerraformingStation")
-	if 81 == v0:
-		return _pog_clone("NavalResearchFacility")
-	if 80 == v0:
-		return _pog_clone("NavalTestingSite")
-	if 44 == v0:
-		return _pog_clone("FinancialCentre")
-	if 45 == v0:
-		return _pog_clone("RegionalHQ")
-	if 92 == v0:
-		return _pog_clone("PlanetaryAdministration")
-	if 93 == v0:
-		return _pog_clone("SystemAdministration")
-	if 94 == v0:
-		return _pog_clone("ClusterAdministration")
-	if 95 == v0:
-		return _pog_clone("RegionalDepartment")
-	if 87 == v0:
-		return _pog_clone("STCHQ")
-	if 47 == v0:
-		return _pog_clone("CentralHQ")
-	if 122 == v0:
-		return _pog_clone("TransferStation")
-	if 121 == v0:
-		return _pog_clone("Beanstalk")
-	if 49 == v0:
-		return _pog_clone("Resort")
-	if 50 == v0:
-		return _pog_clone("LuxuryResort")
-	if 52 == v0:
-		return _pog_clone("LeisureComplex")
-	if 66 == v0:
-		return _pog_clone("EntertainmentStation")
-	if 105 == v0:
-		return _pog_clone("ViceDen")
-	if 106 == v0:
-		return _pog_clone("Casino")
-	if 51 == v0:
-		return _pog_clone("MedicalFacility")
-	if 41 == v0:
-		return _pog_clone("MedicalResearchCentre")
-	if 99 == v0:
-		return _pog_clone("Asylum")
-	if 100 == v0:
-		return _pog_clone("Hospice")
-	if 61 == v0:
-		return _pog_clone("TradingPost")
-	if 63 == v0:
-		return _pog_clone("BlackMarket")
-	if 72 == v0:
-		return _pog_clone("NavalAcademy")
-	if 73 == v0:
-		return _pog_clone("NavalTrainingBase")
-	if 70 == v0:
-		return _pog_clone("SystemDefenceStation")
-	if 71 == v0:
-		return _pog_clone("SystemDefenceDock")
-	if 82 == v0:
-		return _pog_clone("JumpFortress")
-	if 85 == v0:
-		return _pog_clone("DefenceStation")
-	if 54 == v0:
-		return _pog_clone("SecurityStation")
-	if 55 == v0:
-		return _pog_clone("Fortress")
-	if 68 == v0:
-		return _pog_clone("PoliceBase")
-	if 69 == v0:
-		return _pog_clone("PoliceOutpost")
-	if 56 == v0:
-		return _pog_clone("HighSecurityPrison")
-	if 57 == v0:
-		return _pog_clone("LowSecurityPrison")
-	if 58 == v0:
-		return _pog_clone("HardLabourPrison")
-	if 84 == v0:
-		return _pog_clone("SupplyDepot")
-	if 76 == v0:
-		return _pog_clone("RepairDock")
-	if 64 == v0:
-		return _pog_clone("DryDock")
-	if 37 == v0:
-		return _pog_clone("RepairStation")
-	if 86 == v0:
-		return _pog_clone("STCPost")
-	if 74 == v0:
-		return _pog_clone("Outpost")
-	if 75 == v0:
-		return _pog_clone("Base")
-	if 36 == v0:
-		return _pog_clone("Waystation")
-	if 78 == v0:
-		return _pog_clone("MarineBarracks")
-	if 88 == v0:
-		return _pog_clone("FTLArray")
-	if 89 == v0:
-		return _pog_clone("FTLInterchange")
-	if 90 == v0:
-		return _pog_clone("STLTranceiver")
-	if 91 == v0:
-		return _pog_clone("STLInterchange")
-	if 98 == v0:
-		return _pog_clone("Garden")
-	if 97 == v0:
-		return _pog_clone("Ark")
-	if 108 == v0:
-		return _pog_clone("Hermitage")
-	if 48 == v0:
-		return _pog_clone("AgriculturalSettlement")
-	if 112 == v0:
-		return _pog_clone("Habitat")
-	if 107 == v0:
-		return _pog_clone("CollectiveSettlement")
-	if 67 == v0:
-		return _pog_clone("Settlement")
-	if 59 == v0:
-		return _pog_clone("Homestead")
-	if 46 == v0:
-		return _pog_clone("Villa")
-	if 114 == v0:
-		return _pog_clone("BoxTown")
-	if 109 == v0:
-		return _pog_clone("ReligiousCentre")
-	if 62 == v0:
-		return _pog_clone("Warehousing")
-	if 38 == v0:
-		return _pog_clone("OreTransferStation")
-	if 21 == v0:
-		return _pog_clone("Shipyard")
-	if 65 == v0:
-		return _pog_clone("DockingStation")
-	if 35 == v0:
-		return _pog_clone("BioBomber")
-	if 60 == v0:
-		return _pog_clone("MercenaryBase")
-	if 101 == v0:
-		return _pog_clone("PirateBase")
-	if 102 == v0:
-		return _pog_clone("PirateCove")
-	if 103 == v0:
-		return _pog_clone("PirateOutpost")
-	if 104 == v0:
-		return _pog_clone("GangsterHideout")
-	if 111 == v0:
-		return _pog_clone("Hideout")
-	if 113 == v0:
-		return _pog_clone("Junkyard")
-	if 115 == v0:
-		return _pog_clone("AsteroidSculptures")
-	if 118 == v0:
-		return _pog_clone("JumpAccelerator")
-	if 119 == v0:
-		return _pog_clone("HoffersGap")
-	if 120 == v0:
-		return _pog_clone("HoffersHeel")
+	match v0:
+		0:
+			if PogRuntime.TRACE:
+				debug.error("LocationEnum: Warning - location passed has an invalid usage type!")
+			return _pog_clone("Invalid!")
+		1:
+			return _pog_clone("Disused")
+		2:
+			return _pog_clone("WaterMine")
+		3:
+			return _pog_clone("OrganicsMine")
+		4:
+			return _pog_clone("InorganicsMine")
+		5:
+			return _pog_clone("BiomassMine")
+		6:
+			return _pog_clone("CommonMetalsMine")
+		7:
+			return _pog_clone("RareMetalsMine")
+		8:
+			return _pog_clone("ExoticMetalsMine")
+		9:
+			return _pog_clone("RadioactivesMine")
+		10:
+			return _pog_clone("FusionableGasesMine")
+		53:
+			return _pog_clone("NeutroniumMine")
+		11:
+			return _pog_clone("WaterProcessingPlant")
+		12:
+			return _pog_clone("OrganicsProcessingPlant")
+		13:
+			return _pog_clone("InorganicsProcessingPlant")
+		14:
+			return _pog_clone("BiomassProcessingPlant")
+		15:
+			return _pog_clone("CommonMetalsProcessingPlant")
+		16:
+			return _pog_clone("RareMetalsProcessingPlant")
+		17:
+			return _pog_clone("ExoticMetalsProcessingPlant")
+		18:
+			return _pog_clone("RadioactivesProcessingPlant")
+		19:
+			return _pog_clone("FusionableGasesProcessingPlant")
+		20:
+			return _pog_clone("NeutroniumProcessingPlant")
+		22:
+			return _pog_clone("HeavyManufacturingPlant")
+		23:
+			return _pog_clone("BiologicalManufacturingPlant")
+		24:
+			return _pog_clone("WetwareManufacturingPlant")
+		25:
+			return _pog_clone("HiTechManufacturingPlant")
+		26:
+			return _pog_clone("ElectronicsManufacturingPlant")
+		27:
+			return _pog_clone("WeaponsManufacturingPlant")
+		28:
+			return _pog_clone("PharmaceuticalsManufacturingPlant")
+		29:
+			return _pog_clone("PlasticsManufacturingPlant")
+		30:
+			return _pog_clone("FusionReactorsManufacturingPlant")
+		31:
+			return _pog_clone("EnergyCellsManufacturingPlant")
+		32:
+			return _pog_clone("StationFabricationManufacturingPlant")
+		33:
+			return _pog_clone("LuxuriesManufacturingPlant")
+		39:
+			return _pog_clone("ResearchAndDevelopmentLab")
+		40:
+			return _pog_clone("ResearchStation")
+		42:
+			return _pog_clone("BlackBudgetResearchStation")
+		43:
+			return _pog_clone("SensitiveResearchStation")
+		96:
+			return _pog_clone("University")
+		110:
+			return _pog_clone("MadScientistLab")
+		34:
+			return _pog_clone("TerraformingStation")
+		81:
+			return _pog_clone("NavalResearchFacility")
+		80:
+			return _pog_clone("NavalTestingSite")
+		44:
+			return _pog_clone("FinancialCentre")
+		45:
+			return _pog_clone("RegionalHQ")
+		92:
+			return _pog_clone("PlanetaryAdministration")
+		93:
+			return _pog_clone("SystemAdministration")
+		94:
+			return _pog_clone("ClusterAdministration")
+		95:
+			return _pog_clone("RegionalDepartment")
+		87:
+			return _pog_clone("STCHQ")
+		47:
+			return _pog_clone("CentralHQ")
+		122:
+			return _pog_clone("TransferStation")
+		121:
+			return _pog_clone("Beanstalk")
+		49:
+			return _pog_clone("Resort")
+		50:
+			return _pog_clone("LuxuryResort")
+		52:
+			return _pog_clone("LeisureComplex")
+		66:
+			return _pog_clone("EntertainmentStation")
+		105:
+			return _pog_clone("ViceDen")
+		106:
+			return _pog_clone("Casino")
+		51:
+			return _pog_clone("MedicalFacility")
+		41:
+			return _pog_clone("MedicalResearchCentre")
+		99:
+			return _pog_clone("Asylum")
+		100:
+			return _pog_clone("Hospice")
+		61:
+			return _pog_clone("TradingPost")
+		63:
+			return _pog_clone("BlackMarket")
+		72:
+			return _pog_clone("NavalAcademy")
+		73:
+			return _pog_clone("NavalTrainingBase")
+		70:
+			return _pog_clone("SystemDefenceStation")
+		71:
+			return _pog_clone("SystemDefenceDock")
+		82:
+			return _pog_clone("JumpFortress")
+		85:
+			return _pog_clone("DefenceStation")
+		54:
+			return _pog_clone("SecurityStation")
+		55:
+			return _pog_clone("Fortress")
+		68:
+			return _pog_clone("PoliceBase")
+		69:
+			return _pog_clone("PoliceOutpost")
+		56:
+			return _pog_clone("HighSecurityPrison")
+		57:
+			return _pog_clone("LowSecurityPrison")
+		58:
+			return _pog_clone("HardLabourPrison")
+		84:
+			return _pog_clone("SupplyDepot")
+		76:
+			return _pog_clone("RepairDock")
+		64:
+			return _pog_clone("DryDock")
+		37:
+			return _pog_clone("RepairStation")
+		86:
+			return _pog_clone("STCPost")
+		74:
+			return _pog_clone("Outpost")
+		75:
+			return _pog_clone("Base")
+		36:
+			return _pog_clone("Waystation")
+		78:
+			return _pog_clone("MarineBarracks")
+		88:
+			return _pog_clone("FTLArray")
+		89:
+			return _pog_clone("FTLInterchange")
+		90:
+			return _pog_clone("STLTranceiver")
+		91:
+			return _pog_clone("STLInterchange")
+		98:
+			return _pog_clone("Garden")
+		97:
+			return _pog_clone("Ark")
+		108:
+			return _pog_clone("Hermitage")
+		48:
+			return _pog_clone("AgriculturalSettlement")
+		112:
+			return _pog_clone("Habitat")
+		107:
+			return _pog_clone("CollectiveSettlement")
+		67:
+			return _pog_clone("Settlement")
+		59:
+			return _pog_clone("Homestead")
+		46:
+			return _pog_clone("Villa")
+		114:
+			return _pog_clone("BoxTown")
+		109:
+			return _pog_clone("ReligiousCentre")
+		62:
+			return _pog_clone("Warehousing")
+		38:
+			return _pog_clone("OreTransferStation")
+		21:
+			return _pog_clone("Shipyard")
+		65:
+			return _pog_clone("DockingStation")
+		35:
+			return _pog_clone("BioBomber")
+		60:
+			return _pog_clone("MercenaryBase")
+		101:
+			return _pog_clone("PirateBase")
+		102:
+			return _pog_clone("PirateCove")
+		103:
+			return _pog_clone("PirateOutpost")
+		104:
+			return _pog_clone("GangsterHideout")
+		111:
+			return _pog_clone("Hideout")
+		113:
+			return _pog_clone("Junkyard")
+		115:
+			return _pog_clone("AsteroidSculptures")
+		118:
+			return _pog_clone("JumpAccelerator")
+		119:
+			return _pog_clone("HoffersGap")
+		120:
+			return _pog_clone("HoffersHeel")
 	return _pog_clone("Dont Know!")
 	return 0
 
 func from_allegiance_enum(v0) -> Variant:
-	if _pog_is_null(v0):
-		return _pog_clone("Neutral")
-	if 1 == v0:
-		return _pog_clone("Independent")
-	if 2 == v0:
-		return _pog_clone("Exile")
-	if 3 == v0:
-		return _pog_clone("Military")
-	if 4 == v0:
-		return _pog_clone("Underworld")
-	if 5 == v0:
-		return _pog_clone("Government")
-	if 6 == v0:
-		return _pog_clone("Transient")
-	if 7 == v0:
-		return _pog_clone("Society")
-	if 8 == v0:
-		return _pog_clone("Invalid")
-	if 9 == v0:
-		return _pog_clone("Stepson")
-	if 10 == v0:
-		return _pog_clone("Kong")
-	if 11 == v0:
-		return _pog_clone("MAAS Corporation")
-	if 12 == v0:
-		return _pog_clone("Carva Cartel")
-	if 13 == v0:
-		return _pog_clone("Junkers")
-	if 14 == v0:
-		return _pog_clone("Police")
-	if 15 == v0:
-		return _pog_clone("NOMEX Corporation")
-	if 16 == v0:
-		return _pog_clone("NSO Laplace")
-	if 17 == v0:
-		return _pog_clone("Marauders")
-	if 18 == v0:
-		return _pog_clone("Angels")
-	if 19 == v0:
-		return _pog_clone("The Oman")
-	if 20 == v0:
-		return _pog_clone("M.C.A.")
-	if 21 == v0:
-		return _pog_clone("Player")
-	if 22 == v0:
-		return _pog_clone("League")
-	if 23 == v0:
-		return _pog_clone("Trimann Shipping")
-	if 24 == v0:
-		return _pog_clone("Rhondus Gas Mining")
-	if 25 == v0:
-		return _pog_clone("Ashanti Investment")
-	if 26 == v0:
-		return _pog_clone("Crosspoint Minerals")
-	if 27 == v0:
-		return _pog_clone("Helios Mining")
-	if 28 == v0:
-		return _pog_clone("Jardin Terraforming")
-	if 29 == v0:
-		return _pog_clone("Chon Bodifule")
-	if 30 == v0:
-		return _pog_clone("Orion Products")
-	if 31 == v0:
-		return _pog_clone("Von Shelling Industries")
-	if 32 == v0:
-		return _pog_clone("Megalith Corporation")
-	if 33 == v0:
-		return _pog_clone("Hibatsh PMC")
-	if 34 == v0:
-		return _pog_clone("Dester Corporation")
-	if 35 == v0:
-		return _pog_clone("Whind Weapons Systems")
-	if 36 == v0:
-		return _pog_clone("Advanced Security Corporation")
-	if 37 == v0:
-		return _pog_clone("Network 54")
-	if 38 == v0:
-		return _pog_clone("Infonet")
-	if 39 == v0:
-		return _pog_clone("Stellar Net")
-	if 40 == v0:
-		return _pog_clone("Wordsworth Technology")
-	if 41 == v0:
-		return _pog_clone("Netcom SA")
-	if 42 == v0:
-		return _pog_clone("Coventry Engineering Research")
-	if 43 == v0:
-		return _pog_clone("NINEX Wetware")
-	if 44 == v0:
-		return _pog_clone("Universal Consumer Products")
-	if 45 == v0:
-		return _pog_clone("High Life Products")
-	if 46 == v0:
-		return _pog_clone("Low Orbit Recovery")
-	if 47 == v0:
-		return _pog_clone("KIMO Shipping")
-	if 48 == v0:
-		return _pog_clone("Datagon Technologies")
-	if 49 == v0:
-		return _pog_clone("Micoria Communications")
-	if 50 == v0:
-		return _pog_clone("LOMAX Engines")
-	if 51 == v0:
-		return _pog_clone("LOMAX Technologies")
-	if 52 == v0:
-		return _pog_clone("Numiko Products")
-	if 54 == v0:
-		return _pog_clone("Aliens")
+	match v0:
+		0:
+			return _pog_clone("Neutral")
+		1:
+			return _pog_clone("Independent")
+		2:
+			return _pog_clone("Exile")
+		3:
+			return _pog_clone("Military")
+		4:
+			return _pog_clone("Underworld")
+		5:
+			return _pog_clone("Government")
+		6:
+			return _pog_clone("Transient")
+		7:
+			return _pog_clone("Society")
+		8:
+			return _pog_clone("Invalid")
+		9:
+			return _pog_clone("Stepson")
+		10:
+			return _pog_clone("Kong")
+		11:
+			return _pog_clone("MAAS Corporation")
+		12:
+			return _pog_clone("Carva Cartel")
+		13:
+			return _pog_clone("Junkers")
+		14:
+			return _pog_clone("Police")
+		15:
+			return _pog_clone("NOMEX Corporation")
+		16:
+			return _pog_clone("NSO Laplace")
+		17:
+			return _pog_clone("Marauders")
+		18:
+			return _pog_clone("Angels")
+		19:
+			return _pog_clone("The Oman")
+		20:
+			return _pog_clone("M.C.A.")
+		21:
+			return _pog_clone("Player")
+		22:
+			return _pog_clone("League")
+		23:
+			return _pog_clone("Trimann Shipping")
+		24:
+			return _pog_clone("Rhondus Gas Mining")
+		25:
+			return _pog_clone("Ashanti Investment")
+		26:
+			return _pog_clone("Crosspoint Minerals")
+		27:
+			return _pog_clone("Helios Mining")
+		28:
+			return _pog_clone("Jardin Terraforming")
+		29:
+			return _pog_clone("Chon Bodifule")
+		30:
+			return _pog_clone("Orion Products")
+		31:
+			return _pog_clone("Von Shelling Industries")
+		32:
+			return _pog_clone("Megalith Corporation")
+		33:
+			return _pog_clone("Hibatsh PMC")
+		34:
+			return _pog_clone("Dester Corporation")
+		35:
+			return _pog_clone("Whind Weapons Systems")
+		36:
+			return _pog_clone("Advanced Security Corporation")
+		37:
+			return _pog_clone("Network 54")
+		38:
+			return _pog_clone("Infonet")
+		39:
+			return _pog_clone("Stellar Net")
+		40:
+			return _pog_clone("Wordsworth Technology")
+		41:
+			return _pog_clone("Netcom SA")
+		42:
+			return _pog_clone("Coventry Engineering Research")
+		43:
+			return _pog_clone("NINEX Wetware")
+		44:
+			return _pog_clone("Universal Consumer Products")
+		45:
+			return _pog_clone("High Life Products")
+		46:
+			return _pog_clone("Low Orbit Recovery")
+		47:
+			return _pog_clone("KIMO Shipping")
+		48:
+			return _pog_clone("Datagon Technologies")
+		49:
+			return _pog_clone("Micoria Communications")
+		50:
+			return _pog_clone("LOMAX Engines")
+		51:
+			return _pog_clone("LOMAX Technologies")
+		52:
+			return _pog_clone("Numiko Products")
+		54:
+			return _pog_clone("Aliens")
 	return _pog_clone("none")
 	return 0
 
 func from_allegiance_enum_no_space(v0) -> Variant:
-	if _pog_is_null(v0):
-		return _pog_clone("Neutral")
-	if 1 == v0:
-		return _pog_clone("Independent")
-	if 2 == v0:
-		return _pog_clone("Exile")
-	if 3 == v0:
-		return _pog_clone("Military")
-	if 4 == v0:
-		return _pog_clone("Underworld")
-	if 5 == v0:
-		return _pog_clone("Government")
-	if 6 == v0:
-		return _pog_clone("Transient")
-	if 7 == v0:
-		return _pog_clone("Society")
-	if 8 == v0:
-		return _pog_clone("Invalid")
-	if 9 == v0:
-		return _pog_clone("Stepson")
-	if 10 == v0:
-		return _pog_clone("Kong")
-	if 11 == v0:
-		return _pog_clone("MaasCorporation")
-	if 12 == v0:
-		return _pog_clone("CarvaCartel")
-	if 13 == v0:
-		return _pog_clone("Junkers")
-	if 14 == v0:
-		return _pog_clone("Police")
-	if 15 == v0:
-		return _pog_clone("NomexCorporation")
-	if 16 == v0:
-		return _pog_clone("NsoLaplace")
-	if 17 == v0:
-		return _pog_clone("Marauders")
-	if 18 == v0:
-		return _pog_clone("Angels")
-	if 19 == v0:
-		return _pog_clone("TheOman")
-	if 20 == v0:
-		return _pog_clone("Mca")
-	if 21 == v0:
-		return _pog_clone("Player")
-	if 22 == v0:
-		return _pog_clone("League")
-	if 23 == v0:
-		return _pog_clone("TrimannShipping")
-	if 24 == v0:
-		return _pog_clone("RhondusGasMining")
-	if 25 == v0:
-		return _pog_clone("AshantiInvestment")
-	if 26 == v0:
-		return _pog_clone("CrosspointMinerals")
-	if 27 == v0:
-		return _pog_clone("HeliosMining")
-	if 28 == v0:
-		return _pog_clone("JardinTerraforming")
-	if 29 == v0:
-		return _pog_clone("ChonBodifule")
-	if 30 == v0:
-		return _pog_clone("OrionProducts")
-	if 31 == v0:
-		return _pog_clone("VonShellingIndustries")
-	if 32 == v0:
-		return _pog_clone("MegalithCorporation")
-	if 33 == v0:
-		return _pog_clone("HibatshPmc")
-	if 34 == v0:
-		return _pog_clone("DesterCorporation")
-	if 35 == v0:
-		return _pog_clone("WhindWeaponsSystems")
-	if 36 == v0:
-		return _pog_clone("AdvancedSecurityCorporation")
-	if 37 == v0:
-		return _pog_clone("Network54")
-	if 38 == v0:
-		return _pog_clone("Infonet")
-	if 39 == v0:
-		return _pog_clone("StellarNet")
-	if 40 == v0:
-		return _pog_clone("WordsworthTechnology")
-	if 41 == v0:
-		return _pog_clone("NetcomSa")
-	if 42 == v0:
-		return _pog_clone("CoventryEngineeringResearch")
-	if 43 == v0:
-		return _pog_clone("NinexWetware")
-	if 44 == v0:
-		return _pog_clone("UniversalConsumerProducts")
-	if 45 == v0:
-		return _pog_clone("HighLifeProducts")
-	if 46 == v0:
-		return _pog_clone("LowOrbitRecovery")
-	if 47 == v0:
-		return _pog_clone("KimoShipping")
-	if 48 == v0:
-		return _pog_clone("DatagonTechnologies")
-	if 49 == v0:
-		return _pog_clone("MicoriaCommunications")
-	if 50 == v0:
-		return _pog_clone("LomaxEngines")
-	if 51 == v0:
-		return _pog_clone("LomaxTechnologies")
-	if 52 == v0:
-		return _pog_clone("NumikoProducts")
-	if 54 == v0:
-		return _pog_clone("Aliens")
+	match v0:
+		0:
+			return _pog_clone("Neutral")
+		1:
+			return _pog_clone("Independent")
+		2:
+			return _pog_clone("Exile")
+		3:
+			return _pog_clone("Military")
+		4:
+			return _pog_clone("Underworld")
+		5:
+			return _pog_clone("Government")
+		6:
+			return _pog_clone("Transient")
+		7:
+			return _pog_clone("Society")
+		8:
+			return _pog_clone("Invalid")
+		9:
+			return _pog_clone("Stepson")
+		10:
+			return _pog_clone("Kong")
+		11:
+			return _pog_clone("MaasCorporation")
+		12:
+			return _pog_clone("CarvaCartel")
+		13:
+			return _pog_clone("Junkers")
+		14:
+			return _pog_clone("Police")
+		15:
+			return _pog_clone("NomexCorporation")
+		16:
+			return _pog_clone("NsoLaplace")
+		17:
+			return _pog_clone("Marauders")
+		18:
+			return _pog_clone("Angels")
+		19:
+			return _pog_clone("TheOman")
+		20:
+			return _pog_clone("Mca")
+		21:
+			return _pog_clone("Player")
+		22:
+			return _pog_clone("League")
+		23:
+			return _pog_clone("TrimannShipping")
+		24:
+			return _pog_clone("RhondusGasMining")
+		25:
+			return _pog_clone("AshantiInvestment")
+		26:
+			return _pog_clone("CrosspointMinerals")
+		27:
+			return _pog_clone("HeliosMining")
+		28:
+			return _pog_clone("JardinTerraforming")
+		29:
+			return _pog_clone("ChonBodifule")
+		30:
+			return _pog_clone("OrionProducts")
+		31:
+			return _pog_clone("VonShellingIndustries")
+		32:
+			return _pog_clone("MegalithCorporation")
+		33:
+			return _pog_clone("HibatshPmc")
+		34:
+			return _pog_clone("DesterCorporation")
+		35:
+			return _pog_clone("WhindWeaponsSystems")
+		36:
+			return _pog_clone("AdvancedSecurityCorporation")
+		37:
+			return _pog_clone("Network54")
+		38:
+			return _pog_clone("Infonet")
+		39:
+			return _pog_clone("StellarNet")
+		40:
+			return _pog_clone("WordsworthTechnology")
+		41:
+			return _pog_clone("NetcomSa")
+		42:
+			return _pog_clone("CoventryEngineeringResearch")
+		43:
+			return _pog_clone("NinexWetware")
+		44:
+			return _pog_clone("UniversalConsumerProducts")
+		45:
+			return _pog_clone("HighLifeProducts")
+		46:
+			return _pog_clone("LowOrbitRecovery")
+		47:
+			return _pog_clone("KimoShipping")
+		48:
+			return _pog_clone("DatagonTechnologies")
+		49:
+			return _pog_clone("MicoriaCommunications")
+		50:
+			return _pog_clone("LomaxEngines")
+		51:
+			return _pog_clone("LomaxTechnologies")
+		52:
+			return _pog_clone("NumikoProducts")
+		54:
+			return _pog_clone("Aliens")
 	return _pog_clone("none")
 	return 0
 
@@ -1009,721 +1012,254 @@ func g_m_delayed_disabler() -> Variant:
 func super_skip() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 11358
-	while true:
-		if _pc == 11358:
-			await local_9508()
-			_pc = 16832
-			continue
-		elif _pc == 11382:
-			text.add("csv:/text/utils")
-			await iconversation.begin()
-			await iconversation.add_response("no ta.", "no ta.")
-			await iconversation.add_response("yes please.", "yes please.")
-			v0 = await iconversation.ask(0, "utils_particle_employee", "utils_want_to_super_skip")
-			if v0 == 1:
-				_pc = 11516
-				continue
-			else:
-				_pc = 11671
-				continue
-		elif _pc == 11516:
+	await local_9508()
+	if PogRuntime.TRACE:
+		text.add("csv:/text/utils")
+		await iconversation.begin()
+		await iconversation.add_response("no ta.", "no ta.")
+		await iconversation.add_response("yes please.", "yes please.")
+		v0 = await iconversation.ask(0, "utils_particle_employee", "utils_want_to_super_skip")
+		if v0 == 1:
 			await iconversation.end()
 			global.set_bool("g_skip_ok", 0)
 			await local_9845()
-			_pc = 11592
-			continue
-		elif _pc == 11571:
-			debug.print_string("iUtilties.SuperSkip: super skip has been declined.\n")
-			_pc = 11592
-			continue
-		elif _pc == 11592:
+			if PogRuntime.TRACE:
+				debug.print_string("iUtilties.SuperSkip: super skip has been declined.\n")
 			if global.pog_bool("g_skip_ok") == 1:
-				_pc = 11619
-				continue
+				debug.print_string("SuperSkip: g_skip_ok is true! \n")
 			else:
-				_pc = 11645
-				continue
-		elif _pc == 11619:
-			debug.print_string("SuperSkip: g_skip_ok is true! \n")
-			_pc = 11666
-			continue
-		elif _pc == 11645:
-			debug.print_string("SuperSkip: g_skip_ok is false! \n")
-			_pc = 11666
-			continue
-		elif _pc == 11666:
-			_pc = 16846
-			continue
-		elif _pc == 11671:
-			await iconversation.say(0, "utils_particle_employee", "utils_super_welcome")
-			await iconversation.add_response("act zero", "act zero please")
-			await iconversation.add_response("act one", "act one please")
-			await iconversation.add_response("act two", "act two please")
-			await iconversation.add_response("act three", "act three please")
-			v0 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_act")
-			_pc = 16713
-			continue
-		elif _pc == 11845:
-			await iconversation.add_response("Home Sweet Home", "Home sweet home")
-			await iconversation.add_response("Proving Grounds", "proving grounds")
-			await iconversation.add_response("Errand Boy", "Errand Boy")
-			await iconversation.add_response("Steal Reactor", "Steal Reactor")
-			await iconversation.add_response("Hoffers Wake Tour?", "Hoffers Wake Tour?")
-			await iconversation.add_response("Nemesis", "Nemesis")
-			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
-			_pc = 12512
-			continue
-		elif _pc == 12045:
-			global.set_int("g_skip_to_act", 0)
-			global.set_int("g_skip_to_mission_number", 10)
-			global.set_string("g_skip_to_mission", "Home Sweet Home?")
-			_pc = 12570
-			continue
-		elif _pc == 12122:
-			global.set_int("g_skip_to_act", 0)
-			global.set_int("g_skip_to_mission_number", 20)
-			global.set_string("g_skip_to_mission", "Proving Grounds?")
-			_pc = 12570
-			continue
-		elif _pc == 12199:
-			global.set_int("g_skip_to_act", 0)
-			global.set_int("g_skip_to_mission_number", 40)
-			global.set_string("g_skip_to_mission", "Errand Boy?")
-			_pc = 12570
-			continue
-		elif _pc == 12276:
-			global.set_int("g_skip_to_act", 0)
-			global.set_int("g_skip_to_mission_number", 50)
-			global.set_string("g_skip_to_mission", "Steal reactor?")
-			_pc = 12570
-			continue
-		elif _pc == 12353:
-			global.set_int("g_skip_to_act", 0)
-			global.set_int("g_skip_to_mission_number", 55)
-			global.set_string("g_skip_to_mission", "Hoffers Wake Tour?")
-			_pc = 12570
-			continue
-		elif _pc == 12430:
-			global.set_int("g_skip_to_act", 0)
-			global.set_int("g_skip_to_mission_number", 60)
-			global.set_string("g_skip_to_mission", "Nemesis?")
-			_pc = 12570
-			continue
-		elif _pc == 12507:
-			_pc = 12570
-			continue
-		elif _pc == 12512:
-			if 1 != v1:
-				_pc = 12525
-				continue
-			else:
-				_pc = 12045
-				continue
-		elif _pc == 12525:
-			if 2 != v1:
-				_pc = 12534
-				continue
-			else:
-				_pc = 12122
-				continue
-		elif _pc == 12534:
-			if 3 != v1:
-				_pc = 12543
-				continue
-			else:
-				_pc = 12199
-				continue
-		elif _pc == 12543:
-			if 4 != v1:
-				_pc = 12552
-				continue
-			else:
-				_pc = 12276
-				continue
-		elif _pc == 12552:
-			if 5 != v1:
-				_pc = 12561
-				continue
-			else:
-				_pc = 12353
-				continue
-		elif _pc == 12561:
-			if 6 != v1:
-				_pc = 12570
-				continue
-			else:
-				_pc = 12430
-				continue
-		elif _pc == 12570:
-			_pc = 16753
-			continue
-		elif _pc == 12575:
-			await iconversation.add_response("The great escape", "the great escape")
-			await iconversation.add_response("stepson initiation", "stepson initiation")
-			await iconversation.add_response("steal turret fighters", "steal turret fighters")
-			await iconversation.add_response("marauder cache", "marauder cache")
-			await iconversation.add_response("Joint forces", "Joint Forces??")
-			await iconversation.add_response("gunstar sweep", "gunstar sweep")
-			await iconversation.add_response("battle of hoffers wake", "battle of hoffers wake")
-			await iconversation.add_response("league initiation", "league initiation")
-			await iconversation.add_response("LOR platform", "LOR platform")
-			await iconversation.add_response("treasure hunt", "treasure hunt")
-			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
-			_pc = 13657
-			continue
-		elif _pc == 12883:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 1)
-			global.set_string("g_skip_to_mission", "The Great Escape?")
-			_pc = 13751
-			continue
-		elif _pc == 12959:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 2)
-			global.set_string("g_skip_to_mission", "Stepson Initiation?")
-			_pc = 13751
-			continue
-		elif _pc == 13036:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 4)
-			global.set_string("g_skip_to_mission", "Steal the Turret Fighters?")
-			_pc = 13751
-			continue
-		elif _pc == 13113:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 5)
-			global.set_string("g_skip_to_mission", "Marauder Cache?")
-			_pc = 13751
-			continue
-		elif _pc == 13190:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 3)
-			global.set_string("g_skip_to_mission", "Joint Forces??")
-			_pc = 13751
-			continue
-		elif _pc == 13267:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 6)
-			global.set_string("g_skip_to_mission", "Gunstar Supermarket Sweep ?")
-			_pc = 13751
-			continue
-		elif _pc == 13344:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 7)
-			global.set_string("g_skip_to_mission", "Battle Of Hoffers Gap?")
-			_pc = 13751
-			continue
-		elif _pc == 13421:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 8)
-			global.set_string("g_skip_to_mission", "League Initiation?")
-			_pc = 13751
-			continue
-		elif _pc == 13498:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 9)
-			global.set_string("g_skip_to_mission", "LOR Platform??")
-			_pc = 13751
-			continue
-		elif _pc == 13575:
-			global.set_int("g_skip_to_act", 1)
-			global.set_int("g_skip_to_mission_number", 10)
-			global.set_string("g_skip_to_mission", "Treasure Hunt?")
-			_pc = 13751
-			continue
-		elif _pc == 13652:
-			_pc = 13751
-			continue
-		elif _pc == 13657:
-			if 1 != v1:
-				_pc = 13670
-				continue
-			else:
-				_pc = 12883
-				continue
-		elif _pc == 13670:
-			if 2 != v1:
-				_pc = 13679
-				continue
-			else:
-				_pc = 12959
-				continue
-		elif _pc == 13679:
-			if 3 != v1:
-				_pc = 13688
-				continue
-			else:
-				_pc = 13036
-				continue
-		elif _pc == 13688:
-			if 4 != v1:
-				_pc = 13697
-				continue
-			else:
-				_pc = 13113
-				continue
-		elif _pc == 13697:
-			if 5 != v1:
-				_pc = 13706
-				continue
-			else:
-				_pc = 13190
-				continue
-		elif _pc == 13706:
-			if 6 != v1:
-				_pc = 13715
-				continue
-			else:
-				_pc = 13267
-				continue
-		elif _pc == 13715:
-			if 7 != v1:
-				_pc = 13724
-				continue
-			else:
-				_pc = 13344
-				continue
-		elif _pc == 13724:
-			if 8 != v1:
-				_pc = 13733
-				continue
-			else:
-				_pc = 13421
-				continue
-		elif _pc == 13733:
-			if 9 != v1:
-				_pc = 13742
-				continue
-			else:
-				_pc = 13498
-				continue
-		elif _pc == 13742:
-			if 10 != v1:
-				_pc = 13751
-				continue
-			else:
-				_pc = 13575
-				continue
-		elif _pc == 13751:
-			_pc = 16753
-			continue
-		elif _pc == 13756:
-			await iconversation.add_response("Picking up the pieces", "Picking up the pieces")
-			await iconversation.add_response("Oman Initiation", "Oman Initiation??")
-			await iconversation.add_response("Trouble at Ranch", "Trouble at the Ranch?")
-			await iconversation.add_response("High Noon", "High Noon")
-			await iconversation.add_response("Blockade Runner", "Blockade Runner")
-			await iconversation.add_response("Corporate Holdings", "Corporate Holdings")
-			await iconversation.add_response("Marauder Base", "Marauder Base")
-			await iconversation.add_response("Grassy Knoll", "Grassy Knoll")
-			await iconversation.add_response("Unification", "Unfication")
-			await iconversation.add_response("Kong Fracture", "Kong Fracture")
-			await iconversation.add_response("Momma Wolf", "Momma Wolf?")
-			await iconversation.add_response("Wolfs Lair", "Wolf's Lair??")
-			await iconversation.add_response("Marauder War", "Marauder War?")
-			await iconversation.add_response("Ambassador Encounter", "Ambassador Encounter")
-			await iconversation.add_response("Battle of Mwari", "Battle of Mwari")
-			await iconversation.add_response("Hide n Seek", "Hide n Seek")
-			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
-			_pc = 15478
-			continue
-		elif _pc == 14226:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 1)
-			global.set_string("g_skip_to_mission", "Picking up the pieces??")
-			_pc = 15626
-			continue
-		elif _pc == 14303:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 2)
-			global.set_string("g_skip_to_mission", "Oman Initiation??")
-			_pc = 15626
-			continue
-		elif _pc == 14381:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 3)
-			global.set_string("g_skip_to_mission", "Trouble at the Ranch??")
-			_pc = 15626
-			continue
-		elif _pc == 14459:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 4)
-			global.set_string("g_skip_to_mission", "High Noon??")
-			_pc = 15626
-			continue
-		elif _pc == 14537:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 5)
-			global.set_string("g_skip_to_mission", "Blockade Runner")
-			_pc = 15626
-			continue
-		elif _pc == 14615:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 8)
-			global.set_string("g_skip_to_mission", "Corporate Holdings??")
-			_pc = 15626
-			continue
-		elif _pc == 14693:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 9)
-			global.set_string("g_skip_to_mission", "Marauder Base?")
-			_pc = 15626
-			continue
-		elif _pc == 14771:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 10)
-			global.set_string("g_skip_to_mission", " Grassy Knoll??")
-			_pc = 15626
-			continue
-		elif _pc == 14849:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 11)
-			global.set_string("g_skip_to_mission", "Unification??")
-			_pc = 15626
-			continue
-		elif _pc == 14927:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 13)
-			global.set_string("g_skip_to_mission", "Kong Fracture?")
-			_pc = 15626
-			continue
-		elif _pc == 15005:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 18)
-			global.set_string("g_skip_to_mission", "Momma Wolf?")
-			_pc = 15626
-			continue
-		elif _pc == 15083:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 22)
-			global.set_string("g_skip_to_mission", "Wolf's Lair??")
-			_pc = 15626
-			continue
-		elif _pc == 15161:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 25)
-			global.set_string("g_skip_to_mission", "Marauder War?")
-			_pc = 15626
-			continue
-		elif _pc == 15239:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 7)
-			global.set_string("g_skip_to_mission", "Ambassador Encounter??")
-			_pc = 15626
-			continue
-		elif _pc == 15317:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 27)
-			global.set_string("g_skip_to_mission", "Battle of Mwari")
-			_pc = 15626
-			continue
-		elif _pc == 15395:
-			global.set_int("g_skip_to_act", 2)
-			global.set_int("g_skip_to_mission_number", 28)
-			global.set_string("g_skip_to_mission", "Hide and Seek?")
-			_pc = 15626
-			continue
-		elif _pc == 15473:
-			_pc = 15626
-			continue
-		elif _pc == 15478:
-			if 1 != v1:
-				_pc = 15491
-				continue
-			else:
-				_pc = 14226
-				continue
-		elif _pc == 15491:
-			if 2 != v1:
-				_pc = 15500
-				continue
-			else:
-				_pc = 14303
-				continue
-		elif _pc == 15500:
-			if 3 != v1:
-				_pc = 15509
-				continue
-			else:
-				_pc = 14381
-				continue
-		elif _pc == 15509:
-			if 4 != v1:
-				_pc = 15518
-				continue
-			else:
-				_pc = 14459
-				continue
-		elif _pc == 15518:
-			if 5 != v1:
-				_pc = 15527
-				continue
-			else:
-				_pc = 14537
-				continue
-		elif _pc == 15527:
-			if 6 != v1:
-				_pc = 15536
-				continue
-			else:
-				_pc = 14615
-				continue
-		elif _pc == 15536:
-			if 7 != v1:
-				_pc = 15545
-				continue
-			else:
-				_pc = 14693
-				continue
-		elif _pc == 15545:
-			if 8 != v1:
-				_pc = 15554
-				continue
-			else:
-				_pc = 14771
-				continue
-		elif _pc == 15554:
-			if 9 != v1:
-				_pc = 15563
-				continue
-			else:
-				_pc = 14849
-				continue
-		elif _pc == 15563:
-			if 10 != v1:
-				_pc = 15572
-				continue
-			else:
-				_pc = 14927
-				continue
-		elif _pc == 15572:
-			if 11 != v1:
-				_pc = 15581
-				continue
-			else:
-				_pc = 15005
-				continue
-		elif _pc == 15581:
-			if 12 != v1:
-				_pc = 15590
-				continue
-			else:
-				_pc = 15083
-				continue
-		elif _pc == 15590:
-			if 13 != v1:
-				_pc = 15599
-				continue
-			else:
-				_pc = 15161
-				continue
-		elif _pc == 15599:
-			if 14 != v1:
-				_pc = 15608
-				continue
-			else:
-				_pc = 15239
-				continue
-		elif _pc == 15608:
-			if 15 != v1:
-				_pc = 15617
-				continue
-			else:
-				_pc = 15317
-				continue
-		elif _pc == 15617:
-			if 16 != v1:
-				_pc = 15626
-				continue
-			else:
-				_pc = 15395
-				continue
-		elif _pc == 15626:
-			_pc = 16753
-			continue
-		elif _pc == 15631:
-			await iconversation.add_response("Corporates on the run", "Corporates on the run")
-			await iconversation.add_response("Clash of the titans", "Clash of the titans")
-			await iconversation.add_response("Scavenger", "Scavenger?")
-			await iconversation.add_response("Capture the Accelerator", "Capture the Accelerator")
-			await iconversation.add_response("Deep Cover", "Deep Cover??")
-			await iconversation.add_response("Smokescreen", "Smokescreen??")
-			await iconversation.add_response("Hoffers Resuce", " ( Hoffers Rescue )")
-			await iconversation.add_response("Antimatter Cordon", " ( Antimatter Codron )")
-			await iconversation.add_response("The End", "The Finale??")
-			v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
-			_pc = 16618
-			continue
-		elif _pc == 15912:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 1)
-			global.set_string("g_skip_to_mission", "Corporates On The Run")
-			_pc = 16703
-			continue
-		elif _pc == 15989:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 2)
-			global.set_string("g_skip_to_mission", " ( Clash of the titans )")
-			_pc = 16703
-			continue
-		elif _pc == 16067:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 3)
-			global.set_string("g_skip_to_mission", "Scavenger?")
-			_pc = 16703
-			continue
-		elif _pc == 16145:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 4)
-			global.set_string("g_skip_to_mission", "Capture the Jump Accelerator?")
-			_pc = 16703
-			continue
-		elif _pc == 16223:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 5)
-			global.set_string("g_skip_to_mission", "Deep Cover??")
-			_pc = 16703
-			continue
-		elif _pc == 16301:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 6)
-			global.set_string("g_skip_to_mission", "Smokescreen??")
-			_pc = 16703
-			continue
-		elif _pc == 16379:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 8)
-			global.set_string("g_skip_to_mission", " ( Hoffers Rescue )")
-			_pc = 16703
-			continue
-		elif _pc == 16457:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 9)
-			global.set_string("g_skip_to_mission", " ( Antimatter Cordon )")
-			_pc = 16703
-			continue
-		elif _pc == 16535:
-			global.set_int("g_skip_to_act", 3)
-			global.set_int("g_skip_to_mission_number", 10)
-			global.set_string("g_skip_to_mission", "The Finale??")
-			_pc = 16703
-			continue
-		elif _pc == 16613:
-			_pc = 16703
-			continue
-		elif _pc == 16618:
-			if 1 != v1:
-				_pc = 16631
-				continue
-			else:
-				_pc = 15912
-				continue
-		elif _pc == 16631:
-			if 2 != v1:
-				_pc = 16640
-				continue
-			else:
-				_pc = 15989
-				continue
-		elif _pc == 16640:
-			if 3 != v1:
-				_pc = 16649
-				continue
-			else:
-				_pc = 16067
-				continue
-		elif _pc == 16649:
-			if 4 != v1:
-				_pc = 16658
-				continue
-			else:
-				_pc = 16145
-				continue
-		elif _pc == 16658:
-			if 5 != v1:
-				_pc = 16667
-				continue
-			else:
-				_pc = 16223
-				continue
-		elif _pc == 16667:
-			if 6 != v1:
-				_pc = 16676
-				continue
-			else:
-				_pc = 16301
-				continue
-		elif _pc == 16676:
-			if 7 != v1:
-				_pc = 16685
-				continue
-			else:
-				_pc = 16379
-				continue
-		elif _pc == 16685:
-			if 8 != v1:
-				_pc = 16694
-				continue
-			else:
-				_pc = 16457
-				continue
-		elif _pc == 16694:
-			if 9 != v1:
-				_pc = 16703
-				continue
-			else:
-				_pc = 16535
-				continue
-		elif _pc == 16703:
-			_pc = 16753
-			continue
-		elif _pc == 16708:
-			_pc = 16753
-			continue
-		elif _pc == 16713:
-			if 1 != v0:
-				_pc = 16726
-				continue
-			else:
-				_pc = 11845
-				continue
-		elif _pc == 16726:
-			if 2 != v0:
-				_pc = 16735
-				continue
-			else:
-				_pc = 12575
-				continue
-		elif _pc == 16735:
-			if 3 != v0:
-				_pc = 16744
-				continue
-			else:
-				_pc = 13756
-				continue
-		elif _pc == 16744:
-			if 4 != v0:
-				_pc = 16753
-				continue
-			else:
-				_pc = 15631
-				continue
-		elif _pc == 16753:
-			global.set_bool("g_skip_to_specific", 1)
-			global.set_bool("g_skip_missions_is_ok", 1)
-			await iconversation.end()
-			text.remove("csv:/text/utils")
-			_pc = 16832
-			continue
-		elif _pc == 16832:
-			await local_9845()
-			_pc = 16846
-			continue
-		elif _pc == 16846:
+				debug.print_string("SuperSkip: g_skip_ok is false! \n")
 			return 0
-		else:
-			return 0
+		await iconversation.say(0, "utils_particle_employee", "utils_super_welcome")
+		await iconversation.add_response("act zero", "act zero please")
+		await iconversation.add_response("act one", "act one please")
+		await iconversation.add_response("act two", "act two please")
+		await iconversation.add_response("act three", "act three please")
+		v0 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_act")
+		match v0:
+			1:
+				await iconversation.add_response("Home Sweet Home", "Home sweet home")
+				await iconversation.add_response("Proving Grounds", "proving grounds")
+				await iconversation.add_response("Errand Boy", "Errand Boy")
+				await iconversation.add_response("Steal Reactor", "Steal Reactor")
+				await iconversation.add_response("Hoffers Wake Tour?", "Hoffers Wake Tour?")
+				await iconversation.add_response("Nemesis", "Nemesis")
+				v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
+				match v1:
+					1:
+						global.set_int("g_skip_to_act", 0)
+						global.set_int("g_skip_to_mission_number", 10)
+						global.set_string("g_skip_to_mission", "Home Sweet Home?")
+					2:
+						global.set_int("g_skip_to_act", 0)
+						global.set_int("g_skip_to_mission_number", 20)
+						global.set_string("g_skip_to_mission", "Proving Grounds?")
+					3:
+						global.set_int("g_skip_to_act", 0)
+						global.set_int("g_skip_to_mission_number", 40)
+						global.set_string("g_skip_to_mission", "Errand Boy?")
+					4:
+						global.set_int("g_skip_to_act", 0)
+						global.set_int("g_skip_to_mission_number", 50)
+						global.set_string("g_skip_to_mission", "Steal reactor?")
+					5:
+						global.set_int("g_skip_to_act", 0)
+						global.set_int("g_skip_to_mission_number", 55)
+						global.set_string("g_skip_to_mission", "Hoffers Wake Tour?")
+					6:
+						global.set_int("g_skip_to_act", 0)
+						global.set_int("g_skip_to_mission_number", 60)
+						global.set_string("g_skip_to_mission", "Nemesis?")
+			2:
+				await iconversation.add_response("The great escape", "the great escape")
+				await iconversation.add_response("stepson initiation", "stepson initiation")
+				await iconversation.add_response("steal turret fighters", "steal turret fighters")
+				await iconversation.add_response("marauder cache", "marauder cache")
+				await iconversation.add_response("Joint forces", "Joint Forces??")
+				await iconversation.add_response("gunstar sweep", "gunstar sweep")
+				await iconversation.add_response("battle of hoffers wake", "battle of hoffers wake")
+				await iconversation.add_response("league initiation", "league initiation")
+				await iconversation.add_response("LOR platform", "LOR platform")
+				await iconversation.add_response("treasure hunt", "treasure hunt")
+				v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
+				match v1:
+					1:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 1)
+						global.set_string("g_skip_to_mission", "The Great Escape?")
+					2:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 2)
+						global.set_string("g_skip_to_mission", "Stepson Initiation?")
+					3:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 4)
+						global.set_string("g_skip_to_mission", "Steal the Turret Fighters?")
+					4:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 5)
+						global.set_string("g_skip_to_mission", "Marauder Cache?")
+					5:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 3)
+						global.set_string("g_skip_to_mission", "Joint Forces??")
+					6:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 6)
+						global.set_string("g_skip_to_mission", "Gunstar Supermarket Sweep ?")
+					7:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 7)
+						global.set_string("g_skip_to_mission", "Battle Of Hoffers Gap?")
+					8:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 8)
+						global.set_string("g_skip_to_mission", "League Initiation?")
+					9:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 9)
+						global.set_string("g_skip_to_mission", "LOR Platform??")
+					10:
+						global.set_int("g_skip_to_act", 1)
+						global.set_int("g_skip_to_mission_number", 10)
+						global.set_string("g_skip_to_mission", "Treasure Hunt?")
+			3:
+				await iconversation.add_response("Picking up the pieces", "Picking up the pieces")
+				await iconversation.add_response("Oman Initiation", "Oman Initiation??")
+				await iconversation.add_response("Trouble at Ranch", "Trouble at the Ranch?")
+				await iconversation.add_response("High Noon", "High Noon")
+				await iconversation.add_response("Blockade Runner", "Blockade Runner")
+				await iconversation.add_response("Corporate Holdings", "Corporate Holdings")
+				await iconversation.add_response("Marauder Base", "Marauder Base")
+				await iconversation.add_response("Grassy Knoll", "Grassy Knoll")
+				await iconversation.add_response("Unification", "Unfication")
+				await iconversation.add_response("Kong Fracture", "Kong Fracture")
+				await iconversation.add_response("Momma Wolf", "Momma Wolf?")
+				await iconversation.add_response("Wolfs Lair", "Wolf's Lair??")
+				await iconversation.add_response("Marauder War", "Marauder War?")
+				await iconversation.add_response("Ambassador Encounter", "Ambassador Encounter")
+				await iconversation.add_response("Battle of Mwari", "Battle of Mwari")
+				await iconversation.add_response("Hide n Seek", "Hide n Seek")
+				v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
+				match v1:
+					1:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 1)
+						global.set_string("g_skip_to_mission", "Picking up the pieces??")
+					2:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 2)
+						global.set_string("g_skip_to_mission", "Oman Initiation??")
+					3:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 3)
+						global.set_string("g_skip_to_mission", "Trouble at the Ranch??")
+					4:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 4)
+						global.set_string("g_skip_to_mission", "High Noon??")
+					5:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 5)
+						global.set_string("g_skip_to_mission", "Blockade Runner")
+					6:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 8)
+						global.set_string("g_skip_to_mission", "Corporate Holdings??")
+					7:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 9)
+						global.set_string("g_skip_to_mission", "Marauder Base?")
+					8:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 10)
+						global.set_string("g_skip_to_mission", " Grassy Knoll??")
+					9:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 11)
+						global.set_string("g_skip_to_mission", "Unification??")
+					10:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 13)
+						global.set_string("g_skip_to_mission", "Kong Fracture?")
+					11:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 18)
+						global.set_string("g_skip_to_mission", "Momma Wolf?")
+					12:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 22)
+						global.set_string("g_skip_to_mission", "Wolf's Lair??")
+					13:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 25)
+						global.set_string("g_skip_to_mission", "Marauder War?")
+					14:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 7)
+						global.set_string("g_skip_to_mission", "Ambassador Encounter??")
+					15:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 27)
+						global.set_string("g_skip_to_mission", "Battle of Mwari")
+					16:
+						global.set_int("g_skip_to_act", 2)
+						global.set_int("g_skip_to_mission_number", 28)
+						global.set_string("g_skip_to_mission", "Hide and Seek?")
+			4:
+				await iconversation.add_response("Corporates on the run", "Corporates on the run")
+				await iconversation.add_response("Clash of the titans", "Clash of the titans")
+				await iconversation.add_response("Scavenger", "Scavenger?")
+				await iconversation.add_response("Capture the Accelerator", "Capture the Accelerator")
+				await iconversation.add_response("Deep Cover", "Deep Cover??")
+				await iconversation.add_response("Smokescreen", "Smokescreen??")
+				await iconversation.add_response("Hoffers Resuce", " ( Hoffers Rescue )")
+				await iconversation.add_response("Antimatter Cordon", " ( Antimatter Codron )")
+				await iconversation.add_response("The End", "The Finale??")
+				v1 = await iconversation.ask(0, "utils_particle_employee", "utils_super_which_mission")
+				match v1:
+					1:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 1)
+						global.set_string("g_skip_to_mission", "Corporates On The Run")
+					2:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 2)
+						global.set_string("g_skip_to_mission", " ( Clash of the titans )")
+					3:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 3)
+						global.set_string("g_skip_to_mission", "Scavenger?")
+					4:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 4)
+						global.set_string("g_skip_to_mission", "Capture the Jump Accelerator?")
+					5:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 5)
+						global.set_string("g_skip_to_mission", "Deep Cover??")
+					6:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 6)
+						global.set_string("g_skip_to_mission", "Smokescreen??")
+					7:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 8)
+						global.set_string("g_skip_to_mission", " ( Hoffers Rescue )")
+					8:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 9)
+						global.set_string("g_skip_to_mission", " ( Antimatter Cordon )")
+					9:
+						global.set_int("g_skip_to_act", 3)
+						global.set_int("g_skip_to_mission_number", 10)
+						global.set_string("g_skip_to_mission", "The Finale??")
+		global.set_bool("g_skip_to_specific", 1)
+		global.set_bool("g_skip_missions_is_ok", 1)
+		await iconversation.end()
+		text.remove("csv:/text/utils")
+	await local_9845()
+	return 0
 	return 0
 
 func task_skip_mission() -> Variant:
@@ -2316,313 +1852,77 @@ func critical_ship_monitor() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 25790
-	while true:
-		if _pc == 25790:
-			v3 = math.random_int(0, 3)
-			v4 = math.random_int(0, 3)
-			v5 = 0
-			if v1 < 0.0:
-				_pc = 25862
-				continue
-			else:
-				_pc = 25874
-				continue
-		elif _pc == 25862:
-			_pc = 25874
-			continue
-		elif _pc == 25874:
-			if sim.is_dead(v0) or isim.is_dying(v0) or _pog_is_null(v0):
-				_pc = 25925
-				continue
-			else:
-				_pc = 26027
-				continue
-		elif _pc == 25925:
-			_pc = 25951
-			continue
-		elif _pc == 25930:
+	v3 = math.random_int(0, 3)
+	v4 = math.random_int(0, 3)
+	v5 = 0
+	if v1 < 0.0:
+		pass
+	if sim.is_dead(v0) or isim.is_dying(v0) or _pog_is_null(v0):
+		if PogRuntime.TRACE:
 			debug.print_string("iUtilities.CriticalShipMonitor: ")
-			_pc = 25951
-			continue
-		elif _pc == 25951:
-			_pc = 25996
-			continue
-		elif _pc == 25956:
+		if PogRuntime.TRACE:
 			debug.print_string(object.string_property(v0, "name"))
-			_pc = 25996
-			continue
-		elif _pc == 25996:
-			_pc = 26022
-			continue
-		elif _pc == 26001:
+		if PogRuntime.TRACE:
 			debug.print_string(" is invalid. Not monitoring\n")
-			_pc = 26022
-			continue
-		elif _pc == 26022:
-			_pc = 27013
-			continue
-		elif _pc == 26027:
-			if not (isim.is_mission_critical(v0)):
-				_pc = 26051
-				continue
-			else:
-				_pc = 26153
-				continue
-		elif _pc == 26051:
-			_pc = 26077
-			continue
-		elif _pc == 26056:
-			debug.print_string("iUtilities.CriticalShipMonitor: ")
-			_pc = 26077
-			continue
-		elif _pc == 26077:
-			_pc = 26122
-			continue
-		elif _pc == 26082:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 26122
-			continue
-		elif _pc == 26122:
-			_pc = 26148
-			continue
-		elif _pc == 26127:
-			debug.print_string(" is not a critical ship. Not monitoring\n")
-			_pc = 26148
-			continue
-		elif _pc == 26148:
-			_pc = 27013
-			continue
-		elif _pc == 26153:
-			_pc = 26179
-			continue
-		elif _pc == 26158:
-			debug.print_string("iUtilities.CriticalShipMonitor: Monitoring critical ship - ")
-			_pc = 26179
-			continue
-		elif _pc == 26179:
-			_pc = 26224
-			continue
-		elif _pc == 26184:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 26224
-			continue
-		elif _pc == 26224:
-			_pc = 26250
-			continue
-		elif _pc == 26229:
-			debug.print_string("\n")
-			_pc = 26250
-			continue
-		elif _pc == 26250:
-			_pc = 26255
-			continue
-		elif _pc == 26255:
-			await _pog_frame()
-			if _pog_every(26256, 1.0):
-				_pc = 26269
-				continue
-			else:
-				_pc = 27007
-				continue
-		elif _pc == 26269:
-			if sim.is_dead(v0) or isim.is_dying(v0):
-				_pc = 26311
-				continue
-			else:
-				_pc = 26316
-				continue
-		elif _pc == 26311:
-			_pc = 27013
-			continue
-		elif _pc == 26316:
-			if not (isim.is_mission_critical(v0)):
-				_pc = 26340
-				continue
-			else:
-				_pc = 26437
-				continue
-		elif _pc == 26340:
-			_pc = 26366
-			continue
-		elif _pc == 26345:
-			debug.print_string("iUtilities.CriticalShipMonitor: ")
-			_pc = 26366
-			continue
-		elif _pc == 26366:
-			_pc = 26411
-			continue
-		elif _pc == 26371:
-			debug.print_string(object.string_property(v0, "name"))
-			_pc = 26411
-			continue
-		elif _pc == 26411:
-			_pc = 26437
-			continue
-		elif _pc == 26416:
-			debug.print_string(" is no longer a critical ship. Monitoring terminated\n")
-			_pc = 26437
-			continue
-		elif _pc == 26437:
-			if iship.attacked(v0):
-				_pc = 26460
-				continue
-			else:
-				_pc = 27007
-				continue
-		elif _pc == 26460:
-			if not (icomms.is_busy()):
-				_pc = 26479
-				continue
-			else:
-				_pc = 27007
-				continue
-		elif _pc == 26479:
-			if _pog_eq(iship.last_attacker(v0), v2):
-				_pc = 26510
-				continue
-			else:
-				_pc = 26761
-				continue
-		elif _pc == 26510:
-			v3 = v3 + 1
-			if v3 > 3:
-				_pc = 26536
-				continue
-			else:
-				_pc = 26543
-				continue
-		elif _pc == 26536:
-			v3 = 0
-			_pc = 26543
-			continue
-		elif _pc == 26543:
-			_pc = 26685
-			continue
-		elif _pc == 26548:
-			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_1")
-			_pc = 26724
-			continue
-		elif _pc == 26581:
-			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_2")
-			_pc = 26724
-			continue
-		elif _pc == 26614:
-			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_3")
-			_pc = 26724
-			continue
-		elif _pc == 26647:
-			icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_4")
-			_pc = 26724
-			continue
-		elif _pc == 26680:
-			_pc = 26724
-			continue
-		elif _pc == 26685:
-			if not _pog_is_null(v3):
-				_pc = 26698
-				continue
-			else:
-				_pc = 26548
-				continue
-		elif _pc == 26698:
-			if 1 != v3:
-				_pc = 26706
-				continue
-			else:
-				_pc = 26581
-				continue
-		elif _pc == 26706:
-			if 2 != v3:
-				_pc = 26715
-				continue
-			else:
-				_pc = 26614
-				continue
-		elif _pc == 26715:
-			if 3 != v3:
-				_pc = 26724
-				continue
-			else:
-				_pc = 26647
-				continue
-		elif _pc == 26724:
-			await _pog_wait(v1)
-			_pc = 27007
-			continue
-		elif _pc == 26761:
-			v4 = v4 + 1
-			if v4 > 3:
-				_pc = 26787
-				continue
-			else:
-				_pc = 26794
-				continue
-		elif _pc == 26787:
-			v4 = 0
-			_pc = 26794
-			continue
-		elif _pc == 26794:
-			_pc = 26968
-			continue
-		elif _pc == 26799:
-			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_1")
-			_pc = 27007
-			continue
-		elif _pc == 26832:
-			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_2")
-			_pc = 27007
-			continue
-		elif _pc == 26865:
-			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_3")
-			_pc = 27007
-			continue
-		elif _pc == 26898:
-			icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_4")
-			_pc = 27007
-			continue
-		elif _pc == 26931:
-			await _pog_wait(v1)
-			_pc = 27007
-			continue
-		elif _pc == 26968:
-			if not _pog_is_null(v4):
-				_pc = 26981
-				continue
-			else:
-				_pc = 26799
-				continue
-		elif _pc == 26981:
-			if 1 != v4:
-				_pc = 26989
-				continue
-			else:
-				_pc = 26832
-				continue
-		elif _pc == 26989:
-			if 2 != v4:
-				_pc = 26998
-				continue
-			else:
-				_pc = 26865
-				continue
-		elif _pc == 26998:
-			if 3 != v4:
-				_pc = 27007
-				continue
-			else:
-				_pc = 26898
-				continue
-		elif _pc == 27007:
-			_pc = 26255
-			continue
-		elif _pc == 27012:
-			_pc = 27013
-			continue
-		elif _pc == 27013:
-			return
+	else:
+		if not (isim.is_mission_critical(v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iUtilities.CriticalShipMonitor: ")
+			if PogRuntime.TRACE:
+				debug.print_string(object.string_property(v0, "name"))
+			if PogRuntime.TRACE:
+				debug.print_string(" is not a critical ship. Not monitoring\n")
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iUtilities.CriticalShipMonitor: Monitoring critical ship - ")
+			if PogRuntime.TRACE:
+				debug.print_string(object.string_property(v0, "name"))
+			if PogRuntime.TRACE:
+				debug.print_string("\n")
+			while true:
+				await _pog_wait(1)
+				if sim.is_dead(v0) or isim.is_dying(v0):
+					return
+				if not (isim.is_mission_critical(v0)):
+					if PogRuntime.TRACE:
+						debug.print_string("iUtilities.CriticalShipMonitor: ")
+					if PogRuntime.TRACE:
+						debug.print_string(object.string_property(v0, "name"))
+					if PogRuntime.TRACE:
+						debug.print_string(" is no longer a critical ship. Monitoring terminated\n")
+				if not (iship.attacked(v0)):
+					continue
+				if icomms.is_busy():
+					continue
+				if _pog_eq(iship.last_attacker(v0), v2):
+					v3 = v3 + 1
+					if v3 > 3:
+						v3 = 0
+					match v3:
+						0:
+							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_1")
+						1:
+							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_2")
+						2:
+							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_3")
+						3:
+							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_4")
+					await _pog_wait(v1)
+				else:
+					v4 = v4 + 1
+					if v4 > 3:
+						v4 = 0
+					match v4:
+						0:
+							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_1")
+						1:
+							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_2")
+						2:
+							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_3")
+						3:
+							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_4")
+							continue
+	return
 	return 0
 
 func remove_mission_restart() -> Variant:

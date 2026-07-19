@@ -8387,661 +8387,198 @@ func local_125233() -> Variant:
 
 func local_126776() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 126776
-	while true:
-		if _pc == 126776:
-			global.create_bool("g_repeat_last_string", 2, 0)
-			text.add("csv:/text/act_2/act2_master")
-			text.add("csv:/text/act_2/act2_master_addendum")
-			text.add("csv:/text/act_2/act2_master_addendum2")
-			text.add("csv:/text/act_2/act2_master_addendum3")
-			text.add("csv:/text/act_2/act2_master_addendum4")
-			text.add("csv:/text/act_2/act2_mission01")
-			text.add("csv:/text/act_2/act2_mission01_addendum")
-			text.add("csv:/text/act_2/act2_mission01_addendum_2")
-			text.add("csv:/text/act_2/act2_mission02")
-			text.add("csv:/text/act_2/act2_mission02_addendum")
-			text.add("csv:/text/act_2/act2_mission03")
-			text.add("csv:/text/act_2/act2_mission03_addendum")
-			text.add("csv:/text/act_2/act2_mission03_addendum2")
-			text.add("csv:/text/act_2/act2_mission04")
-			text.add("csv:/text/act_2/act2_mission05")
-			text.add("csv:/text/act_2/act2_mission05_addendum")
-			text.add("csv:/text/act_2/act2_mission07")
-			text.add("csv:/text/act_2/act2_mission08")
-			text.add("csv:/text/act_2/act2_mission08_addendum")
-			text.add("csv:/text/act_2/act2_mission09")
-			text.add("csv:/text/act_2/act2_mission10")
-			text.add("csv:/text/act_2/act2_mission10_addendum")
-			text.add("csv:/text/act_2/act2_mission11")
-			text.add("csv:/text/act_2/act2_mission12")
-			text.add("csv:/text/act_2/act2_mission13")
-			text.add("csv:/text/act_2/act2_mission15")
-			text.add("csv:/text/act_2/act2_mission18")
-			text.add("csv:/text/act_2/act2_mission18_addendum")
-			text.add("csv:/text/act_2/act2_mission20")
-			text.add("csv:/text/act_2/act2_mission22")
-			text.add("csv:/text/act_2/act2_mission23")
-			text.add("csv:/text/act_2/act2_mission24")
-			text.add("csv:/text/act_2/act2_mission24_addendum")
-			text.add("csv:/text/act_2/act2_mission24_addendum2")
-			text.add("csv:/text/act_2/act2_mission25")
-			text.add("csv:/text/act_2/act2_mission25_addendum")
-			text.add("csv:/text/act_2/act2_mission25_addendum2")
-			_pc = 127582
-			continue
-		elif _pc == 127582:
-			if 1:
-				_pc = 127588
-				continue
-			else:
-				_pc = 129780
-				continue
-		elif _pc == 127588:
-			await iconversation.begin()
-			await iconversation.add_response("act_2/act2_master.csv", "I'd like to see file act_2/act2_master.csv, please")
-			await iconversation.add_response("act_2/act2_master_addendum.csv", "I'd like to see file act_2/act2_master_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_master_addendum2.csv", "I'd like to see file act_2/act2_master_addendum2.csv, please")
-			await iconversation.add_response("act_2/act2_master_addendum3.csv", "I'd like to see file act_2/act2_master_addendum3.csv, please")
-			await iconversation.add_response("act_2/act2_master_addendum4.csv", "I'd like to see file act_2/act2_master_addendum4.csv, please")
-			await iconversation.add_response("act_2/act2_mission01.csv", "I'd like to see file act_2/act2_mission01.csv, please")
-			await iconversation.add_response("act_2/act2_mission01_addendum.csv", "I'd like to see file act_2/act2_mission01_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission01_addendum_2.csv", "I'd like to see file act_2/act2_mission01_addendum_2.csv, please")
-			await iconversation.add_response("act_2/act2_mission02.csv", "I'd like to see file act_2/act2_mission02.csv, please")
-			await iconversation.add_response("act_2/act2_mission02_addendum.csv", "I'd like to see file act_2/act2_mission02_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission03.csv", "I'd like to see file act_2/act2_mission03.csv, please")
-			await iconversation.add_response("act_2/act2_mission03_addendum.csv", "I'd like to see file act_2/act2_mission03_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission03_addendum2.csv", "I'd like to see file act_2/act2_mission03_addendum2.csv, please")
-			await iconversation.add_response("act_2/act2_mission04.csv", "I'd like to see file act_2/act2_mission04.csv, please")
-			await iconversation.add_response("act_2/act2_mission05.csv", "I'd like to see file act_2/act2_mission05.csv, please")
-			await iconversation.add_response("act_2/act2_mission05_addendum.csv", "I'd like to see file act_2/act2_mission05_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission07.csv", "I'd like to see file act_2/act2_mission07.csv, please")
-			await iconversation.add_response("act_2/act2_mission08.csv", "I'd like to see file act_2/act2_mission08.csv, please")
-			await iconversation.add_response("act_2/act2_mission08_addendum.csv", "I'd like to see file act_2/act2_mission08_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission09.csv", "I'd like to see file act_2/act2_mission09.csv, please")
-			await iconversation.add_response("act_2/act2_mission10.csv", "I'd like to see file act_2/act2_mission10.csv, please")
-			await iconversation.add_response("act_2/act2_mission10_addendum.csv", "I'd like to see file act_2/act2_mission10_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission11.csv", "I'd like to see file act_2/act2_mission11.csv, please")
-			await iconversation.add_response("act_2/act2_mission12.csv", "I'd like to see file act_2/act2_mission12.csv, please")
-			await iconversation.add_response("act_2/act2_mission13.csv", "I'd like to see file act_2/act2_mission13.csv, please")
-			await iconversation.add_response("act_2/act2_mission15.csv", "I'd like to see file act_2/act2_mission15.csv, please")
-			await iconversation.add_response("act_2/act2_mission18.csv", "I'd like to see file act_2/act2_mission18.csv, please")
-			await iconversation.add_response("act_2/act2_mission18_addendum.csv", "I'd like to see file act_2/act2_mission18_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission20.csv", "I'd like to see file act_2/act2_mission20.csv, please")
-			await iconversation.add_response("act_2/act2_mission22.csv", "I'd like to see file act_2/act2_mission22.csv, please")
-			await iconversation.add_response("act_2/act2_mission23.csv", "I'd like to see file act_2/act2_mission23.csv, please")
-			await iconversation.add_response("act_2/act2_mission24.csv", "I'd like to see file act_2/act2_mission24.csv, please")
-			await iconversation.add_response("act_2/act2_mission24_addendum.csv", "I'd like to see file act_2/act2_mission24_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission24_addendum2.csv", "I'd like to see file act_2/act2_mission24_addendum2.csv, please")
-			await iconversation.add_response("act_2/act2_mission25.csv", "I'd like to see file act_2/act2_mission25.csv, please")
-			await iconversation.add_response("act_2/act2_mission25_addendum.csv", "I'd like to see file act_2/act2_mission25_addendum.csv, please")
-			await iconversation.add_response("act_2/act2_mission25_addendum2.csv", "I'd like to see file act_2/act2_mission25_addendum2.csv, please")
-			v0 = await iconversation.ask(0, "particle_employee", "which file do you want to test?")
-			await iconversation.end()
-			_pc = 129437
-			continue
-		elif _pc == 128655:
-			await local_0()
-			_pc = 129774
-			continue
-		elif _pc == 128675:
-			_pc = 128676
-			continue
-		elif _pc == 128676:
-			await local_21563()
-			_pc = 129774
-			continue
-		elif _pc == 128696:
-			_pc = 128697
-			continue
-		elif _pc == 128697:
-			await local_24415()
-			_pc = 129774
-			continue
-		elif _pc == 128717:
-			_pc = 128718
-			continue
-		elif _pc == 128718:
-			await local_26497()
-			_pc = 129774
-			continue
-		elif _pc == 128738:
-			_pc = 128739
-			continue
-		elif _pc == 128739:
-			await local_26962()
-			_pc = 129774
-			continue
-		elif _pc == 128759:
-			_pc = 128760
-			continue
-		elif _pc == 128760:
-			await local_27119()
-			_pc = 129774
-			continue
-		elif _pc == 128780:
-			_pc = 128781
-			continue
-		elif _pc == 128781:
-			await local_28046()
-			_pc = 129774
-			continue
-		elif _pc == 128801:
-			_pc = 128802
-			continue
-		elif _pc == 128802:
-			await local_30744()
-			_pc = 129774
-			continue
-		elif _pc == 128822:
-			_pc = 128823
-			continue
-		elif _pc == 128823:
-			await local_30901()
-			_pc = 129774
-			continue
-		elif _pc == 128843:
-			_pc = 128844
-			continue
-		elif _pc == 128844:
-			await local_34061()
-			_pc = 129774
-			continue
-		elif _pc == 128864:
-			_pc = 128865
-			continue
-		elif _pc == 128865:
-			await local_35527()
-			_pc = 129774
-			continue
-		elif _pc == 128885:
-			_pc = 128886
-			continue
-		elif _pc == 128886:
-			await local_40073()
-			_pc = 129774
-			continue
-		elif _pc == 128906:
-			_pc = 128907
-			continue
-		elif _pc == 128907:
-			await local_40461()
-			_pc = 129774
-			continue
-		elif _pc == 128927:
-			_pc = 128928
-			continue
-		elif _pc == 128928:
-			await local_41465()
-			_pc = 129774
-			continue
-		elif _pc == 128948:
-			_pc = 128949
-			continue
-		elif _pc == 128949:
-			await local_44394()
-			_pc = 129774
-			continue
-		elif _pc == 128969:
-			_pc = 128970
-			continue
-		elif _pc == 128970:
-			await local_48863()
-			_pc = 129774
-			continue
-		elif _pc == 128990:
-			_pc = 128991
-			continue
-		elif _pc == 128991:
-			await local_49482()
-			_pc = 129774
-			continue
-		elif _pc == 129011:
-			_pc = 129012
-			continue
-		elif _pc == 129012:
-			await local_50717()
-			_pc = 129774
-			continue
-		elif _pc == 129032:
-			_pc = 129033
-			continue
-		elif _pc == 129033:
-			await local_52029()
-			_pc = 129774
-			continue
-		elif _pc == 129053:
-			_pc = 129054
-			continue
-		elif _pc == 129054:
-			await local_52032()
-			_pc = 129774
-			continue
-		elif _pc == 129074:
-			_pc = 129075
-			continue
-		elif _pc == 129075:
-			await local_57425()
-			_pc = 129774
-			continue
-		elif _pc == 129095:
-			_pc = 129096
-			continue
-		elif _pc == 129096:
-			await local_60431()
-			_pc = 129774
-			continue
-		elif _pc == 129116:
-			_pc = 129117
-			continue
-		elif _pc == 129117:
-			await local_60742()
-			_pc = 129774
-			continue
-		elif _pc == 129137:
-			_pc = 129138
-			continue
-		elif _pc == 129138:
-			await local_63363()
-			_pc = 129774
-			continue
-		elif _pc == 129158:
-			_pc = 129159
-			continue
-		elif _pc == 129159:
-			await local_66292()
-			_pc = 129774
-			continue
-		elif _pc == 129179:
-			_pc = 129180
-			continue
-		elif _pc == 129180:
-			await local_84775()
-			_pc = 129774
-			continue
-		elif _pc == 129200:
-			_pc = 129201
-			continue
-		elif _pc == 129201:
-			await local_94326()
-			_pc = 129774
-			continue
-		elif _pc == 129221:
-			_pc = 129222
-			continue
-		elif _pc == 129222:
-			await local_97640()
-			_pc = 129774
-			continue
-		elif _pc == 129242:
-			_pc = 129243
-			continue
-		elif _pc == 129243:
-			await local_97720()
-			_pc = 129774
-			continue
-		elif _pc == 129263:
-			_pc = 129264
-			continue
-		elif _pc == 129264:
-			await local_100341()
-			_pc = 129774
-			continue
-		elif _pc == 129284:
-			_pc = 129285
-			continue
-		elif _pc == 129285:
-			await local_101653()
-			_pc = 129774
-			continue
-		elif _pc == 129305:
-			_pc = 129306
-			continue
-		elif _pc == 129306:
-			await local_107277()
-			_pc = 129774
-			continue
-		elif _pc == 129326:
-			_pc = 129327
-			continue
-		elif _pc == 129327:
-			await local_116135()
-			_pc = 129774
-			continue
-		elif _pc == 129347:
-			_pc = 129348
-			continue
-		elif _pc == 129348:
-			await local_117524()
-			_pc = 129774
-			continue
-		elif _pc == 129368:
-			_pc = 129369
-			continue
-		elif _pc == 129369:
-			await local_117989()
-			_pc = 129774
-			continue
-		elif _pc == 129389:
-			_pc = 129390
-			continue
-		elif _pc == 129390:
-			await local_124999()
-			_pc = 129774
-			continue
-		elif _pc == 129410:
-			_pc = 129411
-			continue
-		elif _pc == 129411:
-			await local_125233()
-			_pc = 129774
-			continue
-		elif _pc == 129431:
-			_pc = 129774
-			continue
-		elif _pc == 129437:
-			if 1 != v0:
-				_pc = 129450
-				continue
-			else:
-				_pc = 128655
-				continue
-		elif _pc == 129450:
-			if 2 != v0:
-				_pc = 129459
-				continue
-			else:
-				_pc = 128676
-				continue
-		elif _pc == 129459:
-			if 3 != v0:
-				_pc = 129468
-				continue
-			else:
-				_pc = 128697
-				continue
-		elif _pc == 129468:
-			if 4 != v0:
-				_pc = 129477
-				continue
-			else:
-				_pc = 128718
-				continue
-		elif _pc == 129477:
-			if 5 != v0:
-				_pc = 129486
-				continue
-			else:
-				_pc = 128739
-				continue
-		elif _pc == 129486:
-			if 6 != v0:
-				_pc = 129495
-				continue
-			else:
-				_pc = 128760
-				continue
-		elif _pc == 129495:
-			if 7 != v0:
-				_pc = 129504
-				continue
-			else:
-				_pc = 128781
-				continue
-		elif _pc == 129504:
-			if 8 != v0:
-				_pc = 129513
-				continue
-			else:
-				_pc = 128802
-				continue
-		elif _pc == 129513:
-			if 9 != v0:
-				_pc = 129522
-				continue
-			else:
-				_pc = 128823
-				continue
-		elif _pc == 129522:
-			if 10 != v0:
-				_pc = 129531
-				continue
-			else:
-				_pc = 128844
-				continue
-		elif _pc == 129531:
-			if 11 != v0:
-				_pc = 129540
-				continue
-			else:
-				_pc = 128865
-				continue
-		elif _pc == 129540:
-			if 12 != v0:
-				_pc = 129549
-				continue
-			else:
-				_pc = 128886
-				continue
-		elif _pc == 129549:
-			if 13 != v0:
-				_pc = 129558
-				continue
-			else:
-				_pc = 128907
-				continue
-		elif _pc == 129558:
-			if 14 != v0:
-				_pc = 129567
-				continue
-			else:
-				_pc = 128928
-				continue
-		elif _pc == 129567:
-			if 15 != v0:
-				_pc = 129576
-				continue
-			else:
-				_pc = 128949
-				continue
-		elif _pc == 129576:
-			if 16 != v0:
-				_pc = 129585
-				continue
-			else:
-				_pc = 128970
-				continue
-		elif _pc == 129585:
-			if 17 != v0:
-				_pc = 129594
-				continue
-			else:
-				_pc = 128991
-				continue
-		elif _pc == 129594:
-			if 18 != v0:
-				_pc = 129603
-				continue
-			else:
-				_pc = 129012
-				continue
-		elif _pc == 129603:
-			if 19 != v0:
-				_pc = 129612
-				continue
-			else:
-				_pc = 129033
-				continue
-		elif _pc == 129612:
-			if 20 != v0:
-				_pc = 129621
-				continue
-			else:
-				_pc = 129054
-				continue
-		elif _pc == 129621:
-			if 21 != v0:
-				_pc = 129630
-				continue
-			else:
-				_pc = 129075
-				continue
-		elif _pc == 129630:
-			if 22 != v0:
-				_pc = 129639
-				continue
-			else:
-				_pc = 129096
-				continue
-		elif _pc == 129639:
-			if 23 != v0:
-				_pc = 129648
-				continue
-			else:
-				_pc = 129117
-				continue
-		elif _pc == 129648:
-			if 24 != v0:
-				_pc = 129657
-				continue
-			else:
-				_pc = 129138
-				continue
-		elif _pc == 129657:
-			if 25 != v0:
-				_pc = 129666
-				continue
-			else:
-				_pc = 129159
-				continue
-		elif _pc == 129666:
-			if 26 != v0:
-				_pc = 129675
-				continue
-			else:
-				_pc = 129180
-				continue
-		elif _pc == 129675:
-			if 27 != v0:
-				_pc = 129684
-				continue
-			else:
-				_pc = 129201
-				continue
-		elif _pc == 129684:
-			if 28 != v0:
-				_pc = 129693
-				continue
-			else:
-				_pc = 129222
-				continue
-		elif _pc == 129693:
-			if 29 != v0:
-				_pc = 129702
-				continue
-			else:
-				_pc = 129243
-				continue
-		elif _pc == 129702:
-			if 30 != v0:
-				_pc = 129711
-				continue
-			else:
-				_pc = 129264
-				continue
-		elif _pc == 129711:
-			if 31 != v0:
-				_pc = 129720
-				continue
-			else:
-				_pc = 129285
-				continue
-		elif _pc == 129720:
-			if 32 != v0:
-				_pc = 129729
-				continue
-			else:
-				_pc = 129306
-				continue
-		elif _pc == 129729:
-			if 33 != v0:
-				_pc = 129738
-				continue
-			else:
-				_pc = 129327
-				continue
-		elif _pc == 129738:
-			if 34 != v0:
-				_pc = 129747
-				continue
-			else:
-				_pc = 129348
-				continue
-		elif _pc == 129747:
-			if 35 != v0:
-				_pc = 129756
-				continue
-			else:
-				_pc = 129369
-				continue
-		elif _pc == 129756:
-			if 36 != v0:
-				_pc = 129765
-				continue
-			else:
-				_pc = 129390
-				continue
-		elif _pc == 129765:
-			if 37 != v0:
-				_pc = 129774
-				continue
-			else:
-				_pc = 129411
-				continue
-		elif _pc == 129774:
-			_pc = 127582
-			continue
-		elif _pc == 129780:
-			text.remove("csv:/text/act_2/act2_master")
-			text.remove("csv:/text/act_2/act2_master_addendum")
-			text.remove("csv:/text/act_2/act2_master_addendum2")
-			text.remove("csv:/text/act_2/act2_master_addendum3")
-			text.remove("csv:/text/act_2/act2_master_addendum4")
-			text.remove("csv:/text/act_2/act2_mission01")
-			text.remove("csv:/text/act_2/act2_mission01_addendum")
-			text.remove("csv:/text/act_2/act2_mission01_addendum_2")
-			text.remove("csv:/text/act_2/act2_mission02")
-			text.remove("csv:/text/act_2/act2_mission02_addendum")
-			text.remove("csv:/text/act_2/act2_mission03")
-			text.remove("csv:/text/act_2/act2_mission03_addendum")
-			text.remove("csv:/text/act_2/act2_mission03_addendum2")
-			text.remove("csv:/text/act_2/act2_mission04")
-			text.remove("csv:/text/act_2/act2_mission05")
-			text.remove("csv:/text/act_2/act2_mission05_addendum")
-			text.remove("csv:/text/act_2/act2_mission07")
-			text.remove("csv:/text/act_2/act2_mission08")
-			text.remove("csv:/text/act_2/act2_mission08_addendum")
-			text.remove("csv:/text/act_2/act2_mission09")
-			text.remove("csv:/text/act_2/act2_mission10")
-			text.remove("csv:/text/act_2/act2_mission10_addendum")
-			text.remove("csv:/text/act_2/act2_mission11")
-			text.remove("csv:/text/act_2/act2_mission12")
-			text.remove("csv:/text/act_2/act2_mission13")
-			text.remove("csv:/text/act_2/act2_mission15")
-			text.remove("csv:/text/act_2/act2_mission18")
-			text.remove("csv:/text/act_2/act2_mission18_addendum")
-			text.remove("csv:/text/act_2/act2_mission20")
-			text.remove("csv:/text/act_2/act2_mission22")
-			text.remove("csv:/text/act_2/act2_mission23")
-			text.remove("csv:/text/act_2/act2_mission24")
-			text.remove("csv:/text/act_2/act2_mission24_addendum")
-			text.remove("csv:/text/act_2/act2_mission24_addendum2")
-			text.remove("csv:/text/act_2/act2_mission25")
-			text.remove("csv:/text/act_2/act2_mission25_addendum")
-			text.remove("csv:/text/act_2/act2_mission25_addendum2")
-			return
-		else:
-			return 0
+	global.create_bool("g_repeat_last_string", 2, 0)
+	text.add("csv:/text/act_2/act2_master")
+	text.add("csv:/text/act_2/act2_master_addendum")
+	text.add("csv:/text/act_2/act2_master_addendum2")
+	text.add("csv:/text/act_2/act2_master_addendum3")
+	text.add("csv:/text/act_2/act2_master_addendum4")
+	text.add("csv:/text/act_2/act2_mission01")
+	text.add("csv:/text/act_2/act2_mission01_addendum")
+	text.add("csv:/text/act_2/act2_mission01_addendum_2")
+	text.add("csv:/text/act_2/act2_mission02")
+	text.add("csv:/text/act_2/act2_mission02_addendum")
+	text.add("csv:/text/act_2/act2_mission03")
+	text.add("csv:/text/act_2/act2_mission03_addendum")
+	text.add("csv:/text/act_2/act2_mission03_addendum2")
+	text.add("csv:/text/act_2/act2_mission04")
+	text.add("csv:/text/act_2/act2_mission05")
+	text.add("csv:/text/act_2/act2_mission05_addendum")
+	text.add("csv:/text/act_2/act2_mission07")
+	text.add("csv:/text/act_2/act2_mission08")
+	text.add("csv:/text/act_2/act2_mission08_addendum")
+	text.add("csv:/text/act_2/act2_mission09")
+	text.add("csv:/text/act_2/act2_mission10")
+	text.add("csv:/text/act_2/act2_mission10_addendum")
+	text.add("csv:/text/act_2/act2_mission11")
+	text.add("csv:/text/act_2/act2_mission12")
+	text.add("csv:/text/act_2/act2_mission13")
+	text.add("csv:/text/act_2/act2_mission15")
+	text.add("csv:/text/act_2/act2_mission18")
+	text.add("csv:/text/act_2/act2_mission18_addendum")
+	text.add("csv:/text/act_2/act2_mission20")
+	text.add("csv:/text/act_2/act2_mission22")
+	text.add("csv:/text/act_2/act2_mission23")
+	text.add("csv:/text/act_2/act2_mission24")
+	text.add("csv:/text/act_2/act2_mission24_addendum")
+	text.add("csv:/text/act_2/act2_mission24_addendum2")
+	text.add("csv:/text/act_2/act2_mission25")
+	text.add("csv:/text/act_2/act2_mission25_addendum")
+	text.add("csv:/text/act_2/act2_mission25_addendum2")
+	while 1:
+		await iconversation.begin()
+		await iconversation.add_response("act_2/act2_master.csv", "I'd like to see file act_2/act2_master.csv, please")
+		await iconversation.add_response("act_2/act2_master_addendum.csv", "I'd like to see file act_2/act2_master_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_master_addendum2.csv", "I'd like to see file act_2/act2_master_addendum2.csv, please")
+		await iconversation.add_response("act_2/act2_master_addendum3.csv", "I'd like to see file act_2/act2_master_addendum3.csv, please")
+		await iconversation.add_response("act_2/act2_master_addendum4.csv", "I'd like to see file act_2/act2_master_addendum4.csv, please")
+		await iconversation.add_response("act_2/act2_mission01.csv", "I'd like to see file act_2/act2_mission01.csv, please")
+		await iconversation.add_response("act_2/act2_mission01_addendum.csv", "I'd like to see file act_2/act2_mission01_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission01_addendum_2.csv", "I'd like to see file act_2/act2_mission01_addendum_2.csv, please")
+		await iconversation.add_response("act_2/act2_mission02.csv", "I'd like to see file act_2/act2_mission02.csv, please")
+		await iconversation.add_response("act_2/act2_mission02_addendum.csv", "I'd like to see file act_2/act2_mission02_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission03.csv", "I'd like to see file act_2/act2_mission03.csv, please")
+		await iconversation.add_response("act_2/act2_mission03_addendum.csv", "I'd like to see file act_2/act2_mission03_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission03_addendum2.csv", "I'd like to see file act_2/act2_mission03_addendum2.csv, please")
+		await iconversation.add_response("act_2/act2_mission04.csv", "I'd like to see file act_2/act2_mission04.csv, please")
+		await iconversation.add_response("act_2/act2_mission05.csv", "I'd like to see file act_2/act2_mission05.csv, please")
+		await iconversation.add_response("act_2/act2_mission05_addendum.csv", "I'd like to see file act_2/act2_mission05_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission07.csv", "I'd like to see file act_2/act2_mission07.csv, please")
+		await iconversation.add_response("act_2/act2_mission08.csv", "I'd like to see file act_2/act2_mission08.csv, please")
+		await iconversation.add_response("act_2/act2_mission08_addendum.csv", "I'd like to see file act_2/act2_mission08_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission09.csv", "I'd like to see file act_2/act2_mission09.csv, please")
+		await iconversation.add_response("act_2/act2_mission10.csv", "I'd like to see file act_2/act2_mission10.csv, please")
+		await iconversation.add_response("act_2/act2_mission10_addendum.csv", "I'd like to see file act_2/act2_mission10_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission11.csv", "I'd like to see file act_2/act2_mission11.csv, please")
+		await iconversation.add_response("act_2/act2_mission12.csv", "I'd like to see file act_2/act2_mission12.csv, please")
+		await iconversation.add_response("act_2/act2_mission13.csv", "I'd like to see file act_2/act2_mission13.csv, please")
+		await iconversation.add_response("act_2/act2_mission15.csv", "I'd like to see file act_2/act2_mission15.csv, please")
+		await iconversation.add_response("act_2/act2_mission18.csv", "I'd like to see file act_2/act2_mission18.csv, please")
+		await iconversation.add_response("act_2/act2_mission18_addendum.csv", "I'd like to see file act_2/act2_mission18_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission20.csv", "I'd like to see file act_2/act2_mission20.csv, please")
+		await iconversation.add_response("act_2/act2_mission22.csv", "I'd like to see file act_2/act2_mission22.csv, please")
+		await iconversation.add_response("act_2/act2_mission23.csv", "I'd like to see file act_2/act2_mission23.csv, please")
+		await iconversation.add_response("act_2/act2_mission24.csv", "I'd like to see file act_2/act2_mission24.csv, please")
+		await iconversation.add_response("act_2/act2_mission24_addendum.csv", "I'd like to see file act_2/act2_mission24_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission24_addendum2.csv", "I'd like to see file act_2/act2_mission24_addendum2.csv, please")
+		await iconversation.add_response("act_2/act2_mission25.csv", "I'd like to see file act_2/act2_mission25.csv, please")
+		await iconversation.add_response("act_2/act2_mission25_addendum.csv", "I'd like to see file act_2/act2_mission25_addendum.csv, please")
+		await iconversation.add_response("act_2/act2_mission25_addendum2.csv", "I'd like to see file act_2/act2_mission25_addendum2.csv, please")
+		v0 = await iconversation.ask(0, "particle_employee", "which file do you want to test?")
+		await iconversation.end()
+		match v0:
+			1:
+				await local_0()
+			2:
+				await local_21563()
+			3:
+				await local_24415()
+			4:
+				await local_26497()
+			5:
+				await local_26962()
+			6:
+				await local_27119()
+			7:
+				await local_28046()
+			8:
+				await local_30744()
+			9:
+				await local_30901()
+			10:
+				await local_34061()
+			11:
+				await local_35527()
+			12:
+				await local_40073()
+			13:
+				await local_40461()
+			14:
+				await local_41465()
+			15:
+				await local_44394()
+			16:
+				await local_48863()
+			17:
+				await local_49482()
+			18:
+				await local_50717()
+			19:
+				await local_52029()
+			20:
+				await local_52032()
+			21:
+				await local_57425()
+			22:
+				await local_60431()
+			23:
+				await local_60742()
+			24:
+				await local_63363()
+			25:
+				await local_66292()
+			26:
+				await local_84775()
+			27:
+				await local_94326()
+			28:
+				await local_97640()
+			29:
+				await local_97720()
+			30:
+				await local_100341()
+			31:
+				await local_101653()
+			32:
+				await local_107277()
+			33:
+				await local_116135()
+			34:
+				await local_117524()
+			35:
+				await local_117989()
+			36:
+				await local_124999()
+			37:
+				await local_125233()
+	text.remove("csv:/text/act_2/act2_master")
+	text.remove("csv:/text/act_2/act2_master_addendum")
+	text.remove("csv:/text/act_2/act2_master_addendum2")
+	text.remove("csv:/text/act_2/act2_master_addendum3")
+	text.remove("csv:/text/act_2/act2_master_addendum4")
+	text.remove("csv:/text/act_2/act2_mission01")
+	text.remove("csv:/text/act_2/act2_mission01_addendum")
+	text.remove("csv:/text/act_2/act2_mission01_addendum_2")
+	text.remove("csv:/text/act_2/act2_mission02")
+	text.remove("csv:/text/act_2/act2_mission02_addendum")
+	text.remove("csv:/text/act_2/act2_mission03")
+	text.remove("csv:/text/act_2/act2_mission03_addendum")
+	text.remove("csv:/text/act_2/act2_mission03_addendum2")
+	text.remove("csv:/text/act_2/act2_mission04")
+	text.remove("csv:/text/act_2/act2_mission05")
+	text.remove("csv:/text/act_2/act2_mission05_addendum")
+	text.remove("csv:/text/act_2/act2_mission07")
+	text.remove("csv:/text/act_2/act2_mission08")
+	text.remove("csv:/text/act_2/act2_mission08_addendum")
+	text.remove("csv:/text/act_2/act2_mission09")
+	text.remove("csv:/text/act_2/act2_mission10")
+	text.remove("csv:/text/act_2/act2_mission10_addendum")
+	text.remove("csv:/text/act_2/act2_mission11")
+	text.remove("csv:/text/act_2/act2_mission12")
+	text.remove("csv:/text/act_2/act2_mission13")
+	text.remove("csv:/text/act_2/act2_mission15")
+	text.remove("csv:/text/act_2/act2_mission18")
+	text.remove("csv:/text/act_2/act2_mission18_addendum")
+	text.remove("csv:/text/act_2/act2_mission20")
+	text.remove("csv:/text/act_2/act2_mission22")
+	text.remove("csv:/text/act_2/act2_mission23")
+	text.remove("csv:/text/act_2/act2_mission24")
+	text.remove("csv:/text/act_2/act2_mission24_addendum")
+	text.remove("csv:/text/act_2/act2_mission24_addendum2")
+	text.remove("csv:/text/act_2/act2_mission25")
+	text.remove("csv:/text/act_2/act2_mission25_addendum")
+	text.remove("csv:/text/act_2/act2_mission25_addendum2")
+	return
 	return 0
 
 func main() -> Variant:

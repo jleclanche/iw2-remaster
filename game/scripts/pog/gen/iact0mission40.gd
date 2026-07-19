@@ -124,324 +124,102 @@ func wolfgang_dialogue_handler(v0, v1) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 509
+	v2 = 0
+	v3 = 0
+	v4 = 0
+	v5 = []
+	v7 = iship.find_player_ship()
 	while true:
-		if _pc == 509:
-			v2 = 0
-			v3 = 0
-			v4 = 0
-			v5 = []
-			v7 = iship.find_player_ship()
-			_pc = 565
-			continue
-		elif _pc == 565:
-			if not (isim.is_docked_to(v7, isim.cast(v0))):
-				_pc = 607
-				continue
-			else:
-				_pc = 612
-				continue
-		elif _pc == 607:
-			_pc = 2711
-			continue
-		elif _pc == 612:
-			await iconversation.begin()
-			if state.progress(v1) == 4 and not (v2):
-				_pc = 659
-				continue
-			else:
-				_pc = 748
-				continue
-		elif _pc == 659:
+		if not (isim.is_docked_to(v7, isim.cast(v0))):
+			return
+		await iconversation.begin()
+		if state.progress(v1) == 4 and not (v2):
 			v2 = 1
 			iobjectives.set_state("a0_m40_objectives_collect", 1)
 			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_congrats1")
 			iinventory.add(565, 1)
 			await ibacktobase.allow()
-			_pc = 748
-			continue
-		elif _pc == 748:
-			if state.progress(v1) == 7 and not (v3):
-				_pc = 781
-				continue
-			else:
-				_pc = 1299
-				continue
-		elif _pc == 781:
+		if state.progress(v1) == 7 and not (v3):
 			v5 = list.from_set(isim.sims_in_radius(isim.cast(v0), 10000.0, 2048))
 			v9 = list.item_count(v5)
 			if v9 > 0:
-				_pc = 878
-				continue
-			else:
-				_pc = 1299
-				continue
-		elif _pc == 878:
-			v8 = 0
-			_pc = 885
-			continue
-		elif _pc == 885:
-			if v8 < v9:
-				_pc = 901
-				continue
-			else:
-				_pc = 1046
-				continue
-		elif _pc == 901:
-			if object.property_exists(list.get_nth(v5, v8), "recovered_cargo"):
-				_pc = 949
-				continue
-			else:
-				_pc = 1028
-				continue
-		elif _pc == 949:
-			v4 = 1
-			v6 = iship.cast(list.get_nth(v5, v8))
-			await ipilotsetup.generic_cargo_pod(v6)
-			v8 = v9
-			_pc = 1028
-			continue
-		elif _pc == 1028:
-			v8 = v8 + 1
-			_pc = 885
-			continue
-		elif _pc == 1046:
-			if v4:
-				_pc = 1056
-				continue
-			else:
-				_pc = 1271
-				continue
-		elif _pc == 1056:
-			iai.give_reserved_dock_order(v6, v0)
-			iobjectives.set_state("a0_m40_objectives_return", 1)
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_congrats2")
-			isim.set_docking_lock(iship.find_player_ship(), isim.cast(v0), 0)
-			await iconversation.end()
-			v3 = 1
-			iinventory.add(517, 3)
-			iobjectives.set_state("a0_m40_objectives_visit", 1)
-			state.set_progress(v1, 8)
-			_pc = 2711
-			continue
-		elif _pc == 1266:
-			_pc = 1299
-			continue
-		elif _pc == 1271:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_what")
-			_pc = 1299
-			continue
-		elif _pc == 1299:
-			icomms.add_response_with_code("a0_m40_text_c1_option1_charlesworth", "a0_m40_dialogue_cal_c1_option1_charleswoth", 1)
-			icomms.add_response_with_code("a0_m40_text_c1_option2_business", "a0_m40_dialogue_cal_c1_option2_business", 2)
-			if state.progress(v1) < 8:
-				_pc = 1382
-				continue
-			else:
-				_pc = 1566
-				continue
-		elif _pc == 1382:
+				v8 = 0
+				while v8 < v9:
+					if object.property_exists(list.get_nth(v5, v8), "recovered_cargo"):
+						v4 = 1
+						v6 = iship.cast(list.get_nth(v5, v8))
+						await ipilotsetup.generic_cargo_pod(v6)
+						v8 = v9
+					v8 = v8 + 1
+				if v4:
+					iai.give_reserved_dock_order(v6, v0)
+					iobjectives.set_state("a0_m40_objectives_return", 1)
+					await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_congrats2")
+					isim.set_docking_lock(iship.find_player_ship(), isim.cast(v0), 0)
+					await iconversation.end()
+					v3 = 1
+					iinventory.add(517, 3)
+					iobjectives.set_state("a0_m40_objectives_visit", 1)
+					state.set_progress(v1, 8)
+					return
+				else:
+					await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_what")
+		icomms.add_response_with_code("a0_m40_text_c1_option1_charlesworth", "a0_m40_dialogue_cal_c1_option1_charleswoth", 1)
+		icomms.add_response_with_code("a0_m40_text_c1_option2_business", "a0_m40_dialogue_cal_c1_option2_business", 2)
+		if state.progress(v1) < 8:
 			if state.progress(v1) < 4:
-				_pc = 1408
-				continue
+				if state.progress(v1) != 1 and state.progress(v1) != 3:
+					icomms.add_response_with_code("a0_m40_text_c1_option3_job", "a0_m40_dialogue_cal_c1_option3_job", 3)
 			else:
-				_pc = 1489
-				continue
-		elif _pc == 1408:
-			if state.progress(v1) != 1 and state.progress(v1) != 3:
-				_pc = 1455
-				continue
-			else:
-				_pc = 1484
-				continue
-		elif _pc == 1455:
-			icomms.add_response_with_code("a0_m40_text_c1_option3_job", "a0_m40_dialogue_cal_c1_option3_job", 3)
-			_pc = 1484
-			continue
-		elif _pc == 1484:
-			_pc = 1566
-			continue
-		elif _pc == 1489:
-			if state.progress(v1) != 5 and state.progress(v1) != 7:
-				_pc = 1537
-				continue
-			else:
-				_pc = 1566
-				continue
-		elif _pc == 1537:
-			icomms.add_response_with_code("a0_m40_text_c1_option3_job2", "a0_m40_dialogue_cal_c1_option3_job2", 3)
-			_pc = 1566
-			continue
-		elif _pc == 1566:
-			icomms.add_response_with_code("a0_m40_text_c1_option4_nothing", "a0_m40_dialogue_cal_c1_option4_nothing", 4)
-			v10 = await iconversation.ask(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_so_what")
-			_pc = 2534
-			continue
-		elif _pc == 1633:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response1_in_this")
-			_pc = 2574
-			continue
-		elif _pc == 1666:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response2_well_you")
-			_pc = 2574
-			continue
-		elif _pc == 1699:
-			if state.progress(v1) < 4:
-				_pc = 1725
-				continue
-			else:
-				_pc = 2005
-				continue
-		elif _pc == 1725:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response3_ah_yes")
-			await iconversation.add_response("a0_m40_text_c2_option1_yes", "a0_m40_dialogue_cal_c2_option1_yes")
-			await iconversation.add_response("a0_m40_text_c2_option2_no", "a0_m40_dialogue_cal_c2_option2_no")
-			v11 = await iconversation.ask(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_interested")
-			_pc = 1978
-			continue
-		elif _pc == 1845:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_response1_this_is")
-			state.set_progress(v1, 1)
-			iobjectives.add("a0_m40_objectives_meet_freight")
-			_pc = 2000
-			continue
-		elif _pc == 1919:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_ok_come")
-			state.set_progress(v1, 2)
-			_pc = 2000
-			continue
-		elif _pc == 1973:
-			_pc = 2000
-			continue
-		elif _pc == 1978:
-			if 1 != v11:
-				_pc = 1991
-				continue
-			else:
-				_pc = 1845
-				continue
-		elif _pc == 1991:
-			if 2 != v11:
-				_pc = 2000
-				continue
-			else:
-				_pc = 1919
-				continue
-		elif _pc == 2000:
-			_pc = 2281
-			continue
-		elif _pc == 2005:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response3_ah_yes2")
-			await iconversation.add_response("a0_m40_text_c2_option1_yes", "a0_m40_dialogue_cal_c2_option1_yes")
-			await iconversation.add_response("a0_m40_text_c2_option2_no", "a0_m40_dialogue_cal_c2_option2_no")
-			v11 = await iconversation.ask(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_interested")
-			_pc = 2259
-			continue
-		elif _pc == 2125:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_response1_job2_this_is")
-			state.set_progress(v1, 5)
-			iobjectives.add("a0_m40_objectives_intercept")
-			_pc = 2281
-			continue
-		elif _pc == 2200:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_ok_come")
-			state.set_progress(v1, 6)
-			_pc = 2281
-			continue
-		elif _pc == 2254:
-			_pc = 2281
-			continue
-		elif _pc == 2259:
-			if 1 != v11:
-				_pc = 2272
-				continue
-			else:
-				_pc = 2125
-				continue
-		elif _pc == 2272:
-			if 2 != v11:
-				_pc = 2281
-				continue
-			else:
-				_pc = 2200
-				continue
-		elif _pc == 2281:
-			_pc = 2574
-			continue
-		elif _pc == 2286:
-			await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_ok_come")
-			if state.progress(v1) != 3 and state.progress(v1) != 7 and state.progress(v1) != 1 and state.progress(v1) != 5:
-				_pc = 2405
-				continue
-			else:
-				_pc = 2478
-				continue
-		elif _pc == 2405:
-			if state.progress(v1) != 4:
-				_pc = 2431
-				continue
-			else:
-				_pc = 2457
-				continue
-		elif _pc == 2431:
-			state.set_progress(v1, 2)
-			_pc = 2478
-			continue
-		elif _pc == 2457:
-			state.set_progress(v1, 6)
-			_pc = 2478
-			continue
-		elif _pc == 2478:
-			isim.set_docking_lock(iship.find_player_ship(), isim.cast(v0), 0)
-			_pc = 2574
-			continue
-		elif _pc == 2529:
-			_pc = 2574
-			continue
-		elif _pc == 2534:
-			if 1 != v10:
-				_pc = 2547
-				continue
-			else:
-				_pc = 1633
-				continue
-		elif _pc == 2547:
-			if 2 != v10:
-				_pc = 2556
-				continue
-			else:
-				_pc = 1666
-				continue
-		elif _pc == 2556:
-			if 3 != v10:
-				_pc = 2565
-				continue
-			else:
-				_pc = 1699
-				continue
-		elif _pc == 2565:
-			if 4 != v10:
-				_pc = 2574
-				continue
-			else:
-				_pc = 2286
-				continue
-		elif _pc == 2574:
-			await iconversation.end()
-			if not (state.progress(v1) != 1 and state.progress(v1) != 2 and state.progress(v1) != 5 and state.progress(v1) != 6):
-				_pc = 2679
-				continue
-			else:
-				_pc = 565
-				continue
-		elif _pc == 2679:
-			iship.undock(iship.find_player_ship(), v0)
-			_pc = 2711
-			continue
-		elif _pc == 2711:
-			return v10
-		else:
-			return 0
+				if state.progress(v1) != 5 and state.progress(v1) != 7:
+					icomms.add_response_with_code("a0_m40_text_c1_option3_job2", "a0_m40_dialogue_cal_c1_option3_job2", 3)
+		icomms.add_response_with_code("a0_m40_text_c1_option4_nothing", "a0_m40_dialogue_cal_c1_option4_nothing", 4)
+		v10 = await iconversation.ask(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_so_what")
+		match v10:
+			1:
+				await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response1_in_this")
+			2:
+				await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response2_well_you")
+			3:
+				if state.progress(v1) < 4:
+					await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response3_ah_yes")
+					await iconversation.add_response("a0_m40_text_c2_option1_yes", "a0_m40_dialogue_cal_c2_option1_yes")
+					await iconversation.add_response("a0_m40_text_c2_option2_no", "a0_m40_dialogue_cal_c2_option2_no")
+					v11 = await iconversation.ask(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_interested")
+					match v11:
+						1:
+							await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_response1_this_is")
+							state.set_progress(v1, 1)
+							iobjectives.add("a0_m40_objectives_meet_freight")
+						2:
+							await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_ok_come")
+							state.set_progress(v1, 2)
+				else:
+					await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c1_response3_ah_yes2")
+					await iconversation.add_response("a0_m40_text_c2_option1_yes", "a0_m40_dialogue_cal_c2_option1_yes")
+					await iconversation.add_response("a0_m40_text_c2_option2_no", "a0_m40_dialogue_cal_c2_option2_no")
+					v11 = await iconversation.ask(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_interested")
+					match v11:
+						1:
+							await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_c2_response1_job2_this_is")
+							state.set_progress(v1, 5)
+							iobjectives.add("a0_m40_objectives_intercept")
+						2:
+							await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_ok_come")
+							state.set_progress(v1, 6)
+			4:
+				await iconversation.say(0, "a0_m40_name_wolf", "a0_m40_dialogue_wolfgang_ok_come")
+				if state.progress(v1) != 3 and state.progress(v1) != 7 and state.progress(v1) != 1 and state.progress(v1) != 5:
+					if state.progress(v1) != 4:
+						state.set_progress(v1, 2)
+					else:
+						state.set_progress(v1, 6)
+				isim.set_docking_lock(iship.find_player_ship(), isim.cast(v0), 0)
+		await iconversation.end()
+		if not (state.progress(v1) != 1 and state.progress(v1) != 2 and state.progress(v1) != 5 and state.progress(v1) != 6):
+			break
+	iship.undock(iship.find_player_ship(), v0)
+	return
 	return 0
 
 func local_2720(v0, v1, v2) -> Variant:
@@ -681,36 +459,18 @@ func local_6318(v0, v1, v2) -> Variant:
 	var v15: Variant = 0
 	var v16: Variant = 0
 	var v17: Variant = 0
-	var _pc: int = 6318
+	v3 = 0
+	v4 = 0
+	v5 = 0
+	v6 = 0
+	v7 = 0
+	v8 = 0
+	v9 = 0
+	v10 = 0
+	v11 = 0
 	while true:
-		if _pc == 6318:
-			v3 = 0
-			v4 = 0
-			v5 = 0
-			v6 = 0
-			v7 = 0
-			v8 = 0
-			v9 = 0
-			v10 = 0
-			v11 = 0
-			_pc = 6391
-			continue
-		elif _pc == 6391:
-			await _pog_frame()
-			if _pog_every(6392, 2.0):
-				_pc = 6405
-				continue
-			else:
-				_pc = 7583
-				continue
-		elif _pc == 6405:
-			if await iutilities.player_in_range(v1) and not (v3):
-				_pc = 6435
-				continue
-			else:
-				_pc = 6626
-				continue
-		elif _pc == 6435:
+		await _pog_wait(2)
+		if await iutilities.player_in_range(v1) and not (v3):
 			v3 = 1
 			v16 = await local_5715()
 			v17 = iship.cast(group.leader(v16))
@@ -718,181 +478,58 @@ func local_6318(v0, v1, v2) -> Variant:
 			sim.place_relative_to(v17, v1, 400.0, 0.0, 300.0)
 			await iescort.line_abreast(v16, 40.0, 8000.0, 1)
 			v7 = 1
-			_pc = 6626
+		if not (v3):
 			continue
-		elif _pc == 6626:
-			if v3:
-				_pc = 6636
-				continue
-			else:
-				_pc = 7583
-				continue
-		elif _pc == 6636:
-			if not (await iutilities.player_in_range(v1)):
-				_pc = 6660
-				continue
-			else:
-				_pc = 6672
-				continue
-		elif _pc == 6660:
+		if not (await iutilities.player_in_range(v1)):
 			v3 = 0
-			_pc = 7583
-			continue
-		elif _pc == 6672:
+		else:
 			if sim.distance_between(v0, v17) < 40000.0 and not (v11):
-				_pc = 6713
-				continue
-			else:
-				_pc = 6762
-				continue
-		elif _pc == 6713:
-			v11 = 1
-			await iconversation.one_liner(0, "name_clay", "a0_m40_dialogue_clay_ok_kid")
-			await ibacktobase.inhibit()
-			_pc = 6762
-			continue
-		elif _pc == 6762:
+				v11 = 1
+				await iconversation.one_liner(0, "name_clay", "a0_m40_dialogue_clay_ok_kid")
+				await ibacktobase.inhibit()
 			if sim.distance_between(v0, v17) < 5000.0 and not (v4):
-				_pc = 6803
-				continue
-			else:
-				_pc = 7087
-				continue
-		elif _pc == 6803:
-			iobjectives.set_state("a0_m40_objectives_intercept", 1)
-			v4 = 1
-			await iconversation.begin()
-			await iconversation.add_response("a0_m40_text_cal_c1_option1", "a0_m40_dialogue_cal_c1_option1")
-			await iconversation.add_response("a0_m40_text_cal_c1_option2", "a0_m40_dialogue_cal_option2")
-			v12 = await iconversation.ask(v17, "", "a0_m40_dialogue_belrano_approaching")
-			_pc = 7021
-			continue
-		elif _pc == 6942:
-			await iconversation.say(v17, "", "a0_m40_dialogue_belrano_response1")
-			_pc = 7042
-			continue
-		elif _pc == 6979:
-			await iconversation.say(v17, "", "a0_m40_dialogue_belrano_response2")
-			_pc = 7042
-			continue
-		elif _pc == 7016:
-			_pc = 7042
-			continue
-		elif _pc == 7021:
-			if not _pog_is_null(v12):
-				_pc = 7034
-				continue
-			else:
-				_pc = 6942
-				continue
-		elif _pc == 7034:
-			if 1 != v12:
-				_pc = 7042
-				continue
-			else:
-				_pc = 6979
-				continue
-		elif _pc == 7042:
-			await iconversation.end()
-			iai.give_attack_order(v16, v0)
-			v5 = 1
-			_pc = 7087
-			continue
-		elif _pc == 7087:
+				iobjectives.set_state("a0_m40_objectives_intercept", 1)
+				v4 = 1
+				await iconversation.begin()
+				await iconversation.add_response("a0_m40_text_cal_c1_option1", "a0_m40_dialogue_cal_c1_option1")
+				await iconversation.add_response("a0_m40_text_cal_c1_option2", "a0_m40_dialogue_cal_option2")
+				v12 = await iconversation.ask(v17, "", "a0_m40_dialogue_belrano_approaching")
+				match v12:
+					0:
+						await iconversation.say(v17, "", "a0_m40_dialogue_belrano_response1")
+					1:
+						await iconversation.say(v17, "", "a0_m40_dialogue_belrano_response2")
+				await iconversation.end()
+				iai.give_attack_order(v16, v0)
+				v5 = 1
 			if _pog_is_null(sim.cast(v17)) and not (v6):
-				_pc = 7120
-				continue
-			else:
-				_pc = 7176
-				continue
-		elif _pc == 7120:
-			v6 = 1
-			await iconversation.one_liner(0, "name_clay", "a0_m40_dialogue_clay_theyve")
-			iobjectives.add("a0_m40_objectives_return")
-			_pc = 7176
-			continue
-		elif _pc == 7176:
+				v6 = 1
+				await iconversation.one_liner(0, "name_clay", "a0_m40_dialogue_clay_theyve")
+				iobjectives.add("a0_m40_objectives_return")
 			if v6 and state.progress(v2) != 7:
-				_pc = 7208
+				if isim.is_docked_to(v0, v15):
+					state.set_progress(v2, 7)
+					v8 = 1
+			if not (v7):
 				continue
-			else:
-				_pc = 7264
-				continue
-		elif _pc == 7208:
-			if isim.is_docked_to(v0, v15):
-				_pc = 7236
-				continue
-			else:
-				_pc = 7264
-				continue
-		elif _pc == 7236:
-			state.set_progress(v2, 7)
-			v8 = 1
-			_pc = 7264
-			continue
-		elif _pc == 7264:
-			if v7:
-				_pc = 7274
-				continue
-			else:
-				_pc = 7583
-				continue
-		elif _pc == 7274:
 			if v8 and not (v9):
-				_pc = 7291
-				continue
+				v9 = 1
+				v14 = await local_6068()
+				sim.place_near(group.leader(v14), v0, global.pog_float("g_player_sensor_range"))
+				await iformation.goose(v14, 70.0, 1)
+				iai.give_attack_order(v14, v0)
 			else:
-				_pc = 7428
+				if v13 > 160:
+					v8 = 1
+				else:
+					v13 = v13 + 1
+			if not (v9):
 				continue
-		elif _pc == 7291:
-			v9 = 1
-			v14 = await local_6068()
-			sim.place_near(group.leader(v14), v0, global.pog_float("g_player_sensor_range"))
-			await iformation.goose(v14, 70.0, 1)
-			iai.give_attack_order(v14, v0)
-			_pc = 7467
-			continue
-		elif _pc == 7428:
-			if v13 > 160:
-				_pc = 7442
+			if not (sim.distance_between(group.leader(v14), v0) < 10000.0 and not (v10)):
 				continue
-			else:
-				_pc = 7454
-				continue
-		elif _pc == 7442:
-			v8 = 1
-			_pc = 7467
-			continue
-		elif _pc == 7454:
-			v13 = v13 + 1
-			_pc = 7467
-			continue
-		elif _pc == 7467:
-			if v9:
-				_pc = 7477
-				continue
-			else:
-				_pc = 7583
-				continue
-		elif _pc == 7477:
-			if sim.distance_between(group.leader(v14), v0) < 10000.0 and not (v10):
-				_pc = 7531
-				continue
-			else:
-				_pc = 7583
-				continue
-		elif _pc == 7531:
 			v10 = 1
 			await iconversation.one_liner(group.leader(v14), "", "a0_m40_dialogue_police_piracy")
-			_pc = 7583
-			continue
-		elif _pc == 7583:
-			_pc = 6391
-			continue
-		elif _pc == 7588:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func mission_handler() -> Variant:

@@ -987,71 +987,24 @@ func on_advanced_left() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 16343
-	while true:
-		if _pc == 16343:
-			v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
-			v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
-			v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
-			v3 = await local_16187()
-			_pc = 16671
-			continue
-		elif _pc == 16487:
+	v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
+	v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
+	v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
+	v3 = await local_16187()
+	match v3:
+		0:
 			v5 = string.to_int(gui.edit_box_value(v0))
 			if v5 > 0:
-				_pc = 16538
-				continue
+				v5 = v5 + -1
+				gui.set_edit_box_value(v0, string.from_int(v5))
 			else:
-				_pc = 16597
-				continue
-		elif _pc == 16538:
-			v5 = v5 + -1
-			gui.set_edit_box_value(v0, string.from_int(v5))
-			_pc = 16613
-			continue
-		elif _pc == 16597:
-			gui.play_sound(3)
-			_pc = 16613
-			continue
-		elif _pc == 16613:
-			_pc = 16701
-			continue
-		elif _pc == 16618:
+				gui.play_sound(3)
+		1:
 			gui.on_control_focus_left(v1)
-			_pc = 16701
-			continue
-		elif _pc == 16642:
+		2:
 			await local_16256(v2)
-			_pc = 16701
-			continue
-		elif _pc == 16666:
-			_pc = 16701
-			continue
-		elif _pc == 16671:
-			if not _pog_is_null(v3):
-				_pc = 16684
-				continue
-			else:
-				_pc = 16487
-				continue
-		elif _pc == 16684:
-			if 1 != v3:
-				_pc = 16692
-				continue
-			else:
-				_pc = 16618
-				continue
-		elif _pc == 16692:
-			if 2 != v3:
-				_pc = 16701
-				continue
-			else:
-				_pc = 16642
-				continue
-		elif _pc == 16701:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func on_advanced_right() -> Variant:
@@ -1060,71 +1013,24 @@ func on_advanced_right() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 16704
-	while true:
-		if _pc == 16704:
-			v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
-			v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
-			v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
-			v3 = await local_16187()
-			_pc = 17032
-			continue
-		elif _pc == 16848:
+	v0 = gui.cast(global.handle("NetworkServerAdvancedAICountBox"))
+	v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
+	v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
+	v3 = await local_16187()
+	match v3:
+		0:
 			v4 = string.to_int(gui.edit_box_value(v0))
 			if v4 < 9:
-				_pc = 16900
-				continue
+				v4 = v4 + 1
+				gui.set_edit_box_value(v0, string.from_int(v4))
 			else:
-				_pc = 16958
-				continue
-		elif _pc == 16900:
-			v4 = v4 + 1
-			gui.set_edit_box_value(v0, string.from_int(v4))
-			_pc = 16974
-			continue
-		elif _pc == 16958:
-			gui.play_sound(3)
-			_pc = 16974
-			continue
-		elif _pc == 16974:
-			_pc = 17062
-			continue
-		elif _pc == 16979:
+				gui.play_sound(3)
+		1:
 			gui.on_control_focus_right(v1)
-			_pc = 17062
-			continue
-		elif _pc == 17003:
+		2:
 			await local_16256(v2)
-			_pc = 17062
-			continue
-		elif _pc == 17027:
-			_pc = 17062
-			continue
-		elif _pc == 17032:
-			if not _pog_is_null(v3):
-				_pc = 17045
-				continue
-			else:
-				_pc = 16848
-				continue
-		elif _pc == 17045:
-			if 1 != v3:
-				_pc = 17053
-				continue
-			else:
-				_pc = 16979
-				continue
-		elif _pc == 17053:
-			if 2 != v3:
-				_pc = 17062
-				continue
-			else:
-				_pc = 17003
-				continue
-		elif _pc == 17062:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func on_advanced_select() -> Variant:
@@ -1136,15 +1042,14 @@ func on_advanced_select() -> Variant:
 	v1 = gui.cast(global.handle("NetworkServerAdvancedAISkillSlider"))
 	v2 = gui.cast(global.handle("NetworkServerAdvancedAICheckBox"))
 	v3 = await local_16187()
-	if _pog_is_null(v3):
-		gui.on_control_focus_select(v0)
-		return 0
-	if 1 == v3:
-		gui.play_sound(3)
-		return 0
-	if 2 == v3:
-		await local_16256(v2)
-		return 0
+	match v3:
+		0:
+			gui.on_control_focus_select(v0)
+		1:
+			gui.play_sound(3)
+		2:
+			await local_16256(v2)
+			return 0
 	return 0
 	return 0
 

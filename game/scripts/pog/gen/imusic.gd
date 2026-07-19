@@ -37,234 +37,45 @@ func local_0() -> Variant:
 
 func local_52(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 52
-	while true:
-		if _pc == 52:
-			v2 = ""
-			_pc = 537
-			continue
-		elif _pc == 73:
-			_pc = 173
-			continue
-		elif _pc == 78:
-			v2 = "sound:/audio/music/a1_theme"
-			_pc = 221
-			continue
-		elif _pc == 96:
-			v2 = "sound:/audio/music/a1_ambient"
-			_pc = 221
-			continue
-		elif _pc == 114:
-			v2 = "sound:/audio/music/a1_discovery"
-			_pc = 221
-			continue
-		elif _pc == 132:
-			v2 = "sound:/audio/music/a1_tension"
-			_pc = 221
-			continue
-		elif _pc == 150:
-			v2 = "sound:/audio/music/a1_action"
-			_pc = 221
-			continue
-		elif _pc == 168:
-			_pc = 221
-			continue
-		elif _pc == 173:
-			if not _pog_is_null(v1):
-				_pc = 186
-				continue
-			else:
-				_pc = 78
-				continue
-		elif _pc == 186:
-			if 1 != v1:
-				_pc = 194
-				continue
-			else:
-				_pc = 96
-				continue
-		elif _pc == 194:
-			if 2 != v1:
-				_pc = 203
-				continue
-			else:
-				_pc = 114
-				continue
-		elif _pc == 203:
-			if 3 != v1:
-				_pc = 212
-				continue
-			else:
-				_pc = 132
-				continue
-		elif _pc == 212:
-			if 4 != v1:
-				_pc = 221
-				continue
-			else:
-				_pc = 150
-				continue
-		elif _pc == 221:
-			_pc = 567
-			continue
-		elif _pc == 226:
-			_pc = 326
-			continue
-		elif _pc == 231:
-			v2 = "sound:/audio/music/a2_theme"
-			_pc = 374
-			continue
-		elif _pc == 249:
-			v2 = "sound:/audio/music/a2_ambient"
-			_pc = 374
-			continue
-		elif _pc == 267:
-			v2 = "sound:/audio/music/a2_discovery"
-			_pc = 374
-			continue
-		elif _pc == 285:
-			v2 = "sound:/audio/music/a2_tension"
-			_pc = 374
-			continue
-		elif _pc == 303:
-			v2 = "sound:/audio/music/a2_action"
-			_pc = 374
-			continue
-		elif _pc == 321:
-			_pc = 374
-			continue
-		elif _pc == 326:
-			if not _pog_is_null(v1):
-				_pc = 339
-				continue
-			else:
-				_pc = 231
-				continue
-		elif _pc == 339:
-			if 1 != v1:
-				_pc = 347
-				continue
-			else:
-				_pc = 249
-				continue
-		elif _pc == 347:
-			if 2 != v1:
-				_pc = 356
-				continue
-			else:
-				_pc = 267
-				continue
-		elif _pc == 356:
-			if 3 != v1:
-				_pc = 365
-				continue
-			else:
-				_pc = 285
-				continue
-		elif _pc == 365:
-			if 4 != v1:
-				_pc = 374
-				continue
-			else:
-				_pc = 303
-				continue
-		elif _pc == 374:
-			_pc = 567
-			continue
-		elif _pc == 379:
-			_pc = 479
-			continue
-		elif _pc == 384:
-			v2 = "sound:/audio/music/a4_theme"
-			_pc = 527
-			continue
-		elif _pc == 402:
-			v2 = "sound:/audio/music/a4_ambient"
-			_pc = 527
-			continue
-		elif _pc == 420:
-			v2 = "sound:/audio/music/a4_discovery"
-			_pc = 527
-			continue
-		elif _pc == 438:
-			v2 = "sound:/audio/music/a4_tension"
-			_pc = 527
-			continue
-		elif _pc == 456:
-			v2 = "sound:/audio/music/a4_action"
-			_pc = 527
-			continue
-		elif _pc == 474:
-			_pc = 527
-			continue
-		elif _pc == 479:
-			if not _pog_is_null(v1):
-				_pc = 492
-				continue
-			else:
-				_pc = 384
-				continue
-		elif _pc == 492:
-			if 1 != v1:
-				_pc = 500
-				continue
-			else:
-				_pc = 402
-				continue
-		elif _pc == 500:
-			if 2 != v1:
-				_pc = 509
-				continue
-			else:
-				_pc = 420
-				continue
-		elif _pc == 509:
-			if 3 != v1:
-				_pc = 518
-				continue
-			else:
-				_pc = 438
-				continue
-		elif _pc == 518:
-			if 4 != v1:
-				_pc = 527
-				continue
-			else:
-				_pc = 456
-				continue
-		elif _pc == 527:
-			_pc = 567
-			continue
-		elif _pc == 532:
-			_pc = 567
-			continue
-		elif _pc == 537:
-			if not _pog_is_null(v0):
-				_pc = 550
-				continue
-			else:
-				_pc = 73
-				continue
-		elif _pc == 550:
-			if 1 != v0:
-				_pc = 558
-				continue
-			else:
-				_pc = 226
-				continue
-		elif _pc == 558:
-			if 2 != v0:
-				_pc = 567
-				continue
-			else:
-				_pc = 379
-				continue
-		elif _pc == 567:
-			return _pog_clone(v2)
-		elif _pc == 577:
-			return
-		else:
-			return 0
+	v2 = ""
+	match v0:
+		0:
+			match v1:
+				0:
+					v2 = "sound:/audio/music/a1_theme"
+				1:
+					v2 = "sound:/audio/music/a1_ambient"
+				2:
+					v2 = "sound:/audio/music/a1_discovery"
+				3:
+					v2 = "sound:/audio/music/a1_tension"
+				4:
+					v2 = "sound:/audio/music/a1_action"
+		1:
+			match v1:
+				0:
+					v2 = "sound:/audio/music/a2_theme"
+				1:
+					v2 = "sound:/audio/music/a2_ambient"
+				2:
+					v2 = "sound:/audio/music/a2_discovery"
+				3:
+					v2 = "sound:/audio/music/a2_tension"
+				4:
+					v2 = "sound:/audio/music/a2_action"
+		2:
+			match v1:
+				0:
+					v2 = "sound:/audio/music/a4_theme"
+				1:
+					v2 = "sound:/audio/music/a4_ambient"
+				2:
+					v2 = "sound:/audio/music/a4_discovery"
+				3:
+					v2 = "sound:/audio/music/a4_tension"
+				4:
+					v2 = "sound:/audio/music/a4_action"
+	return _pog_clone(v2)
 	return 0
 
 func local_587(v0) -> Variant:
@@ -605,129 +416,35 @@ func local_2347(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 2347
-	while true:
-		if _pc == 2347:
-			v1 = []
-			v1 = global.list("g_active_location_list")
-			v6 = list.item_count(v1)
-			v5 = 0
-			_pc = 2421
-			continue
-		elif _pc == 2421:
-			if v5 < v6:
-				_pc = 2437
-				continue
-			else:
-				_pc = 2651
-				continue
-		elif _pc == 2437:
-			v7 = ihabitat.cast(list.get_nth(v1, v5))
-			if v7:
-				_pc = 2489
-				continue
-			else:
-				_pc = 2633
-				continue
-		elif _pc == 2489:
+	v1 = []
+	v1 = global.list("g_active_location_list")
+	v6 = list.item_count(v1)
+	v5 = 0
+	while v5 < v6:
+		v7 = ihabitat.cast(list.get_nth(v1, v5))
+		if v7:
 			v8 = await local_836(ifaction.allegiance(isim.faction(v7)))
-			_pc = 2603
-			continue
-		elif _pc == 2544:
-			v2 = v2 + 1
-			_pc = 2633
-			continue
-		elif _pc == 2562:
-			v3 = v3 + 1
-			_pc = 2633
-			continue
-		elif _pc == 2580:
-			v4 = v4 + 1
-			_pc = 2633
-			continue
-		elif _pc == 2598:
-			_pc = 2633
-			continue
-		elif _pc == 2603:
-			if not _pog_is_null(v8):
-				_pc = 2616
-				continue
-			else:
-				_pc = 2544
-				continue
-		elif _pc == 2616:
-			if 1 != v8:
-				_pc = 2624
-				continue
-			else:
-				_pc = 2562
-				continue
-		elif _pc == 2624:
-			if 2 != v8:
-				_pc = 2633
-				continue
-			else:
-				_pc = 2580
-				continue
-		elif _pc == 2633:
-			v5 = v5 + 1
-			_pc = 2421
-			continue
-		elif _pc == 2651:
-			if _pog_is_null(v4) and _pog_is_null(v3) and _pog_is_null(v2):
-				_pc = 2679
-				continue
-			else:
-				_pc = 2689
-				continue
-		elif _pc == 2679:
-			return v0
-		elif _pc == 2689:
-			if v4 >= v3:
-				_pc = 2705
-				continue
-			else:
-				_pc = 2746
-				continue
-		elif _pc == 2705:
-			if v4 >= v2:
-				_pc = 2721
-				continue
-			else:
-				_pc = 2734
-				continue
-		elif _pc == 2721:
+			match v8:
+				0:
+					v2 = v2 + 1
+				1:
+					v3 = v3 + 1
+				2:
+					v4 = v4 + 1
+		v5 = v5 + 1
+	if _pog_is_null(v4) and _pog_is_null(v3) and _pog_is_null(v2):
+		return v0
+	if v4 >= v3:
+		if v4 >= v2:
 			v8 = 2
-			_pc = 2741
-			continue
-		elif _pc == 2734:
-			v8 = 0
-			_pc = 2741
-			continue
-		elif _pc == 2741:
-			_pc = 2781
-			continue
-		elif _pc == 2746:
-			if v2 >= v3:
-				_pc = 2762
-				continue
-			else:
-				_pc = 2774
-				continue
-		elif _pc == 2762:
-			v8 = 0
-			_pc = 2781
-			continue
-		elif _pc == 2774:
-			v8 = 1
-			_pc = 2781
-			continue
-		elif _pc == 2781:
-			return v8
-		elif _pc == 2791:
-			return
 		else:
-			return 0
+			v8 = 0
+	else:
+		if v2 >= v3:
+			v8 = 0
+		else:
+			v8 = 1
+	return v8
 	return 0
 
 func local_2800(v0) -> Variant:

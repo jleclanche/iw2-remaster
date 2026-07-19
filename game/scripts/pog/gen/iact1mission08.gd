@@ -179,209 +179,85 @@ func league_dialogue_monitor(v0, v1) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 1266
+	v2 = 0
+	v5 = []
+	v7 = iship.cast(group.leader(v0))
+	v10 = ifaction.find("Player")
+	v11 = ifaction.find("League")
 	while true:
-		if _pc == 1266:
-			v2 = 0
-			v5 = []
-			v7 = iship.cast(group.leader(v0))
-			v10 = ifaction.find("Player")
-			v11 = ifaction.find("League")
-			_pc = 1382
+		await _pog_wait(5)
+		v8 = iship.find_player_ship()
+		if not (sim.cast(v7) and _pog_is_null(v2)):
 			continue
-		elif _pc == 1382:
-			await _pog_frame()
-			if _pog_every(1383, 5.0):
-				_pc = 1396
-				continue
-			else:
-				_pc = 3033
-				continue
-		elif _pc == 1396:
-			v8 = iship.find_player_ship()
-			if sim.cast(v7) and _pog_is_null(v2):
-				_pc = 1447
-				continue
-			else:
-				_pc = 3033
-				continue
-		elif _pc == 1447:
-			if sim.distance_between(v8, v7) <= 700.0:
-				_pc = 1481
-				continue
-			else:
-				_pc = 3033
-				continue
-		elif _pc == 1481:
-			_pc = 2989
+		if sim.distance_between(v8, v7) > 700.0:
 			continue
-		elif _pc == 1486:
-			iobjectives.set_state("a1_m08_objectives_meet", 1)
-			v2 = 1
-			await iconversation.begin()
-			await iconversation.add_response("a1_m08_text_player_c1_option_1_yes", "a1_m08_dialogue_player_c1_option_1_yes")
-			await iconversation.add_response("a1_m08_text_player_c1_option_2_no", "a1_m08_dialogue_player_c1_option_2_no")
-			_pc = 2087
-			continue
-		elif _pc == 1588:
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_good_we_want")
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_we_have_been")
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_heres_the_droid")
-			v9 = iship.cast(p_set.first_element(sim.children(group.leader(v0))))
-			iship.undock(v9, v7)
-			await iremotepilot.enable_remote_connection(v9, 1)
-			_pog_detach(_pog_spawn(local_1053.bind(v9, v1)))
-			v6 = sim.create("ini:/sims/nav/waypoint", "")
-			sim.place_in_front_of(v6, v7, 100.0)
-			iai.give_approach_order(v7, v6)
-			state.set_progress(v1, 2)
-			iobjectives.add("a1_m08_objectives_goto")
-			await _pog_wait(2.0)
-			sim.destroy(v6)
-			_pc = 2135
-			continue
-		elif _pc == 2013:
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_2_well_be_waiting")
-			await _pog_wait(20.0)
-			_pc = 2135
-			continue
-		elif _pc == 2082:
-			_pc = 2135
-			continue
-		elif _pc == 2087:
-			await iconversation.ask(v7, "", "a1_m08_dialogue_league_c1_cal_there_you")
-			if 1 != await iconversation.ask(v7, "", "a1_m08_dialogue_league_c1_cal_there_you"):
-				_pc = 2126
+		match state.progress(v1):
+			0:
+				iobjectives.set_state("a1_m08_objectives_meet", 1)
+				v2 = 1
+				await iconversation.begin()
+				await iconversation.add_response("a1_m08_text_player_c1_option_1_yes", "a1_m08_dialogue_player_c1_option_1_yes")
+				await iconversation.add_response("a1_m08_text_player_c1_option_2_no", "a1_m08_dialogue_player_c1_option_2_no")
+				match await iconversation.ask(v7, "", "a1_m08_dialogue_league_c1_cal_there_you"):
+					1:
+						await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_good_we_want")
+						await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_we_have_been")
+						await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_heres_the_droid")
+						v9 = iship.cast(p_set.first_element(sim.children(group.leader(v0))))
+						iship.undock(v9, v7)
+						await iremotepilot.enable_remote_connection(v9, 1)
+						_pog_detach(_pog_spawn(local_1053.bind(v9, v1)))
+						v6 = sim.create("ini:/sims/nav/waypoint", "")
+						sim.place_in_front_of(v6, v7, 100.0)
+						iai.give_approach_order(v7, v6)
+						state.set_progress(v1, 2)
+						iobjectives.add("a1_m08_objectives_goto")
+						await _pog_wait(2.0)
+						sim.destroy(v6)
+					2:
+						await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_2_well_be_waiting")
+						await _pog_wait(20.0)
+				await iconversation.end()
+				v2 = 0
+			3:
+				v2 = 1
+				await iconversation.begin()
+				await iconversation.add_response("a1_m08_text_player_c2_option_1_yes", "a1_m08_dialogue_player_c2_option_1_yes")
+				await iconversation.add_response("a1_m08_text_player_c2_option_2_no", "a1_m08_dialogue_player_c2_option_2_no")
+				match await iconversation.ask(v7, "", "a1_m08_dialogue_league_c2_did_you_do"):
+					1:
+						if not _pog_is_null(await local_509(v8)):
+							await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_and_the_drone")
+							iinventory.add(194, 1)
+						else:
+							await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_what_have_you_done")
+						await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_welcome")
+						state.set_progress(v1, 5)
+					2:
+						await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_2_failed")
+						await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_welcome")
+						state.set_progress(v1, 5)
+				await iconversation.end()
+				v2 = 0
+			8:
+				v2 = 1
+				v9 = iship.cast(p_set.first_element(sim.children(group.leader(v0))))
+				if not _pog_is_null(sim.cast(v9)):
+					await iconversation.begin()
+					await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_heres_the_droid")
+					iship.undock(v9, v7)
+					await iremotepilot.enable_remote_connection(v9, 1)
+					_pog_detach(_pog_spawn(local_1053.bind(v9, v1)))
+					v6 = sim.create("ini:/sims/nav/waypoint", "")
+					sim.place_in_front_of(v6, v7, 100.0)
+					iai.give_approach_order(v7, v6)
+					state.set_progress(v1, 2)
+					await iconversation.end()
+					await _pog_wait(2.0)
+					sim.destroy(v6)
+				v2 = 0
 				continue
-			else:
-				_pc = 1588
-				continue
-		elif _pc == 2126:
-			if not _pog_is_null(2):
-				_pc = 2135
-				continue
-			else:
-				_pc = 2013
-				continue
-		elif _pc == 2135:
-			await iconversation.end()
-			v2 = 0
-			_pc = 3033
-			continue
-		elif _pc == 2161:
-			v2 = 1
-			await iconversation.begin()
-			await iconversation.add_response("a1_m08_text_player_c2_option_1_yes", "a1_m08_dialogue_player_c2_option_1_yes")
-			await iconversation.add_response("a1_m08_text_player_c2_option_2_no", "a1_m08_dialogue_player_c2_option_2_no")
-			_pc = 2502
-			continue
-		elif _pc == 2241:
-			if not _pog_is_null(await local_509(v8)):
-				_pc = 2267
-				continue
-			else:
-				_pc = 2322
-				continue
-		elif _pc == 2267:
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_and_the_drone")
-			iinventory.add(194, 1)
-			_pc = 2354
-			continue
-		elif _pc == 2322:
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_what_have_you_done")
-			_pc = 2354
-			continue
-		elif _pc == 2354:
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_welcome")
-			state.set_progress(v1, 5)
-			_pc = 2550
-			continue
-		elif _pc == 2412:
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_2_failed")
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c2_response_1_welcome")
-			state.set_progress(v1, 5)
-			_pc = 2550
-			continue
-		elif _pc == 2502:
-			await iconversation.ask(v7, "", "a1_m08_dialogue_league_c2_did_you_do")
-			if 1 != await iconversation.ask(v7, "", "a1_m08_dialogue_league_c2_did_you_do"):
-				_pc = 2541
-				continue
-			else:
-				_pc = 2241
-				continue
-		elif _pc == 2541:
-			if not _pog_is_null(2):
-				_pc = 2550
-				continue
-			else:
-				_pc = 2412
-				continue
-		elif _pc == 2550:
-			await iconversation.end()
-			v2 = 0
-			_pc = 3033
-			continue
-		elif _pc == 2576:
-			v2 = 1
-			v9 = iship.cast(p_set.first_element(sim.children(group.leader(v0))))
-			if not _pog_is_null(sim.cast(v9)):
-				_pc = 2674
-				continue
-			else:
-				_pc = 2972
-				continue
-		elif _pc == 2674:
-			await iconversation.begin()
-			await iconversation.say(v7, "", "a1_m08_dialogue_league_c1_response_1_heres_the_droid")
-			iship.undock(v9, v7)
-			await iremotepilot.enable_remote_connection(v9, 1)
-			_pog_detach(_pog_spawn(local_1053.bind(v9, v1)))
-			v6 = sim.create("ini:/sims/nav/waypoint", "")
-			sim.place_in_front_of(v6, v7, 100.0)
-			iai.give_approach_order(v7, v6)
-			state.set_progress(v1, 2)
-			await iconversation.end()
-			await _pog_wait(2.0)
-			sim.destroy(v6)
-			_pc = 2972
-			continue
-		elif _pc == 2972:
-			v2 = 0
-			_pc = 3033
-			continue
-		elif _pc == 2984:
-			_pc = 3033
-			continue
-		elif _pc == 2989:
-			state.progress(v1)
-			if not _pog_is_null(state.progress(v1)):
-				_pc = 3015
-				continue
-			else:
-				_pc = 1486
-				continue
-		elif _pc == 3015:
-			if not _pog_is_null(3):
-				_pc = 3024
-				continue
-			else:
-				_pc = 2161
-				continue
-		elif _pc == 3024:
-			if not _pog_is_null(8):
-				_pc = 3033
-				continue
-			else:
-				_pc = 2576
-				continue
-		elif _pc == 3033:
-			_pc = 1382
-			continue
-		elif _pc == 3038:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_3048(v0, v1) -> Variant:

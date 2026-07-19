@@ -823,68 +823,25 @@ func local_11103(v0, v1, v2) -> Variant:
 
 func local_16668(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	var _pc: int = 16668
-	while true:
-		if _pc == 16668:
-			_pc = 16699
-			continue
-		elif _pc == 16678:
-			debug.print_string("MCA conversation\n")
-			_pc = 16699
-			continue
-		elif _pc == 16699:
-			await iconversation.begin()
-			await iconversation.add_response("a2_m09_text_player_c1_option_1_yes", "a2_m09_dialogue_player_c1_option_1_yes")
-			await iconversation.add_response("a2_m09_text_player_c1_option_2_no", "a2_m09_dialogue_player_c1_option_2_no")
-			v3 = await iconversation.ask(v0, "", "a2_m09_dialogue_mca_leader_c1_are_you_ready")
-			_pc = 16981
-			continue
-		elif _pc == 16809:
-			_pc = 16835
-			continue
-		elif _pc == 16814:
-			debug.print_string("MCA conversation accepted\n")
-			_pc = 16835
-			continue
-		elif _pc == 16835:
+	if PogRuntime.TRACE:
+		debug.print_string("MCA conversation\n")
+	await iconversation.begin()
+	await iconversation.add_response("a2_m09_text_player_c1_option_1_yes", "a2_m09_dialogue_player_c1_option_1_yes")
+	await iconversation.add_response("a2_m09_text_player_c1_option_2_no", "a2_m09_dialogue_player_c1_option_2_no")
+	v3 = await iconversation.ask(v0, "", "a2_m09_dialogue_mca_leader_c1_are_you_ready")
+	match v3:
+		1:
+			if PogRuntime.TRACE:
+				debug.print_string("MCA conversation accepted\n")
 			await iconversation.say(v0, "", "a2_m09_dialogue_mca_leader_c1_response_then_lets_go")
 			state.set_progress(v1, 2)
-			_pc = 17003
-			continue
-		elif _pc == 16893:
+		2:
 			await iconversation.say(v0, "", "a2_m09_dialogue_mca_leader_c1_response_then_get_ready")
-			_pc = 16951
-			continue
-		elif _pc == 16930:
-			debug.print_string("MCA conversation declined\n")
-			_pc = 16951
-			continue
-		elif _pc == 16951:
+			if PogRuntime.TRACE:
+				debug.print_string("MCA conversation declined\n")
 			state.set_progress(v1, 1)
-			_pc = 17003
-			continue
-		elif _pc == 16976:
-			_pc = 17003
-			continue
-		elif _pc == 16981:
-			if 1 != v3:
-				_pc = 16994
-				continue
-			else:
-				_pc = 16809
-				continue
-		elif _pc == 16994:
-			if 2 != v3:
-				_pc = 17003
-				continue
-			else:
-				_pc = 16893
-				continue
-		elif _pc == 17003:
-			await iconversation.end()
-			return v3
-		else:
-			return 0
+	await iconversation.end()
+	return
 	return 0
 
 func local_17019(v0, v1, v2) -> Variant:

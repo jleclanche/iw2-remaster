@@ -1090,65 +1090,18 @@ func get_live_t_fighter() -> Variant:
 func create_test_t_fighters() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	var _pc: int = 15962
-	while true:
-		if _pc == 15962:
-			v1 = []
-			_pc = 16120
-			continue
-		elif _pc == 15983:
-			_pc = 16150
-			continue
-		elif _pc == 15988:
+	v1 = []
+	match v0:
+		0:
+			pass
+		1:
 			list.add_tail(v1, await local_16220("name_az"))
-			_pc = 16150
-			continue
-		elif _pc == 16032:
+		2:
 			list.add_tail(v1, await local_16220("name_az"))
 			list.add_tail(v1, await local_16220("name_lori"))
-			_pc = 16150
-			continue
-		elif _pc == 16115:
-			_pc = 16150
-			continue
-		elif _pc == 16120:
-			if not _pog_is_null(v0):
-				_pc = 16133
-				continue
-			else:
-				_pc = 15983
-				continue
-		elif _pc == 16133:
-			if 1 != v0:
-				_pc = 16141
-				continue
-			else:
-				_pc = 15988
-				continue
-		elif _pc == 16141:
-			if 2 != v0:
-				_pc = 16150
-				continue
-			else:
-				_pc = 16032
-				continue
-		elif _pc == 16150:
-			if not (global.exists("g_tfighters_menu_option_enabled")):
-				_pc = 16176
-				continue
-			else:
-				_pc = 16200
-				continue
-		elif _pc == 16176:
-			global.create_bool("g_tfighters_menu_option_enabled", 2, 1)
-			_pc = 16200
-			continue
-		elif _pc == 16200:
-			return _pog_clone(v1)
-		elif _pc == 16210:
-			return
-		else:
-			return 0
+	if not (global.exists("g_tfighters_menu_option_enabled")):
+		global.create_bool("g_tfighters_menu_option_enabled", 2, 1)
+	return _pog_clone(v1)
 	return 0
 
 func local_16220(v0) -> Variant:

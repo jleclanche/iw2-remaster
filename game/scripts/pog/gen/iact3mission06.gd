@@ -105,93 +105,41 @@ func local_407(v0) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 407
-	while true:
-		if _pc == 407:
-			v1 = group.create()
-			v2 = group.create()
-			v3 = ifaction.find("M.C.A.")
-			v5 = 3
-			group.add_group(v1, group.cast(global.handle("g_hoffers_vessels")))
-			v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
-			isim.set_faction(v4, v3)
-			sim.set_cullable(v4, 0)
-			iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v4)
-			v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
-			isim.set_faction(v4, v3)
-			sim.set_cullable(v4, 0)
-			iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v4)
-			group.add_group(v1, v2)
-			v2 = group.create()
-			v6 = 0
-			_pc = 936
-			continue
-		elif _pc == 936:
-			if v6 < v5:
-				_pc = 952
-				continue
-			else:
-				_pc = 1307
-				continue
-		elif _pc == 952:
-			_pc = 1121
-			continue
-		elif _pc == 957:
-			v4 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("Mca", -1))
-			_pc = 1162
-			continue
-		elif _pc == 1010:
-			v4 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("Mca", -1))
-			_pc = 1162
-			continue
-		elif _pc == 1063:
-			v4 = iship.create("ini:/sims/ships/independent/cutter_mercenary", await ishipcreation.ship_name("Mca", -1))
-			_pc = 1162
-			continue
-		elif _pc == 1116:
-			_pc = 1162
-			continue
-		elif _pc == 1121:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 1145
-				continue
-			else:
-				_pc = 957
-				continue
-		elif _pc == 1145:
-			if not _pog_is_null(1):
-				_pc = 1153
-				continue
-			else:
-				_pc = 1010
-				continue
-		elif _pc == 1153:
-			if not _pog_is_null(2):
-				_pc = 1162
-				continue
-			else:
-				_pc = 1063
-				continue
-		elif _pc == 1162:
-			isim.set_faction(v4, v3)
-			sim.set_cullable(v4, 0)
-			iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v4)
-			v6 = v6 + 1
-			_pc = 936
-			continue
-		elif _pc == 1307:
-			group.add_group(v1, v2)
-			await iescort.in_formation_goose(group.nth_group(v1, 1), group.leader(group.nth_group(v1, 0)), 0, 0.0, 200.0, -80.0, 200.0, 2000.0, 1)
-			await iescort.in_formation_goose(group.nth_group(v1, 2), group.leader(group.nth_group(v1, 0)), 0, 0.0, 500.0, -300.0, 200.0, 2000.0, 1)
-			return v1
-		elif _pc == 1526:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v2 = group.create()
+	v3 = ifaction.find("M.C.A.")
+	v5 = 3
+	group.add_group(v1, group.cast(global.handle("g_hoffers_vessels")))
+	v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
+	isim.set_faction(v4, v3)
+	sim.set_cullable(v4, 0)
+	iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+	group.add_sim(v2, v4)
+	v4 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", await ishipcreation.ship_name("Mca", -1))
+	isim.set_faction(v4, v3)
+	sim.set_cullable(v4, 0)
+	iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+	group.add_sim(v2, v4)
+	group.add_group(v1, v2)
+	v2 = group.create()
+	v6 = 0
+	while v6 < v5:
+		match math.random_int(0, 2):
+			0:
+				v4 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("Mca", -1))
+			1:
+				v4 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("Mca", -1))
+			2:
+				v4 = iship.create("ini:/sims/ships/independent/cutter_mercenary", await ishipcreation.ship_name("Mca", -1))
+		isim.set_faction(v4, v3)
+		sim.set_cullable(v4, 0)
+		iship.install_a_i_pilot(v4, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+		group.add_sim(v2, v4)
+		v6 = v6 + 1
+	group.add_group(v1, v2)
+	await iescort.in_formation_goose(group.nth_group(v1, 1), group.leader(group.nth_group(v1, 0)), 0, 0.0, 200.0, -80.0, 200.0, 2000.0, 1)
+	await iescort.in_formation_goose(group.nth_group(v1, 2), group.leader(group.nth_group(v1, 0)), 0, 0.0, 500.0, -300.0, 200.0, 2000.0, 1)
+	return v1
 	return 0
 
 func local_1528(v0, v1) -> Variant:
@@ -305,212 +253,72 @@ func local_3427(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 3427
-	while true:
-		if _pc == 3427:
-			v1 = group.create()
-			v2 = group.create()
-			v3 = ifaction.find("MAAS Corporation")
-			v4 = ifaction.find("Ashanti Investment")
-			v5 = ifaction.find("Von Schelling Industries")
-			v6 = ifaction.find("Advanced Security Corp")
-			v8 = 8
-			v10 = 0
-			ifaction.set_feeling(v3, v4, -1.0)
-			ifaction.set_feeling(v3, v5, -1.0)
-			ifaction.set_feeling(v3, v6, -1.0)
-			ifaction.set_feeling(v4, v3, -1.0)
-			ifaction.set_feeling(v5, v3, -1.0)
-			ifaction.set_feeling(v6, v3, -1.0)
-			v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("MaasCorporation", -1))
-			isim.set_faction(v7, v3)
-			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v7)
-			v9 = 0
-			_pc = 3922
-			continue
-		elif _pc == 3922:
-			if v9 < v8:
-				_pc = 3938
-				continue
-			else:
-				_pc = 4273
-				continue
-		elif _pc == 3938:
-			_pc = 4107
-			continue
-		elif _pc == 3943:
-			v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("MaasCorporation", -1))
-			_pc = 4148
-			continue
-		elif _pc == 3996:
-			v7 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
-			_pc = 4148
-			continue
-		elif _pc == 4049:
-			v7 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("MaasCorporation", -1))
-			_pc = 4148
-			continue
-		elif _pc == 4102:
-			_pc = 4148
-			continue
-		elif _pc == 4107:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 4131
-				continue
-			else:
-				_pc = 3943
-				continue
-		elif _pc == 4131:
-			if not _pog_is_null(1):
-				_pc = 4139
-				continue
-			else:
-				_pc = 3996
-				continue
-		elif _pc == 4139:
-			if not _pog_is_null(2):
-				_pc = 4148
-				continue
-			else:
-				_pc = 4049
-				continue
-		elif _pc == 4148:
-			isim.set_faction(v7, v3)
-			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v7)
-			v9 = v9 + 1
-			_pc = 3922
-			continue
-		elif _pc == 4273:
-			group.add_group(v1, v2)
-			v2 = group.create()
-			v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
-			isim.set_faction(v7, v5)
-			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v7)
-			v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
-			isim.set_faction(v7, v5)
-			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v7)
-			v9 = 0
-			_pc = 4633
-			continue
-		elif _pc == 4633:
-			if v9 < v8:
-				_pc = 4649
-				continue
-			else:
-				_pc = 5125
-				continue
-		elif _pc == 4649:
-			_pc = 4818
-			continue
-		elif _pc == 4654:
-			v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("General", -1))
-			_pc = 4859
-			continue
-		elif _pc == 4707:
-			v7 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("General", -1))
-			_pc = 4859
-			continue
-		elif _pc == 4760:
-			v7 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("General", -1))
-			_pc = 4859
-			continue
-		elif _pc == 4813:
-			_pc = 4859
-			continue
-		elif _pc == 4818:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 4842
-				continue
-			else:
-				_pc = 4654
-				continue
-		elif _pc == 4842:
-			if not _pog_is_null(1):
-				_pc = 4850
-				continue
-			else:
-				_pc = 4707
-				continue
-		elif _pc == 4850:
-			if not _pog_is_null(2):
-				_pc = 4859
-				continue
-			else:
-				_pc = 4760
-				continue
-		elif _pc == 4859:
-			_pc = 4956
-			continue
-		elif _pc == 4864:
-			isim.set_faction(v7, v4)
-			_pc = 4986
-			continue
-		elif _pc == 4893:
-			isim.set_faction(v7, v5)
-			_pc = 4986
-			continue
-		elif _pc == 4922:
-			isim.set_faction(v7, v6)
-			_pc = 4986
-			continue
-		elif _pc == 4951:
-			_pc = 4986
-			continue
-		elif _pc == 4956:
-			if not _pog_is_null(v10):
-				_pc = 4969
-				continue
-			else:
-				_pc = 4864
-				continue
-		elif _pc == 4969:
-			if 1 != v10:
-				_pc = 4977
-				continue
-			else:
-				_pc = 4893
-				continue
-		elif _pc == 4977:
-			if 2 != v10:
-				_pc = 4986
-				continue
-			else:
-				_pc = 4922
-				continue
-		elif _pc == 4986:
-			iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
-			group.add_sim(v2, v7)
-			if v10 < 2:
-				_pc = 5082
-				continue
-			else:
-				_pc = 5100
-				continue
-		elif _pc == 5082:
+	v1 = group.create()
+	v2 = group.create()
+	v3 = ifaction.find("MAAS Corporation")
+	v4 = ifaction.find("Ashanti Investment")
+	v5 = ifaction.find("Von Schelling Industries")
+	v6 = ifaction.find("Advanced Security Corp")
+	v8 = 8
+	v10 = 0
+	ifaction.set_feeling(v3, v4, -1.0)
+	ifaction.set_feeling(v3, v5, -1.0)
+	ifaction.set_feeling(v3, v6, -1.0)
+	ifaction.set_feeling(v4, v3, -1.0)
+	ifaction.set_feeling(v5, v3, -1.0)
+	ifaction.set_feeling(v6, v3, -1.0)
+	v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("MaasCorporation", -1))
+	isim.set_faction(v7, v3)
+	iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+	group.add_sim(v2, v7)
+	v9 = 0
+	while v9 < v8:
+		match math.random_int(0, 2):
+			0:
+				v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("MaasCorporation", -1))
+			1:
+				v7 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("MaasCorporation", -1))
+			2:
+				v7 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("MaasCorporation", -1))
+		isim.set_faction(v7, v3)
+		iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+		group.add_sim(v2, v7)
+		v9 = v9 + 1
+	group.add_group(v1, v2)
+	v2 = group.create()
+	v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
+	isim.set_faction(v7, v5)
+	iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+	group.add_sim(v2, v7)
+	v7 = iship.create("ini:/sims/ships/navy/heavy_cruiser", await ishipcreation.ship_name("General", -1))
+	isim.set_faction(v7, v5)
+	iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+	group.add_sim(v2, v7)
+	v9 = 0
+	while v9 < v8:
+		match math.random_int(0, 2):
+			0:
+				v7 = iship.create("ini:/sims/ships/corporate/cutter", await ishipcreation.ship_name("General", -1))
+			1:
+				v7 = iship.create("ini:/sims/ships/corporate/interceptor", await ishipcreation.ship_name("General", -1))
+			2:
+				v7 = iship.create("ini:/sims/ships/navy/old_corvette_hard", await ishipcreation.ship_name("General", -1))
+		match v10:
+			0:
+				isim.set_faction(v7, v4)
+			1:
+				isim.set_faction(v7, v5)
+			2:
+				isim.set_faction(v7, v6)
+		iship.install_a_i_pilot(v7, 0.20000000298023224, 5.0, 0.20000000298023224, "", "", "", "")
+		group.add_sim(v2, v7)
+		if v10 < 2:
 			v10 = v10 + 1
-			_pc = 5107
-			continue
-		elif _pc == 5100:
-			v10 = 0
-			_pc = 5107
-			continue
-		elif _pc == 5107:
-			v9 = v9 + 1
-			_pc = 4633
-			continue
-		elif _pc == 5125:
-			group.add_group(v1, v2)
-			return v1
-		elif _pc == 5159:
-			return
 		else:
-			return 0
+			v10 = 0
+		v9 = v9 + 1
+	group.add_group(v1, v2)
+	return v1
 	return 0
 
 func local_5161(v0, v1) -> Variant:

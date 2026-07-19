@@ -247,21 +247,22 @@ func server_on_user_message() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	if 15 == v0:
-		v4 = iship.cast(v1)
-		iship.undock_self(v4)
-		imultiplay.server_send_user_message(15, v4, 0, "")
-		return 0
-	if 16 == v0:
-		imultiplay.send_scores(v1)
-		return 0
-	if 99 == v0:
-		await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-		return 0
-	if 204 == v0:
-		isim.dock(isim.cast(v1), isim.cast(v2))
-		imultiplay.server_send_user_message(204, v1, v2, v3)
-		return 0
+	match v0:
+		15:
+			v4 = iship.cast(v1)
+			iship.undock_self(v4)
+			imultiplay.server_send_user_message(15, v4, 0, "")
+			return 0
+		16:
+			imultiplay.send_scores(v1)
+			return 0
+		99:
+			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
+			return 0
+		204:
+			isim.dock(isim.cast(v1), isim.cast(v2))
+			imultiplay.server_send_user_message(204, v1, v2, v3)
+			return 0
 	return 0
 	return 0
 
@@ -948,177 +949,46 @@ func client_on_user_message() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	var _pc: int = 11971
-	while true:
-		if _pc == 11971:
-			v5 = sim.find_by_name(text.field("mp_bomb_name", 0))
-			v6 = []
-			_pc = 12067
-			continue
-		elif _pc == 12033:
-			if _pog_is_null(v5):
-				_pc = 12046
-				continue
-			else:
-				_pc = 12067
-				continue
-		elif _pc == 12046:
+	v5 = sim.find_by_name(text.field("mp_bomb_name", 0))
+	v6 = []
+	if PogRuntime.TRACE:
+		if _pog_is_null(v5):
 			debug.error("Unable to find bomb!!")
-			_pc = 12067
-			continue
-		elif _pc == 12067:
-			_pc = 12947
-			continue
-		elif _pc == 12072:
+	match v0:
+		26:
 			v8 = _pog_spawn(local_11645.bind(isim.cast(v5), isim.cast(v1)))
 			_pog_detach(v8)
-			_pc = 13025
-			continue
-		elif _pc == 12151:
+		27:
 			if _pog_eq(sim.parent(v5), v1):
-				_pc = 12180
-				continue
-			else:
-				_pc = 12306
-				continue
-		elif _pc == 12180:
-			sim.detach_child(v1, v5)
-			sim.set_mass(v5, 0.0)
-			isim.set_faction(isim.cast(v1), ifaction.find("Player"))
-			object.remove_property(v1, "mp_has_bomb")
-			_pc = 12306
-			continue
-		elif _pc == 12306:
-			_pc = 13025
-			continue
-		elif _pc == 12311:
+				sim.detach_child(v1, v5)
+				sim.set_mass(v5, 0.0)
+				isim.set_faction(isim.cast(v1), ifaction.find("Player"))
+				object.remove_property(v1, "mp_has_bomb")
+		28:
 			v9 = 0
-			_pc = 12319
-			continue
-		elif _pc == 12319:
-			if v9 < list.item_count(imultiplay.client_player_list()):
-				_pc = 12358
-				continue
-			else:
-				_pc = 12509
-				continue
-		elif _pc == 12358:
-			v4 = iship.cast(list.get_nth(imultiplay.client_player_list(), v9))
-			if not _pog_eq(v4, iship.cast(v1)):
-				_pc = 12439
-				continue
-			else:
-				_pc = 12491
-				continue
-		elif _pc == 12439:
-			isim.set_faction(isim.cast(v1), ifaction.find("Player"))
-			_pc = 12491
-			continue
-		elif _pc == 12491:
-			v9 = v9 + 1
-			_pc = 12319
-			continue
-		elif _pc == 12509:
+			while v9 < list.item_count(imultiplay.client_player_list()):
+				v4 = iship.cast(list.get_nth(imultiplay.client_player_list(), v9))
+				if not _pog_eq(v4, iship.cast(v1)):
+					isim.set_faction(isim.cast(v1), ifaction.find("Player"))
+				v9 = v9 + 1
 			isim.set_faction(isim.cast(v1), ifaction.find("AntiPlayer"))
 			v8 = _pog_spawn(local_11645.bind(isim.cast(v5), isim.cast(v1)))
 			_pog_detach(v8)
-			_pc = 13025
-			continue
-		elif _pc == 12641:
+		29:
 			isim.set_faction(isim.cast(v1), ifaction.find("Player"))
-			_pc = 13025
-			continue
-		elif _pc == 12698:
+		15:
 			if not _pog_eq(v4, iship.find_player_ship()):
-				_pc = 12722
-				continue
-			else:
-				_pc = 12765
-				continue
-		elif _pc == 12722:
-			v4 = iship.cast(v1)
-			iship.undock_self(v4)
-			_pc = 12765
-			continue
-		elif _pc == 12765:
-			_pc = 13025
-			continue
-		elif _pc == 12770:
+				v4 = iship.cast(v1)
+				iship.undock_self(v4)
+		30:
 			isim.set_indestructable(isim.cast(v5), 0)
-			_pc = 13025
-			continue
-		elif _pc == 12808:
+		31:
 			v8 = _pog_spawn(local_11645.bind(isim.cast(v5), isim.cast(v1)))
 			_pog_detach(v8)
-			_pc = 13025
-			continue
-		elif _pc == 12887:
+		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
-			_pc = 13025
-			continue
-		elif _pc == 12942:
-			_pc = 13025
-			continue
-		elif _pc == 12947:
-			if 26 != v0:
-				_pc = 12961
-				continue
-			else:
-				_pc = 12072
-				continue
-		elif _pc == 12961:
-			if 27 != v0:
-				_pc = 12970
-				continue
-			else:
-				_pc = 12151
-				continue
-		elif _pc == 12970:
-			if 28 != v0:
-				_pc = 12979
-				continue
-			else:
-				_pc = 12311
-				continue
-		elif _pc == 12979:
-			if 29 != v0:
-				_pc = 12988
-				continue
-			else:
-				_pc = 12641
-				continue
-		elif _pc == 12988:
-			if 15 != v0:
-				_pc = 12997
-				continue
-			else:
-				_pc = 12698
-				continue
-		elif _pc == 12997:
-			if 30 != v0:
-				_pc = 13006
-				continue
-			else:
-				_pc = 12770
-				continue
-		elif _pc == 13006:
-			if 31 != v0:
-				_pc = 13015
-				continue
-			else:
-				_pc = 12808
-				continue
-		elif _pc == 13015:
-			if 204 != v0:
-				_pc = 13025
-				continue
-			else:
-				_pc = 12887
-				continue
-		elif _pc == 13025:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func client_exit() -> Variant:

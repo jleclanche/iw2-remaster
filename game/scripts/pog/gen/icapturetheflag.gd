@@ -450,142 +450,55 @@ func server_on_user_message() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 6414
-	while true:
-		if _pc == 6414:
-			v4 = ""
-			_pc = 7586
-			continue
-		elif _pc == 6435:
+	v4 = ""
+	match v0:
+		1:
 			await local_5806(v1)
 			v5 = ifaction.find(v3)
 			isim.set_faction(isim.cast(v1), v5)
 			imultiplay.server_set_player_team(v1, v3)
 			await imputils.spawn_player(v1, group.cast(global.handle("mp_respawn_group")))
 			if _pog_eq(v3, text.field("mp_flag_team_b", 0)):
-				_pc = 6624
-				continue
+				v4 = "mp_flag_joined_team_b"
 			else:
-				_pc = 6642
-				continue
-		elif _pc == 6624:
-			v4 = "mp_flag_joined_team_b"
-			_pc = 6655
-			continue
-		elif _pc == 6642:
-			v4 = "mp_flag_joined_team_a"
-			_pc = 6655
-			continue
-		elif _pc == 6655:
+				v4 = "mp_flag_joined_team_a"
 			imultiplay.server_send_user_message(1, v1, 0, v3)
 			imultiplay.server_broadcast_message(v1, v4, 3)
 			if imultiplay.use_a_i_bots() and imultiplay.a_i_bots_count() > 0:
-				_pc = 6741
-				continue
-			else:
-				_pc = 7323
-				continue
-		elif _pc == 6741:
-			if _pog_eq(v3, text.field("mp_flag_team_a", 0)):
-				_pc = 6774
-				continue
-			else:
-				_pc = 6898
-				continue
-		elif _pc == 6774:
-			v9 = group.cast(global.handle("g_bots_a_handle"))
-			v8 = group.cast(global.handle("g_bots_b_handle"))
-			v10 = ifaction.find(text.field("mp_flag_team_b", 0))
-			_pc = 7017
-			continue
-		elif _pc == 6898:
-			v9 = group.cast(global.handle("g_bots_b_handle"))
-			v8 = group.cast(global.handle("g_bots_a_handle"))
-			v10 = ifaction.find(text.field("mp_flag_team_a", 0))
-			_pc = 7017
-			continue
-		elif _pc == 7017:
-			v7 = isim.cast(group.nth_sim(v9, 0))
-			group.remove_sim(v9, v7)
-			group.add_sim(v8, v7)
-			isim.set_faction(v7, v10)
-			v11 = object.int_property(v7, "bot_index")
-			v11 = v11 + imultiplay.a_i_bots_count() / 2
-			object.set_int_property(v7, "bot_index", v11)
-			await imputils.spawn_player(v7, group.cast(global.handle("mp_respawn_group")))
-			imultiplay.server_send_user_message(1, v7, 0, ifaction.pog_name(isim.faction(v7)))
-			_pc = 7323
-			continue
-		elif _pc == 7323:
-			_pc = 7641
-			continue
-		elif _pc == 7328:
+				if _pog_eq(v3, text.field("mp_flag_team_a", 0)):
+					v9 = group.cast(global.handle("g_bots_a_handle"))
+					v8 = group.cast(global.handle("g_bots_b_handle"))
+					v10 = ifaction.find(text.field("mp_flag_team_b", 0))
+				else:
+					v9 = group.cast(global.handle("g_bots_b_handle"))
+					v8 = group.cast(global.handle("g_bots_a_handle"))
+					v10 = ifaction.find(text.field("mp_flag_team_a", 0))
+				v7 = isim.cast(group.nth_sim(v9, 0))
+				group.remove_sim(v9, v7)
+				group.add_sim(v8, v7)
+				isim.set_faction(v7, v10)
+				v11 = object.int_property(v7, "bot_index")
+				v11 = v11 + imultiplay.a_i_bots_count() / 2
+				object.set_int_property(v7, "bot_index", v11)
+				await imputils.spawn_player(v7, group.cast(global.handle("mp_respawn_group")))
+				imultiplay.server_send_user_message(1, v7, 0, ifaction.pog_name(isim.faction(v7)))
+			return 0
+		15:
 			v6 = iship.cast(v1)
 			iship.undock_self(v6)
 			imultiplay.server_send_user_message(15, v6, 0, "")
-			_pc = 7641
-			continue
-		elif _pc == 7405:
+			return 0
+		16:
 			imultiplay.send_scores(v1)
-			_pc = 7641
-			continue
-		elif _pc == 7429:
+			return 0
+		99:
 			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-			_pc = 7641
-			continue
-		elif _pc == 7489:
+			return 0
+		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			imultiplay.server_send_user_message(204, v1, v2, v3)
-			_pc = 7641
-			continue
-		elif _pc == 7576:
-			_pc = 7641
-			continue
-		elif _pc == 7581:
-			_pc = 7641
-			continue
-		elif _pc == 7586:
-			if 1 != v0:
-				_pc = 7599
-				continue
-			else:
-				_pc = 6435
-				continue
-		elif _pc == 7599:
-			if 15 != v0:
-				_pc = 7608
-				continue
-			else:
-				_pc = 7328
-				continue
-		elif _pc == 7608:
-			if 16 != v0:
-				_pc = 7617
-				continue
-			else:
-				_pc = 7405
-				continue
-		elif _pc == 7617:
-			if 99 != v0:
-				_pc = 7626
-				continue
-			else:
-				_pc = 7429
-				continue
-		elif _pc == 7626:
-			if 204 != v0:
-				_pc = 7636
-				continue
-			else:
-				_pc = 7489
-				continue
-		elif _pc == 7636:
-			_pc = 7576
-			continue
-		elif _pc == 7641:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func server_player_leave() -> Variant:
@@ -1408,213 +1321,77 @@ func client_on_user_message() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var _pc: int = 22205
-	while true:
-		if _pc == 22205:
-			v5 = ifaction.find(text.field("mp_flag_team_b", 0))
-			v6 = ""
-			_pc = 23978
-			continue
-		elif _pc == 22267:
+	v5 = ifaction.find(text.field("mp_flag_team_b", 0))
+	v6 = ""
+	match v0:
+		1:
 			v4 = ifaction.find(v3)
 			isim.set_faction(isim.cast(v1), v4)
 			if _pog_eq(v3, text.field("mp_flag_team_b", 0)):
-				_pc = 22361
-				continue
+				v6 = text.field("mp_flag_joined_team_b", 0)
+				object.add_bool_property(v1, "mp_on_team_beta", 1)
+				object.remove_property(v1, "mp_on_team_alpha")
 			else:
-				_pc = 22447
-				continue
-		elif _pc == 22361:
-			v6 = text.field("mp_flag_joined_team_b", 0)
-			object.add_bool_property(v1, "mp_on_team_beta", 1)
-			object.remove_property(v1, "mp_on_team_alpha")
-			_pc = 22528
-			continue
-		elif _pc == 22447:
-			v6 = text.field("mp_flag_joined_team_a", 0)
-			object.add_bool_property(v1, "mp_on_team_alpha", 1)
-			object.remove_property(v1, "mp_on_team_beta")
-			_pc = 22528
-			continue
-		elif _pc == 22528:
+				v6 = text.field("mp_flag_joined_team_a", 0)
+				object.add_bool_property(v1, "mp_on_team_alpha", 1)
+				object.remove_property(v1, "mp_on_team_beta")
 			v9 = _pog_spawn(local_18921.bind(v1, _pog_clone(v6)))
 			_pog_detach(v9)
-			_pc = 24046
-			continue
-		elif _pc == 22582:
+		15:
 			if not _pog_eq(v10, iship.find_player_ship()):
-				_pc = 22606
-				continue
-			else:
-				_pc = 22649
-				continue
-		elif _pc == 22606:
-			v10 = iship.cast(v1)
-			iship.undock_self(v10)
-			_pc = 22649
-			continue
-		elif _pc == 22649:
-			_pc = 24046
-			continue
-		elif _pc == 22654:
+				v10 = iship.cast(v1)
+				iship.undock_self(v10)
+		22:
 			v4 = isim.faction(isim.cast(v1))
 			if _pog_eq(v4, v5):
-				_pc = 22707
-				continue
+				v7 = sim.find_by_name("Alpha Flag")
+				v6 = text.field("mp_flag_player_picked_up_a", 0)
 			else:
-				_pc = 22766
-				continue
-		elif _pc == 22707:
-			v7 = sim.find_by_name("Alpha Flag")
-			v6 = text.field("mp_flag_player_picked_up_a", 0)
-			_pc = 22820
-			continue
-		elif _pc == 22766:
-			v7 = sim.find_by_name("Beta Flag")
-			v6 = text.field("mp_flag_player_picked_up_b", 0)
-			_pc = 22820
-			continue
-		elif _pc == 22820:
+				v7 = sim.find_by_name("Beta Flag")
+				v6 = text.field("mp_flag_player_picked_up_b", 0)
 			iai.purge_orders(iship.cast(v1))
 			sim.add_child_relative_to(v1, v7, 0.0, 0.0, -(object.float_property(v1, "radius") + 40.0))
 			sim.set_mass(v7, 0.009999999776482582)
 			object.add_bool_property(v1, "mp_has_opponent_flag", 1)
 			v9 = _pog_spawn(local_18921.bind(v1, _pog_clone(v6)))
 			_pog_detach(v9)
-			_pc = 24046
-			continue
-		elif _pc == 23023:
+		33:
 			v4 = isim.faction(isim.cast(v1))
 			if _pog_eq(v4, v5):
-				_pc = 23076
-				continue
+				v7 = sim.find_by_name("Alpha Flag")
+				v6 = text.field("mp_flag_player_won_flag_a", 0)
+				v8 = isim.cast(global.handle("mp_alpha_flag_spawnpoint"))
+				global.set_int("BlueScore", global.pog_int("BlueScore") + 1)
 			else:
-				_pc = 23216
-				continue
-		elif _pc == 23076:
-			v7 = sim.find_by_name("Alpha Flag")
-			v6 = text.field("mp_flag_player_won_flag_a", 0)
-			v8 = isim.cast(global.handle("mp_alpha_flag_spawnpoint"))
-			global.set_int("BlueScore", global.pog_int("BlueScore") + 1)
-			_pc = 23351
-			continue
-		elif _pc == 23216:
-			v7 = sim.find_by_name("Beta Flag")
-			v8 = isim.cast(global.handle("mp_beta_flag_spawnpoint"))
-			v6 = text.field("mp_flag_player_won_flag_b", 0)
-			global.set_int("RedScore", global.pog_int("RedScore") + 1)
-			_pc = 23351
-			continue
-		elif _pc == 23351:
+				v7 = sim.find_by_name("Beta Flag")
+				v8 = isim.cast(global.handle("mp_beta_flag_spawnpoint"))
+				v6 = text.field("mp_flag_player_won_flag_b", 0)
+				global.set_int("RedScore", global.pog_int("RedScore") + 1)
 			sim.detach_child(iship.cast(v1), v7)
 			object.remove_property(v1, "mp_has_opponent_flag")
 			await local_5740(v7, v8)
 			v9 = _pog_spawn(local_18921.bind(v1, _pog_clone(v6)))
 			_pog_detach(v9)
-			_pc = 24046
-			continue
-		elif _pc == 23492:
+		55:
 			if _pog_eq(v3, text.field("mp_flag_team_a", 0)):
-				_pc = 23525
-				continue
+				await local_5740(v1, sim.cast(global.handle("mp_alpha_flag_spawnpoint")))
 			else:
-				_pc = 23582
-				continue
-		elif _pc == 23525:
-			await local_5740(v1, sim.cast(global.handle("mp_alpha_flag_spawnpoint")))
-			_pc = 23634
-			continue
-		elif _pc == 23582:
-			await local_5740(v1, sim.cast(global.handle("mp_beta_flag_spawnpoint")))
-			_pc = 23634
-			continue
-		elif _pc == 23634:
+				await local_5740(v1, sim.cast(global.handle("mp_beta_flag_spawnpoint")))
 			imultiplay.client_add_respawn_effect(iship.cast(v1))
-			_pc = 23666
-			continue
-		elif _pc == 23666:
+		57:
 			v7 = sim.find_by_name(v3)
 			v4 = isim.faction(isim.cast(v7))
 			if _pog_eq(v4, v5):
-				_pc = 23743
-				continue
+				v8 = isim.cast(global.handle("mp_beta_flag_spawnpoint"))
 			else:
-				_pc = 23787
-				continue
-		elif _pc == 23743:
-			v8 = isim.cast(global.handle("mp_beta_flag_spawnpoint"))
-			_pc = 23826
-			continue
-		elif _pc == 23787:
-			v8 = isim.cast(global.handle("mp_alpha_flag_spawnpoint"))
-			_pc = 23826
-			continue
-		elif _pc == 23826:
+				v8 = isim.cast(global.handle("mp_alpha_flag_spawnpoint"))
 			sim.detach_child(iship.cast(v1), v7)
 			object.remove_property(v1, "mp_has_opponent_flag")
 			await local_5740(v7, v8)
-			_pc = 24046
-			continue
-		elif _pc == 23918:
+		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
-			_pc = 24046
-			continue
-		elif _pc == 23973:
-			_pc = 24046
-			continue
-		elif _pc == 23978:
-			if 1 != v0:
-				_pc = 23991
-				continue
-			else:
-				_pc = 22267
-				continue
-		elif _pc == 23991:
-			if 15 != v0:
-				_pc = 24000
-				continue
-			else:
-				_pc = 22582
-				continue
-		elif _pc == 24000:
-			if 22 != v0:
-				_pc = 24009
-				continue
-			else:
-				_pc = 22654
-				continue
-		elif _pc == 24009:
-			if 33 != v0:
-				_pc = 24018
-				continue
-			else:
-				_pc = 23023
-				continue
-		elif _pc == 24018:
-			if 55 != v0:
-				_pc = 24027
-				continue
-			else:
-				_pc = 23492
-				continue
-		elif _pc == 24027:
-			if 57 != v0:
-				_pc = 24036
-				continue
-			else:
-				_pc = 23666
-				continue
-		elif _pc == 24036:
-			if 204 != v0:
-				_pc = 24046
-				continue
-			else:
-				_pc = 23918
-				continue
-		elif _pc == 24046:
 			return 0
-		else:
-			return 0
+	return 0
 	return 0
 
 func client_default_taunt1() -> Variant:

@@ -305,153 +305,59 @@ func local_6028(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 6028
-	while true:
-		if _pc == 6028:
-			v3 = 0
-			v5 = 0
-			v6 = iship.cast(group.leader(v1))
-			await iconversation.begin()
-			await iconversation.add_response("a1_m01_option_player_c2_option_1_special_tour", "a1_m01_dialogue_player_c2_option_1_special_tour")
-			await iconversation.add_response("a1_m01_text_player_c2_option_2_er_yeah", "a1_m01_dialogue_player_c2_option_2_er_yeah")
-			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
-			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c2_hm_vessel_mona_lisa")
-			_pc = 6594
-			continue
-		elif _pc == 6221:
+	v3 = 0
+	v5 = 0
+	v6 = iship.cast(group.leader(v1))
+	await iconversation.begin()
+	await iconversation.add_response("a1_m01_option_player_c2_option_1_special_tour", "a1_m01_dialogue_player_c2_option_1_special_tour")
+	await iconversation.add_response("a1_m01_text_player_c2_option_2_er_yeah", "a1_m01_dialogue_player_c2_option_2_er_yeah")
+	await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
+	v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c2_hm_vessel_mona_lisa")
+	match v4:
+		1:
 			v3 = v3 + 1
-			_pc = 6234
-			continue
-		elif _pc == 6234:
+		2:
 			await iconversation.add_response("a1_m01_text_player_c3_option_1_after_my_ex_girlfried", "a1_m01_dialogue_player_c3_option_1_my_ex_girlfriend")
 			await iconversation.add_response("a1_m01_text_player_c3_option_2_its_my_favourite", "a1_m01_dialogue_player_c3_option_2_its_my_favourite")
 			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
 			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c3_i_see")
 			if v4 == 3:
-				_pc = 6365
-				continue
-			else:
-				_pc = 6378
-				continue
-		elif _pc == 6365:
-			_pc = 6625
-			continue
-		elif _pc == 6378:
+				pass
 			if v4 == 2:
-				_pc = 6391
-				continue
-			else:
-				_pc = 6404
-				continue
-		elif _pc == 6391:
-			v3 = v3 + 1
-			_pc = 6404
-			continue
-		elif _pc == 6404:
+				v3 = v3 + 1
 			await iconversation.add_response("a1_m01_text_player_c4_option_1_my_last_one", "a1_m01_dialogue_player_c4_option_1_my_last_one")
 			await iconversation.add_response("a1_m01_text_player_c4_option_2_this_is_a_tug", "a1_m01_dialogue_player_c4_option_2_this_is_a_tug")
 			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
 			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c4_right_so_why")
 			if v4 == 3:
-				_pc = 6535
-				continue
-			else:
-				_pc = 6547
-				continue
-		elif _pc == 6535:
-			v5 = 1
-			_pc = 6625
-			continue
-		elif _pc == 6547:
+				v5 = 1
 			if v4 == 1:
-				_pc = 6559
-				continue
-			else:
-				_pc = 6572
-				continue
-		elif _pc == 6559:
-			v3 = v3 + 1
-			_pc = 6572
-			continue
-		elif _pc == 6572:
-			_pc = 6625
-			continue
-		elif _pc == 6577:
+				v3 = v3 + 1
+		3:
 			v5 = 1
-			_pc = 6625
-			continue
-		elif _pc == 6589:
-			_pc = 6625
-			continue
-		elif _pc == 6594:
-			if 1 != v4:
-				_pc = 6607
-				continue
-			else:
-				_pc = 6221
-				continue
-		elif _pc == 6607:
-			if 2 != v4:
-				_pc = 6616
-				continue
-			else:
-				_pc = 6234
-				continue
-		elif _pc == 6616:
-			if 3 != v4:
-				_pc = 6625
-				continue
-			else:
-				_pc = 6577
-				continue
-		elif _pc == 6625:
-			if v5:
-				_pc = 6635
-				continue
-			else:
-				_pc = 6875
-				continue
-		elif _pc == 6635:
-			sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
-			await iconversation.say(v6, "", "a1_m01_dialogue_police_c2_response_3_where")
-			await iconversation.say(0, "name_jafs", "a1_m01_dialogue_jafs_lets_move")
-			await _pog_wait(3.0)
-			sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
-			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
-			await iconversation.end()
-			iai.give_attack_order(v1, v0)
-			return v4
-		elif _pc == 6870:
-			_pc = 7112
-			continue
-		elif _pc == 6875:
-			if v3 >= 2:
-				_pc = 6888
-				continue
-			else:
-				_pc = 7005
-				continue
-		elif _pc == 6888:
+	if v5:
+		sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
+		await iconversation.say(v6, "", "a1_m01_dialogue_police_c2_response_3_where")
+		await iconversation.say(0, "name_jafs", "a1_m01_dialogue_jafs_lets_move")
+		await _pog_wait(3.0)
+		sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
+		await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
+		await iconversation.end()
+		iai.give_attack_order(v1, v0)
+		return
+	else:
+		if v3 >= 2:
 			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_right")
 			await iconversation.end()
 			state.set_progress(v2, 6)
 			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v1, _pog_clone("Random"))))
-			_pc = 7112
-			continue
-		elif _pc == 7000:
-			_pc = 7112
-			continue
-		elif _pc == 7005:
+			return
+		else:
 			await iconversation.say(v6, "", "a1_m01_dialogue_police_not_convinced")
 			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
 			await iconversation.end()
 			iai.give_attack_order(v1, v0)
-			_pc = 7112
-			continue
-		elif _pc == 7112:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_7114(v0, v1, v2, v3) -> Variant:

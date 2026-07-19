@@ -23938,729 +23938,218 @@ func local_365870() -> Variant:
 
 func local_366027() -> Variant:
 	var v0: Variant = 0
-	var _pc: int = 366027
-	while true:
-		if _pc == 366027:
-			global.create_bool("g_repeat_last_string", 2, 0)
-			text.add("csv:/text/cargo_list")
-			text.add("csv:/text/cargo_list_addendum")
-			text.add("csv:/text/cargo_list_addendum_2")
-			text.add("csv:/text/clusters")
-			text.add("csv:/text/dioramas")
-			text.add("csv:/text/director")
-			text.add("csv:/text/email")
-			text.add("csv:/text/faction_names")
-			text.add("csv:/text/gui")
-			text.add("csv:/text/gui_addendum")
-			text.add("csv:/text/gui_addendum_2")
-			text.add("csv:/text/gui_addendum_3")
-			text.add("csv:/text/gui_addendum_4")
-			text.add("csv:/text/gui_addendum_5")
-			text.add("csv:/text/hud")
-			text.add("csv:/text/hud_addendum")
-			text.add("csv:/text/input")
-			text.add("csv:/text/instant_action")
-			text.add("csv:/text/instant_action_addendum")
-			text.add("csv:/text/jafs_dialogue")
-			text.add("csv:/text/jafs_dialogue_addendum")
-			text.add("csv:/text/ldsi")
-			text.add("csv:/text/log")
-			text.add("csv:/text/log_addendum")
-			text.add("csv:/text/log_addendum_2")
-			text.add("csv:/text/names")
-			text.add("csv:/text/mount_points")
-			text.add("csv:/text/objectives")
-			text.add("csv:/text/objectives_addendum")
-			text.add("csv:/text/player_ships")
-			text.add("csv:/text/player_systems")
-			text.add("csv:/text/player_systems_addendum")
-			text.add("csv:/text/ship_names")
-			text.add("csv:/text/statistics")
-			text.add("csv:/text/stock")
-			text.add("csv:/text/stock_addendum")
-			text.add("csv:/text/subtargets")
-			text.add("csv:/text/utils")
-			text.add("csv:/text/wingmen")
-			text.add("csv:/text/wingmen_addendum")
-			text.add("csv:/text/wingmen_addendum_2")
-			_pc = 366917
-			continue
-		elif _pc == 366917:
-			if 1:
-				_pc = 366923
-				continue
-			else:
-				_pc = 369343
-				continue
-		elif _pc == 366923:
-			await iconversation.begin()
-			await iconversation.add_response("cargo_list.csv", "I'd like to see file cargo_list.csv, please")
-			await iconversation.add_response("cargo_list_addendum.csv", "I'd like to see file cargo_list_addendum.csv, please")
-			await iconversation.add_response("cargo_list_addendum_2.csv", "I'd like to see file cargo_list_addendum_2.csv, please")
-			await iconversation.add_response("clusters.csv", "I'd like to see file clusters.csv, please")
-			await iconversation.add_response("dioramas.csv", "I'd like to see file dioramas.csv, please")
-			await iconversation.add_response("director.csv", "I'd like to see file director.csv, please")
-			await iconversation.add_response("email.csv", "I'd like to see file email.csv, please")
-			await iconversation.add_response("faction_names.csv", "I'd like to see file faction_names.csv, please")
-			await iconversation.add_response("gui.csv", "I'd like to see file gui.csv, please")
-			await iconversation.add_response("gui_addendum.csv", "I'd like to see file gui_addendum.csv, please")
-			await iconversation.add_response("gui_addendum_2.csv", "I'd like to see file gui_addendum_2.csv, please")
-			await iconversation.add_response("gui_addendum_3.csv", "I'd like to see file gui_addendum_3.csv, please")
-			await iconversation.add_response("gui_addendum_4.csv", "I'd like to see file gui_addendum_4.csv, please")
-			await iconversation.add_response("gui_addendum_5.csv", "I'd like to see file gui_addendum_5.csv, please")
-			await iconversation.add_response("hud.csv", "I'd like to see file hud.csv, please")
-			await iconversation.add_response("hud_addendum.csv", "I'd like to see file hud_addendum.csv, please")
-			await iconversation.add_response("input.csv", "I'd like to see file input.csv, please")
-			await iconversation.add_response("instant_action.csv", "I'd like to see file instant_action.csv, please")
-			await iconversation.add_response("instant_action_addendum.csv", "I'd like to see file instant_action_addendum.csv, please")
-			await iconversation.add_response("jafs_dialogue.csv", "I'd like to see file jafs_dialogue.csv, please")
-			await iconversation.add_response("jafs_dialogue_addendum.csv", "I'd like to see file jafs_dialogue_addendum.csv, please")
-			await iconversation.add_response("ldsi.csv", "I'd like to see file ldsi.csv, please")
-			await iconversation.add_response("log.csv", "I'd like to see file log.csv, please")
-			await iconversation.add_response("log_addendum.csv", "I'd like to see file log_addendum.csv, please")
-			await iconversation.add_response("log_addendum_2.csv", "I'd like to see file log_addendum_2.csv, please")
-			await iconversation.add_response("names.csv", "I'd like to see file names.csv, please")
-			await iconversation.add_response("mount_points.csv", "I'd like to see file mount_points.csv, please")
-			await iconversation.add_response("objectives.csv", "I'd like to see file objectives.csv, please")
-			await iconversation.add_response("objectives_addendum.csv", "I'd like to see file objectives_addendum.csv, please")
-			await iconversation.add_response("player_ships.csv", "I'd like to see file player_ships.csv, please")
-			await iconversation.add_response("player_systems.csv", "I'd like to see file player_systems.csv, please")
-			await iconversation.add_response("player_systems_addendum.csv", "I'd like to see file player_systems_addendum.csv, please")
-			await iconversation.add_response("ship_names.csv", "I'd like to see file ship_names.csv, please")
-			await iconversation.add_response("statistics.csv", "I'd like to see file statistics.csv, please")
-			await iconversation.add_response("stock.csv", "I'd like to see file stock.csv, please")
-			await iconversation.add_response("stock_addendum.csv", "I'd like to see file stock_addendum.csv, please")
-			await iconversation.add_response("subtargets.csv", "I'd like to see file subtargets.csv, please")
-			await iconversation.add_response("utils.csv", "I'd like to see file utils.csv, please")
-			await iconversation.add_response("wingmen.csv", "I'd like to see file wingmen.csv, please")
-			await iconversation.add_response("wingmen_addendum.csv", "I'd like to see file wingmen_addendum.csv, please")
-			await iconversation.add_response("wingmen_addendum_2.csv", "I'd like to see file wingmen_addendum_2.csv, please")
-			v0 = await iconversation.ask(0, "particle_employee", "which file do you want to test?")
-			await iconversation.end()
-			_pc = 368964
-			continue
-		elif _pc == 368098:
-			await local_0()
-			_pc = 369337
-			continue
-		elif _pc == 368118:
-			_pc = 368119
-			continue
-		elif _pc == 368119:
-			await local_34191()
-			_pc = 369337
-			continue
-		elif _pc == 368139:
-			_pc = 368140
-			continue
-		elif _pc == 368140:
-			await local_41894()
-			_pc = 369337
-			continue
-		elif _pc == 368160:
-			_pc = 368161
-			continue
-		elif _pc == 368161:
-			await local_43822()
-			_pc = 369337
-			continue
-		elif _pc == 368181:
-			_pc = 368182
-			continue
-		elif _pc == 368182:
-			await local_45057()
-			_pc = 369337
-			continue
-		elif _pc == 368202:
-			_pc = 368203
-			continue
-		elif _pc == 368203:
-			await local_45599()
-			_pc = 369337
-			continue
-		elif _pc == 368223:
-			_pc = 368224
-			continue
-		elif _pc == 368224:
-			await local_47296()
-			_pc = 369337
-			continue
-		elif _pc == 368244:
-			_pc = 368245
-			continue
-		elif _pc == 368245:
-			await local_62160()
-			_pc = 369337
-			continue
-		elif _pc == 368265:
-			_pc = 368266
-			continue
-		elif _pc == 368266:
-			await local_66244()
-			_pc = 369337
-			continue
-		elif _pc == 368286:
-			_pc = 368287
-			continue
-		elif _pc == 368287:
-			await local_90733()
-			_pc = 369337
-			continue
-		elif _pc == 368307:
-			_pc = 368308
-			continue
-		elif _pc == 368308:
-			await local_93431()
-			_pc = 369337
-			continue
-		elif _pc == 368328:
-			_pc = 368329
-			continue
-		elif _pc == 368329:
-			await local_93588()
-			_pc = 369337
-			continue
-		elif _pc == 368349:
-			_pc = 368350
-			continue
-		elif _pc == 368350:
-			await local_93822()
-			_pc = 369337
-			continue
-		elif _pc == 368370:
-			_pc = 368371
-			continue
-		elif _pc == 368371:
-			await local_93902()
-			_pc = 369337
-			continue
-		elif _pc == 368391:
-			_pc = 368392
-			continue
-		elif _pc == 368392:
-			await local_97062()
-			_pc = 369337
-			continue
-		elif _pc == 368412:
-			_pc = 368413
-			continue
-		elif _pc == 368413:
-			await local_111926()
-			_pc = 369337
-			continue
-		elif _pc == 368433:
-			_pc = 368434
-			continue
-		elif _pc == 368434:
-			await local_112776()
-			_pc = 369337
-			continue
-		elif _pc == 368454:
-			_pc = 368455
-			continue
-		elif _pc == 368455:
-			await local_128102()
-			_pc = 369337
-			continue
-		elif _pc == 368475:
-			_pc = 368476
-			continue
-		elif _pc == 368476:
-			await local_128567()
-			_pc = 369337
-			continue
-		elif _pc == 368496:
-			_pc = 368497
-			continue
-		elif _pc == 368497:
-			await local_128801()
-			_pc = 369337
-			continue
-		elif _pc == 368517:
-			_pc = 368518
-			continue
-		elif _pc == 368518:
-			await local_129497()
-			_pc = 369337
-			continue
-		elif _pc == 368538:
-			_pc = 368539
-			continue
-		elif _pc == 368539:
-			await local_132349()
-			_pc = 369337
-			continue
-		elif _pc == 368559:
-			_pc = 368560
-			continue
-		elif _pc == 368560:
-			await local_132429()
-			_pc = 369337
-			continue
-		elif _pc == 368580:
-			_pc = 368581
-			continue
-		elif _pc == 368581:
-			await local_139208()
-			_pc = 369337
-			continue
-		elif _pc == 368601:
-			_pc = 368602
-			continue
-		elif _pc == 368602:
-			await local_140905()
-			_pc = 369337
-			continue
-		elif _pc == 368622:
-			_pc = 368623
-			continue
-		elif _pc == 368623:
-			await local_142371()
-			_pc = 369337
-			continue
-		elif _pc == 368643:
-			_pc = 368644
-			continue
-		elif _pc == 368644:
-			await local_142990()
-			_pc = 369337
-			continue
-		elif _pc == 368664:
-			_pc = 368665
-			continue
-		elif _pc == 368665:
-			await local_144841()
-			_pc = 369337
-			continue
-		elif _pc == 368685:
-			_pc = 368686
-			continue
-		elif _pc == 368686:
-			await local_175644()
-			_pc = 369337
-			continue
-		elif _pc == 368706:
-			_pc = 368707
-			continue
-		elif _pc == 368707:
-			await local_175647()
-			_pc = 369337
-			continue
-		elif _pc == 368727:
-			_pc = 368728
-			continue
-		elif _pc == 368728:
-			await local_175958()
-			_pc = 369337
-			continue
-		elif _pc == 368748:
-			_pc = 368749
-			continue
-		elif _pc == 368749:
-			await local_188743()
-			_pc = 369337
-			continue
-		elif _pc == 368769:
-			_pc = 368770
-			continue
-		elif _pc == 368770:
-			await local_189362()
-			_pc = 369337
-			continue
-		elif _pc == 368790:
-			_pc = 368791
-			continue
-		elif _pc == 368791:
-			await local_341594()
-			_pc = 369337
-			continue
-		elif _pc == 368811:
-			_pc = 368812
-			continue
-		elif _pc == 368812:
-			await local_343060()
-			_pc = 369337
-			continue
-		elif _pc == 368832:
-			_pc = 368833
-			continue
-		elif _pc == 368833:
-			await local_357847()
-			_pc = 369337
-			continue
-		elif _pc == 368853:
-			_pc = 368854
-			continue
-		elif _pc == 368854:
-			await local_359082()
-			_pc = 369337
-			continue
-		elif _pc == 368874:
-			_pc = 368875
-			continue
-		elif _pc == 368875:
-			await local_362165()
-			_pc = 369337
-			continue
-		elif _pc == 368895:
-			_pc = 368896
-			continue
-		elif _pc == 368896:
-			await local_363246()
-			_pc = 369337
-			continue
-		elif _pc == 368916:
-			_pc = 368917
-			continue
-		elif _pc == 368917:
-			await local_365405()
-			_pc = 369337
-			continue
-		elif _pc == 368937:
-			_pc = 368938
-			continue
-		elif _pc == 368938:
-			await local_365870()
-			_pc = 369337
-			continue
-		elif _pc == 368958:
-			_pc = 369337
-			continue
-		elif _pc == 368964:
-			if 1 != v0:
-				_pc = 368977
-				continue
-			else:
-				_pc = 368098
-				continue
-		elif _pc == 368977:
-			if 2 != v0:
-				_pc = 368986
-				continue
-			else:
-				_pc = 368119
-				continue
-		elif _pc == 368986:
-			if 3 != v0:
-				_pc = 368995
-				continue
-			else:
-				_pc = 368140
-				continue
-		elif _pc == 368995:
-			if 4 != v0:
-				_pc = 369004
-				continue
-			else:
-				_pc = 368161
-				continue
-		elif _pc == 369004:
-			if 5 != v0:
-				_pc = 369013
-				continue
-			else:
-				_pc = 368182
-				continue
-		elif _pc == 369013:
-			if 6 != v0:
-				_pc = 369022
-				continue
-			else:
-				_pc = 368203
-				continue
-		elif _pc == 369022:
-			if 7 != v0:
-				_pc = 369031
-				continue
-			else:
-				_pc = 368224
-				continue
-		elif _pc == 369031:
-			if 8 != v0:
-				_pc = 369040
-				continue
-			else:
-				_pc = 368245
-				continue
-		elif _pc == 369040:
-			if 9 != v0:
-				_pc = 369049
-				continue
-			else:
-				_pc = 368266
-				continue
-		elif _pc == 369049:
-			if 10 != v0:
-				_pc = 369058
-				continue
-			else:
-				_pc = 368287
-				continue
-		elif _pc == 369058:
-			if 11 != v0:
-				_pc = 369067
-				continue
-			else:
-				_pc = 368308
-				continue
-		elif _pc == 369067:
-			if 12 != v0:
-				_pc = 369076
-				continue
-			else:
-				_pc = 368329
-				continue
-		elif _pc == 369076:
-			if 13 != v0:
-				_pc = 369085
-				continue
-			else:
-				_pc = 368350
-				continue
-		elif _pc == 369085:
-			if 14 != v0:
-				_pc = 369094
-				continue
-			else:
-				_pc = 368371
-				continue
-		elif _pc == 369094:
-			if 15 != v0:
-				_pc = 369103
-				continue
-			else:
-				_pc = 368392
-				continue
-		elif _pc == 369103:
-			if 16 != v0:
-				_pc = 369112
-				continue
-			else:
-				_pc = 368413
-				continue
-		elif _pc == 369112:
-			if 17 != v0:
-				_pc = 369121
-				continue
-			else:
-				_pc = 368434
-				continue
-		elif _pc == 369121:
-			if 18 != v0:
-				_pc = 369130
-				continue
-			else:
-				_pc = 368455
-				continue
-		elif _pc == 369130:
-			if 19 != v0:
-				_pc = 369139
-				continue
-			else:
-				_pc = 368476
-				continue
-		elif _pc == 369139:
-			if 20 != v0:
-				_pc = 369148
-				continue
-			else:
-				_pc = 368497
-				continue
-		elif _pc == 369148:
-			if 21 != v0:
-				_pc = 369157
-				continue
-			else:
-				_pc = 368518
-				continue
-		elif _pc == 369157:
-			if 22 != v0:
-				_pc = 369166
-				continue
-			else:
-				_pc = 368539
-				continue
-		elif _pc == 369166:
-			if 23 != v0:
-				_pc = 369175
-				continue
-			else:
-				_pc = 368560
-				continue
-		elif _pc == 369175:
-			if 24 != v0:
-				_pc = 369184
-				continue
-			else:
-				_pc = 368581
-				continue
-		elif _pc == 369184:
-			if 25 != v0:
-				_pc = 369193
-				continue
-			else:
-				_pc = 368602
-				continue
-		elif _pc == 369193:
-			if 26 != v0:
-				_pc = 369202
-				continue
-			else:
-				_pc = 368623
-				continue
-		elif _pc == 369202:
-			if 27 != v0:
-				_pc = 369211
-				continue
-			else:
-				_pc = 368644
-				continue
-		elif _pc == 369211:
-			if 28 != v0:
-				_pc = 369220
-				continue
-			else:
-				_pc = 368665
-				continue
-		elif _pc == 369220:
-			if 29 != v0:
-				_pc = 369229
-				continue
-			else:
-				_pc = 368686
-				continue
-		elif _pc == 369229:
-			if 30 != v0:
-				_pc = 369238
-				continue
-			else:
-				_pc = 368707
-				continue
-		elif _pc == 369238:
-			if 31 != v0:
-				_pc = 369247
-				continue
-			else:
-				_pc = 368728
-				continue
-		elif _pc == 369247:
-			if 32 != v0:
-				_pc = 369256
-				continue
-			else:
-				_pc = 368749
-				continue
-		elif _pc == 369256:
-			if 33 != v0:
-				_pc = 369265
-				continue
-			else:
-				_pc = 368770
-				continue
-		elif _pc == 369265:
-			if 34 != v0:
-				_pc = 369274
-				continue
-			else:
-				_pc = 368791
-				continue
-		elif _pc == 369274:
-			if 35 != v0:
-				_pc = 369283
-				continue
-			else:
-				_pc = 368812
-				continue
-		elif _pc == 369283:
-			if 36 != v0:
-				_pc = 369292
-				continue
-			else:
-				_pc = 368833
-				continue
-		elif _pc == 369292:
-			if 37 != v0:
-				_pc = 369301
-				continue
-			else:
-				_pc = 368854
-				continue
-		elif _pc == 369301:
-			if 38 != v0:
-				_pc = 369310
-				continue
-			else:
-				_pc = 368875
-				continue
-		elif _pc == 369310:
-			if 39 != v0:
-				_pc = 369319
-				continue
-			else:
-				_pc = 368896
-				continue
-		elif _pc == 369319:
-			if 40 != v0:
-				_pc = 369328
-				continue
-			else:
-				_pc = 368917
-				continue
-		elif _pc == 369328:
-			if 41 != v0:
-				_pc = 369337
-				continue
-			else:
-				_pc = 368938
-				continue
-		elif _pc == 369337:
-			_pc = 366917
-			continue
-		elif _pc == 369343:
-			text.remove("csv:/text/cargo_list")
-			text.remove("csv:/text/cargo_list_addendum")
-			text.remove("csv:/text/cargo_list_addendum_2")
-			text.remove("csv:/text/clusters")
-			text.remove("csv:/text/dioramas")
-			text.remove("csv:/text/director")
-			text.remove("csv:/text/email")
-			text.remove("csv:/text/faction_names")
-			text.remove("csv:/text/gui")
-			text.remove("csv:/text/gui_addendum")
-			text.remove("csv:/text/gui_addendum_2")
-			text.remove("csv:/text/gui_addendum_3")
-			text.remove("csv:/text/gui_addendum_4")
-			text.remove("csv:/text/gui_addendum_5")
-			text.remove("csv:/text/hud")
-			text.remove("csv:/text/hud_addendum")
-			text.remove("csv:/text/input")
-			text.remove("csv:/text/instant_action")
-			text.remove("csv:/text/instant_action_addendum")
-			text.remove("csv:/text/jafs_dialogue")
-			text.remove("csv:/text/jafs_dialogue_addendum")
-			text.remove("csv:/text/ldsi")
-			text.remove("csv:/text/log")
-			text.remove("csv:/text/log_addendum")
-			text.remove("csv:/text/log_addendum_2")
-			text.remove("csv:/text/names")
-			text.remove("csv:/text/mount_points")
-			text.remove("csv:/text/objectives")
-			text.remove("csv:/text/objectives_addendum")
-			text.remove("csv:/text/player_ships")
-			text.remove("csv:/text/player_systems")
-			text.remove("csv:/text/player_systems_addendum")
-			text.remove("csv:/text/ship_names")
-			text.remove("csv:/text/statistics")
-			text.remove("csv:/text/stock")
-			text.remove("csv:/text/stock_addendum")
-			text.remove("csv:/text/subtargets")
-			text.remove("csv:/text/utils")
-			text.remove("csv:/text/wingmen")
-			text.remove("csv:/text/wingmen_addendum")
-			text.remove("csv:/text/wingmen_addendum_2")
-			return
-		else:
-			return 0
+	global.create_bool("g_repeat_last_string", 2, 0)
+	text.add("csv:/text/cargo_list")
+	text.add("csv:/text/cargo_list_addendum")
+	text.add("csv:/text/cargo_list_addendum_2")
+	text.add("csv:/text/clusters")
+	text.add("csv:/text/dioramas")
+	text.add("csv:/text/director")
+	text.add("csv:/text/email")
+	text.add("csv:/text/faction_names")
+	text.add("csv:/text/gui")
+	text.add("csv:/text/gui_addendum")
+	text.add("csv:/text/gui_addendum_2")
+	text.add("csv:/text/gui_addendum_3")
+	text.add("csv:/text/gui_addendum_4")
+	text.add("csv:/text/gui_addendum_5")
+	text.add("csv:/text/hud")
+	text.add("csv:/text/hud_addendum")
+	text.add("csv:/text/input")
+	text.add("csv:/text/instant_action")
+	text.add("csv:/text/instant_action_addendum")
+	text.add("csv:/text/jafs_dialogue")
+	text.add("csv:/text/jafs_dialogue_addendum")
+	text.add("csv:/text/ldsi")
+	text.add("csv:/text/log")
+	text.add("csv:/text/log_addendum")
+	text.add("csv:/text/log_addendum_2")
+	text.add("csv:/text/names")
+	text.add("csv:/text/mount_points")
+	text.add("csv:/text/objectives")
+	text.add("csv:/text/objectives_addendum")
+	text.add("csv:/text/player_ships")
+	text.add("csv:/text/player_systems")
+	text.add("csv:/text/player_systems_addendum")
+	text.add("csv:/text/ship_names")
+	text.add("csv:/text/statistics")
+	text.add("csv:/text/stock")
+	text.add("csv:/text/stock_addendum")
+	text.add("csv:/text/subtargets")
+	text.add("csv:/text/utils")
+	text.add("csv:/text/wingmen")
+	text.add("csv:/text/wingmen_addendum")
+	text.add("csv:/text/wingmen_addendum_2")
+	while 1:
+		await iconversation.begin()
+		await iconversation.add_response("cargo_list.csv", "I'd like to see file cargo_list.csv, please")
+		await iconversation.add_response("cargo_list_addendum.csv", "I'd like to see file cargo_list_addendum.csv, please")
+		await iconversation.add_response("cargo_list_addendum_2.csv", "I'd like to see file cargo_list_addendum_2.csv, please")
+		await iconversation.add_response("clusters.csv", "I'd like to see file clusters.csv, please")
+		await iconversation.add_response("dioramas.csv", "I'd like to see file dioramas.csv, please")
+		await iconversation.add_response("director.csv", "I'd like to see file director.csv, please")
+		await iconversation.add_response("email.csv", "I'd like to see file email.csv, please")
+		await iconversation.add_response("faction_names.csv", "I'd like to see file faction_names.csv, please")
+		await iconversation.add_response("gui.csv", "I'd like to see file gui.csv, please")
+		await iconversation.add_response("gui_addendum.csv", "I'd like to see file gui_addendum.csv, please")
+		await iconversation.add_response("gui_addendum_2.csv", "I'd like to see file gui_addendum_2.csv, please")
+		await iconversation.add_response("gui_addendum_3.csv", "I'd like to see file gui_addendum_3.csv, please")
+		await iconversation.add_response("gui_addendum_4.csv", "I'd like to see file gui_addendum_4.csv, please")
+		await iconversation.add_response("gui_addendum_5.csv", "I'd like to see file gui_addendum_5.csv, please")
+		await iconversation.add_response("hud.csv", "I'd like to see file hud.csv, please")
+		await iconversation.add_response("hud_addendum.csv", "I'd like to see file hud_addendum.csv, please")
+		await iconversation.add_response("input.csv", "I'd like to see file input.csv, please")
+		await iconversation.add_response("instant_action.csv", "I'd like to see file instant_action.csv, please")
+		await iconversation.add_response("instant_action_addendum.csv", "I'd like to see file instant_action_addendum.csv, please")
+		await iconversation.add_response("jafs_dialogue.csv", "I'd like to see file jafs_dialogue.csv, please")
+		await iconversation.add_response("jafs_dialogue_addendum.csv", "I'd like to see file jafs_dialogue_addendum.csv, please")
+		await iconversation.add_response("ldsi.csv", "I'd like to see file ldsi.csv, please")
+		await iconversation.add_response("log.csv", "I'd like to see file log.csv, please")
+		await iconversation.add_response("log_addendum.csv", "I'd like to see file log_addendum.csv, please")
+		await iconversation.add_response("log_addendum_2.csv", "I'd like to see file log_addendum_2.csv, please")
+		await iconversation.add_response("names.csv", "I'd like to see file names.csv, please")
+		await iconversation.add_response("mount_points.csv", "I'd like to see file mount_points.csv, please")
+		await iconversation.add_response("objectives.csv", "I'd like to see file objectives.csv, please")
+		await iconversation.add_response("objectives_addendum.csv", "I'd like to see file objectives_addendum.csv, please")
+		await iconversation.add_response("player_ships.csv", "I'd like to see file player_ships.csv, please")
+		await iconversation.add_response("player_systems.csv", "I'd like to see file player_systems.csv, please")
+		await iconversation.add_response("player_systems_addendum.csv", "I'd like to see file player_systems_addendum.csv, please")
+		await iconversation.add_response("ship_names.csv", "I'd like to see file ship_names.csv, please")
+		await iconversation.add_response("statistics.csv", "I'd like to see file statistics.csv, please")
+		await iconversation.add_response("stock.csv", "I'd like to see file stock.csv, please")
+		await iconversation.add_response("stock_addendum.csv", "I'd like to see file stock_addendum.csv, please")
+		await iconversation.add_response("subtargets.csv", "I'd like to see file subtargets.csv, please")
+		await iconversation.add_response("utils.csv", "I'd like to see file utils.csv, please")
+		await iconversation.add_response("wingmen.csv", "I'd like to see file wingmen.csv, please")
+		await iconversation.add_response("wingmen_addendum.csv", "I'd like to see file wingmen_addendum.csv, please")
+		await iconversation.add_response("wingmen_addendum_2.csv", "I'd like to see file wingmen_addendum_2.csv, please")
+		v0 = await iconversation.ask(0, "particle_employee", "which file do you want to test?")
+		await iconversation.end()
+		match v0:
+			1:
+				await local_0()
+			2:
+				await local_34191()
+			3:
+				await local_41894()
+			4:
+				await local_43822()
+			5:
+				await local_45057()
+			6:
+				await local_45599()
+			7:
+				await local_47296()
+			8:
+				await local_62160()
+			9:
+				await local_66244()
+			10:
+				await local_90733()
+			11:
+				await local_93431()
+			12:
+				await local_93588()
+			13:
+				await local_93822()
+			14:
+				await local_93902()
+			15:
+				await local_97062()
+			16:
+				await local_111926()
+			17:
+				await local_112776()
+			18:
+				await local_128102()
+			19:
+				await local_128567()
+			20:
+				await local_128801()
+			21:
+				await local_129497()
+			22:
+				await local_132349()
+			23:
+				await local_132429()
+			24:
+				await local_139208()
+			25:
+				await local_140905()
+			26:
+				await local_142371()
+			27:
+				await local_142990()
+			28:
+				await local_144841()
+			29:
+				await local_175644()
+			30:
+				await local_175647()
+			31:
+				await local_175958()
+			32:
+				await local_188743()
+			33:
+				await local_189362()
+			34:
+				await local_341594()
+			35:
+				await local_343060()
+			36:
+				await local_357847()
+			37:
+				await local_359082()
+			38:
+				await local_362165()
+			39:
+				await local_363246()
+			40:
+				await local_365405()
+			41:
+				await local_365870()
+	text.remove("csv:/text/cargo_list")
+	text.remove("csv:/text/cargo_list_addendum")
+	text.remove("csv:/text/cargo_list_addendum_2")
+	text.remove("csv:/text/clusters")
+	text.remove("csv:/text/dioramas")
+	text.remove("csv:/text/director")
+	text.remove("csv:/text/email")
+	text.remove("csv:/text/faction_names")
+	text.remove("csv:/text/gui")
+	text.remove("csv:/text/gui_addendum")
+	text.remove("csv:/text/gui_addendum_2")
+	text.remove("csv:/text/gui_addendum_3")
+	text.remove("csv:/text/gui_addendum_4")
+	text.remove("csv:/text/gui_addendum_5")
+	text.remove("csv:/text/hud")
+	text.remove("csv:/text/hud_addendum")
+	text.remove("csv:/text/input")
+	text.remove("csv:/text/instant_action")
+	text.remove("csv:/text/instant_action_addendum")
+	text.remove("csv:/text/jafs_dialogue")
+	text.remove("csv:/text/jafs_dialogue_addendum")
+	text.remove("csv:/text/ldsi")
+	text.remove("csv:/text/log")
+	text.remove("csv:/text/log_addendum")
+	text.remove("csv:/text/log_addendum_2")
+	text.remove("csv:/text/names")
+	text.remove("csv:/text/mount_points")
+	text.remove("csv:/text/objectives")
+	text.remove("csv:/text/objectives_addendum")
+	text.remove("csv:/text/player_ships")
+	text.remove("csv:/text/player_systems")
+	text.remove("csv:/text/player_systems_addendum")
+	text.remove("csv:/text/ship_names")
+	text.remove("csv:/text/statistics")
+	text.remove("csv:/text/stock")
+	text.remove("csv:/text/stock_addendum")
+	text.remove("csv:/text/subtargets")
+	text.remove("csv:/text/utils")
+	text.remove("csv:/text/wingmen")
+	text.remove("csv:/text/wingmen_addendum")
+	text.remove("csv:/text/wingmen_addendum_2")
+	return
 	return 0
 
 func main() -> Variant:

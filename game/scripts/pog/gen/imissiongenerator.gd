@@ -970,375 +970,50 @@ func local_12188(v0, v1) -> Variant:
 
 func local_14543(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
-	var v5: Variant = 0
-	var v6: Variant = 0
-	var v7: Variant = 0
-	var v8: Variant = 0
-	var v9: Variant = 0
-	var v10: Variant = 0
-	var _pc: int = 14543
-	while true:
-		if _pc == 14543:
-			_pc = 14597
-			continue
-		elif _pc == 14553:
-			debug.print_string("iMissionGenerator: Sending communication")
-			debug.print_string("\n")
-			_pc = 14597
-			continue
-		elif _pc == 14597:
-			_pc = 15249
-			continue
-		elif _pc == 14602:
-			_pc = 14651
-			continue
-		elif _pc == 14607:
-			debug.print_string("iMissionGenerator: Sending Email")
-			debug.print_string("\n")
-			_pc = 14651
-			continue
-		elif _pc == 14651:
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: Sending communication")
+		debug.print_string("\n")
+	match v1:
+		4:
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: Sending Email")
+				debug.print_string("\n")
 			if not _pog_eq(object.string_property(v0, "patron_character_name"), ""):
-				_pc = 14690
-				continue
+				iemail.send_email(object.string_property(v0, "patron_character_name"), v3, v2, 0)
 			else:
-				_pc = 14746
-				continue
-		elif _pc == 14690:
-			iemail.send_email(object.string_property(v0, "patron_character_name"), v3, v2, 0)
-			_pc = 14778
-			continue
-		elif _pc == 14746:
-			iemail.send_email("Independent", v3, v2, 0)
-			_pc = 14778
-			continue
-		elif _pc == 14778:
-			_pc = 15303
-			continue
-		elif _pc == 14783:
-			await _pog_wait(1.0)
-			if _pog_eq(global.string("gl_genmission_jafs"), ""):
-				_pc = 14849
-				continue
-			else:
-				_pc = 14783
-				continue
-		elif _pc == 14849:
+				iemail.send_email("Independent", v3, v2, 0)
+			return 0
+		1:
+			while true:
+				await _pog_wait(1.0)
+				if not (not _pog_eq(global.string("gl_genmission_jafs"), "")):
+					break
 			global.set_string("gl_genmission_jafs", v2)
-			_pc = 15303
-			continue
-		elif _pc == 14880:
-			_pc = 14929
-			continue
-		elif _pc == 14885:
-			debug.print_string("iMissionGenerator: Clay shouts somat")
-			debug.print_string("\n")
-			_pc = 14929
-			continue
-		elif _pc == 14929:
+			return 0
+		3:
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: Clay shouts somat")
+				debug.print_string("\n")
 			icomms.shout(0, "name_lay", v2)
-			_pc = 15303
-			continue
-		elif _pc == 14961:
-			_pc = 15010
-			continue
-		elif _pc == 14966:
-			debug.print_string("iMissionGenerator: Smith sez somat")
-			debug.print_string("\n")
-			_pc = 15010
-			continue
-		elif _pc == 15010:
+			return 0
+		2:
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: Smith sez somat")
+				debug.print_string("\n")
 			icomms.shout(0, "name_smith", v2)
-			_pc = 15303
-			continue
-		elif _pc == 15042:
+			return 0
+		5:
 			await local_9666(v0)
-			_pc = 15110
-			continue
-		elif _pc == 15066:
-			debug.print_string("iMissionGenerator: Starting iGMTemplate tasks")
-			debug.print_string("\n")
-			_pc = 15110
-			continue
-		elif _pc == 15110:
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: Starting iGMTemplate tasks")
+				debug.print_string("\n")
 			v4 = isim.cast(object.handle_property(v0, "patron_ship_handle"))
 			await iconversation.one_liner(v4, "", v2)
-			_pc = 15303
-			continue
-		elif _pc == 15190:
-			_pc = 15239
-			continue
-		elif _pc == 15195:
-			debug.print_string("iMissionGenerator: iGeneratedMission.SendBriefing - Error, invalid briefing type !")
-			debug.print_string("\n")
-			_pc = 15239
-			continue
-		elif _pc == 15239:
-			_pc = 15303
-			continue
-		elif _pc == 15244:
-			_pc = 15303
-			continue
-		elif _pc == 15249:
-			if 4 != v1:
-				_pc = 15263
-				continue
-			else:
-				_pc = 14602
-				continue
-		elif _pc == 15263:
-			if 1 != v1:
-				_pc = 15271
-				continue
-			else:
-				_pc = 14783
-				continue
-		elif _pc == 15271:
-			if 3 != v1:
-				_pc = 15280
-				continue
-			else:
-				_pc = 14880
-				continue
-		elif _pc == 15280:
-			if 2 != v1:
-				_pc = 15289
-				continue
-			else:
-				_pc = 14961
-				continue
-		elif _pc == 15289:
-			if 5 != v1:
-				_pc = 15298
-				continue
-			else:
-				_pc = 15042
-				continue
-		elif _pc == 15298:
-			_pc = 15190
-			continue
-		elif _pc == 15303:
 			return 0
-		elif _pc == 15316:
-			debug.print_string("iMissionGenerator: Behaviour handler starts")
-			debug.print_string("\n")
-			_pc = 15360
-			continue
-		elif _pc == 15360:
-			if _pog_eq(v1, "TravelTo"):
-				_pc = 15378
-				continue
-			else:
-				_pc = 15664
-				continue
-		elif _pc == 15378:
-			if not _pog_eq(v2, "None"):
-				_pc = 15397
-				continue
-			else:
-				_pc = 15441
-				continue
-		elif _pc == 15397:
-			v4 = imapentity.find_by_name(await local_8034(v2))
-			_pc = 15480
-			continue
-		elif _pc == 15441:
-			v4 = imapentity.find_by_name(await local_8034(v3))
-			_pc = 15480
-			continue
-		elif _pc == 15480:
-			if _pog_is_null(v4):
-				_pc = 15493
-				continue
-			else:
-				_pc = 15622
-				continue
-		elif _pc == 15493:
-			_pc = 15622
-			continue
-		elif _pc == 15498:
-			debug.print_string("iMissionGenerator.BehaviourHandler: Error: Unable to create location handle from given parameters: ")
-			debug.print_string(v2)
-			debug.print_string("\n")
-			debug.print_string(v3)
-			debug.print_string("\n")
-			debug.print_string("iMissionGenerator.BehaviourHandler: Unable to create a location handle from given parameters\n")
-			_pc = 15622
-			continue
-		elif _pc == 15622:
-			_pog_detach(_pog_spawn(iscriptedorders.travel_to.bind(v0, v4)))
-			_pc = 16267
-			continue
-		elif _pc == 15664:
-			if _pog_eq(v1, "TravelBetween"):
-				_pc = 15682
-				continue
-			else:
-				_pc = 15968
-				continue
-		elif _pc == 15682:
-			if not _pog_eq(v2, "None"):
-				_pc = 15701
-				continue
-			else:
-				_pc = 15745
-				continue
-		elif _pc == 15701:
-			v4 = imapentity.find_by_name(await local_8034(v2))
-			_pc = 15784
-			continue
-		elif _pc == 15745:
-			v4 = imapentity.find_by_name(await local_8034(v3))
-			_pc = 15784
-			continue
-		elif _pc == 15784:
-			if _pog_is_null(v4):
-				_pc = 15797
-				continue
-			else:
-				_pc = 15926
-				continue
-		elif _pc == 15797:
-			_pc = 15926
-			continue
-		elif _pc == 15802:
-			debug.print_string("iMissionGenerator.BehaviourHandler: Error: Unable to create location handle from given parameters: ")
-			debug.print_string(v2)
-			debug.print_string("\n")
-			debug.print_string(v3)
-			debug.print_string("\n")
-			debug.print_string("iMissionGenerator.BehaviourHandler: Unable to create a location handle from given parameters")
-			_pc = 15926
-			continue
-		elif _pc == 15926:
-			_pog_detach(_pog_spawn(iscriptedorders.travel_between.bind(v0, v4)))
-			_pc = 16267
-			continue
-		elif _pc == 15968:
-			if _pog_eq(v1, "MonkeyAbout"):
-				_pc = 15986
-				continue
-			else:
-				_pc = 16267
-				continue
-		elif _pc == 15986:
-			if not _pog_eq(v2, "None"):
-				_pc = 16005
-				continue
-			else:
-				_pc = 16049
-				continue
-		elif _pc == 16005:
-			v4 = imapentity.find_by_name(await local_8034(v2))
-			_pc = 16088
-			continue
-		elif _pc == 16049:
-			v4 = imapentity.find_by_name(await local_8034(v3))
-			_pc = 16088
-			continue
-		elif _pc == 16088:
-			if _pog_is_null(v4):
-				_pc = 16101
-				continue
-			else:
-				_pc = 16230
-				continue
-		elif _pc == 16101:
-			_pc = 16230
-			continue
-		elif _pc == 16106:
-			debug.print_string("iMissionGenerator.BehaviourHandler: Error: Unable to create location handle from given parameters: ")
-			debug.print_string(v2)
-			debug.print_string("\n")
-			debug.print_string(v3)
-			debug.print_string("\n")
-			debug.print_string("iMissionGenerator.BehaviourHandler: Unable to create a location handle from given parameters")
-			_pc = 16230
-			continue
-		elif _pc == 16230:
-			_pog_detach(_pog_spawn(iscriptedorders.monkey_about.bind(v0, v4)))
-			_pc = 16267
-			continue
-		elif _pc == 16267:
-			return 0
-		elif _pc == 16333:
-			debug.print_string("iMissionGenerator: Installing mission cargo on ships")
-			debug.print_string("\n")
-			_pc = 16377
-			continue
-		elif _pc == 16377:
-			if _pog_eq(object.string_property(v0, "target_locomotion"), "Yes"):
-				_pc = 16415
-				continue
-			else:
-				_pc = 16422
-				continue
-		elif _pc == 16415:
-			v3 = 1
-			_pc = 16422
-			continue
-		elif _pc == 16422:
-			v4 = 0
-			_pc = 16429
-			continue
-		elif _pc == 16429:
-			if v4 < v7:
-				_pc = 16445
-				continue
-			else:
-				_pc = 17046
-				continue
-		elif _pc == 16445:
-			v10 = iship.cast(group.nth_sim(v1, v4))
-			v6 = object.int_property(v0, await local_29122("cargo_quantity", v4))
-			v5 = 0
-			_pc = 16544
-			continue
-		elif _pc == 16544:
-			if v5 < v6:
-				_pc = 16560
-				continue
-			else:
-				_pc = 17028
-				continue
-		elif _pc == 16560:
-			_pc = 16642
-			continue
-		elif _pc == 16565:
-			debug.print_string(string.join("iMissionGenerator.setupcargo: seting up cargo pod ", string.from_int(v5)))
-			debug.print_string("\n")
-			_pc = 16642
-			continue
-		elif _pc == 16642:
-			v8 = await iutilities.get_cargo_name_from_i_n_i(object.string_property(v0, await local_29122("required_cargo_type", v4)))
-			list.add_tail(v9, iship.create("ini:/sims/ships/utility/cargo_pod", string.join("Pod of ", v8)))
-			object.add_string_property(list.tail(v9), "mission_cargo", object.string_property(v0, await local_29122("required_cargo_type", v4)))
-			if v3:
-				_pc = 16864
-				continue
-			else:
-				_pc = 16919
-				continue
-		elif _pc == 16864:
-			iship.dock(iship.cast(list.tail(v9)), v10)
-			_pc = 17010
-			continue
-		elif _pc == 16919:
-			sim.place_near(iship.cast(list.get_nth(v9, v5)), imapentity.waypoint_for_entity(v2), math.random(600.0, 1000.0))
-			_pc = 17010
-			continue
-		elif _pc == 17010:
-			v5 = v5 + 1
-			_pc = 16544
-			continue
-		elif _pc == 17028:
-			v4 = v4 + 1
-			_pc = 16429
-			continue
-		elif _pc == 17046:
-			return 0
-		else:
-			return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: iGeneratedMission.SendBriefing - Error, invalid briefing type !")
+		debug.print_string("\n")
+	return 0
 	return 0
 
 func local_17063(v0, v1) -> Variant:
@@ -2779,418 +2454,81 @@ func local_37426(v0) -> Variant:
 
 func flush_g_ms(v0) -> Variant:
 	var v1: Variant = 0
-	var _pc: int = 37780
-	while true:
-		if _pc == 37780:
-			v0 = v0 - 4
-			v1 = 0
-			_pc = 37806
-			continue
-		elif _pc == 37806:
-			if v1 < v0:
-				_pc = 37822
-				continue
-			else:
-				_pc = 39079
-				continue
-		elif _pc == 37822:
-			_pc = 38742
-			continue
-		elif _pc == 37827:
-			await local_37426("a4_m11")
-			_pc = 39061
-			continue
-		elif _pc == 37853:
-			await local_37426("a4_m01")
-			_pc = 39061
-			continue
-		elif _pc == 37879:
-			await local_37426("a4_m03")
-			_pc = 39061
-			continue
-		elif _pc == 37905:
-			await local_37426("a4_m02")
-			_pc = 39061
-			continue
-		elif _pc == 37931:
-			await local_37426("a4_m14")
-			_pc = 39061
-			continue
-		elif _pc == 37957:
-			await local_37426("a4_m13")
-			_pc = 39061
-			continue
-		elif _pc == 37983:
-			await local_37426("a4_m10")
-			_pc = 39061
-			continue
-		elif _pc == 38009:
-			await local_37426("a4_m16")
-			_pc = 39061
-			continue
-		elif _pc == 38035:
-			await local_37426("a4_m12")
-			_pc = 39061
-			continue
-		elif _pc == 38061:
-			await local_37426("a4_m08")
-			_pc = 39061
-			continue
-		elif _pc == 38087:
-			await local_37426("a4_m20")
-			_pc = 39061
-			continue
-		elif _pc == 38113:
-			await local_37426("a4_m18")
-			_pc = 39061
-			continue
-		elif _pc == 38139:
-			await local_37426("a4_m06")
-			_pc = 39061
-			continue
-		elif _pc == 38165:
-			await local_37426("a4_m07")
-			_pc = 39061
-			continue
-		elif _pc == 38191:
-			await local_37426("a4_m04")
-			_pc = 39061
-			continue
-		elif _pc == 38217:
-			await local_37426("a4_m05")
-			_pc = 39061
-			continue
-		elif _pc == 38243:
-			await local_37426("a4_m23")
-			_pc = 39061
-			continue
-		elif _pc == 38269:
-			await local_37426("a4_m24")
-			_pc = 39061
-			continue
-		elif _pc == 38295:
-			await local_37426("a4_m25")
-			_pc = 39061
-			continue
-		elif _pc == 38321:
-			await local_37426("a4_m26")
-			_pc = 39061
-			continue
-		elif _pc == 38347:
-			await local_37426("a4_m27")
-			_pc = 39061
-			continue
-		elif _pc == 38373:
-			await local_37426("a4_m28")
-			_pc = 39061
-			continue
-		elif _pc == 38399:
-			await local_37426("a4_m29")
-			_pc = 39061
-			continue
-		elif _pc == 38425:
-			await local_37426("a4_m19")
-			_pc = 39061
-			continue
-		elif _pc == 38451:
-			await local_37426("a4_m09")
-			_pc = 39061
-			continue
-		elif _pc == 38477:
-			await local_37426("a4_m15")
-			_pc = 39061
-			continue
-		elif _pc == 38503:
-			await local_37426("a4_m21")
-			_pc = 39061
-			continue
-		elif _pc == 38529:
-			await local_37426("a4_m22")
-			_pc = 39061
-			continue
-		elif _pc == 38555:
-			await local_37426("a4_m17")
-			_pc = 39061
-			continue
-		elif _pc == 38581:
-			await local_37426("a4_m30")
-			_pc = 39061
-			continue
-		elif _pc == 38607:
-			await local_37426("a4_m31")
-			_pc = 39061
-			continue
-		elif _pc == 38633:
-			await local_37426("a4_m32")
-			_pc = 39061
-			continue
-		elif _pc == 38659:
-			await local_37426("a4_m33")
-			_pc = 39061
-			continue
-		elif _pc == 38685:
-			await local_37426("a4_m34")
-			_pc = 39061
-			continue
-		elif _pc == 38711:
-			await local_37426("a4_m35")
-			_pc = 39061
-			continue
-		elif _pc == 38737:
-			_pc = 39061
-			continue
-		elif _pc == 38742:
-			if 1 != v1:
-				_pc = 38755
-				continue
-			else:
-				_pc = 37827
-				continue
-		elif _pc == 38755:
-			if 2 != v1:
-				_pc = 38764
-				continue
-			else:
-				_pc = 37853
-				continue
-		elif _pc == 38764:
-			if 3 != v1:
-				_pc = 38773
-				continue
-			else:
-				_pc = 37879
-				continue
-		elif _pc == 38773:
-			if 4 != v1:
-				_pc = 38782
-				continue
-			else:
-				_pc = 37905
-				continue
-		elif _pc == 38782:
-			if 5 != v1:
-				_pc = 38791
-				continue
-			else:
-				_pc = 37931
-				continue
-		elif _pc == 38791:
-			if 6 != v1:
-				_pc = 38800
-				continue
-			else:
-				_pc = 37957
-				continue
-		elif _pc == 38800:
-			if 7 != v1:
-				_pc = 38809
-				continue
-			else:
-				_pc = 37983
-				continue
-		elif _pc == 38809:
-			if 8 != v1:
-				_pc = 38818
-				continue
-			else:
-				_pc = 38009
-				continue
-		elif _pc == 38818:
-			if 9 != v1:
-				_pc = 38827
-				continue
-			else:
-				_pc = 38035
-				continue
-		elif _pc == 38827:
-			if 10 != v1:
-				_pc = 38836
-				continue
-			else:
-				_pc = 38061
-				continue
-		elif _pc == 38836:
-			if 11 != v1:
-				_pc = 38845
-				continue
-			else:
-				_pc = 38087
-				continue
-		elif _pc == 38845:
-			if 12 != v1:
-				_pc = 38854
-				continue
-			else:
-				_pc = 38113
-				continue
-		elif _pc == 38854:
-			if 13 != v1:
-				_pc = 38863
-				continue
-			else:
-				_pc = 38139
-				continue
-		elif _pc == 38863:
-			if 14 != v1:
-				_pc = 38872
-				continue
-			else:
-				_pc = 38165
-				continue
-		elif _pc == 38872:
-			if 15 != v1:
-				_pc = 38881
-				continue
-			else:
-				_pc = 38191
-				continue
-		elif _pc == 38881:
-			if 16 != v1:
-				_pc = 38890
-				continue
-			else:
-				_pc = 38217
-				continue
-		elif _pc == 38890:
-			if 17 != v1:
-				_pc = 38899
-				continue
-			else:
-				_pc = 38243
-				continue
-		elif _pc == 38899:
-			if 18 != v1:
-				_pc = 38908
-				continue
-			else:
-				_pc = 38269
-				continue
-		elif _pc == 38908:
-			if 19 != v1:
-				_pc = 38917
-				continue
-			else:
-				_pc = 38295
-				continue
-		elif _pc == 38917:
-			if 20 != v1:
-				_pc = 38926
-				continue
-			else:
-				_pc = 38321
-				continue
-		elif _pc == 38926:
-			if 21 != v1:
-				_pc = 38935
-				continue
-			else:
-				_pc = 38347
-				continue
-		elif _pc == 38935:
-			if 22 != v1:
-				_pc = 38944
-				continue
-			else:
-				_pc = 38373
-				continue
-		elif _pc == 38944:
-			if 23 != v1:
-				_pc = 38953
-				continue
-			else:
-				_pc = 38399
-				continue
-		elif _pc == 38953:
-			if 24 != v1:
-				_pc = 38962
-				continue
-			else:
-				_pc = 38425
-				continue
-		elif _pc == 38962:
-			if 25 != v1:
-				_pc = 38971
-				continue
-			else:
-				_pc = 38451
-				continue
-		elif _pc == 38971:
-			if 26 != v1:
-				_pc = 38980
-				continue
-			else:
-				_pc = 38477
-				continue
-		elif _pc == 38980:
-			if 27 != v1:
-				_pc = 38989
-				continue
-			else:
-				_pc = 38503
-				continue
-		elif _pc == 38989:
-			if 28 != v1:
-				_pc = 38998
-				continue
-			else:
-				_pc = 38529
-				continue
-		elif _pc == 38998:
-			if 29 != v1:
-				_pc = 39007
-				continue
-			else:
-				_pc = 38555
-				continue
-		elif _pc == 39007:
-			if 30 != v1:
-				_pc = 39016
-				continue
-			else:
-				_pc = 38581
-				continue
-		elif _pc == 39016:
-			if 31 != v1:
-				_pc = 39025
-				continue
-			else:
-				_pc = 38607
-				continue
-		elif _pc == 39025:
-			if 32 != v1:
-				_pc = 39034
-				continue
-			else:
-				_pc = 38633
-				continue
-		elif _pc == 39034:
-			if 33 != v1:
-				_pc = 39043
-				continue
-			else:
-				_pc = 38659
-				continue
-		elif _pc == 39043:
-			if 34 != v1:
-				_pc = 39052
-				continue
-			else:
-				_pc = 38685
-				continue
-		elif _pc == 39052:
-			if 35 != v1:
-				_pc = 39061
-				continue
-			else:
-				_pc = 38711
-				continue
-		elif _pc == 39061:
-			v1 = v1 + 1
-			_pc = 37806
-			continue
-		elif _pc == 39079:
-			return 0
-		else:
-			return 0
+	v0 = v0 - 4
+	v1 = 0
+	while v1 < v0:
+		match v1:
+			1:
+				await local_37426("a4_m11")
+			2:
+				await local_37426("a4_m01")
+			3:
+				await local_37426("a4_m03")
+			4:
+				await local_37426("a4_m02")
+			5:
+				await local_37426("a4_m14")
+			6:
+				await local_37426("a4_m13")
+			7:
+				await local_37426("a4_m10")
+			8:
+				await local_37426("a4_m16")
+			9:
+				await local_37426("a4_m12")
+			10:
+				await local_37426("a4_m08")
+			11:
+				await local_37426("a4_m20")
+			12:
+				await local_37426("a4_m18")
+			13:
+				await local_37426("a4_m06")
+			14:
+				await local_37426("a4_m07")
+			15:
+				await local_37426("a4_m04")
+			16:
+				await local_37426("a4_m05")
+			17:
+				await local_37426("a4_m23")
+			18:
+				await local_37426("a4_m24")
+			19:
+				await local_37426("a4_m25")
+			20:
+				await local_37426("a4_m26")
+			21:
+				await local_37426("a4_m27")
+			22:
+				await local_37426("a4_m28")
+			23:
+				await local_37426("a4_m29")
+			24:
+				await local_37426("a4_m19")
+			25:
+				await local_37426("a4_m09")
+			26:
+				await local_37426("a4_m15")
+			27:
+				await local_37426("a4_m21")
+			28:
+				await local_37426("a4_m22")
+			29:
+				await local_37426("a4_m17")
+			30:
+				await local_37426("a4_m30")
+			31:
+				await local_37426("a4_m31")
+			32:
+				await local_37426("a4_m32")
+			33:
+				await local_37426("a4_m33")
+			34:
+				await local_37426("a4_m34")
+			35:
+				await local_37426("a4_m35")
+		v1 = v1 + 1
+	return 0
 	return 0
 

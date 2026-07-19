@@ -147,230 +147,69 @@ func local_790(v0, v1, v2) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 790
+	v3 = 0
+	v4 = 0
+	v5 = sim.cast(p_set.first_element(sim.children(v0)))
+	v6 = iship.find_player_ship()
+	v7 = []
+	v7 = list.from_set(sim.children(v0))
+	v9 = list.tail(v7)
+	iai.give_approach_order_advanced(v0, v1, 0.0, 0.0, 0)
 	while true:
-		if _pc == 790:
-			v3 = 0
-			v4 = 0
-			v5 = sim.cast(p_set.first_element(sim.children(v0)))
-			v6 = iship.find_player_ship()
-			v7 = []
-			v7 = list.from_set(sim.children(v0))
-			v9 = list.tail(v7)
-			iai.give_approach_order_advanced(v0, v1, 0.0, 0.0, 0)
-			_pc = 994
-			continue
-		elif _pc == 994:
-			await _pog_frame()
-			if _pog_every(995, 1.0):
-				_pc = 1008
-				continue
-			else:
-				_pc = 1790
-				continue
-		elif _pc == 1008:
-			if sim.cast(v0) or state.progress(v2) != 100:
-				_pc = 1054
-				continue
-			else:
-				_pc = 1747
-				continue
-		elif _pc == 1054:
+		await _pog_wait(1)
+		if sim.cast(v0) or state.progress(v2) != 100:
 			if iship.attacked(v0) and _pog_eq(iship.last_attacker(v0), v6):
-				_pc = 1104
-				continue
-			else:
-				_pc = 1104
-				continue
-		elif _pc == 1104:
+				pass
 			v7 = list.from_set(isim.sims_in_radius(v0, 8000.0, 536838144))
 			v10 = list.item_count(v7)
 			v11 = 0
-			_pc = 1185
-			continue
-		elif _pc == 1185:
-			if v11 < v10:
-				_pc = 1201
-				continue
-			else:
-				_pc = 1486
-				continue
-		elif _pc == 1201:
-			v8 = iship.cast(list.get_nth(v7, v11))
-			if sim.distance_between(v8, v0) <= 100.0:
-				_pc = 1277
-				continue
-			else:
-				_pc = 1468
-				continue
-		elif _pc == 1277:
-			if _pog_eq(v8, v1) or _pog_eq(v8, v6):
-				_pc = 1305
-				continue
-			else:
-				_pc = 1424
-				continue
-		elif _pc == 1305:
-			await local_589(v8, v9, 0)
-			if _pog_eq(v8, v1):
-				_pc = 1346
-				continue
-			else:
-				_pc = 1377
-				continue
-		elif _pc == 1346:
-			state.set_progress(v2, 2)
-			_pc = 1796
-			continue
-		elif _pc == 1372:
-			_pc = 1419
-			continue
-		elif _pc == 1377:
-			if _pog_eq(v8, v6):
-				_pc = 1393
-				continue
-			else:
-				_pc = 1419
-				continue
-		elif _pc == 1393:
-			state.set_progress(v2, 3)
-			_pc = 1796
-			continue
-		elif _pc == 1419:
-			_pc = 1449
-			continue
-		elif _pc == 1424:
-			await local_589(v8, v9, 1)
-			_pc = 1449
-			continue
-		elif _pc == 1449:
-			sim.destroy(v0)
-			_pc = 1468
-			continue
-		elif _pc == 1468:
-			v11 = v11 + 1
-			_pc = 1185
-			continue
-		elif _pc == 1486:
+			while v11 < v10:
+				v8 = iship.cast(list.get_nth(v7, v11))
+				if sim.distance_between(v8, v0) <= 100.0:
+					if _pog_eq(v8, v1) or _pog_eq(v8, v6):
+						await local_589(v8, v9, 0)
+						if _pog_eq(v8, v1):
+							state.set_progress(v2, 2)
+							return
+						else:
+							if _pog_eq(v8, v6):
+								state.set_progress(v2, 3)
+								return
+					else:
+						await local_589(v8, v9, 1)
+					sim.destroy(v0)
+				v11 = v11 + 1
 			if sim.distance_between(v0, v1) < 9000.0 and not (v3):
-				_pc = 1527
-				continue
-			else:
-				_pc = 1742
-				continue
-		elif _pc == 1527:
-			v3 = 1
-			_pc = 1692
-			continue
-		elif _pc == 1539:
-			await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning1")
-			_pc = 1742
-			continue
-		elif _pc == 1576:
-			await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning2")
-			_pc = 1742
-			continue
-		elif _pc == 1613:
-			await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning3")
-			_pc = 1742
-			continue
-		elif _pc == 1650:
-			await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning4")
-			_pc = 1742
-			continue
-		elif _pc == 1687:
-			_pc = 1742
-			continue
-		elif _pc == 1692:
-			math.random_int(0, 3)
-			if not _pog_is_null(math.random_int(0, 3)):
-				_pc = 1716
-				continue
-			else:
-				_pc = 1539
-				continue
-		elif _pc == 1716:
-			if not _pog_is_null(1):
-				_pc = 1724
-				continue
-			else:
-				_pc = 1576
-				continue
-		elif _pc == 1724:
-			if not _pog_is_null(2):
-				_pc = 1733
-				continue
-			else:
-				_pc = 1613
-				continue
-		elif _pc == 1733:
-			if not _pog_is_null(3):
-				_pc = 1742
-				continue
-			else:
-				_pc = 1650
-				continue
-		elif _pc == 1742:
-			_pc = 1790
-			continue
-		elif _pc == 1747:
+				v3 = 1
+				match math.random_int(0, 3):
+					0:
+						await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning1")
+					1:
+						await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning2")
+					2:
+						await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning3")
+					3:
+						await iconversation.one_liner(v1, "", "a3_m10_dialogue_jafs_warning4")
+		else:
 			sim.destroy(v5)
 			sim.destroy(v0)
-			_pc = 1796
-			continue
-		elif _pc == 1790:
-			_pc = 994
-			continue
-		elif _pc == 1795:
-			_pc = 1796
-			continue
-		elif _pc == 1796:
 			return
-		elif _pc == 1852:
-			if v6 < v4:
-				_pc = 1868
-				continue
-			else:
-				_pc = 2140
-				continue
-		elif _pc == 1868:
-			v2 = group.nth_sim(v0, v6)
-			v1 = list.from_set(isim.sims_in_radius(isim.cast(v2), 5000.0, 536838144))
-			v5 = list.item_count(v1)
-			v7 = 0
-			_pc = 1991
-			continue
-		elif _pc == 1991:
-			if v7 < v5:
-				_pc = 2007
-				continue
-			else:
-				_pc = 2122
-				continue
-		elif _pc == 2007:
+	return
+	v1 = []
+	v4 = group.sim_count(v0)
+	v6 = 0
+	while v6 < v4:
+		v2 = group.nth_sim(v0, v6)
+		v1 = list.from_set(isim.sims_in_radius(isim.cast(v2), 5000.0, 536838144))
+		v5 = list.item_count(v1)
+		v7 = 0
+		while v7 < v5:
 			v3 = iship.cast(list.get_nth(v1, v7))
 			if sim.distance_between(v2, v3) <= 200.0:
-				_pc = 2083
-				continue
-			else:
-				_pc = 2104
-				continue
-		elif _pc == 2083:
-			await local_589(v3, 0, 1)
-			_pc = 2104
-			continue
-		elif _pc == 2104:
+				await local_589(v3, 0, 1)
 			v7 = v7 + 1
-			_pc = 1991
-			continue
-		elif _pc == 2122:
-			v6 = v6 + 1
-			_pc = 1852
-			continue
-		elif _pc == 2140:
-			return 0
-		else:
-			return 0
+		v6 = v6 + 1
+	return 0
 	return 0
 
 func local_2150(v0, v1) -> Variant:
@@ -453,261 +292,111 @@ func local_3052(v0, v1, v2, v3) -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	var _pc: int = 3052
+	v4 = 1
+	v5 = 0
+	v6 = 0
+	v7 = []
+	v8 = imapentity.find_by_name("Remek L-Point")
+	v11 = imapentity.find_by_name("Lucrecia's Base")
+	v12 = iship.create("ini:/sims/ships/utility/snrv", "name_jafs")
+	v13 = iship.cast(sim.find_by_name("a3_m10_name_zero"))
+	v15 = []
+	isim.set_indestructable(v12, 1)
+	isim.set_mission_critical(v12, 1)
+	isim.set_faction(v12, ifaction.find("Player"))
+	await local_2848(v12)
+	sim.place_near(v12, v2, 900.0)
+	v14 = iregion.create_traffic_control(v12, 200.0, 250.0)
+	sim.attach_child(v12, sim.cast(v14))
+	await ipilotsetup.generic_cargo_pod(v12)
+	v19 = object.vector_property_x(v12, "speed")
+	v20 = object.vector_property_y(v12, "speed")
+	v21 = object.vector_property_z(v12, "speed")
+	object.set_vector_property(v12, "speed", 250.0, 250.0, 250.0)
+	object.add_handle_property(v3, "jafs_handle", v12)
+	await iconversation.one_liner(v12, "", "a3_m10_dialogue_jafs_ok_cal")
+	iobjectives.add("a3_m10_objectives_protect")
+	object.set_bool_property(v3, "alien_spawn_active", 1)
 	while true:
-		if _pc == 3052:
-			v4 = 1
-			v5 = 0
-			v6 = 0
-			v7 = []
-			v8 = imapentity.find_by_name("Remek L-Point")
-			v11 = imapentity.find_by_name("Lucrecia's Base")
-			v12 = iship.create("ini:/sims/ships/utility/snrv", "name_jafs")
-			v13 = iship.cast(sim.find_by_name("a3_m10_name_zero"))
-			v15 = []
-			isim.set_indestructable(v12, 1)
-			isim.set_mission_critical(v12, 1)
-			isim.set_faction(v12, ifaction.find("Player"))
-			await local_2848(v12)
-			sim.place_near(v12, v2, 900.0)
-			v14 = iregion.create_traffic_control(v12, 200.0, 250.0)
-			sim.attach_child(v12, sim.cast(v14))
-			await ipilotsetup.generic_cargo_pod(v12)
-			v19 = object.vector_property_x(v12, "speed")
-			v20 = object.vector_property_y(v12, "speed")
-			v21 = object.vector_property_z(v12, "speed")
-			object.set_vector_property(v12, "speed", 250.0, 250.0, 250.0)
-			object.add_handle_property(v3, "jafs_handle", v12)
-			await iconversation.one_liner(v12, "", "a3_m10_dialogue_jafs_ok_cal")
-			iobjectives.add("a3_m10_objectives_protect")
-			object.set_bool_property(v3, "alien_spawn_active", 1)
-			_pc = 3687
-			continue
-		elif _pc == 3687:
-			await _pog_frame()
-			if _pog_every(3688, 1.0):
-				_pc = 3701
-				continue
-			else:
-				_pc = 5448
-				continue
-		elif _pc == 3701:
-			if v22 == 6:
-				_pc = 3714
-				continue
-			else:
-				_pc = 4050
-				continue
-		elif _pc == 3714:
+		await _pog_wait(1)
+		if v22 == 6:
 			object.set_bool_property(v3, "alien_spawn_active", 0)
 			iai.give_approach_order(v12, v13)
 			iobjectives.set_state("a3_m10_objectives_protect", 1)
 			object.set_vector_property(v12, "speed", v19, v20, v21)
 			v15 = list.from_set(isim.sims_in_radius(isim.cast(v11), 100000.0, 536870912))
 			if not _pog_is_null(list.item_count(v15)):
-				_pc = 3916
-				continue
-			else:
-				_pc = 4020
-				continue
-		elif _pc == 3916:
-			v17 = 0
-			_pc = 3923
-			continue
-		elif _pc == 3923:
-			if v17 < list.item_count(v15):
-				_pc = 3952
-				continue
-			else:
-				_pc = 4020
-				continue
-		elif _pc == 3952:
-			sim.destroy(isim.cast(list.get_nth(v15, v17)))
-			v17 = v17 + 1
-			_pc = 3923
-			continue
-		elif _pc == 4020:
+				v17 = 0
+				while v17 < list.item_count(v15):
+					sim.destroy(isim.cast(list.get_nth(v15, v17)))
+					v17 = v17 + 1
 			state.set_progress(v3, 1)
-			_pc = 5454
-			continue
-		elif _pc == 4045:
-			_pc = 5448
-			continue
-		elif _pc == 4050:
-			if v4:
-				_pc = 4060
-				continue
-			else:
-				_pc = 4839
-				continue
-		elif _pc == 4060:
-			v9 = group.nth_sim(v0, v22)
-			iai.give_approach_order(v12, v9)
-			_pc = 4113
-			continue
-		elif _pc == 4113:
-			await _pog_wait(1.0)
-			v15 = list.from_set(isim.sims_in_radius(v12, 4000.0, 536870912))
-			v16 = list.item_count(v15)
-			if not _pog_is_null(v16):
-				_pc = 4231
-				continue
-			else:
-				_pc = 4586
-				continue
-		elif _pc == 4231:
-			v10 = sim.cast(list.head(v15))
-			v5 = 1
-			iai.give_flee_order(v12, isim.cast(v10))
-			_pc = 4312
-			continue
-		elif _pc == 4312:
-			await _pog_wait(1.0)
-			if sim.distance_between(v12, v8) > 25000.0 and _pog_is_null(object.bool_property(v3, "cutscene_active")):
-				_pc = 4406
-				continue
-			else:
-				_pc = 4499
-				continue
-		elif _pc == 4406:
-			_pc = 4432
-			continue
-		elif _pc == 4411:
-			debug.error("Jafs Too Far")
-			_pc = 4432
-			continue
-		elif _pc == 4432:
-			isim.set_indestructable(v12, 0)
-			await local_589(v12, 0, 0)
-			state.set_progress(v3, 2)
-			_pc = 5454
-			continue
-		elif _pc == 4499:
-			if not (not _pog_is_null(sim.cast(v10)) and sim.distance_between(v12, v10) < 4000.0):
-				_pc = 4555
-				continue
-			else:
-				_pc = 4312
-				continue
-		elif _pc == 4555:
-			v5 = 0
-			iai.give_approach_order(v12, v9)
-			_pc = 4586
-			continue
-		elif _pc == 4586:
-			if not (not (iai.is_order_complete(v12)) or v5):
-				_pc = 4616
-				continue
-			else:
-				_pc = 4113
-				continue
-		elif _pc == 4616:
-			v6 = 0
-			_pc = 4707
-			continue
-		elif _pc == 4628:
-			await iconversation.one_liner(v12, "", "a3_m10_dialogue_jafs_right_hold")
-			_pc = 4738
-			continue
-		elif _pc == 4665:
-			await iconversation.one_liner(v12, "", "a3_m10_dialogue_jafs_im_unloading")
-			_pc = 4738
-			continue
-		elif _pc == 4702:
-			_pc = 4738
-			continue
-		elif _pc == 4707:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 4730
-				continue
-			else:
-				_pc = 4628
-				continue
-		elif _pc == 4730:
-			if not _pog_is_null(1):
-				_pc = 4738
-				continue
-			else:
-				_pc = 4665
-				continue
-		elif _pc == 4738:
-			v7 = sim.children(v12)
-			v22 = v22 + 1
-			iship.undock(iship.cast(p_set.first_element(v7)), v12)
-			v4 = 0
-			_pc = 5448
-			continue
-		elif _pc == 4839:
-			v9 = group.nth_sim(v1, v23)
-			v18 = sim.distance_between(v12, v9) * 0.30000001192092896
-			iai.give_approach_order(v12, v9)
-			_pc = 4927
-			continue
-		elif _pc == 4927:
-			await _pog_wait(1.0)
-			v15 = list.from_set(isim.sims_in_radius(v12, 4000.0, 536870912))
-			v16 = list.item_count(v15)
-			if not _pog_is_null(v16):
-				_pc = 5045
-				continue
-			else:
-				_pc = 5374
-				continue
-		elif _pc == 5045:
-			v10 = sim.cast(list.head(v15))
-			v5 = 1
-			iai.give_flee_order(v12, isim.cast(v10))
-			_pc = 5126
-			continue
-		elif _pc == 5126:
-			await _pog_wait(1.0)
-			if sim.distance_between(v12, v8) > 25000.0 and _pog_is_null(object.bool_property(v3, "cutscene_active")):
-				_pc = 5220
-				continue
-			else:
-				_pc = 5287
-				continue
-		elif _pc == 5220:
-			isim.set_indestructable(v12, 0)
-			await local_589(v12, 0, 0)
-			state.set_progress(v3, 2)
-			_pc = 5454
-			continue
-		elif _pc == 5287:
-			if not (not _pog_is_null(sim.cast(v10)) and sim.distance_between(v12, v10) < 4000.0):
-				_pc = 5343
-				continue
-			else:
-				_pc = 5126
-				continue
-		elif _pc == 5343:
-			v5 = 0
-			iai.give_approach_order(v12, v9)
-			_pc = 5374
-			continue
-		elif _pc == 5374:
-			if not (sim.distance_between(v12, v9) > v18 and not (iai.is_order_complete(v12))):
-				_pc = 5428
-				continue
-			else:
-				_pc = 4927
-				continue
-		elif _pc == 5428:
-			v23 = v23 + 1
-			v4 = 1
-			_pc = 5448
-			continue
-		elif _pc == 5448:
-			_pc = 3687
-			continue
-		elif _pc == 5453:
-			_pc = 5454
-			continue
-		elif _pc == 5454:
 			return
 		else:
-			return 0
+			if v4:
+				v9 = group.nth_sim(v0, v22)
+				iai.give_approach_order(v12, v9)
+				while true:
+					await _pog_wait(1.0)
+					v15 = list.from_set(isim.sims_in_radius(v12, 4000.0, 536870912))
+					v16 = list.item_count(v15)
+					if not _pog_is_null(v16):
+						v10 = sim.cast(list.head(v15))
+						v5 = 1
+						iai.give_flee_order(v12, isim.cast(v10))
+						while true:
+							await _pog_wait(1.0)
+							if sim.distance_between(v12, v8) > 25000.0 and _pog_is_null(object.bool_property(v3, "cutscene_active")):
+								if PogRuntime.TRACE:
+									debug.error("Jafs Too Far")
+								isim.set_indestructable(v12, 0)
+								await local_589(v12, 0, 0)
+								state.set_progress(v3, 2)
+								return
+							if not (not _pog_is_null(sim.cast(v10)) and sim.distance_between(v12, v10) < 4000.0):
+								break
+						v5 = 0
+						iai.give_approach_order(v12, v9)
+					if not (not (iai.is_order_complete(v12)) or v5):
+						break
+				v6 = 0
+				match math.random_int(0, 1):
+					0:
+						await iconversation.one_liner(v12, "", "a3_m10_dialogue_jafs_right_hold")
+					1:
+						await iconversation.one_liner(v12, "", "a3_m10_dialogue_jafs_im_unloading")
+				v7 = sim.children(v12)
+				v22 = v22 + 1
+				iship.undock(iship.cast(p_set.first_element(v7)), v12)
+				v4 = 0
+			else:
+				v9 = group.nth_sim(v1, v23)
+				v18 = sim.distance_between(v12, v9) * 0.30000001192092896
+				iai.give_approach_order(v12, v9)
+				while true:
+					await _pog_wait(1.0)
+					v15 = list.from_set(isim.sims_in_radius(v12, 4000.0, 536870912))
+					v16 = list.item_count(v15)
+					if not _pog_is_null(v16):
+						v10 = sim.cast(list.head(v15))
+						v5 = 1
+						iai.give_flee_order(v12, isim.cast(v10))
+						while true:
+							await _pog_wait(1.0)
+							if sim.distance_between(v12, v8) > 25000.0 and _pog_is_null(object.bool_property(v3, "cutscene_active")):
+								isim.set_indestructable(v12, 0)
+								await local_589(v12, 0, 0)
+								state.set_progress(v3, 2)
+								return
+							if not (not _pog_is_null(sim.cast(v10)) and sim.distance_between(v12, v10) < 4000.0):
+								break
+						v5 = 0
+						iai.give_approach_order(v12, v9)
+					if not (sim.distance_between(v12, v9) > v18 and not (iai.is_order_complete(v12))):
+						break
+				v23 = v23 + 1
+				v4 = 1
+	return
 	return 0
 
 func local_5470(v0) -> Variant:

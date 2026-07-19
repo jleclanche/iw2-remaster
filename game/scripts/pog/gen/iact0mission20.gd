@@ -231,160 +231,41 @@ func local_3091(v0, v1, v2) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var _pc: int = 3091
+	v4 = group.sim_count(v0)
 	while true:
-		if _pc == 3091:
-			v4 = group.sim_count(v0)
-			_pc = 3125
-			continue
-		elif _pc == 3125:
-			await _pog_frame()
-			if _pog_every(3126, 1.0):
-				_pc = 3139
-				continue
-			else:
-				_pc = 4046
-				continue
-		elif _pc == 3139:
-			v6 = 0
-			_pc = 3146
-			continue
-		elif _pc == 3146:
-			if v6 < v4:
-				_pc = 3162
-				continue
-			else:
-				_pc = 4046
-				continue
-		elif _pc == 3162:
+		await _pog_wait(1)
+		v6 = 0
+		while v6 < v4:
 			v3 = group.nth_sim(v0, v6)
 			if sim.distance_between(v1, v3) < 2500.0 and not (object.property_exists(v3, "visible")) and not (object.property_exists(v3, "hit")):
-				_pc = 3278
-				continue
+				object.add_int_property(v3, "visible", 1)
+				isim.set_sensor_visibility(isim.cast(v3), 1)
 			else:
-				_pc = 3343
-				continue
-		elif _pc == 3278:
-			object.add_int_property(v3, "visible", 1)
-			isim.set_sensor_visibility(isim.cast(v3), 1)
-			_pc = 3462
-			continue
-		elif _pc == 3343:
-			if sim.distance_between(v1, v3) > 2500.0 and object.property_exists(v3, "visible"):
-				_pc = 3403
-				continue
-			else:
-				_pc = 3462
-				continue
-		elif _pc == 3403:
-			object.remove_property(v3, "visible")
-			isim.set_sensor_visibility(isim.cast(v3), 0)
-			_pc = 3462
-			continue
-		elif _pc == 3462:
+				if sim.distance_between(v1, v3) > 2500.0 and object.property_exists(v3, "visible"):
+					object.remove_property(v3, "visible")
+					isim.set_sensor_visibility(isim.cast(v3), 0)
 			if not (object.property_exists(v3, "hit")) and isim.attacked(isim.cast(v3)):
-				_pc = 3525
-				continue
-			else:
-				_pc = 4028
-				continue
-		elif _pc == 3525:
-			if _pog_eq(isim.last_attacker(isim.cast(v3)), isim.cast(v1)):
-				_pc = 3580
-				continue
-			else:
-				_pc = 3933
-				continue
-		elif _pc == 3580:
-			isim.set_sensor_visibility(isim.cast(v3), 0)
-			object.add_int_property(v3, "hit", 1)
-			_pog_suspend(_pog_task_cast(object.handle_property(v3, "move_handler")))
-			_pc = 3867
-			continue
-		elif _pc == 3697:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment1")
-			_pc = 3915
-			continue
-		elif _pc == 3730:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment2")
-			_pc = 3915
-			continue
-		elif _pc == 3763:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment3")
-			_pc = 3915
-			continue
-		elif _pc == 3796:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment4")
-			_pc = 3915
-			continue
-		elif _pc == 3829:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment5")
-			_pc = 3915
-			continue
-		elif _pc == 3862:
-			_pc = 3915
-			continue
-		elif _pc == 3867:
-			if not _pog_is_null(v5):
-				_pc = 3880
-				continue
-			else:
-				_pc = 3697
-				continue
-		elif _pc == 3880:
-			if 1 != v5:
-				_pc = 3888
-				continue
-			else:
-				_pc = 3730
-				continue
-		elif _pc == 3888:
-			if 2 != v5:
-				_pc = 3897
-				continue
-			else:
-				_pc = 3763
-				continue
-		elif _pc == 3897:
-			if 3 != v5:
-				_pc = 3906
-				continue
-			else:
-				_pc = 3796
-				continue
-		elif _pc == 3906:
-			if 4 != v5:
-				_pc = 3915
-				continue
-			else:
-				_pc = 3829
-				continue
-		elif _pc == 3915:
-			v5 = v5 + 1
-			_pc = 4028
-			continue
-		elif _pc == 3933:
-			if _pog_eq(isim.last_attacker(isim.cast(v3)), isim.cast(v2)):
-				_pc = 3988
-				continue
-			else:
-				_pc = 4028
-				continue
-		elif _pc == 3988:
-			object.add_int_property(iship.cast(v3), "hit_by_drone", 1)
-			_pc = 4028
-			continue
-		elif _pc == 4028:
+				if _pog_eq(isim.last_attacker(isim.cast(v3)), isim.cast(v1)):
+					isim.set_sensor_visibility(isim.cast(v3), 0)
+					object.add_int_property(v3, "hit", 1)
+					_pog_suspend(_pog_task_cast(object.handle_property(v3, "move_handler")))
+					match v5:
+						0:
+							await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment1")
+						1:
+							await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment2")
+						2:
+							await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment3")
+						3:
+							await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment4")
+						4:
+							await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_target_comment5")
+					v5 = v5 + 1
+				else:
+					if _pog_eq(isim.last_attacker(isim.cast(v3)), isim.cast(v2)):
+						object.add_int_property(iship.cast(v3), "hit_by_drone", 1)
 			v6 = v6 + 1
-			_pc = 3146
-			continue
-		elif _pc == 4046:
-			_pc = 3125
-			continue
-		elif _pc == 4051:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_4054(v0) -> Variant:
@@ -617,153 +498,52 @@ func local_9227(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 9227
+	v1 = 0
+	v2 = await iutilities.create_waypoint_at(v0)
+	v4 = math.random(0.0, 3.0)
+	object.add_handle_property(v0, "move_handler", self)
 	while true:
-		if _pc == 9227:
-			v1 = 0
-			v2 = await iutilities.create_waypoint_at(v0)
-			v4 = math.random(0.0, 3.0)
-			object.add_handle_property(v0, "move_handler", self)
-			_pc = 9337
-			continue
-		elif _pc == 9337:
-			await _pog_frame()
-			if _pog_every(9338, 4.0):
-				_pc = 9351
+		await _pog_wait(4)
+		sim.destroy(v3)
+		match v4:
+			0:
+				if v1:
+					v1 = 0
+					v3 = await iutilities.create_waypoint_relative_to(v2, -800.0, 0.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
+				else:
+					v1 = 1
+					v3 = await iutilities.create_waypoint_relative_to(v2, 800.0, 0.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
+			1:
+				if v1:
+					v1 = 0
+					v3 = await iutilities.create_waypoint_relative_to(v2, 800.0, 0.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
+				else:
+					v1 = 1
+					v3 = await iutilities.create_waypoint_relative_to(v2, -800.0, 0.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
+			2:
+				if v1:
+					v1 = 0
+					v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, 800.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
+				else:
+					v1 = 1
+					v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, -800.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
+			3:
+				if v1:
+					v1 = 0
+					v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, -800.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
+				else:
+					v1 = 1
+					v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, 800.0, 0.0)
+					iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
 				continue
-			else:
-				_pc = 10147
-				continue
-		elif _pc == 9351:
-			sim.destroy(v3)
-			_pc = 10108
-			continue
-		elif _pc == 9375:
-			if v1:
-				_pc = 9385
-				continue
-			else:
-				_pc = 9471
-				continue
-		elif _pc == 9385:
-			v1 = 0
-			v3 = await iutilities.create_waypoint_relative_to(v2, -800.0, 0.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 9552
-			continue
-		elif _pc == 9471:
-			v1 = 1
-			v3 = await iutilities.create_waypoint_relative_to(v2, 800.0, 0.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 9552
-			continue
-		elif _pc == 9552:
-			_pc = 10147
-			continue
-		elif _pc == 9557:
-			if v1:
-				_pc = 9567
-				continue
-			else:
-				_pc = 9653
-				continue
-		elif _pc == 9567:
-			v1 = 0
-			v3 = await iutilities.create_waypoint_relative_to(v2, 800.0, 0.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 9734
-			continue
-		elif _pc == 9653:
-			v1 = 1
-			v3 = await iutilities.create_waypoint_relative_to(v2, -800.0, 0.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 9734
-			continue
-		elif _pc == 9734:
-			_pc = 10147
-			continue
-		elif _pc == 9739:
-			if v1:
-				_pc = 9749
-				continue
-			else:
-				_pc = 9835
-				continue
-		elif _pc == 9749:
-			v1 = 0
-			v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, 800.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 9916
-			continue
-		elif _pc == 9835:
-			v1 = 1
-			v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, -800.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 9916
-			continue
-		elif _pc == 9916:
-			_pc = 10147
-			continue
-		elif _pc == 9921:
-			if v1:
-				_pc = 9931
-				continue
-			else:
-				_pc = 10017
-				continue
-		elif _pc == 9931:
-			v1 = 0
-			v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, -800.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 10098
-			continue
-		elif _pc == 10017:
-			v1 = 1
-			v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, 800.0, 0.0)
-			iai.give_approach_order_advanced(v0, v3, 0.0, 0.0, 0)
-			_pc = 10098
-			continue
-		elif _pc == 10098:
-			_pc = 10147
-			continue
-		elif _pc == 10103:
-			_pc = 10147
-			continue
-		elif _pc == 10108:
-			if not _pog_is_null(v4):
-				_pc = 10121
-				continue
-			else:
-				_pc = 9375
-				continue
-		elif _pc == 10121:
-			if 1 != v4:
-				_pc = 10129
-				continue
-			else:
-				_pc = 9557
-				continue
-		elif _pc == 10129:
-			if 2 != v4:
-				_pc = 10138
-				continue
-			else:
-				_pc = 9739
-				continue
-		elif _pc == 10138:
-			if 3 != v4:
-				_pc = 10147
-				continue
-			else:
-				_pc = 9921
-				continue
-		elif _pc == 10147:
-			_pc = 9337
-			continue
-		elif _pc == 10152:
-			return
-		else:
-			return 0
+	return
 	return 0
 
 func local_10155(v0) -> Variant:
@@ -775,72 +555,29 @@ func local_10155(v0) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 10155
-	while true:
-		if _pc == 10155:
-			v1 = group.create()
-			v6 = 100.0
-			v7 = group.sim_count(v0)
-			v8 = 1
-			_pc = 10221
-			continue
-		elif _pc == 10221:
-			if v8 < v7:
-				_pc = 10237
-				continue
-			else:
-				_pc = 10637
-				continue
-		elif _pc == 10237:
-			v3 = v3 + 1
-			v2 = iship.create("ini:/sims/ships/utility/training_target", string.join("a0_m20_name_target+ +", string.from_int(v3)))
-			isim.set_indestructable(v2, 1)
-			isim.set_mission_critical(v2, 1)
-			isim.set_sensor_visibility(v2, 0)
-			_pc = 10440
-			continue
-		elif _pc == 10380:
-			v4 = v6
-			v5 = 0.0
-			_pc = 10471
-			continue
-		elif _pc == 10407:
-			v4 = -(v6)
-			v5 = 0.0
-			_pc = 10471
-			continue
-		elif _pc == 10435:
-			_pc = 10471
-			continue
-		elif _pc == 10440:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 10463
-				continue
-			else:
-				_pc = 10380
-				continue
-		elif _pc == 10463:
-			if not _pog_is_null(1):
-				_pc = 10471
-				continue
-			else:
-				_pc = 10407
-				continue
-		elif _pc == 10471:
-			sim.place_between(v2, group.nth_sim(v0, v8), group.nth_sim(v0, v8 + 1), 0.5)
-			group.add_sim(v1, v2)
-			await ipilotsetup.generic_cargo_pod(v2)
-			_pog_detach(_pog_spawn(local_9227.bind(v2)))
-			v8 = v8 + 3
-			_pc = 10221
-			continue
-		elif _pc == 10637:
-			return v1
-		elif _pc == 10647:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v6 = 100.0
+	v7 = group.sim_count(v0)
+	v8 = 1
+	while v8 < v7:
+		v3 = v3 + 1
+		v2 = iship.create("ini:/sims/ships/utility/training_target", string.join("a0_m20_name_target+ +", string.from_int(v3)))
+		isim.set_indestructable(v2, 1)
+		isim.set_mission_critical(v2, 1)
+		isim.set_sensor_visibility(v2, 0)
+		match math.random_int(0, 1):
+			0:
+				v4 = v6
+				v5 = 0.0
+			1:
+				v4 = -(v6)
+				v5 = 0.0
+		sim.place_between(v2, group.nth_sim(v0, v8), group.nth_sim(v0, v8 + 1), 0.5)
+		group.add_sim(v1, v2)
+		await ipilotsetup.generic_cargo_pod(v2)
+		_pog_detach(_pog_spawn(local_9227.bind(v2)))
+		v8 = v8 + 3
+	return v1
 	return 0
 
 func local_10649(v0, v1, v2) -> Variant:
@@ -1369,91 +1106,27 @@ func local_16217(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var _pc: int = 16217
+	v2 = 1
+	v3 = iship.find_player_ship()
+	v4 = math.random_int(180, 240)
 	while true:
-		if _pc == 16217:
-			v2 = 1
-			v3 = iship.find_player_ship()
-			v4 = math.random_int(180, 240)
-			_pc = 16273
-			continue
-		elif _pc == 16273:
-			await _pog_wait(1.0)
-			if sim.distance_between(v3, v0) > 8000.0 and state.progress(v1) != 8:
-				_pc = 16361
-				continue
-			else:
-				_pc = 16540
-				continue
-		elif _pc == 16361:
+		await _pog_wait(1.0)
+		if sim.distance_between(v3, v0) > 8000.0 and state.progress(v1) != 8:
 			if v5 >= v4:
-				_pc = 16377
-				continue
+				match math.random_int(0, 1):
+					0:
+						await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_dont")
+					1:
+						await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_isnt")
+				v5 = 0
 			else:
-				_pc = 16496
-				continue
-		elif _pc == 16377:
-			_pc = 16453
-			continue
-		elif _pc == 16382:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_dont")
-			_pc = 16484
-			continue
-		elif _pc == 16415:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_isnt")
-			_pc = 16484
-			continue
-		elif _pc == 16448:
-			_pc = 16484
-			continue
-		elif _pc == 16453:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
-				_pc = 16476
-				continue
-			else:
-				_pc = 16382
-				continue
-		elif _pc == 16476:
-			if not _pog_is_null(1):
-				_pc = 16484
-				continue
-			else:
-				_pc = 16415
-				continue
-		elif _pc == 16484:
-			v5 = 0
-			_pc = 16535
-			continue
-		elif _pc == 16496:
-			if not (global.exists("g_weapons_training_active")):
-				_pc = 16522
-				continue
-			else:
-				_pc = 16535
-				continue
-		elif _pc == 16522:
-			v5 = v5 + 1
-			_pc = 16535
-			continue
-		elif _pc == 16535:
-			_pc = 16547
-			continue
-		elif _pc == 16540:
-			v5 = 0
-			_pc = 16547
-			continue
-		elif _pc == 16547:
-			if not (v2):
-				_pc = 16557
-				continue
-			else:
-				_pc = 16273
-				continue
-		elif _pc == 16557:
-			return
+				if not (global.exists("g_weapons_training_active")):
+					v5 = v5 + 1
 		else:
-			return 0
+			v5 = 0
+		if not (v2):
+			break
+	return
 	return 0
 
 func mission_handler() -> Variant:
@@ -1462,145 +1135,53 @@ func mission_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var _pc: int = 16559
+	v4 = self
+	text.add("csv:/text/act_0/act0_mission20")
+	text.add("csv:/text/act_0/act0_mission20_addendum")
+	text.add("csv:/text/act_0/act0_mission20_addendum2")
+	text.add("csv:/text/act_0/act0_mission20_addendum3")
+	text.add("csv:/text/act_1/act1_wingmen_training")
+	v0 = state.find(v4)
+	if not (v0):
+		v0 = state.create(v4, 0)
+		object.add_float_property(v0, "best_time", 200.0)
+		object.add_bool_property(v0, "race_enabled", 0)
+		object.add_handle_property(v0, "drone_handle", 0)
+	await imissiontracker.add_mission(self, 0, 20)
+	if state.progress(v0) != 8:
+		iobjectives.add("a0_m20_objectives_complete_course")
+	if _pog_is_null(state.progress(v0)):
+		await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_theres")
+		state.set_progress(v0, 1)
+	else:
+		if state.progress(v0) == 7:
+			match math.random_int(0, 2):
+				0:
+					await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_your_gonna")
+				1:
+					await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_im_not")
+				2:
+					await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_im_sure")
+	v1 = await iutilities.create_waypoint_relative_to(imapentity.find_by_name("Lucrecia's Base"), 24000.0, 0.0, 0.0)
+	await iutilities.make_waypoint_visible(v1, 1, "a0_m20_name_training_grnd")
+	v2 = await iutilities.create_waypoint_relative_to(imapentity.find_by_name("Lucrecia's Base"), -24000.0, 0.0, 0.0)
+	await iutilities.make_waypoint_visible(v2, 1, "a0_m20_name_weapons_training")
+	_pog_spawn(local_11649.bind(v1, v0))
+	_pog_spawn(local_15514.bind(v2, v0))
+	_pog_spawn(local_16217.bind(v1, v0))
 	while true:
-		if _pc == 16559:
-			v4 = self
-			text.add("csv:/text/act_0/act0_mission20")
-			text.add("csv:/text/act_0/act0_mission20_addendum")
-			text.add("csv:/text/act_0/act0_mission20_addendum2")
-			text.add("csv:/text/act_0/act0_mission20_addendum3")
-			text.add("csv:/text/act_1/act1_wingmen_training")
-			v0 = state.find(v4)
-			if not (v0):
-				_pc = 16723
-				continue
-			else:
-				_pc = 16833
-				continue
-		elif _pc == 16723:
-			v0 = state.create(v4, 0)
-			object.add_float_property(v0, "best_time", 200.0)
-			object.add_bool_property(v0, "race_enabled", 0)
-			object.add_handle_property(v0, "drone_handle", 0)
-			_pc = 16833
+		await _pog_wait(2)
+		if global.pog_int("g_current_act") < 1:
 			continue
-		elif _pc == 16833:
-			await imissiontracker.add_mission(self, 0, 20)
-			if state.progress(v0) != 8:
-				_pc = 16889
-				continue
-			else:
-				_pc = 16910
-				continue
-		elif _pc == 16889:
-			iobjectives.add("a0_m20_objectives_complete_course")
-			_pc = 16910
-			continue
-		elif _pc == 16910:
-			if _pog_is_null(state.progress(v0)):
-				_pc = 16935
-				continue
-			else:
-				_pc = 16988
-				continue
-		elif _pc == 16935:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_theres")
-			state.set_progress(v0, 1)
-			_pc = 17164
-			continue
-		elif _pc == 16988:
-			if state.progress(v0) == 7:
-				_pc = 17014
-				continue
-			else:
-				_pc = 17164
-				continue
-		elif _pc == 17014:
-			_pc = 17123
-			continue
-		elif _pc == 17019:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_your_gonna")
-			_pc = 17164
-			continue
-		elif _pc == 17052:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_im_not")
-			_pc = 17164
-			continue
-		elif _pc == 17085:
-			await iconversation.one_liner(0, "name_clay", "a0_m20_dialogue_clay_im_sure")
-			_pc = 17164
-			continue
-		elif _pc == 17118:
-			_pc = 17164
-			continue
-		elif _pc == 17123:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
-				_pc = 17147
-				continue
-			else:
-				_pc = 17019
-				continue
-		elif _pc == 17147:
-			if not _pog_is_null(1):
-				_pc = 17155
-				continue
-			else:
-				_pc = 17052
-				continue
-		elif _pc == 17155:
-			if not _pog_is_null(2):
-				_pc = 17164
-				continue
-			else:
-				_pc = 17085
-				continue
-		elif _pc == 17164:
-			v1 = await iutilities.create_waypoint_relative_to(imapentity.find_by_name("Lucrecia's Base"), 24000.0, 0.0, 0.0)
-			await iutilities.make_waypoint_visible(v1, 1, "a0_m20_name_training_grnd")
-			v2 = await iutilities.create_waypoint_relative_to(imapentity.find_by_name("Lucrecia's Base"), -24000.0, 0.0, 0.0)
-			await iutilities.make_waypoint_visible(v2, 1, "a0_m20_name_weapons_training")
-			_pog_spawn(local_11649.bind(v1, v0))
-			_pog_spawn(local_15514.bind(v2, v0))
-			_pog_spawn(local_16217.bind(v1, v0))
-			_pc = 17403
-			continue
-		elif _pc == 17403:
-			await _pog_frame()
-			if _pog_every(17404, 2.0):
-				_pc = 17417
-				continue
-			else:
-				_pc = 17625
-				continue
-		elif _pc == 17417:
-			if global.pog_int("g_current_act") >= 1:
-				_pc = 17444
-				continue
-			else:
-				_pc = 17625
-				continue
-		elif _pc == 17444:
-			state.destroy(self)
-			sim.destroy(v1)
-			sim.destroy(v2)
-			await imissiontracker.remove_mission(self)
-			text.remove("csv:/text/act_0/act0_mission20")
-			text.remove("csv:/text/act_0/act0_mission20_addendum")
-			text.remove("csv:/text/act_0/act0_mission20_addendum2")
-			text.remove("csv:/text/act_0/act0_mission20_addendum3")
-			_pc = 17631
-			continue
-		elif _pc == 17625:
-			_pc = 17403
-			continue
-		elif _pc == 17630:
-			_pc = 17631
-			continue
-		elif _pc == 17631:
-			return
-		else:
-			return 0
+		state.destroy(self)
+		sim.destroy(v1)
+		sim.destroy(v2)
+		await imissiontracker.remove_mission(self)
+		text.remove("csv:/text/act_0/act0_mission20")
+		text.remove("csv:/text/act_0/act0_mission20_addendum")
+		text.remove("csv:/text/act_0/act0_mission20_addendum2")
+		text.remove("csv:/text/act_0/act0_mission20_addendum3")
+		return
+	return
 	return 0
 

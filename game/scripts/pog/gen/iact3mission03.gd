@@ -186,758 +186,290 @@ func mission_handler() -> Variant:
 	var v34: Variant = 0
 	var v35: Variant = 0
 	var v36: Variant = 0
-	var _pc: int = 917
-	while true:
-		if _pc == 917:
-			v0 = iship.find_player_ship()
-			v11 = group.create()
-			v12 = group.create()
-			v14 = group.create()
-			v16 = group.create()
-			v18 = ifaction.find("Player")
-			v19 = ifaction.find("MAAS Corporation")
-			v24 = 0
-			v25 = 1
-			v26 = 1
-			v27 = 1
-			v28 = 1
-			v29 = 0
-			v30 = 0
-			v34 = state.find(self)
-			_pc = 1175
-			continue
-		elif _pc == 1154:
-			debug.print_string("iAct3Mission03.MissionHandler: STARTED\n")
-			_pc = 1175
-			continue
-		elif _pc == 1175:
-			await imissiontracker.add_mission(self, 3, 3)
-			if not (v34):
-				_pc = 1217
-				continue
-			else:
-				_pc = 1250
-				continue
-		elif _pc == 1217:
-			v34 = state.create(self, 0)
-			_pc = 1250
-			continue
-		elif _pc == 1250:
-			text.add("csv:/text/act_3/act3_mission03")
-			text.add("csv:/text/act_3/act3_mission03_addendum")
-			v35 = iemail.find("html:/text/act_3/act3_mission03_email")
-			if not (v35):
-				_pc = 1329
-				continue
-			else:
-				_pc = 1394
-				continue
-		elif _pc == 1329:
-			iemail.send_email("a3_m03_email_sender", "a3_m03_email_subject", "html:/text/act_3/act3_mission03_email", 1)
-			_pc = 1389
-			continue
-		elif _pc == 1368:
+	v0 = iship.find_player_ship()
+	v11 = group.create()
+	v12 = group.create()
+	v14 = group.create()
+	v16 = group.create()
+	v18 = ifaction.find("Player")
+	v19 = ifaction.find("MAAS Corporation")
+	v24 = 0
+	v25 = 1
+	v26 = 1
+	v27 = 1
+	v28 = 1
+	v29 = 0
+	v30 = 0
+	v34 = state.find(self)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct3Mission03.MissionHandler: STARTED\n")
+	await imissiontracker.add_mission(self, 3, 3)
+	if not (v34):
+		v34 = state.create(self, 0)
+	text.add("csv:/text/act_3/act3_mission03")
+	text.add("csv:/text/act_3/act3_mission03_addendum")
+	v35 = iemail.find("html:/text/act_3/act3_mission03_email")
+	if not (v35):
+		iemail.send_email("a3_m03_email_sender", "a3_m03_email_subject", "html:/text/act_3/act3_mission03_email", 1)
+		if PogRuntime.TRACE:
 			debug.print_string("iAct3_Mission03.MissionHandler: Email Sent - EXITING\n")
-			_pc = 1389
-			continue
-		elif _pc == 1389:
-			_pc = 6606
-			continue
-		elif _pc == 1394:
-			if not (iemail.read(v35)):
-				_pc = 1418
-				continue
-			else:
-				_pc = 1449
-				continue
-		elif _pc == 1418:
-			_pc = 1444
-			continue
-		elif _pc == 1423:
-			debug.print_string("iAct3_Mission03.MissionHandler: Email not read yet - EXITING\n")
-			_pc = 1444
-			continue
-		elif _pc == 1444:
-			_pc = 6606
-			continue
-		elif _pc == 1449:
+	else:
+		if not (iemail.read(v35)):
+			if PogRuntime.TRACE:
+				debug.print_string("iAct3_Mission03.MissionHandler: Email not read yet - EXITING\n")
+		else:
 			await local_93(v34)
-			_pc = 1494
-			continue
-		elif _pc == 1473:
-			debug.print_string("iAct3Mission03. Email read - starting mission \n")
-			_pc = 1494
-			continue
-		elif _pc == 1494:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct3Mission03. Email read - starting mission \n")
 			group.add_group(v11, v12)
 			group.add_group(v11, v13)
 			group.add_group(v11, v14)
 			group.add_group(v11, v16)
 			v4 = isim.cast(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote"))
-			_pc = 1674
-			continue
-		elif _pc == 1640:
-			if _pog_is_null(v4):
-				_pc = 1653
-				continue
-			else:
-				_pc = 1674
-				continue
-		elif _pc == 1653:
-			debug.print_string("iAct3Mission03.mission_handler: Can't find Maas Asteroid Base\n")
-			_pc = 1674
-			continue
-		elif _pc == 1674:
+			if PogRuntime.TRACE:
+				if _pog_is_null(v4):
+					debug.print_string("iAct3Mission03.mission_handler: Can't find Maas Asteroid Base\n")
 			_pog_detach(_pog_spawn(local_424.bind(self, v34, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v1, v2, v3)))
-			_pc = 6563
-			continue
-		elif _pc == 1799:
-			iobjectives.add("a3_m03_objectives_travel_to_maas_base")
-			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a3_m03_name_waypoint_maas"))
-			sim.place_relative_to(v5, v4, 5000.0, 0.0, 1000.0)
-			isim.set_sensor_visibility(v5, 1)
-			_pc = 1929
-			continue
-		elif _pc == 1929:
-			await _pog_frame()
-			if _pog_every(1930, 0.10000000149011612):
-				_pc = 1943
-				continue
-			else:
-				_pc = 1975
-				continue
-		elif _pc == 1943:
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
-				_pc = 1970
-				continue
-			else:
-				_pc = 1975
-				continue
-		elif _pc == 1970:
-			_pc = 1980
-			continue
-		elif _pc == 1975:
-			_pc = 1929
-			continue
-		elif _pc == 1980:
-			await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote"))
-			await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote")))
-			_pc = 2079
-			continue
-		elif _pc == 2079:
-			await _pog_frame()
-			if _pog_every(2080, 0.10000000149011612):
-				_pc = 2093
-				continue
-			else:
-				_pc = 2132
-				continue
-		elif _pc == 2093:
-			if sim.distance_between(v0, v4) < 1000000000.0:
-				_pc = 2127
-				continue
-			else:
-				_pc = 2132
-				continue
-		elif _pc == 2127:
-			_pc = 2137
-			continue
-		elif _pc == 2132:
-			_pc = 2079
-			continue
-		elif _pc == 2137:
-			sim.destroy(v4)
-			v17 = await local_9283(v4)
-			group.add_group(v11, v17)
-			imapentity.set_hidden(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote"), 1)
-			_pc = 2253
-			continue
-		elif _pc == 2253:
-			await _pog_frame()
-			if _pog_every(2254, 0.10000000149011612):
-				_pc = 2267
-				continue
-			else:
-				_pc = 2306
-				continue
-		elif _pc == 2267:
-			if sim.distance_between(v0, v4) < 350000.0:
-				_pc = 2301
-				continue
-			else:
-				_pc = 2306
-				continue
-		elif _pc == 2301:
-			_pc = 2311
-			continue
-		elif _pc == 2306:
-			_pc = 2253
-			continue
-		elif _pc == 2311:
-			await imusic.pause()
-			await _pog_wait(0.5)
-			await imusic.pog_resume()
-			await imusic.set_suite(2)
-			await imusic.set_mood(1)
-			await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_thats_interesting")
-			await iconversation.one_liner(0, "name_cal", "a3_m03_dialogue_cal_lets_take_a_look")
-			state.set_progress(v34, 1)
-			_pc = 2479
-			continue
-		elif _pc == 2479:
-			v13 = await local_6608(v4, 6, 7000.0)
-			group.add_group(v11, v13)
-			v1 = iship.cast(group.leader(v13))
-			object.add_int_property(v1, "vital_commsat", 0)
-			_pc = 2603
-			continue
-		elif _pc == 2603:
-			await _pog_frame()
-			if _pog_every(2604, 1.0):
-				_pc = 2617
-				continue
-			else:
-				_pc = 3273
-				continue
-		elif _pc == 2617:
-			if sim.is_dead(v0):
-				_pc = 2640
-				continue
-			else:
-				_pc = 2721
-				continue
-		elif _pc == 2640:
-			await iconversation.end()
-			group.destroy(v11, 0)
-			text.remove("csv:/text/act_3/act3_mission03")
-			text.remove("csv:/text/act_3/act3_mission03_addendum")
-			_pc = 6606
-			continue
-		elif _pc == 2721:
-			if sim.distance_between(v0, v4) > 300000.0:
-				_pc = 2755
-				continue
-			else:
-				_pc = 2800
-				continue
-		elif _pc == 2755:
-			if v25:
-				_pc = 2765
-				continue
-			else:
-				_pc = 2800
-				continue
-		elif _pc == 2765:
-			await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_you_are_going_the_wrong_way")
-			v25 = 0
-			_pc = 2800
-			continue
-		elif _pc == 2800:
-			if sim.distance_between(v0, v4) < 20000.0 and v26:
-				_pc = 2840
-				continue
-			else:
-				_pc = 3002
-				continue
-		elif _pc == 2840:
-			iobjectives.set_state("a3_m03_objectives_travel_to_maas_base", 1)
-			iobjectives.add("a3_m03_objectives_investigate_area")
-			await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_look_at_that")
-			await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_antimatter_explosion")
-			await iconversation.one_liner(0, "name_cal", "a3_m03_dialogue_cal_that_explains_the_radiation")
-			await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_lets_take_a_look_around")
-			v26 = 0
-			_pc = 3002
-			continue
-		elif _pc == 3002:
-			if group.sim_count(v13) > 0:
-				_pc = 3027
-				continue
-			else:
-				_pc = 3240
-				continue
-		elif _pc == 3027:
-			v7 = await local_7048(v0, v13, 1000.0, 0)
-			if not _pog_is_null(v7):
-				_pc = 3075
-				continue
-			else:
-				_pc = 3235
-				continue
-		elif _pc == 3075:
-			group.add_sim(v14, v7)
-			if object.property_exists(v7, "vital_commsat"):
-				_pc = 3129
-				continue
-			else:
-				_pc = 3161
-				continue
-		elif _pc == 3129:
-			iobjectives.set_state("a3_m03_objectives_investigate_area", 1)
-			_pc = 3278
-			continue
-		elif _pc == 3156:
-			_pc = 3235
-			continue
-		elif _pc == 3161:
-			if v27:
-				_pc = 3171
-				continue
-			else:
-				_pc = 3215
-				continue
-		elif _pc == 3171:
-			await icutsceneutilities.handle_abort(_pog_spawn(local_13284.bind(v7, v0)))
-			v27 = 0
-			_pc = 3215
-			continue
-		elif _pc == 3215:
-			isim.set_sensor_visibility(v7, 0)
-			_pc = 3235
-			continue
-		elif _pc == 3235:
-			_pc = 3273
-			continue
-		elif _pc == 3240:
-			await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_i_guess_we_will_never_find_out")
-			_pc = 3278
-			continue
-		elif _pc == 3273:
-			_pc = 2603
-			continue
-		elif _pc == 3278:
-			iobjectives.add("a3_m03_objectives_investigate_satellite")
-			await imusic.pause()
-			await icutsceneutilities.handle_abort(_pog_spawn(local_12340.bind(v1, v0)))
-			igame.enable_blackout(1)
-			await imusic.play("sound:/audio/music/a2_tension", 1, 1)
-			iobjectives.set_state("a3_m03_objectives_investigate_satellite", 1)
-			state.set_progress(v34, 2)
-			v24 = 0
-			_pc = 3439
-			continue
-		elif _pc == 3439:
-			ifaction.set_feeling(v18, v19, 0.0)
-			ifaction.set_feeling(v19, v18, 0.0)
-			v2 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", "a3_m03_ship_corp_cruiser")
-			sim.place_relative_to(v2, v4, 6000.0, 1000.0, 5000.0)
-			await ipilotsetup.generic_military(v2)
-			isim.set_faction(v2, v19)
-			group.add_sim(v12, v2)
-			iship.lock_down_weapons(v2)
-			sim.point_at(v2, v4)
-			v36 = iregion.create_l_d_s_i(v0, 10000.0)
-			isim.set_indestructable(v2, 1)
-			v31 = 0
-			_pc = 3735
-			continue
-		elif _pc == 3735:
-			if v31 < 4:
-				_pc = 3748
-				continue
-			else:
-				_pc = 3894
-				continue
-		elif _pc == 3748:
-			v3 = iship.create("ini:/sims/ships/corporate/cutter", "a3_m03_ship_corp_escort")
-			await ipilotsetup.marauder(v3)
-			isim.set_faction(v3, v19)
-			group.add_sim(v12, v3)
-			sim.place_near(v3, v2, 300.0)
-			v31 = v31 + 1
-			_pc = 3735
-			continue
-		elif _pc == 3894:
-			await iformation.cross(v12, 3000.0, 1)
-			v33 = group.sim_count(v12)
-			await local_8259(v16, 6, v19)
-			v15 = await local_7724(v4, 6, 1500)
-			group.add_group(v11, v15)
-			v6 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a3_m03_name_waypoint_hiding"))
-			group.add_sim(v11, v6)
-			igame.enable_blackout(0)
-			await icutsceneutilities.handle_abort(_pog_spawn(local_14021.bind(v4, v6, v0, v2)))
-			iobjectives.add("a3_m03_objectives_hide_from_ships")
-			group.destroy(v13, 1)
-			v22 = _pog_spawn(local_9070.bind(_pog_clone("A3-M3 mine launch"), 35.0))
-			v32 = 210
-			iship.has_fired(v0)
-			_pc = 4260
-			continue
-		elif _pc == 4260:
-			await _pog_frame()
-			if _pog_every(4261, 1.0):
-				_pc = 4274
-				continue
-			else:
-				_pc = 5894
-				continue
-		elif _pc == 4274:
-			if sim.is_dead(v0):
-				_pc = 4297
-				continue
-			else:
-				_pc = 4384
-				continue
-		elif _pc == 4297:
-			group.destroy(v16, 1)
-			group.destroy(v11, 0)
-			text.remove("csv:/text/act_3/act3_mission03")
-			text.remove("csv:/text/act_3/act3_mission03_addendum")
-			_pc = 6606
-			continue
-		elif _pc == 4384:
-			if iship.has_fired(v0):
-				_pc = 4407
-				continue
-			else:
-				_pc = 4445
-				continue
-		elif _pc == 4407:
-			_pc = 4433
-			continue
-		elif _pc == 4412:
-			debug.print_string("iAct3Mission03: Player detected -  Player fired\n")
-			_pc = 4433
-			continue
-		elif _pc == 4433:
-			v30 = 1
-			_pc = 5899
-			continue
-		elif _pc == 4445:
-			if sim.distance_between(v0, v2) < 4000.0:
-				_pc = 4479
-				continue
-			else:
-				_pc = 4517
-				continue
-		elif _pc == 4479:
-			_pc = 4505
-			continue
-		elif _pc == 4484:
-			debug.print_string("iAct3Mission03: Player detected -  Player too close to cruiser\n")
-			_pc = 4505
-			continue
-		elif _pc == 4505:
-			v30 = 1
-			_pc = 5899
-			continue
-		elif _pc == 4517:
-			if (1 - _pog_is_running(v22)):
-				_pc = 4540
-				continue
-			else:
-				_pc = 4911
-				continue
-		elif _pc == 4540:
-			if isim.is_indestructable(v2):
-				_pc = 4563
-				continue
-			else:
-				_pc = 4583
-				continue
-		elif _pc == 4563:
-			isim.set_indestructable(v2, 0)
-			_pc = 4583
-			continue
-		elif _pc == 4583:
-			if sim.distance_between(v0, v6) > 1500.0:
-				_pc = 4617
-				continue
-			else:
-				_pc = 4655
-				continue
-		elif _pc == 4617:
-			_pc = 4643
-			continue
-		elif _pc == 4622:
-			debug.print_string("iAct3Mission03: Player detected -  Player not at hiding spot\n")
-			_pc = 4643
-			continue
-		elif _pc == 4643:
-			v30 = 1
-			_pc = 5899
-			continue
-		elif _pc == 4655:
-			if not _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())):
-				_pc = 4690
-				continue
-			else:
-				_pc = 4728
-				continue
-		elif _pc == 4690:
-			_pc = 4716
-			continue
-		elif _pc == 4695:
-			debug.print_string("iAct3Mission03: Player detected -  Turret Fighters not attached\n")
-			_pc = 4716
-			continue
-		elif _pc == 4716:
-			v30 = 1
-			_pc = 5899
-			continue
-		elif _pc == 4728:
-			if v28 and not (v30):
-				_pc = 4745
-				continue
-			else:
-				_pc = 4906
-				continue
-		elif _pc == 4745:
-			v28 = 0
-			await _pog_wait(5.0)
-			_pog_detach(_pog_spawn(local_8383.bind(v2, v15, v16)))
-			await icutsceneutilities.handle_abort(_pog_spawn(local_13579.bind(v2, v4, v0, iship.cast(group.leader(v16)))))
-			v29 = 1
-			_pc = 4906
-			continue
-		elif _pc == 4906:
-			_pc = 5036
-			continue
-		elif _pc == 4911:
-			if sim.distance_between(v0, v6) < 1500.0:
-				_pc = 4945
-				continue
-			else:
-				_pc = 4964
-				continue
-		elif _pc == 4945:
-			_pog_halt(v22)
-			_pc = 4964
-			continue
-		elif _pc == 4964:
-			if sim.distance_between(v0, v4) > 10000.0:
-				_pc = 4998
-				continue
-			else:
-				_pc = 5036
-				continue
-		elif _pc == 4998:
-			_pc = 5024
-			continue
-		elif _pc == 5003:
-			debug.print_string("iAct3Mission03: Player detected -  Player >10km from base\n")
-			_pc = 5024
-			continue
-		elif _pc == 5024:
-			v30 = 1
-			_pc = 5899
-			continue
-		elif _pc == 5036:
-			if group.sim_count(v12) < v33 or group.sim_count(v16) < 6:
-				_pc = 5087
-				continue
-			else:
-				_pc = 5578
-				continue
-		elif _pc == 5087:
-			_pc = 5178
-			continue
-		elif _pc == 5092:
-			if group.sim_count(v12) < v33:
-				_pc = 5121
-				continue
-			else:
-				_pc = 5152
-				continue
-		elif _pc == 5121:
-			_pc = 5147
-			continue
-		elif _pc == 5126:
-			debug.print_string("iAct3Mission03: Player detected - Cruiser dead\n")
-			_pc = 5147
-			continue
-		elif _pc == 5147:
-			_pc = 5178
-			continue
-		elif _pc == 5152:
-			_pc = 5178
-			continue
-		elif _pc == 5157:
-			debug.print_string("iAct3Mission03: Player detected - Mine group < 6\n")
-			_pc = 5178
-			continue
-		elif _pc == 5178:
-			v29 = 0
-			ifaction.set_feeling(v18, v19, 0.0)
-			ifaction.set_feeling(v19, v18, 0.0)
-			iai.purge_orders(v12)
-			iai.give_attack_order(v12, v0)
-			iship.weapon_targets_from_contact_list(v2)
-			stream.stop(0, 0)
-			stream.stop(1, 0)
-			await imusic.pog_resume()
-			if sim.is_alive(v2) and not (isim.is_dying(v2)):
-				_pc = 5394
-				continue
-			else:
-				_pc = 5418
-				continue
-		elif _pc == 5394:
-			_pog_spawn(local_7404.bind(v2, v0))
-			_pc = 5418
-			continue
-		elif _pc == 5418:
-			await _pog_wait(2.0)
-			icomms.abort(0)
-			ihud.set_prompt("", "")
-			if group.sim_count(v12) > 0:
-				_pc = 5517
-				continue
-			else:
-				_pc = 5573
-				continue
-		elif _pc == 5517:
-			await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_i_think_they_are_on_to_us")
-			await iconversation.one_liner(0, "name_cal", "a3_m03_dialogue_cal_no_kidding")
-			_pc = 5573
-			continue
-		elif _pc == 5573:
-			_pc = 5899
-			continue
-		elif _pc == 5578:
-			if v29:
-				_pc = 5588
-				continue
-			else:
-				_pc = 5894
-				continue
-		elif _pc == 5588:
-			ihud.set_prompt(string.join("a3_m03_text_time_to_detonation+ +", string.from_int(v32 - 1)), "")
-			v32 = v32 + -1
-			if v32 < 1:
-				_pc = 5676
-				continue
-			else:
-				_pc = 5894
-				continue
-		elif _pc == 5676:
-			v29 = 0
-			ihud.set_prompt("", "")
-			await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_times_up")
-			await local_14378(v17, 0)
-			if sim.distance_between(v0, v4) < 20000.0:
-				_pc = 5792
-				continue
-			else:
-				_pc = 5894
-				continue
-		elif _pc == 5792:
-			isim.kill(isim.cast(group.leader(v16)))
-			await _pog_wait(0.20000000298023224)
-			if group.sim_count(v16) <= 0:
-				_pc = 5894
-				continue
-			else:
-				_pc = 5792
-				continue
-		elif _pc == 5894:
-			_pc = 4260
-			continue
-		elif _pc == 5899:
-			if v30:
-				_pc = 5910
-				continue
-			else:
-				_pc = 6187
-				continue
-		elif _pc == 5910:
-			icomms.abort(0)
-			stream.stop(0, 0)
-			stream.stop(1, 0)
-			await imusic.pog_resume()
-			ihud.set_prompt("", "")
-			iobjectives.set_state("a3_m03_objectives_hide_from_ships", 2)
-			ifaction.set_feeling(v18, v19, 0.0)
-			ifaction.set_feeling(v19, v18, 0.0)
-			iai.give_attack_order(v12, v0)
-			await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_i_dont_call_that_hiding")
-			object.add_int_property(v34, "discovered", 1)
-			_pog_spawn(local_7404.bind(v2, v0))
-			_pc = 6209
-			continue
-		elif _pc == 6187:
-			iobjectives.set_state("a3_m03_objectives_hide_from_ships", 1)
-			_pc = 6209
-			continue
-		elif _pc == 6209:
-			_pc = 6214
-			continue
-		elif _pc == 6214:
-			await _pog_frame()
-			if _pog_every(6215, 1.0):
-				_pc = 6228
-				continue
-			else:
-				_pc = 6258
-				continue
-		elif _pc == 6228:
-			if _pog_is_null(group.sim_count(v12)):
-				_pc = 6253
-				continue
-			else:
-				_pc = 6258
-				continue
-		elif _pc == 6253:
-			_pc = 6263
-			continue
-		elif _pc == 6258:
-			_pc = 6214
-			continue
-		elif _pc == 6263:
-			ihud.set_prompt("", "")
-			iregion.destroy(v36)
-			sim.destroy(v6)
-			sim.destroy(v5)
-			iobjectives.set_state("a3_m03_objectives_defeat_corporate_fleet", 1)
-			await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_i_think_we_did_pretty_well")
-			if global.exists("g_act3_scavenger_mission_complete"):
-				_pc = 6423
-				continue
-			else:
-				_pc = 6445
-				continue
-		elif _pc == 6423:
-			global.set_bool("g_act3_scavenger_mission_complete", 1)
-			_pc = 6445
-			continue
-		elif _pc == 6445:
-			await iutilities.group_set_cullable(v11, 1)
-			group.destroy(v11, 0)
-			await imissiontracker.remove_mission(self)
-			await iutilities.remove_mission_restart()
-			state.destroy(self)
-			_pc = 6606
-			continue
-		elif _pc == 6558:
-			_pc = 6606
-			continue
-		elif _pc == 6563:
-			state.progress(v34)
-			if not _pog_is_null(state.progress(v34)):
-				_pc = 6589
-				continue
-			else:
-				_pc = 1799
-				continue
-		elif _pc == 6589:
-			if not _pog_is_null(1):
-				_pc = 6597
-				continue
-			else:
-				_pc = 2479
-				continue
-		elif _pc == 6597:
-			if not _pog_is_null(2):
-				_pc = 6606
-				continue
-			else:
-				_pc = 3439
-				continue
-		elif _pc == 6606:
-			return
-		else:
-			return 0
+			match state.progress(v34):
+				0:
+					iobjectives.add("a3_m03_objectives_travel_to_maas_base")
+					v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a3_m03_name_waypoint_maas"))
+					sim.place_relative_to(v5, v4, 5000.0, 0.0, 1000.0)
+					isim.set_sensor_visibility(v5, 1)
+					while true:
+						await _pog_wait(0.1)
+						if not _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
+							continue
+						break
+					await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote"))
+					await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote")))
+					while true:
+						await _pog_wait(0.1)
+						if sim.distance_between(v0, v4) >= 1000000000.0:
+							continue
+						break
+					sim.destroy(v4)
+					v17 = await local_9283(v4)
+					group.add_group(v11, v17)
+					imapentity.set_hidden(imapentity.find_by_name_in_system("Maas Research Asteroid", "map:/geog/badlands/coyote"), 1)
+					while true:
+						await _pog_wait(0.1)
+						if sim.distance_between(v0, v4) >= 350000.0:
+							continue
+						break
+					await imusic.pause()
+					await _pog_wait(0.5)
+					await imusic.pog_resume()
+					await imusic.set_suite(2)
+					await imusic.set_mood(1)
+					await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_thats_interesting")
+					await iconversation.one_liner(0, "name_cal", "a3_m03_dialogue_cal_lets_take_a_look")
+					state.set_progress(v34, 1)
+				1:
+					v13 = await local_6608(v4, 6, 7000.0)
+					group.add_group(v11, v13)
+					v1 = iship.cast(group.leader(v13))
+					object.add_int_property(v1, "vital_commsat", 0)
+					while true:
+						await _pog_wait(1)
+						if sim.is_dead(v0):
+							await iconversation.end()
+							group.destroy(v11, 0)
+							text.remove("csv:/text/act_3/act3_mission03")
+							text.remove("csv:/text/act_3/act3_mission03_addendum")
+							return
+						if sim.distance_between(v0, v4) > 300000.0:
+							if v25:
+								await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_you_are_going_the_wrong_way")
+								v25 = 0
+						if sim.distance_between(v0, v4) < 20000.0 and v26:
+							iobjectives.set_state("a3_m03_objectives_travel_to_maas_base", 1)
+							iobjectives.add("a3_m03_objectives_investigate_area")
+							await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_look_at_that")
+							await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_antimatter_explosion")
+							await iconversation.one_liner(0, "name_cal", "a3_m03_dialogue_cal_that_explains_the_radiation")
+							await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_lets_take_a_look_around")
+							v26 = 0
+						if group.sim_count(v13) > 0:
+							v7 = await local_7048(v0, v13, 1000.0, 0)
+							if not _pog_is_null(v7):
+								group.add_sim(v14, v7)
+								if object.property_exists(v7, "vital_commsat"):
+									iobjectives.set_state("a3_m03_objectives_investigate_area", 1)
+									break
+								else:
+									if v27:
+										await icutsceneutilities.handle_abort(_pog_spawn(local_13284.bind(v7, v0)))
+										v27 = 0
+									isim.set_sensor_visibility(v7, 0)
+						else:
+							await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_i_guess_we_will_never_find_out")
+							break
+					iobjectives.add("a3_m03_objectives_investigate_satellite")
+					await imusic.pause()
+					await icutsceneutilities.handle_abort(_pog_spawn(local_12340.bind(v1, v0)))
+					igame.enable_blackout(1)
+					await imusic.play("sound:/audio/music/a2_tension", 1, 1)
+					iobjectives.set_state("a3_m03_objectives_investigate_satellite", 1)
+					state.set_progress(v34, 2)
+					v24 = 0
+				2:
+					ifaction.set_feeling(v18, v19, 0.0)
+					ifaction.set_feeling(v19, v18, 0.0)
+					v2 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", "a3_m03_ship_corp_cruiser")
+					sim.place_relative_to(v2, v4, 6000.0, 1000.0, 5000.0)
+					await ipilotsetup.generic_military(v2)
+					isim.set_faction(v2, v19)
+					group.add_sim(v12, v2)
+					iship.lock_down_weapons(v2)
+					sim.point_at(v2, v4)
+					v36 = iregion.create_l_d_s_i(v0, 10000.0)
+					isim.set_indestructable(v2, 1)
+					v31 = 0
+					while v31 < 4:
+						v3 = iship.create("ini:/sims/ships/corporate/cutter", "a3_m03_ship_corp_escort")
+						await ipilotsetup.marauder(v3)
+						isim.set_faction(v3, v19)
+						group.add_sim(v12, v3)
+						sim.place_near(v3, v2, 300.0)
+						v31 = v31 + 1
+					await iformation.cross(v12, 3000.0, 1)
+					v33 = group.sim_count(v12)
+					await local_8259(v16, 6, v19)
+					v15 = await local_7724(v4, 6, 1500)
+					group.add_group(v11, v15)
+					v6 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a3_m03_name_waypoint_hiding"))
+					group.add_sim(v11, v6)
+					igame.enable_blackout(0)
+					await icutsceneutilities.handle_abort(_pog_spawn(local_14021.bind(v4, v6, v0, v2)))
+					iobjectives.add("a3_m03_objectives_hide_from_ships")
+					group.destroy(v13, 1)
+					v22 = _pog_spawn(local_9070.bind(_pog_clone("A3-M3 mine launch"), 35.0))
+					v32 = 210
+					iship.has_fired(v0)
+					while true:
+						await _pog_wait(1)
+						if sim.is_dead(v0):
+							group.destroy(v16, 1)
+							group.destroy(v11, 0)
+							text.remove("csv:/text/act_3/act3_mission03")
+							text.remove("csv:/text/act_3/act3_mission03_addendum")
+							return
+						if iship.has_fired(v0):
+							if PogRuntime.TRACE:
+								debug.print_string("iAct3Mission03: Player detected -  Player fired\n")
+							v30 = 1
+							break
+						if sim.distance_between(v0, v2) < 4000.0:
+							if PogRuntime.TRACE:
+								debug.print_string("iAct3Mission03: Player detected -  Player too close to cruiser\n")
+							v30 = 1
+							break
+						if (1 - _pog_is_running(v22)):
+							if isim.is_indestructable(v2):
+								isim.set_indestructable(v2, 0)
+							if sim.distance_between(v0, v6) > 1500.0:
+								if PogRuntime.TRACE:
+									debug.print_string("iAct3Mission03: Player detected -  Player not at hiding spot\n")
+								v30 = 1
+								break
+							if not _pog_is_null(list.item_count(await iwingmen.get_detached_t_fighters())):
+								if PogRuntime.TRACE:
+									debug.print_string("iAct3Mission03: Player detected -  Turret Fighters not attached\n")
+								v30 = 1
+								break
+							if v28 and not (v30):
+								v28 = 0
+								await _pog_wait(5.0)
+								_pog_detach(_pog_spawn(local_8383.bind(v2, v15, v16)))
+								await icutsceneutilities.handle_abort(_pog_spawn(local_13579.bind(v2, v4, v0, iship.cast(group.leader(v16)))))
+								v29 = 1
+						else:
+							if sim.distance_between(v0, v6) < 1500.0:
+								_pog_halt(v22)
+							if sim.distance_between(v0, v4) > 10000.0:
+								if PogRuntime.TRACE:
+									debug.print_string("iAct3Mission03: Player detected -  Player >10km from base\n")
+								v30 = 1
+								break
+						if group.sim_count(v12) < v33 or group.sim_count(v16) < 6:
+							if PogRuntime.TRACE:
+								if group.sim_count(v12) < v33:
+									if PogRuntime.TRACE:
+										debug.print_string("iAct3Mission03: Player detected - Cruiser dead\n")
+								else:
+									if PogRuntime.TRACE:
+										debug.print_string("iAct3Mission03: Player detected - Mine group < 6\n")
+							v29 = 0
+							ifaction.set_feeling(v18, v19, 0.0)
+							ifaction.set_feeling(v19, v18, 0.0)
+							iai.purge_orders(v12)
+							iai.give_attack_order(v12, v0)
+							iship.weapon_targets_from_contact_list(v2)
+							stream.stop(0, 0)
+							stream.stop(1, 0)
+							await imusic.pog_resume()
+							if sim.is_alive(v2) and not (isim.is_dying(v2)):
+								_pog_spawn(local_7404.bind(v2, v0))
+							await _pog_wait(2.0)
+							icomms.abort(0)
+							ihud.set_prompt("", "")
+							if group.sim_count(v12) > 0:
+								await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_i_think_they_are_on_to_us")
+								await iconversation.one_liner(0, "name_cal", "a3_m03_dialogue_cal_no_kidding")
+							break
+						if not (v29):
+							continue
+						ihud.set_prompt(string.join("a3_m03_text_time_to_detonation+ +", string.from_int(v32 - 1)), "")
+						v32 = v32 + -1
+						if v32 >= 1:
+							continue
+						v29 = 0
+						ihud.set_prompt("", "")
+						await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_times_up")
+						await local_14378(v17, 0)
+						if sim.distance_between(v0, v4) >= 20000.0:
+							continue
+						while true:
+							isim.kill(isim.cast(group.leader(v16)))
+							await _pog_wait(0.20000000298023224)
+							if not (group.sim_count(v16) > 0):
+								break
+					if v30:
+						icomms.abort(0)
+						stream.stop(0, 0)
+						stream.stop(1, 0)
+						await imusic.pog_resume()
+						ihud.set_prompt("", "")
+						iobjectives.set_state("a3_m03_objectives_hide_from_ships", 2)
+						ifaction.set_feeling(v18, v19, 0.0)
+						ifaction.set_feeling(v19, v18, 0.0)
+						iai.give_attack_order(v12, v0)
+						await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_i_dont_call_that_hiding")
+						object.add_int_property(v34, "discovered", 1)
+						_pog_spawn(local_7404.bind(v2, v0))
+					else:
+						iobjectives.set_state("a3_m03_objectives_hide_from_ships", 1)
+					while true:
+						await _pog_wait(1)
+						if not _pog_is_null(group.sim_count(v12)):
+							continue
+						break
+					ihud.set_prompt("", "")
+					iregion.destroy(v36)
+					sim.destroy(v6)
+					sim.destroy(v5)
+					iobjectives.set_state("a3_m03_objectives_defeat_corporate_fleet", 1)
+					await iconversation.one_liner(0, "name_clay", "a3_m03_dialogue_clay_i_think_we_did_pretty_well")
+					if global.exists("g_act3_scavenger_mission_complete"):
+						global.set_bool("g_act3_scavenger_mission_complete", 1)
+					await iutilities.group_set_cullable(v11, 1)
+					group.destroy(v11, 0)
+					await imissiontracker.remove_mission(self)
+					await iutilities.remove_mission_restart()
+					state.destroy(self)
+					return
+	return
 	return 0
 
 func local_6608(v0, v1, v2) -> Variant:

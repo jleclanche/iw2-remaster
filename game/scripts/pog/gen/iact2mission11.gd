@@ -654,90 +654,37 @@ func mission_handler() -> Variant:
 
 func local_5580(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 5580
+	idirector.begin()
+	await icutsceneutilities.enable_player_autopilot()
+	idirector.set_focus(v1)
+	idirector.set_secondary_focus(v0)
+	idirector.set_camera(15)
+	await iconversation.begin()
+	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_1")
+	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_2")
+	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_3")
+	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_4")
+	await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_5")
 	while true:
-		if _pc == 5580:
-			idirector.begin()
-			await icutsceneutilities.enable_player_autopilot()
-			idirector.set_focus(v1)
-			idirector.set_secondary_focus(v0)
-			idirector.set_camera(15)
-			await iconversation.begin()
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_1")
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_2")
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_3")
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_4")
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_5")
-			_pc = 5841
-			continue
-		elif _pc == 5841:
-			await iconversation.add_response("a2_m11_text_briefing_question_1", "a2_m11_dialogue_cal_briefing_question_1")
-			await iconversation.add_response("a2_m11_text_briefing_question_2", "a2_m11_dialogue_cal_briefing_question_2")
-			await iconversation.add_response("a2_m11_text_briefing_question_3", "a2_m11_dialogue_cal_briefing_question_3")
-			await iconversation.add_response("a2_m11_text_briefing_question_4", "a2_m11_dialogue_cal_briefing_question_4")
-			v2 = await iconversation.ask(0, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_6")
-			_pc = 6140
-			continue
-		elif _pc == 5987:
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_1")
-			_pc = 6180
-			continue
-		elif _pc == 6024:
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_2")
-			_pc = 6180
-			continue
-		elif _pc == 6061:
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_3")
-			_pc = 6180
-			continue
-		elif _pc == 6098:
-			await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_4")
-			_pc = 6180
-			continue
-		elif _pc == 6135:
-			_pc = 6180
-			continue
-		elif _pc == 6140:
-			if 1 != v2:
-				_pc = 6153
-				continue
-			else:
-				_pc = 5987
-				continue
-		elif _pc == 6153:
-			if 2 != v2:
-				_pc = 6162
-				continue
-			else:
-				_pc = 6024
-				continue
-		elif _pc == 6162:
-			if 3 != v2:
-				_pc = 6171
-				continue
-			else:
-				_pc = 6061
-				continue
-		elif _pc == 6171:
-			if 4 != v2:
-				_pc = 6180
-				continue
-			else:
-				_pc = 6098
-				continue
-		elif _pc == 6180:
-			if v2 == 1:
-				_pc = 6192
-				continue
-			else:
-				_pc = 5841
-				continue
-		elif _pc == 6192:
-			await iconversation.end()
-			idirector.end()
-			return v2
-		else:
-			return 0
+		await iconversation.add_response("a2_m11_text_briefing_question_1", "a2_m11_dialogue_cal_briefing_question_1")
+		await iconversation.add_response("a2_m11_text_briefing_question_2", "a2_m11_dialogue_cal_briefing_question_2")
+		await iconversation.add_response("a2_m11_text_briefing_question_3", "a2_m11_dialogue_cal_briefing_question_3")
+		await iconversation.add_response("a2_m11_text_briefing_question_4", "a2_m11_dialogue_cal_briefing_question_4")
+		v2 = await iconversation.ask(0, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_6")
+		match v2:
+			1:
+				await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_1")
+			2:
+				await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_2")
+			3:
+				await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_3")
+			4:
+				await iconversation.say(v1, "a2_m11_email_sender", "a2_m11_dialogue_carla_briefing_question_4")
+		if not (v2 != 1):
+			break
+	await iconversation.end()
+	idirector.end()
+	return
 	return 0
 
 func local_6222(v0, v1, v2, v3) -> Variant:
