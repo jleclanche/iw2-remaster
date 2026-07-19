@@ -123,7 +123,9 @@ outputs land in gitignored `data/`.
   `campaign.py`, `classify_map.py`.
 - POG: `pogdis.py` (disassembler, round-trip verified), `pogdec.py`
   (bytecode → `data/pogsrc/*.pog`), `pogport.py` (→ `game/scripts/pog/gen/`),
-  `pogdata.py`, `pogexport.py`, `pogsummary.py`, `pogverify.py`.
+  `pogdata.py`, `pogexport.py`, `pogsummary.py`, `pogverify.py`,
+  `pogsig.py` (native signatures from the SDK headers; `--check` cross-checks
+  them against our bindings).
 - Coverage: `apicov.py`, `featurecov.py` (see docs/coverage.md).
 - Binaries: `tools/ghidra/` (see docs/original-code.md).
 

@@ -2062,6 +2062,34 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
 
+### Native return values our implementations disagree with
+
+Found by recording what each native actually returned during `--basecheck` and
+diffing against the SDK header declarations (issue #24). The headers declare the
+type but document only the *purpose*, so in each case we know our answer is
+wrong and do not know the right one. **Sample was 79 of 832 natives** -- the
+rest are unmeasured, not clean.
+
+- **`Global.Handle`** (`Global.h:160`, `prototype hobject Global.Handle(string)`).
+  `natives/std.gd:103` `_glob_get` is shared by `global.Handle`/`List`/`Set` and
+  returns `globals.get(name, 0)`, so a MISSING handle global reads the numeric
+  0. The string accessor three lines below already establishes the principle --
+  "a MISSING string global reads "" (the engine's store is typed), not the
+  numeric 0" -- so 0 is very likely wrong here too. What a missing *handle*
+  global actually reads (the null handle?) is **not established**. Needs the
+  engine's global store.
+- **`GUI.SetEditBoxValue`** (`GUI.h:757`, declared to return `string`). Our
+  `_eb_set_value` (`natives/ui.gd:999`) returns 0 on every path. The header says
+  only "Set the value entered into the given edit box". Plausibly it returns the
+  (possibly `max_chars`-truncated) text, but that is inference.
+- **`List.GetNth`** (declared `hobject`) sometimes returns an `Array`. May be
+  legitimate -- a list holding lists, where the element genuinely is a list
+  handle. Needs a look at the callers before it is called a defect.
+
+Until these are answered, native return types stay **extracted but unapplied**:
+GDScript enforces declared types at runtime, so annotating would convert each
+into a crash on a path that currently works.
+
 ### HUD
 
 Most of the earlier HUD open questions are **resolved** -- the full recovery

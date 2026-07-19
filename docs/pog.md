@@ -39,8 +39,8 @@ godot --headless --path game --script res://scripts/pog/portcheck.gd
     114/114 packages compile
     2878/2878 functions provably agree with their bytecode (pogverify: 100%,
                MISSING 0, INVENTED 0)
-    2661/2878 ported as structured code (92.5%)
-    217 fall back to the basic-block dispatch form (irreducible, but exact)
+    2829/2878 ported as structured code (98.3%)
+    49 fall back to the basic-block dispatch form (irreducible, but exact)
 
 Run it (START NEW GAME on the front end boots the campaign; the old
 `--pogplay` skip-the-menu flag is gone -- it hijacked every in-session scene
@@ -153,6 +153,65 @@ compare ladder's selector carries across the fall-through edge like any other
 mid-expression value. Both matter for the switch-over-string-table functions
 (`iutilities.FromAllegianceEnum` and friends) that used to lose their string
 literals in dispatch form.
+
+## The switch idiom, and why it cost 168 functions
+
+The compiler lowers a `switch` with the dispatch AFTER the case bodies:
+
+    <preamble>  Goto DISPATCH
+    CASE_a:  <body>  Goto EXIT
+    CASE_b:  <body>  Goto EXIT
+    DISPATCH: <selector> (Copy <const> Equal GoTrue CASE)+
+    EXIT:
+
+so every arm is a *backward* branch. `_find_loops` refuses those -- correctly,
+they are jump tables, exactly as its comment says -- and everything it refused
+reached the goto fallback, which sends the WHOLE function to `_linear`. One
+unshapeable branch was costing an entire function its structure.
+
+Recognising the shape at the forward `Goto` (the jump to the dispatch) took the
+dispatch count from 217 to 49 and recovered 321 switches. Classified at the
+emission site, 1787 of 1870 gotos (95.6%) were this one idiom; only 74 were a
+genuine loop-detection miss.
+
+Syntax follows the SDK's hand-written sources rather than invention --
+`switch ( e )`, `case N :`, `break;` (samples/missions/
+iAct1_Mission07_Showdown.pog:1595) -- and the `break` is exactly the `Goto EXIT`
+each body already ends with. GDScript gets `match`, which needs no break.
+
+Ground truth: `iact1mission07` decompiles that switch back to `case 0..5`
+assigning the boarding/armed dialogue ids in order, matching the original.
+
+Two earlier readings of this were wrong and are recorded in issue #21 so they
+are not re-derived: "multi-level exits out of nested loops" (nothing here exits
+a loop) and "mostly forward branches" (an artifact of comparing targets against
+the function entry instead of the branch address).
+
+## Names and signatures the bytecode does not carry
+
+A package exports almost nothing -- iact1mission07 names 3 functions in 25KB --
+so most functions decompile as `local_8404`. Two recoveries, both from authored
+sources rather than inference:
+
+- **Function names** from the scripts' own debug output: a `<package>.<Name>`
+  string inside a function's own range names it. 102 recovered, and only where
+  the range yields exactly ONE candidate -- 53 more are dropped because the name
+  collides with an export (37) or another local (16), since a debug string can
+  name a function other than the one printing it.
+- **Native signatures** from the SDK's 153 headers (`tools/iw2/pogsig.py`):
+  2017 prototypes with return types, parameter types and parameter names, which
+  is where `native_api`'s parameter names now come from. The headers are
+  Particle Systems copyright like the game data -- read from the local SDK,
+  never copied into the tree; `IW2_POG_SDK` overrides the path.
+
+Cross-check worth knowing: the arity the bytecode's call sites imply agrees with
+the arity the headers declare on all 830 natives where both are known.
+
+Native *types* are extracted but NOT yet applied. GDScript enforces declared
+types at runtime, and an audit of what our natives actually return found 3
+disagreements in a 79-native sample (`global.Handle`, `gui.SetEditBoxValue`,
+`list.GetNth` -- see original.md's Open questions). Annotating today would turn
+each into a crash on a path that currently works. Issue #24.
 
 ## The base screens run the original scripts
 
