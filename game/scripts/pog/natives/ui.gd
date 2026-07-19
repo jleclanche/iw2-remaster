@@ -426,7 +426,7 @@ static func _method_argc(obj: Object, m: String) -> int:
 	return 0
 
 
-func dispatch(fq: String) -> Variant:
+func dispatch(fq: String, args: Array = []) -> Variant:
 	if fq.is_empty() or vm == null:
 		return 0
 	var pkg := fq.get_slice(".", 0).to_lower()
@@ -443,25 +443,25 @@ func dispatch(fq: String) -> Variant:
 		if not s.has_method(m):
 			push_warning("POG: %s has no method for %s" % [pkg, fn])
 			return 0
-		# The engine calls these by name WITH arguments; we have none to pass.
-		# Most take none, but the SDK headers gave the real signatures to
-		# functions POG itself never calls (engine callbacks had no call sites,
-		# so they used to port as `func f()` whose body read v0/v1 as always-0
-		# locals). Passing the declared count keeps that old behaviour instead
-		# of throwing "Too few arguments" -- but say so, because a handler
-		# reading an argument we never supplied is silently wrong.
+		# The engine calls these by name WITH arguments. Where a caller has
+		# them (icStation's reactive task passes station/aggressor/damage),
+		# pass them through; a GUI event handler has none to give. Pad or trim
+		# to the declared count -- GDScript throws on a mismatch either way --
+		# and warn when a declared parameter goes unsupplied, because a
+		# handler reading an argument we never gave it is silently wrong.
 		var argc := _method_argc(s, m)
 		if argc == 0:
 			return s.call(m)
-		if not _argc_warned.has(m):
+		if args.size() < argc and not _argc_warned.has(m):
 			_argc_warned[m] = true
 			push_warning(("POG: dispatching %s.%s with %d unsupplied argument(s)"
-				+ " -- the engine passes real ones here") % [pkg, fn, argc])
-		var blanks: Array = []
-		blanks.resize(argc)
-		return s.callv(m, blanks)
+				+ " -- the engine passes real ones here") % [pkg, fn,
+					argc - args.size()])
+		var padded := args.slice(0, argc)
+		padded.resize(argc)
+		return s.callv(m, padded)
 	if vm.has_method("start"):                  # PogVM: the bytecode oracle
-		vm.start(pkg, fn)
+		vm.start(pkg, fn, args)
 	return 0
 
 

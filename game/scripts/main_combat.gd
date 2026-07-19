@@ -62,6 +62,7 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
 			Transform3D(Basis.looking_at(-out), pos), 1.0)
 	var ai := target as AiShip
 	if ai == null:
+		_station_bolt_hit(target, spec, age, shooter)
 		return
 	# iiSim::ApplyWeaponDamage records the attacker (SetLastAggressor
 	# 0x10079640); icShip::CheckForReactives (0x10073ac0) additionally counts
@@ -87,6 +88,39 @@ func on_bolt_hit(target: Node3D, pos: Vector3, shooter: Node3D = null,
 			ai.set_last_aggressor(ship)
 			_propagate_group_attack(ai)
 		kill_ai(ai)
+
+## icStation::ApplyWeaponDamage (iwar2.dll @ 0x10068b70): a weapon hit on a
+## station additionally reports to the registered reactive function
+## (ihabitat.SetReactiveFunction -> iStation.StationReactive) with
+## (station, aggressor, damage). Stations have no hull pool yet, so the
+## damage half here is the bolt's own number -- the same
+## spec / age_factor value the ship path applies (icBullet::OnCollision).
+func _station_bolt_hit(target: Node3D, spec: Dictionary, age: float,
+		shooter: Node3D) -> void:
+	var rec := _object_record_for(target)
+	if rec.is_empty():
+		return
+	var dmg: float = float(spec.get("damage", 160.0)) \
+			/ ShipSystems.age_factor(age, float(spec.get("half_time", 0.35)))
+	# whichever script host registered a reactive function hears about it;
+	# an empty registration is a no-op in both
+	if pog_rt != null and pog_rt.ents != null:
+		pog_rt.ents.station_attacked(rec, shooter, dmg)
+	if pog_ents != null:
+		pog_ents.station_attacked(rec, shooter, dmg)
+
+
+## The objects[] record a streamed node belongs to: bolt hits hand back either
+## the record's own node or a physics body under the station model.
+func _object_record_for(n: Node3D) -> Dictionary:
+	var cur: Node = n
+	while cur != null:
+		for o in objects:
+			if o["node"] == cur:
+				return o
+		cur = cur.get_parent()
+	return {}
+
 
 func kill_ai(ai: AiShip) -> void:
 	# iiSim::OnKilled 0x10079b80 -> OnExplode (0x10079db0) -> removal;

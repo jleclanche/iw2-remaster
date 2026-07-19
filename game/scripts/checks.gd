@@ -650,7 +650,6 @@ func _campcheck(_delta: float) -> void:
 # so a human looks.
 const KNOWN_STUBS_LEGACY: Array[String] = []
 const KNOWN_STUBS_PORT: Array[String] = [
-	"ihabitat.setreactivefunction",
 	"iship.createturretfighters",
 	"sim.setcullable",
 ]
@@ -1257,6 +1256,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_gatling",
 	&"_ms_lazy_name",
 	&"_ms_script_queries",
+	&"_ms_station_reactive",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
 	&"_ms_finish",
@@ -1829,6 +1829,55 @@ func _ms_lazy_name(_delta: float) -> void:
 		"before table %s, after %s (want the key, then \"Abandoned Hulk\")"
 			% [before, after])
 	_mech_next()
+
+# The dispatch target _ms_station_reactive registers: a stand-in POG package
+# whose one export records what the engine passed it.
+class _ReactiveProbe extends PogScript:
+	var calls: Array = []
+
+	func on_reactive(a, b, c) -> Variant:
+		calls.append([a, b, c])
+		return 0
+
+
+func _ms_station_reactive(_delta: float) -> void:
+	# ihabitat.SetReactiveFunction (ihabitat.dll @ 0x100027d0: assigns the ONE
+	# static icStation::m_damage_function) + icStation::ApplyWeaponDamage
+	# (iwar2.dll @ 0x10068b70): a weapon hit on a station starts the
+	# registered task with (station, aggressor, damage). Register a probe
+	# package, put a bolt on a station record, and read back what arrived.
+	var probe := _ReactiveProbe.new()
+	m.pog_rt.scripts["checkprobe"] = probe
+	m.pog_rt.native("ihabitat.setreactivefunction", ["checkprobe.OnReactive"])
+	var node := Node3D.new()
+	m.add_child(node)
+	var rec := {"name": "Probe Station", "key": "probe_station",
+		"category": "station", "node": node, "x": 0.0, "y": 0.0, "z": 0.0,
+		"radius": 100.0}
+	m.objects.append(rec)
+	m.on_bolt_hit(node, Vector3.ZERO, m.ship, {"spec": PbcWeapons.PBC_BOLT})
+	m.pog_rt.native("ihabitat.setreactivefunction", [])  # clears the static
+	m.on_bolt_hit(node, Vector3.ZERO, m.ship, {"spec": PbcWeapons.PBC_BOLT})
+	m.objects.erase(rec)
+	node.queue_free()
+	m.pog_rt.scripts.erase("checkprobe")
+	var one_call: bool = probe.calls.size() == 1
+	var ok := one_call
+	var detail := "calls=%d" % probe.calls.size()
+	if one_call:
+		var station = probe.calls[0][0]
+		var aggressor = probe.calls[0][1]
+		var dmg := float(probe.calls[0][2])
+		ok = station != null and String(station.name) == "probe_station" \
+			and aggressor != null and bool(aggressor.is_player) \
+			and absf(dmg - 160.0) < 0.01
+		detail = "station=%s player-aggressor=%s dmg=%.0f (cleared: no 2nd call)" \
+			% [station.name if station != null else "null",
+				aggressor != null and bool(aggressor.is_player), dmg]
+	probe.free()
+	_mech("station-reactive", ok, detail)
+	_mech_next()
+
 
 func _ms_save_reload(_delta: float) -> void:
 	# the igame.SaveGame/LoadGame roundtrip with the world extras: hull,

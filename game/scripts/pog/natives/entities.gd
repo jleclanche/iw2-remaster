@@ -807,11 +807,39 @@ func _hab_set_armed_with_target(_t, a: Array) -> Variant:
 		Turrets.instance.arm_station(s.rec, target)
 	return 0
 
-# @stub ihabitat.SetReactiveFunction
-func _hab_noop(_t, _a: Array) -> Variant:
-	# SetReactiveFunction registers a POG callback the engine runs when the
-	# habitat is attacked; the reactive-callback plumbing is not built.
+## icStation::m_damage_function -- ONE static FcString shared by every
+## station, not a per-habitat slot (ihabitat.dll @ 0x100027d0 assigns the
+## static; called with no argument it assigns the empty string).
+var reactive_function := ""
+
+# @native ihabitat.SetReactiveFunction
+func _hab_set_reactive(_t, a: Array) -> Variant:
+	reactive_function = PogStd._s(a[0]) if a.size() > 0 else ""
 	return 0
+
+
+## icStation::ApplyWeaponDamage (iwar2.dll @ 0x10068b70): after the base
+## damage is applied, a non-empty m_damage_function starts a POG task
+## FcScriptEngine::StartTask(fn, [station id, aggressor id, damage]) -- the
+## campaign registers iStation.StationReactive(station, aggressor, damage),
+## which is how shooting a station raises its protection response.
+## main_combat.on_bolt_hit reports station hits here, once per hit, with the
+## record it resolved and the same bolt damage the ship path applies.
+func station_attacked(rec: Dictionary, aggressor_node: Node3D,
+		dmg: float) -> void:
+	if reactive_function.is_empty() or vm == null or world == null:
+		return
+	var station = world._wrap_record(rec)
+	var aggressor = null
+	if game != null and aggressor_node == game.ship:
+		aggressor = world.player_sim()
+	elif aggressor_node is AiShip:
+		aggressor = world._wrap_ship(aggressor_node)
+	if "ui" in vm and vm.ui != null:            # PogRuntime: args-through dispatch
+		vm.ui.dispatch(reactive_function, [station, aggressor, dmg])
+	elif vm.has_method("start"):                # PogVM: start the bytecode task
+		vm.start(reactive_function.get_slice(".", 0).to_lower(),
+			reactive_function.get_slice(".", 1), [station, aggressor, dmg])
 
 
 # ---------------------------------------------------------------- ilagrangepoint
@@ -985,7 +1013,7 @@ const _BINDINGS := {
 	"ihabitat.population": "_hab_population",
 	"ihabitat.setarmed": "_hab_set_armed",
 	"ihabitat.setarmedwithtarget": "_hab_set_armed_with_target",
-	"ihabitat.setreactivefunction": "_hab_noop",
+	"ihabitat.setreactivefunction": "_hab_set_reactive",
 
 	"ilagrangepoint.cast": "_lp_cast",
 	"ilagrangepoint.findbyname": "_lp_find",
