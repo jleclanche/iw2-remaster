@@ -6096,6 +6096,7 @@ func find_cargo_for_location(v0) -> Variant:
 	return 0
 
 func find_mini_cargo_for_location(v0) -> Variant:
+	var v1: Variant = 0
 	var _pc: int = 74534
 	while true:
 		if _pc == 74534:
@@ -6125,15 +6126,15 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 74664
 			continue
 		elif _pc == 74626:
-			math.random_int(0, 20)
-			if 1 != math.random_int(0, 20):
+			v1 = math.random_int(0, 20)
+			if 1 != v1:
 				_pc = 74650
 				continue
 			else:
 				_pc = 74597
 				continue
 		elif _pc == 74650:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 74659
 				continue
 			else:
@@ -6155,29 +6156,29 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 74749
 			continue
 		elif _pc == 74698:
-			math.random_int(1, 4)
-			if 1 != math.random_int(1, 4):
+			v1 = math.random_int(1, 4)
+			if 1 != v1:
 				_pc = 74722
 				continue
 			else:
 				_pc = 74669
 				continue
 		elif _pc == 74722:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 74731
 				continue
 			else:
 				_pc = 74677
 				continue
 		elif _pc == 74731:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 74740
 				continue
 			else:
 				_pc = 74677
 				continue
 		elif _pc == 74740:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 74749
 				continue
 			else:
@@ -6196,29 +6197,29 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 74834
 			continue
 		elif _pc == 74783:
-			math.random_int(1, 4)
-			if 1 != math.random_int(1, 4):
+			v1 = math.random_int(1, 4)
+			if 1 != v1:
 				_pc = 74807
 				continue
 			else:
 				_pc = 74754
 				continue
 		elif _pc == 74807:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 74816
 				continue
 			else:
 				_pc = 74762
 				continue
 		elif _pc == 74816:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 74825
 				continue
 			else:
 				_pc = 74762
 				continue
 		elif _pc == 74825:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 74834
 				continue
 			else:
@@ -6239,50 +6240,50 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 74957
 			continue
 		elif _pc == 74874:
-			math.random_int(0, 18)
-			if 1 != math.random_int(0, 18):
+			v1 = math.random_int(0, 18)
+			if 1 != v1:
 				_pc = 74898
 				continue
 			else:
 				_pc = 74839
 				continue
 		elif _pc == 74898:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 74907
 				continue
 			else:
 				_pc = 74846
 				continue
 		elif _pc == 74907:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 74916
 				continue
 			else:
 				_pc = 74853
 				continue
 		elif _pc == 74916:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 74925
 				continue
 			else:
 				_pc = 74853
 				continue
 		elif _pc == 74925:
-			if not _pog_is_null(5):
+			if 5 != v1:
 				_pc = 74934
 				continue
 			else:
 				_pc = 74853
 				continue
 		elif _pc == 74934:
-			if not _pog_is_null(6):
+			if 6 != v1:
 				_pc = 74943
 				continue
 			else:
 				_pc = 74853
 				continue
 		elif _pc == 74943:
-			if not _pog_is_null(7):
+			if 7 != v1:
 				_pc = 74952
 				continue
 			else:
@@ -6304,22 +6305,22 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 75033
 			continue
 		elif _pc == 74991:
-			math.random_int(1, 3)
-			if 1 != math.random_int(1, 3):
+			v1 = math.random_int(1, 3)
+			if 1 != v1:
 				_pc = 75015
 				continue
 			else:
 				_pc = 74962
 				continue
 		elif _pc == 75015:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 75024
 				continue
 			else:
 				_pc = 74970
 				continue
 		elif _pc == 75024:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 75033
 				continue
 			else:
@@ -6342,29 +6343,29 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 75139
 			continue
 		elif _pc == 75083:
-			math.random_int(0, 9)
-			if 1 != math.random_int(0, 9):
+			v1 = math.random_int(0, 9)
+			if 1 != v1:
 				_pc = 75107
 				continue
 			else:
 				_pc = 75038
 				continue
 		elif _pc == 75107:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 75116
 				continue
 			else:
 				_pc = 75046
 				continue
 		elif _pc == 75116:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 75125
 				continue
 			else:
 				_pc = 75054
 				continue
 		elif _pc == 75125:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 75134
 				continue
 			else:
@@ -6394,57 +6395,57 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 75297
 			continue
 		elif _pc == 75205:
-			math.random_int(0, 9)
-			if 1 != math.random_int(0, 9):
+			v1 = math.random_int(0, 9)
+			if 1 != v1:
 				_pc = 75229
 				continue
 			else:
 				_pc = 75144
 				continue
 		elif _pc == 75229:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 75238
 				continue
 			else:
 				_pc = 75152
 				continue
 		elif _pc == 75238:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 75247
 				continue
 			else:
 				_pc = 75152
 				continue
 		elif _pc == 75247:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 75256
 				continue
 			else:
 				_pc = 75160
 				continue
 		elif _pc == 75256:
-			if not _pog_is_null(5):
+			if 5 != v1:
 				_pc = 75265
 				continue
 			else:
 				_pc = 75160
 				continue
 		elif _pc == 75265:
-			if not _pog_is_null(6):
+			if 6 != v1:
 				_pc = 75274
 				continue
 			else:
 				_pc = 75168
 				continue
 		elif _pc == 75274:
-			if not _pog_is_null(7):
+			if 7 != v1:
 				_pc = 75283
 				continue
 			else:
 				_pc = 75176
 				continue
 		elif _pc == 75283:
-			if not _pog_is_null(8):
+			if 8 != v1:
 				_pc = 75292
 				continue
 			else:
@@ -6474,64 +6475,64 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 75464
 			continue
 		elif _pc == 75363:
-			math.random_int(0, 15)
-			if 1 != math.random_int(0, 15):
+			v1 = math.random_int(0, 15)
+			if 1 != v1:
 				_pc = 75387
 				continue
 			else:
 				_pc = 75302
 				continue
 		elif _pc == 75387:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 75396
 				continue
 			else:
 				_pc = 75302
 				continue
 		elif _pc == 75396:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 75405
 				continue
 			else:
 				_pc = 75302
 				continue
 		elif _pc == 75405:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 75414
 				continue
 			else:
 				_pc = 75310
 				continue
 		elif _pc == 75414:
-			if not _pog_is_null(5):
+			if 5 != v1:
 				_pc = 75423
 				continue
 			else:
 				_pc = 75310
 				continue
 		elif _pc == 75423:
-			if not _pog_is_null(6):
+			if 6 != v1:
 				_pc = 75432
 				continue
 			else:
 				_pc = 75318
 				continue
 		elif _pc == 75432:
-			if not _pog_is_null(7):
+			if 7 != v1:
 				_pc = 75441
 				continue
 			else:
 				_pc = 75326
 				continue
 		elif _pc == 75441:
-			if not _pog_is_null(8):
+			if 8 != v1:
 				_pc = 75450
 				continue
 			else:
 				_pc = 75334
 				continue
 		elif _pc == 75450:
-			if not _pog_is_null(9):
+			if 9 != v1:
 				_pc = 75459
 				continue
 			else:
@@ -6565,85 +6566,85 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 75672
 			continue
 		elif _pc == 75544:
-			math.random_int(0, 15)
-			if 1 != math.random_int(0, 15):
+			v1 = math.random_int(0, 15)
+			if 1 != v1:
 				_pc = 75568
 				continue
 			else:
 				_pc = 75469
 				continue
 		elif _pc == 75568:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 75577
 				continue
 			else:
 				_pc = 75476
 				continue
 		elif _pc == 75577:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 75586
 				continue
 			else:
 				_pc = 75483
 				continue
 		elif _pc == 75586:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 75595
 				continue
 			else:
 				_pc = 75483
 				continue
 		elif _pc == 75595:
-			if not _pog_is_null(5):
+			if 5 != v1:
 				_pc = 75604
 				continue
 			else:
 				_pc = 75483
 				continue
 		elif _pc == 75604:
-			if not _pog_is_null(6):
+			if 6 != v1:
 				_pc = 75613
 				continue
 			else:
 				_pc = 75483
 				continue
 		elif _pc == 75613:
-			if not _pog_is_null(7):
+			if 7 != v1:
 				_pc = 75622
 				continue
 			else:
 				_pc = 75491
 				continue
 		elif _pc == 75622:
-			if not _pog_is_null(8):
+			if 8 != v1:
 				_pc = 75631
 				continue
 			else:
 				_pc = 75499
 				continue
 		elif _pc == 75631:
-			if not _pog_is_null(9):
+			if 9 != v1:
 				_pc = 75640
 				continue
 			else:
 				_pc = 75499
 				continue
 		elif _pc == 75640:
-			if not _pog_is_null(10):
+			if 10 != v1:
 				_pc = 75649
 				continue
 			else:
 				_pc = 75507
 				continue
 		elif _pc == 75649:
-			if not _pog_is_null(11):
+			if 11 != v1:
 				_pc = 75658
 				continue
 			else:
 				_pc = 75515
 				continue
 		elif _pc == 75658:
-			if not _pog_is_null(12):
+			if 12 != v1:
 				_pc = 75667
 				continue
 			else:
@@ -6679,78 +6680,78 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 75879
 			continue
 		elif _pc == 75760:
-			math.random_int(0, 15)
-			if 1 != math.random_int(0, 15):
+			v1 = math.random_int(0, 15)
+			if 1 != v1:
 				_pc = 75784
 				continue
 			else:
 				_pc = 75677
 				continue
 		elif _pc == 75784:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 75793
 				continue
 			else:
 				_pc = 75684
 				continue
 		elif _pc == 75793:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 75802
 				continue
 			else:
 				_pc = 75691
 				continue
 		elif _pc == 75802:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 75811
 				continue
 			else:
 				_pc = 75699
 				continue
 		elif _pc == 75811:
-			if not _pog_is_null(5):
+			if 5 != v1:
 				_pc = 75820
 				continue
 			else:
 				_pc = 75707
 				continue
 		elif _pc == 75820:
-			if not _pog_is_null(6):
+			if 6 != v1:
 				_pc = 75829
 				continue
 			else:
 				_pc = 75707
 				continue
 		elif _pc == 75829:
-			if not _pog_is_null(7):
+			if 7 != v1:
 				_pc = 75838
 				continue
 			else:
 				_pc = 75715
 				continue
 		elif _pc == 75838:
-			if not _pog_is_null(8):
+			if 8 != v1:
 				_pc = 75847
 				continue
 			else:
 				_pc = 75723
 				continue
 		elif _pc == 75847:
-			if not _pog_is_null(9):
+			if 9 != v1:
 				_pc = 75856
 				continue
 			else:
 				_pc = 75723
 				continue
 		elif _pc == 75856:
-			if not _pog_is_null(10):
+			if 10 != v1:
 				_pc = 75865
 				continue
 			else:
 				_pc = 75731
 				continue
 		elif _pc == 75865:
-			if not _pog_is_null(11):
+			if 11 != v1:
 				_pc = 75874
 				continue
 			else:
@@ -6776,36 +6777,36 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 75988
 			continue
 		elif _pc == 75929:
-			math.random_int(0, 4)
-			if not _pog_is_null(math.random_int(0, 4)):
+			v1 = math.random_int(0, 4)
+			if not _pog_is_null(v1):
 				_pc = 75953
 				continue
 			else:
 				_pc = 75884
 				continue
 		elif _pc == 75953:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 75961
 				continue
 			else:
 				_pc = 75892
 				continue
 		elif _pc == 75961:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 75970
 				continue
 			else:
 				_pc = 75900
 				continue
 		elif _pc == 75970:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 75979
 				continue
 			else:
 				_pc = 75908
 				continue
 		elif _pc == 75979:
-			if not _pog_is_null(4):
+			if 4 != v1:
 				_pc = 75988
 				continue
 			else:
@@ -6824,29 +6825,29 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 76072
 			continue
 		elif _pc == 76022:
-			math.random_int(0, 3)
-			if not _pog_is_null(math.random_int(0, 3)):
+			v1 = math.random_int(0, 3)
+			if not _pog_is_null(v1):
 				_pc = 76046
 				continue
 			else:
 				_pc = 75993
 				continue
 		elif _pc == 76046:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 76054
 				continue
 			else:
 				_pc = 75993
 				continue
 		elif _pc == 76054:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 76063
 				continue
 			else:
 				_pc = 76001
 				continue
 		elif _pc == 76063:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 76072
 				continue
 			else:
@@ -6865,29 +6866,29 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 76156
 			continue
 		elif _pc == 76106:
-			math.random_int(0, 3)
-			if not _pog_is_null(math.random_int(0, 3)):
+			v1 = math.random_int(0, 3)
+			if not _pog_is_null(v1):
 				_pc = 76130
 				continue
 			else:
 				_pc = 76077
 				continue
 		elif _pc == 76130:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 76138
 				continue
 			else:
 				_pc = 76077
 				continue
 		elif _pc == 76138:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 76147
 				continue
 			else:
 				_pc = 76085
 				continue
 		elif _pc == 76147:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 76156
 				continue
 			else:
@@ -6906,29 +6907,29 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 76245
 			continue
 		elif _pc == 76190:
-			math.random_int(0, 5)
-			if not _pog_is_null(math.random_int(0, 5)):
+			v1 = math.random_int(0, 5)
+			if not _pog_is_null(v1):
 				_pc = 76214
 				continue
 			else:
 				_pc = 76161
 				continue
 		elif _pc == 76214:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 76222
 				continue
 			else:
 				_pc = 76169
 				continue
 		elif _pc == 76222:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 76231
 				continue
 			else:
 				_pc = 76169
 				continue
 		elif _pc == 76231:
-			if not _pog_is_null(3):
+			if 3 != v1:
 				_pc = 76240
 				continue
 			else:
@@ -6952,22 +6953,22 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 76333
 			continue
 		elif _pc == 76287:
-			math.random_int(0, 5)
-			if not _pog_is_null(math.random_int(0, 5)):
+			v1 = math.random_int(0, 5)
+			if not _pog_is_null(v1):
 				_pc = 76311
 				continue
 			else:
 				_pc = 76250
 				continue
 		elif _pc == 76311:
-			if not _pog_is_null(1):
+			if 1 != v1:
 				_pc = 76319
 				continue
 			else:
 				_pc = 76258
 				continue
 		elif _pc == 76319:
-			if not _pog_is_null(2):
+			if 2 != v1:
 				_pc = 76328
 				continue
 			else:
@@ -6980,406 +6981,407 @@ func find_mini_cargo_for_location(v0) -> Variant:
 			_pc = 76869
 			continue
 		elif _pc == 76338:
-			if not _pog_is_null(v0):
+			v1 = v0
+			if not _pog_is_null(v1):
 				_pc = 76351
 				continue
 			else:
 				_pc = 74586
 				continue
 		elif _pc == 76351:
-			if 6 != v0:
+			if 6 != v1:
 				_pc = 76360
 				continue
 			else:
 				_pc = 74592
 				continue
 		elif _pc == 76360:
-			if 7 != v0:
+			if 7 != v1:
 				_pc = 76369
 				continue
 			else:
 				_pc = 74592
 				continue
 		elif _pc == 76369:
-			if 8 != v0:
+			if 8 != v1:
 				_pc = 76378
 				continue
 			else:
 				_pc = 74592
 				continue
 		elif _pc == 76378:
-			if 21 != v0:
+			if 21 != v1:
 				_pc = 76387
 				continue
 			else:
 				_pc = 74664
 				continue
 		elif _pc == 76387:
-			if 37 != v0:
+			if 37 != v1:
 				_pc = 76396
 				continue
 			else:
 				_pc = 74664
 				continue
 		elif _pc == 76396:
-			if 64 != v0:
+			if 64 != v1:
 				_pc = 76405
 				continue
 			else:
 				_pc = 74664
 				continue
 		elif _pc == 76405:
-			if 76 != v0:
+			if 76 != v1:
 				_pc = 76414
 				continue
 			else:
 				_pc = 74664
 				continue
 		elif _pc == 76414:
-			if 84 != v0:
+			if 84 != v1:
 				_pc = 76423
 				continue
 			else:
 				_pc = 74664
 				continue
 		elif _pc == 76423:
-			if 22 != v0:
+			if 22 != v1:
 				_pc = 76432
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76432:
-			if 23 != v0:
+			if 23 != v1:
 				_pc = 76441
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76441:
-			if 24 != v0:
+			if 24 != v1:
 				_pc = 76450
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76450:
-			if 25 != v0:
+			if 25 != v1:
 				_pc = 76459
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76459:
-			if 26 != v0:
+			if 26 != v1:
 				_pc = 76468
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76468:
-			if 27 != v0:
+			if 27 != v1:
 				_pc = 76477
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76477:
-			if 28 != v0:
+			if 28 != v1:
 				_pc = 76486
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76486:
-			if 29 != v0:
+			if 29 != v1:
 				_pc = 76495
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76495:
-			if 30 != v0:
+			if 30 != v1:
 				_pc = 76504
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76504:
-			if 31 != v0:
+			if 31 != v1:
 				_pc = 76513
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76513:
-			if 32 != v0:
+			if 32 != v1:
 				_pc = 76522
 				continue
 			else:
 				_pc = 74749
 				continue
 		elif _pc == 76522:
-			if 33 != v0:
+			if 33 != v1:
 				_pc = 76531
 				continue
 			else:
 				_pc = 74834
 				continue
 		elif _pc == 76531:
-			if 34 != v0:
+			if 34 != v1:
 				_pc = 76540
 				continue
 			else:
 				_pc = 74957
 				continue
 		elif _pc == 76540:
-			if 35 != v0:
+			if 35 != v1:
 				_pc = 76549
 				continue
 			else:
 				_pc = 74957
 				continue
 		elif _pc == 76549:
-			if 39 != v0:
+			if 39 != v1:
 				_pc = 76558
 				continue
 			else:
 				_pc = 75033
 				continue
 		elif _pc == 76558:
-			if 40 != v0:
+			if 40 != v1:
 				_pc = 76567
 				continue
 			else:
 				_pc = 75033
 				continue
 		elif _pc == 76567:
-			if 41 != v0:
+			if 41 != v1:
 				_pc = 76576
 				continue
 			else:
 				_pc = 75033
 				continue
 		elif _pc == 76576:
-			if 96 != v0:
+			if 96 != v1:
 				_pc = 76585
 				continue
 			else:
 				_pc = 75033
 				continue
 		elif _pc == 76585:
-			if 51 != v0:
+			if 51 != v1:
 				_pc = 76594
 				continue
 			else:
 				_pc = 75033
 				continue
 		elif _pc == 76594:
-			if 42 != v0:
+			if 42 != v1:
 				_pc = 76603
 				continue
 			else:
 				_pc = 75139
 				continue
 		elif _pc == 76603:
-			if 43 != v0:
+			if 43 != v1:
 				_pc = 76612
 				continue
 			else:
 				_pc = 75139
 				continue
 		elif _pc == 76612:
-			if 80 != v0:
+			if 80 != v1:
 				_pc = 76621
 				continue
 			else:
 				_pc = 75139
 				continue
 		elif _pc == 76621:
-			if 81 != v0:
+			if 81 != v1:
 				_pc = 76630
 				continue
 			else:
 				_pc = 75139
 				continue
 		elif _pc == 76630:
-			if 110 != v0:
+			if 110 != v1:
 				_pc = 76639
 				continue
 			else:
 				_pc = 75139
 				continue
 		elif _pc == 76639:
-			if 44 != v0:
+			if 44 != v1:
 				_pc = 76648
 				continue
 			else:
 				_pc = 75297
 				continue
 		elif _pc == 76648:
-			if 45 != v0:
+			if 45 != v1:
 				_pc = 76657
 				continue
 			else:
 				_pc = 75297
 				continue
 		elif _pc == 76657:
-			if 47 != v0:
+			if 47 != v1:
 				_pc = 76666
 				continue
 			else:
 				_pc = 75297
 				continue
 		elif _pc == 76666:
-			if 61 != v0:
+			if 61 != v1:
 				_pc = 76675
 				continue
 			else:
 				_pc = 75464
 				continue
 		elif _pc == 76675:
-			if 63 != v0:
+			if 63 != v1:
 				_pc = 76684
 				continue
 			else:
 				_pc = 75672
 				continue
 		elif _pc == 76684:
-			if 66 != v0:
+			if 66 != v1:
 				_pc = 76693
 				continue
 			else:
 				_pc = 75879
 				continue
 		elif _pc == 76693:
-			if 72 != v0:
+			if 72 != v1:
 				_pc = 76702
 				continue
 			else:
 				_pc = 75988
 				continue
 		elif _pc == 76702:
-			if 73 != v0:
+			if 73 != v1:
 				_pc = 76711
 				continue
 			else:
 				_pc = 75988
 				continue
 		elif _pc == 76711:
-			if 74 != v0:
+			if 74 != v1:
 				_pc = 76720
 				continue
 			else:
 				_pc = 75988
 				continue
 		elif _pc == 76720:
-			if 75 != v0:
+			if 75 != v1:
 				_pc = 76729
 				continue
 			else:
 				_pc = 75988
 				continue
 		elif _pc == 76729:
-			if 78 != v0:
+			if 78 != v1:
 				_pc = 76738
 				continue
 			else:
 				_pc = 75988
 				continue
 		elif _pc == 76738:
-			if 82 != v0:
+			if 82 != v1:
 				_pc = 76747
 				continue
 			else:
 				_pc = 75988
 				continue
 		elif _pc == 76747:
-			if 85 != v0:
+			if 85 != v1:
 				_pc = 76756
 				continue
 			else:
 				_pc = 75988
 				continue
 		elif _pc == 76756:
-			if 68 != v0:
+			if 68 != v1:
 				_pc = 76765
 				continue
 			else:
 				_pc = 76072
 				continue
 		elif _pc == 76765:
-			if 69 != v0:
+			if 69 != v1:
 				_pc = 76774
 				continue
 			else:
 				_pc = 76072
 				continue
 		elif _pc == 76774:
-			if 86 != v0:
+			if 86 != v1:
 				_pc = 76783
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76783:
-			if 87 != v0:
+			if 87 != v1:
 				_pc = 76792
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76792:
-			if 88 != v0:
+			if 88 != v1:
 				_pc = 76801
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76801:
-			if 89 != v0:
+			if 89 != v1:
 				_pc = 76810
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76810:
-			if 90 != v0:
+			if 90 != v1:
 				_pc = 76819
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76819:
-			if 91 != v0:
+			if 91 != v1:
 				_pc = 76828
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76828:
-			if 92 != v0:
+			if 92 != v1:
 				_pc = 76837
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76837:
-			if 93 != v0:
+			if 93 != v1:
 				_pc = 76846
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76846:
-			if 94 != v0:
+			if 94 != v1:
 				_pc = 76855
 				continue
 			else:
 				_pc = 76156
 				continue
 		elif _pc == 76855:
-			if 95 != v0:
+			if 95 != v1:
 				_pc = 76864
 				continue
 			else:

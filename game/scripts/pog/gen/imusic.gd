@@ -259,6 +259,7 @@ func local_1866(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
+	var v5: Variant = 0
 	var _pc: int = 1866
 	while true:
 		if _pc == 1866:
@@ -347,35 +348,36 @@ func local_1866(v0, v1) -> Variant:
 			_pc = 2275
 			continue
 		elif _pc == 2227:
-			if not _pog_is_null(v0):
+			v5 = v0
+			if not _pog_is_null(v5):
 				_pc = 2240
 				continue
 			else:
 				_pc = 1972
 				continue
 		elif _pc == 2240:
-			if 2 != v0:
+			if 2 != v5:
 				_pc = 2249
 				continue
 			else:
 				_pc = 1972
 				continue
 		elif _pc == 2249:
-			if 1 != v0:
+			if 1 != v5:
 				_pc = 2257
 				continue
 			else:
 				_pc = 1972
 				continue
 		elif _pc == 2257:
-			if 3 != v0:
+			if 3 != v5:
 				_pc = 2266
 				continue
 			else:
 				_pc = 2059
 				continue
 		elif _pc == 2266:
-			if 4 != v0:
+			if 4 != v5:
 				_pc = 2275
 				continue
 			else:
@@ -450,6 +452,7 @@ func local_2347(v0) -> Variant:
 func local_2800(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
+	var v3: Variant = 0
 	var _pc: int = 2800
 	while true:
 		if _pc == 2800:
@@ -470,21 +473,22 @@ func local_2800(v0) -> Variant:
 			_pc = 2889
 			continue
 		elif _pc == 2854:
-			if not _pog_is_null(v0):
+			v3 = v0
+			if not _pog_is_null(v3):
 				_pc = 2867
 				continue
 			else:
 				_pc = 2810
 				continue
 		elif _pc == 2867:
-			if 1 != v0:
+			if 1 != v3:
 				_pc = 2875
 				continue
 			else:
 				_pc = 2816
 				continue
 		elif _pc == 2875:
-			if 2 != v0:
+			if 2 != v3:
 				_pc = 2884
 				continue
 			else:
@@ -518,6 +522,7 @@ func monitor() -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
+	var v16: Variant = 0
 	var _pc: int = 2919
 	while true:
 		if _pc == 2919:
@@ -641,21 +646,22 @@ func monitor() -> Variant:
 			_pc = 3635
 			continue
 		elif _pc == 3600:
-			if not _pog_is_null(v13):
+			v16 = v13
+			if not _pog_is_null(v16):
 				_pc = 3613
 				continue
 			else:
 				_pc = 3392
 				continue
 		elif _pc == 3613:
-			if 1 != v13:
+			if 1 != v16:
 				_pc = 3621
 				continue
 			else:
 				_pc = 3440
 				continue
 		elif _pc == 3621:
-			if 2 != v13:
+			if 2 != v16:
 				_pc = 3630
 				continue
 			else:
@@ -945,6 +951,7 @@ func play(v0, v1, v2) -> Variant:
 
 func play_event(v0) -> Variant:
 	var v1: Variant = 0
+	var v2: Variant = 0
 	var _pc: int = 5167
 	while true:
 		if _pc == 5167:
@@ -1014,70 +1021,71 @@ func play_event(v0) -> Variant:
 			_pc = 5513
 			continue
 		elif _pc == 5415:
-			if not _pog_is_null(v0):
+			v2 = v0
+			if not _pog_is_null(v2):
 				_pc = 5428
 				continue
 			else:
 				_pc = 5212
 				continue
 		elif _pc == 5428:
-			if 1 != v0:
+			if 1 != v2:
 				_pc = 5436
 				continue
 			else:
 				_pc = 5217
 				continue
 		elif _pc == 5436:
-			if 2 != v0:
+			if 2 != v2:
 				_pc = 5445
 				continue
 			else:
 				_pc = 5235
 				continue
 		elif _pc == 5445:
-			if 3 != v0:
+			if 3 != v2:
 				_pc = 5454
 				continue
 			else:
 				_pc = 5253
 				continue
 		elif _pc == 5454:
-			if 4 != v0:
+			if 4 != v2:
 				_pc = 5463
 				continue
 			else:
 				_pc = 5271
 				continue
 		elif _pc == 5463:
-			if 5 != v0:
+			if 5 != v2:
 				_pc = 5472
 				continue
 			else:
 				_pc = 5289
 				continue
 		elif _pc == 5472:
-			if 6 != v0:
+			if 6 != v2:
 				_pc = 5481
 				continue
 			else:
 				_pc = 5307
 				continue
 		elif _pc == 5481:
-			if 7 != v0:
+			if 7 != v2:
 				_pc = 5490
 				continue
 			else:
 				_pc = 5325
 				continue
 		elif _pc == 5490:
-			if 8 != v0:
+			if 8 != v2:
 				_pc = 5499
 				continue
 			else:
 				_pc = 5343
 				continue
 		elif _pc == 5499:
-			if 9 != v0:
+			if 9 != v2:
 				_pc = 5508
 				continue
 			else:

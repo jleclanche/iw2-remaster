@@ -1490,6 +1490,7 @@ func local_32297() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
+	var v3: Variant = 0
 	var _pc: int = 32297
 	while true:
 		if _pc == 32297:
@@ -1516,7 +1517,8 @@ func local_32297() -> Variant:
 			_pc = 32519
 			continue
 		elif _pc == 32506:
-			if 1 != v1:
+			v3 = v1
+			if 1 != v3:
 				_pc = 32519
 				continue
 			else:

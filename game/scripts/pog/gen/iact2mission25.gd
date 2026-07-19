@@ -1135,6 +1135,7 @@ func launch_pod_ships(v0, v1, v2, v3) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
+	var v12: Variant = 0
 	var _pc: int = 19230
 	while true:
 		if _pc == 19230:
@@ -1270,36 +1271,36 @@ func launch_pod_ships(v0, v1, v2, v3) -> Variant:
 			_pc = 20357
 			continue
 		elif _pc == 20298:
-			math.random_int(0, 4)
-			if not _pog_is_null(math.random_int(0, 4)):
+			v12 = math.random_int(0, 4)
+			if not _pog_is_null(v12):
 				_pc = 20322
 				continue
 			else:
 				_pc = 20216
 				continue
 		elif _pc == 20322:
-			if not _pog_is_null(1):
+			if 1 != v12:
 				_pc = 20330
 				continue
 			else:
 				_pc = 20216
 				continue
 		elif _pc == 20330:
-			if not _pog_is_null(2):
+			if 2 != v12:
 				_pc = 20339
 				continue
 			else:
 				_pc = 20216
 				continue
 		elif _pc == 20339:
-			if not _pog_is_null(3):
+			if 3 != v12:
 				_pc = 20348
 				continue
 			else:
 				_pc = 20245
 				continue
 		elif _pc == 20348:
-			if not _pog_is_null(4):
+			if 4 != v12:
 				_pc = 20357
 				continue
 			else:

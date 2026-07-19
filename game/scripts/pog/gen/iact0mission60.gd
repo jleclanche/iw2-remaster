@@ -222,6 +222,7 @@ func local_2414(v0, v1) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
+	var v9: Variant = 0
 	var _pc: int = 2414
 	while true:
 		if _pc == 2414:
@@ -285,14 +286,15 @@ func local_2414(v0, v1) -> Variant:
 			_pc = 3242
 			continue
 		elif _pc == 3215:
-			if 1 != v7:
+			v9 = v7
+			if 1 != v9:
 				_pc = 3228
 				continue
 			else:
 				_pc = 3097
 				continue
 		elif _pc == 3228:
-			if 2 != v7:
+			if 2 != v9:
 				_pc = 3237
 				continue
 			else:

@@ -214,6 +214,7 @@ func mission_handler() -> Variant:
 	var v51: Variant = 0
 	var v52: Variant = 0
 	var v53: Variant = 0
+	var v54: Variant = 0
 	var _pc: int = 1163
 	while true:
 		if _pc == 1163:
@@ -416,36 +417,36 @@ func mission_handler() -> Variant:
 			_pc = 3757
 			continue
 		elif _pc == 3696:
-			state.progress(v0)
-			if not _pog_is_null(state.progress(v0)):
+			v54 = state.progress(v0)
+			if not _pog_is_null(v54):
 				_pc = 3722
 				continue
 			else:
 				_pc = 3397
 				continue
 		elif _pc == 3722:
-			if not _pog_is_null(1):
+			if 1 != v54:
 				_pc = 3730
 				continue
 			else:
 				_pc = 3397
 				continue
 		elif _pc == 3730:
-			if not _pog_is_null(2):
+			if 2 != v54:
 				_pc = 3739
 				continue
 			else:
 				_pc = 3397
 				continue
 		elif _pc == 3739:
-			if not _pog_is_null(3):
+			if 3 != v54:
 				_pc = 3748
 				continue
 			else:
 				_pc = 3495
 				continue
 		elif _pc == 3748:
-			if not _pog_is_null(4):
+			if 4 != v54:
 				_pc = 3757
 				continue
 			else:
@@ -1182,36 +1183,36 @@ func mission_handler() -> Variant:
 			_pc = 9395
 			continue
 		elif _pc == 9334:
-			state.progress(v0)
-			if not _pog_is_null(state.progress(v0)):
+			v54 = state.progress(v0)
+			if not _pog_is_null(v54):
 				_pc = 9360
 				continue
 			else:
 				_pc = 3971
 				continue
 		elif _pc == 9360:
-			if not _pog_is_null(1):
+			if 1 != v54:
 				_pc = 9368
 				continue
 			else:
 				_pc = 4292
 				continue
 		elif _pc == 9368:
-			if not _pog_is_null(2):
+			if 2 != v54:
 				_pc = 9377
 				continue
 			else:
 				_pc = 5078
 				continue
 		elif _pc == 9377:
-			if not _pog_is_null(3):
+			if 3 != v54:
 				_pc = 9386
 				continue
 			else:
 				_pc = 6582
 				continue
 		elif _pc == 9386:
-			if not _pog_is_null(4):
+			if 4 != v54:
 				_pc = 9395
 				continue
 			else:
@@ -1374,6 +1375,7 @@ func local_11794(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
+	var v8: Variant = 0
 	var _pc: int = 11794
 	while true:
 		if _pc == 11794:
@@ -1451,71 +1453,71 @@ func local_11794(v0, v1, v2) -> Variant:
 			_pc = 12532
 			continue
 		elif _pc == 12428:
-			math.random_int(0, 9)
-			if not _pog_is_null(math.random_int(0, 9)):
+			v8 = math.random_int(0, 9)
+			if not _pog_is_null(v8):
 				_pc = 12452
 				continue
 			else:
 				_pc = 12158
 				continue
 		elif _pc == 12452:
-			if not _pog_is_null(1):
+			if 1 != v8:
 				_pc = 12460
 				continue
 			else:
 				_pc = 12158
 				continue
 		elif _pc == 12460:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 12469
 				continue
 			else:
 				_pc = 12211
 				continue
 		elif _pc == 12469:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 12478
 				continue
 			else:
 				_pc = 12211
 				continue
 		elif _pc == 12478:
-			if not _pog_is_null(4):
+			if 4 != v8:
 				_pc = 12487
 				continue
 			else:
 				_pc = 12264
 				continue
 		elif _pc == 12487:
-			if not _pog_is_null(5):
+			if 5 != v8:
 				_pc = 12496
 				continue
 			else:
 				_pc = 12264
 				continue
 		elif _pc == 12496:
-			if not _pog_is_null(6):
+			if 6 != v8:
 				_pc = 12505
 				continue
 			else:
 				_pc = 12264
 				continue
 		elif _pc == 12505:
-			if not _pog_is_null(7):
+			if 7 != v8:
 				_pc = 12514
 				continue
 			else:
 				_pc = 12317
 				continue
 		elif _pc == 12514:
-			if not _pog_is_null(8):
+			if 8 != v8:
 				_pc = 12523
 				continue
 			else:
 				_pc = 12317
 				continue
 		elif _pc == 12523:
-			if not _pog_is_null(9):
+			if 9 != v8:
 				_pc = 12532
 				continue
 			else:

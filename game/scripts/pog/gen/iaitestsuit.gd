@@ -336,6 +336,7 @@ func local_5574(v0, v1) -> Variant:
 
 func local_5749() -> Variant:
 	var v0: Variant = 0
+	var v1: Variant = 0
 	var _pc: int = 5749
 	while true:
 		if _pc == 5749:
@@ -366,21 +367,22 @@ func local_5749() -> Variant:
 			_pc = 6043
 			continue
 		elif _pc == 6007:
-			if 1 != v0:
+			v1 = v0
+			if 1 != v1:
 				_pc = 6020
 				continue
 			else:
 				_pc = 5914
 				continue
 		elif _pc == 6020:
-			if 2 != v0:
+			if 2 != v1:
 				_pc = 6029
 				continue
 			else:
 				_pc = 5941
 				continue
 		elif _pc == 6029:
-			if 3 != v0:
+			if 3 != v1:
 				_pc = 6038
 				continue
 			else:
@@ -426,6 +428,7 @@ func local_6286() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
+	var v9: Variant = 0
 	var _pc: int = 6286
 	while true:
 		if _pc == 6286:
@@ -1131,231 +1134,232 @@ func local_6286() -> Variant:
 			_pc = 12625
 			continue
 		elif _pc == 12319:
-			if 1 != v0:
+			v9 = v0
+			if 1 != v9:
 				_pc = 12332
 				continue
 			else:
 				_pc = 7356
 				continue
 		elif _pc == 12332:
-			if 2 != v0:
+			if 2 != v9:
 				_pc = 12341
 				continue
 			else:
 				_pc = 7430
 				continue
 		elif _pc == 12341:
-			if 3 != v0:
+			if 3 != v9:
 				_pc = 12350
 				continue
 			else:
 				_pc = 7534
 				continue
 		elif _pc == 12350:
-			if 4 != v0:
+			if 4 != v9:
 				_pc = 12359
 				continue
 			else:
 				_pc = 7608
 				continue
 		elif _pc == 12359:
-			if 5 != v0:
+			if 5 != v9:
 				_pc = 12368
 				continue
 			else:
 				_pc = 7682
 				continue
 		elif _pc == 12368:
-			if 6 != v0:
+			if 6 != v9:
 				_pc = 12377
 				continue
 			else:
 				_pc = 7706
 				continue
 		elif _pc == 12377:
-			if 7 != v0:
+			if 7 != v9:
 				_pc = 12386
 				continue
 			else:
 				_pc = 7911
 				continue
 		elif _pc == 12386:
-			if 8 != v0:
+			if 8 != v9:
 				_pc = 12395
 				continue
 			else:
 				_pc = 8116
 				continue
 		elif _pc == 12395:
-			if 9 != v0:
+			if 9 != v9:
 				_pc = 12404
 				continue
 			else:
 				_pc = 8268
 				continue
 		elif _pc == 12404:
-			if 10 != v0:
+			if 10 != v9:
 				_pc = 12413
 				continue
 			else:
 				_pc = 8736
 				continue
 		elif _pc == 12413:
-			if 11 != v0:
+			if 11 != v9:
 				_pc = 12422
 				continue
 			else:
 				_pc = 9065
 				continue
 		elif _pc == 12422:
-			if 12 != v0:
+			if 12 != v9:
 				_pc = 12431
 				continue
 			else:
 				_pc = 9141
 				continue
 		elif _pc == 12431:
-			if 13 != v0:
+			if 13 != v9:
 				_pc = 12440
 				continue
 			else:
 				_pc = 9165
 				continue
 		elif _pc == 12440:
-			if 14 != v0:
+			if 14 != v9:
 				_pc = 12449
 				continue
 			else:
 				_pc = 9189
 				continue
 		elif _pc == 12449:
-			if 15 != v0:
+			if 15 != v9:
 				_pc = 12458
 				continue
 			else:
 				_pc = 9450
 				continue
 		elif _pc == 12458:
-			if 16 != v0:
+			if 16 != v9:
 				_pc = 12467
 				continue
 			else:
 				_pc = 9634
 				continue
 		elif _pc == 12467:
-			if 17 != v0:
+			if 17 != v9:
 				_pc = 12476
 				continue
 			else:
 				_pc = 9692
 				continue
 		elif _pc == 12476:
-			if 18 != v0:
+			if 18 != v9:
 				_pc = 12485
 				continue
 			else:
 				_pc = 9750
 				continue
 		elif _pc == 12485:
-			if 19 != v0:
+			if 19 != v9:
 				_pc = 12494
 				continue
 			else:
 				_pc = 9831
 				continue
 		elif _pc == 12494:
-			if 20 != v0:
+			if 20 != v9:
 				_pc = 12503
 				continue
 			else:
 				_pc = 10018
 				continue
 		elif _pc == 12503:
-			if 21 != v0:
+			if 21 != v9:
 				_pc = 12512
 				continue
 			else:
 				_pc = 10205
 				continue
 		elif _pc == 12512:
-			if 22 != v0:
+			if 22 != v9:
 				_pc = 12521
 				continue
 			else:
 				_pc = 10405
 				continue
 		elif _pc == 12521:
-			if 23 != v0:
+			if 23 != v9:
 				_pc = 12530
 				continue
 			else:
 				_pc = 10605
 				continue
 		elif _pc == 12530:
-			if 24 != v0:
+			if 24 != v9:
 				_pc = 12539
 				continue
 			else:
 				_pc = 10805
 				continue
 		elif _pc == 12539:
-			if 25 != v0:
+			if 25 != v9:
 				_pc = 12548
 				continue
 			else:
 				_pc = 10920
 				continue
 		elif _pc == 12548:
-			if 26 != v0:
+			if 26 != v9:
 				_pc = 12557
 				continue
 			else:
 				_pc = 11054
 				continue
 		elif _pc == 12557:
-			if 27 != v0:
+			if 27 != v9:
 				_pc = 12566
 				continue
 			else:
 				_pc = 11168
 				continue
 		elif _pc == 12566:
-			if 28 != v0:
+			if 28 != v9:
 				_pc = 12575
 				continue
 			else:
 				_pc = 11340
 				continue
 		elif _pc == 12575:
-			if 29 != v0:
+			if 29 != v9:
 				_pc = 12584
 				continue
 			else:
 				_pc = 11492
 				continue
 		elif _pc == 12584:
-			if 30 != v0:
+			if 30 != v9:
 				_pc = 12593
 				continue
 			else:
 				_pc = 11619
 				continue
 		elif _pc == 12593:
-			if 31 != v0:
+			if 31 != v9:
 				_pc = 12602
 				continue
 			else:
 				_pc = 11819
 				continue
 		elif _pc == 12602:
-			if 32 != v0:
+			if 32 != v9:
 				_pc = 12611
 				continue
 			else:
 				_pc = 11904
 				continue
 		elif _pc == 12611:
-			if 33 != v0:
+			if 33 != v9:
 				_pc = 12620
 				continue
 			else:

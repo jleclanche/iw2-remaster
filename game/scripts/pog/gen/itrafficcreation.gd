@@ -94,6 +94,7 @@ func local_111(v0) -> Variant:
 	var v30: Variant = 0
 	var v31: Variant = 0
 	var v32: Variant = 0
+	var v33: Variant = 0
 	var _pc: int = 111
 	while true:
 		if _pc == 111:
@@ -824,848 +825,848 @@ func local_111(v0) -> Variant:
 			_pc = 7976
 			continue
 		elif _pc == 6871:
-			ihabitat.type(v1)
-			if not _pog_is_null(ihabitat.type(v1)):
+			v33 = ihabitat.type(v1)
+			if not _pog_is_null(v33):
 				_pc = 6897
 				continue
 			else:
 				_pc = 336
 				continue
 		elif _pc == 6897:
-			if not _pog_is_null(1):
+			if 1 != v33:
 				_pc = 6905
 				continue
 			else:
 				_pc = 495
 				continue
 		elif _pc == 6905:
-			if not _pog_is_null(2):
+			if 2 != v33:
 				_pc = 6914
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6914:
-			if not _pog_is_null(3):
+			if 3 != v33:
 				_pc = 6923
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6923:
-			if not _pog_is_null(4):
+			if 4 != v33:
 				_pc = 6932
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6932:
-			if not _pog_is_null(5):
+			if 5 != v33:
 				_pc = 6941
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6941:
-			if not _pog_is_null(6):
+			if 6 != v33:
 				_pc = 6950
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6950:
-			if not _pog_is_null(7):
+			if 7 != v33:
 				_pc = 6959
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6959:
-			if not _pog_is_null(8):
+			if 8 != v33:
 				_pc = 6968
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6968:
-			if not _pog_is_null(9):
+			if 9 != v33:
 				_pc = 6977
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6977:
-			if not _pog_is_null(10):
+			if 10 != v33:
 				_pc = 6986
 				continue
 			else:
 				_pc = 654
 				continue
 		elif _pc == 6986:
-			if not _pog_is_null(53):
+			if 53 != v33:
 				_pc = 6995
 				continue
 			else:
 				_pc = 813
 				continue
 		elif _pc == 6995:
-			if not _pog_is_null(11):
+			if 11 != v33:
 				_pc = 7004
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7004:
-			if not _pog_is_null(12):
+			if 12 != v33:
 				_pc = 7013
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7013:
-			if not _pog_is_null(13):
+			if 13 != v33:
 				_pc = 7022
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7022:
-			if not _pog_is_null(14):
+			if 14 != v33:
 				_pc = 7031
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7031:
-			if not _pog_is_null(15):
+			if 15 != v33:
 				_pc = 7040
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7040:
-			if not _pog_is_null(16):
+			if 16 != v33:
 				_pc = 7049
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7049:
-			if not _pog_is_null(17):
+			if 17 != v33:
 				_pc = 7058
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7058:
-			if not _pog_is_null(18):
+			if 18 != v33:
 				_pc = 7067
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7067:
-			if not _pog_is_null(19):
+			if 19 != v33:
 				_pc = 7076
 				continue
 			else:
 				_pc = 972
 				continue
 		elif _pc == 7076:
-			if not _pog_is_null(20):
+			if 20 != v33:
 				_pc = 7085
 				continue
 			else:
 				_pc = 1142
 				continue
 		elif _pc == 7085:
-			if not _pog_is_null(22):
+			if 22 != v33:
 				_pc = 7094
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7094:
-			if not _pog_is_null(23):
+			if 23 != v33:
 				_pc = 7103
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7103:
-			if not _pog_is_null(24):
+			if 24 != v33:
 				_pc = 7112
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7112:
-			if not _pog_is_null(25):
+			if 25 != v33:
 				_pc = 7121
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7121:
-			if not _pog_is_null(26):
+			if 26 != v33:
 				_pc = 7130
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7130:
-			if not _pog_is_null(27):
+			if 27 != v33:
 				_pc = 7139
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7139:
-			if not _pog_is_null(28):
+			if 28 != v33:
 				_pc = 7148
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7148:
-			if not _pog_is_null(29):
+			if 29 != v33:
 				_pc = 7157
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7157:
-			if not _pog_is_null(30):
+			if 30 != v33:
 				_pc = 7166
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7166:
-			if not _pog_is_null(31):
+			if 31 != v33:
 				_pc = 7175
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7175:
-			if not _pog_is_null(32):
+			if 32 != v33:
 				_pc = 7184
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7184:
-			if not _pog_is_null(33):
+			if 33 != v33:
 				_pc = 7193
 				continue
 			else:
 				_pc = 1301
 				continue
 		elif _pc == 7193:
-			if not _pog_is_null(39):
+			if 39 != v33:
 				_pc = 7202
 				continue
 			else:
 				_pc = 1460
 				continue
 		elif _pc == 7202:
-			if not _pog_is_null(40):
+			if 40 != v33:
 				_pc = 7211
 				continue
 			else:
 				_pc = 1460
 				continue
 		elif _pc == 7211:
-			if not _pog_is_null(96):
+			if 96 != v33:
 				_pc = 7220
 				continue
 			else:
 				_pc = 1460
 				continue
 		elif _pc == 7220:
-			if not _pog_is_null(110):
+			if 110 != v33:
 				_pc = 7229
 				continue
 			else:
 				_pc = 1460
 				continue
 		elif _pc == 7229:
-			if not _pog_is_null(42):
+			if 42 != v33:
 				_pc = 7238
 				continue
 			else:
 				_pc = 1619
 				continue
 		elif _pc == 7238:
-			if not _pog_is_null(43):
+			if 43 != v33:
 				_pc = 7247
 				continue
 			else:
 				_pc = 1619
 				continue
 		elif _pc == 7247:
-			if not _pog_is_null(80):
+			if 80 != v33:
 				_pc = 7256
 				continue
 			else:
 				_pc = 1619
 				continue
 		elif _pc == 7256:
-			if not _pog_is_null(81):
+			if 81 != v33:
 				_pc = 7265
 				continue
 			else:
 				_pc = 1619
 				continue
 		elif _pc == 7265:
-			if not _pog_is_null(34):
+			if 34 != v33:
 				_pc = 7274
 				continue
 			else:
 				_pc = 1778
 				continue
 		elif _pc == 7274:
-			if not _pog_is_null(35):
+			if 35 != v33:
 				_pc = 7283
 				continue
 			else:
 				_pc = 1778
 				continue
 		elif _pc == 7283:
-			if not _pog_is_null(44):
+			if 44 != v33:
 				_pc = 7292
 				continue
 			else:
 				_pc = 1937
 				continue
 		elif _pc == 7292:
-			if not _pog_is_null(45):
+			if 45 != v33:
 				_pc = 7301
 				continue
 			else:
 				_pc = 1937
 				continue
 		elif _pc == 7301:
-			if not _pog_is_null(47):
+			if 47 != v33:
 				_pc = 7310
 				continue
 			else:
 				_pc = 1937
 				continue
 		elif _pc == 7310:
-			if not _pog_is_null(92):
+			if 92 != v33:
 				_pc = 7319
 				continue
 			else:
 				_pc = 1937
 				continue
 		elif _pc == 7319:
-			if not _pog_is_null(93):
+			if 93 != v33:
 				_pc = 7328
 				continue
 			else:
 				_pc = 1937
 				continue
 		elif _pc == 7328:
-			if not _pog_is_null(94):
+			if 94 != v33:
 				_pc = 7337
 				continue
 			else:
 				_pc = 1937
 				continue
 		elif _pc == 7337:
-			if not _pog_is_null(95):
+			if 95 != v33:
 				_pc = 7346
 				continue
 			else:
 				_pc = 1937
 				continue
 		elif _pc == 7346:
-			if not _pog_is_null(49):
+			if 49 != v33:
 				_pc = 7355
 				continue
 			else:
 				_pc = 2096
 				continue
 		elif _pc == 7355:
-			if not _pog_is_null(50):
+			if 50 != v33:
 				_pc = 7364
 				continue
 			else:
 				_pc = 2096
 				continue
 		elif _pc == 7364:
-			if not _pog_is_null(66):
+			if 66 != v33:
 				_pc = 7373
 				continue
 			else:
 				_pc = 2096
 				continue
 		elif _pc == 7373:
-			if not _pog_is_null(52):
+			if 52 != v33:
 				_pc = 7382
 				continue
 			else:
 				_pc = 2096
 				continue
 		elif _pc == 7382:
-			if not _pog_is_null(105):
+			if 105 != v33:
 				_pc = 7391
 				continue
 			else:
 				_pc = 2255
 				continue
 		elif _pc == 7391:
-			if not _pog_is_null(106):
+			if 106 != v33:
 				_pc = 7400
 				continue
 			else:
 				_pc = 2414
 				continue
 		elif _pc == 7400:
-			if not _pog_is_null(41):
+			if 41 != v33:
 				_pc = 7409
 				continue
 			else:
 				_pc = 2573
 				continue
 		elif _pc == 7409:
-			if not _pog_is_null(51):
+			if 51 != v33:
 				_pc = 7418
 				continue
 			else:
 				_pc = 2573
 				continue
 		elif _pc == 7418:
-			if not _pog_is_null(99):
+			if 99 != v33:
 				_pc = 7427
 				continue
 			else:
 				_pc = 2573
 				continue
 		elif _pc == 7427:
-			if not _pog_is_null(100):
+			if 100 != v33:
 				_pc = 7436
 				continue
 			else:
 				_pc = 2573
 				continue
 		elif _pc == 7436:
-			if not _pog_is_null(61):
+			if 61 != v33:
 				_pc = 7445
 				continue
 			else:
 				_pc = 2732
 				continue
 		elif _pc == 7445:
-			if not _pog_is_null(63):
+			if 63 != v33:
 				_pc = 7454
 				continue
 			else:
 				_pc = 2891
 				continue
 		elif _pc == 7454:
-			if not _pog_is_null(72):
+			if 72 != v33:
 				_pc = 7463
 				continue
 			else:
 				_pc = 3050
 				continue
 		elif _pc == 7463:
-			if not _pog_is_null(73):
+			if 73 != v33:
 				_pc = 7472
 				continue
 			else:
 				_pc = 3050
 				continue
 		elif _pc == 7472:
-			if not _pog_is_null(54):
+			if 54 != v33:
 				_pc = 7481
 				continue
 			else:
 				_pc = 3209
 				continue
 		elif _pc == 7481:
-			if not _pog_is_null(55):
+			if 55 != v33:
 				_pc = 7490
 				continue
 			else:
 				_pc = 3209
 				continue
 		elif _pc == 7490:
-			if not _pog_is_null(70):
+			if 70 != v33:
 				_pc = 7499
 				continue
 			else:
 				_pc = 3209
 				continue
 		elif _pc == 7499:
-			if not _pog_is_null(71):
+			if 71 != v33:
 				_pc = 7508
 				continue
 			else:
 				_pc = 3209
 				continue
 		elif _pc == 7508:
-			if not _pog_is_null(82):
+			if 82 != v33:
 				_pc = 7517
 				continue
 			else:
 				_pc = 3209
 				continue
 		elif _pc == 7517:
-			if not _pog_is_null(85):
+			if 85 != v33:
 				_pc = 7526
 				continue
 			else:
 				_pc = 3209
 				continue
 		elif _pc == 7526:
-			if not _pog_is_null(68):
+			if 68 != v33:
 				_pc = 7535
 				continue
 			else:
 				_pc = 3368
 				continue
 		elif _pc == 7535:
-			if not _pog_is_null(69):
+			if 69 != v33:
 				_pc = 7544
 				continue
 			else:
 				_pc = 3368
 				continue
 		elif _pc == 7544:
-			if not _pog_is_null(56):
+			if 56 != v33:
 				_pc = 7553
 				continue
 			else:
 				_pc = 3527
 				continue
 		elif _pc == 7553:
-			if not _pog_is_null(58):
+			if 58 != v33:
 				_pc = 7562
 				continue
 			else:
 				_pc = 3527
 				continue
 		elif _pc == 7562:
-			if not _pog_is_null(57):
+			if 57 != v33:
 				_pc = 7571
 				continue
 			else:
 				_pc = 3686
 				continue
 		elif _pc == 7571:
-			if not _pog_is_null(84):
+			if 84 != v33:
 				_pc = 7580
 				continue
 			else:
 				_pc = 3845
 				continue
 		elif _pc == 7580:
-			if not _pog_is_null(21):
+			if 21 != v33:
 				_pc = 7589
 				continue
 			else:
 				_pc = 4004
 				continue
 		elif _pc == 7589:
-			if not _pog_is_null(37):
+			if 37 != v33:
 				_pc = 7598
 				continue
 			else:
 				_pc = 4163
 				continue
 		elif _pc == 7598:
-			if not _pog_is_null(64):
+			if 64 != v33:
 				_pc = 7607
 				continue
 			else:
 				_pc = 4163
 				continue
 		elif _pc == 7607:
-			if not _pog_is_null(76):
+			if 76 != v33:
 				_pc = 7616
 				continue
 			else:
 				_pc = 4163
 				continue
 		elif _pc == 7616:
-			if not _pog_is_null(86):
+			if 86 != v33:
 				_pc = 7625
 				continue
 			else:
 				_pc = 4322
 				continue
 		elif _pc == 7625:
-			if not _pog_is_null(74):
+			if 74 != v33:
 				_pc = 7634
 				continue
 			else:
 				_pc = 4322
 				continue
 		elif _pc == 7634:
-			if not _pog_is_null(75):
+			if 75 != v33:
 				_pc = 7643
 				continue
 			else:
 				_pc = 4322
 				continue
 		elif _pc == 7643:
-			if not _pog_is_null(36):
+			if 36 != v33:
 				_pc = 7652
 				continue
 			else:
 				_pc = 4322
 				continue
 		elif _pc == 7652:
-			if not _pog_is_null(60):
+			if 60 != v33:
 				_pc = 7661
 				continue
 			else:
 				_pc = 4481
 				continue
 		elif _pc == 7661:
-			if not _pog_is_null(78):
+			if 78 != v33:
 				_pc = 7670
 				continue
 			else:
 				_pc = 4481
 				continue
 		elif _pc == 7670:
-			if not _pog_is_null(87):
+			if 87 != v33:
 				_pc = 7679
 				continue
 			else:
 				_pc = 4640
 				continue
 		elif _pc == 7679:
-			if not _pog_is_null(88):
+			if 88 != v33:
 				_pc = 7688
 				continue
 			else:
 				_pc = 4640
 				continue
 		elif _pc == 7688:
-			if not _pog_is_null(89):
+			if 89 != v33:
 				_pc = 7697
 				continue
 			else:
 				_pc = 4640
 				continue
 		elif _pc == 7697:
-			if not _pog_is_null(90):
+			if 90 != v33:
 				_pc = 7706
 				continue
 			else:
 				_pc = 4640
 				continue
 		elif _pc == 7706:
-			if not _pog_is_null(91):
+			if 91 != v33:
 				_pc = 7715
 				continue
 			else:
 				_pc = 4640
 				continue
 		elif _pc == 7715:
-			if not _pog_is_null(97):
+			if 97 != v33:
 				_pc = 7724
 				continue
 			else:
 				_pc = 4799
 				continue
 		elif _pc == 7724:
-			if not _pog_is_null(98):
+			if 98 != v33:
 				_pc = 7733
 				continue
 			else:
 				_pc = 4799
 				continue
 		elif _pc == 7733:
-			if not _pog_is_null(108):
+			if 108 != v33:
 				_pc = 7742
 				continue
 			else:
 				_pc = 4799
 				continue
 		elif _pc == 7742:
-			if not _pog_is_null(48):
+			if 48 != v33:
 				_pc = 7751
 				continue
 			else:
 				_pc = 4799
 				continue
 		elif _pc == 7751:
-			if not _pog_is_null(46):
+			if 46 != v33:
 				_pc = 7760
 				continue
 			else:
 				_pc = 4958
 				continue
 		elif _pc == 7760:
-			if not _pog_is_null(59):
+			if 59 != v33:
 				_pc = 7769
 				continue
 			else:
 				_pc = 4958
 				continue
 		elif _pc == 7769:
-			if not _pog_is_null(67):
+			if 67 != v33:
 				_pc = 7778
 				continue
 			else:
 				_pc = 4958
 				continue
 		elif _pc == 7778:
-			if not _pog_is_null(107):
+			if 107 != v33:
 				_pc = 7787
 				continue
 			else:
 				_pc = 4958
 				continue
 		elif _pc == 7787:
-			if not _pog_is_null(112):
+			if 112 != v33:
 				_pc = 7796
 				continue
 			else:
 				_pc = 4958
 				continue
 		elif _pc == 7796:
-			if not _pog_is_null(114):
+			if 114 != v33:
 				_pc = 7805
 				continue
 			else:
 				_pc = 4958
 				continue
 		elif _pc == 7805:
-			if not _pog_is_null(38):
+			if 38 != v33:
 				_pc = 7814
 				continue
 			else:
 				_pc = 5117
 				continue
 		elif _pc == 7814:
-			if not _pog_is_null(62):
+			if 62 != v33:
 				_pc = 7823
 				continue
 			else:
 				_pc = 5276
 				continue
 		elif _pc == 7823:
-			if not _pog_is_null(109):
+			if 109 != v33:
 				_pc = 7832
 				continue
 			else:
 				_pc = 5435
 				continue
 		elif _pc == 7832:
-			if not _pog_is_null(65):
+			if 65 != v33:
 				_pc = 7841
 				continue
 			else:
 				_pc = 5594
 				continue
 		elif _pc == 7841:
-			if not _pog_is_null(101):
+			if 101 != v33:
 				_pc = 7850
 				continue
 			else:
 				_pc = 5753
 				continue
 		elif _pc == 7850:
-			if not _pog_is_null(102):
+			if 102 != v33:
 				_pc = 7859
 				continue
 			else:
 				_pc = 5753
 				continue
 		elif _pc == 7859:
-			if not _pog_is_null(103):
+			if 103 != v33:
 				_pc = 7868
 				continue
 			else:
 				_pc = 5753
 				continue
 		elif _pc == 7868:
-			if not _pog_is_null(111):
+			if 111 != v33:
 				_pc = 7877
 				continue
 			else:
 				_pc = 5753
 				continue
 		elif _pc == 7877:
-			if not _pog_is_null(104):
+			if 104 != v33:
 				_pc = 7886
 				continue
 			else:
 				_pc = 5912
 				continue
 		elif _pc == 7886:
-			if not _pog_is_null(113):
+			if 113 != v33:
 				_pc = 7895
 				continue
 			else:
 				_pc = 6071
 				continue
 		elif _pc == 7895:
-			if not _pog_is_null(79):
+			if 79 != v33:
 				_pc = 7904
 				continue
 			else:
 				_pc = 6230
 				continue
 		elif _pc == 7904:
-			if not _pog_is_null(115):
+			if 115 != v33:
 				_pc = 7913
 				continue
 			else:
 				_pc = 6230
 				continue
 		elif _pc == 7913:
-			if not _pog_is_null(116):
+			if 116 != v33:
 				_pc = 7922
 				continue
 			else:
 				_pc = 6230
 				continue
 		elif _pc == 7922:
-			if not _pog_is_null(117):
+			if 117 != v33:
 				_pc = 7931
 				continue
 			else:
 				_pc = 6230
 				continue
 		elif _pc == 7931:
-			if not _pog_is_null(118):
+			if 118 != v33:
 				_pc = 7940
 				continue
 			else:
 				_pc = 6389
 				continue
 		elif _pc == 7940:
-			if not _pog_is_null(119):
+			if 119 != v33:
 				_pc = 7949
 				continue
 			else:
 				_pc = 6548
 				continue
 		elif _pc == 7949:
-			if not _pog_is_null(120):
+			if 120 != v33:
 				_pc = 7958
 				continue
 			else:
 				_pc = 6548
 				continue
 		elif _pc == 7958:
-			if not _pog_is_null(121):
+			if 121 != v33:
 				_pc = 7967
 				continue
 			else:
 				_pc = 6707
 				continue
 		elif _pc == 7967:
-			if not _pog_is_null(122):
+			if 122 != v33:
 				_pc = 7976
 				continue
 			else:

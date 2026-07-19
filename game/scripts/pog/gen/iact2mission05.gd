@@ -251,6 +251,7 @@ func mission_handler() -> Variant:
 	var v48: Variant = 0
 	var v49: Variant = 0
 	var v50: Variant = 0
+	var v51: Variant = 0
 	var _pc: int = 1659
 	while true:
 		if _pc == 1659:
@@ -515,36 +516,36 @@ func mission_handler() -> Variant:
 			_pc = 4135
 			continue
 		elif _pc == 4074:
-			state.progress(v3)
-			if not _pog_is_null(state.progress(v3)):
+			v51 = state.progress(v3)
+			if not _pog_is_null(v51):
 				_pc = 4100
 				continue
 			else:
 				_pc = 2809
 				continue
 		elif _pc == 4100:
-			if not _pog_is_null(1):
+			if 1 != v51:
 				_pc = 4108
 				continue
 			else:
 				_pc = 2814
 				continue
 		elif _pc == 4108:
-			if not _pog_is_null(2):
+			if 2 != v51:
 				_pc = 4117
 				continue
 			else:
 				_pc = 2904
 				continue
 		elif _pc == 4117:
-			if not _pog_is_null(3):
+			if 3 != v51:
 				_pc = 4126
 				continue
 			else:
 				_pc = 3211
 				continue
 		elif _pc == 4126:
-			if not _pog_is_null(4):
+			if 4 != v51:
 				_pc = 4135
 				continue
 			else:
@@ -630,15 +631,15 @@ func mission_handler() -> Variant:
 			_pc = 4621
 			continue
 		elif _pc == 4561:
-			await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0)
-			if 16 != await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0):
+			v51 = await abb_common.watch_sims_movement(v4, v14, v33, v39, 272, 1.0)
+			if 16 != v51:
 				_pc = 4611
 				continue
 			else:
 				_pc = 4546
 				continue
 		elif _pc == 4611:
-			if not _pog_is_null(256):
+			if 256 != v51:
 				_pc = 4621
 				continue
 			else:
@@ -702,15 +703,15 @@ func mission_handler() -> Variant:
 			_pc = 5285
 			continue
 		elif _pc == 5225:
-			await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0)
-			if 16 != await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0):
+			v51 = await abb_common.watch_sims_movement(v4, v14, 8000.0, v38, 144, 1.0)
+			if 16 != v51:
 				_pc = 5275
 				continue
 			else:
 				_pc = 5104
 				continue
 		elif _pc == 5275:
-			if not _pog_is_null(128):
+			if 128 != v51:
 				_pc = 5285
 				continue
 			else:
@@ -739,8 +740,8 @@ func mission_handler() -> Variant:
 			_pc = 5866
 			continue
 		elif _pc == 5817:
-			await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0)
-			if 32 != await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0):
+			v51 = await abb_common.watch_sims_movement(v4, v14, v34, v39, 32, 1.0)
+			if 32 != v51:
 				_pc = 5866
 				continue
 			else:
@@ -787,15 +788,15 @@ func mission_handler() -> Variant:
 			_pc = 6154
 			continue
 		elif _pc == 6094:
-			await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0)
-			if 16 != await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0):
+			v51 = await abb_common.watch_sims_movement(v4, v13, v36, v38, 144, 1.0)
+			if 16 != v51:
 				_pc = 6144
 				continue
 			else:
 				_pc = 5947
 				continue
 		elif _pc == 6144:
-			if not _pog_is_null(128):
+			if 128 != v51:
 				_pc = 6154
 				continue
 			else:
@@ -869,22 +870,22 @@ func mission_handler() -> Variant:
 			_pc = 6495
 			continue
 		elif _pc == 6425:
-			await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0)
-			if 32 != await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0):
+			v51 = await abb_common.watch_sims_movement(v4, v13, v36, v40, 416, 1.0)
+			if 32 != v51:
 				_pc = 6475
 				continue
 			else:
 				_pc = 5871
 				continue
 		elif _pc == 6475:
-			if not _pog_is_null(128):
+			if 128 != v51:
 				_pc = 6485
 				continue
 			else:
 				_pc = 6159
 				continue
 		elif _pc == 6485:
-			if not _pog_is_null(256):
+			if 256 != v51:
 				_pc = 6495
 				continue
 			else:
@@ -1238,22 +1239,22 @@ func mission_handler() -> Variant:
 			_pc = 10248
 			continue
 		elif _pc == 10206:
-			math.random_int(1, 3)
-			if 1 != math.random_int(1, 3):
+			v51 = math.random_int(1, 3)
+			if 1 != v51:
 				_pc = 10230
 				continue
 			else:
 				_pc = 10051
 				continue
 		elif _pc == 10230:
-			if not _pog_is_null(2):
+			if 2 != v51:
 				_pc = 10239
 				continue
 			else:
 				_pc = 10101
 				continue
 		elif _pc == 10239:
-			if not _pog_is_null(3):
+			if 3 != v51:
 				_pc = 10248
 				continue
 			else:
@@ -1316,15 +1317,15 @@ func mission_handler() -> Variant:
 			_pc = 10699
 			continue
 		elif _pc == 10666:
-			math.random_int(1, 2)
-			if 1 != math.random_int(1, 2):
+			v51 = math.random_int(1, 2)
+			if 1 != v51:
 				_pc = 10690
 				continue
 			else:
 				_pc = 10561
 				continue
 		elif _pc == 10690:
-			if not _pog_is_null(2):
+			if 2 != v51:
 				_pc = 10699
 				continue
 			else:
@@ -1363,15 +1364,15 @@ func mission_handler() -> Variant:
 			_pc = 10892
 			continue
 		elif _pc == 10809:
-			await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0)
-			if 16 != await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0):
+			v51 = await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v43, v39, 16, 1.0)
+			if 16 != v51:
 				_pc = 10884
 				continue
 			else:
 				_pc = 9451
 				continue
 		elif _pc == 10884:
-			if not _pog_is_null(0):
+			if not _pog_is_null(v51):
 				_pc = 10892
 				continue
 			else:
@@ -1407,8 +1408,8 @@ func mission_handler() -> Variant:
 			_pc = 11099
 			continue
 		elif _pc == 11024:
-			await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0)
-			if 16 != await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0):
+			v51 = await abb_common.watch_sims_movement(isim.cast(group.leader(v5)), v18, v32, v39, 16, 1.0)
+			if 16 != v51:
 				_pc = 11099
 				continue
 			else:
@@ -1493,15 +1494,15 @@ func mission_handler() -> Variant:
 			_pc = 11801
 			continue
 		elif _pc == 11761:
-			group.sim_count(v5)
-			if 1 != group.sim_count(v5):
+			v51 = group.sim_count(v5)
+			if 1 != v51:
 				_pc = 11787
 				continue
 			else:
 				_pc = 11599
 				continue
 		elif _pc == 11787:
-			if not _pog_is_null(2):
+			if 2 != v51:
 				_pc = 11796
 				continue
 			else:
@@ -1566,36 +1567,36 @@ func mission_handler() -> Variant:
 			_pc = 12315
 			continue
 		elif _pc == 12254:
-			state.progress(v3)
-			if not _pog_is_null(state.progress(v3)):
+			v51 = state.progress(v3)
+			if not _pog_is_null(v51):
 				_pc = 12280
 				continue
 			else:
 				_pc = 4368
 				continue
 		elif _pc == 12280:
-			if not _pog_is_null(1):
+			if 1 != v51:
 				_pc = 12288
 				continue
 			else:
 				_pc = 4657
 				continue
 		elif _pc == 12288:
-			if not _pog_is_null(2):
+			if 2 != v51:
 				_pc = 12297
 				continue
 			else:
 				_pc = 6629
 				continue
 		elif _pc == 12297:
-			if not _pog_is_null(3):
+			if 3 != v51:
 				_pc = 12306
 				continue
 			else:
 				_pc = 8471
 				continue
 		elif _pc == 12306:
-			if not _pog_is_null(4):
+			if 4 != v51:
 				_pc = 12315
 				continue
 			else:
@@ -1636,35 +1637,36 @@ func mission_handler() -> Variant:
 			_pc = 12701
 			continue
 		elif _pc == 12652:
-			if 5 != v44:
+			v51 = v44
+			if 5 != v51:
 				_pc = 12666
 				continue
 			else:
 				_pc = 12623
 				continue
 		elif _pc == 12666:
-			if 4 != v44:
+			if 4 != v51:
 				_pc = 12675
 				continue
 			else:
 				_pc = 12628
 				continue
 		elif _pc == 12675:
-			if 1 != v44:
+			if 1 != v51:
 				_pc = 12683
 				continue
 			else:
 				_pc = 12628
 				continue
 		elif _pc == 12683:
-			if 2 != v44:
+			if 2 != v51:
 				_pc = 12692
 				continue
 			else:
 				_pc = 12628
 				continue
 		elif _pc == 12692:
-			if 3 != v44:
+			if 3 != v51:
 				_pc = 12701
 				continue
 			else:
@@ -1929,6 +1931,7 @@ func local_17318() -> Variant:
 	return 0
 
 func local_17527(v0) -> Variant:
+	var v1: Variant = 0
 	var _pc: int = 17527
 	while true:
 		if _pc == 17527:
@@ -1953,28 +1956,29 @@ func local_17527(v0) -> Variant:
 			_pc = 17679
 			continue
 		elif _pc == 17635:
-			if not _pog_is_null(v0):
+			v1 = v0
+			if not _pog_is_null(v1):
 				_pc = 17648
 				continue
 			else:
 				_pc = 17532
 				continue
 		elif _pc == 17648:
-			if 1 != v0:
+			if 1 != v1:
 				_pc = 17656
 				continue
 			else:
 				_pc = 17550
 				continue
 		elif _pc == 17656:
-			if 2 != v0:
+			if 2 != v1:
 				_pc = 17665
 				continue
 			else:
 				_pc = 17568
 				continue
 		elif _pc == 17665:
-			if 3 != v0:
+			if 3 != v1:
 				_pc = 17674
 				continue
 			else:

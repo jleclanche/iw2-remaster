@@ -203,6 +203,7 @@ func haulage_in(v0) -> Variant:
 	var v31: Variant = 0
 	var v32: Variant = 0
 	var v33: Variant = 0
+	var v34: Variant = 0
 	var _pc: int = 1590
 	while true:
 		if _pc == 1590:
@@ -520,63 +521,64 @@ func haulage_in(v0) -> Variant:
 			_pc = 3368
 			continue
 		elif _pc == 3283:
-			if 1 != v14:
+			v34 = v14
+			if 1 != v34:
 				_pc = 3296
 				continue
 			else:
 				_pc = 3161
 				continue
 		elif _pc == 3296:
-			if 2 != v14:
+			if 2 != v34:
 				_pc = 3305
 				continue
 			else:
 				_pc = 3174
 				continue
 		elif _pc == 3305:
-			if 3 != v14:
+			if 3 != v34:
 				_pc = 3314
 				continue
 			else:
 				_pc = 3187
 				continue
 		elif _pc == 3314:
-			if 4 != v14:
+			if 4 != v34:
 				_pc = 3323
 				continue
 			else:
 				_pc = 3200
 				continue
 		elif _pc == 3323:
-			if 5 != v14:
+			if 5 != v34:
 				_pc = 3332
 				continue
 			else:
 				_pc = 3213
 				continue
 		elif _pc == 3332:
-			if 6 != v14:
+			if 6 != v34:
 				_pc = 3341
 				continue
 			else:
 				_pc = 3226
 				continue
 		elif _pc == 3341:
-			if 7 != v14:
+			if 7 != v34:
 				_pc = 3350
 				continue
 			else:
 				_pc = 3239
 				continue
 		elif _pc == 3350:
-			if 8 != v14:
+			if 8 != v34:
 				_pc = 3359
 				continue
 			else:
 				_pc = 3252
 				continue
 		elif _pc == 3359:
-			if 9 != v14:
+			if 9 != v34:
 				_pc = 3368
 				continue
 			else:
@@ -606,21 +608,22 @@ func haulage_in(v0) -> Variant:
 			_pc = 3482
 			continue
 		elif _pc == 3451:
-			if 1 != v14:
+			v34 = v14
+			if 1 != v34:
 				_pc = 3464
 				continue
 			else:
 				_pc = 3407
 				continue
 		elif _pc == 3464:
-			if 2 != v14:
+			if 2 != v34:
 				_pc = 3473
 				continue
 			else:
 				_pc = 3420
 				continue
 		elif _pc == 3473:
-			if 3 != v14:
+			if 3 != v34:
 				_pc = 3482
 				continue
 			else:
@@ -650,21 +653,22 @@ func haulage_in(v0) -> Variant:
 			_pc = 3596
 			continue
 		elif _pc == 3565:
-			if 1 != v14:
+			v34 = v14
+			if 1 != v34:
 				_pc = 3578
 				continue
 			else:
 				_pc = 3521
 				continue
 		elif _pc == 3578:
-			if 2 != v14:
+			if 2 != v34:
 				_pc = 3587
 				continue
 			else:
 				_pc = 3534
 				continue
 		elif _pc == 3587:
-			if 3 != v14:
+			if 3 != v34:
 				_pc = 3596
 				continue
 			else:
@@ -698,28 +702,29 @@ func haulage_in(v0) -> Variant:
 			_pc = 3732
 			continue
 		elif _pc == 3692:
-			if 1 != v14:
+			v34 = v14
+			if 1 != v34:
 				_pc = 3705
 				continue
 			else:
 				_pc = 3635
 				continue
 		elif _pc == 3705:
-			if 2 != v14:
+			if 2 != v34:
 				_pc = 3714
 				continue
 			else:
 				_pc = 3648
 				continue
 		elif _pc == 3714:
-			if 3 != v14:
+			if 3 != v34:
 				_pc = 3723
 				continue
 			else:
 				_pc = 3661
 				continue
 		elif _pc == 3723:
-			if 4 != v14:
+			if 4 != v34:
 				_pc = 3732
 				continue
 			else:
@@ -733,175 +738,176 @@ func haulage_in(v0) -> Variant:
 			_pc = 3985
 			continue
 		elif _pc == 3750:
-			if 11 != v7:
+			v34 = v7
+			if 11 != v34:
 				_pc = 3764
 				continue
 			else:
 				_pc = 2997
 				continue
 		elif _pc == 3764:
-			if 12 != v7:
+			if 12 != v34:
 				_pc = 3773
 				continue
 			else:
 				_pc = 3010
 				continue
 		elif _pc == 3773:
-			if 13 != v7:
+			if 13 != v34:
 				_pc = 3782
 				continue
 			else:
 				_pc = 3023
 				continue
 		elif _pc == 3782:
-			if 14 != v7:
+			if 14 != v34:
 				_pc = 3791
 				continue
 			else:
 				_pc = 3036
 				continue
 		elif _pc == 3791:
-			if 15 != v7:
+			if 15 != v34:
 				_pc = 3800
 				continue
 			else:
 				_pc = 3049
 				continue
 		elif _pc == 3800:
-			if 16 != v7:
+			if 16 != v34:
 				_pc = 3809
 				continue
 			else:
 				_pc = 3062
 				continue
 		elif _pc == 3809:
-			if 17 != v7:
+			if 17 != v34:
 				_pc = 3818
 				continue
 			else:
 				_pc = 3075
 				continue
 		elif _pc == 3818:
-			if 18 != v7:
+			if 18 != v34:
 				_pc = 3827
 				continue
 			else:
 				_pc = 3088
 				continue
 		elif _pc == 3827:
-			if 19 != v7:
+			if 19 != v34:
 				_pc = 3836
 				continue
 			else:
 				_pc = 3101
 				continue
 		elif _pc == 3836:
-			if 20 != v7:
+			if 20 != v34:
 				_pc = 3845
 				continue
 			else:
 				_pc = 3114
 				continue
 		elif _pc == 3845:
-			if 22 != v7:
+			if 22 != v34:
 				_pc = 3854
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3854:
-			if 25 != v7:
+			if 25 != v34:
 				_pc = 3863
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3863:
-			if 26 != v7:
+			if 26 != v34:
 				_pc = 3872
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3872:
-			if 27 != v7:
+			if 27 != v34:
 				_pc = 3881
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3881:
-			if 31 != v7:
+			if 31 != v34:
 				_pc = 3890
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3890:
-			if 32 != v7:
+			if 32 != v34:
 				_pc = 3899
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3899:
-			if 33 != v7:
+			if 33 != v34:
 				_pc = 3908
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3908:
-			if 30 != v7:
+			if 30 != v34:
 				_pc = 3917
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3917:
-			if 34 != v7:
+			if 34 != v34:
 				_pc = 3926
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3926:
-			if 35 != v7:
+			if 35 != v34:
 				_pc = 3935
 				continue
 			else:
 				_pc = 3127
 				continue
 		elif _pc == 3935:
-			if 24 != v7:
+			if 24 != v34:
 				_pc = 3944
 				continue
 			else:
 				_pc = 3373
 				continue
 		elif _pc == 3944:
-			if 23 != v7:
+			if 23 != v34:
 				_pc = 3953
 				continue
 			else:
 				_pc = 3373
 				continue
 		elif _pc == 3953:
-			if 28 != v7:
+			if 28 != v34:
 				_pc = 3962
 				continue
 			else:
 				_pc = 3373
 				continue
 		elif _pc == 3962:
-			if 29 != v7:
+			if 29 != v34:
 				_pc = 3971
 				continue
 			else:
 				_pc = 3487
 				continue
 		elif _pc == 3971:
-			if 38 != v7:
+			if 38 != v34:
 				_pc = 3980
 				continue
 			else:
@@ -1367,6 +1373,7 @@ func supply(v0) -> Variant:
 	var v35: Variant = 0
 	var v36: Variant = 0
 	var v37: Variant = 0
+	var v38: Variant = 0
 	var _pc: int = 8760
 	while true:
 		if _pc == 8760:
@@ -1464,189 +1471,190 @@ func supply(v0) -> Variant:
 			_pc = 9581
 			continue
 		elif _pc == 9333:
-			if 22 != v8:
+			v38 = v8
+			if 22 != v38:
 				_pc = 9347
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9347:
-			if 23 != v8:
+			if 23 != v38:
 				_pc = 9356
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9356:
-			if 24 != v8:
+			if 24 != v38:
 				_pc = 9365
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9365:
-			if 25 != v8:
+			if 25 != v38:
 				_pc = 9374
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9374:
-			if 26 != v8:
+			if 26 != v38:
 				_pc = 9383
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9383:
-			if 27 != v8:
+			if 27 != v38:
 				_pc = 9392
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9392:
-			if 28 != v8:
+			if 28 != v38:
 				_pc = 9401
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9401:
-			if 29 != v8:
+			if 29 != v38:
 				_pc = 9410
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9410:
-			if 30 != v8:
+			if 30 != v38:
 				_pc = 9419
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9419:
-			if 31 != v8:
+			if 31 != v38:
 				_pc = 9428
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9428:
-			if 32 != v8:
+			if 32 != v38:
 				_pc = 9437
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9437:
-			if 33 != v8:
+			if 33 != v38:
 				_pc = 9446
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9446:
-			if 39 != v8:
+			if 39 != v38:
 				_pc = 9455
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9455:
-			if 40 != v8:
+			if 40 != v38:
 				_pc = 9464
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9464:
-			if 42 != v8:
+			if 42 != v38:
 				_pc = 9473
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9473:
-			if 43 != v8:
+			if 43 != v38:
 				_pc = 9482
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9482:
-			if 84 != v8:
+			if 84 != v38:
 				_pc = 9491
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9491:
-			if 110 != v8:
+			if 110 != v38:
 				_pc = 9500
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9500:
-			if 97 != v8:
+			if 97 != v38:
 				_pc = 9509
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9509:
-			if 98 != v8:
+			if 98 != v38:
 				_pc = 9518
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9518:
-			if 67 != v8:
+			if 67 != v38:
 				_pc = 9527
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9527:
-			if 107 != v8:
+			if 107 != v38:
 				_pc = 9536
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9536:
-			if 48 != v8:
+			if 48 != v38:
 				_pc = 9545
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9545:
-			if 63 != v8:
+			if 63 != v38:
 				_pc = 9554
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9554:
-			if 89 != v8:
+			if 89 != v38:
 				_pc = 9563
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9563:
-			if 81 != v8:
+			if 81 != v38:
 				_pc = 9572
 				continue
 			else:
 				_pc = 9290
 				continue
 		elif _pc == 9572:
-			if 113 != v8:
+			if 113 != v38:
 				_pc = 9581
 				continue
 			else:
@@ -1670,168 +1678,169 @@ func supply(v0) -> Variant:
 			_pc = 9850
 			continue
 		elif _pc == 9629:
-			if 20 != v8:
+			v38 = v8
+			if 20 != v38:
 				_pc = 9643
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9643:
-			if 42 != v8:
+			if 42 != v38:
 				_pc = 9652
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9652:
-			if 43 != v8:
+			if 43 != v38:
 				_pc = 9661
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9661:
-			if 53 != v8:
+			if 53 != v38:
 				_pc = 9670
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9670:
-			if 54 != v8:
+			if 54 != v38:
 				_pc = 9679
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9679:
-			if 55 != v8:
+			if 55 != v38:
 				_pc = 9688
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9688:
-			if 56 != v8:
+			if 56 != v38:
 				_pc = 9697
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9697:
-			if 60 != v8:
+			if 60 != v38:
 				_pc = 9706
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9706:
-			if 68 != v8:
+			if 68 != v38:
 				_pc = 9715
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9715:
-			if 69 != v8:
+			if 69 != v38:
 				_pc = 9724
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9724:
-			if 70 != v8:
+			if 70 != v38:
 				_pc = 9733
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9733:
-			if 71 != v8:
+			if 71 != v38:
 				_pc = 9742
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9742:
-			if 72 != v8:
+			if 72 != v38:
 				_pc = 9751
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9751:
-			if 73 != v8:
+			if 73 != v38:
 				_pc = 9760
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9760:
-			if 74 != v8:
+			if 74 != v38:
 				_pc = 9769
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9769:
-			if 78 != v8:
+			if 78 != v38:
 				_pc = 9778
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9778:
-			if 79 != v8:
+			if 79 != v38:
 				_pc = 9787
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9787:
-			if 80 != v8:
+			if 80 != v38:
 				_pc = 9796
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9796:
-			if 82 != v8:
+			if 82 != v38:
 				_pc = 9805
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9805:
-			if 85 != v8:
+			if 85 != v38:
 				_pc = 9814
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9814:
-			if 101 != v8:
+			if 101 != v38:
 				_pc = 9823
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9823:
-			if 102 != v8:
+			if 102 != v38:
 				_pc = 9832
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9832:
-			if 103 != v8:
+			if 103 != v38:
 				_pc = 9841
 				continue
 			else:
 				_pc = 9586
 				continue
 		elif _pc == 9841:
-			if 104 != v8:
+			if 104 != v38:
 				_pc = 9850
 				continue
 			else:
@@ -2032,15 +2041,15 @@ func supply(v0) -> Variant:
 			_pc = 10621
 			continue
 		elif _pc == 10590:
-			math.random_int(0, 1)
-			if not _pog_is_null(math.random_int(0, 1)):
+			v38 = math.random_int(0, 1)
+			if not _pog_is_null(v38):
 				_pc = 10613
 				continue
 			else:
 				_pc = 10515
 				continue
 		elif _pc == 10613:
-			if not _pog_is_null(1):
+			if 1 != v38:
 				_pc = 10621
 				continue
 			else:
@@ -2308,6 +2317,7 @@ func trade(v0) -> Variant:
 	var v28: Variant = 0
 	var v29: Variant = 0
 	var v30: Variant = 0
+	var v31: Variant = 0
 	var _pc: int = 12124
 	while true:
 		if _pc == 12124:
@@ -2403,98 +2413,99 @@ func trade(v0) -> Variant:
 			_pc = 12796
 			continue
 		elif _pc == 12667:
-			if not _pog_is_null(v14):
+			v31 = v14
+			if not _pog_is_null(v31):
 				_pc = 12680
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12680:
-			if 1 != v14:
+			if 1 != v31:
 				_pc = 12688
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12688:
-			if 2 != v14:
+			if 2 != v31:
 				_pc = 12697
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12697:
-			if 3 != v14:
+			if 3 != v31:
 				_pc = 12706
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12706:
-			if 4 != v14:
+			if 4 != v31:
 				_pc = 12715
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12715:
-			if 5 != v14:
+			if 5 != v31:
 				_pc = 12724
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12724:
-			if 6 != v14:
+			if 6 != v31:
 				_pc = 12733
 				continue
 			else:
 				_pc = 12486
 				continue
 		elif _pc == 12733:
-			if 7 != v14:
+			if 7 != v31:
 				_pc = 12742
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12742:
-			if 8 != v14:
+			if 8 != v31:
 				_pc = 12751
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12751:
-			if 9 != v14:
+			if 9 != v31:
 				_pc = 12760
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12760:
-			if 10 != v14:
+			if 10 != v31:
 				_pc = 12769
 				continue
 			else:
 				_pc = 12530
 				continue
 		elif _pc == 12769:
-			if 11 != v14:
+			if 11 != v31:
 				_pc = 12778
 				continue
 			else:
 				_pc = 12574
 				continue
 		elif _pc == 12778:
-			if 12 != v14:
+			if 12 != v31:
 				_pc = 12787
 				continue
 			else:
 				_pc = 12574
 				continue
 		elif _pc == 12787:
-			if 13 != v14:
+			if 13 != v31:
 				_pc = 12796
 				continue
 			else:
@@ -3016,6 +3027,7 @@ func official(v0) -> Variant:
 	var v33: Variant = 0
 	var v34: Variant = 0
 	var v35: Variant = 0
+	var v36: Variant = 0
 	var _pc: int = 19492
 	while true:
 		if _pc == 19492:
@@ -3118,203 +3130,204 @@ func official(v0) -> Variant:
 			_pc = 20478
 			continue
 		elif _pc == 20213:
-			if 1 != v12:
+			v36 = v12
+			if 1 != v36:
 				_pc = 20226
 				continue
 			else:
 				_pc = 20134
 				continue
 		elif _pc == 20226:
-			if 44 != v12:
+			if 44 != v36:
 				_pc = 20235
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20235:
-			if 45 != v12:
+			if 45 != v36:
 				_pc = 20244
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20244:
-			if 47 != v12:
+			if 47 != v36:
 				_pc = 20253
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20253:
-			if 49 != v12:
+			if 49 != v36:
 				_pc = 20262
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20262:
-			if 50 != v12:
+			if 50 != v36:
 				_pc = 20271
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20271:
-			if 52 != v12:
+			if 52 != v36:
 				_pc = 20280
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20280:
-			if 82 != v12:
+			if 82 != v36:
 				_pc = 20289
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20289:
-			if 92 != v12:
+			if 92 != v36:
 				_pc = 20298
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20298:
-			if 93 != v12:
+			if 93 != v36:
 				_pc = 20307
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20307:
-			if 94 != v12:
+			if 94 != v36:
 				_pc = 20316
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20316:
-			if 95 != v12:
+			if 95 != v36:
 				_pc = 20325
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20325:
-			if 96 != v12:
+			if 96 != v36:
 				_pc = 20334
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20334:
-			if 86 != v12:
+			if 86 != v36:
 				_pc = 20343
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20343:
-			if 87 != v12:
+			if 87 != v36:
 				_pc = 20352
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20352:
-			if 88 != v12:
+			if 88 != v36:
 				_pc = 20361
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20361:
-			if 89 != v12:
+			if 89 != v36:
 				_pc = 20370
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20370:
-			if 90 != v12:
+			if 90 != v36:
 				_pc = 20379
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20379:
-			if 91 != v12:
+			if 91 != v36:
 				_pc = 20388
 				continue
 			else:
 				_pc = 20146
 				continue
 		elif _pc == 20388:
-			if 56 != v12:
+			if 56 != v36:
 				_pc = 20397
 				continue
 			else:
 				_pc = 20165
 				continue
 		elif _pc == 20397:
-			if 57 != v12:
+			if 57 != v36:
 				_pc = 20406
 				continue
 			else:
 				_pc = 20165
 				continue
 		elif _pc == 20406:
-			if 58 != v12:
+			if 58 != v36:
 				_pc = 20415
 				continue
 			else:
 				_pc = 20165
 				continue
 		elif _pc == 20415:
-			if 68 != v12:
+			if 68 != v36:
 				_pc = 20424
 				continue
 			else:
 				_pc = 20177
 				continue
 		elif _pc == 20424:
-			if 69 != v12:
+			if 69 != v36:
 				_pc = 20433
 				continue
 			else:
 				_pc = 20177
 				continue
 		elif _pc == 20433:
-			if 72 != v12:
+			if 72 != v36:
 				_pc = 20442
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20442:
-			if 73 != v12:
+			if 73 != v36:
 				_pc = 20451
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20451:
-			if 78 != v12:
+			if 78 != v36:
 				_pc = 20460
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20460:
-			if 80 != v12:
+			if 80 != v36:
 				_pc = 20469
 				continue
 			else:
 				_pc = 20196
 				continue
 		elif _pc == 20469:
-			if 81 != v12:
+			if 81 != v36:
 				_pc = 20478
 				continue
 			else:
@@ -3351,77 +3364,78 @@ func official(v0) -> Variant:
 			_pc = 20686
 			continue
 		elif _pc == 20582:
-			if 3 != v13:
+			v36 = v13
+			if 3 != v36:
 				_pc = 20596
 				continue
 			else:
 				_pc = 20483
 				continue
 		elif _pc == 20596:
-			if 5 != v13:
+			if 5 != v36:
 				_pc = 20605
 				continue
 			else:
 				_pc = 20495
 				continue
 		elif _pc == 20605:
-			if 9 != v13:
+			if 9 != v36:
 				_pc = 20614
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20614:
-			if 10 != v13:
+			if 10 != v36:
 				_pc = 20623
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20623:
-			if 17 != v13:
+			if 17 != v36:
 				_pc = 20632
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20632:
-			if 18 != v13:
+			if 18 != v36:
 				_pc = 20641
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20641:
-			if 19 != v13:
+			if 19 != v36:
 				_pc = 20650
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20650:
-			if 22 != v13:
+			if 22 != v36:
 				_pc = 20659
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20659:
-			if 12 != v13:
+			if 12 != v36:
 				_pc = 20668
 				continue
 			else:
 				_pc = 20528
 				continue
 		elif _pc == 20668:
-			if 20 != v13:
+			if 20 != v36:
 				_pc = 20677
 				continue
 			else:
 				_pc = 20542
 				continue
 		elif _pc == 20677:
-			if 14 != v13:
+			if 14 != v36:
 				_pc = 20686
 				continue
 			else:
@@ -3587,43 +3601,43 @@ func official(v0) -> Variant:
 			_pc = 21721
 			continue
 		elif _pc == 21652:
-			math.random_int(1, 6)
-			if 1 != math.random_int(1, 6):
+			v36 = math.random_int(1, 6)
+			if 1 != v36:
 				_pc = 21676
 				continue
 			else:
 				_pc = 21308
 				continue
 		elif _pc == 21676:
-			if not _pog_is_null(2):
+			if 2 != v36:
 				_pc = 21685
 				continue
 			else:
 				_pc = 21361
 				continue
 		elif _pc == 21685:
-			if not _pog_is_null(3):
+			if 3 != v36:
 				_pc = 21694
 				continue
 			else:
 				_pc = 21414
 				continue
 		elif _pc == 21694:
-			if not _pog_is_null(4):
+			if 4 != v36:
 				_pc = 21703
 				continue
 			else:
 				_pc = 21474
 				continue
 		elif _pc == 21703:
-			if not _pog_is_null(5):
+			if 5 != v36:
 				_pc = 21712
 				continue
 			else:
 				_pc = 21534
 				continue
 		elif _pc == 21712:
-			if not _pog_is_null(6):
+			if 6 != v36:
 				_pc = 21721
 				continue
 			else:
@@ -3719,22 +3733,22 @@ func official(v0) -> Variant:
 			_pc = 22092
 			continue
 		elif _pc == 22050:
-			math.random_int(1, 3)
-			if 1 != math.random_int(1, 3):
+			v36 = math.random_int(1, 3)
+			if 1 != v36:
 				_pc = 22074
 				continue
 			else:
 				_pc = 21840
 				continue
 		elif _pc == 22074:
-			if not _pog_is_null(2):
+			if 2 != v36:
 				_pc = 22083
 				continue
 			else:
 				_pc = 21925
 				continue
 		elif _pc == 22083:
-			if not _pog_is_null(3):
+			if 3 != v36:
 				_pc = 22092
 				continue
 			else:
@@ -3839,29 +3853,29 @@ func official(v0) -> Variant:
 			_pc = 22479
 			continue
 		elif _pc == 22428:
-			math.random_int(1, 4)
-			if 1 != math.random_int(1, 4):
+			v36 = math.random_int(1, 4)
+			if 1 != v36:
 				_pc = 22452
 				continue
 			else:
 				_pc = 22211
 				continue
 		elif _pc == 22452:
-			if not _pog_is_null(2):
+			if 2 != v36:
 				_pc = 22461
 				continue
 			else:
 				_pc = 22264
 				continue
 		elif _pc == 22461:
-			if not _pog_is_null(3):
+			if 3 != v36:
 				_pc = 22470
 				continue
 			else:
 				_pc = 22317
 				continue
 		elif _pc == 22470:
-			if not _pog_is_null(4):
+			if 4 != v36:
 				_pc = 22479
 				continue
 			else:
@@ -3985,15 +3999,15 @@ func official(v0) -> Variant:
 			_pc = 22893
 			continue
 		elif _pc == 22860:
-			math.random_int(1, 2)
-			if 1 != math.random_int(1, 2):
+			v36 = math.random_int(1, 2)
+			if 1 != v36:
 				_pc = 22884
 				continue
 			else:
 				_pc = 22742
 				continue
 		elif _pc == 22884:
-			if not _pog_is_null(2):
+			if 2 != v36:
 				_pc = 22893
 				continue
 			else:
@@ -4507,6 +4521,7 @@ func mining(v0) -> Variant:
 	var v17: Variant = 0
 	var v18: Variant = 0
 	var v19: Variant = 0
+	var v20: Variant = 0
 	var _pc: int = 28004
 	while true:
 		if _pc == 28004:
@@ -4681,126 +4696,127 @@ func mining(v0) -> Variant:
 			_pc = 29142
 			continue
 		elif _pc == 28970:
-			if 11 != v12:
+			v20 = v12
+			if 11 != v20:
 				_pc = 28984
 				continue
 			else:
 				_pc = 28794
 				continue
 		elif _pc == 28984:
-			if 12 != v12:
+			if 12 != v20:
 				_pc = 28993
 				continue
 			else:
 				_pc = 28807
 				continue
 		elif _pc == 28993:
-			if 13 != v12:
+			if 13 != v20:
 				_pc = 29002
 				continue
 			else:
 				_pc = 28820
 				continue
 		elif _pc == 29002:
-			if 14 != v12:
+			if 14 != v20:
 				_pc = 29011
 				continue
 			else:
 				_pc = 28833
 				continue
 		elif _pc == 29011:
-			if 15 != v12:
+			if 15 != v20:
 				_pc = 29020
 				continue
 			else:
 				_pc = 28846
 				continue
 		elif _pc == 29020:
-			if 16 != v12:
+			if 16 != v20:
 				_pc = 29029
 				continue
 			else:
 				_pc = 28859
 				continue
 		elif _pc == 29029:
-			if 17 != v12:
+			if 17 != v20:
 				_pc = 29038
 				continue
 			else:
 				_pc = 28872
 				continue
 		elif _pc == 29038:
-			if 18 != v12:
+			if 18 != v20:
 				_pc = 29047
 				continue
 			else:
 				_pc = 28885
 				continue
 		elif _pc == 29047:
-			if 19 != v12:
+			if 19 != v20:
 				_pc = 29056
 				continue
 			else:
 				_pc = 28898
 				continue
 		elif _pc == 29056:
-			if 20 != v12:
+			if 20 != v20:
 				_pc = 29065
 				continue
 			else:
 				_pc = 28911
 				continue
 		elif _pc == 29065:
-			if 2 != v12:
+			if 2 != v20:
 				_pc = 29074
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29074:
-			if 3 != v12:
+			if 3 != v20:
 				_pc = 29083
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29083:
-			if 4 != v12:
+			if 4 != v20:
 				_pc = 29092
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29092:
-			if 5 != v12:
+			if 5 != v20:
 				_pc = 29101
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29101:
-			if 6 != v12:
+			if 6 != v20:
 				_pc = 29110
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29110:
-			if 7 != v12:
+			if 7 != v20:
 				_pc = 29119
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29119:
-			if 8 != v12:
+			if 8 != v20:
 				_pc = 29128
 				continue
 			else:
 				_pc = 28924
 				continue
 		elif _pc == 29128:
-			if 9 != v12:
+			if 9 != v20:
 				_pc = 29137
 				continue
 			else:
@@ -4899,6 +4915,7 @@ func underworld(v0) -> Variant:
 	var v15: Variant = 0
 	var v16: Variant = 0
 	var v17: Variant = 0
+	var v18: Variant = 0
 	var _pc: int = 29677
 	while true:
 		if _pc == 29677:
@@ -5323,63 +5340,64 @@ func underworld(v0) -> Variant:
 			_pc = 33420
 			continue
 		elif _pc == 33335:
-			if 1 != v9:
+			v18 = v9
+			if 1 != v18:
 				_pc = 33348
 				continue
 			else:
 				_pc = 30109
 				continue
 		elif _pc == 33348:
-			if 2 != v9:
+			if 2 != v18:
 				_pc = 33357
 				continue
 			else:
 				_pc = 30672
 				continue
 		elif _pc == 33357:
-			if 3 != v9:
+			if 3 != v18:
 				_pc = 33366
 				continue
 			else:
 				_pc = 30672
 				continue
 		elif _pc == 33366:
-			if 4 != v9:
+			if 4 != v18:
 				_pc = 33375
 				continue
 			else:
 				_pc = 30672
 				continue
 		elif _pc == 33375:
-			if 5 != v9:
+			if 5 != v18:
 				_pc = 33384
 				continue
 			else:
 				_pc = 31149
 				continue
 		elif _pc == 33384:
-			if 6 != v9:
+			if 6 != v18:
 				_pc = 33393
 				continue
 			else:
 				_pc = 31149
 				continue
 		elif _pc == 33393:
-			if 7 != v9:
+			if 7 != v18:
 				_pc = 33402
 				continue
 			else:
 				_pc = 31149
 				continue
 		elif _pc == 33402:
-			if 8 != v9:
+			if 8 != v18:
 				_pc = 33411
 				continue
 			else:
 				_pc = 31626
 				continue
 		elif _pc == 33411:
-			if 9 != v9:
+			if 9 != v18:
 				_pc = 33420
 				continue
 			else:

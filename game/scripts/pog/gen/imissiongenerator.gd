@@ -1514,6 +1514,7 @@ func new_mission_task() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
+	var v14: Variant = 0
 	var _pc: int = 26103
 	while true:
 		if _pc == 26103:
@@ -1881,50 +1882,50 @@ func new_mission_task() -> Variant:
 			_pc = 28807
 			continue
 		elif _pc == 28723:
-			state.progress(v11)
-			if not _pog_is_null(state.progress(v11)):
+			v14 = state.progress(v11)
+			if not _pog_is_null(v14):
 				_pc = 28749
 				continue
 			else:
 				_pc = 27150
 				continue
 		elif _pc == 28749:
-			if not _pog_is_null(1):
+			if 1 != v14:
 				_pc = 28757
 				continue
 			else:
 				_pc = 27404
 				continue
 		elif _pc == 28757:
-			if not _pog_is_null(4):
+			if 4 != v14:
 				_pc = 28766
 				continue
 			else:
 				_pc = 27832
 				continue
 		elif _pc == 28766:
-			if not _pog_is_null(5):
+			if 5 != v14:
 				_pc = 28775
 				continue
 			else:
 				_pc = 28021
 				continue
 		elif _pc == 28775:
-			if not _pog_is_null(7):
+			if 7 != v14:
 				_pc = 28784
 				continue
 			else:
 				_pc = 28344
 				continue
 		elif _pc == 28784:
-			if not _pog_is_null(6):
+			if 6 != v14:
 				_pc = 28793
 				continue
 			else:
 				_pc = 28370
 				continue
 		elif _pc == 28793:
-			if not _pog_is_null(9):
+			if 9 != v14:
 				_pc = 28802
 				continue
 			else:

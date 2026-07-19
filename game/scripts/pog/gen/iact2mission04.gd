@@ -262,6 +262,7 @@ func mission_handler() -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
+	var v24: Variant = 0
 	var _pc: int = 2582
 	while true:
 		if _pc == 2582:
@@ -362,29 +363,29 @@ func mission_handler() -> Variant:
 			_pc = 4376
 			continue
 		elif _pc == 4326:
-			math.random_int(0, 3)
-			if not _pog_is_null(math.random_int(0, 3)):
+			v24 = math.random_int(0, 3)
+			if not _pog_is_null(v24):
 				_pc = 4350
 				continue
 			else:
 				_pc = 4057
 				continue
 		elif _pc == 4350:
-			if not _pog_is_null(1):
+			if 1 != v24:
 				_pc = 4358
 				continue
 			else:
 				_pc = 4145
 				continue
 		elif _pc == 4358:
-			if not _pog_is_null(2):
+			if 2 != v24:
 				_pc = 4367
 				continue
 			else:
 				_pc = 4145
 				continue
 		elif _pc == 4367:
-			if not _pog_is_null(3):
+			if 3 != v24:
 				_pc = 4376
 				continue
 			else:
@@ -787,57 +788,57 @@ func mission_handler() -> Variant:
 			_pc = 8837
 			continue
 		elif _pc == 8749:
-			state.progress(v0)
-			if not _pog_is_null(state.progress(v0)):
+			v24 = state.progress(v0)
+			if not _pog_is_null(v24):
 				_pc = 8775
 				continue
 			else:
 				_pc = 4632
 				continue
 		elif _pc == 8775:
-			if not _pog_is_null(1):
+			if 1 != v24:
 				_pc = 8783
 				continue
 			else:
 				_pc = 5297
 				continue
 		elif _pc == 8783:
-			if not _pog_is_null(2):
+			if 2 != v24:
 				_pc = 8792
 				continue
 			else:
 				_pc = 5522
 				continue
 		elif _pc == 8792:
-			if not _pog_is_null(3):
+			if 3 != v24:
 				_pc = 8801
 				continue
 			else:
 				_pc = 7333
 				continue
 		elif _pc == 8801:
-			if not _pog_is_null(4):
+			if 4 != v24:
 				_pc = 8810
 				continue
 			else:
 				_pc = 7549
 				continue
 		elif _pc == 8810:
-			if not _pog_is_null(5):
+			if 5 != v24:
 				_pc = 8819
 				continue
 			else:
 				_pc = 7705
 				continue
 		elif _pc == 8819:
-			if not _pog_is_null(6):
+			if 6 != v24:
 				_pc = 8828
 				continue
 			else:
 				_pc = 8308
 				continue
 		elif _pc == 8828:
-			if not _pog_is_null(7):
+			if 7 != v24:
 				_pc = 8837
 				continue
 			else:

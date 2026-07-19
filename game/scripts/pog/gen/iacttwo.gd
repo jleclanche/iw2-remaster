@@ -1331,6 +1331,7 @@ func eureka_story_script() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
+	var v6: Variant = 0
 	var _pc: int = 21998
 	while true:
 		if _pc == 21998:
@@ -1628,29 +1629,29 @@ func eureka_story_script() -> Variant:
 			_pc = 24203
 			continue
 		elif _pc == 24143:
-			global.pog_int("g_eureka_conversation_number")
-			if 1 != global.pog_int("g_eureka_conversation_number"):
+			v6 = global.pog_int("g_eureka_conversation_number")
+			if 1 != v6:
 				_pc = 24171
 				continue
 			else:
 				_pc = 23247
 				continue
 		elif _pc == 24171:
-			if not _pog_is_null(2):
+			if 2 != v6:
 				_pc = 24180
 				continue
 			else:
 				_pc = 23664
 				continue
 		elif _pc == 24180:
-			if not _pog_is_null(3):
+			if 3 != v6:
 				_pc = 24189
 				continue
 			else:
 				_pc = 23793
 				continue
 		elif _pc == 24189:
-			if not _pog_is_null(4):
+			if 4 != v6:
 				_pc = 24198
 				continue
 			else:
@@ -1732,29 +1733,29 @@ func eureka_story_script() -> Variant:
 			_pc = 24649
 			continue
 		elif _pc == 24597:
-			state.progress(v1)
-			if not _pog_is_null(state.progress(v1)):
+			v6 = state.progress(v1)
+			if not _pog_is_null(v6):
 				_pc = 24623
 				continue
 			else:
 				_pc = 22297
 				continue
 		elif _pc == 24623:
-			if not _pog_is_null(1):
+			if 1 != v6:
 				_pc = 24631
 				continue
 			else:
 				_pc = 23075
 				continue
 		elif _pc == 24631:
-			if not _pog_is_null(2):
+			if 2 != v6:
 				_pc = 24640
 				continue
 			else:
 				_pc = 24295
 				continue
 		elif _pc == 24640:
-			if not _pog_is_null(3):
+			if 3 != v6:
 				_pc = 24649
 				continue
 			else:
@@ -3434,6 +3435,7 @@ func allied_search_encounters() -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
+	var v8: Variant = 0
 	var _pc: int = 53819
 	while true:
 		if _pc == 53819:
@@ -3553,29 +3555,29 @@ func allied_search_encounters() -> Variant:
 			_pc = 54862
 			continue
 		elif _pc == 54811:
-			math.random_int(1, 4)
-			if 1 != math.random_int(1, 4):
+			v8 = math.random_int(1, 4)
+			if 1 != v8:
 				_pc = 54835
 				continue
 			else:
 				_pc = 54606
 				continue
 		elif _pc == 54835:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 54844
 				continue
 			else:
 				_pc = 54656
 				continue
 		elif _pc == 54844:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 54853
 				continue
 			else:
 				_pc = 54706
 				continue
 		elif _pc == 54853:
-			if not _pog_is_null(4):
+			if 4 != v8:
 				_pc = 54862
 				continue
 			else:
@@ -3615,43 +3617,43 @@ func allied_search_encounters() -> Variant:
 			_pc = 55246
 			continue
 		elif _pc == 55177:
-			math.random_int(1, 6)
-			if 1 != math.random_int(1, 6):
+			v8 = math.random_int(1, 6)
+			if 1 != v8:
 				_pc = 55201
 				continue
 			else:
 				_pc = 54872
 				continue
 		elif _pc == 55201:
-			if not _pog_is_null(2):
+			if 2 != v8:
 				_pc = 55210
 				continue
 			else:
 				_pc = 54922
 				continue
 		elif _pc == 55210:
-			if not _pog_is_null(3):
+			if 3 != v8:
 				_pc = 55219
 				continue
 			else:
 				_pc = 54972
 				continue
 		elif _pc == 55219:
-			if not _pog_is_null(4):
+			if 4 != v8:
 				_pc = 55228
 				continue
 			else:
 				_pc = 55022
 				continue
 		elif _pc == 55228:
-			if not _pog_is_null(5):
+			if 5 != v8:
 				_pc = 55237
 				continue
 			else:
 				_pc = 55072
 				continue
 		elif _pc == 55237:
-			if not _pog_is_null(6):
+			if 6 != v8:
 				_pc = 55246
 				continue
 			else:
@@ -3695,8 +3697,8 @@ func allied_search_encounters() -> Variant:
 			_pc = 55541
 			continue
 		elif _pc == 55515:
-			state.progress(v1)
-			if not _pog_is_null(state.progress(v1)):
+			v8 = state.progress(v1)
+			if not _pog_is_null(v8):
 				_pc = 55541
 				continue
 			else:

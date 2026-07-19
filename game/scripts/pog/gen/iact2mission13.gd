@@ -197,6 +197,7 @@ func mission_handler() -> Variant:
 	var v38: Variant = 0
 	var v39: Variant = 0
 	var v40: Variant = 0
+	var v41: Variant = 0
 	var _pc: int = 1045
 	while true:
 		if _pc == 1045:
@@ -385,8 +386,8 @@ func mission_handler() -> Variant:
 			_pc = 3274
 			continue
 		elif _pc == 3248:
-			state.progress(v1)
-			if not _pog_is_null(state.progress(v1)):
+			v41 = state.progress(v1)
+			if not _pog_is_null(v41):
 				_pc = 3274
 				continue
 			else:
@@ -1124,92 +1125,92 @@ func mission_handler() -> Variant:
 			_pc = 13979
 			continue
 		elif _pc == 13846:
-			state.progress(v1)
-			if not _pog_is_null(state.progress(v1)):
+			v41 = state.progress(v1)
+			if not _pog_is_null(v41):
 				_pc = 13872
 				continue
 			else:
 				_pc = 3427
 				continue
 		elif _pc == 13872:
-			if not _pog_is_null(1):
+			if 1 != v41:
 				_pc = 13880
 				continue
 			else:
 				_pc = 3497
 				continue
 		elif _pc == 13880:
-			if not _pog_is_null(2):
+			if 2 != v41:
 				_pc = 13889
 				continue
 			else:
 				_pc = 4111
 				continue
 		elif _pc == 13889:
-			if not _pog_is_null(3):
+			if 3 != v41:
 				_pc = 13898
 				continue
 			else:
 				_pc = 5307
 				continue
 		elif _pc == 13898:
-			if not _pog_is_null(4):
+			if 4 != v41:
 				_pc = 13907
 				continue
 			else:
 				_pc = 6621
 				continue
 		elif _pc == 13907:
-			if not _pog_is_null(5):
+			if 5 != v41:
 				_pc = 13916
 				continue
 			else:
 				_pc = 7077
 				continue
 		elif _pc == 13916:
-			if not _pog_is_null(6):
+			if 6 != v41:
 				_pc = 13925
 				continue
 			else:
 				_pc = 7978
 				continue
 		elif _pc == 13925:
-			if not _pog_is_null(7):
+			if 7 != v41:
 				_pc = 13934
 				continue
 			else:
 				_pc = 10593
 				continue
 		elif _pc == 13934:
-			if not _pog_is_null(8):
+			if 8 != v41:
 				_pc = 13943
 				continue
 			else:
 				_pc = 12072
 				continue
 		elif _pc == 13943:
-			if not _pog_is_null(9):
+			if 9 != v41:
 				_pc = 13952
 				continue
 			else:
 				_pc = 12461
 				continue
 		elif _pc == 13952:
-			if not _pog_is_null(10):
+			if 10 != v41:
 				_pc = 13961
 				continue
 			else:
 				_pc = 12519
 				continue
 		elif _pc == 13961:
-			if not _pog_is_null(11):
+			if 11 != v41:
 				_pc = 13970
 				continue
 			else:
 				_pc = 13002
 				continue
 		elif _pc == 13970:
-			if not _pog_is_null(12):
+			if 12 != v41:
 				_pc = 13979
 				continue
 			else:

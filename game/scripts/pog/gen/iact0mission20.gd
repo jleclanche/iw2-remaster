@@ -658,6 +658,7 @@ func local_11649(v0, v1) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
+	var v15: Variant = 0
 	var _pc: int = 11649
 	while true:
 		if _pc == 11649:
@@ -885,28 +886,29 @@ func local_11649(v0, v1) -> Variant:
 			_pc = 13833
 			continue
 		elif _pc == 13788:
-			if 1 != v5:
+			v15 = v5
+			if 1 != v15:
 				_pc = 13801
 				continue
 			else:
 				_pc = 13277
 				continue
 		elif _pc == 13801:
-			if 2 != v5:
+			if 2 != v15:
 				_pc = 13810
 				continue
 			else:
 				_pc = 13401
 				continue
 		elif _pc == 13810:
-			if 3 != v5:
+			if 3 != v15:
 				_pc = 13819
 				continue
 			else:
 				_pc = 13462
 				continue
 		elif _pc == 13819:
-			if 4 != v5:
+			if 4 != v15:
 				_pc = 13828
 				continue
 			else:

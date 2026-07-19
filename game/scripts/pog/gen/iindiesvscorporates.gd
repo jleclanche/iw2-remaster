@@ -508,6 +508,7 @@ func local_7534(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
+	var v11: Variant = 0
 	var _pc: int = 7534
 	while true:
 		if _pc == 7534:
@@ -556,21 +557,22 @@ func local_7534(v0) -> Variant:
 			_pc = 8142
 			continue
 		elif _pc == 8107:
-			if not _pog_is_null(v7):
+			v11 = v7
+			if not _pog_is_null(v11):
 				_pc = 8120
 				continue
 			else:
 				_pc = 7723
 				continue
 		elif _pc == 8120:
-			if 1 != v7:
+			if 1 != v11:
 				_pc = 8128
 				continue
 			else:
 				_pc = 7840
 				continue
 		elif _pc == 8128:
-			if 2 != v7:
+			if 2 != v11:
 				_pc = 8137
 				continue
 			else:

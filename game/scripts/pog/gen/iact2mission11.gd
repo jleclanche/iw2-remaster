@@ -186,6 +186,7 @@ func mission_handler() -> Variant:
 	var v42: Variant = 0
 	var v43: Variant = 0
 	var v44: Variant = 0
+	var v45: Variant = 0
 	var _pc: int = 991
 	while true:
 		if _pc == 991:
@@ -392,43 +393,43 @@ func mission_handler() -> Variant:
 			_pc = 3977
 			continue
 		elif _pc == 3907:
-			state.progress(v0)
-			if not _pog_is_null(state.progress(v0)):
+			v45 = state.progress(v0)
+			if not _pog_is_null(v45):
 				_pc = 3933
 				continue
 			else:
 				_pc = 3584
 				continue
 		elif _pc == 3933:
-			if not _pog_is_null(1):
+			if 1 != v45:
 				_pc = 3941
 				continue
 			else:
 				_pc = 3623
 				continue
 		elif _pc == 3941:
-			if not _pog_is_null(2):
+			if 2 != v45:
 				_pc = 3950
 				continue
 			else:
 				_pc = 3662
 				continue
 		elif _pc == 3950:
-			if not _pog_is_null(3):
+			if 3 != v45:
 				_pc = 3959
 				continue
 			else:
 				_pc = 3662
 				continue
 		elif _pc == 3959:
-			if not _pog_is_null(4):
+			if 4 != v45:
 				_pc = 3968
 				continue
 			else:
 				_pc = 3747
 				continue
 		elif _pc == 3968:
-			if not _pog_is_null(5):
+			if 5 != v45:
 				_pc = 3977
 				continue
 			else:

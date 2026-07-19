@@ -322,16 +322,10 @@ class Func:
         self.unstructured = False   # rebuilt as a block dispatch
 
 
-def _has_call(e) -> bool:
-    """Does this expression do anything? Discarding a value is not the same as
-    not computing it: `f() == 2` popped is still a call to f."""
-    if isinstance(e, Call):
-        return True
-    if isinstance(e, Bin):
-        return _has_call(e.a) or _has_call(e.b)
-    if isinstance(e, Un):
-        return _has_call(e.a)
-    return False
+# How many spill slots a _linear block is seeded with. Real cross-boundary
+# stack depths in the shipped bytecode are 1 (a Copy'd switch selector);
+# anything deeper than the pad falls back to the pre-#22 Const(0) behaviour.
+_SPILL_PAD = 8
 
 
 def _keep_discarded(e) -> bool:
@@ -362,6 +356,34 @@ def _flush(stack, stmts) -> None:
         if _keep_discarded(e):
             stmts.append(Do(e))
     stack.clear()
+
+
+def _subst(e, old, new):
+    """Replace the node `old` -- by IDENTITY, not equality -- inside e.
+
+    A `Copy` shares one Expr node between two stack slots; when that node is
+    spilled to a temporary, every other holder of the same node must read the
+    temporary instead, or the expression (and its side effects) is re-emitted.
+    Issue #22's double-RandomInt came from exactly that."""
+    if e is old:
+        return new
+    if isinstance(e, Bin):
+        e.a = _subst(e.a, old, new)
+        e.b = _subst(e.b, old, new)
+    elif isinstance(e, Un):
+        e.a = _subst(e.a, old, new)
+    elif isinstance(e, Call):
+        e.args = [_subst(a, old, new) for a in e.args]
+    return e
+
+
+def _strip_pad(stack, pad) -> list:
+    """The REAL leftovers of a block: everything above the longest untouched
+    bottom prefix of the placeholder pad the block was seeded with."""
+    k = 0
+    while k < len(stack) and k < len(pad) and stack[k] is pad[k]:
+        k += 1
+    return stack[k:]
 
 
 def _has_goto(stmts) -> bool:
@@ -822,18 +844,44 @@ class Decompiler:
                     leaders.add(nxt)
         order = sorted(leaders)
 
+        # A value can cross a block boundary: a switch's compare ladder keeps
+        # the Copy'd selector on the stack between tests, and a debug block's
+        # skip target can land mid-expression. Dropping such values re-emits
+        # their expressions (an extra RNG draw, issue #22) and degenerates the
+        # consumer's condition to a constant (`if (1 != 0)`, a dead arm). So:
+        # every block's stack is seeded with placeholder SPILL VARIABLES in
+        # slots just past the function's real locals (top of the boundary =
+        # first slot, deterministic on both sides), and every exit spills its
+        # real leftovers into those same slots. A block whose predecessors
+        # never spill reads the slot's 0 default -- exactly the old Const(0)
+        # behaviour, so mismatch degrades to what shipped before, never worse.
+        top = 0
+        for off, mn2, args2 in self.instrs:
+            if lo <= off < hi and mn2 in ("Load", "Store", "StoreObject"):
+                top = max(top, args2[0] + 1)
+        pad = [Var(top + _SPILL_PAD - 1 - j) for j in range(_SPILL_PAD)]
+
+        def spill(stack: list[Expr], stmts: list[Stmt],
+                cond: Expr | None) -> Expr | None:
+            # deepest-first, so a shallower slot's expression is never read
+            # after its slot was overwritten; self-assignments are dropped
+            real = _strip_pad(stack, pad)
+            for j in range(len(real) - 1, -1, -1):
+                e = real[-1 - j]
+                tv = Var(top + j)
+                if isinstance(e, Var) and e.n == tv.n:
+                    continue
+                stmts.append(Assign(tv, e))
+                if cond is not None:
+                    cond = _subst(cond, e, tv)
+            stack.clear()
+            return cond
+
         blocks: list[tuple[int, list[Stmt]]] = []
-        # A block boundary can land in the middle of an expression -- a debug
-        # block's skip target does exactly that -- so a value computed in one
-        # block is consumed by a branch in the next. Giving each block a fresh
-        # stack drops that value, and the calls inside it vanish with it. The
-        # stack therefore carries across a fall-through edge, and only there.
-        carry: list[Expr] = []
         for k, start in enumerate(order):
             stop = order[k + 1] if k + 1 < len(order) else hi
             stmts: list[Stmt] = []
-            stack: list[Expr] = carry
-            carry = []
+            stack: list[Expr] = list(pad)
             addr = start
             done = False
             while addr < stop:
@@ -841,18 +889,17 @@ class Decompiler:
                 _, mn, args = self.instrs[i]
                 nxt = self._next_addr(addr)
                 if mn == "Goto":
-                    if stack:
+                    real = _strip_pad(stack, pad)
+                    if real:
                         # The block jumps out with values on its stack -- a
                         # switch arm carrying its result to the shared exit.
-                        # PcSet would drop them (each arm carries a *different*
-                        # value, so the exit block cannot embed them all); if
-                        # the target is the shared exit, fold it in right here.
-                        epi = self._epilogue(args[0], stack)
+                        # If the target IS the shared exit, fold it in here.
+                        epi = self._epilogue(args[0], real)
                         if epi is not None:
                             stmts.append(epi)
                             done = True
                             break
-                    _flush(stack, stmts)
+                    spill(stack, stmts, None)
                     stmts.append(PcSet(args[0]))
                     done = True
                     break
@@ -860,23 +907,16 @@ class Decompiler:
                     cond = stack.pop() if stack else Const(0)
                     if mn == "GoTrue":
                         cond = _not(cond)
-                    # cond is the fall-through condition. The fall-through
-                    # successor is the lexically next block, so pure leftover
-                    # values (a switch's compare ladder keeps the selector on
-                    # the stack between tests) carry across exactly like a
-                    # plain fall-through. Values with side effects ran before
-                    # the branch in the bytecode, so they cannot be deferred
-                    # into one arm -- emit them here instead.
-                    if stack and not any(_has_call(e) for e in stack):
-                        carry = list(stack)
-                        stack.clear()
-                    else:
-                        _flush(stack, stmts)
+                    # both successors read the leftovers back out of the spill
+                    # slots; the spilled node is replaced INSIDE cond too (it
+                    # is the same object after a Copy), or the expression --
+                    # and any call in it -- would be evaluated twice
+                    cond = spill(stack, stmts, cond)
                     stmts.append(If(cond, [PcSet(nxt)], [PcSet(args[0])]))
                     done = True
                     break
                 if mn == "DebugSkip":
-                    _flush(stack, stmts)
+                    spill(stack, stmts, None)
                     stmts.append(PcSet(args[0]))   # developer mode off
                     done = True
                     break
@@ -886,22 +926,29 @@ class Decompiler:
                     continue
                 if mn == "TimedJump":
                     secs = struct.unpack("<f", struct.pack("<I", args[2]))[0]
+                    spill(stack, stmts, None)
                     stmts.append(If(Call("_pog_every", [Const(addr),
                                                         Const(secs)]),
                                     [PcSet(nxt)], [PcSet(args[0])]))
                     done = True
                     break
                 if mn in ("Return", "Halt"):
-                    rv = stack.pop() if (mn == "Return" and stack) else None
-                    _flush(stack, stmts)
+                    # a genuinely empty stack (all placeholders untouched) is a
+                    # void return -- popping the pad would turn every `return`
+                    # into `return v<spill>`
+                    real = _strip_pad(stack, pad)
+                    rv = real.pop() if (mn == "Return" and real) else None
+                    for e in real:
+                        if _keep_discarded(e):
+                            stmts.append(Do(e))
                     stmts.append(Ret(rv) if mn == "Return" else Halt())
                     done = True
                     break
                 addr = self._step(i, stack, stmts)
             if not done:
-                # fell through to the next block: whatever is still on the stack
-                # belongs to an expression that continues there
-                carry = stack
+                # fell through to the next block: whatever is still on the
+                # stack continues there, through the same spill slots
+                spill(stack, stmts, None)
                 stmts.append(PcSet(stop) if stop < hi else Ret(None))
             blocks.append((start, stmts))
         return Dispatch(lo, blocks)

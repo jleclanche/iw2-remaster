@@ -341,6 +341,7 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
+	var v7: Variant = 0
 	var _pc: int = 4788
 	while true:
 		if _pc == 4788:
@@ -380,7 +381,8 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 			_pc = 5085
 			continue
 		elif _pc == 5067:
-			if 1 != v2:
+			v7 = v2
+			if 1 != v7:
 				_pc = 5080
 				continue
 			else:

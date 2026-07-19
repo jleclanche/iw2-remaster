@@ -568,6 +568,7 @@ func event3_50__here_come_the_aliens() -> Variant:
 	var v25: Variant = 0
 	var v26: Variant = 0
 	var v27: Variant = 0
+	var v28: Variant = 0
 	var _pc: int = 7202
 	while true:
 		if _pc == 7202:
@@ -680,127 +681,127 @@ func event3_50__here_come_the_aliens() -> Variant:
 			_pc = 8487
 			continue
 		elif _pc == 8304:
-			state.progress(v18)
-			if not _pog_is_null(state.progress(v18)):
+			v28 = state.progress(v18)
+			if not _pog_is_null(v28):
 				_pc = 8330
 				continue
 			else:
 				_pc = 8057
 				continue
 		elif _pc == 8330:
-			if not _pog_is_null(1):
+			if 1 != v28:
 				_pc = 8338
 				continue
 			else:
 				_pc = 8057
 				continue
 		elif _pc == 8338:
-			if not _pog_is_null(2):
+			if 2 != v28:
 				_pc = 8347
 				continue
 			else:
 				_pc = 8057
 				continue
 		elif _pc == 8347:
-			if not _pog_is_null(3):
+			if 3 != v28:
 				_pc = 8356
 				continue
 			else:
 				_pc = 8069
 				continue
 		elif _pc == 8356:
-			if not _pog_is_null(4):
+			if 4 != v28:
 				_pc = 8365
 				continue
 			else:
 				_pc = 8069
 				continue
 		elif _pc == 8365:
-			if not _pog_is_null(5):
+			if 5 != v28:
 				_pc = 8374
 				continue
 			else:
 				_pc = 8069
 				continue
 		elif _pc == 8374:
-			if not _pog_is_null(6):
+			if 6 != v28:
 				_pc = 8383
 				continue
 			else:
 				_pc = 8123
 				continue
 		elif _pc == 8383:
-			if not _pog_is_null(7):
+			if 7 != v28:
 				_pc = 8392
 				continue
 			else:
 				_pc = 8123
 				continue
 		elif _pc == 8392:
-			if not _pog_is_null(9):
+			if 9 != v28:
 				_pc = 8401
 				continue
 			else:
 				_pc = 8123
 				continue
 		elif _pc == 8401:
-			if not _pog_is_null(10):
+			if 10 != v28:
 				_pc = 8410
 				continue
 			else:
 				_pc = 8149
 				continue
 		elif _pc == 8410:
-			if not _pog_is_null(11):
+			if 11 != v28:
 				_pc = 8419
 				continue
 			else:
 				_pc = 8149
 				continue
 		elif _pc == 8419:
-			if not _pog_is_null(12):
+			if 12 != v28:
 				_pc = 8428
 				continue
 			else:
 				_pc = 8149
 				continue
 		elif _pc == 8428:
-			if not _pog_is_null(13):
+			if 13 != v28:
 				_pc = 8437
 				continue
 			else:
 				_pc = 8149
 				continue
 		elif _pc == 8437:
-			if not _pog_is_null(14):
+			if 14 != v28:
 				_pc = 8446
 				continue
 			else:
 				_pc = 8149
 				continue
 		elif _pc == 8446:
-			if not _pog_is_null(15):
+			if 15 != v28:
 				_pc = 8455
 				continue
 			else:
 				_pc = 8149
 				continue
 		elif _pc == 8455:
-			if not _pog_is_null(16):
+			if 16 != v28:
 				_pc = 8464
 				continue
 			else:
 				_pc = 8198
 				continue
 		elif _pc == 8464:
-			if not _pog_is_null(17):
+			if 17 != v28:
 				_pc = 8473
 				continue
 			else:
 				_pc = 8198
 				continue
 		elif _pc == 8473:
-			if not _pog_is_null(18):
+			if 18 != v28:
 				_pc = 8482
 				continue
 			else:
@@ -1007,22 +1008,22 @@ func event3_50__here_come_the_aliens() -> Variant:
 			_pc = 9645
 			continue
 		elif _pc == 9604:
-			math.random_int(0, 2)
-			if not _pog_is_null(math.random_int(0, 2)):
+			v28 = math.random_int(0, 2)
+			if not _pog_is_null(v28):
 				_pc = 9628
 				continue
 			else:
 				_pc = 9449
 				continue
 		elif _pc == 9628:
-			if not _pog_is_null(1):
+			if 1 != v28:
 				_pc = 9636
 				continue
 			else:
 				_pc = 9499
 				continue
 		elif _pc == 9636:
-			if not _pog_is_null(2):
+			if 2 != v28:
 				_pc = 9645
 				continue
 			else:
@@ -1385,120 +1386,120 @@ func event3_50__here_come_the_aliens() -> Variant:
 			_pc = 13267
 			continue
 		elif _pc == 13098:
-			state.progress(v18)
-			if not _pog_is_null(state.progress(v18)):
+			v28 = state.progress(v18)
+			if not _pog_is_null(v28):
 				_pc = 13124
 				continue
 			else:
 				_pc = 8598
 				continue
 		elif _pc == 13124:
-			if not _pog_is_null(1):
+			if 1 != v28:
 				_pc = 13132
 				continue
 			else:
 				_pc = 8660
 				continue
 		elif _pc == 13132:
-			if not _pog_is_null(2):
+			if 2 != v28:
 				_pc = 13141
 				continue
 			else:
 				_pc = 8794
 				continue
 		elif _pc == 13141:
-			if not _pog_is_null(3):
+			if 3 != v28:
 				_pc = 13150
 				continue
 			else:
 				_pc = 9168
 				continue
 		elif _pc == 13150:
-			if not _pog_is_null(4):
+			if 4 != v28:
 				_pc = 13159
 				continue
 			else:
 				_pc = 9302
 				continue
 		elif _pc == 13159:
-			if not _pog_is_null(5):
+			if 5 != v28:
 				_pc = 13168
 				continue
 			else:
 				_pc = 9864
 				continue
 		elif _pc == 13168:
-			if not _pog_is_null(6):
+			if 6 != v28:
 				_pc = 13177
 				continue
 			else:
 				_pc = 10067
 				continue
 		elif _pc == 13177:
-			if not _pog_is_null(7):
+			if 7 != v28:
 				_pc = 13186
 				continue
 			else:
 				_pc = 10294
 				continue
 		elif _pc == 13186:
-			if not _pog_is_null(8):
+			if 8 != v28:
 				_pc = 13195
 				continue
 			else:
 				_pc = 10523
 				continue
 		elif _pc == 13195:
-			if not _pog_is_null(9):
+			if 9 != v28:
 				_pc = 13204
 				continue
 			else:
 				_pc = 10722
 				continue
 		elif _pc == 13204:
-			if not _pog_is_null(10):
+			if 10 != v28:
 				_pc = 13213
 				continue
 			else:
 				_pc = 10866
 				continue
 		elif _pc == 13213:
-			if not _pog_is_null(11):
+			if 11 != v28:
 				_pc = 13222
 				continue
 			else:
 				_pc = 10866
 				continue
 		elif _pc == 13222:
-			if not _pog_is_null(12):
+			if 12 != v28:
 				_pc = 13231
 				continue
 			else:
 				_pc = 10866
 				continue
 		elif _pc == 13231:
-			if not _pog_is_null(13):
+			if 13 != v28:
 				_pc = 13240
 				continue
 			else:
 				_pc = 10953
 				continue
 		elif _pc == 13240:
-			if not _pog_is_null(14):
+			if 14 != v28:
 				_pc = 13249
 				continue
 			else:
 				_pc = 11518
 				continue
 		elif _pc == 13249:
-			if not _pog_is_null(15):
+			if 15 != v28:
 				_pc = 13258
 				continue
 			else:
 				_pc = 11992
 				continue
 		elif _pc == 13258:
-			if not _pog_is_null(18):
+			if 18 != v28:
 				_pc = 13267
 				continue
 			else:
@@ -1945,6 +1946,7 @@ func place_defences_ships() -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
+	var v15: Variant = 0
 	var _pc: int = 18869
 	while true:
 		if _pc == 18869:
@@ -2114,42 +2116,43 @@ func place_defences_ships() -> Variant:
 			_pc = 20372
 			continue
 		elif _pc == 20315:
-			if not _pog_is_null(v0):
+			v15 = v0
+			if not _pog_is_null(v15):
 				_pc = 20328
 				continue
 			else:
 				_pc = 20083
 				continue
 		elif _pc == 20328:
-			if 1 != v0:
+			if 1 != v15:
 				_pc = 20336
 				continue
 			else:
 				_pc = 20136
 				continue
 		elif _pc == 20336:
-			if 3 != v0:
+			if 3 != v15:
 				_pc = 20345
 				continue
 			else:
 				_pc = 20136
 				continue
 		elif _pc == 20345:
-			if 2 != v0:
+			if 2 != v15:
 				_pc = 20354
 				continue
 			else:
 				_pc = 20195
 				continue
 		elif _pc == 20354:
-			if 4 != v0:
+			if 4 != v15:
 				_pc = 20363
 				continue
 			else:
 				_pc = 20195
 				continue
 		elif _pc == 20363:
-			if 5 != v0:
+			if 5 != v15:
 				_pc = 20372
 				continue
 			else:
@@ -2566,6 +2569,7 @@ func coyote_security() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
+	var v4: Variant = 0
 	var _pc: int = 27039
 	while true:
 		if _pc == 27039:
@@ -2647,8 +2651,8 @@ func coyote_security() -> Variant:
 			_pc = 27487
 			continue
 		elif _pc == 27461:
-			state.progress(v3)
-			if not _pog_is_null(state.progress(v3)):
+			v4 = state.progress(v3)
+			if not _pog_is_null(v4):
 				_pc = 27487
 				continue
 			else:

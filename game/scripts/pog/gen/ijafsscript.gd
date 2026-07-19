@@ -141,6 +141,7 @@ func local_1092(v0, v1, v2) -> Variant:
 	var v17: Variant = 0
 	var v18: Variant = 0
 	var v19: Variant = 0
+	var v20: Variant = 0
 	var _pc: int = 1092
 	while true:
 		if _pc == 1092:
@@ -622,162 +623,162 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 4399
 			continue
 		elif _pc == 4167:
-			object.int_property(v3, "cargo")
-			if 27 != object.int_property(v3, "cargo"):
+			v20 = object.int_property(v3, "cargo")
+			if 27 != v20:
 				_pc = 4201
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4201:
-			if not _pog_is_null(28):
+			if 28 != v20:
 				_pc = 4210
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4210:
-			if not _pog_is_null(29):
+			if 29 != v20:
 				_pc = 4219
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4219:
-			if not _pog_is_null(30):
+			if 30 != v20:
 				_pc = 4228
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4228:
-			if not _pog_is_null(31):
+			if 31 != v20:
 				_pc = 4237
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4237:
-			if not _pog_is_null(32):
+			if 32 != v20:
 				_pc = 4246
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4246:
-			if not _pog_is_null(33):
+			if 33 != v20:
 				_pc = 4255
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4255:
-			if not _pog_is_null(34):
+			if 34 != v20:
 				_pc = 4264
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4264:
-			if not _pog_is_null(35):
+			if 35 != v20:
 				_pc = 4273
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4273:
-			if not _pog_is_null(36):
+			if 36 != v20:
 				_pc = 4282
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4282:
-			if not _pog_is_null(37):
+			if 37 != v20:
 				_pc = 4291
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4291:
-			if not _pog_is_null(38):
+			if 38 != v20:
 				_pc = 4300
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4300:
-			if not _pog_is_null(39):
+			if 39 != v20:
 				_pc = 4309
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4309:
-			if not _pog_is_null(40):
+			if 40 != v20:
 				_pc = 4318
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4318:
-			if not _pog_is_null(41):
+			if 41 != v20:
 				_pc = 4327
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4327:
-			if not _pog_is_null(42):
+			if 42 != v20:
 				_pc = 4336
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4336:
-			if not _pog_is_null(43):
+			if 43 != v20:
 				_pc = 4345
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4345:
-			if not _pog_is_null(44):
+			if 44 != v20:
 				_pc = 4354
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4354:
-			if not _pog_is_null(45):
+			if 45 != v20:
 				_pc = 4363
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4363:
-			if not _pog_is_null(46):
+			if 46 != v20:
 				_pc = 4372
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4372:
-			if not _pog_is_null(47):
+			if 47 != v20:
 				_pc = 4381
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4381:
-			if not _pog_is_null(48):
+			if 48 != v20:
 				_pc = 4390
 				continue
 			else:
 				_pc = 4127
 				continue
 		elif _pc == 4390:
-			if not _pog_is_null(49):
+			if 49 != v20:
 				_pc = 4399
 				continue
 			else:

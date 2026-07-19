@@ -233,6 +233,7 @@ func mission_handler() -> Variant:
 	var v38: Variant = 0
 	var v39: Variant = 0
 	var v40: Variant = 0
+	var v41: Variant = 0
 	var _pc: int = 1692
 	while true:
 		if _pc == 1692:
@@ -352,15 +353,15 @@ func mission_handler() -> Variant:
 			_pc = 2657
 			continue
 		elif _pc == 2597:
-			await abb_common.watch_sims_movement(v4, v23, v28, v31, 272, 1.0)
-			if 16 != await abb_common.watch_sims_movement(v4, v23, v28, v31, 272, 1.0):
+			v41 = await abb_common.watch_sims_movement(v4, v23, v28, v31, 272, 1.0)
+			if 16 != v41:
 				_pc = 2647
 				continue
 			else:
 				_pc = 2582
 				continue
 		elif _pc == 2647:
-			if not _pog_is_null(256):
+			if 256 != v41:
 				_pc = 2657
 				continue
 			else:
@@ -662,21 +663,22 @@ func mission_handler() -> Variant:
 			_pc = 6370
 			continue
 		elif _pc == 6339:
-			if 1 != v36:
+			v41 = v36
+			if 1 != v41:
 				_pc = 6352
 				continue
 			else:
 				_pc = 6223
 				continue
 		elif _pc == 6352:
-			if 2 != v36:
+			if 2 != v41:
 				_pc = 6361
 				continue
 			else:
 				_pc = 6260
 				continue
 		elif _pc == 6361:
-			if 3 != v36:
+			if 3 != v41:
 				_pc = 6370
 				continue
 			else:
@@ -951,36 +953,36 @@ func mission_handler() -> Variant:
 			_pc = 8786
 			continue
 		elif _pc == 8725:
-			state.progress(v1)
-			if not _pog_is_null(state.progress(v1)):
+			v41 = state.progress(v1)
+			if not _pog_is_null(v41):
 				_pc = 8751
 				continue
 			else:
 				_pc = 2333
 				continue
 		elif _pc == 8751:
-			if not _pog_is_null(1):
+			if 1 != v41:
 				_pc = 8759
 				continue
 			else:
 				_pc = 2719
 				continue
 		elif _pc == 8759:
-			if not _pog_is_null(2):
+			if 2 != v41:
 				_pc = 8768
 				continue
 			else:
 				_pc = 3940
 				continue
 		elif _pc == 8768:
-			if not _pog_is_null(3):
+			if 3 != v41:
 				_pc = 8777
 				continue
 			else:
 				_pc = 5278
 				continue
 		elif _pc == 8777:
-			if not _pog_is_null(4):
+			if 4 != v41:
 				_pc = 8786
 				continue
 			else:

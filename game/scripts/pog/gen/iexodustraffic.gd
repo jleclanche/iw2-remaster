@@ -262,6 +262,7 @@ func create_fomalhaut_refugees(v0) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
+	var v15: Variant = 0
 	var _pc: int = 2921
 	while true:
 		if _pc == 2921:
@@ -323,50 +324,50 @@ func create_fomalhaut_refugees(v0) -> Variant:
 			_pc = 3597
 			continue
 		elif _pc == 3519:
-			math.random_int(1, 7)
-			if 1 != math.random_int(1, 7):
+			v15 = math.random_int(1, 7)
+			if 1 != v15:
 				_pc = 3543
 				continue
 			else:
 				_pc = 3449
 				continue
 		elif _pc == 3543:
-			if not _pog_is_null(2):
+			if 2 != v15:
 				_pc = 3552
 				continue
 			else:
 				_pc = 3462
 				continue
 		elif _pc == 3552:
-			if not _pog_is_null(3):
+			if 3 != v15:
 				_pc = 3561
 				continue
 			else:
 				_pc = 3475
 				continue
 		elif _pc == 3561:
-			if not _pog_is_null(4):
+			if 4 != v15:
 				_pc = 3570
 				continue
 			else:
 				_pc = 3475
 				continue
 		elif _pc == 3570:
-			if not _pog_is_null(5):
+			if 5 != v15:
 				_pc = 3579
 				continue
 			else:
 				_pc = 3488
 				continue
 		elif _pc == 3579:
-			if not _pog_is_null(6):
+			if 6 != v15:
 				_pc = 3588
 				continue
 			else:
 				_pc = 3501
 				continue
 		elif _pc == 3588:
-			if not _pog_is_null(7):
+			if 7 != v15:
 				_pc = 3597
 				continue
 			else:
@@ -469,6 +470,7 @@ func local_4713(v0, v1, v2) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
+	var v14: Variant = 0
 	var _pc: int = 4713
 	while true:
 		if _pc == 4713:
@@ -631,64 +633,64 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 5667
 			continue
 		elif _pc == 5566:
-			math.random_int(1, 9)
-			if 1 != math.random_int(1, 9):
+			v14 = math.random_int(1, 9)
+			if 1 != v14:
 				_pc = 5590
 				continue
 			else:
 				_pc = 5450
 				continue
 		elif _pc == 5590:
-			if not _pog_is_null(2):
+			if 2 != v14:
 				_pc = 5599
 				continue
 			else:
 				_pc = 5463
 				continue
 		elif _pc == 5599:
-			if not _pog_is_null(3):
+			if 3 != v14:
 				_pc = 5608
 				continue
 			else:
 				_pc = 5463
 				continue
 		elif _pc == 5608:
-			if not _pog_is_null(4):
+			if 4 != v14:
 				_pc = 5617
 				continue
 			else:
 				_pc = 5475
 				continue
 		elif _pc == 5617:
-			if not _pog_is_null(5):
+			if 5 != v14:
 				_pc = 5626
 				continue
 			else:
 				_pc = 5488
 				continue
 		elif _pc == 5626:
-			if not _pog_is_null(6):
+			if 6 != v14:
 				_pc = 5635
 				continue
 			else:
 				_pc = 5488
 				continue
 		elif _pc == 5635:
-			if not _pog_is_null(7):
+			if 7 != v14:
 				_pc = 5644
 				continue
 			else:
 				_pc = 5501
 				continue
 		elif _pc == 5644:
-			if not _pog_is_null(8):
+			if 8 != v14:
 				_pc = 5653
 				continue
 			else:
 				_pc = 5514
 				continue
 		elif _pc == 5653:
-			if not _pog_is_null(9):
+			if 9 != v14:
 				_pc = 5662
 				continue
 			else:
@@ -1008,64 +1010,64 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 7795
 			continue
 		elif _pc == 7694:
-			math.random_int(1, 9)
-			if 1 != math.random_int(1, 9):
+			v14 = math.random_int(1, 9)
+			if 1 != v14:
 				_pc = 7718
 				continue
 			else:
 				_pc = 7578
 				continue
 		elif _pc == 7718:
-			if not _pog_is_null(2):
+			if 2 != v14:
 				_pc = 7727
 				continue
 			else:
 				_pc = 7591
 				continue
 		elif _pc == 7727:
-			if not _pog_is_null(3):
+			if 3 != v14:
 				_pc = 7736
 				continue
 			else:
 				_pc = 7591
 				continue
 		elif _pc == 7736:
-			if not _pog_is_null(4):
+			if 4 != v14:
 				_pc = 7745
 				continue
 			else:
 				_pc = 7603
 				continue
 		elif _pc == 7745:
-			if not _pog_is_null(5):
+			if 5 != v14:
 				_pc = 7754
 				continue
 			else:
 				_pc = 7616
 				continue
 		elif _pc == 7754:
-			if not _pog_is_null(6):
+			if 6 != v14:
 				_pc = 7763
 				continue
 			else:
 				_pc = 7616
 				continue
 		elif _pc == 7763:
-			if not _pog_is_null(7):
+			if 7 != v14:
 				_pc = 7772
 				continue
 			else:
 				_pc = 7629
 				continue
 		elif _pc == 7772:
-			if not _pog_is_null(8):
+			if 8 != v14:
 				_pc = 7781
 				continue
 			else:
 				_pc = 7642
 				continue
 		elif _pc == 7781:
-			if not _pog_is_null(9):
+			if 9 != v14:
 				_pc = 7790
 				continue
 			else:
@@ -1093,56 +1095,57 @@ func local_4713(v0, v1, v2) -> Variant:
 			_pc = 8082
 			continue
 		elif _pc == 8002:
-			if not _pog_is_null(v1):
+			v14 = v1
+			if not _pog_is_null(v14):
 				_pc = 8015
 				continue
 			else:
 				_pc = 4999
 				continue
 		elif _pc == 8015:
-			if 1 != v1:
+			if 1 != v14:
 				_pc = 8023
 				continue
 			else:
 				_pc = 5355
 				continue
 		elif _pc == 8023:
-			if 2 != v1:
+			if 2 != v14:
 				_pc = 8032
 				continue
 			else:
 				_pc = 6038
 				continue
 		elif _pc == 8032:
-			if 3 != v1:
+			if 3 != v14:
 				_pc = 8041
 				continue
 			else:
 				_pc = 6352
 				continue
 		elif _pc == 8041:
-			if 4 != v1:
+			if 4 != v14:
 				_pc = 8050
 				continue
 			else:
 				_pc = 6642
 				continue
 		elif _pc == 8050:
-			if 5 != v1:
+			if 5 != v14:
 				_pc = 8059
 				continue
 			else:
 				_pc = 6916
 				continue
 		elif _pc == 8059:
-			if 6 != v1:
+			if 6 != v14:
 				_pc = 8068
 				continue
 			else:
 				_pc = 7215
 				continue
 		elif _pc == 8068:
-			if 7 != v1:
+			if 7 != v14:
 				_pc = 8077
 				continue
 			else:
@@ -1781,6 +1784,7 @@ func local_20008(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
+	var v6: Variant = 0
 	var _pc: int = 20008
 	while true:
 		if _pc == 20008:
@@ -1846,14 +1850,15 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 20755
 			continue
 		elif _pc == 20733:
-			if 1 != v5:
+			v6 = v5
+			if 1 != v6:
 				_pc = 20746
 				continue
 			else:
 				_pc = 20602
 				continue
 		elif _pc == 20746:
-			if 2 != v5:
+			if 2 != v6:
 				_pc = 20755
 				continue
 			else:
@@ -1870,14 +1875,15 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 20824
 			continue
 		elif _pc == 20802:
-			if 1 != v5:
+			v6 = v5
+			if 1 != v6:
 				_pc = 20815
 				continue
 			else:
 				_pc = 20506
 				continue
 		elif _pc == 20815:
-			if 2 != v5:
+			if 2 != v6:
 				_pc = 20824
 				continue
 			else:
@@ -1890,29 +1896,29 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 20885
 			continue
 		elif _pc == 20834:
-			math.random_int(1, 4)
-			if 1 != math.random_int(1, 4):
+			v6 = math.random_int(1, 4)
+			if 1 != v6:
 				_pc = 20858
 				continue
 			else:
 				_pc = 20270
 				continue
 		elif _pc == 20858:
-			if not _pog_is_null(2):
+			if 2 != v6:
 				_pc = 20867
 				continue
 			else:
 				_pc = 20328
 				continue
 		elif _pc == 20867:
-			if not _pog_is_null(3):
+			if 3 != v6:
 				_pc = 20876
 				continue
 			else:
 				_pc = 20410
 				continue
 		elif _pc == 20876:
-			if not _pog_is_null(4):
+			if 4 != v6:
 				_pc = 20885
 				continue
 			else:
@@ -1991,21 +1997,22 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 21643
 			continue
 		elif _pc == 21612:
-			if 1 != v5:
+			v6 = v5
+			if 1 != v6:
 				_pc = 21625
 				continue
 			else:
 				_pc = 21293
 				continue
 		elif _pc == 21625:
-			if 2 != v5:
+			if 2 != v6:
 				_pc = 21634
 				continue
 			else:
 				_pc = 21375
 				continue
 		elif _pc == 21634:
-			if 3 != v5:
+			if 3 != v6:
 				_pc = 21643
 				continue
 			else:
@@ -2023,22 +2030,22 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 21753
 			continue
 		elif _pc == 21711:
-			math.random_int(1, 3)
-			if 1 != math.random_int(1, 3):
+			v6 = math.random_int(1, 3)
+			if 1 != v6:
 				_pc = 21735
 				continue
 			else:
 				_pc = 21112
 				continue
 		elif _pc == 21735:
-			if not _pog_is_null(2):
+			if 2 != v6:
 				_pc = 21744
 				continue
 			else:
 				_pc = 21170
 				continue
 		elif _pc == 21744:
-			if not _pog_is_null(3):
+			if 3 != v6:
 				_pc = 21753
 				continue
 			else:
@@ -2056,14 +2063,15 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 21843
 			continue
 		elif _pc == 21821:
-			if 1 != v5:
+			v6 = v5
+			if 1 != v6:
 				_pc = 21834
 				continue
 			else:
 				_pc = 21107
 				continue
 		elif _pc == 21834:
-			if 2 != v5:
+			if 2 != v6:
 				_pc = 21843
 				continue
 			else:
@@ -2076,29 +2084,29 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 21904
 			continue
 		elif _pc == 21853:
-			math.random_int(1, 4)
-			if 1 != math.random_int(1, 4):
+			v6 = math.random_int(1, 4)
+			if 1 != v6:
 				_pc = 21877
 				continue
 			else:
 				_pc = 20895
 				continue
 		elif _pc == 21877:
-			if not _pog_is_null(2):
+			if 2 != v6:
 				_pc = 21886
 				continue
 			else:
 				_pc = 20953
 				continue
 		elif _pc == 21886:
-			if not _pog_is_null(3):
+			if 3 != v6:
 				_pc = 21895
 				continue
 			else:
 				_pc = 21011
 				continue
 		elif _pc == 21895:
-			if not _pog_is_null(4):
+			if 4 != v6:
 				_pc = 21904
 				continue
 			else:
@@ -2151,22 +2159,22 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 22297
 			continue
 		elif _pc == 22255:
-			math.random_int(1, 3)
-			if 1 != math.random_int(1, 3):
+			v6 = math.random_int(1, 3)
+			if 1 != v6:
 				_pc = 22279
 				continue
 			else:
 				_pc = 22139
 				continue
 		elif _pc == 22279:
-			if not _pog_is_null(2):
+			if 2 != v6:
 				_pc = 22288
 				continue
 			else:
 				_pc = 22176
 				continue
 		elif _pc == 22288:
-			if not _pog_is_null(3):
+			if 3 != v6:
 				_pc = 22297
 				continue
 			else:
@@ -2180,14 +2188,15 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 22350
 			continue
 		elif _pc == 22328:
-			if 1 != v5:
+			v6 = v5
+			if 1 != v6:
 				_pc = 22341
 				continue
 			else:
 				_pc = 22005
 				continue
 		elif _pc == 22341:
-			if 2 != v5:
+			if 2 != v6:
 				_pc = 22350
 				continue
 			else:
@@ -2219,28 +2228,29 @@ func local_20008(v0, v1) -> Variant:
 			_pc = 22529
 			continue
 		elif _pc == 22489:
-			if 1 != v5:
+			v6 = v5
+			if 1 != v6:
 				_pc = 22502
 				continue
 			else:
 				_pc = 20265
 				continue
 		elif _pc == 22502:
-			if 2 != v5:
+			if 2 != v6:
 				_pc = 22511
 				continue
 			else:
 				_pc = 20890
 				continue
 		elif _pc == 22511:
-			if 3 != v5:
+			if 3 != v6:
 				_pc = 22520
 				continue
 			else:
 				_pc = 21909
 				continue
 		elif _pc == 22520:
-			if 4 != v5:
+			if 4 != v6:
 				_pc = 22529
 				continue
 			else:
