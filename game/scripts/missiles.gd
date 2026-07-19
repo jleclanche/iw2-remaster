@@ -379,9 +379,10 @@ func _on_tracking(rec: Dictionary) -> void:
 	if main != null and t == main.ship:
 		if not rec["warned"]:
 			rec["warned"] = true
-			# icPlayerPilot::OnIncomingMissile logs event 0x30; the warning
-			# tone itself is the HUD's (hud.gd owner)
-			main.audio.play("audio/hud/klaxon.wav", -8.0)
+			# icPlayerPilot::OnIncomingMissile logs event 0x30; the tone is the
+			# HUD cue table's entry 3 = missile_warning (0x100e8220 ->
+			# 0x101740d8), NOT the klaxon (cue 4)
+			main.audio.play("audio/hud/missile_warning.wav", -8.0)
 			main.hud.warn("INCOMING MISSILE", 2.5)
 	elif t is AiShip:
 		# icShip::OnIncomingMissile: the first ready icCounterMeasureMagazine
@@ -837,9 +838,11 @@ func _explode(rec: Dictionary, at: Vector3) -> void:
 	var r := maxf(maxf(blast, float(spec.get("explode_radius", 0.0))),
 			float(spec.get("radius", 3.0)))
 	r = minf(r, FIREBALL_FLOOR)
+	# no sound here: the explosion SCENE carries its own FcSoundNode and
+	# ExplosionFx plays it (explosion_fx.gd `sounds`). Playing one on top
+	# double-triggered every warhead.
 	ExplosionFx.play(main, "explosion" if r >= 50.0 else "small_explosion",
 			Transform3D(Basis.IDENTITY, at), maxf(r, 10.0))
-	main.audio.play("audio/sfx/small_explosion_%d.wav" % (1 + randi() % 3), -6.0)
 
 # icMissile::CheckForDisruption 0x1006d0b0: disruptor_time scaled by
 # 150 / target_radius (m_destroyer_radius 300 * 0.5), clamped 2..30 s.
