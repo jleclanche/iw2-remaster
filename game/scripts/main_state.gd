@@ -17,6 +17,41 @@ const STREAM_OUT := 5.0e5
 # far_clip = 200000). Sims beyond it are frozen -- no Think, no Simulate.
 const SIM_INTERESTING_RANGE := 2.0 * 2.0e5
 const IMPOSTOR_DIST := 2.5e5  # bodies/stars drawn at capped range, scaled down
+# The camera near plane in FLIGHT. Not cosmetic: the far plane you actually get
+# is min(cam.far, near * 2^23), because the projection matrix is float32. At
+# Godot's default 0.05 the real far plane is 419430 m and the entire sky
+# (flares 4.5e5, starfield 4.7e5, cyclorama 4.8e5) falls off the end of the
+# frustum as it swings toward the view axis. See main_flow.gd's camera setup.
+const CAM_NEAR := 0.1
+
+# --- the sky shell, and the one relationship that binds it --------------------
+# Everything parented to sky_anchor is pinned to the camera at a FIXED radius,
+# so its distance never changes but its DEPTH is radius * cos(theta): deepest
+# when it sits on the view axis. Each layer therefore has to clear the frustum
+# at its worst case, dead ahead.
+#
+#     sky radius  <  the far plane the FRUSTUM actually has
+#
+# NOT cam.far. The projection matrix is float32, and at a large far/near ratio
+# the far plane degrades badly -- (far+near)/(far-near) collapses toward 1.0
+# and the recovered distance loses most of its significance. Measured, with
+# cam.far = 600000 throughout:
+#
+#     near 0.05  ->  419430   (30% short; this is the bug)
+#     near 0.10  ->  559241   (6.8% short; what we ship)
+#     near 1.00  ->  599187   (0.14% short)
+#
+# There is no tidy closed form -- near * 2^23 happens to match the 0.05 case
+# exactly and is wrong by 40 km at 0.1 -- so nothing here derives it. The
+# assertion measures Camera3D.get_frustum() instead (checks.gd _ms_sky_depth),
+# which is the point: cam.far is what we ASK for, the frustum is what we GET.
+#
+# These numbers lived in four files with nothing stating they were coupled, and
+# the coupling broke silently: at Godot's default near of 0.05 the whole sky
+# vanished within 21 degrees of the view axis while cam.far still read 600000.
+const SKY_FLARE_RADIUS := 4.5e5      # _add_sky_flare
+const SKY_STARFIELD_RADIUS := 4.7e5  # _add_starfield
+const SKY_DOME_RADIUS := 4.8e5       # _setup_sky's cyclorama
 const LDSI_RADIUS := 2.5e4
 
 const LDS_MAX := 3.0e10

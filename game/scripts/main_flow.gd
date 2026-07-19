@@ -694,6 +694,25 @@ func _spawn_player() -> void:
 	add_child(missiles)
 	cam = Camera3D.new()
 	cam.far = 6.0e5
+	# The far plane you GET is not the one you ask for. The projection matrix
+	# is float32, and at a large far/near ratio the far plane degrades: with
+	# cam.far = 600000, Camera3D.get_frustum() reports 419430 at near 0.05,
+	# 559241 at near 0.1, 599187 at near 1.0.
+	#
+	# Everything on sky_anchor lives past that: the neighbour-star flares at
+	# 4.5e5, the icStarfieldAvatar points at 4.7e5, the cyclorama at 4.8e5.
+	# Their distance is fixed but their DEPTH is radius * cos(theta), so each
+	# one crossed the 419430 boundary as it swung toward the middle of the
+	# screen and popped out of existence -- "stars disappear when you look at
+	# them", the whole sky quietly hollowing out around the view axis. A flare
+	# at 4.5e5 survived only while cos(theta) < 0.932, i.e. more than 21.2 deg
+	# off-axis; measured at 21.2 deg.
+	#
+	# 0.1 measures 559241 m, clearing the 4.8e5 cyclorama with room to spare,
+	# and stays close enough to the old value that cockpit dressing at the
+	# pilot's eye is unaffected. --mechcheck asserts the margin against the
+	# MEASURED frustum, not against this comment.
+	cam.near = CAM_NEAR
 	cam.keep_aspect = Camera3D.KEEP_WIDTH  # the fov constants are horizontal
 	cam.fov = FOV_INTERNAL  # starts in the F1 internal view
 	add_child(cam)

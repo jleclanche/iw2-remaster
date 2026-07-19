@@ -1153,10 +1153,37 @@ func _mech_next() -> void:
 	demo_phase += 1
 	demo_t = 0.0
 
+## The sky shell has to fit inside the frustum at its DEEPEST, which is dead
+## ahead (depth = radius * cos(theta)). Asserted against the EFFECTIVE far
+## plane -- min(far, near * 2^23) -- not against cam.far, because cam.far is
+## what we asked for and the frustum is what we got. Reading the requested
+## value instead of the derived one is exactly how the sky came to vanish
+## within 21 deg of the view axis while cam.far still reported 600000.
+func _ms_sky_depth(_delta: float) -> void:
+	var cam: Camera3D = m.cam
+	# THE far plane, straight out of the frustum the camera hands the renderer.
+	# Deliberately not cam.far and not a formula: cam.far is what we asked for,
+	# and any closed form for the float32 loss is a model that can be wrong.
+	# Measure what we got.
+	var measured := 0.0
+	for pl: Plane in cam.get_frustum():
+		measured = maxf(measured, -pl.distance_to(cam.global_position))
+	for layer in [["flare", m.SKY_FLARE_RADIUS],
+			["starfield", m.SKY_STARFIELD_RADIUS],
+			["cyclorama", m.SKY_DOME_RADIUS]]:
+		var radius: float = layer[1]
+		# 10% headroom: a layer sitting just inside the plane is one tweak to
+		# near/far away from popping again
+		_mech("sky-depth %s" % layer[0], radius < measured * 0.9,
+				"radius %.0f vs MEASURED far %.0f (cam.far asked %.0f, near %.3f)"
+				% [radius, measured, cam.far, cam.near])
+	_mech_next()
+
 # The mechcheck steps, in run order. demo_phase indexes this table, so a new
 # step is one method plus one line here -- nothing renumbers.
 var _mech_steps: Array[StringName] = [
 	&"_ms_setup",
+	&"_ms_sky_depth",
 	&"_ms_accel",
 	&"_ms_brake",
 	&"_ms_lateral",

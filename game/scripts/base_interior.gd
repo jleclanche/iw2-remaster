@@ -990,5 +990,9 @@ func _show_world() -> void:
 	_hidden.clear()
 	if main.cam != null:
 		main.cam.keep_aspect = Camera3D.KEEP_HEIGHT
-		main.cam.near = 0.05
+		# back to the FLIGHT near plane, not Godot's default. Restoring 0.05
+		# here re-broke the sky after every base visit: at that near the
+		# frustum's real far plane measures 419430 m, inside the sky's own
+		# radius, and the stars vanish near the view axis. See CAM_NEAR.
+		main.cam.near = main.CAM_NEAR
 	main._apply_view()
