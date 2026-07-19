@@ -17,8 +17,7 @@ install — see the doc index at the bottom before exploring by hand.
    — stage files by name. Never write into the game install
    (`C:\Program Files (x86)\GOG Galaxy\Games\Independence War 2`,
    override with `IW2_GAME_DIR`).
-3. **Per-topic commits**, message ends with exactly:
-   `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`
+3. **Per-topic commits.**
 
 ## Toolchain
 
