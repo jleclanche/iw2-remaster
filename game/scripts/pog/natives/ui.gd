@@ -236,6 +236,14 @@ class PogWindow extends RefCounted:
 	var tex_url := ""                  ## "texture:/images/gui/gui"
 	## state -> [left, body, right] Rect2 in atlas pixels. Empty = no skin.
 	var art: Dictionary = {}
+	## The control's STATE GLYPH: `gui.SetWindowStateIcons(win, n, f, s)`, one
+	## eIcon per state, resolved here to its rect in the alpha map exactly as
+	## icCustomisableWindowAvatar::SetAlphaMappedIcon (@ 0x1010c4a0) resolves it
+	## and stores it at +0x194. state -> Rect2 in alpha-map pixels; empty = none.
+	## This is how an inverse button shows selection AT ALL: igui's
+	## MakeInverseButtonIconic gives selected and neutral the SAME three-slice
+	## art (igui.pog:629) and distinguishes the states only by this glyph.
+	var icons: Dictionary = {}
 	var font_url := ""                 ## gui.SetWindowFont
 	## gui.SetWindowTextFormatting arg 1: TRUE = centre the title in the
 	## window, FALSE = left-aligned at the arg-2 inset. That is exactly what
@@ -1599,7 +1607,6 @@ func scroller_done(win: PogWindow) -> void:
 # arguments -- a nine-patch atlas per widget state -- and the remaster has its own
 # look; the background movies are the base's animated backdrops.
 # @stub gui.SetWindowStateTextures
-# @stub gui.SetWindowStateIcons
 # @stub gui.SetShadyBarWidth
 # @stub gui.SetRHSShadyBarWidth
 # @stub gui.PlayBackgroundMovie
@@ -1639,6 +1646,39 @@ func _set_state_textures(_t, a: Array) -> Variant:
 			strip.append(Rect2(l, t, maxf(r - l, 0.0), maxf(b - t, 0.0)))
 			i += 4
 		win.art[s] = strip
+	dirty = true
+	return 0
+
+
+## icCustomisableWindowAvatar's static icon table, written at 0x1010b480:
+## eIcon -> top-left in the alpha map. eax/ecx/edx there are 0/17/34, so the
+## glyphs sit on a 17 px grid (16 px cell + 1 px gutter) in the top-left 3x2
+## corner of the 64x64 map. Indices 0 and 2 are both (0,0) in the original.
+const ICON_XY: Array[Vector2i] = [
+	Vector2i(0, 0), Vector2i(0, 17), Vector2i(0, 0), Vector2i(17, 17),
+	Vector2i(17, 0), Vector2i(34, 17), Vector2i(34, 0),
+]
+## m_icon_size, set to (16, 16) at 0x1010b4f0.
+const ICON_SIZE := Vector2i(16, 16)
+
+
+## `gui.SetWindowStateIcons(window, neutral, focused, selected)` -- the glyph
+## the control wears per state, out of texture:/images/gui/gui_alphamap
+## (icCustomisableWindowAvatar::m_icon_texture, set @ 0x1010b510).
+## SetStateIcons (@ 0x1010c530) is three SetAlphaMappedIcon calls, one per
+## state index, and each resolves eIcon -> a rect through ICON_XY above.
+# @native gui.SetWindowStateIcons
+func _set_state_icons(_t, a: Array) -> Variant:
+	var win := _win(a[0])
+	if win == null or a.size() < 4:
+		return 0
+	var states := ["neutral", "focused", "selected"]
+	for i in states.size():
+		var idx := int(a[i + 1])
+		if idx < 0 or idx >= ICON_XY.size():
+			win.icons.erase(states[i])
+			continue
+		win.icons[states[i]] = Rect2(ICON_XY[idx], ICON_SIZE)
 	dirty = true
 	return 0
 
@@ -2105,7 +2145,7 @@ const _BINDINGS := {
 	"gui.setwindowstatetextures": "_set_state_textures",
 	"gui.setshadybarwidth": "_set_shady_width",
 	"gui.setrhsshadybarwidth": "_set_shady_width_rhs",
-	"gui.setwindowstateicons": "_gui_noop",
+	"gui.setwindowstateicons": "_set_state_icons",
 	"gui.playbackgroundmovie": "_gui_noop",
 	"gui.stopbackgroundmovie": "_gui_noop", "gui.stopallmovies": "_gui_noop",
 	"gui.settextwindowresource": "_tw_set_resource",

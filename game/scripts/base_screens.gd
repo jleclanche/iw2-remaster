@@ -467,6 +467,7 @@ const SHADER_OPACITY := 0.8
 const LIST_ENTRY_H := 10.0
 
 var _atlas: Texture2D
+var _alphamap: Texture2D
 var _detail: Texture2D
 var _skin_fonts: Dictionary = {}
 
@@ -550,6 +551,52 @@ func _gui_atlas() -> Texture2D:
 			img.set_pixel(x, y, c)
 	_atlas = ImageTexture.create_from_image(img)
 	return _atlas
+
+
+## The state-glyph alpha map (icCustomisableWindowAvatar::m_icon_texture =
+## "texture:/images/gui/gui_alphamap" @ 0x1010b510 -> gui_alphamaps.png, 64x64).
+## It is an ALPHA map: the engine passes it to DrawClippedElement as the mask
+## and supplies the colour separately, so we take alpha off its luminance and
+## force the colour white for modulate to tint.
+func _alpha_map() -> Texture2D:
+	if _alphamap != null:
+		return _alphamap
+	var img := Image.load_from_file(main._base().path_join(
+			"data/textures/images/gui/gui_alphamaps.png"))
+	if img == null:
+		return null
+	img.convert(Image.FORMAT_RGBA8)
+	for y in img.get_height():
+		for x in img.get_width():
+			var c := img.get_pixel(x, y)
+			img.set_pixel(x, y, Color(1.0, 1.0, 1.0, maxf(c.r, maxf(c.g, c.b))))
+	_alphamap = ImageTexture.create_from_image(img)
+	return _alphamap
+
+
+## icCustomisableWindowAvatar::m_icon_offset = 23 (@ 0x10164878). The glyph is
+## placed at (window.right - 23, window.top) -- SetAlphaMappedIcon @ 0x1010c4a0
+## builds the point from the window rect's +0x58 (right) less the offset and
+## +0x54 (top), which the explicit loadout-button site confirms by writing
+## `m_thin_button_width - m_icon_offset, 0` for the same placement.
+const ICON_OFFSET := 23.0
+
+
+## The draw @ 0x1010bf75: dest = (x, y) .. (x - 1 + size.x, y + size.y). The
+## asymmetric -1 on the right edge is the engine's, kept rather than tidied.
+func _draw_icon(w: PogUi.PogWindow, r: Rect2, st: String) -> void:
+	var src: Rect2 = w.icons.get(st, Rect2())
+	if src.size.x <= 0.0:
+		return
+	var tex := _alpha_map()
+	if tex == null:
+		return
+	var pos := Vector2(r.position.x + r.size.x - ICON_OFFSET, r.position.y)
+	var dst := Rect2(pos, Vector2(src.size.x - 1.0, src.size.y))
+	# The glyph carries no colour of its own; every caller is
+	# igui.MakeInverseButtonIconic, whose control is black-on-amber, so the
+	# state text colour is the same black the engine draws it in.
+	draw_texture_rect_region(tex, dst, src, _text_colour(w))
 
 
 ## "font:/fonts/square721 bdex bt_8pt" -> the game's own bitmap font.
@@ -692,6 +739,8 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 	var strip: Array = w.art.get(st, w.art.get("neutral", []))
 	if not strip.is_empty():
 		_blit(r, strip)
+	if not w.icons.is_empty():
+		_draw_icon(w, r, st)
 	if w.focusable():
 		_hit.append([r, w, -1])
 	var f := _font_for(w.font_url, _font)

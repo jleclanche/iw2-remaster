@@ -936,6 +936,20 @@ func _basecheck(_delta: float) -> void:
 			_bc("Lucrecia's mail body resolves (html:/text/...)",
 				will.contains("Last Will and Testament"),
 				"%d chars" % will.length())
+			# gui.SetWindowStateIcons(win, 6, 6, 5) -- igui.MakeInverseButtonIconic
+			# (igui.pog:630). Selected and neutral share their three-slice art, so
+			# this glyph is the ONLY thing that reads as "selected"; the eIcon ->
+			# rect table is icCustomisableWindowAvatar's, written @ 0x1010b480 with
+			# m_icon_size (16,16) @ 0x1010b4f0.
+			var iui: PogUi = m.pog_rt.ui
+			var iwin := PogUi.PogWindow.new()
+			iui._set_state_icons(null, [iwin, 6, 6, 5])
+			_bc("iconic button: eIcon 6/6/5 -> the alpha-map rects",
+				iwin.icons.get("neutral") == Rect2(34, 0, 16, 16)
+					and iwin.icons.get("focused") == Rect2(34, 0, 16, 16)
+					and iwin.icons.get("selected") == Rect2(34, 17, 16, 16),
+				"neutral=%s selected=%s"
+					% [iwin.icons.get("neutral"), iwin.icons.get("selected")])
 			print("BASECHECK: ", "PASS" if _base_fail == 0 else "FAIL",
 				" -- ", _base_fail, " failure(s)")
 			get_tree().quit(0 if _base_fail == 0 else 1)
