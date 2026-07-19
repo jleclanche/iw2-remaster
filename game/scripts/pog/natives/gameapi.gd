@@ -993,6 +993,16 @@ func _g_start_new_game(_t, a: Array) -> Variant:
 		return 0
 	var stem := map_stem(PogStd._s(a[0]))
 	var pkg := PogStd._s(a[1]) if a.size() > 1 else ""
+	# The STORY package is not just "load a system and run Main". Our campaign
+	# boot fits the command section, stages the act-0 scene and runs
+	# istartsystem's five startup stages before iprelude.Main -- the engine did
+	# all of that from C++, so start_campaign() is where it lives
+	# (main_flow.gd:441). Running iprelude.Main on its own skipped every bit of
+	# it. "iPrelude" is the package SPMainPDAScreen_OnStart defaults to when the
+	# system ini names no test package (ipdagui.pog:96-101).
+	if pkg.to_lower() == "iprelude":
+		game.start_campaign()
+		return 0
 	if not stem.is_empty():
 		game.start_in_system(stem)
 	if not pkg.is_empty() and vm.has_method("script"):

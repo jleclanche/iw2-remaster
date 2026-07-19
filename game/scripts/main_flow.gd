@@ -618,6 +618,16 @@ func skip_movie() -> void:
 func start_in_system(stem: String, at := "") -> void:
 	# `at` names an entity to arrive beside (the system JSON's own name, e.g.
 	# "Lucrecia's Base"); empty means the system's default entry point.
+	#
+	# Every route into flight comes through here, so this is where the front end
+	# gets out of the way. It used to be the menu item's own job, which stopped
+	# working the moment the items became the original's: SPMainPDAScreen_OnStart
+	# calls igame.StartNewGame and knows nothing about our menu, so START NEW GAME
+	# loaded the system behind a menu that was still up and still paused -- a
+	# freeze, then apparently nothing.
+	if menu != null and menu.visible:
+		menu.launched = true
+		menu.close()
 	lds_state = 0
 	if hud != null:
 		_jump_abort()

@@ -451,7 +451,18 @@ func _pog_boot() -> bool:
 func _build_pda() -> bool:
 	if not _pog_boot():
 		return false
-	main.pog_rt.native("gui.overlayscreen",
+	# The PDA is an OVERLAY, never the bottom of the stack: the original sets
+	# icPDAOverlayManager as the screen and overlays the PDA on it
+	# (ifrontendgui.MainMenuScreen:4-7, then local_1624 pops the wrong-disk
+	# screen and overlays icSPMainPDAScreen). That matters here and not only for
+	# fidelity -- gui.PopScreen deliberately refuses to pop the LAST screen
+	# (ui.gd:580, `screens.size() > 1`), so a PDA raised as the bottom screen
+	# could never be taken down again, and the debug pickers drew on top of a
+	# menu that was still there.
+	var rt: PogRuntime = main.pog_rt
+	if rt.ui.screens.is_empty():
+		rt.native("gui.setscreen", ["icPDAOverlayManager"])
+	rt.native("gui.overlayscreen",
 			["icSPFlightPDAScreen" if launched else "icSPMainPDAScreen"])
 	_pda_up = true
 	_add_debug_items()
@@ -507,12 +518,18 @@ func _add_debug_items() -> void:
 	rt.ui.dirty = true
 
 ## Our debug pickers are drawn by this file, not by the POG screen, so the PDA
-## comes down while one is up and goes back up on the way out.
+## comes down while one is up and goes back up on the way out. Without that the
+## capsule list drew straight over a menu that was still standing.
 func _enter_mode(m: String) -> void:
 	main.audio.play("audio/gui/expand.wav", -8.0)
 	_drop_pda()
 	mode = m
 	sel = 0
+
+func _leave_mode() -> void:
+	mode = "main"
+	sel = 0
+	_build_pda()
 
 func _drop_pda() -> void:
 	if not _pda_up:
@@ -577,8 +594,7 @@ func _activate() -> void:
 	if mode == "systems":
 		if sel == items.size() - 1:
 			main.audio.play("audio/gui/contract.wav", -8.0)
-			mode = "main"
-			sel = 0
+			_leave_mode()
 			return
 		main.audio.play("audio/gui/confirm.wav", -6.0)
 		var pick: Array = SYSTEMS[sel]
@@ -590,8 +606,7 @@ func _activate() -> void:
 	if mode == "ships":
 		if sel == items.size() - 1:
 			main.audio.play("audio/gui/contract.wav", -8.0)
-			mode = "main"
-			sel = 0
+			_leave_mode()
 			return
 		main.audio.play("audio/gui/expand.wav", -8.0)
 		_debug_ship = str((SHIPS[sel] as Array)[0])
@@ -613,8 +628,7 @@ func _activate() -> void:
 	if mode == "loads":
 		if sel == items.size() - 1:
 			main.audio.play("audio/gui/contract.wav", -8.0)
-			mode = "main"
-			sel = 0
+			_leave_mode()
 			return
 		main.audio.play("audio/gui/confirm.wav", -6.0)
 		var slots: Array = main.save_slots()
@@ -754,8 +768,7 @@ func handle(event: InputEvent) -> void:
 					mode = "ships"
 					sel = 0
 				elif mode in ["systems", "ships", "loads"]:
-					mode = "main"
-					sel = 0
+					_leave_mode()
 				elif launched:
 					close()
 	if event is InputEventMouseMotion:

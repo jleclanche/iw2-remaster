@@ -427,6 +427,16 @@ static var _ng_stage := 0
 ## start_campaign directly and so cannot see an input-timing bug.
 var _ngt_stage := 0
 
+## A control on the PDA screen by the POG function it dispatches.
+func _ngt_button(fn: String) -> PogUi.PogWindow:
+	var scr: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+	if scr == null:
+		return null
+	for w in scr.windows:
+		if w.on_press == fn:
+			return w
+	return null
+
 func _newgametest(_delta: float) -> void:
 	match _ngt_stage:
 		0:
@@ -435,8 +445,41 @@ func _newgametest(_delta: float) -> void:
 				# actually plays and the mission advances past its first
 				# `until_comms` step -- fast mode auto-completes it and hides
 				# any hang.
-				m.menu.sel = 0
-				m.menu._activate()   # START NEW GAME, the button's own code
+				#
+				# The button is the ORIGINAL's now (SPMainPDAScreen builds it),
+				# so press THAT rather than this file's old capsule list, which
+				# the front end no longer draws. Pressing the stale list is how
+				# a broken START NEW GAME slipped through: nothing here touched
+				# the control the player actually clicks.
+				m.menu.open()
+				# The debug pickers are OURS and are drawn by menu.gd, so the
+				# original's menu has to come DOWN while one is up or the two
+				# draw on top of each other. gui.PopScreen refuses to pop the
+				# last screen (ui.gd:580), which is why the PDA is raised as an
+				# overlay on icPDAOverlayManager -- assert the take-down and the
+				# rebuild, because neither is visible to any other check.
+				m.menu._enter_mode("ships")
+				var down: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+				print("NEWGAMETEST: %s — PDA drops for a debug picker (%s)"
+					% ["PASS" if down == null else "FAIL",
+						"none" if down == null else down.name])
+				if down != null:
+					get_tree().quit(1)
+					return
+				m.menu._leave_mode()
+				var back: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+				print("NEWGAMETEST: %s — PDA comes back (%s)"
+					% ["PASS" if back != null else "FAIL",
+						"none" if back == null else back.name])
+				var start: PogUi.PogWindow = _ngt_button(
+					"iPDAGUI.SPMainPDAScreen_OnStart")
+				if start == null:
+					print("NEWGAMETEST: FAIL — no START NEW GAME button on ",
+						m.pog_rt.ui.visible_screen().name \
+						if m.pog_rt.ui.visible_screen() != null else "<no screen>")
+					get_tree().quit(1)
+					return
+				m.pog_rt.ui.activate(start)
 				print("NEWGAMETEST: pressed START NEW GAME, movie=%s"
 					% [m.movie != null])
 				_ngt_stage = 1
