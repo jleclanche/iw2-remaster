@@ -787,10 +787,7 @@ func random_sphere(v0, v1, v2) -> Variant:
 	return 0
 	return 0
 
-func stack() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
+func stack(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0

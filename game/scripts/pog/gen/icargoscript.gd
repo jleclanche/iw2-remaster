@@ -6095,8 +6095,7 @@ func find_cargo_for_location(v0) -> Variant:
 	return 0
 	return 0
 
-func find_mini_cargo_for_location() -> Variant:
-	var v0: Variant = 0
+func find_mini_cargo_for_location(v0) -> Variant:
 	var _pc: int = 74534
 	while true:
 		if _pc == 74534:

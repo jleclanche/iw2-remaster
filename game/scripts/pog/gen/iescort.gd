@@ -81,11 +81,7 @@ func goose(v0, v1, v2, v3) -> Variant:
 	return 0
 	return 0
 
-func wedge() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func wedge(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -391,15 +387,11 @@ func cross(v0, v1, v2, v3) -> Variant:
 	return 0
 	return 0
 
-func loose() -> Variant:
+func loose(v0, v1, v2, v3) -> Variant:
 	return 0
 	return 0
 
-func impi() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func impi(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -446,11 +438,7 @@ func impi() -> Variant:
 	return 0
 	return 0
 
-func outrider() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func outrider(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -512,11 +500,7 @@ func outrider() -> Variant:
 	return 0
 	return 0
 
-func line_astern() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func line_astern(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -547,11 +531,7 @@ func line_astern() -> Variant:
 	return 0
 	return 0
 
-func box() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func box(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -682,11 +662,7 @@ func claw(v0, v1, v2, v3) -> Variant:
 	return 0
 	return 0
 
-func wall() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func wall(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -736,11 +712,7 @@ func wall() -> Variant:
 	return 0
 	return 0
 
-func random_rectangle() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func random_rectangle(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -783,11 +755,7 @@ func random_rectangle() -> Variant:
 	return 0
 	return 0
 
-func random_sphere() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func random_sphere(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -818,11 +786,7 @@ func random_sphere() -> Variant:
 	return 0
 	return 0
 
-func stack() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func stack(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -970,16 +934,7 @@ func local_13039(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9) -> Variant:
 	return 0
 	return 0
 
-func in_formation_v() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
-	var v5: Variant = 0
-	var v6: Variant = 0
-	var v7: Variant = 0
-	var v8: Variant = 0
+func in_formation_v(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 	var v9: Variant = 0
 	v9 = 0
 	await local_13039(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9)

@@ -270,13 +270,7 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 	return 0
 	return 0
 
-func follow_route_task() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
-	var v5: Variant = 0
+func follow_route_task(v0, v1, v2, v3, v4, v5) -> Variant:
 	await follow_route(v0, v1, v2, v3, v4, v5)
 	return
 	return 0
@@ -369,16 +363,7 @@ func buzz_camera(v0, v1, v2, v3) -> Variant:
 	return v5
 	return 0
 
-func orbit_sim() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
-	var v5: Variant = 0
-	var v6: Variant = 0
-	var v7: Variant = 0
-	var v8: Variant = 0
+func orbit_sim(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	v9 = 16.0 * (math.pog_abs(v8 - v7) / 360.0)
@@ -443,13 +428,7 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 	return 0
 	return 0
 
-func setup_directed_group_death() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
-	var v5: Variant = 0
+func setup_directed_group_death(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
@@ -557,9 +536,7 @@ func get_things_called(v0, v1) -> Variant:
 	return _pog_clone(v4)
 	return 0
 
-func find_station_module() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func find_station_module(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v2 = []

@@ -1763,8 +1763,7 @@ func freelance_mine(v0) -> Variant:
 	return
 	return 0
 
-func factory_mine() -> Variant:
-	var v0: Variant = 0
+func factory_mine(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -1878,8 +1877,7 @@ func local_34424(v0) -> Variant:
 	return 0
 	return 0
 
-func scout() -> Variant:
-	var v0: Variant = 0
+func scout(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -3440,8 +3438,7 @@ func monkey_about(v0, v1) -> Variant:
 	return
 	return 0
 
-func create_new_orders() -> Variant:
-	var v0: Variant = 0
+func create_new_orders(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0

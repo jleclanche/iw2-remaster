@@ -603,10 +603,7 @@ func check_station_reaction() -> Variant:
 	return
 	return 0
 
-func station_reactive() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
+func station_reactive(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0

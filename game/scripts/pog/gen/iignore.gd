@@ -26,9 +26,7 @@ func local_0() -> Variant:
 	return inifile.cast(global.handle("g_stock_utterance_ini"))
 	return 0
 
-func warn_vessel() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func warn_vessel(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0

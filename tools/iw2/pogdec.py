@@ -433,8 +433,20 @@ class Decompiler:
                 argc[args[1]] = args[2]
         for e, n in entries.items():
             if e not in argc:
-                argc[e] = self.argcs.get(
-                    "%s.%s" % (self.pkg["name"].lower(), n), 0)
+                key = "%s.%s" % (self.pkg["name"].lower(), n)
+                argc[e] = self.argcs.get(key, 0)
+                if argc[e] == 0:
+                    # The census counts CALL SITES, so a function POG never
+                    # calls looks like it takes nothing. The engine-invoked
+                    # callbacks are exactly that: iStation.StationReactive is
+                    # registered by name (iHabitat.SetReactiveFunction) and
+                    # called by the engine with (station, aggressor, damage),
+                    # so it came back as `func station_reactive()` whose body
+                    # reads v0/v1/v2 -- three parameters silently turned into
+                    # locals that are always 0. The SDK header declares the
+                    # real signature; use it only to fill a ZERO, never to
+                    # override a count the call sites actually established.
+                    argc[e] = _sdk_argc().get(key.lower(), 0)
 
         ordered = sorted(entries)
         out = []
@@ -1486,6 +1498,25 @@ def _gd_new(e: New) -> str:
 
 
 _CALL = re.compile(r"(?:Call|Start)\s+([a-z_0-9]+)\.(\w+)\s+argc=(\d+)")
+
+
+_SDK_ARGC: dict[str, int] | None = None
+
+
+def _sdk_argc() -> dict[str, int]:
+    """`pkg.func` (lower) -> parameter count, from the SDK headers.
+
+    Empty when the SDK is not installed: the fallback above then leaves the
+    census's answer alone, which is exactly the old behaviour.
+    """
+    global _SDK_ARGC
+    if _SDK_ARGC is None:
+        try:
+            from .pogsig import signatures
+            _SDK_ARGC = {k: len(v[1]) for k, v in signatures().items()}
+        except (SystemExit, ImportError):
+            _SDK_ARGC = {}
+    return _SDK_ARGC
 
 
 def argc_census() -> dict[str, int]:

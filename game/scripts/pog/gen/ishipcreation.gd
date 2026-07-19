@@ -12579,9 +12579,7 @@ func create_haulage_cargo(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func return_supply_cargo() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func return_supply_cargo(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -12651,9 +12649,7 @@ func return_supply_cargo() -> Variant:
 	return _pog_clone(v11)
 	return 0
 
-func return_trade_cargo() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func return_trade_cargo(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -12839,11 +12835,7 @@ func get_traffic(v0, v1, v2) -> Variant:
 	return v4
 	return 0
 
-func put_ships_in_formation() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
+func put_ships_in_formation(v0, v1, v2, v3) -> Variant:
 	match v1:
 		0:
 			await iformation.wedge(v0, v2, v3)

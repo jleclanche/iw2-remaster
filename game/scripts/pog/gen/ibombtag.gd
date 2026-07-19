@@ -94,30 +94,22 @@ func server_on_end_game() -> Variant:
 	return 0
 	return 0
 
-func weapon_ammo_power_up() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func weapon_ammo_power_up(v0, v1) -> Variant:
 	await imputils.weapon_ammo_power_up(v0, v1)
 	return 0
 	return 0
 
-func speed_power_up() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func speed_power_up(v0, v1) -> Variant:
 	await imputils.speed_power_up(v0, v1)
 	return 0
 	return 0
 
-func speed_power_down() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func speed_power_down(v0, v1) -> Variant:
 	await imputils.speed_power_down(v0, v1)
 	return 0
 	return 0
 
-func health_power_up() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func health_power_up(v0, v1) -> Variant:
 	await imputils.health_power_up(v0, v1)
 	return 0
 	return 0
@@ -241,10 +233,7 @@ func local_1157(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func server_on_user_message() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
+func server_on_user_message(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	match v0:
@@ -266,8 +255,7 @@ func server_on_user_message() -> Variant:
 	return 0
 	return 0
 
-func server_player_leave() -> Variant:
-	var v0: Variant = 0
+func server_player_leave(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v1 = ""
@@ -342,8 +330,7 @@ func player_death() -> Variant:
 	return 0
 	return 0
 
-func server_player_enter() -> Variant:
-	var v0: Variant = 0
+func server_player_enter(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -626,14 +613,12 @@ func client_g_u_i() -> Variant:
 	return 0
 	return 0
 
-func client_respawn() -> Variant:
-	var v0: Variant = 0
+func client_respawn(v0) -> Variant:
 	imultiplay.client_add_respawn_effect(v0)
 	return 0
 	return 0
 
-func client_player_enter() -> Variant:
-	var v0: Variant = 0
+func client_player_enter(v0) -> Variant:
 	imultiplay.set_ship_limits(iship.cast(v0))
 	imultiplay.link_ship_weapons(iship.cast(v0))
 	imultiplay.client_add_respawn_effect(iship.cast(v0))
@@ -748,8 +733,7 @@ func local_8717(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func bot_death() -> Variant:
-	var v0: Variant = 0
+func bot_death(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -810,8 +794,7 @@ func client_player_team_say() -> Variant:
 	return 0
 	return 0
 
-func client_taunt_return() -> Variant:
-	var v0: Variant = 0
+func client_taunt_return(v0) -> Variant:
 	if _pog_eq(string.left(v0, 1), "!"):
 		pass
 	else:
@@ -881,7 +864,7 @@ func client_player_killed() -> Variant:
 	return 0
 	return 0
 
-func client_opponent_killed() -> Variant:
+func client_opponent_killed(v0) -> Variant:
 	return 0
 	return 0
 
@@ -899,9 +882,7 @@ func client_do_scores() -> Variant:
 	return 0
 	return 0
 
-func client_end_game() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func client_end_game(v0, v1) -> Variant:
 	imultiplay.network_reset()
 	imultiplay.client_set_requested_to_cycle(v1)
 	gui.pop_screens_to("icSpaceFlightScreen")

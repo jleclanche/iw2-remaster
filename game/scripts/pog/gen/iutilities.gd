@@ -116,9 +116,7 @@ func filter_on_friendly_habitats(v0, v1) -> Variant:
 	return _pog_clone(p_set.from_list(v3))
 	return 0
 
-func filter_on_friendly_sims() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func filter_on_friendly_sims(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -634,8 +632,7 @@ func get_cargo_name_from_i_n_i(v0) -> Variant:
 	return _pog_clone(v2)
 	return 0
 
-func pick_random_location_of_type() -> Variant:
-	var v0: Variant = 0
+func pick_random_location_of_type(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v1 = []
@@ -654,8 +651,7 @@ func pick_random_location_of_type() -> Variant:
 	return _pog_clone(imapentity.pog_name(imapentity.cast(ihabitat.random(p_set.from_list(v1)))))
 	return 0
 
-func get_zone_of_control() -> Variant:
-	var v0: Variant = 0
+func get_zone_of_control(v0) -> Variant:
 	var v1: Variant = 0
 	if _pog_is_null(ilagrangepoint.cast(v0)):
 		v1 = imapentity.radius_of_influence(v0)
@@ -822,8 +818,7 @@ func rename_sim(v0, v1) -> Variant:
 	return 1
 	return 0
 
-func get_surface_locations_from_orbital() -> Variant:
-	var v0: Variant = 0
+func get_surface_locations_from_orbital(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -1262,9 +1257,7 @@ func super_skip() -> Variant:
 	return 0
 	return 0
 
-func task_skip_mission() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func task_skip_mission(v0, v1) -> Variant:
 	var v2: Variant = 0
 	if PogRuntime.TRACE:
 		if global.exists("g_skip_ok"):
@@ -1288,9 +1281,7 @@ func task_skip_mission() -> Variant:
 	return
 	return 0
 
-func wait_on_skip_mission() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func wait_on_skip_mission(v0, v1) -> Variant:
 	while _pog_is_running(v0):
 		await _pog_wait(1.0)
 	if global.exists(v1):
@@ -1781,9 +1772,7 @@ func convert_seconds_to_time(v0) -> Variant:
 	return _pog_clone(v3)
 	return 0
 
-func timer() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func timer(v0, v1) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("Timer ")
 		debug.print_string(v0)
@@ -1845,9 +1834,7 @@ func send_story_element(v0, v1, v2) -> Variant:
 	return 1
 	return 0
 
-func critical_ship_monitor() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func critical_ship_monitor(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0

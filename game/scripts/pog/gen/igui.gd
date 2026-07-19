@@ -302,12 +302,7 @@ func create_inverse_radio_button(v0, v1, v2) -> Variant:
 	return v3
 	return 0
 
-func create_fancy_vertical_scrollbar() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func create_fancy_vertical_scrollbar(v0, v1, v2, v3, v4) -> Variant:
 	return gui.create_vertical_scrollbar(v0, v1, global.pog_int("GUI_fancy_scrollbar_width"), v2, v3, v4, global.pog_float("GUI_fancy_scrollbar_buttonratio"), "FancyVerticalScrollbar")
 	return 0
 
@@ -457,9 +452,7 @@ func add_back_buttons(v0, v1, v2) -> Variant:
 	return _pog_clone(v8)
 	return 0
 
-func add_back_button() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func add_back_button(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -653,12 +646,7 @@ func create_titled_list_box(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 	return v18
 	return 0
 
-func create_fancy_list_box() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func create_fancy_list_box(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0

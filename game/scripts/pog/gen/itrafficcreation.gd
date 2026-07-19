@@ -2214,8 +2214,7 @@ func start(v0) -> Variant:
 	return v9
 	return 0
 
-func terminate() -> Variant:
-	var v0: Variant = 0
+func terminate(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v2 = ""
@@ -2308,13 +2307,7 @@ func monitor_traffic() -> Variant:
 	return
 	return 0
 
-func custom_go_to_lagrange_point() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
-	var v5: Variant = 0
+func custom_go_to_lagrange_point(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
@@ -2382,12 +2375,7 @@ func custom_local_security_patrol(v0, v1, v2, v3, v4) -> Variant:
 	return v5
 	return 0
 
-func custom_freelance_mine() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func custom_freelance_mine(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
@@ -2420,12 +2408,7 @@ func custom_freelance_mine() -> Variant:
 	return v5
 	return 0
 
-func custom_official_visit() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func custom_official_visit(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
@@ -2458,12 +2441,7 @@ func custom_official_visit() -> Variant:
 	return v5
 	return 0
 
-func custom_piracy() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func custom_piracy(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
@@ -2496,12 +2474,7 @@ func custom_piracy() -> Variant:
 	return v5
 	return 0
 
-func custom_cabbie() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func custom_cabbie(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
@@ -2534,12 +2507,7 @@ func custom_cabbie() -> Variant:
 	return v5
 	return 0
 
-func custom_speed_trap() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func custom_speed_trap(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
@@ -2605,12 +2573,7 @@ func custom_flitter(v0, v1, v2, v3, v4) -> Variant:
 	return v5
 	return 0
 
-func custom_police_raid() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func custom_police_raid(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
@@ -2643,12 +2606,7 @@ func custom_police_raid() -> Variant:
 	return v5
 	return 0
 
-func custom_maneuvre() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func custom_maneuvre(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0

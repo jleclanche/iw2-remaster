@@ -186,8 +186,7 @@ func local_1266() -> Variant:
 	return v2
 	return 0
 
-func set_hangar_screen_enabled() -> Variant:
-	var v0: Variant = 0
+func set_hangar_screen_enabled(v0) -> Variant:
 	global.create_bool("g_hangar_disabled", 6, not (v0))
 	return 0
 	return 0
@@ -197,8 +196,7 @@ func set_trade_screen_enabled(v0) -> Variant:
 	return 0
 	return 0
 
-func set_inventory_screen_enabled() -> Variant:
-	var v0: Variant = 0
+func set_inventory_screen_enabled(v0) -> Variant:
 	global.create_bool("g_inventory_disabled", 6, not (v0))
 	return 0
 	return 0
@@ -213,20 +211,17 @@ func set_manufacturing_screen_enabled(v0) -> Variant:
 	return 0
 	return 0
 
-func set_comms_screen_enabled() -> Variant:
-	var v0: Variant = 0
+func set_comms_screen_enabled(v0) -> Variant:
 	global.create_bool("g_comms_disabled", 6, not (v0))
 	return 0
 	return 0
 
-func set_encyclopaedia_screen_enabled() -> Variant:
-	var v0: Variant = 0
+func set_encyclopaedia_screen_enabled(v0) -> Variant:
 	global.create_bool("g_encyclopaedia_disabled", 6, not (v0))
 	return 0
 	return 0
 
-func set_statistics_screen_enabled() -> Variant:
-	var v0: Variant = 0
+func set_statistics_screen_enabled(v0) -> Variant:
 	global.create_bool("g_statistics_disabled", 6, not (v0))
 	return 0
 	return 0
@@ -236,8 +231,7 @@ func set_triangulation_screen_enabled(v0) -> Variant:
 	return 0
 	return 0
 
-func set_customised_loadout_screen_enabled() -> Variant:
-	var v0: Variant = 0
+func set_customised_loadout_screen_enabled(v0) -> Variant:
 	global.create_bool("g_customised_loadout_disabled", 6, not (v0))
 	return 0
 	return 0
@@ -3011,7 +3005,7 @@ func s_p_customise_screen__on_select() -> Variant:
 	return 0
 	return 0
 
-func s_p_customise_screen__create_options_list_box() -> Variant:
+func s_p_customise_screen__create_options_list_box(v0, v1) -> Variant:
 	return 0
 	return 0
 

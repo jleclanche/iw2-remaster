@@ -415,6 +415,17 @@ static func snake(n: String) -> String:
 
 ## Run "pkg.Func". Works on either host: the ported scripts are PogScript nodes
 ## with snake_cased methods, the VM takes the original name.
+## Reported once per method, so a handler on a per-frame path warns once.
+static var _argc_warned: Dictionary = {}
+
+
+static func _method_argc(obj: Object, m: String) -> int:
+	for d in obj.get_method_list():
+		if d.get("name", "") == m:
+			return (d.get("args", []) as Array).size()
+	return 0
+
+
 func dispatch(fq: String) -> Variant:
 	if fq.is_empty() or vm == null:
 		return 0
@@ -432,7 +443,23 @@ func dispatch(fq: String) -> Variant:
 		if not s.has_method(m):
 			push_warning("POG: %s has no method for %s" % [pkg, fn])
 			return 0
-		return s.call(m)
+		# The engine calls these by name WITH arguments; we have none to pass.
+		# Most take none, but the SDK headers gave the real signatures to
+		# functions POG itself never calls (engine callbacks had no call sites,
+		# so they used to port as `func f()` whose body read v0/v1 as always-0
+		# locals). Passing the declared count keeps that old behaviour instead
+		# of throwing "Too few arguments" -- but say so, because a handler
+		# reading an argument we never supplied is silently wrong.
+		var argc := _method_argc(s, m)
+		if argc == 0:
+			return s.call(m)
+		if not _argc_warned.has(m):
+			_argc_warned[m] = true
+			push_warning(("POG: dispatching %s.%s with %d unsupplied argument(s)"
+				+ " -- the engine passes real ones here") % [pkg, fn, argc])
+		var blanks: Array = []
+		blanks.resize(argc)
+		return s.callv(m, blanks)
 	if vm.has_method("start"):                  # PogVM: the bytecode oracle
 		vm.start(pkg, fn)
 	return 0

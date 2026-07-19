@@ -158,14 +158,7 @@ func attach_way_point_to_group_leader(v0, v1) -> Variant:
 	return
 	return 0
 
-func watch_sims_and_group_combat() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
-	var v5: Variant = 0
-	var v6: Variant = 0
+func watch_sims_and_group_combat(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	return await watch_group_combat_task(v0, v1, v2, v3, v4, 0, v5, v6)
 	return 0
 

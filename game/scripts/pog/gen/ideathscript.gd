@@ -58,8 +58,7 @@ func _link() -> void:
 	string = api.string
 	text = api.text
 
-func antimatter() -> Variant:
-	var v0: Variant = 0
+func antimatter(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = sim.create("ini:/sims/explosions/10km_antimatter_explosion", "Big Bang")
 	sim.place_at(v1, v0)
@@ -92,8 +91,7 @@ func apply_damage(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func explosives() -> Variant:
-	var v0: Variant = 0
+func explosives(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -373,8 +371,7 @@ func player_death_script(v0) -> Variant:
 	return
 	return 0
 
-func mega_pod_death() -> Variant:
-	var v0: Variant = 0
+func mega_pod_death(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -515,8 +512,7 @@ func setup_critical_group_death(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func critical_group_death() -> Variant:
-	var v0: Variant = 0
+func critical_group_death(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0

@@ -59,8 +59,7 @@ func local_0(v0, v1) -> Variant:
 	return
 	return 0
 
-func create_asteroids() -> Variant:
-	var v0: Variant = 0
+func create_asteroids(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -132,12 +131,7 @@ func create_asteroids() -> Variant:
 	return v1
 	return 0
 
-func create_graveyard() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
+func create_graveyard(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0

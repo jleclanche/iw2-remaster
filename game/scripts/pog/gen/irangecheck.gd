@@ -139,8 +139,7 @@ func remove_traffic_exceptions_in_area(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func remove_out_of_system_traffic_exception() -> Variant:
-	var v0: Variant = 0
+func remove_out_of_system_traffic_exception(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v1 = []

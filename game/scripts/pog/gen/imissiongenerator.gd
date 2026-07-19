@@ -84,8 +84,7 @@ func test_piracy_rating(v0) -> Variant:
 	return 0
 	return 0
 
-func test_email() -> Variant:
-	var v0: Variant = 0
+func test_email(v0) -> Variant:
 	if not (iemail.received(v0)):
 		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator: failed email test")
@@ -115,9 +114,7 @@ func test_faction_rating(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func test_global_int() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func test_global_int(v0, v1) -> Variant:
 	if not (global.exists(v0)):
 		global.set_bool("g_accept_generated_mission", 0)
 	else:
@@ -536,8 +533,7 @@ func exclusive_trades(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func fail_if_owner_dead() -> Variant:
-	var v0: Variant = 0
+func fail_if_owner_dead(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v2 = state.find(v0)
@@ -570,9 +566,7 @@ func fail_if_global_bool(v0, v1, v2) -> Variant:
 	return 0
 	return 0
 
-func fail_precludes() -> Variant:
-	var v0: Variant = 0
-	var v1: Variant = 0
+func fail_precludes(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0

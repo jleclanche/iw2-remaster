@@ -1087,8 +1087,7 @@ func get_live_t_fighter() -> Variant:
 	return v2
 	return 0
 
-func create_test_t_fighters() -> Variant:
-	var v0: Variant = 0
+func create_test_t_fighters(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = []
 	match v0:
@@ -1279,8 +1278,7 @@ func get_lori() -> Variant:
 	return 0
 	return 0
 
-func wingman_death_script() -> Variant:
-	var v0: Variant = 0
+func wingman_death_script(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = ""
 	v1 = object.string_property(v0, "name")
@@ -1290,8 +1288,7 @@ func wingman_death_script() -> Variant:
 	return
 	return 0
 
-func t_fighter_death_script() -> Variant:
-	var v0: Variant = 0
+func t_fighter_death_script(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
