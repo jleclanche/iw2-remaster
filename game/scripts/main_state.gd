@@ -90,6 +90,10 @@ const SHIP_HIT_RADIUS := 60.0
 
 # planets.ini [Planets]: the renderer's own config, read by icPlanetProperties
 const ATMOSPHERE_HEIGHT := 1.1  # atmosphere_height
+# The night side of a body is dim, not black: the original's planet layers are
+# ADDITIVE over a base pass, so an unlit face still shows its surface texture.
+# Ours is a single lit pass, so carry a floor instead. Stand-in -- no address.
+const PLANET_AMBIENT := 0.12
 # icPlanetAvatar (0x100cdc50) sizes each of a gas giant's rings with
 # FcRandom::Float(1.75, 2.44) x the body radius (2.44 = _DAT_1011d07c)
 const RING_MIN := 1.75
@@ -123,6 +127,7 @@ var ldsi_mat: StandardMaterial3D
 var sky_anchor: Node3D
 var backdrop_shader: Shader  # gamma-space-filtered additive cyclorama
 var starfield_shader: Shader  # icStarfieldAvatar pixel points
+var planet_shader: Shader  # icPlanetAvatar bodies, lit from their own primary
 var env_ref: Environment
 # icDirector's camera GROUPS, built in its constructor (iwar2 @ 0x100d5e20) and
 # cycled by icDirector::OnMessage (0x100d6920): pressing a camera key when you

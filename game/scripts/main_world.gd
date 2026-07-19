@@ -489,28 +489,102 @@ func _surface_tint(rec: Dictionary, layer: int) -> Color:
 	var c: Array = colors[layer]
 	return Color(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0)
 
-func _planet_material(rec: Dictionary) -> StandardMaterial3D:
+## Planets are BACKDROP geometry, not scene geometry, and must not be lit by
+## the geog scene's DISTANT lights.
+##
+## The original draws every body through the "Creating planets avatar" node
+## (`DAT_10171e04`, built by `FUN_100ceb90` @ 0x100ceb90), which
+## `icSolarSystem::Render` (0x1004d150) adds to the scene graph next to the
+## cyclorama (`this+0x5c8`), gated on the same nebula-opacity test. That node
+## carries `icPlanetAvatar`'s own shader (`FUN_100cdc50`); it never sees the
+## `<star>` / `<fill>` FcLightNodes the geog scene ships.
+##
+## Those two lights are a STAGE RIG for ships and stations -- hoffers_wake
+## authors `<star>` at hpb (180, 0, 0), a flat axis-aligned key that has no
+## relation to where `Hoffer's Wake Alpha` actually sits. Shading a body with
+## it put the terminator in an arbitrary place: Alexander (true radius 8.8e7 m
+## at 1.5e8 m, a legitimate 62-degree disc at the spawn) turned its unlit face
+## to the camera and rendered black, while still occluding -- which is what
+## made the sky flares behind it wink out on rotation for no visible reason.
+##
+## So light a body from the real geometry: the direction from the body to its
+## primary. `icPlanet` carries that star itself (the `icSun *` at `+0xbc` that
+## FUN_100cdc50 reads for Class), so this is the engine's own association, not
+## an invention.
+##
+## `depth_draw_never` is the second half, and it is the one that matters for
+## the sky. The planets-avatar Render (vtable slot 16 @ 0x100cf220) wraps its
+## whole draw in
+##
+##     FcGraphicsEngine::Push(0x10)
+##     gfx+0x118 = 0.01 * 5 = 0.05     // this pass's own near clip
+##     gfx+0x11c = 96000.0             //      "         "  far clip
+##     FiShader::m_global_z_test = 0   // Z TEST OFF for the entire pass
+##     ... Begin / Add(light) / Add(each planet) / Render / End ...
+##     FiShader::m_global_z_test = 1
+##     FcGraphicsEngine::Pop()
+##
+## -- a backdrop pass that puts NOTHING in the depth buffer, run right after
+## the cyclorama and before the world. The FcLensFlareNodes that draw the
+## neighbour-star flares DO depth-test (m_polygon_state eBlend 1 @ FUN_100e5cb0
+## is "depth test on, depth write off"), so in the original they test against a
+## buffer the planets never wrote to and shine straight over a planet's disc.
+## Ours wrote depth from an opaque sphere, so an unlit body silently ate every
+## flare behind it -- a 62-degree black hole in the sky that moved as you
+## turned. Bodies still occlude correctly against ships and stations, which are
+## drawn later and do write depth.
+func _planet_shader() -> Shader:
+	if planet_shader != null:
+		return planet_shader
+	planet_shader = Shader.new()
+	planet_shader.code = """
+shader_type spatial;
+render_mode cull_back, depth_draw_never;
+uniform sampler2D albedo_tex : source_color;
+uniform vec4 tint : source_color;
+uniform vec3 star_dir;   // world space, body -> its primary
+uniform float ambient;   // the night side is dim, never pure black
+uniform float alpha;
+void fragment() {
+	vec3 n = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
+	float lam = max(dot(n, normalize(star_dir)), 0.0);
+	vec4 t = texture(albedo_tex, UV);
+	ALBEDO = t.rgb * tint.rgb * (ambient + (1.0 - ambient) * lam);
+	ALPHA = t.a * alpha;
+}
+"""
+	return planet_shader
+
+func _planet_material(rec: Dictionary) -> ShaderMaterial:
 	# icPlanetAvatar's shader (FUN_100cdc50 @ 0x100cdc50): layer 0 is
 	# SurfaceType(0) out of planets.ini's rocky_ or gassy_planet_textures,
 	# tinted by SurfaceTint(0).
-	var mat := StandardMaterial3D.new()
+	var mat := ShaderMaterial.new()
+	mat.shader = _planet_shader()
 	var textures: Array = rec.get("surface_textures", [])
 	if not textures.is_empty():
-		mat.albedo_texture = _planet_texture(str(textures[0]))
-	mat.albedo_color = _surface_tint(rec, 0)
-	mat.roughness = 0.9
+		mat.set_shader_parameter("albedo_tex", _planet_texture(str(textures[0])))
+	mat.set_shader_parameter("tint", _surface_tint(rec, 0))
+	mat.set_shader_parameter("ambient", PLANET_AMBIENT)
+	mat.set_shader_parameter("alpha", 1.0)
+	# a sane default until _stream_objects stamps the real one
+	mat.set_shader_parameter("star_dir", Vector3.FORWARD)
 	return mat
 
-func _atmosphere_material(rec: Dictionary) -> StandardMaterial3D:
+func _atmosphere_material(rec: Dictionary) -> ShaderMaterial:
 	# the cloud layer: atmosphere_planet_textures[record +0x164], tinted with a
 	# random blend of the two surface tints pulled toward white
-	var mat := StandardMaterial3D.new()
-	mat.albedo_texture = _planet_texture(str(rec["atmosphere_texture"]))
+	# same lighting rule as the surface: the cloud deck has a terminator too
+	var mat := ShaderMaterial.new()
+	mat.shader = _planet_shader()
+	mat.set_shader_parameter("albedo_tex",
+		_planet_texture(str(rec["atmosphere_texture"])))
 	var tint := _surface_tint(rec, 0).lerp(_surface_tint(rec, 1), 0.5) \
 		.lerp(Color.WHITE, 0.6)
-	mat.albedo_color = Color(tint.r, tint.g, tint.b, 0.55)
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.roughness = 1.0
+	mat.set_shader_parameter("tint", tint)
+	mat.set_shader_parameter("ambient", PLANET_AMBIENT)
+	mat.set_shader_parameter("alpha", 0.55)
+	mat.set_shader_parameter("star_dir", Vector3.FORWARD)
 	return mat
 
 func _spawn_impostor(rec: Dictionary) -> void:
@@ -526,7 +600,10 @@ func _spawn_impostor(rec: Dictionary) -> void:
 	mesh.height = 2.0
 	mesh.radial_segments = 48
 	mesh.rings = 24
-	mesh.material = _planet_material(rec)
+	var surf_mat := _planet_material(rec)
+	mesh.material = surf_mat
+	# _light_body_from_primary stamps star_dir on these every frame
+	var lit_mats: Array = [surf_mat]
 	var body := MeshInstance3D.new()
 	body.mesh = mesh
 	node.add_child(body)
@@ -536,10 +613,13 @@ func _spawn_impostor(rec: Dictionary) -> void:
 		shell.height = ATMOSPHERE_HEIGHT * 2.0
 		shell.radial_segments = 48
 		shell.rings = 24
-		shell.material = _atmosphere_material(rec)
+		var atmo_mat := _atmosphere_material(rec)
+		shell.material = atmo_mat
+		lit_mats.append(atmo_mat)
 		var atmo := MeshInstance3D.new()
 		atmo.mesh = shell
 		node.add_child(atmo)
+	rec["lit_mats"] = lit_mats
 	for i in int(rec["ring_count"]):
 		node.add_child(_spawn_ring(rec, i))
 	# The far glow: at range, the original shows a body as a bright star-like
@@ -688,6 +768,36 @@ func _fold_motion() -> void:
 		sw["pos"] = (sw["pos"] as Vector3) - p
 	space_fx.shift_world(p)  # the stored contrail points (FUN_100e5280)
 
+## The body's terminator, from TRUE map positions -- the impostor's own
+## position is a fiction (pulled to IMPOSTOR_DIST), so it cannot be used.
+## `icPlanet` carries its `icSun *` at +0xbc; we recover that association as
+## the nearest star record, which is what a system's primary is.
+func _light_body_from_primary(o: Dictionary) -> void:
+	var mats: Array = o.get("lit_mats", [])
+	if mats.is_empty():
+		return
+	if not o.has("primary"):
+		var best := INF
+		var found: Dictionary = {}
+		for s in objects:
+			if str(s["category"]) != "star":
+				continue
+			var sdx: float = s["x"] - o["x"]
+			var sdy: float = s["y"] - o["y"]
+			var sdz: float = s["z"] - o["z"]
+			var sd := sdx * sdx + sdy * sdy + sdz * sdz
+			if sd < best:
+				best = sd
+				found = s
+		o["primary"] = found
+	var prim: Dictionary = o["primary"]
+	if prim.is_empty():
+		return
+	var dir := Vector3(prim["x"] - o["x"], prim["y"] - o["y"],
+			prim["z"] - o["z"]).normalized()
+	for mat in mats:
+		(mat as ShaderMaterial).set_shader_parameter("star_dir", dir)
+
 func _stream_objects() -> void:
 	# a scripted object is often created before the table that names it loads
 	# (PogWorld.refresh_object_names); no-op unless a table landed since
@@ -715,14 +825,31 @@ func _stream_objects() -> void:
 				# never fill the screen: cap apparent radius vs draw distance
 				var draw_r := minf(r * k, IMPOSTOR_DIST * 0.4)
 				if o["category"] == "star":
-					# The star LIGHT is not re-aimed here: icSolarSystem::
-					# OnBecomeActive (0x1004c380) pulls the geog scene's <star>
-					# FcLightNode with its AUTHORED rotation and only ever
-					# rewrites its colour -- no code re-points it at the
-					# player. Re-aiming it along sun->player (what this branch
-					# used to do) lit the wrong faces of everything;
-					# Lucrecia's Base's docking mouth sat in shadow that the
-					# original's fixed heading lights head-on.
+					# The star LIGHT is not re-aimed HERE, and that is a
+					# behaviour choice, not a claim about the engine.
+					#
+					# CORRECTION. This comment used to assert that "no code
+					# re-points it at the player". That is FALSE and it was
+					# stated with unearned confidence. icSolarSystem::Render
+					# (0x1004d150) does re-point a light every frame: it calls
+					# FUN_1003e160 on `world+0x5d0`'s +0x38 (its POSITION) and
+					# assigns its +0xf8 (its COLOUR) before the scene graph is
+					# built. icPlanetAvatar's pass (0x100cf220) then adds that
+					# same +0x5d0 node with its colour scaled by 0.8
+					# (_DAT_1011959c) and restores it afterwards -- so bodies
+					# are lit by a light the engine moves, not by a fixed one.
+					# What is NOT re-pointed is the geog scene's <star>
+					# FcLightNode, which icSolarSystem::OnBecomeActive
+					# (0x1004c380) pulls with its AUTHORED rotation and only
+					# recolours; that is the ship/station key light.
+					#
+					# We keep OUR directional `sun` on the authored heading
+					# because re-aiming it along sun->player lit the wrong faces
+					# of everything: Lucrecia's Base's docking mouth sat in
+					# shadow that the original's fixed heading lights head-on.
+					# Whether world+0x5d0 should drive a SECOND light for bodies
+					# is open -- see _light_body_from_primary, which currently
+					# approximates it from the nearest star record.
 					# A sun is NEVER seen as a disc: the far plane (600 km)
 					# cannot contain one at map distances (1e11..1e13 m). What
 					# the player sees is icSun's pair of FcLensFlareNodes, and
@@ -744,6 +871,7 @@ func _stream_objects() -> void:
 					continue
 				o["node"].position = Vector3(dx, dy, dz) * k
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
+				_light_body_from_primary(o)
 				var fg: Node3D = o["node"].get_node_or_null("FarGlow")
 				if fg != null:
 					# the far flare: a fixed apparent size (~0.55 deg half-angle),
