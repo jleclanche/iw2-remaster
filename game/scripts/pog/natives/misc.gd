@@ -322,6 +322,11 @@ func _goto_restart_point(_t, _a: Array) -> Variant:
 func _mod_scan(_t, _a: Array) -> Variant:
 	mods.clear()
 	var root := ProjectSettings.globalize_path("res://").path_join("../data/mods")
+	# Shipping no mods means the directory legitimately does not exist, and the
+	# mod page is reachable from the front end's EXTRAS item -- so an absent
+	# directory is an empty list, not an error to spew at whoever opens it.
+	if not DirAccess.dir_exists_absolute(root):
+		return 0
 	for dir in DirAccess.get_directories_at(root):
 		var m := PogMod.new()
 		m.name = dir

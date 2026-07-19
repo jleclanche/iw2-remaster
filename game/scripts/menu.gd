@@ -393,7 +393,7 @@ func _pog_screen_up() -> bool:
 ## Raise one of the original GUI screens through the ported runtime -- the same
 ## gui.OverlayScreen the POG menus themselves call. False when the runtime is
 ## not up (the caller keeps its stand-in behaviour).
-func _pog_overlay(screen: String) -> bool:
+func _pog_overlay(screen: String, push := false) -> bool:
 	var rt: PogRuntime = main.pog_rt
 	if rt == null or rt.ui == null or rt.std == null:
 		return false
@@ -417,7 +417,9 @@ func _pog_overlay(screen: String) -> bool:
 		var s: PogScript = rt.script("igui")
 		if s != null:
 			s.set_g_u_i_globals()
-	rt.native("gui.overlayscreen", [screen])
+	# Most of the front end's items overlay; CREDITS pushes
+	# (SPMainPDAScreen_OnCredits, ipdagui.pog:152-156).
+	rt.native("gui.pushscreen" if push else "gui.overlayscreen", [screen])
 	return true
 
 func _items() -> Array:
@@ -454,8 +456,18 @@ func _items() -> Array:
 		["LOAD GAME", not main.save_slots().is_empty()],
 		["INSTANT ACTION", true], ["EXTRAS", true],
 		["DEBUG START", true],
-		["MULTIPLAYER", false], ["OPTIONS", false],
-		["MOVIES", true], ["CREDITS", false], ["QUIT", true]]
+		# OPTIONS and CREDITS are live now that they raise the screens the
+		# original's own handlers raise (SPMainPDAScreen_OnOptions /
+		# _OnCredits, ipdagui.pog:152-162) instead of nothing. MULTIPLAYER
+		# stays off: icMPMasterScreen has no ported builder.
+		["MULTIPLAYER", false], ["OPTIONS", _has_pog_gui()],
+		["MOVIES", true], ["CREDITS", _has_pog_gui()], ["QUIT", true]]
+
+## The ported GUI runtime is what makes the PDA-screen items reachable at all;
+## without it the front end falls back to its own stand-in lists.
+func _has_pog_gui() -> bool:
+	var rt: PogRuntime = main.pog_rt
+	return rt != null and rt.ui != null and rt.std != null
 
 func _activate() -> void:
 	var items := _items()
@@ -572,15 +584,49 @@ func _activate() -> void:
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "loads"
 			sel = 0
-		"SELECT SYSTEM", "EXTRAS":
+		"EXTRAS":
+			# SPMainPDAScreen_OnMod: gui.OverlayScreen("icModScreen")
+			# (ipdagui.pog:130-134; builder ModScreen, ipdagui.pog:1216). The
+			# system picker this used to open is our own debug affordance and
+			# stays on SELECT SYSTEM, where it belongs.
+			if _pog_overlay("icModScreen"):
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+				return
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "systems"
 			sel = 0
+		"SELECT SYSTEM":
+			main.audio.play("audio/gui/expand.wav", -8.0)
+			mode = "systems"
+			sel = 0
+		"OPTIONS":
+			# SPMainPDAScreen_OnOptions: gui.PlaySound(2) +
+			# gui.OverlayScreen("icSPPDAOptionsScreen") (ipdagui.pog:158-162;
+			# builder SPPDAOptionsScreen, ipdagui.pog:632).
+			if _pog_overlay("icSPPDAOptionsScreen"):
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+			else:
+				main.audio.play("audio/hud/invalid_input.wav", -10.0)
+		"CREDITS":
+			# SPMainPDAScreen_OnCredits PUSHES rather than overlays
+			# (ipdagui.pog:152-156). icCreditScreen is C++-built and mirrored
+			# engine-side (ui.gd:468); it pops itself when the scroll runs out.
+			if _pog_overlay("icCreditScreen", true):
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+			else:
+				main.audio.play("audio/hud/invalid_input.wav", -10.0)
 		"DEBUG START":  # ship picker, then a start location
 			main.audio.play("audio/gui/expand.wav", -8.0)
 			mode = "ships"
 			sel = 0
-		"MOVIES":  # replay the intro
+		"MOVIES":
+			# SPMainPDAScreen_OnMovies: gui.OverlayScreen("icMoviesScreen")
+			# (ipdagui.pog:146-150). The real screen offers all seven movies
+			# (MoviesScreen, ipdagui.pog:1135); jumping straight to the intro
+			# was our stand-in for it.
+			if _pog_overlay("icMoviesScreen"):
+				main.audio.play("audio/gui/confirm.wav", -6.0)
+				return
 			main.audio.play("audio/gui/confirm.wav", -6.0)
 			visible = false
 			main._play_movie("intro", func() -> void: pass)

@@ -950,6 +950,21 @@ func _basecheck(_delta: float) -> void:
 					and iwin.icons.get("selected") == Rect2(34, 17, 16, 16),
 				"neutral=%s selected=%s"
 					% [iwin.icons.get("neutral"), iwin.icons.get("selected")])
+			# The front-end items menu.gd routes at its OWN handlers' screens
+			# (SPMainPDAScreen_On{Options,Movies,Mod}, ipdagui.pog:130-162).
+			# Enabling a button that raises an empty screen would be worse than
+			# leaving it greyed, so each builder must actually produce windows.
+			# icSPPDADeviceScreen is in here because it is the one that consumes
+			# ioptions.CreateGraphics{Device,Resolution}OptionButtons.
+			for pda: String in ["icSPPDAOptionsScreen", "icMoviesScreen",
+					"icModScreen", "icSPPDADeviceScreen"]:
+				m.pog_rt.native("gui.overlayscreen", [pda])
+				var pscr: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+				_bc("front end: %s builds" % pda,
+					pscr != null and pscr.name == pda
+						and not pscr.windows.is_empty(),
+					"windows=%d" % (pscr.windows.size() if pscr != null else -1))
+				m.pog_rt.native("gui.popscreen", [])
 			print("BASECHECK: ", "PASS" if _base_fail == 0 else "FAIL",
 				" -- ", _base_fail, " failure(s)")
 			get_tree().quit(0 if _base_fail == 0 else 1)

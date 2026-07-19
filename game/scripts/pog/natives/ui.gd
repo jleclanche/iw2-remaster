@@ -1917,8 +1917,57 @@ func _option_label(o: PogOption) -> String:
 # The graphics device/resolution rows are the two the options screen builds by
 # hand rather than through Register*; both offer exactly one device, so there is
 # nothing to choose between.
-# @stub ioptions.CreateGraphicsDeviceOptionButtons
-# @stub ioptions.CreateGraphicsResolutionOptionButtons
+## `ioptions.CreateGraphicsDeviceOptionButtons()` -- one radio button per
+## renderer, returned as a POG list. SPPDADeviceScreen walks the list, makes
+## each entry iconic, drops it in a splitter window and checks the one at
+## ioptions.GraphicsDeviceIndex() (ipdagui.pog:947-963). Returning 0 where the
+## script expects a list left the device column empty and the whole graphics
+## screen half-built.
+##
+## The original enumerated D3D8 devices; we have exactly one renderer, so the
+## list has one rung and GraphicsDeviceIndex (already 0 above) selects it.
+# @native ioptions.CreateGraphicsDeviceOptionButtons
+func _opt_device_buttons(_t, _a: Array) -> Variant:
+	var out: Array = []
+	var win := PogWindow.new()
+	win.kind = "radio"
+	win.title = _device_name()
+	win.neutral = default_colour
+	win.focused_col = default_colour
+	win.selected_col = default_colour
+	win.overrides.resize(9)
+	out.append(win)
+	dirty = true
+	return out
+
+
+## The rendering driver, standing in for the original's D3D8 device description.
+func _device_name() -> String:
+	var n := RenderingServer.get_video_adapter_name()
+	return n if not n.is_empty() else "Default"
+
+
+## `ioptions.CreateGraphicsResolutionOptionButtons(screen, has_scrollbar)` -- one
+## radio button per rung of RESOLUTIONS, in the same order
+## ioptions.GraphicsResolutionIndex reports against. SPPDADeviceScreen adds each
+## to the resolution list box and then selects that index (ipdagui.pog:1062-1075).
+##
+## These become LIST BOX ENTRIES, so the box lays them out: their own rect is
+## left at zero, exactly as the entries igui builds elsewhere.
+# @native ioptions.CreateGraphicsResolutionOptionButtons
+func _opt_res_buttons(_t, _a: Array) -> Variant:
+	var out: Array = []
+	for r: Vector2i in RESOLUTIONS:
+		var win := PogWindow.new()
+		win.kind = "radio"
+		win.title = "%d x %d" % [r.x, r.y]
+		win.neutral = default_colour
+		win.focused_col = default_colour
+		win.selected_col = default_colour
+		win.overrides.resize(9)
+		out.append(win)
+	dirty = true
+	return out
 func _opt_noop(_t, _a: Array) -> Variant:
 	return 0
 
@@ -2166,8 +2215,8 @@ const _BINDINGS := {
 	"ioptions.graphicsresolutionindex": "_opt_res_index",
 	"ioptions.setgraphicsdevice": "_opt_set_device",
 	"ioptions.createwindows": "_opt_create_windows",
-	"ioptions.creategraphicsdeviceoptionbuttons": "_opt_noop",
-	"ioptions.creategraphicsresolutionoptionbuttons": "_opt_noop",
+	"ioptions.creategraphicsdeviceoptionbuttons": "_opt_device_buttons",
+	"ioptions.creategraphicsresolutionoptionbuttons": "_opt_res_buttons",
 
 	"input.bindkey": "_bind_key", "input.purgebindings": "_purge_bindings",
 	"input.suspendbindings": "_suspend_bindings",
