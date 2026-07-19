@@ -45,6 +45,7 @@ from .pogdec import (Break, Call, Case, Const, Continue, Debug, Decompiler,
                      PcSet, Ret, Str, Un, Var, While, Assign, Bin, Do, Yield,
                      argc_census, _gd_new, _snake)
 from .pogdis import parse_pkg
+from .pogsig import signatures
 from .resources import ResourceFS
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -86,6 +87,30 @@ def _fname(name: str) -> str:
     return "pog_" + n if (n in _TAKEN or n in _RESERVED) else n
 
 
+# Kept separate from _RESERVED, which _fname uses: broadening that would
+# rename existing ported methods. This is the full GDScript keyword set,
+# because the SDK names parameters things like `class_name` and a partial
+# list only fails once it reaches the one you left out.
+_GD_KEYWORDS = _RESERVED | {
+    "class_name", "elif", "when", "super", "breakpoint", "preload", "yield",
+    "assert", "void", "tool", "namespace", "trait", "PI", "TAU", "INF", "NAN",
+}
+
+
+def _pname(params: list[tuple[str, str]], i: int) -> str:
+    """The SDK's own name for parameter `i`, made safe for GDScript.
+
+    Falls back to `aN` for anything unusable: a missing name, a GDScript
+    keyword, or a name that would shadow the facade's own `rt`.
+    """
+    name = _snake(params[i][1]) if params[i][1] else ""
+    if name in _GD_KEYWORDS or name == "rt":
+        return "a%d" % i
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
+        return "a%d" % i
+    return name
+
+
 def _ind(n: int) -> str:
     return "\t" * n
 
@@ -119,13 +144,32 @@ def gen_native_api() -> str:
 
     # NB the inner class names are prefixed: several packages are called things
     # Godot already owns (object, string, input).
+    # The SDK headers declare every native properly, so the facade can name its
+    # parameters the way the original API does and cite the prototype it came
+    # from. Types are NOT applied here: a native declared `hgroup` whose
+    # implementation returns 0 on an error path would turn a silent wrongness
+    # into a hard crash, and how often that happens is not yet measured.
+    try:
+        sigs = signatures()
+    except SystemExit:
+        sigs = {}                      # SDK not installed: names stay a0, a1
+
     for pkg, fns in pkgs.items():
         cls = "Pkg" + pkg.capitalize()
         L.append("class %s extends RefCounted:" % cls)
         L.append("\tvar rt: PogRuntime")
         for fn in fns:
             n = _ARGC.get("%s.%s" % (pkg, fn), 0)
-            args = ", ".join("a%d" % i for i in range(n))
+            ret, params = sigs.get("%s.%s" % (pkg.lower(), fn.lower()),
+                                   ("", []))
+            names = [_pname(params, i) for i in range(n)] if len(
+                params) == n else ["a%d" % i for i in range(n)]
+            args = ", ".join(names)
+            if params or ret:
+                decl = ", ".join("%s %s" % t for t in params)
+                L.append("\t## prototype %s %s.%s(%s)"
+                         % (ret or "void", pkg.capitalize(), fn,
+                            " %s " % decl if decl else ""))
             L.append("\tfunc %s(%s) -> Variant:" % (_fname(fn), args))
             L.append('\t\treturn rt.native("%s.%s", [%s])'
                      % (pkg, fn.lower(), args))
