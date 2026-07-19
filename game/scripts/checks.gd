@@ -1785,6 +1785,26 @@ func _ms_script_queries(_delta: float) -> void:
 	var s2 := int(m.pog_rt.native("iship.isldsscrambled", [me]))
 	_mech("lds-scrambled-query", s0 == 0 and s1 == 1 and s2 == 0,
 		"%d/%d/%d" % [s0, s1, s2])
+	# turret designation (#6): WeaponsUseExplicitTarget locks every turret
+	# onto the target (ConfigureWeapons(1,t,0) 0x1007b8a0 -> SetMode(1)
+	# 0x10033800); WeaponTargetsFromContactList clears the lock so turrets
+	# pick their own again -- and the battery stays armed through both
+	var gs := _mech_spawn("Query Gunstar", 6000.0, Vector3(0, 0, -8000))
+	gs.setup_ini("sims/ships/navy/gunstar.ini", null)
+	var gsim = w._wrap_ship(gs)
+	var r1 := int(m.pog_rt.native(
+			"iship.weaponsuseexplicittarget", [gsim, viewer]))
+	var bat: Dictionary = _mech_battery(gs)
+	var locked_on: bool = not bat.is_empty() and bat.get("locked") == hostile
+	var r2 := int(m.pog_rt.native(
+			"iship.weapontargetsfromcontactlist", [gsim]))
+	var released: bool = not bat.is_empty() and bat.get("locked") == null \
+			and bool(bat.get("armed", false))
+	_mech("turret-designation", r1 == 1 and locked_on and r2 == 1 and released,
+		"designate=%d locked=%s release=%d armed=%s"
+			% [r1, locked_on, r2, bat.get("armed", false)])
+	gs.queue_free()
+	m.ai_ships.erase(gs)
 	hostile.queue_free()
 	m.ai_ships.erase(hostile)
 	_mech_next()

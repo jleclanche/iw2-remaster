@@ -2323,3 +2323,11 @@ Still open:
 - **The `gui` widget toolkit** (99 natives) -- the base screens (trade,
   manufacturing, recycling) are POG scripts driving it; we replaced the front end,
   so most of it is stubbed.
+- **AI order type 5.** `iship.WeaponTargetsFromContactList` (`iship.dll @
+  0x10002c10`, check at `0x10002c99`) and `iship.WeaponsUseExplicitTarget`
+  (`0x10002de0`, check at `0x10002eec`) both REFUSE to reconfigure a ship
+  whose AI pilot's current order object has `+0x74 == 5` (pilot from
+  `icShip::AIPilot`, order = `pilot[+0x28]`-indexed slot at `+0x18`). Which
+  order class has type 5 is unidentified -- the icAIOrder type enum is
+  unread. Our behaviour-string AI has no numeric orders, so the gate is not
+  reproduced (noted at the natives in world.gd).

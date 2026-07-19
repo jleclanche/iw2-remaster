@@ -1365,8 +1365,16 @@ func docking_allowed(s: PogSim, to: PogSim) -> bool:
 	return s.docking_lock == to
 
 
+# @native isim.WeaponTargetsFromContactList
+func _i_weapons_contact_list(_t, a: Array) -> Variant:
+	# isim.dll @ 0x10004f30: any iiSim. The player pilot's own ship resets to
+	# player control (iiSim::ConfigureWeapons(0,0,0) @ 0x10004fab); everyone
+	# else gets ConfigureWeapons(1, NULL, 0) (@ 0x10004fbc): every turret to
+	# SetMode with NO designated target, i.e. pick its own off the contact
+	# list. No AI-order gate here, unlike the iship spelling.
+	return _weapons_from_contact_list(_as_sim(a[0]))
+
 # @stub isim.StopExplosion
-# @stub isim.WeaponTargetsFromContactList
 # @stub isim.IsRespawning
 func _i_noop(_t, _a: Array) -> Variant:
 	# StopExplosion cancels a staged explosion that iiSim::StartExplosion
@@ -1661,15 +1669,66 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 # @stub iship.IsAIDisabled
 # (IsAIDisabled is a DEAD EXPORT: zero call sites in any .pogasm -- apicov
 # flags it so. Kept bound only so the UNBOUND count stays 0.)
-# @stub iship.WeaponsUseExplicitTarget
-# @stub iship.WeaponTargetsFromContactList
 # @stub iship.PercentageThrusterEmission
 # @stub iship.RecalculateMOIFromMass
 # @stub iship.CreateTurretFighters
 func _sh_noop(_t, _a: Array) -> Variant:
-	# Turret targeting modes (a ship's turrets either track its own target or pick
-	# their own off the contact list) are issue #6; PercentageThrusterEmission is
-	# an avatar channel expression.
+	# PercentageThrusterEmission is an avatar channel expression;
+	# RecalculateMOIFromMass waits on the inertia extraction (#7);
+	# CreateTurretFighters is the icTurretShip gap (#5).
+	return 0
+
+
+## iiSim::ConfigureWeapons(1, NULL, 0) via turrets.gd: rearm the battery with
+## no designated target, so every turret picks its own off the contact list
+## (SetMode, iwar2.dll @ 0x10033800). The player pilot's own ship instead
+## resets to player control -- ConfigureWeapons(0,0,0) -- which for us is a
+## no-op: the player's weapons are already player-driven.
+func _weapons_from_contact_list(s: PogSim) -> int:
+	if s == null or Turrets.instance == null:
+		return 0
+	if s.is_player:
+		return 1
+	if s.node is AiShip:
+		Turrets.instance.arm_ship(s.node, null)
+		return 1
+	if not s.rec.is_empty():
+		Turrets.instance.arm_station(s.rec, null)
+		return 1
+	return 0
+
+# @native iship.WeaponTargetsFromContactList
+func _sh_weapons_contact_list(_t, a: Array) -> Variant:
+	# iship.dll @ 0x10002c10: must be an icShip. The original REFUSES when the
+	# ship's AI pilot's current order is type 5 (0x10002c99; the type-5 order
+	# is unidentified -- docs/original.md open questions; our behaviour-string
+	# AI has no numeric orders, so the gate is not reproduced). Player's true
+	# ship -> ConfigureWeapons(0,0,0); anyone else -> ConfigureWeapons(1,0,0).
+	return _weapons_from_contact_list(_as_sim(a[0]))
+
+# @native iship.WeaponsUseExplicitTarget
+func _sh_weapons_explicit_target(_t, a: Array) -> Variant:
+	# iship.dll @ 0x10002de0: ship must be icShip, target any iiSim; the same
+	# type-5 order refusal as above. On the player's own ship the target is
+	# IGNORED and the weapons reset to player control (0x10002f1e). Everyone
+	# else: iiSim::ConfigureWeapons(1, target, 0) -- every turret designated
+	# onto the target (fire-request slot +0x84, SetMode(1) @ 0x10033800),
+	# which is turrets.gd arm_ship/arm_station with a lock.
+	var s := _as_sim(a[0])
+	var t := _as_sim(a[1]) if a.size() > 1 else null
+	if s == null or Turrets.instance == null:
+		return 0
+	if s.is_player:
+		return 1
+	var target: Node3D = null
+	if t != null and t.node is Node3D and is_instance_valid(t.node):
+		target = t.node
+	if s.node is AiShip:
+		return 1 if not Turrets.instance.arm_ship(s.node, target).is_empty() \
+			else 0
+	if not s.rec.is_empty():
+		return 1 if not Turrets.instance.arm_station(s.rec, target).is_empty() \
+			else 0
 	return 0
 
 
@@ -1825,7 +1884,7 @@ const _BINDINGS := {
 	"isim.alieninfectioneffect": "_i_infection_effect",
 	"isim.isalieninfectioneffecton": "_i_is_infection_on",
 	"isim.setalieninfectiondamage": "_i_set_infection_damage",
-	"isim.weapontargetsfromcontactlist": "_i_noop",
+	"isim.weapontargetsfromcontactlist": "_i_weapons_contact_list",
 	"isim.isrespawning": "_i_noop",
 	"isim.simsinradiusfromset": "_i_sims_in_radius_from_set",
 	"isim.simsinradiusoffaction": "_i_sims_in_radius_of_faction",
@@ -1853,8 +1912,8 @@ const _BINDINGS := {
 	"iship.isfreewithoutpilot": "_sh_is_free",
 	"iship.setaidisabled": "_sh_set_ai_disabled",
 	"iship.isaidisabled": "_sh_noop",
-	"iship.weaponsuseexplicittarget": "_sh_noop",
-	"iship.weapontargetsfromcontactlist": "_sh_noop",
+	"iship.weaponsuseexplicittarget": "_sh_weapons_explicit_target",
+	"iship.weapontargetsfromcontactlist": "_sh_weapons_contact_list",
 	"iship.lastfiretarget": "_sh_last_fire_target", "iship.dock": "_sh_dock",
 	"iship.undock": "_sh_undock", "iship.undockself": "_sh_undock",
 	"iship.brightnessof": "_sh_brightness_of",
