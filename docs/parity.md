@@ -127,8 +127,9 @@ Ordered by campaign impact.
 | Feature | Evidence | What breaks | Effort |
 |---|---|---|---|
 | Remote-pilot control handoff (`iship.InstallPlayerPilot` real swap) | natives/world.gd:1534 "not modelled"; REM LINK HUD node dispatches nothing | 9 missions (a0m20, a1m04/08/09, a2m02/18/24, a3m03/08): the linked vessel can never be flown; icRemoteMissile and the remote fighter are unreachable behind the same wall | L |
-| Front-end/pause PDA wiring | menu.gd:457 OPTIONS/CREDITS `false`; `_pog_overlay` used only for save/load | Stand-in menus diverge from original; OPTIONS, CREDITS dead; Instant Action ship choice (icSPShipTypeScreen) unreachable | M |
-| `ioptions.CreateGraphicsDeviceOptionButtons` / `...Resolution...` | apicov --stubs | The wired PDA options screen will render empty device/resolution rows | S |
+| Front-end/pause PDA wiring | PARTLY DONE (2580a53): OPTIONS/CREDITS/MOVIES/EXTRAS now raise the screens their own ipdagui handlers raise, and basecheck asserts all four build. REMAINS: the button list is still hand-written rather than read out of SPMainPDAScreen, and Instant Action still needs `igui.OverlayCustomScreen` + icSPShipTypeScreen (issue #20) | Labels/order/enablement can still drift from the original; Instant Action ship choice unreachable | M |
+| `ioptions.CreateGraphicsDeviceOptionButtons` / `...Resolution...` | DONE (2580a53) -- both return a list of radio buttons; device list is the one renderer, resolution list is the RESOLUTIONS ladder | -- | -- |
+| `gui.SetWindowStateIcons` | DONE (0f7f1c0) -- the 16x16 state glyph, which is the ONLY thing distinguishing an inverse button's selected state from its neutral one | -- | -- |
 | Player beam fire path (channel-2 beams to the trigger) | weapons.gd cycles channel 1 only; `player_mags` = magazines only | Antimatter Streamer (cargo 578), cutting beam: lootable, fittable, never fire | M |
 | Turret-fighter system (`iship.CreateTurretFighters` + icTurretShip) | stub in world.gd; turrets.gd:14 GENUINE GAP; istartsystem.pog:484 calls it every system start | Carrier-escort loadout feature absent; `iwingmen.AddTFighters` always fed an empty list | L |
 | Turret designation (`WeaponTargetsFromContactList`, `WeaponsUseExplicitTarget`) | apicov --stubs; `_sh_noop` world.gd | a1m03/07, a2m25, a3m01/03, istation, iwingmen: batteries ignore the mission's targeting orders | S |
