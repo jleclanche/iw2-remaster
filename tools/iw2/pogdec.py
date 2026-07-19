@@ -742,10 +742,24 @@ class Decompiler:
     def _linear(self, lo: int, hi: int) -> Dispatch:
         """Rebuild a function as basic blocks under an explicit pc.
 
-        The fallback for the ~8% of functions whose control flow is genuinely
-        irreducible (multi-level exits out of nested loops, mostly). Every jump
-        becomes an assignment to the pc, so nothing is approximated: the result
-        is the original program, just spelled as a state machine.
+        The fallback for the 7.5% of functions (217 of 2878) whose control flow
+        this structurer cannot shape. Every jump becomes an assignment to the
+        pc, so nothing is approximated: the result is the original program, just
+        spelled as a state machine.
+
+        This used to say "multi-level exits out of nested loops, mostly", which
+        a census of the 217 does not support -- NONE of the 1634 unshaped gotos
+        is an exit out of a loop. The real distribution:
+
+            919 (56%)  flat: neither the goto nor its target is in a loop,
+                       and every single one is FORWARD -- the signature of
+                       if/else chains, short-circuit conditions and early
+                       exits, not of loops
+            667 (41%)  inside a loop, targeting somewhere also inside one
+             48  (3%)  jumping into a loop from outside
+
+        That matters for anyone improving this: the dominant case is forward
+        branch structuring, not loop structuring. See issue #21.
         """
         leaders = {lo}
         for off, mn, args in self.instrs:
