@@ -271,7 +271,10 @@ class PogWindow extends RefCounted:
 	## Edit box / slider / radio / checkbox.
 	var value: Variant = ""
 	var max_chars := 0
-	var checked := false
+	## NB: a radio's checked state IS `selected` above -- FcRadioButton::SetChecked
+	## (flux @ 0x89240) Selects the window and Deselects its siblings, it does not
+	## keep a second flag. Holding them apart left every radio the POG checked
+	## drawn in the neutral state forever, because the renderer reads `selected`.
 	## Edit box editing state: FcEditBox's "being typed into" flag (this[0x91])
 	## and the pre-edit text it stashes at +0x10c so Escape can put it back
 	## (OnControlFocusSelect @ flux 0x7c4b0 / OnControlFocusCancel @ 0x7c530).
@@ -1004,9 +1007,18 @@ func _rb_set(_t, a: Array) -> Variant:
 	# radio hangs off the screen's root window, so its group is the screen's
 	# other parentless radios.
 	var win := _win(a[0])
-	if win == null or not PogVM._truthy(a[1]) or win.checked:
+	if win == null or not PogVM._truthy(a[1]):
 		return 0
-	win.checked = true
+	radio_latch(win)
+	return 0
+
+
+## FcRadioButton::SetChecked's false->true edge: Select this window, then walk
+## the group Deselecting every other radio in it.
+func radio_latch(win: PogWindow) -> void:
+	if win.selected:
+		return
+	win.selected = true
 	var siblings: Array = []
 	if win.parent != null:
 		siblings = win.parent.children
@@ -1016,14 +1028,13 @@ func _rb_set(_t, a: Array) -> Variant:
 				siblings.append(w)
 	for s in siblings:
 		if s != win and (s as PogWindow).kind == "radio":
-			(s as PogWindow).checked = false
+			(s as PogWindow).selected = false
 	dirty = true
-	return 0
 
 # @native gui.RadioButtonValue
 func _rb_value(_t, a: Array) -> Variant:
 	var win := _win(a[0])
-	return (1 if win.checked else 0) if win != null else 0
+	return (1 if win.selected else 0) if win != null else 0
 
 # @native gui.CheckboxValue
 func _cb_value(_t, a: Array) -> Variant:
@@ -1485,7 +1496,10 @@ func activate(win: PogWindow) -> Variant:
 	if win.kind == "listbox":
 		win.selected_index = win.focused_entry
 	if win.kind == "radio":
-		win.checked = not win.checked
+		# a radio LATCHES; there is no direct uncheck (FcRadioButton::SetChecked
+		# @ 0x89240). Toggling let Enter clear a group and never select a
+		# sibling, so ibasegui's RadioButtonValue scans matched nothing.
+		radio_latch(win)
 	dirty = true
 	var fn := win.override(IN_SELECT)
 	if fn.is_empty():
