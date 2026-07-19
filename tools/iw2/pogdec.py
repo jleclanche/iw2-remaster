@@ -747,19 +747,28 @@ class Decompiler:
         pc, so nothing is approximated: the result is the original program, just
         spelled as a state machine.
 
-        This used to say "multi-level exits out of nested loops, mostly", which
-        a census of the 217 does not support -- NONE of the 1634 unshaped gotos
-        is an exit out of a loop. The real distribution:
+        Measured at the emission site (the conditional-branch fall-through
+        below), the 1833 gotos this ships break down as:
 
-            919 (56%)  flat: neither the goto nor its target is in a loop,
-                       and every single one is FORWARD -- the signature of
-                       if/else chains, short-circuit conditions and early
-                       exits, not of loops
-            667 (41%)  inside a loop, targeting somewhere also inside one
-             48  (3%)  jumping into a loop from outside
+            1824  BACKWARD -- the target is at or before the branch itself
+               9  forward, past the `hi` of the region being structured
 
-        That matters for anyone improving this: the dominant case is forward
-        branch structuring, not loop structuring. See issue #21.
+        and of the backward ones:
+
+            1769  the target is NOT a header `_find_loops` recognised
+              55  the target IS a recognised header (continue-shaped)
+
+        So the root cause is single and specific: a backward edge whose header
+        `_find_loops` declined to claim. Its dominator test deliberately rejects
+        headers that do not dominate the latch ("a real loop, not a jump table")
+        and everything it rejects lands here, because the if/else shaping above
+        requires `addr < tgt` and a backward edge fails that immediately.
+
+        The old comment guessed "multi-level exits out of nested loops, mostly".
+        Wrong in the specifics -- no goto here exits a loop -- but right that
+        this is about loops, which a first pass at this survey got backwards by
+        comparing targets against the function entry instead of against the
+        branch address. See issue #21.
         """
         leaders = {lo}
         for off, mn, args in self.instrs:
