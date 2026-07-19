@@ -111,47 +111,86 @@ func _process(delta: float) -> void:
 #   * it is up exactly while the shield's "fire" channel is 1 -- which
 #     icAggressorShield::Simulate sets from the active flag (0x1002f44f)
 #
-# UNKNOWN: the world scale. The cone is built at unit size and the LWS node's
-# own transform scales it; we have not parsed avatars/aggressor_shield/setup, so
-# the shell is sized to the player's collision radius instead. Everything else
-# above is recovered.
-const AGG_RIM := 0.1        # icAggressorAvatar +0xbc
-const AGG_SCROLL := 1.0     # 0x1011c824, v units per second
-const AGG_APEX := 4.0       # the fan's apex, as icLDAAvatar (0x1011cfbc)
-const AGG_SHELL_R := 95.0   # our stand-in scale: the player collision radius
+# The world scale is NOT a radius: icAggressorShield::Simulate writes the avatar
+# node's transform every frame (0x1002f464..0x1002f4f5) from the hull's own
+# dimensions -- iiThrusterSim Width/Height/Length (+0x208/0x20c/0x210, the ship
+# INI's width/height/length keys):
+#
+#     node.scale    = (W*0.8, H, min(W*0.8, H) * 0.5)
+#     node.position = (0, 0, L*0.75)
+#
+# and icAggressorAvatar::Draw (0x100b94e0) hands the shared LDA fan a rim radius
+# of exactly 1.0 (immediate at 0x100b95dc) with the apex at +0xbc = the `depth`
+# property. So the cone is unit-sized and the hull dimensions do all the work:
+# on the tug (80/70/120) that is a 128 x 140 m ellipse standing ~84-103 m off
+# the nose, not a 95 m sphere.
+#
+# avatars/aggressor_shield/setup carries TWO cones under the `fire?+s(1.5)`
+# grow-in: shallow (depth 0.2) at z +0.2 and deep (depth 0.4) at z -0.2.
+const AGG_RIM := 1.0          # hardcoded rim radius, 0x100b95dc
+const AGG_SCROLL := 1.0       # 0x1011c824, v units per second
+const AGG_DEPTH_SHALLOW := 0.2  # setup.json cone `depth`, at z +0.2
+const AGG_DEPTH_DEEP := 0.4     # setup.json cone `depth`, at z -0.2
+const AGG_SCALE_XY := 0.8     # 0x1011959c
+const AGG_SCALE_Z := 0.5      # 0x10117738
+const AGG_NOSE := 0.75        # 0x10117d8c
+const AGG_RAMP := 1.5         # the `fire?+s(1.5)` channel's linear rate limit
 
-var _agg_mi: MeshInstance3D
+var _agg_root: Node3D
+var _agg_cones: Array[MeshInstance3D] = []
 var _agg_mat: StandardMaterial3D
 var _agg_clock := 0.0
+var _agg_ramp := 0.0
 
 func _ensure_aggressor(base: String) -> void:
-	if _agg_mi != null:
+	if _agg_root != null:
 		return
 	var tex := ParticleFx.texture(base, "images/sfx/aggressor")
 	_agg_mat = ExplosionFx._blend2_material(tex)
 	_agg_mat.vertex_color_use_as_albedo = true
-	_agg_mi = MeshInstance3D.new()
-	_agg_mi.mesh = ExplosionFx.lda_cone_mesh()
-	_agg_mi.mesh.surface_set_material(0, _agg_mat)
-	_agg_mi.visible = false
-	add_child(_agg_mi)
+	# `root` -> `ship_nose_pos`: the node Simulate drives. Both are authored
+	# identity in the LWS, so one node stands in for the pair.
+	_agg_root = Node3D.new()
+	_agg_root.visible = false
+	add_child(_agg_root)
+	for cone in [[AGG_DEPTH_SHALLOW, 0.2], [AGG_DEPTH_DEEP, -0.2]]:
+		var depth: float = cone[0]
+		var mi := MeshInstance3D.new()
+		# the shared LDA fan: rim radius 1 at z 0 (apex alpha 1, rim alpha 0 --
+		# the aggressor's apex never fades, 0x100b95d6/0x100b95d4), apex at z 1,
+		# so scaling z by `depth` puts the apex at +0xbc
+		mi.mesh = ExplosionFx.lda_cone_mesh()
+		mi.mesh.surface_set_material(0, _agg_mat)
+		mi.position = Vector3(0, 0, cone[1])
+		mi.scale = Vector3(AGG_RIM, AGG_RIM, depth)
+		_agg_root.add_child(mi)
+		_agg_cones.append(mi)
 
 ## Called each frame by main: `up` is ShipSystems.aggressor_active().
-func set_aggressor(base: String, up: bool, xform: Transform3D) -> void:
+## `dims` is the hull's (width, height, length) -- the ship INI keys.
+func set_aggressor(base: String, up: bool, xform: Transform3D,
+		dims: Vector3) -> void:
 	_ensure_aggressor(base)
-	_agg_mi.visible = up
 	if not up:
+		_agg_root.visible = false
 		_agg_clock = 0.0
+		_agg_ramp = 0.0
 		return
+	_agg_root.visible = true
 	# the cone points dead ahead, down the ship's local +Z -- the axis the
-	# shield's coverage cone is measured about (0x1002f810)
-	_agg_mi.global_transform = xform
-	var rim: float = maxf(AGG_RIM, 1e-3) * AGG_SHELL_R / AGG_RIM
-	_agg_mi.scale = Vector3(rim, rim, AGG_APEX * AGG_SHELL_R * 0.25)
+	# shield's coverage cone is measured about (0x1002f810) -- and stands
+	# L*0.75 off the nose along it
+	var nose := xform.translated_local(Vector3(0, 0, dims.z * AGG_NOSE))
+	var sx: float = dims.x * AGG_SCALE_XY
+	var sy: float = dims.y
+	# the grow-in: the `fire?+s(1.5)` channel ramps the whole rig 0 -> 1
+	var s := Vector3(sx, sy, minf(sx, sy) * AGG_SCALE_Z) * _agg_ramp
+	_agg_root.global_transform = Transform3D(nose.basis.scaled(s), nose.origin)
 
 func _update_aggressor(delta: float) -> void:
-	if _agg_mi == null or not _agg_mi.visible:
+	if _agg_root == null or not _agg_root.visible:
 		return
+	_agg_ramp = minf(1.0, _agg_ramp + AGG_RAMP * delta)
 	_agg_clock += delta
 	# v scrolls forward at 1 unit/s (Draw: v0 = +0xc4 - clock, v1 = v0 + 1)
 	_agg_mat.uv1_offset.y = -_agg_clock * AGG_SCROLL

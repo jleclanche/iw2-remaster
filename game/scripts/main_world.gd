@@ -255,8 +255,13 @@ func _update_grid() -> void:
 	# @element icAggressorAvatar -- up exactly while the shield's "fire" channel
 	# is 1 (icAggressorShield::Simulate 0x1002f44f)
 	if sys != null and ship != null:
+		# the shell is sized off the hull's own width/height/length
+		# (icAggressorShield::Simulate 0x1002f464)
 		space_fx.set_aggressor(_base(), sys.aggressor_active(),
-			ship.global_transform)
+			ship.global_transform,
+			Vector3(float(ship_stats.get("width", 80)),
+				float(ship_stats.get("height", 70)),
+				float(ship_stats.get("length", 120))))
 	_update_contrails()
 
 # @element icHUDContrails
