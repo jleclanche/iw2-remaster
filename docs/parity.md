@@ -136,7 +136,7 @@ Ordered by campaign impact.
 | `isim.StopExplosion` | stub ("our explosions are instantaneous") | a1m07/10, a2m01/13, a3m04/10, ideathscript, iwingmen: staged explosions cannot be cancelled mid-sequence | S |
 | icElectricEffectAvatar | featurecov --todo; used by data/ini/sfx/disruptor + sfx/infection nodes | Disruptor arcs (act 2 loot weapon) and act 3 infection arcing invisible — the DoT and crust natives already work | M |
 | icRemoteMissile (visual + control) | missiles.gd:21 stub "data and rules recovered; the handoff is not built" | Remote/deathblow/antimatter missiles (cargo 505/513/515) unusable; depends on the remote handoff | M (after handoff) |
-| icSlugThrower (ammo-counted gun) | turrets.gd:20 stub | Ammo guns the player can now buy/fit on the live customise screen do not fire | S-M |
+| ~~icSlugThrower (ammo-counted gun)~~ **DONE** | was turrets.gd:20; the stub was stale on both counts — the player path was already complete, and 20 NPC hulls mount `nps_assault_cannon` (the stub claimed none did). Admitted to the AI battery with its ammo store; mechcheck `gatling-gun` | — | — |
 | icSignAvatar, icGasBallAvatar, FcParticleDrawLensFlare | featurecov --todo | Station signage, gas-ball prop, flare-particle draws — cosmetic set dressing | S each |
 | gui.PlayBackgroundMovie / StopBackgroundMovie | apicov --stubs (callers: ipdagui, inetworkgui) | PDA animated backdrop missing once the PDA screens are wired | S |
 | `iship.BrightnessOf` rebind | coverage.md: recovered in ship_systems.gd, stub never rebound | a0m50, a1m08 script branches read 0 | S |
@@ -156,7 +156,7 @@ avatars (the remaster draws its own widgets by design).
 | Rotational inertia | scalar box tensor `I = m(w²+h²+l²)/12` + point-mass children; port-null mating not modelled (main_flight.gd:171-209) | Towed/docked stacks turn wrongly; `RecalculateMOIFromMass` stub compounds it |
 | Pirated-pod contents | uniform pick over the commodity table, vs the original's location-weighted generators (main_combat.gd:133) | Act 2 piracy economy: loot distribution is wrong, trade balance drifts from original |
 | Nebula interior | cyclorama wall stand-in beyond a swap distance (space_fx.gd:609-912); extracted, not tuned | Fragile — 6 commits of churn already; only eyeball guards it |
-| Aggressor shield shell | world scale UNKNOWN; `AGG_SHELL_R := 95.0` = player collision radius stand-in (space_fx.gd:114-121) | Visual size may be wrong on non-player hulls |
+| ~~Aggressor shield shell~~ **RECOVERED** | the scale was never a radius: `icAggressorShield::Simulate` 0x1002f464 writes the node transform from the hull's W/H/L — scale (W·0.8, H, min·0.5), position (0,0,L·0.75) — and `icAggressorAvatar::Draw` 0x100b94e0 passes a hardcoded rim 1.0 with the apex at `depth`. Both cones now drawn, grow-in honoured | remaining: the two pulse nulls' looping envelopes and the `<glow>` light |
 | Alien swarm pool | engine pool size UNKNOWN; `ALIEN_CAP := 128` (particle_fx.gd:36-46) | Act 3 swarm density may diverge from original |
 | Death sequence surface points | FindSurfacePoint = random point on half-dims ellipsoid (death_sequence.gd:133) | Sub-explosion crawl placement approximate |
 | Explosion bolt quads | crossed static quads for the turn-to-camera (explosion_fx.gd:647) | Minor visual |
