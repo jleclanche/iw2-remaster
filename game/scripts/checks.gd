@@ -1256,6 +1256,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_pod_spill_assert",
 	&"_ms_gatling",
 	&"_ms_lazy_name",
+	&"_ms_script_queries",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
 	&"_ms_finish",
@@ -1738,6 +1739,54 @@ func _ms_gatling(_delta: float) -> void:
 			% [int(g["ammo"]), int(g["ammo_max"]), float(g["refire"]),
 			float(g["h_arc"]), float(bolt["damage"]),
 			str(bolt["wav"]).get_file()])
+	_mech_next()
+
+func _ms_script_queries(_delta: float) -> void:
+	# iship.BrightnessOf (iship.dll @ 0x100022f0) and iship.IsLDSScrambled
+	# (@ 0x10003240), driven through the runtime dispatch exactly as the
+	# mission scripts drive them (a0m50/a1m08 stealth loops, iscriptedorders).
+	var w: PogWorld = m.pog_rt.world
+	var me = w.player_sim()
+	# scene coords: PogSim.abs_pos treats an AI node's position as the offset
+	# from the player, so distance = |node.position| regardless of where the
+	# ship node has drifted between scene folds
+	var hostile: AiShip = m.spawn_hostile(Vector3(4000, 0, 0))
+	var viewer = w._wrap_ship(hostile)
+	# brightness() must be nonzero or every product below passes vacuously --
+	# park some heat on the ledger for the duration
+	var heat0: float = m.sys.heat
+	m.sys.heat = 0.5 * ShipSystems.HEAT_DAMAGE_THRESHOLD
+	var b0: float = m.sys.brightness()
+	# double-precision distance: mechcheck parks the world at ~1e12 m where
+	# float32 Vector3 math washes a 4 km separation out to 0 -- which is
+	# exactly the bug dist_to exists to avoid
+	var d: float = me.dist_to(viewer)
+	# range = 0 -> unattenuated; range = 2d -> t = 0.5 exactly, so linear
+	# reads b*(1-t) and squared reads b*(1-t*t); range = d/2 -> t clamps to 1
+	var raw := float(m.pog_rt.native("iship.brightnessof", [me, viewer, 0.0, 0]))
+	var lin := float(m.pog_rt.native(
+			"iship.brightnessof", [me, viewer, d * 2.0, 0]))
+	var sq := float(m.pog_rt.native(
+			"iship.brightnessof", [me, viewer, d * 2.0, 1]))
+	var far := float(m.pog_rt.native(
+			"iship.brightnessof", [me, viewer, d * 0.5, 0]))
+	m.sys.heat = heat0
+	_mech("brightness-of", b0 > 0.0 and d > 0.0
+			and absf(raw - b0) < 1e-4
+			and absf(lin - b0 * 0.5) < 1e-4
+			and absf(sq - b0 * 0.75) < 1e-4
+			and far == 0.0,
+		"b0=%.3f raw=%.3f lin=%.3f sq=%.3f far=%.3f d=%.0f"
+			% [b0, raw, lin, sq, far, d])
+	var s0 := int(m.pog_rt.native("iship.isldsscrambled", [me]))
+	m.disrupt(5.0)
+	var s1 := int(m.pog_rt.native("iship.isldsscrambled", [me]))
+	m.disrupt_time = 0.0
+	var s2 := int(m.pog_rt.native("iship.isldsscrambled", [me]))
+	_mech("lds-scrambled-query", s0 == 0 and s1 == 1 and s2 == 0,
+		"%d/%d/%d" % [s0, s1, s2])
+	hostile.queue_free()
+	m.ai_ships.erase(hostile)
 	_mech_next()
 
 func _ms_lazy_name(_delta: float) -> void:

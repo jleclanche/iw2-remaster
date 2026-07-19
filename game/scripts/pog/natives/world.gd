@@ -101,6 +101,12 @@ class PogSim extends RefCounted:
 		return true
 
 	func abs_pos() -> Vector3:
+		# CAUTION: Vector3 is float32, and system coordinates run to AU scale
+		# (~1e11..1e12 m) where its ULP is >100 km -- a nearby ship's offset
+		# can vanish entirely in this return value. The original keeps sim
+		# positions as DOUBLES (FiSim +0x48/+0x50/+0x58 are qword loads, e.g.
+		# iship.dll BrightnessOf @ 0x100023a6). Anything measuring DISTANCE
+		# must go through dist_to() below, which stays in doubles.
 		if is_player:
 			return world.player_pos()
 		if node != null and is_instance_valid(node):
@@ -110,6 +116,30 @@ class PogSim extends RefCounted:
 		if not rec.is_empty():
 			return Vector3(rec.get("x", 0.0), rec.get("y", 0.0), rec.get("z", 0.0))
 		return Vector3.ZERO
+
+	## abs_pos in doubles (GDScript float is 64-bit; only Vector3 truncates).
+	func dabs() -> PackedFloat64Array:
+		if is_player:
+			return world.player_dpos()
+		if node != null and is_instance_valid(node):
+			var p := world.player_dpos()
+			var o: Vector3 = node.position
+			return PackedFloat64Array([p[0] + o.x, p[1] + o.y, p[2] + o.z])
+		if not rec.is_empty():
+			return PackedFloat64Array([float(rec.get("x", 0.0)),
+				float(rec.get("y", 0.0)), float(rec.get("z", 0.0))])
+		return PackedFloat64Array([0.0, 0.0, 0.0])
+
+	## Distance in doubles, the way the engine measures it (FiSim positions
+	## are doubles; float32 washes out km-scale separations at AU-scale
+	## coordinates).
+	func dist_to(other: PogSim) -> float:
+		var a := dabs()
+		var b := other.dabs()
+		var dx := a[0] - b[0]
+		var dy := a[1] - b[1]
+		var dz := a[2] - b[2]
+		return sqrt(dx * dx + dy * dy + dz * dz)
 
 	func set_abs_pos(p: Vector3) -> void:
 		if is_player:
@@ -252,6 +282,13 @@ func player_pos() -> Vector3:
 	if game == null:
 		return Vector3.ZERO
 	return Vector3(game.px, game.py, game.pz)
+
+
+## The same, without the Vector3 float32 truncation (px/py/pz are doubles).
+func player_dpos() -> PackedFloat64Array:
+	if game == null:
+		return PackedFloat64Array([0.0, 0.0, 0.0])
+	return PackedFloat64Array([game.px, game.py, game.pz])
 
 
 ## Moving the player moves the *origin*, because AI ships are positioned relative
@@ -718,7 +755,10 @@ func _s_distance(_t, a: Array) -> Variant:
 	var q := _as_sim(a[1])
 	if p == null or q == null:
 		return 0.0
-	return p.abs_pos().distance_to(q.abs_pos())
+	# doubles, not Vector3: at AU-scale coordinates float32 reads two ships
+	# a few km apart as distance 0, and the missions gate on numbers like
+	# "< 8000" (see PogSim.dist_to)
+	return p.dist_to(q)
 
 # --- motion
 
@@ -1623,15 +1663,66 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 # flags it so. Kept bound only so the UNBOUND count stays 0.)
 # @stub iship.WeaponsUseExplicitTarget
 # @stub iship.WeaponTargetsFromContactList
-# @stub iship.BrightnessOf
 # @stub iship.PercentageThrusterEmission
 # @stub iship.RecalculateMOIFromMass
-# @stub iship.IsLDSScrambled
 # @stub iship.CreateTurretFighters
 func _sh_noop(_t, _a: Array) -> Variant:
 	# Turret targeting modes (a ship's turrets either track its own target or pick
-	# their own off the contact list) need the turret subsims we do not simulate;
-	# BrightnessOf and PercentageThrusterEmission are avatar channel expressions.
+	# their own off the contact list) are issue #6; PercentageThrusterEmission is
+	# an avatar channel expression.
+	return 0
+
+
+## The vessel's ShipSystems, whoever it belongs to -- the player's live on
+## main (main_state.gd `sys`), an AI ship's on its node.
+func _vessel_systems(s: PogSim) -> ShipSystems:
+	if s.is_player:
+		return game.sys if game != null else null
+	if s.node is AiShip:
+		return (s.node as AiShip).sys
+	return null
+
+# @native iship.BrightnessOf
+func _sh_brightness_of(_t, a: Array) -> Variant:
+	# iship.dll @ 0x100022f0: resolve vessel (must be icShip) and viewer (any
+	# FiSim), else the answer stays 0. A vessel in a DIFFERENT system reads 0
+	# (container compare on FiSim+0x12c @ 0x10002396 -- no analogue here: we
+	# hold one loaded system, so every resolvable sim is in it). range = arg2;
+	# |range| < 1e-6 returns Brightness() unattenuated (0x100023f2). Otherwise
+	# t = clamp(dist / range, 0, 1) (0x1000243d..0x10002465), t = t*t when the
+	# squared_attenuation arg is set (0x1000247c), and the answer is
+	# Brightness() * (1 - t) (0x10002488; Brightness = icShip vtable +0xc8,
+	# which is ship_systems.gd brightness(), recovered from 0x10075420).
+	var v := _as_sim(a[0])
+	var viewer := _as_sim(a[1]) if a.size() > 1 else null
+	if v == null or viewer == null:
+		return 0.0
+	var sys := _vessel_systems(v)
+	if sys == null:
+		return 0.0
+	var b: float = sys.brightness()
+	var rng := float(a[2]) if a.size() > 2 else 0.0
+	if absf(rng) < 1e-6:
+		return b
+	var t := clampf(v.dist_to(viewer) / rng, 0.0, 1.0)
+	if a.size() > 3 and bool(a[3]):
+		t *= t
+	return b * (1.0 - t)
+
+# @native iship.IsLDSScrambled
+func _sh_is_lds_scrambled(_t, a: Array) -> Variant:
+	# iship.dll @ 0x10003240: resolve, must be icShip, read the cached LDS
+	# drive (icShip+0x25c) and answer state == 3 (icLDSDrive+0x84; state 2 is
+	# "engaged" per docs/hud.md). State 3 is what icLDSDrive::Scramble and the
+	# DisruptLDSDrive path set -- our equivalent is main's disrupt_time (both
+	# our scramble sources feed it: iship.DisruptLDSDrive and the LDSi field,
+	# missiles.gd). AI ships have no modelled LDS drive state, so they answer
+	# 0 -- same as the original for a ship with no LDS drive fitted.
+	var s := _as_sim(a[0])
+	if s == null or game == null:
+		return 0
+	if s.is_player:
+		return 1 if game.disrupt_time > 0.0 else 0
 	return 0
 
 ## Does the PLAYER have the tracker program? Two routes to "fitted": the
@@ -1766,10 +1857,10 @@ const _BINDINGS := {
 	"iship.weapontargetsfromcontactlist": "_sh_noop",
 	"iship.lastfiretarget": "_sh_last_fire_target", "iship.dock": "_sh_dock",
 	"iship.undock": "_sh_undock", "iship.undockself": "_sh_undock",
-	"iship.brightnessof": "_sh_noop",
+	"iship.brightnessof": "_sh_brightness_of",
 	"iship.percentagethrusteremission": "_sh_noop",
 	"iship.recalculatemoifrommass": "_sh_noop",
-	"iship.isldsscrambled": "_sh_noop",
+	"iship.isldsscrambled": "_sh_is_lds_scrambled",
 	"iship.hashyperspacetracker": "_sh_has_tracker",
 	"iship.hyperspacetrackertarget": "_sh_tracker_target",
 	"iship.hyperspacetrackercontact": "_sh_tracker_contact",
