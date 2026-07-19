@@ -535,7 +535,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 4702:
 			v40 = 1
-			_pog_spawn(local_9501.bind(v0, v23, v10, v19, v26, v22, isim.cast(v33), isim.cast(v31)))
+			_pog_spawn(fleet.bind(v0, v23, v10, v19, v26, v22, isim.cast(v33), isim.cast(v31)))
 			_pc = 4789
 			continue
 		elif _pc == 4789:
@@ -874,7 +874,7 @@ func local_6980(v0, v1) -> Variant:
 	return
 	return 0
 
-func local_9501(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
+func fleet(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0

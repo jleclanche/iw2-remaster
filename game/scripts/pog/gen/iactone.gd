@@ -98,7 +98,7 @@ func _link() -> void:
 	string = api.string
 	text = api.text
 
-func local_0() -> Variant:
+func act_one_globals() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.ActOneGlobals - initialising act one globals\n")
 	text.add("csv:/text/act_1/act1_master")
@@ -149,7 +149,7 @@ func local_0() -> Variant:
 	return 0
 	return 0
 
-func local_1081() -> Variant:
+func destry_act_one_globals() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.DestryActOneGlobals - Purging all act one globals. NONE SHALL SURVIVE !\n")
 	text.remove("csv:/text/act_1/act1_master")
@@ -213,7 +213,7 @@ func local_2048() -> Variant:
 	return
 	return 0
 
-func local_2274() -> Variant:
+func story_element1() -> Variant:
 	var v0: Variant = 0
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.StoryElement1.10 : Story element has begun.\n")
@@ -431,7 +431,7 @@ func local_6569() -> Variant:
 	return
 	return 0
 
-func local_6631() -> Variant:
+func treasure_hunt_conversation_sequence() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.TreasureHuntConversationSequence : task hascommenced\n")
 	await iconversation.begin()
@@ -467,7 +467,7 @@ func local_6855(v0) -> Variant:
 	return 0
 	return 0
 
-func local_7144(v0) -> Variant:
+func piracy_generated_mission(v0) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.PiracyGeneratedMission : Adding new generated issions to the list....\n")
 	match v0:
@@ -593,7 +593,7 @@ func piracy_rating_tracker() -> Variant:
 	var v1: Variant = 0
 	v0 = self
 	v1 = state.find(v0)
-	await local_7144(1)
+	await piracy_generated_mission(1)
 	if not (v1):
 		v1 = state.create(v0, 0)
 	if PogRuntime.TRACE:
@@ -659,7 +659,7 @@ func piracy_rating_tracker() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("ActOne.PiracyRatingTracker - Player has achieved piracy level 3\n")
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
-			await local_7144(1)
+			await piracy_generated_mission(1)
 			state.set_progress(v1, 3)
 		3:
 			while true:
@@ -693,7 +693,7 @@ func piracy_rating_tracker() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 5\n")
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
-			await local_7144(2)
+			await piracy_generated_mission(2)
 			state.set_progress(v1, 5)
 		5:
 			while true:
@@ -727,7 +727,7 @@ func piracy_rating_tracker() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 7\n")
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
-			await local_7144(3)
+			await piracy_generated_mission(3)
 			state.set_progress(v1, 7)
 		7:
 			while true:
@@ -761,7 +761,7 @@ func piracy_rating_tracker() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 11\n")
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
-			await local_7144(4)
+			await piracy_generated_mission(4)
 			state.set_progress(v1, 9)
 		9:
 			while true:
@@ -1125,7 +1125,7 @@ func master_script() -> Variant:
 		await iact1mission09.stub()
 		await iact1mission10.stub()
 		imapentity.set_hidden(imapentity.find_by_name("Haven Station"), 1)
-		await local_1081()
+		await destry_act_one_globals()
 		state.destroy(self)
 		igame.next_act("iActTwo")
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 484, 1, 90, 3, 0))
@@ -1480,7 +1480,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission 10.\n")
 				if PogRuntime.TRACE:
 					debug.print_string(" iActOone.MasterScript - Finished Act One\n")
-				await local_1081()
+				await destry_act_one_globals()
 				state.destroy(self)
 				igame.next_act("iActTwo")
 	return
@@ -1618,7 +1618,7 @@ func local_32297() -> Variant:
 				continue
 		elif _pc == 32918:
 			global.set_int("g_story_1.10", 2)
-			v0 = _pog_spawn(local_2274.bind())
+			v0 = _pog_spawn(story_element1.bind())
 			_pc = 34045
 			continue
 		elif _pc == 32965:
@@ -1786,7 +1786,7 @@ func local_32297() -> Variant:
 				continue
 		elif _pc == 33973:
 			global.set_bool("g_act1_treasure_hunt_conversation", 1)
-			v0 = _pog_spawn(local_6631.bind())
+			v0 = _pog_spawn(treasure_hunt_conversation_sequence.bind())
 			_pc = 34045
 			continue
 		elif _pc == 34019:
@@ -1817,7 +1817,7 @@ func main() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iActOne.Main: Initialising act 1\n")
 		global.set_int("g_current_act", 1)
-		await local_0()
+		await act_one_globals()
 		_pog_spawn(master_script.bind())
 		v0 = 1
 	if v0:

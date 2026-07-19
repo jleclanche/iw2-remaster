@@ -271,7 +271,7 @@ func local_2165(v0, v1) -> Variant:
 	return
 	return 0
 
-func local_2530() -> Variant:
+func event3_20__first_infection() -> Variant:
 	return imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")
 	return 0
 
@@ -301,7 +301,7 @@ func local_3132(v0, v1) -> Variant:
 	v9 = 3
 	v10 = group.create()
 	v15 = self
-	v18 = await local_2530()
+	v18 = await event3_20__first_infection()
 	v20 = iship.find_player_ship()
 	if PogRuntime.TRACE:
 		debug.print_string("iAct3 Defense Demo Cutscene : starting\n")
@@ -385,7 +385,7 @@ func event3_40__preparing_the_defences() -> Variant:
 	var v23: Variant = 0
 	v1 = self
 	v2 = imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")
-	v3 = await local_2530()
+	v3 = await event3_20__first_infection()
 	v6 = iship.find_player_ship()
 	v7 = group.create()
 	v10 = group.create()
@@ -436,7 +436,7 @@ func local_5572() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = await local_2530()
+	v0 = await event3_20__first_infection()
 	v1 = imapentity.find_by_name_in_system("Stoymir L-Point", "map:/geog/gagarin/osprey")
 	v2 = group.cast(global.handle("g_hoffers_vessels"))
 	global.create_bool("g_hoffer_disabled", 2, 1)
@@ -571,7 +571,7 @@ func event3_50__here_come_the_aliens() -> Variant:
 	var _pc: int = 7202
 	while true:
 		if _pc == 7202:
-			v0 = await local_2530()
+			v0 = await event3_20__first_infection()
 			v1 = imapentity.find_by_name_in_system("Christmas L-Point", "map:/geog/gagarin/formhault")
 			v2 = imapentity.find_by_name_in_system("Stoymir L-Point", "map:/geog/gagarin/osprey")
 			v3 = iship.find_player_ship()
@@ -1850,7 +1850,7 @@ func place_defences_gunstars() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v1 = ifaction.find("Military")
-	v2 = await local_2530()
+	v2 = await event3_20__first_infection()
 	v3 = -90.0
 	v4 = 7000.0
 	v5 = group.create()
@@ -1894,7 +1894,7 @@ func place_defences_mines() -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	v1 = group.create()
-	v2 = await local_2530()
+	v2 = await event3_20__first_infection()
 	v3 = ifaction.find("Independent")
 	v4 = 32000.0
 	v5 = 0.0
@@ -1954,7 +1954,7 @@ func place_defences_ships() -> Variant:
 			v7 = ifaction.find("Military")
 			v8 = ifaction.find("League")
 			v9 = 1
-			v12 = await local_2530()
+			v12 = await event3_20__first_infection()
 			if not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 				_pc = 19036
 				continue
@@ -2209,7 +2209,7 @@ func place_defences_ships() -> Variant:
 func place_defences_escape_transport() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v1 = await local_2530()
+	v1 = await event3_20__first_infection()
 	if not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault"):
 		if PogRuntime.TRACE:
 			debug.error("iAct3.PlaceDefencesEscapeTransport: Called from outside Formhault system!")
@@ -2385,7 +2385,7 @@ func local_23692(v0) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v4 = await local_2530()
+	v4 = await event3_20__first_infection()
 	v5 = 0
 	v1 = iship.create("ini:/sims/ships/utility/tug", await ishipcreation.ship_name("League", -1))
 	object.set_float_property(v1, "docking_priority", 250.0)
@@ -2424,7 +2424,7 @@ func local_24248() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v0 = await local_2530()
+	v0 = await event3_20__first_infection()
 	v4 = ifaction.find("Independent")
 	v8 = 0.0
 	v9 = 0.0
@@ -2519,7 +2519,7 @@ func act_three_globals() -> Variant:
 	return 0
 	return 0
 
-func local_26261() -> Variant:
+func destroy_act_three_globals() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActThree.DestroyActThreeGlobals - destroying act three globals\n")
 	global.destroy("g_act3_corporates_on_run_complete")
@@ -2708,7 +2708,7 @@ func master_script() -> Variant:
 	if not (v3):
 		v3 = state.create(v0, 0)
 	if await iutilities.skip_act("Act Three: The Edge of Chaos", 3):
-		await local_26261()
+		await destroy_act_three_globals()
 		state.destroy(self)
 		await iutilities.release_error("THE END!")
 	else:
@@ -2971,7 +2971,7 @@ func final_choice_task() -> Variant:
 	igame.enable_blackout(1)
 	global.set_int("g_current_act", 4)
 	global.destroy("g_disable_traffic_monitor")
-	await local_26261()
+	await destroy_act_three_globals()
 	global.create_bool("g_act3_capture_accelerator_complete", 2, 1)
 	state.destroy_all()
 	iinventory.add_command_section()

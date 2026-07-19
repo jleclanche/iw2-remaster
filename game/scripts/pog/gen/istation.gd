@@ -174,7 +174,7 @@ func local_837(v0, v1) -> Variant:
 			if _pog_is_null(v3):
 				pass
 			else:
-				v2 = await local_1353(v1)
+				v2 = await warning_name(v1)
 				if await local_745(v0):
 					match v1:
 						6:
@@ -195,7 +195,7 @@ func local_837(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func local_1353(v0) -> Variant:
+func warning_name(v0) -> Variant:
 	match v0:
 		0:
 			return _pog_clone("ignore_")
@@ -275,7 +275,7 @@ func local_1627(v0, v1, v2) -> Variant:
 					object.set_int_property(v0, "warned_level", 3)
 					object.set_float_property(v0, "warned_time", igame.game_time())
 					if not (object.property_exists(v1, "station_protection_handler")):
-						v6 = _pog_spawn(local_6298.bind(v1))
+						v6 = _pog_spawn(station_protection_handler.bind(v1))
 						_pog_detach(v6)
 						object.add_handle_property(v1, "station_protection_handler", v6)
 					return 0
@@ -473,7 +473,7 @@ func local_5936(v0, v1) -> Variant:
 	return
 	return 0
 
-func local_6298(v0) -> Variant:
+func station_protection_handler(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0

@@ -50,7 +50,7 @@ func _link() -> void:
 	sim = api.sim
 	string = api.string
 
-func local_0(v0, v1) -> Variant:
+func place_traffic(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -979,11 +979,11 @@ func haulage_in(v0) -> Variant:
 				_pc = 4525
 				continue
 		elif _pc == 4477:
-			v33 = await local_0(group.nth_sim(v12, 0), v30)
+			v33 = await place_traffic(group.nth_sim(v12, 0), v30)
 			_pc = 4568
 			continue
 		elif _pc == 4525:
-			v33 = await local_0(group.nth_sim(v12, 0), v0)
+			v33 = await place_traffic(group.nth_sim(v12, 0), v0)
 			_pc = 4568
 			continue
 		elif _pc == 4568:
@@ -1275,9 +1275,9 @@ func haulage_out(v0) -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iTrafficScenario.HaulageOut -  No escorts generated \n")
 		if not _pog_is_null(v29):
-			v32 = await local_0(group.nth_sim(v11, 0), v29)
+			v32 = await place_traffic(group.nth_sim(v11, 0), v29)
 		else:
-			v32 = await local_0(group.nth_sim(v11, 0), v0)
+			v32 = await place_traffic(group.nth_sim(v11, 0), v0)
 		if v6 > 1:
 			if PogRuntime.TRACE:
 				debug.print_string(" iTrafficScenario.HaulOut - Placing  additional freighters in formation \n")
@@ -2125,11 +2125,11 @@ func supply(v0) -> Variant:
 				_pc = 11143
 				continue
 		elif _pc == 11095:
-			v37 = await local_0(group.nth_sim(v12, 0), v34)
+			v37 = await place_traffic(group.nth_sim(v12, 0), v34)
 			_pc = 11186
 			continue
 		elif _pc == 11143:
-			v37 = await local_0(group.nth_sim(v12, 0), v0)
+			v37 = await place_traffic(group.nth_sim(v12, 0), v0)
 			_pc = 11186
 			continue
 		elif _pc == 11186:
@@ -2555,7 +2555,7 @@ func trade(v0) -> Variant:
 			_pc = 13227
 			continue
 		elif _pc == 13227:
-			v30 = await local_0(group.nth_sim(v12, 0), v0)
+			v30 = await place_traffic(group.nth_sim(v12, 0), v0)
 			if v6 > 1:
 				_pc = 13282
 				continue
@@ -2759,9 +2759,9 @@ func security(v0) -> Variant:
 				v6 = 1
 			v7 = await ishipcreation.get_traffic(6, v13, v6)
 			if not _pog_is_null(v5):
-				v15 = await local_0(group.nth_sim(v7, 0), v5)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v5)
 			else:
-				v15 = await local_0(group.nth_sim(v7, 0), v0)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if PogRuntime.TRACE:
 				debug.print_string(string.join("iTrafficScenario.Security - Placing lead system patrol ship at distance of ", string.from_float(v9)))
 				debug.print_string("\n")
@@ -2793,9 +2793,9 @@ func security(v0) -> Variant:
 				v6 = 1
 			v7 = await ishipcreation.get_traffic(9, v13, v6)
 			if not _pog_is_null(v5):
-				v15 = await local_0(group.nth_sim(v7, 0), v5)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v5)
 			else:
-				v15 = await local_0(group.nth_sim(v7, 0), v0)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if PogRuntime.TRACE:
 				debug.print_string(string.join("iTrafficScenario.Security - Placing lead security mission ship at distance of ", string.from_float(v9)))
 				debug.print_string("\n")
@@ -2826,9 +2826,9 @@ func security(v0) -> Variant:
 			v6 = 1
 			v7 = await ishipcreation.get_traffic(4, v13, v6)
 			if not _pog_is_null(v5):
-				v15 = await local_0(group.nth_sim(v7, 0), v5)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v5)
 			else:
-				v15 = await local_0(group.nth_sim(v7, 0), v0)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if v15:
 				await local_1259(v5, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
@@ -2856,9 +2856,9 @@ func security(v0) -> Variant:
 				v6 = 1
 			v7 = await ishipcreation.get_traffic(5, v13, v6)
 			if not _pog_is_null(v5):
-				v15 = await local_0(group.nth_sim(v7, 0), v5)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v5)
 			else:
-				v15 = await local_0(group.nth_sim(v7, 0), v0)
+				v15 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if PogRuntime.TRACE:
 				debug.print_string(string.join("iTrafficScenario.Security - Placing lead local patrol ship at distance of ", string.from_float(v9)))
 				debug.print_string("\n")
@@ -2955,9 +2955,9 @@ func tanker(v0) -> Variant:
 		3:
 			v3 = await ishipcreation.get_traffic(18, v2, v1)
 	if not _pog_is_null(v5):
-		v8 = await local_0(group.nth_sim(v3, 0), v5)
+		v8 = await place_traffic(group.nth_sim(v3, 0), v5)
 	else:
-		v8 = await local_0(group.nth_sim(v3, 0), v0)
+		v8 = await place_traffic(group.nth_sim(v3, 0), v0)
 	if v1 > 1:
 		if PogRuntime.TRACE:
 			debug.print_string(" iTrafficScenario.Tanker - Placing  additional tankers in formation \n")
@@ -4034,11 +4034,11 @@ func official(v0) -> Variant:
 				_pc = 23063
 				continue
 		elif _pc == 23015:
-			v35 = await local_0(group.nth_sim(v7, 0), v5)
+			v35 = await place_traffic(group.nth_sim(v7, 0), v5)
 			_pc = 23106
 			continue
 		elif _pc == 23063:
-			v35 = await local_0(group.nth_sim(v7, 0), v0)
+			v35 = await place_traffic(group.nth_sim(v7, 0), v0)
 			_pc = 23106
 			continue
 		elif _pc == 23106:
@@ -4389,14 +4389,14 @@ func maintenance(v0) -> Variant:
 				debug.print_string(" iTrafficScenario.Maintenance - creating recovery \n")
 			v6 = 1
 			v7 = await ishipcreation.get_traffic(23, v13, v6)
-			v16 = await local_0(group.nth_sim(v7, 0), v0)
+			v16 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if PogRuntime.TRACE:
 				debug.print_string("iTrafficScenario.Maintenance - Giving orders to recovery ship \n")
 				debug.print_string("iTrafficScenario.Maintenance - creating Hulk to recover \n ")
 			v15 = await ishipcreation.get_traffic(21, v13, 1)
 			if PogRuntime.TRACE:
 				debug.print_string("iTrafficScenario.Maintenance - placing Hulk to recover \n ")
-			v16 = await local_0(group.leader(v15), v1)
+			v16 = await place_traffic(group.leader(v15), v1)
 			if PogRuntime.TRACE:
 				debug.print_string("iTrafficScenario.Maintenance - Assigning recovery orders to list, lead by ship called -  ")
 				debug.print_string(object.string_property(group.nth_sim(v7, 0), "name"))
@@ -4409,9 +4409,9 @@ func maintenance(v0) -> Variant:
 			v6 = 1
 			v7 = await ishipcreation.get_traffic(21, v13, v6)
 			if not _pog_is_null(v5):
-				v16 = await local_0(group.nth_sim(v7, 0), v5)
+				v16 = await place_traffic(group.nth_sim(v7, 0), v5)
 			else:
-				v16 = await local_0(group.nth_sim(v7, 0), v0)
+				v16 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if v16:
 				await local_1259(v5, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v7)), v5)
@@ -4429,9 +4429,9 @@ func maintenance(v0) -> Variant:
 				v6 = 1
 			v7 = await ishipcreation.get_traffic(21, v13, v6)
 			if not _pog_is_null(v5):
-				v16 = await local_0(group.nth_sim(v7, 0), v5)
+				v16 = await place_traffic(group.nth_sim(v7, 0), v5)
 			else:
-				v16 = await local_0(group.nth_sim(v7, 0), v0)
+				v16 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if v6 > 1:
 				if PogRuntime.TRACE:
 					debug.print_string(" iTrafficScenario.Maintenance - placing additional construction ships in formation \n ")
@@ -4459,9 +4459,9 @@ func maintenance(v0) -> Variant:
 				v6 = 1
 			v7 = await ishipcreation.get_traffic(22, v13, v6)
 			if not _pog_is_null(v5):
-				v16 = await local_0(group.nth_sim(v7, 0), v5)
+				v16 = await place_traffic(group.nth_sim(v7, 0), v5)
 			else:
-				v16 = await local_0(group.nth_sim(v7, 0), v0)
+				v16 = await place_traffic(group.nth_sim(v7, 0), v0)
 			if v6 > 1:
 				if PogRuntime.TRACE:
 					debug.print_string(" iTrafficScenario.Maintaiance  - placing additional station reapair ships in formation \n ")
@@ -4818,11 +4818,11 @@ func mining(v0) -> Variant:
 				_pc = 29230
 				continue
 		elif _pc == 29182:
-			v19 = await local_0(group.nth_sim(v7, 0), v5)
+			v19 = await place_traffic(group.nth_sim(v7, 0), v5)
 			_pc = 29273
 			continue
 		elif _pc == 29230:
-			v19 = await local_0(group.nth_sim(v7, 0), v0)
+			v19 = await place_traffic(group.nth_sim(v7, 0), v0)
 			_pc = 29273
 			continue
 		elif _pc == 29273:
@@ -4958,11 +4958,11 @@ func underworld(v0) -> Variant:
 				_pc = 30219
 				continue
 		elif _pc == 30171:
-			v17 = await local_0(group.nth_sim(v2, 0), v6)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v6)
 			_pc = 30262
 			continue
 		elif _pc == 30219:
-			v17 = await local_0(group.nth_sim(v2, 0), v0)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v0)
 			_pc = 30262
 			continue
 		elif _pc == 30262:
@@ -5021,11 +5021,11 @@ func underworld(v0) -> Variant:
 				_pc = 30786
 				continue
 		elif _pc == 30738:
-			v17 = await local_0(group.nth_sim(v2, 0), v6)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v6)
 			_pc = 30829
 			continue
 		elif _pc == 30786:
-			v17 = await local_0(group.nth_sim(v2, 0), v0)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v0)
 			_pc = 30829
 			continue
 		elif _pc == 30829:
@@ -5075,11 +5075,11 @@ func underworld(v0) -> Variant:
 				_pc = 31263
 				continue
 		elif _pc == 31215:
-			v17 = await local_0(group.nth_sim(v2, 0), v6)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v6)
 			_pc = 31306
 			continue
 		elif _pc == 31263:
-			v17 = await local_0(group.nth_sim(v2, 0), v0)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v0)
 			_pc = 31306
 			continue
 		elif _pc == 31306:
@@ -5129,11 +5129,11 @@ func underworld(v0) -> Variant:
 				_pc = 31736
 				continue
 		elif _pc == 31688:
-			v17 = await local_0(group.nth_sim(v2, 0), v6)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v6)
 			_pc = 31779
 			continue
 		elif _pc == 31736:
-			v17 = await local_0(group.nth_sim(v2, 0), v0)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v0)
 			_pc = 31779
 			continue
 		elif _pc == 31779:
@@ -5281,11 +5281,11 @@ func underworld(v0) -> Variant:
 				_pc = 32967
 				continue
 		elif _pc == 32919:
-			v17 = await local_0(group.nth_sim(v2, 0), v6)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v6)
 			_pc = 33010
 			continue
 		elif _pc == 32967:
-			v17 = await local_0(group.nth_sim(v2, 0), v0)
+			v17 = await place_traffic(group.nth_sim(v2, 0), v0)
 			_pc = 33010
 			continue
 		elif _pc == 33010:
@@ -5426,9 +5426,9 @@ func oddball(v0) -> Variant:
 		1:
 			v2 = await ishipcreation.get_traffic(14, 1, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
@@ -5441,9 +5441,9 @@ func oddball(v0) -> Variant:
 		2:
 			v2 = await ishipcreation.get_traffic(21, 1, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
@@ -5456,9 +5456,9 @@ func oddball(v0) -> Variant:
 		3:
 			v2 = await ishipcreation.get_traffic(21, 1, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
@@ -5471,9 +5471,9 @@ func oddball(v0) -> Variant:
 		4:
 			v2 = await ishipcreation.get_traffic(21, 1, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if PogRuntime.TRACE:
 				debug.print_string("iTrafficScenario.Oddball - giving this cheesemaker cheesy orderd\n")
 			if v13:
@@ -5526,9 +5526,9 @@ func civilian(v0) -> Variant:
 		1:
 			v2 = await ishipcreation.get_traffic(25, 1, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
@@ -5541,9 +5541,9 @@ func civilian(v0) -> Variant:
 		2:
 			v2 = await ishipcreation.get_traffic(22, 1, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
@@ -5556,9 +5556,9 @@ func civilian(v0) -> Variant:
 		3:
 			v2 = await ishipcreation.get_traffic(25, 1, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			object.add_bool_property(group.leader(v2), "taxi", 1)
 			if v13:
 				await local_1259(v6, 30)
@@ -5574,9 +5574,9 @@ func civilian(v0) -> Variant:
 				global.create_bool("g_hot_rodder_running", 1, 1)
 				v2 = await ishipcreation.get_traffic(6, 1, 1)
 				if not _pog_is_null(v6):
-					v13 = await local_0(group.nth_sim(v2, 0), v6)
+					v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 				else:
-					v13 = await local_0(group.nth_sim(v2, 0), v0)
+					v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 				if v13:
 					await local_1259(v6, 30)
 					isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
@@ -5654,9 +5654,9 @@ func hostile(v0) -> Variant:
 				debug.print_string(string.join("iTrafficScenario.Hostile: Chosen to create Hostile shipping : ", string.from_int(v9)))
 			v2 = await ishipcreation.get_traffic(9, v4, v9)
 			if not _pog_is_null(v6):
-				v15 = await local_0(group.nth_sim(v2, 0), v6)
+				v15 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v15 = await local_0(group.nth_sim(v2, 0), v0)
+				v15 = await place_traffic(group.nth_sim(v2, 0), v0)
 			v8 = math.random_int(1, 3)
 			if v15:
 				await local_1259(v6, 30)
@@ -5685,9 +5685,9 @@ func hostile(v0) -> Variant:
 		1:
 			v2 = await ishipcreation.get_traffic(6, 1, v9)
 			if not _pog_is_null(v6):
-				v15 = await local_0(group.nth_sim(v2, 0), v6)
+				v15 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v15 = await local_0(group.nth_sim(v2, 0), v0)
+				v15 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v15:
 				await local_1259(v6, 30)
 				await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
@@ -5747,9 +5747,9 @@ func scum(v0) -> Variant:
 				debug.print_string("\n")
 			v2 = await ishipcreation.get_traffic(21, v4, v8)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))
@@ -5768,9 +5768,9 @@ func scum(v0) -> Variant:
 				debug.print_string("\n")
 			v2 = await ishipcreation.get_traffic(21, v4, 1)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				isim.capsule_jump_staggered(isim.cast(group.leader(v2)), v6)
@@ -5787,9 +5787,9 @@ func scum(v0) -> Variant:
 				debug.print_string("\n")
 			v2 = await ishipcreation.get_traffic(21, v4, v8)
 			if not _pog_is_null(v6):
-				v13 = await local_0(group.nth_sim(v2, 0), v6)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v6)
 			else:
-				v13 = await local_0(group.nth_sim(v2, 0), v0)
+				v13 = await place_traffic(group.nth_sim(v2, 0), v0)
 			if v13:
 				await local_1259(v6, 30)
 				await iutilities.capsule_jump_group(v2, v6, math.random(1.0, 2.0))

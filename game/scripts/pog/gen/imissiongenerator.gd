@@ -159,7 +159,7 @@ func local_914(v0) -> Variant:
 	return
 	return 0
 
-func local_981(v0, v1) -> Variant:
+func ditch_cargo(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -616,7 +616,7 @@ func fail_precludes() -> Variant:
 	return 0
 	return 0
 
-func local_8034(v0) -> Variant:
+func pick_location(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v1 = []
@@ -860,7 +860,7 @@ func local_9726(v0, v1) -> Variant:
 			return 0
 	return 0
 
-func local_11861(v0, v1) -> Variant:
+func increase_string_number(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v3 = ""
@@ -926,7 +926,7 @@ func local_12188(v0, v1) -> Variant:
 			v7 = object.int_property(v0, string.join(v1, "_escort_quantity"))
 			while v7 >= 0:
 				v2 = iship.cast(group.nth_sim(v4, v7))
-				object.set_string_property(v2, "name", await local_11861(object.string_property(v0, string.join(v1, "_ship_name")), v7))
+				object.set_string_property(v2, "name", await increase_string_number(object.string_property(v0, string.join(v1, "_ship_name")), v7))
 				v7 = v7 + -1
 		else:
 			if PogRuntime.TRACE:
@@ -939,7 +939,7 @@ func local_12188(v0, v1) -> Variant:
 		sim.place_near(v2, v3, 25000.0)
 		await iescort.goose(v4, 30.0, 12000.0, 1)
 		if _pog_eq(v1, "owner"):
-			await local_36870(v0, v2)
+			await stick_on_cargo(v0, v2)
 		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator: Created ")
 			debug.print_int(group.group_count(v4))
@@ -1225,7 +1225,7 @@ func local_18659(v0) -> Variant:
 	return
 	return 0
 
-func local_21103(v0) -> Variant:
+func resolve_piracy(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -1254,7 +1254,7 @@ func local_21103(v0) -> Variant:
 		break
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator.ResolvePiracy: Owner has surrendered and will now ditch cargo.\n")
-	v6 = await local_981(v2, v0)
+	v6 = await ditch_cargo(v2, v0)
 	await local_2088(v0, "_collect", 2)
 	await iutilities.group_set_cullable(v1, 1)
 	v6 = 1
@@ -1289,7 +1289,7 @@ func local_21611(v0) -> Variant:
 	return 1
 	return 0
 
-func local_22041(v0) -> Variant:
+func setup_trade_delivery(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -1361,7 +1361,7 @@ func local_23165(v0) -> Variant:
 	return 0
 	return 0
 
-func local_23260(v0) -> Variant:
+func resolve_delivery(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -1633,7 +1633,7 @@ func new_mission_task() -> Variant:
 				_pc = 27126
 				continue
 		elif _pc == 27042:
-			await local_33646(v11)
+			await on_success(v11)
 			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
 			state.set_progress(v11, 3)
 			_pc = 27126
@@ -1739,7 +1739,7 @@ func new_mission_task() -> Variant:
 				_pc = 27754
 				continue
 		elif _pc == 27709:
-			await local_22041(v11)
+			await setup_trade_delivery(v11)
 			state.set_progress(v11, 5)
 			_pc = 27775
 			continue
@@ -1784,7 +1784,7 @@ func new_mission_task() -> Variant:
 				_pc = 27858
 				continue
 		elif _pc == 27949:
-			await local_22041(v11)
+			await setup_trade_delivery(v11)
 			state.set_progress(v11, 5)
 			object.set_int_property(v11, "countout", 0)
 			_pc = 28807
@@ -1809,7 +1809,7 @@ func new_mission_task() -> Variant:
 			continue
 		elif _pc == 28177:
 			await local_12159(v11)
-			if await local_21103(v11):
+			if await resolve_piracy(v11):
 				_pc = 28219
 				continue
 			else:
@@ -1849,7 +1849,7 @@ func new_mission_task() -> Variant:
 			_pc = 28445
 			continue
 		elif _pc == 28445:
-			await local_23260(v11)
+			await resolve_delivery(v11)
 			object.set_int_property(v11, "countout", 0)
 			state.set_progress(v11, 9)
 			_pc = 28807
@@ -1871,7 +1871,7 @@ func new_mission_task() -> Variant:
 			continue
 		elif _pc == 28592:
 			state.set_progress(v11, 3)
-			await local_33646(v11)
+			await on_success(v11)
 			await _pog_wait(10.0)
 			_pc = 28807
 			continue
@@ -2200,7 +2200,7 @@ func success_add_mission(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func local_33646(v0) -> Variant:
+func on_success(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -2392,7 +2392,7 @@ func monkey_about(v0, v1) -> Variant:
 	return
 	return 0
 
-func local_36870(v0, v1) -> Variant:
+func stick_on_cargo(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0

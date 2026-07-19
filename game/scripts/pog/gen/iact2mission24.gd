@@ -220,7 +220,7 @@ func mission_handler() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.MissionHandler: No state found. Initialising.\n")
 		v22 = state.create(self, 0)
-		await local_19769(v22)
+		await add_state_properties(v22)
 	else:
 		await local_21000(v22)
 	await local_447(v22)
@@ -367,12 +367,12 @@ func mission_handler() -> Variant:
 				sim.place_relative_to(v0, v10, 0.0, 0.0, 1000.0)
 				sim.point_away(v0, v10)
 				sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
-				v17 = _pog_spawn(local_8040.bind(v4, v22, v26))
-				v19 = _pog_spawn(local_10136.bind(v6, v22, v26))
+				v17 = _pog_spawn(monitor_hq.bind(v4, v22, v26))
+				v19 = _pog_spawn(monitor_cargo.bind(v6, v22, v26))
 				v18 = _pog_spawn(local_11896.bind(v5, v22, v26))
 				v20 = _pog_spawn(local_14220.bind(v7, v22, v26))
 				_pog_spawn(local_40801.bind(v2, 120.0))
-				v16 = _pog_spawn(local_6393.bind(v0, 5000.0, v17, v18, v19, v20, v22))
+				v16 = _pog_spawn(monitor_player.bind(v0, 5000.0, v17, v18, v19, v20, v22))
 				await local_447(v22)
 				if PogRuntime.TRACE:
 					pass
@@ -380,7 +380,7 @@ func mission_handler() -> Variant:
 					await _pog_wait(1)
 					if _pog_is_null(await local_22529(v22, "visited_all_bases")):
 						if await local_22529(v22, "visited_hq") == 1 and await local_22529(v22, "visited_cargo") == 1 and await local_22529(v22, "visited_shipyard") == 1:
-							await local_22216(v22, "visited_all_bases", 1)
+							await save(v22, "visited_all_bases", 1)
 							iobjectives.set_state("a2_m24_objectives_locate_marauder_bases", 1)
 					if await local_22529(v22, "sent_signal") != 1:
 						continue
@@ -397,7 +397,7 @@ func mission_handler() -> Variant:
 				_pog_halt(v20)
 				_pog_halt(v16)
 				await imusic.pause()
-				await icutsceneutilities.handle_abort(_pog_spawn(local_30197.bind(v0, v7, v1)))
+				await icutsceneutilities.handle_abort(_pog_spawn(starting.bind(v0, v7, v1)))
 				igame.enable_blackout(1)
 				iobjectives.set_state("a2_m24_objectices_leave_dante_system", 1)
 				ifaction.set_feeling(v15, v14, 0.0)
@@ -418,7 +418,7 @@ func mission_handler() -> Variant:
 	return
 	return 0
 
-func local_6393(v0, v1, v2, v3, v4, v5, v6) -> Variant:
+func monitor_player(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	v7 = ifaction.find("Marauders")
@@ -509,7 +509,7 @@ func local_7811(v0, v1) -> Variant:
 	return _pog_clone(v3)
 	return 0
 
-func local_8040(v0, v1, v2) -> Variant:
+func monitor_hq(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
@@ -560,7 +560,7 @@ func local_8040(v0, v1, v2) -> Variant:
 			await _pog_wait(1)
 			if _pog_is_null(await local_22529(v1, "visited_hq")):
 				if sim.distance_between(v3, v0) < 80000.0:
-					await local_22216(v1, "visited_hq", 1)
+					await save(v1, "visited_hq", 1)
 					await iconversation.begin()
 					await iconversation.say(0, "name_clay", "a2_m24_dialogue_clay_jackpot_looks_like_weve_found_their_hq")
 					await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_locking_a_waypoint")
@@ -578,11 +578,11 @@ func local_8040(v0, v1, v2) -> Variant:
 							sim.point_at(v3, v5)
 							await icutsceneutilities.handle_abort(_pog_spawn(local_34292.bind(v5)))
 							iobjectives.add("a2_m24_objectives_obtain_flitter")
-							await local_22216(v1, "given_antenna_clue", 1)
+							await save(v1, "given_antenna_clue", 1)
 				if await iremotepilot.remote_active():
 					v4 = await iremotepilot.return_current_remote_vessel()
 					if isim.is_docked_to(v4, v5) and _pog_is_null(await local_22529(v1, "got_antenna")):
-						await local_22216(v1, "got_antenna", 1)
+						await save(v1, "got_antenna", 1)
 						group.remove_sim(v9, v5)
 						sim.set_cullable(v5, 0)
 						isim.set_indestructable(v5, 1)
@@ -607,7 +607,7 @@ func local_8040(v0, v1, v2) -> Variant:
 	return
 	return 0
 
-func local_10136(v0, v1, v2) -> Variant:
+func monitor_cargo(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
@@ -654,7 +654,7 @@ func local_10136(v0, v1, v2) -> Variant:
 			await _pog_wait(1)
 			if _pog_is_null(await local_22529(v1, "visited_cargo")):
 				if sim.distance_between(v3, v0) < 80000.0:
-					await local_22216(v1, "visited_cargo", 1)
+					await save(v1, "visited_cargo", 1)
 					await iconversation.begin()
 					await iconversation.say(0, "name_clay", "a2_m24_dialogue_clay_could_be_a_cargo_depot")
 					await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_locking_a_waypoint")
@@ -668,13 +668,13 @@ func local_10136(v0, v1, v2) -> Variant:
 					if _pog_is_null(await local_22529(v1, "given_power_clue")):
 						if sim.distance_between(v3, v9) < 12000.0:
 							await icutsceneutilities.handle_abort(_pog_spawn(local_35402.bind(group.leader(v6), group.leader(v8))))
-							await local_22216(v1, "given_power_clue", 1)
+							await save(v1, "given_power_clue", 1)
 							iobjectives.add("a2_m24_objectives_locate_and_retrieve_field_generator")
 					if isim.is_docked(v3):
 						v4 = iship.cast(sim.parent(v3))
 						if _pog_eq(sim.group(v4), v6):
 							isim.set_docking_lock(v3, v4, 1)
-							await local_22216(v1, "got_power_booster", 1)
+							await save(v1, "got_power_booster", 1)
 							await iconversation.begin()
 							await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_ill_fetch_the_generator")
 							await iconversation.end()
@@ -733,7 +733,7 @@ func local_11896(v0, v1, v2) -> Variant:
 			debug.print_string("iAct2Mission24.monitor_shipyard: Creating nickable maintenance ships.\n")
 		v7 = isim.cast(await iutilities.create_waypoint_near(v0, 10000.0))
 		group.add_sim(v10, v7)
-		v10 = await local_18896(v7, 5, "a2_m24_ship_flitter_maintenance", v1)
+		v10 = await create_maintenance_group(v7, 5, "a2_m24_ship_flitter_maintenance", v1)
 		group.add_group(v9, v10)
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.monitor_cargo: Creating Security Patrol.\n")
@@ -744,7 +744,7 @@ func local_11896(v0, v1, v2) -> Variant:
 			await _pog_wait(1)
 			if _pog_is_null(await local_22529(v1, "visited_shipyard")):
 				if sim.distance_between(v3, v0) < 80000.0:
-					await local_22216(v1, "visited_shipyard", 1)
+					await save(v1, "visited_shipyard", 1)
 					await iconversation.begin()
 					await iconversation.say(0, "name_clay", "a2_m24_dialogue_clay_looks_like_their_shipyard")
 					await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_locking_a_waypoint")
@@ -756,13 +756,13 @@ func local_11896(v0, v1, v2) -> Variant:
 			if _pog_is_null(await local_22529(v1, "spotted_cruiser")):
 				if sim.distance_between(v3, v0) < 13000.0:
 					await icutsceneutilities.handle_abort(_pog_spawn(local_40867.bind(group.leader(v12))))
-					await local_22216(v1, "spotted_cruiser", 1)
+					await save(v1, "spotted_cruiser", 1)
 			if await local_22529(v1, "visited_lpoint") == 1:
 				if await local_22529(v1, "visited_hq") == 1 and await local_22529(v1, "given_antenna_clue") == 1:
 					if _pog_is_null(await local_22529(v1, "given_flitter_clue")):
 						if sim.distance_between(v3, v7) < 10000.0:
 							await icutsceneutilities.handle_abort(_pog_spawn(local_34875.bind(group.leader(v10))))
-							await local_22216(v1, "given_flitter_clue", 1)
+							await save(v1, "given_flitter_clue", 1)
 							v13 = 0
 							while v13 < group.sim_count(v10):
 								v4 = iship.cast(group.nth_sim(v10, v13))
@@ -777,7 +777,7 @@ func local_11896(v0, v1, v2) -> Variant:
 								if isim.is_docked_to(v3, v4):
 									if _pog_is_null(await local_22529(v1, "given_rem_clue")):
 										isim.set_docking_lock(v3, v4, 1)
-										await local_22216(v1, "given_rem_clue", 1)
+										await save(v1, "given_rem_clue", 1)
 										await iconversation.begin()
 										await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_ok_im_boarding_now")
 										await iconversation.end()
@@ -820,13 +820,13 @@ func local_14220(v0, v1, v2) -> Variant:
 			await _pog_wait(1)
 			if _pog_is_null(await local_22529(v1, "approached_lpoint")):
 				if sim.distance_between(v3, v0) < 200000.0:
-					await local_22216(v1, "approached_lpoint", 1)
+					await save(v1, "approached_lpoint", 1)
 					await iconversation.begin()
 					await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_lpoint_dead_ahead")
 					await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_we_will_need_to_get_closer")
 					await iconversation.end()
 			if _pog_is_null(await local_22529(v1, "visited_lpoint")) and sim.distance_between(v3, v0) < 5000.0:
-				await local_22216(v1, "visited_lpoint", 1)
+				await save(v1, "visited_lpoint", 1)
 				await iconversation.begin()
 				await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_we_are_close_enough")
 				await iconversation.say(0, "name_cal", "a2_m24_dialogue_cal_smith_get_the_coordinates")
@@ -842,11 +842,11 @@ func local_14220(v0, v1, v2) -> Variant:
 				await iconversation.say(0, "name_clay", "a2_m24_dialogue_clay_relay_waypoints")
 				iobjectives.set_state("a2_m24_objectives_scout_for_lpoint_near_faust", 1)
 				await iconversation.end()
-				_pog_spawn(local_37318.bind(v1, v2))
+				_pog_spawn(monitor_relays.bind(v1, v2))
 			if sim.distance_between(v3, v0) >= 5000.0:
 				continue
 			if _pog_is_null(await local_22529(v1, "given_lpoint_antenna_clue")) and await local_22529(v1, "got_power_booster") == 1 and _pog_is_null(await local_22529(v1, "got_antenna")):
-				await local_22216(v1, "given_lpoint_antenna_clue", 1)
+				await save(v1, "given_lpoint_antenna_clue", 1)
 				await iconversation.begin()
 				await iconversation.say(0, "name_cal", "a2_m24_dialogue_cal_smith_try_sending_the_ftl")
 				await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_were_not_getting_through")
@@ -854,7 +854,7 @@ func local_14220(v0, v1, v2) -> Variant:
 				await iconversation.end()
 				iobjectives.add("a2_m24_objectives_locate_and_retrieve_antenna")
 			if _pog_is_null(await local_22529(v1, "given_lpoint_power_clue")) and _pog_is_null(await local_22529(v1, "got_power_booster")) and await local_22529(v1, "got_antenna") == 1:
-				await local_22216(v1, "given_lpoint_power_clue", 1)
+				await save(v1, "given_lpoint_power_clue", 1)
 				await iconversation.begin()
 				await iconversation.say(0, "name_cal", "a2_m24_dialogue_cal_smith_try_the_ftl_again")
 				await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_the_powers_not_enough")
@@ -873,7 +873,7 @@ func local_14220(v0, v1, v2) -> Variant:
 						await iconversation.end()
 						if PogRuntime.TRACE:
 							debug.print_string("iAct2Mission24.monitor_cargo: Player successfully sent FTL signal. EXITING.\n")
-						await local_22216(v1, "sent_signal", 1)
+						await save(v1, "sent_signal", 1)
 						return
 			if not (sim.distance_between(v3, v0) > 300000.0 or state.progress(v1) == 100):
 				continue
@@ -1065,7 +1065,7 @@ func local_18583(v0, v1, v2, v3, v4, v5) -> Variant:
 	return v6
 	return 0
 
-func local_18896(v0, v1, v2, v3) -> Variant:
+func create_maintenance_group(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -1121,7 +1121,7 @@ func local_19367(v0, v1, v2, v3, v4) -> Variant:
 	return
 	return 0
 
-func local_19769(v0) -> Variant:
+func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.add_state_properties: State is invalid - not adding properties. \n")
@@ -1221,7 +1221,7 @@ func local_21000(v0) -> Variant:
 	return 0
 	return 0
 
-func local_22216(v0, v1, v2) -> Variant:
+func save(v0, v1, v2) -> Variant:
 	if not (object.property_exists(v0, v1)):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.save: State property ")
@@ -1592,7 +1592,7 @@ func local_29606(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func local_30197(v0, v1, v2) -> Variant:
+func starting(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
@@ -1916,7 +1916,7 @@ func local_36067(v0, v1, v2, v3, v4, v5) -> Variant:
 	return
 	return 0
 
-func local_37318(v0, v1) -> Variant:
+func monitor_relays(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0

@@ -120,7 +120,7 @@ func _link() -> void:
 	string = api.string
 	text = api.text
 
-func local_0() -> Variant:
+func act_two_globals() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.ActTwoGlobals - initialising act two globals\n")
 	global.create_bool("g_act2_survivors_rescued", 2, 0)
@@ -240,7 +240,7 @@ func local_0() -> Variant:
 	return 0
 	return 0
 
-func local_2740() -> Variant:
+func destry_act_two_globals() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.DestryActTwoGlobals - Purging all act one globals. NONE SHALL SURVIVE !\n")
 	global.destroy("g_act2_survivors_rescued")
@@ -347,7 +347,7 @@ func local_2740() -> Variant:
 	return 0
 	return 0
 
-func local_4883() -> Variant:
+func story_element2() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2.10 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.10_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_1", 1)
@@ -355,7 +355,7 @@ func local_4883() -> Variant:
 	return
 	return 0
 
-func local_4967() -> Variant:
+func story_element() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement 2.10b : Story element has begun\n")
 	await iconversation.begin()
@@ -369,21 +369,21 @@ func local_4967() -> Variant:
 	return
 	return 0
 
-func local_5191() -> Variant:
+func story_element2_170() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_170 : Story element has begun\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.170_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_170", 1)
 	return
 	return 0
 
-func local_5253() -> Variant:
+func story_element2_190() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_190 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.190_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_190", 1)
 	return
 	return 0
 
-func local_5315() -> Variant:
+func story_element2_200() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_200 : Story element has begun.\n")
 	if _pog_is_null(global.pog_bool("g_act2_kong_fracture_success")):
@@ -393,7 +393,7 @@ func local_5315() -> Variant:
 	return
 	return 0
 
-func local_5443() -> Variant:
+func story_element2_180() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_180 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.180_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_180", 1)
@@ -401,7 +401,7 @@ func local_5443() -> Variant:
 	return
 	return 0
 
-func local_5527() -> Variant:
+func story_element2_220() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_220 : Story element has begun.\n")
 	await iconversation.begin()
@@ -418,42 +418,42 @@ func local_5527() -> Variant:
 	return
 	return 0
 
-func local_5829() -> Variant:
+func story_element2_210() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_210 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.210_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_210", 1)
 	return
 	return 0
 
-func local_5891() -> Variant:
+func story_element2_250() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_250 : Story element has begun.\n")
 	await iutilities.release_error("INSERT STORY SEQUENCE 2.250 HERE - hints pointing to the Marauder raider mothership.")
 	return
 	return 0
 
-func local_5940() -> Variant:
+func story_element2_260() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_260 : Story element has begun.\n")
 	iemail.send_email("a2_master_anon_sender", "a2_master_story2.260_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_260", 1)
 	return
 	return 0
 
-func local_6002() -> Variant:
+func story_element2_270() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_270 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.270_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_270", 1)
 	return
 	return 0
 
-func local_6064() -> Variant:
+func story_element2_280() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_280 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.280_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_280", 1)
 	return
 	return 0
 
-func local_6126() -> Variant:
+func story_element2_231() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_231 : Story element has begun.\n")
 	await iconversation.begin()
@@ -463,7 +463,7 @@ func local_6126() -> Variant:
 	return
 	return 0
 
-func local_6244() -> Variant:
+func story_element2_230() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_230 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_boffin_mail_sender", "a2_master_story2.230_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_230", 1)
@@ -471,14 +471,14 @@ func local_6244() -> Variant:
 	return
 	return 0
 
-func local_6328() -> Variant:
+func story_element2_160() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_160 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.160_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_160", 1)
 	return
 	return 0
 
-func local_6390() -> Variant:
+func story_element2_150() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_150 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.150_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_150", 1)
@@ -486,7 +486,7 @@ func local_6390() -> Variant:
 	return
 	return 0
 
-func local_6474() -> Variant:
+func story_element_clay__remeber() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElementClay_Remeber : Story element has begun.\n")
 	await iconversation.begin()
@@ -497,7 +497,7 @@ func local_6474() -> Variant:
 	return
 	return 0
 
-func local_6614() -> Variant:
+func story_element2_290() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_290 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.290_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_290", 1)
@@ -505,14 +505,14 @@ func local_6614() -> Variant:
 	return
 	return 0
 
-func local_6698() -> Variant:
+func story_element2_130() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_130 : Story element has begun.\n")
 	await iutilities.release_error("INSERT STORY SEQUENCE 2.130 HERE - E mail reinforcing the fact that their is a back door into Mwari")
 	return
 	return 0
 
-func local_6747() -> Variant:
+func story_element2_140() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.StoryElement2_140 : Story element has begun.\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.140_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_14", 1)
@@ -575,28 +575,28 @@ func local_6809() -> Variant:
 	return
 	return 0
 
-func local_8697() -> Variant:
+func storyelement2_300() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.Storyelement2_300 : story element has begun\n")
 	iemail.send_email("a2_master_hoffer_mail_sender", "a2_master_story2.300_mail_subject", "html:/text/act_2/act2_master_hoffermail_2_300", 1)
 	return
 	return 0
 
-func local_8759() -> Variant:
+func storyelement2_310() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.Storyelement2_310 : story element has begun\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.310_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_310", 1)
 	return
 	return 0
 
-func local_8821() -> Variant:
+func storyelement2_320() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.Storyelement2_320 : story element has begun\n")
 	iemail.send_email("a2_master_hoffer_mail_sender", "a2_master_story2.320_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_320_b", 1)
 	return
 	return 0
 
-func local_8883() -> Variant:
+func storyelement2_330() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.Storyelement2_330 : story element has begun\n")
 	iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.330_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_330", 1)
@@ -3750,7 +3750,7 @@ func master_script() -> Variant:
 		await iact2mission20.stub()
 		await iact2mission22.stub()
 		await iact2mission24.stub()
-		await local_2740()
+		await destry_act_two_globals()
 		state.destroy(self)
 		igame.next_act("iActThree")
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("League"), 475, 1, 377, 7, 0))
@@ -3991,7 +3991,7 @@ func master_script() -> Variant:
 					await _pog_wait(5.0)
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : player has finished act two, smartass, shutting down act\n")
-				await local_2740()
+				await destry_act_two_globals()
 				state.destroy(self)
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : Calling Act Three\n")
@@ -4022,110 +4022,110 @@ func local_62490() -> Variant:
 			if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_1")) and global.pog_int("g_story_2.10b") != 2:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.10b has been activated\n")
-				v0 = _pog_spawn(local_4967.bind())
+				v0 = _pog_spawn(story_element.bind())
 				global.set_int("g_story_2.10b", 2)
 			else:
 				if global.pog_int("g_story_2.10") == 1:
 					if PogRuntime.TRACE:
 						debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.10 has been activated\n")
-					v0 = _pog_spawn(local_4883.bind())
+					v0 = _pog_spawn(story_element2.bind())
 					global.set_int("g_story_2.10", 2)
 				else:
 					if global.pog_int("g_story_2.170") == 1:
 						if PogRuntime.TRACE:
 							debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.170 has been activated\n")
 						global.set_int("g_story_2.170", 2)
-						v0 = _pog_spawn(local_5191.bind())
+						v0 = _pog_spawn(story_element2_170.bind())
 					else:
 						if global.pog_int("g_story_2.190") == 1:
 							if PogRuntime.TRACE:
 								debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.190 has been activated\n")
 							global.set_int("g_story_2.190", 2)
-							v0 = _pog_spawn(local_5253.bind())
+							v0 = _pog_spawn(story_element2_190.bind())
 						else:
 							if global.pog_int("g_story_2.200") == 1:
 								if PogRuntime.TRACE:
 									debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.200 has been activated\n")
 								global.set_int("g_story_2.200", 2)
-								v0 = _pog_spawn(local_5315.bind())
+								v0 = _pog_spawn(story_element2_200.bind())
 							else:
 								if global.pog_int("g_story_2.180") == 1:
 									if PogRuntime.TRACE:
 										debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.180 has been activated\n")
 									global.set_int("g_story_2.180", 2)
-									v0 = _pog_spawn(local_5443.bind())
+									v0 = _pog_spawn(story_element2_180.bind())
 								else:
 									if global.pog_int("g_story_2.210") == 1:
 										if PogRuntime.TRACE:
 											debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.210 has been activated\n")
 										global.set_int("g_story_2.210", 2)
-										v0 = _pog_spawn(local_5829.bind())
+										v0 = _pog_spawn(story_element2_210.bind())
 									else:
 										if global.pog_int("g_story_2.220") == 1:
 											if PogRuntime.TRACE:
 												debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.220 has been activated\n")
 											global.set_int("g_story_2.220", 2)
-											v0 = _pog_spawn(local_5527.bind())
+											v0 = _pog_spawn(story_element2_220.bind())
 										else:
 											if global.pog_int("g_story_2.231") == 1:
 												if PogRuntime.TRACE:
 													debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.231 has been activated\n")
 												global.set_int("g_story_2.231", 2)
-												v0 = _pog_spawn(local_6126.bind())
+												v0 = _pog_spawn(story_element2_231.bind())
 											else:
 												if global.pog_int("g_story_2.230") == 1:
 													if PogRuntime.TRACE:
 														debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.230 has been activated\n")
 													global.set_int("g_story_2.230", 2)
-													v0 = _pog_spawn(local_6244.bind())
+													v0 = _pog_spawn(story_element2_230.bind())
 												else:
 													if global.pog_int("g_story_2.250") == 1:
 														if PogRuntime.TRACE:
 															debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.250 has been activated\n")
 														global.set_int("g_story_2.250", 2)
-														v0 = _pog_spawn(local_5891.bind())
+														v0 = _pog_spawn(story_element2_250.bind())
 													else:
 														if global.pog_int("g_story_2.270") == 1:
 															if PogRuntime.TRACE:
 																debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.270 has been activated\n")
 															global.set_int("g_story_2.270", 2)
-															v0 = _pog_spawn(local_6002.bind())
+															v0 = _pog_spawn(story_element2_270.bind())
 														else:
 															if global.pog_int("g_story_2.260") == 1:
 																if PogRuntime.TRACE:
 																	debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.260 has been activated\n")
 																global.set_int("g_story_2.260", 2)
-																v0 = _pog_spawn(local_5940.bind())
+																v0 = _pog_spawn(story_element2_260.bind())
 															else:
 																if global.pog_int("g_story_2.160") == 1:
 																	if PogRuntime.TRACE:
 																		debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.160 has been activated\n")
 																	global.set_int("g_story_2.160", 2)
-																	v0 = _pog_spawn(local_6328.bind())
+																	v0 = _pog_spawn(story_element2_160.bind())
 																else:
 																	if global.pog_int("g_story_2.150") == 1:
 																		if PogRuntime.TRACE:
 																			debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.150 has been activated\n")
 																		global.set_int("g_story_2.150", 2)
-																		v0 = _pog_spawn(local_6390.bind())
+																		v0 = _pog_spawn(story_element2_150.bind())
 																	else:
 																		if global.pog_int("g_story_2.290") == 1:
 																			if PogRuntime.TRACE:
 																				debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.290 has been activated\n")
 																			global.set_int("g_story_2.290", 2)
-																			v0 = _pog_spawn(local_6614.bind())
+																			v0 = _pog_spawn(story_element2_290.bind())
 																		else:
 																			if global.pog_int("g_story_2.130") == 1:
 																				if PogRuntime.TRACE:
 																					debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.130 has been activated\n")
 																				global.set_int("g_story_2.130", 2)
-																				v0 = _pog_spawn(local_6698.bind())
+																				v0 = _pog_spawn(story_element2_130.bind())
 																			else:
 																				if global.pog_int("g_story_2.140") == 1:
 																					if PogRuntime.TRACE:
 																						debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.140 has been activated\n")
 																					global.set_int("g_story_2.140", 2)
-																					v0 = _pog_spawn(local_6747.bind())
+																					v0 = _pog_spawn(story_element2_140.bind())
 																				else:
 																					if global.pog_int("g_story_2.140b") == 1:
 																						if PogRuntime.TRACE:
@@ -4137,35 +4137,35 @@ func local_62490() -> Variant:
 																							if PogRuntime.TRACE:
 																								debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.300 has been activated\n")
 																							global.set_int("g_story_2.300", 2)
-																							v0 = _pog_spawn(local_8697.bind())
+																							v0 = _pog_spawn(storyelement2_300.bind())
 																						else:
 																							if global.pog_int("g_story_2.310") == 1:
 																								if PogRuntime.TRACE:
 																									debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.310 has been activated\n")
 																								global.set_int("g_story_2.310", 2)
-																								v0 = _pog_spawn(local_8759.bind())
+																								v0 = _pog_spawn(storyelement2_310.bind())
 																							else:
 																								if global.pog_int("g_story_2.320") == 1:
 																									if PogRuntime.TRACE:
 																										debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.320 has been activated\n")
 																									global.set_int("g_story_2.320", 2)
-																									v0 = _pog_spawn(local_8821.bind())
+																									v0 = _pog_spawn(storyelement2_320.bind())
 																								else:
 																									if global.pog_int("g_story_2.330") == 1:
 																										if PogRuntime.TRACE:
 																											debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.330 has been activated\n")
 																										global.set_int("g_story_2.330", 2)
-																										v0 = _pog_spawn(local_8883.bind())
+																										v0 = _pog_spawn(storyelement2_330.bind())
 																									else:
 																										if global.pog_int("g_story_2.280") == 1:
 																											if PogRuntime.TRACE:
 																												debug.print_string("iActTwo.BaseMasterScript : Story sequence 2.280 has been activated\n")
 																											global.set_int("g_story_2.280", 2)
-																											v0 = _pog_spawn(local_6064.bind())
+																											v0 = _pog_spawn(story_element2_280.bind())
 																										else:
 																											if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_150")) and iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_180")) and global.pog_bool("g_act2_base_has_moved") == 1 and _pog_is_null(global.exists("g_told_about_hoffer")):
 																												global.create_bool("g_told_about_hoffer", 2, 1)
-																												v0 = _pog_spawn(local_6474.bind())
+																												v0 = _pog_spawn(story_element_clay__remeber.bind())
 																											else:
 																												if PogRuntime.TRACE:
 																													debug.print_string(" iActTwo.MasterBaseScript - No story sequences are wating to be executed, sleeping for a bit...\n")
@@ -4188,7 +4188,7 @@ func main() -> Variant:
 	if global.pog_int("g_current_act") <= 1:
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.ActTwoStart : initialising act two\n")
-		await local_0()
+		await act_two_globals()
 		v2 = _pog_spawn(master_script.bind())
 		_pog_detach(v2)
 		global.set_int("g_current_act", 2)

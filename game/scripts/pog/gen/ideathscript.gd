@@ -67,7 +67,7 @@ func antimatter() -> Variant:
 	return
 	return 0
 
-func local_82(v0, v1) -> Variant:
+func apply_damage(v0, v1) -> Variant:
 	var v2: Variant = 0
 	if _pog_is_null(v0):
 		pass
@@ -128,7 +128,7 @@ func explosives() -> Variant:
 		v2 = sim.cast(list.get_nth(v1, v4))
 		v8 = sim.distance_between(v2, v3)
 		v9 = v6 * ((v7 - v8) / v7)
-		await local_82(v2, v9)
+		await apply_damage(v2, v9)
 		v4 = v4 + 1
 	sim.destroy(v3)
 	return

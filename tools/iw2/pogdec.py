@@ -395,6 +395,7 @@ class Decompiler:
         self._covered: set[int] = set()
         self.latch: dict[int, int] = {}
         self.loops: dict[int, int] = {}
+        self._names: dict[int, str] | None = None
 
     # -- helpers
 
@@ -428,7 +429,7 @@ class Decompiler:
         argc: dict[int, int] = {}
         for off, mn, args in self.instrs:
             if mn in ("CallLocal", "StartLocal"):
-                entries.setdefault(args[1], "local_%d" % args[1])
+                entries.setdefault(args[1], self._name_of(args[1]))
                 argc[args[1]] = args[2]
         for e, n in entries.items():
             if e not in argc:
@@ -1252,11 +1253,56 @@ class Decompiler:
             out.append(Halt())
         return nxt
 
+    _SELFNAME = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z_][A-Za-z0-9_]*)")
+
+    def _recovered_names(self) -> dict[int, str]:
+        """Names for the locals, read out of the scripts' own debug output.
+
+        A package exports almost nothing -- iact1mission07 names 3 functions in
+        25KB of bytecode -- so most of the game decompiles as `local_8404`. But
+        the scripts announce themselves when they log ("iAct1_Mission07.save -
+        STARTED"), and that string constant sits inside the function it names.
+
+        Only used when a function's own address range yields exactly ONE
+        candidate: an ambiguous range keeps `local_N` rather than pick (law 1).
+        Verified against the SDK's hand-written sources -- local_8404 recovers
+        as `create_gunstars`, matching iAct1_Mission07_Showdown.pog:61.
+        """
+        if self._names is not None:
+            return self._names
+        self._names = {}
+        stem = self.pkg["name"].lower()
+        entries = set(self.pkg["exports"].values())
+        for off, mn, args in self.instrs:
+            if mn in ("CallLocal", "StartLocal"):
+                entries.add(args[1])
+        taken = set(self.pkg["exports"])
+        bounds = sorted(entries) + [self.end]
+        strings = self.pkg["strings"]
+        for k, e in enumerate(bounds[:-1]):
+            if e in self.pkg["exports"].values():
+                continue
+            hi = bounds[k + 1]
+            found = set()
+            for off, mn, args in self.instrs:
+                if not (e <= off < hi):
+                    continue
+                if mn == "LoadString" and args[0] < len(strings):
+                    m = self._SELFNAME.match(strings[args[0]].strip())
+                    if m and m.group(1).lower() == stem:
+                        found.add(m.group(2))
+            if len(found) == 1:
+                n = found.pop()
+                if n not in taken:      # never let two functions share a name
+                    taken.add(n)
+                    self._names[e] = n
+        return self._names
+
     def _name_of(self, entry: int) -> str:
         for n, e in self.pkg["exports"].items():
             if e == entry:
                 return n
-        return "local_%d" % entry
+        return self._recovered_names().get(entry, "local_%d" % entry)
 
 
 # --- backends --------------------------------------------------------------

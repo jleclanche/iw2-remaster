@@ -140,7 +140,7 @@ func junkyard_handler() -> Variant:
 	return
 	return 0
 
-func local_1522() -> Variant:
+func story_element0_20() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iPrelude.StoryElement0_20 : Story element has begun\n")
 	await iconversation.begin()
@@ -159,7 +159,7 @@ func local_1690() -> Variant:
 	return
 	return 0
 
-func local_1752() -> Variant:
+func lucrecia_mail_conversation_handler() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iPrelude.LucreciaMailConversationHandler : Story element has begin\n")
 	await iconversation.begin()
@@ -381,14 +381,14 @@ func local_4842() -> Variant:
 				debug.print_string("iPrelude.BaseMessageChecker - No story sequences are currnetly runing, checking to see if any are waiting to run\n")
 			if global.pog_int("g_story_0.20") == 1:
 				global.set_int("g_story_0.20", 2)
-				v0 = _pog_spawn(local_1522.bind())
+				v0 = _pog_spawn(story_element0_20.bind())
 				v1 = _pog_spawn(iact0generaltraining.base_exploration_handler.bind())
 				v2 = state.create(v1, 0)
 				global.create_handle("g_base_exploration_handler", 1, v2)
 			else:
 				if iemail.read(v4) and _pog_is_null(global.pog_bool("g_act0_lucrecias_mail_conversation")):
 					global.set_bool("g_act0_lucrecias_mail_conversation", 1)
-					_pog_spawn(local_1752.bind())
+					_pog_spawn(lucrecia_mail_conversation_handler.bind())
 				else:
 					if global.pog_int("g_story_0.30") == 1:
 						global.set_int("g_story_0.30", 2)

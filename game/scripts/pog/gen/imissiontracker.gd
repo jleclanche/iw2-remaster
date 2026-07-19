@@ -20,7 +20,7 @@ func initialise() -> Variant:
 	return 0
 	return 0
 
-func local_56() -> Variant:
+func update_string() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -57,7 +57,7 @@ func add_mission(v0, v1, v2) -> Variant:
 	global.create_handle(string.join("g_mt_mtask_handle", string.from_int(v3)), 2, v0)
 	v3 = v3 + 1
 	global.set_int("g_mt_mtask_counter", v3)
-	await local_56()
+	await update_string()
 	return 0
 	return 0
 
@@ -77,7 +77,7 @@ func remove_mission(v0) -> Variant:
 			if _pog_eq(v3, v0):
 				global.set_handle(string.join("g_mt_mtask_handle", string.from_int(v1)), 0)
 			v1 = v1 + 1
-		await local_56()
+		await update_string()
 	return 0
 	return 0
 

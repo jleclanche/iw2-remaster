@@ -147,7 +147,7 @@ func s_p_main_p_d_a_screen() -> Variant:
 			_pc = 1168
 			continue
 		elif _pc == 1168:
-			await local_23590()
+			await setup_mods()
 			_pc = 1182
 			continue
 		elif _pc == 1182:
@@ -1216,7 +1216,7 @@ func s_p_p_d_a_device_screen__on_apply() -> Variant:
 	v0 = ioptions.graphics_device_index()
 	v1 = await local_20333()
 	v2 = ioptions.graphics_resolution_index(v0)
-	v3 = await local_20538()
+	v3 = await s_p_p_d_a_device_screen__currently_selected_resolution_button()
 	if not (not _pog_eq(v0, v1) or not _pog_eq(v2, v3)):
 		return 0
 	ioptions.set_graphics_device(v1, v3)
@@ -1316,7 +1316,7 @@ func local_20333() -> Variant:
 	return v2
 	return 0
 
-func local_20538() -> Variant:
+func s_p_p_d_a_device_screen__currently_selected_resolution_button() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -1540,7 +1540,7 @@ func control_screen__on_back_button_to_main_menu() -> Variant:
 	return 0
 	return 0
 
-func local_23590() -> Variant:
+func setup_mods() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -1638,7 +1638,7 @@ func local_25001() -> Variant:
 	global.destroy("g_pda_missions_list")
 	global.destroy("g_pda_current_mod")
 	global.destroy("g_pda_selected_mission")
-	await local_23590()
+	await setup_mods()
 	return 0
 	return 0
 
@@ -1679,7 +1679,7 @@ func mod_screen() -> Variant:
 	v18 = []
 	v22 = ""
 	v23 = ""
-	await local_23590()
+	await setup_mods()
 	v21 = imod.count()
 	gui.set_default_font(global.string("GUI_title_font"))
 	v10 = await igui.create_shady_bar()

@@ -71,7 +71,7 @@ func jafs_comment(v0) -> Variant:
 	return 0
 	return 0
 
-func local_176(v0) -> Variant:
+func jafs_goes_home(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -167,7 +167,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 1285
 			continue
 		elif _pc == 1285:
-			_pog_detach(_pog_spawn(local_176.bind(v0)))
+			_pog_detach(_pog_spawn(jafs_goes_home.bind(v0)))
 			_pc = 5409
 			continue
 		elif _pc == 1322:
@@ -221,7 +221,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 1627
 			continue
 		elif _pc == 1627:
-			v3 = iship.cast(await local_16262(v0, v1))
+			v3 = iship.cast(await get_closest_pod(v0, v1))
 			_pc = 1737
 			continue
 		elif _pc == 1674:
@@ -321,7 +321,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 2106
 			continue
 		elif _pc == 2106:
-			if await local_17890(v0, v4, 5):
+			if await jafs_attacked(v0, v4, 5):
 				_pc = 2136
 				continue
 			else:
@@ -338,7 +338,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 5409
 			continue
 		elif _pc == 2167:
-			if not (await local_17028(v4, v0, v1, 300000.0)):
+			if not (await jafs_in_range(v4, v0, v1, 300000.0)):
 				_pc = 2206
 				continue
 			else:
@@ -453,7 +453,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 2857:
 			await _pog_wait(2.0)
-			if await local_17890(v0, v4, 5):
+			if await jafs_attacked(v0, v4, 5):
 				_pc = 2919
 				continue
 			else:
@@ -471,7 +471,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 5409
 			continue
 		elif _pc == 2969:
-			if not (await local_17028(v4, v0, v1, 300000.0)):
+			if not (await jafs_in_range(v4, v0, v1, 300000.0)):
 				_pc = 3008
 				continue
 			else:
@@ -828,7 +828,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 5409
 			continue
 		elif _pc == 4591:
-			if await local_17890(v0, v4, 3):
+			if await jafs_attacked(v0, v4, 3):
 				_pc = 4621
 				continue
 			else:
@@ -937,7 +937,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			_pc = 5409
 			continue
 		elif _pc == 5078:
-			if not (await local_17028(v4, v0, v1, 300000.0)):
+			if not (await jafs_in_range(v4, v0, v1, 300000.0)):
 				_pc = 5117
 				continue
 			else:
@@ -1000,7 +1000,7 @@ func local_1092(v0, v1, v2) -> Variant:
 			continue
 		elif _pc == 5349:
 			await local_18414(v0, "jafs_im_heading_home", 1, 1)
-			_pog_detach(_pog_spawn(local_176.bind(v0)))
+			_pog_detach(_pog_spawn(jafs_goes_home.bind(v0)))
 			_pc = 5409
 			continue
 		elif _pc == 5409:
@@ -1186,7 +1186,7 @@ func local_8690() -> Variant:
 	else:
 		if _pog_is_null(group.sim_count(v3)):
 			await auto_tag_valuable_pods()
-		await local_21770()
+		await filter_out_of_system_pods()
 		if _pog_is_null(group.sim_count(v3)):
 			await local_18414(0, "jafs_nothing_for_me_to_pickup", 0, 0)
 			ihud.pog_print("hud_tag_error_no_pods_in_fov")
@@ -1222,7 +1222,7 @@ func local_8690() -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string("iJafsScript.SummonJafs: Jafs Created\n")
 				v2 = sim.create("ini:/sims/nav/waypoint", "Jafs Pod Waypoint")
-				v9 = iship.cast(await local_16262(v0, v3))
+				v9 = iship.cast(await get_closest_pod(v0, v3))
 				if PogRuntime.TRACE:
 					if _pog_is_null(v9):
 						if PogRuntime.TRACE:
@@ -1243,7 +1243,7 @@ func local_8690() -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
 						return
-					if await local_17890(v0, v1, 5):
+					if await jafs_attacked(v0, v1, 5):
 						sim.destroy(v2)
 						if PogRuntime.TRACE:
 							debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs has been attacked.")
@@ -1255,7 +1255,7 @@ func local_8690() -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("iJafsScript.SummonJafs: TERMINATED - Jafs is NULL, possibly destroyed\n")
 						return
-					if await local_17028(v1, v0, v3, 300000.0):
+					if await jafs_in_range(v1, v0, v3, 300000.0):
 						continue
 					if PogRuntime.TRACE:
 						debug.print_string("iJafsScript.SummonJafs: TERMINATED - Player out of range.\n")
@@ -1662,7 +1662,7 @@ func flag_jafs_inactive() -> Variant:
 	return 0
 	return 0
 
-func local_15683(v0, v1) -> Variant:
+func jafs_runs_away(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -1697,11 +1697,11 @@ func local_15683(v0, v1) -> Variant:
 				await _pog_wait(0.5)
 				if not (group.sim_count(v4) > 0):
 					break
-		_pog_detach(_pog_spawn(local_176.bind(v0)))
+		_pog_detach(_pog_spawn(jafs_goes_home.bind(v0)))
 	return
 	return 0
 
-func local_16262(v0, v1) -> Variant:
+func get_closest_pod(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -1758,7 +1758,7 @@ func local_16262(v0, v1) -> Variant:
 	return v3
 	return 0
 
-func local_17028(v0, v1, v2, v3) -> Variant:
+func jafs_in_range(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	if sim.distance_between(v0, v1) < v3:
@@ -1818,7 +1818,7 @@ func jafs_functionality_available() -> Variant:
 	return 0
 	return 0
 
-func local_17890(v0, v1, v2) -> Variant:
+func jafs_attacked(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
@@ -1835,7 +1835,7 @@ func local_17890(v0, v1, v2) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("\n")
 	if v3 >= v2:
-		_pog_detach(_pog_spawn(local_15683.bind(v0, v5)))
+		_pog_detach(_pog_spawn(jafs_runs_away.bind(v0, v5)))
 		return 1
 	v5 = isim.last_attacker(v0)
 	if _pog_eq(v5, isim.cast(v1)) or _pog_eq(isim.faction(v5), ifaction.find("player")):
@@ -2072,7 +2072,7 @@ func auto_tag_valuable_pods() -> Variant:
 	return 0
 	return 0
 
-func local_21770() -> Variant:
+func filter_out_of_system_pods() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0

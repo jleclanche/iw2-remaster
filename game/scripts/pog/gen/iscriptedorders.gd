@@ -243,7 +243,7 @@ func local_3288(v0) -> Variant:
 	return 0
 	return 0
 
-func local_3398(v0, v1, v2, v3) -> Variant:
+func load_vessels_from_spewer(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -319,7 +319,7 @@ func local_4740(v0, v1) -> Variant:
 	return 0
 	return 0
 
-func local_5017(v0, v1) -> Variant:
+func unload_at_spewer(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -421,7 +421,7 @@ func local_5758(v0, v1, v2, v3) -> Variant:
 				await ipilotsetup.generic_cargo_pod(v7)
 				iai.give_reserved_dock_order(v7, v1)
 			else:
-				await local_5017(v7, v1)
+				await unload_at_spewer(v7, v1)
 			v11 = v11 + 1
 		await _pog_wait(5.0)
 		iship.undock(v5, v1)
@@ -500,7 +500,7 @@ func local_7217(v0, v1, v2) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string(string.join("Empty vessel has reached load slot and is loading: ", object.string_property(v5, "name")))
 			debug.print_string("\n")
-		await local_3398(v0, ihabitat.cast(v1), ihabitat.type(ihabitat.cast(v1)), v4)
+		await load_vessels_from_spewer(v0, ihabitat.cast(v1), ihabitat.type(ihabitat.cast(v1)), v4)
 		object.set_int_property(v4, "occupied", 0)
 	else:
 		if PogRuntime.TRACE:

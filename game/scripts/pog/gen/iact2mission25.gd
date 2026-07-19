@@ -219,7 +219,7 @@ func mission_handler() -> Variant:
 	v28 = state.find(self)
 	if not (v28):
 		v28 = state.create(self, 1)
-		await local_15293(v28)
+		await add_state_properties(v28)
 	await local_624(v28)
 	text.add("csv:/text/act_2/act2_mission25")
 	text.add("csv:/text/act_2/act2_mission25_addendum")
@@ -367,7 +367,7 @@ func monitor_lpoint(v0, v1) -> Variant:
 			debug.print_string("iAct2Mission25.monitor_lpoint:STARTED\n")
 		v13 = object.int_property(v1, "lpoint_wingmen_launched")
 		v2 = await local_6155(v0, v1, v10)
-		await local_15948(v2, 3, v10)
+		await create_loiterers(v2, 3, v10)
 		v3 = iship.cast(group.leader(v2))
 		v4 = await local_7475(v3, 30, 20000.0, v10)
 		group.add_group(v2, v4)
@@ -395,15 +395,15 @@ func monitor_lpoint(v0, v1) -> Variant:
 					await iconversation.end()
 					await local_16286(v7, 3, "ini:/sims/ships/independent/heavy_corvette_mca_mk2", v6, v13)
 					v13 = v13 + 3
-					await local_15770(v1, "lpoint_wingmen_launched", v13)
-					await local_15770(v1, "lpoint_first_time", 1)
+					await save(v1, "lpoint_wingmen_launched", v13)
+					await save(v1, "lpoint_first_time", 1)
 				else:
 					if _pog_is_null(await iwingmen.count()):
 						if v13 < v15:
 							await iconversation.one_liner(v3, "name_hoffer", "a2_m25_dialogue_hoffer_here_have_some_wingmen")
 							await local_16286(v7, 3, "ini:/sims/ships/independent/heavy_corvette_mca_mk2", v6, v13)
 							v13 = v13 + 3
-							await local_15770(v1, "lpoint_wingmen_launched", v13)
+							await save(v1, "lpoint_wingmen_launched", v13)
 						else:
 							await iconversation.one_liner(v3, "name_hoffer", "a2_m25_dialogue_hoffer_sorry_no_more_wingmen")
 			if sim.distance_between(v9, v0) <= 2100000.0:
@@ -585,11 +585,11 @@ func monitor_hq(v0, v1) -> Variant:
 			if sim.distance_between(v2, v0) >= 50000.0:
 				continue
 			if sim.is_dead(v0) or isim.is_dying(v0):
-				await local_15770(v1, "hq_destroyed", 1)
+				await save(v1, "hq_destroyed", 1)
 				iregion.destroy(v15)
 				break
 			if object.int_property(v1, "hq_first_time") == 1:
-				await local_15770(v1, "hq_first_time", 0)
+				await save(v1, "hq_first_time", 0)
 				await iconversation.begin()
 				await iconversation.say(0, "name_clay", "a2_m25_dialogue_clay_looks_like_a_big_battle")
 				await iconversation.say(0, "name_cal", "a2_m25_dialogue_cal_were_here_to_help")
@@ -610,7 +610,7 @@ func monitor_hq(v0, v1) -> Variant:
 								v8 = v8 + 1
 							if object.int_property(v1, "hq_gunstar_first_time") == 1:
 								await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_the_gunstars_are_offline")
-								await local_15770(v1, "hq_gunstar_first_time", 0)
+								await save(v1, "hq_gunstar_first_time", 0)
 					else:
 						if v14:
 							v14 = 0
@@ -908,7 +908,7 @@ func local_13971(v0, v1, v2) -> Variant:
 	return v3
 	return 0
 
-func local_15293(v0) -> Variant:
+func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission25.add_state_properties: State is invalid - not adding properties. \n")
@@ -932,7 +932,7 @@ func local_15293(v0) -> Variant:
 	return 0
 	return 0
 
-func local_15770(v0, v1, v2) -> Variant:
+func save(v0, v1, v2) -> Variant:
 	object.set_int_property(v0, v1, v2)
 	if PogRuntime.TRACE:
 		debug.print_string("iAct2Mission25.save: State property ")
@@ -946,7 +946,7 @@ func local_15770(v0, v1, v2) -> Variant:
 	return 0
 	return 0
 
-func local_15948(v0, v1, v2) -> Variant:
+func create_loiterers(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
@@ -1071,7 +1071,7 @@ func monitor_cargo(v0, v1) -> Variant:
 	object.set_string_property(v3, "death_script", "iDeathScript.CriticalShipDeath")
 	iobjectives.add("a2_m25_objectives_defend_destroyer")
 	v11 = 180
-	v12 = _pog_spawn(local_19230.bind(v8, v6, v3, 60))
+	v12 = _pog_spawn(launch_pod_ships.bind(v8, v6, v3, 60))
 	while true:
 		await _pog_wait(1)
 		await local_10588(v0, v2, v6, 6, v7, 6)
@@ -1119,14 +1119,14 @@ func monitor_cargo(v0, v1) -> Variant:
 	await iconversation.one_liner(v3, "", "a2_m25_dialogue_destroyer_cargo_thanks_for_your_help")
 	iai.give_flee_order(v3, v2)
 	object.set_string_property(v3, "death_script", "")
-	await local_15770(v1, "cargo_destroyed", 1)
+	await save(v1, "cargo_destroyed", 1)
 	state.set_progress(v1, state.progress(v1) + 1)
 	await local_624(v1)
 	await ibacktobase.allow()
 	return
 	return 0
 
-func local_19230(v0, v1, v2, v3) -> Variant:
+func launch_pod_ships(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -1470,7 +1470,7 @@ func monitor_shipyard(v0, v1) -> Variant:
 	await iutilities.group_set_cullable(v5, 1)
 	await iconversation.one_liner(0, "name_cal", "a2_m25_dialogue_cal_take_that")
 	await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_well_done_lets_go")
-	await local_15770(v1, "shipyard_destroyed", 1)
+	await save(v1, "shipyard_destroyed", 1)
 	state.set_progress(v1, state.progress(v1) + 1)
 	await ibacktobase.allow()
 	group.destroy(v5, 0)

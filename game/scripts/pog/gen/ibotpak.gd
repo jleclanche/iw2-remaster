@@ -140,13 +140,13 @@ func assign_game_type(v0, v1) -> Variant:
 	v2 = iship.cast(v0)
 	if not _pog_is_null(v2):
 		if _pog_is_null(v1):
-			_pog_detach(_pog_spawn(local_3851.bind(v2)))
+			_pog_detach(_pog_spawn(death_match_behaviour.bind(v2)))
 		else:
 			if v1 == 1:
 				_pog_detach(_pog_spawn(local_4772.bind(v2)))
 			else:
 				if v1 == 2:
-					_pog_detach(_pog_spawn(local_6446.bind(v2)))
+					_pog_detach(_pog_spawn(bomb_tag_behaviour.bind(v2)))
 	else:
 		v3 = group.cast(v0)
 		v4 = group.sim_count(v3)
@@ -154,13 +154,13 @@ func assign_game_type(v0, v1) -> Variant:
 		while v5 < v4:
 			v2 = iship.cast(group.nth_sim(v3, v5))
 			if _pog_is_null(v1):
-				_pog_detach(_pog_spawn(local_3851.bind(v2)))
+				_pog_detach(_pog_spawn(death_match_behaviour.bind(v2)))
 			else:
 				if v1 == 1:
 					_pog_detach(_pog_spawn(local_4772.bind(v2)))
 				else:
 					if v1 == 2:
-						_pog_detach(_pog_spawn(local_6446.bind(v2)))
+						_pog_detach(_pog_spawn(bomb_tag_behaviour.bind(v2)))
 			v5 = v5 + 1
 	return 0
 	return 0
@@ -281,7 +281,7 @@ func local_3530(v0, v1, v2) -> Variant:
 	return 0
 	return 0
 
-func local_3851(v0) -> Variant:
+func death_match_behaviour(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
@@ -425,7 +425,7 @@ func local_6162(v0, v1, v2) -> Variant:
 	return 0
 	return 0
 
-func local_6446(v0) -> Variant:
+func bomb_tag_behaviour(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0

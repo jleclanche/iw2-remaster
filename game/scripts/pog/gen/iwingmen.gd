@@ -951,7 +951,7 @@ func t_fighter_cease_fire() -> Variant:
 	return 0
 	return 0
 
-func local_13741(v0, v1) -> Variant:
+func remove_tfighter(v0, v1) -> Variant:
 	var v2: Variant = 0
 	v2 = ""
 	v2 = object.string_property(v0, "name")
@@ -1095,16 +1095,16 @@ func create_test_t_fighters() -> Variant:
 		0:
 			pass
 		1:
-			list.add_tail(v1, await local_16220("name_az"))
+			list.add_tail(v1, await create_t_fighter("name_az"))
 		2:
-			list.add_tail(v1, await local_16220("name_az"))
-			list.add_tail(v1, await local_16220("name_lori"))
+			list.add_tail(v1, await create_t_fighter("name_az"))
+			list.add_tail(v1, await create_t_fighter("name_lori"))
 	if not (global.exists("g_tfighters_menu_option_enabled")):
 		global.create_bool("g_tfighters_menu_option_enabled", 2, 1)
 	return _pog_clone(v1)
 	return 0
 
-func local_16220(v0) -> Variant:
+func create_t_fighter(v0) -> Variant:
 	var v1: Variant = 0
 	v1 = iship.create("ini:/sims/ships/player/turret_fighter_prefitted", v0)
 	sim.set_cullable(v1, 0)
@@ -1158,12 +1158,12 @@ func t_fighters_attach() -> Variant:
 					v1 = iship.cast(list.get_nth(v5, v7))
 					if sim.is_alive(v1):
 						if not (sim.is_hidden(v1)):
-							await local_17116(v1, v0, idockport.cast(list.get_nth(v4, v7)))
+							await order_tfighter_attach(v1, v0, idockport.cast(list.get_nth(v4, v7)))
 					v7 = v7 + 1
 	return 0
 	return 0
 
-func local_17116(v0, v1, v2) -> Variant:
+func order_tfighter_attach(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
@@ -1196,7 +1196,7 @@ func local_17116(v0, v1, v2) -> Variant:
 						if isim.is_docked(v0):
 							iship.undock_self(v0)
 						iai.give_dock_order_with_dockport(v4, v2)
-						v5 = _pog_spawn(local_13741.bind(v0, v1))
+						v5 = _pog_spawn(remove_tfighter.bind(v0, v1))
 						object.set_handle_property(v0, "docking_task", v5)
 						_pog_detach(v5)
 	return 0
@@ -1226,7 +1226,7 @@ func t_fighters_detach() -> Variant:
 			else:
 				v3 = 0
 				while v3 < v2:
-					await local_18158(iship.cast(list.get_nth(v1, v3)), v0, v4)
+					await undock_tfighter(iship.cast(list.get_nth(v1, v3)), v0, v4)
 					v4 = v4 - 200.0
 					v3 = v3 + 1
 				await local_19618(0, "_launch_", 2)
@@ -1235,7 +1235,7 @@ func t_fighters_detach() -> Variant:
 	return 0
 	return 0
 
-func local_18158(v0, v1, v2) -> Variant:
+func undock_tfighter(v0, v1, v2) -> Variant:
 	if object.property_exists(v0, "attached"):
 		object.remove_property(v0, "attached")
 	else:

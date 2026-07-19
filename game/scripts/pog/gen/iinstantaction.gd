@@ -660,7 +660,7 @@ func local_8219(v0) -> Variant:
 	return
 	return 0
 
-func local_11591() -> Variant:
+func wait_for_ship() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -738,7 +738,7 @@ func main() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iInstantAction.Main: Starting instant action script.\n")
 	text.add("csv:/text/instant_action")
-	await local_11591()
+	await wait_for_ship()
 	return 0
 	return 0
 

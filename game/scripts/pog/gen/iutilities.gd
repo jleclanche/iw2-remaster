@@ -874,7 +874,7 @@ func allow_mission_skipping() -> Variant:
 	return 0
 	return 0
 
-func local_9508() -> Variant:
+func pog() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	v0 = 0
@@ -928,7 +928,7 @@ func local_9845() -> Variant:
 	return 0
 
 func skip_act(v0, v1) -> Variant:
-	await local_9508()
+	await pog()
 	if PogRuntime.TRACE:
 		if global.exists("g_skip_ok") and global.pog_bool("g_skip_ok") == 1:
 			text.add("csv:/text/utils")
@@ -950,7 +950,7 @@ func skip_mission(v0) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("lubdushumubdig!\n")
 	if PogRuntime.TRACE:
-		await local_9508()
+		await pog()
 		if global.exists("g_skip_ok") and global.pog_bool("g_skip_ok") == 1 and global.pog_bool("g_skip_missions_is_ok") == 1:
 			text.add("csv:/text/utils")
 			if global.pog_bool("g_skip_to_specific") == 1:
@@ -1012,7 +1012,7 @@ func g_m_delayed_disabler() -> Variant:
 func super_skip() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	await local_9508()
+	await pog()
 	if PogRuntime.TRACE:
 		text.add("csv:/text/utils")
 		await iconversation.begin()
@@ -1302,7 +1302,7 @@ func wait_on_skip_mission() -> Variant:
 
 func skip_wait_for_bool(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
-	await local_9508()
+	await pog()
 	if PogRuntime.TRACE:
 		if global.exists("g_skip_ok") and global.pog_bool("g_skip_ok") == 1:
 			if global.pog_bool("g_skip_to_specific") == 1:

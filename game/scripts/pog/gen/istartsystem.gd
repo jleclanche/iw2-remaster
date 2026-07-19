@@ -117,7 +117,7 @@ func local_207() -> Variant:
 	return
 	return 0
 
-func local_486() -> Variant:
+func launch_cutscene_handler() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -280,7 +280,7 @@ func local_3258(v0) -> Variant:
 	return 0
 	return 0
 
-func local_3425() -> Variant:
+func create_filtered_habitat_set() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -331,7 +331,7 @@ func local_3425() -> Variant:
 	return _pog_clone(v6)
 	return 0
 
-func local_4240() -> Variant:
+func create_station_regions() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -339,7 +339,7 @@ func local_4240() -> Variant:
 	v3 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.create_station_regions: Initialising traffic control regions...\n")
-	v3 = await local_3425()
+	v3 = await create_filtered_habitat_set()
 	while not (p_set.is_empty(v3)):
 		v1 = p_set.first_element(v3)
 		v0 = imapentity.cast(v1)
@@ -366,7 +366,7 @@ func local_4240() -> Variant:
 	return 0
 	return 0
 
-func local_4761() -> Variant:
+func load_localised_text() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.load_localised_text: Adding localised text...\n")
 	text.add("csv:/text/stock")
@@ -388,7 +388,7 @@ func local_4761() -> Variant:
 	return 0
 	return 0
 
-func local_5110() -> Variant:
+func unload_localised_text() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.unload_localised_text: Removing localised text...\n")
 	text.remove("csv:/text/stock")
@@ -473,7 +473,7 @@ func local_6138() -> Variant:
 	return 0
 	return 0
 
-func local_6598() -> Variant:
+func preload_sims() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.preload_sims: Preloading...\n")
 	sim.pog_preload("ini:/sims/ships/utility/freighter")
@@ -497,7 +497,7 @@ func local_6598() -> Variant:
 	return 0
 	return 0
 
-func local_7005() -> Variant:
+func finish_loadout() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -535,7 +535,7 @@ func local_7005() -> Variant:
 	return 0
 	return 0
 
-func local_7610() -> Variant:
+func strip_player_ship() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -600,7 +600,7 @@ func local_7610() -> Variant:
 	return 0
 	return 0
 
-func local_8720() -> Variant:
+func check_player_ship() -> Variant:
 	var v0: Variant = 0
 	v0 = ""
 	if not _pog_is_null(iship.find_player_ship()):
@@ -810,8 +810,8 @@ func startup_space() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.StartupSpace: Setting up for spaceflight...\n")
 	await local_5678()
-	await local_6598()
-	await local_4761()
+	await preload_sims()
+	await load_localised_text()
 	await local_6138()
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.StartupSpace: Completed\n")
@@ -829,9 +829,9 @@ func final_setup() -> Variant:
 	v3 = 1
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.FinalSetup: Making Performing last minute pre-flight checks...\n")
-	await local_8720()
+	await check_player_ship()
 	await local_12002()
-	await local_7005()
+	await finish_loadout()
 	if _pog_is_null(igame.game_type()):
 		if _pog_is_null(global.pog_int("g_current_act")):
 			if global.exists("g_act0_found_base"):
@@ -849,7 +849,7 @@ func final_setup() -> Variant:
 			sim.place_at(v5, imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault"))
 		if v2:
 			_pog_suspend_all()
-			_pog_detach(_pog_spawn(local_486.bind()))
+			_pog_detach(_pog_spawn(launch_cutscene_handler.bind()))
 		else:
 			igame.enable_blackout(0)
 	v1 = iship.find_player_ship()
@@ -884,8 +884,8 @@ func final_setup() -> Variant:
 func shutdown_space() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iStartSystem.ShutdownSpace: Shutting down spaceflight...\n")
-	await local_7610()
-	await local_5110()
+	await strip_player_ship()
+	await unload_localised_text()
 	await local_5888()
 	global.destroy("g_active_system_name")
 	global.destroy("g_filtered_system_habitats")
@@ -921,9 +921,9 @@ func startup_system() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iStartSystem.StartupSystem: Making new list of traffic locations\n")
 			if global.exists("g_filtered_system_habitats"):
-				global.set_set("g_filtered_system_habitats", await local_3425())
+				global.set_set("g_filtered_system_habitats", await create_filtered_habitat_set())
 			else:
-				global.create_set("g_filtered_system_habitats", 2, await local_3425())
+				global.create_set("g_filtered_system_habitats", 2, await create_filtered_habitat_set())
 		if global.exists("g_active_system_name"):
 			global.set_string("g_active_system_name", v2)
 		else:
@@ -931,7 +931,7 @@ func startup_system() -> Variant:
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iStartSystem.StartupSystem: System hasn't changed\n")
-	await local_4240()
+	await create_station_regions()
 	global.create_list("g_active_location_list", 2, v0)
 	global.create_list("g_old_active_location_list", 2, v0)
 	global.create_int("g_maximum_generated_ships", 1, 30)
@@ -956,7 +956,7 @@ func startup_system() -> Variant:
 				return 0
 		if PogRuntime.TRACE:
 			debug.print_string("iStartSystem.StartupSystem: Starting Jump Accelerator Monitor...\n")
-		_pog_detach(_pog_spawn(local_17606.bind()))
+		_pog_detach(_pog_spawn(jumpgate_shield_monitor.bind()))
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iStartSystem.StartupSystem: System is not Santa Romera - not starting Jump Accelerator Monitor.\n")
@@ -1122,7 +1122,7 @@ func jumpgate_shield_off(v0) -> Variant:
 	return 0
 	return 0
 
-func local_17606() -> Variant:
+func jumpgate_shield_monitor() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	v0 = iship.find_player_ship()

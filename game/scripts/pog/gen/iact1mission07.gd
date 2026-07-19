@@ -247,7 +247,7 @@ func mission_handler() -> Variant:
 	await imissiontracker.add_mission(self, 1, 7)
 	if not (v50):
 		v50 = state.create(self, 1)
-		await local_13155(v50)
+		await add_state_properties(v50)
 	text.add("csv:/text/act_1/act1_mission07")
 	text.add("csv:/text/act_1/act1_mission07_addendum")
 	text.add("csv:/text/act_1/act1_mission06")
@@ -321,7 +321,7 @@ func mission_handler() -> Variant:
 				group.add_group(v15, v17)
 				v32 = await local_12183(v10)
 				group.add_group(v17, v32)
-				v18 = await local_8404(v50, v10, 6000.0)
+				v18 = await create_gunstars(v50, v10, 6000.0)
 				group.add_group(v17, v18)
 				v16 = group.create()
 				group.add_group(v17, v16)
@@ -343,7 +343,7 @@ func mission_handler() -> Variant:
 						if object.bool_property(v50, "give_welcome_message") == 1:
 							iobjectives.set_state("a1_m07_objective_go_to_hoffers", 1)
 							iobjectives.add("a1_m07_objective_arm_gunstars")
-							await local_13806(v50, "give_welcome_message", 0)
+							await save(v50, "give_welcome_message", 0)
 							v47 = 0
 							_pog_spawn(local_22122.bind(v10))
 							v53 = group.sim_count(v18) - 1
@@ -362,16 +362,16 @@ func mission_handler() -> Variant:
 									v53 = v53 + -1
 					if sim.distance_between(v0, v10) > 2000000.0:
 						if object.bool_property(v50, "give_running_away_message") == 1:
-							await local_13806(v50, "give_running_away_message", 0)
+							await save(v50, "give_running_away_message", 0)
 							if object.bool_property(v50, "give_first_running_away_message") == 1:
 								await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_havent_you_got_a_job_to_do")
-								await local_13806(v50, "give_first_running_away_message", 0)
+								await save(v50, "give_first_running_away_message", 0)
 							else:
 								await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_ill_say_it_again_go_back")
 					if sim.distance_between(v0, v10) > 5000000.0:
 						if PogRuntime.TRACE:
 							debug.print_string("iAct1Mission07. Left Hoffers Gap. Destroying Scenery. \n")
-						await local_13806(v50, "give_running_away_message", 1)
+						await save(v50, "give_running_away_message", 1)
 						group.destroy(v17, 1)
 						group.destroy(v16, 1)
 						v47 = 1
@@ -495,7 +495,7 @@ func mission_handler() -> Variant:
 								group.add_sim(v26, v9)
 								sim.place_near(v9, v8, 100.0)
 								sim.point_away(v9, v8)
-								_pog_spawn(local_21400.bind(v8, v9, v27, v13, v12))
+								_pog_spawn(bombing_run_task.bind(v8, v9, v27, v13, v12))
 								v58 = v58 + 1
 								if v45 == 1:
 									v45 = 0
@@ -545,7 +545,7 @@ func mission_handler() -> Variant:
 	return
 	return 0
 
-func local_8404(v0, v1, v2) -> Variant:
+func create_gunstars(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
@@ -759,7 +759,7 @@ func local_12183(v0) -> Variant:
 	return v1
 	return 0
 
-func local_13155(v0) -> Variant:
+func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct1Mission07.add_state_properties: State is invalid - not adding properties. \n")
@@ -789,7 +789,7 @@ func local_13155(v0) -> Variant:
 	return 0
 	return 0
 
-func local_13806(v0, v1, v2) -> Variant:
+func save(v0, v1, v2) -> Variant:
 	object.set_bool_property(v0, v1, v2)
 	if PogRuntime.TRACE:
 		debug.print_string("iAct1Mission07.save: State property ")
@@ -838,7 +838,7 @@ func local_13984(v0, v1, v2, v3, v4) -> Variant:
 	isim.set_faction(v2, v4)
 	iship.weapon_targets_from_contact_list(v2)
 	v8 = v8 + 1
-	await local_13806(v0, object.string_property(v2, "name"), 1)
+	await save(v0, object.string_property(v2, "name"), 1)
 	object.set_int_property(v0, "armed_gunstar_count", v8)
 	await iconversation.one_liner(0, "name_smith", v6)
 	if v8 == 6:
@@ -924,7 +924,7 @@ func local_15436(v0, v1, v2) -> Variant:
 	while v7 < group.sim_count(v3):
 		v4 = iship.cast(group.nth_sim(v3, v7))
 		v5 = iship.cast(group.nth_sim(v1, v8))
-		_pog_spawn(local_16432.bind(v4, v5))
+		_pog_spawn(gunstar_assault_task.bind(v4, v5))
 		v8 = v8 + 1
 		if v8 > group.sim_count(v1):
 			v8 = 0
@@ -932,7 +932,7 @@ func local_15436(v0, v1, v2) -> Variant:
 	return v3
 	return 0
 
-func local_16432(v0, v1) -> Variant:
+func gunstar_assault_task(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
@@ -992,7 +992,7 @@ func local_16432(v0, v1) -> Variant:
 						debug.print_string(object.string_property(group.leader(v5), "name"))
 						debug.print_string(" as new target.  \n")
 					v1 = iship.cast(group.nth_sim(v5, math.random_int(0, group.sim_count(v5))))
-					_pog_spawn(local_16432.bind(v0, v1))
+					_pog_spawn(gunstar_assault_task.bind(v0, v1))
 					return
 				else:
 					if PogRuntime.TRACE:
@@ -1125,7 +1125,7 @@ func local_20254(v0) -> Variant:
 	return v1
 	return 0
 
-func local_21400(v0, v1, v2, v3, v4) -> Variant:
+func bombing_run_task(v0, v1, v2, v3, v4) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0

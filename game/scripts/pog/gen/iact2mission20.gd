@@ -626,7 +626,7 @@ func local_8345(v0, v1) -> Variant:
 	return v2
 	return 0
 
-func local_9094(v0, v1, v2, v3) -> Variant:
+func battle_handler(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
@@ -689,7 +689,7 @@ func local_10049(v0, v1, v2) -> Variant:
 	v5 = group.cast(global.handle("g_convoy_group"))
 	group.add_group(v5, v4)
 	v3 = await local_8345(v0, v1)
-	_pog_detach(_pog_spawn(local_9094.bind(v0, v3, v5, v2)))
+	_pog_detach(_pog_spawn(battle_handler.bind(v0, v3, v5, v2)))
 	return 0
 	return 0
 

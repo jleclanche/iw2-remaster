@@ -699,7 +699,7 @@ func mission_handler() -> Variant:
 	if _pog_is_null(global.exists("g_grassy_knoll_going")) and _pog_is_null(v1):
 		global.create_bool("g_grassy_knoll_going", 1, 1)
 		v1 = state.create(self, 0)
-		await local_12117(v1)
+		await add_state_properties(v1)
 	else:
 		if _pog_is_null(v1):
 			return
@@ -776,7 +776,7 @@ func mission_handler() -> Variant:
 	return
 	return 0
 
-func local_12117(v0) -> Variant:
+func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission10.add_state_properties: State is invalid - not adding properties. \n")

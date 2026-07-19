@@ -222,7 +222,7 @@ func wolfgang_dialogue_handler(v0, v1) -> Variant:
 	return
 	return 0
 
-func local_2720(v0, v1, v2) -> Variant:
+func charlesworthh(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v3 = 0
@@ -582,7 +582,7 @@ func mission_handler() -> Variant:
 		sim.set_cullable(v10, 0)
 	await irangecheck.add_traffic_exception(ihabitat.cast(v4))
 	isim.set_sensor_visibility(isim.cast(v4), 1)
-	_pog_spawn(local_2720.bind(v4, v11, v12))
+	_pog_spawn(charlesworthh.bind(v4, v11, v12))
 	while true:
 		await _pog_wait(1)
 		if state.progress(v12) == 1 and not (v0):

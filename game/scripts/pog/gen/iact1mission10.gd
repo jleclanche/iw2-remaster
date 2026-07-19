@@ -486,7 +486,7 @@ func local_5113(v0, v1) -> Variant:
 	sim.point_at(v5, v6)
 	sim.set_angular_velocity_euler(v5, 120.0, 50.0, 200.0)
 	await ibacktobase.inhibit()
-	await icutsceneutilities.handle_abort(_pog_spawn(local_14738.bind(v6, v2, v4, isim.cast(v0))))
+	await icutsceneutilities.handle_abort(_pog_spawn(starting.bind(v6, v2, v4, isim.cast(v0))))
 	sim.set_collision(v4, 1)
 	iship.remove_pilot(v4)
 	igame.enable_blackout(1)
@@ -893,7 +893,7 @@ func local_10505() -> Variant:
 	return
 	return 0
 
-func local_14738(v0, v1, v2, v3) -> Variant:
+func starting(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0

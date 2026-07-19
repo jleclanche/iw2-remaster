@@ -16,7 +16,7 @@ func _link() -> void:
 	math = api.math
 	string = api.string
 
-func local_0(v0, v1, v2) -> Variant:
+func ini_for_mission(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	v3 = ""
 	v3 = inifile.numbered_string(v0, v1, "mission", v2, "INVALID")
@@ -32,7 +32,7 @@ func local_0(v0, v1, v2) -> Variant:
 	return inifile.create(v3)
 	return 0
 
-func local_251(v0) -> Variant:
+func send_teaser(v0) -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGeneratorSelector.send_teaser - STARTED\n")
 	if PogRuntime.TRACE:
@@ -94,7 +94,7 @@ func select() -> Variant:
 								if PogRuntime.TRACE:
 									debug.print_string("iMissionGeneratorSelector.Select: Mission is available.\n")
 								v6 = v5
-								v1 = await local_0(v0, v3, v6)
+								v1 = await ini_for_mission(v0, v3, v6)
 								if _pog_is_null(v1):
 									if PogRuntime.TRACE:
 										debug.print_string("iMissionGeneratorSelector.Select: INVALID MISSION HANDLE - ABORTING\n")
@@ -104,7 +104,7 @@ func select() -> Variant:
 								if 1:
 									if PogRuntime.TRACE:
 										debug.print_string("iMissionGeneratorSelector.Select:  Mission not met. Checking for teaser... \n")
-									await local_251(v1)
+									await send_teaser(v1)
 									global.set_int(v2, 1)
 									inifile.destroy(v1)
 								else:
@@ -120,7 +120,7 @@ func select() -> Variant:
 								if PogRuntime.TRACE:
 									debug.print_string("iMissionGeneratorSelector.Select:  teased Mission available \n")
 								v6 = v5
-								v1 = await local_0(v0, v3, v6)
+								v1 = await ini_for_mission(v0, v3, v6)
 								if _pog_is_null(v1):
 									if PogRuntime.TRACE:
 										debug.print_string("iMissionGeneratorSelector.Select: INVALID  MISSION HANDLE - ABORTING\n")

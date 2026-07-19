@@ -776,7 +776,7 @@ func monitor() -> Variant:
 				_pc = 4144
 				continue
 		elif _pc == 4123:
-			await local_5167(4)
+			await play_event(4)
 			_pc = 4176
 			continue
 		elif _pc == 4144:
@@ -787,7 +787,7 @@ func monitor() -> Variant:
 				_pc = 4176
 				continue
 		elif _pc == 4160:
-			await local_5167(3)
+			await play_event(3)
 			_pc = 4176
 			continue
 		elif _pc == 4176:
@@ -885,7 +885,7 @@ func monitor() -> Variant:
 				_pc = 4651
 				continue
 		elif _pc == 4632:
-			await local_5167(v15)
+			await play_event(v15)
 			_pc = 4651
 			continue
 		elif _pc == 4651:
@@ -943,7 +943,7 @@ func play(v0, v1, v2) -> Variant:
 	return 0
 	return 0
 
-func local_5167(v0) -> Variant:
+func play_event(v0) -> Variant:
 	var v1: Variant = 0
 	var _pc: int = 5167
 	while true:

@@ -20,7 +20,7 @@ func _link() -> void:
 	math = api.math
 	object = api.object
 
-func local_0() -> Variant:
+func needed_type() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
@@ -75,13 +75,13 @@ func local_0() -> Variant:
 
 func local_813() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 429
 	return 0
 
 func local_865() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 15):
 		0:
 			return 410
@@ -90,13 +90,13 @@ func local_865() -> Variant:
 		2:
 			return 412
 		3:
-			return await local_0()
+			return await needed_type()
 	return 413
 	return 0
 
 func local_1030() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 25)):
 		return 445
 	if 1 == math.random_int(0, 25):
@@ -136,7 +136,7 @@ func local_1030() -> Variant:
 
 func local_1310() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 4):
 		0:
 			return 416
@@ -153,7 +153,7 @@ func local_1310() -> Variant:
 
 func local_1469() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 4)):
 		return 82
 	if 1 == math.random_int(0, 4):
@@ -169,7 +169,7 @@ func local_1469() -> Variant:
 
 func local_1616() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 25):
 		0:
 			return 400
@@ -182,7 +182,7 @@ func local_1616() -> Variant:
 
 func local_1754() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 35)):
 		return 400
 	if 1 == math.random_int(0, 35):
@@ -228,7 +228,7 @@ func local_1754() -> Variant:
 
 func local_2077() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 25)):
 		return 400
 	if 1 == math.random_int(0, 25):
@@ -250,7 +250,7 @@ func local_2077() -> Variant:
 
 func local_2268() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 25):
 		0:
 			return 400
@@ -263,7 +263,7 @@ func local_2268() -> Variant:
 
 func local_2406() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 25)):
 		return 446
 	if 1 == math.random_int(0, 25):
@@ -285,7 +285,7 @@ func local_2406() -> Variant:
 
 func local_2581() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 25)):
 		return 410
 	if 1 == math.random_int(0, 25):
@@ -317,7 +317,7 @@ func local_2581() -> Variant:
 
 func local_2808() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 7):
 		0:
 			return 447
@@ -340,7 +340,7 @@ func local_2808() -> Variant:
 
 func local_3017() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 4):
 		0:
 			return 421
@@ -357,7 +357,7 @@ func local_3017() -> Variant:
 
 func local_3422() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 15)):
 		return 428
 	if 1 == math.random_int(0, 15):
@@ -395,7 +395,7 @@ func local_3422() -> Variant:
 
 func local_3688() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 15):
 		0:
 			return 431
@@ -408,7 +408,7 @@ func local_3688() -> Variant:
 
 func local_3826() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 15)):
 		return 464
 	if 1 == math.random_int(0, 15):
@@ -434,7 +434,7 @@ func local_3826() -> Variant:
 
 func local_4035() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 20)):
 		return 439
 	if 1 == math.random_int(0, 20):
@@ -470,7 +470,7 @@ func local_4035() -> Variant:
 
 func local_4305() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 8):
 		0:
 			return 407
@@ -483,7 +483,7 @@ func local_4305() -> Variant:
 
 func local_4443() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 5)):
 		return 347
 	return 442
@@ -491,7 +491,7 @@ func local_4443() -> Variant:
 
 func local_4548() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 20)):
 		return 413
 	if 1 == math.random_int(0, 20):
@@ -525,7 +525,7 @@ func local_4548() -> Variant:
 
 func local_4833() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 224)):
 		return 344
 	if 1 == math.random_int(0, 224):
@@ -981,7 +981,7 @@ func local_4833() -> Variant:
 
 func local_7438() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 7):
 		0:
 			return 18
@@ -1004,7 +1004,7 @@ func local_7438() -> Variant:
 
 func local_7640() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 28):
 		0:
 			return 52
@@ -1069,7 +1069,7 @@ func local_7640() -> Variant:
 
 func local_8181() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 39)):
 		return 104
 	if 1 == math.random_int(0, 39):
@@ -1153,7 +1153,7 @@ func local_8181() -> Variant:
 
 func local_8922() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 36)):
 		return 243
 	if 1 == math.random_int(0, 36):
@@ -1233,7 +1233,7 @@ func local_8922() -> Variant:
 
 func local_9454() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 85)):
 		return 473
 	if 1 == math.random_int(0, 85):
@@ -1395,7 +1395,7 @@ func local_9454() -> Variant:
 
 func local_10483() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 70)):
 		return 327
 	if 1 == math.random_int(0, 70):
@@ -1523,7 +1523,7 @@ func local_10483() -> Variant:
 
 func local_11250() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 47)):
 		return 151
 	if 1 == math.random_int(0, 47):
@@ -1625,7 +1625,7 @@ func local_11250() -> Variant:
 
 func local_11962() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 50)):
 		return 470
 	if 1 == math.random_int(0, 50):
@@ -1697,7 +1697,7 @@ func local_11962() -> Variant:
 
 func local_12410() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 6)):
 		return 350
 	if 1 == math.random_int(0, 6):
@@ -1717,7 +1717,7 @@ func local_12410() -> Variant:
 
 func local_12587() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 13):
 		0:
 			return 374
@@ -1752,7 +1752,7 @@ func local_12587() -> Variant:
 
 func local_12899() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 18):
 		0:
 			return 105
@@ -1797,7 +1797,7 @@ func local_12899() -> Variant:
 
 func local_13295() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 8)):
 		return 352
 	if 1 == math.random_int(0, 8):
@@ -1821,7 +1821,7 @@ func local_13295() -> Variant:
 
 func local_13511() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 8)):
 		return 352
 	if 1 == math.random_int(0, 8):
@@ -1845,7 +1845,7 @@ func local_13511() -> Variant:
 
 func local_13727() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 6):
 		0:
 			return 413
@@ -1860,7 +1860,7 @@ func local_13727() -> Variant:
 
 func local_13880() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 25)):
 		return 459
 	if 1 == math.random_int(0, 25):
@@ -1906,7 +1906,7 @@ func local_13880() -> Variant:
 
 func local_14299() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 25):
 		0:
 			return 397
@@ -1931,7 +1931,7 @@ func local_14299() -> Variant:
 
 func local_14539() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 13):
 		0:
 			return 265
@@ -1966,7 +1966,7 @@ func local_14539() -> Variant:
 
 func local_14851() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 16):
 		0:
 			return 265
@@ -2007,7 +2007,7 @@ func local_14851() -> Variant:
 
 func local_15211() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if 1 == math.random_int(0, 61):
 		return 327
 	if 2 == math.random_int(0, 61):
@@ -2135,7 +2135,7 @@ func local_15211() -> Variant:
 
 func local_16289() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 8):
 		0:
 			return 547
@@ -2160,7 +2160,7 @@ func local_16289() -> Variant:
 
 func local_16516() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 13):
 		1:
 			return 53
@@ -2193,7 +2193,7 @@ func local_16516() -> Variant:
 
 func local_16800() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 2):
 		0:
 			return 316
@@ -2206,7 +2206,7 @@ func local_16800() -> Variant:
 
 func local_16923() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 2):
 		0:
 			return 316
@@ -2219,7 +2219,7 @@ func local_16923() -> Variant:
 
 func local_17046() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -2230,7 +2230,7 @@ func local_17046() -> Variant:
 
 func local_17152() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -2241,7 +2241,7 @@ func local_17152() -> Variant:
 
 func local_17258() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 89)):
 		return 3
 	if 1 == math.random_int(0, 89):
@@ -2427,7 +2427,7 @@ func local_17258() -> Variant:
 
 func local_18331() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 2):
 		0:
 			return 2
@@ -2440,7 +2440,7 @@ func local_18331() -> Variant:
 
 func local_18453() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 14)):
 		return 2
 	if 1 == math.random_int(0, 14):
@@ -2476,7 +2476,7 @@ func local_18453() -> Variant:
 
 func local_18705() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 25)):
 		return 2
 	if 1 == math.random_int(0, 25):
@@ -2534,7 +2534,7 @@ func local_18705() -> Variant:
 
 func local_19106() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 14)):
 		return 2
 	if 1 == math.random_int(0, 14):
@@ -2570,7 +2570,7 @@ func local_19106() -> Variant:
 
 func local_19358() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 5)):
 		return 401
 	if 1 == math.random_int(0, 5):
@@ -2588,7 +2588,7 @@ func local_19358() -> Variant:
 
 func local_19501() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 6
 	return 0
 
@@ -2598,7 +2598,7 @@ func local_19552() -> Variant:
 
 func local_19561() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 315
@@ -2617,7 +2617,7 @@ func local_19561() -> Variant:
 
 func local_19733() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 315
@@ -2636,7 +2636,7 @@ func local_19733() -> Variant:
 
 func local_19905() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 15):
 		0:
 			return 315
@@ -2659,7 +2659,7 @@ func local_19905() -> Variant:
 
 func local_20124() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 4):
 		0:
 			return 7
@@ -2676,7 +2676,7 @@ func local_20124() -> Variant:
 
 func local_20279() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -2695,7 +2695,7 @@ func local_20279() -> Variant:
 
 func local_20453() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if 1 == math.random_int(0, 64):
 		return 18
 	if 2 == math.random_int(0, 64):
@@ -2828,12 +2828,12 @@ func local_20453() -> Variant:
 	return 0
 
 func local_21589() -> Variant:
-	return await local_0()
+	return await needed_type()
 	return 0
 
 func local_21609() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 179)):
 		return 51
 	if 1 == math.random_int(0, 179):
@@ -3197,7 +3197,7 @@ func local_21609() -> Variant:
 
 func local_24723() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 3):
 		0:
 			return 426
@@ -3212,13 +3212,13 @@ func local_24723() -> Variant:
 
 func local_24865() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 0
 	return 0
 
 func local_24915() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 7
@@ -3229,7 +3229,7 @@ func local_24915() -> Variant:
 
 func local_25021() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 60)):
 		return 41
 	if 1 == math.random_int(0, 60):
@@ -3357,7 +3357,7 @@ func local_25021() -> Variant:
 
 func local_25939() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3376,7 +3376,7 @@ func local_25939() -> Variant:
 
 func local_26111() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3395,7 +3395,7 @@ func local_26111() -> Variant:
 
 func local_26283() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3414,7 +3414,7 @@ func local_26283() -> Variant:
 
 func local_26455() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3433,7 +3433,7 @@ func local_26455() -> Variant:
 
 func local_26629() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3452,7 +3452,7 @@ func local_26629() -> Variant:
 
 func local_26804() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3471,7 +3471,7 @@ func local_26804() -> Variant:
 
 func local_26979() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3490,7 +3490,7 @@ func local_26979() -> Variant:
 
 func local_27154() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 426
@@ -3509,7 +3509,7 @@ func local_27154() -> Variant:
 
 func local_27329() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 3):
 		0:
 			return 426
@@ -3524,7 +3524,7 @@ func local_27329() -> Variant:
 
 func local_27471() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 6):
 		0:
 			return 426
@@ -3545,13 +3545,13 @@ func local_27471() -> Variant:
 
 func local_27663() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 426
 	return 0
 
 func local_27715() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 17):
 		0:
 			return 426
@@ -3594,7 +3594,7 @@ func local_27715() -> Variant:
 
 func local_28095() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 61)):
 		return 426
 	if 1 == math.random_int(0, 61):
@@ -3724,13 +3724,13 @@ func local_28095() -> Variant:
 
 func local_29094() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 426
 	return 0
 
 func local_29146() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 68)):
 		return 476
 	if 1 == math.random_int(0, 68):
@@ -3874,7 +3874,7 @@ func local_29146() -> Variant:
 
 func local_30145() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if 1 == math.random_int(0, 15):
 		return 538
 	if 2 == math.random_int(0, 15):
@@ -3910,7 +3910,7 @@ func local_30145() -> Variant:
 
 func local_30419() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -3921,7 +3921,7 @@ func local_30419() -> Variant:
 
 func local_30525() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -3932,7 +3932,7 @@ func local_30525() -> Variant:
 
 func local_30631() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -3943,7 +3943,7 @@ func local_30631() -> Variant:
 
 func local_30737() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -3963,7 +3963,7 @@ func local_30843() -> Variant:
 
 func local_30907() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -3974,7 +3974,7 @@ func local_30907() -> Variant:
 
 func local_31013() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -3985,7 +3985,7 @@ func local_31013() -> Variant:
 
 func local_31119() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -3996,7 +3996,7 @@ func local_31119() -> Variant:
 
 func local_31225() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -4007,7 +4007,7 @@ func local_31225() -> Variant:
 
 func local_31331() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 1):
 		0:
 			return 316
@@ -4018,7 +4018,7 @@ func local_31331() -> Variant:
 
 func local_31437() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 29)):
 		return 316
 	if 1 == math.random_int(0, 29):
@@ -4084,7 +4084,7 @@ func local_31437() -> Variant:
 
 func local_31882() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 28):
 		0:
 			return 41
@@ -4149,7 +4149,7 @@ func local_31882() -> Variant:
 
 func local_32420() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 29)):
 		return 3
 	if 1 == math.random_int(0, 29):
@@ -4219,13 +4219,13 @@ func local_32967() -> Variant:
 
 func local_32976() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 7
 	return 0
 
 func local_33027() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 8):
 		0:
 			return 536
@@ -4250,7 +4250,7 @@ func local_33027() -> Variant:
 
 func local_33254() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 8):
 		0:
 			return 536
@@ -4275,7 +4275,7 @@ func local_33254() -> Variant:
 
 func local_33481() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 8):
 		0:
 			return 536
@@ -4300,7 +4300,7 @@ func local_33481() -> Variant:
 
 func local_33708() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 30):
 		0:
 			return 536
@@ -4369,7 +4369,7 @@ func local_33708() -> Variant:
 
 func local_34309() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 19):
 		0:
 			return 119
@@ -4416,13 +4416,13 @@ func local_34309() -> Variant:
 
 func local_34714() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 7
 	return 0
 
 func local_34765() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 89)):
 		return 3
 	if 1 == math.random_int(0, 89):
@@ -4608,7 +4608,7 @@ func local_34765() -> Variant:
 
 func local_35838() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 89)):
 		return 3
 	if 1 == math.random_int(0, 89):
@@ -4794,7 +4794,7 @@ func local_35838() -> Variant:
 
 func local_36911() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 4)):
 		return 317
 	if 1 == math.random_int(0, 4):
@@ -4810,7 +4810,7 @@ func local_36911() -> Variant:
 
 func local_37053() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 22):
 		0:
 			return 547
@@ -4863,13 +4863,13 @@ func local_37053() -> Variant:
 
 func local_37509() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	return 7
 	return 0
 
 func local_37560() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 1
@@ -4888,7 +4888,7 @@ func local_37560() -> Variant:
 
 func local_37730() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 3):
 		0:
 			return 426
@@ -4903,7 +4903,7 @@ func local_37730() -> Variant:
 
 func local_37871() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 12):
 		0:
 			return 1
@@ -4936,7 +4936,7 @@ func local_37871() -> Variant:
 
 func local_38159() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 9):
 		0:
 			return 1
@@ -4963,7 +4963,7 @@ func local_38159() -> Variant:
 
 func local_38395() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 5):
 		0:
 			return 1
@@ -6107,7 +6107,7 @@ func find_mini_cargo_for_location() -> Variant:
 				_pc = 74581
 				continue
 		elif _pc == 74563:
-			return await local_0()
+			return await needed_type()
 		elif _pc == 74581:
 			_pc = 76338
 			continue
@@ -7399,7 +7399,7 @@ func find_mini_cargo_for_location() -> Variant:
 
 func cheap_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 74)):
 		return 4
 	if 1 == math.random_int(0, 74):
@@ -7555,7 +7555,7 @@ func cheap_cargo_generator() -> Variant:
 
 func medium_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 154)):
 		return 383
 	if 1 == math.random_int(0, 154):
@@ -7869,7 +7869,7 @@ func medium_cargo_generator() -> Variant:
 
 func high_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 146):
 		0:
 			return 553
@@ -8166,7 +8166,7 @@ func high_cargo_generator() -> Variant:
 
 func very_high_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 44):
 		0:
 			return 333
@@ -8263,7 +8263,7 @@ func very_high_cargo_generator() -> Variant:
 
 func supply_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	if _pog_is_null(math.random_int(0, 100)):
 		return 11
 	if 1 == math.random_int(0, 100):
@@ -8471,7 +8471,7 @@ func supply_cargo_generator() -> Variant:
 
 func military_supply_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
-		return await local_0()
+		return await needed_type()
 	match math.random_int(0, 24):
 		0:
 			return 482
