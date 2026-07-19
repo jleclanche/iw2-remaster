@@ -8,6 +8,7 @@ extends Node3D
 #
 # @element icTurret
 # @element iiGun
+# @element icSlugThrower
 # @element icBeamProjector
 # @element icBeam
 # @element icBeamAvatar
@@ -17,11 +18,6 @@ extends Node3D
 #   FUN_10034200). Only sims/ships/player/turret_fighter*.ini use it; the
 #   remote-piloting/carrier loadout system that launches them is not built.
 #   Should move to game/scripts/element_markers.gd.
-# @element-stub icSlugThrower -- GENUINE GAP: the ammo-counted gun
-#   (iiGun + max_ammo_count/ammo_count at +0xd0/+0xd4, Fire 0x100327f0
-#   decrements, IsReadyToFire 0x10032750 returns 8 on empty). No NPC in the
-#   flown scenes mounts one; the player fitting screen that would supply ammo
-#   is not built. Should move to game/scripts/element_markers.gd.
 
 # --- iiGun class statics (flux.ini [iiGun]; registered at 0x10034c20) --------
 const MIN_TRAVEL_TIME := 0.4      # m_min_travel_time (flux.ini; FindAimPoint 0x10035170)
@@ -93,9 +89,14 @@ static func _f(props: Dictionary, key: String, dft: float) -> float:
 static func bolt_spec(tpl: String) -> Dictionary:
 	var ini: Dictionary = ShipSystems.read_ini(tpl)
 	var p: Dictionary = ini["props"]
+	# The fire sound is the weapon's own FcSoundNode (play_channel=fire), which
+	# weapons.gd already carries per bolt class; a gatling must not report as a
+	# light PBC. Unknown bolts keep the light PBC as before.
+	var known: Dictionary = PbcWeapons.BOLT_BY_PROJECTILE.get(tpl.get_file(), {})
 	return {"damage": _f(p, "damage", 0.0), "penetration": _f(p, "penetration", 0.0),
 		"half_time": _f(p, "half_time", 2.0), "speed": _f(p, "speed", 6000.0),
 		"lifetime": _f(p, "lifetime", 1.6),
+		"wav": str(known.get("wav", "audio/sfx/light_pbc.wav")),
 		"bypass_shields": int(_f(p, "bypass_shields", 0.0)) != 0}
 
 # a gun mount: icTurret (slews) or icCannon (fixed, wide fire arc -- the
@@ -114,6 +115,11 @@ static func _make_gun(tpl: String, sysref: Dictionary, pos: Vector3,
 		"capacity": _f(p, "capacity", 0.0),
 		"cost": _f(p, "shot_energy_cost", 0.0),
 		"power": _f(p, "power", 0.0),
+		# icSlugThrower's ammo pair (+0xd0 max, +0xd4 current, both ints;
+		# ctor 0x10032660). -1 = not ammo-limited, the convention
+		# ship_systems.gd:409 already uses. nps_assault_cannon starts 500/1000.
+		"ammo": int(_f(p, "ammo_count", _f(p, "max_ammo_count", -1.0))),
+		"ammo_max": int(_f(p, "max_ammo_count", -1.0)),
 		# icTurret ctor defaults (0x10032d80): reacquire FLT_MAX, headings
 		# -45/45, elevations 0/45, velocities 0
 		"reacq_time": _f(p, "reacquire_time", 3.4e38),
@@ -164,7 +170,12 @@ func _battery_for_ship(ai: AiShip) -> Dictionary:
 		var cls := str(s.get("class", ""))
 		var tpl := str(s.get("template", ""))
 		var pos: Vector3 = s.get("pos", Vector3.ZERO)
-		if cls == "icTurret":
+		# icSlugThrower is an iiGun with an ammo store, so it belongs in the
+		# battery exactly like a turret; `turret` below is false for it, which
+		# routes it down the fixed-mount branch (no slew), as icCannon does.
+		# 20 shipped NPC hulls mount nps_assault_cannon -- without this they
+		# fell through to ai_ship.gd's generic 0.5 s PBC bolt.
+		if cls == "icTurret" or cls == "icSlugThrower":
 			guns.append(_make_gun(tpl, s, pos, _null_basis(ai, s)))
 		elif cls == "icBeamProjector":
 			beams.append(_make_beam(tpl, s, pos, _null_basis(ai, s)))
@@ -462,6 +473,11 @@ func _step_gun(b: Dictionary, g: Dictionary, base: Transform3D, armed: bool,
 		return
 	if float(g["power"]) > 0.0 and float(g["energy"]) < float(g["cost"]):
 		return
+	# icSlugThrower::IsReadyToFire 0x10032750 returns 8 on an empty store: the
+	# gun is skipped, with no auto-switch and no reload (refill is cargo-side,
+	# the pod_template key)
+	if int(g.get("ammo", -1)) == 0:
+		return
 	var owner: Node3D = b["owner"]
 	if owner is AiShip and (owner as AiShip).sys != null:
 		var sys: ShipSystems = (owner as AiShip).sys
@@ -499,6 +515,8 @@ func _step_gun(b: Dictionary, g: Dictionary, base: Transform3D, armed: bool,
 	# --- Fire (icTurret::Fire 0x100337d0 -> iiGun::Fire 0x100357e0) --------
 	g["energy"] = maxf(0.0, float(g["energy"]) - float(g["cost"]))
 	g["clock"] = 0.0
+	if int(g.get("ammo", -1)) > 0:
+		g["ammo"] = int(g["ammo"]) - 1  # icSlugThrower::Fire 0x100327f0
 	# the bolt flies at the SOLVED speed; lifetime and half_time scale by
 	# speed/solved so range in metres is preserved (0x10035ad0 block)
 	var spec: Dictionary = bolt.duplicate()
@@ -509,7 +527,7 @@ func _step_gun(b: Dictionary, g: Dictionary, base: Transform3D, armed: bool,
 	var dir := (muzzle * sol - muzzle.origin).normalized()
 	var shooter: Node3D = owner if owner != null else self
 	main.weapons._spawn_at(shooter, muzzle.origin, dir, _owner_vel(b), spec)
-	main.audio.play("audio/sfx/light_pbc.wav", -10.0)
+	main.audio.play(str(bolt.get("wav", "audio/sfx/light_pbc.wav")), -10.0)
 	var shots: Array = g["fired"]
 	shots.append(_time)
 	if shots.size() > 32:

@@ -1028,6 +1028,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_tow_ride",
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
+	&"_ms_gatling",
 	&"_ms_lazy_name",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
@@ -1491,6 +1492,27 @@ func _ms_pod_spill_assert(_delta: float) -> void:
 	elif demo_t > 20.0:
 		_mech("pod-spill", false, "no pods %d s after the kill" % int(demo_t))
 		_mech_next()
+
+func _ms_gatling(_delta: float) -> void:
+	# icSlugThrower is an ammo-counted iiGun. 20 shipped NPC hulls mount
+	# nps_assault_cannon; it must build as a battery gun carrying its own store
+	# and its own fire sound, not fall through to the generic PBC.
+	const TPL := "ini:/subsims/systems/nonplayer/nps_assault_cannon"
+	var g: Dictionary = Turrets._make_gun(TPL, {}, Vector3.ZERO, Basis.IDENTITY)
+	var bolt: Dictionary = g["bolt"]
+	var ok: bool = g["cls"] == "icSlugThrower" \
+			and int(g["ammo"]) == 500 and int(g["ammo_max"]) == 1000 \
+			and not bool(g["turret"]) \
+			and absf(float(g["refire"]) - 0.5) < 0.001 \
+			and absf(float(g["h_arc"]) - 30.0) < 0.001 \
+			and absf(float(bolt["damage"]) - 160.0) < 0.001 \
+			and str(bolt["wav"]).ends_with("gatling.wav")
+	_mech("gatling-gun", ok,
+		"ammo %d/%d refire %.2f arc %.0f dmg %.0f %s"
+			% [int(g["ammo"]), int(g["ammo_max"]), float(g["refire"]),
+			float(g["h_arc"]), float(bolt["damage"]),
+			str(bolt["wav"]).get_file()])
+	_mech_next()
 
 func _ms_lazy_name(_delta: float) -> void:
 	# FcLocalisedText::Field runs at DISPLAY time, so a sim created BEFORE the
