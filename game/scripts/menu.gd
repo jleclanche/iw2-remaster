@@ -786,6 +786,15 @@ func handle(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not visible:
 		return
+	# The scripts dismiss the PDA themselves and know nothing about this wrapper:
+	# SPFlightPDAScreen_OnResume is nothing but gui.PopScreen (ipdagui.pog:414).
+	# That took our screen down and left the front-end chrome standing with no
+	# controls on it -- RESUME "switching to an empty menu". So the menu follows
+	# its screen: once the PDA we raised is gone, we are gone.
+	if _pda_up and _pog_screen_up() == false:
+		_pda_up = false
+		close()
+		return
 	_bust_t += delta
 	# dossier scroll: 18 px/s at native res (DAT_10117d40, icMovie::Tick),
 	# scaled with the fixed-pixel page

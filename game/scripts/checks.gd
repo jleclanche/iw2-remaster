@@ -471,6 +471,21 @@ func _newgametest(_delta: float) -> void:
 				print("NEWGAMETEST: %s — PDA comes back (%s)"
 					% ["PASS" if back != null else "FAIL",
 						"none" if back == null else back.name])
+				# INSTANT ACTION goes through igui.OverlayCustomScreen, which is
+				# a POG function, not a native: it sets g_custom_gui_screen and
+				# overlays icCustomGUIScreen, whose builder IS that global
+				# (igui.pog:748, ui.gd:468). parity.md had this down as a
+				# missing native; it was ported all along.
+				var ia: PogUi.PogWindow = _ngt_button(
+					"iPDAGUI.SPMainPDAScreen_OnInstant")
+				if ia != null:
+					m.pog_rt.ui.activate(ia)
+					var ias: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+					var rows: int = ias.windows.size() if ias != null else 0
+					print("NEWGAMETEST: %s — INSTANT ACTION builds (%s, %d windows)"
+						% ["PASS" if rows > 0 else "FAIL",
+							"none" if ias == null else ias.name, rows])
+					m.pog_rt.native("gui.popscreen", [])
 				var start: PogUi.PogWindow = _ngt_button(
 					"iPDAGUI.SPMainPDAScreen_OnStart")
 				if start == null:
@@ -504,8 +519,36 @@ func _newgametest(_delta: float) -> void:
 				var ok: bool = (steps > 0 or driven) and spoke
 				print("NEWGAMETEST: %s — steps=%d, opening dialogue up=%s"
 					% ["PASS" if ok else "FAIL", steps, spoke])
-				_ngt_stage = 0
-				get_tree().quit(0 if ok else 1)
+				if not ok:
+					_ngt_stage = 0
+					get_tree().quit(1)
+					return
+				# Now the PAUSE menu, which is a DIFFERENT builder
+				# (icSPFlightPDAScreen: RESUME / LOAD / OPTIONS / QUIT,
+				# ipdagui.pog:376) and was never covered by anything.
+				m.menu.open()
+				var res: PogUi.PogWindow = _ngt_button(
+					"iPDAGUI.SPFlightPDAScreen_OnResume")
+				var scrn: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+				print("NEWGAMETEST: %s — pause menu is the flight PDA (%s, RESUME=%s)"
+					% ["PASS" if res != null else "FAIL",
+						"none" if scrn == null else scrn.name, res != null])
+				if res == null:
+					get_tree().quit(1)
+					return
+				m.pog_rt.ui.activate(res)
+				_ngt_stage = 2
+		2:
+			# SPFlightPDAScreen_OnResume is nothing but gui.PopScreen, so the
+			# menu has to notice its own screen went away and stand down --
+			# otherwise RESUME leaves the front-end chrome up with no controls
+			# on it, which is exactly what it did.
+			var closed: bool = not m.menu.visible and not get_tree().paused
+			print("NEWGAMETEST: %s — RESUME returns to flight (menu=%s paused=%s)"
+				% ["PASS" if closed else "FAIL", m.menu.visible,
+					get_tree().paused])
+			_ngt_stage = 0
+			get_tree().quit(0 if closed else 1)
 	if demo_t > 40.0:
 		print("NEWGAMETEST: TIMEOUT stage ", _ngt_stage)
 		get_tree().quit(1)
