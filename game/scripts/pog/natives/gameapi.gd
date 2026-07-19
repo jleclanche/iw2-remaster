@@ -1025,14 +1025,15 @@ func _g_move_player_base(_t, a: Array) -> Variant:
 # and the CD-key / session / network calls belong to the lobby.
 # @stub igame.CreateFog
 # @stub igame.DestroyFog
-# @stub igame.SessionName
 # @stub igame.SetSessionName
-# @stub igame.IsMultiplayerOnly
-# @stub igame.CDKey
 # @stub igame.SetCDKey
-# @stub igame.ServerAddress
 # @stub igame.JoinNetworkGame
 # @stub igame.JoinNetworkGameFromLobby
+## FALSE, and that is the real answer, not a placeholder: the remaster is
+## the single-player campaign, so the build is never multiplayer-only.
+## SPMainPDAScreen gates START NEW GAME and friends on `!IsMultiplayerOnly()`
+## (ipdagui.pog:44), so this one is load-bearing for the front end.
+# @native igame.IsMultiplayerOnly
 func _g_noop(_t, _a: Array) -> Variant:
 	return 0
 

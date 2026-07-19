@@ -477,7 +477,6 @@ func _stream_is_playing_url(_t, a: Array) -> Variant:
 # @stub imultiplay.AddPowerupWeapon
 # @stub imultiplay.ServerMapListItem
 # @stub imultiplay.ServerResetTeams
-# @stub imultiplay.NetworkIsLobbySession
 # @stub imultiplay.RemoteLinkTo
 # @stub imultiplay.ClientSetLastSession
 # @stub imultiplay.ClientOptionsSave
@@ -537,6 +536,11 @@ func _stream_is_playing_url(_t, a: Array) -> Variant:
 # @stub imultiplay.ServerBrowserValidateKey
 # @stub imultiplay.ServerAppTerminate
 # @stub imultiplay.ClientIsTeamGame
+## FALSE, and correct: there is no network session, so we are never sitting
+## in a multiplayer lobby. SPMainPDAScreen's first branch tests it
+## (ipdagui.pog:29) and a wrong answer sends the whole builder down the
+## multiplayer path -- which is exactly what igame.SessionName did.
+# @native imultiplay.NetworkIsLobbySession
 func _mp(_t, _a: Array) -> Variant:
 	return 0
 

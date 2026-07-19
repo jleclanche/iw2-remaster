@@ -1617,13 +1617,9 @@ func scroller_done(win: PogWindow) -> void:
 # Presentation we deliberately do not reproduce. SetWindowStateTextures takes 38
 # arguments -- a nine-patch atlas per widget state -- and the remaster has its own
 # look; the background movies are the base's animated backdrops.
-# @stub gui.SetWindowStateTextures
-# @stub gui.SetShadyBarWidth
-# @stub gui.SetRHSShadyBarWidth
 # @stub gui.PlayBackgroundMovie
 # @stub gui.StopBackgroundMovie
 # @stub gui.StopAllMovies
-# @stub gui.TextWindowBack
 # @stub gui.SetEditBoxCursorToEnd -- our caret always sits at the end of the
 #   text (base_screens draws it there), which is exactly where SetCursorToEnd
 #   (flux @ 0x78c10, SetCursorFromPoint(100000,100000)) put it.

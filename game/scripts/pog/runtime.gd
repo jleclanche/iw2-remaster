@@ -123,11 +123,73 @@ func bind(fqn: String, fn: Callable) -> void:
 
 ## Invoke a native. The generated facades in PogNativeApi call through here, so
 ## an unimplemented native fails loudly instead of silently returning zero.
+## The natives marked `# @stub` in scripts/pog/natives/, read out of the source
+## so the set can never drift from the markers. Lower-cased to match `natives`.
+static var _stubs: Dictionary = {}
+static var _stubs_loaded := false
+## Which stubs have already been reported, so a stub on a per-frame path warns
+## once rather than every tick. `--stubtrace` reports every call instead.
+static var _stub_seen: Dictionary = {}
+static var _stub_trace := false
+
+
+## A stub is bound and returns 0, which is indistinguishable from a real answer:
+## igame.GotPlayDisk answered "no disc" for months and silently deleted four
+## items from the main menu; igame.SessionName returned the int 0 where the
+## script compares against "" and sent the whole front-end builder down the
+## multiplayer branch. Neither crashed, neither logged. So say so, once, the
+## first time each one is actually reached -- an unimplemented native that
+## nothing calls is not worth a word, and one that IS called is worth a warning.
+static func _load_stubs() -> void:
+	if _stubs_loaded:
+		return
+	_stubs_loaded = true
+	_stub_trace = "--stubtrace" in OS.get_cmdline_user_args()
+	var dir := DirAccess.open("res://scripts/pog/natives")
+	if dir == null:
+		return
+	for f in dir.get_files():
+		if not f.ends_with(".gd"):
+			continue
+		var text := FileAccess.get_file_as_string(
+				"res://scripts/pog/natives/".path_join(f))
+		for line in text.split("\n"):
+			var t := (line as String).strip_edges()
+			if not t.begins_with("# @stub"):
+				continue
+			# `# @stub gui.SetEditBoxCursorToEnd -- prose...`: the name is the
+			# first token, anything after it is a note to the reader.
+			var rest := t.substr(7).strip_edges()
+			if rest.is_empty():
+				continue
+			_stubs[rest.split(" ")[0].to_lower()] = f
+	# A name marked BOTH @stub and @native is a stale marker, not a stub: the
+	# implementation landed and the old line was never deleted. @native wins, so
+	# documentation rot cannot manufacture a false warning.
+	for f2 in dir.get_files():
+		if not f2.ends_with(".gd"):
+			continue
+		var text2 := FileAccess.get_file_as_string(
+				"res://scripts/pog/natives/".path_join(f2))
+		for line2 in text2.split("\n"):
+			var t2 := (line2 as String).strip_edges()
+			if not t2.begins_with("# @native"):
+				continue
+			var rest2 := t2.substr(9).strip_edges()
+			if not rest2.is_empty():
+				_stubs.erase(rest2.split(" ")[0].to_lower())
+
+
 func native(fqn: String, args: Array) -> Variant:
 	var fn: Callable = natives.get(fqn, Callable())
 	if not fn.is_valid():
 		push_error("POG: native %s is not implemented" % fqn)
 		return 0
+	_load_stubs()
+	if _stubs.has(fqn) and (_stub_trace or not _stub_seen.has(fqn)):
+		_stub_seen[fqn] = true
+		push_warning(("POG STUB CALLED: %s (natives/%s) returns a placeholder; "
+			+ "callers may be silently wrong") % [fqn, _stubs[fqn]])
 	# The native modules take (task, args); ported scripts have no task object,
 	# and the only natives that used it were task.* -- which the port rewrites
 	# into await, so nothing reaches here needing one.
