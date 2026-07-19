@@ -747,28 +747,34 @@ class Decompiler:
         pc, so nothing is approximated: the result is the original program, just
         spelled as a state machine.
 
-        Measured at the emission site (the conditional-branch fall-through
-        below), the 1833 gotos this ships break down as:
+        Recorded at the emission site (the conditional-branch fall-through
+        below) and classified against the control-flow graph, the 1870 gotos
+        this ships break down as:
 
-            1824  BACKWARD -- the target is at or before the branch itself
+            1126  backward, target not in a cycle with the branch
+             661  backward, in a cycle carrying >1 entry
+              74  backward, in a single-entry cycle
                9  forward, past the `hi` of the region being structured
 
-        and of the backward ones:
+        The first two lines are ONE idiom, not two. The compiler lowers a
+        switch as `goto dispatch; <case bodies>; dispatch: <compare chain>`,
+        where each arm is `Copy; LoadImmediate n; Equal; GoTrue <case>` and
+        every case body sits *before* the dispatch -- so each arm is a backward
+        branch. `abb_common:2897` is a bare 4-arm example; `actonecsvs:48498`
+        is a 25-arm one wrapped in a loop, which is the only reason its nodes
+        share a cycle at all. The cycle/entry distinction above describes the
+        surrounding code, not the branch.
 
-            1769  the target is NOT a header `_find_loops` recognised
-              55  the target IS a recognised header (continue-shaped)
+        So 1787 of 1870 (95.6%) are switch dispatch, and the fix is a switch
+        recogniser, not loop work. `_find_loops` is right to refuse these: they
+        really are jump tables, exactly as its own comment says. Only the 74
+        single-entry cases are a genuine loop-detection bug.
 
-        So the root cause is single and specific: a backward edge whose header
-        `_find_loops` declined to claim. Its dominator test deliberately rejects
-        headers that do not dominate the latch ("a real loop, not a jump table")
-        and everything it rejects lands here, because the if/else shaping above
-        requires `addr < tgt` and a backward edge fails that immediately.
-
-        The old comment guessed "multi-level exits out of nested loops, mostly".
-        Wrong in the specifics -- no goto here exits a loop -- but right that
-        this is about loops, which a first pass at this survey got backwards by
-        comparing targets against the function entry instead of against the
-        branch address. See issue #21.
+        Two earlier readings of this were wrong and are recorded in issue #21
+        so they are not re-derived: "multi-level exits out of nested loops"
+        (nothing here exits a loop) and "mostly forward branches" (an artifact
+        of comparing targets against the function entry rather than the branch
+        address).
         """
         leaders = {lo}
         for off, mn, args in self.instrs:
