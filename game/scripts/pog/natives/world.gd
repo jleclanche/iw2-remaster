@@ -808,11 +808,33 @@ func _s_is_hidden(_t, a: Array) -> Variant:
 	return 1 if (s != null and s.hidden) else 0
 
 # @stub sim.SetCullable
-# @stub sim.SetCollision
 # @stub sim.SetMass
 func _s_noop(_t, _a: Array) -> Variant:
-	# Culling, collision toggles and mass have no effect on the outcome of a
-	# mission. See docs/coverage.md.
+	# Culling is Godot's problem; mass waits on the inertia extraction (#7).
+	return 0
+
+
+# @native sim.SetCollision
+func _s_set_collision(_t, a: Array) -> Variant:
+	# sim.dll @ 0x10005760: resolve (any FiSim) and pass the bool to the
+	# FiSim collision toggle (0x100057f0; absent arg -> 0). The cutscenes
+	# lean on it: staged ships get PLACED overlapping, and the original
+	# guarantees no contact while collision is off -- icBullet::OnCollision
+	# rides the SAME collide path, so bolts pass through too. The player half
+	# is main.player_collision (commit be3434d); AI ships and station records
+	# carry their own flag, honoured by main._collisions and both bolt
+	# sweeps in weapons.gd.
+	var s := _as_sim(a[0])
+	if s == null:
+		return 0
+	var on: bool = a.size() > 1 and PogVM._truthy(a[1])
+	if s.is_player:
+		if game != null:
+			game.player_collision = on
+	elif s.node is AiShip:
+		(s.node as AiShip).collision_enabled = on
+	elif not s.rec.is_empty():
+		s.rec["collision"] = on
 	return 0
 
 
@@ -1240,25 +1262,48 @@ func _i_is_docked(_t, a: Array) -> Variant:
 		return 1 if s.docked_to == to else 0
 	return 1 if s.docked_to != null else 0
 
+## The sim's live scene node, whichever kind of sim it is.
+func _sim_node(s: PogSim) -> Node3D:
+	if s.node != null and is_instance_valid(s.node):
+		return s.node
+	var n = s.rec.get("node") if not s.rec.is_empty() else null
+	return n if (n != null and is_instance_valid(n)) else null
+
 # @native isim.StartExplosion
 # @native isim.CreateExplosion
 func _i_explode(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	if s == null or game == null:
 		return 0
-	# ExplosionFx works in the folded scene space, which is where the ship
-	# node already lives.
-	var pos: Vector3 = s.node.global_position \
-			if (s.node != null and is_instance_valid(s.node)) \
-			else s.abs_pos() - player_pos()
-	# The real StartExplosion (0x1007c950) sets the explosion timer to
-	# FLT_MAX -- a continuous crackle until StopExplosion fires
-	# DoFinalExplosion. We collapse both natives to the final blast at the
-	# sim's radius; the open-ended crawl is not modelled for scripted sims.
+	var node := _sim_node(s)
 	var r := 60.0
-	if s.node != null and is_instance_valid(s.node) and "radius" in s.node:
-		r = float(s.node.radius)
-	DeathSequence.final_explosion(game, Basis.IDENTITY, pos, r, Vector3.ZERO)
+	if node != null and "radius" in node:
+		r = float(node.radius)
+	elif not s.rec.is_empty():
+		r = float(s.rec.get("radius", 60.0))
+	# The real StartExplosion (0x1007c950) sets the explosion timer to
+	# FLT_MAX: the sim BURNS -- the sub-explosion crackle -- until
+	# isim.StopExplosion cuts to DoFinalExplosion. With a live node the burn
+	# is a DeathSequence whose timer never runs out on its own; a sim with no
+	# streamed node collapses to the one final blast, there being nothing to
+	# hang a crawl on.
+	if node != null:
+		for c in node.get_children():
+			if c is DeathSequence:
+				return 0            # already burning
+		var seq := DeathSequence.new()
+		seq.main = game
+		seq.host = node
+		seq.vel = node.velocity if "velocity" in node else Vector3.ZERO
+		seq.size = r
+		seq.radius = r
+		seq.half_dims = Vector3(r, r, r) * 0.5
+		seq._timer = 3.4e38         # FLT_MAX, the recovered value
+		seq._sub_at = 0.0
+		node.add_child(seq)
+		return 0
+	DeathSequence.final_explosion(game, Basis.IDENTITY,
+			s.abs_pos() - player_pos(), r, Vector3.ZERO)
 	return 0
 
 # @native isim.Dock
@@ -1365,6 +1410,45 @@ func docking_allowed(s: PogSim, to: PogSim) -> bool:
 	return s.docking_lock == to
 
 
+# @native isim.StopExplosion
+func _i_stop_explosion(_t, a: Array) -> Variant:
+	# isim.dll @ 0x10004c40 -> iiSim::StopExplosion (iwar2.dll @ 0x1007c970):
+	# NOT a cancel -- an early curtain. It zeroes the staged sub-explosion
+	# timer (+0x1a4) and cuts straight to DoFinalExplosion(type, destroy)
+	# (@ 0x1007c990): four scatter puffs, the reactor_explosion shockwave
+	# unless the sim carries the "no_shockwave" script property (+0x19f --
+	# a1m07 sets it right before calling this), and with destroy=1 the sim's
+	# strong children are flung and the sim itself removed.
+	var s := _as_sim(a[0])
+	if s == null or game == null:
+		return 0
+	var destroy: bool = a.size() > 2 and PogVM._truthy(a[2])
+	var shockwave: bool = std == null \
+			or not PogVM._truthy(std._bag(s).get("no_shockwave", 0))
+	var node := _sim_node(s)
+	if node != null:
+		for c in node.get_children():
+			if c is DeathSequence:
+				# a burn already staged: zero the timer exactly as the engine
+				# does; the next physics tick plays the final blast and runs
+				# the finish callback -- which for a script-staged burn is
+				# empty, so hang the destroy there
+				c.shockwave = shockwave
+				c._timer = 0.0
+				if destroy and not (c.on_finish as Callable).is_valid():
+					c.on_finish = func() -> void: _s_destroy(null, [s])
+				return 0
+		var vel: Vector3 = node.velocity if "velocity" in node \
+				else Vector3.ZERO
+		var radius: float = float(node.radius) if "radius" in node \
+				else float(s.rec.get("radius", 50.0)) \
+				if not s.rec.is_empty() else 50.0
+		DeathSequence.final_explosion(game, node.global_transform.basis,
+				node.global_position, radius, vel, shockwave)
+	if destroy:
+		return _s_destroy(_t, [s])
+	return 0
+
 # @native isim.WeaponTargetsFromContactList
 func _i_weapons_contact_list(_t, a: Array) -> Variant:
 	# isim.dll @ 0x10004f30: any iiSim. The player pilot's own ship resets to
@@ -1374,7 +1458,6 @@ func _i_weapons_contact_list(_t, a: Array) -> Variant:
 	# list. No AI-order gate here, unlike the iship spelling.
 	return _weapons_from_contact_list(_as_sim(a[0]))
 
-# @stub isim.StopExplosion
 # @stub isim.IsRespawning
 func _i_noop(_t, _a: Array) -> Variant:
 	# StopExplosion cancels a staged explosion that iiSim::StartExplosion
@@ -1841,7 +1924,7 @@ const _BINDINGS := {
 	"sim.setangularvelocity": "_s_set_angular",
 	"sim.speed": "_s_speed",
 	"sim.sethidden": "_s_set_hidden", "sim.ishidden": "_s_is_hidden",
-	"sim.setcullable": "_s_noop", "sim.setcollision": "_s_noop",
+	"sim.setcullable": "_s_noop", "sim.setcollision": "_s_set_collision",
 	"sim.setmass": "_s_noop",
 	"sim.avataraddchannel": "_s_avatar_add_channel",
 	"sim.avatarsetchannel": "_s_avatar_set_channel",
@@ -1879,7 +1962,8 @@ const _BINDINGS := {
 	"isim.capsulejumpstaggered": "_i_capsule_jump",
 	"isim.capsulejumpcustom": "_i_capsule_jump",
 	"isim.iscapsulejumping": "_i_is_jumping",
-	"isim.startexplosion": "_i_explode", "isim.stopexplosion": "_i_noop",
+	"isim.startexplosion": "_i_explode",
+	"isim.stopexplosion": "_i_stop_explosion",
 	"isim.createexplosion": "_i_explode",
 	"isim.alieninfectioneffect": "_i_infection_effect",
 	"isim.isalieninfectioneffecton": "_i_is_infection_on",

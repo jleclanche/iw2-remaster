@@ -77,6 +77,10 @@ var weapon_range := 2500.0
 var explosion_size := 10.0
 var half_dims := Vector3(10, 10, 10)  # INI width/height/length * 0.5
 var dying := false    # OnExplode dramatic sequence running; ignore new kills
+## sim.SetCollision (sim.dll @ 0x10005760 -> the FiSim collision toggle):
+## cutscenes stage ships overlapping with collision off. Honoured by
+## main._collisions and the bolt sweeps (icBullet rides the same path).
+var collision_enabled := true
 var docking_priority := 50  # iiSim +0x1c0; the HIGHER sim is the dock parent
 var carried_pods := 0       # cargo pods racked on this hull's cargo clamps;
                             # DoFinalExplosion's DetachAndFlingChild spills

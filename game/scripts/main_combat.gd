@@ -363,11 +363,13 @@ func _collisions() -> void:
 	if base_iface != null and base_iface.cut > 0:
 		return
 	for a in ai_ships:
+		if not a.collision_enabled:
+			continue  # sim.SetCollision(ship, 0): cutscene staging
 		if _aggressor_ram(a):
 			continue
 		_collide_ai(a)
 	for o in objects:
-		if o["node"] == null:
+		if o["node"] == null or not o.get("collision", true):
 			continue
 		if o["category"] == "station" or o["category"] == "gunstar" \
 				or o.get("prop_collide", false):

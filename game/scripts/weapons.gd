@@ -560,6 +560,9 @@ func _physics_process(delta: float) -> void:
 			for t in targets:
 				if t == bolt["shooter"] or not is_instance_valid(t):
 					continue
+				if t is AiShip and not (t as AiShip).collision_enabled:
+					continue  # sim.SetCollision(0): icBullet rides the
+					# same collide path, so bolts pass through
 				if not _segment_sphere(from, node.global_position,
 						t.global_position, 60.0):
 					continue
@@ -597,9 +600,13 @@ func _bolt_vs_stations(from: Vector3, to: Vector3) -> Dictionary:
 		# the StaticBody3D sits directly under the streamed station model
 		var st := (hit["collider"] as Node).get_parent() as Node3D
 		if st != null:
-			return {"target": st, "at": hit["position"]}
+			# sim.SetCollision(station, 0): bolts pass through too
+			var rec: Dictionary = main._object_record_for(st)
+			if rec.is_empty() or rec.get("collision", true):
+				return {"target": st, "at": hit["position"]}
 	for o in main.objects:
-		if o["node"] == null or o.get("hull", false):
+		if o["node"] == null or o.get("hull", false) \
+				or not o.get("collision", true):
 			continue
 		if not (o["category"] == "station" or o["category"] == "gunstar"
 				or o.get("prop_collide", false)):

@@ -75,6 +75,9 @@ var size := 10.0                  # iiSim +0x20 (FUN_10064500 default 10.0)
 var radius := 10.0                # iiSim +0x1c
 var half_dims := Vector3.ONE * 10.0  # surface-point ellipsoid
 var on_finish := Callable()       # removes the wreck (main/fields owns that)
+## The final blast's +0x19f suppression: a sim carrying the "no_shockwave"
+## script property is curtained (isim.StopExplosion) without the wave.
+var shockwave := true
 
 var _timer := 0.0
 var _sub_at := 0.0
@@ -117,7 +120,7 @@ func _physics_process(delta: float) -> void:
 	_sub_at -= delta
 	if _timer <= 0.0:
 		DeathSequence.final_explosion(main, host.global_transform.basis,
-				host.global_position, radius, vel)
+				host.global_position, radius, vel, shockwave)
 		var done := on_finish
 		on_finish = Callable()
 		set_physics_process(false)
@@ -147,14 +150,18 @@ static func _puff(p_main: Node3D, pos: Vector3, p_size: float,
 	if fx != null:
 		fx.drift = p_vel
 
-# DoFinalExplosion (0x1007c990).
+# DoFinalExplosion (0x1007c990). `shockwave` is the +0x19f flag: a sim
+# carrying the "no_shockwave" script property (a1m07 stages this before
+# isim.StopExplosion) gets the four scatter puffs but no reactor_explosion.
 static func final_explosion(p_main: Node3D, basis: Basis, pos: Vector3,
-		p_radius: float, p_vel: Vector3) -> void:
+		p_radius: float, p_vel: Vector3, shockwave := true) -> void:
 	for i in PUFFS:
 		var pr := p_radius * randf_range(PUFF_RADIUS_MIN, PUFF_RADIUS_MAX)
 		var scatter: Vector3 = basis \
 				* (ExplosionFx._unit_vector() * p_radius * PUFF_SCATTER)
 		DeathSequence._puff(p_main, pos + scatter, pr, p_vel)
+	if not shockwave:
+		return
 	# the effect's authored envelope is unit-radius (scale_keys 0 -> 1 over
 	# the lifetime): _size IS the expansion front's final radius
 	var final_r := p_radius * SHOCKWAVE_RADIUS_MULT

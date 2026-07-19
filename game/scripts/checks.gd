@@ -1257,6 +1257,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_lazy_name",
 	&"_ms_script_queries",
 	&"_ms_station_reactive",
+	&"_ms_cutscene_staging",
+	&"_ms_cutscene_staging_assert",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
 	&"_ms_finish",
@@ -1877,6 +1879,62 @@ func _ms_station_reactive(_delta: float) -> void:
 	probe.free()
 	_mech("station-reactive", ok, detail)
 	_mech_next()
+
+
+var _mech_burn: AiShip = null
+
+
+func _ms_cutscene_staging(_delta: float) -> void:
+	# sim.SetCollision (sim.dll @ 0x10005760): with collision off a staged
+	# overlap produces NO contact -- the player glides through; back on, the
+	# same geometry collides and damages. Driven through the runtime dispatch.
+	var w: PogWorld = m.pog_rt.world
+	var hostile: AiShip = m.spawn_hostile(
+			m.ship.global_position + Vector3(0, 0, -50))
+	# a unique key, or _wrap_ship hands back the cached PogSim of the freed
+	# "Marauder Cutter" the brightness step spawned
+	hostile.sim_key = "mech_ghost"
+	var hsim = w._wrap_ship(hostile)
+	m.pog_rt.native("sim.setcollision", [hsim, 0])
+	var hull0: float = m.hull
+	m.ship.velocity = Vector3(0, 0, -10)
+	m._collisions()
+	var ghosted: bool = absf(m.hull - hull0) < 0.01
+	m.pog_rt.native("sim.setcollision", [hsim, 1])
+	m.ship.velocity = Vector3(0, 0, -10)
+	m._collisions()
+	var solid: bool = m.hull < hull0 - 0.01
+	m.ship.velocity = Vector3.ZERO
+	m.hull = m.hull_max
+	_mech("set-collision", ghosted and solid,
+		"off: no contact=%s, on: damaged=%s" % [ghosted, solid])
+	hostile.queue_free()
+	m.ai_ships.erase(hostile)
+	# isim.StartExplosion (0x1007c950: timer = FLT_MAX, the burn) +
+	# isim.StopExplosion (0x1007c970: cut to DoFinalExplosion, destroy=1)
+	_mech_burn = _mech_spawn("Burn Target", 500.0,
+			m.ship.global_position + Vector3(0, 2000, 0))
+	var bsim = w._wrap_ship(_mech_burn)
+	m.pog_rt.native("isim.startexplosion", [bsim, 0])
+	var burning := false
+	for c in _mech_burn.get_children():
+		if c is DeathSequence:
+			burning = true
+	m.pog_rt.native("isim.stopexplosion", [bsim, 0, 1])
+	_mech("start-explosion", burning, "staged burn present=%s" % burning)
+	_mech_next()
+
+
+func _ms_cutscene_staging_assert(_delta: float) -> void:
+	# the curtain runs on the physics tick after the cut: the final blast
+	# fires and the destroy flag removes the sim
+	if _mech_burn == null or not is_instance_valid(_mech_burn):
+		_mech("stop-explosion", true, "curtained and destroyed")
+		_mech_burn = null
+		_mech_next()
+	elif demo_t > 10.0:
+		_mech("stop-explosion", false, "burn target still alive")
+		_mech_next()
 
 
 func _ms_save_reload(_delta: float) -> void:
