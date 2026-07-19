@@ -2046,6 +2046,7 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 | Port the bytecode to GDScript; ship no interpreter | Ran POG bytecode in a VM | The remaster must not carry the 2001 resource format and object model forever. The VM survives as a differential oracle (`--pog`), not the runtime. |
 | Floating origin: player at the scene origin, true position in `main.px/py/pz`, AI ships positioned *relative to the player* | World coordinates | float precision at solar-system scale. **Consequence:** moving the player moves the origin, so AI ships must be re-anchored or they are dragged along. |
 | `MarkObject`/`DeleteMarkedObjects` are no-ops | Manual object-scope GC | Godot refcounts. Memory management, not behaviour. |
+| A MISSING global reads a typed zero: 0 / 0.0 / false / "" / the null handle (`natives/std.gd` `_glob_get`) | Returned **garbage** for every type except `bool` | `FcScriptGlobal::Access` (flux.dll `0x100397d0`) builds its `FtPogValue` return in the **same stack slot as the incoming name parameter**, and on the miss path writes only the 1-byte `bool` member: `mov byte ptr [esp+0x1c], 0` then returns the whole dword. So a missing `Global.Bool` correctly reads false, while `Global.Handle`/`Int`/`Float` read the address of the name string with its low byte cleared -- a nonzero nonsense value that changes with the heap. There is no behaviour to reproduce here, only undefined behaviour to refuse. Scripts that read a global they never created were already relying on nothing. |
 | Multiplayer (`imultiplay`, 118 natives) not ported | -- | Single-player remaster. |
 | The player flies `tug_prefitted.ini`'s subsim list | `tug.ini`'s empty mountpoints, filled by the fitting screen | Same hull (1000 hp / 65 armour) and the avatar we already render. The fitting screen is not ported, and empty mountpoints have `hit_points=0`, so they cannot be damaged -- a tug fitted from `tug.ini` would have no shields and no subsystem damage at all. |
 | Every impact lands exactly `N` subsim criticals | The same, via an RNG gate that re-rolls until they all land | The `critical_chance_scale` roll in `icShip::ApplyWeaponDamage` does not consume a loop iteration when it fails, so it is a no-op that only costs spins. We do the N hits directly. |
@@ -2070,18 +2071,6 @@ type but document only the *purpose*, so in each case we know our answer is
 wrong and do not know the right one. **Sample was 79 of 832 natives** -- the
 rest are unmeasured, not clean.
 
-- **`Global.Handle`** (`Global.h:160`, `prototype hobject Global.Handle(string)`).
-  `natives/std.gd:103` `_glob_get` is shared by `global.Handle`/`List`/`Set` and
-  returns `globals.get(name, 0)`, so a MISSING handle global reads the numeric
-  0. The string accessor three lines below already establishes the principle --
-  "a MISSING string global reads "" (the engine's store is typed), not the
-  numeric 0" -- so 0 is very likely wrong here too. What a missing *handle*
-  global actually reads (the null handle?) is **not established**. Needs the
-  engine's global store.
-- **`GUI.SetEditBoxValue`** (`GUI.h:757`, declared to return `string`). Our
-  `_eb_set_value` (`natives/ui.gd:999`) returns 0 on every path. The header says
-  only "Set the value entered into the given edit box". Plausibly it returns the
-  (possibly `max_chars`-truncated) text, but that is inference.
 - **`List.GetNth`** (declared `hobject`) sometimes returns an `Array`. May be
   legitimate -- a list holding lists, where the element genuinely is a list
   handle. Needs a look at the callers before it is called a defect.
@@ -2089,6 +2078,20 @@ rest are unmeasured, not clean.
 Until these are answered, native return types stay **extracted but unapplied**:
 GDScript enforces declared types at runtime, so annotating would convert each
 into a crash on a path that currently works.
+
+**And the headers over-declare.** `GUI.SetEditBoxValue` is declared
+`prototype string GUI.SetEditBoxValue(...)` (`GUI.h:757`), but its registered
+handler (`gui.dll` package `0x10006650`, bound by
+`FcPackage::RegisterNative("SetEditBoxValue", 0x10006650)` at `0x1000663a`)
+resolves the window, calls `FcEditBox::SetText` -- which returns **void** -- and
+returns down all three exit paths (`0x1000672f`, `0x10006744`, and the
+handle-invalid branch) **without ever writing the POG return slot**. The
+declared `string` is vestigial; the caller reads whatever was already there.
+
+So a header return type states the *intent*, not a guarantee, and typing the
+port from headers alone would be wrong here no matter what our implementation
+does. Any typing pass has to validate each declaration against its handler
+rather than trust the prototype (issue #24).
 
 ### HUD
 

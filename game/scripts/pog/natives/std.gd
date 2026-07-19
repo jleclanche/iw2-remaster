@@ -100,6 +100,20 @@ func _create(_t, a: Array) -> Variant:
 # @native global.Handle
 # @native global.List
 # @native global.Set
+## A MISSING global reads 0 here. That is a DELIBERATE divergence, not a match:
+## FcScriptGlobal::Access (flux.dll 0x100397d0) builds its FtPogValue return in
+## the same stack slot as the incoming name parameter, and on the miss path
+## writes only the 1-byte bool member --
+##
+##     10039807  mov  eax, [esp+0x18]      ; the return slot
+##     1003980b  mov  byte ptr [esp+0x1c], 0   ; only the low byte
+##     10039810  mov  ecx, [esp+0x1c]      ; ... but the whole dword goes back
+##     10039815  mov  [eax], ecx
+##
+## so the original returns the address of the NAME STRING with its low byte
+## cleared. Bool reads that low byte and is correctly false; Handle/Int/Float
+## read nonzero garbage that moves with the heap. There is nothing to
+## reproduce, so we return a typed zero and say so (docs/original.md §9).
 func _glob_get(_t, a: Array) -> Variant:
 	return globals.get(_s(a[0]), 0)
 

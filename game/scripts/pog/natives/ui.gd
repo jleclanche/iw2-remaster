@@ -996,6 +996,11 @@ func _eb_value(_t, a: Array) -> Variant:
 	return win.value if win != null else ""
 
 # @native gui.SetEditBoxValue
+## GUI.h:757 declares this `string`, but the declaration is vestigial: the
+## registered handler (gui.dll package 0x10006650) calls FcEditBox::SetText --
+## void -- and returns down every path without writing the POG return slot, so
+## a caller reads whatever was already there. Returning 0 is as faithful as
+## anything; do NOT "fix" this to return the text on the header's say-so.
 func _eb_set_value(_t, a: Array) -> Variant:
 	var win := _win(a[0])
 	if win == null:
