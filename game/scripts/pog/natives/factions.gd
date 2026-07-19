@@ -46,6 +46,17 @@ class PogGroup extends RefCounted:
 			out.append_array(g.flatten())
 		return out
 
+	## The engine drops a destroyed sim from its group, so SimCount/NthSim
+	## see only survivors -- a1m01 gates its first objective on
+	## SimCount(attackers) reaching 0 after the fight, which a corpse-counting
+	## group can never satisfy.
+	func living() -> Array:
+		var out: Array = []
+		for s in sims:
+			if s != null and s.alive():
+				out.append(s)
+		return out
+
 
 func register(v) -> void:
 	vm = v
@@ -169,14 +180,16 @@ func _g_remove_nth_sim(_t, a: Array) -> Variant:
 func _g_nth_sim(_t, a: Array) -> Variant:
 	var g = a[0]
 	var i := int(a[1])
-	if g is PogGroup and i >= 0 and i < g.sims.size():
-		return g.sims[i]
+	if g is PogGroup:
+		var live: Array = g.living()
+		if i >= 0 and i < live.size():
+			return live[i]
 	return null
 
 # @native group.SimCount
 func _g_sim_count(_t, a: Array) -> Variant:
 	var g = a[0]
-	return g.sims.size() if g is PogGroup else 0
+	return (g.living() as Array).size() if g is PogGroup else 0
 
 # @native group.TotalSimCount
 func _g_total_sim_count(_t, a: Array) -> Variant:

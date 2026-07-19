@@ -655,6 +655,10 @@ const KNOWN_STUBS_LEGACY: Array[String] = []
 const KNOWN_STUBS_PORT: Array[String] = [
 	"iship.createturretfighters",
 	"sim.setcullable",
+	# caught by this very gate: the "mp-only" classification was wrong --
+	# a1m01's MissionHandler calls it in pure SP. Benign for us: the loadout
+	# builds weapon links automatically (icLoadout::CreateWeaponLinks).
+	"imultiplay.linkshipweapons",
 ]
 
 
@@ -715,23 +719,65 @@ func _campcheck_port() -> void:
 				demo_phase = 2
 		2:
 			m.ship.velocity = Vector3.ZERO
+			# keep re-asserting the position: the boot chain can still move
+			# the player (cutscene placement, HUD-tour staging) between the
+			# selection gate and the distance gate
+			var wp := _object_index("Clay's Waypoint")
+			if wp >= 0:
+				var o2: Dictionary = m.objects[wp]
+				m.px = o2["x"]
+				m.py = o2["y"]
+				m.pz = o2["z"]
 			var obj: Dictionary = m.mission.objectives.get(
 					"a0_m10_objectives_approach_clay", {})
 			if obj.get("done", false):
+				print("CAMPCHECK(port): a0m10 approach_clay SUCCEEDED — ",
+					"advancing to act 1 (igame.NextAct, the end-of-act call)")
+				m.pog_rt.native("igame.nextact", ["iActOne"])
+				demo_phase = 3
+		3:
+			# iActOne.Main -> MasterScript chapter 0 -> iact1mission01.Main.
+			# The mission opens with a FIGHT: two Puffins get an attack order,
+			# and change_iff is only added once their group is empty
+			# (iact1mission01.pog local_604). The check plays the player's
+			# part -- kill the attackers -- and the mission's own logic
+			# raises the objective.
+			for a in m.ai_ships:
+				if is_instance_valid(a) and not a.dying \
+						and a.behavior == "attack":
+					m.kill_ai(a)
+			if m.mission.objectives.has("a1_m01_objective_change_iff"):
 				var ck := _checkpoint_check()
 				var sg := _stub_gate(_known_stubs())
-				print("CAMPCHECK(port): PASS — approach_clay SUCCEEDED, ",
-					"objectives=", m.mission.objectives.size())
+				print("CAMPCHECK(port): PASS — act 1 m01 booted, fight won, ",
+					"change_iff raised; objectives=",
+					m.mission.objectives.size())
 				get_tree().quit(0 if ck and sg else 1)
-	if demo_t > 90.0:
+	if demo_t > 180.0:
 		var tail: Array = []
 		for i in range(maxi(0, m.objects.size() - 10), m.objects.size()):
 			tail.append(str(m.objects[i]["name"]))
+		var wpi := _object_index("Clay's Waypoint")
+		var probe := "no waypoint"
+		if wpi >= 0:
+			var wsim = m.pog_rt.world._wrap_record(m.objects[wpi])
+			var me = m.pog_rt.world.player_sim()
+			probe = "dist=%.1f imr=%.1f" % [
+				float(m.pog_rt.native("sim.distancebetween", [me, wsim])),
+				float(m.pog_rt.native(
+					"iai.innermarkerradius", [wsim, me]))]
+		var ships: Array = []
+		for a2 in m.ai_ships:
+			if is_instance_valid(a2):
+				ships.append("%s/%s" % [a2.display_name, a2.behavior])
 		print("CAMPCHECK(port): TIMEOUT phase ", demo_phase,
 			" objectives=", m.mission.objectives.keys(),
-			" last objects=", tail,
-			" movie=", m.movie != null,
-			" halted=", m.pog_rt.halted if m.pog_rt != null else "?")
+			" last objects=", tail, " ", probe,
+			" halted=", m.pog_rt.halted if m.pog_rt != null else "?",
+			" in_conv=", m.pog_rt.gameapi.in_conversation,
+			" speaking=", m.comms.speaking(),
+			" queue=", m.comms.queue.size(),
+			" ai=", ships)
 		get_tree().quit(1)
 
 

@@ -96,8 +96,17 @@ class PogSim extends RefCounted:
 	func alive() -> bool:
 		if dead:
 			return false
-		if node != null:
-			return is_instance_valid(node)
+		# A FREED node compares == null in Godot 4, so `node != null` cannot
+		# tell "record sim, no node" (alive) from "ship node freed by its
+		# death" (not). typeof still answers OBJECT for a freed instance.
+		if typeof(node) == TYPE_OBJECT:
+			if not is_instance_valid(node):
+				return false
+			# iiSim::OnKilled fires at the KILL, not after the death
+			# pyrotechnics: to the scripts a ship in its death crawl is
+			# already gone (group membership, sim.IsAlive) even though the
+			# hulk still tumbles on screen
+			return not ("dying" in node and node.dying)
 		return true
 
 	## object.SetStringProperty(sim, "name", key): FcObject's `name` property
@@ -636,6 +645,11 @@ func _s_name(_t, a: Array) -> Variant:
 func _s_destroy(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	if s == null:
+		return 0
+	if game != null and s.node == game.ship:
+		# our player is welded to main.ship: a handle aliasing it (the act-0
+		# hull iActOne.Main destroys after the tug handover) must not be
+		# killable -- neither the node nor the handle's liveness
 		return 0
 	s.dead = true
 	sims.erase(s.name)
@@ -1758,15 +1772,38 @@ func _sh_create_player_ship(_t, a: Array) -> Variant:
 # @native iship.InstallPlayerPilot
 func _sh_install_player_pilot(_t, a: Array) -> Variant:
 	# The sim named here becomes the one the player is flying. For CreatePlayer
-	# that is the hull we just handed back, and there is nothing to do. The other
-	# callers swap the player into a body double for a cutscene
-	# (icutsceneutilities.CreateGhostShip) or into a different hull mid-mission;
-	# our player is welded to main.ship, so those are not modelled -- but the sim
-	# is still marked, because iship.FindPlayerShip has to keep agreeing with it.
+	# that is the hull we just handed back, and there is nothing to do. A sim
+	# CREATED from a ship INI is the HULL-SWAP case -- iActOne.Main builds the
+	# escape tug and installs the player into it -- and our player being welded
+	# to main.ship means the swap is a re-fit of that one node: _fit_player
+	# already does the full exchange (model, stats, systems, weapons) for the
+	# act-0 tug handover. The temp AI node dies, the sim handle is promoted to
+	# BE the player (iship.FindPlayerShip must hand it back), and the old
+	# player handle is demoted so the script's follow-up sim.Destroy on it
+	# frees nothing. The remote-pilot half (flying a hull that is NOT the
+	# player's) remains #1.
 	var s := _as_sim(a[0])
 	if s == null or s.is_player:
 		return 0
 	s.free_without_pilot = false
+	if game == null or s.node == null or not (s.node is AiShip) \
+			or s.ini.is_empty():
+		return 0
+	_load_ship_db()
+	var key := ini_key(s.ini)
+	var db: Dictionary = ship_db.get(key, {})
+	if db.is_empty():
+		return 0
+	game._fit_player(key, avatar_path(String(db.get("avatar", ""))))
+	game.ai_ships.erase(s.node)
+	s.node.queue_free()
+	# BOTH handles now alias the one welded ship. The long-lived @player sim
+	# stays what FindPlayerShip returns -- handles captured before the swap
+	# (a0m10's MissionHandler grabs FindPlayerShip before CreatePlayer even
+	# runs) must stay live -- and the created hull's handle reads the same
+	# node, so the script's position/dock calls on it land on the player.
+	s.is_player = true
+	s.node = game.ship
 	return 0
 
 # @stub iship.IsAIDisabled

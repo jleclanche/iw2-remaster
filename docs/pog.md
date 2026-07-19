@@ -187,6 +187,27 @@ are not re-derived: "multi-level exits out of nested loops" (nothing here exits
 a loop) and "mostly forward branches" (an artifact of comparing targets against
 the function entry instead of the branch address).
 
+### Cross-block stack values: the spill discipline (#22)
+
+The same `Copy` idiom bit the `_linear` fallback a second way: a value that
+crosses a basic-block boundary (the Copy'd selector between ladder tests, or a
+debug-skip target landing mid-expression) used to be FLUSHED at the branch --
+re-emitting the shared expression as a discarded statement (an extra RNG draw)
+-- while the successor popped an empty stack and read `Const(0)`, degenerating
+its condition to `if (1 != 0)` and killing an arm the original reaches. 492
+of those tells shipped across the 17 packages with unstructured functions.
+
+Now every `_linear` block's stack is seeded with placeholder SPILL VARIABLES
+in slots just past the function's real locals (top of the boundary = first
+slot, so both sides of any edge agree without dataflow analysis), and every
+exit spills its real leftovers into those slots -- deepest-first, and the
+spilled node replaced BY IDENTITY inside the branch condition, because after a
+`Copy` the condition holds the same object. A block whose predecessors never
+spill reads the slot's declared 0 default, which is exactly the old behaviour:
+a mismatch degrades to what shipped before, never worse. Result:
+`v54 = state.Progress(v0); if (0 != v54) ... if (1 != v54)` -- one call, live
+arms, 0 tells in either artifact layer.
+
 ## Names and signatures the bytecode does not carry
 
 A package exports almost nothing -- iact1mission07 names 3 functions in 25KB --

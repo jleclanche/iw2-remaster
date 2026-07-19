@@ -234,63 +234,86 @@ func _steer_to_marker(s, o: PogOrder) -> void:
 	s.node.wp = 0
 	s.node.behavior = "patrol"
 
+## iAI.h: every Give*Order takes "the ship or group" as `us` and "sim or
+## group" as the target. A group argument expands to its living members;
+## a group TARGET acts through its leader (group.Leader = first member).
+func _order_sims(v: Variant) -> Array:
+	if v is PogFactions.PogGroup:
+		var out: Array = []
+		for m in (v as PogFactions.PogGroup).flatten():
+			if m != null and m is PogWorld.PogSim \
+					and (m as PogWorld.PogSim).alive():
+				out.append(m)
+		return out
+	var s = world._as_sim(v)
+	return [s] if s != null else []
+
+
+func _order_target(v: Variant) -> Variant:
+	var l := _order_sims(v)
+	return l[0] if not l.is_empty() else null
+
 # @native iai.GiveAttackOrder
 # @native iai.GiveGenericAttackOrder
 # @native iai.GiveSpecificAttackOrder
 func _ai_attack(_t, a: Array) -> Variant:
-	var s = world._as_sim(a[0])
-	var o := _order_for(s)
-	if o == null:
-		return 0
-	o.kind = "attack"
-	o.target = world._as_sim(a[1]) if a.size() > 1 else null
-	o.complete = false
-	s.node.behavior = "attack"
+	var target: Variant = _order_target(a[1]) if a.size() > 1 else null
+	for s in _order_sims(a[0]):
+		var o := _order_for(s)
+		if o == null:
+			continue
+		o.kind = "attack"
+		o.target = target
+		o.complete = false
+		s.node.behavior = "attack"
 	return 0
 
 # @native iai.GiveEscortOrder
 # @native iai.GiveFormateOrder
 func _ai_escort(_t, a: Array) -> Variant:
-	var s = world._as_sim(a[0])
-	var o := _order_for(s)
-	if o == null:
-		return 0
-	o.kind = "escort"
-	o.target = world._as_sim(a[1]) if a.size() > 1 else null
-	o.complete = false
-	s.node.behavior = "patrol"
-	# the escort GROUP link icAIEscortAgent::GroupAttacker polls: an escort
-	# attacks whoever registered as its escortee's hostile last-aggressor
-	if s.node is AiShip and o.target != null and o.target.node != null:
-		(s.node as AiShip).escort_of = o.target.node
+	var target: Variant = _order_target(a[1]) if a.size() > 1 else null
+	for s in _order_sims(a[0]):
+		var o := _order_for(s)
+		if o == null:
+			continue
+		o.kind = "escort"
+		o.target = target
+		o.complete = false
+		s.node.behavior = "patrol"
+		# the escort GROUP link icAIEscortAgent::GroupAttacker polls: an
+		# escort attacks whoever registered as its escortee's hostile
+		# last-aggressor
+		if s.node is AiShip and target != null and target.node != null:
+			(s.node as AiShip).escort_of = target.node
 	return 0
 
 # @native iai.GiveFleeOrder
 func _ai_flee(_t, a: Array) -> Variant:
-	var s = world._as_sim(a[0])
-	var o := _order_for(s)
-	if o == null:
-		return 0
-	o.kind = "flee"
-	o.complete = false
-	if s.node != null and is_instance_valid(s.node):
-		# Run: a waypoint far away, directly opposite the threat.
-		var away := (s.abs_pos() - world.player_pos()).normalized() * 1.0e5
-		s.node.waypoints = [away]
-		s.node.wp = 0
-		s.node.behavior = "patrol"
+	for s in _order_sims(a[0]):
+		var o := _order_for(s)
+		if o == null:
+			continue
+		o.kind = "flee"
+		o.complete = false
+		if s.node != null and is_instance_valid(s.node):
+			# Run: a waypoint far away, directly opposite the threat.
+			var away: Vector3 = (s.abs_pos() - world.player_pos()) \
+					.normalized() * 1.0e5
+			s.node.waypoints = [away]
+			s.node.wp = 0
+			s.node.behavior = "patrol"
 	return 0
 
 # @native iai.PurgeOrders
 # @native iai.RemoveOrder
 func _ai_purge(_t, a: Array) -> Variant:
-	var s = world._as_sim(a[0])
-	if s == null or s.node == null or not is_instance_valid(s.node):
-		return 0
-	if not (s.node is AiShip):
-		return 0            # the player's hull has no orders to purge
-	orders.erase(s.node.get_instance_id())
-	s.node.behavior = "patrol"
+	for s in _order_sims(a[0]):
+		if s.node == null or not is_instance_valid(s.node):
+			continue
+		if not (s.node is AiShip):
+			continue        # the player's hull has no orders to purge
+		orders.erase(s.node.get_instance_id())
+		s.node.behavior = "patrol"
 	return 0
 
 # @native iai.HasOrder
@@ -818,14 +841,27 @@ func _g_blackout(_t, a: Array) -> Variant:
 
 var blackout := false
 
+## icSPMasterScreen::m_act_package: which act master a later boot re-enters.
+## TODO(#4): persist into saves and re-dispatch on load -- a loaded act>0
+## game currently never restarts its act master.
+var act_package := ""
+
 # @native igame.NextAct
 func _g_next_act(_t, a: Array) -> Variant:
-	# The campaign's act counter: the scripts read it back through global.Int,
-	# and the act CSV tables are loaded off it.
-	if vm != null:
-		var std := _std()
-		if std != null:
-			std.globals["g_current_act"] = int(a[0]) if a.size() > 0 else 0
+	# igame.dll @ 0x10001230: store the ACT PACKAGE NAME into the static
+	# icSPMasterScreen::m_act_package (iwar2), then append ".Main"
+	# (@ 0x1000127e) and FcScriptEngine::CallFunction it IMMEDIATELY.
+	# <act>.Main does the rest itself: advances g_current_act, starts its
+	# MasterScript, rebuilds the player. The old native here read the string
+	# argument as an int -- int("iActOne") == 0 -- so the campaign could
+	# never leave act 0.
+	act_package = PogStd._s(a[0]) if a.size() > 0 else ""
+	if act_package.is_empty() or vm == null:
+		return 0
+	if "ui" in vm and vm.ui != null:            # PogRuntime
+		vm.ui.dispatch(act_package + ".Main")
+	elif vm.has_method("start"):                # PogVM
+		vm.start(act_package.to_lower(), "Main")
 	return 0
 
 func _std() -> PogStd:
