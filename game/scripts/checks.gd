@@ -592,10 +592,11 @@ func _newgamecheck(_delta: float) -> void:
 					or ((m.use_port or m.use_pog) and live_pog)
 				var ok: bool = m.ship != null and m.sys != null \
 					and m.objects.size() > 0 and live_pog and opened
+				var sg := _stub_gate(_known_stubs())
 				print("NEWGAMECHECK: %s — objects=%d, pog=%s, mission steps=%d"
 					% ["PASS" if ok else "FAIL", m.objects.size(), live_pog, steps])
 				_ng_stage = 0
-				get_tree().quit(0 if ok else 1)
+				get_tree().quit(0 if ok and sg else 1)
 	if demo_t > 40.0:
 		print("NEWGAMECHECK: TIMEOUT stage ", _ng_stage)
 		_ng_stage = 0
@@ -632,12 +633,55 @@ func _campcheck(_delta: float) -> void:
 		2:
 			if m.mission.objectives.get("wp1", {}).get("done", false):
 				var ck := _checkpoint_check()
+				var sg := _stub_gate(_known_stubs())
 				print("CAMPCHECK: PASS — waypoint objective completed, ",
 					"dialogue queued=", m.comms.queue.size())
-				get_tree().quit(0 if ck else 1)
+				get_tree().quit(0 if ck and sg else 1)
 	if demo_t > 90.0:
 		print("CAMPCHECK: TIMEOUT phase ", demo_phase, " idx=", m.mission.idx)
 		get_tree().quit(1)
+
+# Observed stub baselines (issue #25), per campaign driver, recorded
+# 2026-07-19. The PORT set is what the istartsystem boot chain reaches:
+# SetReactiveFunction (#26), CreateTurretFighters (#5), SetCullable
+# (presentation, deliberate). The legacy hand-authored driver reaches no
+# stubs. A name DISAPPEARING from a run is progress: update the list. A name
+# APPEARING is a regression or a newly reached code path -- the gate FAILS
+# so a human looks.
+const KNOWN_STUBS_LEGACY: Array[String] = []
+const KNOWN_STUBS_PORT: Array[String] = [
+	"ihabitat.setreactivefunction",
+	"iship.createturretfighters",
+	"sim.setcullable",
+]
+
+
+func _known_stubs() -> Array[String]:
+	return KNOWN_STUBS_PORT if m.use_port else KNOWN_STUBS_LEGACY
+
+
+## Issue #25: the observed stub hits of a run ARE its remaining-work list.
+## Print them, then hold the line against the mission's recorded baseline.
+func _stub_gate(known: Array[String]) -> bool:
+	var hits: Dictionary = PogRuntime.stub_hits
+	var names := hits.keys()
+	names.sort()
+	for n in names:
+		print("  stub hit: %s x%d" % [n, int(hits[n])])
+	var fresh: Array[String] = []
+	for n2 in names:
+		if not known.has(n2):
+			fresh.append(n2)
+	for k in known:
+		if not hits.has(k):
+			print("STUBGATE: %s no longer hit — progress; update the baseline" % k)
+	if fresh.is_empty():
+		print("STUBGATE: PASS — %d stub hits, all in the recorded baseline"
+			% names.size())
+		return true
+	print("STUBGATE: FAIL — stub hits missing from the baseline: ",
+		", ".join(fresh))
+	return false
 
 # Mission checkpoints roll the scoreboard back (iwar2.dll @ 0x100a0ab0
 # SetRestartPoint: snapshot; @ 0x100a0d80 GotoRestartPoint: restore -- see

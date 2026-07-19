@@ -109,7 +109,8 @@ coverage audit. docs/coverage.md and several element_markers.gd lines
 | Full save → reload roundtrip; debug base dock | mechcheck `_ms_save_reload`, `_ms_debug_base` |
 | Base dock fly-in, interior, room tour, base screens raise, PDA save/load slot screens | `--basecheck` (asserted `_bc` steps + screenshots) |
 | New game end-to-end: front-end button → prelude POG boots → objects spawn → dialogue speaks | `--newgametest` / `--newgamecheck` (PASS/FAIL) |
-| Act 0 m10: mission starts, dialogue flows, waypoint objective completes; iscore checkpoint roll-back | `--campcheck` |
+| Act 0 m10: mission starts, dialogue flows, waypoint objective completes; iscore checkpoint roll-back | `--campcheck` — **legacy hand-authored driver only**: under `--port` the objective assertions never fire (found 2026-07-19, see #4); the ported campaign's end-to-end depth is `--newgamecheck --port` (boot + speak + stub gate) |
+| Stub-hit gate: every stub reached in a run is counted and held against a recorded per-mode baseline; a new stub hit FAILS the run (proven able to fail by plant) | `--newgamecheck [--port]`, `--campcheck` `_stub_gate` (#25) |
 | Capsule jump initiate → arrival | `--jumpcheck` |
 | All 114 ported packages compile and instantiate | pog/portcheck.gd |
 | Native API surface: 98% of call sites implemented, 0 unbound | tools/iw2/apicov.py --coverage |

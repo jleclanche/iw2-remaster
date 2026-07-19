@@ -132,6 +132,13 @@ static var _stubs_loaded := false
 static var _stub_seen: Dictionary = {}
 static var _stub_trace := false
 
+## Every stub actually reached this run, fqn -> call count. The check suites
+## read this at the end of a run (issue #25): a mission's observed stub-hit
+## list IS its remaining-work list, and a name appearing that the suite's
+## recorded baseline does not know is either a regression or a newly reached
+## code path -- both worth failing on.
+static var stub_hits: Dictionary = {}
+
 
 ## A stub is bound and returns 0, which is indistinguishable from a real answer:
 ## igame.GotPlayDisk answered "no disc" for months and silently deleted four
@@ -186,10 +193,12 @@ func native(fqn: String, args: Array) -> Variant:
 		push_error("POG: native %s is not implemented" % fqn)
 		return 0
 	_load_stubs()
-	if _stubs.has(fqn) and (_stub_trace or not _stub_seen.has(fqn)):
-		_stub_seen[fqn] = true
-		push_warning(("POG STUB CALLED: %s (natives/%s) returns a placeholder; "
-			+ "callers may be silently wrong") % [fqn, _stubs[fqn]])
+	if _stubs.has(fqn):
+		stub_hits[fqn] = int(stub_hits.get(fqn, 0)) + 1
+		if _stub_trace or not _stub_seen.has(fqn):
+			_stub_seen[fqn] = true
+			push_warning(("POG STUB CALLED: %s (natives/%s) returns a "
+				+ "placeholder; callers may be silently wrong") % [fqn, _stubs[fqn]])
 	# The native modules take (task, args); ported scripts have no task object,
 	# and the only natives that used it were task.* -- which the port rewrites
 	# into await, so nothing reaches here needing one.
