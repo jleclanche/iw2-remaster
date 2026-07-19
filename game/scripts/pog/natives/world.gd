@@ -1619,6 +1619,8 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 	return 0
 
 # @stub iship.IsAIDisabled
+# (IsAIDisabled is a DEAD EXPORT: zero call sites in any .pogasm -- apicov
+# flags it so. Kept bound only so the UNBOUND count stays 0.)
 # @stub iship.WeaponsUseExplicitTarget
 # @stub iship.WeaponTargetsFromContactList
 # @stub iship.BrightnessOf

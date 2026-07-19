@@ -129,6 +129,7 @@ func _credits_music(scr: PogUi.PogScreen) -> void:
 		main.audio.restore_music()
 
 
+# @element icScroller
 ## icScroller: the credits crawl. Advance at the engine's 50 px/s and pop the
 ## screen when the last line has scrolled off the top (Tick @ 0x100164e0).
 func _advance_scrollers(scr: PogUi.PogScreen, delta: float) -> void:

@@ -207,9 +207,9 @@ extends RefCounted
 # @element-stub icBullet -- covered-elsewhere: weapons.gd swept-sphere bolts + main.on_bolt_hit damage chain
 # @element-stub icShip -- covered-elsewhere: ship_flight.gd flight model + ship_systems.gd damage model + ai_ship.gd
 # @element-stub icCargoPod -- covered-elsewhere: spawned as ordinary sims from their INI (natives/world.gd sim.Create; ipilotsetup.generic_cargo_pod)
-# @element-stub icBeamProjector -- GENUINE GAP: beam weapons (antimatter beam, mining laser, comms laser -- data/ini/subsims/systems)
-# @element-stub icBeam -- GENUINE GAP: the beam sim a projector fires
-# (icSlugThrower stays a stub: its @element-stub marker is in turrets.gd)
+# (icBeamProjector is really built: its @element marker is in turrets.gd -- AI beams are mechcheck-verified; the PLAYER fire path is issue #3)
+# (icBeam is really built: its @element marker is in turrets.gd)
+# (icSlugThrower is really built: its @element marker is in turrets.gd -- ammo-counted gun, mechcheck `gatling-gun`)
 # (icTurret is really built: its @element marker is in turrets.gd, with iiGun/icBeamProjector/icBeam)
 # (icTurretShip stays a stub: its @element-stub marker is in turrets.gd)
 # (icAggressorShield is really built: its @element marker is in ship_systems.gd (it is a RAM, not a shield -- base iiWeapon))

@@ -1,5 +1,6 @@
 class_name ShipEffects
 extends Node
+# @element icFlameConeAvatar
 # The original's channel-driven effect rig (FcChannelGeneratorNode +
 # icFlameConeAvatar). Ship state feeds named channels; avatar nodes tagged
 # <anim channel=...> interpolate between their two exported poses by the

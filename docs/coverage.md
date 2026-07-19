@@ -19,19 +19,20 @@ runtime implements, weighted by real campaign call sites (we RUN the original
 bytecode — see docs/pog.md). `featurecov` measures the class side, reading
 the ledger in `game/scripts/element_markers.gd`.
 
-## Headline numbers (2026-07-18)
+## Headline numbers (2026-07-19)
 
-- **apicov: 673/829 natives implemented — 98% of 72,345 campaign call
-  sites.** 156 stubs remain, **131 of them mp-only** (imultiplay + friends,
+- **apicov: 683/829 natives implemented — 98% of 72,345 campaign call
+  sites.** 146 stubs remain, **131 of them mp-only** (imultiplay + friends,
   correctly out of scope).
 - featurecov: 384 registered classes (257 iwar2.dll, 127 flux.dll);
-  8 genuine SP gaps left.
+  6 genuine SP gaps left (icGasBallAvatar, icSignAvatar, icRemoteMissile,
+  icTurretShip, icElectricEffectAvatar, FcParticleDrawLensFlare).
 - All 114 POG packages ported and loading (portcheck); all 48 act-mission
   scripts ported.
 
 **The current done/missing/stand-in picture and the ranked work queue live in
 `docs/parity.md`** (parity audit, commit 0876a3a) **and on the GitHub
-tracker: `jleclanche/iw2-remaster` issues #1–#14 — #14 is the meta roadmap.**
+tracker: `jleclanche/iw2-remaster` issues #1–#26 — #14 is the meta roadmap.**
 File new findings as issues there.
 
 ---
@@ -242,20 +243,22 @@ IsCapsuleJumpAccelerating: our AI ships have no jump spool-up phase.
 7. **ihud.FlashElement** -- tutorial HUD highlight.
 8. ~~**imapentity.SetMapVisibility**~~ -- IMPLEMENTED (task #53).
 
-## Marker-hygiene flags (for the owners of the natives files -- not edited here)
+## Marker-hygiene flags — all resolved as of 2026-07-19
 
-* `iship.IsAIDisabled`: dead marker, zero call sites (`apicov --stubs`).
-* `ihud.ShowScore`: reason comment describes FlashElement only; ShowScore is
-  mp-only and should say so.
-* `iloadout.*Customise*`: "no POG builder" is stale -- the builder exists and
-  is mapped; the missing part is the pylon drag-and-drop UI.
-* `imapentity.SetMapVisibility` / `IsVisibleOnMap`: "no system map view" is
-  stale -- icHUDStarmap is implemented in hud_screens.gd.
-* `sim.AvatarAddChannel` / `AvatarSetChannel` / `AvatarRemoveChannel`:
-  "no equivalent" is stale -- ship_effects.gd is the channel rig; a routing
-  would light up cutscene ships.
-* `sim.AddSubsim` / `FindSubsimByName`: "presentation" undersells it; the
-  act 3 tracker is fitted through it.
+* ~~`iship.IsAIDisabled`~~: dead marker — now annotated in world.gd as a
+  DEAD EXPORT kept bound only for the 0-UNBOUND invariant.
+* ~~`ihud.ShowScore`~~: has its own mp-only reason line (gameapi.gd).
+* ~~`input.KeyCombinations`~~: rebound in ui.gd onto
+  `PogMisc.key_combinations`.
+* ~~`imapentity.*` / `sim.Avatar*` / `sim.AddSubsim`~~: implemented
+  (see the annotated audit sections above).
+* ~~element ledger~~: icBeamProjector/icBeam/icSlugThrower stale
+  "GENUINE GAP" stubs corrected (built in turrets.gd); icFlameConeAvatar
+  and icScroller got their missing `@element` markers (ship_effects.gd,
+  base_screens.gd).
+* `iloadout.*Customise*` reason ("no POG builder") remains slightly stale --
+  the builder exists and is mapped; the missing part is the pylon
+  drag-and-drop UI. The gap itself is real, tracked in the issues.
 
 ## The element side (featurecov)
 
