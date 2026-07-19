@@ -603,6 +603,9 @@ func _newgamecheck(_delta: float) -> void:
 		get_tree().quit(1)
 
 func _campcheck(_delta: float) -> void:
+	if m.use_port:
+		_campcheck_port()
+		return
 	# mission starts, dialogue flows, waypoint objective spawns + completes
 	match demo_phase:
 		0:
@@ -681,6 +684,63 @@ func _stub_gate(known: Array[String]) -> bool:
 	print("STUBGATE: FAIL — stub hits missing from the baseline: ",
 		", ".join(fresh))
 	return false
+
+## The same mission driven by the PORTED runtime (--campcheck --port): the
+## signals are the POG side's own -- the waypoint record iutilities creates,
+## the contact-list selection gate (iship.CurrentTarget == the waypoint), the
+## proximity gate, and the objective keyed by the script's own id reaching
+## OS_Succeeded. This is the ported campaign's end-to-end depth marker (#4).
+func _campcheck_port() -> void:
+	match demo_phase:
+		0:
+			if demo_t > 1.0:
+				m.comms.fast = true
+				m.start_campaign()
+				print("CAMPCHECK(port): campaign booting")
+				demo_phase = 1
+		1:
+			if m.movie != null and demo_t > 3.0:
+				m.skip_movie()
+			# iact0mission10 local_1276: CreateWaypointNear -> the record
+			# "Clay's Waypoint" (a0_m10_name_waypoint) appears in m.objects
+			var idx := _object_index("Clay's Waypoint")
+			if idx >= 0:
+				m.target_ai = null
+				m.target_idx = idx        # gate 1: CurrentTarget == waypoint
+				var o: Dictionary = m.objects[idx]
+				m.px = o["x"]
+				m.py = o["y"]
+				m.pz = o["z"]             # gate 2: DistanceBetween ~ 0
+				print("CAMPCHECK(port): waypoint selected + reached")
+				demo_phase = 2
+		2:
+			m.ship.velocity = Vector3.ZERO
+			var obj: Dictionary = m.mission.objectives.get(
+					"a0_m10_objectives_approach_clay", {})
+			if obj.get("done", false):
+				var ck := _checkpoint_check()
+				var sg := _stub_gate(_known_stubs())
+				print("CAMPCHECK(port): PASS — approach_clay SUCCEEDED, ",
+					"objectives=", m.mission.objectives.size())
+				get_tree().quit(0 if ck and sg else 1)
+	if demo_t > 90.0:
+		var tail: Array = []
+		for i in range(maxi(0, m.objects.size() - 10), m.objects.size()):
+			tail.append(str(m.objects[i]["name"]))
+		print("CAMPCHECK(port): TIMEOUT phase ", demo_phase,
+			" objectives=", m.mission.objectives.keys(),
+			" last objects=", tail,
+			" movie=", m.movie != null,
+			" halted=", m.pog_rt.halted if m.pog_rt != null else "?")
+		get_tree().quit(1)
+
+
+func _object_index(name: String) -> int:
+	for i in m.objects.size():
+		if str(m.objects[i]["name"]) == name:
+			return i
+	return -1
+
 
 # Mission checkpoints roll the scoreboard back (iwar2.dll @ 0x100a0ab0
 # SetRestartPoint: snapshot; @ 0x100a0d80 GotoRestartPoint: restore -- see

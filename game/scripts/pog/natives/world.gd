@@ -100,6 +100,21 @@ class PogSim extends RefCounted:
 			return is_instance_valid(node)
 		return true
 
+	## object.SetStringProperty(sim, "name", key): FcObject's `name` property
+	## IS the sim's name -- iutilities.MakeWaypointVisible renames the fresh
+	## "default" waypoint this way -- and the localisation key resolves to the
+	## display text the contact list shows.
+	func rename(key: String) -> void:
+		name = key
+		if world != null:
+			world.sims[key] = self
+		if not rec.is_empty():
+			rec["key"] = key
+			rec["name"] = world.display_name_of(key) if world != null else key
+		elif node != null and is_instance_valid(node) \
+				and "name_key" in node:
+			node.name_key = key
+
 	func abs_pos() -> Vector3:
 		# CAUTION: Vector3 is float32, and system coordinates run to AU scale
 		# (~1e11..1e12 m) where its ULP is >100 km -- a nearby ship's offset
@@ -1559,11 +1574,16 @@ func _sh_install_ai(_t, a: Array) -> Variant:
 
 # @native iship.CurrentTarget
 func _sh_current_target(_t, _a: Array) -> Variant:
-	if game == null or game.target_ai == null:
+	if game == null:
 		return null
-	if not is_instance_valid(game.target_ai):
-		return null
-	return _wrap_ship(game.target_ai)
+	if game.target_ai != null and is_instance_valid(game.target_ai):
+		return _wrap_ship(game.target_ai)
+	# a contact-list selection of a RECORD (waypoint, station, L-point) is a
+	# target too -- a0m10's first lesson gates on CurrentTarget == the
+	# waypoint it just created, which answered null here
+	if game.target_idx >= 0 and game.target_idx < game.objects.size():
+		return _wrap_record(game.objects[game.target_idx])
+	return null
 
 # @native iship.DisruptLDSDrive
 # @native iship.Disrupt

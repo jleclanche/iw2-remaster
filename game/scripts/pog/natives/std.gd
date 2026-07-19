@@ -342,7 +342,14 @@ func _obj_get(_t, a: Array) -> Variant:
 # @native object.SetListProperty
 # @native object.SetSetProperty
 func _obj_set(_t, a: Array) -> Variant:
-	_bag(a[0])[_s(a[1])] = a[2] if a.size() > 2 else 0
+	var key := _s(a[1])
+	_bag(a[0])[key] = a[2] if a.size() > 2 else 0
+	# `name` on a SIM is not an ordinary bag entry: FcObject's name IS the
+	# sim's name (iutilities.MakeWaypointVisible renames its "default"
+	# waypoint through this property), and the record the HUD and the
+	# contact list read has to follow the rename.
+	if key == "name" and a[0] is PogWorld.PogSim:
+		(a[0] as PogWorld.PogSim).rename(_s(a[2]) if a.size() > 2 else "")
 	return 0
 
 # @native object.PropertyExists

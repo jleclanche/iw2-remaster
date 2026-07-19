@@ -428,12 +428,20 @@ func _o_set_state(_t, a: Array) -> Variant:
 	var key := PogStd._s(a[0])
 	if not game.mission.objectives.has(key):
 		return 0
-	# State 2 is "achieved" in the scripts' vocabulary; anything else leaves it
-	# outstanding (1 = active, 3 = failed).
-	var done := int(a[1]) == 2
-	game.mission.objectives[key]["done"] = done
-	if done and game.hud != null:
-		game.hud.warn("MISSION OBJECTIVE COMPLETED", 2.5)
+	# eObjectiveState (SDK iObjectives.h): 0 OS_Incomplete, 1 OS_Succeeded,
+	# 2 OS_Failed. Every campaign call site agrees: 208 calls pass 1 at their
+	# completion event, 30 pass 2 on failure lines ("got away", reactor
+	# dead), 4 pass 0 as resets. The old reading here ("2 is achieved")
+	# inverted both -- a ported objective could never complete and a failed
+	# one read as a win.
+	var state := int(a[1])
+	game.mission.objectives[key]["done"] = state == 1
+	game.mission.objectives[key]["failed"] = state == 2
+	if game.hud != null:
+		if state == 1:
+			game.hud.warn("MISSION OBJECTIVE COMPLETED", 2.5)
+		elif state == 2:
+			game.hud.warn("MISSION OBJECTIVE FAILED", 2.5)
 	return 0
 
 # @native iobjectives.Remove
