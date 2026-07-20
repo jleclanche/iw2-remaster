@@ -98,11 +98,19 @@ static func bolt_spec(tpl: String) -> Dictionary:
 	# weapons.gd already carries per bolt class; a gatling must not report as a
 	# light PBC. Unknown bolts keep the light PBC as before.
 	var known: Dictionary = PbcWeapons.BOLT_BY_PROJECTILE.get(tpl.get_file(), {})
-	return {"damage": _f(p, "damage", 0.0), "penetration": _f(p, "penetration", 0.0),
+	var out := {"damage": _f(p, "damage", 0.0),
+		"penetration": _f(p, "penetration", 0.0),
 		"half_time": _f(p, "half_time", 2.0), "speed": _f(p, "speed", 6000.0),
 		"lifetime": _f(p, "lifetime", 1.6),
 		"wav": str(known.get("wav", "audio/sfx/light_pbc.wav")),
 		"bypass_shields": int(_f(p, "bypass_shields", 0.0)) != 0}
+	# streak texture / length cap / burst layout come from the bolt AVATAR, not
+	# the INI -- weapons.gd's table carries the extraction; without a row the
+	# renderer's defaults stand
+	for vis in ["texture", "length", "burst", "burst_lengths"]:
+		if known.has(vis):
+			out[vis] = known[vis]
+	return out
 
 # a gun mount: icTurret (slews) or icCannon (fixed, wide fire arc -- the
 # stations' nps_pseudo_turret). Property map offsets in docs/combat.md.
@@ -569,7 +577,8 @@ func _step_gun(b: Dictionary, g: Dictionary, base: Transform3D, armed: bool,
 	var dir := (muzzle * sol - muzzle.origin).normalized()
 	var shooter: Node3D = owner if owner != null else self
 	main.weapons._spawn_at(shooter, muzzle.origin, dir, _owner_vel(b), spec)
-	main.audio.play(str(bolt.get("wav", "audio/sfx/light_pbc.wav")), -10.0)
+	if str(bolt.get("wav", "audio/sfx/light_pbc.wav")) != "":
+		main.audio.play(str(bolt.get("wav", "audio/sfx/light_pbc.wav")), -10.0)
 	var shots: Array = g["fired"]
 	shots.append(_time)
 	if shots.size() > 32:

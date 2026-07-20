@@ -82,13 +82,90 @@ const ASSAULT_BOLT := {"damage": 160.0, "penetration": 52.0, "half_time": 0.35,
 	"burst": [Vector3(-1.6, 2.175, 0), Vector3(2.725, 1.625, 0),
 		Vector3(-2.75, -0.875, 0), Vector3(1.25, -1.925, 0), Vector3.ZERO],
 	"burst_lengths": [650.0, 700.0, 675.0, 750.0, 800.0]}
+# sims/weapons/nps_assault_cannon_bolt.ini -- the AI turrets' burst: identical
+# to the player's except half_time 0.4 (player 0.35). Same avatar, same
+# gatling fire sound (nps_assault_cannon mounts avatars/assault_cannon/
+# setup_effects -> audio/sfx/gatling.ini).
+const NPS_ASSAULT_BOLT := {"damage": 160.0, "penetration": 52.0,
+	"half_time": 0.4, "speed": 6000.0, "lifetime": 2.0, "bypass_shields": false,
+	"length": 800.0, "texture": "images/sfx/pbc_gatling",
+	"wav": "audio/sfx/gatling.wav",
+	"burst": [Vector3(-1.6, 2.175, 0), Vector3(2.725, 1.625, 0),
+		Vector3(-2.75, -0.875, 0), Vector3(1.25, -1.925, 0), Vector3.ZERO],
+	"burst_lengths": [650.0, 700.0, 675.0, 750.0, 800.0]}
+# sims/weapons/heavy_pbc_bolt.ini; avatars/heavy_pbc_bolt/setup.lws is one
+# icBeamAvatar (4, 1, 800), texture pbc_heavy. Fire sound: heavy_pbc.ini's
+# avatars/heavy_pbc/setup_effects.lws -> audio/sfx/heavy_pbc.ini.
+const HEAVY_PBC_BOLT := {"damage": 250.0, "penetration": 70.0, "half_time": 0.5,
+	"speed": 6000.0, "lifetime": 2.0, "bypass_shields": false,
+	"length": 400.0, "texture": "images/sfx/pbc_heavy",
+	"wav": "audio/sfx/heavy_pbc.wav"}
+# sims/weapons/antimatter_bolt.ini (antimatter_based=1); avatars/
+# pbc_bolt_antimatter/setup.lws (4, 1, 600), texture am_pbc. Fire sound:
+# antimatter_pbc.ini's setup_effects -> audio/sfx/antimatter_pbc.ini.
+const ANTIMATTER_BOLT := {"damage": 700.0, "penetration": 70.0,
+	"half_time": 0.6, "speed": 6550.0, "lifetime": 2.3, "bypass_shields": false,
+	"antimatter_based": true,
+	"length": 400.0, "texture": "images/sfx/am_pbc",
+	"wav": "audio/sfx/antimatter_pbc.wav"}
+# sims/weapons/long_range_pbc_bolt.ini -- the sniper cannon's round, the one
+# bolt with bypass_shields=1. avatars/pbc_bolt_sniper/setup.lws (4, 1, 800),
+# texture sniper. Fire sound: long_range_pbc.ini's avatars/sniper_pbc/
+# setup_effects.lws -> audio/sfx/snipercannon.ini.
+const LONG_RANGE_PBC_BOLT := {"damage": 500.0, "penetration": 60.0,
+	"half_time": 2.1, "speed": 8500.0, "lifetime": 4.2, "bypass_shields": true,
+	"length": 400.0, "texture": "images/sfx/sniper",
+	"wav": "audio/sfx/snipercannon.wav"}
+# sims/weapons/neutron_pbc_bolt.ini; avatars/pbc_bolt_neutron/setup.lws
+# (4, 1, 600), texture neutron. Fire sound: neutron_pbc.ini's setup_effects
+# -> audio/sfx/neutron_pbc.ini.
+const NEUTRON_PBC_BOLT := {"damage": 350.0, "penetration": 70.0,
+	"half_time": 0.3, "speed": 6500.0, "lifetime": 2.0, "bypass_shields": false,
+	"length": 400.0, "texture": "images/sfx/neutron",
+	"wav": "audio/sfx/neutron_pbc.wav"}
+# sims/weapons/pbc_bolt_highdamage.ini -- the pulse accelerator's round.
+# avatars/pbc_bolt/setup.lws (4, 1, 800), texture pbc (NOT pbc_standard --
+# that is standard_pbc_bolt's). pbc_pulse_accelerator.ini mounts avatars/
+# standard_pbc/setup_effects -> audio/sfx/pbc.ini, the standard fire sound.
+const PBC_HIGHDAMAGE_BOLT := {"damage": 230.0, "penetration": 52.0,
+	"half_time": 0.3915, "speed": 6000.0, "lifetime": 1.8,
+	"bypass_shields": false,
+	"length": 800.0, "texture": "images/sfx/pbc",
+	"wav": "audio/sfx/pbc.wav"}
+# sims/weapons/quad_light_pbc_bolt.ini -- light-PBC ballistics, but avatars/
+# light_pbc_bolt/setup_quad.lws draws FOUR pbc_light streaks (half-width 2,
+# length 200 each) strung along the flight line at the authored offsets.
+# Fire sound: quad_lite_pbc.ini's avatars/quad_pbc/setup_effects.lws ->
+# audio/sfx/quad_light.ini.
+const QUAD_LIGHT_PBC_BOLT := {"damage": 130.0, "penetration": 35.0,
+	"half_time": 0.3, "speed": 4500.0, "lifetime": 1.5, "bypass_shields": false,
+	"length": 500.0, "texture": "images/sfx/pbc_light",
+	"wav": "audio/sfx/quad_light.wav",
+	"burst": [Vector3(-1, 0, 100), Vector3(0, 1, 400), Vector3(1, 0, 200),
+		Vector3(0, -1, 0)],
+	"burst_lengths": [200.0, 200.0, 200.0, 200.0]}
+# sims/weapons/megabolt.ini -- nps_megabolter's round (AI-only). Reuses
+# avatars/pbc_bolt/setup.lws (texture pbc); the gun avatar (avatars/
+# heavy_pbc/setup.lws, no setup_effects) carries NO FcSoundNode, so the
+# original fires silently: wav "" means no fire sound.
+const MEGABOLT := {"damage": 1000.0, "penetration": 150.0, "half_time": 2.0,
+	"speed": 5000.0, "lifetime": 4.0, "bypass_shields": false,
+	"length": 2800.0, "texture": "images/sfx/pbc", "wav": ""}
 # the selected group's own ballistics, keyed by the gun INI's
-# projectile_template stem (iiGun::Load)
+# projectile_template stem (iiGun::Load). Every icBullet stem the shipped
+# subsims reference resolves here (mechcheck asserts the full population).
 const BOLT_BY_PROJECTILE := {
 	"pbc_bolt": PBC_BOLT,
 	"light_pbc_bolt": LIGHT_PBC_BOLT,
 	"assault_cannon_bolt": ASSAULT_BOLT,
-	"nps_assault_cannon_bolt": ASSAULT_BOLT,
+	"nps_assault_cannon_bolt": NPS_ASSAULT_BOLT,
+	"heavy_pbc_bolt": HEAVY_PBC_BOLT,
+	"antimatter_bolt": ANTIMATTER_BOLT,
+	"long_range_pbc_bolt": LONG_RANGE_PBC_BOLT,
+	"neutron_pbc_bolt": NEUTRON_PBC_BOLT,
+	"pbc_bolt_highdamage": PBC_HIGHDAMAGE_BOLT,
+	"quad_light_pbc_bolt": QUAD_LIGHT_PBC_BOLT,
+	"megabolt": MEGABOLT,
 }
 
 var ship: ShipFlight  # player, for fire()
@@ -403,7 +480,7 @@ func fire() -> void:
 			var fmem: Dictionary = ready[0]
 			fmem["energy"] = float(fmem.get("energy", 0.0)) \
 					- float(fmem["shot_cost"])
-		if main:
+		if main and str(spec.get("wav", "audio/sfx/pbc.wav")) != "":
 			main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 		return
 	var fired := 0
@@ -454,7 +531,7 @@ func fire() -> void:
 		if float(mem.get("shot_cost", 0.0)) > 0.0:
 			mem["energy"] = float(mem.get("energy", 0.0)) \
 					- float(mem["shot_cost"])
-	if main:
+	if main and str(spec.get("wav", "audio/sfx/pbc.wav")) != "":
 		main.audio.play(str(spec.get("wav", "audio/sfx/pbc.wav")), -8.0)
 
 static func _aim_dir(muzzle: Vector3, barrel: Vector3, lead: Vector3) -> Vector3:

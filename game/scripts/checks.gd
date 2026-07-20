@@ -1385,6 +1385,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
 	&"_ms_gatling",
+	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_script_queries",
 	&"_ms_station_reactive",
@@ -2011,6 +2012,68 @@ func _ms_gatling(_delta: float) -> void:
 			% [int(g["ammo"]), int(g["ammo_max"]), float(g["refire"]),
 			float(g["h_arc"]), float(bolt["damage"]),
 			str(bolt["wav"]).get_file()])
+	_mech_next()
+
+## Issue #28: every icBullet the shipped subsims can fire must resolve to an
+## extracted BOLT_BY_PROJECTILE row whose ballistics EQUAL the projectile INI
+## (sims/weapons/*.ini) -- no stem may fall through to another bolt's spec.
+## Walks the real data/ini/subsims/systems population, so a new weapon INI or
+## a deleted table row fails here, and a broken walk fails the floor check
+## (the shipped data has 11 bullet stems).
+func _ms_bolt_table(_delta: float) -> void:
+	var base: String = ShipSystems._base()
+	var stems := {}  # stem -> projectile ini rel
+	var dirs: Array[String] = ["subsims/systems"]
+	var scanned := 0
+	while not dirs.is_empty():
+		var rel: String = dirs.pop_back()
+		var da := DirAccess.open(base.path_join("data/ini").path_join(rel))
+		if da == null:
+			continue
+		for sub in da.get_directories():
+			dirs.append(rel.path_join(sub))
+		for fn in da.get_files():
+			if not fn.ends_with(".ini"):
+				continue
+			scanned += 1
+			var sys: Dictionary = ShipSystems.read_ini(
+					rel.path_join(fn.trim_suffix(".ini")))
+			var tpl := str((sys["props"] as Dictionary).get(
+					"projectile_template", ""))
+			if tpl.is_empty():
+				continue
+			if str(ShipSystems.read_ini(tpl)["class"]) == "icBullet":
+				stems[tpl.get_file()] = tpl
+	var bad := 0
+	for stem: String in stems:
+		var row: Dictionary = PbcWeapons.BOLT_BY_PROJECTILE.get(stem, {})
+		if row.is_empty():
+			_mech("bolt-table %s" % stem, false, "no BOLT_BY_PROJECTILE row")
+			bad += 1
+			continue
+		var p: Dictionary = ShipSystems.read_ini(str(stems[stem]))["props"]
+		var diffs := PackedStringArray()
+		for key in ["damage", "penetration", "half_time", "speed", "lifetime"]:
+			if not is_equal_approx(float(row[key]), float(p.get(key, 0.0))):
+				diffs.append("%s %s!=%s" % [key, row[key], p.get(key, "?")])
+		if bool(row.get("bypass_shields", false)) \
+				!= (int(float(p.get("bypass_shields", "0"))) != 0):
+			diffs.append("bypass_shields")
+		# the wav is avatar-sourced, not INI-sourced; assert the FILE exists
+		# ("" is the authored no-sound case, the megabolter)
+		var wav := str(row.get("wav", ""))
+		if not wav.is_empty() and not FileAccess.file_exists(
+				base.path_join("data/audio").path_join(wav)):
+			diffs.append("missing " + wav)
+		if not FileAccess.file_exists(base.path_join("data/textures")
+				.path_join(str(row.get("texture", ""))) + ".png"):
+			diffs.append("missing texture %s" % row.get("texture", "(none)"))
+		if not diffs.is_empty():
+			_mech("bolt-table %s" % stem, false, " ".join(diffs))
+			bad += 1
+	_mech("bolt-table", bad == 0 and stems.size() >= 11,
+		"%d/%d icBullet stems verified against %d weapon INIs"
+			% [stems.size() - bad, stems.size(), scanned])
 	_mech_next()
 
 func _ms_script_queries(_delta: float) -> void:
