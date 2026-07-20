@@ -836,10 +836,29 @@ func _s_is_hidden(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	return 1 if (s != null and s.hidden) else 0
 
-# @stub sim.SetCullable
 # @stub sim.SetMass
 func _s_noop(_t, _a: Array) -> Variant:
-	# Culling is Godot's problem; mass waits on the inertia extraction (#7).
+	# Mass waits on the inertia extraction (#7).
+	return 0
+
+
+# @native sim.SetCullable
+func _s_set_cullable(_t, a: Array) -> Variant:
+	# sim.dll @ 0x10004a00: SetCullable(sim, 1) CLEARS FiSim flag 0x40
+	# (`and 0xffffffbf` @ 0x10004a6c); SetCullable(sim, 0) SETS it through
+	# FiSim::SetSimFlag(0x40) (@ 0x10004a7e). So flag 0x40 is DON'T-CULL --
+	# which also names the flag act3.md's hyperspace tracker left UNKNOWN:
+	# the tracked jumper is marked uncullable. Our world cull is main_world's
+	# 400 km distance streaming (the same distance FcWorld culls at, per the
+	# heat-sanctuary extraction); a no-cull record streams in regardless of
+	# range and never streams out. Node sims (AI ships) are never culled here
+	# in the first place.
+	var s := _as_sim(a[0])
+	if s == null:
+		return 0
+	var cullable: bool = a.size() > 1 and PogVM._truthy(a[1])
+	if not s.rec.is_empty():
+		s.rec["no_cull"] = not cullable
 	return 0
 
 
@@ -1981,7 +2000,8 @@ const _BINDINGS := {
 	"sim.setangularvelocity": "_s_set_angular",
 	"sim.speed": "_s_speed",
 	"sim.sethidden": "_s_set_hidden", "sim.ishidden": "_s_is_hidden",
-	"sim.setcullable": "_s_noop", "sim.setcollision": "_s_set_collision",
+	"sim.setcullable": "_s_set_cullable",
+	"sim.setcollision": "_s_set_collision",
 	"sim.setmass": "_s_noop",
 	"sim.avataraddchannel": "_s_avatar_add_channel",
 	"sim.avatarsetchannel": "_s_avatar_set_channel",

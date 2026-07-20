@@ -428,7 +428,6 @@ func _stream_is_playing_url(_t, a: Array) -> Variant:
 # @stub imultiplay.ClientBroadcastTeamMessage
 # @stub imultiplay.IsGameEnded
 # @stub imultiplay.ServerSetWinningTeam
-# @stub imultiplay.LinkShipWeapons
 # @stub imultiplay.ClientSendUserMessage
 # @stub imultiplay.ClientAddRespawnEffect
 # @stub imultiplay.SetUpdateFlag
@@ -545,6 +544,25 @@ func _mp(_t, _a: Array) -> Variant:
 	return 0
 
 
+# @native imultiplay.LinkShipWeapons
+func _mp_link_ship_weapons(_t, a: Array) -> Variant:
+	# Not mp-only after all -- the stub gate caught a1m01's MissionHandler and
+	# iinstantaction calling it in pure SP, right after a hull swap. The
+	# handler (imultiplay.dll @ 0x10008680) resolves an icShip and calls
+	# icShip::LinkWeapons (iwar2 @ 0x100761a0): the RUNTIME rebuild of the
+	# loadout's same-name fire groups (the hash-by-name walk is the same law
+	# as icLoadout::CreateWeaponLinks 0x10096940 -- see ship_systems.gd
+	# icWeaponLink). Our player's groups rebuild from the fitted systems,
+	# which is that exact walk; AI hulls build their batteries at scan and
+	# carry no player fire groups to relink.
+	if game == null or game.get("weapons") == null or game.get("sys") == null:
+		return 0
+	var s = a[0]
+	if s != null and "is_player" in s and s.is_player:
+		game.weapons.build_groups(game.sys)
+	return 0
+
+
 const _BINDINGS := {
 	"iemail.sendemail": "_send", "iemail.find": "_email_find",
 	"iemail.cast": "_email_cast", "iemail.read": "_email_read",
@@ -584,7 +602,7 @@ const _BINDINGS := {
 	"imultiplay.clientoptionsdefaulttaunt": "_mp",
 	"imultiplay.clientbroadcastteammessage": "_mp",
 	"imultiplay.isgameended": "_mp", "imultiplay.serversetwinningteam": "_mp",
-	"imultiplay.linkshipweapons": "_mp",
+	"imultiplay.linkshipweapons": "_mp_link_ship_weapons",
 	"imultiplay.clientsendusermessage": "_mp",
 	"imultiplay.clientaddrespawneffect": "_mp",
 	"imultiplay.setupdateflag": "_mp", "imultiplay.packageini": "_mp",

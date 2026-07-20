@@ -656,11 +656,6 @@ func _campcheck(_delta: float) -> void:
 const KNOWN_STUBS_LEGACY: Array[String] = []
 const KNOWN_STUBS_PORT: Array[String] = [
 	"iship.createturretfighters",
-	"sim.setcullable",
-	# caught by this very gate: the "mp-only" classification was wrong --
-	# a1m01's MissionHandler calls it in pure SP. Benign for us: the loadout
-	# builds weapon links automatically (icLoadout::CreateWeaponLinks).
-	"imultiplay.linkshipweapons",
 ]
 
 

@@ -182,7 +182,10 @@ All four natives are `iiThrusterSim` methods bound by `isim.dll`
   before `IsJumping` @ `0x10040c00`): when a ship jumps, if the player has
   program 0x800 AND the jumper is the player's current contact-list target,
   `cpu+0x9c = jumper id; cpu+0xa0 = destination id`, log event 0x67, and
-  `SetSimFlag(jumper, 0x40)` (flag meaning UNKNOWN).
+  `SetSimFlag(jumper, 0x40)` — flag 0x40 is DON'T-CULL, recovered from
+  `sim.SetCullable` (sim.dll @ 0x10004a7e sets it for SetCullable(sim, 0),
+  0x10004a6c clears it): the tracked jumper is exempted from the world cull
+  so it survives to be followed.
 
 ## 6. icTeleportDynamics (kibble / cornflake_field)
 

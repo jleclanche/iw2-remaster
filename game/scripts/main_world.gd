@@ -811,6 +811,11 @@ func _stream_objects() -> void:
 		var dy: float = o["y"] - py
 		var dz: float = o["z"] - pz
 		var d2 := dx * dx + dy * dy + dz * dz
+		# sim.SetCullable(sim, 0) = FiSim flag 0x40, DON'T CULL (sim.dll @
+		# 0x10004a7e): the record streams in regardless of range and never
+		# streams out -- cutscene actors and script waypoints must not vanish
+		# at the 400 km world cull our STREAM_IN mirrors
+		var sd2: float = 0.0 if o.get("no_cull", false) else d2
 		match o["category"]:
 			"body", "star":
 				if o["node"] == null:
@@ -881,7 +886,7 @@ func _stream_objects() -> void:
 					if fg.visible:
 						fg.scale = Vector3.ONE * (min_r / maxf(draw_r, 1.0))
 			"station", "prop", "gunstar":
-				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
+				if o["node"] == null and sd2 < STREAM_IN * STREAM_IN:
 					# POG can create a sim that carries no avatar (a pure logic
 					# marker); there is nothing to stream in for those.
 					if str(o.get("avatar", "")).is_empty():
@@ -904,15 +909,15 @@ func _stream_objects() -> void:
 					# needs it, so stamp it the moment the model exists.
 					if float(o.get("radius", 0.0)) <= 0.0:
 						o["radius"] = _model_bounds_radius(model)
-				elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
+				elif o["node"] != null and sd2 > STREAM_OUT * STREAM_OUT:
 					o["node"].queue_free()
 					o["node"] = null
 				if o["node"] != null:
 					o["node"].position = Vector3(dx, dy, dz)
 			"lpoint":
-				if o["node"] == null and d2 < STREAM_IN * STREAM_IN:
+				if o["node"] == null and sd2 < STREAM_IN * STREAM_IN:
 					o["node"] = _spawn_beacon(o)
-				elif o["node"] != null and d2 > STREAM_OUT * STREAM_OUT:
+				elif o["node"] != null and sd2 > STREAM_OUT * STREAM_OUT:
 					o["node"].queue_free()
 					o["node"] = null
 				if o["node"] != null:
