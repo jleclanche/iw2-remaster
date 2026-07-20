@@ -181,7 +181,9 @@ func _capsule_camera(delta: float, target: Transform3D) -> void:
 		_cap_cam_dir = Vector3(randf_range(0.8, 1.0),
 			randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
 	cam.fov = CAPSULE_CAM_FOV
-	var r := _model_bounds_radius(ship_model)
+	# the distance term is the focus record's +0x10 radius = the SIM's
+	# radius (the drop camera reads the same field), not model bounds
+	var r: float = piloted().radius
 	if r <= 0.0:
 		r = SHIP_HIT_RADIUS
 	var pos := target.origin + target.basis * (_cap_cam_dir
