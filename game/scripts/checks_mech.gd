@@ -87,6 +87,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_gatling",
 	&"_ms_sign_avatar",
 	&"_ms_sign_avatar_assert",
+	&"_ms_gas_ball",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -989,6 +990,31 @@ func _ms_sign_avatar_assert(_delta: float) -> void:
 			and flipped, "%d/13 quads, %d/8 animated, flipped=%s"
 			% [quads, _sign_fx._signs.size(), flipped])
 	_mech_reap(_sign_st)
+	_mech_next()
+
+func _ms_gas_ball(_delta: float) -> void:
+	# icGasBallAvatar (#10): a nebula seen from outside is 32 balls x 2
+	# blend passes at the impostor distance; ball 0 is the fixed centre
+	# blob (s1 1.1 / s2 0.6, ctor @ 0x100bdb50)
+	var fx: SpaceFx = m.space_fx
+	var radius := 2.5e8  # The Effrit's, the one shipped nebula
+	var centre := Vector3(fx._px + 1.0e9, fx._py, fx._pz)
+	fx._neb = {"x": centre.x, "y": centre.y, "z": centre.z, "radius": radius}
+	fx._gas_update(centre, radius, 0.0)
+	var vis := 0
+	for mi in fx._gas_mis:
+		if mi.visible:
+			vis += 1
+	var k: float = m.IMPOSTOR_DIST / 1.0e9
+	var s0: float = (fx._gas_mis[0].material_override as ShaderMaterial) \
+			.get_shader_parameter("size")
+	var at := fx._gas_anchor.position.length()
+	var ok := vis == 64 and absf(at - m.IMPOSTOR_DIST) < 1.0 \
+			and absf(s0 - radius * 1.1 * k) < 1.0
+	_mech("gas-ball", ok, "%d/64 visible, anchor %.0f m, ball0 %.0f m"
+			% [vis, at, s0])
+	fx._neb = {}
+	fx._gas_hide()
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

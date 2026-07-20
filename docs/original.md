@@ -2124,6 +2124,18 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
 
+### icGasBallAvatar's alpha pass source alpha
+
+The gas ball Draw (`iwar2.dll @ 0x100bddb0`) runs its second, depth-sorted
+FcBillBoard pass with engine blend `+0x175c = 3` (SRCALPHA/INVSRCALPHA), but
+`images/sfx/cloud` ships with **no alpha channel** and the vertex alpha is the
+global `+0x1790`. What D3D7 sources as SRCALPHA there (implicit 1.0? a colour
+key? a texture-stage alpha op set in the state flush) is unrecovered --
+implicit 1.0 would paint opaque black card corners over the starfield, which
+the shipped game visibly does not. `space_fx.gd` reads the texture LUMINANCE
+as alpha (black = clear) as the stand-in; settle it by decompiling the
+`FcGraphicsEngine` state flush for the billboard path.
+
 ### Native return values our implementations disagree with
 
 Found by recording what each native actually returned during `--basecheck` and

@@ -813,6 +813,7 @@ func _render_nebula() -> void:
 	if _neb_quads.is_empty() and not _neb.is_empty():
 		_neb_build()
 	if _neb.is_empty() or _cam == null or _hidden:
+		_gas_hide()
 		_neb_hide()
 		return
 
@@ -823,6 +824,9 @@ func _render_nebula() -> void:
 	# offset from `_pos`. Taking the delta in SIM space is what survives a fold.
 	var eye: Vector3 = Vector3(_px, _py, _pz) + _cam.global_position
 	var opacity := nebula_opacity(eye.distance_to(centre), radius)
+	# the gas ball cloud is the nebula's OUTSIDE view -- it must draw exactly
+	# when the inside layers don't
+	_gas_update(centre, radius, opacity)
 	if opacity <= 0.0:
 		_neb_hide()
 		_neb_seeded = false
@@ -1006,6 +1010,146 @@ func _render_nebula() -> void:
 		# and those are depth-tested -- enclosed spaces stay unlit.
 		_neb_fogged = true
 
+
+# --- icGasBallAvatar: the nebula seen from OUTSIDE ---------------------------
+# @element icGasBallAvatar
+# icNebula's own avatar (created by 0x10067940 into nebula+0x1f8; factory
+# 0x100bda60, data ctor FUN_100bdb50 @ 0x100bdb50, vtable 0x1011cc20). The
+# ctor rolls a 32-entry ball table, 7 floats each (+0xcc stride 0x1c):
+#   ball 0 (fixed):   pos (0,0,0), s1 1.1, s2 0.6, rolls 0 / 2pi
+#   balls 1-31:       pos = lerp(0.4, 1.0, u) * random unit vector
+#                     (consts @ 0x10117558/0x101171f0, u = rand()/32767
+#                     @ 0x10118494), s1 = lerp(0.1, 0.4, u') (@ 0x101184b0),
+#                     s2 = lerp(0.3, 0.7, u'') (@ 0x1011c034/0x101191e8),
+#                     two rolls = u * 2pi (@ 0x10119f94)
+# node scale = nebula radius (+0x1c), cull radius x1.7 (@ 0x1011c3ec);
+# colour copied from the nebula's +0x1e4..0x1ec, texture the nebula's
+# texture_url (images/sfx/cloud). Draw (vtable slot 16 @ 0x100bddb0 -- a
+# Ghidra hole, raw-disassembled): view-depth-sorts the table (qsort, cmp @
+# 0x100be050), then TWO FcBillBoard passes over all 32 balls: pass 1 in
+# table order, engine blend +0x175c = 2 (SRCALPHA/ONE additive), size
+# scale*s1, roll 1; pass 2 in sorted back-to-front order, blend 3
+# (SRCALPHA/INVSRCALPHA), size scale*s2, roll 2. OPEN QUESTION
+# (docs/original.md): cloud.png ships with no alpha channel, so what blend
+# 3 uses for source alpha is unproven -- we read the texture luminance as
+# the alpha (black = clear), which is the only reading that doesn't leave
+# opaque black card corners over the starfield.
+# The whole shipped game has ONE nebula (The Effrit, r 2.5e8 m), far beyond
+# the 600 km far plane -- like the bodies, it draws at IMPOSTOR_DIST with
+# the angular size preserved (main_world.gd's impostor law).
+const GAS_BALLS := 32  # 1 fixed + 0x1f randoms (ctor loop @ 0x100bdb50)
+var _gas: Array = []             # {off: Vector3, s1, s2, r1, r2}
+var _gas_mis: Array[MeshInstance3D] = []
+var _gas_anchor: Node3D = null
+
+const GAS_SHADER_COMMON := """
+uniform sampler2D tex : source_color, filter_linear_mipmap, repeat_enable;
+uniform vec3 tint = vec3(1.0);
+uniform float size = 1.0;
+uniform float roll = 0.0;
+void vertex() {
+	float c = cos(roll);
+	float s = sin(roll);
+	vec2 v = vec2(VERTEX.x * c - VERTEX.y * s, VERTEX.x * s + VERTEX.y * c);
+	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(
+		INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2],
+		MODEL_MATRIX[3]);
+	VERTEX = vec3(v * size, 0.0);
+}
+"""
+
+const GAS_ADD_SHADER := """
+shader_type spatial;
+render_mode unshaded, blend_add, cull_disabled, depth_draw_never,
+	shadows_disabled, fog_disabled;
+""" + GAS_SHADER_COMMON + """
+void fragment() {
+	ALBEDO = texture(tex, UV).rgb * tint;
+}
+"""
+
+const GAS_MIX_SHADER := """
+shader_type spatial;
+render_mode unshaded, blend_mix, cull_disabled, depth_draw_never,
+	shadows_disabled, fog_disabled;
+""" + GAS_SHADER_COMMON + """
+void fragment() {
+	vec3 c = texture(tex, UV).rgb;
+	ALBEDO = c * tint;
+	ALPHA = max(c.r, max(c.g, c.b));
+}
+"""
+
+func _gas_build() -> void:
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var tex: Texture2D = ParticleFx.texture(
+			base, str(_neb.get("texture_url", NEB_TEXTURE)))
+	_gas_anchor = Node3D.new()
+	add_child(_gas_anchor)
+	var quad := QuadMesh.new()
+	quad.size = Vector2(2.0, 2.0)  # verts at +/-1; `size` does the scaling
+	_gas.append({"off": Vector3.ZERO, "s1": 1.1, "s2": 0.6,
+			"r1": 0.0, "r2": TAU})
+	for i in GAS_BALLS - 1:
+		_gas.append({
+			"off": Vector3(randf_range(-1, 1), randf_range(-1, 1),
+					randf_range(-1, 1)).normalized() * randf_range(0.4, 1.0),
+			"s1": randf_range(0.1, 0.4), "s2": randf_range(0.3, 0.7),
+			"r1": randf_range(0.0, TAU), "r2": randf_range(0.0, TAU)})
+	for b: Dictionary in _gas:
+		for code in [GAS_ADD_SHADER, GAS_MIX_SHADER]:
+			var sh := Shader.new()
+			sh.code = code
+			var mat := ShaderMaterial.new()
+			mat.shader = sh
+			mat.set_shader_parameter("tex", tex)
+			mat.set_shader_parameter(
+					"roll", b["r1"] if code == GAS_ADD_SHADER else b["r2"])
+			# the additive pass lays down first, the sorted alpha pass on top
+			mat.render_priority = -1 if code == GAS_ADD_SHADER else 0
+			var mi := MeshInstance3D.new()
+			mi.mesh = quad
+			mi.material_override = mat
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.extra_cull_margin = 5.0e5
+			mi.visible = false
+			_gas_anchor.add_child(mi)
+			_gas_mis.append(mi)
+
+func _gas_hide() -> void:
+	for mi in _gas_mis:
+		mi.visible = false
+
+func _gas_update(centre: Vector3, radius: float, opacity: float) -> void:
+	if _gas_mis.is_empty():
+		_gas_build()
+	# at opacity 1 the original's far plane sits at depth * 1.1 (~33 km) --
+	# the balls are far beyond it; the fog wall owns the view
+	if opacity >= 1.0:
+		_gas_hide()
+		return
+	var m := get_parent()
+	var rel := centre - Vector3(_px, _py, _pz)
+	var dist := maxf(rel.length(), 1.0)
+	var k := minf(float(m.IMPOSTOR_DIST) / dist, 1.0)
+	_gas_anchor.position = rel.normalized() * (dist * k)
+	var col_a: Array = _neb.get("nebula_colour", [])
+	var tint := NEB_COLOUR
+	if col_a.size() >= 3:
+		tint = Color(col_a[0], col_a[1], col_a[2])
+	var lin := tint.srgb_to_linear()
+	var tv := Vector3(lin.r, lin.g, lin.b)
+	for i in _gas.size():
+		var b: Dictionary = _gas[i]
+		var pos: Vector3 = (b["off"] as Vector3) * radius * k
+		for pi in 2:
+			var mi: MeshInstance3D = _gas_mis[i * 2 + pi]
+			mi.position = pos
+			var mat: ShaderMaterial = mi.material_override
+			mat.set_shader_parameter("tint", tv)
+			mat.set_shader_parameter("size",
+					radius * float(b["s1"] if pi == 0 else b["s2"]) * k)
+			mi.visible = true
 
 # --- --nebshot: park inside The Effrit and photograph it ---------------------
 # The nebula is the one effect you cannot see from any default spawn, so it gets
