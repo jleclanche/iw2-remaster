@@ -1934,11 +1934,36 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 # (IsAIDisabled is a DEAD EXPORT: zero call sites in any .pogasm -- apicov
 # flags it so. Kept bound only so the UNBOUND count stays 0.)
 # @stub iship.PercentageThrusterEmission
-# @stub iship.CreateTurretFighters
 func _sh_noop(_t, _a: Array) -> Variant:
-	# PercentageThrusterEmission is an avatar channel expression;
-	# CreateTurretFighters is the icTurretShip gap (#5).
+	# PercentageThrusterEmission is an avatar channel expression.
 	return 0
+
+# @native iship.CreateTurretFighters
+func _sh_create_turret_fighters(_t, _a: Array) -> Variant:
+	# icLoadout::CreateTurretFighters @ 0x10097710 (#5): one icTurretShip
+	# per FITTED slot (icLoadout+0xac/+0xad; our loadout carries the count
+	# the customise natives maintain, cap 2 = the two slots), each Load-ed
+	# from sims/ships/player/turret_fighter.ini, named from
+	# m_turret_fighter_names = name_lori / name_az (assigned @ 0x109619 --
+	# the wingmen fly them), faction Player. The original strips every
+	# icMountPoint-derived subsim (loadout bookkeeping, not flight
+	# equipment) -- our created hulls never fit subsims, so there is
+	# nothing to strip. The returned LIST feeds iwingmen.AddTFighters,
+	# whose dockport pairing is already POG-side.
+	var out: Array = []
+	if game == null or vm == null or not ("econ" in vm) or vm.econ == null:
+		return out
+	var n: int = mini(int(vm.econ.loadout.turret_fighters), 2)
+	var names := ["name_lori", "name_az"]
+	for i in n:
+		var s := _create_ship("ini:/sims/ships/player/turret_fighter",
+				names[i])
+		if s == null or s.node == null:
+			continue
+		s.faction = "Player"
+		(s.node as AiShip).behavior = "idle"
+		out.append(s)
+	return out
 
 # @native iship.RecalculateMOIFromMass
 func _sh_recalc_moi(_t, a: Array) -> Variant:
@@ -2199,7 +2224,7 @@ const _BINDINGS := {
 	"iship.hashyperspacetracker": "_sh_has_tracker",
 	"iship.hyperspacetrackertarget": "_sh_tracker_target",
 	"iship.hyperspacetrackercontact": "_sh_tracker_contact",
-	"iship.createturretfighters": "_sh_noop",
+	"iship.createturretfighters": "_sh_create_turret_fighters",
 	"iship.createplayership": "_sh_create_player_ship",
 
 	"imapentity.findbyname": "_s_find_by_name",

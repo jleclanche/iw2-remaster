@@ -97,6 +97,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_eng_layout",
 	&"_ms_star_streaks",
 	&"_ms_lightmap_layer",
+	&"_ms_turret_fighters",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1237,6 +1238,30 @@ func _ms_lightmap_layer(_delta: float) -> void:
 	_mech("lightmap-layer", envs >= 1 and lit == envs,
 			"%d envmap shaders, %d with the lightmap folded in" % [envs, lit])
 	_mech_reap(host)
+	_mech_next()
+
+func _ms_turret_fighters(_delta: float) -> void:
+	# iship.CreateTurretFighters (#5): one icTurretShip per fitted loadout
+	# slot (cap 2), named for the wingmen; zero fitted -> an empty list
+	var lo = m.pog_rt.econ.loadout
+	var before: int = lo.turret_fighters
+	lo.turret_fighters = 0
+	var none: Array = m.pog_rt.native("iship.createturretfighters", [])
+	lo.turret_fighters = 2
+	var two: Array = m.pog_rt.native("iship.createturretfighters", [])
+	lo.turret_fighters = before
+	var ships := 0
+	for s in two:
+		if s != null and s.node is AiShip \
+				and is_instance_valid(s.node):
+			ships += 1
+	_mech("turret-fighters",
+			none.is_empty() and two.size() == 2 and ships == 2,
+			"0-fitted=%d 2-fitted=%d live ships=%d"
+			% [none.size(), two.size(), ships])
+	for s in two:
+		if s != null and s.node != null and is_instance_valid(s.node):
+			_mech_reap(s.node)
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

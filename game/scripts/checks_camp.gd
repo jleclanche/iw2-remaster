@@ -247,9 +247,10 @@ func _campcheck(_delta: float) -> void:
 # APPEARING is a regression or a newly reached code path -- the gate FAILS
 # so a human looks.
 const KNOWN_STUBS_LEGACY: Array[String] = []
-const KNOWN_STUBS_PORT: Array[String] = [
-	"iship.createturretfighters",
-]
+# EMPTY: every native the acts 0-3 boot chain touches is real now
+# (iship.CreateTurretFighters was the last holdout, #5). Any stub hit
+# fails the gate.
+const KNOWN_STUBS_PORT: Array[String] = []
 
 
 func _known_stubs() -> Array[String]:
