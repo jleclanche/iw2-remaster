@@ -290,8 +290,12 @@ func _build(main: Node3D, xform: Transform3D) -> void:
 		if main.audio == null:
 			break
 		var vol: float = float(snd.get("volume", 1.0))
-		main.audio.play("audio/sfx/%s.wav" % str(snd.get("wav", "")),
-				linear_to_db(maxf(vol, 0.001)) - 2.0)
+		# positional (#19): the effect's authored min_range out of
+		# sfx_effects.json (large_explosion 5000, small 2000, impact 400...)
+		main.audio.play_3d("audio/sfx/%s.wav" % str(snd.get("wav", "")),
+				global_position, float(snd.get("min_range", 1000.0)),
+				linear_to_db(maxf(vol, 0.001)) - 2.0,
+				float(snd.get("pitch_bend", 1.0)))
 
 	_life = last_frame / _fps
 	if not _frames.is_empty():

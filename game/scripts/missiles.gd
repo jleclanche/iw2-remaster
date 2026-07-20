@@ -274,12 +274,16 @@ func fire_magazine(shooter: Node3D, mag: Dictionary, target: Node3D) -> bool:
 		spawn_missile(shooter, spec, shooter.global_position + fwd * 30.0,
 				fwd, vel, target)
 	if main != null:
+		# positional (#19), min_range from each launch sound's own audio ini:
+		# cm_launch 200 (countermeasure_launch.ini), ldsi_launch 50,
+		# missile_us 40
+		var at: Vector3 = shooter.global_position
 		if bool(mag["cm"]):
-			main.audio.play("audio/sfx/cm_launch.wav", -6.0)
+			main.audio.play_3d("audio/sfx/cm_launch.wav", at, 200.0, -6.0)
 		elif bool(mag["ldsi"]):
-			main.audio.play("audio/sfx/ldsi_launch.wav", -6.0)
+			main.audio.play_3d("audio/sfx/ldsi_launch.wav", at, 50.0, -6.0)
 		else:
-			main.audio.play("audio/sfx/missile_us.wav", -6.0)
+			main.audio.play_3d("audio/sfx/missile_us.wav", at, 40.0, -6.0)
 	return true
 
 # =============================================================================

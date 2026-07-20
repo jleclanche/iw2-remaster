@@ -55,6 +55,11 @@ func _ready() -> void:
 		p.bus = "Sfx"
 		add_child(p)
 		players.append(p)
+	for i in 8:
+		var p3 := AudioStreamPlayer3D.new()
+		p3.bus = "Sfx"
+		add_child(p3)
+		players_3d.append(p3)
 	# the tug's actual drive: main burn loop plus spool-up/down transients
 	engine_player = AudioStreamPlayer.new()
 	engine_player.volume_db = -80.0
@@ -98,6 +103,36 @@ func _load_wav(rel: String) -> AudioStreamWAV:
 		push_warning("missing sfx " + rel)
 	sfx_cache[rel] = stream
 	return stream
+
+# --- positional one-shots (#19) ---------------------------------------------
+# FcSoundNode's authored fields: min_range ("full volume within" -> Godot's
+# unit_size, the convention the missile flight loops already use) and the
+# pitch jitter -- OnPropertiesChanged (flux @ 0x100e2f50) rolls ONE uniform
+# multiplier in [0.9, 1.1] (0x100ee2bc/0x100ee2c0) times the INI pitch_bend
+# at NODE LOAD, not per trigger; a one-shot play is one node's life, so the
+# roll happens here once per call. The falloff CURVE past min_range is not
+# extracted (the fcSoundDeviceDA dll is not in the decomp set); Godot's
+# inverse-distance law over unit_size stands in, consistent with DS3D's
+# default rolloff, and is flagged in issue #19 until the device is read.
+const JITTER_HI := 1.1   # flux @ 0x100ee2bc
+const JITTER_LO := 0.9   # flux @ 0x100ee2c0
+
+var players_3d: Array[AudioStreamPlayer3D] = []
+
+func play_3d(rel: String, at: Vector3, min_range: float,
+		volume_db := 0.0, pitch_bend := 1.0) -> void:
+	var stream := _load_wav(rel)
+	if stream == null:
+		return
+	for p in players_3d:
+		if not p.playing:
+			p.global_position = at
+			p.unit_size = maxf(min_range, 1.0)
+			p.stream = stream
+			p.volume_db = volume_db
+			p.pitch_scale = pitch_bend * randf_range(JITTER_LO, JITTER_HI)
+			p.play()
+			return
 
 func play(rel: String, volume_db := 0.0) -> void:
 	var stream := _load_wav(rel)

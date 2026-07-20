@@ -19,6 +19,13 @@ extends Node3D
 #   remote-piloting/carrier loadout system that launches them is not built.
 #   Should move to game/scripts/element_markers.gd.
 
+# The fire sounds' authored min_range, each from its own audio/sfx ini (#19)
+const GUN_SOUND_RANGE := {
+	"pbc.wav": 40.0, "light_pbc.wav": 120.0, "heavy_pbc.wav": 200.0,
+	"antimatter_pbc.wav": 120.0, "neutron_pbc.wav": 120.0,
+	"snipercannon.wav": 120.0, "quad_light.wav": 120.0, "gatling.wav": 120.0,
+}
+
 # --- iiGun class statics (flux.ini [iiGun]; registered at 0x10034c20) --------
 const MIN_TRAVEL_TIME := 0.4      # m_min_travel_time (flux.ini; FindAimPoint 0x10035170)
 const MIN_SPEED_FRACTION := 0.75  # floor on the solved bolt speed, 0x10117d8c
@@ -577,8 +584,11 @@ func _step_gun(b: Dictionary, g: Dictionary, base: Transform3D, armed: bool,
 	var dir := (muzzle * sol - muzzle.origin).normalized()
 	var shooter: Node3D = owner if owner != null else self
 	main.weapons._spawn_at(shooter, muzzle.origin, dir, _owner_vel(b), spec)
-	if str(bolt.get("wav", "audio/sfx/light_pbc.wav")) != "":
-		main.audio.play(str(bolt.get("wav", "audio/sfx/light_pbc.wav")), -10.0)
+	var wav := str(bolt.get("wav", "audio/sfx/light_pbc.wav"))
+	if wav != "":
+		# positional (#19): min_range from each fire sound's own audio ini
+		main.audio.play_3d(wav, muzzle.origin,
+				GUN_SOUND_RANGE.get(wav.get_file(), 120.0), -10.0)
 	var shots: Array = g["fired"]
 	shots.append(_time)
 	if shots.size() > 32:
