@@ -587,6 +587,7 @@ func _next_movie() -> void:
 	var job: Array = _movie_queue.pop_front()
 	var then: Callable = job[1]
 	movie = VideoStreamPlayer.new()
+	movie.bus = "Movie"  # fcMovieDeviceBink volume (the MOVIE VOLUME slider)
 	var vs := VideoStreamTheora.new()
 	vs.file = _base().path_join("data/movies/%s.ogv" % str(job[0]))
 	movie.stream = vs

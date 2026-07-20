@@ -132,9 +132,13 @@ func _ready() -> void:
 	# voice goes through its own bus with a spectrum analyzer so the 3D
 	# head can flap its mouth to the VO amplitude (the original's
 	# primitive lip sync over the DELT face morphs)
-	var bus := AudioServer.bus_count
-	AudioServer.add_bus(bus)
-	AudioServer.set_bus_name(bus, "Voice")
+	# audio_manager may have made the bus already (the SPEECH VOLUME slider
+	# lives on it, issue #37) -- reuse, never duplicate the name
+	var bus := AudioServer.get_bus_index("Voice")
+	if bus < 0:
+		bus = AudioServer.bus_count
+		AudioServer.add_bus(bus)
+		AudioServer.set_bus_name(bus, "Voice")
 	AudioServer.set_bus_send(bus, "Master")
 	AudioServer.add_bus_effect(bus, AudioEffectSpectrumAnalyzer.new(), 0)
 	_spectrum = AudioServer.get_bus_effect_instance(bus, 0)

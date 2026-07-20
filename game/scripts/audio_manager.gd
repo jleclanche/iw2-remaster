@@ -20,15 +20,45 @@ var base_path := ""
 var _mood_before_track := ""
 var _engine_hot := false
 
+# The SOUND options screen's four registered floats (ipdagui.gd:936-939)
+# write these engine properties -- fcSoundDeviceDA speech_volume /
+# music_volume / effects_volume and fcMovieDeviceBink volume -- with
+# immediate_update, so they are LIVE mixer levels, not restart settings.
+# Modelled as audio buses; the values persist in the same config store the
+# options rows write (user://pog_system.cfg).
+const VOLUME_BUSES := {
+	"speech": "Voice", "music": "Music", "effects": "Sfx", "movie": "Movie"}
+
+func _make_buses() -> void:
+	for kind: String in VOLUME_BUSES:
+		var bus: String = VOLUME_BUSES[kind]
+		if AudioServer.get_bus_index(bus) < 0:
+			AudioServer.add_bus()
+			AudioServer.set_bus_name(AudioServer.bus_count - 1, bus)
+	var cfg := ConfigFile.new()
+	cfg.load("user://pog_system.cfg")
+	set_volume("speech", float(cfg.get_value("fcSoundDeviceDA", "speech_volume", 1.0)))
+	set_volume("music", float(cfg.get_value("fcSoundDeviceDA", "music_volume", 1.0)))
+	set_volume("effects", float(cfg.get_value("fcSoundDeviceDA", "effects_volume", 1.0)))
+	set_volume("movie", float(cfg.get_value("fcMovieDeviceBink", "volume", 1.0)))
+
+func set_volume(kind: String, v: float) -> void:
+	var i := AudioServer.get_bus_index(str(VOLUME_BUSES.get(kind, "")))
+	if i >= 0:
+		AudioServer.set_bus_volume_db(i, linear_to_db(clampf(v, 0.0001, 1.0)))
+
 func _ready() -> void:
 	base_path = ProjectSettings.globalize_path("res://").path_join("../data/audio")
+	_make_buses()
 	for i in 8:
 		var p := AudioStreamPlayer.new()
+		p.bus = "Sfx"
 		add_child(p)
 		players.append(p)
 	# the tug's actual drive: main burn loop plus spool-up/down transients
 	engine_player = AudioStreamPlayer.new()
 	engine_player.volume_db = -80.0
+	engine_player.bus = "Sfx"
 	add_child(engine_player)
 	var eng := _load_wav("audio/sfx/tug_main_burn_loop.wav")
 	if eng:
@@ -37,6 +67,7 @@ func _ready() -> void:
 		engine_player.play()
 	thruster_player = AudioStreamPlayer.new()
 	thruster_player.volume_db = -80.0
+	thruster_player.bus = "Sfx"
 	add_child(thruster_player)
 	var thr := _load_wav("audio/sfx/maneuvering_thruster.wav")
 	if thr:
@@ -44,10 +75,12 @@ func _ready() -> void:
 		thruster_player.stream = thr
 		thruster_player.play()
 	lds_player = AudioStreamPlayer.new()
+	lds_player.bus = "Sfx"
 	add_child(lds_player)
 	music_a = AudioStreamPlayer.new()
 	music_b = AudioStreamPlayer.new()
-	music_a.bus = "Master"
+	music_a.bus = "Music"
+	music_b.bus = "Music"
 	add_child(music_a)
 	add_child(music_b)
 	music_current = music_a

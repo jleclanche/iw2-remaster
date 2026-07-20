@@ -1920,10 +1920,9 @@ func _opt_apply(_t, _a: Array) -> Variant:
 
 # @native ioptions.RestoreDefaults
 func _opt_restore(_t, _a: Array) -> Variant:
-	var cfg := _cfg("system")
 	for o in options:
-		cfg.set_value(o.section, o.key, o.dflt)
-	_cfg_save(cfg, "system")
+		_opt_store(o, 1.0 if _LIVE_VOLUMES.has(o.section + "/" + o.key)
+				else o.dflt)
 	return 0
 
 # @native ioptions.OnSelect
@@ -1949,13 +1948,31 @@ func _opt_on_right(_t, a: Array) -> Variant:
 func _option(i: int) -> PogOption:
 	return options[i] if i >= 0 and i < options.size() else null
 
+# iOptions.RegisterFloat(name, class_name, property, start, end,
+# immediate_update): the row edits a LIVE engine property. The sound rows
+# (fcSoundDeviceDA speech/music/effects_volume, fcMovieDeviceBink volume)
+# push straight into the mixer buses; full volume is the engine default.
+const _LIVE_VOLUMES := {
+	"fcSoundDeviceDA/speech_volume": "speech",
+	"fcSoundDeviceDA/music_volume": "music",
+	"fcSoundDeviceDA/effects_volume": "effects",
+	"fcMovieDeviceBink/volume": "movie",
+}
+
 func _opt_load(o: PogOption) -> Variant:
-	return _cfg("system").get_value(o.section, o.key, o.dflt)
+	var dflt: Variant = o.dflt
+	if _LIVE_VOLUMES.has(o.section + "/" + o.key):
+		dflt = 1.0
+	return _cfg("system").get_value(o.section, o.key, dflt)
 
 func _opt_store(o: PogOption, v: Variant) -> void:
 	var cfg := _cfg("system")
 	cfg.set_value(o.section, o.key, v)
 	_cfg_save(cfg, "system")
+	# immediate_update: the sound sliders are heard as they move
+	var kind: String = _LIVE_VOLUMES.get(o.section + "/" + o.key, "")
+	if not kind.is_empty() and game != null and game.audio != null:
+		game.audio.set_volume(kind, float(v))
 
 func _opt_step(i: int, dir: int) -> Variant:
 	var o := _option(i)
