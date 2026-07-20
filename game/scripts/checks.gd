@@ -1385,6 +1385,9 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_tow_ride",
 	&"_ms_contact_law",
 	&"_ms_contact_pair",
+	&"_ms_hull_solid",
+	&"_ms_hull_solid_assert",
+	&"_ms_hull_ghost",
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
 	&"_ms_gatling",
@@ -2024,6 +2027,185 @@ func _mech_reap(ai: AiShip) -> void:
 		m._finish_kill(ai)
 
 var _spill_before := 0
+
+# --- issue #33: the permanent hull-solidity gate ------------------------------
+# Converted from the 2026-07-19 "Hoffer's Wake has no collision" throwaway
+# probe. Rams a REAL authored CollisionHull through the exact pipeline every
+# streamed station takes (stations.json -> data/json/collisionhulls/*.json ->
+# ConcavePolygonShape3D -> _collide_hull's rest_info -> _process_contact), and
+# then rams the same model built WITHOUT its collider to prove the fly-through
+# detector actually detects -- the check re-earns its own trust every run.
+# Verdicts are TARGET-RELATIVE (progress along the ram axis toward the node):
+# the floating origin rebases scene coordinates mid-flight, so anything
+# measured as displacement-from-start silently lies here.
+# the hero asteroid: a CLOSED solid, so the centre-line ram cannot thread an
+# authored gap (the modular stations' open frames can pass a ship right past
+# their model origin without touching geometry)
+const HULL_PROBE_AVATAR := "avatars/HeroAsteroid/setup.gltf"
+const HULL_RAM_FROM := 2500.0
+const HULL_RAM_SPEED := 250.0  # 16.7 m/frame at 4x, inside the 40 m probe window
+
+var _mech_hull_o: Dictionary = {}
+var _mech_hull_hp := Vector2.ZERO  # saved (m.hull, m.sys.hull)
+
+func _hull_probe_station(with_hull: bool) -> Dictionary:
+	var fwd: Vector3 = -m.ship.global_transform.basis.z
+	# The record goes into m.objects with world coordinates built by the
+	# streaming convention (scene = world - scene-origin px/py/pz, so
+	# world = px + scene): the REAL streaming and collision frame loops then
+	# handle placement and contact -- the exact pipeline every live station
+	# takes, which is the thing this gate exists to exercise.
+	var anchor: Vector3 = m.ship.global_position + fwd * HULL_RAM_FROM
+	var o := {"name": "Hull Probe", "key": "hull_probe", "category": "station",
+		"avatar": HULL_PROBE_AVATAR, "radius": 0.0, "axis": fwd,
+		"x": m.px + anchor.x, "y": m.py + anchor.y, "z": m.pz + anchor.z}
+	var model: Node3D = m._load_gltf("data/avatars/" + HULL_PROBE_AVATAR)
+	if model == null:
+		return o
+	o["node"] = model
+	m.add_child(model)
+	model.global_position = anchor
+	if with_hull:
+		m._attach_collision_hull(o, model)
+	else:
+		o["hull"] = true  # the probe runs against NOTHING: the ghost case
+	o["radius"] = m._model_bounds_radius(model)
+	m.objects.append(o)
+	m.ship.velocity = fwd * HULL_RAM_SPEED
+	m.ship.set_speed = HULL_RAM_SPEED
+	return o
+
+## a GUIDED ram, re-aimed at the node every frame: the ship's own drift (and
+## whatever throttle state earlier steps left behind) must not let the run
+## slide past the target laterally -- the projection s cannot see a sideways
+## miss. The fixed speed keeps one frame's travel (250 * 4/60 = 16.7 m)
+## inside the 20 m probe sphere so the surface cannot be tunnelled between
+## frames, and the assignment happens every frame so nothing else can steer.
+func _hull_probe_ram() -> void:
+	var node: Node3D = _mech_hull_o["node"]
+	if node == null or not is_instance_valid(node):
+		return
+	var dir: Vector3 = \
+			(node.global_position - m.ship.global_position).normalized()
+	# nose on the target too: the assist trims velocity onto the nose line,
+	# so an unaligned nose turns the aimed ram into a stalled fly-by
+	var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.99 else Vector3.RIGHT
+	m.ship.global_transform.basis = Basis.looking_at(dir, up)
+	m.ship.set_speed = HULL_RAM_SPEED
+	m.ship.velocity = dir * HULL_RAM_SPEED
+
+func _hull_probe_cleanup(restore_pools: bool) -> void:
+	m.objects.erase(_mech_hull_o)
+	var node: Variant = _mech_hull_o.get("node")
+	if node != null and is_instance_valid(node):
+		(node as Node3D).queue_free()
+	_mech_hull_o = {}
+	m.ship.velocity = Vector3.ZERO
+	m.ship.set_speed = 0.0
+	if restore_pools:
+		m.hull = _mech_hull_hp.x
+		if m.sys != null:
+			m.sys.hull = _mech_hull_hp.y
+
+## ram progress along the axis: negative approaching, > 0 = past the centre.
+## TARGET-RELATIVE on purpose: ship and node scene positions from the same
+## frame, so the floating origin's folds cancel out of the difference --
+## anything anchored on where the run STARTED is a lie after the first fold.
+func _hull_probe_s() -> float:
+	var node: Node3D = _mech_hull_o["node"]
+	return (m.ship.global_position - node.global_position) \
+			.dot(_mech_hull_o["axis"] as Vector3)
+
+func _ms_hull_solid(_delta: float) -> void:
+	_mech_hull_o = _hull_probe_station(true)
+	var built: bool = bool(_mech_hull_o.get("hull", false)) \
+			and _mech_hull_o.get("node") != null
+	_mech("hull-built", built,
+		"CollisionHull trimesh for %s" % HULL_PROBE_AVATAR.get_file())
+	if not built:
+		_hull_probe_cleanup(false)
+		demo_phase += 2  # nothing to ram; skip both ram phases
+	else:
+		# the gate is about geometry, not the damage law (contact-law covers
+		# that): top the pool up so the ram is survivable at any damage number
+		_mech_hull_hp = Vector2(m.hull, m.sys.hull if m.sys != null else 0.0)
+		m.hull = 1.0e9
+		if m.sys != null:
+			m.sys.hull = 1.0e9
+		_mech_v0 = Vector3(-1.0e9, 0.0, 0.0)  # (max progress, response seen, -)
+	_mech_next()
+
+func _ms_hull_solid_assert(_delta: float) -> void:
+	var node: Variant = _mech_hull_o.get("node")
+	if node == null or not is_instance_valid(node):
+		_mech("hull-solid", false, "probe station vanished mid-run")
+		_hull_probe_cleanup(true)
+		_mech_next()
+		return
+	_hull_probe_ram()
+	# drive the detector directly: the game loop's own call sits behind the
+	# docked/jump/movie gate, which is not this step's subject -- the gate
+	# rams the GEOMETRY pipeline (trimesh -> rest_info -> ProcessContact)
+	m._collide_hull(_mech_hull_o)
+	var s := _hull_probe_s()
+	_mech_v0.x = maxf(_mech_v0.x, s)
+	# the verdict signal is the RESPONSE, not the trajectory: a real contact
+	# runs _process_contact -> damage_player against the topped-up pool. The
+	# trajectory after first contact is a scrum (bounce vs re-thrust vs the
+	# port-side snap-out) and proves nothing either way.
+	if _hull_probe_hit():
+		_mech("hull-solid", true,
+			"contact at %.0f m from the centre (pool -%.0f)"
+				% [-s, 1.0e9 - _hull_probe_pool()])
+	elif s > 0.0:
+		_mech("hull-solid", false,
+			"flew THROUGH: %.0f m past the centre, no damage, no response" % s)
+	elif demo_t > 30.0:
+		_mech("hull-solid", false,
+			"no contact: nearest %.0f m from the centre after %.0f s"
+				% [-_mech_v0.x, demo_t])
+	else:
+		return
+	_hull_probe_cleanup(false)  # pools stay topped up through the ghost run
+	_mech_next()
+
+func _hull_probe_pool() -> float:
+	return m.sys.hull if m.sys != null else m.hull
+
+func _hull_probe_hit() -> bool:
+	# ANY damage: one 250 m/s ram contact deals ~2e5 against the 1e9 pool
+	return _hull_probe_pool() < 1.0e9 - 1.0 or m.hull < 1.0e9 - 1.0
+
+func _ms_hull_ghost(_delta: float) -> void:
+	if not _mech_hull_o.has("ghost"):
+		_mech_hull_o = _hull_probe_station(false)
+		if _mech_hull_o.get("node") == null:
+			_mech("hull-ghost", false, "probe model failed to load")
+			_hull_probe_cleanup(true)
+			_mech_next()
+			return
+		_mech_hull_o["ghost"] = true
+		# re-top the pools so "no damage" is assertable for THIS run
+		m.hull = 1.0e9
+		if m.sys != null:
+			m.sys.hull = 1.0e9
+		return
+	_hull_probe_ram()
+	m._collide_hull(_mech_hull_o)
+	var s := _hull_probe_s()
+	if _hull_probe_hit():
+		_mech("hull-ghost", false,
+			"contact WITHOUT a collider: a stale body is answering the probe")
+	elif s > 0.0:
+		_mech("hull-ghost", true,
+			"no collider -> flew through undamaged (the detector can fail)")
+	elif demo_t > 30.0:
+		_mech("hull-ghost", false,
+			"never crossed the centre WITHOUT a collider: detector is blind")
+	else:
+		return
+	_hull_probe_cleanup(true)
+	_mech_next()
 
 func _ms_pod_spill(_delta: float) -> void:
 	# a dying hauler spills its racked pods (DetachAndFlingChild -> free
