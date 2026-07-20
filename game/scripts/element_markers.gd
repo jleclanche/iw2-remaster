@@ -131,6 +131,7 @@ extends RefCounted
 # @element-stub icDebugScreenBounds -- debug-only: bounds inspector debug screen
 # @element-stub icFFEffects -- engine-internal: force-feedback effect table; joystick FF is not reproduced (Godot Input.start_joy_vibration would be the hook)
 # @element-stub icAlienSwarmDraw -- dead-in-original: no shipped INI instantiates it (the swarm uses icCornflakeDraw); its per-particle gradient colour is computed then discarded -- an original bug
+# @element-stub FcParticleDrawLensFlare -- dead-in-original: no shipped INI names it; every particle [Draw] in data/ini is FcParticleDrawBillBoard (x6) or FcParticleDrawModel (x2), and no pogsrc reference exists either. The class is live code in flux.dll (CreateInstance @ 0x50ab0) but nothing in the shipped game data ever asks for one
 # (icAlienSwarmDynamics is really built: its @element marker is in particle_fx.gd -- Lorenz attractors)
 # (icCapsuleSpace is really built: its @element marker is in capsule_fx.gd / main.gd)
 # (icCreditScreen is really built: its @element marker is in base_screens.gd (html credits roll, 50 px/s @ 0x10117be8))
