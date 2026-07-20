@@ -91,6 +91,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_disrupt_arcs",
 	&"_ms_remote_missile",
 	&"_ms_remote_missile_assert",
+	&"_ms_remote_fire",
+	&"_ms_remote_fire_assert",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1051,6 +1053,7 @@ func _ms_disrupt_arcs(_delta: float) -> void:
 
 var _rm_t0 := 0.0
 var _rm_fired := false
+var _rf_drone: AiShip = null
 
 func _ms_remote_missile(_delta: float) -> void:
 	# icRemoteMissile (#10): firing the remote launcher spawns a SHIP, not a
@@ -1083,6 +1086,41 @@ func _ms_remote_missile_assert(_delta: float) -> void:
 	_mech("remote-missile", before == 1 and ms.remotes.is_empty()
 			and m.remote_ai == null,
 			"linked, then abort left %d live remotes" % ms.remotes.size())
+	_mech_next()
+
+func _ms_remote_fire(_delta: float) -> void:
+	# #1 residual: the trigger fires the PILOTED hull's own guns. The cutter
+	# mounts nps_assault_cannon (icSlugThrower, a fixed battery gun); a
+	# frame for Turrets._scan_ai_ships to build its battery, then possess.
+	_rf_drone = _mech_spawn("Remote Gunship", 2000.0,
+			m.ship.global_position + Vector3(0, -70000, 0))
+	_rf_drone.sim_key = "remote_gunship"
+	_rf_drone.setup_ini("sims/ships/corporate/cutter.ini", null)
+	_mech_next()
+
+func _ms_remote_fire_assert(_delta: float) -> void:
+	if Turrets.instance == null \
+			or Turrets.instance._battery_for_ship(_rf_drone).is_empty():
+		if demo_t > 200.0:
+			_mech("remote-fire", false, "no battery on the cutter")
+			_mech_next()
+		return
+	m.possess(_rf_drone)
+	var before: int = m.weapons.bolts.size()
+	m.weapons.cooldown = 0.0
+	m.weapons.fire()
+	var after: int = m.weapons.bolts.size()
+	# ... and the own hull must NOT have fired: every new bolt's shooter is
+	# the remote
+	var all_remote := true
+	for i in range(before, after):
+		if m.weapons.bolts[i]["shooter"] != _rf_drone:
+			all_remote = false
+	m.unpossess()
+	_mech("remote-fire", after > before and all_remote,
+			"%d bolt(s), all from the linked hull=%s"
+			% [after - before, all_remote])
+	_mech_reap(_rf_drone)
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

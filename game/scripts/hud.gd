@@ -907,16 +907,19 @@ func _draw_reticle(c: Vector2) -> void:
 	# y = 0). Suppressed while the HUD menu is open: the menu's left box
 	# right-aligns on the SAME -100 anchor, so the engine can never show both.
 	if not menu_active:
-		var vel: float = main.ship.forward_speed()
+		# the flight readouts follow the PILOT, not the hull: a remote link
+		# shows the linked vessel's speed (main.piloted(), issue #1)
+		var vel: float = main.piloted().forward_speed()
 		var vel_text: String = ("%s/s" % _fmt_range(absf(vel))) if in_lds \
 			else "%s%dm/s" % ["-" if vel < 0 else "+", absi(int(absf(vel)))]
 		_hud_text(0, 2, c + Vector2(-SPEED_X, 0), vel_text, 1, 2, ring)
 	_draw_target_block(c)
 	# velocity vector marker
-	var v: Vector3 = main.ship.velocity
+	var v: Vector3 = main.piloted().velocity
 	if v.length() > 5.0 and not in_lds:
 		var cam: Camera3D = main.cam
-		var ahead: Vector3 = main.ship.global_position + v.normalized() * 5000.0
+		var ahead: Vector3 = main.piloted().global_position \
+				+ v.normalized() * 5000.0
 		if not cam.is_position_behind(ahead):
 			var p := cam.unproject_position(ahead)
 			draw_arc(p, 6.0, 0, TAU, 16, ring, 1.4, true)
@@ -987,8 +990,8 @@ func _draw_speed_wedge(c: Vector2) -> void:
 	# (_DAT_1011e048 / _DAT_10119458) while the raw ratio is out of range.
 	if _reticle_tex == null or main.ship == null:
 		return
-	var ref: float = maxf(main.ship.max_speed.z, 1.0)
-	var raw: float = main.ship.forward_speed() / ref
+	var ref: float = maxf(main.piloted().max_speed.z, 1.0)
+	var raw: float = main.piloted().forward_speed() / ref
 	var in_range := raw >= -1.001 and raw <= 1.001   # _DAT_1011e0a8/a4
 	var v := clampf(raw, -1.0, 1.0)
 	var t := tan(v * PI / 4.0)
@@ -1017,14 +1020,14 @@ func _draw_set_speed_needle(c: Vector2, ref: float) -> void:
 	# (pilot state +0x14 above 1e-6, _DAT_101178fc) the needle pegs to the
 	# input's sign in RED; the engine's autopilot-program branch (chartreuse,
 	# icShip+0x25c state 1) has no equivalent in our port yet.
-	var thrust: float = main.ship.input_thrust.z
+	var thrust: float = main.piloted().input_thrust.z
 	var frac: float
 	var col := Color(1, 1, 1)
 	if absf(thrust) >= 1e-6:
 		frac = signf(thrust)
 		col = Color(1, 0, 0)
 	else:
-		frac = clampf(main.ship.set_speed / ref, -1.0, 1.0)
+		frac = clampf(main.piloted().set_speed / ref, -1.0, 1.0)
 	# positive fraction rotates the 9-o'clock anchor UP, matching the wedge
 	var rot := frac * PI / 4.0
 	_spr(c + Vector2(-ICON_BASE, 0).rotated(rot), 19, col, rot)
@@ -1306,10 +1309,10 @@ func _reticle_marker(c: Vector2) -> void:
 		else:
 			var t: Dictionary = main.objects[main.target_idx]
 			tpos = Vector3(t["x"] - main.px, t["y"] - main.py, t["z"] - main.pz)
-		var los: Vector3 = tpos - main.ship.global_position
+		var los: Vector3 = tpos - main.piloted().global_position
 		if los.length() > 1e-6:   # _DAT_101178fc
 			var closing: float = los.normalized().dot(
-					main.ship.velocity - tvel) * 0.0002
+					main.piloted().velocity - tvel) * 0.0002
 			_marker_spin -= clampf(closing, -1.0, 1.0) \
 					* get_process_delta_time() * (PI / 2.0)
 		if _reticle_tex != null:
@@ -1439,7 +1442,7 @@ func _draw_status_icons(c: Vector2) -> void:
 		_icon(c + _icon_pos(-67.5, ICON_R), 0x1B,
 				ICON_ROUNDEL | ICON_PULSE | ICON_RING, AMBER)
 	elif main.ap_mode == 0 and main.ship != null:
-		var thrust: Vector3 = main.ship.input_thrust
+		var thrust: Vector3 = main.piloted().input_thrust
 		if absf(thrust.x) > 0.0 or absf(thrust.y) > 0.0:
 			_icon(c + _icon_pos(-67.5, ICON_R), 0x1D,
 					ICON_ROUNDEL | ICON_PULSE | ICON_RING, AMBER)

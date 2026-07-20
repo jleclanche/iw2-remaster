@@ -391,6 +391,12 @@ func firing_solution(target: Node3D) -> Dictionary:
 func fire() -> void:
 	if cooldown > 0.0:
 		return
+	# a remote link routes the trigger to the PILOTED hull (issue #1):
+	# icPlayerPilot fires the linked ship's own weapon groups, not the
+	# parked own hull's. Own-hull heat/disruption gates do not apply.
+	if main != null and main.piloted() != ship:
+		_fire_remote(main.piloted())
+		return
 	# iiWeapon::Simulate 0x1003cc00 sets flag 0x200 and refuses to fire while
 	# the ship's TotalHeat is at or past heat_damage_threshold. (In practice
 	# only internal heat can get there: sun/planet proximity heat is dormant
@@ -545,6 +551,36 @@ func spawn(shooter: Node3D, dir: Vector3, spec: Dictionary = {}) -> void:
 	var vel: Vector3 = shooter.velocity if "velocity" in shooter else Vector3.ZERO
 	_spawn_at(shooter, shooter.global_position + dir * 40.0, dir, vel,
 			spec if not spec.is_empty() else bolt_spec)
+
+# The linked hull's own FIXED guns fire on the pilot's trigger (each with
+# its own bolt and refire); turrets keep their slew AI, and a gunless hull
+# (the remote probe) fires nothing. The battery record is the same one the
+# AI fire path uses (turrets.gd _battery_for_ship).
+func _fire_remote(rem: ShipFlight) -> void:
+	if not (rem is AiShip) or Turrets.instance == null:
+		return
+	var bat: Dictionary = {}
+	for b in Turrets.instance.batteries:
+		if b.get("owner") == rem:
+			bat = b
+			break
+	var fired := false
+	for g in bat.get("guns", []):
+		if bool(g.get("turret", false)) or int(g.get("ammo", -1)) == 0:
+			continue
+		var mount: Transform3D = rem.global_transform \
+				* Transform3D(g["basis"], g["pos"])
+		_spawn_at(rem, mount.origin, -mount.basis.z, rem.velocity, g["bolt"])
+		if int(g.get("ammo", -1)) > 0:
+			g["ammo"] = int(g["ammo"]) - 1
+		cooldown = maxf(cooldown, float(g.get("refire", refire)))
+		if not fired and main != null:
+			var wav := str((g["bolt"] as Dictionary).get("wav", ""))
+			if wav != "":
+				main.audio.play_3d(wav, mount.origin, 120.0, -8.0)
+		fired = true
+	if fired and main != null:
+		main.player_has_fired = true
 
 func _spawn_at(shooter: Node3D, pos: Vector3, dir: Vector3, base_vel: Vector3,
 		spec: Dictionary = {}) -> void:

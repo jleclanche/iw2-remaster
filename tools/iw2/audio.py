@@ -36,6 +36,10 @@ def clean_wav(data: bytes) -> bytes:
     if not fmt or not payload:
         return data
     body = fmt + payload
+    # RIFF pads odd chunks to even; the originals omit the pad byte and
+    # Godot's parser then seeks one past EOF (gatling.wav, 17251-byte data)
+    if len(body) & 1:
+        body += b"\x00"
     return b"RIFF" + struct.pack("<I", 4 + len(body)) + b"WAVE" + body
 
 
