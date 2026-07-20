@@ -125,6 +125,13 @@ func _ready() -> void:
 		_restarting = false
 		menu.visible = false
 		start_campaign.call_deferred()
+	elif not demo:
+		# A plain launch boots into the FRONT END (the original's
+		# icSPMainPDAScreen), not into flight -- the old straight-to-Tug boot
+		# was a development leftover. The world behind stays whatever
+		# START_SYSTEM built; INSTANT ACTION / START NEW GAME take it from
+		# here. Check harnesses (demo) keep the direct boot they drive.
+		menu.open()
 
 func _exit_tree() -> void:
 	ExplosionFx.release_cache()
