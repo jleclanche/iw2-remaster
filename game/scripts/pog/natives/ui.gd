@@ -2024,11 +2024,20 @@ func _opt_create_windows(_t, a: Array) -> Variant:
 	# kind nothing consumed and focusable() did not know -- the rows were
 	# never navigable.)
 	var parent := _win(a[0] if a.size() > 0 else null)
+	# real per-row geometry inside the parent box: the rows previously had
+	# none (x/y/w/h all zero) and every label drew stacked on one point
+	var row_h := 26
+	var top := 34
+	var pw: int = parent.w if parent != null and parent.w > 0 else 480
 	for i in options.size():
 		var o: PogOption = options[i]
 		var is_slider: bool = o.kind == "float"
 		var row := _new_window("button", [], 0)
 		row.parent = parent
+		row.x = 10
+		row.y = top + i * (row_h + 4)
+		row.w = pw - 20
+		row.h = row_h
 		row.title = _option_text(o) if is_slider else _option_label(o)
 		row.on_press = ""
 		row.overrides[IN_SELECT] = ""

@@ -463,6 +463,28 @@ func _basecheck(_delta: float) -> void:
 						and not pscr.windows.is_empty(),
 					"windows=%d" % (pscr.windows.size() if pscr != null else -1))
 				m.pog_rt.native("gui.popscreen", [])
+			# The SOUND screen's four volume rows (#37) must be SLIDERS with
+			# real, distinct, descending-laid-out geometry -- the first cut
+			# shipped rows with x/y/w/h all zero, every label overprinting one
+			# point, and no check noticed because nothing asserted a rect.
+			m.pog_rt.native("gui.overlayscreen", ["icSPPDASoundScreen"])
+			var snd: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
+			var sliders: Array = []
+			if snd != null:
+				for w2: PogUi.PogWindow in snd.windows:
+					if w2.kind == "slider":
+						sliders.append(w2)
+			var geom_ok := sliders.size() == 4
+			var last_y := -1
+			for w3: PogUi.PogWindow in sliders:
+				if w3.w <= 0 or w3.h <= 0 or w3.y <= last_y:
+					geom_ok = false
+				last_y = w3.y
+			_bc("front end: icSPPDASoundScreen slider rows", geom_ok,
+				"sliders=%d ys=%s" % [sliders.size(),
+					str(sliders.map(func(w4: PogUi.PogWindow) -> int:
+						return w4.y))])
+			m.pog_rt.native("gui.popscreen", [])
 			# The remaster-only debug picker: PogUi.debug_screen composes an
 			# overlay out of the PDA screens' own igui recipe (no POG builder
 			# exists for it) -- one inverse button per row inside the fancy
