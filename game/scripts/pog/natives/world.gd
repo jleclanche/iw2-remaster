@@ -1961,7 +1961,12 @@ func _sh_create_turret_fighters(_t, _a: Array) -> Variant:
 		if s == null or s.node == null:
 			continue
 		s.faction = "Player"
-		(s.node as AiShip).behavior = "idle"
+		var ai := s.node as AiShip
+		ai.behavior = "idle"
+		# the FITTED hull: hit points, armour and the authored subsim list
+		# (sensor, autorepair, LDA, light PBC, twinpack) -- an icTurretShip
+		# is a real icShip, not a bare record
+		ai.setup_ini("sims/ships/player/turret_fighter.ini", null)
 		out.append(s)
 	return out
 

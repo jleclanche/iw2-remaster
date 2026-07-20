@@ -1251,14 +1251,22 @@ func _ms_turret_fighters(_delta: float) -> void:
 	var two: Array = m.pog_rt.native("iship.createturretfighters", [])
 	lo.turret_fighters = before
 	var ships := 0
+	var fitted := 0
 	for s in two:
 		if s != null and s.node is AiShip \
 				and is_instance_valid(s.node):
 			ships += 1
+			# the authored hull: 500 hp and a fitted subsim list (the
+			# turret_fighter.ini record, not the bare-record default)
+			var ai := s.node as AiShip
+			if ai.sys != null and absf(ai.sys.hull_max - 500.0) < 0.5 \
+					and not ai.sys.systems.is_empty():
+				fitted += 1
 	_mech("turret-fighters",
-			none.is_empty() and two.size() == 2 and ships == 2,
-			"0-fitted=%d 2-fitted=%d live ships=%d"
-			% [none.size(), two.size(), ships])
+			none.is_empty() and two.size() == 2 and ships == 2
+			and fitted == 2,
+			"0-fitted=%d 2-fitted=%d live=%d authored-hulls=%d"
+			% [none.size(), two.size(), ships, fitted])
 	for s in two:
 		if s != null and s.node != null and is_instance_valid(s.node):
 			_mech_reap(s.node)
