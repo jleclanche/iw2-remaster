@@ -131,6 +131,11 @@ var ldsi_mat: StandardMaterial3D
 var sky_anchor: Node3D
 var backdrop_shader: Shader  # gamma-space-filtered additive cyclorama
 var starfield_shader: Shader  # icStarfieldAvatar pixel points
+var _star_dirs := PackedVector3Array()  # bright-star unit dirs (#18 streaks)
+var _star_cols := PackedColorArray()
+var _star_points: MeshInstance3D = null
+var _star_lines: MeshInstance3D = null
+var _star_prev_basis := Basis.IDENTITY
 var planet_shader: Shader  # icPlanetAvatar bodies, lit from their own primary
 var env_ref: Environment
 # icDirector's camera GROUPS, built in its constructor (iwar2 @ 0x100d5e20) and

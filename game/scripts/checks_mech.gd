@@ -95,6 +95,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_remote_fire_assert",
 	&"_ms_ghost_autopilot",
 	&"_ms_eng_layout",
+	&"_ms_star_streaks",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1174,6 +1175,32 @@ func _ms_eng_layout(_delta: float) -> void:
 				rects.size(), rects[0].position.x, rects[3].end.x,
 				rects[0].size.x, int(Hud.SPR[66][0]), int(Hud.SPR[67][0]),
 				int(Hud.SPR[68][0])])
+	_mech_next()
+
+func _ms_star_streaks(_delta: float) -> void:
+	# icStarfieldAvatar rotation streaks (#18): a camera slew turns a bright
+	# star into a line between its two projected positions, intensity
+	# 1/length (the 0x640-entry table @ 0x10171f98); below ~2 px it stays a
+	# point. Pure math -- drive star_streak directly.
+	var dir := Vector3.FORWARD
+	var still: Array = m.star_streak(dir, Basis.IDENTITY, Basis.IDENTITY,
+			500.0)
+	# a 2-degree yaw at 500 px/rad = ~17.5 px of motion: a streak, dimmed
+	# to 2/17.5 of the point intensity
+	var turned := Basis(Vector3.UP, deg_to_rad(2.0))
+	var seg: Array = m.star_streak(dir, Basis.IDENTITY, turned, 500.0)
+	var ok := still.is_empty() and seg.size() == 3
+	var len_px := 0.0
+	var want := 0.0
+	if ok:
+		len_px = (seg[0] as Vector3).angle_to(seg[1] as Vector3) * 500.0
+		want = 2.0 / (deg_to_rad(2.0) * 500.0)
+		ok = absf(len_px - deg_to_rad(2.0) * 500.0) < 0.1 \
+				and absf(float(seg[2]) - want) < 0.001
+	_mech("star-streaks", ok,
+			"rest=%s slew len=%.1f px mult=%.3f (want %.3f)"
+			% [still.is_empty(), len_px, float(seg[2]) if seg.size() == 3
+				else -1.0, want])
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

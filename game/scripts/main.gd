@@ -494,6 +494,7 @@ func late_physics(delta: float) -> void:
 	_chase_camera(delta)
 	if sky_anchor != null:
 		sky_anchor.global_position = cam.global_position
+	_update_star_streaks()
 
 ## The pilot's yoke, as the original wires it.
 ##

@@ -342,6 +342,89 @@ func _add_starfield(n: Dictionary) -> void:
 	# the points span the whole sky sphere; never frustum-cull the instance
 	mi.custom_aabb = AABB(Vector3.ONE * -4.8e5, Vector3.ONE * 9.6e5)
 	sky_anchor.add_child(mi)
+	# the rotation-streak overlay (#18): while the camera slews, fast bright
+	# stars redraw as lines (icStarfieldAvatar::Render @ 0xd1000); rebuilt
+	# per frame in _update_star_streaks, hidden at rest
+	_star_dirs = PackedVector3Array()
+	_star_cols = PackedColorArray()
+	for i in bright:
+		_star_dirs.append(pts[i].normalized())
+		_star_cols.append(cols[i])
+	_star_points = mi
+	_star_lines = MeshInstance3D.new()
+	_star_lines.custom_aabb = AABB(Vector3.ONE * -4.8e5, Vector3.ONE * 9.6e5)
+	_star_lines.visible = false
+	sky_anchor.add_child(_star_lines)
+	_star_prev_basis = Basis.IDENTITY
+
+# icStarfieldAvatar's streak law (Render @ 0xd1000): a bright star whose
+# projected screen motion since the previous frame exceeds ~2 px draws as a
+# LINE between the two viewport positions, intensity scaled by the 0x640-entry
+# 1/length table @ 0x10171f98 (runtime-filled). The endpoint that "projects
+# where the star was" under the new camera is cur * prev^-1 * dir.
+const STREAK_MIN_PX := 2.0
+
+## [] when the star stays a point, else [dir_now, dir_prev_in_new_frame,
+## intensity_multiplier] -- pure math, so the mechcheck can drive it.
+static func star_streak(dir: Vector3, prev: Basis, cur: Basis,
+		px_per_rad: float) -> Array:
+	var d2 := (cur * (prev.transposed() * dir)).normalized()
+	var len_px := dir.angle_to(d2) * px_per_rad
+	if len_px <= STREAK_MIN_PX:
+		return []
+	return [dir, d2, minf(1.0, STREAK_MIN_PX / len_px)]
+
+func _update_star_streaks() -> void:
+	if _star_points == null or cam == null:
+		return
+	var cur := cam.global_transform.basis
+	var vp := cam.get_viewport().get_visible_rect().size
+	var px_per_rad: float = vp.y / deg_to_rad(cam.fov)
+	# fast reject: even the fastest star moves by at most the frame's camera
+	# rotation angle
+	var frame_angle := (_star_prev_basis.transposed() * cur).get_rotation_quaternion().get_angle()
+	if frame_angle * px_per_rad <= STREAK_MIN_PX:
+		_star_prev_basis = cur
+		_star_points.visible = true
+		_star_lines.visible = false
+		return
+	var pv := PackedVector3Array()
+	var pc := PackedColorArray()
+	var lv := PackedVector3Array()
+	var lc := PackedColorArray()
+	for i in _star_dirs.size():
+		var seg := star_streak(_star_dirs[i], _star_prev_basis, cur, px_per_rad)
+		if seg.is_empty():
+			pv.append(_star_dirs[i] * 4.7e5)
+			pc.append(_star_cols[i])
+		else:
+			var c: Color = _star_cols[i] * float(seg[2])
+			lv.append((seg[0] as Vector3) * 4.7e5)
+			lv.append((seg[1] as Vector3) * 4.7e5)
+			lc.append(c)
+			lc.append(c)
+	_star_prev_basis = cur
+	var mesh := ArrayMesh.new()
+	if not lv.is_empty():
+		var la: Array = []
+		la.resize(Mesh.ARRAY_MAX)
+		la[Mesh.ARRAY_VERTEX] = lv
+		la[Mesh.ARRAY_COLOR] = lc
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, la)
+	if not pv.is_empty():
+		var pa: Array = []
+		pa.resize(Mesh.ARRAY_MAX)
+		pa[Mesh.ARRAY_VERTEX] = pv
+		pa[Mesh.ARRAY_COLOR] = pc
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_POINTS, pa)
+	var smat := ShaderMaterial.new()
+	smat.shader = _starfield_shader()
+	smat.render_priority = PRIORITY_SKY
+	for s in mesh.get_surface_count():
+		mesh.surface_set_material(s, smat)
+	_star_lines.mesh = mesh
+	_star_lines.visible = true
+	_star_points.visible = false
 
 func _starfield_shader() -> Shader:
 	if starfield_shader != null:
