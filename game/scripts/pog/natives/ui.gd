@@ -661,6 +661,15 @@ func _pop_screen(_t, _a: Array) -> Variant:
 	elif screens.size() > 1:
 		# the screen below comes back with its own overlays intact
 		screens.pop_back()
+	elif screens.size() == 1 and game != null \
+			and (game.get("base_iface") == null or not game.base_iface.inside):
+		# IN FLIGHT the original's stack bottoms at icSpaceFlightScreen (a C++
+		# screen, no POG builder) -- which our flight state models as the
+		# EMPTY stack. A popup raised over flight (icPopUpCommsScreen via
+		# OnConversationStart) must therefore pop back to empty; holding it
+		# would pin an unremovable windowless screen. Inside a base the
+		# stack keeps its last screen as before.
+		screens.pop_back()
 	_restore_shady()
 	focused = null
 	dirty = true

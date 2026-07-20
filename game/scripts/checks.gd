@@ -1397,6 +1397,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_station_reactive",
 	&"_ms_cutscene_staging",
 	&"_ms_cutscene_staging_assert",
+	&"_ms_comms_overlay",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
 	&"_ms_finish",
@@ -2461,6 +2462,34 @@ func _ms_station_reactive(_delta: float) -> void:
 	_mech("station-reactive", ok, detail)
 	_mech_next()
 
+
+## Issue #11: icPopUpCommsScreen runtime verification. The overlay is a
+## windowless C++ screen (no POG builder) that iBaseGUI.OnConversationStart
+## raises over whatever is up. Driven through the ported callback exactly as
+## the engine would: in flight the stack is empty, so gui.OverlayScreen lands
+## it on `screens` -- it must show up there, it must NOT become the visible
+## screen (a windowless screen would blank the base GUI's draw path;
+## visible_screen skips it), and popping must restore the stack.
+func _ms_comms_overlay(_delta: float) -> void:
+	var ui = m.pog_rt.ui
+	var deep0: int = (ui.screens as Array).size()
+	m.pog_rt.script("ibasegui").on_conversation_start()
+	var raised := ""
+	if (ui.screens as Array).size() > deep0:
+		raised = str((ui.screens as Array).back().name)
+	elif not (ui.screens as Array).is_empty() \
+			and not ((ui.screens as Array).back().over as Array).is_empty():
+		raised = str(((ui.screens as Array).back().over as Array).back().name)
+	var vis = ui.visible_screen()
+	var no_blank: bool = vis == null or not (vis.windows as Array).is_empty()
+	ui._pop_screen(null, [])
+	var restored: bool = (ui.screens as Array).size() == deep0
+	_mech("comms-overlay",
+		raised == "icPopUpCommsScreen" and no_blank and restored,
+		"raised=%s visible=%s restored=%s"
+			% [raised if raised != "" else "(nothing)",
+			"(none)" if vis == null else str(vis.name), str(restored)])
+	_mech_next()
 
 var _mech_burn: AiShip = null
 
