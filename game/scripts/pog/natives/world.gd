@@ -175,6 +175,34 @@ class PogSim extends RefCounted:
 			rec["y"] = p.y
 			rec["z"] = p.z
 
+	## Placement in doubles (issue #27): base is a dabs() absolute, off a
+	## metre-scale offset. The AU-scale absolute NEVER passes through a
+	## Vector3 -- at 1e12 m float32's ULP exceeds 100 km, so a scripted 2 km
+	## offset folded through abs_pos() collapses to zero in the outer systems.
+	func set_dabs(base: PackedFloat64Array, off := Vector3.ZERO) -> void:
+		var ax := base[0] + off.x
+		var ay := base[1] + off.y
+		var az := base[2] + off.z
+		if is_player:
+			world.set_player_dpos(PackedFloat64Array([ax, ay, az]))
+		elif node != null and is_instance_valid(node):
+			# offset FROM the player is metre-scale: exact in doubles first,
+			# then the small difference truncates harmlessly
+			var p := world.player_dpos()
+			node.position = Vector3(ax - p[0], ay - p[1], az - p[2])
+		elif not rec.is_empty():
+			rec["x"] = ax
+			rec["y"] = ay
+			rec["z"] = az
+
+	## (other - self) as a Vector3, differenced in doubles first: the
+	## DIRECTION and km-scale separation survive even where both absolutes
+	## sit at AU scale.
+	func dvec_to(other: PogSim) -> Vector3:
+		var a := dabs()
+		var b := other.dabs()
+		return Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2])
+
 	func basis() -> Basis:
 		if node != null and is_instance_valid(node):
 			return node.global_transform.basis
@@ -322,14 +350,20 @@ func player_dpos() -> PackedFloat64Array:
 ## cutscene waiting forever for the player to close on a launch tube that kept
 ## running away from them.
 func set_player_pos(p: Vector3) -> void:
+	set_player_dpos(PackedFloat64Array([p.x, p.y, p.z]))
+
+
+## The doubles path (issue #27): the delta the AI ships are shifted back by is
+## differenced in doubles, and the stored px/py/pz never round-trip float32.
+func set_player_dpos(a: PackedFloat64Array) -> void:
 	if game == null:
 		return
-	var delta := p - player_pos()
+	var delta := Vector3(a[0] - game.px, a[1] - game.py, a[2] - game.pz)
 	if delta == Vector3.ZERO:
 		return
-	game.px = p.x
-	game.py = p.y
-	game.pz = p.z
+	game.px = a[0]
+	game.py = a[1]
+	game.pz = a[2]
 	for ai in game.ai_ships:
 		if is_instance_valid(ai):
 			ai.position -= delta
@@ -698,7 +732,7 @@ func _s_place_at(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	var r := _as_sim(a[1])
 	if s != null and r != null:
-		s.set_abs_pos(r.abs_pos())
+		s.set_dabs(r.dabs())
 	return 0
 
 # @native sim.PlaceRelativeTo
@@ -707,7 +741,9 @@ func _s_place_relative(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	var r := _as_sim(a[1])
 	if s != null and r != null:
-		s.set_abs_pos(r.abs_pos() + r.basis() * vec(a[2], a[3], a[4]))
+		# issue #27: offsets fold in doubles -- at AU coordinates a float32
+		# abs_pos() quantises a 2 km placement onto a 4 km ULP grid
+		s.set_dabs(r.dabs(), r.basis() * vec(a[2], a[3], a[4]))
 	return 0
 
 # @native sim.PlaceNear
@@ -718,7 +754,7 @@ func _s_place_near(_t, a: Array) -> Variant:
 		return 0
 	var d := float(a[2])
 	var dir := Vector3(randf() - 0.5, randf() - 0.5, randf() - 0.5).normalized()
-	s.set_abs_pos(r.abs_pos() + dir * d)
+	s.set_dabs(r.dabs(), dir * d)
 	return 0
 
 # @native sim.PlaceBetween
@@ -729,7 +765,10 @@ func _s_place_between(_t, a: Array) -> Variant:
 	if s == null or p == null or q == null:
 		return 0
 	var f := clampf(float(a[3]), 0.0, 1.0)
-	s.set_abs_pos(p.abs_pos().lerp(q.abs_pos(), f))
+	var pa := p.dabs()
+	var qa := q.dabs()
+	s.set_dabs(PackedFloat64Array([pa[0] + (qa[0] - pa[0]) * f,
+			pa[1] + (qa[1] - pa[1]) * f, pa[2] + (qa[2] - pa[2]) * f]))
 	return 0
 
 # @native sim.PlaceInFrontOf
@@ -737,7 +776,7 @@ func _s_place_in_front(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	var r := _as_sim(a[1])
 	if s != null and r != null:
-		s.set_abs_pos(r.abs_pos() - r.basis().z * float(a[2]))
+		s.set_dabs(r.dabs(), -r.basis().z * float(a[2]))
 	return 0
 
 # @native sim.PointAt
@@ -746,7 +785,7 @@ func _s_point_at(_t, a: Array) -> Variant:
 	var r := _as_sim(a[1])
 	if s == null or r == null or s.node == null:
 		return 0
-	var to := r.abs_pos() - s.abs_pos()
+	var to := s.dvec_to(r)
 	if to.length_squared() > 0.001:
 		s.node.look_at(s.node.global_position + to, Vector3.UP)
 	return 0
@@ -757,7 +796,7 @@ func _s_point_away(_t, a: Array) -> Variant:
 	var r := _as_sim(a[1])
 	if s == null or r == null or s.node == null:
 		return 0
-	var to := s.abs_pos() - r.abs_pos()
+	var to := r.dvec_to(s)
 	if to.length_squared() > 0.001:
 		s.node.look_at(s.node.global_position + to, Vector3.UP)
 	return 0
@@ -1043,7 +1082,7 @@ func _s_attach_child(_t, a: Array) -> Variant:
 		s.children.append(c)
 	c.parent = s
 	if a.size() >= 5:
-		c.set_abs_pos(s.abs_pos() + s.basis() * vec(a[2], a[3], a[4]))
+		c.set_dabs(s.dabs(), s.basis() * vec(a[2], a[3], a[4]))
 	return 0
 
 # @native sim.DetachChild
@@ -1061,7 +1100,7 @@ func _s_is_in_fov(_t, a: Array) -> Variant:
 	var r := _as_sim(a[1])
 	if s == null or r == null:
 		return 0
-	var to := (r.abs_pos() - s.abs_pos()).normalized()
+	var to := s.dvec_to(r).normalized()
 	var fwd := -s.basis().z
 	return 1 if fwd.dot(to) > cos(deg_to_rad(float(a[2]) * 0.5)) else 0
 
@@ -1156,12 +1195,13 @@ func _i_sims_in_radius(_t, a: Array) -> Variant:
 	var mask := 0
 	if a.size() > 2 and (a[2] is int or a[2] is float):
 		mask = int(a[2])
-	var origin := centre.abs_pos()
 	var out: Array = []
 	for ai in game.ai_ships:
 		if not is_instance_valid(ai):
 			continue
-		if (player_pos() + ai.position).distance_to(origin) > r:
+		# issue #27: the range test in doubles -- at AU coordinates a float32
+		# origin quantises by >100 km and swallows the whole query radius
+		if centre.dist_to(_wrap_ship(ai)) > r:
 			continue
 		var w := _wrap_ship(ai)
 		if mask != 0 and (sim_type_of(w) & mask) == 0:
@@ -1201,11 +1241,10 @@ func _i_sims_in_cone(_t, a: Array) -> Variant:
 		return []
 	var fwd := -centre.basis().z
 	var lim := cos(deg_to_rad(float(a[2]) if a.size() > 2 else 45.0))
-	var origin := centre.abs_pos()
 	var out: Array = []
 	# NB a[2] here is the cone half-angle, NOT the radius query's type mask
 	for s in _i_sims_in_radius(_t, [a[0], a[1]]):
-		var to: Vector3 = s.abs_pos() - origin
+		var to: Vector3 = centre.dvec_to(s)
 		if to.length_squared() > 0.001 and fwd.dot(to.normalized()) >= lim:
 			out.append(s)
 	return out
@@ -1220,10 +1259,9 @@ func _i_sims_in_cylinder(_t, a: Array) -> Variant:
 	var axis := -centre.basis().z
 	var r := float(a[1]) if a.size() > 1 else 0.0
 	var half_len := float(a[2]) if a.size() > 2 else r
-	var origin := centre.abs_pos()
 	var out: Array = []
 	for s in _i_sims_in_radius(_t, [centre, maxf(r, half_len)]):
-		var to: Vector3 = s.abs_pos() - origin
+		var to: Vector3 = centre.dvec_to(s)
 		var along: float = to.dot(axis)
 		if absf(along) <= half_len and (to - axis * along).length() <= r:
 			out.append(s)
@@ -1362,7 +1400,7 @@ func _i_explode(_t, a: Array) -> Variant:
 		node.add_child(seq)
 		return 0
 	DeathSequence.final_explosion(game, Basis.IDENTITY,
-			s.abs_pos() - player_pos(), r, Vector3.ZERO)
+			player_sim().dvec_to(s), r, Vector3.ZERO)
 	return 0
 
 # @native isim.Dock

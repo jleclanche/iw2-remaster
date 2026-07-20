@@ -155,10 +155,11 @@ func _nearest_inhibitor() -> Dictionary:
 	# (see _lds_avoidance). pog_ents already tracks these regions; ask it.
 	if pog_ents == null:
 		return {}
-	var b := pog_ents.nearest_ldsi(Vector3(px, py, pz))
+	# nearest_ldsi answers player-relative, differenced in doubles (issue #27)
+	var b := pog_ents.nearest_ldsi()
 	if b.is_empty():
 		return {}
-	return {"center": Vector3(b["center"]) - Vector3(px, py, pz),
+	return {"center": Vector3(b["center"]),
 		"r": float(b["r"]), "clear": float(b["clear"])}
 
 func _lds_clearance() -> float:

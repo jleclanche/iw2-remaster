@@ -224,13 +224,14 @@ func _steer_to_marker(s, o: PogOrder) -> void:
 	if o.target == null or s == null or s.node == null \
 			or not is_instance_valid(s.node):
 		return
-	var tp: Vector3 = o.target.abs_pos()
-	var sp: Vector3 = s.abs_pos()
-	var away := sp - tp
+	# doubles end to end (issue #27): both the ship-to-target offset and the
+	# player-relative waypoint are differenced before any float32 truncation
+	var away: Vector3 = o.target.dvec_to(s)
 	if away.length() < 1.0:
 		away = Vector3.FORWARD
-	var stand := tp + away.normalized() * o.marker
-	s.node.waypoints = [stand - world.player_pos()]
+	var me = world.player_sim()
+	var stand: Vector3 = me.dvec_to(o.target) + away.normalized() * o.marker
+	s.node.waypoints = [stand]
 	s.node.wp = 0
 	s.node.behavior = "patrol"
 
@@ -297,7 +298,7 @@ func _ai_flee(_t, a: Array) -> Variant:
 		o.complete = false
 		if s.node != null and is_instance_valid(s.node):
 			# Run: a waypoint far away, directly opposite the threat.
-			var away: Vector3 = (s.abs_pos() - world.player_pos()) \
+			var away: Vector3 = world.player_sim().dvec_to(s) \
 					.normalized() * 1.0e5
 			s.node.waypoints = [away]
 			s.node.wp = 0
@@ -341,7 +342,7 @@ func _ai_is_complete(_t, a: Array) -> Variant:
 			if o.target == null or not o.target.alive():
 				o.complete = true
 			else:
-				var d: float = s.abs_pos().distance_to(o.target.abs_pos())
+				var d: float = s.dist_to(o.target)  # doubles: issue #27
 				if d <= o.marker + PogWorld.completion_tolerance(o.marker):
 					o.complete = true
 					s.node.waypoints.clear()
@@ -419,7 +420,7 @@ func _ai_force_lp_route(_t, a: Array) -> Variant:
 	o.kind = "approach"
 	o.target = from
 	o.complete = false
-	s.node.waypoints = [from.abs_pos() - world.player_pos()]
+	s.node.waypoints = [world.player_sim().dvec_to(from)]  # doubles: #27
 	s.node.wp = 0
 	s.node.behavior = "patrol"
 	return 0
@@ -663,18 +664,24 @@ func director_process(delta: float) -> void:
 	var subject = focus
 	if subject == null:
 		return
-	var target: Vector3 = subject.abs_pos()
+	# PLAYER-RELATIVE from the start, differenced in doubles (issue #27): a
+	# float32 world-frame camera at AU coordinates snaps to a >100 km grid,
+	# and every cutscene framing offset here is metres.
+	var me = world.player_sim()
+	var target: Vector3 = me.dvec_to(subject)
 	var eye_pos: Vector3 = target + Vector3(0, 20, 120)
 
 	if use_dolly and dolly != null:
-		var base: Vector3 = dolly.attached.abs_pos() \
-				if dolly.attached != null else dolly.pos
+		# (an unattached dolly's stored pos is a float32 world absolute;
+		# quantisation there is baked in at PlaceDolly time)
+		var base: Vector3 = me.dvec_to(dolly.attached) \
+				if dolly.attached != null else dolly.pos - world.player_pos()
 		eye_pos = base + dolly.offset
 		if dolly_look_forward and dolly.attached != null:
 			target = base - dolly.attached.basis().z * 1000.0
 	elif focus2 != null:
 		# Two subjects: back off along their perpendicular so both are visible.
-		var other: Vector3 = focus2.abs_pos()
+		var other: Vector3 = me.dvec_to(focus2)
 		var mid: Vector3 = (target + other) * 0.5
 		var sep: float = maxf(target.distance_to(other), 50.0)
 		var axis: Vector3 = (other - target).normalized().cross(Vector3.UP)
@@ -684,11 +691,9 @@ func director_process(delta: float) -> void:
 		target = mid
 
 	# The camera lives in the folded scene space, like everything else.
-	var origin: Vector3 = world.player_pos()
-	game.cam.global_position = eye_pos - origin
-	var look: Vector3 = target - origin
-	if game.cam.global_position.distance_squared_to(look) > 0.01:
-		game.cam.look_at(look, Vector3.UP)
+	game.cam.global_position = eye_pos
+	if game.cam.global_position.distance_squared_to(target) > 0.01:
+		game.cam.look_at(target, Vector3.UP)
 	if director_fov > 0.0:
 		game.cam.fov = director_fov
 

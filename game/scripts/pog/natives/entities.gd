@@ -49,10 +49,13 @@ class PogRegion extends RefCounted:
 	var speed_limit: float = 0.0
 	var dead := false
 
-	func contains(p: Vector3) -> bool:
+	## Whether the PLAYER sits inside, differenced in doubles (issue #27): a
+	## float32 world point at AU coordinates quantises by >100 km, more than
+	## most region radii.
+	func contains_player(w) -> bool:
 		if dead or centre == null or not centre.alive():
 			return false
-		return centre.abs_pos().distance_to(p) < radius
+		return centre.dist_to(w.player_sim()) < radius
 
 
 ## A subsim: a piece of equipment bolted to a sim. Dockports are the only kind
@@ -176,7 +179,9 @@ func _entities_of(category: String) -> Array:
 ## Nearest(set, sim): the set is the candidate pool, the sim is the yardstick.
 ## An empty pool means "anything of this kind", which is main._nearest.
 func _nearest_of(pool: Variant, ref, category: String):
-	var origin: Vector3 = ref.abs_pos() if ref != null else world.player_pos()
+	# issue #27: ranked in doubles -- float32 absolutes at AU coordinates
+	# quantise by >100 km and re-order near ties arbitrarily
+	var yard = ref if ref != null else world.player_sim()
 	var candidates: Array = pool if pool is Array else []
 	if candidates.is_empty():
 		candidates = _entities_of(category)
@@ -186,7 +191,7 @@ func _nearest_of(pool: Variant, ref, category: String):
 		var s = _sim(c)
 		if s == null or not s.alive():
 			continue
-		var d := s.abs_pos().distance_to(origin)
+		var d: float = yard.dist_to(s)
 		if d < bestd:
 			bestd = d
 			best = s
@@ -212,9 +217,8 @@ func _region_tick() -> void:
 		return
 	if game.docked_at != "" or game.jump_state != 0:
 		return
-	var p := world.player_pos()
 	for r in regions:
-		if not r.contains(p):
+		if not r.contains_player(world):
 			continue
 		if r.kind == "ldsi":
 			if game.lds_state != 0:
@@ -261,35 +265,38 @@ func _r_destroy(_t, a: Array) -> Variant:
 	return 0
 
 
-## Whether a point sits inside a scripted LDS-inhibition region. Kept public
-## because it is the one piece of state outside this file's packages that a
-## caller might reasonably want.
-func lds_inhibited(p: Vector3) -> bool:
+## Whether the player sits inside a scripted LDS-inhibition region. Kept
+## public because it is the one piece of state outside this file's packages
+## that a caller might reasonably want.
+func lds_inhibited() -> bool:
 	for r in regions:
-		if r.kind == "ldsi" and r.contains(p):
+		if r.kind == "ldsi" and r.contains_player(world):
 			return true
 	return false
 
 
-## The nearest scripted LDS-inhibition region to a world-frame point, for the
-## HUD roundel and the LDSi fence. Returns the region's world-frame centre, its
-## radius, and the signed clearance (negative inside the sphere); {} when no
-## live inhibitor exists. icLDSIRegion is a centre+radius sphere (iwar2 @
-## 0x10048870); only kind=="ldsi" regions -- the iRegion.CreateLDSI zones -- are
-## LDS inhibitors. (icTrafficControlRegion::OnSimEnter @ 0x1004f3e0 also calls
+## The nearest scripted LDS-inhibition region to the PLAYER, for the HUD
+## roundel and the LDSi fence. Returns the region's PLAYER-RELATIVE centre
+## (differenced in doubles, issue #27 -- a world-frame float32 centre at AU
+## coordinates is off by up to the ULP's ~131 km), its radius, and the signed
+## clearance (negative inside the sphere); {} when no live inhibitor exists.
+## icLDSIRegion is a centre+radius sphere (iwar2 @ 0x10048870); only
+## kind=="ldsi" regions -- the iRegion.CreateLDSI zones -- are LDS inhibitors.
+## (icTrafficControlRegion::OnSimEnter @ 0x1004f3e0 also calls
 ## EnterLDSInhibitRegion, so approach lanes inhibit too in the original; the
 ## remaster still models "traffic" as a speed cap only -- see docs/lds.md.)
-func nearest_ldsi(p: Vector3) -> Dictionary:
+func nearest_ldsi() -> Dictionary:
 	var best := {}
 	var bestc := INF
+	var me = world.player_sim()
 	for r in regions:
 		if r.kind != "ldsi" or r.dead or r.centre == null or not r.centre.alive():
 			continue
-		var c: Vector3 = r.centre.abs_pos()
-		var clear: float = c.distance_to(p) - r.radius
+		var clear: float = me.dist_to(r.centre) - r.radius
 		if clear < bestc:
 			bestc = clear
-			best = {"center": c, "r": r.radius, "clear": clear}
+			best = {"center": me.dvec_to(r.centre), "r": r.radius,
+				"clear": clear}
 	return best
 
 
@@ -461,8 +468,8 @@ func _dp_dock(_t, a: Array) -> Variant:
 			game.ship.velocity = Vector3.ZERO
 			game.ship.set_speed = 0.0
 	else:
-		mover.set_abs_pos(host.abs_pos()
-				+ Vector3.UP * (host.radius() + mover.radius()))
+		mover.set_dabs(host.dabs(),
+				Vector3.UP * (host.radius() + mover.radius()))
 	return 0
 
 
@@ -516,7 +523,7 @@ func _m_entity_distance(_t, a: Array) -> Variant:
 	var s = _sim(a[1])
 	if e == null or s == null:
 		return 0.0
-	return e.abs_pos().distance_to(s.abs_pos())
+	return e.dist_to(s)  # doubles: issue #27
 
 # @native imapentity.SimForEntity
 func _m_sim_for_entity(_t, a: Array) -> Variant:
@@ -534,12 +541,12 @@ func _m_waypoint_for(_t, a: Array) -> Variant:
 	if _waypoints.has(s.name):
 		var w = _waypoints[s.name]
 		if w != null and w.alive():
-			w.set_abs_pos(s.abs_pos())
+			w.set_dabs(s.dabs())
 			return w
-	var p := s.abs_pos()
+	var p := s.dabs()  # doubles: an AU-scale marker must not quantise (#27)
 	var rec: Dictionary = {
 		"name": "%s Waypoint" % s.name, "category": "lpoint",
-		"x": p.x, "y": p.y, "z": p.z,
+		"x": p[0], "y": p[1], "z": p[2],
 		"radius": 0.0, "avatar": "", "jumps": [], "colors": [],
 		"node": null, "waypoint": true,
 	}
@@ -694,7 +701,7 @@ func _hab_spew(_t, a: Array) -> Variant:
 			p.docked = null
 			break
 	var dir := Vector3(randf() - 0.5, randf() - 0.5, randf() - 0.5).normalized()
-	s.set_abs_pos(h.abs_pos() + dir * (h.radius() + 200.0))
+	s.set_dabs(h.dabs(), dir * (h.radius() + 200.0))
 	if s.node != null and is_instance_valid(s.node):
 		s.node.velocity = dir * 60.0
 	return 0

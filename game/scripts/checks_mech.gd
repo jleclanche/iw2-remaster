@@ -87,6 +87,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_gatling",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
+	&"_ms_au_place",
 	&"_ms_script_queries",
 	&"_ms_station_reactive",
 	&"_ms_cutscene_staging",
@@ -1017,6 +1018,41 @@ func _ms_bolt_table(_delta: float) -> void:
 	_mech("bolt-table", bad == 0 and stems.size() >= 11,
 		"%d/%d icBullet stems verified against %d weapon INIs"
 			% [stems.size() - bad, stems.size(), scanned])
+	_mech_next()
+
+## Issue #27: placement natives must survive AU-scale coordinates. At
+## x = 1e12 m a Vector3 ULP exceeds 100 km, so a scripted 2 km offset folded
+## through float32 abs_pos() collapses. Two record sims at 1e12; PlaceRelativeTo
+## / PlaceInFrontOf / PlaceBetween each place one against the other; the
+## load-bearing mission-gate read (sim.DistanceBetween, doubles) must answer
+## the authored offset within a metre.
+func _ms_au_place(_delta: float) -> void:
+	var w: PogWorld = m.pog_rt.world
+	var ref = w._wrap_record({"key": "au_ref", "name": "au_ref",
+		"category": "station", "x": 1.0e12, "y": 0.0, "z": 0.0, "radius": 10.0})
+	var mov = w._wrap_record({"key": "au_mov", "name": "au_mov",
+		"category": "station", "x": 1.0e12, "y": 0.0, "z": 0.0, "radius": 10.0})
+	var diffs := PackedStringArray()
+	m.pog_rt.native("sim.placerelativeto", [mov, ref, 2000.0, 0.0, 0.0])
+	var d := float(m.pog_rt.native("sim.distancebetween", [mov, ref]))
+	if absf(d - 2000.0) > 1.0:
+		diffs.append("PlaceRelativeTo %.0f" % d)
+	m.pog_rt.native("sim.placeinfrontof", [mov, ref, 3000.0])
+	d = float(m.pog_rt.native("sim.distancebetween", [mov, ref]))
+	if absf(d - 3000.0) > 1.0:
+		diffs.append("PlaceInFrontOf %.0f" % d)
+	# a second anchor 8 km out: the lerp must land ON the line, 2 km in
+	var far = w._wrap_record({"key": "au_far", "name": "au_far",
+		"category": "station", "x": 1.0e12 + 8000.0, "y": 0.0, "z": 0.0,
+		"radius": 10.0})
+	m.pog_rt.native("sim.placebetween", [mov, ref, far, 0.25])
+	d = float(m.pog_rt.native("sim.distancebetween", [mov, ref]))
+	if absf(d - 2000.0) > 1.0:
+		diffs.append("PlaceBetween %.0f" % d)
+	for k in ["au_ref", "au_mov", "au_far"]:
+		w.sims.erase(k)
+	_mech("au-place", diffs.is_empty(),
+		"all offsets exact at 1e12 m" if diffs.is_empty() else " ".join(diffs))
 	_mech_next()
 
 func _ms_script_queries(_delta: float) -> void:
