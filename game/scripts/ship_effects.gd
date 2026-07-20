@@ -351,7 +351,8 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 		if etex != null:
 			mi.set_surface_override_material(int(str(idx)),
 					_envmap_material(src as StandardMaterial3D, etex, ltex,
-						bool(d.get("uv2", false)), mi.mesh.get_aabb()))
+						bool(d.get("uv2", false)), mi.mesh.get_aabb(),
+						_surface_axis(mi, int(str(idx)))))
 		elif ltex != null:
 			var mat: StandardMaterial3D = src.duplicate()
 			mat.detail_enabled = true
@@ -369,12 +370,13 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 # init 6513-6519): lit_base * env * 2. The texcoords are NOT a sphere map:
 # dx7's texgen (FUN_1000ca20 @ 0x1000ca20) normalises by the MODEL'S OWN
 # BOUNDS (FcBounds floored to [-1,1]^3, rows 1/(max-min), translate -min)
-# and picks a projection plane by an axis's dominant component, feeding
-# camera-space position through the un-transform (stage flag 0x20000 =
-# TCI_CAMERASPACEPOSITION, transform COUNT2). OPEN (docs/original.md):
-# which vector that axis is (param_3 vtable+0x3c) -- we use the view
-# direction in model space, the reading that makes the sheen track the
-# camera the way the original's does.
+# and picks a projection plane by an axis's dominant component. The axis
+# is SETTLED (the concrete surface is fcSurfaceD3D, vtable 0x1001553c
+# installed at ctor tail 0x1000ddb0; slot 15 = FUN_1000e600, raw-disasm):
+# it sums the surface's VERTEX NORMALS (+0xc into each vertex, stride
+# +0x1c words) and returns the per-component |mean| -- the plane is the
+# SURFACE'S dominant facing, static per surface, not the camera. The
+# sheen is glued to the hull; only lighting moves over it.
 const ENV_SHADER := """
 shader_type spatial;
 uniform sampler2D base_tex : source_color, filter_linear_mipmap, repeat_enable;
@@ -388,6 +390,7 @@ uniform float metal = 0.1;
 uniform float rough = 0.85;
 uniform vec3 bb_min = vec3(-1.0);
 uniform vec3 bb_inv = vec3(0.5);
+uniform int axis = 2;
 varying vec3 mpos;
 void vertex() {
 	mpos = VERTEX;
@@ -398,11 +401,10 @@ void fragment() {
 		b *= texture(base_tex, UV);
 	}
 	vec3 nm = (mpos - bb_min) * bb_inv;
-	vec3 vdir = abs(mpos - (inverse(MODEL_MATRIX) * INV_VIEW_MATRIX[3]).xyz);
 	vec2 suv = nm.xy;
-	if (vdir.x >= vdir.y && vdir.x >= vdir.z) {
+	if (axis == 0) {
 		suv = nm.zy;
-	} else if (vdir.y >= vdir.z) {
+	} else if (axis == 1) {
 		suv = nm.xz;
 	}
 	vec3 alb = b.rgb * texture(env_tex, suv).rgb * 2.0;
@@ -416,8 +418,26 @@ void fragment() {
 """
 static var _env_shader: Shader = null
 
+## The projection axis: the dominant component of the surface's MEAN
+## VERTEX NORMAL (fcSurfaceD3D slot 15 @ 0x1000e600 sums the normals and
+## takes per-component absolutes). Returns 0/1/2 for the axis to drop.
+static func _surface_axis(mi: MeshInstance3D, idx: int) -> int:
+	if mi.mesh == null or idx >= mi.mesh.get_surface_count():
+		return 2
+	var arrays: Array = mi.mesh.surface_get_arrays(idx)
+	var norms: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var acc := Vector3.ZERO
+	for n in norms:
+		acc += n
+	acc = acc.abs()
+	if acc.x >= acc.y and acc.x >= acc.z:
+		return 0
+	if acc.y >= acc.z:
+		return 1
+	return 2
+
 func _envmap_material(src: StandardMaterial3D, env: Texture2D,
-		lmap: Texture2D, uv2: bool, aabb: AABB) -> ShaderMaterial:
+		lmap: Texture2D, uv2: bool, aabb: AABB, axis: int) -> ShaderMaterial:
 	if _env_shader == null:
 		_env_shader = Shader.new()
 		_env_shader.code = ENV_SHADER
@@ -439,6 +459,7 @@ func _envmap_material(src: StandardMaterial3D, env: Texture2D,
 	var mx := aabb.end.max(Vector3.ONE)
 	mat.set_shader_parameter("bb_min", mn)
 	mat.set_shader_parameter("bb_inv", Vector3.ONE / (mx - mn))
+	mat.set_shader_parameter("axis", axis)
 	return mat
 
 # @element icSignAvatar
