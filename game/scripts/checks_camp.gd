@@ -414,6 +414,58 @@ func _campcheck_port() -> void:
 					"system entry — advancing to act 3")
 				m.pog_rt.native("igame.nextact", ["iActThree"])
 				demo_phase = 5
+		# phase 46, the m02 drive (dock the Daru + the initiation Ask ->
+		# iact2mission02), is PROVEN to run end to end -- a --pogtrace run
+		# reached a2_m02_objectives_wait through the full ladder -- but the
+		# untraced timing is flaky against the intercept choreography, and a
+		# flaky gate is worse than none. Deterministic re-gating is #4's
+		# next unit; the play (park docked, rotate targets, pin approach) is
+		# kept below for it.
+		46:
+			# KompiraStoryScript cases 0..3: the 40 s tour + chat
+			# (comms.fast), then case 1 demands the PLAYER approach an Oman
+			# station (< 300 km spawns the intercept) AND hold a
+			# formate/approach ORDER on an intercept ship (CurrentTarget in
+			# the group, CurrentOrderType 2/3 -- iacttwo.pog 1970..1978).
+			# The intercept flies AT the player, so the nearest AI ship is
+			# it; ap_mode is re-pinned each tick because arrival disengages
+			# it. Then the 100 km / 8 km gates and the DOCKED initiation Ask
+			# ("take the test"; fast answers yes) -> iact2mission02.Main().
+			var daru := _object_index("Daru el-Salam")
+			if daru >= 0:
+				var od2: Dictionary = m.objects[daru]
+				m.px = od2["x"]
+				m.py = od2["y"]
+				m.pz = od2["z"]
+				m.ship.velocity = Vector3.ZERO
+				m.docked_at = str(od2["name"])
+			# the hail gates fire on dist(intercept leader, player) < 10 km /
+			# < 1 km and IsOrderComplete; the intercept's approach flight is
+			# slow and RNG-placed, so the check collapses the distances --
+			# every live ship parks 800 m out -- and ROTATES the target
+			# (3 s each, the story polls every 2 s) until the v14 pairing
+			# (CurrentTarget in the intercept group + order 2/3) lands.
+			var live: Array = []
+			for a3 in m.ai_ships:
+				if a3 is AiShip and is_instance_valid(a3) \
+						and not (a3 as AiShip).dying:
+					live.append(a3)
+					var away3: Vector3 = a3.global_position \
+							- m.ship.global_position
+					if away3.length() > 5000.0:
+						a3.global_position = m.ship.global_position \
+								+ away3.normalized() * 800.0
+						a3.velocity = Vector3.ZERO
+			if not live.is_empty():
+				m.target_ai = live[int(demo_t / 3.0) % live.size()]
+				m.ap_mode = 1
+			if m.mission.objectives.has("a2_m02_objectives_wait"):
+				print("CAMPCHECK(port): act 2 m02 BOOTED off the story ",
+					"script (wait objective raised) — advancing to act 3")
+				m.docked_at = ""
+				m.ap_mode = 0
+				m.pog_rt.native("igame.nextact", ["iActThree"])
+				demo_phase = 5
 		5:
 			# iActThree -> MasterScript -> iact3mission01.Main: the mission
 			# SENDS an email and holds until the player READS it
@@ -449,7 +501,10 @@ func _campcheck_port() -> void:
 					"COMPLETE, a3m01 rendezvous reached; objectives=",
 					m.mission.objectives.size())
 				get_tree().quit(0 if ck and sg else 1)
-	if demo_t > 240.0:
+	# 600 s: the Kompira leg alone carries the 40 s system-cutscene tour,
+	# the Oman intercept ladder and the initiation conversations (all at
+	# comms.fast); the m02 boot lands around the 420 s mark end to end
+	if demo_t > 600.0:
 		var tail: Array = []
 		for i in range(maxi(0, m.objects.size() - 10), m.objects.size()):
 			tail.append(str(m.objects[i]["name"]))
