@@ -327,7 +327,7 @@ func _step(dir: int) -> void:
 		var n := win.focused_entry + dir
 		if n >= 0 and n < win.entries.size():
 			win.focused_entry = n
-			_beep(false)
+			ui.play_widget_sound(1)  # focus move = OnGainedFocus's hover tick
 			queue_redraw()
 			return
 		# Off the end of the list: fall out of it and on to the next control.
@@ -339,7 +339,7 @@ func _step(dir: int) -> void:
 			and into.focused_entry < 0:
 		into.focused_entry = 0 if dir > 0 else into.entries.size() - 1
 	_sync()
-	_beep(false)
+	ui.play_widget_sound(1)  # focus move = OnGainedFocus's hover tick
 	queue_redraw()
 
 
@@ -423,15 +423,21 @@ func _hover(screen_p: Vector2) -> void:
 		_fi = i
 		if at >= 0:
 			win.focused_entry = at
+		# FcWindow::OnGainedFocus (flux) queues registered sound 1 -- the
+		# hover tick (audio/gui/minor via the PDA's RegisterSound table)
+		ui.play_widget_sound(1)
 		_sync()
 		queue_redraw()
 		return
 
 
+## The original widget sounds, via the registered gui.RegisterSound table
+## (flux FcWindow::QueueSound): activate = 2 (confirm), rejected = 3 (error).
+## The old valid/invalid_input.wav pair here was the HUD's cue family, not
+## the base GUI's.
 func _beep(bad: bool) -> void:
-	if main != null and main.audio != null:
-		main.audio.play("audio/hud/%s_input.wav"
-				% ("invalid" if bad else "valid"), -12.0)
+	if ui != null:
+		ui.play_widget_sound(3 if bad else 2)
 
 
 # ---------------------------------------------------------------- draw

@@ -1392,13 +1392,23 @@ func _register_sound(_t, a: Array) -> Variant:
 # @native gui.PlaySound
 # @native gui.QueueSound
 func _play_sound(_t, a: Array) -> Variant:
-	if game == null or game.audio == null:
-		return 0
-	var url: String = sounds.get(int(a[0]), "")
-	if url.is_empty():
-		return 0
-	game.audio.play(sound_path(url), -6.0)
+	play_widget_sound(int(a[0]))
 	return 0
+
+## FcWindow::QueueSound / PlaySound (flux @ 0x10094a10 / 0x10094a30) play out
+## of the SAME registered table gui.RegisterSound fills (the PDA registers
+## 1=minor, 2=confirm, 3=error, 4=loadout, ...). The widget event map,
+## recovered from flux.dll: OnGainedFocus -> 1 (the hover sound),
+## OnLeftMouseUp / OnControlFocusSelect -> 2 (activate), the boundary and
+## cancel paths -> 3. base_screens drives its focus/activate events through
+## here so the base GUI clicks like the original, not like the HUD.
+func play_widget_sound(id: int) -> void:
+	if game == null or game.audio == null:
+		return
+	var url: String = sounds.get(id, "")
+	if url.is_empty():
+		return
+	game.audio.play(sound_path(url), -6.0)
 
 
 ## "sound:/audio/gui/minor" -> "audio/gui/minor.wav", the path AudioManager wants.
