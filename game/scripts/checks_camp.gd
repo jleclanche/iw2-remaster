@@ -399,7 +399,19 @@ func _campcheck_port() -> void:
 					"a2_m01_objectives_protect", {})
 			if prot.get("done", false):
 				print("CAMPCHECK(port): act 2 m01 protect COMPLETE — ",
-					"advancing to act 3")
+					"jumping to Kompira (the free-roam dispatch, issue #4)")
+				m._load_system("kompira", "", m.system_stem)
+				demo_phase = 45
+		45:
+			# the FREE-ROAM dispatch: Act2SystemMonitor polls ActiveWorld
+			# every 0.5 s and, on entering Kompira, starts
+			# KompiraStoryScript (which owns iact2mission02) and stores its
+			# state in g_kompira_state -- the observable that the per-system
+			# story machinery armed. Dead until the ActiveWorld map-URL fix.
+			if PogVM._truthy(m.pog_rt.native("global.exists",
+					["g_kompira_state"])):
+				print("CAMPCHECK(port): Kompira story script ARMED on ",
+					"system entry — advancing to act 3")
 				m.pog_rt.native("igame.nextact", ["iActThree"])
 				demo_phase = 5
 		5:
