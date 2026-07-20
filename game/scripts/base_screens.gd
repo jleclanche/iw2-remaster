@@ -733,6 +733,9 @@ func _draw_window(w: PogUi.PogWindow) -> void:
 	if w.kind == "scroller":
 		_draw_scroller(w, r)
 		return
+	if w.kind == "slider":
+		_draw_slider(w, r)
+		return
 	var st := _state_of(w)
 	# a control skinned for some states but not this one keeps its neutral
 	# art (vanishing on hover is not a state)
@@ -909,6 +912,41 @@ func _scroll_to(t: PogUi.PogWindow, pos: float) -> void:
 		t.scroll = clampf(pos, 0.0, maxf(0.0, t.page_h - _rect_of(t).size.y))
 	queue_redraw()
 
+
+## An options slider row (the Sound screen's volume rows, issue #37):
+## the label on the left, a rounded pill track on the right half with a
+## filled square thumb at the value. Shapes matched to the reference
+## screenshot on the issue; FcSliderControl's own skin art is not
+## extracted, so this is the GUI palette over the reference geometry.
+func _draw_slider(w: PogUi.PogWindow, r: Rect2) -> void:
+	var hot: bool = _current() == w
+	var col: Color = AMBER if hot else AMBER_DIM
+	var f := _font_for(w.font_url, _font)
+	var fs := _font_px(f)
+	var ty := r.position.y + (r.size.y - f.get_height(fs)) * 0.5 \
+			+ f.get_ascent(fs)
+	draw_string(f, Vector2(r.position.x + 4.0, ty), w.title.to_upper(),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
+	# the track pill: the right half of the row, a rounded outline
+	var tx := r.position.x + r.size.x * 0.5
+	var tw := r.size.x * 0.5 - 6.0
+	var th := minf(r.size.y - 6.0, 16.0)
+	var tr := Rect2(Vector2(tx, r.position.y + (r.size.y - th) * 0.5),
+			Vector2(tw, th))
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0, 0, 0, 0)
+	sb.border_color = col
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(int(th * 0.5))
+	draw_style_box(sb, tr)
+	# the thumb: a filled square riding the track at the option's value
+	var frac := ui.option_frac(int(w.value))
+	var side := th - 6.0
+	var span := tw - side - 8.0
+	draw_rect(Rect2(Vector2(tr.position.x + 4.0 + span * frac,
+			tr.position.y + 3.0), Vector2(side, side)), col)
+	if w.focusable():
+		_hit.append([r, w, -1])
 
 func _draw_scrollbar(w: PogUi.PogWindow, r: Rect2) -> void:
 	var t: PogUi.PogWindow = w.scroll_target

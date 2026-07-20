@@ -2018,20 +2018,40 @@ func _opt_set_device(_t, a: Array) -> Variant:
 
 # @native ioptions.CreateWindows
 func _opt_create_windows(_t, a: Array) -> Variant:
-	# One row per registered option, as a button whose title carries the current
-	# value. Selecting it steps the option, which is what OnSelect does.
+	# One row per registered option. Floats are SLIDERS (the Sound screen's
+	# four volume rows, issue #37): label + track + thumb, value read live.
+	# Bools/ints stay buttons whose title carries the value. ("option" was a
+	# kind nothing consumed and focusable() did not know -- the rows were
+	# never navigable.)
 	var parent := _win(a[0] if a.size() > 0 else null)
 	for i in options.size():
 		var o: PogOption = options[i]
+		var is_slider: bool = o.kind == "float"
 		var row := _new_window("button", [], 0)
 		row.parent = parent
-		row.title = _option_label(o)
+		row.title = _option_text(o) if is_slider else _option_label(o)
 		row.on_press = ""
 		row.overrides[IN_SELECT] = ""
 		row.value = i                 # which option this row steps
-		row.kind = "option"
+		if is_slider:
+			row.kind = "slider"
 	dirty = true
 	return 0
+
+## The localised label text alone (the slider's caption; the pill shows the
+## value).
+func _option_text(o: PogOption) -> String:
+	if game != null and game.comms != null:
+		return str(game.comms.strings.get(o.label, o.label))
+	return o.label
+
+## The 0..1 fraction a slider row shows, read live from the option store.
+func option_frac(i: int) -> float:
+	var o := _option(i)
+	if o == null:
+		return 0.0
+	return clampf((float(_opt_load(o)) - o.lo) / maxf(o.hi - o.lo, 0.0001),
+			0.0, 1.0)
 
 ## "Detail  HIGH" -- the label the option row shows.
 func _option_label(o: PogOption) -> String:
