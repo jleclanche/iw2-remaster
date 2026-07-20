@@ -163,6 +163,24 @@ class Assembler:
                 extras = {"iw2_glow_channels": {
                     str(i): expr
                     for i, expr in self.b.glow_channels[pso_path].items()}}
+            if mesh is not None and pso_path in self.b.surface_layers:
+                # wrap-addressed lightmaps + envmap names (#16/#15): resolved
+                # to data/textures-relative paths for the runtime material pass
+                lay: dict = {}
+                for i, d in self.b.surface_layers[pso_path].items():
+                    ent: dict = {}
+                    if d.get("lightmap"):
+                        rel = self.texture_rel(scene_dir, d["lightmap"])
+                        if rel:
+                            ent["lightmap"] = rel
+                            ent["uv2"] = bool(d.get("uv2"))
+                    if d.get("envmap"):
+                        ent["envmap"] = d["envmap"]
+                    if ent:
+                        lay[str(i)] = ent
+                if lay:
+                    extras = (extras or {})
+                    extras["iw2_surface_layers"] = lay
             if n["kind"] not in ("object", "null"):
                 extras = {"iw2_kind": n["kind"]}
                 for attr in ("channel", "class", "template", "tint", "splay",

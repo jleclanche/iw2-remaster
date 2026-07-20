@@ -55,6 +55,14 @@ class GltfBuilder:
         # constant. The caller folds this into the instancing node's extras so
         # ship_effects can animate emission at runtime.
         self.glow_channels: dict[str, dict[int, str]] = {}
+        # mesh key -> {primitive index: {"lightmap": name, "uv2": bool,
+        # "envmap": name}} for the layers glTF cannot carry (issues #16/#15):
+        # WRAP-addressed slot-1 lightmaps render as a MODULATE layer
+        # (CreateRenderSurface cLayer(2), flux.dll.c:100107-100119) and the
+        # envmap as a camera-space sphere map at MODULATE2X. Material extras
+        # do not survive Godot's import; the caller folds these into the
+        # instancing node's extras like the glow channels.
+        self.surface_layers: dict[str, dict[int, dict]] = {}
 
     def _view(self, raw: bytes, target: int) -> int:
         while len(self.blob) % 4:
@@ -160,6 +168,15 @@ class GltfBuilder:
             if m:
                 self.glow_channels.setdefault(key, {})[len(prims)] = \
                     m.group(1).strip()
+            layer: dict = {}
+            if s.texture2 and s.texture2 != s.texture and not glow2:
+                # the WRAP-addressed modulate lightmap glTF drops (#16)
+                layer["lightmap"] = s.texture2
+                layer["uv2"] = bool(s.uvs2)
+            if s.envmap:
+                layer["envmap"] = s.envmap
+            if layer:
+                self.surface_layers.setdefault(key, {})[len(prims)] = layer
             prims.append({"attributes": attrs, "indices": ia,
                           "material": self.material(s, resolve_texture(s), uri2)})
         if not prims:

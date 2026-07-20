@@ -96,6 +96,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_ghost_autopilot",
 	&"_ms_eng_layout",
 	&"_ms_star_streaks",
+	&"_ms_lightmap_layer",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1201,6 +1202,37 @@ func _ms_star_streaks(_delta: float) -> void:
 			"rest=%s slew len=%.1f px mult=%.3f (want %.3f)"
 			% [still.is_empty(), len_px, float(seg[2]) if seg.size() == 3
 				else -1.0, want])
+	_mech_next()
+
+func _ms_lightmap_layer(_delta: float) -> void:
+	# the SHDR slot-1 WRAP lightmap (#16): am_remote's hull authors one on
+	# every primitive; attaching effects must give those surfaces a MUL
+	# detail layer on UV2 (the export's TEXCOORD_1)
+	var model: Node3D = m._load_gltf("data/avatars/avatars/am_remote/setup.gltf")
+	if model == null:
+		_mech("lightmap-layer", false, "am_remote avatar failed to load")
+		_mech_next()
+		return
+	var host := _mech_spawn("Lightmap Probe", 100.0,
+			m.ship.global_position + Vector3(0, -80000, 0))
+	host.add_child(model)
+	ShipEffects.attach(host, model)
+	var muls := 0
+	var texd := 0
+	for n in host.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for si in mi.get_surface_override_material_count():
+			var mat := mi.get_surface_override_material(si)
+			if mat is StandardMaterial3D \
+					and (mat as StandardMaterial3D).detail_enabled \
+					and (mat as StandardMaterial3D).detail_blend_mode \
+						== BaseMaterial3D.BLEND_MODE_MUL:
+				muls += 1
+				if (mat as StandardMaterial3D).detail_albedo != null:
+					texd += 1
+	_mech("lightmap-layer", muls >= 1 and texd == muls,
+			"%d MUL detail layers, %d textured" % [muls, texd])
+	_mech_reap(host)
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

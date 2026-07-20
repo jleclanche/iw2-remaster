@@ -156,6 +156,9 @@ func _scan(model: Node3D) -> void:
 				if not exprs.has(gch) \
 						and not gch in ["flame", "core", "boom", "flap"]:
 					exprs[gch] = {"terms": _parse_expr(gch), "value": 0.0}
+		if ex.has("iw2_surface_layers") and n is MeshInstance3D:
+			_apply_surface_layers(n as MeshInstance3D,
+					ex["iw2_surface_layers"])
 		if str(ex.get("iw2_class", "")) == "icFlameConeAvatar":
 			_add_flame_cone(n as Node3D, ex)
 		if str(ex.get("iw2_class", "")) == "icBeamAvatar":
@@ -321,6 +324,35 @@ func _add_jet_beam(node: Node3D, ex: Dictionary) -> void:
 	mi.visible = false
 	add_child(mi)
 	_jet_beams.append({"node": node, "mi": mi})
+
+# The SHDR slot-1 lightmap layer (#16): 6729 of 9596 shipped materials
+# carry one. WRAP-addressed slots render as a MODULATE layer over the lit
+# base (CreateRenderSurface cLayer(2), flux.dll.c:100107-100119) -- Godot's
+# detail layer in MUL mode is that operation. DIVERGENCE, documented: the
+# original multiplies in 8-bit gamma space, Godot's detail blend runs in
+# linear -- midtone lightmaps land slightly brighter than the original.
+# (The clamp-addressed white-on-black masks already ship as emissive in the
+# export -- the multipass SRCALPHA/ONE path; the envmap name also carried
+# in these extras is #15, not yet consumed.)
+func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	for idx in lay:
+		var d: Dictionary = lay[idx]
+		if not d.has("lightmap"):
+			continue
+		var tex: Texture2D = ParticleFx.texture(base, str(d["lightmap"]))
+		if tex == null:
+			continue
+		var src := mi.get_active_material(int(str(idx)))
+		if not (src is StandardMaterial3D):
+			continue
+		var mat: StandardMaterial3D = src.duplicate()
+		mat.detail_enabled = true
+		mat.detail_blend_mode = BaseMaterial3D.BLEND_MODE_MUL
+		mat.detail_uv_layer = BaseMaterial3D.DETAIL_UV_2 \
+				if bool(d.get("uv2", false)) else BaseMaterial3D.DETAIL_UV_1
+		mat.detail_albedo = tex
+		mi.set_surface_override_material(int(str(idx)), mat)
 
 # @element icSignAvatar
 # Station signage (registry FUN_100cfeb0 @ 0x100cfeb0, vtable 0x1011d190;
