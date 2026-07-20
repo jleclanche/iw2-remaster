@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import struct
 from pathlib import Path
 
@@ -48,6 +49,12 @@ class GltfBuilder:
         }
         self._image_ids: dict[str, int] = {}
         self._mesh_ids: dict[str, int] = {}
+        # mesh key -> {primitive index: channel expression} for surfaces named
+        # <glow channel=EXPR> (issue #17): the layer's intensity is CHANNEL
+        # DRIVEN in the engine (AddSurfaceChannel, flux.dll.c:99855), not
+        # constant. The caller folds this into the instancing node's extras so
+        # ship_effects can animate emission at runtime.
+        self.glow_channels: dict[str, dict[int, str]] = {}
 
     def _view(self, raw: bytes, target: int) -> int:
         while len(self.blob) % 4:
@@ -149,6 +156,10 @@ class GltfBuilder:
             glow2 = (s.texture2 and s.texture2 != s.texture
                      and (getattr(s, "tex2_mode", 0) & 0xf) in (3, 4))
             uri2 = resolve_texture2(s) if resolve_texture2 and glow2 else None
+            m = re.search(r"<glow\s+channel=([^>]+)>", s.name)
+            if m:
+                self.glow_channels.setdefault(key, {})[len(prims)] = \
+                    m.group(1).strip()
             prims.append({"attributes": attrs, "indices": ia,
                           "material": self.material(s, resolve_texture(s), uri2)})
         if not prims:

@@ -53,6 +53,7 @@ extends Node
 var ship: ShipFlight
 var anim_nodes: Array = []   # {node, channel, p0..s1}
 var flame_cones: Array = []  # {mat: ShaderMaterial, channel: String}
+var glow_mats: Array = []    # {mat: StandardMaterial3D, channel: String} (#17)
 var _jet_beams: Array = []   # {node: Node3D (icBeamAvatar), mi: MeshInstance3D}
 var _engine_flares: Array = []  # {node, quad: FlareQuad, intensity, col}
 var exprs: Dictionary = {}   # channel string -> {terms: Array, value: float}
@@ -136,6 +137,23 @@ func _scan(model: Node3D) -> void:
 			})
 			if not exprs.has(ch) and not ch in ["flame", "core", "boom", "flap"]:
 				exprs[ch] = {"terms": _parse_expr(ch), "value": 0.0}
+		if ex.has("iw2_glow_channels") and n is MeshInstance3D:
+			# <glow channel=EXPR> surfaces (#17): the export tags the mesh
+			# node with {primitive: expression}; each surface's emission
+			# follows its channel instead of staying baked full-bright
+			var chans: Dictionary = ex["iw2_glow_channels"]
+			for idx in chans:
+				var mi := n as MeshInstance3D
+				var src := mi.get_active_material(int(str(idx)))
+				if not (src is StandardMaterial3D):
+					continue
+				var mat: StandardMaterial3D = src.duplicate()
+				mi.set_surface_override_material(int(str(idx)), mat)
+				var gch := str(chans[idx])
+				glow_mats.append({"mat": mat, "channel": gch})
+				if not exprs.has(gch) \
+						and not gch in ["flame", "core", "boom", "flap"]:
+					exprs[gch] = {"terms": _parse_expr(gch), "value": 0.0}
 		if str(ex.get("iw2_class", "")) == "icFlameConeAvatar":
 			_add_flame_cone(n as Node3D, ex)
 		if str(ex.get("iw2_class", "")) == "icBeamAvatar":
@@ -558,6 +576,18 @@ func _physics_process(delta: float) -> void:
 		else:
 			v = 0.0
 		(fc["mat"] as ShaderMaterial).set_shader_parameter("intensity", clampf(v, 0.0, 1.0))
+	# the <glow channel=...> surfaces (#17): emission follows the channel
+	for gm in glow_mats:
+		var gch: String = gm["channel"]
+		var gv: float
+		if named.has(gch):
+			gv = named[gch]
+		elif exprs.has(gch):
+			gv = exprs[gch]["value"]
+		else:
+			gv = 0.0
+		(gm["mat"] as StandardMaterial3D).emission_energy_multiplier = \
+				clampf(gv, 0.0, 1.0)
 	if _flameshot:
 		_flameshot_tick(delta)
 	for entry in anim_nodes:

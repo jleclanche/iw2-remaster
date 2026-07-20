@@ -139,6 +139,12 @@ class Assembler:
                 else:
                     self.missing_psos.append(pso_path)
             extras = None
+            if mesh is not None and pso_path in self.b.glow_channels:
+                # <glow channel=EXPR> surfaces (issue #17): the runtime drives
+                # each primitive's emission from the named channel expression
+                extras = {"iw2_glow_channels": {
+                    str(i): expr
+                    for i, expr in self.b.glow_channels[pso_path].items()}}
             if n["kind"] not in ("object", "null"):
                 extras = {"iw2_kind": n["kind"]}
                 for attr in ("channel", "class", "template", "tint", "splay",
