@@ -468,6 +468,9 @@ func _campcheck_port() -> void:
 				m.ap_mode = 1
 			if int(demo_t) % 20 == 0 and int(demo_t) != _kprobe_t:
 				_kprobe_t = int(demo_t)
+				# bracket the probe's own native calls so they don't
+				# overwrite the parked task's last_native breadcrumb
+				m.pog_rt.current_seq = -1
 				var kst: Variant = m.pog_rt.native("global.handle",
 						["g_kompira_state"])
 				print("CAMPCHECK probe: kompira progress=",

@@ -188,6 +188,12 @@ static func _load_stubs() -> void:
 
 
 func native(fqn: String, args: Array) -> Variant:
+	# the hung-task breadcrumb (#4): a coroutine parked on an await shows
+	# its LAST native here. CAVEAT, proven by its first field use: calls
+	# from OUTSIDE the task system (checks, HUD dispatch) run under a
+	# stale current_seq and overwrite the parked task's entry -- external
+	# callers must bracket with current_seq = -1 for a clean read.
+	last_native[current_seq] = fqn
 	var fn: Callable = natives.get(fqn, Callable())
 	if not fn.is_valid():
 		push_error("POG: native %s is not implemented" % fqn)
@@ -216,10 +222,13 @@ func dump_tasks() -> Array:
 		var s: PogScript = scripts[key]
 		for h in s._tasks:
 			if h.running():
-				out.append("%s #%d%s" % [h.label, h.seq,
-					" SUSPENDED" if is_suspended(h.seq) else ""])
+				out.append("%s #%d%s last=%s" % [h.label, h.seq,
+					" SUSPENDED" if is_suspended(h.seq) else "",
+					str(last_native.get(h.seq, "?"))])
 	out.append("suspend_below=%d exempt=%d" % [suspend_below, suspend_exempt])
 	return out
+
+var last_native: Dictionary = {}  ## seq -> the last native that task called
 
 
 ## Get (creating on first use) the ported script for a package.
