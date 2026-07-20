@@ -2124,6 +2124,17 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
 
+### The envmap texgen's projection axis
+
+The envmap layer's texcoord builder (`dx7graph.dll FUN_1000ca20 @
+0x1000ca20`) normalises by the model's own bounds and picks the projection
+plane by the dominant component of a float3 it fetches through
+`param_3->vtable+0x3c`. WHOSE vector that is (a per-layer authored axis?
+the camera direction handed down by the caller?) is unresolved -- the
+caller is not identified in the decomp set. `ship_effects.gd` uses the
+view direction in model space; settle it by finding the vtable and its
+0x3c slot's implementation.
+
 ### icGasBallAvatar's alpha pass source alpha
 
 The gas ball Draw (`iwar2.dll @ 0x100bddb0`) runs its second, depth-sorted

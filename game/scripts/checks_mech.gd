@@ -1217,21 +1217,25 @@ func _ms_lightmap_layer(_delta: float) -> void:
 			m.ship.global_position + Vector3(0, -80000, 0))
 	host.add_child(model)
 	ShipEffects.attach(host, model)
-	var muls := 0
-	var texd := 0
+	# am_remote authors BOTH layers on every primitive (wrap lightmap +
+	# Aluminium envmap), so each surface must come back as the envmap
+	# shader with a lightmap folded in (has_light); lightmap-only surfaces
+	# elsewhere take the MUL-detail route instead
+	var envs := 0
+	var lit := 0
 	for n in host.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		for si in mi.get_surface_override_material_count():
 			var mat := mi.get_surface_override_material(si)
-			if mat is StandardMaterial3D \
-					and (mat as StandardMaterial3D).detail_enabled \
-					and (mat as StandardMaterial3D).detail_blend_mode \
-						== BaseMaterial3D.BLEND_MODE_MUL:
-				muls += 1
-				if (mat as StandardMaterial3D).detail_albedo != null:
-					texd += 1
-	_mech("lightmap-layer", muls >= 1 and texd == muls,
-			"%d MUL detail layers, %d textured" % [muls, texd])
+			if mat is ShaderMaterial \
+					and (mat as ShaderMaterial).get_shader_parameter(
+						"env_tex") != null:
+				envs += 1
+				if bool((mat as ShaderMaterial).get_shader_parameter(
+						"has_light")):
+					lit += 1
+	_mech("lightmap-layer", envs >= 1 and lit == envs,
+			"%d envmap shaders, %d with the lightmap folded in" % [envs, lit])
 	_mech_reap(host)
 	_mech_next()
 

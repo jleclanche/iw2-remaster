@@ -338,21 +338,108 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 	var base := ProjectSettings.globalize_path("res://").path_join("..")
 	for idx in lay:
 		var d: Dictionary = lay[idx]
-		if not d.has("lightmap"):
-			continue
-		var tex: Texture2D = ParticleFx.texture(base, str(d["lightmap"]))
-		if tex == null:
-			continue
 		var src := mi.get_active_material(int(str(idx)))
 		if not (src is StandardMaterial3D):
 			continue
-		var mat: StandardMaterial3D = src.duplicate()
-		mat.detail_enabled = true
-		mat.detail_blend_mode = BaseMaterial3D.BLEND_MODE_MUL
-		mat.detail_uv_layer = BaseMaterial3D.DETAIL_UV_2 \
-				if bool(d.get("uv2", false)) else BaseMaterial3D.DETAIL_UV_1
-		mat.detail_albedo = tex
-		mi.set_surface_override_material(int(str(idx)), mat)
+		var ltex: Texture2D = null
+		if d.has("lightmap"):
+			ltex = ParticleFx.texture(base, str(d["lightmap"]))
+		var etex: Texture2D = null
+		if d.has("envmap"):
+			var stem := str(d["envmap"]).get_basename().to_lower()
+			etex = ParticleFx.texture(base, "images/envmaps/" + stem)
+		if etex != null:
+			mi.set_surface_override_material(int(str(idx)),
+					_envmap_material(src as StandardMaterial3D, etex, ltex,
+						bool(d.get("uv2", false)), mi.mesh.get_aabb()))
+		elif ltex != null:
+			var mat: StandardMaterial3D = src.duplicate()
+			mat.detail_enabled = true
+			mat.detail_blend_mode = BaseMaterial3D.BLEND_MODE_MUL
+			mat.detail_uv_layer = BaseMaterial3D.DETAIL_UV_2 \
+					if bool(d.get("uv2", false)) \
+					else BaseMaterial3D.DETAIL_UV_1
+			mat.detail_albedo = ltex
+			mi.set_surface_override_material(int(str(idx)), mat)
+
+# The ENVMAP layer (#15): nearly every hull surface names one
+# (CastIron/Aluminium/SteelShiny/Chrome/...). FcModel's cLayer(3) is built
+# from sSurface+0x38 (CreateRenderSurface, flux.dll.c:100084-100097) and
+# rendered at D3DTOP_MODULATE2X ("Using D3DTOP_MODULATE2X for spec", dx7
+# init 6513-6519): lit_base * env * 2. The texcoords are NOT a sphere map:
+# dx7's texgen (FUN_1000ca20 @ 0x1000ca20) normalises by the MODEL'S OWN
+# BOUNDS (FcBounds floored to [-1,1]^3, rows 1/(max-min), translate -min)
+# and picks a projection plane by an axis's dominant component, feeding
+# camera-space position through the un-transform (stage flag 0x20000 =
+# TCI_CAMERASPACEPOSITION, transform COUNT2). OPEN (docs/original.md):
+# which vector that axis is (param_3 vtable+0x3c) -- we use the view
+# direction in model space, the reading that makes the sheen track the
+# camera the way the original's does.
+const ENV_SHADER := """
+shader_type spatial;
+uniform sampler2D base_tex : source_color, filter_linear_mipmap, repeat_enable;
+uniform sampler2D env_tex : source_color, filter_linear_mipmap, repeat_enable;
+uniform sampler2D light_tex : source_color, filter_linear_mipmap, repeat_enable;
+uniform bool has_base = false;
+uniform bool has_light = false;
+uniform bool light_uv2 = false;
+uniform vec4 base_color = vec4(1.0);
+uniform float metal = 0.1;
+uniform float rough = 0.85;
+uniform vec3 bb_min = vec3(-1.0);
+uniform vec3 bb_inv = vec3(0.5);
+varying vec3 mpos;
+void vertex() {
+	mpos = VERTEX;
+}
+void fragment() {
+	vec4 b = base_color;
+	if (has_base) {
+		b *= texture(base_tex, UV);
+	}
+	vec3 nm = (mpos - bb_min) * bb_inv;
+	vec3 vdir = abs(mpos - (inverse(MODEL_MATRIX) * INV_VIEW_MATRIX[3]).xyz);
+	vec2 suv = nm.xy;
+	if (vdir.x >= vdir.y && vdir.x >= vdir.z) {
+		suv = nm.zy;
+	} else if (vdir.y >= vdir.z) {
+		suv = nm.xz;
+	}
+	vec3 alb = b.rgb * texture(env_tex, suv).rgb * 2.0;
+	if (has_light) {
+		alb *= texture(light_tex, light_uv2 ? UV2 : UV).rgb;
+	}
+	ALBEDO = alb;
+	METALLIC = metal;
+	ROUGHNESS = rough;
+}
+"""
+static var _env_shader: Shader = null
+
+func _envmap_material(src: StandardMaterial3D, env: Texture2D,
+		lmap: Texture2D, uv2: bool, aabb: AABB) -> ShaderMaterial:
+	if _env_shader == null:
+		_env_shader = Shader.new()
+		_env_shader.code = ENV_SHADER
+	var mat := ShaderMaterial.new()
+	mat.shader = _env_shader
+	if src.albedo_texture != null:
+		mat.set_shader_parameter("base_tex", src.albedo_texture)
+		mat.set_shader_parameter("has_base", true)
+	mat.set_shader_parameter("base_color", src.albedo_color)
+	mat.set_shader_parameter("env_tex", env)
+	if lmap != null:
+		mat.set_shader_parameter("light_tex", lmap)
+		mat.set_shader_parameter("has_light", true)
+		mat.set_shader_parameter("light_uv2", uv2)
+	mat.set_shader_parameter("metal", src.metallic)
+	mat.set_shader_parameter("rough", src.roughness)
+	# FcBounds floored to at least [-1,1]^3 (FUN_1000ca20's AddPoint pair)
+	var mn := aabb.position.min(Vector3.ONE * -1.0)
+	var mx := aabb.end.max(Vector3.ONE)
+	mat.set_shader_parameter("bb_min", mn)
+	mat.set_shader_parameter("bb_inv", Vector3.ONE / (mx - mn))
+	return mat
 
 # @element icSignAvatar
 # Station signage (registry FUN_100cfeb0 @ 0x100cfeb0, vtable 0x1011d190;
