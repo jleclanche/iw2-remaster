@@ -1504,6 +1504,18 @@ func _ms_script_queries(_delta: float) -> void:
 	_mech("turret-designation", r1 == 1 and locked_on and r2 == 1 and released,
 		"designate=%d locked=%s release=%d armed=%s"
 			% [r1, locked_on, r2, bat.get("armed", false)])
+	# group membership (#4): AddSim must set the sim's own back-reference,
+	# because sim.Group(member) answers which group it was added to -- the
+	# Kompira initiation's v14 pairing (iacttwo.pog 1970) polls exactly
+	# that, and without the back-reference it was structurally false for
+	# every POG-created group
+	var grp: Variant = m.pog_rt.native("group.create", [])
+	m.pog_rt.native("group.addsim", [grp, viewer])
+	var back_ok: bool = m.pog_rt.native("sim.group", [viewer]) == grp
+	m.pog_rt.native("group.removesim", [grp, viewer])
+	var clear_ok: bool = m.pog_rt.native("sim.group", [viewer]) == null
+	_mech("group-backref", back_ok and clear_ok,
+		"addsim back=%s removesim cleared=%s" % [back_ok, clear_ok])
 	gs.queue_free()
 	m.ai_ships.erase(gs)
 	hostile.queue_free()

@@ -156,9 +156,18 @@ func _g_create(_t, _a: Array) -> Variant:
 
 # @native group.AddSim
 func _g_add_sim(_t, a: Array) -> Variant:
+	# AddSim also sets the SIM'S OWN group back-reference: sim.Group(x)
+	# must answer the group x was added to. Without it, every
+	# `sim.Group(member) == group` comparison in the campaign was
+	# structurally false -- the Kompira initiation's v14 pairing
+	# (iacttwo.pog 1970) and the wingman-membership tests among them (#4;
+	# found by the task breadcrumb reading `last=sim.group` on the story's
+	# poll loop).
 	var g = a[0]
 	if g is PogGroup and a[1] != null and not g.sims.has(a[1]):
 		g.sims.append(a[1])
+		if "group" in a[1]:
+			a[1].group = g
 	return 0
 
 # @native group.RemoveSim
@@ -166,6 +175,8 @@ func _g_remove_sim(_t, a: Array) -> Variant:
 	var g = a[0]
 	if g is PogGroup:
 		g.sims.erase(a[1])
+		if a[1] != null and "group" in a[1] and a[1].group == g:
+			a[1].group = null
 	return 0
 
 # @native group.RemoveNthSim
