@@ -106,6 +106,10 @@ const MAX_RINGS := 8  # max_rings
 const RING_WIDTH := (RING_MAX - RING_MIN) / MAX_RINGS
 
 var ship: ShipFlight
+# The REMOTE LINK (#1): iship.InstallPlayerPilot onto a live mission sim
+# moves the PILOT, not the hull -- while set, control, camera and
+# iship.FindPlayerShip follow this ship and the own hull drifts.
+var remote_ai: AiShip = null
 var ship_model: Node3D
 var player_ship_ini := ""  # sims/ships/player/*.ini path of the fitted hull
 var cockpit: Node3D
@@ -360,6 +364,32 @@ func iff_level(fac: String) -> int:
 	elif f < 0.6:
 		return 3
 	return 4
+
+## The ship the player is FLYING: the remote vessel while a link is up,
+## the own hull otherwise. Control, camera and the flight readouts route
+## through this so the pilot -- not the hull -- is what the player is.
+func piloted() -> ShipFlight:
+	if remote_ai != null and is_instance_valid(remote_ai):
+		return remote_ai
+	return ship
+
+func possess(ai: AiShip) -> void:
+	remote_ai = ai
+	ai.behavior = "piloted"
+	ai.input_rotate = Vector3.ZERO
+	ai.input_thrust = Vector3.ZERO
+	# the own hull holds station while the pilot is away: throttle to zero,
+	# the assist brakes it to rest where it was left
+	ship.set_speed = 0.0
+	ship.input_rotate = Vector3.ZERO
+	ship.input_thrust = Vector3.ZERO
+
+func unpossess() -> void:
+	if remote_ai != null and is_instance_valid(remote_ai):
+		remote_ai.behavior = "idle"
+		remote_ai.input_rotate = Vector3.ZERO
+		remote_ai.input_thrust = Vector3.ZERO
+	remote_ai = null
 
 func _base() -> String:
 	return ProjectSettings.globalize_path("res://").path_join("..")

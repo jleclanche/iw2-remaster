@@ -1651,6 +1651,12 @@ func _infection_host(s: PogSim) -> Node3D:
 # ---------------------------------------------------------------- iship
 # @native iship.FindPlayerShip
 func _sh_find_player(_t, _a: Array) -> Variant:
+	# During a remote link the player IS the linked vessel: iRemotePilot's
+	# own toggle path calls FindPlayerShip to find which ship to take the
+	# pilot OFF, so this must follow the pilot, not the hull (#1).
+	if game != null and game.remote_ai != null \
+			and is_instance_valid(game.remote_ai):
+		return _wrap_ship(game.remote_ai)
 	return player_sim()
 
 # @native iship.Create
@@ -1864,11 +1870,25 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 	# frees nothing. The remote-pilot half (flying a hull that is NOT the
 	# player's) remains #1.
 	var s := _as_sim(a[0])
-	if s == null or s.is_player:
+	if s == null:
+		return 0
+	if s.is_player:
+		# installing the pilot back on the OWN ship ends a remote link
+		if game != null:
+			game.unpossess()
 		return 0
 	s.free_without_pilot = false
-	if game == null or s.node == null or not (s.node is AiShip) \
-			or s.ini.is_empty():
+	if game == null or s.node == null or not (s.node is AiShip):
+		return 0
+	# THE REMOTE LINK (#1): a sim flagged remote_connection_available takes
+	# the PILOT, not the hull -- iRemotePilot.Install's whole flow. Control,
+	# camera and FindPlayerShip follow it; the mission's drone stays the
+	# mission's drone and the own hull drifts where the pilot left it.
+	if std != null and PogVM._truthy(std._bag(s)
+			.get("remote_connection_available", 0)):
+		game.possess(s.node as AiShip)
+		return 0
+	if s.ini.is_empty():
 		return 0
 	_load_ship_db()
 	var key := ini_key(s.ini)

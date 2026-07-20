@@ -266,6 +266,10 @@ func _physics_process(delta: float) -> void:
 			main.kill_ai(self)
 			return
 	match behavior:
+		"piloted":
+			# the REMOTE LINK (#1): the player's pilot is installed here --
+			# main._player_control writes the input fields; no AI steering
+			pass
 		"towed":
 			# a docked child rides its parent rigidly (FiSim::UpdateChild
 			# rewrites the child's transform from the parent every tick);

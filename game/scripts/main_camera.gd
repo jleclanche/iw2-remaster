@@ -52,7 +52,9 @@ func _set_camera(group: int) -> void:
 	_apply_view()
 
 func _chase_camera(delta: float) -> void:
-	var target := ship.global_transform
+	# the camera rides the PILOTED ship: the remote vessel while a link is
+	# up (#1) -- the pilot moved, so the eye did
+	var target: Transform3D = piloted().global_transform
 	if jump_state == 4:
 		_capsule_camera(delta, target)
 		return
@@ -76,7 +78,7 @@ func _chase_camera(delta: float) -> void:
 	# initial_range = 4, [icExternalCamera] initial_zoom = 3), against
 	# iiSim::CalculateRadius (0x1007ccf0). Fixed-metre offsets framed the
 	# turret fighter fine and put the camera INSIDE the tug's silhouette.
-	var r := ship.radius
+	var r: float = piloted().radius
 	match cam_name():
 		"cockpit", "no_cockpit":  # rigid at the pilot's eye (the crew null)
 			cam.global_transform = target.translated_local(eye)

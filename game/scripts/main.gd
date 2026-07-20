@@ -183,13 +183,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	# so this is ours. It carries the yoke's two real behaviours: the zoom factor
 	# divides it, and RollYawToggleHold swaps its X channel from yaw to roll.
 	if event is InputEventMouseMotion and not demo and docked_at == "":
+		var sh: ShipFlight = piloted()  # the remote vessel while linked (#1)
 		var mx: float = event.relative.x * 0.003 / zoom_factor
 		var my: float = event.relative.y * 0.003 / zoom_factor
 		if roll_yaw_swap:
-			ship.input_rotate.z = clampf(ship.input_rotate.z - mx, -1, 1)
+			sh.input_rotate.z = clampf(sh.input_rotate.z - mx, -1, 1)
 		else:
-			ship.input_rotate.y = clampf(ship.input_rotate.y - mx, -1, 1)
-		ship.input_rotate.x = clampf(ship.input_rotate.x - my, -1, 1)
+			sh.input_rotate.y = clampf(sh.input_rotate.y - mx, -1, 1)
+		sh.input_rotate.x = clampf(sh.input_rotate.x - my, -1, 1)
 	# RollYawToggleHold: held, not toggled (flux.ini toggle_roll_yaw = 0). The
 	# original's only binding is joystick button 2; on a mouse yoke the right
 	# button is its natural home.
@@ -512,14 +513,18 @@ func late_physics(delta: float) -> void:
 ##   - the zoom factor DIVIDES yaw and pitch (not roll), which is what makes a
 ##     zoomed shot aimable.
 func _player_control(delta: float) -> void:
+	# The yoke drives the PILOTED ship: the own hull normally, the linked
+	# vessel during a remote link (#1) -- the original installs the player
+	# PILOT on the remote sim and this is that pilot's control path.
+	var sh: ShipFlight = piloted()
 	# ThrottleDelta is a rate on the throttle FRACTION: `throttle += v * dt *
 	# 0.3333` clamped to [0,1] (the 1/3 is the float at 0x10119454). A full sweep
 	# is three seconds, and the throttle is a fraction of max speed, not m/s.
-	var dv := ship.max_speed.z * delta / 3.0
-	ship.set_speed = clampf(ship.set_speed
+	var dv := sh.max_speed.z * delta / 3.0
+	sh.set_speed = clampf(sh.set_speed
 		+ (_key(KEY_EQUAL) + _key(KEY_KP_ADD)) * dv
 		- (_key(KEY_MINUS) + _key(KEY_KP_SUBTRACT)) * dv,
-		0.0, ship.max_speed.z)
+		0.0, sh.max_speed.z)
 	# icPlayerPilot::Think (0x100ad8f0, at 0x100ae191) re-tests the zoom gate every
 	# frame and drops the zoom the moment the hardware that granted it goes away.
 	if zoomed and not _zoom_allowed().is_empty():
@@ -537,9 +542,9 @@ func _player_control(delta: float) -> void:
 		# THRUSTERS, not steering. LateralX = D / A, LateralZ = W / S. LateralY
 		# has no keyboard binding in either shipped config -- it is joystick-only
 		# (JoyYAxis with the ALT modifier), so vertical strafe is left unbound.
-		ship.input_thrust.z = _key(KEY_W) - _key(KEY_S)
-		ship.input_thrust.x = _key(KEY_D) - _key(KEY_A)
-		ship.input_thrust.y = 0.0
+		sh.input_thrust.z = _key(KEY_W) - _key(KEY_S)
+		sh.input_thrust.x = _key(KEY_D) - _key(KEY_A)
+		sh.input_thrust.y = 0.0
 		# keyboard_only.ini: NumPad6 = +Yaw, NumPad8 = +Pitch, NumPad3 = +Roll,
 		# and the `inverse` twins are the negative half of each axis. +Pitch is
 		# NOSE DOWN: the joystick binding is `JoyYAxis, inverse`, and an inverted
@@ -554,14 +559,14 @@ func _player_control(delta: float) -> void:
 			roll = t
 		# Godot's local axes: +x pitches the nose UP, +y yaws LEFT, +z rolls LEFT
 		if absf(yaw) > 0.0:
-			ship.input_rotate.y = -yaw / zoom_factor
+			sh.input_rotate.y = -yaw / zoom_factor
 		if absf(pitch) > 0.0:
-			ship.input_rotate.x = -pitch / zoom_factor
-		ship.input_rotate.z = -roll
-		ship.input_rotate.x = move_toward(ship.input_rotate.x, 0.0, delta * 1.5)
-		ship.input_rotate.y = move_toward(ship.input_rotate.y, 0.0, delta * 1.5)
+			sh.input_rotate.x = -pitch / zoom_factor
+		sh.input_rotate.z = -roll
+		sh.input_rotate.x = move_toward(sh.input_rotate.x, 0.0, delta * 1.5)
+		sh.input_rotate.y = move_toward(sh.input_rotate.y, 0.0, delta * 1.5)
 	# free flight: N toggles, LeftCtrl / NumPad5 holds (FreeToggle/FreeHold)
-	ship.assist = not (free_toggle or Input.is_physical_key_pressed(KEY_CTRL)
+	sh.assist = not (free_toggle or Input.is_physical_key_pressed(KEY_CTRL)
 		or Input.is_physical_key_pressed(KEY_KP_5))
 	if (Input.is_key_pressed(KEY_SPACE)
 			or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) \

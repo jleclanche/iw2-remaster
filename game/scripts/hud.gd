@@ -1808,6 +1808,12 @@ func _menu_select() -> void:
 			# itself on jafs availability/active flags)
 			if main.pog != null:
 				main.pog.start("ijafsscript", "CallJafs")
+		"hud_menu_remote_link":
+			# REM LINK runs iRemotePilot.Install (#1): link to the current
+			# target when it is remote-enabled, toggle the link off when one
+			# is up -- the script does both, and its own shouts narrate
+			if main.pog_rt != null:
+				main.pog_rt.ui.dispatch("iRemotePilot.Install")
 	if kind in ["cmd", "toggle", "carousel"]:
 		menu_active = false
 		menu_focus = MENU_ROOT

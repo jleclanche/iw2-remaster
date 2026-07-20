@@ -332,7 +332,21 @@ func _obj_add(_t, a: Array) -> Variant:
 # @native object.ListProperty
 # @native object.SetProperty
 func _obj_get(_t, a: Array) -> Variant:
-	return _bag(a[0]).get(_s(a[1]), 0)
+	var bag := _bag(a[0])
+	var key := _s(a[1])
+	if bag.has(key):
+		return bag[key]
+	# FcObject properties reach the ENGINE object's fields when the bag has
+	# no script-written entry: hit_points is the live hull. The iRemotePilot
+	# watchdog polls it on both ends of the link every 4 s (iremotepilot
+	# local_0) -- a bag-only 0 would sever every remote link on sight (#1).
+	if key == "hit_points" and a[0] is PogWorld.PogSim:
+		var s := a[0] as PogWorld.PogSim
+		if s.is_player and s.world != null and s.world.game != null:
+			return float(s.world.game.hull)
+		if s.node != null and is_instance_valid(s.node) and "hull" in s.node:
+			return float(s.node.hull)
+	return 0
 
 # @native object.SetBoolProperty
 # @native object.SetIntProperty

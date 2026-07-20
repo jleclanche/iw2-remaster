@@ -93,6 +93,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_cutscene_staging",
 	&"_ms_cutscene_staging_assert",
 	&"_ms_comms_overlay",
+	&"_ms_remote_link",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
 	&"_ms_finish",
@@ -1219,6 +1220,45 @@ func _ms_comms_overlay(_delta: float) -> void:
 		"raised=%s visible=%s restored=%s"
 			% [raised if raised != "" else "(nothing)",
 			"(none)" if vis == null else str(vis.name), str(restored)])
+	_mech_next()
+
+## Issue #1: the REMOTE LINK end to end, driven exactly as the game drives
+## it -- the HUD's REM LINK node dispatches iRemotePilot.Install, which
+## links to the CURRENT TARGET when it carries remote_connection_available.
+## Asserted: possession (piloted() and control follow the drone,
+## FindPlayerShip answers the drone), the watchdog's live hit_points read,
+## and the toggle back (pilot returns, drone released to its own AI).
+func _ms_remote_link(_delta: float) -> void:
+	var drone: AiShip = m.spawn_hostile(m.ship.global_position
+			+ Vector3(2000, 0, 0))
+	drone.behavior = "idle"
+	# a unique identity: _wrap_ship caches by name, and earlier steps have
+	# already parked a (freed) "Marauder Cutter" wrap in the registry
+	drone.display_name = "Remote Probe Drone"
+	drone.sim_key = "remote_probe_drone"
+	var w = m.pog_rt.world._wrap_ship(drone)
+	m.pog_rt.native("object.addintproperty",
+			[w, "remote_connection_available", 1])
+	m.target_ai = drone
+	m.pog_rt.ui.dispatch("iRemotePilot.Install")
+	var linked: bool = m.remote_ai == drone and m.piloted() == drone \
+			and drone.behavior == "piloted"
+	var fps_remote: bool = \
+			m.pog_rt.native("iship.findplayership", []) == w
+	# the watchdog (iremotepilot local_0) reads hit_points off both ends
+	# every 4 s; a dead read severs the link, so it must be the LIVE hull
+	var hp := float(m.pog_rt.native("object.floatproperty",
+			[w, "hit_points"]))
+	var hp_live: bool = absf(hp - drone.hull) < 0.5 and hp > 0.0
+	m.pog_rt.ui.dispatch("iRemotePilot.Install")   # toggle the link off
+	var released: bool = m.remote_ai == null and m.piloted() == m.ship \
+			and drone.behavior != "piloted"
+	_mech("remote-link",
+		linked and fps_remote and hp_live and released,
+		"linked=%s fps=%s hp=%.0f released=%s"
+			% [linked, fps_remote, hp, released])
+	m.target_ai = null
+	_mech_reap(drone)
 	_mech_next()
 
 var _mech_burn: AiShip = null
