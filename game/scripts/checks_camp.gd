@@ -476,6 +476,8 @@ func _campcheck_port() -> void:
 					" ask=", m.comms.ask_options.size(),
 					" depth=", m.pog_rt.gameapi.director_depth,
 					" ghost=", m.pog_rt.world.sims.has("I am a Ghost"))
+				for tline in m.pog_rt.dump_tasks():
+					print("  task: ", tline)
 			if m.mission.objectives.has("a2_m02_objectives_wait"):
 				print("CAMPCHECK(port): act 2 m02 BOOTED off the story ",
 					"script (wait objective raised) — advancing to act 3")

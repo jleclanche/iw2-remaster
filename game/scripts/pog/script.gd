@@ -32,6 +32,7 @@ class PogTaskHandle extends RefCounted:
 	var done := false
 	var halted := false
 	var seq := 0
+	var label := ""       ## "package.method", for the task dump (#4)
 
 	func running() -> bool:
 		return not done and not halted
@@ -106,6 +107,7 @@ func _pog_frame() -> void:
 func _pog_spawn(c: Callable) -> PogTaskHandle:
 	var h := PogTaskHandle.new()
 	h.seq = rt.next_seq()
+	h.label = "%s.%s" % [name, c.get_method()]
 	_tasks.append(h)
 	_run(c, h)
 	return h

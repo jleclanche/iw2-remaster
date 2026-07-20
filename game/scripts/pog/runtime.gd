@@ -205,6 +205,23 @@ func native(fqn: String, args: Array) -> Variant:
 	return fn.call(null, args)
 
 
+## The live-task dump (#4): every spawned coroutine that has neither
+## finished nor been halted, with the suspend state -- the visibility that
+## turns "a story task silently parked/hung" from a theory into a listing.
+## (A GDScript coroutine that hangs on an await raises nothing; this is
+## the only window into it.)
+func dump_tasks() -> Array:
+	var out: Array = []
+	for key in scripts:
+		var s: PogScript = scripts[key]
+		for h in s._tasks:
+			if h.running():
+				out.append("%s #%d%s" % [h.label, h.seq,
+					" SUSPENDED" if is_suspended(h.seq) else ""])
+	out.append("suspend_below=%d exempt=%d" % [suspend_below, suspend_exempt])
+	return out
+
+
 ## Get (creating on first use) the ported script for a package.
 func script(name: String) -> PogScript:
 	var key := name.to_lower()
