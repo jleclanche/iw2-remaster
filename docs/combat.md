@@ -947,13 +947,33 @@ attitude (`+0x3a0`), and the thruster sim converges the missile's velocity
 vector toward it under the per-axis INI `acceleration` (380,380,380 on the
 seeker) -- full lateral thrust, no point-first-then-burn. The brain
 (`icAITarget::Think 0x59a5e`, gated by the missile's order flags
-`0xc000008` set in `SetTarget 0x1006d6c0`) builds that velocity from the
-bearing to the target (`ComputeTargetVector 0x58708`: unit direction +
-range into `+0xb0`/`+0xc8`) and `ComputeTargetVelocity` (`0x5a098`) folds
-the **target's own velocity** in (`+0xbc`): close along the bearing while
-matching the target's motion -- a constant-bearing intercept.
-`ComputeAngularControl` (`0x5e32c`) aligns the nose to the same vector at
-the authored angular rates. missiles.gd `_steer` flies exactly this shape.
+`0xc000008` set in `SetTarget 0x1006d6c0`) builds that velocity in two
+extracted stages (`ComputeLateralControl 0x1005b3f4`):
+
+1. **Desired end velocity** (`ComputeTargetVelocity 0x1005a098`): the
+   target's own velocity, plus -- order flag `0x4000000`, part of the
+   missile's `0xc000008` -- the unit bearing scaled by
+   `(DirectionError + 1) * 0.5 * MaxSpeed`. `DirectionError` (`+0xcc`,
+   set in `ComputeTargetVector 0x10058708`) is bearing (dot) forward, so
+   the commanded closing speed fades to zero as the nose falls off the
+   bearing and returns as `ComputeAngularControl` (`0x5e32c`) re-points
+   it at the authored angular rates. This is the terminal law: an
+   overshooting missile sees the bearing behind it, brakes to match the
+   target's velocity, swings its nose, and closes again -- a damped
+   intercept, not an orbit.
+2. **Per-axis journey profile** (`ComputeJourneyComponent 0x10058f6e`,
+   journey vector = the full offset to the target, constraints from
+   `GetLateralConstraints 0x1005a301` = the per-axis INI accelerations
+   and MaxSpeed): while `v^2 < vt^2 + 2*a*|d|` (the constant 2.0 at
+   `0x10119ec8`) -- "braking now would still stop in time" -- command
+   `v + a*dt` toward the target; past that peak, command the end
+   velocity. Inside `m_lateral_damping_distance` (6.0, exported static
+   `0x1015c3a4`) the acceleration scales by `max(|d|/6, 0.01)`; output
+   clamps to per-axis MaxSpeed.
+
+missiles.gd `_steer` flies exactly this shape; the mechcheck seeker-cross
+step proves a 90-degrees-off-axis launch converges (the pre-extraction
+pursuit law provably never did).
 
 **In-flight sound.** Every missile avatar's `Setup.lws` carries a sound
 null on the **`lz` channel** -- the same channel that lights the exhaust --
@@ -970,12 +990,13 @@ min_range 250). missiles.gd `FLIGHT_SOUNDS`.
 
 Not recovered. **Do not fill these in with plausible values.**
 
-- **`icAITarget` fine control.** The guidance STRUCTURE above is extracted;
-  the fine mixing in `ComputeLateralControl` (`0x5b3f4` -- damping bands,
-  avoidance blending, LDS branches) and the roll policy in
-  `ComputeAngularControl` are ship-AI machinery whose missile-relevant
-  residue was not fully pinned; the remaster's `_steer` is the extracted
-  shape without those refinements.
+- **`icAITarget` residue.** The lateral law is now extracted (10.9b): the
+  journey profile, the damping band and the DirectionError speed gate all
+  cite their addresses. Still not pinned: the roll policy inside
+  `ComputeAngularControl` (`0x5e32c`), the avoidance blending
+  (`FactorInAvoidance`, only reachable when `IsAvoiding`), and the
+  mid-branch of `ComputeJourneyComponent` (0 < time-to-peak < dt -- a
+  one-frame sliver that collapses at our tick rates).
 - **`icShockwave`** -- the antimatter and LDSI explosion carrier. Radius and
   the INI it is built from are recovered; its damage application is not.
 - **The LDSI missile's in-LDS fuse.** `icLDSIMissile::Think` (`0x1006b830`)

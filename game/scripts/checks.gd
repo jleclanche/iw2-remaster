@@ -1366,6 +1366,9 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_ap_dock",
 	&"_ms_missile_spawn",
 	&"_ms_missile_track",
+	&"_ms_seeker_cross",
+	&"_ms_seeker_cross_assert",
+	&"_ms_seeker_dud",
 	&"_ms_turret_spawn",
 	&"_ms_turret_refire",
 	&"_ms_beam_spawn",
@@ -1584,6 +1587,69 @@ func _ms_missile_track(_delta: float) -> void:
 				_mech("missile-damage", false, "step=%.1f" % drop)
 			_mech_v0.x = m.target_ai.hull
 		m._fire_secondary()
+
+## Issue #30: a player-fired seeker with a lock must CONVERGE. A magazine
+## round is eMissileType 2: armed straight into TRACK (icMissile::Simulate
+## case 1) and steered by the embedded icAITarget (0x1006c550). The
+## missile-kill step's target sits dead ahead, which an inert dud would ALSO
+## hit -- this target sits 90 degrees off the launch axis at 3 km, a geometry
+## only real guidance reaches.
+func _ms_seeker_cross(_delta: float) -> void:
+	var ai: AiShip = m.spawn_hostile(m.ship.global_position
+			+ m.ship.global_transform.basis.x * 3000.0)
+	ai.hull = 250.0  # one seeker (280 flat blast) kills
+	ai.behavior = "idle"
+	m.target_ai = ai
+	for i in m._secondary_count():
+		m._select_secondary(i)
+		if "SEEKER" in m.secondary_name.to_upper():
+			break
+	_mech_v0 = Vector3.ZERO
+	_mech_next()
+
+func _ms_seeker_cross_assert(_delta: float) -> void:
+	if m.target_ai != null and is_instance_valid(m.target_ai):
+		m._fire_secondary()  # refire clock gates repeats
+	# the round must actually be IN TRACK on the locked target, not merely
+	# happen to drift into the blast
+	for rec: Dictionary in m.missiles.missiles:
+		if int(rec["state"]) == Missiles.ST_TRACK and rec["target"] == m.target_ai:
+			_mech_v0.x = 1.0
+	if m.target_ai == null or not is_instance_valid(m.target_ai):
+		_mech("seeker-cross", _mech_v0.x == 1.0,
+			"off-axis kill in %.0f s (tracked=%d)" % [demo_t, int(_mech_v0.x)])
+		_mech_next()
+	elif demo_t > 45.0:
+		_mech("seeker-cross", false, "target alive after %.0f s (tracked=%d)"
+			% [demo_t, int(_mech_v0.x)])
+		_mech_reap(m.target_ai)
+		m.target_ai = null
+		_mech_next()
+
+## The rule's other half: a type-2 round fired with NO lock is a dud --
+## Think() finds no target instance and sets state 6 (coast inert to
+## lifetime). Firing unlocked must not invent a target.
+func _ms_seeker_dud(_delta: float) -> void:
+	if _mech_v0.z == 0.0:
+		m.target_ai = null
+		# the cross step may have run the magazine dry; the dud rule needs a round
+		var mag: Dictionary = m.player_mags[m.secondary_idx]
+		mag["ammo"] = maxi(int(mag["ammo"]), 1)
+		var count: int = m.missiles.missiles.size()
+		m._fire_secondary()
+		if m.missiles.missiles.size() > count:
+			_mech_v0.z = 1.0
+			_mech_v0.y = float(demo_t)  # launch time
+		return
+	# arm_time 0.5 s (sims/weapons/seeker_missile.ini); settled by +1.5 s
+	if demo_t < float(_mech_v0.y) + 1.5:
+		return
+	var rec: Dictionary = m.missiles.missiles.back()
+	var ok: bool = int(rec["state"]) == Missiles.ST_DEAD \
+			and rec["target"] == null
+	_mech("seeker-dud", ok, "state=%d target=%s"
+		% [int(rec["state"]), str(rec["target"])])
+	_mech_next()
 
 func _ms_turret_spawn(_delta: float) -> void:
 	# icTurret: a gunstar's nps_turret_pbc fires pbc_bolt on the

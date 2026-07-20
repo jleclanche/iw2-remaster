@@ -38,6 +38,9 @@ const MISSILE_SRC := 2            # eDamageSource for every warhead path
 # flux.ini [icSimTrackingMissile] (= compiled defaults 0x1015dd5c/0x1015dd60):
 const DECOY_RANGE_L0 := 500.0     # max_range_for_decoying_level_zero_missile
 const REACQUIRE_RANGE_L1 := 5000.0  # min_range_for_stopping_level_one_..._reacquisition
+# icAITarget statics (exported, read from the PE .data section):
+const LATERAL_DAMPING_DISTANCE := 6.0  # m_lateral_damping_distance 0x1015c3a4
+const JOURNEY_MIN_ACCEL_SCALE := 0.01  # ComputeJourneyComponent 0x10058f6e floor
 # flux.ini [icMissileMagazine] (compiled defaults 0.02 / 0.08 at 0x1015ba80/7c):
 const LAUNCH_LIKELIHOOD := 0.005  # missile_launch_likelihood_per_ammo_fraction
 # flux.ini [icMagazine] (compiled default 0.1 at 0x1015ba00):
@@ -609,11 +612,14 @@ func _step_guidance(rec: Dictionary, node: Node3D, spec: Dictionary,
 		delta: float) -> bool:
 	var state := int(rec["state"])
 	var chase: Node3D = null
+	var tgt: Variant = rec["target"]
 	if rec["decoy"] != null:
 		chase = (rec["decoy"] as Dictionary)["node"]
-	elif rec["target"] != null and is_instance_valid(rec["target"]):
-		chase = rec["target"]
-	elif rec["target"] != null:
+	elif tgt != null and is_instance_valid(tgt):
+		chase = tgt
+	elif not is_same(tgt, null):
+		# a FREED target compares == null in GDScript, so `!= null` alone
+		# leaves the missile coasting in TRACK forever; is_same sees through it
 		rec["target"] = null  # target died: Think() drops the lock
 		state = ST_SEEK if rec["cls"] == "icMine" else ST_DEAD
 		rec["state"] = state
@@ -715,25 +721,47 @@ func _steer(rec: Dictionary, node: Node3D, spec: Dictionary, chase: Node3D,
 	# icMissile::Simulate (0x1006c550) state 3 hands iiThrusterSim::
 	# ComputeForceAndTorque a DESIRED VELOCITY (missile+0x37c, the embedded
 	# icAITarget's +0xdc) and a desired attitude (+0x3a0): the missile steers
-	# its VELOCITY VECTOR with the full per-axis thruster acceleration
-	# (380,380,380 on the seeker) -- it never has to point at the target
-	# before it can pull toward it. The brain builds that velocity from the
-	# bearing to the target (icAITarget::ComputeTargetVector 0x58708: unit
-	# direction and range into +0xb0/+0xc8) at maximum speed, and
-	# ComputeTargetVelocity (0x5a098) folds the TARGET'S OWN velocity in
-	# (+0xbc) -- close along the bearing while matching the target's motion,
-	# i.e. a constant-bearing intercept. ComputeAngularControl (0x5e32c)
-	# separately aligns the nose to the same vector at the authored angular
-	# rates. (The exact control mixing in ComputeLateralControl 0x5b3f4 --
-	# damping bands, avoidance, formation offsets -- is ship-AI machinery a
-	# missile's order flags 0xc000008 never enable.)
+	# its VELOCITY VECTOR with the per-axis thruster acceleration (380,380,380
+	# on the seeker) -- it never has to point at the target before it can pull
+	# toward it. The brain (icAITarget::ComputeLateralControl 0x1005b3f4):
+	#
+	# 1. Desired END velocity (ComputeTargetVelocity 0x1005a098): the target's
+	#    own velocity, PLUS -- order flag 0x4000000, set for every missile by
+	#    icMissile::SetTarget 0x1006d6c0 (flags 0xc000008) -- the bearing
+	#    scaled by (DirectionError + 1) * 0.5 * MaxSpeed. DirectionError
+	#    (+0xcc, ComputeTargetVector 0x10058708) is bearing (dot) forward: the
+	#    commanded closing speed FADES as the nose falls off the bearing and
+	#    returns as ComputeAngularControl (0x5e32c) swings it back. That is
+	#    the whole terminal law: an overshooting missile sees the bearing
+	#    behind it, brakes to match the target, re-points, and closes again.
+	# 2. Per axis (ComputeJourneyComponent 0x10058f6e, journey d = the full
+	#    vector to the target, accel +a/-a, the 2.0 at 0x10119ec8): while
+	#    v^2 < vt^2 + 2*a*|d| -- "braking now would still stop in time" --
+	#    command v + sign(d)*a*dt (accelerate); past that peak, command vt.
+	#    |d| < m_lateral_damping_distance (6 m) scales a by max(|d|/6, 0.01).
+	#    Output clamps to per-axis MaxSpeed (GetLateralConstraints 0x1005a301).
 	var speed := float(spec.get("speed", 2800.0))
 	var accel := float(spec.get("accel", 300.0))
 	var to: Vector3 = chase.global_position - node.global_position
 	var fwd: Vector3 = -node.global_transform.basis.z
 	var dir := to.normalized() if to.length_squared() > 1e-6 else fwd
-	var want_vel: Vector3 = dir * speed + _ship_vel(chase)
-	rec["vel"] = (rec["vel"] as Vector3).move_toward(want_vel, accel * delta)
+	var dir_err := fwd.dot(dir)
+	var vt: Vector3 = _ship_vel(chase) + dir * ((dir_err + 1.0) * 0.5 * speed)
+	var vel: Vector3 = rec["vel"]
+	for i in 3:
+		var d := to[i]
+		var a := accel
+		if absf(d) < LATERAL_DAMPING_DISTANCE:
+			a *= maxf(absf(d) / LATERAL_DAMPING_DISTANCE,
+					JOURNEY_MIN_ACCEL_SCALE)
+		var want: float
+		if vel[i] * vel[i] < vt[i] * vt[i] + 2.0 * a * absf(d):
+			want = vel[i] + signf(d) * a * delta
+		else:
+			want = vt[i]
+		want = clampf(want, -speed, speed)
+		vel[i] = move_toward(vel[i], want, a * delta)
+	rec["vel"] = vel
 	# nose alignment at the INI yaw/pitch rate (the drawn attitude and the
 	# exhaust direction; the thrusters above do the actual steering)
 	var max_turn := deg_to_rad(float(spec.get("yaw_rate", 120.0))) * delta
