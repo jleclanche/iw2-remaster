@@ -19,6 +19,7 @@ static var _ng_stage := 0
 ## exactly what the player does. Distinct from _newgamecheck, which calls
 ## start_campaign directly and so cannot see an input-timing bug.
 var _ngt_stage := 0
+var _kprobe_t := -1  # kompira-drive probe throttle (#4 diagnosis)
 
 ## A control on the PDA screen by the POG function it dispatches.
 func _ngt_button(fn: String) -> PogUi.PogWindow:
@@ -415,12 +416,15 @@ func _campcheck_port() -> void:
 				m.pog_rt.native("igame.nextact", ["iActThree"])
 				demo_phase = 5
 		# phase 46, the m02 drive (dock the Daru + the initiation Ask ->
-		# iact2mission02), is PROVEN to run end to end -- a --pogtrace run
-		# reached a2_m02_objectives_wait through the full ladder -- but the
-		# untraced timing is flaky against the intercept choreography, and a
-		# flaky gate is worse than none. Deterministic re-gating is #4's
-		# next unit; the play (park docked, rotate targets, pin approach) is
-		# kept below for it.
+		# iact2mission02), reached a2_m02_objectives_wait once through the
+		# full ladder, and the Ask-code fix (icomms.AddResponseWithCode's
+		# real (text, reply, code) signature) removed the systematic
+		# always-decline. The REMAINING race is pinned by the probe below:
+		# KompiraStoryScript sits at progress 0 with conv=false -- case 0's
+		# `while (!idirector.IsBusy())` handoff to the system-tour cutscene
+		# sometimes never sees busy. That handoff is #4's next unit; the
+		# play (park docked, rotate targets, pin approach) and the probe
+		# are kept here for it.
 		46:
 			# KompiraStoryScript cases 0..3: the 40 s tour + chat
 			# (comms.fast), then case 1 demands the PLAYER approach an Oman
@@ -459,6 +463,16 @@ func _campcheck_port() -> void:
 			if not live.is_empty():
 				m.target_ai = live[int(demo_t / 3.0) % live.size()]
 				m.ap_mode = 1
+			if int(demo_t) % 20 == 0 and int(demo_t) != _kprobe_t:
+				_kprobe_t = int(demo_t)
+				var kst: Variant = m.pog_rt.native("global.handle",
+						["g_kompira_state"])
+				print("CAMPCHECK probe: kompira progress=",
+					m.pog_rt.native("state.progress", [kst]),
+					" ships=", live.size(), " conv=",
+					m.pog_rt.gameapi.in_conversation,
+					" speaking=", m.comms.speaking(),
+					" ask=", m.comms.ask_options.size())
 			if m.mission.objectives.has("a2_m02_objectives_wait"):
 				print("CAMPCHECK(port): act 2 m02 BOOTED off the story ",
 					"script (wait objective raised) — advancing to act 3")

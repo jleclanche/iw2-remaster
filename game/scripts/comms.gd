@@ -297,6 +297,7 @@ func ask(question_key: String, q_speaker: String, options: Array) -> void:
 	say_key(question_key, q_speaker)
 	ask_speaker = q_speaker
 	ask_question = question_key
+	chosen = -1  # a NEW ask must not leak the previous ask's pick (#4)
 	for o in options:
 		ask_options.append({
 			"text": str(strings.get(o[0], o[0])),

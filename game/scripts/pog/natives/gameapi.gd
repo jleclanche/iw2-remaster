@@ -104,11 +104,21 @@ func _c_say(_t, a: Array) -> Variant:
 # @native icomms.AddResponse
 # @native icomms.AddResponseWithCode
 func _c_add_response(_t, a: Array) -> Variant:
-	# AddResponseWithCode(text_key, code, ...). The code is what Response()
-	# hands back, and is how the script branches on the player's choice.
+	# THE REAL SIGNATURE is (text_key, reply_key, code) -- every shipped
+	# WithCode call passes the code THIRD (a0m40: "...option1...",
+	# "...dialogue...", 1). The old read took int(reply_key) = 0 as the
+	# code for EVERY option, so Response() answered 0 whatever the player
+	# picked: `if (v12 == 1)` branches never took, the Oman initiation
+	# always declined, and act 2's m02 never booted (#4). Codeless
+	# AddResponse defaults to the 1-BASED OPTION INDEX -- the form every
+	# iconversation.Ask branch compares against.
+	var code: int = responses.size() + 1
+	if a.size() > 2 and (a[2] is int or a[2] is float):
+		code = int(a[2])
 	responses.append({
 		"text": PogStd._s(a[0]),
-		"code": int(a[1]) if a.size() > 1 else responses.size(),
+		"reply": PogStd._s(a[1]) if a.size() > 1 else "",
+		"code": code,
 	})
 	return 0
 
