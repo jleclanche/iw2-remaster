@@ -138,6 +138,13 @@ outputs land in gitignored `data/`.
   handler's actual return-slot writes -- the #24 audit; results in
   docs/original.md).
 - Coverage: `apicov.py`, `featurecov.py` (see docs/coverage.md).
+- Visual regression (#8): `refdiff.py` -- locks a blessed baseline of the
+  capture suites' `data/screenshots/*.png` into `data/refshots/`
+  (gitignored: rendered frames carry the game's art) and fails on drift
+  (`--record` to bless, `--check` after every windowed capture run;
+  per-shot tolerance overrides in `data/refshots/tolerances.json` for
+  animated scenes). Proven able to fail: a 20% brightness drift on one
+  shot fails the band-share metric.
 - Binaries: `tools/ghidra/` (see docs/original-code.md).
 
 ## Pause model
