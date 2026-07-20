@@ -228,11 +228,42 @@ class Case(Stmt):
     (iAct1_Mission07_Showdown.pog:1595): `switch ( e )`, `case N :`, and a
     `break;` ending each arm -- which is exactly the `Goto exit` the compiler
     emits at the end of every case body.
+
+    But an arm only has that `Goto exit` when the source said `break`: the
+    compiled shape puts the dispatch chain AFTER the bodies, so an arm
+    without one falls straight into the next body, and off the last body
+    into the dispatch itself -- which re-evaluates the selector and jumps
+    again. A fall-through switch is therefore a resume-dispatch LOOP, and
+    the campaign's story ladders are exactly that: every arm of
+    iacttwo.KompiraStoryScript's switch(state.Progress) ends in a plain
+    Pop (case 0 body 0x69f2..0x6a9b, dispatch @ 0x7e4d), so one entry runs
+    the whole remaining ladder. `brk` records, per arm, whether the real
+    `Goto exit` was there; both backends must honour it.
     """
 
     def __init__(self, sel, arms):
         self.sel = sel
-        self.arms = arms          # [([value Expr], [Stmt])], in source order
+        self.arms = arms   # [([value Expr], [Stmt], brk: bool)], source order
+
+    def loops(self) -> bool:
+        """One arm that can actually fall through makes the construct
+        re-dispatch. An arm ending in return/halt/continue/break/goto never
+        reaches the next body, so its missing `Goto exit` is not a
+        fall-through -- the compiler just had nothing to jump over."""
+        return any(not brk and not _terminates(body)
+                   for _, body, brk in self.arms)
+
+
+def _terminates(stmts) -> bool:
+    """Control cannot run off the end of `stmts`."""
+    if not stmts:
+        return False
+    last = stmts[-1]
+    if isinstance(last, (Ret, Halt, Break, Continue, Goto)):
+        return True
+    if isinstance(last, If) and last.els:
+        return _terminates(last.then) and _terminates(last.els)
+    return False
 
 
 class Goto(Stmt):
@@ -394,7 +425,7 @@ def _has_goto(stmts) -> bool:
             return True
         if isinstance(s, (While, DoWhile, Every, Debug)) and _has_goto(s.body):
             return True
-        if isinstance(s, Case) and any(_has_goto(b) for _, b in s.arms):
+        if isinstance(s, Case) and any(_has_goto(b) for _, b, _brk in s.arms):
             return True
     return False
 
@@ -1119,10 +1150,11 @@ class Decompiler:
         for idx, t in enumerate(order):
             end = order[idx + 1] if idx + 1 < len(order) else disp
             b = self._last_before(end)
-            if b is not None and b >= t and self._target(b) == exit_at:
+            brk = b is not None and b >= t and self._target(b) == exit_at
+            if brk:
                 self._covered.add(b)        # the arm's `break`
                 end = b
-            out_arms.append((by_tgt[t], self._block(t, end, ctx)))
+            out_arms.append((by_tgt[t], self._block(t, end, ctx), brk))
         return Case(sel[0], out_arms), exit_at
 
     def _jump_stmt(self, tgt: int, ctx) -> Stmt | None:
@@ -1433,9 +1465,14 @@ class PogBackend:
             return out + [i + "}"]
         if isinstance(s, Case):
             out = ["%sswitch ( %s )" % (i, s.sel), i + "{"]
-            for vals, body in s.arms:
+            for vals, body, brk in s.arms:
                 out += ["%s\tcase %s :" % (i, v) for v in vals]
-                out += self.body(body, d + 2) + ["%s\t\tbreak;" % i, ""]
+                out += self.body(body, d + 2)
+                # A `break;` only where the bytecode has the Goto exit; a
+                # fall-through arm runs on into the next, and off the last
+                # arm into the dispatch again (a resume loop).
+                out += ["%s\t\tbreak;" % i if brk
+                        else "%s\t\t// falls through" % i, ""]
             return out + [i + "}"]
         return [i + "; // ?"]
 
@@ -1494,13 +1531,33 @@ class GdBackend:
                 out += [i + "else:"] + self.body(s.els, d + 1)
             return out
         if isinstance(s, Case):
-            # `match` needs no break: GDScript arms do not fall through, which
-            # is what the bytecode's `Goto exit` per arm already means.
-            out = ["%smatch %s:" % (i, _gx(s.sel))]
-            for vals, body in s.arms:
-                out += ["%s%s:" % (_ind(d + 1),
-                                   ", ".join(_gx(v) for v in vals))]
+            if not s.loops():
+                # every arm breaks: `match` (no fall-through) is exact
+                out = ["%smatch %s:" % (i, _gx(s.sel))]
+                for vals, body, _brk in s.arms:
+                    out += ["%s%s:" % (_ind(d + 1),
+                                       ", ".join(_gx(v) for v in vals))]
+                    out += self.body(body, d + 2)
+                return out
+            # fall-through switch = resume-dispatch loop (see Case): enter
+            # at the matched arm, run every arm from there down, re-dispatch
+            self._case_n = getattr(self, "_case_n", 0) + 1
+            sw, arm = "_sw%d" % self._case_n, "_arm%d" % self._case_n
+            out = ["%swhile true:" % i,
+                   "%svar %s = %s" % (_ind(d + 1), sw, _gx(s.sel)),
+                   "%svar %s := -1" % (_ind(d + 1), arm)]
+            for k, (vals, _body, _brk) in enumerate(s.arms):
+                cond = " or ".join("%s == %s" % (sw, _gx(v)) for v in vals)
+                out.append("%s%s %s:" % (_ind(d + 1),
+                                         "if" if k == 0 else "elif", cond))
+                out.append("%s%s = %d" % (_ind(d + 2), arm, k))
+            out += ["%sif %s == -1:" % (_ind(d + 1), arm),
+                    "%sbreak" % _ind(d + 2)]
+            for k, (_vals, body, brk) in enumerate(s.arms):
+                out.append("%sif %s <= %d:" % (_ind(d + 1), arm, k))
                 out += self.body(body, d + 2)
+                if brk:
+                    out.append("%sbreak" % _ind(d + 2))
             return out
         return [i + "pass"]
 

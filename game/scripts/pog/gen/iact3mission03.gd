@@ -230,8 +230,18 @@ func mission_handler() -> Variant:
 				if _pog_is_null(v4):
 					debug.print_string("iAct3Mission03.mission_handler: Can't find Maas Asteroid Base\n")
 			_pog_detach(_pog_spawn(local_424.bind(self, v34, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v1, v2, v3)))
-			match state.progress(v34):
-				0:
+			while true:
+				var _sw1: Variant = state.progress(v34)
+				var _arm1: int = -1
+				if _pog_eq(_sw1, 0):
+					_arm1 = 0
+				elif _pog_eq(_sw1, 1):
+					_arm1 = 1
+				elif _pog_eq(_sw1, 2):
+					_arm1 = 2
+				if _arm1 == -1:
+					break
+				if _arm1 <= 0:
 					iobjectives.add("a3_m03_objectives_travel_to_maas_base")
 					v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a3_m03_name_waypoint_maas"))
 					sim.place_relative_to(v5, v4, 5000.0, 0.0, 1000.0)
@@ -265,7 +275,7 @@ func mission_handler() -> Variant:
 					await iconversation.one_liner(0, "name_smith", "a3_m03_dialogue_smith_thats_interesting")
 					await iconversation.one_liner(0, "name_cal", "a3_m03_dialogue_cal_lets_take_a_look")
 					state.set_progress(v34, 1)
-				1:
+				if _arm1 <= 1:
 					v13 = await local_6608(v4, 6, 7000.0)
 					group.add_group(v11, v13)
 					v1 = iship.cast(group.leader(v13))
@@ -313,7 +323,7 @@ func mission_handler() -> Variant:
 					iobjectives.set_state("a3_m03_objectives_investigate_satellite", 1)
 					state.set_progress(v34, 2)
 					v24 = 0
-				2:
+				if _arm1 <= 2:
 					ifaction.set_feeling(v18, v19, 0.0)
 					ifaction.set_feeling(v19, v18, 0.0)
 					v2 = iship.create("ini:/sims/ships/corporate/corp_cruiser_turrets", "a3_m03_ship_corp_cruiser")
@@ -469,6 +479,7 @@ func mission_handler() -> Variant:
 					await iutilities.remove_mission_restart()
 					state.destroy(self)
 					return
+					break
 	return
 	return 0
 

@@ -229,11 +229,35 @@ func master_script() -> Variant:
 		if global.exists("g_hud_handler") == 1 and not (object.property_exists(global.handle("g_hud_handler"), "number_completed_hud_nodes")) and object.int_property(global.handle("g_hud_handler"), "number_completed_hud_nodes") < 10:
 			state.restore(state.cast(global.handle("g_hud_handler")))
 		_pog_detach(_pog_spawn(junkyard_handler.bind()))
-		match state.progress(v1):
-			0:
+		while true:
+			var _sw1: Variant = state.progress(v1)
+			var _arm1: int = -1
+			if _pog_eq(_sw1, 0):
+				_arm1 = 0
+			elif _pog_eq(_sw1, 1):
+				_arm1 = 1
+			elif _pog_eq(_sw1, 2):
+				_arm1 = 2
+			elif _pog_eq(_sw1, 3):
+				_arm1 = 3
+			elif _pog_eq(_sw1, 4):
+				_arm1 = 4
+			elif _pog_eq(_sw1, 5):
+				_arm1 = 5
+			elif _pog_eq(_sw1, 6):
+				_arm1 = 6
+			elif _pog_eq(_sw1, 7):
+				_arm1 = 7
+			elif _pog_eq(_sw1, 8):
+				_arm1 = 8
+			elif _pog_eq(_sw1, 9):
+				_arm1 = 9
+			if _arm1 == -1:
+				break
+			if _arm1 <= 0:
 				await iact0mission10.main()
 				state.set_progress(v1, 1)
-			1:
+			if _arm1 <= 1:
 				while true:
 					await _pog_wait(1)
 					if global.pog_bool("g_act0_found_base") == 1:
@@ -246,7 +270,7 @@ func master_script() -> Variant:
 				await iutilities.send_story_element("g_story_0.20", 0, 0)
 				await iutilities.send_story_element("g_story_0.30", 0, 0)
 				state.set_progress(v1, 2)
-			2:
+			if _arm1 <= 2:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						await _pog_wait(1)
@@ -259,7 +283,7 @@ func master_script() -> Variant:
 								debug.print_string("iPrelude.MasterScript - Still waiting for player to be given proving grounds mission.\n")
 				await iact0mission20.main()
 				state.set_progress(v1, 3)
-			3:
+			if _arm1 <= 3:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						await _pog_wait(2)
@@ -272,7 +296,7 @@ func master_script() -> Variant:
 								debug.print_string("iPrelude.MasterScript - Still waiting for player to complete the proving grounds mission.\n")
 				await iutilities.send_story_element("g_story_0.40", 0, 0)
 				state.set_progress(v1, 4)
-			4:
+			if _arm1 <= 4:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						await _pog_wait(2)
@@ -285,7 +309,7 @@ func master_script() -> Variant:
 								debug.print_string("iPrelude.MasterScript - Still waiting for player to be given tour mission.\n")
 				await iact0missiontour.main()
 				state.set_progress(v1, 5)
-			5:
+			if _arm1 <= 5:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						await _pog_wait(2)
@@ -299,7 +323,7 @@ func master_script() -> Variant:
 				await iconversation.say(0, "name_clay", "a0_m35_dialogue_clay_hm_i")
 				await iact0mission40.main()
 				state.set_progress(v1, 6)
-			6:
+			if _arm1 <= 6:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						await _pog_wait(2)
@@ -314,7 +338,7 @@ func master_script() -> Variant:
 				await iconversation.one_liner(0, "name_clay", "a0_master_dialogue_clay_hey_maybe")
 				await iact0mission50.main()
 				state.set_progress(v1, 7)
-			7:
+			if _arm1 <= 7:
 				while true:
 					await _pog_wait(2)
 					if global.pog_bool("g_act0_recovered_reactor") == 1:
@@ -327,7 +351,7 @@ func master_script() -> Variant:
 				global.set_int("g_act0_base_online", 1)
 				iinventory.remove_command_section()
 				state.set_progress(v1, 8)
-			8:
+			if _arm1 <= 8:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						await _pog_wait(2)
@@ -340,7 +364,7 @@ func master_script() -> Variant:
 								debug.print_string("iPrelude.MasterScript - Still waiting for player to finish online base.\n")
 				await iact0mission60.main()
 				state.set_progress(v1, 9)
-			9:
+			if _arm1 <= 9:
 				while true:
 					await _pog_wait(2)
 					if global.pog_bool("g_act0_nemesis_complete") == 1:
@@ -355,6 +379,7 @@ func master_script() -> Variant:
 				state.destroy(self)
 				await _pog_movie("/movies/midtro")
 				igame.next_act("iActOne")
+				break
 	return
 	return 0
 

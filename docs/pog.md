@@ -176,8 +176,37 @@ genuine loop-detection miss.
 
 Syntax follows the SDK's hand-written sources rather than invention --
 `switch ( e )`, `case N :`, `break;` (samples/missions/
-iAct1_Mission07_Showdown.pog:1595) -- and the `break` is exactly the `Goto EXIT`
-each body already ends with. GDScript gets `match`, which needs no break.
+iAct1_Mission07_Showdown.pog:1595) -- and a `break` is exactly a `Goto EXIT`
+ending the body. But only bodies whose source said `break` HAVE that goto:
+
+### Fall-through switches are resume-dispatch loops
+
+An arm without the `Goto EXIT` falls straight into the next body, and off
+the LAST body into the dispatch itself, which re-evaluates the selector and
+jumps again. So a fall-through switch is a loop: enter at the matched case,
+run every case from there down, re-dispatch; exit only via a real `break`
+or a selector no arm matches. The campaign's story ladders are exactly this
+shape -- in `iacttwo.KompiraStoryScript`'s `switch (state.Progress(v1))`
+not one of the 8 case bodies ends with a jump (case 0's body 0x69f2..0x6a9b
+ends in a plain `Pop`; dispatch @ 0x7e4d in iacttwo.pkg), so first entry at
+progress 0 plays the tour, sets progress 1, and RUNS ON into the intercept,
+the Daru approach, the docked initiation and `iact2mission02.Main()` -- one
+task lifetime, one system visit.
+
+The old emission ('match', which cannot fall through) ran ONE case per
+spawn and returned: every story script died after its first progress step,
+and Act2SystemMonitor only restarts one on a system re-entry
+(iacttwo.pog:3495). Both backends now honour a per-arm `brk` flag read
+from the bytecode: `pog` prints `break;` or `// falls through` per arm, and
+`gd` emits `match` only when every arm breaks; otherwise the loop the
+construct is (`while true:` + selector-to-arm-index + guarded bodies in
+address order, `if _arm <= k:`, so an entered arm runs all later ones).
+An arm ending in return/halt/continue/break/goto counts as breaking (it
+never reaches the next body), which is what keeps a switch-inside-a-loop
+whose arms `continue;` the OUTER loop (iact1mission10.local_7725,
+iact2mission07.local_716 -- the only two in the corpus) on the exact
+`match` path; the loop emission refuses arms carrying outer-loop jumps
+rather than capture them (census: 128 looping / 193 one-shot switches).
 
 Ground truth: `iact1mission07` decompiles that switch back to `case 0..5`
 assigning the boarding/armed dialogue ids in order, matching the original.

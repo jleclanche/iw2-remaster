@@ -81,8 +81,20 @@ func main_task() -> Variant:
 	iobjectives.remove("a1_m00_objective_checkout")
 	sim.destroy(sim.cast(global.handle("g_mission_waypoint")))
 	global.destroy("g_mission_waypoint")
-	match state.progress(v2):
-		0:
+	while true:
+		var _sw1: Variant = state.progress(v2)
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 0):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 1):
+			_arm1 = 1
+		elif _pog_eq(_sw1, 2):
+			_arm1 = 2
+		elif _pog_eq(_sw1, 3):
+			_arm1 = 3
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.PiracySpecialMissionOne - starting intro loop\n")
 			while not (v5):
@@ -97,7 +109,7 @@ func main_task() -> Variant:
 					v5 = 1
 				else:
 					await _pog_wait(2.0)
-		1:
+		if _arm1 <= 1:
 			v5 = 0
 			v3 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_waypoint_name_distress"))
 			global.create_handle("g_mission_waypoint", 2, v3)
@@ -125,7 +137,7 @@ func main_task() -> Variant:
 					iobjectives.set_state("a1_m00_objective_checkout", 1)
 					v5 = 1
 			state.set_progress(v2, 2)
-		2:
+		if _arm1 <= 2:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOneOne.PiracySpecialMissionOne - starting close loop\n")
 			v5 = 0
@@ -174,13 +186,14 @@ func main_task() -> Variant:
 						debug.print_string("iActOne.PiracySpecialMissionOne - waiting for player to get close to targer ship so we can chat, sleeping\n")
 					await _pog_wait(2.0)
 			state.set_progress(v2, 3)
-		3:
+		if _arm1 <= 3:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.PiracySpecialMissionOne - finished what i need to do here\n")
 			while sim.distance_between(v3, v6) < 100000.0:
 				await _pog_wait(1.0)
 			state.destroy(self)
 			return
+			break
 	return
 	return 0
 

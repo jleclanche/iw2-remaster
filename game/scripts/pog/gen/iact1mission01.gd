@@ -313,10 +313,20 @@ func local_6028(v0, v1, v2) -> Variant:
 	await iconversation.add_response("a1_m01_text_player_c2_option_2_er_yeah", "a1_m01_dialogue_player_c2_option_2_er_yeah")
 	await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
 	v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c2_hm_vessel_mona_lisa")
-	match v4:
-		1:
+	while true:
+		var _sw1: Variant = v4
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 1):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 2):
+			_arm1 = 1
+		elif _pog_eq(_sw1, 3):
+			_arm1 = 2
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
 			v3 = v3 + 1
-		2:
+		if _arm1 <= 1:
 			await iconversation.add_response("a1_m01_text_player_c3_option_1_after_my_ex_girlfried", "a1_m01_dialogue_player_c3_option_1_my_ex_girlfriend")
 			await iconversation.add_response("a1_m01_text_player_c3_option_2_its_my_favourite", "a1_m01_dialogue_player_c3_option_2_its_my_favourite")
 			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
@@ -333,8 +343,10 @@ func local_6028(v0, v1, v2) -> Variant:
 				v5 = 1
 			if v4 == 1:
 				v3 = v3 + 1
-		3:
+			break
+		if _arm1 <= 2:
 			v5 = 1
+			break
 	if v5:
 		sim.set_angular_velocity_euler(v6, 180.0, 0.0, 0.0)
 		await iconversation.say(v6, "", "a1_m01_dialogue_police_c2_response_3_where")

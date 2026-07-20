@@ -513,8 +513,16 @@ func stepson_member() -> Variant:
 		v2 = state.create(v1, 0)
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.StepsonMember : Starting to monitoring the players career with the Stepsons.\n")
-	match state.progress(v2):
-		0:
+	while true:
+		var _sw1: Variant = state.progress(v2)
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 0):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 1):
+			_arm1 = 1
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
 			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 484, 1, 344, 1, 0))
 			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 483, 1, 7, 3, 2))
 			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 490, 1, 377, 1, 0))
@@ -569,10 +577,11 @@ func stepson_member() -> Variant:
 			itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 165, 1, 29, 40, 0))
 			itrade.remove_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 490, 1, 43, 10, 0))
 			state.set_progress(v2, 1)
-		1:
+		if _arm1 <= 1:
 			global.set_bool("g_act1_stepsons_pleased", 1)
 			state.destroy(self)
 			return
+			break
 	return
 	return 0
 
@@ -598,8 +607,32 @@ func piracy_rating_tracker() -> Variant:
 		v1 = state.create(v0, 0)
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.PiracyRatingTracker - Commencing Piracy Rating Tracker script.\n")
-	match state.progress(v1):
-		0:
+	while true:
+		var _sw2: Variant = state.progress(v1)
+		var _arm2: int = -1
+		if _pog_eq(_sw2, 0):
+			_arm2 = 0
+		elif _pog_eq(_sw2, 1):
+			_arm2 = 1
+		elif _pog_eq(_sw2, 2):
+			_arm2 = 2
+		elif _pog_eq(_sw2, 3):
+			_arm2 = 3
+		elif _pog_eq(_sw2, 4):
+			_arm2 = 4
+		elif _pog_eq(_sw2, 5):
+			_arm2 = 5
+		elif _pog_eq(_sw2, 6):
+			_arm2 = 6
+		elif _pog_eq(_sw2, 7):
+			_arm2 = 7
+		elif _pog_eq(_sw2, 8):
+			_arm2 = 8
+		elif _pog_eq(_sw2, 9):
+			_arm2 = 9
+		if _arm2 == -1:
+			break
+		if _arm2 <= 0:
 			if _pog_is_null(object.property_exists(v1, "done_special")):
 				object.add_int_property(v1, "done_special", 1)
 				if await iutilities.skip_mission("Piracy Special Mission?"):
@@ -633,7 +666,7 @@ func piracy_rating_tracker() -> Variant:
 				debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 1\n")
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 17)
 			state.set_progress(v1, 1)
-		1:
+		if _arm2 <= 1:
 			while true:
 				await _pog_wait(5)
 				if iscore.pod_piracy_value() < object.int_property(v1, "next_piracy_level"):
@@ -644,7 +677,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(1)
 			state.set_progress(v1, 2)
-		2:
+		if _arm2 <= 2:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -661,7 +694,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await piracy_generated_mission(1)
 			state.set_progress(v1, 3)
-		3:
+		if _arm2 <= 3:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -678,7 +711,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(2)
 			state.set_progress(v1, 4)
-		4:
+		if _arm2 <= 4:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -695,7 +728,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await piracy_generated_mission(2)
 			state.set_progress(v1, 5)
-		5:
+		if _arm2 <= 5:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -712,7 +745,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(3)
 			state.set_progress(v1, 6)
-		6:
+		if _arm2 <= 6:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -729,7 +762,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await piracy_generated_mission(3)
 			state.set_progress(v1, 7)
-		7:
+		if _arm2 <= 7:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -746,7 +779,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await local_6855(4)
 			state.set_progress(v1, 8)
-		8:
+		if _arm2 <= 8:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -763,7 +796,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			await piracy_generated_mission(4)
 			state.set_progress(v1, 9)
-		9:
+		if _arm2 <= 9:
 			while true:
 				await _pog_wait(5)
 				if PogRuntime.TRACE:
@@ -780,6 +813,7 @@ func piracy_rating_tracker() -> Variant:
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			global.set_bool("g_act1_stepsons_intro", 1)
 			state.destroy(self)
+			break
 	return
 	return 0
 
@@ -796,13 +830,27 @@ func marauder_encounters() -> Variant:
 		state.set_progress(v1, 4)
 	if PogRuntime.TRACE:
 		debug.print_string("iActOne.MarauderEncounters : Starting Marauder Encounters Task\n")
-	match state.progress(v1):
-		0:
+	while true:
+		var _sw3: Variant = state.progress(v1)
+		var _arm3: int = -1
+		if _pog_eq(_sw3, 0):
+			_arm3 = 0
+		elif _pog_eq(_sw3, 1):
+			_arm3 = 1
+		elif _pog_eq(_sw3, 2):
+			_arm3 = 2
+		elif _pog_eq(_sw3, 3):
+			_arm3 = 3
+		elif _pog_eq(_sw3, 4):
+			_arm3 = 4
+		if _arm3 == -1:
+			break
+		if _arm3 <= 0:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.MarauderEncounters : Setting up marauder encounter counter global\n")
 			global.create_int("g_marauder_encounter_count", 2, 0)
 			state.set_progress(v1, 1)
-		1:
+		if _arm3 <= 1:
 			await igangsterincidentgen.set_active(1)
 			await igangsterincidentgen.set_faction(17)
 			await igangsterincidentgen.set_number_of_vessel_attackers_var(2)
@@ -823,7 +871,7 @@ func marauder_encounters() -> Variant:
 					break
 			global.set_bool("g_act1_marauders_encountered", 1)
 			state.set_progress(v1, 2)
-		2:
+		if _arm3 <= 2:
 			await igangsterincidentgen.set_active(0)
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.MarauderEncounter : Pausing the baddie generator while act 01 mission 05 executes....\n")
@@ -835,7 +883,7 @@ func marauder_encounters() -> Variant:
 				debug.print_string("iActOne.MarauderEncounter : player has completed Marauder Cache mission, resuming marauder encounters\n")
 			global.set_int("g_marauder_encounter_count", 0)
 			state.set_progress(v1, 3)
-		3:
+		if _arm3 <= 3:
 			await igangsterincidentgen.set_active(1)
 			await igangsterincidentgen.set_faction(17)
 			await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
@@ -861,8 +909,9 @@ func marauder_encounters() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iActOne.MarauderEncounter : Stopping marauder encounters while the player performs act 01 mission 06 - gunstar supermarket sweep...\n")
 			state.set_progress(v1, 4)
-		4:
+		if _arm3 <= 4:
 			state.destroy(self)
+			break
 	return
 	return 0
 
@@ -925,13 +974,21 @@ func haven_station_introduction() -> Variant:
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iActOne.HavenStationIntroduction : Starting haven station introduction task\n")
-		match state.progress(v1):
-			0:
+		while true:
+			var _sw4: Variant = state.progress(v1)
+			var _arm4: int = -1
+			if _pog_eq(_sw4, 0):
+				_arm4 = 0
+			elif _pog_eq(_sw4, 1):
+				_arm4 = 1
+			if _arm4 == -1:
+				break
+			if _arm4 <= 0:
 				if PogRuntime.TRACE:
 					debug.print_string("iActOne.HavenStationVisitor : Sending player invitation to the league\n")
 				iemail.send_email("a1_m08_email_sender", "a1_master_subject_haven", "html:/text/act_1/act1_master_leaguemail_2", 1)
 				state.set_progress(v1, 1)
-			1:
+			if _arm4 <= 1:
 				if PogRuntime.TRACE:
 					debug.print_string("iActOne.HavenStationVisitor : setting up the tiger lilly - the league aligned piggy back ship\n")
 				v3 = iship.create("ini:/sims/ships/utility/snrv_recovery", "Tiger Lilly")
@@ -1066,6 +1123,7 @@ func haven_station_introduction() -> Variant:
 					while isim.is_docked_to(v2, v3):
 						await _pog_wait(1.0)
 					v4 = 0
+				break
 	return
 	return 0
 
@@ -1236,12 +1294,50 @@ func master_script() -> Variant:
 			debug.print_string("iActOne.MasterScript: Commencing Act One Chapter Script.\n")
 		if _pog_is_null(global.exists("g_finished_email_hinter")) and global.pog_bool("g_act1_character_intro") == 1:
 			_pog_spawn(piracy_email_hinter.bind())
-		match state.progress(v2):
-			0:
+		while true:
+			var _sw5: Variant = state.progress(v2)
+			var _arm5: int = -1
+			if _pog_eq(_sw5, 0):
+				_arm5 = 0
+			elif _pog_eq(_sw5, 1):
+				_arm5 = 1
+			elif _pog_eq(_sw5, 2):
+				_arm5 = 2
+			elif _pog_eq(_sw5, 3):
+				_arm5 = 3
+			elif _pog_eq(_sw5, 4):
+				_arm5 = 4
+			elif _pog_eq(_sw5, 5):
+				_arm5 = 5
+			elif _pog_eq(_sw5, 6):
+				_arm5 = 6
+			elif _pog_eq(_sw5, 7):
+				_arm5 = 7
+			elif _pog_eq(_sw5, 9):
+				_arm5 = 8
+			elif _pog_eq(_sw5, 10):
+				_arm5 = 9
+			elif _pog_eq(_sw5, 11):
+				_arm5 = 10
+			elif _pog_eq(_sw5, 12):
+				_arm5 = 11
+			elif _pog_eq(_sw5, 13):
+				_arm5 = 12
+			elif _pog_eq(_sw5, 14):
+				_arm5 = 13
+			elif _pog_eq(_sw5, 15):
+				_arm5 = 14
+			elif _pog_eq(_sw5, 16):
+				_arm5 = 15
+			elif _pog_eq(_sw5, 17):
+				_arm5 = 16
+			if _arm5 == -1:
+				break
+			if _arm5 <= 0:
 				await ijafsscript.disable_jafs()
 				await iact1mission01.main()
 				state.set_progress(v2, 1)
-			1:
+			if _arm5 <= 1:
 				while true:
 					await _pog_wait(1)
 					if global.pog_bool("g_act1_found_base") == 1:
@@ -1254,7 +1350,7 @@ func master_script() -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string("iActOne.MasterScript -initilising story elements S1.10 & S1.30 in player base.\n")
 				state.set_progress(v2, 2)
-			2:
+			if _arm5 <= 2:
 				while true:
 					await _pog_wait(1)
 					if global.pog_bool("g_act1_character_intro") == 1:
@@ -1267,7 +1363,7 @@ func master_script() -> Variant:
 				await ijafsscript.enable_jafs()
 				_pog_spawn(piracy_rating_tracker.bind())
 				state.set_progress(v2, 3)
-			3:
+			if _arm5 <= 3:
 				await iutilities.skip_wait_for_bool("utils_bool_g_act1_stepsons_intro", "g_act1_stepsons_intro", 1)
 				while true:
 					await _pog_wait(5)
@@ -1280,7 +1376,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Still waiting for player to attract the Stepsons job offer.\n")
 				await iact1mission02.main()
 				state.set_progress(v2, 4)
-			4:
+			if _arm5 <= 4:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_stepson_member") == 1:
@@ -1292,7 +1388,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Still waiting for player to acomplete act 01 Mission 02.\n")
 				_pog_detach(_pog_spawn(stepson_member.bind()))
 				state.set_progress(v2, 6)
-			5:
+			if _arm5 <= 5:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_stepsons_pleased") == 1:
@@ -1303,7 +1399,7 @@ func master_script() -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("iActOne.MasterScript - Still waiting for player to work his way up through Stespon Heirachy.\n")
 				state.set_progress(v2, 6)
-			6:
+			if _arm5 <= 6:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_stepsons_pleased") == 1:
@@ -1316,7 +1412,7 @@ func master_script() -> Variant:
 				global.set_int("g_story_1.40", 1)
 				await iact1mission04.main()
 				state.set_progress(v2, 7)
-			7:
+			if _arm5 <= 7:
 				while true:
 					await _pog_wait(1)
 					if global.pog_bool("g_act1_got_turret_fighters") == 1:
@@ -1331,7 +1427,7 @@ func master_script() -> Variant:
 				global.set_int("g_story_1.60", 1)
 				_pog_detach(_pog_spawn(marauder_encounters.bind()))
 				state.set_progress(v2, 9)
-			9:
+			if _arm5 <= 8:
 				await iutilities.skip_wait_for_bool("utils_g_act1_marauders_encountered", "g_act1_marauders_encountered", 1)
 				while true:
 					await _pog_wait(5)
@@ -1344,7 +1440,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Waiting for the player encounter enough marauders to trigger Act 01 Mission 05.\n")
 				await iact1mission05.main()
 				state.set_progress(v2, 10)
-			10:
+			if _arm5 <= 9:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_destroyed_marauder_cache") == 1:
@@ -1357,7 +1453,7 @@ func master_script() -> Variant:
 				global.set_int("g_story_1.80", 1)
 				state.set_progress(v2, 11)
 				await iact1mission03.main()
-			11:
+			if _arm5 <= 10:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_hoffers_wake_warning") == 1:
@@ -1373,7 +1469,7 @@ func master_script() -> Variant:
 						break
 				await iact1mission06.main()
 				state.set_progress(v2, 12)
-			12:
+			if _arm5 <= 11:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_retreived_gunstars") == 1:
@@ -1385,7 +1481,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 06.\n")
 				await iact1mission07.main()
 				state.set_progress(v2, 13)
-			13:
+			if _arm5 <= 12:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_saved_hoffers_wake") == 1:
@@ -1397,7 +1493,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 07.\n")
 				global.set_int("g_story_1.100", 1)
 				state.set_progress(v2, 14)
-			14:
+			if _arm5 <= 13:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_league_introduction") == 1:
@@ -1409,7 +1505,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Waiting for the player to read the league introduction.\n")
 				await iact1mission08.main()
 				state.set_progress(v2, 15)
-			15:
+			if _arm5 <= 14:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_league_initiation") == 1:
@@ -1456,7 +1552,7 @@ func master_script() -> Variant:
 				_pog_spawn(haven_station_introduction.bind())
 				await iact1mission09.main()
 				state.set_progress(v2, 16)
-			16:
+			if _arm5 <= 15:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_lor_stolen") == 1:
@@ -1468,7 +1564,7 @@ func master_script() -> Variant:
 							debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission09.\n")
 				await iact1mission10.main()
 				state.set_progress(v2, 17)
-			17:
+			if _arm5 <= 16:
 				while true:
 					await _pog_wait(5)
 					if global.pog_bool("g_act1_retrieved_artefact") == 1:
@@ -1483,6 +1579,7 @@ func master_script() -> Variant:
 				await destry_act_one_globals()
 				state.destroy(self)
 				igame.next_act("iActTwo")
+				break
 	return
 	return 0
 

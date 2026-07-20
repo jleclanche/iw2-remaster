@@ -411,23 +411,21 @@ func _campcheck_port() -> void:
 			# story machinery armed. Dead until the ActiveWorld map-URL fix.
 			if PogVM._truthy(m.pog_rt.native("global.exists",
 					["g_kompira_state"])):
-				print("CAMPCHECK(port): Kompira story script ARMED on ",
-					"system entry — advancing to act 3")
-				m.pog_rt.native("igame.nextact", ["iActThree"])
-				demo_phase = 5
+				print("CAMPCHECK(port): Kompira story script ARMED — ",
+					"driving the initiation to m02")
+				demo_phase = 46
 		# phase 46, the m02 drive (dock the Daru + the initiation Ask ->
-		# iact2mission02), reached a2_m02_objectives_wait once through the
-		# full ladder; the Ask-code fix removed the systematic
-		# always-decline and the director Begin/End nesting removed the
-		# busy-flag race. The task dump then LISTED the parked coroutine:
-		# iacttwo.kompira_story_script is alive and UNSUSPENDED
-		# (suspend_below -1) yet in_conversation stays false and no
-		# isystemcutscene task ever appears -- the story is parked at an
-		# await BEFORE iconversation.begin() and AFTER (or at)
-		# isystemcutscene.kompira(), with is_busy TRUE (depth 1) so the
-		# busy-wait cannot be the parking spot. One more probe field
-		# (which await, via a last-checkpoint label on the handle) settles
-		# it; the play and probes below are the harness for that run.
+		# iact2mission02). Getting here deterministic took four engine
+		# fixes in a row: the Ask-code fix (systematic always-decline),
+		# director Begin/End nesting (busy-flag race), group.AddSim's
+		# sim back-reference (the v14 pairing at iacttwo.pog 1970 compares
+		# sim.Group(target) against the intercept group), and finally the
+		# ported switch semantics: the original switch(state.Progress)
+		# FALLS THROUGH (no case body in the bytecode ends with the Goto
+		# exit; dispatch @ iacttwo.pkg 0x7e4d re-entered off the last
+		# body), so the ladder is a resume-dispatch loop, where the old
+		# `match` emission ran one case per spawn and the story died after
+		# the tour.
 		46:
 			# KompiraStoryScript cases 0..3: the 40 s tour + chat
 			# (comms.fast), then case 1 demands the PLAYER approach an Oman

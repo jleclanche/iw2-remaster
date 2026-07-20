@@ -8466,81 +8466,160 @@ func local_126776() -> Variant:
 		await iconversation.add_response("act_2/act2_mission25_addendum2.csv", "I'd like to see file act_2/act2_mission25_addendum2.csv, please")
 		v0 = await iconversation.ask(0, "particle_employee", "which file do you want to test?")
 		await iconversation.end()
-		match v0:
-			1:
+		while true:
+			var _sw1: Variant = v0
+			var _arm1: int = -1
+			if _pog_eq(_sw1, 1):
+				_arm1 = 0
+			elif _pog_eq(_sw1, 2):
+				_arm1 = 1
+			elif _pog_eq(_sw1, 3):
+				_arm1 = 2
+			elif _pog_eq(_sw1, 4):
+				_arm1 = 3
+			elif _pog_eq(_sw1, 5):
+				_arm1 = 4
+			elif _pog_eq(_sw1, 6):
+				_arm1 = 5
+			elif _pog_eq(_sw1, 7):
+				_arm1 = 6
+			elif _pog_eq(_sw1, 8):
+				_arm1 = 7
+			elif _pog_eq(_sw1, 9):
+				_arm1 = 8
+			elif _pog_eq(_sw1, 10):
+				_arm1 = 9
+			elif _pog_eq(_sw1, 11):
+				_arm1 = 10
+			elif _pog_eq(_sw1, 12):
+				_arm1 = 11
+			elif _pog_eq(_sw1, 13):
+				_arm1 = 12
+			elif _pog_eq(_sw1, 14):
+				_arm1 = 13
+			elif _pog_eq(_sw1, 15):
+				_arm1 = 14
+			elif _pog_eq(_sw1, 16):
+				_arm1 = 15
+			elif _pog_eq(_sw1, 17):
+				_arm1 = 16
+			elif _pog_eq(_sw1, 18):
+				_arm1 = 17
+			elif _pog_eq(_sw1, 19):
+				_arm1 = 18
+			elif _pog_eq(_sw1, 20):
+				_arm1 = 19
+			elif _pog_eq(_sw1, 21):
+				_arm1 = 20
+			elif _pog_eq(_sw1, 22):
+				_arm1 = 21
+			elif _pog_eq(_sw1, 23):
+				_arm1 = 22
+			elif _pog_eq(_sw1, 24):
+				_arm1 = 23
+			elif _pog_eq(_sw1, 25):
+				_arm1 = 24
+			elif _pog_eq(_sw1, 26):
+				_arm1 = 25
+			elif _pog_eq(_sw1, 27):
+				_arm1 = 26
+			elif _pog_eq(_sw1, 28):
+				_arm1 = 27
+			elif _pog_eq(_sw1, 29):
+				_arm1 = 28
+			elif _pog_eq(_sw1, 30):
+				_arm1 = 29
+			elif _pog_eq(_sw1, 31):
+				_arm1 = 30
+			elif _pog_eq(_sw1, 32):
+				_arm1 = 31
+			elif _pog_eq(_sw1, 33):
+				_arm1 = 32
+			elif _pog_eq(_sw1, 34):
+				_arm1 = 33
+			elif _pog_eq(_sw1, 35):
+				_arm1 = 34
+			elif _pog_eq(_sw1, 36):
+				_arm1 = 35
+			elif _pog_eq(_sw1, 37):
+				_arm1 = 36
+			if _arm1 == -1:
+				break
+			if _arm1 <= 0:
 				await local_0()
-			2:
+			if _arm1 <= 1:
 				await local_21563()
-			3:
+			if _arm1 <= 2:
 				await local_24415()
-			4:
+			if _arm1 <= 3:
 				await local_26497()
-			5:
+			if _arm1 <= 4:
 				await local_26962()
-			6:
+			if _arm1 <= 5:
 				await local_27119()
-			7:
+			if _arm1 <= 6:
 				await local_28046()
-			8:
+			if _arm1 <= 7:
 				await local_30744()
-			9:
+			if _arm1 <= 8:
 				await local_30901()
-			10:
+			if _arm1 <= 9:
 				await local_34061()
-			11:
+			if _arm1 <= 10:
 				await local_35527()
-			12:
+			if _arm1 <= 11:
 				await local_40073()
-			13:
+			if _arm1 <= 12:
 				await local_40461()
-			14:
+			if _arm1 <= 13:
 				await local_41465()
-			15:
+			if _arm1 <= 14:
 				await local_44394()
-			16:
+			if _arm1 <= 15:
 				await local_48863()
-			17:
+			if _arm1 <= 16:
 				await local_49482()
-			18:
+			if _arm1 <= 17:
 				await local_50717()
-			19:
+			if _arm1 <= 18:
 				await local_52029()
-			20:
+			if _arm1 <= 19:
 				await local_52032()
-			21:
+			if _arm1 <= 20:
 				await local_57425()
-			22:
+			if _arm1 <= 21:
 				await local_60431()
-			23:
+			if _arm1 <= 22:
 				await local_60742()
-			24:
+			if _arm1 <= 23:
 				await local_63363()
-			25:
+			if _arm1 <= 24:
 				await local_66292()
-			26:
+			if _arm1 <= 25:
 				await local_84775()
-			27:
+			if _arm1 <= 26:
 				await local_94326()
-			28:
+			if _arm1 <= 27:
 				await local_97640()
-			29:
+			if _arm1 <= 28:
 				await local_97720()
-			30:
+			if _arm1 <= 29:
 				await local_100341()
-			31:
+			if _arm1 <= 30:
 				await local_101653()
-			32:
+			if _arm1 <= 31:
 				await local_107277()
-			33:
+			if _arm1 <= 32:
 				await local_116135()
-			34:
+			if _arm1 <= 33:
 				await local_117524()
-			35:
+			if _arm1 <= 34:
 				await local_117989()
-			36:
+			if _arm1 <= 35:
 				await local_124999()
-			37:
+			if _arm1 <= 36:
 				await local_125233()
+				break
 	text.remove("csv:/text/act_2/act2_master")
 	text.remove("csv:/text/act_2/act2_master_addendum")
 	text.remove("csv:/text/act_2/act2_master_addendum2")

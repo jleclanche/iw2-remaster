@@ -1323,8 +1323,26 @@ func client_on_user_message() -> Variant:
 	var v10: Variant = 0
 	v5 = ifaction.find(text.field("mp_flag_team_b", 0))
 	v6 = ""
-	match v0:
-		1:
+	while true:
+		var _sw1: Variant = v0
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 1):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 15):
+			_arm1 = 1
+		elif _pog_eq(_sw1, 22):
+			_arm1 = 2
+		elif _pog_eq(_sw1, 33):
+			_arm1 = 3
+		elif _pog_eq(_sw1, 55):
+			_arm1 = 4
+		elif _pog_eq(_sw1, 57):
+			_arm1 = 5
+		elif _pog_eq(_sw1, 204):
+			_arm1 = 6
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
 			v4 = ifaction.find(v3)
 			isim.set_faction(isim.cast(v1), v4)
 			if _pog_eq(v3, text.field("mp_flag_team_b", 0)):
@@ -1337,11 +1355,13 @@ func client_on_user_message() -> Variant:
 				object.remove_property(v1, "mp_on_team_beta")
 			v9 = _pog_spawn(local_18921.bind(v1, _pog_clone(v6)))
 			_pog_detach(v9)
-		15:
+			break
+		if _arm1 <= 1:
 			if not _pog_eq(v10, iship.find_player_ship()):
 				v10 = iship.cast(v1)
 				iship.undock_self(v10)
-		22:
+			break
+		if _arm1 <= 2:
 			v4 = isim.faction(isim.cast(v1))
 			if _pog_eq(v4, v5):
 				v7 = sim.find_by_name("Alpha Flag")
@@ -1355,7 +1375,8 @@ func client_on_user_message() -> Variant:
 			object.add_bool_property(v1, "mp_has_opponent_flag", 1)
 			v9 = _pog_spawn(local_18921.bind(v1, _pog_clone(v6)))
 			_pog_detach(v9)
-		33:
+			break
+		if _arm1 <= 3:
 			v4 = isim.faction(isim.cast(v1))
 			if _pog_eq(v4, v5):
 				v7 = sim.find_by_name("Alpha Flag")
@@ -1372,13 +1393,14 @@ func client_on_user_message() -> Variant:
 			await local_5740(v7, v8)
 			v9 = _pog_spawn(local_18921.bind(v1, _pog_clone(v6)))
 			_pog_detach(v9)
-		55:
+			break
+		if _arm1 <= 4:
 			if _pog_eq(v3, text.field("mp_flag_team_a", 0)):
 				await local_5740(v1, sim.cast(global.handle("mp_alpha_flag_spawnpoint")))
 			else:
 				await local_5740(v1, sim.cast(global.handle("mp_beta_flag_spawnpoint")))
 			imultiplay.client_add_respawn_effect(iship.cast(v1))
-		57:
+		if _arm1 <= 5:
 			v7 = sim.find_by_name(v3)
 			v4 = isim.faction(isim.cast(v7))
 			if _pog_eq(v4, v5):
@@ -1388,9 +1410,11 @@ func client_on_user_message() -> Variant:
 			sim.detach_child(iship.cast(v1), v7)
 			object.remove_property(v1, "mp_has_opponent_flag")
 			await local_5740(v7, v8)
-		204:
+			break
+		if _arm1 <= 6:
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			return 0
+			break
 	return 0
 	return 0
 

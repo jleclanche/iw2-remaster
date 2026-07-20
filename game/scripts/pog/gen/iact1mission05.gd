@@ -201,8 +201,16 @@ func mission_handler() -> Variant:
 			if PogRuntime.TRACE:
 				if _pog_is_null(v6):
 					debug.error("Unable to find hoffers gap ")
-			match state.progress(v24):
-				1:
+			while true:
+				var _sw1: Variant = state.progress(v24)
+				var _arm1: int = -1
+				if _pog_eq(_sw1, 1):
+					_arm1 = 0
+				elif _pog_eq(_sw1, 2):
+					_arm1 = 1
+				if _arm1 == -1:
+					break
+				if _arm1 <= 0:
 					v27 = 1
 					if not (object.property_exists(v24, "oregon_alive")):
 						object.add_bool_property(v24, "oregon_alive", 1)
@@ -303,7 +311,7 @@ func mission_handler() -> Variant:
 							await iconversation.end()
 						break
 					state.set_progress(v24, 2)
-				2:
+				if _arm1 <= 1:
 					v2 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m05_waypoint_cache"))
 					sim.place_between(v2, v4, v6, 0.4000000059604645)
 					isim.set_sensor_visibility(v2, 1)
@@ -403,6 +411,7 @@ func mission_handler() -> Variant:
 					group.destroy(v18, 0)
 					if global.exists("g_act1_destroyed_marauder_cache"):
 						global.set_bool("g_act1_destroyed_marauder_cache", 1)
+					break
 			state.destroy(self)
 			await imissiontracker.remove_mission(self)
 			await iutilities.remove_mission_restart()

@@ -118,18 +118,31 @@ func exodus_traffic_generator() -> Variant:
 	else:
 		v2 = 0
 		global.create_int("g_alien_spread_radius", 2, v2)
-	match v2:
-		3:
+	while true:
+		var _sw1: Variant = v2
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 3):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 2):
+			_arm1 = 1
+		elif _pog_eq(_sw1, 1):
+			_arm1 = 2
+		elif _pog_eq(_sw1, 0):
+			_arm1 = 3
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
 			await disable_all_traffic_in_system("map:/geog/gagarin/batatas")
-		2:
+		if _arm1 <= 1:
 			await disable_all_traffic_in_system("map:/geog/gagarin/owens_star")
 			await disable_all_traffic_in_system("map:/geog/gagarin/formhault")
 			await disable_all_traffic_in_system("map:/geog/gagarin/ishime")
-		1:
+		if _arm1 <= 2:
 			await disable_all_traffic_in_system("map:/geog/gagarin/drake")
 			await disable_all_traffic_in_system("map:/geog/gagarin/osprey")
-		0:
+		if _arm1 <= 3:
 			await disable_all_traffic_in_system("map:/geog/gagarin/new_bavaria")
+			break
 	while true:
 		await _pog_wait(1)
 		if global.pog_int("g_story_3.145") != 2:

@@ -215,23 +215,48 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 			if v6 & 1024:
 				debug.print_string("Don't Wait ")
 			debug.print_string("\n")
-	match v8:
-		4:
+	while true:
+		var _sw1: Variant = v8
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 4):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 3):
+			_arm1 = 1
+		elif _pog_eq(_sw1, 2):
+			_arm1 = 2
+		elif _pog_eq(_sw1, 1):
+			_arm1 = 3
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
 			v10 = group.nth_group(v2, v8 - 4)
 			v14 = await recursive_sim_count(v10)
-		3:
+		if _arm1 <= 1:
 			v11 = group.nth_group(v2, v8 - 3)
 			v15 = await recursive_sim_count(v11)
-		2:
+		if _arm1 <= 2:
 			v12 = group.nth_group(v2, v8 - 2)
 			v16 = await recursive_sim_count(v12)
-		1:
+		if _arm1 <= 3:
 			v13 = group.nth_group(v2, v8 - 1)
 			v17 = await recursive_sim_count(v13)
+			break
 	while true:
 		if v6 & 12288:
-			match v8:
-				4:
+			while true:
+				var _sw2: Variant = v8
+				var _arm2: int = -1
+				if _pog_eq(_sw2, 4):
+					_arm2 = 0
+				elif _pog_eq(_sw2, 3):
+					_arm2 = 1
+				elif _pog_eq(_sw2, 2):
+					_arm2 = 2
+				elif _pog_eq(_sw2, 1):
+					_arm2 = 3
+				if _arm2 == -1:
+					break
+				if _arm2 <= 0:
 					v19 = await recursive_sim_count(v10)
 					if v6 & 4096 and _pog_is_null(v19):
 						if PogRuntime.TRACE:
@@ -241,7 +266,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
 						return 8192 | (v9 & (v8 - 4))
-				3:
+				if _arm2 <= 1:
 					v19 = await recursive_sim_count(v11)
 					if v6 & 4096 and _pog_is_null(v19):
 						if PogRuntime.TRACE:
@@ -251,7 +276,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
 						return 8192 | (v9 & (v8 - 3))
-				2:
+				if _arm2 <= 2:
 					v19 = await recursive_sim_count(v12)
 					if v6 & 4096 and _pog_is_null(v19):
 						if PogRuntime.TRACE:
@@ -261,7 +286,7 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
 						return 8192 | (v9 & (v8 - 2))
-				1:
+				if _arm2 <= 3:
 					v19 = await recursive_sim_count(v13)
 					if v6 & 4096 and _pog_is_null(v19):
 						if PogRuntime.TRACE:
@@ -271,50 +296,77 @@ func watch_group_combat_task(v0, v1, v2, v3, v4, v5, v6, v7) -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_Sim_Destroyed\n")
 						return 8192 | (v9 & (v8 - 1))
+					break
 		if v6 & 16384:
-			match v8:
-				4:
+			while true:
+				var _sw3: Variant = v8
+				var _arm3: int = -1
+				if _pog_eq(_sw3, 4):
+					_arm3 = 0
+				elif _pog_eq(_sw3, 3):
+					_arm3 = 1
+				elif _pog_eq(_sw3, 2):
+					_arm3 = 2
+				elif _pog_eq(_sw3, 1):
+					_arm3 = 3
+				if _arm3 == -1:
+					break
+				if _arm3 <= 0:
 					if not (await iutilities.near_to_group(v1, v10, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
 						return 16384 | (v9 & (v8 - 4))
-				3:
+				if _arm3 <= 1:
 					if not (await iutilities.near_to_group(v1, v11, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
 						return 16384 | (v9 & (v8 - 3))
-				2:
+				if _arm3 <= 2:
 					if not (await iutilities.near_to_group(v1, v12, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
 						return 16384 | (v9 & (v8 - 2))
-				1:
+				if _arm3 <= 3:
 					if not (await iutilities.near_to_group(v1, v13, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Leave_Close_Range\n")
 						return 16384 | (v9 & (v8 - 1))
+					break
 		if v6 & 32768:
-			match v8:
-				4:
+			while true:
+				var _sw4: Variant = v8
+				var _arm4: int = -1
+				if _pog_eq(_sw4, 4):
+					_arm4 = 0
+				elif _pog_eq(_sw4, 3):
+					_arm4 = 1
+				elif _pog_eq(_sw4, 2):
+					_arm4 = 2
+				elif _pog_eq(_sw4, 1):
+					_arm4 = 3
+				if _arm4 == -1:
+					break
+				if _arm4 <= 0:
 					if not (await iutilities.far_from_group(v1, v10, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
 						return 32768 | (v9 & (v8 - 4))
-				3:
+				if _arm4 <= 1:
 					if not (await iutilities.far_from_group(v1, v11, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
 						return 32768 | (v9 & (v8 - 3))
-				2:
+				if _arm4 <= 2:
 					if not (await iutilities.far_from_group(v1, v12, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
 						return 32768 | (v9 & (v8 - 2))
-				1:
+				if _arm4 <= 3:
 					if not (await iutilities.far_from_group(v1, v13, v3, 1)):
 						if PogRuntime.TRACE:
 							debug.print_string("Watch result : WS_SubGroup_All_Enter_Close_Range\n")
 						return 32768 | (v9 & (v8 - 1))
+					break
 		if v6 & 65536:
 			if (1 - _pog_is_running(v5)):
 				return 65536

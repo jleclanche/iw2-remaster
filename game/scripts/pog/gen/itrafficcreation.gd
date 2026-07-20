@@ -2046,69 +2046,117 @@ func local_10476(v0) -> Variant:
 		debug.print_string(" - scenario ")
 		debug.print_int(v1)
 		debug.print_string(" \n")
-	match v1:
-		0:
+	while true:
+		var _sw1: Variant = v1
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 0):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 1):
+			_arm1 = 1
+		elif _pog_eq(_sw1, 2):
+			_arm1 = 2
+		elif _pog_eq(_sw1, 3):
+			_arm1 = 3
+		elif _pog_eq(_sw1, 4):
+			_arm1 = 4
+		elif _pog_eq(_sw1, 5):
+			_arm1 = 5
+		elif _pog_eq(_sw1, 6):
+			_arm1 = 6
+		elif _pog_eq(_sw1, 7):
+			_arm1 = 7
+		elif _pog_eq(_sw1, 8):
+			_arm1 = 8
+		elif _pog_eq(_sw1, 9):
+			_arm1 = 9
+		elif _pog_eq(_sw1, 10):
+			_arm1 = 10
+		elif _pog_eq(_sw1, 11):
+			_arm1 = 11
+		elif _pog_eq(_sw1, 12):
+			_arm1 = 12
+		elif _pog_eq(_sw1, 13):
+			_arm1 = 13
+		elif _pog_eq(_sw1, 14):
+			_arm1 = 14
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_some_traffic : NO SCENARIO RETURNED FOR ")
 				await local_27(imapentity.pog_name(v0))
 				await local_27("\n")
-		1:
+		if _arm1 <= 1:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageIn Scenario.\n")
 			await itrafficscenario.haulage_in(v0)
-		2:
+			break
+		if _arm1 <= 2:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing HaulageOut Scenario\n")
 			await itrafficscenario.haulage_out(v0)
-		3:
+			break
+		if _arm1 <= 3:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Supply Scenario\n")
 			await itrafficscenario.supply(v0)
-		4:
+			break
+		if _arm1 <= 4:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Trade Scenario \n")
 			await itrafficscenario.trade(v0)
-		5:
+			break
+		if _arm1 <= 5:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Security Scenario\n")
 			await itrafficscenario.security(v0)
-		6:
+			break
+		if _arm1 <= 6:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Tanker Scenario\n")
 			await itrafficscenario.tanker(v0)
-		7:
+			break
+		if _arm1 <= 7:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Official scenario\n")
 			await itrafficscenario.official(v0)
-		8:
+			break
+		if _arm1 <= 8:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Underworld Scenario\n")
 			await itrafficscenario.underworld(v0)
-		9:
+			break
+		if _arm1 <= 9:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Maintenance Scenario\n")
 			await itrafficscenario.maintenance(v0)
-		10:
+			break
+		if _arm1 <= 10:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Mining sceanareo\n")
 			await itrafficscenario.mining(v0)
-		11:
+			break
+		if _arm1 <= 11:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Oddball Scenario\n")
 			await itrafficscenario.oddball(v0)
-		12:
+			break
+		if _arm1 <= 12:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Civilian scenario\n")
 			await itrafficscenario.civilian(v0)
-		13:
+			break
+		if _arm1 <= 13:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Hostile Scenario\n")
 			await itrafficscenario.hostile(v0)
-		14:
+			break
+		if _arm1 <= 14:
 			if PogRuntime.TRACE:
 				await local_27("iTrafficCreation.Generate_Some_Traffic : Commencing Scum Scenario\n")
 			await itrafficscenario.scum(v0)
 			return 0
+			break
 	return 0
 	return 0
 

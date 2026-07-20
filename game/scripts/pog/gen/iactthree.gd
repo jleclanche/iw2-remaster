@@ -2718,15 +2718,59 @@ func master_script() -> Variant:
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iChapterOne.PiracyRatingTracker - Commencing Act Two Chapter Script.\n")
-		match state.progress(v3):
-			0:
+		while true:
+			var _sw1: Variant = state.progress(v3)
+			var _arm1: int = -1
+			if _pog_eq(_sw1, 0):
+				_arm1 = 0
+			elif _pog_eq(_sw1, 1):
+				_arm1 = 1
+			elif _pog_eq(_sw1, 2):
+				_arm1 = 2
+			elif _pog_eq(_sw1, 3):
+				_arm1 = 3
+			elif _pog_eq(_sw1, 4):
+				_arm1 = 4
+			elif _pog_eq(_sw1, 5):
+				_arm1 = 5
+			elif _pog_eq(_sw1, 6):
+				_arm1 = 6
+			elif _pog_eq(_sw1, 7):
+				_arm1 = 7
+			elif _pog_eq(_sw1, 8):
+				_arm1 = 8
+			elif _pog_eq(_sw1, 9):
+				_arm1 = 9
+			elif _pog_eq(_sw1, 10):
+				_arm1 = 10
+			elif _pog_eq(_sw1, 13):
+				_arm1 = 11
+			elif _pog_eq(_sw1, 14):
+				_arm1 = 12
+			elif _pog_eq(_sw1, 15):
+				_arm1 = 13
+			elif _pog_eq(_sw1, 16):
+				_arm1 = 14
+			elif _pog_eq(_sw1, 17):
+				_arm1 = 15
+			elif _pog_eq(_sw1, 18):
+				_arm1 = 16
+			elif _pog_eq(_sw1, 19):
+				_arm1 = 17
+			elif _pog_eq(_sw1, 20):
+				_arm1 = 18
+			elif _pog_eq(_sw1, 21):
+				_arm1 = 19
+			if _arm1 == -1:
+				break
+			if _arm1 <= 0:
 				await local_27540()
 				await iutilities.send_story_element("g_story_3.10", 3, 1)
 				await iutilities.send_story_element("g_story_3.20", 3, 1)
 				v1 = _pog_spawn(coyote_security.bind())
 				await iact3mission01.main()
 				state.set_progress(v3, 1)
-			1:
+			if _arm1 <= 1:
 				while true:
 					if PogRuntime.TRACE:
 						debug.print_string("iActThree.MasterScript : waiting for player to complete act 3 mission 01, sleeping\n")
@@ -2735,7 +2779,7 @@ func master_script() -> Variant:
 						break
 				await iutilities.send_story_element("g_story_3.30", 3, 2)
 				state.set_progress(v3, 2)
-			2:
+			if _arm1 <= 2:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						if PogRuntime.TRACE:
@@ -2746,7 +2790,7 @@ func master_script() -> Variant:
 				iemail.send_email("a1_master_stepsons_mail_sender", "a2_master_story2.290_mail_subject", "html:/text/act_3/War_mail_2", 1)
 				await iact3mission02.main()
 				state.set_progress(v3, 3)
-			3:
+			if _arm1 <= 3:
 				while true:
 					if PogRuntime.TRACE:
 						debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 02, sleeping \n")
@@ -2757,7 +2801,7 @@ func master_script() -> Variant:
 				global.set_bool("g_act3_corporates_left_coyote", 1)
 				await local_28499()
 				state.set_progress(v3, 4)
-			4:
+			if _arm1 <= 4:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						if PogRuntime.TRACE:
@@ -2767,7 +2811,7 @@ func master_script() -> Variant:
 							break
 				await iact3mission03.main()
 				state.set_progress(v3, 5)
-			5:
+			if _arm1 <= 5:
 				while true:
 					if PogRuntime.TRACE:
 						debug.print_string("iActThree.MasterScript - waiting for player to finish act 03 mission 03 - scavenger, sleeping\n")
@@ -2780,7 +2824,7 @@ func master_script() -> Variant:
 				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 554, 1, 55, 1, 4))
 				await iact3mission04.main()
 				state.set_progress(v3, 6)
-			6:
+			if _arm1 <= 6:
 				while true:
 					if PogRuntime.TRACE:
 						debug.print_string("iActThree.MasterScript : waiting for the player to complete act 03 mision 04 - capture the accelerator, sleeping\n ")
@@ -2790,7 +2834,7 @@ func master_script() -> Variant:
 				await iutilities.send_story_element("g_story_3.70", 3, 0)
 				await iutilities.send_story_element("g_story_3.75", 3, 0)
 				state.set_progress(v3, 7)
-			7:
+			if _arm1 <= 7:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						if PogRuntime.TRACE:
@@ -2800,7 +2844,7 @@ func master_script() -> Variant:
 							break
 				await local_1729()
 				state.set_progress(v3, 8)
-			8:
+			if _arm1 <= 8:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					while true:
 						if PogRuntime.TRACE:
@@ -2811,7 +2855,7 @@ func master_script() -> Variant:
 				await iutilities.send_story_element("g_story_3.80", 3, 5)
 				await iact3mission05.main()
 				state.set_progress(v3, 9)
-			9:
+			if _arm1 <= 9:
 				while true:
 					if PogRuntime.TRACE:
 						debug.print_string("iActThree.MasterScript : Waiting for the player to finish act 03 mission 05 - deep cover, sleeping\n")
@@ -2821,7 +2865,7 @@ func master_script() -> Variant:
 				await iutilities.send_story_element("g_story_3.90", 3, 6)
 				await iact3mission06.main()
 				state.set_progress(v3, 10)
-			10:
+			if _arm1 <= 10:
 				while true:
 					if PogRuntime.TRACE:
 						debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 06 - smokescreen, sleeping \n")
@@ -2832,7 +2876,7 @@ func master_script() -> Variant:
 				await iutilities.send_story_element("g_story_3.110", 3, 8)
 				await iact3mission08.main()
 				state.set_progress(v3, 13)
-			13:
+			if _arm1 <= 11:
 				while true:
 					if PogRuntime.TRACE:
 						debug.print_string("iActThree.MasterScript : waiting for plater to finish act 03 mission 08 - rescue hoffer, sleeping")
@@ -2841,16 +2885,16 @@ func master_script() -> Variant:
 						break
 				global.create_bool("g_disable_traffic_monitor", 1, 1)
 				await ifactionscript.set_neutral_factions()
-			14:
+			if _arm1 <= 12:
 				_pog_spawn(iexodustraffic.exodus_traffic_generator.bind())
 				await iutilities.send_story_element("g_story_3.140", 3, 9)
 				state.set_progress(v3, 15)
-			15:
+			if _arm1 <= 13:
 				if PogRuntime.TRACE:
 					debug.print_string("iActThree.MasterScript - progress marker 14\n")
 				await iact3mission09.main()
 				state.set_progress(v3, 16)
-			16:
+			if _arm1 <= 14:
 				if PogRuntime.TRACE:
 					debug.print_string("iActThree.MasterScript - progress marker 15\n")
 				while true:
@@ -2861,11 +2905,11 @@ func master_script() -> Variant:
 						break
 				await local_5572()
 				state.set_progress(v3, 17)
-			17:
+			if _arm1 <= 15:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					_pog_spawn(event3_40__preparing_the_defences.bind())
 				state.set_progress(v3, 18)
-			18:
+			if _arm1 <= 16:
 				if PogRuntime.TRACE:
 					debug.print_string("iActThree.MasterScript - progress marker 15b\n")
 				if global.pog_bool("g_skip_to_specific") != 1:
@@ -2885,11 +2929,11 @@ func master_script() -> Variant:
 				v2 = iinventory.number_of_cargo_type(171)
 				iinventory.remove(171, v2)
 				state.set_progress(v3, 19)
-			19:
+			if _arm1 <= 17:
 				if global.pog_bool("g_skip_to_specific") != 1:
 					_pog_spawn(event3_50__here_come_the_aliens.bind())
 				state.set_progress(v3, 20)
-			20:
+			if _arm1 <= 18:
 				if PogRuntime.TRACE:
 					debug.print_string("iActThree.MasterScript - progress marker 15c\n")
 				if global.pog_bool("g_skip_to_specific") != 1:
@@ -2901,7 +2945,7 @@ func master_script() -> Variant:
 							break
 				await iact3mission10.main()
 				state.set_progress(v3, 21)
-			21:
+			if _arm1 <= 19:
 				if PogRuntime.TRACE:
 					debug.print_string("iActThree.MasterScript - progress marker 16\n")
 				while true:
@@ -2913,6 +2957,7 @@ func master_script() -> Variant:
 				state.destroy(self)
 				await final_choice()
 				return
+				break
 	return
 	return 0
 

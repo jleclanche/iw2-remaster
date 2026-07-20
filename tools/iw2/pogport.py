@@ -273,12 +273,31 @@ def gen_native_api() -> tuple[str, int, int]:
 # --- the GDScript backend for ported scripts -------------------------------
 
 
+def _free_jumps(stmts) -> bool:
+    """A break/continue in `stmts` that would bind to a loop OUTSIDE the
+    statement list: descends into if/debug (transparent) but not into loops
+    (their breaks are theirs). The looping-switch emission wraps arms in a
+    `while`, which would capture such a jump -- so it must refuse them."""
+    for s in stmts:
+        if isinstance(s, (Break, Continue)):
+            return True
+        if isinstance(s, If) and (_free_jumps(s.then) or _free_jumps(s.els)):
+            return True
+        if isinstance(s, Debug) and _free_jumps(s.body):
+            return True
+        if isinstance(s, Case) and not s.loops() \
+                and any(_free_jumps(b) for _, b, _brk in s.arms):
+            return True
+    return False
+
+
 class Port:
     def __init__(self, pkg_name: str, imports: dict[str, bool],
                  taken: set[str] | None = None):
         self.pkg = pkg_name
         self.imports = imports       # package -> is_native
         self.unstructured = 0
+        self._case_n = 0             # unique temps for nested switch loops
         # A package variable must not collide with a function in this same file
         # (several packages export a Group() and also import `group`).
         self.taken = taken or set()
@@ -478,11 +497,51 @@ class Port:
                 out += [i + "else:"] + self.body(s.els, d + 1)
             return out
         if isinstance(s, Case):
-            out = ["%smatch %s:" % (i, self.x(s.sel))]
-            for vals, body in s.arms:
-                out += ["%s%s:" % (_ind(d + 1),
-                                   ", ".join(self.x(v) for v in vals))]
+            if not s.loops():
+                # every arm has the bytecode's `Goto exit`: a one-shot
+                # switch, and `match` is exact
+                out = ["%smatch %s:" % (i, self.x(s.sel))]
+                for vals, body, _brk in s.arms:
+                    out += ["%s%s:" % (_ind(d + 1),
+                                       ", ".join(self.x(v) for v in vals))]
+                    out += self.body(body, d + 2)
+                return out
+            # A fall-through switch is a resume-dispatch loop (pogdec.Case):
+            # the dispatch sits AFTER the bodies, an arm without `break`
+            # runs on into the next, and the last arm falls into the
+            # dispatch again, which re-evaluates the selector. `match`
+            # cannot express that -- the campaign's story ladders
+            # (switch(state.Progress) in iacttwo et al.) ran one case and
+            # returned, which killed every story script after its first
+            # progress step. Emitted as the loop it is: pick the entry arm,
+            # run every arm from there down, re-dispatch; a real `break`
+            # leaves the construct.
+            for _vals, body, _brk in s.arms:
+                if _free_jumps(body):
+                    # a break/continue for a loop OUTSIDE the switch would
+                    # bind to the emitted while -- refuse to miscompile
+                    raise RuntimeError(
+                        "fall-through switch arm carries an outer-loop "
+                        "break/continue; needs the Dispatch fallback")
+            self._case_n += 1
+            sw, arm = "_sw%d" % self._case_n, "_arm%d" % self._case_n
+            out = ["%swhile true:" % i,
+                   "%svar %s: Variant = %s" % (_ind(d + 1), sw,
+                                               self.x(s.sel)),
+                   "%svar %s: int = -1" % (_ind(d + 1), arm)]
+            for k, (vals, _body, _brk) in enumerate(s.arms):
+                cond = " or ".join("_pog_eq(%s, %s)" % (sw, self.x(v))
+                                   for v in vals)
+                out.append("%s%s %s:" % (_ind(d + 1),
+                                         "if" if k == 0 else "elif", cond))
+                out.append("%s%s = %d" % (_ind(d + 2), arm, k))
+            out += ["%sif %s == -1:" % (_ind(d + 1), arm),
+                    "%sbreak" % _ind(d + 2)]
+            for k, (_vals, body, brk) in enumerate(s.arms):
+                out.append("%sif %s <= %d:" % (_ind(d + 1), arm, k))
                 out += self.body(body, d + 2)
+                if brk:
+                    out.append("%sbreak" % _ind(d + 2))
             return out
         return [i + "pass"]
 
@@ -533,7 +592,7 @@ def _locals_used(f: Func) -> int:
                 walk(s.body)
             elif isinstance(s, Case):
                 walk_e(s.sel)
-                for _vals, body in s.arms:
+                for _vals, body, _brk in s.arms:
                     walk(body)
             elif isinstance(s, Dispatch):
                 for _addr, body in s.blocks:

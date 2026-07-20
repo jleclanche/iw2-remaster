@@ -3193,55 +3193,108 @@ func local_46734() -> Variant:
 		await iconversation.add_response("act_1/act1_wingmen_training.csv", "I'd like to see file act_1/act1_wingmen_training.csv, please")
 		v0 = await iconversation.ask(0, "particle_employee", "which file do you want to test?")
 		await iconversation.end()
-		match v0:
-			1:
+		while true:
+			var _sw1: Variant = v0
+			var _arm1: int = -1
+			if _pog_eq(_sw1, 1):
+				_arm1 = 0
+			elif _pog_eq(_sw1, 2):
+				_arm1 = 1
+			elif _pog_eq(_sw1, 3):
+				_arm1 = 2
+			elif _pog_eq(_sw1, 4):
+				_arm1 = 3
+			elif _pog_eq(_sw1, 5):
+				_arm1 = 4
+			elif _pog_eq(_sw1, 6):
+				_arm1 = 5
+			elif _pog_eq(_sw1, 7):
+				_arm1 = 6
+			elif _pog_eq(_sw1, 8):
+				_arm1 = 7
+			elif _pog_eq(_sw1, 9):
+				_arm1 = 8
+			elif _pog_eq(_sw1, 10):
+				_arm1 = 9
+			elif _pog_eq(_sw1, 11):
+				_arm1 = 10
+			elif _pog_eq(_sw1, 12):
+				_arm1 = 11
+			elif _pog_eq(_sw1, 13):
+				_arm1 = 12
+			elif _pog_eq(_sw1, 14):
+				_arm1 = 13
+			elif _pog_eq(_sw1, 15):
+				_arm1 = 14
+			elif _pog_eq(_sw1, 16):
+				_arm1 = 15
+			elif _pog_eq(_sw1, 17):
+				_arm1 = 16
+			elif _pog_eq(_sw1, 18):
+				_arm1 = 17
+			elif _pog_eq(_sw1, 19):
+				_arm1 = 18
+			elif _pog_eq(_sw1, 20):
+				_arm1 = 19
+			elif _pog_eq(_sw1, 21):
+				_arm1 = 20
+			elif _pog_eq(_sw1, 22):
+				_arm1 = 21
+			elif _pog_eq(_sw1, 23):
+				_arm1 = 22
+			elif _pog_eq(_sw1, 24):
+				_arm1 = 23
+			if _arm1 == -1:
+				break
+			if _arm1 <= 0:
 				await local_0()
-			2:
+			if _arm1 <= 1:
 				await local_8165()
-			3:
+			if _arm1 <= 2:
 				await local_8861()
-			4:
+			if _arm1 <= 3:
 				await local_9326()
-			5:
+			if _arm1 <= 4:
 				await local_10484()
-			6:
+			if _arm1 <= 5:
 				await local_10564()
-			7:
+			if _arm1 <= 6:
 				await local_15880()
-			8:
+			if _arm1 <= 7:
 				await local_16037()
-			9:
+			if _arm1 <= 8:
 				await local_19505()
-			10:
+			if _arm1 <= 9:
 				await local_19893()
-			11:
+			if _arm1 <= 10:
 				await local_21744()
-			12:
+			if _arm1 <= 11:
 				await local_25828()
-			13:
+			if _arm1 <= 12:
 				await local_26139()
-			14:
+			if _arm1 <= 13:
 				await local_28760()
-			15:
+			if _arm1 <= 14:
 				await local_31381()
-			16:
+			if _arm1 <= 15:
 				await local_31538()
-			17:
+			if _arm1 <= 16:
 				await local_37162()
-			18:
+			if _arm1 <= 17:
 				await local_37242()
-			19:
+			if _arm1 <= 18:
 				await local_38862()
-			20:
+			if _arm1 <= 19:
 				await local_39558()
-			21:
+			if _arm1 <= 20:
 				await local_40100()
-			22:
+			if _arm1 <= 21:
 				await local_42490()
-			23:
+			if _arm1 <= 22:
 				await local_43186()
-			24:
+			if _arm1 <= 23:
 				await local_44344()
+				break
 	text.remove("csv:/text/act_1/act1_master")
 	text.remove("csv:/text/act_1/act1_master_addendum")
 	text.remove("csv:/text/act_1/act1_master_addendum2")
