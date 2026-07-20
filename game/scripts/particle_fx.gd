@@ -384,11 +384,16 @@ static func spawn(parent: Node3D, base: String, name: String, xform: Transform3D
 	fx.global_transform = xform
 	return fx
 
+# @element icElectricEffectAvatar
 # An icDisruptorDynamics effect glued to a hull: iiThrusterSim::
 # AlienInfectionEffect (0x1007ed80) creates ini:/sfx/infection/node, hands it
 # the sim's models and radius (FUN_100c3ce0 -> intake 0x100c5430), scales the
-# node by max(1, radius/15) and attaches it to the avatar. icDisruptor (the
-# weapon effect) does the same with /25 and a finite emitter time.
+# node by max(1, radius/15) and attaches it to the avatar. icShip::Disrupt
+# (0x100751b0) does the same with ini:/sfx/disruptor/node at /25 and a
+# finite emitter time (SetTime @ 0x100c4150 = the disruption seconds).
+# Both shipped icElectricEffectAvatar INIs (registry @ 0x100c3960, ctor
+# 0x100c3a50) resolve here: the node is the emitter+dynamics+draw bundle
+# this spawn assembles, riding the host model's edges.
 static func spawn_on_model(parent: Node3D, base: String, name: String,
 		model: Node3D, sim_radius: float, scale: float) -> ParticleFx:
 	var fx := spawn(parent, base, name,

@@ -105,6 +105,7 @@ var infection_damage: float:
 			_infection_damage = value
 var infection_fx: Node3D = null  # the sfx/infection crawl; presence IS the
 								# "effect on" state (IsAlienEffectOn 0x1007ee70)
+var disrupt_fx: ParticleFx = null  # the sfx/disruptor arcs while disrupted
 # A cannon fitted at runtime by sim.AddSubsim (act 3's nps_antimatter_pbc):
 # when set, _attack fires this projectile instead of main.spawn_bolt's
 # standard PBC bolt. Spec dict as PbcWeapons uses, plus "refire".
@@ -227,6 +228,22 @@ func disrupt(seconds: float, full: bool) -> void:
 	# ship_systems owner.
 	disrupt_time = maxf(disrupt_time, seconds)
 	disrupt_full = disrupt_full or full
+	# ... and the ARCS: icShip::Disrupt (0x100751b0) attaches
+	# ini:/sfx/disruptor/node (icElectricEffectAvatar crawling the hull
+	# edges) scaled max(1, radius/25) (FUN_100c3ce0), emitter life = the
+	# disruption seconds (SetTime @ 0x100c4150); a second hit while one is
+	# attached only re-times the existing node (FindChildByClass head).
+	# (The FcLightNode the original also parents @ 0x100c4170 is not
+	# reproduced.)
+	if is_instance_valid(disrupt_fx):
+		disrupt_fx.sys["time"] = disrupt_fx._age + disrupt_time
+	else:
+		var base := ProjectSettings.globalize_path("res://").path_join("..")
+		disrupt_fx = ParticleFx.spawn_on_model(self, base, "disruptor",
+				self, radius, maxf(1.0, radius / 25.0))
+		if disrupt_fx != null:
+			disrupt_fx.sys = disrupt_fx.sys.duplicate()
+			disrupt_fx.sys["time"] = disrupt_time
 
 func hit_by_bolt(spec: Dictionary, age: float, at: Vector3) -> Dictionary:
 	# icBullet::OnCollision -> icShip::ApplyWeaponDamage

@@ -68,6 +68,20 @@ func disrupt_player_systems(seconds: float, full: bool) -> void:
 		sys.disrupt(seconds, full)
 	hud.warn("SYSTEMS DISRUPTED" if full else "SHIELDS DISRUPTED", 3.0)
 	audio.play("audio/sfx/disruptor_startup.wav", -6.0)
+	# the ARCS: icShip::Disrupt (0x100751b0) attaches ini:/sfx/disruptor/node
+	# scaled max(1, radius/25), emitter life = the disruption seconds
+	# (SetTime @ 0x100c4150); re-disruption re-times the attached node
+	if is_instance_valid(player_disrupt_fx):
+		player_disrupt_fx.sys["time"] = \
+				player_disrupt_fx._age + weapon_disrupt_time
+	elif ship_model != null:
+		var r := float(ship_stats.get("radius", 60.0))
+		player_disrupt_fx = ParticleFx.spawn_on_model(ship,
+				ProjectSettings.globalize_path("res://").path_join(".."),
+				"disruptor", ship_model, r, maxf(1.0, r / 25.0))
+		if player_disrupt_fx != null:
+			player_disrupt_fx.sys = player_disrupt_fx.sys.duplicate()
+			player_disrupt_fx.sys["time"] = weapon_disrupt_time
 
 func _kill_player() -> void:
 	# The respawn-in-place flow can't ride out the 30 s dramatic sequence, so

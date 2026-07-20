@@ -88,6 +88,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_sign_avatar",
 	&"_ms_sign_avatar_assert",
 	&"_ms_gas_ball",
+	&"_ms_disrupt_arcs",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1015,6 +1016,35 @@ func _ms_gas_ball(_delta: float) -> void:
 			% [vis, at, s0])
 	fx._neb = {}
 	fx._gas_hide()
+	_mech_next()
+
+func _ms_disrupt_arcs(_delta: float) -> void:
+	# icShip::Disrupt attaches the icElectricEffectAvatar arcs (#10):
+	# ini:/sfx/disruptor/node scaled max(1, radius/25), emitter life = the
+	# disruption seconds; a re-disrupt re-times the SAME node
+	var ai := _mech_spawn("Disruptee", 1000.0,
+			m.ship.global_position + Vector3(0, -60000, 0))
+	var mi := MeshInstance3D.new()
+	mi.mesh = BoxMesh.new()
+	(mi.mesh as BoxMesh).size = Vector3(60, 60, 60)
+	ai.add_child(mi)
+	ai.radius = 100.0
+	ai.disrupt(3.0, true)
+	var fx := ai.disrupt_fx
+	var made := fx != null and is_instance_valid(fx)
+	var edges := 0
+	var life := 0.0
+	if made:
+		edges = fx._edges.size()
+		life = float(fx.sys["time"])
+	ai.disrupt(8.0, true)
+	var relife := float(fx.sys["time"]) if made else 0.0
+	var same: bool = made and ai.disrupt_fx == fx
+	_mech("disrupt-arcs", made and edges > 0 and absf(life - 3.0) < 0.01
+			and same and absf(relife - (fx._age + 8.0)) < 0.01,
+			"fx=%s edges=%d life=%.1f->%.1f same-node=%s"
+			% [made, edges, life, relife, same])
+	_mech_reap(ai)
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:
