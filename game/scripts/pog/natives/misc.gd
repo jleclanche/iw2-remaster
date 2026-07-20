@@ -81,7 +81,9 @@ func _send(_t, a: Array) -> Variant:
 	m.sender = PogStd._s(a[0])
 	m.subject = PogStd._s(a[1])
 	m.body = body
-	m.received = vm.time if vm != null else 0.0
+	# the received stamp only orders the inbox; PogRuntime carries no game
+	# clock (vm.time was the oracle VM's), so engine seconds serve both hosts
+	m.received = float(Time.get_ticks_msec()) * 0.001
 	inbox.append(m)
 	if game != null and game.hud != null:
 		game.hud.warn("NEW MAIL", 2.5)
@@ -108,8 +110,16 @@ func _email_cast(_t, a: Array) -> Variant:
 
 # @native iemail.Read
 func _email_read(_t, a: Array) -> Variant:
+	# A NULL handle reads as TRUE. Inference from the shipped bytecode, not
+	# the dll: iact3mission01's phase 0 (pogasm 2359..2454) does Find ->
+	# (null) -> SendEmail -> Read(v2) with v2 STILL the null from Find, and
+	# an unread verdict exits the one-shot MissionHandler for good (Goto
+	# L8865 -> Return, no re-runner anywhere). The shipped mission can only
+	# proceed if Read(null) is truthy -- the email-read gate is decorative.
 	var m = a[0] if a.size() > 0 else null
-	return 1 if (m is PogEmail and m.read) else 0
+	if not (m is PogEmail):
+		return 1
+	return 1 if m.read else 0
 
 # @native iemail.MarkAsRead
 func _email_mark_read(_t, a: Array) -> Variant:

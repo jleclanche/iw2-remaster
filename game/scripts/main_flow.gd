@@ -115,9 +115,12 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 	if ship.fx != null:
 		ship.fx.queue_free()
 		ship.fx = null
-	ship_model = _load_gltf(avatar)
-	ship.add_child(ship_model)
-	ShipEffects.attach(ship, ship_model)
+	ship_model = _load_gltf(avatar) if not avatar.is_empty() else null
+	# a missing avatar record already push_errors in _load_gltf; the fit must
+	# still complete (stats/systems/groups) or the campaign wedges hull-less
+	if ship_model != null:
+		ship.add_child(ship_model)
+		ShipEffects.attach(ship, ship_model)
 	var stats: Array = _load_json("data/json/ships.json")
 	for rec in stats:
 		if rec.get("path", "") == ini_path:
@@ -126,7 +129,8 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 	base_max_accel = ship.max_accel
 	base_turn_accel = ship.turn_accel
 	_fit_systems(ini_path)
-	weapons.set_muzzles(ship_model)
+	if ship_model != null:
+		weapons.set_muzzles(ship_model)
 	# icWeaponLink: the loadout builds the fire groups when the hull is fitted
 	# (icLoadout::CreateWeaponLinks 0x10096940), so this is the same moment
 	weapons.build_groups(sys)

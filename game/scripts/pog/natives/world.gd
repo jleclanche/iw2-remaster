@@ -533,7 +533,11 @@ func _create_ship(ini: String, name: String) -> PogSim:
 	ai.ctype = String(props.get("type", "TRANS")).trim_prefix("T_")
 	ai.avatar_path = avatar_path(String(rec.get("avatar", "")))
 	ai.setup(props if not props.is_empty() else {"hit_points": 600})
-	var mdl: Node3D = game._load_gltf(ai.avatar_path)
+	# no db record -> no avatar; a pure logic sim must not hit the loader
+	# with "data/avatars/.gltf" (loud error, then a null model anyway)
+	var mdl: Node3D = null
+	if not String(rec.get("avatar", "")).is_empty():
+		mdl = game._load_gltf(ai.avatar_path)
 	if mdl != null:
 		ai.add_child(mdl)
 		if not is_alien:
@@ -700,7 +704,16 @@ func _s_destroy(_t, a: Array) -> Variant:
 		var n = s.rec.get("node")
 		if n != null and is_instance_valid(n):
 			n.queue_free()
+		# a record selection is an INDEX into objects[]: destroying the
+		# targeted record (or one before it) must drop/shift the selection,
+		# or the HUD reads a different -- or out-of-bounds -- object
+		var gone: int = game.objects.find(s.rec)
 		game.objects.erase(s.rec)
+		if gone >= 0 and game.target_idx >= 0:
+			if game.target_idx == gone:
+				game.target_idx = -1
+			elif game.target_idx > gone:
+				game.target_idx -= 1
 	return 0
 
 # @native sim.IsAlive
@@ -1862,7 +1875,10 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 	var db: Dictionary = ship_db.get(key, {})
 	if db.is_empty():
 		return 0
-	game._fit_player(key, avatar_path(String(db.get("avatar", ""))))
+	# a record without an avatar fits stats/systems only -- "" tells
+	# _fit_player to skip the model rather than ask for "avatars/.gltf"
+	var av := String(db.get("avatar", ""))
+	game._fit_player(key, avatar_path(av) if not av.is_empty() else "")
 	game.ai_ships.erase(s.node)
 	s.node.queue_free()
 	# BOTH handles now alias the one welded ship. The long-lived @player sim

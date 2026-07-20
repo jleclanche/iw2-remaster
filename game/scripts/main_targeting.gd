@@ -110,6 +110,11 @@ func subtarget_world_pos() -> Vector3:
 func _target_pos() -> Vector3:
 	if target_ai != null and is_instance_valid(target_ai):
 		return target_ai.global_position
+	# self-heal a stale record target: scripted destroys (act transitions
+	# above all) shrink objects[] without clearing the selection, and every
+	# HUD read of objects[target_idx] after this trusts the index
+	if target_idx >= objects.size():
+		target_idx = -1
 	if target_idx >= 0:
 		var t: Dictionary = objects[target_idx]
 		return Vector3(t["x"] - px, t["y"] - py, t["z"] - pz)

@@ -231,7 +231,8 @@ func _steer_to_marker(s, o: PogOrder) -> void:
 		away = Vector3.FORWARD
 	var me = world.player_sim()
 	var stand: Vector3 = me.dvec_to(o.target) + away.normalized() * o.marker
-	s.node.waypoints = [stand]
+	var wps: Array[Vector3] = [stand]
+	s.node.waypoints = wps
 	s.node.wp = 0
 	s.node.behavior = "patrol"
 
@@ -298,9 +299,9 @@ func _ai_flee(_t, a: Array) -> Variant:
 		o.complete = false
 		if s.node != null and is_instance_valid(s.node):
 			# Run: a waypoint far away, directly opposite the threat.
-			var away: Vector3 = world.player_sim().dvec_to(s) \
-					.normalized() * 1.0e5
-			s.node.waypoints = [away]
+			var away: Array[Vector3] = [Vector3(world.player_sim()
+					.dvec_to(s)).normalized() * 1.0e5]
+			s.node.waypoints = away
 			s.node.wp = 0
 			s.node.behavior = "patrol"
 	return 0
@@ -374,12 +375,38 @@ func _ai_is_complete(_t, a: Array) -> Variant:
 				o.complete = true
 	return 1 if o.complete else 0
 
-# @native iai.CurrentOrderType
 # @native iai.CurrentOrderName
 func _ai_order_type(_t, a: Array) -> Variant:
 	var s = world._as_sim(a[0])
 	var o := _order_for(s)
 	return o.kind if o != null else ""
+
+# @native iai.CurrentOrderType
+func _ai_order_type_enum(_t, a: Array) -> Variant:
+	# Returns the IeOrderType ENUM (iAI.h declaration order: None 0,
+	# Attack 1, Formate 2, Approach 3, Dock 4, Flee 5, Escort 6) -- a0m10's
+	# approach lesson polls `CurrentOrderType(player) != 3`, and answering
+	# the string kind here made the ported comparison a type error. For the
+	# PLAYER the current order is the autopilot (icPlayerPilot pushes an
+	# order onto the player's own icAIPilot): ap_mode 1 approach, 2 formate,
+	# 3 dock. (GiveFormateOrder shares our escort machinery, so an AI
+	# formate reports Escort.)
+	var s = world._as_sim(a[0])
+	if s != null and s.is_player and game != null:
+		return [0, 3, 2, 4][clampi(int(game.ap_mode), 0, 3)]
+	var o := _order_for(s)
+	if o == null:
+		return 0
+	match o.kind:
+		"attack":
+			return 1
+		"approach":
+			return 4 if o.dockport != null else 3
+		"flee":
+			return 5
+		"escort":
+			return 6
+	return 0
 
 # @native iai.CurrentOrderTarget
 func _ai_order_target(_t, a: Array) -> Variant:
@@ -420,7 +447,8 @@ func _ai_force_lp_route(_t, a: Array) -> Variant:
 	o.kind = "approach"
 	o.target = from
 	o.complete = false
-	s.node.waypoints = [world.player_sim().dvec_to(from)]  # doubles: #27
+	var wps: Array[Vector3] = [Vector3(world.player_sim().dvec_to(from))]
+	s.node.waypoints = wps  # doubles: #27
 	s.node.wp = 0
 	s.node.behavior = "patrol"
 	return 0
@@ -499,6 +527,7 @@ class PogDolly extends RefCounted:
 	var pos := Vector3.ZERO        ## absolute metres
 	var attached = null            ## PogWorld.PogSim it rides
 	var offset := Vector3.ZERO
+	var vel := Vector3.ZERO        ## iDirector.SetDirection's tracking motion
 
 # @native idirector.Begin
 func _d_begin(_t, _a: Array) -> Variant:
@@ -576,15 +605,21 @@ func _d_use_dolly_orientation(_t, a: Array) -> Variant:
 
 # @native idirector.SetDirection
 func _d_set_direction(_t, a: Array) -> Variant:
-	# SetDirection(dolly, x, y, z, dist): place the camera off its subject along
-	# a direction, at a distance. This is the shot composition.
-	var d = a[0]
+	# iDirector.h: SetDirection(dolly, hsim a, hsim b, float time, acc_time)
+	# -- "given two sims, set the direction of MOTION": the dolly tracks
+	# along (b - a), covering the span in `time` seconds. (The old numeric
+	# x/y/z/dist reading of these arguments was invented -- iact2mission01's
+	# cutscene passes two waypoint HANDLES here.) acc_time's ramp is folded
+	# into the constant rate.
+	var d = a[0] if a.size() > 0 else null
 	if not (d is PogDolly):
 		return 0
-	var dir := PogWorld.vec(a[1], a[2], a[3])
-	if dir.length_squared() < 0.0001:
-		dir = Vector3.BACK
-	d.offset = dir.normalized() * (float(a[4]) if a.size() > 4 else 100.0)
+	var sa = world._as_sim(a[1] if a.size() > 1 else null)
+	var sb = world._as_sim(a[2] if a.size() > 2 else null)
+	if sa == null or sb == null:
+		return 0
+	var t := maxf(float(a[3]) if a.size() > 3 else 1.0, 0.01)
+	(d as PogDolly).vel = sa.dvec_to(sb) / t
 	return 0
 
 # @native idirector.SetCamera
@@ -672,6 +707,13 @@ func director_process(delta: float) -> void:
 	var eye_pos: Vector3 = target + Vector3(0, 20, 120)
 
 	if use_dolly and dolly != null:
+		# SetDirection's tracking move: the dolly drifts along its commanded
+		# motion (as extra offset when attached, in place when free)
+		if dolly.vel != Vector3.ZERO:
+			if dolly.attached != null:
+				dolly.offset += dolly.vel * delta
+			else:
+				dolly.pos += dolly.vel * delta
 		# (an unattached dolly's stored pos is a float32 world absolute;
 		# quantisation there is baked in at PlaceDolly time)
 		var base: Vector3 = me.dvec_to(dolly.attached) \
@@ -1281,7 +1323,7 @@ const _BINDINGS := {
 	"iai.purgeorders": "_ai_purge", "iai.removeorder": "_ai_purge",
 	"iai.hasorder": "_ai_has_order",
 	"iai.isordercomplete": "_ai_is_complete",
-	"iai.currentordertype": "_ai_order_type",
+	"iai.currentordertype": "_ai_order_type_enum",
 	"iai.currentordername": "_ai_order_type",
 	"iai.currentordertarget": "_ai_order_target",
 	"iai.clearautopilot": "_ai_clear_autopilot",
