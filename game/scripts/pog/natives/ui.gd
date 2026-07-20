@@ -1723,16 +1723,37 @@ func scroller_done(win: PogWindow) -> void:
 
 
 # ---------------------------------------------------------------- gui: skin
-# Presentation we deliberately do not reproduce. SetWindowStateTextures takes 38
-# arguments -- a nine-patch atlas per widget state -- and the remaster has its own
-# look; the background movies are the base's animated backdrops.
-# @stub gui.PlayBackgroundMovie
-# @stub gui.StopBackgroundMovie
-# @stub gui.StopAllMovies
-# @stub gui.SetEditBoxCursorToEnd -- our caret always sits at the end of the
-#   text (base_screens draws it there), which is exactly where SetCursorToEnd
-#   (flux @ 0x78c10, SetCursorFromPoint(100000,100000)) put it.
+# Presentation we deliberately do not reproduce: SetWindowStateTextures takes
+# 38 arguments -- a nine-patch atlas per widget state -- and the remaster has
+# its own look.
 func _gui_noop(_t, _a: Array) -> Variant:
+	return 0
+
+## The PDA's animated backdrop, drawn by base_screens behind the windows.
+var background_movie := ""
+
+# @native gui.PlayBackgroundMovie
+func _play_background_movie(_t, a: Array) -> Variant:
+	# (movie_stem, html?): only the mod screen and multiplayer ShowShip name
+	# one; a stem whose .ogv the extractor has not produced shows nothing
+	# (base_screens warns once).
+	background_movie = PogStd._s(a[0])
+	dirty = true
+	return 0
+
+# @native gui.StopBackgroundMovie
+# @native gui.StopAllMovies
+func _stop_background_movie(_t, _a: Array) -> Variant:
+	background_movie = ""
+	dirty = true
+	return 0
+
+# @native gui.SetEditBoxCursorToEnd
+func _eb_cursor_to_end(_t, _a: Array) -> Variant:
+	# flux @ 0x78c10 = SetCursorFromPoint(100000, 100000): clamp the caret
+	# to the end of the text. Our edit boxes keep the caret at the end by
+	# construction (base_screens draws it after the value), so arriving here
+	# IS the post-state -- there is nothing to move.
 	return 0
 
 
@@ -2357,12 +2378,13 @@ const _BINDINGS := {
 	"gui.setshadybarwidth": "_set_shady_width",
 	"gui.setrhsshadybarwidth": "_set_shady_width_rhs",
 	"gui.setwindowstateicons": "_set_state_icons",
-	"gui.playbackgroundmovie": "_gui_noop",
-	"gui.stopbackgroundmovie": "_gui_noop", "gui.stopallmovies": "_gui_noop",
+	"gui.playbackgroundmovie": "_play_background_movie",
+	"gui.stopbackgroundmovie": "_stop_background_movie",
+	"gui.stopallmovies": "_stop_background_movie",
 	"gui.settextwindowresource": "_tw_set_resource",
 	"gui.textwindowback": "_tw_back",
 	"gui.seteditboxoverrides": "_eb_set_overrides",
-	"gui.seteditboxcursortoend": "_gui_noop",
+	"gui.seteditboxcursortoend": "_eb_cursor_to_end",
 
 	"ioptions.registerbool": "_opt_bool", "ioptions.registerint": "_opt_int",
 	"ioptions.registerfloat": "_opt_float",

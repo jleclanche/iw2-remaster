@@ -75,9 +75,44 @@ func _ready() -> void:
 
 const SCROLL_SPEED := 50.0   ## px/s -- icCreditScreen's constant @ 0x10117be8
 
+# gui.PlayBackgroundMovie (#20): the PDA's animated backdrop -- a looping
+# movie behind the windows. Only the mod screen and multiplayer ShowShip
+# name one; a stem whose .ogv was not extracted simply shows nothing.
+var _bg_movie_name := ""
+var _bg_movie: VideoStreamPlayer = null
+
+func _sync_background_movie() -> void:
+	var want: String = ui.background_movie
+	if want == _bg_movie_name:
+		return
+	_bg_movie_name = want
+	if _bg_movie != null:
+		_bg_movie.queue_free()
+		_bg_movie = null
+	if want.is_empty():
+		return
+	var path: String = main._base().path_join(
+			"data/movies/%s.ogv" % want.get_file())
+	if not FileAccess.file_exists(path):
+		push_warning("background movie not extracted: " + want)
+		return
+	_bg_movie = VideoStreamPlayer.new()
+	_bg_movie.bus = "Movie"
+	var vs := VideoStreamTheora.new()
+	vs.file = path
+	_bg_movie.stream = vs
+	_bg_movie.loop = true
+	_bg_movie.expand = true
+	_bg_movie.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_bg_movie.show_behind_parent = true
+	add_child(_bg_movie)
+	move_child(_bg_movie, 0)
+	_bg_movie.play()
+
 func _process(delta: float) -> void:
 	if ui == null:
 		return
+	_sync_background_movie()
 	# The topmost screen with content. A windowless C++ overlay (the popup
 	# comms panel) falls through to whatever it covers.
 	var scr: PogUi.PogScreen = ui.visible_screen()
