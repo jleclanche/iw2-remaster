@@ -479,6 +479,7 @@ func _physics_process(delta: float) -> void:
 			or (not base_iface.inside and base_iface.cut == 0))
 	_fold_motion()
 	_stream_objects()
+	_contact_sound_cd = maxf(0.0, _contact_sound_cd - delta)
 	_collisions()
 	fields.tick(delta)
 	_update_grid()

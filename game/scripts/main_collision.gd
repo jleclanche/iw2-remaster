@@ -37,6 +37,20 @@ const CONTACT_RESTITUTION := 1.5   # -(1+e) @ 0x100edb4c
 const CONTACT_UNWIND := 1.1        # -1.1 @ 0x100edb50, frames of own travel
 const CONTACT_APPROACH_GATE := 0.1 # @ 0x100ece2c, m/s
 
+# Contact FEEDBACK: the original's collide handler fires per contact event,
+# so scraping along a hull is audible even when the damage rounds to zero.
+# One clatter per cooldown window; the damage/log line keeps its own gate.
+var _contact_sound_cd := 0.0
+
+func _contact_feedback(dv: float, speed_rel: float, what: String) -> void:
+	if dv > 0.05:
+		damage_player(_collision_damage(dv, maxf(ship.mass, 1.0), 0.0, 0.0),
+				"COLLISION - " + what)
+	if _contact_sound_cd <= 0.0 and (dv > 0.05 or speed_rel > 1.0):
+		_contact_sound_cd = 0.35
+		audio.play("audio/sfx/collision.wav", -3.0 if dv > 0.05 else -14.0)
+		audio.play("audio/sfx/ship_clatter.wav", -8.0 if dv > 0.05 else -16.0)
+
 func _contact_angular_term(s: ShipFlight, r: Vector3, n: Vector3) -> float:
 	# n . ((I^-1 (r x n)) x r): the contact's angular admittance, with the
 	# diagonal body-frame box tensor (ShipFlight.moi)
@@ -116,15 +130,10 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 	var n := d / dist
 	var dv := _process_contact(center + n * radius, n, null, vel,
 			get_physics_process_delta_time())
-	# 0.05 m/s is a port-side report gate: resting contact re-fires the
-	# response with near-zero j (the law responds up to +0.1 m/s separating,
-	# its contact stabiliser), and the damage at that dv is ~1e-3 hp -- only
-	# the log line and the clatter loop are worth suppressing
-	if dv.x > 0.05:
-		damage_player(_collision_damage(dv.x, maxf(ship.mass, 1.0),
-				0.0, 0.0), "COLLISION - " + what.to_upper())
-		audio.play("audio/sfx/collision.wav", -3.0)
-		audio.play("audio/sfx/ship_clatter.wav", -8.0)
+	# damage/log above 0.05 m/s dv (below it the hp rounds to ~1e-3);
+	# the clatter also fires for a moving scrape, on a cooldown -- silent
+	# sliding along a hull reads as "collision is gone"
+	_contact_feedback(dv.x, (ship.velocity - vel).length(), what.to_upper())
 	# port-side safety net: our detector reports penetration (a point test),
 	# not surface contact, so never leave the ship inside the sphere
 	d = ship.global_position - center
@@ -237,11 +246,7 @@ func _collide_hull(o: Dictionary) -> void:
 		n = -n
 	var dv := _process_contact(point, n, null, Vector3.ZERO,
 			get_physics_process_delta_time())
-	if dv.x > 0.05:
-		damage_player(_collision_damage(dv.x, maxf(ship.mass, 1.0), 0.0, 0.0),
-			"COLLISION - " + str(o["name"]).to_upper())
-		audio.play("audio/sfx/collision.wav", -3.0)
-		audio.play("audio/sfx/ship_clatter.wav", -8.0)
+	_contact_feedback(dv.x, ship.velocity.length(), str(o["name"]).to_upper())
 	# port-side safety net: stay outside the surface our probe found
 	if (ship.global_position - point).dot(n) < _probe_shape.radius:
 		ship.global_position = point + n * (_probe_shape.radius + 0.5)
