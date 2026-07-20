@@ -60,12 +60,16 @@ and most of it is listed on this page.
    instead of the mission's. Degrades a1m03, a1m07, a2m25, a3m01, a3m03,
    istation, iwingmen. Turrets exist now, so this is routing, not
    simulation. (S)
-7. **The physics feel is a fudge in two load-bearing places.** Collision
-   response is `velocity -= n * rel * 1.6  # bounce off (response
-   stand-in)` (main_collision.gd:32); rotational inertia is a scalar
-   box-tensor stand-in (main_flight.gd:171-209). a2m24 leans on
-   `sim.SetMass` + `iship.RecalculateMOIFromMass` (both stubs) — the one
-   mission most exposed to invented physics. (M-L, needs extraction)
+7. **DONE — the physics is extracted (#7).** Collision response is
+   FiSim::ProcessContact (flux @ 0x100bd920): restitution 0.5 with the
+   full angular admittance denominator, the 1.1-frame positional unwind,
+   momentum bookkeeping (main_collision.gd `_process_contact`). Inertia
+   is the original's diagonal box tensor (iiThrusterSim::Load @
+   0x1007ddf0, m/12 pairings), the tow tensor sum is
+   FiSim::AddMomentOfInertia's as-shipped law (unrotated + unit-mass
+   parallel-axis), and `sim.SetMass` + `iship.RecalculateMOIFromMass`
+   are real (a2m24's pairing). mechcheck: contact-restitution,
+   contact-angular, contact-pair, setmass-moi.
 8. **Cutscene staging stubs:** `sim.SetCollision` (52 calls, 18
    packages; only the player half ported — commit be3434d) risks visible
    collisions during staged scenes; `isim.StopExplosion` (a1m07, a1m10,
@@ -154,8 +158,8 @@ avatars (the remaster draws its own widgets by design).
 
 | Feature | Divergence | Risk |
 |---|---|---|
-| Collision bounce response | `velocity -= n * rel * 1.6`, an invented restitution (main_collision.gd:32) | Wrong feel in every ram/scrape; worst where missions stage collisions (a2m24) |
-| Rotational inertia | scalar box tensor `I = m(w²+h²+l²)/12` + point-mass children; port-null mating not modelled (main_flight.gd:171-209) | Towed/docked stacks turn wrongly; `RecalculateMOIFromMass` stub compounds it |
+| ~~Collision bounce response~~ **EXTRACTED (#7)** | FiSim::ProcessContact @ 0x100bd920: j = 1.5·approach / (Σ1/m + angular admittance), restitution 0.5 (-1.5 @ 0x100edb4c), 1.1-frame unwind (-1.1 @ 0x100edb50), +0.1 m/s gate (@ 0x100ece2c) — `_process_contact` | remaining: our detectors (95 m ring, point-vs-sphere) are still port geometry; the response law is the original's |
+| ~~Rotational inertia~~ **EXTRACTED (#7)** | iiThrusterSim::Load @ 0x1007ddf0: diagonal box tensor diag(m/12·(h²+l²), m/12·(w²+l²), m/12·(w²+h²)); docking adds the child tensor unrotated + a unit-mass parallel-axis term (AddMomentOfInertia @ 0x100c06b0 — no mass factor, as shipped); SetMass/RecalculateMOIFromMass real | remaining: port-null mating offset still capture-moment; per-axis authority now honest |
 | Pirated-pod contents | uniform pick over the commodity table, vs the original's location-weighted generators (main_combat.gd:133) | Act 2 piracy economy: loot distribution is wrong, trade balance drifts from original |
 | Nebula interior | cyclorama wall stand-in beyond a swap distance (space_fx.gd:609-912); extracted, not tuned | Fragile — 6 commits of churn already; only eyeball guards it |
 | ~~Aggressor shield shell~~ **RECOVERED** | the scale was never a radius: `icAggressorShield::Simulate` 0x1002f464 writes the node transform from the hull's W/H/L — scale (W·0.8, H, min·0.5), position (0,0,L·0.75) — and `icAggressorAvatar::Draw` 0x100b94e0 passes a hardcoded rim 1.0 with the apex at `depth`. Both cones now drawn, grow-in honoured | remaining: the two pulse nulls' looping envelopes and the `<glow>` light |
@@ -180,7 +184,7 @@ an end-to-end check; everything else is call-site analysis (see A#4).
 |---|---|---|---|---|
 | **0 — Prologue** | iprelude, m10, m20, m40, m50, m60, generaltraining, missiontour | m20: remote-link training segment (creates `a0_m20_name_remote`, enables connection — handoff no-ops). Verify whether the timed course requires it or it is an optional lesson | m20: `WeaponsUseExplicitTarget`, `SetCollision` staging; m50: `BrightnessOf` branch reads 0 | m10 VERIFIED to first waypoint + checkpoint (campcheck); rest of m10's HUD-tour and m40/m50/m60 never driven end-to-end; icPopUpCommsScreen overlay unverified |
 | **1 — The Badlands** | m00-m10, piracyspecial, wingmentraining | m04, m08, m09: remote-pilot missions — scripts gate on flying the linked drone (m08:442, m09:496-635) | m03/m07: turret designation inert; m07/m10: StopExplosion; m01/m07/m10: SetCollision staging; m10: ghost-ship cutscene body-swap no-ops; m09: thruster-emission cosmetic; wingmen target orders partial | None run past static analysis; piracyspecial + wingmentraining unexercised |
-| **2 — Piracy** | m01-m05, m07-m11, m13, m18-m20, m22, m24, m25 | m02, m18, m24: remote-pilot missions; m24 doubly exposed: also `SetMass` + `RecalculateMOIFromMass` stubs on invented-inertia physics | m25: turret designation; m01/m13: StopExplosion; m01/m18/m24/m25: SetCollision; piracy loot distribution invented (pod contents); player-lootable beams/slug-throwers/remote missiles cannot fire; disruptor arcs invisible (icElectricEffectAvatar) | m05 LDSi burst and m22 tracker poll implemented but never observed in-mission; trading/customise screens live but unexercised by any check beyond basecheck's raise |
+| **2 — Piracy** | m01-m05, m07-m11, m13, m18-m20, m22, m24, m25 | m02, m18, m24: remote-pilot missions (m24's `SetMass` + `RecalculateMOIFromMass` are now real, on the extracted tensor) | m25: turret designation; m01/m13: StopExplosion; m01/m18/m24/m25: SetCollision; piracy loot distribution invented (pod contents); player-lootable beams/slug-throwers/remote missiles cannot fire; disruptor arcs invisible (icElectricEffectAvatar) | m05 LDSi burst and m22 tracker poll implemented but never observed in-mission; trading/customise screens live but unexercised by any check beyond basecheck's raise |
 | **3 — Gathering Storm** | m01-m06, m08-m10, iactthree | m03, m08: remote-pilot missions | m01/m03: turret designation; m04/m10: StopExplosion + SetCollision; infection ARC visual missing (DoT + crust natives work); `IsCapsuleJumpAccelerating` always no; player antimatter streamer unusable (scripted counter-weapon is the antimatter PBC — works via sim.AddSubsim, implemented) | Alien fights, capsule-chase sequences, endgame never run; alienswarm INI missing in original too (no-op'd there as well — parity, amusingly) |
 | **JAFS side jobs** ("act 4", ijafsscript + imissiongenerator*) | 29 generated jobs | none known | SetCollision staging; generated economy rides the invented pod-content weighting | Entirely unexercised; runs on implemented natives (trade/cargo/email all 100%) |
 
@@ -228,9 +232,9 @@ these lands on sand.
    `BrightnessOf` rebind, `IsLDSScrambled`, icPopUpCommsScreen runtime
    check. Rationale: clears most of the per-mission "Degraded" column
    for a few days' work; each is S with a named call-site list above.
-7. **Physics honesty: collision response + inertia tensor extraction**
-   (replace the 1.6 bounce and scalar tensor with recovered laws; then
-   implement `SetMass`/`RecalculateMOIFromMass` for real). Before a2m24.
+7. ~~Physics honesty: collision response + inertia tensor extraction~~
+   **DONE** — ProcessContact law, box tensor, tow tensor sum,
+   `SetMass`/`RecalculateMOIFromMass` real (#7 closed).
 8. **Turret fighters** (icTurretShip + CreateTurretFighters +
    AddTFighters plumbing) — after the remote handoff, which it shares
    machinery with (both are "player-adjacent hulls that fly

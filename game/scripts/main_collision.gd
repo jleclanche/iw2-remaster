@@ -18,6 +18,93 @@ func _collision_damage(dv_a: float, m_a: float, dv_b: float, m_b: float) -> floa
 	var nb := dv_b / COLLISION_SWEET
 	return (na * na * m_a + nb * nb * m_b) * COLLISION_FACTOR
 
+# FiSim::ProcessContact (flux.dll @ 0x100bd920) -- the collision RESPONSE law:
+#   gate:    (vp_a - vp_b).n > 0.1 -> no response (@ 0x100ece2c); vp is the
+#            CONTACT-POINT velocity, v + w x r
+#   unwind:  each party not more than twice as heavy as the other backs out
+#            along the normal by 1.1 frames of its own speed, and unwinds its
+#            rotation by the same 1.1 frames (-1.1 @ 0x100edb50)
+#   impulse: j = 1.5 * approach / (1/m_a + 1/m_b
+#                + n.((I^-1_a (r_a x n)) x r_a) + n.((I^-1_b (r_b x n)) x r_b))
+#            (-1.5 @ 0x100edb4c = -(1+e): restitution 0.5). FiSim stores
+#            MOMENTUM (+0x110 linear, +0x11c angular): p_a -= j*n,
+#            L_a -= r_a x j*n, the partner gets the opposite, then
+#            v = p/m and w = I^-1 L.
+# A massless partner is FiSim::SetMass(0): 1/m stored as 0 -- immovable
+# (flux @ 0x100bcbb0). Contacts of docked children forward to the stack
+# parent (+0x164), which carries the summed mass and tensor.
+const CONTACT_RESTITUTION := 1.5   # -(1+e) @ 0x100edb4c
+const CONTACT_UNWIND := 1.1        # -1.1 @ 0x100edb50, frames of own travel
+const CONTACT_APPROACH_GATE := 0.1 # @ 0x100ece2c, m/s
+
+func _contact_angular_term(s: ShipFlight, r: Vector3, n: Vector3) -> float:
+	# n . ((I^-1 (r x n)) x r): the contact's angular admittance, with the
+	# diagonal body-frame box tensor (ShipFlight.moi)
+	if s == null or s.moi.x <= 0.0 or s.moi.y <= 0.0 or s.moi.z <= 0.0:
+		return 0.0
+	var b := s.global_transform.basis
+	var rxn_l: Vector3 = r.cross(n) * b
+	var t := Vector3(rxn_l.x / s.moi.x, rxn_l.y / s.moi.y, rxn_l.z / s.moi.z)
+	return n.dot((b * t).cross(r))
+
+func _contact_spin(s: ShipFlight, r: Vector3, dp: Vector3) -> void:
+	# dL = r x dp; dw = I^-1 dL (angular_velocity is body-frame)
+	if s.moi.x <= 0.0 or s.moi.y <= 0.0 or s.moi.z <= 0.0:
+		return
+	var dl: Vector3 = r.cross(dp) * s.global_transform.basis
+	s.angular_velocity += Vector3(dl.x / s.moi.x, dl.y / s.moi.y, dl.z / s.moi.z)
+
+func _contact_unspin(s: ShipFlight, delta: float) -> void:
+	# the unwind's rotation half: the quaternion integrated by -1.1 frames
+	var back := s.angular_velocity * (-delta * CONTACT_UNWIND)
+	s.rotate_object_local(Vector3.RIGHT, back.x)
+	s.rotate_object_local(Vector3.UP, back.y)
+	s.rotate_object_local(Vector3.BACK, back.z)
+
+## The response, player = party A. `partner` null = a massless obstacle
+## moving at `partner_vel` (its dv term is 0 and it cannot be pushed).
+## `n` points from the partner toward the player. Returns the two speed
+## changes |j|/m -- the inputs of the collision damage law above.
+func _process_contact(point: Vector3, n: Vector3, partner: ShipFlight,
+		partner_vel: Vector3, delta: float) -> Vector2:
+	var inv_m_a := 1.0 / maxf(ship.mass, 1e-6)
+	var r_a := point - ship.global_position
+	var w_a: Vector3 = ship.global_transform.basis * ship.angular_velocity
+	var vp_a: Vector3 = ship.velocity + w_a.cross(r_a)
+	var inv_m_b := 0.0
+	var r_b := Vector3.ZERO
+	var vp_b := partner_vel
+	if partner != null:
+		inv_m_b = 1.0 / partner.mass if partner.mass > 1e-6 else 0.0
+		r_b = point - partner.global_position
+		var w_b: Vector3 = partner.global_transform.basis \
+				* partner.angular_velocity
+		vp_b = partner.velocity + w_b.cross(r_b)
+	var approach := (vp_a - vp_b).dot(n)
+	if approach > CONTACT_APPROACH_GATE:
+		return Vector2.ZERO
+	# positional unwind first (the original's order), on pre-impulse speeds
+	if inv_m_b <= 2.0 * inv_m_a:
+		ship.global_position += n \
+				* (ship.velocity.length() * delta * CONTACT_UNWIND)
+		_contact_unspin(ship, delta)
+	if partner != null and inv_m_a <= 2.0 * inv_m_b:
+		partner.global_position -= n \
+				* (partner.velocity.length() * delta * CONTACT_UNWIND)
+		_contact_unspin(partner, delta)
+	var denom := inv_m_a + inv_m_b + _contact_angular_term(ship, r_a, n)
+	if partner != null:
+		denom += _contact_angular_term(partner, r_b, n)
+	if denom <= 1e-9:
+		return Vector2.ZERO
+	var j := CONTACT_RESTITUTION * approach / denom  # < 0 on approach
+	ship.velocity -= n * (j * inv_m_a)
+	_contact_spin(ship, r_a, n * -j)
+	if partner != null and inv_m_b > 0.0:
+		partner.velocity += n * (j * inv_m_b)
+		_contact_spin(partner, r_b, n * j)
+	return Vector2(absf(j) * inv_m_a, absf(j) * inv_m_b)
+
 func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 		what: String) -> void:
 	# the player against a MASSLESS-partner obstacle (stations, props, field
@@ -27,14 +114,23 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 	if dist >= radius or dist < 0.1:
 		return
 	var n := d / dist
-	var rel: float = (ship.velocity - vel).dot(n)
-	if rel < 0.0:
-		ship.velocity -= n * rel * 1.6  # bounce off (response stand-in)
-		damage_player(_collision_damage(-rel * 1.6, maxf(ship.mass, 1.0),
+	var dv := _process_contact(center + n * radius, n, null, vel,
+			get_physics_process_delta_time())
+	# 0.05 m/s is a port-side report gate: resting contact re-fires the
+	# response with near-zero j (the law responds up to +0.1 m/s separating,
+	# its contact stabiliser), and the damage at that dv is ~1e-3 hp -- only
+	# the log line and the clatter loop are worth suppressing
+	if dv.x > 0.05:
+		damage_player(_collision_damage(dv.x, maxf(ship.mass, 1.0),
 				0.0, 0.0), "COLLISION - " + what.to_upper())
 		audio.play("audio/sfx/collision.wav", -3.0)
 		audio.play("audio/sfx/ship_clatter.wav", -8.0)
-	ship.global_position = center + n * radius
+	# port-side safety net: our detector reports penetration (a point test),
+	# not surface contact, so never leave the ship inside the sphere
+	d = ship.global_position - center
+	dist = d.length()
+	if dist < radius and dist > 0.1:
+		ship.global_position = center + d / dist * radius
 
 # --- station collision hulls -------------------------------------------------
 # The original's REAL collision geometry: every station ini names a
@@ -139,15 +235,16 @@ func _collide_hull(o: Dictionary) -> void:
 	# orient the normal off the surface toward the ship
 	if n.dot(ship.global_position - point) < 0.0:
 		n = -n
-	var rel: float = ship.velocity.dot(n)
-	if rel < 0.0:
-		ship.velocity -= n * rel * 1.6  # bounce off
-		damage_player(clampf(-rel * 0.4, 4.0, 250.0),
+	var dv := _process_contact(point, n, null, Vector3.ZERO,
+			get_physics_process_delta_time())
+	if dv.x > 0.05:
+		damage_player(_collision_damage(dv.x, maxf(ship.mass, 1.0), 0.0, 0.0),
 			"COLLISION - " + str(o["name"]).to_upper())
 		audio.play("audio/sfx/collision.wav", -3.0)
 		audio.play("audio/sfx/ship_clatter.wav", -8.0)
-	# push out of the surface
-	ship.global_position = point + n * (_probe_shape.radius + 0.5)
+	# port-side safety net: stay outside the surface our probe found
+	if (ship.global_position - point).dot(n) < _probe_shape.radius:
+		ship.global_position = point + n * (_probe_shape.radius + 0.5)
 
 func _model_coll_spheres(model: Node3D) -> Array:
 	# one collision sphere per major mesh chunk (model-local), so sprawling

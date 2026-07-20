@@ -25,12 +25,26 @@ var angular_speed_boost := 1.4               # free-flight rotation bonus
 # never author it); `immobile=1` instead forces SetMass(0) = INFINITE
 # (FiSim stores 1/mass at +0xa0; 0 means force can never move it).
 var mass := 0.0
+# iiThrusterSim::Load (0x1007ddf0) and the iship.RecalculateMOIFromMass
+# handler (iship.dll @ 0x10003450): the inertia tensor is the DIAGONAL box
+# tensor over the ini dims -- diag(m/12*(h^2+l^2), m/12*(w^2+l^2),
+# m/12*(w^2+h^2)), 1/12 @ 0x1011ae44 / 0x10004140 -- rebuilt from the
+# CURRENT mass whenever a script changes it (sim.SetMass does NOT rebuild).
+var dims := Vector3.ZERO       # ini width/height/length (m)
+var moi := Vector3.ZERO        # diagonal inertia, body frame
 # Docking (icDockPort::OnDock -> FiSim::AttachChild -> OnAttachChild):
 # the child's mass and moment of inertia are ADDED to the parent's, and
 # FiSim::Integrate divides force by the total -- a heavy docked pod scales
 # your acceleration by mass/(mass+partner), an immobile partner kills it.
 var tow_mass := 0.0            # docked child's mass; INF = immobile partner
-var tow_torque_scale := 1.0    # I_own / (I_own + I_child + m d^2), set by main
+var tow_torque_scale := Vector3.ONE  # per-axis I_own / I_combined, set by main
+
+func recalc_moi() -> void:
+	var k := mass / 12.0
+	moi = Vector3(
+		k * (dims.y * dims.y + dims.z * dims.z),
+		k * (dims.x * dims.x + dims.z * dims.z),
+		k * (dims.x * dims.x + dims.y * dims.y))
 # iiSim::CalculateRadius (0x1007ccf0): sqrt((w^2 + h^2 + l^2) * 0.25) -- the
 # engine's sim radius. The external cameras are authored in RADII (defaults.ini
 # [icArcadeCamera] range = 4, [icChaseCamera] initial_range = 4, ...).
@@ -69,6 +83,8 @@ func load_stats(props: Dictionary) -> void:
 	var h := float(props.get("height", 0.0))
 	var l := float(props.get("length", 0.0))
 	mass = w * h * l * 0.001  # m_density
+	dims = Vector3(w, h, l)
+	recalc_moi()
 	if w > 0.0 or h > 0.0 or l > 0.0:
 		radius = sqrt((w * w + h * h + l * l) * 0.25)  # CalculateRadius
 	turn_rate = Vector3(props.get("pitch_rate", 60), props.get("yaw_rate", 60),

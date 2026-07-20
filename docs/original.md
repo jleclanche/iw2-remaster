@@ -811,6 +811,67 @@ the **viewpoint** teleporting, not the particles.
 
 ---
 
+## 5h. Collision response and the inertia tensor (#7)
+
+**The response law is `FiSim::ProcessContact` (flux.dll @ 0x100bd920)** --
+`FcWorld::RespondToCollisions` (0x100c6140) calls it (vtable +0x70) on the
+lower-id party of each contact pair with `(other, contact_pos<double>,
+normal<float>)`:
+
+1. **Docked children forward to the stack root**: if either party has an
+   attach parent (`+0x164`), the parent's ProcessContact runs instead -- the
+   root carries the summed mass/tensor (below).
+2. Both masses zero -> no response. **`SetMass(0)` = immovable**:
+   `FiSim::SetMass` (0x100bcbb0) stores mass (`+0x18`) and 1/mass (`+0xa0`),
+   and |m| < 1e-6 zeroes BOTH, so forces and impulses never move it.
+3. **Approach gate**: contact-point velocities `vp = v + w x r` (velocity
+   `+0x70`, angular velocity `+0x7c`, `r` = contact - position); if
+   `(vp_a - vp_b)·n > 0.1` (@ 0x100ece2c) -> no response. Note the gate is
+   +0.1: contacts separating slower than 0.1 m/s still respond, which (with
+   e = 0.5 pulling the normal speed toward 0) is the engine's resting-contact
+   stabiliser.
+4. Both parties get sim flag `0x200` (collided; flag `0x1` = destroyed, set
+   by `FiSim::Destroy` 0x100bb310, excludes a party from response).
+5. **Positional unwind**: each party whose partner is at least half its mass
+   (`1/m_b <= 2/m_a` -> A moves, and vice versa) backs out along the normal
+   by `|v| * dt * 1.1` (-1.1 @ 0x100edb50) and integrates its orientation
+   quaternion by **-1.1 frames** of its angular velocity (the 0.5 in the
+   `dq = 0.5 w (x) q` derivative @ 0x100ea2cc).
+6. **The impulse**: `j = 1.5 * approach / (1/m_a + 1/m_b +
+   n·((I⁻¹_a(r_a x n)) x r_a) + n·((I⁻¹_b(r_b x n)) x r_b))` -- the -1.5 @
+   0x100edb4c is -(1+e), so **restitution e = 0.5**. FiSim stores MOMENTUM
+   (`+0x110` linear, `+0x11c` angular): `p_a -= j n`, `L_a -= r_a x j n`,
+   the partner gets the opposite signs, then `v = p/m` and `w = I⁻¹ L`
+   (world-space inverse tensor cached at `+0xc8`).
+
+**The inertia tensor is a diagonal box** (`iiThrusterSim::Load` @ 0x1007ddf0,
+and the `iship.RecalculateMOIFromMass` handler iship.dll @ 0x10003450 rebuilds
+the same thing from the CURRENT mass): `I = diag(m/12*(h²+l²), m/12*(w²+l²),
+m/12*(w²+h²))` over the ini width/height/length -- 1/12 @ 0x1011ae44 /
+0x10004140. `FiSim::SetMomentOfInertia` (0x100bcc00) stores the tensor
+(`+0x24`) and its inverse (`+0xa4`), zeroing both when the determinant is
+below 1e-6. The per-ship `pitch/yaw/roll_accel` factors only scale the stored
+max-torque terms (`+0x230/234/238` = I_axis * accel * deg->rad), NOT the
+collision tensor. `sim.SetMass` (sim.dll @ 0x10005940) is a bare virtual
+`SetMass` -- it does **not** rebuild the tensor; scripts pair it with
+`RecalculateMOIFromMass` when they mean that (a2m24).
+
+**Docking sums tensors with a unit-mass parallel-axis term**:
+`FiSim::OnAttachChild` (0x100c0270) -> `AddMass` + `AddMomentOfInertia`
+(0x100c06b0), which adds the child's tensor UNROTATED plus
+`(|r|² δ_ij - r_i r_j)` built from the RAW attach offset (`+0x168`, the same
+plain-metres vector `UpdateChild` rides) -- **no mass factor**, as shipped.
+The offset term is therefore negligible against the box tensors, and a docked
+stack turns with `I_parent + I_child` to first order. Both Add walks
+propagate up the parent chain (subtract-then-re-add), keeping the stack root
+authoritative.
+
+Port: main_collision.gd `_process_contact` (+ the mechcheck steps
+contact-restitution / contact-angular / contact-pair / setmass-moi, which
+reproduce the formula's exact numbers).
+
+---
+
 ## 6. Factions
 
 Diplomacy is a **feelings matrix**: a float in `[-1, +1]`, negative hostile,

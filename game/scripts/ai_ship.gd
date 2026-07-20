@@ -164,11 +164,14 @@ func _load_dims(props: Dictionary) -> void:
 		half_dims = Vector3(w, h, l) * 0.5
 		explosion_size = half_dims.length()  # CalculateRadius 0x1007ccf0
 		mass = w * h * l * 0.001             # iiThrusterSim::Load, m_density
+		dims = Vector3(w, h, l)
 	else:
 		# no dimensions in the record: the radius is the only size we have
 		half_dims = Vector3.ONE * radius * 0.5
 		explosion_size = radius
 		mass = radius * radius * radius * 0.001
+		dims = Vector3.ONE * radius
+	recalc_moi()
 
 func setup_ini(path: String, model: Node3D = null) -> void:
 	# the authored hull: hit_points, armour and the full subsim list

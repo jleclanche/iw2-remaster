@@ -1377,6 +1377,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_tri_drive",
 	&"_ms_tow_dock",
 	&"_ms_tow_ride",
+	&"_ms_contact_law",
+	&"_ms_contact_pair",
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
 	&"_ms_gatling",
@@ -1777,9 +1779,15 @@ func _ms_tow_dock(_delta: float) -> void:
 	var mass_ok: bool = absf(m.ship.mass - 672.0) < 1.0
 	var did: bool = m._try_tow_dock()
 	var scale_ok: bool = absf(m.ship.mass_scale() - 672.0 / 797.0) < 0.01
-	_mech("tow-dock", did and mass_ok and scale_ok,
-		"tug %.0f + pod %.0f -> accel x %.3f"
-			% [m.ship.mass, pod.mass, m.ship.mass_scale()])
+	# the per-axis tensor scale (FiSim::AddMomentOfInertia @ 0x100c06b0): the
+	# pod adds its box tensor plus a UNIT-MASS offset term, so roll (z, no
+	# offset penalty for an aft pod) keeps more authority than pitch/yaw and
+	# nothing drops below ~0.8 -- the old m*d^2 stand-in sat near 0.09 on x/y
+	var ts: Vector3 = m.ship.tow_torque_scale
+	var ts_ok: bool = ts.z > ts.x and ts.x > 0.8 and ts.z < 0.95
+	_mech("tow-dock", did and mass_ok and scale_ok and ts_ok,
+		"tug %.0f + pod %.0f -> accel x %.3f, torque (%.3f %.3f %.3f)"
+			% [m.ship.mass, pod.mass, m.ship.mass_scale(), ts.x, ts.y, ts.z])
 	_mech_v0 = pod.global_position
 	_mech_next()
 
@@ -1799,6 +1807,68 @@ func _ms_tow_ride(_delta: float) -> void:
 		"accel scale back to %.3f" % m.ship.mass_scale())
 	if pod2 != null:
 		_mech_reap(pod2)
+	_mech_next()
+
+func _ms_contact_law(_delta: float) -> void:
+	# --- FiSim::ProcessContact (flux @ 0x100bd920): restitution 0.5 ---------
+	# central static hit: r x n = 0, no angular admittance, so the response
+	# is exactly v'.n = -0.5 * (v.n). The OLD invented 1.6 bounce gave -0.6;
+	# the tolerance separates them, so this fails against the stand-in.
+	var n := Vector3(1, 0, 0)
+	m.ship.velocity = -n * 12.0
+	m.ship.angular_velocity = Vector3.ZERO
+	var center: Vector3 = m.ship.global_position - n * 190.0
+	m._collide_sphere(center, 200.0, Vector3.ZERO, "MECH WALL")
+	var vn: float = m.ship.velocity.dot(n)
+	var spin0_ok: bool = m.ship.angular_velocity.length() < 0.001
+	_mech("contact-restitution", absf(vn - 6.0) < 0.5 and spin0_ok,
+		"central bounce v.n %+.2f (want +6.0 = -0.5 * approach), spin %.5f"
+			% [vn, m.ship.angular_velocity.length()])
+	# off-centre: the contact sits 30 m above the centre of mass, so part of
+	# the impulse must shed into spin and the linear kick shrinks
+	m.ship.velocity = -n * 12.0
+	var point: Vector3 = m.ship.global_position - n * 5.0 + Vector3(0, 30, 0)
+	m._process_contact(point, n, null, Vector3.ZERO, 0.016)
+	var vn2: float = m.ship.velocity.dot(n)
+	var w2: float = m.ship.angular_velocity.length()
+	_mech("contact-angular", w2 > 0.001 and vn2 < 5.99 and vn2 > -11.5,
+		"off-centre v.n %+.2f (< the central +6), spin %.4f rad/s" % [vn2, w2])
+	m.ship.velocity = Vector3.ZERO
+	m.ship.angular_velocity = Vector3.ZERO
+	_mech_next()
+
+func _ms_contact_pair(_delta: float) -> void:
+	# two-body contact: the impulse splits by inverse mass -- momentum is
+	# conserved exactly, and the light pod takes the bigger velocity change
+	var pod := _mech_spawn("Contact Pod", 1000.0,
+			m.ship.global_position + Vector3(90, 0, 0))
+	pod.setup_ini("sims/ships/utility/cargo_pod.ini", null)
+	pod.mass = 125.0
+	pod.recalc_moi()
+	pod.velocity = Vector3.ZERO
+	pod.angular_velocity = Vector3.ZERO
+	m.ship.velocity = Vector3(30, 0, 0)
+	m.ship.angular_velocity = Vector3.ZERO
+	var p0: Vector3 = m.ship.velocity * m.ship.mass + pod.velocity * pod.mass
+	m._collide_ai(pod)
+	var p1: Vector3 = m.ship.velocity * m.ship.mass + pod.velocity * pod.mass
+	_mech("contact-pair", pod.velocity.x > 1.0 and (p1 - p0).length() < 0.5
+			and pod.velocity.x > m.ship.velocity.x,
+		"pod kicked %+.1f m/s, player %+.1f, |dp| %.3f"
+			% [pod.velocity.x, m.ship.velocity.x, (p1 - p0).length()])
+	# --- sim.SetMass + iship.RecalculateMOIFromMass (the a2m24 pairing) -----
+	var s = m.pog_world._wrap_ship(pod)
+	var moi0: Vector3 = pod.moi
+	m.pog_world._s_set_mass(null, [s, 250.0])
+	var mass_set: bool = absf(pod.mass - 250.0) < 0.01
+	var moi_frozen: bool = pod.moi == moi0   # SetMass does NOT rebuild it
+	m.pog_world._sh_recalc_moi(null, [s])
+	var moi_ratio: float = pod.moi.x / maxf(moi0.x, 1e-6)
+	_mech("setmass-moi", mass_set and moi_frozen
+			and absf(moi_ratio - 2.0) < 0.01,
+		"mass 125 -> 250, MOI frozen until recalc, then x %.2f" % moi_ratio)
+	_mech_reap(pod)
+	m.ship.velocity = Vector3.ZERO
 	_mech_next()
 
 ## kill_ai now runs OnExplode's timed dramatic sequence for anything over

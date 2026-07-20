@@ -169,9 +169,13 @@ func _drop_out_of_lds() -> void:
 # well depends on your hull's mass (= w*h*l*0.001, iiThrusterSim::Load)
 # against the pod's. The tug (672) barely feels a pod (125); the command
 # section (4.2) can hardly budge one. Port-null mating is not modelled: the
-# partner keeps its capture-moment offset. The torque side is a scalar
-# stand-in for the inertia tensor sum (box I = m*(w^2+h^2+l^2)/12 plus the
-# parallel-axis m*d^2 term).
+# partner keeps its capture-moment offset. The torque side is the real
+# tensor sum: FiSim::AddMomentOfInertia (flux @ 0x100c06b0) adds the child's
+# tensor UNROTATED plus a parallel-axis term (|r|^2 - r_i r_j) built from
+# the RAW attach offset with NO mass factor (OnAttachChild @ 0x100c0270
+# passes +0x168, the same plain-metres vector UpdateChild rides) -- so the
+# offset term is negligible against the box tensors, and a docked stack
+# turns with I_parent + I_child to first order.
 var towed: AiShip = null
 var towed_rel := Transform3D()
 var towed_prev_behavior := "patrol"
@@ -206,16 +210,17 @@ func _try_tow_dock() -> bool:
 	best.behavior = "towed"
 	towed_rel = ship.global_transform.affine_inverse() * best.global_transform
 	ship.tow_mass = best.mass
-	# scalar inertia stand-in: I = m*(w^2+h^2+l^2)/12, + m*d^2 for the child
-	var pd := Vector3(float(ship_stats.get("width", 80)),
-			float(ship_stats.get("height", 70)),
-			float(ship_stats.get("length", 120)))
-	var i_own: float = ship.mass * pd.length_squared() / 12.0
-	var cd := best.half_dims * 2.0
-	var d2 := ship.global_position.distance_squared_to(best.global_position)
-	var i_child: float = best.mass * cd.length_squared() / 12.0 + best.mass * d2
-	ship.tow_torque_scale = i_own / maxf(i_own + i_child, 0.001) \
-			if i_own > 0.0 else 0.0
+	# the tensor sum (see the header comment): child box tensor + the
+	# unit-mass parallel-axis diagonal of the attach offset
+	var r := towed_rel.origin
+	var pa := Vector3(r.length_squared() - r.x * r.x,
+			r.length_squared() - r.y * r.y,
+			r.length_squared() - r.z * r.z)
+	var comb := ship.moi + best.moi + pa
+	ship.tow_torque_scale = Vector3(
+			ship.moi.x / maxf(comb.x, 1e-6),
+			ship.moi.y / maxf(comb.y, 1e-6),
+			ship.moi.z / maxf(comb.z, 1e-6))
 	audio.play("audio/sfx/dock.wav", -4.0)
 	hud.log_msg("DOCKED: %s  (MASS %d + %d)"
 			% [str(best.display_name).to_upper(), int(ship.mass), int(best.mass)])
@@ -239,7 +244,7 @@ func _release_tow(nudge: bool) -> void:
 			hud.log_msg("UNDOCKED: %s" % str(towed.display_name).to_upper())
 	towed = null
 	ship.tow_mass = 0.0
-	ship.tow_torque_scale = 1.0
+	ship.tow_torque_scale = Vector3.ONE
 
 func _try_dock() -> void:
 	var near := _nearest("station")

@@ -330,21 +330,23 @@ func _collide_ai(a: AiShip) -> void:
 	if dist >= 95.0 or dist < 0.1:
 		return
 	var n := d / dist
-	var rel: float = (ship.velocity - a.velocity).dot(n)
-	if rel < 0.0:
-		var m_p := maxf(ship.mass, 1.0)
-		var m_a := maxf(a.mass, 1.0)
-		var dv_p := -rel * 1.6
-		var dv_a := dv_p * m_p / m_a
-		ship.velocity -= n * rel * 1.6
-		a.velocity += n * rel * 1.6 * (m_p / m_a)
-		var dmg := _collision_damage(dv_p, m_p, dv_a, m_a)
+	# the contact point sits midway between the centres: the 95 m ring is our
+	# detector's geometry, not the original's collider mesh
+	var dv := _process_contact(a.global_position + n * (dist * 0.5), n, a,
+			Vector3.ZERO, get_physics_process_delta_time())
+	if dv.x > 0.05 or dv.y > 0.05:
+		var dmg := _collision_damage(dv.x, maxf(ship.mass, 1.0),
+				dv.y, maxf(a.mass, 1.0))
 		damage_player(dmg, "COLLISION - " + str(a.display_name).to_upper())
 		if a.damage(dmg):
 			kill_ai(a)
 		audio.play("audio/sfx/collision.wav", -3.0)
 		audio.play("audio/sfx/ship_clatter.wav", -8.0)
-	ship.global_position = a.global_position + n * 95.0
+	# port-side safety net: never leave the pair interpenetrating
+	d = ship.global_position - a.global_position
+	dist = d.length()
+	if dist < 95.0 and dist > 0.1:
+		ship.global_position = a.global_position + d / dist * 95.0
 
 func _collisions() -> void:
 	# player_collision: leave() clears docked_at BEFORE the startup movie, but

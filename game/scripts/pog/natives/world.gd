@@ -836,9 +836,20 @@ func _s_is_hidden(_t, a: Array) -> Variant:
 	var s := _as_sim(a[0])
 	return 1 if (s != null and s.hidden) else 0
 
-# @stub sim.SetMass
-func _s_noop(_t, _a: Array) -> Variant:
-	# Mass waits on the inertia extraction (#7).
+# @native sim.SetMass
+func _s_set_mass(_t, a: Array) -> Variant:
+	# sim.dll @ 0x10005940: resolve the FiSim and call virtual SetMass
+	# (vtbl+0x50). FiSim::SetMass (flux @ 0x100bcbb0) stores mass AND 1/mass;
+	# |m| < 1e-6 stores both as 0 = immovable. The tensor is NOT rebuilt --
+	# scripts follow with iship.RecalculateMOIFromMass when they mean that.
+	var s := _as_sim(a[0])
+	if s == null:
+		return 0
+	var m := float(a[1]) if a.size() > 1 else 0.0
+	if s.node != null and is_instance_valid(s.node) and "mass" in s.node:
+		s.node.mass = m
+	elif not s.rec.is_empty():
+		s.rec["mass"] = m
 	return 0
 
 
@@ -1829,12 +1840,22 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 # (IsAIDisabled is a DEAD EXPORT: zero call sites in any .pogasm -- apicov
 # flags it so. Kept bound only so the UNBOUND count stays 0.)
 # @stub iship.PercentageThrusterEmission
-# @stub iship.RecalculateMOIFromMass
 # @stub iship.CreateTurretFighters
 func _sh_noop(_t, _a: Array) -> Variant:
 	# PercentageThrusterEmission is an avatar channel expression;
-	# RecalculateMOIFromMass waits on the inertia extraction (#7);
 	# CreateTurretFighters is the icTurretShip gap (#5).
+	return 0
+
+# @native iship.RecalculateMOIFromMass
+func _sh_recalc_moi(_t, a: Array) -> Variant:
+	# iship.dll @ 0x10003450: rebuild the diagonal box tensor from the
+	# CURRENT mass -- diag(m/12*(h^2+l^2), m/12*(w^2+l^2), m/12*(w^2+h^2)),
+	# 1/12 @ 0x10004140 -- refresh the max-torque terms and call virtual
+	# SetMomentOfInertia. Ours: ShipFlight.recalc_moi() (the a2m24 pairing
+	# with sim.SetMass).
+	var s := _as_sim(a[0])
+	if s != null and s.node is ShipFlight:
+		(s.node as ShipFlight).recalc_moi()
 	return 0
 
 
@@ -2002,7 +2023,7 @@ const _BINDINGS := {
 	"sim.sethidden": "_s_set_hidden", "sim.ishidden": "_s_is_hidden",
 	"sim.setcullable": "_s_set_cullable",
 	"sim.setcollision": "_s_set_collision",
-	"sim.setmass": "_s_noop",
+	"sim.setmass": "_s_set_mass",
 	"sim.avataraddchannel": "_s_avatar_add_channel",
 	"sim.avatarsetchannel": "_s_avatar_set_channel",
 	"sim.avatarremovechannel": "_s_avatar_remove_channel",
@@ -2079,7 +2100,7 @@ const _BINDINGS := {
 	"iship.undock": "_sh_undock", "iship.undockself": "_sh_undock",
 	"iship.brightnessof": "_sh_brightness_of",
 	"iship.percentagethrusteremission": "_sh_noop",
-	"iship.recalculatemoifrommass": "_sh_noop",
+	"iship.recalculatemoifrommass": "_sh_recalc_moi",
 	"iship.isldsscrambled": "_sh_is_lds_scrambled",
 	"iship.hashyperspacetracker": "_sh_has_tracker",
 	"iship.hyperspacetrackertarget": "_sh_tracker_target",
