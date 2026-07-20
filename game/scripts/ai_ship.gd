@@ -106,6 +106,11 @@ var infection_damage: float:
 var infection_fx: Node3D = null  # the sfx/infection crawl; presence IS the
 								# "effect on" state (IsAlienEffectOn 0x1007ee70)
 var disrupt_fx: ParticleFx = null  # the sfx/disruptor arcs while disrupted
+# iship.WeaponsUseExplicitTarget on a hull without a turret battery: the
+# icTurretShip attached-fire target (+0x324, mode 3 of Think @ 0x10034700).
+# The guns fire AT this whatever the flight AI is doing -- the wingman
+# fighter rides the player docked and shoots turret-style.
+var weapons_target: Node3D = null
 # A cannon fitted at runtime by sim.AddSubsim (act 3's nps_antimatter_pbc):
 # when set, _attack fires this projectile instead of main.spawn_bolt's
 # standard PBC bolt. Spec dict as PbcWeapons uses, plus "refire".
@@ -282,6 +287,7 @@ func _physics_process(delta: float) -> void:
 				and main.has_method("kill_ai"):
 			main.kill_ai(self)
 			return
+	_explicit_fire()
 	match behavior:
 		"piloted":
 			# the REMOTE LINK (#1): the player's pilot is installed here --
@@ -304,6 +310,34 @@ func _physics_process(delta: float) -> void:
 		_:
 			_patrol(delta)
 	super._physics_process(delta)
+
+# icTurretShip::Think's attached-fire branch (0x10034700, raw-disasm):
+# with a resolved, HOSTILE explicit target the fire solver FUN_10034200
+# runs turret-style -- the guns solve onto the target's lead point at the
+# assumed 6000 m/s bolt speed regardless of the hull's own attitude --
+# else FUN_100344e0 stows. Ours: bolts leave toward the lead point when
+# in range, whatever the flight AI (or the dock) is doing with the nose.
+const TURRET_LEAD_SPEED := 6000.0
+
+func _explicit_fire() -> void:
+	if weapons_target == null:
+		return
+	if not is_instance_valid(weapons_target):
+		weapons_target = null
+		return
+	if (disrupt_time > 0.0 and disrupt_full) or fire_cooldown > 0.0 \
+			or main == null:
+		return
+	var tpos: Vector3 = weapons_target.global_position
+	var dist := global_position.distance_to(tpos)
+	if dist >= weapon_range:
+		return
+	var tvel := Vector3.ZERO
+	if "velocity" in weapons_target:
+		tvel = weapons_target.velocity
+	var aim: Vector3 = tpos + (tvel - velocity) * (dist / TURRET_LEAD_SPEED)
+	fire_cooldown = 0.5
+	main.spawn_bolt(self, (aim - global_position).normalized())
 
 func _steer_toward(point: Vector3, _delta: float) -> float:
 	# steer through the flight model's angular dynamics (input_rotate) so AI

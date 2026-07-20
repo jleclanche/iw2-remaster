@@ -98,6 +98,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_star_streaks",
 	&"_ms_lightmap_layer",
 	&"_ms_turret_fighters",
+	&"_ms_attached_fire",
+	&"_ms_attached_fire_assert",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1270,6 +1272,56 @@ func _ms_turret_fighters(_delta: float) -> void:
 	for s in two:
 		if s != null and s.node != null and is_instance_valid(s.node):
 			_mech_reap(s.node)
+	_mech_next()
+
+var _af_fighter: AiShip = null
+var _af_victim: AiShip = null
+var _af_bolts0 := 0
+
+func _ms_attached_fire(_delta: float) -> void:
+	# icTurretShip attached fire (#5): WeaponsUseExplicitTarget on a hull
+	# without a turret battery must make its guns solve onto the target
+	# turret-style (Think 0x10034700 mode 3) -- bolts leave toward the
+	# lead point regardless of the hull's own attitude
+	_af_fighter = _mech_spawn("TFighter", 500.0,
+			m.ship.global_position + Vector3(0, -90000, 0))
+	_af_fighter.sim_key = "tfighter_probe"
+	_af_victim = _mech_spawn("TFighter Prey", 500.0,
+			_af_fighter.global_position + Vector3(1000, 0, 0))
+	_af_victim.sim_key = "tfighter_prey"
+	# face the fighter AWAY from the prey: the turret solve must not care
+	_af_fighter.global_transform.basis = Basis.looking_at(
+			Vector3(-1, 0, 0), Vector3.UP)
+	var w: PogWorld = m.pog_rt.world
+	_af_bolts0 = m.weapons.bolts.size()
+	m.pog_rt.native("iship.weaponsuseexplicittarget",
+			[w._wrap_ship(_af_fighter), w._wrap_ship(_af_victim)])
+	_mech_next()
+
+func _ms_attached_fire_assert(_delta: float) -> void:
+	var fired := 0
+	var at_prey := 0
+	for i in range(_af_bolts0, m.weapons.bolts.size()):
+		var b: Dictionary = m.weapons.bolts[i]
+		if b.get("shooter") != _af_fighter:
+			continue
+		fired += 1
+		var dir: Vector3 = (b["vel"] as Vector3).normalized()
+		var want: Vector3 = (_af_victim.global_position
+				- _af_fighter.global_position).normalized()
+		if dir.dot(want) > 0.9:
+			at_prey += 1
+	if fired == 0 and demo_t < 200.0:
+		return
+	# ... and LockDownWeapons must clear the solve
+	m.pog_rt.native("iship.lockdownweapons",
+			[m.pog_rt.world._wrap_ship(_af_fighter)])
+	var cleared: bool = _af_fighter.weapons_target == null
+	_mech("attached-fire", fired > 0 and at_prey == fired and cleared,
+			"%d bolt(s), %d toward the prey, lock-cleared=%s"
+			% [fired, at_prey, cleared])
+	_mech_reap(_af_fighter)
+	_mech_reap(_af_victim)
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

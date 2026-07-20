@@ -1792,10 +1792,14 @@ func _sh_undock(_t, a: Array) -> Variant:
 # @native iship.LockDownWeapons
 func _sh_lock_weapons(_t, a: Array) -> Variant:
 	# The mission locks the player's guns during the training approach, which is
-	# why firing does nothing until Clay says otherwise.
+	# why firing does nothing until Clay says otherwise. On an AI hull the
+	# lock clears the explicit attached-fire target (iwingmen purges orders
+	# and locks before re-targeting a fighter).
 	var s := _as_sim(a[0])
 	if game != null and s != null and s.is_player:
 		game.fire_lock = 1.0e9
+	elif s != null and s.node is AiShip and is_instance_valid(s.node):
+		(s.node as AiShip).weapons_target = null
 	return 0
 
 # @native iship.SetAIDisabled
@@ -2028,8 +2032,13 @@ func _sh_weapons_explicit_target(_t, a: Array) -> Variant:
 	if t != null and t.node is Node3D and is_instance_valid(t.node):
 		target = t.node
 	if s.node is AiShip:
-		return 1 if not Turrets.instance.arm_ship(s.node, target).is_empty() \
-			else 0
+		if not Turrets.instance.arm_ship(s.node, target).is_empty():
+			return 1
+		# no turret battery: the icTurretShip attached-fire path -- the
+		# hull's own guns solve onto the explicit target turret-style
+		# (Think 0x10034700 mode 3, +0x324; ai_ship._explicit_fire)
+		(s.node as AiShip).weapons_target = target
+		return 1 if target != null else 0
 	if not s.rec.is_empty():
 		return 1 if not Turrets.instance.arm_station(s.rec, target).is_empty() \
 			else 0
