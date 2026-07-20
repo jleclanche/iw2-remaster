@@ -337,13 +337,39 @@ func _campcheck_port() -> void:
 						and a.behavior == "attack":
 					m.kill_ai(a)
 			if m.mission.objectives.has("a1_m01_objective_change_iff"):
+				print("CAMPCHECK(port): act 1 m01 booted, fight won, ",
+					"change_iff raised — advancing to act 2")
+				m.pog_rt.native("igame.nextact", ["iActTwo"])
+				demo_phase = 4
+		4:
+			# iActTwo.Main -> MasterScript -> (no SkipAct) -> chapter switch
+			# case 0 -> iact2mission01.Main: the cutscene stages the Haven
+			# Station rescue, a three-line conversation runs (comms.fast
+			# auto-answers), and the mission's own logic raises the protect
+			# objective (iact2mission01.pog @ 4084..4353).
+			if m.mission.objectives.has("a2_m01_objectives_protect"):
+				print("CAMPCHECK(port): act 2 m01 booted, protect raised — ",
+					"advancing to act 3")
+				m.pog_rt.native("igame.nextact", ["iActThree"])
+				demo_phase = 5
+		5:
+			# iActThree -> MasterScript -> iact3mission01.Main: the mission
+			# SENDS an email and holds until the player READS it
+			# (iact3mission01.pog @ 2359..2490); the check reads it the way
+			# the PDA inbox would (iemail.MarkAsRead), and the rendezvous
+			# objective follows.
+			var mail: Variant = m.pog_rt.native("iemail.find",
+					["html:/text/act_3/act3_mission01_email"])
+			if mail != null and not (mail is int and int(mail) == 0):
+				m.pog_rt.native("iemail.markasread", [mail])
+			if m.mission.objectives.has("a3_m01_objectives_redezvous"):
 				var ck := _checkpoint_check()
 				var sg := _stub_gate(_known_stubs())
-				print("CAMPCHECK(port): PASS — act 1 m01 booted, fight won, ",
-					"change_iff raised; objectives=",
+				print("CAMPCHECK(port): PASS — acts 1/2/3 m01 booted and ",
+					"raised their first objectives; objectives=",
 					m.mission.objectives.size())
 				get_tree().quit(0 if ck and sg else 1)
-	if demo_t > 180.0:
+	if demo_t > 240.0:
 		var tail: Array = []
 		for i in range(maxi(0, m.objects.size() - 10), m.objects.size()):
 			tail.append(str(m.objects[i]["name"]))
