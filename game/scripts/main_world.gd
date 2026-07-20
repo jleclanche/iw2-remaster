@@ -171,6 +171,10 @@ func _make_additive(node: Node3D) -> void:
 					var sm := ShaderMaterial.new()
 					sm.shader = _additive_backdrop_shader()
 					sm.set_shader_parameter("albedo_tex", std.albedo_texture)
+					# the deepest painter slot (PRIORITY_PLANET note): this
+					# camera-anchored dome sits 480 km out and would otherwise
+					# distance-sort in FRONT of every planet
+					sm.render_priority = PRIORITY_SKY
 					m.set_surface_override_material(i, sm)
 				else:
 					var dup: StandardMaterial3D = std.duplicate()
@@ -178,6 +182,7 @@ func _make_additive(node: Node3D) -> void:
 					dup.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 					dup.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 					dup.cull_mode = BaseMaterial3D.CULL_DISABLED
+					dup.render_priority = PRIORITY_SKY
 					m.set_surface_override_material(i, dup)
 
 func _additive_backdrop_shader() -> Shader:
@@ -330,6 +335,7 @@ func _add_starfield(n: Dictionary) -> void:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_POINTS, arrays)
 	var mat := ShaderMaterial.new()
 	mat.shader = _starfield_shader()
+	mat.render_priority = PRIORITY_SKY  # backdrop slot, behind the planets
 	mesh.surface_set_material(0, mat)
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
@@ -555,12 +561,23 @@ void fragment() {
 """
 	return planet_shader
 
+# The sky is a painter-ordered stack in the original: the cyclorama dome +
+# starfield, then the nebula layers, then the planets pass (0x100cf220,
+# z-test off), then the world. Godot's transparent queue sorts by distance
+# instead, which put the camera-anchored sky dome (480 km out) and the
+# in-nebula wall in FRONT of Belial at Eureka's L-point. render_priority
+# -40 (sky) < -30 (nebula, space_fx.gd) < -20 (bodies) < 0 (world)
+# reproduces the original's order.
+const PRIORITY_SKY := -40
+const PRIORITY_PLANET := -20
+
 func _planet_material(rec: Dictionary) -> ShaderMaterial:
 	# icPlanetAvatar's shader (FUN_100cdc50 @ 0x100cdc50): layer 0 is
 	# SurfaceType(0) out of planets.ini's rocky_ or gassy_planet_textures,
 	# tinted by SurfaceTint(0).
 	var mat := ShaderMaterial.new()
 	mat.shader = _planet_shader()
+	mat.render_priority = PRIORITY_PLANET
 	var textures: Array = rec.get("surface_textures", [])
 	if not textures.is_empty():
 		mat.set_shader_parameter("albedo_tex", _planet_texture(str(textures[0])))
@@ -577,6 +594,7 @@ func _atmosphere_material(rec: Dictionary) -> ShaderMaterial:
 	# same lighting rule as the surface: the cloud deck has a terminator too
 	var mat := ShaderMaterial.new()
 	mat.shader = _planet_shader()
+	mat.render_priority = PRIORITY_PLANET
 	mat.set_shader_parameter("albedo_tex",
 		_planet_texture(str(rec["atmosphere_texture"])))
 	var tint := _surface_tint(rec, 0).lerp(_surface_tint(rec, 1), 0.5) \
@@ -663,6 +681,7 @@ func _spawn_ring(rec: Dictionary, i: int) -> MeshInstance3D:
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.render_priority = PRIORITY_PLANET
 	var node := MeshInstance3D.new()
 	node.mesh = _annulus_mesh(r - RING_WIDTH, r)
 	node.mesh.surface_set_material(0, mat)

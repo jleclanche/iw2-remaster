@@ -712,6 +712,12 @@ func _neb_build() -> void:
 		var mat := ShaderMaterial.new()
 		mat.shader = sh
 		mat.set_shader_parameter("tex", tex)
+		# the original draws the nebula as part of the sky backdrop, BEFORE
+		# the planets pass (icPlanetsAvatar::Render 0x100cf220 runs "right
+		# after the cyclorama"); Godot's transparent queue sorts by distance,
+		# which painted this camera-range wall OVER a planet behind it
+		# (Eureka's Belial). render_priority pins the painter order.
+		mat.render_priority = -30
 		var mi := MeshInstance3D.new()
 		mi.mesh = quad
 		mi.material_override = mat
@@ -723,6 +729,7 @@ func _neb_build() -> void:
 	sky_sh.code = NEB_SKY_SHADER
 	var sky_mat := ShaderMaterial.new()
 	sky_mat.shader = sky_sh
+	sky_mat.render_priority = -30  # backdrop wall: same painter slot
 	_neb_sky = MeshInstance3D.new()
 	_neb_sky.mesh = quad
 	_neb_sky.material_override = sky_mat
