@@ -384,7 +384,21 @@ func _campcheck_port() -> void:
 			# auto-answers), and the mission's own logic raises the protect
 			# objective (iact2mission01.pog @ 4084..4353).
 			if m.mission.objectives.has("a2_m01_objectives_protect"):
-				print("CAMPCHECK(port): act 2 m01 booted, protect raised — ",
+				print("CAMPCHECK(port): act 2 m01 protect raised — ",
+					"defending the LOR platform (issue #4)")
+				demo_phase = 40
+		40:
+			# the protect gate (iact2mission01 case 4733/4823): the objective
+			# completes when the ATTACKER GROUP is empty. The check plays
+			# the player's defence -- kill everything on the attack
+			for a2a in m.ai_ships:
+				if is_instance_valid(a2a) and not a2a.dying \
+						and a2a.behavior == "attack":
+					m.kill_ai(a2a)
+			var prot: Dictionary = m.mission.objectives.get(
+					"a2_m01_objectives_protect", {})
+			if prot.get("done", false):
+				print("CAMPCHECK(port): act 2 m01 protect COMPLETE — ",
 					"advancing to act 3")
 				m.pog_rt.native("igame.nextact", ["iActThree"])
 				demo_phase = 5
@@ -399,10 +413,28 @@ func _campcheck_port() -> void:
 			if mail != null and not (mail is int and int(mail) == 0):
 				m.pog_rt.native("iemail.markasread", [mail])
 			if m.mission.objectives.has("a3_m01_objectives_redezvous"):
+				print("CAMPCHECK(port): act 3 m01 rendezvous raised — ",
+					"flying to the League Rendezvous (issue #4)")
+				demo_phase = 50
+		50:
+			# the movement watch (iact3mission01 case 2597,
+			# abb_common.WatchSimsMovement): reaching the
+			# a3_m01_waypoint_initial_meeting waypoint ("League Rendezvous")
+			# completes the objective at case 2745
+			var wp3 := _object_index("League Rendezvous")
+			if wp3 >= 0:
+				var o3: Dictionary = m.objects[wp3]
+				m.px = o3["x"]
+				m.py = o3["y"]
+				m.pz = o3["z"]
+				m.ship.velocity = Vector3.ZERO
+			var rdv: Dictionary = m.mission.objectives.get(
+					"a3_m01_objectives_redezvous", {})
+			if rdv.get("done", false):
 				var ck := _checkpoint_check()
 				var sg := _stub_gate(_known_stubs())
-				print("CAMPCHECK(port): PASS — acts 1/2/3 m01 booted and ",
-					"raised their first objectives; objectives=",
+				print("CAMPCHECK(port): PASS — a1m01 and a2m01-protect ",
+					"COMPLETE, a3m01 rendezvous reached; objectives=",
 					m.mission.objectives.size())
 				get_tree().quit(0 if ck and sg else 1)
 	if demo_t > 240.0:
