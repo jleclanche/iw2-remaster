@@ -419,13 +419,15 @@ func _campcheck_port() -> void:
 		# iact2mission02), reached a2_m02_objectives_wait once through the
 		# full ladder; the Ask-code fix removed the systematic
 		# always-decline and the director Begin/End nesting removed the
-		# busy-flag race. The split probe (depth=/ghost=) then pinned the
-		# LAST obstacle exactly: with the director stuck at depth 1 from
-		# a2m01's staging (an unmatched Begin, now visible instead of
-		# masked) the story task DIES between creating g_kompira_state and
-		# spawning the tour (ghost never created, no conversation, no
-		# script error printed) -- a silent coroutine death. #4's next
-		# unit: error surfacing in _pog_spawn, then this gate goes live.
+		# busy-flag race. The task dump then LISTED the parked coroutine:
+		# iacttwo.kompira_story_script is alive and UNSUSPENDED
+		# (suspend_below -1) yet in_conversation stays false and no
+		# isystemcutscene task ever appears -- the story is parked at an
+		# await BEFORE iconversation.begin() and AFTER (or at)
+		# isystemcutscene.kompira(), with is_busy TRUE (depth 1) so the
+		# busy-wait cannot be the parking spot. One more probe field
+		# (which await, via a last-checkpoint label on the handle) settles
+		# it; the play and probes below are the harness for that run.
 		46:
 			# KompiraStoryScript cases 0..3: the 40 s tour + chat
 			# (comms.fast), then case 1 demands the PLAYER approach an Oman
