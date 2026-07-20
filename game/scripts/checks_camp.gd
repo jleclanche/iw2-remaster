@@ -417,14 +417,15 @@ func _campcheck_port() -> void:
 				demo_phase = 5
 		# phase 46, the m02 drive (dock the Daru + the initiation Ask ->
 		# iact2mission02), reached a2_m02_objectives_wait once through the
-		# full ladder, and the Ask-code fix (icomms.AddResponseWithCode's
-		# real (text, reply, code) signature) removed the systematic
-		# always-decline. The REMAINING race is pinned by the probe below:
-		# KompiraStoryScript sits at progress 0 with conv=false -- case 0's
-		# `while (!idirector.IsBusy())` handoff to the system-tour cutscene
-		# sometimes never sees busy. That handoff is #4's next unit; the
-		# play (park docked, rotate targets, pin approach) and the probe
-		# are kept here for it.
+		# full ladder; the Ask-code fix removed the systematic
+		# always-decline and the director Begin/End nesting removed the
+		# busy-flag race. The split probe (depth=/ghost=) then pinned the
+		# LAST obstacle exactly: with the director stuck at depth 1 from
+		# a2m01's staging (an unmatched Begin, now visible instead of
+		# masked) the story task DIES between creating g_kompira_state and
+		# spawning the tour (ghost never created, no conversation, no
+		# script error printed) -- a silent coroutine death. #4's next
+		# unit: error surfacing in _pog_spawn, then this gate goes live.
 		46:
 			# KompiraStoryScript cases 0..3: the 40 s tour + chat
 			# (comms.fast), then case 1 demands the PLAYER approach an Oman
@@ -472,7 +473,9 @@ func _campcheck_port() -> void:
 					" ships=", live.size(), " conv=",
 					m.pog_rt.gameapi.in_conversation,
 					" speaking=", m.comms.speaking(),
-					" ask=", m.comms.ask_options.size())
+					" ask=", m.comms.ask_options.size(),
+					" depth=", m.pog_rt.gameapi.director_depth,
+					" ghost=", m.pog_rt.world.sims.has("I am a Ghost"))
 			if m.mission.objectives.has("a2_m02_objectives_wait"):
 				print("CAMPCHECK(port): act 2 m02 BOOTED off the story ",
 					"script (wait objective raised) — advancing to act 3")

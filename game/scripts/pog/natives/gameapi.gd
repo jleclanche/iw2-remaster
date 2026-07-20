@@ -557,7 +557,16 @@ func _o_remove(_t, a: Array) -> Variant:
 # We drive main.cam directly for the duration: director_process() runs each
 # frame while a scene is up, and _apply_view() takes the camera back at End.
 
-var director_busy := false
+# Begin/End NEST -- a DEPTH, not a bool. Concurrent scripts each bracket
+# their own scene (a2m01's staging can still be winding down while
+# Kompira's system-tour cutscene begins); with a single bool one script's
+# End cleared another's Begin, and KompiraStoryScript's
+# `while (!idirector.IsBusy())` handoff could poll forever in the gap --
+# the m02-drive race pinned by the campcheck probe (#4).
+var director_depth := 0
+var director_busy: bool:
+	get:
+		return director_depth > 0
 var focus = null                  ## PogWorld.PogSim
 var focus2 = null
 var dolly: PogDolly = null
@@ -577,7 +586,7 @@ class PogDolly extends RefCounted:
 func _d_begin(_t, _a: Array) -> Variant:
 	if PogRuntime.TRACE:
 		print("[pog] idirector.Begin")
-	director_busy = true
+	director_depth += 1
 	focus = null
 	focus2 = null
 	dolly = null
@@ -589,7 +598,9 @@ func _d_begin(_t, _a: Array) -> Variant:
 func _d_end(_t, _a: Array) -> Variant:
 	if PogRuntime.TRACE:
 		print("[pog] idirector.End")
-	director_busy = false
+	director_depth = maxi(0, director_depth - 1)
+	if director_depth > 0:
+		return 0  # an outer scene is still running: don't restore
 	fade = 0.0
 	fade_rate = 0.0
 	if game != null:
@@ -702,7 +713,8 @@ func _d_set_fov(_t, a: Array) -> Variant:
 func _d_obituary(_t, a: Array) -> Variant:
 	# The death cam: frame the wreck.
 	focus = world._as_sim(a[0])
-	director_busy = true
+	if director_depth == 0:
+		director_depth = 1
 	return 0
 
 # @native idirector.IsObituaryView
