@@ -231,6 +231,8 @@ var px := 0.0
 var py := 0.0
 var pz := 0.0
 var system_stem := ""
+var system_map_url := ""  # "map:/geog/<cluster>/<stem>" -- the engine's
+							# world identity, what ActiveWorld answers
 var system_name := ""
 var objects: Array = []
 var ai_ships: Array = []

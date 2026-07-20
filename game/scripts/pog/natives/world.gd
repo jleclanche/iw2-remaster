@@ -1298,7 +1298,12 @@ func _i_attacked(_t, _a: Array) -> Variant:
 # @native isim.WorldName
 # @native isim.ActiveWorld
 func _i_world(_t, _a: Array) -> Variant:
-	return game.system_name if game != null else ""
+	# the MAP URL, not the display name: every shipped comparison is
+	# `ActiveWorld() == "map:/geog/badlands/kompira"` (iActTwo's
+	# Act2SystemMonitor and 20+ others) -- the display-name return made
+	# every one of them silently false, killing act 2's entire free-roam
+	# story dispatch (#4). One live system: every sim shares the world.
+	return game.system_map_url if game != null else ""
 
 ## The engine's IeSimType, EXTRACTED: iiSim::Type (0x10078df0) returns the
 ## ordinal of the name in the m_type_names table (.data 0x1015d8e4..0x1015d960,

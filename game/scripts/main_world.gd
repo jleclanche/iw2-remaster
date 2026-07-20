@@ -469,6 +469,16 @@ func _clear_system() -> void:
 func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 	_clear_system()
 	system_stem = stem
+	# the engine-form world identity: isim.ActiveWorld/WorldName answer
+	# "map:/geog/<cluster>/<stem>" -- every script comparison uses that
+	# form (iActTwo's Act2SystemMonitor dispatches its per-system story
+	# scripts on it), never the display name
+	system_map_url = ""
+	for cluster in ["badlands", "gagarin", "multiplayer"]:
+		if FileAccess.file_exists(_base().path_join(
+				"data/json/scenes/geog/%s/%s.json" % [cluster, stem])):
+			system_map_url = "map:/geog/%s/%s" % [cluster, stem]
+			break
 	var sys: Dictionary = _load_json("data/json/systems/%s.json" % stem)
 	system_name = str(sys["objects"][0]["name"])
 	var entry := {}
