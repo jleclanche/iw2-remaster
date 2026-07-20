@@ -37,6 +37,7 @@ var sims: Dictionary = {}              ## name -> PogSim
 var ship_db: Dictionary = {}           ## "sims/ships/x.ini" -> ships.json record
 var _preloaded: Dictionary = {}
 var _player_infection_fx: Node3D = null
+var pilot_ghost = null  # PogSim: the cutscene ghost holding the pilot
 ## iship.HyperSpaceTrackerContact / HyperSpaceTrackerTarget (iship.dll @
 ## 0x10002f70 / 0x10003080): the player CPU's +0x9c / +0xa0 -- the last ship
 ## the tracker followed through a capsule jump, and where it went. Set by
@@ -1653,7 +1654,12 @@ func _infection_host(s: PogSim) -> Node3D:
 func _sh_find_player(_t, _a: Array) -> Variant:
 	# During a remote link the player IS the linked vessel: iRemotePilot's
 	# own toggle path calls FindPlayerShip to find which ship to take the
-	# pilot OFF, so this must follow the pilot, not the hull (#1).
+	# pilot OFF, so this must follow the pilot, not the hull (#1). Same
+	# rule for the cutscene ghost: DisablePlayerAutopilot reads the
+	# enable-count property off FindPlayerShip and walks sim.Parent back
+	# to the hull, so the ghost must be the answer while it holds the pilot.
+	if pilot_ghost != null:
+		return pilot_ghost
 	if game != null and game.remote_ai != null \
 			and is_instance_valid(game.remote_ai):
 		return _wrap_ship(game.remote_ai)
@@ -1873,9 +1879,23 @@ func _sh_install_player_pilot(_t, a: Array) -> Variant:
 	if s == null:
 		return 0
 	if s.is_player:
-		# installing the pilot back on the OWN ship ends a remote link
+		# installing the pilot back on the OWN ship ends a remote link --
+		# and a cutscene ghost's hold (DisablePlayerAutopilot's
+		# InstallPlayerPilot(parent) before it destroys the ghost)
 		if game != null:
 			game.unpossess()
+			game.pilot_parked = false
+		pilot_ghost = null
+		return 0
+	# THE CUTSCENE GHOST (iCutSceneUtilities.EnablePlayerAutopilot -- 15
+	# shipped scripts): a sim ATTACHED to the player takes the PILOT, not
+	# the hull. The hull stays as it is and the script flies it through AI
+	# orders on the handle it saved; FindPlayerShip answers the ghost (the
+	# enable-count property lives on it) and the yoke parks.
+	if s.parent != null and s.parent.is_player:
+		pilot_ghost = s
+		if game != null:
+			game.pilot_parked = true
 		return 0
 	s.free_without_pilot = false
 	if game == null or s.node == null or not (s.node is AiShip):

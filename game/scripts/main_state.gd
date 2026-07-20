@@ -302,6 +302,8 @@ var nearest_missile_range := -1.0
 var weapon_disrupt_time := 0.0
 var weapon_disrupt_full := false
 var player_disrupt_fx: ParticleFx = null  # sfx/disruptor arcs on the own hull
+var pilot_parked := false  # a cutscene ghost holds the pilot: yoke inert,
+							# the script flies the hull through AI orders
 
 var clock_start := 0  # ms tick when we last left port (the HUD clock)
 var base_root: Node3D  # hangar interior while docked at an ordinary base

@@ -187,6 +187,33 @@ func _order_for(s) -> PogOrder:
 		orders[key] = PogOrder.new()
 	return orders[key]
 
+## An approach/dock order on the PLAYER hull -- the cutscene-autopilot case
+## (iCutSceneUtilities parks the pilot in a ghost, then orders the hull
+## around by the handle it saved). The original pushes the order onto the
+## player's own icAIPilot (icPlayerPilot::EngageAutopilotApproach 0x100afbc0
+## runs the SAME machinery); ours IS main's autopilot, so the order selects
+## the target and engages approach mode. IsOrderComplete = ap_mode back at 0.
+func _player_approach(s, a: Array) -> Variant:
+	if s == null or world.game == null or s.node != world.game.ship:
+		return 0
+	var m = world.game
+	var tgt = world._as_sim(a[1] if a.size() > 1 else null)
+	if tgt == null:
+		return 0
+	if tgt.node != null and is_instance_valid(tgt.node) and tgt.node is AiShip:
+		m.target_ai = tgt.node
+		m.target_idx = -1
+	elif not tgt.rec.is_empty():
+		var idx: int = m.objects.find(tgt.rec)
+		if idx < 0:
+			return 0
+		m.target_idx = idx
+		m.target_ai = null
+	else:
+		return 0
+	m._set_autopilot(1)
+	return 0
+
 # @native iai.GiveApproachOrder
 # @native iai.GiveApproachOrderAdvanced
 # @native iai.GiveApproachOrderNoDropOff
@@ -197,7 +224,7 @@ func _ai_approach(_t, a: Array) -> Variant:
 	var s = world._as_sim(a[0])
 	var o := _order_for(s)
 	if o == null:
-		return 0
+		return _player_approach(s, a)
 	o.kind = "approach"
 	o.dockport = null
 	var tgt = a[1] if a.size() > 1 else null
@@ -313,7 +340,10 @@ func _ai_purge(_t, a: Array) -> Variant:
 		if s.node == null or not is_instance_valid(s.node):
 			continue
 		if not (s.node is AiShip):
-			continue        # the player's hull has no orders to purge
+			# purging the player hull's "orders" = disengaging its autopilot
+			if world.game != null and s.node == world.game.ship:
+				world.game.ap_mode = 0
+			continue
 		orders.erase(s.node.get_instance_id())
 		s.node.behavior = "patrol"
 	return 0
@@ -329,6 +359,10 @@ func _ai_is_complete(_t, a: Array) -> Variant:
 	var s = world._as_sim(a[0])
 	var o := _order_for(s)
 	if o == null:
+		# the player hull under cutscene autopilot (_player_approach):
+		# complete when the approach disengages (ap_mode back at 0)
+		if s != null and world.game != null and s.node == world.game.ship:
+			return 1 if world.game.ap_mode == 0 else 0
 		return 1              # a dead ship has finished whatever it was doing
 	if o.complete:
 		return 1

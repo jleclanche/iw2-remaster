@@ -513,6 +513,11 @@ func late_physics(delta: float) -> void:
 ##   - the zoom factor DIVIDES yaw and pitch (not roll), which is what makes a
 ##     zoomed shot aimable.
 func _player_control(delta: float) -> void:
+	# a cutscene ghost holds the pilot (iCutSceneUtilities.
+	# EnablePlayerAutopilot): the yoke drives NOTHING -- the script flies
+	# the hull through AI orders until the pilot is installed back
+	if pilot_parked:
+		return
 	# The yoke drives the PILOTED ship: the own hull normally, the linked
 	# vessel during a remote link (#1) -- the original installs the player
 	# PILOT on the remote sim and this is that pilot's control path.

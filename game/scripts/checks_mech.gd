@@ -93,6 +93,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_remote_missile_assert",
 	&"_ms_remote_fire",
 	&"_ms_remote_fire_assert",
+	&"_ms_ghost_autopilot",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1121,6 +1122,37 @@ func _ms_remote_fire_assert(_delta: float) -> void:
 			"%d bolt(s), all from the linked hull=%s"
 			% [after - before, all_remote])
 	_mech_reap(_rf_drone)
+	_mech_next()
+
+func _ms_ghost_autopilot(_delta: float) -> void:
+	# iCutSceneUtilities.EnablePlayerAutopilot (#1): the ghost takes the
+	# PILOT, not the hull -- run the PORTED script function itself
+	var cs = m.pog_rt.script("icutsceneutilities")
+	var hull = cs.enable_player_autopilot()
+	var w: PogWorld = m.pog_rt.world
+	var ghost = m.pog_rt.native("iship.findplayership", [])
+	var parked: bool = m.pilot_parked and ghost != null \
+			and ghost != w.player_sim() and ghost.parent == w.player_sim()
+	# the script flies the HULL by the handle Enable returned: an approach
+	# order must engage the player autopilot, not vanish into _order_for
+	var st: AiShip = _mech_spawn("Ghost Waypoint", 100.0,
+			m.ship.global_position - m.ship.global_transform.basis.z * 60000.0)
+	st.sim_key = "ghost_waypoint"
+	m.pog_rt.native("iai.giveapproachorderadvanced",
+			[hull, w._wrap_ship(st), 0.0, 1.0, 0])
+	var engaged: bool = m.ap_mode == 1
+	var incomplete: bool = not PogVM._truthy(
+			m.pog_rt.native("iai.isordercomplete", [hull]))
+	# ... and the reverse: Disable installs the pilot back and frees the ghost
+	cs.disable_player_autopilot()
+	var restored: bool = not m.pilot_parked \
+			and m.pog_rt.native("iship.findplayership", []) == w.player_sim()
+	m.ap_mode = 0
+	_mech("ghost-autopilot",
+			parked and engaged and incomplete and restored,
+			"parked=%s engaged=%s incomplete=%s restored=%s"
+			% [parked, engaged, incomplete, restored])
+	_mech_reap(st)
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:
