@@ -927,9 +927,12 @@ func _ms_pod_spill_assert(_delta: float) -> void:
 		if is_instance_valid(a) and String(a.ctype) == "CargoPod":
 			pods.append(a)
 	if pods.size() >= 2:
+		# cargo 0 is a LEGAL roll (CheapCargoGenerator's fall-through tail,
+		# icargoscript.pog:10469, stamped unconditionally by the original --
+		# ishipcreation.pog:10606); only a MISSING property (-1) fails
 		var s = m.pog_world._wrap_ship(pods[0])
 		var cargo := int(m.pog_std._bag(s).get("cargo", -1))
-		_mech("pod-spill", cargo > 0, "%d pods, first cargo id %d"
+		_mech("pod-spill", cargo >= 0, "%d pods, first cargo id %d"
 				% [pods.size(), cargo])
 		for p in pods:
 			_mech_reap(p)

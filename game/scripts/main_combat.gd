@@ -182,7 +182,27 @@ func _spill_pods(ai: AiShip) -> void:
 		# flung like the debris: radius * 0.4 (0x10117558), riding the wreck's
 		# velocity
 		(s.node as Node3D).velocity = ai.velocity + dir * ai.radius * 0.4
-		if pog_econ != null and not pog_econ.cargo_types.is_empty():
+		if pog_rt != null:
+			# pod CONTENT through the original's own weighted table:
+			# iCargoScript.CheapCargoGenerator (pogsrc:10240) -- an 18%
+			# NeededType head, then the authored roll-chain. WHICH generator
+			# a hauler carries is authored at traffic creation per location
+			# (FindCargoForLocation); a spill without a traffic origin takes
+			# the cheap table rather than a uniform pick over every
+			# commodity (which handed out antimatter drives). The tail of
+			# the roll-chain returns 0 (~37% of non-NeededType rolls) and
+			# the original stamps that too -- SetIntProperty is
+			# unconditional (ishipcreation.pog:10606), an empty pod.
+			var pod = s
+			var assign := func() -> void:
+				var cid: Variant = await pog_rt.script("icargoscript") \
+						.cheap_cargo_generator()
+				if pod != null:
+					var id := int(cid) if cid != null else 0
+					pog_rt.std._bag(pod)["cargo"] = id
+					pog_std._bag(pod)["cargo"] = id
+			assign.call()
+		elif pog_econ != null and not pog_econ.cargo_types.is_empty():
 			var ids: Array = pog_econ.cargo_types.keys()
 			pog_std._bag(s)["cargo"] = ids[randi() % ids.size()]
 
