@@ -338,8 +338,43 @@ func _campcheck_port() -> void:
 						and a.behavior == "attack":
 					m.kill_ai(a)
 			if m.mission.objectives.has("a1_m01_objective_change_iff"):
-				print("CAMPCHECK(port): act 1 m01 booted, fight won, ",
-					"change_iff raised — advancing to act 2")
+				print("CAMPCHECK(port): act 1 m01 fight won — docking at ",
+					"Maurice's (the change_iff gate, issue #4)")
+				demo_phase = 30
+		30:
+			# the dock watcher (iact1mission01 local_8531): IsDocked(player)
+			# AND DistanceBetween < 450 at Maurice's Freighter Service Depot
+			# raises change_iff to DONE and adds find_base. The check plays
+			# the player's docking: park at the depot record, docked_at set.
+			var depot := _object_index("Maurice's Freighter Service Depot")
+			if depot >= 0:
+				var od: Dictionary = m.objects[depot]
+				m.px = od["x"]
+				m.py = od["y"]
+				m.pz = od["z"]
+				m.ship.velocity = Vector3.ZERO
+				m.docked_at = str(od["name"])
+			if m.mission.objectives.has("a1_m01_objective_find_base"):
+				print("CAMPCHECK(port): docked — change_iff done, find_base ",
+					"raised; casting off for Lucrecia's")
+				m.docked_at = ""
+				demo_phase = 31
+		31:
+			# the base watcher (local_7459): distance to Lucrecia's Base
+			# < 20 km completes find_base and sets mission progress 10 --
+			# a1m01 run birth to completion
+			var luc := _object_index("Lucrecia's Base")
+			if luc >= 0:
+				var ol: Dictionary = m.objects[luc]
+				m.px = ol["x"]
+				m.py = ol["y"]
+				m.pz = ol["z"]
+				m.ship.velocity = Vector3.ZERO
+			var fb: Dictionary = m.mission.objectives.get(
+					"a1_m01_objective_find_base", {})
+			if fb.get("done", false):
+				print("CAMPCHECK(port): act 1 m01 COMPLETE (find_base done)",
+					" — advancing to act 2")
 				m.pog_rt.native("igame.nextact", ["iActTwo"])
 				demo_phase = 4
 		4:
