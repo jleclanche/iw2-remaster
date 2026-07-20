@@ -51,9 +51,10 @@ func _try_jump() -> void:
 func _jump_process(delta: float) -> void:
 	jump_timer += delta
 	match jump_state:
-		1:  # spool -- the drive charging in the queue (icAITarget stage 3,
-			# GetNewCapsuleJumpStage @ 0x1005c5af waits on icCapsuleDrive)
-			if jump_timer >= 3.0:
+		1:  # the QUEUE DELAY: PerformJumps case 0 (MakeEffect @ 0x10042f80)
+			# arms the player jump with countdown = 2.0 s (0x40000000),
+			# yoke zeroed, director cue 0xf -- not a 3 s spool
+			if jump_timer >= 2.0:
 				jump_state = 2
 				jump_timer = 0.0
 				hud.warn("ACCELERATION RUN", 2.0)
@@ -179,8 +180,15 @@ func _capsule_exit() -> void:
 	if SHIP_HIT_RADIUS / maxf(v, 1.0) >= 2.5:  # big-hull cap @ 0x10042730
 		v = SHIP_HIT_RADIUS / 2.5
 	v = clampf(v, CAPSULE_EXIT_MIN, CAPSULE_EXIT_MAX)
-	ship.velocity = (b * Vector3.FORWARD) * v
+	var exit_dir := b * Vector3.FORWARD
+	ship.velocity = exit_dir * v
 	ship.set_speed = minf(v, ship.max_speed.z)
+	# DoCapsuleJump pulls the arrival back by the ship's radius along the
+	# exit direction (position -= exit_dir * radius @ 0x10042730), so the
+	# hull materialises clear of the L-point marker
+	px -= exit_dir.x * SHIP_HIT_RADIUS
+	py -= exit_dir.y * SHIP_HIT_RADIUS
+	pz -= exit_dir.z * SHIP_HIT_RADIUS
 
 ## Abort the capsule sequence (a scripted system change mid-jump): put the
 ## world, HUD and fade back the way icCapsuleSpace::DetachEffect would.
