@@ -355,6 +355,11 @@ func hud_up() -> bool:
 func _draw() -> void:
 	if not hud_up():
 		return
+	# an open menu element REPLACES the flight HUD (issue #35, from the
+	# original's captures: the TRI and the starmap show only the page and
+	# its caption band -- no reticle, no MFD, no right-hand stack)
+	if screen != "":
+		return
 	var c := _screen() / 2.0
 	var based: bool = main.get("base_root") != null
 	if not based:
