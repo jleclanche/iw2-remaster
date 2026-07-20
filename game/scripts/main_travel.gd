@@ -84,12 +84,18 @@ func _jump_process(delta: float) -> void:
 			if jump_timer >= jump_duration:
 				_capsule_exit()
 		5:  # exit blank (case 6): the teleport already happened under full
-			# white; the flash recedes as the ship flies off the L-point
-			# (FUN_100beea0's proximity falloff), then camera + HUD restore
-			# (case 7: icDirector::ChangeMode(0))
-			jump_fade.color.a = clampf(1.0 - jump_timer / CAPSULE_FLASH,
-				0.0, 1.0) * _flash_flicker(jump_timer / CAPSULE_FLASH)
-			if jump_timer >= CAPSULE_FLASH:
+			# white. The blank is PROXIMITY-driven, not timed: the white
+			# flare rides at z = (0.5 - d^2/R^2) * R from the LATCHED exit
+			# point (FUN_100beea0, R = 2 x ship radius floored by the INI --
+			# FUN_100be550 @ 0x100be550), stays ACTIVE while d^2 < R^2, and
+			# the player additionally holds 1.5 s (_DAT_1011a268). Then
+			# camera + HUD restore (case 7: icDirector::ChangeMode(0)).
+			var d := Vector3(px - _cap_exit_x, py - _cap_exit_y,
+					pz - _cap_exit_z).length()
+			var r2 := SHIP_HIT_RADIUS * 2.0
+			jump_fade.color.a = clampf(1.0 - maxf(jump_timer / CAPSULE_FLASH,
+				d / r2), 0.0, 1.0) * _flash_flicker(jump_timer / CAPSULE_FLASH)
+			if jump_timer >= CAPSULE_FLASH and d >= r2:
 				jump_state = 0
 				jump_fade.color.a = 0.0
 				hud.visible = true
@@ -189,6 +195,11 @@ func _capsule_exit() -> void:
 	px -= exit_dir.x * SHIP_HIT_RADIUS
 	py -= exit_dir.y * SHIP_HIT_RADIUS
 	pz -= exit_dir.z * SHIP_HIT_RADIUS
+	# ... and LATCH the exit point: the blank avatar measures its
+	# proximity falloff from here (FUN_100beea0's cached doubles)
+	_cap_exit_x = px
+	_cap_exit_y = py
+	_cap_exit_z = pz
 
 ## Abort the capsule sequence (a scripted system change mid-jump): put the
 ## world, HUD and fade back the way icCapsuleSpace::DetachEffect would.

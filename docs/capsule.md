@@ -170,9 +170,13 @@ State changes (`FUN_100c0170` @ `0x100c0170`): state 1 = play entry sound
 + force feedback + spawn the L-point flash (`FUN_100c02d0`: an
 `icTimedWaypoint` living `flash_time` s carrying a (0.65, 0.75, 1.0)
 lens flare sized by the ship); state 2 = start the tunnel loop. The
-blank's own progress (`FUN_100bf870` @ `0x100bf870`) is proximity-based
-— `FUN_100beea0` places the white flare by `(1 − d²/R²)·R` — and for the
-**player it holds at least 1.5 s** (`_DAT_1011a268`). The effect node's
+blank's own progress (`FUN_100bf870` @ `0x100bf870`) is proximity-based:
+`FUN_100beea0` places the white flare at `z = (0.5 − d²/R²)·R` from the
+LATCHED anchor position (cached doubles at `+0xc8..0xdc`, re-latched when
+the anchor's system id `+0x12c` changes), with **R = 2 × ship radius**
+floored by the INI value (`FUN_100be550`, `puVar6[0x84]`); the blank
+stays ACTIVE while `d² < R²` (the predicate at `0x100bf9xx`), and for the
+**player it additionally holds at least 1.5 s** (`_DAT_1011a268`). The effect node's
 brightness channel envelope (`FUN_100bef90`) has keys every 0.1 from 0.2
 to 0.9 (`_DAT_101184b0`, `_DAT_1011951c`) with values rand[**0.7**, 1.0]
 (`_DAT_101191e8`), zero at the ends — the flicker we drive `jump_fade`
@@ -255,16 +259,21 @@ J/K at L-points, `JUMP_RANGE`, and the arrival offset (+2500, +300,
 - **engine[0x1790]** (the master vertex alpha halved into every tunnel
   vertex): not recovered; 0.5 baked, beam pass drawn once instead of the
   literal twice.
-- The blank avatar's true white-out is proximity-driven
-  (`FUN_100beea0`); ours is time-driven with the recovered 1.5 s hold and
-  the recovered flicker envelope.
-- Original queue delay is 2.0 s after `TryToJump`; our pre-tunnel states
-  keep the existing 3 s + 3 s spool/accel approximation of the autopilot
-  sequence (its per-ship charge time lives in the icCapsuleDrive subsim
-  INI, `recharge_time` — not wired here).
-- `DoCapsuleJump` pulls the arrival position back by ship radius along
-  the exit velocity; we keep the loader's existing entry offset instead.
+- ~~The blank avatar's true white-out is proximity-driven~~ RECOVERED and
+  wired: the exit blank ends when the ship has flown `R = 2 × radius`
+  from the latched arrival point AND the 1.5 s player hold has passed
+  (`FUN_100beea0` placement `(0.5 − d²/R²)·R`, active while `d² < R²`).
+- ~~Original queue delay is 2.0 s~~ WIRED (state 1 holds exactly 2.0 s,
+  `MakeEffect`'s countdown). `recharge_time` resolved: no shipped capsule
+  drive INI authors the key — only the LDAs carry it.
+- ~~`DoCapsuleJump` pulls the arrival position back by ship radius~~
+  WIRED (the arrival subtracts `exit_dir × radius`).
 - Camera 24's distance term uses the focus record's `+0x10` radius; we
-  use the ship model bounds radius. Camera 25 (jump queued, event 0xf)
-  is a drop/flyby-type camera (`FUN_100d95e0` with 8.0 at +0xa8) — not
-  implemented; states 1–2 keep the player camera.
+  use the ship model bounds radius.
+- ~~Camera 25 not implemented~~ RECOVERED and wired: the jump-queue drop
+  camera (instance at `icDirector+0x244`, `+0xa8 = 8.0`; cut placement
+  `FUN_100d9710`) parks ahead of the flight path by rand[**1.5, 2.0**] s
+  of travel (`0x101626c4/c8`) along the velocity direction (focus +Z at
+  rest), displaced by a random unit vector at
+  `max(radius / tan(0.5), radius × 1.5) × 8.0`, and holds FIXED through
+  the queue and entry flash (event 0xf duration −2), tracking the ship.

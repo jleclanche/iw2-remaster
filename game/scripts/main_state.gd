@@ -258,6 +258,9 @@ var _flick := PackedFloat32Array()  # entry/exit blank flicker keys
 var _cap_cut_t := 0.0  # capsule camera: time to next cut
 var _cap_cam_dir := Vector3.RIGHT  # current random viewpoint (ship-local)
 var _cap_prev_bg := 0  # Environment background mode to restore
+var _cap_exit_x := 0.0  # the latched arrival point: the exit blank's
+var _cap_exit_y := 0.0  # proximity falloff measures from here
+var _cap_exit_z := 0.0  # (FUN_100beea0's cached doubles)
 # The hull is owned by the subsim model when one is fitted; these stay as plain
 # properties so the HUD and the ported scripts (which set game.hull on load and
 # on respawn) keep working against a single number.

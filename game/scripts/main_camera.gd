@@ -58,6 +58,12 @@ func _chase_camera(delta: float) -> void:
 	if jump_state == 4:
 		_capsule_camera(delta, target)
 		return
+	# camera 25 holds from the queue through the entry flash (event 0xf,
+	# duration -2; nothing re-cues until 0x10 inside the capsule)
+	if jump_state in [1, 2, 3]:
+		_jump_queue_camera(target)
+		return
+	_jq_set = false
 	# inside Lucrecia's Base the camera is the diorama's own, out of the scene
 	if base_iface != null and base_iface.inside:
 		base_iface.place_camera()
@@ -109,6 +115,39 @@ func _chase_camera(delta: float) -> void:
 		"drop":  # fixed in space, tracking the ship
 			cam.global_transform = Transform3D(Basis.IDENTITY,
 				drop_cam_pos).looking_at(target.origin, Vector3.UP)
+
+## Camera 25 -- the jump-queue drop camera (#34). icDirector event 0xf
+## ("jump queued", cued by PerformJumps case 0) selects camera 25
+## (response table @ 0x1011d498: cams (25,25,25), priority 7, duration -2
+## = held for the queue). It is a DROP camera (ctor FUN_100d95e0, the
+## instance at icDirector+0x244 with +0xa8 = 8.0; cut placement
+## FUN_100d9710): parked AHEAD of the flight path by rand[1.5, 2.0] s of
+## travel (0x101626c4/c8) along the velocity direction (the focus basis
+## +Z at rest), displaced sideways by a random unit vector at
+## max(radius / tan(0.5), radius * 1.5) x the 8.0 multiplier, then left
+## FIXED, tracking the ship as it runs the acceleration past it.
+var _jq_set := false
+var _jq_pos := Vector3.ZERO
+
+func _jump_queue_camera(target: Transform3D) -> void:
+	if not _jq_set:
+		_jq_set = true
+		var r: float = maxf(piloted().radius, 1.0)
+		var vel: Vector3 = piloted().velocity
+		var vd := vel.normalized() if vel.length() > 1e-3 \
+				else -target.basis.z
+		var side := Vector3(randf_range(-1, 1), randf_range(-1, 1),
+				randf_range(-1, 1)).normalized() \
+				* maxf(r / tan(0.5), r * 1.5) * 8.0
+		_jq_pos = target.origin + vd * vel.length() \
+				* randf_range(1.5, 2.0) + side
+		if cockpit != null:
+			cockpit.visible = false
+		if ship_model != null:
+			ship_model.visible = true
+		cam.fov = FOV_EXTERNAL
+	cam.global_transform = Transform3D(Basis.IDENTITY, _jq_pos) \
+			.looking_at(target.origin, Vector3.UP)
 
 ## The capsule-space camera. icDirector event 0x10 ("in capsule space",
 ## cued every frame by PerformJumps case 5 via FUN_100426f0) selects camera
