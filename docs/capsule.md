@@ -252,13 +252,22 @@ J/K at L-points, `JUMP_RANGE`, and the arrival offset (+2500, +300,
 
 ## 8. UNKNOWN / PLACEHOLDER
 
-- **FcLensFlareNode internals**: the flare sprite atlas (type ids 1, 9,
-  0x2b) and world sizing are not recovered; CapsuleFx uses additive
-  billboard quads with a procedural radial texture, ring-flare size 150 m
-  (placeholder), end flares at the recovered 10 km.
-- **engine[0x1790]** (the master vertex alpha halved into every tunnel
-  vertex): not recovered; 0.5 baked, beam pass drawn once instead of the
-  literal twice.
+- **FcLensFlareNode internals**: PARTLY recovered. The flare UV table is
+  `m_tex_coords @ flux 0x100ee420`, stride 0x20 = four (u,v) corner
+  pairs per type, indexed `type * 8` in `Render` (flux.dll.c:215303ff);
+  types 0/1/2 read raw as the 2x2 QUADRANTS of the flare texture
+  ((0,0)-(.5,.5) / (.5,0)-(1,.5) / (0,.5)-(.5,1)). Types >= ~4 (incl.
+  the capsule's 9 and 0x2b) are not raw-backed -- their runtime
+  initializer is unfound, so those cells (and the ring-flare size) stay
+  open; CapsuleFx keeps the procedural stand-in. Flag-8 world sizing IS
+  recovered (envelope x FlareNominalDistance x gfx+0x108, the law
+  ship_effects' engine flares already use).
+- ~~**engine[0x1790]** not recovered~~ IDENTIFIED: the engineering-page
+  RE (docs/hud_elements.md) proved `engine+0x1790` is the graphics
+  engine's MASTER/global alpha -- written by fades (the eng page's 1 s
+  fade-in writes `t/1.0` there), 1.0 in normal flight. The tunnel's
+  baked 0.5 x master is therefore the right shape; the second beam pass
+  stays unreproduced.
 - ~~The blank avatar's true white-out is proximity-driven~~ RECOVERED and
   wired: the exit blank ends when the ship has flown `R = 2 × radius`
   from the latched arrival point AND the 1.5 s player hold has passed
