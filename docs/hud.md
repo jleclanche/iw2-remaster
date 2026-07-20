@@ -881,6 +881,33 @@ ship's loadout** (weapons are customised at base and differ per hull), not a HUD
 bug. Our single-row panel is correct; whatever the fitted group's `group_label()`
 returns is the right caption. No change needed beyond the single-row fix.
 
+### The ammo readout (issue #29): FUN_10105550 @ 0x10105550
+
+The row draw (`FUN_10104d50`) asks the weapon `GetHUDInfo(bool&, uint&)`
+(vtable +0x64) and branches: `true` -> the charge-bar row (`FUN_101053e0`,
+sprite 69 at x=16, 14-segment bar at x=36, `"%d%%"`); `false` -> the ammo
+row `FUN_10105550`, count = the uint (icSlugThrower +0xd4 rounds,
+icMagazine +0xb0 ammo). The ammo row, verbatim:
+
+- **0 rounds**: blink at 1 Hz -- drawn only while
+  `fract(game_time_ms * 0.001 [_DAT_10119458]) > 0.5 [_DAT_10117738]`. The
+  blinked glyph decompiles into an atlas-offset artifact (`DAT_101763a0`
+  is a 16-bit offset table, not a string); hud.gd blinks `"0"` as a
+  flagged stand-in.
+- **1..6 rounds**: one sprite-78 pip PER ROUND at `x = 11 + 12k` (pitch
+  `_DAT_10119ec4` = 12), `y = row + 5 [_DAT_101183f0] + 11 [_DAT_1011c164]`.
+- **7+**: sprite 78 at x=11 plus the plain count clamped to 999 (`0x3e7`)
+  at x=18. There is NO "/capacity" -- our old `ammo/max` text was invented.
+- **The slug-thrower variant** (row field +0x6c == 0x4f -- the update at
+  `0x10105196..` stores the row's ICON sprite id there: 0x45=69 guns,
+  0x4e=78 magazines, 0x4f=79 slug throwers): sprite 79 at x=11, and the
+  readout counts SLUGS -- the stored display value is `rounds * 5`
+  (`_DAT_1011e300`), one assault-cannon "round" being the five-streak
+  burst. With capacity >= 50 rounds (`+0xd0 >= 0x32`) the number ROLLS:
+  within one burst of the target it eases down at 5 slugs per effective
+  refire period (`+0xb8 / TRIWeight`); further out, and on reload, it
+  snaps. Under 50 capacity there is no animation.
+
 ---
 
 ## Reticle collisions + the warning font (task #67)

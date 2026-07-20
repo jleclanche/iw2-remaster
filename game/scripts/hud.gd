@@ -2800,6 +2800,36 @@ func _draw_ucp_bands(r: Rect2) -> void:
 			x += span
 			u = 0.0
 
+# FUN_10105550's rolling slug readout (the 0x4f row), display value in slugs
+var _ammo_roll := -1.0
+
+## FUN_10105550 (iwar2.dll @ 0x10105550), the magazine round readout:
+##   0 rounds -> blink at 1 Hz: visible while fract(game_time_ms * 0.001
+##     [_DAT_10119458]) > 0.5 [_DAT_10117738]. What the original blinks
+##     decompiles into an atlas-offset artifact (DAT_101763a0 is a 16-bit
+##     offset table, not a string); a blinking "0" is our flagged stand-in.
+##   1..6 -> one sprite-78 pip PER ROUND at x = 11 + 12k (pitch
+##     _DAT_10119ec4 = 12), y = row + 5 + 11.
+##   7+ -> sprite 78 at x=11 plus the plain count clamped to 999 (0x3e7)
+##     at x=18. The original never draws a "/capacity" -- ours was invented.
+func _ammo_row(pos: Vector2, ry: float, count: int) -> void:
+	if count <= 0:
+		if fmod(Time.get_ticks_msec() * 0.001, 1.0) > 0.5:
+			draw_string(_font, Vector2(pos.x + 18, ry + 20), "0",
+					HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+		return
+	if _sprites == null:
+		draw_string(_font, Vector2(pos.x + 18, ry + 20), str(mini(count, 999)),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+		return
+	if count < 7:
+		for k in count:
+			_spr(Vector2(pos.x + 11 + 12 * k, ry + 16), 78, AMBER)
+		return
+	_spr(Vector2(pos.x + 11, ry + 16), 78, AMBER)
+	draw_string(_font, Vector2(pos.x + 18, ry + 20), str(mini(count, 999)),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+
 func _draw_weapon_panel() -> void:
 	# icHUDWeapons: 112 wide, 16px header + 32px per weapon in the selected group.
 	# Each row is a lightning sprite at x=16, a 14-segment charge bar at x=36
@@ -2819,23 +2849,18 @@ func _draw_weapon_panel() -> void:
 	var on_secondary: bool = int(main.secondary_idx) >= 0 \
 			and int(main.secondary_idx) < (main.player_mags as Array).size()
 	var title := str(main.weapon_name)
-	var sec_ammo := ""
+	var sec_count := -1
 	if on_secondary:
 		var mag: Dictionary = (main.player_mags as Array)[main.secondary_idx]
 		title = str(mag["projectile"]).replace("_", " ")
-		sec_ammo = "%d/%d" % [int(mag["ammo"]), int(mag["max_ammo"])]
+		sec_count = int(mag["ammo"])
 	# the MFD above may be in a short mode; the stack advance uses its height
 	var pos := Vector2(_left_x(), _advance(MARGIN, _mfd_rect().size.y))
 	var size := Vector2(PANEL_W, ROW_PITCH + HDR_H)
 	_panel(pos, size, title.to_upper())
 	var ry := pos.y + HDR_H
 	if on_secondary:
-		# the missile row's icon is sprite 78 (the secondary rows at x=11 in
-		# the same draw); the ammo text layout stays ours
-		if _sprites != null:
-			_spr(Vector2(pos.x + 16, ry + 16), 78, AMBER)
-		draw_string(_font, Vector2(pos.x + 36, ry + 20), sec_ammo,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+		_ammo_row(pos, ry, sec_count)
 		_ea = 1.0
 		return
 	# What the bar SHOWS: the row draw (FUN_10104d50 0x10104d50) asks the
@@ -2873,16 +2898,35 @@ func _draw_weapon_panel() -> void:
 	# (16, y + _DAT_101184a0 = 16); the charge bar is FUN_100ebde0(36,
 	# y + 10, 112 - 38 = 74, frac, style 1) -- the same call _bar ports.
 	# (Our old hand-drawn lightning polygon was invented.)
+	if gun_ammo >= 0:
+		# icSlugThrower row (FUN_10105550's +0x6c == 0x4f branch: the row
+		# stores its ICON sprite id there): sprite 79 at x=11, no bar, and the
+		# readout counts SLUGS, not INI rounds -- the update (0x10105196..)
+		# stores rounds * 5 (_DAT_1011e300), one assault-cannon "round" being
+		# the five-streak burst. With 50+ rounds capacity (+0xd0 >= 0x32) the
+		# number ROLLS: within one burst of the target it eases down at
+		# 5 slugs per effective refire period (+0xb8 / TRIWeight), further
+		# out (or on reload) it snaps.
+		if _sprites != null:
+			_spr(Vector2(pos.x + 11, ry + 15), 79, AMBER)
+		var m0: Dictionary = (main.weapons.current_group()["members"] as Array)[0]
+		var target := float(gun_ammo) * 5.0
+		var animate: bool = int(m0.get("ammo_max", -1)) >= 50
+		if _ammo_roll < target or not animate or _ammo_roll > target + 5.0:
+			_ammo_roll = target
+		elif target < _ammo_roll:
+			var period: float = float(m0.get("refire", 0.5)) \
+					/ maxf(main.weapons._tri_offensive(), 1e-3)
+			_ammo_roll = maxf(target,
+					_ammo_roll - get_process_delta_time() * 5.0 / maxf(period, 1e-3))
+		draw_string(_font, Vector2(pos.x + 18, ry + 20), str(int(_ammo_roll)),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
+		_ea = 1.0
+		return
 	if _sprites != null:
 		_spr(Vector2(pos.x + 16, ry + 16), 69, AMBER)
-	var readout := "%d%%" % int(charge * 100)
-	if gun_ammo >= 0:
-		# an ammo gun (the gatling): round count, and per the recovered ammo
-		# row there is no percentage bar under it
-		readout = str(gun_ammo)
-	else:
-		_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
-	draw_string(_font, Vector2(pos.x + 36, ry + 28), readout,
+	_bar(Vector2(pos.x + 36, ry + 10), charge, AMBER)
+	draw_string(_font, Vector2(pos.x + 36, ry + 28), "%d%%" % int(charge * 100),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE - 2, _dim(AMBER))
 	_ea = 1.0
 
