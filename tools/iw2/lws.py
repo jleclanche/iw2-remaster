@@ -26,7 +26,9 @@ from pathlib import Path
 
 from .resources import ResourceFS
 
-_ATTR_RE = re.compile(r'(\w+)=("[^"]*"|\([^)]*\)|\S+)')
+# whitespace around '=' is legal and shipped: casinostation.lws signage
+# writes 'texture = "casino"' / 'fps =3'
+_ATTR_RE = re.compile(r'(\w+)\s*=\s*("[^"]*"|\([^)]*\)|\S+)')
 
 
 def _parse_tag(name: str) -> tuple[str, dict]:

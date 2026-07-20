@@ -55,6 +55,8 @@ var anim_nodes: Array = []   # {node, channel, p0..s1}
 var flame_cones: Array = []  # {mat: ShaderMaterial, channel: String}
 var glow_mats: Array = []    # {mat: StandardMaterial3D, channel: String} (#17)
 var _jet_beams: Array = []   # {node: Node3D (icBeamAvatar), mi: MeshInstance3D}
+var _signs: Array = []       # {mat, tex1, tex2, fps} (icSignAvatar flips)
+var _sign_t := 0.0
 var _engine_flares: Array = []  # {node, quad: FlareQuad, intensity, col}
 var exprs: Dictionary = {}   # channel string -> {terms: Array, value: float}
 var fire_pulse := 0.0        # set by weapons fire events
@@ -158,6 +160,8 @@ func _scan(model: Node3D) -> void:
 			_add_flame_cone(n as Node3D, ex)
 		if str(ex.get("iw2_class", "")) == "icBeamAvatar":
 			_add_jet_beam(n as Node3D, ex)
+		if str(ex.get("iw2_class", "")) == "icSignAvatar":
+			_add_sign(n as Node3D, ex)
 		if bool(ex.get("iw2_lens_flare", false)) \
 				and ex.has("iw2_flare_intensity"):
 			_add_engine_flare(n as Node3D, ex)
@@ -317,6 +321,42 @@ func _add_jet_beam(node: Node3D, ex: Dictionary) -> void:
 	mi.visible = false
 	add_child(mi)
 	_jet_beams.append({"node": node, "mi": mi})
+
+# @element icSignAvatar
+# Station signage (registry FUN_100cfeb0 @ 0x100cfeb0, vtable 0x1011d190;
+# property map FUN_100cff60: "texture" +0xbc, "texture_2" +0xc0, "fps" +0xc4).
+# Draw (vtable slot @ 0x100d0440 -- a Ghidra hole, raw-disassembled): one quad
+# in the NODE'S LOCAL FRAME (no billboarding), x -0.5..+0.5, y 0..1 (the base
+# sits ON the null, the null's scale sizes it), z 0, colour (1,1,1), v=0 at
+# the top edge. Polygon state @ 0x10171e80 (init FUN_100d00f0): cull 0,
+# blend 1 = pure additive, ztest on / z-write off -- additive_material's
+# exact shape. Textures load through the "texture:" prefix (@ 0x1016172c,
+# loader @ 0x100d0330). Two-texture signs flip on game time: phase =
+# game_ms * 0.001 / fps (consts @ 0x10119458 / cmp 0.5 @ 0x10117738, code
+# 0x100d047f..0x100d04d7); frac(phase) <= 0.5 draws texture, else texture_2.
+# So "fps" is actually the FULL flip cycle in SECONDS (casinostation.lws
+# authors fps 2..4 -- its neon flips every 1..2 s, not 2..4 times a second).
+func _add_sign(node: Node3D, ex: Dictionary) -> void:
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var t1: Texture2D = ParticleFx.texture(
+			base, str(ex.get("iw2_texture_path", "")))
+	if t1 == null:
+		return
+	var quad := QuadMesh.new()
+	quad.size = Vector2(1, 1)
+	quad.center_offset = Vector3(0, 0.5, 0)
+	var mi := MeshInstance3D.new()
+	mi.mesh = quad
+	mi.material_override = ParticleFx.additive_material(t1)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	node.add_child(mi)
+	var t2: Texture2D = null
+	if ex.has("iw2_texture_2_path"):
+		t2 = ParticleFx.texture(base, str(ex["iw2_texture_2_path"]))
+	var fps := float(ex.get("iw2_fps", 0))
+	if t2 != null and fps > 0.0:
+		_signs.append({"mat": mi.material_override,
+				"tex1": t1, "tex2": t2, "fps": fps})
 
 # unit beam quad: z 0..1 along the beam, x -1..1 across; u along the length,
 # v across the width (icBeamAvatar mesh gen @ 0x100bbc6c..0x100bbd7e)
@@ -610,3 +650,10 @@ func _physics_process(delta: float) -> void:
 		n.transform = Transform3D(b, (entry["p0"] as Vector3).lerp(entry["p1"], t))
 	_update_jet_beams()
 	_update_engine_flares()
+	# icSignAvatar flip: frac(t_seconds / fps) <= 0.5 -> texture, else
+	# texture_2 (Draw @ 0x100d047f..0x100d04d7 -- see _add_sign)
+	_sign_t += delta
+	for sg in _signs:
+		var frac := fposmod(_sign_t / float(sg["fps"]), 1.0)
+		(sg["mat"] as StandardMaterial3D).albedo_texture = \
+				sg["tex1"] if frac <= 0.5 else sg["tex2"]

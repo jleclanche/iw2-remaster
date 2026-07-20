@@ -85,6 +85,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_pod_spill",
 	&"_ms_pod_spill_assert",
 	&"_ms_gatling",
+	&"_ms_sign_avatar",
+	&"_ms_sign_avatar_assert",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -940,6 +942,54 @@ func _ms_pod_spill_assert(_delta: float) -> void:
 	elif demo_t > 20.0:
 		_mech("pod-spill", false, "no pods %d s after the kill" % int(demo_t))
 		_mech_next()
+
+var _sign_st: AiShip
+var _sign_fx: ShipEffects
+var _sign_t0 := 0.0
+
+func _ms_sign_avatar(_delta: float) -> void:
+	# icSignAvatar (#10): the casino's 13 sign nulls each grow an additive
+	# quad; the 8 two-texture ones flip on frac(t/fps) (draw @ 0x100d0440)
+	var model: Node3D = m._load_gltf(
+			"data/avatars/avatars/modularstations/casinostation.gltf")
+	if model == null:
+		_mech("sign-avatar", false, "casinostation avatar failed to load")
+		_mech_next()
+		return
+	_sign_st = _mech_spawn("Sign Casino", 1000.0,
+			m.ship.global_position + Vector3(0, -50000, 0))
+	_sign_st.add_child(model)
+	_sign_fx = ShipEffects.attach(_sign_st, model)
+	if not _sign_fx._signs.is_empty():
+		# park game time just past the half-cycle: the next fx tick must be
+		# showing texture_2
+		_sign_fx._sign_t = float(_sign_fx._signs[0]["fps"]) * 0.75
+	_sign_t0 = demo_t
+	_mech_next()
+
+func _ms_sign_avatar_assert(_delta: float) -> void:
+	var quads := 0
+	for n in _sign_st.find_children("*", "Node3D", true, false):
+		if not n.has_meta("extras") \
+				or str(n.get_meta("extras").get("iw2_class", "")) \
+					!= "icSignAvatar":
+			continue
+		for c in n.get_children():
+			if c is MeshInstance3D and (c as MeshInstance3D).mesh is QuadMesh:
+				quads += 1
+	var flipped := false
+	if not _sign_fx._signs.is_empty():
+		var sg: Dictionary = _sign_fx._signs[0]
+		flipped = (sg["mat"] as StandardMaterial3D).albedo_texture == sg["tex2"]
+	# the fx node ticks after this check in tree order -- poll until the
+	# parked half-cycle phase lands (tex2 shows for fps/2 s per cycle)
+	if not flipped and demo_t < _sign_t0 + 5.0:
+		return
+	_mech("sign-avatar", quads == 13 and _sign_fx._signs.size() == 8
+			and flipped, "%d/13 quads, %d/8 animated, flipped=%s"
+			% [quads, _sign_fx._signs.size(), flipped])
+	_mech_reap(_sign_st)
+	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:
 	# icSlugThrower is an ammo-counted iiGun. 20 shipped NPC hulls mount

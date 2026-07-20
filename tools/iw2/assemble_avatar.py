@@ -85,6 +85,24 @@ class Assembler:
             self._tex_cache[key] = uri
         return self._tex_cache[key]
 
+    def texture_rel(self, scene_dir: str, name) -> str | None:
+        """Texture stem -> path relative to data/textures, no suffix.
+
+        For effect-null textures (icSignAvatar) the runtime loads the PNG
+        itself via ParticleFx.texture, which roots at data/textures -- the
+        glTF-relative form texture_uri returns is useless to it.
+        """
+        if not name:
+            return None
+        stem = PurePosixPath(str(name).replace("\\", "/")).stem.lower()
+        local = self.textures_root / scene_dir / f"{stem}.png"
+        hits = [local] if local.is_file() else \
+            list(self.textures_root.rglob(f"{stem}.png"))
+        if not hits:
+            return None
+        return hits[0].relative_to(self.textures_root) \
+                      .with_suffix("").as_posix()
+
     def add_scene(self, scene_path: str, parent: int | None) -> None:
         scene_dir = str(PurePosixPath(scene_path).parent)
         scene = parse_scene(self.fs.read_text(scene_path))
@@ -149,7 +167,8 @@ class Assembler:
                 extras = {"iw2_kind": n["kind"]}
                 for attr in ("channel", "class", "template", "tint", "splay",
                              "name", "color", "intensity", "light_type",
-                             "lens_flare", "texture", "repeat",
+                             "lens_flare", "texture", "texture_2", "fps",
+                             "repeat",
                              "flare_intensity", "flare_options", "flare_fade",
                              "flare_star_filter", "flare_nominal"):
                     if attr in n:
@@ -160,6 +179,14 @@ class Assembler:
                 if n["kind"] == "anim" and n.get("keys"):
                     extras["iw2_pose0"] = _pose(n["keys"][0])
                     extras["iw2_pose1"] = _pose(n["keys"][-1])
+                # sign textures live beside the scene's PSO textures; the
+                # runtime loads them itself, so resolve to data/textures-
+                # relative paths here where the search machinery lives
+                if extras.get("iw2_class") == "icSignAvatar":
+                    for tk in ("iw2_texture", "iw2_texture_2"):
+                        rel = self.texture_rel(scene_dir, extras.get(tk))
+                        if rel:
+                            extras[tk + "_path"] = rel
             # detail_switch transforms are authoring-time offsets (LOD variants
             # laid out side by side, e.g. the tug's three at x -75/0/+75 once
             # the pivot folds in); the engine treats them as identity
