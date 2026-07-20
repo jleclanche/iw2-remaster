@@ -94,6 +94,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_remote_fire",
 	&"_ms_remote_fire_assert",
 	&"_ms_ghost_autopilot",
+	&"_ms_eng_layout",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1153,6 +1154,26 @@ func _ms_ghost_autopilot(_delta: float) -> void:
 			"parked=%s engaged=%s incomplete=%s restored=%s"
 			% [parked, engaged, incomplete, restored])
 	_mech_reap(st)
+	_mech_next()
+
+func _ms_eng_layout(_delta: float) -> void:
+	# the engineering page's recovered furniture (#35): the four bottom
+	# status pills span 35..605 on the 640 page ((w-96)/4 pitch +32), and
+	# the sprite table's 65..68 run is the re-paired builder assignment
+	# (wrench at atlas x 66; the TRI glyphs at 99/132/165 -- the old
+	# off-by-one drew a wrench on the DRIVE row)
+	var rects: Array = HudScreens.eng_bottom_rects()
+	var xs_ok: bool = rects.size() == 4 \
+			and absf(rects[0].position.x - 35.0) < 0.01 \
+			and absf(rects[3].end.x - 605.0) < 0.01 \
+			and absf(rects[0].size.x - 118.5) < 0.01
+	var spr_ok: bool = int(Hud.SPR[65][0]) == 66 and int(Hud.SPR[66][0]) == 99 \
+			and int(Hud.SPR[67][0]) == 132 and int(Hud.SPR[68][0]) == 165
+	_mech("eng-layout", xs_ok and spr_ok,
+			"pills=%d x0=%.1f x3end=%.1f w=%.1f tri-glyphs@%d/%d/%d" % [
+				rects.size(), rects[0].position.x, rects[3].end.x,
+				rects[0].size.x, int(Hud.SPR[66][0]), int(Hud.SPR[67][0]),
+				int(Hud.SPR[68][0])])
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

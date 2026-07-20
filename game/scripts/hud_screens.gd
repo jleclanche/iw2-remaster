@@ -329,8 +329,16 @@ const MENU_DELAY := 0.5                 # flux.ini FcInputMapper::initial_delay
 const MENU_PERIOD := 0.08               # flux.ini FcInputMapper::repeat_period
 
 var eng_row := 5                                # ctor: this+0x54 = 5
-const ENG_ROW0_Y := 177.0                       # OURS (212 - 35)
-const ENG_ROW5_Y := 352.0                       # OURS (317 + 35)
+# recovered geometry (FUN_101069a0 / FUN_10106720 / FUN_10108240 /
+# FUN_10105ef0): the selector row at y 150 (chevrons 39/74, name pill at
+# 109 w 298), the three status lamps at y 108, the reactor at y 362, the
+# four status pills at y 421
+const ENG_ROW0_Y := 150.0
+const ENG_LAMP_Y := 108.0
+const ENG_LAMP_XS := [39.0, 74.0, 109.0]
+const ENG_ROW5_Y := 362.0
+const ENG_ROW5_LEN := 379.0                     # 0x10108240: {35, 362, 379}
+const ENG_BOTTOM_Y := 421.0
 var eng_sel := 0                                # row 0's cursor into systems[]
 
 # Our stand-in for icHUD +0x1bc / +0x1c0. hud.gd only forwards key PRESSES, so
@@ -536,21 +544,51 @@ func _draw_engineering(fade: float) -> void:
 	if not _tri_loaded:
 		_tri_loaded = true
 		_tri_tex = Hud._load_mask(main._base(), "tri.png")
-	var o := _page()
+	# scale-to-window: the engine renders the page in its 640x480 virtual
+	# canvas and the device transform stretches it with the screen (the body
+	# draw's own dev-mode check @ 0x10105d75 compares against 0x280 x 0x1e0);
+	# uniform scale, centred
+	var vp := get_viewport_rect().size
+	var k := minf(vp.x / PAGE.x, vp.y / PAGE.y)
+	draw_set_transform(((vp - PAGE * k) * 0.5).floor(), 0.0, Vector2(k, k))
+	var o := Vector2.ZERO
 	# the whole screen is the menu family's AMBER (DAT_10174fb0), not the
 	# flight HUD's green -- see the reference shots on issue #35
 	var amber := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, fade)
 	var col := Color(amber.r, amber.g, amber.b, fade * 0.5)
 	var t: float = Time.get_ticks_msec() / 1000.0
 
-	# header: hud_engineering_ship + _iff, off the ship record (FUN_10106580)
+	# header: hull name + IFF, uppercased, at (20, 63) (FUN_10106580's
+	# FUN_100eb270(font 1, x 20, y 63, halign 0))
 	var strings: Dictionary = main.comms.strings if main.comms != null else {}
 	var iff := str(strings.get("player_iff_code", "CAL JOHNSTON"))
-	draw_string(hud._font_num, o + Vector2(BAR_X, 96.0),
+	draw_string(hud._font_num, o + Vector2(20.0, 63.0),
 			"%s \"%s\" [IFF CODE: %s]" % [
 				str(strings.get("hud_engineering_ship", "COMMAND SECTION")),
 				str(main.ship.name).to_upper(), iff],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2, col)
+
+	# the three status lamps at (39/74/109, 108) (FUN_10106720): each is the
+	# warning glyph in AMBER while its condition is bad, else the ring
+	# roundel (sprite 52) in the page colour -- wrench 65 for hull < 0.3
+	# (0x10163ee8), thermometer 62 for heat >= 0.7 (0x10163ef4) of the
+	# x0.8-scaled fraction (0x10163efc), lightning 63 for free power <= 0
+	# (feed FUN_10108890: +0xa4 hull/max, +0xa8 heat, +0xb4 ship+0x27c)
+	var ls: ShipSystems = _sys()
+	var lamp_hull: float = ls.hull / maxf(ls.hull_max, 1.0) \
+			if ls != null else 1.0
+	var lamp_heat: float = clampf((ls.heat + ls.heat_external) \
+			/ ShipSystems.HEAT_DAMAGE_THRESHOLD * 0.8, 0.0, 1.0) \
+			if ls != null else 0.0
+	var lamp_pwr: float = ls._power_pool if ls != null else 1.0
+	var lamps: Array = [
+		[65, lamp_hull < 0.3], [62, lamp_heat >= 0.7], [63, lamp_pwr <= 0.0]]
+	for li in 3:
+		var lp := o + Vector2(ENG_LAMP_XS[li], ENG_LAMP_Y)
+		if bool(lamps[li][1]):
+			_spr(lp, int(lamps[li][0]), amber)
+		else:
+			_spr(lp, 52, col)
 
 	# the track: tri.png drawn 1:1, (275,192)-(430,347), u/v 0..0.60546875
 	if _tri_tex != null:
@@ -592,10 +630,12 @@ func _draw_engineering(fade: float) -> void:
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2,
 			amber if eng_row == 4 else col)
 
-	# row 0: the subsim selector. Left/right cycle icShip+0x140 and Enter
-	# toggles the selected sim (FUN_10106390); label at (150, 109) in the
-	# original -- ours keeps the 35 px pitch column. Chevrons light hot.
+	# row 0: the subsim selector (FUN_101069a0). Chevrons -- sprites 34/35 --
+	# at (39, 150) / (74, 150), lit while the matching direction is held on
+	# row 0; the selected sim's name in a 298-wide captioned pill at
+	# (109, 150) (FUN_100ea900); connector strokes on y = 151.
 	var list: Array = _eng_systems()
+	var hot0: bool = eng_row == 0
 	var lbl := "SYSTEM    NONE"
 	if eng_sel >= 0 and eng_sel < list.size():
 		var sel0: Dictionary = list[eng_sel]
@@ -604,31 +644,129 @@ func _draw_engineering(fade: float) -> void:
 				if bool(sel0.get("off", false))
 				else str(strings.get("hud_engineering_general_enabled",
 					"ENABLED"))]
-	var r0 := _eng_row(o, ENG_ROW0_Y, 0, -1.0, eng_row == 0, amber)
-	draw_string(hud._font_num, Vector2(o.x + r0, o.y + ENG_ROW0_Y + 5.0),
-			("< %s >" % lbl) if eng_row == 0 else ("  %s" % lbl),
+	var held_l: bool = hot0 and _menu_held and _menu_cmd == 2
+	var held_r: bool = hot0 and _menu_held and _menu_cmd == 3
+	_spr(o + Vector2(ENG_LAMP_XS[0], ENG_ROW0_Y), 34,
+			amber if held_l else (amber if hot0 else col), PI * 0.5)
+	_spr(o + Vector2(ENG_LAMP_XS[1], ENG_ROW0_Y), 34,
+			amber if held_r else (amber if hot0 else col), -PI * 0.5)
+	var c0 := Color(amber.r, amber.g, amber.b,
+			amber.a if hot0 else amber.a * 0.5)
+	hud._hbar(self, o.x + 109.0, o.y + ENG_ROW0_Y, 298.0 - 8.0, 40, 41, c0)
+	draw_string(hud._font_num,
+			Vector2(o.x + 109.0 + 15.5, o.y + ENG_ROW0_Y + 5.0), lbl,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2,
-			amber if eng_row == 0 else col)
+			amber if hot0 else col)
+	for seg in [[55.0, 60.0], [90.0, 95.0], [421.0, 426.75]]:
+		draw_line(o + Vector2(seg[0], ENG_ROW0_Y + 1.0),
+				o + Vector2(seg[1], ENG_ROW0_Y + 1.0), c0, 1.0)
+	# ... and the selected sim's side panel at x 440 w 155 (FUN_10107070):
+	# the wrench repair pill (icon 65, bar w 138, blink under 0.3) tracking
+	# the sim's hull fraction
+	if eng_sel >= 0 and eng_sel < list.size():
+		var ps: Dictionary = list[eng_sel]
+		var pf: float = float(ps.get("hp", 0.0)) \
+				/ maxf(float(ps.get("hp_max", 1.0)), 1.0)
+		var pc := Color(amber.r, amber.g, amber.b,
+				amber.a if hot0 else amber.a * 0.5)
+		hud._hbar(self, o.x + 440.0, o.y + ENG_ROW0_Y + 35.0, 138.0 - 8.0,
+				40, 41, pc)
+		_spr(o + Vector2(444.0, ENG_ROW0_Y + 35.0), 65, pc)
+		draw_rect(Rect2(
+				Vector2(o.x + 440.0 + 15.5, o.y + ENG_ROW0_Y + 30.0),
+				Vector2((138.0 - 8.0 - 27.5) * clampf(pf, 0.0, 1.0), 10.0)),
+				Color(pc.r, pc.g, pc.b, pc.a * 0.8))
 
-	# row 5: the reactor throttle (icReactor+0xa0 ramp target) -- lightning
-	# icon, the style-3 SEGMENTED bar (FUN_100ebde0, sprites 14/13 on the
-	# 7 px pitch) and the output readout in its own pill
+	# row 5: the reactor (FUN_10108240): the bar record {35, 362, 379,
+	# style 3} -- lightning icon, sprites 14/13 segments -- then the
+	# connector stroke 420..427 and the output readout in its own pill at
+	# (440, 362) w 152, text centred on (516, 362)
 	var s5: ShipSystems = _sys()
 	var thr: float = s5.reactor_throttle() if s5 != null else 1.0
 	var hot5: bool = eng_row == 5
-	# (the reactor row's own icon sprite id is not recovered; no icon
-	# beats a wrong glyph)
-	var r5 := _eng_row(o, ENG_ROW5_Y, 0, -1.0, hot5, amber)
-	hud._segbar3(self, Vector2(o.x + r5, o.y + ENG_ROW5_Y),
-			BAR_LEN - 8.0 - 27.5, thr, amber if hot5 else col)
-	var mw: float = s5.reactor_power() if s5 != null \
-			and s5.has_method("reactor_power") else 0.0
-	draw_string(hud._font_num,
-			Vector2(o.x + BAR_X + BAR_LEN + 12.0, o.y + ENG_ROW5_Y + 5.0),
+	var c5 := Color(amber.r, amber.g, amber.b,
+			amber.a if hot5 else amber.a * 0.5)
+	hud._hbar(self, o.x + BAR_X, o.y + ENG_ROW5_Y, ENG_ROW5_LEN - 8.0,
+			40, 41, c5)
+	if hot5:
+		_spr(o + Vector2(BAR_X + 4.0, ENG_ROW5_Y), 51, c5)
+	_spr(o + Vector2(BAR_X + 4.0, ENG_ROW5_Y), 63, c5)
+	hud._segbar3(self, Vector2(o.x + BAR_X + 19.5, o.y + ENG_ROW5_Y),
+			ENG_ROW5_LEN - 8.0 - 27.5, thr, amber if hot5 else col)
+	draw_line(o + Vector2(420.0, ENG_ROW5_Y), o + Vector2(427.0, ENG_ROW5_Y),
+			c5, 1.0)
+	hud._hbar(self, o.x + 440.0, o.y + ENG_ROW5_Y, 152.0 - 8.0, 40, 41, c5)
+	var mw: float = 0.0
+	if s5 != null:
+		for rsys in s5.systems:
+			if str(rsys["class"]) == "icReactor":
+				mw = float(rsys.get("output", 0.0))
+	draw_string(hud._font_num, Vector2(o.x + 516.0 - 30.0,
+			o.y + ENG_ROW5_Y + 5.0),
 			("%d MW" % int(round(mw * thr))) if mw > 0.0
 				else ("%3d%%" % int(round(thr * 100.0))),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2,
+			HORIZONTAL_ALIGNMENT_CENTER, 60, hud.num_size - 2,
 			amber if hot5 else col)
+
+	_eng_bottom_row(o, amber, col, t)
+	draw_set_transform_matrix(Transform2D.IDENTITY)
+
+## The four wide status pills across the page bottom (FUN_10105ef0, called
+## with x 35, y 421, w = page_w - 70): each pill (w - 96)/4 wide on a 32 px
+## gap. Recovered fills: hull fraction behind the wrench (65, blinks under
+## 0.2), the per-subsim tick strip (FUN_10106d20), the heat fraction behind
+## the thermometer (62, blinks past 0.75) and Brightness() behind the bulb
+## (64, red past 0.8 -- docs/original.md icShip::Brightness).
+## The authored pill x/width layout, page coords: 4 pills of (w - 96)/4 on
+## a 32 px gap starting at x 35 (FUN_10105ef0's head: fsub 96 @ 0x1011c70c,
+## fmul 0.25 @ 0x101191ec, advance 32 @ 0x1011848c).
+static func eng_bottom_rects() -> Array:
+	var pw := (PAGE.x - 70.0 - 96.0) * 0.25
+	var out: Array = []
+	for i in 4:
+		out.append(Rect2(35.0 + (pw + 32.0) * i, ENG_BOTTOM_Y, pw, 20.0))
+	return out
+
+func _eng_bottom_row(o: Vector2, amber: Color, col: Color, t: float) -> void:
+	var s: ShipSystems = _sys()
+	var total := PAGE.x - 70.0
+	var pw := (total - 96.0) * 0.25
+	var hull_f: float = s.hull / maxf(s.hull_max, 1.0) if s != null else 1.0
+	var heat_f: float = clampf((s.heat + s.heat_external) * 0.75 \
+			/ ShipSystems.HEAT_DAMAGE_THRESHOLD, 0.0, 1.0) \
+			if s != null else 0.0
+	var brt: float = clampf(s.brightness(), 0.0, 1.0) if s != null else 0.0
+	var blink := fposmod(t, 1.0) < 0.5
+	var rows: Array = [
+		[65, hull_f, hull_f < 0.2 and blink],
+		[0, -1.0, false],
+		[62, heat_f, heat_f > 0.75 and blink],
+		[64, brt, brt > 0.8 and blink],
+	]
+	for i in 4:
+		var x: float = 35.0 + (pw + 32.0) * i
+		var c := Color(1.0, 0.07, 0.0, amber.a) if bool(rows[i][2]) else col
+		hud._hbar(self, o.x + x, o.y + ENG_BOTTOM_Y, pw - 8.0, 40, 41, c)
+		if int(rows[i][0]) != 0:
+			_spr(o + Vector2(x + 4.0, ENG_BOTTOM_Y), int(rows[i][0]), c)
+		var frac := float(rows[i][1])
+		if frac >= 0.0:
+			draw_rect(Rect2(Vector2(o.x + x + 15.5, o.y + ENG_BOTTOM_Y - 5.0),
+					Vector2((pw - 8.0 - 27.5) * clampf(frac, 0.0, 1.0), 10.0)),
+					Color(c.r, c.g, c.b, c.a * 0.8))
+		elif s != null and i == 1:
+			# the tick strip: one mark per subsim, bright when damaged
+			var n: int = s.systems.size()
+			for j in n:
+				var sub: Dictionary = s.systems[j]
+				var dmg: bool = bool(sub.get("destroyed", false)) \
+						or float(sub.get("hp", 1.0)) \
+						< float(sub.get("hp_max", 1.0))
+				var mx: float = x + 15.5 \
+						+ (pw - 8.0 - 27.5) * (float(j) + 0.5) / float(maxi(n, 1))
+				draw_line(Vector2(o.x + mx, o.y + ENG_BOTTOM_Y - 5.0),
+						Vector2(o.x + mx, o.y + ENG_BOTTOM_Y + 5.0),
+						amber if dmg else col, 2.0)
 
 # --- icHUDStarmap -------------------------------------------------------------
 # @element icHUDStarmap

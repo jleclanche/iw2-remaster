@@ -936,27 +936,64 @@ The rows are not bare text -- each is the shared bar-record renderer
   style 1 = 10/9 step 5, style 2 = 12/11 step 6, **style 3 = 14/13 step 7**
   (the reactor row). Full segments at full alpha plus ONE tail segment at
   fractional alpha.
-- **sprites 66/67/68** (the TRI axis glyphs): atlas `(66/99/132, 191)`,
-  32x32, origin `(16,16)` (table-builder calls `@ 0x100e7a0e/45/7c`).
+- **sprites 65..68**, re-paired against the builder's ENTRY ADDRESSES (each
+  `FUN_100ee6b0` call pairs with the `mov edi, <entry>` that FOLLOWS it;
+  anchor: sprite 60's edi `0x10174a20` = the verified L-point icon cell):
+  **65 = (66,191) wrench**, **66 = (99,191) DRIVE**, **67 = (132,191)
+  OFFENSIVE**, **68 = (165,191) DEFENSIVE** — the earlier `@ 0x100e7a0e/45/7c
+  = 66/67/68` claim was one entry off and drew a wrench on the drive row.
+  Confirmed against the glyph pixels (wrench / ship+plume / ship+beams /
+  ship+arc).
 - **`FUN_100ea900`** (captioned pill, e.g. RESET TRI): text width via
   `FUN_100ebd70`, the 40/41 pill, optional icon, then the caption.
 
 hud_screens.gd `_draw_engineering` now draws the rows through this shape
 (pill + icon + solid fill + needle), in the menu family's AMBER.
 
+### The rest of the page, recovered (body draw `FUN_10105d40`, raw-disasm)
+
+The body draw calls its sections in order: the feed `FUN_10108890`, header
+subtitle `FUN_10106580` (hull + IFF at (20, 63), font 1), lamps
+`FUN_10106720`, `FUN_1002a9f0`, selector `FUN_101069a0` (+ side panel
+`FUN_10107070`), TRI `FUN_10107710`, reactor `FUN_10108240`, bottom row
+`FUN_10105ef0(35, 421, page_w - 70, 20)`. Page ALPHA fades in over 1 s
+(`this+0x58 += dt`, `engine+0x1790 = t/1.0`); the page renders in the
+640x480 virtual canvas the device transform scales to the window (the dev
+check compares `engine+0x13c/0x140` against 0x280/0x1e0).
+
+- **the three "circles" are STATUS LAMPS** at (39/74/109, 108)
+  (`FUN_10106720`): the warning glyph in amber when bad, else ring sprite
+  52 -- wrench 65 for hull fraction < 0.3 (`0x10163ee8`), thermometer 62
+  for the x0.8-scaled heat fraction >= 0.7 (`0x10163ef4`/`0x10163efc`),
+  lightning 63 for free power (`ship+0x27c`) <= 0. Feed values:
+  `FUN_10108890` (+0xa4 hull/max, +0xa8 heat/(m_heat_damage_threshold),
+  +0xb4 free power).
+- **the "AUTOREPAIR row" is the subsim selector** (`FUN_101069a0`):
+  chevron sprites 34/35 at (39, 150)/(74, 150) lit while held, the
+  selected sim's localised name in a 298-wide captioned pill at (109, 150)
+  (`FUN_100ea900`), connector strokes on y = 151 (55-60 / 90-95 /
+  421-426.75). The wrench-with-progress pill is the sim's SIDE PANEL
+  (`FUN_10107070`): a 155-wide frame at x 440, a style-1 wrench pill
+  (icon 65, bar w 138) and a conditional lightning/MW row.
+- **the reactor row** (`FUN_10108240`): record {35, 362, 379, style 3},
+  a connector stroke 420..427, the readout pill at (440, 362) w 152 with
+  the MW text centred on (516, 362). Throttle held-key rate 0.35/s
+  (`0x10163f14`).
+- **the bottom row IS four wide status pills** (`FUN_10105ef0`): each
+  (w - 96)/4 wide on a 32 px gap from x 35 -- hull fraction behind the
+  wrench (blink < 0.2), the per-subsim tick strip (`FUN_10106d20`), heat
+  behind the thermometer (blink > 0.75), `icShip::Brightness()` behind
+  the bulb (> 0.8).
+
 ### Still UNKNOWN on this screen
 
-- the **y positions** of rows 0 and 5 in `hud_screens.gd` are still ours (the
-  original puts row 0's label at (150, 109); we keep the 35 px row pitch).
-  Row 5's position is not recovered at all.
-- what `0x1011e378` = 70 and `0x1011e37c` = 160 position.
-- `icHUD+0x1b6`, the lock that suppresses the held path, is read but we have not
-  established what sets it.
-- the reactor row's own icon sprite id and the exact "MW" readout format
-  (`FUN_10108240`'s draw half); the fill-quad height inside the pill.
-- the header's three circles and AUTOREPAIR row (prev/next arrows + wrench
-  progress pill) in the reference shot, and the four wide status pills
-  across the page bottom -- their draw functions are not yet attributed.
+- `icHUD+0x1b6`, the lock that suppresses the held path, is read but we have
+  not established what sets it.
+- `FUN_10108240`'s MW format string literal (the FcString::Format source is
+  register-carried); ours prints "%d MW".
+- `FUN_1002a9f0` (between the feed and the selector) is unread.
+- the exact per-subsim mark shape in `FUN_10106d20` (we draw a tick per
+  subsim, bright when damaged).
 
 ## `icHUDStarmap` — a pannable 2D chart, and the data is in `clusters.ini`
 

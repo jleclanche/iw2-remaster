@@ -138,9 +138,13 @@ const SPR := {
 	# 66..68: the TRI axis glyphs (table builder calls @ 0x100e7a0e/45/7c):
 	# engine plume / two beams / deflecting arc -- the same three glyphs
 	# tri.png's corners carry (docs/hud_elements.md, the axis proof)
-	66: [66, 191, 32, 32, 16, 16],       # DRIVE
-	67: [99, 191, 32, 32, 16, 16],       # OFFENSIVE
-	68: [132, 191, 32, 32, 16, 16],      # DEFENSIVE
+	# ids 65..68 re-paired against the builder's entry addresses (edi
+	# 0x10174ad4/af8/b1c/b40 = entries 65/66/67/68; the earlier pass was one
+	# cell off, which drew a WRENCH on the drive row)
+	65: [66, 191, 32, 32, 16, 16],       # wrench (repair)
+	66: [99, 191, 32, 32, 16, 16],       # DRIVE (ship + plume)
+	67: [132, 191, 32, 32, 16, 16],      # OFFENSIVE (ship + beams)
+	68: [165, 191, 32, 32, 16, 16],      # DEFENSIVE (ship + arc)
 	52: [165, 59, 32, 32, 16, 16],       # roundel: ring
 	53: [198, 59, 32, 32, 16, 16],       # roundel: ring + disc  (bits 0|3)
 	54: [33, 125, 32, 32, 16, 16],       # ship class icon, type 1 (FUN_100e86d0)
