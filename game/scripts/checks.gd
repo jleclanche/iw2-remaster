@@ -1370,6 +1370,9 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_turret_refire",
 	&"_ms_beam_spawn",
 	&"_ms_beam_burst",
+	&"_ms_player_beam",
+	&"_ms_player_beam_gate",
+	&"_ms_player_beam_burn",
 	&"_ms_field_spawn",
 	&"_ms_field_assert",
 	&"_ms_field_cull",
@@ -1665,6 +1668,77 @@ func _ms_beam_burst(_delta: float) -> void:
 		_mech("beam-burst", false, "energy=%.0f firing=%s after %.0f s"
 			% [float(_mech_beam["energy"]),
 				str(_mech_beam["firing"]), demo_t])
+		_mech_next()
+
+func _ms_player_beam(_delta: float) -> void:
+	# --- the player's channel-2 beam (#3): the tug's own mining laser -------
+	# icBeamProjector::Fire (0x100300c0): the trigger must NOT light the beam
+	# below min_fire_energy; from a part-charged bank it lights and holds
+	# until dry, damaging the first contact and heating the ship.
+	m.weapons.clear()
+	var fitted: bool = m.player_beams.size() == 1 \
+			and str(m.player_beams[0]["stem"]) == "mining_beam"
+	_mech("player-beam-fitted", fitted, "beams=%d" % m.player_beams.size())
+	if not fitted:
+		_mech_beam = {}
+		_mech_next()
+		return
+	_mech_beam = m.player_beams[0]
+	# the drone sits on the BEAM's own axis (the mount null aims it, not the
+	# hull nose), inside the 1500 m length
+	var mount: Transform3D = m.ship.global_transform * Transform3D(
+			_mech_beam["basis"] as Basis, _mech_beam["pos"] as Vector3)
+	_mech_drone = _mech_spawn("Beam Drone", 5000.0,
+			mount.origin - mount.basis.z * 800.0)
+	_mech_drone.velocity = m.ship.velocity
+	_mech_drone.radius = 30.0
+	m._select_secondary(m.player_mags.size())  # first beam entry of the ring
+	_mech("player-beam-select", m.secondary_name == "MINING BEAM",
+		"selected '%s'" % m.secondary_name)
+	_mech_beam["energy"] = float(_mech_beam["min_fire"]) * 0.5
+	_mech_next()
+
+func _ms_player_beam_gate(_delta: float) -> void:
+	if _mech_beam.is_empty():
+		_mech_next()   # fitted-check already failed and reported
+		return
+	if demo_t < 0.5:
+		m._fire_secondary()   # hold the trigger below the threshold
+		return
+	_mech("player-beam-lowgate", not bool(_mech_beam["firing"])
+			and float(_mech_beam["burst_damage"]) == 0.0,
+		"energy %.0f < min_fire %.0f never lit"
+			% [float(_mech_beam["energy"]), float(_mech_beam["min_fire"])])
+	# a part charge: 2 x min_fire lights up and burns dry -- 400 energy /
+	# drain 200 * damage_rate 1000 = 2000 damage, and sqrt(1000) * 5 heat/s
+	# stays under the 500 overheat cutoff for the 2 s burn
+	_mech_beam["energy"] = float(_mech_beam["min_fire"]) * 2.0
+	_mech_v0 = Vector3(_mech_drone.hull, m.sys.heat, 0.0)
+	_mech_next()
+
+func _ms_player_beam_burn(_delta: float) -> void:
+	if _mech_beam.is_empty():
+		_mech_next()
+		return
+	m._fire_secondary()
+	var burst := float(_mech_beam["burst_damage"])
+	if burst > 0.0 and not bool(_mech_beam["firing"]):
+		_mech("player-beam-burst", absf(burst - 2000.0) < 50.0 * Engine.time_scale,
+			"%.0f damage (2 x min_fire 400 / drain 200 * rate 1000)" % burst)
+		var took := float(_mech_v0.x) - _mech_drone.hull
+		_mech("player-beam-damage", absf(took - burst) < 1.0,
+			"drone hull -%.0f" % took)
+		# the player-style heat coupling (ai_charge == 0, gate 0x100301d1).
+		# Grew-at-all is the failable claim: without the coupling the
+		# heatsinks make heat FALL across the 2 s burn.
+		_mech("player-beam-heat", m.sys.heat > float(_mech_v0.y) + 5.0,
+			"ship heat %.0f -> %.0f" % [float(_mech_v0.y), m.sys.heat])
+		m._select_secondary(-1)
+		_mech_reap(_mech_drone)
+		_mech_next()
+	elif demo_t > 30.0:
+		_mech("player-beam-burst", false, "energy=%.0f firing=%s after %.0f s"
+			% [float(_mech_beam["energy"]), str(_mech_beam["firing"]), demo_t])
 		_mech_next()
 
 func _ms_field_spawn(_delta: float) -> void:

@@ -34,14 +34,15 @@ and most of it is listed on this page.
    builder mapped, unreachable). Wiring this retires a whole class of
    divergence at once. (M; plus S for the two `ioptions.CreateGraphics*`
    row stubs the options screen will call)
-3. **The player cannot fire a fitted beam weapon.** Beam mechanics are
-   built and mechcheck-verified (turrets.gd: icBeamProjector/icBeam,
-   AI ships and stations fire them) — but the player fire paths cover
-   only guns (weapons.gd, channel 1) and magazines (main_combat.gd
-   `player_mags`). A fitted icBeamProjector lands on channel 2 with no
-   route to the trigger. Cargo_AntimatterStreamer (578) and the cutting
-   beam are loot/fitting options from act 2 piracy onward — currently
-   dead weight in the loadout screen. (M)
+3. **DONE — fitted beams fire on the player trigger (#3).** The
+   channel-2 ring now holds magazines AND beams side by side
+   (icPlayerPilot::GetNextWeapon 0x100b0590); the trigger runs
+   icBeamProjector::Fire's recovered player path (0x100300c0: light-up
+   above min_fire_energy, hold until the bank is dry, no target gate,
+   heat coupling at 0x100301d1). The tug's own mining laser proves it:
+   mechcheck player-beam-fitted/-select/-lowgate/-burst/-damage/-heat.
+   Antimatter Streamer and the cutting beam route the same way when
+   looted.
 4. **Campaign verification depth is one mission.** `--campcheck` proves
    act 0 mission 10 boots, speaks, and completes its first waypoint
    objective (+ the iscore checkpoint natives). Nothing runs missions
@@ -135,11 +136,11 @@ Ordered by campaign impact.
 | Front-end/pause PDA wiring | PARTLY DONE (2580a53): OPTIONS/CREDITS/MOVIES/EXTRAS now raise the screens their own ipdagui handlers raise, and basecheck asserts all four build. REMAINS: the button list is still hand-written rather than read out of SPMainPDAScreen, and Instant Action still needs `igui.OverlayCustomScreen` + icSPShipTypeScreen (issue #20) | Labels/order/enablement can still drift from the original; Instant Action ship choice unreachable | M |
 | `ioptions.CreateGraphicsDeviceOptionButtons` / `...Resolution...` | DONE (2580a53) -- both return a list of radio buttons; device list is the one renderer, resolution list is the RESOLUTIONS ladder | -- | -- |
 | `gui.SetWindowStateIcons` | DONE (0f7f1c0) -- the 16x16 state glyph, which is the ONLY thing distinguishing an inverse button's selected state from its neutral one | -- | -- |
-| Player beam fire path (channel-2 beams to the trigger) | weapons.gd cycles channel 1 only; `player_mags` = magazines only | Antimatter Streamer (cargo 578), cutting beam: lootable, fittable, never fire | M |
+| Player beam fire path (channel-2 beams to the trigger) | DONE (#3) — the secondary ring holds magazines and beams; icBeamProjector::Fire's player path (0x100300c0) drives them; mechcheck player-beam-* | -- | -- |
 | Turret-fighter system (`iship.CreateTurretFighters` + icTurretShip) | stub in world.gd; turrets.gd:14 GENUINE GAP; istartsystem.pog:484 calls it every system start | Carrier-escort loadout feature absent; `iwingmen.AddTFighters` always fed an empty list | L |
-| Turret designation (`WeaponTargetsFromContactList`, `WeaponsUseExplicitTarget`) | apicov --stubs; `_sh_noop` world.gd | a1m03/07, a2m25, a3m01/03, istation, iwingmen: batteries ignore the mission's targeting orders | S |
-| `sim.SetCollision` (non-player half) | stub; 52 calls / 18 pkgs; be3434d ported the player half | Staged cutscenes and dock sequences can collide visibly (a0m20, a1m01/07/10, a2m01/18/24/25, a3m04/10, ideathscript, ishipcreation...) | S-M |
-| `isim.StopExplosion` | stub ("our explosions are instantaneous") | a1m07/10, a2m01/13, a3m04/10, ideathscript, iwingmen: staged explosions cannot be cancelled mid-sequence | S |
+| Turret designation (`WeaponTargetsFromContactList`, `WeaponsUseExplicitTarget`) | DONE (issue #6) — designation locks/releases the battery; mechcheck turret-designation | -- | -- |
+| `sim.SetCollision` (non-player half) | DONE (issue #9) — AI ships and records carry the flag; collisions and both bolt sweeps honour it; mechcheck set-collision | -- | -- |
+| `isim.StopExplosion` | DONE (issue #9) — staged burn + early curtain; mechcheck start/stop-explosion | -- | -- |
 | icElectricEffectAvatar | featurecov --todo; used by data/ini/sfx/disruptor + sfx/infection nodes | Disruptor arcs (act 2 loot weapon) and act 3 infection arcing invisible — the DoT and crust natives already work | M |
 | icRemoteMissile (visual + control) | missiles.gd:21 stub "data and rules recovered; the handoff is not built" | Remote/deathblow/antimatter missiles (cargo 505/513/515) unusable; depends on the remote handoff | M (after handoff) |
 | ~~icSlugThrower (ammo-counted gun)~~ **DONE** | was turrets.gd:20; the stub was stale on both counts — the player path was already complete, and 20 NPC hulls mount `nps_assault_cannon` (the stub claimed none did). Admitted to the AI battery with its ammo store; mechcheck `gatling-gun` | — | — |

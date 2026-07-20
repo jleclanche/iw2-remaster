@@ -173,6 +173,9 @@ func _fit_systems(ini_path: String) -> void:
 		hull_max = float(ship_stats.get("hit_points", 500))
 		hull = hull_max
 		player_mags = []
+		player_beams = []
+		if Turrets.instance != null:
+			Turrets.instance.set_player_battery(self)
 		_select_secondary(-1)
 		return
 	fitted.bind_model(ship_model)
@@ -187,6 +190,11 @@ func _fit_systems(ini_path: String) -> void:
 	# the fitted missile/countermeasure magazines (tug_prefitted.ini: seeker
 	# x5, LDSi x4, decoy x8)
 	player_mags = Missiles.mags_for(sys)
+	# the fitted beams join the channel-2 cycle (icPlayerPilot::GetNextWeapon
+	# 0x100b0590 holds magazines and beam links side by side; the tug's is
+	# the mining laser)
+	player_beams = Turrets.instance.set_player_battery(self) \
+			if Turrets.instance != null else []
 	_select_secondary(-1)
 
 ## NEW GAME while a game is already running. The POG runtime, its tasks, the

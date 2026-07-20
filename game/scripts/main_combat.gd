@@ -396,10 +396,26 @@ func _collisions() -> void:
 
 # --- the missile system: player-side plumbing (missiles.gd) -----------------
 
+## The channel-2 ring: the fitted magazines, then the fitted beams
+## (icPlayerPilot::GetNextWeapon 0x100b0590 cycles magazines and beam links
+## side by side, filtered by fire channel).
+func _secondary_count() -> int:
+	return player_mags.size() + player_beams.size()
+
+func _selected_beam() -> Dictionary:
+	if secondary_idx >= player_mags.size() \
+			and secondary_idx < _secondary_count():
+		return player_beams[secondary_idx - player_mags.size()]
+	return {}
+
 func _select_secondary(idx: int) -> void:
-	secondary_idx = idx if idx >= 0 and idx < player_mags.size() else -1
+	secondary_idx = idx if idx >= 0 and idx < _secondary_count() else -1
 	if secondary_idx < 0:
 		secondary_name = "NONE"
+		return
+	var beam := _selected_beam()
+	if not beam.is_empty():
+		secondary_name = str(beam["stem"]).replace("_", " ").to_upper()
 		return
 	var mag: Dictionary = player_mags[secondary_idx]
 	secondary_name = "%s %d/%d" % [str(mag["projectile"]).replace("_", " ")
@@ -461,31 +477,38 @@ func _next_primary_weapon(warn := true) -> bool:
 
 func _cycle_secondary() -> void:
 	# icPlayerPilot.NextSecondaryWeapon (Backspace / Joy3) steps the ring of
-	# fitted magazines. Same cue rule as the primary above.
-	if player_mags.is_empty():
+	# fitted magazines and beams. Same cue rule as the primary above.
+	if _secondary_count() == 0:
 		hud.warn("NO SECONDARY WEAPONS")
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
-	if player_mags.size() == 1 and secondary_idx == 0:
+	if _secondary_count() == 1 and secondary_idx == 0:
 		audio.play("audio/hud/invalid_input.wav", -8.0)
 		return
-	_select_secondary((secondary_idx + 1) % player_mags.size())
+	_select_secondary((secondary_idx + 1) % _secondary_count())
 	audio.play("audio/hud/valid_input.wav", -10.0)
 	hud.log_msg("WEAPON: %s" % secondary_name)
 
 func _fire_secondary() -> void:
-	if secondary_idx < 0 or secondary_idx >= player_mags.size():
+	if secondary_idx < 0 or secondary_idx >= _secondary_count():
 		return
 	# iiWeapon::IsReadyToFire 0x1003cb80: the disrupted flag blocks fire.
 	# Shields-only disruption (full_disruption=0, e.g. achillies) only takes
 	# the LDA subsims, not the weapons.
 	if weapon_disrupt_time > 0.0 and weapon_disrupt_full:
 		return
-	var mag: Dictionary = player_mags[secondary_idx]
 	# the ship-wide overheat flag 0x200 (iiWeapon::Simulate 0x1003cc00)
 	if sys != null and sys.heat + sys.heat_external \
 			>= ShipSystems.HEAT_DAMAGE_THRESHOLD:
 		return
+	var beam := _selected_beam()
+	if not beam.is_empty():
+		# held trigger: one frame's fire request, consumed by
+		# Turrets._step_beam's player branch (icBeamProjector::Fire
+		# 0x100300c0 runs per frame while the trigger is down)
+		beam["trigger"] = true
+		return
+	var mag: Dictionary = player_mags[secondary_idx]
 	if missiles.fire_magazine(ship, mag, target_ai):
 		_select_secondary(secondary_idx)  # refresh the ammo readout
 

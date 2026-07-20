@@ -72,6 +72,11 @@ var _time := 0.0            # game-time clock for the fire logs
 
 func _enter_tree() -> void:
 	instance = self
+	# main fits the player during its _ready, BEFORE this deferred node
+	# exists (missiles.gd bootstraps it a frame later) -- pick the fitted
+	# beams up now
+	if main != null and main.sys != null:
+		main.player_beams = set_player_battery(main)
 
 func _exit_tree() -> void:
 	if instance == self:
@@ -188,11 +193,48 @@ func _battery_for_ship(ai: AiShip) -> Dictionary:
 # position, so read the setup-scene JSON (where the engine's attach nulls
 # live) for the hpb; identity when nothing is found.
 func _null_basis(ai: AiShip, s: Dictionary) -> Basis:
+	return _ini_null_basis(ai.ini_path, s)
+
+func _ini_null_basis(ini_path: String, s: Dictionary) -> Basis:
 	var null_name := str(s.get("null", ""))
-	if null_name.is_empty() or ai.ini_path.is_empty():
+	if null_name.is_empty() or ini_path.is_empty():
 		return Basis.IDENTITY
-	var rec: Dictionary = ShipSystems.ship_record(ai.ini_path)
+	var rec: Dictionary = ShipSystems.ship_record(ini_path)
 	return _scene_null_basis(str(rec.get("setup_scene", "")), null_name)
+
+# --- the player's beams (#3) -------------------------------------------------
+# icBeamProjector::Fire (0x100300c0), the PLAYER trigger path: light-up needs
+# energy above min_fire_energy (+0xb8) -- the full-capacity rule in _step_beam
+# is the AI AUTO trigger, a separate recovered gate -- then the beam holds
+# until the bank runs dry (energy -= beam_power_drain * dt, off at zero,
+# result 4). No target is required: iiWeapon::AttemptToActivateWeapon
+# (0x1003ccb0) only checks the pilot's selected id, and the beam goes where
+# the mount points. The tug ships one: subsims/systems/player/mining_laser
+# (capacity 1200, min_fire_energy 200, beam_power_drain 200).
+var _player_battery: Dictionary = {}
+
+## (Re)build the player's beam battery from the fitted loadout. Returns the
+## beam dicts for main's secondary cycle; empty when nothing is fitted.
+func set_player_battery(mn: Node3D) -> Array:
+	if not _player_battery.is_empty():
+		_free_battery(_player_battery)
+		batteries.erase(_player_battery)
+		_player_battery = {}
+	var sys: ShipSystems = mn.sys
+	if sys == null or mn.ship == null:
+		return []
+	var beams: Array = []
+	for s in sys.systems:
+		if str(s.get("class", "")) == "icBeamProjector":
+			beams.append(_make_beam(str(s.get("template", "")), s,
+					s.get("pos", Vector3.ZERO),
+					_ini_null_basis(str(mn.player_ship_ini), s)))
+	if beams.is_empty():
+		return []
+	_player_battery = {"owner": mn.ship, "rec": {}, "ship": true, "guns": [],
+		"beams": beams, "armed": false, "locked": null, "player": true}
+	batteries.append(_player_battery)
+	return beams
 
 var _scene_cache: Dictionary = {}
 
@@ -696,15 +738,26 @@ func _step_beam(b: Dictionary, m: Dictionary, base: Transform3D, armed: bool,
 	# a live fire-request target, light up and hold the beam until the bank
 	# hits zero or the solution is lost
 	var want_fire := false
-	if armed and target != null and eff > 0.0:
+	if bool(b.get("player", false)):
+		# the player trigger (icBeamProjector::Fire 0x100300c0): light-up
+		# above min_fire_energy, hold until dry, no target gate -- see
+		# set_player_battery. The flag is set by main._fire_secondary each
+		# held frame and consumed here.
+		if bool(m.get("trigger", false)) and eff > 0.0:
+			if was_live:
+				want_fire = float(m["energy"]) > 0.0
+			else:
+				want_fire = float(m["energy"]) > float(m["min_fire"])
+		m["trigger"] = false
+	elif armed and target != null and eff > 0.0:
 		if was_live:
 			want_fire = float(m["energy"]) > 0.0
 		else:
 			want_fire = float(m["energy"]) >= float(m["capacity"]) \
 					and float(m["energy"]) > float(m["min_fire"])
-	# beam CFS (0x100304e0): the target must sit in the muzzle cylinder --
-	# ahead, within length, |x| and |y| inside its radius
-	if want_fire:
+	# beam CFS (0x100304e0), the AI trigger only: the target must sit in the
+	# muzzle cylinder -- ahead, within length, |x| and |y| inside its radius
+	if want_fire and target != null and not bool(b.get("player", false)):
 		var local: Vector3 = mount.affine_inverse() * target.global_position
 		var r := _chase_radius(target)
 		if local.z > 0.0 or -local.z > float(m["length"]) \
@@ -780,10 +833,15 @@ func _step_beam(b: Dictionary, m: Dictionary, base: Transform3D, armed: bool,
 	# 0x100301d1 tests |ai_charge| < 1e-6) also heats the ship:
 	# internal += sqrt(damage_rate) * heat_scale * dt
 	m["energy"] = maxf(0.0, float(m["energy"]) - float(m["drain"]) * delta)
-	if absf(float(m["ai_charge"])) < 1e-6 and owner is AiShip \
-			and (owner as AiShip).sys != null:
-		(owner as AiShip).sys.heat += sqrt(maxf(float(m["damage_rate"]), 0.0)) \
-				* BEAM_HEAT_SCALE * delta
+	if absf(float(m["ai_charge"])) < 1e-6:
+		var heat_sys: ShipSystems = null
+		if owner is AiShip:
+			heat_sys = (owner as AiShip).sys
+		elif bool(b.get("player", false)):
+			heat_sys = main.sys
+		if heat_sys != null:
+			heat_sys.heat += sqrt(maxf(float(m["damage_rate"]), 0.0)) \
+					* BEAM_HEAT_SCALE * delta
 	if float(m["energy"]) <= 0.0:
 		m["firing"] = false
 	var vis := minf(float(m["length"]) * float(m["ramp"]), hit_dist)

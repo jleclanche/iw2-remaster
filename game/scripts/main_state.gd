@@ -286,6 +286,7 @@ var fire_lock := 0.0  # brief inhibit after menus/movies eat a click
 var disrupt_time := 0.0  # LDSi weapon hit: drive locked out (iship.Disrupt)
 # --- the missile system's player-side state (missiles.gd) -------------------
 var player_mags: Array = []      # the fitted icMissileMagazine/icCM magazines
+var player_beams: Array = []     # the fitted icBeamProjectors (turrets.gd, #3)
 var secondary_idx := -1          # NextSecondaryWeapon ring; -1 = primary
 var secondary_name := "NONE"     # HUD weapon-panel line (hud.gd owner wires it)
 # icPlayerPilot's incoming-missile feed (OnIncomingMissile 0x100b0fc0): the
