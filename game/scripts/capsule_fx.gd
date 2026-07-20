@@ -82,7 +82,12 @@ const BEAM_W_MAX := 460.0        # _DAT_1011cd70
 const BEAM_JX := 50.0            # _DAT_1011a1c0, strip offset scatter
 const BEAM_JY := 10.0            # _DAT_101190c0
 const END_FLARE_Z := 90000.0     # _DAT_1011cd5c
-const END_FLARE_SIZE := 10000.0  # 0x461c4000 @ 0x100c2040
+# FlareNominalDistance (+0xe4) per flare family, FUN_100c2040: the end
+# flares author 10000 (0x461c4000), the 99 ring flares 3500 (0x455ac000);
+# both flag-8 fixed-world size = m_intensity_scale x envelope x nominal
+# x tan(half-fov) (Render, flux.dll.c:215202-215206)
+const END_FLARE_NOMINAL := 10000.0
+const RING_FLARE_NOMINAL := 3500.0
 const WALL1_COLOR := Color(1.0, 0.52, 0.01, 0.5)   # 0x3f051eb8, 0x3c23d70a
 const WALL2_COLOR := Color(0.83, 0.10, 0.01, 0.5)  # 0x3f547ae1, 0x3dcccccd
 const WALL2_SCALE := 1.07        # 0x3f88f5c3
@@ -450,19 +455,30 @@ func _rebuild_flares() -> void:
 	vv.resize(quads * 6)
 	vc.resize(quads * 6)
 	vu.resize(quads * 6)
+	# flag-8 fixed-world sizing (FcLensFlareNode::Render, flux.dll.c:
+	# 215202-215206): half = m_intensity_scale x envelope x
+	# FlareNominalDistance x tan(half-fov). The ring flares author
+	# nominal 3500 (+0xe4 = 0x455ac000, FUN_100c2040's 99-loop), the end
+	# flares 10000; both carry flag 8 (+0xe8 = 9 / 1). The old 150 m ring
+	# size was the last placeholder on issue #34.
+	var half_fov := tan(deg_to_rad(_cam.fov) * 0.5)
+	var ring_half := StarFx.INTENSITY_SCALE * FLARE_RING_GAIN \
+			* RING_FLARE_NOMINAL * half_fov
+	var end_half := StarFx.INTENSITY_SCALE * FLARE_END_GAIN \
+			* END_FLARE_NOMINAL * half_fov
 	var o := 0
 	for p in SEGS:
 		var i := (_head + p) % SEGS
 		var c := FLARE_COLOR
 		c.a = FLARE_RING_GAIN
 		o = _quad(vv, vc, vu, o, Vector3(_cx[i], _cy[i], _cz[i]),
-			rt, up, 150.0, c)  # PLACEHOLDER size (sprite atlas unrecovered)
+			rt, up, ring_half, c)
 	var ce := FLARE_COLOR
 	ce.a = FLARE_END_GAIN
 	o = _quad(vv, vc, vu, o, Vector3(0, 0, -END_FLARE_Z), rt, up,
-		END_FLARE_SIZE, ce)
+		end_half, ce)
 	o = _quad(vv, vc, vu, o, Vector3(0, 0, END_FLARE_Z), rt, up,
-		END_FLARE_SIZE, ce)
+		end_half, ce)
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vv

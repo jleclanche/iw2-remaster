@@ -259,9 +259,12 @@ J/K at L-points, `JUMP_RANGE`, and the arrival offset (+2500, +300,
   `StarFx._load_atlas` already slices. The residual list's "type ids
   1/9/0x2b" were a misread: 0xbc holds a style 0..3 (ctor default 1).
   CapsuleFx's flares now draw from the real atlas (procedural radial
-  only as the no-data fallback). Flag-8 world sizing was already
-  recovered (envelope x FlareNominalDistance x gfx+0x108). Remaining:
-  only the ring-flare's authored SIZE (the 150 m stand-in).
+  only as the no-data fallback), and the ring-flare size is AUTHORED
+  now: the 99 per-ring flares carry FlareNominalDistance **3500**
+  (+0xe4 = 0x455ac000 in `FUN_100c2040`'s loop, style 3, flag 9), the
+  end flares 10000 -- both sized by the recovered flag-8 law
+  (m_intensity_scale x envelope x nominal x tan(half-fov)). Nothing on
+  this list remains unrecovered.
 - ~~**engine[0x1790]** not recovered~~ IDENTIFIED: the engineering-page
   RE (docs/hud_elements.md) proved `engine+0x1790` is the graphics
   engine's MASTER/global alpha -- written by fades (the eng page's 1 s
