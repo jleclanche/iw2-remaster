@@ -2071,27 +2071,54 @@ type but document only the *purpose*, so in each case we know our answer is
 wrong and do not know the right one. **Sample was 79 of 832 natives** -- the
 rest are unmeasured, not clean.
 
-- **`List.GetNth`** (declared `hobject`) sometimes returns an `Array`. May be
-  legitimate -- a list holding lists, where the element genuinely is a list
-  handle. Needs a look at the callers before it is called a defect.
+- ~~**`List.GetNth`** (declared `hobject`) sometimes returns an `Array`~~ --
+  RESOLVED legitimate: the handler (`list.dll @ 0x10001230`) walks to the
+  Nth node and writes the RAW stored 32-bit node value into the return slot
+  (`mov eax,[node]; mov [args],eax`) -- no conversion, no handle resolution.
+  A list of lists stores list handles as node values, and our Array IS the
+  list value, so returning it is the exact analogue. The declared `hobject`
+  means "whatever was stored", untyped pass-through.
 
 Until these are answered, native return types stay **extracted but unapplied**:
 GDScript enforces declared types at runtime, so annotating would convert each
 into a crash on a path that currently works.
 
-**And the headers over-declare.** `GUI.SetEditBoxValue` is declared
-`prototype string GUI.SetEditBoxValue(...)` (`GUI.h:757`), but its registered
-handler (`gui.dll` package `0x10006650`, bound by
-`FcPackage::RegisterNative("SetEditBoxValue", 0x10006650)` at `0x1000663a`)
-resolves the window, calls `FcEditBox::SetText` -- which returns **void** -- and
-returns down all three exit paths (`0x1000672f`, `0x10006744`, and the
-handle-invalid branch) **without ever writing the POG return slot**. The
-declared `string` is vestigial; the caller reads whatever was already there.
+**And the headers over-declare -- now measured across the WHOLE surface.**
+`GUI.SetEditBoxValue` was the first case: declared `string` (`GUI.h:757`) but
+its handler never writes the POG return slot. `tools/iw2/pogret.py` (issue
+#24) now validates every declaration against its registered handler: it
+enumerates each wrapper DLL's `RegisterNative(name, handler)` pairs, tracks
+the `FcArgs` pointer through the handler's code (esp-depth-adjusted loads,
+`[ebp+8]` frames, callee-cleaned thiscall imports decoded from their mangled
+names, local helpers' `ret n`), and classifies what reaches the return slot.
+Held to an 18-case hand-read ground truth (every verdict class) before the
+wide run -- five classifier bugs were caught that way, each a clean-looking
+false result.
 
-So a header return type states the *intent*, not a guarantee, and typing the
-port from headers alone would be wrong here no matter what our implementation
-does. Any typing pass has to validate each declaration against its handler
-rather than trust the prototype (issue #24).
+**Result (2026-07-20): 1078 handlers audited, 1065 matched to SDK
+declarations, 1028 agree.** The 37 disagreements, all now binary-verified
+facts rather than open questions:
+
+- **19 VESTIGIAL declarations** (declared a return, handler never writes):
+  `gui.SetEditBoxValue` (the proven one), the five `idirector` staging
+  setters (`AttachDollyToSim`/`FadeIn`/`FadeOut`/`SetDollyCamera`/
+  `SetInterpolateFieldOfView` -- fire-and-forget, no script reads them),
+  `igame.LoadGame`, seven dead MP server-browser list getters,
+  `list.SetNth`, `sim.RemoveNthSubsim`, `sim.SetHidden` (hand-confirmed:
+  sets FiSim flag **0x2 = hidden** and returns; the flag name is a bonus
+  recovery), `state.Destroy`, `imultiplay.ClientOptionsSetHostSession`.
+  These must stay untyped (or void) in any typing pass.
+- **17 undeclared returns** (declared void, handler writes a success flag):
+  setter families -- `gui.DisableHighlight`, the `idockport` trio,
+  `ihabitat.SetArmed`, `iship.SetAIDisabled`, `iremotepilot.Install`,
+  `object.AddBool/AddVectorProperty`, `lock.Release`, five imultiplay
+  senders. Harmless either way; recorded so a typing pass does not "fix"
+  them to void on the header's say-so.
+- **1 type mismatch**: `math.Sign` declared `float`, handler writes **int**.
+  Academic for us -- zero campaign call sites, not even bound.
+
+Typing the ported GDScript can now proceed from the VALIDATED set: header
+type where handler agrees (1028), handler's word where they differ.
 
 ### HUD
 

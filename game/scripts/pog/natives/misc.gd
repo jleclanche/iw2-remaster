@@ -533,13 +533,19 @@ func _stream_is_playing_url(_t, a: Array) -> Variant:
 # @stub imultiplay.ClientLastAddress
 # @stub imultiplay.ClientLastSession
 # @stub imultiplay.ServerBrowserValidateKey
-# @stub imultiplay.ServerAppTerminate
 # @stub imultiplay.ClientIsTeamGame
 ## FALSE, and correct: there is no network session, so we are never sitting
 ## in a multiplayer lobby. SPMainPDAScreen's first branch tests it
 ## (ipdagui.pog:29) and a wrong answer sends the whole builder down the
 ## multiplayer path -- which is exactly what igame.SessionName did.
 # @native imultiplay.NetworkIsLobbySession
+## Also a TRUE no-op in single player, not a stub: the QUIT confirmation
+## (iPDAGUI.PDAConfirmScreen_OnOK) calls it defensively, and the handler
+## (imultiplay.dll @ 0x10001630 via the 0x10006290 thunk) only signals a
+## spawned dedicated-server helper's shutdown event and closes its handles --
+## when no server app is running ([0x1000f7a0] == 0, always in SP) the
+## original does exactly nothing too.
+# @native imultiplay.ServerAppTerminate
 func _mp(_t, _a: Array) -> Variant:
 	return 0
 

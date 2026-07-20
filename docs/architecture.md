@@ -125,7 +125,10 @@ outputs land in gitignored `data/`.
   (bytecode → `data/pogsrc/*.pog`), `pogport.py` (→ `game/scripts/pog/gen/`),
   `pogdata.py`, `pogexport.py`, `pogsummary.py`, `pogverify.py`,
   `pogsig.py` (native signatures from the SDK headers; `--check` cross-checks
-  them against our bindings).
+  them against our bindings),
+  `pogret.py` (validates each SDK-declared return type against the binary
+  handler's actual return-slot writes -- the #24 audit; results in
+  docs/original.md).
 - Coverage: `apicov.py`, `featurecov.py` (see docs/coverage.md).
 - Binaries: `tools/ghidra/` (see docs/original-code.md).
 
