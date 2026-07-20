@@ -252,16 +252,16 @@ J/K at L-points, `JUMP_RANGE`, and the arrival offset (+2500, +300,
 
 ## 8. UNKNOWN / PLACEHOLDER
 
-- **FcLensFlareNode internals**: PARTLY recovered. The flare UV table is
-  `m_tex_coords @ flux 0x100ee420`, stride 0x20 = four (u,v) corner
-  pairs per type, indexed `type * 8` in `Render` (flux.dll.c:215303ff);
-  types 0/1/2 read raw as the 2x2 QUADRANTS of the flare texture
-  ((0,0)-(.5,.5) / (.5,0)-(1,.5) / (0,.5)-(.5,1)). Types >= ~4 (incl.
-  the capsule's 9 and 0x2b) are not raw-backed -- their runtime
-  initializer is unfound, so those cells (and the ring-flare size) stay
-  open; CapsuleFx keeps the procedural stand-in. Flag-8 world sizing IS
-  recovered (envelope x FlareNominalDistance x gfx+0x108, the law
-  ship_effects' engine flares already use).
+- ~~**FcLensFlareNode internals** not recovered~~ RECOVERED: the flare
+  atlas is `texture:/images/sfx/lens_flares` (`m_texture_url`), and
+  `m_tex_coords @ flux 0x100ee420` is a FOUR-entry const table (PE-raw,
+  dumped) -- `eStyle` 0..3 = the four 2x2 QUADRANTS, exactly what
+  `StarFx._load_atlas` already slices. The residual list's "type ids
+  1/9/0x2b" were a misread: 0xbc holds a style 0..3 (ctor default 1).
+  CapsuleFx's flares now draw from the real atlas (procedural radial
+  only as the no-data fallback). Flag-8 world sizing was already
+  recovered (envelope x FlareNominalDistance x gfx+0x108). Remaining:
+  only the ring-flare's authored SIZE (the 150 m stand-in).
 - ~~**engine[0x1790]** not recovered~~ IDENTIFIED: the engineering-page
   RE (docs/hud_elements.md) proved `engine+0x1790` is the graphics
   engine's MASTER/global alpha -- written by fades (the eng page's 1 s

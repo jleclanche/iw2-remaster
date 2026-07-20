@@ -188,9 +188,19 @@ static func _tex(stem: String) -> ImageTexture:
 	return ImageTexture.create_from_image(img)
 
 
-static func _flare_tex() -> ImageTexture:
-	# PLACEHOLDER radial glow for the FcLensFlareNode sprites (atlas ids
-	# 1/9/0x2b not recovered)
+static func _flare_tex() -> Texture2D:
+	# The REAL FcLensFlareNode atlas (#34): m_texture_url =
+	# texture:/images/sfx/lens_flares, m_tex_coords @ flux 0x100ee420 is a
+	# FOUR-entry table (eStyle 0..3 = the 2x2 quadrants; the "type ids
+	# 1/9/0x2b" the residual list carried were a misread of other fields).
+	# Style 0, the top-left soft glow, is the default the ctor sets
+	# (+0xbc = 1... style 1 top-right) -- the capsule's white blank uses
+	# the plain glow quadrant.
+	var base := ProjectSettings.globalize_path("res://").path_join("..")
+	var tex := StarFx.style_texture(0, base)
+	if tex != null:
+		return tex
+	# no extracted data on disk (bare CI checkout): keep the radial
 	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
 	for y in 64:
 		for x in 64:
