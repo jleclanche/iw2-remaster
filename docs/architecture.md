@@ -86,6 +86,14 @@ bytecode in resource.zip. We RUN the originals — never re-author missions.
 Run: `<godot console exe> --headless --path game -- --<flag>`. Fast suites are
 kept ≤30 s; run before commits, not after every edit.
 
+Since issue #31 the harness is split per suite along the same layered-file
+scheme as main.gd — one node, one class, an extends chain:
+`checks_state.gd` (shared state + cross-suite helpers) ← `checks_probes.gd`
+(one-shot probes + the demo) ← `checks_camp.gd` (newgame/campcheck + stub
+gate) ← `checks_base.gd` (uicheck/basecheck) ← `checks_jump.gd` ←
+`checks_mech.gd` ← `checks.gd` (`CheckRunner`, the step dispatcher). New
+campcheck acts go in `checks_camp.gd`; new mech steps in `checks_mech.gd`.
+
 | flag | proves |
 |---|---|
 | `--mechcheck` | flight-model/LDS/missile/turret/beam/fields assertions, 4× time, ~17 s |
