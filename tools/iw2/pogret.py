@@ -462,15 +462,12 @@ def classify(dll: Dll, handler: int, hi: int, verbose=False) -> str:
     return verdict
 
 
-def main() -> None:
-    from .pogsig import signatures
-    verbose = "--verbose" in sys.argv
-    only = ""
-    if "--pkg" in sys.argv:
-        only = sys.argv[sys.argv.index("--pkg") + 1].lower()
-    sigs = signatures()
+def audit(only: str = "", verbose: bool = False) -> dict[str, str]:
+    """`pkg.func` (lowercased) -> verdict, for every registered handler.
 
-    audited: dict[str, str] = {}          # pkg.func (lower) -> verdict
+    This is the importable face of the tool: pogport merges it with the SDK
+    declarations to decide which facade returns may be typed."""
+    audited: dict[str, str] = {}
     for dll_path in sorted(RELEASE.glob("*.dll")):
         pkg = _PKG_OF.get(dll_path.stem.lower(), dll_path.stem.lower())
         if only and pkg != only:
@@ -484,10 +481,22 @@ def main() -> None:
         if not regs:
             continue
         bounds = sorted(regs) + [dll.base + dll.text[1] + dll.text[2]]
-        for k, (hva, fn) in enumerate(sorted(regs.items())):
+        for hva, fn in sorted(regs.items()):
             hi = bounds[bounds.index(hva) + 1]
             v = classify(dll, hva, hi, verbose)
             audited["%s.%s" % (pkg, fn.lower())] = v
+    return audited
+
+
+def main() -> None:
+    from .pogsig import signatures
+    verbose = "--verbose" in sys.argv
+    only = ""
+    if "--pkg" in sys.argv:
+        only = sys.argv[sys.argv.index("--pkg") + 1].lower()
+    sigs = signatures()
+
+    audited = audit(only, verbose)
 
     # ---- cross-check against the SDK declarations
     n_match = n_vest = n_undecl = n_type = 0

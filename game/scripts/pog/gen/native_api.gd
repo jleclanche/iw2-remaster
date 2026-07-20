@@ -7,22 +7,26 @@ extends RefCounted
 ## mission calls api.iship.find_player_ship() rather than poking a
 ## string into a dispatch table. The implementations live in
 ## scripts/pog/natives/ and are shared with the VM oracle.
+##
+## Numeric returns are typed only where tools/iw2/pogret.py
+## validated the SDK declaration against the binary handler (#24)
+## and our implementation cannot return null.
 
 var _rt: PogRuntime
 
 class PkgConfig extends RefCounted:
 	var rt: PogRuntime
 	## prototype int Config.CountNumber( string filename, string section, string key )
-	func count_number(filename, section, key) -> Variant:
+	func count_number(filename, section, key) -> int:
 		return rt.native("config.countnumber", [filename, section, key])
 	## prototype void Config.CreateBool( string filename, string section, string key, bool value )
 	func create_bool(filename, section, key, value) -> Variant:
 		return rt.native("config.createbool", [filename, section, key, value])
 	## prototype bool Config.Exists( string filename, string section, string key )
-	func exists(filename, section, key) -> Variant:
+	func exists(filename, section, key) -> int:
 		return rt.native("config.exists", [filename, section, key])
 	## prototype int Config.GetBool( string filename, string section, string key )
-	func get_bool(filename, section, key) -> Variant:
+	func get_bool(filename, section, key) -> int:
 		return rt.native("config.getbool", [filename, section, key])
 	## prototype string Config.GetNumberedString( string filename, string section, string key, int number )
 	func get_numbered_string(filename, section, key, number) -> Variant:
@@ -37,7 +41,7 @@ class PkgConfig extends RefCounted:
 class PkgDebug extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Debug.DeveloperMode()
-	func developer_mode() -> Variant:
+	func developer_mode() -> int:
 		return rt.native("debug.developermode", [])
 	## prototype void Debug.Error( string message )
 	func error(message) -> Variant:
@@ -58,7 +62,7 @@ class PkgDebug extends RefCounted:
 class PkgGlobal extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Global.Bool( string name )
-	func pog_bool(name) -> Variant:
+	func pog_bool(name) -> int:
 		return rt.native("global.bool", [name])
 	## prototype void Global.CreateBool( string name, int access, bool initial_value )
 	func create_bool(name, access, initial_value) -> Variant:
@@ -85,16 +89,16 @@ class PkgGlobal extends RefCounted:
 	func destroy(name) -> Variant:
 		return rt.native("global.destroy", [name])
 	## prototype bool Global.Exists( string name )
-	func exists(name) -> Variant:
+	func exists(name) -> int:
 		return rt.native("global.exists", [name])
 	## prototype float Global.Float( string name )
-	func pog_float(name) -> Variant:
+	func pog_float(name) -> float:
 		return rt.native("global.float", [name])
 	## prototype hobject Global.Handle( string name )
 	func handle(name) -> Variant:
 		return rt.native("global.handle", [name])
 	## prototype int Global.Int( string name )
-	func pog_int(name) -> Variant:
+	func pog_int(name) -> int:
 		return rt.native("global.int", [name])
 	## prototype list Global.List( string name )
 	func list(name) -> Variant:
@@ -151,7 +155,7 @@ class PkgGroup extends RefCounted:
 	func from_set(the_set) -> Variant:
 		return rt.native("group.fromset", [the_set])
 	## prototype int Group.GroupCount( hgroup group )
-	func group_count(group) -> Variant:
+	func group_count(group) -> int:
 		return rt.native("group.groupcount", [group])
 	## prototype hsim Group.Leader( hgroup group )
 	func leader(group) -> Variant:
@@ -178,10 +182,10 @@ class PkgGroup extends RefCounted:
 	func remove_sim(group, sim) -> Variant:
 		return rt.native("group.removesim", [group, sim])
 	## prototype int Group.SimCount( hgroup group )
-	func sim_count(group) -> Variant:
+	func sim_count(group) -> int:
 		return rt.native("group.simcount", [group])
 	## prototype int Group.TotalSimCount( hgroup group )
-	func total_sim_count(group) -> Variant:
+	func total_sim_count(group) -> int:
 		return rt.native("group.totalsimcount", [group])
 
 class PkgGui extends RefCounted:
@@ -198,7 +202,7 @@ class PkgGui extends RefCounted:
 	func cast(window) -> Variant:
 		return rt.native("gui.cast", [window])
 	## prototype bool Gui.CheckboxValue( hwindow check_box )
-	func checkbox_value(check_box) -> Variant:
+	func checkbox_value(check_box) -> int:
 		return rt.native("gui.checkboxvalue", [check_box])
 	func clear_all_screens() -> Variant:
 		return rt.native("gui.clearallscreens", [])
@@ -260,19 +264,19 @@ class PkgGui extends RefCounted:
 	func focused_window() -> Variant:
 		return rt.native("gui.focusedwindow", [])
 	## prototype int Gui.FrameHeight()
-	func frame_height() -> Variant:
+	func frame_height() -> int:
 		return rt.native("gui.frameheight", [])
 	## prototype int Gui.FrameWidth()
-	func frame_width() -> Variant:
+	func frame_width() -> int:
 		return rt.native("gui.framewidth", [])
 	## prototype int Gui.ListBoxFocusedEntry( hwindow list_box )
-	func list_box_focused_entry(list_box) -> Variant:
+	func list_box_focused_entry(list_box) -> int:
 		return rt.native("gui.listboxfocusedentry", [list_box])
 	## prototype int Gui.ListBoxSelectedIndex( hwindow list_box )
-	func list_box_selected_index(list_box) -> Variant:
+	func list_box_selected_index(list_box) -> int:
 		return rt.native("gui.listboxselectedindex", [list_box])
 	## prototype int Gui.NumScreens()
-	func num_screens() -> Variant:
+	func num_screens() -> int:
 		return rt.native("gui.numscreens", [])
 	## prototype void Gui.OnControlFocusLeft( hwindow window )
 	func on_control_focus_left(window) -> Variant:
@@ -290,7 +294,7 @@ class PkgGui extends RefCounted:
 	func play_background_movie(movie, text) -> Variant:
 		return rt.native("gui.playbackgroundmovie", [movie, text])
 	## prototype bool Gui.PlaySound( eSound sound )
-	func play_sound(sound) -> Variant:
+	func play_sound(sound) -> int:
 		return rt.native("gui.playsound", [sound])
 	func pop_screen() -> Variant:
 		return rt.native("gui.popscreen", [])
@@ -301,10 +305,10 @@ class PkgGui extends RefCounted:
 	func push_screen(screen_class) -> Variant:
 		return rt.native("gui.pushscreen", [screen_class])
 	## prototype bool Gui.QueueSound( eSound sound )
-	func queue_sound(sound) -> Variant:
+	func queue_sound(sound) -> int:
 		return rt.native("gui.queuesound", [sound])
 	## prototype bool Gui.RadioButtonValue( hwindow radio_button )
-	func radio_button_value(radio_button) -> Variant:
+	func radio_button_value(radio_button) -> int:
 		return rt.native("gui.radiobuttonvalue", [radio_button])
 	## prototype void Gui.RegisterSound( string sound_request, eSound sound )
 	func register_sound(sound_request, sound) -> Variant:
@@ -420,7 +424,7 @@ class PkgGui extends RefCounted:
 	func set_window_title(window, title) -> Variant:
 		return rt.native("gui.setwindowtitle", [window, title])
 	## prototype float Gui.SliderControlValue( hwindow slider_window )
-	func slider_control_value(slider_window) -> Variant:
+	func slider_control_value(slider_window) -> float:
 		return rt.native("gui.slidercontrolvalue", [slider_window])
 	## prototype hwindow Gui.SplitterWindowBottomWindow( hwindow window )
 	func splitter_window_bottom_window(window) -> Variant:
@@ -433,46 +437,46 @@ class PkgGui extends RefCounted:
 	func stop_background_movie() -> Variant:
 		return rt.native("gui.stopbackgroundmovie", [])
 	## prototype bool Gui.TextWindowBack( hwindow text_window )
-	func text_window_back(text_window) -> Variant:
+	func text_window_back(text_window) -> int:
 		return rt.native("gui.textwindowback", [text_window])
 	## prototype hwindow Gui.TopWindow()
 	func top_window() -> Variant:
 		return rt.native("gui.topwindow", [])
 	## prototype int Gui.WindowCanvasHeight( hwindow window )
-	func window_canvas_height(window) -> Variant:
+	func window_canvas_height(window) -> int:
 		return rt.native("gui.windowcanvasheight", [window])
 	## prototype int Gui.WindowCanvasWidth( hwindow window )
-	func window_canvas_width(window) -> Variant:
+	func window_canvas_width(window) -> int:
 		return rt.native("gui.windowcanvaswidth", [window])
 	## prototype float Gui.WindowFocusedBlue( hwindow window )
-	func window_focused_blue(window) -> Variant:
+	func window_focused_blue(window) -> float:
 		return rt.native("gui.windowfocusedblue", [window])
 	## prototype float Gui.WindowFocusedGreen( hwindow window )
-	func window_focused_green(window) -> Variant:
+	func window_focused_green(window) -> float:
 		return rt.native("gui.windowfocusedgreen", [window])
 	## prototype float Gui.WindowFocusedRed( hwindow window )
-	func window_focused_red(window) -> Variant:
+	func window_focused_red(window) -> float:
 		return rt.native("gui.windowfocusedred", [window])
 	## prototype float Gui.WindowNeutralBlue( hwindow window )
-	func window_neutral_blue(window) -> Variant:
+	func window_neutral_blue(window) -> float:
 		return rt.native("gui.windowneutralblue", [window])
 	## prototype float Gui.WindowNeutralGreen( hwindow window )
-	func window_neutral_green(window) -> Variant:
+	func window_neutral_green(window) -> float:
 		return rt.native("gui.windowneutralgreen", [window])
 	## prototype float Gui.WindowNeutralRed( hwindow window )
-	func window_neutral_red(window) -> Variant:
+	func window_neutral_red(window) -> float:
 		return rt.native("gui.windowneutralred", [window])
 	## prototype hwindow Gui.WindowNextFocus( hwindow window )
 	func window_next_focus(window) -> Variant:
 		return rt.native("gui.windownextfocus", [window])
 	## prototype float Gui.WindowSelectedBlue( hwindow window )
-	func window_selected_blue(window) -> Variant:
+	func window_selected_blue(window) -> float:
 		return rt.native("gui.windowselectedblue", [window])
 	## prototype float Gui.WindowSelectedGreen( hwindow window )
-	func window_selected_green(window) -> Variant:
+	func window_selected_green(window) -> float:
 		return rt.native("gui.windowselectedgreen", [window])
 	## prototype float Gui.WindowSelectedRed( hwindow window )
-	func window_selected_red(window) -> Variant:
+	func window_selected_red(window) -> float:
 		return rt.native("gui.windowselectedred", [window])
 	## prototype string Gui.WindowTitle( hwindow window )
 	func window_title(window) -> Variant:
@@ -492,7 +496,7 @@ class PkgIai extends RefCounted:
 	func current_order_type(ship) -> Variant:
 		return rt.native("iai.currentordertype", [ship])
 	## prototype bool Iai.ForceLPRoute( hship ship, hlagrangepoint start_lp, hlagrangepoint end_lp )
-	func force_l_p_route(ship, start_lp, end_lp) -> Variant:
+	func force_l_p_route(ship, start_lp, end_lp) -> int:
 		return rt.native("iai.forcelproute", [ship, start_lp, end_lp])
 	## prototype void Iai.GiveApproachOrder( hobject us, hobject target )
 	func give_approach_order(us, target) -> Variant:
@@ -531,16 +535,16 @@ class PkgIai extends RefCounted:
 	func give_specific_attack_order(us, target, attack_style) -> Variant:
 		return rt.native("iai.givespecificattackorder", [us, target, attack_style])
 	## prototype bool Iai.HasOrder( hship ship )
-	func has_order(ship) -> Variant:
+	func has_order(ship) -> int:
 		return rt.native("iai.hasorder", [ship])
 	## prototype float Iai.InnerMarkerRadius( hisim target, hisim us )
-	func inner_marker_radius(target, us) -> Variant:
+	func inner_marker_radius(target, us) -> float:
 		return rt.native("iai.innermarkerradius", [target, us])
 	## prototype bool Iai.IsCapsuleJumpAccelerating( hship ship )
-	func is_capsule_jump_accelerating(ship) -> Variant:
+	func is_capsule_jump_accelerating(ship) -> int:
 		return rt.native("iai.iscapsulejumpaccelerating", [ship])
 	## prototype bool Iai.IsOrderComplete( hobject ship_or_group )
-	func is_order_complete(ship_or_group) -> Variant:
+	func is_order_complete(ship_or_group) -> int:
 		return rt.native("iai.isordercomplete", [ship_or_group])
 	## prototype void Iai.PurgeOrders( hobject ship_or_group )
 	func purge_orders(ship_or_group) -> Variant:
@@ -570,7 +574,7 @@ class PkgIbody extends RefCounted:
 class PkgIcargo extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Icargo.CanManufacture( hcargo cargo )
-	func can_manufacture(cargo) -> Variant:
+	func can_manufacture(cargo) -> int:
 		return rt.native("icargo.canmanufacture", [cargo])
 	## prototype hcargo Icargo.Cast( hobject object_handle )
 	func cast(object_handle) -> Variant:
@@ -585,7 +589,7 @@ class PkgIcargo extends RefCounted:
 	func find(type) -> Variant:
 		return rt.native("icargo.find", [type])
 	## prototype int Icargo.ManufactureValue( hcargo cargo )
-	func manufacture_value(cargo) -> Variant:
+	func manufacture_value(cargo) -> int:
 		return rt.native("icargo.manufacturevalue", [cargo])
 	## prototype void Icargo.MarkInsignificant( hcargo cargo )
 	func mark_insignificant(cargo) -> Variant:
@@ -594,7 +598,7 @@ class PkgIcargo extends RefCounted:
 	func pog_name(cargo) -> Variant:
 		return rt.native("icargo.name", [cargo])
 	## prototype int Icargo.Value( hcargo cargo )
-	func value(cargo) -> Variant:
+	func value(cargo) -> int:
 		return rt.native("icargo.value", [cargo])
 
 class PkgIcomms extends RefCounted:
@@ -614,26 +618,26 @@ class PkgIcomms extends RefCounted:
 	func ask(speaker, speaker_key, phrase_key) -> Variant:
 		return rt.native("icomms.ask", [speaker, speaker_key, phrase_key])
 	## prototype bool Icomms.BeginConversation()
-	func begin_conversation() -> Variant:
+	func begin_conversation() -> int:
 		return rt.native("icomms.beginconversation", [])
 	## prototype bool Icomms.CanEnd()
-	func can_end() -> Variant:
+	func can_end() -> int:
 		return rt.native("icomms.canend", [])
 	func clear_responses() -> Variant:
 		return rt.native("icomms.clearresponses", [])
 	func end_conversation() -> Variant:
 		return rt.native("icomms.endconversation", [])
 	## prototype bool Icomms.IsBusy()
-	func is_busy() -> Variant:
+	func is_busy() -> int:
 		return rt.native("icomms.isbusy", [])
 	## prototype bool Icomms.IsInConversation()
-	func is_in_conversation() -> Variant:
+	func is_in_conversation() -> int:
 		return rt.native("icomms.isinconversation", [])
 	## prototype bool Icomms.IsSaying( hobject speaker, string speaker_key, string phrase_key )
-	func is_saying(speaker, speaker_key, phrase_key) -> Variant:
+	func is_saying(speaker, speaker_key, phrase_key) -> int:
 		return rt.native("icomms.issaying", [speaker, speaker_key, phrase_key])
 	## prototype int Icomms.Response()
-	func response() -> Variant:
+	func response() -> int:
 		return rt.native("icomms.response", [])
 	## prototype void Icomms.Say( hobject speaker, string speaker_key, string phrase_key )
 	func say(speaker, speaker_key, phrase_key) -> Variant:
@@ -669,10 +673,10 @@ class PkgIdirector extends RefCounted:
 	func fade_out(time, r, g, b) -> Variant:
 		return rt.native("idirector.fadeout", [time, r, g, b])
 	## prototype bool Idirector.IsBusy()
-	func is_busy() -> Variant:
+	func is_busy() -> int:
 		return rt.native("idirector.isbusy", [])
 	## prototype bool Idirector.IsObituaryView()
-	func is_obituary_view() -> Variant:
+	func is_obituary_view() -> int:
 		return rt.native("idirector.isobituaryview", [])
 	## prototype void Idirector.Obituary( string caption )
 	func obituary(caption) -> Variant:
@@ -711,13 +715,13 @@ class PkgIdockport extends RefCounted:
 	func cast(dockport) -> Variant:
 		return rt.native("idockport.cast", [dockport])
 	## prototype int Idockport.Count( hisim sim, eDockportType type, eDockportStatus status )
-	func count(sim, type, status) -> Variant:
+	func count(sim, type, status) -> int:
 		return rt.native("idockport.count", [sim, type, status])
 	## prototype void Idockport.Disable( hdockport dockport )
 	func disable(dockport) -> Variant:
 		return rt.native("idockport.disable", [dockport])
 	## prototype bool Idockport.Dock( hdockport us, hdockport them )
-	func dock(us, them) -> Variant:
+	func dock(us, them) -> int:
 		return rt.native("idockport.dock", [us, them])
 	## prototype set Idockport.DockportsCompatibleWith( hisim sim, eDockportType type, eDockportStatus status )
 	func dockports_compatible_with(sim, type, status) -> Variant:
@@ -729,7 +733,7 @@ class PkgIdockport extends RefCounted:
 	func enable(dockport) -> Variant:
 		return rt.native("idockport.enable", [dockport])
 	## prototype bool Idockport.IsDisabled( hdockport dockport )
-	func is_disabled(dockport) -> Variant:
+	func is_disabled(dockport) -> int:
 		return rt.native("idockport.isdisabled", [dockport])
 
 class PkgIemail extends RefCounted:
@@ -747,7 +751,7 @@ class PkgIemail extends RefCounted:
 	func find(email_body_request) -> Variant:
 		return rt.native("iemail.find", [email_body_request])
 	## prototype int Iemail.InboxSize()
-	func inbox_size() -> Variant:
+	func inbox_size() -> int:
 		return rt.native("iemail.inboxsize", [])
 	## prototype void Iemail.MarkAsRead( hemail email )
 	func mark_as_read(email) -> Variant:
@@ -759,10 +763,10 @@ class PkgIemail extends RefCounted:
 	func nth_in_inbox(n) -> Variant:
 		return rt.native("iemail.nthininbox", [n])
 	## prototype bool Iemail.Read( hemail email )
-	func read(email) -> Variant:
+	func read(email) -> int:
 		return rt.native("iemail.read", [email])
 	## prototype bool Iemail.Received( string email_body_request )
-	func received(email_body_request) -> Variant:
+	func received(email_body_request) -> int:
 		return rt.native("iemail.received", [email_body_request])
 	func reset_windows() -> Variant:
 		return rt.native("iemail.resetwindows", [])
@@ -778,7 +782,7 @@ class PkgIemail extends RefCounted:
 	func subject(email) -> Variant:
 		return rt.native("iemail.subject", [email])
 	## prototype int Iemail.Unread()
-	func unread() -> Variant:
+	func unread() -> int:
 		return rt.native("iemail.unread", [])
 
 class PkgIfaction extends RefCounted:
@@ -796,10 +800,10 @@ class PkgIfaction extends RefCounted:
 	func create(name, prefix, allegiance) -> Variant:
 		return rt.native("ifaction.create", [name, prefix, allegiance])
 	## prototype float Ifaction.Feeling( hfaction feeler, hfaction feelee )
-	func feeling(feeler, feelee) -> Variant:
+	func feeling(feeler, feelee) -> float:
 		return rt.native("ifaction.feeling", [feeler, feelee])
 	## prototype float Ifaction.FeelingLevel( eFeelingType type )
-	func feeling_level(type) -> Variant:
+	func feeling_level(type) -> float:
 		return rt.native("ifaction.feelinglevel", [type])
 	## prototype hfaction Ifaction.Find( string name )
 	func find(name) -> Variant:
@@ -817,7 +821,7 @@ class PkgIfaction extends RefCounted:
 class PkgIgame extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Igame.AutosaveSaved()
-	func autosave_saved() -> Variant:
+	func autosave_saved() -> int:
 		return rt.native("igame.autosavesaved", [])
 	## prototype string Igame.CDKey()
 	func c_d_key() -> Variant:
@@ -832,19 +836,19 @@ class PkgIgame extends RefCounted:
 	func enable_blackout(enable) -> Variant:
 		return rt.native("igame.enableblackout", [enable])
 	## prototype float Igame.GameTime()
-	func game_time() -> Variant:
+	func game_time() -> float:
 		return rt.native("igame.gametime", [])
 	## prototype int Igame.GameType()
-	func game_type() -> Variant:
+	func game_type() -> int:
 		return rt.native("igame.gametype", [])
 	## prototype bool Igame.GotEarnedMovie( eEarnableMovie movie )
-	func got_earned_movie(movie) -> Variant:
+	func got_earned_movie(movie) -> int:
 		return rt.native("igame.gotearnedmovie", [movie])
 	## prototype bool Igame.GotPlayDisk( string file_on_play_disk )
-	func got_play_disk(file_on_play_disk) -> Variant:
+	func got_play_disk(file_on_play_disk) -> int:
 		return rt.native("igame.gotplaydisk", [file_on_play_disk])
 	## prototype bool Igame.IsMultiplayerOnly()
-	func is_multiplayer_only() -> Variant:
+	func is_multiplayer_only() -> int:
 		return rt.native("igame.ismultiplayeronly", [])
 	## prototype void Igame.JoinNetworkGame( int session )
 	func join_network_game(session) -> Variant:
@@ -864,7 +868,7 @@ class PkgIgame extends RefCounted:
 	func next_act(act) -> Variant:
 		return rt.native("igame.nextact", [act])
 	## prototype int Igame.NumberOfSavedGameSlots()
-	func number_of_saved_game_slots() -> Variant:
+	func number_of_saved_game_slots() -> int:
 		return rt.native("igame.numberofsavedgameslots", [])
 	## prototype void Igame.PlayMovie( string url )
 	func play_movie(url) -> Variant:
@@ -899,7 +903,7 @@ class PkgIgame extends RefCounted:
 	func start_new_game(system_url, act) -> Variant:
 		return rt.native("igame.startnewgame", [system_url, act])
 	## prototype int Igame.SystemTime()
-	func system_time() -> Variant:
+	func system_time() -> int:
 		return rt.native("igame.systemtime", [])
 
 class PkgIhabitat extends RefCounted:
@@ -926,16 +930,16 @@ class PkgIhabitat extends RefCounted:
 	func find_by_name(name) -> Variant:
 		return rt.native("ihabitat.findbyname", [name])
 	## prototype bool Ihabitat.HasSpewer( hhabitat station )
-	func has_spewer(station) -> Variant:
+	func has_spewer(station) -> int:
 		return rt.native("ihabitat.hasspewer", [station])
 	## prototype bool Ihabitat.HasSpewerSlotFree( hhabitat station )
-	func has_spewer_slot_free(station) -> Variant:
+	func has_spewer_slot_free(station) -> int:
 		return rt.native("ihabitat.hasspewerslotfree", [station])
 	## prototype hhabitat Ihabitat.Nearest( set habitats, hsim sim )
 	func nearest(habitats, sim) -> Variant:
 		return rt.native("ihabitat.nearest", [habitats, sim])
 	## prototype int Ihabitat.Population( hhabitat habitat )
-	func population(habitat) -> Variant:
+	func population(habitat) -> int:
 		return rt.native("ihabitat.population", [habitat])
 	## prototype hhabitat Ihabitat.Random( set habitats )
 	func random(habitats) -> Variant:
@@ -950,7 +954,7 @@ class PkgIhabitat extends RefCounted:
 	func set_reactive_function(reactive_function) -> Variant:
 		return rt.native("ihabitat.setreactivefunction", [reactive_function])
 	## prototype bool Ihabitat.Spew( hhabitat station, hsim cargo_pod )
-	func spew(station, cargo_pod) -> Variant:
+	func spew(station, cargo_pod) -> int:
 		return rt.native("ihabitat.spew", [station, cargo_pod])
 	## prototype IeHabitatType Ihabitat.Type( hhabitat habitat )
 	func type(habitat) -> Variant:
@@ -1006,16 +1010,16 @@ class PkgIinventory extends RefCounted:
 	func cancel_new_cargo_flags() -> Variant:
 		return rt.native("iinventory.cancelnewcargoflags", [])
 	## prototype int Iinventory.CargoCategoryFromName( string cargo_name )
-	func cargo_category_from_name(cargo_name) -> Variant:
+	func cargo_category_from_name(cargo_name) -> int:
 		return rt.native("iinventory.cargocategoryfromname", [cargo_name])
 	## prototype int Iinventory.CargoTypeFromCategoryIndex( int category_index )
-	func cargo_type_from_category_index(category_index) -> Variant:
+	func cargo_type_from_category_index(category_index) -> int:
 		return rt.native("iinventory.cargotypefromcategoryindex", [category_index])
 	## prototype int Iinventory.CargoTypeFromName( string cargo_name )
-	func cargo_type_from_name(cargo_name) -> Variant:
+	func cargo_type_from_name(cargo_name) -> int:
 		return rt.native("iinventory.cargotypefromname", [cargo_name])
 	## prototype int Iinventory.CategoryContaining( int index )
-	func category_containing(index) -> Variant:
+	func category_containing(index) -> int:
 		return rt.native("iinventory.categorycontaining", [index])
 	## prototype void Iinventory.CreateCargoCategory( int category_id, string category_name_key, string encyclopaedia_entry, int start_type, int end_type )
 	func create_cargo_category(category_id, category_name_key, encyclopaedia_entry, start_type, end_type) -> Variant:
@@ -1033,46 +1037,46 @@ class PkgIinventory extends RefCounted:
 	func fill_recycling_list_box(list_box, cargos) -> Variant:
 		return rt.native("iinventory.fillrecyclinglistbox", [list_box, cargos])
 	## prototype bool Iinventory.GotBlueprints( int cargo_type )
-	func got_blueprints(cargo_type) -> Variant:
+	func got_blueprints(cargo_type) -> int:
 		return rt.native("iinventory.gotblueprints", [cargo_type])
 	## prototype bool Iinventory.GotCommandSection()
-	func got_command_section() -> Variant:
+	func got_command_section() -> int:
 		return rt.native("iinventory.gotcommandsection", [])
 	## prototype bool Iinventory.GotFastAttackShip()
-	func got_fast_attack_ship() -> Variant:
+	func got_fast_attack_ship() -> int:
 		return rt.native("iinventory.gotfastattackship", [])
 	## prototype bool Iinventory.GotHeavyCorvette()
-	func got_heavy_corvette() -> Variant:
+	func got_heavy_corvette() -> int:
 		return rt.native("iinventory.gotheavycorvette", [])
 	## prototype bool Iinventory.GotStormPetrel()
-	func got_storm_petrel() -> Variant:
+	func got_storm_petrel() -> int:
 		return rt.native("iinventory.gotstormpetrel", [])
 	## prototype bool Iinventory.GotTug()
-	func got_tug() -> Variant:
+	func got_tug() -> int:
 		return rt.native("iinventory.gottug", [])
 	## prototype bool Iinventory.Manufacture( int cargo_type, int quantity )
-	func manufacture(cargo_type, quantity) -> Variant:
+	func manufacture(cargo_type, quantity) -> int:
 		return rt.native("iinventory.manufacture", [cargo_type, quantity])
 	## prototype int Iinventory.ManufactureUnits()
-	func manufacture_units() -> Variant:
+	func manufacture_units() -> int:
 		return rt.native("iinventory.manufactureunits", [])
 	## prototype int Iinventory.NumberOfCargoType( int type )
-	func number_of_cargo_type(type) -> Variant:
+	func number_of_cargo_type(type) -> int:
 		return rt.native("iinventory.numberofcargotype", [type])
 	## prototype int Iinventory.NumberOfCargoTypes()
-	func number_of_cargo_types() -> Variant:
+	func number_of_cargo_types() -> int:
 		return rt.native("iinventory.numberofcargotypes", [])
 	## prototype int Iinventory.NumberOfRecyclableCargoInCategory( int category )
-	func number_of_recyclable_cargo_in_category(category) -> Variant:
+	func number_of_recyclable_cargo_in_category(category) -> int:
 		return rt.native("iinventory.numberofrecyclablecargoincategory", [category])
 	## prototype int Iinventory.NumberOfRecyclableCargoInSuperSet( int super_set )
-	func number_of_recyclable_cargo_in_super_set(super_set) -> Variant:
+	func number_of_recyclable_cargo_in_super_set(super_set) -> int:
 		return rt.native("iinventory.numberofrecyclablecargoinsuperset", [super_set])
 	## prototype bool Iinventory.Recycle( int cargo_type, int quantity )
-	func recycle(cargo_type, quantity) -> Variant:
+	func recycle(cargo_type, quantity) -> int:
 		return rt.native("iinventory.recycle", [cargo_type, quantity])
 	## prototype bool Iinventory.Remove( int cargo_type, int quantity )
-	func remove(cargo_type, quantity) -> Variant:
+	func remove(cargo_type, quantity) -> int:
 		return rt.native("iinventory.remove", [cargo_type, quantity])
 	func remove_command_section() -> Variant:
 		return rt.native("iinventory.removecommandsection", [])
@@ -1084,7 +1088,7 @@ class PkgIinventory extends RefCounted:
 	func set_blueprints_for_cargo(cargo_type, blueprints) -> Variant:
 		return rt.native("iinventory.setblueprintsforcargo", [cargo_type, blueprints])
 	## prototype int Iinventory.SuperSetContaining( int index )
-	func super_set_containing(index) -> Variant:
+	func super_set_containing(index) -> int:
 		return rt.native("iinventory.supersetcontaining", [index])
 
 class PkgIlagrangepoint extends RefCounted:
@@ -1102,7 +1106,7 @@ class PkgIlagrangepoint extends RefCounted:
 	func find_by_name(name) -> Variant:
 		return rt.native("ilagrangepoint.findbyname", [name])
 	## prototype bool Ilagrangepoint.Interstellar( hlagrangepoint lagrangepoint )
-	func interstellar(lagrangepoint) -> Variant:
+	func interstellar(lagrangepoint) -> int:
 		return rt.native("ilagrangepoint.interstellar", [lagrangepoint])
 	## prototype set Ilagrangepoint.LocalDestinations( hlagrangepoint lagrangepoint )
 	func local_destinations(lagrangepoint) -> Variant:
@@ -1123,10 +1127,10 @@ class PkgIloadout extends RefCounted:
 	func calculate_loadout(loadout) -> Variant:
 		return rt.native("iloadout.calculateloadout", [loadout])
 	## prototype int Iloadout.Cargo()
-	func cargo() -> Variant:
+	func cargo() -> int:
 		return rt.native("iloadout.cargo", [])
 	## prototype bool Iloadout.CargoSpaceWarning()
-	func cargo_space_warning() -> Variant:
+	func cargo_space_warning() -> int:
 		return rt.native("iloadout.cargospacewarning", [])
 	## prototype eLoadout Iloadout.CurrentLoadout()
 	func current_loadout() -> Variant:
@@ -1134,10 +1138,10 @@ class PkgIloadout extends RefCounted:
 	func end_customised_loadout() -> Variant:
 		return rt.native("iloadout.endcustomisedloadout", [])
 	## prototype bool Iloadout.GoodToGo()
-	func good_to_go() -> Variant:
+	func good_to_go() -> int:
 		return rt.native("iloadout.goodtogo", [])
 	## prototype bool Iloadout.LoadoutActive()
-	func loadout_active() -> Variant:
+	func loadout_active() -> int:
 		return rt.native("iloadout.loadoutactive", [])
 	## prototype string Iloadout.LoadoutDescription()
 	func loadout_description() -> Variant:
@@ -1146,7 +1150,7 @@ class PkgIloadout extends RefCounted:
 	func loadout_name(loadout) -> Variant:
 		return rt.native("iloadout.loadoutname", [loadout])
 	## prototype bool Iloadout.OnCustomiseScreenBack()
-	func on_customise_screen_back() -> Variant:
+	func on_customise_screen_back() -> int:
 		return rt.native("iloadout.oncustomisescreenback", [])
 	func on_customise_screen_select() -> Variant:
 		return rt.native("iloadout.oncustomisescreenselect", [])
@@ -1160,7 +1164,7 @@ class PkgIloadout extends RefCounted:
 	func register_ammo_type(weapon_template) -> Variant:
 		return rt.native("iloadout.registerammotype", [weapon_template])
 	## prototype bool Iloadout.RemoteFighterMounted()
-	func remote_fighter_mounted() -> Variant:
+	func remote_fighter_mounted() -> int:
 		return rt.native("iloadout.remotefightermounted", [])
 	func remove_remote_fighter() -> Variant:
 		return rt.native("iloadout.removeremotefighter", [])
@@ -1194,10 +1198,10 @@ class PkgIloadout extends RefCounted:
 	func strip_turret_fighters(turret_fighters) -> Variant:
 		return rt.native("iloadout.stripturretfighters", [turret_fighters])
 	## prototype int Iloadout.TurretFightersInLoadout()
-	func turret_fighters_in_loadout() -> Variant:
+	func turret_fighters_in_loadout() -> int:
 		return rt.native("iloadout.turretfightersinloadout", [])
 	## prototype int Iloadout.UnusedInternalCargoSlots()
-	func unused_internal_cargo_slots() -> Variant:
+	func unused_internal_cargo_slots() -> int:
 		return rt.native("iloadout.unusedinternalcargoslots", [])
 	func update_customised_loadout_text_box() -> Variant:
 		return rt.native("iloadout.updatecustomisedloadouttextbox", [])
@@ -1208,7 +1212,7 @@ class PkgImapentity extends RefCounted:
 	func cast(thing) -> Variant:
 		return rt.native("imapentity.cast", [thing])
 	## prototype float Imapentity.EntityToSimDistance( hmapentity entity, hsim sim )
-	func entity_to_sim_distance(entity, sim) -> Variant:
+	func entity_to_sim_distance(entity, sim) -> float:
 		return rt.native("imapentity.entitytosimdistance", [entity, sim])
 	## prototype hmapentity Imapentity.FindByName( string name )
 	func find_by_name(name) -> Variant:
@@ -1217,13 +1221,13 @@ class PkgImapentity extends RefCounted:
 	func find_by_name_in_system(name, system) -> Variant:
 		return rt.native("imapentity.findbynameinsystem", [name, system])
 	## prototype int Imapentity.GeogIndex( hmapentity entity )
-	func geog_index(entity) -> Variant:
+	func geog_index(entity) -> int:
 		return rt.native("imapentity.geogindex", [entity])
 	## prototype bool Imapentity.IsDestroyed( hmapentity waypoint )
-	func is_destroyed(waypoint) -> Variant:
+	func is_destroyed(waypoint) -> int:
 		return rt.native("imapentity.isdestroyed", [waypoint])
 	## prototype bool Imapentity.IsVisibleOnMap( hmapentity waypoint )
-	func is_visible_on_map(waypoint) -> Variant:
+	func is_visible_on_map(waypoint) -> int:
 		return rt.native("imapentity.isvisibleonmap", [waypoint])
 	## prototype string Imapentity.Name( hmapentity entity )
 	func pog_name(entity) -> Variant:
@@ -1232,7 +1236,7 @@ class PkgImapentity extends RefCounted:
 	func parent(entity) -> Variant:
 		return rt.native("imapentity.parent", [entity])
 	## prototype float Imapentity.RadiusOfInfluence( hmapentity entity )
-	func radius_of_influence(entity) -> Variant:
+	func radius_of_influence(entity) -> float:
 		return rt.native("imapentity.radiusofinfluence", [entity])
 	## prototype void Imapentity.SetDestroyed( hmapentity waypoint, bool destroyed )
 	func set_destroyed(waypoint, destroyed) -> Variant:
@@ -1274,7 +1278,7 @@ class PkgImapentity extends RefCounted:
 class PkgImod extends RefCounted:
 	var rt: PogRuntime
 	## prototype int Imod.Count()
-	func count() -> Variant:
+	func count() -> int:
 		return rt.native("imod.count", [])
 	## prototype string Imod.DisplayName( int n )
 	func display_name(n) -> Variant:
@@ -1283,7 +1287,7 @@ class PkgImod extends RefCounted:
 	func enable(n, enable) -> Variant:
 		return rt.native("imod.enable", [n, enable])
 	## prototype bool Imod.IsScenario( int n )
-	func is_scenario(n) -> Variant:
+	func is_scenario(n) -> int:
 		return rt.native("imod.isscenario", [n])
 	## prototype string Imod.Name( int n )
 	func pog_name(n) -> Variant:
@@ -1294,10 +1298,10 @@ class PkgImod extends RefCounted:
 class PkgImultiplay extends RefCounted:
 	var rt: PogRuntime
 	## prototype int Imultiplay.AIBotsCount()
-	func a_i_bots_count() -> Variant:
+	func a_i_bots_count() -> int:
 		return rt.native("imultiplay.aibotscount", [])
 	## prototype float Imultiplay.AIBotsSkillLevel()
-	func a_i_bots_skill_level() -> Variant:
+	func a_i_bots_skill_level() -> float:
 		return rt.native("imultiplay.aibotsskilllevel", [])
 	## prototype void Imultiplay.AddBotEndGameInfo( string name, string team, int frags, int flags, int died )
 	func add_bot_end_game_info(name, team, frags, flags, died) -> Variant:
@@ -1321,16 +1325,16 @@ class PkgImultiplay extends RefCounted:
 	func client_broadcast_team_message(sim, message, message_type) -> Variant:
 		return rt.native("imultiplay.clientbroadcastteammessage", [sim, message, message_type])
 	## prototype int Imultiplay.ClientEndGameInfoCount()
-	func client_end_game_info_count() -> Variant:
+	func client_end_game_info_count() -> int:
 		return rt.native("imultiplay.clientendgameinfocount", [])
 	## prototype int Imultiplay.ClientEndGameInfoDied( int i )
-	func client_end_game_info_died(i) -> Variant:
+	func client_end_game_info_died(i) -> int:
 		return rt.native("imultiplay.clientendgameinfodied", [i])
 	## prototype int Imultiplay.ClientEndGameInfoFlags( int i )
-	func client_end_game_info_flags(i) -> Variant:
+	func client_end_game_info_flags(i) -> int:
 		return rt.native("imultiplay.clientendgameinfoflags", [i])
 	## prototype int Imultiplay.ClientEndGameInfoFrags( int i )
-	func client_end_game_info_frags(i) -> Variant:
+	func client_end_game_info_frags(i) -> int:
 		return rt.native("imultiplay.clientendgameinfofrags", [i])
 	## prototype string Imultiplay.ClientEndGameInfoName( int i )
 	func client_end_game_info_name(i) -> Variant:
@@ -1339,7 +1343,7 @@ class PkgImultiplay extends RefCounted:
 	func client_end_game_info_team(i) -> Variant:
 		return rt.native("imultiplay.clientendgameinfoteam", [i])
 	## prototype bool Imultiplay.ClientIsTeamGame()
-	func client_is_team_game() -> Variant:
+	func client_is_team_game() -> int:
 		return rt.native("imultiplay.clientisteamgame", [])
 	## prototype string Imultiplay.ClientLastAddress()
 	func client_last_address() -> Variant:
@@ -1361,16 +1365,16 @@ class PkgImultiplay extends RefCounted:
 	func client_options_save() -> Variant:
 		return rt.native("imultiplay.clientoptionssave", [])
 	## prototype bool Imultiplay.ClientOptionsServerAIBots()
-	func client_options_server_a_i_bots() -> Variant:
+	func client_options_server_a_i_bots() -> int:
 		return rt.native("imultiplay.clientoptionsserveraibots", [])
 	## prototype int Imultiplay.ClientOptionsServerAIBotsCount()
-	func client_options_server_a_i_bots_count() -> Variant:
+	func client_options_server_a_i_bots_count() -> int:
 		return rt.native("imultiplay.clientoptionsserveraibotscount", [])
 	## prototype float Imultiplay.ClientOptionsServerAIBotsSkill()
-	func client_options_server_a_i_bots_skill() -> Variant:
+	func client_options_server_a_i_bots_skill() -> float:
 		return rt.native("imultiplay.clientoptionsserveraibotsskill", [])
 	## prototype int Imultiplay.ClientOptionsServerFragLimit()
-	func client_options_server_frag_limit() -> Variant:
+	func client_options_server_frag_limit() -> int:
 		return rt.native("imultiplay.clientoptionsserverfraglimit", [])
 	## prototype string Imultiplay.ClientOptionsServerMap()
 	func client_options_server_map() -> Variant:
@@ -1382,7 +1386,7 @@ class PkgImultiplay extends RefCounted:
 	func client_options_server_package() -> Variant:
 		return rt.native("imultiplay.clientoptionsserverpackage", [])
 	## prototype int Imultiplay.ClientOptionsServerTimeLimit()
-	func client_options_server_time_limit() -> Variant:
+	func client_options_server_time_limit() -> int:
 		return rt.native("imultiplay.clientoptionsservertimelimit", [])
 	## prototype void Imultiplay.ClientOptionsSetName( string name )
 	func client_options_set_name(name) -> Variant:
@@ -1421,10 +1425,10 @@ class PkgImultiplay extends RefCounted:
 	func client_player_list() -> Variant:
 		return rt.native("imultiplay.clientplayerlist", [])
 	## prototype int Imultiplay.ClientRejectedCount()
-	func client_rejected_count() -> Variant:
+	func client_rejected_count() -> int:
 		return rt.native("imultiplay.clientrejectedcount", [])
 	## prototype bool Imultiplay.ClientRequestedToCycle()
-	func client_requested_to_cycle() -> Variant:
+	func client_requested_to_cycle() -> int:
 		return rt.native("imultiplay.clientrequestedtocycle", [])
 	## prototype void Imultiplay.ClientSay( hsim sim, string message )
 	func client_say(sim, message) -> Variant:
@@ -1445,40 +1449,40 @@ class PkgImultiplay extends RefCounted:
 	func client_set_team_game(team_game) -> Variant:
 		return rt.native("imultiplay.clientsetteamgame", [team_game])
 	## prototype float Imultiplay.DebugSimPositionX( hsim sim )
-	func debug_sim_position_x(sim) -> Variant:
+	func debug_sim_position_x(sim) -> float:
 		return rt.native("imultiplay.debugsimpositionx", [sim])
 	## prototype float Imultiplay.DebugSimPositionY( hsim sim )
-	func debug_sim_position_y(sim) -> Variant:
+	func debug_sim_position_y(sim) -> float:
 		return rt.native("imultiplay.debugsimpositiony", [sim])
 	## prototype float Imultiplay.DebugSimPositionZ( hsim sim )
-	func debug_sim_position_z(sim) -> Variant:
+	func debug_sim_position_z(sim) -> float:
 		return rt.native("imultiplay.debugsimpositionz", [sim])
 	## prototype bool Imultiplay.EndGame()
-	func end_game() -> Variant:
+	func end_game() -> int:
 		return rt.native("imultiplay.endgame", [])
 	## prototype int Imultiplay.FragLimit()
-	func frag_limit() -> Variant:
+	func frag_limit() -> int:
 		return rt.native("imultiplay.fraglimit", [])
 	## prototype int Imultiplay.GetServerMapList( string package_name )
-	func get_server_map_list(package_name) -> Variant:
+	func get_server_map_list(package_name) -> int:
 		return rt.native("imultiplay.getservermaplist", [package_name])
 	## prototype int Imultiplay.GetServerPackageList()
-	func get_server_package_list() -> Variant:
+	func get_server_package_list() -> int:
 		return rt.native("imultiplay.getserverpackagelist", [])
 	## prototype int Imultiplay.GetServerShipList()
-	func get_server_ship_list() -> Variant:
+	func get_server_ship_list() -> int:
 		return rt.native("imultiplay.getservershiplist", [])
 	## prototype void Imultiplay.InstallAIPilot( hship ship )
 	func install_a_i_pilot(ship) -> Variant:
 		return rt.native("imultiplay.installaipilot", [ship])
 	## prototype bool Imultiplay.IsClient()
-	func is_client() -> Variant:
+	func is_client() -> int:
 		return rt.native("imultiplay.isclient", [])
 	## prototype bool Imultiplay.IsGameEnded()
-	func is_game_ended() -> Variant:
+	func is_game_ended() -> int:
 		return rt.native("imultiplay.isgameended", [])
 	## prototype bool Imultiplay.IsServerAppSpawned()
-	func is_server_app_spawned() -> Variant:
+	func is_server_app_spawned() -> int:
 		return rt.native("imultiplay.isserverappspawned", [])
 	## prototype void Imultiplay.LinkShipWeapons( hship ship )
 	func link_ship_weapons(ship) -> Variant:
@@ -1487,19 +1491,19 @@ class PkgImultiplay extends RefCounted:
 	func map_i_n_i() -> Variant:
 		return rt.native("imultiplay.mapini", [])
 	## prototype bool Imultiplay.NetworkIsLobbySession()
-	func network_is_lobby_session() -> Variant:
+	func network_is_lobby_session() -> int:
 		return rt.native("imultiplay.networkislobbysession", [])
 	## prototype bool Imultiplay.NetworkReset()
-	func network_reset() -> Variant:
+	func network_reset() -> int:
 		return rt.native("imultiplay.networkreset", [])
 	## prototype bool Imultiplay.NetworkSetProtocol( int i )
-	func network_set_protocol(i) -> Variant:
+	func network_set_protocol(i) -> int:
 		return rt.native("imultiplay.networksetprotocol", [i])
 	## prototype string Imultiplay.PackageINI()
 	func package_i_n_i() -> Variant:
 		return rt.native("imultiplay.packageini", [])
 	## prototype int Imultiplay.ProtocolVersion()
-	func protocol_version() -> Variant:
+	func protocol_version() -> int:
 		return rt.native("imultiplay.protocolversion", [])
 	## prototype void Imultiplay.RemoteLinkTo( hship ship )
 	func remote_link_to(ship) -> Variant:
@@ -1529,13 +1533,13 @@ class PkgImultiplay extends RefCounted:
 	func server_browser_display_item(i) -> Variant:
 		return rt.native("imultiplay.serverbrowserdisplayitem", [i])
 	## prototype int Imultiplay.ServerBrowserMaxPlayers( int i )
-	func server_browser_max_players(i) -> Variant:
+	func server_browser_max_players(i) -> int:
 		return rt.native("imultiplay.serverbrowsermaxplayers", [i])
 	## prototype int Imultiplay.ServerBrowserPlayers( int i )
-	func server_browser_players(i) -> Variant:
+	func server_browser_players(i) -> int:
 		return rt.native("imultiplay.serverbrowserplayers", [i])
 	## prototype int Imultiplay.ServerBrowserSessionIndex( int i )
-	func server_browser_session_index(i) -> Variant:
+	func server_browser_session_index(i) -> int:
 		return rt.native("imultiplay.serverbrowsersessionindex", [i])
 	## prototype string Imultiplay.ServerBrowserSessionName( int i )
 	func server_browser_session_name(i) -> Variant:
@@ -1544,13 +1548,13 @@ class PkgImultiplay extends RefCounted:
 	func server_browser_set_pog_functions(update_func, complete_func) -> Variant:
 		return rt.native("imultiplay.serverbrowsersetpogfunctions", [update_func, complete_func])
 	## prototype bool Imultiplay.ServerBrowserUpdateComplete()
-	func server_browser_update_complete() -> Variant:
+	func server_browser_update_complete() -> int:
 		return rt.native("imultiplay.serverbrowserupdatecomplete", [])
 	## prototype bool Imultiplay.ServerBrowserValidateKey( string key )
-	func server_browser_validate_key(key) -> Variant:
+	func server_browser_validate_key(key) -> int:
 		return rt.native("imultiplay.serverbrowservalidatekey", [key])
 	## prototype int Imultiplay.ServerIP()
-	func server_i_p() -> Variant:
+	func server_i_p() -> int:
 		return rt.native("imultiplay.serverip", [])
 	## prototype string Imultiplay.ServerMapListItem( int i )
 	func server_map_list_item(i) -> Variant:
@@ -1565,16 +1569,16 @@ class PkgImultiplay extends RefCounted:
 	func server_package_list_item_short(i) -> Variant:
 		return rt.native("imultiplay.serverpackagelistitemshort", [i])
 	## prototype int Imultiplay.ServerPlayerDiedCount( hsim sim_id )
-	func server_player_died_count(sim_id) -> Variant:
+	func server_player_died_count(sim_id) -> int:
 		return rt.native("imultiplay.serverplayerdiedcount", [sim_id])
 	## prototype int Imultiplay.ServerPlayerFlagsCount( hsim sim_id )
-	func server_player_flags_count(sim_id) -> Variant:
+	func server_player_flags_count(sim_id) -> int:
 		return rt.native("imultiplay.serverplayerflagscount", [sim_id])
 	## prototype int Imultiplay.ServerPlayerFragCount( hsim sim_id )
-	func server_player_frag_count(sim_id) -> Variant:
+	func server_player_frag_count(sim_id) -> int:
 		return rt.native("imultiplay.serverplayerfragcount", [sim_id])
 	## prototype int Imultiplay.ServerPlayerIP( hsim isim_id )
-	func server_player_i_p(isim_id) -> Variant:
+	func server_player_i_p(isim_id) -> int:
 		return rt.native("imultiplay.serverplayerip", [isim_id])
 	## prototype list Imultiplay.ServerPlayerList()
 	func server_player_list() -> Variant:
@@ -1591,7 +1595,7 @@ class PkgImultiplay extends RefCounted:
 	func server_send_user_message(i, sim1, sim2, data) -> Variant:
 		return rt.native("imultiplay.serversendusermessage", [i, sim1, sim2, data])
 	## prototype int Imultiplay.ServerSessionIndexFromName( string ip_address, string session_name )
-	func server_session_index_from_name(ip_address, session_name) -> Variant:
+	func server_session_index_from_name(ip_address, session_name) -> int:
 		return rt.native("imultiplay.serversessionindexfromname", [ip_address, session_name])
 	## prototype void Imultiplay.ServerSetPlayerDiedCount( hsim sim_id, int count )
 	func server_set_player_died_count(sim_id, count) -> Variant:
@@ -1615,13 +1619,13 @@ class PkgImultiplay extends RefCounted:
 	func server_ship_list_item(i) -> Variant:
 		return rt.native("imultiplay.servershiplistitem", [i])
 	## prototype bool Imultiplay.SetForRespawn( hsim sim )
-	func set_for_respawn(sim) -> Variant:
+	func set_for_respawn(sim) -> int:
 		return rt.native("imultiplay.setforrespawn", [sim])
 	## prototype void Imultiplay.SetGameType( string game_type )
 	func set_game_type(game_type) -> Variant:
 		return rt.native("imultiplay.setgametype", [game_type])
 	## prototype bool Imultiplay.SetPlayerShip( hship ship, string playername, hship old_ship )
-	func set_player_ship(ship, playername, old_ship) -> Variant:
+	func set_player_ship(ship, playername, old_ship) -> int:
 		return rt.native("imultiplay.setplayership", [ship, playername, old_ship])
 	## prototype void Imultiplay.SetShipLimits( hship ship )
 	func set_ship_limits(ship) -> Variant:
@@ -1636,10 +1640,10 @@ class PkgImultiplay extends RefCounted:
 	func sever_remote_link_to(ship) -> Variant:
 		return rt.native("imultiplay.severremotelinkto", [ship])
 	## prototype int Imultiplay.TimeLimit()
-	func time_limit() -> Variant:
+	func time_limit() -> int:
 		return rt.native("imultiplay.timelimit", [])
 	## prototype bool Imultiplay.UseAIBots()
-	func use_a_i_bots() -> Variant:
+	func use_a_i_bots() -> int:
 		return rt.native("imultiplay.useaibots", [])
 
 class PkgInifile extends RefCounted:
@@ -1654,19 +1658,19 @@ class PkgInifile extends RefCounted:
 	func destroy(h) -> Variant:
 		return rt.native("inifile.destroy", [h])
 	## prototype float Inifile.Float( hinifile h, string section, string key, float defaultfloat )
-	func pog_float(h, section, key, defaultfloat) -> Variant:
+	func pog_float(h, section, key, defaultfloat) -> float:
 		return rt.native("inifile.float", [h, section, key, defaultfloat])
 	## prototype int Inifile.Int( hinifile h, string section, string key, int defaultint )
-	func pog_int(h, section, key, defaultint) -> Variant:
+	func pog_int(h, section, key, defaultint) -> int:
 		return rt.native("inifile.int", [h, section, key, defaultint])
 	## prototype bool Inifile.NumberedExists( hinifile h, string section, string key, int number )
-	func numbered_exists(h, section, key, number) -> Variant:
+	func numbered_exists(h, section, key, number) -> int:
 		return rt.native("inifile.numberedexists", [h, section, key, number])
 	## prototype float Inifile.NumberedFloat( hinifile h, string section, string key, int number, float defaultfloat )
-	func numbered_float(h, section, key, number, defaultfloat) -> Variant:
+	func numbered_float(h, section, key, number, defaultfloat) -> float:
 		return rt.native("inifile.numberedfloat", [h, section, key, number, defaultfloat])
 	## prototype int Inifile.NumberedInt( hinifile h, string section, string key, int number, int defaultint )
-	func numbered_int(h, section, key, number, defaultint) -> Variant:
+	func numbered_int(h, section, key, number, defaultint) -> int:
 		return rt.native("inifile.numberedint", [h, section, key, number, defaultint])
 	## prototype string Inifile.NumberedString( hinifile h, string section, string key, int number, string defaultstring )
 	func numbered_string(h, section, key, number, defaultstring) -> Variant:
@@ -1681,7 +1685,7 @@ class PkgInput extends RefCounted:
 	func bind_key(function, key) -> Variant:
 		return rt.native("input.bindkey", [function, key])
 	## prototype int Input.CurrentInputScheme()
-	func current_input_scheme() -> Variant:
+	func current_input_scheme() -> int:
 		return rt.native("input.currentinputscheme", [])
 	## prototype string Input.KeyCombinations( string function )
 	func key_combinations(function) -> Variant:
@@ -1690,7 +1694,7 @@ class PkgInput extends RefCounted:
 	func nth_input_scheme_name(index) -> Variant:
 		return rt.native("input.nthinputschemename", [index])
 	## prototype int Input.NumInputSchemes()
-	func num_input_schemes() -> Variant:
+	func num_input_schemes() -> int:
 		return rt.native("input.numinputschemes", [])
 	func purge_bindings() -> Variant:
 		return rt.native("input.purgebindings", [])
@@ -1728,16 +1732,16 @@ class PkgIoptions extends RefCounted:
 	func create_windows(list_box) -> Variant:
 		return rt.native("ioptions.createwindows", [list_box])
 	## prototype bool Ioptions.DirectX8Available()
-	func direct_x8_available() -> Variant:
+	func direct_x8_available() -> int:
 		return rt.native("ioptions.directx8available", [])
 	## prototype int Ioptions.GraphicsDeviceIndex()
-	func graphics_device_index() -> Variant:
+	func graphics_device_index() -> int:
 		return rt.native("ioptions.graphicsdeviceindex", [])
 	## prototype int Ioptions.GraphicsResolutionIndex( int device_index )
-	func graphics_resolution_index(device_index) -> Variant:
+	func graphics_resolution_index(device_index) -> int:
 		return rt.native("ioptions.graphicsresolutionindex", [device_index])
 	## prototype int Ioptions.NumberOfResolutionOptions( int device_index )
-	func number_of_resolution_options(device_index) -> Variant:
+	func number_of_resolution_options(device_index) -> int:
 		return rt.native("ioptions.numberofresolutionoptions", [device_index])
 	## prototype void Ioptions.OnLeft( hwindow list_box )
 	func on_left(list_box) -> Variant:
@@ -1797,7 +1801,7 @@ class PkgIscore extends RefCounted:
 	func h_t_m_lised_stats() -> Variant:
 		return rt.native("iscore.htmlisedstats", [])
 	## prototype int Iscore.PodPiracyValue()
-	func pod_piracy_value() -> Variant:
+	func pod_piracy_value() -> int:
 		return rt.native("iscore.podpiracyvalue", [])
 	## prototype void Iscore.SetKillValue( string ship_type, int value )
 	func set_kill_value(ship_type, value) -> Variant:
@@ -1805,16 +1809,16 @@ class PkgIscore extends RefCounted:
 	func set_restart_point() -> Variant:
 		return rt.native("iscore.setrestartpoint", [])
 	## prototype int Iscore.Total()
-	func total() -> Variant:
+	func total() -> int:
 		return rt.native("iscore.total", [])
 
 class PkgIship extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Iship.Attacked( hship ship )
-	func attacked(ship) -> Variant:
+	func attacked(ship) -> int:
 		return rt.native("iship.attacked", [ship])
 	## prototype float Iship.BrightnessOf( hship vessel, hsim sim, float attenuation_range, bool squared_attenuation )
-	func brightness_of(vessel, sim, attenuation_range, squared_attenuation) -> Variant:
+	func brightness_of(vessel, sim, attenuation_range, squared_attenuation) -> float:
 		return rt.native("iship.brightnessof", [vessel, sim, attenuation_range, squared_attenuation])
 	## prototype void Iship.CancelDisrupt( hship ship )
 	func cancel_disrupt(ship) -> Variant:
@@ -1841,16 +1845,16 @@ class PkgIship extends RefCounted:
 	func disrupt_l_d_s_drive(ship, time_in_seconds) -> Variant:
 		return rt.native("iship.disruptldsdrive", [ship, time_in_seconds])
 	## prototype bool Iship.Dock( hsim ship, hsim sim )
-	func dock(ship, sim) -> Variant:
+	func dock(ship, sim) -> int:
 		return rt.native("iship.dock", [ship, sim])
 	## prototype hship Iship.FindPlayerShip()
 	func find_player_ship() -> Variant:
 		return rt.native("iship.findplayership", [])
 	## prototype bool Iship.HasFired( hship ship )
-	func has_fired(ship) -> Variant:
+	func has_fired(ship) -> int:
 		return rt.native("iship.hasfired", [ship])
 	## prototype bool Iship.HasHyperSpaceTracker( hship ship )
-	func has_hyper_space_tracker(ship) -> Variant:
+	func has_hyper_space_tracker(ship) -> int:
 		return rt.native("iship.hashyperspacetracker", [ship])
 	## prototype void Iship.Heal( hship ship )
 	func heal(ship) -> Variant:
@@ -1868,22 +1872,22 @@ class PkgIship extends RefCounted:
 	func install_player_pilot(ship) -> Variant:
 		return rt.native("iship.installplayerpilot", [ship])
 	## prototype bool Iship.IsAIDisabled( hship ship )
-	func is_a_i_disabled() -> Variant:
+	func is_a_i_disabled() -> int:
 		return rt.native("iship.isaidisabled", [])
 	## prototype bool Iship.IsDisrupted( hship ship )
-	func is_disrupted(ship) -> Variant:
+	func is_disrupted(ship) -> int:
 		return rt.native("iship.isdisrupted", [ship])
 	## prototype bool Iship.IsFreeWithoutPilot( hship ship )
-	func is_free_without_pilot(ship) -> Variant:
+	func is_free_without_pilot(ship) -> int:
 		return rt.native("iship.isfreewithoutpilot", [ship])
 	## prototype bool Iship.IsInLDS( hship ship )
-	func is_in_l_d_s(ship) -> Variant:
+	func is_in_l_d_s(ship) -> int:
 		return rt.native("iship.isinlds", [ship])
 	## prototype bool Iship.IsLDSInhibited( hship ship )
-	func is_l_d_s_inhibited(ship) -> Variant:
+	func is_l_d_s_inhibited(ship) -> int:
 		return rt.native("iship.isldsinhibited", [ship])
 	## prototype bool Iship.IsLDSScrambled( hship ship )
-	func is_l_d_s_scrambled(ship) -> Variant:
+	func is_l_d_s_scrambled(ship) -> int:
 		return rt.native("iship.isldsscrambled", [ship])
 	## prototype hisim Iship.LastAttacker( hship ship )
 	func last_attacker(ship) -> Variant:
@@ -1892,13 +1896,13 @@ class PkgIship extends RefCounted:
 	func last_fire_target(ship) -> Variant:
 		return rt.native("iship.lastfiretarget", [ship])
 	## prototype bool Iship.LockDownWeapons( hship ship )
-	func lock_down_weapons(ship) -> Variant:
+	func lock_down_weapons(ship) -> int:
 		return rt.native("iship.lockdownweapons", [ship])
 	## prototype float Iship.PercentageThrusterEmission( hship vessel )
-	func percentage_thruster_emission(vessel) -> Variant:
+	func percentage_thruster_emission(vessel) -> float:
 		return rt.native("iship.percentagethrusteremission", [vessel])
 	## prototype float Iship.PilotSkillLevel( hship ship )
-	func pilot_skill_level(ship) -> Variant:
+	func pilot_skill_level(ship) -> float:
 		return rt.native("iship.pilotskilllevel", [ship])
 	## prototype void Iship.RecalculateMOIFromMass( hship ship )
 	func recalculate_m_o_i_from_mass(ship) -> Variant:
@@ -1916,16 +1920,16 @@ class PkgIship extends RefCounted:
 	func set_pilot_skill_level(ship, level) -> Variant:
 		return rt.native("iship.setpilotskilllevel", [ship, level])
 	## prototype bool Iship.Undock( hship ship, hsim sim )
-	func undock(ship, sim) -> Variant:
+	func undock(ship, sim) -> int:
 		return rt.native("iship.undock", [ship, sim])
 	## prototype void Iship.UndockSelf( hship ship )
 	func undock_self(ship) -> Variant:
 		return rt.native("iship.undockself", [ship])
 	## prototype bool Iship.WeaponTargetsFromContactList( hship ship )
-	func weapon_targets_from_contact_list(ship) -> Variant:
+	func weapon_targets_from_contact_list(ship) -> int:
 		return rt.native("iship.weapontargetsfromcontactlist", [ship])
 	## prototype bool Iship.WeaponsUseExplicitTarget( hship ship, hisim target )
-	func weapons_use_explicit_target(ship, target) -> Variant:
+	func weapons_use_explicit_target(ship, target) -> int:
 		return rt.native("iship.weaponsuseexplicittarget", [ship, target])
 
 class PkgIsim extends RefCounted:
@@ -1937,7 +1941,7 @@ class PkgIsim extends RefCounted:
 	func alien_infection_effect(sim, on) -> Variant:
 		return rt.native("isim.alieninfectioneffect", [sim, on])
 	## prototype bool Isim.Attacked( hisim ship )
-	func attacked(ship) -> Variant:
+	func attacked(ship) -> int:
 		return rt.native("isim.attacked", [ship])
 	## prototype void Isim.CapsuleJump( hisim sim, hisim destination )
 	func capsule_jump(sim, destination) -> Variant:
@@ -1955,7 +1959,7 @@ class PkgIsim extends RefCounted:
 	func create_explosion(sim) -> Variant:
 		return rt.native("isim.createexplosion", [sim])
 	## prototype bool Isim.Dock( hisim sim1, hisim sim2 )
-	func dock(sim1, sim2) -> Variant:
+	func dock(sim1, sim2) -> int:
 		return rt.native("isim.dock", [sim1, sim2])
 	## prototype hfaction Isim.Faction( hisim sim_handle )
 	func faction(sim_handle) -> Variant:
@@ -1964,31 +1968,31 @@ class PkgIsim extends RefCounted:
 	func find_by_name_in_system(name, system) -> Variant:
 		return rt.native("isim.findbynameinsystem", [name, system])
 	## prototype bool Isim.IsAlienInfectionEffectOn( hisim sim )
-	func is_alien_infection_effect_on(sim) -> Variant:
+	func is_alien_infection_effect_on(sim) -> int:
 		return rt.native("isim.isalieninfectioneffecton", [sim])
 	## prototype bool Isim.IsCapsuleJumping( hisim sim )
-	func is_capsule_jumping(sim) -> Variant:
+	func is_capsule_jumping(sim) -> int:
 		return rt.native("isim.iscapsulejumping", [sim])
 	## prototype bool Isim.IsDocked( hisim sim )
-	func is_docked(sim) -> Variant:
+	func is_docked(sim) -> int:
 		return rt.native("isim.isdocked", [sim])
 	## prototype bool Isim.IsDockedTo( hisim sim1, hisim sim2 )
-	func is_docked_to(sim1, sim2) -> Variant:
+	func is_docked_to(sim1, sim2) -> int:
 		return rt.native("isim.isdockedto", [sim1, sim2])
 	## prototype bool Isim.IsDockedToStructure( hisim sim1, hisim sim2 )
-	func is_docked_to_structure(sim1, sim2) -> Variant:
+	func is_docked_to_structure(sim1, sim2) -> int:
 		return rt.native("isim.isdockedtostructure", [sim1, sim2])
 	## prototype bool Isim.IsDying( hisim sim )
-	func is_dying(sim) -> Variant:
+	func is_dying(sim) -> int:
 		return rt.native("isim.isdying", [sim])
 	## prototype bool Isim.IsIndestructable( hisim sim )
-	func is_indestructable(sim) -> Variant:
+	func is_indestructable(sim) -> int:
 		return rt.native("isim.isindestructable", [sim])
 	## prototype bool Isim.IsMissionCritical( hisim sim )
-	func is_mission_critical(sim) -> Variant:
+	func is_mission_critical(sim) -> int:
 		return rt.native("isim.ismissioncritical", [sim])
 	## prototype bool Isim.IsRespawning( hisim sim )
-	func is_respawning(sim) -> Variant:
+	func is_respawning(sim) -> int:
 		return rt.native("isim.isrespawning", [sim])
 	## prototype void Isim.Kill( hisim sim )
 	func kill(sim) -> Variant:
@@ -1997,7 +2001,7 @@ class PkgIsim extends RefCounted:
 	func last_attacker(ship) -> Variant:
 		return rt.native("isim.lastattacker", [ship])
 	## prototype bool Isim.LockDownWeapons( hisim sim )
-	func lock_down_weapons(sim) -> Variant:
+	func lock_down_weapons(sim) -> int:
 		return rt.native("isim.lockdownweapons", [sim])
 	## prototype set Isim.NonPlanetaryInRadius( hisim sim, float radius )
 	func non_planetary_in_radius(sim, radius) -> Variant:
@@ -2057,10 +2061,10 @@ class PkgIsim extends RefCounted:
 	func type(object_handle) -> Variant:
 		return rt.native("isim.type", [object_handle])
 	## prototype bool Isim.Undock( hisim sim1, hisim sim2 )
-	func undock(sim1, sim2) -> Variant:
+	func undock(sim1, sim2) -> int:
 		return rt.native("isim.undock", [sim1, sim2])
 	## prototype bool Isim.WeaponTargetsFromContactList( hisim sim )
-	func weapon_targets_from_contact_list(sim) -> Variant:
+	func weapon_targets_from_contact_list(sim) -> int:
 		return rt.native("isim.weapontargetsfromcontactlist", [sim])
 	## prototype string Isim.WorldName( hisim sim )
 	func world_name(sim) -> Variant:
@@ -2074,7 +2078,7 @@ class PkgIstation extends RefCounted:
 class PkgItrade extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Itrade.CanSatisfyTrade( htrade trade )
-	func can_satisfy_trade(trade) -> Variant:
+	func can_satisfy_trade(trade) -> int:
 		return rt.native("itrade.cansatisfytrade", [trade])
 	## prototype htrade Itrade.CreateTradeForCargoCategory( hfaction offering_faction, int cargo_type_offered, int num_offered, int cargo_category_wanted, int num_wanted, int offers )
 	func create_trade_for_cargo_category(offering_faction, cargo_type_offered, num_offered, cargo_category_wanted, num_wanted, offers) -> Variant:
@@ -2092,16 +2096,16 @@ class PkgItrade extends RefCounted:
 	func jaffs_trade_description(trade) -> Variant:
 		return rt.native("itrade.jaffstradedescription", [trade])
 	## prototype int Itrade.MetatypeOfTrade( htrade trade )
-	func metatype_of_trade(trade) -> Variant:
+	func metatype_of_trade(trade) -> int:
 		return rt.native("itrade.metatypeoftrade", [trade])
 	## prototype htrade Itrade.NthTrade( int n )
 	func nth_trade(n) -> Variant:
 		return rt.native("itrade.nthtrade", [n])
 	## prototype int Itrade.NumOffers( htrade trade )
-	func num_offers(trade) -> Variant:
+	func num_offers(trade) -> int:
 		return rt.native("itrade.numoffers", [trade])
 	## prototype int Itrade.NumTrades()
-	func num_trades() -> Variant:
+	func num_trades() -> int:
 		return rt.native("itrade.numtrades", [])
 	## prototype void Itrade.OfferTrade( htrade trade )
 	func offer_trade(trade) -> Variant:
@@ -2110,7 +2114,7 @@ class PkgItrade extends RefCounted:
 	func offered(trade) -> Variant:
 		return rt.native("itrade.offered", [trade])
 	## prototype bool Itrade.PerformTrade( htrade trade )
-	func perform_trade(trade) -> Variant:
+	func perform_trade(trade) -> int:
 		return rt.native("itrade.performtrade", [trade])
 	## prototype void Itrade.RemoveTrade( htrade trade )
 	func remove_trade(trade) -> Variant:
@@ -2131,7 +2135,7 @@ class PkgList extends RefCounted:
 	func append(list_one, list_two) -> Variant:
 		return rt.native("list.append", [list_one, list_two])
 	## prototype bool List.Contains( list the_list, hobject the_handle )
-	func contains(the_list, the_handle) -> Variant:
+	func contains(the_list, the_handle) -> int:
 		return rt.native("list.contains", [the_list, the_handle])
 	## prototype list List.FromSet( set the_set )
 	func from_set(the_set) -> Variant:
@@ -2143,10 +2147,10 @@ class PkgList extends RefCounted:
 	func head(the_list) -> Variant:
 		return rt.native("list.head", [the_list])
 	## prototype bool List.IsEmpty( list the_list )
-	func is_empty(the_list) -> Variant:
+	func is_empty(the_list) -> int:
 		return rt.native("list.isempty", [the_list])
 	## prototype int List.ItemCount( list the_list )
-	func item_count(the_list) -> Variant:
+	func item_count(the_list) -> int:
 		return rt.native("list.itemcount", [the_list])
 	## prototype void List.Remove( list the_list, hobject the_handle )
 	func remove(the_list, the_handle) -> Variant:
@@ -2182,25 +2186,25 @@ class PkgList extends RefCounted:
 class PkgMath extends RefCounted:
 	var rt: PogRuntime
 	## prototype float Math.Abs( float f )
-	func pog_abs(f) -> Variant:
+	func pog_abs(f) -> float:
 		return rt.native("math.abs", [f])
 	## prototype float Math.Cos( float x )
-	func pog_cos(x) -> Variant:
+	func pog_cos(x) -> float:
 		return rt.native("math.cos", [x])
 	## prototype float Math.CubeRoot( float f )
-	func cube_root(f) -> Variant:
+	func cube_root(f) -> float:
 		return rt.native("math.cuberoot", [f])
 	## prototype float Math.Random( float min, float max )
-	func random(min, max) -> Variant:
+	func random(min, max) -> float:
 		return rt.native("math.random", [min, max])
 	## prototype int Math.RandomInt( int min, int max )
-	func random_int(min, max) -> Variant:
+	func random_int(min, max) -> int:
 		return rt.native("math.randomint", [min, max])
 	## prototype float Math.Sin( float x )
-	func pog_sin(x) -> Variant:
+	func pog_sin(x) -> float:
 		return rt.native("math.sin", [x])
 	## prototype float Math.Sqrt( float f )
-	func pog_sqrt(f) -> Variant:
+	func pog_sqrt(f) -> float:
 		return rt.native("math.sqrt", [f])
 
 class PkgObject extends RefCounted:
@@ -2209,44 +2213,44 @@ class PkgObject extends RefCounted:
 	func add_bool_property(o, property, value) -> Variant:
 		return rt.native("object.addboolproperty", [o, property, value])
 	## prototype bool Object.AddFloatProperty( hobject o, string property, float value )
-	func add_float_property(o, property, value) -> Variant:
+	func add_float_property(o, property, value) -> int:
 		return rt.native("object.addfloatproperty", [o, property, value])
 	## prototype bool Object.AddHandleProperty( hobject o, string property, hobject value )
-	func add_handle_property(o, property, value) -> Variant:
+	func add_handle_property(o, property, value) -> int:
 		return rt.native("object.addhandleproperty", [o, property, value])
 	## prototype bool Object.AddIntProperty( hobject o, string property, int value )
-	func add_int_property(o, property, value) -> Variant:
+	func add_int_property(o, property, value) -> int:
 		return rt.native("object.addintproperty", [o, property, value])
 	## prototype bool Object.AddListProperty( hobject o, string property, list value )
-	func add_list_property(o, property, value) -> Variant:
+	func add_list_property(o, property, value) -> int:
 		return rt.native("object.addlistproperty", [o, property, value])
 	func add_set_property() -> Variant:
 		return rt.native("object.addsetproperty", [])
 	## prototype bool Object.AddStringProperty( hobject o, string property, string value )
-	func add_string_property(o, property, value) -> Variant:
+	func add_string_property(o, property, value) -> int:
 		return rt.native("object.addstringproperty", [o, property, value])
 	## prototype bool Object.BoolProperty( hobject o, string property )
-	func bool_property(o, property) -> Variant:
+	func bool_property(o, property) -> int:
 		return rt.native("object.boolproperty", [o, property])
 	func destroy() -> Variant:
 		return rt.native("object.destroy", [])
 	## prototype float Object.FloatProperty( hobject o, string property )
-	func float_property(o, property) -> Variant:
+	func float_property(o, property) -> float:
 		return rt.native("object.floatproperty", [o, property])
 	## prototype hobject Object.HandleProperty( hobject o, string property )
 	func handle_property(o, property) -> Variant:
 		return rt.native("object.handleproperty", [o, property])
 	## prototype int Object.IDModulus( hobject o, int modulus )
-	func i_d_modulus(o, modulus) -> Variant:
+	func i_d_modulus(o, modulus) -> int:
 		return rt.native("object.idmodulus", [o, modulus])
 	## prototype int Object.IntProperty( hobject o, string property )
-	func int_property(o, property) -> Variant:
+	func int_property(o, property) -> int:
 		return rt.native("object.intproperty", [o, property])
 	## prototype list Object.ListProperty( hobject o, string property )
 	func list_property(o, property) -> Variant:
 		return rt.native("object.listproperty", [o, property])
 	## prototype bool Object.PropertyExists( hobject o, string property )
-	func property_exists(o, property) -> Variant:
+	func property_exists(o, property) -> int:
 		return rt.native("object.propertyexists", [o, property])
 	## prototype void Object.RemoveProperty( hobject o, string property )
 	func remove_property(o, property) -> Variant:
@@ -2280,13 +2284,13 @@ class PkgObject extends RefCounted:
 	func string_property(o, property) -> Variant:
 		return rt.native("object.stringproperty", [o, property])
 	## prototype float Object.VectorPropertyX( hobject o, string property )
-	func vector_property_x(o, property) -> Variant:
+	func vector_property_x(o, property) -> float:
 		return rt.native("object.vectorpropertyx", [o, property])
 	## prototype float Object.VectorPropertyY( hobject o, string property )
-	func vector_property_y(o, property) -> Variant:
+	func vector_property_y(o, property) -> float:
 		return rt.native("object.vectorpropertyy", [o, property])
 	## prototype float Object.VectorPropertyZ( hobject o, string property )
-	func vector_property_z(o, property) -> Variant:
+	func vector_property_z(o, property) -> float:
 		return rt.native("object.vectorpropertyz", [o, property])
 
 class PkgSet extends RefCounted:
@@ -2295,7 +2299,7 @@ class PkgSet extends RefCounted:
 	func add(the_set, the_handle) -> Variant:
 		return rt.native("set.add", [the_set, the_handle])
 	## prototype bool Set.Contains( set the_set, hobject the_handle )
-	func contains(the_set, the_handle) -> Variant:
+	func contains(the_set, the_handle) -> int:
 		return rt.native("set.contains", [the_set, the_handle])
 	## prototype void Set.Difference( set set_one, set set_two )
 	func difference(set_one, set_two) -> Variant:
@@ -2307,10 +2311,10 @@ class PkgSet extends RefCounted:
 	func from_list(the_list) -> Variant:
 		return rt.native("set.fromlist", [the_list])
 	## prototype bool Set.IsEmpty( set the_set )
-	func is_empty(the_set) -> Variant:
+	func is_empty(the_set) -> int:
 		return rt.native("set.isempty", [the_set])
 	## prototype int Set.ItemCount( set the_set )
-	func item_count(the_set) -> Variant:
+	func item_count(the_set) -> int:
 		return rt.native("set.itemcount", [the_set])
 	## prototype void Set.Remove( set the_set, hobject the_handle )
 	func remove(the_set, the_handle) -> Variant:
@@ -2325,7 +2329,7 @@ class PkgSim extends RefCounted:
 	func add_child_relative_to(parent, child, x, y, z) -> Variant:
 		return rt.native("sim.addchildrelativeto", [parent, child, x, y, z])
 	## prototype bool Sim.AddSubsim( hsim sim, hsubsim subsim )
-	func add_subsim(sim, subsim) -> Variant:
+	func add_subsim(sim, subsim) -> int:
 		return rt.native("sim.addsubsim", [sim, subsim])
 	## prototype void Sim.AttachChild( hsim parent, hsim child )
 	func attach_child(parent, child) -> Variant:
@@ -2358,10 +2362,10 @@ class PkgSim extends RefCounted:
 	func detach_child(parent, child) -> Variant:
 		return rt.native("sim.detachchild", [parent, child])
 	## prototype float Sim.DistanceBetween( hsim sim1, hsim sim2 )
-	func distance_between(sim1, sim2) -> Variant:
+	func distance_between(sim1, sim2) -> float:
 		return rt.native("sim.distancebetween", [sim1, sim2])
 	## prototype float Sim.DistanceBetweenCentres( hsim sim1, hsim sim2 )
-	func distance_between_centres(sim1, sim2) -> Variant:
+	func distance_between_centres(sim1, sim2) -> float:
 		return rt.native("sim.distancebetweencentres", [sim1, sim2])
 	## prototype hsim Sim.FindByName( string name )
 	func find_by_name(name) -> Variant:
@@ -2373,16 +2377,16 @@ class PkgSim extends RefCounted:
 	func group(sims) -> Variant:
 		return rt.native("sim.group", [sims])
 	## prototype bool Sim.IsAlive( hsim sim )
-	func is_alive(sim) -> Variant:
+	func is_alive(sim) -> int:
 		return rt.native("sim.isalive", [sim])
 	## prototype bool Sim.IsDead( hsim sim )
-	func is_dead(sim) -> Variant:
+	func is_dead(sim) -> int:
 		return rt.native("sim.isdead", [sim])
 	## prototype bool Sim.IsHidden( hsim sim )
-	func is_hidden(sim) -> Variant:
+	func is_hidden(sim) -> int:
 		return rt.native("sim.ishidden", [sim])
 	## prototype bool Sim.IsInFOV( hsim sim1, hsim sim2, float fov )
-	func is_in_f_o_v(sim1, sim2, fov) -> Variant:
+	func is_in_f_o_v(sim1, sim2, fov) -> int:
 		return rt.native("sim.isinfov", [sim1, sim2, fov])
 	## prototype string Sim.Name( hsim sim )
 	func pog_name(sim) -> Variant:
@@ -2391,22 +2395,22 @@ class PkgSim extends RefCounted:
 	func parent(sim) -> Variant:
 		return rt.native("sim.parent", [sim])
 	## prototype bool Sim.PlaceAt( hsim sim, hsim marker )
-	func place_at(sim, marker) -> Variant:
+	func place_at(sim, marker) -> int:
 		return rt.native("sim.placeat", [sim, marker])
 	## prototype bool Sim.PlaceBetween( hsim sim, hsim begin, hsim end, float distance )
-	func place_between(sim, begin, end, distance) -> Variant:
+	func place_between(sim, begin, end, distance) -> int:
 		return rt.native("sim.placebetween", [sim, begin, end, distance])
 	## prototype bool Sim.PlaceInFrontOf( hsim sim, hsim other_sim, float distance )
-	func place_in_front_of(sim, other_sim, distance) -> Variant:
+	func place_in_front_of(sim, other_sim, distance) -> int:
 		return rt.native("sim.placeinfrontof", [sim, other_sim, distance])
 	## prototype bool Sim.PlaceNear( hsim sim, hsim marker, float distance )
-	func place_near(sim, marker, distance) -> Variant:
+	func place_near(sim, marker, distance) -> int:
 		return rt.native("sim.placenear", [sim, marker, distance])
 	## prototype bool Sim.PlaceRelativeTo( hsim sim, hsim marker, float x, float y, float z )
-	func place_relative_to(sim, marker, x, y, z) -> Variant:
+	func place_relative_to(sim, marker, x, y, z) -> int:
 		return rt.native("sim.placerelativeto", [sim, marker, x, y, z])
 	## prototype bool Sim.PlaceRelativeToInside( hsim sim, hsim other_sim, float x, float y, float z )
-	func place_relative_to_inside(sim, other_sim, x, y, z) -> Variant:
+	func place_relative_to_inside(sim, other_sim, x, y, z) -> int:
 		return rt.native("sim.placerelativetoinside", [sim, other_sim, x, y, z])
 	## prototype void Sim.PointAt( hsim sim, hsim marker )
 	func point_at(sim, marker) -> Variant:
@@ -2445,7 +2449,7 @@ class PkgSim extends RefCounted:
 	func set_velocity_local_to_sim(sim, x, y, z) -> Variant:
 		return rt.native("sim.setvelocitylocaltosim", [sim, x, y, z])
 	## prototype float Sim.Speed( hsim sim )
-	func speed(sim) -> Variant:
+	func speed(sim) -> float:
 		return rt.native("sim.speed", [sim])
 
 class PkgState extends RefCounted:
@@ -2465,7 +2469,7 @@ class PkgState extends RefCounted:
 	func find(t) -> Variant:
 		return rt.native("state.find", [t])
 	## prototype int State.Progress( hstate state )
-	func progress(state) -> Variant:
+	func progress(state) -> int:
 		return rt.native("state.progress", [state])
 	## prototype void State.Restore( hstate state )
 	func restore(state) -> Variant:
@@ -2480,10 +2484,10 @@ class PkgState extends RefCounted:
 class PkgStream extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Stream.IsPlaying( int slot )
-	func is_playing(slot) -> Variant:
+	func is_playing(slot) -> int:
 		return rt.native("stream.isplaying", [slot])
 	## prototype bool Stream.IsPlayingURL( int slot, string url )
-	func is_playing_u_r_l(slot, url) -> Variant:
+	func is_playing_u_r_l(slot, url) -> int:
 		return rt.native("stream.isplayingurl", [slot, url])
 	## prototype void Stream.Play( int slot, string url, bool fade, bool loop )
 	func play(slot, url, fade, loop) -> Variant:
@@ -2510,13 +2514,13 @@ class PkgString extends RefCounted:
 	func left(str_in, n) -> Variant:
 		return rt.native("string.left", [str_in, n])
 	## prototype int String.Length( string in )
-	func length(a0) -> Variant:
+	func length(a0) -> int:
 		return rt.native("string.length", [a0])
 	## prototype string String.Right( string str_in, int n )
 	func right(str_in, n) -> Variant:
 		return rt.native("string.right", [str_in, n])
 	## prototype int String.ToInt( string str_int )
-	func to_int(str_int) -> Variant:
+	func to_int(str_int) -> int:
 		return rt.native("string.toint", [str_int])
 	## prototype string String.TrimLeft( string str_in, int n )
 	func trim_left(str_in, n) -> Variant:
@@ -2549,7 +2553,7 @@ class PkgSubsim extends RefCounted:
 class PkgTask extends RefCounted:
 	var rt: PogRuntime
 	## prototype bool Task.Call( string function )
-	func pog_call(function) -> Variant:
+	func pog_call(function) -> int:
 		return rt.native("task.call", [function])
 	## prototype htask Task.Cast( hobject o )
 	func cast(o) -> Variant:
@@ -2564,10 +2568,10 @@ class PkgTask extends RefCounted:
 	func pog_halt(t) -> Variant:
 		return rt.native("task.halt", [t])
 	## prototype bool Task.IsHalted( htask t )
-	func is_halted(t) -> Variant:
+	func is_halted(t) -> int:
 		return rt.native("task.ishalted", [t])
 	## prototype bool Task.IsRunning( htask t )
-	func is_running(t) -> Variant:
+	func is_running(t) -> int:
 		return rt.native("task.isrunning", [t])
 	## prototype void Task.Resume( htask t )
 	func pog_resume(t) -> Variant:
