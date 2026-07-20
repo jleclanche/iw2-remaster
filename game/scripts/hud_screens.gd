@@ -508,14 +508,49 @@ func _tri_bary(w: Array) -> Vector2:
 var _tri_tex: Texture2D
 var _tri_loaded := false
 
+## One engineering pill row (FUN_100ed780 = FUN_100eda60 frame + fill):
+## the rail pill (caps 40 / rails 41, len - 8 with a pill), the icon at
+## x + 4 (x - 8 [0x10117b28] + 12 [0x10119ec4]) over highlight sprite 51
+## when hot, and the SOLID fill quad inset +15.5 / -27.5 (0x1011dc68/64).
+## Alpha is the engine's 0.5 idle / 1.0 hot split (FUN_100eda60 head).
+func _eng_row(o: Vector2, y: float, icon: int, frac: float, hot: bool,
+		amber: Color) -> float:
+	var c := Color(amber.r, amber.g, amber.b,
+			amber.a if hot else amber.a * 0.5)
+	var len := BAR_LEN - 8.0
+	hud._hbar(self, o.x + BAR_X, o.y + y, len, 40, 41, c)
+	var ix := BAR_X + 4.0
+	if hot:
+		hud._spr(Vector2(o.x + ix, o.y + y), 51, c, 0.0, 0, self)
+	if icon != 0:
+		hud._spr(Vector2(o.x + ix, o.y + y), icon, c, 0.0, 0, self)
+	var fx := ix + 15.5
+	var fl := len - 27.5
+	if frac >= 0.0:
+		draw_rect(Rect2(Vector2(o.x + fx, o.y + y - 5.0),
+				Vector2(fl * clampf(frac, 0.0, 1.0), 10.0)),
+				Color(c.r, c.g, c.b, c.a * 0.8))
+	return fx  # where the fill/caption content starts
+
 func _draw_engineering(fade: float) -> void:
 	if not _tri_loaded:
 		_tri_loaded = true
 		_tri_tex = Hud._load_mask(main._base(), "tri.png")
 	var o := _page()
-	var col := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
-	var hot := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, fade)
+	# the whole screen is the menu family's AMBER (DAT_10174fb0), not the
+	# flight HUD's green -- see the reference shots on issue #35
+	var amber := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, fade)
+	var col := Color(amber.r, amber.g, amber.b, fade * 0.5)
 	var t: float = Time.get_ticks_msec() / 1000.0
+
+	# header: hud_engineering_ship + _iff, off the ship record (FUN_10106580)
+	var strings: Dictionary = main.comms.strings if main.comms != null else {}
+	var iff := str(strings.get("player_iff_code", "CAL JOHNSTON"))
+	draw_string(hud._font_num, o + Vector2(BAR_X, 96.0),
+			"%s \"%s\" [IFF CODE: %s]" % [
+				str(strings.get("hud_engineering_ship", "COMMAND SECTION")),
+				str(main.ship.name).to_upper(), iff],
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2, col)
 
 	# the track: tri.png drawn 1:1, (275,192)-(430,347), u/v 0..0.60546875
 	if _tri_tex != null:
@@ -523,37 +558,22 @@ func _draw_engineering(fade: float) -> void:
 				Rect2(o + TRI_QUAD, Vector2(TRI_SIZE, TRI_SIZE)),
 				Rect2(0, 0, TRI_SIZE, TRI_SIZE), col)
 
-	# the three bars: x = 35, y = 212 / 247 / 282, length 217, icon 66/67/68.
-	# Each carries the slow ghost as its fill and the fast ghost as a needle.
+	# the three TRI rows: x = 35, y = 212 / 247 / 282, length 217, icons
+	# 66/67/68 (the tri.png corner glyphs), each a pill + SOLID fill of the
+	# slow ghost, with the fast ghost as a needle
 	for i in 3:
 		var y := BAR_Y + BAR_PITCH * i
 		var sel: bool = eng_row == i + 1
-		var c: Color = hot if sel else col
 		var v: float = float(_tri_slow[i])
 		# the shimmer: while the ghost has caught up and the axis is off its
 		# rails, the drawn value wobbles +/-0.02 (FUN_10107710)
 		if v > 1e-6 and v < 0.999999:
 			v = clampf(v + sin(t * TRI_JIT_HZ[i]) * TRI_JITTER, 0.0, 1.0)
-		_spr(o + Vector2(BAR_X, y), TRI_SPR[i], c)
-		var bx := o.x + BAR_X + 20.0
-		var bw := BAR_LEN - 20.0
-		draw_rect(Rect2(Vector2(bx, o.y + y - 5.0), Vector2(bw, 10.0)),
-				Color(c.r, c.g, c.b, 0.25 * fade), false, 1.0)
-		draw_rect(Rect2(Vector2(bx + 1.0, o.y + y - 4.0),
-				Vector2((bw - 2.0) * v, 8.0)), Color(c.r, c.g, c.b, 0.55 * fade))
-		var nx := bx + 1.0 + (bw - 2.0) * float(_tri_fast[i])
+		var fx := _eng_row(o, y, TRI_SPR[i], v, sel, amber)
+		var c: Color = amber if sel else col
+		var fl := BAR_LEN - 8.0 - 27.5
+		var nx := o.x + fx + fl * float(_tri_fast[i])
 		draw_line(Vector2(nx, o.y + y - 6.0), Vector2(nx, o.y + y + 6.0), c, 1.5)
-		# the original writes no text here at all -- the glyph IS the label, and
-		# it is the same glyph as the tri.png corner it feeds. The readout above
-		# each bar is ours, and it now carries the thing that actually matters:
-		# the TRIWeight this axis is handing its subsims (min 0.5 at an empty
-		# corner, 1.0 balanced, max 1.5 at a full one).
-		var s: ShipSystems = _sys()
-		var w: float = float(s.tri_weights[i]) if s != null else 1.0
-		draw_string(hud._font_num, Vector2(bx, o.y + y - 10.0),
-				"%s %d%%  x%.2f" % [TRI_NAME[i],
-					int(round(float(tri[i]) * 100.0)), w],
-				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2, c)
 
 	# the marker: sprite 45, chased toward the barycentre at 50 px/s, spinning
 	# one revolution per 2 s (rot = frac(t_ms * 0.0005) * 2*PI)
@@ -562,57 +582,53 @@ func _draw_engineering(fade: float) -> void:
 		_tri_mark = want
 	_tri_mark = _tri_mark.move_toward(want, TRI_TRACK * get_process_delta_time())
 	var rot: float = fposmod(Time.get_ticks_msec() * 0.0005, 1.0) * TAU
-	_spr(o + _tri_mark, 45, hot, rot)
+	_spr(o + _tri_mark, 45, amber, rot)
 
-	# row 4: hud_engineering_resettri at (35, 317)
-	draw_string(hud._font_num, o + Vector2(BAR_X, RESET_Y),
-			"RESET TRI", HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size,
-			hot if eng_row == 4 else col)
-	# row 0: the subsim selector. Left/right cycle icShip+0x140 and Enter toggles
-	# the selected sim (FUN_10106390); the original draws its label at (150, 109)
-	# with left/right chevrons that light while the key is held (FUN_101069a0,
-	# sprites 8/9). Our y keeps the 35px row pitch instead.
+	# row 4: hud_engineering_resettri at (35, 317) -- a captioned pill
+	# (FUN_100ea900: rails 40/41 + the caption)
+	var r4 := _eng_row(o, RESET_Y, 0, -1.0, eng_row == 4, amber)
+	draw_string(hud._font_num, Vector2(o.x + r4, o.y + RESET_Y + 5.0),
+			str(strings.get("hud_engineering_resettri", "RESET TRI")),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2,
+			amber if eng_row == 4 else col)
+
+	# row 0: the subsim selector. Left/right cycle icShip+0x140 and Enter
+	# toggles the selected sim (FUN_10106390); label at (150, 109) in the
+	# original -- ours keeps the 35 px pitch column. Chevrons light hot.
 	var list: Array = _eng_systems()
 	var lbl := "SYSTEM    NONE"
 	if eng_sel >= 0 and eng_sel < list.size():
-		var sel: Dictionary = list[eng_sel]
-		lbl = "%-14s %s" % [str(sel["name"]).to_upper().substr(0, 14),
-			"DISABLED" if bool(sel.get("off", false)) else "ENABLED"]
-	draw_string(hud._font_num, o + Vector2(BAR_X, ENG_ROW0_Y),
+		var sel0: Dictionary = list[eng_sel]
+		lbl = "%-14s %s" % [str(sel0["name"]).to_upper().substr(0, 14),
+			str(strings.get("hud_engineering_general_disabled", "DISABLED"))
+				if bool(sel0.get("off", false))
+				else str(strings.get("hud_engineering_general_enabled",
+					"ENABLED"))]
+	var r0 := _eng_row(o, ENG_ROW0_Y, 0, -1.0, eng_row == 0, amber)
+	draw_string(hud._font_num, Vector2(o.x + r0, o.y + ENG_ROW0_Y + 5.0),
 			("< %s >" % lbl) if eng_row == 0 else ("  %s" % lbl),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size,
-			hot if eng_row == 0 else col)
-	# row 5: the reactor throttle -- icReactor's ramp target (+0xa0), dragged by
-	# left/right at the same 0.35/s (FUN_10108240). The screen OPENS on this row.
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2,
+			amber if eng_row == 0 else col)
+
+	# row 5: the reactor throttle (icReactor+0xa0 ramp target) -- lightning
+	# icon, the style-3 SEGMENTED bar (FUN_100ebde0, sprites 14/13 on the
+	# 7 px pitch) and the output readout in its own pill
 	var s5: ShipSystems = _sys()
 	var thr: float = s5.reactor_throttle() if s5 != null else 1.0
-	draw_string(hud._font_num, o + Vector2(BAR_X, ENG_ROW5_Y),
-			"REACTOR   %3d%%" % int(round(thr * 100.0)),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size,
-			hot if eng_row == 5 else col)
-
-	# hud_engineering_ship / _hull and the subsim states, right of the track.
-	# Their layout is not recovered; this column is ours.
-	var x := o.x + TRI_QUAD.x + TRI_SIZE + 16.0
-	var y2 := o.y + TRI_QUAD.y + 4.0
-	draw_string(hud._font_num, Vector2(x, y2), "SHIP  %s"
-			% str(main.ship.name).to_upper(),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, col)
-	y2 += float(hud.num_size) + 4.0
-	draw_string(hud._font_num, Vector2(x, y2), "HULL  %3d%%"
-			% int(round(main.hull / main.hull_max * 100.0)),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, col)
-	var states: Dictionary = main.system_states()
-	for g: String in states.keys():
-		var s: float = float(states[g])
-		if s < 0.0:
-			continue
-		y2 += float(hud.num_size) + 2.0
-		var hc: Color = hud._health_color(s)
-		draw_string(hud._font_num, Vector2(x, y2), "%-4s  %3d%%"
-				% [g, int(round(s * 100.0))],
-				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size,
-				Color(hc.r, hc.g, hc.b, fade))
+	var hot5: bool = eng_row == 5
+	# (the reactor row's own icon sprite id is not recovered; no icon
+	# beats a wrong glyph)
+	var r5 := _eng_row(o, ENG_ROW5_Y, 0, -1.0, hot5, amber)
+	hud._segbar3(self, Vector2(o.x + r5, o.y + ENG_ROW5_Y),
+			BAR_LEN - 8.0 - 27.5, thr, amber if hot5 else col)
+	var mw: float = s5.reactor_power() if s5 != null \
+			and s5.has_method("reactor_power") else 0.0
+	draw_string(hud._font_num,
+			Vector2(o.x + BAR_X + BAR_LEN + 12.0, o.y + ENG_ROW5_Y + 5.0),
+			("%d MW" % int(round(mw * thr))) if mw > 0.0
+				else ("%3d%%" % int(round(thr * 100.0))),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size - 2,
+			amber if hot5 else col)
 
 # --- icHUDStarmap -------------------------------------------------------------
 # @element icHUDStarmap

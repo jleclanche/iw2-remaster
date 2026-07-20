@@ -917,6 +917,33 @@ The other strings are not rows at all, which is why the count never worked out:
 `this+0xa0`), and `_back` is the **Cancel prompt** (`0x101091d4`), not a row —
 Backspace closes the screen through cmd 5.
 
+### The row FURNITURE (issue #35 pass, 2026-07-20)
+
+The rows are not bare text -- each is the shared bar-record renderer
+`FUN_100ed780` = `FUN_100eda60` (frame) + `FUN_100ed7c0` (fill) +
+`FUN_100edea0` (marker):
+
+- **the pill** is `FUN_100eaf90(x, y, len, hot, cap 40, rail 41)` -- the same
+  rail primitive as every menu node box (`hud.gd _hbar`). With a pill the
+  record's length loses 8 (`0x10117b28`).
+- **the icon** sits at `x - 8 + 12` (`0x10119ec4` = 12), over highlight
+  sprite 51 when hot; alpha is 0.5 idle / 1.0 hot (`FUN_100eda60` head).
+- **the fill** is a SOLID quad (not segments) inset `x += 15.5`
+  (`0x1011dc68`) / `len -= 27.5` (`0x1011dc64`), blinking red at 0.5 s duty
+  past the record's threshold (`FUN_100ed7c0`, `m_game_time * 0.001`).
+- **`FUN_100ebde0`'s style table** (`0x10162e00`, 20 bytes per style:
+  `{full_sprite, tail_sprite, step-1, seg_w, ...}`): style 0 = 8/7 step 3,
+  style 1 = 10/9 step 5, style 2 = 12/11 step 6, **style 3 = 14/13 step 7**
+  (the reactor row). Full segments at full alpha plus ONE tail segment at
+  fractional alpha.
+- **sprites 66/67/68** (the TRI axis glyphs): atlas `(66/99/132, 191)`,
+  32x32, origin `(16,16)` (table-builder calls `@ 0x100e7a0e/45/7c`).
+- **`FUN_100ea900`** (captioned pill, e.g. RESET TRI): text width via
+  `FUN_100ebd70`, the 40/41 pill, optional icon, then the caption.
+
+hud_screens.gd `_draw_engineering` now draws the rows through this shape
+(pill + icon + solid fill + needle), in the menu family's AMBER.
+
 ### Still UNKNOWN on this screen
 
 - the **y positions** of rows 0 and 5 in `hud_screens.gd` are still ours (the
@@ -925,6 +952,11 @@ Backspace closes the screen through cmd 5.
 - what `0x1011e378` = 70 and `0x1011e37c` = 160 position.
 - `icHUD+0x1b6`, the lock that suppresses the held path, is read but we have not
   established what sets it.
+- the reactor row's own icon sprite id and the exact "MW" readout format
+  (`FUN_10108240`'s draw half); the fill-quad height inside the pill.
+- the header's three circles and AUTOREPAIR row (prev/next arrows + wrench
+  progress pill) in the reference shot, and the four wide status pills
+  across the page bottom -- their draw functions are not yet attributed.
 
 ## `icHUDStarmap` — a pannable 2D chart, and the data is in `clusters.ini`
 

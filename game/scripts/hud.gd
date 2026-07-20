@@ -135,6 +135,12 @@ const SPR := {
 	49: [0, 92, 32, 32, 16, 16],         # unidentified-contact class icon
 	50: [132, 59, 32, 32, 16, 16],       # rotating sweep wedge (flag bit 1)
 	51: [165, 92, 32, 32, 16, 16],       # roundel: soft disc (also under the MFD class icon)
+	# 66..68: the TRI axis glyphs (table builder calls @ 0x100e7a0e/45/7c):
+	# engine plume / two beams / deflecting arc -- the same three glyphs
+	# tri.png's corners carry (docs/hud_elements.md, the axis proof)
+	66: [66, 191, 32, 32, 16, 16],       # DRIVE
+	67: [99, 191, 32, 32, 16, 16],       # OFFENSIVE
+	68: [132, 191, 32, 32, 16, 16],      # DEFENSIVE
 	52: [165, 59, 32, 32, 16, 16],       # roundel: ring
 	53: [198, 59, 32, 32, 16, 16],       # roundel: ring + disc  (bits 0|3)
 	54: [33, 125, 32, 32, 16, 16],       # ship class icon, type 1 (FUN_100e86d0)
@@ -803,6 +809,22 @@ func _bar(pos: Vector2, frac: float, col: Color, segs := BAR_SEGS) -> void:
 		else:
 			draw_rect(Rect2(pos + Vector2(lit * BAR_PITCH, 0),
 					Vector2(BAR_PITCH - 1.0, 8)), _dim(pc))
+
+func _segbar3(ci: CanvasItem, pos: Vector2, length: float, frac: float,
+		col: Color) -> void:
+	# FUN_100ebde0, bar style 3 (table @ 0x10162e3c): fill sprite 14, tail
+	# sprite 13, 7 px pitch (table[+8] = 6, + 1). Full segments at full
+	# alpha, one tail segment at alpha = the fractional remainder; the unlit
+	# tail is never drawn.
+	var segs := int(length / 7.0)
+	var f := clampf(frac, 0.0, 1.0)
+	var lit := int(floor(f * segs))
+	var rem := f * segs - float(lit)
+	for i in mini(lit, segs):
+		_spr(pos + Vector2(i * 7.0, 0), 14, col, 0.0, 0, ci)
+	if rem > 0.0 and lit < segs:
+		_spr(pos + Vector2(lit * 7.0, 0), 13,
+				Color(col.r, col.g, col.b, col.a * rem), 0.0, 0, ci)
 
 func _contact_color(hostile: bool, category: String, faction := "") -> Color:
 	# FUN_100e8530, the one place the engine picks a contact's colour -- the
