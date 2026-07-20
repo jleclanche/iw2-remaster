@@ -89,6 +89,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_sign_avatar_assert",
 	&"_ms_gas_ball",
 	&"_ms_disrupt_arcs",
+	&"_ms_remote_missile",
+	&"_ms_remote_missile_assert",
 	&"_ms_bolt_table",
 	&"_ms_lazy_name",
 	&"_ms_au_place",
@@ -1045,6 +1047,42 @@ func _ms_disrupt_arcs(_delta: float) -> void:
 			"fx=%s edges=%d life=%.1f->%.1f same-node=%s"
 			% [made, edges, life, relife, same])
 	_mech_reap(ai)
+	_mech_next()
+
+var _rm_t0 := 0.0
+var _rm_fired := false
+
+func _ms_remote_missile(_delta: float) -> void:
+	# icRemoteMissile (#10): firing the remote launcher spawns a SHIP, not a
+	# missile record; after m_arm_time (1.5 s) the player is flying it
+	var mag: Dictionary = Missiles._mag_record("remote_launcher", {})
+	mag["clock"] = 1.0e9  # past any refire delay
+	_rm_fired = m.missiles.fire_magazine(m.ship, mag, null)
+	_rm_t0 = demo_t
+	_mech_next()
+
+func _ms_remote_missile_assert(_delta: float) -> void:
+	var ms: Missiles = m.missiles
+	if not _rm_fired or ms.remotes.is_empty():
+		_mech("remote-missile", false, "fired=%s remotes=%d"
+				% [_rm_fired, ms.remotes.size()])
+		_mech_next()
+		return
+	var ai: AiShip = ms.remotes[0]["ai"]
+	# phase 1: wait for the arm-time link
+	if m.remote_ai != ai:
+		if demo_t > _rm_t0 + 10.0:
+			_mech("remote-missile", false,
+					"no link %.1f s after launch" % (demo_t - _rm_t0))
+			_mech_next()
+		return
+	# linked: abort the link -> Think self-destructs the missile
+	m.unpossess()
+	var before := ms.remotes.size()
+	ms._step_remotes(0.0)
+	_mech("remote-missile", before == 1 and ms.remotes.is_empty()
+			and m.remote_ai == null,
+			"linked, then abort left %d live remotes" % ms.remotes.size())
 	_mech_next()
 
 func _ms_gatling(_delta: float) -> void:

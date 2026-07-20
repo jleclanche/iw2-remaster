@@ -18,10 +18,7 @@ extends Node3D
 # @element icMissileLauncher
 # @element icMissileTrailAvatar
 # @element icRocketTrailAvatar
-# @element-stub icRemoteMissile -- GENUINE GAP: data and rules recovered
-#   (docs/combat.md: an icShip subclass the player flies through
-#   icPlayerPilot::RemoteLink 0x1006f490); the remote-piloting camera/control
-#   handoff is not built.
+# @element icRemoteMissile
 
 # --- icMissile class statics (compiled-in, read out of the PE) --------------
 const ACTIVE_SEEK_UPDATE := 1.0   # m_active_seek_update_time  0x1011b60c
@@ -151,6 +148,29 @@ const SPECS := {
 		"yaw_rate": 120.0, "radius": 3.0, "sensor_radius": 10000.0,
 		"explode_radius": 150.0, "blast_radius": 600.0, "proximity": false,
 		"hit_points": 20.0, "model": "ldsi_mine"},
+	# icRemoteMissile: an icShip the player flies (docs/combat.md 10.6).
+	# Flight stats/hull/avatar come off the ship record itself (the `ini`
+	# key) through the standard ship-creation path; only the WARHEAD keys
+	# (+0x300..+0x310) live here. explode_radius mirrors blast_radius purely
+	# to satisfy _explode's icMissile gate -- it is not an authored key.
+	"remote_missile": {"cls": "icRemoteMissile", "damage": 1600.0,
+		"penetration": 60.0, "lifetime": 60.0, "blast_radius": 2000.0,
+		"explode_radius": 2000.0, "radius": 3.0,
+		"ini": "ini:/sims/weapons/remote_missile"},
+	"deathblow_remote_missile": {"cls": "icRemoteMissile", "damage": 2500.0,
+		"penetration": 60.0, "lifetime": 20.0, "blast_radius": 2500.0,
+		"explode_radius": 2500.0, "radius": 3.0,
+		"ini": "ini:/sims/weapons/deathblow_remote_missile"},
+	# the antimatter remote authors NO damage/penetration -- its
+	# antimatter_radius kill chain (+0x30c) is not yet extracted, so its
+	# warhead is inert here beyond the fireball (docs/combat.md)
+	"antimatter_missile": {"cls": "icRemoteMissile", "damage": 0.0,
+		"penetration": 0.0, "lifetime": 30.0, "blast_radius": 0.0,
+		"antimatter_radius": 2500.0, "radius": 3.0,
+		"ini": "ini:/sims/weapons/antimatter_missile"},
+	"remote_probe": {"cls": "icRemoteMissile", "damage": 0.0,
+		"penetration": 0.0, "lifetime": 60.0, "blast_radius": 0.0,
+		"radius": 3.0, "ini": "ini:/sims/weapons/remote_probe"},
 }
 
 # --- subsims/systems/*.ini magazines (keys: icMagazine map 0x10037db0) -------
@@ -188,6 +208,15 @@ const MAG_SPECS := {
 		"max_ammo": 8, "refire_delay": 0.5, "rocket": true},
 	"nps_gnat_rocket_pod": {"projectile": "gnat_rocket", "launch_speed": 200.0,
 		"max_ammo": 8, "refire_delay": 0.5, "rocket": true},
+	# subsims/systems/player/*_launcher.ini (verbatim)
+	"remote_launcher": {"projectile": "remote_missile", "launch_speed": 200.0,
+		"max_ammo": 1, "refire_delay": 2.0},
+	"deathblow_remote_launcher": {"projectile": "deathblow_remote_missile",
+		"launch_speed": 200.0, "max_ammo": 1, "refire_delay": 2.0},
+	"antimatter_missile_launcher": {"projectile": "antimatter_missile",
+		"launch_speed": 200.0, "max_ammo": 1, "refire_delay": 4.0},
+	"remote_probe_launcher": {"projectile": "remote_probe",
+		"launch_speed": 200.0, "max_ammo": 2, "refire_delay": 2.0},
 }
 
 var main: Node3D
@@ -240,7 +269,8 @@ static func mags_all() -> Array:
 	var out: Array = []
 	for stem in ["seeker_missile_magazine", "deadshot_missile_magazine",
 			"harrower_missile_magazine", "ldsi_missile_magazine",
-			"decoy_magazine", "flare_magazine", "gnat_rocket_pod"]:
+			"decoy_magazine", "flare_magazine", "gnat_rocket_pod",
+			"remote_launcher"]:
 		out.append(_mag_record(stem, {}))
 	return out
 
@@ -270,6 +300,8 @@ func fire_magazine(shooter: Node3D, mag: Dictionary, target: Node3D) -> bool:
 	var spec: Dictionary = mag["spec"]
 	if bool(mag["cm"]):
 		_spawn_cm(shooter, spec, vel)
+	elif str(spec.get("cls", "")) == "icRemoteMissile":
+		_spawn_remote(shooter, spec, fwd, vel)
 	else:
 		spawn_missile(shooter, spec, shooter.global_position + fwd * 30.0,
 				fwd, vel, target)
@@ -412,6 +444,7 @@ func _physics_process(delta: float) -> void:
 	_ai_fire(delta)
 	_step_cms(delta)
 	_step_missiles(delta)
+	_step_remotes(delta)
 	_update_incoming()
 
 # --- AI launch decisions ------------------------------------------------
@@ -816,6 +849,75 @@ func detonate(rec: Dictionary) -> void:
 		return
 	_explode(rec, (node as Node3D).global_position)
 
+
+# =============================================================================
+# icRemoteMissile -- the flyable warhead (docs/combat.md 10.6)
+# =============================================================================
+# An icShip subclass (ctor 0x1006f330): a real ship with hull, subsims and an
+# avatar, spawned through the standard ship-creation path so its flight stats
+# and model come off the authored record. Think (0x1006f490): after m_arm_time
+# (1.5 s @ 0x1011ba60) it hands itself to icPlayerPilot::RemoteLink -- the
+# possession machinery main.possess() already implements. It self-destructs
+# (ApplyDamage(2 x max hull, src 5)) on any collision (0x1006f610), at
+# arm_time + lifetime (0x1006f530), or when the pilot aborts; every death
+# routes through OnExplode (0x1006f630) = the icMissile blast, aggressor =
+# the owner (+0x314). Shockwave radius cap 2000 @ 0x1011bb90.
+const REMOTE_ARM_TIME := 1.5  # icRemoteMissile::m_arm_time 0x1011ba60
+
+var remotes: Array = []  # {ai, spec, age, linked, owner, last_pos}
+var _remote_seq := 0
+
+func _spawn_remote(shooter: Node3D, spec: Dictionary, fwd: Vector3,
+		vel: Vector3) -> void:
+	if main == null or main.pog_world == null:
+		return
+	_remote_seq += 1
+	var ini := str(spec["ini"])
+	var s = main.pog_world._create_ship(ini,
+			"%s_%d" % [ini.get_file(), _remote_seq])
+	if s == null or s.node == null:
+		return
+	var ai: AiShip = s.node
+	ai.behavior = "idle"
+	ai.global_position = shooter.global_position + fwd * 30.0
+	ai.global_transform.basis = shooter.global_transform.basis
+	ai.velocity = vel
+	remotes.append({"ai": ai, "spec": spec, "age": 0.0, "linked": false,
+			"owner": shooter, "last_pos": ai.global_position})
+
+func _step_remotes(delta: float) -> void:
+	for i in range(remotes.size() - 1, -1, -1):
+		var r: Dictionary = remotes[i]
+		var ai: AiShip = r["ai"]
+		if not is_instance_valid(ai) or ai.hull <= 0.0:
+			# shot down / collided: the ship death path IS the self-destruct
+			# (ApplyDamage 2 x hull, 0x1006f610) and OnExplode still fires
+			_remote_blast(r, r["last_pos"] as Vector3)
+			remotes.remove_at(i)
+			continue
+		r["last_pos"] = ai.global_position
+		r["age"] = float(r["age"]) + delta
+		if float(r["age"]) >= REMOTE_ARM_TIME and not bool(r["linked"]) \
+				and r["owner"] == main.ship and main.remote_ai == null:
+			# Think 0x1006f490: armed -> icPlayerPilot::RemoteLink
+			main.possess(ai)
+			r["linked"] = true
+		var aborted: bool = bool(r["linked"]) and main.remote_ai != ai
+		var expired: bool = float(r["age"]) \
+				>= REMOTE_ARM_TIME + float(r["spec"].get("lifetime", 60.0))
+		if aborted or expired:
+			if main.remote_ai == ai:
+				main.unpossess()
+			var at: Vector3 = ai.global_position
+			remotes.remove_at(i)
+			main.kill_ai(ai)
+			_remote_blast(r, at)
+
+func _remote_blast(r: Dictionary, at: Vector3) -> void:
+	if main.remote_ai == r["ai"]:
+		main.unpossess()
+	_explode({"state": ST_TRACK, "spec": r["spec"],
+			"cls": "icRemoteMissile", "shooter": r["owner"]}, at)
 
 func _explode(rec: Dictionary, at: Vector3) -> void:
 	if int(rec["state"]) == ST_EXPLODED:
